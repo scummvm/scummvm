@@ -32,7 +32,7 @@ namespace MADS {
 
 class MADSEngine;
 
-class MenuView: public FullScreenDialog {
+class MenuView : public FullScreenDialog {
 protected:
 	bool _breakFlag;
 	bool _redrawFlag;
@@ -46,6 +46,7 @@ protected:
 	* Event handler
 	*/
 	virtual bool onEvent(Common::Event &event);
+
 public:
 	MenuView(MADSEngine *vm);
 
@@ -83,6 +84,7 @@ private:
 	char _currentLine[80];
 	MSurface *_spareScreen;
 	Font *_font;
+
 private:
 	/**
 	 * Load the text resource
@@ -113,6 +115,7 @@ private:
 	 * Reset the game palette
 	 */
 	void resetPalette();
+
 protected:
 	virtual void display();
 
@@ -122,6 +125,7 @@ protected:
 	 * Called when the script is finished
 	 */
 	virtual void scriptDone();
+
 public:
 	/**
 	 * Queue the given text resource for display
@@ -133,7 +137,9 @@ public:
 	virtual ~TextView();
 };
 
-enum ResyncMode { NEVER, ALWAYS, BEGINNING };
+enum ResyncMode { NEVER,
+	                ALWAYS,
+	                BEGINNING };
 
 struct ResourceEntry {
 	Common::String _resourceName;
@@ -144,7 +150,7 @@ struct ResourceEntry {
 
 	ResourceEntry() {}
 	ResourceEntry(const Common::String &resName, int fx, bool soundFlag,
-			bool bgFlag, bool showWhiteBars) {
+	              bool bgFlag, bool showWhiteBars) {
 		_resourceName = resName;
 		_fx = fx;
 		_soundFlag = soundFlag;
@@ -191,12 +197,14 @@ private:
 	int _manualFrame2;
 	int _animFrameNumber;
 	bool _nextCyclingActive;
+
 private:
 	void checkResource(const Common::String &resourceName);
 
 	int scanResourceIndex(const Common::String &resourceName);
 
 	uint _scrollFrameCtr;
+
 private:
 	void load();
 
@@ -209,6 +217,7 @@ private:
 	void loadNextResource();
 
 	void scroll();
+
 protected:
 	virtual void display();
 
@@ -217,6 +226,7 @@ protected:
 	virtual bool onEvent(Common::Event &event);
 
 	virtual void scriptDone();
+
 public:
 	/**
 	* Queue the given text resource for display

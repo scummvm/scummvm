@@ -28,9 +28,9 @@
 #ifndef CGE_SOUND_H
 #define CGE_SOUND_H
 
-#include "cge/fileio.h"
 #include "audio/midiplayer.h"
 #include "audio/mixer.h"
+#include "cge/fileio.h"
 #include "common/memstream.h"
 
 namespace Audio {
@@ -43,15 +43,16 @@ class CGEEngine;
 
 // sample info
 struct SmpInfo {
-	const uint8  *_saddr;                              // address
-	uint16  _slen;                                     // length
-	uint16  _span;                                     // left/right pan (0-15)
-	int     _counter;                                  // number of time the sample should be played
+	const uint8 *_saddr; // address
+	uint16 _slen; // length
+	uint16 _span; // left/right pan (0-15)
+	int _counter; // number of time the sample should be played
 };
 
 class DataCk {
 	byte *_buf;
 	int _ckSize;
+
 public:
 	DataCk(byte *buf, int bufSize);
 	~DataCk();
@@ -75,6 +76,7 @@ public:
 	int16 getRepeat();
 	void setRepeat(int16 count);
 	void stop();
+
 private:
 	int _soundRepeatCount;
 	CGEEngine *_vm;
@@ -90,12 +92,13 @@ class Fx {
 	struct Handler {
 		int _ref;
 		DataCk *_wav;
-	} *_cache;
+	} * _cache;
 	int _size;
 
 	DataCk *load(int idx, int ref);
 	DataCk *loadWave(EncryptedStream *file);
 	int find(int ref);
+
 public:
 	DataCk *_current;
 
@@ -106,7 +109,7 @@ public:
 	DataCk *operator[](int ref);
 };
 
-class MusicPlayer: public Audio::MidiPlayer {
+class MusicPlayer : public Audio::MidiPlayer {
 private:
 	CGEEngine *_vm;
 	byte *_data;
@@ -118,6 +121,7 @@ private:
 
 	// Stop MIDI File
 	void sndMidiStop();
+
 public:
 	MusicPlayer(CGEEngine *vm);
 	~MusicPlayer();
@@ -132,4 +136,3 @@ public:
 } // End of namespace CGE
 
 #endif
-

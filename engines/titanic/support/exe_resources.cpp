@@ -21,13 +21,19 @@
  */
 
 #include "titanic/support/exe_resources.h"
-#include "titanic/true_talk/script_handler.h"
 #include "titanic/titanic.h"
+#include "titanic/true_talk/script_handler.h"
 
 namespace Titanic {
 
-CExeResources::CExeResources() : _owner(nullptr), _field4(0), _field8(0),
-		_fieldC(0), _field10(0), _field14(0), _vocabMode(VOCAB_MODE_NONE) {
+CExeResources::CExeResources()
+  : _owner(nullptr)
+  , _field4(0)
+  , _field8(0)
+  , _fieldC(0)
+  , _field10(0)
+  , _field14(0)
+  , _vocabMode(VOCAB_MODE_NONE) {
 }
 
 void CExeResources::reset(CScriptHandler *owner, int val1, VocabMode vocabMode) {

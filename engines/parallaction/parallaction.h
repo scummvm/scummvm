@@ -23,23 +23,22 @@
 #ifndef PARALLACTION_PARALLACTION_H
 #define PARALLACTION_PARALLACTION_H
 
-#include "common/str.h"
-#include "common/stack.h"
 #include "common/array.h"
 #include "common/func.h"
 #include "common/random.h"
 #include "common/savefile.h"
+#include "common/stack.h"
+#include "common/str.h"
 #include "common/textconsole.h"
 
 #include "engines/engine.h"
 
+#include "parallaction/disk.h"
 #include "parallaction/input.h"
 #include "parallaction/inventory.h"
 #include "parallaction/objects.h"
-#include "parallaction/disk.h"
 
-#define PATH_LEN	200
-
+#define PATH_LEN 200
 
 /**
  * This is the namespace of the Parallaction engine.
@@ -74,24 +73,23 @@ enum {
 	GF_LANG_MULT = 1 << 5
 };
 
-
 enum EngineFlags {
-	kEnginePauseJobs	= (1 << 1),
-	kEngineWalking		= (1 << 3),
-	kEngineChangeLocation	= (1 << 4),
-	kEngineBlockInput	= (1 << 5),
-	kEngineDragging		= (1 << 6),
-	kEngineTransformedDonna	= (1 << 7),
+	kEnginePauseJobs = (1 << 1),
+	kEngineWalking = (1 << 3),
+	kEngineChangeLocation = (1 << 4),
+	kEngineBlockInput = (1 << 5),
+	kEngineDragging = (1 << 6),
+	kEngineTransformedDonna = (1 << 7),
 
 	// BRA specific
-	kEngineReturn		= (1 << 10)
+	kEngineReturn = (1 << 10)
 };
 
 enum {
-	kEvNone			= 0,
-	kEvSaveGame		= 2000,
-	kEvLoadGame		= 4000,
-	kEvIngameMenu   = 8000
+	kEvNone = 0,
+	kEvSaveGame = 2000,
+	kEvLoadGame = 4000,
+	kEvIngameMenu = 8000
 };
 
 enum ParallactionGameType {
@@ -101,25 +99,17 @@ enum ParallactionGameType {
 
 struct PARALLACTIONGameDescription;
 
-
-
-
-extern uint32		g_engineFlags;
-extern char			g_saveData1[];
-extern uint32		g_globalFlags;
-extern const char	*g_dinoName;
-extern const char	*g_donnaName;
-extern const char	*g_doughName;
-extern const char	*g_drkiName;
-extern const char	*g_minidinoName;
-extern const char	*g_minidonnaName;
-extern const char	*g_minidoughName;
-extern const char	*g_minidrkiName;
-
-
-
-
-
+extern uint32 g_engineFlags;
+extern char g_saveData1[];
+extern uint32 g_globalFlags;
+extern const char *g_dinoName;
+extern const char *g_donnaName;
+extern const char *g_doughName;
+extern const char *g_drkiName;
+extern const char *g_minidinoName;
+extern const char *g_minidonnaName;
+extern const char *g_minidoughName;
+extern const char *g_minidrkiName;
 
 class Debugger;
 class Gfx;
@@ -141,44 +131,43 @@ class BalloonManager;
 
 struct Location {
 
-	Common::Point	_startPosition;
-	uint16			_startFrame;
-	char			_name[100];
+	Common::Point _startPosition;
+	uint16 _startFrame;
+	char _name[100];
 
-	CommandList		_aCommands;
-	CommandList		_commands;
-	Common::String	_comment;
-	Common::String	_endComment;
+	CommandList _aCommands;
+	CommandList _commands;
+	Common::String _comment;
+	Common::String _endComment;
 
-	ZoneList		_zones;
-	AnimationList	_animations;
-	ProgramList		_programs;
+	ZoneList _zones;
+	AnimationList _animations;
+	ProgramList _programs;
 
-	bool		_hasSound;
-	char		_soundFile[50];
+	bool _hasSound;
+	char _soundFile[50];
 
 	// NS specific
-	PointList	_walkPoints;
+	PointList _walkPoints;
 	Common::String _slideText[2];
 
 	// BRA specific
-	int			_zeta0;
-	int			_zeta1;
-	int			_zeta2;
-	CommandList		_escapeCommands;
-	Common::Point	_followerStartPosition;
-	uint16			_followerStartFrame;
-
+	int _zeta0;
+	int _zeta1;
+	int _zeta2;
+	CommandList _escapeCommands;
+	Common::Point _followerStartPosition;
+	uint16 _followerStartFrame;
 
 protected:
-	int			_gameType;
+	int _gameType;
 
 	bool keepZone_br(ZonePtr z);
 	bool keepZone_ns(ZonePtr z);
 	bool keepAnimation_ns(AnimationPtr a);
 	bool keepAnimation_br(AnimationPtr a);
 
-	template<class T>
+	template <class T>
 	void freeList(Common::List<T> &list, bool removeAll, Common::MemFunc1<bool, T, Location> filter);
 
 public:
@@ -194,7 +183,6 @@ public:
 	int getScale(int z) const;
 };
 
-
 class CharacterName {
 	const char *_prefix;
 	const char *_suffix;
@@ -206,6 +194,7 @@ class CharacterName {
 	static const char _suffixTras[];
 	static const char _empty[];
 	void dummify();
+
 public:
 	CharacterName();
 	CharacterName(const char *name);
@@ -216,16 +205,15 @@ public:
 	bool dummy() const;
 };
 
-
 struct Character {
-	AnimationPtr	_ani;
-	GfxObj			*_head;
-	GfxObj			*_talk;
+	AnimationPtr _ani;
+	GfxObj *_head;
+	GfxObj *_talk;
 
 	Character();
 
 protected:
-	CharacterName	_name;
+	CharacterName _name;
 
 public:
 	void setName(const char *name);
@@ -234,7 +222,6 @@ public:
 	const char *getFullName() const;
 	bool dummy() const;
 };
-
 
 class SaveLoad;
 
@@ -249,12 +236,12 @@ public:
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 
-protected:		// members
+protected: // members
 	bool detectGame();
 
 private:
 	const PARALLACTIONGameDescription *_gameDescription;
-	uint16	_language;
+	uint16 _language;
 
 public:
 	Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gameDesc);
@@ -276,113 +263,113 @@ public:
 	virtual GUI::Debugger *getDebugger();
 
 	// info
-	int32			_screenWidth;
-	int32			_screenHeight;
-	int32			_screenSize;
-	int				_gameType;
+	int32 _screenWidth;
+	int32 _screenHeight;
+	int32 _screenSize;
+	int _gameType;
 
 	// subsystems
-	Gfx				*_gfx;
-	Disk			*_disk;
-	Input			*_input;
-	Debugger		*_debugger;
-	SaveLoad		*_saveLoad;
+	Gfx *_gfx;
+	Disk *_disk;
+	Input *_input;
+	Debugger *_debugger;
+	SaveLoad *_saveLoad;
 	MenuInputHelper *_menuHelper;
 	Common::RandomSource _rnd;
-	SoundMan		*_soundMan;
+	SoundMan *_soundMan;
 
 	// fonts
-	Font		*_labelFont;
-	Font		*_menuFont;
-	Font		*_introFont;
-	Font		*_dialogueFont;
+	Font *_labelFont;
+	Font *_menuFont;
+	Font *_introFont;
+	Font *_dialogueFont;
 
 	// game utilities
-	Table				*_globalFlagsNames;
-	Table				*_objectsNames;
-	GfxObj				*_objects;
-	Table				*_callableNames;
-	Table				*_localFlagNames;
-	CommandExec			*_cmdExec;
-	ProgramExec			*_programExec;
-	BalloonManager		*_balloonMan;
-	DialogueManager		*_dialogueMan;
-	InventoryRenderer	*_inventoryRenderer;
-	Inventory			*_inventory;			// inventory for the current character
+	Table *_globalFlagsNames;
+	Table *_objectsNames;
+	GfxObj *_objects;
+	Table *_callableNames;
+	Table *_localFlagNames;
+	CommandExec *_cmdExec;
+	ProgramExec *_programExec;
+	BalloonManager *_balloonMan;
+	DialogueManager *_dialogueMan;
+	InventoryRenderer *_inventoryRenderer;
+	Inventory *_inventory; // inventory for the current character
 
 	// game data
-	Character		_char;
-	uint32			_localFlags[NUM_LOCATIONS];
-	char			_locationNames[NUM_LOCATIONS][32];
-	int16			_currentLocationIndex;
-	uint16			_numLocations;
-	Location		_location;
-	ZonePtr			_activeZone;
-	char			_characterName1[50];	// only used in changeCharacter
-	ZonePtr			_zoneTrap;
-	ZonePtr			_commentZone;
-	Common::String  _newLocationName;
+	Character _char;
+	uint32 _localFlags[NUM_LOCATIONS];
+	char _locationNames[NUM_LOCATIONS][32];
+	int16 _currentLocationIndex;
+	uint16 _numLocations;
+	Location _location;
+	ZonePtr _activeZone;
+	char _characterName1[50]; // only used in changeCharacter
+	ZonePtr _zoneTrap;
+	ZonePtr _commentZone;
+	Common::String _newLocationName;
 
 protected:
-	void	runGame();
-	void	runGameFrame(int event);
-	void	runGuiFrame();
-	void	cleanupGui();
-	void	runDialogueFrame();
-	void	exitDialogueMode();
-	void	runCommentFrame();
-	void	enterCommentMode(ZonePtr z);
-	void	exitCommentMode();
-	void	updateView();
-	void	drawAnimation(AnimationPtr anim);
-	void	drawZone(ZonePtr zone);
-	void	updateZones();
-	void	doLocationEnterTransition();
-	void	allocateLocationSlot(const char *name);
-	void	finalizeLocationParsing();
-	void	showLocationComment(const Common::String &text, bool end);
-	void	destroyDialogueManager();
+	void runGame();
+	void runGameFrame(int event);
+	void runGuiFrame();
+	void cleanupGui();
+	void runDialogueFrame();
+	void exitDialogueMode();
+	void runCommentFrame();
+	void enterCommentMode(ZonePtr z);
+	void exitCommentMode();
+	void updateView();
+	void drawAnimation(AnimationPtr anim);
+	void drawZone(ZonePtr zone);
+	void updateZones();
+	void doLocationEnterTransition();
+	void allocateLocationSlot(const char *name);
+	void finalizeLocationParsing();
+	void showLocationComment(const Common::String &text, bool end);
+	void destroyDialogueManager();
 
 public:
-	void	beep();
-	void	pauseJobs();
-	void	resumeJobs();
-	uint	getInternLanguage();
-	void	setInternLanguage(uint id);
-	void	enterDialogueMode(ZonePtr z);
-	void	scheduleLocationSwitch(const char *location);
-	void	showSlide(const char *name, int x = 0, int y = 0);
+	void beep();
+	void pauseJobs();
+	void resumeJobs();
+	uint getInternLanguage();
+	void setInternLanguage(uint id);
+	void enterDialogueMode(ZonePtr z);
+	void scheduleLocationSwitch(const char *location);
+	void showSlide(const char *name, int x = 0, int y = 0);
 
 public:
-	void		setLocationFlags(uint32 flags);
-	void		clearLocationFlags(uint32 flags);
-	void		toggleLocationFlags(uint32 flags);
-	uint32		getLocationFlags();
-	bool		checkSpecialZoneBox(ZonePtr z, uint32 type, uint x, uint y);
-	bool		checkZoneBox(ZonePtr z, uint32 type, uint x, uint y);
-	bool		checkZoneType(ZonePtr z, uint32 type);
-	bool		checkLinkedAnimBox(ZonePtr z, uint32 type, uint x, uint y);
-	ZonePtr		hitZone(uint32 type, uint16 x, uint16 y);
-	void		runZone(ZonePtr z);
-	bool		pickupItem(ZonePtr z);
-	void		updateDoor(ZonePtr z, bool close);
-	void		showZone(ZonePtr z, bool visible);
-	void		highlightInventoryItem(ItemPosition pos);
-	int16		getHoverInventoryItem(int16 x, int16 y);
-	int		addInventoryItem(ItemName item);
-	int		addInventoryItem(ItemName item, uint32 value);
-	void		dropItem(uint16 v);
-	bool		isItemInInventory(int32 v);
-	const		InventoryItem* getInventoryItem(int16 pos);
-	int16		getInventoryItemIndex(int16 pos);
-	void		cleanInventory(bool keepVerbs = true);
-	void		openInventory();
-	void		closeInventory();
+	void setLocationFlags(uint32 flags);
+	void clearLocationFlags(uint32 flags);
+	void toggleLocationFlags(uint32 flags);
+	uint32 getLocationFlags();
+	bool checkSpecialZoneBox(ZonePtr z, uint32 type, uint x, uint y);
+	bool checkZoneBox(ZonePtr z, uint32 type, uint x, uint y);
+	bool checkZoneType(ZonePtr z, uint32 type);
+	bool checkLinkedAnimBox(ZonePtr z, uint32 type, uint x, uint y);
+	ZonePtr hitZone(uint32 type, uint16 x, uint16 y);
+	void runZone(ZonePtr z);
+	bool pickupItem(ZonePtr z);
+	void updateDoor(ZonePtr z, bool close);
+	void showZone(ZonePtr z, bool visible);
+	void highlightInventoryItem(ItemPosition pos);
+	int16 getHoverInventoryItem(int16 x, int16 y);
+	int addInventoryItem(ItemName item);
+	int addInventoryItem(ItemName item, uint32 value);
+	void dropItem(uint16 v);
+	bool isItemInInventory(int32 v);
+	const InventoryItem *getInventoryItem(int16 pos);
+	int16 getInventoryItemIndex(int16 pos);
+	void cleanInventory(bool keepVerbs = true);
+	void openInventory();
+	void closeInventory();
 
-	virtual void parseLocation(const char* name) = 0;
+	virtual void parseLocation(const char *name) = 0;
 	virtual void changeLocation() = 0;
 	virtual void changeCharacter(const char *name) = 0;
-	virtual	void callFunction(uint index, void* parm) = 0;
+	virtual void callFunction(uint index, void *parm) = 0;
 	virtual void runPendingZones() = 0;
 	virtual void cleanupGame() = 0;
 	virtual void updateWalkers() = 0;
@@ -391,29 +378,26 @@ public:
 	virtual bool processGameEvent(int event) = 0;
 };
 
-
-
 class Parallaction_ns : public Parallaction {
 
 public:
-	Parallaction_ns(OSystem* syst, const PARALLACTIONGameDescription *gameDesc);
+	Parallaction_ns(OSystem *syst, const PARALLACTIONGameDescription *gameDesc);
 	~Parallaction_ns();
 
 	// Engine APIs
 	virtual Common::Error init();
 	virtual Common::Error go();
 
-	SoundMan_ns*	_soundManI;
+	SoundMan_ns *_soundManI;
 
-	uint16			_score;
-	Common::String	_password;
-
+	uint16 _score;
+	Common::String _password;
 
 public:
 	virtual void parseLocation(const char *filename);
 	virtual void changeLocation();
 	virtual void changeCharacter(const char *name);
-	virtual void callFunction(uint index, void* parm);
+	virtual void callFunction(uint index, void *parm);
 	virtual void runPendingZones();
 	virtual void cleanupGame();
 	virtual void updateWalkers();
@@ -421,30 +405,29 @@ public:
 	virtual DialogueManager *createDialogueManager(ZonePtr z);
 	virtual bool processGameEvent(int event);
 
-	void	changeBackground(const char *background, const char *mask = 0, const char *path = 0);
+	void changeBackground(const char *background, const char *mask = 0, const char *path = 0);
 
 private:
-	bool				_inTestResult;
-	LocationParser_ns	*_locationParser;
-	ProgramParser_ns	*_programParser;
+	bool _inTestResult;
+	LocationParser_ns *_locationParser;
+	ProgramParser_ns *_programParser;
 
 private:
-	void	initFonts();
-	void	freeFonts();
-	void	initResources();
-	void	initInventory();
-	void	destroyInventory();
-	void	setupBalloonManager();
-	void	startGui();
-	void	startCreditSequence();
-	void	startEndPartSequence();
-	void	loadProgram(AnimationPtr a, const char *filename);
-	void	freeLocation(bool removeAll);
-	void	freeCharacter();
-	void	destroyTestResultLabels();
-	void	startMovingSarcophagus(ZonePtr sarc);
-	void	stopMovingSarcophagus();
-
+	void initFonts();
+	void freeFonts();
+	void initResources();
+	void initInventory();
+	void destroyInventory();
+	void setupBalloonManager();
+	void startGui();
+	void startCreditSequence();
+	void startEndPartSequence();
+	void loadProgram(AnimationPtr a, const char *filename);
+	void freeLocation(bool removeAll);
+	void freeCharacter();
+	void destroyTestResultLabels();
+	void startMovingSarcophagus(ZonePtr sarc);
+	void stopMovingSarcophagus();
 
 	//  callables data
 	typedef void (Parallaction_ns::*Callable)(void *);
@@ -456,8 +439,8 @@ private:
 	uint16 num_foglie;
 
 	int16 _sarcophagusDeltaX;
-	bool	_movingSarcophagus;		 // sarcophagus stuff to be saved
-	uint16	_freeSarcophagusSlotX;		 // sarcophagus stuff to be saved
+	bool _movingSarcophagus; // sarcophagus stuff to be saved
+	uint16 _freeSarcophagusSlotX; // sarcophagus stuff to be saved
 	AnimationPtr _rightHandAnim;
 	bool _intro;
 	static const Callable _dosCallables[25];
@@ -465,7 +448,7 @@ private:
 
 	GfxObj *_testResultLabels[2];
 
-	PathWalker_NS		*_walker;
+	PathWalker_NS *_walker;
 
 	// common callables
 	void _c_play_boogie(void *);
@@ -501,24 +484,22 @@ private:
 	void _c_HBOn(void *);
 };
 
-
-
-#define NUM_ZONES	100
+#define NUM_ZONES 100
 
 class Parallaction_br : public Parallaction {
 
 public:
-	Parallaction_br(OSystem* syst, const PARALLACTIONGameDescription *gameDesc);
+	Parallaction_br(OSystem *syst, const PARALLACTIONGameDescription *gameDesc);
 	~Parallaction_br();
 
 	virtual Common::Error init();
 	virtual Common::Error go();
 
 public:
-	virtual void parseLocation(const char* name);
+	virtual void parseLocation(const char *name);
 	virtual void changeLocation();
 	virtual void changeCharacter(const char *name);
-	virtual	void callFunction(uint index, void* parm);
+	virtual void callFunction(uint index, void *parm);
 	virtual void runPendingZones();
 	virtual void cleanupGame();
 	virtual void updateWalkers();
@@ -533,63 +514,61 @@ public:
 	void restoreOrSaveZoneFlags(ZonePtr z, bool restore);
 
 public:
-	bool	counterExists(const Common::String &name);
-	int		getCounterValue(const Common::String &name);
-	void	setCounterValue(const Common::String &name, int value);
+	bool counterExists(const Common::String &name);
+	int getCounterValue(const Common::String &name);
+	void setCounterValue(const Common::String &name, int value);
 
-	void	setFollower(const Common::String &name);
+	void setFollower(const Common::String &name);
 
-	int		getSfxStatus();
-	int		getMusicStatus();
-	void	enableSfx(bool enable);
-	void	enableMusic(bool enable);
+	int getSfxStatus();
+	int getMusicStatus();
+	void enableSfx(bool enable);
+	void enableMusic(bool enable);
 
 	const char **_audioCommandsNamesRes;
 	static const char *_partNames[];
-	int			_part;
-	int			_nextPart;
+	int _part;
+	int _nextPart;
 
-
-#if 0	// disabled since I couldn't find any references to lip sync in the scripts
+#if 0 // disabled since I couldn't find any references to lip sync in the scripts
 	int16		_lipSyncVal;
 	uint		_subtitleLipSync;
 #endif
-	int			_subtitleY;
-	GfxObj		*_subtitle[2];
-	ZonePtr		_activeZone2;
-	uint32		_zoneFlags[NUM_LOCATIONS][NUM_ZONES];
-
-
-private:
-	LocationParser_br		*_locationParser;
-	ProgramParser_br		*_programParser;
-	SoundMan_br				*_soundManI;
-	Inventory				*_charInventories[3];	// all the inventories
-
-	int32		_counters[32];
-	Table		*_countersNames;
+	int _subtitleY;
+	GfxObj *_subtitle[2];
+	ZonePtr _activeZone2;
+	uint32 _zoneFlags[NUM_LOCATIONS][NUM_ZONES];
 
 private:
-	void	initResources();
-	void	initInventory();
-	void	destroyInventory();
-	void	setupBalloonManager();
-	void	initFonts();
-	void	freeFonts();
-	void	freeLocation(bool removeAll);
-	void	loadProgram(AnimationPtr a, const char *filename);
-	void	startGui(bool showSplash);
-	void	startIngameMenu();
-	void	freeCharacter();
+	LocationParser_br *_locationParser;
+	ProgramParser_br *_programParser;
+	SoundMan_br *_soundManI;
+	Inventory *_charInventories[3]; // all the inventories
+
+	int32 _counters[32];
+	Table *_countersNames;
+
+private:
+	void initResources();
+	void initInventory();
+	void destroyInventory();
+	void setupBalloonManager();
+	void initFonts();
+	void freeFonts();
+	void freeLocation(bool removeAll);
+	void loadProgram(AnimationPtr a, const char *filename);
+	void startGui(bool showSplash);
+	void startIngameMenu();
+	void freeCharacter();
 
 	typedef void (Parallaction_br::*Callable)(void *);
 	const Callable *_callables;
 	static const Callable _dosCallables[6];
 	static const Callable _amigaCallables[6];
 
-	Common::String		_followerName;
-	AnimationPtr		_follower;
-	PathWalker_BR		*_walker;
+	Common::String _followerName;
+	AnimationPtr _follower;
+	PathWalker_BR *_walker;
 
 	// dos callables
 	void _c_null(void *);
@@ -603,8 +582,6 @@ private:
 
 extern Parallaction *g_vm;
 
-
 } // End of namespace Parallaction
-
 
 #endif

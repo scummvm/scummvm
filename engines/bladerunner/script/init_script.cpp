@@ -102,21 +102,18 @@ void InitScript::Init_Game_Flags() {
 	}
 
 	if (!Game_Flag_Query(kFlagGordoIsReplicant)
-	 && !Game_Flag_Query(kFlagLucyIsReplicant)
-	 && !Game_Flag_Query(kFlagDektoraIsReplicant)
-	) {
+	    && !Game_Flag_Query(kFlagLucyIsReplicant)
+	    && !Game_Flag_Query(kFlagDektoraIsReplicant)) {
 		Game_Flag_Set(kFlagDektoraIsReplicant);
 	}
 
 	if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
 		Global_Variable_Set(kVariableHollowayArrest, 1);
-	} else if ( Game_Flag_Query(kFlagGordoIsReplicant)
-	        && !Game_Flag_Query(kFlagLucyIsReplicant)
-	) {
+	} else if (Game_Flag_Query(kFlagGordoIsReplicant)
+	           && !Game_Flag_Query(kFlagLucyIsReplicant)) {
 		Global_Variable_Set(kVariableHollowayArrest, 2);
 	} else if (!Game_Flag_Query(kFlagGordoIsReplicant)
-	        &&  Game_Flag_Query(kFlagLucyIsReplicant)
-	) {
+	           && Game_Flag_Query(kFlagLucyIsReplicant)) {
 		Global_Variable_Set(kVariableHollowayArrest, 3);
 	} else if (Random_Query(1, 2) == 1) {
 		Global_Variable_Set(kVariableHollowayArrest, 2);
@@ -148,408 +145,408 @@ static ClueWeight ClueWeightsForSteele[44] = {
 #else
 static ClueWeight ClueWeightsForSteele[45] = {
 #endif // BLADERUNNER_ORIGINAL_BUGS
-	{kClueMcCoyRetiredZuben, 100},
-	{kClueMcCoyShotZubenInTheBack, 100},
-	{kClueMcCoyRetiredLucy, 100},
-	{kClueMcCoyRetiredDektora, 100},
-	{kClueMcCoyRetiredSadik, 100},
-	{kClueMcCoyRetiredLutherLance, 100},
-	{kClueClovisOrdersMcCoysDeath, 100},
-	{kClueVKDektoraReplicant, 100},
-	{kClueVKBobGorskyReplicant, 100},
-	{kClueVKLutherLanceReplicant, 100},
-	{kClueVKGrigorianReplicant, 100},
-	{kClueVKIzoReplicant, 100},
-	{kClueVKCrazylegsReplicant, 100},
-	{kClueVKRunciterReplicant, 100},
-	{kClueVKEarlyQReplicant, 100},
-	{kClueMcCoyIsStupid, 90},
-	{kClueMcCoyIsKind, 90},
-	{kClueMcCoyIsInsane, 90},
-	{kClueGrigorianInterviewA, 90},
-	{kClueGrigorianInterviewB1, 90},
-	{kClueGrigorianInterviewB2, 90},
-	{kClueChopstickWrapper, 85},
-	{kClueMcCoyIsAnnoying, 85},
-	{kClueMcCoyWarnedIzo, 85},
-	{kClueMcCoyHelpedIzoIzoIsAReplicant, 85},
-	{kClueCrimeSceneNotes, 80},
-	{kClueShellCasings, 65},
-	{kClueSushiMenu, 65},
-	{kClueMcCoyLetZubenEscape, 65},
-	{kClueMcCoyHelpedDektora, 65},
-	{kClueMcCoyHelpedLucy, 65},
-	{kClueMcCoyHelpedGordo, 65},
-	{kClueMcCoyBetrayal, 65},
-	{kClueSightingMcCoyRuncitersShop, 65},
-	{kClueWeaponsOrderForm, 65},
-	{kClueHollowayInterview, 65},
-	{kClueRunciterConfession1, 65},
-	{kClueRunciterConfession2, 65},
-	{kClueMcCoyKilledRunciter1, 55},
-	{kClueMcCoyShotGuzza, 55},
-	{kClueMcCoyKilledRunciter2, 55},
-	{kClueCandy, 30},
-	{kClueToyDog, 30},
-	{kClueDogCollar1, 30},
+	{ kClueMcCoyRetiredZuben, 100 },
+	{ kClueMcCoyShotZubenInTheBack, 100 },
+	{ kClueMcCoyRetiredLucy, 100 },
+	{ kClueMcCoyRetiredDektora, 100 },
+	{ kClueMcCoyRetiredSadik, 100 },
+	{ kClueMcCoyRetiredLutherLance, 100 },
+	{ kClueClovisOrdersMcCoysDeath, 100 },
+	{ kClueVKDektoraReplicant, 100 },
+	{ kClueVKBobGorskyReplicant, 100 },
+	{ kClueVKLutherLanceReplicant, 100 },
+	{ kClueVKGrigorianReplicant, 100 },
+	{ kClueVKIzoReplicant, 100 },
+	{ kClueVKCrazylegsReplicant, 100 },
+	{ kClueVKRunciterReplicant, 100 },
+	{ kClueVKEarlyQReplicant, 100 },
+	{ kClueMcCoyIsStupid, 90 },
+	{ kClueMcCoyIsKind, 90 },
+	{ kClueMcCoyIsInsane, 90 },
+	{ kClueGrigorianInterviewA, 90 },
+	{ kClueGrigorianInterviewB1, 90 },
+	{ kClueGrigorianInterviewB2, 90 },
+	{ kClueChopstickWrapper, 85 },
+	{ kClueMcCoyIsAnnoying, 85 },
+	{ kClueMcCoyWarnedIzo, 85 },
+	{ kClueMcCoyHelpedIzoIzoIsAReplicant, 85 },
+	{ kClueCrimeSceneNotes, 80 },
+	{ kClueShellCasings, 65 },
+	{ kClueSushiMenu, 65 },
+	{ kClueMcCoyLetZubenEscape, 65 },
+	{ kClueMcCoyHelpedDektora, 65 },
+	{ kClueMcCoyHelpedLucy, 65 },
+	{ kClueMcCoyHelpedGordo, 65 },
+	{ kClueMcCoyBetrayal, 65 },
+	{ kClueSightingMcCoyRuncitersShop, 65 },
+	{ kClueWeaponsOrderForm, 65 },
+	{ kClueHollowayInterview, 65 },
+	{ kClueRunciterConfession1, 65 },
+	{ kClueRunciterConfession2, 65 },
+	{ kClueMcCoyKilledRunciter1, 55 },
+	{ kClueMcCoyShotGuzza, 55 },
+	{ kClueMcCoyKilledRunciter2, 55 },
+	{ kClueCandy, 30 },
+	{ kClueToyDog, 30 },
+	{ kClueDogCollar1, 30 },
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-	{kClueOfficersStatement, 30}, // part of resolving Zuben dead end state
+	{ kClueOfficersStatement, 30 }, // part of resolving Zuben dead end state
 #endif // BLADERUNNER_ORIGINAL_BUGS
 };
 
 static ClueWeight ClueWeightsForGordo[28] = {
-	{kClueMcCoyShotZubenInTheBack, 70},
-	{kClueMcCoyIsAnnoying, 65},
-	{kClueMcCoyIsKind, 70},
-	{kClueMcCoyIsInsane, 95},
-	{kClueMcCoyKilledRunciter1, 70},
-	{kClueMcCoysDescription, 70},
-	{kClueMcCoyIsABladeRunner, 70},
-	{kClueMcCoyLetZubenEscape, 70},
-	{kClueMcCoyWarnedIzo, 95},
-	{kClueMcCoyHelpedIzoIzoIsAReplicant, 70},
-	{kClueMcCoyHelpedDektora, 70},
-	{kClueMcCoyHelpedLucy, 70},
-	{kClueMcCoyHelpedGordo, 70},
-	{kClueMcCoyShotGuzza, 65},
-	{kClueMcCoyRetiredZuben, 70},
-	{kClueMcCoyRetiredLucy, 70},
-	{kClueMcCoyRetiredDektora, 70},
-	{kClueMcCoyRetiredSadik, 70},
-	{kClueMcCoyRetiredLutherLance, 70},
-	{kClueMcCoyBetrayal, 70},
-	{kClueMcCoyKilledRunciter2, 70},
-	{kClueClovisOrdersMcCoysDeath, 70},
-	{kClueEarlyAttemptedToSeduceLucy, 70},
-	{kClueCrazylegsInterview1, 65},
-	{kClueCrazylegsInterview2, 65},
-	{kCluePowerSource, 70},
-	{kClueCrystalArrestedCrazylegs, 55},
-	{kClueSightingMcCoyRuncitersShop, 65}
+	{ kClueMcCoyShotZubenInTheBack, 70 },
+	{ kClueMcCoyIsAnnoying, 65 },
+	{ kClueMcCoyIsKind, 70 },
+	{ kClueMcCoyIsInsane, 95 },
+	{ kClueMcCoyKilledRunciter1, 70 },
+	{ kClueMcCoysDescription, 70 },
+	{ kClueMcCoyIsABladeRunner, 70 },
+	{ kClueMcCoyLetZubenEscape, 70 },
+	{ kClueMcCoyWarnedIzo, 95 },
+	{ kClueMcCoyHelpedIzoIzoIsAReplicant, 70 },
+	{ kClueMcCoyHelpedDektora, 70 },
+	{ kClueMcCoyHelpedLucy, 70 },
+	{ kClueMcCoyHelpedGordo, 70 },
+	{ kClueMcCoyShotGuzza, 65 },
+	{ kClueMcCoyRetiredZuben, 70 },
+	{ kClueMcCoyRetiredLucy, 70 },
+	{ kClueMcCoyRetiredDektora, 70 },
+	{ kClueMcCoyRetiredSadik, 70 },
+	{ kClueMcCoyRetiredLutherLance, 70 },
+	{ kClueMcCoyBetrayal, 70 },
+	{ kClueMcCoyKilledRunciter2, 70 },
+	{ kClueClovisOrdersMcCoysDeath, 70 },
+	{ kClueEarlyAttemptedToSeduceLucy, 70 },
+	{ kClueCrazylegsInterview1, 65 },
+	{ kClueCrazylegsInterview2, 65 },
+	{ kCluePowerSource, 70 },
+	{ kClueCrystalArrestedCrazylegs, 55 },
+	{ kClueSightingMcCoyRuncitersShop, 65 }
 };
 
 static ClueWeight ClueWeightsForDektora[46] = {
-	{kClueMcCoyShotZubenInTheBack, 70},
-	{kClueMcCoyIsAnnoying, 45},
-	{kClueMcCoyIsKind, 70},
-	{kClueMcCoyIsInsane, 65},
-	{kClueMcCoyKilledRunciter1, 70},
-	{kClueMcCoysDescription, 70},
-	{kClueMcCoyIsABladeRunner, 70},
-	{kClueMcCoyLetZubenEscape, 70},
-	{kClueMcCoyWarnedIzo, 65},
-	{kClueMcCoyHelpedIzoIzoIsAReplicant, 70},
-	{kClueMcCoyHelpedGordo, 70},
-	{kClueMcCoyHelpedLucy, 70},
-	{kClueMcCoyHelpedDektora, 70},
-	{kClueMcCoyShotGuzza, 45},
-	{kClueMcCoyRetiredZuben, 70},
-	{kClueMcCoyRetiredLucy, 70},
-	{kClueMcCoyRetiredDektora, 70},
-	{kClueMcCoyRetiredGordo, 70},
-	{kClueMcCoyRetiredSadik, 70},
-	{kClueMcCoyRetiredLutherLance, 70},
-	{kClueMcCoyBetrayal, 70},
-	{kClueMcCoyKilledRunciter2, 70},
-	{kClueClovisOrdersMcCoysDeath, 70},
-	{kClueSuspectDektora, 70},
-	{kClueEarlyAttemptedToSeduceLucy, 70},
-	{kClueMcCoyIsStupid, 65},
-	{kClueZubenInterview, 65},
-	{kClueHowieLeeInterview, 55},
-	{kClueIzoInterview, 60},
-	{kClueGordoInterview1, 60},
-	{kClueGordoInterview2, 60},
-	{kClueEarlyQInterview, 70},
-	{kClueGordoInterview3, 65},
-	{kClueIzosStashRaided, 65},
-	{kClueGordoBlabs, 70},
-	{kClueDNATyrell, 70},
-	{kClueDNASebastian, 65},
-	{kClueDNAChew, 65},
-	{kClueDNAMoraji, 65},
-	{kClueDNALutherLance, 65},
-	{kClueDNAMarcus, 65},
-	{kClueCrazylegsInterview1, 65},
-	{kClueCrazylegsInterview2, 65},
-	{kCluePowerSource, 70},
-	{kClueCrystalArrestedCrazylegs, 55},
-	{kClueSightingMcCoyRuncitersShop, 65}
+	{ kClueMcCoyShotZubenInTheBack, 70 },
+	{ kClueMcCoyIsAnnoying, 45 },
+	{ kClueMcCoyIsKind, 70 },
+	{ kClueMcCoyIsInsane, 65 },
+	{ kClueMcCoyKilledRunciter1, 70 },
+	{ kClueMcCoysDescription, 70 },
+	{ kClueMcCoyIsABladeRunner, 70 },
+	{ kClueMcCoyLetZubenEscape, 70 },
+	{ kClueMcCoyWarnedIzo, 65 },
+	{ kClueMcCoyHelpedIzoIzoIsAReplicant, 70 },
+	{ kClueMcCoyHelpedGordo, 70 },
+	{ kClueMcCoyHelpedLucy, 70 },
+	{ kClueMcCoyHelpedDektora, 70 },
+	{ kClueMcCoyShotGuzza, 45 },
+	{ kClueMcCoyRetiredZuben, 70 },
+	{ kClueMcCoyRetiredLucy, 70 },
+	{ kClueMcCoyRetiredDektora, 70 },
+	{ kClueMcCoyRetiredGordo, 70 },
+	{ kClueMcCoyRetiredSadik, 70 },
+	{ kClueMcCoyRetiredLutherLance, 70 },
+	{ kClueMcCoyBetrayal, 70 },
+	{ kClueMcCoyKilledRunciter2, 70 },
+	{ kClueClovisOrdersMcCoysDeath, 70 },
+	{ kClueSuspectDektora, 70 },
+	{ kClueEarlyAttemptedToSeduceLucy, 70 },
+	{ kClueMcCoyIsStupid, 65 },
+	{ kClueZubenInterview, 65 },
+	{ kClueHowieLeeInterview, 55 },
+	{ kClueIzoInterview, 60 },
+	{ kClueGordoInterview1, 60 },
+	{ kClueGordoInterview2, 60 },
+	{ kClueEarlyQInterview, 70 },
+	{ kClueGordoInterview3, 65 },
+	{ kClueIzosStashRaided, 65 },
+	{ kClueGordoBlabs, 70 },
+	{ kClueDNATyrell, 70 },
+	{ kClueDNASebastian, 65 },
+	{ kClueDNAChew, 65 },
+	{ kClueDNAMoraji, 65 },
+	{ kClueDNALutherLance, 65 },
+	{ kClueDNAMarcus, 65 },
+	{ kClueCrazylegsInterview1, 65 },
+	{ kClueCrazylegsInterview2, 65 },
+	{ kCluePowerSource, 70 },
+	{ kClueCrystalArrestedCrazylegs, 55 },
+	{ kClueSightingMcCoyRuncitersShop, 65 }
 };
 
 static ClueWeight ClueWeightsForGuzza[23] = {
-	{kClueMcCoyIsKind, 90},
-	{kClueMcCoyIsInsane, 90},
-	{kClueMcCoyIsAnnoying, 70},
-	{kClueMcCoyIsABladeRunner, 75},
-	{kClueMcCoyWarnedIzo, 75},
-	{kClueMcCoyHelpedDektora, 75},
-	{kClueMcCoyHelpedLucy, 75},
-	{kClueMcCoyHelpedGordo, 75},
-	{kClueMcCoyLetZubenEscape, 70},
-	{kClueMcCoyHelpedIzoIzoIsAReplicant, 70},
-	{kClueMcCoyRetiredZuben, 70},
-	{kClueMcCoyRetiredLucy, 70},
-	{kClueMcCoyRetiredDektora, 70},
-	{kClueMcCoyRetiredSadik, 70},
-	{kClueMcCoyRetiredLutherLance, 70},
-	{kClueMcCoyKilledRunciter2, 70},
-	{kClueSightingSadikBradbury, 65},
-	{kClueSightingMcCoyRuncitersShop, 65},
-	{kClueWeaponsOrderForm, 65},
-	{kClueHollowayInterview, 65},
-	{kClueRunciterConfession1, 65},
-	{kClueRunciterConfession2, 65},
-	{kClueMcCoyKilledRunciter1, 55}
+	{ kClueMcCoyIsKind, 90 },
+	{ kClueMcCoyIsInsane, 90 },
+	{ kClueMcCoyIsAnnoying, 70 },
+	{ kClueMcCoyIsABladeRunner, 75 },
+	{ kClueMcCoyWarnedIzo, 75 },
+	{ kClueMcCoyHelpedDektora, 75 },
+	{ kClueMcCoyHelpedLucy, 75 },
+	{ kClueMcCoyHelpedGordo, 75 },
+	{ kClueMcCoyLetZubenEscape, 70 },
+	{ kClueMcCoyHelpedIzoIzoIsAReplicant, 70 },
+	{ kClueMcCoyRetiredZuben, 70 },
+	{ kClueMcCoyRetiredLucy, 70 },
+	{ kClueMcCoyRetiredDektora, 70 },
+	{ kClueMcCoyRetiredSadik, 70 },
+	{ kClueMcCoyRetiredLutherLance, 70 },
+	{ kClueMcCoyKilledRunciter2, 70 },
+	{ kClueSightingSadikBradbury, 65 },
+	{ kClueSightingMcCoyRuncitersShop, 65 },
+	{ kClueWeaponsOrderForm, 65 },
+	{ kClueHollowayInterview, 65 },
+	{ kClueRunciterConfession1, 65 },
+	{ kClueRunciterConfession2, 65 },
+	{ kClueMcCoyKilledRunciter1, 55 }
 };
 
 static ClueWeight ClueWeightsForClovis[46] = {
-	{kClueMcCoyShotZubenInTheBack, 70},
-	{kClueMcCoyIsKind, 70},
-	{kClueMcCoyKilledRunciter1, 70},
-	{kClueMcCoysDescription, 70},
-	{kClueMcCoyIsABladeRunner, 70},
-	{kClueMcCoyLetZubenEscape, 70},
-	{kClueMcCoyHelpedIzoIzoIsAReplicant, 70},
-	{kClueMcCoyHelpedGordo, 70},
-	{kClueMcCoyHelpedLucy, 70},
-	{kClueMcCoyHelpedDektora, 70},
-	{kClueMcCoyRetiredZuben, 70},
-	{kClueMcCoyRetiredLucy, 70},
-	{kClueMcCoyRetiredDektora, 70},
-	{kClueMcCoyRetiredSadik, 70},
-	{kClueMcCoyRetiredLutherLance, 70},
-	{kClueMcCoyBetrayal, 70},
-	{kClueMcCoyKilledRunciter2, 70},
-	{kClueEarlyAttemptedToSeduceLucy, 70},
-	{kClueGordoBlabs, 70},
-	{kClueDNATyrell, 70},
-	{kCluePowerSource, 70},
-	{kClueMcCoyIsInsane, 65},
-	{kClueMcCoyWarnedIzo, 65},
-	{kClueMcCoyIsStupid, 65},
-	{kClueZubenInterview, 65},
-	{kClueSuspectDektora, 65},
-	{kClueGordoInterview3, 65},
-	{kClueDektoraInterview4, 65},
-	{kClueIzosStashRaided, 65},
-	{kClueDNASebastian, 65},
-	{kClueDNAChew, 65},
-	{kClueDNAMoraji, 65},
-	{kClueDNALutherLance, 65},
-	{kClueDNAMarcus, 65},
-	{kClueCrazylegsInterview1, 65},
-	{kClueCrazylegsInterview2, 65},
-	{kClueSightingMcCoyRuncitersShop, 65},
-	{kClueIzoInterview, 60},
-	{kClueGordoInterview1, 60},
-	{kClueGordoInterview2, 60},
-	{kClueEarlyQInterview, 60},
-	{kClueHowieLeeInterview, 55},
-	{kClueDektoraConfession, 55},
-	{kClueCrystalArrestedCrazylegs, 55},
-	{kClueMcCoyIsAnnoying, 45},
-	{kClueMcCoyShotGuzza, 45}
+	{ kClueMcCoyShotZubenInTheBack, 70 },
+	{ kClueMcCoyIsKind, 70 },
+	{ kClueMcCoyKilledRunciter1, 70 },
+	{ kClueMcCoysDescription, 70 },
+	{ kClueMcCoyIsABladeRunner, 70 },
+	{ kClueMcCoyLetZubenEscape, 70 },
+	{ kClueMcCoyHelpedIzoIzoIsAReplicant, 70 },
+	{ kClueMcCoyHelpedGordo, 70 },
+	{ kClueMcCoyHelpedLucy, 70 },
+	{ kClueMcCoyHelpedDektora, 70 },
+	{ kClueMcCoyRetiredZuben, 70 },
+	{ kClueMcCoyRetiredLucy, 70 },
+	{ kClueMcCoyRetiredDektora, 70 },
+	{ kClueMcCoyRetiredSadik, 70 },
+	{ kClueMcCoyRetiredLutherLance, 70 },
+	{ kClueMcCoyBetrayal, 70 },
+	{ kClueMcCoyKilledRunciter2, 70 },
+	{ kClueEarlyAttemptedToSeduceLucy, 70 },
+	{ kClueGordoBlabs, 70 },
+	{ kClueDNATyrell, 70 },
+	{ kCluePowerSource, 70 },
+	{ kClueMcCoyIsInsane, 65 },
+	{ kClueMcCoyWarnedIzo, 65 },
+	{ kClueMcCoyIsStupid, 65 },
+	{ kClueZubenInterview, 65 },
+	{ kClueSuspectDektora, 65 },
+	{ kClueGordoInterview3, 65 },
+	{ kClueDektoraInterview4, 65 },
+	{ kClueIzosStashRaided, 65 },
+	{ kClueDNASebastian, 65 },
+	{ kClueDNAChew, 65 },
+	{ kClueDNAMoraji, 65 },
+	{ kClueDNALutherLance, 65 },
+	{ kClueDNAMarcus, 65 },
+	{ kClueCrazylegsInterview1, 65 },
+	{ kClueCrazylegsInterview2, 65 },
+	{ kClueSightingMcCoyRuncitersShop, 65 },
+	{ kClueIzoInterview, 60 },
+	{ kClueGordoInterview1, 60 },
+	{ kClueGordoInterview2, 60 },
+	{ kClueEarlyQInterview, 60 },
+	{ kClueHowieLeeInterview, 55 },
+	{ kClueDektoraConfession, 55 },
+	{ kClueCrystalArrestedCrazylegs, 55 },
+	{ kClueMcCoyIsAnnoying, 45 },
+	{ kClueMcCoyShotGuzza, 45 }
 };
 
 static ClueWeight ClueWeightsForLucy[47] = {
-	{kClueMcCoyShotZubenInTheBack, 70},
-	{kClueMcCoyIsAnnoying, 45},
-	{kClueMcCoyIsKind, 70},
-	{kClueMcCoyIsInsane, 65},
-	{kClueMcCoyKilledRunciter1, 70},
-	{kClueMcCoysDescription, 70},
-	{kClueMcCoyIsABladeRunner, 70},
-	{kClueMcCoyLetZubenEscape, 70},
-	{kClueMcCoyWarnedIzo, 65},
-	{kClueMcCoyHelpedIzoIzoIsAReplicant, 70},
-	{kClueMcCoyHelpedGordo, 70},
-	{kClueMcCoyHelpedLucy, 70},
-	{kClueMcCoyHelpedDektora, 70},
-	{kClueMcCoyShotGuzza, 45},
-	{kClueMcCoyRetiredZuben, 70},
-	{kClueMcCoyRetiredLucy, 70},
-	{kClueMcCoyRetiredDektora, 70},
-	{kClueMcCoyRetiredSadik, 70},
-	{kClueMcCoyRetiredLutherLance, 70},
-	{kClueMcCoyBetrayal, 70},
-	{kClueMcCoyKilledRunciter2, 70},
-	{kClueClovisOrdersMcCoysDeath, 70},
-	{kClueEarlyAttemptedToSeduceLucy, 70},
-	{kClueMcCoyIsStupid, 65},
-	{kClueZubenInterview, 65},
-	{kClueHowieLeeInterview, 55},
-	{kClueIzoInterview, 60},
-	{kClueGordoInterview1, 60},
-	{kClueGordoInterview2, 60},
-	{kClueEarlyQInterview, 60},
-	{kClueSuspectDektora, 65},
-	{kClueGordoInterview3, 65},
-	{kClueDektoraInterview4, 65},
-	{kClueIzosStashRaided, 55},
-	{kClueGordoBlabs, 70},
-	{kClueDektoraConfession, 70},
-	{kClueDNATyrell, 70},
-	{kClueDNASebastian, 65},
-	{kClueDNAChew, 65},
-	{kClueDNAMoraji, 65},
-	{kClueDNALutherLance, 65},
-	{kClueDNAMarcus, 65},
-	{kClueCrazylegsInterview1, 65},
-	{kClueCrazylegsInterview2, 65},
-	{kCluePowerSource, 70},
-	{kClueCrystalArrestedCrazylegs, 55},
-	{kClueSightingMcCoyRuncitersShop, 65}
+	{ kClueMcCoyShotZubenInTheBack, 70 },
+	{ kClueMcCoyIsAnnoying, 45 },
+	{ kClueMcCoyIsKind, 70 },
+	{ kClueMcCoyIsInsane, 65 },
+	{ kClueMcCoyKilledRunciter1, 70 },
+	{ kClueMcCoysDescription, 70 },
+	{ kClueMcCoyIsABladeRunner, 70 },
+	{ kClueMcCoyLetZubenEscape, 70 },
+	{ kClueMcCoyWarnedIzo, 65 },
+	{ kClueMcCoyHelpedIzoIzoIsAReplicant, 70 },
+	{ kClueMcCoyHelpedGordo, 70 },
+	{ kClueMcCoyHelpedLucy, 70 },
+	{ kClueMcCoyHelpedDektora, 70 },
+	{ kClueMcCoyShotGuzza, 45 },
+	{ kClueMcCoyRetiredZuben, 70 },
+	{ kClueMcCoyRetiredLucy, 70 },
+	{ kClueMcCoyRetiredDektora, 70 },
+	{ kClueMcCoyRetiredSadik, 70 },
+	{ kClueMcCoyRetiredLutherLance, 70 },
+	{ kClueMcCoyBetrayal, 70 },
+	{ kClueMcCoyKilledRunciter2, 70 },
+	{ kClueClovisOrdersMcCoysDeath, 70 },
+	{ kClueEarlyAttemptedToSeduceLucy, 70 },
+	{ kClueMcCoyIsStupid, 65 },
+	{ kClueZubenInterview, 65 },
+	{ kClueHowieLeeInterview, 55 },
+	{ kClueIzoInterview, 60 },
+	{ kClueGordoInterview1, 60 },
+	{ kClueGordoInterview2, 60 },
+	{ kClueEarlyQInterview, 60 },
+	{ kClueSuspectDektora, 65 },
+	{ kClueGordoInterview3, 65 },
+	{ kClueDektoraInterview4, 65 },
+	{ kClueIzosStashRaided, 55 },
+	{ kClueGordoBlabs, 70 },
+	{ kClueDektoraConfession, 70 },
+	{ kClueDNATyrell, 70 },
+	{ kClueDNASebastian, 65 },
+	{ kClueDNAChew, 65 },
+	{ kClueDNAMoraji, 65 },
+	{ kClueDNALutherLance, 65 },
+	{ kClueDNAMarcus, 65 },
+	{ kClueCrazylegsInterview1, 65 },
+	{ kClueCrazylegsInterview2, 65 },
+	{ kCluePowerSource, 70 },
+	{ kClueCrystalArrestedCrazylegs, 55 },
+	{ kClueSightingMcCoyRuncitersShop, 65 }
 };
 
 static ClueWeight ClueWeightsForIzoAndSadik[47] = {
-	{kClueMcCoyShotZubenInTheBack, 70},
-	{kClueMcCoyIsAnnoying, 45},
-	{kClueMcCoyIsKind, 70},
-	{kClueMcCoyIsInsane, 65},
-	{kClueMcCoyKilledRunciter1, 70},
-	{kClueMcCoysDescription, 70},
-	{kClueMcCoyIsABladeRunner, 70},
-	{kClueMcCoyLetZubenEscape, 70},
-	{kClueMcCoyWarnedIzo, 65},
-	{kClueMcCoyHelpedIzoIzoIsAReplicant, 70},
-	{kClueMcCoyHelpedGordo, 70},
-	{kClueMcCoyHelpedLucy, 70},
-	{kClueMcCoyHelpedDektora, 70},
-	{kClueMcCoyShotGuzza, 45},
-	{kClueMcCoyRetiredZuben, 70},
-	{kClueMcCoyRetiredLucy, 70},
-	{kClueMcCoyRetiredDektora, 70},
-	{kClueMcCoyRetiredSadik, 70},
-	{kClueMcCoyRetiredLutherLance, 70},
-	{kClueMcCoyBetrayal, 70},
-	{kClueMcCoyKilledRunciter2, 70},
-	{kClueClovisOrdersMcCoysDeath, 70},
-	{kClueEarlyAttemptedToSeduceLucy, 70},
-	{kClueMcCoyIsStupid, 65},
-	{kClueZubenInterview, 45},
-	{kClueHowieLeeInterview, 45},
-	{kClueIzoInterview, 45},
-	{kClueGordoInterview1, 45},
-	{kClueGordoInterview2, 45},
-	{kClueEarlyQInterview, 45},
-	{kClueSuspectDektora, 45},
-	{kClueGordoInterview3, 45},
-	{kClueDektoraInterview4, 45},
-	{kClueIzosStashRaided, 45},
-	{kClueGordoBlabs, 45},
-	{kClueDektoraConfession, 45},
-	{kClueDNATyrell, 70},
-	{kClueDNASebastian, 70},
-	{kClueDNAChew, 70},
-	{kClueDNAMoraji, 70},
-	{kClueDNALutherLance, 70},
-	{kClueDNAMarcus, 70},
-	{kClueCrazylegsInterview1, 65},
-	{kClueCrazylegsInterview2, 65},
-	{kCluePowerSource, 70},
-	{kClueCrystalArrestedCrazylegs, 55},
-	{kClueSightingMcCoyRuncitersShop, 65}
+	{ kClueMcCoyShotZubenInTheBack, 70 },
+	{ kClueMcCoyIsAnnoying, 45 },
+	{ kClueMcCoyIsKind, 70 },
+	{ kClueMcCoyIsInsane, 65 },
+	{ kClueMcCoyKilledRunciter1, 70 },
+	{ kClueMcCoysDescription, 70 },
+	{ kClueMcCoyIsABladeRunner, 70 },
+	{ kClueMcCoyLetZubenEscape, 70 },
+	{ kClueMcCoyWarnedIzo, 65 },
+	{ kClueMcCoyHelpedIzoIzoIsAReplicant, 70 },
+	{ kClueMcCoyHelpedGordo, 70 },
+	{ kClueMcCoyHelpedLucy, 70 },
+	{ kClueMcCoyHelpedDektora, 70 },
+	{ kClueMcCoyShotGuzza, 45 },
+	{ kClueMcCoyRetiredZuben, 70 },
+	{ kClueMcCoyRetiredLucy, 70 },
+	{ kClueMcCoyRetiredDektora, 70 },
+	{ kClueMcCoyRetiredSadik, 70 },
+	{ kClueMcCoyRetiredLutherLance, 70 },
+	{ kClueMcCoyBetrayal, 70 },
+	{ kClueMcCoyKilledRunciter2, 70 },
+	{ kClueClovisOrdersMcCoysDeath, 70 },
+	{ kClueEarlyAttemptedToSeduceLucy, 70 },
+	{ kClueMcCoyIsStupid, 65 },
+	{ kClueZubenInterview, 45 },
+	{ kClueHowieLeeInterview, 45 },
+	{ kClueIzoInterview, 45 },
+	{ kClueGordoInterview1, 45 },
+	{ kClueGordoInterview2, 45 },
+	{ kClueEarlyQInterview, 45 },
+	{ kClueSuspectDektora, 45 },
+	{ kClueGordoInterview3, 45 },
+	{ kClueDektoraInterview4, 45 },
+	{ kClueIzosStashRaided, 45 },
+	{ kClueGordoBlabs, 45 },
+	{ kClueDektoraConfession, 45 },
+	{ kClueDNATyrell, 70 },
+	{ kClueDNASebastian, 70 },
+	{ kClueDNAChew, 70 },
+	{ kClueDNAMoraji, 70 },
+	{ kClueDNALutherLance, 70 },
+	{ kClueDNAMarcus, 70 },
+	{ kClueCrazylegsInterview1, 65 },
+	{ kClueCrazylegsInterview2, 65 },
+	{ kCluePowerSource, 70 },
+	{ kClueCrystalArrestedCrazylegs, 55 },
+	{ kClueSightingMcCoyRuncitersShop, 65 }
 };
 
 static ClueWeight ClueWeightsForCrazylegs[49] = {
-	{kClueMcCoyIsKind, 70},
-	{kClueMcCoyKilledRunciter1, 70},
-	{kClueMcCoyIsABladeRunner, 70},
-	{kClueMcCoyHelpedIzoIzoIsAReplicant, 70},
-	{kClueMcCoyHelpedGordo, 70},
-	{kClueMcCoyHelpedLucy, 70},
-	{kClueMcCoyHelpedDektora, 70},
-	{kClueMcCoyRetiredZuben, 70},
-	{kClueMcCoyRetiredLucy, 70},
-	{kClueMcCoyRetiredDektora, 70},
-	{kClueMcCoyRetiredSadik, 70},
-	{kClueMcCoyRetiredLutherLance, 70},
-	{kClueMcCoyBetrayal, 70},
-	{kClueMcCoyKilledRunciter2, 70},
-	{kClueClovisOrdersMcCoysDeath, 70},
-	{kClueGordoBlabs, 70},
-	{kClueDektoraConfession, 70},
-	{kClueDNATyrell, 70},
-	{kClueDNASebastian, 70},
-	{kClueDNAChew, 70},
-	{kClueDNAMoraji, 70},
-	{kClueDNALutherLance, 70},
-	{kClueDNAMarcus, 70},
-	{kCluePowerSource, 70},
-	{kClueMcCoyShotZubenInTheBack, 65},
-	{kClueMcCoyIsAnnoying, 65},
-	{kClueMcCoyIsInsane, 65},
-	{kClueMcCoysDescription, 65},
-	{kClueMcCoyLetZubenEscape, 65},
-	{kClueMcCoyWarnedIzo, 65},
-	{kClueMcCoyShotGuzza, 65},
-	{kClueMcCoyIsStupid, 65},
-	{kClueSuspectDektora, 65},
-	{kClueGordoInterview3, 65},
-	{kClueDektoraInterview4, 65},
-	{kClueIzosStashRaided, 65},
-	{kClueCrazylegsInterview1, 65},
-	{kClueCrazylegsInterview2, 65},
-	{kClueSightingMcCoyRuncitersShop, 65},
-	{kClueGrigoriansNote, 65},
-	{kClueCrazysInvolvement, 65},
-	{kClueIzoInterview, 60},
-	{kClueGordoInterview1, 60},
-	{kClueGordoInterview2, 60},
-	{kClueEarlyAttemptedToSeduceLucy, 55},
-	{kClueEarlyQInterview, 55},
-	{kClueCrystalArrestedCrazylegs, 55},
-	{kClueZubenInterview, 50},
-	{kClueHowieLeeInterview, 40}
+	{ kClueMcCoyIsKind, 70 },
+	{ kClueMcCoyKilledRunciter1, 70 },
+	{ kClueMcCoyIsABladeRunner, 70 },
+	{ kClueMcCoyHelpedIzoIzoIsAReplicant, 70 },
+	{ kClueMcCoyHelpedGordo, 70 },
+	{ kClueMcCoyHelpedLucy, 70 },
+	{ kClueMcCoyHelpedDektora, 70 },
+	{ kClueMcCoyRetiredZuben, 70 },
+	{ kClueMcCoyRetiredLucy, 70 },
+	{ kClueMcCoyRetiredDektora, 70 },
+	{ kClueMcCoyRetiredSadik, 70 },
+	{ kClueMcCoyRetiredLutherLance, 70 },
+	{ kClueMcCoyBetrayal, 70 },
+	{ kClueMcCoyKilledRunciter2, 70 },
+	{ kClueClovisOrdersMcCoysDeath, 70 },
+	{ kClueGordoBlabs, 70 },
+	{ kClueDektoraConfession, 70 },
+	{ kClueDNATyrell, 70 },
+	{ kClueDNASebastian, 70 },
+	{ kClueDNAChew, 70 },
+	{ kClueDNAMoraji, 70 },
+	{ kClueDNALutherLance, 70 },
+	{ kClueDNAMarcus, 70 },
+	{ kCluePowerSource, 70 },
+	{ kClueMcCoyShotZubenInTheBack, 65 },
+	{ kClueMcCoyIsAnnoying, 65 },
+	{ kClueMcCoyIsInsane, 65 },
+	{ kClueMcCoysDescription, 65 },
+	{ kClueMcCoyLetZubenEscape, 65 },
+	{ kClueMcCoyWarnedIzo, 65 },
+	{ kClueMcCoyShotGuzza, 65 },
+	{ kClueMcCoyIsStupid, 65 },
+	{ kClueSuspectDektora, 65 },
+	{ kClueGordoInterview3, 65 },
+	{ kClueDektoraInterview4, 65 },
+	{ kClueIzosStashRaided, 65 },
+	{ kClueCrazylegsInterview1, 65 },
+	{ kClueCrazylegsInterview2, 65 },
+	{ kClueSightingMcCoyRuncitersShop, 65 },
+	{ kClueGrigoriansNote, 65 },
+	{ kClueCrazysInvolvement, 65 },
+	{ kClueIzoInterview, 60 },
+	{ kClueGordoInterview1, 60 },
+	{ kClueGordoInterview2, 60 },
+	{ kClueEarlyAttemptedToSeduceLucy, 55 },
+	{ kClueEarlyQInterview, 55 },
+	{ kClueCrystalArrestedCrazylegs, 55 },
+	{ kClueZubenInterview, 50 },
+	{ kClueHowieLeeInterview, 40 }
 };
 
 static ClueWeight ClueWeightsForLuther[44] = {
-	{kClueMcCoyIsKind, 70},
-	{kClueGordoBlabs, 70},
-	{kClueDNATyrell, 70},
-	{kCluePowerSource, 70},
-	{kClueMcCoyIsAnnoying, 65},
-	{kClueMcCoyWarnedIzo, 65},
-	{kClueMcCoyHelpedIzoIzoIsAReplicant, 65},
-	{kClueMcCoyHelpedLucy, 65},
-	{kClueMcCoyHelpedDektora, 65},
-	{kClueMcCoyShotGuzza, 65},
-	{kClueMcCoyRetiredLucy, 65},
-	{kClueMcCoyRetiredDektora, 65},
-	{kClueMcCoyRetiredSadik, 65},
-	{kClueMcCoyBetrayal, 65},
-	{kClueMcCoyIsStupid, 65},
-	{kClueSuspectDektora, 65},
-	{kClueIzosStashRaided, 65},
-	{kClueDNASebastian, 65},
-	{kClueDNAChew, 65},
-	{kClueDNAMoraji, 65},
-	{kClueDNAMarcus, 65},
-	{kClueCrazylegsInterview1, 65},
-	{kClueCrazylegsInterview2, 65},
-	{kClueMcCoyIsABladeRunner, 60},
-	{kClueMcCoyLetZubenEscape, 60},
-	{kClueGordoInterview1, 60},
-	{kClueGordoInterview2, 60},
-	{kClueSightingMcCoyRuncitersShop, 60},
-	{kClueMcCoyIsInsane, 55},
-	{kClueMcCoysDescription, 55},
-	{kClueMcCoyHelpedGordo, 55},
-	{kClueMcCoyRetiredZuben, 55},
-	{kClueIzoInterview, 55},
-	{kClueDektoraInterview4, 55},
-	{kClueDektoraConfession, 55},
-	{kClueGordoInterview3, 50},
-	{kClueEarlyQInterview, 45},
-	{kClueCrystalArrestedCrazylegs, 45},
-	{kClueMcCoyShotZubenInTheBack, 35},
-	{kClueMcCoyKilledRunciter1, 35},
-	{kClueMcCoyKilledRunciter2, 35},
-	{kClueEarlyAttemptedToSeduceLucy, 35},
-	{kClueZubenInterview, 30},
-	{kClueHowieLeeInterview, 30}
+	{ kClueMcCoyIsKind, 70 },
+	{ kClueGordoBlabs, 70 },
+	{ kClueDNATyrell, 70 },
+	{ kCluePowerSource, 70 },
+	{ kClueMcCoyIsAnnoying, 65 },
+	{ kClueMcCoyWarnedIzo, 65 },
+	{ kClueMcCoyHelpedIzoIzoIsAReplicant, 65 },
+	{ kClueMcCoyHelpedLucy, 65 },
+	{ kClueMcCoyHelpedDektora, 65 },
+	{ kClueMcCoyShotGuzza, 65 },
+	{ kClueMcCoyRetiredLucy, 65 },
+	{ kClueMcCoyRetiredDektora, 65 },
+	{ kClueMcCoyRetiredSadik, 65 },
+	{ kClueMcCoyBetrayal, 65 },
+	{ kClueMcCoyIsStupid, 65 },
+	{ kClueSuspectDektora, 65 },
+	{ kClueIzosStashRaided, 65 },
+	{ kClueDNASebastian, 65 },
+	{ kClueDNAChew, 65 },
+	{ kClueDNAMoraji, 65 },
+	{ kClueDNAMarcus, 65 },
+	{ kClueCrazylegsInterview1, 65 },
+	{ kClueCrazylegsInterview2, 65 },
+	{ kClueMcCoyIsABladeRunner, 60 },
+	{ kClueMcCoyLetZubenEscape, 60 },
+	{ kClueGordoInterview1, 60 },
+	{ kClueGordoInterview2, 60 },
+	{ kClueSightingMcCoyRuncitersShop, 60 },
+	{ kClueMcCoyIsInsane, 55 },
+	{ kClueMcCoysDescription, 55 },
+	{ kClueMcCoyHelpedGordo, 55 },
+	{ kClueMcCoyRetiredZuben, 55 },
+	{ kClueIzoInterview, 55 },
+	{ kClueDektoraInterview4, 55 },
+	{ kClueDektoraConfession, 55 },
+	{ kClueGordoInterview3, 50 },
+	{ kClueEarlyQInterview, 45 },
+	{ kClueCrystalArrestedCrazylegs, 45 },
+	{ kClueMcCoyShotZubenInTheBack, 35 },
+	{ kClueMcCoyKilledRunciter1, 35 },
+	{ kClueMcCoyKilledRunciter2, 35 },
+	{ kClueEarlyAttemptedToSeduceLucy, 35 },
+	{ kClueZubenInterview, 30 },
+	{ kClueHowieLeeInterview, 30 }
 };
 
 void InitScript::Init_Clues2() {
@@ -557,9 +554,9 @@ void InitScript::Init_Clues2() {
 		Actor_Clue_Add_To_Database(kActorVoiceOver, i, 100, false, false, -1);
 	}
 
-#define IMPORT_CLUE_TABLE(a, arr) \
-	for (int i = 0; i != ARRAYSIZE(arr); ++i) {\
-		Actor_Clue_Add_To_Database( a, arr[i].clue, arr[i].weight, 0, 0, -1);\
+#define IMPORT_CLUE_TABLE(a, arr)                                        \
+	for (int i = 0; i != ARRAYSIZE(arr); ++i) {                            \
+		Actor_Clue_Add_To_Database(a, arr[i].clue, arr[i].weight, 0, 0, -1); \
 	}
 
 	IMPORT_CLUE_TABLE(kActorSteele, ClueWeightsForSteele);
@@ -2489,7 +2486,7 @@ void InitScript::Init_CDB() {
 	CDB_Set_Crime(kClueStaggeredbyPunches, kCrimeBradburyAssault);
 	CDB_Set_Crime(kClueAct2Ended, kCrimeBradburyAssault);
 
-	for(int i = 0; i != 288; ++i) {
+	for (int i = 0; i != 288; ++i) {
 		CDB_Set_Clue_Asset_Type(i, kClueTypeIntangible);
 	}
 
@@ -2978,127 +2975,127 @@ void InitScript::Init_Actor_Health() {
 }
 
 void InitScript::Init_Combat_Cover_Waypoints() {
-	Combat_Cover_Waypoint_Set_Data( 0,  0, kSetDR01_DR02_DR04, kSceneDR01, -603.0f,    0.0f,     32.0f);
-	Combat_Cover_Waypoint_Set_Data( 1,  0, kSetDR01_DR02_DR04, kSceneDR01, -670.0f,    0.0f,    -24.0f);
-	Combat_Cover_Waypoint_Set_Data( 2,  0, kSetDR01_DR02_DR04, kSceneDR01, -604.0f,    0.0f,    -96.0f);
-	Combat_Cover_Waypoint_Set_Data( 3,  0, kSetDR01_DR02_DR04, kSceneDR01, -490.0f,    0.0f,    -20.0f);
-	Combat_Cover_Waypoint_Set_Data( 4,  0, kSetDR01_DR02_DR04, kSceneDR01, -667.0f,    0.0f,   -164.0f);
-	Combat_Cover_Waypoint_Set_Data( 5,  0, kSetDR01_DR02_DR04, kSceneDR01, -606.0f,    0.0f,   -222.0f);
-	Combat_Cover_Waypoint_Set_Data( 6,  0, kSetDR01_DR02_DR04, kSceneDR01, -534.0f,    0.0f,   -170.0f);
-	Combat_Cover_Waypoint_Set_Data( 7,  3, kSetNR01,           kSceneNR01,   76.06f,  23.83f, -1058.49f);
-	Combat_Cover_Waypoint_Set_Data( 8,  3, kSetNR01,           kSceneNR01, -335.94f,  31.55f, -1406.49f);
-	Combat_Cover_Waypoint_Set_Data( 9, 15, kSetHF06,           kSceneHF06,  286.0f,  367.93f,   330.0f);
-	Combat_Cover_Waypoint_Set_Data(10, 15, kSetHF06,           kSceneHF06,  -58.0f,  367.93f,   294.0f);
-	Combat_Cover_Waypoint_Set_Data(11,  4, kSetHF01,           kSceneHF01,  -30.0f,    8.0f,   -759.0f);
-	Combat_Cover_Waypoint_Set_Data(12,  4, kSetHF01,           kSceneHF01,  -93.0f,    8.0f,   -693.0f);
-	Combat_Cover_Waypoint_Set_Data(13,  4, kSetHF01,           kSceneHF01,   -6.0f,    8.0f,   -607.0f);
-	Combat_Cover_Waypoint_Set_Data(14,  4, kSetHF01,           kSceneHF01,   78.0f,    8.0f,   -687.0f);
-	Combat_Cover_Waypoint_Set_Data(15,  4, kSetHF01,           kSceneHF01,  262.0f,    8.0f,   -683.0f);
-	Combat_Cover_Waypoint_Set_Data(16,  4, kSetHF01,           kSceneHF01,  334.0f,    8.0f,   -607.0f);
-	Combat_Cover_Waypoint_Set_Data(17,  4, kSetHF01,           kSceneHF01,  426.0f,    8.0f,   -679.0f);
-	Combat_Cover_Waypoint_Set_Data(18,  5, kSetCT01_CT12,      kSceneCT12, -318.0f,   -6.5f,   1117.0f);
-	Combat_Cover_Waypoint_Set_Data(19,  5, kSetCT01_CT12,      kSceneCT12, -330.0f,   -6.5f,    981.0f);
-	Combat_Cover_Waypoint_Set_Data(20,  5, kSetCT01_CT12,      kSceneCT12, -294.0f,   -6.5f,    725.0f);
-	Combat_Cover_Waypoint_Set_Data(21, 16, kSetUG12,           kSceneUG12,  380.0f, -126.21f,   198.0f);
-	Combat_Cover_Waypoint_Set_Data(22, 16, kSetUG12,           kSceneUG12,  364.0f, -126.21f,   -66.0f);
-	Combat_Cover_Waypoint_Set_Data(23, 18, kSetRC03,           kSceneRC03,    8.0f,    1.72f,     8.0f);
-	Combat_Cover_Waypoint_Set_Data(24, 18, kSetRC03,           kSceneRC03,  188.0f,    1.72f,    92.0f);
-	Combat_Cover_Waypoint_Set_Data(25, 18, kSetRC03,           kSceneRC03,  216.0f,   -4.01f,   196.0f);
-	Combat_Cover_Waypoint_Set_Data(26, 18, kSetRC03,           kSceneRC03, -420.0f,    1.72f,   100.0f);
-	Combat_Cover_Waypoint_Set_Data(27, 18, kSetRC03,           kSceneRC03, -672.0f,    1.72f,   -44.0f);
-	Combat_Cover_Waypoint_Set_Data(28, 10, kSetUG05,           kSceneUG05, -128.77f,  -5.21f,  -435.0f);
-	Combat_Cover_Waypoint_Set_Data(29, 10, kSetUG05,           kSceneUG05,  -20.77f,   0.81f,  -199.0f);
-	Combat_Cover_Waypoint_Set_Data(30, 10, kSetUG04,           kSceneUG04, -216.0f,   39.15f,  -819.0f);
-	Combat_Cover_Waypoint_Set_Data(31, 10, kSetUG04,           kSceneUG04,  144.0f,   -1.74f, -1015.0f);
-	Combat_Cover_Waypoint_Set_Data(32, 10, kSetUG04,           kSceneUG04,  152.0f,    4.14f,  -811.0f);
-	Combat_Cover_Waypoint_Set_Data(33, 10, kSetUG06,           kSceneUG06, -121.0f,    0.0f,    -39.0f);
-	Combat_Cover_Waypoint_Set_Data(34, 10, kSetUG07,           kSceneUG07,   86.0f,  -12.21f,  -278.0f);
-	Combat_Cover_Waypoint_Set_Data(35, 20, kSetHF05,           kSceneHF05,  407.82f,  40.63f,    95.25f);
-	Combat_Cover_Waypoint_Set_Data(36, 20, kSetHF05,           kSceneHF05,  357.81f,  40.63f,   387.9f);
+	Combat_Cover_Waypoint_Set_Data(0, 0, kSetDR01_DR02_DR04, kSceneDR01, -603.0f, 0.0f, 32.0f);
+	Combat_Cover_Waypoint_Set_Data(1, 0, kSetDR01_DR02_DR04, kSceneDR01, -670.0f, 0.0f, -24.0f);
+	Combat_Cover_Waypoint_Set_Data(2, 0, kSetDR01_DR02_DR04, kSceneDR01, -604.0f, 0.0f, -96.0f);
+	Combat_Cover_Waypoint_Set_Data(3, 0, kSetDR01_DR02_DR04, kSceneDR01, -490.0f, 0.0f, -20.0f);
+	Combat_Cover_Waypoint_Set_Data(4, 0, kSetDR01_DR02_DR04, kSceneDR01, -667.0f, 0.0f, -164.0f);
+	Combat_Cover_Waypoint_Set_Data(5, 0, kSetDR01_DR02_DR04, kSceneDR01, -606.0f, 0.0f, -222.0f);
+	Combat_Cover_Waypoint_Set_Data(6, 0, kSetDR01_DR02_DR04, kSceneDR01, -534.0f, 0.0f, -170.0f);
+	Combat_Cover_Waypoint_Set_Data(7, 3, kSetNR01, kSceneNR01, 76.06f, 23.83f, -1058.49f);
+	Combat_Cover_Waypoint_Set_Data(8, 3, kSetNR01, kSceneNR01, -335.94f, 31.55f, -1406.49f);
+	Combat_Cover_Waypoint_Set_Data(9, 15, kSetHF06, kSceneHF06, 286.0f, 367.93f, 330.0f);
+	Combat_Cover_Waypoint_Set_Data(10, 15, kSetHF06, kSceneHF06, -58.0f, 367.93f, 294.0f);
+	Combat_Cover_Waypoint_Set_Data(11, 4, kSetHF01, kSceneHF01, -30.0f, 8.0f, -759.0f);
+	Combat_Cover_Waypoint_Set_Data(12, 4, kSetHF01, kSceneHF01, -93.0f, 8.0f, -693.0f);
+	Combat_Cover_Waypoint_Set_Data(13, 4, kSetHF01, kSceneHF01, -6.0f, 8.0f, -607.0f);
+	Combat_Cover_Waypoint_Set_Data(14, 4, kSetHF01, kSceneHF01, 78.0f, 8.0f, -687.0f);
+	Combat_Cover_Waypoint_Set_Data(15, 4, kSetHF01, kSceneHF01, 262.0f, 8.0f, -683.0f);
+	Combat_Cover_Waypoint_Set_Data(16, 4, kSetHF01, kSceneHF01, 334.0f, 8.0f, -607.0f);
+	Combat_Cover_Waypoint_Set_Data(17, 4, kSetHF01, kSceneHF01, 426.0f, 8.0f, -679.0f);
+	Combat_Cover_Waypoint_Set_Data(18, 5, kSetCT01_CT12, kSceneCT12, -318.0f, -6.5f, 1117.0f);
+	Combat_Cover_Waypoint_Set_Data(19, 5, kSetCT01_CT12, kSceneCT12, -330.0f, -6.5f, 981.0f);
+	Combat_Cover_Waypoint_Set_Data(20, 5, kSetCT01_CT12, kSceneCT12, -294.0f, -6.5f, 725.0f);
+	Combat_Cover_Waypoint_Set_Data(21, 16, kSetUG12, kSceneUG12, 380.0f, -126.21f, 198.0f);
+	Combat_Cover_Waypoint_Set_Data(22, 16, kSetUG12, kSceneUG12, 364.0f, -126.21f, -66.0f);
+	Combat_Cover_Waypoint_Set_Data(23, 18, kSetRC03, kSceneRC03, 8.0f, 1.72f, 8.0f);
+	Combat_Cover_Waypoint_Set_Data(24, 18, kSetRC03, kSceneRC03, 188.0f, 1.72f, 92.0f);
+	Combat_Cover_Waypoint_Set_Data(25, 18, kSetRC03, kSceneRC03, 216.0f, -4.01f, 196.0f);
+	Combat_Cover_Waypoint_Set_Data(26, 18, kSetRC03, kSceneRC03, -420.0f, 1.72f, 100.0f);
+	Combat_Cover_Waypoint_Set_Data(27, 18, kSetRC03, kSceneRC03, -672.0f, 1.72f, -44.0f);
+	Combat_Cover_Waypoint_Set_Data(28, 10, kSetUG05, kSceneUG05, -128.77f, -5.21f, -435.0f);
+	Combat_Cover_Waypoint_Set_Data(29, 10, kSetUG05, kSceneUG05, -20.77f, 0.81f, -199.0f);
+	Combat_Cover_Waypoint_Set_Data(30, 10, kSetUG04, kSceneUG04, -216.0f, 39.15f, -819.0f);
+	Combat_Cover_Waypoint_Set_Data(31, 10, kSetUG04, kSceneUG04, 144.0f, -1.74f, -1015.0f);
+	Combat_Cover_Waypoint_Set_Data(32, 10, kSetUG04, kSceneUG04, 152.0f, 4.14f, -811.0f);
+	Combat_Cover_Waypoint_Set_Data(33, 10, kSetUG06, kSceneUG06, -121.0f, 0.0f, -39.0f);
+	Combat_Cover_Waypoint_Set_Data(34, 10, kSetUG07, kSceneUG07, 86.0f, -12.21f, -278.0f);
+	Combat_Cover_Waypoint_Set_Data(35, 20, kSetHF05, kSceneHF05, 407.82f, 40.63f, 95.25f);
+	Combat_Cover_Waypoint_Set_Data(36, 20, kSetHF05, kSceneHF05, 357.81f, 40.63f, 387.9f);
 }
 
 void InitScript::Init_Combat_Flee_Waypoints() {
-	Combat_Flee_Waypoint_Set_Data( 0,  4, kSetHF01,           kSceneHF01,   187.0f,     8.0f,   -197.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data( 1,  4, kSetHF01,           kSceneHF01,   454.0f,     8.0f,   -717.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data( 2,  4, kSetHF02,           kSceneHF02,   -10.87f,   47.76f,  -141.32f, -1);
-	Combat_Flee_Waypoint_Set_Data( 3,  4, kSetHF02,           kSceneHF02,   466.0f,    47.76f,  -532.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data( 4,  4, kSetHF03,           kSceneHF03,   199.0f,    47.76f,  -880.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data( 5,  4, kSetHF03,           kSceneHF03,   594.0f,    47.76f, -1141.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data( 6,  4, kSetHF03,           kSceneHF03,   912.0f,    47.76f,  -447.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data( 7,  4, kSetHF03,           kSceneHF03,   492.0f,    47.76f,  -459.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data( 8,  1, kSetBB01,           kSceneBB01,   271.0f,     0.0f,   1038.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data( 9,  1, kSetBB01,           kSceneBB01,  -175.0f,     9.04f,     8.59f, -1);
-	Combat_Flee_Waypoint_Set_Data(10,  1, kSetBB01,           kSceneBB01,  -343.05f,    9.04f,   260.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(11,  0, kSetDR01_DR02_DR04, kSceneDR01,  -443.0f,    -0.04f,  -180.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(12,  0, kSetDR01_DR02_DR04, kSceneDR02, -1485.0f,     6.98f,  -393.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(13,  0, kSetDR01_DR02_DR04, kSceneDR04,  -652.0f,     7.18f,   354.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(14,  6, kSetMA01,           kSceneMA01,    25.0f,     0.0f,   -314.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(15,  6, kSetMA01,           kSceneMA01,   980.0f,     0.0f,    189.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(16,  6, kSetMA01,           kSceneMA01,   601.0f,     0.0f,  -1641.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(17, 12, kSetUG07,           kSceneUG07,   218.0f,   -12.21f,  -290.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(18, 12, kSetUG07,           kSceneUG07,  -150.0f,   -12.21f,  -962.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(19, 13, kSetUG08,           kSceneUG08,  -524.0f,     0.0f,   -172.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(20, 13, kSetUG08,           kSceneUG08,  -427.0f,     0.0f,    199.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(21, 13, kSetUG08,           kSceneUG08,  -121.0f,     0.0f,   -145.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(22, 14, kSetUG10,           kSceneUG10,     2.0f,     1.15f,   412.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(23, 14, kSetUG10,           kSceneUG10,  -327.0f,     1.15f,  -384.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(24, 14, kSetUG10,           kSceneUG10,  -253.0f,    81.33f,  -620.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(25,  5, kSetCT05,           kSceneCT05,  -518.52f, -109.91f,   312.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(26,  5, kSetCT05,           kSceneCT05,   141.0f,  -109.91f,   452.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(27,  5, kSetCT11,           kSceneCT11,   516.0f,     0.56f,   779.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(28,  5, kSetCT11,           kSceneCT11,   388.0f,     9.68f,   190.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(29,  5, kSetCT11,           kSceneCT11,  -429.0f,     9.68f,  -115.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(30,  7, kSetPS14,           kScenePS14,  -997.0f,   508.14f,  -630.84f, -1);
-	Combat_Flee_Waypoint_Set_Data(31,  7, kSetPS14,           kScenePS14,  -416.27f,  508.14f,  -574.84f, -1);
-	Combat_Flee_Waypoint_Set_Data(32,  7, kSetPS14,           kScenePS14,  -416.0f,   508.14f,  -906.84f, -1);
-	Combat_Flee_Waypoint_Set_Data(33,  7, kSetPS14,           kScenePS14, -1168.0f,   508.14f, -1666.84f, -1);
-	Combat_Flee_Waypoint_Set_Data(34, 10, kSetUG06,           kSceneUG06,    75.0f,   153.0f,   -485.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(35, 10, kSetUG06,           kSceneUG06,   -18.0f,     0.0f,    321.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(36, 11, kSetUG01,           kSceneUG01,  -190.0f,   -50.13f,  -298.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(37, 11, kSetUG01,           kSceneUG01,   126.0f,   -50.13f,  -150.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(38, 11, kSetUG01,           kSceneUG01,   187.78f,  -50.13f, -1262.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(39, 11, kSetUG01,           kSceneUG01,   -20.22f,  -30.13f, -2338.3f,  -1);
-	Combat_Flee_Waypoint_Set_Data(40,  3, kSetNR01,           kSceneNR01,  -416.0f,    31.55f,  -829.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(41,  3, kSetNR01,           kSceneNR01,  -412.0f,    31.55f, -1357.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(42,  3, kSetNR01,           kSceneNR01,  -208.0f,    23.0f,  -1693.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(43,  3, kSetNR01,           kSceneNR01,   -64.0f,    23.83f, -2097.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(44,  3, kSetNR01,           kSceneNR01,   320.0f,    23.83f, -1058.49f, -1);
-	Combat_Flee_Waypoint_Set_Data(45,  3, kSetNR01,           kSceneNR01,   252.0f,    31.65f,  -674.49f, -1);
-	Combat_Flee_Waypoint_Set_Data(46,  8, kSetKP02,           kSceneKP02,  -803.0f,  -615.49f,  2619.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(47,  8, kSetKP02,           kSceneKP02, -1027.0f,  -614.49f,  3151.24f, -1);
-	Combat_Flee_Waypoint_Set_Data(48,  9, kSetKP05_KP06,      kSceneKP05, -1190.0f,     0.0f,    876.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(49,  9, kSetKP05_KP06,      kSceneKP05,  -687.0f,     0.0f,    910.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(50,  9, kSetKP05_KP06,      kSceneKP06,  -455.0f,     8.26f,  -453.26f, -1);
-	Combat_Flee_Waypoint_Set_Data(51,  9, kSetKP05_KP06,      kSceneKP06, -1127.0f,     8.26f,  -705.26f, -1);
-	Combat_Flee_Waypoint_Set_Data(52,  9, kSetKP05_KP06,      kSceneKP06, -1143.0f,     8.26f,  -261.26f, -1);
-	Combat_Flee_Waypoint_Set_Data(53,  9, kSetKP05_KP06,      kSceneKP06,  -703.0f,     8.26f,  -157.26f, -1);
-	Combat_Flee_Waypoint_Set_Data(54, 10, kSetUG04,           kSceneUG04,   166.0f,    11.87f,  -250.8f,  -1);
-	Combat_Flee_Waypoint_Set_Data(55, 10, kSetUG04,           kSceneUG04,   158.0f,     4.14f,   -10.8f,  -1);
-	Combat_Flee_Waypoint_Set_Data(56, 10, kSetUG04,           kSceneUG04,  -310.0f,    39.15f,  -822.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(57, 10, kSetUG04,           kSceneUG04,  -302.0f,    -1.74f, -5847.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(58, 10, kSetUG05,           kSceneUG05,     4.0f,     1.37f, -3684.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(59, 10, kSetUG05,           kSceneUG05,   146.28f,   -6.05f,  -135.93f, -1);
-	Combat_Flee_Waypoint_Set_Data(60,  7, kSetMA07,           kSceneMA07,   212.0f,  -162.8f,   -108.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(61,  7, kSetMA07,           kSceneMA07,   -28.0f,  -162.8f,   -104.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(62,  7, kSetMA07,           kSceneMA07,   504.0f,  -162.8f,    224.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(63,  7, kSetMA07,           kSceneMA07,  -301.0f,  -162.8f,    275.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(64, 15, kSetHF06,           kSceneHF06,    98.0f,   367.93f,   -10.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(65, 15, kSetHF06,           kSceneHF06,  -206.0f,   367.69f,   386.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(66,  5, kSetCT01_CT12,      kSceneCT12,  -190.0f,    -6.5f,    789.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(67,  5, kSetCT01_CT12,      kSceneCT12,   123.0f,    -6.5f,   1002.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(68,  5, kSetCT01_CT12,      kSceneCT12,  -573.0f,    -6.5f,   1202.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(69, 16, kSetUG12,           kSceneUG12,   120.0f,  -126.21f,  -350.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(70, 16, kSetUG12,           kSceneUG12,   524.0f,  -126.21f,   158.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(71, 16, kSetUG12,           kSceneUG12,   276.0f,  -126.21f,   537.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(72, 17, kSetUG14,           kSceneUG14,  -334.7f,    12.97f,  -332.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(73, 18, kSetRC03,           kSceneRC03,  -672.0f,     1.72f,   -96.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(74, 18, kSetRC03,           kSceneRC03,  -552.0f,    -4.01f,   268.0f,  -1);
-	Combat_Flee_Waypoint_Set_Data(75, 18, kSetRC03,           kSceneRC03,   293.06f,    1.72f,   112.25f, -1);
-	Combat_Flee_Waypoint_Set_Data(76, 20, kSetHF05,           kSceneHF05,   435.13f,   37.18f,  -292.34f, -1);
+	Combat_Flee_Waypoint_Set_Data(0, 4, kSetHF01, kSceneHF01, 187.0f, 8.0f, -197.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(1, 4, kSetHF01, kSceneHF01, 454.0f, 8.0f, -717.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(2, 4, kSetHF02, kSceneHF02, -10.87f, 47.76f, -141.32f, -1);
+	Combat_Flee_Waypoint_Set_Data(3, 4, kSetHF02, kSceneHF02, 466.0f, 47.76f, -532.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(4, 4, kSetHF03, kSceneHF03, 199.0f, 47.76f, -880.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(5, 4, kSetHF03, kSceneHF03, 594.0f, 47.76f, -1141.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(6, 4, kSetHF03, kSceneHF03, 912.0f, 47.76f, -447.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(7, 4, kSetHF03, kSceneHF03, 492.0f, 47.76f, -459.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(8, 1, kSetBB01, kSceneBB01, 271.0f, 0.0f, 1038.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(9, 1, kSetBB01, kSceneBB01, -175.0f, 9.04f, 8.59f, -1);
+	Combat_Flee_Waypoint_Set_Data(10, 1, kSetBB01, kSceneBB01, -343.05f, 9.04f, 260.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(11, 0, kSetDR01_DR02_DR04, kSceneDR01, -443.0f, -0.04f, -180.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(12, 0, kSetDR01_DR02_DR04, kSceneDR02, -1485.0f, 6.98f, -393.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(13, 0, kSetDR01_DR02_DR04, kSceneDR04, -652.0f, 7.18f, 354.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(14, 6, kSetMA01, kSceneMA01, 25.0f, 0.0f, -314.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(15, 6, kSetMA01, kSceneMA01, 980.0f, 0.0f, 189.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(16, 6, kSetMA01, kSceneMA01, 601.0f, 0.0f, -1641.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(17, 12, kSetUG07, kSceneUG07, 218.0f, -12.21f, -290.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(18, 12, kSetUG07, kSceneUG07, -150.0f, -12.21f, -962.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(19, 13, kSetUG08, kSceneUG08, -524.0f, 0.0f, -172.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(20, 13, kSetUG08, kSceneUG08, -427.0f, 0.0f, 199.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(21, 13, kSetUG08, kSceneUG08, -121.0f, 0.0f, -145.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(22, 14, kSetUG10, kSceneUG10, 2.0f, 1.15f, 412.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(23, 14, kSetUG10, kSceneUG10, -327.0f, 1.15f, -384.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(24, 14, kSetUG10, kSceneUG10, -253.0f, 81.33f, -620.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(25, 5, kSetCT05, kSceneCT05, -518.52f, -109.91f, 312.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(26, 5, kSetCT05, kSceneCT05, 141.0f, -109.91f, 452.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(27, 5, kSetCT11, kSceneCT11, 516.0f, 0.56f, 779.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(28, 5, kSetCT11, kSceneCT11, 388.0f, 9.68f, 190.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(29, 5, kSetCT11, kSceneCT11, -429.0f, 9.68f, -115.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(30, 7, kSetPS14, kScenePS14, -997.0f, 508.14f, -630.84f, -1);
+	Combat_Flee_Waypoint_Set_Data(31, 7, kSetPS14, kScenePS14, -416.27f, 508.14f, -574.84f, -1);
+	Combat_Flee_Waypoint_Set_Data(32, 7, kSetPS14, kScenePS14, -416.0f, 508.14f, -906.84f, -1);
+	Combat_Flee_Waypoint_Set_Data(33, 7, kSetPS14, kScenePS14, -1168.0f, 508.14f, -1666.84f, -1);
+	Combat_Flee_Waypoint_Set_Data(34, 10, kSetUG06, kSceneUG06, 75.0f, 153.0f, -485.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(35, 10, kSetUG06, kSceneUG06, -18.0f, 0.0f, 321.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(36, 11, kSetUG01, kSceneUG01, -190.0f, -50.13f, -298.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(37, 11, kSetUG01, kSceneUG01, 126.0f, -50.13f, -150.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(38, 11, kSetUG01, kSceneUG01, 187.78f, -50.13f, -1262.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(39, 11, kSetUG01, kSceneUG01, -20.22f, -30.13f, -2338.3f, -1);
+	Combat_Flee_Waypoint_Set_Data(40, 3, kSetNR01, kSceneNR01, -416.0f, 31.55f, -829.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(41, 3, kSetNR01, kSceneNR01, -412.0f, 31.55f, -1357.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(42, 3, kSetNR01, kSceneNR01, -208.0f, 23.0f, -1693.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(43, 3, kSetNR01, kSceneNR01, -64.0f, 23.83f, -2097.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(44, 3, kSetNR01, kSceneNR01, 320.0f, 23.83f, -1058.49f, -1);
+	Combat_Flee_Waypoint_Set_Data(45, 3, kSetNR01, kSceneNR01, 252.0f, 31.65f, -674.49f, -1);
+	Combat_Flee_Waypoint_Set_Data(46, 8, kSetKP02, kSceneKP02, -803.0f, -615.49f, 2619.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(47, 8, kSetKP02, kSceneKP02, -1027.0f, -614.49f, 3151.24f, -1);
+	Combat_Flee_Waypoint_Set_Data(48, 9, kSetKP05_KP06, kSceneKP05, -1190.0f, 0.0f, 876.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(49, 9, kSetKP05_KP06, kSceneKP05, -687.0f, 0.0f, 910.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(50, 9, kSetKP05_KP06, kSceneKP06, -455.0f, 8.26f, -453.26f, -1);
+	Combat_Flee_Waypoint_Set_Data(51, 9, kSetKP05_KP06, kSceneKP06, -1127.0f, 8.26f, -705.26f, -1);
+	Combat_Flee_Waypoint_Set_Data(52, 9, kSetKP05_KP06, kSceneKP06, -1143.0f, 8.26f, -261.26f, -1);
+	Combat_Flee_Waypoint_Set_Data(53, 9, kSetKP05_KP06, kSceneKP06, -703.0f, 8.26f, -157.26f, -1);
+	Combat_Flee_Waypoint_Set_Data(54, 10, kSetUG04, kSceneUG04, 166.0f, 11.87f, -250.8f, -1);
+	Combat_Flee_Waypoint_Set_Data(55, 10, kSetUG04, kSceneUG04, 158.0f, 4.14f, -10.8f, -1);
+	Combat_Flee_Waypoint_Set_Data(56, 10, kSetUG04, kSceneUG04, -310.0f, 39.15f, -822.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(57, 10, kSetUG04, kSceneUG04, -302.0f, -1.74f, -5847.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(58, 10, kSetUG05, kSceneUG05, 4.0f, 1.37f, -3684.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(59, 10, kSetUG05, kSceneUG05, 146.28f, -6.05f, -135.93f, -1);
+	Combat_Flee_Waypoint_Set_Data(60, 7, kSetMA07, kSceneMA07, 212.0f, -162.8f, -108.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(61, 7, kSetMA07, kSceneMA07, -28.0f, -162.8f, -104.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(62, 7, kSetMA07, kSceneMA07, 504.0f, -162.8f, 224.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(63, 7, kSetMA07, kSceneMA07, -301.0f, -162.8f, 275.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(64, 15, kSetHF06, kSceneHF06, 98.0f, 367.93f, -10.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(65, 15, kSetHF06, kSceneHF06, -206.0f, 367.69f, 386.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(66, 5, kSetCT01_CT12, kSceneCT12, -190.0f, -6.5f, 789.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(67, 5, kSetCT01_CT12, kSceneCT12, 123.0f, -6.5f, 1002.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(68, 5, kSetCT01_CT12, kSceneCT12, -573.0f, -6.5f, 1202.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(69, 16, kSetUG12, kSceneUG12, 120.0f, -126.21f, -350.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(70, 16, kSetUG12, kSceneUG12, 524.0f, -126.21f, 158.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(71, 16, kSetUG12, kSceneUG12, 276.0f, -126.21f, 537.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(72, 17, kSetUG14, kSceneUG14, -334.7f, 12.97f, -332.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(73, 18, kSetRC03, kSceneRC03, -672.0f, 1.72f, -96.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(74, 18, kSetRC03, kSceneRC03, -552.0f, -4.01f, 268.0f, -1);
+	Combat_Flee_Waypoint_Set_Data(75, 18, kSetRC03, kSceneRC03, 293.06f, 1.72f, 112.25f, -1);
+	Combat_Flee_Waypoint_Set_Data(76, 20, kSetHF05, kSceneHF05, 435.13f, 37.18f, -292.34f, -1);
 }
 
 void InitScript::Init_Shadows() {
-	int list[] = {440, 37, 38, 83, 874};
+	int list[] = { 440, 37, 38, 83, 874 };
 	Disable_Shadows(list, 5);
 }
 

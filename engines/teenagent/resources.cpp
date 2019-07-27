@@ -21,11 +21,11 @@
  */
 
 #include "teenagent/resources.h"
-#include "teenagent/teenagent.h"
 #include "common/debug.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "common/zlib.h"
+#include "teenagent/teenagent.h"
 
 namespace TeenAgent {
 
@@ -107,9 +107,7 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 
 #if !defined(USE_ZLIB)
 	uint16 header = dat->readUint16BE();
-	bool isCompressed = (header == 0x1F8B ||
-				     ((header & 0x0F00) == 0x0800 &&
-				      header % 31 == 0));
+	bool isCompressed = (header == 0x1F8B || ((header & 0x0F00) == 0x0800 && header % 31 == 0));
 	dat->seek(-2, SEEK_CUR);
 
 	if (isCompressed) {

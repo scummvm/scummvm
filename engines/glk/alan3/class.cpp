@@ -26,13 +26,13 @@
 namespace Glk {
 namespace Alan3 {
 
-/* PUBLIC DATA */
-ClassEntry *classes; /* Class table pointer */
+	/* PUBLIC DATA */
+	ClassEntry *classes; /* Class table pointer */
 
-/*======================================================================*/
-char *idOfClass(int theClass) {
-	return (char *)pointerTo(classes[theClass].id);
-}
+	/*======================================================================*/
+	char *idOfClass(int theClass) {
+		return (char *)pointerTo(classes[theClass].id);
+	}
 
 } // End of namespace Alan3
 } // End of namespace Glk

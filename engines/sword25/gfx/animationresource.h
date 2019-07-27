@@ -33,10 +33,10 @@
 #define SWORD25_ANIMATIONRESOURCE_H
 
 #include "common/xmlparser.h"
+#include "sword25/gfx/animation.h"
+#include "sword25/gfx/animationdescription.h"
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/resource.h"
-#include "sword25/gfx/animationdescription.h"
-#include "sword25/gfx/animation.h"
 
 namespace Sword25 {
 
@@ -87,27 +87,26 @@ private:
 
 	PackageManager *_pPackage;
 
-
 	bool computeFeatures();
 	bool precacheAllFrames() const;
 
 	// Parser
 	CUSTOM_XML_PARSER(AnimationResource) {
 		XML_KEY(animation)
-			XML_PROP(fps, true)
-			XML_PROP(type, true)
+		  XML_PROP(fps, true)
+		    XML_PROP(type, true)
 
-			XML_KEY(frame)
-				XML_PROP(file, true)
-				XML_PROP(hotspotx, true)
-				XML_PROP(hotspoty, true)
-				XML_PROP(fliph, false)
-				XML_PROP(flipv, false)
-			KEY_END()
-		KEY_END()
+		      XML_KEY(frame)
+		        XML_PROP(file, true)
+		          XML_PROP(hotspotx, true)
+		            XML_PROP(hotspoty, true)
+		              XML_PROP(fliph, false)
+		                XML_PROP(flipv, false)
+		                  KEY_END()
+		                    KEY_END()
 	} PARSER_END()
 
-	bool parseBooleanKey(Common::String s, bool &result);
+	  bool parseBooleanKey(Common::String s, bool &result);
 
 	// Parser callback methods
 	bool parserCallback_animation(ParserNode *node);

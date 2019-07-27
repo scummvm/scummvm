@@ -60,7 +60,7 @@ Command::ExecuteResult LoadPlayerCommand::execute(ScriptExecutionContext &script
 }
 
 Common::String LoadPlayerCommand::debugString() const {
-	return Common::String::format("LOADPLAYER %u %u %u %u %s", (unsigned int) _apkFrameFirst, (unsigned int) _apkFrameLast, (unsigned int) _playerFrameFirst, (unsigned int) _palIndexFirst, _apkFileName.c_str());
+	return Common::String::format("LOADPLAYER %u %u %u %u %s", (unsigned int)_apkFrameFirst, (unsigned int)_apkFrameLast, (unsigned int)_playerFrameFirst, (unsigned int)_palIndexFirst, _apkFileName.c_str());
 }
 
 }

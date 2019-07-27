@@ -25,8 +25,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CWheelHotSpot, CBackground)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(SignalObject)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(SignalObject)
 END_MESSAGE_MAP()
 
 void CWheelHotSpot::save(SimpleFile *file, int indent) {

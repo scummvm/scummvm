@@ -20,15 +20,15 @@
  *
  */
 
-#include "illusions/duckman/illusions_duckman.h"
 #include "illusions/duckman/duckman_screenshakereffects.h"
+#include "illusions/duckman/illusions_duckman.h"
 
 #include "engines/util.h"
 
 namespace Illusions {
 
 static const ScreenShakerPoint kShakerPoints0[] = {
-	{0, -2}, {0, -4}, {0, -3}, {0, -1}, {0, 1}
+	{ 0, -2 }, { 0, -4 }, { 0, -3 }, { 0, -1 }, { 0, 1 }
 };
 
 static const ScreenShakeEffect kShakerEffect0 = {
@@ -36,8 +36,7 @@ static const ScreenShakeEffect kShakerEffect0 = {
 };
 
 static const ScreenShakerPoint kShakerPoints1[] = {
-	{-4, -5}, {4,  5}, {-3, -4}, {3, 4}, {-2, -3}, {2, 3}, {-1, -2},
-	{ 1,  2}, {0, -1}
+	{ -4, -5 }, { 4, 5 }, { -3, -4 }, { 3, 4 }, { -2, -3 }, { 2, 3 }, { -1, -2 }, { 1, 2 }, { 0, -1 }
 };
 
 static const ScreenShakeEffect kShakerEffect1 = {
@@ -45,8 +44,15 @@ static const ScreenShakeEffect kShakerEffect1 = {
 };
 
 static const ScreenShakerPoint kShakerPoints2[] = {
-	{0, -3}, {0,  3}, {0, -2}, {0, 2}, {0, -2}, {0, 2}, {0, -1},
-	{0,  1}, {0, -1},
+	{ 0, -3 },
+	{ 0, 3 },
+	{ 0, -2 },
+	{ 0, 2 },
+	{ 0, -2 },
+	{ 0, 2 },
+	{ 0, -1 },
+	{ 0, 1 },
+	{ 0, -1 },
 };
 
 static const ScreenShakeEffect kShakerEffect2 = {
@@ -54,7 +60,7 @@ static const ScreenShakeEffect kShakerEffect2 = {
 };
 
 static const ScreenShakerPoint kShakerPoints3[] = {
-	{0, 1}, {0, -1}, {0, -2}, {0, 0}, {(int16)32768, 0}
+	{ 0, 1 }, { 0, -1 }, { 0, -2 }, { 0, 0 }, { (int16)32768, 0 }
 };
 
 static const ScreenShakeEffect kShakerEffect3 = {
@@ -62,7 +68,7 @@ static const ScreenShakeEffect kShakerEffect3 = {
 };
 
 static const ScreenShakerPoint kShakerPoints4[] = {
-	{0, 4}, {0, -1}, {0, 3}, {0, -2}, {0, 1}, {0, -1}, {0, 1}, {0, -1}
+	{ 0, 4 }, { 0, -1 }, { 0, 3 }, { 0, -2 }, { 0, 1 }, { 0, -1 }, { 0, 1 }, { 0, -1 }
 };
 
 static const ScreenShakeEffect kShakerEffect4 = {
@@ -70,10 +76,7 @@ static const ScreenShakeEffect kShakerEffect4 = {
 };
 
 static const ScreenShakerPoint kShakerPoints5[] = {
-	{0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0},
-	{0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0},
-	{0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0},
-	{0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0}
+	{ 0, -1 }, { 0, 0 }, { 0, 1 }, { 0, 0 }, { 0, -1 }, { 0, 0 }, { 0, 1 }, { 0, 0 }, { 0, -1 }, { 0, 0 }, { 0, 1 }, { 0, 0 }, { 0, -1 }, { 0, 0 }, { 0, 1 }, { 0, 0 }, { 0, -1 }, { 0, 0 }, { 0, 1 }, { 0, 0 }, { 0, -1 }, { 0, 0 }, { 0, 1 }, { 0, 0 }, { 0, -1 }, { 0, 0 }, { 0, 1 }, { 0, 0 }, { 0, -1 }, { 0, 0 }, { 0, 1 }, { 0, 0 }
 };
 
 static const ScreenShakeEffect kShakerEffect5 = {

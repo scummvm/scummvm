@@ -20,16 +20,17 @@
  *
  */
 
-#include "common/endian.h"
 #include "common/config-manager.h"
+#include "common/endian.h"
 
+#include "gob/global.h"
 #include "gob/gob.h"
 #include "gob/init.h"
-#include "gob/global.h"
 
 namespace Gob {
 
-Init_v4::Init_v4(GobEngine *vm) : Init_v3(vm) {
+Init_v4::Init_v4(GobEngine *vm)
+  : Init_v3(vm) {
 }
 
 Init_v4::~Init_v4() {

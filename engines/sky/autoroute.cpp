@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "common/textconsole.h"
 #include "common/util.h"
@@ -33,13 +32,13 @@
 
 namespace Sky {
 
-#define ROUTE_GRID_WIDTH ((GAME_SCREEN_WIDTH/8)+2)
-#define ROUTE_GRID_HEIGHT ((GAME_SCREEN_HEIGHT/8)+2)
-#define ROUTE_GRID_SIZE (ROUTE_GRID_WIDTH*ROUTE_GRID_HEIGHT*2)
-#define WALK_JUMP 8      // walk in blocks of 8
+#define ROUTE_GRID_WIDTH ((GAME_SCREEN_WIDTH / 8) + 2)
+#define ROUTE_GRID_HEIGHT ((GAME_SCREEN_HEIGHT / 8) + 2)
+#define ROUTE_GRID_SIZE (ROUTE_GRID_WIDTH * ROUTE_GRID_HEIGHT * 2)
+#define WALK_JUMP 8 // walk in blocks of 8
 
-const int16 AutoRoute::_routeDirections[4] = {    -1,     1, -ROUTE_GRID_WIDTH, ROUTE_GRID_WIDTH };
-const uint16 AutoRoute::_logicCommands[4] = { RIGHTY, LEFTY,             DOWNY,              UPY };
+const int16 AutoRoute::_routeDirections[4] = { -1, 1, -ROUTE_GRID_WIDTH, ROUTE_GRID_WIDTH };
+const uint16 AutoRoute::_logicCommands[4] = { RIGHTY, LEFTY, DOWNY, UPY };
 
 AutoRoute::AutoRoute(Grid *pGrid, SkyCompact *compact) {
 	_grid = pGrid;
@@ -98,7 +97,8 @@ void AutoRoute::initWalkGrid(uint8 screen, uint8 width) {
 	wGridPos = _routeGrid + (ROUTE_GRID_SIZE >> 1) - ROUTE_GRID_WIDTH - 2;
 
 	memset(_routeGrid, 0, ROUTE_GRID_SIZE);
-	uint8 bitsLeft = 0; uint32 gridData = 0;
+	uint8 bitsLeft = 0;
+	uint32 gridData = 0;
 	for (uint8 gridCntY = 0; gridCntY < ROUTE_GRID_HEIGHT - 2; gridCntY++) {
 		for (uint8 gridCntX = 0; gridCntX < ROUTE_GRID_WIDTH - 2; gridCntX++) {
 			if (!bitsLeft) {
@@ -130,7 +130,7 @@ bool AutoRoute::calcWalkGrid(uint8 startX, uint8 startY, uint8 destX, uint8 dest
 		roiY = startY;
 	} else {
 		directionY = ROUTE_GRID_WIDTH;
-		roiY = (ROUTE_GRID_HEIGHT-1) - startY;
+		roiY = (ROUTE_GRID_HEIGHT - 1) - startY;
 	}
 	if (startX > destX) {
 		directionX = -1;
@@ -140,15 +140,15 @@ bool AutoRoute::calcWalkGrid(uint8 startX, uint8 startY, uint8 destX, uint8 dest
 		roiX = (ROUTE_GRID_WIDTH - 1) - startX;
 	}
 
-	uint16 *walkDest  = _routeGrid + (destY + 1) * ROUTE_GRID_WIDTH + destX + 1;
+	uint16 *walkDest = _routeGrid + (destY + 1) * ROUTE_GRID_WIDTH + destX + 1;
 	uint16 *walkStart = _routeGrid + (startY + 1) * ROUTE_GRID_WIDTH + startX + 1;
 	*walkStart = 1;
 
 	// if we are on the edge, move diagonally from start
-	if (roiY < ROUTE_GRID_HEIGHT-3)
+	if (roiY < ROUTE_GRID_HEIGHT - 3)
 		walkStart -= directionY;
 
-	if (roiX < ROUTE_GRID_WIDTH-2)
+	if (roiX < ROUTE_GRID_WIDTH - 2)
 		walkStart -= directionX;
 
 	bool gridChanged = true;
@@ -271,7 +271,7 @@ uint16 AutoRoute::autoRoute(Compact *cpt) {
 
 	uint8 cnt = 0;
 	do {
-		routeDest[cnt]     = routeData[cnt];
+		routeDest[cnt] = routeData[cnt];
 		routeDest[cnt + 1] = routeData[cnt + 1];
 		cnt += 2;
 	} while (routeData[cnt - 2]);

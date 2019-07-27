@@ -22,18 +22,18 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objects.h"
-#include "fullpipe/objectnames.h"
+#include "fullpipe/behavior.h"
 #include "fullpipe/constants.h"
-#include "fullpipe/motion.h"
-#include "fullpipe/scenes.h"
-#include "fullpipe/scene.h"
-#include "fullpipe/statics.h"
 #include "fullpipe/floaters.h"
 #include "fullpipe/gameloader.h"
-#include "fullpipe/behavior.h"
 #include "fullpipe/interaction.h"
 #include "fullpipe/modal.h"
+#include "fullpipe/motion.h"
+#include "fullpipe/objectnames.h"
+#include "fullpipe/objects.h"
+#include "fullpipe/scene.h"
+#include "fullpipe/scenes.h"
+#include "fullpipe/statics.h"
 
 namespace Fullpipe {
 
@@ -68,7 +68,7 @@ void scene08_initScene(Scene *sc) {
 
 		g_vars->scene08_clock->startAnim(MV_CLK8_GO, 0, -1);
 		g_vars->scene08_clock->_movement->setDynamicPhaseIndex(3);
-	} else if (batuta== g_fp->getObjectEnumState(sO_TummyTrampie, sO_IsScratchingBelly)) {
+	} else if (batuta == g_fp->getObjectEnumState(sO_TummyTrampie, sO_IsScratchingBelly)) {
 		g_vars->scene08_batuta->changeStatics2(ST_BTT_CHESHET);
 
 		g_vars->scene08_clock->startAnim(MV_CLK8_GO, 0, -1);
@@ -371,13 +371,13 @@ void sceneHandler08_calcFlight() {
 	}
 
 	if (g_fp->_aniMan->_oy <= 280 && g_vars->scene08_stairsVisible
-		&& g_fp->_aniMan->_statics && g_fp->_aniMan->_statics->_staticsId == ST_MAN8_HANDSUP) {
+	    && g_fp->_aniMan->_statics && g_fp->_aniMan->_statics->_staticsId == ST_MAN8_HANDSUP) {
 		sceneHandler08_badLuck();
 	} else if (g_fp->_aniMan->_oy > 236 || g_vars->scene08_stairsVisible
-				|| !g_fp->_aniMan->_statics || g_fp->_aniMan->_statics->_staticsId != ST_MAN8_HANDSUP) {
+	           || !g_fp->_aniMan->_statics || g_fp->_aniMan->_statics->_staticsId != ST_MAN8_HANDSUP) {
 		if (g_fp->_aniMan->_movement || g_fp->_aniMan->_oy < 660
-			|| (g_vars->scene08_vmyats->_movement && g_vars->scene08_vmyats->_movement->_currDynamicPhaseIndex > 0)
-			|| abs(g_vars->scene08_manOffsetY) > 2) {
+		    || (g_vars->scene08_vmyats->_movement && g_vars->scene08_vmyats->_movement->_currDynamicPhaseIndex > 0)
+		    || abs(g_vars->scene08_manOffsetY) > 2) {
 			if (g_vars->scene08_manOffsetY >= 0 && !g_fp->_aniMan->_movement) {
 				if (g_fp->_aniMan->_statics->_staticsId == ST_MAN8_HANDSUP)
 					g_fp->_aniMan->startAnim(MV_MAN8_HANDSDOWN, 0, -1);
@@ -483,73 +483,72 @@ int sceneHandler08(ExCommand *cmd) {
 		}
 		break;
 
-	case 33:
-		{
-			int res = 0;
+	case 33: {
+		int res = 0;
 
-			if (g_fp->_aniMan2) {
-				if (g_vars->scene08_inArcade) {
-					int scHeight = g_fp->_sceneRect.bottom - g_fp->_sceneRect.top;
-
-					if (g_fp->_aniMan2->_oy < g_fp->_sceneRect.top + 200) {
-						g_fp->_sceneRect.top = g_fp->_aniMan2->_oy - 200;
-
-						if (g_fp->_sceneRect.top < 0)
-							g_fp->_sceneRect.top = 0;
-
-						g_fp->_sceneRect.bottom = scHeight + g_fp->_sceneRect.top;
-					}
-
-					if (g_fp->_aniMan2->_oy > g_fp->_sceneRect.bottom - 350) {
-						g_fp->_sceneRect.bottom = g_fp->_aniMan2->_oy + 350;
-						g_fp->_sceneRect.top = g_fp->_aniMan2->_oy + 350 - scHeight;
-					}
-				} else {
-					if (g_fp->_aniMan2->_ox < g_fp->_sceneRect.left + 200)
-						g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.left - 300;
-
-					if (g_fp->_aniMan2->_ox > g_fp->_sceneRect.right - 200)
-						g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.right + 300;
-
-					res = 1;
-				}
-			}
-
-			g_fp->_floaters->update();
-
+		if (g_fp->_aniMan2) {
 			if (g_vars->scene08_inArcade) {
-				if (g_vars->scene08_inAir)
-					sceneHandler08_calcFlight();
+				int scHeight = g_fp->_sceneRect.bottom - g_fp->_sceneRect.top;
+
+				if (g_fp->_aniMan2->_oy < g_fp->_sceneRect.top + 200) {
+					g_fp->_sceneRect.top = g_fp->_aniMan2->_oy - 200;
+
+					if (g_fp->_sceneRect.top < 0)
+						g_fp->_sceneRect.top = 0;
+
+					g_fp->_sceneRect.bottom = scHeight + g_fp->_sceneRect.top;
+				}
+
+				if (g_fp->_aniMan2->_oy > g_fp->_sceneRect.bottom - 350) {
+					g_fp->_sceneRect.bottom = g_fp->_aniMan2->_oy + 350;
+					g_fp->_sceneRect.top = g_fp->_aniMan2->_oy + 350 - scHeight;
+				}
 			} else {
-				Movement *mov = g_fp->_aniMan->_movement;
+				if (g_fp->_aniMan2->_ox < g_fp->_sceneRect.left + 200)
+					g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.left - 300;
 
-				if (mov) {
-					if (mov->_id == MV_MAN_TOLADDERD && mov->_currDynamicPhaseIndex == 8)
-						g_fp->_aniMan->_priority = 2;
+				if (g_fp->_aniMan2->_ox > g_fp->_sceneRect.right - 200)
+					g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.right + 300;
 
-					if (mov && mov->_id == MV_MAN_FROMLADDERUP && mov->_currDynamicPhaseIndex == 13)
-						g_fp->_aniMan->_priority = 20;
-				}
-
-				g_fp->_behaviorManager->updateBehaviors();
-				g_fp->startSceneTrack();
+				res = 1;
 			}
-
-			if (g_vars->scene08_flyingUp)
-				sceneHandler08_checkEndArcade();
-
-			if (g_vars->scene08_snoringCountdown > 0) {
-				g_vars->scene08_snoringCountdown--;
-
-				if (!g_vars->scene08_snoringCountdown) {
-					g_fp->playSound(SND_8_014, 0);
-
-					g_vars->scene08_snoringCountdown = 71;
-				}
-			}
-
-			return res;
 		}
+
+		g_fp->_floaters->update();
+
+		if (g_vars->scene08_inArcade) {
+			if (g_vars->scene08_inAir)
+				sceneHandler08_calcFlight();
+		} else {
+			Movement *mov = g_fp->_aniMan->_movement;
+
+			if (mov) {
+				if (mov->_id == MV_MAN_TOLADDERD && mov->_currDynamicPhaseIndex == 8)
+					g_fp->_aniMan->_priority = 2;
+
+				if (mov && mov->_id == MV_MAN_FROMLADDERUP && mov->_currDynamicPhaseIndex == 13)
+					g_fp->_aniMan->_priority = 20;
+			}
+
+			g_fp->_behaviorManager->updateBehaviors();
+			g_fp->startSceneTrack();
+		}
+
+		if (g_vars->scene08_flyingUp)
+			sceneHandler08_checkEndArcade();
+
+		if (g_vars->scene08_snoringCountdown > 0) {
+			g_vars->scene08_snoringCountdown--;
+
+			if (!g_vars->scene08_snoringCountdown) {
+				g_fp->playSound(SND_8_014, 0);
+
+				g_vars->scene08_snoringCountdown = 71;
+			}
+		}
+
+		return res;
+	}
 	}
 
 	return 0;

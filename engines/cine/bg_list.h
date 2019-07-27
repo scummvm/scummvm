@@ -23,9 +23,8 @@
 #ifndef CINE_BGLIST_H
 #define CINE_BGLIST_H
 
-
-#include "common/scummsys.h"
 #include "common/list.h"
+#include "common/scummsys.h"
 
 namespace Cine {
 

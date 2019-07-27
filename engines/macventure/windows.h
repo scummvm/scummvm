@@ -31,8 +31,8 @@
 #ifndef MACVENTURE_WINDOWS_H
 #define MACVENTURE_WINDOWS_H
 
-#include "common/rect.h"
 #include "common/array.h"
+#include "common/rect.h"
 
 namespace MacVenture {
 // massive HACK
@@ -100,8 +100,11 @@ struct BorderBounds {
 	uint16 rightOffset;
 	uint16 bottomOffset;
 
-	BorderBounds(uint16 l, uint16 t, uint16 r, uint16 b) :
-	leftOffset(l), topOffset(t), rightOffset(r), bottomOffset(b) {}
+	BorderBounds(uint16 l, uint16 t, uint16 r, uint16 b)
+	  : leftOffset(l)
+	  , topOffset(t)
+	  , rightOffset(r)
+	  , bottomOffset(b) {}
 };
 }
 #endif

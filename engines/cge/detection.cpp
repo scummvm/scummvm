@@ -20,19 +20,19 @@
  *
  */
 
+#include "base/plugins.h"
+#include "cge/cge.h"
+#include "cge/fileio.h"
 #include "common/config-manager.h"
-#include "engines/advancedDetector.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
-#include "base/plugins.h"
+#include "engines/advancedDetector.h"
 #include "graphics/thumbnail.h"
-#include "cge/cge.h"
-#include "cge/fileio.h"
 
 namespace CGE {
 
-#define GAMEOPTION_COLOR_BLIND_DEFAULT_OFF  GUIO_GAMEOPTIONS1
+#define GAMEOPTION_COLOR_BLIND_DEFAULT_OFF GUIO_GAMEOPTIONS1
 
 static const PlainGameDescriptor CGEGames[] = {
 	{ "soltys", "Soltys" },
@@ -40,81 +40,30 @@ static const PlainGameDescriptor CGEGames[] = {
 };
 
 static const ADGameDescription gameDescriptions[] = {
-	{
-		"soltys", "Freeware",
-		{
-			{"vol.cat", 0, "0c33e2c304821a2444d297fc5e2d67c6", 50176},
-			{"vol.dat", 0, "f9ae2e7f8f7cac91378cdafca43faf1e", 8437676},
-			AD_LISTEND
-		},
-		Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
-	},
-	{
-		"soltys", "Demo (not supported)",
-		{
-			{"vol.cat", 0, "1e077c8ff58109a187f07ac54b0c873a", 18788},
-			{"vol.dat", 0, "75d385a6074c58b69f7730481f256051", 1796710},
-			AD_LISTEND
-		},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO , GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
-	},
-	{
-		"soltys", "Demo (not supported)",
-		{
-			{"vol.cat", 0, "f17987487fab1ebddd781d8d02fedecc", 7168},
-			{"vol.dat", 0, "c5d9b15863cab61dc125551576dece04", 1075272},
-			AD_LISTEND
-		},
-		Common::PL_POL, Common::kPlatformDOS, ADGF_DEMO , GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
-	},
-	{
-		"soltys", "Freeware v1.0",
-		{
-			{"vol.cat", 0, "f1675684c68ab90272f5776f8f2c3974", 50176},
-			{"vol.dat", 0, "4ffeff4abc99ac5999b55ccfc56ab1df", 8430868},
-			AD_LISTEND
-		},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS , GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
-	},
-	{
-		"soltys", "Freeware v1.0",
-		{
-			{"vol.cat", 0, "20fdce799adb618100ef9ee2362be875", 50176},
-			{"vol.dat", 0, "0e43331c846094d77f5dd201827e0a3b", 8439339},
-			AD_LISTEND
-		},
-		Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
-	},
-	{
-		"soltys", "Freeware v1.0",
-		{
-			{"vol.cat", 0, "fcae86b20eaa5cedec17b24fa5e85eb4", 50176},
-			{"vol.dat", 0, "ff10d54acc2c95696c57e05819b6906f", 8450151},
-			AD_LISTEND
-		},
-		Common::ES_ESP, Common::kPlatformDOS, ADGF_NO_FLAGS , GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
-	},
+	{ "soltys", "Freeware", { { "vol.cat", 0, "0c33e2c304821a2444d297fc5e2d67c6", 50176 }, { "vol.dat", 0, "f9ae2e7f8f7cac91378cdafca43faf1e", 8437676 }, AD_LISTEND }, Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF) },
+	{ "soltys", "Demo (not supported)", { { "vol.cat", 0, "1e077c8ff58109a187f07ac54b0c873a", 18788 }, { "vol.dat", 0, "75d385a6074c58b69f7730481f256051", 1796710 }, AD_LISTEND }, Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF) },
+	{ "soltys", "Demo (not supported)", { { "vol.cat", 0, "f17987487fab1ebddd781d8d02fedecc", 7168 }, { "vol.dat", 0, "c5d9b15863cab61dc125551576dece04", 1075272 }, AD_LISTEND }, Common::PL_POL, Common::kPlatformDOS, ADGF_DEMO, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF) },
+	{ "soltys", "Freeware v1.0", { { "vol.cat", 0, "f1675684c68ab90272f5776f8f2c3974", 50176 }, { "vol.dat", 0, "4ffeff4abc99ac5999b55ccfc56ab1df", 8430868 }, AD_LISTEND }, Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF) },
+	{ "soltys", "Freeware v1.0", { { "vol.cat", 0, "20fdce799adb618100ef9ee2362be875", 50176 }, { "vol.dat", 0, "0e43331c846094d77f5dd201827e0a3b", 8439339 }, AD_LISTEND }, Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF) },
+	{ "soltys", "Freeware v1.0", { { "vol.cat", 0, "fcae86b20eaa5cedec17b24fa5e85eb4", 50176 }, { "vol.dat", 0, "ff10d54acc2c95696c57e05819b6906f", 8450151 }, AD_LISTEND }, Common::ES_ESP, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF) },
 
 	AD_TABLE_END_MARKER
 };
 
 static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_COLOR_BLIND_DEFAULT_OFF,
-		{
-			_s("Color Blind Mode"),
-			_s("Enable Color Blind Mode by default"),
-			"enable_color_blind",
-			false
-		}
-	},
+	{ GAMEOPTION_COLOR_BLIND_DEFAULT_OFF,
+	  { _s("Color Blind Mode"),
+	    _s("Enable Color Blind Mode by default"),
+	    "enable_color_blind",
+	    false } },
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
 class CGEMetaEngine : public AdvancedMetaEngine {
 public:
-	CGEMetaEngine() : AdvancedMetaEngine(CGE::gameDescriptions, sizeof(ADGameDescription), CGEGames, optionsList) {
+	CGEMetaEngine()
+	  : AdvancedMetaEngine(CGE::gameDescriptions, sizeof(ADGameDescription), CGEGames, optionsList) {
 		_singleId = "soltys";
 	}
 
@@ -171,15 +120,7 @@ ADDetectedGame CGEMetaEngine::fallbackDetect(const FileMap &allFiles, const Comm
 }
 
 bool CGEMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup) || (f == kSupportsDeleteSave) || (f == kSavesSupportMetaInfo) || (f == kSavesSupportThumbnail) || (f == kSavesSupportCreationDate) || (f == kSavesSupportPlayTime) || (f == kSimpleSavesNames);
 }
 
 void CGEMetaEngine::removeSaveState(const char *target, int slot) const {
@@ -245,8 +186,7 @@ SaveStateDescriptor CGEMetaEngine::querySaveMetaInfos(const char *target, int sl
 		char buffer[kSavegameStrSize + 1];
 		f->read(buffer, kSavegameStrSize + 1);
 
-		bool hasHeader = !strncmp(buffer, CGE::savegameStr, kSavegameStrSize + 1) &&
-			CGE::CGEEngine::readSavegameHeader(f, header, false);
+		bool hasHeader = !strncmp(buffer, CGE::savegameStr, kSavegameStrSize + 1) && CGE::CGEEngine::readSavegameHeader(f, header, false);
 		delete f;
 
 		if (!hasHeader) {

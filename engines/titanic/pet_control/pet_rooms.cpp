@@ -26,13 +26,21 @@
 
 namespace Titanic {
 
-CPetRooms::CPetRooms() :
-		_chevLeftOnDim(nullptr), _chevLeftOffDim(nullptr),
-		_chevRightOnDim(nullptr), _chevRightOffDim(nullptr),
-		_chevLeftOnLit(nullptr), _chevLeftOffLit(nullptr),
-		_chevRightOnLit(nullptr), _chevRightOffLit(nullptr),
-		_floorNum(1), _elevatorNum(0), _roomNum(0), _sublevel(1),
-		_wellEntry(0), _elevatorBroken(true) {
+CPetRooms::CPetRooms()
+  : _chevLeftOnDim(nullptr)
+  , _chevLeftOffDim(nullptr)
+  , _chevRightOnDim(nullptr)
+  , _chevRightOffDim(nullptr)
+  , _chevLeftOnLit(nullptr)
+  , _chevLeftOffLit(nullptr)
+  , _chevRightOnLit(nullptr)
+  , _chevRightOffLit(nullptr)
+  , _floorNum(1)
+  , _elevatorNum(0)
+  , _roomNum(0)
+  , _sublevel(1)
+  , _wellEntry(0)
+  , _elevatorBroken(true) {
 }
 
 bool CPetRooms::setup(CPetControl *petControl) {

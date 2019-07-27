@@ -3,10 +3,9 @@
 #include "common/bitstream.h"
 #include "common/memstream.h"
 
-class BitStreamTestSuite : public CxxTest::TestSuite
-{
+class BitStreamTestSuite : public CxxTest::TestSuite {
 private:
-	template<class MS, class BS>
+	template <class MS, class BS>
 	void tmpl_get_bit() {
 		byte contents[] = { 'a' };
 
@@ -20,6 +19,7 @@ private:
 		TS_ASSERT_EQUALS(bs.pos(), 3u);
 		TS_ASSERT(!bs.eos());
 	}
+
 public:
 	void test_get_bit() {
 		tmpl_get_bit<Common::MemoryReadStream, Common::BitStream8MSB>();
@@ -27,7 +27,7 @@ public:
 	}
 
 private:
-	template<class MS, class BS>
+	template <class MS, class BS>
 	void tmpl_get_bits() {
 		byte contents[] = { 'a', 'b' };
 
@@ -41,6 +41,7 @@ private:
 		TS_ASSERT_EQUALS(bs.pos(), 11u);
 		TS_ASSERT(!bs.eos());
 	}
+
 public:
 	void test_get_bits() {
 		tmpl_get_bits<Common::MemoryReadStream, Common::BitStream8MSB>();
@@ -48,7 +49,7 @@ public:
 	}
 
 private:
-	template<class MS, class BS>
+	template <class MS, class BS>
 	void tmpl_skip() {
 		byte contents[] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
 
@@ -65,6 +66,7 @@ private:
 		TS_ASSERT_EQUALS(bs.pos(), 77u);
 		TS_ASSERT(!bs.eos());
 	}
+
 public:
 	void test_skip() {
 		tmpl_skip<Common::MemoryReadStream, Common::BitStream8MSB>();
@@ -72,7 +74,7 @@ public:
 	}
 
 private:
-	template<class MS, class BS>
+	template <class MS, class BS>
 	void tmpl_rewind() {
 		byte contents[] = { 'a' };
 
@@ -89,6 +91,7 @@ private:
 
 		TS_ASSERT_EQUALS(bs.size(), 8u);
 	}
+
 public:
 	void test_rewind() {
 		tmpl_rewind<Common::MemoryReadStream, Common::BitStream8MSB>();
@@ -96,7 +99,7 @@ public:
 	}
 
 private:
-	template<class MS, class BS>
+	template <class MS, class BS>
 	void tmpl_peek_bit() {
 		byte contents[] = { 'a' };
 
@@ -112,6 +115,7 @@ private:
 		TS_ASSERT_EQUALS(bs.pos(), 1u);
 		TS_ASSERT(!bs.eos());
 	}
+
 public:
 	void test_peek_bit() {
 		tmpl_peek_bit<Common::MemoryReadStream, Common::BitStream8MSB>();
@@ -119,7 +123,7 @@ public:
 	}
 
 private:
-	template<class MS, class BS>
+	template <class MS, class BS>
 	void tmpl_peek_bits() {
 		byte contents[] = { 'a', 'b' };
 
@@ -138,6 +142,7 @@ private:
 		TS_ASSERT_EQUALS(bs.peekBits(6), 4u);
 		TS_ASSERT(!bs.eos());
 	}
+
 public:
 	void test_peek_bits() {
 		tmpl_peek_bits<Common::MemoryReadStream, Common::BitStream8MSB>();
@@ -145,7 +150,7 @@ public:
 	}
 
 private:
-	template<class MS, class BS>
+	template <class MS, class BS>
 	void tmpl_eos() {
 		byte contents[] = { 'a', 'b' };
 
@@ -161,6 +166,7 @@ private:
 		TS_ASSERT_EQUALS(bs.pos(), 0u);
 		TS_ASSERT(!bs.eos());
 	}
+
 public:
 	void test_eos() {
 		tmpl_eos<Common::MemoryReadStream, Common::BitStream8MSB>();
@@ -168,7 +174,7 @@ public:
 	}
 
 private:
-	template<class MS, class BS>
+	template <class MS, class BS>
 	void tmpl_get_bits_lsb() {
 		byte contents[] = { 'a', 'b' };
 
@@ -182,6 +188,7 @@ private:
 		TS_ASSERT_EQUALS(bs.pos(), 11u);
 		TS_ASSERT(!bs.eos());
 	}
+
 public:
 	void test_get_bits_lsb() {
 		tmpl_get_bits_lsb<Common::MemoryReadStream, Common::BitStream8LSB>();
@@ -189,7 +196,7 @@ public:
 	}
 
 private:
-	template<class MS, class BS>
+	template <class MS, class BS>
 	void tmpl_peek_bits_lsb() {
 		byte contents[] = { 'a', 'b' };
 
@@ -208,6 +215,7 @@ private:
 		TS_ASSERT_EQUALS(bs.peekBits(20), 12u);
 		TS_ASSERT(!bs.eos());
 	}
+
 public:
 	void test_peek_bits_lsb() {
 		tmpl_peek_bits_lsb<Common::MemoryReadStream, Common::BitStream8LSB>();
@@ -215,7 +223,7 @@ public:
 	}
 
 private:
-	template<class MS, class BS>
+	template <class MS, class BS>
 	void tmpl_align() {
 		byte contents[] = { 'a', 'b' };
 
@@ -229,6 +237,7 @@ private:
 		bs.align();
 		TS_ASSERT_EQUALS(bs.pos(), 8u);
 	}
+
 public:
 	void test_align() {
 		tmpl_align<Common::MemoryReadStream, Common::BitStream8LSB>();
@@ -236,7 +245,7 @@ public:
 	}
 
 private:
-	template<class MS, class BS>
+	template <class MS, class BS>
 	void tmpl_align_16() {
 		byte contents[] = { 'a', 'b' };
 
@@ -250,6 +259,7 @@ private:
 		bs.align();
 		TS_ASSERT_EQUALS(bs.pos(), 16u);
 	}
+
 public:
 	void test_align_16() {
 		tmpl_align_16<Common::MemoryReadStream, Common::BitStream16BELSB>();

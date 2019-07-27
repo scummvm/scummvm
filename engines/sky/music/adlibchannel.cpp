@@ -20,11 +20,10 @@
  *
  */
 
-
+#include "sky/music/adlibchannel.h"
+#include "audio/fmopl.h"
 #include "common/endian.h"
 #include "common/textconsole.h"
-#include "audio/fmopl.h"
-#include "sky/music/adlibchannel.h"
 #include "sky/sky.h"
 
 namespace Sky {
@@ -40,8 +39,7 @@ AdLibChannel::AdLibChannel(OPL::OPL *opl, uint8 *pMusicData, uint16 startOfData)
 	_channelData.channelVolume = 0x7F;
 	_channelData.nextEventTime = getNextEventTime();
 
-	_channelData.adlibChannelNumber = _channelData.lastCommand = _channelData.note =
-		_channelData.adlibReg1 = _channelData.adlibReg2 = _channelData.freqOffset = 0;
+	_channelData.adlibChannelNumber = _channelData.lastCommand = _channelData.note = _channelData.adlibReg1 = _channelData.adlibReg2 = _channelData.freqOffset = 0;
 	_channelData.frequency = 0;
 	_channelData.instrumentData = NULL;
 
@@ -75,8 +73,8 @@ AdLibChannel::AdLibChannel(OPL::OPL *opl, uint8 *pMusicData, uint16 startOfData)
 		_adlibRegMirror = _musicData + 0xF5F;
 	}
 
-	_instrumentMap = _musicData+instrumentDataLoc;
-	_instruments = (InstrumentStruct *)(_instrumentMap+0x80);
+	_instrumentMap = _musicData + instrumentDataLoc;
+	_instruments = (InstrumentStruct *)(_instrumentMap + 0x80);
 }
 
 AdLibChannel::~AdLibChannel() {
@@ -141,19 +139,37 @@ uint8 AdLibChannel::process(uint16 aktTime) {
 			if (opcode == 0xFF) {
 				// dummy opcode
 			} else if (opcode >= 0x90) {
-				switch (opcode&0xF) {
-				case 0: com90_caseNoteOff(); break;
-				case 1: com90_stopChannel(); break;
-				case 2: com90_setupInstrument(); break;
+				switch (opcode & 0xF) {
+				case 0:
+					com90_caseNoteOff();
+					break;
+				case 1:
+					com90_stopChannel();
+					break;
+				case 2:
+					com90_setupInstrument();
+					break;
 				case 3:
 					returnVal = com90_updateTempo();
 					break;
-				case 5: com90_getFreqOffset(); break;
-				case 6: com90_getChannelVolume(); break;
-				case 7: com90_getTremoVibro(); break;
-				case 8: com90_loopMusic(); break;
-				case 9: com90_keyOff(); break;
-				case 12: com90_setLoopPoint(); break;
+				case 5:
+					com90_getFreqOffset();
+					break;
+				case 6:
+					com90_getChannelVolume();
+					break;
+				case 7:
+					com90_getTremoVibro();
+					break;
+				case 8:
+					com90_loopMusic();
+					break;
+				case 9:
+					com90_keyOff();
+					break;
+				case 12:
+					com90_setLoopPoint();
+					break;
 
 				default:
 					error("AdLibChannel: Unknown music opcode 0x%02X", opcode);
@@ -287,7 +303,7 @@ void AdLibChannel::com90_getFreqOffset() {
 	_channelData.freqOffset = _musicData[_channelData.eventDataPtr++];
 	if (_channelData.note & 0x20) {
 		uint16 nextNote = getNextNote(
-			_channelData.lastCommand - 0x18 + _channelData.instrumentData->bindedEffect);
+		  _channelData.lastCommand - 0x18 + _channelData.instrumentData->bindedEffect);
 		setRegister(0xA0 | _channelData.adlibChannelNumber, (uint8)nextNote);
 		setRegister(0xB0 | _channelData.adlibChannelNumber, (uint8)((nextNote >> 8) | 0x20));
 		_channelData.note = (uint8)(nextNote >> 8) | 0x20;

@@ -29,10 +29,10 @@
 #ifndef TONY_INPUT_H
 #define TONY_INPUT_H
 
-#include "common/events.h"
-#include "common/rect.h"
 #include "common/array.h"
+#include "common/events.h"
 #include "common/keyboard.h"
+#include "common/rect.h"
 #include "tony/utils.h"
 
 namespace Tony {

@@ -315,6 +315,6 @@ const char *exitLine_EN = "Hope you enjoyed playing ToonStruck!!";
 const char *exitLine_FR = "Nous esp\202rons que vous avez aim\202 jouer \205 ToonStruck !";
 const char *exitLine_DE = "Wir hoffen, Toonstruck hat Ihnen Spa\341 gemacht!";
 const char *exitLine_RU = "Hope you enjoyed playing ToonStruck!!";
-const char* exitLine_SP = "\255\255Esperamos que te diviertas jugando a ToonStruck!!";
+const char *exitLine_SP = "\255\255Esperamos que te diviertas jugando a ToonStruck!!";
 
 #endif

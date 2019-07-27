@@ -32,7 +32,6 @@ class QueenEngine;
 
 class Talk {
 public:
-
 	//! Public interface to run a talk from a file
 	static void talk(const char *filename, int personInRoom, char *cutawayFilename, QueenEngine *vm);
 
@@ -43,32 +42,31 @@ public:
 	static void getString(const byte *ptr, uint16 &offset, char *str, int maxLength, int align = 2);
 
 private:
-
 	//! Collection of constants used by Talk
 	enum {
-	  LINE_HEIGHT = 10,
-	  MAX_STRING_LENGTH = 255,
-	  MAX_STRING_SIZE = (MAX_STRING_LENGTH + 1),
-	  MAX_TEXT_WIDTH = (320-18),
-	  PUSHUP = 4,
-	  ARROW_ZONE_UP   = 5,
-	  ARROW_ZONE_DOWN = 6,
-	  DOG_HEADER_SIZE = 20,
-	  OPTION_TEXT_MARGIN = 24
+		LINE_HEIGHT = 10,
+		MAX_STRING_LENGTH = 255,
+		MAX_STRING_SIZE = (MAX_STRING_LENGTH + 1),
+		MAX_TEXT_WIDTH = (320 - 18),
+		PUSHUP = 4,
+		ARROW_ZONE_UP = 5,
+		ARROW_ZONE_DOWN = 6,
+		DOG_HEADER_SIZE = 20,
+		OPTION_TEXT_MARGIN = 24
 	};
 
 	//! Special commands for speech
 	enum {
-		SPEAK_DEFAULT      =  0,
-		SPEAK_FACE_LEFT    = -1,
-		SPEAK_FACE_RIGHT   = -2,
-		SPEAK_FACE_FRONT   = -3,
-		SPEAK_FACE_BACK    = -4,
-		SPEAK_ORACLE       = -5,
-		SPEAK_UNKNOWN_6    = -6,
-		SPEAK_AMAL_ON      = -7,
-		SPEAK_PAUSE        = -8,
-		SPEAK_NONE         = -9
+		SPEAK_DEFAULT = 0,
+		SPEAK_FACE_LEFT = -1,
+		SPEAK_FACE_RIGHT = -2,
+		SPEAK_FACE_FRONT = -3,
+		SPEAK_FACE_BACK = -4,
+		SPEAK_ORACLE = -5,
+		SPEAK_UNKNOWN_6 = -6,
+		SPEAK_AMAL_ON = -7,
+		SPEAK_PAUSE = -8,
+		SPEAK_NONE = -9
 	};
 
 	struct DialogueNode {
@@ -80,8 +78,8 @@ private:
 
 	struct SpeechParameters {
 		const char *name;
-		signed char state,faceDirection;
-		signed char body,bf,rf,af;
+		signed char state, faceDirection;
+		signed char body, bf, rf, af;
 		const char *animation;
 		signed char ff;
 	};
@@ -167,12 +165,12 @@ private:
 
 	//! Get a selected value
 	int16 selectedValue(int index) {
-		return talkSelected()->values[index-1];
+		return talkSelected()->values[index - 1];
 	}
 
 	//! Set a selected value
 	void selectedValue(int index, int16 value) {
-		talkSelected()->values[index-1] = value;
+		talkSelected()->values[index - 1] = value;
 	}
 
 	//! The sentence will not be displayed again
@@ -189,38 +187,37 @@ private:
 
 	//! Speak a part of a sentence
 	void speakSegment(
-			const char *segmentStart,
-			int length,
-			Person *person,
-			int command,
-			const char *voiceFilePrefix,
-			int index);
+	  const char *segmentStart,
+	  int length,
+	  Person *person,
+	  int command,
+	  const char *voiceFilePrefix,
+	  int index);
 
 	void headStringAnimation(const SpeechParameters *parameters, int bobNum, int bankNum);
 
 	void stringAnimation(const SpeechParameters *parameters, int startFrame, int bankNum);
 
 	void defaultAnimation(
-		const char *segment,
-		bool isJoe,
-		const SpeechParameters *parameters,
-		int startFrame,
-		int bankNum);
+	  const char *segment,
+	  bool isJoe,
+	  const SpeechParameters *parameters,
+	  int startFrame,
+	  int bankNum);
 
 	int countSpaces(const char *segment);
 
 	//! Get special parameters for speech
 	const SpeechParameters *findSpeechParameters(
-			const char *name,
-			int state,
-			int faceDirection);
+	  const char *name,
+	  int state,
+	  int faceDirection);
 
 	int splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]);
 
 	int splitOptionHebrew(const char *str, char optionText[5][MAX_STRING_SIZE]);
 
 	int splitOptionDefault(const char *str, char optionText[5][MAX_STRING_SIZE]);
-
 };
 
 } // End of namespace Queen

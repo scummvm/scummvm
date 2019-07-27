@@ -208,7 +208,7 @@ void Room::tug3ElasiStunnedOrKilled() {
 	if (_awayMission->tug.bridgeWinMethod == 1)
 		return;
 	if (_awayMission->tug.bridgeElasi1Status == GUARDSTAT_UP || _awayMission->tug.bridgeElasi2Status == GUARDSTAT_UP
-	        || _awayMission->tug.bridgeElasi3Status == GUARDSTAT_UP || _awayMission->tug.bridgeElasi4Status == GUARDSTAT_UP)
+	    || _awayMission->tug.bridgeElasi3Status == GUARDSTAT_UP || _awayMission->tug.bridgeElasi4Status == GUARDSTAT_UP)
 		return;
 
 	// BUGFIX: if the ship is deorbiting, the mission isn't won yet.
@@ -378,11 +378,7 @@ void Room::tug3UseCommunicator() {
 
 		// BUGFIX: if still fighting the elasi, the mission isn't done yet.
 		_awayMission->tug.orbitalDecayCounter = 0;
-		if (!_awayMission->tug.elasiSurrendered &&
-		        (_awayMission->tug.bridgeElasi1Status == GUARDSTAT_UP
-		         || _awayMission->tug.bridgeElasi2Status == GUARDSTAT_UP
-		         || _awayMission->tug.bridgeElasi3Status == GUARDSTAT_UP
-		         || _awayMission->tug.bridgeElasi4Status == GUARDSTAT_UP))
+		if (!_awayMission->tug.elasiSurrendered && (_awayMission->tug.bridgeElasi1Status == GUARDSTAT_UP || _awayMission->tug.bridgeElasi2Status == GUARDSTAT_UP || _awayMission->tug.bridgeElasi3Status == GUARDSTAT_UP || _awayMission->tug.bridgeElasi4Status == GUARDSTAT_UP))
 			return;
 
 		tug3EndMission();

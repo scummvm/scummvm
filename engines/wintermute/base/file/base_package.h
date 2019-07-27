@@ -30,8 +30,8 @@
 #define WINTERMUTE_BASE_PACKAGE_H
 
 #include "common/archive.h"
-#include "common/stream.h"
 #include "common/fs.h"
+#include "common/stream.h"
 
 namespace Wintermute {
 class BasePackage {
@@ -78,6 +78,7 @@ public:
 	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 
 	int getPriority() const { return _priority; }
+
 private:
 	byte _priority;
 	Common::Array<BasePackage *> _packages;

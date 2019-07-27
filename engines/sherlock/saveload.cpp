@@ -21,13 +21,13 @@
  */
 
 #include "sherlock/saveload.h"
-#include "sherlock/surface.h"
-#include "sherlock/sherlock.h"
-#include "sherlock/scalpel/scalpel_saveload.h"
-#include "sherlock/tattoo/widget_files.h"
 #include "common/system.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
+#include "sherlock/scalpel/scalpel_saveload.h"
+#include "sherlock/sherlock.h"
+#include "sherlock/surface.h"
+#include "sherlock/tattoo/widget_files.h"
 
 namespace Sherlock {
 
@@ -44,8 +44,9 @@ SaveManager *SaveManager::init(SherlockEngine *vm, const Common::String &target)
 		return new Tattoo::WidgetFiles(vm, target);
 }
 
-SaveManager::SaveManager(SherlockEngine *vm, const Common::String &target) :
-		_vm(vm), _target(target) {
+SaveManager::SaveManager(SherlockEngine *vm, const Common::String &target)
+  : _vm(vm)
+  , _target(target) {
 	_saveThumb = nullptr;
 	_justLoaded = false;
 	_savegameIndex = 0;
@@ -130,7 +131,8 @@ WARN_UNUSED_RESULT bool SaveManager::readSavegameHeader(Common::InSaveFile *in, 
 	// Read in the string
 	header._saveName.clear();
 	char ch;
-	while ((ch = (char)in->readByte()) != '\0') header._saveName += ch;
+	while ((ch = (char)in->readByte()) != '\0')
+		header._saveName += ch;
 
 	// Get the thumbnail
 	if (!Graphics::loadThumbnail(*in, header._thumbnail, skipThumbnail)) {
@@ -198,7 +200,7 @@ void SaveManager::createThumbnail() {
 void SaveManager::loadGame(int slot) {
 	Events &events = *_vm->_events;
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
-		generateSaveName(slot));
+	  generateSaveName(slot));
 	if (!saveFile)
 		return;
 
@@ -219,7 +221,7 @@ void SaveManager::loadGame(int slot) {
 void SaveManager::saveGame(int slot, const Common::String &name) {
 	Events &events = *_vm->_events;
 	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(
-		generateSaveName(slot));
+	  generateSaveName(slot));
 
 	SherlockSavegameHeader header;
 	header._saveName = name;

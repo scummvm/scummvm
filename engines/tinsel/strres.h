@@ -29,10 +29,10 @@
 
 namespace Tinsel {
 
-#define	STRINGS_PER_CHUNK	64	// number of strings per chunk in the language text files
-#define	FIRST_STR_ID		1	// id number of first string in string table
-#define	MAX_STRING_SIZE		255	// maximum size of a string in the resource table
-#define	MAX_STRRES_SIZE		300000	// maximum size of string resource file
+#define STRINGS_PER_CHUNK 64 // number of strings per chunk in the language text files
+#define FIRST_STR_ID 1 // id number of first string in string table
+#define MAX_STRING_SIZE 255 // maximum size of a string in the resource table
+#define MAX_STRRES_SIZE 300000 // maximum size of string resource file
 
 // Set if we're handling 2-byte characters.
 extern bool g_bMultiByte;
@@ -64,7 +64,7 @@ int LoadStringRes(int id, char *pBuffer, int bufferMax);
  */
 int LoadSubString(int id, int sub, char *pBuffer, int bufferMax);
 
-int SubStringCount(int id);	// identifier of string to be tested
+int SubStringCount(int id); // identifier of string to be tested
 
 /**
  * Frees the text buffer allocated from ChangeLanguage()

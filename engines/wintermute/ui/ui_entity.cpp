@@ -26,26 +26,26 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/ad/ad_entity.h"
-#include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/ui/ui_entity.h"
-#include "engines/wintermute/base/base_parser.h"
+#include "engines/wintermute/ad/ad_entity.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(UIEntity, false)
 
 //////////////////////////////////////////////////////////////////////////
-UIEntity::UIEntity(BaseGame *inGame) : UIObject(inGame) {
+UIEntity::UIEntity(BaseGame *inGame)
+  : UIObject(inGame) {
 	_type = UI_CUSTOM;
 	_entity = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 UIEntity::~UIEntity() {
@@ -54,7 +54,6 @@ UIEntity::~UIEntity() {
 	}
 	_entity = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool UIEntity::loadFile(const char *filename) {
@@ -72,12 +71,10 @@ bool UIEntity::loadFile(const char *filename) {
 		_gameRef->LOG(0, "Error parsing ENTITY container file '%s'", filename);
 	}
 
-
 	delete[] buffer;
 
 	return ret;
 }
-
 
 TOKEN_DEF_START
 TOKEN_DEF(ENTITY_CONTAINER)
@@ -263,7 +260,6 @@ bool UIEntity::display(int offsetX, int offsetY) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
@@ -303,7 +299,6 @@ bool UIEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *UIEntity::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
@@ -331,7 +326,6 @@ ScValue *UIEntity::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool UIEntity::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
@@ -347,12 +341,10 @@ bool UIEntity::scSetProperty(const char *name, ScValue *value) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 const char *UIEntity::scToString() {
 	return "[entity container]";
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool UIEntity::persist(BasePersistenceManager *persistMgr) {

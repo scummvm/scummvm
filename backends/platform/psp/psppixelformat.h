@@ -23,8 +23,8 @@
 #ifndef PSP_PIXEL_FORMAT_H
 #define PSP_PIXEL_FORMAT_H
 
-#include "graphics/pixelformat.h"
 #include "backends/platform/psp/trace.h"
+#include "graphics/pixelformat.h"
 
 /**
  *	Specialized PixelFormat class
@@ -45,15 +45,18 @@ struct PSPPixelFormat {
 	};
 
 	Type format;
-	uint32 bitsPerPixel;					///< Must match bpp of selected type
-	bool swapRB;							///< Swap red and blue values when reading and writing
+	uint32 bitsPerPixel; ///< Must match bpp of selected type
+	bool swapRB; ///< Swap red and blue values when reading and writing
 
-	PSPPixelFormat() : format(Type_Unknown), bitsPerPixel(0), swapRB(false) {}
+	PSPPixelFormat()
+	  : format(Type_Unknown)
+	  , bitsPerPixel(0)
+	  , swapRB(false) {}
 	void set(Type type, bool swap = false);
 	static void convertFromScummvmPixelFormat(const Graphics::PixelFormat *pf,
-	        PSPPixelFormat::Type &bufferType,
-	        PSPPixelFormat::Type &paletteType,
-	        bool &swapRedBlue);
+	                                          PSPPixelFormat::Type &bufferType,
+	                                          PSPPixelFormat::Type &paletteType,
+	                                          bool &swapRedBlue);
 	static Graphics::PixelFormat convertToScummvmPixelFormat(PSPPixelFormat::Type type);
 	uint32 convertTo32BitColor(uint32 color) const;
 
@@ -84,9 +87,9 @@ struct PSPPixelFormat {
 		switch (format) {
 		case Type_4444:
 			a = (color >> 12) & 0xF; // Interpolate to get true colors
-			b = (color >> 8)  & 0xF;
-			g = (color >> 4)  & 0xF;
-			r = (color >> 0)  & 0xF;
+			b = (color >> 8) & 0xF;
+			g = (color >> 4) & 0xF;
+			r = (color >> 0) & 0xF;
 			a = a << 4 | a;
 			b = b << 4 | b;
 			g = g << 4 | g;
@@ -95,8 +98,8 @@ struct PSPPixelFormat {
 		case Type_5551:
 			a = (color >> 15) ? 0xFF : 0;
 			b = (color >> 10) & 0x1F;
-			g = (color >> 5)  & 0x1F;
-			r = (color >> 0)  & 0x1F;
+			g = (color >> 5) & 0x1F;
+			r = (color >> 0) & 0x1F;
 			b = b << 3 | b >> 2;
 			g = g << 3 | g >> 2;
 			r = r << 3 | r >> 2;
@@ -104,8 +107,8 @@ struct PSPPixelFormat {
 		case Type_5650:
 			a = 0xFF;
 			b = (color >> 11) & 0x1F;
-			g = (color >> 5)  & 0x3F;
-			r = (color >> 0)  & 0x1F;
+			g = (color >> 5) & 0x3F;
+			r = (color >> 0) & 0x1F;
 			b = b << 3 | b >> 2;
 			g = g << 2 | g >> 4;
 			r = r << 3 | r >> 2;
@@ -113,8 +116,8 @@ struct PSPPixelFormat {
 		case Type_8888:
 			a = (color >> 24) & 0xFF;
 			b = (color >> 16) & 0xFF;
-			g = (color >> 8)  & 0xFF;
-			r = (color >> 0)  & 0xFF;
+			g = (color >> 8) & 0xFF;
+			r = (color >> 0) & 0xFF;
 			break;
 		default:
 			a = b = g = r = 0;
@@ -165,7 +168,7 @@ struct PSPPixelFormat {
 
 		switch (format) {
 		case Type_4444:
-			output = (color & 0xf0f0) | ((color & 0x000f) << 8)  | ((color & 0x0f00) >> 8);
+			output = (color & 0xf0f0) | ((color & 0x000f) << 8) | ((color & 0x0f00) >> 8);
 			break;
 		case Type_5551:
 			output = (color & 0x83e0) | ((color & 0x001f) << 10) | ((color & 0x7c00) >> 10);
@@ -186,20 +189,16 @@ struct PSPPixelFormat {
 
 		switch (format) {
 		case Type_4444:
-			output = (color & 0xf0f0f0f0) |
-			         ((color & 0x000f000f) << 8)  | ((color & 0x0f000f00) >> 8);
+			output = (color & 0xf0f0f0f0) | ((color & 0x000f000f) << 8) | ((color & 0x0f000f00) >> 8);
 			break;
 		case Type_5551:
-			output = (color & 0x83e083e0) |
-			         ((color & 0x001f001f) << 10) | ((color & 0x7c007c00) >> 10);
+			output = (color & 0x83e083e0) | ((color & 0x001f001f) << 10) | ((color & 0x7c007c00) >> 10);
 			break;
 		case Type_5650:
-			output = (color & 0x07e007e0) |
-			         ((color & 0x001f001f) << 11) | ((color & 0xf800f800) >> 11);
+			output = (color & 0x07e007e0) | ((color & 0x001f001f) << 11) | ((color & 0xf800f800) >> 11);
 			break;
 		case Type_8888:
-			output = (color & 0xff00ff00) |
-			         ((color & 0x000000ff) << 16) | ((color & 0x00ff0000) >> 16);
+			output = (color & 0xff00ff00) | ((color & 0x000000ff) << 16) | ((color & 0x00ff0000) >> 16);
 			break;
 		default:
 			PSP_ERROR("invalid format[%u] for swapping\n", format);
@@ -215,7 +214,7 @@ struct PSPPixelFormat {
 		uint32 result;
 
 		switch (bitsPerPixel) {
-		case 4:	// We can't distinguish a 4 bit color with a pointer
+		case 4: // We can't distinguish a 4 bit color with a pointer
 		case 8:
 			result = *pointer;
 			break;

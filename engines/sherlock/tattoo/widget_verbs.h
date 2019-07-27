@@ -23,8 +23,8 @@
 #ifndef SHERLOCK_TATTOO_WIDGET_VERBS_H
 #define SHERLOCK_TATTOO_WIDGET_VERBS_H
 
-#include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/str-array.h"
 #include "sherlock/tattoo/widget_base.h"
 
@@ -34,36 +34,38 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-class WidgetVerbs: public WidgetBase {
-private:
-	int _selector, _oldSelector;
-	bool _outsideMenu;
+	class WidgetVerbs : public WidgetBase {
+	private:
+		int _selector, _oldSelector;
+		bool _outsideMenu;
 
-	/**
+		/**
 	 * Highlights the controls for the verb list
 	 */
-	void highlightVerbControls();
+		void highlightVerbControls();
 
-	/**
+		/**
 	 * Renders the window on an internal surface for later drawing on-screen
 	 */
-	void render();
-public:
-	Common::StringArray _verbCommands;
-public:
-	WidgetVerbs(SherlockEngine *vm);
-	virtual ~WidgetVerbs() {}
+		void render();
 
-	/**
+	public:
+		Common::StringArray _verbCommands;
+
+	public:
+		WidgetVerbs(SherlockEngine *vm);
+		virtual ~WidgetVerbs() {}
+
+		/**
 	 * Turns on the menu with all the verbs that are available for the given object
 	 */
-	void load(bool objectsOn);
+		void load(bool objectsOn);
 
-	/**
+		/**
 	 * Process input for the dialog
 	 */
-	virtual void handleEvents();
-};
+		virtual void handleEvents();
+	};
 
 } // End of namespace Tattoo
 

@@ -26,11 +26,12 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMovePlayerTo, CGameObject)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(ActMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(ActMsg)
 END_MESSAGE_MAP()
 
-CMovePlayerTo::CMovePlayerTo() : CGameObject() {
+CMovePlayerTo::CMovePlayerTo()
+  : CGameObject() {
 }
 
 void CMovePlayerTo::save(SimpleFile *file, int indent) {

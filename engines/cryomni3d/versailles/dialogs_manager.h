@@ -23,8 +23,8 @@
 #ifndef CRYOMNI3D_VERSAILLES_DIALOGS_MANAGER_H
 #define CRYOMNI3D_VERSAILLES_DIALOGS_MANAGER_H
 
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "graphics/managed_surface.h"
 
 #include "cryomni3d/dialogs_manager.h"
@@ -33,37 +33,38 @@
 namespace CryOmni3D {
 namespace Versailles {
 
-class CryOmni3DEngine_Versailles;
+	class CryOmni3DEngine_Versailles;
 
-class Versailles_DialogsManager : public DialogsManager {
-public:
-	Versailles_DialogsManager(CryOmni3DEngine_Versailles *engine,
-	                          bool padAudioFileName) : _engine(engine),
-		_padAudioFileName(padAudioFileName) { }
+	class Versailles_DialogsManager : public DialogsManager {
+	public:
+		Versailles_DialogsManager(CryOmni3DEngine_Versailles *engine,
+		                          bool padAudioFileName)
+		  : _engine(engine)
+		  , _padAudioFileName(padAudioFileName) {}
 
-	// This overload will hide the base one and this is what we want
-	bool play(const Common::String &sequence);
+		// This overload will hide the base one and this is what we want
+		bool play(const Common::String &sequence);
 
-	typedef void (CryOmni3DEngine_Versailles::*ShowCallback)();
-	void registerShowCallback(const Common::String &showName, ShowCallback callback) { _shows[showName] = callback; }
+		typedef void (CryOmni3DEngine_Versailles::*ShowCallback)();
+		void registerShowCallback(const Common::String &showName, ShowCallback callback) { _shows[showName] = callback; }
 
-protected:
-	void executeShow(const Common::String &show) override;
-	void playDialog(const Common::String &video, const Common::String &sound,
-	                const Common::String &text, const SubtitlesSettings &settings) override;
-	void displayMessage(const Common::String &text) override;
-	uint askPlayerQuestions(const Common::String &video,
-	                        const Common::StringArray &questions) override;
+	protected:
+		void executeShow(const Common::String &show) override;
+		void playDialog(const Common::String &video, const Common::String &sound,
+		                const Common::String &text, const SubtitlesSettings &settings) override;
+		void displayMessage(const Common::String &text) override;
+		uint askPlayerQuestions(const Common::String &video,
+		                        const Common::StringArray &questions) override;
 
-private:
-	CryOmni3DEngine_Versailles *_engine;
-	Common::HashMap<Common::String, ShowCallback> _shows;
-	bool _padAudioFileName;
+	private:
+		CryOmni3DEngine_Versailles *_engine;
+		Common::HashMap<Common::String, ShowCallback> _shows;
+		bool _padAudioFileName;
 
-	void loadFrame(const Common::String &video);
+		void loadFrame(const Common::String &video);
 
-	Graphics::ManagedSurface _lastImage;
-};
+		Graphics::ManagedSurface _lastImage;
+	};
 
 } // End of namespace Versailles
 } // End of namespace CryOmni3D

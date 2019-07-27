@@ -23,10 +23,10 @@
 #ifndef LURE_HOTSPOTS_H
 #define LURE_HOTSPOTS_H
 
-#include "lure/luredefs.h"
-#include "lure/screen.h"
 #include "lure/disk.h"
+#include "lure/luredefs.h"
 #include "lure/res_struct.h"
+#include "lure/screen.h"
 
 namespace Lure {
 
@@ -38,12 +38,13 @@ class HotspotTickHandlers;
 class Support {
 private:
 	static bool changeRoomCheckBumped(Hotspot &h);
+
 public:
 	static int findIntersectingCharacters(Hotspot &h, uint16 *charList, int16 xp = -1, int16 yp = -1, int roomNumber = -1);
 	static bool checkForIntersectingCharacter(Hotspot &h, int16 xp = -1, int16 yp = -1, int roomNumber = -1);
 	static bool checkRoomChange(Hotspot &h);
 	static void characterChangeRoom(Hotspot &h, uint16 roomNumber,
-								  int16 newX, int16 newY, Direction dir);
+	                                int16 newX, int16 newY, Direction dir);
 	static bool charactersIntersecting(HotspotData *hotspot1, HotspotData *hotspot2);
 	static bool isCharacterInList(uint16 *lst, int numEntries, uint16 charId);
 };
@@ -99,6 +100,7 @@ private:
 	void rackSerfAnimHandler(Hotspot &h);
 	void fighterAnimHandler(Hotspot &h);
 	void playerFightAnimHandler(Hotspot &h);
+
 public:
 	HotspotTickHandlers();
 
@@ -109,20 +111,27 @@ class WalkingActionEntry {
 private:
 	Direction _direction;
 	int _numSteps;
+
 public:
-	WalkingActionEntry(Direction dir, int steps): _direction(dir), _numSteps(steps) {}
+	WalkingActionEntry(Direction dir, int steps)
+	  : _direction(dir)
+	  , _numSteps(steps) {}
 	Direction direction() const { return _direction; }
 	int &rawSteps() { return _numSteps; }
 	int numSteps() const;
 };
 
-enum PathFinderResult {PF_UNFINISHED, PF_OK, PF_DEST_OCCUPIED, PF_PART_PATH, PF_NO_WALK};
+enum PathFinderResult { PF_UNFINISHED,
+	                      PF_OK,
+	                      PF_DEST_OCCUPIED,
+	                      PF_PART_PATH,
+	                      PF_NO_WALK };
 
 class PathFinder {
 private:
 	Hotspot *_hotspot;
 	bool _inUse;
-	typedef Common::List<Common::SharedPtr<WalkingActionEntry> > WalkingActionList;
+	typedef Common::List<Common::SharedPtr<WalkingActionEntry>> WalkingActionList;
 	WalkingActionList _list;
 	RoomPathsDecompressedData _layer;
 	int _stepCtr;
@@ -150,6 +159,7 @@ private:
 	void addBack(Direction dir, int steps) {
 		_list.push_back(WalkingActionList::value_type(new WalkingActionEntry(dir, steps)));
 	}
+
 public:
 	PathFinder(Hotspot *h);
 	void clear();
@@ -166,15 +176,20 @@ public:
 	void loadFromStream(Common::ReadStream *stream);
 };
 
-enum HotspotPrecheckResult {PC_EXECUTE, PC_NOT_IN_ROOM, PC_FAILED, PC_WAIT, PC_EXCESS};
+enum HotspotPrecheckResult { PC_EXECUTE,
+	                           PC_NOT_IN_ROOM,
+	                           PC_FAILED,
+	                           PC_WAIT,
+	                           PC_EXCESS };
 
-enum BarPlaceResult {BP_KEEP_TRYING, BP_GOT_THERE, BP_FAIL};
+enum BarPlaceResult { BP_KEEP_TRYING,
+	                    BP_GOT_THERE,
+	                    BP_FAIL };
 
 struct DestStructure {
 	uint8 counter;
 	Common::Point position;
 };
-
 
 #define MAX_NUM_FRAMES 16
 
@@ -270,6 +285,7 @@ private:
 
 	// Auxillaries
 	void doLookAction(HotspotData *hotspot, Action action);
+
 public:
 	Hotspot(HotspotData *res);
 	Hotspot(Hotspot *character, uint16 objType);
@@ -325,13 +341,17 @@ public:
 	void setColorOffset(uint8 value) { _colorOffset = value; }
 	void setRoomNumber(uint16 roomNum) {
 		_roomNumber = roomNum;
-		if (_data) _data->roomNumber = roomNum;
+		if (_data)
+			_data->roomNumber = roomNum;
 	}
 	uint16 nameId() const;
 	const char *getName();
 	bool isActiveAnimation();
 	void setPosition(int16 newX, int16 newY);
-	void setDestPosition(int16 newX, int16 newY) { _destX = newX; _destY = newY; }
+	void setDestPosition(int16 newX, int16 newY) {
+		_destX = newX;
+		_destY = newY;
+	}
 	void setDestHotspot(uint16 id) { _destHotspotId = id; }
 	void setExitCtr(uint8 value) { _exitCtr = value; }
 	BlockedState blockedState() const {
@@ -457,7 +477,10 @@ public:
 	DestStructure &tempDest() { return _tempDest; }
 	uint16 frameCtr() const { return _frameCtr; }
 	void setFrameCtr(uint16 value) { _frameCtr = value; }
-	void decrFrameCtr() { if (_frameCtr > 0) --_frameCtr; }
+	void decrFrameCtr() {
+		if (_frameCtr > 0)
+			--_frameCtr;
+	}
 	uint8 actionCtr() const {
 		assert(_data);
 		return _data->actionCtr;
@@ -472,7 +495,7 @@ public:
 	// Miscellaneous
 	void doNothing(HotspotData *hotspot);
 	void converse(uint16 destCharacterId, uint16 messageId, bool srcStandStill = false,
-					   bool destStandStill = false);
+	              bool destStandStill = false);
 	void showMessage(uint16 messageId, uint16 destCharacterId = NOONE_ID);
 	void scheduleConverse(uint16 destHotspot, uint16 messageId);
 	void handleTalkDialog();
@@ -481,7 +504,7 @@ public:
 	void loadFromStream(Common::ReadStream *stream);
 };
 
-class HotspotList: public Common::List<Common::SharedPtr<Hotspot> > {
+class HotspotList : public Common::List<Common::SharedPtr<Hotspot>> {
 public:
 	void saveToStream(Common::WriteStream *stream) const;
 	void loadFromStream(Common::ReadStream *stream);

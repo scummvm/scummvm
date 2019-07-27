@@ -20,8 +20,8 @@
  *
  */
 
-#include "scumm/he/intern_he.h"
 #include "engines/scumm/he/moonbase/moonbase.h"
+#include "scumm/he/intern_he.h"
 
 namespace Scumm {
 
@@ -34,14 +34,13 @@ enum {
 };
 
 static void blitDistortionCore(
-	Graphics::Surface *dstBitmap,
-	const int x, const int y,
-	const Graphics::Surface *distortionBitmap,
-	const Common::Rect *optionalclipRectPtr,
-	int transferOp,
-	const Graphics::Surface *srcBitmap,
-	Common::Rect *srcClipRect
-) {
+  Graphics::Surface *dstBitmap,
+  const int x, const int y,
+  const Graphics::Surface *distortionBitmap,
+  const Common::Rect *optionalclipRectPtr,
+  int transferOp,
+  const Graphics::Surface *srcBitmap,
+  Common::Rect *srcClipRect) {
 	Common::Rect clipRect(dstBitmap->w, dstBitmap->h);
 
 	if (optionalclipRectPtr) {
@@ -93,7 +92,7 @@ static void blitDistortionCore(
 		for (int i = cw; --i >= 0;) {
 			uint16 p = READ_LE_UINT16(is);
 			int sx = baseX + dx + ((p >> 5) & 0x1f); // G color
-			int sy = baseY + dy + (p & 0x1f);        // B color;
+			int sy = baseY + dy + (p & 0x1f); // B color;
 
 			if (transferOp == kReflectionClipped) {
 				if (sx < srcClipRect->left)
@@ -128,7 +127,7 @@ static void blitDistortionCore(
 }
 
 void Moonbase::blitDistortion(byte *bufferData, const int bufferWidth, const int bufferHeight, const int bufferPitch,
-		const Common::Rect *optionalClippingRect, byte *dataStream, const int x, const int y, byte *altSourceBuffer) {
+                              const Common::Rect *optionalClippingRect, byte *dataStream, const int x, const int y, byte *altSourceBuffer) {
 	byte *sourcePixels = (altSourceBuffer) ? altSourceBuffer : bufferData;
 	Common::Rect dstLimitsRect(bufferWidth, bufferHeight);
 	Common::Rect clippedDstRect = dstLimitsRect;
@@ -161,16 +160,25 @@ void Moonbase::blitDistortion(byte *bufferData, const int bufferWidth, const int
 
 	for (int i = 0; i < subBlockCount; i++) {
 		byte *blockData = subBlockStream;
-		uint32 blockSize = READ_LE_UINT32(blockData); blockData += 4;
+		uint32 blockSize = READ_LE_UINT32(blockData);
+		blockData += 4;
 		subBlockStream += blockSize;
-		int xOffset = READ_LE_UINT16(blockData); blockData += 2;
-		int yOffset = READ_LE_UINT16(blockData); blockData += 2;
-		int width = READ_LE_UINT16(blockData); blockData += 2;
-		int height = READ_LE_UINT16(blockData); blockData += 2;
-		int l_reach = READ_LE_UINT16(blockData); blockData += 2;
-		int r_reach = READ_LE_UINT16(blockData); blockData += 2;
-		int t_reach = READ_LE_UINT16(blockData); blockData += 2;
-		int b_reach = READ_LE_UINT16(blockData); blockData += 2;
+		int xOffset = READ_LE_UINT16(blockData);
+		blockData += 2;
+		int yOffset = READ_LE_UINT16(blockData);
+		blockData += 2;
+		int width = READ_LE_UINT16(blockData);
+		blockData += 2;
+		int height = READ_LE_UINT16(blockData);
+		blockData += 2;
+		int l_reach = READ_LE_UINT16(blockData);
+		blockData += 2;
+		int r_reach = READ_LE_UINT16(blockData);
+		blockData += 2;
+		int t_reach = READ_LE_UINT16(blockData);
+		blockData += 2;
+		int b_reach = READ_LE_UINT16(blockData);
+		blockData += 2;
 		int distortionPitch = ((width * 2 + 7) / 8); // 2 for 555
 
 		if (width == 0 && height == 0)

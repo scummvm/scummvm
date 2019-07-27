@@ -33,8 +33,8 @@
 #include "saga/render.h"
 #include "saga/scene.h"
 
-#include "common/timer.h"
 #include "common/system.h"
+#include "common/timer.h"
 
 namespace Saga {
 
@@ -135,10 +135,7 @@ void Render::drawScene() {
 	if (_flags & RF_MAP)
 		_vm->_interface->mapPanelDrawCrossHair();
 
-	if ((curMode == kPanelOption) ||
-		(curMode == kPanelQuit) ||
-		(curMode == kPanelLoad) ||
-		(curMode == kPanelSave)) {
+	if ((curMode == kPanelOption) || (curMode == kPanelQuit) || (curMode == kPanelLoad) || (curMode == kPanelSave)) {
 		_vm->_interface->drawOption();
 
 		if (curMode == kPanelQuit) {
@@ -181,7 +178,7 @@ void Render::drawScene() {
 		textPoint.y = 90;
 
 		_vm->_font->textDraw(kKnownFontPause, pauseString, textPoint,
-							_vm->KnownColor2ColorId(kKnownColorBrightWhite), _vm->KnownColor2ColorId(kKnownColorBlack), kFontOutline);
+		                     _vm->KnownColor2ColorId(kKnownColorBrightWhite), _vm->KnownColor2ColorId(kKnownColorBlack), kFontOutline);
 	}
 
 	// Update user interface
@@ -192,7 +189,7 @@ void Render::drawScene() {
 	if (_flags & RF_TEXT_TEST) {
 		Rect rect(mousePoint.x, mousePoint.y, mousePoint.x + 100, mousePoint.y + 50);
 		_vm->_font->textDrawRect(kKnownFontMedium, test_txt, rect,
-				kITEColorBrightWhite, kITEColorBlack, (FontEffectFlags)(kFontOutline | kFontCentered));
+		                         kITEColorBrightWhite, kITEColorBlack, (FontEffectFlags)(kFontOutline | kFontCentered));
 	}
 
 	// Display palette test, if applicable
@@ -223,7 +220,7 @@ void Render::addDirtyRect(Common::Rect r) {
 
 	// Check if the new rectangle is contained within another in the list
 	Common::List<Common::Rect>::iterator it;
-	for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ) {
+	for (it = _dirtyRects.begin(); it != _dirtyRects.end();) {
 		// If we find a rectangle which fully contains the new one,
 		// we can abort the search.
 		if (it->contains(r))
@@ -264,7 +261,7 @@ void Render::drawDirtyRects() {
 		}
 	} else {
 		_system->copyRectToScreen(_vm->_gfx->getBackBufferPixels(), _vm->_gfx->getBackBufferWidth(), 0, 0,
-								  _vm->_gfx->getBackBufferWidth(), _vm->_gfx->getBackBufferHeight());
+		                          _vm->_gfx->getBackBufferWidth(), _vm->_gfx->getBackBufferHeight());
 	}
 
 	_dirtyRects.clear();

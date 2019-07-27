@@ -25,11 +25,11 @@
 #include "common/system.h"
 
 #include "graphics/colormasks.h"
+#include "graphics/palette.h"
 #include "graphics/scaler.h"
 #include "graphics/scaler/intern.h"
-#include "graphics/palette.h"
 
-template<int bitFormat>
+template <int bitFormat>
 uint16 quadBlockInterpolate(const uint8 *src, uint32 srcPitch) {
 	uint16 colorx1y1 = *(((const uint16 *)src));
 	uint16 colorx2y1 = *(((const uint16 *)src) + 1);
@@ -37,10 +37,10 @@ uint16 quadBlockInterpolate(const uint8 *src, uint32 srcPitch) {
 	uint16 colorx1y2 = *(((const uint16 *)(src + srcPitch)));
 	uint16 colorx2y2 = *(((const uint16 *)(src + srcPitch)) + 1);
 
-	return interpolate16_1_1_1_1<Graphics::ColorMasks<bitFormat> >(colorx1y1, colorx2y1, colorx1y2, colorx2y2);
+	return interpolate16_1_1_1_1<Graphics::ColorMasks<bitFormat>>(colorx1y1, colorx2y1, colorx1y2, colorx2y2);
 }
 
-template<int bitFormat>
+template <int bitFormat>
 void createThumbnail_2(const uint8 *src, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	// Make sure the width and height is a multiple of 2.
 	width &= ~1;
@@ -55,7 +55,7 @@ void createThumbnail_2(const uint8 *src, uint32 srcPitch, uint8 *dstPtr, uint32 
 	}
 }
 
-template<int bitFormat>
+template <int bitFormat>
 void createThumbnail_4(const uint8 *src, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	// Make sure the width and height is a multiple of 4
 	width &= ~3;
@@ -68,7 +68,7 @@ void createThumbnail_4(const uint8 *src, uint32 srcPitch, uint8 *dstPtr, uint32 
 			uint16 downleft = quadBlockInterpolate<bitFormat>(src + srcPitch * 2 + 2 * x, srcPitch);
 			uint16 downright = quadBlockInterpolate<bitFormat>(src + srcPitch * 2 + 2 * (x + 2), srcPitch);
 
-			*((uint16 *)dstPtr) = interpolate16_1_1_1_1<Graphics::ColorMasks<bitFormat> >(upleft, upright, downleft, downright);
+			*((uint16 *)dstPtr) = interpolate16_1_1_1_1<Graphics::ColorMasks<bitFormat>>(upleft, upright, downleft, downright);
 		}
 		dstPtr += (dstPitch - 2 * width / 4);
 		src += 4 * srcPitch;
@@ -134,13 +134,13 @@ static void scaleThumbnail(Graphics::Surface &in, Graphics::Surface &out) {
 
 				// Look up colors at the points
 				uint8 p1R, p1G, p1B;
-				Graphics::colorToRGB<Graphics::ColorMasks<565> >(READ_UINT16(in.getBasePtr(x1, y1)), p1R, p1G, p1B);
+				Graphics::colorToRGB<Graphics::ColorMasks<565>>(READ_UINT16(in.getBasePtr(x1, y1)), p1R, p1G, p1B);
 				uint8 p2R, p2G, p2B;
-				Graphics::colorToRGB<Graphics::ColorMasks<565> >(READ_UINT16(in.getBasePtr(x2, y1)), p2R, p2G, p2B);
+				Graphics::colorToRGB<Graphics::ColorMasks<565>>(READ_UINT16(in.getBasePtr(x2, y1)), p2R, p2G, p2B);
 				uint8 p3R, p3G, p3B;
-				Graphics::colorToRGB<Graphics::ColorMasks<565> >(READ_UINT16(in.getBasePtr(x1, y2)), p3R, p3G, p3B);
+				Graphics::colorToRGB<Graphics::ColorMasks<565>>(READ_UINT16(in.getBasePtr(x1, y2)), p3R, p3G, p3B);
 				uint8 p4R, p4G, p4B;
-				Graphics::colorToRGB<Graphics::ColorMasks<565> >(READ_UINT16(in.getBasePtr(x2, y2)), p4R, p4G, p4B);
+				Graphics::colorToRGB<Graphics::ColorMasks<565>>(READ_UINT16(in.getBasePtr(x2, y2)), p4R, p4G, p4B);
 
 				const float xDiff = xFrac - x1;
 				const float yDiff = yFrac - y1;
@@ -149,7 +149,7 @@ static void scaleThumbnail(Graphics::Surface &in, Graphics::Surface &out) {
 				uint8 pG = (uint8)((1 - yDiff) * ((1 - xDiff) * p1G + xDiff * p2G) + yDiff * ((1 - xDiff) * p3G + xDiff * p4G));
 				uint8 pB = (uint8)((1 - yDiff) * ((1 - xDiff) * p1B + xDiff * p2B) + yDiff * ((1 - xDiff) * p3B + xDiff * p4B));
 
-				WRITE_UINT16(dst, Graphics::RGBToColor<Graphics::ColorMasks<565> >(pR, pG, pB));
+				WRITE_UINT16(dst, Graphics::RGBToColor<Graphics::ColorMasks<565>>(pR, pG, pB));
 				dst += 2;
 			}
 
@@ -158,7 +158,6 @@ static void scaleThumbnail(Graphics::Surface &in, Graphics::Surface &out) {
 		}
 	}
 }
-
 
 /**
  * Copies the current screen contents to a new surface, using RGB565 format.
@@ -203,7 +202,7 @@ static bool grabScreen565(Graphics::Surface *surf) {
 				screenFormat.colorToRGB(col, r, g, b);
 			}
 
-			*((uint16 *)surf->getBasePtr(x, y)) = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
+			*((uint16 *)surf->getBasePtr(x, y)) = Graphics::RGBToColor<Graphics::ColorMasks<565>>(r, g, b);
 		}
 	}
 
@@ -251,7 +250,7 @@ bool createThumbnail(Graphics::Surface *surf, const uint8 *pixels, int w, int h,
 			g = palette[pixels[y * w + x] * 3 + 1];
 			b = palette[pixels[y * w + x] * 3 + 2];
 
-			*((uint16 *)screen.getBasePtr(x, y)) = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
+			*((uint16 *)screen.getBasePtr(x, y)) = Graphics::RGBToColor<Graphics::ColorMasks<565>>(r, g, b);
 		}
 	}
 
@@ -277,7 +276,7 @@ bool createScreenShot(Graphics::Surface &surf) {
 				byte r = 0, g = 0, b = 0, a = 0;
 				uint32 col = READ_UINT32(screen->getBasePtr(x, y));
 				screenFormat.colorToARGB(col, a, r, g, b);
-				*((uint32 *)surf.getBasePtr(x, y)) = Graphics::ARGBToColor<Graphics::ColorMasks<8888> >(a, r, g, b);
+				*((uint32 *)surf.getBasePtr(x, y)) = Graphics::ARGBToColor<Graphics::ColorMasks<8888>>(a, r, g, b);
 			}
 		}
 		g_system->unlockScreen();

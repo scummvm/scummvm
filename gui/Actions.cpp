@@ -21,27 +21,27 @@
  */
 
 #include "gui/Actions.h"
-#include "gui/message.h"
 #include "common/config-manager.h"
+#include "gui/message.h"
 
 #ifdef _WIN32_WCE
-	#include "backends/platform/wince/CEActionsPocket.h"
-	#include "backends/platform/wince/CEActionsSmartphone.h"
-	#include "backends/platform/wince/CEDevice.h"
+#	include "backends/platform/wince/CEActionsPocket.h"
+#	include "backends/platform/wince/CEActionsSmartphone.h"
+#	include "backends/platform/wince/CEDevice.h"
 #elif defined(__SYMBIAN32__)
-	#include "backends/platform/symbian/src/SymbianActions.h"
+#	include "backends/platform/symbian/src/SymbianActions.h"
 #endif
 
 namespace GUI {
 
-Actions* Actions::Instance() {
+Actions *Actions::Instance() {
 	return _instance;
 }
 
-Actions::Actions() :
-	_mapping_active(false), _initialized(false) {
+Actions::Actions()
+  : _mapping_active(false)
+  , _initialized(false) {
 }
-
 
 Actions::~Actions() {
 }
@@ -66,7 +66,6 @@ void Actions::initInstanceMain(OSystem *mainSystem) {
 void Actions::initInstanceGame() {
 	_instance->_initialized = true;
 }
-
 
 bool Actions::initialized() {
 	return _initialized;
@@ -93,7 +92,7 @@ bool Actions::performMapped(unsigned int keyCode, bool pushed) {
 
 	for (i = 0; i < size(); ++i) {
 		if (_action_mapping[i] == keyCode && _action_enabled[i])
-				return perform((ActionType)i, pushed);
+			return perform((ActionType)i, pushed);
 	}
 
 	return false;
@@ -140,7 +139,6 @@ unsigned int Actions::getMapping(ActionType action) {
 	return _action_mapping[action];
 }
 
-
 void Actions::setMapping(ActionType action, unsigned int keyCode) {
 	int i;
 
@@ -152,11 +150,10 @@ void Actions::setMapping(ActionType action, unsigned int keyCode) {
 	_action_mapping[action] = keyCode;
 }
 
-Key& Actions::getKeyAction(ActionType action) {
+Key &Actions::getKeyAction(ActionType action) {
 	return _key_action[action];
 }
 
 Actions *Actions::_instance = NULL;
-
 
 } // namespace GUI

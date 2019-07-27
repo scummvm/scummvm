@@ -26,7 +26,8 @@
 
 namespace Gob {
 
-Infogrames::Infogrames(Audio::Mixer &mixer) : _mixer(&mixer) {
+Infogrames::Infogrames(Audio::Mixer &mixer)
+  : _mixer(&mixer) {
 	_instruments = 0;
 	_song = 0;
 }
@@ -51,7 +52,7 @@ bool Infogrames::loadSong(const char *fileName) {
 			return false;
 
 	_song = new Audio::Infogrames(*_instruments, true,
-			_mixer->getOutputRate(), _mixer->getOutputRate() / 75);
+	                              _mixer->getOutputRate(), _mixer->getOutputRate() / 75);
 
 	if (!_song->load(fileName)) {
 		warning("Infogrames: Couldn't load music \"%s\"", fileName);
@@ -66,7 +67,7 @@ void Infogrames::play() {
 	if (_song && !_mixer->isSoundHandleActive(_handle)) {
 		_song->restart();
 		_mixer->playStream(Audio::Mixer::kMusicSoundType,
-				&_handle, _song, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+		                   &_handle, _song, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 	}
 }
 

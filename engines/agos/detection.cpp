@@ -22,16 +22,16 @@
 
 #include "base/plugins.h"
 
-#include "engines/advancedDetector.h"
-#include "engines/obsolete.h"
 #include "common/config-manager.h"
+#include "common/installshield_cab.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "common/installshield_cab.h"
+#include "engines/advancedDetector.h"
+#include "engines/obsolete.h"
 
-#include "agos/intern.h"
 #include "agos/agos.h"
+#include "agos/intern.h"
 
 namespace AGOS {
 
@@ -51,35 +51,35 @@ struct AGOSGameDescription {
  *
  */
 static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
-	{"simon1acorn", "simon1", Common::kPlatformAcorn},
-	{"simon1amiga", "simon1", Common::kPlatformAmiga},
-	{"simon1cd32", "simon1", Common::kPlatformAmiga},
-	{"simon1demo", "simon1", Common::kPlatformDOS},
-	{"simon1dos", "simon1", Common::kPlatformDOS},
-	{"simon1talkie", "simon1", Common::kPlatformDOS},
-	{"simon1win", "simon1", Common::kPlatformWindows},
-	{"simon2dos", "simon2", Common::kPlatformDOS},
-	{"simon2talkie", "simon2", Common::kPlatformDOS},
-	{"simon2mac", "simon2", Common::kPlatformMacintosh},
-	{"simon2win", "simon2", Common::kPlatformWindows},
-	{0, 0, Common::kPlatformUnknown}
+	{ "simon1acorn", "simon1", Common::kPlatformAcorn },
+	{ "simon1amiga", "simon1", Common::kPlatformAmiga },
+	{ "simon1cd32", "simon1", Common::kPlatformAmiga },
+	{ "simon1demo", "simon1", Common::kPlatformDOS },
+	{ "simon1dos", "simon1", Common::kPlatformDOS },
+	{ "simon1talkie", "simon1", Common::kPlatformDOS },
+	{ "simon1win", "simon1", Common::kPlatformWindows },
+	{ "simon2dos", "simon2", Common::kPlatformDOS },
+	{ "simon2talkie", "simon2", Common::kPlatformDOS },
+	{ "simon2mac", "simon2", Common::kPlatformMacintosh },
+	{ "simon2win", "simon2", Common::kPlatformWindows },
+	{ 0, 0, Common::kPlatformUnknown }
 };
 
 static const PlainGameDescriptor agosGames[] = {
-	{"pn", "Personal Nightmare"},
-	{"elvira1", "Elvira - Mistress of the Dark"},
-	{"elvira2", "Elvira II - The Jaws of Cerberus"},
-	{"waxworks", "Waxworks"},
-	{"simon1", "Simon the Sorcerer 1"},
-	{"simon2", "Simon the Sorcerer 2"},
+	{ "pn", "Personal Nightmare" },
+	{ "elvira1", "Elvira - Mistress of the Dark" },
+	{ "elvira2", "Elvira II - The Jaws of Cerberus" },
+	{ "waxworks", "Waxworks" },
+	{ "simon1", "Simon the Sorcerer 1" },
+	{ "simon2", "Simon the Sorcerer 2" },
 #ifdef ENABLE_AGOS2
-	{"feeble", "The Feeble Files"},
-	{"dimp", "Demon in my Pocket"},
-	{"jumble", "Jumble"},
-	{"puzzle", "NoPatience"},
-	{"swampy", "Swampy Adventures"},
+	{ "feeble", "The Feeble Files" },
+	{ "dimp", "Demon in my Pocket" },
+	{ "jumble", "Jumble" },
+	{ "puzzle", "NoPatience" },
+	{ "swampy", "Swampy Adventures" },
 #endif
-	{0, 0}
+	{ 0, 0 }
 };
 
 #include "agos/detection_tables.h"
@@ -93,7 +93,8 @@ using namespace AGOS;
 
 class AgosMetaEngine : public AdvancedMetaEngine {
 public:
-	AgosMetaEngine() : AdvancedMetaEngine(AGOS::gameDescriptions, sizeof(AGOS::AGOSGameDescription), agosGames) {
+	AgosMetaEngine()
+	  : AdvancedMetaEngine(AGOS::gameDescriptions, sizeof(AGOS::AGOSGameDescription), agosGames) {
 		_guiOptions = GUIO1(GUIO_NOLAUNCHLOAD);
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
@@ -124,14 +125,11 @@ public:
 };
 
 bool AgosMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) || (f == kSimpleSavesNames);
 }
 
 bool AGOS::AGOSEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL);
+	return (f == kSupportsRTL);
 }
 
 bool AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -211,9 +209,9 @@ SaveStateList AgosMetaEngine::listSaves(const char *target) const {
 int AgosMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 #if PLUGIN_ENABLED_DYNAMIC(AGOS)
-	REGISTER_PLUGIN_DYNAMIC(AGOS, PLUGIN_TYPE_ENGINE, AgosMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(AGOS, PLUGIN_TYPE_ENGINE, AgosMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(AGOS, PLUGIN_TYPE_ENGINE, AgosMetaEngine);
+REGISTER_PLUGIN_STATIC(AGOS, PLUGIN_TYPE_ENGINE, AgosMetaEngine);
 #endif
 
 namespace AGOS {

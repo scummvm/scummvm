@@ -23,20 +23,21 @@
 #include "common/endian.h"
 #include "common/stream.h"
 
-#include "gob/gob.h"
-#include "gob/mult.h"
-#include "gob/global.h"
-#include "gob/util.h"
 #include "gob/draw.h"
 #include "gob/game.h"
-#include "gob/script.h"
-#include "gob/resources.h"
+#include "gob/global.h"
+#include "gob/gob.h"
 #include "gob/inter.h"
+#include "gob/mult.h"
+#include "gob/resources.h"
 #include "gob/scenery.h"
+#include "gob/script.h"
+#include "gob/util.h"
 
 namespace Gob {
 
-Mult_v1::Mult_v1(GobEngine *vm) : Mult(vm) {
+Mult_v1::Mult_v1(GobEngine *vm)
+  : Mult(vm) {
 }
 
 void Mult_v1::loadMult(int16 resId) {
@@ -159,18 +160,15 @@ void Mult_v1::loadMult(int16 resId) {
 			_multData->sndKeys[i].resId = _vm->_game->_script->peekUint16();
 
 			for (j = 0; j < i; j++) {
-				if (_multData->sndKeys[i].resId ==
-				    _multData->sndKeys[j].resId) {
-					_multData->sndKeys[i].soundIndex =
-					    _multData->sndKeys[j].soundIndex;
+				if (_multData->sndKeys[i].resId == _multData->sndKeys[j].resId) {
+					_multData->sndKeys[i].soundIndex = _multData->sndKeys[j].soundIndex;
 					_vm->_game->_script->skip(2);
 					break;
 				}
 			}
 			if (i == j) {
 				_vm->_inter->loadSound(19 - _multData->sndSlotsCount);
-				_multData->sndKeys[i].soundIndex =
-				    19 - _multData->sndSlotsCount;
+				_multData->sndKeys[i].soundIndex = 19 - _multData->sndSlotsCount;
 				_multData->sndSlotsCount++;
 			}
 			break;
@@ -336,11 +334,9 @@ void Mult_v1::drawStatics(bool &stop) {
 
 		_vm->_scenery->_curStaticLayer = _multData->staticKeys[_counter].layer;
 		for (_vm->_scenery->_curStatic = 0;
-				_vm->_scenery->_curStaticLayer >=
-					_vm->_scenery->getStaticLayersCount(_multData->staticIndices[_vm->_scenery->_curStatic]);
-				_vm->_scenery->_curStatic++) {
-			_vm->_scenery->_curStaticLayer -=
-					_vm->_scenery->getStaticLayersCount(_multData->staticIndices[_vm->_scenery->_curStatic]);
+		     _vm->_scenery->_curStaticLayer >= _vm->_scenery->getStaticLayersCount(_multData->staticIndices[_vm->_scenery->_curStatic]);
+		     _vm->_scenery->_curStatic++) {
+			_vm->_scenery->_curStaticLayer -= _vm->_scenery->getStaticLayersCount(_multData->staticIndices[_vm->_scenery->_curStatic]);
 		}
 
 		_vm->_scenery->_curStatic = _multData->staticIndices[_vm->_scenery->_curStatic];
@@ -418,10 +414,8 @@ void Mult_v1::newCycleAnim(Mult_Object &animObj) {
 
 	case 2:
 		animData.frame = 0;
-		animData.animation =
-				animData.newAnimation;
-		animData.layer =
-				animData.newLayer;
+		animData.animation = animData.newAnimation;
+		animData.layer = animData.newLayer;
 		break;
 
 	case 3:
@@ -478,8 +472,7 @@ void Mult_v1::animate() {
 		pDirtyBottoms[i] = 1000;
 		pDirtyRights[i] = 1000;
 
-		if (!animData.isStatic && !animData.isPaused &&
-		    (animObj.tick == animData.maxTick)) {
+		if (!animData.isStatic && !animData.isPaused && (animObj.tick == animData.maxTick)) {
 			if (animData.order < minOrder)
 				minOrder = animData.order;
 
@@ -488,17 +481,13 @@ void Mult_v1::animate() {
 
 			pNeedRedraw[i] = 1;
 			_vm->_scenery->updateAnim(animData.layer, animData.frame,
-				animData.animation, 0, *(animObj.pPosX), *(animObj.pPosY), 0);
+			                          animData.animation, 0, *(animObj.pPosX), *(animObj.pPosY), 0);
 
 			if (animObj.lastLeft != -1) {
-				pDirtyLefts[i] =
-				  MIN(animObj.lastLeft, _vm->_scenery->_toRedrawLeft);
-				pDirtyTops[i] =
-				  MIN(animObj.lastTop, _vm->_scenery->_toRedrawTop);
-				pDirtyRights[i] =
-				  MAX(animObj.lastRight, _vm->_scenery->_toRedrawRight);
-				pDirtyBottoms[i] =
-				  MAX(animObj.lastBottom, _vm->_scenery->_toRedrawBottom);
+				pDirtyLefts[i] = MIN(animObj.lastLeft, _vm->_scenery->_toRedrawLeft);
+				pDirtyTops[i] = MIN(animObj.lastTop, _vm->_scenery->_toRedrawTop);
+				pDirtyRights[i] = MAX(animObj.lastRight, _vm->_scenery->_toRedrawRight);
+				pDirtyBottoms[i] = MAX(animObj.lastBottom, _vm->_scenery->_toRedrawBottom);
 			} else {
 				pDirtyLefts[i] = _vm->_scenery->_toRedrawLeft;
 				pDirtyTops[i] = _vm->_scenery->_toRedrawTop;
@@ -537,7 +526,7 @@ void Mult_v1::animate() {
 
 	// Find intersections
 	for (i = 0; i < _objCount; i++) {
-	Mult_AnimData &animData = *(_objects[i].pAnimData);
+		Mult_AnimData &animData = *(_objects[i].pAnimData);
 		animData.intersected = 200;
 
 		if (animData.isStatic)
@@ -598,8 +587,8 @@ void Mult_v1::animate() {
 			if (pNeedRedraw[i]) {
 				if (!animData.isStatic) {
 					_vm->_scenery->updateAnim(animData.layer, animData.frame,
-						animData.animation, 2, *(animObj.pPosX),
-						*(animObj.pPosY), 1);
+					                          animData.animation, 2, *(animObj.pPosX),
+					                          *(animObj.pPosY), 1);
 
 					if (_vm->_scenery->_toRedrawLeft != -12345) {
 						animObj.lastLeft = _vm->_scenery->_toRedrawLeft;
@@ -633,8 +622,8 @@ void Mult_v1::animate() {
 					_vm->_scenery->_toRedrawBottom = pDirtyBottoms[j];
 
 					_vm->_scenery->updateAnim(animData.layer, animData.frame,
-						animData.animation, 4, *(animObj.pPosX),
-						*(animObj.pPosY), 1);
+					                          animData.animation, 4, *(animObj.pPosX),
+					                          *(animObj.pPosY), 1);
 
 					_vm->_scenery->updateStatic(order + 1);
 				}

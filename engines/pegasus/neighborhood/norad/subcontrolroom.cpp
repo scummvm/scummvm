@@ -23,12 +23,12 @@
  *
  */
 
-#include "pegasus/gamestate.h"
-#include "pegasus/pegasus.h"
-#include "pegasus/neighborhood/norad/constants.h"
-#include "pegasus/neighborhood/norad/norad.h"
 #include "pegasus/neighborhood/norad/subcontrolroom.h"
+#include "pegasus/gamestate.h"
+#include "pegasus/neighborhood/norad/constants.h"
 #include "pegasus/neighborhood/norad/delta/noraddelta.h"
+#include "pegasus/neighborhood/norad/norad.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -152,13 +152,7 @@ static const NotificationFlags kClawMenuFinished = kClawHighlightFinished << 1;
 static const NotificationFlags kDeltaSplashFinished = kClawMenuFinished << 1;
 static const NotificationFlags kDeltaPrepFinished = kDeltaSplashFinished << 1;
 
-static const NotificationFlags kSubControlNotificationFlags = kAlphaSplashFinished |
-														kAlphaPrepFinished |
-														kPrepHighlightFinished |
-														kClawHighlightFinished |
-														kClawMenuFinished |
-														kDeltaSplashFinished |
-														kDeltaPrepFinished;
+static const NotificationFlags kSubControlNotificationFlags = kAlphaSplashFinished | kAlphaPrepFinished | kPrepHighlightFinished | kClawHighlightFinished | kClawMenuFinished | kDeltaSplashFinished | kDeltaPrepFinished;
 
 static const NotificationFlags kOneSecondOfMoveFinished = 1;
 
@@ -260,46 +254,38 @@ enum {
 // Array indexed by [claw position] [action]
 // array yields an index into the neighborhood's extra id table for claw animation or -1.
 static const int s_clawStateTable[4][8] = {
-	{
-		kClawAPinchIndex,
-		kNoActionIndex,
-		kNoActionIndex,
-		kClawFromAToBIndex,
-		kNoActionIndex,
-		kClawACounterclockwiseIndex,
-		kClawAClockwiseIndex,
-		kClawALoopIndex
-	},
-	{
-		kClawBPinchIndex,
-		kNoActionIndex,
-		kClawFromBToAIndex,
-		kClawFromBToDIndex,
-		kClawFromBToCIndex,
-		kClawBCounterclockwiseIndex,
-		kClawBClockwiseIndex,
-		kClawBLoopIndex
-	},
-	{
-		kClawCPinchIndex,
-		kClawFromCToBIndex,
-		kNoActionIndex,
-		kNoActionIndex,
-		kNoActionIndex,
-		kClawCCounterclockwiseIndex,
-		kClawCClockwiseIndex,
-		kClawCLoopIndex
-	},
-	{
-		kClawDPinchIndex,
-		kNoActionIndex,
-		kClawFromDToBIndex,
-		kNoActionIndex,
-		kNoActionIndex,
-		kClawDCounterclockwiseIndex,
-		kClawDClockwiseIndex,
-		kClawDLoopIndex
-	}
+	{ kClawAPinchIndex,
+	  kNoActionIndex,
+	  kNoActionIndex,
+	  kClawFromAToBIndex,
+	  kNoActionIndex,
+	  kClawACounterclockwiseIndex,
+	  kClawAClockwiseIndex,
+	  kClawALoopIndex },
+	{ kClawBPinchIndex,
+	  kNoActionIndex,
+	  kClawFromBToAIndex,
+	  kClawFromBToDIndex,
+	  kClawFromBToCIndex,
+	  kClawBCounterclockwiseIndex,
+	  kClawBClockwiseIndex,
+	  kClawBLoopIndex },
+	{ kClawCPinchIndex,
+	  kClawFromCToBIndex,
+	  kNoActionIndex,
+	  kNoActionIndex,
+	  kNoActionIndex,
+	  kClawCCounterclockwiseIndex,
+	  kClawCClockwiseIndex,
+	  kClawCLoopIndex },
+	{ kClawDPinchIndex,
+	  kNoActionIndex,
+	  kClawFromDToBIndex,
+	  kNoActionIndex,
+	  kNoActionIndex,
+	  kClawDCounterclockwiseIndex,
+	  kClawDClockwiseIndex,
+	  kClawDLoopIndex }
 };
 
 // Move directions for s_clawMovieTable:
@@ -315,77 +301,55 @@ static const int kClawNowhere = -1;
 // Array indexed by [claw position] [move direction]
 // array yields new claw position or -1.
 static const int s_clawMovieTable[4][4] = {
-	{
-		kClawNowhere,
-		kClawNowhere,
-		kClawAtB,
-		kClawNowhere
-	},
-	{
-		kClawNowhere,
-		kClawAtA,
-		kClawAtD,
-		kClawAtC
-	},
-	{
-		kClawAtB,
-		kClawNowhere,
-		kClawNowhere,
-		kClawNowhere
-	},
-	{
-		kClawNowhere,
-		kClawAtB,
-		kClawNowhere,
-		kClawNowhere
-	}
+	{ kClawNowhere,
+	  kClawNowhere,
+	  kClawAtB,
+	  kClawNowhere },
+	{ kClawNowhere,
+	  kClawAtA,
+	  kClawAtD,
+	  kClawAtC },
+	{ kClawAtB,
+	  kClawNowhere,
+	  kClawNowhere,
+	  kClawNowhere },
+	{ kClawNowhere,
+	  kClawAtB,
+	  kClawNowhere,
+	  kClawNowhere }
 };
 
 // Indexed by claw action index, claw position, plus 0 for start, 1 for stop.
 // (Never indexed with kLoopActionIndex.)
 static const TimeValue s_clawMonitorTable[7][4][2] = {
-	{
-		{ kAPinchStart, kAPinchStop },
-		{ kBPinchStart, kBPinchStop },
-		{ kCPinchStart, kCPinchStop },
-		{ kDPinchStart, kDPinchStop }
-	},
-	{
-		{ 0xffffffff, 0xffffffff },
-		{ 0xffffffff, 0xffffffff },
-		{ kCToBStart, kCToBStop },
-		{ 0xffffffff, 0xffffffff }
-	},
-	{
-		{ 0xffffffff, 0xffffffff },
-		{ kBToAStart, kBToAStop },
-		{ 0xffffffff, 0xffffffff },
-		{ kDToBStart, kDToBStop }
-	},
-	{
-		{ kAToBStart, kAToBStop },
-		{ kBToDStart, kBToDStop },
-		{ 0xffffffff, 0xffffffff },
-		{ 0xffffffff, 0xffffffff }
-	},
-	{
-		{ 0xffffffff, 0xffffffff },
-		{ kBToCStart, kBToCStop },
-		{ 0xffffffff, 0xffffffff },
-		{ 0xffffffff, 0xffffffff }
-	},
-	{
-		{ kACCWStart, kACCWStop },
-		{ kBCCWStart, kBCCWStop },
-		{ kCCCWStart, kCCCWStop },
-		{ kDCCWStart, kDCCWStop }
-	},
-	{
-		{ kACWStart, kACWStop },
-		{ kBCWStart, kBCWStop },
-		{ kCCWStart, kCCWStop },
-		{ kDCWStart, kDCWStop }
-	}
+	{ { kAPinchStart, kAPinchStop },
+	  { kBPinchStart, kBPinchStop },
+	  { kCPinchStart, kCPinchStop },
+	  { kDPinchStart, kDPinchStop } },
+	{ { 0xffffffff, 0xffffffff },
+	  { 0xffffffff, 0xffffffff },
+	  { kCToBStart, kCToBStop },
+	  { 0xffffffff, 0xffffffff } },
+	{ { 0xffffffff, 0xffffffff },
+	  { kBToAStart, kBToAStop },
+	  { 0xffffffff, 0xffffffff },
+	  { kDToBStart, kDToBStop } },
+	{ { kAToBStart, kAToBStop },
+	  { kBToDStart, kBToDStop },
+	  { 0xffffffff, 0xffffffff },
+	  { 0xffffffff, 0xffffffff } },
+	{ { 0xffffffff, 0xffffffff },
+	  { kBToCStart, kBToCStop },
+	  { 0xffffffff, 0xffffffff },
+	  { 0xffffffff, 0xffffffff } },
+	{ { kACCWStart, kACCWStop },
+	  { kBCCWStart, kBCCWStop },
+	  { kCCCWStart, kCCCWStop },
+	  { kDCCWStart, kDCCWStop } },
+	{ { kACWStart, kACWStop },
+	  { kBCWStart, kBCWStop },
+	  { kCCWStart, kCCWStop },
+	  { kDCWStart, kDCWStop } }
 };
 
 // Frame indices for the green ball sprite.
@@ -422,12 +386,20 @@ static const ResIDType kSubControlButtonBaseID = 500;
 static const ResIDType kClawMonitorGreenBallBaseID = 600;
 
 // Constructor
-SubControlRoom::SubControlRoom(Neighborhood *handler) : GameInteraction(kNoradSubControlRoomInteractionID, handler),
-		_subControlMovie(kSubControlMonitorID), _subControlNotification(kSubControlNotificationID, (PegasusEngine *)g_engine),
-		_clawMonitorMovie(kClawMonitorID), _pinchButton(kSubControlPinchID), _downButton(kSubControlDownID),
-		_rightButton(kSubControlRightID), _leftButton(kSubControlLeftID), _upButton(kSubControlUpID),
-		_ccwButton(kSubControlCCWID), _cwButton(kSubControlCWID), _greenBall(kClawMonitorGreenBallID),
-		_greenBallNotification(kNoradGreenBallNotificationID, (PegasusEngine *)g_engine) {
+SubControlRoom::SubControlRoom(Neighborhood *handler)
+  : GameInteraction(kNoradSubControlRoomInteractionID, handler)
+  , _subControlMovie(kSubControlMonitorID)
+  , _subControlNotification(kSubControlNotificationID, (PegasusEngine *)g_engine)
+  , _clawMonitorMovie(kClawMonitorID)
+  , _pinchButton(kSubControlPinchID)
+  , _downButton(kSubControlDownID)
+  , _rightButton(kSubControlRightID)
+  , _leftButton(kSubControlLeftID)
+  , _upButton(kSubControlUpID)
+  , _ccwButton(kSubControlCCWID)
+  , _cwButton(kSubControlCWID)
+  , _greenBall(kClawMonitorGreenBallID)
+  , _greenBallNotification(kNoradGreenBallNotificationID, (PegasusEngine *)g_engine) {
 	_neighborhoodNotification = handler->getNeighborhoodNotification();
 	_playingAgainstRobot = false;
 	_robotState = kNoRobot;
@@ -443,9 +415,9 @@ void SubControlRoom::openInteraction() {
 
 	Norad *owner = (Norad *)getOwner();
 	owner->getClawInfo(_outSpotID, _prepSpotID, _clawControlSpotID, _clawButtonSpotIDs[0],
-			_clawButtonSpotIDs[1], _clawButtonSpotIDs[2], _clawButtonSpotIDs[3],
-			_clawButtonSpotIDs[4], _clawButtonSpotIDs[5], _clawButtonSpotIDs[6],
-			_clawStartPosition, _clawExtraIDs);
+	                   _clawButtonSpotIDs[1], _clawButtonSpotIDs[2], _clawButtonSpotIDs[3],
+	                   _clawButtonSpotIDs[4], _clawButtonSpotIDs[5], _clawButtonSpotIDs[6],
+	                   _clawStartPosition, _clawExtraIDs);
 
 	_clawPosition = _clawStartPosition;
 	_clawNextPosition = _clawPosition;
@@ -534,11 +506,11 @@ void SubControlRoom::openInteraction() {
 void SubControlRoom::initInteraction() {
 	if (GameState.getNoradSubPrepState() == kSubDamaged) {
 		playControlMonitorSection(kDeltaSplashStart * _subControlScale, kDeltaSplashStop * _subControlScale,
-				0, kDeltaSplash, false);
+		                          0, kDeltaSplash, false);
 		playClawMonitorSection(kDeltaClawSplashStart, kDeltaClawSplashStop, kDeltaSplashFinished, _gameState, false);
 	} else {
 		playControlMonitorSection(kAlphaSplashStart * _subControlScale, kAlphaSplashStop * _subControlScale,
-				0, kAlphaSplash, false);
+		                          0, kAlphaSplash, false);
 		playClawMonitorSection(kAlphaClawSplashStart, kAlphaClawSplashStop, kAlphaSplashFinished, _gameState, false);
 	}
 
@@ -569,10 +541,10 @@ void SubControlRoom::receiveNotification(Notification *notification, const Notif
 		case kPrepHighlightFinished:
 			if (GameState.getNoradSubPrepState() == kSubDamaged)
 				playControlMonitorSection(kDeltaLaunchPrepStart * _subControlScale,
-						kDeltaLaunchPrepStop * _subControlScale, kDeltaPrepFinished, _gameState, false);
+				                          kDeltaLaunchPrepStop * _subControlScale, kDeltaPrepFinished, _gameState, false);
 			else
 				playControlMonitorSection(kAlphaLaunchPrepStart * _subControlScale,
-						kAlphaLaunchPrepStop * _subControlScale, kAlphaPrepFinished, _gameState, false);
+				                          kAlphaLaunchPrepStop * _subControlScale, kAlphaPrepFinished, _gameState, false);
 			break;
 		case kAlphaPrepFinished:
 			GameState.setNoradSubPrepState(kSubPrepped);
@@ -581,7 +553,7 @@ void SubControlRoom::receiveNotification(Notification *notification, const Notif
 			break;
 		case kClawHighlightFinished:
 			playControlMonitorSection(kClawMenuStart * _subControlScale, kClawMenuStop * _subControlScale,
-					kClawMenuFinished, _gameState, false);
+			                          kClawMenuFinished, _gameState, false);
 			break;
 		case kClawMenuFinished:
 			owner->playClawMonitorIntro();
@@ -679,9 +651,9 @@ void SubControlRoom::receiveNotification(Notification *notification, const Notif
 						dispatchClawAction(kMoveLeftActionIndex);
 						break;
 					case kClawAtB:
-						if (_clawStartPosition == kClawAtD)             // Norad Alpha
+						if (_clawStartPosition == kClawAtD) // Norad Alpha
 							dispatchClawAction(kMoveLeftActionIndex);
-						else if (_clawStartPosition == kClawAtC)        // Norad Delta
+						else if (_clawStartPosition == kClawAtC) // Norad Delta
 							dispatchClawAction(kMoveUpActionIndex);
 						break;
 					case kClawAtC:
@@ -766,8 +738,7 @@ void SubControlRoom::showButtons() {
 			_buttons[i]->show();
 			if (i == _currentAction)
 				_buttons[i]->setCurrentFrameIndex(kButtonHighlightedFrame);
-			else if (s_clawStateTable[_clawNextPosition][i] != kNoActionIndex &&
-					_gameState != kPuttingClawAway) // this could be called during a move, so check _clawNextPosition
+			else if (s_clawStateTable[_clawNextPosition][i] != kNoActionIndex && _gameState != kPuttingClawAway) // this could be called during a move, so check _clawNextPosition
 				_buttons[i]->setCurrentFrameIndex(kButtonActiveFrame);
 			else
 				_buttons[i]->setCurrentFrameIndex(kButtonDimFrame);
@@ -796,12 +767,12 @@ void SubControlRoom::clickInHotspot(const Input &input, const Hotspot *spot) {
 		dispatchClawAction(actionIndex);
 	} else if (clickedID == _prepSpotID) {
 		playControlMonitorSection(kLaunchPrepHighlightStart * _subControlScale,
-				kLaunchPrepHighlightStop * _subControlScale,
-				kPrepHighlightFinished, kPlayingHighlight, false);
+		                          kLaunchPrepHighlightStop * _subControlScale,
+		                          kPrepHighlightFinished, kPlayingHighlight, false);
 	} else if (clickedID == _clawControlSpotID) {
 		playControlMonitorSection(kClawControlHighlightStart * _subControlScale,
-				kClawControlHighlightStop * _subControlScale,
-				kClawHighlightFinished, kPlayingHighlight, false);
+		                          kClawControlHighlightStop * _subControlScale,
+		                          kClawHighlightFinished, kPlayingHighlight, false);
 	} else if (clickedID == _outSpotID) {
 		_gameState = kPuttingClawAway;
 
@@ -814,9 +785,9 @@ void SubControlRoom::clickInHotspot(const Input &input, const Hotspot *spot) {
 					dispatchClawAction(kMoveLeftActionIndex);
 					break;
 				case kClawAtB:
-					if (_clawStartPosition == kClawAtD)             // Norad Alpha
+					if (_clawStartPosition == kClawAtD) // Norad Alpha
 						dispatchClawAction(kMoveLeftActionIndex);
-					else if (_clawStartPosition == kClawAtC)        // Norad Delta
+					else if (_clawStartPosition == kClawAtC) // Norad Delta
 						dispatchClawAction(kMoveUpActionIndex);
 					break;
 				case kClawAtC:
@@ -920,7 +891,7 @@ void SubControlRoom::performActionImmediately(const int action, const uint32 ext
 		break;
 	default:
 		playClawMonitorSection(s_clawMonitorTable[action][_clawPosition][0],
-				s_clawMonitorTable[action][_clawPosition][1], 0, _gameState, true);
+		                       s_clawMonitorTable[action][_clawPosition][1], 0, _gameState, true);
 		break;
 	}
 
@@ -938,7 +909,7 @@ void SubControlRoom::setControlMonitorToTime(const TimeValue newTime, const int 
 }
 
 void SubControlRoom::playControlMonitorSection(const TimeValue in, const TimeValue out, const NotificationFlags flags,
-		const int newState, const bool shouldAllowInput) {
+                                               const int newState, const bool shouldAllowInput) {
 	_subControlMovie.stop();
 	_subControlMovie.setSegment(in, out);
 	_subControlMovie.setTime(in);
@@ -978,7 +949,7 @@ void SubControlRoom::setClawMonitorToTime(const TimeValue newTime) {
 }
 
 void SubControlRoom::playClawMonitorSection(const TimeValue in, const TimeValue out, const NotificationFlags flags,
-		const int newState, const bool shouldAllowInput) {
+                                            const int newState, const bool shouldAllowInput) {
 	_clawMonitorMovie.stop();
 	_clawMonitorMovie.setSegment(in, out);
 	_clawMonitorMovie.setTime(in);

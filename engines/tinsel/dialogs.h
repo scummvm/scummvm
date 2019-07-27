@@ -22,11 +22,11 @@
  * Inventory related functions
  */
 
-#ifndef TINSEL_INVENTORY_H	// prevent multiple includes
+#ifndef TINSEL_INVENTORY_H // prevent multiple includes
 #define TINSEL_INVENTORY_H
 
 #include "tinsel/dw.h"
-#include "tinsel/events.h"	// for PLR_EVENT, PLR_EVENT
+#include "tinsel/events.h" // for PLR_EVENT, PLR_EVENT
 
 namespace Common {
 class Serializer;
@@ -35,13 +35,13 @@ class Serializer;
 namespace Tinsel {
 
 enum {
-	INV_OPEN	= -1,	// DW1 only
-	INV_CONV	= 0,
-	INV_1		= 1,
-	INV_2		= 2,
-	INV_CONF	= 3,
-	INV_MENU	= 3,	// DW2 constant
-	NUM_INV		= 4,
+	INV_OPEN = -1, // DW1 only
+	INV_CONV = 0,
+	INV_1 = 1,
+	INV_2 = 2,
+	INV_CONF = 3,
+	INV_MENU = 3, // DW2 constant
+	NUM_INV = 4,
 
 	// Discworld 2 constants
 	DW2_INV_OPEN = 5,
@@ -50,30 +50,38 @@ enum {
 
 /** structure of each inventory object */
 struct INV_OBJECT {
-	int32 id;		// inventory objects id
-	SCNHANDLE hIconFilm;	// inventory objects animation film
-	SCNHANDLE hScript;	// inventory objects event handling script
-	int32 attribute;		// inventory object's attribute
+	int32 id; // inventory objects id
+	SCNHANDLE hIconFilm; // inventory objects animation film
+	SCNHANDLE hScript; // inventory objects event handling script
+	int32 attribute; // inventory object's attribute
 };
 
 // attribute values - not a bit bit field to prevent portability problems
-#define DROPCODE	0x01
-#define ONLYINV1	0x02
-#define ONLYINV2	0x04
-#define DEFINV1		0x08
-#define DEFINV2		0x10
-#define PERMACONV	0x20
-#define CONVENDITEM	0x40
+#define DROPCODE 0x01
+#define ONLYINV1 0x02
+#define ONLYINV2 0x04
+#define DEFINV1 0x08
+#define DEFINV2 0x10
+#define PERMACONV 0x20
+#define CONVENDITEM 0x40
 
 void PopUpInventory(int invno);
 
 enum CONFTYPE {
-	MAIN_MENU, SAVE_MENU, LOAD_MENU, QUIT_MENU, RESTART_MENU, SOUND_MENU,
-	CONTROLS_MENU, SUBTITLES_MENU, HOPPER_MENU1, HOPPER_MENU2, TOP_WINDOW
+	MAIN_MENU,
+	SAVE_MENU,
+	LOAD_MENU,
+	QUIT_MENU,
+	RESTART_MENU,
+	SOUND_MENU,
+	CONTROLS_MENU,
+	SUBTITLES_MENU,
+	HOPPER_MENU1,
+	HOPPER_MENU2,
+	TOP_WINDOW
 };
 
 void OpenMenu(CONFTYPE type);
-
 
 void Xmovement(int x);
 void Ymovement(int y);
@@ -81,7 +89,6 @@ void Ymovement(int y);
 void EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds);
 void ButtonToInventory(PLR_EVENT be);
 void KeyToInventory(PLR_EVENT ke);
-
 
 int WhichItemHeld();
 
@@ -91,15 +98,14 @@ void ClearInventory(int invno);
 void AddToInventory(int invno, int icon, bool hold = false);
 bool RemFromInventory(int invno, int icon);
 
-
 void RegisterIcons(void *cptr, int num);
 
 void idec_convw(SCNHANDLE text, int MaxContents, int MinWidth, int MinHeight,
-			int StartWidth, int StartHeight, int MaxWidth, int MaxHeight);
+                int StartWidth, int StartHeight, int MaxWidth, int MaxHeight);
 void idec_inv1(SCNHANDLE text, int MaxContents, int MinWidth, int MinHeight,
-			int StartWidth, int StartHeight, int MaxWidth, int MaxHeight);
+               int StartWidth, int StartHeight, int MaxWidth, int MaxHeight);
 void idec_inv2(SCNHANDLE text, int MaxContents, int MinWidth, int MinHeight,
-			int StartWidth, int StartHeight, int MaxWidth, int MaxHeight);
+               int StartWidth, int StartHeight, int MaxWidth, int MaxHeight);
 
 bool InventoryActive();
 
@@ -113,11 +119,11 @@ void HideConversation(bool hide);
 bool ConvIsHidden();
 
 enum {
-	NOOBJECT		= -1,
-	INV_NOICON		= -1,
-	INV_CLOSEICON	= -2,
-	INV_OPENICON	= -3,
-	INV_HELDNOTIN	= -4
+	NOOBJECT = -1,
+	INV_NOICON = -1,
+	INV_CLOSEICON = -2,
+	INV_OPENICON = -3,
+	INV_HELDNOTIN = -4
 };
 
 enum CONV_PARAM {
@@ -126,7 +132,6 @@ enum CONV_PARAM {
 	CONV_END,
 	CONV_TOP
 };
-
 
 void ConvAction(int index);
 void SetConvDetails(CONV_PARAM fn, HPOLYGON hPoly, int ano);
@@ -150,7 +155,7 @@ void syncInvInfo(Common::Serializer &s);
 int InvGetLimit(int invno);
 void InvSetLimit(int invno, int n);
 void InvSetSize(int invno, int MinWidth, int MinHeight,
-		int StartWidth, int StartHeight, int MaxWidth, int MaxHeight);
+                int StartWidth, int StartHeight, int MaxWidth, int MaxHeight);
 
 bool GetIsInvObject(int id);
 

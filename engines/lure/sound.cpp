@@ -26,10 +26,10 @@
 #include "lure/res.h"
 #include "lure/room.h"
 
+#include "audio/midiparser.h"
 #include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "common/endian.h"
-#include "audio/midiparser.h"
 
 namespace Common {
 DECLARE_SINGLETON(Lure::SoundManager);
@@ -130,7 +130,6 @@ void SoundManager::loadFromStream(Common::ReadStream *stream) {
 	}
 }
 
-
 void SoundManager::loadSection(uint16 sectionId) {
 	debugC(ERROR_BASIC, kLureDebugSounds, "SoundManager::loadSection = %xh", sectionId);
 	killSounds();
@@ -220,7 +219,7 @@ void SoundManager::addSound(uint8 soundIndex, bool tidyFlag) {
 	}
 
 	// Mark the found channels as in use
-	Common::fill(_channelsInUse+channelCtr, _channelsInUse+channelCtr + numChannels, true);
+	Common::fill(_channelsInUse + channelCtr, _channelsInUse + channelCtr + numChannels, true);
 
 	SoundDescResource *newEntry = new SoundDescResource();
 	newEntry->soundNumber = rec.soundNumber;
@@ -256,7 +255,6 @@ void SoundManager::addSound2(uint8 soundIndex) {
 	}
 }
 
-
 void SoundManager::stopSound(uint8 soundIndex) {
 	debugC(ERROR_BASIC, kLureDebugSounds, "SoundManager::stopSound index=%d", soundIndex);
 	SoundDescResource &rec = soundDescs()[soundIndex];
@@ -270,7 +268,7 @@ void SoundManager::killSound(uint8 soundNumber) {
 
 void SoundManager::setVolume(uint8 soundNumber, uint8 volume) {
 	debugC(ERROR_BASIC, kLureDebugSounds, "SoundManager::setVolume soundNumber=%d, volume=%d",
-		soundNumber, volume);
+	       soundNumber, volume);
 	musicInterface_TidySounds();
 
 	SoundDescResource *entry = findSound(soundNumber);
@@ -286,7 +284,7 @@ uint8 SoundManager::descIndexOf(uint8 soundNumber) {
 			return index;
 	}
 
-	return 0xff;   // Couldn't find entry
+	return 0xff; // Couldn't find entry
 }
 
 // Used to sync the volume for all channels with the Config Manager
@@ -389,8 +387,7 @@ void SoundManager::fadeOut() {
 	musicInterface_TidySounds();
 
 	bool inProgress = true;
-	while (inProgress)
-	{
+	while (inProgress) {
 		inProgress = false;
 
 		g_system->lockMutex(_soundMutex);
@@ -418,7 +415,7 @@ void SoundManager::fadeOut() {
 
 void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber, uint8 numChannels) {
 	debugC(ERROR_INTERMEDIATE, kLureDebugSounds, "musicInterface_Play soundNumber=%d, channel=%d",
-		soundNumber, channelNumber);
+	       soundNumber, channelNumber);
 	Game &game = Game::getReference();
 
 	if (!_soundData)
@@ -451,7 +448,7 @@ void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber, u
 
 	g_system->lockMutex(_soundMutex);
 	MidiMusic *sound = new MidiMusic(_driver, _channelsInner, channelNumber, soundNum,
-		isMusic, numChannels, soundStart, dataSize);
+	                                 isMusic, numChannels, soundStart, dataSize);
 	_playingSounds.push_back(MusicList::value_type(sound));
 	g_system->unlockMutex(_soundMutex);
 }
@@ -502,7 +499,7 @@ bool SoundManager::musicInterface_CheckPlaying(uint8 soundNumber) {
 
 void SoundManager::musicInterface_SetVolume(uint8 channelNum, uint8 volume) {
 	debugC(ERROR_INTERMEDIATE, kLureDebugSounds, "musicInterface_SetVolume channel=%d, volume=%d",
-		channelNum, volume);
+	       channelNum, volume);
 	musicInterface_TidySounds();
 
 	g_system->lockMutex(_soundMutex);
@@ -566,7 +563,7 @@ void SoundManager::musicInterface_TidySounds() {
 }
 
 void SoundManager::onTimer(void *data) {
-	SoundManager *snd = (SoundManager *) data;
+	SoundManager *snd = (SoundManager *)data;
 	snd->doTimer();
 }
 
@@ -589,7 +586,7 @@ void SoundManager::doTimer() {
 /*------------------------------------------------------------------------*/
 
 MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
-					 uint8 channelNum, uint8 soundNum, bool isMus, uint8 numChannels, void *soundData, uint32 size) {
+                     uint8 channelNum, uint8 soundNum, bool isMus, uint8 numChannels, void *soundData, uint32 size) {
 	_driver = driver;
 	assert(_driver);
 	_channels = channels;
@@ -625,8 +622,8 @@ MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
 		_decompressedSound = Memory::allocate(packedSize * 2);
 
 		uint16 *data = (uint16 *)(_soundData + 1);
-		uint16 *dataDest = (uint16 *) _decompressedSound->data();
-		byte *idx  = ((byte *)data) + 0x200;
+		uint16 *dataDest = (uint16 *)_decompressedSound->data();
+		byte *idx = ((byte *)data) + 0x200;
 
 		for (uint i = 0; i < packedSize; i++)
 #if defined(SCUMM_NEED_ALIGNMENT)
@@ -661,8 +658,7 @@ void MidiMusic::setVolume(int volume) {
 	for (int i = 0; i < _numChannels; ++i) {
 		if (_channels[_channelNumber + i].midiChannel != NULL)
 			_channels[_channelNumber + i].midiChannel->volume(
-				_channels[_channelNumber + i].volume *
-				volume / 65025);
+			  _channels[_channelNumber + i].volume * volume / 65025);
 	}
 }
 
@@ -675,7 +671,8 @@ void MidiMusic::playMusic() {
 
 void MidiMusic::send(uint32 b) {
 #ifdef SOUND_CROP_CHANNELS
-	if ((b & 0xF) >= _numChannels) return;
+	if ((b & 0xF) >= _numChannels)
+		return;
 	byte channel = _channelNumber + (byte)(b & 0x0F);
 #else
 	byte channel = _channelNumber + ((byte)(b & 0x0F) % _numChannels);
@@ -695,8 +692,7 @@ void MidiMusic::send(uint32 b) {
 		if (Sound.isRoland() && !Sound.hasNativeMT32()) {
 			b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
 		}
-	}
-	else if ((b & 0xFFF0) == 0x007BB0) {
+	} else if ((b & 0xFFF0) == 0x007BB0) {
 		// No implementation
 	}
 

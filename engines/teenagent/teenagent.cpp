@@ -21,8 +21,8 @@
  */
 
 #include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/debug.h"
 #include "common/events.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -33,8 +33,8 @@
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
 
-#include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "audio/mixer.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
@@ -53,7 +53,10 @@
 namespace TeenAgent {
 
 TeenAgentEngine::TeenAgentEngine(OSystem *system, const ADGameDescription *gd)
-	: Engine(system), _action(kActionNone), _gameDescription(gd), _rnd("teenagent") {
+  : Engine(system)
+  , _action(kActionNone)
+  , _gameDescription(gd)
+  , _rnd("teenagent") {
 	DebugMan.addDebugChannel(kDebugActor, "Actor", "Enable Actor Debug");
 	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Enable Animation Debug");
 	DebugMan.addDebugChannel(kDebugCallbacks, "Callbacks", "Enable Callbacks Debug");
@@ -108,8 +111,7 @@ bool TeenAgentEngine::trySelectedObject() {
 	debugC(0, kDebugObject, "checking active object %u on %u", inv->id, _dstObject->id);
 
 	//mouse time challenge hack:
-	if ((res->dseg.get_byte(dsAddr_timedCallbackState) == 1 && inv->id == kInvItemRock && _dstObject->id == 5) ||
-	    (res->dseg.get_byte(dsAddr_timedCallbackState) == 2 && inv->id == kInvItemSuperGlue && _dstObject->id == 5)) {
+	if ((res->dseg.get_byte(dsAddr_timedCallbackState) == 1 && inv->id == kInvItemRock && _dstObject->id == 5) || (res->dseg.get_byte(dsAddr_timedCallbackState) == 2 && inv->id == kInvItemSuperGlue && _dstObject->id == 5)) {
 		//putting rock into hole or superglue on rock
 		fnPutRockInHole();
 		return true;
@@ -151,8 +153,7 @@ void TeenAgentEngine::processObject() {
 		uint16 callback = READ_LE_UINT16(dcall);
 		if (callback == 0 || !processCallback(callback))
 			displayMessage(_dstObject->description);
-	}
-	break;
+	} break;
 	case kActionUse: {
 		if (trySelectedObject())
 			break;
@@ -163,8 +164,7 @@ void TeenAgentEngine::processObject() {
 		uint16 callback = READ_LE_UINT16(dcall);
 		if (!processCallback(callback))
 			displayMessage(_dstObject->description);
-	}
-	break;
+	} break;
 
 	case kActionNone:
 		break;
@@ -213,7 +213,7 @@ void TeenAgentEngine::init() {
 	_useHotspots.resize(42);
 	byte *sceneHotspots = res->dseg.ptr(dsAddr_sceneHotspotsPtr);
 	for (byte i = 0; i < 42; ++i) {
-		Common::Array<UseHotspot> & hotspots = _useHotspots[i];
+		Common::Array<UseHotspot> &hotspots = _useHotspots[i];
 		byte *hotspotsPtr = res->dseg.ptr(READ_LE_UINT16(sceneHotspots + i * 2));
 		while (*hotspotsPtr) {
 			UseHotspot h;
@@ -491,10 +491,7 @@ bool TeenAgentEngine::showMetropolis() {
 			for (uint y = 1; y < 56; ++y) {
 				for (uint x = 1; x < 160; ++x) {
 					uint offset = y * 160 + x;
-					uint v =
-					    (uint)colors[offset - 161] + colors[offset - 160] + colors[offset - 159] +
-					    (uint)colors[offset - 1] + colors[offset + 1] +
-					    (uint)colors[offset + 161] + colors[offset + 160] + colors[offset + 159];
+					uint v = (uint)colors[offset - 161] + colors[offset - 160] + colors[offset - 159] + (uint)colors[offset - 1] + colors[offset + 1] + (uint)colors[offset + 161] + colors[offset + 160] + colors[offset + 159];
 					v >>= 3;
 					colors[offset + 8960] = v;
 				}
@@ -515,13 +512,12 @@ bool TeenAgentEngine::showMetropolis() {
 		_system->unlockScreen();
 
 		_system->copyRectToScreen(
-		    varia9Data + (logo_y < 0 ? -logo_y * 320 : 0), 320,
-		    0, logo_y >= 0 ? logo_y : 0,
-		    320, logo_y >= 0 ? 57 : 57 + logo_y);
+		  varia9Data + (logo_y < 0 ? -logo_y * 320 : 0), 320,
+		  0, logo_y >= 0 ? logo_y : 0,
+		  320, logo_y >= 0 ? 57 : 57 + logo_y);
 
 		if (logo_y < 82 - 57)
 			++logo_y;
-
 
 		_system->updateScreen();
 		_system->delayMillis(100);
@@ -596,12 +592,12 @@ Common::Error TeenAgentEngine::run() {
 			debug(5, "event");
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-				if ((event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_d) ||
-				        event.kbd.ascii == '~' || event.kbd.ascii == '#') {
+				if ((event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_d) || event.kbd.ascii == '~' || event.kbd.ascii == '#') {
 					console->attach();
 				} else if (event.kbd.hasFlags(0) && event.kbd.keycode == Common::KEYCODE_F5) {
 					openMainMenuDialog();
-				} if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_f) {
+				}
+				if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_f) {
 					_markDelay = _markDelay == 80 ? 40 : 80;
 					debug(5, "markDelay = %u", _markDelay);
 				}
@@ -633,8 +629,7 @@ Common::Error TeenAgentEngine::run() {
 			case Common::EVENT_MOUSEMOVE:
 				mouse = event.mouse;
 				break;
-			default:
-				;
+			default:;
 			}
 		}
 
@@ -714,9 +709,9 @@ Common::Error TeenAgentEngine::run() {
 Common::String TeenAgentEngine::parseMessage(uint16 addr) {
 	Common::String message;
 	for (
-	    const char *str = (const char *)res->dseg.ptr(addr);
-	    str[0] != 0 || str[1] != 0;
-	    ++str) {
+	  const char *str = (const char *)res->dseg.ptr(addr);
+	  str[0] != 0 || str[1] != 0;
+	  ++str) {
 		char c = str[0];
 		message += c != 0 && (signed char)c != -1 ? c : '\n';
 	}
@@ -1051,7 +1046,7 @@ void TeenAgentEngine::setMusic(byte id) {
 		res->dseg.set_byte(dsAddr_currentMusic, id);
 
 	if (_gameDescription->flags & ADGF_CD) {
-		byte track2cd[] = {7, 2, 0, 9, 3, 6, 8, 10, 4, 5, 11};
+		byte track2cd[] = { 7, 2, 0, 9, 3, 6, 8, 10, 4, 5, 11 };
 		if (id == 0 || id > 11 || track2cd[id - 1] == 0) {
 			debugC(0, kDebugMusic, "no cd music for id %u", id);
 			return;

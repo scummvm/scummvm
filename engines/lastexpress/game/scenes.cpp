@@ -39,9 +39,15 @@
 
 namespace LastExpress {
 
-SceneManager::SceneManager(LastExpressEngine *engine) : _engine(engine),
-	_flagNoEntity(false), _flagDrawEntities(false), _flagDrawSequences(false), _flagCoordinates(false),
-	_coords(0, 0, 480, 640), _clockHours(NULL), _clockMinutes(NULL) {
+SceneManager::SceneManager(LastExpressEngine *engine)
+  : _engine(engine)
+  , _flagNoEntity(false)
+  , _flagDrawEntities(false)
+  , _flagDrawSequences(false)
+  , _flagCoordinates(false)
+  , _coords(0, 0, 480, 640)
+  , _clockHours(NULL)
+  , _clockMinutes(NULL) {
 	_sceneLoader = new SceneLoader();
 }
 
@@ -72,7 +78,7 @@ void SceneManager::loadSceneDataFile(ArchiveIndex archive) {
 	if (_engine->isDemo())
 		archive = kArchiveCd2;
 
-	switch(archive) {
+	switch (archive) {
 	case kArchiveCd1:
 	case kArchiveCd2:
 	case kArchiveCd3:
@@ -201,8 +207,10 @@ void SceneManager::loadSceneFromItemPosition(InventoryItem item) {
 
 	// Set field value
 	CarIndex car = kCarRestaurant;
-	if (item == kItem5) car = kCarRedSleeping;
-	if (item == kItem7) car = kCarGreenSleeping;
+	if (item == kItem5)
+		car = kCarRedSleeping;
+	if (item == kItem7)
+		car = kCarGreenSleeping;
 
 	if (!getEntities()->isInsideTrainCar(kEntityPlayer, car))
 		return;
@@ -221,8 +229,8 @@ void SceneManager::loadSceneFromItemPosition(InventoryItem item) {
 
 	// Checks are different for each item
 	if ((item == kItem3 && position == 56)
-	 || (item == kItem5 && (position >= 23 && position <= 32))
-	 || (item == kItem7 && (position == 1 || (position >= 22 && position <= 33)))) {
+	    || (item == kItem5 && (position >= 23 && position <= 32))
+	    || (item == kItem7 && (position == 1 || (position >= 22 && position <= 33)))) {
 		if (getState()->sceneUseBackup)
 			getState()->sceneBackup = getSceneIndexFromPosition(car, position);
 		else
@@ -484,7 +492,7 @@ bool SceneManager::checkCurrentPosition(bool doCheckOtherCars) const {
 
 	if (!doCheckOtherCars)
 		return (car == kCarGreenSleeping || car == kCarRedSleeping)
-		   && ((position >= 41 && position <= 48) || (position >= 51 && position <= 58));
+		  && ((position >= 41 && position <= 48) || (position >= 51 && position <= 58));
 
 	if (position == 99)
 		return true;
@@ -665,7 +673,7 @@ void SceneManager::drawFrames(bool refreshScreen) {
 	}
 }
 
-void SceneManager::addToQueue(SequenceFrame * const frame) {
+void SceneManager::addToQueue(SequenceFrame *const frame) {
 	if (!frame)
 		return;
 
@@ -761,9 +769,9 @@ void SceneManager::setCoordinates(SequenceFrame *frame) {
 		return;
 
 	setCoordinates(Common::Rect((int16)frame->getInfo()->xPos1,
-								(int16)frame->getInfo()->yPos1,
-								(int16)frame->getInfo()->xPos2,
-								(int16)frame->getInfo()->yPos2));
+	                            (int16)frame->getInfo()->yPos1,
+	                            (int16)frame->getInfo()->xPos2,
+	                            (int16)frame->getInfo()->yPos2));
 }
 
 void SceneManager::resetCoordinates() {
@@ -788,8 +796,8 @@ SceneIndex SceneManager::getSceneIndexFromPosition(CarIndex car, Position positi
 	Scene *firstScene = getScenes()->get(index);
 
 	while (firstScene->car != car
-		|| firstScene->position != position
-		|| ((param3 != -1 || firstScene->param3) && firstScene->param3 != param3 && firstScene->type != Scene::kTypeItem3)) {
+	       || firstScene->position != position
+	       || ((param3 != -1 || firstScene->param3) && firstScene->param3 != param3 && firstScene->type != Scene::kTypeItem3)) {
 
 		// Increment index and look at the next scene
 		index = (SceneIndex)(index + 1);
@@ -818,14 +826,15 @@ SceneIndex SceneManager::getSceneIndexFromPosition(CarIndex car, Position positi
 //  - if it returns kSceneNone, it has been modified
 //
 // Note: we use the original hotspot scene to pre-process again
-#define PROCESS_HOTSPOT_SCENE(hotspot, index) { \
-	SceneIndex processedScene = getAction()->processHotspot(*hotspot); \
-	SceneIndex testScene = (processedScene == kSceneInvalid) ? (hotspot)->scene : processedScene; \
-	if (testScene) { \
-		*index = (hotspot)->scene; \
-		preProcessScene(index); \
-	} \
-}
+#define PROCESS_HOTSPOT_SCENE(hotspot, index)                                                     \
+	{                                                                                               \
+		SceneIndex processedScene = getAction()->processHotspot(*hotspot);                            \
+		SceneIndex testScene = (processedScene == kSceneInvalid) ? (hotspot)->scene : processedScene; \
+		if (testScene) {                                                                              \
+			*index = (hotspot)->scene;                                                                  \
+			preProcessScene(index);                                                                     \
+		}                                                                                             \
+	}
 
 void SceneManager::preProcessScene(SceneIndex *index) {
 
@@ -1022,10 +1031,10 @@ void SceneManager::preProcessScene(SceneIndex *index) {
 			Scene *currentScene = getScenes()->get(getState()->scene);
 
 			if ((checkPosition(getState()->scene, kCheckPositionLookingUp) && checkPosition(*index, kCheckPositionLookingUp) && currentScene->entityPosition < scene->entityPosition)
-			 || (checkPosition(getState()->scene, kCheckPositionLookingDown)  && checkPosition(*index, kCheckPositionLookingDown)  && currentScene->entityPosition > scene->entityPosition)) {
+			    || (checkPosition(getState()->scene, kCheckPositionLookingDown) && checkPosition(*index, kCheckPositionLookingDown) && currentScene->entityPosition > scene->entityPosition)) {
 
 				if (State::getPowerOfTwo((uint32)getEntities()->getCompartments(scene->param1)) != 30
-				 && State::getPowerOfTwo((uint32)getEntities()->getCompartments1(scene->param1)) != 30 )
+				    && State::getPowerOfTwo((uint32)getEntities()->getCompartments1(scene->param1)) != 30)
 					getSound()->playSound(kEntityPlayer, "CAT1126A");
 
 				*index = scene->getHotspot()->scene;
@@ -1152,7 +1161,7 @@ void SceneManager::postProcessScene() {
 
 	case Scene::kTypeLoadBeetleSequences:
 		if ((getProgress().chapter == kChapter2 || getProgress().chapter == kChapter3)
-		  && getInventory()->get(kItemBeetle)->location == kObjectLocation3) {
+		    && getInventory()->get(kItemBeetle)->location == kObjectLocation3) {
 			if (!getBeetle()->isLoaded())
 				getBeetle()->load();
 		}

@@ -32,54 +32,53 @@
 #ifndef SWORD25_ANIMATIONDESCRIPTION_H
 #define SWORD25_ANIMATIONDESCRIPTION_H
 
+#include "sword25/gfx/animation.h"
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/persistable.h"
-#include "sword25/gfx/animation.h"
 
 namespace Sword25 {
 
 class AnimationDescription : public Persistable {
 protected:
-	AnimationDescription() :
-		_animationType(Animation::AT_LOOP),
-		_FPS(10),
-		_millisPerFrame(0),
-		_scalingAllowed(true),
-		_alphaAllowed(true),
-		_colorModulationAllowed(true)
-	{}
+	AnimationDescription()
+	  : _animationType(Animation::AT_LOOP)
+	  , _FPS(10)
+	  , _millisPerFrame(0)
+	  , _scalingAllowed(true)
+	  , _alphaAllowed(true)
+	  , _colorModulationAllowed(true) {}
 
 public:
 	struct Frame {
 		// Die Hotspot-Angabe bezieht sich auf das ungeflippte Bild!!
-		int32         hotspotX;
-		int32         hotspotY;
-		bool        flipV;
-		bool        flipH;
-		Common::String  fileName;
-		Common::String  action;
+		int32 hotspotX;
+		int32 hotspotY;
+		bool flipV;
+		bool flipH;
+		Common::String fileName;
+		Common::String action;
 	};
 
-	virtual const Frame    &getFrame(uint index) const = 0;
-	virtual uint  getFrameCount() const = 0;
-	virtual void  unlock() = 0;
+	virtual const Frame &getFrame(uint index) const = 0;
+	virtual uint getFrameCount() const = 0;
+	virtual void unlock() = 0;
 
-	Animation::ANIMATION_TYPES   getAnimationType() const {
+	Animation::ANIMATION_TYPES getAnimationType() const {
 		return _animationType;
 	}
-	int                             getFPS() const {
+	int getFPS() const {
 		return _FPS;
 	}
-	int                             getMillisPerFrame() const {
+	int getMillisPerFrame() const {
 		return _millisPerFrame;
 	}
-	bool                            isScalingAllowed() const {
+	bool isScalingAllowed() const {
 		return _scalingAllowed;
 	}
-	bool                            isAlphaAllowed() const {
+	bool isAlphaAllowed() const {
 		return _alphaAllowed;
 	}
-	bool                            isColorModulationAllowed() const {
+	bool isColorModulationAllowed() const {
 		return _colorModulationAllowed;
 	}
 
@@ -87,12 +86,12 @@ public:
 	virtual bool unpersist(InputPersistenceBlock &reader);
 
 protected:
-	Animation::ANIMATION_TYPES   _animationType;
-	int32                        _FPS;
-	int32                        _millisPerFrame;
-	bool                         _scalingAllowed;
-	bool                         _alphaAllowed;
-	bool                         _colorModulationAllowed;
+	Animation::ANIMATION_TYPES _animationType;
+	int32 _FPS;
+	int32 _millisPerFrame;
+	bool _scalingAllowed;
+	bool _alphaAllowed;
+	bool _colorModulationAllowed;
 };
 
 } // End of namespace Sword25

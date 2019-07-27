@@ -28,9 +28,10 @@
 
 namespace LastExpress {
 
-#define COLOR_KEY  0xFFFF
+#define COLOR_KEY 0xFFFF
 
-GraphicsManager::GraphicsManager() : _changed(false) {
+GraphicsManager::GraphicsManager()
+  : _changed(false) {
 	const Graphics::PixelFormat format(2, 5, 5, 5, 0, 10, 5, 0, 0);
 	_screen.create(640, 480, format);
 
@@ -71,23 +72,23 @@ void GraphicsManager::clear(BackgroundType type) {
 
 void GraphicsManager::clear(BackgroundType type, const Common::Rect &rect) {
 	switch (type) {
-		default:
-			error("[GraphicsManager::clear] Unknown background type: %d", type);
-			break;
+	default:
+		error("[GraphicsManager::clear] Unknown background type: %d", type);
+		break;
 
-		case kBackgroundA:
-		case kBackgroundC:
-		case kBackgroundOverlay:
-		case kBackgroundInventory:
-			getSurface(type)->fillRect(rect, COLOR_KEY);
-			break;
+	case kBackgroundA:
+	case kBackgroundC:
+	case kBackgroundOverlay:
+	case kBackgroundInventory:
+		getSurface(type)->fillRect(rect, COLOR_KEY);
+		break;
 
-		case kBackgroundAll:
-			_backgroundA.fillRect(rect, COLOR_KEY);
-			_backgroundC.fillRect(rect, COLOR_KEY);
-			_overlay.fillRect(rect, COLOR_KEY);
-			_inventory.fillRect(rect, COLOR_KEY);
-			break;
+	case kBackgroundAll:
+		_backgroundA.fillRect(rect, COLOR_KEY);
+		_backgroundC.fillRect(rect, COLOR_KEY);
+		_overlay.fillRect(rect, COLOR_KEY);
+		_inventory.fillRect(rect, COLOR_KEY);
+		break;
 	}
 }
 
@@ -104,25 +105,25 @@ bool GraphicsManager::draw(Drawable *drawable, BackgroundType type, bool transit
 
 Graphics::Surface *GraphicsManager::getSurface(BackgroundType type) {
 	switch (type) {
-		default:
-			error("[GraphicsManager::getSurface] Unknown surface type: %d", type);
-			break;
+	default:
+		error("[GraphicsManager::getSurface] Unknown surface type: %d", type);
+		break;
 
-		case kBackgroundA:
-			return &_backgroundA;
+	case kBackgroundA:
+		return &_backgroundA;
 
-		case kBackgroundC:
-			return &_backgroundC;
+	case kBackgroundC:
+		return &_backgroundC;
 
-		case kBackgroundOverlay:
-			return &_overlay;
+	case kBackgroundOverlay:
+		return &_overlay;
 
-		case kBackgroundInventory:
-			return &_inventory;
+	case kBackgroundInventory:
+		return &_inventory;
 
-		case kBackgroundAll:
-			error("[GraphicsManager::getSurface] Cannot return a surface for kBackgroundAll");
-			break;
+	case kBackgroundAll:
+		error("[GraphicsManager::getSurface] Cannot return a surface for kBackgroundAll");
+		break;
 	}
 }
 

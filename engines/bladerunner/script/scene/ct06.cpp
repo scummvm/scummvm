@@ -33,23 +33,23 @@ void SceneScriptCT06::InitializeScene() {
 	} else {
 		Setup_Scene_Information(175.91f, -58.23f, 24.47f, 768);
 	}
-	Scene_Exit_Add_2D_Exit(0,   0, 440, 639, 479, 2);
+	Scene_Exit_Add_2D_Exit(0, 0, 440, 639, 479, 2);
 	Scene_Exit_Add_2D_Exit(1, 401, 162, 536, 317, 0);
 	if (Game_Flag_Query(kFlagZubenRetired) && Actor_Query_In_Set(kActorZuben, kSetCT07)) {
 		Actor_Put_In_Set(kActorZuben, kSetCT06);
 		Actor_Set_At_XYZ(kActorZuben, 58.41f, -58.23f, -24.97f, 240);
 		Actor_Retired_Here(kActorZuben, 72, 36, 1, kActorMcCoy);
 	}
-	Ambient_Sounds_Add_Looping_Sound(kSfxRAIN10,   100, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxCTDRONE1,  20, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAIN10, 100, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTDRONE1, 20, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Sound(kSfxSPIN2A,  80, 180, 16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  50, 180, 16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDR2,  50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDR3,  70, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2A, 80, 180, 16, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B, 50, 180, 16, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDR2, 50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDR3, 70, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 60, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT06HideAtFreeSlotA) {
 		Ambient_Sounds_Add_Sound(kSfxZUBWLK1, 1, 5, 25, 25, -100, 100, -101, -101, 0, 0);

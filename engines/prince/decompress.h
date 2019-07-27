@@ -32,6 +32,7 @@ namespace Prince {
 class Decompressor {
 public:
 	void decompress(byte *source, byte *dest, uint32 destSize);
+
 protected:
 	byte *_src, *_dst;
 	byte _bitBuffer;

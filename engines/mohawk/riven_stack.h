@@ -23,8 +23,8 @@
 #ifndef RIVEN_STACK_H
 #define RIVEN_STACK_H
 
-#include "common/keyboard.h"
 #include "common/hash-str.h"
+#include "common/keyboard.h"
 #include "common/ptr.h"
 #include "common/rect.h"
 #include "common/str-array.h"
@@ -213,12 +213,11 @@ private:
 	typedef Common::HashMap<Common::String, Common::SharedPtr<ExternalCommand>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> CommandsMap;
 
 #define REGISTER_COMMAND(cls, method) \
-		registerCommand( \
-			#method, new Common::Functor1Mem<const Common::Array<uint16> &, void, cls>(this, &cls::method) \
-		)
+	registerCommand(                    \
+	  #method, new Common::Functor1Mem<const Common::Array<uint16> &, void, cls>(this, &cls::method))
 
 #define TIMER(cls, method) \
-		new Common::Functor0Mem<void, cls>(this, &cls::method)
+	new Common::Functor0Mem<void, cls>(this, &cls::method)
 
 	void loadResourceNames();
 	void loadCardIdMap();

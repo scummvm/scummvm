@@ -26,8 +26,8 @@
 #include "common/system.h"
 
 namespace Common {
-	class String;
-	class SeekableSubReadStreamEndian;
+class String;
+class SeekableSubReadStreamEndian;
 }
 
 namespace Gob {
@@ -70,21 +70,20 @@ private:
 	};
 
 	typedef Common::Array<CMPFile *> LayerArray;
-	typedef Common::Array<Part>      PartArray;
+	typedef Common::Array<Part> PartArray;
 
 	GobEngine *_vm;
 
 	uint16 _width;
 	uint16 _height;
-	uint8  _bpp;
+	uint8 _bpp;
 
 	byte _hasPadding;
 
 	CMPFile *_backdrop;
 
 	LayerArray _layers;
-	PartArray  _parts;
-
+	PartArray _parts;
 
 	void load(Common::SeekableSubReadStreamEndian &dec, const Common::String &fileName);
 

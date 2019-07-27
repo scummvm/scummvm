@@ -27,44 +27,44 @@
 #include "tony/mpal/memory.h"
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Tony {
 
 namespace MPAL {
 
-class RMRes {
-protected:
-	MpalHandle _h;
-	byte *_buf;
+	class RMRes {
+	protected:
+		MpalHandle _h;
+		byte *_buf;
 
-public:
-	RMRes(uint32 resID);
-	virtual ~RMRes();
+	public:
+		RMRes(uint32 resID);
+		virtual ~RMRes();
 
-	// Attributes
-	unsigned int size();
-	const byte *dataPointer();
-	bool isValid();
+		// Attributes
+		unsigned int size();
+		const byte *dataPointer();
+		bool isValid();
 
-	// Casting for access to data
-	operator const byte*();
+		// Casting for access to data
+		operator const byte *();
 
-	Common::SeekableReadStream *getReadStream();
-};
+		Common::SeekableReadStream *getReadStream();
+	};
 
-class RMResRaw : public RMRes {
-public:
-	RMResRaw(uint32 resID);
-	virtual ~RMResRaw();
+	class RMResRaw : public RMRes {
+	public:
+		RMResRaw(uint32 resID);
+		virtual ~RMResRaw();
 
-	const byte *dataPointer();
-	operator const byte*();
+		const byte *dataPointer();
+		operator const byte *();
 
-	int width();
-	int height();
-};
+		int width();
+		int height();
+	};
 
 } // end of namespace MPAL
 

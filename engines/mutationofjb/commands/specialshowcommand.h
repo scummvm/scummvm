@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_SPECIALSHOWCOMMAND_H
 #define MUTATIONOFJB_SPECIALSHOWCOMMAND_H
 
-#include "mutationofjb/commands/seqcommand.h"
 #include "common/scummsys.h"
+#include "mutationofjb/commands/seqcommand.h"
 
 namespace MutationOfJB {
 
@@ -40,7 +40,8 @@ public:
 		COMPUTER_PUZZLE
 	};
 
-	SpecialShowCommand(Mode mode) : _mode(mode) {}
+	SpecialShowCommand(Mode mode)
+	  : _mode(mode) {}
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const override;
 

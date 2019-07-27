@@ -95,7 +95,6 @@ List<Event> DefaultEventMapper::mapEvent(const Event &ev, EventSource *source) {
 	return events;
 }
 
-
 void DefaultEventMapper::addDelayedEvent(uint32 millis, Event ev) {
 	if (_delayedEvents.empty()) {
 		_delayedEffectiveTime = g_system->getMillis() + millis;

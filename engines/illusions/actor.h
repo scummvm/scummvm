@@ -23,14 +23,14 @@
 #ifndef ILLUSIONS_ACTOR_H
 #define ILLUSIONS_ACTOR_H
 
-#include "illusions/resources/actorresource.h"
-#include "illusions/resources/backgroundresource.h"
-#include "illusions/graphics.h"
-#include "illusions/pathfinder.h"
 #include "common/algorithm.h"
 #include "common/func.h"
 #include "common/list.h"
 #include "graphics/surface.h"
+#include "illusions/graphics.h"
+#include "illusions/pathfinder.h"
+#include "illusions/resources/actorresource.h"
+#include "illusions/resources/backgroundresource.h"
 
 namespace Illusions {
 
@@ -68,21 +68,25 @@ struct DefaultSequence {
 	uint32 _sequenceId;
 	uint32 _newSequenceId;
 	DefaultSequence()
-		: _sequenceId(0), _newSequenceId(0) {}
+	  : _sequenceId(0)
+	  , _newSequenceId(0) {}
 	DefaultSequence(uint32 sequenceId, uint32 newSequenceId)
-		: _sequenceId(sequenceId), _newSequenceId(newSequenceId) {}
+	  : _sequenceId(sequenceId)
+	  , _newSequenceId(newSequenceId) {}
 };
 
 class DefaultSequences {
 public:
 	uint32 use(uint32 sequenceId);
 	void set(uint32 sequenceId, uint32 newSequenceId);
+
 protected:
 	typedef Common::Array<DefaultSequence> Items;
 	typedef Items::iterator ItemsIterator;
-	struct DefaultSequenceEqual : public Common::UnaryFunction<const DefaultSequence&, bool> {
+	struct DefaultSequenceEqual : public Common::UnaryFunction<const DefaultSequence &, bool> {
 		uint32 _sequenceId;
-		DefaultSequenceEqual(uint32 sequenceId) : _sequenceId(sequenceId) {}
+		DefaultSequenceEqual(uint32 sequenceId)
+		  : _sequenceId(sequenceId) {}
 		bool operator()(const DefaultSequence &defaultSequence) const {
 			return defaultSequence._sequenceId == _sequenceId;
 		}
@@ -90,7 +94,7 @@ protected:
 	Common::Array<DefaultSequence> _items;
 };
 
-typedef Common::Functor2<Control*, uint32, void> ActorControlRoutine;
+typedef Common::Functor2<Control *, uint32, void> ActorControlRoutine;
 
 class Actor {
 public:
@@ -106,6 +110,7 @@ public:
 	void setControlRoutine(ActorControlRoutine *controlRoutine);
 	void runControlRoutine(Control *control, uint32 deltaTime);
 	bool findNamedPoint(uint32 namedPointId, Common::Point &pt);
+
 public:
 	IllusionsEngine *_vm;
 	byte _drawFlags;
@@ -175,7 +180,6 @@ public:
 
 	RGB _color;
 	int16 _choiceJumpOffs;
-
 };
 
 class Control {
@@ -226,6 +230,7 @@ public:
 	void drawActorRect(const Common::Rect r, byte color);
 	void fillActor(byte color);
 	bool isPixelCollision(Common::Point &pt);
+
 public:
 	IllusionsEngine *_vm;
 	uint _flags;
@@ -274,8 +279,9 @@ public:
 	void appearActors();
 	void pauseActors(uint32 objectId);
 	void unpauseActors(uint32 objectId);
+
 public:
-	typedef Common::List<Control*> Items;
+	typedef Common::List<Control *> Items;
 	typedef Items::iterator ItemsIterator;
 	IllusionsEngine *_vm;
 	Items _controls;

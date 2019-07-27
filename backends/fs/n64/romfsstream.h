@@ -23,10 +23,10 @@
 #ifndef BACKENDS_FS_ROMFSSTREAM_H
 #define BACKENDS_FS_ROMFSSTREAM_H
 
-#include "common/scummsys.h"
 #include "common/noncopyable.h"
-#include "common/stream.h"
+#include "common/scummsys.h"
 #include "common/str.h"
+#include "common/stream.h"
 
 class RomfsStream : public Common::SeekableReadStream, public Common::WriteStream, public Common::NonCopyable {
 protected:

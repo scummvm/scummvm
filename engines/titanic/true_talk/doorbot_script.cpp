@@ -20,12 +20,12 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "titanic/true_talk/doorbot_script.h"
-#include "titanic/true_talk/tt_room_script.h"
-#include "titanic/true_talk/true_talk_manager.h"
-#include "titanic/translation.h"
+#include "common/textconsole.h"
 #include "titanic/titanic.h"
+#include "titanic/translation.h"
+#include "titanic/true_talk/true_talk_manager.h"
+#include "titanic/true_talk/tt_room_script.h"
 
 namespace Titanic {
 
@@ -37,40 +37,22 @@ static const int STATE_ARRAY_DE[9] = {
 };
 
 static const RoomDialogueId ROOM_DIALOGUES1_EN[] = {
-	{ 100, 10523 }, { 101, 10499 }, { 107, 10516 }, { 108, 10500 },
-	{ 109, 10490 }, { 110, 10504 }, { 111, 10506 }, { 112, 10498 },
-	{ 113, 10502 }, { 114, 10507 }, { 115, 10497 }, { 116, 10508 },
-	{ 117, 10505 }, { 118, 10505 }, { 122, 10516 }, { 123, 10383 },
-	{ 124, 10510 }, { 125, 10511 }, { 126, 10513 }, { 127, 10512 },
-	{ 128, 10495 }, { 129, 10496 }, { 130, 10491 }, { 131, 10493 },
-	{ 132, 10492 }, { 0, 0 }
+	{ 100, 10523 }, { 101, 10499 }, { 107, 10516 }, { 108, 10500 }, { 109, 10490 }, { 110, 10504 }, { 111, 10506 }, { 112, 10498 }, { 113, 10502 }, { 114, 10507 }, { 115, 10497 }, { 116, 10508 }, { 117, 10505 }, { 118, 10505 }, { 122, 10516 }, { 123, 10383 }, { 124, 10510 }, { 125, 10511 }, { 126, 10513 }, { 127, 10512 }, { 128, 10495 }, { 129, 10496 }, { 130, 10491 }, { 131, 10493 }, { 132, 10492 }, { 0, 0 }
 };
 static const RoomDialogueId ROOM_DIALOGUES1_DE[] = {
-	{ 101, 10375 }, { 107, 10379 }, { 108, 10378 }, { 109, 10364 },
-	{ 110, 10377 }, { 111, 10383 }, { 112, 10374 }, { 113, 10376 },
-	{ 114, 10384 }, { 115, 10373 }, { 116, 10385 }, { 117, 10380 },
-	{ 118, 10380 }, { 122, 10392 }, { 123, 10390 }, { 124, 10386 },
-	{ 125, 10387 }, { 126, 10389 }, { 127, 10388 }, { 128, 10371 },
-	{ 129, 10372 }, { 130, 10366 }, { 131, 10368 }, { 132, 10367 },
-	{ 0, 0 }
+	{ 101, 10375 }, { 107, 10379 }, { 108, 10378 }, { 109, 10364 }, { 110, 10377 }, { 111, 10383 }, { 112, 10374 }, { 113, 10376 }, { 114, 10384 }, { 115, 10373 }, { 116, 10385 }, { 117, 10380 }, { 118, 10380 }, { 122, 10392 }, { 123, 10390 }, { 124, 10386 }, { 125, 10387 }, { 126, 10389 }, { 127, 10388 }, { 128, 10371 }, { 129, 10372 }, { 130, 10366 }, { 131, 10368 }, { 132, 10367 }, { 0, 0 }
 };
 
 static const RoomDialogueId ROOM_DIALOGUES2_EN[] = {
-	{ 102, 221981 }, { 110, 221948 }, { 111, 221968 }, { 107, 222000 },
-	{ 101, 221935 }, { 112, 221924 }, { 113, 221942 }, { 116, 221977 },
-	{ 124, 221987 }, { 125, 221984 }, { 127, 221991 }, { 128, 221916 },
-	{ 129, 221919 }, { 131, 221912 }, { 132, 221908 }, { 0, 0 }
+	{ 102, 221981 }, { 110, 221948 }, { 111, 221968 }, { 107, 222000 }, { 101, 221935 }, { 112, 221924 }, { 113, 221942 }, { 116, 221977 }, { 124, 221987 }, { 125, 221984 }, { 127, 221991 }, { 128, 221916 }, { 129, 221919 }, { 131, 221912 }, { 132, 221908 }, { 0, 0 }
 };
 static const RoomDialogueId ROOM_DIALOGUES2_DE[] = {
-	{ 102, 221981 }, { 110, 221948 }, { 111, 221968 }, { 107, 222000 },
-	{ 101, 221935 }, { 112, 221924 }, { 113, 221942 }, { 116, 221977 },
-	{ 124, 221987 }, { 125, 221984 }, { 127, 221991 }, { 128, 221916 },
-	{ 129, 221919 }, { 131, 221912 }, { 132, 221909 }, { 0, 0 }
+	{ 102, 221981 }, { 110, 221948 }, { 111, 221968 }, { 107, 222000 }, { 101, 221935 }, { 112, 221924 }, { 113, 221942 }, { 116, 221977 }, { 124, 221987 }, { 125, 221984 }, { 127, 221991 }, { 128, 221916 }, { 129, 221919 }, { 131, 221912 }, { 132, 221909 }, { 0, 0 }
 };
 
 DoorbotScript::DoorbotScript(int val1, const char *charClass, int v2,
-		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
-		TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {
+                             const char *charName, int v3, int val2, int v4, int v5, int v6, int v7)
+  : TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {
 	_stateIndex = _doorbotState = 0;
 
 	loadRanges("Ranges/Doorbot");
@@ -108,8 +90,7 @@ void DoorbotScript::setupSentences() {
 }
 
 int DoorbotScript::chooseResponse(const TTroomScript *roomScript, const TTsentence *sentence, uint tag) {
-	if (tag == MKTAG('D', 'N', 'A', '1') || tag == MKTAG('H', 'H', 'G', 'Q') ||
-		tag == MKTAG('A', 'N', 'S', 'W') || tag == MKTAG('S', 'U', 'M', 'S')) {
+	if (tag == MKTAG('D', 'N', 'A', '1') || tag == MKTAG('H', 'H', 'G', 'Q') || tag == MKTAG('A', 'N', 'S', 'W') || tag == MKTAG('S', 'U', 'M', 'S')) {
 		if (_stateIndex > 8)
 			_stateIndex = 0;
 		addResponse(TRANSLATE(STATE_ARRAY_EN[_stateIndex], STATE_ARRAY_DE[_stateIndex]));
@@ -121,8 +102,7 @@ int DoorbotScript::chooseResponse(const TTroomScript *roomScript, const TTsenten
 		return 2;
 	}
 
-	if (tag == MKTAG('C', 'H', 'S', 'E') || tag == MKTAG('C', 'M', 'N', 'T') ||
-			tag == MKTAG('J', 'F', 'O', 'D'))
+	if (tag == MKTAG('C', 'H', 'S', 'E') || tag == MKTAG('C', 'M', 'N', 'T') || tag == MKTAG('J', 'F', 'O', 'D'))
 		tag = MKTAG('F', 'O', 'O', 'D');
 
 	if (tag == MKTAG('F', 'O', 'O', 'D') && roomScript->_scriptId == 132) {
@@ -145,10 +125,10 @@ int DoorbotScript::chooseResponse(const TTroomScript *roomScript, const TTsenten
 		return setResponse(getDialogueId(222259));
 	} else if (tag == MKTAG('T', 'R', 'A', '2')) {
 		return setResponse(getRandomBit() ? TRANSLATE(11860, 11873)
-			: TRANSLATE(11858, 11871));
+		                                  : TRANSLATE(11858, 11871));
 	} else if (tag == MKTAG('T', 'R', 'A', '3')) {
 		return setResponse(getRandomBit() ? TRANSLATE(11859, 11872)
-			: TRANSLATE(11857, 11870));
+		                                  : TRANSLATE(11857, 11870));
 	} else if (tag == MKTAG('B', 'R', 'N', 'D')) {
 		switch (getRandomNumber(3)) {
 		case 1:
@@ -227,8 +207,7 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 		return setResponse(getDialogueId(220113));
 	}
 
-	if (sentence->_category == 6 && (sentence->contains("why not") ||
-				sentence->contains("warum nicht"))) {
+	if (sentence->_category == 6 && (sentence->contains("why not") || sentence->contains("warum nicht"))) {
 		return setResponse(11871, 8);
 	}
 
@@ -295,7 +274,8 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 		case 16: {
 			TTtreeResult treeResult[32];
 			if (g_vm->_trueTalkManager->_quotesTree.search(sentence->_normalizedLine.c_str(),
-					TREE_3, &treeResult[0], 0, nullptr) != -1)
+			                                               TREE_3, &treeResult[0], 0, nullptr)
+			    != -1)
 				return setResponse(getDialogueId(221380), 0);
 			break;
 		}
@@ -401,12 +381,12 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 
 		case 33:
 			if (sentence->contains("sieve") || sentence->contains("colander")
-					|| sentence->contains("vegetable") || sentence->contains("ground")
-					|| sentence->contains("earth") || sentence->contains("garden")
-					|| sentence->contains("cheese") || sentence->contains("strainer")
-					|| sentence->contains("sieb") || sentence->contains("emmenthaler")
-					|| sentence->contains("gemuese") || sentence->contains("kaese")
-					|| sentence->contains("erde") || sentence->contains("garten")) {
+			    || sentence->contains("vegetable") || sentence->contains("ground")
+			    || sentence->contains("earth") || sentence->contains("garden")
+			    || sentence->contains("cheese") || sentence->contains("strainer")
+			    || sentence->contains("sieb") || sentence->contains("emmenthaler")
+			    || sentence->contains("gemuese") || sentence->contains("kaese")
+			    || sentence->contains("erde") || sentence->contains("garten")) {
 				return setResponse(getDialogueId(221375), 0);
 			} else if (getRandomNumber(100) > 30) {
 				return setResponse(getDialogueId(221376), 33);
@@ -425,7 +405,7 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 				if (sentence->localWord("deskbot") || sentence->localWord("titania"))
 					return setResponse(10148, 0);
 				if (sentence->localWord("barbot") || sentence->localWord("rowbot")
-					|| sentence->localWord("liftbot") || sentence->localWord("maitredbot"))
+				    || sentence->localWord("liftbot") || sentence->localWord("maitredbot"))
 					return setResponse(10147, 0);
 			}
 			break;
@@ -520,8 +500,8 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 	}
 
 	if (processEntries(&_entries, _entryCount, roomScript, sentence) == 2
-			|| processEntries(_defaultEntries, 0, roomScript, sentence) == 2
-			|| defaultProcess(roomScript, sentence))
+	    || processEntries(_defaultEntries, 0, roomScript, sentence) == 2
+	    || defaultProcess(roomScript, sentence))
 		return 2;
 
 	if (g_language == Common::DE_DEU && sentence->contains("42")) {
@@ -558,7 +538,7 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 
 ScriptChangedResult DoorbotScript::scriptChanged(const TTroomScript *roomScript, uint id) {
 	if (id == 3) {
-		if (roomScript != nullptr  && roomScript->_scriptId != 100) {
+		if (roomScript != nullptr && roomScript->_scriptId != 100) {
 			if (CTrueTalkManager::_v9 == 101) {
 				addResponse(getDialogueId(220873));
 				applyResponse();
@@ -613,7 +593,7 @@ ScriptChangedResult DoorbotScript::scriptChanged(const TTroomScript *roomScript,
 }
 
 int DoorbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
-		uint tag1, uint tag2, uint remainder) {
+                               uint tag1, uint tag2, uint remainder) {
 	switch (tag2) {
 	case MKTAG('A', 'D', 'V', 'T'):
 	case MKTAG('A', 'R', 'T', 'I'):
@@ -745,12 +725,10 @@ int DoorbotScript::updateState(uint oldId, uint newId, int index) {
 		default:
 			break;
 		}
-	}
-	else if (newId >= 220883) {
+	} else if (newId >= 220883) {
 		CTrueTalkManager::setFlags(38, 1);
 		CTrueTalkManager::triggerAction(28, 0);
-	}
-	else if (newId >= 220076) {
+	} else if (newId >= 220076) {
 		switch (newId) {
 		case 220078:
 		case 220080:
@@ -766,13 +744,11 @@ int DoorbotScript::updateState(uint oldId, uint newId, int index) {
 		}
 
 		CTrueTalkManager::setFlags(39, 1);
-	}
-	else if (newId == 220075) {
+	} else if (newId == 220075) {
 		if (flag39)
 			return getRangeValue(221381);
 		CTrueTalkManager::setFlags(39, 1);
-	}
-	else if (newId == 220038) {
+	} else if (newId == 220038) {
 		return 220038;
 	}
 
@@ -782,10 +758,10 @@ int DoorbotScript::updateState(uint oldId, uint newId, int index) {
 			uint bits = us._dialBits;
 
 			if (!bits
-				|| (index == 0 && (bits == 5 || bits == 1))
-				|| (index == 1 && (bits == 6 || bits == 2))
-				|| (index == 2 && (bits == 9 || bits == 1))
-				|| (index == 3 && (bits == 10 || bits == 2))) {
+			    || (index == 0 && (bits == 5 || bits == 1))
+			    || (index == 1 && (bits == 6 || bits == 2))
+			    || (index == 2 && (bits == 9 || bits == 1))
+			    || (index == 3 && (bits == 10 || bits == 2))) {
 				setState(us._newValue);
 				break;
 			}
@@ -850,7 +826,7 @@ int DoorbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 		break;
 	case 9:
 		if (sentence->localWord("my") || sentence->contains("my")
-				|| sentence->contains("mein"))
+		    || sentence->contains("mein"))
 			return true;
 		id2 = getRoomDialogueId1(roomScript);
 		if (id2) {
@@ -974,11 +950,11 @@ int DoorbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 		break;
 	case 29:
 		if (sentence->localWord("another") || sentence->localWord("more")
-				|| sentence->localWord("additional") || sentence->contains("another")
-				|| sentence->contains("more") || sentence->contains("additional")
-				|| sentence->contains("noch ein") || sentence->contains("einen anderen")
-				|| sentence->contains("ein anderes") || sentence->contains("eine andere")
-				|| sentence->contains("zusaetzliche")) {
+		    || sentence->localWord("additional") || sentence->contains("another")
+		    || sentence->contains("more") || sentence->contains("additional")
+		    || sentence->contains("noch ein") || sentence->contains("einen anderen")
+		    || sentence->contains("ein anderes") || sentence->contains("eine andere")
+		    || sentence->contains("zusaetzliche")) {
 			addResponse(getDialogueId(220058));
 			applyResponse();
 			return 2;
@@ -986,7 +962,7 @@ int DoorbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 		break;
 	case 30:
 		if (!sentence->localWord("because") && !sentence->contains("because")
-				&& !(g_language == Common::DE_DEU && sentence->contains("well")))
+		    && !(g_language == Common::DE_DEU && sentence->contains("well")))
 			return 1;
 		break;
 
@@ -1052,7 +1028,7 @@ bool DoorbotScript::randomResponse(uint index) {
 	}
 
 	if (flag || (getDialRegion(1) != 1 && getRandomNumber(100) > 33)
-			|| getRandomNumber(8) <= index)
+	    || getRandomNumber(8) <= index)
 		return false;
 
 	if (getRandomNumber(100) > 40) {

@@ -55,7 +55,7 @@ public:
 class SequenceItemLeaderAudio : public SequenceItemLeader {
 public:
 	SequenceItemLeaderAudio()
-		: _sample(0) {}
+	  : _sample(0) {}
 
 	void deserialize(Archive &archive) override;
 	void toConsole() override;

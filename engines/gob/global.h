@@ -23,8 +23,8 @@
 #ifndef GOB_GLOBAL_H
 #define GOB_GLOBAL_H
 
-#include "common/file.h"
 #include "common/endian.h"
+#include "common/file.h"
 
 #include "gob/video.h"
 
@@ -35,12 +35,12 @@ namespace Gob {
 #define VIDMODE_VGA 0x13
 #define VIDMODE_HER 0x07
 
-#define MIDI_FLAG       0x4000
-#define PROAUDIO_FLAG   0x0010
-#define ADLIB_FLAG      0x0008
-#define BLASTER_FLAG    0x0004
+#define MIDI_FLAG 0x4000
+#define PROAUDIO_FLAG 0x0010
+#define ADLIB_FLAG 0x0008
+#define BLASTER_FLAG 0x0004
 #define INTERSOUND_FLAG 0x0002
-#define SPEAKER_FLAG    0x0001
+#define SPEAKER_FLAG 0x0001
 
 //#define NO    0
 //#define YES   1
@@ -53,7 +53,7 @@ namespace Gob {
 #define F5_KEY 0x3F00
 #define F6_KEY 0x4000
 #define ESCAPE 0x001B
-#define ENTER  0x000D
+#define ENTER 0x000D
 
 /* Video drivers */
 #define UNK_DRIVER 0
@@ -63,17 +63,17 @@ namespace Gob {
 #define HER_DRIVER 4
 
 enum Language {
-	kLanguageFrench     =  0,
-	kLanguageGerman     =  1,
-	kLanguageBritish    =  2,
-	kLanguageSpanish    =  3,
-	kLanguageItalian    =  4,
-	kLanguageAmerican   =  5,
-	kLanguageDutch      =  6,
-	kLanguageKorean     =  7,
-	kLanguageHebrew     =  8,
-	kLanguagePortuguese =  9,
-	kLanguageJapanese   = 10
+	kLanguageFrench = 0,
+	kLanguageGerman = 1,
+	kLanguageBritish = 2,
+	kLanguageSpanish = 3,
+	kLanguageItalian = 4,
+	kLanguageAmerican = 5,
+	kLanguageDutch = 6,
+	kLanguageKorean = 7,
+	kLanguageHebrew = 8,
+	kLanguagePortuguese = 9,
+	kLanguageJapanese = 10
 };
 
 class Global {
@@ -93,7 +93,7 @@ public:
 
 	uint16 _language;
 	uint16 _languageWanted;
-	bool   _foundLanguage;
+	bool _foundLanguage;
 
 	char _useMouse;
 	int16 _mousePresent;

@@ -23,8 +23,8 @@
 #ifndef SHERLOCK_MUSIC_H
 #define SHERLOCK_MUSIC_H
 
-#include "audio/midiparser.h"
 #include "audio/mididrv.h"
+#include "audio/midiparser.h"
 // for 3DO digital music
 #include "audio/mixer.h"
 #include "common/mutex.h"
@@ -53,7 +53,7 @@ public:
 	virtual void unloadMusic();
 
 private:
-	byte  *_musData;
+	byte *_musData;
 	uint32 _musDataSize;
 };
 
@@ -71,12 +71,14 @@ private:
 	 * Play the specified music resource
 	 */
 	bool playMusic(const Common::String &name);
+
 public:
 	bool _musicPlaying;
 	bool _musicOn;
 	int _musicVolume;
 	bool _midiOption;
 	Common::String _currentSongName, _nextSongName;
+
 public:
 	Music(SherlockEngine *vm, Audio::Mixer *mixer);
 	~Music();

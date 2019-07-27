@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE1100_SPRITES_H
 #define NEVERHOOD_MODULES_MODULE1100_SPRITES_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -32,6 +32,7 @@ namespace Neverhood {
 class SsScene1105Button : public StaticSprite {
 public:
 	SsScene1105Button(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash, NRect &collisionBounds);
+
 protected:
 	Scene *_parentScene;
 	int _countdown;
@@ -49,6 +50,7 @@ class SsScene1105SymbolDie : public StaticSprite {
 public:
 	SsScene1105SymbolDie(NeverhoodEngine *vm, uint dieIndex, int16 x, int16 y);
 	void hide();
+
 protected:
 	uint _dieIndex;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -60,6 +62,7 @@ public:
 	AsScene1105TeddyBear(NeverhoodEngine *vm, Scene *parentScene);
 	void show();
 	void hide();
+
 protected:
 	Scene *_parentScene;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -68,6 +71,7 @@ protected:
 class SsScene1105OpenButton : public StaticSprite {
 public:
 	SsScene1105OpenButton(NeverhoodEngine *vm, Scene *parentScene);
+
 protected:
 	Scene *_parentScene;
 	int _countdown;
@@ -79,6 +83,7 @@ protected:
 class KmScene1109 : public Klaymen {
 public:
 	KmScene1109(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };

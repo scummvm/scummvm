@@ -35,17 +35,17 @@ namespace MystStacks {
 
 #define DECLARE_OPCODE(x) void x(uint16 var, const ArgumentsArray &args)
 
-class MakingOf : public MystScriptParser {
-public:
-	explicit MakingOf(MohawkEngine_Myst *vm);
-	~MakingOf() override;
+	class MakingOf : public MystScriptParser {
+	public:
+		explicit MakingOf(MohawkEngine_Myst *vm);
+		~MakingOf() override;
 
-	void disablePersistentScripts() override;
-	void runPersistentScripts() override;
+		void disablePersistentScripts() override;
+		void runPersistentScripts() override;
 
-private:
-	void setupOpcodes();
-};
+	private:
+		void setupOpcodes();
+	};
 
 } // End of namespace MystStacks
 } // End of namespace Mohawk

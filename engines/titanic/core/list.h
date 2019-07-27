@@ -23,17 +23,17 @@
 #ifndef TITANIC_LIST_H
 #define TITANIC_LIST_H
 
-#include "common/scummsys.h"
 #include "common/list.h"
-#include "titanic/support/simple_file.h"
+#include "common/scummsys.h"
 #include "titanic/core/saveable_object.h"
+#include "titanic/support/simple_file.h"
 
 namespace Titanic {
 
 /**
  * Base list item class
  */
-class ListItem: public CSaveableObject {
+class ListItem : public CSaveableObject {
 public:
 	CLASSDEF;
 
@@ -51,24 +51,31 @@ public:
 /**
  * List item macro for managed pointers an item
  */
-#define PTR_LIST_ITEM(T) class T##ListItem : public ListItem { \
-	public: T *_item; \
-	T##ListItem() : _item(nullptr) {} \
-	T##ListItem(T *item) : _item(item) {} \
-	virtual ~T##ListItem() { delete _item; } \
+#define PTR_LIST_ITEM(T)                     \
+	class T##ListItem : public ListItem {      \
+	public:                                    \
+		T *_item;                                \
+		T##ListItem()                            \
+		  : _item(nullptr) {}                    \
+		T##ListItem(T *item)                     \
+		  : _item(item) {}                       \
+		virtual ~T##ListItem() { delete _item; } \
 	}
 
-template<typename T>
+template <typename T>
 class PtrListItem : public ListItem {
 public:
 	T *_item;
+
 public:
-	PtrListItem() : _item(nullptr) {}
-	PtrListItem(T *item) : _item(item) {}
+	PtrListItem()
+	  : _item(nullptr) {}
+	PtrListItem(T *item)
+	  : _item(item) {}
 	virtual ~PtrListItem() { delete _item; }
 };
 
-template<typename T>
+template <typename T>
 class List : public CSaveableObject, public Common::List<T *> {
 public:
 	virtual ~List() { destroyContents(); }
@@ -91,7 +98,6 @@ public:
 			item->save(file, indent + 1);
 			item->saveFooter(file, indent);
 		}
-
 	}
 
 	/**
@@ -131,7 +137,7 @@ public:
 	void destroyContents() {
 		typename Common::List<T *>::iterator i;
 		for (i = Common::List<T *>::begin();
-				i != Common::List<T *>::end(); ++i) {
+		     i != Common::List<T *>::end(); ++i) {
 			CSaveableObject *obj = *i;
 			delete obj;
 		}
@@ -150,7 +156,7 @@ public:
 
 	bool contains(const T *item) const {
 		for (typename Common::List<T *>::const_iterator i = Common::List<T *>::begin();
-				i != Common::List<T *>::end(); ++i) {
+		     i != Common::List<T *>::end(); ++i) {
 			if (*i == item)
 				return true;
 		}

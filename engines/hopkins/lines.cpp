@@ -104,7 +104,7 @@ int LigneItem::appendToRouteInc(int from, int to, RouteItem *route, int index) {
 		to = _lineDataEndIdx;
 
 	for (int i = from; i < to; ++i)
-		route[index++].set(_lineData[2*i], _lineData[2*i+1], _directionRouteInc);
+		route[index++].set(_lineData[2 * i], _lineData[2 * i + 1], _directionRouteInc);
 	return index;
 }
 
@@ -114,7 +114,7 @@ int LigneItem::appendToRouteDec(int from, int to, RouteItem *route, int index) {
 		from = _lineDataEndIdx - 1;
 
 	for (int i = from; i > to; --i)
-		route[index++].set(_lineData[2*i], _lineData[2*i+1], _directionRouteDec);
+		route[index++].set(_lineData[2 * i], _lineData[2 * i + 1], _directionRouteDec);
 	return index;
 }
 
@@ -129,11 +129,11 @@ void LinesManager::loadLines(const Common::String &file) {
 	byte *ptr = _vm->_fileIO->loadFile(file);
 	for (int idx = 0; READ_LE_INT16((uint16 *)ptr + (idx * 5)) != -1; idx++) {
 		addLine(idx,
-		    (Directions)READ_LE_INT16((uint16 *)ptr + (idx * 5)),
-		    READ_LE_INT16((uint16 *)ptr + (idx * 5) + 1),
-		    READ_LE_INT16((uint16 *)ptr + (idx * 5) + 2),
-		    READ_LE_INT16((uint16 *)ptr + (idx * 5) + 3),
-		    READ_LE_INT16((uint16 *)ptr + (idx * 5) + 4));
+		        (Directions)READ_LE_INT16((uint16 *)ptr + (idx * 5)),
+		        READ_LE_INT16((uint16 *)ptr + (idx * 5) + 1),
+		        READ_LE_INT16((uint16 *)ptr + (idx * 5) + 2),
+		        READ_LE_INT16((uint16 *)ptr + (idx * 5) + 3),
+		        READ_LE_INT16((uint16 *)ptr + (idx * 5) + 4));
 	}
 	initRoute();
 	_vm->_globals->freeMemory(ptr);
@@ -375,7 +375,7 @@ void LinesManager::addLine(int lineIdx, Directions direction, int fromX, int fro
  * Check collision line
  */
 bool LinesManager::checkCollisionLine(int xp, int yp, int *foundDataIdx, int *foundLineIdx, int startLineIdx, int endLineIdx) {
-	debugC(5, kDebugPath, "checkCollisionLine(%d, %d, foundDataIdx, foundLineIdx, %d, %d)", xp, yp, startLineIdx ,endLineIdx);
+	debugC(5, kDebugPath, "checkCollisionLine(%d, %d, foundDataIdx, foundLineIdx, %d, %d)", xp, yp, startLineIdx, endLineIdx);
 	int16 *lineData;
 
 	int left = xp + 4;
@@ -446,9 +446,7 @@ void LinesManager::initRoute() {
 
 		int curLineX = curLineData[2 * curDataIdx - 2];
 		int curLineY = curLineData[2 * curDataIdx - 1];
-		if (_vm->_graphicsMan->_maxX == curLineX || _vm->_graphicsMan->_maxY == curLineY ||
-			_vm->_graphicsMan->_minX == curLineX || _vm->_graphicsMan->_minY == curLineY ||
-			(lineX == curLineX && lineY == curLineY))
+		if (_vm->_graphicsMan->_maxX == curLineX || _vm->_graphicsMan->_maxY == curLineY || _vm->_graphicsMan->_minX == curLineX || _vm->_graphicsMan->_minY == curLineY || (lineX == curLineX && lineY == curLineY))
 			break;
 		if (lineIdx == MAX_LINES)
 			error("ERROR - LAST LINE NOT FOUND");
@@ -700,7 +698,7 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int lineIdx, int destLineIdx, i
 
 		int newLinesDataIdx = 0;
 		int newLinesIdx = 0;
-		switch(newDir) {
+		switch (newDir) {
 		case DIR_UP:
 			newLinesIdx = linesIdxUp;
 			newLinesDataIdx = linesDataIdxUp;
@@ -1003,7 +1001,7 @@ int LinesManager::computeRouteIdx(int lineIdx, int dataIdx, int fromX, int fromY
 					curLineIdx = endLineIdx;
 			} while (destLineIdx != curLineIdx);
 			if (abs(destLineIdx - lineIdx) == stepCount) {
-				if (dataIdx >  abs(_lineItem[lineIdx]._lineDataEndIdx / 2)) {
+				if (dataIdx > abs(_lineItem[lineIdx]._lineDataEndIdx / 2)) {
 					result = avoidObstacle(lineIdx, dataIdx, routerIdx, destLineIdx, destDataIdx, route);
 				} else {
 					result = avoidObstacleOnSegment(lineIdx, dataIdx, routerIdx, destLineIdx, destDataIdx, route, startLineIdx, endLineIdx);
@@ -1040,7 +1038,7 @@ int LinesManager::computeRouteIdx(int lineIdx, int dataIdx, int fromX, int fromY
 		}
 		if (lineIdx == destLineIdx)
 			result = avoidObstacle(lineIdx, dataIdx, result, lineIdx, destDataIdx, route);
-		for(;;) {
+		for (;;) {
 			if (!checkCollisionLine(_newPosX, _newPosY, &foundDataIdx, &foundLineIdx, _lastLine + 1, _linesNumb))
 				break;
 
@@ -1106,8 +1104,7 @@ RouteItem *LinesManager::findRoute(int fromX, int fromY, int destX, int destY) {
 	if (destY <= 24)
 		clipDestY = 25;
 	if (!_vm->_globals->_checkDistanceFl) {
-		if (abs(fromX - _oldRouteFromX) <= 4 && abs(fromY - _oldRouteFromY) <= 4 &&
-		    abs(_oldRouteDestX - destX) <= 4 && abs(_oldRouteDestY - clipDestY) <= 4)
+		if (abs(fromX - _oldRouteFromX) <= 4 && abs(fromY - _oldRouteFromY) <= 4 && abs(_oldRouteDestX - destX) <= 4 && abs(_oldRouteDestY - clipDestY) <= 4)
 			return NULL;
 
 		if (abs(fromX - destX) <= 4 && abs(fromY - clipDestY) <= 4)
@@ -1174,7 +1171,7 @@ RouteItem *LinesManager::findRoute(int fromX, int fromY, int destX, int destY) {
 		collLineIdxArr[DIR_RIGHT] = -1;
 		++tmpDelta;
 		if (deltaArr[DIR_UP] < tmpDelta && collLineIdxArr[DIR_UP] != -1)
-				break;
+			break;
 		if (deltaArr[DIR_DOWN] < tmpDelta && collLineIdxArr[DIR_DOWN] != -1)
 			break;
 	}
@@ -1349,7 +1346,7 @@ RouteItem *LinesManager::findRoute(int fromX, int fromY, int destX, int destY) {
 		case DIR_DOWN:
 			for (int deltaY = 0; deltaY < delta; deltaY++) {
 				if (checkCollisionLine(fromX, deltaY + fromY, &foundDataIdx, &foundLineIdx, _lastLine + 1, _linesNumb)
-				        && _lastLine < foundLineIdx) {
+				    && _lastLine < foundLineIdx) {
 					int tmpRouteIdx = computeRouteIdx(foundLineIdx, foundDataIdx, fromX, deltaY + fromY, fromX, delta + fromY, routeIdx, &_bestRoute[0]);
 					if (tmpRouteIdx == -1) {
 						_bestRoute[routeIdx].invalidate();
@@ -2027,7 +2024,7 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 	arrDelta[DIR_DOWN] = delta;
 
 	for (delta = 0; clipY2 - delta > _vm->_graphicsMan->_minY; delta++) {
-		if (checkCollisionLine(clipX2, clipY2 - delta , &arrDataIdx[DIR_UP], &arrLineIdx[DIR_UP], 0, _lastLine) && arrLineIdx[DIR_UP] <= _lastLine)
+		if (checkCollisionLine(clipX2, clipY2 - delta, &arrDataIdx[DIR_UP], &arrLineIdx[DIR_UP], 0, _lastLine) && arrLineIdx[DIR_UP] <= _lastLine)
 			break;
 		arrDataIdx[DIR_UP] = 0;
 		arrLineIdx[DIR_UP] = -1;
@@ -2576,44 +2573,41 @@ int LinesManager::getMouseZone() {
 	if ((_vm->_events->_mousePos.y + _vm->_events->_mouseOffset.y) > 19) {
 		for (int bobZoneId = 0; bobZoneId <= 48; bobZoneId++) {
 			int bobId = _bobZone[bobZoneId];
-			if (bobId && _bobZoneFl[bobZoneId] && _vm->_objectsMan->_bob[bobId]._bobMode && _vm->_objectsMan->_bob[bobId]._frameIndex != 250 &&
-				!_vm->_objectsMan->_bob[bobId]._disabledAnimationFl && xp > _vm->_objectsMan->_bob[bobId]._oldX &&
-				xp < _vm->_objectsMan->_bob[bobId]._oldWidth + _vm->_objectsMan->_bob[bobId]._oldX && yp > _vm->_objectsMan->_bob[bobId]._oldY) {
-					if (yp < _vm->_objectsMan->_bob[bobId]._oldHeight + _vm->_objectsMan->_bob[bobId]._oldY) {
-						if (_zone[bobZoneId]._spriteIndex == -1) {
-							_zone[bobZoneId]._destX = 0;
-							_zone[bobZoneId]._destY = 0;
-						}
-						if (!_zone[bobZoneId]._destX && !_zone[bobZoneId]._destY) {
-							_zone[bobZoneId]._destX = _vm->_objectsMan->_bob[bobId]._oldWidth + _vm->_objectsMan->_bob[bobId]._oldX;
-							_zone[bobZoneId]._destY = _vm->_objectsMan->_bob[bobId]._oldHeight + _vm->_objectsMan->_bob[bobId]._oldY + 6;
-							_zone[bobZoneId]._spriteIndex = -1;
-						}
-
-						// WORKAROUND: Avoid allowing hotspots that should remain non-interactive
-						if (bobZoneId == 24 && _vm->_globals->_curRoomNum == 14)
-							continue;
-
-						return bobZoneId;
+			if (bobId && _bobZoneFl[bobZoneId] && _vm->_objectsMan->_bob[bobId]._bobMode && _vm->_objectsMan->_bob[bobId]._frameIndex != 250 && !_vm->_objectsMan->_bob[bobId]._disabledAnimationFl && xp > _vm->_objectsMan->_bob[bobId]._oldX && xp < _vm->_objectsMan->_bob[bobId]._oldWidth + _vm->_objectsMan->_bob[bobId]._oldX && yp > _vm->_objectsMan->_bob[bobId]._oldY) {
+				if (yp < _vm->_objectsMan->_bob[bobId]._oldHeight + _vm->_objectsMan->_bob[bobId]._oldY) {
+					if (_zone[bobZoneId]._spriteIndex == -1) {
+						_zone[bobZoneId]._destX = 0;
+						_zone[bobZoneId]._destY = 0;
 					}
+					if (!_zone[bobZoneId]._destX && !_zone[bobZoneId]._destY) {
+						_zone[bobZoneId]._destX = _vm->_objectsMan->_bob[bobId]._oldWidth + _vm->_objectsMan->_bob[bobId]._oldX;
+						_zone[bobZoneId]._destY = _vm->_objectsMan->_bob[bobId]._oldHeight + _vm->_objectsMan->_bob[bobId]._oldY + 6;
+						_zone[bobZoneId]._spriteIndex = -1;
+					}
+
+					// WORKAROUND: Avoid allowing hotspots that should remain non-interactive
+					if (bobZoneId == 24 && _vm->_globals->_curRoomNum == 14)
+						continue;
+
+					return bobZoneId;
+				}
 			}
 		}
 		_currentSegmentId = 0;
 		for (int squareZoneId = 0; squareZoneId <= 99; squareZoneId++) {
 			if (_zone[squareZoneId]._enabledFl && _squareZone[squareZoneId]._enabledFl
-				&& _squareZone[squareZoneId]._left <= xp && _squareZone[squareZoneId]._right >= xp
-				&& _squareZone[squareZoneId]._top <= yp && _squareZone[squareZoneId]._bottom >= yp) {
-					if (_squareZone[squareZoneId]._squareZoneFl)
-						return _zoneLine[_squareZone[squareZoneId]._minZoneLineIdx]._bobZoneIdx;
+			    && _squareZone[squareZoneId]._left <= xp && _squareZone[squareZoneId]._right >= xp
+			    && _squareZone[squareZoneId]._top <= yp && _squareZone[squareZoneId]._bottom >= yp) {
+				if (_squareZone[squareZoneId]._squareZoneFl)
+					return _zoneLine[_squareZone[squareZoneId]._minZoneLineIdx]._bobZoneIdx;
 
-					_segment[_currentSegmentId]._minZoneLineIdx = _squareZone[squareZoneId]._minZoneLineIdx;
-					_segment[_currentSegmentId]._maxZoneLineIdx = _squareZone[squareZoneId]._maxZoneLineIdx;
-					++_currentSegmentId;
+				_segment[_currentSegmentId]._minZoneLineIdx = _squareZone[squareZoneId]._minZoneLineIdx;
+				_segment[_currentSegmentId]._maxZoneLineIdx = _squareZone[squareZoneId]._maxZoneLineIdx;
+				++_currentSegmentId;
 			}
 		}
 		if (!_currentSegmentId)
 			return -1;
-
 
 		int colRes1 = 0;
 		for (int yCurrent = yp; yCurrent >= 0; --yCurrent) {
@@ -2688,10 +2682,7 @@ int LinesManager::checkCollision(int xp, int yp) {
 				int destY = dataP[count * 2 - 1];
 
 				bool flag = true;
-				if ((startX < destX && (xMax < startX || xMin > destX))  ||
-				    (startX >= destX && (xMin > startX || xMax < destX)) ||
-				    (startY < destY && (yMax < startY || yMin > destY))  ||
-				    (startY >= destY && (yMin > startY || yMax < destY)))
+				if ((startX < destX && (xMax < startX || xMin > destX)) || (startX >= destX && (xMin > startX || xMax < destX)) || (startY < destY && (yMax < startY || yMin > destY)) || (startY >= destY && (yMin > startY || yMax < destY)))
 					flag = false;
 
 				if (flag && curZoneLine->_count > 0) {
@@ -2863,12 +2854,12 @@ void LinesManager::checkZone() {
 	int mouseY = _vm->_events->getMouseY();
 	int oldMouseY = mouseY;
 	if (_vm->_globals->_cityMapEnabledFl
-		|| _vm->_events->_startPos.x >= mouseX
-		|| (mouseY = _vm->_graphicsMan->_scrollOffset + 54, mouseX >= mouseY)
-		|| (mouseY = oldMouseY - 1, mouseY < 0 || mouseY > 59)) {
-			if (_vm->_objectsMan->_visibleFl)
-				_vm->_objectsMan->_eraseVisibleCounter = 4;
-			_vm->_objectsMan->_visibleFl = false;
+	    || _vm->_events->_startPos.x >= mouseX
+	    || (mouseY = _vm->_graphicsMan->_scrollOffset + 54, mouseX >= mouseY)
+	    || (mouseY = oldMouseY - 1, mouseY < 0 || mouseY > 59)) {
+		if (_vm->_objectsMan->_visibleFl)
+			_vm->_objectsMan->_eraseVisibleCounter = 4;
+		_vm->_objectsMan->_visibleFl = false;
 	} else {
 		_vm->_objectsMan->_visibleFl = true;
 	}
@@ -2907,27 +2898,23 @@ void LinesManager::checkZone() {
 			}
 		}
 		if (zoneId != -1) {
-			if (_zone[zoneId]._verbFl1 || _zone[zoneId]._verbFl2 ||
-				_zone[zoneId]._verbFl3 || _zone[zoneId]._verbFl4 ||
-				_zone[zoneId]._verbFl5 || _zone[zoneId]._verbFl6 ||
-				_zone[zoneId]._verbFl7 || _zone[zoneId]._verbFl8 ||
-				_zone[zoneId]._verbFl9 || _zone[zoneId]._verbFl10) {
-					if (_oldMouseZoneId != zoneId) {
-						_vm->_fontMan->initTextBuffers(5, _zone[zoneId]._messageId, _vm->_globals->_zoneFilename, 0, 430, 0, 0, 252);
-						_vm->_fontMan->showText(5);
-						_forceHideText = true;
+			if (_zone[zoneId]._verbFl1 || _zone[zoneId]._verbFl2 || _zone[zoneId]._verbFl3 || _zone[zoneId]._verbFl4 || _zone[zoneId]._verbFl5 || _zone[zoneId]._verbFl6 || _zone[zoneId]._verbFl7 || _zone[zoneId]._verbFl8 || _zone[zoneId]._verbFl9 || _zone[zoneId]._verbFl10) {
+				if (_oldMouseZoneId != zoneId) {
+					_vm->_fontMan->initTextBuffers(5, _zone[zoneId]._messageId, _vm->_globals->_zoneFilename, 0, 430, 0, 0, 252);
+					_vm->_fontMan->showText(5);
+					_forceHideText = true;
+				}
+				_hotspotTextColor += 25;
+				if (_hotspotTextColor > 100)
+					_hotspotTextColor = 0;
+				_vm->_graphicsMan->setColorPercentage2(251, _hotspotTextColor, _hotspotTextColor, _hotspotTextColor);
+				if (_vm->_events->_mouseCursorId == 4) {
+					if (_zone[zoneId]._verbFl1 == 2) {
+						_vm->_events->changeMouseCursor(16);
+						_vm->_events->_mouseCursorId = 16;
+						_vm->_objectsMan->setVerb(16);
 					}
-					_hotspotTextColor += 25;
-					if (_hotspotTextColor > 100)
-						_hotspotTextColor = 0;
-					_vm->_graphicsMan->setColorPercentage2(251, _hotspotTextColor, _hotspotTextColor, _hotspotTextColor);
-					if (_vm->_events->_mouseCursorId == 4) {
-						if (_zone[zoneId]._verbFl1 == 2) {
-							_vm->_events->changeMouseCursor(16);
-							_vm->_events->_mouseCursorId = 16;
-							_vm->_objectsMan->setVerb(16);
-						}
-					}
+				}
 			} else {
 				_vm->_graphicsMan->setColorPercentage2(251, 100, 100, 100);
 				_vm->_events->_mouseCursorId = 4;

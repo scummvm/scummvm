@@ -26,15 +26,19 @@
  */
 
 #include "cge/bitmap.h"
-#include "cge/vga13h.h"
 #include "cge/cge_main.h"
-#include "common/system.h"
-#include "common/debug.h"
+#include "cge/vga13h.h"
 #include "common/debug-channels.h"
+#include "common/debug.h"
+#include "common/system.h"
 
 namespace CGE {
 
-Bitmap::Bitmap(CGEEngine *vm, const char *fname) : _m(NULL), _v(NULL), _map(0), _vm(vm) {
+Bitmap::Bitmap(CGEEngine *vm, const char *fname)
+  : _m(NULL)
+  , _v(NULL)
+  , _map(0)
+  , _vm(vm) {
 	debugC(1, kCGEDebugBitmap, "Bitmap::Bitmap(%s)", fname);
 
 	char pat[kMaxPath];
@@ -51,7 +55,14 @@ Bitmap::Bitmap(CGEEngine *vm, const char *fname) : _m(NULL), _v(NULL), _map(0), 
 	}
 }
 
-Bitmap::Bitmap(CGEEngine *vm, uint16 w, uint16 h, uint8 *map) : _w(w), _h(h), _m(map), _v(NULL), _map(0), _b(NULL), _vm(vm) {
+Bitmap::Bitmap(CGEEngine *vm, uint16 w, uint16 h, uint8 *map)
+  : _w(w)
+  , _h(h)
+  , _m(map)
+  , _v(NULL)
+  , _map(0)
+  , _b(NULL)
+  , _vm(vm) {
 	debugC(1, kCGEDebugBitmap, "Bitmap::Bitmap(%d, %d, map)", w, h);
 	if (map)
 		code();
@@ -61,27 +72,32 @@ Bitmap::Bitmap(CGEEngine *vm, uint16 w, uint16 h, uint8 *map) : _w(w), _h(h), _m
 // immediately as VGA video chunks, in near memory as fast as possible,
 // especially for text line real time display
 Bitmap::Bitmap(CGEEngine *vm, uint16 w, uint16 h, uint8 fill)
-	: _w((w + 3) & ~3),                              // only full uint32 allowed!
-	  _h(h), _m(NULL), _map(0), _b(NULL), _vm(vm) {
+  : _w((w + 3) & ~3)
+  , // only full uint32 allowed!
+  _h(h)
+  , _m(NULL)
+  , _map(0)
+  , _b(NULL)
+  , _vm(vm) {
 	debugC(1, kCGEDebugBitmap, "Bitmap::Bitmap(%d, %d, %d)", w, h, fill);
 
-	uint16 dsiz = _w >> 2;                           // data size (1 plane line size)
-	uint16 lsiz = 2 + dsiz + 2;                     // uint16 for line header, uint16 for gap
-	uint16 psiz = _h * lsiz;                         // - last gape, but + plane trailer
-	uint8 *v = new uint8[4 * psiz + _h * sizeof(*_b)];// the same for 4 planes
-	                                                // + room for wash table
+	uint16 dsiz = _w >> 2; // data size (1 plane line size)
+	uint16 lsiz = 2 + dsiz + 2; // uint16 for line header, uint16 for gap
+	uint16 psiz = _h * lsiz; // - last gape, but + plane trailer
+	uint8 *v = new uint8[4 * psiz + _h * sizeof(*_b)]; // the same for 4 planes
+	  // + room for wash table
 	assert(v != NULL);
 
-	WRITE_LE_UINT16(v, (kBmpCPY | dsiz));                 // data chunk hader
-	memset(v + 2, fill, dsiz);                      // data bytes
-	WRITE_LE_UINT16(v + lsiz - 2, (kBmpSKP | ((kScrWidth / 4) - dsiz)));  // gap
+	WRITE_LE_UINT16(v, (kBmpCPY | dsiz)); // data chunk hader
+	memset(v + 2, fill, dsiz); // data bytes
+	WRITE_LE_UINT16(v + lsiz - 2, (kBmpSKP | ((kScrWidth / 4) - dsiz))); // gap
 
 	// Replicate lines
 	byte *destP;
 	for (destP = v + lsiz; destP < (v + psiz); destP += lsiz)
 		Common::copy(v, v + lsiz, destP);
 
-	WRITE_LE_UINT16(v + psiz - 2, kBmpEOI);            // plane trailer uint16
+	WRITE_LE_UINT16(v + psiz - 2, kBmpEOI); // plane trailer uint16
 
 	// Replicate planes
 	for (destP = v + psiz; destP < (v + 4 * psiz); destP += psiz)
@@ -95,12 +111,19 @@ Bitmap::Bitmap(CGEEngine *vm, uint16 w, uint16 h, uint8 fill)
 	for (HideDesc *hdP = b + 1; hdP < (b + _h); hdP++)
 		*hdP = *b;
 
-	b->_skip = 0;                                    // fix the first entry
+	b->_skip = 0; // fix the first entry
 	_v = v;
 	_b = b;
 }
 
-Bitmap::Bitmap(CGEEngine *vm, const Bitmap &bmp) : _w(bmp._w), _h(bmp._h), _m(NULL), _v(NULL), _map(0), _b(NULL), _vm(vm) {
+Bitmap::Bitmap(CGEEngine *vm, const Bitmap &bmp)
+  : _w(bmp._w)
+  , _h(bmp._h)
+  , _m(NULL)
+  , _v(NULL)
+  , _map(0)
+  , _b(NULL)
+  , _vm(vm) {
 	debugC(1, kCGEDebugBitmap, "Bitmap::Bitmap(bmp)");
 	uint8 *v0 = bmp._v;
 	if (!v0)
@@ -165,29 +188,29 @@ BitmapPtr Bitmap::code() {
 
 	uint16 cnt;
 
-	if (_v) {                                        // old X-map exists, so remove it
+	if (_v) { // old X-map exists, so remove it
 		delete[] _v;
 		_v = NULL;
 	}
 
-	while (true) {                                  // at most 2 times: for (V == NULL) & for allocated block;
+	while (true) { // at most 2 times: for (V == NULL) & for allocated block;
 		uint8 *im = _v + 2;
-		uint16 *cp = (uint16 *) _v;
+		uint16 *cp = (uint16 *)_v;
 		int bpl;
 
-		if (_v) {                                      // 2nd pass - fill the hide table
+		if (_v) { // 2nd pass - fill the hide table
 			for (uint16 i = 0; i < _h; i++) {
 				_b[i]._skip = 0xFFFF;
 				_b[i]._hide = 0x0000;
 			}
 		}
-		for (bpl = 0; bpl < 4; bpl++) {              // once per each bitplane
+		for (bpl = 0; bpl < 4; bpl++) { // once per each bitplane
 			uint8 *bm = _m;
 			bool skip = (bm[bpl] == kPixelTransp);
 			uint16 j;
 
 			cnt = 0;
-			for (uint16 i = 0; i < _h; i++) {                  // once per each line
+			for (uint16 i = 0; i < _h; i++) { // once per each line
 				uint8 pix;
 				for (j = bpl; j < _w; j += 4) {
 					pix = bm[j];
@@ -203,7 +226,7 @@ BitmapPtr Bitmap::code() {
 						if (_v)
 							WRITE_LE_UINT16(cp, cnt); // store block description uint16
 
-						cp = (uint16 *) im;
+						cp = (uint16 *)im;
 						im += 2;
 						skip = (pix == kPixelTransp);
 						cnt = 0;
@@ -225,24 +248,24 @@ BitmapPtr Bitmap::code() {
 						if (_v)
 							WRITE_LE_UINT16(cp, cnt);
 
-						cp = (uint16 *) im;
+						cp = (uint16 *)im;
 						im += 2;
 						skip = true;
 						cnt = (kScrWidth - j + 3) / 4;
 					}
 				}
 			}
-			if (cnt && ! skip) {
+			if (cnt && !skip) {
 				cnt |= kBmpCPY;
 				if (_v)
 					WRITE_LE_UINT16(cp, cnt);
 
-				cp = (uint16 *) im;
+				cp = (uint16 *)im;
 				im += 2;
 			}
 			if (_v)
 				WRITE_LE_UINT16(cp, kBmpEOI);
-			cp = (uint16 *) im;
+			cp = (uint16 *)im;
 			im += 2;
 		}
 		if (_v)
@@ -256,7 +279,7 @@ BitmapPtr Bitmap::code() {
 	}
 	cnt = 0;
 	for (uint16 i = 0; i < _h; i++) {
-		if (_b[i]._skip == 0xFFFF) {                    // whole line is skipped
+		if (_b[i]._skip == 0xFFFF) { // whole line is skipped
 			_b[i]._skip = (cnt + kScrWidth) >> 2;
 			cnt = 0;
 		} else {

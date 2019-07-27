@@ -27,8 +27,8 @@
 
 #include "audio/mixer.h"
 
-#include "common/random.h"
 #include "common/array.h"
+#include "common/random.h"
 
 #include "gui/debugger.h"
 
@@ -64,17 +64,17 @@ class Inventory;
 
 // Engine Debug Flags
 enum {
-	kDebugActor     = (1 << 0),
+	kDebugActor = (1 << 0),
 	kDebugAnimation = (1 << 1),
 	kDebugCallbacks = (1 << 2),
-	kDebugDialog    = (1 << 3),
-	kDebugFont      = (1 << 4),
+	kDebugDialog = (1 << 3),
+	kDebugFont = (1 << 4),
 	kDebugInventory = (1 << 5),
-	kDebugMusic     = (1 << 6),
-	kDebugObject    = (1 << 7),
-	kDebugPack      = (1 << 8),
-	kDebugScene     = (1 << 9),
-	kDebugSurface   = (1 << 10)
+	kDebugMusic = (1 << 6),
+	kDebugObject = (1 << 7),
+	kDebugPack = (1 << 8),
+	kDebugScene = (1 << 9),
+	kDebugSurface = (1 << 10)
 };
 
 const uint16 kScreenWidth = 320;
@@ -96,7 +96,9 @@ public:
 
 	void init();
 
-	enum Action { kActionNone, kActionExamine, kActionUse };
+	enum Action { kActionNone,
+		            kActionExamine,
+		            kActionUse };
 
 	void examine(const Common::Point &point, Object *object);
 	void use(Object *object);
@@ -176,7 +178,7 @@ private:
 
 	uint _markDelay, _gameDelay;
 
-	Common::Array<Common::Array<UseHotspot> > _useHotspots;
+	Common::Array<Common::Array<UseHotspot>> _useHotspots;
 
 	void fnIntro();
 	void fnPoleClimbFail();

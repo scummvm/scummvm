@@ -25,9 +25,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CNoNutBowl, CBackground)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(ReplaceBowlAndNutsMsg)
-	ON_MESSAGE(NutPuzzleMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(ReplaceBowlAndNutsMsg)
+ON_MESSAGE(NutPuzzleMsg)
 END_MESSAGE_MAP()
 
 void CNoNutBowl::save(SimpleFile *file, int indent) {

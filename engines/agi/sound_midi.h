@@ -37,7 +37,7 @@ public:
 	~MIDISound() { free(_data); }
 	virtual uint16 type() { return _type; }
 	uint8 *_data; ///< Raw sound resource data
-	uint32 _len;  ///< Length of the raw sound resource
+	uint32 _len; ///< Length of the raw sound resource
 
 protected:
 	uint16 _type; ///< Sound resource type

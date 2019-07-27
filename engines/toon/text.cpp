@@ -26,7 +26,8 @@
 
 namespace Toon {
 
-TextResource::TextResource(ToonEngine *vm) : _vm(vm) {
+TextResource::TextResource(ToonEngine *vm)
+  : _vm(vm) {
 	_numTexts = 0;
 	_textData = NULL;
 }

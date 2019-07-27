@@ -25,27 +25,27 @@
 #ifndef SAGA_RENDER_H
 #define SAGA_RENDER_H
 
-#include "saga/sprite.h"
-#include "saga/gfx.h"
 #include "common/list.h"
+#include "saga/gfx.h"
+#include "saga/sprite.h"
 
 namespace Saga {
 
 enum RENDER_FLAGS {
-	RF_RENDERPAUSE      = (1 << 0),
-	RF_MAP              = (1 << 1),
-	RF_DISABLE_ACTORS   = (1 << 2),
-	RF_DEMO_SUBST       = (1 << 3)
+	RF_RENDERPAUSE = (1 << 0),
+	RF_MAP = (1 << 1),
+	RF_DISABLE_ACTORS = (1 << 2),
+	RF_DEMO_SUBST = (1 << 3)
 };
 
 // Extra render flags used for debugging
 #ifdef SAGA_DEBUG
 enum RENDER_DEBUG_FLAGS {
-	RF_SHOW_FPS         = (1 << 4),
-	RF_PALETTE_TEST     = (1 << 5),
-	RF_TEXT_TEST        = (1 << 6),
-	RF_OBJECTMAP_TEST   = (1 << 7),
-	RF_ACTOR_PATH_TEST  = (1 << 8)
+	RF_SHOW_FPS = (1 << 4),
+	RF_PALETTE_TEST = (1 << 5),
+	RF_TEXT_TEST = (1 << 6),
+	RF_OBJECTMAP_TEST = (1 << 7),
+	RF_ACTOR_PATH_TEST = (1 << 8)
 };
 #endif
 

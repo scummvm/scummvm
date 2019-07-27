@@ -46,7 +46,7 @@ struct ObstacleDef {
 	int _ticks;
 };
 
-class Scene49: public Scene {
+class Scene49 : public Scene {
 public:
 	Scene49(GnapEngine *vm);
 	~Scene49() {}
@@ -77,7 +77,7 @@ private:
 
 /*****************************************************************************/
 
-class Scene50: public Scene {
+class Scene50 : public Scene {
 public:
 	Scene50(GnapEngine *vm);
 	~Scene50() {}
@@ -143,7 +143,7 @@ struct Scene51Item {
 	int _id;
 };
 
-class Scene51: public Scene {
+class Scene51 : public Scene {
 public:
 	Scene51(GnapEngine *vm);
 	~Scene51() {}
@@ -201,7 +201,7 @@ private:
 
 /*****************************************************************************/
 
-class Scene52: public Scene {
+class Scene52 : public Scene {
 public:
 	Scene52(GnapEngine *vm);
 	~Scene52() {}

@@ -24,17 +24,20 @@
 #define TITANIC_SOUND_MANAGER_H
 
 #include "titanic/core/list.h"
-#include "titanic/support/simple_file.h"
 #include "titanic/sound/audio_buffer.h"
 #include "titanic/sound/proximity.h"
 #include "titanic/sound/qmixer.h"
 #include "titanic/sound/wave_file.h"
+#include "titanic/support/simple_file.h"
 #include "titanic/true_talk/dialogue_file.h"
 
 namespace Titanic {
 
 enum VolumeMode {
-	VOL_NORMAL = -1, VOL_QUIET = -2, VOL_VERY_QUIET = -3, VOL_MUTE = -4
+	VOL_NORMAL = -1,
+	VOL_QUIET = -2,
+	VOL_VERY_QUIET = -3,
+	VOL_MUTE = -4
 };
 
 /**
@@ -49,6 +52,7 @@ protected:
 	double _speechPercent;
 	double _masterPercent;
 	double _parrotPercent;
+
 public:
 	CSoundManager();
 	virtual ~CSoundManager() {}
@@ -208,7 +212,7 @@ public:
 	 * Sets the position and orientation for the listener (player)
 	 */
 	virtual void setListenerPosition(double posX, double posY, double posZ,
-		double directionX, double directionY, double directionZ, bool stopSounds) {}
+	                                 double directionX, double directionY, double directionZ, bool stopSounds) {}
 
 	/**
 	 * Returns the music volume percent
@@ -237,11 +241,20 @@ public:
 	int _iChannel;
 	CEndTalkerFn _endFn;
 	TTtalker *_talker;
+
 public:
-	QSoundManagerSound() : ListItem(), _waveFile(nullptr),
-		_iChannel(0), _endFn(nullptr), _talker(nullptr) {}
-	QSoundManagerSound(CWaveFile *waveFile, int iChannel, CEndTalkerFn endFn, TTtalker *talker) :
-		ListItem(), _waveFile(waveFile), _iChannel(iChannel), _endFn(endFn), _talker(talker) {}
+	QSoundManagerSound()
+	  : ListItem()
+	  , _waveFile(nullptr)
+	  , _iChannel(0)
+	  , _endFn(nullptr)
+	  , _talker(nullptr) {}
+	QSoundManagerSound(CWaveFile *waveFile, int iChannel, CEndTalkerFn endFn, TTtalker *talker)
+	  : ListItem()
+	  , _waveFile(waveFile)
+	  , _iChannel(iChannel)
+	  , _endFn(endFn)
+	  , _talker(talker) {}
 };
 
 class QSoundManagerSounds : public List<QSoundManagerSound> {
@@ -280,15 +293,22 @@ class QSoundManager : public CSoundManager, public QMixer {
 		int _handle;
 		PositioningMode _positioningMode;
 
-		Slot() : _waveFile(0), _isTimed(0), _ticks(0), _channel(-1),
-			_handle(0), _positioningMode(POSMODE_NONE) {}
+		Slot()
+		  : _waveFile(0)
+		  , _isTimed(0)
+		  , _ticks(0)
+		  , _channel(-1)
+		  , _handle(0)
+		  , _positioningMode(POSMODE_NONE) {}
 		void clear();
 	};
+
 private:
 	QSoundManagerSounds _sounds;
 	Common::Array<Slot> _slots;
 	uint _channelsVolume[16];
 	int _channelsMode[16];
+
 private:
 	/**
 	 * Updates the volume for a channel
@@ -321,6 +341,7 @@ private:
 	 * Resets the specified channel and returns a new free one
 	 */
 	int resetChannel(int iChannel);
+
 public:
 	int _field18;
 	int _field1C;
@@ -457,7 +478,7 @@ public:
 	 * Sets the position and orientation for the listener (player)
 	 */
 	virtual void setListenerPosition(double posX, double posY, double posZ,
-		double directionX, double directionY, double directionZ, bool stopSounds);
+	                                 double directionX, double directionY, double directionZ, bool stopSounds);
 
 	/**
 	 * Starts a wave file playing

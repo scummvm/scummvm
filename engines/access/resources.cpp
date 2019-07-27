@@ -58,8 +58,8 @@ bool Resources::load(Common::String &errorMessage) {
 	uint version = f.readUint16LE();
 	if (version != expectedVersion) {
 		errorMessage = Common::String::format(
-			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
-			filename.c_str(), expectedVersion, 0, version, 0);
+		  _("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
+		  filename.c_str(), expectedVersion, 0, version, 0);
 		return false;
 	}
 
@@ -98,7 +98,7 @@ void Resources::load(Common::SeekableReadStream &s) {
 
 	// Get the offset of the data for the game
 	uint entryOffset = findEntry(_vm->getGameID(), _vm->isCD() ? 1 : 0,
-		_vm->isDemo() ? 1 : 0, _vm->getLanguage());
+	                             _vm->isDemo() ? 1 : 0, _vm->getLanguage());
 	s.seek(entryOffset);
 
 	// Load filename list
@@ -151,8 +151,7 @@ void Resources::load(Common::SeekableReadStream &s) {
 uint Resources::findEntry(byte gameId, byte discType, byte demoType, Common::Language language) {
 	for (uint idx = 0; idx < _datIndex.size(); ++idx) {
 		DATEntry &de = _datIndex[idx];
-		if (de._gameId == gameId && de._discType == discType &&
-			de._demoType == demoType && de._language == language)
+		if (de._gameId == gameId && de._discType == discType && de._demoType == demoType && de._language == language)
 			return de._fileOffset;
 	}
 
@@ -194,15 +193,15 @@ const byte INITIAL_PALETTE[18 * 3] = {
 
 const char *const GENERAL_MESSAGES[] = {
 	"LOOKING THERE REVEALS NOTHING OF INTEREST.", // LOOK_MESSAGE
-	"THAT DOESN'T OPEN.",               // OPEN_MESSAGE
-	"THAT WON'T MOVE.",                 // MOVE_MESSAGE
-	"YOU CAN'T TAKE THAT.",             // GET_MESSAGE
-	"THAT DOESN'T SEEM TO WORK.",       // USE_MESSAGE
-	"YOU CAN'T CLIMB THAT.",            // GO_MESSAGE
-	"THERE SEEMS TO BE NO RESPONSE.",   // TALK_MESSAGE
-	"THIS OBJECT REQUIRES NO HINTS",    // HELP_MESSAGE
-	"THIS OBJECT REQUIRES NO HINTS",    // HELP_MESSAGE
-	"THAT DOESN'T SEEM TO WORK."        // USE_MESSAGE
+	"THAT DOESN'T OPEN.", // OPEN_MESSAGE
+	"THAT WON'T MOVE.", // MOVE_MESSAGE
+	"YOU CAN'T TAKE THAT.", // GET_MESSAGE
+	"THAT DOESN'T SEEM TO WORK.", // USE_MESSAGE
+	"YOU CAN'T CLIMB THAT.", // GO_MESSAGE
+	"THERE SEEMS TO BE NO RESPONSE.", // TALK_MESSAGE
+	"THIS OBJECT REQUIRES NO HINTS", // HELP_MESSAGE
+	"THIS OBJECT REQUIRES NO HINTS", // HELP_MESSAGE
+	"THAT DOESN'T SEEM TO WORK." // USE_MESSAGE
 };
 
 const int INVCOORDS[][4] = {

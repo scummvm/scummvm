@@ -26,8 +26,12 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CPlaceHolderItem, CNamedItem);
 
-CPlaceHolderItem::CPlaceHolderItem() :
-	_field4C(0), _field60(0), _field64(0), _field68(0), _field7C(0) {
+CPlaceHolderItem::CPlaceHolderItem()
+  : _field4C(0)
+  , _field60(0)
+  , _field64(0)
+  , _field68(0)
+  , _field7C(0) {
 }
 
 void CPlaceHolderItem::save(SimpleFile *file, int indent) {

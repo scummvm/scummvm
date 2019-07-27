@@ -7443,7 +7443,7 @@ const static uint8 dsegStartBlock[DSEG_STARTBLK_SIZE] = {
 	0x69, 0x6e, 0x75, 0x65, 0x2e, 0x24
 };
 
-const static char* messages[333] = {
+const static char *messages[333] = {
 	"I have no idea what to do with it.", // 0
 	"I can't imagine what I could do with\nthis.", // 1
 	"I can't figure out what I should do\nwith this.", // 2
@@ -12118,13 +12118,13 @@ const static uint8 dsegEndBlock[DSEG_ENDBLK_SIZE] = {
 
 // Dialog Strings Block
 
-#define ANIM_WAIT        "\xff"
-#define NEW_LINE         "\n"
-#define DISPLAY_MESSAGE  "\n\n"
+#define ANIM_WAIT "\xff"
+#define NEW_LINE "\n"
+#define DISPLAY_MESSAGE "\n\n"
 #define CHANGE_CHARACTER "\n\n\n"
-#define END_DIALOG       "\n\n\n\n"
+#define END_DIALOG "\n\n\n\n"
 
-const static char* dialog_0[] = {
+const static char *dialog_0[] = {
 	ANIM_WAIT,
 	"Good day.",
 	CHANGE_CHARACTER,
@@ -12164,7 +12164,7 @@ const static char* dialog_0[] = {
 	END_DIALOG
 };
 
-const static char* dialog_1[] = {
+const static char *dialog_1[] = {
 	"So...",
 	DISPLAY_MESSAGE,
 	"What are you doing now?",
@@ -12227,7 +12227,7 @@ const static char* dialog_1[] = {
 	END_DIALOG
 };
 
-const static char* dialog_2[] = {
+const static char *dialog_2[] = {
 	"Thanks. What is it?",
 	CHANGE_CHARACTER,
 	"Chocolate candy.",
@@ -12301,7 +12301,7 @@ const static char* dialog_2[] = {
 	END_DIALOG
 };
 
-const static char* dialog_3[] = {
+const static char *dialog_3[] = {
 	"Mister guard, I...",
 	CHANGE_CHARACTER,
 	"Listen, boy.",
@@ -12330,14 +12330,14 @@ const static char* dialog_3[] = {
 	END_DIALOG
 };
 
-const static char* dialog_4[] = {
+const static char *dialog_4[] = {
 	"Nice suit.",
 	CHANGE_CHARACTER,
 	"Yeah.",
 	END_DIALOG
 };
 
-const static char* dialog_5[] = {
+const static char *dialog_5[] = {
 	CHANGE_CHARACTER,
 	"Damn!",
 	DISPLAY_MESSAGE,
@@ -12345,7 +12345,7 @@ const static char* dialog_5[] = {
 	END_DIALOG
 };
 
-const static char* dialog_6[] = {
+const static char *dialog_6[] = {
 	"Hey!",
 	CHANGE_CHARACTER,
 	"What?",
@@ -12368,7 +12368,7 @@ const static char* dialog_6[] = {
 	END_DIALOG
 };
 
-const static char* dialog_7[] = {
+const static char *dialog_7[] = {
 	"Hey!",
 	CHANGE_CHARACTER,
 	"You've seen nothing.",
@@ -12377,14 +12377,14 @@ const static char* dialog_7[] = {
 	END_DIALOG
 };
 
-const static char* dialog_8[] = {
+const static char *dialog_8[] = {
 	"Hey!",
 	CHANGE_CHARACTER,
 	"Get lost.",
 	END_DIALOG
 };
 
-const static char* dialog_9[] = {
+const static char *dialog_9[] = {
 	"What would you say if I gave you some",
 	NEW_LINE,
 	"gold?...",
@@ -12403,7 +12403,7 @@ const static char* dialog_9[] = {
 	END_DIALOG
 };
 
-const static char* dialog_10[] = {
+const static char *dialog_10[] = {
 	"Now please open the door.",
 	CHANGE_CHARACTER,
 	"No way. Now buzz off.",
@@ -12418,7 +12418,7 @@ const static char* dialog_10[] = {
 	END_DIALOG
 };
 
-const static char* dialog_11[] = {
+const static char *dialog_11[] = {
 	"You... You...",
 	CHANGE_CHARACTER,
 	"Buzz off.",
@@ -12431,14 +12431,14 @@ const static char* dialog_11[] = {
 	END_DIALOG
 };
 
-const static char* dialog_12[] = {
+const static char *dialog_12[] = {
 	"You can't even trust corrupt",
 	NEW_LINE,
 	"guards these days.",
 	END_DIALOG
 };
 
-const static char* dialog_13[] = {
+const static char *dialog_13[] = {
 	"Hi.",
 	CHANGE_CHARACTER,
 	"Hello.",
@@ -12479,7 +12479,7 @@ const static char* dialog_13[] = {
 	END_DIALOG
 };
 
-const static char* dialog_14[] = {
+const static char *dialog_14[] = {
 	"Listen, Sonny or whatever.",
 	DISPLAY_MESSAGE,
 	"What are you trying to do",
@@ -12522,7 +12522,7 @@ const static char* dialog_14[] = {
 	END_DIALOG
 };
 
-const static char* dialog_15[] = {
+const static char *dialog_15[] = {
 	"Hey, kid!",
 	DISPLAY_MESSAGE,
 	"I've got a great idea!",
@@ -12547,14 +12547,14 @@ const static char* dialog_15[] = {
 	END_DIALOG
 };
 
-const static char* dialog_16[] = {
+const static char *dialog_16[] = {
 	"Hey...",
 	CHANGE_CHARACTER,
 	"Go away.",
 	END_DIALOG
 };
 
-const static char* dialog_17[] = {
+const static char *dialog_17[] = {
 	"Hey, boy! It's unbelievable!",
 	CHANGE_CHARACTER,
 	"What?",
@@ -12577,7 +12577,7 @@ const static char* dialog_17[] = {
 	END_DIALOG
 };
 
-const static char* dialog_18[] = {
+const static char *dialog_18[] = {
 	"Good day, sir!",
 	CHANGE_CHARACTER,
 	"And good day to",
@@ -12604,7 +12604,7 @@ const static char* dialog_18[] = {
 	END_DIALOG
 };
 
-const static char* dialog_19[] = {
+const static char *dialog_19[] = {
 	"Do you know the boy",
 	NEW_LINE,
 	"playing with the ball",
@@ -12645,7 +12645,7 @@ const static char* dialog_19[] = {
 	END_DIALOG
 };
 
-const static char* dialog_20[] = {
+const static char *dialog_20[] = {
 	"Are you going to sit here",
 	NEW_LINE,
 	"all day long?",
@@ -12698,14 +12698,14 @@ const static char* dialog_20[] = {
 	END_DIALOG
 };
 
-const static char* dialog_21[] = {
+const static char *dialog_21[] = {
 	"Anything new?",
 	CHANGE_CHARACTER,
 	"Hope not.",
 	END_DIALOG
 };
 
-const static char* dialog_22[] = {
+const static char *dialog_22[] = {
 	"May I borrow this shotgun?",
 	CHANGE_CHARACTER,
 	"No.",
@@ -12726,7 +12726,7 @@ const static char* dialog_22[] = {
 	END_DIALOG
 };
 
-const static char* dialog_23[] = {
+const static char *dialog_23[] = {
 	"Maybe you will change your mind",
 	NEW_LINE,
 	"about the shotgun?...",
@@ -12749,7 +12749,7 @@ const static char* dialog_23[] = {
 	END_DIALOG
 };
 
-const static char* dialog_24[] = {
+const static char *dialog_24[] = {
 	"May I search your drawers?",
 	CHANGE_CHARACTER,
 	"Yes.",
@@ -12778,7 +12778,7 @@ const static char* dialog_24[] = {
 	END_DIALOG
 };
 
-const static char* dialog_25[] = {
+const static char *dialog_25[] = {
 	"May I borrow the fan?",
 	CHANGE_CHARACTER,
 	"No way. It makes this hot day more",
@@ -12787,14 +12787,14 @@ const static char* dialog_25[] = {
 	END_DIALOG
 };
 
-const static char* dialog_26[] = {
+const static char *dialog_26[] = {
 	"About this fan...",
 	CHANGE_CHARACTER,
 	"Come back in winter.",
 	END_DIALOG
 };
 
-const static char* dialog_27[] = {
+const static char *dialog_27[] = {
 	"Nice weather we have",
 	NEW_LINE,
 	"today...",
@@ -12805,7 +12805,7 @@ const static char* dialog_27[] = {
 	END_DIALOG
 };
 
-const static char* dialog_28[] = {
+const static char *dialog_28[] = {
 	"Is it your daughter?",
 	CHANGE_CHARACTER,
 	"You are very kind,",
@@ -12858,7 +12858,7 @@ const static char* dialog_28[] = {
 	END_DIALOG
 };
 
-const static char* dialog_29[] = {
+const static char *dialog_29[] = {
 	"May I ask what you are",
 	NEW_LINE,
 	"doing?",
@@ -12898,21 +12898,21 @@ const static char* dialog_29[] = {
 	END_DIALOG
 };
 
-const static char* dialog_30[] = {
+const static char *dialog_30[] = {
 	"Is everything OK?",
 	CHANGE_CHARACTER,
 	"Indeed it is.",
 	END_DIALOG
 };
 
-const static char* dialog_31[] = {
+const static char *dialog_31[] = {
 	"Is everything OK?",
 	CHANGE_CHARACTER,
 	"You know.",
 	END_DIALOG
 };
 
-const static char* dialog_32[] = {
+const static char *dialog_32[] = {
 	"Is everything OK?",
 	CHANGE_CHARACTER,
 	"It's nice you ask,",
@@ -12923,7 +12923,7 @@ const static char* dialog_32[] = {
 	END_DIALOG
 };
 
-const static char* dialog_33[] = {
+const static char *dialog_33[] = {
 	"Is everything OK?",
 	CHANGE_CHARACTER,
 	"Don't repeat",
@@ -12932,7 +12932,7 @@ const static char* dialog_33[] = {
 	END_DIALOG
 };
 
-const static char* dialog_34[] = {
+const static char *dialog_34[] = {
 	"Is everything OK?",
 	CHANGE_CHARACTER,
 	"Don't interrupt",
@@ -12941,19 +12941,19 @@ const static char* dialog_34[] = {
 	END_DIALOG
 };
 
-const static char* dialog_35[] = {
+const static char *dialog_35[] = {
 	"Is everything OK?",
 	CHANGE_CHARACTER,
 	"Oh shut up.",
 	END_DIALOG
 };
 
-const static char* dialog_36[] = {
+const static char *dialog_36[] = {
 	"Is everything OK?",
 	END_DIALOG
 };
 
-const static char* dialog_37[] = {
+const static char *dialog_37[] = {
 	"Excuse my",
 	NEW_LINE,
 	"immodesty...",
@@ -12974,7 +12974,7 @@ const static char* dialog_37[] = {
 	END_DIALOG
 };
 
-const static char* dialog_38[] = {
+const static char *dialog_38[] = {
 	"I hope you",
 	NEW_LINE,
 	"like it...",
@@ -13003,7 +13003,7 @@ const static char* dialog_38[] = {
 	END_DIALOG
 };
 
-const static char* dialog_39[] = {
+const static char *dialog_39[] = {
 	"Would you care for",
 	NEW_LINE,
 	"another flower?",
@@ -13016,7 +13016,7 @@ const static char* dialog_39[] = {
 	END_DIALOG
 };
 
-const static char* dialog_40[] = {
+const static char *dialog_40[] = {
 	"Are you sure you don't",
 	NEW_LINE,
 	"want another flower?",
@@ -13025,7 +13025,7 @@ const static char* dialog_40[] = {
 	END_DIALOG
 };
 
-const static char* dialog_41[] = {
+const static char *dialog_41[] = {
 	"May I borrow this",
 	NEW_LINE,
 	"duster?",
@@ -13048,7 +13048,7 @@ const static char* dialog_41[] = {
 	END_DIALOG
 };
 
-const static char* dialog_42[] = {
+const static char *dialog_42[] = {
 	"Any chances to borrow the",
 	NEW_LINE,
 	"feather duster?",
@@ -13057,7 +13057,7 @@ const static char* dialog_42[] = {
 	END_DIALOG
 };
 
-const static char* dialog_43[] = {
+const static char *dialog_43[] = {
 	"Do you think you could",
 	NEW_LINE,
 	"lend me the feather duster",
@@ -13076,14 +13076,14 @@ const static char* dialog_43[] = {
 	END_DIALOG
 };
 
-const static char* dialog_44[] = {
+const static char *dialog_44[] = {
 	"Ha! I'm even faster than Indy`!",
 	CHANGE_CHARACTER,
 	"I've seen it all, boy!",
 	END_DIALOG
 };
 
-const static char* dialog_45[] = {
+const static char *dialog_45[] = {
 	"Er...",
 	DISPLAY_MESSAGE,
 	"Uh...",
@@ -13096,7 +13096,7 @@ const static char* dialog_45[] = {
 	END_DIALOG
 };
 
-const static char* dialog_46[] = {
+const static char *dialog_46[] = {
 	"Excuse me, lady, but I think your",
 	NEW_LINE,
 	"laundry is dry now...",
@@ -13113,7 +13113,7 @@ const static char* dialog_46[] = {
 	END_DIALOG
 };
 
-const static char* dialog_47[] = {
+const static char *dialog_47[] = {
 	CHANGE_CHARACTER,
 	"You were right, young man.",
 	DISPLAY_MESSAGE,
@@ -13123,7 +13123,7 @@ const static char* dialog_47[] = {
 	END_DIALOG
 };
 
-const static char* dialog_48[] = {
+const static char *dialog_48[] = {
 	"Do you need this fake apple?",
 	CHANGE_CHARACTER,
 	"It depends. This apple",
@@ -13152,7 +13152,7 @@ const static char* dialog_48[] = {
 	END_DIALOG
 };
 
-const static char* dialog_49[] = {
+const static char *dialog_49[] = {
 	"This apple...",
 	CHANGE_CHARACTER,
 	"No story, no apple.",
@@ -13162,7 +13162,7 @@ const static char* dialog_49[] = {
 	END_DIALOG
 };
 
-const static char* dialog_50[] = {
+const static char *dialog_50[] = {
 	"Could she be...",
 	DISPLAY_MESSAGE,
 	"...the most beautiful girl...",
@@ -13171,7 +13171,7 @@ const static char* dialog_50[] = {
 	END_DIALOG
 };
 
-const static char* dialog_51[] = {
+const static char *dialog_51[] = {
 	"I think it's high time to",
 	NEW_LINE,
 	"introduce myself.",
@@ -13182,7 +13182,7 @@ const static char* dialog_51[] = {
 	END_DIALOG
 };
 
-const static char* dialog_52[] = {
+const static char *dialog_52[] = {
 	"The moment I saw those eyes",
 	NEW_LINE,
 	"was the best moment of my entire",
@@ -13198,7 +13198,7 @@ const static char* dialog_52[] = {
 	END_DIALOG
 };
 
-const static char* dialog_53[] = {
+const static char *dialog_53[] = {
 	"Uh...",
 	DISPLAY_MESSAGE,
 	"Er...",
@@ -13278,14 +13278,14 @@ const static char* dialog_53[] = {
 	END_DIALOG
 };
 
-const static char* dialog_54[] = {
+const static char *dialog_54[] = {
 	"Do you like it?",
 	CHANGE_CHARACTER,
 	"You're charming.",
 	END_DIALOG
 };
 
-const static char* dialog_55[] = {
+const static char *dialog_55[] = {
 	"As a matter",
 	NEW_LINE,
 	"of fact...",
@@ -13296,7 +13296,7 @@ const static char* dialog_55[] = {
 	END_DIALOG
 };
 
-const static char* dialog_56[] = {
+const static char *dialog_56[] = {
 	"Oh,yes...",
 	DISPLAY_MESSAGE,
 	"I just wanted to say",
@@ -13311,12 +13311,12 @@ const static char* dialog_56[] = {
 	END_DIALOG
 };
 
-const static char* dialog_57[] = {
+const static char *dialog_57[] = {
 	"I hate myself.",
 	END_DIALOG
 };
 
-const static char* dialog_58[] = {
+const static char *dialog_58[] = {
 	"I have another",
 	NEW_LINE,
 	"flower...",
@@ -13333,7 +13333,7 @@ const static char* dialog_58[] = {
 	END_DIALOG
 };
 
-const static char* dialog_59[] = {
+const static char *dialog_59[] = {
 	"So you don't want",
 	NEW_LINE,
 	"another flower?",
@@ -13342,7 +13342,7 @@ const static char* dialog_59[] = {
 	END_DIALOG
 };
 
-const static char* dialog_60[] = {
+const static char *dialog_60[] = {
 	"Would you like some candy?",
 	CHANGE_CHARACTER,
 	"You're nice, but no, thanks.",
@@ -13379,7 +13379,7 @@ const static char* dialog_60[] = {
 	END_DIALOG
 };
 
-const static char* dialog_61[] = {
+const static char *dialog_61[] = {
 	ANIM_WAIT,
 	"Khm...",
 	CHANGE_CHARACTER,
@@ -13421,14 +13421,14 @@ const static char* dialog_61[] = {
 	END_DIALOG
 };
 
-const static char* dialog_62[] = {
+const static char *dialog_62[] = {
 	"Thanks. I will never",
 	NEW_LINE,
 	"wash it.",
 	END_DIALOG
 };
 
-const static char* dialog_63[] = {
+const static char *dialog_63[] = {
 	"I found your name on a banknote",
 	NEW_LINE,
 	"some fatso gave me. Do you know",
@@ -13439,7 +13439,7 @@ const static char* dialog_63[] = {
 	END_DIALOG
 };
 
-const static char* dialog_64[] = {
+const static char *dialog_64[] = {
 	"Hey, what's up?!",
 	CHANGE_CHARACTER,
 	"Oh, poor me!...",
@@ -13480,7 +13480,7 @@ const static char* dialog_64[] = {
 	END_DIALOG
 };
 
-const static char* dialog_65[] = {
+const static char *dialog_65[] = {
 	"Hey, you!",
 	DISPLAY_MESSAGE,
 	"Would you please give me that nut",
@@ -13489,12 +13489,12 @@ const static char* dialog_65[] = {
 	END_DIALOG
 };
 
-const static char* dialog_66[] = {
+const static char *dialog_66[] = {
 	"Are you gonna give me that nut or not?!",
 	END_DIALOG
 };
 
-const static char* dialog_67[] = {
+const static char *dialog_67[] = {
 	"All right.",
 	DISPLAY_MESSAGE,
 	"That's it.",
@@ -13507,19 +13507,19 @@ const static char* dialog_67[] = {
 	END_DIALOG
 };
 
-const static char* dialog_68[] = {
+const static char *dialog_68[] = {
 	"Don't you know it's not politically",
 	NEW_LINE,
 	"correct to wear a fur?",
 	END_DIALOG
 };
 
-const static char* dialog_69[] = {
+const static char *dialog_69[] = {
 	"Hey, thanks again for the nut.",
 	END_DIALOG
 };
 
-const static char* dialog_70[] = {
+const static char *dialog_70[] = {
 	"I didn't ask if I could take the rope.",
 	DISPLAY_MESSAGE,
 	"It's really rude to take someone else's",
@@ -13538,12 +13538,12 @@ const static char* dialog_70[] = {
 	END_DIALOG
 };
 
-const static char* dialog_71[] = {
+const static char *dialog_71[] = {
 	"No pain no gain.",
 	END_DIALOG
 };
 
-const static char* dialog_72[] = {
+const static char *dialog_72[] = {
 	"Listen, guys. I want you to get",
 	NEW_LINE,
 	"outta here at once!",
@@ -13556,7 +13556,7 @@ const static char* dialog_72[] = {
 	END_DIALOG
 };
 
-const static char* dialog_73[] = {
+const static char *dialog_73[] = {
 	"I can see...",
 	DISPLAY_MESSAGE,
 	"...there's a...",
@@ -13565,7 +13565,7 @@ const static char* dialog_73[] = {
 	END_DIALOG
 };
 
-const static char* dialog_74[] = {
+const static char *dialog_74[] = {
 	"Not that I'm chicken.",
 	DISPLAY_MESSAGE,
 	"It's just that it could be",
@@ -13594,12 +13594,12 @@ const static char* dialog_74[] = {
 	END_DIALOG
 };
 
-const static char* dialog_75[] = {
+const static char *dialog_75[] = {
 	"This spider gives me thrills...",
 	END_DIALOG
 };
 
-const static char* dialog_76[] = {
+const static char *dialog_76[] = {
 	"Hey, little buddy!",
 	DISPLAY_MESSAGE,
 	"I've got a DECENT PROPOSAL for you.",
@@ -13614,7 +13614,7 @@ const static char* dialog_76[] = {
 	END_DIALOG
 };
 
-const static char* dialog_77[] = {
+const static char *dialog_77[] = {
 	"I should have know",
 	NEW_LINE,
 	"there's a catch.",
@@ -13624,29 +13624,29 @@ const static char* dialog_77[] = {
 	END_DIALOG
 };
 
-const static char* dialog_78[] = {
+const static char *dialog_78[] = {
 	"Hello there, big boy.",
 	END_DIALOG
 };
 
-const static char* dialog_79[] = {
+const static char *dialog_79[] = {
 	"Don't ignore me, please.",
 	END_DIALOG
 };
 
-const static char* dialog_80[] = {
+const static char *dialog_80[] = {
 	"You know, I'm a little bit dog-tired",
 	NEW_LINE,
 	"talking to you.",
 	END_DIALOG
 };
 
-const static char* dialog_81[] = {
+const static char *dialog_81[] = {
 	"What's up?",
 	END_DIALOG
 };
 
-const static char* dialog_82[] = {
+const static char *dialog_82[] = {
 	"Yes, I could take this...",
 	DISPLAY_MESSAGE,
 	"It's a quiet little village...",
@@ -13663,14 +13663,14 @@ const static char* dialog_82[] = {
 	END_DIALOG
 };
 
-const static char* dialog_83[] = {
+const static char *dialog_83[] = {
 	"I don't want my fingerprints on it.",
 	DISPLAY_MESSAGE,
 	" Who knows what it was used for.",
 	END_DIALOG
 };
 
-const static char* dialog_84[] = {
+const static char *dialog_84[] = {
 	"I'm afraid that it's too hard",
 	NEW_LINE,
 	"to catch a mouse just like",
@@ -13681,7 +13681,7 @@ const static char* dialog_84[] = {
 	END_DIALOG
 };
 
-const static char* dialog_85[] = {
+const static char *dialog_85[] = {
 	"I could try to scare these birds myself",
 	NEW_LINE,
 	"if I hadn't watched that Hitchcock",
@@ -13694,14 +13694,14 @@ const static char* dialog_85[] = {
 	END_DIALOG
 };
 
-const static char* dialog_86[] = {
+const static char *dialog_86[] = {
 	"Great. Let's GET THE MESSAGE.",
 	DISPLAY_MESSAGE,
 	"\"Gold awaits at the end of the road.\"",
 	END_DIALOG
 };
 
-const static char* dialog_87[] = {
+const static char *dialog_87[] = {
 	"Are you Mr. John Noty?",
 	CHANGE_CHARACTER,
 	"How do you do, my friend.",
@@ -13770,7 +13770,7 @@ const static char* dialog_87[] = {
 	END_DIALOG
 };
 
-const static char* dialog_88[] = {
+const static char *dialog_88[] = {
 	"I will NEVER take this!",
 	DISPLAY_MESSAGE,
 	"NEVER!",
@@ -13789,7 +13789,7 @@ const static char* dialog_88[] = {
 	END_DIALOG
 };
 
-const static char* dialog_89[] = {
+const static char *dialog_89[] = {
 	"I can't believe he treated me",
 	NEW_LINE,
 	"like that.",
@@ -13801,7 +13801,7 @@ const static char* dialog_89[] = {
 	END_DIALOG
 };
 
-const static char* dialog_90[] = {
+const static char *dialog_90[] = {
 	"Boy...",
 	DISPLAY_MESSAGE,
 	"It's all black...",
@@ -13817,7 +13817,7 @@ const static char* dialog_90[] = {
 	END_DIALOG
 };
 
-const static char* dialog_91[] = {
+const static char *dialog_91[] = {
 	"Searching trash cans again?",
 	DISPLAY_MESSAGE,
 	ANIM_WAIT,
@@ -13827,7 +13827,7 @@ const static char* dialog_91[] = {
 	END_DIALOG
 };
 
-const static char* dialog_92[] = {
+const static char *dialog_92[] = {
 	"The same as usual...",
 	DISPLAY_MESSAGE,
 	"Disasters...",
@@ -13845,7 +13845,7 @@ const static char* dialog_92[] = {
 	END_DIALOG
 };
 
-const static char* dialog_93[] = {
+const static char *dialog_93[] = {
 	ANIM_WAIT,
 	"Gee...",
 	CHANGE_CHARACTER,
@@ -13883,7 +13883,7 @@ const static char* dialog_93[] = {
 	END_DIALOG
 };
 
-const static char* dialog_94[] = {
+const static char *dialog_94[] = {
 	"There's nothing intere...",
 	DISPLAY_MESSAGE,
 	"No, wait a minute...",
@@ -13892,7 +13892,7 @@ const static char* dialog_94[] = {
 	END_DIALOG
 };
 
-const static char* dialog_95[] = {
+const static char *dialog_95[] = {
 	"Don't you think you",
 	NEW_LINE,
 	"should add a little",
@@ -13923,7 +13923,7 @@ const static char* dialog_95[] = {
 	END_DIALOG
 };
 
-const static char* dialog_96[] = {
+const static char *dialog_96[] = {
 	CHANGE_CHARACTER,
 	"This... hic!...",
 	DISPLAY_MESSAGE,
@@ -13941,7 +13941,7 @@ const static char* dialog_96[] = {
 	END_DIALOG
 };
 
-const static char* dialog_97[] = {
+const static char *dialog_97[] = {
 	"I don't need this radio, but",
 	NEW_LINE,
 	"I can use its batteries.",
@@ -13954,7 +13954,7 @@ const static char* dialog_97[] = {
 	END_DIALOG
 };
 
-const static char* dialog_98[] = {
+const static char *dialog_98[] = {
 	CHANGE_CHARACTER,
 	"Security test: voice, scent, view.",
 	DISPLAY_MESSAGE,
@@ -13965,7 +13965,7 @@ const static char* dialog_98[] = {
 	END_DIALOG
 };
 
-const static char* dialog_99[] = {
+const static char *dialog_99[] = {
 	CHANGE_CHARACTER,
 	"Security test: voice, scent, view.",
 	DISPLAY_MESSAGE,
@@ -13976,7 +13976,7 @@ const static char* dialog_99[] = {
 	END_DIALOG
 };
 
-const static char* dialog_100[] = {
+const static char *dialog_100[] = {
 	CHANGE_CHARACTER,
 	"Security test: voice, scent, view.",
 	DISPLAY_MESSAGE,
@@ -13987,7 +13987,7 @@ const static char* dialog_100[] = {
 	END_DIALOG
 };
 
-const static char* dialog_101[] = {
+const static char *dialog_101[] = {
 	"May I talk with...",
 	CHANGE_CHARACTER,
 	"Go away.",
@@ -14004,7 +14004,7 @@ const static char* dialog_101[] = {
 	END_DIALOG
 };
 
-const static char* dialog_102[] = {
+const static char *dialog_102[] = {
 	"Well, but maybe...",
 	CHANGE_CHARACTER,
 	"I...",
@@ -14025,7 +14025,7 @@ const static char* dialog_102[] = {
 	END_DIALOG
 };
 
-const static char* dialog_103[] = {
+const static char *dialog_103[] = {
 	"Last time I ask you...",
 	CHANGE_CHARACTER,
 	"BUSY.",
@@ -14058,7 +14058,7 @@ const static char* dialog_103[] = {
 	END_DIALOG
 };
 
-const static char* dialog_104[] = {
+const static char *dialog_104[] = {
 	"Er...",
 	CHANGE_CHARACTER,
 	"Wrrrr...",
@@ -14067,7 +14067,7 @@ const static char* dialog_104[] = {
 	END_DIALOG
 };
 
-const static char* dialog_105[] = {
+const static char *dialog_105[] = {
 	"Good day, Mr. Robot.",
 	CHANGE_CHARACTER,
 	"Hey, yo, wassup my man,",
@@ -14154,21 +14154,21 @@ const static char* dialog_105[] = {
 	END_DIALOG
 };
 
-const static char* dialog_106[] = {
+const static char *dialog_106[] = {
 	"Sesame, open...",
 	CHANGE_CHARACTER,
 	"(CENSORED), you (CENSORED).",
 	END_DIALOG
 };
 
-const static char* dialog_107[] = {
+const static char *dialog_107[] = {
 	"Hi there!",
 	CHANGE_CHARACTER,
 	"(PARENTAL GUIDANCE: EXPLICIT LYRICS)",
 	END_DIALOG
 };
 
-const static char* dialog_108[] = {
+const static char *dialog_108[] = {
 	"I'm telling you, it's something great.",
 	CHANGE_CHARACTER,
 	"I remember when you killed my",
@@ -14222,7 +14222,7 @@ const static char* dialog_108[] = {
 	END_DIALOG
 };
 
-const static char* dialog_109[] = {
+const static char *dialog_109[] = {
 	ANIM_WAIT,
 	"Great.",
 	DISPLAY_MESSAGE,
@@ -14242,7 +14242,7 @@ const static char* dialog_109[] = {
 	END_DIALOG
 };
 
-const static char* dialog_110[] = {
+const static char *dialog_110[] = {
 	"Here I am.",
 	DISPLAY_MESSAGE,
 	"Well, have you noticed anything",
@@ -14265,7 +14265,7 @@ const static char* dialog_110[] = {
 	END_DIALOG
 };
 
-const static char* dialog_111[] = {
+const static char *dialog_111[] = {
 	"Where is my wallet?!",
 	DISPLAY_MESSAGE,
 	"You thief!",
@@ -14278,7 +14278,7 @@ const static char* dialog_111[] = {
 	END_DIALOG
 };
 
-const static char* dialog_112[] = {
+const static char *dialog_112[] = {
 	"I demand an explanation.",
 	CHANGE_CHARACTER,
 	"Hah!",
@@ -14404,7 +14404,7 @@ const static char* dialog_112[] = {
 	END_DIALOG
 };
 
-const static char* dialog_113[] = {
+const static char *dialog_113[] = {
 	"This fool trusts me.",
 	DISPLAY_MESSAGE,
 	"But I will use him...",
@@ -14433,7 +14433,7 @@ const static char* dialog_113[] = {
 	END_DIALOG
 };
 
-const static char* dialog_114[] = {
+const static char *dialog_114[] = {
 	"But soon...",
 	DISPLAY_MESSAGE,
 	"I'll get rich.",
@@ -14448,19 +14448,19 @@ const static char* dialog_114[] = {
 	END_DIALOG
 };
 
-const static char* dialog_115[] = {
+const static char *dialog_115[] = {
 	ANIM_WAIT,
 	"TAKE ON THE WORLD!...",
 	END_DIALOG
 };
 
-const static char* dialog_116[] = {
+const static char *dialog_116[] = {
 	ANIM_WAIT,
 	"I always wanted to say that.",
 	END_DIALOG
 };
 
-const static char* dialog_117[] = {
+const static char *dialog_117[] = {
 	"It's me again.",
 	CHANGE_CHARACTER,
 	"Goodbye again.",
@@ -14507,7 +14507,7 @@ const static char* dialog_117[] = {
 	END_DIALOG
 };
 
-const static char* dialog_118[] = {
+const static char *dialog_118[] = {
 	"Ok, get in, you filthy terrorist.",
 	DISPLAY_MESSAGE,
 	"Just don't tell anybody.",
@@ -14516,7 +14516,7 @@ const static char* dialog_118[] = {
 	END_DIALOG
 };
 
-const static char* dialog_119[] = {
+const static char *dialog_119[] = {
 	"So...",
 	DISPLAY_MESSAGE,
 	"That's how it all happened...",
@@ -14548,14 +14548,14 @@ const static char* dialog_119[] = {
 	END_DIALOG
 };
 
-const static char* dialog_120[] = {
+const static char *dialog_120[] = {
 	"I have to hide somewhere!",
 	DISPLAY_MESSAGE,
 	"Now!",
 	END_DIALOG
 };
 
-const static char* dialog_121[] = {
+const static char *dialog_121[] = {
 	"I have to buy an old-fashioned safe.",
 	DISPLAY_MESSAGE,
 	"That stupid robot went mad again.",
@@ -14566,7 +14566,7 @@ const static char* dialog_121[] = {
 	END_DIALOG
 };
 
-const static char* dialog_122[] = {
+const static char *dialog_122[] = {
 	"Third time this week.",
 	DISPLAY_MESSAGE,
 	"Oh, all right, all right!...",
@@ -14575,7 +14575,7 @@ const static char* dialog_122[] = {
 	END_DIALOG
 };
 
-const static char* dialog_123[] = {
+const static char *dialog_123[] = {
 	"...cover it all.",
 	DISPLAY_MESSAGE,
 	"I need more money for the security system.",
@@ -14590,7 +14590,7 @@ const static char* dialog_123[] = {
 	END_DIALOG
 };
 
-const static char* dialog_124[] = {
+const static char *dialog_124[] = {
 	"Mr. John Noty?",
 	DISPLAY_MESSAGE,
 	"I just received some information from",
@@ -14605,7 +14605,7 @@ const static char* dialog_124[] = {
 	END_DIALOG
 };
 
-const static char* dialog_125[] = {
+const static char *dialog_125[] = {
 	"So this is it?!",
 	CHANGE_CHARACTER,
 	"Definitely ...hic!... yes.",
@@ -14614,14 +14614,14 @@ const static char* dialog_125[] = {
 	END_DIALOG
 };
 
-const static char* dialog_126[] = {
+const static char *dialog_126[] = {
 	"I have to stop them!",
 	DISPLAY_MESSAGE,
 	"There's no time to waste!",
 	END_DIALOG
 };
 
-const static char* dialog_127[] = {
+const static char *dialog_127[] = {
 	"Well, well, well...",
 	DISPLAY_MESSAGE,
 	"You really play on my nerves.",
@@ -14636,7 +14636,7 @@ const static char* dialog_127[] = {
 	END_DIALOG
 };
 
-const static char* dialog_128[] = {
+const static char *dialog_128[] = {
 	"But I have to kill you anyway.",
 	CHANGE_CHARACTER,
 	"No, no!",
@@ -14651,7 +14651,7 @@ const static char* dialog_128[] = {
 	END_DIALOG
 };
 
-const static char* dialog_129[] = {
+const static char *dialog_129[] = {
 	CHANGE_CHARACTER,
 	"The poor professor has fainted...",
 	CHANGE_CHARACTER,
@@ -14696,7 +14696,7 @@ const static char* dialog_129[] = {
 	END_DIALOG
 };
 
-const static char* dialog_130[] = {
+const static char *dialog_130[] = {
 	ANIM_WAIT,
 	"(gulp)",
 	DISPLAY_MESSAGE,
@@ -14706,7 +14706,7 @@ const static char* dialog_130[] = {
 	END_DIALOG
 };
 
-const static char* dialog_131[] = {
+const static char *dialog_131[] = {
 	"You've lost, mister!",
 	DISPLAY_MESSAGE,
 	"The police are surrounding the building!",
@@ -14729,7 +14729,7 @@ const static char* dialog_131[] = {
 	END_DIALOG
 };
 
-const static char* dialog_132[] = {
+const static char *dialog_132[] = {
 	"I'll have to disarm you.",
 	DISPLAY_MESSAGE,
 	"Be nice and surrender without problems.",
@@ -14750,7 +14750,7 @@ const static char* dialog_132[] = {
 	END_DIALOG
 };
 
-const static char* dialog_133[] = {
+const static char *dialog_133[] = {
 	"I won't give you any more chances...",
 	CHANGE_CHARACTER,
 	"Good.",
@@ -14759,12 +14759,12 @@ const static char* dialog_133[] = {
 	END_DIALOG
 };
 
-const static char* dialog_134[] = {
+const static char *dialog_134[] = {
 	"Stop packing that money!",
 	END_DIALOG
 };
 
-const static char* dialog_135[] = {
+const static char *dialog_135[] = {
 	"Hi, there!",
 	CHANGE_CHARACTER,
 	"Hi.",
@@ -14783,7 +14783,7 @@ const static char* dialog_135[] = {
 	END_DIALOG
 };
 
-const static char* dialog_136[] = {
+const static char *dialog_136[] = {
 	"Can't you let me in without all that",
 	NEW_LINE,
 	"bureaucracy?",
@@ -14802,7 +14802,7 @@ const static char* dialog_136[] = {
 	END_DIALOG
 };
 
-const static char* dialog_137[] = {
+const static char *dialog_137[] = {
 	"MAY I PASS, PLEASE?!",
 	CHANGE_CHARACTER,
 	"YES, YOU MAY!",
@@ -14811,7 +14811,7 @@ const static char* dialog_137[] = {
 	END_DIALOG
 };
 
-const static char* dialog_138[] = {
+const static char *dialog_138[] = {
 	"Let me in!",
 	CHANGE_CHARACTER,
 	"Show your documents!",
@@ -14831,14 +14831,14 @@ const static char* dialog_138[] = {
 	END_DIALOG
 };
 
-const static char* dialog_139[] = {
+const static char *dialog_139[] = {
 	"I have to...",
 	CHANGE_CHARACTER,
 	"Documents!",
 	END_DIALOG
 };
 
-const static char* dialog_140[] = {
+const static char *dialog_140[] = {
 	"What are you reading?",
 	CHANGE_CHARACTER,
 	"'Soldier News', of course.",
@@ -14883,7 +14883,7 @@ const static char* dialog_140[] = {
 	END_DIALOG
 };
 
-const static char* dialog_141[] = {
+const static char *dialog_141[] = {
 	"Would you lend me the magazine?",
 	CHANGE_CHARACTER,
 	"And what am I supposed",
@@ -14903,25 +14903,25 @@ const static char* dialog_141[] = {
 	END_DIALOG
 };
 
-const static char* dialog_142[] = {
+const static char *dialog_142[] = {
 	"What's up?",
 	CHANGE_CHARACTER,
 	"The sky, I hope.",
 	END_DIALOG
 };
 
-const static char* dialog_143[] = {
+const static char *dialog_143[] = {
 	"Keep up the good work.",
 	END_DIALOG
 };
 
-const static char* dialog_144[] = {
+const static char *dialog_144[] = {
 	CHANGE_CHARACTER,
 	"Hey, get back!",
 	END_DIALOG
 };
 
-const static char* dialog_145[] = {
+const static char *dialog_145[] = {
 	"What's the matter?",
 	CHANGE_CHARACTER,
 	"You must show me your pass",
@@ -14938,7 +14938,7 @@ const static char* dialog_145[] = {
 	END_DIALOG
 };
 
-const static char* dialog_146[] = {
+const static char *dialog_146[] = {
 	CHANGE_CHARACTER,
 	"I warn you...",
 	DISPLAY_MESSAGE,
@@ -14946,7 +14946,7 @@ const static char* dialog_146[] = {
 	END_DIALOG
 };
 
-const static char* dialog_147[] = {
+const static char *dialog_147[] = {
 	CHANGE_CHARACTER,
 	"All right.",
 	DISPLAY_MESSAGE,
@@ -14958,7 +14958,7 @@ const static char* dialog_147[] = {
 	END_DIALOG
 };
 
-const static char* dialog_148[] = {
+const static char *dialog_148[] = {
 	CHANGE_CHARACTER,
 	"We're gonna turn you into a real man,",
 	NEW_LINE,
@@ -14988,7 +14988,7 @@ const static char* dialog_148[] = {
 	END_DIALOG
 };
 
-const static char* dialog_149[] = {
+const static char *dialog_149[] = {
 	CHANGE_CHARACTER,
 	"The task is simple.",
 	DISPLAY_MESSAGE,
@@ -15004,7 +15004,7 @@ const static char* dialog_149[] = {
 	END_DIALOG
 };
 
-const static char* dialog_150[] = {
+const static char *dialog_150[] = {
 	ANIM_WAIT,
 	"Hello?",
 	DISPLAY_MESSAGE,
@@ -15013,14 +15013,14 @@ const static char* dialog_150[] = {
 	END_DIALOG
 };
 
-const static char* dialog_151[] = {
+const static char *dialog_151[] = {
 	"OK, that was funny.",
 	DISPLAY_MESSAGE,
 	"Now let me out!",
 	END_DIALOG
 };
 
-const static char* dialog_152[] = {
+const static char *dialog_152[] = {
 	"Hey! Is there anybody out",
 	NEW_LINE,
 	"there?!",
@@ -15030,24 +15030,24 @@ const static char* dialog_152[] = {
 	END_DIALOG
 };
 
-const static char* dialog_153[] = {
+const static char *dialog_153[] = {
 	"Have mercy!",
 	DISPLAY_MESSAGE,
 	"I'm gonna die here!",
 	END_DIALOG
 };
 
-const static char* dialog_154[] = {
+const static char *dialog_154[] = {
 	"I'm getting hungry!",
 	END_DIALOG
 };
 
-const static char* dialog_155[] = {
+const static char *dialog_155[] = {
 	"I don't know what to say now...",
 	END_DIALOG
 };
 
-const static char* dialog_156[] = {
+const static char *dialog_156[] = {
 	"I think...",
 	DISPLAY_MESSAGE,
 	"...you've passed...",
@@ -15060,7 +15060,7 @@ const static char* dialog_156[] = {
 	END_DIALOG
 };
 
-const static char* dialog_157[] = {
+const static char *dialog_157[] = {
 	CHANGE_CHARACTER,
 	"Ok, soldier.",
 	DISPLAY_MESSAGE,
@@ -15088,7 +15088,7 @@ const static char* dialog_157[] = {
 	END_DIALOG
 };
 
-const static char* dialog_158[] = {
+const static char *dialog_158[] = {
 	"Please tell me the password",
 	NEW_LINE,
 	"and let's get over it all.",
@@ -15098,7 +15098,7 @@ const static char* dialog_158[] = {
 	END_DIALOG
 };
 
-const static char* dialog_159[] = {
+const static char *dialog_159[] = {
 	"Hey, talk to me.",
 	DISPLAY_MESSAGE,
 	ANIM_WAIT,
@@ -15112,7 +15112,7 @@ const static char* dialog_159[] = {
 	END_DIALOG
 };
 
-const static char* dialog_160[] = {
+const static char *dialog_160[] = {
 	"Are you ready to talk?",
 	DISPLAY_MESSAGE,
 	ANIM_WAIT,
@@ -15120,7 +15120,7 @@ const static char* dialog_160[] = {
 	END_DIALOG
 };
 
-const static char* dialog_161[] = {
+const static char *dialog_161[] = {
 	"Now, what is the password?",
 	CHANGE_CHARACTER,
 	"Get lost, you pathetic wimp.",
@@ -15138,7 +15138,7 @@ const static char* dialog_161[] = {
 	END_DIALOG
 };
 
-const static char* dialog_162[] = {
+const static char *dialog_162[] = {
 	"I brought you something...",
 	CHANGE_CHARACTER,
 	"You can't bribe me.",
@@ -15151,7 +15151,7 @@ const static char* dialog_162[] = {
 // The usage of this in the engine overlaps the previous dialog i.e. the
 // starting offset used is two bytes early, thus implicitly changing the
 // first command of this dialog from NEW_LINE to CHANGE_CHARACTER.
-const static char* dialog_163[] = {
+const static char *dialog_163[] = {
 	NEW_LINE,
 	"OH GIMMIE GIMMIE GIMMIE!!!",
 	DISPLAY_MESSAGE,
@@ -15173,7 +15173,7 @@ const static char* dialog_163[] = {
 	END_DIALOG
 };
 
-const static char* dialog_164[] = {
+const static char *dialog_164[] = {
 	"You...",
 	DISPLAY_MESSAGE,
 	"...you...",
@@ -15183,7 +15183,7 @@ const static char* dialog_164[] = {
 	END_DIALOG
 };
 
-const static char* dialog_165[] = {
+const static char *dialog_165[] = {
 	"Would you care for a wonderful kaleidoscope?",
 	CHANGE_CHARACTER,
 	"I had one once, but captain saw me",
@@ -15214,12 +15214,12 @@ const static char* dialog_165[] = {
 	END_DIALOG
 };
 
-const static char* dialog_166[] = {
+const static char *dialog_166[] = {
 	"'COFFEE'.",
 	END_DIALOG
 };
 
-const static char* dialog_167[] = {
+const static char *dialog_167[] = {
 	CHANGE_CHARACTER,
 	"Hot, wasn't it?",
 	CHANGE_CHARACTER,
@@ -15267,14 +15267,14 @@ const static char* dialog_167[] = {
 	END_DIALOG
 };
 
-const static char* dialog_168[] = {
+const static char *dialog_168[] = {
 	"Time for a little hint?",
 	CHANGE_CHARACTER,
 	"No.",
 	END_DIALOG
 };
 
-const static char* dialog_169[] = {
+const static char *dialog_169[] = {
 	"Hello, sir. I'm Mark.",
 	CHANGE_CHARACTER,
 	"What a pity you're not a dollar.",
@@ -15313,7 +15313,7 @@ const static char* dialog_169[] = {
 	END_DIALOG
 };
 
-const static char* dialog_170[] = {
+const static char *dialog_170[] = {
 	"Not much of a rush on, is there?",
 	CHANGE_CHARACTER,
 	"Do you want to order something or not?",
@@ -15349,7 +15349,7 @@ const static char* dialog_170[] = {
 	END_DIALOG
 };
 
-const static char* dialog_171[] = {
+const static char *dialog_171[] = {
 	"What are you drinking?",
 	CHANGE_CHARACTER,
 	"Tea.",
@@ -15358,14 +15358,14 @@ const static char* dialog_171[] = {
 	END_DIALOG
 };
 
-const static char* dialog_172[] = {
+const static char *dialog_172[] = {
 	"Nice weather.",
 	CHANGE_CHARACTER,
 	"Mhmmm...",
 	END_DIALOG
 };
 
-const static char* dialog_173[] = {
+const static char *dialog_173[] = {
 	"Sometimes I feel tired.",
 	DISPLAY_MESSAGE,
 	ANIM_WAIT,
@@ -15373,30 +15373,30 @@ const static char* dialog_173[] = {
 	END_DIALOG
 };
 
-const static char* dialog_174[] = {
+const static char *dialog_174[] = {
 	"Hey, Woodstock's over!",
 	END_DIALOG
 };
 
-const static char* dialog_175[] = {
+const static char *dialog_175[] = {
 	"Thanks.",
 	END_DIALOG
 };
 
-const static char* dialog_176[] = {
+const static char *dialog_176[] = {
 	CHANGE_CHARACTER,
 	"What the...",
 	END_DIALOG
 };
 
-const static char* dialog_177[] = {
+const static char *dialog_177[] = {
 	"Hey, aren't you thirsty?",
 	DISPLAY_MESSAGE,
 	"Have you forgotten about your cup?",
 	END_DIALOG
 };
 
-const static char* dialog_178[] = {
+const static char *dialog_178[] = {
 	"Sir, we have been informed that...",
 	CHANGE_CHARACTER,
 	"Later!",
@@ -15407,14 +15407,14 @@ const static char* dialog_178[] = {
 	END_DIALOG
 };
 
-const static char* dialog_179[] = {
+const static char *dialog_179[] = {
 	"Sir, some young boy tried to get inside",
 	NEW_LINE,
 	"the mansion.",
 	END_DIALOG
 };
 
-const static char* dialog_180[] = {
+const static char *dialog_180[] = {
 	"Don't worry.",
 	DISPLAY_MESSAGE,
 	"Young boys are curious...",
@@ -15427,12 +15427,12 @@ const static char* dialog_180[] = {
 	END_DIALOG
 };
 
-const static char* dialog_181[] = {
+const static char *dialog_181[] = {
 	"Sir, that boy tried to get in again.",
 	END_DIALOG
 };
 
-const static char* dialog_182[] = {
+const static char *dialog_182[] = {
 	"Do you think it's serious?",
 	CHANGE_CHARACTER,
 	"Hmmm... No...",
@@ -15451,7 +15451,7 @@ const static char* dialog_182[] = {
 	END_DIALOG
 };
 
-const static char* dialog_183[] = {
+const static char *dialog_183[] = {
 	"Don't tell me it's that boy again...",
 	CHANGE_CHARACTER,
 	"I'm afraid so.",
@@ -15460,7 +15460,7 @@ const static char* dialog_183[] = {
 	END_DIALOG
 };
 
-const static char* dialog_184[] = {
+const static char *dialog_184[] = {
 	"He's starting to get on my nerves.",
 	DISPLAY_MESSAGE,
 	"And what am I paying you for?",
@@ -15473,7 +15473,7 @@ const static char* dialog_184[] = {
 	END_DIALOG
 };
 
-const static char* dialog_185[] = {
+const static char *dialog_185[] = {
 	"Sir...",
 	CHANGE_CHARACTER,
 	"Let me guess...",
@@ -15494,7 +15494,7 @@ const static char* dialog_185[] = {
 	END_DIALOG
 };
 
-const static char* dialog_186[] = {
+const static char *dialog_186[] = {
 	"I'll handle it myself.",
 	DISPLAY_MESSAGE,
 	"Now get out!",
@@ -15503,7 +15503,7 @@ const static char* dialog_186[] = {
 	END_DIALOG
 };
 
-const static char* dialog_187[] = {
+const static char *dialog_187[] = {
 	"Hey, you up there!",
 	DISPLAY_MESSAGE,
 	"Get down at once!",
@@ -15516,7 +15516,7 @@ const static char* dialog_187[] = {
 	END_DIALOG
 };
 
-const static char* dialog_188[] = {
+const static char *dialog_188[] = {
 	"Hey, birdy, don't be shy.",
 	DISPLAY_MESSAGE,
 	"Come to me...",
@@ -15526,12 +15526,12 @@ const static char* dialog_188[] = {
 	END_DIALOG
 };
 
-const static char* dialog_189[] = {
+const static char *dialog_189[] = {
 	"Come here, little bird...",
 	END_DIALOG
 };
 
-const static char* dialog_190[] = {
+const static char *dialog_190[] = {
 	NEW_LINE,
 	"Hey, keep away from this door!",
 	CHANGE_CHARACTER,
@@ -15543,7 +15543,7 @@ const static char* dialog_190[] = {
 	END_DIALOG
 };
 
-const static char* dialog_191[] = {
+const static char *dialog_191[] = {
 	CHANGE_CHARACTER,
 	"I told you to keep away, didn't I?",
 	CHANGE_CHARACTER,
@@ -15551,7 +15551,7 @@ const static char* dialog_191[] = {
 	END_DIALOG
 };
 
-const static char* dialog_192[] = {
+const static char *dialog_192[] = {
 	"I've got a new delivery of gold.",
 	CHANGE_CHARACTER,
 	"Yeah, I know.",
@@ -15568,7 +15568,7 @@ const static char* dialog_192[] = {
 	END_DIALOG
 };
 
-const static char* dialog_193[] = {
+const static char *dialog_193[] = {
 	"As I told you, our organisation",
 	NEW_LINE,
 	"takes care of unusual problems.",
@@ -15651,7 +15651,7 @@ const static char* dialog_193[] = {
 	END_DIALOG
 };
 
-const static char* dialog_194[] = {
+const static char *dialog_194[] = {
 	ANIM_WAIT,
 	"The name is...",
 	DISPLAY_MESSAGE,
@@ -15663,12 +15663,12 @@ const static char* dialog_194[] = {
 	END_DIALOG
 };
 
-const static char* dialog_195[] = {
+const static char *dialog_195[] = {
 	"He's coming.",
 	END_DIALOG
 };
 
-const static char* dialog_196[] = {
+const static char *dialog_196[] = {
 	"Oh, I'm sorry about my men.",
 	DISPLAY_MESSAGE,
 	"Sometimes they get a bit too nervous...",
@@ -15679,7 +15679,7 @@ const static char* dialog_196[] = {
 	END_DIALOG
 };
 
-const static char* dialog_197[] = {
+const static char *dialog_197[] = {
 	"Listen, mister...",
 	CHANGE_CHARACTER,
 	"I know, I know.",
@@ -15775,19 +15775,19 @@ const static char* dialog_197[] = {
 	END_DIALOG
 };
 
-const static char* dialog_198[] = {
+const static char *dialog_198[] = {
 	CHANGE_CHARACTER,
 	"Our respect?",
 	END_DIALOG
 };
 
-const static char* dialog_199[] = {
+const static char *dialog_199[] = {
 	CHANGE_CHARACTER,
 	"Patriotism?",
 	END_DIALOG
 };
 
-const static char* dialog_200[] = {
+const static char *dialog_200[] = {
 	CHANGE_CHARACTER,
 	"Girls?",
 	CHANGE_CHARACTER,
@@ -15797,7 +15797,7 @@ const static char* dialog_200[] = {
 	END_DIALOG
 };
 
-const static char* dialog_201[] = {
+const static char *dialog_201[] = {
 	"Ok, I agree. What am I supposed to do?",
 	CHANGE_CHARACTER,
 	"Before you start, I suggest that first",
@@ -15814,7 +15814,7 @@ const static char* dialog_201[] = {
 	END_DIALOG
 };
 
-const static char* dialog_202[] = {
+const static char *dialog_202[] = {
 	"...and it was even fun.",
 	CHANGE_CHARACTER,
 	"I'm glad you liked our training methods.",
@@ -15908,7 +15908,7 @@ const static char* dialog_202[] = {
 	END_DIALOG
 };
 
-const static char* dialog_203[] = {
+const static char *dialog_203[] = {
 	CHANGE_CHARACTER,
 	"Don't worry.",
 	DISPLAY_MESSAGE,
@@ -15918,7 +15918,7 @@ const static char* dialog_203[] = {
 	END_DIALOG
 };
 
-const static char* dialog_204[] = {
+const static char *dialog_204[] = {
 	CHANGE_CHARACTER,
 	"He got what he deserved.",
 	DISPLAY_MESSAGE,
@@ -15987,7 +15987,7 @@ const static char* dialog_204[] = {
 	END_DIALOG
 };
 
-const static char* dialog_205[] = {
+const static char *dialog_205[] = {
 	CHANGE_CHARACTER,
 	"It's not a soap opera, it's",
 	NEW_LINE,
@@ -16008,7 +16008,7 @@ const static char* dialog_205[] = {
 	END_DIALOG
 };
 
-const static char* dialog_206[] = {
+const static char *dialog_206[] = {
 	CHANGE_CHARACTER,
 	"You don't have to tell me.",
 	DISPLAY_MESSAGE,
@@ -16038,7 +16038,7 @@ const static char* dialog_206[] = {
 	END_DIALOG
 };
 
-const static char* dialog_207[] = {
+const static char *dialog_207[] = {
 	CHANGE_CHARACTER,
 	"Me?...",
 	DISPLAY_MESSAGE,
@@ -16050,7 +16050,7 @@ const static char* dialog_207[] = {
 	END_DIALOG
 };
 
-const static char* dialog_208[] = {
+const static char *dialog_208[] = {
 	CHANGE_CHARACTER,
 	"(sigh)",
 	DISPLAY_MESSAGE,
@@ -16063,7 +16063,7 @@ const static char* dialog_208[] = {
 	END_DIALOG
 };
 
-const static char* dialog_209[] = {
+const static char *dialog_209[] = {
 	"In the name of...",
 	DISPLAY_MESSAGE,
 	"...blah...blah...blah...",
@@ -16074,14 +16074,14 @@ const static char* dialog_209[] = {
 	END_DIALOG
 };
 
-const static char* dialog_210[] = {
+const static char *dialog_210[] = {
 	"       Well...       ",
 	DISPLAY_MESSAGE,
 	"That's all, folks!",
 	END_DIALOG
 };
 
-const static char* dialog_211[] = {
+const static char *dialog_211[] = {
 	"I found the time pill!",
 	DISPLAY_MESSAGE,
 	"It must have fallen out of the jar!...",
@@ -16091,14 +16091,14 @@ const static char* dialog_211[] = {
 	END_DIALOG
 };
 
-const static char* dialog_212[] = {
+const static char *dialog_212[] = {
 	"Wow!",
 	DISPLAY_MESSAGE,
 	"This is charming!...",
 	END_DIALOG
 };
 
-const static char** dialogs[] = {
+const static char **dialogs[] = {
 	dialog_0,
 	dialog_1,
 	dialog_2,

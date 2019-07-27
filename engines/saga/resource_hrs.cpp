@@ -24,17 +24,17 @@
 
 // HRS Resource file management module (SAGA 2, used in DINO and FTA2)
 
-#include "saga/saga.h"
+#	include "saga/saga.h"
 
-#include "saga/actor.h"
-#include "saga/animation.h"
-#include "saga/interface.h"
-#include "saga/music.h"
-#include "saga/resource.h"
-#include "saga/scene.h"
-#include "saga/sndres.h"
+#	include "saga/actor.h"
+#	include "saga/animation.h"
+#	include "saga/interface.h"
+#	include "saga/music.h"
+#	include "saga/resource.h"
+#	include "saga/scene.h"
+#	include "saga/sndres.h"
 
-#include "common/endian.h"
+#	include "common/endian.h"
 
 namespace Saga {
 
@@ -72,7 +72,7 @@ bool ResourceContext_HRS::loadResV2(uint32 contextSize) {
 	uint32 firstEntryOffset;
 	uint32 tableSize;
 	int i, count;
-	const uint32 resourceSize = 4 + 4 + 4;	// id, size, offset
+	const uint32 resourceSize = 4 + 4 + 4; // id, size, offset
 
 	debug(3, "Context %s =====", _fileName);
 	_file.seek(0, SEEK_SET);
@@ -80,7 +80,7 @@ bool ResourceContext_HRS::loadResV2(uint32 contextSize) {
 	readCategory(origin);
 
 	// Check if the file is valid
-	if (origin.id != MKTAG('H','R','E','S')) {	// header
+	if (origin.id != MKTAG('H', 'R', 'E', 'S')) { // header
 		return false;
 	}
 

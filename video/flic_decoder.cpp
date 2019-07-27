@@ -112,7 +112,7 @@ FlicDecoder::FlicVideoTrack::~FlicVideoTrack() {
 }
 
 void FlicDecoder::FlicVideoTrack::readHeader() {
-	_fileStream->readUint16LE();	// flags
+	_fileStream->readUint16LE(); // flags
 	// Note: The normal delay is a 32-bit integer (dword), whereas the overridden delay is a 16-bit integer (word)
 	// the frame delay is the FLIC "speed", in milliseconds.
 	_frameDelay = _startFrameDelay = _fileStream->readUint32LE();
@@ -154,10 +154,10 @@ Graphics::PixelFormat FlicDecoder::FlicVideoTrack::getPixelFormat() const {
 }
 
 #define FLI_SETPAL 4
-#define FLI_SS2    7
-#define FLI_BRUN   15
-#define FLI_COPY   16
-#define PSTAMP     18
+#define FLI_SS2 7
+#define FLI_BRUN 15
+#define FLI_COPY 16
+#define PSTAMP 18
 #define FRAME_TYPE 0xF1FA
 
 const Graphics::Surface *FlicDecoder::FlicVideoTrack::decodeNextFrame() {
@@ -172,7 +172,7 @@ const Graphics::Surface *FlicDecoder::FlicVideoTrack::decodeNextFrame() {
 	default:
 		error("FlicDecoder::decodeFrame(): unknown main chunk type (type = 0x%02X)", frameType);
 		break;
-	 }
+	}
 
 	_curFrame++;
 	_nextFrameStartTime += _frameDelay;
@@ -190,11 +190,11 @@ void FlicDecoder::FlicVideoTrack::handleFrame() {
 	uint16 chunkCount = _fileStream->readUint16LE();
 	// Note: The overridden delay is a 16-bit integer (word), whereas the normal delay is a 32-bit integer (dword)
 	// the frame delay is the FLIC "speed", in milliseconds.
-	uint16 newFrameDelay = _fileStream->readUint16LE();	// "speed", in milliseconds
+	uint16 newFrameDelay = _fileStream->readUint16LE(); // "speed", in milliseconds
 	if (newFrameDelay > 0)
 		_frameDelay = newFrameDelay;
 
-	_fileStream->readUint16LE();	// reserved, always 0
+	_fileStream->readUint16LE(); // reserved, always 0
 	uint16 newWidth = _fileStream->readUint16LE();
 	uint16 newHeight = _fileStream->readUint16LE();
 
@@ -285,13 +285,14 @@ void FlicDecoder::FlicVideoTrack::decodeByteRun(uint8 *data) {
 	_dirtyRects.push_back(Common::Rect(0, 0, getWidth(), getHeight()));
 }
 
-#define OP_PACKETCOUNT   0
-#define OP_UNDEFINED     1
-#define OP_LASTPIXEL     2
+#define OP_PACKETCOUNT 0
+#define OP_UNDEFINED 1
+#define OP_LASTPIXEL 2
 #define OP_LINESKIPCOUNT 3
 
 void FlicDecoder::FlicVideoTrack::decodeDeltaFLC(uint8 *data) {
-	uint16 linesInChunk = READ_LE_UINT16(data); data += 2;
+	uint16 linesInChunk = READ_LE_UINT16(data);
+	data += 2;
 	uint16 currentLine = 0;
 	uint16 packetCount = 0;
 
@@ -300,7 +301,8 @@ void FlicDecoder::FlicVideoTrack::decodeDeltaFLC(uint8 *data) {
 
 		// First process all the opcodes.
 		do {
-			opcode = READ_LE_UINT16(data); data += 2;
+			opcode = READ_LE_UINT16(data);
+			data += 2;
 
 			switch ((opcode >> 14) & 3) {
 			case OP_PACKETCOUNT:
@@ -330,7 +332,8 @@ void FlicDecoder::FlicVideoTrack::decodeDeltaFLC(uint8 *data) {
 				_dirtyRects.push_back(Common::Rect(column, currentLine, column + rleCount * 2, currentLine + 1));
 			} else if (rleCount < 0) {
 				rleCount = -rleCount;
-				uint16 dataWord = READ_UINT16(data); data += 2;
+				uint16 dataWord = READ_UINT16(data);
+				data += 2;
 				for (int i = 0; i < rleCount; ++i) {
 					WRITE_UINT16((byte *)_surface->getBasePtr(column + i * 2, currentLine), dataWord);
 				}
@@ -346,7 +349,8 @@ void FlicDecoder::FlicVideoTrack::decodeDeltaFLC(uint8 *data) {
 }
 
 void FlicDecoder::FlicVideoTrack::unpackPalette(uint8 *data) {
-	uint16 numPackets = READ_LE_UINT16(data); data += 2;
+	uint16 numPackets = READ_LE_UINT16(data);
+	data += 2;
 
 	if (0 == READ_LE_UINT16(data)) { //special case
 		data += 2;

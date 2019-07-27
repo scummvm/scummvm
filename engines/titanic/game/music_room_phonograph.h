@@ -29,11 +29,15 @@ namespace Titanic {
 
 class CMusicRoomPhonograph : public CRestaurantPhonograph {
 	DECLARE_MESSAGE_MAP;
+
 private:
 	int _field118;
+
 public:
 	CLASSDEF;
-	CMusicRoomPhonograph() : CRestaurantPhonograph(), _field118(0) {}
+	CMusicRoomPhonograph()
+	  : CRestaurantPhonograph()
+	  , _field118(0) {}
 
 	/**
 	 * Save the data for the class to file

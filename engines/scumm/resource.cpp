@@ -22,15 +22,15 @@
 
 #include "common/str.h"
 #ifndef MACOSX
-#include "common/config-manager.h"
+#	include "common/config-manager.h"
 #endif
 
 #include "scumm/charset.h"
 #include "scumm/dialogs.h"
 #include "scumm/file.h"
+#include "scumm/he/intern_he.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
-#include "scumm/he/intern_he.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
@@ -51,15 +51,12 @@ enum {
 	RF_OFFHEAP = 0x40
 };
 
-
-
 extern const char *nameOfResType(ResType type);
 
 static uint16 newTag2Old(uint32 newTag);
 static const byte *findResourceSmall(uint32 tag, const byte *searchin);
 
 static bool checkTryMedia(BaseScummFile *handle);
-
 
 /* Open a room */
 void ScummEngine::openRoom(const int room) {
@@ -144,7 +141,7 @@ void ScummEngine::openRoom(const int room) {
 	} while (1);
 
 	deleteRoomOffsets();
-	_fileOffset = 0;		// start of file
+	_fileOffset = 0; // start of file
 }
 
 void ScummEngine::closeRoom() {
@@ -166,7 +163,7 @@ void ScummEngine::deleteRoomOffsets() {
 /** Read room offsets */
 void ScummEngine::readRoomsOffsets() {
 	if (_game.features & GF_SMALL_HEADER) {
-		_fileHandle->seek(12, SEEK_SET);	// Directly searching for the room offset block would be more generic...
+		_fileHandle->seek(12, SEEK_SET); // Directly searching for the room offset block would be more generic...
 	} else {
 		_fileHandle->seek(16, SEEK_SET);
 	}
@@ -174,7 +171,7 @@ void ScummEngine::readRoomsOffsets() {
 	int num = _fileHandle->readByte();
 	while (num--) {
 		int room = _fileHandle->readByte();
-		int offset =  _fileHandle->readUint32LE();
+		int offset = _fileHandle->readUint32LE();
 		if (_res->_types[rtRoom][room]._roomoffs != RES_INVALID_OFFSET) {
 			_res->_types[rtRoom][room]._roomoffs = offset;
 		}
@@ -219,11 +216,11 @@ void ScummEngine::askForDisk(const char *filename, int disknum) {
 
 		_imuseDigital->stopAllSounds();
 
-#ifdef MACOSX
+#	ifdef MACOSX
 		sprintf(buf, "Cannot find file: '%s'\nPlease insert disc %d.\nPress OK to retry, Quit to exit", filename, disknum);
-#else
+#	else
 		sprintf(buf, "Cannot find file: '%s'\nInsert disc %d into drive %s\nPress OK to retry, Quit to exit", filename, disknum, ConfMan.get("path").c_str());
-#endif
+#	endif
 
 		result = displayMessage("Quit", "%s", buf);
 		if (!result) {
@@ -255,26 +252,26 @@ void ScummEngine::readIndexFile() {
 			if (_fileHandle->eos() || _fileHandle->err())
 				break;
 			switch (blocktype) {
-			case MKTAG('D','O','B','J'):
+			case MKTAG('D', 'O', 'B', 'J'):
 				_numGlobalObjects = _fileHandle->readUint16LE();
 				itemsize -= 2;
 				break;
-			case MKTAG('D','R','O','O'):
+			case MKTAG('D', 'R', 'O', 'O'):
 				_numRooms = _fileHandle->readUint16LE();
 				itemsize -= 2;
 				break;
 
-			case MKTAG('D','S','C','R'):
+			case MKTAG('D', 'S', 'C', 'R'):
 				_numScripts = _fileHandle->readUint16LE();
 				itemsize -= 2;
 				break;
 
-			case MKTAG('D','C','O','S'):
+			case MKTAG('D', 'C', 'O', 'S'):
 				_numCostumes = _fileHandle->readUint16LE();
 				itemsize -= 2;
 				break;
 
-			case MKTAG('D','S','O','U'):
+			case MKTAG('D', 'S', 'O', 'U'):
 				_numSounds = _fileHandle->readUint16LE();
 				itemsize -= 2;
 				break;
@@ -303,22 +300,19 @@ void ScummEngine::readIndexFile() {
 		readIndexBlock(blocktype, itemsize);
 	}
 
-//  if (numblock!=9)
-//    error("Not enough blocks read from directory");
+	//  if (numblock!=9)
+	//    error("Not enough blocks read from directory");
 
 	closeRoom();
 }
-
-
 
 #define TRYMEDIA_MARK_LEN 6
 
 bool checkTryMedia(BaseScummFile *handle) {
 	byte buf[TRYMEDIA_MARK_LEN];
 	bool matched = true;
-	const byte magic[2][TRYMEDIA_MARK_LEN] =
-		{{ 0x00,  'T', 'M', 'S', 'A', 'M' },
-		 { 'i',   '=', '$', ':', '(', '$' }};  // Same but 0x69 xored
+	const byte magic[2][TRYMEDIA_MARK_LEN] = { { 0x00, 'T', 'M', 'S', 'A', 'M' },
+		                                         { 'i', '=', '$', ':', '(', '$' } }; // Same but 0x69 xored
 
 	handle->read(buf, TRYMEDIA_MARK_LEN);
 
@@ -342,20 +336,19 @@ bool checkTryMedia(BaseScummFile *handle) {
 	return false;
 }
 
-
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	int num;
 	char *ptr;
 	switch (blocktype) {
-	case MKTAG('A','N','A','M'):		// Used by: The Dig, FT
+	case MKTAG('A', 'N', 'A', 'M'): // Used by: The Dig, FT
 		num = _fileHandle->readUint16LE();
 		ptr = (char *)malloc(num * 9);
 		_fileHandle->read(ptr, num * 9);
 		_imuseDigital->setAudioNames(num, ptr);
 		break;
 
-	case MKTAG('D','R','S','C'):		// Used by: COMI
+	case MKTAG('D', 'R', 'S', 'C'): // Used by: COMI
 		readResTypeList(rtRoomScripts);
 		break;
 
@@ -368,37 +361,37 @@ void ScummEngine_v7::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 void ScummEngine_v70he::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	int i;
 	switch (blocktype) {
-	case MKTAG('D','I','R','I'):
+	case MKTAG('D', 'I', 'R', 'I'):
 		readResTypeList(rtRoomImage);
 		break;
 
-	case MKTAG('D','I','R','M'):
+	case MKTAG('D', 'I', 'R', 'M'):
 		readResTypeList(rtImage);
 		break;
 
-	case MKTAG('D','I','R','T'):
+	case MKTAG('D', 'I', 'R', 'T'):
 		readResTypeList(rtTalkie);
 		break;
 
-	case MKTAG('D','L','F','L'):
+	case MKTAG('D', 'L', 'F', 'L'):
 		i = _fileHandle->readUint16LE();
 		_fileHandle->seek(-2, SEEK_CUR);
 		_heV7RoomOffsets = (byte *)calloc(2 + (i * 4), 1);
-		_fileHandle->read(_heV7RoomOffsets, (2 + (i * 4)) );
+		_fileHandle->read(_heV7RoomOffsets, (2 + (i * 4)));
 		break;
 
-	case MKTAG('D','I','S','K'):
+	case MKTAG('D', 'I', 'S', 'K'):
 		i = _fileHandle->readUint16LE();
 		_heV7DiskOffsets = (byte *)calloc(i, 1);
 		_fileHandle->read(_heV7DiskOffsets, i);
 		break;
 
-	case MKTAG('S','V','E','R'):
+	case MKTAG('S', 'V', 'E', 'R'):
 		// Index version number
 		_fileHandle->seek(itemsize - 8, SEEK_CUR);
 		break;
 
-	case MKTAG('I','N','I','B'):
+	case MKTAG('I', 'N', 'I', 'B'):
 		_fileHandle->seek(itemsize - 8, SEEK_CUR);
 		debug(2, "INIB index block not yet handled, skipping");
 		break;
@@ -411,29 +404,29 @@ void ScummEngine_v70he::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	int i;
 	switch (blocktype) {
-	case MKTAG('D','C','H','R'):
-	case MKTAG('D','I','R','F'):
+	case MKTAG('D', 'C', 'H', 'R'):
+	case MKTAG('D', 'I', 'R', 'F'):
 		readResTypeList(rtCharset);
 		break;
 
-	case MKTAG('D','O','B','J'):
+	case MKTAG('D', 'O', 'B', 'J'):
 		readGlobalObjects();
 		break;
 
-	case MKTAG('R','N','A','M'):
+	case MKTAG('R', 'N', 'A', 'M'):
 		// Names of rooms. Maybe we should put them into a table, for use by the debugger?
 		if (_game.heversion >= 80) {
-			for (int room; (room = _fileHandle->readUint16LE()); ) {
+			for (int room; (room = _fileHandle->readUint16LE());) {
 				char buf[100];
 				i = 0;
-				for (byte s; (s = _fileHandle->readByte()) && i < ARRAYSIZE(buf) - 1; ) {
+				for (byte s; (s = _fileHandle->readByte()) && i < ARRAYSIZE(buf) - 1;) {
 					buf[i++] = s;
 				}
 				buf[i] = 0;
 				debug(5, "Room %d: '%s'", room, buf);
 			}
 		} else {
-			for (int room; (room = _fileHandle->readByte()); ) {
+			for (int room; (room = _fileHandle->readByte());) {
 				char buf[10];
 				_fileHandle->read(buf, 9);
 				buf[9] = 0;
@@ -444,38 +437,38 @@ void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 		}
 		break;
 
-	case MKTAG('D','R','O','O'):
-	case MKTAG('D','I','R','R'):
+	case MKTAG('D', 'R', 'O', 'O'):
+	case MKTAG('D', 'I', 'R', 'R'):
 		readResTypeList(rtRoom);
 		break;
 
-	case MKTAG('D','S','C','R'):
-	case MKTAG('D','I','R','S'):
+	case MKTAG('D', 'S', 'C', 'R'):
+	case MKTAG('D', 'I', 'R', 'S'):
 		readResTypeList(rtScript);
 		break;
 
-	case MKTAG('D','C','O','S'):
-	case MKTAG('D','I','R','C'):
+	case MKTAG('D', 'C', 'O', 'S'):
+	case MKTAG('D', 'I', 'R', 'C'):
 		readResTypeList(rtCostume);
 		break;
 
-	case MKTAG('M','A','X','S'):
+	case MKTAG('M', 'A', 'X', 'S'):
 		readMAXS(itemsize);
 		allocateArrays();
 		break;
 
-	case MKTAG('D','I','R','N'):
-	case MKTAG('D','S','O','U'):
+	case MKTAG('D', 'I', 'R', 'N'):
+	case MKTAG('D', 'S', 'O', 'U'):
 		readResTypeList(rtSound);
 		break;
 
-	case MKTAG('A','A','R','Y'):
+	case MKTAG('A', 'A', 'R', 'Y'):
 		readArrayFromIndexFile();
 		break;
 
 	default:
 		error("Bad ID %04X('%s') found in index file directory", blocktype,
-				tag2str(blocktype));
+		      tag2str(blocktype));
 	}
 }
 
@@ -497,7 +490,6 @@ int ScummEngine::readResTypeList(ResType type) {
 	}
 
 	debug(2, "  readResTypeList(%s): %d entries", nameOfResType(type), num);
-
 
 	for (idx = 0; idx < num; idx++) {
 		_res->_types[type][idx]._roomno = _fileHandle->readByte();
@@ -522,7 +514,7 @@ int ScummEngine_v70he::readResTypeList(ResType type) {
 
 	for (idx = 0; idx < num; idx++) {
 		// The globsize is currently not being used
-		/*_res->_types[type][idx]._globsize =*/ _fileHandle->readUint32LE();
+		/*_res->_types[type][idx]._globsize =*/_fileHandle->readUint32LE();
 	}
 
 	return num;
@@ -543,7 +535,7 @@ void ResourceManager::allocResTypeData(ResType type, uint32 tag, int num, ResTyp
 	_types[type].clear();
 	_types[type].resize(num);
 
-/*
+	/*
 	TODO: Use multiple Resource subclasses, one for each res mode; then,
 	given them serializability.
 	if (mode) {
@@ -677,10 +669,10 @@ int ScummEngine::loadResource(ResType type, ResId idx) {
 		tag = _fileHandle->readUint32BE();
 		if (tag != _res->_types[type]._tag && _game.heversion < 70) {
 			error("Unknown res tag '%s' encountered (expected '%s') "
-			        "while trying to load res (%s,%d) in room %d at %d+%d in file %s",
-			        tag2str(tag), tag2str(_res->_types[type]._tag),
-					nameOfResType(type), idx, roomNr,
-					_fileOffset, fileOffs, _fileHandle->getName());
+			      "while trying to load res (%s,%d) in room %d at %d+%d in file %s",
+			      tag2str(tag), tag2str(_res->_types[type]._tag),
+			      nameOfResType(type), idx, roomNr,
+			      _fileOffset, fileOffs, _fileHandle->getName());
 		}
 
 		size = _fileHandle->readUint32BE();
@@ -771,7 +763,7 @@ byte *ScummEngine::getStringAddressVar(int i) {
 
 void ResourceManager::increaseExpireCounter() {
 	++_expireCounter;
-	if (_expireCounter == 0) {	// overflow?
+	if (_expireCounter == 0) { // overflow?
 		increaseResourceCounters();
 	}
 }
@@ -793,8 +785,8 @@ void ResourceManager::setResourceCounter(ResType type, ResId idx, byte counter) 
 }
 
 void ResourceManager::Resource::setResourceCounter(byte counter) {
-	_flags &= RF_LOCK;	// Clear lower 7 bits, preserve the lock bit.
-	_flags |= counter;	// Update the usage counter
+	_flags &= RF_LOCK; // Clear lower 7 bits, preserve the lock bit.
+	_flags |= counter; // Update the usage counter
 }
 
 byte ResourceManager::Resource::getResourceCounter() const {
@@ -867,7 +859,8 @@ ResourceManager::ResTypeData::ResTypeData() {
 ResourceManager::ResTypeData::~ResTypeData() {
 }
 
-ResourceManager::ResourceManager(ScummEngine *vm) : _vm(vm) {
+ResourceManager::ResourceManager(ScummEngine *vm)
+  : _vm(vm) {
 	_allocatedSize = 0;
 	_maxHeapThreshold = 0;
 	_minHeapThreshold = 0;
@@ -1137,10 +1130,10 @@ void ResourceManager::resourceStats() {
 }
 
 void ScummEngine_v5::readMAXS(int blockSize) {
-	_numVariables = _fileHandle->readUint16LE();      // 800
-	_fileHandle->readUint16LE();                      // 16
-	_numBitVariables = _fileHandle->readUint16LE();   // 2048
-	_numLocalObjects = _fileHandle->readUint16LE();   // 200
+	_numVariables = _fileHandle->readUint16LE(); // 800
+	_fileHandle->readUint16LE(); // 16
+	_numBitVariables = _fileHandle->readUint16LE(); // 2048
+	_numLocalObjects = _fileHandle->readUint16LE(); // 200
 	_numArray = 50;
 	_numVerbs = 100;
 	// Used to be 50, which wasn't enough for MI2 and FOA. See bugs
@@ -1148,11 +1141,11 @@ void ScummEngine_v5::readMAXS(int blockSize) {
 	_numNewNames = 150;
 	_objectRoomTable = NULL;
 
-	_fileHandle->readUint16LE();                      // 50
-	_numCharsets = _fileHandle->readUint16LE();       // 9
-	_fileHandle->readUint16LE();                      // 100
-	_fileHandle->readUint16LE();                      // 50
-	_numInventory = _fileHandle->readUint16LE();      // 80
+	_fileHandle->readUint16LE(); // 50
+	_numCharsets = _fileHandle->readUint16LE(); // 9
+	_fileHandle->readUint16LE(); // 100
+	_fileHandle->readUint16LE(); // 50
+	_numInventory = _fileHandle->readUint16LE(); // 80
 	_numGlobalScripts = 200;
 
 	_shadowPaletteSize = 256;
@@ -1165,25 +1158,25 @@ void ScummEngine_v5::readMAXS(int blockSize) {
 
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v8::readMAXS(int blockSize) {
-	_fileHandle->seek(50, SEEK_CUR);                 // Skip over SCUMM engine version
-	_fileHandle->seek(50, SEEK_CUR);                 // Skip over data file version
-	_numVariables = _fileHandle->readUint32LE();     // 1500
-	_numBitVariables = _fileHandle->readUint32LE();  // 2048
-	_fileHandle->readUint32LE();                     // 40
-	_numScripts = _fileHandle->readUint32LE();       // 458
-	_numSounds = _fileHandle->readUint32LE();        // 789
-	_numCharsets = _fileHandle->readUint32LE();      // 1
-	_numCostumes = _fileHandle->readUint32LE();      // 446
-	_numRooms = _fileHandle->readUint32LE();         // 95
-	_fileHandle->readUint32LE();                     // 80
+	_fileHandle->seek(50, SEEK_CUR); // Skip over SCUMM engine version
+	_fileHandle->seek(50, SEEK_CUR); // Skip over data file version
+	_numVariables = _fileHandle->readUint32LE(); // 1500
+	_numBitVariables = _fileHandle->readUint32LE(); // 2048
+	_fileHandle->readUint32LE(); // 40
+	_numScripts = _fileHandle->readUint32LE(); // 458
+	_numSounds = _fileHandle->readUint32LE(); // 789
+	_numCharsets = _fileHandle->readUint32LE(); // 1
+	_numCostumes = _fileHandle->readUint32LE(); // 446
+	_numRooms = _fileHandle->readUint32LE(); // 95
+	_fileHandle->readUint32LE(); // 80
 	_numGlobalObjects = _fileHandle->readUint32LE(); // 1401
-	_fileHandle->readUint32LE();                     // 60
-	_numLocalObjects = _fileHandle->readUint32LE();  // 200
-	_numNewNames = _fileHandle->readUint32LE();      // 100
-	_numFlObject = _fileHandle->readUint32LE();      // 128
-	_numInventory = _fileHandle->readUint32LE();     // 80
-	_numArray = _fileHandle->readUint32LE();         // 200
-	_numVerbs = _fileHandle->readUint32LE();         // 50
+	_fileHandle->readUint32LE(); // 60
+	_numLocalObjects = _fileHandle->readUint32LE(); // 200
+	_numNewNames = _fileHandle->readUint32LE(); // 100
+	_numFlObject = _fileHandle->readUint32LE(); // 128
+	_numInventory = _fileHandle->readUint32LE(); // 80
+	_numArray = _fileHandle->readUint32LE(); // 200
+	_numVerbs = _fileHandle->readUint32LE(); // 50
 
 	_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 	_numGlobalScripts = 2000;
@@ -1193,8 +1186,8 @@ void ScummEngine_v8::readMAXS(int blockSize) {
 }
 
 void ScummEngine_v7::readMAXS(int blockSize) {
-	_fileHandle->seek(50, SEEK_CUR);                 // Skip over SCUMM engine version
-	_fileHandle->seek(50, SEEK_CUR);                 // Skip over data file version
+	_fileHandle->seek(50, SEEK_CUR); // Skip over SCUMM engine version
+	_fileHandle->seek(50, SEEK_CUR); // Skip over data file version
 	_numVariables = _fileHandle->readUint16LE();
 	_numBitVariables = _fileHandle->readUint16LE();
 	_fileHandle->readUint16LE();
@@ -1213,8 +1206,7 @@ void ScummEngine_v7::readMAXS(int blockSize) {
 
 	_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 
-	if ((_game.id == GID_FT) && (_game.features & GF_DEMO) &&
-		(_game.platform == Common::kPlatformDOS))
+	if ((_game.id == GID_FT) && (_game.features & GF_DEMO) && (_game.platform == Common::kPlatformDOS))
 		_numGlobalScripts = 300;
 	else
 		_numGlobalScripts = 2000;
@@ -1305,7 +1297,7 @@ void ScummEngine_v8::readGlobalObjects() {
 	// bsearch on it. For this we (ab)use strcmp, which works fine
 	// since the table entries start with a string.
 	qsort(_objectIDMap, _objectIDMapSize, sizeof(ObjectNameId),
-			(int (*)(const void*, const void*))strcmp);
+	      (int (*)(const void *, const void *))strcmp);
 }
 
 void ScummEngine_v7::readGlobalObjects() {
@@ -1320,11 +1312,11 @@ void ScummEngine_v7::readGlobalObjects() {
 
 	_fileHandle->read(_classData, num * sizeof(uint32));
 
-#if defined(SCUMM_BIG_ENDIAN)
+#	if defined(SCUMM_BIG_ENDIAN)
 	// Correct the endianess if necessary
 	for (int i = 0; i != num; i++)
 		_classData[i] = FROM_LE_32(_classData[i]);
-#endif
+#	endif
 }
 #endif
 
@@ -1347,14 +1339,14 @@ void ScummEngine::allocateArrays() {
 		_arraySlot = (byte *)calloc(_numArray, 1);
 	}
 
-	_res->allocResTypeData(rtCostume, (_game.features & GF_NEW_COSTUMES) ? MKTAG('A','K','O','S') : MKTAG('C','O','S','T'),
-								_numCostumes, kStaticResTypeMode);
-	_res->allocResTypeData(rtRoom, MKTAG('R','O','O','M'), _numRooms, kStaticResTypeMode);
-	_res->allocResTypeData(rtRoomImage, MKTAG('R','M','I','M'), _numRooms, kStaticResTypeMode);
-	_res->allocResTypeData(rtRoomScripts, MKTAG('R','M','S','C'), _numRooms, kStaticResTypeMode);
-	_res->allocResTypeData(rtSound, MKTAG('S','O','U','N'), _numSounds, kSoundResTypeMode);
-	_res->allocResTypeData(rtScript, MKTAG('S','C','R','P'), _numScripts, kStaticResTypeMode);
-	_res->allocResTypeData(rtCharset, MKTAG('C','H','A','R'), _numCharsets, kStaticResTypeMode);
+	_res->allocResTypeData(rtCostume, (_game.features & GF_NEW_COSTUMES) ? MKTAG('A', 'K', 'O', 'S') : MKTAG('C', 'O', 'S', 'T'),
+	                       _numCostumes, kStaticResTypeMode);
+	_res->allocResTypeData(rtRoom, MKTAG('R', 'O', 'O', 'M'), _numRooms, kStaticResTypeMode);
+	_res->allocResTypeData(rtRoomImage, MKTAG('R', 'M', 'I', 'M'), _numRooms, kStaticResTypeMode);
+	_res->allocResTypeData(rtRoomScripts, MKTAG('R', 'M', 'S', 'C'), _numRooms, kStaticResTypeMode);
+	_res->allocResTypeData(rtSound, MKTAG('S', 'O', 'U', 'N'), _numSounds, kSoundResTypeMode);
+	_res->allocResTypeData(rtScript, MKTAG('S', 'C', 'R', 'P'), _numScripts, kStaticResTypeMode);
+	_res->allocResTypeData(rtCharset, MKTAG('C', 'H', 'A', 'R'), _numCharsets, kStaticResTypeMode);
 	_res->allocResTypeData(rtObjectName, 0, _numNewNames, kDynamicResTypeMode);
 	_res->allocResTypeData(rtInventory, 0, _numInventory, kDynamicResTypeMode);
 	_res->allocResTypeData(rtTemp, 0, 10, kDynamicResTypeMode);
@@ -1364,8 +1356,8 @@ void ScummEngine::allocateArrays() {
 	_res->allocResTypeData(rtString, 0, _numArray, kDynamicResTypeMode);
 	_res->allocResTypeData(rtFlObject, 0, _numFlObject, kDynamicResTypeMode);
 	_res->allocResTypeData(rtMatrix, 0, 10, kDynamicResTypeMode);
-	_res->allocResTypeData(rtImage, MKTAG('A','W','I','Z'), _numImages, kStaticResTypeMode);
-	_res->allocResTypeData(rtTalkie, MKTAG('T','L','K','E'), _numTalkies, kStaticResTypeMode);
+	_res->allocResTypeData(rtImage, MKTAG('A', 'W', 'I', 'Z'), _numImages, kStaticResTypeMode);
+	_res->allocResTypeData(rtTalkie, MKTAG('T', 'L', 'K', 'E'), _numTalkies, kStaticResTypeMode);
 }
 
 void ScummEngine_v70he::allocateArrays() {
@@ -1374,7 +1366,6 @@ void ScummEngine_v70he::allocateArrays() {
 	_res->allocResTypeData(rtSpoolBuffer, 0, 9, kStaticResTypeMode);
 	_heV7RoomIntOffsets = (uint32 *)calloc(_numRooms, sizeof(uint32));
 }
-
 
 void ScummEngine::dumpResource(const char *tag, int id, const byte *ptr, int length) {
 	char buf[256];
@@ -1400,7 +1391,8 @@ void ScummEngine::dumpResource(const char *tag, int id, const byte *ptr, int len
 }
 
 ResourceIterator::ResourceIterator(const byte *searchin, bool smallHeader)
-	: _ptr(searchin), _smallHeader(smallHeader) {
+  : _ptr(searchin)
+  , _smallHeader(smallHeader) {
 	assert(searchin);
 	if (_smallHeader) {
 		_size = READ_LE_UINT32(searchin);
@@ -1411,7 +1403,6 @@ ResourceIterator::ResourceIterator(const byte *searchin, bool smallHeader)
 		_pos = 8;
 		_ptr = searchin + 8;
 	}
-
 }
 
 const byte *ResourceIterator::findNext(uint32 tag) {
@@ -1427,7 +1418,7 @@ const byte *ResourceIterator::findNext(uint32 tag) {
 			result = _ptr;
 			size = READ_LE_UINT32(result);
 			if ((int32)size <= 0)
-				return 0;	// Avoid endless loop
+				return 0; // Avoid endless loop
 
 			_pos += size;
 			_ptr += size;
@@ -1440,7 +1431,7 @@ const byte *ResourceIterator::findNext(uint32 tag) {
 			result = _ptr;
 			size = READ_BE_UINT32(result + 4);
 			if ((int32)size <= 0)
-				return 0;	// Avoid endless loop
+				return 0; // Avoid endless loop
 
 			_pos += size;
 			_ptr += size;
@@ -1524,36 +1515,36 @@ const byte *findResourceSmall(uint32 tag, const byte *searchin) {
 
 uint16 newTag2Old(uint32 newTag) {
 	switch (newTag) {
-	case (MKTAG('R','M','H','D')):
-		return (0x4448);	// HD
-	case (MKTAG('I','M','0','0')):
-		return (0x4D42);	// BM
-	case (MKTAG('E','X','C','D')):
-		return (0x5845);	// EX
-	case (MKTAG('E','N','C','D')):
-		return (0x4E45);	// EN
-	case (MKTAG('S','C','A','L')):
-		return (0x4153);	// SA
-	case (MKTAG('L','S','C','R')):
-		return (0x534C);	// LS
-	case (MKTAG('O','B','C','D')):
-		return (0x434F);	// OC
-	case (MKTAG('O','B','I','M')):
-		return (0x494F);	// OI
-	case (MKTAG('S','M','A','P')):
-		return (0x4D42);	// BM
-	case (MKTAG('C','L','U','T')):
-		return (0x4150);	// PA
-	case (MKTAG('B','O','X','D')):
-		return (0x5842);	// BX
-	case (MKTAG('C','Y','C','L')):
-		return (0x4343);	// CC
-	case (MKTAG('E','P','A','L')):
-		return (0x5053);	// SP
-	case (MKTAG('T','I','L','E')):
-		return (0x4C54);	// TL
-	case (MKTAG('Z','P','0','0')):
-		return (0x505A);	// ZP
+	case (MKTAG('R', 'M', 'H', 'D')):
+		return (0x4448); // HD
+	case (MKTAG('I', 'M', '0', '0')):
+		return (0x4D42); // BM
+	case (MKTAG('E', 'X', 'C', 'D')):
+		return (0x5845); // EX
+	case (MKTAG('E', 'N', 'C', 'D')):
+		return (0x4E45); // EN
+	case (MKTAG('S', 'C', 'A', 'L')):
+		return (0x4153); // SA
+	case (MKTAG('L', 'S', 'C', 'R')):
+		return (0x534C); // LS
+	case (MKTAG('O', 'B', 'C', 'D')):
+		return (0x434F); // OC
+	case (MKTAG('O', 'B', 'I', 'M')):
+		return (0x494F); // OI
+	case (MKTAG('S', 'M', 'A', 'P')):
+		return (0x4D42); // BM
+	case (MKTAG('C', 'L', 'U', 'T')):
+		return (0x4150); // PA
+	case (MKTAG('B', 'O', 'X', 'D')):
+		return (0x5842); // BX
+	case (MKTAG('C', 'Y', 'C', 'L')):
+		return (0x4343); // CC
+	case (MKTAG('E', 'P', 'A', 'L')):
+		return (0x5053); // SP
+	case (MKTAG('T', 'I', 'L', 'E')):
+		return (0x4C54); // TL
+	case (MKTAG('Z', 'P', '0', '0')):
+		return (0x505A); // ZP
 	default:
 		return (0);
 	}

@@ -22,30 +22,29 @@
 
 #include "common/config-manager.h"
 
-#include "agos/debugger.h"
 #include "agos/agos.h"
+#include "agos/debugger.h"
 #include "agos/midi.h"
 #include "agos/sound.h"
 
 namespace AGOS {
 
 Debugger::Debugger(AGOSEngine *vm)
-	: GUI::Debugger() {
+  : GUI::Debugger() {
 	_vm = vm;
 
 	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
-	registerCmd("music",    WRAP_METHOD(Debugger, Cmd_PlayMusic));
-	registerCmd("sound",    WRAP_METHOD(Debugger, Cmd_PlaySound));
-	registerCmd("voice",    WRAP_METHOD(Debugger, Cmd_PlayVoice));
-	registerCmd("bit",      WRAP_METHOD(Debugger, Cmd_SetBit));
-	registerCmd("bit2",     WRAP_METHOD(Debugger, Cmd_SetBit2));
-	registerCmd("bit3",     WRAP_METHOD(Debugger, Cmd_SetBit3));
-	registerCmd("var",      WRAP_METHOD(Debugger, Cmd_SetVar));
-	registerCmd("obj",      WRAP_METHOD(Debugger, Cmd_SetObjectFlag));
-	registerCmd("sub",      WRAP_METHOD(Debugger, Cmd_StartSubroutine));
-	registerCmd("dumpimage",      WRAP_METHOD(Debugger, Cmd_dumpImage));
-	registerCmd("dumpscript",     WRAP_METHOD(Debugger, Cmd_dumpScript));
-
+	registerCmd("music", WRAP_METHOD(Debugger, Cmd_PlayMusic));
+	registerCmd("sound", WRAP_METHOD(Debugger, Cmd_PlaySound));
+	registerCmd("voice", WRAP_METHOD(Debugger, Cmd_PlayVoice));
+	registerCmd("bit", WRAP_METHOD(Debugger, Cmd_SetBit));
+	registerCmd("bit2", WRAP_METHOD(Debugger, Cmd_SetBit2));
+	registerCmd("bit3", WRAP_METHOD(Debugger, Cmd_SetBit3));
+	registerCmd("var", WRAP_METHOD(Debugger, Cmd_SetVar));
+	registerCmd("obj", WRAP_METHOD(Debugger, Cmd_SetObjectFlag));
+	registerCmd("sub", WRAP_METHOD(Debugger, Cmd_StartSubroutine));
+	registerCmd("dumpimage", WRAP_METHOD(Debugger, Cmd_dumpImage));
+	registerCmd("dumpscript", WRAP_METHOD(Debugger, Cmd_dumpScript));
 }
 
 bool Debugger::Cmd_PlayMusic(int argc, const char **argv) {
@@ -238,7 +237,6 @@ bool Debugger::Cmd_dumpImage(int argc, const char **argv) {
 			_vm->dumpVgaBitmaps(zoneNum);
 		} else {
 			debugPrintf("Invalid Zone Number %d\n", zoneNum);
-
 		}
 	} else
 		debugPrintf("Syntax: dumpimage <zonenum>\n");
@@ -255,7 +253,6 @@ bool Debugger::Cmd_dumpScript(int argc, const char **argv) {
 			_vm->dumpVgaFile(vpe->vgaFile1);
 		} else {
 			debugPrintf("Invalid Zone Number %d\n", zoneNum);
-
 		}
 	} else
 		debugPrintf("Syntax: dumpscript <zonenum>\n");

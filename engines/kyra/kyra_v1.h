@@ -34,8 +34,8 @@
 
 #include "audio/mixer.h"
 
-#include "kyra/script/script.h"
 #include "kyra/engine/item.h"
+#include "kyra/script/script.h"
 
 namespace Common {
 class OutSaveFile;
@@ -116,15 +116,15 @@ struct GameFlags {
 
 	Common::Platform platform;
 
-	bool isDemo               : 1;
-	bool useAltShapeHeader    : 1;    // alternative shape header (uses 2 bytes more, those are unused though)
-	bool isTalkie             : 1;
-	bool isOldFloppy          : 1;
-	bool useHiRes             : 1;
-	bool use16ColorMode       : 1;
-	bool useHiColorMode       : 1;
-	bool useDigSound          : 1;
-	bool useInstallerPackage  : 1;
+	bool isDemo : 1;
+	bool useAltShapeHeader : 1; // alternative shape header (uses 2 bytes more, those are unused though)
+	bool isTalkie : 1;
+	bool isOldFloppy : 1;
+	bool useHiRes : 1;
+	bool use16ColorMode : 1;
+	bool useHiColorMode : 1;
+	bool useDigSound : 1;
+	bool useInstallerPackage : 1;
 
 	byte gameID;
 };
@@ -145,17 +145,17 @@ enum {
 // TODO: this is just the start of makeing the debug output of the kyra engine a bit more useable
 // in the future we maybe merge some flags  and/or create new ones
 enum DebugLevels {
-	kDebugLevelScriptFuncs = 1 <<  0, ///< debug level for o#_* functions
-	kDebugLevelScript      = 1 <<  1, ///< debug level for "EMCInterpreter" functions
-	kDebugLevelSprites     = 1 <<  2, ///< debug level for "Sprites" functions
-	kDebugLevelScreen      = 1 <<  3, ///< debug level for "Screen" functions
-	kDebugLevelSound       = 1 <<  4, ///< debug level for "Sound" functions
-	kDebugLevelAnimator    = 1 <<  5, ///< debug level for "ScreenAnimator" functions
-	kDebugLevelMain        = 1 <<  6, ///< debug level for common "KyraEngine(_v#)" functions && "TextDisplayer" functions
-	kDebugLevelGUI         = 1 <<  7, ///< debug level for "KyraEngine*" gui functions
-	kDebugLevelSequence    = 1 <<  8, ///< debug level for "SeqPlayer" functions
-	kDebugLevelMovie       = 1 <<  9, ///< debug level for movie specific funtions
-	kDebugLevelTimer       = 1 << 10  ///< debug level for "TimerManager" functions
+	kDebugLevelScriptFuncs = 1 << 0, ///< debug level for o#_* functions
+	kDebugLevelScript = 1 << 1, ///< debug level for "EMCInterpreter" functions
+	kDebugLevelSprites = 1 << 2, ///< debug level for "Sprites" functions
+	kDebugLevelScreen = 1 << 3, ///< debug level for "Screen" functions
+	kDebugLevelSound = 1 << 4, ///< debug level for "Sound" functions
+	kDebugLevelAnimator = 1 << 5, ///< debug level for "ScreenAnimator" functions
+	kDebugLevelMain = 1 << 6, ///< debug level for common "KyraEngine(_v#)" functions && "TextDisplayer" functions
+	kDebugLevelGUI = 1 << 7, ///< debug level for "KyraEngine*" gui functions
+	kDebugLevelSequence = 1 << 8, ///< debug level for "SeqPlayer" functions
+	kDebugLevelMovie = 1 << 9, ///< debug level for movie specific funtions
+	kDebugLevelTimer = 1 << 10 ///< debug level for "TimerManager" functions
 };
 
 enum AudioResourceSet {
@@ -176,14 +176,14 @@ class GUI;
 struct Button;
 
 class KyraEngine_v1 : public Engine {
-friend class Debugger;
-friend class ::KyraMetaEngine;
-friend class GUI;
-friend class GUI_v1;
-friend class GUI_EoB;
-friend class SoundMidiPC;    // For _eventMan
-friend class SeqPlayer_HOF; // For skipFlag()
-friend class TransferPartyWiz; // For save state API
+	friend class Debugger;
+	friend class ::KyraMetaEngine;
+	friend class GUI;
+	friend class GUI_v1;
+	friend class GUI_EoB;
+	friend class SoundMidiPC; // For _eventMan
+	friend class SeqPlayer_HOF; // For skipFlag()
+	friend class TransferPartyWiz; // For save state API
 public:
 	KyraEngine_v1(OSystem *system, const GameFlags &flags);
 	virtual ~KyraEngine_v1();
@@ -231,7 +231,7 @@ public:
 
 	// sound
 	virtual void snd_playTheme(int file, int track);
-	virtual void snd_playSoundEffect(int id, int volume=0xFF);
+	virtual void snd_playSoundEffect(int id, int volume = 0xFF);
 	virtual void snd_playWanderScoreViaMap(int command, int restart);
 	virtual void snd_playVoiceFile(int id) = 0;
 	virtual bool snd_voiceIsPlaying();
@@ -281,9 +281,15 @@ protected:
 		Common::Event event;
 		bool causedSkip;
 
-		Event() : event(), causedSkip(false) {}
-		Event(Common::Event e) : event(e), causedSkip(false) {}
-		Event(Common::Event e, bool skip) : event(e), causedSkip(skip) {}
+		Event()
+		  : event()
+		  , causedSkip(false) {}
+		Event(Common::Event e)
+		  : event(e)
+		  , causedSkip(false) {}
+		Event(Common::Event e, bool skip)
+		  : event(e)
+		  , causedSkip(skip) {}
 
 		operator Common::Event() const { return event; }
 	};
@@ -404,8 +410,8 @@ protected:
 		byte gameID;
 		uint32 flags;
 
-		bool originalSave;  // savegame from original interpreter
-		bool oldHeader;     // old scummvm save header
+		bool originalSave; // savegame from original interpreter
+		bool oldHeader; // old scummvm save header
 
 		Graphics::Surface *thumbnail;
 	};

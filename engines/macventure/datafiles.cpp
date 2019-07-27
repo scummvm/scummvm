@@ -46,20 +46,20 @@ struct BorderName {
 };
 
 static const BorderName g_borderNames[] = {
-	{kDocument, "Document"},
-	{kDBox, "DBox"},
-	{kPlainDBox, "PlainDBox"},
-	{kAltBox, "AltBox"},
-	{kNoGrowDoc, "NoGrowDoc"},
-	{kMovableDBox, "MovableDBox"},
-	{kZoomDoc, "ZoomDoc"},
-	{kZoomNoGrow, "ZoomNoGrow"},
-	{kInvWindow, "InvWindow"},
-	{kRDoc16, "RDoc16"},
-	{kRDoc4, "RDoc4"},
-	{kRDoc6, "RDoc6"},
-	{kRDoc10, "RDoc10"},
-	{kNoType, "No type"}
+	{ kDocument, "Document" },
+	{ kDBox, "DBox" },
+	{ kPlainDBox, "PlainDBox" },
+	{ kAltBox, "AltBox" },
+	{ kNoGrowDoc, "NoGrowDoc" },
+	{ kMovableDBox, "MovableDBox" },
+	{ kZoomDoc, "ZoomDoc" },
+	{ kZoomNoGrow, "ZoomNoGrow" },
+	{ kInvWindow, "InvWindow" },
+	{ kRDoc16, "RDoc16" },
+	{ kRDoc4, "RDoc4" },
+	{ kRDoc6, "RDoc6" },
+	{ kRDoc10, "RDoc10" },
+	{ kNoType, "No type" }
 };
 
 Common::String windowTypeName(MVWindowType windowType) {

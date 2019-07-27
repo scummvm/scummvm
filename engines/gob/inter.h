@@ -26,13 +26,13 @@
 #include "common/func.h"
 #include "common/hashmap.h"
 
-#include "gob/goblin.h"
-#include "gob/variables.h"
-#include "gob/iniconfig.h"
 #include "gob/databases.h"
+#include "gob/goblin.h"
+#include "gob/iniconfig.h"
+#include "gob/variables.h"
 
 namespace Common {
-	class PEResources;
+class PEResources;
 }
 
 namespace Gob {
@@ -47,18 +47,18 @@ namespace Geisha {
 // This is to help devices with small memory (PDA, smartphones, ...)
 // to save a bit of memory used by opcode names in the Gob engine.
 #ifndef REDUCE_MEMORY_USAGE
-	#define _OPCODEDRAW(ver, x)  setProc(new Common::Functor0Mem<void, ver>(this, &ver::x), #x)
-	#define _OPCODEFUNC(ver, x)  setProc(new Common::Functor1Mem<OpFuncParams &, void, ver>(this, &ver::x), #x)
-	#define _OPCODEGOB(ver, x)   setProc(new Common::Functor1Mem<OpGobParams &, void, ver>(this, &ver::x), #x)
+#	define _OPCODEDRAW(ver, x) setProc(new Common::Functor0Mem<void, ver>(this, &ver::x), #  x)
+#	define _OPCODEFUNC(ver, x) setProc(new Common::Functor1Mem<OpFuncParams &, void, ver>(this, &ver::x), #  x)
+#	define _OPCODEGOB(ver, x) setProc(new Common::Functor1Mem<OpGobParams &, void, ver>(this, &ver::x), #  x)
 #else
-	#define _OPCODEDRAW(ver, x)  setProc(new Common::Functor0Mem<void, ver>(this, &ver::x), "")
-	#define _OPCODEFUNC(ver, x)  setProc(new Common::Functor1Mem<OpFuncParams &, void, ver>(this, &ver::x), "")
-	#define _OPCODEGOB(ver, x)   setProc(new Common::Functor1Mem<OpGobParams &, void, ver>(this, &ver::x), "")
+#	define _OPCODEDRAW(ver, x) setProc(new Common::Functor0Mem<void, ver>(this, &ver::x), "")
+#	define _OPCODEFUNC(ver, x) setProc(new Common::Functor1Mem<OpFuncParams &, void, ver>(this, &ver::x), "")
+#	define _OPCODEGOB(ver, x) setProc(new Common::Functor1Mem<OpGobParams &, void, ver>(this, &ver::x), "")
 #endif
 
 #define CLEAROPCODEDRAW(i) _opcodesDraw[i].setProc(0, 0)
 #define CLEAROPCODEFUNC(i) _opcodesFunc[i].setProc(0, 0)
-#define CLEAROPCODEGOB(i)  _opcodesGob.erase(i)
+#define CLEAROPCODEGOB(i) _opcodesGob.erase(i)
 
 typedef Common::Functor0<void> OpcodeDraw;
 typedef Common::Functor1<struct OpFuncParams &, void> OpcodeFunc;
@@ -77,12 +77,14 @@ struct OpGobParams {
 	Goblin::Gob_Object *objDesc;
 };
 
-template<typename T>
+template <typename T>
 struct OpcodeEntry : Common::NonCopyable {
 	T *proc;
 	const char *desc;
 
-	OpcodeEntry() : proc(0), desc(0) {}
+	OpcodeEntry()
+	  : proc(0)
+	  , desc(0) {}
 	~OpcodeEntry() {
 		setProc(0, 0);
 	}
@@ -132,7 +134,7 @@ public:
 protected:
 	OpcodeEntry<OpcodeDraw> _opcodesDraw[256];
 	OpcodeEntry<OpcodeFunc> _opcodesFunc[256];
-	Common::HashMap<int, OpcodeEntry<OpcodeGob> > _opcodesGob;
+	Common::HashMap<int, OpcodeEntry<OpcodeGob>> _opcodesGob;
 
 	bool _break;
 
@@ -143,7 +145,7 @@ protected:
 	VariableStack _varStack;
 
 	// Busy-wait detection
-	bool   _noBusyWait;
+	bool _noBusyWait;
 	uint32 _lastBusyWait;
 
 	GobEngine *_vm;
@@ -158,7 +160,7 @@ protected:
 
 	virtual void setupOpcodesDraw() = 0;
 	virtual void setupOpcodesFunc() = 0;
-	virtual void setupOpcodesGob()  = 0;
+	virtual void setupOpcodesGob() = 0;
 
 	virtual void checkSwitchTable(uint32 &offset) = 0;
 
@@ -220,7 +222,7 @@ protected:
 	void o1_callSub(OpFuncParams &params);
 	void o1_printTotText(OpFuncParams &params);
 	void o1_loadCursor(OpFuncParams &params);
-	void o1_switch (OpFuncParams &params);
+	void o1_switch(OpFuncParams &params);
 	void o1_repeatUntil(OpFuncParams &params);
 	void o1_whileDo(OpFuncParams &params);
 	void o1_if(OpFuncParams &params);
@@ -378,7 +380,7 @@ protected:
 	int16 loadSound(int16 slot);
 
 private:
-	Geisha::Diving      *_diving;
+	Geisha::Diving *_diving;
 	Geisha::Penetration *_penetration;
 
 	Cheater_Geisha *_cheater;

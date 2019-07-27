@@ -20,13 +20,12 @@
  *
  */
 
-
-#include "sci/engine/kernel.h"
 #include "sci/engine/object.h"
+#include "sci/engine/kernel.h"
 #include "sci/engine/script.h"
 #include "sci/engine/seg_manager.h"
 #ifdef ENABLE_SCI32
-#include "sci/engine/features.h"
+#	include "sci/engine/features.h"
 #endif
 
 namespace Sci {
@@ -224,7 +223,7 @@ int Object::propertyOffsetToId(SegManager *segMan, int propertyOffset) const {
 
 	if (propertyOffset < 0 || (propertyOffset >> 1) >= selectors) {
 		error("Applied propertyOffsetToId to invalid property offset %x (property #%d not in [0..%d])",
-		          propertyOffset, propertyOffset >> 1, selectors - 1);
+		      propertyOffset, propertyOffset >> 1, selectors - 1);
 		return -1;
 	}
 
@@ -243,8 +242,8 @@ int Object::propertyOffsetToId(SegManager *segMan, int propertyOffset) const {
 void Object::initSpecies(SegManager *segMan, reg_t addr) {
 	uint16 speciesOffset = getSpeciesSelector().getOffset();
 
-	if (speciesOffset == 0xffff)		// -1
-		setSpeciesSelector(NULL_REG);	// no species
+	if (speciesOffset == 0xffff) // -1
+		setSpeciesSelector(NULL_REG); // no species
 	else
 		setSpeciesSelector(segMan->getClassAddress(speciesOffset, SCRIPT_GET_LOCK, addr.getSegment()));
 }
@@ -252,8 +251,8 @@ void Object::initSpecies(SegManager *segMan, reg_t addr) {
 void Object::initSuperClass(SegManager *segMan, reg_t addr) {
 	uint16 superClassOffset = getSuperClassSelector().getOffset();
 
-	if (superClassOffset == 0xffff)			// -1
-		setSuperClassSelector(NULL_REG);	// no superclass
+	if (superClassOffset == 0xffff) // -1
+		setSuperClassSelector(NULL_REG); // no superclass
 	else
 		setSuperClassSelector(segMan->getClassAddress(superClassOffset, SCRIPT_GET_LOCK, addr.getSegment()));
 }
@@ -297,9 +296,9 @@ bool Object::initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClas
 			}
 
 			debugC(kDebugLevelVM, "Object %04x:%04x (name %s, script %d) "
-			        "varnum doesn't match baseObj's: obj %d, base %d",
-			        PRINT_REG(_pos), name, objScript,
-			        originalVarCount, baseObj->getVarCount());
+			                      "varnum doesn't match baseObj's: obj %d, base %d",
+			       PRINT_REG(_pos), name, objScript,
+			       originalVarCount, baseObj->getVarCount());
 
 #if 0
 			// We enumerate the methods selectors which could be hidden here
@@ -377,7 +376,7 @@ bool Object::mustSetViewVisible(int index, const bool fromPropertyOp) const {
 void Object::initSelectorsSci3(const SciSpan<const byte> &buf, const bool initVariables) {
 	enum {
 		kExtraGroups = 3,
-		kGroupSize   = 32
+		kGroupSize = 32
 	};
 
 	const SciSpan<const byte> groupInfo = _baseObj.subspan(16);
@@ -401,7 +400,7 @@ void Object::initSelectorsSci3(const SciSpan<const byte> &buf, const bool initVa
 		byte groupLocation = groupInfo[groupNr];
 		const SciSpan<const byte> seeker = selectorBase.subspan(groupLocation * kGroupSize * sizeof(uint16));
 
-		if (groupLocation != 0)	{
+		if (groupLocation != 0) {
 			// This object actually has selectors belonging to this group
 			int typeMask = seeker.getUint32SEAt(0);
 
@@ -433,7 +432,7 @@ void Object::initSelectorsSci3(const SciSpan<const byte> &buf, const bool initVa
 		byte groupLocation = groupInfo[groupNr];
 		const SciSpan<const byte> seeker = selectorBase.subspan(groupLocation * kGroupSize * sizeof(uint16));
 
-		if (groupLocation != 0)	{
+		if (groupLocation != 0) {
 			// This object actually has selectors belonging to this group
 			int typeMask = seeker.getUint32SEAt(0);
 			int groupBaseId = groupNr * kGroupSize;

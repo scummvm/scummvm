@@ -61,7 +61,10 @@ public:
 	void kill();
 
 	// graphics
-	void setWindowSize(uint winWidth, uint winHeight) { _winWidth = winWidth; _winHeight = winHeight; }
+	void setWindowSize(uint winWidth, uint winHeight) {
+		_winWidth = winWidth;
+		_winHeight = winHeight;
+	}
 	bool initGfx();
 	void display();
 	void clear();
@@ -155,7 +158,7 @@ public:
 	bool loadZBuffer(Common::SeekableReadStream *stream);
 
 	// Colors
-	void setBlankColor(int r, int g, int b) { _currentBlankColour = _renderSurface.format.RGBToColor(r & 255, g & 255, b & 255);};
+	void setBlankColor(int r, int g, int b) { _currentBlankColour = _renderSurface.format.RGBToColor(r & 255, g & 255, b & 255); };
 	void setBurnColor(int r, int g, int b) {
 		_currentBurnG = r;
 		_currentBurnG = g;
@@ -213,7 +216,7 @@ private:
 	SpriteLayers *_spriteLayers;
 	void fontSprite(bool flip, int x, int y, Sprite &single, const SpritePalette &fontPal);
 	Graphics::Surface *duplicateSurface(Graphics::Surface *surface);
-	void blendColor(Graphics::Surface * surface, uint32 color, Graphics::TSpriteBlendMode mode);
+	void blendColor(Graphics::Surface *surface, uint32 color, Graphics::TSpriteBlendMode mode);
 	Graphics::Surface *applyLightmapToSprite(Graphics::Surface *&blitted, OnScreenPerson *thisPerson, bool mirror, int x, int y, int x1, int y1, int diffX, int diffY);
 
 	// Sprite banks
@@ -237,6 +240,5 @@ private:
 };
 
 } // End of namespace Sludge
-
 
 #endif // SLUDGE_GRAPHICS_H

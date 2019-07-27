@@ -20,13 +20,11 @@
  *
  */
 
-
 #ifndef PARALLACTION_EXEC_H
 #define PARALLACTION_EXEC_H
 
 #include "common/util.h"
 #include "parallaction/objects.h"
-
 
 namespace Parallaction {
 
@@ -47,35 +45,35 @@ class Parallaction_br;
 
 struct CommandContext {
 	CommandPtr _cmd;
-	ZonePtr	_z;
+	ZonePtr _z;
 
 	// TODO: add a way to invoke CommandExec::suspend() from the context. With that
 	// in place, opcodes dependency on CommandExec would be zero, and they could
 	// be moved into a Game object, together with the non-infrastructural code now
 	// in Parallaction_XX
 };
-typedef Common::Functor1<CommandContext&, void> CommandOpcode;
-typedef Common::Array<const CommandOpcode *>	CommandOpcodeSet;
+typedef Common::Functor1<CommandContext &, void> CommandOpcode;
+typedef Common::Array<const CommandOpcode *> CommandOpcodeSet;
 #define DECLARE_UNQUALIFIED_COMMAND_OPCODE(op) void cmdOp_##op(CommandContext &)
 
 struct ProgramContext {
-	AnimationPtr	_anim;
-	ProgramPtr		_program;
+	AnimationPtr _anim;
+	ProgramPtr _program;
 	InstructionPtr _inst;
-	uint32		_ip;
-	uint16		_modCounter;
-	bool		_suspend;
+	uint32 _ip;
+	uint16 _modCounter;
+	bool _suspend;
 };
-typedef Common::Functor1<ProgramContext&, void> ProgramOpcode;
-typedef Common::Array<const ProgramOpcode *>	ProgramOpcodeSet;
+typedef Common::Functor1<ProgramContext &, void> ProgramOpcode;
+typedef Common::Array<const ProgramOpcode *> ProgramOpcodeSet;
 #define DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(op) void instOp_##op(ProgramContext &)
 
-
-template<class OpcodeSet>
+template <class OpcodeSet>
 class Exec {
 protected:
 	OpcodeSet _opcodes;
 	typedef typename OpcodeSet::iterator OpIt;
+
 public:
 	virtual ~Exec() {
 		for (OpIt i = _opcodes.begin(); i != _opcodes.end(); ++i)
@@ -89,7 +87,7 @@ protected:
 	Parallaction *_vm;
 
 	CommandContext _ctxt;
-	ZonePtr	_execZone;
+	ZonePtr _execZone;
 	bool _running;
 	bool _suspend;
 
@@ -97,12 +95,13 @@ protected:
 		bool _valid;
 		CommandList::iterator _first;
 		CommandList::iterator _last;
-		ZonePtr	_zone;
+		ZonePtr _zone;
 	} _suspendedCtxt;
 
 	void runList(CommandList::iterator first, CommandList::iterator last);
 	void createSuspendList(CommandList::iterator first, CommandList::iterator last);
 	void cleanSuspendedList();
+
 public:
 	CommandExec(Parallaction *vm);
 
@@ -113,7 +112,7 @@ public:
 
 class CommandExec_ns : public CommandExec {
 protected:
-	Parallaction_ns	*_vm;
+	Parallaction_ns *_vm;
 
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(invalid);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(set);
@@ -132,13 +131,14 @@ protected:
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(quit);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(move);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(stop);
+
 public:
-	CommandExec_ns(Parallaction_ns* vm);
+	CommandExec_ns(Parallaction_ns *vm);
 };
 
 class CommandExec_br : public CommandExec {
 protected:
-	Parallaction_br	*_vm;
+	Parallaction_br *_vm;
 
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(invalid);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(set);
@@ -182,20 +182,19 @@ protected:
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(ret);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(onsave);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(offsave);
+
 public:
-	CommandExec_br(Parallaction_br* vm);
+	CommandExec_br(Parallaction_br *vm);
 };
-
-
-
 
 class ProgramExec : public Exec<ProgramOpcodeSet> {
 protected:
 	ProgramContext _ctxt;
-	uint16	_modCounter;
+	uint16 _modCounter;
 	const char **_instructionNames;
 
 	void runScript(ProgramPtr script, AnimationPtr a);
+
 public:
 	void runScripts(ProgramList::iterator first, ProgramList::iterator last);
 	ProgramExec();
@@ -220,6 +219,7 @@ protected:
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(sound);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(move);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endscript);
+
 public:
 	ProgramExec_ns(Parallaction_ns *vm);
 };
@@ -255,6 +255,7 @@ protected:
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(ifgt);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endif);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(stop);
+
 public:
 	ProgramExec_br(Parallaction_br *vm);
 };

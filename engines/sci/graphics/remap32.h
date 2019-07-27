@@ -47,7 +47,8 @@ enum RemapType {
  */
 class SingleRemap {
 public:
-	SingleRemap() : _type(kRemapNone) {}
+	SingleRemap()
+	  : _type(kRemapNone) {}
 
 	/**
 	 * The type of remap.

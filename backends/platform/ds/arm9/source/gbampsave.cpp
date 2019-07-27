@@ -24,10 +24,10 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 
 #include "gbampsave.h"
-#include "fat/gba_nds_fat.h"
 #include "backends/fs/ds/ds-fs.h"
-#include "common/config-manager.h"
 #include "common/bufferedstream.h"
+#include "common/config-manager.h"
+#include "fat/gba_nds_fat.h"
 
 #define SAVE_BUFFER_SIZE 100000
 
@@ -62,7 +62,7 @@ Common::OutSaveFile *GBAMPSaveFileManager::openForSaving(const Common::String &f
 		fileSpec += '/';
 	fileSpec += filename;
 
-//	consolePrintf("Opening the file: %s\n", fileSpec.c_str());
+	//	consolePrintf("Opening the file: %s\n", fileSpec.c_str());
 
 	Common::WriteStream *stream = DS::DSFileStream::makeFromPath(fileSpec, true);
 	// Use a write buffer
@@ -76,20 +76,20 @@ Common::InSaveFile *GBAMPSaveFileManager::openForLoading(const Common::String &f
 		fileSpec += '/';
 	fileSpec += filename;
 
-//	consolePrintf("Opening the file: %s\n", fileSpec.c_str());
+	//	consolePrintf("Opening the file: %s\n", fileSpec.c_str());
 
 	return DS::DSFileStream::makeFromPath(fileSpec, false);
 }
-
 
 bool GBAMPSaveFileManager::removeSavefile(const Common::String &filename) {
 	return false; // TODO: Implement this
 }
 
-
 Common::StringArray GBAMPSaveFileManager::listSavefiles(const Common::String &pattern) {
 
-	enum { TYPE_NO_MORE = 0, TYPE_FILE = 1, TYPE_DIR = 2 };
+	enum { TYPE_NO_MORE = 0,
+		     TYPE_FILE = 1,
+		     TYPE_DIR = 2 };
 	char name[256];
 
 	{
@@ -101,21 +101,20 @@ Common::StringArray GBAMPSaveFileManager::listSavefiles(const Common::String &pa
 			realName += 4;
 		}
 
-	//	consolePrintf("Real cwd:%d\n", realName);
+		//	consolePrintf("Real cwd:%d\n", realName);
 
 		char *p = realName;
 		while (*p) {
-			if (*p == '\\') *p = '/';
+			if (*p == '\\')
+				*p = '/';
 			p++;
 		}
 
-	//	consolePrintf("Real cwd:%d\n", realName);
+		//	consolePrintf("Real cwd:%d\n", realName);
 		FAT_chdir(realName);
-
 	}
 
-//	consolePrintf("Save path: '%s', pattern: '%s'\n", getSavePath(), pattern);
-
+	//	consolePrintf("Save path: '%s', pattern: '%s'\n", getSavePath(), pattern);
 
 	int fileType = FAT_FindFirstFileLFN(name);
 
@@ -130,7 +129,6 @@ Common::StringArray GBAMPSaveFileManager::listSavefiles(const Common::String &pa
 			for (int r = 0; name[r] != 0; r++) {
 				name[r] = tolower(name[r]);
 			}
-
 
 			if (Common::matchString(name, pattern.c_str())) {
 				list.push_back(name);

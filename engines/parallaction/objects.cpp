@@ -22,12 +22,11 @@
 
 #include "common/textconsole.h"
 
-#include "parallaction/parallaction.h"
 #include "parallaction/objects.h"
+#include "parallaction/parallaction.h"
 #include "parallaction/parser.h"
 
 namespace Parallaction {
-
 
 Command::Command() {
 	_id = 0;
@@ -60,7 +59,8 @@ Animation::~Animation() {
 }
 
 void Animation::getFrameRect(Common::Rect &r) const {
-	r.setWidth(0); r.setHeight(0);
+	r.setWidth(0);
+	r.setHeight(0);
 	if (!gfxobj) {
 		return;
 	}
@@ -92,12 +92,14 @@ void Animation::resetZ() {
 }
 
 uint16 Animation::getFrameNum() const {
-	if (!gfxobj) return 0;
+	if (!gfxobj)
+		return 0;
 	return gfxobj->getNum();
 }
 
-byte* Animation::getFrameData() const {
-	if (!gfxobj) return NULL;
+byte *Animation::getFrameData() const {
+	if (!gfxobj)
+		return NULL;
 	return gfxobj->getData(_frame);
 }
 
@@ -129,8 +131,8 @@ void Animation::setFoot(const Common::Point &foot) {
 	setY(foot.y - (rect.top + rect.height()));
 }
 
-#define NUM_LOCALS	10
-char	_localNames[NUM_LOCALS][10];
+#define NUM_LOCALS 10
+char _localNames[NUM_LOCALS][10];
 
 Program::Program() {
 	_loopCounter = 0;
@@ -145,7 +147,7 @@ Program::~Program() {
 	delete[] _locals;
 }
 
-int16 Program::findLocal(const char* name) {
+int16 Program::findLocal(const char *name) {
 	for (uint16 _si = 0; _si < NUM_LOCALS; _si++) {
 		if (!scumm_stricmp(name, _localNames[_si]))
 			return _si;
@@ -181,7 +183,6 @@ void LocalVariable::setRange(int16 min, int16 max) {
 int16 LocalVariable::getValue() const {
 	return _value;
 }
-
 
 Zone::Zone() {
 	_left = _top = _right = _bottom = 0;
@@ -265,7 +266,9 @@ int Answer::speakerMood() {
 	return _mood & 0xF;
 }
 
-Question::Question(const Common::String &name) : _name(name), _mood(0) {
+Question::Question(const Common::String &name)
+  : _name(name)
+  , _mood(0) {
 	memset(_answers, 0, sizeof(_answers));
 }
 
@@ -286,7 +289,6 @@ int Question::speakerMood() {
 int Question::balloonWinding() {
 	return _mood & 0x10;
 }
-
 
 Instruction::Instruction() {
 	_index = 0;
@@ -319,7 +321,7 @@ int16 ScriptVar::getValue() {
 	}
 
 	error("Parameter is not an r-value");
-	return 0;	// for compilers that don't support NORETURN
+	return 0; // for compilers that don't support NORETURN
 }
 
 void ScriptVar::setValue(int16 value) {
@@ -334,7 +336,6 @@ void ScriptVar::setValue(int16 value) {
 	if (_flags & kParaField) {
 		_field->setValue(value);
 	}
-
 }
 
 void ScriptVar::setLocal(LocalVariable *local) {
@@ -362,7 +363,6 @@ void ScriptVar::setRandom(int16 seed) {
 	_flags |= kParaRandom;
 }
 
-
 ScriptVar::ScriptVar() {
 	_flags = 0;
 	_local = 0;
@@ -374,26 +374,31 @@ ScriptVar::~ScriptVar() {
 	delete _field;
 }
 
-
-Table::Table(uint32 size) : _size(size), _used(0), _disposeMemory(true) {
-	_data = (char**)calloc(size, sizeof(char *));
+Table::Table(uint32 size)
+  : _size(size)
+  , _used(0)
+  , _disposeMemory(true) {
+	_data = (char **)calloc(size, sizeof(char *));
 }
 
-Table::Table(uint32 size, const char **data) : _size(size), _used(size), _disposeMemory(false) {
+Table::Table(uint32 size, const char **data)
+  : _size(size)
+  , _used(size)
+  , _disposeMemory(false) {
 	_data = const_cast<char **>(data);
 }
 
 Table::~Table() {
 
-	if (!_disposeMemory) return;
+	if (!_disposeMemory)
+		return;
 
 	clear();
 
 	free(_data);
-
 }
 
-void Table::addData(const char* s) {
+void Table::addData(const char *s) {
 
 	if (!(_used < _size))
 		error("Table overflow");
@@ -403,10 +408,11 @@ void Table::addData(const char* s) {
 	_data[_used++] = data;
 }
 
-uint16 Table::lookup(const char* s) {
+uint16 Table::lookup(const char *s) {
 
 	for (uint16 i = 0; i < _used; i++) {
-		if (!scumm_stricmp(_data[i], s)) return i + 1;
+		if (!scumm_stricmp(_data[i], s))
+			return i + 1;
 	}
 
 	return notFound;
@@ -424,8 +430,9 @@ const char *Table::item(uint index) const {
 	return _data[index];
 }
 
-
-FixedTable::FixedTable(uint32 size, uint32 fixed) : Table(size), _numFixed(fixed) {
+FixedTable::FixedTable(uint32 size, uint32 fixed)
+  : Table(size)
+  , _numFixed(fixed) {
 }
 
 void FixedTable::clear() {
@@ -439,7 +446,7 @@ void FixedTable::clear() {
 	_used -= deleted;
 }
 
-Table* createTableFromStream(uint32 size, Common::SeekableReadStream *stream) {
+Table *createTableFromStream(uint32 size, Common::SeekableReadStream *stream) {
 	assert(stream);
 
 	Table *t = new Table(size);
@@ -454,6 +461,5 @@ Table* createTableFromStream(uint32 size, Common::SeekableReadStream *stream) {
 	delete stream;
 	return t;
 }
-
 
 } // namespace Parallaction

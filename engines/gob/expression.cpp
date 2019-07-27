@@ -23,19 +23,19 @@
 #include "common/endian.h"
 #include "common/str.h"
 
-#include "gob/gob.h"
 #include "gob/expression.h"
-#include "gob/global.h"
 #include "gob/game.h"
-#include "gob/script.h"
+#include "gob/global.h"
+#include "gob/gob.h"
 #include "gob/inter.h"
+#include "gob/script.h"
 
 namespace Gob {
 
 Expression::Stack::Stack(size_t size) {
-	opers  = new byte[size];
+	opers = new byte[size];
 	values = new int32[size];
-	memset(opers , 0, size * sizeof(byte ));
+	memset(opers, 0, size * sizeof(byte));
 	memset(values, 0, size * sizeof(int32));
 }
 
@@ -51,18 +51,19 @@ Expression::StackFrame::StackFrame(const Stack &stack) {
 }
 
 void Expression::StackFrame::push(int count) {
-	opers  += count;
+	opers += count;
 	values += count;
-	pos    += count;
+	pos += count;
 }
 
 void Expression::StackFrame::pop(int count) {
-	opers  -= count;
+	opers -= count;
 	values -= count;
-	pos    -= count;
+	pos -= count;
 }
 
-Expression::Expression(GobEngine *vm) : _vm(vm) {
+Expression::Expression(GobEngine *vm)
+  : _vm(vm) {
 	_resultStr[0] = 0;
 	_resultInt = 0;
 }
@@ -245,7 +246,7 @@ void Expression::printExpr_internal(char stopToken) {
 				break;
 
 			case OP_LOAD_IMM_INT8: // int8 immediate
-				debugN(5, "%d",  _vm->_game->_script->readInt8());
+				debugN(5, "%d", _vm->_game->_script->readInt8());
 				break;
 
 			case OP_LOAD_IMM_STR: // string immediate
@@ -266,10 +267,10 @@ void Expression::printExpr_internal(char stopToken) {
 				}
 				break;
 
-			case OP_ARRAY_INT8:  // int8 array access
+			case OP_ARRAY_INT8: // int8 array access
 			case OP_ARRAY_INT32: // int32 array access
 			case OP_ARRAY_INT16: // int16 array access
-			case OP_ARRAY_STR:   // string array access
+			case OP_ARRAY_STR: // string array access
 				debugN(5, "\n");
 				if (operation == OP_ARRAY_STR)
 					debugN(5, "(&");
@@ -280,7 +281,7 @@ void Expression::printExpr_internal(char stopToken) {
 				_vm->_game->_script->skip(dimCount);
 				for (dim = 0; dim < dimCount; dim++) {
 					printExpr_internal(OP_END_MARKER);
-					debugN(5, " of %d", (int16) arrDesc[dim]);
+					debugN(5, " of %d", (int16)arrDesc[dim]);
 					if (dim != dimCount - 1)
 						debugN(5, ",");
 				}
@@ -311,7 +312,7 @@ void Expression::printExpr_internal(char stopToken) {
 				break;
 			}
 			continue;
-		}		// if ((operation >= OP_ARRAY_INT8) && (operation <= OP_FUNC))
+		} // if ((operation >= OP_ARRAY_INT8) && (operation <= OP_FUNC))
 
 		// operators
 		switch (operation) {
@@ -403,7 +404,7 @@ void Expression::printExpr_internal(char stopToken) {
 			break;
 
 		default:
-			debugN(5, "<%d>", (int16) operation);
+			debugN(5, "<%d>", (int16)operation);
 			error("Expression::printExpr(): invalid operator in expression");
 			break;
 		}
@@ -429,7 +430,6 @@ void Expression::printExpr_internal(char stopToken) {
 		}
 	}
 }
-
 
 void Expression::printVarIndex() {
 	byte *arrDesc;
@@ -461,7 +461,7 @@ void Expression::printVarIndex() {
 		_vm->_game->_script->skip(dimCount);
 		for (dim = 0; dim < dimCount; dim++) {
 			printExpr(OP_END_MARKER);
-			debugN(5, " of %d", (int16) arrDesc[dim]);
+			debugN(5, " of %d", (int16)arrDesc[dim]);
 			if (dim != dimCount - 1)
 				debugN(5, ",");
 		}
@@ -502,7 +502,7 @@ int Expression::cmpHelper(const StackFrame &stackFrame) {
 }
 
 bool Expression::getVarBase(uint32 &varBase, bool mindStop,
-		uint16 *size, uint16 *type) {
+                            uint16 *size, uint16 *type) {
 
 	varBase = 0;
 
@@ -679,33 +679,32 @@ void Expression::loadValue(byte operation, uint32 varBase, const StackFrame &sta
 			offset = offset * arrDescPtr[dim] + temp2;
 		}
 		if (operation == OP_ARRAY_INT8)
-			*stackFrame.values = (int8) READ_VARO_UINT8(varBase + temp + offset);
+			*stackFrame.values = (int8)READ_VARO_UINT8(varBase + temp + offset);
 		else if (operation == OP_ARRAY_INT32)
 			*stackFrame.values = READ_VARO_UINT32(varBase + temp * 4 + offset * 4);
 		else if (operation == OP_ARRAY_INT16)
-			*stackFrame.values = (int16) READ_VARO_UINT16(varBase + temp * 2 + offset * 2);
+			*stackFrame.values = (int16)READ_VARO_UINT16(varBase + temp * 2 + offset * 2);
 		else if (operation == OP_ARRAY_STR) {
 			*stackFrame.values = encodePtr(_vm->_inter->_variables->getAddressOff8(
-						varBase + temp * 4 + offset * _vm->_global->_inter_animDataSize * 4),
-					kInterVar);
+			                                 varBase + temp * 4 + offset * _vm->_global->_inter_animDataSize * 4),
+			                               kInterVar);
 			if (_vm->_game->_script->peekByte() == 13) {
 				_vm->_game->_script->skip(1);
 				temp2 = parseValExpr(OP_END_MARKER);
 				*stackFrame.opers = OP_LOAD_IMM_INT16;
-				*stackFrame.values = READ_VARO_UINT8(varBase + temp * 4 +
-						offset * 4 * _vm->_global->_inter_animDataSize + temp2);
+				*stackFrame.values = READ_VARO_UINT8(varBase + temp * 4 + offset * 4 * _vm->_global->_inter_animDataSize + temp2);
 			}
 		}
 		break;
 
 	case OP_LOAD_VAR_INT16:
 		*stackFrame.opers = OP_LOAD_IMM_INT16;
-		*stackFrame.values = (int16) READ_VARO_UINT16(varBase + _vm->_game->_script->readUint16() * 2);
+		*stackFrame.values = (int16)READ_VARO_UINT16(varBase + _vm->_game->_script->readUint16() * 2);
 		break;
 
 	case OP_LOAD_VAR_INT8:
 		*stackFrame.opers = OP_LOAD_IMM_INT16;
-		*stackFrame.values = (int8) READ_VARO_UINT8(varBase + _vm->_game->_script->readUint16());
+		*stackFrame.values = (int8)READ_VARO_UINT8(varBase + _vm->_game->_script->readUint16());
 		break;
 
 	case OP_LOAD_IMM_INT32:
@@ -735,7 +734,7 @@ void Expression::loadValue(byte operation, uint32 varBase, const StackFrame &sta
 
 	case OP_LOAD_VAR_INT32_AS_INT16:
 		*stackFrame.opers = OP_LOAD_IMM_INT16;
-		*stackFrame.values = (int16) READ_VARO_UINT16(varBase + _vm->_game->_script->readUint16() * 4);
+		*stackFrame.values = (int16)READ_VARO_UINT16(varBase + _vm->_game->_script->readUint16() * 4);
 		break;
 
 	case OP_LOAD_VAR_STR:
@@ -770,8 +769,7 @@ void Expression::loadValue(byte operation, uint32 varBase, const StackFrame &sta
 			break;
 
 		case FUNC_SQR:
-			_resultInt =
-				_resultInt * _resultInt;
+			_resultInt = _resultInt * _resultInt;
 			break;
 
 		case FUNC_ABS:
@@ -780,8 +778,7 @@ void Expression::loadValue(byte operation, uint32 varBase, const StackFrame &sta
 			break;
 
 		case FUNC_RAND:
-			_resultInt =
-				_vm->_util->getRandom(_resultInt);
+			_resultInt = _vm->_util->getRandom(_resultInt);
 			break;
 		}
 
@@ -861,7 +858,6 @@ void Expression::simpleArithmetic2(StackFrame &stackFrame) {
 			break;
 		}
 	}
-
 }
 
 // Complex arithmetics with brackets
@@ -873,8 +869,7 @@ bool Expression::complexArithmetic(Stack &stack, StackFrame &stackFrame, int16 b
 		} else if (stack.opers[brackStart] == OP_LOAD_IMM_STR) {
 			if ((char *)decodePtr(stack.values[brackStart]) != _resultStr) {
 				Common::strlcpy(_resultStr, (char *)decodePtr(stack.values[brackStart]), sizeof(_resultStr));
-				stack.values[brackStart] =
-					encodePtr((byte *)_resultStr, kResStr);
+				stack.values[brackStart] = encodePtr((byte *)_resultStr, kResStr);
 			}
 			Common::strlcat(_resultStr, (char *)decodePtr(stackFrame.values[-1]), sizeof(_resultStr));
 		}
@@ -1031,11 +1026,9 @@ int16 Expression::parseExpr(byte stopToken, byte *type) {
 			continue;
 		} // (op >= OP_ARRAY_INT8) && (op <= OP_FUNC)
 
-		if ((operation == stopToken) || (operation == OP_OR) ||
-				(operation == OP_AND) || (operation == OP_END_EXPR)) {
+		if ((operation == stopToken) || (operation == OP_OR) || (operation == OP_AND) || (operation == OP_END_EXPR)) {
 			while (stackFrame.pos >= 2) {
-				if ((stackFrame.opers[-2] == OP_BEGIN_EXPR) &&
-						((operation == OP_END_EXPR) || (operation == stopToken))) {
+				if ((stackFrame.opers[-2] == OP_BEGIN_EXPR) && ((operation == OP_END_EXPR) || (operation == stopToken))) {
 					stackFrame.opers[-2] = stackFrame.opers[-1];
 					if ((stackFrame.opers[-2] == OP_LOAD_IMM_INT16) || (stackFrame.opers[-2] == OP_LOAD_IMM_STR))
 						stackFrame.values[-2] = stackFrame.values[-1];
@@ -1046,11 +1039,10 @@ int16 Expression::parseExpr(byte stopToken, byte *type) {
 
 					if (operation != stopToken)
 						break;
-				}	// if ((stackFrame.opers[-2] == OP_BEGIN_EXPR) && ...)
+				} // if ((stackFrame.opers[-2] == OP_BEGIN_EXPR) && ...)
 
-				for (brackStart = (stackFrame.pos - 2); (brackStart > 0) &&
-				    (stack.opers[brackStart] < OP_OR) && (stack.opers[brackStart] != OP_BEGIN_EXPR);
-						brackStart--)
+				for (brackStart = (stackFrame.pos - 2); (brackStart > 0) && (stack.opers[brackStart] < OP_OR) && (stack.opers[brackStart] != OP_BEGIN_EXPR);
+				     brackStart--)
 					;
 
 				if ((stack.opers[brackStart] >= OP_OR) || (stack.opers[brackStart] == OP_BEGIN_EXPR))
@@ -1059,7 +1051,7 @@ int16 Expression::parseExpr(byte stopToken, byte *type) {
 				if (complexArithmetic(stack, stackFrame, brackStart))
 					break;
 
-			}	// while (stackFrame.pos >= 2)
+			} // while (stackFrame.pos >= 2)
 
 			if ((operation == OP_OR) || (operation == OP_AND)) {
 				if (stackFrame.opers[-1] == OP_LOAD_IMM_INT16) {
@@ -1069,8 +1061,7 @@ int16 Expression::parseExpr(byte stopToken, byte *type) {
 						stackFrame.opers[-1] = GOB_FALSE;
 				}
 
-				if (((operation == OP_OR) && (stackFrame.opers[-1] == GOB_TRUE)) ||
-				    ((operation == OP_AND) && (stackFrame.opers[-1] == GOB_FALSE))) {
+				if (((operation == OP_OR) && (stackFrame.opers[-1] == GOB_TRUE)) || ((operation == OP_AND) && (stackFrame.opers[-1] == GOB_FALSE))) {
 					if ((stackFrame.pos > 1) && (stackFrame.opers[-2] == OP_BEGIN_EXPR)) {
 						skipExpr(OP_END_EXPR);
 						stackFrame.opers[-2] = stackFrame.opers[-1];
@@ -1098,7 +1089,7 @@ int16 Expression::parseExpr(byte stopToken, byte *type) {
 			getResult(stack.opers[0], stack.values[0], type);
 
 			return 0;
-		}		// (operation == stopToken) || (operation == OP_OR) || (operation == OP_AND) || (operation == OP_END_EXPR)
+		} // (operation == stopToken) || (operation == OP_OR) || (operation == OP_AND) || (operation == OP_END_EXPR)
 
 		if ((operation < OP_NEG) || (operation > OP_NOT)) {
 			if ((operation < OP_LESS) || (operation > OP_NEQ))

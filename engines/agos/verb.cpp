@@ -255,8 +255,8 @@ static const byte convertVerbID[9] = {
 
 void AGOSEngine::printVerbOf(uint hitarea_id) {
 	const char *txt;
-	const char * const *verb_names;
-	const char * const *verb_prep_names;
+	const char *const *verb_names;
+	const char *const *verb_prep_names;
 
 	hitarea_id -= 101;
 	if (getGameType() == GType_SIMON2)
@@ -334,7 +334,7 @@ void AGOSEngine::showActionString(const byte *string) {
 		return;
 
 	// Arisme : hack for long strings in the French version
-	if ((strlen((const char*)string) - 1) <= len)
+	if ((strlen((const char *)string) - 1) <= len)
 		x = (len - (strlen((const char *)string) - 1)) * 3;
 	else
 		x = 0;
@@ -470,8 +470,7 @@ void AGOSEngine::disableBox(uint hitarea) {
 	if (ha != NULL) {
 		ha->flags |= kBFBoxDead;
 		ha->flags &= ~kBFBoxSelected;
-		if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
-			hitarea == 102) {
+		if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) && hitarea == 102) {
 			resetVerbs();
 		}
 	}
@@ -583,7 +582,7 @@ void AGOSEngine::resetVerbs() {
 	if (getGameType() == GType_SIMON2) {
 		id = 2;
 		if (!getBitFlag(79))
-		id = (_mouse.y >= 136) ? 102 : 101;
+			id = (_mouse.y >= 136) ? 102 : 101;
 	} else {
 		id = (_mouse.y >= 136) ? 102 : 101;
 	}
@@ -625,7 +624,7 @@ void AGOSEngine_Feeble::setVerb(HitArea *ha) {
 	}
 
 	_mouseCursor = cursor;
-	_mouseAnimMax = (cursor == 4) ? 14: 16;
+	_mouseAnimMax = (cursor == 4) ? 14 : 16;
 	_mouseAnim = 1;
 	_needHitAreaRecalc++;
 	_verbHitArea = cursor + 300;
@@ -720,13 +719,12 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 	do {
 		if (ha->flags & kBFBoxInUse) {
 			if (!(ha->flags & kBFBoxDead)) {
-				if (x >= ha->x && y >= ha->y &&
-						x - ha->x < ha->width && y - ha->y < ha->height && priority <= ha->priority) {
+				if (x >= ha->x && y >= ha->y && x - ha->x < ha->width && y - ha->y < ha->height && priority <= ha->priority) {
 					priority = ha->priority;
 					best_ha = ha;
 				} else {
 					if (ha->flags & kBFBoxSelected) {
-						hitarea_leave(ha , true);
+						hitarea_leave(ha, true);
 						ha->flags &= ~kBFBoxSelected;
 					}
 				}
@@ -816,13 +814,12 @@ void AGOSEngine_Waxworks::boxController(uint x, uint y, uint mode) {
 	do {
 		if (ha->flags & kBFBoxInUse) {
 			if (!(ha->flags & kBFBoxDead)) {
-				if (x_ >= ha->x && y_ >= ha->y &&
-						x_ - ha->x < ha->width && y_ - ha->y < ha->height && priority <= ha->priority) {
+				if (x_ >= ha->x && y_ >= ha->y && x_ - ha->x < ha->width && y_ - ha->y < ha->height && priority <= ha->priority) {
 					priority = ha->priority;
 					best_ha = ha;
 				} else {
 					if (ha->flags & kBFBoxSelected) {
-						hitarea_leave(ha , true);
+						hitarea_leave(ha, true);
 						ha->flags &= ~kBFBoxSelected;
 					}
 				}
@@ -856,8 +853,7 @@ void AGOSEngine_Waxworks::boxController(uint x, uint y, uint mode) {
 			if (getGameType() == GType_PP) {
 				_variableArray[400] = x;
 				_variableArray[401] = y;
-			} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2 ||
-				getGameType() == GType_FF) {
+			} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2 || getGameType() == GType_FF) {
 				_variableArray[1] = x;
 				_variableArray[2] = y;
 			}

@@ -32,9 +32,13 @@ public:
 	float x;
 	float y;
 
-	Vector2() : x(0.0), y(0.0) {}
+	Vector2()
+	  : x(0.0)
+	  , y(0.0) {}
 
-	Vector2(float ax, float ay) : x(ax), y(ay) {}
+	Vector2(float ax, float ay)
+	  : x(ax)
+	  , y(ay) {}
 };
 
 inline bool operator==(const Vector2 &a, const Vector2 &b) {
@@ -51,9 +55,15 @@ public:
 	float y;
 	float z;
 
-	Vector3() : x(0.0), y(0.0), z(0.0) {}
+	Vector3()
+	  : x(0.0)
+	  , y(0.0)
+	  , z(0.0) {}
 
-	Vector3(float ax, float ay, float az) : x(ax), y(ay), z(az) {}
+	Vector3(float ax, float ay, float az)
+	  : x(ax)
+	  , y(ay)
+	  , z(az) {}
 
 	inline float length() {
 		return sqrt(x * x + y * y + z * z);
@@ -69,9 +79,9 @@ public:
 
 	inline static Vector3 cross(Vector3 a, Vector3 b) {
 		return Vector3(
-			a.y * b.z - a.z * b.y,
-			a.z * b.x - a.x * b.z,
-			a.x * b.y - a.y * b.x);
+		  a.y * b.z - a.z * b.y,
+		  a.z * b.x - a.x * b.z,
+		  a.x * b.y - a.y * b.x);
 	}
 
 	inline static float dot(Vector3 a, Vector3 b) {
@@ -102,9 +112,17 @@ public:
 	float z;
 	float w;
 
-	Vector4() : x(0.0), y(0.0), z(0.0), w(0.0) {}
+	Vector4()
+	  : x(0.0)
+	  , y(0.0)
+	  , z(0.0)
+	  , w(0.0) {}
 
-	Vector4(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
+	Vector4(float ax, float ay, float az, float aw)
+	  : x(ax)
+	  , y(ay)
+	  , z(az)
+	  , w(aw) {}
 };
 
 inline Vector4 operator+(Vector4 a, Vector4 b) {

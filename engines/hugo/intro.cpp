@@ -32,18 +32,19 @@
 #include "graphics/font.h"
 #include "graphics/pixelformat.h"
 
-#include "hugo/hugo.h"
-#include "hugo/intro.h"
+#include "hugo/display.h"
 #include "hugo/file.h"
 #include "hugo/game.h"
-#include "hugo/util.h"
-#include "hugo/display.h"
+#include "hugo/hugo.h"
+#include "hugo/intro.h"
 #include "hugo/sound.h"
 #include "hugo/text.h"
+#include "hugo/util.h"
 
 namespace Hugo {
 
-IntroHandler::IntroHandler(HugoEngine *vm) : _vm(vm) {
+IntroHandler::IntroHandler(HugoEngine *vm)
+  : _vm(vm) {
 	_introXSize = 0;
 	_introTicks = 0;
 	_introX = _introY = nullptr;
@@ -82,7 +83,8 @@ void IntroHandler::freeIntroData() {
 	_introX = _introY = nullptr;
 }
 
-intro_v1d::intro_v1d(HugoEngine *vm) : IntroHandler(vm) {
+intro_v1d::intro_v1d(HugoEngine *vm)
+  : IntroHandler(vm) {
 	_introState = 0;
 }
 
@@ -113,8 +115,8 @@ bool intro_v1d::introPlay() {
 			break;
 
 		case 1:
-			_vm->_screen->drawShape(20, 92,_TLIGHTMAGENTA,_TMAGENTA);
-			_vm->_screen->drawShape(250,92,_TLIGHTMAGENTA,_TMAGENTA);
+			_vm->_screen->drawShape(20, 92, _TLIGHTMAGENTA, _TMAGENTA);
+			_vm->_screen->drawShape(250, 92, _TLIGHTMAGENTA, _TMAGENTA);
 
 			// TROMAN, size 10-5
 			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))
@@ -233,7 +235,8 @@ bool intro_v1d::introPlay() {
 	return (++_introTicks >= introSize);
 }
 
-intro_v2d::intro_v2d(HugoEngine *vm) : IntroHandler(vm) {
+intro_v2d::intro_v2d(HugoEngine *vm)
+  : IntroHandler(vm) {
 }
 
 intro_v2d::~intro_v2d() {
@@ -275,7 +278,8 @@ bool intro_v2d::introPlay() {
 	return true;
 }
 
-intro_v3d::intro_v3d(HugoEngine *vm) : IntroHandler(vm) {
+intro_v3d::intro_v3d(HugoEngine *vm)
+  : IntroHandler(vm) {
 }
 
 intro_v3d::~intro_v3d() {
@@ -293,7 +297,7 @@ void intro_v3d::introInit() {
 	if (_vm->_boot._registered)
 		sprintf(buffer, "%s  Registered Version", _vm->getCopyrightString());
 	else
-		sprintf(buffer,"%s  Shareware Version", _vm->getCopyrightString());
+		sprintf(buffer, "%s  Shareware Version", _vm->getCopyrightString());
 
 	// TROMAN, size 10-5
 	if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))
@@ -345,7 +349,8 @@ bool intro_v3d::introPlay() {
 	return (++_introTicks >= getIntroSize());
 }
 
-intro_v1w::intro_v1w(HugoEngine *vm) : IntroHandler(vm) {
+intro_v1w::intro_v1w(HugoEngine *vm)
+  : IntroHandler(vm) {
 }
 
 intro_v1w::~intro_v1w() {
@@ -362,7 +367,8 @@ bool intro_v1w::introPlay() {
 	return true;
 }
 
-intro_v2w::intro_v2w(HugoEngine *vm) : IntroHandler(vm) {
+intro_v2w::intro_v2w(HugoEngine *vm)
+  : IntroHandler(vm) {
 }
 
 intro_v2w::~intro_v2w() {
@@ -383,7 +389,8 @@ bool intro_v2w::introPlay() {
 	return true;
 }
 
-intro_v3w::intro_v3w(HugoEngine *vm) : IntroHandler(vm) {
+intro_v3w::intro_v3w(HugoEngine *vm)
+  : IntroHandler(vm) {
 }
 
 intro_v3w::~intro_v3w() {

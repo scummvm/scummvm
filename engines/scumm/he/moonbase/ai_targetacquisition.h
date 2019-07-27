@@ -47,7 +47,11 @@ private:
 	AI *_ai;
 
 public:
-	Sortie(AI *ai) { _ai = ai; _unitType = 0; _shotPosX = _shotPosY = 0; }
+	Sortie(AI *ai) {
+		_ai = ai;
+		_unitType = 0;
+		_shotPosX = _shotPosY = 0;
+	}
 	virtual ~Sortie();
 
 	static void setSourcePos(int x, int y) {
@@ -92,7 +96,6 @@ public:
 
 	virtual int numChildrenToGen();
 	virtual IContainedObject *createChildObj(int, int &completionFlag);
-
 
 	virtual float calcH();
 	virtual int checkSuccess();

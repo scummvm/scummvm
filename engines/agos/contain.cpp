@@ -33,9 +33,9 @@ int AGOSEngine_Elvira2::canPlace(Item *x, Item *y) {
 	int cap = 0;
 
 	if (o == NULL)
-		return 0;	/* Fits Fine */
+		return 0; /* Fits Fine */
 
-	xPlace(x,NULL);		/* Avoid disturbing figures */
+	xPlace(x, NULL); /* Avoid disturbing figures */
 	if (o)
 		cap = sizeContents(y);
 
@@ -43,9 +43,9 @@ int AGOSEngine_Elvira2::canPlace(Item *x, Item *y) {
 	if ((o) && (o->objectFlags & kOFVolume)) {
 		ct = getOffsetOfChild2Param(o, kOFVolume);
 		cap = o->objectFlagValue[ct] - cap;
-		cap -= sizeOfRec(x, 0);	/* - size of item going in */
+		cap -= sizeOfRec(x, 0); /* - size of item going in */
 		if (cap < 0)
-			return -1;	/* Too big to fit */
+			return -1; /* Too big to fit */
 	}
 
 	return 0;
@@ -60,9 +60,9 @@ int AGOSEngine::canPlace(Item *x, Item *y) {
 	int wt;
 
 	if ((c == NULL) && (p == NULL))
-		return 0;		/* Fits Fine */
+		return 0; /* Fits Fine */
 
-	xPlace(x, NULL);		/* Avoid disturbing figures */
+	xPlace(x, NULL); /* Avoid disturbing figures */
 	if (c)
 		cap = sizeContents(y);
 
@@ -70,13 +70,13 @@ int AGOSEngine::canPlace(Item *x, Item *y) {
 	xPlace(x, z);
 	if (c) {
 		cap = c->volume - cap;
-		cap -= sizeOfRec(x, 0);	/* - size of item going in */
+		cap -= sizeOfRec(x, 0); /* - size of item going in */
 		if (cap < 0)
-			return -1;	/* Too big to fit */
+			return -1; /* Too big to fit */
 	}
 	if (p) {
 		if (wt + weightOf(x) > p->strength * 10)
-			return -2;	/* Too heavy */
+			return -2; /* Too heavy */
 	}
 
 	return 0;
@@ -110,9 +110,9 @@ int AGOSEngine::sizeRec(Item *x, int d) {
 	o = derefItem(x->child);
 
 	if (d > 32)
-		return(0);
+		return (0);
 	while (o) {
-		n += sizeOfRec(o,d);
+		n += sizeOfRec(o, d);
 		o = derefItem(o->child);
 	}
 

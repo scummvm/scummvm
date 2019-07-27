@@ -23,10 +23,10 @@
 #ifndef GOB_SOUND_SOUNDMIXER_H
 #define GOB_SOUND_SOUNDMIXER_H
 
-#include "common/mutex.h"
-#include "common/frac.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "common/frac.h"
+#include "common/mutex.h"
 
 namespace Gob {
 
@@ -38,7 +38,7 @@ public:
 	~SoundMixer();
 
 	virtual void play(SoundDesc &sndDesc, int16 repCount,
-			int16 frequency, int16 fadeLength = 0);
+	                  int16 frequency, int16 fadeLength = 0);
 	virtual void stop(int16 fadeLength);
 
 	bool isPlaying() const;
@@ -84,7 +84,7 @@ protected:
 	char _playingSound;
 
 	virtual void setSample(SoundDesc &sndDesc, int16 repCount,
-			int16 frequency, int16 fadeLength);
+	                       int16 frequency, int16 fadeLength);
 	virtual void checkEndSample();
 	virtual void endFade();
 

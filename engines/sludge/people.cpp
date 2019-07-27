@@ -20,6 +20,7 @@
  *
  */
 
+#include "sludge/people.h"
 #include "sludge/allfiles.h"
 #include "sludge/floor.h"
 #include "sludge/function.h"
@@ -28,7 +29,6 @@
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
 #include "sludge/objtypes.h"
-#include "sludge/people.h"
 #include "sludge/region.h"
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
@@ -136,7 +136,7 @@ bool PersonaAnimation::load(Common::SeekableReadStream *stream) {
 
 	if (numFrames) {
 		int a = stream->readUint32LE();
-		frames = new AnimFrame [numFrames];
+		frames = new AnimFrame[numFrames];
 		if (!checkNew(frames))
 			return false;
 		theSprites = g_sludge->_gfxMan->loadBankForAnim(a);
@@ -264,8 +264,7 @@ bool PeopleManager::turnPersonToFace(int thisNum, int direc) {
 		thisPerson->walking = false;
 		thisPerson->spinning = false;
 		turnMeAngle(thisPerson, direc);
-		_vm->_speechMan->isCurrentTalker(thisPerson) ?
-				thisPerson->makeTalker() : thisPerson->makeSilent();
+		_vm->_speechMan->isCurrentTalker(thisPerson) ? thisPerson->makeTalker() : thisPerson->makeSilent();
 		return true;
 	}
 	return false;
@@ -341,108 +340,107 @@ enum drawModes {
 
 void PeopleManager::setMyDrawMode(OnScreenPerson *moveMe, int h) {
 	switch (h) {
-		case drawModeTransparent3:
-			moveMe->r = moveMe->g = moveMe->b = 0;
-			moveMe->colourmix = 0;
-			moveMe->transparency = 64;
-			break;
-		case drawModeTransparent2:
-			moveMe->r = moveMe->g = moveMe->b = 0;
-			moveMe->colourmix = 0;
-			moveMe->transparency = 128;
-			break;
-		case drawModeTransparent1:
-			moveMe->r = moveMe->g = moveMe->b = 0;
-			moveMe->colourmix = 0;
-			moveMe->transparency = 192;
-			break;
-		case drawModeInvisible:
-			moveMe->r = moveMe->g = moveMe->b = 0;
-			moveMe->colourmix = 0;
-			moveMe->transparency = 254;
-			break;
-		case drawModeDark1:
-			moveMe->r = moveMe->g = moveMe->b = 0;
-			moveMe->colourmix = 192;
-			moveMe->transparency = 0;
-			break;
-		case drawModeDark2:
-			moveMe->r = moveMe->g = moveMe->b = 0;
-			moveMe->colourmix = 128;
-			moveMe->transparency = 0;
-			break;
-		case drawModeDark3:
-			moveMe->r = moveMe->g = moveMe->b = 0;
-			moveMe->colourmix = 64;
-			moveMe->transparency = 0;
-			break;
-		case drawModeBlack:
-			moveMe->r = moveMe->g = moveMe->b = 0;
-			moveMe->colourmix = 255;
-			moveMe->transparency = 0;
-			break;
-		case drawModeShadow1:
-			moveMe->r = moveMe->g = moveMe->b = 0;
-			moveMe->colourmix = 255;
-			moveMe->transparency = 64;
-			break;
-		case drawModeShadow2:
-			moveMe->r = moveMe->g = moveMe->b = 0;
-			moveMe->colourmix = 255;
-			moveMe->transparency = 128;
-			break;
-		case drawModeShadow3:
-			moveMe->r = moveMe->g = moveMe->b = 0;
-			moveMe->colourmix = 255;
-			moveMe->transparency = 192;
-			break;
-		case drawModeFoggy3:
-			moveMe->r = moveMe->g = moveMe->b = 128;
-			moveMe->colourmix = 192;
-			moveMe->transparency = 0;
-			break;
-		case drawModeFoggy2:
-			moveMe->r = moveMe->g = moveMe->b = 128;
-			moveMe->colourmix = 128;
-			moveMe->transparency = 0;
-			break;
-		case drawModeFoggy1:
-			moveMe->r = moveMe->g = moveMe->b = 128;
-			moveMe->colourmix = 64;
-			moveMe->transparency = 0;
-			break;
-		case drawModeFoggy4:
-			moveMe->r = moveMe->g = moveMe->b = 128;
-			moveMe->colourmix = 255;
-			moveMe->transparency = 0;
-			break;
-		case drawModeGlow3:
-			moveMe->r = moveMe->g = moveMe->b = 255;
-			moveMe->colourmix = 192;
-			moveMe->transparency = 0;
-			break;
-		case drawModeGlow2:
-			moveMe->r = moveMe->g = moveMe->b = 255;
-			moveMe->colourmix = 128;
-			moveMe->transparency = 0;
-			break;
-		case drawModeGlow1:
-			moveMe->r = moveMe->g = moveMe->b = 255;
-			moveMe->colourmix = 64;
-			moveMe->transparency = 0;
-			break;
-		case drawModeGlow4:
-			moveMe->r = moveMe->g = moveMe->b = 255;
-			moveMe->colourmix = 255;
-			moveMe->transparency = 0;
-			break;
-		default:
-			moveMe->r = moveMe->g = moveMe->b = 0;
-			moveMe->colourmix = 0;
-			moveMe->transparency = 0;
-			break;
+	case drawModeTransparent3:
+		moveMe->r = moveMe->g = moveMe->b = 0;
+		moveMe->colourmix = 0;
+		moveMe->transparency = 64;
+		break;
+	case drawModeTransparent2:
+		moveMe->r = moveMe->g = moveMe->b = 0;
+		moveMe->colourmix = 0;
+		moveMe->transparency = 128;
+		break;
+	case drawModeTransparent1:
+		moveMe->r = moveMe->g = moveMe->b = 0;
+		moveMe->colourmix = 0;
+		moveMe->transparency = 192;
+		break;
+	case drawModeInvisible:
+		moveMe->r = moveMe->g = moveMe->b = 0;
+		moveMe->colourmix = 0;
+		moveMe->transparency = 254;
+		break;
+	case drawModeDark1:
+		moveMe->r = moveMe->g = moveMe->b = 0;
+		moveMe->colourmix = 192;
+		moveMe->transparency = 0;
+		break;
+	case drawModeDark2:
+		moveMe->r = moveMe->g = moveMe->b = 0;
+		moveMe->colourmix = 128;
+		moveMe->transparency = 0;
+		break;
+	case drawModeDark3:
+		moveMe->r = moveMe->g = moveMe->b = 0;
+		moveMe->colourmix = 64;
+		moveMe->transparency = 0;
+		break;
+	case drawModeBlack:
+		moveMe->r = moveMe->g = moveMe->b = 0;
+		moveMe->colourmix = 255;
+		moveMe->transparency = 0;
+		break;
+	case drawModeShadow1:
+		moveMe->r = moveMe->g = moveMe->b = 0;
+		moveMe->colourmix = 255;
+		moveMe->transparency = 64;
+		break;
+	case drawModeShadow2:
+		moveMe->r = moveMe->g = moveMe->b = 0;
+		moveMe->colourmix = 255;
+		moveMe->transparency = 128;
+		break;
+	case drawModeShadow3:
+		moveMe->r = moveMe->g = moveMe->b = 0;
+		moveMe->colourmix = 255;
+		moveMe->transparency = 192;
+		break;
+	case drawModeFoggy3:
+		moveMe->r = moveMe->g = moveMe->b = 128;
+		moveMe->colourmix = 192;
+		moveMe->transparency = 0;
+		break;
+	case drawModeFoggy2:
+		moveMe->r = moveMe->g = moveMe->b = 128;
+		moveMe->colourmix = 128;
+		moveMe->transparency = 0;
+		break;
+	case drawModeFoggy1:
+		moveMe->r = moveMe->g = moveMe->b = 128;
+		moveMe->colourmix = 64;
+		moveMe->transparency = 0;
+		break;
+	case drawModeFoggy4:
+		moveMe->r = moveMe->g = moveMe->b = 128;
+		moveMe->colourmix = 255;
+		moveMe->transparency = 0;
+		break;
+	case drawModeGlow3:
+		moveMe->r = moveMe->g = moveMe->b = 255;
+		moveMe->colourmix = 192;
+		moveMe->transparency = 0;
+		break;
+	case drawModeGlow2:
+		moveMe->r = moveMe->g = moveMe->b = 255;
+		moveMe->colourmix = 128;
+		moveMe->transparency = 0;
+		break;
+	case drawModeGlow1:
+		moveMe->r = moveMe->g = moveMe->b = 255;
+		moveMe->colourmix = 64;
+		moveMe->transparency = 0;
+		break;
+	case drawModeGlow4:
+		moveMe->r = moveMe->g = moveMe->b = 255;
+		moveMe->colourmix = 255;
+		moveMe->transparency = 0;
+		break;
+	default:
+		moveMe->r = moveMe->g = moveMe->b = 0;
+		moveMe->colourmix = 0;
+		moveMe->transparency = 0;
+		break;
 	}
-
 }
 
 void PeopleManager::setDrawMode(int h, int ob) {
@@ -496,7 +494,7 @@ void PeopleManager::drawPeople() {
 	_vm->_regionMan->resetOverRegion();
 
 	for (OnScreenPersonList::iterator it = _allPeople->begin(); it != _allPeople->end(); ++it) {
-		OnScreenPerson * thisPerson = (*it);
+		OnScreenPerson *thisPerson = (*it);
 		if (thisPerson->show) {
 			myAnim = thisPerson->myAnim;
 			if (myAnim != thisPerson->lastUsedAnim) {
@@ -510,7 +508,7 @@ void PeopleManager::drawPeople() {
 					thisPerson->frameTick = thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
 				} else if (myAnim->frames[thisPerson->frameNum].noise) {
 					startNewFunctionNum(-myAnim->frames[thisPerson->frameNum].noise, 0,
-					NULL, noStack);
+					                    NULL, noStack);
 					thisPerson->frameNum++;
 					thisPerson->frameNum %= thisPerson->myAnim->numFrames;
 					thisPerson->frameTick = thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
@@ -548,7 +546,7 @@ void PeopleManager::drawPeople() {
 					thisPerson->frameTick = thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
 				} else if (myAnim->frames[thisPerson->frameNum].noise) {
 					startNewFunctionNum(-myAnim->frames[thisPerson->frameNum].noise, 0,
-					NULL, noStack);
+					                    NULL, noStack);
 					thisPerson->frameNum++;
 					thisPerson->frameNum %= thisPerson->myAnim->numFrames;
 					thisPerson->frameTick = thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
@@ -807,7 +805,7 @@ void PeopleManager::animatePerson(int obj, PersonaAnimation *fram) { // Set a ne
 	}
 }
 
-void PeopleManager::animatePerson(int obj, Persona *per) {             // Set a new costume
+void PeopleManager::animatePerson(int obj, Persona *per) { // Set a new costume
 	OnScreenPerson *moveMe = findPerson(obj);
 	if (moveMe) {
 		moveMe->spinning = false;
@@ -868,7 +866,7 @@ void PeopleManager::removeOneCharacter(int i) {
 	}
 }
 
-bool PeopleManager::savePeople(Common::WriteStream* stream) {
+bool PeopleManager::savePeople(Common::WriteStream *stream) {
 	stream->writeSint16LE(_scaleHorizon);
 	stream->writeSint16LE(_scaleDivide);
 	int countPeople = _allPeople->size();

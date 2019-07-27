@@ -20,9 +20,8 @@
  *
  */
 
-
-#include "scumm/scumm.h"
 #include "scumm/usage_bits.h"
+#include "scumm/scumm.h"
 
 namespace Scumm {
 

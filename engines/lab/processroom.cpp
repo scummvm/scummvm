@@ -42,7 +42,7 @@
 
 namespace Lab {
 
-#define NOFILE         "no file"
+#define NOFILE "no file"
 
 bool LabEngine::checkConditions(const Common::Array<int16> &condition) {
 	for (unsigned int i = 0; i < condition.size(); ++i)
@@ -90,9 +90,7 @@ const CloseData *LabEngine::findClosePtrMatch(const CloseData *closePtr, const C
 	CloseDataList::const_iterator i;
 
 	for (i = list.begin(); i != list.end(); ++i) {
-		if ((closePtr->_x1 == i->_x1) && (closePtr->_x2 == i->_x2) &&
-			  (closePtr->_y1 == i->_y1) && (closePtr->_y2 == i->_y2) &&
-			  (closePtr->_depth == i->_depth))
+		if ((closePtr->_x1 == i->_x1) && (closePtr->_x2 == i->_x2) && (closePtr->_y1 == i->_y1) && (closePtr->_y2 == i->_y2) && (closePtr->_depth == i->_depth))
 			return &(*i);
 
 		const CloseData *resClosePtr = findClosePtrMatch(closePtr, i->_subCloseUps);
@@ -246,7 +244,7 @@ void LabEngine::doActions(const ActionList &actionList) {
 			_music->loadSoundEffect(action->_messages[0], false, true);
 			break;
 
-		case kActionPlaySoundNoWait:	// only used in scene 7 (street, when teleporting to the surreal maze)
+		case kActionPlaySoundNoWait: // only used in scene 7 (street, when teleporting to the surreal maze)
 			_music->loadSoundEffect(action->_messages[0], false, false);
 			break;
 
@@ -258,7 +256,7 @@ void LabEngine::doActions(const ActionList &actionList) {
 			_graphics->readPict(action->_messages[0], true);
 			break;
 
-		case kActionShowDiffLooping:	// used in scene 44 (heart of the labyrinth, minotaur)
+		case kActionShowDiffLooping: // used in scene 44 (heart of the labyrinth, minotaur)
 			_graphics->readPict(action->_messages[0], false);
 			break;
 
@@ -294,8 +292,7 @@ void LabEngine::doActions(const ActionList &actionList) {
 				_curFileName = test;
 				_graphics->readPict(_curFileName);
 			}
-			}
-			break;
+		} break;
 
 		case kActionSetElement:
 			_conditions->inclElement(action->_param1);
@@ -332,7 +329,7 @@ void LabEngine::doActions(const ActionList &actionList) {
 			}
 
 			_music->checkRoomMusic(_roomNum, action->_param1);
-			_roomNum   = action->_param1;
+			_roomNum = action->_param1;
 			_direction = action->_param2 - 1;
 			_closeDataPtr = nullptr;
 			_anim->_doBlack = true;
@@ -340,12 +337,11 @@ void LabEngine::doActions(const ActionList &actionList) {
 
 		case kActionSetCloseup: {
 			Common::Point curPos = Common::Point(_utils->scaleX(action->_param1), _utils->scaleY(action->_param2));
-				const CloseData *tmpClosePtr = getObject(curPos, _closeDataPtr);
+			const CloseData *tmpClosePtr = getObject(curPos, _closeDataPtr);
 
-				if (tmpClosePtr)
-					_closeDataPtr = tmpClosePtr;
-			}
-			break;
+			if (tmpClosePtr)
+				_closeDataPtr = tmpClosePtr;
+		} break;
 
 		case kActionMainView:
 			_closeDataPtr = nullptr;
@@ -370,32 +366,31 @@ void LabEngine::doActions(const ActionList &actionList) {
 			break;
 
 		case kActionWaitSecs: {
-				uint32 targetMillis = _system->getMillis() + action->_param1 * 1000;
+			uint32 targetMillis = _system->getMillis() + action->_param1 * 1000;
 
-				_graphics->screenUpdate();
+			_graphics->screenUpdate();
 
-				while (_system->getMillis() < targetMillis) {
-					updateEvents();
-					if (_quitLab || shouldQuit())
-						return;
-					_anim->diffNextFrame();
-				}
+			while (_system->getMillis() < targetMillis) {
+				updateEvents();
+				if (_quitLab || shouldQuit())
+					return;
+				_anim->diffNextFrame();
 			}
-			break;
+		} break;
 
-		case kActionStopMusic:	// used in scene 44 (heart of the labyrinth, minotaur)
+		case kActionStopMusic: // used in scene 44 (heart of the labyrinth, minotaur)
 			_music->freeMusic();
 			break;
 
-		case kActionStartMusic:	// unused
+		case kActionStartMusic: // unused
 			error("Unused opcode kActionStartMusic has been called");
 			break;
 
-		case kActionChangeMusic:	// used in scene 46 (museum exhibit, for the alarm)
+		case kActionChangeMusic: // used in scene 46 (museum exhibit, for the alarm)
 			_music->changeMusic(action->_messages[0], true, false);
 			break;
 
-		case kActionResetMusic:	// used in scene 45 (sheriff's office, after museum)
+		case kActionResetMusic: // used in scene 45 (sheriff's office, after museum)
 			_music->resetMusic(true);
 			break;
 
@@ -403,7 +398,7 @@ void LabEngine::doActions(const ActionList &actionList) {
 			error("Unused opcode kActionFillMusic has been called");
 			break;
 
-		case kActionWaitSound:	// used in scene 44 (heart of the labyrinth / ending)
+		case kActionWaitSound: // used in scene 44 (heart of the labyrinth / ending)
 			while (_music->isSoundEffectActive()) {
 				updateEvents();
 				if (_quitLab || shouldQuit())
@@ -417,12 +412,12 @@ void LabEngine::doActions(const ActionList &actionList) {
 			_music->stopSoundEffect();
 			break;
 
-		case kActionWinMusic:	// used in scene 44 (heart of the labyrinth / ending)
+		case kActionWinMusic: // used in scene 44 (heart of the labyrinth / ending)
 			_music->freeMusic();
 			_music->changeMusic("Music:WinGame", false, false);
 			break;
 
-		case kActionWinGame:	// used in scene 44 (heart of the labyrinth / ending)
+		case kActionWinGame: // used in scene 44 (heart of the labyrinth / ending)
 			_quitLab = true;
 			showLab2Teaser();
 			break;
@@ -487,11 +482,8 @@ bool LabEngine::doActionRuleSub(int16 action, int16 roomNum, const CloseData *cl
 		}
 
 		for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
-			if ((rule->_ruleType == kRuleTypeAction) &&
-				((rule->_param1 == action) || ((rule->_param1 == 0) && allowDefaults))) {
-				if (((rule->_param2 == closePtr->_closeUpType) ||
-					  ((rule->_param2 == 0) && allowDefaults)) ||
-					  ((action == 1) && (rule->_param2 == -closePtr->_closeUpType))) {
+			if ((rule->_ruleType == kRuleTypeAction) && ((rule->_param1 == action) || ((rule->_param1 == 0) && allowDefaults))) {
+				if (((rule->_param2 == closePtr->_closeUpType) || ((rule->_param2 == 0) && allowDefaults)) || ((action == 1) && (rule->_param2 == -closePtr->_closeUpType))) {
 					if (checkConditions(rule->_condition)) {
 						doActions(rule->_actionList);
 						return true;
@@ -535,9 +527,7 @@ bool LabEngine::doOperateRuleSub(int16 itemNum, int16 roomNum, const CloseData *
 			}
 
 			for (RuleList::iterator rule = rules->begin(); rule != rules->end(); ++rule) {
-				if ((rule->_ruleType == kRuleTypeOperate) &&
-					  ((rule->_param1 == itemNum) || ((rule->_param1 == 0) && allowDefaults)) &&
-						((rule->_param2 == closePtr->_closeUpType) || ((rule->_param2 == 0) && allowDefaults))) {
+				if ((rule->_ruleType == kRuleTypeOperate) && ((rule->_param1 == itemNum) || ((rule->_param1 == 0) && allowDefaults)) && ((rule->_param2 == closePtr->_closeUpType) || ((rule->_param2 == 0) && allowDefaults))) {
 					if (checkConditions(rule->_condition)) {
 						doActions(rule->_actionList);
 						return true;
@@ -599,9 +589,7 @@ bool LabEngine::doTurn(uint16 from, uint16 to) {
 	RuleList &rules = _rooms[_roomNum]._rules;
 
 	for (RuleList::iterator rule = rules.begin(); rule != rules.end(); ++rule) {
-		if ((rule->_ruleType == kRuleTypeTurn) ||
-			  ((rule->_ruleType == kRuleTypeTurnFromTo) &&
-			  (rule->_param1 == from) && (rule->_param2 == to))) {
+		if ((rule->_ruleType == kRuleTypeTurn) || ((rule->_ruleType == kRuleTypeTurnFromTo) && (rule->_param1 == from) && (rule->_param2 == to))) {
 			if (checkConditions(rule->_condition)) {
 				doActions(rule->_actionList);
 				return true;

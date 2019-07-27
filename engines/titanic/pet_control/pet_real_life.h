@@ -23,9 +23,9 @@
 #ifndef TITANIC_PET_REAL_LIFE_H
 #define TITANIC_PET_REAL_LIFE_H
 
-#include "titanic/pet_control/pet_section.h"
-#include "titanic/pet_control/pet_glyphs.h"
 #include "titanic/gfx/text_control.h"
+#include "titanic/pet_control/pet_glyphs.h"
+#include "titanic/pet_control/pet_section.h"
 
 namespace Titanic {
 
@@ -36,6 +36,7 @@ class CPetRealLife : public CPetSection {
 private:
 	CPetGlyphs _glyphs;
 	CTextControl _text;
+
 private:
 	/**
 	 * Does setup
@@ -46,6 +47,7 @@ private:
 	 * Adds one of the four button glyphs for display
 	 */
 	void addButton(CPetGlyph *glyph);
+
 public:
 	virtual ~CPetRealLife() {}
 

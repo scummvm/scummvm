@@ -24,7 +24,9 @@
 
 namespace Common {
 
-EventDispatcher::EventDispatcher() : _autoFreeMapper(false), _mapper(nullptr) {
+EventDispatcher::EventDispatcher()
+  : _autoFreeMapper(false)
+  , _mapper(nullptr) {
 }
 
 EventDispatcher::~EventDispatcher() {
@@ -74,10 +76,10 @@ void EventDispatcher::clearEvents() {
 	Event event;
 
 	for (List<SourceEntry>::iterator i = _sources.begin(); i != _sources.end(); ++i) {
-		while (i->source->pollEvent(event)) {}
+		while (i->source->pollEvent(event)) {
+		}
 	}
 }
-
 
 void EventDispatcher::registerMapper(EventMapper *mapper, bool autoFree) {
 	if (_autoFreeMapper) {
@@ -86,7 +88,6 @@ void EventDispatcher::registerMapper(EventMapper *mapper, bool autoFree) {
 	_mapper = mapper;
 	_autoFreeMapper = autoFree;
 }
-
 
 void EventDispatcher::registerSource(EventSource *source, bool autoFree) {
 	SourceEntry newEntry;

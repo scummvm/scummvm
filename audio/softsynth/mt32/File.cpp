@@ -24,13 +24,15 @@
 
 namespace MT32Emu {
 
-AbstractFile::AbstractFile() : sha1DigestCalculated(false) {
+AbstractFile::AbstractFile()
+  : sha1DigestCalculated(false) {
 	sha1Digest[0] = 0;
 
 	reserved = NULL;
 }
 
-AbstractFile::AbstractFile(const SHA1Digest &useSHA1Digest) : sha1DigestCalculated(true) {
+AbstractFile::AbstractFile(const SHA1Digest &useSHA1Digest)
+  : sha1DigestCalculated(true) {
 	memcpy(sha1Digest, useSHA1Digest, sizeof(SHA1Digest) - 1);
 	sha1Digest[sizeof(SHA1Digest) - 1] = 0; // Ensure terminator char.
 
@@ -60,11 +62,14 @@ const File::SHA1Digest &AbstractFile::getSHA1() {
 	return sha1Digest;
 }
 
-ArrayFile::ArrayFile(const Bit8u *useData, size_t useSize) : data(useData), size(useSize)
-{}
+ArrayFile::ArrayFile(const Bit8u *useData, size_t useSize)
+  : data(useData)
+  , size(useSize) {}
 
-ArrayFile::ArrayFile(const Bit8u *useData, size_t useSize, const SHA1Digest &useSHA1Digest) : AbstractFile(useSHA1Digest), data(useData), size(useSize)
-{}
+ArrayFile::ArrayFile(const Bit8u *useData, size_t useSize, const SHA1Digest &useSHA1Digest)
+  : AbstractFile(useSHA1Digest)
+  , data(useData)
+  , size(useSize) {}
 
 size_t ArrayFile::getSize() {
 	return size;

@@ -56,8 +56,14 @@ const byte ARROW[] = {
 	4, 2, 5, 5
 };
 
-Events::Events() : _forceClick(false), _currentEvent(nullptr), _cursorId(CURSOR_NONE),
-	_timerMilli(0), _timerTimeExpiry(0), _priorFrameTime(0), _frameCounter(0) {
+Events::Events()
+  : _forceClick(false)
+  , _currentEvent(nullptr)
+  , _cursorId(CURSOR_NONE)
+  , _timerMilli(0)
+  , _timerTimeExpiry(0)
+  , _priorFrameTime(0)
+  , _frameCounter(0) {
 	initializeCursors();
 }
 
@@ -82,7 +88,7 @@ void Events::initializeCursors() {
 		int offset = *p++;
 		int len = *p++;
 
-		for (int x = offset; x < (offset  + len); ++x, ++p) {
+		for (int x = offset; x < (offset + len); ++x, ++p) {
 			arr.hLine(x, y, x, (*p == 0xf7) ? WHITE : BLACK);
 		}
 	}
@@ -117,7 +123,7 @@ void Events::checkForNextFrameCounter() {
 }
 
 void Events::getEvent(event_t *event, bool polled) {
-	_currentEvent  = event;
+	_currentEvent = event;
 	event->clear();
 
 	dispatchEvent(*_currentEvent, polled);
@@ -369,11 +375,11 @@ void Events::handleButtonUp(bool isLeft, const Point &pos) {
 
 bool Events::isModifierKey(const Common::KeyCode &keycode) const {
 	return keycode == Common::KEYCODE_LCTRL || keycode == Common::KEYCODE_LALT
-		|| keycode == Common::KEYCODE_RCTRL || keycode == Common::KEYCODE_RALT
-		|| keycode == Common::KEYCODE_LSHIFT || keycode == Common::KEYCODE_RSHIFT
-		|| keycode == Common::KEYCODE_LSUPER || keycode == Common::KEYCODE_RSUPER
-		|| keycode == Common::KEYCODE_CAPSLOCK || keycode == Common::KEYCODE_NUMLOCK
-		|| keycode == Common::KEYCODE_SCROLLOCK;
+	  || keycode == Common::KEYCODE_RCTRL || keycode == Common::KEYCODE_RALT
+	  || keycode == Common::KEYCODE_LSHIFT || keycode == Common::KEYCODE_RSHIFT
+	  || keycode == Common::KEYCODE_LSUPER || keycode == Common::KEYCODE_RSUPER
+	  || keycode == Common::KEYCODE_CAPSLOCK || keycode == Common::KEYCODE_NUMLOCK
+	  || keycode == Common::KEYCODE_SCROLLOCK;
 }
 
 void Events::waitForPress() {
@@ -384,7 +390,7 @@ void Events::waitForPress() {
 		g_system->delayMillis(10);
 		checkForNextFrameCounter();
 	} while (!g_vm->shouldQuit() && (e.type != Common::EVENT_KEYDOWN || isModifierKey(e.kbd.keycode))
-		&& e.type != Common::EVENT_LBUTTONDOWN && e.type != Common::EVENT_RBUTTONDOWN && e.type != Common::EVENT_MBUTTONDOWN);
+	         && e.type != Common::EVENT_LBUTTONDOWN && e.type != Common::EVENT_RBUTTONDOWN && e.type != Common::EVENT_MBUTTONDOWN);
 }
 
 void Events::setCursor(CursorId cursorId) {

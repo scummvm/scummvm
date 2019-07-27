@@ -20,11 +20,10 @@
  *
  */
 
-#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
+#include "dreamweb/sound.h"
 
 namespace DreamWeb {
-
 
 typedef void (DreamWebEngine::*UseCallback)(void);
 
@@ -39,87 +38,87 @@ struct UseListEntry {
 void DreamWebEngine::useRoutine() {
 
 	static const UseListEntry kUseList[] = {
-		{ &DreamWebEngine::useMon,                  "NETW" },
-		{ &DreamWebEngine::useElevator1,            "ELVA" },
-		{ &DreamWebEngine::useElevator2,            "ELVB" },
-		{ &DreamWebEngine::useElevator3,            "ELVC" },
-		{ &DreamWebEngine::useElevator4,            "ELVE" },
-		{ &DreamWebEngine::useElevator5,            "ELVF" },
-		{ &DreamWebEngine::useChurchGate,           "CGAT" },
-		{ &DreamWebEngine::useStereo,               "REMO" },
-		{ &DreamWebEngine::useButtonA,              "BUTA" },
-		{ &DreamWebEngine::useWinch,                "CBOX" },
-		{ &DreamWebEngine::useLighter,              "LITE" },
-		{ &DreamWebEngine::usePlate,                "PLAT" },
-		{ &DreamWebEngine::useControl,              "LIFT" },
-		{ &DreamWebEngine::useWire,                 "WIRE" },
-		{ &DreamWebEngine::useHandle,               "HNDL" },
-		{ &DreamWebEngine::useHatch,                "HACH" },
-		{ &DreamWebEngine::useElvDoor,              "DOOR" },
-		{ &DreamWebEngine::useCashCard,             "CSHR" },
-		{ &DreamWebEngine::useGun,                  "GUNA" },
-		{ &DreamWebEngine::useCardReader1,          "CRAA" },
-		{ &DreamWebEngine::useCardReader2,          "CRBB" },
-		{ &DreamWebEngine::useCardReader3,          "CRCC" },
-		{ &DreamWebEngine::sitDownInBar,            "SEAT" },
-		{ &DreamWebEngine::useMenu,                 "MENU" },
-		{ &DreamWebEngine::useCooker,               "COOK" },
-		{ &DreamWebEngine::callHotelLift,           "ELCA" },
-		{ &DreamWebEngine::callEdensLift,           "EDCA" },
-		{ &DreamWebEngine::callEdensDLift,          "DDCA" },
-		{ &DreamWebEngine::useAltar,                "ALTR" },
-		{ &DreamWebEngine::openHotelDoor,           "LOKA" },
-		{ &DreamWebEngine::openHotelDoor2,          "LOKB" },
-		{ &DreamWebEngine::openLouis,               "ENTA" },
-		{ &DreamWebEngine::openRyan,                "ENTB" },
-		{ &DreamWebEngine::openPoolBoss,            "ENTE" },
-		{ &DreamWebEngine::openYourNeighbor,        "ENTC" },
-		{ &DreamWebEngine::openEden,                "ENTD" },
-		{ &DreamWebEngine::openSarters,             "ENTH" },
-		{ &DreamWebEngine::wearWatch,               "WWAT" },
-		{ &DreamWebEngine::usePoolReader,           "POOL" },
-		{ &DreamWebEngine::wearShades,              "WSHD" },
-		{ &DreamWebEngine::grafittiDoor,            "GRAF" },
-		{ &DreamWebEngine::trapDoor,                "TRAP" },
-		{ &DreamWebEngine::edensCDPlayer,           "CDPE" },
-		{ &DreamWebEngine::openTVDoor,              "DLOK" },
-		{ &DreamWebEngine::useHole,                 "HOLE" },
-		{ &DreamWebEngine::useDryer,                "DRYR" },
-		{ &DreamWebEngine::useChurchHole,           "HOLY" },
-		{ &DreamWebEngine::useWall,                 "WALL" },
-		{ &DreamWebEngine::useDiary,                "BOOK" },
-		{ &DreamWebEngine::useAxe,                  "AXED" },
-		{ &DreamWebEngine::useShield,               "SHLD" },
-		{ &DreamWebEngine::useRailing,              "BCNY" },
-		{ &DreamWebEngine::useCoveredBox,           "LIDC" },
-		{ &DreamWebEngine::useClearBox,             "LIDU" },
-		{ &DreamWebEngine::useOpenBox,              "LIDO" },
-		{ &DreamWebEngine::usePipe,                 "PIPE" },
-		{ &DreamWebEngine::useBalcony,              "BALC" },
-		{ &DreamWebEngine::useWindow,               "WIND" },
-		{ &DreamWebEngine::viewFolder,              "PAPR" },
-		{ &DreamWebEngine::useTrainer,              "UWTA" },
-		{ &DreamWebEngine::useTrainer,              "UWTB" },
-		{ &DreamWebEngine::enterSymbol,             "STAT" },
-		{ &DreamWebEngine::openTomb,                "TLID" },
-		{ &DreamWebEngine::useSlab,                 "SLAB" },
-		{ &DreamWebEngine::useCart,                 "CART" },
-		{ &DreamWebEngine::useFullCart,             "FCAR" },
-		{ &DreamWebEngine::slabDoorA,               "SLBA" },
-		{ &DreamWebEngine::slabDoorB,               "SLBB" },
-		{ &DreamWebEngine::slabDoorC,               "SLBC" },
-		{ &DreamWebEngine::slabDoorD,               "SLBD" },
-		{ &DreamWebEngine::slabDoorE,               "SLBE" },
-		{ &DreamWebEngine::slabDoorF,               "SLBF" },
-		{ &DreamWebEngine::usePlinth,               "PLIN" },
-		{ &DreamWebEngine::useLadder,               "LADD" },
-		{ &DreamWebEngine::useLadderB,              "LADB" },
-		{ &DreamWebEngine::chewy,                   "GUMA" },
-		{ &DreamWebEngine::wheelSound,              "SQEE" },
-		{ &DreamWebEngine::runTap,                  "TAPP" },
-		{ &DreamWebEngine::playGuitar,              "GUIT" },
-		{ &DreamWebEngine::hotelControl,            "CONT" },
-		{ &DreamWebEngine::hotelBell,               "BELL" },
+		{ &DreamWebEngine::useMon, "NETW" },
+		{ &DreamWebEngine::useElevator1, "ELVA" },
+		{ &DreamWebEngine::useElevator2, "ELVB" },
+		{ &DreamWebEngine::useElevator3, "ELVC" },
+		{ &DreamWebEngine::useElevator4, "ELVE" },
+		{ &DreamWebEngine::useElevator5, "ELVF" },
+		{ &DreamWebEngine::useChurchGate, "CGAT" },
+		{ &DreamWebEngine::useStereo, "REMO" },
+		{ &DreamWebEngine::useButtonA, "BUTA" },
+		{ &DreamWebEngine::useWinch, "CBOX" },
+		{ &DreamWebEngine::useLighter, "LITE" },
+		{ &DreamWebEngine::usePlate, "PLAT" },
+		{ &DreamWebEngine::useControl, "LIFT" },
+		{ &DreamWebEngine::useWire, "WIRE" },
+		{ &DreamWebEngine::useHandle, "HNDL" },
+		{ &DreamWebEngine::useHatch, "HACH" },
+		{ &DreamWebEngine::useElvDoor, "DOOR" },
+		{ &DreamWebEngine::useCashCard, "CSHR" },
+		{ &DreamWebEngine::useGun, "GUNA" },
+		{ &DreamWebEngine::useCardReader1, "CRAA" },
+		{ &DreamWebEngine::useCardReader2, "CRBB" },
+		{ &DreamWebEngine::useCardReader3, "CRCC" },
+		{ &DreamWebEngine::sitDownInBar, "SEAT" },
+		{ &DreamWebEngine::useMenu, "MENU" },
+		{ &DreamWebEngine::useCooker, "COOK" },
+		{ &DreamWebEngine::callHotelLift, "ELCA" },
+		{ &DreamWebEngine::callEdensLift, "EDCA" },
+		{ &DreamWebEngine::callEdensDLift, "DDCA" },
+		{ &DreamWebEngine::useAltar, "ALTR" },
+		{ &DreamWebEngine::openHotelDoor, "LOKA" },
+		{ &DreamWebEngine::openHotelDoor2, "LOKB" },
+		{ &DreamWebEngine::openLouis, "ENTA" },
+		{ &DreamWebEngine::openRyan, "ENTB" },
+		{ &DreamWebEngine::openPoolBoss, "ENTE" },
+		{ &DreamWebEngine::openYourNeighbor, "ENTC" },
+		{ &DreamWebEngine::openEden, "ENTD" },
+		{ &DreamWebEngine::openSarters, "ENTH" },
+		{ &DreamWebEngine::wearWatch, "WWAT" },
+		{ &DreamWebEngine::usePoolReader, "POOL" },
+		{ &DreamWebEngine::wearShades, "WSHD" },
+		{ &DreamWebEngine::grafittiDoor, "GRAF" },
+		{ &DreamWebEngine::trapDoor, "TRAP" },
+		{ &DreamWebEngine::edensCDPlayer, "CDPE" },
+		{ &DreamWebEngine::openTVDoor, "DLOK" },
+		{ &DreamWebEngine::useHole, "HOLE" },
+		{ &DreamWebEngine::useDryer, "DRYR" },
+		{ &DreamWebEngine::useChurchHole, "HOLY" },
+		{ &DreamWebEngine::useWall, "WALL" },
+		{ &DreamWebEngine::useDiary, "BOOK" },
+		{ &DreamWebEngine::useAxe, "AXED" },
+		{ &DreamWebEngine::useShield, "SHLD" },
+		{ &DreamWebEngine::useRailing, "BCNY" },
+		{ &DreamWebEngine::useCoveredBox, "LIDC" },
+		{ &DreamWebEngine::useClearBox, "LIDU" },
+		{ &DreamWebEngine::useOpenBox, "LIDO" },
+		{ &DreamWebEngine::usePipe, "PIPE" },
+		{ &DreamWebEngine::useBalcony, "BALC" },
+		{ &DreamWebEngine::useWindow, "WIND" },
+		{ &DreamWebEngine::viewFolder, "PAPR" },
+		{ &DreamWebEngine::useTrainer, "UWTA" },
+		{ &DreamWebEngine::useTrainer, "UWTB" },
+		{ &DreamWebEngine::enterSymbol, "STAT" },
+		{ &DreamWebEngine::openTomb, "TLID" },
+		{ &DreamWebEngine::useSlab, "SLAB" },
+		{ &DreamWebEngine::useCart, "CART" },
+		{ &DreamWebEngine::useFullCart, "FCAR" },
+		{ &DreamWebEngine::slabDoorA, "SLBA" },
+		{ &DreamWebEngine::slabDoorB, "SLBB" },
+		{ &DreamWebEngine::slabDoorC, "SLBC" },
+		{ &DreamWebEngine::slabDoorD, "SLBD" },
+		{ &DreamWebEngine::slabDoorE, "SLBE" },
+		{ &DreamWebEngine::slabDoorF, "SLBF" },
+		{ &DreamWebEngine::usePlinth, "PLIN" },
+		{ &DreamWebEngine::useLadder, "LADD" },
+		{ &DreamWebEngine::useLadderB, "LADB" },
+		{ &DreamWebEngine::chewy, "GUMA" },
+		{ &DreamWebEngine::wheelSound, "SQEE" },
+		{ &DreamWebEngine::runTap, "TAPP" },
+		{ &DreamWebEngine::playGuitar, "GUIT" },
+		{ &DreamWebEngine::hotelControl, "CONT" },
+		{ &DreamWebEngine::hotelBell, "BELL" },
 	};
 
 	if (_realLocation >= 50) {
@@ -222,7 +221,7 @@ void DreamWebEngine::useElevator1() {
 void DreamWebEngine::useElevator2() {
 	showFirstUse();
 
-	if (_vars._location == 23)	// In pool hall
+	if (_vars._location == 23) // In pool hall
 		_newLocation = 31;
 	else
 		_newLocation = 23;
@@ -488,12 +487,11 @@ void DreamWebEngine::openLouis() {
 	_getBack = 1;
 }
 
-
 void DreamWebEngine::useWall() {
 	showFirstUse();
 
 	if (_mansPath != 3) {
-		_vars._watchingTime = 30*2;
+		_vars._watchingTime = 30 * 2;
 		_vars._reelToWatch = 2;
 		_vars._endWatchReel = 31;
 		_vars._watchSpeed = 1;
@@ -695,17 +693,17 @@ void DreamWebEngine::slabDoorF() {
 bool DreamWebEngine::defaultUseHandler(const char *id) {
 	if (_withObject == 255) {
 		withWhat();
-		return true;	// event handled
+		return true; // event handled
 	}
 
 	if (!compare(_withObject, _withType, id)) {
 		// Wrong item
 		showPuzText(14, 300);
 		putBackObStuff();
-		return true;	// event handled
+		return true; // event handled
 	}
 
-	return false;	// continue with the original event
+	return false; // continue with the original event
 }
 
 void DreamWebEngine::useChurchGate() {
@@ -723,7 +721,7 @@ void DreamWebEngine::useChurchGate() {
 	_vars._progressPoints++;
 	turnPathOn(3);
 	if (_vars._aideDead != 0)
-		turnPathOn(2);	// Open church
+		turnPathOn(2); // Open church
 }
 
 void DreamWebEngine::useGun() {
@@ -765,7 +763,7 @@ void DreamWebEngine::useGun() {
 		_vars._progressPoints++;
 
 	} else if (_realLocation == 8 && _mapX == 22 && _mapY == 40
-	    && !isSetObOnMap(92) && _mansPath != 9) {
+	           && !isSetObOnMap(92) && _mansPath != 9) {
 		// by studio
 		_destination = 9;
 		_finalDest = 9;
@@ -775,7 +773,7 @@ void DreamWebEngine::useGun() {
 		_vars._progressPoints++;
 
 	} else if (_realLocation == 6 && _mapX == 11 && _mapY == 20
-	    && isSetObOnMap(5)) {
+	           && isSetObOnMap(5)) {
 		// sarters
 		_destination = 1;
 		_finalDest = 1;
@@ -784,7 +782,7 @@ void DreamWebEngine::useGun() {
 		placeSetObject(6);
 		turnAnyPathOn(1, _roomNum - 1);
 		_vars._liftFlag = 1;
-		_vars._watchingTime = 40*2;
+		_vars._watchingTime = 40 * 2;
 		_vars._reelToWatch = 4;
 		_vars._endWatchReel = 43;
 		_vars._watchSpeed = 1;
@@ -801,7 +799,7 @@ void DreamWebEngine::useGun() {
 		_destination = 2;
 		_finalDest = 2;
 		autoSetWalk();
-		_vars._watchingTime = 164*2;
+		_vars._watchingTime = 164 * 2;
 		_vars._reelToWatch = 3;
 		_vars._endWatchReel = 164;
 		_vars._watchSpeed = 1;
@@ -954,7 +952,7 @@ void DreamWebEngine::useObject() {
 	}
 
 	if (_mouseButton == _oldButton)
-		return;	// nouse
+		return; // nouse
 
 	if (_mouseButton & 1)
 		useRoutine();
@@ -1201,7 +1199,7 @@ void DreamWebEngine::openTomb() {
 
 void DreamWebEngine::hotelControl() {
 	if (_realLocation != 21 || _mapX != 33)
-		showSecondUse();	// Not right control
+		showSecondUse(); // Not right control
 	else
 		showFirstUse();
 
@@ -1212,7 +1210,7 @@ void DreamWebEngine::useCooker() {
 	if (checkInside(_command, _objectType) == kNumexobjects)
 		showFirstUse();
 	else
-		showSecondUse();	// Food inside
+		showSecondUse(); // Food inside
 
 	putBackObStuff();
 }
@@ -1232,9 +1230,9 @@ void DreamWebEngine::useControl() {
 		return;
 	}
 
-	if (compare(_withObject, _withType, "KEYA")) {	// Right key
+	if (compare(_withObject, _withType, "KEYA")) { // Right key
 		_sound->playChannel1(16);
-		if (_vars._location == 21) {	// Going down
+		if (_vars._location == 21) { // Going down
 			showPuzText(3, 300);
 			_newLocation = 30;
 		} else {
@@ -1322,7 +1320,7 @@ void DreamWebEngine::usePipe() {
 		showPuzText(36, 300);
 		putBackObStuff();
 		DynObject *exObject = getExAd(_withObject);
-		exObject->objId[3] = 'F'-'A';	// CUPE (empty cup) -> CUPF (full cup)
+		exObject->objId[3] = 'F' - 'A'; // CUPE (empty cup) -> CUPF (full cup)
 		return;
 	} else if (compare(_withObject, _withType, "CUPF")) {
 		// Already full
@@ -1345,7 +1343,7 @@ void DreamWebEngine::useOpenBox() {
 		_vars._progressPoints++;
 		showPuzText(37, 300);
 		DynObject *exObject = getExAd(_withObject);
-		exObject->objId[3] = 'E'-'A';	// CUPF (full cup) -> CUPE (empty cup)
+		exObject->objId[3] = 'E' - 'A'; // CUPF (full cup) -> CUPE (empty cup)
 		_vars._watchingTime = 140;
 		_vars._reelToWatch = 105;
 		_vars._endWatchReel = 181;
@@ -1375,7 +1373,7 @@ void DreamWebEngine::runTap() {
 	if (compare(_withObject, _withType, "CUPE")) {
 		// Fill cup from tap
 		DynObject *exObject = getExAd(_withObject);
-		exObject->objId[3] = 'F'-'A';	// CUPE (empty cup) -> CUPF (full cup)
+		exObject->objId[3] = 'F' - 'A'; // CUPE (empty cup) -> CUPF (full cup)
 		_sound->playChannel1(8);
 		showPuzText(57, 300);
 		putBackObStuff();
@@ -1404,7 +1402,7 @@ void DreamWebEngine::useAxe() {
 		// Axe on door
 		showPuzText(15, 300);
 		_vars._progressPoints++;
-		_vars._watchingTime = 46*2;
+		_vars._watchingTime = 46 * 2;
 		_vars._reelToWatch = 31;
 		_vars._endWatchReel = 77;
 		_vars._watchSpeed = 1;
@@ -1546,9 +1544,9 @@ void DreamWebEngine::useStereo() {
 		DynObject *object = (DynObject *)getAnyAd(&dummy, &dummy);
 		object->turnedOn ^= 1;
 		if (object->turnedOn != 255)
-			showPuzText(7, 400);	// Stereo off
+			showPuzText(7, 400); // Stereo off
 		else
-			showPuzText(8, 400);	// Stereo on
+			showPuzText(8, 400); // Stereo on
 
 		putBackObStuff();
 	}
@@ -1595,6 +1593,5 @@ void DreamWebEngine::useButtonA() {
 		putBackObStuff();
 	}
 }
-
 
 } // End of namespace DreamWeb

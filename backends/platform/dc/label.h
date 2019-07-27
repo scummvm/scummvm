@@ -23,16 +23,15 @@
 #ifndef DC_LABEL_H
 #define DC_LABEL_H
 
-class Label
-{
- private:
-  void *texture;
-  int tex_u, u;
+class Label {
+private:
+	void *texture;
+	int tex_u, u;
 
- public:
-  void create_texture(const char *text);
-  void draw(float x, float y, unsigned int argb = 0xffffffff,
-	    float scale = 1.0);
+public:
+	void create_texture(const char *text);
+	void draw(float x, float y, unsigned int argb = 0xffffffff,
+	          float scale = 1.0);
 };
 
 #endif /* DC_LABEL_H */

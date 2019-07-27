@@ -23,9 +23,9 @@
 #ifndef MADS_SEQUENCE_H
 #define MADS_SEQUENCE_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "mads/action.h"
 
 namespace MADS {
@@ -33,12 +33,15 @@ namespace MADS {
 class SpriteSlot;
 
 enum SequenceTrigger {
-	SEQUENCE_TRIGGER_EXPIRE = 0,	// Trigger when the sequence finishes
-	SEQUENCE_TRIGGER_LOOP = 1,		// Trigger when the sequence loops
-	SEQUENCE_TRIGGER_SPRITE = 2		// Trigger when sequence reaches specific sprite
+	SEQUENCE_TRIGGER_EXPIRE = 0, // Trigger when the sequence finishes
+	SEQUENCE_TRIGGER_LOOP = 1, // Trigger when the sequence loops
+	SEQUENCE_TRIGGER_SPRITE = 2 // Trigger when sequence reaches specific sprite
 };
 
-enum SpriteAnimType { ANIMTYPE_NONE = 0, ANIMTYPE_CYCLED = 1, ANIMTYPE_PING_PONG = 2, ANIMTYPE_STAMP = 9 };
+enum SpriteAnimType { ANIMTYPE_NONE = 0,
+	                    ANIMTYPE_CYCLED = 1,
+	                    ANIMTYPE_PING_PONG = 2,
+	                    ANIMTYPE_STAMP = 9 };
 
 #define SEQUENCE_ENTRY_SUBSET_MAX 5
 
@@ -91,6 +94,7 @@ class SequenceList {
 private:
 	MADSEngine *_vm;
 	Common::Array<SequenceEntry> _entries;
+
 public:
 	SequenceList(MADSEngine *vm);
 
@@ -98,8 +102,8 @@ public:
 	void clear();
 	bool addSubEntry(int index, SequenceTrigger mode, int frameIndex, int trigger);
 	int add(int spriteListIndex, bool flipped, int frameIndex, int triggerCountdown, int delayTicks,
-		int extraTicks, int numTicks, int msgX, int msgY, bool nonFixed, int scale, int depth,
-		int frameInc, SpriteAnimType animType, int numSprites, int frameStart);
+	        int extraTicks, int numTicks, int msgX, int msgY, bool nonFixed, int scale, int depth,
+	        int frameInc, SpriteAnimType animType, int numSprites, int frameStart);
 
 	int addTimer(int timeout, int endTrigger);
 	void remove(int seqIndex);
@@ -113,13 +117,13 @@ public:
 	void setDepth(int seqIndex, int depth);
 	void setPosition(int seqIndex, const Common::Point &pt);
 	int addSpriteCycle(int srcSpriteIdx, bool flipped, int numTicks,
-		int triggerCountdown = 0, int timeoutTicks = 0, int extraTicks = 0);
+	                   int triggerCountdown = 0, int timeoutTicks = 0, int extraTicks = 0);
 	int addReverseSpriteCycle(int srcSpriteIdx, bool flipped, int numTicks,
-		int triggerCountdown = 0, int timeoutTicks = 0, int extraTicks = 0);
+	                          int triggerCountdown = 0, int timeoutTicks = 0, int extraTicks = 0);
 
 	int startCycle(int srcSpriteIdx, bool flipped, int cycleIndex);
 	int startPingPongCycle(int srcSpriteIndex, bool flipped, int numTicks,
-		int triggerCountdown = 0, int timeoutTicks = 0, int extraTicks = 0);
+	                       int triggerCountdown = 0, int timeoutTicks = 0, int extraTicks = 0);
 	void updateTimeout(int destSeqIndex, int srcSeqIndex);
 	void setScale(int spriteIdx, int scale);
 	void setMsgLayout(int seqIndex);

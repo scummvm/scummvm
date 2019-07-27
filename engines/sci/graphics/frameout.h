@@ -23,7 +23,7 @@
 #ifndef SCI_GRAPHICS_FRAMEOUT_H
 #define SCI_GRAPHICS_FRAMEOUT_H
 
-#include "engines/util.h"                // for initGraphics
+#include "engines/util.h" // for initGraphics
 #include "sci/event.h"
 #include "sci/graphics/plane32.h"
 #include "sci/graphics/screen_item32.h"

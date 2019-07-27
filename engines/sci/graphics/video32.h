@@ -24,16 +24,16 @@
 #define SCI_GRAPHICS_VIDEO32_H
 
 #ifdef USE_RGB_COLOR
-#include "common/config-manager.h" // for ConfMan
+#	include "common/config-manager.h" // for ConfMan
 #endif
 #include "common/ptr.h"
-#include "common/rect.h"          // for Rect
-#include "common/scummsys.h"      // for int16, uint8, uint16, int32
-#include "common/str.h"           // for String
-#include "sci/engine/vm_types.h"  // for reg_t
+#include "common/rect.h" // for Rect
+#include "common/scummsys.h" // for int16, uint8, uint16, int32
+#include "common/str.h" // for String
+#include "sci/engine/vm_types.h" // for reg_t
+#include "sci/sound/audio32.h" // for Audio32::kMaxVolume
 #include "sci/video/robot_decoder.h" // for RobotDecoder
-#include "sci/sound/audio32.h"    // for Audio32::kMaxVolume
-#include "video/avi_decoder.h"    // for AVIDecoder::setVolume
+#include "video/avi_decoder.h" // for AVIDecoder::setVolume
 
 namespace Video {
 class AdvancedVMDDecoder;
@@ -53,28 +53,28 @@ struct Palette;
 class VideoPlayer {
 public:
 	enum EventFlags {
-		kEventFlagNone         = 0,
-		kEventFlagEnd          = 1,
-		kEventFlagEscapeKey    = 2,
-		kEventFlagMouseDown    = 4,
+		kEventFlagNone = 0,
+		kEventFlagEnd = 1,
+		kEventFlagEscapeKey = 2,
+		kEventFlagMouseDown = 4,
 		kEventFlagHotRectangle = 8,
-		kEventFlagToFrame      = 0x10,
-		kEventFlagYieldToVM    = 0x20,
-		kEventFlagReverse      = 0x80
+		kEventFlagToFrame = 0x10,
+		kEventFlagYieldToVM = 0x20,
+		kEventFlagReverse = 0x80
 	};
 
 	friend EventFlags operator|(const EventFlags a, const EventFlags b) {
 		return static_cast<EventFlags>((int)a | (int)b);
 	}
 
-	VideoPlayer(EventManager *eventMan, Video::VideoDecoder *decoder = nullptr) :
-		_eventMan(eventMan),
-		_decoder(decoder)
+	VideoPlayer(EventManager *eventMan, Video::VideoDecoder *decoder = nullptr)
+	  : _eventMan(eventMan)
+	  , _decoder(decoder)
 #ifdef USE_RGB_COLOR
-		,
-		_hqVideoMode(false)
+	  , _hqVideoMode(false)
 #endif
-		{}
+	{
+	}
 
 	virtual ~VideoPlayer() {}
 
@@ -113,8 +113,7 @@ protected:
 			return false;
 		}
 
-		if (_decoder->getWidth() == _drawRect.width() &&
-			_decoder->getHeight() == _drawRect.height()) {
+		if (_decoder->getWidth() == _drawRect.width() && _decoder->getHeight() == _drawRect.height()) {
 			return false;
 		}
 
@@ -207,16 +206,16 @@ public:
 class AVIPlayer : public VideoPlayer {
 public:
 	enum IOStatus {
-		kIOSuccess      = 0,
+		kIOSuccess = 0,
 		kIOFileNotFound = 2,
-		kIOSeekFailed   = 12
+		kIOSeekFailed = 12
 	};
 
 	enum AVIStatus {
-		kAVINotOpen  = 0,
-		kAVIOpen     = 1,
-		kAVIPlaying  = 2,
-		kAVIPaused   = 3
+		kAVINotOpen = 0,
+		kAVIOpen = 1,
+		kAVIPlaying = 2,
+		kAVIPaused = 3
 	};
 
 	AVIPlayer(EventManager *eventMan);
@@ -278,26 +277,26 @@ public:
 
 	enum IOStatus {
 		kIOSuccess = 0,
-		kIOError   = 0xFFFF
+		kIOError = 0xFFFF
 	};
 
 	enum PlayFlags {
-		kPlayFlagNone             = 0,
-		kPlayFlagDoublePixels     = 1,
-		kPlayFlagBlackLines       = 4,
-		kPlayFlagBoost            = 0x10,
+		kPlayFlagNone = 0,
+		kPlayFlagDoublePixels = 1,
+		kPlayFlagBlackLines = 4,
+		kPlayFlagBoost = 0x10,
 		kPlayFlagLeaveScreenBlack = 0x20,
-		kPlayFlagLeaveLastFrame   = 0x40,
-		kPlayFlagBlackPalette     = 0x80,
-		kPlayFlagStretchVertical  = 0x100
+		kPlayFlagLeaveLastFrame = 0x40,
+		kPlayFlagBlackPalette = 0x80,
+		kPlayFlagStretchVertical = 0x100
 	};
 
 	enum VMDStatus {
-		kVMDNotOpen  = 0,
-		kVMDOpen     = 1,
-		kVMDPlaying  = 2,
-		kVMDPaused   = 3,
-		kVMDStopped  = 4,
+		kVMDNotOpen = 0,
+		kVMDOpen = 1,
+		kVMDPlaying = 2,
+		kVMDPaused = 3,
+		kVMDStopped = 4,
 		kVMDFinished = 5
 	};
 
@@ -626,10 +625,10 @@ private:
 class DuckPlayer : public VideoPlayer {
 public:
 	enum DuckStatus {
-		kDuckClosed  = 0,
-		kDuckOpen    = 1,
+		kDuckClosed = 0,
+		kDuckOpen = 1,
 		kDuckPlaying = 2,
-		kDuckPaused  = 3
+		kDuckPaused = 3
 	};
 
 	DuckPlayer(EventManager *eventMan, SegManager *segMan);
@@ -716,12 +715,12 @@ private:
  */
 class Video32 : public Common::Serializable {
 public:
-	Video32(SegManager *segMan, EventManager *eventMan) :
-	_SEQPlayer(eventMan),
-	_AVIPlayer(eventMan),
-	_VMDPlayer(eventMan, segMan),
-	_robotPlayer(segMan),
-	_duckPlayer(eventMan, segMan) {}
+	Video32(SegManager *segMan, EventManager *eventMan)
+	  : _SEQPlayer(eventMan)
+	  , _AVIPlayer(eventMan)
+	  , _VMDPlayer(eventMan, segMan)
+	  , _robotPlayer(segMan)
+	  , _duckPlayer(eventMan, segMan) {}
 
 	void beforeSaveLoadWithSerializer(Common::Serializer &ser);
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);

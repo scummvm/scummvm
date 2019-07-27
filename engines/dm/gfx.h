@@ -28,10 +28,10 @@
 #ifndef DM_GFX_H
 #define DM_GFX_H
 
-#include "common/scummsys.h"
-#include "common/rect.h"
-#include "common/memstream.h"
 #include "common/array.h"
+#include "common/memstream.h"
+#include "common/rect.h"
+#include "common/scummsys.h"
 
 #include "dm/dm.h"
 
@@ -46,44 +46,44 @@ enum ViewFloor {
 	kDMViewFloorD2R = 5, // @ C5_VIEW_FLOOR_D2R
 	kDMViewFloorD1L = 6, // @ C6_VIEW_FLOOR_D1L
 	kDMViewFloorD1C = 7, // @ C7_VIEW_FLOOR_D1C
-	kDMViewFloorD1R = 8  // @ C8_VIEW_FLOOR_D1R
+	kDMViewFloorD1R = 8 // @ C8_VIEW_FLOOR_D1R
 };
 
 enum DoorState {
-	kDMDoorStateOpen = 0,        // @ C0_DOOR_STATE_OPEN
-	kDMDoorStateOneFourth = 1,   // @ C1_DOOR_STATE_CLOSED_ONE_FOURTH
-	kDMDoorStateHalf = 2,        // @ k2_DoorStateAspect_CLOSED_HALF
+	kDMDoorStateOpen = 0, // @ C0_DOOR_STATE_OPEN
+	kDMDoorStateOneFourth = 1, // @ C1_DOOR_STATE_CLOSED_ONE_FOURTH
+	kDMDoorStateHalf = 2, // @ k2_DoorStateAspect_CLOSED_HALF
 	kDMDoorStateThreeFourth = 3, // @ C3_DOOR_STATE_CLOSED_THREE_FOURTH
-	kDMDoorStateClosed = 4,      // @ C4_DOOR_STATE_CLOSED
-	kDMDoorStateDestroyed = 5    // @ C5_DOOR_STATE_DESTROYED
+	kDMDoorStateClosed = 4, // @ C4_DOOR_STATE_CLOSED
+	kDMDoorStateDestroyed = 5 // @ C5_DOOR_STATE_DESTROYED
 };
 
 enum DoorOrnament {
 	kDMDoorOrnamentD3LCR = 0, // @ C0_VIEW_DOOR_ORNAMENT_D3LCR
 	kDMDoorOrnamentD2LCR = 1, // @ C1_VIEW_DOOR_ORNAMENT_D2LCR
-	kDMDoorOrnamentD1LCR = 2  // @ C2_VIEW_DOOR_ORNAMENT_D1LCR
+	kDMDoorOrnamentD1LCR = 2 // @ C2_VIEW_DOOR_ORNAMENT_D1LCR
 };
 
 enum DoorButton {
 	kDMDoorButtonD3R = 0, // @ C0_VIEW_DOOR_BUTTON_D3R
 	kDMDoorButtonD3C = 1, // @ C1_VIEW_DOOR_BUTTON_D3C
 	kDMDoorButtonD2C = 2, // @ C2_VIEW_DOOR_BUTTON_D2C
-	kDMDoorButtonD1C = 3  // @ C3_VIEW_DOOR_BUTTON_D1C
+	kDMDoorButtonD1C = 3 // @ C3_VIEW_DOOR_BUTTON_D1C
 };
 
 /* View lanes */
 enum ViewLane {
 	kDMViewLaneCenter = 0, // @ C0_VIEW_LANE_CENTER
-	kDMViewLaneLeft = 1,   // @ C1_VIEW_LANE_LEFT
-	kDMViewLaneRight = 2   // @ C2_VIEW_LANE_RIGHT
+	kDMViewLaneLeft = 1, // @ C1_VIEW_LANE_LEFT
+	kDMViewLaneRight = 2 // @ C2_VIEW_LANE_RIGHT
 };
 
 /* Explosion aspects */
 enum ExplosionAspectEnum {
-	kDMExplosionAspectFire = 0,   // @ C0_EXPLOSION_ASPECT_FIRE
-	kDMExplosionAspectSpell = 1,  // @ C1_EXPLOSION_ASPECT_SPELL
+	kDMExplosionAspectFire = 0, // @ C0_EXPLOSION_ASPECT_FIRE
+	kDMExplosionAspectSpell = 1, // @ C1_EXPLOSION_ASPECT_SPELL
 	kDMExplosionAspectPoison = 2, // @ C2_EXPLOSION_ASPECT_POISON
-	kDMExplosionAspectSmoke = 3   // @ C3_EXPLOSION_ASPECT_SMOKE
+	kDMExplosionAspectSmoke = 3 // @ C3_EXPLOSION_ASPECT_SMOKE
 };
 
 enum WallSet {
@@ -107,29 +107,29 @@ enum ViewWall {
 	kDMViewWallD2RFront = 9, // @ C09_VIEW_WALL_D2R_FRONT
 	kDMViewWallD1LRight = 10, // @ C10_VIEW_WALL_D1L_RIGHT
 	kDMViewWallD1RLeft = 11, // @ C11_VIEW_WALL_D1R_LEFT
-	kDMViewWallD1CFront = 12  // @ C12_VIEW_WALL_D1C_FRONT
+	kDMViewWallD1CFront = 12 // @ C12_VIEW_WALL_D1C_FRONT
 };
 
 enum CellOrder {
 	kDMCellOrderNone = 0xFFFF,
-	kDMCellOrderAlcove = 0x0000,                                  // @ C0000_CELL_ORDER_ALCOVE
-	kDMCellOrderBackLeft = 0x0001,                                // @ C0001_CELL_ORDER_BACKLEFT
-	kDMCellOrderBackRight = 0x0002,                               // @ C0002_CELL_ORDER_BACKRIGHT
-	kDMCellOrderDoorPass1BackLeft = 0x0018,                      // @ C0018_CELL_ORDER_DOORPASS1_BACKLEFT
-	kDMCellOrderBackLeftBackRight = 0x0021,                      // @ C0021_CELL_ORDER_BACKLEFT_BACKRIGHT
-	kDMCellOrderDoorPass1BackRight = 0x0028,                     // @ C0028_CELL_ORDER_DOORPASS1_BACKRIGHT
-	kDMCellOrderBackRightFrontRight = 0x0032,                    // @ C0032_CELL_ORDER_BACKRIGHT_FRONTRIGHT
-	kDMCellOrderDoorPass2FrontRight = 0x0039,                    // @ C0039_CELL_ORDER_DOORPASS2_FRONTRIGHT
-	kDMCellOrderBackLeftFrontLeft = 0x0041,                      // @ C0041_CELL_ORDER_BACKLEFT_FRONTLEFT
-	kDMCellOrderDoorPass2FrontLeft = 0x0049,                     // @ C0049_CELL_ORDER_DOORPASS2_FRONTLEFT
-	kDMCellOrderDoorPass1BackRightBackLeft = 0x0128,            // @ C0128_CELL_ORDER_DOORPASS1_BACKRIGHT_BACKLEFT
-	kDMCellOrderDoorPass1BackLeftBackRight = 0x0218,            // @ C0218_CELL_ORDER_DOORPASS1_BACKLEFT_BACKRIGHT
-	kDMCellOrderBackLeftBackRightFrontRight = 0x0321,           // @ C0321_CELL_ORDER_BACKLEFT_BACKRIGHT_FRONTRIGHT
-	kDMCellOrderBackRightFrontLeftFrontRight = 0x0342,          // @ C0342_CELL_ORDER_BACKRIGHT_FRONTLEFT_FRONTRIGHT
-	kDMCellOrderDoorPass2FrontLeftFrontRight = 0x0349,          // @ C0349_CELL_ORDER_DOORPASS2_FRONTLEFT_FRONTRIGHT
-	kDMCellOrderBackRightBackLeftFrontLeft = 0x0412,            // @ C0412_CELL_ORDER_BACKRIGHT_BACKLEFT_FRONTLEFT
-	kDMCellOrderBackLeftFrontRightFrontLeft = 0x0431,           // @ C0431_CELL_ORDER_BACKLEFT_FRONTRIGHT_FRONTLEFT
-	kDMCellOrderDoorPass2FrontRightFrontLeft = 0x0439,          // @ C0439_CELL_ORDER_DOORPASS2_FRONTRIGHT_FRONTLEFT
+	kDMCellOrderAlcove = 0x0000, // @ C0000_CELL_ORDER_ALCOVE
+	kDMCellOrderBackLeft = 0x0001, // @ C0001_CELL_ORDER_BACKLEFT
+	kDMCellOrderBackRight = 0x0002, // @ C0002_CELL_ORDER_BACKRIGHT
+	kDMCellOrderDoorPass1BackLeft = 0x0018, // @ C0018_CELL_ORDER_DOORPASS1_BACKLEFT
+	kDMCellOrderBackLeftBackRight = 0x0021, // @ C0021_CELL_ORDER_BACKLEFT_BACKRIGHT
+	kDMCellOrderDoorPass1BackRight = 0x0028, // @ C0028_CELL_ORDER_DOORPASS1_BACKRIGHT
+	kDMCellOrderBackRightFrontRight = 0x0032, // @ C0032_CELL_ORDER_BACKRIGHT_FRONTRIGHT
+	kDMCellOrderDoorPass2FrontRight = 0x0039, // @ C0039_CELL_ORDER_DOORPASS2_FRONTRIGHT
+	kDMCellOrderBackLeftFrontLeft = 0x0041, // @ C0041_CELL_ORDER_BACKLEFT_FRONTLEFT
+	kDMCellOrderDoorPass2FrontLeft = 0x0049, // @ C0049_CELL_ORDER_DOORPASS2_FRONTLEFT
+	kDMCellOrderDoorPass1BackRightBackLeft = 0x0128, // @ C0128_CELL_ORDER_DOORPASS1_BACKRIGHT_BACKLEFT
+	kDMCellOrderDoorPass1BackLeftBackRight = 0x0218, // @ C0218_CELL_ORDER_DOORPASS1_BACKLEFT_BACKRIGHT
+	kDMCellOrderBackLeftBackRightFrontRight = 0x0321, // @ C0321_CELL_ORDER_BACKLEFT_BACKRIGHT_FRONTRIGHT
+	kDMCellOrderBackRightFrontLeftFrontRight = 0x0342, // @ C0342_CELL_ORDER_BACKRIGHT_FRONTLEFT_FRONTRIGHT
+	kDMCellOrderDoorPass2FrontLeftFrontRight = 0x0349, // @ C0349_CELL_ORDER_DOORPASS2_FRONTLEFT_FRONTRIGHT
+	kDMCellOrderBackRightBackLeftFrontLeft = 0x0412, // @ C0412_CELL_ORDER_BACKRIGHT_BACKLEFT_FRONTLEFT
+	kDMCellOrderBackLeftFrontRightFrontLeft = 0x0431, // @ C0431_CELL_ORDER_BACKLEFT_FRONTRIGHT_FRONTLEFT
+	kDMCellOrderDoorPass2FrontRightFrontLeft = 0x0439, // @ C0439_CELL_ORDER_DOORPASS2_FRONTRIGHT_FRONTLEFT
 	kDMCellOrderBackLeftBackRightFrontLeftFrontRight = 0x3421, // @ C3421_CELL_ORDER_BACKLEFT_BACKRIGHT_FRONTLEFT_FRONTRIGHT
 	kDMCellOrderBackRightBackLeftFrontRightFrontLeft = 0x4312 // @ C4312_CELL_ORDER_BACKRIGHT_BACKLEFT_FRONTRIGHT_FRONTLEFT
 };
@@ -365,8 +365,12 @@ public:
 	uint16 _byteWidth;
 	uint16 _height;
 
-	ExplosionAspect(uint16 byteWidth, uint16 height) :_byteWidth(byteWidth), _height(height) {}
-	ExplosionAspect() : _byteWidth(0), _height(0) {}
+	ExplosionAspect(uint16 byteWidth, uint16 height)
+	  : _byteWidth(byteWidth)
+	  , _height(height) {}
+	ExplosionAspect()
+	  : _byteWidth(0)
+	  , _height(0) {}
 }; // @ EXPLOSION_ASPECT
 
 // in all cases, where a function takes a Box, it expects it to contain inclusive boundaries
@@ -403,9 +407,12 @@ public:
 
 	Frame() {}
 	Frame(uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
-		  uint16 srcWidth, uint16 srcHeight, uint16 srcX, uint16 srcY) :
-		_box(destFromX, destToX, destFromY, destToY),
-		_srcByteWidth(srcWidth), _srcHeight(srcHeight), _srcX(srcX), _srcY(srcY) {}
+	      uint16 srcWidth, uint16 srcHeight, uint16 srcX, uint16 srcY)
+	  : _box(destFromX, destToX, destFromY, destToY)
+	  , _srcByteWidth(srcWidth)
+	  , _srcHeight(srcHeight)
+	  , _srcX(srcX)
+	  , _srcY(srcY) {}
 };
 
 class FieldAspect {
@@ -432,23 +439,38 @@ public:
 	byte _heightSide;
 	byte _byteWidthAttack;
 	byte _heightAttack;
+
 private:
 	byte _coordinateSet_TransparentColor;
 	byte _replacementColorSetIndices;
+
 public:
-
 	CreatureAspect(uint16 uint161, uint16 uint162, byte byte0, byte byte1, byte byte2, byte byte3, byte byte4, byte byte5, byte byte6, byte byte7)
-		: _firstNativeBitmapRelativeIndex(uint161), _firstDerivedBitmapIndex(uint162), _byteWidthFront(byte0),
-		_heightFront(byte1), _byteWidthSide(byte2), _heightSide(byte3), _byteWidthAttack(byte4),
-		_heightAttack(byte5), _coordinateSet_TransparentColor(byte6), _replacementColorSetIndices(byte7) {}
+	  : _firstNativeBitmapRelativeIndex(uint161)
+	  , _firstDerivedBitmapIndex(uint162)
+	  , _byteWidthFront(byte0)
+	  , _heightFront(byte1)
+	  , _byteWidthSide(byte2)
+	  , _heightSide(byte3)
+	  , _byteWidthAttack(byte4)
+	  , _heightAttack(byte5)
+	  , _coordinateSet_TransparentColor(byte6)
+	  , _replacementColorSetIndices(byte7) {}
 
-	CreatureAspect() :
-		_firstNativeBitmapRelativeIndex(0), _firstDerivedBitmapIndex(0), _byteWidthFront(0),
-		_heightFront(0), _byteWidthSide(0), _heightSide(0), _byteWidthAttack(0),
-		_heightAttack(0), _coordinateSet_TransparentColor(0), _replacementColorSetIndices(0) {}
+	CreatureAspect()
+	  : _firstNativeBitmapRelativeIndex(0)
+	  , _firstDerivedBitmapIndex(0)
+	  , _byteWidthFront(0)
+	  , _heightFront(0)
+	  , _byteWidthSide(0)
+	  , _heightSide(0)
+	  , _byteWidthAttack(0)
+	  , _heightAttack(0)
+	  , _coordinateSet_TransparentColor(0)
+	  , _replacementColorSetIndices(0) {}
 
 	byte getCoordSet() { return (_coordinateSet_TransparentColor >> 4) & 0xF; } // @ M71_COORDINATE_SET
-	byte getTranspColour() { return  _coordinateSet_TransparentColor & 0xF; } // @ M72_TRANSPARENT_COLOR
+	byte getTranspColour() { return _coordinateSet_TransparentColor & 0xF; } // @ M72_TRANSPARENT_COLOR
 	byte getReplColour10() { return (_replacementColorSetIndices >> 4) & 0xF; } // @ M74_COLOR_10_REPLACEMENT_COLOR_SET
 	byte getReplColour9() { return _replacementColorSetIndices & 0xF; } // @ M73_COLOR_09_REPLACEMENT_COLOR_SET
 }; // @ CREATURE_ASPECT
@@ -461,11 +483,20 @@ public:
 	byte _height;
 	byte _graphicInfo; /* Bits 7-5 and 3-1 Unreferenced */
 	byte _coordinateSet;
-	ObjectAspect(byte firstN, byte firstD, byte byteWidth, byte h, byte grap, byte coord) :
-		_firstNativeBitmapRelativeIndex(firstN), _firstDerivedBitmapRelativeIndex(firstD),
-		_byteWidth(byteWidth), _height(h), _graphicInfo(grap), _coordinateSet(coord) {}
-	ObjectAspect() : _firstNativeBitmapRelativeIndex(0), _firstDerivedBitmapRelativeIndex(0),
-		_byteWidth(0), _height(0), _graphicInfo(0), _coordinateSet(0) {}
+	ObjectAspect(byte firstN, byte firstD, byte byteWidth, byte h, byte grap, byte coord)
+	  : _firstNativeBitmapRelativeIndex(firstN)
+	  , _firstDerivedBitmapRelativeIndex(firstD)
+	  , _byteWidth(byteWidth)
+	  , _height(h)
+	  , _graphicInfo(grap)
+	  , _coordinateSet(coord) {}
+	ObjectAspect()
+	  : _firstNativeBitmapRelativeIndex(0)
+	  , _firstDerivedBitmapRelativeIndex(0)
+	  , _byteWidth(0)
+	  , _height(0)
+	  , _graphicInfo(0)
+	  , _coordinateSet(0) {}
 }; // @ OBJECT_ASPECT
 
 class ProjectileAspect {
@@ -476,12 +507,19 @@ public:
 	byte _height;
 	uint16 _graphicInfo; /* Bits 15-9, 7-5 and 3-2 Unreferenced */
 
-	ProjectileAspect(byte firstN, byte firstD, byte byteWidth, byte h, uint16 grap) :
-		_firstNativeBitmapRelativeIndex(firstN), _firstDerivedBitmapRelativeIndex(firstD),
-		_byteWidth(byteWidth), _height(h), _graphicInfo(grap) {}
+	ProjectileAspect(byte firstN, byte firstD, byte byteWidth, byte h, uint16 grap)
+	  : _firstNativeBitmapRelativeIndex(firstN)
+	  , _firstDerivedBitmapRelativeIndex(firstD)
+	  , _byteWidth(byteWidth)
+	  , _height(h)
+	  , _graphicInfo(grap) {}
 
-	ProjectileAspect() : _firstNativeBitmapRelativeIndex(0),
-		_firstDerivedBitmapRelativeIndex(0), _byteWidth(0), _height(0), _graphicInfo(0) {}
+	ProjectileAspect()
+	  : _firstNativeBitmapRelativeIndex(0)
+	  , _firstDerivedBitmapRelativeIndex(0)
+	  , _byteWidth(0)
+	  , _height(0)
+	  , _graphicInfo(0) {}
 }; // @ PROJECTIL_ASPECT
 
 class CreatureReplColorSet {
@@ -517,7 +555,6 @@ struct OrnamentInfo {
 #define k1_viewportDungeonView 1 // @ C1_VIEWPORT_DUNGEON_VIEW
 #define k2_viewportAsBeforeSleepOrFreezeGame 2 // @ C2_VIEWPORT_AS_BEFORE_SLEEP_OR_FREEZE_GAME
 
-
 #define k112_byteWidthViewport 112 // @ C112_BYTE_WIDTH_VIEWPORT
 #define k136_heightViewport 136 // @ C136_HEIGHT_VIEWPORT
 
@@ -535,7 +572,6 @@ struct OrnamentInfo {
 #define k128_byteWidth 128 // @ C128_BYTE_WIDTH
 #define k144_byteWidth 144 // @ C144_BYTE_WIDTH
 
-
 class DoorFrames {
 public:
 	Frame _closedOrDestroyed;
@@ -543,21 +579,21 @@ public:
 	Frame _leftHorizontal[3];
 	Frame _rightHorizontal[3];
 	DoorFrames(Frame f1, Frame f2_1, Frame f2_2, Frame f2_3,
-			   Frame f3_1, Frame f3_2, Frame f3_3,
-			   Frame f4_1, Frame f4_2, Frame f4_3);
+	           Frame f3_1, Frame f3_2, Frame f3_3,
+	           Frame f4_1, Frame f4_2, Frame f4_3);
 }; // @ DOOR_FRAMES
 
-#define D00_RGB_BLACK                                0x0000
-#define D01_RGB_DARK_BLUE                            0x0004
-#define D02_RGB_LIGHT_BROWN                          0x0842
-#define D03_RGB_PINK                                 0x086F
-#define D04_RGB_LIGHTER_BROWN                        0x0A62
-#define D05_RGB_DARK_GOLD                            0x0A82
-#define D06_RGB_GOLD                                 0x0CA2
-#define D07_RGB_RED                                  0x0F00
-#define D08_RGB_YELLOW                               0x0FF4
-#define D09_RGB_WHITE                                0x0FFF
-#define D10_MASK_RED_COMPONENT                       0x0F00
+#define D00_RGB_BLACK 0x0000
+#define D01_RGB_DARK_BLUE 0x0004
+#define D02_RGB_LIGHT_BROWN 0x0842
+#define D03_RGB_PINK 0x086F
+#define D04_RGB_LIGHTER_BROWN 0x0A62
+#define D05_RGB_DARK_GOLD 0x0A82
+#define D06_RGB_GOLD 0x0CA2
+#define D07_RGB_RED 0x0F00
+#define D08_RGB_YELLOW 0x0FF4
+#define D09_RGB_WHITE 0x0FFF
+#define D10_MASK_RED_COMPONENT 0x0F00
 #define D10_MASK_RED_COMPONENT 0x0F00
 #define D11_MASK_GREEN_COMPONENT 0x00F0
 #define D12_MASK_BLUE_COMPONENT 0x000F
@@ -667,7 +703,7 @@ private:
 	byte *_bitmapWallD0RNative; // @ G0099_puc_Bitmap_WallD0R_Native;
 
 	int16 _currentWallSet; // @ G0231_i_CurrentWallSet
-	int16 _currentFloorSet;// @ G0230_i_CurrentFloorSet
+	int16 _currentFloorSet; // @ G0230_i_CurrentFloorSet
 
 	bool _useFlippedWallAndFootprintsBitmap; // @ G0076_B_UseFlippedWallAndFootprintsBitmaps
 
@@ -683,7 +719,6 @@ private:
 	uint16 *_paletteFadeFrom; // @ K0017_pui_Palette_FadeFrom
 	uint16 _paletteFadeTemporary[16]; // @ K0016_aui_Palette_FadeTemporary
 public:
-
 	uint16 _screenWidth;
 	uint16 _screenHeight;
 	byte *_bitmapScreen; // @ G0348_pl_Bitmap_Screen
@@ -710,7 +745,7 @@ public:
 	void initializeGraphicData(); // @ F0460_START_InitializeGraphicData
 	void loadCurrentMapGraphics(); // @ F0096_DUNGEONVIEW_LoadCurrentMapGraphics_CPSDF
 	void allocateFlippedWallBitmaps(); // @ F0461_START_AllocateFlippedWallBitmaps
-	void drawDoorBitmap(Frame *frame);// @ F0102_DUNGEONVIEW_DrawDoorBitmap
+	void drawDoorBitmap(Frame *frame); // @ F0102_DUNGEONVIEW_DrawDoorBitmap
 	void drawDoorFrameBitmapFlippedHorizontally(byte *bitmap, Frame *frame); // @ F0103_DUNGEONVIEW_DrawDoorFrameBitmapFlippedHorizontally
 	void drawDoorButton(int16 doorButtonOrdinal, DoorButton doorButton); // @ F0110_DUNGEONVIEW_DrawDoorButton
 
@@ -722,7 +757,7 @@ public:
 	void copyBitmapAndFlipHorizontal(byte *srcBitmap, byte *destBitmap, uint16 byteWidth, uint16 height); // @ F0099_DUNGEONVIEW_CopyBitmapAndFlipHorizontal
 	void drawFloorOrnament(uint16 floorOrnOrdinal, ViewFloor viewFloorIndex); // @ F0108_DUNGEONVIEW_DrawFloorOrnament
 	void drawDoor(uint16 doorThingIndex, DoorState doorState, int16 *doorNativeBitmapIndices, int16 byteCount,
-					   DoorOrnament doorOrnament, DoorFrames *doorFrames); // @ F0111_DUNGEONVIEW_DrawDoor
+	              DoorOrnament doorOrnament, DoorFrames *doorFrames); // @ F0111_DUNGEONVIEW_DrawDoor
 	void drawDoorOrnament(int16 doorOrnOdinal, DoorOrnament doorOrnament); // @ F0109_DUNGEONVIEW_DrawDoorOrnament
 	void drawCeilingPit(int16 nativeBitmapIndex, Frame *frame, int16 mapX, int16 mapY, bool flipHorizontal); // @ F0112_DUNGEONVIEW_DrawCeilingPit
 
@@ -730,20 +765,19 @@ public:
 	void blitToViewport(byte *bitmap, int16 *box, int16 byteWidth, Color transparent, int16 height); // @ F0020_MAIN_BlitToViewport
 	void blitToScreen(byte *bitmap, const Box *box, int16 byteWidth, Color transparent, int16 height); // @ F0021_MAIN_BlitToScreen
 
-
 	/* srcHeight and destHeight are not necessary for blitting, only error checking, thus they are defaulted for existing code which
 	does not pass anything, newly imported calls do pass srcHeght and srcWidth, so this is a ceonvenience change so the the parameters
 	match the original exactly, if need arises for heights then we'll have to retrospectively add them in old function calls*/
 	/* Expects inclusive boundaries in box */
 	void blitToBitmap(byte *srcBitmap, byte *destBitmap, const Box &box, uint16 srcX, uint16 srcY, uint16 srcByteWidth,
-						   uint16 destByteWidth, Color transparent, int16 srcHeight, int16 destHight); // @ F0132_VIDEO_Blit
-	 /* Expects inclusive boundaries in box */
+	                  uint16 destByteWidth, Color transparent, int16 srcHeight, int16 destHight); // @ F0132_VIDEO_Blit
+	/* Expects inclusive boundaries in box */
 	void blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask, byte *tmp, Box &box, int16 lastUnitIndex,
-											int16 firstUnitIndex, int16 destByteWidth, Color transparent,
-											int16 xPos, int16 yPos, int16 destHeight, int16 height2); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
-		 // this function takes pixel widths
+	                                   int16 firstUnitIndex, int16 destByteWidth, Color transparent,
+	                                   int16 xPos, int16 yPos, int16 destHeight, int16 height2); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
+	// this function takes pixel widths
 	void blitToBitmapShrinkWithPalChange(byte *srcBitmap, byte *destBitmap,
-											  int16 srcPixelWidth, int16 srcHight, int16 destPixelWidth, int16 destHeight, byte *palChange); // @ F0129_VIDEO_BlitShrinkWithPaletteChanges
+	                                     int16 srcPixelWidth, int16 srcHight, int16 destPixelWidth, int16 destHeight, byte *palChange); // @ F0129_VIDEO_BlitShrinkWithPaletteChanges
 	void flipBitmapHorizontal(byte *bitmap, uint16 byteWidth, uint16 height); // @ F0130_VIDEO_FlipHorizontal
 	void flipBitmapVertical(byte *bitmap, uint16 byteWidth, uint16 height);
 	byte *getExplosionBitmap(uint16 explosionAspIndex, uint16 scale, int16 &returnByteWidth, int16 &returnHeight); // @ F0114_DUNGEONVIEW_GetExplosionBitmap
@@ -767,8 +801,8 @@ public:
 	int16 getScaledBitmapByteCount(int16 byteWidth, int16 height, int16 scale); // @ F0459_START_GetScaledBitmapByteCount
 	int16 getScaledDimension(int16 dimension, int16 scale); // @ M78_SCALED_DIMENSION
 	void drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Direction directionParam,
-					  int16 mapXpos, int16 mapYpos, int16 viewSquareIndex,
-					  CellOrder orderedViewCellOrdinals); // @ F0115_DUNGEONVIEW_DrawObjectsCreaturesProjectilesExplosions_CPSEF
+	                                               int16 mapXpos, int16 mapYpos, int16 viewSquareIndex,
+	                                               CellOrder orderedViewCellOrdinals); // @ F0115_DUNGEONVIEW_DrawObjectsCreaturesProjectilesExplosions_CPSEF
 	uint16 getNormalizedByteWidth(uint16 byteWidth); // @ M77_NORMALIZED_BYTE_WIDTH
 	uint16 getVerticalOffsetM23(uint16 val); // @ M23_VERTICAL_OFFSET
 	uint16 getHorizontalOffsetM22(uint16 val); // @ M22_HORIZONTAL_OFFSET
@@ -826,7 +860,7 @@ public:
 
 private:
 	void initConstants();
-	uint16 getBitmapByteCount(uint16 pixelWidth, uint16 height);  // @ M75_BITMAP_BYTE_COUNT
+	uint16 getBitmapByteCount(uint16 pixelWidth, uint16 height); // @ M75_BITMAP_BYTE_COUNT
 };
 
 }

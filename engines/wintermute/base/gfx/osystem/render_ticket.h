@@ -29,9 +29,9 @@
 #ifndef WINTERMUTE_RENDER_TICKET_H
 #define WINTERMUTE_RENDER_TICKET_H
 
-#include "graphics/transparent_surface.h"
-#include "graphics/surface.h"
 #include "common/rect.h"
+#include "graphics/surface.h"
+#include "graphics/transparent_surface.h"
 
 namespace Wintermute {
 
@@ -52,7 +52,10 @@ class BaseSurfaceOSystem;
 class RenderTicket {
 public:
 	RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, Graphics::TransformStruct transform);
-	RenderTicket() : _isValid(true), _wantsDraw(false), _transform(Graphics::TransformStruct()) {}
+	RenderTicket()
+	  : _isValid(true)
+	  , _wantsDraw(false)
+	  , _transform(Graphics::TransformStruct()) {}
 	~RenderTicket();
 	const Graphics::Surface *getSurface() const { return _surface; }
 	// Non-dirty-rects:
@@ -70,6 +73,7 @@ public:
 	BaseSurfaceOSystem *_owner;
 	bool operator==(const RenderTicket &a) const;
 	const Common::Rect *getSrcRect() const { return &_srcRect; }
+
 private:
 	Graphics::Surface *_surface;
 	Common::Rect _srcRect;

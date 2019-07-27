@@ -31,8 +31,8 @@
 
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/kernel.h"
-#include "sword25/script/script.h"
 #include "sword25/script/luabindhelper.h"
+#include "sword25/script/script.h"
 
 #include "sword25/package/packagemanager.h"
 
@@ -66,7 +66,8 @@ static void splitSearchPath(const Common::String &path, Common::String &director
 	// Scan backwards for a trailing slash
 	const char *sPath = path.c_str();
 	const char *lastSlash = sPath + strlen(sPath) - 1;
-	while ((lastSlash >= sPath) && (*lastSlash != '/')) --lastSlash;
+	while ((lastSlash >= sPath) && (*lastSlash != '/'))
+		--lastSlash;
 
 	if (lastSlash >= sPath) {
 		directory = "";
@@ -145,18 +146,18 @@ static int dummyFuncError(lua_State *L) {
 static const char *PACKAGE_LIBRARY_NAME = "Package";
 
 static const luaL_reg PACKAGE_FUNCTIONS[] = {
-	{"LoadPackage", loadPackage},
-	{"LoadDirectoryAsPackage", loadDirectoryAsPackage},
-	{"GetCurrentDirectory", dummyFuncError},
-	{"ChangeDirectory", dummyFuncError},
-	{"GetAbsolutePath", dummyFuncError},
-	{"GetFileSize", dummyFuncError},
-	{"GetFileType", dummyFuncError},
-	{"FindFiles", findFiles},
-	{"FindDirectories", findDirectories},
-	{"GetFileAsString", getFileAsString},
-	{"FileExists", fileExists},
-	{0, 0}
+	{ "LoadPackage", loadPackage },
+	{ "LoadDirectoryAsPackage", loadDirectoryAsPackage },
+	{ "GetCurrentDirectory", dummyFuncError },
+	{ "ChangeDirectory", dummyFuncError },
+	{ "GetAbsolutePath", dummyFuncError },
+	{ "GetFileSize", dummyFuncError },
+	{ "GetFileType", dummyFuncError },
+	{ "FindFiles", findFiles },
+	{ "FindDirectories", findDirectories },
+	{ "GetFileAsString", getFileAsString },
+	{ "FileExists", fileExists },
+	{ 0, 0 }
 };
 
 bool PackageManager::registerScriptBindings() {

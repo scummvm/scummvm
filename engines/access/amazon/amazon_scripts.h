@@ -23,42 +23,44 @@
 #ifndef ACCESS_AMAZON_SCRIPTS_H
 #define ACCESS_AMAZON_SCRIPTS_H
 
-#include "common/scummsys.h"
 #include "access/scripts.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
 namespace Amazon {
 
-class AmazonEngine;
+	class AmazonEngine;
 
-class AmazonScripts : public Scripts {
-private:
-	AmazonEngine *_game;
-protected:
-	virtual void executeSpecial(int commandIndex, int param1, int param2);
-	virtual void executeCommand(int commandIndex);
+	class AmazonScripts : public Scripts {
+	private:
+		AmazonEngine *_game;
 
-	void cLoop();
-	void mWhile1();
-	void mWhile2();
-	void mWhile(int param1);
-	void loadBackground(int param1, int param2);
-	void plotInactive();
-	void loadNSound(int param1, int param2);
-	void setInactive();
-	void boatWalls(int param1, int param2);
+	protected:
+		virtual void executeSpecial(int commandIndex, int param1, int param2);
+		virtual void executeCommand(int commandIndex);
 
-	void cmdHelp_v2();
-	void cmdCycleBack();
-	void cmdChapter();
-	void cmdSetHelp();
-	void cmdCenterPanel();
-	void cmdMainPanel();
-	void CMDRETFLASH();
-public:
-	AmazonScripts(AccessEngine *vm);
-};
+		void cLoop();
+		void mWhile1();
+		void mWhile2();
+		void mWhile(int param1);
+		void loadBackground(int param1, int param2);
+		void plotInactive();
+		void loadNSound(int param1, int param2);
+		void setInactive();
+		void boatWalls(int param1, int param2);
+
+		void cmdHelp_v2();
+		void cmdCycleBack();
+		void cmdChapter();
+		void cmdSetHelp();
+		void cmdCenterPanel();
+		void cmdMainPanel();
+		void CMDRETFLASH();
+
+	public:
+		AmazonScripts(AccessEngine *vm);
+	};
 
 } // End of namespace Amazon
 

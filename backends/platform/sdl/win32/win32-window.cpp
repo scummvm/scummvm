@@ -25,14 +25,14 @@
 
 #ifdef WIN32
 
-#include "backends/platform/sdl/win32/win32-window.h"
+#	include "backends/platform/sdl/win32/win32-window.h"
 
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#	define WIN32_LEAN_AND_MEAN
+#	include <windows.h>
 
 void SdlWindow_Win32::setupIcon() {
 	HMODULE handle = GetModuleHandle(NULL);
-	HICON   ico    = LoadIcon(handle, MAKEINTRESOURCE(1001 /* IDI_ICON */));
+	HICON ico = LoadIcon(handle, MAKEINTRESOURCE(1001 /* IDI_ICON */));
 	if (ico) {
 		HWND hwnd = getHwnd();
 		if (hwnd) {
@@ -54,11 +54,11 @@ void SdlWindow_Win32::setupIcon() {
 HWND SdlWindow_Win32::getHwnd() {
 	SDL_SysWMinfo wminfo;
 	if (getSDLWMInformation(&wminfo)) {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+#	if SDL_VERSION_ATLEAST(2, 0, 0)
 		return wminfo.info.win.window;
-#else
+#	else
 		return wminfo.window;
-#endif
+#	endif
 	}
 	return NULL;
 }

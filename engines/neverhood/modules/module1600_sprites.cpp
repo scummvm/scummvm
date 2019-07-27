@@ -25,7 +25,8 @@
 namespace Neverhood {
 
 AsCommonCar::AsCommonCar(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: AnimatedSprite(vm, 1000), _parentScene(parentScene) {
+  : AnimatedSprite(vm, 1000)
+  , _parentScene(parentScene) {
 
 	createSurface(200, 556, 328);
 	_x = x;
@@ -141,10 +142,7 @@ uint32 AsCommonCar::handleMessage(int messageNum, const MessageParam &param, Ent
 			NPoint pt = param.asPoint();
 			if (_yMoveTotalSteps <= 0 && !_isBusy) {
 				// Check if we're already exiting (or something)
-				if ((pt.x <= 20 && _exitDirection == 1) ||
-					(pt.x >= 620 && _exitDirection == 3) ||
-					(pt.y <= 20 && _exitDirection == 2) ||
-					(pt.y >= 460 && _exitDirection == 4))
+				if ((pt.x <= 20 && _exitDirection == 1) || (pt.x >= 620 && _exitDirection == 3) || (pt.y <= 20 && _exitDirection == 2) || (pt.y >= 460 && _exitDirection == 4))
 					break;
 				_destX = pt.x;
 				_destY = pt.y;
@@ -358,9 +356,7 @@ void AsCommonCar::moveToNextPoint() {
 	} else {
 		NPoint nextPt = pathPoint(_currPointIndex + 1);
 		NPoint currPt = pathPoint(_currPointIndex);
-		if (ABS(nextPt.y - currPt.y) <= ABS(nextPt.x - currPt.x) &&
-			((_currMoveDirection == 2 && nextPt.x < currPt.x) ||
-			(_currMoveDirection == 4 && nextPt.x >= currPt.x))) {
+		if (ABS(nextPt.y - currPt.y) <= ABS(nextPt.x - currPt.x) && ((_currMoveDirection == 2 && nextPt.x < currPt.x) || (_currMoveDirection == 4 && nextPt.x >= currPt.x))) {
 			if (_currMoveDirection == 2)
 				_currMoveDirection = 4;
 			else if (_currMoveDirection == 4)
@@ -446,9 +442,7 @@ void AsCommonCar::moveToPrevPoint() {
 			prevPt = pathPoint(_currPointIndex);
 			currPt = pathPoint(_currPointIndex + 1);
 		}
-		if (ABS(prevPt.y - currPt.y) <= ABS(prevPt.x - currPt.x) &&
-			((_currMoveDirection == 2 && prevPt.x < currPt.x) ||
-			(_currMoveDirection == 4 && prevPt.x >= currPt.x))) {
+		if (ABS(prevPt.y - currPt.y) <= ABS(prevPt.x - currPt.x) && ((_currMoveDirection == 2 && prevPt.x < currPt.x) || (_currMoveDirection == 4 && prevPt.x >= currPt.x))) {
 			if (_currMoveDirection == 2)
 				_currMoveDirection = 4;
 			else if (_currMoveDirection == 4)
@@ -618,8 +612,7 @@ void AsCommonCar::suMoveToNextPoint() {
 				_steps = 11;
 			}
 		}
-		if ((distance < 20 && _exitDirection == 0 && _lastDistance < distance) ||
-			(_exitDirection == 0 && _lastDistance + 20 < distance))
+		if ((distance < 20 && _exitDirection == 0 && _lastDistance < distance) || (_exitDirection == 0 && _lastDistance + 20 < distance))
 			_isBraking = true;
 		if (distance < _lastDistance)
 			_lastDistance = distance;
@@ -630,7 +623,6 @@ void AsCommonCar::suMoveToNextPoint() {
 			sendMessage(_parentScene, NM_KLAYMEN_STOP_CLIMBING, 0);
 		}
 	}
-
 }
 
 void AsCommonCar::suMoveToPrevPoint() {
@@ -763,8 +755,7 @@ void AsCommonCar::suMoveToPrevPoint() {
 				_steps = 11;
 			}
 		}
-		if ((distance < 20 && _exitDirection == 0 && _lastDistance < distance) ||
-			(_exitDirection == 0 && _lastDistance + 20 < distance))
+		if ((distance < 20 && _exitDirection == 0 && _lastDistance < distance) || (_exitDirection == 0 && _lastDistance + 20 < distance))
 			_isBraking = true;
 		if (distance < _lastDistance)
 			_lastDistance = distance;
@@ -775,7 +766,6 @@ void AsCommonCar::suMoveToPrevPoint() {
 			sendMessage(_parentScene, NM_KLAYMEN_CLIMB_LADDER, 0);
 		}
 	}
-
 }
 
 void AsCommonCar::updateSound() {
@@ -799,7 +789,7 @@ void AsCommonCar::updateSound() {
 }
 
 AsCommonIdleCarLower::AsCommonIdleCarLower(NeverhoodEngine *vm, int16 x, int16 y)
-	: AnimatedSprite(vm, 0x1209E09F, 1100, x, y) {
+  : AnimatedSprite(vm, 0x1209E09F, 1100, x, y) {
 
 	setDoDeltaX(1);
 	startAnimation(0x1209E09F, 1, -1);
@@ -807,14 +797,15 @@ AsCommonIdleCarLower::AsCommonIdleCarLower(NeverhoodEngine *vm, int16 x, int16 y
 }
 
 AsCommonIdleCarFull::AsCommonIdleCarFull(NeverhoodEngine *vm, int16 x, int16 y)
-	: AnimatedSprite(vm, 0x1209E09F, 100, x, y) {
+  : AnimatedSprite(vm, 0x1209E09F, 100, x, y) {
 
 	setDoDeltaX(1);
 	_newStickFrameIndex = 0;
 }
 
 AsCommonCarConnector::AsCommonCarConnector(NeverhoodEngine *vm, AsCommonCar *asCar)
-	: AnimatedSprite(vm, 1100), _asCar(asCar) {
+  : AnimatedSprite(vm, 1100)
+  , _asCar(asCar) {
 
 	createSurface1(0x60281C10, 150);
 	startAnimation(0x60281C10, -1, -1);
@@ -829,7 +820,7 @@ void AsCommonCarConnector::update() {
 }
 
 void Tracks::findTrackPoint(NPoint pt, int &minMatchTrackIndex, int &minMatchDistance,
-	DataResource &dataResource) {
+                            DataResource &dataResource) {
 	const uint trackCount = size();
 	minMatchTrackIndex = -1;
 	minMatchDistance = 640;
@@ -847,7 +838,7 @@ void Tracks::findTrackPoint(NPoint pt, int &minMatchTrackIndex, int &minMatchDis
 }
 
 KmScene1608::KmScene1608(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+  : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }

@@ -26,7 +26,10 @@
 
 namespace MutationOfJB {
 
-Timer::Timer(uint32 millis) : _millis(millis), _startTime(0), _state(IDLE) {
+Timer::Timer(uint32 millis)
+  : _millis(millis)
+  , _startTime(0)
+  , _state(IDLE) {
 }
 
 void Timer::start() {

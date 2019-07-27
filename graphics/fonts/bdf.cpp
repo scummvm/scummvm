@@ -22,8 +22,8 @@
 
 #include "graphics/fonts/bdf.h"
 
-#include "common/file.h"
 #include "common/endian.h"
+#include "common/file.h"
 #include "common/textconsole.h"
 
 #include "graphics/surface.h"
@@ -31,7 +31,8 @@
 namespace Graphics {
 
 BdfFont::BdfFont(const BdfFontData &data, DisposeAfterUse::Flag dispose)
-	: _data(data), _dispose(dispose) {
+  : _data(data)
+  , _dispose(dispose) {
 }
 
 BdfFont::~BdfFont() {
@@ -79,8 +80,7 @@ int BdfFont::getCharWidth(uint32 chr) const {
 		return _data.advances[ch];
 }
 
-
-template<typename PixelType>
+template <typename PixelType>
 void drawCharIntern(byte *ptr, uint pitch, const byte *src, int h, int width, int minX, int maxX, const PixelType color) {
 	byte data = 0;
 	while (h--) {
@@ -186,104 +186,105 @@ void BdfFont::drawChar(Surface *dst, uint32 chr, const int tx, const int ty, con
 
 namespace {
 
-inline byte hexToInt(char c) {
-	if (c >= '0' && c <= '9')
-		return c - '0';
-	else if (c >= 'A' && c <= 'F')
-		return c - 'A' + 10;
-	else if (c >= 'a' && c <= 'f')
-		return c - 'a' + 10;
-	else
-		return 0;
-}
-
-byte *loadCharacter(Common::SeekableReadStream &stream, int &encoding, int &advance, BdfBoundingBox &box) {
-	Common::String line;
-	byte *bitmap = 0;
-
-	while (true) {
-		line = stream.readLine();
-		line.trim(); 	// BDF files created from unifont tools (make hex)
-						// have a rogue space character after the "BITMAP" label
-
-		if (stream.err() || stream.eos()) {
-			warning("BdfFont::loadCharacter: Premature end of file");
-			delete[] bitmap;
+	inline byte hexToInt(char c) {
+		if (c >= '0' && c <= '9')
+			return c - '0';
+		else if (c >= 'A' && c <= 'F')
+			return c - 'A' + 10;
+		else if (c >= 'a' && c <= 'f')
+			return c - 'a' + 10;
+		else
 			return 0;
-		}
+	}
 
-		if (line.hasPrefix("ENCODING ")) {
-			if (sscanf(line.c_str(), "ENCODING %d", &encoding) != 1) {
-				warning("BdfFont::loadCharacter: Invalid ENCODING");
-				delete[] bitmap;
-				return 0;
-			}
-		} else if (line.hasPrefix("DWIDTH ")) {
-			int yAdvance;
-			if (sscanf(line.c_str(), "DWIDTH %d %d", &advance, &yAdvance) != 2) {
-				warning("BdfFont::loadCharacter: Invalid DWIDTH");
-				delete[] bitmap;
-				return 0;
-			}
+	byte *loadCharacter(Common::SeekableReadStream &stream, int &encoding, int &advance, BdfBoundingBox &box) {
+		Common::String line;
+		byte *bitmap = 0;
 
-			if (yAdvance != 0) {
-				warning("BdfFont::loadCharacter: Character %d has an y advance of %d", encoding, yAdvance);
+		while (true) {
+			line = stream.readLine();
+			line.trim(); // BDF files created from unifont tools (make hex)
+			  // have a rogue space character after the "BITMAP" label
+
+			if (stream.err() || stream.eos()) {
+				warning("BdfFont::loadCharacter: Premature end of file");
 				delete[] bitmap;
 				return 0;
 			}
 
-			if (advance < 0) {
-				warning("BdfFont::loadCharacter: Character %d has an x advance of %d", encoding, advance);
-				delete[] bitmap;
-				return 0;
-			}
-		} else if (line.hasPrefix("BBX ")) {
-			int width, height, xOffset, yOffset;
-			if (sscanf(line.c_str(), "BBX %d %d %d %d",
-			           &width, &height, &xOffset, &yOffset) != 4) {
-				warning("BdfFont::loadCharacter: Invalid BBX");
-				delete[] bitmap;
-				return 0;
-			}
-
-			box.width = width;
-			box.height = height;
-			box.xOffset = xOffset;
-			box.yOffset = yOffset;
-		} else if (line == "BITMAP") {
-			const uint bytesPerRow = (box.width + 7) / 8;
-			byte *dst = bitmap = new byte[box.height * bytesPerRow];
-
-			for (int y = 0; y < box.height; ++y) {
-				line = stream.readLine();
-				if (stream.err() || stream.eos()) {
-					warning("BdfFont::loadCharacter: Premature end of file");
+			if (line.hasPrefix("ENCODING ")) {
+				if (sscanf(line.c_str(), "ENCODING %d", &encoding) != 1) {
+					warning("BdfFont::loadCharacter: Invalid ENCODING");
+					delete[] bitmap;
+					return 0;
+				}
+			} else if (line.hasPrefix("DWIDTH ")) {
+				int yAdvance;
+				if (sscanf(line.c_str(), "DWIDTH %d %d", &advance, &yAdvance) != 2) {
+					warning("BdfFont::loadCharacter: Invalid DWIDTH");
 					delete[] bitmap;
 					return 0;
 				}
 
-				if (line.size() != 2 * bytesPerRow) {
-					warning("BdfFont::loadCharacter: Pixel line has wrong size");
+				if (yAdvance != 0) {
+					warning("BdfFont::loadCharacter: Character %d has an y advance of %d", encoding, yAdvance);
 					delete[] bitmap;
 					return 0;
 				}
 
-				for (uint x = 0; x < bytesPerRow; ++x) {
-					char nibble1 = line[x * 2 + 0];
-					char nibble2 = line[x * 2 + 1];
-					*dst++ = (hexToInt(nibble1) << 4) | hexToInt(nibble2);
+				if (advance < 0) {
+					warning("BdfFont::loadCharacter: Character %d has an x advance of %d", encoding, advance);
+					delete[] bitmap;
+					return 0;
 				}
+			} else if (line.hasPrefix("BBX ")) {
+				int width, height, xOffset, yOffset;
+				if (sscanf(line.c_str(), "BBX %d %d %d %d",
+				           &width, &height, &xOffset, &yOffset)
+				    != 4) {
+					warning("BdfFont::loadCharacter: Invalid BBX");
+					delete[] bitmap;
+					return 0;
+				}
+
+				box.width = width;
+				box.height = height;
+				box.xOffset = xOffset;
+				box.yOffset = yOffset;
+			} else if (line == "BITMAP") {
+				const uint bytesPerRow = (box.width + 7) / 8;
+				byte *dst = bitmap = new byte[box.height * bytesPerRow];
+
+				for (int y = 0; y < box.height; ++y) {
+					line = stream.readLine();
+					if (stream.err() || stream.eos()) {
+						warning("BdfFont::loadCharacter: Premature end of file");
+						delete[] bitmap;
+						return 0;
+					}
+
+					if (line.size() != 2 * bytesPerRow) {
+						warning("BdfFont::loadCharacter: Pixel line has wrong size");
+						delete[] bitmap;
+						return 0;
+					}
+
+					for (uint x = 0; x < bytesPerRow; ++x) {
+						char nibble1 = line[x * 2 + 0];
+						char nibble2 = line[x * 2 + 1];
+						*dst++ = (hexToInt(nibble1) << 4) | hexToInt(nibble2);
+					}
+				}
+			} else if (line == "ENDCHAR") {
+				return bitmap;
 			}
-		} else if (line == "ENDCHAR") {
-			return bitmap;
 		}
 	}
-}
 
-void freeBitmaps(byte **bitmaps, int size) {
-	for (int i = 0; i < size; ++i)
-		delete[] bitmaps[i];
-}
+	void freeBitmaps(byte **bitmaps, int size) {
+		for (int i = 0; i < size; ++i)
+			delete[] bitmaps[i];
+	}
 
 } // End of anonymous namespace
 
@@ -322,7 +323,8 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 		if (line.hasPrefix("FONTBOUNDINGBOX ")) {
 			int width, height, xOffset, yOffset;
 			if (sscanf(line.c_str(), "FONTBOUNDINGBOX %d %d %d %d",
-			           &width, &height, &xOffset, &yOffset) != 4) {
+			           &width, &height, &xOffset, &yOffset)
+			    != 4) {
 				warning("BdfFont::loadFont: Invalid FONTBOUNDINGBOX");
 				freeBitmaps(bitmaps, font.numCharacters);
 				delete[] bitmaps;
@@ -415,7 +417,7 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 			}
 		} else if (line.hasPrefix("FAMILY_NAME \"")) {
 			familyName = new char[line.size()];
-			Common::strlcpy(familyName, line.c_str() + 13, line.size() - 12);	// strlcpy() copies at most size-1 characters and then add a '\0'
+			Common::strlcpy(familyName, line.c_str() + 13, line.size() - 12); // strlcpy() copies at most size-1 characters and then add a '\0'
 			char *p = &familyName[strlen(familyName)];
 			while (p != familyName && *p != '"')
 				p--;
@@ -432,7 +434,7 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 			*p = '\0'; // Remove last quote
 		} else if (line.hasPrefix("SLANT \"")) {
 			slant = new char[line.size()];
-			Common::strlcpy(slant, line.c_str() + 7, line.size() - 6);  // strlcpy() copies at most size-1 characters and then add a '\0'
+			Common::strlcpy(slant, line.c_str() + 7, line.size() - 6); // strlcpy() copies at most size-1 characters and then add a '\0'
 			char *p = &slant[strlen(slant)];
 			while (p != slant && *p != '"')
 				p--;
@@ -669,7 +671,6 @@ BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 			bitmaps[i] = 0;
 		}
 	}
-
 
 	if (stream.readByte() == 0xFF) {
 		advances = new byte[data.numCharacters];

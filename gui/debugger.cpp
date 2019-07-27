@@ -23,28 +23,27 @@
 // NB: This is really only necessary if USE_READLINE is defined
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/debug.h"
 #include "common/system.h"
 
 #ifndef DISABLE_MD5
-#include "common/md5.h"
-#include "common/archive.h"
-#include "common/macresman.h"
-#include "common/stream.h"
+#	include "common/archive.h"
+#	include "common/macresman.h"
+#	include "common/md5.h"
+#	include "common/stream.h"
 #endif
 
 #include "engines/engine.h"
 
 #include "gui/debugger.h"
 #ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
-	#include "gui/console.h"
+#	include "gui/console.h"
 #elif defined(USE_READLINE)
-	#include <readline/readline.h>
-	#include <readline/history.h>
-	#include "common/events.h"
+#	include <readline/readline.h>
+#	include <readline/history.h>
+#	include "common/events.h"
 #endif
-
 
 namespace GUI {
 
@@ -63,20 +62,20 @@ Debugger::Debugger() {
 
 	// Register commands
 	//registerCmd("continue",			WRAP_METHOD(Debugger, cmdExit));
-	registerCmd("exit",				WRAP_METHOD(Debugger, cmdExit));
-	registerCmd("quit",				WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("exit", WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("quit", WRAP_METHOD(Debugger, cmdExit));
 
-	registerCmd("help",				WRAP_METHOD(Debugger, cmdHelp));
-	registerCmd("openlog",			WRAP_METHOD(Debugger, cmdOpenLog));
+	registerCmd("help", WRAP_METHOD(Debugger, cmdHelp));
+	registerCmd("openlog", WRAP_METHOD(Debugger, cmdOpenLog));
 #ifndef DISABLE_MD5
-	registerCmd("md5",				WRAP_METHOD(Debugger, cmdMd5));
-	registerCmd("md5mac",			WRAP_METHOD(Debugger, cmdMd5Mac));
+	registerCmd("md5", WRAP_METHOD(Debugger, cmdMd5));
+	registerCmd("md5mac", WRAP_METHOD(Debugger, cmdMd5Mac));
 #endif
 
-	registerCmd("debuglevel",		WRAP_METHOD(Debugger, cmdDebugLevel));
-	registerCmd("debugflag_list",		WRAP_METHOD(Debugger, cmdDebugFlagsList));
-	registerCmd("debugflag_enable",	WRAP_METHOD(Debugger, cmdDebugFlagEnable));
-	registerCmd("debugflag_disable",	WRAP_METHOD(Debugger, cmdDebugFlagDisable));
+	registerCmd("debuglevel", WRAP_METHOD(Debugger, cmdDebugLevel));
+	registerCmd("debugflag_list", WRAP_METHOD(Debugger, cmdDebugFlagsList));
+	registerCmd("debugflag_enable", WRAP_METHOD(Debugger, cmdDebugFlagEnable));
+	registerCmd("debugflag_disable", WRAP_METHOD(Debugger, cmdDebugFlagDisable));
 }
 
 Debugger::~Debugger() {
@@ -84,7 +83,6 @@ Debugger::~Debugger() {
 	delete _debuggerDialog;
 #endif
 }
-
 
 // Initialisation Functions
 int Debugger::getCharsPerLine() {
@@ -101,7 +99,7 @@ int Debugger::getCharsPerLine() {
 }
 
 int Debugger::debugPrintf(const char *format, ...) {
-	va_list	argptr;
+	va_list argptr;
 
 	va_start(argptr, format);
 	int count;
@@ -111,7 +109,7 @@ int Debugger::debugPrintf(const char *format, ...) {
 	count = ::vprintf(format, argptr);
 	::fflush(stdout);
 #endif
-	va_end (argptr);
+	va_end(argptr);
 	return count;
 }
 
@@ -185,27 +183,26 @@ void Debugger::onFrame() {
 
 #if defined(USE_TEXT_CONSOLE_FOR_DEBUGGER) && defined(USE_READLINE)
 namespace {
-Debugger *g_readline_debugger;
+	Debugger *g_readline_debugger;
 
-char *readline_completionFunction(const char *text, int state) {
-	return g_readline_debugger->readlineComplete(text, state);
-}
-
-void readline_eventFunction() {
-	Common::EventManager *eventMan = g_system->getEventManager();
-
-	Common::Event event;
-	while (eventMan->pollEvent(event)) {
-		// drop all events
+	char *readline_completionFunction(const char *text, int state) {
+		return g_readline_debugger->readlineComplete(text, state);
 	}
-}
 
-#ifdef USE_READLINE_INT_COMPLETION
-typedef int RLCompFunc_t(const char *, int);
-#else
-typedef char *RLCompFunc_t(const char *, int);
-#endif
+	void readline_eventFunction() {
+		Common::EventManager *eventMan = g_system->getEventManager();
 
+		Common::Event event;
+		while (eventMan->pollEvent(event)) {
+			// drop all events
+		}
+	}
+
+#	ifdef USE_READLINE_INT_COMPLETION
+	typedef int RLCompFunc_t(const char *, int);
+#	else
+	typedef char *RLCompFunc_t(const char *, int);
+#	endif
 
 } // end of anonymous namespace
 #endif
@@ -231,7 +228,7 @@ void Debugger::enter() {
 #else
 	printf("Debugger entered, please switch to this console for input.\n");
 
-#ifdef USE_READLINE
+#	ifdef USE_READLINE
 	// TODO: add support for saving/loading history?
 
 	g_readline_debugger = this;
@@ -251,7 +248,7 @@ void Debugger::enter() {
 	free(line_read);
 	line_read = 0;
 
-#else
+#	else
 	int i;
 	char buf[256];
 
@@ -268,7 +265,7 @@ void Debugger::enter() {
 		if (i == 0)
 			continue;
 	} while (parseCommand(buf));
-#endif
+#	endif
 
 #endif
 }
@@ -331,7 +328,7 @@ bool Debugger::parseCommand(const char *inputOrig) {
 					if (!chr) {
 						debugPrintf("You must access this array as %s[element]\n", param[0]);
 					} else {
-						int element = atoi(chr+1);
+						int element = atoi(chr + 1);
 						int32 *var = *(int32 **)_vars[i].variable;
 						if (element >= _vars[i].arraySize) {
 							debugPrintf("%s is out of range (array is %d elements big)\n", param[0], _vars[i].arraySize);
@@ -340,8 +337,7 @@ bool Debugger::parseCommand(const char *inputOrig) {
 							debugPrintf("(int)%s = %d\n", param[0], var[element]);
 						}
 					}
-					}
-					break;
+				} break;
 				default:
 					debugPrintf("Failed to set variable %s to %s - unknown type\n", _vars[i].name.c_str(), param[1]);
 					break;
@@ -365,7 +361,7 @@ bool Debugger::parseCommand(const char *inputOrig) {
 					if (!chr) {
 						debugPrintf("You must access this array as %s[element]\n", param[0]);
 					} else {
-						int element = atoi(chr+1);
+						int element = atoi(chr + 1);
 						const int32 *var = *(const int32 **)_vars[i].variable;
 						if (element >= _vars[i].arraySize) {
 							debugPrintf("%s is out of range (array is %d elements big)\n", param[0], _vars[i].arraySize);
@@ -373,8 +369,7 @@ bool Debugger::parseCommand(const char *inputOrig) {
 							debugPrintf("(int)%s = %d\n", param[0], var[element]);
 						}
 					}
-				}
-				break;
+				} break;
 				// String
 				case DVAR_STRING:
 					debugPrintf("(string)%s = %s\n", param[0], ((Common::String *)_vars[i].variable)->c_str());
@@ -395,7 +390,10 @@ bool Debugger::parseCommand(const char *inputOrig) {
 
 void Debugger::splitCommand(Common::String &input, int &argc, const char **argv) {
 	byte c;
-	enum states { DULL, IN_WORD, IN_STRING } state = DULL;
+	enum states { DULL,
+		            IN_WORD,
+		            IN_STRING } state
+	  = DULL;
 	const char *paramStart = nullptr;
 
 	argc = 0;
@@ -414,7 +412,7 @@ void Debugger::splitCommand(Common::String &input, int &argc, const char **argv)
 				paramStart = p + 1; // word starts at *next* char, not this one
 			} else {
 				state = IN_WORD;
-				paramStart = p;		// word starts here
+				paramStart = p; // word starts here
 			}
 			break;
 
@@ -424,7 +422,7 @@ void Debugger::splitCommand(Common::String &input, int &argc, const char **argv)
 				// Add entire quoted string to parameter list
 				*p = '\0';
 				argv[argc++] = paramStart;
-				state = DULL;	// back to "not in word, not in string" state
+				state = DULL; // back to "not in word, not in string" state
 			}
 			break;
 
@@ -433,7 +431,7 @@ void Debugger::splitCommand(Common::String &input, int &argc, const char **argv)
 			if (isspace(c)) {
 				*p = '\0';
 				argv[argc++] = paramStart;
-				state = DULL;	// back to "not in word, not in string" state
+				state = DULL; // back to "not in word, not in string" state
 			}
 			break;
 		}
@@ -475,8 +473,7 @@ bool Debugger::tabComplete(const char *input, Common::String &completion) const 
 				} else {
 					// take common prefix of previous match and this command
 					for (uint j = 0; j < completion.size(); j++) {
-						if (inputlen + j >= i->_key.size() ||
-								completion[j] != i->_key[inputlen + j]) {
+						if (inputlen + j >= i->_key.size() || completion[j] != i->_key[inputlen + j]) {
 							completion = Common::String(completion.begin(), completion.begin() + j);
 							// If there is no unambiguous completion, abort
 							if (completion.empty())
@@ -537,7 +534,6 @@ void Debugger::registerCmd(const Common::String &cmdname, Debuglet *debuglet) {
 	assert(debuglet && debuglet->isValid());
 	_cmds[cmdname] = Common::SharedPtr<Debuglet>(debuglet);
 }
-
 
 // Detach ("exit") the debugger
 bool Debugger::cmdExit(int argc, const char **argv) {
@@ -735,8 +731,8 @@ bool Debugger::cmdDebugFlagsList(int argc, const char **argv) {
 	}
 	for (Common::DebugManager::DebugChannelList::const_iterator i = debugLevels.begin(); i != debugLevels.end(); ++i) {
 		debugPrintf("%c%s - %s (%s)\n", i->enabled ? '+' : ' ',
-				i->name.c_str(), i->description.c_str(),
-				i->enabled ? "enabled" : "disabled");
+		            i->name.c_str(), i->description.c_str(),
+		            i->enabled ? "enabled" : "disabled");
 	}
 	debugPrintf("\n");
 	return true;
@@ -781,7 +777,6 @@ bool Debugger::debuggerInputCallback(GUI::ConsoleDialog *console, const char *in
 
 	return debugger->parseCommand(input);
 }
-
 
 bool Debugger::debuggerCompletionCallback(GUI::ConsoleDialog *console, const char *input, Common::String &completion, void *refCon) {
 	Debugger *debugger = (Debugger *)refCon;

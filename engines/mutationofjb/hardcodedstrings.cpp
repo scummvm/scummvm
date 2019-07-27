@@ -29,7 +29,8 @@
 
 namespace MutationOfJB {
 
-HardcodedStrings::HardcodedStrings(Game &game) : _strings(STRING_TYPES_TOTAL) {
+HardcodedStrings::HardcodedStrings(Game &game)
+  : _strings(STRING_TYPES_TOTAL) {
 	loadStrings(game.getLanguage());
 }
 
@@ -106,7 +107,6 @@ void HardcodedStrings::loadStrings(Common::Language lang) {
 	str = file.readPascalString();
 	if (lang == Common::DE_DEU)
 		_strings[USE] = str;
-
 
 	if (lang == Common::SK_SVK)
 		file.seek(0x1982F);

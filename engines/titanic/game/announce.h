@@ -32,11 +32,13 @@ class CAnnounce : public CGameObject {
 	bool TimerMsg(CTimerMsg *msg);
 	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
 	bool ActMsg(CActMsg *msg);
+
 private:
 	int _nameIndex;
 	int _soundHandle;
 	bool _notActivatedFlag;
 	bool _enabled;
+
 public:
 	CLASSDEF;
 	CAnnounce();

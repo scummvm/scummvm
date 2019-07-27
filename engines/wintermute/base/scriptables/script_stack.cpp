@@ -27,18 +27,18 @@
  */
 
 #include "engines/wintermute/base/scriptables/script_stack.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(ScStack, false)
 
 //////////////////////////////////////////////////////////////////////////
-ScStack::ScStack(BaseGame *inGame) : BaseClass(inGame) {
+ScStack::ScStack(BaseGame *inGame)
+  : BaseClass(inGame) {
 	_sP = -1;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 ScStack::~ScStack() {
@@ -53,7 +53,6 @@ ScStack::~ScStack() {
 	_values.clear();
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *ScStack::pop() {
 	if (_sP < 0) {
@@ -63,7 +62,6 @@ ScValue *ScStack::pop() {
 
 	return _values[_sP--];
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void ScStack::push(ScValue *val) {
@@ -79,7 +77,6 @@ void ScStack::push(ScValue *val) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *ScStack::getPushValue() {
 	_sP++;
@@ -92,8 +89,6 @@ ScValue *ScStack::getPushValue() {
 	return _values[_sP];
 }
 
-
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *ScStack::getTop() {
 	if (_sP < 0 || _sP >= (int32)_values.size()) {
@@ -102,7 +97,6 @@ ScValue *ScStack::getTop() {
 		return _values[_sP];
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 ScValue *ScStack::getAt(int index) {
@@ -113,7 +107,6 @@ ScValue *ScStack::getAt(int index) {
 		return _values[index];
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void ScStack::correctParams(uint32 expectedParams) {
@@ -144,42 +137,35 @@ void ScStack::correctParams(uint32 expectedParams) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void ScStack::pushNULL() {
 	getPushValue()->setNULL();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void ScStack::pushInt(int val) {
 	getPushValue()->setInt(val);
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void ScStack::pushFloat(double val) {
 	getPushValue()->setFloat(val);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void ScStack::pushBool(bool val) {
 	getPushValue()->setBool(val);
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void ScStack::pushString(const char *val) {
 	getPushValue()->setString(val);
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void ScStack::pushNative(BaseScriptable *val, bool persistent) {
 	getPushValue()->setNative(val, persistent);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool ScStack::persist(BasePersistenceManager *persistMgr) {

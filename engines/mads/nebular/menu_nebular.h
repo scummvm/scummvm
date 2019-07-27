@@ -35,125 +35,138 @@ class MADSEngine;
 
 namespace Nebular {
 
-enum MADSGameAction {
-	START_GAME, RESUME_GAME, SHOW_INTRO, CREDITS, QUOTES, EXIT,
-	SETS, EVOLVE
-};
+	enum MADSGameAction {
+		START_GAME,
+		RESUME_GAME,
+		SHOW_INTRO,
+		CREDITS,
+		QUOTES,
+		EXIT,
+		SETS,
+		EVOLVE
+	};
 
-class MainMenu: public MenuView {
-private:
-	SpriteAsset *_menuItems[7];
-	int _menuItemIndexes[7];
-	int _menuItemIndex;
-	int _frameIndex;
-	uint32 _delayTimeout;
-	bool _skipFlag;
-	bool _showEvolve, _showSets;
+	class MainMenu : public MenuView {
+	private:
+		SpriteAsset *_menuItems[7];
+		int _menuItemIndexes[7];
+		int _menuItemIndex;
+		int _frameIndex;
+		uint32 _delayTimeout;
+		bool _skipFlag;
+		bool _showEvolve, _showSets;
 
-	/**
+		/**
 	 * Currently highlighted menu item
 	 */
-	int _highlightedIndex;
+		int _highlightedIndex;
 
-	/**
+		/**
 	 * Flag for mouse button being pressed
 	 */
-	bool _buttonDown;
+		bool _buttonDown;
 
-	/**
+		/**
 	 * Stores menu item selection
 	 */
-	int _selectedIndex;
+		int _selectedIndex;
 
-	/**
+		/**
 	 * Get the highlighted menu item under the cursor
 	 */
-	int getHighlightedItem(const Common::Point &pt);
+		int getHighlightedItem(const Common::Point &pt);
 
-	/**
+		/**
 	 * Un-highlight a currently highlighted item
 	 */
-	void unhighlightItem();
+		void unhighlightItem();
 
-	/**
+		/**
 	 * Execute a given menuitem
 	 */
-	void handleAction(MADSGameAction action);
+		void handleAction(MADSGameAction action);
 
-	/**
+		/**
 	 * Add a sprite slot for the current menuitem frame
 	 */
-	void addSpriteSlot();
+		void addSpriteSlot();
 
-	/**
+		/**
 	 * Returns true if the Quotes item should be shown.
 	 * i.e. if the player has completed the game
 	 */
-	bool shouldShowQuotes();
+		bool shouldShowQuotes();
 
-	/**
+		/**
 	 * Show the bonus item icons, if available
 	 */
-	void showBonusItems();
-protected:
-	/**
+		void showBonusItems();
+
+	protected:
+		/**
 	 * Display the menu
 	 */
-	virtual void display();
+		virtual void display();
 
-	/**
+		/**
 	 * Handle the menu item animations
 	 */
-	virtual void doFrame();
+		virtual void doFrame();
 
-	/**
+		/**
 	 * Event handler
 	 */
-	virtual bool onEvent(Common::Event &event);
-public:
-	MainMenu(MADSEngine *vm);
+		virtual bool onEvent(Common::Event &event);
 
-	virtual ~MainMenu();
-};
+	public:
+		MainMenu(MADSEngine *vm);
 
-class AdvertView : public EventTarget {
-private:
-	/**
+		virtual ~MainMenu();
+	};
+
+	class AdvertView : public EventTarget {
+	private:
+		/**
 	 * Engine reference
 	 */
-	MADSEngine *_vm;
+		MADSEngine *_vm;
 
-	/**
+		/**
 	 * Signals when to close the dialog
 	 */
-	bool _breakFlag;
-protected:
-	/**
+		bool _breakFlag;
+
+	protected:
+		/**
 	* Event handler
 	*/
-	virtual bool onEvent(Common::Event &event);
-public:
-	AdvertView(MADSEngine *vm);
+		virtual bool onEvent(Common::Event &event);
 
-	virtual ~AdvertView() {}
+	public:
+		AdvertView(MADSEngine *vm);
 
-	/**
+		virtual ~AdvertView() {}
+
+		/**
 	 * Show the dialog
 	 */
-	void show();
-};
+		void show();
+	};
 
-class RexAnimationView : public AnimationView {
-protected:
-	virtual void scriptDone();
-public:
-	RexAnimationView(MADSEngine *vm) : AnimationView(vm) {}
-};
+	class RexAnimationView : public AnimationView {
+	protected:
+		virtual void scriptDone();
 
-class RexTextView : public TextView {
-public:
-	RexTextView(MADSEngine *vm) : TextView(vm) {}
-};
+	public:
+		RexAnimationView(MADSEngine *vm)
+		  : AnimationView(vm) {}
+	};
+
+	class RexTextView : public TextView {
+	public:
+		RexTextView(MADSEngine *vm)
+		  : TextView(vm) {}
+	};
 
 } // End of namespace Nebular
 

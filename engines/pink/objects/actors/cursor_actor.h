@@ -25,9 +25,9 @@
 
 #include "common/debug.h"
 
-#include "pink/pink.h"
 #include "pink/objects/actions/action_cel.h"
 #include "pink/objects/actors/actor.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
@@ -47,7 +47,7 @@ public:
 	void setCursorItem(const Common::String &name, const Common::Point point) {
 		if (!_action || _action->getName() != name)
 			setAction(name);
-		static_cast<ActionCEL*>(_action)->setCenter(point);
+		static_cast<ActionCEL *>(_action)->setCenter(point);
 	}
 };
 

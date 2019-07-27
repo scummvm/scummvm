@@ -27,15 +27,16 @@
  */
 
 #include "engines/wintermute/base/save_thumb_helper.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
-#include "engines/wintermute/base/base_game.h"
 #include "graphics/scaler.h"
 
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-SaveThumbHelper::SaveThumbHelper(BaseGame *inGame) : _gameRef(inGame) {
+SaveThumbHelper::SaveThumbHelper(BaseGame *inGame)
+  : _gameRef(inGame) {
 	_thumbnail = nullptr;
 	_scummVMThumb = nullptr;
 }
@@ -71,7 +72,6 @@ BaseImage *SaveThumbHelper::storeThumb(bool doFlip, int width, int height) {
 			thumbnail = new BaseImage();
 			thumbnail->copyFrom(screenshot, width, height);
 		}
-
 
 		delete screenshot;
 		screenshot = nullptr;

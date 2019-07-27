@@ -30,15 +30,42 @@
 using namespace Common;
 
 enum Action {
-	GET = 1, PUSH = 3, PULL = 4, OPERATE = 5, OPEN = 6,	CLOSE = 7, LOCK = 8,
-	UNLOCK = 9,	USE = 10, GIVE = 11, TALK_TO = 12, TELL = 13, BUY = 14,
-	LOOK = 15, LOOK_AT = 16, LOOK_THROUGH = 17,	ASK = 18, DRINK = 20,
-	STATUS = 21, GO_TO = 22, RETURN = 23, BRIBE = 24, EXAMINE = 25,
-	NPC_SET_ROOM_AND_BLOCKED_OFFSET = 28, NPC_HEY_SIR = 29, NPC_EXEC_SCRIPT = 30,
-	NPC_RESET_PAUSED_LIST = 31, NPC_SET_RAND_DEST = 32, NPC_WALKING_CHECK = 33,
-	NPC_SET_SUPPORT_OFFSET = 34, NPC_SUPPORT_OFFSET_COND = 35,
-	NPC_DISPATCH_ACTION = 36, NPC_TALK_NPC_TO_NPC = 37, NPC_PAUSE = 38,
-	NPC_START_TALKING = 39, NPC_JUMP_ADDRESS = 40,
+	GET = 1,
+	PUSH = 3,
+	PULL = 4,
+	OPERATE = 5,
+	OPEN = 6,
+	CLOSE = 7,
+	LOCK = 8,
+	UNLOCK = 9,
+	USE = 10,
+	GIVE = 11,
+	TALK_TO = 12,
+	TELL = 13,
+	BUY = 14,
+	LOOK = 15,
+	LOOK_AT = 16,
+	LOOK_THROUGH = 17,
+	ASK = 18,
+	DRINK = 20,
+	STATUS = 21,
+	GO_TO = 22,
+	RETURN = 23,
+	BRIBE = 24,
+	EXAMINE = 25,
+	NPC_SET_ROOM_AND_BLOCKED_OFFSET = 28,
+	NPC_HEY_SIR = 29,
+	NPC_EXEC_SCRIPT = 30,
+	NPC_RESET_PAUSED_LIST = 31,
+	NPC_SET_RAND_DEST = 32,
+	NPC_WALKING_CHECK = 33,
+	NPC_SET_SUPPORT_OFFSET = 34,
+	NPC_SUPPORT_OFFSET_COND = 35,
+	NPC_DISPATCH_ACTION = 36,
+	NPC_TALK_NPC_TO_NPC = 37,
+	NPC_PAUSE = 38,
+	NPC_START_TALKING = 39,
+	NPC_JUMP_ADDRESS = 40,
 	NONE = 0
 };
 
@@ -50,9 +77,9 @@ struct CurrentActionOutput {
 	uint16 usedId;
 };
 
-int numParams[NPC_JUMP_ADDRESS+1] = {0,
-	1, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 0, 1,
-	0, 1, 1, 1, 1, 0, 0, 2, 1, 1, 0, 0, 1, 1, 2, 2, 5, 2, 2, 1};
+int numParams[NPC_JUMP_ADDRESS + 1] = { 0,
+	                                      1, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 0, 1,
+	                                      0, 1, 1, 1, 1, 0, 0, 2, 1, 1, 0, 0, 1, 1, 2, 2, 5, 2, 2, 1 };
 
 #define NUM_JUMP_OFFSETS 2
 
@@ -62,12 +89,12 @@ struct JumpOffsetsRecord {
 };
 
 JumpOffsetsRecord jumpOffsets[] = {
-	{EN_ANY, {0x87be, 0x881c}},
-	{IT_ITA, {0x881c, 0x887a}},
-	{FR_FRA, {0x8bbf, 0x8c18}},
-	{DE_DEU, {0x8c1c, 0x8c75}},
-	{ES_ESP, {0x8882, 0x88e0}},
-	{UNK_LANG, {0, 0}}
+	{ EN_ANY, { 0x87be, 0x881c } },
+	{ IT_ITA, { 0x881c, 0x887a } },
+	{ FR_FRA, { 0x8bbf, 0x8c18 } },
+	{ DE_DEU, { 0x8c1c, 0x8c75 } },
+	{ ES_ESP, { 0x8882, 0x88e0 } },
+	{ UNK_LANG, { 0, 0 } }
 };
 
 #define MAX_BUFFER_ENTRIES 63
@@ -100,9 +127,7 @@ uint16 get_sequence_index(uint16 offset, int supportIndex) {
 	for (index = 0; index < numSupportEntries; ++index) {
 		SupportStructure &rec = supportList[index];
 
-		if ((rec.numInstructions > 0) &&
-			(offset >= rec.instructionOffsets[0]) &&
-			(offset <= rec.instructionOffsets[rec.numInstructions - 1])) {
+		if ((rec.numInstructions > 0) && (offset >= rec.instructionOffsets[0]) && (offset <= rec.instructionOffsets[rec.numInstructions - 1])) {
 			// Scan through the entry's insruction list
 			for (int iIndex = 0; iIndex < rec.numInstructions; ++iIndex) {
 				if (rec.instructionOffsets[iIndex] == offset) {
@@ -127,47 +152,134 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 
 	switch (language) {
 	case EN_ANY:
-		if (startOffset == 0x7dcb) { startOffset = 0x7d9d; maxOffset = 0x7dcb; }
-		if (startOffset == 0x7248) { startOffset = 0x71ce; maxOffset = 0x7248; }
-		if (startOffset == 0x79a8) { startOffset = 0x785c; maxOffset = 0x79a8; }
-		if (startOffset == 0x6f4f) { startOffset = 0x6e5d; maxOffset = 0x6fe5; }
-		if (startOffset == 0x76ec) { startOffset = 0x734a; maxOffset = 0x77a2; }
+		if (startOffset == 0x7dcb) {
+			startOffset = 0x7d9d;
+			maxOffset = 0x7dcb;
+		}
+		if (startOffset == 0x7248) {
+			startOffset = 0x71ce;
+			maxOffset = 0x7248;
+		}
+		if (startOffset == 0x79a8) {
+			startOffset = 0x785c;
+			maxOffset = 0x79a8;
+		}
+		if (startOffset == 0x6f4f) {
+			startOffset = 0x6e5d;
+			maxOffset = 0x6fe5;
+		}
+		if (startOffset == 0x76ec) {
+			startOffset = 0x734a;
+			maxOffset = 0x77a2;
+		}
 		break;
 	case IT_ITA:
-		if (startOffset == 0x7e8b) { startOffset = 0x7e5d; maxOffset = 0x7eb5; }
-		if (startOffset == 0x7a68) { startOffset = 0x791c; maxOffset = 0x7a92; }
-		if (startOffset == 0x7308) { startOffset = 0x7308; maxOffset = 0x7362; }
-		if (startOffset == 0x7308) { startOffset = 0x728e; maxOffset = 0x7362; }
-		if (startOffset == 0x700f) { startOffset = 0x700f; maxOffset = 0x7083; }
-		if (startOffset == 0x700f) { startOffset = 0x6f1d; maxOffset = 0x70a5; }
-		if (startOffset == 0x7866) { startOffset = 0x740a; maxOffset = 0x7876; }
-		if (startOffset == 0x3600) { startOffset = 0x35c6; maxOffset = 0x3622; }
+		if (startOffset == 0x7e8b) {
+			startOffset = 0x7e5d;
+			maxOffset = 0x7eb5;
+		}
+		if (startOffset == 0x7a68) {
+			startOffset = 0x791c;
+			maxOffset = 0x7a92;
+		}
+		if (startOffset == 0x7308) {
+			startOffset = 0x7308;
+			maxOffset = 0x7362;
+		}
+		if (startOffset == 0x7308) {
+			startOffset = 0x728e;
+			maxOffset = 0x7362;
+		}
+		if (startOffset == 0x700f) {
+			startOffset = 0x700f;
+			maxOffset = 0x7083;
+		}
+		if (startOffset == 0x700f) {
+			startOffset = 0x6f1d;
+			maxOffset = 0x70a5;
+		}
+		if (startOffset == 0x7866) {
+			startOffset = 0x740a;
+			maxOffset = 0x7876;
+		}
+		if (startOffset == 0x3600) {
+			startOffset = 0x35c6;
+			maxOffset = 0x3622;
+		}
 		break;
 	case FR_FRA:
-		if (startOffset == 0x7eab) { startOffset = 0x7e7d; maxOffset = 0x7ed5; }
-		if (startOffset == 0x7a88) { startOffset = 0x793c; maxOffset = 0x7ab2; }
-		if (startOffset == 0x7328) { startOffset = 0x72ae; maxOffset = 0x7382; }
-		if (startOffset == 0x702f) { startOffset = 0x6f3d; maxOffset = 0x70a3; }
-		if (startOffset == 0x7886) { startOffset = 0x742a; maxOffset = 0x7896; }
+		if (startOffset == 0x7eab) {
+			startOffset = 0x7e7d;
+			maxOffset = 0x7ed5;
+		}
+		if (startOffset == 0x7a88) {
+			startOffset = 0x793c;
+			maxOffset = 0x7ab2;
+		}
+		if (startOffset == 0x7328) {
+			startOffset = 0x72ae;
+			maxOffset = 0x7382;
+		}
+		if (startOffset == 0x702f) {
+			startOffset = 0x6f3d;
+			maxOffset = 0x70a3;
+		}
+		if (startOffset == 0x7886) {
+			startOffset = 0x742a;
+			maxOffset = 0x7896;
+		}
 		break;
 	case DE_DEU:
-		if (startOffset == 0x7edb) { startOffset = 0x7ead; maxOffset = 0x7f05; }
-		if (startOffset == 0x7ab8) { startOffset = 0x796c; maxOffset = 0x7ae2; }
-		if (startOffset == 0x7358) { startOffset = 0x72de; maxOffset = 0x73b2; }
-		if (startOffset == 0x705f) { startOffset = 0x6f6d; maxOffset = 0x70d3; }
-		if (startOffset == 0x78b6) { startOffset = 0x745a; maxOffset = 0x78c6; }
+		if (startOffset == 0x7edb) {
+			startOffset = 0x7ead;
+			maxOffset = 0x7f05;
+		}
+		if (startOffset == 0x7ab8) {
+			startOffset = 0x796c;
+			maxOffset = 0x7ae2;
+		}
+		if (startOffset == 0x7358) {
+			startOffset = 0x72de;
+			maxOffset = 0x73b2;
+		}
+		if (startOffset == 0x705f) {
+			startOffset = 0x6f6d;
+			maxOffset = 0x70d3;
+		}
+		if (startOffset == 0x78b6) {
+			startOffset = 0x745a;
+			maxOffset = 0x78c6;
+		}
 		break;
 	default:
-		if (startOffset == 0x7eab) { startOffset = 0x7e7d; maxOffset = 0x7ed5; }
-		if (startOffset == 0x7a88) { startOffset = 0x793c; maxOffset = 0x7ab2; }
-		if (startOffset == 0x7328) { startOffset = 0x72ae; maxOffset = 0x7382; }
-		if (startOffset == 0x702f) { startOffset = 0x702f; maxOffset = 0x70a3; }
-		if (startOffset == 0x702f) { startOffset = 0x6f3d; maxOffset = 0x70c5; }
-		if (startOffset == 0x7886) { startOffset = 0x742a; maxOffset = 0x7896; }
+		if (startOffset == 0x7eab) {
+			startOffset = 0x7e7d;
+			maxOffset = 0x7ed5;
+		}
+		if (startOffset == 0x7a88) {
+			startOffset = 0x793c;
+			maxOffset = 0x7ab2;
+		}
+		if (startOffset == 0x7328) {
+			startOffset = 0x72ae;
+			maxOffset = 0x7382;
+		}
+		if (startOffset == 0x702f) {
+			startOffset = 0x702f;
+			maxOffset = 0x70a3;
+		}
+		if (startOffset == 0x702f) {
+			startOffset = 0x6f3d;
+			maxOffset = 0x70c5;
+		}
+		if (startOffset == 0x7886) {
+			startOffset = 0x742a;
+			maxOffset = 0x7896;
+		}
 		break;
 	}
 
-//printf("Start=%xh max=%xh\n", startOffset, maxOffset);
+	//printf("Start=%xh max=%xh\n", startOffset, maxOffset);
 	SymbolTableEntry symbolTable[MAX_INSTRUCTION_ENTRIES];
 	uint16 numSymbols = 0;
 	uint16 offset = startOffset;
@@ -176,7 +288,7 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 	uint16 paramIndex;
 	uint16 params[5];
 	uint16 index;
-	uint16 *pOut = (uint16 *) data;
+	uint16 *pOut = (uint16 *)data;
 	JumpOffsetsRecord *jmpOffset;
 
 	lureExe.seek(dataSegment + startOffset);
@@ -189,8 +301,7 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 		}
 
 		// Check for end of sequence set with prior instruction
-		if ((actionNum == NPC_SET_SUPPORT_OFFSET) && ((maxOffset == 0) ||
-			(offset > maxOffset)))
+		if ((actionNum == NPC_SET_SUPPORT_OFFSET) && ((maxOffset == 0) || (offset > maxOffset)))
 			break;
 
 		// Mark the offset of the next instruction
@@ -203,14 +314,13 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 		// Get in the next action
 		actionNum = lureExe.readWord();
 
-//printf("%xh - action=%d", offset, actionNum);
+		//printf("%xh - action=%d", offset, actionNum);
 
 		if (actionNum == 0) {
 			// At end of script block
-//printf("\n");
+			//printf("\n");
 			break;
-		}
-		else if (actionNum > NPC_JUMP_ADDRESS) {
+		} else if (actionNum > NPC_JUMP_ADDRESS) {
 			// Unknown action code - halt execution
 			printf("%xh - unknown action %d\n", offset, actionNum);
 			exit(1);
@@ -237,9 +347,7 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 
 			// Special check for forward references - it's considered to be in
 			// the same block if it's forward within 100h blocks
-			if ((params[paramIndex] > offset) &&
-				(params[paramIndex] < offset + FORWARD_JUMP_ALLOWANCE) &&
-				(params[paramIndex] > maxOffset)) {
+			if ((params[paramIndex] > offset) && (params[paramIndex] < offset + FORWARD_JUMP_ALLOWANCE) && (params[paramIndex] > maxOffset)) {
 				maxOffset = params[paramIndex];
 			}
 			break;
@@ -247,7 +355,8 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 		case NPC_JUMP_ADDRESS:
 			// Make sure the address is in the known list
 			jmpOffset = &jumpOffsets[0];
-			while (jmpOffset->language != language) ++jmpOffset;
+			while (jmpOffset->language != language)
+				++jmpOffset;
 			index = 0;
 			while ((index < NUM_JUMP_OFFSETS) && (jmpOffset->jumpOffsets[index] != params[0]))
 				++index;
@@ -273,12 +382,11 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 		}
 
 		// Output parameters
-		for (paramIndex = 0; paramIndex < numParams[actionNum]; ++paramIndex)
-		{
+		for (paramIndex = 0; paramIndex < numParams[actionNum]; ++paramIndex) {
 			*pOut++ = TO_LE_16(params[paramIndex]);
-//printf(" %xh", TO_LE_16(params[paramIndex]));
+			//printf(" %xh", TO_LE_16(params[paramIndex]));
 		}
-//printf("\n");
+		//printf("\n");
 
 		// Increase size
 		totalSize += (numParams[actionNum] + 1) * sizeof(uint16);
@@ -299,14 +407,14 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 		else {
 			// Handle resolving the constant
 			index = get_sequence_index(READ_LE_UINT16(symbolTable[symbolCtr].p),
-				symbolTable[symbolCtr].globalNeeded ? -1 : supportIndex);
-//printf("Symbol %xh => %xh\n", *symbolTable[symbolCtr].p, index);
+			                           symbolTable[symbolCtr].globalNeeded ? -1 : supportIndex);
+			//printf("Symbol %xh => %xh\n", *symbolTable[symbolCtr].p, index);
 			if (index != 0xffff) {
 				// Jump found - so replace symbol entry with it
 				WRITE_LE_UINT16(symbolTable[symbolCtr].p, index);
 			} else {
 				printf("Sequence contained unknown offset %xh\n",
-					READ_LE_UINT16(symbolTable[symbolCtr].p));
+				       READ_LE_UINT16(symbolTable[symbolCtr].p));
 				exit(1);
 			}
 		}
@@ -328,9 +436,9 @@ void process_entry(uint16 offset, byte *data, uint16 &totalSize) {
 			exit(1);
 		}
 
-//printf("process_entry index=%d, offset=%xh\n", numSupportEntries, offset);
+		//printf("process_entry index=%d, offset=%xh\n", numSupportEntries, offset);
 		totalSize += process_action_sequence_entry(numSupportEntries - 1,
-			data + totalSize,  MAX_DATA_SIZE - totalSize);
+		                                           data + totalSize, MAX_DATA_SIZE - totalSize);
 	}
 }
 
@@ -353,7 +461,7 @@ void read_action_sequence(byte *&data, uint16 &totalSize) {
 	int index, roomIndex;
 
 	// Allocate enough space for output sequence list
-	data = (byte *) malloc(MAX_DATA_SIZE);
+	data = (byte *)malloc(MAX_DATA_SIZE);
 
 	// Get a list of offsets used in the script engine
 	uint16 offsetList[NUM_TABLED_ACTION_BLOCKS];
@@ -367,11 +475,16 @@ void read_action_sequence(byte *&data, uint16 &totalSize) {
 
 	// Get a list of the offsets for each room
 	uint16 raOffset = 0x4D10;
-	if (language == IT_ITA) raOffset = 0x4dc0;
-	else if (language == FR_FRA) raOffset = 0x4df0;
-	else if (language == DE_DEU) raOffset = 0x4de0;
-	else if (language == ES_ESP) raOffset = 0x4dc0;
-	else if (language != EN_ANY) errorExit("read_action_sequence: Unknown language");
+	if (language == IT_ITA)
+		raOffset = 0x4dc0;
+	else if (language == FR_FRA)
+		raOffset = 0x4df0;
+	else if (language == DE_DEU)
+		raOffset = 0x4de0;
+	else if (language == ES_ESP)
+		raOffset = 0x4dc0;
+	else if (language != EN_ANY)
+		errorExit("read_action_sequence: Unknown language");
 
 	lureExe.seek(dataSegment + raOffset, SEEK_SET);
 	for (roomIndex = 0; roomIndex < RANDOM_ROOM_NUM_ENTRIES; ++roomIndex) {
@@ -397,8 +510,7 @@ void read_action_sequence(byte *&data, uint16 &totalSize) {
 			offset += 2;
 
 			uint16 firstCommand = lureExe.readWord();
-			randomActions[roomIndex].entries[entryCtr].offset =
-				(firstCommand == 0xfffe) ? 0 : offset;
+			randomActions[roomIndex].entries[entryCtr].offset = (firstCommand == 0xfffe) ? 0 : offset;
 
 			offset += sizeof(uint16);
 			while (lureExe.readWord() != 0xffff)
@@ -407,8 +519,7 @@ void read_action_sequence(byte *&data, uint16 &totalSize) {
 		}
 
 		// Adjust the total size to accomodate random action data in the output
-		totalSize += sizeof(uint16)  * randomActions[roomIndex].numEntries +
-			(sizeof(uint16) * 2);
+		totalSize += sizeof(uint16) * randomActions[roomIndex].numEntries + (sizeof(uint16) * 2);
 	}
 
 	totalSize += sizeof(uint16) + MAX_BUFFER_ENTRIES * sizeof(uint16);
@@ -419,13 +530,13 @@ void read_action_sequence(byte *&data, uint16 &totalSize) {
 	// index, so they need to be first, and in that order
 	switch (language) {
 	case EN_ANY:
-		process_entry(0x13c2, data, totalSize);	  // RETURN sequence
-		process_entry(0xbb95, data, totalSize);	  // Exit blocked sequence
-		process_entry(0x706c, data, totalSize);   // Jump proc #2 - go to castle basement
+		process_entry(0x13c2, data, totalSize); // RETURN sequence
+		process_entry(0xbb95, data, totalSize); // Exit blocked sequence
+		process_entry(0x706c, data, totalSize); // Jump proc #2 - go to castle basement
 		process_entry(0x728a, data, totalSize);
 		process_entry(0x76ec, data, totalSize);
-		process_entry(0x4ebb, data, totalSize);	  // Goewin as a follower in cave
-		process_entry(0x7D9D, data, totalSize);	  // Goewin standard handler
+		process_entry(0x4ebb, data, totalSize); // Goewin as a follower in cave
+		process_entry(0x7D9D, data, totalSize); // Goewin standard handler
 		break;
 	case IT_ITA:
 		process_entry(0x13c2, data, totalSize);
@@ -460,18 +571,23 @@ void read_action_sequence(byte *&data, uint16 &totalSize) {
 	// Next process each of the character hotspots
 
 	uint16 hsOffset = 0x5d98;
-	if (language == IT_ITA) hsOffset = 0x5e58;
-	else if (language == FR_FRA) hsOffset = 0x5e78;
-	else if (language == DE_DEU) hsOffset = 0x5ea8;
-	else if (language == ES_ESP) hsOffset = 0x5e78;
-	else if (language != EN_ANY) errorExit("read_action_sequence: Unknown language");
+	if (language == IT_ITA)
+		hsOffset = 0x5e58;
+	else if (language == FR_FRA)
+		hsOffset = 0x5e78;
+	else if (language == DE_DEU)
+		hsOffset = 0x5ea8;
+	else if (language == ES_ESP)
+		hsOffset = 0x5e78;
+	else if (language != EN_ANY)
+		errorExit("read_action_sequence: Unknown language");
 
 	hotspotIndex = 0;
 	for (;;) {
-		lureExe.seek(dataSegment + hsOffset +
-			hotspotIndex * sizeof(HotspotHeaderEntry));
+		lureExe.seek(dataSegment + hsOffset + hotspotIndex * sizeof(HotspotHeaderEntry));
 		lureExe.read(&entryHeader, sizeof(HotspotHeaderEntry));
-		if (FROM_LE_16(entryHeader.offset) == 0xffff) break;
+		if (FROM_LE_16(entryHeader.offset) == 0xffff)
+			break;
 		++hotspotIndex;
 
 		// Move to the action sequence area of the hotspot
@@ -486,7 +602,7 @@ void read_action_sequence(byte *&data, uint16 &totalSize) {
 	for (roomIndex = 0; roomIndex < RANDOM_ROOM_NUM_ENTRIES; ++roomIndex) {
 		for (index = 0; index < randomActions[roomIndex].numEntries; ++index) {
 			if (randomActions[roomIndex].entries[index].offset != 0xfffe) {
-//printf("room=%d entry=%xh\n", roomIndex+1, randomActions[roomIndex].entries[index].offset);
+				//printf("room=%d entry=%xh\n", roomIndex+1, randomActions[roomIndex].entries[index].offset);
 				process_entry(randomActions[roomIndex].entries[index].offset, data, totalSize);
 			}
 		}
@@ -494,7 +610,7 @@ void read_action_sequence(byte *&data, uint16 &totalSize) {
 
 	// Output the list used in the script engine
 
-	pHeader = (uint16 *) data;
+	pHeader = (uint16 *)data;
 	for (index = 0; index < NUM_TABLED_ACTION_BLOCKS; ++index)
 		if (offsetList[index] == 0)
 			*pHeader++ = 0;
@@ -508,7 +624,7 @@ void read_action_sequence(byte *&data, uint16 &totalSize) {
 		if (randomActions[roomIndex].numEntries == 0)
 			continue;
 
-		*pHeader++ = TO_LE_16(roomIndex + 1);    // Save the room number
+		*pHeader++ = TO_LE_16(roomIndex + 1); // Save the room number
 
 		// Create a word containing the number of available actions and a bit flag set
 		// specifying which of the actions are repeatable (as opposed to once only)

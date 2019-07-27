@@ -20,9 +20,9 @@
  *
  */
 
-#include "pink/pda_mgr.h"
-#include "pink/objects/actors/actor.h"
 #include "pink/objects/pages/pda_page.h"
+#include "pink/objects/actors/actor.h"
+#include "pink/pda_mgr.h"
 #include "pink/pink.h"
 
 namespace Pink {

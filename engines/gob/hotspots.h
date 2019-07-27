@@ -37,28 +37,28 @@ public:
 	static const int kHotspotCount = 250;
 
 	enum Type {
-		kTypeNone              =  0,
-		kTypeMove              =  1,
-		kTypeClick             =  2,
-		kTypeInput1NoLeave     =  3,
-		kTypeInput1Leave       =  4,
-		kTypeInput2NoLeave     =  5,
-		kTypeInput2Leave       =  6,
-		kTypeInput3NoLeave     =  7,
-		kTypeInput3Leave       =  8,
-		kTypeInputFloatNoLeave =  9,
-		kTypeInputFloatLeave   = 10,
-		kTypeEnable2           = 11,
-		kTypeEnable1           = 12,
-		kTypeClickEnter        = 21
+		kTypeNone = 0,
+		kTypeMove = 1,
+		kTypeClick = 2,
+		kTypeInput1NoLeave = 3,
+		kTypeInput1Leave = 4,
+		kTypeInput2NoLeave = 5,
+		kTypeInput2Leave = 6,
+		kTypeInput3NoLeave = 7,
+		kTypeInput3Leave = 8,
+		kTypeInputFloatNoLeave = 9,
+		kTypeInputFloatLeave = 10,
+		kTypeEnable2 = 11,
+		kTypeEnable1 = 12,
+		kTypeClickEnter = 21
 	};
 
 	enum State {
 		kStateFilledDisabled = 0xC,
-		kStateFilled         = 0x8,
-		kStateDisabled       = 0x4,
-		kStateType2          = 0x2,
-		kStateType1          = 0x1
+		kStateFilled = 0x8,
+		kStateDisabled = 0x4,
+		kStateType2 = 0x2,
+		kStateType1 = 0x1
 	};
 
 	Hotspots(GobEngine *vm);
@@ -69,9 +69,9 @@ public:
 
 	/** Add a hotspot, returning the new index. */
 	uint16 add(uint16 id,
-			uint16 left,  uint16 top, uint16 right, uint16 bottom,
-			uint16 flags, uint16 key,
-			uint16 funcEnter, uint16 funcLeave, uint16 funcPos);
+	           uint16 left, uint16 top, uint16 right, uint16 bottom,
+	           uint16 flags, uint16 key,
+	           uint16 funcEnter, uint16 funcLeave, uint16 funcPos);
 
 	/** Remove a specific hotspot. */
 	void remove(uint16 id);
@@ -103,42 +103,42 @@ public:
 
 private:
 	struct Hotspot {
-		uint16  id;
-		uint16  left;
-		uint16  top;
-		uint16  right;
-		uint16  bottom;
-		uint16  flags;
-		uint16  key;
-		uint16  funcEnter;
-		uint16  funcLeave;
-		uint16  funcPos;
+		uint16 id;
+		uint16 left;
+		uint16 top;
+		uint16 right;
+		uint16 bottom;
+		uint16 flags;
+		uint16 key;
+		uint16 funcEnter;
+		uint16 funcLeave;
+		uint16 funcPos;
 		Script *script;
 
 		Hotspot();
 		Hotspot(uint16 i,
-				uint16 l, uint16 t, uint16 r, uint16 b, uint16 f, uint16 k,
-				uint16 enter, uint16 leave, uint16 pos);
+		        uint16 l, uint16 t, uint16 r, uint16 b, uint16 f, uint16 k,
+		        uint16 enter, uint16 leave, uint16 pos);
 
 		void clear();
 
-		Type         getType  () const;
+		Type getType() const;
 		MouseButtons getButton() const;
-		uint16       getWindow() const;
-		uint8        getCursor() const;
-		uint8        getState () const;
+		uint16 getWindow() const;
+		uint8 getCursor() const;
+		uint8 getState() const;
 
 		/** Is this hotspot the block end marker? */
 		bool isEnd() const;
 
-		bool isInput      () const;
+		bool isInput() const;
 		bool isActiveInput() const;
-		bool isInputLeave () const;
+		bool isInputLeave() const;
 
-		bool isFilled       () const;
+		bool isFilled() const;
 		bool isFilledEnabled() const;
-		bool isFilledNew    () const;
-		bool isDisabled     () const;
+		bool isFilledNew() const;
+		bool isDisabled() const;
 
 		/** Are the specified coordinates in the hotspot? */
 		bool isIn(uint16 x, uint16 y) const;
@@ -148,18 +148,18 @@ private:
 		static uint8 getState(uint16 id);
 
 		void disable();
-		void enable ();
+		void enable();
 	};
 
 	struct StackEntry {
-		bool     shouldPush;
+		bool shouldPush;
 		Hotspot *hotspots;
-		uint32   size;
-		uint32   key;
-		uint32   id;
-		uint32   index;
-		uint16   x;
-		uint16   y;
+		uint32 size;
+		uint32 key;
+		uint32 id;
+		uint32 index;
+		uint16 x;
+		uint16 y;
 	};
 
 	struct InputDesc {
@@ -213,20 +213,20 @@ private:
 
 	/** Update events from a specific input. */
 	uint16 updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 height,
-			uint16 backColor, uint16 frontColor, char *str, uint16 fontIndex,
-			Type type, int16 &duration, uint16 &id, uint16 &index);
+	                   uint16 backColor, uint16 frontColor, char *str, uint16 fontIndex,
+	                   Type type, int16 &duration, uint16 &id, uint16 &index);
 
 	/** Handle all inputs we currently manage. */
 	uint16 handleInputs(int16 time, uint16 inputCount, uint16 &curInput,
-			InputDesc *inputs, uint16 &id, uint16 &index);
+	                    InputDesc *inputs, uint16 &id, uint16 &index);
 
 	/** Evaluate adding new hotspots script commands. */
 	void evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
-			uint16 &inputId, bool &hasInput, uint16 &inputCount);
+	                 uint16 &inputId, bool &hasInput, uint16 &inputCount);
 	/** Find the hotspot requested by script commands. */
 	bool evaluateFind(uint16 key, int16 timeVal, const uint16 *ids,
-			uint16 leaveWindowIndex, uint16 hotspotIndex1, uint16 hotspotIndex2,
-			uint16 endIndex, int16 &duration, uint16 &id, uint16 &index, bool &finished);
+	                  uint16 leaveWindowIndex, uint16 hotspotIndex1, uint16 hotspotIndex2,
+	                  uint16 endIndex, int16 &duration, uint16 &id, uint16 &index, bool &finished);
 
 	// Finding specific hotspots
 	/** Find the hotspot index that corresponds to the input index. */
@@ -246,7 +246,7 @@ private:
 
 	/** Leave the nth plain (without Type1 or Type2 state) hotspot. */
 	bool leaveNthPlain(uint16 n, uint16 startIndex, int16 timeVal, const uint16 *ids,
-			uint16 &id, uint16 &index, int16 &duration);
+	                   uint16 &id, uint16 &index, int16 &duration);
 
 	// Hotspot ID variable access
 	void setCurrentHotspot(const uint16 *ids, uint16 id) const;
@@ -255,15 +255,15 @@ private:
 	// String input functions
 	void cleanFloatString(const Hotspot &spot) const;
 	void checkStringMatch(const Hotspot &spot, const InputDesc &input,
-			uint16 inputPos) const;
+	                      uint16 inputPos) const;
 	void matchInputStrings(const InputDesc *inputs) const;
 
 	uint16 convertSpecialKey(uint16 key) const;
 
 	/** Calculate the graphical cursor position. */
 	void getTextCursorPos(const Font &font, const char *str,
-			uint32 pos, uint16 x, uint16 y, uint16 width, uint16 height,
-			uint16 &cursorX, uint16 &cursorY, uint16 &cursorWidth, uint16 &cursorHeight) const;
+	                      uint32 pos, uint16 x, uint16 y, uint16 width, uint16 height,
+	                      uint16 &cursorX, uint16 &cursorY, uint16 &cursorWidth, uint16 &cursorHeight) const;
 
 	/** Fill that rectangle with the color. */
 	void fillRect(uint16 x, uint16 y, uint16 width, uint16 height, uint16 color) const;

@@ -1024,1005 +1024,1005 @@ static const uint32 kEoB2TransferExpTableAmiga[6] = {
 static const Uint32Provider kEoB2TransferExpTableAmigaProvider = { ARRAYSIZE(kEoB2TransferExpTableAmiga), kEoB2TransferExpTableAmiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData00Amiga[5] = {
-	{ 0x01,   0, 208,  16,   1,   1,   0,   0,   0,   0 },
-	{ 0x01,   0, 208,  16,   1,   1,   0,   0,   0,   0 },
-	{ 0x00,   0, 216,  51,   8,   0,   0,   0,   0,   0 },
-	{ 0x06,   3,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x01, 0, 208, 16, 1, 1, 0, 0, 0, 0 },
+	{ 0x01, 0, 208, 16, 1, 1, 0, 0, 0, 0 },
+	{ 0x00, 0, 216, 51, 8, 0, 0, 0, 0, 0 },
+	{ 0x06, 3, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData00AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData00Amiga), kEoB2IntroAnimData00Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData01Amiga[5] = {
-	{ 0x01,   1, 184,   8,   1,   1,   0,   0,   0,   0 },
-	{ 0x01,   1, 184,   8,   1,   1,   0,   0,   0,   0 },
-	{ 0x00,   0, 216,  51,   7,   0,   0,   0,   0,   0 },
-	{ 0x06,   4,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x01, 1, 184, 8, 1, 1, 0, 0, 0, 0 },
+	{ 0x01, 1, 184, 8, 1, 1, 0, 0, 0, 0 },
+	{ 0x00, 0, 216, 51, 7, 0, 0, 0, 0, 0 },
+	{ 0x06, 4, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData01AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData01Amiga), kEoB2IntroAnimData01Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData02Amiga[5] = {
-	{ 0x01,   2, 216,  51,   1,   0,   0,   0,   0,   0 },
-	{ 0x01,   2, 216,  51,   1,   0,   0,   0,   0,   0 },
-	{ 0x00,   0, 216,  51,  18,   0,   0,   0,   0,   0 },
-	{ 0x06,   6,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x01, 2, 216, 51, 1, 0, 0, 0, 0, 0 },
+	{ 0x01, 2, 216, 51, 1, 0, 0, 0, 0, 0 },
+	{ 0x00, 0, 216, 51, 18, 0, 0, 0, 0, 0 },
+	{ 0x06, 6, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData02AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData02Amiga), kEoB2IntroAnimData02Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData03Amiga[4] = {
-	{ 0x00,   0,   0,   0,   1,   2,   0,   0,   0,   0 },
-	{ 0x06,   3,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x00,   0,   0,   0,   1,   2,   0,   0,   0,   0 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x00, 0, 0, 0, 1, 2, 0, 0, 0, 0 },
+	{ 0x06, 3, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x00, 0, 0, 0, 1, 2, 0, 0, 0, 0 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData03AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData03Amiga), kEoB2IntroAnimData03Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData04Amiga[3] = {
-	{ 0x01,   0, 282,   8,   1,   0,   0,   0,   0,   0 },
-	{ 0x01,   0, 282,   8,   1,   0,   0,   0,   0,   0 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x01, 0, 282, 8, 1, 0, 0, 0, 0, 0 },
+	{ 0x01, 0, 282, 8, 1, 0, 0, 0, 0, 0 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData04AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData04Amiga), kEoB2IntroAnimData04Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData05Amiga[4] = {
-	{ 0x00,   0,   0,   0,   1,   1,   0,   0,   0,   0 },
-	{ 0x00,   0,   0,   0,   1,   1,   0,   0,   0,   0 },
-	{ 0x06,   5,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x00, 0, 0, 0, 1, 1, 0, 0, 0, 0 },
+	{ 0x00, 0, 0, 0, 1, 1, 0, 0, 0, 0 },
+	{ 0x06, 5, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData05AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData05Amiga), kEoB2IntroAnimData05Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData06Amiga[16] = {
-	{ 0x01,  12, 170,  11,   2,   0,   0,   0,   0,   0 },
-	{ 0x01,  12, 188,  38,   2,   0,   0,   0,   0,   0 },
-	{ 0x01,  12, 203,  63,   2,   0,   0,   0,   0,   0 },
-	{ 0x01,  12, 218,  85,   2,   0,   0,   0,   0,   0 },
-	{ 0x01,  12, 232, 107,   2,   0,   0,   0,   0,   0 },
-	{ 0x06,   9,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x01,   3, 242, 125,   1,   0,   0,   0,   0,   0 },
-	{ 0x01,   4, 240, 125,   2,   0,   0,   0,   0,   0 },
-	{ 0x01,   5, 238, 124,   2,   0,   0,   0,   0,   0 },
-	{ 0x01,   6, 236, 123,   2,   0,   0,   0,   0,   0 },
-	{ 0x01,   7, 232, 121,   2,   0,   0,   0,   0,   0 },
-	{ 0x01,   8, 226, 120,   3,   0,   0,   0,   0,   0 },
-	{ 0x01,   9, 220, 119,   3,   0,   0,   0,   0,   0 },
-	{ 0x01,  10, 241, 115,   3,   0,   0,   0,   0,   0 },
-	{ 0x01,  11, 241, 115,   3,   0,   0,   0,   0,   0 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x01, 12, 170, 11, 2, 0, 0, 0, 0, 0 },
+	{ 0x01, 12, 188, 38, 2, 0, 0, 0, 0, 0 },
+	{ 0x01, 12, 203, 63, 2, 0, 0, 0, 0, 0 },
+	{ 0x01, 12, 218, 85, 2, 0, 0, 0, 0, 0 },
+	{ 0x01, 12, 232, 107, 2, 0, 0, 0, 0, 0 },
+	{ 0x06, 9, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x01, 3, 242, 125, 1, 0, 0, 0, 0, 0 },
+	{ 0x01, 4, 240, 125, 2, 0, 0, 0, 0, 0 },
+	{ 0x01, 5, 238, 124, 2, 0, 0, 0, 0, 0 },
+	{ 0x01, 6, 236, 123, 2, 0, 0, 0, 0, 0 },
+	{ 0x01, 7, 232, 121, 2, 0, 0, 0, 0, 0 },
+	{ 0x01, 8, 226, 120, 3, 0, 0, 0, 0, 0 },
+	{ 0x01, 9, 220, 119, 3, 0, 0, 0, 0, 0 },
+	{ 0x01, 10, 241, 115, 3, 0, 0, 0, 0, 0 },
+	{ 0x01, 11, 241, 115, 3, 0, 0, 0, 0, 0 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData06AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData06Amiga), kEoB2IntroAnimData06Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData07Amiga[5] = {
-	{ 0x01,  12,  54,  17,   2,   0,   0,   0,   0,   0 },
-	{ 0x01,  12,  80,  53,   2,   0,   0,   0,   0,   0 },
-	{ 0x01,  12, 104,  87,   2,   0,   0,   0,   0,   0 },
-	{ 0x01,  12, 130, 124,   2,   0,   0,   0,   0,   0 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x01, 12, 54, 17, 2, 0, 0, 0, 0, 0 },
+	{ 0x01, 12, 80, 53, 2, 0, 0, 0, 0, 0 },
+	{ 0x01, 12, 104, 87, 2, 0, 0, 0, 0, 0 },
+	{ 0x01, 12, 130, 124, 2, 0, 0, 0, 0, 0 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData07AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData07Amiga), kEoB2IntroAnimData07Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData08Amiga[6] = {
-	{ 0x01,  12, 112,   8,   2,   0,   0,   0,   0,   0 },
-	{ 0x01,  12, 126,  34,   2,   0,   0,   0,   0,   0 },
-	{ 0x01,  12, 142,  60,   2,   0,   0,   0,   0,   0 },
-	{ 0x01,  12, 170, 109,   2,   0,   0,   0,   0,   0 },
-	{ 0x06,   8,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x01, 12, 112, 8, 2, 0, 0, 0, 0, 0 },
+	{ 0x01, 12, 126, 34, 2, 0, 0, 0, 0, 0 },
+	{ 0x01, 12, 142, 60, 2, 0, 0, 0, 0, 0 },
+	{ 0x01, 12, 170, 109, 2, 0, 0, 0, 0, 0 },
+	{ 0x06, 8, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData08AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData08Amiga), kEoB2IntroAnimData08Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData09Amiga[4] = {
-	{ 0x05,   0, 184,  64,   6,   0,  30,   8,   3,  16 },
-	{ 0x05,   0, 184,  64,   6,   0,  33,   8,   3,  16 },
-	{ 0x05,   0, 184,  64,   6,   0,  36,   8,   3,  16 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 184, 64, 6, 0, 30, 8, 3, 16 },
+	{ 0x05, 0, 184, 64, 6, 0, 33, 8, 3, 16 },
+	{ 0x05, 0, 184, 64, 6, 0, 36, 8, 3, 16 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData09AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData09Amiga), kEoB2IntroAnimData09Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData10Amiga[10] = {
-	{ 0x05,   0, 184,  64,   0,   0,  30,   8,   3,  16 },
-	{ 0x05,   0, 128,  88,   3,   0,  30,  32,   4,  24 },
-	{ 0x05,   0, 128,  88,   3,   0,  34,  32,   4,  24 },
-	{ 0x05,   0, 184,  64,   0,   0,  33,   8,   3,  16 },
-	{ 0x05,   0, 128,  88,   3,   0,  30,  32,   4,  24 },
-	{ 0x05,   0, 128,  88,   3,   0,  34,  32,   4,  24 },
-	{ 0x05,   0, 184,  64,   0,   0,  36,   8,   3,  16 },
-	{ 0x05,   0, 128,  88,   3,   0,  30,  32,   4,  24 },
-	{ 0x05,   0, 128,  88,   3,   0,  34,  32,   4,  24 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 184, 64, 0, 0, 30, 8, 3, 16 },
+	{ 0x05, 0, 128, 88, 3, 0, 30, 32, 4, 24 },
+	{ 0x05, 0, 128, 88, 3, 0, 34, 32, 4, 24 },
+	{ 0x05, 0, 184, 64, 0, 0, 33, 8, 3, 16 },
+	{ 0x05, 0, 128, 88, 3, 0, 30, 32, 4, 24 },
+	{ 0x05, 0, 128, 88, 3, 0, 34, 32, 4, 24 },
+	{ 0x05, 0, 184, 64, 0, 0, 36, 8, 3, 16 },
+	{ 0x05, 0, 128, 88, 3, 0, 30, 32, 4, 24 },
+	{ 0x05, 0, 128, 88, 3, 0, 34, 32, 4, 24 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData10AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData10Amiga), kEoB2IntroAnimData10Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData11Amiga[10] = {
-	{ 0x03,  15,  36,  48,   2,   1,   0,   0,   0,   0 },
-	{ 0x03,  15,  36,  48,   2,   2,   0,   0,   0,   0 },
-	{ 0x06,  11,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x03,  15,  36,  48,   2,   3,   0,   0,   0,   0 },
-	{ 0x03,  15,  36,  48,  90,   4,   0,   0,   0,   0 },
-	{ 0x03,  15,  36,  48,   2,   3,   0,   0,   0,   0 },
-	{ 0x03,  15,  36,  48,   2,   2,   0,   0,   0,   0 },
-	{ 0x03,  15,  36,  48,   2,   1,   0,   0,   0,   0 },
-	{ 0x03,  15,  36,  48,   2,   0,   0,   0,   0,   0 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x03, 15, 36, 48, 2, 1, 0, 0, 0, 0 },
+	{ 0x03, 15, 36, 48, 2, 2, 0, 0, 0, 0 },
+	{ 0x06, 11, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x03, 15, 36, 48, 2, 3, 0, 0, 0, 0 },
+	{ 0x03, 15, 36, 48, 90, 4, 0, 0, 0, 0 },
+	{ 0x03, 15, 36, 48, 2, 3, 0, 0, 0, 0 },
+	{ 0x03, 15, 36, 48, 2, 2, 0, 0, 0, 0 },
+	{ 0x03, 15, 36, 48, 2, 1, 0, 0, 0, 0 },
+	{ 0x03, 15, 36, 48, 2, 0, 0, 0, 0, 0 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData11AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData11Amiga), kEoB2IntroAnimData11Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData12Amiga[4] = {
-	{ 0x06,  10,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   0, 104,  24,   5,   0,   0,   8,  15, 112 },
-	{ 0x05,   0, 104,  24,   5,   0,  15,   8,  15, 112 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x06, 10, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 0, 104, 24, 5, 0, 0, 8, 15, 112 },
+	{ 0x05, 0, 104, 24, 5, 0, 15, 8, 15, 112 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData12AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData12Amiga), kEoB2IntroAnimData12Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData13Amiga[6] = {
-	{ 0x05,   0, 184,  64,   0,   0,  30,   8,   3,  16 },
-	{ 0x05,   0, 104,  72,   5,   0,  10, 120,  10,  64 },
-	{ 0x05,   0, 184,  64,   0,   0,  33,   8,   3,  16 },
-	{ 0x05,   0, 104,  72,   5,   0,  20, 120,  10,  64 },
-	{ 0x05,   0, 184,  64,   0,   0,  36,   8,   3,  16 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 184, 64, 0, 0, 30, 8, 3, 16 },
+	{ 0x05, 0, 104, 72, 5, 0, 10, 120, 10, 64 },
+	{ 0x05, 0, 184, 64, 0, 0, 33, 8, 3, 16 },
+	{ 0x05, 0, 104, 72, 5, 0, 20, 120, 10, 64 },
+	{ 0x05, 0, 184, 64, 0, 0, 36, 8, 3, 16 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData13AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData13Amiga), kEoB2IntroAnimData13Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData14Amiga[4] = {
-	{ 0x05,   0, 104,   0,   8,   0,   0,   0,  13, 200 },
-	{ 0x05,   0, 104,   0,   8,   0,  13,   0,  13, 200 },
-	{ 0x05,   0, 104,   0,   8,   0,  26,   0,  13, 200 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 104, 0, 8, 0, 0, 0, 13, 200 },
+	{ 0x05, 0, 104, 0, 8, 0, 13, 0, 13, 200 },
+	{ 0x05, 0, 104, 0, 8, 0, 26, 0, 13, 200 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData14AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData14Amiga), kEoB2IntroAnimData14Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData15Amiga[11] = {
-	{ 0x06, 255,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   9, 224,  72,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   3, 240,  40,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   6, 112,  72,   6,   0,   0,   0,   0,   0 },
-	{ 0x02,   1, 224,  72,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   4, 240,  40,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   7, 112,  72,   6,   0,   0,   0,   0,   0 },
-	{ 0x02,   2, 224,  72,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   5, 240,  40,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   8, 112,  72,   6,   0,   0,   0,   0,   0 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x06, 255, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 9, 224, 72, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 3, 240, 40, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 6, 112, 72, 6, 0, 0, 0, 0, 0 },
+	{ 0x02, 1, 224, 72, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 4, 240, 40, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 7, 112, 72, 6, 0, 0, 0, 0, 0 },
+	{ 0x02, 2, 224, 72, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 5, 240, 40, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 8, 112, 72, 6, 0, 0, 0, 0, 0 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData15AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData15Amiga), kEoB2IntroAnimData15Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData16Amiga[12] = {
-	{ 0x06, 255,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   9, 224,  72,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   3, 240,  40,   6,   0,   0,   0,   0,   0 },
-	{ 0x06,   5,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x00,   0,   0,   0,   1,   3,   0,   0,   0,   0 },
-	{ 0x00,   0,   0,   0,   1,   3,   0,   0,   0,   0 },
-	{ 0x00,   0,   0,   0,   1,   3,   0,   0,   0,   0 },
-	{ 0x02,   1, 224,  72,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   4, 240,  40,   6,   0,   0,   0,   0,   0 },
-	{ 0x02,   2, 224,  72,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   5, 240,  40,   6,   0,   0,   0,   0,   0 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x06, 255, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 9, 224, 72, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 3, 240, 40, 6, 0, 0, 0, 0, 0 },
+	{ 0x06, 5, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x00, 0, 0, 0, 1, 3, 0, 0, 0, 0 },
+	{ 0x00, 0, 0, 0, 1, 3, 0, 0, 0, 0 },
+	{ 0x00, 0, 0, 0, 1, 3, 0, 0, 0, 0 },
+	{ 0x02, 1, 224, 72, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 4, 240, 40, 6, 0, 0, 0, 0, 0 },
+	{ 0x02, 2, 224, 72, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 5, 240, 40, 6, 0, 0, 0, 0, 0 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData16AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData16Amiga), kEoB2IntroAnimData16Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData17Amiga[8] = {
-	{ 0x06, 255,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   9, 224,  72,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   3, 240,  40,   6,   0,   0,   0,   0,   0 },
-	{ 0x02,   1, 224,  72,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   4, 240,  40,   6,   0,   0,   0,   0,   0 },
-	{ 0x02,   2, 224,  72,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   5, 240,  40,   6,   0,   0,   0,   0,   0 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x06, 255, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 9, 224, 72, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 3, 240, 40, 6, 0, 0, 0, 0, 0 },
+	{ 0x02, 1, 224, 72, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 4, 240, 40, 6, 0, 0, 0, 0, 0 },
+	{ 0x02, 2, 224, 72, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 5, 240, 40, 6, 0, 0, 0, 0, 0 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData17AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData17Amiga), kEoB2IntroAnimData17Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData18Amiga[14] = {
-	{ 0x06, 255,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,  10, 136,  40,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   9, 224,  72,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   3, 240,  40,   3,   0,   0,   0,   0,   0 },
-	{ 0x02,  11, 136,  40,   3,   0,   0,   0,   0,   0 },
-	{ 0x02,  12, 136,  40,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   1, 224,  72,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   4, 240,  40,   3,   0,   0,   0,   0,   0 },
-	{ 0x02,  13, 136,  40,   3,   0,   0,   0,   0,   0 },
-	{ 0x02,  10, 136,  40,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   2, 224,  72,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   5, 240,  40,   3,   0,   0,   0,   0,   0 },
-	{ 0x02,  13, 136,  40,   3,   0,   0,   0,   0,   0 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x06, 255, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 10, 136, 40, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 9, 224, 72, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 3, 240, 40, 3, 0, 0, 0, 0, 0 },
+	{ 0x02, 11, 136, 40, 3, 0, 0, 0, 0, 0 },
+	{ 0x02, 12, 136, 40, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 1, 224, 72, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 4, 240, 40, 3, 0, 0, 0, 0, 0 },
+	{ 0x02, 13, 136, 40, 3, 0, 0, 0, 0, 0 },
+	{ 0x02, 10, 136, 40, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 2, 224, 72, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 5, 240, 40, 3, 0, 0, 0, 0, 0 },
+	{ 0x02, 13, 136, 40, 3, 0, 0, 0, 0, 0 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData18AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData18Amiga), kEoB2IntroAnimData18Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData19Amiga[14] = {
-	{ 0x06, 255,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,  11, 136,  40,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   9, 224,  72,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   3, 240,  40,   3,   0,   0,   0,   0,   0 },
-	{ 0x02,  10, 136,  40,   3,   0,   0,   0,   0,   0 },
-	{ 0x02,  13, 136,  40,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   1, 224,  72,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   4, 240,  40,   3,   0,   0,   0,   0,   0 },
-	{ 0x02,  12, 136,  40,   3,   0,   0,   0,   0,   0 },
-	{ 0x02,  11, 136,  40,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   2, 224,  72,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   5, 240,  40,   3,   0,   0,   0,   0,   0 },
-	{ 0x02,  13, 136,  40,   3,   0,   0,   0,   0,   0 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x06, 255, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 11, 136, 40, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 9, 224, 72, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 3, 240, 40, 3, 0, 0, 0, 0, 0 },
+	{ 0x02, 10, 136, 40, 3, 0, 0, 0, 0, 0 },
+	{ 0x02, 13, 136, 40, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 1, 224, 72, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 4, 240, 40, 3, 0, 0, 0, 0, 0 },
+	{ 0x02, 12, 136, 40, 3, 0, 0, 0, 0, 0 },
+	{ 0x02, 11, 136, 40, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 2, 224, 72, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 5, 240, 40, 3, 0, 0, 0, 0, 0 },
+	{ 0x02, 13, 136, 40, 3, 0, 0, 0, 0, 0 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData19AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData19Amiga), kEoB2IntroAnimData19Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData20Amiga[14] = {
-	{ 0x06, 255,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,  14, 136,  40,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   9, 224,  72,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   3, 240,  40,   3,   0,   0,   0,   0,   0 },
-	{ 0x02,  15, 136,  40,   3,   0,   0,   0,   0,   0 },
-	{ 0x02,  16, 136,  40,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   1, 224,  72,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   4, 240,  40,   3,   0,   0,   0,   0,   0 },
-	{ 0x02,  17, 136,  40,   3,   0,   0,   0,   0,   0 },
-	{ 0x02,  14, 136,  40,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   2, 224,  72,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   5, 240,  40,   3,   0,   0,   0,   0,   0 },
-	{ 0x02,  17, 136,  40,   3,   0,   0,   0,   0,   0 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x06, 255, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 14, 136, 40, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 9, 224, 72, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 3, 240, 40, 3, 0, 0, 0, 0, 0 },
+	{ 0x02, 15, 136, 40, 3, 0, 0, 0, 0, 0 },
+	{ 0x02, 16, 136, 40, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 1, 224, 72, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 4, 240, 40, 3, 0, 0, 0, 0, 0 },
+	{ 0x02, 17, 136, 40, 3, 0, 0, 0, 0, 0 },
+	{ 0x02, 14, 136, 40, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 2, 224, 72, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 5, 240, 40, 3, 0, 0, 0, 0, 0 },
+	{ 0x02, 17, 136, 40, 3, 0, 0, 0, 0, 0 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData20AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData20Amiga), kEoB2IntroAnimData20Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData21Amiga[2] = {
-	{ 0x05,   0, 104,  32,   0,   0,  10,   0,  10,  96 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 104, 32, 0, 0, 10, 0, 10, 96 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData21AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData21Amiga), kEoB2IntroAnimData21Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData22Amiga[2] = {
-	{ 0x05,   0, 104,  32,   3,   0,  20,   0,  10,  96 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 104, 32, 3, 0, 20, 0, 10, 96 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData22AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData22Amiga), kEoB2IntroAnimData22Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData23Amiga[2] = {
-	{ 0x05,   0, 104,  32,   0,   0,  30,   0,  10,  96 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 104, 32, 0, 0, 30, 0, 10, 96 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData23AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData23Amiga), kEoB2IntroAnimData23Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData24Amiga[2] = {
-	{ 0x05,   0, 104,  32,   0,   0,   0,  96,  10,  96 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 104, 32, 0, 0, 0, 96, 10, 96 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData24AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData24Amiga), kEoB2IntroAnimData24Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData25Amiga[2] = {
-	{ 0x05,   0, 104,  32,   3,   0,  10,  96,  10,  96 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 104, 32, 3, 0, 10, 96, 10, 96 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData25AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData25Amiga), kEoB2IntroAnimData25Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData26Amiga[2] = {
-	{ 0x05,   0, 104,  32,   0,   0,  20,  96,  10,  96 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 104, 32, 0, 0, 20, 96, 10, 96 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData26AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData26Amiga), kEoB2IntroAnimData26Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData27Amiga[2] = {
-	{ 0x05,   0, 104,  32,   0,   0,   0,   0,  10,  96 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 104, 32, 0, 0, 0, 0, 10, 96 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData27AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData27Amiga), kEoB2IntroAnimData27Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData28Amiga[2] = {
-	{ 0x05,   0, 104,  32,   3,   0,   0,   0,  10,  96 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 104, 32, 3, 0, 0, 0, 10, 96 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData28AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData28Amiga), kEoB2IntroAnimData28Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData29Amiga[2] = {
-	{ 0x05,   0, 104,  32,   4,   0,  10,   0,  10,  96 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 104, 32, 4, 0, 10, 0, 10, 96 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData29AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData29Amiga), kEoB2IntroAnimData29Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData30Amiga[2] = {
-	{ 0x05,   0, 104,  32,   8,   0,  20,   0,  10,  96 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 104, 32, 8, 0, 20, 0, 10, 96 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData30AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData30Amiga), kEoB2IntroAnimData30Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData31Amiga[5] = {
-	{ 0x06, 255,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   0, 176,  56,   3,   0,  19, 136,   2,   8 },
-	{ 0x05,   0, 176,  56,   3,   0,  21, 136,   2,   8 },
-	{ 0x05,   0, 176,  56,   3,   0,  23, 136,   2,   8 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x06, 255, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 0, 176, 56, 3, 0, 19, 136, 2, 8 },
+	{ 0x05, 0, 176, 56, 3, 0, 21, 136, 2, 8 },
+	{ 0x05, 0, 176, 56, 3, 0, 23, 136, 2, 8 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData31AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData31Amiga), kEoB2IntroAnimData31Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData32Amiga[14] = {
-	{ 0x06, 255,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   0, 176,  56,   0,   0,  19, 136,   2,   8 },
-	{ 0x05,   0, 144,  88,   5,   0,   1, 136,   6,  40 },
-	{ 0x05,   0, 176,  56,   0,   0,  21, 136,   2,   8 },
-	{ 0x05,   0, 144,  88,   3,   0,   7, 136,   6,  40 },
-	{ 0x05,   0, 176,  56,   2,   0,  23, 136,   2,   8 },
-	{ 0x05,   0, 144,  88,   3,   0,  13, 136,   6,  40 },
-	{ 0x05,   0, 176,  56,   0,   0,  19, 136,   2,   8 },
-	{ 0x05,   0, 144,  88,   6,   0,   1, 136,   6,  40 },
-	{ 0x05,   0, 176,  56,   0,   0,  21, 136,   2,   8 },
-	{ 0x05,   0, 144,  88,   3,   0,   7, 136,   6,  40 },
-	{ 0x05,   0, 176,  56,   0,   0,  23, 136,   2,   8 },
-	{ 0x05,   0, 144,  88,   3,   0,   1, 136,   6,  40 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x06, 255, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 0, 176, 56, 0, 0, 19, 136, 2, 8 },
+	{ 0x05, 0, 144, 88, 5, 0, 1, 136, 6, 40 },
+	{ 0x05, 0, 176, 56, 0, 0, 21, 136, 2, 8 },
+	{ 0x05, 0, 144, 88, 3, 0, 7, 136, 6, 40 },
+	{ 0x05, 0, 176, 56, 2, 0, 23, 136, 2, 8 },
+	{ 0x05, 0, 144, 88, 3, 0, 13, 136, 6, 40 },
+	{ 0x05, 0, 176, 56, 0, 0, 19, 136, 2, 8 },
+	{ 0x05, 0, 144, 88, 6, 0, 1, 136, 6, 40 },
+	{ 0x05, 0, 176, 56, 0, 0, 21, 136, 2, 8 },
+	{ 0x05, 0, 144, 88, 3, 0, 7, 136, 6, 40 },
+	{ 0x05, 0, 176, 56, 0, 0, 23, 136, 2, 8 },
+	{ 0x05, 0, 144, 88, 3, 0, 1, 136, 6, 40 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData32AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData32Amiga), kEoB2IntroAnimData32Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData33Amiga[8] = {
-	{ 0x06, 255,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   0,  80,  64,   0,   0,   1, 136,   2,  16 },
-	{ 0x05,   0, 248,  64,   3,   0,   7, 136,   2,  16 },
-	{ 0x05,   0,  80,  64,   0,   0,   3, 136,   2,  16 },
-	{ 0x05,   0, 248,  64,   3,   0,   9, 136,   2,  16 },
-	{ 0x05,   0,  80,  64,   0,   0,   5, 136,   2,  16 },
-	{ 0x05,   0, 248,  64,   3,   0,  11, 136,   2,  16 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x06, 255, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 0, 80, 64, 0, 0, 1, 136, 2, 16 },
+	{ 0x05, 0, 248, 64, 3, 0, 7, 136, 2, 16 },
+	{ 0x05, 0, 80, 64, 0, 0, 3, 136, 2, 16 },
+	{ 0x05, 0, 248, 64, 3, 0, 9, 136, 2, 16 },
+	{ 0x05, 0, 80, 64, 0, 0, 5, 136, 2, 16 },
+	{ 0x05, 0, 248, 64, 3, 0, 11, 136, 2, 16 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData33AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData33Amiga), kEoB2IntroAnimData33Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData34Amiga[5] = {
-	{ 0x06, 255,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   0,  16,  48,   0,   0,   0, 152,  14,  48 },
-	{ 0x05,   0, 192,  48,   4,   0,  14, 128,  13,  48 },
-	{ 0x05,   0,  16,  48,   0,   0,   1,  40,  35,  48 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x06, 255, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 0, 16, 48, 0, 0, 0, 152, 14, 48 },
+	{ 0x05, 0, 192, 48, 4, 0, 14, 128, 13, 48 },
+	{ 0x05, 0, 16, 48, 0, 0, 1, 40, 35, 48 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData34AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData34Amiga), kEoB2IntroAnimData34Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData35Amiga[6] = {
-	{ 0x06,   1,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   0, 168,  24,   3,   0,   0, 128,   2,  32 },
-	{ 0x05,   0, 152,  16,   3,   0,   0,  88,   5,  40 },
-	{ 0x05,   0, 128,   0,   3,   0,   0,   0,  10,  88 },
-	{ 0x05,   0, 104,   0,   3,   0,  13,   0,  14,  88 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x06, 1, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 0, 168, 24, 3, 0, 0, 128, 2, 32 },
+	{ 0x05, 0, 152, 16, 3, 0, 0, 88, 5, 40 },
+	{ 0x05, 0, 128, 0, 3, 0, 0, 0, 10, 88 },
+	{ 0x05, 0, 104, 0, 3, 0, 13, 0, 14, 88 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData35AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData35Amiga), kEoB2IntroAnimData35Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData36Amiga[2] = {
-	{ 0x05,   0, 104,   0,   0,   0,  13,   0,  13, 200 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 104, 0, 0, 0, 13, 0, 13, 200 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData36AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData36Amiga), kEoB2IntroAnimData36Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData37Amiga[25] = {
-	{ 0x03,  17,  36,  48,   0,   1,   0,   0,   0,   0 },
-	{ 0x03,  16, 142,  80,   0,   1,   0,   0,   0,   0 },
-	{ 0x03,  19, 151,  28,   2,   1,   0,   0,   0,   0 },
-	{ 0x03,  17,  36,  48,   0,   2,   0,   0,   0,   0 },
-	{ 0x03,  16, 142,  80,   0,   2,   0,   0,   0,   0 },
-	{ 0x03,  19, 151,  28,   2,   2,   0,   0,   0,   0 },
-	{ 0x03,  17,  36,  48,   0,   3,   0,   0,   0,   0 },
-	{ 0x03,  16, 142,  80,   0,   3,   0,   0,   0,   0 },
-	{ 0x03,  19, 151,  28,   2,   3,   0,   0,   0,   0 },
-	{ 0x03,  17,  36,  48,   0,   4,   0,   0,   0,   0 },
-	{ 0x03,  16, 142,  80,   0,   4,   0,   0,   0,   0 },
-	{ 0x03,  19, 151,  28,  54,   4,   0,   0,   0,   0 },
-	{ 0x03,  17,  36,  48,   0,   3,   0,   0,   0,   0 },
-	{ 0x03,  16, 142,  80,   0,   3,   0,   0,   0,   0 },
-	{ 0x03,  19, 151,  28,   2,   3,   0,   0,   0,   0 },
-	{ 0x03,  17,  36,  48,   0,   2,   0,   0,   0,   0 },
-	{ 0x03,  16, 142,  80,   0,   2,   0,   0,   0,   0 },
-	{ 0x03,  19, 151,  28,   2,   2,   0,   0,   0,   0 },
-	{ 0x03,  17,  36,  48,   0,   1,   0,   0,   0,   0 },
-	{ 0x03,  16, 142,  80,   0,   1,   0,   0,   0,   0 },
-	{ 0x03,  19, 151,  28,   2,   1,   0,   0,   0,   0 },
-	{ 0x03,  17,  36,  48,   0,   0,   0,   0,   0,   0 },
-	{ 0x03,  16, 142,  80,   0,   0,   0,   0,   0,   0 },
-	{ 0x03,  19, 151,  28,   2,   0,   0,   0,   0,   0 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x03, 17, 36, 48, 0, 1, 0, 0, 0, 0 },
+	{ 0x03, 16, 142, 80, 0, 1, 0, 0, 0, 0 },
+	{ 0x03, 19, 151, 28, 2, 1, 0, 0, 0, 0 },
+	{ 0x03, 17, 36, 48, 0, 2, 0, 0, 0, 0 },
+	{ 0x03, 16, 142, 80, 0, 2, 0, 0, 0, 0 },
+	{ 0x03, 19, 151, 28, 2, 2, 0, 0, 0, 0 },
+	{ 0x03, 17, 36, 48, 0, 3, 0, 0, 0, 0 },
+	{ 0x03, 16, 142, 80, 0, 3, 0, 0, 0, 0 },
+	{ 0x03, 19, 151, 28, 2, 3, 0, 0, 0, 0 },
+	{ 0x03, 17, 36, 48, 0, 4, 0, 0, 0, 0 },
+	{ 0x03, 16, 142, 80, 0, 4, 0, 0, 0, 0 },
+	{ 0x03, 19, 151, 28, 54, 4, 0, 0, 0, 0 },
+	{ 0x03, 17, 36, 48, 0, 3, 0, 0, 0, 0 },
+	{ 0x03, 16, 142, 80, 0, 3, 0, 0, 0, 0 },
+	{ 0x03, 19, 151, 28, 2, 3, 0, 0, 0, 0 },
+	{ 0x03, 17, 36, 48, 0, 2, 0, 0, 0, 0 },
+	{ 0x03, 16, 142, 80, 0, 2, 0, 0, 0, 0 },
+	{ 0x03, 19, 151, 28, 2, 2, 0, 0, 0, 0 },
+	{ 0x03, 17, 36, 48, 0, 1, 0, 0, 0, 0 },
+	{ 0x03, 16, 142, 80, 0, 1, 0, 0, 0, 0 },
+	{ 0x03, 19, 151, 28, 2, 1, 0, 0, 0, 0 },
+	{ 0x03, 17, 36, 48, 0, 0, 0, 0, 0, 0 },
+	{ 0x03, 16, 142, 80, 0, 0, 0, 0, 0, 0 },
+	{ 0x03, 19, 151, 28, 2, 0, 0, 0, 0, 0 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData37AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData37Amiga), kEoB2IntroAnimData37Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData38Amiga[22] = {
-	{ 0x03,  22,  13,  32,   0,   1,   0,   0,   0,   0 },
-	{ 0x03,  23,  67,  80,   1,   0,   0,   0,   0,   0 },
-	{ 0x03,  22,  13,  32,   0,   2,   0,   0,   0,   0 },
-	{ 0x03,  23,  67,  80,   1,   1,   0,   0,   0,   0 },
-	{ 0x06,  11,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x03,  22,  13,  32,   0,   3,   0,   0,   0,   0 },
-	{ 0x03,  23,  67,  80,   1,   2,   0,   0,   0,   0 },
-	{ 0x03,  22,  13,  32,   0,   4,   0,   0,   0,   0 },
-	{ 0x03,  23,  67,  80,   1,   3,   0,   0,   0,   0 },
-	{ 0x03,  22,  13,  32,   0,   4,   0,   0,   0,   0 },
-	{ 0x03,  23,  67,  80,  90,   4,   0,   0,   0,   0 },
-	{ 0x03,  22,  13,  32,   0,   4,   0,   0,   0,   0 },
-	{ 0x03,  23,  67,  80,   1,   3,   0,   0,   0,   0 },
-	{ 0x03,  22,  13,  32,   0,   3,   0,   0,   0,   0 },
-	{ 0x03,  23,  67,  80,   1,   2,   0,   0,   0,   0 },
-	{ 0x03,  22,  13,  32,   0,   2,   0,   0,   0,   0 },
-	{ 0x03,  23,  67,  80,   1,   1,   0,   0,   0,   0 },
-	{ 0x03,  22,  13,  32,   0,   1,   0,   0,   0,   0 },
-	{ 0x03,  23,  67,  80,   1,   0,   0,   0,   0,   0 },
-	{ 0x03,  22,  13,  32,   0,   0,   0,   0,   0,   0 },
-	{ 0x03,  23,  67,  80,   1,   0,   0,   0,   0,   0 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x03, 22, 13, 32, 0, 1, 0, 0, 0, 0 },
+	{ 0x03, 23, 67, 80, 1, 0, 0, 0, 0, 0 },
+	{ 0x03, 22, 13, 32, 0, 2, 0, 0, 0, 0 },
+	{ 0x03, 23, 67, 80, 1, 1, 0, 0, 0, 0 },
+	{ 0x06, 11, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x03, 22, 13, 32, 0, 3, 0, 0, 0, 0 },
+	{ 0x03, 23, 67, 80, 1, 2, 0, 0, 0, 0 },
+	{ 0x03, 22, 13, 32, 0, 4, 0, 0, 0, 0 },
+	{ 0x03, 23, 67, 80, 1, 3, 0, 0, 0, 0 },
+	{ 0x03, 22, 13, 32, 0, 4, 0, 0, 0, 0 },
+	{ 0x03, 23, 67, 80, 90, 4, 0, 0, 0, 0 },
+	{ 0x03, 22, 13, 32, 0, 4, 0, 0, 0, 0 },
+	{ 0x03, 23, 67, 80, 1, 3, 0, 0, 0, 0 },
+	{ 0x03, 22, 13, 32, 0, 3, 0, 0, 0, 0 },
+	{ 0x03, 23, 67, 80, 1, 2, 0, 0, 0, 0 },
+	{ 0x03, 22, 13, 32, 0, 2, 0, 0, 0, 0 },
+	{ 0x03, 23, 67, 80, 1, 1, 0, 0, 0, 0 },
+	{ 0x03, 22, 13, 32, 0, 1, 0, 0, 0, 0 },
+	{ 0x03, 23, 67, 80, 1, 0, 0, 0, 0, 0 },
+	{ 0x03, 22, 13, 32, 0, 0, 0, 0, 0, 0 },
+	{ 0x03, 23, 67, 80, 1, 0, 0, 0, 0, 0 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData38AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData38Amiga), kEoB2IntroAnimData38Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData39Amiga[3] = {
-	{ 0x06,   3,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x00,   0,   0,   0,   1,   2,   0,   0,   0,   0 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x06, 3, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x00, 0, 0, 0, 1, 2, 0, 0, 0, 0 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData39AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData39Amiga), kEoB2IntroAnimData39Amiga };
 
 static const DarkMoonAnimCommand kEoB2IntroAnimData40Amiga[5] = {
-	{ 0x06,   5,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x00,   0,   0,   0,   1,   3,   0,   0,   0,   0 },
-	{ 0x00,   0,   0,   0,   1,   3,   0,   0,   0,   0 },
-	{ 0x00,   0,   0,   0,   1,   3,   0,   0,   0,   0 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x06, 5, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x00, 0, 0, 0, 1, 3, 0, 0, 0, 0 },
+	{ 0x00, 0, 0, 0, 1, 3, 0, 0, 0, 0 },
+	{ 0x00, 0, 0, 0, 1, 3, 0, 0, 0, 0 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData40AmigaProvider = { ARRAYSIZE(kEoB2IntroAnimData40Amiga), kEoB2IntroAnimData40Amiga };
 
 static const DarkMoonShapeDef kEoB2IntroShapes00Amiga[15] = {
-	{    0,   1, 137,   4,  43 },
-	{    1,   5, 137,   4,  54 },
-	{    2,   9, 140,   4,   8 },
-	{    3,   1, 181,   1,   3 },
-	{    4,   9, 154,   1,   3 },
-	{    5,   9, 158,   2,   5 },
-	{    6,   9, 164,   3,   7 },
-	{    7,   9, 172,   3,  11 },
-	{    8,   9, 184,   5,  13 },
-	{    9,  15, 137,   6,  15 },
-	{   10,  15, 153,   2,  21 },
-	{   11,  17, 153,   2,  21 },
-	{   12,   1, 185,   1,   4 },
-	{   13,   1, 190,   1,   1 },
-	{    0,   0,   0,   0,   0 }
+	{ 0, 1, 137, 4, 43 },
+	{ 1, 5, 137, 4, 54 },
+	{ 2, 9, 140, 4, 8 },
+	{ 3, 1, 181, 1, 3 },
+	{ 4, 9, 154, 1, 3 },
+	{ 5, 9, 158, 2, 5 },
+	{ 6, 9, 164, 3, 7 },
+	{ 7, 9, 172, 3, 11 },
+	{ 8, 9, 184, 5, 13 },
+	{ 9, 15, 137, 6, 15 },
+	{ 10, 15, 153, 2, 21 },
+	{ 11, 17, 153, 2, 21 },
+	{ 12, 1, 185, 1, 4 },
+	{ 13, 1, 190, 1, 1 },
+	{ 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonShapeDefProvider kEoB2IntroShapes00AmigaProvider = { ARRAYSIZE(kEoB2IntroShapes00Amiga), kEoB2IntroShapes00Amiga };
 
 static const DarkMoonShapeDef kEoB2IntroShapes01Amiga[2] = {
-	{    0,   1, 137,   1,  16 },
-	{    0,   0,   0,   0,   0 }
+	{ 0, 1, 137, 1, 16 },
+	{ 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonShapeDefProvider kEoB2IntroShapes01AmigaProvider = { ARRAYSIZE(kEoB2IntroShapes01Amiga), kEoB2IntroShapes01Amiga };
 
 static const DarkMoonShapeDef kEoB2IntroShapes04Amiga[10] = {
-	{   15,   2,   0,  32,  14 },
-	{   16,   5,  16,   5,   8 },
-	{   17,   2,  26,  32,  19 },
-	{   18,   0, 140,  35,  10 },
-	{   19,  21,  16,   3,   8 },
-	{   20,   0,  47,  22,  10 },
-	{   21,   0,  59,  31,  10 },
-	{   22,   0,  71,  36,  39 },
-	{   23,   0, 119,  24,  15 },
-	{    0,   0,   0,   0,   0 }
+	{ 15, 2, 0, 32, 14 },
+	{ 16, 5, 16, 5, 8 },
+	{ 17, 2, 26, 32, 19 },
+	{ 18, 0, 140, 35, 10 },
+	{ 19, 21, 16, 3, 8 },
+	{ 20, 0, 47, 22, 10 },
+	{ 21, 0, 59, 31, 10 },
+	{ 22, 0, 71, 36, 39 },
+	{ 23, 0, 119, 24, 15 },
+	{ 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonShapeDefProvider kEoB2IntroShapes04AmigaProvider = { ARRAYSIZE(kEoB2IntroShapes04Amiga), kEoB2IntroShapes04Amiga };
 
 static const DarkMoonShapeDef kEoB2IntroShapes07Amiga[18] = {
-	{   -9,   1, 136,   6,  40 },
-	{   -1,   7, 136,   6,  40 },
-	{   -2,  13, 136,   6,  40 },
-	{    3,  19, 136,   2,  16 },
-	{    4,  21, 136,   2,  16 },
-	{    5,  23, 136,   2,  16 },
-	{    6,  19, 152,   1,   8 },
-	{    7,  20, 152,   1,   8 },
-	{    8,  21, 152,   1,   8 },
-	{  -10,  25, 136,   2,  16 },
-	{  -11,  27, 136,   2,  16 },
-	{  -12,  29, 136,   2,  16 },
-	{  -13,  31, 136,   2,  16 },
-	{  -14,  25, 152,   2,  16 },
-	{  -15,  27, 152,   2,  16 },
-	{  -16,  29, 152,   2,  16 },
-	{  -17,  31, 152,   2,  16 },
-	{    0,   0,   0,   0,   0 }
+	{ -9, 1, 136, 6, 40 },
+	{ -1, 7, 136, 6, 40 },
+	{ -2, 13, 136, 6, 40 },
+	{ 3, 19, 136, 2, 16 },
+	{ 4, 21, 136, 2, 16 },
+	{ 5, 23, 136, 2, 16 },
+	{ 6, 19, 152, 1, 8 },
+	{ 7, 20, 152, 1, 8 },
+	{ 8, 21, 152, 1, 8 },
+	{ -10, 25, 136, 2, 16 },
+	{ -11, 27, 136, 2, 16 },
+	{ -12, 29, 136, 2, 16 },
+	{ -13, 31, 136, 2, 16 },
+	{ -14, 25, 152, 2, 16 },
+	{ -15, 27, 152, 2, 16 },
+	{ -16, 29, 152, 2, 16 },
+	{ -17, 31, 152, 2, 16 },
+	{ 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonShapeDefProvider kEoB2IntroShapes07AmigaProvider = { ARRAYSIZE(kEoB2IntroShapes07Amiga), kEoB2IntroShapes07Amiga };
 
 static const DarkMoonShapeDef kEoB2IntroShapes13Amiga[10] = {
-	{   25,   2,   0,  32,  14 },
-	{   26,   5,  16,   5,   8 },
-	{   27,   2,  26,  32,  19 },
-	{   28,   0, 140,  35,  10 },
-	{   29,  21,  16,   3,   8 },
-	{   30,   0,  47,  22,  10 },
-	{   31,   0,  59,  31,  10 },
-	{   32,   0,  71,  36,  39 },
-	{   33,   0, 119,  24,  15 },
-	{    0,   0,   0,   0,   0 }
+	{ 25, 2, 0, 32, 14 },
+	{ 26, 5, 16, 5, 8 },
+	{ 27, 2, 26, 32, 19 },
+	{ 28, 0, 140, 35, 10 },
+	{ 29, 21, 16, 3, 8 },
+	{ 30, 0, 47, 22, 10 },
+	{ 31, 0, 59, 31, 10 },
+	{ 32, 0, 71, 36, 39 },
+	{ 33, 0, 119, 24, 15 },
+	{ 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonShapeDefProvider kEoB2IntroShapes13AmigaProvider = { ARRAYSIZE(kEoB2IntroShapes13Amiga), kEoB2IntroShapes13Amiga };
 
 static const DarkMoonShapeDef kEoB2IntroShapes14Amiga[10] = {
-	{   35,   2,   0,  32,  14 },
-	{   36,   5,  16,   5,   8 },
-	{   37,   2,  26,  32,  19 },
-	{   38,   0, 140,  35,  10 },
-	{   39,  21,  16,   3,   8 },
-	{   40,   0,  47,  22,  10 },
-	{   41,   0,  59,  31,  10 },
-	{   42,   0,  71,  36,  39 },
-	{   43,   0, 119,  24,  15 },
-	{    0,   0,   0,   0,   0 }
+	{ 35, 2, 0, 32, 14 },
+	{ 36, 5, 16, 5, 8 },
+	{ 37, 2, 26, 32, 19 },
+	{ 38, 0, 140, 35, 10 },
+	{ 39, 21, 16, 3, 8 },
+	{ 40, 0, 47, 22, 10 },
+	{ 41, 0, 59, 31, 10 },
+	{ 42, 0, 71, 36, 39 },
+	{ 43, 0, 119, 24, 15 },
+	{ 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonShapeDefProvider kEoB2IntroShapes14AmigaProvider = { ARRAYSIZE(kEoB2IntroShapes14Amiga), kEoB2IntroShapes14Amiga };
 
 static const DarkMoonShapeDef kEoB2IntroShapes15Amiga[10] = {
-	{   45,   2,   0,  32,  14 },
-	{   46,   5,  16,   5,   8 },
-	{   47,   2,  26,  32,  19 },
-	{   48,   0, 140,  35,  10 },
-	{   49,  21,  16,   3,   8 },
-	{   50,   0,  47,  22,  10 },
-	{   51,   0,  59,  31,  10 },
-	{   52,   0,  71,  36,  39 },
-	{   53,   0, 119,  24,  15 },
-	{    0,   0,   0,   0,   0 }
+	{ 45, 2, 0, 32, 14 },
+	{ 46, 5, 16, 5, 8 },
+	{ 47, 2, 26, 32, 19 },
+	{ 48, 0, 140, 35, 10 },
+	{ 49, 21, 16, 3, 8 },
+	{ 50, 0, 47, 22, 10 },
+	{ 51, 0, 59, 31, 10 },
+	{ 52, 0, 71, 36, 39 },
+	{ 53, 0, 119, 24, 15 },
+	{ 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonShapeDefProvider kEoB2IntroShapes15AmigaProvider = { ARRAYSIZE(kEoB2IntroShapes15Amiga), kEoB2IntroShapes15Amiga };
 
 static const DarkMoonAnimCommand kEoB2FinaleAnimData00Amiga[11] = {
-	{ 0x06,   4,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   0, 136,   8,   8,   0,   5, 136,  11,  48 },
-	{ 0x02,   1, 136,   8,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   0,  80,   8,   0,   0,   0, 136,   5,  40 },
-	{ 0x06,   5,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   0, 232,  88,   4,   0,   0,  88,   8,  48 },
-	{ 0x02,   3,  80,   8,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   0, 232,  88,   4,   0,   8,  88,   8,  48 },
-	{ 0x05,   0, 232,  88,   4,   0,  16,  88,   8,  48 },
-	{ 0x02,   2, 232,  88,   4,   0,   0,   0,   0,   0 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x06, 4, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 0, 136, 8, 8, 0, 5, 136, 11, 48 },
+	{ 0x02, 1, 136, 8, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 0, 80, 8, 0, 0, 0, 136, 5, 40 },
+	{ 0x06, 5, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 0, 232, 88, 4, 0, 0, 88, 8, 48 },
+	{ 0x02, 3, 80, 8, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 0, 232, 88, 4, 0, 8, 88, 8, 48 },
+	{ 0x05, 0, 232, 88, 4, 0, 16, 88, 8, 48 },
+	{ 0x02, 2, 232, 88, 4, 0, 0, 0, 0, 0 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2FinaleAnimData00AmigaProvider = { ARRAYSIZE(kEoB2FinaleAnimData00Amiga), kEoB2FinaleAnimData00Amiga };
 
 static const DarkMoonAnimCommand kEoB2FinaleAnimData01Amiga[9] = {
-	{ 0x06,   4,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   0, 136,   8,  12,   0,   5, 136,  11,  48 },
-	{ 0x02,   1, 136,   8,   0,   0,   0,   0,   0,   0 },
-	{ 0x06,   5,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   0, 232,  88,   6,   0,   0,  88,   8,  48 },
-	{ 0x05,   0, 232,  88,   6,   0,   8,  88,   8,  48 },
-	{ 0x05,   0, 232,  88,   6,   0,  16,  88,   8,  48 },
-	{ 0x02,   2, 232,  88,   6,   0,   0,   0,   0,   0 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x06, 4, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 0, 136, 8, 12, 0, 5, 136, 11, 48 },
+	{ 0x02, 1, 136, 8, 0, 0, 0, 0, 0, 0 },
+	{ 0x06, 5, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 0, 232, 88, 6, 0, 0, 88, 8, 48 },
+	{ 0x05, 0, 232, 88, 6, 0, 8, 88, 8, 48 },
+	{ 0x05, 0, 232, 88, 6, 0, 16, 88, 8, 48 },
+	{ 0x02, 2, 232, 88, 6, 0, 0, 0, 0, 0 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2FinaleAnimData01AmigaProvider = { ARRAYSIZE(kEoB2FinaleAnimData01Amiga), kEoB2FinaleAnimData01Amiga };
 
 static const DarkMoonAnimCommand kEoB2FinaleAnimData02Amiga[4] = {
-	{ 0x05,   0, 232, 112,   6,   0,  24, 176,   3,  16 },
-	{ 0x05,   0, 232, 112,   6,   0,  27, 176,   3,  16 },
-	{ 0x05,   0, 232, 112,   6,   0,  30, 176,   3,  16 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 232, 112, 6, 0, 24, 176, 3, 16 },
+	{ 0x05, 0, 232, 112, 6, 0, 27, 176, 3, 16 },
+	{ 0x05, 0, 232, 112, 6, 0, 30, 176, 3, 16 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2FinaleAnimData02AmigaProvider = { ARRAYSIZE(kEoB2FinaleAnimData02Amiga), kEoB2FinaleAnimData02Amiga };
 
 static const DarkMoonAnimCommand kEoB2FinaleAnimData03Amiga[6] = {
-	{ 0x05,   0,  80,   8,   0,   0,   0, 136,   5,  40 },
-	{ 0x05,   0, 232, 112,   3,   0,  24, 176,   3,  16 },
-	{ 0x02,   3,  80,   8,   3,   0,   0,   0,   0,   0 },
-	{ 0x05,   0, 232, 112,   3,   0,  27, 176,   3,  16 },
-	{ 0x05,   0, 232, 112,   3,   0,  30, 176,   3,  16 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 80, 8, 0, 0, 0, 136, 5, 40 },
+	{ 0x05, 0, 232, 112, 3, 0, 24, 176, 3, 16 },
+	{ 0x02, 3, 80, 8, 3, 0, 0, 0, 0, 0 },
+	{ 0x05, 0, 232, 112, 3, 0, 27, 176, 3, 16 },
+	{ 0x05, 0, 232, 112, 3, 0, 30, 176, 3, 16 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2FinaleAnimData03AmigaProvider = { ARRAYSIZE(kEoB2FinaleAnimData03Amiga), kEoB2FinaleAnimData03Amiga };
 
 static const DarkMoonAnimCommand kEoB2FinaleAnimData04Amiga[8] = {
-	{ 0x06,   6,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   0, 104,  40,   3,   0,  32,  88,   8,  88 },
-	{ 0x05,   0, 104,  40,   3,   0,  32,   0,   8,  88 },
-	{ 0x05,   0, 104,  40,   3,   0,  24,   0,   8,  88 },
-	{ 0x05,   0, 104,  40,   3,   0,  16,   0,   8,  88 },
-	{ 0x05,   0, 104,  40,   3,   0,   0,   0,   8,  88 },
-	{ 0x05,   0, 104,  40,   3,   0,  24,  88,   8,  88 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x06, 6, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 0, 104, 40, 3, 0, 32, 88, 8, 88 },
+	{ 0x05, 0, 104, 40, 3, 0, 32, 0, 8, 88 },
+	{ 0x05, 0, 104, 40, 3, 0, 24, 0, 8, 88 },
+	{ 0x05, 0, 104, 40, 3, 0, 16, 0, 8, 88 },
+	{ 0x05, 0, 104, 40, 3, 0, 0, 0, 8, 88 },
+	{ 0x05, 0, 104, 40, 3, 0, 24, 88, 8, 88 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2FinaleAnimData04AmigaProvider = { ARRAYSIZE(kEoB2FinaleAnimData04Amiga), kEoB2FinaleAnimData04Amiga };
 
 static const DarkMoonAnimCommand kEoB2FinaleAnimData05Amiga[7] = {
-	{ 0x05,   0, 232, 112,   0,   0,  24, 176,   3,  16 },
-	{ 0x05,   0, 128,  40,   4,   0,  33, 176,   2,  16 },
-	{ 0x05,   0, 232, 112,   0,   0,  27, 176,   3,  16 },
-	{ 0x05,   0, 128,  40,   4,   0,  35, 176,   2,  16 },
-	{ 0x05,   0, 232, 112,   0,   0,  30, 176,   3,  16 },
-	{ 0x05,   0, 128,  40,   4,   0,  37, 176,   2,  16 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 232, 112, 0, 0, 24, 176, 3, 16 },
+	{ 0x05, 0, 128, 40, 4, 0, 33, 176, 2, 16 },
+	{ 0x05, 0, 232, 112, 0, 0, 27, 176, 3, 16 },
+	{ 0x05, 0, 128, 40, 4, 0, 35, 176, 2, 16 },
+	{ 0x05, 0, 232, 112, 0, 0, 30, 176, 3, 16 },
+	{ 0x05, 0, 128, 40, 4, 0, 37, 176, 2, 16 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2FinaleAnimData05AmigaProvider = { ARRAYSIZE(kEoB2FinaleAnimData05Amiga), kEoB2FinaleAnimData05Amiga };
 
 static const DarkMoonAnimCommand kEoB2FinaleAnimData06Amiga[2] = {
-	{ 0x05,   0, 104,  40,   0,   0,  16, 136,   8,  48 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 104, 40, 0, 0, 16, 136, 8, 48 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2FinaleAnimData06AmigaProvider = { ARRAYSIZE(kEoB2FinaleAnimData06Amiga), kEoB2FinaleAnimData06Amiga };
 
 static const DarkMoonAnimCommand kEoB2FinaleAnimData07Amiga[6] = {
-	{ 0x05,   0, 208,  80,   4,   0,   0, 128,   6,  56 },
-	{ 0x05,   0, 208,  80,   4,   0,   6, 128,   6,  56 },
-	{ 0x05,   0, 208,  80,   4,   0,  12, 128,   6,  56 },
-	{ 0x05,   0, 208,  80,   4,   0,  18, 128,   6,  56 },
-	{ 0x05,   0, 208,  80,   4,   0,  24, 128,   6,  56 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 208, 80, 4, 0, 0, 128, 6, 56 },
+	{ 0x05, 0, 208, 80, 4, 0, 6, 128, 6, 56 },
+	{ 0x05, 0, 208, 80, 4, 0, 12, 128, 6, 56 },
+	{ 0x05, 0, 208, 80, 4, 0, 18, 128, 6, 56 },
+	{ 0x05, 0, 208, 80, 4, 0, 24, 128, 6, 56 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2FinaleAnimData07AmigaProvider = { ARRAYSIZE(kEoB2FinaleAnimData07Amiga), kEoB2FinaleAnimData07Amiga };
 
 static const DarkMoonAnimCommand kEoB2FinaleAnimData08Amiga[3] = {
-	{ 0x05,   0, 224,  56,   3,   0,   0, 184,   4,  16 },
-	{ 0x05,   0, 224,  56,   0,   0,   4, 184,   4,  16 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 224, 56, 3, 0, 0, 184, 4, 16 },
+	{ 0x05, 0, 224, 56, 0, 0, 4, 184, 4, 16 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2FinaleAnimData08AmigaProvider = { ARRAYSIZE(kEoB2FinaleAnimData08Amiga), kEoB2FinaleAnimData08Amiga };
 
 static const DarkMoonAnimCommand kEoB2FinaleAnimData09Amiga[8] = {
-	{ 0x01,   1, -10,  40,   2,   0,   0,   0,   0,   0 },
-	{ 0x01,   1,   0,  40,   2,   0,   0,   0,   0,   0 },
-	{ 0x01,   1,  10,  40,   2,   0,   0,   0,   0,   0 },
-	{ 0x01,   1,  20,  40,   2,   0,   0,   0,   0,   0 },
-	{ 0x01,   1,  30,  40,   2,   0,   0,   0,   0,   0 },
-	{ 0x01,   1,  40,  40,   2,   0,   0,   0,   0,   0 },
-	{ 0x02,   2,  48,  40,   2,   0,   0,   0,   0,   0 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x01, 1, -10, 40, 2, 0, 0, 0, 0, 0 },
+	{ 0x01, 1, 0, 40, 2, 0, 0, 0, 0, 0 },
+	{ 0x01, 1, 10, 40, 2, 0, 0, 0, 0, 0 },
+	{ 0x01, 1, 20, 40, 2, 0, 0, 0, 0, 0 },
+	{ 0x01, 1, 30, 40, 2, 0, 0, 0, 0, 0 },
+	{ 0x01, 1, 40, 40, 2, 0, 0, 0, 0, 0 },
+	{ 0x02, 2, 48, 40, 2, 0, 0, 0, 0, 0 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2FinaleAnimData09AmigaProvider = { ARRAYSIZE(kEoB2FinaleAnimData09Amiga), kEoB2FinaleAnimData09Amiga };
 
 static const DarkMoonAnimCommand kEoB2FinaleAnimData10Amiga[14] = {
-	{ 0x05,   1,   8,  40,   0,   0,  32,   0,   8,  80 },
-	{ 0x05,   1, 280,  96,   0,   0,  24, 160,   4,  40 },
-	{ 0x05,   1,  96,  96,   3,   0,  12,  80,   1,  16 },
-	{ 0x05,   1,   8,  40,   0,   0,  32,  80,   8,  80 },
-	{ 0x05,   1, 280,  96,   0,   0,  28, 160,   4,  40 },
-	{ 0x05,   1,  96,  96,   3,   0,  13,  80,   1,  16 },
-	{ 0x05,   1,   8,  40,   0,   0,  24,  80,   8,  80 },
-	{ 0x05,   1, 280,  96,   0,   0,  32, 160,   4,  40 },
-	{ 0x05,   1,  96,  96,   3,   0,  14,  80,   1,  16 },
-	{ 0x06,   8,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   1,  40,  32,   0,   0,   0,  40,  16,  40 },
-	{ 0x05,   1, 248,  88,   0,   0,  12, 176,   6,  24 },
-	{ 0x05,   1,  96,  80,   3,   0,   0, 128,  12,  24 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 1, 8, 40, 0, 0, 32, 0, 8, 80 },
+	{ 0x05, 1, 280, 96, 0, 0, 24, 160, 4, 40 },
+	{ 0x05, 1, 96, 96, 3, 0, 12, 80, 1, 16 },
+	{ 0x05, 1, 8, 40, 0, 0, 32, 80, 8, 80 },
+	{ 0x05, 1, 280, 96, 0, 0, 28, 160, 4, 40 },
+	{ 0x05, 1, 96, 96, 3, 0, 13, 80, 1, 16 },
+	{ 0x05, 1, 8, 40, 0, 0, 24, 80, 8, 80 },
+	{ 0x05, 1, 280, 96, 0, 0, 32, 160, 4, 40 },
+	{ 0x05, 1, 96, 96, 3, 0, 14, 80, 1, 16 },
+	{ 0x06, 8, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 1, 40, 32, 0, 0, 0, 40, 16, 40 },
+	{ 0x05, 1, 248, 88, 0, 0, 12, 176, 6, 24 },
+	{ 0x05, 1, 96, 80, 3, 0, 0, 128, 12, 24 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2FinaleAnimData10AmigaProvider = { ARRAYSIZE(kEoB2FinaleAnimData10Amiga), kEoB2FinaleAnimData10Amiga };
 
 static const DarkMoonAnimCommand kEoB2FinaleAnimData11Amiga[18] = {
-	{ 0x05,   1,  40,  32,   0,   0,  16,  40,  16,  40 },
-	{ 0x05,   1, 248,  88,   0,   0,  18, 176,   6,  24 },
-	{ 0x05,   1,  96,  80,   0,   0,   0, 152,  12,  24 },
-	{ 0x05,   1,   8,  40,   0,   0,  24,  80,   8,  80 },
-	{ 0x05,   1, 280,  96,   0,   0,  32, 160,   4,  40 },
-	{ 0x05,   1,  96,  96,   0,   0,  14,  80,   1,  16 },
-	{ 0x05,   0, 168,  16,   0,   0,  32,   0,   8,  80 },
-	{ 0x05,   0, 232,  16,   0,   0,  32,  80,   8,  80 },
-	{ 0x05,   1,   8,  40,   0,   0,  24,  80,   8,  80 },
-	{ 0x05,   1, 280,  96,   0,   0,  32, 160,   4,  40 },
-	{ 0x05,   1,  96,  96,   3,   0,  14,  80,   1,  16 },
-	{ 0x05,   1,   8,  40,   0,   0,  32,   0,   8,  80 },
-	{ 0x05,   1, 280,  96,   0,   0,  24, 160,   4,  40 },
-	{ 0x05,   1,  96,  96,   3,   0,  12,  80,   1,  16 },
-	{ 0x05,   1,   8,  40,   0,   0,  16,  80,   8,  80 },
-	{ 0x05,   1, 280,  96,   0,   0,  36, 160,   4,  40 },
-	{ 0x05,   1,  96,  96,   3,   0,  15,  80,   1,  16 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 1, 40, 32, 0, 0, 16, 40, 16, 40 },
+	{ 0x05, 1, 248, 88, 0, 0, 18, 176, 6, 24 },
+	{ 0x05, 1, 96, 80, 0, 0, 0, 152, 12, 24 },
+	{ 0x05, 1, 8, 40, 0, 0, 24, 80, 8, 80 },
+	{ 0x05, 1, 280, 96, 0, 0, 32, 160, 4, 40 },
+	{ 0x05, 1, 96, 96, 0, 0, 14, 80, 1, 16 },
+	{ 0x05, 0, 168, 16, 0, 0, 32, 0, 8, 80 },
+	{ 0x05, 0, 232, 16, 0, 0, 32, 80, 8, 80 },
+	{ 0x05, 1, 8, 40, 0, 0, 24, 80, 8, 80 },
+	{ 0x05, 1, 280, 96, 0, 0, 32, 160, 4, 40 },
+	{ 0x05, 1, 96, 96, 3, 0, 14, 80, 1, 16 },
+	{ 0x05, 1, 8, 40, 0, 0, 32, 0, 8, 80 },
+	{ 0x05, 1, 280, 96, 0, 0, 24, 160, 4, 40 },
+	{ 0x05, 1, 96, 96, 3, 0, 12, 80, 1, 16 },
+	{ 0x05, 1, 8, 40, 0, 0, 16, 80, 8, 80 },
+	{ 0x05, 1, 280, 96, 0, 0, 36, 160, 4, 40 },
+	{ 0x05, 1, 96, 96, 3, 0, 15, 80, 1, 16 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2FinaleAnimData11AmigaProvider = { ARRAYSIZE(kEoB2FinaleAnimData11Amiga), kEoB2FinaleAnimData11Amiga };
 
 static const DarkMoonAnimCommand kEoB2FinaleAnimData12Amiga[23] = {
-	{ 0x05,   1,  40,  32,   0,   0,  16,  40,  16,  40 },
-	{ 0x05,   1, 248,  88,   0,   0,  18, 176,   6,  24 },
-	{ 0x05,   1,  96,  80,   0,   0,   0, 152,  12,  24 },
-	{ 0x05,   1,   8,  40,   0,   0,  24,  80,   8,  80 },
-	{ 0x05,   1, 280,  96,   0,   0,  32, 160,   4,  40 },
-	{ 0x05,   1,  96,  96,   0,   0,  14,  80,   1,  16 },
-	{ 0x05,   0, 168,  16,   0,   0,  32,   0,   8,  80 },
-	{ 0x05,   0, 232,  16,   0,   0,  32,  80,   8,  80 },
-	{ 0x06,  15,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   2, 168,  16,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   1,   8,  40,   0,   0,  32,   0,   8,  80 },
-	{ 0x05,   1, 280,  96,   0,   0,  24, 160,   4,  40 },
-	{ 0x05,   1,  96,  96,   3,   0,  12,  80,   1,  16 },
-	{ 0x05,   0, 168,  16,   0,   0,  32,   0,   8,  80 },
-	{ 0x05,   0, 232,  16,   0,   0,  32,  80,   8,  80 },
-	{ 0x06,  15,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   3, 168,  16,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   1,   8,  40,   0,   0,  16,  80,   8,  80 },
-	{ 0x05,   1, 280,  96,   0,   0,  36, 160,   4,  40 },
-	{ 0x05,   1,  96,  96,   3,   0,  15,  80,   1,  16 },
-	{ 0x05,   0, 168,  16,   0,   0,  32,   0,   8,  80 },
-	{ 0x05,   0, 232,  16,   0,   0,  32,  80,   8,  80 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 1, 40, 32, 0, 0, 16, 40, 16, 40 },
+	{ 0x05, 1, 248, 88, 0, 0, 18, 176, 6, 24 },
+	{ 0x05, 1, 96, 80, 0, 0, 0, 152, 12, 24 },
+	{ 0x05, 1, 8, 40, 0, 0, 24, 80, 8, 80 },
+	{ 0x05, 1, 280, 96, 0, 0, 32, 160, 4, 40 },
+	{ 0x05, 1, 96, 96, 0, 0, 14, 80, 1, 16 },
+	{ 0x05, 0, 168, 16, 0, 0, 32, 0, 8, 80 },
+	{ 0x05, 0, 232, 16, 0, 0, 32, 80, 8, 80 },
+	{ 0x06, 15, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 2, 168, 16, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 1, 8, 40, 0, 0, 32, 0, 8, 80 },
+	{ 0x05, 1, 280, 96, 0, 0, 24, 160, 4, 40 },
+	{ 0x05, 1, 96, 96, 3, 0, 12, 80, 1, 16 },
+	{ 0x05, 0, 168, 16, 0, 0, 32, 0, 8, 80 },
+	{ 0x05, 0, 232, 16, 0, 0, 32, 80, 8, 80 },
+	{ 0x06, 15, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 3, 168, 16, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 1, 8, 40, 0, 0, 16, 80, 8, 80 },
+	{ 0x05, 1, 280, 96, 0, 0, 36, 160, 4, 40 },
+	{ 0x05, 1, 96, 96, 3, 0, 15, 80, 1, 16 },
+	{ 0x05, 0, 168, 16, 0, 0, 32, 0, 8, 80 },
+	{ 0x05, 0, 232, 16, 0, 0, 32, 80, 8, 80 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2FinaleAnimData12AmigaProvider = { ARRAYSIZE(kEoB2FinaleAnimData12Amiga), kEoB2FinaleAnimData12Amiga };
 
 static const DarkMoonAnimCommand kEoB2FinaleAnimData13Amiga[23] = {
-	{ 0x06,  15,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   1, 168,  16,   0,   0,   0,   0,   0,   0 },
-	{ 0x06,   9,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   1,  40,  32,   0,   0,   0,   0,  16,  40 },
-	{ 0x05,   1, 248,  88,   0,   0,   0, 176,   6,  24 },
-	{ 0x05,   1,  96,  80,   3,   0,   0,  80,  12,  24 },
-	{ 0x05,   0, 168,  16,   0,   0,  32,   0,   8,  80 },
-	{ 0x05,   0, 232,  16,   0,   0,  32,  80,   8,  80 },
-	{ 0x06,  15,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   3, 168,  16,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   1,  40,  32,   0,   0,  16,   0,  16,  40 },
-	{ 0x05,   1, 248,  88,   0,   0,   6, 176,   6,  24 },
-	{ 0x05,   1,  96,  80,   3,   0,   0, 104,  12,  24 },
-	{ 0x05,   0, 168,  16,   0,   0,  32,   0,   8,  80 },
-	{ 0x05,   0, 232,  16,   0,   0,  32,  80,   8,  80 },
-	{ 0x06,  15,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   2, 168,  16,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   1,  40,  32,   0,   0,   0,  40,  16,  40 },
-	{ 0x05,   1, 248,  88,   0,   0,  12, 176,   6,  24 },
-	{ 0x05,   1,  96,  80,   3,   0,   0, 128,  12,  24 },
-	{ 0x05,   0, 168,  16,   0,   0,  32,   0,   8,  80 },
-	{ 0x05,   0, 232,  16,   0,   0,  32,  80,   8,  80 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x06, 15, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 1, 168, 16, 0, 0, 0, 0, 0, 0 },
+	{ 0x06, 9, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 1, 40, 32, 0, 0, 0, 0, 16, 40 },
+	{ 0x05, 1, 248, 88, 0, 0, 0, 176, 6, 24 },
+	{ 0x05, 1, 96, 80, 3, 0, 0, 80, 12, 24 },
+	{ 0x05, 0, 168, 16, 0, 0, 32, 0, 8, 80 },
+	{ 0x05, 0, 232, 16, 0, 0, 32, 80, 8, 80 },
+	{ 0x06, 15, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 3, 168, 16, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 1, 40, 32, 0, 0, 16, 0, 16, 40 },
+	{ 0x05, 1, 248, 88, 0, 0, 6, 176, 6, 24 },
+	{ 0x05, 1, 96, 80, 3, 0, 0, 104, 12, 24 },
+	{ 0x05, 0, 168, 16, 0, 0, 32, 0, 8, 80 },
+	{ 0x05, 0, 232, 16, 0, 0, 32, 80, 8, 80 },
+	{ 0x06, 15, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 2, 168, 16, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 1, 40, 32, 0, 0, 0, 40, 16, 40 },
+	{ 0x05, 1, 248, 88, 0, 0, 12, 176, 6, 24 },
+	{ 0x05, 1, 96, 80, 3, 0, 0, 128, 12, 24 },
+	{ 0x05, 0, 168, 16, 0, 0, 32, 0, 8, 80 },
+	{ 0x05, 0, 232, 16, 0, 0, 32, 80, 8, 80 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2FinaleAnimData13AmigaProvider = { ARRAYSIZE(kEoB2FinaleAnimData13Amiga), kEoB2FinaleAnimData13Amiga };
 
 static const DarkMoonAnimCommand kEoB2FinaleAnimData14Amiga[24] = {
-	{ 0x06,  15,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   1, 168,  16,   0,   0,   0,   0,   0,   0 },
-	{ 0x06,   9,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   1,  40,  32,   0,   0,   0,   0,  16,  40 },
-	{ 0x05,   1, 248,  88,   0,   0,   0, 176,   6,  24 },
-	{ 0x05,   1,  96,  80,   3,   0,   0,  80,  12,  24 },
-	{ 0x05,   0, 168,  16,   0,   0,  32,   0,   8,  80 },
-	{ 0x05,   0, 232,  16,   0,   0,  32,  80,   8,  80 },
-	{ 0x06,  15,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   3, 168,  16,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   1,  40,  32,   0,   0,  16,   0,  16,  40 },
-	{ 0x05,   1, 248,  88,   0,   0,   6, 176,   6,  24 },
-	{ 0x05,   1,  96,  80,   3,   0,   0, 104,  12,  24 },
-	{ 0x05,   0, 168,  16,   0,   0,  32,   0,   8,  80 },
-	{ 0x05,   0, 232,  16,   0,   0,  32,  80,   8,  80 },
-	{ 0x06,  15,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   2, 168,  16,   0,   0,   0,   0,   0,   0 },
-	{ 0x06,   9,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   1,  40,  32,   0,   0,   0,  40,  16,  40 },
-	{ 0x05,   1, 248,  88,   0,   0,  12, 176,   6,  24 },
-	{ 0x05,   1,  96,  80,   3,   0,   0, 128,  12,  24 },
-	{ 0x05,   0, 168,  16,   0,   0,  32,   0,   8,  80 },
-	{ 0x05,   0, 232,  16,   0,   0,  32,  80,   8,  80 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x06, 15, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 1, 168, 16, 0, 0, 0, 0, 0, 0 },
+	{ 0x06, 9, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 1, 40, 32, 0, 0, 0, 0, 16, 40 },
+	{ 0x05, 1, 248, 88, 0, 0, 0, 176, 6, 24 },
+	{ 0x05, 1, 96, 80, 3, 0, 0, 80, 12, 24 },
+	{ 0x05, 0, 168, 16, 0, 0, 32, 0, 8, 80 },
+	{ 0x05, 0, 232, 16, 0, 0, 32, 80, 8, 80 },
+	{ 0x06, 15, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 3, 168, 16, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 1, 40, 32, 0, 0, 16, 0, 16, 40 },
+	{ 0x05, 1, 248, 88, 0, 0, 6, 176, 6, 24 },
+	{ 0x05, 1, 96, 80, 3, 0, 0, 104, 12, 24 },
+	{ 0x05, 0, 168, 16, 0, 0, 32, 0, 8, 80 },
+	{ 0x05, 0, 232, 16, 0, 0, 32, 80, 8, 80 },
+	{ 0x06, 15, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 2, 168, 16, 0, 0, 0, 0, 0, 0 },
+	{ 0x06, 9, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 1, 40, 32, 0, 0, 0, 40, 16, 40 },
+	{ 0x05, 1, 248, 88, 0, 0, 12, 176, 6, 24 },
+	{ 0x05, 1, 96, 80, 3, 0, 0, 128, 12, 24 },
+	{ 0x05, 0, 168, 16, 0, 0, 32, 0, 8, 80 },
+	{ 0x05, 0, 232, 16, 0, 0, 32, 80, 8, 80 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2FinaleAnimData14AmigaProvider = { ARRAYSIZE(kEoB2FinaleAnimData14Amiga), kEoB2FinaleAnimData14Amiga };
 
 static const DarkMoonAnimCommand kEoB2FinaleAnimData15Amiga[19] = {
-	{ 0x05,   1,  40,  32,   0,   0,   0,   0,  16,  40 },
-	{ 0x05,   1, 248,  88,   0,   0,   0, 176,   6,  24 },
-	{ 0x05,   1,  96,  80,   3,   0,   0,  80,  12,  24 },
-	{ 0x05,   0, 168,  16,   0,   0,  32,   0,   8,  80 },
-	{ 0x05,   0, 232,  16,   0,   0,  32,  80,   8,  80 },
-	{ 0x06,  15,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   3, 168,  16,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   1,  40,  32,   0,   0,  16,   0,  16,  40 },
-	{ 0x05,   1, 248,  88,   0,   0,   6, 176,   6,  24 },
-	{ 0x05,   1,  96,  80,   3,   0,   0, 104,  12,  24 },
-	{ 0x05,   0, 168,  16,   0,   0,  32,   0,   8,  80 },
-	{ 0x05,   0, 232,  16,   0,   0,  32,  80,   8,  80 },
-	{ 0x06,   9,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   1,  40,  32,   0,   0,   0,  40,  16,  40 },
-	{ 0x05,   1, 248,  88,   0,   0,  12, 176,   6,  24 },
-	{ 0x05,   1,  96,  80,   3,   0,   0, 128,  12,  24 },
-	{ 0x05,   0, 168,  16,   0,   0,  32,   0,   8,  80 },
-	{ 0x05,   0, 232,  16,   0,   0,  32,  80,   8,  80 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 1, 40, 32, 0, 0, 0, 0, 16, 40 },
+	{ 0x05, 1, 248, 88, 0, 0, 0, 176, 6, 24 },
+	{ 0x05, 1, 96, 80, 3, 0, 0, 80, 12, 24 },
+	{ 0x05, 0, 168, 16, 0, 0, 32, 0, 8, 80 },
+	{ 0x05, 0, 232, 16, 0, 0, 32, 80, 8, 80 },
+	{ 0x06, 15, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 3, 168, 16, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 1, 40, 32, 0, 0, 16, 0, 16, 40 },
+	{ 0x05, 1, 248, 88, 0, 0, 6, 176, 6, 24 },
+	{ 0x05, 1, 96, 80, 3, 0, 0, 104, 12, 24 },
+	{ 0x05, 0, 168, 16, 0, 0, 32, 0, 8, 80 },
+	{ 0x05, 0, 232, 16, 0, 0, 32, 80, 8, 80 },
+	{ 0x06, 9, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 1, 40, 32, 0, 0, 0, 40, 16, 40 },
+	{ 0x05, 1, 248, 88, 0, 0, 12, 176, 6, 24 },
+	{ 0x05, 1, 96, 80, 3, 0, 0, 128, 12, 24 },
+	{ 0x05, 0, 168, 16, 0, 0, 32, 0, 8, 80 },
+	{ 0x05, 0, 232, 16, 0, 0, 32, 80, 8, 80 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2FinaleAnimData15AmigaProvider = { ARRAYSIZE(kEoB2FinaleAnimData15Amiga), kEoB2FinaleAnimData15Amiga };
 
 static const DarkMoonAnimCommand kEoB2FinaleAnimData16Amiga[13] = {
-	{ 0x06,  15,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   1, 168,  16,   3,   0,   0,   0,   0,   0 },
-	{ 0x05,   0, 168,  16,   0,   0,  32,   0,   8,  80 },
-	{ 0x05,   0, 232,  16,   0,   0,  32,  80,   8,  80 },
-	{ 0x06,  15,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   2, 168,  16,   3,   0,   0,   0,   0,   0 },
-	{ 0x05,   0, 168,  16,   0,   0,  32,   0,   8,  80 },
-	{ 0x05,   0, 232,  16,   0,   0,  32,  80,   8,  80 },
-	{ 0x06,  15,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x02,   3, 168,  16,   3,   0,   0,   0,   0,   0 },
-	{ 0x05,   0, 168,  16,   0,   0,  32,   0,   8,  80 },
-	{ 0x05,   0, 232,  16,   0,   0,  32,  80,   8,  80 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x06, 15, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 1, 168, 16, 3, 0, 0, 0, 0, 0 },
+	{ 0x05, 0, 168, 16, 0, 0, 32, 0, 8, 80 },
+	{ 0x05, 0, 232, 16, 0, 0, 32, 80, 8, 80 },
+	{ 0x06, 15, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 2, 168, 16, 3, 0, 0, 0, 0, 0 },
+	{ 0x05, 0, 168, 16, 0, 0, 32, 0, 8, 80 },
+	{ 0x05, 0, 232, 16, 0, 0, 32, 80, 8, 80 },
+	{ 0x06, 15, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x02, 3, 168, 16, 3, 0, 0, 0, 0, 0 },
+	{ 0x05, 0, 168, 16, 0, 0, 32, 0, 8, 80 },
+	{ 0x05, 0, 232, 16, 0, 0, 32, 80, 8, 80 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2FinaleAnimData16AmigaProvider = { ARRAYSIZE(kEoB2FinaleAnimData16Amiga), kEoB2FinaleAnimData16Amiga };
 
 static const DarkMoonAnimCommand kEoB2FinaleAnimData17Amiga[20] = {
-	{ 0x05,   0, 168,  16,   1,   0,   0,   0,  16,  80 },
-	{ 0x05,   0, 168,  16,   2,   0,  16,   0,  16,  80 },
-	{ 0x05,   0, 168,  16,   3,   0,   0,   0,  16,  80 },
-	{ 0x05,   0, 168,  16,   1,   0,   0,   0,  16,  80 },
-	{ 0x05,   0, 168,  16,   2,   0,  16,   0,  16,  80 },
-	{ 0x05,   0, 168,  16,   3,   0,   0,  80,  16,  80 },
-	{ 0x05,   0, 168,  16,   1,   0,  16,   0,  16,  80 },
-	{ 0x05,   0, 168,  16,   2,   0,   0,  80,  16,  80 },
-	{ 0x05,   0, 168,  16,   3,   0,  16,   0,  16,  80 },
-	{ 0x05,   0, 168,  16,   1,   0,   0,   0,  16,  80 },
-	{ 0x05,   0, 168,  16,   2,   0,  16,   0,  16,  80 },
-	{ 0x06,  10,   0,   0,   0,   0,   0,   0,   0,   0 },
-	{ 0x05,   0, 168,  16,   3,   0,   0,   0,  16,  80 },
-	{ 0x05,   0, 168,  16,   1,   0,  16,   0,  16,  80 },
-	{ 0x05,   0, 168,  16,   2,   0,   0,  80,  16,  80 },
-	{ 0x05,   0, 168,  16,   3,   0,  16,   0,  16,  80 },
-	{ 0x05,   0, 168,  16,   1,   0,   0,  80,  16,  80 },
-	{ 0x05,   0, 168,  16,   2,   0,  16,   0,  16,  80 },
-	{ 0x05,   0, 168,  16,   3,   0,  16,   0,  16,  80 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 168, 16, 1, 0, 0, 0, 16, 80 },
+	{ 0x05, 0, 168, 16, 2, 0, 16, 0, 16, 80 },
+	{ 0x05, 0, 168, 16, 3, 0, 0, 0, 16, 80 },
+	{ 0x05, 0, 168, 16, 1, 0, 0, 0, 16, 80 },
+	{ 0x05, 0, 168, 16, 2, 0, 16, 0, 16, 80 },
+	{ 0x05, 0, 168, 16, 3, 0, 0, 80, 16, 80 },
+	{ 0x05, 0, 168, 16, 1, 0, 16, 0, 16, 80 },
+	{ 0x05, 0, 168, 16, 2, 0, 0, 80, 16, 80 },
+	{ 0x05, 0, 168, 16, 3, 0, 16, 0, 16, 80 },
+	{ 0x05, 0, 168, 16, 1, 0, 0, 0, 16, 80 },
+	{ 0x05, 0, 168, 16, 2, 0, 16, 0, 16, 80 },
+	{ 0x06, 10, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0x05, 0, 168, 16, 3, 0, 0, 0, 16, 80 },
+	{ 0x05, 0, 168, 16, 1, 0, 16, 0, 16, 80 },
+	{ 0x05, 0, 168, 16, 2, 0, 0, 80, 16, 80 },
+	{ 0x05, 0, 168, 16, 3, 0, 16, 0, 16, 80 },
+	{ 0x05, 0, 168, 16, 1, 0, 0, 80, 16, 80 },
+	{ 0x05, 0, 168, 16, 2, 0, 16, 0, 16, 80 },
+	{ 0x05, 0, 168, 16, 3, 0, 16, 0, 16, 80 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2FinaleAnimData17AmigaProvider = { ARRAYSIZE(kEoB2FinaleAnimData17Amiga), kEoB2FinaleAnimData17Amiga };
 
 static const DarkMoonAnimCommand kEoB2FinaleAnimData18Amiga[28] = {
-	{ 0x05,   0, 168,  16,   1,   0,   0,  80,  16,  80 },
-	{ 0x05,   0, 168,  16,   2,   0,   0,  80,  16,  80 },
-	{ 0x05,   0, 168,  16,   3,   0,  16,  80,  16,  80 },
-	{ 0x05,   0, 168,  16,   1,   0,   0,  80,  16,  80 },
-	{ 0x05,   0, 168,  16,   2,   0,  16,  80,  16,  80 },
-	{ 0x05,   0, 168,  16,   3,   0,   0,  80,  16,  80 },
-	{ 0x05,   0, 168,  16,   1,   0,  16,   0,  16,  80 },
-	{ 0x05,   0, 168,  16,   2,   0,   0,  80,  16,  80 },
-	{ 0x05,   0, 168,  16,   3,   0,  16,  80,  16,  80 },
-	{ 0x05,   0, 168,  16,   1,   0,   0,  80,  16,  80 },
-	{ 0x05,   0, 168,  16,   2,   0,  16,   0,  16,  80 },
-	{ 0x05,   0, 168,  16,   3,   0,   0,   0,  16,  80 },
-	{ 0x05,   0, 168,  16,   1,   0,   0,   0,  16,  80 },
-	{ 0x05,   0, 168,  16,   2,   0,  16,   0,  16,  80 },
-	{ 0x05,   0, 168,  16,   3,   0,   0,  80,  16,  80 },
-	{ 0x05,   0, 168,  16,   1,   0,  16,  80,  16,  80 },
-	{ 0x05,   0, 168,  16,   2,   0,   0,  80,  16,  80 },
-	{ 0x05,   0, 168,  16,   3,   0,  16,   0,  16,  80 },
-	{ 0x05,   0, 168,  16,   1,   0,   0,  80,  16,  80 },
-	{ 0x05,   0, 168,  16,   2,   0,  16,  80,  16,  80 },
-	{ 0x05,   0, 168,  16,   3,   0,   0,  80,  16,  80 },
-	{ 0x05,   0, 168,  16,   1,   0,  16,  80,  16,  80 },
-	{ 0x05,   0, 168,  16,   2,   0,   0,  80,  16,  80 },
-	{ 0x05,   0, 168,  16,   3,   0,  16,   0,  16,  80 },
-	{ 0x05,   0, 168,  16,   1,   0,   0,  80,  16,  80 },
-	{ 0x05,   0, 168,  16,   2,   0,  16,  80,  16,  80 },
-	{ 0x05,   0, 168,  16,   0,   0,  16,  80,  16,  80 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 168, 16, 1, 0, 0, 80, 16, 80 },
+	{ 0x05, 0, 168, 16, 2, 0, 0, 80, 16, 80 },
+	{ 0x05, 0, 168, 16, 3, 0, 16, 80, 16, 80 },
+	{ 0x05, 0, 168, 16, 1, 0, 0, 80, 16, 80 },
+	{ 0x05, 0, 168, 16, 2, 0, 16, 80, 16, 80 },
+	{ 0x05, 0, 168, 16, 3, 0, 0, 80, 16, 80 },
+	{ 0x05, 0, 168, 16, 1, 0, 16, 0, 16, 80 },
+	{ 0x05, 0, 168, 16, 2, 0, 0, 80, 16, 80 },
+	{ 0x05, 0, 168, 16, 3, 0, 16, 80, 16, 80 },
+	{ 0x05, 0, 168, 16, 1, 0, 0, 80, 16, 80 },
+	{ 0x05, 0, 168, 16, 2, 0, 16, 0, 16, 80 },
+	{ 0x05, 0, 168, 16, 3, 0, 0, 0, 16, 80 },
+	{ 0x05, 0, 168, 16, 1, 0, 0, 0, 16, 80 },
+	{ 0x05, 0, 168, 16, 2, 0, 16, 0, 16, 80 },
+	{ 0x05, 0, 168, 16, 3, 0, 0, 80, 16, 80 },
+	{ 0x05, 0, 168, 16, 1, 0, 16, 80, 16, 80 },
+	{ 0x05, 0, 168, 16, 2, 0, 0, 80, 16, 80 },
+	{ 0x05, 0, 168, 16, 3, 0, 16, 0, 16, 80 },
+	{ 0x05, 0, 168, 16, 1, 0, 0, 80, 16, 80 },
+	{ 0x05, 0, 168, 16, 2, 0, 16, 80, 16, 80 },
+	{ 0x05, 0, 168, 16, 3, 0, 0, 80, 16, 80 },
+	{ 0x05, 0, 168, 16, 1, 0, 16, 80, 16, 80 },
+	{ 0x05, 0, 168, 16, 2, 0, 0, 80, 16, 80 },
+	{ 0x05, 0, 168, 16, 3, 0, 16, 0, 16, 80 },
+	{ 0x05, 0, 168, 16, 1, 0, 0, 80, 16, 80 },
+	{ 0x05, 0, 168, 16, 2, 0, 16, 80, 16, 80 },
+	{ 0x05, 0, 168, 16, 0, 0, 16, 80, 16, 80 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2FinaleAnimData18AmigaProvider = { ARRAYSIZE(kEoB2FinaleAnimData18Amiga), kEoB2FinaleAnimData18Amiga };
 
 static const DarkMoonAnimCommand kEoB2FinaleAnimData19Amiga[7] = {
-	{ 0x05,   0,  80,  80,   4,   0,   0, 128,   6,  56 },
-	{ 0x05,   0,  80,  80,   4,   0,   6, 128,   6,  56 },
-	{ 0x05,   0,  80,  80,   4,   0,  12, 128,   6,  56 },
-	{ 0x05,   0,  80,  80,   4,   0,  18, 128,   6,  56 },
-	{ 0x05,   0,  80,  80,   4,   0,  24, 128,   6,  56 },
-	{ 0x05,   0,  80,  80,   4,   0,  30, 128,   6,  56 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 80, 80, 4, 0, 0, 128, 6, 56 },
+	{ 0x05, 0, 80, 80, 4, 0, 6, 128, 6, 56 },
+	{ 0x05, 0, 80, 80, 4, 0, 12, 128, 6, 56 },
+	{ 0x05, 0, 80, 80, 4, 0, 18, 128, 6, 56 },
+	{ 0x05, 0, 80, 80, 4, 0, 24, 128, 6, 56 },
+	{ 0x05, 0, 80, 80, 4, 0, 30, 128, 6, 56 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2FinaleAnimData19AmigaProvider = { ARRAYSIZE(kEoB2FinaleAnimData19Amiga), kEoB2FinaleAnimData19Amiga };
 
 static const DarkMoonAnimCommand kEoB2FinaleAnimData20Amiga[3] = {
-	{ 0x05,   0,  96,  56,   3,   0,   0, 184,   4,  16 },
-	{ 0x05,   0,  96,  56,   0,   0,   4, 184,   4,  16 },
-	{ 0xff,   0,   0,   0,   0,   0,   0,   0,   0,   0 }
+	{ 0x05, 0, 96, 56, 3, 0, 0, 184, 4, 16 },
+	{ 0x05, 0, 96, 56, 0, 0, 4, 184, 4, 16 },
+	{ 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonAnimCommandProvider kEoB2FinaleAnimData20AmigaProvider = { ARRAYSIZE(kEoB2FinaleAnimData20Amiga), kEoB2FinaleAnimData20Amiga };
 
 static const DarkMoonShapeDef kEoB2FinaleShapes00Amiga[4] = {
-	{   -1,  16,   0,  11,  48 },
-	{   -2,  28,  80,   8,  48 },
-	{   -3,   9,   0,   5,  40 },
-	{    0,   0,   0,   0,   0 }
+	{ -1, 16, 0, 11, 48 },
+	{ -2, 28, 80, 8, 48 },
+	{ -3, 9, 0, 5, 40 },
+	{ 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonShapeDefProvider kEoB2FinaleShapes00AmigaProvider = { ARRAYSIZE(kEoB2FinaleShapes00Amiga), kEoB2FinaleShapes00Amiga };
 
 static const DarkMoonShapeDef kEoB2FinaleShapes03Amiga[3] = {
-	{   -1,  30,   0,   8,  96 },
-	{   -2,  30, 104,  10,  96 },
-	{    0,   0,   0,   0,   0 }
+	{ -1, 30, 0, 8, 96 },
+	{ -2, 30, 104, 10, 96 },
+	{ 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonShapeDefProvider kEoB2FinaleShapes03AmigaProvider = { ARRAYSIZE(kEoB2FinaleShapes03Amiga), kEoB2FinaleShapes03Amiga };
 
 static const DarkMoonShapeDef kEoB2FinaleShapes07Amiga[4] = {
-	{    1,   0,   0,  16,  72 },
-	{    2,  16,   0,  16,  72 },
-	{    3,   0,  72,  16,  72 },
-	{    0,   0,   0,   0,   0 }
+	{ 1, 0, 0, 16, 72 },
+	{ 2, 16, 0, 16, 72 },
+	{ 3, 0, 72, 16, 72 },
+	{ 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonShapeDefProvider kEoB2FinaleShapes07AmigaProvider = { ARRAYSIZE(kEoB2FinaleShapes07Amiga), kEoB2FinaleShapes07Amiga };
 
 static const DarkMoonShapeDef kEoB2FinaleShapes09Amiga[9] = {
-	{    0,   0,   0,  32,  16 },
-	{    2,   0,  36,  35,  41 },
-	{    3,   0,  77,  24,  17 },
-	{    4,   0,  94,  15,  33 },
-	{    5,  24,  77,  10,  17 },
-	{    6,  16,  99,  23,  69 },
-	{  -10,   0, 136,   8,  64 },
-	{  -11,   8, 136,   8,  64 },
-	{    0,   0,   0,   0,   0 }
+	{ 0, 0, 0, 32, 16 },
+	{ 2, 0, 36, 35, 41 },
+	{ 3, 0, 77, 24, 17 },
+	{ 4, 0, 94, 15, 33 },
+	{ 5, 24, 77, 10, 17 },
+	{ 6, 16, 99, 23, 69 },
+	{ -10, 0, 136, 8, 64 },
+	{ -11, 8, 136, 8, 64 },
+	{ 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonShapeDefProvider kEoB2FinaleShapes09AmigaProvider = { ARRAYSIZE(kEoB2FinaleShapes09Amiga), kEoB2FinaleShapes09Amiga };
 
 static const DarkMoonShapeDef kEoB2FinaleShapes10Amiga[4] = {
-	{    1,   0,   0,  40,  30 },
-	{   15,   9,  37,  21,  48 },
-	{   16,  16,  88,   6,  56 },
-	{    0,   0,   0,   0,   0 }
+	{ 1, 0, 0, 40, 30 },
+	{ 15, 9, 37, 21, 48 },
+	{ 16, 16, 88, 6, 56 },
+	{ 0, 0, 0, 0, 0 }
 };
 
 static const DarkMoonShapeDefProvider kEoB2FinaleShapes10AmigaProvider = { ARRAYSIZE(kEoB2FinaleShapes10Amiga), kEoB2FinaleShapes10Amiga };
@@ -2163,54 +2163,12 @@ static const uint16 kEoB2EncodeMonsterDefsAmiga[72] = {
 static const Uint16Provider kEoB2EncodeMonsterDefsAmigaProvider = { ARRAYSIZE(kEoB2EncodeMonsterDefsAmiga), kEoB2EncodeMonsterDefsAmiga };
 
 static const EoBCharacter kEoB2NpcPresetsAmiga[6] = {
-	{ 0x00, 0x01, "Insal",
-	  15, 15,  0,  0, 13, 13, 11, 11, 17, 17, 16, 16,  9,  9,
-	     3,   39, 10, 0, 10, 5, 5, -1, 8, { 6, 0, 0 },
-	  { 0x00006ADA, 0x00000000, 0x00000000 }, 0x00000000,
-	  { 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-	    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-	    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-	    0x0000, 0x0000, 0x0000 } },
-	{ 0x00, 0x01, "Calandra",
-	  18, 18, 36, 36, 13, 13,  8,  8, 15, 15, 16, 16, 14, 14,
-	     4,   76, 10, 0, 1, 0, 2, -2, 12, { 9, 0, 0 },
-	  { 0x0003DF35, 0x00000000, 0x00000000 }, 0x00000000,
-	  { 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-	    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-	    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-	    0x0000, 0x0000, 0x0000 } },
-	{ 0x00, 0x01, "Shorn",
-	  15, 15,  0,  0, 14, 14, 13, 13, 14, 14, 13, 13, 16, 16,
-	    40,   40, 10, 0, 6, 4, 3, -3, 100, { 8, 0, 0 },
-	  { 0x00021730, 0x00000000, 0x00000000 }, 0x00000000,
-	  { 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-	    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-	    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-	    0x0000, 0x0000, 0x0000 } },
-	{ 0x00, 0x01, "San-raal",
-	  11, 11,  0,  0, 18, 18, 13, 13, 14, 14, 16, 16,  9,  9,
-	    28,   28, 10, 0, 2, 3, 5, -4, 100, { 8, 0, 0 },
-	  { 0x00017AF0, 0x00000000, 0x00000000 }, 0x096B4566,
-	  { 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-	    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-	    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-	    0x0000, 0x0000, 0x0000 } },
-	{ 0x00, 0x01, "Tanglor",
-	  16, 16,  0,  0, 13, 13, 16, 16, 15, 15, 11, 11, 12, 12,
-	    53,   53,  9, 0, 4, 6, 1, -5, 100, { 7, 7, 0 },
-	  { 0x00010FC2, 0x00010FC2, 0x00000000 }, 0xFFFFFFFF,
-	  { 0x0004, 0x0008, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-	    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-	    0x0000, 0x0024, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-	    0x0000, 0x0000, 0x0000 } },
-	{ 0x00, 0x01, "Amber",
-	  14, 14,  0,  0, 17, 17, 12, 12, 18, 18,  9,  9, 17, 17,
-	    36,   36, 10, 0, 3, 10, 1, -6, 100, { 7, 7, 0 },
-	  { 0x0000FAE6, 0x0000FAE6, 0x00000000 }, 0x00294566,
-	  { 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-	    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-	    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-	    0x0000, 0x0000, 0x0000 } }
+	{ 0x00, 0x01, "Insal", 15, 15, 0, 0, 13, 13, 11, 11, 17, 17, 16, 16, 9, 9, 3, 39, 10, 0, 10, 5, 5, -1, 8, { 6, 0, 0 }, { 0x00006ADA, 0x00000000, 0x00000000 }, 0x00000000, { 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000 } },
+	{ 0x00, 0x01, "Calandra", 18, 18, 36, 36, 13, 13, 8, 8, 15, 15, 16, 16, 14, 14, 4, 76, 10, 0, 1, 0, 2, -2, 12, { 9, 0, 0 }, { 0x0003DF35, 0x00000000, 0x00000000 }, 0x00000000, { 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000 } },
+	{ 0x00, 0x01, "Shorn", 15, 15, 0, 0, 14, 14, 13, 13, 14, 14, 13, 13, 16, 16, 40, 40, 10, 0, 6, 4, 3, -3, 100, { 8, 0, 0 }, { 0x00021730, 0x00000000, 0x00000000 }, 0x00000000, { 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000 } },
+	{ 0x00, 0x01, "San-raal", 11, 11, 0, 0, 18, 18, 13, 13, 14, 14, 16, 16, 9, 9, 28, 28, 10, 0, 2, 3, 5, -4, 100, { 8, 0, 0 }, { 0x00017AF0, 0x00000000, 0x00000000 }, 0x096B4566, { 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000 } },
+	{ 0x00, 0x01, "Tanglor", 16, 16, 0, 0, 13, 13, 16, 16, 15, 15, 11, 11, 12, 12, 53, 53, 9, 0, 4, 6, 1, -5, 100, { 7, 7, 0 }, { 0x00010FC2, 0x00010FC2, 0x00000000 }, 0xFFFFFFFF, { 0x0004, 0x0008, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0024, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000 } },
+	{ 0x00, 0x01, "Amber", 14, 14, 0, 0, 17, 17, 12, 12, 18, 18, 9, 9, 17, 17, 36, 36, 10, 0, 3, 10, 1, -6, 100, { 7, 7, 0 }, { 0x0000FAE6, 0x0000FAE6, 0x00000000 }, 0x00294566, { 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000 } }
 };
 
 static const EoBCharacterProvider kEoB2NpcPresetsAmigaProvider = { ARRAYSIZE(kEoB2NpcPresetsAmiga), kEoB2NpcPresetsAmiga };

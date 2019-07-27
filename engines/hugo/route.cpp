@@ -32,19 +32,20 @@
 #include "common/debug.h"
 #include "common/system.h"
 
-#include "hugo/hugo.h"
 #include "hugo/game.h"
-#include "hugo/route.h"
-#include "hugo/object.h"
+#include "hugo/hugo.h"
 #include "hugo/inventory.h"
 #include "hugo/mouse.h"
+#include "hugo/object.h"
+#include "hugo/route.h"
 
 namespace Hugo {
-Route::Route(HugoEngine *vm) : _vm(vm) {
+Route::Route(HugoEngine *vm)
+  : _vm(vm) {
 	_oldWalkDirection = 0;
-	_routeIndex       = -1;                         // Hero not following a route
-	_routeType        = kRouteSpace;                // Hero walking to space
-	_routeObjId       = -1;                         // Hero not walking to anything
+	_routeIndex = -1; // Hero not following a route
+	_routeType = kRouteSpace; // Hero walking to space
+	_routeObjId = -1; // Hero not walking to anything
 
 	for (int i = 0; i < kMaxSeg; i++)
 		_segment[i]._y = _segment[i]._x1 = _segment[i]._x2 = 0;
@@ -72,7 +73,7 @@ int16 Route::getRouteIndex() const {
 void Route::setDirection(const uint16 keyCode) {
 	debugC(1, kDebugRoute, "setDirection(%d)", keyCode);
 
-	Object *obj = _vm->_hero;                     // Pointer to hero object
+	Object *obj = _vm->_hero; // Pointer to hero object
 
 	// Set first image in sequence
 	switch (keyCode) {
@@ -118,26 +119,26 @@ void Route::setDirection(const uint16 keyCode) {
 void Route::setWalk(const uint16 direction) {
 	debugC(1, kDebugRoute, "setWalk(%d)", direction);
 
-	Object *obj = _vm->_hero;                     // Pointer to hero object
+	Object *obj = _vm->_hero; // Pointer to hero object
 
 	if (_vm->getGameStatus()._storyModeFl || obj->_pathType != kPathUser) // Make sure user has control
 		return;
 
 	if (!obj->_vx && !obj->_vy)
-		_oldWalkDirection = 0;                      // Fix for consistant restarts
+		_oldWalkDirection = 0; // Fix for consistant restarts
 
 	if (direction != _oldWalkDirection) {
 		// Direction has changed
-		setDirection(direction);                    // Face new direction
+		setDirection(direction); // Face new direction
 		obj->_vx = obj->_vy = 0;
-		switch (direction) {                        // And set correct velocity
+		switch (direction) { // And set correct velocity
 		case Common::KEYCODE_UP:
 		case Common::KEYCODE_KP8:
 			obj->_vy = -kStepDy;
 			break;
 		case Common::KEYCODE_DOWN:
 		case Common::KEYCODE_KP2:
-			obj->_vy =  kStepDy;
+			obj->_vy = kStepDy;
 			break;
 		case Common::KEYCODE_LEFT:
 		case Common::KEYCODE_KP4:
@@ -145,7 +146,7 @@ void Route::setWalk(const uint16 direction) {
 			break;
 		case Common::KEYCODE_RIGHT:
 		case Common::KEYCODE_KP6:
-			obj->_vx =  kStepDx;
+			obj->_vx = kStepDx;
 			break;
 		case Common::KEYCODE_HOME:
 		case Common::KEYCODE_KP7:
@@ -157,19 +158,19 @@ void Route::setWalk(const uint16 direction) {
 		case Common::KEYCODE_KP1:
 			obj->_vx = -kStepDx;
 			// Note: in v1 Dos and v2 Dos, obj->vy is set to -DY
-			obj->_vy =  kStepDy / 2;
+			obj->_vy = kStepDy / 2;
 			break;
 		case Common::KEYCODE_PAGEUP:
 		case Common::KEYCODE_KP9:
-			obj->_vx =  kStepDx;
+			obj->_vx = kStepDx;
 			// Note: in v1 Dos and v2 Dos, obj->vy is set to -DY
 			obj->_vy = -kStepDy / 2;
 			break;
 		case Common::KEYCODE_PAGEDOWN:
 		case Common::KEYCODE_KP3:
-			obj->_vx =  kStepDx;
+			obj->_vx = kStepDx;
 			// Note: in v1 Dos and v2 Dos, obj->vy is set to DY
-			obj->_vy =  kStepDy / 2;
+			obj->_vy = kStepDy / 2;
 			break;
 		}
 		_oldWalkDirection = direction;
@@ -199,8 +200,8 @@ void Route::segment(int16 x, int16 y) {
 	debugC(1, kDebugRoute, "segment(%d, %d)", x, y);
 
 	// Note: use of static - can't waste stack
-	static ImagePtr  p;                             // Ptr to _boundaryMap[y]
-	static Segment  *segPtr;                        // Ptr to segment
+	static ImagePtr p; // Ptr to _boundaryMap[y]
+	static Segment *segPtr; // Ptr to segment
 
 	// Bomb out if stack exhausted
 	// Vinterstum: Is this just a safeguard, or actually used?
@@ -209,7 +210,7 @@ void Route::segment(int16 x, int16 y) {
 
 	// Find and fill on either side of point
 	p = _boundaryMap[y];
-	int16 x1, x2;                                   // Range of segment
+	int16 x1, x2; // Range of segment
 	for (x1 = x; x1 > 0; x1--) {
 		if (p[x1] == 0) {
 			p[x1] = kMapFill;
@@ -297,7 +298,7 @@ void Route::segment(int16 x, int16 y) {
 		} else {
 			// Create segment
 			segPtr = &_segment[_segmentNumb];
-			segPtr->_y  = y;
+			segPtr->_y = y;
 			segPtr->_x1 = x1;
 			segPtr->_x2 = x2;
 			_segmentNumb++;
@@ -313,10 +314,10 @@ Common::Point *Route::newNode() {
 	debugC(1, kDebugRoute, "newNode");
 
 	_routeListIndex++;
-	if (_routeListIndex >= kMaxNodes)               // Too many nodes
-		return nullptr;                             // Incomplete route - failure
+	if (_routeListIndex >= kMaxNodes) // Too many nodes
+		return nullptr; // Incomplete route - failure
 
-	_route[_routeListIndex] = _route[_routeListIndex - 1];  // Initialize with previous node
+	_route[_routeListIndex] = _route[_routeListIndex - 1]; // Initialize with previous node
 	return &_route[_routeListIndex];
 }
 
@@ -330,20 +331,20 @@ bool Route::findRoute(const int16 cx, const int16 cy) {
 	debugC(1, kDebugRoute, "findRoute(%d, %d)", cx, cy);
 
 	// Initialize for search
-	_routeFoundFl  = false;                         // Path not found yet
-	_fullStackFl = false;                           // Stack not exhausted
-	_fullSegmentFl  = false;                        // Segments not exhausted
-	_segmentNumb = 0;                               // Segment index
-	_heroWidth = kHeroMinWidth;                     // Minimum width of hero
-	_destY = cy;                                    // Destination coords
-	_destX = cx;                                    // Destination coords
+	_routeFoundFl = false; // Path not found yet
+	_fullStackFl = false; // Stack not exhausted
+	_fullSegmentFl = false; // Segments not exhausted
+	_segmentNumb = 0; // Segment index
+	_heroWidth = kHeroMinWidth; // Minimum width of hero
+	_destY = cy; // Destination coords
+	_destX = cx; // Destination coords
 
-	int16 herox1 = _vm->_hero->_x + _vm->_hero->_currImagePtr->_x1;        // Hero baseline
-	int16 herox2 = _vm->_hero->_x + _vm->_hero->_currImagePtr->_x2;        // Hero baseline
-	int16 heroy  = _vm->_hero->_y + _vm->_hero->_currImagePtr->_y2;        // Hero baseline
+	int16 herox1 = _vm->_hero->_x + _vm->_hero->_currImagePtr->_x1; // Hero baseline
+	int16 herox2 = _vm->_hero->_x + _vm->_hero->_currImagePtr->_x2; // Hero baseline
+	int16 heroy = _vm->_hero->_y + _vm->_hero->_currImagePtr->_y2; // Hero baseline
 
 	// Store all object baselines into objbound (except hero's = [0])
-	Object  *obj;                                   // Ptr to object
+	Object *obj; // Ptr to object
 	int i;
 	for (i = 1, obj = &_vm->_object->_objects[i]; i < _vm->_object->_numObj; i++, obj++) {
 		if ((obj->_screenIndex == *_vm->_screenPtr) && (obj->_cycling != kCycleInvisible) && (obj->_priority == kPriorityFloating))
@@ -379,16 +380,16 @@ bool Route::findRoute(const int16 cx, const int16 cy) {
 	_route[0].y = _destY;
 
 	// Make a final segment for hero's base (we left a spare)
-	_segment[_segmentNumb]._y  = heroy;
+	_segment[_segmentNumb]._y = heroy;
 	_segment[_segmentNumb]._x1 = herox1;
 	_segment[_segmentNumb]._x2 = herox2;
 	_segmentNumb++;
 
 	// Look in segments[] for straight lines from destination to hero
 	for (i = 0, _routeListIndex = 0; i < _segmentNumb - 1; i++) {
-		Common::Point *routeNode;                   // Ptr to route node
-		if ((routeNode = newNode()) == 0)           // New node for new segment
-			return false;                           // Too many nodes
+		Common::Point *routeNode; // Ptr to route node
+		if ((routeNode = newNode()) == 0) // New node for new segment
+			return false; // Too many nodes
 		routeNode->y = _segment[i]._y;
 
 		// Look ahead for furthest straight line
@@ -396,11 +397,11 @@ bool Route::findRoute(const int16 cx, const int16 cy) {
 			Segment *segPtr = &_segment[j];
 			// Can we get to this segment from previous node?
 			if (segPtr->_x1 <= routeNode->x && segPtr->_x2 >= routeNode->x + _heroWidth - 1) {
-				routeNode->y = segPtr->_y;          // Yes, keep updating node
+				routeNode->y = segPtr->_y; // Yes, keep updating node
 			} else {
 				// No, create another node on previous segment to reach it
-				if ((routeNode = newNode()) == 0)   // Add new route node
-					return false;                   // Too many nodes
+				if ((routeNode = newNode()) == 0) // Add new route node
+					return false; // Too many nodes
 
 				// Find overlap between old and new segments
 				int16 x1 = MAX(_segment[j - 1]._x1, segPtr->_x1);
@@ -420,7 +421,7 @@ bool Route::findRoute(const int16 cx, const int16 cy) {
 					routeNode->x = x2 - _heroWidth - dx;
 				else
 					routeNode->x = herox1;
-				i = j - 2;                          // Restart segment (-1 to offset auto increment)
+				i = j - 2; // Restart segment (-1 to offset auto increment)
 				break;
 			}
 		}
@@ -438,7 +439,7 @@ bool Route::findRoute(const int16 cx, const int16 cy) {
 void Route::processRoute() {
 	debugC(1, kDebugRoute, "processRoute");
 
-	static bool turnedFl = false;                   // Used to get extra cycle for turning
+	static bool turnedFl = false; // Used to get extra cycle for turning
 
 	if (_routeIndex < 0)
 		return;
@@ -461,26 +462,26 @@ void Route::processRoute() {
 		if (--_routeIndex < 0) {
 			// See why we walked here
 			switch (_routeType) {
-			case kRouteExit:                        // Walked to an exit, proceed into it
+			case kRouteExit: // Walked to an exit, proceed into it
 				setWalk(_vm->_mouse->getDirection(_routeObjId));
 				break;
-			case kRouteLook:                        // Look at an object
+			case kRouteLook: // Look at an object
 				if (turnedFl) {
 					_vm->_object->lookObject(&_vm->_object->_objects[_routeObjId]);
 					turnedFl = false;
 				} else {
 					setDirection(_vm->_object->_objects[_routeObjId]._direction);
-					_routeIndex++;                  // Come round again
+					_routeIndex++; // Come round again
 					turnedFl = true;
 				}
 				break;
-			case kRouteGet:                         // Get (or use) an object
+			case kRouteGet: // Get (or use) an object
 				if (turnedFl) {
 					_vm->_object->useObject(_routeObjId);
 					turnedFl = false;
 				} else {
 					setDirection(_vm->_object->_objects[_routeObjId]._direction);
-					_routeIndex++;                  // Come round again
+					_routeIndex++; // Come round again
 					turnedFl = true;
 				}
 				break;
@@ -522,17 +523,17 @@ bool Route::startRoute(const RouteType routeType, const int16 objId, int16 cx, i
 	if (_vm->_inventory->getInventoryState() != kInventoryOff)
 		_vm->_inventory->setInventoryState(kInventoryUp);
 
-	_routeType = routeType;                         // Purpose of trip
-	_routeObjId  = objId;                           // Index of exit/object
+	_routeType = routeType; // Purpose of trip
+	_routeObjId = objId; // Index of exit/object
 
 	// Adjust destination to center hero if walking to cursor
 	if (_routeType == kRouteSpace)
 		cx -= kHeroMinWidth / 2;
 
-	bool foundFl = false;                           // TRUE if route found ok
-	if ((foundFl = findRoute(cx, cy))) {            // Found a route?
-		_routeIndex = _routeListIndex;              // Node index
-		_vm->_hero->_vx = _vm->_hero->_vy = 0;      // Stop manual motion
+	bool foundFl = false; // TRUE if route found ok
+	if ((foundFl = findRoute(cx, cy))) { // Found a route?
+		_routeIndex = _routeListIndex; // Node index
+		_vm->_hero->_vx = _vm->_hero->_vy = 0; // Stop manual motion
 	}
 
 	return foundFl;

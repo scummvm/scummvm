@@ -22,17 +22,21 @@
 
 #ifdef ENABLE_EOB
 
-#include "kyra/sound/sound_intern.h"
-#include "kyra/resource/resource.h"
-#include "kyra/sound/drivers/audiomaster2.h"
+#	include "kyra/resource/resource.h"
+#	include "kyra/sound/drivers/audiomaster2.h"
+#	include "kyra/sound/sound_intern.h"
 
-#include "common/config-manager.h"
-#include "common/memstream.h"
+#	include "common/config-manager.h"
+#	include "common/memstream.h"
 
 namespace Kyra {
 
-SoundAmiga_EoB::SoundAmiga_EoB(KyraEngine_v1 *vm, Audio::Mixer *mixer) : Sound(vm, mixer),
-	_vm(vm), _driver(0), _currentResourceSet(-1), _ready(false) {
+SoundAmiga_EoB::SoundAmiga_EoB(KyraEngine_v1 *vm, Audio::Mixer *mixer)
+  : Sound(vm, mixer)
+  , _vm(vm)
+  , _driver(0)
+  , _currentResourceSet(-1)
+  , _ready(false) {
 	_fileBuffer = new uint8[64000];
 	memset(_resInfo, 0, sizeof(_resInfo));
 }
@@ -60,7 +64,7 @@ bool SoundAmiga_EoB::init() {
 
 void SoundAmiga_EoB::initAudioResourceInfo(int set, void *info) {
 	delete _resInfo[set];
-	_resInfo[set] = info ? new SoundResourceInfo_AmigaEoB(*(SoundResourceInfo_AmigaEoB*)info) : 0;
+	_resInfo[set] = info ? new SoundResourceInfo_AmigaEoB(*(SoundResourceInfo_AmigaEoB *)info) : 0;
 }
 
 void SoundAmiga_EoB::selectAudioResourceSet(int set) {
@@ -89,7 +93,7 @@ void SoundAmiga_EoB::loadSoundFile(Common::String file) {
 	// This value can deviate up to 5 bytes from the real size in EOB II Amiga.
 	// The original simply tries to read 64000 bytes from the file (ignoring this
 	// value). We do the same.
-	// EOB I strangely always seems to have correct values. 
+	// EOB I strangely always seems to have correct values.
 	uint16 readSize = in->readUint16LE() - 10;
 	uint8 cmp = in->readByte();
 	in->seek(1, SEEK_CUR);
@@ -106,7 +110,7 @@ void SoundAmiga_EoB::loadSoundFile(Common::String file) {
 
 	if (cmp == 0) {
 		memcpy(buf, _fileBuffer, outSize);
-	} else if (cmp == 3) {			
+	} else if (cmp == 3) {
 		Screen::decodeFrame3(_fileBuffer, buf, outSize, true);
 	} else if (cmp == 4) {
 		Screen::decodeFrame4(_fileBuffer, buf, outSize);
@@ -213,7 +217,7 @@ void SoundAmiga_EoB::playSoundEffect(uint8 track, uint8 volume) {
 }
 
 void SoundAmiga_EoB::beginFadeOut(int delay) {
-	_driver->fadeOut(delay);	
+	_driver->fadeOut(delay);
 	while (_driver->isFading() && !_vm->shouldQuit())
 		_vm->delay(5);
 	haltTrack();

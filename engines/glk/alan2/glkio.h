@@ -26,29 +26,28 @@
 /* Header file for Glk output for Alan interpreter
  */
 
-#include "glk/windows.h"
 #include "glk/alan2/types.h"
+#include "glk/windows.h"
 
 namespace Glk {
 namespace Alan2 {
 
-extern winid_t glkMainWin;
-extern winid_t glkStatusWin;
+	extern winid_t glkMainWin;
+	extern winid_t glkStatusWin;
 
-/* NB: this header must be included in any file which calls print() */
+	/* NB: this header must be included in any file which calls print() */
 
 #undef printf
 #define printf glkio_printf
 
-void glkio_printf(const char *, ...);
+	void glkio_printf(const char *, ...);
 
 #define LINELENGTH 80
 #define HISTORYLENGTH 20
 
-extern Boolean readline(char usrbuf[]);
+	extern Boolean readline(char usrbuf[]);
 
 } // End of namespace Alan2
 } // End of namespace Glk
 
 #endif
-

@@ -69,12 +69,12 @@ const unsigned int MAX_CURRENT = 0xFF << TARGET_SHIFTS;
 // scheme eventually.
 const int INTERRUPT_TIME = 7;
 
-LA32Ramp::LA32Ramp() :
-	current(0),
-	largeTarget(0),
-	largeIncrement(0),
-	interruptCountdown(0),
-	interruptRaised(false) {
+LA32Ramp::LA32Ramp()
+  : current(0)
+  , largeTarget(0)
+  , largeIncrement(0)
+  , interruptCountdown(0)
+  , interruptRaised(false) {
 }
 
 void LA32Ramp::startRamp(Bit8u target, Bit8u increment) {

@@ -25,8 +25,8 @@
 namespace Glk {
 namespace Alan3 {
 
-/* PUBLIC DATA */
-Aword *scores;          // Score table pointer
+	/* PUBLIC DATA */
+	Aword *scores; // Score table pointer
 
 } // End of namespace Alan3
 } // End of namespace Glk

@@ -20,15 +20,15 @@
  *
  */
 
-#include "gnap/gnap.h"
-#include "gnap/gamesys.h"
-#include "gnap/resource.h"
 #include "gnap/scenes/groupcs.h"
-
+#include "gnap/gamesys.h"
+#include "gnap/gnap.h"
+#include "gnap/resource.h"
 
 namespace Gnap {
 
-Scene16::Scene16(GnapEngine *vm) : CutScene(vm) {}
+Scene16::Scene16(GnapEngine *vm)
+  : CutScene(vm) {}
 
 int Scene16::init() {
 	_sequenceIdArr[0] = 0x1F2;
@@ -87,7 +87,8 @@ int Scene16::init() {
 
 /*****************************************************************************/
 
-Scene471::Scene471(GnapEngine *vm) : CutScene(vm) {}
+Scene471::Scene471(GnapEngine *vm)
+  : CutScene(vm) {}
 
 int Scene471::init() {
 	_sequenceIdArr[0] = 0x301;
@@ -115,7 +116,8 @@ int Scene471::init() {
 	return -1;
 }
 
-Scene472::Scene472(GnapEngine *vm) : CutScene(vm) {}
+Scene472::Scene472(GnapEngine *vm)
+  : CutScene(vm) {}
 
 int Scene472::init() {
 	_sequenceIdArr[0] = 0x306;
@@ -140,7 +142,8 @@ int Scene472::init() {
 	return -1;
 }
 
-Scene473::Scene473(GnapEngine *vm) : CutScene(vm) {}
+Scene473::Scene473(GnapEngine *vm)
+  : CutScene(vm) {}
 
 int Scene473::init() {
 	_sequenceIdArr[0] = 0x320;
@@ -156,7 +159,8 @@ int Scene473::init() {
 	return -1;
 }
 
-Scene474::Scene474(GnapEngine *vm) : CutScene(vm) {}
+Scene474::Scene474(GnapEngine *vm)
+  : CutScene(vm) {}
 
 int Scene474::init() {
 	_sequenceIdArr[0] = 0x30C;
@@ -176,7 +180,8 @@ int Scene474::init() {
 	return -1;
 }
 
-Scene475::Scene475(GnapEngine *vm) : CutScene(vm) {}
+Scene475::Scene475(GnapEngine *vm)
+  : CutScene(vm) {}
 
 int Scene475::init() {
 	_sequenceIdArr[0] = 0x30E;
@@ -194,7 +199,8 @@ int Scene475::init() {
 	return -1;
 }
 
-Scene476::Scene476(GnapEngine *vm) : CutScene(vm) {}
+Scene476::Scene476(GnapEngine *vm)
+  : CutScene(vm) {}
 
 int Scene476::init() {
 	_sequenceIdArr[0] = 0x31E;
@@ -207,7 +213,8 @@ int Scene476::init() {
 	return -1;
 }
 
-Scene477::Scene477(GnapEngine *vm) : CutScene(vm) {}
+Scene477::Scene477(GnapEngine *vm)
+  : CutScene(vm) {}
 
 int Scene477::init() {
 	int v0, v4, v2, v3;
@@ -259,7 +266,8 @@ int Scene477::init() {
 
 /*****************************************************************************/
 
-Scene48::Scene48(GnapEngine *vm) : CutScene(vm) {}
+Scene48::Scene48(GnapEngine *vm)
+  : CutScene(vm) {}
 
 int Scene48::init() {
 	_sequenceIdArr[0] = 390;
@@ -321,7 +329,8 @@ int Scene48::init() {
 
 /*****************************************************************************/
 
-Scene541::Scene541(GnapEngine *vm) : CutScene(vm) {}
+Scene541::Scene541(GnapEngine *vm)
+  : CutScene(vm) {}
 
 int Scene541::init() {
 	_sequenceIdArr[0] = 0x1BE;
@@ -353,7 +362,8 @@ int Scene541::init() {
 	return -1;
 }
 
-Scene542::Scene542(GnapEngine *vm) : CutScene(vm) {}
+Scene542::Scene542(GnapEngine *vm)
+  : CutScene(vm) {}
 
 int Scene542::init() {
 	_sequenceIdArr[0] = 0x1C9;

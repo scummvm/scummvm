@@ -25,43 +25,42 @@
 #include "bladerunner/actor.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/boundingbox.h"
+#include "bladerunner/chapters.h"
 #include "bladerunner/combat.h"
-#include "bladerunner/font.h"
 #include "bladerunner/fog.h"
+#include "bladerunner/font.h"
 #include "bladerunner/game_constants.h"
 #include "bladerunner/game_flags.h"
 #include "bladerunner/game_info.h"
+#include "bladerunner/item_pickup.h"
+#include "bladerunner/items.h"
 #include "bladerunner/light.h"
 #include "bladerunner/lights.h"
+#include "bladerunner/overlays.h"
 #include "bladerunner/regions.h"
 #include "bladerunner/savefile.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
-#include "bladerunner/items.h"
-#include "bladerunner/item_pickup.h"
 #include "bladerunner/screen_effects.h"
-#include "bladerunner/settings.h"
+#include "bladerunner/script/vk_script.h"
 #include "bladerunner/set.h"
 #include "bladerunner/set_effects.h"
+#include "bladerunner/settings.h"
+#include "bladerunner/subtitles.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/time.h"
+#include "bladerunner/ui/elevator.h"
+#include "bladerunner/ui/esper.h"
+#include "bladerunner/ui/kia.h"
+#include "bladerunner/ui/scores.h"
+#include "bladerunner/ui/spinner.h"
+#include "bladerunner/ui/vk.h"
 #include "bladerunner/vector.h"
 #include "bladerunner/view.h"
 #include "bladerunner/vqa_decoder.h"
 #include "bladerunner/vqa_player.h"
 #include "bladerunner/waypoints.h"
 #include "bladerunner/zbuffer.h"
-#include "bladerunner/chapters.h"
-#include "bladerunner/ui/kia.h"
-#include "bladerunner/ui/esper.h"
-#include "bladerunner/ui/spinner.h"
-#include "bladerunner/ui/elevator.h"
-#include "bladerunner/ui/vk.h"
-#include "bladerunner/ui/scores.h"
-#include "bladerunner/script/vk_script.h"
-#include "bladerunner/overlays.h"
-#include "bladerunner/subtitles.h"
-
 
 #include "common/debug.h"
 #include "common/str.h"
@@ -70,7 +69,8 @@
 
 namespace BladeRunner {
 
-Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
+Debugger::Debugger(BladeRunnerEngine *vm)
+  : GUI::Debugger() {
 	_vm = vm;
 
 	_isDebuggerOverlay = false;
@@ -167,7 +167,7 @@ bool Debugger::cmdAnimation(int argc, const char **argv) {
 	if (argc == 4) {
 		int animationMode = atoi(argv[2]);
 		int showDmgWhenMoving = atoi(argv[3]);
-		actor->setFlagDamageAnimIfMoving(showDmgWhenMoving!=0);
+		actor->setFlagDamageAnimIfMoving(showDmgWhenMoving != 0);
 		actor->changeAnimationMode(animationMode, true);
 		debugPrintf("actorAnimationMode(%i) = %i, showDamageWhenMoving = %i\n", actorId, animationMode, actor->getFlagDamageAnimIfMoving());
 		return false;
@@ -233,18 +233,18 @@ bool Debugger::cmdDraw(int argc, const char **argv) {
 		if (arg == "allobj") {
 			if (_viewActorsToggle && _view3dObjectsToggle && _viewItemsToggle) {
 				_viewActorsToggle = false;
-				_view3dObjectsToggle  = false;
+				_view3dObjectsToggle = false;
 				_viewItemsToggle = false;
 			} else {
 				_viewActorsToggle = true;
-				_view3dObjectsToggle  = true;
+				_view3dObjectsToggle = true;
 				_viewItemsToggle = true;
 			}
 			debugPrintf("Drawing all scene objects (actors, 3d objects, items) = %i\n", _viewActorsToggle && _view3dObjectsToggle && _viewItemsToggle);
 		} else if (arg == "act") {
 			if (argc == 2) {
 				_viewActorsToggle = !_viewActorsToggle;
-				debugPrintf("Drawing all actors in scene = %s\n", _viewActorsToggle? "true" : "false");
+				debugPrintf("Drawing all actors in scene = %s\n", _viewActorsToggle ? "true" : "false");
 			} else {
 				_viewActorsToggle = false;
 				dbgDrawnObj.setId = -1;
@@ -254,7 +254,7 @@ bool Debugger::cmdDraw(int argc, const char **argv) {
 		} else if (arg == "obj") {
 			if (argc == 2) {
 				_view3dObjectsToggle = !_view3dObjectsToggle;
-				debugPrintf("Drawing all 3d objects in scene = %s\n", _view3dObjectsToggle? "true" : "false");
+				debugPrintf("Drawing all 3d objects in scene = %s\n", _view3dObjectsToggle ? "true" : "false");
 			} else {
 				_view3dObjectsToggle = false;
 				dbgDrawnObj.type = debuggerObjType3dObject;
@@ -262,7 +262,7 @@ bool Debugger::cmdDraw(int argc, const char **argv) {
 		} else if (arg == "item") {
 			if (argc == 2) {
 				_viewItemsToggle = !_viewItemsToggle;
-				debugPrintf("Drawing all items in scene = %s\n", _viewItemsToggle? "true" : "false");
+				debugPrintf("Drawing all items in scene = %s\n", _viewItemsToggle ? "true" : "false");
 			} else {
 				_viewItemsToggle = false;
 				dbgDrawnObj.setId = -1;
@@ -272,7 +272,7 @@ bool Debugger::cmdDraw(int argc, const char **argv) {
 		} else if (arg == "eff") {
 			if (argc == 2) {
 				_viewScreenEffects = !_viewScreenEffects;
-				debugPrintf("Drawing all screen effects = %s\n", _viewScreenEffects? "true" : "false");
+				debugPrintf("Drawing all screen effects = %s\n", _viewScreenEffects ? "true" : "false");
 			} else {
 				_viewScreenEffects = false;
 				dbgDrawnObj.type = debuggerObjTypeEffect;
@@ -280,7 +280,7 @@ bool Debugger::cmdDraw(int argc, const char **argv) {
 		} else if (arg == "fog") {
 			if (argc == 2) {
 				_viewFogs = !_viewFogs;
-				debugPrintf("Drawing all fogs = %s\n", _viewFogs? "true" : "false");
+				debugPrintf("Drawing all fogs = %s\n", _viewFogs ? "true" : "false");
 			} else {
 				_viewFogs = false;
 				dbgDrawnObj.type = debuggerObjTypeFog;
@@ -288,7 +288,7 @@ bool Debugger::cmdDraw(int argc, const char **argv) {
 		} else if (arg == "lit") {
 			if (argc == 2) {
 				_viewLights = !_viewLights;
-				debugPrintf("Drawing all lights = %s\n", _viewLights? "true" : "false");
+				debugPrintf("Drawing all lights = %s\n", _viewLights ? "true" : "false");
 			} else {
 				_viewLights = false;
 				dbgDrawnObj.type = debuggerObjTypeLight;
@@ -296,16 +296,16 @@ bool Debugger::cmdDraw(int argc, const char **argv) {
 		} else if (arg == "allreg") {
 			if (_viewRegionsNormalToggle && _viewRegionsExitsToggle) {
 				_viewRegionsNormalToggle = false;
-				_viewRegionsExitsToggle  = false;
+				_viewRegionsExitsToggle = false;
 			} else {
 				_viewRegionsNormalToggle = true;
-				_viewRegionsExitsToggle  = true;
+				_viewRegionsExitsToggle = true;
 			}
-			debugPrintf("Drawing all scene regions (regular, exits) = %s\n", (_viewRegionsNormalToggle && _viewRegionsExitsToggle)? "true" : "false");
+			debugPrintf("Drawing all scene regions (regular, exits) = %s\n", (_viewRegionsNormalToggle && _viewRegionsExitsToggle) ? "true" : "false");
 		} else if (arg == "regnorm") {
 			if (argc == 2) {
 				_viewRegionsNormalToggle = !_viewRegionsNormalToggle;
-				debugPrintf("Drawing all normal regions = %s\n", _viewRegionsNormalToggle? "true" : "false");
+				debugPrintf("Drawing all normal regions = %s\n", _viewRegionsNormalToggle ? "true" : "false");
 			} else {
 				_viewRegionsNormalToggle = false;
 				dbgDrawnObj.type = debuggerObjTypeRegionNormal;
@@ -313,32 +313,32 @@ bool Debugger::cmdDraw(int argc, const char **argv) {
 		} else if (arg == "regexit") {
 			if (argc == 2) {
 				_viewRegionsExitsToggle = !_viewRegionsExitsToggle;
-				debugPrintf("Drawing all exit regions = %s\n", _viewRegionsExitsToggle? "true" : "false");
+				debugPrintf("Drawing all exit regions = %s\n", _viewRegionsExitsToggle ? "true" : "false");
 			} else {
 				_viewRegionsExitsToggle = false;
 				dbgDrawnObj.type = debuggerObjTypeRegionExit;
 			}
 		} else if (arg == "obstacles") {
 			_viewObstacles = !_viewObstacles;
-			debugPrintf("Drawing obstacles = %s\n", _viewObstacles? "true" : "false");
+			debugPrintf("Drawing obstacles = %s\n", _viewObstacles ? "true" : "false");
 		} else if (arg == "ui") {
 			_viewUI = !_viewUI;
-			debugPrintf("Drawing all UI elements = %s\n", _viewUI? "true" : "false");
+			debugPrintf("Drawing all UI elements = %s\n", _viewUI ? "true" : "false");
 		} else if (arg == "allway") {
 			if (_viewWaypointsNormalToggle && _viewWaypointsFleeToggle && _viewWaypointsCoverToggle) {
 				_viewWaypointsNormalToggle = false;
-				_viewWaypointsFleeToggle  = false;
+				_viewWaypointsFleeToggle = false;
 				_viewWaypointsCoverToggle = false;
 			} else {
 				_viewWaypointsNormalToggle = true;
 				_viewWaypointsFleeToggle = true;
 				_viewWaypointsCoverToggle = true;
 			}
-			debugPrintf("Drawing all waypoints (regular, cover, flee) = %s\n", (_viewWaypointsNormalToggle && _viewWaypointsFleeToggle && _viewWaypointsCoverToggle)? "true" : "false");
+			debugPrintf("Drawing all waypoints (regular, cover, flee) = %s\n", (_viewWaypointsNormalToggle && _viewWaypointsFleeToggle && _viewWaypointsCoverToggle) ? "true" : "false");
 		} else if (arg == "waynorm") {
 			if (argc == 2) {
 				_viewWaypointsNormalToggle = !_viewWaypointsNormalToggle;
-				debugPrintf("Drawing all normal waypoints = %s\n", _viewWaypointsNormalToggle? "true" : "false");
+				debugPrintf("Drawing all normal waypoints = %s\n", _viewWaypointsNormalToggle ? "true" : "false");
 			} else {
 				_viewWaypointsNormalToggle = false;
 				dbgDrawnObj.setId = -1;
@@ -348,7 +348,7 @@ bool Debugger::cmdDraw(int argc, const char **argv) {
 		} else if (arg == "wayflee") {
 			if (argc == 2) {
 				_viewWaypointsFleeToggle = !_viewWaypointsFleeToggle;
-				debugPrintf("Drawing all flee waypoints = %s\n", _viewWaypointsFleeToggle? "true" : "false");
+				debugPrintf("Drawing all flee waypoints = %s\n", _viewWaypointsFleeToggle ? "true" : "false");
 			} else {
 				_viewWaypointsFleeToggle = false;
 				dbgDrawnObj.setId = -1;
@@ -358,7 +358,7 @@ bool Debugger::cmdDraw(int argc, const char **argv) {
 		} else if (arg == "waycov") {
 			if (argc == 2) {
 				_viewWaypointsCoverToggle = !_viewWaypointsCoverToggle;
-				debugPrintf("Drawing all cover waypoints = %s\n", _viewWaypointsCoverToggle? "true" : "false");
+				debugPrintf("Drawing all cover waypoints = %s\n", _viewWaypointsCoverToggle ? "true" : "false");
 			} else {
 				_viewWaypointsCoverToggle = false;
 				dbgDrawnObj.setId = -1;
@@ -368,14 +368,14 @@ bool Debugger::cmdDraw(int argc, const char **argv) {
 		} else if (arg == "walk") {
 			if (argc == 2) {
 				_viewWalkboxes = !_viewWalkboxes;
-				debugPrintf("Drawing all walk boxes = %s\n", _viewWalkboxes? "true" : "false");
+				debugPrintf("Drawing all walk boxes = %s\n", _viewWalkboxes ? "true" : "false");
 			} else {
 				_viewWalkboxes = false;
 				dbgDrawnObj.type = debuggerObjTypeWalkbox;
 			}
 		} else if (arg == "zbuf") {
 			_viewZBuffer = !_viewZBuffer;
-			debugPrintf("Drawing Z buffer = %s\n", _viewZBuffer? "true" : "false");
+			debugPrintf("Drawing Z buffer = %s\n", _viewZBuffer ? "true" : "false");
 		} else if (arg == "reset") {
 
 			if (!_specificDrawnObjectsList.empty()) {
@@ -398,24 +398,24 @@ bool Debugger::cmdDraw(int argc, const char **argv) {
 			_viewWalkboxes = false;
 			_viewZBuffer = false;
 
-			debugPrintf("Drawing all scene objects (actors, 3d objects, items) = %s\n", (_viewActorsToggle && _view3dObjectsToggle && _viewItemsToggle)? "true" : "false");
-			debugPrintf("Drawing scene actors = %s\n", _viewActorsToggle? "true" : "false");
-			debugPrintf("Drawing scene 3d objects = %s\n", _view3dObjectsToggle? "true" : "false");
-			debugPrintf("Drawing scene items = %s\n", _viewItemsToggle? "true" : "false");
-			debugPrintf("Drawing obstacles = %s\n", _viewObstacles? "true" : "false");
-			debugPrintf("Drawing all regions (regular, exits) = %s\n", (_viewRegionsNormalToggle && _viewRegionsExitsToggle)? "true" : "false");
-			debugPrintf("Drawing regular regions = %s\n",  _viewRegionsNormalToggle? "true" : "false");
-			debugPrintf("Drawing exit regions = %s\n",  _viewRegionsExitsToggle? "true" : "false");
-			debugPrintf("Drawing screen effects = %s\n", _viewScreenEffects? "true" : "false");
-			debugPrintf("Drawing fogs = %s\n", _viewFogs? "true" : "false");
-			debugPrintf("Drawing lights = %s\n", _viewLights? "true" : "false");
-			debugPrintf("Drawing UI elements = %s\n", _viewUI? "true" : "false");
-			debugPrintf("Drawing all waypoints (regular, cover, flee) = %s\n", (_viewWaypointsNormalToggle && _viewWaypointsFleeToggle && _viewWaypointsCoverToggle)? "true" : "false");
-			debugPrintf("Drawing regular waypoints = %s\n", _viewWaypointsNormalToggle? "true" : "false");
-			debugPrintf("Drawing flee waypoints = %s\n", _viewWaypointsFleeToggle? "true" : "false");
-			debugPrintf("Drawing cover waypoints = %s\n", _viewWaypointsCoverToggle? "true" : "false");
-			debugPrintf("Drawing walkboxes = %s\n", _viewWalkboxes? "true" : "false");
-			debugPrintf("Drawing Z buffer = %s\n", _viewZBuffer? "true" : "false");
+			debugPrintf("Drawing all scene objects (actors, 3d objects, items) = %s\n", (_viewActorsToggle && _view3dObjectsToggle && _viewItemsToggle) ? "true" : "false");
+			debugPrintf("Drawing scene actors = %s\n", _viewActorsToggle ? "true" : "false");
+			debugPrintf("Drawing scene 3d objects = %s\n", _view3dObjectsToggle ? "true" : "false");
+			debugPrintf("Drawing scene items = %s\n", _viewItemsToggle ? "true" : "false");
+			debugPrintf("Drawing obstacles = %s\n", _viewObstacles ? "true" : "false");
+			debugPrintf("Drawing all regions (regular, exits) = %s\n", (_viewRegionsNormalToggle && _viewRegionsExitsToggle) ? "true" : "false");
+			debugPrintf("Drawing regular regions = %s\n", _viewRegionsNormalToggle ? "true" : "false");
+			debugPrintf("Drawing exit regions = %s\n", _viewRegionsExitsToggle ? "true" : "false");
+			debugPrintf("Drawing screen effects = %s\n", _viewScreenEffects ? "true" : "false");
+			debugPrintf("Drawing fogs = %s\n", _viewFogs ? "true" : "false");
+			debugPrintf("Drawing lights = %s\n", _viewLights ? "true" : "false");
+			debugPrintf("Drawing UI elements = %s\n", _viewUI ? "true" : "false");
+			debugPrintf("Drawing all waypoints (regular, cover, flee) = %s\n", (_viewWaypointsNormalToggle && _viewWaypointsFleeToggle && _viewWaypointsCoverToggle) ? "true" : "false");
+			debugPrintf("Drawing regular waypoints = %s\n", _viewWaypointsNormalToggle ? "true" : "false");
+			debugPrintf("Drawing flee waypoints = %s\n", _viewWaypointsFleeToggle ? "true" : "false");
+			debugPrintf("Drawing cover waypoints = %s\n", _viewWaypointsCoverToggle ? "true" : "false");
+			debugPrintf("Drawing walkboxes = %s\n", _viewWalkboxes ? "true" : "false");
+			debugPrintf("Drawing Z buffer = %s\n", _viewZBuffer ? "true" : "false");
 		} else {
 			invalidSyntax = true;
 		}
@@ -604,61 +604,187 @@ const struct SceneList {
 	int set;
 	int scene;
 } sceneList[] = {
-	{ 1, "CT01", 4, 13 },    { 1, "CT02", 27, 14 },  { 1, "CT03", 5, 15 },    { 1, "CT04", 5, 16 },
-	{ 1, "CT05", 28, 17 },   { 1, "CT06", 29, 18 },  { 1, "CT07", 30, 19 },   { 1, "CT12", 4, 24 },
-	{ 1, "MA01", 49, 48 },   { 1, "MA02", 10, 49 },  { 1, "MA04", 10, 50 },   { 1, "MA04", 50, 50 },
-	{ 1, "MA05", 51, 51 },   { 1, "MA06", 52, 52 },  { 1, "MA07", 53, 53 },   { 1, "PS01", 61, 65 },
-	{ 1, "PS02", 62, 66 },   { 1, "PS03", 63, 67 },  { 1, "PS04", 64, 68 },   { 1, "PS05", 15, 69 },
-	{ 1, "PS06", 65, 70 },   { 1, "PS07", 66, 71 },  { 1, "PS09", 67, 72 },   { 1, "PS10", 14, 73 },
-	{ 1, "PS11", 14, 74 },   { 1, "PS12", 14, 75 },  { 1, "PS13", 14, 76 },   { 1, "PS14", 68, 77 },
-	{ 1, "PS15", 101, 119 }, { 1, "RC01", 69, 78 },  { 1, "RC02", 16, 79 },   { 1, "RC51", 16, 107 },
+	{ 1, "CT01", 4, 13 }, { 1, "CT02", 27, 14 }, { 1, "CT03", 5, 15 }, { 1, "CT04", 5, 16 }, { 1, "CT05", 28, 17 }, { 1, "CT06", 29, 18 }, { 1, "CT07", 30, 19 }, { 1, "CT12", 4, 24 }, { 1, "MA01", 49, 48 }, { 1, "MA02", 10, 49 }, { 1, "MA04", 10, 50 }, { 1, "MA04", 50, 50 }, { 1, "MA05", 51, 51 }, { 1, "MA06", 52, 52 }, { 1, "MA07", 53, 53 }, { 1, "PS01", 61, 65 }, { 1, "PS02", 62, 66 }, { 1, "PS03", 63, 67 }, { 1, "PS04", 64, 68 }, { 1, "PS05", 15, 69 }, { 1, "PS06", 65, 70 }, { 1, "PS07", 66, 71 }, { 1, "PS09", 67, 72 }, { 1, "PS10", 14, 73 }, { 1, "PS11", 14, 74 }, { 1, "PS12", 14, 75 }, { 1, "PS13", 14, 76 }, { 1, "PS14", 68, 77 }, { 1, "PS15", 101, 119 }, { 1, "RC01", 69, 78 }, { 1, "RC02", 16, 79 }, { 1, "RC51", 16, 107 },
 
-	{ 2, "AR01", 0, 0 },     { 2, "AR02", 0, 1 },    { 2, "BB01", 20, 2 },    { 2, "BB02", 1, 3 },
-	{ 2, "BB03", 21, 4 },    { 2, "BB04", 1, 5 },    { 2, "BB05", 22, 6 },    { 2, "BB06", 1, 7 },
-	{ 2, "BB06", 2, 7 },     { 2, "BB07", 2, 8 },    { 2, "BB07", 3, 8 },     { 2, "BB08", 23, 9 },
-	{ 2, "BB09", 24, 10 },   { 2, "BB10", 25, 11 },  { 2, "BB11", 26, 12 },   { 2, "BB12", 102, 120 },
-	{ 2, "BB51", 1, 104 },   { 2, "CT01", 4, 13 },   { 2, "CT02", 27, 14 },   { 2, "CT03", 5, 15 },
-	{ 2, "CT04", 5, 16 },    { 2, "CT05", 28, 17 },  { 2, "CT06", 29, 18 },   { 2, "CT08", 6, 20 },
-	{ 2, "CT09", 31, 21 },   { 2, "CT10", 32, 22 },  { 2, "CT11", 33, 23 },   { 2, "CT12", 4, 24 },
-	{ 2, "CT51", 6, 105 },   { 2, "DR01", 7, 25 },   { 2, "DR02", 7, 26 },    { 2, "DR03", 34, 27 },
-	{ 2, "DR04", 7, 28 },    { 2, "DR05", 35, 29 },  { 2, "DR06", 36, 30 },   { 2, "HC01", 8, 31 },
-	{ 2, "HC02", 8, 32 },    { 2, "HC03", 8, 33 },   { 2, "HC04", 8, 106 },   { 2, "HF01", 37, 34 },
-	{ 2, "HF02", 38, 35 },   { 2, "HF03", 39, 36 },  { 2, "HF04", 40, 37 },   { 2, "HF05", 41, 38 },
-	{ 2, "HF06", 42, 39 },   { 2, "MA01", 49, 48 },  { 2, "MA02", 10, 49 },   { 2, "MA04", 10, 50 },
-	{ 2, "MA04", 50, 50 },   { 2, "MA05", 51, 51 },  { 2, "MA06", 52, 52 },   { 2, "MA07", 53, 53 },
-	{ 2, "NR01", 54, 54 },   { 2, "NR02", 11, 55 },  { 2, "NR03", 55, 56 },   { 2, "NR04", 12, 57 },
-	{ 2, "NR05", 13, 58 },   { 2, "NR06", 56, 59 },  { 2, "NR07", 57, 60 },   { 2, "NR08", 13, 61 },
-	{ 2, "NR09", 58, 62 },   { 2, "NR10", 59, 63 },  { 2, "NR11", 60, 64 },   { 2, "PS01", 61, 65 },
-	{ 2, "PS02", 62, 66 },   { 2, "PS03", 63, 67 },  { 2, "PS04", 64, 68 },   { 2, "PS05", 15, 69 },
-	{ 2, "PS06", 65, 70 },   { 2, "PS07", 66, 71 },  { 2, "PS09", 67, 72 },   { 2, "PS10", 14, 73 },
-	{ 2, "PS11", 14, 74 },   { 2, "PS12", 14, 75 },  { 2, "PS13", 14, 76 },   { 2, "PS14", 68, 77 },
-	{ 2, "PS15", 101, 119 }, { 2, "RC01", 69, 78 },  { 2, "RC03", 70, 80 },   { 2, "RC04", 71, 81 },
-	{ 2, "TB02", 17, 82 },   { 2, "TB05", 72, 84 },  { 2, "TB06", 73, 85 },   { 2, "TB07", 18, 108 },
-	{ 2, "UG01", 74, 86 },   { 2, "UG02", 75, 87 },  { 2, "UG03", 76, 88 },   { 2, "UG04", 77, 89 },
-	{ 2, "UG06", 79, 91 },   { 2, "UG10", 83, 95 },
+	{ 2, "AR01", 0, 0 },
+	{ 2, "AR02", 0, 1 },
+	{ 2, "BB01", 20, 2 },
+	{ 2, "BB02", 1, 3 },
+	{ 2, "BB03", 21, 4 },
+	{ 2, "BB04", 1, 5 },
+	{ 2, "BB05", 22, 6 },
+	{ 2, "BB06", 1, 7 },
+	{ 2, "BB06", 2, 7 },
+	{ 2, "BB07", 2, 8 },
+	{ 2, "BB07", 3, 8 },
+	{ 2, "BB08", 23, 9 },
+	{ 2, "BB09", 24, 10 },
+	{ 2, "BB10", 25, 11 },
+	{ 2, "BB11", 26, 12 },
+	{ 2, "BB12", 102, 120 },
+	{ 2, "BB51", 1, 104 },
+	{ 2, "CT01", 4, 13 },
+	{ 2, "CT02", 27, 14 },
+	{ 2, "CT03", 5, 15 },
+	{ 2, "CT04", 5, 16 },
+	{ 2, "CT05", 28, 17 },
+	{ 2, "CT06", 29, 18 },
+	{ 2, "CT08", 6, 20 },
+	{ 2, "CT09", 31, 21 },
+	{ 2, "CT10", 32, 22 },
+	{ 2, "CT11", 33, 23 },
+	{ 2, "CT12", 4, 24 },
+	{ 2, "CT51", 6, 105 },
+	{ 2, "DR01", 7, 25 },
+	{ 2, "DR02", 7, 26 },
+	{ 2, "DR03", 34, 27 },
+	{ 2, "DR04", 7, 28 },
+	{ 2, "DR05", 35, 29 },
+	{ 2, "DR06", 36, 30 },
+	{ 2, "HC01", 8, 31 },
+	{ 2, "HC02", 8, 32 },
+	{ 2, "HC03", 8, 33 },
+	{ 2, "HC04", 8, 106 },
+	{ 2, "HF01", 37, 34 },
+	{ 2, "HF02", 38, 35 },
+	{ 2, "HF03", 39, 36 },
+	{ 2, "HF04", 40, 37 },
+	{ 2, "HF05", 41, 38 },
+	{ 2, "HF06", 42, 39 },
+	{ 2, "MA01", 49, 48 },
+	{ 2, "MA02", 10, 49 },
+	{ 2, "MA04", 10, 50 },
+	{ 2, "MA04", 50, 50 },
+	{ 2, "MA05", 51, 51 },
+	{ 2, "MA06", 52, 52 },
+	{ 2, "MA07", 53, 53 },
+	{ 2, "NR01", 54, 54 },
+	{ 2, "NR02", 11, 55 },
+	{ 2, "NR03", 55, 56 },
+	{ 2, "NR04", 12, 57 },
+	{ 2, "NR05", 13, 58 },
+	{ 2, "NR06", 56, 59 },
+	{ 2, "NR07", 57, 60 },
+	{ 2, "NR08", 13, 61 },
+	{ 2, "NR09", 58, 62 },
+	{ 2, "NR10", 59, 63 },
+	{ 2, "NR11", 60, 64 },
+	{ 2, "PS01", 61, 65 },
+	{ 2, "PS02", 62, 66 },
+	{ 2, "PS03", 63, 67 },
+	{ 2, "PS04", 64, 68 },
+	{ 2, "PS05", 15, 69 },
+	{ 2, "PS06", 65, 70 },
+	{ 2, "PS07", 66, 71 },
+	{ 2, "PS09", 67, 72 },
+	{ 2, "PS10", 14, 73 },
+	{ 2, "PS11", 14, 74 },
+	{ 2, "PS12", 14, 75 },
+	{ 2, "PS13", 14, 76 },
+	{ 2, "PS14", 68, 77 },
+	{ 2, "PS15", 101, 119 },
+	{ 2, "RC01", 69, 78 },
+	{ 2, "RC03", 70, 80 },
+	{ 2, "RC04", 71, 81 },
+	{ 2, "TB02", 17, 82 },
+	{ 2, "TB05", 72, 84 },
+	{ 2, "TB06", 73, 85 },
+	{ 2, "TB07", 18, 108 },
+	{ 2, "UG01", 74, 86 },
+	{ 2, "UG02", 75, 87 },
+	{ 2, "UG03", 76, 88 },
+	{ 2, "UG04", 77, 89 },
+	{ 2, "UG06", 79, 91 },
+	{ 2, "UG10", 83, 95 },
 
-	{ 4, "AR01", 0, 0 },     { 4, "AR02", 0, 1 },    { 4, "BB01", 20, 2 },    { 4, "BB02", 1, 3 },
-	{ 4, "BB03", 21, 4 },    { 4, "BB04", 1, 5 },    { 4, "BB51", 1, 104 },   { 4, "CT01", 4, 13 },
-	{ 4, "CT02", 27, 14 },   { 4, "CT03", 5, 15 },   { 4, "CT04", 5, 16 },    { 4, "CT05", 28, 17 },
-	{ 4, "CT06", 29, 18 },   { 4, "CT08", 6, 20 },   { 4, "CT09", 31, 21 },   { 4, "CT10", 32, 22 },
-	{ 4, "CT11", 33, 23 },   { 4, "CT12", 4, 24 },   { 4, "CT51", 6, 105 },   { 4, "DR01", 7, 25 },
-	{ 4, "DR02", 7, 26 },    { 4, "DR03", 34, 27 },  { 4, "DR04", 7, 28 },    { 4, "DR05", 35, 29 },
-	{ 4, "DR06", 36, 30 },   { 4, "HC01", 8, 31 },   { 4, "HC02", 8, 32 },    { 4, "HC03", 8, 33 },
-	{ 4, "HC04", 8, 106 },   { 4, "HF01", 37, 34 },  { 4, "HF02", 38, 35 },   { 4, "HF03", 39, 36 },
-	{ 4, "HF04", 40, 37 },   { 4, "HF05", 41, 38 },  { 4, "HF06", 42, 39 },   { 4, "HF07", 43, 40 },
-	{ 4, "KP01", 44, 41 },   { 4, "KP02", 45, 42 },  { 4, "KP03", 46, 43 },   { 4, "KP04", 47, 44 },
-	{ 4, "KP05", 9, 45 },    { 4, "KP06", 9, 46 },   { 4, "KP07", 48, 47 },   { 4, "MA02", 10, 49 },
-	{ 4, "MA04", 10, 50 },   { 4, "MA04", 50, 50 },  { 4, "MA05", 51, 51 },   { 4, "MA06", 52, 52 },
-	{ 4, "MA07", 53, 53 },   { 4, "NR01", 54, 54 },  { 4, "NR02", 11, 55 },   { 4, "NR03", 55, 56 },
-	{ 4, "NR04", 12, 57 },   { 4, "NR05", 13, 58 },  { 4, "NR06", 56, 59 },   { 4, "NR07", 57, 60 },
-	{ 4, "NR08", 13, 61 },   { 4, "NR09", 58, 62 },  { 4, "NR10", 59, 63 },   { 4, "NR11", 60, 64 },
-	{ 4, "PS09", 67, 72 },   { 4, "PS14", 68, 77 },  { 4, "RC01", 69, 78 },   { 4, "RC02", 16, 89 },
-	{ 4, "RC03", 70, 80 },   { 4, "RC04", 71, 81 },  { 4, "RC51", 16, 107 },  { 4, "TB02", 17, 82 },
-	{ 4, "TB03", 17, 83 },   { 4, "TB07", 18, 108 }, { 4, "UG01", 74, 86 },   { 4, "UG02", 75, 87 },
-	{ 4, "UG03", 76, 88 },   { 4, "UG04", 77, 89 },  { 4, "UG05", 78, 90 },   { 4, "UG06", 79, 91 },
-	{ 4, "UG07", 80, 92 },   { 4, "UG08", 81, 93 },  { 4, "UG09", 82, 94 },   { 4, "UG10", 83, 95 },
-	{ 4, "UG12", 84, 96 },   { 4, "UG13", 85, 97 },  { 4, "UG14", 86, 98 },   { 4, "UG15", 87, 99 },
-	{ 4, "UG16", 16, 100 },  { 4, "UG17", 88, 101 }, { 4, "UG18", 89, 102 },  { 4, "UG19", 90, 103 },
+	{ 4, "AR01", 0, 0 },
+	{ 4, "AR02", 0, 1 },
+	{ 4, "BB01", 20, 2 },
+	{ 4, "BB02", 1, 3 },
+	{ 4, "BB03", 21, 4 },
+	{ 4, "BB04", 1, 5 },
+	{ 4, "BB51", 1, 104 },
+	{ 4, "CT01", 4, 13 },
+	{ 4, "CT02", 27, 14 },
+	{ 4, "CT03", 5, 15 },
+	{ 4, "CT04", 5, 16 },
+	{ 4, "CT05", 28, 17 },
+	{ 4, "CT06", 29, 18 },
+	{ 4, "CT08", 6, 20 },
+	{ 4, "CT09", 31, 21 },
+	{ 4, "CT10", 32, 22 },
+	{ 4, "CT11", 33, 23 },
+	{ 4, "CT12", 4, 24 },
+	{ 4, "CT51", 6, 105 },
+	{ 4, "DR01", 7, 25 },
+	{ 4, "DR02", 7, 26 },
+	{ 4, "DR03", 34, 27 },
+	{ 4, "DR04", 7, 28 },
+	{ 4, "DR05", 35, 29 },
+	{ 4, "DR06", 36, 30 },
+	{ 4, "HC01", 8, 31 },
+	{ 4, "HC02", 8, 32 },
+	{ 4, "HC03", 8, 33 },
+	{ 4, "HC04", 8, 106 },
+	{ 4, "HF01", 37, 34 },
+	{ 4, "HF02", 38, 35 },
+	{ 4, "HF03", 39, 36 },
+	{ 4, "HF04", 40, 37 },
+	{ 4, "HF05", 41, 38 },
+	{ 4, "HF06", 42, 39 },
+	{ 4, "HF07", 43, 40 },
+	{ 4, "KP01", 44, 41 },
+	{ 4, "KP02", 45, 42 },
+	{ 4, "KP03", 46, 43 },
+	{ 4, "KP04", 47, 44 },
+	{ 4, "KP05", 9, 45 },
+	{ 4, "KP06", 9, 46 },
+	{ 4, "KP07", 48, 47 },
+	{ 4, "MA02", 10, 49 },
+	{ 4, "MA04", 10, 50 },
+	{ 4, "MA04", 50, 50 },
+	{ 4, "MA05", 51, 51 },
+	{ 4, "MA06", 52, 52 },
+	{ 4, "MA07", 53, 53 },
+	{ 4, "NR01", 54, 54 },
+	{ 4, "NR02", 11, 55 },
+	{ 4, "NR03", 55, 56 },
+	{ 4, "NR04", 12, 57 },
+	{ 4, "NR05", 13, 58 },
+	{ 4, "NR06", 56, 59 },
+	{ 4, "NR07", 57, 60 },
+	{ 4, "NR08", 13, 61 },
+	{ 4, "NR09", 58, 62 },
+	{ 4, "NR10", 59, 63 },
+	{ 4, "NR11", 60, 64 },
+	{ 4, "PS09", 67, 72 },
+	{ 4, "PS14", 68, 77 },
+	{ 4, "RC01", 69, 78 },
+	{ 4, "RC02", 16, 89 },
+	{ 4, "RC03", 70, 80 },
+	{ 4, "RC04", 71, 81 },
+	{ 4, "RC51", 16, 107 },
+	{ 4, "TB02", 17, 82 },
+	{ 4, "TB03", 17, 83 },
+	{ 4, "TB07", 18, 108 },
+	{ 4, "UG01", 74, 86 },
+	{ 4, "UG02", 75, 87 },
+	{ 4, "UG03", 76, 88 },
+	{ 4, "UG04", 77, 89 },
+	{ 4, "UG05", 78, 90 },
+	{ 4, "UG06", 79, 91 },
+	{ 4, "UG07", 80, 92 },
+	{ 4, "UG08", 81, 93 },
+	{ 4, "UG09", 82, 94 },
+	{ 4, "UG10", 83, 95 },
+	{ 4, "UG12", 84, 96 },
+	{ 4, "UG13", 85, 97 },
+	{ 4, "UG14", 86, 98 },
+	{ 4, "UG15", 87, 99 },
+	{ 4, "UG16", 16, 100 },
+	{ 4, "UG17", 88, 101 },
+	{ 4, "UG18", 89, 102 },
+	{ 4, "UG19", 90, 103 },
 
 	{ 0, NULL, 0, 0 }
 };
@@ -690,10 +816,7 @@ bool Debugger::cmdScene(int argc, const char **argv) {
 		// Sanity check
 		uint i;
 		for (i = 0; sceneList[i].chapter != 0; i++) {
-			if (sceneList[i].chapter == chapterIdNormalized &&
-			    sceneList[i].set == setId &&
-			    sceneList[i].scene == sceneId
-			) {
+			if (sceneList[i].chapter == chapterIdNormalized && sceneList[i].set == setId && sceneList[i].scene == sceneId) {
 				break;
 			}
 		}
@@ -761,12 +884,12 @@ bool Debugger::cmdScene(int argc, const char **argv) {
 	uint i;
 	for (i = 0; sceneList[i].chapter != 0; i++) {
 		if (sceneList[i].chapter == chapterIdNormalized && sceneList[i].set == _vm->_scene->getSetId()
-				&& sceneList[i].scene == _vm->_scene->getSceneId())
+		    && sceneList[i].scene == _vm->_scene->getSceneId())
 			break;
 	}
 
 	debugPrintf("chapterID = %i\nsetId = %i\nsceneId = %i\nsceneName = '%s'\n", _vm->_settings->getChapter(), _vm->_scene->getSetId(),
-				_vm->_scene->getSceneId(), sceneList[i].name);
+	            _vm->_scene->getSceneId(), sceneList[i].name);
 	return true;
 }
 
@@ -968,69 +1091,267 @@ const struct OverlayAndScenesVQAsList {
 	const char *name;
 	bool isOverlayVQA; // else it is a scene VQA
 } overlaysList[] = {
-	{ 1, "MA04OVR2", true }, { 1, "PS10", false },    { 1, "MA01", false },    { 1, "RC01", false },    { 1, "PS01", false },
-	{ 1, "CT01", false },    { 1, "PS11", false },    { 1, "RC51", false },    { 1, "MA02", false },    { 1, "RC02", false },
-	{ 1, "PS02", false },    { 1, "CT02", false },    { 1, "PS12", false },    { 1, "CT12", false },    { 1, "PS03", false },
-	{ 1, "CT03", false },    { 1, "PS13", false },    { 1, "MA04", false },    { 1, "PS04", false },    { 1, "CT04", false },
-	{ 1, "PS14", false },    { 1, "CT01SPNR", true }, { 1, "MA05", false },    { 1, "PS05", false },    { 1, "CT05", false },
-	{ 1, "PS15", false },    { 1, "MA06", false },    { 1, "PS06", false },    { 1, "CT06", false },    { 1, "MA02OVER", true },
-	{ 1, "CT02OVER", true }, { 1, "MA07", false },    { 1, "PS07", false },    { 1, "CT07", false },    { 1, "PS09", false },
-	{ 1, "MA04OVER", true }, { 1, "PS05OVER", true }, { 1, "CT05OVER", true },
+	{ 1, "MA04OVR2", true }, { 1, "PS10", false }, { 1, "MA01", false }, { 1, "RC01", false }, { 1, "PS01", false }, { 1, "CT01", false }, { 1, "PS11", false }, { 1, "RC51", false }, { 1, "MA02", false }, { 1, "RC02", false }, { 1, "PS02", false }, { 1, "CT02", false }, { 1, "PS12", false }, { 1, "CT12", false }, { 1, "PS03", false }, { 1, "CT03", false }, { 1, "PS13", false }, { 1, "MA04", false }, { 1, "PS04", false }, { 1, "CT04", false }, { 1, "PS14", false }, { 1, "CT01SPNR", true }, { 1, "MA05", false }, { 1, "PS05", false }, { 1, "CT05", false }, { 1, "PS15", false }, { 1, "MA06", false }, { 1, "PS06", false }, { 1, "CT06", false }, { 1, "MA02OVER", true }, { 1, "CT02OVER", true }, { 1, "MA07", false }, { 1, "PS07", false }, { 1, "CT07", false }, { 1, "PS09", false }, { 1, "MA04OVER", true }, { 1, "PS05OVER", true }, { 1, "CT05OVER", true },
 
-	{ 2, "BB10OVR1", true }, { 2, "BB10OVR2", true }, { 2, "BB10OVR3", true }, { 2, "BB10OVR4", true }, { 2, "BB10OVR5", true },
-	{ 2, "BB10_2", false },  { 2, "UG10_2", false },  { 2, "NR10_2", false },  { 2, "PS10_2", false },  { 2, "CT10_2", false },
-	{ 2, "MA01_2", false },  { 2, "BB01_2", false },  { 2, "HC01_2", false },  { 2, "RC01_2", false },  { 2, "HF01_2", false },
-	{ 2, "UG01_2", false },  { 2, "AR01_2", false },  { 2, "DR01_2", false },  { 2, "NR01_2", false },  { 2, "PS01_2", false },
-	{ 2, "CT01_2", false },  { 2, "BB11_2", false },  { 2, "NR11_2", false },  { 2, "PS11_2", false },  { 2, "CT11_2", false },
-	{ 2, "BB51_2", false },  { 2, "CT51_2", false },  { 2, "MA02_2", false },  { 2, "BB02_2", false },  { 2, "TB02_2", false },
-	{ 2, "HC02_2", false },  { 2, "HF02_2", false },  { 2, "UG02_2", false },  { 2, "AR02_2", false },  { 2, "DR02_2", false },
-	{ 2, "NR02_2", false },  { 2, "PS02_2", false },  { 2, "CT02_2", false },  { 2, "BB12_2", false },  { 2, "PS12_2", false },
-	{ 2, "CT12_2", false },  { 2, "MA04OVR2", true }, { 2, "BB03_2", false },  { 2, "HC03_2", false },  { 2, "RC03_2", false },
-	{ 2, "HF03_2", false },  { 2, "UG03_2", false },  { 2, "DR03_2", false },  { 2, "NR03_2", false },  { 2, "PS03_2", false },
-	{ 2, "CT03_2", false },  { 2, "PS13_2", false },  { 2, "MA04_2", false },  { 2, "BB04_2", false },  { 2, "HC04_2", false },
-	{ 2, "RC04_2", false },  { 2, "HF04_2", false },  { 2, "UG04_2", false },  { 2, "DR04_2", false },  { 2, "NR04_2", false },
-	{ 2, "PS04_2", false },  { 2, "CT04_2", false },  { 2, "PS14_2", false },  { 2, "DR06OVR2", true }, { 2, "MA05_2", false },
-	{ 2, "BB05_2", false },  { 2, "TB05_2", false },  { 2, "HF05_2", false },  { 2, "DR05_2", false },  { 2, "NR05_2", false },
-	{ 2, "PS05_2", false },  { 2, "CT05_2", false },  { 2, "PS15_2", false },  { 2, "MA06_2", false },  { 2, "BB06_2", false },
-	{ 2, "TB06_2", false },  { 2, "HF06_2", false },  { 2, "UG06_2", false },  { 2, "DR06_2", false },  { 2, "NR06_2", false },
-	{ 2, "PS06_2", false },  { 2, "CT06_2", false },  { 2, "MA07_2", false },  { 2, "BB07_2", false },  { 2, "TB07_2", false },
-	{ 2, "NR07_2", false },  { 2, "PS07_2", false },  { 2, "BB08_2", false },  { 2, "NR08_2", false },  { 2, "CT08_2", false },
-	{ 2, "BB09_2", false },  { 2, "NR09_2", false },  { 2, "PS09_2", false },  { 2, "CT09_2", false },  { 2, "NR11OVER", true },
-	{ 2, "CT01SPNR", true }, { 2, "MA02OVER", true }, { 2, "CT02OVER", true }, { 2, "BB12OVER", true }, { 2, "MA04OVER", true },
-	{ 2, "DR04OVER", true }, { 2, "NR04OVER", true }, { 2, "BB05OVER", true }, { 2, "DR05OVER", true }, { 2, "PS05OVER", true },
-	{ 2, "CT05OVER", true }, { 2, "BB06OVER", true }, { 2, "DR06OVER", true }, { 2, "BB07OVER", true }, { 2, "BB08OVER", true },
+	{ 2, "BB10OVR1", true },
+	{ 2, "BB10OVR2", true },
+	{ 2, "BB10OVR3", true },
+	{ 2, "BB10OVR4", true },
+	{ 2, "BB10OVR5", true },
+	{ 2, "BB10_2", false },
+	{ 2, "UG10_2", false },
+	{ 2, "NR10_2", false },
+	{ 2, "PS10_2", false },
+	{ 2, "CT10_2", false },
+	{ 2, "MA01_2", false },
+	{ 2, "BB01_2", false },
+	{ 2, "HC01_2", false },
+	{ 2, "RC01_2", false },
+	{ 2, "HF01_2", false },
+	{ 2, "UG01_2", false },
+	{ 2, "AR01_2", false },
+	{ 2, "DR01_2", false },
+	{ 2, "NR01_2", false },
+	{ 2, "PS01_2", false },
+	{ 2, "CT01_2", false },
+	{ 2, "BB11_2", false },
+	{ 2, "NR11_2", false },
+	{ 2, "PS11_2", false },
+	{ 2, "CT11_2", false },
+	{ 2, "BB51_2", false },
+	{ 2, "CT51_2", false },
+	{ 2, "MA02_2", false },
+	{ 2, "BB02_2", false },
+	{ 2, "TB02_2", false },
+	{ 2, "HC02_2", false },
+	{ 2, "HF02_2", false },
+	{ 2, "UG02_2", false },
+	{ 2, "AR02_2", false },
+	{ 2, "DR02_2", false },
+	{ 2, "NR02_2", false },
+	{ 2, "PS02_2", false },
+	{ 2, "CT02_2", false },
+	{ 2, "BB12_2", false },
+	{ 2, "PS12_2", false },
+	{ 2, "CT12_2", false },
+	{ 2, "MA04OVR2", true },
+	{ 2, "BB03_2", false },
+	{ 2, "HC03_2", false },
+	{ 2, "RC03_2", false },
+	{ 2, "HF03_2", false },
+	{ 2, "UG03_2", false },
+	{ 2, "DR03_2", false },
+	{ 2, "NR03_2", false },
+	{ 2, "PS03_2", false },
+	{ 2, "CT03_2", false },
+	{ 2, "PS13_2", false },
+	{ 2, "MA04_2", false },
+	{ 2, "BB04_2", false },
+	{ 2, "HC04_2", false },
+	{ 2, "RC04_2", false },
+	{ 2, "HF04_2", false },
+	{ 2, "UG04_2", false },
+	{ 2, "DR04_2", false },
+	{ 2, "NR04_2", false },
+	{ 2, "PS04_2", false },
+	{ 2, "CT04_2", false },
+	{ 2, "PS14_2", false },
+	{ 2, "DR06OVR2", true },
+	{ 2, "MA05_2", false },
+	{ 2, "BB05_2", false },
+	{ 2, "TB05_2", false },
+	{ 2, "HF05_2", false },
+	{ 2, "DR05_2", false },
+	{ 2, "NR05_2", false },
+	{ 2, "PS05_2", false },
+	{ 2, "CT05_2", false },
+	{ 2, "PS15_2", false },
+	{ 2, "MA06_2", false },
+	{ 2, "BB06_2", false },
+	{ 2, "TB06_2", false },
+	{ 2, "HF06_2", false },
+	{ 2, "UG06_2", false },
+	{ 2, "DR06_2", false },
+	{ 2, "NR06_2", false },
+	{ 2, "PS06_2", false },
+	{ 2, "CT06_2", false },
+	{ 2, "MA07_2", false },
+	{ 2, "BB07_2", false },
+	{ 2, "TB07_2", false },
+	{ 2, "NR07_2", false },
+	{ 2, "PS07_2", false },
+	{ 2, "BB08_2", false },
+	{ 2, "NR08_2", false },
+	{ 2, "CT08_2", false },
+	{ 2, "BB09_2", false },
+	{ 2, "NR09_2", false },
+	{ 2, "PS09_2", false },
+	{ 2, "CT09_2", false },
+	{ 2, "NR11OVER", true },
+	{ 2, "CT01SPNR", true },
+	{ 2, "MA02OVER", true },
+	{ 2, "CT02OVER", true },
+	{ 2, "BB12OVER", true },
+	{ 2, "MA04OVER", true },
+	{ 2, "DR04OVER", true },
+	{ 2, "NR04OVER", true },
+	{ 2, "BB05OVER", true },
+	{ 2, "DR05OVER", true },
+	{ 2, "PS05OVER", true },
+	{ 2, "CT05OVER", true },
+	{ 2, "BB06OVER", true },
+	{ 2, "DR06OVER", true },
+	{ 2, "BB07OVER", true },
+	{ 2, "BB08OVER", true },
 
-	{ 3, "UG10_3", false },  { 3, "NR10_3", false },  { 3, "CT10_3", false },  { 3, "BB01_3", false },  { 3, "HC01_3", false },
-	{ 3, "RC01_3", false },  { 3, "HF01_3", false },  { 3, "UG01_3", false },  { 3, "KP01_3", false },  { 3, "AR01_3", false },
-	{ 3, "DR01_3", false },  { 3, "NR01_3", false },  { 3, "CT01_3", false },  { 3, "NR11_3", false },  { 3, "CT11_3", false },
-	{ 3, "BB51_3", false },  { 3, "RC51_3", false },  { 3, "CT51_3", false },  { 3, "MA02_3", false },  { 3, "BB02_3", false },
-	{ 3, "TB02_3", false },  { 3, "HC02_3", false },  { 3, "RC02_3", false },  { 3, "HF02_3", false },  { 3, "UG02_3", false },
-	{ 3, "KP02_3", false },  { 3, "AR02_3", false },  { 3, "DR02_3", false },  { 3, "NR02_3", false },  { 3, "CT02_3", false },
-	{ 3, "UG12_3", false },  { 3, "CT12_3", false },  { 3, "MA04OVR2", true }, { 3, "BB03_3", false },  { 3, "TB03_3", false },
-	{ 3, "HC03_3", false },  { 3, "RC03_3", false },  { 3, "HF03_3", false },  { 3, "UG03_3", false },  { 3, "KP03_3", false },
-	{ 3, "DR03_3", false },  { 3, "NR03_3", false },  { 3, "CT03_3", false },  { 3, "UG13_3", false },  { 3, "MA04_3", false },
-	{ 3, "BB04_3", false },  { 3, "HC04_3", false },  { 3, "RC04_3", false },  { 3, "HF04_3", false },  { 3, "UG04_3", false },
-	{ 3, "KP04_3", false },  { 3, "DR04_3", false },  { 3, "NR04_3", false },  { 3, "CT04_3", false },  { 3, "UG14_3", false },
-	{ 3, "PS14_3", false },  { 3, "DR06OVR2", true }, { 3, "MA05_3", false },  { 3, "HF05_3", false },  { 3, "UG05_3", false },
-	{ 3, "KP05_3", false },  { 3, "DR05_3", false },  { 3, "NR05_3", false },  { 3, "CT05_3", false },  { 3, "UG15_3", false },
-	{ 3, "MA06_3", false },  { 3, "HF06_3", false },  { 3, "UG06_3", false },  { 3, "KP06_3", false },  { 3, "DR06_3", false },
-	{ 3, "NR06_3", false },  { 3, "CT06_3", false },  { 3, "UG16_3", false },  { 3, "UG18OVR2", true }, { 3, "UG19OVR1", true },
-	{ 3, "MA07_3", false },  { 3, "TB07_3", false },  { 3, "HF07_3", false },  { 3, "UG07_3", false },  { 3, "KP07_3", false },
-	{ 3, "NR07_3", false },  { 3, "UG17_3", false },  { 3, "UG08_3", false },  { 3, "NR08_3", false },  { 3, "CT08_3", false },
-	{ 3, "UG18_3", false },  { 3, "UG09_3", false },  { 3, "NR09_3", false },  { 3, "PS09_3", false },  { 3, "CT09_3", false },
-	{ 3, "UG19_3", false },  { 3, "NR11OVER", true }, { 3, "CT01SPNR", true }, { 3, "MA02OVER", true }, { 3, "CT02OVER", true },
-	{ 3, "MA04OVER", true }, { 3, "DR04OVER", true }, { 3, "NR04OVER", true }, { 3, "UG14OVER", true }, { 3, "DR05OVER", true },
-	{ 3, "CT05OVER", true }, { 3, "UG15OVER", true }, { 3, "DR06OVER", true }, { 3, "UG17OVER", true }, { 3, "UG18OVER", true },
+	{ 3, "UG10_3", false },
+	{ 3, "NR10_3", false },
+	{ 3, "CT10_3", false },
+	{ 3, "BB01_3", false },
+	{ 3, "HC01_3", false },
+	{ 3, "RC01_3", false },
+	{ 3, "HF01_3", false },
+	{ 3, "UG01_3", false },
+	{ 3, "KP01_3", false },
+	{ 3, "AR01_3", false },
+	{ 3, "DR01_3", false },
+	{ 3, "NR01_3", false },
+	{ 3, "CT01_3", false },
+	{ 3, "NR11_3", false },
+	{ 3, "CT11_3", false },
+	{ 3, "BB51_3", false },
+	{ 3, "RC51_3", false },
+	{ 3, "CT51_3", false },
+	{ 3, "MA02_3", false },
+	{ 3, "BB02_3", false },
+	{ 3, "TB02_3", false },
+	{ 3, "HC02_3", false },
+	{ 3, "RC02_3", false },
+	{ 3, "HF02_3", false },
+	{ 3, "UG02_3", false },
+	{ 3, "KP02_3", false },
+	{ 3, "AR02_3", false },
+	{ 3, "DR02_3", false },
+	{ 3, "NR02_3", false },
+	{ 3, "CT02_3", false },
+	{ 3, "UG12_3", false },
+	{ 3, "CT12_3", false },
+	{ 3, "MA04OVR2", true },
+	{ 3, "BB03_3", false },
+	{ 3, "TB03_3", false },
+	{ 3, "HC03_3", false },
+	{ 3, "RC03_3", false },
+	{ 3, "HF03_3", false },
+	{ 3, "UG03_3", false },
+	{ 3, "KP03_3", false },
+	{ 3, "DR03_3", false },
+	{ 3, "NR03_3", false },
+	{ 3, "CT03_3", false },
+	{ 3, "UG13_3", false },
+	{ 3, "MA04_3", false },
+	{ 3, "BB04_3", false },
+	{ 3, "HC04_3", false },
+	{ 3, "RC04_3", false },
+	{ 3, "HF04_3", false },
+	{ 3, "UG04_3", false },
+	{ 3, "KP04_3", false },
+	{ 3, "DR04_3", false },
+	{ 3, "NR04_3", false },
+	{ 3, "CT04_3", false },
+	{ 3, "UG14_3", false },
+	{ 3, "PS14_3", false },
+	{ 3, "DR06OVR2", true },
+	{ 3, "MA05_3", false },
+	{ 3, "HF05_3", false },
+	{ 3, "UG05_3", false },
+	{ 3, "KP05_3", false },
+	{ 3, "DR05_3", false },
+	{ 3, "NR05_3", false },
+	{ 3, "CT05_3", false },
+	{ 3, "UG15_3", false },
+	{ 3, "MA06_3", false },
+	{ 3, "HF06_3", false },
+	{ 3, "UG06_3", false },
+	{ 3, "KP06_3", false },
+	{ 3, "DR06_3", false },
+	{ 3, "NR06_3", false },
+	{ 3, "CT06_3", false },
+	{ 3, "UG16_3", false },
+	{ 3, "UG18OVR2", true },
+	{ 3, "UG19OVR1", true },
+	{ 3, "MA07_3", false },
+	{ 3, "TB07_3", false },
+	{ 3, "HF07_3", false },
+	{ 3, "UG07_3", false },
+	{ 3, "KP07_3", false },
+	{ 3, "NR07_3", false },
+	{ 3, "UG17_3", false },
+	{ 3, "UG08_3", false },
+	{ 3, "NR08_3", false },
+	{ 3, "CT08_3", false },
+	{ 3, "UG18_3", false },
+	{ 3, "UG09_3", false },
+	{ 3, "NR09_3", false },
+	{ 3, "PS09_3", false },
+	{ 3, "CT09_3", false },
+	{ 3, "UG19_3", false },
+	{ 3, "NR11OVER", true },
+	{ 3, "CT01SPNR", true },
+	{ 3, "MA02OVER", true },
+	{ 3, "CT02OVER", true },
+	{ 3, "MA04OVER", true },
+	{ 3, "DR04OVER", true },
+	{ 3, "NR04OVER", true },
+	{ 3, "UG14OVER", true },
+	{ 3, "DR05OVER", true },
+	{ 3, "CT05OVER", true },
+	{ 3, "UG15OVER", true },
+	{ 3, "DR06OVER", true },
+	{ 3, "UG17OVER", true },
+	{ 3, "UG18OVER", true },
 
-	{ 6, "VKLUCY", true },   { 6, "VKRUNC", true },   { 6, "KIA_CLUE", false },{ 6, "KIA_INGM", false }, { 6, "KIA_CRIM", false },
-	{ 6, "KIA_SUSP", false },{ 6, "HC01ESP1", false },{ 6, "HC01ESP2", false },{ 6, "HC01ESP3", false }, { 6, "RC02ESP1", false },
-	{ 6, "HC02ESP2", false },{ 6, "RC02ESP2", false },{ 6, "HC02ESP3", false },{ 6, "RC02ESP3", false }, { 6, "HC02ESP4", false },
-	{ 6, "RC02ESP4", false },{ 6, "HC02ESP5", false },{ 6, "RC02ESP5", false },{ 6, "RC02ESP6", false }, { 6, "RC02ESP7", false },
-	{ 6, "TB06ESP1", false },{ 6, "KP06ESP1", false },{ 6, "NR06ESP1", false },{ 6, "TB06ESP2", false }, { 6, "KP06ESP2", false },
-	{ 6, "NR06ESP2", false },{ 6, "TB06ESP3", false },{ 6, "KP06ESP3", false },{ 6, "NR07ESP1", false }, { 6, "TB06ESP4", false },
-	{ 6, "KP06ESP4", false },{ 6, "NR07ESP2", false },{ 6, "SPINNER", false }, { 6, "KIAOVER", false },  { 6, "VK", false },
-	{ 6, "VKKASH", true },   { 6, "PS02ELEV", false },{ 6, "ESPER", false },   { 6, "VKDEKT", true },   { 6, "MA06ELEV", false },
-	{ 6, "VKBOB", true },    { 6, "SCORE", false },
+	{ 6, "VKLUCY", true },
+	{ 6, "VKRUNC", true },
+	{ 6, "KIA_CLUE", false },
+	{ 6, "KIA_INGM", false },
+	{ 6, "KIA_CRIM", false },
+	{ 6, "KIA_SUSP", false },
+	{ 6, "HC01ESP1", false },
+	{ 6, "HC01ESP2", false },
+	{ 6, "HC01ESP3", false },
+	{ 6, "RC02ESP1", false },
+	{ 6, "HC02ESP2", false },
+	{ 6, "RC02ESP2", false },
+	{ 6, "HC02ESP3", false },
+	{ 6, "RC02ESP3", false },
+	{ 6, "HC02ESP4", false },
+	{ 6, "RC02ESP4", false },
+	{ 6, "HC02ESP5", false },
+	{ 6, "RC02ESP5", false },
+	{ 6, "RC02ESP6", false },
+	{ 6, "RC02ESP7", false },
+	{ 6, "TB06ESP1", false },
+	{ 6, "KP06ESP1", false },
+	{ 6, "NR06ESP1", false },
+	{ 6, "TB06ESP2", false },
+	{ 6, "KP06ESP2", false },
+	{ 6, "NR06ESP2", false },
+	{ 6, "TB06ESP3", false },
+	{ 6, "KP06ESP3", false },
+	{ 6, "NR07ESP1", false },
+	{ 6, "TB06ESP4", false },
+	{ 6, "KP06ESP4", false },
+	{ 6, "NR07ESP2", false },
+	{ 6, "SPINNER", false },
+	{ 6, "KIAOVER", false },
+	{ 6, "VK", false },
+	{ 6, "VKKASH", true },
+	{ 6, "PS02ELEV", false },
+	{ 6, "ESPER", false },
+	{ 6, "VKDEKT", true },
+	{ 6, "MA06ELEV", false },
+	{ 6, "VKBOB", true },
+	{ 6, "SCORE", false },
 
 	{ 0, NULL, false }
 };
@@ -1054,12 +1375,11 @@ bool Debugger::cmdOverlay(int argc, const char **argv) {
 	bool invalidSyntax = false;
 
 	if (_vm->_kia->isOpen()
-		|| _vm->_esper->isOpen()
-		|| _vm->_spinner->isOpen()
-		|| _vm->_elevator->isOpen()
-		|| _vm->_vk->isOpen()
-		|| _vm->_scores->isOpen()
-	) {
+	    || _vm->_esper->isOpen()
+	    || _vm->_spinner->isOpen()
+	    || _vm->_elevator->isOpen()
+	    || _vm->_vk->isOpen()
+	    || _vm->_scores->isOpen()) {
 		debugPrintf("Sorry, playing custom overlays in KIA, ESPER, Voigt-Kampff, Spinner GPS,\nScores or Elevator mode is not supported\n");
 		return true;
 	}
@@ -1080,10 +1400,10 @@ bool Debugger::cmdOverlay(int argc, const char **argv) {
 
 		// Normally, don't force-load the MODE.MIX resource
 		if (!_vm->isArchiveOpen("MODE.MIX")) {
-	//		if (_vm->openArchive("MODE.MIX") { // Note: This will force-load MODE.MIX. Use with caution!
-	//			debugPrintf("Warning: MODE.MIX resources were force-loaded.\n Please, don't use game's menu modes (KIA, ESPER, Voigt-Kampff, Spinner GPS, Scores or Elevator) before executing an \"%s reset\" from the debugger!\n", argv[0]);
-	//			modeMixOverlaysAvailableFlg = true;
-	//		}
+			//		if (_vm->openArchive("MODE.MIX") { // Note: This will force-load MODE.MIX. Use with caution!
+			//			debugPrintf("Warning: MODE.MIX resources were force-loaded.\n Please, don't use game's menu modes (KIA, ESPER, Voigt-Kampff, Spinner GPS, Scores or Elevator) before executing an \"%s reset\" from the debugger!\n", argv[0]);
+			//			modeMixOverlaysAvailableFlg = true;
+			//		}
 		} else {
 			modeMixOverlaysAvailableFlg = true;
 		}
@@ -1096,14 +1416,14 @@ bool Debugger::cmdOverlay(int argc, const char **argv) {
 			for (int i = 0; i < _vm->_overlays->kOverlayVideos; ++i) {
 				if (_vm->_overlays->_videos[i].loaded) {
 					countOfLoadedOverlaysInScene++;
-					VQADecoder::LoopInfo &loopInfo =_vm->_overlays->_videos[i].vqaPlayer->_decoder._loopInfo;
+					VQADecoder::LoopInfo &loopInfo = _vm->_overlays->_videos[i].vqaPlayer->_decoder._loopInfo;
 					for (int j = 0; j < loopInfo.loopCount; ++j) {
 						debugPrintf("%s %2d %4d %4d\n", _vm->_overlays->_videos[i].name.c_str(), j, loopInfo.loops[j].begin, loopInfo.loops[j].end);
 					}
 				}
 			}
 
-			if ( countOfLoadedOverlaysInScene > 0) {
+			if (countOfLoadedOverlaysInScene > 0) {
 				debugPrintf("  ** %d overlays are loaded in scene **\n", countOfLoadedOverlaysInScene);
 			} else {
 				debugPrintf("  ** No overlays loaded in scene **\n");
@@ -1116,7 +1436,7 @@ bool Debugger::cmdOverlay(int argc, const char **argv) {
 			Common::String argName = argv[1];
 
 			if (argName == "reset") {
-			// Reset (remove) the overlays loaded for the scene
+				// Reset (remove) the overlays loaded for the scene
 				_vm->_overlays->removeAll();
 				// And return to original VQA for this scene
 				const Common::String origSceneName = _vm->_gameInfo->getSceneName(_vm->_scene->_sceneId);
@@ -1140,27 +1460,25 @@ bool Debugger::cmdOverlay(int argc, const char **argv) {
 				_vm->_scene->startDefaultLoop();
 				_vm->_scene->advanceFrame();
 
-
 			} else if (argName == "avail") {
-			// List the available overlays in the loaded resources
+				// List the available overlays in the loaded resources
 				const uint dispColCount = 5;
 				uint colCountIter = 0;
 				uint16 itemIter = 0;
 
 				debugPrintf("Available overlays in the loaded resources:\n");
 				for (itemIter = 0; overlaysList[itemIter].resourceId != 0; ++itemIter) {
-					if ( (overlaysList[itemIter].resourceId == chapterIdOverlaysAvailableInt)
-						|| ( modeMixOverlaysAvailableFlg && overlaysList[itemIter].resourceId == 6)
-					) {
+					if ((overlaysList[itemIter].resourceId == chapterIdOverlaysAvailableInt)
+					    || (modeMixOverlaysAvailableFlg && overlaysList[itemIter].resourceId == 6)) {
 						debugPrintf("%s ", overlaysList[itemIter].name);
 						colCountIter = (colCountIter + 1) % dispColCount;
-						if ( colCountIter == 0) {
+						if (colCountIter == 0) {
 							debugPrintf("\n");
 						}
 					}
 				}
 				// final new line if needed
-				if ( colCountIter % dispColCount != 0) {
+				if (colCountIter % dispColCount != 0) {
 					debugPrintf("\n");
 				}
 				if (!modeMixOverlaysAvailableFlg) {
@@ -1200,15 +1518,14 @@ bool Debugger::cmdOverlay(int argc, const char **argv) {
 			// Check if specified overlay name exists AND is available
 			uint16 itemIter = 0;
 			for (itemIter = 0; overlaysList[itemIter].resourceId != 0; ++itemIter) {
-				if ( (overlaysList[itemIter].resourceId == chapterIdOverlaysAvailableInt)
-					|| ( modeMixOverlaysAvailableFlg && overlaysList[itemIter].resourceId == 6)
-				) {
+				if ((overlaysList[itemIter].resourceId == chapterIdOverlaysAvailableInt)
+				    || (modeMixOverlaysAvailableFlg && overlaysList[itemIter].resourceId == 6)) {
 					if (strcmp(overlaysList[itemIter].name, overlayName.c_str()) == 0) {
 						break;
 					}
 				}
 			}
-			if (overlaysList[itemIter].resourceId == 0 ) {
+			if (overlaysList[itemIter].resourceId == 0) {
 				debugPrintf("No available resource was found by that name!\nPerhaps it exists in another chapter.\n");
 				return true;
 			}
@@ -1218,18 +1535,18 @@ bool Debugger::cmdOverlay(int argc, const char **argv) {
 				// Attempt to load the overlay in an empty slot
 				// even if it's not already loaded for the scene (in _vm->_overlays->_videos)
 				int overlayVideoIdx = _vm->_overlays->play(overlayName, overlayAnimationId, loopForever, startNowFlag, 0);
-				if ( overlayVideoIdx == -1 ) {
+				if (overlayVideoIdx == -1) {
 					debugPrintf("Could not load the overlay animation: %s in this scene. Try reseting overlays first to free up slots!\n", overlayName.c_str());
 				} else {
 					debugPrintf("Loading overlay animation: %s...\n", overlayName.c_str());
 
-					VQADecoder::LoopInfo &loopInfo =_vm->_overlays->_videos[overlayVideoIdx].vqaPlayer->_decoder._loopInfo;
+					VQADecoder::LoopInfo &loopInfo = _vm->_overlays->_videos[overlayVideoIdx].vqaPlayer->_decoder._loopInfo;
 					int overlayAnimationLoopCount = loopInfo.loopCount;
 					if (overlayAnimationLoopCount == 0) {
 						debugPrintf("Error: No valid loops were found for overlay animation named: %s!\n", overlayName.c_str());
 						_vm->_overlays->remove(overlayName.c_str());
 					} else if (overlayAnimationId >= overlayAnimationLoopCount) {
-						debugPrintf("Invalid loop id: %d for overlay animation: %s. Try from 0 to %d.\n",  overlayAnimationId, overlayName.c_str(), overlayAnimationLoopCount-1);
+						debugPrintf("Invalid loop id: %d for overlay animation: %s. Try from 0 to %d.\n", overlayAnimationId, overlayName.c_str(), overlayAnimationLoopCount - 1);
 					} else {
 						// print info about available loops too
 						debugPrintf("Animation: %s loaded. Running loop %d...\n", overlayName.c_str(), overlayAnimationId);
@@ -1248,12 +1565,12 @@ bool Debugger::cmdOverlay(int argc, const char **argv) {
 					return true;
 				}
 
-				VQADecoder::LoopInfo &loopInfo =_vm->_scene->_vqaPlayer->_decoder._loopInfo;
+				VQADecoder::LoopInfo &loopInfo = _vm->_scene->_vqaPlayer->_decoder._loopInfo;
 				int sceneAnimationLoopCount = loopInfo.loopCount;
 				if (sceneAnimationLoopCount == 0) {
 					debugPrintf("Error: No valid loops were found for scene animation named: %s!\n", (overlayName + ".VQA").c_str());
 				} else if (overlayAnimationId >= sceneAnimationLoopCount) {
-					debugPrintf("Invalid loop id: %d for scene animation: %s. Try from 0 to %d.\n",  overlayAnimationId, overlayName.c_str(), sceneAnimationLoopCount-1);
+					debugPrintf("Invalid loop id: %d for scene animation: %s. Try from 0 to %d.\n", overlayAnimationId, overlayName.c_str(), sceneAnimationLoopCount - 1);
 				} else {
 					// ignore the specified loopForever and startNow flags
 					// just do a kSceneLoopModeOnce, without immediate start
@@ -1313,7 +1630,6 @@ bool Debugger::cmdSubtitle(int argc, const char **argv) {
 		debugPrintf("Usage: %s (\"<text_to_display>\" | info | reset)\n", argv[0]);
 	}
 	return true;
-
 }
 
 /**
@@ -1326,7 +1642,7 @@ bool Debugger::cmdMazeScore(int argc, const char **argv) {
 		invalidSyntax = true;
 	} else {
 		if (_vm->_scene->getSetId() != kSetPS10_PS11_PS12_PS13) {
-			debugPrintf("Error:Command %s is only valid during the Police Maze course\n",  argv[0]);
+			debugPrintf("Error:Command %s is only valid during the Police Maze course\n", argv[0]);
 			return true;
 		}
 		//
@@ -1336,7 +1652,7 @@ bool Debugger::cmdMazeScore(int argc, const char **argv) {
 		argName.toLowercase();
 		if (argc == 2 && argName == "toggle") {
 			_showMazeScore = !_showMazeScore;
-			debugPrintf("Showing maze score = %s\n", _showMazeScore ? "True":"False");
+			debugPrintf("Showing maze score = %s\n", _showMazeScore ? "True" : "False");
 		} else {
 			invalidSyntax = true;
 		}
@@ -1348,7 +1664,6 @@ bool Debugger::cmdMazeScore(int argc, const char **argv) {
 	}
 	return true;
 }
-
 
 /**
 * Add, remove or edit flags or bounding box for an object to debug some issues whereby existing obstacle layout does not prevent
@@ -1404,18 +1719,17 @@ bool Debugger::cmdObject(int argc, const char **argv) {
 
 				_vm->_scene->_set->_objects[objectId].bbox = BoundingBox(x0, y0, z0, x1, y1, z1);
 				_vm->_scene->_set->_objects[objectId].isObstacle = 0; // init as false
-				_vm->_scene->_set->_objects[objectId].isClickable = 0;// init as false
+				_vm->_scene->_set->_objects[objectId].isClickable = 0; // init as false
 				_vm->_scene->_set->_objects[objectId].isHotMouse = 0;
 				_vm->_scene->_set->_objects[objectId].unknown1 = 0;
-				_vm->_scene->_set->_objects[objectId].isTarget = 0;   // init as false
+				_vm->_scene->_set->_objects[objectId].isTarget = 0; // init as false
 				//
 				if (_vm->_sceneObjects->addObject(objectId + kSceneObjectOffsetObjects,
 				                                  _vm->_scene->_set->_objects[objectId].bbox,
 				                                  false,
 				                                  false,
 				                                  _vm->_scene->_set->_objects[objectId].unknown1,
-				                                  false)
-				) {
+				                                  false)) {
 					debugPrintf("Object: %d: %s was added to set and scene\n", objectId, custObjName.c_str());
 				} else {
 					debugPrintf("Failed to add object: %d: %s to the scene\n", objectId, custObjName.c_str());
@@ -1423,10 +1737,9 @@ bool Debugger::cmdObject(int argc, const char **argv) {
 				return true;
 			}
 		} else if ((modeName == "remove" && argc == 3)
-		            || (modeName == "flags" && argc == 6)
-					|| (modeName == "bounds" && argc == 9)
-		            || (modeName == "list" && argc == 3)
-		) {
+		           || (modeName == "flags" && argc == 6)
+		           || (modeName == "bounds" && argc == 9)
+		           || (modeName == "list" && argc == 3)) {
 			// remove object mode, show properties or edit flags
 			int objectId = atoi(argv[2]);
 			if (objectId >= 0 && objectId < _vm->_scene->_set->_objectCount) {
@@ -1446,9 +1759,9 @@ bool Debugger::cmdObject(int argc, const char **argv) {
 					// This inconsistency is fixed if you exit and re-enter the scene.
 					debugPrintf("%d: %s (Clk: %s, Trg: %s, Obs: %s), Pos(%02.2f,%02.2f,%02.2f)\n     Bbox(%02.2f,%02.2f,%02.2f) ~ (%02.2f,%02.2f,%02.2f)\n",
 					            objectId, objName.c_str(),
-					            _vm->_scene->_set->_objects[objectId].isClickable? "T" : "F",
-					            _vm->_scene->_set->_objects[objectId].isTarget?    "T" : "F",
-					            _vm->_scene->_set->_objects[objectId].isObstacle?  "T" : "F",
+					            _vm->_scene->_set->_objects[objectId].isClickable ? "T" : "F",
+					            _vm->_scene->_set->_objects[objectId].isTarget ? "T" : "F",
+					            _vm->_scene->_set->_objects[objectId].isObstacle ? "T" : "F",
 					            pos.x, pos.y, pos.z,
 					            a.x, a.y, a.z, b.x, b.y, b.z);
 				} else if (modeName == "remove") {
@@ -1466,28 +1779,28 @@ bool Debugger::cmdObject(int argc, const char **argv) {
 					_vm->_scene->_set->_objects[objectId].bbox.setXYZ(positionBottomRight.x, positionBottomRight.y, positionBottomRight.z, positionTopLeft.x, positionTopLeft.y, positionTopLeft.z);
 					if (!_vm->_sceneIsLoading && _vm->_sceneObjects->remove(objectId + kSceneObjectOffsetObjects)) {
 						_vm->_sceneObjects->addObject(objectId + kSceneObjectOffsetObjects,
-						                               _vm->_scene->_set->_objects[objectId].bbox,
-						                               _vm->_scene->_set->_objects[objectId].isClickable,
-						                               _vm->_scene->_set->_objects[objectId].isObstacle,
-						                               _vm->_scene->_set->_objects[objectId].unknown1,
-						                               _vm->_scene->_set->_objects[objectId].isTarget);
+						                              _vm->_scene->_set->_objects[objectId].bbox,
+						                              _vm->_scene->_set->_objects[objectId].isClickable,
+						                              _vm->_scene->_set->_objects[objectId].isObstacle,
+						                              _vm->_scene->_set->_objects[objectId].unknown1,
+						                              _vm->_scene->_set->_objects[objectId].isTarget);
 						// scene's objectSetIsObstacle will update obstacle and walkpath
 						_vm->_scene->objectSetIsObstacle(objectId, _vm->_scene->_set->_objects[objectId].isObstacle, !_vm->_sceneIsLoading, true);
 						debugPrintf("New bounds: (%02.2f,%02.2f,%02.2f) ~ (%02.2f,%02.2f,%02.2f)\n",
-						             positionBottomRight.x, positionBottomRight.y, positionBottomRight.z,
-						             positionTopLeft.x,   positionTopLeft.y,   positionTopLeft.z);
+						            positionBottomRight.x, positionBottomRight.y, positionBottomRight.z,
+						            positionTopLeft.x, positionTopLeft.y, positionTopLeft.z);
 					}
 				} else {
 					// edit flags
-					bool newClickable = atoi(argv[3])? true : false;
-					bool newTarget    = atoi(argv[4])? true : false;
-					bool newObstacle  = atoi(argv[5])? true : false;
+					bool newClickable = atoi(argv[3]) ? true : false;
+					bool newTarget = atoi(argv[4]) ? true : false;
+					bool newObstacle = atoi(argv[5]) ? true : false;
 					// scene's objectSetIsObstacle will update obstacle and walkpath
 					_vm->_scene->objectSetIsObstacle(objectId, newObstacle, !_vm->_sceneIsLoading, true);
 					_vm->_scene->objectSetIsClickable(objectId, newClickable, !_vm->_sceneIsLoading);
 					_vm->_scene->objectSetIsTarget(objectId, newTarget, !_vm->_sceneIsLoading);
 
-					debugPrintf("Setting obj %d: %s as clickable: %s, target: %s, obstacle: %s\n", objectId, objName.c_str(), newClickable? "T":"F", newTarget? "T":"F", newObstacle? "T":"F");
+					debugPrintf("Setting obj %d: %s as clickable: %s, target: %s, obstacle: %s\n", objectId, objName.c_str(), newClickable ? "T" : "F", newTarget ? "T" : "F", newObstacle ? "T" : "F");
 				}
 				return true;
 			} else {
@@ -1549,10 +1862,9 @@ bool Debugger::cmdItem(int argc, const char **argv) {
 				debugPrintf("Item: %d is already in the scene\n", itemId);
 			}
 		} else if ((modeName == "remove" && argc == 3)
-		            || (modeName == "flags" && argc == 5)
-		            || (modeName == "bounds" && argc == 9)
-		            || (modeName == "list" && argc == 3)
-		) {
+		           || (modeName == "flags" && argc == 5)
+		           || (modeName == "bounds" && argc == 9)
+		           || (modeName == "list" && argc == 3)) {
 			// remove item mode, show properties or edit flags
 			if (_vm->_sceneObjects->findById(itemId + kSceneObjectOffsetItems) != -1) {
 				if (modeName == "list") {
@@ -1562,14 +1874,14 @@ bool Debugger::cmdItem(int argc, const char **argv) {
 					int itemAnimationId;
 					int facing_curr = _vm->_items->getFacing(itemId);
 					_vm->_items->getWidthHeight(itemId, &currWidth, &currHeight);
-					_vm->_items->getXYZ(itemId, &xpos_curr, &ypos_curr, &zpos_curr );
+					_vm->_items->getXYZ(itemId, &xpos_curr, &ypos_curr, &zpos_curr);
 					_vm->_items->getBoundingBox(itemId).getXYZ(&x0_curr, &y0_curr, &z0_curr, &x1_curr, &y1_curr, &z1_curr);
 					_vm->_items->getAnimationId(itemId, &itemAnimationId);
 					const Common::Rect &screenRect = _vm->_items->getScreenRectangle(itemId);
 					debugPrintf("Item %d (Trg: %s, Vis/Clk: %s) Pos(%02.2f,%02.2f,%02.2f), Face: %d, Height: %d, Width: %d AnimId: %d\n ScrRct(%d,%d,%d,%d) Bbox(%02.2f,%02.2f,%02.2f) ~ (%02.2f,%02.2f,%02.2f)\n",
 					            itemId,
-					            _vm->_items->isTarget(itemId)?  "T" : "F",
-					            _vm->_items->isVisible(itemId)? "T" : "F",
+					            _vm->_items->isTarget(itemId) ? "T" : "F",
+					            _vm->_items->isVisible(itemId) ? "T" : "F",
 					            xpos_curr, ypos_curr, zpos_curr,
 					            facing_curr, currWidth, currHeight, itemAnimationId,
 					            screenRect.top, screenRect.left, screenRect.bottom, screenRect.right,
@@ -1585,7 +1897,7 @@ bool Debugger::cmdItem(int argc, const char **argv) {
 					Vector3 newPosition(atof(argv[3]), atof(argv[4]), atof(argv[5]));
 					int newFacing = atoi(argv[6]);
 					int newHeight = atoi(argv[7]);
-					int newWidth =  atoi(argv[8]);
+					int newWidth = atoi(argv[8]);
 					//// setXYZ recalculates the item's bounding box
 					//_vm->_items->setXYZ(itemId, newPosition);
 					//// facing affects the angle and thus the screenRect in the next tick()
@@ -1606,11 +1918,11 @@ bool Debugger::cmdItem(int argc, const char **argv) {
 					}
 				} else {
 					// edit flags
-					bool newObstacle  = (atoi(argv[3]) != 0);
-					bool newTarget    = (atoi(argv[4]) != 0);
+					bool newObstacle = (atoi(argv[3]) != 0);
+					bool newTarget = (atoi(argv[4]) != 0);
 					_vm->_items->setIsObstacle(itemId, newObstacle);
 					_vm->_items->setIsTarget(itemId, newTarget);
-					debugPrintf("Setting item %d as visible/clickable: %s and target: %s\n", itemId, newObstacle? "T":"F", newTarget? "T":"F");
+					debugPrintf("Setting item %d as visible/clickable: %s and target: %s\n", itemId, newObstacle ? "T" : "F", newTarget ? "T" : "F");
 				}
 				return true;
 			} else {
@@ -1619,7 +1931,7 @@ bool Debugger::cmdItem(int argc, const char **argv) {
 			}
 		} else if (modeName == "spin" && argc == 3) {
 			int itemAnimationId = atoi(argv[2]);
-			if (itemAnimationId >=0 && itemAnimationId <= 996) {
+			if (itemAnimationId >= 0 && itemAnimationId <= 996) {
 				_vm->_itemPickup->setup(itemAnimationId, 320, 240);
 				return false; // close the debugger
 			} else {
@@ -1676,14 +1988,14 @@ bool Debugger::cmdRegion(int argc, const char **argv) {
 			debugPrintf("A region id has to be an integer within [0, 9]\n");
 			return true;
 		}
-		if (modeName == "add" && ((regionTypeName == "reg" && argc == 8) || (regionTypeName == "exit" && argc == 9)) ) {
+		if (modeName == "add" && ((regionTypeName == "reg" && argc == 8) || (regionTypeName == "exit" && argc == 9))) {
 			// add region mode
 			if (!regions->_regions[regionID].present) {
 				int type = 0;
-				int topY    = atoi(argv[4]);
-				int leftX   = atoi(argv[5]);
+				int topY = atoi(argv[4]);
+				int leftX = atoi(argv[5]);
 				int bottomY = atoi(argv[6]);
-				int rightX  = atoi(argv[7]);
+				int rightX = atoi(argv[7]);
 				if (regionTypeName == "exit") {
 					type = atoi(argv[8]);
 				}
@@ -1709,10 +2021,10 @@ bool Debugger::cmdRegion(int argc, const char **argv) {
 					}
 				} else if (modeName == "bounds") {
 					int topY, leftX, bottomY, rightX = 0;
-					topY    = atoi(argv[4]);
-					leftX   = atoi(argv[5]);
+					topY = atoi(argv[4]);
+					leftX = atoi(argv[5]);
 					bottomY = atoi(argv[6]);
-					rightX  = atoi(argv[7]);
+					rightX = atoi(argv[7]);
 
 					if (regions->remove(regionID)) {
 						Common::Rect newRect(leftX, topY, rightX, bottomY);
@@ -1766,7 +2078,7 @@ bool Debugger::cmdClick(int argc, const char **argv) {
 		argName.toLowercase();
 		if (argc == 2 && argName == "toggle") {
 			_showMouseClickInfo = !_showMouseClickInfo;
-			debugPrintf("Showing mouse click info = %s\n", _showMouseClickInfo ? "True":"False");
+			debugPrintf("Showing mouse click info = %s\n", _showMouseClickInfo ? "True" : "False");
 			return false; // close the debugger console
 		} else {
 			invalidSyntax = true;
@@ -1836,7 +2148,7 @@ bool Debugger::cmdVk(int argc, const char **argv) {
 		invalidSyntax = true;
 	} else {
 		if (!_vm->_vk->isOpen()) {
-			debugPrintf("Error:Command %s is only valid within a Voigt-Kampff session\n",  argv[0]);
+			debugPrintf("Error:Command %s is only valid within a Voigt-Kampff session\n", argv[0]);
 			return true;
 		}
 		//
@@ -1847,10 +2159,10 @@ bool Debugger::cmdVk(int argc, const char **argv) {
 		argName.toLowercase();
 		if (argc == 2 && argName == "full") {
 			_playFullVk = !_playFullVk;
-			debugPrintf("Playing full V-K session = %s\n", _playFullVk ? "True":"False");
+			debugPrintf("Playing full V-K session = %s\n", _playFullVk ? "True" : "False");
 		} else if (argc == 2 && argName == "stats") {
 			_showStatsVk = !_showStatsVk;
-			debugPrintf("Showing V-K session statistics= %s\n", _showStatsVk ? "True":"False");
+			debugPrintf("Showing V-K session statistics= %s\n", _showStatsVk ? "True" : "False");
 		} else {
 			invalidSyntax = true;
 		}
@@ -1862,7 +2174,6 @@ bool Debugger::cmdVk(int argc, const char **argv) {
 		debugPrintf("Usage: %s (full|stats)\n", argv[0]);
 	}
 	return true;
-
 }
 /**
 *
@@ -1886,22 +2197,22 @@ bool Debugger::cmdList(int argc, const char **argv) {
 					if (sceneObject->type == kSceneObjectTypeActor) {
 						Actor *actor = _vm->_actors[sceneObject->id - kSceneObjectOffsetActors];
 						debugPrintf("%d: %s (Clk: %s, Trg: %s, Prs: %s, Obs: %s, Mvg: %s)\n    Goal: %d, Set: %d, Anim mode: %d id:%d showDmg: %s inCombat: %s\n    Pos(%02.2f,%02.2f,%02.2f)\n",
-									 sceneObject->id - kSceneObjectOffsetActors,
-									 _vm->_textActorNames->getText(sceneObject->id - kSceneObjectOffsetActors),
-									 sceneObject->isClickable? "T" : "F",
-									 sceneObject->isTarget?    "T" : "F",
-									 sceneObject->isPresent?   "T" : "F",
-									 sceneObject->isObstacle?  "T" : "F",
-									 sceneObject->isMoving?    "T" : "F",
-									 actor->getGoal(),
-									 actor->getSetId(),
-									 actor->getAnimationMode(),
-									 actor->getAnimationId(),
-									 actor->getFlagDamageAnimIfMoving()? "T" : "F",
-									 actor->inCombat()? "T" : "F",
-									 actor->getPosition().x,
-									 actor->getPosition().y,
-									 actor->getPosition().z);
+						            sceneObject->id - kSceneObjectOffsetActors,
+						            _vm->_textActorNames->getText(sceneObject->id - kSceneObjectOffsetActors),
+						            sceneObject->isClickable ? "T" : "F",
+						            sceneObject->isTarget ? "T" : "F",
+						            sceneObject->isPresent ? "T" : "F",
+						            sceneObject->isObstacle ? "T" : "F",
+						            sceneObject->isMoving ? "T" : "F",
+						            actor->getGoal(),
+						            actor->getSetId(),
+						            actor->getAnimationMode(),
+						            actor->getAnimationId(),
+						            actor->getFlagDamageAnimIfMoving() ? "T" : "F",
+						            actor->inCombat() ? "T" : "F",
+						            actor->getPosition().x,
+						            actor->getPosition().y,
+						            actor->getPosition().z);
 						++count;
 					}
 				}
@@ -1939,27 +2250,27 @@ bool Debugger::cmdList(int argc, const char **argv) {
 					}
 
 					debugPrintf("%d: %s (Mvg: %s, Walk:%s, Run:%s, Ret:%s, Trg: %s, Rep: %s)\n    Hp: %d, Fac: %d, Friend: %d\n    Goal: %d, Set: %d, Anim mode: %d id:%d showDmg: %s inCombat: %s\n    Pos(%02.2f,%02.2f,%02.2f), Walkbx:%d\n",
-						actorId,
-						_vm->_textActorNames->getText(actorId),
-						actor->isMoving()?  "T" : "F",
-						actor->isWalking()? "T" : "F",
-						actor->isRunning()? "T" : "F",
-						actor->isRetired()? "T" : "F",
-						actor->isTarget()?  "T" : "F",
-						isReplicant?        "T" : "F",
-						actor->getCurrentHP(),
-						actor->getFacing(),
-						actor->getFriendlinessToOther(kActorMcCoy),
-						actor->getGoal(),
-						actor->getSetId(),
-						actor->getAnimationMode(),
-						actor->getAnimationId(),
-						actor->getFlagDamageAnimIfMoving()? "T" : "F",
-						actor->inCombat()? "T" : "F",
-						actor->getPosition().x,
-						actor->getPosition().y,
-						actor->getPosition().z,
-						actor->getWalkbox());
+					            actorId,
+					            _vm->_textActorNames->getText(actorId),
+					            actor->isMoving() ? "T" : "F",
+					            actor->isWalking() ? "T" : "F",
+					            actor->isRunning() ? "T" : "F",
+					            actor->isRetired() ? "T" : "F",
+					            actor->isTarget() ? "T" : "F",
+					            isReplicant ? "T" : "F",
+					            actor->getCurrentHP(),
+					            actor->getFacing(),
+					            actor->getFriendlinessToOther(kActorMcCoy),
+					            actor->getGoal(),
+					            actor->getSetId(),
+					            actor->getAnimationMode(),
+					            actor->getAnimationId(),
+					            actor->getFlagDamageAnimIfMoving() ? "T" : "F",
+					            actor->inCombat() ? "T" : "F",
+					            actor->getPosition().x,
+					            actor->getPosition().y,
+					            actor->getPosition().z,
+					            actor->getWalkbox());
 				} else {
 					debugPrintf("Invalid actor id: %d was specified\n", actorId);
 					return true;
@@ -1969,13 +2280,13 @@ bool Debugger::cmdList(int argc, const char **argv) {
 			}
 		} else if (arg == "obj") {
 			debugPrintf("View info\nCamera position: (%5.2f, %5.2f, %5.2f), Viewport position: (%5.2f, %5.2f, %5.2f), FoVx: %2.2f\n",
-						_vm->_view->_cameraPosition.x,
-						_vm->_view->_cameraPosition.y,
-						_vm->_view->_cameraPosition.z,
-						_vm->_view->_viewportPosition.x,
-						_vm->_view->_viewportPosition.y,
-						_vm->_view->_viewportPosition.z,
-						_vm->_view->_fovX);
+			            _vm->_view->_cameraPosition.x,
+			            _vm->_view->_cameraPosition.y,
+			            _vm->_view->_cameraPosition.z,
+			            _vm->_view->_viewportPosition.x,
+			            _vm->_view->_viewportPosition.y,
+			            _vm->_view->_viewportPosition.z,
+			            _vm->_view->_fovX);
 			debugPrintf("Listing scene objects: \n");
 			int count = 0;
 			for (int i = 0; i < _vm->_sceneObjects->_count; i++) {
@@ -1990,15 +2301,15 @@ bool Debugger::cmdList(int argc, const char **argv) {
 					++count;
 				} else if (sceneObject->type == kSceneObjectTypeObject) {
 					debugPrintf("%d: %s (Clk: %s, Trg: %s, Prs: %s, Obs: %s, Mvg: %s), Pos(%02.2f,%02.2f,%02.2f)\n     Bbox(%02.2f,%02.2f,%02.2f) ~ (%02.2f,%02.2f,%02.2f)\n",
-								 sceneObject->id - kSceneObjectOffsetObjects,
-								 _vm->_scene->objectGetName(sceneObject->id - kSceneObjectOffsetObjects).c_str(),
-								 sceneObject->isClickable? "T" : "F",
-								 sceneObject->isTarget?    "T" : "F",
-								 sceneObject->isPresent?   "T" : "F",
-								 sceneObject->isObstacle?  "T" : "F",
-								 sceneObject->isMoving?    "T" : "F",
-								 pos.x, pos.y, pos.z,
-								 a.x, a.y, a.z, b.x, b.y, b.z);
+					            sceneObject->id - kSceneObjectOffsetObjects,
+					            _vm->_scene->objectGetName(sceneObject->id - kSceneObjectOffsetObjects).c_str(),
+					            sceneObject->isClickable ? "T" : "F",
+					            sceneObject->isTarget ? "T" : "F",
+					            sceneObject->isPresent ? "T" : "F",
+					            sceneObject->isObstacle ? "T" : "F",
+					            sceneObject->isMoving ? "T" : "F",
+					            pos.x, pos.y, pos.z,
+					            a.x, a.y, a.z, b.x, b.y, b.z);
 					++count;
 				}
 			}
@@ -2020,16 +2331,16 @@ bool Debugger::cmdList(int argc, const char **argv) {
 					_vm->_items->getWidthHeight(sceneObject->id - kSceneObjectOffsetItems, &currWidth, &currHeight);
 					const Common::Rect &screenRect = _vm->_items->getScreenRectangle(sceneObject->id - kSceneObjectOffsetItems);
 					debugPrintf("Id %i, Pos(%02.2f,%02.2f,%02.2f), Face: %d, Height: %d, Width: %d, ScrRct(%d,%d,%d,%d)\n Clk: %s, Trg: %s, Prs: %s, Vis: %s, Mvg: %s Bbox(%02.2f,%02.2f,%02.2f)~(%02.2f,%02.2f,%02.2f)\n",
-								 sceneObject->id - kSceneObjectOffsetItems,
-								 pos.x, pos.y, pos.z,
-								 _vm->_items->getFacing(sceneObject->id - kSceneObjectOffsetItems), currHeight, currWidth,
-								 screenRect.top, screenRect.left, screenRect.bottom, screenRect.right,
-								 sceneObject->isClickable? "T" : "F",
-								 sceneObject->isTarget?    "T" : "F",
-								 sceneObject->isPresent?   "T" : "F",
-								 sceneObject->isObstacle?  "T" : "F",
-								 sceneObject->isMoving?    "T" : "F",
-								 a.x, a.y, a.z, b.x, b.y, b.z);
+					            sceneObject->id - kSceneObjectOffsetItems,
+					            pos.x, pos.y, pos.z,
+					            _vm->_items->getFacing(sceneObject->id - kSceneObjectOffsetItems), currHeight, currWidth,
+					            screenRect.top, screenRect.left, screenRect.bottom, screenRect.right,
+					            sceneObject->isClickable ? "T" : "F",
+					            sceneObject->isTarget ? "T" : "F",
+					            sceneObject->isPresent ? "T" : "F",
+					            sceneObject->isObstacle ? "T" : "F",
+					            sceneObject->isMoving ? "T" : "F",
+					            a.x, a.y, a.z, b.x, b.y, b.z);
 					++count;
 				}
 			}
@@ -2040,7 +2351,8 @@ bool Debugger::cmdList(int argc, const char **argv) {
 			//list regions
 			for (int i = 0; i < 10; i++) {
 				Regions::Region *region = &_vm->_scene->_regions->_regions[i];
-				if (!region->present) continue;
+				if (!region->present)
+					continue;
 				Common::Rect r = region->rectangle;
 				debugPrintf("Region slot: %d (t:%d l:%d b:%d r:%d)\n", i, r.top, r.left, r.bottom, r.right);
 				++count;
@@ -2050,7 +2362,8 @@ bool Debugger::cmdList(int argc, const char **argv) {
 			//list exits
 			for (int i = 0; i < 10; i++) {
 				Regions::Region *region = &_vm->_scene->_exits->_regions[i];
-				if (!region->present) continue;
+				if (!region->present)
+					continue;
 				Common::Rect r = region->rectangle;
 				debugPrintf("Exit slot: %d (t:%d l:%d b:%d r:%d)\n", i, r.top, r.left, r.bottom, r.right);
 				++count;
@@ -2143,32 +2456,32 @@ bool Debugger::cmdList(int argc, const char **argv) {
 	return true;
 }
 
-
 void Debugger::drawDebuggerOverlay() {
 
 	updateTogglesForDbgDrawListInCurrentSetAndScene();
 
 	if (_viewActorsToggle || _specificActorsDrawn
 	    || _view3dObjectsToggle || _specific3dObjectsDrawn
-	    || _viewItemsToggle || _specificItemsDrawn
-	) {
+	    || _viewItemsToggle || _specificItemsDrawn) {
 		drawSceneObjects();
 	}
-	if (_viewScreenEffects || _specificEffectsDrawn) drawScreenEffects();
-	if (_viewLights || _specificLightsDrawn) drawLights();
-	if (_viewFogs || _specificFogsDrawn) drawFogs();
+	if (_viewScreenEffects || _specificEffectsDrawn)
+		drawScreenEffects();
+	if (_viewLights || _specificLightsDrawn)
+		drawLights();
+	if (_viewFogs || _specificFogsDrawn)
+		drawFogs();
 	if (_viewRegionsNormalToggle || _specificRegionNormalDrawn
-	    || _viewRegionsExitsToggle || _specificRegionExitsDrawn
-	) {
+	    || _viewRegionsExitsToggle || _specificRegionExitsDrawn) {
 		drawRegions();
 	}
 	if (_viewWaypointsNormalToggle || _specificWaypointNormalDrawn
 	    || _viewWaypointsFleeToggle || _specificWaypointFleeDrawn
-	    || _viewWaypointsCoverToggle || _specificWaypointCoverDrawn
-	) {
+	    || _viewWaypointsCoverToggle || _specificWaypointCoverDrawn) {
 		drawWaypoints();
 	}
-	if (_viewWalkboxes || _specificWalkboxesDrawn) drawWalkboxes();
+	if (_viewWalkboxes || _specificWalkboxesDrawn)
+		drawWalkboxes();
 }
 
 void Debugger::drawBBox(Vector3 start, Vector3 end, View *view, Graphics::Surface *surface, int color) {
@@ -2216,8 +2529,7 @@ void Debugger::drawSceneObjects() {
 				break;
 			case kSceneObjectTypeActor:
 				if (_viewActorsToggle
-				    || (_specificActorsDrawn && findInDbgDrawList(debuggerObjTypeActor, sceneObject->id - kSceneObjectOffsetActors, -1, -1) != -1)
-				) {
+				    || (_specificActorsDrawn && findInDbgDrawList(debuggerObjTypeActor, sceneObject->id - kSceneObjectOffsetActors, -1, -1) != -1)) {
 					color = _vm->_surfaceFront.format.RGBToColor(255, 0, 0);
 					drawBBox(a, b, _vm->_view, &_vm->_surfaceFront, color);
 					_vm->_surfaceFront.frameRect(sceneObject->screenRectangle, color);
@@ -2226,8 +2538,7 @@ void Debugger::drawSceneObjects() {
 				break;
 			case kSceneObjectTypeItem:
 				if (_viewItemsToggle
-				    || (_specificItemsDrawn && findInDbgDrawList(debuggerObjTypeItem, sceneObject->id - kSceneObjectOffsetItems, -1, -1) != -1)
-				) {
+				    || (_specificItemsDrawn && findInDbgDrawList(debuggerObjTypeItem, sceneObject->id - kSceneObjectOffsetItems, -1, -1) != -1)) {
 					color = _vm->_surfaceFront.format.RGBToColor(0, 255, 0);
 					char itemText[40];
 					drawBBox(a, b, _vm->_view, &_vm->_surfaceFront, color);
@@ -2238,8 +2549,7 @@ void Debugger::drawSceneObjects() {
 				break;
 			case kSceneObjectTypeObject:
 				if (_view3dObjectsToggle
-				    || (_specific3dObjectsDrawn && findInDbgDrawList(debuggerObjType3dObject, sceneObject->id - kSceneObjectOffsetObjects, _vm->_scene->getSetId(), _vm->_scene->getSceneId()) != -1)
-				) {
+				    || (_specific3dObjectsDrawn && findInDbgDrawList(debuggerObjType3dObject, sceneObject->id - kSceneObjectOffsetObjects, _vm->_scene->getSetId(), _vm->_scene->getSceneId()) != -1)) {
 					color = _vm->_surfaceFront.format.RGBToColor(127, 127, 127);
 					if (sceneObject->isClickable) {
 						color = _vm->_surfaceFront.format.RGBToColor(0, 255, 0);
@@ -2258,8 +2568,7 @@ void Debugger::drawLights() {
 	// draw lights
 	for (int i = 0; i < (int)_vm->_lights->_lights.size(); i++) {
 		if (_viewLights
-		    || (_specificLightsDrawn && findInDbgDrawList(debuggerObjTypeLight, i, _vm->_scene->getSetId(), _vm->_scene->getSceneId()) != -1)
-		) {
+		    || (_specificLightsDrawn && findInDbgDrawList(debuggerObjTypeLight, i, _vm->_scene->getSetId(), _vm->_scene->getSceneId()) != -1)) {
 			Light *light = _vm->_lights->_lights[i];
 			Matrix4x3 m = light->_matrix;
 			m = invertMatrix(m);
@@ -2292,8 +2601,7 @@ void Debugger::drawFogs() {
 	Fog *fog = _vm->_scene->_set->_effects->_fogs;
 	for (int i = 0; fog != nullptr; ++i) {
 		if (_viewFogs
-		    || (_specificFogsDrawn && findInDbgDrawList(debuggerObjTypeFog, i, _vm->_scene->getSetId(), _vm->_scene->getSceneId()) != -1)
-		) {
+		    || (_specificFogsDrawn && findInDbgDrawList(debuggerObjTypeFog, i, _vm->_scene->getSetId(), _vm->_scene->getSceneId()) != -1)) {
 			// Matrix4x3 m = fog->_matrix;
 			// m = invertMatrix(m);
 			Matrix4x3 m = fog->_inverted;
@@ -2330,10 +2638,10 @@ void Debugger::drawRegions() {
 		//draw regions
 		for (int i = 0; i < 10; i++) {
 			Regions::Region *region = &_vm->_scene->_regions->_regions[i];
-			if (!region->present) continue;
+			if (!region->present)
+				continue;
 			if (_viewRegionsNormalToggle
-				|| (_specificRegionNormalDrawn && findInDbgDrawList(debuggerObjTypeRegionNormal, i, _vm->_scene->getSetId(), _vm->_scene->getSceneId()) != -1)
-			) {
+			    || (_specificRegionNormalDrawn && findInDbgDrawList(debuggerObjTypeRegionNormal, i, _vm->_scene->getSetId(), _vm->_scene->getSceneId()) != -1)) {
 				_vm->_surfaceFront.frameRect(region->rectangle, _vm->_surfaceFront.format.RGBToColor(0, 0, 255));
 			}
 		}
@@ -2343,10 +2651,10 @@ void Debugger::drawRegions() {
 		//draw exits
 		for (int i = 0; i < 10; i++) {
 			Regions::Region *region = &_vm->_scene->_exits->_regions[i];
-			if (!region->present) continue;
+			if (!region->present)
+				continue;
 			if (_viewRegionsExitsToggle
-				|| (_specificRegionExitsDrawn && findInDbgDrawList(debuggerObjTypeRegionExit, i, _vm->_scene->getSetId(), _vm->_scene->getSceneId()) != -1)
-			) {
+			    || (_specificRegionExitsDrawn && findInDbgDrawList(debuggerObjTypeRegionExit, i, _vm->_scene->getSetId(), _vm->_scene->getSceneId()) != -1)) {
 				_vm->_surfaceFront.frameRect(region->rectangle, _vm->_surfaceFront.format.RGBToColor(255, 255, 255));
 			}
 		}
@@ -2354,7 +2662,7 @@ void Debugger::drawRegions() {
 }
 
 void Debugger::drawWaypoints() {
-	if (_viewWaypointsNormalToggle || _specificWaypointNormalDrawn)  {
+	if (_viewWaypointsNormalToggle || _specificWaypointNormalDrawn) {
 		//draw world waypoints
 		for (int i = 0; i < _vm->_waypoints->_count; i++) {
 			Waypoints::Waypoint *waypoint = &_vm->_waypoints->_waypoints[i];
@@ -2362,8 +2670,7 @@ void Debugger::drawWaypoints() {
 				continue;
 			}
 			if (_viewWaypointsNormalToggle
-				|| (_specificWaypointNormalDrawn && findInDbgDrawList(debuggerObjTypeWaypointNorm, i, -1, -1) != -1)
-			) {
+			    || (_specificWaypointNormalDrawn && findInDbgDrawList(debuggerObjTypeWaypointNorm, i, -1, -1) != -1)) {
 				Vector3 pos = waypoint->position;
 				Vector3 size = Vector3(3.0f, 3.0f, 3.0f);
 				int color = _vm->_surfaceFront.format.RGBToColor(255, 255, 255);
@@ -2384,8 +2691,7 @@ void Debugger::drawWaypoints() {
 				continue;
 			}
 			if (_viewWaypointsCoverToggle
-				|| (_specificWaypointCoverDrawn && findInDbgDrawList(debuggerObjTypeWaypointCover, i, -1, -1) != -1)
-			) {
+			    || (_specificWaypointCoverDrawn && findInDbgDrawList(debuggerObjTypeWaypointCover, i, -1, -1) != -1)) {
 				Vector3 pos = cover->position;
 				Vector3 size = Vector3(3.0f, 3.0f, 3.0f);
 				int color = _vm->_surfaceFront.format.RGBToColor(255, 0, 255);
@@ -2406,8 +2712,7 @@ void Debugger::drawWaypoints() {
 				continue;
 			}
 			if (_viewWaypointsFleeToggle
-				|| (_specificWaypointFleeDrawn && findInDbgDrawList(debuggerObjTypeWaypoingFlee, i, -1, -1) != -1)
-			) {
+			    || (_specificWaypointFleeDrawn && findInDbgDrawList(debuggerObjTypeWaypoingFlee, i, -1, -1) != -1)) {
 				Vector3 pos = flee->position;
 				Vector3 size = Vector3(3.0f, 3.0f, 3.0f);
 				int color = _vm->_surfaceFront.format.RGBToColor(0, 255, 255);
@@ -2425,8 +2730,7 @@ void Debugger::drawWalkboxes() {
 	//draw walkboxes
 	for (int i = 0; i < _vm->_scene->_set->_walkboxCount; i++) {
 		if (_viewWalkboxes
-		    || (_specificWalkboxesDrawn && findInDbgDrawList(debuggerObjTypeWalkbox, i, _vm->_scene->getSetId(), _vm->_scene->getSceneId()) != -1)
-		) {
+		    || (_specificWalkboxesDrawn && findInDbgDrawList(debuggerObjTypeWalkbox, i, _vm->_scene->getSetId(), _vm->_scene->getSceneId()) != -1)) {
 			Set::Walkbox *walkbox = &_vm->_scene->_set->_walkboxes[i];
 			for (int j = 0; j < walkbox->vertexCount; j++) {
 				Vector3 start = _vm->_view->calculateScreenPosition(walkbox->vertices[j]);
@@ -2443,8 +2747,7 @@ void Debugger::drawScreenEffects() {
 	//draw aesc
 	for (uint i = 0; i < _vm->_screenEffects->_entries.size(); i++) {
 		if (_viewScreenEffects
-		    || (_specificEffectsDrawn && findInDbgDrawList(debuggerObjTypeEffect, i, _vm->_scene->getSetId(), _vm->_scene->getSceneId()) != -1)
-		) {
+		    || (_specificEffectsDrawn && findInDbgDrawList(debuggerObjTypeEffect, i, _vm->_scene->getSetId(), _vm->_scene->getSceneId()) != -1)) {
 			ScreenEffects::Entry &entry = _vm->_screenEffects->_entries[i];
 			int j = 0;
 			for (int y = 0; y < entry.height; y++) {
@@ -2455,9 +2758,9 @@ void Debugger::drawScreenEffects() {
 					const int bladeToScummVmConstant = 256 / 16;
 
 					int color = _vm->_surfaceFront.format.RGBToColor(
-						CLIP(entry.palette[ec].r * bladeToScummVmConstant, 0, 255),
-						CLIP(entry.palette[ec].g * bladeToScummVmConstant, 0, 255),
-						CLIP(entry.palette[ec].b * bladeToScummVmConstant, 0, 255));
+					  CLIP(entry.palette[ec].r * bladeToScummVmConstant, 0, 255),
+					  CLIP(entry.palette[ec].g * bladeToScummVmConstant, 0, 255),
+					  CLIP(entry.palette[ec].b * bladeToScummVmConstant, 0, 255));
 					_vm->_surfaceFront.fillRect(r, color);
 				}
 			}
@@ -2501,12 +2804,11 @@ int Debugger::findInDbgDrawList(DebuggerDrawnObjectType drObjType, int drObjId, 
 		return -1;
 	}
 
-	for (int i = 0; i < (int) _specificDrawnObjectsList.size(); ++i) {
+	for (int i = 0; i < (int)_specificDrawnObjectsList.size(); ++i) {
 		if ((drObjType == debuggerObjTypeUndefined || drObjType == _specificDrawnObjectsList[i].type)
-			&& (drObjId == -1 || drObjId == _specificDrawnObjectsList[i].objId)
+		    && (drObjId == -1 || drObjId == _specificDrawnObjectsList[i].objId)
 		    && (drObjSetId == -1 || _specificDrawnObjectsList[i].setId == -1 || drObjSetId == _specificDrawnObjectsList[i].setId)
-		    && (drObjSceneId == -1 || _specificDrawnObjectsList[i].sceneId == -1 || drObjSceneId == _specificDrawnObjectsList[i].sceneId)
-		) {
+		    && (drObjSceneId == -1 || _specificDrawnObjectsList[i].sceneId == -1 || drObjSceneId == _specificDrawnObjectsList[i].sceneId)) {
 			// TODO for actors, 3d objects, items and waypoints it's probably preferable to ignore the sceneId (?)
 			return i;
 		}
@@ -2527,10 +2829,9 @@ void Debugger::updateTogglesForDbgDrawListInCurrentSetAndScene() {
 	_specificWaypointFleeDrawn = false;
 	_specificWaypointCoverDrawn = false;
 	_specificWalkboxesDrawn = false;
-	for (int i = 0; i < (int) _specificDrawnObjectsList.size(); ++i) {
-		if ((_specificDrawnObjectsList[i].sceneId == -1 ||  _specificDrawnObjectsList[i].sceneId == _vm->_scene->getSceneId() )
-		    && (_specificDrawnObjectsList[i].setId == -1 || _specificDrawnObjectsList[i].setId == _vm->_scene->getSetId())
-		) {
+	for (int i = 0; i < (int)_specificDrawnObjectsList.size(); ++i) {
+		if ((_specificDrawnObjectsList[i].sceneId == -1 || _specificDrawnObjectsList[i].sceneId == _vm->_scene->getSceneId())
+		    && (_specificDrawnObjectsList[i].setId == -1 || _specificDrawnObjectsList[i].setId == _vm->_scene->getSetId())) {
 			switch (_specificDrawnObjectsList[i].type) {
 			case debuggerObjTypeActor:
 				_specificActorsDrawn = true;
@@ -2574,18 +2875,18 @@ void Debugger::updateTogglesForDbgDrawListInCurrentSetAndScene() {
 		}
 	}
 	_isDebuggerOverlay = _viewActorsToggle || _specificActorsDrawn
-					 || _view3dObjectsToggle || _specific3dObjectsDrawn
-					 || _viewItemsToggle || _specificItemsDrawn
-					 || _viewRegionsNormalToggle || _specificRegionNormalDrawn
-					 || _viewRegionsExitsToggle || _specificRegionExitsDrawn
-					 || _viewScreenEffects || _specificEffectsDrawn
-					 || _viewLights || _specificLightsDrawn
-					 || _viewFogs || _specificFogsDrawn
-					 || _viewWaypointsNormalToggle || _specificWaypointNormalDrawn
-					 || _viewWaypointsFleeToggle || _specificWaypointFleeDrawn
-					 || _viewWaypointsCoverToggle || _specificWaypointCoverDrawn
-					 || _viewWalkboxes || _specificWalkboxesDrawn
-					 || !_specificDrawnObjectsList.empty();
+	  || _view3dObjectsToggle || _specific3dObjectsDrawn
+	  || _viewItemsToggle || _specificItemsDrawn
+	  || _viewRegionsNormalToggle || _specificRegionNormalDrawn
+	  || _viewRegionsExitsToggle || _specificRegionExitsDrawn
+	  || _viewScreenEffects || _specificEffectsDrawn
+	  || _viewLights || _specificLightsDrawn
+	  || _viewFogs || _specificFogsDrawn
+	  || _viewWaypointsNormalToggle || _specificWaypointNormalDrawn
+	  || _viewWaypointsFleeToggle || _specificWaypointFleeDrawn
+	  || _viewWaypointsCoverToggle || _specificWaypointCoverDrawn
+	  || _viewWalkboxes || _specificWalkboxesDrawn
+	  || !_specificDrawnObjectsList.empty();
 }
 
 } // End of namespace BladeRunner

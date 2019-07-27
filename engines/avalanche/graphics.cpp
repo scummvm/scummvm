@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
-#include "avalanche/avalanche.h"
 #include "avalanche/graphics.h"
+#include "avalanche/avalanche.h"
 
 #include "common/math.h"
 #include "common/system.h"
@@ -35,18 +35,18 @@
 
 namespace Avalanche {
 
-const byte GraphicManager::kEgaPaletteIndex[16] = {0, 1, 2, 3, 4, 5, 20, 7, 56, 57, 58, 59, 60, 61, 62, 63};
+const byte GraphicManager::kEgaPaletteIndex[16] = { 0, 1, 2, 3, 4, 5, 20, 7, 56, 57, 58, 59, 60, 61, 62, 63 };
 
 const MouseHotspotType GraphicManager::kMouseHotSpots[9] = {
-	{8,0},  // 0 - up-arrow
-	{0,0},  // 1 - screwdriver
-	{15,6}, // 2 - right-arrow
-	{0,0},  // 3 - fletch
-	{8,7},  // 4 - hourglass
-	{4,0},  // 5 - TTHand
-	{8,5},  // 6 - Mark's crosshairs
-	{8,7},  // 7 - I-beam
-	{0,0}   // 8 - question mark
+	{ 8, 0 }, // 0 - up-arrow
+	{ 0, 0 }, // 1 - screwdriver
+	{ 15, 6 }, // 2 - right-arrow
+	{ 0, 0 }, // 3 - fletch
+	{ 8, 7 }, // 4 - hourglass
+	{ 4, 0 }, // 5 - TTHand
+	{ 8, 5 }, // 6 - Mark's crosshairs
+	{ 8, 7 }, // 7 - I-beam
+	{ 0, 0 } // 8 - question mark
 };
 
 GraphicManager::GraphicManager(AvalancheEngine *vm) {
@@ -74,7 +74,7 @@ void GraphicManager::init() {
 	for (int i = 0; i < 64; ++i) {
 		_egaPalette[i][0] = (i >> 2 & 1) * 0xaa + (i >> 5 & 1) * 0x55;
 		_egaPalette[i][1] = (i >> 1 & 1) * 0xaa + (i >> 4 & 1) * 0x55;
-		_egaPalette[i][2] = (i      & 1) * 0xaa + (i >> 3 & 1) * 0x55;
+		_egaPalette[i][2] = (i & 1) * 0xaa + (i >> 3 & 1) * 0x55;
 	}
 
 	for (int i = 0; i < 16; i++)
@@ -138,7 +138,7 @@ void GraphicManager::loadMouse(byte which) {
 		for (int i = 0; i < mask.w; i++) {
 			byte pixel = *(byte *)mask.getBasePtr(i, j);
 			if (pixel == 0) {
-				*(byte *)cursor.getBasePtr(i, j * 2    ) = 0;
+				*(byte *)cursor.getBasePtr(i, j * 2) = 0;
 				*(byte *)cursor.getBasePtr(i, j * 2 + 1) = 0;
 			}
 		}
@@ -155,7 +155,7 @@ void GraphicManager::loadMouse(byte which) {
 		for (int i = 0; i < mask.w; i++) {
 			byte pixel = *(byte *)mask.getBasePtr(i, j);
 			if (pixel != 0) {
-				*(byte *)cursor.getBasePtr(i, j * 2    ) = pixel;
+				*(byte *)cursor.getBasePtr(i, j * 2) = pixel;
 				*(byte *)cursor.getBasePtr(i, j * 2 + 1) = pixel;
 			}
 		}
@@ -223,9 +223,9 @@ Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16
 
 	// If impossible angles, then swap them!
 	if (endAngle < stAngle) {
-		uint16 tmpAngle=endAngle;
-		endAngle=stAngle;
-		stAngle=tmpAngle;
+		uint16 tmpAngle = endAngle;
+		endAngle = stAngle;
+		stAngle = tmpAngle;
 	}
 
 	// Approximate the number of pixels required by using the circumference equation of an ellipse.
@@ -385,7 +385,7 @@ void GraphicManager::drawDirection(int index, int x, int y) {
 }
 
 void GraphicManager::drawScrollShadow(int16 x1, int16 y1, int16 x2, int16 y2) {
-	for (byte i = 0; i < 2; i ++) {
+	for (byte i = 0; i < 2; i++) {
 		_scrolls.fillRect(Common::Rect(x1 + i, y1 + i, x1 + i + 1, y2 - i), kColorWhite);
 		_scrolls.fillRect(Common::Rect(x1 + i, y1 + i, x2 - i, y1 + i + 1), kColorWhite);
 
@@ -675,8 +675,7 @@ void GraphicManager::helpDrawButton(int y, byte which) {
 	if (y == -177) {
 		x = 229;
 		y = 5;
-	}
-	else
+	} else
 		x = 470;
 
 	_vm->_graphics->drawPicture(_surface, button, x, y);
@@ -718,7 +717,7 @@ void GraphicManager::seuDrawTitle() {
 	doubledPicture.create(width * 2, height, Graphics::PixelFormat::createFormatCLUT8());
 
 	// These cycles are for doubling the picture's width.
-	for (int x = (width * 2) - 2 ; x >= 0; x -= 2) {
+	for (int x = (width * 2) - 2; x >= 0; x -= 2) {
 		for (int y = 0; y < height; y++) {
 			*(byte *)doubledPicture.getBasePtr(x, y) = *(byte *)doubledPicture.getBasePtr(x + 1, y) = *(byte *)picture.getBasePtr(x / 2, y);
 		}
@@ -1208,7 +1207,7 @@ void GraphicManager::zoomOut(int16 x, int16 y) {
 	//setlinestyle(dottedln, 0, 1); TODO: Implement it with a dotted line style!!!
 
 	saveScreen();
-	for (byte i = 1; i <= 20; i ++) {
+	for (byte i = 1; i <= 20; i++) {
 		int16 x1 = x - (x / 20) * i;
 		int16 y1 = y - ((y - 10) / 20) * i;
 		int16 x2 = x + (((639 - x) / 20) * i);

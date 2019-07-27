@@ -21,9 +21,9 @@
  */
 
 #if !defined(BACKEND_EVENTS_OP_H) && !defined(DISABLE_DEFAULT_EVENTMANAGER)
-#define BACKEND_EVENTS_OP_H
+#	define BACKEND_EVENTS_OP_H
 
-#include "backends/events/sdl/sdl-events.h"
+#	include "backends/events/sdl/sdl-events.h"
 
 /**
  * Events manager for the OpenPandora.
@@ -34,12 +34,10 @@ public:
 	OPEventSource();
 
 protected:
-
 	/**
 	 * Button state for L button modifier
 	 */
 	bool _buttonStateL;
-
 
 	bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
 	bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);

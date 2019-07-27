@@ -21,9 +21,9 @@
  */
 
 #if !defined(BACKEND_EVENTS_SDL_ANDROIDSDL_H) && !defined(DISABLE_DEFAULT_EVENTMANAGER)
-#define BACKEND_EVENTS_SDL_ANDROIDSDL_H
+#	define BACKEND_EVENTS_SDL_ANDROIDSDL_H
 
-#include "backends/events/sdl/sdl-events.h"
+#	include "backends/events/sdl/sdl-events.h"
 
 /**
  * SDL events manager for ANDROIDSDL

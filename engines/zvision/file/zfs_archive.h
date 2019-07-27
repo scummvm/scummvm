@@ -24,8 +24,8 @@
 #define ZVISION_ZFS_ARCHIVE_H
 
 #include "common/archive.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 
 namespace Common {
 class String;

@@ -21,9 +21,9 @@
  */
 
 #if !defined(SCUMM_SMUSH_PLAYER_H) && defined(ENABLE_SCUMM_7_8)
-#define SCUMM_SMUSH_PLAYER_H
+#	define SCUMM_SMUSH_PLAYER_H
 
-#include "common/util.h"
+#	include "common/util.h"
 
 namespace Audio {
 class SoundHandle;
@@ -41,6 +41,7 @@ class Codec47Decoder;
 
 class SmushPlayer {
 	friend class Insane;
+
 private:
 	ScummEngine_v7 *_vm;
 	int32 _nbframes;
@@ -125,9 +126,9 @@ private:
 	void handleAnimHeader(int32 subSize, Common::SeekableReadStream &);
 	void handleFrame(int32 frameSize, Common::SeekableReadStream &);
 	void handleNewPalette(int32 subSize, Common::SeekableReadStream &);
-#ifdef USE_ZLIB
+#	ifdef USE_ZLIB
 	void handleZlibFrameObject(int32 subSize, Common::SeekableReadStream &b);
-#endif
+#	endif
 	void handleFrameObject(int32 subSize, Common::SeekableReadStream &);
 	void handleSoundBuffer(int32, int32, int32, int32, int32, int32, Common::SeekableReadStream &, int32);
 	void handleSoundFrame(int32 subSize, Common::SeekableReadStream &);

@@ -23,7 +23,7 @@
 #ifndef SCUMM_PLAYERS_PLAYER_V2CMS_H
 #define SCUMM_PLAYERS_PLAYER_V2CMS_H
 
-#include "scumm/players/player_v2base.h"	// for channel_data
+#include "scumm/players/player_v2base.h" // for channel_data
 
 class CMSEmulator;
 
@@ -42,8 +42,8 @@ public:
 	virtual void startSound(int sound);
 	virtual void stopSound(int sound);
 	virtual void stopAllSounds();
-	virtual int  getMusicTimer();
-	virtual int  getSoundStatus(int sound) const;
+	virtual int getMusicTimer();
+	virtual int getSoundStatus(int sound) const;
 
 	// AudioStream API
 	virtual int readBuffer(int16 *buffer, const int numSamples);

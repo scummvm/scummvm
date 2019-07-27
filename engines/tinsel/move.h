@@ -20,17 +20,18 @@
  *
  */
 
-#ifndef TINSEL_MOVE_H	// prevent multiple includes
+#ifndef TINSEL_MOVE_H // prevent multiple includes
 #define TINSEL_MOVE_H
 
-#include "tinsel/dw.h"	// for SCNHANDLE
+#include "tinsel/dw.h" // for SCNHANDLE
 #include "tinsel/rince.h"
 
 namespace Tinsel {
 
 struct MOVER;
 
-typedef enum { YB_X2, YB_X1_5 } YBIAS;
+typedef enum { YB_X2,
+	             YB_X1_5 } YBIAS;
 
 int SetActorDest(MOVER *pMover, int x, int y, bool igPath, SCNHANDLE film);
 void SSetActorDest(MOVER *pActor);
@@ -41,7 +42,7 @@ int GetLastLeadXdest();
 int GetLastLeadYdest();
 
 DIRECTION GetDirection(int fromx, int fromy, int tox, int toy, DIRECTION lastreel,
-							  HPOLYGON hPath, YBIAS yBias = YB_X2);
+                       HPOLYGON hPath, YBIAS yBias = YB_X2);
 } // End of namespace Tinsel
 
 #endif /* TINSEL_MOVE_H */

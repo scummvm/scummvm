@@ -20,20 +20,21 @@
  *
  */
 
+#include "gui/widgets/scrollbar.h"
 #include "common/rect.h"
 #include "common/system.h"
 #include "common/timer.h"
-#include "gui/widgets/scrollbar.h"
-#include "gui/gui-manager.h"
 #include "gui/ThemeEngine.h"
+#include "gui/gui-manager.h"
 #include "gui/widgets/scrollcontainer.h"
 
 namespace GUI {
 
-#define UP_DOWN_BOX_HEIGHT	(_w+1)
+#define UP_DOWN_BOX_HEIGHT (_w + 1)
 
 ScrollBarWidget::ScrollBarWidget(GuiObject *boss, int x, int y, int w, int h)
-	: Widget (boss, x, y, w, h), CommandSender(boss) {
+  : Widget(boss, x, y, w, h)
+  , CommandSender(boss) {
 	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG | WIDGET_WANT_TICKLE);
 	_type = kScrollBarWidget;
 
@@ -118,15 +119,14 @@ void ScrollBarWidget::handleMouseMoved(int x, int y, int button) {
 		if (_sliderPos > _h - UP_DOWN_BOX_HEIGHT - _sliderHeight)
 			_sliderPos = _h - UP_DOWN_BOX_HEIGHT - _sliderHeight;
 
-		_currentPos =
-			(_sliderPos - UP_DOWN_BOX_HEIGHT) * (_numEntries - _entriesPerPage) / (_h - 2 * UP_DOWN_BOX_HEIGHT - _sliderHeight);
+		_currentPos = (_sliderPos - UP_DOWN_BOX_HEIGHT) * (_numEntries - _entriesPerPage) / (_h - 2 * UP_DOWN_BOX_HEIGHT - _sliderHeight);
 		checkBounds(old_pos);
 	} else {
 		int old_part = _part;
 
-		if (y <= UP_DOWN_BOX_HEIGHT)	// Up arrow
+		if (y <= UP_DOWN_BOX_HEIGHT) // Up arrow
 			_part = kUpArrowPart;
-		else if (y >= _h - UP_DOWN_BOX_HEIGHT)	// Down arrow
+		else if (y >= _h - UP_DOWN_BOX_HEIGHT) // Down arrow
 			_part = kDownArrowPart;
 		else if (y < _sliderPos)
 			_part = kPageUpPart;
@@ -177,8 +177,7 @@ void ScrollBarWidget::recalc() {
 		if (_sliderHeight < UP_DOWN_BOX_HEIGHT)
 			_sliderHeight = UP_DOWN_BOX_HEIGHT;
 
-		_sliderPos =
-			UP_DOWN_BOX_HEIGHT + (_h - 2 * UP_DOWN_BOX_HEIGHT - _sliderHeight) * _currentPos / (_numEntries - _entriesPerPage);
+		_sliderPos = UP_DOWN_BOX_HEIGHT + (_h - 2 * UP_DOWN_BOX_HEIGHT - _sliderHeight) * _currentPos / (_numEntries - _entriesPerPage);
 		if (_sliderPos < 0)
 			_sliderPos = 0;
 		setVisible(true);

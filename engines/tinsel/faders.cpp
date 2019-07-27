@@ -21,12 +21,12 @@
  * Palette Fader and Flasher processes.
  */
 
+#include "tinsel/faders.h" // fader defs
 #include "tinsel/actors.h"
-#include "tinsel/faders.h"	// fader defs
 #include "tinsel/handle.h"
-#include "tinsel/palette.h"	// Palette Manager defs
-#include "tinsel/pid.h"	// list of all process IDs
-#include "tinsel/sched.h"	// scheduler defs
+#include "tinsel/palette.h" // Palette Manager defs
+#include "tinsel/pid.h" // list of all process IDs
+#include "tinsel/sched.h" // scheduler defs
 #include "tinsel/sysvar.h"
 #include "tinsel/tinsel.h"
 
@@ -34,8 +34,8 @@ namespace Tinsel {
 
 /** structure used by the "FadeProcess" process */
 struct FADE {
-	const long *pColorMultTable;	// list of fixed point color multipliers - terminated with negative entry
-	PALQ *pPalQ;		// palette queue entry to fade
+	const long *pColorMultTable; // list of fixed point color multipliers - terminated with negative entry
+	PALQ *pPalQ; // palette queue entry to fade
 };
 
 // fixed point fade multiplier tables
@@ -47,11 +47,11 @@ struct FADE {
  * @param color			Color to scale
  * @param colorMult		Fixed point multiplier
  */
-static COLORREF ScaleColor(COLORREF color, uint32 colorMult)	{
+static COLORREF ScaleColor(COLORREF color, uint32 colorMult) {
 	// apply multiplier to RGB components
-	uint32 red   = ((TINSEL_GetRValue(color) * colorMult) << 8) >> 24;
+	uint32 red = ((TINSEL_GetRValue(color) * colorMult) << 8) >> 24;
 	uint32 green = ((TINSEL_GetGValue(color) * colorMult) << 8) >> 24;
-	uint32 blue  = ((TINSEL_GetBValue(color) * colorMult) << 8) >> 24;
+	uint32 blue = ((TINSEL_GetBValue(color) * colorMult) << 8) >> 24;
 
 	// return new color
 	return TINSEL_RGB(red, green, blue);
@@ -91,9 +91,9 @@ static void FadePalette(COLORREF *pNew, COLORREF *pOrig, int numColors, uint32 m
 static void FadeProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
-		COLORREF fadeRGB[MAX_COLORS];	// local copy of palette
-		const long *pColMult;			// pointer to color multiplier table
-		PALETTE *pPalette;		// pointer to palette
+	COLORREF fadeRGB[MAX_COLORS]; // local copy of palette
+	const long *pColMult; // pointer to color multiplier table
+	PALETTE *pPalette; // pointer to palette
 	CORO_END_CONTEXT(_ctx);
 
 	// get the fade data structure - copied to process when it was created
@@ -114,10 +114,10 @@ static void FadeProcess(CORO_PARAM, const void *param) {
 		// fade palette using next multiplier
 		if (TinselV2)
 			FadePalette(_ctx->fadeRGB, pFade->pPalQ->palRGB,
-				pFade->pPalQ->numColors, (uint32) *_ctx->pColMult);
+			            pFade->pPalQ->numColors, (uint32)*_ctx->pColMult);
 		else
 			FadePalette(_ctx->fadeRGB, _ctx->pPalette->palRGB,
-				FROM_32(_ctx->pPalette->numColors), (uint32) *_ctx->pColMult);
+			            FROM_32(_ctx->pPalette->numColors), (uint32)*_ctx->pColMult);
 
 		// send new palette to video DAC
 		UpdateDACqueue(pFade->pPalQ->posInDAC, FROM_32(_ctx->pPalette->numColors), _ctx->fadeRGB);
@@ -139,7 +139,7 @@ static void FadeProcess(CORO_PARAM, const void *param) {
  * @param multTable			Fixed point color multiplier table
  */
 static void Fader(const long multTable[]) {
-	PALQ *pPal;	// palette manager iterator
+	PALQ *pPal; // palette manager iterator
 
 	if (TinselV2) {
 		// The is only ever one cuncurrent fade
@@ -153,8 +153,8 @@ static void Fader(const long multTable[]) {
 		FADE fade;
 
 		// fill in FADE struct
-		fade.pColorMultTable	= multTable;
-		fade.pPalQ		= pPal;
+		fade.pColorMultTable = multTable;
+		fade.pPalQ = pPal;
 
 		// create a fader process for this palette
 		CoroScheduler.createProcess(PID_FADER, FadeProcess, (void *)&fade, sizeof(FADE));
@@ -166,8 +166,8 @@ static void Fader(const long multTable[]) {
  */
 void FadeOutMedium() {
 	// Fixed point fade multiplier table
-	static const long fadeout[] = {0xea00, 0xd000, 0xb600, 0x9c00,
-		0x8200, 0x6800, 0x4e00, 0x3400, 0x1a00, 0, -1};
+	static const long fadeout[] = { 0xea00, 0xd000, 0xb600, 0x9c00,
+		                              0x8200, 0x6800, 0x4e00, 0x3400, 0x1a00, 0, -1 };
 
 	// call generic fader
 	Fader(fadeout);
@@ -178,7 +178,7 @@ void FadeOutMedium() {
  */
 void FadeOutFast() {
 	// Fixed point fade multiplier table
-	static const long fadeout[] = {0xd000, 0xa000, 0x7000, 0x4000, 0x1000, 0, -1};
+	static const long fadeout[] = { 0xd000, 0xa000, 0x7000, 0x4000, 0x1000, 0, -1 };
 
 	// call generic fader
 	Fader(fadeout);
@@ -189,8 +189,8 @@ void FadeOutFast() {
  */
 void FadeInMedium() {
 	// Fade multiplier table
-	static const long fadein[] = {0, 0x1a00, 0x3400, 0x4e00, 0x6800,
-		0x8200, 0x9c00, 0xb600, 0xd000, 0xea00, 0x10000L, -1};
+	static const long fadein[] = { 0, 0x1a00, 0x3400, 0x4e00, 0x6800,
+		                             0x8200, 0x9c00, 0xb600, 0xd000, 0xea00, 0x10000L, -1 };
 
 	// call generic fader
 	Fader(fadein);
@@ -201,7 +201,7 @@ void FadeInMedium() {
  */
 void FadeInFast() {
 	// Fade multiplier table
-	static const long fadein[] = {0, 0x1000, 0x4000, 0x7000, 0xa000, 0xd000, 0x10000L, -1};
+	static const long fadein[] = { 0, 0x1000, 0x4000, 0x7000, 0xa000, 0xd000, 0x10000L, -1 };
 
 	// call generic fader
 	Fader(fadein);

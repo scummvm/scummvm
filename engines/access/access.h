@@ -23,15 +23,6 @@
 #ifndef ACCESS_ACCESS_H
 #define ACCESS_ACCESS_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
-#include "common/error.h"
-#include "common/random.h"
-#include "common/savefile.h"
-#include "common/serializer.h"
-#include "common/util.h"
-#include "engines/engine.h"
-#include "graphics/surface.h"
 #include "access/animation.h"
 #include "access/bubble_box.h"
 #include "access/char.h"
@@ -48,6 +39,15 @@
 #include "access/scripts.h"
 #include "access/sound.h"
 #include "access/video.h"
+#include "common/error.h"
+#include "common/random.h"
+#include "common/savefile.h"
+#include "common/scummsys.h"
+#include "common/serializer.h"
+#include "common/system.h"
+#include "common/util.h"
+#include "engines/engine.h"
+#include "graphics/surface.h"
 
 /**
  * This is the namespace of the Access engine.
@@ -66,10 +66,10 @@ enum {
 };
 
 enum AccessDebugChannels {
-	kDebugPath      = 1 << 0,
-	kDebugScripts	= 1 << 1,
-	kDebugGraphics	= 1 << 2,
-	kDebugSound     = 1 << 3
+	kDebugPath = 1 << 0,
+	kDebugScripts = 1 << 1,
+	kDebugGraphics = 1 << 2,
+	kDebugSound = 1 << 3
 };
 
 struct AccessGameDescription;
@@ -125,6 +125,7 @@ protected:
 	// Engine APIs
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
+
 protected:
 	/**
 	 * Play the game
@@ -135,6 +136,7 @@ protected:
 	* Synchronize savegame data
 	*/
 	virtual void synchronize(Common::Serializer &s);
+
 public:
 	AnimationManager *_animation;
 	BubbleBox *_bubbleBox;

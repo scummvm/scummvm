@@ -21,10 +21,10 @@
  */
 
 #include "common/algorithm.h"
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/stream.h"
 #include "common/system.h"
-#include "common/config-manager.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
@@ -125,10 +125,10 @@ bool MSNImage::loadStream(Common::SeekableReadStream &stream) {
 	destroy();
 
 	uint size = 0;
-	size  = (stream.readUint16LE() + 0xF) >> 4;
+	size = (stream.readUint16LE() + 0xF) >> 4;
 	size |= (stream.readUint16LE() & 0xF) << 12;
-	size += 0x70;    // zus_paragraph
-	size *= 16;      // a paragraph is 16 bytes
+	size += 0x70; // zus_paragraph
+	size *= 16; // a paragraph is 16 bytes
 	_encodedImage = new byte[size];
 
 	_palette = new byte[717];
@@ -185,7 +185,7 @@ bool MSNImage::loadStream(Common::SeekableReadStream &stream) {
 	// it from there.
 	if (!loadFromEngineDataFile()) {
 		// Load the image from the stream
-		byte zwCodes[256] = {0};
+		byte zwCodes[256] = { 0 };
 		byte numRepeat = stream.readByte();
 		byte numZw = stream.readByte();
 		stream.read(zwCodes, numZw);
@@ -267,7 +267,7 @@ void MSNImage::destroy() {
 		_encodedImage = nullptr;
 	}
 	for (Common::Array<Graphics::Surface *>::iterator it = _sectionSurfaces.begin();
-		 it != _sectionSurfaces.end(); ++it) {
+	     it != _sectionSurfaces.end(); ++it) {
 		(*it)->free();
 	}
 }

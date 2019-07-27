@@ -34,31 +34,31 @@
 #include "common/system.h"
 #include "common/util.h"
 
-#include "sword25/sword25.h"
-#include "sword25/kernel/kernel.h"
-#include "sword25/kernel/inputpersistenceblock.h"
-#include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/input/inputengine.h"
+#include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/kernel/outputpersistenceblock.h"
+#include "sword25/sword25.h"
 
 namespace Sword25 {
 
 #define DOUBLE_CLICK_TIME 500
 #define DOUBLE_CLICK_RECT_SIZE 4
 
-InputEngine::InputEngine(Kernel *pKernel) :
-	Service(pKernel),
-	_currentState(0),
-	_leftMouseDown(false),
-	_rightMouseDown(false),
-	_mouseX(0),
-	_mouseY(0),
-	_leftDoubleClick(false),
-	_doubleClickTime(DOUBLE_CLICK_TIME),
-	_doubleClickRectWidth(DOUBLE_CLICK_RECT_SIZE),
-	_doubleClickRectHeight(DOUBLE_CLICK_RECT_SIZE),
-	_lastLeftClickTime(0),
-	_lastLeftClickMouseX(0),
-	_lastLeftClickMouseY(0) {
+InputEngine::InputEngine(Kernel *pKernel)
+  : Service(pKernel)
+  , _currentState(0)
+  , _leftMouseDown(false)
+  , _rightMouseDown(false)
+  , _mouseX(0)
+  , _mouseY(0)
+  , _leftDoubleClick(false)
+  , _doubleClickTime(DOUBLE_CLICK_TIME)
+  , _doubleClickRectWidth(DOUBLE_CLICK_RECT_SIZE)
+  , _doubleClickRectHeight(DOUBLE_CLICK_RECT_SIZE)
+  , _lastLeftClickTime(0)
+  , _lastLeftClickMouseX(0)
+  , _lastLeftClickMouseY(0) {
 	memset(_keyboardState[0], 0, sizeof(_keyboardState[0]));
 	memset(_keyboardState[1], 0, sizeof(_keyboardState[1]));
 	_leftMouseState[0] = false;
@@ -156,9 +156,7 @@ void InputEngine::testForLeftDoubleClick() {
 		// A double click is signalled if
 		// 1. The two clicks are close enough together
 		// 2. The mouse cursor hasn't moved much
-		if (now - _lastLeftClickTime <= _doubleClickTime &&
-		        ABS(_mouseX - _lastLeftClickMouseX) <= _doubleClickRectWidth / 2 &&
-		        ABS(_mouseY - _lastLeftClickMouseY) <= _doubleClickRectHeight / 2) {
+		if (now - _lastLeftClickTime <= _doubleClickTime && ABS(_mouseX - _lastLeftClickMouseX) <= _doubleClickRectWidth / 2 && ABS(_mouseY - _lastLeftClickMouseY) <= _doubleClickRectHeight / 2) {
 			_leftDoubleClick = true;
 
 			// Reset the time and position of the last click, so that clicking is not
@@ -208,8 +206,7 @@ bool InputEngine::isKeyDown(uint keyCode) {
 
 bool InputEngine::wasKeyDown(uint keyCode) {
 	assert(keyCode < ARRAYSIZE(_keyboardState[_currentState]));
-	return ((_keyboardState[_currentState][keyCode] & 0x80) == 0) &&
-	       ((_keyboardState[_currentState ^ 1][keyCode] & 0x80) != 0);
+	return ((_keyboardState[_currentState][keyCode] & 0x80) == 0) && ((_keyboardState[_currentState ^ 1][keyCode] & 0x80) != 0);
 }
 
 void InputEngine::setCharacterCallback(CharacterCallback callback) {

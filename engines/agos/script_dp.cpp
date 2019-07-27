@@ -20,15 +20,13 @@
  *
  */
 
-
-
 #ifdef ENABLE_AGOS2
 
-#include "agos/agos.h"
+#	include "agos/agos.h"
 
 namespace AGOS {
 
-#define OPCODE(x)	_OPCODE(AGOSEngine_DIMP, x)
+#	define OPCODE(x) _OPCODE(AGOSEngine_DIMP, x)
 
 void AGOSEngine_DIMP::setupOpcodes() {
 	static const OpcodeEntryDIMP opcodes[] = {
@@ -285,13 +283,12 @@ void AGOSEngine_DIMP::setupOpcodes() {
 
 void AGOSEngine_DIMP::executeOpcode(int opcode) {
 	OpcodeProcDIMP op = _opcodesDIMP[opcode].proc;
-	(this->*op) ();
+	(this->*op)();
 }
 
 // -----------------------------------------------------------------------
 // DIMP Opcodes
 // -----------------------------------------------------------------------
-
 
 void AGOSEngine_DIMP::odp_saveUserGame() {
 	// 132: save game

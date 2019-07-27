@@ -36,16 +36,14 @@
  *
  */
 
-
 #ifndef KYRA_SOUND_ADLIBDRIVER_H
 #define KYRA_SOUND_ADLIBDRIVER_H
 
-#include "kyra/resource/resource.h"
 #include "common/mutex.h"
+#include "kyra/resource/resource.h"
 
 // Basic AdLib Programming:
 // https://web.archive.org/web/20050322080425/http://www.gamedev.net/reference/articles/article446.asp
-
 
 namespace Audio {
 class Mixer;
@@ -102,7 +100,7 @@ private:
 	// unk41 - Sound-effect. Used for primaryEffect2()
 
 	struct Channel {
-		bool lock;	// New to ScummVM
+		bool lock; // New to ScummVM
 		uint8 opExtraLevel2;
 		const uint8 *dataptr;
 		uint8 duration;
@@ -130,7 +128,7 @@ private:
 		uint8 position;
 		uint8 regAx;
 		uint8 regBx;
-		typedef void (AdLibDriver::*Callback)(Channel&);
+		typedef void (AdLibDriver::*Callback)(Channel &);
 		Callback primaryEffect;
 		Callback secondaryEffect;
 		uint8 fractionalSpacing;
@@ -279,6 +277,7 @@ private:
 	int update_setSoundTrigger(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setTempoReset(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int updateCallback56(const uint8 *&dataptr, Channel &channel, uint8 value);
+
 private:
 	// These variables have not yet been named, but some of them are partly
 	// known nevertheless:
@@ -340,8 +339,14 @@ private:
 	uint32 _soundDataSize;
 
 	struct QueueEntry {
-		QueueEntry() : data(0), id(0), volume(0) {}
-		QueueEntry(uint8 *ptr, uint8 track, uint8 vol) : data(ptr), id(track), volume(vol) {}
+		QueueEntry()
+		  : data(0)
+		  , id(0)
+		  , volume(0) {}
+		QueueEntry(uint8 *ptr, uint8 track, uint8 vol)
+		  : data(ptr)
+		  , id(track)
+		  , volume(vol) {}
 		uint8 *data;
 		uint8 id;
 		uint8 volume;

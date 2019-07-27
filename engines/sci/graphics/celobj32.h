@@ -25,8 +25,8 @@
 
 #include "common/rational.h"
 #include "common/rect.h"
-#include "sci/resource.h"
 #include "sci/engine/vm_types.h"
+#include "sci/resource.h"
 #include "sci/util.h"
 
 namespace Sci {
@@ -47,15 +47,15 @@ enum {
 };
 
 enum CelType {
-	kCelTypeView  = 0,
-	kCelTypePic   = 1,
-	kCelTypeMem   = 2,
+	kCelTypeView = 0,
+	kCelTypePic = 1,
+	kCelTypeMem = 2,
 	kCelTypeColor = 3
 };
 
 enum CelCompressionType {
-	kCelCompressionNone    = 0,
-	kCelCompressionRLE     = 138,
+	kCelCompressionNone = 0,
+	kCelCompressionRLE = 138,
 	kCelCompressionInvalid = 1000
 };
 
@@ -95,24 +95,19 @@ struct CelInfo32 {
 	 */
 	uint8 color;
 
-	CelInfo32() :
-		// In SSCI, color is left uninitialised
-		type(kCelTypeMem),
-		resourceId(0),
-		loopNo(0),
-		celNo(0),
-		bitmap(NULL_REG) {}
+	CelInfo32()
+	  : // In SSCI, color is left uninitialised
+	  type(kCelTypeMem)
+	  , resourceId(0)
+	  , loopNo(0)
+	  , celNo(0)
+	  , bitmap(NULL_REG) {}
 
 	// This is the equivalence criteria used by CelObj::searchCache in at least
 	// SSCI SQ6. Notably, it does not check the color field.
 	inline bool operator==(const CelInfo32 &other) {
 		return (
-			type == other.type &&
-			resourceId == other.resourceId &&
-			loopNo == other.loopNo &&
-			celNo == other.celNo &&
-			bitmap == other.bitmap
-		);
+		  type == other.type && resourceId == other.resourceId && loopNo == other.loopNo && celNo == other.celNo && bitmap == other.bitmap);
 	}
 
 	inline bool operator!=(const CelInfo32 &other) {
@@ -146,7 +141,8 @@ struct CelCacheEntry {
 	 */
 	int id;
 	Common::ScopedPtr<CelObj> celObj;
-	CelCacheEntry() : id(0) {}
+	CelCacheEntry()
+	  : id(0) {}
 };
 
 typedef Common::Array<CelCacheEntry> CelCache;
@@ -213,9 +209,9 @@ class CelScaler {
 	void buildLookupTable(int *table, const Ratio &ratio, const int size);
 
 public:
-	CelScaler() :
-		_scaleTables(),
-		_activeIndex(0) {
+	CelScaler()
+	  : _scaleTables()
+	  , _activeIndex(0) {
 		CelScalerTable &table = _scaleTables[0];
 		table.scaleX = Ratio();
 		table.scaleY = Ratio();
@@ -411,10 +407,10 @@ public:
 #pragma mark -
 #pragma mark CelObj - Drawing
 private:
-	template<typename MAPPER, typename SCALER>
+	template <typename MAPPER, typename SCALER>
 	void render(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const;
 
-	template<typename MAPPER, typename SCALER>
+	template <typename MAPPER, typename SCALER>
 	void render(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition, const Ratio &scaleX, const Ratio &scaleY) const;
 
 	void drawHzFlip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const;

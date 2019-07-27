@@ -36,11 +36,11 @@
  */
 
 #ifdef SCUMM_LITTLE_ENDIAN
-#define TS_RGB(R,G,B)       ((0xff << 24) | ((R) << 16) | ((G) << 8) | (B))
-#define TS_ARGB(A,R,G,B)    (((R) << 24) | ((G) << 16) | ((B) << 8) | (A))
+#	define TS_RGB(R, G, B) ((0xff << 24) | ((R) << 16) | ((G) << 8) | (B))
+#	define TS_ARGB(A, R, G, B) (((R) << 24) | ((G) << 16) | ((B) << 8) | (A))
 #else
-#define TS_RGB(R,G,B)       (((R) << 24) | ((G) << 16) | (B << 8) | 0xff)
-#define TS_ARGB(A,R,G,B)    (((R) << 24) | ((G) << 16) | ((B) << 8) | (A))
+#	define TS_RGB(R, G, B) (((R) << 24) | ((G) << 16) | (B << 8) | 0xff)
+#	define TS_ARGB(A, R, G, B) (((R) << 24) | ((G) << 16) | ((B) << 8) | (A))
 #endif
 
 namespace Graphics {
@@ -129,12 +129,12 @@ struct TransparentSurface : public Graphics::Surface {
 	                  int width = -1, int height = -1,
 	                  TSpriteBlendMode blend = BLEND_NORMAL);
 	Common::Rect blitClip(Graphics::Surface &target, Common::Rect clippingArea,
-						int posX = 0, int posY = 0,
-						int flipping = FLIP_NONE,
-						Common::Rect *pPartRect = nullptr,
-						uint color = TS_ARGB(255, 255, 255, 255),
-						int width = -1, int height = -1,
-						TSpriteBlendMode blend = BLEND_NORMAL);
+	                      int posX = 0, int posY = 0,
+	                      int flipping = FLIP_NONE,
+	                      Common::Rect *pPartRect = nullptr,
+	                      uint color = TS_ARGB(255, 255, 255, 255),
+	                      int width = -1, int height = -1,
+	                      TSpriteBlendMode blend = BLEND_NORMAL);
 
 	void applyColorKey(uint8 r, uint8 g, uint8 b, bool overwriteAlpha = false);
 
@@ -174,6 +174,7 @@ struct TransparentSurface : public Graphics::Surface {
 
 	AlphaType getAlphaMode() const;
 	void setAlphaMode(AlphaType);
+
 private:
 	AlphaType _alphaMode;
 
@@ -194,6 +195,5 @@ private:
 };*/
 
 } // End of namespace Graphics
-
 
 #endif

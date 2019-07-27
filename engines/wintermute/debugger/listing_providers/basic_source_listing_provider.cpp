@@ -24,7 +24,8 @@
 #include "engines/wintermute/base/base_file_manager.h"
 
 namespace Wintermute {
-BasicSourceListingProvider::BasicSourceListingProvider() : _fsDirectory(nullptr) {
+BasicSourceListingProvider::BasicSourceListingProvider()
+  : _fsDirectory(nullptr) {
 }
 
 BasicSourceListingProvider::~BasicSourceListingProvider() {
@@ -42,7 +43,7 @@ SourceListing *BasicSourceListingProvider::getListing(const Common::String &file
 	for (uint i = 0; i < filename.size(); i++) {
 		if (filename[i] == '\\') {
 			unixFilename.insertChar('/', unixFilename.size());
-		}  else {
+		} else {
 			unixFilename.insertChar(filename[i], unixFilename.size());
 		}
 	}
@@ -85,7 +86,8 @@ ErrorCode BasicSourceListingProvider::setPath(const Common::String &path) {
 }
 
 Common::String BasicSourceListingProvider::getPath() const {
-	if (!_fsDirectory) return "";
+	if (!_fsDirectory)
+		return "";
 	return _fsDirectory->getFSNode().getPath();
 }
 

@@ -20,11 +20,11 @@
  *
  */
 
-#include "kyra/text/text.h"
 #include "kyra/engine/kyra_lok.h"
-#include "kyra/graphics/animator_lok.h"
 #include "kyra/engine/sprites.h"
 #include "kyra/engine/timer.h"
+#include "kyra/graphics/animator_lok.h"
+#include "kyra/text/text.h"
 
 #include "common/system.h"
 
@@ -182,7 +182,7 @@ void KyraEngine_LoK::backupChatPartnerAnimFrame(int8 charNum) {
 }
 
 int8 KyraEngine_LoK::getChatPartnerNum() {
-	uint8 sceneTable[] = {0x2, 0x5, 0x2D, 0x7, 0x1B, 0x8, 0x22, 0x9, 0x30, 0x0A};
+	uint8 sceneTable[] = { 0x2, 0x5, 0x2D, 0x7, 0x1B, 0x8, 0x22, 0x9, 0x30, 0x0A };
 	int pos = 0;
 	int partner = -1;
 
@@ -249,7 +249,7 @@ int KyraEngine_LoK::initCharacterChat(int8 charNum) {
 }
 
 void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int8 charNum, int8 chatDuration) {
-	uint8 startAnimFrames[] =  { 0x10, 0x32, 0x56, 0x0, 0x0, 0x0 };
+	uint8 startAnimFrames[] = { 0x10, 0x32, 0x56, 0x0, 0x0, 0x0 };
 
 	uint16 chatTicks;
 	int16 convoInitialized;

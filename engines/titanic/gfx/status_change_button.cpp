@@ -25,10 +25,11 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CStatusChangeButton, CSTButton)
-	ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseButtonDownMsg)
 END_MESSAGE_MAP()
 
-CStatusChangeButton::CStatusChangeButton() : CSTButton() {
+CStatusChangeButton::CStatusChangeButton()
+  : CSTButton() {
 }
 
 void CStatusChangeButton::save(SimpleFile *file, int indent) {

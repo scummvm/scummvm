@@ -32,11 +32,16 @@ class CFan : public CGameObject {
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
+
 public:
 	int _state, _value2;
+
 public:
 	CLASSDEF;
-	CFan() : CGameObject(), _state(0), _value2(0) {}
+	CFan()
+	  : CGameObject()
+	  , _state(0)
+	  , _value2(0) {}
 
 	/**
 	 * Save the data for the class to file

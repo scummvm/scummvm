@@ -30,7 +30,7 @@ namespace Gnap {
 class GnapEngine;
 class CutScene;
 
-class Scene16: public CutScene {
+class Scene16 : public CutScene {
 public:
 	Scene16(GnapEngine *vm);
 	virtual ~Scene16() {}
@@ -38,7 +38,7 @@ public:
 	virtual int init();
 };
 
-class Scene471: public CutScene {
+class Scene471 : public CutScene {
 public:
 	Scene471(GnapEngine *vm);
 	virtual ~Scene471() {}
@@ -46,7 +46,7 @@ public:
 	virtual int init();
 };
 
-class Scene472: public CutScene {
+class Scene472 : public CutScene {
 public:
 	Scene472(GnapEngine *vm);
 	virtual ~Scene472() {}
@@ -54,7 +54,7 @@ public:
 	virtual int init();
 };
 
-class Scene473: public CutScene {
+class Scene473 : public CutScene {
 public:
 	Scene473(GnapEngine *vm);
 	virtual ~Scene473() {}
@@ -62,7 +62,7 @@ public:
 	virtual int init();
 };
 
-class Scene474: public CutScene {
+class Scene474 : public CutScene {
 public:
 	Scene474(GnapEngine *vm);
 	virtual ~Scene474() {}
@@ -70,7 +70,7 @@ public:
 	virtual int init();
 };
 
-class Scene475: public CutScene {
+class Scene475 : public CutScene {
 public:
 	Scene475(GnapEngine *vm);
 	virtual ~Scene475() {}
@@ -78,7 +78,7 @@ public:
 	virtual int init();
 };
 
-class Scene476: public CutScene {
+class Scene476 : public CutScene {
 public:
 	Scene476(GnapEngine *vm);
 	virtual ~Scene476() {}
@@ -86,7 +86,7 @@ public:
 	virtual int init();
 };
 
-class Scene477: public CutScene {
+class Scene477 : public CutScene {
 public:
 	Scene477(GnapEngine *vm);
 	virtual ~Scene477() {}
@@ -94,7 +94,7 @@ public:
 	virtual int init();
 };
 
-class Scene48: public CutScene {
+class Scene48 : public CutScene {
 public:
 	Scene48(GnapEngine *vm);
 	virtual ~Scene48() {}
@@ -102,7 +102,7 @@ public:
 	virtual int init();
 };
 
-class Scene541: public CutScene {
+class Scene541 : public CutScene {
 public:
 	Scene541(GnapEngine *vm);
 	virtual ~Scene541() {}
@@ -110,7 +110,7 @@ public:
 	virtual int init();
 };
 
-class Scene542: public CutScene {
+class Scene542 : public CutScene {
 public:
 	Scene542(GnapEngine *vm);
 	virtual ~Scene542() {}

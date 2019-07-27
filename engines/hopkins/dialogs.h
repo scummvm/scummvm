@@ -23,16 +23,17 @@
 #ifndef HOPKINS_DIALOGS_H
 #define HOPKINS_DIALOGS_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
 #include "common/error.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
+#include "common/system.h"
 
 namespace Hopkins {
 
 class HopkinsEngine;
 
-enum SaveLoadMode { MODE_SAVE = 1, MODE_LOAD = 2 };
+enum SaveLoadMode { MODE_SAVE = 1,
+	                  MODE_LOAD = 2 };
 
 /**
  * Class for manging game dialogs
@@ -51,7 +52,8 @@ private:
 	HopkinsEngine *_vm;
 
 	void showSaveLoad(SaveLoadMode mode);
-	int  searchSavegames();
+	int searchSavegames();
+
 public:
 	bool _inventFl;
 
@@ -69,7 +71,7 @@ public:
 	void loadIcons();
 
 	void disableInvent() { _removeInventFl = true; }
-	void enableInvent()  { _removeInventFl = false; }
+	void enableInvent() { _removeInventFl = false; }
 };
 
 } // End of namespace Hopkins

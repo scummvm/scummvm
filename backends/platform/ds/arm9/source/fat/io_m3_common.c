@@ -32,28 +32,28 @@
 
 #include "io_m3_common.h"
 
-static u16 _M3_readHalfword (u32 addr) {
-	return *((vu16*)addr);
+static u16 _M3_readHalfword(u32 addr) {
+	return *((vu16 *)addr);
 }
 
-void _M3_changeMode (u32 mode) {
-	_M3_readHalfword (0x08e00002);
-	_M3_readHalfword (0x0800000e);
-	_M3_readHalfword (0x08801ffc);
-	_M3_readHalfword (0x0800104a);
-	_M3_readHalfword (0x08800612);
-	_M3_readHalfword (0x08000000);
-	_M3_readHalfword (0x08801b66);
-	_M3_readHalfword (0x08000000 + (mode << 1));
-	_M3_readHalfword (0x0800080e);
-	_M3_readHalfword (0x08000000);
+void _M3_changeMode(u32 mode) {
+	_M3_readHalfword(0x08e00002);
+	_M3_readHalfword(0x0800000e);
+	_M3_readHalfword(0x08801ffc);
+	_M3_readHalfword(0x0800104a);
+	_M3_readHalfword(0x08800612);
+	_M3_readHalfword(0x08000000);
+	_M3_readHalfword(0x08801b66);
+	_M3_readHalfword(0x08000000 + (mode << 1));
+	_M3_readHalfword(0x0800080e);
+	_M3_readHalfword(0x08000000);
 
 	if ((mode & 0x0f) != 4) {
-		_M3_readHalfword (0x09000000);
+		_M3_readHalfword(0x09000000);
 	} else {
-		_M3_readHalfword (0x080001e4);
-		_M3_readHalfword (0x080001e4);
-		_M3_readHalfword (0x08000188);
-		_M3_readHalfword (0x08000188);
+		_M3_readHalfword(0x080001e4);
+		_M3_readHalfword(0x080001e4);
+		_M3_readHalfword(0x08000188);
+		_M3_readHalfword(0x08000188);
 	}
 }

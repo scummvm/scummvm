@@ -29,16 +29,15 @@
 #ifndef WINTERMUTE_BASE_SPRITE_H
 #define WINTERMUTE_BASE_SPRITE_H
 
-
-#include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/base/base_script_holder.h"
+#include "engines/wintermute/coll_templ.h"
 #include "graphics/transform_tools.h"
 
 namespace Wintermute {
 class BaseFrame;
 class BaseSurface;
 class BaseObject;
-class BaseSprite: public BaseScriptHolder {
+class BaseSprite : public BaseScriptHolder {
 public:
 	BaseSurface *getSurface();
 	void cleanup();
@@ -70,6 +69,7 @@ public:
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	virtual const char *scToString() override;
 	Common::String debuggerToString() const override;
+
 private:
 	BaseObject *_owner;
 	bool _canBreak;

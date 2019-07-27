@@ -32,9 +32,8 @@ struct gfxEntryStruct {
 	int imageSize;
 	int fontIndex;
 	int height;
-	int width;		// for font: max right border; for sprite: just width
+	int width; // for font: max right border; for sprite: just width
 };
-
 
 struct objectParamsQuery {
 	int16 X;
@@ -48,8 +47,8 @@ struct objectParamsQuery {
 };
 
 objDataStruct *getObjectDataFromOverlay(int ovlIdx, int objIdx);
-int16 getSingleObjectParam(int16 overlayIdx, int16 param2, int16 param3, int16 * returnParam);
-int16 getMultipleObjectParam(int16 overlayIdx, int16 objectIdx, objectParamsQuery * returnParam);
+int16 getSingleObjectParam(int16 overlayIdx, int16 param2, int16 param3, int16 *returnParam);
+int16 getMultipleObjectParam(int16 overlayIdx, int16 objectIdx, objectParamsQuery *returnParam);
 void objectReset();
 const char *getObjectName(int index, const char *string);
 int getObjectClass(int overlayIdx, int objIdx);

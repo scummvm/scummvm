@@ -22,12 +22,12 @@
 
 #include "common/debug.h"
 
-#include "pink/pink.h"
 #include "pink/objects/actors/actor.h"
 #include "pink/objects/pages/game_page.h"
 #include "pink/objects/sequences/sequence.h"
 #include "pink/objects/sequences/sequence_context.h"
 #include "pink/objects/sequences/sequencer.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
@@ -42,8 +42,10 @@ void SequenceActorState::execute(uint segment, Sequence *sequence, bool loadingS
 }
 
 SequenceContext::SequenceContext(Sequence *sequence)
-		: _sequence(sequence), _nextItemIndex(0),
-		  _segment(1), _actor(nullptr) {
+  : _sequence(sequence)
+  , _nextItemIndex(0)
+  , _segment(1)
+  , _actor(nullptr) {
 	sequence->setContext(this);
 	Common::Array<SequenceItem *> &items = sequence->getItems();
 	debug(kPinkDebugScripts, "SequenceContext for %s", _sequence->getName().c_str());
@@ -71,7 +73,6 @@ void SequenceContext::execute(uint nextItemIndex, bool loadingSave) {
 	_nextItemIndex = nextItemIndex;
 	_segment++;
 }
-
 
 void SequenceContext::clearDefaultActions() {
 	for (uint i = 0; i < _states.size(); ++i) {

@@ -22,8 +22,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef	SWORD2_CONTROL_H
-#define	SWORD2_CONTROL_H
+#ifndef SWORD2_CONTROL_H
+#define SWORD2_CONTROL_H
 
 #include "sword2/defs.h"
 #include "sword2/saveload.h"
@@ -174,12 +174,14 @@ public:
 
 class SaveDialog : public SaveRestoreDialog {
 public:
-	SaveDialog(Sword2Engine *vm) : SaveRestoreDialog(vm, kSaveDialog) {}
+	SaveDialog(Sword2Engine *vm)
+	  : SaveRestoreDialog(vm, kSaveDialog) {}
 };
 
 class RestoreDialog : public SaveRestoreDialog {
 public:
-	RestoreDialog(Sword2Engine *vm) : SaveRestoreDialog(vm, kRestoreDialog) {}
+	RestoreDialog(Sword2Engine *vm)
+	  : SaveRestoreDialog(vm, kRestoreDialog) {}
 };
 
 } // End of namespace Sword2

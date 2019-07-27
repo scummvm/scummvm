@@ -45,23 +45,30 @@
 
 #include "engines/util.h"
 
-const char *g_actionNames[] = {"None", "Action1", "Action2", "ExitCompartment", "Action4", "ExcuseMeCath", "ExcuseMe", "INVALID", "Knock", "OpenDoor", "Action10", "Action11", "Default", "INVALID", "INVALID", "INVALID", "Action16", "DrawScene", "Callback"};
-const char *g_directionNames[] = { "None", "Up", "Down", "Left", "Right", "Switch"};
-const char *g_entityNames[] = { "Player", "Anna", "August", "Mertens", "Coudert", "Pascale", "Waiter1", "Waiter2", "Cooks", "Verges", "Tatiana", "Vassili", "Alexei", "Abbot", "Milos", "Vesna", "Ivo", "Salko", "Kronos", "Kahina", "Francois", "MmeBoutarel", "Boutarel", "Rebecca", "Sophie", "Mahmud", "Yasmin", "Hadija", "Alouan", "Gendarmes", "Max", "Chapters", "Train", "Tables0", "Tables1", "Tables2", "Tables3", "Tables4", "Tables5", "Entity39"};
-
+const char *g_actionNames[] = { "None", "Action1", "Action2", "ExitCompartment", "Action4", "ExcuseMeCath", "ExcuseMe", "INVALID", "Knock", "OpenDoor", "Action10", "Action11", "Default", "INVALID", "INVALID", "INVALID", "Action16", "DrawScene", "Callback" };
+const char *g_directionNames[] = { "None", "Up", "Down", "Left", "Right", "Switch" };
+const char *g_entityNames[] = { "Player", "Anna", "August", "Mertens", "Coudert", "Pascale", "Waiter1", "Waiter2", "Cooks", "Verges", "Tatiana", "Vassili", "Alexei", "Abbot", "Milos", "Vesna", "Ivo", "Salko", "Kronos", "Kahina", "Francois", "MmeBoutarel", "Boutarel", "Rebecca", "Sophie", "Mahmud", "Yasmin", "Hadija", "Alouan", "Gendarmes", "Max", "Chapters", "Train", "Tables0", "Tables1", "Tables2", "Tables3", "Tables4", "Tables5", "Entity39" };
 
 namespace LastExpress {
 
-LastExpressEngine::LastExpressEngine(OSystem *syst, const ADGameDescription *gd) :
-	Engine(syst), _gameDescription(gd),
-	_debugger(NULL), _random("lastexpress"), _cursor(NULL),
-	_font(NULL), _logic(NULL), _menu(NULL),
-	_lastFrameCount(0),
-	_graphicsMan(NULL), _resMan(NULL),
-	_sceneMan(NULL), _soundMan(NULL),
-	_eventMouse(NULL), _eventTick(NULL),
-	_eventMouseBackup(NULL), _eventTickBackup(NULL)
-	{
+LastExpressEngine::LastExpressEngine(OSystem *syst, const ADGameDescription *gd)
+  : Engine(syst)
+  , _gameDescription(gd)
+  , _debugger(NULL)
+  , _random("lastexpress")
+  , _cursor(NULL)
+  , _font(NULL)
+  , _logic(NULL)
+  , _menu(NULL)
+  , _lastFrameCount(0)
+  , _graphicsMan(NULL)
+  , _resMan(NULL)
+  , _sceneMan(NULL)
+  , _soundMan(NULL)
+  , _eventMouse(NULL)
+  , _eventTick(NULL)
+  , _eventMouseBackup(NULL)
+  , _eventTickBackup(NULL) {
 	// Setup mixer
 	Engine::syncSoundSettings();
 

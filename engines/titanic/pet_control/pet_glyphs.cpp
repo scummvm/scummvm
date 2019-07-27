@@ -21,8 +21,8 @@
  */
 
 #include "titanic/pet_control/pet_glyphs.h"
-#include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/pet_control/pet_section.h"
 
 namespace Titanic {
 
@@ -77,9 +77,14 @@ bool CPetGlyph::isHighlighted() const {
 
 /*------------------------------------------------------------------------*/
 
-CPetGlyphs::CPetGlyphs() : _firstVisibleIndex(0),  _numVisibleGlyphs(TOTAL_GLYPHS),
-		_highlightIndex(-1), _field1C(-1), _flags(0),
-		_dragGlyph(nullptr), _owner(nullptr) {
+CPetGlyphs::CPetGlyphs()
+  : _firstVisibleIndex(0)
+  , _numVisibleGlyphs(TOTAL_GLYPHS)
+  , _highlightIndex(-1)
+  , _field1C(-1)
+  , _flags(0)
+  , _dragGlyph(nullptr)
+  , _owner(nullptr) {
 }
 
 void CPetGlyphs::setNumVisible(int total) {
@@ -532,7 +537,7 @@ void CPetGlyphs::removeInvalid() {
 	if (!areItemsValid()) {
 		changeHighlight(-1);
 
-		for (iterator i = begin(); i != end(); ) {
+		for (iterator i = begin(); i != end();) {
 			CPetGlyph *glyph = *i;
 
 			if (!glyph->isValid()) {

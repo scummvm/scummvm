@@ -24,34 +24,34 @@
 
 #include "zvision/scripting/controls/lever_control.h"
 
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
-#include "zvision/graphics/render_manager.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/zvision.h"
 
-#include "common/stream.h"
 #include "common/file.h"
-#include "common/tokenizer.h"
+#include "common/stream.h"
 #include "common/system.h"
+#include "common/tokenizer.h"
 #include "graphics/surface.h"
 #include "video/video_decoder.h"
 
 namespace ZVision {
 
 LeverControl::LeverControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)
-	: Control(engine, key, CONTROL_LEVER),
-	  _frameInfo(0),
-	  _frameCount(0),
-	  _startFrame(0),
-	  _currentFrame(0),
-	  _lastRenderedFrame(0),
-	  _mouseIsCaptured(false),
-	  _isReturning(false),
-	  _accumulatedTime(0),
-	  _returnRoutesCurrentFrame(0),
-	  _animation(NULL),
-	  _cursor(CursorIndex_Active),
-	  _mirrored(false) {
+  : Control(engine, key, CONTROL_LEVER)
+  , _frameInfo(0)
+  , _frameCount(0)
+  , _startFrame(0)
+  , _currentFrame(0)
+  , _lastRenderedFrame(0)
+  , _mouseIsCaptured(false)
+  , _isReturning(false)
+  , _accumulatedTime(0)
+  , _returnRoutesCurrentFrame(0)
+  , _animation(NULL)
+  , _cursor(CursorIndex_Active)
+  , _mirrored(false) {
 
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();

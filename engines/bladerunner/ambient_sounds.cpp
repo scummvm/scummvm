@@ -24,10 +24,10 @@
 
 #include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/game_constants.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/savefile.h"
 #include "bladerunner/time.h"
-#include "bladerunner/game_constants.h"
 
 #include "common/debug.h"
 #include "common/system.h"
@@ -66,25 +66,24 @@ static inline void sort(int &a, int &b) {
 }
 
 void AmbientSounds::addSound(
-	int sfxId,
-	uint32 timeMin, uint32 timeMax,
-	int volumeMin, int volumeMax,
-	int panStartMin, int panStartMax,
-	int panEndMin, int panEndMax,
-	int priority, int unk) {
+  int sfxId,
+  uint32 timeMin, uint32 timeMax,
+  int volumeMin, int volumeMax,
+  int panStartMin, int panStartMax,
+  int panEndMin, int panEndMax,
+  int priority, int unk) {
 
 	sort(volumeMin, volumeMax);
 	sort(panStartMin, panStartMax);
 	sort(panEndMin, panEndMax);
 
 	addSoundByName(
-				_vm->_gameInfo->getSfxTrack(sfxId),
-				timeMin, timeMax,
-				volumeMin, volumeMax,
-				panStartMin, panStartMax,
-				panEndMin, panEndMax,
-				priority, unk
-				);
+	  _vm->_gameInfo->getSfxTrack(sfxId),
+	  timeMin, timeMax,
+	  volumeMin, volumeMax,
+	  panStartMin, panStartMax,
+	  panEndMin, panEndMax,
+	  priority, unk);
 }
 
 void AmbientSounds::removeNonLoopingSound(int sfxId, bool stopPlaying) {
@@ -106,13 +105,13 @@ void AmbientSounds::addSpeech(int actorId, int sentenceId, uint32 timeMin, uint3
 	sort(panStartMin, panStartMax);
 	sort(panEndMin, panEndMax);
 
-	Common::String name = Common::String::format( "%02d-%04d%s.AUD", actorId, sentenceId, _vm->_languageCode.c_str());
+	Common::String name = Common::String::format("%02d-%04d%s.AUD", actorId, sentenceId, _vm->_languageCode.c_str());
 	addSoundByName(name,
-					timeMin, timeMax,
-					volumeMin, volumeMax,
-					panStartMin, panStartMax,
-					panEndMin, panEndMax,
-					priority, unk);
+	               timeMin, timeMax,
+	               volumeMin, volumeMax,
+	               panStartMin, panStartMax,
+	               panEndMin, panEndMax,
+	               priority, unk);
 }
 
 void AmbientSounds::playSound(int sfxId, int volume, int panStart, int panEnd, int priority) {
@@ -120,7 +119,7 @@ void AmbientSounds::playSound(int sfxId, int volume, int panStart, int panEnd, i
 }
 
 void AmbientSounds::playSpeech(int actorId, int sentenceId, int volume, int panStart, int panEnd, int priority) {
-	Common::String name = Common::String::format( "%02d-%04d%s.AUD", actorId, sentenceId, _vm->_languageCode.c_str());
+	Common::String name = Common::String::format("%02d-%04d%s.AUD", actorId, sentenceId, _vm->_languageCode.c_str());
 	_vm->_audioPlayer->playAud(name, volume * _ambientVolume / 100, panStart, panEnd, priority, kAudioPlayerOverrideVolume, Audio::Mixer::kSpeechSoundType);
 }
 
@@ -214,14 +213,14 @@ void AmbientSounds::tick() {
 		track.volume = _vm->_rnd.getRandomNumberRng(track.volumeMin, track.volumeMax);
 
 		track.audioPlayerTrack = _vm->_audioPlayer->playAud(track.name,
-															track.volume * _ambientVolume / 100,
-															panStart,
-															panEnd,
-															track.priority,
-															kAudioPlayerOverrideVolume);
+		                                                    track.volume * _ambientVolume / 100,
+		                                                    panStart,
+		                                                    panEnd,
+		                                                    track.priority,
+		                                                    kAudioPlayerOverrideVolume);
 
 		track.nextPlayTimeStart = now;
-		track.nextPlayTimeDiff  = _vm->_rnd.getRandomNumberRng(track.timeMin, track.timeMax);
+		track.nextPlayTimeDiff = _vm->_rnd.getRandomNumberRng(track.timeMin, track.timeMax);
 	}
 }
 
@@ -299,12 +298,12 @@ int AmbientSounds::findLoopingTrackByHash(int32 hash) const {
 }
 
 void AmbientSounds::addSoundByName(
-	const Common::String &name,
-	uint32 timeMin, uint32 timeMax,
-	int volumeMin, int volumeMax,
-	int panStartMin, int panStartMax,
-	int panEndMin, int panEndMax,
-	int priority, int unk) {
+  const Common::String &name,
+  uint32 timeMin, uint32 timeMax,
+  int volumeMin, int volumeMax,
+  int panStartMin, int panStartMax,
+  int panEndMin, int panEndMax,
+  int priority, int unk) {
 
 	int i = findAvailableNonLoopingTrack();
 	if (i < 0) {
@@ -321,7 +320,7 @@ void AmbientSounds::addSoundByName(
 	track.timeMin = 1000u * timeMin;
 	track.timeMax = 1000u * timeMax;
 	track.nextPlayTimeStart = now;
-	track.nextPlayTimeDiff  = _vm->_rnd.getRandomNumberRng(track.timeMin, track.timeMax);
+	track.nextPlayTimeDiff = _vm->_rnd.getRandomNumberRng(track.timeMin, track.timeMax);
 	track.volumeMin = volumeMin;
 	track.volumeMax = volumeMax;
 	track.volume = 0;
@@ -416,7 +415,7 @@ void AmbientSounds::load(SaveFileReadStream &f) {
 		track.timeMax = (uint32)f.readInt();
 		f.skip(4); // track.nextPlayTime is not used after load
 		track.nextPlayTimeStart = now;
-		track.nextPlayTimeDiff  = _vm->_rnd.getRandomNumberRng(track.timeMin, track.timeMax);
+		track.nextPlayTimeDiff = _vm->_rnd.getRandomNumberRng(track.timeMin, track.timeMax);
 		track.volumeMin = f.readInt();
 		track.volumeMax = f.readInt();
 		track.volume = f.readInt();

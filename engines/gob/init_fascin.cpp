@@ -22,31 +22,32 @@
 
 #include "common/endian.h"
 
-#include "gob/gob.h"
-#include "gob/init.h"
 #include "gob/game.h"
 #include "gob/global.h"
+#include "gob/gob.h"
+#include "gob/init.h"
 
 namespace Gob {
 
-Init_Fascination::Init_Fascination(GobEngine *vm) : Init_v2(vm) {
+Init_Fascination::Init_Fascination(GobEngine *vm)
+  : Init_v2(vm) {
 }
 
 Init_Fascination::~Init_Fascination() {
 }
 
 void Init_Fascination::updateConfig() {
-// In Fascination, some empty texts are present and used to clean up the text area.
-// Using _doSubtitles does the trick.
-// The first obvious example is in the hotel hall: 'Use ...' is displayed at
-// the same place than the character dialogs.
+	// In Fascination, some empty texts are present and used to clean up the text area.
+	// Using _doSubtitles does the trick.
+	// The first obvious example is in the hotel hall: 'Use ...' is displayed at
+	// the same place than the character dialogs.
 	_vm->_global->_doSubtitles = true;
 }
 
 void Init_Fascination::initGame() {
-// HACK - Suppress
-// the PC Speaker, as the script checks in the intro for it's presence
-// to play or not some noices.
+	// HACK - Suppress
+	// the PC Speaker, as the script checks in the intro for it's presence
+	// to play or not some noices.
 	_vm->_global->_soundFlags = MIDI_FLAG | BLASTER_FLAG | ADLIB_FLAG;
 
 	Init::initGame();

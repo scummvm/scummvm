@@ -29,22 +29,23 @@
 namespace Cloud {
 namespace OneDrive {
 
-class OneDriveStorage;
+	class OneDriveStorage;
 
-class OneDriveTokenRefresher: public Networking::CurlJsonRequest {
-	OneDriveStorage *_parentStorage;
-	Common::Array<Common::String> _headers;
+	class OneDriveTokenRefresher : public Networking::CurlJsonRequest {
+		OneDriveStorage *_parentStorage;
+		Common::Array<Common::String> _headers;
 
-	void tokenRefreshed(Storage::BoolResponse response);
+		void tokenRefreshed(Storage::BoolResponse response);
 
-	virtual void finishJson(Common::JSONValue *json);
-public:
-	OneDriveTokenRefresher(OneDriveStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url);
-	virtual ~OneDriveTokenRefresher();
+		virtual void finishJson(Common::JSONValue *json);
 
-	virtual void setHeaders(Common::Array<Common::String> &headers);
-	virtual void addHeader(Common::String header);
-};
+	public:
+		OneDriveTokenRefresher(OneDriveStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url);
+		virtual ~OneDriveTokenRefresher();
+
+		virtual void setHeaders(Common::Array<Common::String> &headers);
+		virtual void addHeader(Common::String header);
+	};
 
 } // End of namespace OneDrive
 } // End of namespace Cloud

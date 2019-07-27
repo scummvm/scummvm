@@ -29,10 +29,9 @@
 #ifndef WINTERMUTE_BASE_OBJECT_H
 #define WINTERMUTE_BASE_OBJECT_H
 
-
+#include "common/events.h"
 #include "engines/wintermute/base/base_script_holder.h"
 #include "engines/wintermute/persistent.h"
-#include "common/events.h"
 #include "graphics/transform_struct.h"
 
 namespace Wintermute {
@@ -75,6 +74,7 @@ protected:
 	bool _rectSet;
 	int32 _iD;
 	char *_soundEvent;
+
 public:
 	Graphics::TSpriteBlendMode _blendMode;
 	virtual bool afterMove();
@@ -120,20 +120,19 @@ public:
 	BaseObject(BaseGame *inGame);
 	virtual ~BaseObject();
 	// base
-	virtual bool update()  {
+	virtual bool update() {
 		return STATUS_FAILED;
 	};
 	virtual bool display() {
 		return STATUS_FAILED;
 	};
-	virtual bool invalidateDeviceObjects()  {
+	virtual bool invalidateDeviceObjects() {
 		return STATUS_OK;
 	};
-	virtual bool restoreDeviceObjects()     {
+	virtual bool restoreDeviceObjects() {
 		return STATUS_OK;
 	};
 	bool _nonIntMouseEvents;
-
 
 public:
 	// scripting interface

@@ -29,15 +29,16 @@ class ScValue;
 class DebuggableScript;
 
 class WatchInstance {
-	Watch* _watch;
+	Watch *_watch;
 	ScValue *_lastValue;
-	DebuggableScript* _script;
+	DebuggableScript *_script;
+
 public:
-	WatchInstance (Watch* watch, DebuggableScript* script);
+	WatchInstance(Watch *watch, DebuggableScript *script);
 	~WatchInstance();
 	void evaluate();
-friend class DebuggableScript;
-friend class Watch;
+	friend class DebuggableScript;
+	friend class Watch;
 };
 } // End of namespace Wintermute
 

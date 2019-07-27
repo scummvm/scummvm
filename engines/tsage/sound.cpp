@@ -20,14 +20,14 @@
  *
  */
 
-#include "audio/fmopl.h"
+#include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+#include "audio/fmopl.h"
 #include "common/config-manager.h"
 #include "common/timer.h"
-#include "audio/audiostream.h"
 #include "tsage/core.h"
-#include "tsage/globals.h"
 #include "tsage/debugger.h"
+#include "tsage/globals.h"
 #include "tsage/graphics.h"
 #include "tsage/tsage.h"
 
@@ -59,12 +59,12 @@ SoundManager::~SoundManager() {
 		Common::StackLock slock(_serverDisabledMutex);
 		g_vm->_mixer->stopAll();
 
-		for (Common::List<Sound *>::iterator i = _soundList.begin(); i != _soundList.end(); ) {
+		for (Common::List<Sound *>::iterator i = _soundList.begin(); i != _soundList.end();) {
 			Sound *s = *i;
 			++i;
 			s->stop();
 		}
-		for (Common::List<SoundDriver *>::iterator i = _installedDrivers.begin(); i != _installedDrivers.end(); ) {
+		for (Common::List<SoundDriver *>::iterator i = _installedDrivers.begin(); i != _installedDrivers.end();) {
 			SoundDriver *driver = *i;
 			++i;
 			delete driver;
@@ -137,9 +137,7 @@ void SoundManager::syncSounds() {
 		if (voice_mute)
 			subtitles = true;
 
-		R2_GLOBALS._speechSubtitles =
-			(voice_mute ? 0 : SPEECH_VOICE) |
-			(!subtitles ? 0 : SPEECH_TEXT);
+		R2_GLOBALS._speechSubtitles = (voice_mute ? 0 : SPEECH_VOICE) | (!subtitles ? 0 : SPEECH_TEXT);
 	}
 }
 
@@ -406,7 +404,7 @@ void SoundManager::sfSoundServer(void *) {
 
 	// Poll all sound drivers in case they need it
 	for (Common::List<SoundDriver *>::iterator j = sfManager()._installedDrivers.begin();
-				j != sfManager()._installedDrivers.end(); ++j) {
+	     j != sfManager()._installedDrivers.end(); ++j) {
 		(*j)->poll();
 	}
 }
@@ -432,11 +430,9 @@ void SoundManager::sfProcessFading() {
 				--s->_fadeCounter;
 			else {
 				if (s->_volume >= s->_fadeDest) {
-					s->_volume = ((s->_volume - s->_fadeDest) > s->_fadeSteps) ?
-						s->_volume - s->_fadeSteps : s->_fadeDest;
+					s->_volume = ((s->_volume - s->_fadeDest) > s->_fadeSteps) ? s->_volume - s->_fadeSteps : s->_fadeDest;
 				} else {
-					s->_volume = ((s->_fadeDest - s->_volume) > s->_fadeSteps) ?
-						s->_volume + s->_fadeSteps : s->_fadeDest;
+					s->_volume = ((s->_fadeDest - s->_volume) > s->_fadeSteps) ? s->_volume + s->_fadeSteps : s->_fadeDest;
 				}
 
 				sfDoUpdateVolume(s);
@@ -559,7 +555,7 @@ void SoundManager::loadNotifierProc(bool postFlag) {
 		if (_sndmgrReady) {
 			Common::StackLock slock(_serverDisabledMutex);
 
-			for (Common::List<Sound *>::iterator i = _soundList.begin(); i != _soundList.end(); ) {
+			for (Common::List<Sound *>::iterator i = _soundList.begin(); i != _soundList.end();) {
 				Sound *s = *i;
 				++i;
 				s->stop();
@@ -647,7 +643,7 @@ void SoundManager::sfRethinkSoundDrivers() {
 
 		// Loop through the sound drivers
 		for (Common::List<SoundDriver *>::iterator i = sfManager()._installedDrivers.begin();
-				i != sfManager()._installedDrivers.end(); ++i) {
+		     i != sfManager()._installedDrivers.end(); ++i) {
 			// Process the group data for each sound driver
 			SoundDriver *driver = *i;
 			const byte *groupData = driver->_groupOffset->_pData;
@@ -694,7 +690,7 @@ void SoundManager::sfRethinkSoundDrivers() {
 			vs->_field3 = 0;
 
 			for (Common::List<SoundDriver *>::iterator i = sfManager()._installedDrivers.begin();
-							i != sfManager()._installedDrivers.end(); ++i) {
+			     i != sfManager()._installedDrivers.end(); ++i) {
 				// Process the group data for each sound driver
 				SoundDriver *driver = *i;
 				const byte *groupData = driver->_groupOffset->_pData;
@@ -904,8 +900,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 				// Type 0
 				if (sound->_isEmpty) {
 					uint idx = 0;
-					while ((idx < vtStruct->_entries.size()) &&
-							(vtStruct->_entries[idx]._voiceNum == foundIndex))
+					while ((idx < vtStruct->_entries.size()) && (vtStruct->_entries[idx]._voiceNum == foundIndex))
 						++idx;
 					if (idx == vtStruct->_entries.size())
 						continue;
@@ -917,8 +912,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 					int entryIndex = -1, maxVoiceNum = 0;
 
 					for (uint idx = 0; idx < vtStruct->_entries.size(); ++idx) {
-						if (!vtStruct->_entries[idx]._type0._sound2 && (vtStruct->_entries[idx]._field1 != 0) &&
-								(vtStruct->_entries[idx]._voiceNum > maxVoiceNum)) {
+						if (!vtStruct->_entries[idx]._type0._sound2 && (vtStruct->_entries[idx]._field1 != 0) && (vtStruct->_entries[idx]._voiceNum > maxVoiceNum)) {
 							maxVoiceNum = vtStruct->_entries[idx]._voiceNum;
 							entryIndex = idx;
 						}
@@ -939,8 +933,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 					int maxPriority = 0;
 					entryIndex = -1;
 					for (uint idx = 0; idx < vtStruct->_entries.size(); ++idx) {
-						if ((vtStruct->_entries[idx]._field1 != 0) &&
-								(vtStruct->_entries[idx]._type0._priority2 > maxPriority)) {
+						if ((vtStruct->_entries[idx]._field1 != 0) && (vtStruct->_entries[idx]._type0._priority2 > maxPriority)) {
 							maxPriority = vtStruct->_entries[idx]._type0._priority2;
 							entryIndex = idx;
 						}
@@ -1120,7 +1113,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 						driver->proc24(vse._channelNum, idx, vse._sound, 123, 0);
 						driver->proc24(vse._channelNum, idx, vse._sound, 1, vse._sound->_chModulation[vse._channelNum]);
 						driver->proc24(vse._channelNum, idx, vse._sound, 7,
-							vse._sound->_chVolume[vse._channelNum] * vse._sound->_volume / 127);
+						               vse._sound->_chVolume[vse._channelNum] * vse._sound->_volume / 127);
 						driver->proc24(vse._channelNum, idx, vse._sound, 10, vse._sound->_chPan[vse._channelNum]);
 						driver->proc24(vse._channelNum, idx, vse._sound, 64, vse._sound->_chDamper[vse._channelNum]);
 
@@ -1190,11 +1183,11 @@ void SoundManager::sfRethinkVoiceTypes() {
 
 				driver->proc24(vseFound._channelNum, voiceIndex, vseFound._sound, 123, 0);
 				driver->proc24(vseFound._channelNum, voiceIndex, vseFound._sound,
-					1, vseFound._sound->_chModulation[vseFound._channelNum]);
+				               1, vseFound._sound->_chModulation[vseFound._channelNum]);
 				driver->proc24(vseFound._channelNum, voiceIndex, vseFound._sound,
-					7, vseFound._sound->_chVolume[vseFound._channelNum] * vseFound._sound->_volume / 127);
+				               7, vseFound._sound->_chVolume[vseFound._channelNum] * vseFound._sound->_volume / 127);
 				driver->proc24(vseFound._channelNum, voiceIndex, vseFound._sound,
-					10, vseFound._sound->_chPan[vseFound._channelNum]);
+				               10, vseFound._sound->_chPan[vseFound._channelNum]);
 				driver->setProgram(vseFound._channelNum, vseFound._sound->_chProgram[vseFound._channelNum]);
 				driver->setPitchBlend(vseFound._channelNum, vseFound._sound->_chPitchBlend[vseFound._channelNum]);
 			}
@@ -1263,7 +1256,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 				driver->updateVoice(vs->_entries[idx2]._voiceNum);
 				driver->proc38(vs->_entries[idx2]._voiceNum, 1, vse2._sound->_chModulation[vse2._channelNum]);
 				driver->proc38(vs->_entries[idx2]._voiceNum, 7,
-					vse2._sound->_chVolume[vse2._channelNum] * vse2._sound->_volume / 127);
+				               vse2._sound->_chVolume[vse2._channelNum] * vse2._sound->_volume / 127);
 				driver->proc38(vs->_entries[idx2]._voiceNum, 10, vse2._sound->_chPan[vse2._channelNum]);
 				driver->setPitch(vs->_entries[idx2]._voiceNum, vse2._sound->_chPitchBlend[vse2._channelNum]);
 			}
@@ -1324,7 +1317,7 @@ void SoundManager::sfSetMasterVol(int volume) {
 		_soundManager->_masterVol = volume;
 
 		for (Common::List<SoundDriver *>::iterator i = _soundManager->_installedDrivers.begin();
-				i != _soundManager->_installedDrivers.end(); ++i) {
+		     i != _soundManager->_installedDrivers.end(); ++i) {
 			(*i)->setMasterVolume(volume);
 		}
 	}
@@ -1360,14 +1353,13 @@ void SoundManager::sfExtractTrackInfo(trackInfoStruct *trackInfo, const byte *so
 }
 
 void SoundManager::sfTerminate() {
-
 }
 
 void SoundManager::sfExtractGroupMask() {
 	uint32 mask = 0;
 
 	for (Common::List<SoundDriver *>::iterator i = sfManager()._installedDrivers.begin();
-				i != sfManager()._installedDrivers.end(); ++i)
+	     i != sfManager()._installedDrivers.end(); ++i)
 		mask |= (*i)->_groupMask;
 
 	_soundManager->_groupsAvail = mask;
@@ -1485,7 +1477,6 @@ Sound::Sound() {
 	_primed = false;
 	_isEmpty = false;
 	_remoteReceiver = NULL;
-
 
 	memset(_chProgram, 0, SOUND_ARR_SIZE * sizeof(int));
 	memset(_chModulation, 0, SOUND_ARR_SIZE * sizeof(int));
@@ -1895,7 +1886,7 @@ void Sound::soPrimeChannelData() {
 		for (int idx = 0; idx < _trackInfo._numTracks; ++idx) {
 			byte *d = _channelData[idx];
 			int mode = *d;
-			int channelNum = (int8)*(d + 1);
+			int channelNum = (int8) * (d + 1);
 
 			_trkChannel[idx] = channelNum;
 			assert((channelNum >= -1) && (channelNum < 16));
@@ -1966,8 +1957,7 @@ void Sound::soServiceTrackType0(int trackIndex, const byte *channelData) {
 			voiceType = vtStruct->_voiceType;
 			if (voiceType == VOICETYPE_0) {
 				for (uint idx = 0; idx < vtStruct->_entries.size(); ++idx) {
-					if (!vtStruct->_entries[idx]._type0._sound &&
-							(vtStruct->_entries[idx]._type0._channelNum != channelNum)) {
+					if (!vtStruct->_entries[idx]._type0._sound && (vtStruct->_entries[idx]._type0._channelNum != channelNum)) {
 						voiceNum = vtStruct->_entries[idx]._voiceNum;
 						driver = vtStruct->_entries[idx]._driver;
 						break;
@@ -2150,7 +2140,6 @@ void Sound::soServiceTrackType0(int trackIndex, const byte *channelData) {
 					assert(driver);
 					driver->setVolume1(voiceNum, chVoiceType, 0, b);
 				}
-
 			}
 		}
 	}
@@ -2342,7 +2331,7 @@ void Sound::soServiceTrackType1(int trackIndex, const byte *channelData) {
 						int v1, v2;
 						driver->playSound(channelData, 14, -1, vtStruct->_entries[entryIndex]._voiceNum, *(channelData + 1), 0x7f);
 						driver->proc42(vtStruct->_entries[entryIndex]._voiceNum, *(channelData + 1), _loop ? 1 : 0,
-							&v1, &v2);
+						               &v1, &v2);
 						_trkState[trackIndex] = 2;
 					}
 				} else {
@@ -2409,7 +2398,8 @@ int Sound::soFindSound(VoiceTypeStruct *vtStruct, int channelNum) {
 
 /*--------------------------------------------------------------------------*/
 
-ASound::ASound(): EventHandler() {
+ASound::ASound()
+  : EventHandler() {
 	_endAction = NULL;
 	_cueValue = -1;
 	if (g_globals)
@@ -2426,7 +2416,6 @@ void ASound::synchronize(Serializer &s) {
 
 	SYNC_POINTER(_action);
 	s.syncAsByte(_cueValue);
-
 }
 
 void ASound::dispatch() {
@@ -2490,7 +2479,8 @@ void ASound::fadeSound(int soundNum) {
 
 /*--------------------------------------------------------------------------*/
 
-ASoundExt::ASoundExt(): ASound() {
+ASoundExt::ASoundExt()
+  : ASound() {
 	_soundNum = 0;
 }
 
@@ -2535,7 +2525,8 @@ void PlayStream::ResFileData::load(Common::SeekableReadStream &stream) {
 	stream.skip(18);
 }
 
-PlayStream::PlayStream(): EventHandler() {
+PlayStream::PlayStream()
+  : EventHandler() {
 	_index = NULL;
 	_endAction = NULL;
 	_audioStream = NULL;
@@ -2609,7 +2600,7 @@ bool PlayStream::play(int voiceNum, EventHandler *endAction) {
 				break;
 
 			// Get the size of the chunk
-			chunkSize  = _file.readUint16LE() - 16;
+			chunkSize = _file.readUint16LE() - 16;
 			_file.skip(10);
 
 			// Read in the data for this next chunk and queue it
@@ -2619,7 +2610,7 @@ bool PlayStream::play(int voiceNum, EventHandler *endAction) {
 		}
 
 		g_vm->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle,
-			_audioStream, DisposeAfterUse::YES);
+		                         _audioStream, DisposeAfterUse::YES);
 		_voiceNum = voiceNum;
 		_endAction = endAction;
 		return true;
@@ -2670,7 +2661,7 @@ void PlayStream::dispatch() {
 
 uint32 PlayStream::getFileOffset(const uint16 *data, int count, int voiceNum) {
 	if (!data)
-		return 0;	// no valid voice data found
+		return 0; // no valid voice data found
 
 	int bitsIndex = voiceNum & 7;
 	int byteIndex = voiceNum >> 3;
@@ -2727,7 +2718,8 @@ const int v440D4[48] = {
 	647, 657, 666, 676
 };
 
-AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
+AdlibSoundDriver::AdlibSoundDriver()
+  : SoundDriver() {
 	_minVersion = 0x102;
 	_maxVersion = 0x10A;
 	_masterVolume = 0;
@@ -2888,8 +2880,7 @@ void AdlibSoundDriver::flush() {
 void AdlibSoundDriver::updateChannelVolume(int channelNum) {
 	int volume = (_masterVolume * _channelVolume[channelNum] / 127 * _v4405E[channelNum] / 127) / 2;
 	int level2 = 63 - v44134[volume * _v44079[channelNum] / 63];
-	int level1 = !_v44082[channelNum] ? 63 - _v44070[channelNum] :
-		63 - v44134[volume * _v44070[channelNum] / 63];
+	int level1 = !_v44082[channelNum] ? 63 - _v44070[channelNum] : 63 - v44134[volume * _v44070[channelNum] / 63];
 
 	int portNum = adlib_operator1_offset[channelNum] + 0x40;
 	write(portNum, (_portContents[portNum] & 0x80) | level1);
@@ -2954,8 +2945,7 @@ void AdlibSoundDriver::updateChannel(int channel) {
 	write(0x80 + portOffset, *(dataP + 27) | (*(dataP + 26) << 4));
 	write(0xE0 + portOffset, (_portContents[0xE0 + portOffset] & 0xFC) | *(dataP + 28));
 
-	write(0xC0 + channel, (_portContents[0xC0 + channel] & 0xF0)
-		| (*(dataP + 16) << 1) | *(dataP + 3));
+	write(0xC0 + channel, (_portContents[0xC0 + channel] & 0xF0) | (*(dataP + 16) << 1) | *(dataP + 3));
 
 	_v44082[channel] = *(dataP + 3);
 }
@@ -3001,8 +2991,7 @@ void AdlibSoundDriver::setFrequency(int channel) {
 
 	int dataWord = v440D4[((ch % 12) << 2) + offset];
 	write(0xA0 + channel, dataWord & 0xff);
-	write(0xB0 + channel, (_portContents[0xB0 + channel] & 0xE0) |
-		((dataWord >> 8) & 3) | (var2 << 2));
+	write(0xB0 + channel, (_portContents[0xB0 + channel] & 0xE0) | ((dataWord >> 8) & 3) | (var2 << 2));
 }
 
 void AdlibSoundDriver::onTimer() {
@@ -3011,8 +3000,8 @@ void AdlibSoundDriver::onTimer() {
 
 /*--------------------------------------------------------------------------*/
 
-
-SoundBlasterDriver::SoundBlasterDriver(): SoundDriver() {
+SoundBlasterDriver::SoundBlasterDriver()
+  : SoundDriver() {
 	_minVersion = 0x102;
 	_maxVersion = 0x10A;
 	_masterVolume = 0;

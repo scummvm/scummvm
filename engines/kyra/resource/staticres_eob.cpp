@@ -26,7 +26,6 @@
 
 #include "common/memstream.h"
 
-
 namespace Kyra {
 
 #ifdef ENABLE_EOB
@@ -188,8 +187,8 @@ const uint8 EoBCoreEngine::_hpIncrPerLevel[] = { 10, 4, 8, 6, 10, 10, 9, 10, 9, 
 const uint8 EoBCoreEngine::_numLevelsPerClass[] = { 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 2, 2, 3, 2, 2 };
 
 const int8 EoBCoreEngine::_characterClassType[] = {
-	0, -1, -1, 5, -1, -1, 4, -1, -1, 1, -1, -1, 2, -1, -1, 3, -1, -1,  0,
-	2, -1, 0, 3, -1, 0, 1, -1, 0, 1, 3, 3, 1, -1, 2, 3, -1, 0, 2,  1,  5,
+	0, -1, -1, 5, -1, -1, 4, -1, -1, 1, -1, -1, 2, -1, -1, 3, -1, -1, 0,
+	2, -1, 0, 3, -1, 0, 1, -1, 0, 1, 3, 3, 1, -1, 2, 3, -1, 0, 2, 1, 5,
 	2, -1, 2, 1, -1
 };
 
@@ -223,19 +222,19 @@ const uint8 EoBCoreEngine::_wallOfForceShapeDefs[] = {
 };
 
 const uint8 EoBCoreEngine::_buttonList1[] = {
-	58, 0, 1, 2, 3, 90, 91, 4, 5, 6, 7, 8, 9, 10, 11, 12, 78, 79, 13, 14,  15,  16,
+	58, 0, 1, 2, 3, 90, 91, 4, 5, 6, 7, 8, 9, 10, 11, 12, 78, 79, 13, 14, 15, 16,
 	80, 81, 17, 18, 19, 20, 82, 83, 49, 50, 51, 52, 53, 54, 56, 57, 255
 };
 
 const uint8 EoBCoreEngine::_buttonList2[] = {
 	58, 61, 62, 63, 64, 65, 93, 94, 66, 67, 68, 69, 70, 71, 76, 77, 88, 0, 1, 2, 3,
-	90, 91,  4,  5, 6, 7, 8, 9, 10, 11, 12, 78, 79, 13, 14, 15, 16, 80, 81, 17, 18,
+	90, 91, 4, 5, 6, 7, 8, 9, 10, 11, 12, 78, 79, 13, 14, 15, 16, 80, 81, 17, 18,
 	19, 20, 82, 83, 49, 50, 51, 52, 53, 54, 56, 57, 255
 };
 
 const uint8 EoBCoreEngine::_buttonList3[] = {
 	58, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
-	40, 41, 42, 43, 44, 45, 84, 85, 46, 47, 48, 60, 59, 92, 4, 5, 6, 7, 8, 49,  50,
+	40, 41, 42, 43, 44, 45, 84, 85, 46, 47, 48, 60, 59, 92, 4, 5, 6, 7, 8, 49, 50,
 	51, 52, 53, 54, 56, 57, 255
 };
 
@@ -469,7 +468,7 @@ void EoBCoreEngine::initStaticResource() {
 
 	if (_flags.platform == Common::kPlatformAmiga) {
 		const char *const *map = _staticres->loadStrings(kEoBBaseSoundMap, temp2);
-		_amigaSoundMap = new const char*[temp2];
+		_amigaSoundMap = new const char *[temp2];
 		for (int i = 0; i < temp2; ++i) {
 			assert(map[i]);
 			_amigaSoundMap[i] = map[i][0] ? map[i] : 0;
@@ -513,7 +512,7 @@ void EoBCoreEngine::initStaticResource() {
 		SoundResourceInfo_PC finale(files, temp);
 		sndInfo_finale = &finale;
 	}
-	
+
 	_sound->initAudioResourceInfo(kMusicIngame, sndInfo_ingame);
 	_sound->initAudioResourceInfo(kMusicIntro, sndInfo_intro);
 	_sound->initAudioResourceInfo(kMusicFinale, sndInfo_finale);
@@ -523,18 +522,36 @@ void EoBCoreEngine::initStaticResource() {
 	// save slot. Instead of emulating this we provide a menu similiar to EOB II.
 
 	static const char *const saveLoadStrings[5][4] = {
-		{   "Cancel",   "Empty Slot",		"Save Game",    "Load Game"     },
-		{   "Abbr.",    "Leerer Slot",		"Speichern",    "  Laden"       },
-		{	" < < ",	"Posizione Vuota",	"Salva",		"Carica"	    },
-		{   0,          0,					0,					0			},
-		{	0,          0,					0,					0			}
+		{ "Cancel", "Empty Slot", "Save Game", "Load Game" },
+		{ "Abbr.", "Leerer Slot", "Speichern", "  Laden" },
+		{ " < < ", "Posizione Vuota", "Salva", "Carica" },
+		{ 0, 0, 0, 0 },
+		{ 0, 0, 0, 0 }
 	};
 
 	static const char *const errorSlotEmptyString[5] = {
 		"There is no game\rsaved in that slot!",
 		"Hier ist noch kein\rSpiel gespeichert!",
 		"Non c'\x0E alcun gioco\rsalvato in quella\rposizione!",
-		"\r ""\x82\xBB\x82\xCC\x83""X""\x83\x8D\x83""b""\x83""g""\x82\xC9\x82\xCD\x83""Q""\x81""[""\x83\x80\x82\xAA\x83""Z""\x81""[""\x83""u\r ""\x82\xB3\x82\xEA\x82\xC4\x82\xA2\x82\xDC\x82\xB9\x82\xF1\x81""B",
+		"\r "
+		"\x82\xBB\x82\xCC\x83"
+		"X"
+		"\x83\x8D\x83"
+		"b"
+		"\x83"
+		"g"
+		"\x82\xC9\x82\xCD\x83"
+		"Q"
+		"\x81"
+		"["
+		"\x83\x80\x82\xAA\x83"
+		"Z"
+		"\x81"
+		"["
+		"\x83"
+		"u\r "
+		"\x82\xB3\x82\xEA\x82\xC4\x82\xA2\x82\xDC\x82\xB9\x82\xF1\x81"
+		"B",
 		0
 	};
 
@@ -555,7 +572,7 @@ void EoBCoreEngine::initStaticResource() {
 	} else {
 		_saveLoadStrings = saveLoadStrings[4];
 		_errorSlotEmptyString = errorSlotEmptyString[4];
-	}	
+	}
 
 	_menuOkString = "OK";
 }
@@ -669,7 +686,7 @@ void EoBCoreEngine::initButtonData() {
 
 	_buttonDefs = new EoBGuiButtonDef[ARRAYSIZE(buttonDefs)];
 	memcpy(_buttonDefs, buttonDefs, sizeof(buttonDefs));
-	
+
 	if (_flags.platform == Common::kPlatformFMTowns) {
 		static const uint16 keyCodesFMTowns[] = {
 			93, 94, 95, 96, 67, 27, 24, 349, 350, 351, 352, 80, 27, 24, 30, 0, 31, 0, 29, 0, 28, 0, 127, 18, 27, 93, 94, 95, 96,
@@ -688,8 +705,15 @@ void EoBCoreEngine::initButtonData() {
 	_buttonCallbacks.clear();
 	_buttonCallbacks.reserve(ARRAYSIZE(buttonDefs));
 
-#define EOB_CBN(x, y) _buttonCallbacks.push_back(BUTTON_FUNCTOR(EoBCoreEngine, this, &EoBCoreEngine::y)); for (int l = 0; l < (x - 1); l++) { _buttonCallbacks.push_back(_buttonCallbacks[_buttonCallbacks.size() - 1 - l]); }
-#define EOB_CBI(x, y) for (int l = x; l; l--) { _buttonCallbacks.push_back(_buttonCallbacks[y]); }
+#	define EOB_CBN(x, y)                                                                 \
+		_buttonCallbacks.push_back(BUTTON_FUNCTOR(EoBCoreEngine, this, &EoBCoreEngine::y)); \
+		for (int l = 0; l < (x - 1); l++) {                                                 \
+			_buttonCallbacks.push_back(_buttonCallbacks[_buttonCallbacks.size() - 1 - l]);    \
+		}
+#	define EOB_CBI(x, y)                                \
+		for (int l = x; l; l--) {                          \
+			_buttonCallbacks.push_back(_buttonCallbacks[y]); \
+		}
 	EOB_CBN(4, clickedCharPortraitDefault);
 	EOB_CBN(1, clickedCamp);
 	EOB_CBN(4, clickedSceneDropPickupItem);
@@ -728,74 +752,74 @@ void EoBCoreEngine::initButtonData() {
 	EOB_CBN(1, clickedSpellbookScroll);
 	EOB_CBI(5, 61);
 	EOB_CBI(1, 88);
-#undef EOB_CBI
-#undef EOB_CBN
+#	undef EOB_CBI
+#	undef EOB_CBN
 }
 
 void EoBCoreEngine::initMenus() {
 	static const EoBMenuButtonDef buttonDefs[] = {
-		{  2,   12,  20, 158,  14,  20,  3  },
-		{  3,   12,  37, 158,  14,  52,  3  },
-		{  4,   12,  54, 158,  14,  26,  3  },
-		{  5,   12,  71, 158,  14,  32,  3  },
-		{  6,   12,  88, 158,  14,   0,  3  },
-		{  7,   12, 105, 158,  14,  35,  3  },
-		{  8,  128, 122,  40,  14,  19,  7  },
-		{  9,   12,  20, 158,  14,  39,  3  },
-		{  10,  12,  37, 158,  14,  32,  3  },
-		{  11,  12,  54, 158,  14,  33,  3  },
-		{  12,  12,  71, 158,  14,  17,  3  },
-		{  8,  128, 122,  40,  14,  19,  7  },
-		{  18,  12,  20, 158,  14,  32,  3  },
-		{  19,  12,  37, 158,  14,  50,  3  },
-		{  8,  128, 122,  40,  14,  19,  7  },
-		{  8,  128, 122,  40,  14,  19,  5  },
-		{  0,  184,   0,  64,  48, 112,  0  },
-		{  0,  256,   0,  64,  48, 113,  0  },
-		{  0,  184,  56,  64,  48, 114,  0  },
-		{  0,  256,  56,  64,  48, 115,  0  },
-		{  0,  184, 112,  64,  48, 116,  0  },
-		{  0,  256, 112,  64,  48, 117,  0  },
-		{  36,   8, 126,  48,  14,  48,  5  },
-		{  8,  128, 126,  40,  14,  19,  5  },
-		{  0,    0,  50, 168,  72,  61,  0  },
-		{  31,  11,  16,  20,  18,   2,  5  },
-		{  32,  38,  16,  20,  18,   3,  5  },
-		{  33,  65,  16,  20,  18,   4,  5  },
-		{  34,  92,  16,  20,  18,   5,  5  },
-		{  35, 119,  16,  20,  18,   6,  5  },
-		{  60, 146,  16,  20,  18,   7,  5  },
-		{  61, 150,  16,  20,  18,   8,  5  },
-		{  38,  16,  57,  32,  14,  22,  7  },
-		{  39, 128,  57,  32,  14,  51,  7  },
-		{  8,  128, 126,  40,  14,  19,  7  },
-		{  0,    0,  50, 168,  72,  61,  0  },
+		{ 2, 12, 20, 158, 14, 20, 3 },
+		{ 3, 12, 37, 158, 14, 52, 3 },
+		{ 4, 12, 54, 158, 14, 26, 3 },
+		{ 5, 12, 71, 158, 14, 32, 3 },
+		{ 6, 12, 88, 158, 14, 0, 3 },
+		{ 7, 12, 105, 158, 14, 35, 3 },
+		{ 8, 128, 122, 40, 14, 19, 7 },
+		{ 9, 12, 20, 158, 14, 39, 3 },
+		{ 10, 12, 37, 158, 14, 32, 3 },
+		{ 11, 12, 54, 158, 14, 33, 3 },
+		{ 12, 12, 71, 158, 14, 17, 3 },
+		{ 8, 128, 122, 40, 14, 19, 7 },
+		{ 18, 12, 20, 158, 14, 32, 3 },
+		{ 19, 12, 37, 158, 14, 50, 3 },
+		{ 8, 128, 122, 40, 14, 19, 7 },
+		{ 8, 128, 122, 40, 14, 19, 5 },
+		{ 0, 184, 0, 64, 48, 112, 0 },
+		{ 0, 256, 0, 64, 48, 113, 0 },
+		{ 0, 184, 56, 64, 48, 114, 0 },
+		{ 0, 256, 56, 64, 48, 115, 0 },
+		{ 0, 184, 112, 64, 48, 116, 0 },
+		{ 0, 256, 112, 64, 48, 117, 0 },
+		{ 36, 8, 126, 48, 14, 48, 5 },
+		{ 8, 128, 126, 40, 14, 19, 5 },
+		{ 0, 0, 50, 168, 72, 61, 0 },
+		{ 31, 11, 16, 20, 18, 2, 5 },
+		{ 32, 38, 16, 20, 18, 3, 5 },
+		{ 33, 65, 16, 20, 18, 4, 5 },
+		{ 34, 92, 16, 20, 18, 5, 5 },
+		{ 35, 119, 16, 20, 18, 6, 5 },
+		{ 60, 146, 16, 20, 18, 7, 5 },
+		{ 61, 150, 16, 20, 18, 8, 5 },
+		{ 38, 16, 57, 32, 14, 22, 7 },
+		{ 39, 128, 57, 32, 14, 51, 7 },
+		{ 8, 128, 126, 40, 14, 19, 7 },
+		{ 0, 0, 50, 168, 72, 61, 0 },
 		// EOB 1 memorize/pray menu:
-		{  36,   8, 126,  48,  14,  48,  5  },
-		{  8,  128, 126,  40,  14,  19,  5  },
-		{  0,    0,  50, 168,  72,  61,  0  },
-		{  31,   8,  16,  24,  20,   2,  5  },
-		{  32,  40,  16,  24,  20,   3,  5  },
-		{  33,  72,  16,  24,  20,   4,  5  },
-		{  34, 104,  16,  24,  20,   5,  5  },
-		{  35, 136,  16,  24,  20,   6,  5  },
+		{ 36, 8, 126, 48, 14, 48, 5 },
+		{ 8, 128, 126, 40, 14, 19, 5 },
+		{ 0, 0, 50, 168, 72, 61, 0 },
+		{ 31, 8, 16, 24, 20, 2, 5 },
+		{ 32, 40, 16, 24, 20, 3, 5 },
+		{ 33, 72, 16, 24, 20, 4, 5 },
+		{ 34, 104, 16, 24, 20, 5, 5 },
+		{ 35, 136, 16, 24, 20, 6, 5 },
 		// FM-Towns options menu
-		{  18,  12,  20, 158,  14,  32,  3  },
-		{  19,  12,  37, 158,  14,  50,  3  },
-		{  20,  12,  54, 158,  14,  21,  3  },
-		{  8,  128, 122,  40,  14,  19,  7  }
+		{ 18, 12, 20, 158, 14, 32, 3 },
+		{ 19, 12, 37, 158, 14, 50, 3 },
+		{ 20, 12, 54, 158, 14, 21, 3 },
+		{ 8, 128, 122, 40, 14, 19, 7 }
 	};
 
 	_menuButtonDefs = buttonDefs;
 
 	static const EoBMenuDef menuDefs[] = {
-		{  1, 10,  0, 7,  9 },
-		{  1, 10,  7, 5,  9 },
-		{  1, 10, 12, 3,  9 },
-		{  0, 10, 15, 7, 15 },
-		{ 37, 10, 22, 9,  9 },
-		{  0, 11, 32, 2, 15 },
-		{ 48, 10, 34, 2,  9 }
+		{ 1, 10, 0, 7, 9 },
+		{ 1, 10, 7, 5, 9 },
+		{ 1, 10, 12, 3, 9 },
+		{ 0, 10, 15, 7, 15 },
+		{ 37, 10, 22, 9, 9 },
+		{ 0, 11, 32, 2, 15 },
+		{ 48, 10, 34, 2, 9 }
 	};
 
 	delete[] _menuDefs;
@@ -821,21 +845,36 @@ void EoBCoreEngine::initMenus() {
 	}
 }
 
-
 void EoBCoreEngine::initSpells() {
-#define mpn magicTimingParaAssign.push_back(0);
-#define mp1n if (_flags.gameID == GI_EOB1) magicTimingParaAssign.push_back(0);
-#define mp2n if (_flags.gameID == GI_EOB2) magicTimingParaAssign.push_back(0);
-#define mp(x) magicTimingParaAssign.push_back(&magicTimingPara[x << 2]);
-#define mp1(x) if (_flags.gameID == GI_EOB1) magicTimingParaAssign.push_back(&magicTimingPara[x << 2]);
-#define mp2(x) if (_flags.gameID == GI_EOB2) magicTimingParaAssign.push_back(&magicTimingPara[x << 2]);
+#	define mpn magicTimingParaAssign.push_back(0);
+#	define mp1n                    \
+		if (_flags.gameID == GI_EOB1) \
+			magicTimingParaAssign.push_back(0);
+#	define mp2n                    \
+		if (_flags.gameID == GI_EOB2) \
+			magicTimingParaAssign.push_back(0);
+#	define mp(x) magicTimingParaAssign.push_back(&magicTimingPara[x << 2]);
+#	define mp1(x)                  \
+		if (_flags.gameID == GI_EOB1) \
+			magicTimingParaAssign.push_back(&magicTimingPara[x << 2]);
+#	define mp2(x)                  \
+		if (_flags.gameID == GI_EOB2) \
+			magicTimingParaAssign.push_back(&magicTimingPara[x << 2]);
 
-#define sc(x) startCallback.push_back(&EoBCoreEngine::spellCallback_start_##x);
-#define sc1(x) if (_flags.gameID == GI_EOB1) startCallback.push_back(&EoBCoreEngine::spellCallback_start_##x);
-#define sc2(x) if (_flags.gameID == GI_EOB2) startCallback.push_back(&EoBCoreEngine::spellCallback_start_##x);
-#define ec(x) endCallback.push_back(&EoBCoreEngine::spellCallback_end_##x);
-#define ec1(x) if (_flags.gameID == GI_EOB1) endCallback.push_back(&EoBCoreEngine::spellCallback_end_##x);
-#define ec2(x) if (_flags.gameID == GI_EOB2) endCallback.push_back(&EoBCoreEngine::spellCallback_end_##x);
+#	define sc(x) startCallback.push_back(&EoBCoreEngine::spellCallback_start_##x);
+#	define sc1(x)                  \
+		if (_flags.gameID == GI_EOB1) \
+			startCallback.push_back(&EoBCoreEngine::spellCallback_start_##x);
+#	define sc2(x)                  \
+		if (_flags.gameID == GI_EOB2) \
+			startCallback.push_back(&EoBCoreEngine::spellCallback_start_##x);
+#	define ec(x) endCallback.push_back(&EoBCoreEngine::spellCallback_end_##x);
+#	define ec1(x)                  \
+		if (_flags.gameID == GI_EOB1) \
+			endCallback.push_back(&EoBCoreEngine::spellCallback_end_##x);
+#	define ec2(x)                  \
+		if (_flags.gameID == GI_EOB2) \
+			endCallback.push_back(&EoBCoreEngine::spellCallback_end_##x);
 
 	static const uint16 magicTimingPara[] = {
 		0, 546, 2, 1, // 0 detect magic
@@ -855,80 +894,80 @@ void EoBCoreEngine::initSpells() {
 	mpn;
 	mpn;
 	mpn;
-	mp(0);  // Detect Magic
-	mpn;    // Magic Missile
+	mp(0); // Detect Magic
+	mpn; // Magic Missile
 	mp1n;
-	mp(1);  // Shield
-	mp(2);  // Shocking Grasp
+	mp(1); // Shield
+	mp(2); // Shocking Grasp
 	mp2(3); // Blur
 	mp2(1); // Detect Invis
-	mp2n;   // Imp Identify
-	mpn;    // Invis
+	mp2n; // Imp Identify
+	mpn; // Invis
 	mp1n;
-	mpn;    // Melf
-	mp1n;   // Stinking Cloud
-	mpn;    // Dispel Magic
-	mpn;    // Fireball
-	mp1n;   // Flame Arrow
-	mp(3);  // Haste
-	mpn;    // Hold Person
-	mpn;    // Invisibility
-	mpn;    // Lightning Bolt
-	mp(2);  // Vampiric Touch
-	mpn;    // Fear
-	mpn;    // Ice Storm
-	mp1n;   // Stone Skin
-	mp1n;   // Cloud Kill
+	mpn; // Melf
+	mp1n; // Stinking Cloud
+	mpn; // Dispel Magic
+	mpn; // Fireball
+	mp1n; // Flame Arrow
+	mp(3); // Haste
+	mpn; // Hold Person
+	mpn; // Invisibility
+	mpn; // Lightning Bolt
+	mp(2); // Vampiric Touch
+	mpn; // Fear
+	mpn; // Ice Storm
+	mp1n; // Stone Skin
+	mp1n; // Cloud Kill
 	mp2(4); // Improved Invisibility
-	mp2n;   // remove Curse
-	mpn;    // Cone of Cold
-	mpn;    // Hold Monster
-	mp2n;   // Wall of Force
-	mp2n;   // Disintegrate
-	mp2n;   // Flesh To Stone
-	mp2n;   // Stone To Flesh
+	mp2n; // remove Curse
+	mpn; // Cone of Cold
+	mpn; // Hold Monster
+	mp2n; // Wall of Force
+	mp2n; // Disintegrate
+	mp2n; // Flesh To Stone
+	mp2n; // Stone To Flesh
 	mp2(2); // True Seeing
-	mp2n;   // Finger of Death
-	mp2n;   // Power Word Stun
-	mp2n;   // Bigby's Fist
-	mp2n;   // empty
-	mp(5);  // Bless
-	mpn;                        // EOB1: cure, EOB2: cause
-	mpn;                        // EOB1: cause, EOB2: cure
-	mp(0);  // Detect Magic
-	mp(6);  // Prot from Evil
-	mp(7);  // Aid
-	mp(8);  // Flame Blad
-	mpn;    // Hold Person
-	mp(9);  // Slow Poison
-	mpn;    // Create Food
-	mpn;    // Dispel Magic
-	mp(1);  // Magical Vestment
-	mp(2);  // Prayer
-	mpn;    // Remove Paralysis
-	mpn;                        // EOB1: cure, EOB2: cause
-	mpn;                        // EOB1: cause, EOB2: cure
-	mpn;    // Neutral Poison
-	mp(6);  // Prot From Evil 10'
-	mp1n;   // Prot From Lightning
-	mpn;                        // EOB1: cure, EOB2: cause
-	mpn;                        // EOB1: cause, EOB2: cure
-	mpn;    // Flame Strike
-	mpn;    // Raise Dead
-	mp2n;   // Slay Living
+	mp2n; // Finger of Death
+	mp2n; // Power Word Stun
+	mp2n; // Bigby's Fist
+	mp2n; // empty
+	mp(5); // Bless
+	mpn; // EOB1: cure, EOB2: cause
+	mpn; // EOB1: cause, EOB2: cure
+	mp(0); // Detect Magic
+	mp(6); // Prot from Evil
+	mp(7); // Aid
+	mp(8); // Flame Blad
+	mpn; // Hold Person
+	mp(9); // Slow Poison
+	mpn; // Create Food
+	mpn; // Dispel Magic
+	mp(1); // Magical Vestment
+	mp(2); // Prayer
+	mpn; // Remove Paralysis
+	mpn; // EOB1: cure, EOB2: cause
+	mpn; // EOB1: cause, EOB2: cure
+	mpn; // Neutral Poison
+	mp(6); // Prot From Evil 10'
+	mp1n; // Prot From Lightning
+	mpn; // EOB1: cure, EOB2: cause
+	mpn; // EOB1: cause, EOB2: cure
+	mpn; // Flame Strike
+	mpn; // Raise Dead
+	mp2n; // Slay Living
 	mp2(2); // True Seeing
-	mp2n;   // Harm
-	mp2n;   // Heal
-	mp2n;   // Resurrect
-	mpn;    // Lay on Hands
-	mp2n;   // Turn Undead
-	mpn;    // Lightning Bolt (EOB1) / Fireball 1(EOB2) passive
-	mp2(10);// Mystic Defense
-	mp2n;   // Fireball 2 passive
-	mpn;    // death spell passive
-	mpn;    // disintegrate passive
-	mp2n;   // cause critical passive
-	mp2n;   // flesh to stone passive
+	mp2n; // Harm
+	mp2n; // Heal
+	mp2n; // Resurrect
+	mpn; // Lay on Hands
+	mp2n; // Turn Undead
+	mpn; // Lightning Bolt (EOB1) / Fireball 1(EOB2) passive
+	mp2(10); // Mystic Defense
+	mp2n; // Fireball 2 passive
+	mpn; // death spell passive
+	mpn; // disintegrate passive
+	mp2n; // cause critical passive
+	mp2n; // flesh to stone passive
 
 	Common::Array<SpellStartCallback> startCallback;
 	sc(empty);
@@ -944,7 +983,7 @@ void EoBCoreEngine::initSpells() {
 	sc2(improvedIdentify);
 	sc(empty);
 	sc(melfsAcidArrow);
-	sc1(empty);     // Stinking Cloud
+	sc1(empty); // Stinking Cloud
 	sc(dispelMagic);
 	sc(fireball);
 	sc1(flameArrow);
@@ -970,7 +1009,7 @@ void EoBCoreEngine::initSpells() {
 	sc2(powerWordStun);
 	sc2(empty);
 	sc2(empty);
-	sc(empty);  // Bless
+	sc(empty); // Bless
 	sc2(causeLightWounds);
 	sc(cureLightWounds);
 	sc1(causeLightWounds);
@@ -1025,7 +1064,7 @@ void EoBCoreEngine::initSpells() {
 	ec2(empty);
 	ec2(empty);
 	ec(melfsAcidArrow);
-	ec1(empty);     // Stinking Cloud
+	ec1(empty); // Stinking Cloud
 	ec(empty);
 	ec(fireball);
 	ec1(flameArrow);
@@ -1036,8 +1075,8 @@ void EoBCoreEngine::initSpells() {
 	ec(vampiricTouch);
 	ec(empty);
 	ec(iceStorm);
-	ec(empty);      // EOB1: stone skin, EOB2: imp invisibility
-	ec(empty);      // EOB1: cloud kill, EOB2: remove curse
+	ec(empty); // EOB1: stone skin, EOB2: imp invisibility
+	ec(empty); // EOB1: cloud kill, EOB2: remove curse
 	ec(empty);
 	ec(holdMonster);
 	ec2(empty);
@@ -1049,7 +1088,7 @@ void EoBCoreEngine::initSpells() {
 	ec2(empty);
 	ec2(empty);
 	ec2(empty);
-	ec(empty);  // Bless
+	ec(empty); // Bless
 	ec(empty);
 	ec(empty);
 	ec(detectMagic);
@@ -1113,18 +1152,18 @@ void EoBCoreEngine::initSpells() {
 
 	_clericSpellOffset = _mageSpellListSize;
 
-#undef mpn
-#undef mp1n
-#undef mp2n
-#undef mp
-#undef mp1
-#undef mp2
-#undef sc
-#undef sc1
-#undef sc2
-#undef ec
-#undef ec1
-#undef ec2
+#	undef mpn
+#	undef mp1n
+#	undef mp2n
+#	undef mp
+#	undef mp1
+#	undef mp2
+#	undef sc
+#	undef sc1
+#	undef sc2
+#	undef ec
+#	undef ec1
+#	undef ec2
 }
 
 void EoBEngine::initStaticResource() {
@@ -1280,7 +1319,7 @@ void EoBEngine::initSpells() {
 		{ 0x0020, 0x000000, 0x00 }, // lay on hands
 		{ 0x0000, 0x000000, 0x00 }, // obj hit passive
 		{ 0x0000, 0x000000, 0x00 }, // disintegrate passive
-		{ 0x0000, 0x000000, 0x00 }  // death spell passive
+		{ 0x0000, 0x000000, 0x00 } // death spell passive
 	};
 
 	int temp;
@@ -1367,7 +1406,7 @@ void DarkMoonEngine::initStaticResource() {
 
 	_amigaSoundMapExtra = _staticres->loadStrings(kEoB2SoundMapExtra, temp);
 	_amigaSoundFiles2 = _staticres->loadStrings(kEoB2SoundFilesIngame2, temp);
-	_amigaSoundIndex1 = (const int8*)_staticres->loadRawData(kEoB2SoundIndex1, temp);
+	_amigaSoundIndex1 = (const int8 *)_staticres->loadRawData(kEoB2SoundIndex1, temp);
 	_amigaSoundIndex2 = _staticres->loadRawData(kEoB2SoundIndex2, temp);
 	_amigaSoundPatch = _staticres->loadRawData(kEoB2MonsterSoundPatchData, _amigaSoundPatchSize);
 
@@ -1381,23 +1420,17 @@ void DarkMoonEngine::initStaticResource() {
 
 	// ScummVM specific
 	static const char *const transferStringsScummVM[3][5] = {
-		{
-			"\r We cannot find any EOB save game\r file. Please make sure that the\r save game file with the party\r you wish to transfer is located\r in your ScummVM save game\r directory. If you have set up\r multiple save directories you\r have to copy the EOB save file\r into your EOB II save directory.\r Do you wish to try again?",
-			"Game ID",
-			"\r It seems that you have already\r defeated Xanathar here. Do you\r wish to transfer the party that\r finished the game? If not, you\r will be able to select a save\r game from the save game\r dialogue.",
-			"Select File",
-			"\r\r   Please wait..."
-		},
-		{
-			"\r Kein EOB-Spielstand zu finden.\r Bitte Spielstandsdatei mit der\r zu ]bernehmenden Gruppe in das\r ScummVM Spielstands-Verzeichnis\r kopieren. Bei mehreren Spiel-\r stands-Verzeichnissen bitte\r den EOB-Spielstand in das\r EOB II-Spielstands-Verzeichnis\r kopieren. Nochmal versuchen?",
-			"Game ID",
-			"\r Wie es scheint, wurde Xanathar\r hier bereits besiegt. Soll die\r Gruppe, mit der das Spiel be-\r endet wurde, ]bernommen werden?\r Falls nicht, kann ein Spielstand\r aus der Spielstandsliste gew[hlt\r werden.",
-			"Spiel W[hlen",
-			"\r\r  Bitte warten..."
-		},
-		{
-			0, 0, 0, 0
-		}
+		{ "\r We cannot find any EOB save game\r file. Please make sure that the\r save game file with the party\r you wish to transfer is located\r in your ScummVM save game\r directory. If you have set up\r multiple save directories you\r have to copy the EOB save file\r into your EOB II save directory.\r Do you wish to try again?",
+		  "Game ID",
+		  "\r It seems that you have already\r defeated Xanathar here. Do you\r wish to transfer the party that\r finished the game? If not, you\r will be able to select a save\r game from the save game\r dialogue.",
+		  "Select File",
+		  "\r\r   Please wait..." },
+		{ "\r Kein EOB-Spielstand zu finden.\r Bitte Spielstandsdatei mit der\r zu ]bernehmenden Gruppe in das\r ScummVM Spielstands-Verzeichnis\r kopieren. Bei mehreren Spiel-\r stands-Verzeichnissen bitte\r den EOB-Spielstand in das\r EOB II-Spielstands-Verzeichnis\r kopieren. Nochmal versuchen?",
+		  "Game ID",
+		  "\r Wie es scheint, wurde Xanathar\r hier bereits besiegt. Soll die\r Gruppe, mit der das Spiel be-\r endet wurde, ]bernommen werden?\r Falls nicht, kann ein Spielstand\r aus der Spielstandsliste gew[hlt\r werden.",
+		  "Spiel W[hlen",
+		  "\r\r  Bitte warten..." },
+		{ 0, 0, 0, 0 }
 	};
 
 	_transferStringsScummVM = transferStringsScummVM[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];

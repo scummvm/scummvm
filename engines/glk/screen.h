@@ -25,17 +25,21 @@
 
 #include "common/archive.h"
 #include "common/array.h"
-#include "graphics/screen.h"
-#include "graphics/font.h"
 #include "glk/fonts.h"
 #include "glk/utils.h"
+#include "graphics/font.h"
+#include "graphics/screen.h"
 
 namespace Glk {
 
 #define FONTS_TOTAL 8
 
 enum CaretShape {
-	SMALL_DOT = 0, FAT_DOT = 1, THIN_LINE = 2, FAT_LINE = 3, BLOCK = 4
+	SMALL_DOT = 0,
+	FAT_DOT = 1,
+	THIN_LINE = 2,
+	FAT_LINE = 3,
+	BLOCK = 4
 };
 
 /**
@@ -52,24 +56,29 @@ private:
 	 * Load a single font
 	 */
 	const Graphics::Font *loadFont(FACES face, Common::Archive *archive,
-		double size, double aspect, int style);
+	                               double size, double aspect, int style);
+
 protected:
 	Common::Array<const Graphics::Font *> _fonts;
+
 protected:
 	/**
 	 * Load the fonts
 	 */
 	virtual void loadFonts(Common::Archive *archive);
+
 public:
 	/**
 	 * Return the font Id for a given name
 	 */
 	static FACES getFontId(const Common::String &name);
+
 public:
 	/**
 	 * Constructor
 	 */
-	Screen() : Graphics::Screen() {}
+	Screen()
+	  : Graphics::Screen() {}
 
 	/**
 	 * Destructor

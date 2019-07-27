@@ -30,16 +30,38 @@
 
 namespace Titanic {
 
-enum NumberFlag { NF_1 = 1, NF_2 = 2, NF_4 = 4, NF_8 = 8, NF_10 = 0x10 };
+enum NumberFlag { NF_1 = 1,
+	                NF_2 = 2,
+	                NF_4 = 4,
+	                NF_8 = 8,
+	                NF_10 = 0x10 };
 
 enum ParserAction {
-	NO_ACTION = 0, CHECK_COMMAND_FORM, EXPECT_THING,  OBJECT_IS_TO,
-	SEEK_ACTOR, SEEK_OBJECT, SEEK_OBJECT_OVERRIDE, SEEK_TO,
-	SEEK_FROM, SEEK_TO_OVERRIDE, SEEK_FROM_OVERRIDE, SEEK_LOCATION,
-	SEEK_OWNERSHIP, SEEK_STATE, SEEK_MODIFIERS, SEEK_NEW_FRAME,
-	SEEK_STATE_OBJECT, SET_ACTION, SET_COLOR, ACTOR_IS_TO,
-	ACTOR_IS_FROM, ACTOR_IS_OBJECT, STATE_IDENTITY,
-	WORD_TYPE_IS_SENTENCE_TYPE, COMPLEX_VERB
+	NO_ACTION = 0,
+	CHECK_COMMAND_FORM,
+	EXPECT_THING,
+	OBJECT_IS_TO,
+	SEEK_ACTOR,
+	SEEK_OBJECT,
+	SEEK_OBJECT_OVERRIDE,
+	SEEK_TO,
+	SEEK_FROM,
+	SEEK_TO_OVERRIDE,
+	SEEK_FROM_OVERRIDE,
+	SEEK_LOCATION,
+	SEEK_OWNERSHIP,
+	SEEK_STATE,
+	SEEK_MODIFIERS,
+	SEEK_NEW_FRAME,
+	SEEK_STATE_OBJECT,
+	SET_ACTION,
+	SET_COLOR,
+	ACTOR_IS_TO,
+	ACTOR_IS_FROM,
+	ACTOR_IS_OBJECT,
+	STATE_IDENTITY,
+	WORD_TYPE_IS_SENTENCE_TYPE,
+	COMPLEX_VERB
 };
 
 class CScriptHandler;
@@ -50,18 +72,27 @@ struct NumberEntry {
 	int _value;
 	int _flags;
 
-	NumberEntry() : _value(0), _flags(0) {}
-	NumberEntry(const CString &text, int value, int flags) :
-		_text(text), _value(value), _flags(flags) {}
+	NumberEntry()
+	  : _value(0)
+	  , _flags(0) {}
+	NumberEntry(const CString &text, int value, int flags)
+	  : _text(text)
+	  , _value(value)
+	  , _flags(flags) {}
 };
 typedef Common::Array<NumberEntry> NumberArray;
 
 class TTparserNode : public TTnode {
 public:
 	uint _tag;
+
 public:
-	TTparserNode() : TTnode(), _tag(0) {}
-	TTparserNode(uint tag) : TTnode(), _tag(tag) {}
+	TTparserNode()
+	  : TTnode()
+	  , _tag(0) {}
+	TTparserNode(uint tag)
+	  : TTnode()
+	  , _tag(tag) {}
 };
 
 class TTparser {
@@ -75,6 +106,7 @@ private:
 	TTparserNode *_nodesP;
 	TTconcept *_conceptP;
 	TTconcept *_currentConceptP;
+
 private:
 	/**
 	 * Clear the parser
@@ -188,6 +220,7 @@ private:
 	bool checkConcept2(TTconcept *concept, int conceptMode);
 	int filterConcepts(int conceptMode, int conceptIndex);
 	bool resetConcept(TTconcept **conceptPP, int conceptIndex);
+
 public:
 	CScriptHandler *_owner;
 	TTsentenceConcept *_sentenceConcept;
@@ -197,6 +230,7 @@ public:
 	int _field14;
 	TTword *_currentWordP;
 	StringArray _pronouns;
+
 public:
 	TTparser(CScriptHandler *owner);
 	~TTparser();

@@ -26,7 +26,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CElevatorActionArea, CGameObject)
-	ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseButtonDownMsg)
 END_MESSAGE_MAP()
 
 void CElevatorActionArea::save(SimpleFile *file, int indent) {

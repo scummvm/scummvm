@@ -45,47 +45,46 @@
  *
  */
 
-#include "common/timer.h"
 #include "common/system.h"
+#include "common/timer.h"
 #include "graphics/cursorman.h"
-#include "graphics/primitives.h"
 #include "graphics/macgui/macfontmanager.h"
-#include "graphics/macgui/macwindowmanager.h"
-#include "graphics/macgui/macwindow.h"
 #include "graphics/macgui/macmenu.h"
+#include "graphics/macgui/macwindow.h"
+#include "graphics/macgui/macwindowmanager.h"
+#include "graphics/primitives.h"
 
-#include "wage/wage.h"
 #include "wage/design.h"
 #include "wage/entities.h"
 #include "wage/gui.h"
+#include "wage/wage.h"
 #include "wage/world.h"
 
 namespace Wage {
 
 static const Graphics::MacMenuData menuSubItems[] = {
-	{ kMenuHighLevel, "File",	0, 0, false },
-	{ kMenuHighLevel, "Edit",	0, 0, false },
-	{ kMenuFile, "New",			kMenuActionNew, 0, false },
-	{ kMenuFile, "Open...",		kMenuActionOpen, 0, true },
-	{ kMenuFile, "Close",		kMenuActionClose, 0, true },
-	{ kMenuFile, "Save",		kMenuActionSave, 0, true },
-	{ kMenuFile, "Save as...",	kMenuActionSaveAs, 0, true },
-	{ kMenuFile, "Revert",		kMenuActionRevert, 0, false },
-	{ kMenuFile, "Quit",		kMenuActionQuit, 0, true },
+	{ kMenuHighLevel, "File", 0, 0, false },
+	{ kMenuHighLevel, "Edit", 0, 0, false },
+	{ kMenuFile, "New", kMenuActionNew, 0, false },
+	{ kMenuFile, "Open...", kMenuActionOpen, 0, true },
+	{ kMenuFile, "Close", kMenuActionClose, 0, true },
+	{ kMenuFile, "Save", kMenuActionSave, 0, true },
+	{ kMenuFile, "Save as...", kMenuActionSaveAs, 0, true },
+	{ kMenuFile, "Revert", kMenuActionRevert, 0, false },
+	{ kMenuFile, "Quit", kMenuActionQuit, 0, true },
 
-	{ kMenuEdit, "Undo",		kMenuActionUndo, 'Z', false },
-	{ kMenuEdit, NULL,			0, 0, false },
-	{ kMenuEdit, "Cut",			kMenuActionCut, 'K', false },
-	{ kMenuEdit, "Copy",		kMenuActionCopy, 'C', false },
-	{ kMenuEdit, "Paste",		kMenuActionPaste, 'V', false },
-	{ kMenuEdit, "Clear",		kMenuActionClear, 'B', false },
+	{ kMenuEdit, "Undo", kMenuActionUndo, 'Z', false },
+	{ kMenuEdit, NULL, 0, 0, false },
+	{ kMenuEdit, "Cut", kMenuActionCut, 'K', false },
+	{ kMenuEdit, "Copy", kMenuActionCopy, 'C', false },
+	{ kMenuEdit, "Paste", kMenuActionPaste, 'V', false },
+	{ kMenuEdit, "Clear", kMenuActionClear, 'B', false },
 
-	{ 0, NULL,			0, 0, false }
+	{ 0, NULL, 0, 0, false }
 };
 
 static bool sceneWindowCallback(WindowClick click, Common::Event &event, void *gui);
 static void menuCommandsCallback(int action, Common::String &text, void *data);
-
 
 Gui::Gui(WageEngine *engine) {
 	_engine = engine;
@@ -184,7 +183,7 @@ static bool sceneWindowCallback(WindowClick click, Common::Event &event, void *g
 bool Gui::processSceneEvents(WindowClick click, Common::Event &event) {
 	if (click == kBorderInner && event.type == Common::EVENT_LBUTTONUP) {
 		Designed *obj = _scene->lookUpEntity(event.mouse.x - _sceneWindow->getDimensions().left,
-												  event.mouse.y - _sceneWindow->getDimensions().top);
+		                                     event.mouse.y - _sceneWindow->getDimensions().top);
 
 		if (obj != nullptr)
 			_engine->processTurn(NULL, obj);
@@ -219,9 +218,7 @@ void Gui::regenWeaponsMenu() {
 
 	for (uint i = 0; i < weapons->size(); i++) {
 		Obj *obj = (*weapons)[i];
-		if (obj->_type == Obj::REGULAR_WEAPON ||
-			obj->_type == Obj::THROW_WEAPON ||
-			obj->_type == Obj::MAGICAL_OBJECT) {
+		if (obj->_type == Obj::REGULAR_WEAPON || obj->_type == Obj::THROW_WEAPON || obj->_type == Obj::MAGICAL_OBJECT) {
 			Common::String command(obj->_operativeVerb);
 			command += " ";
 			command += obj->_name;
@@ -248,7 +245,7 @@ void menuCommandsCallback(int action, Common::String &text, void *data) {
 }
 
 void Gui::executeMenuCommand(int action, Common::String &text) {
-	switch(action) {
+	switch (action) {
 	case kMenuActionAbout:
 	case kMenuActionNew:
 	case kMenuActionClose:
@@ -283,19 +280,18 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 		break;
 
 	case kMenuActionCommand: {
-			_engine->_inputText = text;
-			Common::String inp = text + '\n';
+		_engine->_inputText = text;
+		Common::String inp = text + '\n';
 
-			appendText(inp.c_str());
+		appendText(inp.c_str());
 
-			_consoleWindow->clearInput();
+		_consoleWindow->clearInput();
 
-			_engine->processTurn(&text, NULL);
-			break;
-		}
+		_engine->processTurn(&text, NULL);
+		break;
+	}
 	default:
 		warning("Unknown action: %d", action);
-
 	}
 }
 

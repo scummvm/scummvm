@@ -23,11 +23,11 @@
  *
  */
 
+#include "pegasus/neighborhood/norad/noradelevator.h"
 #include "pegasus/gamestate.h"
-#include "pegasus/pegasus.h"
 #include "pegasus/neighborhood/norad/constants.h"
 #include "pegasus/neighborhood/norad/norad.h"
-#include "pegasus/neighborhood/norad/noradelevator.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -38,8 +38,10 @@ static const ResIDType kElevatorDownOnID = 202;
 static const ResIDType kElevatorUpOnID = 203;
 
 NoradElevator::NoradElevator(Neighborhood *handler, const RoomID upRoom, const RoomID downRoom,
-		const HotSpotID upHotspot, const HotSpotID downHotspot) : GameInteraction(kNoradElevatorInteractionID, handler),
-		_elevatorControls(kNoradElevatorControlsID), _elevatorNotification(kNoradElevatorNotificationID, ((PegasusEngine *)g_engine)) {
+                             const HotSpotID upHotspot, const HotSpotID downHotspot)
+  : GameInteraction(kNoradElevatorInteractionID, handler)
+  , _elevatorControls(kNoradElevatorControlsID)
+  , _elevatorNotification(kNoradElevatorNotificationID, ((PegasusEngine *)g_engine)) {
 	_timerExpired = false;
 	_upRoom = upRoom;
 	_downRoom = downRoom;

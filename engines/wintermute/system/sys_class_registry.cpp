@@ -26,15 +26,15 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/platform_osystem.h"
-#include "engines/wintermute/base/base_engine.h"
-#include "engines/wintermute/base/gfx/base_renderer.h"
-#include "engines/wintermute/system/sys_instance.h"
 #include "engines/wintermute/system/sys_class_registry.h"
-#include "engines/wintermute/system/sys_class.h"
-#include "engines/wintermute/wintermute.h"
 #include "common/stream.h"
+#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/system/sys_class.h"
+#include "engines/wintermute/system/sys_instance.h"
+#include "engines/wintermute/wintermute.h"
 
 namespace Wintermute {
 
@@ -43,7 +43,6 @@ SystemClassRegistry::SystemClassRegistry() {
 	_count = 0;
 	_disabled = false;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 SystemClassRegistry::~SystemClassRegistry() {
@@ -74,7 +73,6 @@ bool SystemClassRegistry::registerClass(SystemClass *classObj) {
 	return true;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool SystemClassRegistry::unregisterClass(SystemClass *classObj) {
 
@@ -98,10 +96,8 @@ bool SystemClassRegistry::unregisterClass(SystemClass *classObj) {
 		_idMap.erase(idIt);
 	}
 
-
 	return true;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool SystemClassRegistry::registerInstance(const char *className, void *instance) {
@@ -149,7 +145,6 @@ bool SystemClassRegistry::unregisterInstance(const char *className, void *instan
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool SystemClassRegistry::getPointerID(void *pointer, int *classID, int *instanceID) {
 	if (pointer == nullptr) {
@@ -160,7 +155,6 @@ bool SystemClassRegistry::getPointerID(void *pointer, int *classID, int *instanc
 	if (it == _instanceMap.end()) {
 		return false;
 	}
-
 
 	SystemInstance *inst = (*it)._value;
 	*instanceID = inst->getID();
@@ -205,12 +199,11 @@ bool SystemClassRegistry::saveTable(BaseGame *gameRef, BasePersistenceManager *p
 			gameRef->_renderer->setIndicatorVal((int)(50.0f / (float)((float)_classes.size() / (float)counter)));
 		}
 
-		(it->_value)->saveTable(gameRef,  persistMgr);
+		(it->_value)->saveTable(gameRef, persistMgr);
 	}
 	persistMgr->putString("</CLASS_REGISTRY_TABLE>");
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool SystemClassRegistry::loadTable(BaseGame *gameRef, BasePersistenceManager *persistMgr) {
@@ -239,7 +232,7 @@ bool SystemClassRegistry::loadTable(BaseGame *gameRef, BasePersistenceManager *p
 		Common::String className = persistMgr->getStringObj();
 		NameMap::iterator mapIt = _nameMap.find(className);
 		if (mapIt != _nameMap.end()) {
-			(*mapIt)._value->loadTable(gameRef,  persistMgr);
+			(*mapIt)._value->loadTable(gameRef, persistMgr);
 		}
 	}
 
@@ -247,7 +240,6 @@ bool SystemClassRegistry::loadTable(BaseGame *gameRef, BasePersistenceManager *p
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool SystemClassRegistry::saveInstances(BaseGame *gameRef, BasePersistenceManager *persistMgr, bool quickSave) {
@@ -273,7 +265,7 @@ bool SystemClassRegistry::saveInstances(BaseGame *gameRef, BasePersistenceManage
 		}
 		gameRef->miniUpdate();
 
-		(it->_value)->saveInstances(gameRef,  persistMgr);
+		(it->_value)->saveInstances(gameRef, persistMgr);
 	}
 
 	return STATUS_OK;
@@ -312,7 +304,6 @@ bool SystemClassRegistry::loadInstances(BaseGame *gameRef, BasePersistenceManage
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool SystemClassRegistry::enumInstances(SYS_INSTANCE_CALLBACK lpCallback, const char *className, void *lpData) {
 	NameMap::iterator mapIt = _nameMap.find(className);
@@ -323,7 +314,6 @@ bool SystemClassRegistry::enumInstances(SYS_INSTANCE_CALLBACK lpCallback, const 
 	(*mapIt)._value->instanceCallback(lpCallback, lpData);
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void SystemClassRegistry::dumpClasses(Common::WriteStream *stream) {

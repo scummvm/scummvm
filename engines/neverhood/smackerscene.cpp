@@ -26,8 +26,14 @@
 namespace Neverhood {
 
 SmackerScene::SmackerScene(NeverhoodEngine *vm, Module *parentModule, bool doubleSurface, bool canSkip, bool canAbort)
-	: Scene(vm, parentModule), _doubleSurface(doubleSurface), _canSkip(canSkip), _canAbort(canAbort), _videoPlayedBefore(false),
-	_fileHashListIndex(-1), _fileHashList(NULL), _playNextVideoFlag(false) {
+  : Scene(vm, parentModule)
+  , _doubleSurface(doubleSurface)
+  , _canSkip(canSkip)
+  , _canAbort(canAbort)
+  , _videoPlayedBefore(false)
+  , _fileHashListIndex(-1)
+  , _fileHashList(NULL)
+  , _playNextVideoFlag(false) {
 
 	debug(0, "SmackerScene::SmackerScene(%d, %d, %d)", doubleSurface, canSkip, canAbort);
 
@@ -46,11 +52,9 @@ SmackerScene::SmackerScene(NeverhoodEngine *vm, Module *parentModule, bool doubl
 
 	SetUpdateHandler(&SmackerScene::update);
 	SetMessageHandler(&SmackerScene::handleMessage);
-
 }
 
 SmackerScene::~SmackerScene() {
-
 }
 
 void SmackerScene::setFileHash(uint32 fileHash) {
@@ -91,7 +95,6 @@ void SmackerScene::nextVideo() {
 		_vm->_screen->setSmackerDecoder(NULL);
 		sendMessage(_parentModule, 0x1009, 0);
 	}
-
 }
 
 void SmackerScene::update() {

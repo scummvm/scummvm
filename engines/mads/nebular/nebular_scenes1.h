@@ -26,237 +26,241 @@
 #include "common/scummsys.h"
 #include "common/serializer.h"
 #include "mads/game.h"
-#include "mads/scene.h"
 #include "mads/nebular/nebular_scenes.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
 namespace Nebular {
 
-class Scene1xx : public NebularScene {
-protected:
-	/**
+	class Scene1xx : public NebularScene {
+	protected:
+		/**
 	 * Plays an appropriate sound when entering a scene
 	 */
-	void sceneEntrySound();
+		void sceneEntrySound();
 
-	/**
+		/**
 	 *Sets the AA file to use for the scene
 	 */
-	void setAAName();
+		void setAAName();
 
-	/**
+		/**
 	 * Updates the prefix used for getting player sprites for the scene
 	 */
-	void setPlayerSpritesPrefix();
-public:
-	Scene1xx(MADSEngine *vm) : NebularScene(vm) {}
-};
+		void setPlayerSpritesPrefix();
 
-class Scene101 : public Scene1xx {
-private:
-	bool _sittingFl;
-	bool _panelOpened;
+	public:
+		Scene1xx(MADSEngine *vm)
+		  : NebularScene(vm) {}
+	};
 
-	int _messageNum;
-	int _posY;
-	int _shieldSpriteIdx;
-	int _chairHotspotId;
-	int _oldSpecial;
+	class Scene101 : public Scene1xx {
+	private:
+		bool _sittingFl;
+		bool _panelOpened;
 
-	void sayDang();
+		int _messageNum;
+		int _posY;
+		int _shieldSpriteIdx;
+		int _chairHotspotId;
+		int _oldSpecial;
 
-public:
-	Scene101(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		void sayDang();
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene101(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene102 : public Scene1xx {
-private:
-	bool _fridgeOpenedFl;
-	bool _fridgeOpenedDescr;
-	bool _fridgeFirstOpenFl;
-	bool _chairDescrFl;
-	bool _drawerDescrFl;
-	bool _activeMsgFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	int _fridgeCommentCount;
+	class Scene102 : public Scene1xx {
+	private:
+		bool _fridgeOpenedFl;
+		bool _fridgeOpenedDescr;
+		bool _fridgeFirstOpenFl;
+		bool _chairDescrFl;
+		bool _drawerDescrFl;
+		bool _activeMsgFl;
 
-	void addRandomMessage();
+		int _fridgeCommentCount;
 
-public:
-	Scene102(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		void addRandomMessage();
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-	virtual void postActions();
-};
+	public:
+		Scene102(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene103 : public Scene1xx {
-private:
-	uint32 _updateClock;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+		virtual void postActions();
+	};
 
-public:
-	Scene103(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	class Scene103 : public Scene1xx {
+	private:
+		uint32 _updateClock;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void actions();
-	virtual void postActions();
-};
+	public:
+		Scene103(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene104 : public Scene1xx {
-private:
-	bool _kargShootingFl;
-	bool _loseFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void actions();
+		virtual void postActions();
+	};
 
-public:
-	Scene104(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	class Scene104 : public Scene1xx {
+	private:
+		bool _kargShootingFl;
+		bool _loseFl;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene104(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene105 : public Scene1xx {
-private:
-	bool _explosionFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-public:
-	Scene105(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	class Scene105 : public Scene1xx {
+	private:
+		bool _explosionFl;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene105(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene106 : public Scene1xx {
-private:
-	bool _backToShipFl;
-	bool _shadowFl;
-	bool _firstEmergingFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	int _positionY;
+	class Scene106 : public Scene1xx {
+	private:
+		bool _backToShipFl;
+		bool _shadowFl;
+		bool _firstEmergingFl;
 
-public:
-	Scene106(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		int _positionY;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene106(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene107 : public Scene1xx {
-private:
-	bool _shootingFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-public:
-	Scene107(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	class Scene107 : public Scene1xx {
+	private:
+		bool _shootingFl;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene107(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene108 : public Scene1xx {
-public:
-	Scene108(MADSEngine *vm) : Scene1xx(vm) {}
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	virtual void setup();
-	virtual void enter();
-	virtual void preActions();
-	virtual void actions();
-};
+	class Scene108 : public Scene1xx {
+	public:
+		Scene108(MADSEngine *vm)
+		  : Scene1xx(vm) {}
 
-class Scene109 : public Scene1xx {
-private:
-	bool _rexThrowingObject;
-	bool _hoovicDifficultFl;
-	bool _beforeEatingRex;
-	bool _eatingRex;
-	bool _hungryFl;
-	bool _eatingFirstFish;
+		virtual void setup();
+		virtual void enter();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	int _throwingObjectId;
-	int _hoovicTrigger;
+	class Scene109 : public Scene1xx {
+	private:
+		bool _rexThrowingObject;
+		bool _hoovicDifficultFl;
+		bool _beforeEatingRex;
+		bool _eatingRex;
+		bool _hungryFl;
+		bool _eatingFirstFish;
 
-public:
-	Scene109(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		int _throwingObjectId;
+		int _hoovicTrigger;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene109(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene110 : public Scene1xx {
-private:
-	bool _crabsFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-public:
-	Scene110(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	class Scene110 : public Scene1xx {
+	private:
+		bool _crabsFl;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene110(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene111 : public Scene1xx {
-private:
-	bool _stampedFl;
-	bool _launch1Fl;
-	bool _launched2Fl;
-	bool _rexDivingFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-public:
-	Scene111(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	class Scene111 : public Scene1xx {
+	private:
+		bool _stampedFl;
+		bool _launch1Fl;
+		bool _launched2Fl;
+		bool _rexDivingFl;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene111(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene112 : public Scene1xx {
-public:
-	Scene112(MADSEngine *vm) : Scene1xx(vm) {}
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void actions() {};
-};
+	class Scene112 : public Scene1xx {
+	public:
+		Scene112(MADSEngine *vm)
+		  : Scene1xx(vm) {}
+
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void actions() {};
+	};
 
 } // End of namespace Nebular
 } // End of namespace MADS

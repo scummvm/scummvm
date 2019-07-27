@@ -31,12 +31,12 @@ namespace Tattoo {
 
 #define TATTOO_MAX_PEOPLE 96
 
-struct PeopleData {
-	const char *portrait;
-	int fixedTextId;
-};
+	struct PeopleData {
+		const char *portrait;
+		int fixedTextId;
+	};
 
-extern const PeopleData PEOPLE_DATA[TATTOO_MAX_PEOPLE];
+	extern const PeopleData PEOPLE_DATA[TATTOO_MAX_PEOPLE];
 
 } // End of namespace Tattoo
 

@@ -48,13 +48,13 @@
 #ifndef WAGE_WAGE_H
 #define WAGE_WAGE_H
 
-#include "engines/engine.h"
 #include "audio/mixer.h"
 #include "common/debug.h"
 #include "common/endian.h"
-#include "common/rect.h"
 #include "common/macresman.h"
 #include "common/random.h"
+#include "common/rect.h"
+#include "engines/engine.h"
 
 #include "wage/debugger.h"
 
@@ -112,6 +112,7 @@ bool isStorageScene(const Common::String &name);
 
 class WageEngine : public Engine {
 	friend class Dialog;
+
 public:
 	WageEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~WageEngine();
@@ -228,7 +229,6 @@ private:
 	Common::String getSavegameFilename(int16 slotId) const;
 
 public:
-
 	virtual GUI::Debugger *getDebugger() { return _debugger; }
 
 private:

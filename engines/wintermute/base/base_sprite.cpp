@@ -27,39 +27,38 @@
  */
 
 #include "engines/wintermute/base/base_sprite.h"
-#include "engines/wintermute/utils/path_util.h"
-#include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
-#include "engines/wintermute/base/gfx/base_surface.h"
-#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_engine.h"
-#include "engines/wintermute/base/base_frame.h"
-#include "engines/wintermute/base/sound/base_sound.h"
-#include "engines/wintermute/base/base_sub_frame.h"
 #include "engines/wintermute/base/base_file_manager.h"
-#include "engines/wintermute/platform_osystem.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/base/base_frame.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_parser.h"
+#include "engines/wintermute/base/base_sub_frame.h"
+#include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/game_description.h"
+#include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/utils/path_util.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseSprite, false)
 
 //////////////////////////////////////////////////////////////////////
-BaseSprite::BaseSprite(BaseGame *inGame, BaseObject *Owner) : BaseScriptHolder(inGame) {
+BaseSprite::BaseSprite(BaseGame *inGame, BaseObject *Owner)
+  : BaseScriptHolder(inGame) {
 	_editorAllFrames = false;
 	_owner = Owner;
 	setDefaults();
 }
 
-
 //////////////////////////////////////////////////////////////////////
 BaseSprite::~BaseSprite() {
 	cleanup();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseSprite::setDefaults() {
@@ -85,7 +84,6 @@ void BaseSprite::setDefaults() {
 	_precise = true;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void BaseSprite::cleanup() {
 	BaseScriptHolder::cleanup();
@@ -100,7 +98,6 @@ void BaseSprite::cleanup() {
 
 	setDefaults();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSprite::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, uint32 alpha) {
@@ -185,8 +182,6 @@ bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteC
 	return ret;
 }
 
-
-
 TOKEN_DEF_START
 TOKEN_DEF(CONTINUOUS)
 TOKEN_DEF(SPRITE)
@@ -229,7 +224,6 @@ bool BaseSprite::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteCa
 	BaseParser parser;
 
 	cleanup();
-
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_SPRITE) {
@@ -322,8 +316,7 @@ bool BaseSprite::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteCa
 			if (_currentFrame == -1) {
 				_currentFrame = 0;
 			}
-		}
-		break;
+		} break;
 
 		case TOKEN_EDITOR_PROPERTY:
 			parseEditorProperty(params, false);
@@ -339,7 +332,6 @@ bool BaseSprite::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteCa
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 void BaseSprite::reset() {
@@ -363,7 +355,6 @@ void BaseSprite::reset() {
 	_finished = false;
 	_moveX = _moveY = 0;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 bool BaseSprite::getCurrentFrame(float zoomX, float zoomY) {
@@ -425,7 +416,6 @@ bool BaseSprite::getCurrentFrame(float zoomX, float zoomY) {
 	return _changed;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 bool BaseSprite::display(int x, int y, BaseObject *registerVal, float zoomX, float zoomY, uint32 alpha, float rotate, Graphics::TSpriteBlendMode blendMode) {
 	if (_currentFrame < 0 || _currentFrame >= (int32)_frames.size()) {
@@ -444,7 +434,6 @@ bool BaseSprite::display(int x, int y, BaseObject *registerVal, float zoomX, flo
 	// draw frame
 	return _frames[_currentFrame]->draw(x - _gameRef->_offsetX, y - _gameRef->_offsetY, registerVal, zoomX, zoomY, _precise, alpha, _editorAllFrames, rotate, blendMode);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 BaseSurface *BaseSprite::getSurface() {
@@ -524,7 +513,6 @@ bool BaseSprite::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseSprite::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptHolder::persist(persistMgr);
@@ -553,10 +541,8 @@ bool BaseSprite::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_streamed));
 	persistMgr->transferBool(TMEMBER(_streamedKeepLoaded));
 
-
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
@@ -701,7 +687,6 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *BaseSprite::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
@@ -777,7 +762,6 @@ ScValue *BaseSprite::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseSprite::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
@@ -811,12 +795,10 @@ bool BaseSprite::scSetProperty(const char *name, ScValue *value) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 const char *BaseSprite::scToString() {
 	return "[sprite]";
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSprite::killAllSounds() {

@@ -20,21 +20,23 @@
  *
  */
 
-#include "common/config-manager.h"
-#include "audio/mixer.h"
 #include "audio/audiostream.h"
-#include "audio/mididrv.h"
-#include "audio/midiparser.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
+#include "audio/mididrv.h"
+#include "audio/midiparser.h"
+#include "audio/mixer.h"
+#include "common/config-manager.h"
 // Miles Audio
-#include "audio/miles.h"
 #include "access/access.h"
 #include "access/sound.h"
+#include "audio/miles.h"
 
 namespace Access {
 
-SoundManager::SoundManager(AccessEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
+SoundManager::SoundManager(AccessEngine *vm, Audio::Mixer *mixer)
+  : _vm(vm)
+  , _mixer(mixer) {
 	_effectsHandle = new Audio::SoundHandle();
 }
 
@@ -107,7 +109,7 @@ void SoundManager::playSound(Resource *res, int priority, bool loop, int soundIn
 
 	Audio::RewindableAudioStream *audioStream;
 
-	if (READ_BE_UINT32(resourceData) == MKTAG('R','I','F','F')) {
+	if (READ_BE_UINT32(resourceData) == MKTAG('R', 'I', 'F', 'F')) {
 		// CD version uses WAVE-files
 		Common::SeekableReadStream *waveStream = new Common::MemoryReadStream(resourceData, res->_size, DisposeAfterUse::NO);
 		audioStream = Audio::makeWAVStream(waveStream, DisposeAfterUse::YES);
@@ -125,7 +127,7 @@ void SoundManager::playSound(Resource *res, int priority, bool loop, int soundIn
 		byte internalSampleRate = resourceData[5];
 		int sampleSize = READ_LE_UINT16(resourceData + 7);
 
-		assert( (sampleSize + 32) <= res->_size);
+		assert((sampleSize + 32) <= res->_size);
 
 		int sampleRate = 0;
 		switch (internalSampleRate) {
@@ -156,15 +158,16 @@ void SoundManager::playSound(Resource *res, int priority, bool loop, int soundIn
 
 	if (loop) {
 		_queue.push_back(QueuedSound(new Audio::LoopingAudioStream(audioStream, 0,
-			DisposeAfterUse::NO), soundIndex));
+		                                                           DisposeAfterUse::NO),
+		                             soundIndex));
 	} else {
 		_queue.push_back(QueuedSound(audioStream, soundIndex));
 	}
 
 	if (!_mixer->isSoundHandleActive(*_effectsHandle))
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, _effectsHandle,
-						_queue[0]._stream, -1, _mixer->kMaxChannelVolume, 0,
-						DisposeAfterUse::NO);
+		                   _queue[0]._stream, -1, _mixer->kMaxChannelVolume, 0,
+		                   DisposeAfterUse::NO);
 }
 
 void SoundManager::checkSoundQueue() {
@@ -178,8 +181,8 @@ void SoundManager::checkSoundQueue() {
 
 	if (_queue.size() && _queue[0]._stream)
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, _effectsHandle,
-		   _queue[0]._stream, -1, _mixer->kMaxChannelVolume, 0,
-		   DisposeAfterUse::NO);
+		                   _queue[0]._stream, -1, _mixer->kMaxChannelVolume, 0,
+		                   DisposeAfterUse::NO);
 }
 
 bool SoundManager::isSFXPlaying() {
@@ -212,7 +215,8 @@ void SoundManager::freeSounds() {
 
 /******************************************************************************************/
 
-MusicManager::MusicManager(AccessEngine *vm) : _vm(vm) {
+MusicManager::MusicManager(AccessEngine *vm)
+  : _vm(vm) {
 	_music = nullptr;
 	_tempMusic = nullptr;
 	_isLooping = false;
@@ -231,7 +235,7 @@ MusicManager::MusicManager(AccessEngine *vm) : _vm(vm) {
 	switch (musicType) {
 	case MT_ADLIB: {
 		if (_vm->getGameID() == GType_Amazon && !_vm->isDemo()) {
-			Resource   *midiDrvResource = _vm->_files->loadFile(92, 1);
+			Resource *midiDrvResource = _vm->_files->loadFile(92, 1);
 			Common::MemoryReadStream *adLibInstrumentStream = new Common::MemoryReadStream(midiDrvResource->data(), midiDrvResource->_size);
 
 			_driver = Audio::MidiDriver_Miles_AdLib_create("", "", adLibInstrumentStream);

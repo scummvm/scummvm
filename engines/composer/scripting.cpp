@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "common/scummsys.h"
 #include "common/savefile.h"
+#include "common/scummsys.h"
 
 #include "composer/composer.h"
 #include "composer/graphics.h"
@@ -180,7 +180,7 @@ void ComposerEngine::runScript(uint16 id) {
 	if (stream->size() < 2)
 		error("SCRP was too small (%d)", stream->size());
 	uint16 size = stream->readUint16LE();
-	if (stream->size() < 2 + 2*size)
+	if (stream->size() < 2 + 2 * size)
 		error("SCRP was too small (%d, but claimed %d entries)", stream->size(), size);
 	uint16 *script = new uint16[size];
 	for (uint i = 0; i < size; i++)
@@ -226,7 +226,7 @@ void ComposerEngine::runScript(uint16 id) {
 				error("kOpAdd had wrong number of params (%d)", numParams);
 			val2 = getArg(script[pos + 2], arg2);
 			val3 = getArg(script[pos + 3], arg3);
-			debug(9, "[%d/%d] = [%d/%d]=%d + [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos+3], arg3, val3, val2 + val3);
+			debug(9, "[%d/%d] = [%d/%d]=%d + [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos + 3], arg3, val3, val2 + val3);
 			setArg(script[pos + 1], arg1, val2 + val3);
 			break;
 		case kOpSubtract:
@@ -234,7 +234,7 @@ void ComposerEngine::runScript(uint16 id) {
 				error("kOpSubtract had wrong number of params (%d)", numParams);
 			val2 = getArg(script[pos + 2], arg2);
 			val3 = getArg(script[pos + 3], arg3);
-			debug(9, "[%d/%d] = [%d/%d]=%d - [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos+3], arg3, val3, val2 - val3);
+			debug(9, "[%d/%d] = [%d/%d]=%d - [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos + 3], arg3, val3, val2 - val3);
 			setArg(script[pos + 1], arg1, val2 - val3);
 			break;
 		case kOpMultiply:
@@ -242,7 +242,7 @@ void ComposerEngine::runScript(uint16 id) {
 				error("kOpMultiply had wrong number of params (%d)", numParams);
 			val2 = getArg(script[pos + 2], arg2);
 			val3 = getArg(script[pos + 3], arg3);
-			debug(9, "[%d/%d] = [%d/%d]=%d * [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos+3], arg3, val3, val2 * val3);
+			debug(9, "[%d/%d] = [%d/%d]=%d * [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos + 3], arg3, val3, val2 * val3);
 			setArg(script[pos + 1], arg1, val2 * val3);
 			break;
 		case kOpDivide:
@@ -252,7 +252,7 @@ void ComposerEngine::runScript(uint16 id) {
 			val3 = getArg(script[pos + 3], arg3);
 			if (val3 == 0)
 				error("script tried to divide by zero");
-			debug(9, "[%d/%d] = [%d/%d]=%d / [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos+3], arg3, val3, val2 / val3);
+			debug(9, "[%d/%d] = [%d/%d]=%d / [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos + 3], arg3, val3, val2 / val3);
 			setArg(script[pos + 1], arg1, val2 / val3);
 			break;
 		case kOpModulo:
@@ -262,7 +262,7 @@ void ComposerEngine::runScript(uint16 id) {
 			val3 = getArg(script[pos + 3], arg3);
 			if (val3 == 0)
 				error("script tried to divide by zero (modulo)");
-			debug(9, "[%d/%d] = [%d/%d]=%d %% [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos+3], arg3, val3, val2 % val3);
+			debug(9, "[%d/%d] = [%d/%d]=%d %% [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos + 3], arg3, val3, val2 % val3);
 			setArg(script[pos + 1], arg1, val2 % val3);
 			break;
 		case kOpMaybeAlsoAssign:
@@ -291,7 +291,7 @@ void ComposerEngine::runScript(uint16 id) {
 				error("kOpAnd had wrong number of params (%d)", numParams);
 			val2 = getArg(script[pos + 2], arg2);
 			val3 = getArg(script[pos + 3], arg3);
-			debug(9, "[%d/%d] = [%d/%d]=%d & [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos+3], arg3, val3, val2 & val3);
+			debug(9, "[%d/%d] = [%d/%d]=%d & [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos + 3], arg3, val3, val2 & val3);
 			setArg(script[pos + 1], arg1, val2 & val3);
 			break;
 		case kOpOr:
@@ -299,7 +299,7 @@ void ComposerEngine::runScript(uint16 id) {
 				error("kOpOr had wrong number of params (%d)", numParams);
 			val2 = getArg(script[pos + 2], arg2);
 			val3 = getArg(script[pos + 3], arg3);
-			debug(9, "[%d/%d] = [%d/%d]=%d | [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos+3], arg3, val3, val2 | val3);
+			debug(9, "[%d/%d] = [%d/%d]=%d | [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos + 3], arg3, val3, val2 | val3);
 			setArg(script[pos + 1], arg1, val2 | val3);
 			break;
 		case kOpXor:
@@ -307,7 +307,7 @@ void ComposerEngine::runScript(uint16 id) {
 				error("kOpXor had wrong number of params (%d)", numParams);
 			val2 = getArg(script[pos + 2], arg2);
 			val3 = getArg(script[pos + 3], arg3);
-			debug(9, "[%d/%d] = [%d/%d]=%d ^ [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos+3], arg3, val3, val2 ^ val3);
+			debug(9, "[%d/%d] = [%d/%d]=%d ^ [%d/%d]=%d (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos + 3], arg3, val3, val2 ^ val3);
 			setArg(script[pos + 1], arg1, val2 ^ val3);
 			break;
 		case kOpNot:
@@ -330,7 +330,7 @@ void ComposerEngine::runScript(uint16 id) {
 			val2 = getArg(script[pos + 2], arg2);
 			val3 = getArg(script[pos + 3], arg3);
 			val1 = _rnd->getRandomNumberRng(val2, val3);
-			debug(9, "[%d/%d] = rnd([%d/%d]=%d, [%d/%d]=%d) (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos+3], arg3, val3, val1);
+			debug(9, "[%d/%d] = rnd([%d/%d]=%d, [%d/%d]=%d) (%d)", script[pos + 1], arg1, script[pos + 2], arg2, val2, script[pos + 3], arg3, val3, val1);
 			setArg(script[pos + 1], arg1, val1);
 			break;
 		case kOpExecuteScript:
@@ -553,9 +553,9 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 	case kFuncSetCursor:
 		debug(3, "kSetCursor(%d, (%d, %d))", param1, param2, param3);
 		{
-		uint16 oldCursor = _mouseSpriteId;
-		setCursor(param1, Common::Point(param2, param3));
-		return oldCursor;
+			uint16 oldCursor = _mouseSpriteId;
+			setCursor(param1, Common::Point(param2, param3));
+			return oldCursor;
 		}
 	case kFuncGetCursor:
 		debug(3, "kFuncGetCursor()");
@@ -600,39 +600,39 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 	case kFuncSaveVars:
 		debug(3, "kFuncSaveVars(%d)", param1);
 		{
-		Common::String filename = _targetName + Common::String::format(".%03d", param1);
-		Common::WriteStream *stream = _saveFileMan->openForSaving(filename);
-		for (uint i = 0; i < 1000; i++) {
-			stream->writeUint16LE(_vars[i]);
-		}
-		delete stream;
+			Common::String filename = _targetName + Common::String::format(".%03d", param1);
+			Common::WriteStream *stream = _saveFileMan->openForSaving(filename);
+			for (uint i = 0; i < 1000; i++) {
+				stream->writeUint16LE(_vars[i]);
+			}
+			delete stream;
 		}
 		return 1;
 	case kFuncLoadVars:
 		debug(3, "kFuncLoadVars(%d, %d, %d)", param1, param2, param3);
 		{
-		Common::String filename = _targetName + Common::String::format(".%03d", param1);
-		Common::SeekableReadStream *stream = _saveFileMan->openForLoading(filename);
-		if (!stream) {
-			if (!_bookIni.hasKey(Common::String::format("%d", param1), "Data"))
-				return 0;
-			filename = getFilename("Data", param1);
-			Common::File *file = new Common::File();
-			if (!file->open(filename))
-				error("couldn't open '%s' to get vars id '%d'", filename.c_str(), param1);
-			stream = file;
-		}
-		if (param3 == 0)
-			param3 = 1000;
-		if (param2 < 0 || param3 < 0 || param2 + param3 > 1000)
-			error("can't read %d entries into %d from file '%s' for vars id '%d'", param3, param2, filename.c_str(), param1);
-		stream->skip(param2 * 2);
-		for (uint i = 0; i < (uint)param3; i++) {
-			if (stream->pos() + 1 > stream->size())
-				break;
-			_vars[param2 + i] = stream->readUint16LE();
-		}
-		delete stream;
+			Common::String filename = _targetName + Common::String::format(".%03d", param1);
+			Common::SeekableReadStream *stream = _saveFileMan->openForLoading(filename);
+			if (!stream) {
+				if (!_bookIni.hasKey(Common::String::format("%d", param1), "Data"))
+					return 0;
+				filename = getFilename("Data", param1);
+				Common::File *file = new Common::File();
+				if (!file->open(filename))
+					error("couldn't open '%s' to get vars id '%d'", filename.c_str(), param1);
+				stream = file;
+			}
+			if (param3 == 0)
+				param3 = 1000;
+			if (param2 < 0 || param3 < 0 || param2 + param3 > 1000)
+				error("can't read %d entries into %d from file '%s' for vars id '%d'", param3, param2, filename.c_str(), param1);
+			stream->skip(param2 * 2);
+			for (uint i = 0; i < (uint)param3; i++) {
+				if (stream->pos() + 1 > stream->size())
+					break;
+				_vars[param2 + i] = stream->readUint16LE();
+			}
+			delete stream;
 		}
 		return 1;
 	case kFuncQueueScriptOnce:
@@ -660,13 +660,12 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		debug(3, "kFuncClearSprites()");
 		removeSprite(0, 0);
 		return 0;
-	case kFuncAddSprite:
-		{
+	case kFuncAddSprite: {
 		Common::Point pos(_vars[param3], _vars[param3 + 1]);
 		int16 zorder = _vars[param3 + 2];
 		debug(3, "kFuncAddSprite(%d, %d, [%d = (%d, %d), %d])", param1, param2, param3, pos.x, pos.y, zorder);
 		addSprite(param1, param2, zorder, pos);
-		}
+	}
 		return 0;
 	case kFuncRemoveSprite:
 		debug(3, "kFuncRemoveSprite(%d, %d)", param1, param2);
@@ -683,20 +682,20 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 	case kFuncLoadData:
 		debug(3, "kFuncLoadData(%d, %d, %d)", param1, param2, param3);
 		{
-		Common::String filename = getFilename("Data", param1);
-		Common::File *file = new Common::File();
-		if (!file->open(filename))
-			error("couldn't open '%s' to get data id '%d'", filename.c_str(), param1);
-		if (param3 == 0)
-			param3 = 1000;
-		if (param2 < 0 || param3 < 0 || param2 + param3 > 1000)
-			error("can't read %d entries into %d from file '%s' for data id '%d'", param3, param2, filename.c_str(), param1);
-		for (uint i = 0; i < (uint)param3; i++) {
-			if (file->pos() + 1 > file->size())
-				break;
-			_vars[param2 + i] = file->readUint16LE();
-		}
-		delete file;
+			Common::String filename = getFilename("Data", param1);
+			Common::File *file = new Common::File();
+			if (!file->open(filename))
+				error("couldn't open '%s' to get data id '%d'", filename.c_str(), param1);
+			if (param3 == 0)
+				param3 = 1000;
+			if (param2 < 0 || param3 < 0 || param2 + param3 > 1000)
+				error("can't read %d entries into %d from file '%s' for data id '%d'", param3, param2, filename.c_str(), param1);
+			for (uint i = 0; i < (uint)param3; i++) {
+				if (file->pos() + 1 > file->size())
+					break;
+				_vars[param2 + i] = file->readUint16LE();
+			}
+			delete file;
 		}
 		return 1;
 	case kFuncGetSpriteSize:
@@ -705,13 +704,13 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		width = 0;
 		height = 0;
 		{
-		Common::SeekableReadStream *stream = getStreamForSprite(param1);
-		if (stream) {
-			stream->readUint16LE();
-			height = stream->readSint16LE();
-			width = stream->readSint16LE();
-			delete stream;
-		}
+			Common::SeekableReadStream *stream = getStreamForSprite(param1);
+			if (stream) {
+				stream->readUint16LE();
+				height = stream->readSint16LE();
+				width = stream->readSint16LE();
+				delete stream;
+			}
 		}
 		_vars[param2] = width;
 		_vars[param3] = height;
@@ -721,7 +720,9 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 	}
 }
 
-OldScript::OldScript(uint16 id, Common::SeekableReadStream *stream) : _id(id), _stream(stream) {
+OldScript::OldScript(uint16 id, Common::SeekableReadStream *stream)
+  : _id(id)
+  , _stream(stream) {
 	_size = _stream->readUint32LE();
 	_stream->skip(2);
 	_currDelay = 0;

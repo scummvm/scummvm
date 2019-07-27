@@ -24,7 +24,7 @@
 #ifndef PSP_MEMORY_H
 #define PSP_MEMORY_H
 
-#define MIN_AMOUNT_FOR_COMPLEX_COPY  8
+#define MIN_AMOUNT_FOR_COMPLEX_COPY 8
 #define MIN_AMOUNT_FOR_MISALIGNED_COPY 8
 
 //#define __PSP_DEBUG_PRINT__
@@ -34,13 +34,15 @@
 // These instructions don't generate automatically but are faster then copying byte by byte
 inline void lwl_copy(byte *dst, const byte *src) {
 	uint32 data;
-	asm volatile ("lwr %0,0(%1)\n\t"
-		 "lwl %0,3(%1)\n\t"
-		 : "=&r" (data) : "r" (src), "m" (*src));
+	asm volatile("lwr %0,0(%1)\n\t"
+	             "lwl %0,3(%1)\n\t"
+	             : "=&r"(data)
+	             : "r"(src), "m"(*src));
 
-	asm volatile ("swr %1,0(%2)\n\t"
-		 "swl %1,3(%2)\n\t"
-		 : "=m" (*dst) : "r" (data), "r" (dst));
+	asm volatile("swr %1,0(%2)\n\t"
+	             "swl %1,3(%2)\n\t"
+	             : "=m"(*dst)
+	             : "r"(data), "r"(dst));
 }
 
 /**
@@ -76,7 +78,7 @@ public:
 
 		if (bytes < MIN_AMOUNT_FOR_COMPLEX_COPY) {
 			copy8(dst, src, bytes);
-		} else {	// go to more powerful copy
+		} else { // go to more powerful copy
 			copy(dst, src, bytes);
 		}
 
@@ -115,7 +117,7 @@ public:
 	static void fastSwap(byte *dst, const byte *src, uint32 bytes, PSPPixelFormat &format) {
 		if (bytes < MIN_AMOUNT_FOR_COMPLEX_COPY * 2) {
 			swap16((uint16 *)dst, (const uint16 *)src, bytes, format);
-		} else {	// go to more powerful copy
+		} else { // go to more powerful copy
 			swap((uint16 *)dst, (const uint16 *)src, bytes, format);
 		}
 	}

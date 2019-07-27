@@ -46,12 +46,12 @@ class ZBuffer;
 class VQAPlayer {
 	friend class Debugger;
 
-	BladeRunnerEngine           *_vm;
-	Common::String               _name;
-	Common::SeekableReadStream  *_s;
-	VQADecoder                   _decoder;
-	Audio::QueuingAudioStream   *_audioStream;
-	Graphics::Surface           *_surface;
+	BladeRunnerEngine *_vm;
+	Common::String _name;
+	Common::SeekableReadStream *_s;
+	VQADecoder _decoder;
+	Audio::QueuingAudioStream *_audioStream;
+	Graphics::Surface *_surface;
 
 	int _frame;
 	int _frameNext;
@@ -67,37 +67,36 @@ class VQAPlayer {
 	int _repeatsCountInitial;
 
 	uint32 _frameNextTime;
-	bool   _hasAudio;
-	bool   _audioStarted;
+	bool _hasAudio;
+	bool _audioStarted;
 	Audio::SoundHandle _soundHandle;
 
 	void (*_callbackLoopEnded)(void *, int frame, int loopId);
-	void  *_callbackData;
+	void *_callbackData;
 
 public:
-
 	VQAPlayer(BladeRunnerEngine *vm, Graphics::Surface *surface, const Common::String &name)
-		: _vm(vm),
-		  _name(name),
-		  _s(nullptr),
-		  _surface(surface),
-		  _decoder(),
-		  _audioStream(nullptr),
-		  _frame(-1),
-		  _frameNext(-1),
-		  _frameBegin(-1),
-		  _frameEnd(-1),
-		  _loop(-1),
-		  _repeatsCount(-1),
-		  _repeatsCountQueued(-1),
-		  _frameEndQueued(-1),
-		  _loopInitial(-1),
-		  _repeatsCountInitial(-1),
-		  _frameNextTime(0),
-		  _hasAudio(false),
-		  _audioStarted(false),
-		  _callbackLoopEnded(nullptr),
-		  _callbackData(nullptr) { }
+	  : _vm(vm)
+	  , _name(name)
+	  , _s(nullptr)
+	  , _surface(surface)
+	  , _decoder()
+	  , _audioStream(nullptr)
+	  , _frame(-1)
+	  , _frameNext(-1)
+	  , _frameBegin(-1)
+	  , _frameEnd(-1)
+	  , _loop(-1)
+	  , _repeatsCount(-1)
+	  , _repeatsCountQueued(-1)
+	  , _frameEndQueued(-1)
+	  , _loopInitial(-1)
+	  , _repeatsCountInitial(-1)
+	  , _frameNextTime(0)
+	  , _hasAudio(false)
+	  , _audioStarted(false)
+	  , _callbackLoopEnded(nullptr)
+	  , _callbackData(nullptr) {}
 
 	~VQAPlayer() {
 		close();
@@ -106,14 +105,14 @@ public:
 	bool open();
 	void close();
 
-	int  update(bool forceDraw = false, bool advanceFrame = true, bool useTime = true, Graphics::Surface *customSurface = nullptr);
+	int update(bool forceDraw = false, bool advanceFrame = true, bool useTime = true, Graphics::Surface *customSurface = nullptr);
 	void updateZBuffer(ZBuffer *zbuffer);
 	void updateView(View *view);
 	void updateScreenEffects(ScreenEffects *screenEffects);
 	void updateLights(Lights *lights);
 
-	bool setBeginAndEndFrame(int begin, int end, int repeatsCount, int loopSetMode, void(*callback)(void *, int, int), void *callbackData);
-	bool setLoop(int loop, int repeatsCount, int loopSetMode, void(*callback)(void*, int, int), void *callbackData);
+	bool setBeginAndEndFrame(int begin, int end, int repeatsCount, int loopSetMode, void (*callback)(void *, int, int), void *callbackData);
+	bool setLoop(int loop, int repeatsCount, int loopSetMode, void (*callback)(void *, int, int), void *callbackData);
 
 	bool seekToFrame(int frame);
 

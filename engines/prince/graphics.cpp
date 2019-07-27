@@ -21,8 +21,8 @@
  */
 
 #include "prince/graphics.h"
-#include "prince/prince.h"
 #include "prince/mhwanh.h"
+#include "prince/prince.h"
 
 #include "graphics/palette.h"
 
@@ -30,7 +30,9 @@
 
 namespace Prince {
 
-GraphicsMan::GraphicsMan(PrinceEngine *vm) : _vm(vm), _changed(false) {
+GraphicsMan::GraphicsMan(PrinceEngine *vm)
+  : _vm(vm)
+  , _changed(false) {
 	initGraphics(640, 480);
 
 	_frontScreen = new Graphics::Surface();
@@ -434,7 +436,7 @@ byte GraphicsMan::getBlendTableColor(byte pixelColor, byte backgroundPixelColor,
 }
 
 void GraphicsMan::makeShadowTable(int brightness, byte *shadowPalette) {
-	int shadow =  brightness * 256 / 100;
+	int shadow = brightness * 256 / 100;
 	const byte *originalPalette = _vm->_roomBmp->getPalette();
 
 	for (int i = 0; i < 256; i++) {

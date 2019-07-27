@@ -35,7 +35,7 @@ void ProgramExec::runScript(ProgramPtr script, AnimationPtr a) {
 	_ctxt._modCounter = _modCounter;
 
 	InstructionPtr inst;
-	for ( ; (a->_flags & kFlagsActing) ; ) {
+	for (; (a->_flags & kFlagsActing);) {
 
 		inst = script->_instructions[_ctxt._ip];
 		_ctxt._inst = inst;
@@ -49,10 +49,8 @@ void ProgramExec::runScript(ProgramPtr script, AnimationPtr a) {
 
 		if (_ctxt._suspend)
 			break;
-
 	}
 	script->_ip = _ctxt._ip;
-
 }
 
 void ProgramExec::runScripts(ProgramList::iterator first, ProgramList::iterator last) {
@@ -81,9 +79,10 @@ void ProgramExec::runScripts(ProgramList::iterator first, ProgramList::iterator 
 	return;
 }
 
-ProgramExec::ProgramExec() : _modCounter(0), _instructionNames(NULL) {
+ProgramExec::ProgramExec()
+  : _modCounter(0)
+  , _instructionNames(NULL) {
 }
-
 
 void CommandExec::runList(CommandList::iterator first, CommandList::iterator last) {
 
@@ -93,7 +92,7 @@ void CommandExec::runList(CommandList::iterator first, CommandList::iterator las
 	_suspend = false;
 	_running = true;
 
-	for ( ; first != last; ++first) {
+	for (; first != last; ++first) {
 		if (_vm->shouldQuit())
 			break;
 
@@ -120,10 +119,11 @@ void CommandExec::runList(CommandList::iterator first, CommandList::iterator las
 		bool onMatch = (cmd->_flagsOn & useFlags) == cmd->_flagsOn;
 		bool offMatch = (cmd->_flagsOff & ~useFlags) == cmd->_flagsOff;
 
-		debugC(3, kDebugExec, "runCommands[%i] (on: %x, off: %x), (%s = %x)", cmd->_id,  cmd->_flagsOn, cmd->_flagsOff,
-			useLocalFlags ? "LOCALFLAGS" : "GLOBALFLAGS", useFlags);
+		debugC(3, kDebugExec, "runCommands[%i] (on: %x, off: %x), (%s = %x)", cmd->_id, cmd->_flagsOn, cmd->_flagsOff,
+		       useLocalFlags ? "LOCALFLAGS" : "GLOBALFLAGS", useFlags);
 
-		if (!onMatch || !offMatch) continue;
+		if (!onMatch || !offMatch)
+			continue;
 
 		_ctxt._z = _execZone;
 		_ctxt._cmd = cmd;
@@ -137,10 +137,9 @@ void CommandExec::runList(CommandList::iterator first, CommandList::iterator las
 	}
 
 	_running = false;
-
 }
 
-void CommandExec::run(CommandList& list, ZonePtr z) {
+void CommandExec::run(CommandList &list, ZonePtr z) {
 	if (list.size() == 0) {
 		debugC(3, kDebugExec, "runCommands: nothing to do");
 		return;
@@ -197,8 +196,10 @@ void CommandExec::runSuspended() {
 	}
 }
 
-
-CommandExec::CommandExec(Parallaction *vm) : _vm(vm), _suspend(false), _running(false) {
+CommandExec::CommandExec(Parallaction *vm)
+  : _vm(vm)
+  , _suspend(false)
+  , _running(false) {
 	_suspendedCtxt._valid = false;
 }
 

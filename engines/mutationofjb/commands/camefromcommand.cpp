@@ -21,9 +21,9 @@
  */
 
 #include "mutationofjb/commands/camefromcommand.h"
+#include "common/str.h"
 #include "mutationofjb/gamedata.h"
 #include "mutationofjb/script.h"
-#include "common/str.h"
 
 /** @file
  * "CAMEFROM " <sceneId>

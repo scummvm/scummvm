@@ -31,20 +31,23 @@
 #include "common/textconsole.h"
 #include "gui/debugger.h"
 
-#include "hugo/hugo.h"
 #include "hugo/display.h"
-#include "hugo/parser.h"
 #include "hugo/file.h"
-#include "hugo/util.h"
+#include "hugo/hugo.h"
+#include "hugo/inventory.h"
+#include "hugo/object.h"
+#include "hugo/parser.h"
 #include "hugo/route.h"
 #include "hugo/sound.h"
-#include "hugo/object.h"
 #include "hugo/text.h"
-#include "hugo/inventory.h"
+#include "hugo/util.h"
 
 namespace Hugo {
 
-Parser::Parser(HugoEngine *vm) : _vm(vm), _putIndex(0), _getIndex(0) {
+Parser::Parser(HugoEngine *vm)
+  : _vm(vm)
+  , _putIndex(0)
+  , _getIndex(0) {
 	_catchallList = nullptr;
 	_arrayReqs = nullptr;
 
@@ -103,7 +106,6 @@ void Parser::loadCmdList(Common::ReadStream &in) {
 		}
 	}
 }
-
 
 void Parser::readBG(Common::ReadStream &in, Background &curBG) {
 	curBG._verbIndex = in.readUint16BE();
@@ -172,9 +174,7 @@ const char *Parser::useBG(const char *name) {
 
 	ObjectList p = _backgroundObjects[*_vm->_screenPtr];
 	for (int i = 0; p[i]._verbIndex != 0; i++) {
-		if ((name == _vm->_text->getNoun(p[i]._nounIndex, 0) &&
-		     p[i]._verbIndex != _vm->_look) &&
-		    ((p[i]._roomState == kStateDontCare) || (p[i]._roomState == _vm->_screenStates[*_vm->_screenPtr])))
+		if ((name == _vm->_text->getNoun(p[i]._nounIndex, 0) && p[i]._verbIndex != _vm->_look) && ((p[i]._roomState == kStateDontCare) || (p[i]._roomState == _vm->_screenStates[*_vm->_screenPtr])))
 			return _vm->_text->getVerb(p[i]._verbIndex, 0);
 	}
 
@@ -227,11 +227,11 @@ void Parser::charHandler() {
 			_getIndex = 0;
 
 		switch (c) {
-		case Common::KEYCODE_BACKSPACE:             // Rubout key
+		case Common::KEYCODE_BACKSPACE: // Rubout key
 			if (_cmdLineIndex)
 				_cmdLine[--_cmdLineIndex] = '\0';
 			break;
-		case Common::KEYCODE_RETURN:                // EOL, pass line to line handler
+		case Common::KEYCODE_RETURN: // EOL, pass line to line handler
 			if (_cmdLineIndex && (_vm->_hero->_pathType != kPathQuiet)) {
 				// Remove inventory bar if active
 				if (_vm->_inventory->getInventoryState() == kInventoryActive)
@@ -241,7 +241,7 @@ void Parser::charHandler() {
 				_cmdLine[_cmdLineIndex = 0] = '\0';
 			}
 			break;
-		default:                                    // Normal text key, add to line
+		default: // Normal text key, add to line
 			if (_cmdLineIndex >= kMaxLineSize) {
 				//MessageBeep(MB_ICONASTERISK);
 				warning("STUB: MessageBeep() - Command line too long");
@@ -312,8 +312,8 @@ void Parser::keyHandler(Common::Event event) {
 	}
 
 	// Process key down event - called from OnKeyDown()
-	switch (nChar) {                                // Set various toggle states
-	case Common::KEYCODE_ESCAPE:                    // Escape key, may want to QUIT
+	switch (nChar) { // Set various toggle states
+	case Common::KEYCODE_ESCAPE: // Escape key, may want to QUIT
 		if (gameStatus._viewState == kViewIntro)
 			gameStatus._skipIntroFl = true;
 		else {
@@ -338,24 +338,24 @@ void Parser::keyHandler(Common::Event event) {
 	case Common::KEYCODE_KP6:
 	case Common::KEYCODE_KP8:
 	case Common::KEYCODE_KP2:
-		_vm->_route->resetRoute();                  // Stop any automatic route
-		_vm->_route->setWalk(nChar);                // Direction of hero travel
+		_vm->_route->resetRoute(); // Stop any automatic route
+		_vm->_route->setWalk(nChar); // Direction of hero travel
 		break;
-	case Common::KEYCODE_F1:                        // User Help (DOS)
+	case Common::KEYCODE_F1: // User Help (DOS)
 		if (_checkDoubleF1Fl)
 			gameStatus._helpFl = true;
 		else
 			_vm->_screen->userHelp();
 		_checkDoubleF1Fl = !_checkDoubleF1Fl;
 		break;
-	case Common::KEYCODE_F2:                        // Toggle sound
+	case Common::KEYCODE_F2: // Toggle sound
 		_vm->_sound->toggleSound();
 		_vm->_sound->toggleMusic();
 		break;
-	case Common::KEYCODE_F3:                        // Repeat last line
+	case Common::KEYCODE_F3: // Repeat last line
 		gameStatus._recallFl = true;
 		break;
-	case Common::KEYCODE_F4:                        // Save game
+	case Common::KEYCODE_F4: // Save game
 		if (gameStatus._viewState == kViewPlay) {
 			if (gameStatus._gameOverFl)
 				_vm->gameOverMsg();
@@ -363,17 +363,17 @@ void Parser::keyHandler(Common::Event event) {
 				_vm->_file->saveGame(-1, Common::String());
 		}
 		break;
-	case Common::KEYCODE_F5:                        // Restore game
+	case Common::KEYCODE_F5: // Restore game
 		_vm->_file->restoreGame(-1);
 		break;
-	case Common::KEYCODE_F6:                        // Inventory
+	case Common::KEYCODE_F6: // Inventory
 		showInventory();
 		break;
-	case Common::KEYCODE_F8:                        // Turbo mode
+	case Common::KEYCODE_F8: // Turbo mode
 		switchTurbo();
 		break;
-	default:                                        // Any other key
-		if (!gameStatus._storyModeFl) {              // Keyboard disabled
+	default: // Any other key
+		if (!gameStatus._storyModeFl) { // Keyboard disabled
 			// Add printable keys to ring buffer
 			uint16 bnext = _putIndex + 1;
 			if (bnext >= sizeof(_ringBuffer))
@@ -460,13 +460,13 @@ void Parser::showDosInventory() const {
 	for (int i = 0; i < _vm->_object->_numObj; i++) { // Find widths of 2 columns
 		if (_vm->_object->isCarried(i)) {
 			uint16 len = strlen(_vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, 2));
-			if (index++ & 1)                        // Right hand column
+			if (index++ & 1) // Right hand column
 				len2 = (len > len2) ? len : len2;
 			else
 				len1 = (len > len1) ? len : len1;
 		}
 	}
-	len1 += 1;                                      // For gap between columns
+	len1 += 1; // For gap between columns
 
 	if (len1 + len2 < (uint16)strlen(_vm->_text->getTextParser(kTBOutro)))
 		len1 = strlen(_vm->_text->getTextParser(kTBOutro));

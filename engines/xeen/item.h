@@ -23,9 +23,9 @@
 #ifndef XEEN_ITEM_H
 #define XEEN_ITEM_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
 #include "xeen/sprites.h"
 
@@ -37,19 +37,33 @@ class XeenEngine;
 class Character;
 
 enum ItemCategory {
-	CATEGORY_WEAPON = 0, CATEGORY_ARMOR = 1, CATEGORY_ACCESSORY = 2, CATEGORY_MISC = 3,
+	CATEGORY_WEAPON = 0,
+	CATEGORY_ARMOR = 1,
+	CATEGORY_ACCESSORY = 2,
+	CATEGORY_MISC = 3,
 	NUM_ITEM_CATEGORIES = 4
 };
 
 enum AttributeCategory {
-	ATTR_MIGHT = 0, ATTR_INTELLECT = 1, ATTR_PERSONALITY = 2, ATTR_SPEED = 3,
-	ATTR_ACCURACY = 4, ATTR_LUCK = 5, ATTR_HIT_POINTS = 6, ATTR_SPELL_POINTS = 7,
-	ATTR_ARMOR_CLASS = 8, ATTR_THIEVERY = 9
+	ATTR_MIGHT = 0,
+	ATTR_INTELLECT = 1,
+	ATTR_PERSONALITY = 2,
+	ATTR_SPEED = 3,
+	ATTR_ACCURACY = 4,
+	ATTR_LUCK = 5,
+	ATTR_HIT_POINTS = 6,
+	ATTR_SPELL_POINTS = 7,
+	ATTR_ARMOR_CLASS = 8,
+	ATTR_THIEVERY = 9
 };
 
 enum ElementalCategory {
-	ELEM_FIRE = 0, ELEM_ELECTRICITY = 1, ELEM_COLD = 2, ELEM_ACID_POISON = 3,
-	ELEM_ENERGY = 4, ELEM_MAGIC = 5
+	ELEM_FIRE = 0,
+	ELEM_ELECTRICITY = 1,
+	ELEM_COLD = 2,
+	ELEM_ACID_POISON = 3,
+	ELEM_ENERGY = 4,
+	ELEM_MAGIC = 5
 };
 
 enum WeaponId {
@@ -57,19 +71,27 @@ enum WeaponId {
 };
 
 enum Effectiveness {
-	EFFECTIVE_NONE = 0, EFFECTIVE_DRAGON = 1, EFFECTIVE_UNDEAD = 2, EFFECTIVE_GOLEM = 3,
-	EFFECTIVE_INSECT = 4, EFFEctIVE_MONSTERS = 5, EFFECTIVE_ANIMAL = 6
+	EFFECTIVE_NONE = 0,
+	EFFECTIVE_DRAGON = 1,
+	EFFECTIVE_UNDEAD = 2,
+	EFFECTIVE_GOLEM = 3,
+	EFFECTIVE_INSECT = 4,
+	EFFEctIVE_MONSTERS = 5,
+	EFFECTIVE_ANIMAL = 6
 };
 
 struct ItemState {
-	byte _counter : 6;		// Stores charges for Misc items, and the effective against for weapons
+	byte _counter : 6; // Stores charges for Misc items, and the effective against for weapons
 	bool _cursed : 1;
 	bool _broken : 1;
 
 	/**
 	 * Constructor
 	 */
-	ItemState() : _counter(0), _cursed(false), _broken(false) {}
+	ItemState()
+	  : _counter(0)
+	  , _cursed(false)
+	  , _broken(false) {}
 
 	/**
 	 * Clear the state
@@ -101,11 +123,13 @@ public:
 	uint _id;
 	ItemState _state;
 	int _frame;
+
 public:
 	/**
 	 * Return the name of the item
 	 */
 	static const char *getItemName(ItemCategory category, uint id);
+
 public:
 	/**
 	 * Constructor
@@ -161,7 +185,7 @@ protected:
 
 	XeenEngine *getVm();
 	void equipError(int itemIndex1, ItemCategory category1, int itemIndex2,
-		ItemCategory category2);
+	                ItemCategory category2);
 
 	/**
 	 * Returns a text string listing all the stats/attributes of a given item
@@ -172,6 +196,7 @@ protected:
 	 * Capitalizes a passed description string that includes embedded formatting for the Items dialog
 	 */
 	void capitalizeItem(Common::String &name);
+
 public:
 	InventoryItems(Character *character, ItemCategory category);
 	virtual ~InventoryItems() {}
@@ -236,14 +261,16 @@ public:
 	bool isFull() const;
 };
 
-class WeaponItems: public InventoryItems {
+class WeaponItems : public InventoryItems {
 protected:
 	/**
 	 * Returns a text string listing all the stats/attributes of a given item
 	 */
 	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes);
+
 public:
-	WeaponItems(Character *character) : InventoryItems(character, CATEGORY_WEAPON) {}
+	WeaponItems(Character *character)
+	  : InventoryItems(character, CATEGORY_WEAPON) {}
 	virtual ~WeaponItems() {}
 
 	/**
@@ -274,8 +301,10 @@ protected:
 	 * Returns a text string listing all the stats/attributes of a given item
 	 */
 	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes);
+
 public:
-	ArmorItems(Character *character) : InventoryItems(character, CATEGORY_ARMOR) {}
+	ArmorItems(Character *character)
+	  : InventoryItems(character, CATEGORY_ARMOR) {}
 	virtual ~ArmorItems() {}
 
 	/**
@@ -301,8 +330,10 @@ protected:
 	 * Returns a text string listing all the stats/attributes of a given item
 	 */
 	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes);
+
 public:
-	AccessoryItems(Character *character) : InventoryItems(character, CATEGORY_ACCESSORY) {}
+	AccessoryItems(Character *character)
+	  : InventoryItems(character, CATEGORY_ACCESSORY) {}
 
 	/**
 	 * Equip a given accessory
@@ -322,8 +353,10 @@ protected:
 	 * Returns a text string listing all the stats/attributes of a given item
 	 */
 	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes);
+
 public:
-	MiscItems(Character *character) : InventoryItems(character, CATEGORY_MISC) {}
+	MiscItems(Character *character)
+	  : InventoryItems(character, CATEGORY_MISC) {}
 	virtual ~MiscItems() {}
 
 	/**
@@ -336,8 +369,10 @@ public:
 class InventoryItemsGroup {
 private:
 	Character *_owner;
+
 public:
-	InventoryItemsGroup(Character *owner) : _owner(owner) {}
+	InventoryItemsGroup(Character *owner)
+	  : _owner(owner) {}
 
 	/**
 	 * Returns the inventory items for a given category

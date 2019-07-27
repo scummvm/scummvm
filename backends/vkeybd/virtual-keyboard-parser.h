@@ -27,8 +27,8 @@
 
 #ifdef ENABLE_VKEYBD
 
-#include "common/xmlparser.h"
-#include "backends/vkeybd/virtual-keyboard.h"
+#	include "backends/vkeybd/virtual-keyboard.h"
+#	include "common/xmlparser.h"
 
 /**
 
@@ -179,7 +179,6 @@ namespace Common {
 class VirtualKeyboardParser : public XMLParser {
 
 public:
-
 	/**
 	 * Enum dictating how extensive a parse will be
 	 */
@@ -204,39 +203,38 @@ public:
 protected:
 	CUSTOM_XML_PARSER(VirtualKeyboardParser) {
 		XML_KEY(keyboard)
-			XML_PROP(initial_mode, true)
-			XML_PROP(v_align, false)
-			XML_PROP(h_align, false)
-			XML_KEY(mode)
-				XML_PROP(name, true)
-				XML_PROP(resolutions, true)
-				XML_KEY(layout)
-					XML_PROP(resolution, true)
-					XML_PROP(bitmap, true)
-					XML_PROP(transparent_color, false)
-					XML_PROP(display_font_color, false)
-					XML_KEY(map)
-						XML_KEY(area)
-							XML_PROP(shape, true)
-							XML_PROP(coords, true)
-							XML_PROP(target, true)
-						KEY_END()
-					KEY_END()
-				KEY_END()
-				XML_KEY(event)
-					XML_PROP(name, true)
-					XML_PROP(type, true)
-					XML_PROP(code, false)
-					XML_PROP(ascii, false)
-					XML_PROP(modifiers, false)
-					XML_PROP(mode, false)
-				KEY_END()
-			KEY_END()
-		KEY_END()
+		  XML_PROP(initial_mode, true)
+		    XML_PROP(v_align, false)
+		      XML_PROP(h_align, false)
+		        XML_KEY(mode)
+		          XML_PROP(name, true)
+		            XML_PROP(resolutions, true)
+		              XML_KEY(layout)
+		                XML_PROP(resolution, true)
+		                  XML_PROP(bitmap, true)
+		                    XML_PROP(transparent_color, false)
+		                      XML_PROP(display_font_color, false)
+		                        XML_KEY(map)
+		                          XML_KEY(area)
+		                            XML_PROP(shape, true)
+		                              XML_PROP(coords, true)
+		                                XML_PROP(target, true)
+		                                  KEY_END()
+		                                    KEY_END()
+		                                      KEY_END()
+		                                        XML_KEY(event)
+		                                          XML_PROP(name, true)
+		                                            XML_PROP(type, true)
+		                                              XML_PROP(code, false)
+		                                                XML_PROP(ascii, false)
+		                                                  XML_PROP(modifiers, false)
+		                                                    XML_PROP(mode, false)
+		                                                      KEY_END()
+		                                                        KEY_END()
+		                                                          KEY_END()
 	} PARSER_END()
 
-protected:
-	VirtualKeyboard *_keyboard;
+	  protected : VirtualKeyboard *_keyboard;
 
 	/** internal state variables of parser */
 	ParseMode _parseMode;

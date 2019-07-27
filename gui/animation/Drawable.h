@@ -37,9 +37,15 @@ typedef Common::SharedPtr<Animation> AnimationPtr;
 
 class Drawable {
 public:
-	Drawable() :
-		_bitmap(NULL), _positionX(0), _positionY(0), _width(0), _height(0), _alpha(1),
-		_usingSnapshot(false), _shouldCenter(false) {
+	Drawable()
+	  : _bitmap(NULL)
+	  , _positionX(0)
+	  , _positionY(0)
+	  , _width(0)
+	  , _height(0)
+	  , _alpha(1)
+	  , _usingSnapshot(false)
+	  , _shouldCenter(false) {
 		_displayRatio = 1.0;
 	}
 

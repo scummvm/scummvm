@@ -23,9 +23,9 @@
 #ifndef CRUISE_CRUISE_H
 #define CRUISE_CRUISE_H
 
+#include "common/random.h"
 #include "common/scummsys.h"
 #include "common/util.h"
-#include "common/random.h"
 
 #include "engines/engine.h"
 
@@ -48,12 +48,18 @@ namespace Cruise {
 
 #define MAX_LANGUAGE_STRINGS 25
 
-enum LangStringId { ID_PAUSED = 0, ID_INVENTORY = 5, ID_SPEAK_ABOUT = 6, ID_PLAYER_MENU = 7,
-	ID_SAVE = 9, ID_LOAD = 10, ID_RESTART = 11, ID_QUIT = 12};
+enum LangStringId { ID_PAUSED = 0,
+	                  ID_INVENTORY = 5,
+	                  ID_SPEAK_ABOUT = 6,
+	                  ID_PLAYER_MENU = 7,
+	                  ID_SAVE = 9,
+	                  ID_LOAD = 10,
+	                  ID_RESTART = 11,
+	                  ID_QUIT = 12 };
 
 struct CRUISEGameDescription;
 
-class CruiseEngine: public Engine {
+class CruiseEngine : public Engine {
 private:
 	bool _preLoad;
 	Debugger *_debugger;
@@ -69,6 +75,7 @@ private:
 	bool loadLanguageStrings();
 	void mainLoop();
 	int processInput();
+
 protected:
 	// Engine APIs
 	virtual Common::Error run();
@@ -78,8 +85,8 @@ protected:
 	bool initGame();
 
 public:
-	CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc);
-	virtual ~ CruiseEngine();
+	CruiseEngine(OSystem *syst, const CRUISEGameDescription *gameDesc);
+	virtual ~CruiseEngine();
 	virtual bool hasFeature(EngineFeature f) const;
 
 	int getGameType() const;
@@ -105,8 +112,8 @@ public:
 	Common::RandomSource _rnd;
 
 	struct MemInfo {
-		int32  lineNum;
-		char   fname[64];
+		int32 lineNum;
+		char fname[64];
 		uint32 magic;
 
 		static uint32 const cookie = 0x41424344;

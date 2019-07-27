@@ -44,7 +44,7 @@ void TurnTable::loadFromStream(Common::SeekableReadStream *stream) {
 		_entries[i].endDirection = stream->readByte();
 		stream->readByte(); // alignment
 		debug(0, "Turn[%d]: %d %d %d %d %d", i, _entries[i].room, _entries[i].direction,
-				_entries[i].turnDirection, _entries[i].altCode, _entries[i].endDirection);
+		      _entries[i].turnDirection, _entries[i].altCode, _entries[i].endDirection);
 	}
 }
 

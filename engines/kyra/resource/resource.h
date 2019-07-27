@@ -23,21 +23,20 @@
 #ifndef KYRA_RESOURCE_H
 #define KYRA_RESOURCE_H
 
-
-#include "common/scummsys.h"
-#include "common/str.h"
+#include "common/archive.h"
 #include "common/file.h"
-#include "common/list.h"
 #include "common/hash-str.h"
 #include "common/hashmap.h"
-#include "common/stream.h"
+#include "common/list.h"
 #include "common/ptr.h"
-#include "common/archive.h"
+#include "common/scummsys.h"
+#include "common/str.h"
+#include "common/stream.h"
 
-#include "kyra/kyra_v1.h"
 #include "kyra/engine/darkmoon.h"
-#include "kyra/engine/lol.h"
 #include "kyra/engine/kyra_hof.h"
+#include "kyra/engine/lol.h"
+#include "kyra/kyra_v1.h"
 
 namespace Kyra {
 
@@ -70,13 +69,14 @@ public:
 
 	void listFiles(const Common::String &pattern, Common::ArchiveMemberList &list);
 
-	bool exists(const char *file, bool errorOutOnFail=false);
+	bool exists(const char *file, bool errorOutOnFail = false);
 	uint32 getFileSize(const char *file);
 	uint8 *fileData(const char *file, uint32 *size);
 	Common::SeekableReadStream *createReadStream(const Common::String &file);
 	Common::SeekableReadStreamEndian *createEndianAwareReadStream(const Common::String &file);
 
 	bool loadFileToBuf(const char *file, void *buf, uint32 maxSize);
+
 protected:
 	typedef Common::HashMap<Common::String, Common::Archive *, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> ArchiveMap;
 	ArchiveMap _archiveCache;
@@ -88,11 +88,11 @@ protected:
 	Common::Archive *loadArchive(const Common::String &name, Common::ArchiveMemberPtr member);
 	Common::Archive *loadInstallerArchive(const Common::String &file, const Common::String &ext, const uint8 offset);
 
-	bool loadProtectedFiles(const char *const * list);
+	bool loadProtectedFiles(const char *const *list);
 
 	void initializeLoaders();
 
-	typedef Common::List<Common::SharedPtr<ResArchiveLoader> > LoaderList;
+	typedef Common::List<Common::SharedPtr<ResArchiveLoader>> LoaderList;
 	LoaderList _loaders;
 
 	KyraEngine_v1 *_vm;
@@ -1030,7 +1030,11 @@ class StaticResource {
 public:
 	static const Common::String staticDataFilename() { return "KYRA.DAT"; }
 
-	StaticResource(KyraEngine_v1 *vm) : _vm(vm), _resList(), _fileLoader(0), _dataTable() {}
+	StaticResource(KyraEngine_v1 *vm)
+	  : _vm(vm)
+	  , _resList()
+	  , _fileLoader(0)
+	  , _dataTable() {}
 	~StaticResource() { deinit(); }
 
 	bool loadStaticResourceFile();
@@ -1069,6 +1073,7 @@ public:
 	// can't be loaded
 	bool prefetchId(int id);
 	void unloadId(int id);
+
 private:
 	bool tryKyraDatLoad();
 
@@ -1177,8 +1182,12 @@ private:
 	const FileType *_fileLoader;
 
 	struct DataDescriptor {
-		DataDescriptor() : filename(0), type(0) {}
-		DataDescriptor(uint32 f, uint8 t) : filename(f), type(t) {}
+		DataDescriptor()
+		  : filename(0)
+		  , type(0) {}
+		DataDescriptor(uint32 f, uint8 t)
+		  : filename(f)
+		  , type(t) {}
 
 		uint32 filename;
 		uint8 type;

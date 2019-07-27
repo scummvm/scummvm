@@ -31,24 +31,25 @@ class SherlockEngine;
 
 namespace Scalpel {
 
-class ScalpelDebugger : public Debugger {
-private:
-	/**
+	class ScalpelDebugger : public Debugger {
+	private:
+		/**
 	 * Plays a 3DO movie
 	 */
-	bool cmd3DO_PlayMovie(int argc, const char **argv);
+		bool cmd3DO_PlayMovie(int argc, const char **argv);
 
-	/**
+		/**
 	 * Plays a 3DO audio
 	 */
-	bool cmd3DO_PlayAudio(int argc, const char **argv);
-public:
-	ScalpelDebugger(SherlockEngine *vm);
-	virtual ~ScalpelDebugger() {}
-};
+		bool cmd3DO_PlayAudio(int argc, const char **argv);
+
+	public:
+		ScalpelDebugger(SherlockEngine *vm);
+		virtual ~ScalpelDebugger() {}
+	};
 
 } // End of namespace Scalpel
 
 } // End of namespace Sherlock
 
-#endif	/* SHERLOCK_DEBUGGER_H */
+#endif /* SHERLOCK_DEBUGGER_H */

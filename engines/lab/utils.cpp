@@ -34,7 +34,9 @@
 #include "lab/utils.h"
 
 namespace Lab {
-Utils::Utils(LabEngine *vm) : _vm(vm), _rnd("lab") {
+Utils::Utils(LabEngine *vm)
+  : _vm(vm)
+  , _rnd("lab") {
 	_dataBytesPerRow = 0;
 }
 
@@ -110,7 +112,7 @@ Common::Point Utils::vgaUnscale(Common::Point pos) {
 	return result;
 }
 
-template<typename T>
+template <typename T>
 void Utils::unDiff(T *dest, Common::File *sourceFile) {
 	byte bytesPerWord = sizeof(T);
 
@@ -141,7 +143,7 @@ void Utils::unDiff(T *dest, Common::File *sourceFile) {
 	}
 }
 
-template<typename T>
+template <typename T>
 void Utils::verticalUnDiff(T *dest, Common::File *sourceFile, uint16 bytesPerRow) {
 	uint16 counter = 0;
 	byte bytesPerWord = sizeof(T);
@@ -188,7 +190,7 @@ void Utils::runLengthDecode(byte *dest, Common::File *sourceFile) {
 			return;
 		} else if (num > '\0') {
 			sourceFile->read(dest, num);
-			dest   += num;
+			dest += num;
 		} else {
 			count = (int16)(-num);
 			num = sourceFile->readSByte();

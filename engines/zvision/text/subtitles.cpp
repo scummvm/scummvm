@@ -20,17 +20,17 @@
  *
  */
 
-#include "zvision/graphics/render_manager.h"
 #include "zvision/text/subtitles.h"
 #include "zvision/file/search_manager.h"
+#include "zvision/graphics/render_manager.h"
 #include "zvision/text/text.h"
 
 namespace ZVision {
 
-Subtitle::Subtitle(ZVision *engine, const Common::String &subname, bool upscaleToHires) :
-	_engine(engine),
-	_areaId(-1),
-	_subId(-1) {
+Subtitle::Subtitle(ZVision *engine, const Common::String &subname, bool upscaleToHires)
+  : _engine(engine)
+  , _areaId(-1)
+  , _subId(-1) {
 	Common::File file;
 	if (_engine->getSearchManager()->openFile(file, subname)) {
 		while (!file.eos()) {

@@ -21,9 +21,9 @@
  */
 
 #include "titanic/pet_control/pet_inventory_glyphs.h"
+#include "titanic/messages/pet_messages.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/pet_control/pet_inventory.h"
-#include "titanic/messages/pet_messages.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -73,7 +73,6 @@ void CPetInventoryGlyph::drawAt(CScreenManager *screenManager, const Point &pt, 
 	}
 }
 
-
 void CPetInventoryGlyph::unhighlightCurrent() {
 	if (_singular) {
 		_singular->setPosition(Point(0, 0));
@@ -119,14 +118,14 @@ bool CPetInventoryGlyph::dragGlyph(const Point &topLeft, CMouseDragStartMsg *msg
 		petControl->removeFromInventory(_item, false, false);
 
 		carryParcel->setPosition(Point(msg->_mousePos.x - carryParcel->_bounds.width() / 2,
-			msg->_mousePos.y - carryParcel->_bounds.height() / 2));
+		                               msg->_mousePos.y - carryParcel->_bounds.height() / 2));
 		carryParcel->setPosition(Point(SCREEN_WIDTH, SCREEN_HEIGHT));
 		item = carryParcel;
 	} else {
 		petControl->removeFromInventory(_item, false, true);
 
 		_item->setPosition(Point(msg->_mousePos.x - _item->_bounds.width() / 2,
-			msg->_mousePos.y - _item->_bounds.height() / 2));
+		                         msg->_mousePos.y - _item->_bounds.height() / 2));
 		_item->setVisible(true);
 	}
 
@@ -156,8 +155,7 @@ void CPetInventoryGlyph::getTooltip(CTextControl *text) {
 
 				CString temperature = g_vm->_strings[stateMsg._value ? A_HOT : A_COLD];
 				text->setText(CString::format("%s %s", temperature.c_str(),
-					g_vm->_itemDescriptions[itemIndex].c_str()
-				));
+				                              g_vm->_itemDescriptions[itemIndex].c_str()));
 
 			} else {
 				text->setText(g_vm->_itemDescriptions[itemIndex]);
@@ -222,7 +220,7 @@ int CPetInventoryGlyph::populateItem(CGameObject *item, bool isLoading) {
 	if (itemIndex == -1)
 		return -1;
 
-	// Some objects can be in multiple different states. These are handled 
+	// Some objects can be in multiple different states. These are handled
 	// below to give each the correct inventory glyph and description
 	switch (ITEM_MODES[itemIndex]) {
 	case 0:

@@ -42,7 +42,7 @@ struct AwayMission {
 
 	bool redshirtDead; // 0x1e
 	byte activeAction; // 0x1f
-	byte activeObject;  // 0x20; The item that is going to be used on something
+	byte activeObject; // 0x20; The item that is going to be used on something
 	byte passiveObject; // 0x21; The item that the active item is used on (or the item looked at, etc).
 
 	// If this is true after calling room-specific RDF code, the game will continue to run

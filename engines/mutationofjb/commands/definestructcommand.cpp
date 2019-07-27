@@ -21,9 +21,9 @@
  */
 
 #include "mutationofjb/commands/definestructcommand.h"
-#include "mutationofjb/script.h"
-#include "mutationofjb/game.h"
 #include "common/debug.h"
+#include "mutationofjb/game.h"
+#include "mutationofjb/script.h"
 
 /** @file
  * "DEFINE_STRUCT " <numItemGroups> " " <context> " " <objectId> " " <colorString> <CRLF>

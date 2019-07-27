@@ -53,7 +53,7 @@ int WhoWill::execute(int message, int action, bool type) {
 
 	Common::String actionStr = type ? map._events._text[action] : Res.WHO_WILL_ACTIONS[action];
 	Common::String msg = Common::String::format(Res.WHO_WILL, actionStr.c_str(),
-		Res.WHO_ACTIONS[message], party._activeParty.size());
+	                                            Res.WHO_ACTIONS[message], party._activeParty.size());
 
 	windows[36].open();
 	windows[36].writeString(msg);

@@ -36,8 +36,8 @@ class BladeRunnerEngine;
 class Shape {
 	BladeRunnerEngine *_vm;
 
-	int   _width;
-	int   _height;
+	int _width;
+	int _height;
 	byte *_data;
 
 public:
@@ -48,7 +48,7 @@ public:
 
 	void draw(Graphics::Surface &surface, int x, int y) const;
 
-	int getWidth()  const { return _width;  }
+	int getWidth() const { return _width; }
 	int getHeight() const { return _height; }
 };
 

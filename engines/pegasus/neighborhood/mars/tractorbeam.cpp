@@ -23,17 +23,17 @@
  *
  */
 
-#include "pegasus/pegasus.h"
-#include "pegasus/neighborhood/mars/constants.h"
 #include "pegasus/neighborhood/mars/tractorbeam.h"
+#include "pegasus/neighborhood/mars/constants.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
-TractorBeam::TractorBeam() : DisplayElement(kNoDisplayElement) {
+TractorBeam::TractorBeam()
+  : DisplayElement(kNoDisplayElement) {
 	setBounds(kShuttleTractorLeft, kShuttleTractorTop, kShuttleTractorLeft + kShuttleTractorWidth,
-			kShuttleTractorTop + kShuttleTractorHeight);
+	          kShuttleTractorTop + kShuttleTractorHeight);
 	setDisplayOrder(kShuttleTractorBeamOrder);
-
 }
 
 static const int kHalfWidth = kShuttleTractorWidth >> 1;
@@ -50,22 +50,22 @@ static const int kMaxLevel = 50;
 static const int kAVert = -2 * kMaxLevel;
 static const int kBVert = 3 * kMaxLevel * kHalfHeight;
 
-#define READ_PIXEL(ptr) \
+#define READ_PIXEL(ptr)                  \
 	if (screen->format.bytesPerPixel == 2) \
-		color = READ_UINT16(ptr); \
-	else \
-		color = READ_UINT32(ptr); \
+		color = READ_UINT16(ptr);            \
+	else                                   \
+		color = READ_UINT32(ptr);            \
 	screen->format.colorToRGB(color, r, g, b)
 
-#define WRITE_PIXEL(ptr) \
+#define WRITE_PIXEL(ptr)                      \
 	color = screen->format.RGBToColor(r, g, b); \
-	if (screen->format.bytesPerPixel == 2) \
-		WRITE_UINT16(ptr, color); \
-	else \
+	if (screen->format.bytesPerPixel == 2)      \
+		WRITE_UINT16(ptr, color);                 \
+	else                                        \
 		WRITE_UINT32(ptr, color)
 
-#define DO_BLEND(ptr) \
-	READ_PIXEL(ptr); \
+#define DO_BLEND(ptr)                    \
+	READ_PIXEL(ptr);                       \
 	g += (((0xff - g) * blendHoriz) >> 8); \
 	b += (((0xff - b) * blendHoriz) >> 8); \
 	WRITE_PIXEL(ptr)

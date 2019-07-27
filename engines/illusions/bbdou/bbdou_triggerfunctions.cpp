@@ -20,15 +20,19 @@
  *
  */
 
-#include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/bbdou/bbdou_triggerfunctions.h"
+#include "illusions/bbdou/illusions_bbdou.h"
 
 namespace Illusions {
 
 // TriggerFunction
 
 TriggerFunction::TriggerFunction(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, TriggerFunctionCallback *callback)
-	: _sceneId(sceneId), _verbId(verbId), _objectId2(objectId2), _objectId(objectId), _callback(callback) {
+  : _sceneId(sceneId)
+  , _verbId(verbId)
+  , _objectId2(objectId2)
+  , _objectId(objectId)
+  , _callback(callback) {
 }
 
 TriggerFunction::~TriggerFunction() {
@@ -72,8 +76,7 @@ TriggerFunctions::ItemsIterator TriggerFunctions::findInternal(uint32 sceneId, u
 	ItemsIterator it = _triggerFunctions.begin();
 	for (; it != _triggerFunctions.end(); ++it) {
 		TriggerFunction *triggerFunction = *it;
-		if (triggerFunction->_sceneId == sceneId && triggerFunction->_verbId == verbId &&
-			triggerFunction->_objectId2 == objectId2 && triggerFunction->_objectId == objectId)
+		if (triggerFunction->_sceneId == sceneId && triggerFunction->_verbId == verbId && triggerFunction->_objectId2 == objectId2 && triggerFunction->_objectId == objectId)
 			break;
 	}
 	return it;

@@ -23,15 +23,15 @@
 #ifndef GOB_PREGOB_SEQFILE_H
 #define GOB_PREGOB_SEQFILE_H
 
-#include "common/system.h"
 #include "common/array.h"
 #include "common/list.h"
+#include "common/system.h"
 
 #include "gob/util.h"
 
 namespace Common {
-	class String;
-	class SeekableReadStream;
+class String;
+class SeekableReadStream;
 }
 
 namespace Gob {
@@ -64,10 +64,8 @@ public:
 	 */
 	void play(bool abortable = true, uint16 endFrame = 0xFFFF, uint16 frameRate = 0);
 
-
 protected:
 	GobEngine *_vm;
-
 
 	/** Returns the current frame number. */
 	uint16 getFrame() const;
@@ -91,7 +89,6 @@ protected:
 	virtual void handleFrameEvent();
 	/** Callback for special user input handling. */
 	virtual void handleInput(int16 key, int16 mouseX, int16 mouseY, MouseButtons mouseButtons);
-
 
 private:
 	/** Number of animation objects that are visible at the same time. */
@@ -142,23 +139,22 @@ private:
 	typedef Common::Array<ANIFile *> Animations;
 
 	typedef Common::Array<BackgroundKey> BackgroundKeys;
-	typedef Common::Array<AnimationKey>  AnimationKeys;
+	typedef Common::Array<AnimationKey> AnimationKeys;
 
 	typedef Common::List<Object> Objects;
 
 	typedef Common::Array<Loop> Loops;
 
-
-	uint16 _frame;     ///< The current frame.
-	bool   _abortPlay; ///< Was the end of the playback requested?
+	uint16 _frame; ///< The current frame.
+	bool _abortPlay; ///< Was the end of the playback requested?
 
 	uint16 _frameRate;
 
 	Backgrounds _backgrounds; ///< All backgrounds in this SEQ.
-	Animations  _animations;  ///< All animations in this SEQ.
+	Animations _animations; ///< All animations in this SEQ.
 
-	BackgroundKeys _bgKeys;   ///< The background change keyframes.
-	AnimationKeys  _animKeys; ///< The animation change keyframes.
+	BackgroundKeys _bgKeys; ///< The background change keyframes.
+	AnimationKeys _animKeys; ///< The animation change keyframes.
 
 	Object _objects[kObjectCount]; ///< The managed animation objects.
 
@@ -166,7 +162,6 @@ private:
 
 	/** Whether the playback should be abortable by user input. */
 	bool _abortable;
-
 
 	// -- Loading helpers --
 
@@ -182,7 +177,7 @@ private:
 	Objects getOrderedObjects();
 
 	void clearAnims(); ///< Remove all animation frames.
-	void drawAnims();  ///< Draw the animation frames.
+	void drawAnims(); ///< Draw the animation frames.
 
 	/** Look if we can compact the loop array. */
 	void cleanLoops();

@@ -20,20 +20,24 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "access/access.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
+#include "common/scummsys.h"
 #include "engines/util.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
-#include "access/access.h"
 
 namespace Access {
 
 AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
-	: _gameDescription(gameDesc), Engine(syst), _randomSource("Access"),
-	  _useItem(_flags[99]), _startup(_flags[170]), _manScaleOff(_flags[172]) {
+  : _gameDescription(gameDesc)
+  , Engine(syst)
+  , _randomSource("Access")
+  , _useItem(_flags[99])
+  , _startup(_flags[170])
+  , _manScaleOff(_flags[172]) {
 	// Set up debug channels
 	DebugMan.addDebugChannel(kDebugPath, "path", "Pathfinding debug level");
 	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
@@ -166,8 +170,7 @@ void AccessEngine::initialize() {
 		const Common::FSNode cdromDir = gameDataDir.getChild("tdrom");
 
 		for (int idx = 0; idx < 15; ++idx) {
-			Common::String folder = (idx == 0) ? "game" :
-				Common::String::format("chap%.2d", idx);
+			Common::String folder = (idx == 0) ? "game" : Common::String::format("chap%.2d", idx);
 			SearchMan.addSubDirectoryMatching(cdromDir, folder);
 		}
 	}
@@ -273,7 +276,7 @@ void AccessEngine::speakText(BaseSurface *s, const Common::String &msg) {
 				_sound->loadSoundTable(0, _narateFile + 99, _sndSubFile);
 				_sound->playSound(0);
 
-				while(_sound->isSFXPlaying() && !shouldQuit())
+				while (_sound->isSFXPlaying() && !shouldQuit())
 					_events->pollEvents();
 
 				_scripts->cmdFreeSound();
@@ -306,7 +309,7 @@ void AccessEngine::speakText(BaseSurface *s, const Common::String &msg) {
 		_sound->_soundTable.push_back(SoundEntry(res, 1));
 		_sound->playSound(0);
 
-		while(_sound->isSFXPlaying() && !shouldQuit())
+		while (_sound->isSFXPlaying() && !shouldQuit())
 			_events->pollEvents();
 
 		_scripts->cmdFreeSound();
@@ -342,7 +345,7 @@ void AccessEngine::printText(BaseSurface *s, const Common::String &msg) {
 
 		s->_printOrg = Common::Point(s->_printStart.x, s->_printOrg.y + 9);
 
-		if (s->_printOrg.y >_printEnd && !lastLine) {
+		if (s->_printOrg.y > _printEnd && !lastLine) {
 			_events->waitKeyMouse();
 			s->copyBuffer(&_buffer2);
 			s->_printOrg.y = s->_printStart.y;
@@ -353,7 +356,6 @@ void AccessEngine::printText(BaseSurface *s, const Common::String &msg) {
 	}
 	_events->waitKeyMouse();
 }
-
 
 void AccessEngine::plotList() {
 	_player->calcPlayer();
@@ -383,8 +385,8 @@ void AccessEngine::plotList1() {
 			ie._flags |= IMGFLAG_CROPPED;
 		} else {
 			ie._flags &= ~IMGFLAG_CROPPED;
-			if (_buffer2._leftSkip != 0 ||  _buffer2._rightSkip != 0
-				|| _buffer2._topSkip != 0 || _buffer2._bottomSkip != 0)
+			if (_buffer2._leftSkip != 0 || _buffer2._rightSkip != 0
+			    || _buffer2._topSkip != 0 || _buffer2._bottomSkip != 0)
 				ie._flags |= IMGFLAG_CROPPED;
 
 			_newRects.push_back(bounds);
@@ -430,15 +432,15 @@ void AccessEngine::copyRects() {
 
 void AccessEngine::copyBF1BF2() {
 	_buffer2.copyRectToSurface(_buffer1, 0, 0,
-		Common::Rect(_scrollX, _scrollY,
-		_scrollX + _screen->_vWindowBytesWide,
-		_scrollY + _screen->_vWindowLinesTall));
+	                           Common::Rect(_scrollX, _scrollY,
+	                                        _scrollX + _screen->_vWindowBytesWide,
+	                                        _scrollY + _screen->_vWindowLinesTall));
 }
 
 void AccessEngine::copyBF2Vid() {
 	_screen->blitFrom(_buffer2,
-		Common::Rect(0, 0, _screen->_vWindowBytesWide, _screen->_vWindowLinesTall),
-		Common::Point(_screen->_windowXAdd, _screen->_windowYAdd));
+	                  Common::Rect(0, 0, _screen->_vWindowBytesWide, _screen->_vWindowLinesTall),
+	                  Common::Point(_screen->_windowXAdd, _screen->_windowYAdd));
 }
 
 void AccessEngine::playVideo(int videoNum, const Common::Point &pt) {
@@ -458,7 +460,7 @@ void AccessEngine::freeChar() {
 
 Common::Error AccessEngine::saveGameState(int slot, const Common::String &desc) {
 	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(
-		generateSaveName(slot));
+	  generateSaveName(slot));
 	if (!out)
 		return Common::kCreatingFileFailed;
 
@@ -477,7 +479,7 @@ Common::Error AccessEngine::saveGameState(int slot, const Common::String &desc) 
 
 Common::Error AccessEngine::loadGameState(int slot) {
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
-		generateSaveName(slot));
+	  generateSaveName(slot));
 	if (!saveFile)
 		return Common::kReadingFailed;
 
@@ -581,7 +583,7 @@ void AccessEngine::writeSavegameHeader(Common::OutSaveFile *out, AccessSavegameH
 	_screen->getPalette(thumbPalette);
 	Graphics::Surface saveThumb;
 	::createThumbnail(&saveThumb, (const byte *)_screen->getPixels(),
-		_screen->w, _screen->h, thumbPalette);
+	                  _screen->w, _screen->h, thumbPalette);
 	Graphics::saveThumbnail(*out, saveThumb);
 	saveThumb.free();
 

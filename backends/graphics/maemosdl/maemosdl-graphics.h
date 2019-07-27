@@ -22,10 +22,10 @@
 
 #if defined(MAEMO)
 
-#ifndef BACKENDS_GRAPHICS_MAEMOSDL_GRAPHICS_H
-#define BACKENDS_GRAPHICS_MAEMOSDL_GRAPHICS_H
+#	ifndef BACKENDS_GRAPHICS_MAEMOSDL_GRAPHICS_H
+#		define BACKENDS_GRAPHICS_MAEMOSDL_GRAPHICS_H
 
-#include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
+#		include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 
 class MaemoSdlGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
@@ -35,6 +35,6 @@ protected:
 	virtual bool loadGFXMode() override;
 };
 
-#endif
+#	endif
 
 #endif

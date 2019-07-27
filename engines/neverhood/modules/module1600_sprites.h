@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE1600_SPRITES_H
 #define NEVERHOOD_MODULES_MODULE1600_SPRITES_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -34,6 +34,7 @@ public:
 	AsCommonCar(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 	~AsCommonCar();
 	void setPathPoints(NPointArray *pathPoints);
+
 protected:
 	Scene *_parentScene;
 	NPointArray *_pathPoints;
@@ -103,20 +104,22 @@ public:
 class AsCommonCarConnector : public AnimatedSprite {
 public:
 	AsCommonCarConnector(NeverhoodEngine *vm, AsCommonCar *asCar);
+
 protected:
 	AsCommonCar *_asCar;
 	void update();
 };
 
-class Tracks : public Common::Array<TrackInfo*> {
+class Tracks : public Common::Array<TrackInfo *> {
 public:
 	void findTrackPoint(NPoint pt, int &minMatchTrackIndex, int &minMatchDistance,
-		DataResource &dataResource);
+	                    DataResource &dataResource);
 };
 
 class KmScene1608 : public Klaymen {
 public:
 	KmScene1608(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };

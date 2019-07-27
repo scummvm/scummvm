@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptIsabella::AIScriptIsabella(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptIsabella::AIScriptIsabella(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 	_var1 = 0;
 	_var2 = 0;
 	_var3 = 0;
@@ -442,17 +443,17 @@ bool AIScriptIsabella::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptIsabella::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptIsabella::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptIsabella::ReachedMovementTrackWaypoint(int waypointId) {

@@ -33,55 +33,54 @@
 namespace StarTrek {
 
 extern const RoomAction trial0ActionList[] = {
-	{ {ACTION_TICK, 1,  0, 0}, &Room::trial0Tick1 },
-	{ {ACTION_TICK, 40, 0, 0}, &Room::trial0Tick40 },
-	{ {ACTION_TIMER_EXPIRED, 0, 0, 0}, &Room::trial0Timer0Expired },
+	{ { ACTION_TICK, 1, 0, 0 }, &Room::trial0Tick1 },
+	{ { ACTION_TICK, 40, 0, 0 }, &Room::trial0Tick40 },
+	{ { ACTION_TIMER_EXPIRED, 0, 0, 0 }, &Room::trial0Timer0Expired },
 
-	{ {ACTION_WALK, HOTSPOT_CENTER, 0, 0}, &Room::trial0WalkToRoomCenter },
-	{ {ACTION_DONE_WALK, 1, 0, 0},         &Room::trial0ReachedRoomCenter },
+	{ { ACTION_WALK, HOTSPOT_CENTER, 0, 0 }, &Room::trial0WalkToRoomCenter },
+	{ { ACTION_DONE_WALK, 1, 0, 0 }, &Room::trial0ReachedRoomCenter },
 
-	{ {ACTION_LOOK, HOTSPOT_WINDOW,     0, 0}, &Room::trial0LookAtWindow },
-	{ {ACTION_LOOK, OBJECT_VLICT,       0, 0}, &Room::trial0LookAtVlict },
-	{ {ACTION_LOOK, OBJECT_GUARD,       0, 0}, &Room::trial0LookAtGuard },
-	{ {ACTION_LOOK, HOTSPOT_BENCH,      0, 0}, &Room::trial0LookAtBench },
-	{ {ACTION_LOOK, HOTSPOT_CENTER,     0, 0}, &Room::trial0LookAtSeal },
-	{ {ACTION_LOOK, OBJECT_KIRK,        0, 0}, &Room::trial0LookAtKirk },
-	{ {ACTION_LOOK, OBJECT_SPOCK,       0, 0}, &Room::trial0LookAtSpock },
-	{ {ACTION_LOOK, OBJECT_MCCOY,       0, 0}, &Room::trial0LookAtMccoy },
-	{ {ACTION_LOOK, OBJECT_REDSHIRT,    0, 0}, &Room::trial0LookAtRedshirt },
-	{ {ACTION_LOOK, OBJECT_QUETZECOATL, 0, 0}, &Room::trial0LookAtQuetzecoatl },
-	{ {ACTION_TALK, OBJECT_VLICT,       0, 0}, &Room::trial0TalkToVlict },
-	{ {ACTION_TALK, OBJECT_GUARD,       0, 0}, &Room::trial0TalkToGuard },
-	{ {ACTION_TALK, OBJECT_QUETZECOATL, 0, 0}, &Room::trial0TalkToQuetzecoatl },
-	{ {ACTION_TALK, OBJECT_MCCOY,       0, 0}, &Room::trial0TalkToMccoy },
-	{ {ACTION_TALK, OBJECT_SPOCK,       0, 0}, &Room::trial0TalkToSpock },
-	{ {ACTION_TALK, OBJECT_REDSHIRT,    0, 0}, &Room::trial0TalkToRedshirt },
+	{ { ACTION_LOOK, HOTSPOT_WINDOW, 0, 0 }, &Room::trial0LookAtWindow },
+	{ { ACTION_LOOK, OBJECT_VLICT, 0, 0 }, &Room::trial0LookAtVlict },
+	{ { ACTION_LOOK, OBJECT_GUARD, 0, 0 }, &Room::trial0LookAtGuard },
+	{ { ACTION_LOOK, HOTSPOT_BENCH, 0, 0 }, &Room::trial0LookAtBench },
+	{ { ACTION_LOOK, HOTSPOT_CENTER, 0, 0 }, &Room::trial0LookAtSeal },
+	{ { ACTION_LOOK, OBJECT_KIRK, 0, 0 }, &Room::trial0LookAtKirk },
+	{ { ACTION_LOOK, OBJECT_SPOCK, 0, 0 }, &Room::trial0LookAtSpock },
+	{ { ACTION_LOOK, OBJECT_MCCOY, 0, 0 }, &Room::trial0LookAtMccoy },
+	{ { ACTION_LOOK, OBJECT_REDSHIRT, 0, 0 }, &Room::trial0LookAtRedshirt },
+	{ { ACTION_LOOK, OBJECT_QUETZECOATL, 0, 0 }, &Room::trial0LookAtQuetzecoatl },
+	{ { ACTION_TALK, OBJECT_VLICT, 0, 0 }, &Room::trial0TalkToVlict },
+	{ { ACTION_TALK, OBJECT_GUARD, 0, 0 }, &Room::trial0TalkToGuard },
+	{ { ACTION_TALK, OBJECT_QUETZECOATL, 0, 0 }, &Room::trial0TalkToQuetzecoatl },
+	{ { ACTION_TALK, OBJECT_MCCOY, 0, 0 }, &Room::trial0TalkToMccoy },
+	{ { ACTION_TALK, OBJECT_SPOCK, 0, 0 }, &Room::trial0TalkToSpock },
+	{ { ACTION_TALK, OBJECT_REDSHIRT, 0, 0 }, &Room::trial0TalkToRedshirt },
 
-	{ {ACTION_USE, OBJECT_IPHASERS, 0xff, 0}, &Room::trial0UsePhaserOrRock },
-	{ {ACTION_USE, OBJECT_IPHASERK, 0xff, 0}, &Room::trial0UsePhaserOrRock },
-	{ {ACTION_USE, OBJECT_IROCK,    0xff, 0}, &Room::trial0UsePhaserOrRock },
-	{ {ACTION_USE, OBJECT_ISNAKE, OBJECT_VLICT, 0}, &Room::trial0UseSnakeOnVlict },
-	{ {ACTION_USE, OBJECT_ISNAKE, OBJECT_GUARD, 0}, &Room::trial0UseSnakeOnGuard },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_QUETZECOATL, 0}, &Room::trial0UseMTricorderOnQuetzecoatl },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_VLICT, 0}, &Room::trial0UseMTricorderOnVlict },
-	{ {ACTION_USE, OBJECT_IMTRICOR, 0xff, 0}, &Room::trial0UseMTricorderAnywhere },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_WINDOW, 0}, &Room::trial0UseSTricorderOnWindow },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0}, &Room::trial0UseSTricorderAnywhere },
-	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0}, &Room::trial0UseCommunicator },
+	{ { ACTION_USE, OBJECT_IPHASERS, 0xff, 0 }, &Room::trial0UsePhaserOrRock },
+	{ { ACTION_USE, OBJECT_IPHASERK, 0xff, 0 }, &Room::trial0UsePhaserOrRock },
+	{ { ACTION_USE, OBJECT_IROCK, 0xff, 0 }, &Room::trial0UsePhaserOrRock },
+	{ { ACTION_USE, OBJECT_ISNAKE, OBJECT_VLICT, 0 }, &Room::trial0UseSnakeOnVlict },
+	{ { ACTION_USE, OBJECT_ISNAKE, OBJECT_GUARD, 0 }, &Room::trial0UseSnakeOnGuard },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_QUETZECOATL, 0 }, &Room::trial0UseMTricorderOnQuetzecoatl },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_VLICT, 0 }, &Room::trial0UseMTricorderOnVlict },
+	{ { ACTION_USE, OBJECT_IMTRICOR, 0xff, 0 }, &Room::trial0UseMTricorderAnywhere },
+	{ { ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_WINDOW, 0 }, &Room::trial0UseSTricorderOnWindow },
+	{ { ACTION_USE, OBJECT_ISTRICOR, 0xff, 0 }, &Room::trial0UseSTricorderAnywhere },
+	{ { ACTION_USE, OBJECT_ICOMM, 0xff, 0 }, &Room::trial0UseCommunicator },
 
-	{ {ACTION_USE, OBJECT_SPOCK,    OBJECT_GUARD, 0}, &Room::trial0UseCrewmanOnKlingon },
-	{ {ACTION_USE, OBJECT_KIRK,     OBJECT_GUARD, 0}, &Room::trial0UseCrewmanOnKlingon },
-	{ {ACTION_USE, OBJECT_REDSHIRT, OBJECT_GUARD, 0}, &Room::trial0UseCrewmanOnKlingon },
-	{ {ACTION_USE, OBJECT_SPOCK,    OBJECT_VLICT, 0}, &Room::trial0UseCrewmanOnKlingon },
-	{ {ACTION_USE, OBJECT_KIRK,     OBJECT_VLICT, 0}, &Room::trial0UseCrewmanOnKlingon },
-	{ {ACTION_USE, OBJECT_REDSHIRT, OBJECT_VLICT, 0}, &Room::trial0UseCrewmanOnKlingon },
-	{ {ACTION_USE, OBJECT_MCCOY,    OBJECT_VLICT, 0}, &Room::trial0UseMccoyOnVlict },
-	{ {ACTION_USE, OBJECT_MCCOY,    OBJECT_GUARD, 0}, &Room::trial0UseMccoyOnGuard },
-	{ {ACTION_USE, OBJECT_IMEDKIT,  0xff, 0}, &Room::trial0UseMedkitAnywhere },
+	{ { ACTION_USE, OBJECT_SPOCK, OBJECT_GUARD, 0 }, &Room::trial0UseCrewmanOnKlingon },
+	{ { ACTION_USE, OBJECT_KIRK, OBJECT_GUARD, 0 }, &Room::trial0UseCrewmanOnKlingon },
+	{ { ACTION_USE, OBJECT_REDSHIRT, OBJECT_GUARD, 0 }, &Room::trial0UseCrewmanOnKlingon },
+	{ { ACTION_USE, OBJECT_SPOCK, OBJECT_VLICT, 0 }, &Room::trial0UseCrewmanOnKlingon },
+	{ { ACTION_USE, OBJECT_KIRK, OBJECT_VLICT, 0 }, &Room::trial0UseCrewmanOnKlingon },
+	{ { ACTION_USE, OBJECT_REDSHIRT, OBJECT_VLICT, 0 }, &Room::trial0UseCrewmanOnKlingon },
+	{ { ACTION_USE, OBJECT_MCCOY, OBJECT_VLICT, 0 }, &Room::trial0UseMccoyOnVlict },
+	{ { ACTION_USE, OBJECT_MCCOY, OBJECT_GUARD, 0 }, &Room::trial0UseMccoyOnGuard },
+	{ { ACTION_USE, OBJECT_IMEDKIT, 0xff, 0 }, &Room::trial0UseMedkitAnywhere },
 };
 
 extern const int trial0NumActions = ARRAYSIZE(trial0ActionList);
-
 
 void Room::trial0Tick1() {
 	playVoc("TRI0LOOP");
@@ -120,7 +119,7 @@ void Room::trial0ReachedRoomCenter() {
 	showMultipleTexts(choices1);
 
 	showText(TX_SPEAKER_VLICT, TX_TRI0_054);
-	showText(TX_SPEAKER_KIRK,  TX_TRI0_004);
+	showText(TX_SPEAKER_KIRK, TX_TRI0_004);
 	showText(TX_SPEAKER_VLICT, TX_TRI0_047);
 
 	const TextRef choices2[] = {
@@ -132,21 +131,21 @@ void Room::trial0ReachedRoomCenter() {
 
 	if (choice == 0) { // Kirk intervenes as a warrior
 		showText(TX_SPEAKER_VLICT, TX_TRI0_043);
-		showText(TX_SPEAKER_KIRK,  TX_TRI0_002);
+		showText(TX_SPEAKER_KIRK, TX_TRI0_002);
 		showText(TX_SPEAKER_VLICT, TX_TRI0_056);
 		showText(TX_SPEAKER_VLICT, TX_TRI0_061);
-		showText(TX_SPEAKER_KIRK,  TX_TRI0_001);
+		showText(TX_SPEAKER_KIRK, TX_TRI0_001);
 		showText(TX_SPEAKER_VLICT, TX_TRI0_060);
 		_awayMission->disableInput = true;
 		loadRoomIndex(1, 4);
 	} else if (choice == 1) { // "This trial is a mockery"
-		showText(TX_SPEAKER_VLICT,        TX_TRI0_048);
-		showText(TX_SPEAKER_QUETZECOATL,  TX_TRI0_041);
-		showText(TX_SPEAKER_VLICT,        TX_TRI0_050);
-		showText(TX_SPEAKER_QUETZECOATL,  TX_TRI0_039);
-		showText(TX_SPEAKER_VLICT,        TX_TRI0_059);
-		showText(TX_SPEAKER_QUETZECOATL,  TX_TRI0_040);
-		showText(TX_SPEAKER_VLICT,        TX_TRI0_046);
+		showText(TX_SPEAKER_VLICT, TX_TRI0_048);
+		showText(TX_SPEAKER_QUETZECOATL, TX_TRI0_041);
+		showText(TX_SPEAKER_VLICT, TX_TRI0_050);
+		showText(TX_SPEAKER_QUETZECOATL, TX_TRI0_039);
+		showText(TX_SPEAKER_VLICT, TX_TRI0_059);
+		showText(TX_SPEAKER_QUETZECOATL, TX_TRI0_040);
+		showText(TX_SPEAKER_VLICT, TX_TRI0_046);
 
 		const TextRef choices3[] = {
 			TX_SPEAKER_KIRK,
@@ -167,7 +166,7 @@ void Room::trial0ReachedRoomCenter() {
 
 			if (choice == 0 || choice == 1) {
 				showText(TX_SPEAKER_VLICT, TX_TRI0_057);
-				showText(TX_SPEAKER_KIRK,  TX_TRI0_003);
+				showText(TX_SPEAKER_KIRK, TX_TRI0_003);
 				showText(TX_SPEAKER_VLICT, TX_TRI0_051);
 
 				const TextRef choices5[] = {
@@ -251,9 +250,9 @@ void Room::trial0TalkToVlict() {
 void Room::trial0TalkToGuard() {
 	showText(TX_SPEAKER_KLINGON_GUARD, TX_TRI0_F24);
 	showText(TX_SPEAKER_BENNIE, TX_TRI0_065);
-	showText(TX_SPEAKER_KIRK,   TX_TRI0_007);
+	showText(TX_SPEAKER_KIRK, TX_TRI0_007);
 	showText(TX_SPEAKER_BENNIE, TX_TRI0_064);
-	showText(TX_SPEAKER_KIRK,   TX_TRI0_022);
+	showText(TX_SPEAKER_KIRK, TX_TRI0_022);
 	showText(TX_SPEAKER_BENNIE, TX_TRI0_066);
 }
 

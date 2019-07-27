@@ -21,14 +21,14 @@
  * String resource managment routines
  */
 
-#include "tinsel/dw.h"
-#include "tinsel/drives.h"
-#include "tinsel/sound.h"
 #include "tinsel/strres.h"
-#include "tinsel/scn.h"
-#include "common/file.h"
 #include "common/endian.h"
+#include "common/file.h"
 #include "common/textconsole.h"
+#include "tinsel/drives.h"
+#include "tinsel/dw.h"
+#include "tinsel/scn.h"
+#include "tinsel/sound.h"
 
 #include "gui/message.h"
 
@@ -45,24 +45,23 @@ int g_newestString;
 static uint8 *g_textBuffer = 0;
 
 static struct {
-	bool		bPresent;
-	const char	*szStem;
-	SCNHANDLE	hDescription;
-	SCNHANDLE	hFlagFilm;
+	bool bPresent;
+	const char *szStem;
+	SCNHANDLE hDescription;
+	SCNHANDLE hFlagFilm;
 
 } g_languages[NUM_LANGUAGES] = {
 
-	{ false, "English",	0, 0 },
-	{ false, "French",	0, 0 },
-	{ false, "German",	0, 0 },
-	{ false, "Italian",	0, 0 },
-	{ false, "Spanish",	0, 0 },
-	{ false, "Hebrew",	0, 0 },
-	{ false, "Magyar",	0, 0 },
-	{ false, "Japanese",0, 0 },
-	{ false, "US",		0, 0 }
+	{ false, "English", 0, 0 },
+	{ false, "French", 0, 0 },
+	{ false, "German", 0, 0 },
+	{ false, "Italian", 0, 0 },
+	{ false, "Spanish", 0, 0 },
+	{ false, "Hebrew", 0, 0 },
+	{ false, "Magyar", 0, 0 },
+	{ false, "Japanese", 0, 0 },
+	{ false, "US", 0, 0 }
 };
-
 
 // Set if we're handling 2-byte characters.
 bool g_bMultiByte = false;
@@ -71,9 +70,9 @@ LANGUAGE g_textLanguage, g_sampleLanguage = TXT_ENGLISH;
 
 //----------------- LOCAL DEFINES ----------------------------
 
-#define languageExtension	".txt"
-#define indexExtension		".idx"
-#define sampleExtension		".smp"
+#define languageExtension ".txt"
+#define indexExtension ".idx"
+#define sampleExtension ".smp"
 
 //----------------- FUNCTIONS --------------------------------
 
@@ -83,7 +82,7 @@ LANGUAGE g_textLanguage, g_sampleLanguage = TXT_ENGLISH;
  */
 void ChangeLanguage(LANGUAGE newLang) {
 	TinselFile f;
-	uint32 textLen = 0;	// length of buffer
+	uint32 textLen = 0; // length of buffer
 
 	g_textLanguage = newLang;
 	g_sampleLanguage = newLang;
@@ -120,7 +119,7 @@ void ChangeLanguage(LANGUAGE newLang) {
 
 		// get length of uncompressed file
 		textLen = f.size();
-		f.seek(0, SEEK_SET);	// Set to beginning of file
+		f.seek(0, SEEK_SET); // Set to beginning of file
 
 		if (g_textBuffer == NULL) {
 			// allocate a text buffer for the strings
@@ -137,7 +136,7 @@ void ChangeLanguage(LANGUAGE newLang) {
 
 		// close the file
 		f.close();
-	} else {	// the file must be compressed
+	} else { // the file must be compressed
 		error("Compression handling has been removed");
 	}
 }
@@ -191,17 +190,17 @@ static byte *FindStringBase(int id) {
 			pText += *pText + 1;
 		} else if (*pText == 0x80) {
 			// string of length 128 - 255
-			pText++;		// skip control byte
+			pText++; // skip control byte
 			pText += *pText + 1;
 		} else if (*pText == 0x90) {
 			// string of length 256 - 511
-			pText++;		// skip control byte
+			pText++; // skip control byte
 			pText += *pText + 1 + 256;
-		} else {	// multiple string
+		} else { // multiple string
 			int subCount;
 
 			subCount = *pText & ~0x80;
-			pText++;		// skip control byte
+			pText++; // skip control byte
 
 			// skip prior sub-strings
 			while (subCount--) {
@@ -221,7 +220,6 @@ static byte *FindStringBase(int id) {
 	return pText;
 }
 
-
 /**
  * Loads a string resource identified by id.
  * @param id			identifier of string to be loaded
@@ -229,7 +227,7 @@ static byte *FindStringBase(int id) {
  * @param bufferMax		maximum number of chars to be copied to the buffer
  */
 int LoadStringResource(int id, int sub, char *pBuffer, int bufferMax) {
-	int len;	// length of string
+	int len; // length of string
 
 	byte *pText = FindStringBase(id);
 
@@ -243,19 +241,19 @@ int LoadStringResource(int id, int sub, char *pBuffer, int bufferMax) {
 		len = *pText;
 	} else if (*pText == 0x80) {
 		// string of length 128 - 255
-		pText++;		// skip control byte
+		pText++; // skip control byte
 
 		// get length of string
 		len = *pText;
 	} else if (*pText == 0x90) {
 		// string of length 128 - 255
-		pText++;		// skip control byte
+		pText++; // skip control byte
 
 		// get length of string
 		len = *pText + 256;
 	} else {
 		// multiple string
-		pText++;		// skip control byte
+		pText++; // skip control byte
 
 		// skip prior sub-strings
 		while (sub--) {
@@ -351,7 +349,6 @@ int SubStringCount(int id) {
 		return (*pText & ~0x80);
 }
 
-
 void FreeTextBuffer() {
 	free(g_textBuffer);
 	g_textBuffer = NULL;
@@ -365,7 +362,7 @@ void LanguageFacts(int language, SCNHANDLE hDescription, SCNHANDLE hFlagFilm) {
 	assert(language >= 0 && language < NUM_LANGUAGES);
 
 	g_languages[language].hDescription = hDescription;
-	g_languages[language].hFlagFilm	 = hFlagFilm;
+	g_languages[language].hFlagFilm = hFlagFilm;
 }
 
 /**
@@ -395,7 +392,7 @@ int NumberOfLanguages() {
 LANGUAGE NextLanguage(LANGUAGE thisOne) {
 	int i;
 
-	for (i = thisOne+1; i < NUM_LANGUAGES; i++) {
+	for (i = thisOne + 1; i < NUM_LANGUAGES; i++) {
 		if (g_languages[i].bPresent)
 			return (LANGUAGE)i;
 	}
@@ -412,12 +409,12 @@ LANGUAGE NextLanguage(LANGUAGE thisOne) {
 LANGUAGE PrevLanguage(LANGUAGE thisOne) {
 	int i;
 
-	for (i = thisOne-1; i >= 0; i--) {
+	for (i = thisOne - 1; i >= 0; i--) {
 		if (g_languages[i].bPresent)
 			return (LANGUAGE)i;
 	}
 
-	for (i = NUM_LANGUAGES-1; i > thisOne; i--) {
+	for (i = NUM_LANGUAGES - 1; i > thisOne; i--) {
 		if (g_languages[i].bPresent)
 			return (LANGUAGE)i;
 	}

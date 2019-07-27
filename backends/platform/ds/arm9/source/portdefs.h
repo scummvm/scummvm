@@ -21,71 +21,70 @@
  */
 
 #ifndef _PORTDEFS_H_
-#define _PORTDEFS_H_
+#	define _PORTDEFS_H_
 
 // Include ndstypes.h for uint16 etc. typedefs
-#include "nds/ndstypes.h"
+#	include "nds/ndstypes.h"
 
 // Define SCUMMVM_DONT_DEFINE_TYPES to prevent scummsys.h from trying to
 // re-define those data types.
-#define SCUMMVM_DONT_DEFINE_TYPES
+#	define SCUMMVM_DONT_DEFINE_TYPES
 
 // Include required headers
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <ctype.h>
-#include <math.h>
-#include <new>
+#	include <ctype.h>
+#	include <math.h>
+#	include <new>
+#	include <stdarg.h>
+#	include <stdio.h>
+#	include <stdlib.h>
+#	include <string.h>
 
-#define double float
+#	define double float
 
-#ifndef DISABLE_COMMAND_LINE
-#define DISABLE_COMMAND_LINE
-#endif
+#	ifndef DISABLE_COMMAND_LINE
+#		define DISABLE_COMMAND_LINE
+#	endif
 
-#ifndef STREAM_AUDIO_FROM_DISK
-#define STREAM_AUDIO_FROM_DISK
-#endif
+#	ifndef STREAM_AUDIO_FROM_DISK
+#		define STREAM_AUDIO_FROM_DISK
+#	endif
 
 // FIXME: What is "NO_DEBUG_MSGS" good for?
-#define NO_DEBUG_MSGS
+#	define NO_DEBUG_MSGS
 
 // This is defined in dsmain.cpp
-#ifdef __cplusplus
+#	ifdef __cplusplus
 extern "C" {
-#endif
+#	endif
 void consolePrintf(const char *format, ...);
-#ifdef __cplusplus
+#	ifdef __cplusplus
 }
-#endif
+#	endif
 
+#	ifdef assert
+#		undef assert
+#	endif
 
-#ifdef assert
-#undef assert
-#endif
+#	ifdef NDEBUG
 
-#ifdef NDEBUG
+#		define assert(e) ((void)0)
 
-#define	assert(e)	((void)0)
-
-#else
+#	else
 
 // FIXME: Shouldn't assert() also bail out / exit / halt the program? Right now we just
 // print an error message...
-#define assert(s) \
-	do { \
-		if (!(s)) { \
-			consolePrintf("Assertion failed: '##s##' at file %s, line %d\n", __FILE__, __LINE__); \
-		} \
-	} while (0)
+#		define assert(s)                                                                           \
+			do {                                                                                      \
+				if (!(s)) {                                                                             \
+					consolePrintf("Assertion failed: '##s##' at file %s, line %d\n", __FILE__, __LINE__); \
+				}                                                                                       \
+			} while (0)
 
-#endif
+#	endif
 
 // FIXME: Since I can't change the engine at the moment (post lockdown) this define can go here.
 // This define changes the mouse-relative motion which doesn't make sense on a touch screen to
 // a more conventional form of input where the menus can be clicked on.
-#define LURE_CLICKABLE_MENUS
+#	define LURE_CLICKABLE_MENUS
 
 #endif

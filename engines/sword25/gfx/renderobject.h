@@ -42,10 +42,10 @@
 #ifndef SWORD25_RENDEROBJECT_H
 #define SWORD25_RENDEROBJECT_H
 
-#include "sword25/kernel/common.h"
-#include "sword25/kernel/persistable.h"
 #include "common/rect.h"
 #include "sword25/gfx/renderobjectptr.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/persistable.h"
 
 #include "common/list.h"
 
@@ -302,7 +302,7 @@ public:
 	            Wie alle andere Attribute ist auch dieses relativ zum Elternobjekt, ein Kinderobjekt kann also nie unter seinem
 	            Elternobjekt liegen, auch wenn es einen Z-Wert von 0 hat.
 	 */
-	int         getZ() const {
+	int getZ() const {
 		return _z;
 	}
 
@@ -313,13 +313,13 @@ public:
 	/**
 	    @brief Gibt die Breite des Objektes zurück.
 	 */
-	int         getWidth() const {
+	int getWidth() const {
 		return _width;
 	}
 	/**
 	    @brief Gibt die Höhe des Objektes zurück.
 	 */
-	int         getHeight() const {
+	int getHeight() const {
 		return _height;
 	}
 	/**
@@ -327,27 +327,27 @@ public:
 	    @return Gibt den Sichtbarkeitszustand des Objektes zurück.<br>
 	            true entspricht sichtbar, false entspricht unsichtbar.
 	 */
-	bool        isVisible() const {
+	bool isVisible() const {
 		return _visible;
 	}
 	/**
 	    @brief Gibt den Typ des Objektes zurück.
 	 */
-	TYPES       getType() const {
+	TYPES getType() const {
 		return _type;
 	}
 	/**
 	    @brief Gibt zurück, ob das Objekt erfolgreich initialisiert wurde.
 	    @remark Hässlicher Workaround um das Problem, dass Konstruktoren keine Rückgabewerte haben.
 	 */
-	bool        getInitSuccess() const {
+	bool getInitSuccess() const {
 		return _initSuccess;
 	}
 	/**
 	    @brief Gibt die Bounding-Box des Objektes zurück.
 	    @remark Diese Angabe erfolgt ausnahmsweise in Bildschirmkoordianten und nicht relativ zum Elternobjekt.
 	 */
-	const Common::Rect  &getBbox() const {
+	const Common::Rect &getBbox() const {
 		return _bbox;
 	}
 	/**
@@ -385,29 +385,29 @@ public:
 protected:
 	// Typen
 	// -----
-	typedef Common::List<RenderObjectPtr<RenderObject> >          RENDEROBJECT_LIST;
-	typedef Common::List<RenderObjectPtr<RenderObject> >::iterator    RENDEROBJECT_ITER;
+	typedef Common::List<RenderObjectPtr<RenderObject>> RENDEROBJECT_LIST;
+	typedef Common::List<RenderObjectPtr<RenderObject>>::iterator RENDEROBJECT_ITER;
 
-	int32       _x;            ///< Die X-Position des Objektes relativ zum Eltern-Objekt
-	int32       _y;            ///< Die Y-Position des Objektes relativ zum Eltern-Objekt
-	int32       _z;            ///< Der Z-Wert des Objektes relativ zum Eltern-Objekt
-	int32       _absoluteX;    ///< Die absolute X-Position des Objektes
-	int32       _absoluteY;    ///< Die absolute Y-Position des Objektes
-	int32		_absoluteZ;
-	int32       _width;        ///< Die Breite des Objektes
-	int32       _height;       ///< Die Höhe des Objektes
-	bool        _visible;      ///< Ist true, wenn das Objekt sichtbar ist
-	bool        _childChanged; ///< Ist true, wenn sich ein Kinderobjekt verändert hat
-	TYPES       _type;         ///< Der Objekttyp
-	bool        _initSuccess;  ///< Ist true, wenn Objekt erfolgreich intialisiert werden konnte
-	Common::Rect _bbox;         ///< Die Bounding-Box des Objektes in Bildschirmkoordinaten
+	int32 _x; ///< Die X-Position des Objektes relativ zum Eltern-Objekt
+	int32 _y; ///< Die Y-Position des Objektes relativ zum Eltern-Objekt
+	int32 _z; ///< Der Z-Wert des Objektes relativ zum Eltern-Objekt
+	int32 _absoluteX; ///< Die absolute X-Position des Objektes
+	int32 _absoluteY; ///< Die absolute Y-Position des Objektes
+	int32 _absoluteZ;
+	int32 _width; ///< Die Breite des Objektes
+	int32 _height; ///< Die Höhe des Objektes
+	bool _visible; ///< Ist true, wenn das Objekt sichtbar ist
+	bool _childChanged; ///< Ist true, wenn sich ein Kinderobjekt verändert hat
+	TYPES _type; ///< Der Objekttyp
+	bool _initSuccess; ///< Ist true, wenn Objekt erfolgreich intialisiert werden konnte
+	Common::Rect _bbox; ///< Die Bounding-Box des Objektes in Bildschirmkoordinaten
 
 	// Kopien der Variablen, die für die Errechnung des Dirty-Rects und zur Bestimmung der Objektveränderung notwendig sind
-	Common::Rect     _oldBbox;
-	int32       _oldX;
-	int32       _oldY;
-	int32       _oldZ;
-	bool        _oldVisible;
+	Common::Rect _oldBbox;
+	int32 _oldX;
+	int32 _oldY;
+	int32 _oldZ;
+	bool _oldVisible;
 
 	static int _nextGlobalVersion;
 
@@ -456,7 +456,7 @@ protected:
 	/// Ein Pointer auf das Elternobjekt.
 	RenderObjectPtr<RenderObject> _parentPtr;
 	/// Die Liste der Kinderobjekte nach der Renderreihenfolge geordnet
-	RENDEROBJECT_LIST           _children;
+	RENDEROBJECT_LIST _children;
 
 	/**
 	    @brief Gibt einen Pointer auf den BS_RenderObjektManager zurück, der das Objekt verwaltet.

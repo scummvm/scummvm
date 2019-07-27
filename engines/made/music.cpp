@@ -36,7 +36,9 @@
 
 namespace Made {
 
-MusicPlayer::MusicPlayer(bool milesAudio) : _isGM(false),_milesAudioMode(false) {
+MusicPlayer::MusicPlayer(bool milesAudio)
+  : _isGM(false)
+  , _milesAudioMode(false) {
 	MusicType musicType = MT_INVALID;
 	if (milesAudio) {
 		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
@@ -64,7 +66,7 @@ MusicPlayer::MusicPlayer(bool milesAudio) : _isGM(false),_milesAudioMode(false) 
 			break;
 		}
 	} else {
-			MidiPlayer::createDriver();
+		MidiPlayer::createDriver();
 	}
 
 	int ret = _driver->open();

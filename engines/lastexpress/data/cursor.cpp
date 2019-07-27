@@ -32,7 +32,8 @@ namespace LastExpress {
 
 uint16 brigthnessData[4] = { 0, 0x7BDE, 0x739C, 0x6318 };
 
-Cursor::Cursor() : _current(kCursorMAX) {
+Cursor::Cursor()
+  : _current(kCursorMAX) {
 	memset(&_cursors, 0, sizeof(_cursors));
 }
 
@@ -41,7 +42,7 @@ bool Cursor::load(Common::SeekableReadStream *stream) {
 		return false;
 
 	// Load the whole file to memory
-	Common::SeekableReadStream *data = stream->readStream((uint32) stream->size());
+	Common::SeekableReadStream *data = stream->readStream((uint32)stream->size());
 	delete stream;
 	if (!data)
 		return false;
@@ -51,8 +52,8 @@ bool Cursor::load(Common::SeekableReadStream *stream) {
 		_cursors[i].hotspotX = data->readUint16LE();
 		_cursors[i].hotspotY = data->readUint16LE();
 		debugC(15, kLastExpressDebugCursor,
-			"Cursor %d hotspot x: %d, hotspot y: %d",
-			i, _cursors[i].hotspotX, _cursors[i].hotspotY);
+		       "Cursor %d hotspot x: %d, hotspot y: %d",
+		       i, _cursors[i].hotspotX, _cursors[i].hotspotY);
 	}
 
 	// Read the pixel data
@@ -103,8 +104,11 @@ const uint16 *Cursor::getCursorImage(CursorStyle style) const {
 	return _cursors[style].image;
 }
 
-
-Icon::Icon(CursorStyle style) : _style(style), _x(0), _y(0), _brightnessIndex(-1) {}
+Icon::Icon(CursorStyle style)
+  : _style(style)
+  , _x(0)
+  , _y(0)
+  , _brightnessIndex(-1) {}
 
 void Icon::setPosition(int16 x, int16 y) {
 	_x = x;

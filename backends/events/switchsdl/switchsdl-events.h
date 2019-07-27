@@ -21,13 +21,13 @@
  */
 
 #if !defined(DISABLE_DEFAULT_EVENTMANAGER)
-#define BACKEND_EVENTS_SWITCH_H
+#	define BACKEND_EVENTS_SWITCH_H
 
-#include "backends/events/sdl/sdl-events.h"
+#	include "backends/events/sdl/sdl-events.h"
 
-#define SCE_TOUCH_PORT_MAX_NUM 1
-#define TOUCHSCREEN_WIDTH 1280
-#define TOUCHSCREEN_HEIGHT 720
+#	define SCE_TOUCH_PORT_MAX_NUM 1
+#	define TOUCHSCREEN_WIDTH 1280
+#	define TOUCHSCREEN_HEIGHT 720
 
 /**
  * SDL Events manager for the SWITCH.
@@ -36,10 +36,11 @@ class SwitchEventSource : public SdlEventSource {
 public:
 	SwitchEventSource();
 	bool pollEvent(Common::Event &event) override;
+
 protected:
 	void preprocessEvents(SDL_Event *event) override;
-private:
 
+private:
 	enum {
 		MAX_NUM_FINGERS = 3, // number of fingers to track per panel
 		MAX_TAP_TIME = 250, // taps longer than this will not result in mouse click events

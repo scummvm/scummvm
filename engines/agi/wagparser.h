@@ -33,22 +33,22 @@ namespace Agi {
  * And then there's the data with as many bytes as defined in the header's property size variable.
  */
 class WagProperty {
-// Constants, enumerations etc
+	// Constants, enumerations etc
 public:
 	/**
 	 * Property codes taken from WinAGI 1.1.21's source code file WinAGI/AGIObjects.bas.
 	 */
 	enum WagPropertyCode {
 		PC_GAMEDESC = 129, ///< Game description (WinAGI 1.1.21 limits these to 4096 bytes)
-		PC_GAMEAUTHOR,     ///< Game author (WinAGI 1.1.21 limits these to 256 bytes)
-		PC_GAMEID,         ///< Game ID
-		PC_INTVERSION,     ///< Interpreter version (WinAGI 1.1.21 defaults to version 2.917)
-		PC_GAMELAST,       ///< Last edit date
-		PC_GAMEVERSION,    ///< Game version (WinAGI 1.1.21 limits these to 256 bytes)
-		PC_GAMEABOUT,      ///< About game (WinAGI 1.1.21 limits these to 4096 bytes)
-		PC_GAMEEXEC,       ///< Game executable
-		PC_RESDIR,         ///< Resource directory name
-		PC_DEFSYNTAX,      ///< Default syntax
+		PC_GAMEAUTHOR, ///< Game author (WinAGI 1.1.21 limits these to 256 bytes)
+		PC_GAMEID, ///< Game ID
+		PC_INTVERSION, ///< Interpreter version (WinAGI 1.1.21 defaults to version 2.917)
+		PC_GAMELAST, ///< Last edit date
+		PC_GAMEVERSION, ///< Game version (WinAGI 1.1.21 limits these to 256 bytes)
+		PC_GAMEABOUT, ///< About game (WinAGI 1.1.21 limits these to 4096 bytes)
+		PC_GAMEEXEC, ///< Game executable
+		PC_RESDIR, ///< Resource directory name
+		PC_DEFSYNTAX, ///< Default syntax
 		PC_INVOBJDESC = 144,
 		PC_VOCABWORDDESC = 160,
 		PC_PALETTE = 172,
@@ -87,7 +87,7 @@ public:
 		PT_UNDEFINED = 0x100 ///< An undefined property type (Added for ScummVM).
 	};
 
-// Constructors, destructors, operators etc
+	// Constructors, destructors, operators etc
 public:
 	/**
 	 * Creates an empty WagProperty object.
@@ -110,7 +110,7 @@ public:
 	 */
 	WagProperty &operator=(const WagProperty &other);
 
-// Non-public helper methods
+	// Non-public helper methods
 protected:
 	/**
 	 * Sets the default values for member variables.
@@ -128,7 +128,7 @@ protected:
 	 */
 	void deepCopy(const WagProperty &other);
 
-// Public methods that have side-effects
+	// Public methods that have side-effects
 public:
 	/**
 	 * Read in a property (Header and data).
@@ -142,7 +142,7 @@ public:
 	 */
 	void clear();
 
-// Public access functions
+	// Public access functions
 public:
 	/**
 	 * Was the property read ok from the source stream?
@@ -180,23 +180,22 @@ public:
 	 */
 	const char *getData() const { return _propData; }
 
-// Member variables
+	// Member variables
 protected:
-	bool _readOk;                   ///< Was the property read ok from the source stream?
+	bool _readOk; ///< Was the property read ok from the source stream?
 	enum WagPropertyCode _propCode; ///< Property code (Part of the property's header)
 	enum WagPropertyType _propType; ///< Property type (Part of the property's header)
-	byte _propNum;                  ///< Property number (Part of the property's header)
-	uint16 _propSize;               ///< Property's size (Part of the property's header)
-	char *_propData;                ///< The property's data (Plus a trailing zero for C-style string access)
+	byte _propNum; ///< Property number (Part of the property's header)
+	uint16 _propSize; ///< Property's size (Part of the property's header)
+	char *_propData; ///< The property's data (Plus a trailing zero for C-style string access)
 };
-
 
 /**
  * Class for parsing *.wag files created by WinAGI.
  * Using this class you can get information about fanmade AGI games if they have provided a *.wag file with them.
  */
 class WagFileParser {
-// Constants, type definitions, enumerations etc.
+	// Constants, type definitions, enumerations etc.
 public:
 	enum {
 		WINAGI_VERSION_LENGTH = 16 ///< WinAGI's version string's length (Always 16)
@@ -278,10 +277,10 @@ protected:
 	 */
 	bool endOfProperties(const Common::SeekableReadStream &stream) const;
 
-// Member variables
+	// Member variables
 protected:
 	PropertyList _propList; ///< List of loaded properties from the file.
-	bool         _parsedOk; ///< Did the parsing of the file go ok?
+	bool _parsedOk; ///< Did the parsing of the file go ok?
 };
 
 } // End of namespace Agi

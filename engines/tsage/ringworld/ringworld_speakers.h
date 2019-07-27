@@ -25,310 +25,313 @@
 
 #include "common/scummsys.h"
 #include "tsage/converse.h"
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
 #include "tsage/ringworld/ringworld_logic.h"
+#include "tsage/scenes.h"
 
 namespace TsAGE {
 
 namespace Ringworld {
 
-using namespace TsAGE;
+	using namespace TsAGE;
 
-class SpeakerGText : public Speaker {
-public:
-	SceneObject _sceneObject;
-public:
-	SpeakerGText();
-
-	virtual Common::String getClassName() { return "SpeakerGText"; }
-	virtual void setText(const Common::String &msg);
-	virtual void removeText();
-};
-
-class SpeakerPOR : public AnimatedSpeaker {
-	class SpeakerAction1 : public SpeakerAction {
+	class SpeakerGText : public Speaker {
 	public:
-		virtual void signal();
+		SceneObject _sceneObject;
+
+	public:
+		SpeakerGText();
+
+		virtual Common::String getClassName() { return "SpeakerGText"; }
+		virtual void setText(const Common::String &msg);
+		virtual void removeText();
 	};
 
-public:
-	SceneObject _object3;
-	SpeakerAction1 _action2;
-public:
-	SpeakerPOR();
-	virtual Common::String getClassName() { return "SpeakerPOR"; }
-	virtual void setText(const Common::String &msg);
-};
+	class SpeakerPOR : public AnimatedSpeaker {
+		class SpeakerAction1 : public SpeakerAction {
+		public:
+			virtual void signal();
+		};
 
-class SpeakerOR : public AnimatedSpeaker {
-public:
-	SpeakerOR();
-	virtual Common::String getClassName() { return "SpeakerOR"; }
-	virtual void setText(const Common::String &msg);
-};
+	public:
+		SceneObject _object3;
+		SpeakerAction1 _action2;
 
-class SpeakerOText : public SpeakerGText {
-public:
-	SpeakerOText();
+	public:
+		SpeakerPOR();
+		virtual Common::String getClassName() { return "SpeakerPOR"; }
+		virtual void setText(const Common::String &msg);
+	};
 
-	virtual Common::String getClassName() { return "SpeakerOText"; }
-};
+	class SpeakerOR : public AnimatedSpeaker {
+	public:
+		SpeakerOR();
+		virtual Common::String getClassName() { return "SpeakerOR"; }
+		virtual void setText(const Common::String &msg);
+	};
 
-class SpeakerPOText : public ScreenSpeaker {
-public:
-	SpeakerPOText();
+	class SpeakerOText : public SpeakerGText {
+	public:
+		SpeakerOText();
 
-	virtual Common::String getClassName() { return "SpeakerPOText"; }
-};
+		virtual Common::String getClassName() { return "SpeakerOText"; }
+	};
 
-class SpeakerSText : public ScreenSpeaker {
-public:
-	SpeakerSText();
+	class SpeakerPOText : public ScreenSpeaker {
+	public:
+		SpeakerPOText();
 
-	virtual Common::String getClassName() { return "SpeakerSText"; }
-};
+		virtual Common::String getClassName() { return "SpeakerPOText"; }
+	};
 
-class SpeakerQText : public ScreenSpeaker {
-public:
-	SpeakerQText();
+	class SpeakerSText : public ScreenSpeaker {
+	public:
+		SpeakerSText();
 
-	virtual Common::String getClassName() { return "SpeakerQText"; }
-};
+		virtual Common::String getClassName() { return "SpeakerSText"; }
+	};
 
-class SpeakerMText : public ScreenSpeaker {
-public:
-	SpeakerMText();
+	class SpeakerQText : public ScreenSpeaker {
+	public:
+		SpeakerQText();
 
-	virtual Common::String getClassName() { return "SpeakerMText"; }
-};
+		virtual Common::String getClassName() { return "SpeakerQText"; }
+	};
 
-class SpeakerCText : public ScreenSpeaker {
-public:
-	SpeakerCText();
+	class SpeakerMText : public ScreenSpeaker {
+	public:
+		SpeakerMText();
 
-	virtual Common::String getClassName() { return "SpeakerCText"; }
-};
+		virtual Common::String getClassName() { return "SpeakerMText"; }
+	};
 
-class SpeakerEText : public ScreenSpeaker {
-public:
-	SpeakerEText();
+	class SpeakerCText : public ScreenSpeaker {
+	public:
+		SpeakerCText();
 
-	virtual Common::String getClassName() { return "SpeakerEText"; }
-};
+		virtual Common::String getClassName() { return "SpeakerCText"; }
+	};
 
-class SpeakerGR : public AnimatedSpeaker {
-public:
-	SpeakerGR();
+	class SpeakerEText : public ScreenSpeaker {
+	public:
+		SpeakerEText();
 
-	virtual Common::String getClassName() { return "SpeakerGR"; }
-	virtual void setText(const Common::String &msg);
-};
+		virtual Common::String getClassName() { return "SpeakerEText"; }
+	};
 
-class SpeakerHText : public ScreenSpeaker {
-public:
-	SpeakerHText();
+	class SpeakerGR : public AnimatedSpeaker {
+	public:
+		SpeakerGR();
 
-	virtual Common::String getClassName() { return "SpeakerHText"; }
-};
+		virtual Common::String getClassName() { return "SpeakerGR"; }
+		virtual void setText(const Common::String &msg);
+	};
 
-class SpeakerPText : public ScreenSpeaker {
-public:
-	SpeakerPText();
+	class SpeakerHText : public ScreenSpeaker {
+	public:
+		SpeakerHText();
 
-	virtual Common::String getClassName() { return "SpeakerPText"; }
-};
+		virtual Common::String getClassName() { return "SpeakerHText"; }
+	};
 
-class SpeakerCHFText : public ScreenSpeaker {
-public:
-	SpeakerCHFText();
+	class SpeakerPText : public ScreenSpeaker {
+	public:
+		SpeakerPText();
 
-	virtual Common::String getClassName() { return "SpeakerCHFText"; }
-};
+		virtual Common::String getClassName() { return "SpeakerPText"; }
+	};
 
-class SpeakerSKText : public ScreenSpeaker {
-public:
-	SpeakerSKText();
+	class SpeakerCHFText : public ScreenSpeaker {
+	public:
+		SpeakerCHFText();
 
-	virtual Common::String getClassName() { return "SpeakerSKText"; }
-};
+		virtual Common::String getClassName() { return "SpeakerCHFText"; }
+	};
 
-class SpeakerCDRText : public ScreenSpeaker {
-public:
-	SpeakerCDRText();
+	class SpeakerSKText : public ScreenSpeaker {
+	public:
+		SpeakerSKText();
 
-	virtual Common::String getClassName() { return "SpeakerCDRText"; }
-};
+		virtual Common::String getClassName() { return "SpeakerSKText"; }
+	};
 
-class SpeakerFLText : public ScreenSpeaker {
-public:
-	SpeakerFLText();
+	class SpeakerCDRText : public ScreenSpeaker {
+	public:
+		SpeakerCDRText();
 
-	virtual Common::String getClassName() { return "SpeakerFLText"; }
-};
+		virtual Common::String getClassName() { return "SpeakerCDRText"; }
+	};
 
-class SpeakerBatText : public ScreenSpeaker {
-public:
-	SpeakerBatText();
+	class SpeakerFLText : public ScreenSpeaker {
+	public:
+		SpeakerFLText();
 
-	virtual Common::String getClassName() { return "SpeakerFLText"; }
-};
+		virtual Common::String getClassName() { return "SpeakerFLText"; }
+	};
 
-class SpeakerQR : public AnimatedSpeaker {
-public:
-	SpeakerQR();
+	class SpeakerBatText : public ScreenSpeaker {
+	public:
+		SpeakerBatText();
 
-	virtual Common::String getClassName() { return "SpeakerQR"; }
-	virtual void setText(const Common::String &msg);
-};
+		virtual Common::String getClassName() { return "SpeakerFLText"; }
+	};
 
-class SpeakerQU : public AnimatedSpeaker {
-public:
-	SpeakerQU();
+	class SpeakerQR : public AnimatedSpeaker {
+	public:
+		SpeakerQR();
 
-	virtual Common::String getClassName() { return "SpeakerQU"; }
-	virtual void setText(const Common::String &msg);
-};
+		virtual Common::String getClassName() { return "SpeakerQR"; }
+		virtual void setText(const Common::String &msg);
+	};
 
-class SpeakerSKL : public AnimatedSpeaker {
-public:
-	SpeakerSKL();
+	class SpeakerQU : public AnimatedSpeaker {
+	public:
+		SpeakerQU();
 
-	virtual Common::String getClassName() { return "SpeakerQL"; }
-	virtual void setText(const Common::String &msg);
-};
+		virtual Common::String getClassName() { return "SpeakerQU"; }
+		virtual void setText(const Common::String &msg);
+	};
 
-class SpeakerQL : public AnimatedSpeaker {
-public:
-	SpeakerQL();
+	class SpeakerSKL : public AnimatedSpeaker {
+	public:
+		SpeakerSKL();
 
-	virtual Common::String getClassName() { return "SpeakerQL"; }
-	virtual void setText(const Common::String &msg);
-};
+		virtual Common::String getClassName() { return "SpeakerQL"; }
+		virtual void setText(const Common::String &msg);
+	};
 
-class SpeakerSR : public AnimatedSpeaker {
-public:
-	SceneObject _object3;
-public:
-	SpeakerSR();
+	class SpeakerQL : public AnimatedSpeaker {
+	public:
+		SpeakerQL();
 
-	virtual Common::String getClassName() { return "SpeakerSR"; }
-	void setText(const Common::String &msg);
-};
+		virtual Common::String getClassName() { return "SpeakerQL"; }
+		virtual void setText(const Common::String &msg);
+	};
 
-class SpeakerSL : public AnimatedSpeaker {
-public:
-	SpeakerSL();
+	class SpeakerSR : public AnimatedSpeaker {
+	public:
+		SceneObject _object3;
 
-	virtual Common::String getClassName() { return "SpeakerSL"; }
-	virtual void setText(const Common::String &msg);
-};
+	public:
+		SpeakerSR();
 
-class SpeakerCR : public AnimatedSpeaker {
-public:
-	SpeakerCR();
+		virtual Common::String getClassName() { return "SpeakerSR"; }
+		void setText(const Common::String &msg);
+	};
 
-	virtual Common::String getClassName() { return "SpeakerCR"; }
-	virtual void setText(const Common::String &msg);
-};
+	class SpeakerSL : public AnimatedSpeaker {
+	public:
+		SpeakerSL();
 
-class SpeakerMR : public AnimatedSpeaker {
-public:
-	SpeakerMR();
+		virtual Common::String getClassName() { return "SpeakerSL"; }
+		virtual void setText(const Common::String &msg);
+	};
 
-	virtual Common::String getClassName() { return "SpeakerMR"; }
-	virtual void setText(const Common::String &msg);
-};
+	class SpeakerCR : public AnimatedSpeaker {
+	public:
+		SpeakerCR();
 
-class SpeakerSAL : public AnimatedSpeaker {
-public:
-	SpeakerSAL();
+		virtual Common::String getClassName() { return "SpeakerCR"; }
+		virtual void setText(const Common::String &msg);
+	};
 
-	virtual Common::String getClassName() { return "SpeakerSAL"; }
-	virtual void setText(const Common::String &msg);
-};
+	class SpeakerMR : public AnimatedSpeaker {
+	public:
+		SpeakerMR();
 
-class SpeakerML : public AnimatedSpeaker {
-public:
-	SpeakerML();
+		virtual Common::String getClassName() { return "SpeakerMR"; }
+		virtual void setText(const Common::String &msg);
+	};
 
-	virtual Common::String getClassName() { return "SpeakerML"; }
-	virtual void setText(const Common::String &msg);
-};
+	class SpeakerSAL : public AnimatedSpeaker {
+	public:
+		SpeakerSAL();
 
-class SpeakerCHFL : public AnimatedSpeaker {
-public:
-	SpeakerCHFL();
+		virtual Common::String getClassName() { return "SpeakerSAL"; }
+		virtual void setText(const Common::String &msg);
+	};
 
-	virtual Common::String getClassName() { return "SpeakerCHFL"; }
-	virtual void setText(const Common::String &msg);
-};
+	class SpeakerML : public AnimatedSpeaker {
+	public:
+		SpeakerML();
 
-class SpeakerCHFR : public AnimatedSpeaker {
-public:
-	SpeakerCHFR();
+		virtual Common::String getClassName() { return "SpeakerML"; }
+		virtual void setText(const Common::String &msg);
+	};
 
-	virtual Common::String getClassName() { return "SpeakerCHFR"; }
-	virtual void setText(const Common::String &msg);
-};
+	class SpeakerCHFL : public AnimatedSpeaker {
+	public:
+		SpeakerCHFL();
 
-class SpeakerPL : public AnimatedSpeaker {
-public:
-	SceneObject _object3;
-	SpeakerAction _speakerAction2;
+		virtual Common::String getClassName() { return "SpeakerCHFL"; }
+		virtual void setText(const Common::String &msg);
+	};
 
-	SpeakerPL();
+	class SpeakerCHFR : public AnimatedSpeaker {
+	public:
+		SpeakerCHFR();
 
-	virtual Common::String getClassName() { return "SpeakerPL"; }
-	virtual void setText(const Common::String &msg);
-	virtual void removeText();
-};
+		virtual Common::String getClassName() { return "SpeakerCHFR"; }
+		virtual void setText(const Common::String &msg);
+	};
 
-class SpeakerPR : public AnimatedSpeaker {
-public:
-	SceneObject _object3;
-	SpeakerAction _speakerAction2;
+	class SpeakerPL : public AnimatedSpeaker {
+	public:
+		SceneObject _object3;
+		SpeakerAction _speakerAction2;
 
-	SpeakerPR();
+		SpeakerPL();
 
-	virtual Common::String getClassName() { return "SpeakerPR"; }
-	virtual void setText(const Common::String &msg);
-	virtual void removeText();
-};
+		virtual Common::String getClassName() { return "SpeakerPL"; }
+		virtual void setText(const Common::String &msg);
+		virtual void removeText();
+	};
 
-class SpeakerCDR : public AnimatedSpeaker {
-public:
-	SpeakerCDR();
+	class SpeakerPR : public AnimatedSpeaker {
+	public:
+		SceneObject _object3;
+		SpeakerAction _speakerAction2;
 
-	virtual Common::String getClassName() { return "SpeakerCDR"; }
-	virtual void setText(const Common::String &msg);
-};
+		SpeakerPR();
 
-class SpeakerCDL : public AnimatedSpeaker {
-public:
-	SpeakerCDL();
+		virtual Common::String getClassName() { return "SpeakerPR"; }
+		virtual void setText(const Common::String &msg);
+		virtual void removeText();
+	};
 
-	virtual Common::String getClassName() { return "SpeakerCDL"; }
-	virtual void setText(const Common::String &msg);
-};
+	class SpeakerCDR : public AnimatedSpeaker {
+	public:
+		SpeakerCDR();
 
-class SpeakerFLL : public AnimatedSpeaker {
-public:
-	SpeakerFLL();
+		virtual Common::String getClassName() { return "SpeakerCDR"; }
+		virtual void setText(const Common::String &msg);
+	};
 
-	virtual Common::String getClassName() { return "SpeakerFLL"; }
-	virtual void setText(const Common::String &msg);
-};
+	class SpeakerCDL : public AnimatedSpeaker {
+	public:
+		SpeakerCDL();
 
-class SpeakerBatR : public AnimatedSpeaker {
-public:
-	SpeakerBatR();
+		virtual Common::String getClassName() { return "SpeakerCDL"; }
+		virtual void setText(const Common::String &msg);
+	};
 
-	virtual Common::String getClassName() { return "SpeakerBatR"; }
-	virtual void setText(const Common::String &msg);
-};
+	class SpeakerFLL : public AnimatedSpeaker {
+	public:
+		SpeakerFLL();
+
+		virtual Common::String getClassName() { return "SpeakerFLL"; }
+		virtual void setText(const Common::String &msg);
+	};
+
+	class SpeakerBatR : public AnimatedSpeaker {
+	public:
+		SpeakerBatR();
+
+		virtual Common::String getClassName() { return "SpeakerBatR"; }
+		virtual void setText(const Common::String &msg);
+	};
 
 } // End of namespace Ringworld
 

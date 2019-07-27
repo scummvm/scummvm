@@ -23,13 +23,13 @@
 #ifndef SCI_GRAPHICS_HELPERS_H
 #define SCI_GRAPHICS_HELPERS_H
 
-#include "common/endian.h"	// for READ_LE_UINT16
+#include "common/endian.h" // for READ_LE_UINT16
 #include "common/rect.h"
 #include "common/serializer.h"
 #ifdef ENABLE_SCI32
-#include "common/rational.h"
-#include "graphics/pixelformat.h"
-#include "graphics/surface.h"
+#	include "common/rational.h"
+#	include "graphics/pixelformat.h"
+#	include "graphics/surface.h"
 #endif
 #include "sci/engine/vm_types.h"
 
@@ -41,7 +41,7 @@ namespace Sci {
 #define MAX_CACHED_VIEWS 50
 
 enum ShakeDirection {
-	kShakeVertical   = 1,
+	kShakeVertical = 1,
 	kShakeHorizontal = 2
 };
 
@@ -64,10 +64,19 @@ struct Port {
 	int16 penMode;
 	uint16 counterTillFree;
 
-	Port(uint16 theId) : id(theId), top(0), left(0),
-		curTop(0), curLeft(0),
-		fontHeight(0), fontId(0), greyedOutput(false),
-		penClr(0), backClr(0xFF), penMode(0), counterTillFree(0) {
+	Port(uint16 theId)
+	  : id(theId)
+	  , top(0)
+	  , left(0)
+	  , curTop(0)
+	  , curLeft(0)
+	  , fontHeight(0)
+	  , fontId(0)
+	  , greyedOutput(false)
+	  , penClr(0)
+	  , backClr(0xFF)
+	  , penMode(0)
+	  , counterTillFree(0) {
 	}
 
 	bool isWindow() const { return id >= PORTS_FIRSTWINDOWID && id != 0xFFFF; }
@@ -83,10 +92,13 @@ struct Window : public Port, public Common::Serializable {
 	Common::String title;
 	bool bDrawn;
 
-	Window(uint16 theId) : Port(theId),
-		wndStyle(0), saveScreenMask(0),
-		hSaved1(NULL_REG), hSaved2(NULL_REG),
-		bDrawn(false) {
+	Window(uint16 theId)
+	  : Port(theId)
+	  , wndStyle(0)
+	  , saveScreenMask(0)
+	  , hSaved1(NULL_REG)
+	  , hSaved2(NULL_REG)
+	  , bDrawn(false) {
 	}
 
 	void syncRect(Common::Serializer &ser, Common::Rect &targetRect) {
@@ -189,7 +201,7 @@ inline void mulru(Common::Rect &rect, const Common::Rational &ratioX, const Comm
  * Returns number of returned parts (in `outRects`) otherwise.
  * (In particular, this returns 0 if `r` is contained in `other`.)
  */
-inline int splitRects(Common::Rect r, const Common::Rect &other, Common::Rect(&outRects)[4]) {
+inline int splitRects(Common::Rect r, const Common::Rect &other, Common::Rect (&outRects)[4]) {
 	if (!r.intersects(other)) {
 		return -1;
 	}
@@ -271,12 +283,12 @@ struct PalSchedule {
 
 // Game view types, sorted by the number of colors
 enum ViewType {
-	kViewUnknown,   // uninitialized, or non-SCI
-	kViewEga,       // EGA SCI0/SCI1 and Amiga SCI0/SCI1 ECS 16 colors
-	kViewAmiga,     // Amiga SCI1 ECS 32 colors
-	kViewAmiga64,   // Amiga SCI1 AGA 64 colors (i.e. Longbow)
-	kViewVga,       // VGA SCI1 256 colors
-	kViewVga11      // VGA SCI1.1 and newer 256 colors
+	kViewUnknown, // uninitialized, or non-SCI
+	kViewEga, // EGA SCI0/SCI1 and Amiga SCI0/SCI1 ECS 16 colors
+	kViewAmiga, // Amiga SCI1 ECS 32 colors
+	kViewAmiga64, // Amiga SCI1 AGA 64 colors (i.e. Longbow)
+	kViewVga, // VGA SCI1 256 colors
+	kViewVga11 // VGA SCI1.1 and newer 256 colors
 };
 
 } // End of namespace Sci

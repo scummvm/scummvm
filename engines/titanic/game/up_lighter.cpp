@@ -28,17 +28,21 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CUpLighter, CDropTarget)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(PumpingMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(EnterRoomMsg)
-	ON_MESSAGE(ChangeSeasonMsg)
-	ON_MESSAGE(TimerMsg)
-	ON_MESSAGE(LeaveRoomMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(PumpingMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(ChangeSeasonMsg)
+ON_MESSAGE(TimerMsg)
+ON_MESSAGE(LeaveRoomMsg)
 END_MESSAGE_MAP()
 
-CUpLighter::CUpLighter() : CDropTarget(), _hosePumping(false),
-	_inRoom(0), _isSpring(false), _noseDispensed(false) {
+CUpLighter::CUpLighter()
+  : CDropTarget()
+  , _hosePumping(false)
+  , _inRoom(0)
+  , _isSpring(false)
+  , _noseDispensed(false) {
 }
 
 void CUpLighter::save(SimpleFile *file, int indent) {
@@ -87,7 +91,7 @@ bool CUpLighter::PumpingMsg(CPumpingMsg *msg) {
 bool CUpLighter::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	CTrueTalkTriggerActionMsg triggerMsg(280245, 0, 0);
 	triggerMsg.execute(getRoot(), CParrot::_type,
-		MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_CLASS_DEF | MSGFLAG_SCAN);
+	                   MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_CLASS_DEF | MSGFLAG_SCAN);
 	return true;
 }
 

@@ -27,7 +27,7 @@
 
 namespace Scumm {
 
-#define FOW_ANIM_FRAME_COUNT	38
+#define FOW_ANIM_FRAME_COUNT 38
 
 void Moonbase::initFOW() {
 	_fowSentinelImage = -1;
@@ -146,21 +146,21 @@ bool Moonbase::setFOWImage(int image) {
 }
 
 enum FOWElement {
-	FOW_EMPTY	= 0,
-	FOW_SOLID	= 1,
+	FOW_EMPTY = 0,
+	FOW_SOLID = 1,
 
-	FF_L		= 0x01,
-	FF_R		= 0x02,
-	FF_T		= 0x04,
-	FF_B		= 0x08,
-	FF_T_L		= 0x10,
-	FF_T_R		= 0x20,
-	FF_B_L		= 0x40,
-	FF_B_R		= 0x80,
-	FF_Q_A		= (FF_L | FF_T | FF_T_L),
-	FF_Q_B		= (FF_R | FF_T | FF_T_R),
-	FF_Q_C		= (FF_L | FF_B | FF_B_L),
-	FF_Q_D		= (FF_R | FF_B | FF_B_R)
+	FF_L = 0x01,
+	FF_R = 0x02,
+	FF_T = 0x04,
+	FF_B = 0x08,
+	FF_T_L = 0x10,
+	FF_T_R = 0x20,
+	FF_B_L = 0x40,
+	FF_B_R = 0x80,
+	FF_Q_A = (FF_L | FF_T | FF_T_L),
+	FF_Q_B = (FF_R | FF_T | FF_T_R),
+	FF_Q_C = (FF_L | FF_B | FF_B_L),
+	FF_Q_D = (FF_R | FF_B | FF_B_R)
 };
 
 int Moonbase::readFOWVisibilityArray(int array, int y, int x) {
@@ -171,7 +171,7 @@ int Moonbase::readFOWVisibilityArray(int array, int y, int x) {
 }
 
 void Moonbase::setFOWInfo(int fowInfoArray, int downDim, int acrossDim, int viewX, int viewY, int clipX1,
-				int clipY1, int clipX2, int clipY2, int technique, int nFrame) {
+                          int clipY1, int clipX2, int clipY2, int technique, int nFrame) {
 	if (!_fowImage)
 		return;
 
@@ -208,13 +208,43 @@ void Moonbase::setFOWInfo(int fowInfoArray, int downDim, int acrossDim, int view
 	_fowVh = (((_fowMvy + view_H + th - 1) / th) - _fowVty1) + 1;
 
 	// Build the connectivity table
-	int t = (_fowVty1 - 1); if (t >= dh) { t = 0; } else if (t < 0) { t = (dh - 1); }
-	int m = (_fowVty1 + 0); if (m >= dh) { m = 0; } else if (m < 0) { m = (dh - 1); }
-	int b = (_fowVty1 + 1); if (b >= dh) { b = 0; } else if (b < 0) { b = (dh - 1); }
+	int t = (_fowVty1 - 1);
+	if (t >= dh) {
+		t = 0;
+	} else if (t < 0) {
+		t = (dh - 1);
+	}
+	int m = (_fowVty1 + 0);
+	if (m >= dh) {
+		m = 0;
+	} else if (m < 0) {
+		m = (dh - 1);
+	}
+	int b = (_fowVty1 + 1);
+	if (b >= dh) {
+		b = 0;
+	} else if (b < 0) {
+		b = (dh - 1);
+	}
 
-	int il = (_fowVtx1 - 1); if (il >= dh) { il = 0; } else if (il < 0) { il = (dw - 1); }
-	int ic = (_fowVtx1 + 0); if (ic >= dh) { ic = 0; } else if (ic < 0) { ic = (dw - 1); }
-	int ir = (_fowVtx1 + 1); if (ir >= dh) { ir = 0; } else if (ir < 0) { ir = (dw - 1); }
+	int il = (_fowVtx1 - 1);
+	if (il >= dh) {
+		il = 0;
+	} else if (il < 0) {
+		il = (dw - 1);
+	}
+	int ic = (_fowVtx1 + 0);
+	if (ic >= dh) {
+		ic = 0;
+	} else if (ic < 0) {
+		ic = (dw - 1);
+	}
+	int ir = (_fowVtx1 + 1);
+	if (ir >= dh) {
+		ir = 0;
+	} else if (ir < 0) {
+		ir = (dw - 1);
+	}
 
 	int dataOffset = (_fowVw * 3);
 	int dataOffset2 = (dataOffset * 2);
@@ -238,14 +268,22 @@ void Moonbase::setFOWInfo(int fowInfoArray, int downDim, int acrossDim, int view
 			if (visibility == FOW_EMPTY) {
 				uint32 bits = 0;
 
-				if (readFOWVisibilityArray(fowInfoArray, t, l) != 0) bits |= FF_T_L;
-				if (readFOWVisibilityArray(fowInfoArray, t, c) != 0) bits |= FF_T;
-				if (readFOWVisibilityArray(fowInfoArray, t, r) != 0) bits |= FF_T_R;
-				if (readFOWVisibilityArray(fowInfoArray, m, l) != 0) bits |= FF_L;
-				if (readFOWVisibilityArray(fowInfoArray, m, r) != 0) bits |= FF_R;
-				if (readFOWVisibilityArray(fowInfoArray, b, l) != 0) bits |= FF_B_L;
-				if (readFOWVisibilityArray(fowInfoArray, b, c) != 0) bits |= FF_B;
-				if (readFOWVisibilityArray(fowInfoArray, b, r) != 0) bits |= FF_B_R;
+				if (readFOWVisibilityArray(fowInfoArray, t, l) != 0)
+					bits |= FF_T_L;
+				if (readFOWVisibilityArray(fowInfoArray, t, c) != 0)
+					bits |= FF_T;
+				if (readFOWVisibilityArray(fowInfoArray, t, r) != 0)
+					bits |= FF_T_R;
+				if (readFOWVisibilityArray(fowInfoArray, m, l) != 0)
+					bits |= FF_L;
+				if (readFOWVisibilityArray(fowInfoArray, m, r) != 0)
+					bits |= FF_R;
+				if (readFOWVisibilityArray(fowInfoArray, b, l) != 0)
+					bits |= FF_B_L;
+				if (readFOWVisibilityArray(fowInfoArray, b, c) != 0)
+					bits |= FF_B;
+				if (readFOWVisibilityArray(fowInfoArray, b, r) != 0)
+					bits |= FF_B_R;
 
 				if (bits) {
 					*pRenderTableA++ = 1;
@@ -253,44 +291,28 @@ void Moonbase::setFOWInfo(int fowInfoArray, int downDim, int acrossDim, int view
 
 					// Quadrant (A)
 					if (bits & FF_Q_A) {
-						*pRenderTableA++ = (
-							((FF_L   & bits) ? 1 : 0) |
-							((FF_T   & bits) ? 2 : 0) |
-							((FF_T_L & bits) ? 4 : 0)
-						) + 0;
+						*pRenderTableA++ = (((FF_L & bits) ? 1 : 0) | ((FF_T & bits) ? 2 : 0) | ((FF_T_L & bits) ? 4 : 0)) + 0;
 					} else {
 						*pRenderTableA++ = 0;
 					}
 
 					// Quadrant (B)
 					if (bits & FF_Q_B) {
-						*pRenderTableA++ = (
-							((FF_R   & bits) ? 1 : 0) |
-							((FF_T   & bits) ? 2 : 0) |
-							((FF_T_R & bits) ? 4 : 0)
-						) + 8;
+						*pRenderTableA++ = (((FF_R & bits) ? 1 : 0) | ((FF_T & bits) ? 2 : 0) | ((FF_T_R & bits) ? 4 : 0)) + 8;
 					} else {
 						*pRenderTableA++ = 0;
 					}
 
 					// Quadrant (C)
 					if (bits & FF_Q_C) {
-						*pRenderTableB++ = (
-							((FF_L   & bits) ? 1 : 0) |
-							((FF_B   & bits) ? 2 : 0) |
-							((FF_B_L & bits) ? 4 : 0)
-						) + 16;
+						*pRenderTableB++ = (((FF_L & bits) ? 1 : 0) | ((FF_B & bits) ? 2 : 0) | ((FF_B_L & bits) ? 4 : 0)) + 16;
 					} else {
 						*pRenderTableB++ = 0;
 					}
 
 					// Quadrant (D)
 					if (bits & FF_Q_D) {
-						*pRenderTableB++ = (
-							((FF_R   & bits) ? 1 : 0) |
-							((FF_B   & bits) ? 2 : 0) |
-							((FF_B_R & bits) ? 4 : 0)
-						) + 24;
+						*pRenderTableB++ = (((FF_R & bits) ? 1 : 0) | ((FF_B & bits) ? 2 : 0) | ((FF_B_R & bits) ? 4 : 0)) + 24;
 					} else {
 						*pRenderTableB++ = 0;
 					}
@@ -313,14 +335,26 @@ void Moonbase::setFOWInfo(int fowInfoArray, int downDim, int acrossDim, int view
 				}
 			}
 
-			if (++l >= dw) { l = 0; }
-			if (++c >= dw) { c = 0; }
-			if (++r >= dw) { r = 0; }
+			if (++l >= dw) {
+				l = 0;
+			}
+			if (++c >= dw) {
+				c = 0;
+			}
+			if (++r >= dw) {
+				r = 0;
+			}
 		}
 
-		if (++t >= dh) { t = 0; }
-		if (++m >= dh) { m = 0; }
-		if (++b >= dh) { b = 0; }
+		if (++t >= dh) {
+			t = 0;
+		}
+		if (++m >= dh) {
+			m = 0;
+		}
+		if (++b >= dh) {
+			b = 0;
+		}
 	}
 
 	_fowCurrentFOWFrame = (nFrame >= 0) ? (nFrame % _fowAnimationFrames) : ((-nFrame) % _fowAnimationFrames);

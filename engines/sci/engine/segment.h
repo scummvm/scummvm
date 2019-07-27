@@ -27,21 +27,21 @@
 #include "common/str.h"
 #include "sci/engine/object.h"
 #include "sci/engine/vm.h"
-#include "sci/engine/vm_types.h"	// for reg_t
+#include "sci/engine/vm_types.h" // for reg_t
 #include "sci/util.h"
 #ifdef ENABLE_SCI32
-#include "sci/graphics/palette32.h"
+#	include "sci/graphics/palette32.h"
 #endif
 
 namespace Sci {
 
 struct SegmentRef {
-	bool isRaw;	///< true if data is raw, false if it is a reg_t sequence
+	bool isRaw; ///< true if data is raw, false if it is a reg_t sequence
 	union {
 		byte *raw;
 		reg_t *reg;
 	};
-	int maxSize;	///< number of available bytes
+	int maxSize; ///< number of available bytes
 
 	// FIXME: Perhaps a generic 'offset' is more appropriate here
 	bool skipByte; ///< true if referencing the 2nd data byte of *reg, false otherwise
@@ -52,11 +52,14 @@ struct SegmentRef {
 	// TODO: Add this?
 	//SegmentType type;
 
-	SegmentRef() : isRaw(true), raw(0), maxSize(0), skipByte(false) {}
+	SegmentRef()
+	  : isRaw(true)
+	  , raw(0)
+	  , maxSize(0)
+	  , skipByte(false) {}
 
 	bool isValid() const { return (isRaw ? raw != 0 : reg != 0); }
 };
-
 
 enum SegmentType {
 	SEG_TYPE_INVALID = 0,
@@ -69,7 +72,7 @@ enum SegmentType {
 	SEG_TYPE_NODES = 7,
 	SEG_TYPE_HUNK = 8,
 	SEG_TYPE_DYNMEM = 9,
-	// 10 used to be string fragments, now obsolete
+// 10 used to be string fragments, now obsolete
 
 #ifdef ENABLE_SCI32
 	SEG_TYPE_ARRAY = 11,
@@ -87,7 +90,8 @@ public:
 	static SegmentObj *createSegmentObj(SegmentType type);
 
 public:
-	SegmentObj(SegmentType type) : _type(type) {}
+	SegmentObj(SegmentType type)
+	  : _type(type) {}
 	virtual ~SegmentObj() {}
 
 	inline SegmentType getType() const { return _type; }
@@ -150,7 +154,9 @@ struct LocalVariables : public SegmentObj {
 	Common::Array<reg_t> _locals;
 
 public:
-	LocalVariables(): SegmentObj(SEG_TYPE_LOCALS), script_id(0) { }
+	LocalVariables()
+	  : SegmentObj(SEG_TYPE_LOCALS)
+	  , script_id(0) {}
 
 	virtual bool isValidOffset(uint32 offset) const {
 		return offset < _locals.size() * 2;
@@ -168,7 +174,10 @@ struct DataStack : SegmentObj {
 	reg_t *_entries;
 
 public:
-	DataStack() : SegmentObj(SEG_TYPE_STACK), _capacity(0), _entries(NULL) { }
+	DataStack()
+	  : SegmentObj(SEG_TYPE_STACK)
+	  , _capacity(0)
+	  , _entries(NULL) {}
 	~DataStack() {
 		free(_entries);
 		_entries = NULL;
@@ -216,7 +225,8 @@ struct List {
 	 */
 	int numRecursions;
 
-	List() : numRecursions(0) {}
+	List()
+	  : numRecursions(0) {}
 #endif
 };
 
@@ -226,7 +236,7 @@ struct Hunk {
 	const char *type;
 };
 
-template<typename T>
+template <typename T>
 struct SegmentObjTable : public SegmentObj {
 	typedef T value_type;
 	struct Entry {
@@ -242,7 +252,8 @@ struct SegmentObjTable : public SegmentObj {
 	ArrayType _table;
 
 public:
-	SegmentObjTable(SegmentType type) : SegmentObj(type) {
+	SegmentObjTable(SegmentType type)
+	  : SegmentObj(type) {
 		initTable();
 	}
 
@@ -274,7 +285,7 @@ public:
 			uint newIdx = _table.size();
 			_table.push_back(Entry());
 			_table.back().data = new T;
-			_table[newIdx].next_free = newIdx;	// Tag as 'valid'
+			_table[newIdx].next_free = newIdx; // Tag as 'valid'
 			return newIdx;
 		}
 	}
@@ -315,10 +326,10 @@ public:
 	const T &operator[](uint index) const { return at(index); }
 };
 
-
 /* CloneTable */
 struct CloneTable : public SegmentObjTable<Clone> {
-	CloneTable() : SegmentObjTable<Clone>(SEG_TYPE_CLONES) {}
+	CloneTable()
+	  : SegmentObjTable<Clone>(SEG_TYPE_CLONES) {}
 
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
 	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
@@ -326,10 +337,10 @@ struct CloneTable : public SegmentObjTable<Clone> {
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
-
 /* NodeTable */
 struct NodeTable : public SegmentObjTable<Node> {
-	NodeTable() : SegmentObjTable<Node>(SEG_TYPE_NODES) {}
+	NodeTable()
+	  : SegmentObjTable<Node>(SEG_TYPE_NODES) {}
 
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) {
 		freeEntry(sub_addr.getOffset());
@@ -338,11 +349,11 @@ struct NodeTable : public SegmentObjTable<Node> {
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
-
 
 /* ListTable */
 struct ListTable : public SegmentObjTable<List> {
-	ListTable() : SegmentObjTable<List>(SEG_TYPE_LISTS) {}
+	ListTable()
+	  : SegmentObjTable<List>(SEG_TYPE_LISTS) {}
 
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) {
 		freeEntry(sub_addr.getOffset());
@@ -352,10 +363,10 @@ struct ListTable : public SegmentObjTable<List> {
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
-
 /* HunkTable */
 struct HunkTable : public SegmentObjTable<Hunk> {
-	HunkTable() : SegmentObjTable<Hunk>(SEG_TYPE_HUNK) {}
+	HunkTable()
+	  : SegmentObjTable<Hunk>(SEG_TYPE_HUNK) {}
 	virtual ~HunkTable() {
 		for (uint i = 0; i < _table.size(); i++) {
 			if (isValidEntry(i))
@@ -380,7 +391,6 @@ struct HunkTable : public SegmentObjTable<Hunk> {
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
-
 // Free-style memory
 struct DynMem : public SegmentObj {
 	uint _size;
@@ -388,7 +398,10 @@ struct DynMem : public SegmentObj {
 	byte *_buf;
 
 public:
-	DynMem() : SegmentObj(SEG_TYPE_DYNMEM), _size(0), _buf(0) {}
+	DynMem()
+	  : SegmentObj(SEG_TYPE_DYNMEM)
+	  , _size(0)
+	  , _buf(0) {}
 	~DynMem() {
 		free(_buf);
 		_buf = NULL;
@@ -411,30 +424,30 @@ public:
 
 #ifdef ENABLE_SCI32
 
-#pragma mark -
-#pragma mark Arrays
+#	pragma mark -
+#	pragma mark Arrays
 
 enum SciArrayType {
-	kArrayTypeInt16   = 0,
-	kArrayTypeID      = 1,
-	kArrayTypeByte    = 2,
-	kArrayTypeString  = 3,
+	kArrayTypeInt16 = 0,
+	kArrayTypeID = 1,
+	kArrayTypeByte = 2,
+	kArrayTypeString = 3,
 	// Type 4 was for 32-bit integers; never used
 	kArrayTypeInvalid = 5
 };
 
 enum SciArrayTrim {
-	kArrayTrimRight  = 1, ///< Trim whitespace after the last non-whitespace character
+	kArrayTrimRight = 1, ///< Trim whitespace after the last non-whitespace character
 	kArrayTrimCenter = 2, ///< Trim whitespace between non-whitespace characters
-	kArrayTrimLeft   = 4  ///< Trim whitespace before the first non-whitespace character
+	kArrayTrimLeft = 4 ///< Trim whitespace before the first non-whitespace character
 };
 
 class SciArray : public Common::Serializable {
 public:
-	SciArray() :
-		_type(kArrayTypeInvalid),
-		_size(0),
-		_data(nullptr) {}
+	SciArray()
+	  : _type(kArrayTypeInvalid)
+	  , _size(0)
+	  , _data(nullptr) {}
 
 	SciArray(const SciArray &array) {
 		_type = array._type;
@@ -480,7 +493,7 @@ public:
 	 */
 	void setType(const SciArrayType type) {
 		assert(_type == kArrayTypeInvalid);
-		switch(type) {
+		switch (type) {
 		case kArrayTypeInt16:
 		case kArrayTypeID:
 			_elementSize = sizeof(reg_t);
@@ -553,7 +566,7 @@ public:
 			assert(index < _size);
 		}
 
-		switch(_type) {
+		switch (_type) {
 		case kArrayTypeInt16:
 		case kArrayTypeID:
 			return ((reg_t *)_data)[index];
@@ -585,7 +598,7 @@ public:
 			assert(index < _size);
 		}
 
-		switch(_type) {
+		switch (_type) {
 		case kArrayTypeInt16:
 		case kArrayTypeID:
 			((reg_t *)_data)[index] = value;
@@ -870,7 +883,7 @@ public:
 
 	Common::String toDebugString() const {
 		const char *type;
-		switch(_type) {
+		switch (_type) {
 		case kArrayTypeID:
 			type = "reg_t";
 			break;
@@ -900,7 +913,8 @@ protected:
 };
 
 struct ArrayTable : public SegmentObjTable<SciArray> {
-	ArrayTable() : SegmentObjTable<SciArray>(SEG_TYPE_ARRAY) {}
+	ArrayTable()
+	  : SegmentObjTable<SciArray>(SEG_TYPE_ARRAY) {}
 
 	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
 
@@ -908,20 +922,20 @@ struct ArrayTable : public SegmentObjTable<SciArray> {
 	SegmentRef dereference(reg_t pointer);
 };
 
-#pragma mark -
-#pragma mark Bitmaps
+#	pragma mark -
+#	pragma mark Bitmaps
 
 enum {
 	kDefaultSkipColor = 250
 };
 
-#define BITMAP_PROPERTY(size, property, offset)\
-inline uint##size get##property() const {\
-	return READ_SCI11ENDIAN_UINT##size(_data + (offset));\
-}\
-inline void set##property(uint##size value) {\
-	WRITE_SCI11ENDIAN_UINT##size(_data + (offset), (value));\
-}
+#	define BITMAP_PROPERTY(size, property, offset)              \
+		inline uint##size get##property() const {                  \
+			return READ_SCI11ENDIAN_UINT##size(_data + (offset));    \
+		}                                                          \
+		inline void set##property(uint##size value) {              \
+			WRITE_SCI11ENDIAN_UINT##size(_data + (offset), (value)); \
+		}
 
 struct BitmapTable;
 
@@ -951,15 +965,15 @@ public:
 		// scaling resolutions other than the default (320x200). Perhaps SCI3 used
 		// the extra bytes, or there is some reason why they tried to align the header
 		// size with other headers like pic headers?
-//		uint32 bitmapHeaderSize;
-//		if (getSciVersion() >= SCI_VERSION_2_1_MIDDLE) {
-//			bitmapHeaderSize = 46;
-//		} else if (getSciVersion() == SCI_VERSION_2_1_EARLY) {
-//			bitmapHeaderSize = 40;
-//		} else {
-//			bitmapHeaderSize = 36;
-//		}
-//		return bitmapHeaderSize;
+		//		uint32 bitmapHeaderSize;
+		//		if (getSciVersion() >= SCI_VERSION_2_1_MIDDLE) {
+		//			bitmapHeaderSize = 46;
+		//		} else if (getSciVersion() == SCI_VERSION_2_1_EARLY) {
+		//			bitmapHeaderSize = 40;
+		//		} else {
+		//			bitmapHeaderSize = 36;
+		//		}
+		//		return bitmapHeaderSize;
 		return 46;
 	}
 
@@ -971,7 +985,10 @@ public:
 		return width * height + getBitmapHeaderSize();
 	}
 
-	inline SciBitmap() : _data(nullptr), _dataSize(0), _gc(true) {}
+	inline SciBitmap()
+	  : _data(nullptr)
+	  , _dataSize(0)
+	  , _gc(true) {}
 
 	inline SciBitmap(const SciBitmap &other) {
 		_dataSize = other._dataSize;
@@ -1065,9 +1082,8 @@ public:
 
 	inline Common::Point getOrigin() const {
 		return Common::Point(
-			(int16)READ_SCI11ENDIAN_UINT16(_data + 4),
-			(int16)READ_SCI11ENDIAN_UINT16(_data + 6)
-		);
+		  (int16)READ_SCI11ENDIAN_UINT16(_data + 4),
+		  (int16)READ_SCI11ENDIAN_UINT16(_data + 6));
 	}
 
 	inline void setOrigin(const Common::Point &origin) {
@@ -1173,19 +1189,20 @@ public:
 
 	Common::String toString() const {
 		return Common::String::format("%dx%d; res %dx%d; origin %dx%d; skip color %u; %s; %s)",
-			getWidth(), getHeight(),
-			getXResolution(), getYResolution(),
-			getOrigin().x, getOrigin().y,
-			getSkipColor(),
-			getRemap() ? "remap" : "no remap",
-			getShouldGC() ? "GC" : "no GC");
+		                              getWidth(), getHeight(),
+		                              getXResolution(), getYResolution(),
+		                              getOrigin().x, getOrigin().y,
+		                              getSkipColor(),
+		                              getRemap() ? "remap" : "no remap",
+		                              getShouldGC() ? "GC" : "no GC");
 	}
 };
 
-#undef BITMAP_PROPERTY
+#	undef BITMAP_PROPERTY
 
 struct BitmapTable : public SegmentObjTable<SciBitmap> {
-	BitmapTable() : SegmentObjTable<SciBitmap>(SEG_TYPE_BITMAP) {}
+	BitmapTable()
+	  : SegmentObjTable<SciBitmap>(SEG_TYPE_BITMAP) {}
 
 	SegmentRef dereference(reg_t pointer) {
 		SegmentRef ret;
@@ -1199,7 +1216,6 @@ struct BitmapTable : public SegmentObjTable<SciBitmap> {
 };
 
 #endif
-
 
 } // End of namespace Sci
 

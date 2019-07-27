@@ -27,12 +27,12 @@
 #include "common/endian.h"
 #include "common/textconsole.h"
 
-#include "cine/cine.h"
 #include "cine/bg_list.h"
+#include "cine/cine.h"
 #include "cine/object.h"
+#include "cine/script.h"
 #include "cine/sound.h"
 #include "cine/various.h"
-#include "cine/script.h"
 
 namespace Cine {
 
@@ -264,21 +264,22 @@ void OSScript::setupTable() {
  * @param script Script bytecode reference
  * @param idx Script bytecode index
  */
-OSScript::OSScript(const RawScript &script, int16 idx) :
-	FWScript(script, idx, new OSScriptInfo) {}
+OSScript::OSScript(const RawScript &script, int16 idx)
+  : FWScript(script, idx, new OSScriptInfo) {}
 
 /**
  * Constructor for object scripts
  * @param script Script bytecode reference
  * @param idx Script bytecode index
  */
-OSScript::OSScript(RawObjectScript &script, int16 idx) :
-	FWScript(script, idx, new OSScriptInfo) {}
+OSScript::OSScript(RawObjectScript &script, int16 idx)
+  : FWScript(script, idx, new OSScriptInfo) {}
 
 /**
  * Copy constructor
  */
-OSScript::OSScript(const OSScript &src) : FWScript(src, new OSScriptInfo) {}
+OSScript::OSScript(const OSScript &src)
+  : FWScript(src, new OSScriptInfo) {}
 
 /**
  * Restore script state from savefile
@@ -620,13 +621,13 @@ int FWScript::o2_stopObjectScript() {
 }
 
 int FWScript::o2_op8D() {
-	uint16 objIdx1  = getNextWord();
-	uint16 xAdd1    = getNextWord();
-	uint16 yAdd1    = getNextWord();
+	uint16 objIdx1 = getNextWord();
+	uint16 xAdd1 = getNextWord();
+	uint16 yAdd1 = getNextWord();
 	uint16 maskAdd1 = getNextWord();
-	uint16 objIdx2  = getNextWord();
-	uint16 xAdd2    = getNextWord();
-	uint16 yAdd2    = getNextWord();
+	uint16 objIdx2 = getNextWord();
+	uint16 xAdd2 = getNextWord();
+	uint16 yAdd2 = getNextWord();
 	uint16 maskAdd2 = getNextWord();
 	debugC(5, kCineDebugScript, "Line: %d: o2_op8D(%d, %d, %d, %d, %d, %d, %d, %d)", _line, objIdx1, xAdd1, yAdd1, maskAdd1, objIdx2, xAdd2, yAdd2, maskAdd2);
 

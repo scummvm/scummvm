@@ -22,10 +22,10 @@
 
 // minimalistic gfx pipe implementation based on Vzzrzzn's GfxPipe.
 
-#include <kernel.h>
-#include <malloc.h>
 #include "backends/platform/ps2/DmaPipe.h"
 #include "backends/platform/ps2/GsDefs.h"
+#include <kernel.h>
+#include <malloc.h>
 
 class SinglePipe {
 public:
@@ -39,6 +39,7 @@ public:
 	void appendChain(uint64 dmaTag);
 	void init(void);
 	uint64 *_chainHead;
+
 private:
 	uint64 *_bufPos;
 	uint16 *_chainSize;
@@ -59,17 +60,17 @@ DmaPipe::DmaPipe(uint32 size) {
 	D2_MADR = 0;
 	D2_ASR1 = 0;
 	D2_ASR0 = 0;
-	D_STAT  = 0xFF1F;
-	D_CTRL  = 0;
-	D_PCR   = 0;
-	D_SQWC  = 0;
-	D_RBOR  = 0;
-	D_RBSR  = 0;
-	D_CTRL  = 1;
+	D_STAT = 0xFF1F;
+	D_CTRL = 0;
+	D_PCR = 0;
+	D_SQWC = 0;
+	D_RBOR = 0;
+	D_RBSR = 0;
+	D_CTRL = 1;
 	if (!(D_STAT & CIM2)) // channel 2 interrupts enabled?
-		D_STAT = CIM2;	  // enable them
-	if (D_STAT & CIS2)	  // is there an old interrupt we have to acknowledge?
-		D_STAT = CIS2;	  // do so...
+		D_STAT = CIM2; // enable them
+	if (D_STAT & CIS2) // is there an old interrupt we have to acknowledge?
+		D_STAT = CIS2; // do so...
 	SifSetDChain();
 }
 
@@ -79,30 +80,35 @@ void DmaPipe::uploadTex(uint32 dest, uint16 bufWidth, uint16 destOfsX, uint16 de
 	*(_pipes[_curPipe]->_chainHead) &= 0xffffffff8fffffff; // change last chain tag id, from 'end' to 'cnt'
 	*(_pipes[_curPipe]->_chainHead) |= (1 << 28);
 	_pipes[_curPipe]->setGifLoopTag(4);
-	_pipes[_curPipe]->setReg(GPR_BITBLTBUF, GS_SET_DEST_BLTBUF((dest/256) & 0x3fff, (bufWidth/64) & 0x3f, pixelFmt & 0x3f));
-	_pipes[_curPipe]->setReg(   GPR_TRXPOS, GS_SET_DEST_TRXPOS(destOfsX, destOfsY));
-	_pipes[_curPipe]->setReg(   GPR_TRXREG, GS_SET_TRXREG(width, height));
-	_pipes[_curPipe]->setReg(   GPR_TRXDIR, 0);
+	_pipes[_curPipe]->setReg(GPR_BITBLTBUF, GS_SET_DEST_BLTBUF((dest / 256) & 0x3fff, (bufWidth / 64) & 0x3f, pixelFmt & 0x3f));
+	_pipes[_curPipe]->setReg(GPR_TRXPOS, GS_SET_DEST_TRXPOS(destOfsX, destOfsY));
+	_pipes[_curPipe]->setReg(GPR_TRXREG, GS_SET_TRXREG(width, height));
+	_pipes[_curPipe]->setReg(GPR_TRXDIR, 0);
 
 	checkSpace(15);
 	uint32 numq = width * height;
 	switch (pixelFmt) {
-		case GS_PSMCT32:
-			numq = (numq + 3) >> 2; break;
-		case GS_PSMCT24:
-			numq = (numq + 2) / 3; break;
-		case GS_PSMCT16:
-		case GS_PSMCT16S:
-			numq = (numq + 7) >> 3; break;
-		case GS_PSMT8:
-		case GS_PSMT8H:
-			numq = (numq + 15) >> 4; break;
-		case GS_PSMT4HL:
-		case GS_PSMT4HH:
-		case GS_PSMT4:
-			numq = (numq + 31) >> 5; break;
-		default:
-			numq = 0;
+	case GS_PSMCT32:
+		numq = (numq + 3) >> 2;
+		break;
+	case GS_PSMCT24:
+		numq = (numq + 2) / 3;
+		break;
+	case GS_PSMCT16:
+	case GS_PSMCT16S:
+		numq = (numq + 7) >> 3;
+		break;
+	case GS_PSMT8:
+	case GS_PSMT8H:
+		numq = (numq + 15) >> 4;
+		break;
+	case GS_PSMT4HL:
+	case GS_PSMT4HH:
+	case GS_PSMT4:
+		numq = (numq + 31) >> 5;
+		break;
+	default:
+		numq = 0;
 	}
 	uint64 texSrc = (uint32)src & 0x7fffffff;
 	while (numq) {
@@ -121,65 +127,65 @@ void DmaPipe::uploadTex(uint32 dest, uint16 bufWidth, uint16 destOfsX, uint16 de
 void DmaPipe::setTex(uint32 tex, uint32 texBufWidth, uint8 texPowW, uint8 texPowH, uint8 texPixFmt, uint32 clut, uint8 csm, uint32 clutBufWidth, uint32 clutPixFmt) {
 	checkSpace(7);
 	_pipes[_curPipe]->setGifLoopTag(6);
-	_pipes[_curPipe]->setReg( GPR_TEXCLUT, 256 / 64);
+	_pipes[_curPipe]->setReg(GPR_TEXCLUT, 256 / 64);
 	_pipes[_curPipe]->setReg(GPR_TEXFLUSH, 0);
-	_pipes[_curPipe]->setReg(    GPR_TEXA, GS_SET_TEXA(128, 1, 0));
-	_pipes[_curPipe]->setReg(  GPR_TEX1_1, GS_SET_TEX1(0, 0, FILTER_LINEAR, FILTER_LINEAR, 0, 0, 0));
-	_pipes[_curPipe]->setReg(  GPR_TEX0_1, GS_SET_TEX0(tex / 256, texBufWidth / 64, texPixFmt, texPowW, texPowH, 1, 0, clut / 256, clutBufWidth / 64, csm, 0, 1));
-	_pipes[_curPipe]->setReg( GPR_CLAMP_1, 0);
+	_pipes[_curPipe]->setReg(GPR_TEXA, GS_SET_TEXA(128, 1, 0));
+	_pipes[_curPipe]->setReg(GPR_TEX1_1, GS_SET_TEX1(0, 0, FILTER_LINEAR, FILTER_LINEAR, 0, 0, 0));
+	_pipes[_curPipe]->setReg(GPR_TEX0_1, GS_SET_TEX0(tex / 256, texBufWidth / 64, texPixFmt, texPowW, texPowH, 1, 0, clut / 256, clutBufWidth / 64, csm, 0, 1));
+	_pipes[_curPipe]->setReg(GPR_CLAMP_1, 0);
 }
 
 void DmaPipe::textureRect(const GsVertex *p1, const GsVertex *p2, const TexVertex *t1, const TexVertex *t2) {
 	checkSpace(4);
-	_pipes[_curPipe]->setGifRegListTag( 6, 0xffffffffff535310);
-	_pipes[_curPipe]->setListReg( GS_SET_PRIM(PR_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0),
-								  GS_SET_COLQ(GS_RGBA(0x80, 0x80, 0x80, 0x80)));
-	_pipes[_curPipe]->setListReg( GS_SET_UV(t1->u, t1->v),
-								  GS_SET_XYZ(p1->x, p1->y, p1->z));
-	_pipes[_curPipe]->setListReg( GS_SET_UV(t2->u, t2->v),
-								  GS_SET_XYZ(p2->x, p2->y, p2->z));
+	_pipes[_curPipe]->setGifRegListTag(6, 0xffffffffff535310);
+	_pipes[_curPipe]->setListReg(GS_SET_PRIM(PR_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0),
+	                             GS_SET_COLQ(GS_RGBA(0x80, 0x80, 0x80, 0x80)));
+	_pipes[_curPipe]->setListReg(GS_SET_UV(t1->u, t1->v),
+	                             GS_SET_XYZ(p1->x, p1->y, p1->z));
+	_pipes[_curPipe]->setListReg(GS_SET_UV(t2->u, t2->v),
+	                             GS_SET_XYZ(p2->x, p2->y, p2->z));
 }
 
 void DmaPipe::textureRect(const GsVertex *p1, const GsVertex *p2, const GsVertex *p3, const GsVertex *p4, const TexVertex *t1, const TexVertex *t2, const TexVertex *t3, const TexVertex *t4, uint32 rgba) {
 	checkSpace(6);
 	_pipes[_curPipe]->setGifRegListTag(10, 0xffffff5353535310);
 
-	_pipes[_curPipe]->setListReg( GS_SET_PRIM(PR_TRIANGLESTRIP, 0, 1, 0, 1, 0, 1, 0, 0),
-								  GS_SET_COLQ(rgba));
-	_pipes[_curPipe]->setListReg( GS_SET_UV(t1->u, t1->v),
-								  GS_SET_XYZ(p1->x, p1->y, p1->z));
-	_pipes[_curPipe]->setListReg( GS_SET_UV(t2->u, t2->v),
-								  GS_SET_XYZ(p2->x, p2->y, p2->z));
-	_pipes[_curPipe]->setListReg( GS_SET_UV(t3->u, t3->v),
-								  GS_SET_XYZ(p3->x, p3->y, p3->z));
-	_pipes[_curPipe]->setListReg( GS_SET_UV(t4->u, t4->v),
-								  GS_SET_XYZ(p4->x, p4->y, p4->z));
+	_pipes[_curPipe]->setListReg(GS_SET_PRIM(PR_TRIANGLESTRIP, 0, 1, 0, 1, 0, 1, 0, 0),
+	                             GS_SET_COLQ(rgba));
+	_pipes[_curPipe]->setListReg(GS_SET_UV(t1->u, t1->v),
+	                             GS_SET_XYZ(p1->x, p1->y, p1->z));
+	_pipes[_curPipe]->setListReg(GS_SET_UV(t2->u, t2->v),
+	                             GS_SET_XYZ(p2->x, p2->y, p2->z));
+	_pipes[_curPipe]->setListReg(GS_SET_UV(t3->u, t3->v),
+	                             GS_SET_XYZ(p3->x, p3->y, p3->z));
+	_pipes[_curPipe]->setListReg(GS_SET_UV(t4->u, t4->v),
+	                             GS_SET_XYZ(p4->x, p4->y, p4->z));
 }
 
 void DmaPipe::flatRect(const GsVertex *p1, const GsVertex *p2, const GsVertex *p3, const GsVertex *p4, uint32 rgba) {
 	checkSpace(4);
-	_pipes[_curPipe]->setGifRegListTag( 6, 0xffffffffff555510);
-	_pipes[_curPipe]->setListReg( GS_SET_PRIM(PR_TRIANGLESTRIP, 0, 0, 0, 0, 0, 0, 0, 0),
-								  GS_SET_COLQ(rgba));
-	_pipes[_curPipe]->setListReg( GS_SET_XYZ(p1->x, p1->y, p1->z),
-								  GS_SET_XYZ(p2->x, p2->y, p2->z));
-	_pipes[_curPipe]->setListReg( GS_SET_XYZ(p3->x, p3->y, p3->z),
-								  GS_SET_XYZ(p4->x, p4->y, p4->z));
+	_pipes[_curPipe]->setGifRegListTag(6, 0xffffffffff555510);
+	_pipes[_curPipe]->setListReg(GS_SET_PRIM(PR_TRIANGLESTRIP, 0, 0, 0, 0, 0, 0, 0, 0),
+	                             GS_SET_COLQ(rgba));
+	_pipes[_curPipe]->setListReg(GS_SET_XYZ(p1->x, p1->y, p1->z),
+	                             GS_SET_XYZ(p2->x, p2->y, p2->z));
+	_pipes[_curPipe]->setListReg(GS_SET_XYZ(p3->x, p3->y, p3->z),
+	                             GS_SET_XYZ(p4->x, p4->y, p4->z));
 }
 
 void DmaPipe::flatRect(const GsVertex *p1, const GsVertex *p2, uint32 rgba) {
 	checkSpace(3);
-	_pipes[_curPipe]->setGifRegListTag( 4, 0xffffffffffff5510);
-	_pipes[_curPipe]->setListReg( GS_SET_PRIM(PR_SPRITE, 0, 0, 0, 1, 0, 0, 0, 0),
-								  GS_SET_COLQ(rgba));
-	_pipes[_curPipe]->setListReg( GS_SET_XYZ(p1->x, p1->y, p1->z),
-								  GS_SET_XYZ(p2->x, p2->y, p2->z));
+	_pipes[_curPipe]->setGifRegListTag(4, 0xffffffffffff5510);
+	_pipes[_curPipe]->setListReg(GS_SET_PRIM(PR_SPRITE, 0, 0, 0, 1, 0, 0, 0, 0),
+	                             GS_SET_COLQ(rgba));
+	_pipes[_curPipe]->setListReg(GS_SET_XYZ(p1->x, p1->y, p1->z),
+	                             GS_SET_XYZ(p2->x, p2->y, p2->z));
 }
 
 void DmaPipe::setOrigin(uint16 x, uint16 y) {
 	checkSpace(2);
 	_pipes[_curPipe]->setGifLoopTag(1);
-	_pipes[_curPipe]->setReg( GPR_XYOFFSET_1, GS_SET_XYOFFSET(x, y));
+	_pipes[_curPipe]->setReg(GPR_XYOFFSET_1, GS_SET_XYOFFSET(x, y));
 }
 
 void DmaPipe::setAlphaBlend(AlphaBlendColor a, AlphaBlendColor b, AlphaBlendAlpha c, AlphaBlendColor d, uint8 fix) {
@@ -197,34 +203,34 @@ void DmaPipe::setConfig(uint8 prModeCont, uint8 dither, uint8 colClamp) {
 	// set: A = dest pixel, b = 0, C = source alpha, D = source pixel, fix = don't care
 
 	_pipes[_curPipe]->setReg(GPR_ALPHA_1, GS_SET_ALPHA(DEST_COLOR, ZERO_COLOR, SOURCE_ALPHA, SOURCE_COLOR, 0));
-	_pipes[_curPipe]->setReg(   GPR_PRIM, 0);
-	_pipes[_curPipe]->setReg(   GPR_PABE, 0); // alpha blending off
-	_pipes[_curPipe]->setReg( GPR_TEST_1, GS_SET_TEST(0, 0, 0, 0, 0, 0, 1, 1)); // ztest off
-	_pipes[_curPipe]->setReg( GPR_ZBUF_1, (uint64)1 << 32); // zbuffer off
+	_pipes[_curPipe]->setReg(GPR_PRIM, 0);
+	_pipes[_curPipe]->setReg(GPR_PABE, 0); // alpha blending off
+	_pipes[_curPipe]->setReg(GPR_TEST_1, GS_SET_TEST(0, 0, 0, 0, 0, 0, 1, 1)); // ztest off
+	_pipes[_curPipe]->setReg(GPR_ZBUF_1, (uint64)1 << 32); // zbuffer off
 
-	_pipes[_curPipe]->setReg( GPR_PRMODECONT, prModeCont & 1);
-	_pipes[_curPipe]->setReg( GPR_DTHE, dither & 1);
-	_pipes[_curPipe]->setReg( GPR_COLCLAMP, colClamp & 1);
+	_pipes[_curPipe]->setReg(GPR_PRMODECONT, prModeCont & 1);
+	_pipes[_curPipe]->setReg(GPR_DTHE, dither & 1);
+	_pipes[_curPipe]->setReg(GPR_COLCLAMP, colClamp & 1);
 }
 
 void DmaPipe::setScissorRect(uint64 x1, uint64 y1, uint64 x2, uint64 y2) {
 	checkSpace(2);
 	_pipes[_curPipe]->setGifLoopTag(1);
-	_pipes[_curPipe]->setReg( GPR_SCISSOR_1, GS_SET_SCISSOR(x1, x2, y1, y2));
+	_pipes[_curPipe]->setReg(GPR_SCISSOR_1, GS_SET_SCISSOR(x1, x2, y1, y2));
 }
 
 void DmaPipe::setDrawBuffer(uint64 base, uint64 width, uint8 pixelFmt, uint64 mask) {
 	checkSpace(2);
 	_pipes[_curPipe]->setGifLoopTag(1);
-	_pipes[_curPipe]->setReg( GPR_FRAME_1, GS_SET_FRAME(base / 8192, width / 64, pixelFmt, mask));
+	_pipes[_curPipe]->setReg(GPR_FRAME_1, GS_SET_FRAME(base / 8192, width / 64, pixelFmt, mask));
 }
 
 void DmaPipe::setFinishEvent(void) {
 	checkSpace(3);
 	// make GS generate a FINISH interrupt when it's done.
 	_pipes[_curPipe]->setGifLoopTag(2);
-	_pipes[_curPipe]->setReg( GPR_FINISH, 1);
-	_pipes[_curPipe]->setReg( GPR_SIGNAL, 1);
+	_pipes[_curPipe]->setReg(GPR_FINISH, 1);
+	_pipes[_curPipe]->setReg(GPR_SIGNAL, 1);
 }
 
 void DmaPipe::checkSpace(uint32 needed) {
@@ -233,7 +239,8 @@ void DmaPipe::checkSpace(uint32 needed) {
 }
 
 void DmaPipe::waitForDma(void) {
-	while (D2_CHCR & 0x100) {}
+	while (D2_CHCR & 0x100) {
+	}
 }
 
 void DmaPipe::flush(void) {
@@ -252,7 +259,7 @@ SinglePipe::SinglePipe(uint64 *buf, uint32 size) {
 
 void SinglePipe::flush(void) {
 	D2_TADR = (uint32)_buf;
-	D2_QWC  = 0;
+	D2_QWC = 0;
 	D2_CHCR |= 0x185;
 }
 

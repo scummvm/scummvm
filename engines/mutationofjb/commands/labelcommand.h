@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_LABELCOMMAND_H
 #define MUTATIONOFJB_LABELCOMMAND_H
 
-#include "mutationofjb/commands/seqcommand.h"
 #include "common/str.h"
+#include "mutationofjb/commands/seqcommand.h"
 
 namespace MutationOfJB {
 
@@ -37,11 +37,13 @@ public:
 
 class LabelCommand : public SeqCommand {
 public:
-	LabelCommand(const Common::String &name) : _name(name) {}
+	LabelCommand(const Common::String &name)
+	  : _name(name) {}
 	const Common::String &getName() const;
 
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const override;
+
 private:
 	Common::String _name;
 };

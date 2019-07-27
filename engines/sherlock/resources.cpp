@@ -21,14 +21,15 @@
  */
 
 #include "sherlock/resources.h"
-#include "sherlock/screen.h"
-#include "sherlock/sherlock.h"
 #include "common/debug.h"
 #include "common/memstream.h"
+#include "sherlock/screen.h"
+#include "sherlock/sherlock.h"
 
 namespace Sherlock {
 
-Cache::Cache(SherlockEngine *vm) : _vm(vm) {
+Cache::Cache(SherlockEngine *vm)
+  : _vm(vm) {
 }
 
 bool Cache::isCached(const Common::String &filename) const {
@@ -85,7 +86,9 @@ Common::SeekableReadStream *Cache::get(const Common::String &filename) const {
 
 /*----------------------------------------------------------------*/
 
-Resources::Resources(SherlockEngine *vm) : _vm(vm), _cache(vm) {
+Resources::Resources(SherlockEngine *vm)
+  : _vm(vm)
+  , _cache(vm) {
 	_resourceIndex = -1;
 
 	if (_vm->_interactiveFl) {
@@ -196,7 +199,7 @@ void Resources::decompressIfNecessary(Common::SeekableReadStream *&stream) {
 }
 
 Common::SeekableReadStream *Resources::load(const Common::String &filename, const Common::String &libraryFile,
-		bool suppressErrors) {
+                                            bool suppressErrors) {
 	// Open up the library for access
 	Common::SeekableReadStream *libStream = load(libraryFile);
 
@@ -230,7 +233,7 @@ bool Resources::exists(const Common::String &filename) const {
 }
 
 void Resources::loadLibraryIndex(const Common::String &libFilename,
-		Common::SeekableReadStream *stream, bool isNewStyle) {
+                                 Common::SeekableReadStream *stream, bool isNewStyle) {
 	uint32 offset, nextOffset;
 
 	// Return immediately if the library has already been loaded

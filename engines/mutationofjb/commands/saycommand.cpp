@@ -28,9 +28,9 @@
 #include "mutationofjb/tasks/saytask.h"
 #include "mutationofjb/tasks/taskmanager.h"
 
-#include "common/str.h"
-#include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/debug.h"
+#include "common/str.h"
 
 /** @file
  * <firstLine> { <CRLF> <additionalLine> }
@@ -146,7 +146,6 @@ bool SayCommandParser::parse(const Common::String &line, ScriptParseContext &par
 
 	return true;
 }
-
 
 Command::ExecuteResult SayCommand::execute(ScriptExecutionContext &scriptExecCtx) {
 	Game &game = scriptExecCtx.getGame();

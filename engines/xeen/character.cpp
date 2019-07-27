@@ -48,13 +48,23 @@ int CharacterArray::indexOf(const Character &c) {
 
 /*------------------------------------------------------------------------*/
 
-Character::Character(): _weapons(this), _armor(this), _accessories(this), _misc(this), _items(this) {
+Character::Character()
+  : _weapons(this)
+  , _armor(this)
+  , _accessories(this)
+  , _misc(this)
+  , _items(this) {
 	clear();
 	_faceSprites = nullptr;
 	_rosterId = -1;
 }
 
-Character::Character(const Character &src) : _weapons(this), _armor(this), _accessories(this), _misc(this), _items(this) {
+Character::Character(const Character &src)
+  : _weapons(this)
+  , _armor(this)
+  , _accessories(this)
+  , _misc(this)
+  , _items(this) {
 	operator=(src);
 }
 
@@ -196,8 +206,7 @@ void Character::synchronize(Common::Serializer &s) {
 	// upper nibble of the first 64 bytes. Except for award 9, which was a full
 	// byte counter counting the number of times the warzone was awarded
 	for (int idx = 0; idx < 64; ++idx) {
-		byte b = (idx == WARZONE_AWARD) ? _awards[idx] :
-			(_awards[idx] ? 0x1 : 0) | (_awards[idx + 64] ? 0x10 : 0);
+		byte b = (idx == WARZONE_AWARD) ? _awards[idx] : (_awards[idx] ? 0x1 : 0) | (_awards[idx + 64] ? 0x10 : 0);
 		s.syncAsByte(b);
 		if (s.isLoading()) {
 			_awards[idx] = (idx == WARZONE_AWARD) ? b : b & 0xF;
@@ -258,7 +267,7 @@ bool Character::isDisabled() const {
 	Condition condition = worstCondition();
 
 	return condition == ASLEEP || condition == PARALYZED || condition == UNCONSCIOUS
-		|| condition == STONED || condition == ERADICATED;
+	  || condition == STONED || condition == ERADICATED;
 }
 
 bool Character::isDisabledOrDead() const {
@@ -392,7 +401,6 @@ uint Character::getStat(Attribute attrib, bool baseOnly) const {
 		attr._permanent += Res.AGE_RANGES_ADJUST[mode][ageIndex];
 	}
 
-
 	attr._permanent += itemScan((int)attrib);
 
 	if (!baseOnly) {
@@ -474,7 +482,7 @@ bool Character::noActions() {
 	case ERADICATED: {
 		Common::String msg = Common::String::format(Res.IN_NO_CONDITION, _name.c_str());
 		ErrorScroll::show(Party::_vm, msg,
-			Party::_vm->_mode == 17 ? WT_LOC_WAIT : WT_NONFREEZED_WAIT);
+		                  Party::_vm->_mode == 17 ? WT_LOC_WAIT : WT_NONFREEZED_WAIT);
 		return true;
 	}
 	default:
@@ -556,7 +564,7 @@ int Character::itemScan(int itemId) const {
 		const XeenItem &item = _weapons[idx];
 
 		if (item._frame && !item.isBad() && itemId < 11
-				&& itemId != 3 && item._material >= 59 && item._material <= 130) {
+		    && itemId != 3 && item._material >= 59 && item._material <= 130) {
 			int mIndex = (int)item.getAttributeCategory();
 			if (mIndex > PERSONALITY)
 				++mIndex;
@@ -941,10 +949,8 @@ uint Character::getCurrentExperience() const {
 		shift = lev - 1;
 	}
 
-	return (base * 1024000) + (Res.CLASS_EXP_LEVELS[_class] << shift) +
-		_experience;
+	return (base * 1024000) + (Res.CLASS_EXP_LEVELS[_class] << shift) + _experience;
 }
-
 
 int Character::getNumSkills() const {
 	int total = 0;
@@ -1130,7 +1136,7 @@ ItemCategory Character::makeItem(int p1, int itemIndex, int p3) {
 			}
 
 			v12 = Res.MAKE_ITEM_ARR1[vm->getRandomNumber(Res.MAKE_ITEM_ARR2[mult][p1][0],
-				Res.MAKE_ITEM_ARR2[mult][p1][1])];
+			                                             Res.MAKE_ITEM_ARR2[mult][p1][1])];
 			break;
 
 		case 2:
@@ -1158,13 +1164,13 @@ ItemCategory Character::makeItem(int p1, int itemIndex, int p3) {
 			}
 
 			v14 = Res.MAKE_ITEM_ARR1[vm->getRandomNumber(Res.MAKE_ITEM_ARR3[mult][p1][0],
-				Res.MAKE_ITEM_ARR3[mult][p1][1])];
+			                                             Res.MAKE_ITEM_ARR3[mult][p1][1])];
 			break;
 
 		case 3:
 			mult = p1 == 7 || vm->getRandomNumber(1, 100) > 70 ? 1 : 0;
 			v16 = vm->getRandomNumber(Res.MAKE_ITEM_ARR4[mult][p1 - 1][0],
-				Res.MAKE_ITEM_ARR4[mult][p1 - 1][1]);
+			                          Res.MAKE_ITEM_ARR4[mult][p1 - 1][1]);
 			if (mult)
 				v16 += 9;
 			break;

@@ -25,8 +25,8 @@
  * Copyright (c) 1987-1989 Lankhor
  */
 
-#include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
+#include "mortevielle/mortevielle.h"
 
 #include "common/endian.h"
 #include "common/rect.h"
@@ -196,7 +196,7 @@ void MouseHandler::moveMouse(bool &funct, char &key) {
 						break;
 					default:
 						break;
-					}    // case
+					} // case
 				}
 			}
 			break;
@@ -228,11 +228,11 @@ void MouseHandler::moveMouse(bool &funct, char &key) {
 			_vm->_soundOff = !_vm->_soundOff;
 			return;
 			break;
-		case '\24':           // ^T => mode tandy
+		case '\24': // ^T => mode tandy
 			funct = true;
 			key = '\11';
 			break;
-		case '\10':           // ^H => mode Hercule
+		case '\10': // ^H => mode Hercule
 			funct = true;
 			key = '\7';
 			break;

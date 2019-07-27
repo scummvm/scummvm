@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptMurray::AIScriptMurray(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptMurray::AIScriptMurray(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 	_flag = false;
 }
 
@@ -42,8 +43,7 @@ void AIScriptMurray::Initialize() {
 
 bool AIScriptMurray::Update() {
 	if (Global_Variable_Query(kVariableChapter) == 4
-	 && Actor_Query_Goal_Number(kActorMurray) != 300
-	) {
+	    && Actor_Query_Goal_Number(kActorMurray) != 300) {
 		Actor_Set_Goal_Number(kActorMurray, 300);
 	}
 
@@ -51,11 +51,10 @@ bool AIScriptMurray::Update() {
 		return true;
 	}
 
-	if ( Actor_Query_In_Set(kActorMcCoy, kSetHF01)
-	 &&  Actor_Query_In_Set(kActorMurray, kSetHF01)
-	 &&  Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorMurray) < 48
-	 && !Game_Flag_Query(kFlagHF01MurrayMiaIntro)
-	) {
+	if (Actor_Query_In_Set(kActorMcCoy, kSetHF01)
+	    && Actor_Query_In_Set(kActorMurray, kSetHF01)
+	    && Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorMurray) < 48
+	    && !Game_Flag_Query(kFlagHF01MurrayMiaIntro)) {
 		Actor_Set_Goal_Number(kActorMurray, 1);
 		return true;
 	}
@@ -245,17 +244,17 @@ bool AIScriptMurray::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptMurray::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptMurray::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptMurray::ReachedMovementTrackWaypoint(int waypointId) {

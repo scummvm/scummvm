@@ -32,7 +32,6 @@ public:
 	CodeBlocksProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version = 0);
 
 protected:
-
 	void createWorkspace(const BuildSetup &setup);
 
 	void createOtherBuildFiles(const BuildSetup &) {}

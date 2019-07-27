@@ -34,12 +34,14 @@ class CBarBell : public CGameObject {
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 	bool ActMsg(CActMsg *msg);
+
 public:
 	int _fieldBC;
 	int _volume;
 	int _soundVal3;
 	int _fieldC8;
 	int _fieldCC;
+
 public:
 	CLASSDEF;
 	CBarBell();

@@ -27,7 +27,9 @@ namespace Cine {
 
 bool labyrinthCheat;
 
-CineConsole::CineConsole(CineEngine *vm) : GUI::Debugger(), _vm(vm) {
+CineConsole::CineConsole(CineEngine *vm)
+  : GUI::Debugger()
+  , _vm(vm) {
 	assert(_vm);
 	registerCmd("labyrinthCheat", WRAP_METHOD(CineConsole, Cmd_LabyrinthCheat));
 

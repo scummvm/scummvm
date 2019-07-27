@@ -22,13 +22,12 @@
 
 #ifdef ENABLE_EOB
 
-#include "kyra/engine/eobcommon.h"
-#include "kyra/script/script_eob.h"
-#include "kyra/resource/resource.h"
-#include "kyra/engine/timer.h"
+#	include "kyra/engine/eobcommon.h"
+#	include "kyra/engine/timer.h"
+#	include "kyra/resource/resource.h"
+#	include "kyra/script/script_eob.h"
 
-#include "common/system.h"
-
+#	include "common/system.h"
 
 namespace Kyra {
 
@@ -81,7 +80,7 @@ void EoBCoreEngine::releaseMonsterShapes(int first, int num) {
 
 uint8 *EoBCoreEngine::loadTownsShape(Common::SeekableReadStream *stream) {
 	uint32 size = stream->readUint32LE();
-	uint8 *shape= new uint8[size];
+	uint8 *shape = new uint8[size];
 	stream->read(shape, size);
 	if (shape[0] == 1)
 		shape[0]++;
@@ -307,7 +306,7 @@ void EoBCoreEngine::drawBlockObject(int flipped, int page, const uint8 *shape, i
 	const ScreenDim *d = _screen->getScreenDim(sd);
 	if (_flags.gameID == GI_EOB1)
 		x &= ~1;
-	
+
 	_screen->drawShape(page, shape, x - (d->sx << 3), y - d->sy, sd, flipped | (ovl ? 2 : 0), ovl);
 }
 
@@ -329,7 +328,7 @@ void EoBCoreEngine::flashMonsterShape(EoBMonsterInPlay *m) {
 	_flashShapeTimer = 0;
 	drawScene(1);
 	m->flags &= 0xFD;
-	_flashShapeTimer  = _system->getMillis() + _tickLength;
+	_flashShapeTimer = _system->getMillis() + _tickLength;
 	enableSysTimer(2);
 
 	_sceneUpdateRequired = true;
@@ -646,7 +645,7 @@ void EoBCoreEngine::drawFlyingObjects(int index) {
 		}
 
 		x -= (shp[2] << 2);
-		y -= (y == 44 ? (shp[1]  >> 1) : shp[1]);
+		y -= (y == 44 ? (shp[1] >> 1) : shp[1]);
 
 		drawBlockObject(flipped, 2, shp, x, y, 5);
 		_screen->setShapeFadingLevel(0);

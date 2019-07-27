@@ -30,30 +30,30 @@
 
 namespace Cloud {
 namespace OneDrive {
-class OneDriveStorage;
+	class OneDriveStorage;
 
-class OneDriveUploadRequest: public Networking::Request {
-	OneDriveStorage *_storage;
-	Common::String _savePath;
-	Common::SeekableReadStream *_contentsStream;
-	Storage::UploadCallback _uploadCallback;
-	Request *_workingRequest;
-	bool _ignoreCallback;
-	Common::String _uploadUrl;
+	class OneDriveUploadRequest : public Networking::Request {
+		OneDriveStorage *_storage;
+		Common::String _savePath;
+		Common::SeekableReadStream *_contentsStream;
+		Storage::UploadCallback _uploadCallback;
+		Request *_workingRequest;
+		bool _ignoreCallback;
+		Common::String _uploadUrl;
 
-	void start();
-	void uploadNextPart();
-	void partUploadedCallback(Networking::JsonResponse response);
-	void partUploadedErrorCallback(Networking::ErrorResponse error);
-	void finishUpload(StorageFile status);
+		void start();
+		void uploadNextPart();
+		void partUploadedCallback(Networking::JsonResponse response);
+		void partUploadedErrorCallback(Networking::ErrorResponse error);
+		void finishUpload(StorageFile status);
 
-public:
-	OneDriveUploadRequest(OneDriveStorage *storage, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb);
-	virtual ~OneDriveUploadRequest();
+	public:
+		OneDriveUploadRequest(OneDriveStorage *storage, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb);
+		virtual ~OneDriveUploadRequest();
 
-	virtual void handle();
-	virtual void restart();
-};
+		virtual void handle();
+		virtual void restart();
+	};
 
 } // End of namespace OneDrive
 } // End of namespace Cloud

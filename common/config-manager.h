@@ -24,10 +24,10 @@
 #define COMMON_CONFIG_MANAGER_H
 
 #include "common/array.h"
+#include "common/hash-str.h"
 #include "common/hashmap.h"
 #include "common/singleton.h"
 #include "common/str.h"
-#include "common/hash-str.h"
 
 namespace Common {
 
@@ -45,7 +45,6 @@ class SeekableReadStream;
 class ConfigManager : public Singleton<ConfigManager> {
 
 public:
-
 	class Domain {
 	private:
 		StringMap _entries;
@@ -55,7 +54,7 @@ public:
 	public:
 		typedef StringMap::const_iterator const_iterator;
 		const_iterator begin() const { return _entries.begin(); }
-		const_iterator end()   const { return _entries.end(); }
+		const_iterator end() const { return _entries.end(); }
 
 		bool empty() const { return _entries.empty(); }
 
@@ -99,26 +98,25 @@ public:
 	static char const *const kCloudDomain;
 #endif
 
-	void				loadDefaultConfigFile();
-	void				loadConfigFile(const String &filename);
+	void loadDefaultConfigFile();
+	void loadConfigFile(const String &filename);
 
 	/**
 	 * Retrieve the config domain with the given name.
 	 * @param domName	the name of the domain to retrieve
 	 * @return pointer to the domain, or 0 if the domain doesn't exist.
 	 */
-	Domain *			getDomain(const String &domName);
-	const Domain *		getDomain(const String &domName) const;
-
+	Domain *getDomain(const String &domName);
+	const Domain *getDomain(const String &domName) const;
 
 	//
 	// Generic access methods: No domain specified, use the values from the
 	// various domains in the order of their priority.
 	//
 
-	bool				hasKey(const String &key) const;
-	const String &		get(const String &key) const;
-	void				set(const String &key, const String &value);
+	bool hasKey(const String &key) const;
+	const String &get(const String &key) const;
+	void set(const String &key, const String &value);
 
 #if 1
 	//
@@ -128,86 +126,85 @@ public:
 	// options dialog code...
 	//
 
-	bool				hasKey(const String &key, const String &domName) const;
-	const String &		get(const String &key, const String &domName) const;
-	void				set(const String &key, const String &value, const String &domName);
+	bool hasKey(const String &key, const String &domName) const;
+	const String &get(const String &key, const String &domName) const;
+	void set(const String &key, const String &value, const String &domName);
 
-	void				removeKey(const String &key, const String &domName);
+	void removeKey(const String &key, const String &domName);
 #endif
 
 	//
 	// Some additional convenience accessors.
 	//
-	int					getInt(const String &key, const String &domName = String()) const;
-	bool				getBool(const String &key, const String &domName = String()) const;
-	void				setInt(const String &key, int value, const String &domName = String());
-	void				setBool(const String &key, bool value, const String &domName = String());
+	int getInt(const String &key, const String &domName = String()) const;
+	bool getBool(const String &key, const String &domName = String()) const;
+	void setInt(const String &key, int value, const String &domName = String());
+	void setBool(const String &key, bool value, const String &domName = String());
 
+	void registerDefault(const String &key, const String &value);
+	void registerDefault(const String &key, const char *value);
+	void registerDefault(const String &key, int value);
+	void registerDefault(const String &key, bool value);
 
-	void				registerDefault(const String &key, const String &value);
-	void				registerDefault(const String &key, const char *value);
-	void				registerDefault(const String &key, int value);
-	void				registerDefault(const String &key, bool value);
+	void flushToDisk();
 
-	void				flushToDisk();
+	void setActiveDomain(const String &domName);
+	Domain *getActiveDomain() { return _activeDomain; }
+	const Domain *getActiveDomain() const { return _activeDomain; }
+	const String &getActiveDomainName() const { return _activeDomainName; }
 
-	void				setActiveDomain(const String &domName);
-	Domain *			getActiveDomain() { return _activeDomain; }
-	const Domain *		getActiveDomain() const { return _activeDomain; }
-	const String &		getActiveDomainName() const { return _activeDomainName; }
+	void addGameDomain(const String &domName);
+	void removeGameDomain(const String &domName);
+	void renameGameDomain(const String &oldName, const String &newName);
 
-	void				addGameDomain(const String &domName);
-	void				removeGameDomain(const String &domName);
-	void				renameGameDomain(const String &oldName, const String &newName);
+	void addMiscDomain(const String &domName);
+	void removeMiscDomain(const String &domName);
+	void renameMiscDomain(const String &oldName, const String &newName);
 
-	void				addMiscDomain(const String &domName);
-	void				removeMiscDomain(const String &domName);
-	void				renameMiscDomain(const String &oldName, const String &newName);
+	bool hasGameDomain(const String &domName) const;
+	bool hasMiscDomain(const String &domName) const;
 
-	bool				hasGameDomain(const String &domName) const;
-	bool				hasMiscDomain(const String &domName) const;
-
-	const DomainMap &	getGameDomains() const { return _gameDomains; }
+	const DomainMap &getGameDomains() const { return _gameDomains; }
 	DomainMap::iterator beginGameDomains() { return _gameDomains.begin(); }
 	DomainMap::iterator endGameDomains() { return _gameDomains.end(); }
 
-	static void			defragment(); // move in memory to reduce fragmentation
-	void 				copyFrom(ConfigManager &source);
+	static void defragment(); // move in memory to reduce fragmentation
+	void copyFrom(ConfigManager &source);
 
 private:
 	friend class Singleton<SingletonBaseType>;
 	ConfigManager();
 
-	void			loadFromStream(SeekableReadStream &stream);
-	void			addDomain(const String &domainName, const Domain &domain);
-	void			writeDomain(WriteStream &stream, const String &name, const Domain &domain);
-	void			renameDomain(const String &oldName, const String &newName, DomainMap &map);
+	void loadFromStream(SeekableReadStream &stream);
+	void addDomain(const String &domainName, const Domain &domain);
+	void writeDomain(WriteStream &stream, const String &name, const Domain &domain);
+	void renameDomain(const String &oldName, const String &newName, DomainMap &map);
 
-	Domain			_transientDomain;
-	DomainMap		_gameDomains;
-	DomainMap		_miscDomains; // Any other domains
-	Domain			_appDomain;
-	Domain			_defaultsDomain;
+	Domain _transientDomain;
+	DomainMap _gameDomains;
+	DomainMap _miscDomains; // Any other domains
+	Domain _appDomain;
+	Domain _defaultsDomain;
 
 #ifdef ENABLE_KEYMAPPER
-	Domain			_keymapperDomain;
+	Domain _keymapperDomain;
 #endif
 
 #ifdef USE_CLOUD
-	Domain			_cloudDomain;
+	Domain _cloudDomain;
 #endif
 
-	Array<String>	_domainSaveOrder;
+	Array<String> _domainSaveOrder;
 
-	String			_activeDomainName;
-	Domain *		_activeDomain;
+	String _activeDomainName;
+	Domain *_activeDomain;
 
-	String			_filename;
+	String _filename;
 };
 
 } // End of namespace Common
 
 /** Shortcut for accessing the configuration manager. */
-#define ConfMan		Common::ConfigManager::instance()
+#define ConfMan Common::ConfigManager::instance()
 
 #endif

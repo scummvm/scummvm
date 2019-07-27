@@ -27,9 +27,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CEnterSecClassState, CGameObject)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(StatusChangeMsg)
-	ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(MovieEndMsg)
 END_MESSAGE_MAP()
 
 void CEnterSecClassState::save(SimpleFile *file, int indent) {
@@ -52,7 +52,7 @@ bool CEnterSecClassState::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (getPassengerClass() > 2) {
 		playSound(TRANSLATE("b#105.wav", "b#84.wav"));
 		petDisplayMessage(1, CLASS_NOT_PERMITTED_IN_AREA);
-	} else if (!compareRoomNameTo("SecClassLittleLift") || _mode == 2)  {
+	} else if (!compareRoomNameTo("SecClassLittleLift") || _mode == 2) {
 		CActMsg actMsg(getFullViewName().deleteRight(2) + ".S");
 		actMsg.execute("SecClassRoomLeaver");
 		changeView("secClassState.Node 01.N");

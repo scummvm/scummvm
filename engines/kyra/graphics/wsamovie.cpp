@@ -28,7 +28,11 @@
 namespace Kyra {
 
 WSAMovie_v1::WSAMovie_v1(KyraEngine_v1 *vm)
-	: Movie(vm), _frameData(0), _frameOffsTable(0), _offscreenBuffer(0), _deltaBuffer(0) {
+  : Movie(vm)
+  , _frameData(0)
+  , _frameOffsTable(0)
+  , _offscreenBuffer(0)
+  , _deltaBuffer(0) {
 }
 
 WSAMovie_v1::~WSAMovie_v1() {
@@ -45,10 +49,14 @@ int WSAMovie_v1::open(const char *filename, int offscreenDecode, Palette *palBuf
 		return 0;
 
 	const uint8 *wsaData = p;
-	_numFrames = READ_LE_UINT16(wsaData); wsaData += 2;
-	_width = READ_LE_UINT16(wsaData); wsaData += 2;
-	_height = READ_LE_UINT16(wsaData); wsaData += 2;
-	_deltaBufferSize = READ_LE_UINT16(wsaData); wsaData += 2;
+	_numFrames = READ_LE_UINT16(wsaData);
+	wsaData += 2;
+	_width = READ_LE_UINT16(wsaData);
+	wsaData += 2;
+	_height = READ_LE_UINT16(wsaData);
+	wsaData += 2;
+	_deltaBufferSize = READ_LE_UINT16(wsaData);
+	wsaData += 2;
 	_offscreenBuffer = NULL;
 	_flags = 0;
 	if (_vm->gameFlags().useAltShapeHeader) {
@@ -86,7 +94,8 @@ int WSAMovie_v1::open(const char *filename, int offscreenDecode, Palette *palBuf
 	// read frame offsets
 	_frameOffsTable = new uint32[_numFrames + 2];
 	_frameOffsTable[0] = 0;
-	uint32 frameDataOffs = READ_LE_UINT32(wsaData); wsaData += 4;
+	uint32 frameDataOffs = READ_LE_UINT32(wsaData);
+	wsaData += 4;
 	bool firstFrame = true;
 
 	if (frameDataOffs == 0) {
@@ -222,7 +231,9 @@ void WSAMovie_v1::processFrame(int frameNum, uint8 *dst) {
 
 #pragma mark -
 
-WSAMovieAmiga::WSAMovieAmiga(KyraEngine_v1 *vm) : WSAMovie_v1(vm), _buffer(0) {}
+WSAMovieAmiga::WSAMovieAmiga(KyraEngine_v1 *vm)
+  : WSAMovie_v1(vm)
+  , _buffer(0) {}
 
 int WSAMovieAmiga::open(const char *filename, int offscreenDecode, Palette *palBuf) {
 	int res = WSAMovie_v1::open(filename, offscreenDecode, palBuf);
@@ -359,7 +370,10 @@ void WSAMovieAmiga::processFrame(int frameNum, uint8 *dst) {
 
 #pragma mark -
 
-WSAMovie_v2::WSAMovie_v2(KyraEngine_v1 *vm) : WSAMovie_v1(vm), _xAdd(0), _yAdd(0) {}
+WSAMovie_v2::WSAMovie_v2(KyraEngine_v1 *vm)
+  : WSAMovie_v1(vm)
+  , _xAdd(0)
+  , _yAdd(0) {}
 
 int WSAMovie_v2::open(const char *filename, int unk1, Palette *palBuf) {
 	close();
@@ -373,15 +387,22 @@ int WSAMovie_v2::open(const char *filename, int unk1, Palette *palBuf) {
 	}
 
 	const uint8 *wsaData = p;
-	_numFrames = READ_LE_UINT16(wsaData); wsaData += 2;
-	_xAdd = (int16)(READ_LE_UINT16(wsaData)); wsaData += 2;
-	_yAdd = (int16)(READ_LE_UINT16(wsaData)); wsaData += 2;
-	_width = READ_LE_UINT16(wsaData); wsaData += 2;
-	_height = READ_LE_UINT16(wsaData); wsaData += 2;
-	_deltaBufferSize = READ_LE_UINT16(wsaData); wsaData += 2;
+	_numFrames = READ_LE_UINT16(wsaData);
+	wsaData += 2;
+	_xAdd = (int16)(READ_LE_UINT16(wsaData));
+	wsaData += 2;
+	_yAdd = (int16)(READ_LE_UINT16(wsaData));
+	wsaData += 2;
+	_width = READ_LE_UINT16(wsaData);
+	wsaData += 2;
+	_height = READ_LE_UINT16(wsaData);
+	wsaData += 2;
+	_deltaBufferSize = READ_LE_UINT16(wsaData);
+	wsaData += 2;
 	_offscreenBuffer = NULL;
 	_flags = 0;
-	flags = READ_LE_UINT16(wsaData); wsaData += 2;
+	flags = READ_LE_UINT16(wsaData);
+	wsaData += 2;
 
 	uint32 offsPal = 0;
 	if (flags & 1) {
@@ -401,7 +422,6 @@ int WSAMovie_v2::open(const char *filename, int unk1, Palette *palBuf) {
 
 		_flags |= WF_XOR;
 	}
-
 
 	if (!(unk1 & 2)) {
 		_flags |= WF_OFFSCREEN_DECODE;
@@ -423,7 +443,8 @@ int WSAMovie_v2::open(const char *filename, int unk1, Palette *palBuf) {
 	// read frame offsets
 	_frameOffsTable = new uint32[_numFrames + 2];
 	_frameOffsTable[0] = 0;
-	uint32 frameDataOffs = READ_LE_UINT32(wsaData); wsaData += 4;
+	uint32 frameDataOffs = READ_LE_UINT32(wsaData);
+	wsaData += 4;
 	bool firstFrame = true;
 	if (frameDataOffs == 0) {
 		firstFrame = false;

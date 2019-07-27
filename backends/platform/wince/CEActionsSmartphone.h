@@ -23,12 +23,12 @@
 #ifndef CEACTIONSSMARTPHONE_H
 #define CEACTIONSSMARTPHONE_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
-#include "common/str.h"
-#include "gui/Key.h"
-#include "gui/Actions.h"
 #include "backends/graphics/wincesdl/wincesdl-graphics.h"
+#include "common/scummsys.h"
+#include "common/str.h"
+#include "common/system.h"
+#include "gui/Actions.h"
+#include "gui/Key.h"
 
 #define SMARTPHONE_ACTION_VERSION 5
 
@@ -51,7 +51,6 @@ enum smartphoneActionType {
 	SMARTPHONE_ACTION_LAST
 };
 
-
 class CEActionsSmartphone : public GUI::Actions {
 public:
 	// Actions
@@ -67,6 +66,7 @@ public:
 	int version();
 
 	~CEActionsSmartphone();
+
 private:
 	CEActionsSmartphone();
 	WINCESdlGraphicsManager *_graphicsMan;

@@ -21,85 +21,85 @@
  */
 
 #include "glk/scott/detection.h"
-#include "glk/scott/detection_tables.h"
-#include "glk/blorb.h"
 #include "common/file.h"
 #include "common/md5.h"
 #include "engines/game.h"
+#include "glk/blorb.h"
+#include "glk/scott/detection_tables.h"
 
 namespace Glk {
 namespace Scott {
 
-void ScottMetaEngine::getSupportedGames(PlainGameList &games) {
-	for (const PlainGameDescriptor *pd = SCOTT_GAME_LIST; pd->gameId; ++pd)
-		games.push_back(*pd);
-}
-
-GameDescriptor ScottMetaEngine::findGame(const char *gameId) {
-	for (const PlainGameDescriptor *pd = SCOTT_GAME_LIST; pd->gameId; ++pd) {
-		if (!strcmp(gameId, pd->gameId))
-			return *pd;
+	void ScottMetaEngine::getSupportedGames(PlainGameList &games) {
+		for (const PlainGameDescriptor *pd = SCOTT_GAME_LIST; pd->gameId; ++pd)
+			games.push_back(*pd);
 	}
 
-	return GameDescriptor::empty();
-}
+	GameDescriptor ScottMetaEngine::findGame(const char *gameId) {
+		for (const PlainGameDescriptor *pd = SCOTT_GAME_LIST; pd->gameId; ++pd) {
+			if (!strcmp(gameId, pd->gameId))
+				return *pd;
+		}
 
-bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
-	const char *const EXTENSIONS[] = { ".saga", ".dat", nullptr };
+		return GameDescriptor::empty();
+	}
 
-	// Loop through the files of the folder
-	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		// Check for a recognised filename
-		if (file->isDirectory())
-			continue;
+	bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
+		const char *const EXTENSIONS[] = { ".saga", ".dat", nullptr };
 
-		Common::String filename = file->getName();
-		bool hasExt = Blorb::hasBlorbExt(filename), isBlorb = false;
-		for (const char *const *ext = &EXTENSIONS[0]; *ext && !hasExt; ++ext)
-			hasExt = filename.hasSuffixIgnoreCase(*ext);
-		if (!hasExt)
-			continue;
-
-		Common::File gameFile;
-		if (!gameFile.open(*file))
-			continue;
-		Common::String md5 = Common::computeStreamMD5AsString(gameFile, 5000);
-		int32 filesize = gameFile.size();
-		gameFile.seek(0);
-		isBlorb = Blorb::isBlorb(gameFile, ID_SAAI);
-		gameFile.close();
-
-		if (!isBlorb && Blorb::hasBlorbExt(filename))
-			continue;
-
-		// Scan through the Scott game list for a match
-		const ScottGame *p = SCOTT_GAMES;
-		while (p->_md5 && p->_filesize != filesize && md5 != p->_md5)
-			++p;
-
-		if (!p->_gameId) {
-			if (!isBlorb && filename.hasSuffixIgnoreCase(".dat"))
+		// Loop through the files of the folder
+		for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+			// Check for a recognised filename
+			if (file->isDirectory())
 				continue;
 
-			const PlainGameDescriptor &desc = SCOTT_GAME_LIST[0];
-			gameList.push_back(GlkDetectedGame(desc.gameId, desc.description, filename, md5, filesize));
-		} else {
-			// Found a match
-			PlainGameDescriptor gameDesc = findGame(p->_gameId);
-			gameList.push_back(GlkDetectedGame(p->_gameId, gameDesc.description, filename));
+			Common::String filename = file->getName();
+			bool hasExt = Blorb::hasBlorbExt(filename), isBlorb = false;
+			for (const char *const *ext = &EXTENSIONS[0]; *ext && !hasExt; ++ext)
+				hasExt = filename.hasSuffixIgnoreCase(*ext);
+			if (!hasExt)
+				continue;
+
+			Common::File gameFile;
+			if (!gameFile.open(*file))
+				continue;
+			Common::String md5 = Common::computeStreamMD5AsString(gameFile, 5000);
+			int32 filesize = gameFile.size();
+			gameFile.seek(0);
+			isBlorb = Blorb::isBlorb(gameFile, ID_SAAI);
+			gameFile.close();
+
+			if (!isBlorb && Blorb::hasBlorbExt(filename))
+				continue;
+
+			// Scan through the Scott game list for a match
+			const ScottGame *p = SCOTT_GAMES;
+			while (p->_md5 && p->_filesize != filesize && md5 != p->_md5)
+				++p;
+
+			if (!p->_gameId) {
+				if (!isBlorb && filename.hasSuffixIgnoreCase(".dat"))
+					continue;
+
+				const PlainGameDescriptor &desc = SCOTT_GAME_LIST[0];
+				gameList.push_back(GlkDetectedGame(desc.gameId, desc.description, filename, md5, filesize));
+			} else {
+				// Found a match
+				PlainGameDescriptor gameDesc = findGame(p->_gameId);
+				gameList.push_back(GlkDetectedGame(p->_gameId, gameDesc.description, filename));
+			}
+		}
+
+		return !gameList.empty();
+	}
+
+	void ScottMetaEngine::detectClashes(Common::StringMap &map) {
+		for (const PlainGameDescriptor *pd = SCOTT_GAME_LIST; pd->gameId; ++pd) {
+			if (map.contains(pd->gameId))
+				error("Duplicate game Id found - %s", pd->gameId);
+			map[pd->gameId] = "";
 		}
 	}
-
-	return !gameList.empty();
-}
-
-void ScottMetaEngine::detectClashes(Common::StringMap &map) {
-	for (const PlainGameDescriptor *pd = SCOTT_GAME_LIST; pd->gameId; ++pd) {
-		if (map.contains(pd->gameId))
-			error("Duplicate game Id found - %s", pd->gameId);
-		map[pd->gameId] = "";
-	}
-}
 
 } // End of namespace Scott
 } // End of namespace Glk

@@ -24,7 +24,7 @@
 #define SCUMM_RESOURCE_H
 
 #include "common/array.h"
-#include "scumm/scumm.h"	// for ResType
+#include "scumm/scumm.h" // for ResType
 
 namespace Scumm {
 
@@ -40,6 +40,7 @@ class ResourceIterator {
 	uint32 _pos;
 	const byte *_ptr;
 	bool _smallHeader;
+
 public:
 	ResourceIterator(const byte *searchin, bool smallHeader);
 	const byte *findNext(uint32 tag);
@@ -64,9 +65,9 @@ class ScummEngine;
  * marked in this way.
  */
 enum ResTypeMode {
-	kDynamicResTypeMode = 0,	///< Resource is generated during runtime and may change
-	kStaticResTypeMode = 1,		///< Resource comes from data files, does not change
-	kSoundResTypeMode = 2		///< Resource comes from data files, but may change
+	kDynamicResTypeMode = 0, ///< Resource is generated during runtime and may change
+	kStaticResTypeMode = 1, ///< Resource comes from data files, does not change
+	kSoundResTypeMode = 2 ///< Resource comes from data files, but may change
 };
 
 /**
@@ -151,7 +152,8 @@ public:
 	 * This struct represents a resource type and all resource of that type.
 	 */
 	class ResTypeData : public Common::Array<Resource> {
-	friend class ResourceManager;
+		friend class ResourceManager;
+
 	public:
 		/**
 		 * The mode of this res type.
@@ -188,8 +190,8 @@ public:
 	byte *createResource(ResType type, ResId idx, uint32 size);
 	void nukeResource(ResType type, ResId idx);
 
-//	inline Resource &getRes(ResType type, ResId idx) { return _types[type][idx]; }
-//	inline const Resource &getRes(ResType type, ResId idx) const { return _types[type][idx]; }
+	//	inline Resource &getRes(ResType type, ResId idx) { return _types[type][idx]; }
+	//	inline const Resource &getRes(ResType type, ResId idx) const { return _types[type][idx]; }
 
 	bool isResourceLoaded(ResType type, ResId idx) const;
 
@@ -225,8 +227,9 @@ public:
 
 	void resourceStats();
 
-//protected:
+	//protected:
 	bool validateResource(const char *str, ResType type, ResId idx) const;
+
 protected:
 	void expireResources(uint32 size);
 };

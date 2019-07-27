@@ -42,6 +42,7 @@ public:
 	bool playSequence(const uint8 *seqData, bool skipSeq);
 
 	uint8 *setPanPages(int pageNum, int shape);
+
 protected:
 	KyraEngine_LoK *_vm;
 	OSystem *_system;

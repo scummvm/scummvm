@@ -23,7 +23,6 @@
 #ifndef SKY_SCREEN_H
 #define SKY_SCREEN_H
 
-
 #include "common/scummsys.h"
 #include "sky/skydefs.h"
 
@@ -41,9 +40,9 @@ class SkyCompact;
 struct Compact;
 struct DataFileHeader;
 
-#define SCROLL_JUMP		16
-#define VGA_COLORS		256
-#define GAME_COLORS		240
+#define SCROLL_JUMP 16
+#define VGA_COLORS 256
+#define GAME_COLORS 240
 
 #define FORE 1
 #define BACK 0
@@ -84,7 +83,7 @@ public:
 	void fnFadeDown(uint32 scroll);
 	void fnDrawScreen(uint32 palette, uint32 scroll);
 	void clearScreen(bool fullscreen = false);
-	void setFocusRectangle(const Common::Rect& rect);
+	void setFocusRectangle(const Common::Rect &rect);
 
 	void recreate();
 	void flip(bool doUpdate = true);
@@ -118,7 +117,7 @@ private:
 	} _seqInfo;
 
 	//- more regular screen.asm + layer.asm routines
-	void convertPalette(uint8 *inPal, uint8* outPal);
+	void convertPalette(uint8 *inPal, uint8 *outPal);
 	void palette_fadedown_helper(uint8 *pal, uint num);
 
 	//- sprite.asm routines

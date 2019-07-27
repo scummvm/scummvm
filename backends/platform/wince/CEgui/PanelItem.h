@@ -34,10 +34,12 @@ class Panel;
 
 class PanelItem : public GUIElement {
 	friend class Panel;
+
 public:
 	PanelItem(WORD reference);
 	virtual ~PanelItem();
 	virtual bool action(int x, int y, bool pushed);
+
 protected:
 	void setPanel(Panel *panel);
 	Panel *_panel;

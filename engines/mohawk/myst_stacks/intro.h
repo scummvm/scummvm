@@ -36,32 +36,32 @@ namespace MystStacks {
 
 #define DECLARE_OPCODE(x) void x(uint16 var, const ArgumentsArray &args)
 
-class Intro : public MystScriptParser {
-public:
-	explicit Intro(MohawkEngine_Myst *vm, MystStack stackId = kIntroStack);
-	~Intro() override;
+	class Intro : public MystScriptParser {
+	public:
+		explicit Intro(MohawkEngine_Myst *vm, MystStack stackId = kIntroStack);
+		~Intro() override;
 
-	void disablePersistentScripts() override;
-	void runPersistentScripts() override;
+		void disablePersistentScripts() override;
+		void runPersistentScripts() override;
 
-private:
-	void setupOpcodes();
-	uint16 getVar(uint16 var) override;
+	private:
+		void setupOpcodes();
+		uint16 getVar(uint16 var) override;
 
-	DECLARE_OPCODE(o_useLinkBook);
+		DECLARE_OPCODE(o_useLinkBook);
 
-	DECLARE_OPCODE(o_playIntroMovies);
-	DECLARE_OPCODE(o_mystLinkBook_init);
+		DECLARE_OPCODE(o_playIntroMovies);
+		DECLARE_OPCODE(o_mystLinkBook_init);
 
-	void introMovies_run();
-	void mystLinkBook_run();
+		void introMovies_run();
+		void mystLinkBook_run();
 
-	bool _introMoviesRunning;
-	uint16 _introStep;
+		bool _introMoviesRunning;
+		uint16 _introStep;
 
-	bool _linkBookRunning;
-	MystAreaVideo *_linkBookMovie;
-};
+		bool _linkBookRunning;
+		MystAreaVideo *_linkBookMovie;
+	};
 
 } // End of namespace MystStacks
 } // End of namespace Mohawk

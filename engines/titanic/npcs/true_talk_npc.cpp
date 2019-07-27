@@ -29,20 +29,29 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CTrueTalkNPC, CCharacter)
-	ON_MESSAGE(TextInputMsg)
-	ON_MESSAGE(TrueTalkGetAssetDetailsMsg)
-	ON_MESSAGE(DismissBotMsg)
-	ON_MESSAGE(TrueTalkNotifySpeechStartedMsg)
-	ON_MESSAGE(TrueTalkNotifySpeechEndedMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(NPCQueueIdleAnimMsg)
-	ON_MESSAGE(TimerMsg)
-	ON_MESSAGE(NPCPlayAnimationMsg)
+ON_MESSAGE(TextInputMsg)
+ON_MESSAGE(TrueTalkGetAssetDetailsMsg)
+ON_MESSAGE(DismissBotMsg)
+ON_MESSAGE(TrueTalkNotifySpeechStartedMsg)
+ON_MESSAGE(TrueTalkNotifySpeechEndedMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(NPCQueueIdleAnimMsg)
+ON_MESSAGE(TimerMsg)
+ON_MESSAGE(NPCPlayAnimationMsg)
 END_MESSAGE_MAP()
 
-CTrueTalkNPC::CTrueTalkNPC() : _assetName("z451.dlg"),
-	_assetNumber(0x11170), _fieldE4(0), _npcFlags(0), _speechDuration(0), _startTicks(0),
-	_fieldF4(0), _fieldF8(0), _speechTimerId(0), _speechCounter(0), _field104(0) {
+CTrueTalkNPC::CTrueTalkNPC()
+  : _assetName("z451.dlg")
+  , _assetNumber(0x11170)
+  , _fieldE4(0)
+  , _npcFlags(0)
+  , _speechDuration(0)
+  , _startTicks(0)
+  , _fieldF4(0)
+  , _fieldF8(0)
+  , _speechTimerId(0)
+  , _speechCounter(0)
+  , _field104(0) {
 }
 
 void CTrueTalkNPC::save(SimpleFile *file, int indent) {
@@ -97,7 +106,7 @@ bool CTrueTalkNPC::DismissBotMsg(CDismissBotMsg *msg) {
 
 bool CTrueTalkNPC::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMsg *msg) {
 	debugC(DEBUG_DETAILED, kDebugScripts, "%s TrueTalkNotifySpeechStartedMsg flags=%x dialogueId=%d",
-		getName().c_str(), _npcFlags, msg->_dialogueId);
+	       getName().c_str(), _npcFlags, msg->_dialogueId);
 
 	_npcFlags |= NPCFLAG_SPEAKING;
 	++_speechCounter;
@@ -199,7 +208,7 @@ bool CTrueTalkNPC::TimerMsg(CTimerMsg *msg) {
 }
 
 bool CTrueTalkNPC::NPCPlayAnimationMsg(CNPCPlayAnimationMsg *msg) {
-//	const char *const *nameP = msg->_names;
+	//	const char *const *nameP = msg->_names;
 	int count;
 	for (count = 0; msg->_names[count]; ++count)
 		;

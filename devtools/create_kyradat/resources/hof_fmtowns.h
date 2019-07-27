@@ -65,39 +65,39 @@ static const HoFSequence k2SeqplaySeqDataFMTownsSeq[16] = {
 };
 
 static const FrameControl k2SeqplaySeqDataFMTownsSeqNestedControl7[18] = {
-	{  0, 10 },
-	{  1, 10 },
-	{  2, 10 },
-	{  3, 10 },
-	{  4, 10 },
-	{  5, 10 },
-	{  6, 10 },
-	{  7, 10 },
-	{  8, 10 },
-	{  9, 10 },
-	{  8, 10 },
-	{  7, 10 },
-	{  6, 10 },
-	{  5, 40 },
-	{  4, 10 },
-	{  3, 10 },
-	{  2, 10 },
-	{  1, 10 }
+	{ 0, 10 },
+	{ 1, 10 },
+	{ 2, 10 },
+	{ 3, 10 },
+	{ 4, 10 },
+	{ 5, 10 },
+	{ 6, 10 },
+	{ 7, 10 },
+	{ 8, 10 },
+	{ 9, 10 },
+	{ 8, 10 },
+	{ 7, 10 },
+	{ 6, 10 },
+	{ 5, 40 },
+	{ 4, 10 },
+	{ 3, 10 },
+	{ 2, 10 },
+	{ 1, 10 }
 };
 
 static const FrameControl k2SeqplaySeqDataFMTownsSeqNestedControl10[17] = {
-	{  0,  6 },
-	{  1,  6 },
-	{  2,  6 },
-	{  3,  6 },
-	{  4,  6 },
-	{  5,  6 },
-	{  6,  6 },
-	{  7,  6 },
-	{  8,  6 },
-	{  9,  6 },
-	{ 10,  6 },
-	{ 11,  6 },
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 2, 6 },
+	{ 3, 6 },
+	{ 4, 6 },
+	{ 5, 6 },
+	{ 6, 6 },
+	{ 7, 6 },
+	{ 8, 6 },
+	{ 9, 6 },
+	{ 10, 6 },
+	{ 11, 6 },
 	{ 11, 12 },
 	{ 12, 12 },
 	{ 13, 12 },
@@ -106,53 +106,53 @@ static const FrameControl k2SeqplaySeqDataFMTownsSeqNestedControl10[17] = {
 };
 
 static const FrameControl k2SeqplaySeqDataFMTownsSeqNestedControl11[9] = {
-	{  0,  6 },
-	{  1,  6 },
-	{  2,  6 },
-	{  3,  6 },
-	{  4,  6 },
-	{  3,  6 },
-	{  4,  6 },
-	{  5, 64 },
-	{  5,  6 }
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 2, 6 },
+	{ 3, 6 },
+	{ 4, 6 },
+	{ 3, 6 },
+	{ 4, 6 },
+	{ 5, 64 },
+	{ 5, 6 }
 };
 
 static const FrameControl k2SeqplaySeqDataFMTownsSeqNestedControl12[16] = {
-	{  0,  6 },
-	{  1,  6 },
-	{  0,  6 },
-	{  1,  6 },
-	{  0,  6 },
-	{  1,  6 },
-	{  0,  6 },
-	{  1,  6 },
-	{  0,  6 },
-	{  1,  6 },
-	{  0,  6 },
-	{  1,  6 },
-	{  0,  6 },
-	{  1,  6 },
-	{  0,  6 },
-	{  1,  6 }
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 0, 6 },
+	{ 1, 6 }
 };
 
 static const FrameControl k2SeqplaySeqDataFMTownsSeqNestedControl13[5] = {
-	{  0,  6 },
-	{  1,  6 },
-	{  2,  6 },
-	{  1,  6 },
-	{  0,  1 }
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 2, 6 },
+	{ 1, 6 },
+	{ 0, 1 }
 };
 
 static const FrameControl k2SeqplaySeqDataFMTownsSeqNestedControl14[8] = {
-	{  0,  6 },
-	{  1,  6 },
-	{  2,  6 },
-	{  3,  6 },
-	{  4,  6 },
-	{  3,  6 },
-	{  2,  6 },
-	{  1,  6 }
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 2, 6 },
+	{ 3, 6 },
+	{ 4, 6 },
+	{ 3, 6 },
+	{ 2, 6 },
+	{ 1, 6 }
 };
 
 static const HoFNestedSequence k2SeqplaySeqDataFMTownsSeqNested[15] = {
@@ -576,9 +576,17 @@ static const ByteProvider k2IngameTalkObjIndexFMTownsProvider = { ARRAYSIZE(k2In
 
 static const char *const k2IngameTimJpStringsFMTowns[4] = {
 	"Yippee!",
-	"\x82\xE2\x82\xC1\x82\xBD\x81""[""\x81""I",
+	"\x82\xE2\x82\xC1\x82\xBD\x81"
+	"["
+	"\x81"
+	"I",
 	"Hop on!",
-	"\x82\xB3\x82\xA0\x81""A""\x8D""s""\x82\xB1\x82\xA4\x82\xE6\x81""I"
+	"\x82\xB3\x82\xA0\x81"
+	"A"
+	"\x8D"
+	"s"
+	"\x82\xB1\x82\xA4\x82\xE6\x81"
+	"I"
 };
 
 static const StringListProvider k2IngameTimJpStringsFMTownsProvider = { ARRAYSIZE(k2IngameTimJpStringsFMTowns), k2IngameTimJpStringsFMTowns };
@@ -696,21 +704,20 @@ static const FrameControl k2IngameShapeAnimDataFMTowns13FrameControl[4] = {
 };
 
 static const ItemAnimDefinition k2IngameShapeAnimDataFMTowns[14] = {
-	{   6, 12, k2IngameShapeAnimDataFMTowns0FrameControl },
-	{   2,  6, k2IngameShapeAnimDataFMTowns1FrameControl },
-	{  11,  6, k2IngameShapeAnimDataFMTowns2FrameControl },
-	{  28,  4, k2IngameShapeAnimDataFMTowns3FrameControl },
-	{  23,  4, k2IngameShapeAnimDataFMTowns4FrameControl },
-	{  22,  4, k2IngameShapeAnimDataFMTowns5FrameControl },
-	{  58,  4, k2IngameShapeAnimDataFMTowns6FrameControl },
-	{  26,  4, k2IngameShapeAnimDataFMTowns7FrameControl },
-	{ 109,  4, k2IngameShapeAnimDataFMTowns8FrameControl },
-	{ 121,  4, k2IngameShapeAnimDataFMTowns9FrameControl },
-	{ 126,  4, k2IngameShapeAnimDataFMTowns10FrameControl },
-	{ 145,  6, k2IngameShapeAnimDataFMTowns11FrameControl },
-	{ 149,  4, k2IngameShapeAnimDataFMTowns12FrameControl },
-	{ 153,  4, k2IngameShapeAnimDataFMTowns13FrameControl }
+	{ 6, 12, k2IngameShapeAnimDataFMTowns0FrameControl },
+	{ 2, 6, k2IngameShapeAnimDataFMTowns1FrameControl },
+	{ 11, 6, k2IngameShapeAnimDataFMTowns2FrameControl },
+	{ 28, 4, k2IngameShapeAnimDataFMTowns3FrameControl },
+	{ 23, 4, k2IngameShapeAnimDataFMTowns4FrameControl },
+	{ 22, 4, k2IngameShapeAnimDataFMTowns5FrameControl },
+	{ 58, 4, k2IngameShapeAnimDataFMTowns6FrameControl },
+	{ 26, 4, k2IngameShapeAnimDataFMTowns7FrameControl },
+	{ 109, 4, k2IngameShapeAnimDataFMTowns8FrameControl },
+	{ 121, 4, k2IngameShapeAnimDataFMTowns9FrameControl },
+	{ 126, 4, k2IngameShapeAnimDataFMTowns10FrameControl },
+	{ 145, 6, k2IngameShapeAnimDataFMTowns11FrameControl },
+	{ 149, 4, k2IngameShapeAnimDataFMTowns12FrameControl },
+	{ 153, 4, k2IngameShapeAnimDataFMTowns13FrameControl }
 };
 
 static const ItemAnimDefinitionProvider k2IngameShapeAnimDataFMTownsProvider = { ARRAYSIZE(k2IngameShapeAnimDataFMTowns), k2IngameShapeAnimDataFMTowns };
-

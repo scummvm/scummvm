@@ -25,10 +25,10 @@
 namespace BladeRunner {
 
 enum kHC03Loops {
-	kHC03LoopMainLoop                 = 0,
-	kHC03LoopCageDoorOpening          = 2,
-	kHC03LoopMainCageOpen             = 3,
-	kHC03LoopTrapDoorOpening          = 5,
+	kHC03LoopMainLoop = 0,
+	kHC03LoopCageDoorOpening = 2,
+	kHC03LoopMainCageOpen = 3,
+	kHC03LoopTrapDoorOpening = 5,
 	kHC03LoopMainCageOpenTrapDoorOpen = 6
 };
 
@@ -44,24 +44,23 @@ void SceneScriptHC03::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 0, 0, 30, 479, 3);
 
 	if (Game_Flag_Query(kFlagHC03CageOpen)
-	 || Global_Variable_Query(kVariableChapter) > 3
-	) {
+	    || Global_Variable_Query(kVariableChapter) > 3) {
 		Item_Remove_From_World(kItemGreenPawnLock);
 		Game_Flag_Set(kFlagHC03CageOpen);
 		Scene_Exit_Add_2D_Exit(1, 400, 275, 515, 375, 2);
 	}
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 50, 50, 0);
-	Ambient_Sounds_Add_Looping_Sound(kSfxHCLOOP1,  50, 50, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM8,   3, 30, 16, 16, -100, -70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM2,   3, 30, 16, 16, -100, -70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM3,   3, 30, 16, 16, -100, -70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM4,   3, 30, 16, 16, -100, -70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM5,   3, 30, 16, 16, -100, -70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM6,   3, 30, 16, 16, -100, -70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM7,   3, 30, 16, 16, -100, -70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM1,   3, 30, 16, 16, -100, -70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCBELL1,  3, 50, 25, 25, -100, -70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxHCLOOP1, 50, 50, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM8, 3, 30, 16, 16, -100, -70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM2, 3, 30, 16, 16, -100, -70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM3, 3, 30, 16, 16, -100, -70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM4, 3, 30, 16, 16, -100, -70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM5, 3, 30, 16, 16, -100, -70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM6, 3, 30, 16, 16, -100, -70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM7, 3, 30, 16, 16, -100, -70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM1, 3, 30, 16, 16, -100, -70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCBELL1, 3, 50, 25, 25, -100, -70, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxINDFLUT1, 3, 50, 33, 33, -100, -70, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfx67_0470R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfx67_0480R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
@@ -81,8 +80,7 @@ void SceneScriptHC03::InitializeScene() {
 	if (Game_Flag_Query(kFlagHC03TrapDoorOpen)) {
 		Scene_Loop_Set_Default(kHC03LoopMainCageOpenTrapDoorOpen);
 	} else if (Game_Flag_Query(kFlagHC03CageOpen)
-	        || Global_Variable_Query(kVariableChapter) > 3
-	) {
+	           || Global_Variable_Query(kVariableChapter) > 3) {
 		Scene_Loop_Set_Default(kHC03LoopMainCageOpen);
 	} else {
 		Scene_Loop_Set_Default(kHC03LoopMainLoop);
@@ -92,9 +90,8 @@ void SceneScriptHC03::InitializeScene() {
 void SceneScriptHC03::SceneLoaded() {
 	Obstacle_Object("GUITAR01", true);
 	if (Game_Flag_Query(kFlagHC03CageOpen)
-	 || Game_Flag_Query(kFlagHC03TrapDoorOpen)
-	 || Global_Variable_Query(kVariableChapter) > 3
-	) {
+	    || Game_Flag_Query(kFlagHC03TrapDoorOpen)
+	    || Global_Variable_Query(kVariableChapter) > 3) {
 		Unobstacle_Object("GPscisGate", true);
 	} else {
 		Obstacle_Object("GPscisGate", true);
@@ -181,25 +178,23 @@ bool SceneScriptHC03::ClickedOn2DRegion(int region) {
 
 void SceneScriptHC03::SceneFrameAdvanced(int frame) {
 	if (frame == 10
-	 || frame == 19
-	 || frame == 29
-	 || frame == 39
-	 || frame == 49
-	 || frame == 59
-	 || frame == 71
-	 || frame == 82
-	 || frame == 91
-	 || frame == 101
-	 || frame == 111
-	 || frame == 121
-	 || frame == 131
-	) {
+	    || frame == 19
+	    || frame == 29
+	    || frame == 39
+	    || frame == 49
+	    || frame == 59
+	    || frame == 71
+	    || frame == 82
+	    || frame == 91
+	    || frame == 101
+	    || frame == 111
+	    || frame == 121
+	    || frame == 131) {
 		Sound_Play(kSfx14KBEEP1, Random_Query(33, 50), 50, 50, 50);
 	}
 
 	if (!Game_Flag_Query(kFlagHC03TrapDoorOpened)
-	 &&  frame == 66
-	) {
+	    && frame == 66) {
 		Ambient_Sounds_Play_Sound(kSfxCHAINLNK, 90, 0, -40, 99);
 		Sound_Play(kSfxMTLDOOR2, Random_Query(47, 47), 0, -40, 50);
 		Scene_Exit_Add_2D_Exit(1, 400, 275, 515, 375, 2);

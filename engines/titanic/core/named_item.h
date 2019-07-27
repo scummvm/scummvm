@@ -31,10 +31,12 @@ class CViewItem;
 class CNodeItem;
 class CRoomItem;
 
-class CNamedItem: public CTreeItem {
+class CNamedItem : public CTreeItem {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	CString _name;
+
 public:
 	CLASSDEF;
 

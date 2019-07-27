@@ -22,16 +22,41 @@
 
 #include "audio/softsynth/fmtowns_pc98/towns_euphony.h"
 #include "common/endian.h"
-#include "common/util.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
 #define EUP_EVENT(x) _euphonyEvents.push_back(new EuphonyEvent(this, &EuphonyPlayer::event_##x))
 
-EuphonyPlayer::EuphonyPlayer(Audio::Mixer *mixer) : _partConfig_enable(0), _partConfig_type(0), _partConfig_ordr(0), _partConfig_volume(0),
-	_partConfig_transpose(0), _musicPos(0), _musicStart(0), _playing(false), _pendingEventsChain(0), _tempoModifier(0), _bar(0),
-	_beat(0), _defaultBarLength(0), _barLength(0), _playerUpdatesLeft(0), _updatesPerPulseRemainder(0),	_updatesPerPulse(0),
-	_deltaTicks(0), _defaultTempo(0), _trackTempo(0), _tempoControlMode(0), _timerSetting(0), _tempoMode1PulseCounter(0),
-	_parseToBar(0), _tempoMode1UpdateF8(0), _loop(false), _endOfTrack(false), _paused(false), _musicTrackSize(0) {
+EuphonyPlayer::EuphonyPlayer(Audio::Mixer *mixer)
+  : _partConfig_enable(0)
+  , _partConfig_type(0)
+  , _partConfig_ordr(0)
+  , _partConfig_volume(0)
+  , _partConfig_transpose(0)
+  , _musicPos(0)
+  , _musicStart(0)
+  , _playing(false)
+  , _pendingEventsChain(0)
+  , _tempoModifier(0)
+  , _bar(0)
+  , _beat(0)
+  , _defaultBarLength(0)
+  , _barLength(0)
+  , _playerUpdatesLeft(0)
+  , _updatesPerPulseRemainder(0)
+  , _updatesPerPulse(0)
+  , _deltaTicks(0)
+  , _defaultTempo(0)
+  , _trackTempo(0)
+  , _tempoControlMode(0)
+  , _timerSetting(0)
+  , _tempoMode1PulseCounter(0)
+  , _parseToBar(0)
+  , _tempoMode1UpdateF8(0)
+  , _loop(false)
+  , _endOfTrack(false)
+  , _paused(false)
+  , _musicTrackSize(0) {
 	EUP_EVENT(notImpl);
 	EUP_EVENT(noteOn);
 	EUP_EVENT(polyphonicAftertouch);
@@ -515,7 +540,7 @@ bool EuphonyPlayer::event_sysex() {
 	sendByte(type, 0xF0);
 	proceedToNextEvent();
 
-	for (bool loop = true; loop; ) {
+	for (bool loop = true; loop;) {
 		for (int i = 0; i < 6; i++) {
 			if (_musicPos[i] != 0xFF) {
 				sendByte(type, _musicPos[i]);
@@ -645,7 +670,11 @@ void EuphonyPlayer::sendTempo(int tempo) {
 	}
 }
 
-EuphonyDriver::EuphonyDriver(Audio::Mixer *mixer, EuphonyPlayer *pl) : EuphonyBaseDriver(), _channels(0), _partToChanMapping(0), _sustainChannels(0) {
+EuphonyDriver::EuphonyDriver(Audio::Mixer *mixer, EuphonyPlayer *pl)
+  : EuphonyBaseDriver()
+  , _channels(0)
+  , _partToChanMapping(0)
+  , _sustainChannels(0) {
 	_intf = new TownsAudioInterface(mixer, pl);
 }
 
@@ -655,7 +684,6 @@ EuphonyDriver::~EuphonyDriver() {
 	delete[] _sustainChannels;
 	delete[] _channels;
 }
-
 
 bool EuphonyDriver::init() {
 	if (!_intf->init())
@@ -959,7 +987,8 @@ void EuphonyDriver::pitchWheel() {
 	}
 }
 
-Type0Driver::Type0Driver(EuphonyPlayer *pl) : EuphonyBaseDriver() {
+Type0Driver::Type0Driver(EuphonyPlayer *pl)
+  : EuphonyBaseDriver() {
 }
 
 Type0Driver::~Type0Driver() {

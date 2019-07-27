@@ -23,15 +23,15 @@
 
 #include "tinsel/object.h"
 #include "tinsel/background.h"
-#include "tinsel/cliprect.h"	// object clip rect defs
-#include "tinsel/graphics.h"	// low level interface
+#include "tinsel/cliprect.h" // object clip rect defs
+#include "tinsel/graphics.h" // low level interface
 #include "tinsel/handle.h"
 #include "tinsel/text.h"
 #include "tinsel/tinsel.h"
 
 #include "common/textconsole.h"
 
-#define	OID_EFFECTS	0x2000			// generic special effects object id
+#define OID_EFFECTS 0x2000 // generic special effects object id
 
 namespace Tinsel {
 
@@ -88,8 +88,7 @@ void KillAllObjects() {
 	objectList[NUM_OBJECTS - 1].pNext = NULL;
 }
 
-
-#ifdef	DEBUG
+#ifdef DEBUG
 /**
  * Shows the maximum number of objects used at once.
  */
@@ -103,7 +102,7 @@ void ObjectStats() {
  * Allocate a object from the free list.
  */
 OBJECT *AllocObject() {
-	OBJECT *pObj = pFreeObjects;	// get a free object
+	OBJECT *pObj = pFreeObjects; // get a free object
 
 	// check for no free objects
 	assert(pObj != NULL);
@@ -163,7 +162,7 @@ void CopyObject(OBJECT *pDest, OBJECT *pSrc) {
  */
 
 void InsertObject(OBJECT **pObjList, OBJECT *pInsObj) {
-	OBJECT **pAnchor, *pObj;	// object list traversal pointers
+	OBJECT **pAnchor, *pObj; // object list traversal pointers
 
 	// validate object pointer
 	assert(isValidObject(pInsObj));
@@ -187,7 +186,6 @@ void InsertObject(OBJECT **pObjList, OBJECT *pInsObj) {
 	*pAnchor = pInsObj;
 }
 
-
 /**
  * Deletes an object from the specified object list and places it
  * on the free list.
@@ -195,7 +193,7 @@ void InsertObject(OBJECT **pObjList, OBJECT *pInsObj) {
  * @param pDelObj			Object to delete
  */
 void DelObject(OBJECT **pObjList, OBJECT *pDelObj) {
-	OBJECT **pAnchor, *pObj;	// object list traversal pointers
+	OBJECT **pAnchor, *pObj; // object list traversal pointers
 	const Common::Rect rcScreen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	// validate object pointer
@@ -240,14 +238,13 @@ void DelObject(OBJECT **pObjList, OBJECT *pDelObj) {
 	warning("DelObject(): formally 'assert(0)!'");
 }
 
-
 /**
  * Sort the specified object list in Z Y order.
  * @param pObjList			List to sort
  */
 void SortObjectList(OBJECT **pObjList) {
-	OBJECT *pPrev, *pObj;	// object list traversal pointers
-	OBJECT head;		// temporary head of list - because pObjList is not usually a OBJECT
+	OBJECT *pPrev, *pObj; // object list traversal pointers
+	OBJECT head; // temporary head of list - because pObjList is not usually a OBJECT
 
 	// put at head of list
 	head.pNext = *pObjList;
@@ -269,7 +266,7 @@ void SortObjectList(OBJECT **pObjList) {
 
 			// back to beginning of list
 			pPrev = &head;
-			pObj  = head.pNext;
+			pObj = head.pNext;
 		} else if (pObj->zPos == pPrev->zPos) {
 			// Z values are the same - sort on Y
 			if (fracToDouble(pObj->yPos) < fracToDouble(pPrev->yPos)) {
@@ -283,7 +280,7 @@ void SortObjectList(OBJECT **pObjList) {
 
 				// back to beginning of list
 				pPrev = &head;
-				pObj  = head.pNext;
+				pObj = head.pNext;
 			}
 		}
 	}
@@ -302,10 +299,10 @@ void GetAniOffset(SCNHANDLE hImg, int flags, int *pAniX, int *pAniY) {
 		const IMAGE *pImg = (const IMAGE *)LockMem(hImg);
 
 		// set ani X
-		*pAniX = (int16) FROM_16(pImg->anioffX);
+		*pAniX = (int16)FROM_16(pImg->anioffX);
 
 		// set ani Y
-		*pAniY = (int16) FROM_16(pImg->anioffY);
+		*pAniY = (int16)FROM_16(pImg->anioffY);
 
 		if (flags & DMA_FLIPH) {
 			// we are flipped horizontally
@@ -324,7 +321,6 @@ void GetAniOffset(SCNHANDLE hImg, int flags, int *pAniX, int *pAniY) {
 		// null image
 		*pAniX = *pAniY = 0;
 }
-
 
 /**
  * Returns the x,y position of an objects animation point.
@@ -369,9 +365,9 @@ OBJECT *InitObject(const OBJ_INIT *pInitTbl) {
 
 	// get pointer to image
 	if (pInitTbl->hObjImg) {
-		int aniX, aniY;		// objects animation offsets
-		PALQ *pPalQ = NULL;	// palette queue pointer
-		const IMAGE *pImg = (const IMAGE *)LockMem(pInitTbl->hObjImg);	// handle to image
+		int aniX, aniY; // objects animation offsets
+		PALQ *pPalQ = NULL; // palette queue pointer
+		const IMAGE *pImg = (const IMAGE *)LockMem(pInitTbl->hObjImg); // handle to image
 
 		if (pImg->hImgPal) {
 			// allocate a palette for this object
@@ -385,7 +381,7 @@ OBJECT *InitObject(const OBJ_INIT *pInitTbl) {
 		pObj->pPal = pPalQ;
 
 		// set objects size
-		pObj->width  = FROM_16(pImg->imgWidth);
+		pObj->width = FROM_16(pImg->imgWidth);
 		pObj->height = FROM_16(pImg->imgHeight) & ~C16_FLAG_MASK;
 		pObj->flags &= ~C16_FLAG_MASK;
 		pObj->flags |= FROM_16(pImg->imgHeight) & C16_FLAG_MASK;
@@ -401,7 +397,7 @@ OBJECT *InitObject(const OBJ_INIT *pInitTbl) {
 
 		// set objects Y position - subtract ani offset
 		pObj->yPos = intToFrac(pInitTbl->objY - aniY);
-	} else {	// no image handle - null image
+	} else { // no image handle - null image
 
 		// set objects X position
 		pObj->xPos = intToFrac(pInitTbl->objX);
@@ -425,11 +421,11 @@ void AnimateObjectFlags(OBJECT *pAniObj, int newflags, SCNHANDLE hNewImg) {
 	assert(isValidObject(pAniObj));
 
 	if (pAniObj->hImg != hNewImg
-		|| (pAniObj->flags & DMA_HARDFLAGS) != (newflags & DMA_HARDFLAGS)) {
+	    || (pAniObj->flags & DMA_HARDFLAGS) != (newflags & DMA_HARDFLAGS)) {
 		// something has changed
 
-		int oldAniX, oldAniY;	// objects old animation offsets
-		int newAniX, newAniY;	// objects new animation offsets
+		int oldAniX, oldAniY; // objects old animation offsets
+		int newAniX, newAniY; // objects new animation offsets
 
 		// get objects old animation offsets
 		GetAniOffset(pAniObj->hImg, pAniObj->flags, &oldAniX, &oldAniY);
@@ -442,17 +438,17 @@ void AnimateObjectFlags(OBJECT *pAniObj, int newflags, SCNHANDLE hNewImg) {
 			const IMAGE *pNewImg = (IMAGE *)LockMem(hNewImg);
 
 			// setup new shape
-			pAniObj->width  = FROM_16(pNewImg->imgWidth);
+			pAniObj->width = FROM_16(pNewImg->imgWidth);
 			pAniObj->height = FROM_16(pNewImg->imgHeight) & ~C16_FLAG_MASK;
 			newflags &= ~C16_FLAG_MASK;
 			newflags |= FROM_16(pNewImg->imgHeight) & C16_FLAG_MASK;
 
 			// set objects bitmap definition
-			pAniObj->hBits  = FROM_32(pNewImg->hImgBits);
-		} else {	// null image
-			pAniObj->width  = 0;
+			pAniObj->hBits = FROM_32(pNewImg->hImgBits);
+		} else { // null image
+			pAniObj->width = 0;
 			pAniObj->height = 0;
-			pAniObj->hBits  = 0;
+			pAniObj->hBits = 0;
 		}
 
 		// set objects flags and signal a change
@@ -487,8 +483,8 @@ void AnimateObject(OBJECT *pAniObj, SCNHANDLE hNewImg) {
  */
 OBJECT *RectangleObject(SCNHANDLE hPal, int color, int width, int height) {
 	// template for initializing the rectangle object
-	static const OBJ_INIT rectObj = {0, DMA_CONST, OID_EFFECTS, 0, 0, 0};
-	PALQ *pPalQ;		// palette queue pointer
+	static const OBJ_INIT rectObj = { 0, DMA_CONST, OID_EFFECTS, 0, 0, 0 };
+	PALQ *pPalQ; // palette queue pointer
 
 	// allocate and init a new object
 	OBJECT *pRect = InitObject(&rectObj);
@@ -523,7 +519,7 @@ OBJECT *RectangleObject(SCNHANDLE hPal, int color, int width, int height) {
  */
 OBJECT *TranslucentObject(int width, int height) {
 	// template for initializing the rectangle object
-	static const OBJ_INIT rectObj = {0, DMA_TRANS, OID_EFFECTS, 0, 0, 0};
+	static const OBJ_INIT rectObj = { 0, DMA_TRANS, OID_EFFECTS, 0, 0, 0 };
 
 	// allocate and init a new object
 	OBJECT *pRect = InitObject(&rectObj);

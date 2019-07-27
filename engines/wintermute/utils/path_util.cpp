@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "common/file.h"
 #include "engines/wintermute/utils/path_util.h"
+#include "common/file.h"
 
 namespace Wintermute {
 
@@ -64,7 +64,7 @@ Common::String PathUtil::combine(const Common::String &path1, const Common::Stri
 }
 
 bool PathUtil::hasTrailingSlash(const Common::String &path) {
-	return (path.size() > 0 && path[path.size() - 1 ] == '/');
+	return (path.size() > 0 && path[path.size() - 1] == '/');
 }
 
 //////////////////////////////////////////////////////////////////////////

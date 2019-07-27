@@ -21,8 +21,8 @@
  */
 
 #include "mutationofjb/commands/removeallitemscommand.h"
-#include "mutationofjb/script.h"
 #include "mutationofjb/gamedata.h"
+#include "mutationofjb/script.h"
 
 /** @file
  * "DELALLITEMS"

@@ -20,13 +20,14 @@
  *
  */
 
-#include "gnap/gnap.h"
 #include "gnap/character.h"
 #include "gnap/gamesys.h"
+#include "gnap/gnap.h"
 
 namespace Gnap {
 
-Character::Character(GnapEngine *vm) : _vm(vm) {
+Character::Character(GnapEngine *vm)
+  : _vm(vm) {
 	_pos = Common::Point(0, 0);
 	_idleFacing = kDirIdleLeft;
 	_actionStatus = 0;
@@ -42,7 +43,7 @@ Character::Character(GnapEngine *vm) : _vm(vm) {
 	_walkDirX = _walkDirY = 0;
 	_walkDirXIncr = _walkDirYIncr = 0;
 
-	for(int i = 0; i < kMaxGridStructs; i++) {
+	for (int i = 0; i < kMaxGridStructs; i++) {
 		_walkNodes[i]._id = 0;
 		_walkNodes[i]._sequenceId = 0;
 		_walkNodes[i]._deltaX = 0;
@@ -107,7 +108,8 @@ void Character::walkStep() {
 }
 /************************************************************************************************/
 
-PlayerGnap::PlayerGnap(GnapEngine * vm) : Character(vm) {
+PlayerGnap::PlayerGnap(GnapEngine *vm)
+  : Character(vm) {
 	_brainPulseNum = 0;
 	_brainPulseRndValue = 0;
 }
@@ -441,7 +443,7 @@ int PlayerGnap::getSequenceId(int kind, Common::Point gridPos) {
 }
 
 void PlayerGnap::useJointOnPlatypus() {
-	PlayerPlat& plat = *_vm->_plat;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->setGrabCursorSprite(-1);
 	if (doPlatypusAction(1, 0, 0x107C1, 0)) {
@@ -449,13 +451,13 @@ void PlayerGnap::useJointOnPlatypus() {
 		_vm->_gameSys->setAnimation(0, 0, 1);
 		_vm->_gameSys->setAnimation(0x10876, plat._id, 0);
 		_vm->_gameSys->insertSequence(0x10875, _id,
-			makeRid(_sequenceDatNum, _sequenceId), _id,
-			kSeqSyncWait, 0, 15 * (5 * _pos.x - 30), 48 * (_pos.y - 7));
+		                              makeRid(_sequenceDatNum, _sequenceId), _id,
+		                              kSeqSyncWait, 0, 15 * (5 * _pos.x - 30), 48 * (_pos.y - 7));
 		_sequenceDatNum = 1;
 		_sequenceId = 0x875;
 		_vm->_gameSys->insertSequence(0x10876, plat._id,
-			plat._sequenceId | (plat._sequenceDatNum << 16), plat._id,
-			kSeqSyncWait, 0, 15 * (5 * plat._pos.x - 25), 48 * (plat._pos.y - 7));
+		                              plat._sequenceId | (plat._sequenceDatNum << 16), plat._id,
+		                              kSeqSyncWait, 0, 15 * (5 * plat._pos.x - 25), 48 * (plat._pos.y - 7));
 		plat._sequenceDatNum = 1;
 		plat._sequenceId = 0x876;
 		plat._idleFacing = kDirIdleLeft;
@@ -473,20 +475,20 @@ void PlayerGnap::useJointOnPlatypus() {
 }
 
 void PlayerGnap::kissPlatypus(int callback) {
-	PlayerPlat& plat = *_vm->_plat;
+	PlayerPlat &plat = *_vm->_plat;
 
 	if (doPlatypusAction(-1, 0, 0x107D1, callback)) {
 		_actionStatus = 100;
 		_vm->_gameSys->setAnimation(0, 0, 1);
 		_vm->_gameSys->setAnimation(0x10847, _id, 0);
 		_vm->_gameSys->insertSequence(0x10847, _id,
-			makeRid(_sequenceDatNum, _sequenceId), _id,
-			kSeqSyncWait, 0, 15 * (5 * _pos.x - 20) - (21 - _vm->_gridMinX), 48 * (_pos.y - 6) - (146 - _vm->_gridMinY));
+		                              makeRid(_sequenceDatNum, _sequenceId), _id,
+		                              kSeqSyncWait, 0, 15 * (5 * _pos.x - 20) - (21 - _vm->_gridMinX), 48 * (_pos.y - 6) - (146 - _vm->_gridMinY));
 		_sequenceDatNum = 1;
 		_sequenceId = 0x847;
 		_vm->_gameSys->insertSequence(0x107CB, plat._id,
-			makeRid(plat._sequenceDatNum, plat._sequenceId), plat._id,
-			kSeqSyncWait, _vm->getSequenceTotalDuration(0x10847), 75 * plat._pos.x - plat._gridX, 48 * plat._pos.y - plat._gridY);
+		                              makeRid(plat._sequenceDatNum, plat._sequenceId), plat._id,
+		                              kSeqSyncWait, _vm->getSequenceTotalDuration(0x10847), 75 * plat._pos.x - plat._gridX, 48 * plat._pos.y - plat._gridY);
 		plat._sequenceDatNum = 1;
 		plat._sequenceId = 0x7CB;
 		plat._idleFacing = kDirIdleLeft;
@@ -504,28 +506,28 @@ void PlayerGnap::kissPlatypus(int callback) {
 }
 
 void PlayerGnap::useDeviceOnPlatypus() {
-	PlayerPlat& plat = *_vm->_plat;
+	PlayerPlat &plat = *_vm->_plat;
 
 	playSequence(makeRid(1, getSequenceId(kGSPullOutDevice, plat._pos)));
 
 	if (plat._idleFacing != kDirIdleLeft) {
 		_vm->_gameSys->insertSequence(makeRid(1, 0x7D5), plat._id,
-			makeRid(plat._sequenceDatNum, plat._sequenceId), plat._id,
-			kSeqSyncWait, 0, 75 * plat._pos.x - plat._gridX, 48 * plat._pos.y - plat._gridY);
+		                              makeRid(plat._sequenceDatNum, plat._sequenceId), plat._id,
+		                              kSeqSyncWait, 0, 75 * plat._pos.x - plat._gridX, 48 * plat._pos.y - plat._gridY);
 		plat._sequenceId = 0x7D5;
 		plat._sequenceDatNum = 1;
 	} else {
 		_vm->_gameSys->insertSequence(makeRid(1, 0x7D4), plat._id,
-			makeRid(plat._sequenceDatNum, plat._sequenceId), plat._id,
-			kSeqSyncWait, 0, 75 * plat._pos.x - plat._gridX, 48 * plat._pos.y - plat._gridY);
+		                              makeRid(plat._sequenceDatNum, plat._sequenceId), plat._id,
+		                              kSeqSyncWait, 0, 75 * plat._pos.x - plat._gridX, 48 * plat._pos.y - plat._gridY);
 		plat._sequenceId = 0x7D4;
 		plat._sequenceDatNum = 1;
 	}
 
 	int newSequenceId = getSequenceId(kGSUseDevice, Common::Point(0, 0));
 	_vm->_gameSys->insertSequence(makeRid(1, newSequenceId), _id,
-		makeRid(_sequenceDatNum, _sequenceId), _id,
-		kSeqSyncWait, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
+	                              makeRid(_sequenceDatNum, _sequenceId), _id,
+	                              kSeqSyncWait, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
 	_sequenceId = newSequenceId;
 	_sequenceDatNum = 1;
 }
@@ -539,8 +541,8 @@ void PlayerGnap::playSequence(int sequenceId) {
 	_vm->_timers[3] = 300;
 	idle();
 	_vm->_gameSys->insertSequence(sequenceId, _id,
-		makeRid(_sequenceDatNum, _sequenceId), _id,
-		kSeqScale | kSeqSyncWait, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
+	                              makeRid(_sequenceDatNum, _sequenceId), _id,
+	                              kSeqScale | kSeqSyncWait, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
 	_sequenceId = ridToEntryIndex(sequenceId);
 	_sequenceDatNum = ridToDatIndex(sequenceId);
 }
@@ -577,14 +579,14 @@ void PlayerGnap::updateIdleSequence() {
 			_vm->_timers[2] = _vm->getRandom(30) + 20;
 			if (_idleFacing == kDirBottomRight) {
 				_vm->_gameSys->insertSequence(0x107BD, _id,
-					makeRid(_sequenceDatNum, _sequenceId), _id,
-					kSeqSyncWait, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
+				                              makeRid(_sequenceDatNum, _sequenceId), _id,
+				                              kSeqSyncWait, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
 				_sequenceId = 0x7BD;
 				_sequenceDatNum = 1;
 			} else if (_idleFacing == kDirBottomLeft) {
 				_vm->_gameSys->insertSequence(0x107BE, _id,
-					makeRid(_sequenceDatNum, _sequenceId), _id,
-					kSeqSyncWait, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
+				                              makeRid(_sequenceDatNum, _sequenceId), _id,
+				                              kSeqSyncWait, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
 				_sequenceId = 0x7BE;
 				_sequenceDatNum = 1;
 			}
@@ -611,14 +613,14 @@ void PlayerGnap::updateIdleSequence2() {
 			_vm->_timers[2] = _vm->getRandom(30) + 20;
 			if (_idleFacing == kDirBottomRight) {
 				_vm->_gameSys->insertSequence(0x107BD, _id,
-					makeRid(_sequenceDatNum, _sequenceId), _id,
-					kSeqSyncWait, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
+				                              makeRid(_sequenceDatNum, _sequenceId), _id,
+				                              kSeqSyncWait, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
 				_sequenceId = 0x7BD;
 				_sequenceDatNum = 1;
 			} else if (_idleFacing == kDirBottomLeft) {
 				_vm->_gameSys->insertSequence(0x107BE, _id,
-					makeRid(_sequenceDatNum, _sequenceId), _id,
-					kSeqSyncWait, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
+				                              makeRid(_sequenceDatNum, _sequenceId), _id,
+				                              kSeqSyncWait, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
 				_sequenceId = 0x7BE;
 				_sequenceDatNum = 1;
 			}
@@ -647,8 +649,8 @@ void PlayerGnap::initPos(int gridX, int gridY, Facing facing) {
 	_id = 20 * _pos.y;
 	_sequenceDatNum = 1;
 	_vm->_gameSys->insertSequence(makeRid(1, _sequenceId), 20 * _pos.y,
-		0, 0,
-		kSeqScale, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
+	                              0, 0,
+	                              kSeqScale, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
 }
 
 int PlayerGnap::getWalkSequenceId(int deltaX, int deltaY) {
@@ -665,7 +667,7 @@ int PlayerGnap::getWalkSequenceId(int deltaX, int deltaY) {
 }
 
 bool PlayerGnap::walkTo(Common::Point gridPos, int animationIndex, int sequenceId, int flags) {
-	PlayerPlat& plat = *_vm->_plat;
+	PlayerPlat &plat = *_vm->_plat;
 	int datNum = flags & 3;
 
 	_vm->_timers[2] = 200;
@@ -709,28 +711,28 @@ bool PlayerGnap::walkTo(Common::Point gridPos, int animationIndex, int sequenceI
 		if (_walkNodes[index]._deltaX == 1 && _walkNodes[index]._deltaY == 0) {
 			if (index % 2) {
 				_vm->_gameSys->insertSequence(makeRid(datNum, 0x7AB), _walkNodes[index]._id,
-					makeRid(gnapSequenceDatNum, gnapSequenceId), gnapId,
-					kSeqScale | kSeqSyncWait, 0, 75 * _walkNodes[index]._gridX1 - _gridX, 48 * _walkNodes[index]._gridY1 - _gridY);
+				                              makeRid(gnapSequenceDatNum, gnapSequenceId), gnapId,
+				                              kSeqScale | kSeqSyncWait, 0, 75 * _walkNodes[index]._gridX1 - _gridX, 48 * _walkNodes[index]._gridY1 - _gridY);
 				_walkNodes[index]._sequenceId = 0x7AB;
 				gnapSequenceId = 0x7AB;
 			} else {
 				_vm->_gameSys->insertSequence(makeRid(datNum, 0x7AC), _walkNodes[index]._id,
-					makeRid(gnapSequenceDatNum, gnapSequenceId), gnapId,
-					kSeqScale | kSeqSyncWait, 0, 75 * _walkNodes[index]._gridX1 - _gridX, 48 * _walkNodes[index]._gridY1 - _gridY);
+				                              makeRid(gnapSequenceDatNum, gnapSequenceId), gnapId,
+				                              kSeqScale | kSeqSyncWait, 0, 75 * _walkNodes[index]._gridX1 - _gridX, 48 * _walkNodes[index]._gridY1 - _gridY);
 				_walkNodes[index]._sequenceId = 0x7AC;
 				gnapSequenceId = 0x7AC;
 			}
 		} else if (_walkNodes[index]._deltaX == -1 && _walkNodes[index]._deltaY == 0) {
 			if (index % 2) {
 				_vm->_gameSys->insertSequence(makeRid(datNum, 0x7AF), _walkNodes[index]._id,
-					makeRid(gnapSequenceDatNum, gnapSequenceId), gnapId,
-					kSeqScale | kSeqSyncWait, 0, 75 * _walkNodes[index]._gridX1 - _gridX, 48 * _walkNodes[index]._gridY1 - _gridY);
+				                              makeRid(gnapSequenceDatNum, gnapSequenceId), gnapId,
+				                              kSeqScale | kSeqSyncWait, 0, 75 * _walkNodes[index]._gridX1 - _gridX, 48 * _walkNodes[index]._gridY1 - _gridY);
 				_walkNodes[index]._sequenceId = 0x7AF;
 				gnapSequenceId = 0x7AF;
 			} else {
 				_vm->_gameSys->insertSequence(makeRid(datNum, 0x7B0), _walkNodes[index]._id,
-					makeRid(gnapSequenceDatNum, gnapSequenceId), gnapId,
-					kSeqScale | kSeqSyncWait, 0, 75 * _walkNodes[index]._gridX1 - _gridX, 48 * _walkNodes[index]._gridY1 - _gridY);
+				                              makeRid(gnapSequenceDatNum, gnapSequenceId), gnapId,
+				                              kSeqScale | kSeqSyncWait, 0, 75 * _walkNodes[index]._gridX1 - _gridX, 48 * _walkNodes[index]._gridY1 - _gridY);
 				_walkNodes[index]._sequenceId = 0x7B0;
 				gnapSequenceId = 0x7B0;
 			}
@@ -741,8 +743,8 @@ bool PlayerGnap::walkTo(Common::Point gridPos, int animationIndex, int sequenceI
 				_walkNodes[index]._id += 10;
 			int newSequenceId = getWalkSequenceId(_walkNodes[index]._deltaX, _walkNodes[index]._deltaY);
 			_vm->_gameSys->insertSequence(makeRid(datNum, newSequenceId), _walkNodes[index]._id,
-				makeRid(gnapSequenceDatNum, gnapSequenceId), gnapId,
-				kSeqScale | kSeqSyncWait, 0, 75 * _walkNodes[index]._gridX1 - _gridX, 48 * _walkNodes[index]._gridY1 - _gridY);
+			                              makeRid(gnapSequenceDatNum, gnapSequenceId), gnapId,
+			                              kSeqScale | kSeqSyncWait, 0, 75 * _walkNodes[index]._gridX1 - _gridX, 48 * _walkNodes[index]._gridY1 - _gridY);
 			_walkNodes[index]._sequenceId = newSequenceId;
 			gnapSequenceId = newSequenceId;
 		}
@@ -822,12 +824,12 @@ bool PlayerGnap::walkTo(Common::Point gridPos, int animationIndex, int sequenceI
 
 		if (flags & 4) {
 			_vm->_gameSys->insertSequence(makeRid(_sequenceDatNum, _sequenceId), _id,
-				makeRid(gnapSequenceDatNum, gnapSequenceId), gnapId,
-				kSeqScale | kSeqSyncWait, 0, 0, 0);
+			                              makeRid(gnapSequenceDatNum, gnapSequenceId), gnapId,
+			                              kSeqScale | kSeqSyncWait, 0, 0, 0);
 		} else {
 			_vm->_gameSys->insertSequence(makeRid(_sequenceDatNum, _sequenceId), _id,
-				makeRid(gnapSequenceDatNum, gnapSequenceId), gnapId,
-				kSeqScale | kSeqSyncWait, 0, 75 * _walkDestX - _gridX, 48 * _walkDestY - _gridY);
+			                              makeRid(gnapSequenceDatNum, gnapSequenceId), gnapId,
+			                              kSeqScale | kSeqSyncWait, 0, 75 * _walkDestX - _gridX, 48 * _walkDestY - _gridY);
 		}
 	}
 
@@ -994,16 +996,10 @@ int PlayerGnap::getShowSequenceId(int index, int gridX, int gridY) {
 }
 
 void PlayerGnap::idle() {
-	if (_sequenceDatNum == 1 &&
-			(_sequenceId == 0x7A6 || _sequenceId == 0x7AA ||
-			_sequenceId == 0x832 || _sequenceId == 0x841 ||
-			_sequenceId == 0x842 || _sequenceId == 0x8A2 ||
-			_sequenceId == 0x833 || _sequenceId == 0x834 ||
-			_sequenceId == 0x885 || _sequenceId == 0x7A8 ||
-			_sequenceId == 0x831 || _sequenceId == 0x89A)) {
+	if (_sequenceDatNum == 1 && (_sequenceId == 0x7A6 || _sequenceId == 0x7AA || _sequenceId == 0x832 || _sequenceId == 0x841 || _sequenceId == 0x842 || _sequenceId == 0x8A2 || _sequenceId == 0x833 || _sequenceId == 0x834 || _sequenceId == 0x885 || _sequenceId == 0x7A8 || _sequenceId == 0x831 || _sequenceId == 0x89A)) {
 		_vm->_gameSys->insertSequence(getSequenceId(kGSIdle, Common::Point(0, 0)) | 0x10000, _id,
-			makeRid(_sequenceDatNum, _sequenceId), _id,
-			kSeqSyncExists, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
+		                              makeRid(_sequenceDatNum, _sequenceId), _id,
+		                              kSeqSyncExists, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
 		_sequenceId = getSequenceId(kGSIdle, Common::Point(0, 0));
 		_sequenceDatNum = 1;
 	}
@@ -1012,8 +1008,8 @@ void PlayerGnap::idle() {
 void PlayerGnap::actionIdle(int sequenceId) {
 	if (_sequenceId != -1 && ridToDatIndex(sequenceId) == _sequenceDatNum && ridToEntryIndex(sequenceId) == _sequenceId) {
 		_vm->_gameSys->insertSequence(getSequenceId(kGSIdle, Common::Point(0, 0)) | 0x10000, _id,
-			makeRid(_sequenceDatNum, _sequenceId), _id,
-			kSeqSyncExists, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
+		                              makeRid(_sequenceDatNum, _sequenceId), _id,
+		                              kSeqSyncExists, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
 		_sequenceId = getSequenceId(kGSIdle, Common::Point(0, 0));
 		_sequenceDatNum = 1;
 	}
@@ -1060,7 +1056,7 @@ void PlayerGnap::playShowItem(int itemIndex, int gridLookX, int gridLookY) {
 }
 
 void PlayerGnap::playShowCurrItem(Common::Point destPos, int gridLookX, int gridLookY) {
-	PlayerPlat& plat = *_vm->_plat;
+	PlayerPlat &plat = *_vm->_plat;
 
 	if (plat._pos == destPos)
 		plat.makeRoom();
@@ -1069,7 +1065,7 @@ void PlayerGnap::playShowCurrItem(Common::Point destPos, int gridLookX, int grid
 }
 
 bool PlayerGnap::doPlatypusAction(int gridX, int gridY, int platSequenceId, int callback) {
-	PlayerPlat& plat = *_vm->_plat;
+	PlayerPlat &plat = *_vm->_plat;
 	bool result = false;
 
 	if (_actionStatus <= -1 && plat._actionStatus <= -1) {
@@ -1118,7 +1114,8 @@ void PlayerGnap::useDisguiseOnPlatypus() {
 
 /************************************************************************************************/
 
-PlayerPlat::PlayerPlat(GnapEngine * vm) : Character(vm) {}
+PlayerPlat::PlayerPlat(GnapEngine *vm)
+  : Character(vm) {}
 
 int PlayerPlat::getSequenceId(int kind, Common::Point gridPos) {
 	// The original had 3 parameters, all always set to 0.
@@ -1136,8 +1133,8 @@ int PlayerPlat::getSequenceId(int kind, Common::Point gridPos) {
 
 void PlayerPlat::playSequence(int sequenceId) {
 	_vm->_gameSys->insertSequence(sequenceId, _id,
-		makeRid(_sequenceDatNum, _sequenceId), _id,
-		kSeqScale | kSeqSyncWait, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
+	                              makeRid(_sequenceDatNum, _sequenceId), _id,
+	                              kSeqScale | kSeqSyncWait, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
 	_sequenceId = ridToEntryIndex(sequenceId);
 	_sequenceDatNum = ridToDatIndex(sequenceId);
 }
@@ -1181,7 +1178,7 @@ void PlayerPlat::updateIdleSequence() {
 }
 
 void PlayerPlat::updateIdleSequence2() {
-	PlayerGnap& gnap = *_vm->_gnap;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (_actionStatus < 0 && gnap._actionStatus < 0) {
 		if (_vm->_timers[0]) {
@@ -1227,8 +1224,8 @@ void PlayerPlat::initPos(int gridX, int gridY, Facing facing) {
 	_id = 20 * _pos.y;
 	_sequenceDatNum = 1;
 	_vm->_gameSys->insertSequence(makeRid(1, _sequenceId), 20 * _pos.y,
-		0, 0,
-		kSeqScale, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
+	                              0, 0,
+	                              kSeqScale, 0, 75 * _pos.x - _gridX, 48 * _pos.y - _gridY);
 }
 
 int PlayerPlat::getWalkSequenceId(int deltaX, int deltaY) {
@@ -1248,7 +1245,7 @@ bool PlayerPlat::walkTo(Common::Point gridPos, int animationIndex, int sequenceI
 	// Note: flags is always 1. The code could be simplified.
 
 	int datNum = flags & 3;
-	PlayerGnap& gnap = *_vm->_gnap;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	_vm->_timers[1] = 60;
 
@@ -1286,28 +1283,28 @@ bool PlayerPlat::walkTo(Common::Point gridPos, int animationIndex, int sequenceI
 		if (_walkNodes[index]._deltaX == 1 && _walkNodes[index]._deltaY == 0) {
 			if (index % 2) {
 				_vm->_gameSys->insertSequence(makeRid(datNum, 0x7CD), _walkNodes[index]._id,
-					makeRid(platSequenceDatNum, platSequenceId), platId,
-					kSeqScale | kSeqSyncWait, 0, 75 * _walkNodes[index]._gridX1 - _gridX, 48 * _walkNodes[index]._gridY1 - _gridY);
+				                              makeRid(platSequenceDatNum, platSequenceId), platId,
+				                              kSeqScale | kSeqSyncWait, 0, 75 * _walkNodes[index]._gridX1 - _gridX, 48 * _walkNodes[index]._gridY1 - _gridY);
 				_walkNodes[index]._sequenceId = 0x7CD;
 				platSequenceId = 0x7CD;
 			} else {
 				_vm->_gameSys->insertSequence(makeRid(datNum, 0x7CE), _walkNodes[index]._id,
-					makeRid(platSequenceDatNum, platSequenceId), platId,
-					kSeqScale | kSeqSyncWait, 0, 75 * _walkNodes[index]._gridX1 - _gridX, 48 * _walkNodes[index]._gridY1 - _gridY);
+				                              makeRid(platSequenceDatNum, platSequenceId), platId,
+				                              kSeqScale | kSeqSyncWait, 0, 75 * _walkNodes[index]._gridX1 - _gridX, 48 * _walkNodes[index]._gridY1 - _gridY);
 				_walkNodes[index]._sequenceId = 0x7CE;
 				platSequenceId = 0x7CE;
 			}
 		} else if (_walkNodes[index]._deltaX == -1 && _walkNodes[index]._deltaY == 0) {
 			if (index % 2) {
 				_vm->_gameSys->insertSequence(makeRid(datNum, 0x7CF), _walkNodes[index]._id,
-					makeRid(platSequenceDatNum, platSequenceId), platId,
-					kSeqScale | kSeqSyncWait, 0, 75 * _walkNodes[index]._gridX1 - _gridX, 48 * _walkNodes[index]._gridY1 - _gridY);
+				                              makeRid(platSequenceDatNum, platSequenceId), platId,
+				                              kSeqScale | kSeqSyncWait, 0, 75 * _walkNodes[index]._gridX1 - _gridX, 48 * _walkNodes[index]._gridY1 - _gridY);
 				_walkNodes[index]._sequenceId = 0x7CF;
 				platSequenceId = 0x7CF;
 			} else {
 				_vm->_gameSys->insertSequence(makeRid(datNum, 0x7D0), _walkNodes[index]._id,
-					makeRid(platSequenceDatNum, platSequenceId), platId,
-					kSeqScale | kSeqSyncWait, 0, 75 * _walkNodes[index]._gridX1 - _gridX, 48 * _walkNodes[index]._gridY1 - _gridY);
+				                              makeRid(platSequenceDatNum, platSequenceId), platId,
+				                              kSeqScale | kSeqSyncWait, 0, 75 * _walkNodes[index]._gridX1 - _gridX, 48 * _walkNodes[index]._gridY1 - _gridY);
 				_walkNodes[index]._sequenceId = 0x7D0;
 				platSequenceId = 0x7D0;
 			}
@@ -1318,8 +1315,8 @@ bool PlayerPlat::walkTo(Common::Point gridPos, int animationIndex, int sequenceI
 				_walkNodes[index]._id += 10;
 			int newSequenceId = getWalkSequenceId(_walkNodes[index]._deltaX, _walkNodes[index]._deltaY);
 			_vm->_gameSys->insertSequence(makeRid(datNum, newSequenceId), _walkNodes[index]._id,
-				makeRid(platSequenceDatNum, platSequenceId), platId,
-				kSeqScale | kSeqSyncWait, 0, 75 * _walkNodes[index]._gridX1 - _gridX, 48 * _walkNodes[index]._gridY1 - _gridY);
+			                              makeRid(platSequenceDatNum, platSequenceId), platId,
+			                              kSeqScale | kSeqSyncWait, 0, 75 * _walkNodes[index]._gridX1 - _gridX, 48 * _walkNodes[index]._gridY1 - _gridY);
 			_walkNodes[index]._sequenceId = newSequenceId;
 			platSequenceId = newSequenceId;
 		}
@@ -1390,12 +1387,12 @@ bool PlayerPlat::walkTo(Common::Point gridPos, int animationIndex, int sequenceI
 
 		if (flags & 4)
 			_vm->_gameSys->insertSequence(makeRid(_sequenceDatNum, _sequenceId), _id,
-			makeRid(platSequenceDatNum, platSequenceId), platId,
-			9, 0, 0, 0);
+			                              makeRid(platSequenceDatNum, platSequenceId), platId,
+			                              9, 0, 0, 0);
 		else
 			_vm->_gameSys->insertSequence(makeRid(_sequenceDatNum, _sequenceId), _id,
-			makeRid(platSequenceDatNum, platSequenceId), platId,
-			9, 0, 75 * _walkDestX - _gridX, 48 * _walkDestY - _gridY);
+			                              makeRid(platSequenceDatNum, platSequenceId), platId,
+			                              9, 0, 75 * _walkDestX - _gridX, 48 * _walkDestY - _gridY);
 	}
 
 	_pos = Common::Point(_walkDestX, _walkDestY);

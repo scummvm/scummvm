@@ -24,41 +24,42 @@
 #define TSAGE_RINGWORLD_DEMO_H
 
 #include "common/scummsys.h"
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
+#include "tsage/scenes.h"
 #include "tsage/sound.h"
 
 namespace TsAGE {
 
 namespace Ringworld {
 
-using namespace TsAGE;
+	using namespace TsAGE;
 
-class RingworldDemoGame: public Game {
-private:
-	void pauseGame();
-public:
-	virtual void start();
-	virtual Scene *createScene(int sceneNumber);
-	virtual void quitGame();
-	virtual void processEvent(Event &event);
-	virtual bool canSaveGameStateCurrently();
-	virtual bool canLoadGameStateCurrently();
-};
+	class RingworldDemoGame : public Game {
+	private:
+		void pauseGame();
 
-class RingworldDemoScene: public Scene {
-public:
-	SequenceManager _sequenceManager;
-	SceneObject _actor1, _actor2, _actor3;
-	SceneObject _actor4, _actor5, _actor6;
-	ASound _soundHandler;
+	public:
+		virtual void start();
+		virtual Scene *createScene(int sceneNumber);
+		virtual void quitGame();
+		virtual void processEvent(Event &event);
+		virtual bool canSaveGameStateCurrently();
+		virtual bool canLoadGameStateCurrently();
+	};
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void process(Event &event);
-	virtual void signal();
-};
+	class RingworldDemoScene : public Scene {
+	public:
+		SequenceManager _sequenceManager;
+		SceneObject _actor1, _actor2, _actor3;
+		SceneObject _actor4, _actor5, _actor6;
+		ASound _soundHandler;
+
+		virtual void postInit(SceneObjectList *OwnerList = NULL);
+		virtual void process(Event &event);
+		virtual void signal();
+	};
 
 } // End of namespace Ringworld
 

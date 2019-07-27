@@ -20,15 +20,18 @@
  *
  */
 
-#include "neverhood/console.h"
 #include "neverhood/scene.h"
+#include "neverhood/console.h"
 #include "neverhood/smackerplayer.h"
 
 namespace Neverhood {
 
 Scene::Scene(NeverhoodEngine *vm, Module *parentModule)
-	: Entity(vm, 0), _parentModule(parentModule), _dataResource(vm), _hitRects(NULL),
-	_mouseCursorWasVisible(true) {
+  : Entity(vm, 0)
+  , _parentModule(parentModule)
+  , _dataResource(vm)
+  , _hitRects(NULL)
+  , _mouseCursorWasVisible(true) {
 
 	_isKlaymenBusy = false;
 	_doConvertMessages = false;
@@ -73,14 +76,13 @@ Scene::~Scene() {
 	}
 
 	// Delete all entities
-	for (Common::Array<Entity*>::iterator iter = _entities.begin(); iter != _entities.end(); iter++)
+	for (Common::Array<Entity *>::iterator iter = _entities.begin(); iter != _entities.end(); iter++)
 		delete *iter;
 
 	// Don't delete surfaces since they always belong to an entity
 
 	// Purge the resources after each scene
 	_vm->_res->purgeResources();
-
 }
 
 void Scene::draw() {
@@ -88,14 +90,14 @@ void Scene::draw() {
 		if (_smackerPlayer->getSurface())
 			_smackerPlayer->getSurface()->draw();
 	} else {
-		for (Common::Array<BaseSurface*>::iterator iter = _surfaces.begin(); iter != _surfaces.end(); iter++)
+		for (Common::Array<BaseSurface *>::iterator iter = _surfaces.begin(); iter != _surfaces.end(); iter++)
 			(*iter)->draw();
 	}
 }
 
 void Scene::addEntity(Entity *entity) {
 	int index = 0, insertIndex = -1;
-	for (Common::Array<Entity*>::iterator iter = _entities.begin(); iter != _entities.end(); iter++) {
+	for (Common::Array<Entity *>::iterator iter = _entities.begin(); iter != _entities.end(); iter++) {
 		if ((*iter)->getPriority() > entity->getPriority()) {
 			insertIndex = index;
 			break;
@@ -120,7 +122,7 @@ bool Scene::removeEntity(Entity *entity) {
 void Scene::addSurface(BaseSurface *surface) {
 	if (surface) {
 		int index = 0, insertIndex = -1;
-		for (Common::Array<BaseSurface*>::iterator iter = _surfaces.begin(); iter != _surfaces.end(); iter++) {
+		for (Common::Array<BaseSurface *>::iterator iter = _surfaces.begin(); iter != _surfaces.end(); iter++) {
 			if ((*iter)->getPriority() > surface->getPriority()) {
 				insertIndex = index;
 				break;
@@ -150,9 +152,9 @@ void Scene::printSurfaces(Console *con) {
 		NRect clipRect = _surfaces[index]->getClipRect();
 		int priority = _surfaces[index]->getPriority();
 		con->debugPrintf("%d ('%s'): Priority %d, draw rect (%d, %d, %d, %d), clip rect (%d, %d, %d, %d)\n",
-			index, _surfaces[index]->getName().c_str(), priority,
-			drawRect.x, drawRect.y, drawRect.x2(), drawRect.y2(),
-			clipRect.x1, clipRect.y1, clipRect.x2, clipRect.y2);
+		                 index, _surfaces[index]->getName().c_str(), priority,
+		                 drawRect.x, drawRect.y, drawRect.x2(), drawRect.y2(),
+		                 clipRect.x1, clipRect.y1, clipRect.x2, clipRect.y2);
 	}
 }
 
@@ -255,14 +257,9 @@ void Scene::update() {
 
 	if (_mouseClicked) {
 		if (_klaymen) {
-			if (_canAcceptInput &&
-				_klaymen->hasMessageHandler() &&
-				sendMessage(_klaymen, 0x1008, 0) != 0 &&
-				queryPositionSprite(_mouseClickPos.x, _mouseClickPos.y)) {
+			if (_canAcceptInput && _klaymen->hasMessageHandler() && sendMessage(_klaymen, 0x1008, 0) != 0 && queryPositionSprite(_mouseClickPos.x, _mouseClickPos.y)) {
 				_mouseClicked = false;
-			} else if (_canAcceptInput &&
-				_klaymen->hasMessageHandler() &&
-				sendMessage(_klaymen, 0x1008, 0) != 0) {
+			} else if (_canAcceptInput && _klaymen->hasMessageHandler() && sendMessage(_klaymen, 0x1008, 0) != 0) {
 				_mouseClicked = !queryPositionRectList(_mouseClickPos.x, _mouseClickPos.y);
 			}
 		} else if (queryPositionSprite(_mouseClickPos.x, _mouseClickPos.y)) {
@@ -273,9 +270,8 @@ void Scene::update() {
 	processMessageList();
 
 	// Update all entities
-	for (Common::Array<Entity*>::iterator iter = _entities.begin(); iter != _entities.end(); iter++)
+	for (Common::Array<Entity *>::iterator iter = _entities.begin(); iter != _entities.end(); iter++)
 		(*iter)->handleUpdate();
-
 }
 
 void Scene::leaveScene(uint32 result) {
@@ -331,7 +327,7 @@ uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *s
 		break;
 	case NM_PRIORITY_CHANGE:
 		// Set the sender's surface priority
-		setSurfacePriority(((Sprite*)sender)->getSurface(), param.asInteger());
+		setSurfacePriority(((Sprite *)sender)->getSurface(), param.asInteger());
 		break;
 	}
 	return 0;
@@ -340,8 +336,7 @@ uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *s
 bool Scene::queryPositionSprite(int16 mouseX, int16 mouseY) {
 	for (uint i = 0; i < _collisionSprites.size(); i++) {
 		Sprite *sprite = _collisionSprites[i];
-		if (sprite->hasMessageHandler() && sprite->isPointInside(mouseX, mouseY) &&
-			sendPointMessage(sprite, 0x1011, _mouseClickPos) != 0) {
+		if (sprite->hasMessageHandler() && sprite->isPointInside(mouseX, mouseY) && sendPointMessage(sprite, 0x1011, _mouseClickPos) != 0) {
 			return true;
 		}
 	}
@@ -392,9 +387,7 @@ bool Scene::setMessageList2(uint32 id, bool canAcceptInput, bool doConvertMessag
 }
 
 bool Scene::setMessageList2(MessageList *messageList, bool canAcceptInput, bool doConvertMessages) {
-	if (_messageListStatus == 0 ||
-		(_messageListStatus == 1 && messageList != _messageList2) ||
-		(_messageListStatus == 2 && messageList == _messageList2)) {
+	if (_messageListStatus == 0 || (_messageListStatus == 1 && messageList != _messageList2) || (_messageListStatus == 2 && messageList == _messageList2)) {
 		// NOTE Skipped unneeded resource preloading code
 		_messageValue = -1;
 		_messageList2 = messageList;
@@ -477,7 +470,6 @@ void Scene::processMessageList() {
 	}
 
 	_isMessageListBusy = false;
-
 }
 
 void Scene::cancelMessageList() {
@@ -549,7 +541,7 @@ void Scene::clearHitRects() {
 }
 
 HitRect *Scene::findHitRectAtPos(int16 x, int16 y) {
-	static HitRect kDefaultHitRect = {NRect(), 0x5000};
+	static HitRect kDefaultHitRect = { NRect(), 0x5000 };
 	if (_hitRects)
 		for (HitRectList::iterator it = _hitRects->begin(); it != _hitRects->end(); it++)
 			if ((*it).rect.contains(x, y))
@@ -559,7 +551,7 @@ HitRect *Scene::findHitRectAtPos(int16 x, int16 y) {
 
 void Scene::addCollisionSprite(Sprite *sprite) {
 	int index = 0, insertIndex = -1;
-	for (Common::Array<Sprite*>::iterator iter = _collisionSprites.begin(); iter != _collisionSprites.end(); iter++) {
+	for (Common::Array<Sprite *>::iterator iter = _collisionSprites.begin(); iter != _collisionSprites.end(); iter++) {
 		if ((*iter)->getPriority() > sprite->getPriority()) {
 			insertIndex = index;
 			break;
@@ -586,7 +578,7 @@ void Scene::clearCollisionSprites() {
 }
 
 void Scene::checkCollision(Sprite *sprite, uint16 flags, int messageNum, uint32 messageParam) {
-	for (Common::Array<Sprite*>::iterator iter = _collisionSprites.begin(); iter != _collisionSprites.end(); iter++) {
+	for (Common::Array<Sprite *>::iterator iter = _collisionSprites.begin(); iter != _collisionSprites.end(); iter++) {
 		Sprite *collSprite = *iter;
 		if ((sprite->getFlags() & flags) && collSprite->checkCollision(sprite->getCollisionBounds())) {
 			sprite->sendMessage(collSprite, messageNum, messageParam);
@@ -596,7 +588,7 @@ void Scene::checkCollision(Sprite *sprite, uint16 flags, int messageNum, uint32 
 
 void Scene::insertMouse(Mouse *mouseCursor) {
 	if (_mouseCursor)
-		deleteSprite((Sprite**)&_mouseCursor);
+		deleteSprite((Sprite **)&_mouseCursor);
 	_mouseCursor = mouseCursor;
 	addEntity(_mouseCursor);
 }
@@ -604,7 +596,7 @@ void Scene::insertMouse(Mouse *mouseCursor) {
 // StaticScene
 
 StaticScene::StaticScene(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 cursorFileHash)
-	: Scene(vm, parentModule) {
+  : Scene(vm, parentModule) {
 
 	SetMessageHandler(&StaticScene::handleMessage);
 

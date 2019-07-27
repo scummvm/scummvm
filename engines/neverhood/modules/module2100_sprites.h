@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE2100_SPRITES_H
 #define NEVERHOOD_MODULES_MODULE2100_SPRITES_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -32,6 +32,7 @@ namespace Neverhood {
 class AsScene2101Door : public AnimatedSprite {
 public:
 	AsScene2101Door(NeverhoodEngine *vm, bool isOpen);
+
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void stOpenDoor();
@@ -42,6 +43,7 @@ protected:
 class AsScene2101HitByDoorEffect : public AnimatedSprite {
 public:
 	AsScene2101HitByDoorEffect(NeverhoodEngine *vm, Sprite *klaymen);
+
 protected:
 	Sprite *_klaymen;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -50,6 +52,7 @@ protected:
 class SsCommonFloorButton : public StaticSprite {
 public:
 	SsCommonFloorButton(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int surfacePriority, uint32 soundFileHash);
+
 protected:
 	Scene *_parentScene;
 	uint32 _soundFileHash;

@@ -45,31 +45,31 @@ class KIASectionCrimes : public KIASectionBase {
 		int actorId;
 	};
 
-	bool  _isOpen;
+	bool _isOpen;
 
-	UIContainer   *_uiContainer;
+	UIContainer *_uiContainer;
 	UIImagePicker *_buttons;
-	UIScrollBox   *_cluesScrollBox;
+	UIScrollBox *_cluesScrollBox;
 
 	ActorClues *_clues;
 
-	int          _acquiredClueCount;
+	int _acquiredClueCount;
 	AcquiredClue _acquiredClues[kClueCount];
 
-	int                 _crimeSelected;
+	int _crimeSelected;
 
-	int                 _crimesFoundCount;
+	int _crimesFoundCount;
 	Common::Array<bool> _crimesFound;
 
-	int                 _suspectsFoundCount;
+	int _suspectsFoundCount;
 	Common::Array<bool> _suspectsFound;
 	Common::Array<bool> _suspectsWithIdentity;
 
-	int   _mouseX;
-	int   _mouseY;
+	int _mouseX;
+	int _mouseY;
 
-	int    _suspectPhotoShapeId;
-	int    _suspectPhotoNotUsed;
+	int _suspectPhotoShapeId;
+	int _suspectPhotoNotUsed;
 	Shape *_suspectPhotoShape;
 
 public:

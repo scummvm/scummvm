@@ -83,7 +83,10 @@ public:
 	uint32 _byteCount;
 	byte *_firstSample;
 	uint32 _sampleCount;
-	SoundData() : _byteCount(0), _firstSample(nullptr), _sampleCount(0) {}
+	SoundData()
+	  : _byteCount(0)
+	  , _firstSample(nullptr)
+	  , _sampleCount(0) {}
 }; // @ SOUND_DATA
 
 class Sound {
@@ -93,9 +96,18 @@ public:
 	byte _priority;
 	byte _loudDistance;
 	byte _softDistance;
-	Sound(int16 index, byte period, byte priority, byte loudDist, byte softDist) :
-		_graphicIndex(index), _period(period), _priority(priority), _loudDistance(loudDist), _softDistance(softDist) {}
-	Sound() : _graphicIndex(0), _period(0), _priority(0), _loudDistance(0), _softDistance(0) {}
+	Sound(int16 index, byte period, byte priority, byte loudDist, byte softDist)
+	  : _graphicIndex(index)
+	  , _period(period)
+	  , _priority(priority)
+	  , _loudDistance(loudDist)
+	  , _softDistance(softDist) {}
+	Sound()
+	  : _graphicIndex(0)
+	  , _period(0)
+	  , _priority(0)
+	  , _loudDistance(0)
+	  , _softDistance(0) {}
 }; // @ Sound
 
 class PendingSound {
@@ -103,8 +115,10 @@ public:
 	uint8 _leftVolume;
 	uint8 _rightVolume;
 	int16 _soundIndex;
-	PendingSound(uint8 leftVolume, uint8 rightVolume, int16 soundIndex) :
-		_leftVolume(leftVolume), _rightVolume(rightVolume), _soundIndex(soundIndex) {}
+	PendingSound(uint8 leftVolume, uint8 rightVolume, int16 soundIndex)
+	  : _leftVolume(leftVolume)
+	  , _rightVolume(rightVolume)
+	  , _soundIndex(soundIndex) {}
 };
 
 class SoundMan {
@@ -112,6 +126,7 @@ class SoundMan {
 
 protected:
 	SoundMan(DMEngine *vm);
+
 public:
 	virtual ~SoundMan();
 
@@ -130,10 +145,12 @@ public:
 	void initConstants();
 };
 
-class SoundMan_Atari: public SoundMan {
+class SoundMan_Atari : public SoundMan {
 	friend class SoundMan;
 
-	SoundMan_Atari(DMEngine *vm): SoundMan(vm) {};
+	SoundMan_Atari(DMEngine *vm)
+	  : SoundMan(vm) {};
+
 public:
 	void loadSounds() override {} // @ F0503_SOUND_LoadAll
 	void requestPlay(uint16 soundIndex, int16 mapX, int16 mapY, SoundMode soundMode) override {} // @ F0064_SOUND_RequestPlay_CPSD

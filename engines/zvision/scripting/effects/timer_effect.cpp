@@ -24,15 +24,15 @@
 
 #include "zvision/scripting/effects/timer_effect.h"
 
-#include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
+#include "zvision/zvision.h"
 
 #include "common/stream.h"
 
 namespace ZVision {
 
 TimerNode::TimerNode(ZVision *engine, uint32 key, uint timeInSeconds)
-	: ScriptingEffect(engine, key, SCRIPTING_EFFECT_TIMER) {
+  : ScriptingEffect(engine, key, SCRIPTING_EFFECT_TIMER) {
 	_timeLeft = 0;
 
 	if (_engine->getGameId() == GID_NEMESIS)

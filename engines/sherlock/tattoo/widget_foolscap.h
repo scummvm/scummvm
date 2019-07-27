@@ -23,57 +23,58 @@
 #ifndef SHERLOCK_TATTOO_FOOLSCAP_H
 #define SHERLOCK_TATTOO_FOOLSCAP_H
 
-#include "sherlock/tattoo/widget_base.h"
 #include "sherlock/image_file.h"
+#include "sherlock/tattoo/widget_base.h"
 
 namespace Sherlock {
 
 namespace Tattoo {
 
-class TattooEngine;
+	class TattooEngine;
 
-class WidgetFoolscap: public WidgetBase {
-private:
-	ImageFile *_images;
-	Common::Point _lines[3];
-	char _answers[3][10];
-	const char *_solutions[3];
-	int _numWide;
-	int _spacing;
-	Common::Point _cursorPos;
-	int _blinkCounter;
-	bool _blinkFlag;
-	int _lineNum, _charNum;
-	bool _solved;
+	class WidgetFoolscap : public WidgetBase {
+	private:
+		ImageFile *_images;
+		Common::Point _lines[3];
+		char _answers[3][10];
+		const char *_solutions[3];
+		int _numWide;
+		int _spacing;
+		Common::Point _cursorPos;
+		int _blinkCounter;
+		bool _blinkFlag;
+		int _lineNum, _charNum;
+		bool _solved;
 
-	/**
+		/**
 	 * Handle keyboard events
 	 */
-	void handleKeyboardEvents();
+		void handleKeyboardEvents();
 
-	/**
+		/**
 	 * Restore the background for the current line/horiz position
 	 */
-	void restoreChar();
-public:
-	WidgetFoolscap(TattooEngine *vm);
-	virtual ~WidgetFoolscap();
+		void restoreChar();
 
-	/**
+	public:
+		WidgetFoolscap(TattooEngine *vm);
+		virtual ~WidgetFoolscap();
+
+		/**
 	 * Show the foolscap puzzle
 	 */
-	void show();
+		void show();
 
-	/**
+		/**
 	 * Close the window
 	 */
-	void close();
+		void close();
 
-	/**
+		/**
 	* Handle events whilst the widget is on-screen
 	*/
-	virtual void handleEvents();
-};
+		virtual void handleEvents();
+	};
 
 } // End of namespace Tattoo
 

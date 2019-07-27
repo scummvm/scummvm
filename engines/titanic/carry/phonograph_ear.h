@@ -32,11 +32,15 @@ class CPhonographEar : public CEar {
 	bool CorrectMusicPlayedMsg(CCorrectMusicPlayedMsg *msg);
 	bool PETGainedObjectMsg(CPETGainedObjectMsg *msg);
 	bool TimerMsg(CTimerMsg *msg);
+
 private:
 	bool _replacementEar;
+
 public:
 	CLASSDEF;
-	CPhonographEar() : CEar(), _replacementEar(true) {}
+	CPhonographEar()
+	  : CEar()
+	  , _replacementEar(true) {}
 
 	/**
 	 * Save the data for the class to file

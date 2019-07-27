@@ -25,13 +25,16 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CHeadPiece, CCarry)
-	ON_MESSAGE(SenseWorkingMsg)
-	ON_MESSAGE(PETGainedObjectMsg)
-	ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(SenseWorkingMsg)
+ON_MESSAGE(PETGainedObjectMsg)
+ON_MESSAGE(MouseDragStartMsg)
 END_MESSAGE_MAP()
 
-CHeadPiece::CHeadPiece() : CCarry(), _string6("Not Working"),
-		_flag(0), _field13C(false) {
+CHeadPiece::CHeadPiece()
+  : CCarry()
+  , _string6("Not Working")
+  , _flag(0)
+  , _field13C(false) {
 }
 
 void CHeadPiece::save(SimpleFile *file, int indent) {
@@ -83,7 +86,7 @@ bool CHeadPiece::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 		setVisible(true);
 		moveToView();
 		setPosition(Point(msg->_mousePos.x - _bounds.width() / 2,
-			msg->_mousePos.y - _bounds.height() / 2));
+		                  msg->_mousePos.y - _bounds.height() / 2));
 
 		CTakeHeadPieceMsg takeMsg(getName());
 		if (takeMsg._value != "NULL")

@@ -48,12 +48,10 @@
 
 #include "sword25/util/lua/lua.h"
 
-
 namespace Common {
 class WriteStream;
 class ReadStream;
 }
-
 
 namespace Lua {
 

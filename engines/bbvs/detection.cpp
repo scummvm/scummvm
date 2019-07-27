@@ -22,11 +22,11 @@
 
 #include "bbvs/bbvs.h"
 
+#include "base/plugins.h"
 #include "common/config-manager.h"
-#include "engines/advancedDetector.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "base/plugins.h"
+#include "engines/advancedDetector.h"
 #include "graphics/thumbnail.h"
 
 static const PlainGameDescriptor bbvsGames[] = {
@@ -37,38 +37,35 @@ static const PlainGameDescriptor bbvsGames[] = {
 namespace Bbvs {
 
 static const ADGameDescription gameDescriptions[] = {
-	{
-		"bbvs",
-		0,
-		AD_ENTRY1s("vspr0001.vnm", "7ffe9b9e7ca322db1d48e86f5130578e", 1166628),
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
-		GUIO0()
-	},
-	{
-		"bbvs",
-		0,
-		AD_ENTRY1s("vspr0001.vnm", "91c76b1048f93208cd7b1a05ebccb408", 1176976),
-		Common::RU_RUS,
-		Common::kPlatformWindows,
-		GF_GUILANGSWITCH | ADGF_NO_FLAGS,
-		GUIO0()
-	},
+	{ "bbvs",
+	  0,
+	  AD_ENTRY1s("vspr0001.vnm", "7ffe9b9e7ca322db1d48e86f5130578e", 1166628),
+	  Common::EN_ANY,
+	  Common::kPlatformWindows,
+	  ADGF_NO_FLAGS,
+	  GUIO0() },
+	{ "bbvs",
+	  0,
+	  AD_ENTRY1s("vspr0001.vnm", "91c76b1048f93208cd7b1a05ebccb408", 1176976),
+	  Common::RU_RUS,
+	  Common::kPlatformWindows,
+	  GF_GUILANGSWITCH | ADGF_NO_FLAGS,
+	  GUIO0() },
 
 	AD_TABLE_END_MARKER
 };
 
 } // End of namespace Bbvs
 
-static const char * const directoryGlobs[] = {
+static const char *const directoryGlobs[] = {
 	"vnm",
 	0
 };
 
 class BbvsMetaEngine : public AdvancedMetaEngine {
 public:
-	BbvsMetaEngine() : AdvancedMetaEngine(Bbvs::gameDescriptions, sizeof(ADGameDescription), bbvsGames) {
+	BbvsMetaEngine()
+	  : AdvancedMetaEngine(Bbvs::gameDescriptions, sizeof(ADGameDescription), bbvsGames) {
 		_singleId = "bbvs";
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
@@ -91,14 +88,7 @@ public:
 };
 
 bool BbvsMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-	    (f == kSupportsListSaves) ||
-	    (f == kSupportsDeleteSave) ||
-	    (f == kSupportsLoadingDuringStartup) ||
-	    (f == kSavesSupportMetaInfo) ||
-	    (f == kSavesSupportThumbnail) ||
-	    (f == kSavesSupportCreationDate) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) || (f == kSupportsDeleteSave) || (f == kSupportsLoadingDuringStartup) || (f == kSavesSupportMetaInfo) || (f == kSavesSupportThumbnail) || (f == kSavesSupportCreationDate) || (f == kSimpleSavesNames);
 }
 
 void BbvsMetaEngine::removeSaveState(const char *target, int slot) const {
@@ -167,7 +157,7 @@ bool BbvsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(BBVS)
-	REGISTER_PLUGIN_DYNAMIC(BBVS, PLUGIN_TYPE_ENGINE, BbvsMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(BBVS, PLUGIN_TYPE_ENGINE, BbvsMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(BBVS, PLUGIN_TYPE_ENGINE, BbvsMetaEngine);
+REGISTER_PLUGIN_STATIC(BBVS, PLUGIN_TYPE_ENGINE, BbvsMetaEngine);
 #endif

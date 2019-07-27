@@ -21,24 +21,27 @@
  */
 
 #include "titanic/game/transport/lift_indicator.h"
-#include "titanic/game/transport/lift.h"
 #include "titanic/debugger.h"
+#include "titanic/game/transport/lift.h"
 #include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CLiftindicator, CLift)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(PETActivateMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(EnterRoomMsg)
-	ON_MESSAGE(LeaveRoomMsg)
-	ON_MESSAGE(TimerMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(PETActivateMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(LeaveRoomMsg)
+ON_MESSAGE(TimerMsg)
 END_MESSAGE_MAP()
 
-CLiftindicator::CLiftindicator() : CLift(),
-		_multiplier(0), _startY(0), _endY(0) {
+CLiftindicator::CLiftindicator()
+  : CLift()
+  , _multiplier(0)
+  , _startY(0)
+  , _endY(0) {
 }
 
 void CLiftindicator::save(SimpleFile *file, int indent) {
@@ -66,9 +69,9 @@ bool CLiftindicator::EnterViewMsg(CEnterViewMsg *msg) {
 	CPetControl *pet = getPetControl();
 	int floorNum = pet->getRoomsFloorNum();
 	debugC(kDebugScripts, "Lifts = %d,%d,%d,%d, %d",
-		CLift::_elevator1Floor, CLift::_elevator2Floor,
-		CLift::_elevator3Floor, CLift::_elevator4Floor,
-		floorNum);
+	       CLift::_elevator1Floor, CLift::_elevator2Floor,
+	       CLift::_elevator3Floor, CLift::_elevator4Floor,
+	       floorNum);
 
 	if ((pet->petGetRoomsWellEntry() & 1) == (_liftNum & 1)) {
 		petSetRemoteTarget();
@@ -78,7 +81,7 @@ bool CLiftindicator::EnterViewMsg(CEnterViewMsg *msg) {
 		petDisplayMessage(OUTSIDE_ELEVATOR_NUM, petGetRoomsWellEntry());
 
 		debugC(kDebugScripts, "Claiming PET - %d, Multiplier = %f",
-			_liftNum, multiplier);
+		       _liftNum, multiplier);
 	}
 
 	switch (_liftNum) {
@@ -91,15 +94,13 @@ bool CLiftindicator::EnterViewMsg(CEnterViewMsg *msg) {
 		switch (petGetRoomsWellEntry()) {
 		case 1:
 		case 2:
-			setPosition(Point(_bounds.left, _indicatorPos.y +
-				(int)(multiplier * CLift::_elevator1Floor)));
+			setPosition(Point(_bounds.left, _indicatorPos.y + (int)(multiplier * CLift::_elevator1Floor)));
 			_startFrame = CLift::_elevator1Floor;
 			break;
 
 		case 3:
 		case 4:
-			setPosition(Point(_bounds.left, _indicatorPos.y +
-				(int)(multiplier * CLift::_elevator3Floor)));
+			setPosition(Point(_bounds.left, _indicatorPos.y + (int)(multiplier * CLift::_elevator3Floor)));
 			_startFrame = CLift::_elevator3Floor;
 			break;
 
@@ -113,15 +114,13 @@ bool CLiftindicator::EnterViewMsg(CEnterViewMsg *msg) {
 		switch (petGetRoomsWellEntry()) {
 		case 1:
 		case 2:
-			setPosition(Point(_bounds.left, _indicatorPos.y +
-				(int)(multiplier * CLift::_elevator2Floor)));
+			setPosition(Point(_bounds.left, _indicatorPos.y + (int)(multiplier * CLift::_elevator2Floor)));
 			_startFrame = CLift::_elevator2Floor;
 			break;
 
 		case 3:
 		case 4:
-			setPosition(Point(_bounds.left, _indicatorPos.y +
-				(int)(multiplier * CLift::_elevator4Floor)));
+			setPosition(Point(_bounds.left, _indicatorPos.y + (int)(multiplier * CLift::_elevator4Floor)));
 			_startFrame = CLift::_elevator4Floor;
 			break;
 
@@ -153,7 +152,7 @@ bool CLiftindicator::PETActivateMsg(CPETActivateMsg *msg) {
 			_endFrame = pet->getRoomsFloorNum();
 
 			if (petGetRoomsWellEntry() == 4 && !CLift::_hasCorrectHead
-					&& pet->getRoomsFloorNum() != CLift::_elevator4Floor) {
+			    && pet->getRoomsFloorNum() != CLift::_elevator4Floor) {
 				petDisplayMessage(1, ELEVATOR_NON_FUNCTIONAL);
 			} else {
 				_startY = _indicatorPos.y + (int)(_startFrame * multiplier);
@@ -186,9 +185,9 @@ bool CLiftindicator::PETActivateMsg(CPETActivateMsg *msg) {
 				}
 
 				debugC(kDebugScripts, "Lifts = %d,%d,%d,%d %d",
-					CLift::_elevator1Floor, CLift::_elevator2Floor,
-					CLift::_elevator3Floor, CLift::_elevator4Floor,
-					petGetRoomsWellEntry());
+				       CLift::_elevator1Floor, CLift::_elevator2Floor,
+				       CLift::_elevator3Floor, CLift::_elevator4Floor,
+				       petGetRoomsWellEntry());
 			}
 		}
 	}

@@ -25,7 +25,7 @@
 #include "audio/softsynth/pcspk.h"
 
 #ifndef DIRECTOR_SOUND_H
-#define DIRECTOR_SOUND_H
+#	define DIRECTOR_SOUND_H
 
 namespace Director {
 

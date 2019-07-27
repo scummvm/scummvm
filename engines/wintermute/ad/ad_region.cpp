@@ -28,24 +28,24 @@
 
 #include "engines/wintermute/ad/ad_region.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
-#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_parser.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdRegion, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdRegion::AdRegion(BaseGame *inGame) : BaseRegion(inGame) {
+AdRegion::AdRegion(BaseGame *inGame)
+  : BaseRegion(inGame) {
 	_blocked = false;
 	_decoration = false;
 	_zoom = 0;
 	_alpha = 0xFFFFFFFF;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 AdRegion::~AdRegion() {
@@ -83,12 +83,10 @@ bool AdRegion::loadFile(const char *filename) {
 		_gameRef->LOG(0, "Error parsing REGION file '%s'", filename);
 	}
 
-
 	delete[] buffer;
 
 	return ret;
 }
-
 
 TOKEN_DEF_START
 TOKEN_DEF(REGION)
@@ -183,15 +181,13 @@ bool AdRegion::loadBuffer(char *buffer, bool complete) {
 			int j;
 			parser.scanStr(params, "%d", &j);
 			_zoom = (float)j;
-		}
-		break;
+		} break;
 
 		case TOKEN_POINT: {
 			int x, y;
 			parser.scanStr(params, "%d,%d", &x, &y);
 			_points.add(new BasePoint(x, y));
-		}
-		break;
+		} break;
 
 		case TOKEN_ALPHA_COLOR:
 			parser.scanStr(params, "%d,%d,%d", &ar, &ag, &ab);
@@ -234,7 +230,6 @@ bool AdRegion::loadBuffer(char *buffer, bool complete) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
@@ -252,9 +247,9 @@ bool AdRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	        return STATUS_OK;
 	    }
 
-	    else*/ return BaseRegion::scCallMethod(script, stack, thisStack, name);
+	    else*/
+	return BaseRegion::scCallMethod(script, stack, thisStack, name);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 ScValue *AdRegion::scGetProperty(const Common::String &name) {
@@ -311,7 +306,6 @@ ScValue *AdRegion::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdRegion::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
@@ -357,12 +351,10 @@ bool AdRegion::scSetProperty(const char *name, ScValue *value) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 const char *AdRegion::scToString() {
 	return "[ad region]";
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdRegion::saveAsText(BaseDynamicBuffer *buffer, int indent) {
@@ -395,7 +387,6 @@ bool AdRegion::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdRegion::persist(BasePersistenceManager *persistMgr) {

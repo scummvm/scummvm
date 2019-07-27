@@ -36,26 +36,26 @@ class SaveFileWriteStream;
 class Music {
 	struct Track {
 		Common::String name;
-		int            volume;
-		int            pan;
-		int32          timeFadeIn;
-		int32          timePlay;
-		int            loop;
-		int32          timeFadeOut;
+		int volume;
+		int pan;
+		int32 timeFadeIn;
+		int32 timePlay;
+		int loop;
+		int32 timeFadeOut;
 	};
 
 	BladeRunnerEngine *_vm;
 
 	Common::Mutex _mutex;
-	int           _musicVolume;
-	int           _channel;
-	bool          _isNextPresent;
-	bool          _isPlaying;
-	bool          _isPaused;
-	Track         _current;
-	Track         _next;
-	byte         *_data;
-	AudStream    *_stream;
+	int _musicVolume;
+	int _channel;
+	bool _isNextPresent;
+	bool _isPlaying;
+	bool _isPaused;
+	Track _current;
+	Track _next;
+	byte *_data;
+	AudStream *_stream;
 
 public:
 	Music(BladeRunnerEngine *vm);

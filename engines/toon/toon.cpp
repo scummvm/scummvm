@@ -20,13 +20,13 @@
  *
  */
 
-#include "common/system.h"
-#include "common/events.h"
-#include "common/debug-channels.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
-#include "common/savefile.h"
+#include "common/debug-channels.h"
+#include "common/events.h"
 #include "common/memstream.h"
+#include "common/savefile.h"
+#include "common/system.h"
 #include "common/translation.h"
 
 #include "engines/advancedDetector.h"
@@ -34,16 +34,16 @@
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "graphics/thumbnail.h"
-#include "gui/saveload.h"
 #include "gui/message.h"
+#include "gui/saveload.h"
+#include "toon/anim.h"
+#include "toon/drew.h"
+#include "toon/flux.h"
+#include "toon/hotspot.h"
+#include "toon/path.h"
+#include "toon/picture.h"
 #include "toon/resource.h"
 #include "toon/toon.h"
-#include "toon/anim.h"
-#include "toon/picture.h"
-#include "toon/hotspot.h"
-#include "toon/flux.h"
-#include "toon/drew.h"
-#include "toon/path.h"
 
 namespace Toon {
 
@@ -113,8 +113,6 @@ void ToonEngine::init() {
 	_characters[1] = new CharacterFlux(this);
 	_drew = _characters[0];
 	_flux = _characters[1];
-
-
 
 	// preload walk anim for flux and drew
 	_drew->loadWalkAnimation("STNDWALK.CAF");
@@ -226,7 +224,6 @@ void ToonEngine::parseInput() {
 						Common::String buf = Common::String::format(_("Could not quick save into slot #%d"), slotNum);
 						GUI::MessageDialog dialog(buf, "OK", 0);
 						dialog.runModal();
-
 					}
 				}
 			}
@@ -299,7 +296,6 @@ void ToonEngine::updateTimers() {
 					_gameState->_timerTimeout[i] = getOldMilli() + _gameState->_timerDelay[i] * getTickLength();
 
 					return;
-
 				}
 			}
 		}
@@ -432,7 +428,7 @@ void ToonEngine::render() {
 	// add a little sleep here
 	int32 newMillis = (int32)_system->getMillis();
 	int32 sleepMs = 1; // Minimum delay to allow thread scheduling
-	if ((newMillis - _lastRenderTime)  < _tickLength * 2)
+	if ((newMillis - _lastRenderTime) < _tickLength * 2)
 		sleepMs = _tickLength * 2 - (newMillis - _lastRenderTime);
 	assert(sleepMs >= 0);
 	_system->delayMillis(sleepMs);
@@ -466,21 +462,21 @@ void ToonEngine::doMagnifierEffect() {
 
 	byte tempBuffer[25 * 25];
 	for (int32 y = -12; y <= 12; y++) {
-		int32 cy = CLIP<int32>(posY + y, 0, TOON_BACKBUFFER_HEIGHT-1);
+		int32 cy = CLIP<int32>(posY + y, 0, TOON_BACKBUFFER_HEIGHT - 1);
 		for (int32 x = -12; x <= 12; x++) {
-			int32 cx = CLIP<int32>(posX + x, 0, TOON_BACKBUFFER_WIDTH-1);
+			int32 cx = CLIP<int32>(posX + x, 0, TOON_BACKBUFFER_WIDTH - 1);
 			uint8 *curRow = (uint8 *)surface.getBasePtr(cx, cy);
 			tempBuffer[(y + 12) * 25 + x + 12] = *curRow;
 		}
 	}
 
 	for (int32 y = -12; y <= 12; y++) {
-		int32 cy = CLIP<int32>(posY + y, 0, TOON_BACKBUFFER_HEIGHT-1);
+		int32 cy = CLIP<int32>(posY + y, 0, TOON_BACKBUFFER_HEIGHT - 1);
 		for (int32 x = -12; x <= 12; x++) {
 			int32 dist = y * y + x * x;
 			if (dist > 144)
 				continue;
-			int32 cx = CLIP<int32>(posX + x, 0, TOON_BACKBUFFER_WIDTH-1);
+			int32 cx = CLIP<int32>(posX + x, 0, TOON_BACKBUFFER_WIDTH - 1);
 			uint8 *curRow = (uint8 *)surface.getBasePtr(cx, cy);
 			int32 lerp = (512 + intSqrt[dist] * 256 / 12);
 			*curRow = tempBuffer[(y * lerp / 1024 + 12) * 25 + x * lerp / 1024 + 12];
@@ -518,7 +514,7 @@ void ToonEngine::copyToVirtualScreen(bool updateScreen) {
 			}
 			rect.clip(TOON_SCREEN_WIDTH, TOON_SCREEN_HEIGHT);
 			if (rect.left >= 0 && rect.top >= 0 && rect.right - rect.left > 0 && rect.bottom - rect.top > 0) {
-				_system->copyRectToScreen((byte *)_mainSurface->getBasePtr(_oldDirtyRects[i].left + offX, _oldDirtyRects[i].top), TOON_BACKBUFFER_WIDTH, rect.left , rect.top, rect.right - rect.left, rect.bottom - rect.top);
+				_system->copyRectToScreen((byte *)_mainSurface->getBasePtr(_oldDirtyRects[i].left + offX, _oldDirtyRects[i].top), TOON_BACKBUFFER_WIDTH, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
 			}
 		}
 
@@ -534,7 +530,7 @@ void ToonEngine::copyToVirtualScreen(bool updateScreen) {
 			}
 			rect.clip(TOON_SCREEN_WIDTH, TOON_SCREEN_HEIGHT);
 			if (rect.left >= 0 && rect.top >= 0 && rect.right - rect.left > 0 && rect.bottom - rect.top > 0) {
-				_system->copyRectToScreen((byte *)_mainSurface->getBasePtr(_dirtyRects[i].left + offX, _dirtyRects[i].top), TOON_BACKBUFFER_WIDTH, rect.left , rect.top, rect.right - rect.left, rect.bottom - rect.top);
+				_system->copyRectToScreen((byte *)_mainSurface->getBasePtr(_dirtyRects[i].left + offX, _dirtyRects[i].top), TOON_BACKBUFFER_WIDTH, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
 			}
 		}
 	}
@@ -542,7 +538,7 @@ void ToonEngine::copyToVirtualScreen(bool updateScreen) {
 
 	if (updateScreen) {
 		_system->updateScreen();
-		_shouldQuit = shouldQuit();	// update game quit flag - this shouldn't be called all the time, as it's a virtual function
+		_shouldQuit = shouldQuit(); // update game quit flag - this shouldn't be called all the time, as it's a virtual function
 	}
 }
 
@@ -563,43 +559,42 @@ void ToonEngine::doFrame() {
 }
 
 enum MainMenuSelections {
-	MAINMENUHOTSPOT_NONE         = 0,
-	MAINMENUHOTSPOT_START        = 1,
-	MAINMENUHOTSPOT_INTRO        = 2,
-	MAINMENUHOTSPOT_LOADGAME     = 3,
-	MAINMENUHOTSPOT_HOTKEYS      = 4,
-	MAINMENUHOTSPOT_CREDITS      = 5,
-	MAINMENUHOTSPOT_QUIT         = 6,
+	MAINMENUHOTSPOT_NONE = 0,
+	MAINMENUHOTSPOT_START = 1,
+	MAINMENUHOTSPOT_INTRO = 2,
+	MAINMENUHOTSPOT_LOADGAME = 3,
+	MAINMENUHOTSPOT_HOTKEYS = 4,
+	MAINMENUHOTSPOT_CREDITS = 5,
+	MAINMENUHOTSPOT_QUIT = 6,
 	MAINMENUHOTSPOT_HOTKEYSCLOSE = 7
 };
 
 enum MainMenuMasks {
-	MAINMENUMASK_BASE       = 1,
-	MAINMENUMASK_HOTKEYS    = 2,
+	MAINMENUMASK_BASE = 1,
+	MAINMENUMASK_HOTKEYS = 2,
 	MAINMENUMASK_EVERYWHERE = 3
 };
 
 enum OptionMenuSelections {
-	OPTIONMENUHOTSPOT_NONE					= 0,
-	OPTIONMENUHOTSPOT_PLAY					= 1,
-	OPTIONMENUHOTSPOT_QUIT					= 2,
-	OPTIONMENUHOTSPOT_TEXT					= 3,
-	OPTIONMENUHOTSPOT_TEXTSPEED				= 4,
-	OPTIONMENUHOTSPOT_VOLUMESFX				= 5,
-	OPTIONMENUHOTSPOT_VOLUMESFXSLIDER		= 6,
-	OPTIONMENUHOTSPOT_VOLUMEMUSIC			= 7,
-	OPTIONMENUHOTSPOT_VOLUMEMUSICSLIDER		= 8,
-	OPTIONMENUHOTSPOT_VOLUMEVOICE			= 9,
-	OPTIONMENUHOTSPOT_VOLUMEVOICESLIDER		= 10,
-	OPTIONMENUHOTSPOT_SPEAKERBUTTON			= 11,
-	OPTIONMENUHOTSPOT_SPEAKERLEVER			= 12,
-	OPTIONMENUHOTSPOT_VIDEO_MODE			= 13
+	OPTIONMENUHOTSPOT_NONE = 0,
+	OPTIONMENUHOTSPOT_PLAY = 1,
+	OPTIONMENUHOTSPOT_QUIT = 2,
+	OPTIONMENUHOTSPOT_TEXT = 3,
+	OPTIONMENUHOTSPOT_TEXTSPEED = 4,
+	OPTIONMENUHOTSPOT_VOLUMESFX = 5,
+	OPTIONMENUHOTSPOT_VOLUMESFXSLIDER = 6,
+	OPTIONMENUHOTSPOT_VOLUMEMUSIC = 7,
+	OPTIONMENUHOTSPOT_VOLUMEMUSICSLIDER = 8,
+	OPTIONMENUHOTSPOT_VOLUMEVOICE = 9,
+	OPTIONMENUHOTSPOT_VOLUMEVOICESLIDER = 10,
+	OPTIONMENUHOTSPOT_SPEAKERBUTTON = 11,
+	OPTIONMENUHOTSPOT_SPEAKERLEVER = 12,
+	OPTIONMENUHOTSPOT_VIDEO_MODE = 13
 };
 
 enum OptionMenuMasks {
 	OPTIONMENUMASK_EVERYWHERE = 1
 };
-
 
 struct MenuFile {
 	int menuMask;
@@ -610,50 +605,50 @@ struct MenuFile {
 
 #define MAINMENU_ENTRYCOUNT 12
 static const MenuFile mainMenuFiles[] = {
-	{ MAINMENUMASK_BASE,       MAINMENUHOTSPOT_START,        "STARTBUT.CAF", 0 }, // "Start" button
-	{ MAINMENUMASK_BASE,       MAINMENUHOTSPOT_INTRO,        "INTROBUT.CAF", 0 }, // "Intro" button
-	{ MAINMENUMASK_BASE,       MAINMENUHOTSPOT_LOADGAME,     "LOADBUT.CAF",  0 }, // "Load Game" button
-	{ MAINMENUMASK_BASE,       MAINMENUHOTSPOT_HOTKEYS,      "HOTBUT.CAF",   0 }, // "Hot Keys" button
-	{ MAINMENUMASK_BASE,       MAINMENUHOTSPOT_CREDITS,      "CREDBUT.CAF",  0 }, // "Credits" button
-	{ MAINMENUMASK_BASE,       MAINMENUHOTSPOT_QUIT,         "QUITBUT.CAF",  0 }, // "Quit" button
-	{ MAINMENUMASK_BASE,       MAINMENUHOTSPOT_NONE,         "LEGALTXT.CAF", 0 }, // Legal Text
+	{ MAINMENUMASK_BASE, MAINMENUHOTSPOT_START, "STARTBUT.CAF", 0 }, // "Start" button
+	{ MAINMENUMASK_BASE, MAINMENUHOTSPOT_INTRO, "INTROBUT.CAF", 0 }, // "Intro" button
+	{ MAINMENUMASK_BASE, MAINMENUHOTSPOT_LOADGAME, "LOADBUT.CAF", 0 }, // "Load Game" button
+	{ MAINMENUMASK_BASE, MAINMENUHOTSPOT_HOTKEYS, "HOTBUT.CAF", 0 }, // "Hot Keys" button
+	{ MAINMENUMASK_BASE, MAINMENUHOTSPOT_CREDITS, "CREDBUT.CAF", 0 }, // "Credits" button
+	{ MAINMENUMASK_BASE, MAINMENUHOTSPOT_QUIT, "QUITBUT.CAF", 0 }, // "Quit" button
+	{ MAINMENUMASK_BASE, MAINMENUHOTSPOT_NONE, "LEGALTXT.CAF", 0 }, // Legal Text
 
-	{ MAINMENUMASK_EVERYWHERE, MAINMENUHOTSPOT_NONE,         "TOONGLOW.CAF", 6 }, // Clown glow
-	{ MAINMENUMASK_EVERYWHERE, MAINMENUHOTSPOT_NONE,         "TOONSTRK.CAF", 6 }, // Toonstruck title
-	{ MAINMENUMASK_EVERYWHERE, MAINMENUHOTSPOT_NONE,         "EYEGLOW.CAF",  4 }, // Clown eye glow
-	{ MAINMENUMASK_EVERYWHERE, MAINMENUHOTSPOT_NONE,         "PROPHEAD.CAF", 4 }, // Clown propellor head
-	{ MAINMENUMASK_HOTKEYS,    MAINMENUHOTSPOT_HOTKEYSCLOSE, "HOTKEYS.CAF",  0 }  // Hotkeys display - clicking on it will close hotkeys
+	{ MAINMENUMASK_EVERYWHERE, MAINMENUHOTSPOT_NONE, "TOONGLOW.CAF", 6 }, // Clown glow
+	{ MAINMENUMASK_EVERYWHERE, MAINMENUHOTSPOT_NONE, "TOONSTRK.CAF", 6 }, // Toonstruck title
+	{ MAINMENUMASK_EVERYWHERE, MAINMENUHOTSPOT_NONE, "EYEGLOW.CAF", 4 }, // Clown eye glow
+	{ MAINMENUMASK_EVERYWHERE, MAINMENUHOTSPOT_NONE, "PROPHEAD.CAF", 4 }, // Clown propellor head
+	{ MAINMENUMASK_HOTKEYS, MAINMENUHOTSPOT_HOTKEYSCLOSE, "HOTKEYS.CAF", 0 } // Hotkeys display - clicking on it will close hotkeys
 };
 
 #define OPTIONMENU_ENTRYCOUNT 27
 static const MenuFile optionMenuFiles[] = {
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_PLAY,        "PLAYBUTN.CAF", 0 }, // "Start" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_QUIT,        "QUITBUTN.CAF", 0 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_VIDEO_MODE,        "VIDMODE.CAF", 0 }, // "Start" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_TEXTSPEED,        "TXTSPEED.CAF", 0 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_TEXT,        "TEXTDIAL.CAF", 0}, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_VOLUMESFX,        "SFXBUTN.CAF", 0 }, // "Start" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_VOLUMESFXSLIDER,        "SFXSLDR.CAF", 0 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_VOLUMEVOICE,        "VOICEBTN.CAF", 0 }, // "Start" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_VOLUMEVOICESLIDER,        "VOICESLD.CAF", 0 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_VOLUMEMUSIC,        "MUSICBTN.CAF", 0 }, // "Start" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_VOLUMEMUSICSLIDER,        "MUSICSLD.CAF", 0 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_SPEAKERBUTTON,        "XTRABUTN.CAF", 0 }, // "Start" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_SPEAKERLEVER,        "XTRALEVR.CAF", 0}, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "ANTENNAL.CAF", 6 }, // "Start" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "ANTENNAR.CAF", 6 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "BIGREDL.CAF", 6 }, // "Start" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "BIGREDR.CAF", 6 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "GRIDLTEL.CAF", 6 }, // "Start" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "GRIDLTER.CAF", 6 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "LSPEAKR.CAF", 0 }, // "Start" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "RSPEAKR.CAF", 0 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "STARLITL.CAF", 6 }, // "Start" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "STARLITR.CAF", 6 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "CHASE1.CAF", 6 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "CHASE2.CAF", 6 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "CHASE3.CAF", 6 }, // "Intro" button
-	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "CHASE4.CAF", 6 } // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_PLAY, "PLAYBUTN.CAF", 0 }, // "Start" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_QUIT, "QUITBUTN.CAF", 0 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_VIDEO_MODE, "VIDMODE.CAF", 0 }, // "Start" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_TEXTSPEED, "TXTSPEED.CAF", 0 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_TEXT, "TEXTDIAL.CAF", 0 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_VOLUMESFX, "SFXBUTN.CAF", 0 }, // "Start" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_VOLUMESFXSLIDER, "SFXSLDR.CAF", 0 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_VOLUMEVOICE, "VOICEBTN.CAF", 0 }, // "Start" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_VOLUMEVOICESLIDER, "VOICESLD.CAF", 0 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_VOLUMEMUSIC, "MUSICBTN.CAF", 0 }, // "Start" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_VOLUMEMUSICSLIDER, "MUSICSLD.CAF", 0 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_SPEAKERBUTTON, "XTRABUTN.CAF", 0 }, // "Start" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_SPEAKERLEVER, "XTRALEVR.CAF", 0 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_NONE, "ANTENNAL.CAF", 6 }, // "Start" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_NONE, "ANTENNAR.CAF", 6 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_NONE, "BIGREDL.CAF", 6 }, // "Start" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_NONE, "BIGREDR.CAF", 6 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_NONE, "GRIDLTEL.CAF", 6 }, // "Start" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_NONE, "GRIDLTER.CAF", 6 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_NONE, "LSPEAKR.CAF", 0 }, // "Start" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_NONE, "RSPEAKR.CAF", 0 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_NONE, "STARLITL.CAF", 6 }, // "Start" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_NONE, "STARLITR.CAF", 6 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_NONE, "CHASE1.CAF", 6 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_NONE, "CHASE2.CAF", 6 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_NONE, "CHASE3.CAF", 6 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE, OPTIONMENUHOTSPOT_NONE, "CHASE4.CAF", 6 } // "Intro" button
 };
 
 struct MenuEntry {
@@ -671,7 +666,7 @@ bool ToonEngine::showOptions() {
 
 	storePalette();
 	fadeOut(5);
-	Picture* optionPicture = new Picture(this);
+	Picture *optionPicture = new Picture(this);
 	optionPicture->loadPicture("OPTIONS.CPS");
 	optionPicture->setupPalette();
 	flushPalette(true);
@@ -883,7 +878,7 @@ bool ToonEngine::showOptions() {
 		if (clickingOn == OPTIONMENUHOTSPOT_SPEAKERLEVER) {
 
 			entries[12].activeFrame = 1 - entries[12].activeFrame;
-			if(entries[12].activeFrame == 1) {
+			if (entries[12].activeFrame == 1) {
 				entries[20].animateOnFrame = 4;
 				entries[20].playOnce = false;
 				playSFX(-3, 128);
@@ -902,7 +897,7 @@ bool ToonEngine::showOptions() {
 				_showConversationText = true;
 				setFont(true);
 				entries[4].activeFrame = 8;
-			} else if(entries[4].activeFrame == 8) {
+			} else if (entries[4].activeFrame == 8) {
 				_showConversationText = true;
 				setFont(false);
 				entries[4].activeFrame = 0;
@@ -986,8 +981,7 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 				mainmenuMusic = new AudioStreamInstance(_audioManager, _mixer, mainmenuMusicFile, true);
 				mainmenuMusic->play(false);
 				musicPlaying = true;
-			}
-			else {
+			} else {
 				musicPlaying = false;
 			}
 		}
@@ -1149,8 +1143,10 @@ Common::Error ToonEngine::run() {
 }
 
 ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
-	: Engine(syst), _gameDescription(gameDescription),
-	_language(gameDescription->language), _rnd("toon") {
+  : Engine(syst)
+  , _gameDescription(gameDescription)
+  , _language(gameDescription->language)
+  , _rnd("toon") {
 	_tickLength = 16;
 	_currentPicture = NULL;
 	_inventoryPicture = NULL;
@@ -1426,8 +1422,7 @@ void ToonEngine::updateAnimationSceneScripts(int32 timeElapsed) {
 	_updatingSceneScriptRunFlag = true;
 
 	do {
-		if (_sceneAnimationScripts[_lastProcessedSceneScript]._lastTimer <= _system->getMillis() &&
-		        !_sceneAnimationScripts[_lastProcessedSceneScript]._frozen && !_sceneAnimationScripts[_lastProcessedSceneScript]._frozenForConversation) {
+		if (_sceneAnimationScripts[_lastProcessedSceneScript]._lastTimer <= _system->getMillis() && !_sceneAnimationScripts[_lastProcessedSceneScript]._frozen && !_sceneAnimationScripts[_lastProcessedSceneScript]._frozenForConversation) {
 			_animationSceneScriptRunFlag = true;
 
 			while (_animationSceneScriptRunFlag && _sceneAnimationScripts[_lastProcessedSceneScript]._lastTimer <= _system->getMillis() && !_shouldQuit) {
@@ -1439,7 +1434,6 @@ void ToonEngine::updateAnimationSceneScripts(int32 timeElapsed) {
 				if (_sceneAnimationScripts[_lastProcessedSceneScript]._frozen || _sceneAnimationScripts[_lastProcessedSceneScript]._frozenForConversation)
 					break;
 			}
-
 		}
 
 		if (!_script->isValid(&_sceneAnimationScripts[_lastProcessedSceneScript]._state)) {
@@ -1484,7 +1478,8 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 	}
 
 	for (int32 i = 0; i < 8; i++) {
-		if (_characters[i]) _characters[i]->setFlag(0);
+		if (_characters[i])
+			_characters[i]->setFlag(0);
 	}
 	_drew->playStandingAnim();
 	_drew->setVisible(true);
@@ -1569,7 +1564,7 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 	uint8 *convData = resources()->getFileData(locationName + ".CNV", &convfileSize);
 	if (convData) {
 		assert(convfileSize < 4096 * sizeof(int16));
-		memcpy(_conversationData , convData, convfileSize);
+		memcpy(_conversationData, convData, convfileSize);
 		prepareConversations();
 	}
 
@@ -1644,7 +1639,6 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 
 		while (_script->run(&_scriptState[0]))
 			waitForScriptStep();
-
 	}
 }
 
@@ -1676,7 +1670,7 @@ void ToonEngine::loadAdditionalPalette(const Common::String &fileName, int32 mod
 		break;
 	case 2:
 		memcpy(_cutawayPalette, palette, size);
-		fixPaletteEntries(_cutawayPalette, size/3);
+		fixPaletteEntries(_cutawayPalette, size / 3);
 		break;
 	case 3:
 		memcpy(_universalPalette, palette, 96);
@@ -1684,7 +1678,7 @@ void ToonEngine::loadAdditionalPalette(const Common::String &fileName, int32 mod
 		break;
 	case 4:
 		memcpy(_fluxPalette, palette, 24);
-		fixPaletteEntries(_fluxPalette , 8);
+		fixPaletteEntries(_fluxPalette, 8);
 		break;
 	default:
 		warning("loadAdditionalPalette() - Unknown mode");
@@ -1730,9 +1724,9 @@ void ToonEngine::loadCursor() {
 void ToonEngine::setCursor(int32 type, bool inventory, int32 offsetX, int offsetY) {
 
 	static const int32 offsets[] = {
-		0,   1,  1,  6,  7,  1,  8,   10, 18,  10,
-		28,  8,  36, 10, 46, 10, 56,  10, 66,  10,
-		76,  10, 86, 10, 96, 10, 106, 10, 116, 10,
+		0, 1, 1, 6, 7, 1, 8, 10, 18, 10,
+		28, 8, 36, 10, 46, 10, 56, 10, 66, 10,
+		76, 10, 86, 10, 96, 10, 106, 10, 116, 10,
 		126, 10
 	};
 
@@ -1837,7 +1831,7 @@ void ToonEngine::clickEvent() {
 	}
 
 	// find hotspot
-	int32 hot = _hotspots->find(mouseX + state()->_currentScrollValue , _mouseY);
+	int32 hot = _hotspots->find(mouseX + state()->_currentScrollValue, _mouseY);
 	HotspotData *currentHot = 0;
 	if (hot > -1) {
 		currentHot = _hotspots->get(hot);
@@ -1867,7 +1861,7 @@ void ToonEngine::clickEvent() {
 		if (_gameState->_inCutaway || _gameState->_inInventory || _gameState->_inCloseUp)
 			return;
 
-		if (_pathFinding->findClosestWalkingPoint(_mouseX + _gameState->_currentScrollValue , _mouseY, &xx, &yy))
+		if (_pathFinding->findClosestWalkingPoint(_mouseX + _gameState->_currentScrollValue, _mouseY, &xx, &yy))
 			_drew->walkTo(xx, yy);
 		return;
 	}
@@ -2208,7 +2202,7 @@ void ToonEngine::drawInfoLine() {
 		if (_currentHotspotItem >= 0 && _currentHotspotItem < 2000) {
 			infoTool = _roomTexts->getText(_currentHotspotItem);
 		} else if (_currentHotspotItem <= -1) {
-//			static const char * const specialInfoLine[] = { "Exit non defined", "Bottomless Bag", "Flux", "Drew Blanc" };
+			//			static const char * const specialInfoLine[] = { "Exit non defined", "Bottomless Bag", "Flux", "Drew Blanc" };
 			infoTool = _specialInfoLine[-1 - _currentHotspotItem];
 		} else {
 			int32 loc = _currentHotspotItem - 2000;
@@ -2399,7 +2393,6 @@ int32 ToonEngine::characterTalk(int32 dialogid, bool blocking) {
 	if (blocking)
 		_gameState->_mouseHidden = true;
 
-
 	// get what is before the string
 	int a = READ_LE_UINT16(myLine - 2);
 	char *b = myLine - 2 - 4 * a;
@@ -2426,7 +2419,6 @@ int32 ToonEngine::characterTalk(int32 dialogid, bool blocking) {
 				while ((waitChar->getAnimFlag() & 0x10) == 0x10 && !_shouldQuit)
 					doFrame();
 			}
-
 		}
 		int32 talkerId = READ_LE_UINT16(cc - 2);
 
@@ -2442,7 +2434,8 @@ int32 ToonEngine::characterTalk(int32 dialogid, bool blocking) {
 		// listener
 		int32 listenerId = READ_LE_UINT16(c - 2);
 		int32 listenerAnimId = READ_LE_UINT16(c - 4);
-		if (blocking) playTalkAnimOnCharacter(listenerAnimId, listenerId, false);
+		if (blocking)
+			playTalkAnimOnCharacter(listenerAnimId, listenerId, false);
 		c -= 4;
 	}
 
@@ -2471,7 +2464,7 @@ int32 ToonEngine::characterTalk(int32 dialogid, bool blocking) {
 			character->stopSpecialAnim();
 	}
 
-	debugC(0, 0xfff, "Talker = %d (num participants : %d) will say '%s'", (int)talkerId , (int)numParticipants, myLine);
+	debugC(0, 0xfff, "Talker = %d (num participants : %d) will say '%s'", (int)talkerId, (int)numParticipants, myLine);
 
 	getTextPosition(talkerId, &_currentTextLineX, &_currentTextLineY);
 
@@ -2520,7 +2513,7 @@ void ToonEngine::haveAConversation(int32 convId) {
 		}
 
 		// if current voice stream sub 15130
-		processConversationClick(conv , 2);
+		processConversationClick(conv, 2);
 		doFrame();
 	}
 
@@ -2611,12 +2604,11 @@ void ToonEngine::prepareConversations() {
 		allConvs[i].state[1]._data2 = 1;
 		allConvs[i].state[1]._data3 = 6;
 		allConvs[i].state[3]._data2 = 2;
-
 	}
 	int numConversations = READ_LE_UINT16(_conversationData + 1);
 	int16 *curConversation = _conversationData + 3;
 	for (int i = 0; i < numConversations; i++) {
-		Conversation *conv = &allConvs[ READ_LE_UINT16(curConversation)];
+		Conversation *conv = &allConvs[READ_LE_UINT16(curConversation)];
 		if (!conv->_enable) {
 
 			conv->_enable = 1;
@@ -2984,9 +2976,7 @@ int32 ToonEngine::showInventory() {
 			for (int32 i = 0; i < _gameState->_numInventoryItems; i++) {
 				int32 x = 57 * (i % 7) + 114;
 				int32 y = ((9 * (i % 7)) & 0xf) + 56 * (i / 7) + 80;
-				if (_mouseX >= (_gameState->_currentScrollValue + x - 6) &&
-				        _mouseX <= (_gameState->_currentScrollValue + x + 44 + 7) &&
-				        _mouseY >= y - 6 && _mouseY <= y + 50) {
+				if (_mouseX >= (_gameState->_currentScrollValue + x - 6) && _mouseX <= (_gameState->_currentScrollValue + x + 44 + 7) && _mouseY >= y - 6 && _mouseY <= y + 50) {
 					foundObj = i;
 					break;
 				}
@@ -3203,11 +3193,11 @@ void ToonEngine::playSFX(int32 id, int32 volume) {
 	if (id < 0)
 		_audioManager->playSFX(-id + 1, volume, true);
 	else
-		_audioManager->playSFX(id , volume, false);
+		_audioManager->playSFX(id, volume, false);
 }
 
 void ToonEngine::playSoundWrong() {
-	_audioManager->playSFX(randRange(0,7), 128, true);
+	_audioManager->playSFX(randRange(0, 7), 128, true);
 }
 
 void ToonEngine::getTextPosition(int32 characterId, int32 *retX, int32 *retY) {
@@ -3264,7 +3254,7 @@ void ToonEngine::getTextPosition(int32 characterId, int32 *retX, int32 *retY) {
 		if (character && !_gameState->_inCutaway) {
 			if (character->getAnimationInstance()) {
 				if (character->getX() >= _gameState->_currentScrollValue && character->getX() <= _gameState->_currentScrollValue + TOON_SCREEN_WIDTH) {
-					int16 x1= 0, y1 = 0, x2 = 0, y2 = 0;
+					int16 x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 					character->getAnimationInstance()->getRect(&x1, &y1, &x2, &y2);
 					*retX = (x1 + x2) / 2;
 					*retY = y1;
@@ -3446,7 +3436,7 @@ bool ToonEngine::loadGame(int32 slot) {
 		return false;
 
 	int32 saveGameVersion = loadFile->readSint32BE();
-	if ( (saveGameVersion < 4) || (saveGameVersion > TOON_SAVEGAME_VERSION) ) {
+	if ((saveGameVersion < 4) || (saveGameVersion > TOON_SAVEGAME_VERSION)) {
 		delete loadFile;
 		return false;
 	}
@@ -3533,7 +3523,8 @@ bool ToonEngine::loadGame(int32 slot) {
 		Common::MemoryReadStream rStr(buf, size + 2);
 		while (1) {
 			int16 command = rStr.readSint16BE();
-			if (!command) break;
+			if (!command)
+				break;
 			switch (command) {
 			case 1: {
 				int16 frame = rStr.readSint16BE();
@@ -3542,8 +3533,8 @@ bool ToonEngine::loadGame(int32 slot) {
 				rStr.read(animName, animLen);
 				int16 x = rStr.readSint16BE();
 				int16 y = rStr.readSint16BE();
-//				int16 z = rStr.readSint16BE();
-//				int16 layerZ = rStr.readSint16BE();
+				//				int16 z = rStr.readSint16BE();
+				//				int16 layerZ = rStr.readSint16BE();
 				rStr.readSint16BE();
 				rStr.readSint16BE();
 
@@ -3554,7 +3545,7 @@ bool ToonEngine::loadGame(int32 slot) {
 				break;
 			}
 			case 2: {
-				int16 x =  rStr.readSint16BE();
+				int16 x = rStr.readSint16BE();
 				int16 y = rStr.readSint16BE();
 				int16 x1 = rStr.readSint16BE();
 				int16 y1 = rStr.readSint16BE();
@@ -3562,7 +3553,7 @@ bool ToonEngine::loadGame(int32 slot) {
 				break;
 			}
 			case 3: {
-				int16 x =  rStr.readSint16BE();
+				int16 x = rStr.readSint16BE();
 				int16 y = rStr.readSint16BE();
 				int16 x1 = rStr.readSint16BE();
 				int16 y1 = rStr.readSint16BE();
@@ -3691,7 +3682,7 @@ void ToonEngine::restorePalette() {
 }
 
 const char *ToonEngine::getSpecialConversationMusic(int32 conversationId) {
-	static const char * const specialMusic[] = {
+	static const char *const specialMusic[] = {
 		0, 0,
 		"BR091013", "BR091013",
 		"NET1214", "NET1214",
@@ -3922,7 +3913,7 @@ int32 ToonEngine::handleInventoryOnInventory(int32 itemDest, int32 itemSrc) {
 			characterTalk(1322);
 			return 1;
 		} else if (itemSrc == 107) {
-			sayLines(2 , 1300);
+			sayLines(2, 1300);
 			replaceItemFromInventory(107, 111);
 			_gameState->_mouseState = -1;
 			setCursor(0, false, 0, 0);
@@ -4679,7 +4670,7 @@ int32 ToonEngine::handleInventoryOnDrew(int32 itemId) {
 				sayLines(1, 1456);
 			}
 		} else {
-			runEventScript(_mouseX, _mouseY, 2, 100 , 0);
+			runEventScript(_mouseX, _mouseY, 2, 100, 0);
 		}
 		return 1;
 	case 0x18:
@@ -4761,7 +4752,7 @@ int32 ToonEngine::handleInventoryOnDrew(int32 itemId) {
 			sayLines(2, 1440);
 			_gameState->_mouseHidden = false;
 		} else {
-			runEventScript(_mouseX, _mouseY, 2 , 101, 0);
+			runEventScript(_mouseX, _mouseY, 2, 101, 0);
 		}
 		return 1;
 	case 79:
@@ -4855,7 +4846,7 @@ int32 ToonEngine::pauseSceneAnimationScript(int32 animScriptId, int32 tickToWait
 	return nextTicks;
 }
 
-Common::String ToonEngine::createRoomFilename(const Common::String& name) {
+Common::String ToonEngine::createRoomFilename(const Common::String &name) {
 	Common::String file = Common::String::format("ACT%d/%s/%s", _gameState->_currentChapter, _gameState->_locations[_gameState->_currentScene]._name, name.c_str());
 	return file;
 }
@@ -4910,7 +4901,6 @@ void ToonEngine::createShadowLUT() {
 		}
 
 		_shadowLUT[i] = foundColor;
-
 	}
 }
 
@@ -4930,7 +4920,7 @@ bool ToonEngine::loadToonDat() {
 	}
 
 	// Read header
-	char buf[4+1];
+	char buf[4 + 1];
 	in.read(buf, 4);
 	buf[4] = '\0';
 
@@ -4946,8 +4936,8 @@ bool ToonEngine::loadToonDat() {
 
 	if ((majVer != TOON_DAT_VER_MAJ) || (minVer != TOON_DAT_VER_MIN)) {
 		msg = Common::String::format(
-			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
-			filename.c_str(), TOON_DAT_VER_MAJ, TOON_DAT_VER_MIN, majVer, minVer);
+		  _("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
+		  filename.c_str(), TOON_DAT_VER_MAJ, TOON_DAT_VER_MIN, majVer, minVer);
 		GUIErrorMessage(msg);
 		warning("%s", msg.c_str());
 
@@ -4970,7 +4960,7 @@ void ToonEngine::unloadToonDat() {
 }
 
 char **ToonEngine::loadTextsVariants(Common::File &in) {
-	int  len;
+	int len;
 	char **res = 0;
 	char *pos = 0;
 
@@ -5023,7 +5013,7 @@ void ToonEngine::makeLineWalkable(int32 x, int32 y, int32 x2, int32 y2) {
 
 void ToonEngine::playRoomMusic() {
 	if (_gameState->_inConversation) {
-		const char* music = getSpecialConversationMusic(_gameState->_currentConversationId);
+		const char *music = getSpecialConversationMusic(_gameState->_currentConversationId);
 		if (music) {
 			_audioManager->playMusic(_gameState->_locations[_gameState->_currentScene]._name, music);
 			return;
@@ -5033,13 +5023,12 @@ void ToonEngine::playRoomMusic() {
 	_audioManager->playMusic(_gameState->_locations[_gameState->_currentScene]._name, _gameState->_locations[_gameState->_currentScene]._music);
 }
 
-void ToonEngine::dirtyAllScreen()
-{
+void ToonEngine::dirtyAllScreen() {
 	_dirtyRects.clear();
 	_dirtyAll = true;
 }
 
-void ToonEngine::addDirtyRect( int32 left, int32 top, int32 right, int32 bottom ) {
+void ToonEngine::addDirtyRect(int32 left, int32 top, int32 right, int32 bottom) {
 	left = MIN<int32>(MAX<int32>(left, 0), TOON_BACKBUFFER_WIDTH);
 	right = MIN<int32>(MAX<int32>(right, 0), TOON_BACKBUFFER_WIDTH);
 	top = MIN<int32>(MAX<int32>(top, 0), TOON_BACKBUFFER_HEIGHT);
@@ -5060,7 +5049,7 @@ void ToonEngine::addDirtyRect( int32 left, int32 top, int32 right, int32 bottom 
 	}
 
 	// check also in the old rect (of the old frame)
-	for (int32 i = _oldDirtyRects.size() - 1 ; i >= 0; i--) {
+	for (int32 i = _oldDirtyRects.size() - 1; i >= 0; i--) {
 		if (rect.contains(_oldDirtyRects[i])) {
 			_oldDirtyRects.remove_at(i);
 		}

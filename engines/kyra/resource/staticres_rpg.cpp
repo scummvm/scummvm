@@ -22,7 +22,6 @@
 
 #include "kyra/resource/resource.h"
 
-
 namespace Kyra {
 
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)

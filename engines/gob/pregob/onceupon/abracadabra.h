@@ -29,30 +29,30 @@ namespace Gob {
 
 namespace OnceUpon {
 
-class Abracadabra : public OnceUpon {
-public:
-	Abracadabra(GobEngine *vm);
-	~Abracadabra();
+	class Abracadabra : public OnceUpon {
+	public:
+		Abracadabra(GobEngine *vm);
+		~Abracadabra();
 
-	void run();
+		void run();
 
-protected:
-	const StorkParam &getStorkParameters() const;
+	protected:
+		const StorkParam &getStorkParameters() const;
 
-private:
-	/** Definition of the menu button that leads to the animal names screen. */
-	static const MenuButton kAnimalsButtons;
+	private:
+		/** Definition of the menu button that leads to the animal names screen. */
+		static const MenuButton kAnimalsButtons;
 
-	/** Definition of the buttons that make up the animals in the animal names screen. */
-	static const MenuButton kAnimalButtons[];
-	/** File prefixes for the name of each animal. */
-	static const char *kAnimalNames[];
+		/** Definition of the buttons that make up the animals in the animal names screen. */
+		static const MenuButton kAnimalButtons[];
+		/** File prefixes for the name of each animal. */
+		static const char *kAnimalNames[];
 
-	// Parameters for the stork section.
-	static const MenuButton kStorkHouses[];
-	static const Stork::BundleDrop kStorkBundleDrops[];
-	static const struct StorkParam kStorkParam;
-};
+		// Parameters for the stork section.
+		static const MenuButton kStorkHouses[];
+		static const Stork::BundleDrop kStorkBundleDrops[];
+		static const struct StorkParam kStorkParam;
+	};
 
 } // End of namespace OnceUpon
 

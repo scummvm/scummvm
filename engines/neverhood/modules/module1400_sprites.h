@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE1400_SPRITES_H
 #define NEVERHOOD_MODULES_MODULE1400_SPRITES_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -33,6 +33,7 @@ class AsScene1401Pipe : public AnimatedSprite {
 public:
 	AsScene1401Pipe(NeverhoodEngine *vm);
 	virtual ~AsScene1401Pipe();
+
 protected:
 	int _countdown1;
 	int _countdown2;
@@ -48,6 +49,7 @@ protected:
 class AsScene1401Mouse : public AnimatedSprite {
 public:
 	AsScene1401Mouse(NeverhoodEngine *vm);
+
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void suSuckedIn();
@@ -57,6 +59,7 @@ protected:
 class AsScene1401Cheese : public AnimatedSprite {
 public:
 	AsScene1401Cheese(NeverhoodEngine *vm);
+
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void suSuckedIn();
@@ -66,6 +69,7 @@ protected:
 class AsScene1401BackDoor : public AnimatedSprite {
 public:
 	AsScene1401BackDoor(NeverhoodEngine *vm, Sprite *klaymen, bool isOpen);
+
 protected:
 	Sprite *_klaymen;
 	int _countdown;
@@ -90,6 +94,7 @@ class AsCommonProjector : public AnimatedSprite {
 public:
 	AsCommonProjector(NeverhoodEngine *vm, Scene *parentScene, Sprite *klaymen, Sprite *asPipe);
 	virtual ~AsCommonProjector();
+
 protected:
 	Scene *_parentScene;
 	Sprite *_klaymen;
@@ -122,6 +127,7 @@ public:
 class AsScene1402PuzzleBox : public AnimatedSprite {
 public:
 	AsScene1402PuzzleBox(NeverhoodEngine *vm, Scene *parentScene, int status);
+
 protected:
 	Scene *_parentScene;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -133,6 +139,7 @@ protected:
 class AsScene1407Mouse : public AnimatedSprite {
 public:
 	AsScene1407Mouse(NeverhoodEngine *vm, Scene *parentScene);
+
 protected:
 	Scene *_parentScene;
 	int16 _walkDestX;
@@ -156,6 +163,7 @@ public:
 	AsScene1405Tile(NeverhoodEngine *vm, Scene1405 *parentScene, uint32 tileIndex);
 	void show();
 	void hide(bool playClickSound);
+
 protected:
 	Scene1405 *_parentScene;
 	bool _isShowing;
@@ -168,6 +176,7 @@ protected:
 class KmScene1401 : public Klaymen {
 public:
 	KmScene1401(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
@@ -175,6 +184,7 @@ protected:
 class KmScene1402 : public Klaymen {
 public:
 	KmScene1402(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
@@ -182,6 +192,7 @@ protected:
 class KmScene1403 : public Klaymen {
 public:
 	KmScene1403(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
@@ -189,6 +200,7 @@ protected:
 class KmScene1404 : public Klaymen {
 public:
 	KmScene1404(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };

@@ -24,12 +24,12 @@
 #define NEVERHOOD_SCENE_H
 
 #include "common/array.h"
-#include "neverhood/neverhood.h"
 #include "neverhood/background.h"
 #include "neverhood/entity.h"
 #include "neverhood/graphics.h"
 #include "neverhood/klaymen.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/palette.h"
 #include "neverhood/sprite.h"
 #include "neverhood/staticdata.h"
@@ -76,90 +76,90 @@ public:
 	void checkCollision(Sprite *sprite, uint16 flags, int messageNum, uint32 messageParam);
 	// Some crazy templated functions to make the logic code smaller/simpler (imo!)
 	// insertKlaymen
-	template<class T>
+	template <class T>
 	void insertKlaymen() {
-		_klaymen = (T*)addSprite(new T(_vm, this));
+		_klaymen = (T *)addSprite(new T(_vm, this));
 	}
-	template<class T, class Arg1>
+	template <class T, class Arg1>
 	void insertKlaymen(Arg1 arg1) {
-		_klaymen = (T*)addSprite(new T(_vm, this, arg1));
+		_klaymen = (T *)addSprite(new T(_vm, this, arg1));
 	}
-	template<class T, class Arg1, class Arg2>
+	template <class T, class Arg1, class Arg2>
 	void insertKlaymen(Arg1 arg1, Arg2 arg2) {
-		_klaymen = (T*)addSprite(new T(_vm, this, arg1, arg2));
+		_klaymen = (T *)addSprite(new T(_vm, this, arg1, arg2));
 	}
-	template<class T, class Arg1, class Arg2, class Arg3>
+	template <class T, class Arg1, class Arg2, class Arg3>
 	void insertKlaymen(Arg1 arg1, Arg2 arg2, Arg3 arg3) {
-		_klaymen = (T*)addSprite(new T(_vm, this, arg1, arg2, arg3));
+		_klaymen = (T *)addSprite(new T(_vm, this, arg1, arg2, arg3));
 	}
-	template<class T, class Arg1, class Arg2, class Arg3, class Arg4>
+	template <class T, class Arg1, class Arg2, class Arg3, class Arg4>
 	void insertKlaymen(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {
-		_klaymen = (T*)addSprite(new T(_vm, this, arg1, arg2, arg3, arg4));
+		_klaymen = (T *)addSprite(new T(_vm, this, arg1, arg2, arg3, arg4));
 	}
-	template<class T, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5>
+	template <class T, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5>
 	void insertKlaymen(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5) {
-		_klaymen = (T*)addSprite(new T(_vm, this, arg1, arg2, arg3, arg4, arg5));
+		_klaymen = (T *)addSprite(new T(_vm, this, arg1, arg2, arg3, arg4, arg5));
 	}
-	template<class T, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6>
+	template <class T, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6>
 	void insertKlaymen(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6) {
-		_klaymen = (T*)addSprite(new T(_vm, this, arg1, arg2, arg3, arg4, arg5, arg6));
+		_klaymen = (T *)addSprite(new T(_vm, this, arg1, arg2, arg3, arg4, arg5, arg6));
 	}
 	// insertSprite
-	template<class T>
-	T* insertSprite() {
-		return (T*)addSprite(new T(_vm));
+	template <class T>
+	T *insertSprite() {
+		return (T *)addSprite(new T(_vm));
 	}
-	template<class T, class Arg1>
-	T* insertSprite(Arg1 arg1) {
-		return (T*)addSprite(new T(_vm, arg1));
+	template <class T, class Arg1>
+	T *insertSprite(Arg1 arg1) {
+		return (T *)addSprite(new T(_vm, arg1));
 	}
-	template<class T, class Arg1, class Arg2>
-	T* insertSprite(Arg1 arg1, Arg2 arg2) {
-		return (T*)addSprite(new T(_vm, arg1, arg2));
+	template <class T, class Arg1, class Arg2>
+	T *insertSprite(Arg1 arg1, Arg2 arg2) {
+		return (T *)addSprite(new T(_vm, arg1, arg2));
 	}
-	template<class T, class Arg1, class Arg2, class Arg3>
-	T* insertSprite(Arg1 arg1, Arg2 arg2, Arg3 arg3) {
-		return (T*)addSprite(new T(_vm, arg1, arg2, arg3));
+	template <class T, class Arg1, class Arg2, class Arg3>
+	T *insertSprite(Arg1 arg1, Arg2 arg2, Arg3 arg3) {
+		return (T *)addSprite(new T(_vm, arg1, arg2, arg3));
 	}
-	template<class T, class Arg1, class Arg2, class Arg3, class Arg4>
-	T* insertSprite(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {
-		return (T*)addSprite(new T(_vm, arg1, arg2, arg3, arg4));
+	template <class T, class Arg1, class Arg2, class Arg3, class Arg4>
+	T *insertSprite(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {
+		return (T *)addSprite(new T(_vm, arg1, arg2, arg3, arg4));
 	}
-	template<class T, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5>
-	T* insertSprite(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5) {
-		return (T*)addSprite(new T(_vm, arg1, arg2, arg3, arg4, arg5));
+	template <class T, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5>
+	T *insertSprite(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5) {
+		return (T *)addSprite(new T(_vm, arg1, arg2, arg3, arg4, arg5));
 	}
-	template<class T, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6>
-	T* insertSprite(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6) {
-		return (T*)addSprite(new T(_vm, arg1, arg2, arg3, arg4, arg5, arg6));
+	template <class T, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6>
+	T *insertSprite(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6) {
+		return (T *)addSprite(new T(_vm, arg1, arg2, arg3, arg4, arg5, arg6));
 	}
 	// createSprite
-	template<class T>
-	T* createSprite() {
+	template <class T>
+	T *createSprite() {
 		return new T(_vm);
 	}
-	template<class T, class Arg1>
-	T* createSprite(Arg1 arg1) {
+	template <class T, class Arg1>
+	T *createSprite(Arg1 arg1) {
 		return new T(_vm, arg1);
 	}
-	template<class T, class Arg1, class Arg2>
-	T* createSprite(Arg1 arg1, Arg2 arg2) {
+	template <class T, class Arg1, class Arg2>
+	T *createSprite(Arg1 arg1, Arg2 arg2) {
 		return new T(_vm, arg1, arg2);
 	}
-	template<class T, class Arg1, class Arg2, class Arg3>
-	T* createSprite(Arg1 arg1, Arg2 arg2, Arg3 arg3) {
+	template <class T, class Arg1, class Arg2, class Arg3>
+	T *createSprite(Arg1 arg1, Arg2 arg2, Arg3 arg3) {
 		return new T(_vm, arg1, arg2, arg3);
 	}
-	template<class T, class Arg1, class Arg2, class Arg3, class Arg4>
-	T* createSprite(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {
+	template <class T, class Arg1, class Arg2, class Arg3, class Arg4>
+	T *createSprite(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {
 		return new T(_vm, arg1, arg2, arg3, arg4);
 	}
-	template<class T, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5>
-	T* createSprite(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5) {
+	template <class T, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5>
+	T *createSprite(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5) {
 		return new T(_vm, arg1, arg2, arg3, arg4, arg5);
 	}
-	template<class T, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6>
-	T* createSprite(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6) {
+	template <class T, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6>
+	T *createSprite(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6) {
 		return new T(_vm, arg1, arg2, arg3, arg4, arg5, arg6);
 	}
 
@@ -168,8 +168,8 @@ public:
 
 protected:
 	Module *_parentModule;
-	Common::Array<Entity*> _entities;
-	Common::Array<BaseSurface*> _surfaces;
+	Common::Array<Entity *> _entities;
+	Common::Array<BaseSurface *> _surfaces;
 
 	Klaymen *_klaymen;
 	Background *_background;
@@ -199,10 +199,10 @@ protected:
 	HitRectList _hitRectList;
 
 	HitRectList *_hitRects;
-	Common::Array<Sprite*> _collisionSprites;
+	Common::Array<Sprite *> _collisionSprites;
 
 	// Used for debugging
-	uint32 _backgroundFileHash, _cursorFileHash;    // for StaticScene and all Scene* classes
+	uint32 _backgroundFileHash, _cursorFileHash; // for StaticScene and all Scene* classes
 
 	int _messageValue;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -222,17 +222,17 @@ protected:
 	void loadDataResource(uint32 fileHash);
 	uint16 convertMessageNum(uint32 messageNum);
 
-    void setHitRects(HitRectList *hitRects);
+	void setHitRects(HitRectList *hitRects);
 	void clearHitRects();
 	void clearCollisionSprites();
 
 	void insertMouse(Mouse *mouseCursor);
 };
 
-
 class StaticScene : public Scene {
 public:
 	StaticScene(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 cursorFileHash);
+
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };

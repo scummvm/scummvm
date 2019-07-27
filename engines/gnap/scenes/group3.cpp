@@ -20,14 +20,15 @@
  *
  */
 
-#include "gnap/gnap.h"
-#include "gnap/gamesys.h"
-#include "gnap/resource.h"
 #include "gnap/scenes/group3.h"
+#include "gnap/gamesys.h"
+#include "gnap/gnap.h"
+#include "gnap/resource.h"
 
 namespace Gnap {
 
-Scene30::Scene30(GnapEngine *vm) : Scene(vm) {
+Scene30::Scene30(GnapEngine *vm)
+  : Scene(vm) {
 	_kidSequenceId = -1;
 }
 
@@ -45,9 +46,9 @@ void Scene30::updateHotspots() {
 }
 
 void Scene30::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	bool hasTakenPill = false;
 
@@ -214,8 +215,8 @@ void Scene30::run() {
 }
 
 void Scene30::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -274,7 +275,8 @@ void Scene30::updateAnimations() {
 
 /*****************************************************************************/
 
-Scene31::Scene31(GnapEngine *vm) : Scene(vm) {
+Scene31::Scene31(GnapEngine *vm)
+  : Scene(vm) {
 	_beerGuyDistracted = false;
 	_currClerkSequenceId = -1;
 	_nextClerkSequenceId = -1;
@@ -298,9 +300,9 @@ void Scene31::updateHotspots() {
 }
 
 void Scene31::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->playSound(0x1093B, true);
 	_vm->startSoundTimerB(6);
@@ -498,7 +500,7 @@ void Scene31::run() {
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = _vm->getRandom(20) + 60;
 				if (gnap._actionStatus < 0 && _nextClerkSequenceId == -1) {
-					switch (_vm->getRandom(6)){
+					switch (_vm->getRandom(6)) {
 					case 0:
 						_nextClerkSequenceId = 0xFF;
 						break;
@@ -539,9 +541,9 @@ void Scene31::run() {
 }
 
 void Scene31::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -641,7 +643,8 @@ void Scene31::updateAnimations() {
 
 /*****************************************************************************/
 
-Scene32::Scene32(GnapEngine *vm) : Scene(vm) {}
+Scene32::Scene32(GnapEngine *vm)
+  : Scene(vm) {}
 
 int Scene32::init() {
 	_vm->_gameSys->setAnimation(0, 0, 0);
@@ -664,9 +667,9 @@ void Scene32::updateHotspots() {
 }
 
 void Scene32::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->playSound(0x1091C, true);
 	_vm->startSoundTimerC(5);
@@ -747,7 +750,6 @@ void Scene32::run() {
 			if (gnap._actionStatus < 0)
 				gnap.walkTo(Common::Point(-1, -1), -1, -1, 1);
 			break;
-
 		}
 
 		if (_vm->_mouseClickState._left && gnap._actionStatus < 0) {
@@ -787,7 +789,7 @@ void Scene32::run() {
 }
 
 void Scene32::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -798,7 +800,8 @@ void Scene32::updateAnimations() {
 
 /*****************************************************************************/
 
-Scene33::Scene33(GnapEngine *vm) : Scene(vm) {
+Scene33::Scene33(GnapEngine *vm)
+  : Scene(vm) {
 	_currChickenSequenceId = -1;
 	_nextChickenSequenceId = -1;
 }
@@ -821,9 +824,9 @@ void Scene33::updateHotspots() {
 }
 
 void Scene33::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->playSound(0x1091C, true);
 	_vm->startSoundTimerC(6);
@@ -1029,8 +1032,8 @@ void Scene33::run() {
 }
 
 void Scene33::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		switch (gnap._actionStatus) {
@@ -1086,11 +1089,12 @@ void Scene33::updateAnimations() {
 
 /*****************************************************************************/
 
-Scene38::Scene38(GnapEngine *vm) : Scene(vm) {
+Scene38::Scene38(GnapEngine *vm)
+  : Scene(vm) {
 }
 
 int Scene38::init() {
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 1);
@@ -1098,8 +1102,8 @@ int Scene38::init() {
 }
 
 void Scene38::updateHotspots() {
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->setHotspot(kHS38Platypus, 0, 0, 0, 0, SF_WALKABLE | SF_TALK_CURSOR | SF_GRAB_CURSOR | SF_LOOK_CURSOR);
 	_vm->setHotspot(kHS38ExitHouse, 150, 585, 650, 600, SF_EXIT_D_CURSOR, 0, 8);
@@ -1134,8 +1138,8 @@ void Scene38::updateHotspots() {
 }
 
 void Scene38::run() {
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->queueInsertDeviceIcon();
 	_vm->_gameSys->insertSequence(0x9B, 0, 0, 0, kSeqNone, 0, 0, 0);
@@ -1296,9 +1300,9 @@ void Scene38::run() {
 }
 
 void Scene38::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -1402,13 +1406,14 @@ void Scene38::updateAnimations() {
 
 /*****************************************************************************/
 
-Scene39::Scene39(GnapEngine *vm) : Scene(vm) {
+Scene39::Scene39(GnapEngine *vm)
+  : Scene(vm) {
 	_currGuySequenceId = -1;
 	_nextGuySequenceId = -1;
 }
 
 int Scene39::init() {
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 1);
@@ -1427,9 +1432,9 @@ void Scene39::updateHotspots() {
 }
 
 void Scene39::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	// Bug in the original? Timer was never initialized.
 	_vm->_timers[5] = 0;
@@ -1590,8 +1595,8 @@ void Scene39::run() {
 }
 
 void Scene39::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);

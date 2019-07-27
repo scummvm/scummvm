@@ -23,116 +23,148 @@
 #ifndef SHERLOCK_SCALPEL_TSAGE_RESOURCES_H
 #define SHERLOCK_SCALPEL_TSAGE_RESOURCES_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/file.h"
 #include "common/list.h"
-#include "common/str.h"
+#include "common/scummsys.h"
 #include "common/str-array.h"
+#include "common/str.h"
 #include "common/util.h"
 #include "graphics/surface.h"
 #include "sherlock/screen.h"
 
 namespace Sherlock {
 namespace Scalpel {
-namespace TsAGE {
+	namespace TsAGE {
 
-// Magic number used by original game to identify valid memory blocks
-const uint32 MEMORY_ENTRY_ID = 0xE11DA722;
+		// Magic number used by original game to identify valid memory blocks
+		const uint32 MEMORY_ENTRY_ID = 0xE11DA722;
 
-const int MEMORY_POOL_SIZE = 1000;
+		const int MEMORY_POOL_SIZE = 1000;
 
-enum ResourceType { RES_LIBRARY, RES_STRIP, RES_IMAGE, RES_PALETTE, RES_VISAGE, RES_SOUND, RES_MESSAGE,
-		RES_FONT, RES_POINTER, RES_BANK, RES_SND_DRIVER, RES_PRIORITY, RES_CONTROL, RES_WALKRGNS,
-		RES_BITMAP, RES_SAVE, RES_SEQUENCE,
-		// Return to Ringworld specific resource types
-		RT17, RT18, RT19, RT20, RT21, RT22, RT23, RT24, RT25, RT26, RT27, RT28, RT29, RT30, RT31
-};
+		enum ResourceType { RES_LIBRARY,
+			                  RES_STRIP,
+			                  RES_IMAGE,
+			                  RES_PALETTE,
+			                  RES_VISAGE,
+			                  RES_SOUND,
+			                  RES_MESSAGE,
+			                  RES_FONT,
+			                  RES_POINTER,
+			                  RES_BANK,
+			                  RES_SND_DRIVER,
+			                  RES_PRIORITY,
+			                  RES_CONTROL,
+			                  RES_WALKRGNS,
+			                  RES_BITMAP,
+			                  RES_SAVE,
+			                  RES_SEQUENCE,
+			                  // Return to Ringworld specific resource types
+			                  RT17,
+			                  RT18,
+			                  RT19,
+			                  RT20,
+			                  RT21,
+			                  RT22,
+			                  RT23,
+			                  RT24,
+			                  RT25,
+			                  RT26,
+			                  RT27,
+			                  RT28,
+			                  RT29,
+			                  RT30,
+			                  RT31
+		};
 
-class SectionEntry {
-public:
-	ResourceType resType;
-	uint16 resNum;
-	uint32 fileOffset;
+		class SectionEntry {
+		public:
+			ResourceType resType;
+			uint16 resNum;
+			uint32 fileOffset;
 
-	SectionEntry() {
-		resType = RES_LIBRARY;
-		resNum = 0;
-		fileOffset = 0;
-	}
-};
+			SectionEntry() {
+				resType = RES_LIBRARY;
+				resNum = 0;
+				fileOffset = 0;
+			}
+		};
 
-class ResourceEntry {
-public:
-	uint16 id;
-	bool isCompressed;
-	uint32 fileOffset;
-	uint32 size;
-	uint32 uncompressedSize;
+		class ResourceEntry {
+		public:
+			uint16 id;
+			bool isCompressed;
+			uint32 fileOffset;
+			uint32 size;
+			uint32 uncompressedSize;
 
-	ResourceEntry() {
-		id = 0;
-		isCompressed = false;
-		fileOffset = 0;
-		size = 0;
-		uncompressedSize = 0;
-	}
-};
+			ResourceEntry() {
+				id = 0;
+				isCompressed = false;
+				fileOffset = 0;
+				size = 0;
+				uncompressedSize = 0;
+			}
+		};
 
-typedef Common::List<ResourceEntry> ResourceList;
+		typedef Common::List<ResourceEntry> ResourceList;
 
-class SectionList : public Common::List<SectionEntry> {
-public:
-	uint32 fileOffset;
+		class SectionList : public Common::List<SectionEntry> {
+		public:
+			uint32 fileOffset;
 
-	SectionList() {
-		fileOffset = 0;
-	}
-};
+			SectionList() {
+				fileOffset = 0;
+			}
+		};
 
-class BitReader {
-private:
-	Common::ReadStream &_stream;
-	uint8 _remainder, _bitsLeft;
-	byte readByte() { return _stream.eos() ? 0 : _stream.readByte(); }
-public:
-	BitReader(Common::ReadStream &s) : _stream(s) {
-		numBits = 9;
-		_remainder = 0;
-		_bitsLeft = 0;
-	}
-	uint16 readToken();
+		class BitReader {
+		private:
+			Common::ReadStream &_stream;
+			uint8 _remainder, _bitsLeft;
+			byte readByte() { return _stream.eos() ? 0 : _stream.readByte(); }
 
-	int numBits;
-};
+		public:
+			BitReader(Common::ReadStream &s)
+			  : _stream(s) {
+				numBits = 9;
+				_remainder = 0;
+				_bitsLeft = 0;
+			}
+			uint16 readToken();
 
-class TLib {
-private:
-	Common::StringArray _resStrings;
-private:
-	Common::File _file;
-	Common::String _filename;
-	ResourceList _resources;
-	SectionList _sections;
+			int numBits;
+		};
 
-	void loadSection(uint32 fileOffset);
-	void loadIndex();
+		class TLib {
+		private:
+			Common::StringArray _resStrings;
 
-	static bool scanIndex(Common::File &f, ResourceType resType, int rlbNum, int resNum, ResourceEntry &resEntry);
-	static void loadSection(Common::File &f, ResourceList &resources);
-public:
-	TLib(const Common::String &filename);
-	~TLib();
+		private:
+			Common::File _file;
+			Common::String _filename;
+			ResourceList _resources;
+			SectionList _sections;
 
-	const Common::String &getFilename() { return _filename; }
-	const SectionList &getSections() { return _sections; }
-	Common::SeekableReadStream *getResource(uint16 id, bool suppressErrors = false);
-	Common::SeekableReadStream *getResource(ResourceType resType, uint16 resNum, uint16 rlbNum, bool suppressErrors = false);
-	uint32 getResourceStart(ResourceType resType, uint16 resNum, uint16 rlbNum, ResourceEntry &entry);
-	void getPalette(byte palette[PALETTE_SIZE], int paletteNum);
-};
+			void loadSection(uint32 fileOffset);
+			void loadIndex();
 
-} // end of namespace TsAGE
+			static bool scanIndex(Common::File &f, ResourceType resType, int rlbNum, int resNum, ResourceEntry &resEntry);
+			static void loadSection(Common::File &f, ResourceList &resources);
+
+		public:
+			TLib(const Common::String &filename);
+			~TLib();
+
+			const Common::String &getFilename() { return _filename; }
+			const SectionList &getSections() { return _sections; }
+			Common::SeekableReadStream *getResource(uint16 id, bool suppressErrors = false);
+			Common::SeekableReadStream *getResource(ResourceType resType, uint16 resNum, uint16 rlbNum, bool suppressErrors = false);
+			uint32 getResourceStart(ResourceType resType, uint16 resNum, uint16 rlbNum, ResourceEntry &entry);
+			void getPalette(byte palette[PALETTE_SIZE], int paletteNum);
+		};
+
+	} // end of namespace TsAGE
 } // end of namespace Scalpel
 } // end of namespace Sherlock
 

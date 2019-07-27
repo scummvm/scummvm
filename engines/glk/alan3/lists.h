@@ -21,29 +21,29 @@
  */
 
 #ifndef GLK_ALAN3_LISTS
-#define GLK_ALAN3_LISTS
+#	define GLK_ALAN3_LISTS
 
 /* Various utility functions for handling lists and arrays */
 
-#include "glk/alan3/acode.h"
-#include "glk/alan3/types.h"
+#	include "glk/alan3/acode.h"
+#	include "glk/alan3/types.h"
 
 namespace Glk {
 namespace Alan3 {
 
-extern void initArray(void *array);
+	extern void initArray(void *array);
 
-#define isEndOfArray(x) implementationOfIsEndOfList((Aword *) (x))
-extern bool implementationOfIsEndOfList(Aword *adr);
+#	define isEndOfArray(x) implementationOfIsEndOfList((Aword *)(x))
+	extern bool implementationOfIsEndOfList(Aword *adr);
 
-#define setEndOfArray(x) implementationOfSetEndOfArray((Aword *) (x))
-extern void implementationOfSetEndOfArray(Aword *adr);
+#	define setEndOfArray(x) implementationOfSetEndOfArray((Aword *)(x))
+	extern void implementationOfSetEndOfArray(Aword *adr);
 
-#define lengthOfArray(array) lengthOfArrayImplementation((array), sizeof(*(array)))
-extern int lengthOfArrayImplementation(void *array, int element_size_in_bytes);
+#	define lengthOfArray(array) lengthOfArrayImplementation((array), sizeof(*(array)))
+	extern int lengthOfArrayImplementation(void *array, int element_size_in_bytes);
 
-#define addElement(array, element) addElementImplementation((array), (&element), sizeof(element))
-extern void addElementImplementation(void *array_of_any_type, void *element_of_any_size, int element_size_in_bytes);
+#	define addElement(array, element) addElementImplementation((array), (&element), sizeof(element))
+	extern void addElementImplementation(void *array_of_any_type, void *element_of_any_size, int element_size_in_bytes);
 #endif
 
 } // End of namespace Alan3

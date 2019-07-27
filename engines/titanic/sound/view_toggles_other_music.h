@@ -30,8 +30,10 @@ namespace Titanic {
 class CViewTogglesOtherMusic : public CEnterViewTogglesOtherMusic {
 	DECLARE_MESSAGE_MAP;
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
+
 private:
 	int _value;
+
 public:
 	CLASSDEF;
 	CViewTogglesOtherMusic();

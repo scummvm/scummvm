@@ -71,7 +71,7 @@ private:
 	Gui *_gui;
 
 	Common::String _userInput;
-	Common::Array<DialogElement*> _elements;
+	Common::Array<DialogElement *> _elements;
 	Common::Rect _bounds;
 };
 

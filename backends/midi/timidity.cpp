@@ -39,46 +39,46 @@
 
 #if defined(USE_TIMIDITY)
 
-#include "common/endian.h"
-#include "common/error.h"
-#include "common/str.h"
-#include "common/textconsole.h"
-#include "audio/musicplugin.h"
-#include "audio/mpu401.h"
+#	include "audio/mpu401.h"
+#	include "audio/musicplugin.h"
+#	include "common/endian.h"
+#	include "common/error.h"
+#	include "common/str.h"
+#	include "common/textconsole.h"
 
-#include <unistd.h>
-#include <stdio.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/param.h>
-#include <netdb.h>  /* for getaddrinfo */
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <errno.h>
+#	include <arpa/inet.h>
+#	include <errno.h>
+#	include <netdb.h> /* for getaddrinfo */
+#	include <netinet/in.h>
+#	include <stdarg.h>
+#	include <stdio.h>
+#	include <stdlib.h>
+#	include <string.h>
+#	include <sys/param.h>
+#	include <sys/socket.h>
+#	include <sys/types.h>
+#	include <unistd.h>
 
 // BeOS BONE uses snooze (x/1000) in place of usleep(x)
-#ifdef __BEOS__
-#define usleep(v) snooze(v/1000)
-#endif
+#	ifdef __BEOS__
+#		define usleep(v) snooze(v / 1000)
+#	endif
 
-#define SEQ_MIDIPUTC 5
+#	define SEQ_MIDIPUTC 5
 
-#define TIMIDITY_LOW_DELAY
+#	define TIMIDITY_LOW_DELAY
 
-#ifdef TIMIDITY_LOW_DELAY
-#define BUF_LOW_SYNC	0.1
-#define BUF_HIGH_SYNC	0.15
-#else
-#define BUF_LOW_SYNC	0.4
-#define BUF_HIGH_SYNC	0.8
-#endif
+#	ifdef TIMIDITY_LOW_DELAY
+#		define BUF_LOW_SYNC 0.1
+#		define BUF_HIGH_SYNC 0.15
+#	else
+#		define BUF_LOW_SYNC 0.4
+#		define BUF_HIGH_SYNC 0.8
+#	endif
 
 /* default host & port */
-#define DEFAULT_TIMIDITY_HOST "127.0.0.1"
-#define DEFAULT_TIMIDITY_PORT "7777"
+#	define DEFAULT_TIMIDITY_HOST "127.0.0.1"
+#	define DEFAULT_TIMIDITY_PORT "7777"
 
 class MidiDriver_TIMIDITY : public MidiDriver_MPU401 {
 public:
@@ -92,7 +92,7 @@ public:
 
 private:
 	/* creates a tcp connection to TiMidity server, returns filedesc (like open()) */
-	int connect_to_server(const char* hostname, const char* tcp_port);
+	int connect_to_server(const char *hostname, const char *tcp_port);
 
 	/* send command to the server; printf-like; returns reply string */
 	char *timidity_ctl_command(const char *fmt, ...) GCC_PRINTF(2, 3);
@@ -123,8 +123,8 @@ private:
 
 	/* buffer for partial data read from _control_fd - from timidity-io.c, see fdgets() */
 	char _controlbuffer[BUFSIZ];
-	int _controlbuffer_count;	/* beginning of read pointer */
-	int _controlbuffer_size;	/* end of read pointer */
+	int _controlbuffer_count; /* beginning of read pointer */
+	int _controlbuffer_size; /* end of read pointer */
 };
 
 MidiDriver_TIMIDITY::MidiDriver_TIMIDITY() {
@@ -188,13 +188,13 @@ int MidiDriver_TIMIDITY::open() {
 	if (atoi(res) != 200)
 		warning("TiMidity: bad reply for SETBUF command: %s", res);
 
-	/* should read something like "200 63017 is ready acceptable",
+		/* should read something like "200 63017 is ready acceptable",
 	 * where 63017 is port for data connection */
-#ifdef SCUMM_LITTLE_ENDIAN
+#	ifdef SCUMM_LITTLE_ENDIAN
 	res = timidity_ctl_command("OPEN lsb");
-#else
+#	else
 	res = timidity_ctl_command("OPEN msb");
-#endif
+#	endif
 
 	if (atoi(res) != 200) {
 		warning("TiMidity: bad reply for OPEN command: %s", res);
@@ -273,15 +273,15 @@ void MidiDriver_TIMIDITY::teardown() {
 	close_all();
 }
 
-int MidiDriver_TIMIDITY::connect_to_server(const char* hostname, const char* tcp_port) {
+int MidiDriver_TIMIDITY::connect_to_server(const char *hostname, const char *tcp_port) {
 	int fd;
-	struct addrinfo  hints;
+	struct addrinfo hints;
 	struct addrinfo *result, *rp;
 
 	/* get all address(es) matching host and port */
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_family   = AF_UNSPEC; /* Allow IPv4 or IPv6 */
+	hints.ai_family = AF_UNSPEC; /* Allow IPv4 or IPv6 */
 	if (getaddrinfo(hostname, tcp_port, &hints, &result) != 0) {
 		warning("TiMidity: getaddrinfo: %s\n", strerror(errno));
 		return -1;
@@ -314,7 +314,7 @@ char *MidiDriver_TIMIDITY::timidity_ctl_command(const char *fmt, ...) {
 	if (fmt != NULL) {
 		/* if argumends are present, write them to control connection */
 		va_start(ap, fmt);
-		int len = vsnprintf(buff, BUFSIZ-1, fmt, ap); /* leave one byte for \n */
+		int len = vsnprintf(buff, BUFSIZ - 1, fmt, ap); /* leave one byte for \n */
 		va_end(ap);
 
 		/* add newline if needed */
@@ -485,7 +485,7 @@ void MidiDriver_TIMIDITY::send(uint32 b) {
 
 void MidiDriver_TIMIDITY::sysEx(const byte *msg, uint16 length) {
 	fprintf(stderr, "Timidity::sysEx\n");
-	unsigned char buf[266*4];
+	unsigned char buf[266 * 4];
 	int position = 0;
 	const byte *chr = msg;
 
@@ -497,7 +497,7 @@ void MidiDriver_TIMIDITY::sysEx(const byte *msg, uint16 length) {
 	buf[position++] = 0;
 	for (; length; --length, ++chr) {
 		buf[position++] = SEQ_MIDIPUTC;
-		buf[position++] = (unsigned char) *chr & 0x7F;
+		buf[position++] = (unsigned char)*chr & 0x7F;
 		buf[position++] = _device_num;
 		buf[position++] = 0;
 	}
@@ -508,7 +508,6 @@ void MidiDriver_TIMIDITY::sysEx(const byte *msg, uint16 length) {
 
 	timidity_write_data(buf, position);
 }
-
 
 // Plugin interface
 
@@ -539,9 +538,9 @@ Common::Error TimidityMusicPlugin::createInstance(MidiDriver **mididriver, MidiD
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(TIMIDITY)
-	//REGISTER_PLUGIN_DYNAMIC(TIMIDITY, PLUGIN_TYPE_MUSIC, TimidityMusicPlugin);
+//REGISTER_PLUGIN_DYNAMIC(TIMIDITY, PLUGIN_TYPE_MUSIC, TimidityMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(TIMIDITY, PLUGIN_TYPE_MUSIC, TimidityMusicPlugin);
+REGISTER_PLUGIN_STATIC(TIMIDITY, PLUGIN_TYPE_MUSIC, TimidityMusicPlugin);
 //#endif
 
 #endif // defined(USE_TIMIDITY)

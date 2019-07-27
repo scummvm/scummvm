@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "common/stream.h"
 #include "common/memstream.h"
+#include "common/stream.h"
 
 #include "startrek/bitmap.h"
 #include "startrek/startrek.h"
@@ -59,7 +59,11 @@ Bitmap::Bitmap(const Bitmap &bitmap) {
 	memcpy(pixels, bitmap.pixels, pixelsArraySize);
 }
 
-Bitmap::Bitmap(int w, int h) : width(w), height(h), xoffset(0), yoffset(0) {
+Bitmap::Bitmap(int w, int h)
+  : width(w)
+  , height(h)
+  , xoffset(0)
+  , yoffset(0) {
 	pixels = new byte[width * height];
 	pixelsArraySize = width * height;
 }
@@ -68,7 +72,6 @@ Bitmap::~Bitmap() {
 	if (pixels != nullptr)
 		delete[] pixels;
 }
-
 
 TextBitmap::TextBitmap(int w, int h) {
 	width = w;

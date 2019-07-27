@@ -33,24 +33,24 @@
 #include <common/config-manager.h>
 
 #ifdef POSIX
-#include <errno.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <net/if.h>
-#include <netinet/in.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <sys/types.h>
+#	include <arpa/inet.h>
+#	include <errno.h>
+#	include <net/if.h>
+#	include <netinet/in.h>
+#	include <sys/ioctl.h>
+#	include <sys/socket.h>
+#	include <sys/types.h>
+#	include <unistd.h>
 
-#ifndef SIOCGIFCONF
-#include <sys/sockio.h>
-#endif
+#	ifndef SIOCGIFCONF
+#		include <sys/sockio.h>
+#	endif
 
-#ifndef _SIZEOF_ADDR_IFREQ
-#define _SIZEOF_ADDR_IFREQ sizeof
-#endif
+#	ifndef _SIZEOF_ADDR_IFREQ
+#		define _SIZEOF_ADDR_IFREQ sizeof
+#	endif
 
-#define LSSDP_BUFFER_LEN 2048
+#	define LSSDP_BUFFER_LEN 2048
 #endif
 
 namespace Common {
@@ -62,8 +62,15 @@ DECLARE_SINGLETON(Networking::LocalWebserver);
 
 namespace Networking {
 
-LocalWebserver::LocalWebserver(): _set(nullptr), _serverSocket(nullptr), _timerStarted(false),
-	_stopOnIdle(false), _minimalMode(false), _clients(0), _idlingFrames(0), _serverPort(DEFAULT_SERVER_PORT) {
+LocalWebserver::LocalWebserver()
+  : _set(nullptr)
+  , _serverSocket(nullptr)
+  , _timerStarted(false)
+  , _stopOnIdle(false)
+  , _minimalMode(false)
+  , _clients(0)
+  , _idlingFrames(0)
+  , _serverPort(DEFAULT_SERVER_PORT) {
 	addPathHandler("/", &_indexPageHandler);
 	addPathHandler("/files", &_filesPageHandler);
 	addPathHandler("/create", &_createDirectoryHandler);
@@ -168,7 +175,7 @@ void LocalWebserver::addPathHandler(Common::String path, BaseHandler *handler) {
 	_pathHandlers[path] = handler;
 }
 
-Common::String LocalWebserver::getAddress() { return _address;  }
+Common::String LocalWebserver::getAddress() { return _address; }
 
 IndexPageHandler &LocalWebserver::indexPageHandler() { return _indexPageHandler; }
 
@@ -246,7 +253,7 @@ void LocalWebserver::handleClient(uint32 i) {
 
 		// if no handler, answer with default BAD REQUEST
 	}
-	// fall through
+		// fall through
 
 	case BAD_REQUEST:
 		setClientGetHandler(_client[i], "<html><head><title>ScummVM - Bad Request</title></head><body>BAD REQUEST</body></html>", 400);
@@ -294,10 +301,9 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 			warning("LocalWebserver: SDLNet_ResolveHost: %s", SDLNet_GetError());
 		} else {
 			_address = Common::String::format(
-				"http://%u.%u.%u.%u:%u/",
-				localIp.host & 0xFF, (localIp.host >> 8) & 0xFF, (localIp.host >> 16) & 0xFF, (localIp.host >> 24) & 0xFF,
-				_serverPort
-			);
+			  "http://%u.%u.%u.%u:%u/",
+			  localIp.host & 0xFF, (localIp.host >> 8) & 0xFF, (localIp.host >> 16) & 0xFF, (localIp.host >> 24) & 0xFF,
+			  _serverPort);
 		}
 	}
 
@@ -307,7 +313,7 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 	else
 		return;
 
-	// if not - try platform-specific
+		// if not - try platform-specific
 #ifdef POSIX
 	void *tmpAddrPtr = NULL;
 
@@ -319,10 +325,10 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 		char buffer[LSSDP_BUFFER_LEN] = {};
 		struct ifconf ifc;
 		ifc.ifc_len = sizeof(buffer);
-		ifc.ifc_buf = (caddr_t) buffer;
+		ifc.ifc_buf = (caddr_t)buffer;
 
 		if (ioctl(fd, SIOCGIFCONF, &ifc) < 0) {
-		    warning("LocalWebserver: ioctl SIOCGIFCONF failed: %s (%d)", strerror(errno), errno);
+			warning("LocalWebserver: ioctl SIOCGIFCONF failed: %s (%d)", strerror(errno), errno);
 		} else {
 			struct ifreq *i;
 			for (size_t index = 0; index < (size_t)ifc.ifc_len; index += _SIZEOF_ADDR_IFREQ(*i)) {
@@ -408,12 +414,15 @@ void LocalWebserver::setClientRedirectHandler(Client &client, Common::SeekableRe
 }
 
 namespace {
-int hexDigit(char c) {
-	if ('0' <= c && c <= '9') return c - '0';
-	if ('A' <= c && c <= 'F') return c - 'A' + 10;
-	if ('a' <= c && c <= 'f') return c - 'a' + 10;
-	return -1;
-}
+	int hexDigit(char c) {
+		if ('0' <= c && c <= '9')
+			return c - '0';
+		if ('A' <= c && c <= 'F')
+			return c - 'A' + 10;
+		if ('a' <= c && c <= 'f')
+			return c - 'a' + 10;
+		return -1;
+	}
 }
 
 Common::String LocalWebserver::urlDecode(Common::String value) {
@@ -441,15 +450,10 @@ Common::String LocalWebserver::urlDecode(Common::String value) {
 }
 
 namespace {
-bool isQueryUnreserved(char c) {
-	return (
-		('0' <= c && c <= '9') ||
-		('A' <= c && c <= 'Z') ||
-		('a' <= c && c <= 'z') ||
-		c == '-' || c == '_' || c == '.' || c == '!' ||
-		c == '~' || c == '*' || c == '\'' || c == '(' || c == ')'
-	);
-}
+	bool isQueryUnreserved(char c) {
+		return (
+		  ('0' <= c && c <= '9') || ('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z') || c == '-' || c == '_' || c == '.' || c == '!' || c == '~' || c == '*' || c == '\'' || c == '(' || c == ')');
+	}
 }
 
 Common::String LocalWebserver::urlEncodeQueryParameterValue(Common::String value) {

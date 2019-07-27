@@ -38,7 +38,7 @@ SpritePalette verbLinePalette;
 SpritePalette litVerbLinePalette;
 
 StatusStuff mainStatus;
-StatusStuff *nowStatus = & mainStatus;
+StatusStuff *nowStatus = &mainStatus;
 
 void setLitStatus(int i) {
 	nowStatus->litStatus = i;
@@ -93,20 +93,20 @@ void drawStatusBar() {
 		switch (nowStatus->alignStatus) {
 		case IN_THE_CENTRE:
 			g_sludge->_txtMan->pasteString(stat->text,
-					((g_system->getWidth() - g_sludge->_txtMan->stringWidth(stat->text)) >> 1) / cameraZoom, y / cameraZoom,
-					(n++ == nowStatus->litStatus) ? litVerbLinePalette : verbLinePalette);
+			                               ((g_system->getWidth() - g_sludge->_txtMan->stringWidth(stat->text)) >> 1) / cameraZoom, y / cameraZoom,
+			                               (n++ == nowStatus->litStatus) ? litVerbLinePalette : verbLinePalette);
 			break;
 
 		case 1001:
 			g_sludge->_txtMan->pasteString(stat->text,
-					(g_system->getWidth() - g_sludge->_txtMan->stringWidth(stat->text)) - nowStatus->statusX / cameraZoom, y / cameraZoom,
-					(n ++ == nowStatus->litStatus) ? litVerbLinePalette : verbLinePalette);
+			                               (g_system->getWidth() - g_sludge->_txtMan->stringWidth(stat->text)) - nowStatus->statusX / cameraZoom, y / cameraZoom,
+			                               (n++ == nowStatus->litStatus) ? litVerbLinePalette : verbLinePalette);
 			break;
 
 		default:
 			g_sludge->_txtMan->pasteString(stat->text,
-					nowStatus->statusX / cameraZoom, y / cameraZoom,
-					(n ++ == nowStatus->litStatus) ? litVerbLinePalette : verbLinePalette);
+			                               nowStatus->statusX / cameraZoom, y / cameraZoom,
+			                               (n++ == nowStatus->litStatus) ? litVerbLinePalette : verbLinePalette);
 		}
 		stat = stat->next;
 		y -= g_sludge->_txtMan->getFontHeight();
@@ -127,7 +127,7 @@ void statusBarLitColour(byte r, byte g, byte b) {
 	nowStatus->statusLB = b;
 }
 
-StatusStuff *copyStatusBarStuff(StatusStuff  *here) {
+StatusStuff *copyStatusBarStuff(StatusStuff *here) {
 
 	// Things we want to keep
 	here->statusLR = nowStatus->statusLR;
@@ -156,7 +156,6 @@ void restoreBarStuff(StatusStuff *here) {
 	litVerbLinePalette.setColor((byte)here->statusLR, (byte)here->statusLG, (byte)here->statusLB);
 	nowStatus = here;
 }
-
 
 void initStatusBar() {
 	mainStatus.firstStatusBar = NULL;
@@ -218,11 +217,12 @@ bool loadStatusBars(Common::SeekableReadStream *stream) {
 	verbLinePalette.setColor((byte)nowStatus->statusR, (byte)nowStatus->statusG, (byte)nowStatus->statusB);
 	litVerbLinePalette.setColor((byte)nowStatus->statusLR, (byte)nowStatus->statusLG, (byte)nowStatus->statusLB);
 	// Read what's being said
-	StatusBar **viewLine = & (nowStatus->firstStatusBar);
+	StatusBar **viewLine = &(nowStatus->firstStatusBar);
 	StatusBar *newOne;
 	while (stream->readByte()) {
 		newOne = new StatusBar;
-		if (! checkNew(newOne)) return false;
+		if (!checkNew(newOne))
+			return false;
 		newOne->text = readString(stream);
 		newOne->next = NULL;
 		(*viewLine) = newOne;

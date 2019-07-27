@@ -25,17 +25,17 @@
 namespace BladeRunner {
 
 void SceneScriptHF07::InitializeScene() {
-	if (Game_Flag_Query(kFlagUG06toHF07) ) {
+	if (Game_Flag_Query(kFlagUG06toHF07)) {
 		Setup_Scene_Information(-84.0f, 58.43f, -105.0f, 524);
 	} else {
-		Setup_Scene_Information(298.0f, 58.43f,  -71.0f, 700);
+		Setup_Scene_Information(298.0f, 58.43f, -71.0f, 700);
 	}
 
 	Scene_Exit_Add_2D_Exit(0, 289, 136, 344, 305, 0);
-	Scene_Exit_Add_2D_Exit(1,  69, 264, 132, 303, 2);
+	Scene_Exit_Add_2D_Exit(1, 69, 264, 132, 303, 2);
 
-	Ambient_Sounds_Add_Looping_Sound(kSfxDRAMB4,   100, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxFACTAMB2,  32, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxDRAMB4, 100, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxFACTAMB2, 32, 0, 1);
 	Ambient_Sounds_Add_Sound(kSfxBBGRN1, 5, 40, 20, 33, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxBBGRN2, 5, 40, 20, 33, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxBBGRN3, 5, 40, 20, 33, -100, 100, -101, -101, 0, 0);
@@ -124,8 +124,7 @@ void SceneScriptHF07::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagHF01TalkToLovedOne)) {
 		int actorId = getAffectionTowardsActor();
 		if (Game_Flag_Query(kFlagHF01TalkToLovedOne)
-		 && actorId != -1
-		) {
+		    && actorId != -1) {
 			Actor_Put_In_Set(actorId, kSetHF07);
 			if (Game_Flag_Query(kFlagUG06toHF07)) {
 				Actor_Set_At_XYZ(actorId, -73.0f, 58.43f, -7.0f, 224);
@@ -152,13 +151,11 @@ void SceneScriptHF07::DialogueQueueFlushed(int a1) {
 
 int SceneScriptHF07::getAffectionTowardsActor() {
 	if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsDektora
-	 && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraGone
-	) {
+	    && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraGone) {
 		return kActorDektora;
 	}
 	if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy
-	 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyGone
-	) {
+	    && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyGone) {
 		return kActorLucy;
 	}
 	return -1;

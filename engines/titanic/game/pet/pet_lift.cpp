@@ -26,7 +26,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPETLift, CPETTransport)
-	ON_MESSAGE(TransportMsg)
+ON_MESSAGE(TransportMsg)
 END_MESSAGE_MAP()
 
 void CPETLift::save(SimpleFile *file, int indent) {

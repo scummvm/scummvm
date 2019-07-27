@@ -1,16 +1,16 @@
 #include <cxxtest/TestSuite.h>
 
-#include "common/memstream.h"
 #include "common/bufferedstream.h"
+#include "common/memstream.h"
 
 class BufferedSeekableReadStreamTestSuite : public CxxTest::TestSuite {
-	public:
+public:
 	void test_traverse() {
 		byte contents[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 		Common::MemoryReadStream ms(contents, 10);
 
 		Common::SeekableReadStream &ssrs
-			= *Common::wrapBufferedSeekableReadStream(&ms, 4, DisposeAfterUse::NO);
+		  = *Common::wrapBufferedSeekableReadStream(&ms, 4, DisposeAfterUse::NO);
 
 		byte i, b;
 		for (i = 0; i < 10; ++i) {
@@ -35,7 +35,7 @@ class BufferedSeekableReadStreamTestSuite : public CxxTest::TestSuite {
 		Common::MemoryReadStream ms(contents, 10);
 
 		Common::SeekableReadStream &ssrs
-			= *Common::wrapBufferedSeekableReadStream(&ms, 4, DisposeAfterUse::NO);
+		  = *Common::wrapBufferedSeekableReadStream(&ms, 4, DisposeAfterUse::NO);
 		byte b;
 
 		TS_ASSERT_EQUALS(ssrs.pos(), 0);

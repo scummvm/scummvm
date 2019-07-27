@@ -28,15 +28,15 @@
 //
 // The jung2.vqa movie does work, but only thanks to a grotesque hack.
 
-#include "kyra/kyra_v1.h"
 #include "kyra/graphics/vqa.h"
 #include "kyra/graphics/screen.h"
+#include "kyra/kyra_v1.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 
-#include "common/system.h"
 #include "common/events.h"
+#include "common/system.h"
 
 #include "graphics/palette.h"
 #include "graphics/surface.h"
@@ -72,7 +72,7 @@ bool VQADecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 	_fileStream = stream;
 
-	if (_fileStream->readUint32BE() != MKTAG('F','O','R','M')) {
+	if (_fileStream->readUint32BE() != MKTAG('F', 'O', 'R', 'M')) {
 		warning("VQADecoder::loadStream(): Cannot find `FORM' tag");
 		return false;
 	}
@@ -81,7 +81,7 @@ bool VQADecoder::loadStream(Common::SeekableReadStream *stream) {
 	// children.
 	_fileStream->readUint32BE();
 
-	if (_fileStream->readUint32BE() != MKTAG('W','V','Q','A')) {
+	if (_fileStream->readUint32BE() != MKTAG('W', 'V', 'Q', 'A')) {
 		warning("VQADecoder::loadStream(): Cannot find `WVQA' tag");
 		return false;
 	}
@@ -102,7 +102,7 @@ bool VQADecoder::loadStream(Common::SeekableReadStream *stream) {
 		uint32 size = _fileStream->readUint32BE();
 
 		switch (tag) {
-		case MKTAG('V','Q','H','D'):
+		case MKTAG('V', 'Q', 'H', 'D'):
 			handleVQHD(_fileStream);
 			if (_header.flags & 1) {
 				audioTrack = new VQAAudioTrack(&_header, getSoundType());
@@ -110,7 +110,7 @@ bool VQADecoder::loadStream(Common::SeekableReadStream *stream) {
 			}
 			foundVQHD = true;
 			break;
-		case MKTAG('F','I','N','F'):
+		case MKTAG('F', 'I', 'N', 'F'):
 			if (!foundVQHD) {
 				warning("VQADecoder::loadStream(): Found `FINF' before `VQHD'");
 				return false;
@@ -133,26 +133,26 @@ bool VQADecoder::loadStream(Common::SeekableReadStream *stream) {
 }
 
 void VQADecoder::handleVQHD(Common::SeekableReadStream *stream) {
-	_header.version     = stream->readUint16LE();
-	_header.flags       = stream->readUint16LE();
-	_header.numFrames   = stream->readUint16LE();
-	_header.width       = stream->readUint16LE();
-	_header.height      = stream->readUint16LE();
-	_header.blockW      = stream->readByte();
-	_header.blockH      = stream->readByte();
-	_header.frameRate   = stream->readByte();
-	_header.cbParts     = stream->readByte();
-	_header.colors      = stream->readUint16LE();
-	_header.maxBlocks   = stream->readUint16LE();
-	_header.unk1        = stream->readUint32LE();
-	_header.unk2        = stream->readUint16LE();
-	_header.freq        = stream->readUint16LE();
-	_header.channels    = stream->readByte();
-	_header.bits        = stream->readByte();
-	_header.unk3        = stream->readUint32LE();
-	_header.unk4        = stream->readUint16LE();
+	_header.version = stream->readUint16LE();
+	_header.flags = stream->readUint16LE();
+	_header.numFrames = stream->readUint16LE();
+	_header.width = stream->readUint16LE();
+	_header.height = stream->readUint16LE();
+	_header.blockW = stream->readByte();
+	_header.blockH = stream->readByte();
+	_header.frameRate = stream->readByte();
+	_header.cbParts = stream->readByte();
+	_header.colors = stream->readUint16LE();
+	_header.maxBlocks = stream->readUint16LE();
+	_header.unk1 = stream->readUint32LE();
+	_header.unk2 = stream->readUint16LE();
+	_header.freq = stream->readUint16LE();
+	_header.channels = stream->readByte();
+	_header.bits = stream->readByte();
+	_header.unk3 = stream->readUint32LE();
+	_header.unk4 = stream->readUint16LE();
 	_header.maxCBFZSize = stream->readUint32LE();
-	_header.unk5        = stream->readUint32LE();
+	_header.unk5 = stream->readUint32LE();
 
 	_frameInfo = new uint32[_header.numFrames + 1];
 
@@ -210,7 +210,7 @@ void VQADecoder::handleFINF(Common::SeekableReadStream *stream) {
 			if (stream->eos())
 				break;
 
-			if (scanTag == MKTAG('V','Q','F','R')) {
+			if (scanTag == MKTAG('V', 'Q', 'F', 'R')) {
 				_frameInfo[0] = (stream->pos() - 8) | 0x80000000;
 				break;
 			}
@@ -250,22 +250,22 @@ void VQADecoder::readNextPacket() {
 		uint32 size;
 
 		switch (tag) {
-		case MKTAG('S','N','D','0'):	// Uncompressed sound
+		case MKTAG('S', 'N', 'D', '0'): // Uncompressed sound
 			assert(audioTrack);
 			audioTrack->handleSND0(_fileStream);
 			break;
-		case MKTAG('S','N','D','1'):	// Compressed sound, almost like AUD
+		case MKTAG('S', 'N', 'D', '1'): // Compressed sound, almost like AUD
 			assert(audioTrack);
 			audioTrack->handleSND1(_fileStream);
 			break;
-		case MKTAG('S','N','D','2'):	// Compressed sound
+		case MKTAG('S', 'N', 'D', '2'): // Compressed sound
 			assert(audioTrack);
 			audioTrack->handleSND2(_fileStream);
 			break;
-		case MKTAG('V','Q','F','R'):
+		case MKTAG('V', 'Q', 'F', 'R'):
 			videoTrack->handleVQFR(_fileStream);
 			break;
-		case MKTAG('C','M','D','S'):
+		case MKTAG('C', 'M', 'D', 'S'):
 			// The purpose of this is unknown, but it's known to
 			// exist so don't warn about it.
 			size = _fileStream->readUint32BE();
@@ -282,8 +282,8 @@ void VQADecoder::readNextPacket() {
 
 // -----------------------------------------------------------------------
 
-VQADecoder::VQAAudioTrack::VQAAudioTrack(const VQAHeader *header, Audio::Mixer::SoundType soundType) :
-		AudioTrack(soundType) {
+VQADecoder::VQAAudioTrack::VQAAudioTrack(const VQAHeader *header, Audio::Mixer::SoundType soundType)
+  : AudioTrack(soundType) {
 	_audioStream = Audio::makeQueuingAudioStream(header->freq, false);
 }
 
@@ -316,7 +316,7 @@ void VQADecoder::VQAAudioTrack::handleSND1(Common::SeekableReadStream *stream) {
 		const int8 WSTable2Bit[] = { -2, -1, 0, 1 };
 		const int8 WSTable4Bit[] = {
 			-9, -8, -6, -5, -4, -3, -2, -1,
-			 0,  1,  2,  3,  4,  5,  6,  8
+			0, 1, 2, 3, 4, 5, 6, 8
 		};
 
 		byte *outbuf = (byte *)malloc(outsize);
@@ -535,43 +535,43 @@ void VQADecoder::VQAVideoTrack::handleVQFR(Common::SeekableReadStream *stream) {
 		size = stream->readUint32BE();
 
 		switch (tag) {
-		case MKTAG('C','B','F','0'):	// Full codebook
+		case MKTAG('C', 'B', 'F', '0'): // Full codebook
 			stream->read(_codeBook, size);
 			break;
-		case MKTAG('C','B','F','Z'):	// Full codebook
+		case MKTAG('C', 'B', 'F', 'Z'): // Full codebook
 			inbuf = (byte *)malloc(size);
 			stream->read(inbuf, size);
 			Screen::decodeFrame4(inbuf, _codeBook, _codeBookSize);
 			free(inbuf);
 			break;
-		case MKTAG('C','B','P','0'):	// Partial codebook
+		case MKTAG('C', 'B', 'P', '0'): // Partial codebook
 			_compressedCodeBook = false;
 			stream->read(_partialCodeBook + _partialCodeBookSize, size);
 			_partialCodeBookSize += size;
 			_numPartialCodeBooks++;
 			break;
-		case MKTAG('C','B','P','Z'):	// Partial codebook
+		case MKTAG('C', 'B', 'P', 'Z'): // Partial codebook
 			_compressedCodeBook = true;
 			stream->read(_partialCodeBook + _partialCodeBookSize, size);
 			_partialCodeBookSize += size;
 			_numPartialCodeBooks++;
 			break;
-		case MKTAG('C','P','L','0'):	// Palette
+		case MKTAG('C', 'P', 'L', '0'): // Palette
 			assert(size <= 3 * 256);
 			stream->read(_palette, size);
 			break;
-		case MKTAG('C','P','L','Z'):	// Palette
+		case MKTAG('C', 'P', 'L', 'Z'): // Palette
 			inbuf = (byte *)malloc(size);
 			stream->read(inbuf, size);
 			Screen::decodeFrame4(inbuf, _palette, 3 * 256);
 			free(inbuf);
 			break;
-		case MKTAG('V','P','T','0'):	// Frame data
+		case MKTAG('V', 'P', 'T', '0'): // Frame data
 			assert(size / 2 <= _numVectorPointers);
 			for (i = 0; i < size / 2; i++)
 				_vectorPointers[i] = stream->readUint16LE();
 			break;
-		case MKTAG('V','P','T','Z'):	// Frame data
+		case MKTAG('V', 'P', 'T', 'Z'): // Frame data
 			inbuf = (byte *)malloc(size);
 			stream->read(inbuf, size);
 			size = Screen::decodeFrame4(inbuf, (uint8 *)_vectorPointers, 2 * _numVectorPointers);

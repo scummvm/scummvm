@@ -72,31 +72,31 @@ public:
 	virtual void stopSong() {}
 	virtual void stopSpeech() {}
 
-	virtual bool isSpeechActive() const	{ return false; }
+	virtual bool isSpeechActive() const { return false; }
 	virtual bool isSfxActive() const { return false; }
 
 	virtual void updateMusic() {}
 
 	virtual void setVolume(int vol);
-	virtual int getVolume()				{ return _musicVolume; }
+	virtual int getVolume() { return _musicVolume; }
 
-	void playLastSong()		{ playSong(_lastOverride); }
+	void playLastSong() { playSong(_lastOverride); }
 
-	bool sfxOn() const			{ return _sfxToggle; }
-	void sfxToggle(bool val)	{ _sfxToggle = val; }
-	void toggleSfx()			{ _sfxToggle = !_sfxToggle; }
+	bool sfxOn() const { return _sfxToggle; }
+	void sfxToggle(bool val) { _sfxToggle = val; }
+	void toggleSfx() { _sfxToggle = !_sfxToggle; }
 
-	bool speechOn()	const		{ return _speechToggle; }
-	void speechToggle(bool val)	{ _speechToggle = val; }
-	void toggleSpeech()			{ _speechToggle = !_speechToggle; }
+	bool speechOn() const { return _speechToggle; }
+	void speechToggle(bool val) { _speechToggle = val; }
+	void toggleSpeech() { _speechToggle = !_speechToggle; }
 
-	bool musicOn() const		{ return _musicToggle; }
-	void musicToggle(bool val)	{ _musicToggle = val; }
-	void toggleMusic()			{ _musicToggle = !_musicToggle; }
+	bool musicOn() const { return _musicToggle; }
+	void musicToggle(bool val) { _musicToggle = val; }
+	void toggleMusic() { _musicToggle = !_musicToggle; }
 
-	bool speechSfxExists() const	{ return _speechSfxExists; }
+	bool speechSfxExists() const { return _speechSfxExists; }
 
-	int16 lastOverride() const	{ return _lastOverride; }
+	int16 lastOverride() const { return _lastOverride; }
 
 	void saveState(byte *&ptr);
 	void loadState(uint32 ver, byte *&ptr);
@@ -109,7 +109,6 @@ public:
 	static const int16 _jungleList[];
 
 protected:
-
 	Audio::Mixer *_mixer;
 	QueenEngine *_vm;
 
@@ -131,12 +130,12 @@ public:
 	void playSpeech(const char *base);
 	void playSong(int16 songNum);
 
-	void stopSfx()			{ _mixer->stopHandle(_sfxHandle); }
+	void stopSfx() { _mixer->stopHandle(_sfxHandle); }
 	void stopSong();
-	void stopSpeech()		{ _mixer->stopHandle(_speechHandle); }
+	void stopSpeech() { _mixer->stopHandle(_speechHandle); }
 
-	bool isSpeechActive() const	{ return _mixer->isSoundHandleActive(_speechHandle); }
-	bool isSfxActive() const	{ return _mixer->isSoundHandleActive(_sfxHandle); }
+	bool isSpeechActive() const { return _mixer->isSoundHandleActive(_speechHandle); }
+	bool isSfxActive() const { return _mixer->isSoundHandleActive(_sfxHandle); }
 
 	void setVolume(int vol);
 
@@ -165,7 +164,6 @@ public:
 	void updateMusic();
 
 protected:
-
 	void playSound(const char *base);
 	Audio::AudioStream *loadModule(const char *base, int song);
 	void playModule(const char *base, int song);

@@ -32,13 +32,12 @@
 #include "common/system.h"
 #include "glk/tads/os_frob_tads.h"
 #include "glk/tads/os_glk.h"
-#include "glk/tads/tads2/lib.h"
 #include "glk/tads/tads2/appctx.h"
+#include "glk/tads/tads2/lib.h"
 
 namespace Glk {
 namespace TADS {
-namespace TADS2 {
-
+	namespace TADS2 {
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -84,7 +83,6 @@ namespace TADS2 {
  *   programs via dynamic linking or other mechanisms.  
  */
 
-
 /* ------------------------------------------------------------------------ */
 /*
  *   ANSI C99 exact-size integer types.
@@ -109,7 +107,6 @@ namespace TADS2 {
  *   in some cases on overflow and sign extension behavior at the specific
  *   bit size.
  */
-
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -222,7 +219,6 @@ namespace TADS2 {
 /* #define os_tls_create(varname)  pthread_key_create(&varname, NULL) */
 /* #define os_tls_delete(varname)  pthread_key_delete(varname) */
 
-
 /*
  *   On API-based systems, each access to get or set the thread local
  *   requires an API call, using the slot ID stored in the actual global to
@@ -245,10 +241,10 @@ namespace TADS2 {
  *   as appropriate for the local system.
  */
 #ifdef OS_DECLARATIVE_TLS
-#define os_tls_create(varname)
-#define os_tls_delete(varname)
-#define os_tls_get(typ, varname) varname
-#define os_tls_set(varname, val) varname = (val)
+#	define os_tls_create(varname)
+#	define os_tls_delete(varname)
+#	define os_tls_get(typ, varname) varname
+#	define os_tls_set(varname, val) varname = (val)
 #endif
 
 /*
@@ -259,33 +255,32 @@ namespace TADS2 {
  *   definitions below. 
  */
 #ifdef OS_PTHREAD_TLS
-#include <pthread.h>
-#define OS_DECL_TLS(typ, varname) pthread_key_t varname
-#define os_tls_create(varname) pthread_key_create(&varname, NULL)
-#define os_tls_delete(varname) pthread_key_delete(varname)
-#define os_tls_get(typ, varname) ((typ)pthread_getspecific(varname))
-#define os_tls_set(varname, val) pthread_setspecific(varname, val)
+#	include <pthread.h>
+#	define OS_DECL_TLS(typ, varname) pthread_key_t varname
+#	define os_tls_create(varname) pthread_key_create(&varname, NULL)
+#	define os_tls_delete(varname) pthread_key_delete(varname)
+#	define os_tls_get(typ, varname) ((typ)pthread_getspecific(varname))
+#	define os_tls_set(varname, val) pthread_setspecific(varname, val)
 #endif
 
-/* ------------------------------------------------------------------------ */
-/* 
+		/* ------------------------------------------------------------------------ */
+		/* 
  *   OS main entrypoint 
  */
-int os0main(int oargc, char **oargv,
-            int (*mainfn)(int, char **, char *), 
-            const char *before, const char *config);
+		int os0main(int oargc, char **oargv,
+		            int (*mainfn)(int, char **, char *),
+		            const char *before, const char *config);
 
-/* 
+		/* 
  *   new-style OS main entrypoint - takes an application container context 
  */
-int os0main2(int oargc, char **oargv,
-             int (*mainfn)(int, char **, appctxdef *, char *),
-             const char *before, const char *config,
-             appctxdef *appctx);
+		int os0main2(int oargc, char **oargv,
+		             int (*mainfn)(int, char **, appctxdef *, char *),
+		             const char *before, const char *config,
+		             appctxdef *appctx);
 
-
-/* open the error message file for reading */
-osfildef *oserrop(const char *arg0);
+		/* open the error message file for reading */
+		osfildef *oserrop(const char *arg0);
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -334,8 +329,6 @@ osfildef *oserrop(const char *arg0);
  *   time-critical code will bother trying.  
  */
 
-
-
 /* ------------------------------------------------------------------------ */
 /*
  *   TADS 2 swapping configuration.  Define OS_DEFAULT_SWAP_ENABLED to 0
@@ -344,7 +337,7 @@ osfildef *oserrop(const char *arg0);
  *   default.  
  */
 #ifndef OS_DEFAULT_SWAP_ENABLED
-# define OS_DEFAULT_SWAP_ENABLED   1
+#	define OS_DEFAULT_SWAP_ENABLED 1
 #endif
 
 /*
@@ -352,7 +345,7 @@ osfildef *oserrop(const char *arg0);
  *   it the same as the platform ID string.  
  */
 #ifndef OS_SYSTEM_LDESC
-# define OS_SYSTEM_LDESC  OS_SYSTEM_NAME
+#	define OS_SYSTEM_LDESC OS_SYSTEM_NAME
 #endif
 
 /*
@@ -368,13 +361,13 @@ osfildef *oserrop(const char *arg0);
  *   non-default text.  
  */
 #ifndef OS_TC_USAGE
-# define OS_TC_USAGE  "usage: tc [options] file"
+#	define OS_TC_USAGE "usage: tc [options] file"
 #endif
 #ifndef OS_TR_USAGE
-# define OS_TR_USAGE  "usage: tr [options] file"
+#	define OS_TR_USAGE "usage: tr [options] file"
 #endif
 #ifndef OS_TDB_USAGE
-# define OS_TDB_USAGE  "usage: tdb [options] file"
+#	define OS_TDB_USAGE "usage: tdb [options] file"
 #endif
 
 /*
@@ -383,7 +376,7 @@ osfildef *oserrop(const char *arg0);
  *   point, define it to an empty string.  
  */
 #ifndef OS_TDB_STARTUP_MSG
-# define OS_TDB_STARTUP_MSG ""
+#	define OS_TDB_STARTUP_MSG ""
 #endif
 
 /*
@@ -395,10 +388,10 @@ osfildef *oserrop(const char *arg0);
  *   sub-level isn't meaningful.
  */
 #ifndef OS_SYSTEM_PATCHSUBLVL
-# define OS_SYSTEM_PATCHSUBLVL  "0"
+#	define OS_SYSTEM_PATCHSUBLVL "0"
 #endif
 
-} // End of namespace TADS2
+	} // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk
 

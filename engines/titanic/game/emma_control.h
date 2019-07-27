@@ -31,15 +31,20 @@ class CEmmaControl : public CBackground {
 	DECLARE_MESSAGE_MAP;
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
+
 private:
 	bool _flag;
 
 	CString _hiddenSoundName;
 	CString _visibleSoundName;
+
 public:
 	CLASSDEF;
-	CEmmaControl() : CBackground(), _flag(false),
-		_hiddenSoundName("b#39.wav"), _visibleSoundName("b#38.wav") {}
+	CEmmaControl()
+	  : CBackground()
+	  , _flag(false)
+	  , _hiddenSoundName("b#39.wav")
+	  , _visibleSoundName("b#38.wav") {}
 
 	/**
 	 * Save the data for the class to file

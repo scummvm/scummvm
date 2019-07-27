@@ -21,14 +21,14 @@
  */
 #include "saga/saga.h"
 
-#include "saga/gfx.h"
 #include "saga/actor.h"
 #include "saga/console.h"
+#include "saga/gfx.h"
 #include "saga/interface.h"
+#include "saga/isomap.h"
 #include "saga/render.h"
 #include "saga/scene.h"
 #include "saga/script.h"
-#include "saga/isomap.h"
 
 #include "common/events.h"
 #include "common/system.h"

@@ -30,11 +30,13 @@
 
 namespace CGE {
 
-Cluster::Cluster(CGEEngine *vm, int16 a, int16 b) : _vm(vm) {
+Cluster::Cluster(CGEEngine *vm, int16 a, int16 b)
+  : _vm(vm) {
 	_pt = Common::Point(a, b);
 }
 
-Cluster::Cluster(CGEEngine *vm) : _vm(vm) {
+Cluster::Cluster(CGEEngine *vm)
+  : _vm(vm) {
 	_pt = Common::Point(-1, -1);
 }
 
@@ -47,7 +49,14 @@ bool Cluster::isValid() const {
 }
 
 Walk::Walk(CGEEngine *vm, BitmapPtr *shpl)
-	: Sprite(vm, shpl), _dir(kDirNone), _tracePtr(-1), _level(0), _target(-1, -1), _findLevel(-1), _here(vm), _vm(vm) {
+  : Sprite(vm, shpl)
+  , _dir(kDirNone)
+  , _tracePtr(-1)
+  , _level(0)
+  , _target(-1, -1)
+  , _findLevel(-1)
+  , _here(vm)
+  , _vm(vm) {
 	for (int i = 0; i < kMaxFindLevel; i++) {
 		Cluster *tmpClust = new Cluster(_vm);
 		_trace.push_back(tmpClust);
@@ -96,14 +105,12 @@ void Walk::tick() {
 
 	step();
 
-	if ((_dir == kDirWest  && _x <= 0) ||
-	    (_dir == kDirEast  && _x + _w >= kScrWidth) ||
-	    (_dir == kDirSouth && _y + _w >= kWorldHeight - 2)) {
+	if ((_dir == kDirWest && _x <= 0) || (_dir == kDirEast && _x + _w >= kScrWidth) || (_dir == kDirSouth && _y + _w >= kWorldHeight - 2)) {
 		park();
 	} else {
 		// take current Z position
 		_z = _here._pt.y;
-		_vm->_commandHandlerTurbo->addCommand(kCmdZTrim, -1, 0, this);    // update Hero's pos in show queue
+		_vm->_commandHandlerTurbo->addCommand(kCmdZTrim, -1, 0, this); // update Hero's pos in show queue
 	}
 }
 
@@ -118,7 +125,7 @@ int Walk::distance(Sprite *spr) {
 	dx /= kMapGridX;
 	int dz = spr->_z - _z;
 	if (dz < 0)
-		dz = - dz;
+		dz = -dz;
 
 	dx = dx * dx + dz * dz;
 	for (dz = 1; dz * dz < dx; dz++)
@@ -184,7 +191,7 @@ void Walk::findWay(Sprite *spr) {
 
 	findWay(Cluster(_vm, (x / kMapGridX),
 	                ((z < kMapZCnt - kDistMax) ? (z + 1)
-	                 : (z - 1))));
+	                                           : (z - 1))));
 }
 
 bool Walk::lower(Sprite *spr) {
@@ -221,7 +228,7 @@ bool Cluster::chkBar() const {
 }
 
 bool Walk::find1Way(Cluster c) {
-	const Cluster tab[4] = { Cluster(_vm, -1, 0), Cluster(_vm, 1, 0), Cluster(_vm, 0, -1), Cluster(_vm, 0, 1)};
+	const Cluster tab[4] = { Cluster(_vm, -1, 0), Cluster(_vm, 1, 0), Cluster(_vm, 0, -1), Cluster(_vm, 0, 1) };
 	const int tabLen = 4;
 
 	if (c._pt == _target)

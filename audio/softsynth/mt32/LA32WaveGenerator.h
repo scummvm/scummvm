@@ -18,9 +18,9 @@
 #ifndef MT32EMU_LA32_WAVE_GENERATOR_H
 #define MT32EMU_LA32_WAVE_GENERATOR_H
 
+#include "Types.h"
 #include "globals.h"
 #include "internals.h"
-#include "Types.h"
 
 namespace MT32Emu {
 
@@ -181,7 +181,7 @@ public:
 	void initSynth(const bool sawtoothWaveform, const Bit8u pulseWidth, const Bit8u resonance);
 
 	// Initialise the WG engine for generation of PCM partial samples and set up the invariant parameters
-	void initPCM(const Bit16s * const pcmWaveAddress, const Bit32u pcmWaveLength, const bool pcmWaveLooped, const bool pcmWaveInterpolated);
+	void initPCM(const Bit16s *const pcmWaveAddress, const Bit32u pcmWaveLength, const bool pcmWaveLooped, const bool pcmWaveInterpolated);
 
 	// Update parameters with respect to TVP, TVA and TVF, and generate next sample
 	void generateNextSample(const Bit32u amp, const Bit16u pitch, const Bit32u cutoff);
@@ -221,7 +221,7 @@ public:
 	virtual void initSynth(const PairType master, const bool sawtoothWaveform, const Bit8u pulseWidth, const Bit8u resonance) = 0;
 
 	// Initialise the WG engine for generation of PCM partial samples and set up the invariant parameters
-	virtual void initPCM(const PairType master, const Bit16s * const pcmWaveAddress, const Bit32u pcmWaveLength, const bool pcmWaveLooped) = 0;
+	virtual void initPCM(const PairType master, const Bit16s *const pcmWaveAddress, const Bit32u pcmWaveLength, const bool pcmWaveLooped) = 0;
 
 	// Deactivate the WG engine
 	virtual void deactivate(const PairType master) = 0;
@@ -245,7 +245,7 @@ public:
 	void initSynth(const PairType master, const bool sawtoothWaveform, const Bit8u pulseWidth, const Bit8u resonance);
 
 	// Initialise the WG engine for generation of PCM partial samples and set up the invariant parameters
-	void initPCM(const PairType master, const Bit16s * const pcmWaveAddress, const Bit32u pcmWaveLength, const bool pcmWaveLooped);
+	void initPCM(const PairType master, const Bit16s *const pcmWaveAddress, const Bit32u pcmWaveLength, const bool pcmWaveLooped);
 
 	// Update parameters with respect to TVP, TVA and TVF, and generate next sample
 	void generateNextSample(const PairType master, const Bit32u amp, const Bit16u pitch, const Bit32u cutoff);

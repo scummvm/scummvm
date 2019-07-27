@@ -29,6 +29,7 @@ namespace Titanic {
 
 class CHoseEnd : public CHose {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	CLASSDEF;
 	CHoseEnd();

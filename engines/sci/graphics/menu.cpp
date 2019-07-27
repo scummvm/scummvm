@@ -20,28 +20,34 @@
  *
  */
 
-#include "common/util.h"
 #include "common/stack.h"
+#include "common/util.h"
 #include "graphics/primitives.h"
 
-#include "sci/sci.h"
-#include "sci/event.h"
 #include "sci/engine/kernel.h"
-#include "sci/engine/state.h"
 #include "sci/engine/selector.h"
-#include "sci/graphics/ports.h"
-#include "sci/graphics/paint16.h"
+#include "sci/engine/state.h"
+#include "sci/event.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/font.h"
-#include "sci/graphics/text16.h"
-#include "sci/graphics/screen.h"
 #include "sci/graphics/menu.h"
+#include "sci/graphics/paint16.h"
+#include "sci/graphics/ports.h"
+#include "sci/graphics/screen.h"
+#include "sci/graphics/text16.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
 GfxMenu::GfxMenu(EventManager *event, SegManager *segMan, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16, GfxScreen *screen, GfxCursor *cursor)
-	: _event(event), _segMan(segMan), _ports(ports), _paint16(paint16), _text16(text16), _screen(screen), _cursor(cursor) {
+  : _event(event)
+  , _segMan(segMan)
+  , _ports(ports)
+  , _paint16(paint16)
+  , _text16(text16)
+  , _screen(screen)
+  , _cursor(cursor) {
 
 	_menuSaveHandle = NULL_REG;
 	_barSaveHandle = NULL_REG;
@@ -100,8 +106,11 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 
 		// Now go through the content till we find end-marker and collect data about it.
 		// ':' is an end-marker for each item.
-		tagPos = 0; rightAlignedPos = 0;
-		controlPos = 0; altPos = 0; functionPos = 0;
+		tagPos = 0;
+		rightAlignedPos = 0;
+		controlPos = 0;
+		altPos = 0;
+		functionPos = 0;
 		while ((curPos < contentSize) && (content[curPos] != ':')) {
 			switch (content[curPos]) {
 			case '=': // Set tag
@@ -169,16 +178,36 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 				error("function marker at end of item");
 			itemEntry->keyPress = content[tempPos];
 			switch (content[functionPos + 1]) {
-			case '1': itemEntry->keyPress = kSciKeyF1; break;
-			case '2': itemEntry->keyPress = kSciKeyF2; break;
-			case '3': itemEntry->keyPress = kSciKeyF3; break;
-			case '4': itemEntry->keyPress = kSciKeyF4; break;
-			case '5': itemEntry->keyPress = kSciKeyF5; break;
-			case '6': itemEntry->keyPress = kSciKeyF6; break;
-			case '7': itemEntry->keyPress = kSciKeyF7; break;
-			case '8': itemEntry->keyPress = kSciKeyF8; break;
-			case '9': itemEntry->keyPress = kSciKeyF9; break;
-			case '0': itemEntry->keyPress = kSciKeyF10; break;
+			case '1':
+				itemEntry->keyPress = kSciKeyF1;
+				break;
+			case '2':
+				itemEntry->keyPress = kSciKeyF2;
+				break;
+			case '3':
+				itemEntry->keyPress = kSciKeyF3;
+				break;
+			case '4':
+				itemEntry->keyPress = kSciKeyF4;
+				break;
+			case '5':
+				itemEntry->keyPress = kSciKeyF5;
+				break;
+			case '6':
+				itemEntry->keyPress = kSciKeyF6;
+				break;
+			case '7':
+				itemEntry->keyPress = kSciKeyF7;
+				break;
+			case '8':
+				itemEntry->keyPress = kSciKeyF8;
+				break;
+			case '9':
+				itemEntry->keyPress = kSciKeyF9;
+				break;
+			case '0':
+				itemEntry->keyPress = kSciKeyF10;
+				break;
 			default:
 				error("illegal function key specified");
 			}
@@ -449,9 +478,7 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 				// kGetEvent)
 				keyModifier &= 0xFF;
 
-				if (itemEntry->keyPress == keyPress &&
-					itemEntry->keyModifier == keyModifier &&
-					itemEntry->enabled)
+				if (itemEntry->keyPress == keyPress && itemEntry->keyModifier == keyModifier && itemEntry->enabled)
 					break;
 				itemIterator++;
 			}
@@ -491,7 +518,7 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 			interactiveEnd(pauseSound);
 			forceClaimed = true;
 		}
-		} break;
+	} break;
 	}
 
 	if (!_menuSaveHandle.isNull()) {
@@ -622,7 +649,9 @@ void GfxMenu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 
 	// Do the drawing
 	_paint16->fillRect(_menuRect, GFX_SCREEN_MASK_VISUAL, 0);
-	_menuRect.left++; _menuRect.right--; _menuRect.bottom--;
+	_menuRect.left++;
+	_menuRect.right--;
+	_menuRect.bottom--;
 	_paint16->fillRect(_menuRect, GFX_SCREEN_MASK_VISUAL, _screen->getColorWhite());
 
 	_menuRect.left += 8;
@@ -657,7 +686,9 @@ void GfxMenu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 	_paint16->fillRect(_ports->_menuLine, 1, 0);
 
 	_menuRect.left -= 8;
-	_menuRect.left--; _menuRect.right++; _menuRect.bottom++;
+	_menuRect.left--;
+	_menuRect.right++;
+	_menuRect.bottom++;
 	_paint16->bitsShow(_menuRect);
 }
 
@@ -669,7 +700,8 @@ void GfxMenu::invertMenuSelection(uint16 itemId) {
 
 	itemRect.top += (itemId - 1) * _ports->_curPort->fontHeight + 1;
 	itemRect.bottom = itemRect.top + _ports->_curPort->fontHeight;
-	itemRect.left++; itemRect.right--;
+	itemRect.left++;
+	itemRect.right--;
 
 	_paint16->invertRect(itemRect);
 	_paint16->bitsShow(itemRect);
@@ -770,19 +802,23 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 			do {
 				switch (curEvent.character) {
 				case kSciKeyEsc:
-					_curMenuId = curItemEntry->menuId; _curItemId = curItemEntry->id;
+					_curMenuId = curItemEntry->menuId;
+					_curItemId = curItemEntry->id;
 					return NULL;
 				case kSciKeyEnter:
-					if (curItemEntry->enabled)  {
-						_curMenuId = curItemEntry->menuId; _curItemId = curItemEntry->id;
+					if (curItemEntry->enabled) {
+						_curMenuId = curItemEntry->menuId;
+						_curItemId = curItemEntry->id;
 						return curItemEntry;
 					}
 					break;
 				case kSciKeyLeft:
-					newMenuId--; newItemId = 1;
+					newMenuId--;
+					newItemId = 1;
 					break;
 				case kSciKeyRight:
-					newMenuId++; newItemId = 1;
+					newMenuId++;
+					newItemId = 1;
 					break;
 				case kSciKeyUp:
 					newItemId--;
@@ -794,7 +830,8 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 				if ((newMenuId != curItemEntry->menuId) || (newItemId != curItemEntry->id)) {
 					// Selection changed, fix up new selection if required
 					newItemEntry = interactiveGetItem(newMenuId, newItemId, newMenuId != curItemEntry->menuId);
-					newMenuId = newItemEntry->menuId; newItemId = newItemEntry->id;
+					newMenuId = newItemEntry->menuId;
+					newItemId = newItemEntry->id;
 
 					// if we do this step again because of a separator line -> don't repeat left/right, but go down
 					switch (curEvent.character) {
@@ -842,14 +879,15 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 				if (newItemId) {
 					newItemEntry = interactiveGetItem(newMenuId, newItemId, false);
 					if ((newItemEntry->enabled) && (!newItemEntry->separatorLine)) {
-						_curMenuId = newItemEntry->menuId; _curItemId = newItemEntry->id;
+						_curMenuId = newItemEntry->menuId;
+						_curItemId = newItemEntry->id;
 						return newItemEntry;
 					}
 					newItemEntry = curItemEntry;
 				}
 				newItemId = curItemEntry->id;
 			}
-			} break;
+		} break;
 
 		case kSciEventNone:
 			g_sci->sleep(2500 / 1000);
@@ -929,7 +967,6 @@ GuiMenuItemEntry *GfxMenu::interactiveWithMouse() {
 				curItemId = newItemId;
 			}
 		}
-
 	}
 	return NULL;
 }

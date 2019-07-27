@@ -26,23 +26,24 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "engines/wintermute/ui/ui_object.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_sprite.h"
-#include "engines/wintermute/ui/ui_object.h"
+#include "engines/wintermute/base/font/base_font_storage.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/ui/ui_tiled_image.h"
 #include "engines/wintermute/ui/ui_window.h"
-#include "engines/wintermute/platform_osystem.h"
-#include "engines/wintermute/base/gfx/base_renderer.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
-#include "engines/wintermute/base/scriptables/script_stack.h"
-#include "engines/wintermute/base/font/base_font_storage.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(UIObject, false)
 
 //////////////////////////////////////////////////////////////////////////
-UIObject::UIObject(BaseGame *inGame) : BaseObject(inGame) {
+UIObject::UIObject(BaseGame *inGame)
+  : BaseObject(inGame) {
 	_back = nullptr;
 	_image = nullptr;
 	_font = nullptr;
@@ -69,7 +70,6 @@ UIObject::UIObject(BaseGame *inGame) : BaseObject(inGame) {
 	_nonIntMouseEvents = true;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 UIObject::~UIObject() {
 	if (!_gameRef->_loadInProgress) {
@@ -94,13 +94,12 @@ UIObject::~UIObject() {
 	_focusedWidget = nullptr; // ref only
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void UIObject::setText(const char *text) {
 	if (_text) {
 		delete[] _text;
 	}
-	_text = new char [strlen(text) + 1];
+	_text = new char[strlen(text) + 1];
 	if (_text) {
 		strcpy(_text, text);
 		for (uint32 i = 0; i < strlen(_text); i++) {
@@ -111,12 +110,10 @@ void UIObject::setText(const char *text) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool UIObject::display(int offsetX, int offsetY) {
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void UIObject::setListener(BaseScriptHolder *object, BaseScriptHolder *listenerObject, uint32 listenerParam) {
@@ -124,7 +121,6 @@ void UIObject::setListener(BaseScriptHolder *object, BaseScriptHolder *listenerO
 	_listenerParamObject = listenerObject;
 	_listenerParamDWORD = listenerParam;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void UIObject::correctSize() {
@@ -150,8 +146,6 @@ void UIObject::correctSize() {
 		_back->correctSize(&_width, &_height);
 	}
 }
-
-
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
@@ -358,7 +352,6 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *UIObject::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
@@ -463,7 +456,6 @@ ScValue *UIObject::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool UIObject::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
@@ -525,12 +517,10 @@ bool UIObject::scSetProperty(const char *name, ScValue *value) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 const char *UIObject::scToString() {
 	return "[ui_object]";
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool UIObject::isFocused() {
@@ -552,7 +542,6 @@ bool UIObject::isFocused() {
 	return false;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool UIObject::handleMouse(TMouseEvent event, TMouseButton button) {
 	// handle focus change
@@ -561,7 +550,6 @@ bool UIObject::handleMouse(TMouseEvent event, TMouseButton button) {
 	}
 	return BaseObject::handleMouse(event, button);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool UIObject::focus() {
@@ -593,7 +581,6 @@ bool UIObject::focus() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool UIObject::getTotalOffset(int *offsetX, int *offsetY) {
 	int offX = 0, offY = 0;
@@ -614,7 +601,6 @@ bool UIObject::getTotalOffset(int *offsetX, int *offsetY) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool UIObject::persist(BasePersistenceManager *persistMgr) {
@@ -724,6 +710,5 @@ BaseFont *UIObject::getFont() {
 BaseScriptHolder *UIObject::getListener() const {
 	return _listenerObject;
 }
-
 
 } // End of namespace Wintermute

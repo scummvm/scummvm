@@ -20,42 +20,44 @@
  *
  */
 
+#include "common/config-manager.h"
+#include "common/events.h"
 #include "common/file.h"
 #include "common/fs.h"
-#include "common/config-manager.h"
 #include "common/system.h"
-#include "common/events.h"
 
 #include "audio/mixer.h"
 
 #include "saga/saga.h"
 
-#include "saga/resource.h"
-#include "saga/gfx.h"
-#include "saga/render.h"
 #include "saga/actor.h"
 #include "saga/animation.h"
 #include "saga/console.h"
 #include "saga/events.h"
 #include "saga/font.h"
+#include "saga/gfx.h"
 #include "saga/interface.h"
 #include "saga/isomap.h"
-#include "saga/puzzle.h"
-#include "saga/script.h"
-#include "saga/scene.h"
-#include "saga/sndres.h"
-#include "saga/sprite.h"
-#include "saga/sound.h"
 #include "saga/music.h"
-#include "saga/palanim.h"
 #include "saga/objectmap.h"
+#include "saga/palanim.h"
+#include "saga/puzzle.h"
+#include "saga/render.h"
+#include "saga/resource.h"
+#include "saga/scene.h"
+#include "saga/script.h"
+#include "saga/sndres.h"
+#include "saga/sound.h"
+#include "saga/sprite.h"
 
 namespace Saga {
 
 #define MAX_TIME_DELTA 100
 
 SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
-	: Engine(syst), _gameDescription(gameDesc), _rnd("saga") {
+  : Engine(syst)
+  , _gameDescription(gameDesc)
+  , _rnd("saga") {
 
 	_framesEsc = 0;
 
@@ -223,19 +225,19 @@ Common::Error SagaEngine::run() {
 		_readingSpeed = 0;
 
 	switch (getGameId()) {
-		case GID_ITE:
-			_resource = new Resource_RSC(this);
-			break;
+	case GID_ITE:
+		_resource = new Resource_RSC(this);
+		break;
 #ifdef ENABLE_IHNM
-		case GID_IHNM:
-			_resource = new Resource_RES(this);
-			break;
+	case GID_IHNM:
+		_resource = new Resource_RES(this);
+		break;
 #endif
 #ifdef ENABLE_SAGA2
-		case GID_DINO:
-		case GID_FTA2:
-			_resource = new Resource_HRS(this);
-			break;
+	case GID_DINO:
+	case GID_FTA2:
+		_resource = new Resource_HRS(this);
+		break;
 #endif
 	}
 
@@ -323,7 +325,7 @@ Common::Error SagaEngine::run() {
 		_scene->changeScene(ConfMan.getInt("start_scene"), 0, kTransitionNoFade);
 	} else if (ConfMan.hasKey("boot_param")) {
 		if (getGameId() == GID_ITE)
-			_interface->addToInventory(_actor->objIndexToId(0));	// Magic hat
+			_interface->addToInventory(_actor->objIndexToId(0)); // Magic hat
 		_scene->changeScene(ConfMan.getInt("boot_param"), 0, kTransitionNoFade);
 	} else if (ConfMan.hasKey("save_slot")) {
 		// Init the current chapter to 8 (character selection) for IHNM
@@ -372,11 +374,7 @@ Common::Error SagaEngine::run() {
 			if ((getGameId() == GID_ITE && _puzzle->isActive()) || _actor->isForcedTextShown()) {
 				_actor->handleSpeech(msec);
 			} else if (!_scene->isInIntro()) {
-				if (_interface->getMode() == kPanelMain ||
-						_interface->getMode() == kPanelConverse ||
-						_interface->getMode() == kPanelCutaway ||
-						_interface->getMode() == kPanelNull ||
-						_interface->getMode() == kPanelChapterSelection)
+				if (_interface->getMode() == kPanelMain || _interface->getMode() == kPanelConverse || _interface->getMode() == kPanelCutaway || _interface->getMode() == kPanelNull || _interface->getMode() == kPanelChapterSelection)
 					_actor->direct(msec);
 			}
 
@@ -401,7 +399,6 @@ void SagaEngine::loadStrings(StringsTable &stringsTable, const ByteArray &string
 	if (stringsData.empty()) {
 		error("SagaEngine::loadStrings() Error loading strings list resource");
 	}
-
 
 	ByteArrayReadStreamEndian scriptS(stringsData, isBigEndian()); //TODO: get endianess from context
 
@@ -494,24 +491,24 @@ const char *SagaEngine::getTextString(int textStringId) {
 	int lang = 0;
 
 	switch (getLanguage()) {
-		case Common::DE_DEU:
-			lang = 1;
-			break;
-		case Common::IT_ITA:
-			lang = 2;
-			break;
-		case Common::ES_ESP:
-			lang = 3;
-			break;
-		case Common::RU_RUS:
-			lang = 4;
-			break;
-		case Common::FR_FRA:
-			lang = 5;
-			break;
-		default:
-			lang = 0;
-			break;
+	case Common::DE_DEU:
+		lang = 1;
+		break;
+	case Common::IT_ITA:
+		lang = 2;
+		break;
+	case Common::ES_ESP:
+		lang = 3;
+		break;
+	case Common::RU_RUS:
+		lang = 4;
+		break;
+	case Common::FR_FRA:
+		lang = 5;
+		break;
+	default:
+		lang = 0;
+		break;
 	}
 
 	string = ITEinterfaceTextStrings[lang][textStringId];
@@ -526,23 +523,23 @@ void SagaEngine::getExcuseInfo(int verb, const char *&textString, int &soundReso
 
 	if (verb == _script->getVerbType(kVerbOpen)) {
 		textString = getTextString(kTextNoPlaceToOpen);
-		soundResourceId = 239;		// Boar voice 0
+		soundResourceId = 239; // Boar voice 0
 	}
 	if (verb == _script->getVerbType(kVerbClose)) {
 		textString = getTextString(kTextNoOpening);
-		soundResourceId = 241;		// Boar voice 2
+		soundResourceId = 241; // Boar voice 2
 	}
 	if (verb == _script->getVerbType(kVerbUse)) {
 		textString = getTextString(kTextDontKnow);
-		soundResourceId = 244;		// Boar voice 5
+		soundResourceId = 244; // Boar voice 5
 	}
 	if (verb == _script->getVerbType(kVerbLookAt)) {
 		textString = getTextString(kTextNothingSpecial);
-		soundResourceId = 245;		// Boar voice 6
+		soundResourceId = 245; // Boar voice 6
 	}
 	if (verb == _script->getVerbType(kVerbPickUp)) {
 		textString = getTextString(kTextICantPickup);
-		soundResourceId = 246;		// Boar voice 7
+		soundResourceId = 246; // Boar voice 7
 	}
 }
 
@@ -551,7 +548,7 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 
 	if (getGameId() == GID_ITE) {
 		switch (knownColor) {
-		case(kKnownColorTransparent):
+		case (kKnownColorTransparent):
 			colorId = kITEColorTransBlack;
 			break;
 		case (kKnownColorBrightWhite):
@@ -588,7 +585,7 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 		int offset = (getFeatures() & GF_IHNM_COLOR_FIX) ? 1 : 0;
 
 		switch (knownColor) {
-		case(kKnownColorTransparent):
+		case (kKnownColorTransparent):
 			colorId = (ColorId)(249 - offset);
 			break;
 		case (kKnownColorBrightWhite):

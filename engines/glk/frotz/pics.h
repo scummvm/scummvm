@@ -30,106 +30,116 @@
 namespace Glk {
 namespace Frotz {
 
-enum PicturesMode {
-	kMONO  = 0,
-	kTEXT  = 1,
-	kCGA   = 2,
-	kMCGA  = 3,
-	kEGA   = 4,
-	kAmiga = 5
-};
+	enum PicturesMode {
+		kMONO = 0,
+		kTEXT = 1,
+		kCGA = 2,
+		kMCGA = 3,
+		kEGA = 4,
+		kAmiga = 5
+	};
 
-/**
+	/**
  * Infocom graphics file manager
  */
-class Pics : public Common::Archive {
-	/**
+	class Pics : public Common::Archive {
+		/**
 	 * Describes a single index entry
 	 */
-	struct Entry {
-		uint _number;
-		size_t _width, _height;
-		uint _flags;
-		size_t _dataOffset;
-		size_t _dataSize;
-		size_t _paletteOffset;
-		Common::String _filename;
+		struct Entry {
+			uint _number;
+			size_t _width, _height;
+			uint _flags;
+			size_t _dataOffset;
+			size_t _dataSize;
+			size_t _paletteOffset;
+			Common::String _filename;
 
-		/**
+			/**
 		 * Constructor
 		 */
-		Entry() : _number(0), _width(0), _height(0), _flags(0), _dataOffset(0), _dataSize(0),
-			_paletteOffset(0) {}
-	};
-private:
-	Common::String _filename;
-	Common::Array<Entry> _index;	///< list of entries
-	uint _entrySize;
-	uint _version;
-	Common::Array<byte> *_palette;
-private:
-	/**
+			Entry()
+			  : _number(0)
+			  , _width(0)
+			  , _height(0)
+			  , _flags(0)
+			  , _dataOffset(0)
+			  , _dataSize(0)
+			  , _paletteOffset(0) {}
+		};
+
+	private:
+		Common::String _filename;
+		Common::Array<Entry> _index; ///< list of entries
+		uint _entrySize;
+		uint _version;
+		Common::Array<byte> *_palette;
+
+	private:
+		/**
 	 * Returns the filename for the pictures archive
 	 */
-	static Common::String getFilename();
+		static Common::String getFilename();
 
-	/**
+		/**
 	 * Read in the palette
 	 */
-	void loadPalette(Common::File &f, const Entry &e, Common::Array<byte> &palette) const;
-public:
-	/**
+		void loadPalette(Common::File &f, const Entry &e, Common::Array<byte> &palette) const;
+
+	public:
+		/**
 	 * Returns true if an mg1 file exists for the game
 	 */
-	static bool exists();
-public:
-	/**
+		static bool exists();
+
+	public:
+		/**
 	 * Constructor
 	 */
-	Pics();
+		Pics();
 
-	/**
+		/**
 	 * Destructor
 	 */
-	~Pics();
+		~Pics();
 
-	/**
+		/**
 	 * Return the number of entries in the file
 	 */
-	size_t size() const { return _index.size(); }
+		size_t size() const { return _index.size(); }
 
-	/**
+		/**
 	 * Return the version of the file
 	 */
-	uint version() const { return _version; }
+		uint version() const { return _version; }
 
-	/**
+		/**
 	 * Check if a member with the given name is present in the Archive.
 	 * Patterns are not allowed, as this is meant to be a quick File::exists()
 	 * replacement.
 	 */
-	virtual bool hasFile(const Common::String &name) const override;
+		virtual bool hasFile(const Common::String &name) const override;
 
-	/**
+		/**
 	 * Add all members of the Archive to list.
 	 * Must only append to list, and not remove elements from it.
 	 *
 	 * @return the number of names added to list
 	 */
-	virtual int listMembers(Common::ArchiveMemberList &list) const override;
+		virtual int listMembers(Common::ArchiveMemberList &list) const override;
 
-	/**
+		/**
 	 * Returns a ArchiveMember representation of the given file.
 	 */
-	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
+		virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
 
-	/**
+		/**
 	 * Create a stream bound to a member with the specified name in the
 	 * archive. If no member with this name exists, 0 is returned.
 	 * @return the newly created input stream
 	 */
-	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
-};
+		virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
+	};
 
 } // End of namespace Frotz
 } // End of namespace Glk

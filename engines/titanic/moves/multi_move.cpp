@@ -25,10 +25,11 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMultiMove, CMovePlayerTo)
-	ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseButtonDownMsg)
 END_MESSAGE_MAP()
 
-CMultiMove::CMultiMove() : CMovePlayerTo() {
+CMultiMove::CMultiMove()
+  : CMovePlayerTo() {
 }
 
 void CMultiMove::save(SimpleFile *file, int indent) {

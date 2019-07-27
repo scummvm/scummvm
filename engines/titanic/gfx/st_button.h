@@ -24,8 +24,8 @@
 #define TITANIC_ST_BUTTON_H
 
 #include "titanic/core/background.h"
-#include "titanic/messages/mouse_messages.h"
 #include "titanic/messages/messages.h"
+#include "titanic/messages/mouse_messages.h"
 
 namespace Titanic {
 
@@ -34,6 +34,7 @@ class CSTButton : public CBackground {
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
+
 protected:
 	int _statusInc;
 	CString _actionTarget;
@@ -42,6 +43,7 @@ protected:
 	CString _actionName;
 	CString _soundName;
 	int _buttonFrame;
+
 public:
 	CLASSDEF;
 	CSTButton();

@@ -20,16 +20,16 @@
  *
  */
 
+#include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/stream.h"
-#include "common/memstream.h"
 
-#include "sci/sci.h"
 #include "sci/engine/file.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/savegame.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/state.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
@@ -51,10 +51,10 @@ uint32 MemoryDynamicRWStream::read(void *dataPtr, uint32 dataSize) {
 SaveFileRewriteStream::SaveFileRewriteStream(const Common::String &fileName,
                                              Common::SeekableReadStream *inFile,
                                              kFileOpenMode mode,
-                                             bool compress) :
-	MemoryDynamicRWStream(DisposeAfterUse::YES),
-	_fileName(fileName),
-	_compress(compress) {
+                                             bool compress)
+  : MemoryDynamicRWStream(DisposeAfterUse::YES)
+  , _fileName(fileName)
+  , _compress(compress) {
 	const bool truncate = (mode == kFileOpenModeCreate);
 	const bool seekToEnd = (mode == kFileOpenModeOpenOrCreate);
 
@@ -207,7 +207,7 @@ reg_t file_open(EngineState *s, const Common::String &filename, kFileOpenMode mo
 		outFile = stream;
 	} else
 #endif
-	if (mode == kFileOpenModeOpenOrFail) {
+	  if (mode == kFileOpenModeOpenOrFail) {
 		// Try to open file, abort if not possible
 		inFile = saveFileMan->openForLoading(wrappedName);
 		// If no matching savestate exists: fall back to reading from a regular
@@ -443,7 +443,9 @@ Common::MemoryReadStream *makeCatalogue(const uint maxNumSaves, const uint gameN
 }
 #endif
 
-FileHandle::FileHandle() : _in(0), _out(0) {
+FileHandle::FileHandle()
+  : _in(0)
+  , _out(0) {
 }
 
 FileHandle::~FileHandle() {
@@ -465,7 +467,6 @@ void FileHandle::close() {
 bool FileHandle::isOpen() const {
 	return _in || _out;
 }
-
 
 void DirSeeker::addAsVirtualFiles(Common::String title, Common::String fileMask) {
 	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();

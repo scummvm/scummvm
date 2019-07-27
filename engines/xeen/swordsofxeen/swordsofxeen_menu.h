@@ -28,31 +28,32 @@
 namespace Xeen {
 namespace SwordsOfXeen {
 
-class MainMenu : public ButtonContainer {
-private:
-	SpriteResource _start;
+	class MainMenu : public ButtonContainer {
+	private:
+		SpriteResource _start;
 
-	/**
+		/**
 	 * Constructor
 	 */
-	MainMenu(XeenEngine *vm);
+		MainMenu(XeenEngine *vm);
 
-	/**
+		/**
 	 * Shows the menu
 	 */
-	void execute();
+		void execute();
 
-	/**
+		/**
 	 * Loads buttons for the menu
 	 */
-	void loadButtons();
-public:
-	/**
+		void loadButtons();
+
+	public:
+		/**
 	 * Shows the main menu
 	 * @param vm		Engine reference
 	 */
-	static void show(XeenEngine *vm);
-};
+		static void show(XeenEngine *vm);
+	};
 
 } // End of namespace SwordsOfXeen
 } // End of namespace Xeen

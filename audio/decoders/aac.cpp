@@ -24,24 +24,24 @@
 
 #ifdef USE_FAAD
 
-#include "common/debug.h"
-#include "common/memstream.h"
-#include "common/stream.h"
-#include "common/textconsole.h"
-#include "common/util.h"
+#	include "common/debug.h"
+#	include "common/memstream.h"
+#	include "common/stream.h"
+#	include "common/textconsole.h"
+#	include "common/util.h"
 
-#include "audio/audiostream.h"
-#include "audio/decoders/codec.h"
-#include "audio/decoders/raw.h"
+#	include "audio/audiostream.h"
+#	include "audio/decoders/codec.h"
+#	include "audio/decoders/raw.h"
 
-#include <neaacdec.h>
+#	include <neaacdec.h>
 
 namespace Audio {
 
 class AACDecoder : public Codec {
 public:
 	AACDecoder(Common::SeekableReadStream *extraData,
-	          DisposeAfterUse::Flag disposeExtraData);
+	           DisposeAfterUse::Flag disposeExtraData);
 	~AACDecoder();
 
 	AudioStream *decodeFrame(Common::SeekableReadStream &stream);
@@ -59,7 +59,7 @@ AACDecoder::AACDecoder(Common::SeekableReadStream *extraData, DisposeAfterUse::F
 	// Configure the library to our needs
 	NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration(_handle);
 	conf->outputFormat = FAAD_FMT_16BIT; // We only support 16bit audio
-	conf->downMatrix = 1;                // Convert from 5.1 to stereo if required
+	conf->downMatrix = 1; // Convert from 5.1 to stereo if required
 	NeAACDecSetConfiguration(_handle, conf);
 
 	// Copy the extra data to a buffer
@@ -108,9 +108,9 @@ AudioStream *AACDecoder::decodeFrame(Common::SeekableReadStream &stream) {
 		if (_channels == 2)
 			flags |= FLAG_STEREO;
 
-#ifdef SCUMM_LITTLE_ENDIAN
+#	ifdef SCUMM_LITTLE_ENDIAN
 		flags |= FLAG_LITTLE_ENDIAN;
-#endif
+#	endif
 
 		audioStream->queueBuffer(buffer, frameInfo.samples * 2, DisposeAfterUse::YES, flags);
 

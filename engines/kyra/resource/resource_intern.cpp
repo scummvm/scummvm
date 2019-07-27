@@ -34,7 +34,8 @@ namespace Kyra {
 // -> PlainArchive implementation
 
 PlainArchive::PlainArchive(Common::ArchiveMemberPtr file)
-	: _file(file), _files() {
+  : _file(file)
+  , _files() {
 }
 
 bool PlainArchive::hasFile(const Common::String &name) const {
@@ -85,7 +86,9 @@ PlainArchive::Entry PlainArchive::getFileEntry(const Common::String &name) const
 // -> TlkArchive implementation
 
 TlkArchive::TlkArchive(Common::ArchiveMemberPtr file, uint16 entryCount, const uint32 *fileEntries)
-	: _file(file), _entryCount(entryCount), _fileEntries(fileEntries) {
+  : _file(file)
+  , _entryCount(entryCount)
+  , _fileEntries(fileEntries) {
 }
 
 TlkArchive::~TlkArchive() {
@@ -167,7 +170,7 @@ const uint32 *TlkArchive::findFile(const Common::String &name) const {
 // -> CachedArchive implementation
 
 CachedArchive::CachedArchive(const FileInputList &files)
-	: _files() {
+  : _files() {
 	for (FileInputList::const_iterator i = files.begin(); i != files.end(); ++i) {
 		Entry entry;
 
@@ -227,15 +230,15 @@ bool ResLoaderPak::checkFilename(Common::String filename) const {
 
 namespace {
 
-Common::String readString(Common::SeekableReadStream &stream) {
-	Common::String result;
-	char c = 0;
+	Common::String readString(Common::SeekableReadStream &stream) {
+		Common::String result;
+		char c = 0;
 
-	while ((c = stream.readByte()) != 0)
-		result += c;
+		while ((c = stream.readByte()) != 0)
+			result += c;
 
-	return result;
-}
+		return result;
+	}
 
 } // end of anonymous namespace
 
@@ -481,7 +484,6 @@ Common::Archive *ResLoaderTlk::load(Common::ArchiveMemberPtr file, Common::Seeka
 		fileEntries[i * 2 + 1] = READ_LE_UINT32(&fileEntries[i * 2 + 1]);
 	}
 
-
 	return new TlkArchive(file, entryCount, fileEntries);
 }
 
@@ -489,7 +491,12 @@ Common::Archive *ResLoaderTlk::load(Common::ArchiveMemberPtr file, Common::Seeka
 
 class FileExpanderSource {
 public:
-	FileExpanderSource(const uint8 *data, int dataSize) : _dataPtr(data), _endofBuffer(data + dataSize), _bitsLeft(8), _key(0), _index(0) {}
+	FileExpanderSource(const uint8 *data, int dataSize)
+	  : _dataPtr(data)
+	  , _endofBuffer(data + dataSize)
+	  , _bitsLeft(8)
+	  , _key(0)
+	  , _index(0) {}
 	~FileExpanderSource() {}
 
 	void advSrcRefresh();
@@ -501,7 +508,7 @@ public:
 	uint16 getKeyMasked(uint8 newIndex);
 	uint16 keyMaskedAlign(uint16 val);
 
-	void copyBytes(uint8 *& dst);
+	void copyBytes(uint8 *&dst);
 
 private:
 	const uint8 *_dataPtr;
@@ -553,7 +560,7 @@ uint16 FileExpanderSource::getKeyMasked(uint8 newIndex) {
 	return res;
 }
 
-void FileExpanderSource::copyBytes(uint8 *& dst) {
+void FileExpanderSource::copyBytes(uint8 *&dst) {
 	advSrcBitsByIndex(_bitsLeft);
 	uint16 r = (READ_LE_UINT16(_dataPtr) ^ _key) + 1;
 	_dataPtr += 2;
@@ -599,7 +606,8 @@ private:
 	uint16 *_tables16[3];
 };
 
-FileExpander::FileExpander() : _src(0) {
+FileExpander::FileExpander()
+  : _src(0) {
 	_tables[0] = new uint8[3914];
 	assert(_tables[0]);
 
@@ -723,7 +731,7 @@ bool FileExpander::process(uint8 *dst, const uint8 *src, uint32 outsize, uint32 
 
 		int16 cmd = 0;
 
-		do  {
+		do {
 			cmd = ((int16 *)_tables[2])[_src->getKeyLower()];
 			_src->advSrcBitsByIndex(cmd < 0 ? calcCmdAndIndex(_tables[3], cmd) : _tables[0][cmd]);
 
@@ -753,7 +761,7 @@ bool FileExpander::process(uint8 *dst, const uint8 *src, uint32 outsize, uint32 
 					uint32 pos = dst - s2;
 					s2 += (d - dst);
 
-					if (pos < (uint32) cmd) {
+					if (pos < (uint32)cmd) {
 						cmd -= pos;
 						while (pos--)
 							*d++ = *s2++;
@@ -906,14 +914,14 @@ uint8 FileExpander::calcCmdAndIndex(const uint8 *tbl, int16 &para) {
 
 namespace {
 
-struct InsArchive {
-	Common::String filename;
-	uint32 firstFile;
-	uint32 startOffset;
-	uint32 lastFile;
-	uint32 endOffset;
-	uint32 totalSize;
-};
+	struct InsArchive {
+		Common::String filename;
+		uint32 firstFile;
+		uint32 startOffset;
+		uint32 lastFile;
+		uint32 endOffset;
+		uint32 totalSize;
+	};
 
 } // end of anonymouse namespace
 

@@ -29,23 +29,23 @@
 #include "bladerunner/audio_player.h"
 #include "bladerunner/audio_speech.h"
 #include "bladerunner/bladerunner.h"
-#include "bladerunner/crimes_database.h"
 #include "bladerunner/combat.h"
+#include "bladerunner/crimes_database.h"
 #include "bladerunner/dialogue_menu.h"
 #include "bladerunner/game_flags.h"
 #include "bladerunner/game_info.h"
-#include "bladerunner/items.h"
 #include "bladerunner/item_pickup.h"
+#include "bladerunner/items.h"
 #include "bladerunner/movement_track.h"
 #include "bladerunner/music.h"
 #include "bladerunner/overlays.h"
 #include "bladerunner/regions.h"
 #include "bladerunner/set.h"
-#include "bladerunner/settings.h"
 #include "bladerunner/set_effects.h"
+#include "bladerunner/settings.h"
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-#include "bladerunner/screen_effects.h"
+#	include "bladerunner/screen_effects.h"
 #endif // BLADERUNNER_ORIGINAL_BUGS
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
@@ -53,6 +53,7 @@
 #include "bladerunner/script/scene_script.h"
 #include "bladerunner/slice_animations.h"
 #include "bladerunner/slice_renderer.h"
+#include "bladerunner/subtitles.h"
 #include "bladerunner/suspects_database.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/time.h"
@@ -64,7 +65,6 @@
 #include "bladerunner/ui/vk.h"
 #include "bladerunner/vector.h"
 #include "bladerunner/waypoints.h"
-#include "bladerunner/subtitles.h"
 
 #include "common/debug-channels.h"
 
@@ -98,9 +98,9 @@ bool ScriptBase::Region_Check(int left, int top, int right, int down) {
 	debugC(kDebugScript, "Region_Check(%d, %d, %d, %d)", left, top, right, down);
 
 	return _vm->_sceneScript->_mouseX >= left
-		&& _vm->_sceneScript->_mouseY >= top
-		&& _vm->_sceneScript->_mouseX <= right
-		&& _vm->_sceneScript->_mouseY <= down;
+	  && _vm->_sceneScript->_mouseY >= top
+	  && _vm->_sceneScript->_mouseX <= right
+	  && _vm->_sceneScript->_mouseY <= down;
 }
 
 bool ScriptBase::Object_Query_Click(const char *objectName1, const char *objectName2) {
@@ -432,11 +432,11 @@ bool ScriptBase::Actor_Query_In_Between_Two_Actors(int actorId, int otherActor1I
 	float z1 = _vm->_actors[otherActor1Id]->getZ();
 	float x2 = _vm->_actors[otherActor2Id]->getX();
 	float z2 = _vm->_actors[otherActor2Id]->getZ();
-	return _vm->_sceneObjects->isBetween(x1,         z1,         x2,         z1,         actorId + kSceneObjectOffsetActors)
-		|| _vm->_sceneObjects->isBetween(x1 - 12.0f, z1 - 12.0f, x2 - 12.0f, z2 - 12.0f, actorId + kSceneObjectOffsetActors)
-		|| _vm->_sceneObjects->isBetween(x1 + 12.0f, z1 - 12.0f, x2 + 12.0f, z2 - 12.0f, actorId + kSceneObjectOffsetActors)
-		|| _vm->_sceneObjects->isBetween(x1 + 12.0f, z1 + 12.0f, x2 + 12.0f, z2 + 12.0f, actorId + kSceneObjectOffsetActors)
-		|| _vm->_sceneObjects->isBetween(x1 - 12.0f, z1 + 12.0f, x2 - 12.0f, z2 + 12.0f, actorId + kSceneObjectOffsetActors);
+	return _vm->_sceneObjects->isBetween(x1, z1, x2, z1, actorId + kSceneObjectOffsetActors)
+	  || _vm->_sceneObjects->isBetween(x1 - 12.0f, z1 - 12.0f, x2 - 12.0f, z2 - 12.0f, actorId + kSceneObjectOffsetActors)
+	  || _vm->_sceneObjects->isBetween(x1 + 12.0f, z1 - 12.0f, x2 + 12.0f, z2 - 12.0f, actorId + kSceneObjectOffsetActors)
+	  || _vm->_sceneObjects->isBetween(x1 + 12.0f, z1 + 12.0f, x2 + 12.0f, z2 + 12.0f, actorId + kSceneObjectOffsetActors)
+	  || _vm->_sceneObjects->isBetween(x1 - 12.0f, z1 + 12.0f, x2 - 12.0f, z2 + 12.0f, actorId + kSceneObjectOffsetActors);
 }
 
 void ScriptBase::Actor_Set_Goal_Number(int actorId, int goalNumber) {
@@ -1053,11 +1053,10 @@ int ScriptBase::Global_Variable_Decrement(int var, int dec) {
 
 int ScriptBase::Random_Query(int min, int max) {
 	debugC(9, kDebugScript, "Random_Query(%d, %d)", min, max);
-	if ( min == max )
-	{
+	if (min == max) {
 		return min;
 	}
-	if ( min > max ) // there is at least one such case
+	if (min > max) // there is at least one such case
 	{
 		return _vm->_rnd.getRandomNumberRng(max, min); // swap the arguments
 	}
@@ -1195,9 +1194,9 @@ void ScriptBase::Ambient_Sounds_Add_Sound(int sfxId, uint32 timeMin, uint32 time
 	_vm->_ambientSounds->addSound(sfxId, timeMin, timeMax, volumeMin, volumeMax, panStartMin, panStartMax, panEndMin, panEndMax, priority, unk);
 }
 
-void  ScriptBase::Ambient_Sounds_Remove_Sound(int sfxId, bool stopPlaying) {
+void ScriptBase::Ambient_Sounds_Remove_Sound(int sfxId, bool stopPlaying) {
 	debugC(kDebugScript, "Ambient_Sounds_Remove_Sound(%d, %d)", sfxId, stopPlaying);
-	_vm->_ambientSounds->removeNonLoopingSound(sfxId,  stopPlaying);
+	_vm->_ambientSounds->removeNonLoopingSound(sfxId, stopPlaying);
 }
 
 void ScriptBase::Ambient_Sounds_Add_Speech_Sound(int actorId, int sentenceId, uint32 timeMin, uint32 timeMax, int volumeMin, int volumeMax, int panStartMin, int panStartMax, int panEndMin, int panEndMax, int priority, int unk) {
@@ -1391,7 +1390,7 @@ void ScriptBase::Combat_Flee_Waypoint_Set_Data(int fleeWaypointId, int type, int
 	_vm->_combat->_fleeWaypoints[fleeWaypointId].field7 = a8;
 }
 
-void ScriptBase::Police_Maze_Target_Track_Add(int itemId, float startX, float startY, float startZ, float endX, float endY, float endZ, int steps, const int* instructions, bool isActive) {
+void ScriptBase::Police_Maze_Target_Track_Add(int itemId, float startX, float startY, float startZ, float endX, float endY, float endZ, int steps, const int *instructions, bool isActive) {
 	debugC(kDebugScript, "Police_Maze_Target_Track_Add(%d, %f, %f, %f, %f, %f, %f, %d, ptr, %d)", itemId, startX, startY, startZ, endX, endY, endZ, steps, isActive);
 	_vm->_policeMaze->_tracks[itemId]->add(itemId, startX, startY, startZ, endX, endY, endZ, steps, instructions, isActive);
 	_vm->_policeMaze->activate();

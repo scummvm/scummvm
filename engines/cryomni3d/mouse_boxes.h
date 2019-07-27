@@ -51,7 +51,13 @@ public:
 
 private:
 	struct MouseBox {
-		MouseBox() : left(-1), top(-1), right(-1), bottom(-1), string(nullptr), isChar(false) {}
+		MouseBox()
+		  : left(-1)
+		  , top(-1)
+		  , right(-1)
+		  , bottom(-1)
+		  , string(nullptr)
+		  , isChar(false) {}
 
 		int left;
 		int top;

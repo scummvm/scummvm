@@ -25,7 +25,8 @@
 
 namespace Tucker {
 
-TuckerConsole::TuckerConsole(TuckerEngine *vm) :  _vm(vm) {
+TuckerConsole::TuckerConsole(TuckerEngine *vm)
+  : _vm(vm) {
 	assert(_vm);
 }
 

@@ -24,11 +24,11 @@
 #include "common/timer.h"
 
 #include "scumm/actor.h"
-#include "scumm/scumm_v7.h"
-#include "scumm/sound.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse_digi/dimuse_bndmgr.h"
 #include "scumm/imuse_digi/dimuse_track.h"
+#include "scumm/scumm_v7.h"
+#include "scumm/sound.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
@@ -50,8 +50,7 @@ int IMuseDigital::allocSlot(int priority) {
 		debug(5, "IMuseDigital::allocSlot(): All slots are full");
 		for (l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 			Track *track = _track[l];
-			if (track->used && !track->toBeRemoved &&
-					(lowest_priority > track->soundPriority) && !track->souStreamUsed) {
+			if (track->used && !track->toBeRemoved && (lowest_priority > track->soundPriority) && !track->souStreamUsed) {
 				lowest_priority = track->soundPriority;
 				trackId = l;
 			}
@@ -175,7 +174,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 void IMuseDigital::setPriority(int soundId, int priority) {
 	Common::StackLock lock(_mutex, "IMuseDigital::setPriority()");
 	debug(5, "IMuseDigital::setPriority(%d, %d)", soundId, priority);
-	assert ((priority >= 0) && (priority <= 127));
+	assert((priority >= 0) && (priority <= 127));
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];

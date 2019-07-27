@@ -43,10 +43,9 @@
    SOFTWARE.
  */
 
-
+#include "graphics/nine_patch.h"
 #include "common/array.h"
 #include "graphics/transparent_surface.h"
-#include "graphics/nine_patch.h"
 
 #include "graphics/managed_surface.h"
 
@@ -58,7 +57,6 @@ NinePatchSide::~NinePatchSide() {
 
 	_m.clear();
 }
-
 
 bool NinePatchSide::init(Graphics::TransparentSurface *bmp, bool vertical) {
 	const uint len = vertical ? bmp->h : bmp->w;
@@ -151,10 +149,11 @@ NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bi
 	if (_width <= 0 || _height <= 0)
 		goto bad_bitmap;
 
-	/* make sure all four corners are transparent */
-#define _check_pixel(x, y) \
+		/* make sure all four corners are transparent */
+#define _check_pixel(x, y)                                               \
 	bmp->format.colorToARGB(*(uint32 *)bmp->getBasePtr(x, y), a, r, g, b); \
-	if (a != 0 && r + g + b + a != 4) goto bad_bitmap;
+	if (a != 0 && r + g + b + a != 4)                                      \
+		goto bad_bitmap;
 
 	_check_pixel(0, 0);
 	_check_pixel(bmp->w - 1, 0);
@@ -197,7 +196,7 @@ NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bi
 	}
 
 	if (!_h.init(bmp, false) || !_v.init(bmp, true)) {
-bad_bitmap:
+	bad_bitmap:
 		_h._m.clear();
 		_v._m.clear();
 	}
@@ -242,7 +241,7 @@ void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, in
 
 		for (uint i = 0; i < srf->w; ++i) {
 			for (uint j = 0; j < srf->h; ++j) {
-				uint32 color = *(uint32*)srf->getBasePtr(i, j);
+				uint32 color = *(uint32 *)srf->getBasePtr(i, j);
 				if (color > 0) {
 					*((byte *)target.getBasePtr(i, j)) = closestGrayscale(color, palette, numColors);
 				}
@@ -271,11 +270,11 @@ void NinePatchBitmap::drawRegions(Graphics::Surface &target, int dx, int dy, int
 	for (uint i = 0; i < _v._m.size(); ++i) {
 		for (uint j = 0; j < _h._m.size(); ++j) {
 			Common::Rect r(_h._m[j]->offset, _v._m[i]->offset,
-						_h._m[j]->offset + _h._m[j]->length, _v._m[i]->offset + _v._m[i]->length);
+			               _h._m[j]->offset + _h._m[j]->length, _v._m[i]->offset + _v._m[i]->length);
 
 			_bmp->blit(target, dx + _h._m[j]->dest_offset, dy + _v._m[i]->dest_offset,
-					Graphics::FLIP_NONE, &r, TS_ARGB(255, 255, 255, 255),
-					_h._m[j]->dest_length, _v._m[i]->dest_length);
+			           Graphics::FLIP_NONE, &r, TS_ARGB(255, 255, 255, 255),
+			           _h._m[j]->dest_length, _v._m[i]->dest_length);
 		}
 	}
 }
@@ -306,16 +305,16 @@ void NinePatchBitmap::blitClip(Graphics::Surface &target, Common::Rect clip, int
 	for (uint i = 0; i < _v._m.size(); ++i) {
 		for (uint j = 0; j < _h._m.size(); ++j) {
 			Common::Rect r(_h._m[j]->offset, _v._m[i]->offset,
-				_h._m[j]->offset + _h._m[j]->length, _v._m[i]->offset + _v._m[i]->length);
+			               _h._m[j]->offset + _h._m[j]->length, _v._m[i]->offset + _v._m[i]->length);
 
 			_bmp->blitClip(target, clip, dx + _h._m[j]->dest_offset, dy + _v._m[i]->dest_offset,
-				Graphics::FLIP_NONE, &r, TS_ARGB(255, 255, 255, 255),
-				_h._m[j]->dest_length, _v._m[i]->dest_length);
+			               Graphics::FLIP_NONE, &r, TS_ARGB(255, 255, 255, 255),
+			               _h._m[j]->dest_length, _v._m[i]->dest_length);
 		}
 	}
 }
 
-byte NinePatchBitmap::getColorIndex(uint32 target, byte* palette) {
+byte NinePatchBitmap::getColorIndex(uint32 target, byte *palette) {
 	byte *pal = palette;
 	uint i = 0;
 	uint32 color = TS_RGB(pal[0], pal[1], pal[2]);
@@ -343,7 +342,7 @@ static inline uint32 dist(uint32 a, uint32 b) {
 	return b - a;
 }
 
-byte NinePatchBitmap::closestGrayscale(uint32 color, byte* palette, byte paletteLength) {
+byte NinePatchBitmap::closestGrayscale(uint32 color, byte *palette, byte paletteLength) {
 	if (!_cached_colors.contains(color)) {
 		byte target = grayscale(color);
 		byte bestNdx = 0;

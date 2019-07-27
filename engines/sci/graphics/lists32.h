@@ -34,7 +34,7 @@ namespace Sci {
  * pointers that are passed to it and deletes them when calling `erase` or when
  * destroying the StablePointerArray.
  */
-template<class T, uint N>
+template <class T, uint N>
 class StablePointerArray {
 	uint _size;
 	T *_items[N];
@@ -45,8 +45,11 @@ public:
 	typedef T *value_type;
 	typedef uint size_type;
 
-	StablePointerArray() : _size(0), _items() {}
-	StablePointerArray(const StablePointerArray &other) : _size(other._size) {
+	StablePointerArray()
+	  : _size(0)
+	  , _items() {}
+	StablePointerArray(const StablePointerArray &other)
+	  : _size(other._size) {
 		for (size_type i = 0; i < _size; ++i) {
 			if (other._items[i] == nullptr) {
 				_items[i] = nullptr;
@@ -183,11 +186,13 @@ public:
 	}
 };
 
-template<typename T>
+template <typename T>
 class FindByObject {
 	const reg_t &_object;
+
 public:
-	FindByObject(const reg_t &object) : _object(object) {}
+	FindByObject(const reg_t &object)
+	  : _object(object) {}
 	bool operator()(const T entry) const {
 		return entry && entry->_object == _object;
 	}

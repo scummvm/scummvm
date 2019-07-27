@@ -28,11 +28,11 @@
 namespace Glk {
 namespace Alan3 {
 
-/* DATA */
-extern ClassEntry *classes;     /* Class table pointer */
+	/* DATA */
+	extern ClassEntry *classes; /* Class table pointer */
 
-/* FUNCTIONS */
-extern char *idOfClass(int theClass);
+	/* FUNCTIONS */
+	extern char *idOfClass(int theClass);
 
 } // End of namespace Alan3
 } // End of namespace Glk

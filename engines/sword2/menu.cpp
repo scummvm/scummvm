@@ -22,14 +22,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
 #include "common/rect.h"
 
-#include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"
 #include "sword2/mouse.h"
 #include "sword2/screen.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
@@ -47,7 +46,6 @@ void Mouse::clearIconArea(int menu, int pocket, Common::Rect *r) {
 		menuIconWidth = RDMENU_PSXICONWIDE;
 	else
 		menuIconWidth = RDMENU_ICONWIDE;
-
 
 	r->top = menu * (RENDERDEEP + MENUDEEP) + (MENUDEEP - RDMENU_ICONDEEP) / 2;
 	r->bottom = r->top + RDMENU_ICONDEEP;
@@ -84,7 +82,6 @@ void Mouse::processMenu() {
 	else
 		menuIconWidth = RDMENU_ICONWIDE;
 
-
 	if (lastTime == 0) {
 		lastTime = _vm->getMillis();
 		frameCount = 1;
@@ -96,7 +93,7 @@ void Mouse::processMenu() {
 			delta = 250;
 			frameCount = 1;
 		} else {
-			frameCount = (uint8) ((_iconCount + 8) * delta / 750);
+			frameCount = (uint8)((_iconCount + 8) * delta / 750);
 			lastTime += frameCount * 750 / (_iconCount + 8);
 		}
 	}
@@ -188,8 +185,8 @@ void Mouse::processMenu() {
 
 					if (_pocketStatus[menu][i] != MAXMENUANIMS) {
 						_vm->_screen->scaleImageFast(
-							dst, screenWide, r2.right - r2.left, r2.bottom - r2.top,
-							src, menuIconWidth, menuIconWidth, RDMENU_ICONDEEP);
+						  dst, screenWide, r2.right - r2.left, r2.bottom - r2.top,
+						  src, menuIconWidth, menuIconWidth, RDMENU_ICONDEEP);
 					} else {
 						for (j = 0; j < RDMENU_ICONDEEP; j++) {
 							memcpy(dst, src, menuIconWidth);

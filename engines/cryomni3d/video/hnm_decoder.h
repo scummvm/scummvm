@@ -23,11 +23,11 @@
 #ifndef CRYOMNI3D_VIDEO_HNM_DECODER_H
 #define CRYOMNI3D_VIDEO_HNM_DECODER_H
 
+#include "audio/audiostream.h"
 #include "common/rational.h"
 #include "graphics/pixelformat.h"
-#include "video/video_decoder.h"
 #include "graphics/surface.h"
-#include "audio/audiostream.h"
+#include "video/video_decoder.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -67,7 +67,10 @@ private:
 		int getFrameCount() const { return _frameCount; }
 		uint32 getNextFrameStartTime() const { return _nextFrameStartTime; }
 		const Graphics::Surface *decodeNextFrame() { return &_surface; }
-		const byte *getPalette() const { _dirtyPalette = false; return _palette; }
+		const byte *getPalette() const {
+			_dirtyPalette = false;
+			return _palette;
+		}
 		bool hasDirtyPalette() const { return _dirtyPalette; }
 
 		/** Decode a video chunk. */
@@ -75,7 +78,10 @@ private:
 		void decodeInterframe(Common::SeekableReadStream *stream, uint32 size);
 		void decodeIntraframe(Common::SeekableReadStream *stream, uint32 size);
 
-		void restart() { _nextFrameDelay = uint32(-1); _nextNextFrameDelay = uint32(-1); }
+		void restart() {
+			_nextFrameDelay = uint32(-1);
+			_nextNextFrameDelay = uint32(-1);
+		}
 		void setFrameDelay(uint32 frameDelay);
 
 	private:
@@ -103,8 +109,10 @@ private:
 		~DPCMAudioTrack();
 
 		Audio::Timestamp decodeSound(Common::SeekableReadStream *stream, uint32 size);
+
 	protected:
 		Audio::AudioStream *getAudioStream() const { return _audioStream; }
+
 	private:
 		Audio::QueuingAudioStream *_audioStream;
 		bool _gotLUT;

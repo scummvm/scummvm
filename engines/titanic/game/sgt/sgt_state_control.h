@@ -35,11 +35,15 @@ class CSGTStateControl : public CBackground {
 	bool PETActivateMsg(CPETActivateMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
+
 private:
 	int _state;
+
 public:
 	CLASSDEF;
-	CSGTStateControl() : CBackground(), _state(1) {}
+	CSGTStateControl()
+	  : CBackground()
+	  , _state(1) {}
 
 	/**
 	 * Save the data for the class to file

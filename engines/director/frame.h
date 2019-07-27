@@ -26,7 +26,7 @@
 #include "graphics/managed_surface.h"
 
 namespace Image {
-	class ImageDecoder;
+class ImageDecoder;
 }
 
 namespace Director {
@@ -106,7 +106,6 @@ struct FrameEntity {
 	uint16 spriteId;
 	Common::Rect rect;
 };
-
 
 class Frame {
 public:

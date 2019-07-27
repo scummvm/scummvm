@@ -37,7 +37,7 @@ inline uint32 REVERSEBITS(uint32 x) {
 	x = (((x & ~0x0F0F0F0F) >> 4) | ((x & 0x0F0F0F0F) << 4));
 	x = (((x & ~0x00FF00FF) >> 8) | ((x & 0x00FF00FF) << 8));
 
-	return((x >> 16) | (x << 16));
+	return ((x >> 16) | (x << 16));
 }
 
 /**
@@ -46,7 +46,7 @@ inline uint32 REVERSEBITS(uint32 x) {
  * Used in engines:
  *  - scumm
  */
-template<class BITSTREAM>
+template <class BITSTREAM>
 class Huffman {
 public:
 	/** Construct a Huffman decoder.
@@ -67,7 +67,9 @@ private:
 		uint32 code;
 		uint32 symbol;
 
-		Symbol(uint32 c, uint32 s) : code(c), symbol(s) {}
+		Symbol(uint32 c, uint32 s)
+		  : code(c)
+		  , symbol(s) {}
 	};
 
 	typedef List<Symbol> CodeList;
@@ -79,9 +81,10 @@ private:
 	/** Prefix lookup table used to speed up the decoding of short codes. */
 	struct PrefixEntry {
 		uint32 symbol;
-		uint8  length;
+		uint8 length;
 
-		PrefixEntry() : length(0xFF) {}
+		PrefixEntry()
+		  : length(0xFF) {}
 	};
 
 	static const uint8 _prefixTableBits = 8;

@@ -23,9 +23,9 @@
 #ifndef XEEN_CHARACTER_H
 #define XEEN_CHARACTER_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
 #include "xeen/combat.h"
 #include "xeen/item.h"
@@ -39,54 +39,111 @@ namespace Xeen {
 #define WARZONE_AWARD 9
 
 enum Award {
-	SHANGRILA_GUILD_MEMBER = 5, GOOBER = 76, SUPER_GOOBER = 77,
-	CASTLEVIEW_GUILD_MEMBER = 83, SANDCASTER_GUILD_MEMBER = 84,
-	LAKESIDE_GUILD_MEMBER = 85, NECROPOLIS_GUILD_MEMBER = 86, OLYMPUS_GUILD_MEMBER = 87
+	SHANGRILA_GUILD_MEMBER = 5,
+	GOOBER = 76,
+	SUPER_GOOBER = 77,
+	CASTLEVIEW_GUILD_MEMBER = 83,
+	SANDCASTER_GUILD_MEMBER = 84,
+	LAKESIDE_GUILD_MEMBER = 85,
+	NECROPOLIS_GUILD_MEMBER = 86,
+	OLYMPUS_GUILD_MEMBER = 87
 };
 
-enum Sex { MALE = 0, FEMALE = 1, YES_PLEASE = 2 };
+enum Sex { MALE = 0,
+	         FEMALE = 1,
+	         YES_PLEASE = 2 };
 
-enum Race { HUMAN = 0, ELF = 1, DWARF = 2, GNOME = 3, HALF_ORC = 4 };
+enum Race { HUMAN = 0,
+	          ELF = 1,
+	          DWARF = 2,
+	          GNOME = 3,
+	          HALF_ORC = 4 };
 
 enum CharacterClass {
-	CLASS_KNIGHT = 0, CLASS_PALADIN = 1, CLASS_ARCHER = 2, CLASS_CLERIC = 3,
-	CLASS_SORCERER = 4, CLASS_ROBBER = 5, CLASS_NINJA = 6, CLASS_BARBARIAN = 7,
-	CLASS_DRUID = 8, CLASS_RANGER = 9, TOTAL_CLASSES = 10
+	CLASS_KNIGHT = 0,
+	CLASS_PALADIN = 1,
+	CLASS_ARCHER = 2,
+	CLASS_CLERIC = 3,
+	CLASS_SORCERER = 4,
+	CLASS_ROBBER = 5,
+	CLASS_NINJA = 6,
+	CLASS_BARBARIAN = 7,
+	CLASS_DRUID = 8,
+	CLASS_RANGER = 9,
+	TOTAL_CLASSES = 10
 };
 
 enum HatesClass {
-	HATES_DWARF = 12, HATES_PARTY = 15, HATES_NOBODY = 16
+	HATES_DWARF = 12,
+	HATES_PARTY = 15,
+	HATES_NOBODY = 16
 };
 
 enum Attribute {
-	MIGHT = 0, INTELLECT = 1, PERSONALITY = 2, ENDURANCE = 3, SPEED = 4,
-	ACCURACY = 5, LUCK = 6, TOTAL_ATTRIBUTES = 7
+	MIGHT = 0,
+	INTELLECT = 1,
+	PERSONALITY = 2,
+	ENDURANCE = 3,
+	SPEED = 4,
+	ACCURACY = 5,
+	LUCK = 6,
+	TOTAL_ATTRIBUTES = 7
 };
 
 enum Skill {
-	THIEVERY = 0, ARMS_MASTER = 1, ASTROLOGER = 2, BODYBUILDER = 3,
-	CARTOGRAPHER = 4, CRUSADER = 5, DIRECTION_SENSE = 6, LINGUIST = 7,
-	MERCHANT = 8, MOUNTAINEER = 9, NAVIGATOR = 10, PATHFINDER = 11,
-	PRAYER_MASTER = 12, PRESTIDIGITATION = 13, SWIMMING = 14, TRACKING = 15,
-	SPOT_DOORS = 16, DANGER_SENSE = 17
+	THIEVERY = 0,
+	ARMS_MASTER = 1,
+	ASTROLOGER = 2,
+	BODYBUILDER = 3,
+	CARTOGRAPHER = 4,
+	CRUSADER = 5,
+	DIRECTION_SENSE = 6,
+	LINGUIST = 7,
+	MERCHANT = 8,
+	MOUNTAINEER = 9,
+	NAVIGATOR = 10,
+	PATHFINDER = 11,
+	PRAYER_MASTER = 12,
+	PRESTIDIGITATION = 13,
+	SWIMMING = 14,
+	TRACKING = 15,
+	SPOT_DOORS = 16,
+	DANGER_SENSE = 17
 };
 
 enum Condition {
-	CURSED = 0, HEART_BROKEN = 1, WEAK = 2, POISONED = 3,
-	DISEASED = 4, INSANE = 5, IN_LOVE = 6, DRUNK = 7, ASLEEP = 8,
-	DEPRESSED = 9, CONFUSED = 10, PARALYZED = 11, UNCONSCIOUS = 12,
-	DEAD = 13, STONED = 14, ERADICATED = 15,
+	CURSED = 0,
+	HEART_BROKEN = 1,
+	WEAK = 2,
+	POISONED = 3,
+	DISEASED = 4,
+	INSANE = 5,
+	IN_LOVE = 6,
+	DRUNK = 7,
+	ASLEEP = 8,
+	DEPRESSED = 9,
+	CONFUSED = 10,
+	PARALYZED = 11,
+	UNCONSCIOUS = 12,
+	DEAD = 13,
+	STONED = 14,
+	ERADICATED = 15,
 	NO_CONDITION = 16
 };
 
 enum QuickAction {
-	QUICK_ATTACK = 0, QUICK_SPELL = 1, QUICK_BLOCK = 2, QUICK_RUN = 3
+	QUICK_ATTACK = 0,
+	QUICK_SPELL = 1,
+	QUICK_BLOCK = 2,
+	QUICK_RUN = 3
 };
 
 enum SpellsCategory {
-	SPELLCAT_INVALID = -1, SPELLCAT_CLERICAL = 0, SPELLCAT_WIZARDRY = 1, SPELLCAT_DRUIDIC = 2
+	SPELLCAT_INVALID = -1,
+	SPELLCAT_CLERICAL = 0,
+	SPELLCAT_WIZARDRY = 1,
+	SPELLCAT_DRUIDIC = 2
 };
-
 
 class XeenEngine;
 
@@ -94,6 +151,7 @@ class AttributePair {
 public:
 	uint _permanent;
 	uint _temporary;
+
 public:
 	AttributePair();
 	void synchronize(Common::Serializer &s);
@@ -105,6 +163,7 @@ private:
 	 * Modifies a passed attribute value based on player's condition
 	 */
 	int conditionMod(Attribute attrib) const;
+
 public:
 	Common::String _name;
 	Sex _sex;
@@ -154,6 +213,7 @@ public:
 
 	SpriteResource *_faceSprites;
 	int _rosterId;
+
 public:
 	/**
 	 * Constructor

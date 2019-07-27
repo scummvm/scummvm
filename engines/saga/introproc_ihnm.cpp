@@ -24,27 +24,27 @@
 
 // "I Have No Mouth" Intro sequence scene procedures
 
-#include "saga/saga.h"
-#include "saga/gfx.h"
+#	include "saga/gfx.h"
+#	include "saga/saga.h"
 
-#include "saga/animation.h"
-#include "saga/events.h"
-#include "saga/interface.h"
-#include "saga/render.h"
-#include "saga/resource.h"
-#include "saga/sndres.h"
-#include "saga/music.h"
+#	include "saga/animation.h"
+#	include "saga/events.h"
+#	include "saga/interface.h"
+#	include "saga/music.h"
+#	include "saga/render.h"
+#	include "saga/resource.h"
+#	include "saga/sndres.h"
 
-#include "saga/scene.h"
+#	include "saga/scene.h"
 
-#include "common/events.h"
-#include "common/system.h"
+#	include "common/events.h"
+#	include "common/system.h"
 
 namespace Saga {
 
 // IHNM cutaway intro resource IDs
-#define RID_IHNM_INTRO_CUTAWAYS 39
-#define RID_IHNMDEMO_INTRO_CUTAWAYS 25
+#	define RID_IHNM_INTRO_CUTAWAYS 39
+#	define RID_IHNMDEMO_INTRO_CUTAWAYS 25
 
 int Scene::IHNMStartProc() {
 	LoadSceneParams firstScene;
@@ -213,7 +213,7 @@ bool Scene::playTitle(int title, int time, int mode) {
 
 		case 2: // display background
 			_vm->_system->copyRectToScreen(backBufferSurface->getPixels(), backBufferSurface->w, 0, 0,
-							  backBufferSurface->w, backBufferSurface->h);
+			                               backBufferSurface->w, backBufferSurface->h);
 			phase++;
 			startTime = curTime;
 			break;
@@ -234,7 +234,7 @@ bool Scene::playTitle(int title, int time, int mode) {
 			if (checkKey()) {
 				_vm->_scene->cutawaySkip();
 				interrupted = true;
-				phase = 6;	// end playback and fade out
+				phase = 6; // end playback and fade out
 				break;
 			}
 
@@ -248,9 +248,8 @@ bool Scene::playTitle(int title, int time, int mode) {
 					frameTime = curTime;
 
 					_vm->_system->copyRectToScreen(backBufferSurface->getPixels(), backBufferSurface->w, 0, 0,
-							  backBufferSurface->w, backBufferSurface->h);
+					                               backBufferSurface->w, backBufferSurface->h);
 				}
-
 			}
 			break;
 
@@ -273,9 +272,9 @@ bool Scene::playTitle(int title, int time, int mode) {
 
 	_vm->_anim->endVideo();
 
-	memset((byte *)backBufferSurface->getPixels(), 0,  backBufferSurface->w *  backBufferSurface->h);
+	memset((byte *)backBufferSurface->getPixels(), 0, backBufferSurface->w * backBufferSurface->h);
 	_vm->_system->copyRectToScreen(backBufferSurface->getPixels(), backBufferSurface->w, 0, 0,
-							  backBufferSurface->w, backBufferSurface->h);
+	                               backBufferSurface->w, backBufferSurface->h);
 
 	return interrupted;
 }

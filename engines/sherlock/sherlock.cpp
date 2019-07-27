@@ -21,19 +21,21 @@
  */
 
 #include "sherlock/sherlock.h"
-#include "sherlock/surface.h"
-#include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/scummsys.h"
+#include "sherlock/surface.h"
 
 namespace Sherlock {
 
-SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc) :
-		Engine(syst), _gameDescription(gameDesc), _randomSource("Sherlock") {
-	DebugMan.addDebugChannel(kDebugLevelScript,      "scripts", "Script debug level");
-	DebugMan.addDebugChannel(kDebugLevelAdLibDriver, "AdLib",   "AdLib driver debugging");
-	DebugMan.addDebugChannel(kDebugLevelMT32Driver,  "MT32",    "MT32 driver debugging");
-	DebugMan.addDebugChannel(kDebugLevelMusic,       "Music",   "Music debugging");
+SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc)
+  : Engine(syst)
+  , _gameDescription(gameDesc)
+  , _randomSource("Sherlock") {
+	DebugMan.addDebugChannel(kDebugLevelScript, "scripts", "Script debug level");
+	DebugMan.addDebugChannel(kDebugLevelAdLibDriver, "AdLib", "AdLib driver debugging");
+	DebugMan.addDebugChannel(kDebugLevelMT32Driver, "MT32", "MT32 driver debugging");
+	DebugMan.addDebugChannel(kDebugLevelMusic, "Music", "Music debugging");
 
 	_animation = nullptr;
 	_debugger = nullptr;

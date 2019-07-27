@@ -83,9 +83,9 @@ public:
 private:
 	bool animate(int section1, int section2, int duration);
 	bool animate(int section1, int section2, int duration, MessagePosition position,
-				 StringId text);
+	             StringId text);
 	bool animate(int section1, int section2, int section3, int section4, int duration,
-				 MessagePosition position, StringId text);
+	             MessagePosition position, StringId text);
 
 	void titleScreen();
 	void titleFadeIn();
@@ -104,14 +104,14 @@ public:
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 };
 
-class ShipHall: public Room {
+class ShipHall : public Room {
 public:
 	ShipHall(SupernovaEngine *vm, GameManager *gm);
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 };
 
-class ShipSleepCabin: public Room {
+class ShipSleepCabin : public Room {
 public:
 	ShipSleepCabin(SupernovaEngine *vm, GameManager *gm);
 
@@ -135,7 +135,7 @@ private:
 	byte _color;
 };
 
-class ShipCabinL1: public Room {
+class ShipCabinL1 : public Room {
 public:
 	ShipCabinL1(SupernovaEngine *vm, GameManager *gm);
 };
@@ -172,7 +172,7 @@ public:
 	virtual void onEntrance();
 };
 
-class ShipCabinBathroom : public Room  {
+class ShipCabinBathroom : public Room {
 public:
 	ShipCabinBathroom(SupernovaEngine *vm, GameManager *gm);
 };
@@ -211,7 +211,6 @@ class ShipOuterSpace : public Room {
 public:
 	ShipOuterSpace(SupernovaEngine *vm, GameManager *gm);
 };
-
 
 // Arsano
 class ArsanoRocks : public Room {
@@ -324,7 +323,6 @@ private:
 	// TODO: Hack, to be move away and renamed when the other uses are found
 	StringId _dialogsX[6];
 };
-
 
 // Axacuss
 class AxacussCell : public Room {
@@ -511,9 +509,9 @@ public:
 private:
 	void animate(int filenumber, int section1, int section2, int duration);
 	void animate(int filenumber, int section1, int section2, int duration, MessagePosition position,
-				 const char *text);
+	             const char *text);
 	void animate(int filenumber, int section1, int section2, int section3, int section4, int duration,
-				 MessagePosition position, const char *text);
+	             MessagePosition position, const char *text);
 
 	Common::String _outroText;
 };

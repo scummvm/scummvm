@@ -30,7 +30,9 @@
 
 namespace LastExpress {
 
-State::State(LastExpressEngine *engine) : _engine(engine), _timer(0) {
+State::State(LastExpressEngine *engine)
+  : _engine(engine)
+  , _timer(0) {
 	_inventory = new Inventory(engine);
 	_objects = new Objects(engine);
 	_savepoints = new SavePoints(engine);
@@ -63,8 +65,8 @@ void State::reset() {
 
 bool State::isNightTime() const {
 	return (_state->progress.chapter == kChapter1
-		 || _state->progress.chapter == kChapter4
-		 || (_state->progress.chapter == kChapter5 && !_state->progress.isNightTime));
+	        || _state->progress.chapter == kChapter4
+	        || (_state->progress.chapter == kChapter5 && !_state->progress.isNightTime));
 }
 
 void State::getHourMinutes(uint32 time, uint8 *hours, uint8 *minutes) {
@@ -72,7 +74,7 @@ void State::getHourMinutes(uint32 time, uint8 *hours, uint8 *minutes) {
 		error("[State::getHourMinutes] Invalid parameters passed");
 
 	*hours = (uint8)((time % 1296000) / 54000);
-	*minutes =  (uint8)((time % 54000) / 900);
+	*minutes = (uint8)((time % 54000) / 900);
 }
 
 uint32 State::getPowerOfTwo(uint32 x) {

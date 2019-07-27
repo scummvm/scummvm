@@ -27,8 +27,9 @@ namespace Sherlock {
 
 namespace Tattoo {
 
-TattooDebugger::TattooDebugger(SherlockEngine *vm) : Debugger(vm) {
-}
+	TattooDebugger::TattooDebugger(SherlockEngine *vm)
+	  : Debugger(vm) {
+	}
 
 } // End of namespace Tattoo
 

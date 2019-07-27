@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptHysteriaPatron3::AIScriptHysteriaPatron3(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptHysteriaPatron3::AIScriptHysteriaPatron3(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 }
 
 void AIScriptHysteriaPatron3::Initialize() {
@@ -99,17 +100,17 @@ bool AIScriptHysteriaPatron3::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptHysteriaPatron3::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptHysteriaPatron3::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptHysteriaPatron3::ReachedMovementTrackWaypoint(int waypointId) {

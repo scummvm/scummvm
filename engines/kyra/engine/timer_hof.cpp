@@ -106,5 +106,4 @@ void KyraEngine_HoF::setWalkspeed(uint8 newSpeed) {
 	_timer->setDelay(0, newSpeed);
 }
 
-
 } // End of namespace Kyra

@@ -29,12 +29,11 @@
 namespace StarTrek {
 
 extern const RoomAction trial4ActionList[] = {
-	{ {ACTION_TICK, 1,  0, 0}, &Room::trial4Tick1 },
-	{ {ACTION_TICK, 60, 0, 0}, &Room::trial4Tick60 },
+	{ { ACTION_TICK, 1, 0, 0 }, &Room::trial4Tick1 },
+	{ { ACTION_TICK, 60, 0, 0 }, &Room::trial4Tick60 },
 };
 
 extern const int trial4NumActions = ARRAYSIZE(trial4ActionList);
-
 
 void Room::trial4Tick1() {
 	playVoc("TRI4LOOP");
@@ -67,7 +66,7 @@ void Room::trial4Tick60() {
 		showMultipleTexts(choices2); // choice doesn't matter
 
 		showText(TX_SPEAKER_VLICT, TX_TRI4_062);
-		showText(TX_SPEAKER_KIRK,  TX_TRI4_014);
+		showText(TX_SPEAKER_KIRK, TX_TRI4_014);
 		showText(TX_SPEAKER_VLICT, TX_TRI4_066);
 		showText(TX_SPEAKER_QUETZECOATL, TX_TRI4_043);
 
@@ -87,11 +86,11 @@ void Room::trial4Tick60() {
 		}
 	} else if (choice == 1) { // "Use of guile is honorable?"
 		showText(TX_SPEAKER_VLICT, TX_TRI4_060);
-		showText(TX_SPEAKER_KIRK,  TX_TRI4_013);
+		showText(TX_SPEAKER_KIRK, TX_TRI4_013);
 		showText(TX_SPEAKER_VLICT, TX_TRI4_072);
-		showText(TX_SPEAKER_KIRK,  TX_TRI4_015);
+		showText(TX_SPEAKER_KIRK, TX_TRI4_015);
 		showText(TX_SPEAKER_VLICT, TX_TRI4_071);
-		showText(TX_SPEAKER_KIRK,  TX_TRI4_005);
+		showText(TX_SPEAKER_KIRK, TX_TRI4_005);
 		showText(TX_SPEAKER_QUETZECOATL, TX_TRI4_052);
 		showText(TX_SPEAKER_QUETZECOATL, TX_TRI4_041);
 		showText(TX_SPEAKER_QUETZECOATL, TX_TRI4_051);
@@ -108,7 +107,7 @@ void Room::trial4Tick60() {
 
 		if (choice == 1) { // Threatened Vlict
 			showText(TX_SPEAKER_VLICT, TX_TRI4_069);
-			showText(TX_SPEAKER_KIRK,  TX_TRI4_004);
+			showText(TX_SPEAKER_KIRK, TX_TRI4_004);
 		} // else, nothing more
 	} else if (choice == 2) { // "You didn't say I couldn't use my ship"
 		showText(TX_SPEAKER_VLICT, TX_TRI4_058);
@@ -122,8 +121,8 @@ void Room::trial4Tick60() {
 
 		if (choice == 0) { // "Let's stop playing games"
 			showText(TX_SPEAKER_VLICT, TX_TRI4_075);
-			showText(TX_SPEAKER_KIRK,  TX_TRI4_017);
-			showText(TX_SPEAKER_QUETZECOATL,  TX_TRI4_042);
+			showText(TX_SPEAKER_KIRK, TX_TRI4_017);
+			showText(TX_SPEAKER_QUETZECOATL, TX_TRI4_042);
 			showText(TX_SPEAKER_VLICT, TX_TRI4_054);
 
 			const TextRef choices3[] = {
@@ -144,11 +143,11 @@ void Room::trial4Tick60() {
 			showText(TX_SPEAKER_VLICT, TX_TRI4_076);
 			showText(TX_SPEAKER_MCCOY, TX_TRI4_037);
 			showText(TX_SPEAKER_VLICT, TX_TRI4_073);
-			showText(TX_SPEAKER_KIRK,  TX_TRI4_011);
+			showText(TX_SPEAKER_KIRK, TX_TRI4_011);
 			showText(TX_SPEAKER_VLICT, TX_TRI4_059);
 		} else if (choice == 2) { // "Nature beat me to it"
 			showText(TX_SPEAKER_VLICT, TX_TRI4_065);
-			showText(TX_SPEAKER_KIRK,  TX_TRI4_016);
+			showText(TX_SPEAKER_KIRK, TX_TRI4_016);
 			showText(TX_SPEAKER_VLICT, TX_TRI4_074);
 
 			const TextRef choices3[] = {
@@ -165,15 +164,15 @@ void Room::trial4Tick60() {
 				showText(TX_SPEAKER_KIRK, TX_TRI4_006);
 				showText(TX_SPEAKER_QUETZECOATL, TX_TRI4_048);
 			} else if (choice == 1) { // "You didn't give him a fair trial"
-				showText(TX_SPEAKER_VLICT,       TX_TRI4_055);
+				showText(TX_SPEAKER_VLICT, TX_TRI4_055);
 				showText(TX_SPEAKER_QUETZECOATL, TX_TRI4_045);
-				showText(TX_SPEAKER_KIRK,        TX_TRI4_003);
+				showText(TX_SPEAKER_KIRK, TX_TRI4_003);
 				showText(TX_SPEAKER_QUETZECOATL, TX_TRI4_047);
-				showText(TX_SPEAKER_KIRK,        TX_TRI4_010);
+				showText(TX_SPEAKER_KIRK, TX_TRI4_010);
 			} else if (choice == 2) { // "How can a liar like you say 'honor'"
-				showText(TX_SPEAKER_VLICT,       TX_TRI4_067);
+				showText(TX_SPEAKER_VLICT, TX_TRI4_067);
 				showText(TX_SPEAKER_QUETZECOATL, TX_TRI4_046);
-				showText(TX_SPEAKER_KIRK,        TX_TRI4_007);
+				showText(TX_SPEAKER_KIRK, TX_TRI4_007);
 				showText(TX_SPEAKER_QUETZECOATL, TX_TRI4_049);
 			}
 		}

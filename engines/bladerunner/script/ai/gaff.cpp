@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptGaff::AIScriptGaff(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptGaff::AIScriptGaff(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 }
 
 void AIScriptGaff::Initialize() {
@@ -38,22 +39,19 @@ void AIScriptGaff::Initialize() {
 }
 
 bool AIScriptGaff::Update() {
-	if ( Global_Variable_Query(kVariableChapter) == 2
-	 && !Game_Flag_Query(kFlagGaffChapter2Started)
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 2
+	    && !Game_Flag_Query(kFlagGaffChapter2Started)) {
 		Actor_Set_Goal_Number(kActorGaff, kGoalGaffStartWalkingAround);
 		Game_Flag_Set(kFlagGaffChapter2Started);
 		return true;
 	}
 
 	if (Global_Variable_Query(kVariableChapter) == 4
-	 && Actor_Query_Goal_Number(kActorGaff) < kGoalGaffStartChapter4
-	) {
+	    && Actor_Query_Goal_Number(kActorGaff) < kGoalGaffStartChapter4) {
 		Actor_Set_Goal_Number(kActorGaff, kGoalGaffStartChapter4);
 	}
 
 	return false;
-
 }
 
 void AIScriptGaff::TimerExpired(int timer) {
@@ -107,17 +105,17 @@ void AIScriptGaff::CompletedMovementTrack() {
 
 	if (Actor_Query_Goal_Number(kActorGaff) == kGoalGaffStartWalkingAround) {
 		Actor_Set_Goal_Number(kActorGaff, kGoalGaffWalkAround);
-		return;// true;
+		return; // true;
 	}
 
 	if (Actor_Query_Goal_Number(kActorGaff) == kGoalGaffWalkAround) {
 		Actor_Set_Goal_Number(kActorGaff, kGoalGaffRepeatWalkingAround);
-		return;// true;
+		return; // true;
 	}
 
 	if (Actor_Query_Goal_Number(kActorGaff) == kGoalGaffRepeatWalkingAround) {
 		Actor_Set_Goal_Number(kActorGaff, kGoalGaffWalkAround);
-		return;// true;
+		return; // true;
 	}
 	// return false;
 }
@@ -128,10 +126,8 @@ void AIScriptGaff::ReceivedClue(int clueId, int fromActorId) {
 
 void AIScriptGaff::ClickedByPlayer() {
 	if ((Global_Variable_Query(kVariableChapter) == 2
-	  || Global_Variable_Query(kVariableChapter) == 3
-	 )
-	 && Game_Flag_Query(kFlagGaffChapter2Started)
-	) {
+	     || Global_Variable_Query(kVariableChapter) == 3)
+	    && Game_Flag_Query(kFlagGaffChapter2Started)) {
 		AI_Movement_Track_Pause(kActorGaff);
 		Actor_Face_Actor(kActorMcCoy, kActorGaff, true);
 		Actor_Face_Actor(kActorGaff, kActorMcCoy, true);
@@ -166,11 +162,10 @@ void AIScriptGaff::OtherAgentExitedThisScene(int otherActorId) {
 void AIScriptGaff::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
 	// It is impossible to triger this as player has no control at this moment
 	if (otherActorId == kActorMcCoy
-	 && combatMode == 1
-	 && Global_Variable_Query(kVariableChapter) == 4
-	 && Actor_Query_In_Set(kActorMcCoy, kSetMA07)
-	 && Actor_Query_Goal_Number(kActorGaff) == kGoalGaffMA07Wait
-	) {
+	    && combatMode == 1
+	    && Global_Variable_Query(kVariableChapter) == 4
+	    && Actor_Query_In_Set(kActorMcCoy, kSetMA07)
+	    && Actor_Query_Goal_Number(kActorGaff) == kGoalGaffMA07Wait) {
 		AI_Countdown_Timer_Reset(kActorGaff, kActorTimerAIScriptCustomTask0);
 		Actor_Set_Goal_Number(kActorGaff, kGoalGaffMA07ShootMcCoy);
 	}
@@ -238,29 +233,28 @@ bool AIScriptGaff::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorGaff);
 		return true;
 
-	case kGoalGaffWalkAround:
-		{
-			AI_Movement_Track_Flush(kActorGaff);
-			AI_Movement_Track_Append(kActorGaff, 82, 1);
-			AI_Movement_Track_Append(kActorGaff, 76, 1);
-			AI_Movement_Track_Append(kActorGaff, 78, 1);
-			int rnd = Random_Query(1, 3);
-			if (rnd == 1) {
-				AI_Movement_Track_Append(kActorGaff, 271, 0);
-				AI_Movement_Track_Append(kActorGaff, 272, 0);
-				AI_Movement_Track_Append(kActorGaff, 273, 0);
-			} else if (rnd == 2) {
-				AI_Movement_Track_Append(kActorGaff, 273, 0);
-				AI_Movement_Track_Append(kActorGaff, 272, 0);
-				AI_Movement_Track_Append(kActorGaff, 271, 0);
-			} else if (rnd == 3) {
-				AI_Movement_Track_Append(kActorGaff, 272, 0);
-				AI_Movement_Track_Append(kActorGaff, 273, 0);
-			}
-			AI_Movement_Track_Append(kActorGaff, 274, 0);
-			AI_Movement_Track_Append(kActorGaff, 275, 0);
-			AI_Movement_Track_Repeat(kActorGaff);
+	case kGoalGaffWalkAround: {
+		AI_Movement_Track_Flush(kActorGaff);
+		AI_Movement_Track_Append(kActorGaff, 82, 1);
+		AI_Movement_Track_Append(kActorGaff, 76, 1);
+		AI_Movement_Track_Append(kActorGaff, 78, 1);
+		int rnd = Random_Query(1, 3);
+		if (rnd == 1) {
+			AI_Movement_Track_Append(kActorGaff, 271, 0);
+			AI_Movement_Track_Append(kActorGaff, 272, 0);
+			AI_Movement_Track_Append(kActorGaff, 273, 0);
+		} else if (rnd == 2) {
+			AI_Movement_Track_Append(kActorGaff, 273, 0);
+			AI_Movement_Track_Append(kActorGaff, 272, 0);
+			AI_Movement_Track_Append(kActorGaff, 271, 0);
+		} else if (rnd == 3) {
+			AI_Movement_Track_Append(kActorGaff, 272, 0);
+			AI_Movement_Track_Append(kActorGaff, 273, 0);
 		}
+		AI_Movement_Track_Append(kActorGaff, 274, 0);
+		AI_Movement_Track_Append(kActorGaff, 275, 0);
+		AI_Movement_Track_Repeat(kActorGaff);
+	}
 		return true;
 
 	case kGoalGaffRepeatWalkingAround:
@@ -479,17 +473,17 @@ bool AIScriptGaff::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptGaff::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptGaff::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptGaff::ReachedMovementTrackWaypoint(int waypointId) {

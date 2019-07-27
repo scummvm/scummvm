@@ -39,15 +39,16 @@
 
 #if defined(__MINT__)
 
-#include <osbind.h>
-#include "audio/mpu401.h"
-#include "common/error.h"
-#include "common/util.h"
-#include "audio/musicplugin.h"
+#	include "audio/mpu401.h"
+#	include "audio/musicplugin.h"
+#	include "common/error.h"
+#	include "common/util.h"
+#	include <osbind.h>
 
 class MidiDriver_STMIDI : public MidiDriver_MPU401 {
 public:
-	MidiDriver_STMIDI() : _isOpen (false) { }
+	MidiDriver_STMIDI()
+	  : _isOpen(false) {}
 	int open();
 	bool isOpen() const { return _isOpen; }
 	void close();
@@ -77,20 +78,20 @@ void MidiDriver_STMIDI::send(uint32 b) {
 	byte first_byte = (b & 0x0000FF00) >> 8;
 	byte second_byte = (b & 0x00FF0000) >> 16;
 
-//	warning("ST MIDI Packet sent");
+	//	warning("ST MIDI Packet sent");
 
 	switch (b & 0xF0) {
-	case 0x80:	// Note Off
-	case 0x90:	// Note On
-	case 0xA0:	// Polyphonic Key Pressure
-	case 0xB0:	// Controller
-	case 0xE0:	// Pitch Bend
+	case 0x80: // Note Off
+	case 0x90: // Note On
+	case 0xA0: // Polyphonic Key Pressure
+	case 0xB0: // Controller
+	case 0xE0: // Pitch Bend
 		Bconout(3, status_byte);
 		Bconout(3, first_byte);
 		Bconout(3, second_byte);
 		break;
-	case 0xC0:	// Program Change
-	case 0xD0:	// Aftertouch
+	case 0xC0: // Program Change
+	case 0xD0: // Aftertouch
 		Bconout(3, status_byte);
 		Bconout(3, first_byte);
 		break;
@@ -100,12 +101,12 @@ void MidiDriver_STMIDI::send(uint32 b) {
 	}
 }
 
-void MidiDriver_STMIDI::sysEx (const byte *msg, uint16 length) {
+void MidiDriver_STMIDI::sysEx(const byte *msg, uint16 length) {
 	// FIXME: LordHoto doesn't know if this will still work
 	// when sending 264 byte sysEx data, as needed by KYRA,
 	// feel free to revert it to 254 again if needed.
 	if (length > 264) {
-		warning ("Cannot send SysEx block - data too large");
+		warning("Cannot send SysEx block - data too large");
 		return;
 	}
 
@@ -114,7 +115,7 @@ void MidiDriver_STMIDI::sysEx (const byte *msg, uint16 length) {
 
 	Bconout(3, '0xF0');
 	for (; length; --length, ++chr) {
-		Bconout(3,((unsigned char) *chr & 0x7F));
+		Bconout(3, ((unsigned char)*chr & 0x7F));
 	}
 	Bconout(3, '0xF7');
 }
@@ -150,9 +151,9 @@ Common::Error StMidiMusicPlugin::createInstance(MidiDriver **mididriver, MidiDri
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(STMIDI)
-	//REGISTER_PLUGIN_DYNAMIC(STMIDI, PLUGIN_TYPE_MUSIC, StMidiMusicPlugin);
+//REGISTER_PLUGIN_DYNAMIC(STMIDI, PLUGIN_TYPE_MUSIC, StMidiMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(STMIDI, PLUGIN_TYPE_MUSIC, StMidiMusicPlugin);
+REGISTER_PLUGIN_STATIC(STMIDI, PLUGIN_TYPE_MUSIC, StMidiMusicPlugin);
 //#endif
 
 #endif

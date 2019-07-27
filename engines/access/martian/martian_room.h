@@ -23,8 +23,8 @@
 #ifndef ACCESS_MARTIAN_ROOM_H
 #define ACCESS_MARTIAN_ROOM_H
 
-#include "common/scummsys.h"
 #include "access/room.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
@@ -32,33 +32,35 @@ class AccessEngine;
 
 namespace Martian {
 
-class MartianEngine;
+	class MartianEngine;
 
-class MartianRoom : public Room {
-private:
-	MartianEngine *_game;
+	class MartianRoom : public Room {
+	private:
+		MartianEngine *_game;
 
-	void roomSet();
+		void roomSet();
 
-	int _byte26CD2[30];
-	int _byte26CBC[10];
-protected:
-	virtual void loadRoom(int roomNumber);
+		int _byte26CD2[30];
+		int _byte26CBC[10];
 
-	virtual void reloadRoom();
+	protected:
+		virtual void loadRoom(int roomNumber);
 
-	virtual void reloadRoom1();
+		virtual void reloadRoom();
 
-	virtual void mainAreaClick();
-public:
-	MartianRoom(AccessEngine *vm);
+		virtual void reloadRoom1();
 
-	virtual ~MartianRoom();
+		virtual void mainAreaClick();
 
-	virtual void init4Quads() { }
+	public:
+		MartianRoom(AccessEngine *vm);
 
-	virtual void roomMenu();
-};
+		virtual ~MartianRoom();
+
+		virtual void init4Quads() {}
+
+		virtual void roomMenu();
+	};
 
 } // End of namespace Martian
 

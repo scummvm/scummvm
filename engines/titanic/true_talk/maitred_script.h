@@ -32,6 +32,7 @@ private:
 	TTmapEntryArray _states;
 	TTsentenceEntries _sentences1;
 	int _answerCtr;
+
 private:
 	/**
 	 * Setup sentence data
@@ -63,9 +64,10 @@ private:
 	 * Does preprocessing for the sentence
 	 */
 	int preprocess(const TTroomScript *roomScript, const TTsentence *sentence);
+
 public:
 	MaitreDScript(int val1, const char *charClass, int v2,
-			const char *charName, int v3, int val2);
+	              const char *charName, int v3, int val2);
 
 	/**
 	 * Chooses and adds a conversation response based on a specified tag Id.
@@ -83,7 +85,7 @@ public:
 	virtual ScriptChangedResult scriptChanged(const TTroomScript *roomScript, uint id);
 
 	virtual int handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
-		uint tag1, uint tag2, uint remainder);
+	                        uint tag1, uint tag2, uint remainder);
 
 	/**
 	 * Handles updating NPC state based on specified dialogue Ids and dial positions

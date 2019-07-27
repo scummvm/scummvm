@@ -24,9 +24,11 @@
 #include "common/hash-str.h"
 #include "common/translation.h"
 
-MusicDevice::MusicDevice(MusicPluginObject const *musicPlugin, Common::String name, MusicType mt) :
-	_musicDriverName(_(musicPlugin->getName())), _musicDriverId(musicPlugin->getId()),
-	_name(_(name)), _type(mt) {
+MusicDevice::MusicDevice(MusicPluginObject const *musicPlugin, Common::String name, MusicType mt)
+  : _musicDriverName(_(musicPlugin->getName()))
+  , _musicDriverId(musicPlugin->getId())
+  , _name(_(name))
+  , _type(mt) {
 }
 
 Common::String MusicDevice::getCompleteName() {

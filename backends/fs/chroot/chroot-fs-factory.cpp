@@ -22,20 +22,20 @@
 
 #if defined(POSIX)
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
-#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
-#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
-#define FORBIDDEN_SYMBOL_EXCEPTION_exit		//Needed for IRIX's unistd.h
-#define FORBIDDEN_SYMBOL_EXCEPTION_random
-#define FORBIDDEN_SYMBOL_EXCEPTION_srandom
+#	define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+#	define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
+#	define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
+#	define FORBIDDEN_SYMBOL_EXCEPTION_exit //Needed for IRIX's unistd.h
+#	define FORBIDDEN_SYMBOL_EXCEPTION_random
+#	define FORBIDDEN_SYMBOL_EXCEPTION_srandom
 
-#include <unistd.h>
+#	include <unistd.h>
 
-#include "backends/fs/chroot/chroot-fs-factory.h"
-#include "backends/fs/chroot/chroot-fs.h"
+#	include "backends/fs/chroot/chroot-fs-factory.h"
+#	include "backends/fs/chroot/chroot-fs.h"
 
 ChRootFilesystemFactory::ChRootFilesystemFactory(const Common::String &root)
-    : _root(root) {
+  : _root(root) {
 }
 
 AbstractFSNode *ChRootFilesystemFactory::makeRootFileNode() const {

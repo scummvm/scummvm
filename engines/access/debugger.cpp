@@ -20,10 +20,10 @@
  *
  */
 
-#include "common/file.h"
-#include "access/access.h"
 #include "access/debugger.h"
+#include "access/access.h"
 #include "access/amazon/amazon_game.h"
+#include "common/file.h"
 
 namespace Access {
 
@@ -64,7 +64,9 @@ void Debugger::postEnter() {
 
 /*------------------------------------------------------------------------*/
 
-Debugger::Debugger(AccessEngine *vm) : GUI::Debugger(), _vm(vm) {
+Debugger::Debugger(AccessEngine *vm)
+  : GUI::Debugger()
+  , _vm(vm) {
 	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("scene", WRAP_METHOD(Debugger, Cmd_LoadScene));
 	registerCmd("cheat", WRAP_METHOD(Debugger, Cmd_Cheat));
@@ -104,7 +106,7 @@ bool Debugger::Cmd_LoadScene(int argc, const char **argv) {
 		_vm->_scripts->_returnCode = 0;
 
 		return false;
-		}
+	}
 	default:
 		debugPrintf("Current scene is: %d\n", _vm->_player->_roomNumber);
 		debugPrintf("Usage: %s <scene number>\n", argv[0]);
@@ -141,27 +143,28 @@ bool Debugger::Cmd_PlayMovie(int argc, const char **argv) {
 
 namespace Amazon {
 
-AmazonDebugger::AmazonDebugger(AccessEngine *vm) : Debugger(vm) {
-	registerCmd("chapter", WRAP_METHOD(AmazonDebugger, Cmd_StartChapter));
-}
-
-bool AmazonDebugger::Cmd_StartChapter(int argc, const char **argv) {
-	if (argc != 2) {
-		debugPrintf("Usage: %s <chapter number>\n", argv[0]);
-		return true;
+	AmazonDebugger::AmazonDebugger(AccessEngine *vm)
+	  : Debugger(vm) {
+		registerCmd("chapter", WRAP_METHOD(AmazonDebugger, Cmd_StartChapter));
 	}
 
-	// Build up a simple one line script to start the given chapter
-	byte *chapterScript = (byte *)malloc(5);
-	chapterScript[0] = SCRIPT_START_BYTE;
-	chapterScript[1] = ROOM_SCRIPT % 256;
-	chapterScript[2] = ROOM_SCRIPT / 256;
-	chapterScript[3] = 0x80 + 75;			// cmdChapter
-	chapterScript[4] = strToInt(argv[1]);	// chapter number
-	_vm->_scripts->setScript(new Resource(chapterScript, 5), true);
+	bool AmazonDebugger::Cmd_StartChapter(int argc, const char **argv) {
+		if (argc != 2) {
+			debugPrintf("Usage: %s <chapter number>\n", argv[0]);
+			return true;
+		}
 
-	return false;
-}
+		// Build up a simple one line script to start the given chapter
+		byte *chapterScript = (byte *)malloc(5);
+		chapterScript[0] = SCRIPT_START_BYTE;
+		chapterScript[1] = ROOM_SCRIPT % 256;
+		chapterScript[2] = ROOM_SCRIPT / 256;
+		chapterScript[3] = 0x80 + 75; // cmdChapter
+		chapterScript[4] = strToInt(argv[1]); // chapter number
+		_vm->_scripts->setScript(new Resource(chapterScript, 5), true);
+
+		return false;
+	}
 
 } // End of namespace Amazon
 

@@ -20,12 +20,12 @@
  *
  */
 
+#include "agi/inv.h"
 #include "agi/agi.h"
 #include "agi/graphics.h"
-#include "agi/inv.h"
-#include "agi/text.h"
 #include "agi/keyboard.h"
 #include "agi/systemui.h"
+#include "agi/text.h"
 
 namespace Agi {
 

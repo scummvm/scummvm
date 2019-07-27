@@ -30,7 +30,7 @@
 // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
 #ifdef main
-#undef main
+#	undef main
 #endif // main
 
 #include <stdio.h>
@@ -40,13 +40,14 @@
 #include "common/endian.h"
 
 enum AccessMode {
-	kFileReadMode  = 1,
+	kFileReadMode = 1,
 	kFileWriteMode = 2
 };
 
 class File {
 private:
 	FILE *f;
+
 public:
 	bool open(const char *filename, AccessMode mode = kFileReadMode) {
 		f = fopen(filename, (mode == kFileReadMode) ? "rb" : "wb");
@@ -105,9 +106,9 @@ public:
 	}
 	uint32 size() {
 		uint32 position = ftell(f);
-		fseek (f, 0, SEEK_END);
+		fseek(f, 0, SEEK_END);
 		uint32 end = ftell(f);
-		fseek (f, position, SEEK_SET);
+		fseek(f, position, SEEK_SET);
 
 		return end;
 	}
@@ -121,25 +122,25 @@ int _version;
 #define BUFFER_SIZE 32768
 
 const byte tabdrFr[32] = {
-	32, 101, 115,  97, 114, 105, 110,
-	117, 116, 111, 108,  13, 100,  99,
-	112, 109,  46, 118, 130,  39, 102,
-	98,  44, 113, 104, 103,  33,  76,
-	85, 106,  30,  31
+	32, 101, 115, 97, 114, 105, 110,
+	117, 116, 111, 108, 13, 100, 99,
+	112, 109, 46, 118, 130, 39, 102,
+	98, 44, 113, 104, 103, 33, 76,
+	85, 106, 30, 31
 };
 
 const byte tab30Fr[32] = {
-	69,  67,  74, 138, 133, 120,  77, 122,
-	121,  68,  65,  63,  73,  80,  83,  82,
-	156,  45,  58,  79,  49,  86,  78,  84,
-	71,  81,  64,  66, 135,  34, 136,  91
+	69, 67, 74, 138, 133, 120, 77, 122,
+	121, 68, 65, 63, 73, 80, 83, 82,
+	156, 45, 58, 79, 49, 86, 78, 84,
+	71, 81, 64, 66, 135, 34, 136, 91
 };
 
-const byte tab31Fr[32]= {
-	93,  47,  48,  53,  50,  70, 124,  75,
-	72, 147, 140, 150, 151,  57,  56,  51,
-	107, 139,  55,  89, 131,  37,  54,  88,
-	119,   0,   0,   0,   0,   0,   0,   0
+const byte tab31Fr[32] = {
+	93, 47, 48, 53, 50, 70, 124, 75,
+	72, 147, 140, 150, 151, 57, 56, 51,
+	107, 139, 55, 89, 131, 37, 54, 88,
+	119, 0, 0, 0, 0, 0, 0, 0
 };
 
 const byte tabdrDe[32] = {
@@ -157,11 +158,11 @@ const byte tab30De[32] = {
 	0x6A, 0x5B, 0x5D, 0x40, 0x22, 0x2F, 0x30, 0x35
 };
 
-const byte tab31De[32]= {
+const byte tab31De[32] = {
 	0x78, 0x2D, 0x32, 0x82, 0x43, 0x39, 0x33, 0x38,
 	0x7C, 0x27, 0x37, 0x3B, 0x25, 0x28, 0x29, 0x36,
 	0x51, 0x59, 0x71, 0x81, 0x87, 0x88, 0x93, 0,
-	0,    0,    0,    0,    0,    0,    0,    0
+	0, 0, 0, 0, 0, 0, 0, 0
 };
 
 const byte *tabdr, *tab30, *tab31;
@@ -361,7 +362,7 @@ static void import_strings(const char *textFilename) {
 
 	// Set up a buffer for the output compressed strings
 	uint16 strData[BUFFER_SIZE];
-	memset(strData, 0, BUFFER_SIZE*sizeof(uint16));
+	memset(strData, 0, BUFFER_SIZE * sizeof(uint16));
 	char sLine[BUFFER_SIZE];
 
 	int indis = 0;
@@ -393,7 +394,6 @@ static void import_strings(const char *textFilename) {
 	txxNtp.close();
 	textFile.close();
 }
-
 
 int main(int argc, char *argv[]) {
 	if (argc != 4) {

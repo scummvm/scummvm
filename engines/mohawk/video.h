@@ -150,7 +150,10 @@ public:
 	/**
 	 * Move the video to the specified coordinates
 	 */
-	void moveTo(uint16 x, uint16 y) { setX(x); setY(y); }
+	void moveTo(uint16 x, uint16 y) {
+		setX(x);
+		setY(y);
+	}
 
 	/**
 	 * Center the video on the screen
@@ -223,7 +226,7 @@ private:
 	// Non-changing variables
 	Video::VideoDecoder *_video;
 	Common::String _fileName; // External video files
-	int _id;                  // Internal Mohawk files
+	int _id; // Internal Mohawk files
 
 	// Playback variables
 	uint16 _x;

@@ -24,9 +24,9 @@
 #define BACKENDS_GRAPHICS_WINDOWED_H
 
 #include "backends/graphics/graphics.h"
+#include "common/config-manager.h"
 #include "common/frac.h"
 #include "common/rect.h"
-#include "common/config-manager.h"
 #include "common/textconsole.h"
 #include "graphics/scaler/aspect.h"
 
@@ -39,16 +39,16 @@ enum {
 
 class WindowedGraphicsManager : virtual public GraphicsManager {
 public:
-	WindowedGraphicsManager() :
-		_windowWidth(0),
-		_windowHeight(0),
-		_overlayVisible(false),
-		_forceRedraw(false),
-		_cursorVisible(false),
-		_cursorX(0),
-		_cursorY(0),
-		_cursorNeedsRedraw(false),
-		_cursorLastInActiveArea(true) {}
+	WindowedGraphicsManager()
+	  : _windowWidth(0)
+	  , _windowHeight(0)
+	  , _overlayVisible(false)
+	  , _forceRedraw(false)
+	  , _cursorVisible(false)
+	  , _cursorX(0)
+	  , _cursorY(0)
+	  , _cursorNeedsRedraw(false)
+	  , _cursorLastInActiveArea(true) {}
 
 	virtual void showOverlay() override {
 		if (_overlayVisible)

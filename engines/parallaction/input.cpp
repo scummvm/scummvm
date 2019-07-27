@@ -25,24 +25,24 @@
 #include "common/textconsole.h"
 #include "graphics/cursorman.h"
 
+#include "parallaction/debug.h"
 #include "parallaction/exec.h"
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"
-#include "parallaction/debug.h"
 
 namespace Parallaction {
 
-#define MOUSEARROW_WIDTH_NS		16
-#define MOUSEARROW_HEIGHT_NS		16
+#define MOUSEARROW_WIDTH_NS 16
+#define MOUSEARROW_HEIGHT_NS 16
 
-#define MOUSECOMBO_WIDTH_NS		32	// sizes for cursor + selected inventory item
-#define MOUSECOMBO_HEIGHT_NS		32
+#define MOUSECOMBO_WIDTH_NS 32 // sizes for cursor + selected inventory item
+#define MOUSECOMBO_HEIGHT_NS 32
 
 struct MouseComboProperties {
-	int	_xOffset;
-	int	_yOffset;
-	int	_width;
-	int	_height;
+	int _xOffset;
+	int _yOffset;
+	int _width;
+	int _height;
 };
 /*
 // TODO: improve NS's handling of normal cursor before merging cursor code.
@@ -53,17 +53,18 @@ MouseComboProperties	_mouseComboProps_NS = {
 	32	// combo (arrow + icon) height
 };
 */
-MouseComboProperties	_mouseComboProps_BR = {
-	8,	// combo x offset (the icon from the inventory will be rendered from here)
-	8,	// combo y offset (ditto)
-	68,	// combo (arrow + icon) width
-	68	// combo (arrow + icon) height
+MouseComboProperties _mouseComboProps_BR = {
+	8, // combo x offset (the icon from the inventory will be rendered from here)
+	8, // combo y offset (ditto)
+	68, // combo (arrow + icon) width
+	68 // combo (arrow + icon) height
 };
 
-Input::Input(Parallaction *vm) : _vm(vm) {
+Input::Input(Parallaction *vm)
+  : _vm(vm) {
 	_gameType = _vm->getGameType();
 	_transCurrentHoverItem = 0;
-	_hasDelayedAction = false;  // actived when the character needs to move before taking an action
+	_hasDelayedAction = false; // actived when the character needs to move before taking an action
 	_mouseState = MOUSE_DISABLED;
 	_activeItem._index = 0;
 	_activeItem._id = 0;
@@ -143,9 +144,7 @@ void Input::readInput() {
 
 		default:
 			break;
-
 		}
-
 	}
 
 	if (updateMousePos) {
@@ -155,7 +154,6 @@ void Input::readInput() {
 	_vm->_debugger->onFrame();
 
 	return;
-
 }
 
 bool Input::getLastKeyDown(uint16 &ascii) {
@@ -167,7 +165,7 @@ bool Input::getLastKeyDown(uint16 &ascii) {
 void Input::waitForButtonEvent(uint32 buttonEventMask, int32 timeout) {
 
 	if (buttonEventMask == kMouseNone) {
-		_mouseButtons = kMouseNone;	// don't wait on nothing
+		_mouseButtons = kMouseNone; // don't wait on nothing
 		return;
 	}
 
@@ -184,43 +182,38 @@ void Input::waitForButtonEvent(uint32 buttonEventMask, int32 timeout) {
 			timeout -= LOOP_RESOLUTION;
 		} while ((timeout > 0) && (_mouseButtons & buttonEventMask) == 0);
 	}
-
 }
-
 
 int Input::updateGameInput() {
 
 	int event = kEvNone;
 
-	if (!isMouseEnabled() ||
-		(g_engineFlags & kEngineBlockInput) ||
-		(g_engineFlags & kEngineWalking) ||
-		(g_engineFlags & kEngineChangeLocation)) {
+	if (!isMouseEnabled() || (g_engineFlags & kEngineBlockInput) || (g_engineFlags & kEngineWalking) || (g_engineFlags & kEngineChangeLocation)) {
 
 		debugC(3, kDebugInput, "updateGameInput: input flags (mouse: %i, block: %i, walking: %i, changeloc: %i)",
-			isMouseEnabled(),
-			(g_engineFlags & kEngineBlockInput) == 0,
-			(g_engineFlags & kEngineWalking) == 0,
-			(g_engineFlags & kEngineChangeLocation) == 0
-		);
+		       isMouseEnabled(),
+		       (g_engineFlags & kEngineBlockInput) == 0,
+		       (g_engineFlags & kEngineWalking) == 0,
+		       (g_engineFlags & kEngineChangeLocation) == 0);
 
 		return event;
 	}
 
 	if (_gameType == GType_Nippon) {
 		if (_hasKeyPressEvent && (_vm->getFeatures() & GF_DEMO) == 0) {
-			if (_keyPressed.keycode == Common::KEYCODE_l) event = kEvLoadGame;
-			if (_keyPressed.keycode == Common::KEYCODE_s) event = kEvSaveGame;
+			if (_keyPressed.keycode == Common::KEYCODE_l)
+				event = kEvLoadGame;
+			if (_keyPressed.keycode == Common::KEYCODE_s)
+				event = kEvSaveGame;
 		}
-	} else
-	if (_gameType == GType_BRA) {
+	} else if (_gameType == GType_BRA) {
 		if (_hasKeyPressEvent && (_vm->getFeatures() & GF_DEMO) == 0) {
-			if (_keyPressed.keycode == Common::KEYCODE_F5) event = kEvIngameMenu;
+			if (_keyPressed.keycode == Common::KEYCODE_F5)
+				event = kEvIngameMenu;
 		}
 	} else {
 		error("unsupported gametype in updateGameInput");
 	}
-
 
 	if (event == kEvNone) {
 		translateGameInput();
@@ -228,7 +221,6 @@ int Input::updateGameInput() {
 
 	return event;
 }
-
 
 int Input::updateInput() {
 
@@ -329,7 +321,7 @@ bool Input::translateGameInput() {
 
 	if ((_mouseButtons == kMouseLeftUp) && ((_activeItem._id != 0) || (ACTIONTYPE(z) == kZoneCommand))) {
 
-		bool noWalk = z->_flags & kFlagsNoWalk;	// check the explicit no-walk flag
+		bool noWalk = z->_flags & kFlagsNoWalk; // check the explicit no-walk flag
 		if (_gameType == GType_BRA) {
 			// action performed on object marked for self-use do not need walk in BRA
 			noWalk |= ((z->_flags & kFlagsYourself) != 0);
@@ -356,7 +348,6 @@ bool Input::translateGameInput() {
 
 	return true;
 }
-
 
 void Input::enterInventoryMode() {
 	Common::Point mousePos;
@@ -387,7 +378,7 @@ void Input::exitInventoryMode() {
 	getCursorPos(mousePos);
 
 	int pos = _vm->getHoverInventoryItem(mousePos.x, mousePos.y);
-	_vm->highlightInventoryItem(-1);			// disable
+	_vm->highlightInventoryItem(-1); // disable
 
 	if ((g_engineFlags & kEngineDragging)) {
 
@@ -398,9 +389,8 @@ void Input::exitInventoryMode() {
 			_vm->dropItem(z->u._mergeObj1);
 			_vm->dropItem(z->u._mergeObj2);
 			_vm->addInventoryItem(z->u._mergeObj3);
-			_vm->_cmdExec->run(z->_commands);	// commands might set a new _inputMode
+			_vm->_cmdExec->run(z->_commands); // commands might set a new _inputMode
 		}
-
 	}
 
 	_vm->closeInventory();
@@ -434,11 +424,10 @@ bool Input::updateInventoryInput() {
 	int16 _si = _vm->getHoverInventoryItem(mousePos.x, mousePos.y);
 	if (_si != _transCurrentHoverItem) {
 		_transCurrentHoverItem = _si;
-		_vm->highlightInventoryItem(_si);						// enable
+		_vm->highlightInventoryItem(_si); // enable
 	}
 
 	return true;
-
 }
 
 void Input::setMouseState(MouseTriState state) {
@@ -465,12 +454,11 @@ bool Input::isMouseEnabled() {
 	return (_mouseState == MOUSE_ENABLED_SHOW) || (_mouseState == MOUSE_ENABLED_HIDE);
 }
 
-void Input::getAbsoluteCursorPos(Common::Point& p) const {
+void Input::getAbsoluteCursorPos(Common::Point &p) const {
 	_vm->_gfx->getScrollPos(p);
 	p.x += _mousePos.x;
 	p.y += _mousePos.y;
 }
-
 
 void Input::initCursors() {
 
@@ -504,7 +492,7 @@ void Input::initCursors() {
 			// TODO: scale mouse cursor (see staticres.cpp)
 			Graphics::Surface *surf2 = new Graphics::Surface;
 			surf2->create(32, 16, Graphics::PixelFormat::createFormatCLUT8());
-			memcpy(surf2->getPixels(), _resMouseArrow_BR_Amiga, 32*16);
+			memcpy(surf2->getPixels(), _resMouseArrow_BR_Amiga, 32 * 16);
 			_mouseArrow = new SurfaceToFrames(surf2);
 		}
 		break;
@@ -512,7 +500,6 @@ void Input::initCursors() {
 	default:
 		warning("Input::initCursors: unknown gametype");
 	}
-
 }
 
 void Input::setArrowCursor() {
@@ -538,7 +525,6 @@ void Input::setArrowCursor() {
 	default:
 		warning("Input::setArrowCursor: unknown gametype");
 	}
-
 }
 
 void Input::setInventoryCursor(ItemName name) {
@@ -570,7 +556,6 @@ void Input::setInventoryCursor(ItemName name) {
 	default:
 		warning("Input::setInventoryCursor: unknown gametype");
 	}
-
 }
 
 } // namespace Parallaction

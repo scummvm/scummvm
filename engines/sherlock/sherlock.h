@@ -23,13 +23,13 @@
 #ifndef SHERLOCK_SHERLOCK_H
 #define SHERLOCK_SHERLOCK_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/endian.h"
 #include "common/hash-str.h"
-#include "common/serializer.h"
 #include "common/random.h"
 #include "common/savefile.h"
+#include "common/scummsys.h"
+#include "common/serializer.h"
 #include "common/util.h"
 #include "engines/engine.h"
 #include "sherlock/animation.h"
@@ -52,10 +52,10 @@
 namespace Sherlock {
 
 enum {
-	kDebugLevelScript      = 1 << 0,
+	kDebugLevelScript = 1 << 0,
 	kDebugLevelAdLibDriver = 2 << 0,
-	kDebugLevelMT32Driver  = 3 << 0,
-	kDebugLevelMusic       = 4 << 0
+	kDebugLevelMT32Driver = 3 << 0,
+	kDebugLevelMusic = 4 << 0
 };
 
 enum GameType {
@@ -80,7 +80,7 @@ class Resource;
 
 class SherlockEngine : public Engine {
 private:
-\
+
 	/**
 	 * Main loop for displaying a scene and handling all that occurs within it
 	 */
@@ -90,6 +90,7 @@ private:
 	 * Handle all player input
 	 */
 	void handleInput();
+
 protected:
 	/**
 	 * Does basic initialization of the game engine
@@ -109,6 +110,7 @@ protected:
 	 * Load game configuration esttings
 	 */
 	virtual void loadConfig();
+
 public:
 	const SherlockGameDescription *_gameDescription;
 	Animation *_animation;
@@ -135,6 +137,7 @@ public:
 	bool _showOriginalSavesDialog;
 	bool _interactiveFl;
 	bool _isScreenDoubled;
+
 public:
 	SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~SherlockEngine();

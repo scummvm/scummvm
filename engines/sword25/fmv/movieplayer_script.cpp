@@ -29,12 +29,12 @@
  *
  */
 
-#include "common/scummsys.h"	// for USE_THEORADEC
+#include "common/scummsys.h" // for USE_THEORADEC
 
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/kernel.h"
-#include "sword25/script/script.h"
 #include "sword25/script/luabindhelper.h"
+#include "sword25/script/script.h"
 
 #include "sword25/fmv/movieplayer.h"
 
@@ -152,7 +152,8 @@ bool MoviePlayer::registerScriptBindings() {
 	lua_State *L = static_cast<lua_State *>(pScript->getScriptObject());
 	assert(L);
 
-	if (!LuaBindhelper::addFunctionsToLib(L, LIBRARY_NAME, LIBRARY_FUNCTIONS)) return false;
+	if (!LuaBindhelper::addFunctionsToLib(L, LIBRARY_NAME, LIBRARY_FUNCTIONS))
+		return false;
 
 	return true;
 }

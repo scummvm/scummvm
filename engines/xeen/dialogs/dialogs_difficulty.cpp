@@ -34,7 +34,8 @@ int DifficultyDialog::show(XeenEngine *vm) {
 	return result;
 }
 
-DifficultyDialog::DifficultyDialog(XeenEngine *vm) : ButtonContainer(vm) {
+DifficultyDialog::DifficultyDialog(XeenEngine *vm)
+  : ButtonContainer(vm) {
 	loadButtons();
 }
 

@@ -22,9 +22,9 @@
 
 #include "titanic/core/game_object.h"
 #include "titanic/core/mail_man.h"
+#include "titanic/core/project_item.h"
 #include "titanic/core/resource_key.h"
 #include "titanic/core/room_item.h"
-#include "titanic/core/project_item.h"
 #include "titanic/debugger.h"
 #include "titanic/events.h"
 #include "titanic/game_manager.h"
@@ -57,7 +57,8 @@ void CGameObject::deinit() {
 	}
 }
 
-CGameObject::CGameObject(): CNamedItem() {
+CGameObject::CGameObject()
+  : CNamedItem() {
 	_bounds = Rect(0, 0, 15, 15);
 	_unused1 = 0;
 	_unused2 = 0;
@@ -94,7 +95,7 @@ void CGameObject::save(SimpleFile *file, int indent) {
 
 		if (rangeList) {
 			for (CMovieRangeInfoList::const_iterator i = rangeList->begin();
-				i != rangeList->end(); ++i) {
+			     i != rangeList->end(); ++i) {
 				CMovieRangeInfo *rangeInfo = new CMovieRangeInfo(*i);
 				rangeInfo->_initialFrame = (i == rangeList->begin()) ? getMovieFrame() : -1;
 				_movieRangeInfoList.push_back(rangeInfo);
@@ -466,7 +467,7 @@ bool CGameObject::isSoundActive(int handle) const {
 }
 
 void CGameObject::playAmbientSound(const CString &resName, VolumeMode mode, bool initialMute, bool repeated,
-		int handleIndex, Audio::Mixer::SoundType soundType) {
+                                   int handleIndex, Audio::Mixer::SoundType soundType) {
 	if (handleIndex < 0 || handleIndex > 3)
 		return;
 	CGameManager *gameManager = getGameManager();
@@ -663,7 +664,6 @@ void CGameObject::playMovie(int startFrame, int endFrame, uint flags) {
 	}
 }
 
-
 void CGameObject::playMovie(int startFrame, int endFrame, int initialFrame, uint flags) {
 	_frameNumber = -1;
 
@@ -809,7 +809,7 @@ int CGameObject::playSound(const CString &name, CProximity &prox) {
 }
 
 int CGameObject::queueSound(const CString &name, uint priorHandle, uint volume, int balance, bool repeated,
-		Audio::Mixer::SoundType soundType) {
+                            Audio::Mixer::SoundType soundType) {
 	CProximity prox;
 	prox._balance = balance;
 	prox._repeated = repeated;
@@ -836,7 +836,7 @@ void CGameObject::stopSound(int handle, uint seconds) {
 
 int CGameObject::addTimer(int endVal, uint firstDuration, uint repeatDuration) {
 	CTimeEventInfo *timer = new CTimeEventInfo(getTicksCount(), repeatDuration != 0,
-		firstDuration, repeatDuration, this, endVal, CString());
+	                                           firstDuration, repeatDuration, this, endVal, CString());
 
 	getGameManager()->addTimer(timer);
 	return timer->_id;
@@ -844,7 +844,7 @@ int CGameObject::addTimer(int endVal, uint firstDuration, uint repeatDuration) {
 
 int CGameObject::addTimer(uint firstDuration, uint repeatDuration) {
 	CTimeEventInfo *timer = new CTimeEventInfo(getTicksCount(), repeatDuration != 0,
-		firstDuration, repeatDuration, this, 0, CString());
+	                                           firstDuration, repeatDuration, this, 0, CString());
 
 	CGameManager *gameMan = getGameManager();
 	if (gameMan)
@@ -862,7 +862,7 @@ int CGameObject::startAnimTimer(const CString &action, uint firstDuration, uint 
 	CGameManager *gameMan = getGameManager();
 	if (gameMan) {
 		CTimeEventInfo *timer = new CTimeEventInfo(getTicksCount(), repeatDuration > 0,
-			firstDuration, repeatDuration, this, 0, action);
+		                                           firstDuration, repeatDuration, this, 0, action);
 		gameMan->addTimer(timer);
 		return timer->_id;
 	}
@@ -907,7 +907,7 @@ CString CGameObject::getViewFullName() const {
 	CRoomItem *room = node->findRoom();
 
 	return CString::format("%s.%s.%s", room->getName().c_str(),
-		node->getName().c_str(), view->getName().c_str());
+	                       node->getName().c_str(), view->getName().c_str());
 }
 
 void CGameObject::sleep(uint milli) {
@@ -968,7 +968,7 @@ CGameObject *CGameObject::findMailByFlags(RoomFlagsComparison compareType, uint 
 		return nullptr;
 
 	for (CGameObject *obj = mailMan->getFirstObject(); obj;
-			obj = mailMan->getNextObject(obj)) {
+	     obj = mailMan->getNextObject(obj)) {
 		if (compareRoomFlags(compareType, obj->_roomFlags, roomFlags))
 			return obj;
 	}
@@ -1240,7 +1240,7 @@ CGameObject *CGameObject::getDraggingObject() const {
 
 Point CGameObject::getControid() const {
 	return Point(_bounds.left + _bounds.width() / 2,
-		_bounds.top + _bounds.height() / 2);
+	             _bounds.top + _bounds.height() / 2);
 }
 
 bool CGameObject::clipExistsByStart(const CString &name, int startFrame) const {
@@ -1705,6 +1705,5 @@ uint CGameObject::getNodeChangedCtr() const {
 uint CGameObject::getNodeEnterTicks() const {
 	return getGameManager()->_gameState.getNodeEnterTicks();
 }
-
 
 } // End of namespace Titanic

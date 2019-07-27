@@ -31,7 +31,8 @@ class KyraEngine_MR;
 class Screen_MR;
 
 class GUI_MR : public GUI_v2 {
-friend class KyraEngine_MR;
+	friend class KyraEngine_MR;
+
 public:
 	GUI_MR(KyraEngine_MR *engine);
 
@@ -46,6 +47,7 @@ public:
 	int optionsButton(Button *button);
 
 	void createScreenThumbnail(Graphics::Surface &dst);
+
 private:
 	const char *getMenuTitle(const Menu &menu);
 	const char *getMenuItemTitle(const MenuItem &menuItem);

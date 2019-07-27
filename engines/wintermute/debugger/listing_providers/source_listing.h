@@ -27,6 +27,7 @@
 namespace Wintermute {
 class SourceListing : public Listing {
 	const Common::Array<Common::String> _strings;
+
 public:
 	SourceListing(const Common::Array<Common::String> &strings);
 	virtual ~SourceListing();

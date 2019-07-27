@@ -66,7 +66,7 @@ static void saveOrLoadVar(Common::ReadStream &stream, Location &location) {
 	location = (Location)stream.readSint32LE();
 }
 
-template<class S>
+template <class S>
 TuckerEngine::SavegameError TuckerEngine::saveOrLoadGameStateData(S &s) {
 	for (int i = 0; i < kFlagsTableSize; ++i) {
 		saveOrLoadVar(s, _flagsTable[i]);
@@ -115,7 +115,7 @@ Common::Error TuckerEngine::loadGameState(int slot) {
 
 		case kSavegameInvalidVersionError:
 			warning("Invalid savegame '%s' (expected savegame version v%i-v%i, got v%i)",
-				fileName.c_str(), kSavegameVersionMinimum, kSavegameVersionCurrent, header.version);
+			        fileName.c_str(), kSavegameVersionMinimum, kSavegameVersionCurrent, header.version);
 			break;
 
 		default:
@@ -140,7 +140,6 @@ Common::Error TuckerEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-
 WARN_UNUSED_RESULT TuckerEngine::SavegameError TuckerEngine::readSavegameHeader(const char *target, int slot, SavegameHeader &header) {
 	Common::String fileName = generateGameStateFileName(target, slot);
 	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(fileName);
@@ -156,12 +155,12 @@ WARN_UNUSED_RESULT TuckerEngine::SavegameError TuckerEngine::readSavegameHeader(
 }
 
 WARN_UNUSED_RESULT TuckerEngine::SavegameError TuckerEngine::readSavegameHeader(Common::InSaveFile *file, SavegameHeader &header, bool skipThumbnail) {
-	header.version   = 0;
-	header.flags     = 0;
+	header.version = 0;
+	header.flags = 0;
 	header.description.clear();
-	header.saveDate  = 0;
-	header.saveTime  = 0;
-	header.playTime  = 0;
+	header.saveDate = 0;
+	header.saveTime = 0;
+	header.playTime = 0;
 	header.thumbnail = nullptr;
 
 	if (file->readUint32BE() == kSavegameSignature) {
@@ -222,7 +221,7 @@ TuckerEngine::SavegameError TuckerEngine::writeSavegameHeader(Common::OutSaveFil
 	TimeDate curTime;
 	_system->getTimeAndDate(curTime);
 	header.saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
-	header.saveTime = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min)     & 0xFF) <<  8) | ((curTime.tm_sec)         & 0xFF);
+	header.saveTime = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
 	header.playTime = g_engine->getTotalPlayTime() / 1000;
 	file->writeUint32LE(header.saveDate);
 	file->writeUint32LE(header.saveTime);

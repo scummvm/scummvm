@@ -29,28 +29,28 @@ namespace Sci {
 
 // Flags for the signal selector
 enum ViewSignals {
-	kSignalStopUpdate    = 0x0001,
-	kSignalViewUpdated   = 0x0002,
-	kSignalNoUpdate      = 0x0004,
-	kSignalHidden        = 0x0008,
+	kSignalStopUpdate = 0x0001,
+	kSignalViewUpdated = 0x0002,
+	kSignalNoUpdate = 0x0004,
+	kSignalHidden = 0x0008,
 	kSignalFixedPriority = 0x0010,
-	kSignalAlwaysUpdate  = 0x0020,
-	kSignalForceUpdate   = 0x0040,
-	kSignalRemoveView    = 0x0080,
-	kSignalFrozen        = 0x0100, // I got frozen today!!
+	kSignalAlwaysUpdate = 0x0020,
+	kSignalForceUpdate = 0x0040,
+	kSignalRemoveView = 0x0080,
+	kSignalFrozen = 0x0100, // I got frozen today!!
 	//kSignalExtraActor	 = 0x0200, // unused by us, defines all actors that may be included into the background if speed is too slow
-	kSignalHitObstacle	 = 0x0400, // used in the actor movement code by kDoBresen()
-	kSignalDoesntTurn	 = 0x0800, // used by _k_dirloop() to determine if an actor can turn or not
+	kSignalHitObstacle = 0x0400, // used in the actor movement code by kDoBresen()
+	kSignalDoesntTurn = 0x0800, // used by _k_dirloop() to determine if an actor can turn or not
 	//kSignalNoCycler		 = 0x1000, // unused by us
 	//kSignalIgnoreHorizon = 0x2000, // unused by us, defines actor that can ignore horizon
-	kSignalIgnoreActor   = 0x4000,
-	kSignalDisposeMe     = 0x8000
+	kSignalIgnoreActor = 0x4000,
+	kSignalDisposeMe = 0x8000
 };
 
 enum ViewScaleSignals {
-	kScaleSignalDoScaling				= 0x0001, // enables scaling when drawing that cel (involves scaleX and scaleY)
-	kScaleSignalGlobalScaling			= 0x0002, // means that global scaling shall get applied on that cel (sets scaleX/scaleY)
-	kScaleSignalHoyle4SpecialHandling	= 0x0004  // HOYLE4-exclusive: special handling inside kAnimate, is used when giving out cards
+	kScaleSignalDoScaling = 0x0001, // enables scaling when drawing that cel (involves scaleX and scaleY)
+	kScaleSignalGlobalScaling = 0x0002, // means that global scaling shall get applied on that cel (sets scaleX/scaleY)
+	kScaleSignalHoyle4SpecialHandling = 0x0004 // HOYLE4-exclusive: special handling inside kAnimate, is used when giving out cards
 };
 
 struct AnimateEntry {

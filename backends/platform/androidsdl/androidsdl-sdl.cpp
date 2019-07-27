@@ -24,9 +24,9 @@
 
 #include "common/config-manager.h"
 
-#include "backends/platform/androidsdl/androidsdl-sdl.h"
 #include "backends/events/androidsdl/androidsdl-events.h"
 #include "backends/graphics/androidsdl/androidsdl-graphics.h"
+#include "backends/platform/androidsdl/androidsdl-sdl.h"
 #include <SDL_android.h>
 #include <SDL_screenkeyboard.h>
 
@@ -102,18 +102,18 @@ void OSystem_ANDROIDSDL::switchToRelativeMouseMode() {
 
 void OSystem_ANDROIDSDL::setFeatureState(Feature f, bool enable) {
 	switch (f) {
-		case kFeatureTouchpadMode:
-			ConfMan.setBool("touchpad_mouse_mode", enable);
-			touchpadMode(enable);
-			break;
-		case kFeatureOnScreenControl:
-			ConfMan.setBool("onscreen_control", enable);
-			showOnScreenControl(enable);
-			break;
-		case kFeatureSwapMenuAndBackButtons:
-			ConfMan.setBool("swap_menu_and_back_buttons", enable);
-			swapMenuAndBackButtons(enable);
-			break;
+	case kFeatureTouchpadMode:
+		ConfMan.setBool("touchpad_mouse_mode", enable);
+		touchpadMode(enable);
+		break;
+	case kFeatureOnScreenControl:
+		ConfMan.setBool("onscreen_control", enable);
+		showOnScreenControl(enable);
+		break;
+	case kFeatureSwapMenuAndBackButtons:
+		ConfMan.setBool("swap_menu_and_back_buttons", enable);
+		swapMenuAndBackButtons(enable);
+		break;
 	}
 
 	OSystem_POSIX::setFeatureState(f, enable);
@@ -121,24 +121,21 @@ void OSystem_ANDROIDSDL::setFeatureState(Feature f, bool enable) {
 
 bool OSystem_ANDROIDSDL::getFeatureState(Feature f) {
 	switch (f) {
-		case kFeatureTouchpadMode:
-			return ConfMan.getBool("touchpad_mouse_mode");
-			break;
-		case kFeatureOnScreenControl:
-			return ConfMan.getBool("onscreen_control");
-			break;
-		case kFeatureSwapMenuAndBackButtons:
-			return ConfMan.getBool("swap_menu_and_back_buttons");
-			break;
-		default:
-			return OSystem_POSIX::getFeatureState(f);
-			break;
+	case kFeatureTouchpadMode:
+		return ConfMan.getBool("touchpad_mouse_mode");
+		break;
+	case kFeatureOnScreenControl:
+		return ConfMan.getBool("onscreen_control");
+		break;
+	case kFeatureSwapMenuAndBackButtons:
+		return ConfMan.getBool("swap_menu_and_back_buttons");
+		break;
+	default:
+		return OSystem_POSIX::getFeatureState(f);
+		break;
 	}
 }
 
 bool OSystem_ANDROIDSDL::hasFeature(Feature f) {
-	return (f == kFeatureTouchpadMode ||
-			f == kFeatureOnScreenControl ||
-			f == kFeatureSwapMenuAndBackButtons ||
-			f == OSystem_POSIX::getFeatureState(f));
+	return (f == kFeatureTouchpadMode || f == kFeatureOnScreenControl || f == kFeatureSwapMenuAndBackButtons || f == OSystem_POSIX::getFeatureState(f));
 }

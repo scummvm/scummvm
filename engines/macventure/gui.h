@@ -31,20 +31,20 @@
 #ifndef MACVENTURE_GUI_H
 #define MACVENTURE_GUI_H
 
-#include "graphics/macgui/macwindowmanager.h"
-#include "graphics/macgui/macwindow.h"
 #include "graphics/macgui/macmenu.h"
+#include "graphics/macgui/macwindow.h"
+#include "graphics/macgui/macwindowmanager.h"
 
 #include "graphics/font.h"
 
 #include "common/timer.h"
 
-#include "macventure/macventure.h"
 #include "macventure/container.h"
-#include "macventure/image.h"
-#include "macventure/prebuilt_dialogs.h"
-#include "macventure/dialog.h"
 #include "macventure/controls.h"
+#include "macventure/dialog.h"
+#include "macventure/image.h"
+#include "macventure/macventure.h"
+#include "macventure/prebuilt_dialogs.h"
 #include "macventure/windows.h"
 
 namespace MacVenture {
@@ -124,9 +124,9 @@ public:
 	bool processDiplomaEvents(WindowClick click, Common::Event &event);
 	bool processInventoryEvents(WindowClick click, Common::Event &event);
 
-	const WindowData& getWindowData(WindowReference reference);
+	const WindowData &getWindowData(WindowReference reference);
 
-	const Graphics::Font& getCurrentFont();
+	const Graphics::Font &getCurrentFont();
 
 	// Clicks
 	void selectForDrag(Common::Point cursorPosition);
@@ -163,9 +163,7 @@ public:
 
 	void createInnerSurface(Graphics::ManagedSurface *innerSurface, Graphics::ManagedSurface *outerSurface, const BorderBounds &borders);
 
-
 private: // Attributes
-
 	MacVentureEngine *_engine;
 	Common::MacResManager *_resourceManager;
 
@@ -182,12 +180,12 @@ private: // Attributes
 	Graphics::MacWindow *_selfWindow;
 	Graphics::MacWindow *_exitsWindow;
 	Graphics::MacWindow *_diplomaWindow;
-	Common::Array<Graphics::MacWindow*> _inventoryWindows;
+	Common::Array<Graphics::MacWindow *> _inventoryWindows;
 	Graphics::MacMenu *_menu;
 	Dialog *_dialog;
 
 	Container *_graphics;
-	Common::HashMap<ObjID, ImageAsset*> _assets;
+	Common::HashMap<ObjID, ImageAsset *> _assets;
 
 	Graphics::ManagedSurface _draggedSurface;
 	DraggedObj _draggedObj;
@@ -197,7 +195,6 @@ private: // Attributes
 	ConsoleText *_consoleText;
 
 private: // Methods
-
 	// Initializers
 	void initGUI();
 	void initWindows();
@@ -231,7 +228,7 @@ private: // Methods
 	// Finders
 	WindowReference findWindowAtPoint(Common::Point point);
 	Common::Point getGlobalScrolledSurfacePosition(WindowReference reference);
-	WindowData& findWindowData(WindowReference reference);
+	WindowData &findWindowData(WindowReference reference);
 	Graphics::MacWindow *findWindow(WindowReference reference);
 
 	// Utils
@@ -245,7 +242,6 @@ private: // Methods
 	void removeInventoryWindow(WindowReference ref);
 
 	void ensureAssetLoaded(ObjID obj);
-
 };
 
 enum ClickState {
@@ -277,11 +273,9 @@ public:
 	bool canSelectDraggable();
 
 private:
-
 	void changeState(CursorInput input);
 	void executeStateIn();
 	void executeStateOut();
-
 
 private:
 	Gui *_gui;
@@ -290,8 +284,6 @@ private:
 	ClickState _state;
 };
 
-
-
 enum {
 	kConsoleLeftOffset = 2
 };
@@ -299,7 +291,6 @@ enum {
 class ConsoleText {
 
 public:
-
 	ConsoleText(Gui *gui) {
 		_gui = gui;
 		_lines.push_back("");
@@ -307,7 +298,6 @@ public:
 	}
 
 	~ConsoleText() {
-
 	}
 
 	void printLine(const Common::String &str, int maxW) {
@@ -362,14 +352,11 @@ public:
 		}
 	}
 
-
 private:
-
 	Gui *_gui;
 
 	Common::StringArray _lines;
 	int _scrollPos;
-
 };
 
 } // End of namespace MacVenture

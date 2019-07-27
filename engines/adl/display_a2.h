@@ -23,7 +23,7 @@
 #include "adl/display.h"
 
 #ifndef ADL_DISPLAY_A2_H
-#define ADL_DISPLAY_A2_H
+#	define ADL_DISPLAY_A2_H
 
 namespace Adl {
 

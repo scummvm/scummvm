@@ -1,5 +1,7 @@
 static const char *const kEoB1ChargenStrings1DOSItalian[9] = {
-	"Il tuo gruppo ""\x0E""\rcompleto.Premi il\rbottone GIOCA per\riniziare la nuova\rpartita.",
+	"Il tuo gruppo "
+	"\x0E"
+	"\rcompleto.Premi il\rbottone GIOCA per\riniziare la nuova\rpartita.",
 	"          ",
 	"CA\rPF\rLIV",
 	"%s\r%d\r%d\r%d\r%d\r%d",
@@ -126,7 +128,10 @@ static const char *const kEoB1BonusStringsDOSItalian[3] = {
 static const StringListProvider kEoB1BonusStringsDOSItalianProvider = { ARRAYSIZE(kEoB1BonusStringsDOSItalian), kEoB1BonusStringsDOSItalian };
 
 static const char *const kEoB1TurnUndeadStringDOSItalian[1] = {
-	"\x06\x06""%s usa scacciare non-morti!""\x06\x0F""\r"
+	"\x06\x06"
+	"%s usa scacciare non-morti!"
+	"\x06\x0F"
+	"\r"
 };
 
 static const StringListProvider kEoB1TurnUndeadStringDOSItalianProvider = { ARRAYSIZE(kEoB1TurnUndeadStringDOSItalian), kEoB1TurnUndeadStringDOSItalian };
@@ -213,21 +218,31 @@ static const char *const kEoB1Npc7StringsDOSItalian[3] = {
 static const StringListProvider kEoB1Npc7StringsDOSItalianProvider = { ARRAYSIZE(kEoB1Npc7StringsDOSItalian), kEoB1Npc7StringsDOSItalian };
 
 static const char *const kEoB1PryDoorStringsDOSItalian[7] = {
-	"Nessuno pu""\x11"" forzare la porta\r",
+	"Nessuno pu"
+	"\x11"
+	" forzare la porta\r",
 	"Il gruppo forza la porta!\r",
 	"%s forza la porta!\r",
 	"Il gruppo prova a forzare la porta, ma fallisce.\r",
 	"Non puoi metterci quest'oggetto.\r",
-	"L'oggetto ""\x0E"" troppo grande.\r",
-	"Nessuno pu""\x11"" forzare questa porta.\r"
+	"L'oggetto "
+	"\x0E"
+	" troppo grande.\r",
+	"Nessuno pu"
+	"\x11"
+	" forzare questa porta.\r"
 };
 
 static const StringListProvider kEoB1PryDoorStringsDOSItalianProvider = { ARRAYSIZE(kEoB1PryDoorStringsDOSItalian), kEoB1PryDoorStringsDOSItalian };
 
 static const char *const kEoB1WarningStringsDOSItalian[3] = {
 	"Non potete proseguire da questa parte.\r",
-	"%s non pu""\x11"" consumare cibo!\r",
-	"Non ""\x0E"" commestibile!\r"
+	"%s non pu"
+	"\x11"
+	" consumare cibo!\r",
+	"Non "
+	"\x0E"
+	" commestibile!\r"
 };
 
 static const StringListProvider kEoB1WarningStringsDOSItalianProvider = { ARRAYSIZE(kEoB1WarningStringsDOSItalian), kEoB1WarningStringsDOSItalian };
@@ -246,9 +261,15 @@ static const char *const kEoB1ItemSuffixStringsPotionsDOSItalian[8] = {
 	"Guarigione",
 	"Super-Guarigione",
 	"Veleno",
-	"Vitalit""\x0C""",
-	"Velocit""\x0C""",
-	"Invisibilit""\x0C""",
+	"Vitalit"
+	"\x0C"
+	"",
+	"Velocit"
+	"\x0C"
+	"",
+	"Invisibilit"
+	"\x0C"
+	"",
 	"Antidoti"
 };
 
@@ -315,7 +336,9 @@ static const char *const kEoB1PatternGrFix2DOSItalian[1] = {
 static const StringListProvider kEoB1PatternGrFix2DOSItalianProvider = { ARRAYSIZE(kEoB1PatternGrFix2DOSItalian), kEoB1PatternGrFix2DOSItalian };
 
 static const char *const kEoB1ValidateArmorStringDOSItalian[1] = {
-	"%s non pu""\x11"" indossare quest'armatura.\r"
+	"%s non pu"
+	"\x11"
+	" indossare quest'armatura.\r"
 };
 
 static const StringListProvider kEoB1ValidateArmorStringDOSItalianProvider = { ARRAYSIZE(kEoB1ValidateArmorStringDOSItalian), kEoB1ValidateArmorStringDOSItalian };
@@ -341,9 +364,13 @@ static const char *const kEoB1WandStringsDOSItalian[2] = {
 static const StringListProvider kEoB1WandStringsDOSItalianProvider = { ARRAYSIZE(kEoB1WandStringsDOSItalian), kEoB1WandStringsDOSItalian };
 
 static const char *const kEoB1ItemMisuseStringsDOSItalian[3] = {
-	"%s non pu""\x11"" usare quest'oggetto.\r",
+	"%s non pu"
+	"\x11"
+	" usare quest'oggetto.\r",
 	"Se indossato quest'oggetto funziona in automatico.\r",
-	"Questo oggetto non si usa cos""\x10"".\r"
+	"Questo oggetto non si usa cos"
+	"\x10"
+	".\r"
 };
 
 static const StringListProvider kEoB1ItemMisuseStringsDOSItalianProvider = { ARRAYSIZE(kEoB1ItemMisuseStringsDOSItalian), kEoB1ItemMisuseStringsDOSItalian };
@@ -355,7 +382,9 @@ static const char *const kEoB1TakenStringsDOSItalian[1] = {
 static const StringListProvider kEoB1TakenStringsDOSItalianProvider = { ARRAYSIZE(kEoB1TakenStringsDOSItalian), kEoB1TakenStringsDOSItalian };
 
 static const char *const kEoB1PotionEffectStringsDOSItalian[8] = {
-	"molto pi""\x12"" forte",
+	"molto pi"
+	"\x12"
+	" forte",
 	"meglio",
 	"molto meglio",
 	"ammalato",
@@ -368,7 +397,9 @@ static const char *const kEoB1PotionEffectStringsDOSItalian[8] = {
 static const StringListProvider kEoB1PotionEffectStringsDOSItalianProvider = { ARRAYSIZE(kEoB1PotionEffectStringsDOSItalian), kEoB1PotionEffectStringsDOSItalian };
 
 static const char *const kEoB1YesNoStringsDOSItalian[2] = {
-	"s""\x10""",
+	"s"
+	"\x10"
+	"",
 	"no"
 };
 
@@ -433,13 +464,19 @@ static const StringListProvider kEoB1MenuStringsOnOffDOSItalianProvider = { ARRA
 
 static const char *const kEoB1MenuStringsSpellsDOSItalian[17] = {
 	"\r\r Scegli il\r personaggio del\r gruppo a cui\r far studiare gli\r incantesimi.",
-	"\r Il tuo Paladino ""\x0E""\r di livello troppo\r basso.",
+	"\r Il tuo Paladino "
+	"\x0E"
+	"\r di livello troppo\r basso.",
 	"\r\r Il Mago non ha\r il Libro degli\r Incantesimi!",
 	"\r\r\r Scegli il\r personaggio del\r gruppo a cui far\r pregare per gli\r incantesimi.",
 	"\r Non hai nessun\r Chierico che\r possa pregare.",
 	"\r Non hai nessun\r Mago che possa\r studiare gli\r incantesimi.",
-	" Un Mago morto o\r svenuto non pu""\x11""\r memorizzare\r incantesimi.",
-	" Un Chierico morto o\r svenuto non pu""\x11""\r memorizzare\r incantesimi.",
+	" Un Mago morto o\r svenuto non pu"
+	"\x11"
+	"\r memorizzare\r incantesimi.",
+	" Un Chierico morto o\r svenuto non pu"
+	"\x11"
+	"\r memorizzare\r incantesimi.",
 	"1",
 	"2",
 	"3",
@@ -447,7 +484,9 @@ static const char *const kEoB1MenuStringsSpellsDOSItalian[17] = {
 	"5",
 	"Canc.",
 	"Incantesimi:",
-	"S""\x10""",
+	"S"
+	"\x10"
+	"",
 	"No"
 };
 
@@ -455,7 +494,9 @@ static const StringListProvider kEoB1MenuStringsSpellsDOSItalianProvider = { ARR
 
 static const char *const kEoB1MenuStringsRestDOSItalian[5] = {
 	"\rMetti i tuoi \rguaritori a curare\ril gruppo?",
-	" Qualcuno ""\x0E"" ancora\rferito. Riposa\rfino alla\rguarigione?",
+	" Qualcuno "
+	"\x0E"
+	" ancora\rferito. Riposa\rfino alla\rguarigione?",
 	"Riposando.",
 	"\r Tutti i\r personaggi sono\r riposati.",
 	" Il tuo gruppo ha\rbisogno di riposare\rper ottenere gli\rincantesimi."
@@ -545,13 +586,17 @@ static const char *const kEoB1MenuStringsRest4DOSItalian[1] = {
 static const StringListProvider kEoB1MenuStringsRest4DOSItalianProvider = { ARRAYSIZE(kEoB1MenuStringsRest4DOSItalian), kEoB1MenuStringsRest4DOSItalian };
 
 static const char *const kEoB1MenuStringsDefeatDOSItalian[1] = {
-	"L'intero gruppo ""\x0E"" stato sconfitto.  I servitori del male potranno portare avanti i loro piani indisturbati!\r"
+	"L'intero gruppo "
+	"\x0E"
+	" stato sconfitto.  I servitori del male potranno portare avanti i loro piani indisturbati!\r"
 };
 
 static const StringListProvider kEoB1MenuStringsDefeatDOSItalianProvider = { ARRAYSIZE(kEoB1MenuStringsDefeatDOSItalian), kEoB1MenuStringsDefeatDOSItalian };
 
 static const char *const kEoB1MenuYesNoStringsDOSItalian[2] = {
-	"S""\x10""",
+	"S"
+	"\x10"
+	"",
 	"No"
 };
 
@@ -613,19 +658,28 @@ static const char *const kEoB1CharStatusStrings81DOSItalian[1] = {
 static const StringListProvider kEoB1CharStatusStrings81DOSItalianProvider = { ARRAYSIZE(kEoB1CharStatusStrings81DOSItalian), kEoB1CharStatusStrings81DOSItalian };
 
 static const char *const kEoB1CharStatusStrings9DOSItalian[1] = {
-	"%s non ""\x0E"" pi""\x12"" paralizzato!\r"
+	"%s non "
+	"\x0E"
+	" pi"
+	"\x12"
+	" paralizzato!\r"
 };
 
 static const StringListProvider kEoB1CharStatusStrings9DOSItalianProvider = { ARRAYSIZE(kEoB1CharStatusStrings9DOSItalian), kEoB1CharStatusStrings9DOSItalian };
 
 static const char *const kEoB1CharStatusStrings131DOSItalian[1] = {
-	"%s ""\x0E"" %s!\r"
+	"%s "
+	"\x0E"
+	" %s!\r"
 };
 
 static const StringListProvider kEoB1CharStatusStrings131DOSItalianProvider = { ARRAYSIZE(kEoB1CharStatusStrings131DOSItalian), kEoB1CharStatusStrings131DOSItalian };
 
 static const char *const kEoB1LevelGainStringsDOSItalian[1] = {
-	"\x06\x01""%s ha guadagnato un livello di esperienza.""\x06\x0F""\r"
+	"\x06\x01"
+	"%s ha guadagnato un livello di esperienza."
+	"\x06\x0F"
+	"\r"
 };
 
 static const StringListProvider kEoB1LevelGainStringsDOSItalianProvider = { ARRAYSIZE(kEoB1LevelGainStringsDOSItalian), kEoB1LevelGainStringsDOSItalian };
@@ -649,16 +703,20 @@ static const char *const kEoB1MageSpellsListDOSItalian[26] = {
 	"Lettura Magico",
 	"Scudo",
 	"Scarica Elettrica",
-	"Invisibilit""\x0C",
+	"Invisibilit"
+	"\x0C",
 	"Chiavistello",
 	"Freccia Acida M.",
 	"Nube Maleodorante",
 	"Dissolvi Magie",
 	"Palla di Fuoco",
 	"Freccia Infuocata",
-	"Velocit""\x0C",
+	"Velocit"
+	"\x0C",
 	"Blocca Persone",
-	"Invisibilit""\x0C"" 3m",
+	"Invisibilit"
+	"\x0C"
+	" 3m",
 	"Fulmine",
 	"Tocco del Vampiro",
 	"Paura",
@@ -709,15 +767,19 @@ static const char *const kEoB1SpellNamesDOSItalian[51] = {
 	"dardo incantato",
 	"scudo",
 	"scarica elettrica",
-	"invisibilit""\x0C",
+	"invisibilit"
+	"\x0C",
 	"freccia acida di melf",
 	"nube maleodorante",
 	"dissolvi magie",
 	"palla di fuoco",
 	"freccia infuocata",
-	"velocit""\x0C",
+	"velocit"
+	"\x0C",
 	"blocca persone",
-	"invisibilit""\x0C"",raggio 3m",
+	"invisibilit"
+	"\x0C"
+	",raggio 3m",
 	"fulmine",
 	"tocco del vampiro",
 	"paura",
@@ -770,8 +832,12 @@ static const StringListProvider kEoB1MagicStrings1DOSItalianProvider = { ARRAYSI
 
 static const char *const kEoB1MagicStrings2DOSItalian[3] = {
 	"nessun effetto\r",
-	"%s ""\x0E"" stato disintegrato!!\r",
-	"Il gruppo ""\x0E"" stato colpito da 'Morte'!\r"
+	"%s "
+	"\x0E"
+	" stato disintegrato!!\r",
+	"Il gruppo "
+	"\x0E"
+	" stato colpito da 'Morte'!\r"
 };
 
 static const StringListProvider kEoB1MagicStrings2DOSItalianProvider = { ARRAYSIZE(kEoB1MagicStrings2DOSItalian), kEoB1MagicStrings2DOSItalian };
@@ -794,7 +860,9 @@ static const char *const kEoB1MagicStrings4DOSItalian[1] = {
 static const StringListProvider kEoB1MagicStrings4DOSItalianProvider = { ARRAYSIZE(kEoB1MagicStrings4DOSItalian), kEoB1MagicStrings4DOSItalian };
 
 static const char *const kEoB1MagicStrings6DOSItalian[1] = {
-	"%s ha gi""\x0C"" classe armatura base alta.\r"
+	"%s ha gi"
+	"\x0C"
+	" classe armatura base alta.\r"
 };
 
 static const StringListProvider kEoB1MagicStrings6DOSItalianProvider = { ARRAYSIZE(kEoB1MagicStrings6DOSItalian), kEoB1MagicStrings6DOSItalian };
@@ -811,7 +879,11 @@ static const StringListProvider kEoB1MagicStrings7DOSItalianProvider = { ARRAYSI
 
 static const char *const kEoB1MagicStrings8DOSItalian[3] = {
 	"Tutti gli incantesimi su %s si sono dissolti.\r",
-	"'Benedizione' ""\x0E"" gi""\x0C"" attiva sul gruppo.\r",
+	"'Benedizione' "
+	"\x0E"
+	" gi"
+	"\x0C"
+	" attiva sul gruppo.\r",
 	"'Aiuto' fallisce!\r"
 };
 
@@ -886,12 +958,15 @@ static const char *const kEoB1ManPromptDOSItalian[1] = {
 static const StringListProvider kEoB1ManPromptDOSItalianProvider = { ARRAYSIZE(kEoB1ManPromptDOSItalian), kEoB1ManPromptDOSItalian };
 
 static const char *const kEoB1MonsterDistAttStringsDOSItalian[5] = {
-	"%s ""\x0E"" stato colpito da 'Causa Ferite Gravi'\r",
-	"Il gruppo ""\x0E"" stato colpito da 'Flagello Mentale'!\r",
+	"%s "
+	"\x0E"
+	" stato colpito da 'Causa Ferite Gravi'\r",
+	"Il gruppo "
+	"\x0E"
+	" stato colpito da 'Flagello Mentale'!\r",
 	"paralizzato",
 	"avvelenato",
 	"paralizzato"
 };
 
 static const StringListProvider kEoB1MonsterDistAttStringsDOSItalianProvider = { ARRAYSIZE(kEoB1MonsterDistAttStringsDOSItalian), kEoB1MonsterDistAttStringsDOSItalian };
-

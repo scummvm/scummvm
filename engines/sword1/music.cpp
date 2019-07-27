@@ -20,15 +20,13 @@
  *
  */
 
-
 #include "common/file.h"
-#include "common/util.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
-#include "sword1/sword1.h"
 #include "sword1/music.h"
+#include "sword1/sword1.h"
 
-#include "audio/mixer.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/aiff.h"
 #include "audio/decoders/flac.h"
@@ -36,6 +34,7 @@
 #include "audio/decoders/vorbis.h"
 #include "audio/decoders/wave.h"
 #include "audio/decoders/xa.h"
+#include "audio/mixer.h"
 
 #define SMP_BUFSIZE 8192
 

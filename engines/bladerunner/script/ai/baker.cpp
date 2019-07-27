@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptBaker::AIScriptBaker(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptBaker::AIScriptBaker(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 }
 
 void AIScriptBaker::Initialize() {
@@ -102,17 +103,17 @@ bool AIScriptBaker::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptBaker::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptBaker::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptBaker::ReachedMovementTrackWaypoint(int waypointId) {

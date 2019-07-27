@@ -25,15 +25,16 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#include "cge/general.h"
 #include "cge/talk.h"
-#include "cge/game.h"
-#include "cge/events.h"
 #include "cge/cge_main.h"
+#include "cge/events.h"
+#include "cge/game.h"
+#include "cge/general.h"
 
 namespace CGE {
 
-Font::Font(CGEEngine *vm, const char *name) : _vm(vm) {
+Font::Font(CGEEngine *vm, const char *name)
+  : _vm(vm) {
 	_map = (uint8 *)malloc(kMapSize);
 	_pos = (uint16 *)malloc(kPosSize * sizeof(uint16));
 	_widthArr = (uint8 *)malloc(kWidSize);
@@ -74,15 +75,19 @@ uint16 Font::width(const char *text) {
 }
 
 Talk::Talk(CGEEngine *vm, const char *text, TextBoxStyle mode, bool wideSpace)
-	: Sprite(vm, NULL), _mode(mode), _wideSpace(wideSpace), _vm(vm) {
+  : Sprite(vm, NULL)
+  , _mode(mode)
+  , _wideSpace(wideSpace)
+  , _vm(vm) {
 	_ts = NULL;
 	_flags._syst = true;
 	update(text);
 }
 
-
 Talk::Talk(CGEEngine *vm)
-	: Sprite(vm, NULL), _mode(kTBPure), _vm(vm) {
+  : Sprite(vm, NULL)
+  , _mode(kTBPure)
+  , _vm(vm) {
 	_ts = NULL;
 	_flags._syst = true;
 	_wideSpace = false;
@@ -192,7 +197,10 @@ Bitmap *Talk::box(uint16 w, uint16 h) {
 	return new Bitmap(_vm, w, h, b);
 }
 
-InfoLine::InfoLine(CGEEngine *vm, uint16 w) : Talk(vm), _oldText(NULL), _vm(vm) {
+InfoLine::InfoLine(CGEEngine *vm, uint16 w)
+  : Talk(vm)
+  , _oldText(NULL)
+  , _vm(vm) {
 	if (!_ts) {
 		_ts = new BitmapPtr[2];
 		_ts[1] = NULL;
@@ -209,24 +217,24 @@ void InfoLine::update(const char *text) {
 	uint16 w = _ts[0]->_w;
 	uint16 h = _ts[0]->_h;
 	uint8 *v = (uint8 *)_ts[0]->_v;
-	uint16 dsiz = w >> 2;                           // data size (1 plane line size)
-	uint16 lsiz = 2 + dsiz + 2;                     // uint16 for line header, uint16 for gap
-	uint16 psiz = h * lsiz;                         // - last gape, but + plane trailer
-	uint16 size = 4 * psiz;                         // whole map size
+	uint16 dsiz = w >> 2; // data size (1 plane line size)
+	uint16 lsiz = 2 + dsiz + 2; // uint16 for line header, uint16 for gap
+	uint16 psiz = h * lsiz; // - last gape, but + plane trailer
+	uint16 size = 4 * psiz; // whole map size
 
 	// clear whole rectangle
-	memset(v + 2, kTextColBG, dsiz);                // data bytes
+	memset(v + 2, kTextColBG, dsiz); // data bytes
 	for (byte *pDest = v + lsiz; pDest < (v + psiz); pDest += lsiz) {
 		Common::copy(v, v + lsiz, pDest);
 	}
-	*(uint16 *)(v + psiz - 2) = TO_LE_16(kBmpEOI);  // plane trailer uint16
+	*(uint16 *)(v + psiz - 2) = TO_LE_16(kBmpEOI); // plane trailer uint16
 	for (byte *pDest = v + psiz; pDest < (v + 4 * psiz); pDest += psiz) {
 		Common::copy(v, v + psiz, pDest);
 	}
 
 	// paint text line
 	if (text) {
-		uint8 *p = v + 2, * q = p + size;
+		uint8 *p = v + 2, *q = p + size;
 
 		while (*text) {
 			uint16 cw = _vm->_font->_widthArr[(unsigned char)*text];

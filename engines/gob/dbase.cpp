@@ -24,7 +24,8 @@
 
 namespace Gob {
 
-dBase::dBase() : _recordData(0) {
+dBase::dBase()
+  : _recordData(0) {
 	clear();
 }
 
@@ -48,15 +49,15 @@ bool dBase::load(Common::SeekableReadStream &stream) {
 	_hasMemo = (_version & 0x80) != 0;
 
 	_lastUpdate.tm_year = stream.readByte();
-	_lastUpdate.tm_mon  = stream.readByte() - 1;
+	_lastUpdate.tm_mon = stream.readByte() - 1;
 	_lastUpdate.tm_mday = stream.readByte();
 	_lastUpdate.tm_hour = 0;
-	_lastUpdate.tm_min  = 0;
-	_lastUpdate.tm_sec  = 0;
+	_lastUpdate.tm_min = 0;
+	_lastUpdate.tm_sec = 0;
 
 	uint32 recordCount = stream.readUint32LE();
-	uint32 headerSize  = stream.readUint16LE();
-	uint32 recordSize  = stream.readUint16LE();
+	uint32 headerSize = stream.readUint16LE();
+	uint32 recordSize = stream.readUint16LE();
 
 	stream.skip(20); // Reserved
 
@@ -68,11 +69,11 @@ bool dBase::load(Common::SeekableReadStream &stream) {
 		stream.seek(-1, SEEK_CUR);
 
 		field.name = readString(stream, 11);
-		field.type = (Type) stream.readByte();
+		field.type = (Type)stream.readByte();
 
 		stream.skip(4); // Field data address
 
-		field.size     = stream.readByte();
+		field.size = stream.readByte();
 		field.decimals = stream.readByte();
 
 		fieldsLength += field.size;
@@ -159,7 +160,7 @@ Common::String dBase::getString(const Record &record, int field) const {
 	assert(_fields[field].type == kTypeString);
 
 	uint32 fieldLength = stringLength(record.fields[field], _fields[field].size);
-	return Common::String((const char *) record.fields[field], fieldLength);
+	return Common::String((const char *)record.fields[field], fieldLength);
 }
 
 // String fields are padded with spaces. This finds the real length.

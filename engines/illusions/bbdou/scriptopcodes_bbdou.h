@@ -23,8 +23,8 @@
 #ifndef ILLUSIONS_BBDOU_SCRIPTOPCODES_BBDOU_H
 #define ILLUSIONS_BBDOU_SCRIPTOPCODES_BBDOU_H
 
-#include "illusions/scriptopcodes.h"
 #include "common/func.h"
+#include "illusions/scriptopcodes.h"
 
 namespace Illusions {
 
@@ -37,6 +37,7 @@ public:
 	~ScriptOpcodes_BBDOU();
 	void initOpcodes();
 	void freeOpcodes();
+
 protected:
 	IllusionsEngine_BBDOU *_vm;
 
@@ -145,7 +146,6 @@ protected:
 	void opSetFontId(ScriptThread *scriptThread, OpCall &opCall);
 	void opAddMenuKey(ScriptThread *scriptThread, OpCall &opCall);
 	void opChangeSceneAll(ScriptThread *scriptThread, OpCall &opCall);
-
 };
 
 } // End of namespace Illusions

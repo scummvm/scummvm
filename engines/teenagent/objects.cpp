@@ -87,10 +87,9 @@ void Object::setName(const Common::String &newName) {
 
 void Object::dump(int level) const {
 	debugC(level, kDebugObject, "object: %u %u [%u,%u,%u,%u], actor: [%u,%u,%u,%u], orientation: %u, name: %s", id, enabled,
-	      rect.left, rect.top, rect.right, rect.bottom,
-	      actorRect.left, actorRect.top, actorRect.right, actorRect.bottom,
-	      actorOrientation, name.c_str()
-	     );
+	       rect.left, rect.top, rect.right, rect.bottom,
+	       actorRect.left, actorRect.top, actorRect.right, actorRect.bottom,
+	       actorOrientation, name.c_str());
 }
 
 Common::String Object::parseDescription(const char *name) {
@@ -141,16 +140,15 @@ void UseHotspot::load(byte *src) {
 
 void UseHotspot::dump(int level) const {
 	debugC(level, kDebugObject,
-	      "hotspot: invId: %02x, objId: %02x, orientation: %02x, actor position: (%d,%d), callback: %04x",
-	      inventoryId, objectId, orientation, actorX, actorY, callback
-	     );
+	       "hotspot: invId: %02x, objId: %02x, orientation: %02x, actor position: (%d,%d), callback: %04x",
+	       inventoryId, objectId, orientation, actorX, actorY, callback);
 }
 
 void Walkbox::dump(int level) const {
 	debugC(level, kDebugObject, "walkbox %02x %02x [%d, %d, %d, %d] top: %u, right: %u, bottom: %u, left: %u",
-	      type, orientation,
-	      rect.left, rect.top, rect.right, rect.bottom,
-	      sideHint[0], sideHint[1], sideHint[2], sideHint[3]);
+	       type, orientation,
+	       rect.left, rect.top, rect.right, rect.bottom,
+	       sideHint[0], sideHint[1], sideHint[2], sideHint[3]);
 }
 
 void Walkbox::load(byte *src) {

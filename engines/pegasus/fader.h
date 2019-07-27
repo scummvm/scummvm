@@ -34,7 +34,8 @@ namespace Pegasus {
 class Fader;
 
 class FaderMoveSpec {
-friend class Fader;
+	friend class Fader;
+
 public:
 	FaderMoveSpec() {
 		_faderScale = kDefaultTimeScale;
@@ -99,7 +100,8 @@ protected:
 
 class FaderAnimation : public DisplayElement, public Fader {
 public:
-	FaderAnimation(const DisplayElementID id) : DisplayElement(id) {}
+	FaderAnimation(const DisplayElementID id)
+	  : DisplayElement(id) {}
 	virtual ~FaderAnimation() {}
 
 	void setFaderValue(const int32);
@@ -108,7 +110,8 @@ public:
 class Sound;
 
 class SoundFader : public Fader {
-friend class Sound;
+	friend class Sound;
+
 public:
 	SoundFader();
 	virtual ~SoundFader() {}

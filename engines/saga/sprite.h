@@ -27,7 +27,7 @@
 
 namespace Saga {
 
-#define SPRITE_ZMAX  16
+#define SPRITE_ZMAX 16
 #define SPRITE_ZMASK 0x0F
 
 struct SpriteInfo {
@@ -37,7 +37,11 @@ struct SpriteInfo {
 	int xAlign;
 	int yAlign;
 
-	SpriteInfo() : width(0), height(0), xAlign(0), yAlign(0) {
+	SpriteInfo()
+	  : width(0)
+	  , height(0)
+	  , xAlign(0)
+	  , yAlign(0) {
 	}
 };
 

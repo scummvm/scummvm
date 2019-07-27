@@ -21,13 +21,13 @@
  */
 
 #include "kyra/sound/sound_digital_mr.h"
-#include "kyra/resource/resource.h"
 #include "kyra/engine/kyra_mr.h"
+#include "kyra/resource/resource.h"
 
 #include "audio/audiostream.h"
+#include "audio/decoders/flac.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/vorbis.h"
-#include "audio/decoders/flac.h"
 
 #include "common/util.h"
 
@@ -35,8 +35,17 @@ namespace Kyra {
 
 class KyraAudioStream : public Audio::SeekableAudioStream {
 public:
-	KyraAudioStream(Audio::SeekableAudioStream *impl) : _impl(impl), _rate(impl->getRate()), _fadeSamples(0), _fadeCount(0), _fading(0), _endOfData(false) {}
-	~KyraAudioStream() { delete _impl; _impl = 0; }
+	KyraAudioStream(Audio::SeekableAudioStream *impl)
+	  : _impl(impl)
+	  , _rate(impl->getRate())
+	  , _fadeSamples(0)
+	  , _fadeCount(0)
+	  , _fading(0)
+	  , _endOfData(false) {}
+	~KyraAudioStream() {
+		delete _impl;
+		_impl = 0;
+	}
 
 	int readBuffer(int16 *buffer, const int numSamples);
 	bool isStereo() const { return _impl->isStereo(); }
@@ -48,6 +57,7 @@ public:
 
 	bool seek(const Audio::Timestamp &where) { return _impl->seek(where); }
 	Audio::Timestamp getLength() const { return _impl->getLength(); }
+
 private:
 	Audio::SeekableAudioStream *_impl;
 
@@ -102,7 +112,9 @@ int KyraAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	return samplesRead;
 }
 
-SoundDigital_MR::SoundDigital_MR(KyraEngine_MR *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
+SoundDigital_MR::SoundDigital_MR(KyraEngine_MR *vm, Audio::Mixer *mixer)
+  : _vm(vm)
+  , _mixer(mixer) {
 	for (uint i = 0; i < ARRAYSIZE(_sounds); ++i)
 		_sounds[i].stream = 0;
 }

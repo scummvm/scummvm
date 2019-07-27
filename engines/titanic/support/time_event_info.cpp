@@ -44,7 +44,7 @@ void CTimeEventInfoList::postSave() {
 
 void CTimeEventInfoList::update(uint ticks) {
 	// Remove any items that are done
-	for (iterator i = begin(); i != end(); ) {
+	for (iterator i = begin(); i != end();) {
 		CTimeEventInfo *item = *i;
 		if (item->_done) {
 			i = erase(i);
@@ -55,7 +55,7 @@ void CTimeEventInfoList::update(uint ticks) {
 	}
 
 	// Handle updating the items
-	for (iterator i = begin(); i != end(); ) {
+	for (iterator i = begin(); i != end();) {
 		CTimeEventInfo *item = *i;
 		if (!item->update(ticks)) {
 			++i;
@@ -90,18 +90,37 @@ void CTimeEventInfoList::setPersisent(uint id, bool flag) {
 
 uint CTimeEventInfo::_nextId;
 
-CTimeEventInfo::CTimeEventInfo() : ListItem(), _lockCounter(0),
-		_repeated(false), _firstDuration(0), _repeatDuration(0),
-		_target(nullptr), _actionVal(0), _timerCtr(0), _done(false),
-		_lastTimerTicks(0), _relativeTicks(0), _persisent(true) {
+CTimeEventInfo::CTimeEventInfo()
+  : ListItem()
+  , _lockCounter(0)
+  , _repeated(false)
+  , _firstDuration(0)
+  , _repeatDuration(0)
+  , _target(nullptr)
+  , _actionVal(0)
+  , _timerCtr(0)
+  , _done(false)
+  , _lastTimerTicks(0)
+  , _relativeTicks(0)
+  , _persisent(true) {
 	_id = _nextId++;
 }
 
 CTimeEventInfo::CTimeEventInfo(uint ticks, bool repeated, uint firstDuration,
-		uint repeatDuration, CTreeItem *target, int endVal, const CString &action) :
-		ListItem(), _lockCounter(0), _repeated(repeated), _firstDuration(firstDuration),
-		_repeatDuration(repeatDuration), _target(target), _actionVal(endVal), _action(action),
-		_done(false), _timerCtr(0), _lastTimerTicks(ticks), _relativeTicks(0), _persisent(true) {
+                               uint repeatDuration, CTreeItem *target, int endVal, const CString &action)
+  : ListItem()
+  , _lockCounter(0)
+  , _repeated(repeated)
+  , _firstDuration(firstDuration)
+  , _repeatDuration(repeatDuration)
+  , _target(target)
+  , _actionVal(endVal)
+  , _action(action)
+  , _done(false)
+  , _timerCtr(0)
+  , _lastTimerTicks(ticks)
+  , _relativeTicks(0)
+  , _persisent(true) {
 	_id = _nextId++;
 }
 

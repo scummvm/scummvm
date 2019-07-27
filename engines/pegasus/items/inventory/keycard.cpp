@@ -23,13 +23,13 @@
  *
  */
 
-#include "pegasus/pegasus.h"
 #include "pegasus/items/inventory/keycard.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
-KeyCard::KeyCard(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
-			InventoryItem(id, neighborhood, room, direction) {
+KeyCard::KeyCard(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction)
+  : InventoryItem(id, neighborhood, room, direction) {
 	setItemState(kFlashlightOff);
 }
 

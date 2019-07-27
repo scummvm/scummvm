@@ -134,7 +134,7 @@ void StarTrekEngine::initAwayCrewPositions(int warpEntryIndex) {
 
 			int16 rdfOffset = RDF_ROOM_ENTRY_POSITIONS + warpEntryIndex * 32 + i * 8;
 
-			int16 srcX = _room->readRdfWord(rdfOffset + 0);  // Position to spawn at
+			int16 srcX = _room->readRdfWord(rdfOffset + 0); // Position to spawn at
 			int16 srcY = _room->readRdfWord(rdfOffset + 2);
 			int16 destX = _room->readRdfWord(rdfOffset + 4); // Position to walk to
 			int16 destY = _room->readRdfWord(rdfOffset + 6);
@@ -359,7 +359,6 @@ void StarTrekEngine::awayMissionLeftClick() {
 		}
 		break;
 	}
-
 	}
 }
 
@@ -380,7 +379,7 @@ void StarTrekEngine::awayMissionSelectAction(bool openActionMenu) {
 			_awayMission.activeObject = clickedObject;
 	}
 	if (_awayMission.activeAction == ACTION_USE
-			&& _awayMission.activeObject == OBJECT_ICOMM && (_awayMission.crewDownBitset & (1 << OBJECT_KIRK)) == 0) {
+	    && _awayMission.activeObject == OBJECT_ICOMM && (_awayMission.crewDownBitset & (1 << OBJECT_KIRK)) == 0) {
 		if (!walkActiveObjectToHotspot()) {
 			addAction(_awayMission.activeAction, _awayMission.activeObject, 0, 0);
 			_sound->playVoc("communic");
@@ -417,8 +416,8 @@ void StarTrekEngine::awayMissionUseObject(int16 clickedObject) {
 
 	if (!tryWalkToHotspot) {
 		if ((activeIsCrewman && passiveIsCrewman)
-				|| (activeIsCrewman && passiveIsItem)
-				|| (activeIsItem && passiveIsItem)) {
+		    || (activeIsCrewman && passiveIsItem)
+		    || (activeIsItem && passiveIsItem)) {
 			if (_awayMission.passiveObject == OBJECT_ICOMM) {
 				if (walkActiveObjectToHotspot())
 					return;
@@ -500,7 +499,7 @@ void StarTrekEngine::addAction(const Action &action) {
 }
 
 void StarTrekEngine::addAction(byte type, byte b1, byte b2, byte b3) {
-	const Action a = {type, b1, b2, b3};
+	const Action a = { type, b1, b2, b3 };
 	addAction(a);
 }
 
@@ -542,7 +541,7 @@ void StarTrekEngine::handleAwayMissionAction() {
 			case OBJECT_KIRK:
 				// BUGFIX: Don't allow the "use" action to bypass the "disableWalking" variable
 				if (!(!_awayMission.disableWalking && _room->handleAction(ACTION_WALK, action.passiveObject(), 0, 0))
-						&& !_room->handleAction(ACTION_GET, action.passiveObject(), 0, 0)) {
+				    && !_room->handleAction(ACTION_GET, action.passiveObject(), 0, 0)) {
 					showTextbox("Capt. Kirk", getLoadedText(GROUNDTX_KIRK_USE), 20, 20, TEXTCOLOR_YELLOW, 0);
 				}
 				break;
@@ -558,7 +557,7 @@ void StarTrekEngine::handleAwayMissionAction() {
 
 			case OBJECT_MCCOY:
 				if (!_room->handleAction(ACTION_USE, OBJECT_IMEDKIT, action.passiveObject(), 0)
-						&& !_room->handleAction(ACTION_USE, OBJECT_IMTRICOR, action.passiveObject(), 0)) {
+				    && !_room->handleAction(ACTION_USE, OBJECT_IMTRICOR, action.passiveObject(), 0)) {
 					// BUGFIX: Original game has just "McCoy" instead of "Dr. McCoy".
 					showTextbox("Dr. McCoy", getLoadedText(GROUNDTX_MCCOY_USE), 20, 20, TEXTCOLOR_BLUE, 0);
 				}

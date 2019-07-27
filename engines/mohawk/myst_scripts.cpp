@@ -20,18 +20,18 @@
  *
  */
 
+#include "mohawk/myst_scripts.h"
 #include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_card.h"
 #include "mohawk/myst_graphics.h"
-#include "mohawk/myst_scripts.h"
 #include "mohawk/myst_sound.h"
 #include "mohawk/video.h"
 
 #include "common/debug-channels.h"
-#include "common/system.h"
 #include "common/memstream.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 
 namespace Mohawk {
@@ -74,10 +74,10 @@ const uint16 MystScriptParser::_startCard[11] = {
 
 // NOTE: Credits Start Card is 10000
 
-MystScriptParser::MystScriptParser(MohawkEngine_Myst *vm, MystStack stackId) :
-		_vm(vm),
-		_stackId(stackId),
-		_globals(vm->_gameState->_globals) {
+MystScriptParser::MystScriptParser(MohawkEngine_Myst *vm, MystStack stackId)
+  : _vm(vm)
+  , _stackId(stackId)
+  , _globals(vm->_gameState->_globals) {
 	setupCommonOpcodes();
 	_invokingResource = nullptr;
 	_savedCardId = 0;
@@ -264,7 +264,7 @@ MystScript MystScriptParser::readScript(Common::SeekableReadStream *stream, Myst
 }
 
 uint16 MystScriptParser::getVar(uint16 var) {
-	switch(var) {
+	switch (var) {
 	case 105:
 		return _tempVar;
 	case 106:
@@ -329,7 +329,7 @@ void MystScriptParser::o_changeCardSwitch4(uint16 var, const ArgumentsArray &arg
 	uint16 value = getVar(var);
 
 	if (value)
-		_vm->changeToCard(args[value -1 ], kTransitionDissolve);
+		_vm->changeToCard(args[value - 1], kTransitionDissolve);
 	else if (_invokingResource != nullptr)
 		_vm->changeToCard(_invokingResource->getDest(), kTransitionDissolve);
 	else
@@ -340,7 +340,7 @@ void MystScriptParser::o_changeCardSwitchLtR(uint16 var, const ArgumentsArray &a
 	uint16 value = getVar(var);
 
 	if (value)
-		_vm->changeToCard(args[value -1 ], kTransitionLeftToRight);
+		_vm->changeToCard(args[value - 1], kTransitionLeftToRight);
 	else if (_invokingResource != nullptr)
 		_vm->changeToCard(_invokingResource->getDest(), kTransitionLeftToRight);
 	else
@@ -351,7 +351,7 @@ void MystScriptParser::o_changeCardSwitchRtL(uint16 var, const ArgumentsArray &a
 	uint16 value = getVar(var);
 
 	if (value)
-		_vm->changeToCard(args[value -1 ], kTransitionRightToLeft);
+		_vm->changeToCard(args[value - 1], kTransitionRightToLeft);
 	else if (_invokingResource != nullptr)
 		_vm->changeToCard(_invokingResource->getDest(), kTransitionRightToLeft);
 	else
@@ -363,20 +363,20 @@ void MystScriptParser::o_takePage(uint16 var, const ArgumentsArray &args) {
 	// However, in the original v1.0 English release this opcode takes no argument.
 	uint16 cursorId; // = args[0];
 	switch (var) {
-		case 41: // Vault white page
-			cursorId = kWhitePageCursor;
-			break;
-		case 25:  // Fireplace red page
-		case 102: // Red page
-			cursorId = kRedPageCursor;
-			break;
-		case 24:  // Fireplace blue page
-		case 103: // Blue page
-			cursorId = kBluePageCursor;
-			break;
-		default:
-			warning("Unexpected take page variable '%d'", var);
-			cursorId = kDefaultMystCursor;
+	case 41: // Vault white page
+		cursorId = kWhitePageCursor;
+		break;
+	case 25: // Fireplace red page
+	case 102: // Red page
+		cursorId = kRedPageCursor;
+		break;
+	case 24: // Fireplace blue page
+	case 103: // Blue page
+		cursorId = kBluePageCursor;
+		break;
+	default:
+		warning("Unexpected take page variable '%d'", var);
+		cursorId = kDefaultMystCursor;
 	}
 
 	HeldPage oldPage = _globals.heldPage;
@@ -722,14 +722,14 @@ void MystScriptParser::o_changeCard(uint16 var, const ArgumentsArray &args) {
 }
 
 void MystScriptParser::o_drawImageChangeCard(uint16 var, const ArgumentsArray &args) {
-		uint16 imageId = args[0];
-		uint16 cardId = args[1];
-		TransitionType transition = static_cast<TransitionType>(args[2]);
+	uint16 imageId = args[0];
+	uint16 cardId = args[1];
+	TransitionType transition = static_cast<TransitionType>(args[2]);
 
-		_vm->_gfx->copyImageToScreen(imageId, Common::Rect(0, 0, 544, 333));
-		_vm->wait(200);
+	_vm->_gfx->copyImageToScreen(imageId, Common::Rect(0, 0, 544, 333));
+	_vm->wait(200);
 
-		_vm->changeToCard(cardId, transition);
+	_vm->changeToCard(cardId, transition);
 }
 
 void MystScriptParser::o_changeMainCursor(uint16 var, const ArgumentsArray &args) {

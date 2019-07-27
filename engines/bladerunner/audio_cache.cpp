@@ -26,10 +26,10 @@
 
 namespace BladeRunner {
 
-AudioCache::AudioCache() :
-	_totalSize(0),
-	_maxSize(2457600),
-	_accessCounter(0) {}
+AudioCache::AudioCache()
+  : _totalSize(0)
+  , _maxSize(2457600)
+  , _accessCounter(0) {}
 
 AudioCache::~AudioCache() {
 	for (uint i = 0; i != _cacheItems.size(); ++i) {
@@ -82,7 +82,7 @@ byte *AudioCache::findByHash(int32 hash) {
 	return nullptr;
 }
 
-void  AudioCache::storeByHash(int32 hash, Common::SeekableReadStream *stream) {
+void AudioCache::storeByHash(int32 hash, Common::SeekableReadStream *stream) {
 	Common::StackLock lock(_mutex);
 
 	uint32 size = stream->size();

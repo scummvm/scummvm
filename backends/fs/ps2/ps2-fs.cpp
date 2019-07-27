@@ -23,26 +23,26 @@
 #if defined(__PLAYSTATION2__)
 
 // Disable symbol overrides so that we can use "FILE"
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
-#define FORBIDDEN_SYMBOL_EXCEPTION_abort
-#define FORBIDDEN_SYMBOL_EXCEPTION_exit
+#	define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+#	define FORBIDDEN_SYMBOL_EXCEPTION_printf
+#	define FORBIDDEN_SYMBOL_EXCEPTION_abort
+#	define FORBIDDEN_SYMBOL_EXCEPTION_exit
 
-#include "backends/fs/ps2/ps2-fs.h"
+#	include "backends/fs/ps2/ps2-fs.h"
 
-#include <kernel.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include "backends/platform/ps2/asyncfio.h"
-#include "backends/platform/ps2/fileio.h"
-#include "backends/platform/ps2/systemps2.h"
-#include "backends/platform/ps2/ps2debug.h"
+#	include "backends/platform/ps2/asyncfio.h"
+#	include "backends/platform/ps2/fileio.h"
+#	include "backends/platform/ps2/ps2debug.h"
+#	include "backends/platform/ps2/systemps2.h"
+#	include <kernel.h>
+#	include <stdio.h>
+#	include <stdlib.h>
 
-#include <fileXio_rpc.h>
+#	include <fileXio_rpc.h>
 
-#include "backends/platform/ps2/ps2temp.h"
+#	include "backends/platform/ps2/ps2temp.h"
 
-#define DEFAULT_MODE (FIO_S_IRUSR | FIO_S_IWUSR | FIO_S_IRGRP | FIO_S_IWGRP | FIO_S_IROTH | FIO_S_IWOTH)
+#	define DEFAULT_MODE (FIO_S_IRUSR | FIO_S_IWUSR | FIO_S_IRGRP | FIO_S_IWGRP | FIO_S_IROTH | FIO_S_IWOTH)
 
 extern AsyncFio fio;
 extern OSystem_PS2 *g_systemPs2;
@@ -102,7 +102,7 @@ Ps2FilesystemNode::Ps2FilesystemNode(const Common::String &path) {
 		_displayName = _lastPathComponent(_path);
 
 		if (_isDirectory && _path.lastChar() != '/')
-			_path+= '/';
+			_path += '/';
 
 		_isRoot = false;
 	}
@@ -142,7 +142,7 @@ Ps2FilesystemNode::Ps2FilesystemNode(const Common::String &path, bool verify) {
 		_displayName = _lastPathComponent(_path);
 
 		if (_isDirectory && _path.lastChar() != '/')
-			_path+= '/';
+			_path += '/';
 
 		_isRoot = false;
 	}
@@ -168,7 +168,7 @@ void Ps2FilesystemNode::doverify(void) {
 
 	dbg_printf(" verify: %s -> ", _path.c_str());
 
-#if 0
+#	if 0
 	if (_path.empty()) {
 		dbg_printf("PlayStation 2 Root !\n");
 		_verified = true;
@@ -180,7 +180,7 @@ void Ps2FilesystemNode::doverify(void) {
 		_verified = true;
 		return;
 	}
-#endif
+#	endif
 
 	if (_path[3] != ':' && _path[4] != ':') {
 		dbg_printf("relative path !\n");
@@ -197,7 +197,7 @@ void Ps2FilesystemNode::doverify(void) {
 	}
 
 	switch (medium) {
-#if 0
+#	if 0
 	case HD_DEV: /*stat*/
 	case USB_DEV:
 		iox_stat_t stat;
@@ -210,60 +210,60 @@ void Ps2FilesystemNode::doverify(void) {
 			return true;
 		}
 	break;
-#endif
+#	endif
 
 	case CD_DEV: /*no stat*/
 	case HD_DEV:
 	case USB_DEV:
 	case HOST_DEV:
 	case MC_DEV:
-#if 1
-	fd = fio.open(_path.c_str(), O_RDONLY);
+#	if 1
+		fd = fio.open(_path.c_str(), O_RDONLY);
 
-	dbg_printf("_path = %s -- fio.open -> %d\n", _path.c_str(), fd);
+		dbg_printf("_path = %s -- fio.open -> %d\n", _path.c_str(), fd);
 
-	if (fd >=0) {
-		fio.close(fd);
-		dbg_printf("  yes [open]\n");
-		_isHere = true;
-		if (medium==MC_DEV && _path.lastChar()=='/')
+		if (fd >= 0) {
+			fio.close(fd);
+			dbg_printf("  yes [open]\n");
+			_isHere = true;
+			if (medium == MC_DEV && _path.lastChar() == '/')
+				_isDirectory = true;
+			else
+				_isDirectory = false;
+			return;
+		}
+
+		fd = fio.dopen(_path.c_str());
+		if (fd >= 0) {
+			fio.dclose(fd);
+			dbg_printf("  yes [dopen]\n");
+			_isHere = true;
 			_isDirectory = true;
-		else
-			_isDirectory = false;
-		return;
-	}
+			return;
+		}
 
-	fd = fio.dopen(_path.c_str());
-	if (fd >=0) {
-		fio.dclose(fd);
-		dbg_printf("  yes [dopen]\n");
-		_isHere = true;
-		_isDirectory = true;
-		return;
-	}
-
-#else
-	fileXioOpen(_path.c_str(), O_RDONLY, DEFAULT_MODE);
-	fileXioWaitAsync(FXIO_WAIT, &fd);
-	if (fd>=0) {
-		fileXioClose(fd);
+#	else
+		fileXioOpen(_path.c_str(), O_RDONLY, DEFAULT_MODE);
 		fileXioWaitAsync(FXIO_WAIT, &fd);
-		return true;
-	}
+		if (fd >= 0) {
+			fileXioClose(fd);
+			fileXioWaitAsync(FXIO_WAIT, &fd);
+			return true;
+		}
 
-	fileXioDopen(_path.c_str());
-	fileXioWaitAsync(FXIO_WAIT, &fd);
-	if (fd>=0) {
-		fileXioDclose(fd);
+		fileXioDopen(_path.c_str());
 		fileXioWaitAsync(FXIO_WAIT, &fd);
-		return true;
-	}
-#endif
-	break;
+		if (fd >= 0) {
+			fileXioDclose(fd);
+			fileXioWaitAsync(FXIO_WAIT, &fd);
+			return true;
+		}
+#	endif
+		break;
 	case ERR_DEV:
 		_isHere = false;
 		_isDirectory = false;
-	break;
+		break;
 	}
 
 	_isHere = false;
@@ -287,9 +287,9 @@ AbstractFSNode *Ps2FilesystemNode::getChild(const Common::String &n) const {
 			return NULL;
 	}
 
-	return new Ps2FilesystemNode(_path+n, 1);
+	return new Ps2FilesystemNode(_path + n, 1);
 
-/*
+	/*
 	int fd;
 
 	if (_path == "pfs0:")
@@ -371,13 +371,11 @@ bool Ps2FilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hi
 				if (dirent.name[0] == '.')
 					continue; // ignore '.' and '..'
 
-				if ( (mode == Common::FSNode::kListAll) ||
+				if ((mode == Common::FSNode::kListAll) ||
 
-					((mode == Common::FSNode::kListDirectoriesOnly) &&
-					 (dirent.stat.mode & FIO_S_IFDIR)) ||
+				    ((mode == Common::FSNode::kListDirectoriesOnly) && (dirent.stat.mode & FIO_S_IFDIR)) ||
 
-				    ((mode == Common::FSNode::kListFilesOnly) &&
-					 !(dirent.stat.mode & FIO_S_IFDIR)) ) {
+				    ((mode == Common::FSNode::kListFilesOnly) && !(dirent.stat.mode & FIO_S_IFDIR))) {
 
 					dirEntry._isHere = true;
 					dirEntry._isDirectory = (bool)(dirent.stat.mode & FIO_S_IFDIR);

@@ -26,7 +26,8 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CDomeFromTopOfWell, CViewAutoSoundPlayer);
 
-CDomeFromTopOfWell::CDomeFromTopOfWell() : CViewAutoSoundPlayer() {
+CDomeFromTopOfWell::CDomeFromTopOfWell()
+  : CViewAutoSoundPlayer() {
 	_filename = "z#227.wav";
 	_volume = 25;
 	_repeated = true;

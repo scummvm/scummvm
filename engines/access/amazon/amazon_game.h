@@ -30,107 +30,109 @@ namespace Access {
 
 namespace Amazon {
 
-class AmazonEngine;
+	class AmazonEngine;
 
-class AmazonEngine : public AccessEngine {
-private:
-	byte _tileData[1455];
-	Common::Array<CellIdent> _chapterCells;
+	class AmazonEngine : public AccessEngine {
+	private:
+		byte _tileData[1455];
+		Common::Array<CellIdent> _chapterCells;
 
-	/**
+		/**
 	 * Setup variables for the game
 	 */
-	void setupGame();
+		void setupGame();
 
-	/**
+		/**
 	 * Initialize variables found in the config file
 	 */
-	void configSelect();
+		void configSelect();
 
-	void initVariables();
-	void initObjects();
-	void calcIQ();
-	void helpTitle();
-	void drawHelpText(const Common::String &msg);
-	void loadEstablish(int estabIndex);
-	void doEstablish(int screenId, int estabIndex);
+		void initVariables();
+		void initObjects();
+		void calcIQ();
+		void helpTitle();
+		void drawHelpText(const Common::String &msg);
+		void loadEstablish(int estabIndex);
+		void doEstablish(int screenId, int estabIndex);
 
-protected:
-	/**
+	protected:
+		/**
 	 * Play the game
 	 */
-	virtual void playGame();
+		virtual void playGame();
 
-	/**
+		/**
 	* Synchronize savegame data
 	*/
-	virtual void synchronize(Common::Serializer &s);
-public:
-	InactivePlayer _inactive;
-	bool _charSegSwitch;
-	byte _help1[366];
-	byte _help2[366];
-	byte _help3[366];
-	byte *_helpTbl[3];
+		virtual void synchronize(Common::Serializer &s);
 
-	// Fields that are mapped to flags
-	int &_guardLocation;
-	int &_guardFind;
-	int &_helpLevel;
-	int &_jasMayaFlag;
-	int &_moreHelp;
-	int &_flashbackFlag;
-	int &_riverFlag;
-	int &_aniOutFlag;
-	int &_badEnd;
-	int &_noHints;
-	int &_aniFlag;
-	int &_allenFlag;
-	int &_noSound;
+	public:
+		InactivePlayer _inactive;
+		bool _charSegSwitch;
+		byte _help1[366];
+		byte _help2[366];
+		byte _help3[366];
+		byte *_helpTbl[3];
 
-	// Saved fields
-	int _chapter;
-	int _rawInactiveX;
-	int _rawInactiveY;
-	int _inactiveYOff;
+		// Fields that are mapped to flags
+		int &_guardLocation;
+		int &_guardFind;
+		int &_helpLevel;
+		int &_jasMayaFlag;
+		int &_moreHelp;
+		int &_flashbackFlag;
+		int &_riverFlag;
+		int &_aniOutFlag;
+		int &_badEnd;
+		int &_noHints;
+		int &_aniFlag;
+		int &_allenFlag;
+		int &_noSound;
 
-	// Other game specific fields
-	Ant *_ant;
-	Cast *_cast;
-	Guard *_guard;
-	Jungle *_jungle;
-	Opening *_opening;
-	Plane *_plane;
-	River *_river;
-	int _hintLevel;
-	int _updateChapter;
-	int _oldTitleChapter;
-	int _iqValue;
-public:
-	AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc);
+		// Saved fields
+		int _chapter;
+		int _rawInactiveX;
+		int _rawInactiveY;
+		int _inactiveYOff;
 
-	virtual ~AmazonEngine();
+		// Other game specific fields
+		Ant *_ant;
+		Cast *_cast;
+		Guard *_guard;
+		Jungle *_jungle;
+		Opening *_opening;
+		Plane *_plane;
+		River *_river;
+		int _hintLevel;
+		int _updateChapter;
+		int _oldTitleChapter;
+		int _iqValue;
 
-	virtual void dead(int deathId);
+	public:
+		AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 
-	/**
+		virtual ~AmazonEngine();
+
+		virtual void dead(int deathId);
+
+		/**
 	* Free the inactive player data
 	*/
-	void freeInactivePlayer();
+		void freeInactivePlayer();
 
-	void drawHelp(const Common::String str);
+		void drawHelp(const Common::String str);
 
-	virtual void establish(int esatabIndex, int sub);
+		virtual void establish(int esatabIndex, int sub);
 
-	void tileScreen();
-	void updateSummary(int chap);
-	void establishCenter(int screenId, int esatabIndex);
+		void tileScreen();
+		void updateSummary(int chap);
+		void establishCenter(int screenId, int esatabIndex);
 
-	/**
+		/**
 	 * Show the start of a chapter
 	 */
-	void startChapter(int chapter);
-};
+		void startChapter(int chapter);
+	};
 
 } // End of namespace Amazon
 

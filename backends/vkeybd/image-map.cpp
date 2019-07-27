@@ -24,10 +24,10 @@
 
 #ifdef ENABLE_VKEYBD
 
-#include "common/textconsole.h"
+#	include "common/textconsole.h"
 
-#include "backends/vkeybd/image-map.h"
-#include "backends/vkeybd/polygon.h"
+#	include "backends/vkeybd/image-map.h"
+#	include "backends/vkeybd/polygon.h"
 
 namespace Common {
 
@@ -67,7 +67,6 @@ String ImageMap::findMapArea(int16 x, int16 y) {
 
 	return String();
 }
-
 
 } // End of namespace Common
 

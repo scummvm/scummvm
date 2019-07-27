@@ -28,13 +28,12 @@
 #include "gui/debugger.h"
 
 #if EXTENDED_DEBUGGER_ENABLED
-#include "engines/wintermute/base/scriptables/debuggable/debuggable_script.h"
+#	include "engines/wintermute/base/scriptables/debuggable/debuggable_script.h"
 #else
-#include "engines/wintermute/base/scriptables/script.h"
+#	include "engines/wintermute/base/scriptables/script.h"
 #endif
 
 #define DEFAULT_SOURCE_PADDING 5
-
 
 #define STEP_CMD "step"
 #define CONTINUE_CMD "continue"

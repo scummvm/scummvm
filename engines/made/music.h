@@ -42,7 +42,7 @@ public:
 
 	void playXMIDI(GenericResource *midiResource, MusicFlags flags = MUSIC_NORMAL);
 	void playSMF(GenericResource *midiResource, MusicFlags flags = MUSIC_NORMAL);
-//	void stop();
+	//	void stop();
 	void pause();
 	void resume();
 

@@ -22,8 +22,8 @@
 
 #include "backends/platform/linuxmoto/linuxmoto-sdl.h"
 
-#include "backends/graphics/linuxmotosdl/linuxmotosdl-graphics.h"
 #include "backends/events/linuxmotosdl/linuxmotosdl-events.h"
+#include "backends/graphics/linuxmotosdl/linuxmotosdl-graphics.h"
 
 void OSystem_LINUXMOTO::initBackend() {
 	// Create the backend custom managers

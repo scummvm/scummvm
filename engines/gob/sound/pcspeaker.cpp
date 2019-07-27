@@ -20,16 +20,17 @@
  *
  */
 
-#include "audio/softsynth/pcspk.h"
 #include "gob/sound/pcspeaker.h"
+#include "audio/softsynth/pcspk.h"
 
 namespace Gob {
 
-PCSpeaker::PCSpeaker(Audio::Mixer &mixer) : _mixer(&mixer) {
+PCSpeaker::PCSpeaker(Audio::Mixer &mixer)
+  : _mixer(&mixer) {
 
 	_stream = new Audio::PCSpeaker(_mixer->getOutputRate());
 	_mixer->playStream(Audio::Mixer::kSFXSoundType,
-			&_handle, _stream, -1, 50, 0, DisposeAfterUse::NO, true);
+	                   &_handle, _stream, -1, 50, 0, DisposeAfterUse::NO, true);
 }
 
 PCSpeaker::~PCSpeaker() {

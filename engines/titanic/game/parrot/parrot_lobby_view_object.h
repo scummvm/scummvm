@@ -30,11 +30,15 @@ namespace Titanic {
 class CParrotLobbyViewObject : public CParrotLobbyObject {
 	DECLARE_MESSAGE_MAP;
 	bool ActMsg(CActMsg *msg);
+
 public:
 	bool _flag;
+
 public:
 	CLASSDEF;
-	CParrotLobbyViewObject() : CParrotLobbyObject(), _flag(true) {}
+	CParrotLobbyViewObject()
+	  : CParrotLobbyObject()
+	  , _flag(true) {}
 
 	/**
 	 * Save the data for the class to file

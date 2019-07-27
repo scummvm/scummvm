@@ -32,8 +32,8 @@
 
 #include "graphics/cursorman.h"
 
-#include "gui/editrecorddialog.h"
 #include "gui/ThemeEval.h"
+#include "gui/editrecorddialog.h"
 
 #include "gui/onscreendialog.h"
 
@@ -57,7 +57,8 @@ void OnScreenDialog::reflowLayout() {
 void OnScreenDialog::releaseFocus() {
 }
 
-OnScreenDialog::OnScreenDialog(bool isRecord) : Dialog("OnScreenDialog") {
+OnScreenDialog::OnScreenDialog(bool isRecord)
+  : Dialog("OnScreenDialog") {
 	_x = _y = 0;
 
 #ifndef DISABLE_FANCY_THEMES
@@ -110,7 +111,6 @@ OnScreenDialog::OnScreenDialog(bool isRecord) : Dialog("OnScreenDialog") {
 			new ButtonWidget(this, "OnScreenDialog.FastReplayButton", ">>", _("Fast replay"), kFastModeCmd);
 		}
 	}
-
 
 	_text = new GUI::StaticTextWidget(this, "OnScreenDialog.TimeLabel", "00:00:00");
 	_enableDrag = false;
@@ -199,7 +199,6 @@ void OnScreenDialog::handleMouseDown(int x, int y, int button, int clickCount) {
 
 void OnScreenDialog::handleMouseUp(int x, int y, int button, int clickCount) {
 	if (isMouseOver(x, y)) {
-
 	}
 	_enableDrag = false;
 	Dialog::handleMouseUp(x, y, button, clickCount);

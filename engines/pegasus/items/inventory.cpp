@@ -23,9 +23,9 @@
  *
  */
 
+#include "pegasus/items/inventory.h"
 #include "pegasus/constants.h"
 #include "pegasus/items/item.h"
-#include "pegasus/items/inventory.h"
 
 namespace Pegasus {
 
@@ -44,7 +44,7 @@ void Inventory::setWeightLimit(WeightType limit) {
 }
 
 WeightType Inventory::getWeight() {
-	WeightType	result = 0;
+	WeightType result = 0;
 
 	for (ItemIterator it = _inventoryList.begin(); it != _inventoryList.end(); it++)
 		result += (*it)->getItemWeight();

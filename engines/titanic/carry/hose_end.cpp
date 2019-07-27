@@ -26,7 +26,8 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CHoseEnd, CHose);
 
-CHoseEnd::CHoseEnd() : CHose() {
+CHoseEnd::CHoseEnd()
+  : CHose() {
 }
 
 void CHoseEnd::save(SimpleFile *file, int indent) {

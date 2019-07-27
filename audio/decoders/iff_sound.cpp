@@ -23,19 +23,19 @@
 #include "audio/decoders/iff_sound.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
-#include "common/iff_container.h"
 #include "common/func.h"
+#include "common/iff_container.h"
 
 namespace Audio {
 
 struct Voice8Header {
-	uint32	oneShotHiSamples;
-	uint32	repeatHiSamples;
-	uint32	samplesPerHiCycle;
-	uint16	samplesPerSec;
-	byte	octaves;
-	byte	compression;
-	uint32	volume;
+	uint32 oneShotHiSamples;
+	uint32 repeatHiSamples;
+	uint32 samplesPerHiCycle;
+	uint16 samplesPerSec;
+	byte octaves;
+	byte compression;
+	uint32 volume;
 
 	Voice8Header() {
 		memset(this, 0, sizeof(Voice8Header));
@@ -54,8 +54,6 @@ void Voice8Header::load(Common::ReadStream &stream) {
 	volume = stream.readUint32BE();
 }
 
-
-
 struct A8SVXLoader {
 	Voice8Header _header;
 	int8 *_data;
@@ -63,7 +61,7 @@ struct A8SVXLoader {
 
 	void load(Common::ReadStream &input) {
 		Common::IFFParser parser(&input);
-		Common::Functor1Mem< Common::IFFChunk&, bool, A8SVXLoader > c(this, &A8SVXLoader::callback);
+		Common::Functor1Mem<Common::IFFChunk &, bool, A8SVXLoader> c(this, &A8SVXLoader::callback);
 		parser.parse(c);
 	}
 
@@ -95,10 +93,8 @@ struct A8SVXLoader {
 			error("compressed IFF audio is not supported");
 			break;
 		}
-
 	}
 };
-
 
 AudioStream *make8SVXStream(Common::ReadStream &input, bool loop) {
 	A8SVXLoader loader;
@@ -115,8 +111,8 @@ AudioStream *make8SVXStream(Common::ReadStream &input, bool loop) {
 
 		if (loopStart != loopEnd) {
 			return new SubLoopingAudioStream(stream, 0,
-					Timestamp(0, loopStart, loader._header.samplesPerSec),
-					Timestamp(0, loopEnd, loader._header.samplesPerSec));
+			                                 Timestamp(0, loopStart, loader._header.samplesPerSec),
+			                                 Timestamp(0, loopEnd, loader._header.samplesPerSec));
 		}
 	}
 

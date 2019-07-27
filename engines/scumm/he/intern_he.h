@@ -25,10 +25,10 @@
 
 #include "scumm/scumm_v6.h"
 #ifdef ENABLE_HE
-#include "scumm/he/floodfill_he.h"
-#include "scumm/he/wiz_he.h"
+#	include "scumm/he/floodfill_he.h"
+#	include "scumm/he/wiz_he.h"
 #endif
-#include "scumm/actor_he.h"	// For AuxBlock & AuxEntry
+#include "scumm/actor_he.h" // For AuxBlock & AuxEntry
 
 namespace Common {
 class SeekableReadStream;
@@ -48,12 +48,11 @@ class CUP_Player;
 
 class ScummEngine_v60he : public ScummEngine_v6 {
 protected:
-
 public:
 	Common::SeekableReadStream *_hInFileTable[17];
 	Common::WriteStream *_hOutFileTable[17];
 
-	Common::Rect _actorClipOverride;	// HE specific
+	Common::Rect _actorClipOverride; // HE specific
 
 	int _heTimers[16];
 	uint32 _pauseStartTime;
@@ -250,6 +249,7 @@ protected:
 	void o71_polygonHit();
 
 	byte VAR_WIZ_TCOLOR;
+
 public:
 	/* Actor AuxQueue stuff (HE) */
 	AuxBlock _auxBlocks[16];
@@ -265,19 +265,18 @@ public:
 
 class ScummEngine_v72he : public ScummEngine_v71he {
 protected:
-
-#include "common/pack-start.h"	// START STRUCT PACKING
+#	include "common/pack-start.h" // START STRUCT PACKING
 
 	struct ArrayHeader {
-		int32 type;      //0
+		int32 type; //0
 		int32 dim1start; //4
-		int32 dim1end;   //8
+		int32 dim1end; //8
 		int32 dim2start; //0C
-		int32 dim2end;   //10
-		byte data[1];    //14
+		int32 dim2end; //10
+		byte data[1]; //14
 	} PACKED_STRUCT;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+#	include "common/pack-end.h" // END STRUCT PACKING
 
 	int _stringLength;
 	byte _stringBuffer[4096];
@@ -310,10 +309,10 @@ protected:
 	virtual int readArray(int array, int idx2, int idx1);
 	virtual void writeArray(int array, int idx2, int idx1, int value);
 	void redimArray(int arrayId, int newDim2start, int newDim2end,
-					int newDim1start, int newDim1end, int type);
+	                int newDim1start, int newDim1end, int type);
 	void checkArrayLimits(int array, int dim2start, int dim2end, int dim1start, int dim1end);
 	void copyArray(int array1, int a1_dim2start, int a1_dim2end, int a1_dim1start, int a1_dim1end,
-					int array2, int a2_dim2start, int a2_dim2end, int a2_dim1start, int a2_dim1end);
+	               int array2, int a2_dim2start, int a2_dim2end, int a2_dim1start, int a2_dim1end);
 	void copyArrayHelper(ArrayHeader *ah, int idx2, int idx1, int len1, byte **data, int *size, int *num);
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int32 resID);
@@ -389,7 +388,7 @@ protected:
 
 	byte VAR_POLYGONS_ONLY;
 
-	byte VAR_MOUSE_STATE;			// Used in checkExecVerbs();
+	byte VAR_MOUSE_STATE; // Used in checkExecVerbs();
 	byte VAR_PLATFORM;
 };
 
@@ -572,7 +571,8 @@ protected:
 
 class ScummEngine_v99he : public ScummEngine_v90he {
 public:
-	ScummEngine_v99he(OSystem *syst, const DetectorResult &dr) : ScummEngine_v90he(syst, dr) {}
+	ScummEngine_v99he(OSystem *syst, const DetectorResult &dr)
+	  : ScummEngine_v90he(syst, dr) {}
 
 	virtual void resetScumm();
 
@@ -591,7 +591,7 @@ protected:
 };
 
 class ScummEngine_v100he : public ScummEngine_v99he {
-friend class AI;
+	friend class AI;
 
 protected:
 	ResType _heResType;
@@ -684,7 +684,6 @@ public:
 };
 
 #endif
-
 
 } // End of namespace Scumm
 

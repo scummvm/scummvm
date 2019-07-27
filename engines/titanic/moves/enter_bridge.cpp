@@ -25,7 +25,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CEnterBridge, CGameObject)
-	ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(EnterRoomMsg)
 END_MESSAGE_MAP()
 
 void CEnterBridge::save(SimpleFile *file, int indent) {

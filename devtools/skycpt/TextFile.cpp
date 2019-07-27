@@ -20,8 +20,8 @@
  *
  */
 
-#include "stdafx.h"
 #include "TextFile.h"
+#include "stdafx.h"
 
 TextFile::TextFile(const char *name) {
 	FILE *inf = fopen(name, "r");
@@ -61,12 +61,12 @@ char *TextFile::giveLine(uint32 num) {
 
 void TextFile::read(FILE *inf) {
 	char *line = (char *)malloc(4096);
-	_lines = (char**)malloc(4096 * sizeof(char *));
+	_lines = (char **)malloc(4096 * sizeof(char *));
 	_numLines = 0;
 	uint32 linesMax = 4096;
 	while (fgets(line, 4096, inf)) {
 		if (_numLines >= linesMax) {
-			_lines = (char**)realloc(_lines, linesMax * 2 * sizeof(char *));
+			_lines = (char **)realloc(_lines, linesMax * 2 * sizeof(char *));
 			linesMax *= 2;
 		}
 		char *start = line;

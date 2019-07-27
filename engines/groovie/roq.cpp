@@ -27,8 +27,8 @@
 #include "groovie/graphics.h"
 #include "groovie/groovie.h"
 
-#include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/debug.h"
 #include "common/rect.h"
 #include "common/substream.h"
 #include "common/textconsole.h"
@@ -38,19 +38,20 @@
 
 #ifdef USE_RGB_COLOR
 // Required for the YUV to RGB conversion
-#include "graphics/conversion.h"
+#	include "graphics/conversion.h"
 #endif
 #include "audio/audiostream.h"
-#include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "audio/mixer.h"
 
 namespace Groovie {
 
-ROQPlayer::ROQPlayer(GroovieEngine *vm) :
-	VideoPlayer(vm), _codingTypeCount(0),
-	_fg(&_vm->_graphicsMan->_foreground),
-	_bg(&_vm->_graphicsMan->_background),
-	_firstFrame(true) {
+ROQPlayer::ROQPlayer(GroovieEngine *vm)
+  : VideoPlayer(vm)
+  , _codingTypeCount(0)
+  , _fg(&_vm->_graphicsMan->_foreground)
+  , _bg(&_vm->_graphicsMan->_background)
+  , _firstFrame(true) {
 
 	// Create the work surfaces
 	_currBuf = new Graphics::Surface();
@@ -70,7 +71,7 @@ uint16 ROQPlayer::loadInternal() {
 		int8 i;
 		debugN(1, "Groovie::ROQ: New ROQ: bitflags are ");
 		for (i = 15; i >= 0; i--) {
-			debugN(1, "%d", _flags & (1 << i)? 1 : 0);
+			debugN(1, "%d", _flags & (1 << i) ? 1 : 0);
 			if (i % 4 == 0) {
 				debugN(1, " ");
 			}
@@ -80,7 +81,7 @@ uint16 ROQPlayer::loadInternal() {
 
 	// Flags:
 	// - 2 For overlay videos, show the whole video
-	_flagTwo =	((_flags & (1 << 2)) != 0);
+	_flagTwo = ((_flags & (1 << 2)) != 0);
 
 	// Begin reading the file
 	debugC(1, kDebugVideo, "Groovie::ROQ: Loading video");
@@ -385,7 +386,7 @@ bool ROQPlayer::processBlockQuadVector(ROQBlockHeader &blockHeader) {
 	int8 My = blockHeader.param & 0xFF;
 
 	// Calculate where the block should end
-	int32 endpos =_file->pos() + blockHeader.size;
+	int32 endpos = _file->pos() + blockHeader.size;
 
 	// Reset the coding types
 	_codingTypeCount = 0;
@@ -403,7 +404,7 @@ bool ROQPlayer::processBlockQuadVector(ROQBlockHeader &blockHeader) {
 	}
 
 	// HACK: Skip the remaining bytes
-	int32 skipBytes = endpos -_file->pos();
+	int32 skipBytes = endpos - _file->pos();
 	if (skipBytes > 0) {
 		_file->skip(skipBytes);
 		if (skipBytes != 2) {
@@ -458,9 +459,9 @@ void ROQPlayer::processBlockQuadVectorBlockSub(int baseX, int baseY, int8 Mx, in
 		paint4(_file->readByte(), baseX, baseY);
 		break;
 	case 3:
-		paint2(_file->readByte(), baseX    , baseY);
+		paint2(_file->readByte(), baseX, baseY);
 		paint2(_file->readByte(), baseX + 2, baseY);
-		paint2(_file->readByte(), baseX    , baseY + 2);
+		paint2(_file->readByte(), baseX, baseY + 2);
 		paint2(_file->readByte(), baseX + 2, baseY + 2);
 		break;
 	}

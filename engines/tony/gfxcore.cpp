@@ -242,7 +242,7 @@ RMGfxWoodyBuffer::RMGfxWoodyBuffer() {
 }
 
 RMGfxWoodyBuffer::RMGfxWoodyBuffer(int dimx, int dimy)
-	: RMGfxBuffer(dimx, dimy, 16) {
+  : RMGfxBuffer(dimx, dimy, 16) {
 }
 
 /****************************************************************************\
@@ -513,9 +513,7 @@ int RMGfxSourceBufferPal::loadPalette(const byte *buf) {
 void RMGfxSourceBufferPal::preparePalette() {
 	for (int i = 0; i < 256; i++) {
 		// we convert 555 to 565 here.
-		_palFinal[i] = (((int)_pal[i * 3 + 0] >> 3) <<  11) |
-		                (((int)_pal[i * 3 + 1] >> 3) <<  6) |
-		                (((int)_pal[i * 3 + 2] >> 3) <<  0);
+		_palFinal[i] = (((int)_pal[i * 3 + 0] >> 3) << 11) | (((int)_pal[i * 3 + 1] >> 3) << 6) | (((int)_pal[i * 3 + 2] >> 3) << 0);
 	}
 }
 
@@ -559,7 +557,7 @@ void RMGfxSourceBuffer4::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimit
 }
 
 RMGfxSourceBuffer4::RMGfxSourceBuffer4(int dimx, int dimy)
-	: RMGfxBuffer(dimx, dimy, 4) {
+  : RMGfxBuffer(dimx, dimy, 4) {
 	setPriority(0);
 }
 
@@ -644,7 +642,7 @@ void RMGfxSourceBuffer8::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimit
 }
 
 RMGfxSourceBuffer8::RMGfxSourceBuffer8(int dimx, int dimy)
-	: RMGfxBuffer(dimx, dimy, 8) {
+  : RMGfxBuffer(dimx, dimy, 8) {
 	setPriority(0);
 	_bTrasp0 = false;
 }
@@ -666,9 +664,9 @@ void RMGfxSourceBuffer8::create(int dimx, int dimy) {
 	RMGfxBuffer::create(dimx, dimy, 8);
 }
 
-#define GETRED(x)   (((x) >> 11) & 0x1F)
+#define GETRED(x) (((x) >> 11) & 0x1F)
 #define GETGREEN(x) (((x) >> 5) & 0x3F)
-#define GETBLUE(x)   ((x) & 0x1F)
+#define GETBLUE(x) ((x)&0x1F)
 
 /****************************************************************************\
 *               RMGfxSourceBuffer8AB Methods
@@ -842,7 +840,7 @@ void RMGfxSourceBuffer8RLE::compressRLE() {
 		byte *startsrc = src;
 		for (int x = 0; x < _dimx;) {
 			if ((curdata == 0 && *src == 0) || (curdata == 1 && *src == _alphaBlendColor)
-			        || (curdata == 2 && (*src != _alphaBlendColor && *src != 0))) {
+			    || (curdata == 2 && (*src != _alphaBlendColor && *src != 0))) {
 				src++;
 				rep++;
 				x++;
@@ -910,9 +908,9 @@ void RMGfxSourceBuffer8RLE::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPri
 
 	// Loop
 	if (prim->isFlipped()) {
-// Eliminate horizontal clipping
-//		width = m_dimx;
-//		x1=prim->getDst()._x1;
+		// Eliminate horizontal clipping
+		//		width = m_dimx;
+		//		x1=prim->getDst()._x1;
 
 		// Clipping
 		u = _dimx - (width + u);
@@ -960,18 +958,18 @@ RMGfxSourceBuffer8RLEByte::~RMGfxSourceBuffer8RLEByte() {
 
 void RMGfxSourceBuffer8RLEByte::rleWriteTrasp(byte *&cur, int rep) {
 	assert(rep < 255);
-	*cur ++ = rep;
+	*cur++ = rep;
 }
 
 void RMGfxSourceBuffer8RLEByte::rleWriteAlphaBlend(byte *&cur, int rep) {
 	assert(rep < 255);
-	*cur ++ = rep;
+	*cur++ = rep;
 }
 
 void RMGfxSourceBuffer8RLEByte::rleWriteData(byte *&cur, int rep, byte *src) {
 	assert(rep < 256);
 
-	*cur ++ = rep;
+	*cur++ = rep;
 	if (rep > 0) {
 		memcpy(cur, src, rep);
 		cur += rep;
@@ -982,7 +980,7 @@ void RMGfxSourceBuffer8RLEByte::rleWriteData(byte *&cur, int rep, byte *src) {
 }
 
 void RMGfxSourceBuffer8RLEByte::rleWriteEOL(byte *&cur) {
-	*cur ++ = 0xFF;
+	*cur++ = 0xFF;
 }
 
 void RMGfxSourceBuffer8RLEByte::rleDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength) {
@@ -995,7 +993,7 @@ void RMGfxSourceBuffer8RLEByte::rleDecompressLine(uint16 *dst, byte *src, int nS
 		assert(nStartSkip > 0);
 
 		// TRASP
-		n =  *src++;
+		n = *src++;
 		if (n == 0xFF)
 			return;
 
@@ -1008,7 +1006,6 @@ void RMGfxSourceBuffer8RLEByte::rleDecompressLine(uint16 *dst, byte *src, int nS
 				return;
 		}
 		nStartSkip -= n;
-
 
 		assert(nStartSkip > 0);
 
@@ -1034,7 +1031,7 @@ void RMGfxSourceBuffer8RLEByte::rleDecompressLine(uint16 *dst, byte *src, int nS
 	}
 
 	while (1) {
-RLEByteDoTrasp:
+	RLEByteDoTrasp:
 		// Get the trasp of s**t
 		n = *src++;
 
@@ -1047,11 +1044,11 @@ RLEByteDoTrasp:
 		if (nLength <= 0)
 			return;
 
-RLEByteDoAlpha:
+	RLEByteDoAlpha:
 		// Alpha
 		n = *src++;
 
-RLEByteDoAlpha2:
+	RLEByteDoAlpha2:
 		if (n > nLength)
 			n = nLength;
 		for (int i = 0; i < n; i++) {
@@ -1063,7 +1060,7 @@ RLEByteDoAlpha2:
 			g = (g >> 2) + (_alphaG >> 1);
 			b = (b >> 2) + (_alphaB >> 1);
 
-			*dst ++ = (r << 11) | (g << 5) | b;
+			*dst++ = (r << 11) | (g << 5) | b;
 		}
 
 		nLength -= n;
@@ -1071,16 +1068,16 @@ RLEByteDoAlpha2:
 			return;
 		assert(nLength > 0);
 
-//RLEByteDoCopy:
+		//RLEByteDoCopy:
 		// Copy the stuff
 		n = *src++;
 
-RLEByteDoCopy2:
+	RLEByteDoCopy2:
 		if (n > nLength)
 			n = nLength;
 
 		for (int i = 0; i < n; i++)
-			*dst ++ = _palFinal[*src++];
+			*dst++ = _palFinal[*src++];
 
 		nLength -= n;
 		if (!nLength)
@@ -1113,7 +1110,6 @@ void RMGfxSourceBuffer8RLEByte::rleDecompressLineFlipped(uint16 *dst, byte *src,
 		}
 		nStartSkip -= n;
 
-
 		assert(nStartSkip > 0);
 
 		// ALPHA
@@ -1138,7 +1134,7 @@ void RMGfxSourceBuffer8RLEByte::rleDecompressLineFlipped(uint16 *dst, byte *src,
 	}
 
 	while (1) {
-RLEByteFlippedDoTrasp:
+	RLEByteFlippedDoTrasp:
 		// Get the trasp of s**t
 		n = *src++;
 
@@ -1151,11 +1147,11 @@ RLEByteFlippedDoTrasp:
 		if (nLength <= 0)
 			return;
 
-RLEByteFlippedDoAlpha:
+	RLEByteFlippedDoAlpha:
 		// Alpha
 		n = *src++;
 
-RLEByteFlippedDoAlpha2:
+	RLEByteFlippedDoAlpha2:
 		if (n > nLength)
 			n = nLength;
 		for (int i = 0; i < n; i++) {
@@ -1175,11 +1171,11 @@ RLEByteFlippedDoAlpha2:
 			return;
 		assert(nLength > 0);
 
-//RLEByteFlippedDoCopy:
+		//RLEByteFlippedDoCopy:
 		// Copy the data
 		n = *src++;
 
-RLEByteFlippedDoCopy2:
+	RLEByteFlippedDoCopy2:
 		if (n > nLength)
 			n = nLength;
 
@@ -1222,8 +1218,8 @@ void RMGfxSourceBuffer8RLEWord::rleWriteData(byte *&cur, int rep, byte *src) {
 }
 
 void RMGfxSourceBuffer8RLEWord::rleWriteEOL(byte *&cur) {
-	*cur ++ = 0xFF;
-	*cur ++ = 0xFF;
+	*cur++ = 0xFF;
+	*cur++ = 0xFF;
 }
 
 void RMGfxSourceBuffer8RLEWord::rleDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength) {
@@ -1279,7 +1275,7 @@ void RMGfxSourceBuffer8RLEWord::rleDecompressLine(uint16 *dst, byte *src, int nS
 	}
 
 	while (1) {
-RLEWordDoTrasp:
+	RLEWordDoTrasp:
 		// Get the trasp of s**t
 		n = READ_LE_UINT16(src);
 		src += 2;
@@ -1294,11 +1290,11 @@ RLEWordDoTrasp:
 		if (nLength <= 0)
 			return;
 
-RLEWordDoAlpha:
+	RLEWordDoAlpha:
 		n = READ_LE_UINT16(src);
 		src += 2;
 
-RLEWordDoAlpha2:
+	RLEWordDoAlpha2:
 		if (n > nLength)
 			n = nLength;
 
@@ -1320,12 +1316,12 @@ RLEWordDoAlpha2:
 
 		assert(nLength > 0);
 
-//RLEWordDoCopy:
+		//RLEWordDoCopy:
 		// Copy the data
 		n = READ_LE_UINT16(src);
 		src += 2;
 
-RLEWordDoCopy2:
+	RLEWordDoCopy2:
 		if (n > nLength)
 			n = nLength;
 
@@ -1393,7 +1389,7 @@ void RMGfxSourceBuffer8RLEWord::rleDecompressLineFlipped(uint16 *dst, byte *src,
 	}
 
 	while (1) {
-RLEWordFlippedDoTrasp:
+	RLEWordFlippedDoTrasp:
 		// Get the trasp of s**t
 		n = READ_LE_UINT16(src);
 		src += 2;
@@ -1408,11 +1404,11 @@ RLEWordFlippedDoTrasp:
 		if (nLength <= 0)
 			return;
 
-RLEWordFlippedDoAlpha:
+	RLEWordFlippedDoAlpha:
 		n = READ_LE_UINT16(src);
 		src += 2;
 
-RLEWordFlippedDoAlpha2:
+	RLEWordFlippedDoAlpha2:
 		if (n > nLength)
 			n = nLength;
 
@@ -1434,12 +1430,12 @@ RLEWordFlippedDoAlpha2:
 
 		assert(nLength > 0);
 
-//RLEWordFlippedDoCopy:
+		//RLEWordFlippedDoCopy:
 		// Copy the data
 		n = READ_LE_UINT16(src);
 		src += 2;
 
-RLEWordFlippedDoCopy2:
+	RLEWordFlippedDoCopy2:
 		if (n > nLength)
 			n = nLength;
 
@@ -1461,7 +1457,7 @@ RLEWordFlippedDoCopy2:
 RMGfxSourceBuffer8RLEWordAB::~RMGfxSourceBuffer8RLEWordAB() {
 }
 
-void RMGfxSourceBuffer8RLEWordAB::rleDecompressLine(uint16 *dst, byte *src,  int nStartSkip, int nLength) {
+void RMGfxSourceBuffer8RLEWordAB::rleDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength) {
 	int n;
 
 	if (!GLOBALS._bCfgTransparence) {
@@ -1519,7 +1515,7 @@ void RMGfxSourceBuffer8RLEWordAB::rleDecompressLine(uint16 *dst, byte *src,  int
 	}
 
 	while (1) {
-RLEWordDoTrasp:
+	RLEWordDoTrasp:
 		// Get the trasp of s**t
 		n = READ_LE_UINT16(src);
 		src += 2;
@@ -1534,11 +1530,11 @@ RLEWordDoTrasp:
 		if (nLength <= 0)
 			return;
 
-RLEWordDoAlpha:
+	RLEWordDoAlpha:
 		n = READ_LE_UINT16(src);
 		src += 2;
 
-RLEWordDoAlpha2:
+	RLEWordDoAlpha2:
 		if (n > nLength)
 			n = nLength;
 
@@ -1561,12 +1557,12 @@ RLEWordDoAlpha2:
 
 		assert(nLength > 0);
 
-//RLEWordDoCopy:
+		//RLEWordDoCopy:
 		// Copy the data
 		n = READ_LE_UINT16(src);
 		src += 2;
 
-RLEWordDoCopy2:
+	RLEWordDoCopy2:
 		if (n > nLength)
 			n = nLength;
 
@@ -1583,7 +1579,7 @@ RLEWordDoCopy2:
 			g = (g >> 1) + (g2 >> 1);
 			b = (b >> 1) + (b2 >> 1);
 
-			*dst ++ = (r << 11) | (g << 5) | b;
+			*dst++ = (r << 11) | (g << 5) | b;
 			src++;
 		}
 
@@ -1621,10 +1617,7 @@ void RMGfxSourceBuffer8AA::calculateAA() {
 	for (int y = 0; y < _dimy; y++) {
 		for (int x = 0; x < _dimx; x++) {
 			if (*src == 0) {
-				if ((y > 0 && src[-_dimx] != 0) ||
-				    (y < _dimy - 1 && src[_dimx] != 0) ||
-				    (x > 0 && src[-1] != 0) ||
-				    (x < _dimx - 1 && src[1] != 0))
+				if ((y > 0 && src[-_dimx] != 0) || (y < _dimy - 1 && src[_dimx] != 0) || (x > 0 && src[-1] != 0) || (x < _dimx - 1 && src[1] != 0))
 					*srcaa = 1;
 			}
 
@@ -1638,10 +1631,7 @@ void RMGfxSourceBuffer8AA::calculateAA() {
 	for (int y = 0; y < _dimy; y++) {
 		for (int x = 0; x < _dimx; x++) {
 			if (*src != 0) {
-				if ((y > 0 && srcaa[-_dimx] == 1) ||
-				    (y < _dimy - 1 && srcaa[_dimx] == 1) ||
-				    (x > 0 && srcaa[-1] == 1) ||
-				    (x < _dimx - 1 && srcaa[1] == 1))
+				if ((y > 0 && srcaa[-_dimx] == 1) || (y < _dimy - 1 && srcaa[_dimx] == 1) || (x > 0 && srcaa[-1] == 1) || (x < _dimx - 1 && srcaa[1] == 1))
 					*srcaa = 2;
 			}
 
@@ -1657,7 +1647,8 @@ void RMGfxSourceBuffer8AA::calculateAA() {
 	memcpy(_aabuf, _megaAABuf, _dimx * _dimy);
 }
 
-RMGfxSourceBuffer8AA::RMGfxSourceBuffer8AA() : RMGfxSourceBuffer8() {
+RMGfxSourceBuffer8AA::RMGfxSourceBuffer8AA()
+  : RMGfxSourceBuffer8() {
 	_aabuf = NULL;
 }
 
@@ -1949,7 +1940,7 @@ void RMGfxSourceBuffer16::prepareImage() {
 }
 
 RMGfxSourceBuffer16::RMGfxSourceBuffer16(int dimx, int dimy)
-	: RMGfxBuffer(dimx, dimy, 16) {
+  : RMGfxBuffer(dimx, dimy, 16) {
 	setPriority(0);
 	_bTrasp0 = false;
 }

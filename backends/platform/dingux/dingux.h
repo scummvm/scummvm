@@ -25,17 +25,16 @@
 
 #if defined(DINGUX)
 
-#include "backends/base-backend.h"
-#include "backends/platform/sdl/sdl.h"
-#include "backends/platform/sdl/posix/posix.h"
-#include "backends/graphics/dinguxsdl/dinguxsdl-graphics.h"
-#include "backends/events/dinguxsdl/dinguxsdl-events.h"
+#	include "backends/base-backend.h"
+#	include "backends/events/dinguxsdl/dinguxsdl-events.h"
+#	include "backends/graphics/dinguxsdl/dinguxsdl-graphics.h"
+#	include "backends/platform/sdl/posix/posix.h"
+#	include "backends/platform/sdl/sdl.h"
 
 class OSystem_SDL_Dingux : public OSystem_POSIX {
 public:
 	void initBackend();
 };
-
 
 #endif /* DINGUX */
 #endif /* SDL_DINGUX_COMMON_H */

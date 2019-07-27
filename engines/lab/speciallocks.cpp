@@ -20,7 +20,7 @@
  *
  */
 
- /*
+/*
  * This code is based on Labyrinth of Time code with assistance of
  *
  * Copyright (c) 1993 Terra Nova Development
@@ -32,10 +32,10 @@
 
 #include "gui/message.h"
 
-#include "lab/lab.h"
 #include "lab/anim.h"
 #include "lab/dispman.h"
 #include "lab/image.h"
+#include "lab/lab.h"
 #include "lab/labsets.h"
 #include "lab/resource.h"
 #include "lab/speciallocks.h"
@@ -43,8 +43,8 @@
 
 namespace Lab {
 
-#define BRICKOPEN      115
-#define COMBINATIONUNLOCKED  130
+#define BRICKOPEN 115
+#define COMBINATIONUNLOCKED 130
 
 enum TileScroll {
 	kScrollLeft = 1,
@@ -69,7 +69,8 @@ const uint16 SOLUTION[4][4] = {
 
 const int COMBINATION_X[6] = { 45, 83, 129, 166, 211, 248 };
 
-SpecialLocks::SpecialLocks(LabEngine *vm) : _vm(vm) {
+SpecialLocks::SpecialLocks(LabEngine *vm)
+  : _vm(vm) {
 	for (int i = 0; i < 16; i++)
 		_tiles[i] = nullptr;
 
@@ -102,7 +103,7 @@ void SpecialLocks::tileClick(Common::Point pos) {
 		return;
 
 	int tileX = (realPos.x - 101) / 30;
-	int tileY = (realPos.y -  26) / 25;
+	int tileY = (realPos.y - 26) / 25;
 
 	if ((tileX < 4) && (tileY < 4))
 		changeTile(tileX, tileY);

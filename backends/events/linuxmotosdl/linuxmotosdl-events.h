@@ -21,9 +21,9 @@
  */
 
 #if !defined(BACKEND_EVENTS_SDL_LINUXMOTO_H) && !defined(DISABLE_DEFAULT_EVENTMANAGER)
-#define BACKEND_EVENTS_SDL_LINUXMOTO_H
+#	define BACKEND_EVENTS_SDL_LINUXMOTO_H
 
-#include "backends/events/sdl/sdl-events.h"
+#	include "backends/events/sdl/sdl-events.h"
 
 /**
  * SDL events manager for LINUXMOTO

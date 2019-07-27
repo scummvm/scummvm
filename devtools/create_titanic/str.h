@@ -46,6 +46,7 @@ namespace Common {
 class String {
 public:
 	static const uint32 npos = 0xFFFFFFFF;
+
 protected:
 	/**
 	 * The size of the internal storage. Increasing this means less heap
@@ -71,8 +72,7 @@ protected:
 	 * Pointer to the actual string storage. Either points to _storage,
 	 * or to a block allocated on the heap via malloc.
 	 */
-	char  *_str;
-
+	char *_str;
 
 	union {
 		/**
@@ -85,7 +85,7 @@ protected:
 		 */
 		struct {
 			mutable int *_refCount;
-			uint32       _capacity;
+			uint32 _capacity;
 		} _extern;
 	};
 
@@ -95,7 +95,9 @@ protected:
 
 public:
 	/** Construct a new empty string. */
-	String() : _size(0), _str(_storage) { _storage[0] = 0; }
+	String()
+	  : _size(0)
+	  , _str(_storage) { _storage[0] = 0; }
 
 	/** Construct a new string from the given NULL-terminated C string. */
 	String(const char *str);
@@ -133,13 +135,13 @@ public:
 
 	bool equals(const String &x) const;
 	bool equalsIgnoreCase(const String &x) const;
-	int compareTo(const String &x) const;           // strcmp clone
+	int compareTo(const String &x) const; // strcmp clone
 	int compareToIgnoreCase(const String &x) const; // stricmp clone
 
 	bool equals(const char *x) const;
 	bool equalsIgnoreCase(const char *x) const;
-	int compareTo(const char *x) const;             // strcmp clone
-	int compareToIgnoreCase(const char *x) const;   // stricmp clone
+	int compareTo(const char *x) const; // strcmp clone
+	int compareToIgnoreCase(const char *x) const; // stricmp clone
 
 	bool hasSuffix(const String &x) const;
 	bool hasSuffix(const char *x) const;
@@ -152,11 +154,11 @@ public:
 	bool contains(char x) const;
 
 	inline const char *c_str() const { return _str; }
-	inline uint size() const         { return _size; }
+	inline uint size() const { return _size; }
 
 	inline bool empty() const { return (_size == 0); }
-	char firstChar() const    { return (_size > 0) ? _str[0] : 0; }
-	char lastChar() const     { return (_size > 0) ? _str[_size - 1] : 0; }
+	char firstChar() const { return (_size > 0) ? _str[0] : 0; }
+	char lastChar() const { return (_size > 0) ? _str[_size - 1] : 0; }
 
 	char operator[](int idx) const {
 		assert(_str && idx >= 0 && idx < (int)_size);
@@ -200,7 +202,7 @@ public:
 	 * except that it stores the result in (variably sized) String
 	 * instead of a fixed size buffer.
 	 */
-	static String format(const char *fmt, ...) GCC_PRINTF(1,2);
+	static String format(const char *fmt, ...) GCC_PRINTF(1, 2);
 
 	/**
 	 * Print formatted data into a String object. Similar to vsprintf,
@@ -210,15 +212,15 @@ public:
 	static String vformat(const char *fmt, va_list args);
 
 public:
-	typedef char          value_type;
+	typedef char value_type;
 	/**
 	 * Unsigned version of the underlying type. This can be used to cast
 	 * individual string characters to bigger integer types without sign
 	 * extension happening.
 	 */
 	typedef unsigned char unsigned_type;
-	typedef char *        iterator;
-	typedef const char *  const_iterator;
+	typedef char *iterator;
+	typedef const char *const_iterator;
 
 	iterator begin() {
 		// Since the user could potentially
@@ -268,7 +270,6 @@ extern char *ltrim(char *t);
 extern char *rtrim(char *t);
 extern char *trim(char *t);
 
-
 /**
  * Returns the last component of a given path.
  *
@@ -297,7 +298,6 @@ String lastPathComponent(const String &path, const char sep);
  */
 String normalizePath(const String &path, const char sep);
 
-
 /**
  * Simple DOS-style pattern matching function (understands * and ? like used in DOS).
  * Taken from exult/files/listfiles.cc
@@ -324,7 +324,6 @@ String normalizePath(const String &path, const char sep);
  * @return true if str matches the pattern, false otherwise.
  */
 bool matchString(const char *str, const char *pat, bool ignoreCase = false, bool pathMode = false);
-
 
 /**
  * Take a 32 bit value and turn it into a four character string, where each of
@@ -375,8 +374,7 @@ size_t strlcat(char *dst, const char *src, size_t size);
  * Note: It is *NOT* safe to do anything with the return value other than directly
  * copying or printing it.
  */
-#define tag2str(x)	Common::tag2string(x).c_str()
-
+#define tag2str(x) Common::tag2string(x).c_str()
 
 } // End of namespace Common
 

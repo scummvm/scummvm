@@ -24,21 +24,22 @@
 #include "common/str.h"
 #include "graphics/cursorman.h"
 
-#include "gob/gob.h"
 #include "gob/draw.h"
-#include "gob/global.h"
-#include "gob/util.h"
 #include "gob/game.h"
-#include "gob/script.h"
-#include "gob/resources.h"
+#include "gob/global.h"
+#include "gob/gob.h"
 #include "gob/hotspots.h"
-#include "gob/scenery.h"
 #include "gob/inter.h"
+#include "gob/resources.h"
+#include "gob/scenery.h"
+#include "gob/script.h"
+#include "gob/util.h"
 #include "gob/video.h"
 
 namespace Gob {
 
-Draw_v2::Draw_v2(GobEngine *vm) : Draw_v1(vm) {
+Draw_v2::Draw_v2(GobEngine *vm)
+  : Draw_v1(vm) {
 	_mayorWorkaroundStatus = 0;
 }
 
@@ -60,7 +61,7 @@ void Draw_v2::initScreen() {
 	}
 
 	_spritesArray[kFrontSurface] = _frontSurface;
-	_spritesArray[kBackSurface ] = _backSurface;
+	_spritesArray[kBackSurface] = _backSurface;
 
 	_vm->_video->dirtyRectsAll();
 }
@@ -92,9 +93,8 @@ void Draw_v2::animateCursor(int16 cursor) {
 
 	// .-- _draw_animateCursorSUB1 ---
 	if (cursorIndex == -1) {
-		cursorIndex =
-			_vm->_game->_hotspots->findCursor(_vm->_global->_inter_mouseX,
-			                                  _vm->_global->_inter_mouseY);
+		cursorIndex = _vm->_game->_hotspots->findCursor(_vm->_global->_inter_mouseX,
+		                                                _vm->_global->_inter_mouseY);
 
 		if (_cursorAnimLow[cursorIndex] == -1)
 			cursorIndex = 1;
@@ -104,17 +104,13 @@ void Draw_v2::animateCursor(int16 cursor) {
 	if (_cursorAnimLow[cursorIndex] != -1) {
 		// .-- _draw_animateCursorSUB2 ---
 		if (cursorIndex == _cursorIndex) {
-			if ((_cursorAnimDelays[_cursorIndex] != 0) &&
-					((_cursorTimeKey + (_cursorAnimDelays[_cursorIndex] * 10)) <=
-						_vm->_util->getTimeKey())) {
+			if ((_cursorAnimDelays[_cursorIndex] != 0) && ((_cursorTimeKey + (_cursorAnimDelays[_cursorIndex] * 10)) <= _vm->_util->getTimeKey())) {
 				_cursorAnim++;
-				if ((_cursorAnimHigh[_cursorIndex] < _cursorAnim) ||
-						(_cursorAnimLow[_cursorIndex] > _cursorAnim))
+				if ((_cursorAnimHigh[_cursorIndex] < _cursorAnim) || (_cursorAnimLow[_cursorIndex] > _cursorAnim))
 					_cursorAnim = _cursorAnimLow[_cursorIndex];
 				_cursorTimeKey = _vm->_util->getTimeKey();
 			} else {
-				if (_noInvalidated && (_vm->_global->_inter_mouseX == _cursorX) &&
-						(_vm->_global->_inter_mouseY == _cursorY)) {
+				if (_noInvalidated && (_vm->_global->_inter_mouseX == _cursorX) && (_vm->_global->_inter_mouseY == _cursorY)) {
 					_vm->_video->waitRetrace();
 					return;
 				}
@@ -128,8 +124,7 @@ void Draw_v2::animateCursor(int16 cursor) {
 		}
 
 		if (_cursorAnimDelays[_cursorIndex] != 0) {
-			if ((_cursorAnimHigh[_cursorIndex] < _cursorAnim) ||
-					(_cursorAnimLow[_cursorIndex] > _cursorAnim))
+			if ((_cursorAnimHigh[_cursorIndex] < _cursorAnim) || (_cursorAnimLow[_cursorIndex] > _cursorAnim))
 				_cursorAnim = _cursorAnimLow[_cursorIndex];
 
 			cursorIndex = _cursorAnim;
@@ -140,8 +135,8 @@ void Draw_v2::animateCursor(int16 cursor) {
 		hotspotY = 0;
 
 		if (_cursorHotspotXVar != -1) {
-			hotspotX = (uint16) VAR(_cursorIndex + _cursorHotspotXVar);
-			hotspotY = (uint16) VAR(_cursorIndex + _cursorHotspotYVar);
+			hotspotX = (uint16)VAR(_cursorIndex + _cursorHotspotXVar);
+			hotspotY = (uint16)VAR(_cursorIndex + _cursorHotspotYVar);
 		} else if (_cursorHotspotX != -1) {
 			hotspotX = _cursorHotspotX;
 			hotspotY = _cursorHotspotY;
@@ -155,20 +150,20 @@ void Draw_v2::animateCursor(int16 cursor) {
 
 		_scummvmCursor->clear();
 		_scummvmCursor->blit(*_cursorSprites,
-				cursorIndex * _cursorWidth, 0,
-				(cursorIndex + 1) * _cursorWidth - 1,
-				_cursorHeight - 1, 0, 0);
+		                     cursorIndex * _cursorWidth, 0,
+		                     (cursorIndex + 1) * _cursorWidth - 1,
+		                     _cursorHeight - 1, 0, 0);
 
 		uint32 keyColor = 0;
 		if (_doCursorPalettes && _cursorKeyColors && _doCursorPalettes[cursorIndex])
 			keyColor = _cursorKeyColors[cursorIndex];
 
 		CursorMan.replaceCursor(_scummvmCursor->getData(),
-				_cursorWidth, _cursorHeight, hotspotX, hotspotY, keyColor, false, &_vm->getPixelFormat());
+		                        _cursorWidth, _cursorHeight, hotspotX, hotspotY, keyColor, false, &_vm->getPixelFormat());
 
 		if (_doCursorPalettes && _doCursorPalettes[cursorIndex]) {
 			CursorMan.replaceCursorPalette(_cursorPalettes + (cursorIndex * 256 * 3),
-					_cursorPaletteStarts[cursorIndex], _cursorPaletteCounts[cursorIndex]);
+			                               _cursorPaletteStarts[cursorIndex], _cursorPaletteCounts[cursorIndex]);
 			CursorMan.disableCursorPalette(false);
 		} else
 			CursorMan.disableCursorPalette(true);
@@ -212,8 +207,7 @@ void Draw_v2::printTotText(int16 id) {
 
 	// WORKAROUND: In the scripts of some Gobliins 2 versions, the dialog text IDs
 	// for Fingus and the mayor are swapped.
-	if ((_vm->getGameType() == kGameTypeGob2) && !_vm->isCD() &&
-	     _vm->isCurrentTot("gob07.tot")) {
+	if ((_vm->getGameType() == kGameTypeGob2) && !_vm->isCD() && _vm->isCurrentTot("gob07.tot")) {
 
 		if (id == 24) {
 			if (_mayorWorkaroundStatus == 1) {
@@ -228,16 +222,15 @@ void Draw_v2::printTotText(int16 id) {
 			} else
 				_mayorWorkaroundStatus = 0;
 		}
-
 	}
 
 	TextItem *textItem = _vm->_game->_resources->getTextItem(id);
 	if (!textItem)
 		return;
 
-	size    = textItem->getSize();
+	size = textItem->getSize();
 	dataPtr = textItem->getData();
-	ptr     = dataPtr;
+	ptr = dataPtr;
 	_pattern = 0;
 
 	bool isSubtitle = (ptr[1] & 0x80) != 0;
@@ -251,7 +244,7 @@ void Draw_v2::printTotText(int16 id) {
 		destX = (READ_LE_UINT16(ptr) & 0x7FFF) * 2;
 		spriteRight = READ_LE_UINT16(ptr + 4) * 2 + 1;
 	} else {
-// No mask used for Fascination
+		// No mask used for Fascination
 		destX = READ_LE_UINT16(ptr);
 		if (_vm->getGameType() != kGameTypeFascination)
 			destX &= 0x7FFF;
@@ -289,7 +282,7 @@ void Draw_v2::printTotText(int16 id) {
 
 	if (_renderFlags & RENDERFLAG_CAPTUREPUSH) {
 		_vm->_game->capturePush(destX, destY,
-				spriteRight - destX + 1, spriteBottom - destY + 1);
+		                        spriteRight - destX + 1, spriteBottom - destY + 1);
 		(*_vm->_scenery->_pCaptureCounter)++;
 	}
 
@@ -415,30 +408,29 @@ void Draw_v2::printTotText(int16 id) {
 
 				if (colId != -1)
 					_vm->_game->_hotspots->add(colId + 0xD000, rectLeft, rectTop,
-							rectRight, rectBottom, (uint16) Hotspots::kTypeClick, 0, 0, 0, 0);
+					                           rectRight, rectBottom, (uint16)Hotspots::kTypeClick, 0, 0, 0, 0);
 
 				if (_needAdjust != 2)
 					printTextCentered(colCmd & 0x0F, rectLeft + 4, rectTop + 4,
-							rectRight - 4, rectBottom - 4, str, fontIndex, frontColor);
+					                  rectRight - 4, rectBottom - 4, str, fontIndex, frontColor);
 				else
 					printTextCentered(colCmd & 0x0F, rectLeft + 2, rectTop + 2,
-							rectRight - 2, rectBottom - 2, str, fontIndex, frontColor);
+					                  rectRight - 2, rectBottom - 2, str, fontIndex, frontColor);
 
 			} else {
 				_destSpriteX = offX;
 				_destSpriteY = offY;
-				_fontIndex   = fontIndex;
-				_frontColor  = frontColor;
+				_fontIndex = fontIndex;
+				_frontColor = frontColor;
 				_textToPrint = str;
 
 				if (isSubtitle) {
-					_fontIndex  = _subtitleFont;
+					_fontIndex = _subtitleFont;
 					_frontColor = _subtitleColor;
 				}
 
 				if (_needAdjust != 2) {
-					if ((_destSpriteX >= destX) && (_destSpriteY >= destY) &&
-					    (((_fonts[_fontIndex]->getCharHeight() / 2) + _destSpriteY - 1) <= spriteBottom)) {
+					if ((_destSpriteX >= destX) && (_destSpriteY >= destY) && (((_fonts[_fontIndex]->getCharHeight() / 2) + _destSpriteY - 1) <= spriteBottom)) {
 						while (((_destSpriteX + width - 1) > spriteRight) && (width > 0)) {
 							width -= _fonts[_fontIndex]->getCharWidth() / 2;
 							str[strlen(str) - 1] = '\0';
@@ -480,7 +472,7 @@ void Draw_v2::printTotText(int16 id) {
 			break;
 
 		cmd = *ptr;
-		switch ((uint8) cmd) {
+		switch ((uint8)cmd) {
 		case 2:
 		case 5:
 			ptr++;
@@ -500,7 +492,7 @@ void Draw_v2::printTotText(int16 id) {
 			ptr++;
 
 			if (isSubtitle) {
-				_subtitleFont  = fontIndex;
+				_subtitleFont = fontIndex;
 				_subtitleColor = frontColor;
 			}
 			break;
@@ -529,7 +521,7 @@ void Draw_v2::printTotText(int16 id) {
 				adjustCoords(2, &rectLeft, &rectTop);
 				adjustCoords(2, &rectRight, &rectBottom);
 				_vm->_game->_hotspots->add(colId + 0x0D000, rectLeft, rectTop,
-						rectRight, rectBottom, (uint16) Hotspots::kTypeClick, 0, 0, 0, 0);
+				                           rectRight, rectBottom, (uint16)Hotspots::kTypeClick, 0, 0, 0, 0);
 				ptr += 8;
 			}
 			break;
@@ -550,7 +542,7 @@ void Draw_v2::printTotText(int16 id) {
 			break;
 
 		case 10:
-			str[0] = (char) 255;
+			str[0] = (char)255;
 			WRITE_LE_UINT16(str + 1, ptr - _vm->_game->_resources->getTexts());
 			str[3] = 0;
 			ptr++;
@@ -561,7 +553,7 @@ void Draw_v2::printTotText(int16 id) {
 			break;
 
 		default:
-			str[strPos] = (char) cmd;
+			str[strPos] = (char)cmd;
 			// fall through
 		case 32:
 			mask[strPos++] = maskChar;
@@ -603,8 +595,7 @@ void Draw_v2::printTotText(int16 id) {
 			} else {
 				strPos += strlen(buf);
 				if (ptr[1] != ' ') {
-					if ((ptr[1] == 2) &&
-							(((int16)READ_LE_UINT16(ptr + 4)) == _destSpriteY)) {
+					if ((ptr[1] == 2) && (((int16)READ_LE_UINT16(ptr + 4)) == _destSpriteY)) {
 						ptr += 5;
 						str[strPos] = ' ';
 						mask[strPos++] = maskChar;
@@ -614,8 +605,7 @@ void Draw_v2::printTotText(int16 id) {
 					mask[strPos++] = maskChar;
 					while (ptr[1] == ' ')
 						ptr++;
-					if ((ptr[1] == 2) &&
-							(((int16)READ_LE_UINT16(ptr + 4)) == _destSpriteY))
+					if ((ptr[1] == 2) && (((int16)READ_LE_UINT16(ptr + 4)) == _destSpriteY))
 						ptr += 5;
 				}
 				ptrEnd += 23;
@@ -665,8 +655,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 		if (_destSurface == kBackSurface) {
 			_destSpriteX += _backDeltaX;
 			_destSpriteY += _backDeltaY;
-			if ((operation == DRAW_DRAWLINE) ||
-			   ((operation >= DRAW_DRAWBAR) && (operation <= DRAW_FILLRECTABS))) {
+			if ((operation == DRAW_DRAWLINE) || ((operation >= DRAW_DRAWBAR) && (operation <= DRAW_FILLRECTABS))) {
 				_spriteRight += _backDeltaX;
 				_spriteBottom += _backDeltaY;
 			}
@@ -685,8 +674,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 	if (_vm->_video->_splitSurf && ((_destSurface == kFrontSurface) || (_destSurface == kBackSurface))) {
 		if ((_destSpriteY >= _vm->_video->_splitStart)) {
 			_destSpriteY -= _vm->_video->_splitStart;
-			if ((operation == DRAW_DRAWLINE) ||
-				 ((operation >= DRAW_DRAWBAR) && (operation <= DRAW_FILLRECTABS)))
+			if ((operation == DRAW_DRAWLINE) || ((operation >= DRAW_DRAWBAR) && (operation <= DRAW_FILLRECTABS)))
 				_spriteBottom -= _vm->_video->_splitStart;
 
 			_destSurface += 4;
@@ -697,7 +685,6 @@ void Draw_v2::spriteOperation(int16 operation) {
 			if (_destSurface < 24)
 				_destSurface += 4;
 		}
-
 	}
 
 	adjustCoords(0, &_destSpriteX, &_destSpriteY);
@@ -718,8 +705,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 				SWAP(_spriteBottom, _destSpriteY);
 				SWAP(_spriteRight, _destSpriteX);
 			}
-		} else if ((operation == DRAW_LOADSPRITE) ||
-		           (operation > DRAW_PRINTTEXT)) {
+		} else if ((operation == DRAW_LOADSPRITE) || (operation > DRAW_PRINTTEXT)) {
 			if (_spriteBottom < _destSpriteY)
 				SWAP(_spriteBottom, _destSpriteY);
 			if (_spriteRight < _destSpriteX)
@@ -744,13 +730,13 @@ void Draw_v2::spriteOperation(int16 operation) {
 			break;
 
 		_spritesArray[_destSurface]->blit(*_spritesArray[_sourceSurface],
-				_spriteLeft, spriteTop,
-				_spriteLeft + _spriteRight - 1,
-				_spriteTop + _spriteBottom - 1,
-				_destSpriteX, _destSpriteY, (_transparency == 0) ? -1 : 0);
+		                                  _spriteLeft, spriteTop,
+		                                  _spriteLeft + _spriteRight - 1,
+		                                  _spriteTop + _spriteBottom - 1,
+		                                  _destSpriteX, _destSpriteY, (_transparency == 0) ? -1 : 0);
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
-				_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
+		            _destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
 		break;
 
 	case DRAW_PUTPIXEL:
@@ -762,48 +748,48 @@ void Draw_v2::spriteOperation(int16 operation) {
 	case DRAW_FILLRECT:
 		if (!(_backColor & 0xFF00) || !(_backColor & 0x0100)) {
 			_spritesArray[_destSurface]->fillRect(destSpriteX,
-					_destSpriteY, _destSpriteX + _spriteRight - 1,
-					_destSpriteY + _spriteBottom - 1, getColor(_backColor));
+			                                      _destSpriteY, _destSpriteX + _spriteRight - 1,
+			                                      _destSpriteY + _spriteBottom - 1, getColor(_backColor));
 		} else {
-			uint8 strength = 16 - (((uint16) _backColor) >> 12);
+			uint8 strength = 16 - (((uint16)_backColor) >> 12);
 
 			_spritesArray[_destSurface]->shadeRect(destSpriteX,
-					_destSpriteY, _destSpriteX + _spriteRight - 1,
-					_destSpriteY + _spriteBottom - 1, getColor(_backColor), strength);
+			                                       _destSpriteY, _destSpriteX + _spriteRight - 1,
+			                                       _destSpriteY + _spriteBottom - 1, getColor(_backColor), strength);
 		}
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
-				_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
+		            _destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
 		break;
 
 	case DRAW_DRAWLINE:
 		_spritesArray[_destSurface]->drawLine(_destSpriteX, _destSpriteY,
-		    _spriteRight, _spriteBottom, _frontColor);
+		                                      _spriteRight, _spriteBottom, _frontColor);
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _spriteRight, _spriteBottom);
 		break;
 
 	case DRAW_INVALIDATE:
 		_spritesArray[_destSurface]->drawCircle(_destSpriteX,
-				_destSpriteY, _spriteRight, _frontColor);
+		                                        _destSpriteY, _spriteRight, _frontColor);
 
 		dirtiedRect(_destSurface, _destSpriteX - _spriteRight, _destSpriteY - _spriteBottom,
-				_destSpriteX + _spriteRight, _destSpriteY + _spriteBottom);
+		            _destSpriteX + _spriteRight, _destSpriteY + _spriteBottom);
 		break;
 
 	case DRAW_LOADSPRITE:
-		resource = _vm->_game->_resources->getResource((uint16) _spriteLeft,
-			                                             &_spriteRight, &_spriteBottom);
+		resource = _vm->_game->_resources->getResource((uint16)_spriteLeft,
+		                                               &_spriteRight, &_spriteBottom);
 
 		if (!resource)
 			break;
 
 		_vm->_video->drawPackedSprite(resource->getData(),
-				_spriteRight, _spriteBottom, _destSpriteX, _destSpriteY,
-				_transparency, *_spritesArray[_destSurface]);
+		                              _spriteRight, _spriteBottom, _destSpriteX, _destSpriteY,
+		                              _transparency, *_spritesArray[_destSurface]);
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
-				_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
+		            _destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
 
 		delete resource;
 		break;
@@ -824,77 +810,76 @@ void Draw_v2::spriteOperation(int16 operation) {
 
 			Font *font = _fonts[_fontIndex];
 			if (font->isMonospaced()) {
-				if (((int8) _textToPrint[0]) == -1) {
+				if (((int8)_textToPrint[0]) == -1) {
 					_vm->validateLanguage();
 
 					byte *dataBuf = _vm->_game->_resources->getTexts() + _textToPrint[1] + 1;
 					len = *dataBuf++;
 					for (int i = 0; i < len; i++, dataBuf += 2) {
 						font->drawLetter(*_spritesArray[_destSurface], READ_LE_UINT16(dataBuf),
-								_destSpriteX, _destSpriteY, getColor(_frontColor),
-								getColor(_backColor), _transparency);
+						                 _destSpriteX, _destSpriteY, getColor(_frontColor),
+						                 getColor(_backColor), _transparency);
 					}
 				} else {
 					font->drawString(_textToPrint, _destSpriteX, _destSpriteY, getColor(_frontColor),
-							getColor(_backColor), _transparency, *_spritesArray[_destSurface]);
+					                 getColor(_backColor), _transparency, *_spritesArray[_destSurface]);
 					_destSpriteX += len * font->getCharWidth();
 				}
 			} else {
 				for (int i = 0; i < len; i++) {
 					font->drawLetter(*_spritesArray[_destSurface], _textToPrint[i],
-								_destSpriteX, _destSpriteY, getColor(_frontColor),
-								getColor(_backColor), _transparency);
+					                 _destSpriteX, _destSpriteY, getColor(_frontColor),
+					                 getColor(_backColor), _transparency);
 					_destSpriteX += font->getCharWidth(_textToPrint[i]);
 				}
 			}
 
 		} else {
 			sourceSurf = _spritesArray[_fontToSprite[_fontIndex].sprite];
-			ratio = ((sourceSurf == _frontSurface) || (sourceSurf == _backSurface)) ?
-				320 : sourceSurf->getWidth();
+			ratio = ((sourceSurf == _frontSurface) || (sourceSurf == _backSurface)) ? 320 : sourceSurf->getWidth();
 			ratio /= _fontToSprite[_fontIndex].width;
 			for (int i = 0; i < len; i++) {
 				y = ((_textToPrint[i] - _fontToSprite[_fontIndex].base) / ratio)
-					* _fontToSprite[_fontIndex].height;
+				  * _fontToSprite[_fontIndex].height;
 				x = ((_textToPrint[i] - _fontToSprite[_fontIndex].base) % ratio)
-					* _fontToSprite[_fontIndex].width;
+				  * _fontToSprite[_fontIndex].width;
 				_spritesArray[_destSurface]->blit(*_spritesArray[_fontToSprite[_fontIndex].sprite], x, y,
-						x + _fontToSprite[_fontIndex].width - 1,
-						y + _fontToSprite[_fontIndex].height - 1,
-						_destSpriteX, _destSpriteY, (_transparency == 0) ? -1 : 0);
+				                                  x + _fontToSprite[_fontIndex].width - 1,
+				                                  y + _fontToSprite[_fontIndex].height - 1,
+				                                  _destSpriteX, _destSpriteY, (_transparency == 0) ? -1 : 0);
 				_destSpriteX += _fontToSprite[_fontIndex].width;
 			}
 		}
 
 		dirtiedRect(_destSurface, left, _destSpriteY,
-				_destSpriteX - 1, _destSpriteY + _fonts[_fontIndex]->getCharHeight() - 1);
+		            _destSpriteX - 1, _destSpriteY + _fonts[_fontIndex]->getCharHeight() - 1);
 		break;
 
 	case DRAW_DRAWBAR:
 		if (_needAdjust != 2) {
 			_spritesArray[_destSurface]->fillRect(_destSpriteX, _spriteBottom - 1,
-					_spriteRight, _spriteBottom, _frontColor);
+			                                      _spriteRight, _spriteBottom, _frontColor);
 
 			_spritesArray[_destSurface]->fillRect(_destSpriteX, _destSpriteY,
-					_destSpriteX + 1, _spriteBottom, _frontColor);
+			                                      _destSpriteX + 1, _spriteBottom, _frontColor);
 
 			_spritesArray[_destSurface]->fillRect(_spriteRight - 1, _destSpriteY,
-					_spriteRight, _spriteBottom, _frontColor);
+			                                      _spriteRight, _spriteBottom, _frontColor);
 
 			_spritesArray[_destSurface]->fillRect(_destSpriteX, _destSpriteY,
-					_spriteRight, _destSpriteY + 1, _frontColor);
+			                                      _spriteRight, _destSpriteY + 1, _frontColor);
 		} else {
 			_spritesArray[_destSurface]->drawLine(_destSpriteX, _spriteBottom,
-					_spriteRight, _spriteBottom, _frontColor);
+			                                      _spriteRight, _spriteBottom, _frontColor);
 
 			_spritesArray[_destSurface]->drawLine(_destSpriteX, _destSpriteY,
-					_destSpriteX, _spriteBottom, _frontColor);
+			                                      _destSpriteX, _spriteBottom, _frontColor);
 
 			_spritesArray[_destSurface]->drawLine(_spriteRight, _destSpriteY,
-					_spriteRight, _spriteBottom, _frontColor);
+			                                      _spriteRight, _spriteBottom, _frontColor);
 
 			_spritesArray[_destSurface]->drawLine(_destSpriteX, _destSpriteY,
-					_spriteRight, _destSpriteY, _frontColor);
+			                                      _spriteRight, _destSpriteY, _frontColor);
 		}
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _spriteRight, _spriteBottom);
@@ -903,8 +888,8 @@ void Draw_v2::spriteOperation(int16 operation) {
 	case DRAW_CLEARRECT:
 		if ((_backColor != 16) && (_backColor != 144)) {
 			_spritesArray[_destSurface]->fillRect(_destSpriteX, _destSpriteY,
-			    _spriteRight, _spriteBottom,
-			    getColor(_backColor));
+			                                      _spriteRight, _spriteBottom,
+			                                      getColor(_backColor));
 		}
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _spriteRight, _spriteBottom);
@@ -912,7 +897,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 
 	case DRAW_FILLRECTABS:
 		_spritesArray[_destSurface]->fillRect(_destSpriteX, _destSpriteY,
-		    _spriteRight, _spriteBottom, getColor(_backColor));
+		                                      _spriteRight, _spriteBottom, getColor(_backColor));
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _spriteRight, _spriteBottom);
 		break;
@@ -958,10 +943,10 @@ void Draw_v2::spriteOperation(int16 operation) {
  */
 
 static const char *kLittleRedStrings[][2] = {
-	{"die Heule"          , "die Eule"},
-	{"das Schmetterling"  , "der Schmetterling"},
-	{"die Vespe"          , "die Wespe"},
-	{"das Eich\224rnchen" , "das Eichh\224rnchen"}
+	{ "die Heule", "die Eule" },
+	{ "das Schmetterling", "der Schmetterling" },
+	{ "die Vespe", "die Wespe" },
+	{ "das Eich\224rnchen", "das Eichh\224rnchen" }
 };
 
 void Draw_v2::fixLittleRedStrings() {

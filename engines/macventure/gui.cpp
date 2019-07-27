@@ -28,15 +28,15 @@
  * Used with explicit permission from the author
  */
 
-#include "common/file.h"
-#include "common/system.h"
 #include "common/debug-channels.h"
 #include "common/debug.h"
-#include "image/bmp.h"
+#include "common/file.h"
+#include "common/system.h"
 #include "graphics/macgui/macfontmanager.h"
+#include "image/bmp.h"
 
-#include "macventure/gui.h"
 #include "macventure/dialog.h"
+#include "macventure/gui.h"
 
 namespace MacVenture {
 
@@ -69,35 +69,34 @@ enum {
 const bool kLoadStaticMenus = true;
 
 static const Graphics::MacMenuData menuSubItems[] = {
-	{ kMenuHighLevel,	"File",				0, 0, false },
-	{ kMenuHighLevel,	"Edit",				0, 0, false },
-	{ kMenuHighLevel,	"Special",			0, 0, false },
-	{ kMenuHighLevel,	"Font",				0, 0, false },
-	{ kMenuHighLevel,	"FontSize",			0, 0, false },
+	{ kMenuHighLevel, "File", 0, 0, false },
+	{ kMenuHighLevel, "Edit", 0, 0, false },
+	{ kMenuHighLevel, "Special", 0, 0, false },
+	{ kMenuHighLevel, "Font", 0, 0, false },
+	{ kMenuHighLevel, "FontSize", 0, 0, false },
 
 	//{ kMenuAbout,		"About",			kMenuActionAbout, 0, true},
 
-	{ kMenuFile,		"New",				kMenuActionNew, 0, true },
-	{ kMenuFile,		NULL,				0, 0, false },
-	{ kMenuFile,		"Open...",			kMenuActionOpen, 0, true },
-	{ kMenuFile,		"Save",				kMenuActionSave, 0, true },
-	{ kMenuFile,		"Save as...",		kMenuActionSaveAs, 0, true },
-	{ kMenuFile,		NULL,				0, 0, false },
-	{ kMenuFile,		"Quit",				kMenuActionQuit, 0, true },
+	{ kMenuFile, "New", kMenuActionNew, 0, true },
+	{ kMenuFile, NULL, 0, 0, false },
+	{ kMenuFile, "Open...", kMenuActionOpen, 0, true },
+	{ kMenuFile, "Save", kMenuActionSave, 0, true },
+	{ kMenuFile, "Save as...", kMenuActionSaveAs, 0, true },
+	{ kMenuFile, NULL, 0, 0, false },
+	{ kMenuFile, "Quit", kMenuActionQuit, 0, true },
 
-	{ kMenuEdit,		"Undo",				kMenuActionUndo, 'Z', false },
-	{ kMenuEdit,		NULL,				0, 0, false },
-	{ kMenuEdit,		"Cut",				kMenuActionCut, 'K', false },
-	{ kMenuEdit,		"Copy",				kMenuActionCopy, 'C', false },
-	{ kMenuEdit,		"Paste",			kMenuActionPaste, 'V', false },
-	{ kMenuEdit,		"Clear",			kMenuActionClear, 'B', false },
+	{ kMenuEdit, "Undo", kMenuActionUndo, 'Z', false },
+	{ kMenuEdit, NULL, 0, 0, false },
+	{ kMenuEdit, "Cut", kMenuActionCut, 'K', false },
+	{ kMenuEdit, "Copy", kMenuActionCopy, 'C', false },
+	{ kMenuEdit, "Paste", kMenuActionPaste, 'V', false },
+	{ kMenuEdit, "Clear", kMenuActionClear, 'B', false },
 
-	{ kMenuSpecial,		"Clean Up",			kMenuActionCleanUp, 0, false },
-	{ kMenuSpecial,		"Mess Up",			kMenuActionMessUp, 0, false },
+	{ kMenuSpecial, "Clean Up", kMenuActionCleanUp, 0, false },
+	{ kMenuSpecial, "Mess Up", kMenuActionMessUp, 0, false },
 
-	{ 0,				NULL,				0, 0, false }
+	{ 0, NULL, 0, 0, false }
 };
-
 
 bool commandsWindowCallback(Graphics::WindowClick, Common::Event &event, void *gui);
 bool mainGameWindowCallback(Graphics::WindowClick, Common::Event &event, void *gui);
@@ -176,7 +175,6 @@ void Gui::initGUI() {
 		error("GUI: Could not load controls");
 
 	draw();
-
 }
 
 void Gui::reloadInternals() {
@@ -317,7 +315,7 @@ void Gui::addChild(WindowReference target, ObjID child) {
 void Gui::removeChild(WindowReference target, ObjID child) {
 	WindowData &data = findWindowData(target);
 	uint index = 0;
-	for (;index < data.children.size(); index++) {
+	for (; index < data.children.size(); index++) {
 		if (data.children[index].obj == child) {
 			break;
 		}
@@ -343,10 +341,10 @@ WindowReference Gui::createInventoryWindow(ObjID objRef) {
 	} else {
 		BorderBounds bbs = borderBounds(kInvWindow);
 		newData.bounds = Common::Rect(
-			settings._invLeft - bbs.leftOffset,
-			settings._invTop - bbs.topOffset,
-			settings._invLeft + settings._invWidth,
-			settings._invTop + settings._invHeight);
+		  settings._invLeft - bbs.leftOffset,
+		  settings._invTop - bbs.topOffset,
+		  settings._invLeft + settings._invWidth,
+		  settings._invTop + settings._invHeight);
 	}
 	newData.type = kInvWindow;
 	newData.hasCloseBox = true;
@@ -388,7 +386,7 @@ void Gui::loadGraphics() {
 }
 
 void Gui::clearAssets() {
-	Common::HashMap<ObjID, ImageAsset*>::const_iterator it = _assets.begin();
+	Common::HashMap<ObjID, ImageAsset *>::const_iterator it = _assets.begin();
 	for (; it != _assets.end(); it++) {
 		delete it->_value;
 	}
@@ -478,14 +476,15 @@ bool Gui::loadWindows() {
 		data.type = (MVWindowType)res->readUint16BE();
 		BorderBounds bbs = borderBounds(data.type);
 		data.bounds = Common::Rect(
-			left - bbs.leftOffset,
-			top - bbs.topOffset,
-			right + bbs.rightOffset,
-			bottom + bbs.bottomOffset);
+		  left - bbs.leftOffset,
+		  top - bbs.topOffset,
+		  right + bbs.rightOffset,
+		  bottom + bbs.bottomOffset);
 
 		data.visible = res->readUint16BE();
 		data.hasCloseBox = res->readUint16BE();
-		data.refcon = (WindowReference)id; id++;
+		data.refcon = (WindowReference)id;
+		id++;
 		res->readUint32BE(); // Skip the true id. For some reason it's reading 0
 		data.titleLength = res->readByte();
 		if (data.titleLength) {
@@ -534,7 +533,8 @@ bool Gui::loadControls() {
 		data.scrollMin = res->readUint16BE();
 		data.cdef = res->readUint16BE();
 		data.refcon = (ControlAction)res->readUint32BE();
-		data.type = (ControlType)id; id++;
+		data.type = (ControlType)id;
+		id++;
 		data.titleLength = res->readByte();
 		if (data.titleLength) {
 			char *title = new char[data.titleLength + 1];
@@ -550,7 +550,6 @@ bool Gui::loadControls() {
 		} else {
 			data.bounds = Common::Rect(left, top, right, bottom);
 		}
-
 
 		_controlData->push_back(CommandButton(data, this));
 
@@ -568,7 +567,6 @@ void Gui::drawWindows() {
 	drawInventories();
 	drawExitsWindow();
 	drawConsoleWindow();
-
 }
 
 void Gui::drawCommandsWindow() {
@@ -577,13 +575,13 @@ void Gui::drawCommandsWindow() {
 		WindowData data = getWindowData(kCommandsWindow);
 		srf->fillRect(Common::Rect(0, 0, srf->w, srf->h), kColorWhite);
 		getCurrentFont().drawString(
-			srf,
-			_engine->getCommandsPausedString(),
-			0,
-			(srf->h / 2) - getCurrentFont().getFontHeight(),
-			data.bounds.right - data.bounds.left,
-			kColorBlack,
-			Graphics::kTextAlignCenter);
+		  srf,
+		  _engine->getCommandsPausedString(),
+		  0,
+		  (srf->h / 2) - getCurrentFont().getFontHeight(),
+		  data.bounds.right - data.bounds.left,
+		  kColorBlack,
+		  Graphics::kTextAlignCenter);
 	} else {
 		Common::Array<CommandButton>::const_iterator it = _controlData->begin();
 		for (; it != _controlData->end(); ++it) {
@@ -605,10 +603,10 @@ void Gui::drawMainGameWindow() {
 		ensureAssetLoaded(objRef);
 
 		_assets[objRef]->blitInto(
-			_mainGameWindow->getSurface(),
-			border.leftOffset,
-			border.topOffset,
-			kBlitDirect);
+		  _mainGameWindow->getSurface(),
+		  border.leftOffset,
+		  border.topOffset,
+		  kBlitDirect);
 	}
 
 	drawObjectsInWindow(data, _mainGameWindow->getSurface());
@@ -654,7 +652,6 @@ void Gui::drawInventories() {
 
 		findWindow(data.refcon)->setDirty(true);
 	}
-
 }
 
 void Gui::drawExitsWindow() {
@@ -690,8 +687,7 @@ void Gui::drawObjectsInWindow(const WindowData &targetData, Graphics::ManagedSur
 
 	Graphics::ManagedSurface composeSurface;
 	createInnerSurface(&composeSurface, surface, border);
-	assert(composeSurface.w <= surface->w &&
-			composeSurface.h <= surface->h);
+	assert(composeSurface.w <= surface->w && composeSurface.h <= surface->h);
 	composeSurface.clear(kColorGreen);
 
 	for (uint i = 0; i < targetData.children.size(); i++) {
@@ -702,17 +698,16 @@ void Gui::drawObjectsInWindow(const WindowData &targetData, Graphics::ManagedSur
 		ensureAssetLoaded(child);
 
 		_assets[child]->blitInto(
-			&composeSurface,
-			pos.x,
-			pos.y,
-			mode);
+		  &composeSurface,
+		  pos.x,
+		  pos.y,
+		  mode);
 
 		if (_engine->isObjVisible(child)) {
-			if (_engine->isObjSelected(child) ||
-				child == _draggedObj.id) {
+			if (_engine->isObjSelected(child) || child == _draggedObj.id) {
 
 				_assets[child]->blitInto(
-					&composeSurface, pos.x, pos.y, kBlitOR);
+				  &composeSurface, pos.x, pos.y, kBlitOR);
 			}
 		}
 
@@ -731,8 +726,7 @@ void Gui::drawWindowTitle(WindowReference target, Graphics::ManagedSurface *surf
 }
 
 void Gui::drawDraggedObject() {
-	if (_draggedObj.id != 0 &&
-		_engine->isObjVisible(_draggedObj.id)) {
+	if (_draggedObj.id != 0 && _engine->isObjVisible(_draggedObj.id)) {
 		ensureAssetLoaded(_draggedObj.id);
 		ImageAsset *asset = _assets[_draggedObj.id];
 
@@ -758,23 +752,22 @@ void Gui::drawDraggedObject() {
 
 		_draggedSurface.create(w, h, _screen.format);
 		_draggedSurface.blitFrom(
-			_screen,
-			Common::Rect(
-				target.x,
-				target.y,
-				target.x + _draggedSurface.w,
-				target.y + _draggedSurface.h),
-			Common::Point(0, 0));
+		  _screen,
+		  Common::Rect(
+		    target.x,
+		    target.y,
+		    target.x + _draggedSurface.w,
+		    target.y + _draggedSurface.h),
+		  Common::Point(0, 0));
 		asset->blitInto(&_draggedSurface, MIN((int16)0, _draggedObj.pos.x), MIN((int16)0, _draggedObj.pos.y), kBlitBIC);
 
 		g_system->copyRectToScreen(
-			_draggedSurface.getBasePtr(0, 0),
-			_draggedSurface.pitch,
-			target.x,
-			target.y,
-			_draggedSurface.w,
-			_draggedSurface.h
-		);
+		  _draggedSurface.getBasePtr(0, 0),
+		  _draggedSurface.pitch,
+		  target.x,
+		  target.y,
+		  _draggedSurface.w,
+		  _draggedSurface.h);
 	}
 }
 
@@ -848,7 +841,7 @@ void Gui::updateExit(ObjID obj) {
 	int ctl = -1;
 	int i = 0;
 	Common::Array<CommandButton>::const_iterator it = _exitsData->begin();
-	for (;it != _exitsData->end(); it++) {
+	for (; it != _exitsData->end(); it++) {
 		if (it->getData().refcon == obj)
 			ctl = i;
 		else
@@ -858,8 +851,7 @@ void Gui::updateExit(ObjID obj) {
 	if (ctl != -1)
 		_exitsData->remove_at(ctl);
 
-	if (!_engine->isHiddenExit(obj) &&
-		_engine->getParent(obj) == _engine->getParent(1)) {
+	if (!_engine->isHiddenExit(obj) && _engine->getParent(obj) == _engine->getParent(1)) {
 		ControlData data;
 		data.titleLength = 0;
 		data.refcon = (ControlAction)obj; // Objects can be exits (actions)
@@ -891,7 +883,6 @@ void Gui::setTextInput(Common::String str) {
 	_engine->setTextInput(str);
 }
 
-
 void Gui::closeDialog() {
 	delete _dialog;
 	_dialog = NULL;
@@ -922,9 +913,9 @@ void Gui::quitGame() {
 
 void Gui::createInnerSurface(Graphics::ManagedSurface *innerSurface, Graphics::ManagedSurface *outerSurface, const BorderBounds &borders) {
 	innerSurface->create(
-		outerSurface->w - borders.leftOffset - borders.rightOffset,
-		outerSurface->h - borders.topOffset - borders.bottomOffset,
-		outerSurface->format);
+	  outerSurface->w - borders.leftOffset - borders.rightOffset,
+	  outerSurface->h - borders.topOffset - borders.bottomOffset,
+	  outerSurface->format);
 }
 
 void Gui::moveDraggedObject(Common::Point target) {
@@ -935,13 +926,11 @@ void Gui::moveDraggedObject(Common::Point target) {
 	_draggedObj.hasMoved = (_draggedObj.startPos.sqrDist(_draggedObj.pos) >= (kDragThreshold * kDragThreshold));
 
 	debugC(4, kMVDebugGUI, "Dragged obj position: (%d, %d), mouse offset: (%d, %d), hasMoved: %d, dist: %d, threshold: %d",
-		_draggedObj.pos.x, _draggedObj.pos.y,
-		_draggedObj.mouseOffset.x, _draggedObj.mouseOffset.y,
-		_draggedObj.hasMoved,
-		_draggedObj.startPos.sqrDist(_draggedObj.pos),
-		kDragThreshold * kDragThreshold
-	);
-
+	       _draggedObj.pos.x, _draggedObj.pos.y,
+	       _draggedObj.mouseOffset.x, _draggedObj.mouseOffset.y,
+	       _draggedObj.hasMoved,
+	       _draggedObj.startPos.sqrDist(_draggedObj.pos),
+	       kDragThreshold * kDragThreshold);
 }
 
 WindowReference Gui::findWindowAtPoint(Common::Point point) {
@@ -966,8 +955,8 @@ Common::Point Gui::getGlobalScrolledSurfacePosition(WindowReference reference) {
 		return Common::Point(0, 0);
 	}
 	return Common::Point(
-		win->getDimensions().left + border.leftOffset - data.scrollPos.x,
-		win->getDimensions().top + border.topOffset - data.scrollPos.y);
+	  win->getDimensions().left + border.leftOffset - data.scrollPos.x,
+	  win->getDimensions().top + border.topOffset - data.scrollPos.y);
 }
 
 WindowData &Gui::findWindowData(WindowReference reference) {
@@ -1018,11 +1007,16 @@ void Gui::ensureInventoryOpen(WindowReference reference, ObjID id) {
 
 WindowReference Gui::getObjWindow(ObjID objID) {
 	switch (objID) {
-	case 0xfffc: return kExitsWindow;
-	case 0xfffd: return kSelfWindow;
-	case 0xfffe: return kOutConsoleWindow;
-	case 0xffff: return kCommandsWindow;
-	default: return findObjWindow(objID);
+	case 0xfffc:
+		return kExitsWindow;
+	case 0xfffd:
+		return kSelfWindow;
+	case 0xfffe:
+		return kOutConsoleWindow;
+	case 0xffff:
+		return kCommandsWindow;
+	default:
+		return findObjWindow(objID);
 	}
 }
 
@@ -1059,8 +1053,7 @@ void Gui::checkSelect(const WindowData &data, Common::Point pos, const Common::R
 }
 
 bool Gui::canBeSelected(ObjID obj, const Common::Rect &clickRect, WindowReference ref) {
-	return (_engine->isObjClickable(obj) &&
-			isRectInsideObject(clickRect, obj));
+	return (_engine->isObjClickable(obj) && isRectInsideObject(clickRect, obj));
 }
 
 bool Gui::isRectInsideObject(Common::Rect target, ObjID obj) {
@@ -1069,10 +1062,10 @@ bool Gui::isRectInsideObject(Common::Rect target, ObjID obj) {
 	Common::Rect intersection = bounds.findIntersectingRect(target);
 	// We translate it to the image's coord system
 	intersection = Common::Rect(
-		intersection.left - bounds.left,
-		intersection.top - bounds.top,
-		intersection.left - bounds.left + intersection.width(),
-		intersection.top - bounds.top + intersection.height());
+	  intersection.left - bounds.left,
+	  intersection.top - bounds.top,
+	  intersection.left - bounds.left + intersection.width(),
+	  intersection.top - bounds.top + intersection.height());
 
 	return _assets[obj]->isRectInside(intersection);
 }
@@ -1139,10 +1132,9 @@ void Gui::removeInventoryWindow(WindowReference ref) {
 	}
 }
 
-
 /* HANDLERS */
 void Gui::handleMenuAction(MenuAction action) {
-	switch (action)	{
+	switch (action) {
 	case MacVenture::kMenuActionAbout:
 		warning("Unimplemented MacVenture Menu Action: About");
 		break;
@@ -1193,40 +1185,40 @@ void Gui::handleMenuAction(MenuAction action) {
 /* CALLBACKS */
 
 bool commandsWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
-	Gui *g = (Gui*)gui;
+	Gui *g = (Gui *)gui;
 	return g->processCommandEvents(click, event);
 }
 
 bool mainGameWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
-	Gui *g = (Gui*)gui;
+	Gui *g = (Gui *)gui;
 	return g->processMainGameEvents(click, event);
 }
 
 bool outConsoleWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
-	Gui *g = (Gui*)gui;
+	Gui *g = (Gui *)gui;
 	return g->processOutConsoleEvents(click, event);
 }
 
 bool selfWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
-	Gui *g = (Gui*)gui;
+	Gui *g = (Gui *)gui;
 
 	return g->processSelfEvents(click, event);
 }
 
 bool exitsWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
-	Gui *g = (Gui*)gui;
+	Gui *g = (Gui *)gui;
 
 	return g->processExitsEvents(click, event);
 }
 
 bool diplomaWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
-	Gui *g = (Gui*)gui;
+	Gui *g = (Gui *)gui;
 
 	return g->processDiplomaEvents(click, event);
 }
 
 bool inventoryWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
-	Gui *g = (Gui*)gui;
+	Gui *g = (Gui *)gui;
 
 	return g->processInventoryEvents(click, event);
 }
@@ -1237,14 +1229,12 @@ void menuCommandsCallback(int action, Common::String &text, void *data) {
 	g->handleMenuAction((MenuAction)action);
 }
 
-
 void Gui::invertWindowColors(WindowReference winID) {
 	Graphics::ManagedSurface *srf = findWindow(winID)->getSurface();
 	for (uint y = 0; y < srf->h; y++) {
 		for (uint x = 0; x < srf->w; x++) {
 			byte p = *(byte *)srf->getBasePtr(x, y);
-			*(byte *)srf->getBasePtr(x, y) =
-				(p == kColorWhite) ? kColorBlack : kColorGray;
+			*(byte *)srf->getBasePtr(x, y) = (p == kColorWhite) ? kColorBlack : kColorGray;
 		}
 	}
 }
@@ -1261,7 +1251,7 @@ bool Gui::tryCloseWindow(WindowReference winID) {
 
 Common::Point Gui::getObjMeasures(ObjID obj) {
 	ensureAssetLoaded(obj);
- 	int w = _assets[obj]->getWidth();
+	int w = _assets[obj]->getWidth();
 	int h = _assets[obj]->getHeight();
 	return Common::Point(w, h);
 }
@@ -1294,8 +1284,8 @@ bool Gui::processCommandEvents(WindowClick click, Common::Event &event) {
 		}
 
 		Common::Point position(
-			event.mouse.x - _controlsWindow->getDimensions().left,
-			event.mouse.y - _controlsWindow->getDimensions().top);
+		  event.mouse.x - _controlsWindow->getDimensions().left,
+		  event.mouse.y - _controlsWindow->getDimensions().top);
 
 		CommandButton data;
 		if (!_controlData)
@@ -1358,8 +1348,8 @@ bool MacVenture::Gui::processExitsEvents(WindowClick click, Common::Event &event
 		}
 
 		Common::Point position(
-			event.mouse.x - _exitsWindow->getDimensions().left,
-			event.mouse.y - _exitsWindow->getDimensions().top);
+		  event.mouse.x - _exitsWindow->getDimensions().left,
+		  event.mouse.y - _exitsWindow->getDimensions().top);
 
 		CommandButton button;
 		if (!_exitsData)
@@ -1376,7 +1366,6 @@ bool MacVenture::Gui::processExitsEvents(WindowClick click, Common::Event &event
 				it->unselect();
 			}
 		}
-
 	}
 	return getWindowData(kExitsWindow).visible;
 }
@@ -1411,7 +1400,7 @@ bool Gui::processInventoryEvents(WindowClick click, Common::Event &event) {
 			return false;
 		}
 
-		WindowData &data = findWindowData((WindowReference) ref);
+		WindowData &data = findWindowData((WindowReference)ref);
 
 		if (click == kBorderScrollUp) {
 			data.scrollPos.y = MAX(0, data.scrollPos.y - kScrollAmount);
@@ -1436,7 +1425,7 @@ void Gui::selectForDrag(Common::Point cursorPosition) {
 	}
 
 	Graphics::MacWindow *win = findWindow(ref);
-	WindowData &data = findWindowData((WindowReference) ref);
+	WindowData &data = findWindowData((WindowReference)ref);
 
 	Common::Rect clickRect = calculateClickRect(cursorPosition + data.scrollPos, win->getDimensions());
 	checkSelect(data, cursorPosition, clickRect, (WindowReference)ref);
@@ -1464,6 +1453,5 @@ void Gui::ensureAssetLoaded(ObjID obj) {
 		_assets[obj] = new ImageAsset(obj, _graphics);
 	}
 }
-
 
 } // End of namespace MacVenture

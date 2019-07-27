@@ -24,15 +24,15 @@
 #define BACKENDS_NETWORKING_SDL_NET_GETCLIENTHANDLER_H
 
 #include "backends/networking/sdl_net/client.h"
+#include "common/hash-str.h"
 #include "common/hashmap.h"
 #include "common/stream.h"
-#include "common/hash-str.h"
 
 namespace Networking {
 
 #define CLIENT_HANDLER_BUFFER_SIZE 1 * 1024 * 1024
 
-class GetClientHandler: public ClientHandler {
+class GetClientHandler : public ClientHandler {
 	Common::HashMap<Common::String, Common::String> _specialHeaders;
 	long _responseCode;
 	bool _headersPrepared;

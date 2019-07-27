@@ -42,12 +42,13 @@ public:
 	int8 getFreeChannel();
 
 protected:
-
 	struct chan {
 		bool playing;
 		int8 note;
 
-		chan() : playing(false), note(0) {};
+		chan()
+		  : playing(false)
+		  , note(0) {};
 	};
 
 	MidiDriver *_driver;

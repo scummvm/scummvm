@@ -84,7 +84,7 @@ void Room::mudd5Timer2Expired() { // Life-support generator starts acting up
 }
 
 void Room::mudd5UseCommunicator() {
-	showText(TX_SPEAKER_KIRK,  TX_MUD5_003);
+	showText(TX_SPEAKER_KIRK, TX_MUD5_003);
 	showText(TX_SPEAKER_UHURA, TX_STATICU1);
 }
 
@@ -120,13 +120,12 @@ void Room::mudd5UseStunPhaserOnHatch() {
 
 void Room::mudd5UseKillPhaserOnHatch() {
 	showText(TX_SPEAKER_BUCHERT, TX_MUD5_039);
-	showText(TX_SPEAKER_SPOCK,   TX_MUD5_027);
+	showText(TX_SPEAKER_SPOCK, TX_MUD5_027);
 }
 
 void Room::mudd5UseAnythingOnLifeSupportGenerator() {
 	showText(TX_SPEAKER_MCCOY, TX_MUD5_014); // BUGFIX: speaker is McCoy, not none
 }
-
 
 void Room::mudd5UseDooverOnLifeSupportGenerator() {
 	if (_awayMission->mudd.lifeSupportMalfunctioning) {
@@ -150,7 +149,7 @@ void Room::mudd5KirkTimer4Expired() {
 }
 
 void Room::mudd5KirkRepairedLifeSupportGenerator() {
-	showText(TX_SPEAKER_KIRK,  TX_MUD5_007);
+	showText(TX_SPEAKER_KIRK, TX_MUD5_007);
 	showText(TX_SPEAKER_SPOCK, TX_MUD5_028);
 
 	_awayMission->mudd.lifeSupportMalfunctioning = false;
@@ -177,7 +176,7 @@ void Room::mudd5KirkTimer3Expired() { // Mudd popped back in after repairing gen
 void Room::mudd5LookAtHatch() {
 	showDescription(TX_MUD5N011);
 	showText(TX_SPEAKER_SPOCK, TX_MUD5_031);
-	showText(TX_SPEAKER_KIRK,  TX_MUD5_009);
+	showText(TX_SPEAKER_KIRK, TX_MUD5_009);
 }
 
 void Room::mudd5LookAtLifeSupportGenerator() {
@@ -231,7 +230,7 @@ void Room::mudd5LookAtEngine() {
 }
 
 void Room::mudd5TalkToKirk() {
-	showText(TX_SPEAKER_KIRK,  TX_MUD5_002);
+	showText(TX_SPEAKER_KIRK, TX_MUD5_002);
 	showText(TX_SPEAKER_SPOCK, TX_MUD5_032);
 }
 
@@ -242,12 +241,12 @@ void Room::mudd5TalkToSpock() {
 
 void Room::mudd5TalkToMccoy() {
 	showText(TX_SPEAKER_MCCOY, TX_MUD5_017);
-	showText(TX_SPEAKER_KIRK,  TX_MUD5_004);
+	showText(TX_SPEAKER_KIRK, TX_MUD5_004);
 }
 
 void Room::mudd5TalkToRedshirt() {
 	showText(TX_SPEAKER_BUCHERT, TX_MUD5_040);
-	showText(TX_SPEAKER_MCCOY,   TX_MUD5_018);
+	showText(TX_SPEAKER_MCCOY, TX_MUD5_018);
 }
 
 void Room::mudd5UseMedkit() {

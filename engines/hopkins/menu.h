@@ -23,9 +23,9 @@
 #ifndef HOPKINS_MENU_H
 #define HOPKINS_MENU_H
 
+#include "common/error.h"
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "common/error.h"
 
 namespace Hopkins {
 

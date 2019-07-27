@@ -24,15 +24,15 @@
 
 #if defined(RISCOS) && defined(SDL_BACKEND)
 
-#include "backends/events/riscossdl/riscossdl-events.h"
-#include "backends/platform/sdl/riscos/riscos-utils.h"
+#	include "backends/events/riscossdl/riscossdl-events.h"
+#	include "backends/platform/sdl/riscos/riscos-utils.h"
 
-#include "common/events.h"
+#	include "common/events.h"
 
-#include <swis.h>
+#	include <swis.h>
 
 RISCOSSdlEventSource::RISCOSSdlEventSource()
-    : SdlEventSource() {
+  : SdlEventSource() {
 	int messages[2];
 	messages[0] = 3; // Message_DataLoad
 	messages[1] = 0;
@@ -57,7 +57,7 @@ bool RISCOSSdlEventSource::handleSysWMEvent(SDL_Event &ev, Common::Event &event)
 			// Acknowledge that the event has been received
 			pollBlock[4] = 4; // Message_DataLoadAck
 			pollBlock[3] = pollBlock[2];
-			_swix(Wimp_SendMessage, _INR(0,2), 19, pollBlock, 0);
+			_swix(Wimp_SendMessage, _INR(0, 2), 19, pollBlock, 0);
 			return true;
 		}
 	}

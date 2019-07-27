@@ -77,11 +77,11 @@ void Room::tug0SpockReachedControlsToExamine() {
 
 void Room::tug0SpockExaminedControls() {
 	showText(TX_SPEAKER_SPOCK, TX_TUG0_040);
-	showText(TX_SPEAKER_KIRK,  TX_TUG0_005);
+	showText(TX_SPEAKER_KIRK, TX_TUG0_005);
 	showText(TX_SPEAKER_SPOCK, TX_TUG0_043);
-	showText(TX_SPEAKER_KIRK,  TX_TUG0_013);
+	showText(TX_SPEAKER_KIRK, TX_TUG0_013);
 	showText(TX_SPEAKER_SPOCK, TX_TUG0_038);
-	showText(TX_SPEAKER_KIRK,  TX_TUG0_008);
+	showText(TX_SPEAKER_KIRK, TX_TUG0_008);
 	_awayMission->tug.spockExaminedTransporter = true;
 	_awayMission->disableInput = false;
 }
@@ -140,20 +140,20 @@ void Room::tug0SpockFinishedUsingWire() {
 
 	_awayMission->tug.transporterRepaired = true;
 
-	showText(TX_SPEAKER_KIRK,  TX_TUG0_010);
+	showText(TX_SPEAKER_KIRK, TX_TUG0_010);
 	showText(TX_SPEAKER_MCCOY, TX_TUG0_022);
 
 	// BUGFIX: check if the redshirt is dead.
 	if (!_awayMission->redshirtDead) {
-		showText(TX_SPEAKER_KIRK,  TX_TUG0_002);
+		showText(TX_SPEAKER_KIRK, TX_TUG0_002);
 
 		showText(TX_SPEAKER_CHRISTENSEN, TX_TUG0L009);
 		showText(TX_SPEAKER_CHRISTENSEN, TX_TUG0L008);
 
 		if (_awayMission->tug.haveBomb) {
 			showText(TX_SPEAKER_CHRISTENSEN, TX_TUG0L010);
-			showText(TX_SPEAKER_MCCOY,       TX_TUG0_021);
-			showText(TX_SPEAKER_SPOCK,       TX_TUG0_041);
+			showText(TX_SPEAKER_MCCOY, TX_TUG0_021);
+			showText(TX_SPEAKER_SPOCK, TX_TUG0_041);
 		}
 	}
 }
@@ -270,9 +270,9 @@ void Room::tug0SpockPreparedTransporter() {
 
 void Room::tug0SpockReachedTransporter() {
 	playSoundEffectIndex(SND_TRANSDEM);
-	loadActorAnim2(OBJECT_KIRK,     "kteled", -1, -1, 21);
-	loadActorAnim2(OBJECT_SPOCK,    "steled", -1, -1, 0);
-	loadActorAnim2(OBJECT_MCCOY,    "mteled", -1, -1, 0);
+	loadActorAnim2(OBJECT_KIRK, "kteled", -1, -1, 21);
+	loadActorAnim2(OBJECT_SPOCK, "steled", -1, -1, 0);
+	loadActorAnim2(OBJECT_MCCOY, "mteled", -1, -1, 0);
 	loadActorAnim2(OBJECT_REDSHIRT, "rteled", -1, -1, 0);
 }
 
@@ -328,9 +328,9 @@ void Room::tug0BombExploded() {
 	showText(TX_SPEAKER_MCCOY, TX_TUG0_023);
 	showText(TX_SPEAKER_SPOCK, TX_TUG0_037);
 	showText(TX_SPEAKER_MCCOY, TX_TUG0_027);
-	showText(TX_SPEAKER_KIRK,  TX_TUG0_004);
+	showText(TX_SPEAKER_KIRK, TX_TUG0_004);
 	showText(TX_SPEAKER_SCOTT, TX_TUG0_S11);
-	showText(TX_SPEAKER_KIRK,  TX_TUG0_003);
+	showText(TX_SPEAKER_KIRK, TX_TUG0_003);
 	showText(TX_SPEAKER_SCOTT, TX_TUG0_S06);
 
 	_awayMission->tug.field2d = 1;
@@ -411,31 +411,31 @@ void Room::tug0LookAtDoor() {
 }
 
 void Room::tug0TalkToKirk() {
-	showText(TX_SPEAKER_KIRK,  TX_TUG0_006);
+	showText(TX_SPEAKER_KIRK, TX_TUG0_006);
 	showText(TX_SPEAKER_SPOCK, TX_TUG0_036);
-	showText(TX_SPEAKER_KIRK,  TX_TUG0_011);
+	showText(TX_SPEAKER_KIRK, TX_TUG0_011);
 }
 
 void Room::tug0TalkToMccoy() {
 	showText(TX_SPEAKER_MCCOY, TX_TUG0_025);
-	showText(TX_SPEAKER_KIRK,  TX_TUG0_007);
+	showText(TX_SPEAKER_KIRK, TX_TUG0_007);
 	showText(TX_SPEAKER_MCCOY, TX_TUG0_024);
 }
 
 void Room::tug0TalkToSpock() {
 	showText(TX_SPEAKER_SPOCK, TX_TUG0_042);
-	showText(TX_SPEAKER_KIRK,  TX_TUG0_009);
+	showText(TX_SPEAKER_KIRK, TX_TUG0_009);
 }
 
 void Room::tug0TalkToRedshirt() {
-	showText(TX_SPEAKER_CHRISTENSEN,  TX_TUG0L006);
+	showText(TX_SPEAKER_CHRISTENSEN, TX_TUG0L006);
 }
 
 void Room::tug0TalkToEngineer() {
 	if (_awayMission->tug.engineerConscious) {
 		showText(TX_SPEAKER_SIMPSON, TX_TUG0_F30);
-		showText(TX_SPEAKER_MCCOY,  TX_TUG0_026);
-		showText(TX_SPEAKER_KIRK,   TX_TUG0_012);
+		showText(TX_SPEAKER_MCCOY, TX_TUG0_026);
+		showText(TX_SPEAKER_KIRK, TX_TUG0_012);
 	}
 }
 

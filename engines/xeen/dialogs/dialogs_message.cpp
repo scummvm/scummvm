@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "xeen/dialogs/dialogs_message.h"
+#include "common/scummsys.h"
 #include "xeen/events.h"
 #include "xeen/xeen.h"
 
@@ -82,7 +82,9 @@ void MessageDialog::execute(const Common::String &msg, MessageWaitType waitType)
 /*------------------------------------------------------------------------*/
 
 void ErrorScroll::show(XeenEngine *vm, const Common::String &msg, MessageWaitType waitType) {
-	Common::String s = Common::String::format("\x3""c\v010\t000%s", msg.c_str());
+	Common::String s = Common::String::format("\x3"
+	                                          "c\v010\t000%s",
+	                                          msg.c_str());
 	MessageDialog::show(vm, s, waitType);
 }
 
@@ -106,9 +108,8 @@ void CantCast::execute(int spellId, int componentNum) {
 	sound.playFX(21);
 	w.open();
 	w.writeString(Common::String::format(Res.NOT_ENOUGH_TO_CAST,
-		Res.SPELL_CAST_COMPONENTS[componentNum - 1],
-		spells._spellNames[spellId].c_str()
-	));
+	                                     Res.SPELL_CAST_COMPONENTS[componentNum - 1],
+	                                     spells._spellNames[spellId].c_str()));
 	w.update();
 
 	do {

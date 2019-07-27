@@ -23,9 +23,9 @@
 #ifndef MUTATIONOFJB_IFPIGGYCOMMAND_H
 #define MUTATIONOFJB_IFPIGGYCOMMAND_H
 
-#include "mutationofjb/commands/conditionalcommand.h"
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "mutationofjb/commands/conditionalcommand.h"
 
 namespace MutationOfJB {
 

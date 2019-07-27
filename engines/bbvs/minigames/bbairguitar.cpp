@@ -24,12 +24,12 @@
 
 #include "common/savefile.h"
 
-#include "gui/message.h"
 #include "gui/filebrowser-dialog.h"
+#include "gui/message.h"
 
 namespace Bbvs {
 
-static const char * const kNoteSoundFilenames[] = {
+static const char *const kNoteSoundFilenames[] = {
 	"a.aif", "a#.aif", "b.aif", "c.aif", "c#.aif",
 	"d.aif", "d#.aif", "e.aif", "f.aif", "f#.aif",
 	"g.aif", "g#.aif", "a_oct.aif"
@@ -37,104 +37,95 @@ static const char * const kNoteSoundFilenames[] = {
 
 static const uint kNoteSoundFilenamesCount = ARRAYSIZE(kNoteSoundFilenames);
 
-static const char * const kPatchDirectories[] = {
+static const char *const kPatchDirectories[] = {
 	"rock", "burp", "fart"
 };
 
 static const uint kPatchDirectoriesCount = ARRAYSIZE(kPatchDirectories);
 
-static const BBPoint kPianoKeyArea1[] = {{29, 192}, {38, 192}, {38, 222}, {41, 222}, {41, 239}, {29, 239}};
-static const BBPoint kPianoKeyArea2[] = {{38, 192}, {43, 192}, {43, 222}, {38, 222}};
-static const BBPoint kPianoKeyArea3[] = {{43, 192}, {49, 192}, {49, 222}, {52, 222}, {52, 239}, {41, 239}, {41, 222}, {43, 222}};
-static const BBPoint kPianoKeyArea4[] = {{49, 192}, {54, 192}, {54, 222}, {49, 222}};
-static const BBPoint kPianoKeyArea5[] = {{54, 192}, {63, 192}, {63, 239}, {52, 239}, {52, 222}, {54, 222}};
-static const BBPoint kPianoKeyArea6[] = {{63, 192}, {71, 192}, {71, 222}, {74, 222}, {74, 239}, {63, 239}};
-static const BBPoint kPianoKeyArea7[] = {{71, 192}, {76, 192}, {76, 222}, {71, 222}};
-static const BBPoint kPianoKeyArea8[] = {{76, 192}, {82, 192}, {82, 222}, {85, 222}, {85, 239}, {74, 239}, {74, 222}, {76, 222}};
-static const BBPoint kPianoKeyArea9[] = {{82, 192}, {87, 192}, {87, 222}, {82, 222}};
-static const BBPoint kPianoKeyArea10[] = {{87, 192}, {94, 192}, {94, 222}, {96, 222}, {96, 239}, {85, 239}, {85, 222}, {87, 222}};
-static const BBPoint kPianoKeyArea11[] = {{94, 192}, {99, 192}, {99, 222}, {94, 222}};
-static const BBPoint kPianoKeyArea12[] = {{99, 192}, {107, 192}, {107, 239}, {96, 239}, {96, 222}, {99, 222}};
-static const BBPoint kPianoKeyArea13[] = {{107, 192}, {118, 192}, {118, 239}, {107, 239}};
+static const BBPoint kPianoKeyArea1[] = { { 29, 192 }, { 38, 192 }, { 38, 222 }, { 41, 222 }, { 41, 239 }, { 29, 239 } };
+static const BBPoint kPianoKeyArea2[] = { { 38, 192 }, { 43, 192 }, { 43, 222 }, { 38, 222 } };
+static const BBPoint kPianoKeyArea3[] = { { 43, 192 }, { 49, 192 }, { 49, 222 }, { 52, 222 }, { 52, 239 }, { 41, 239 }, { 41, 222 }, { 43, 222 } };
+static const BBPoint kPianoKeyArea4[] = { { 49, 192 }, { 54, 192 }, { 54, 222 }, { 49, 222 } };
+static const BBPoint kPianoKeyArea5[] = { { 54, 192 }, { 63, 192 }, { 63, 239 }, { 52, 239 }, { 52, 222 }, { 54, 222 } };
+static const BBPoint kPianoKeyArea6[] = { { 63, 192 }, { 71, 192 }, { 71, 222 }, { 74, 222 }, { 74, 239 }, { 63, 239 } };
+static const BBPoint kPianoKeyArea7[] = { { 71, 192 }, { 76, 192 }, { 76, 222 }, { 71, 222 } };
+static const BBPoint kPianoKeyArea8[] = { { 76, 192 }, { 82, 192 }, { 82, 222 }, { 85, 222 }, { 85, 239 }, { 74, 239 }, { 74, 222 }, { 76, 222 } };
+static const BBPoint kPianoKeyArea9[] = { { 82, 192 }, { 87, 192 }, { 87, 222 }, { 82, 222 } };
+static const BBPoint kPianoKeyArea10[] = { { 87, 192 }, { 94, 192 }, { 94, 222 }, { 96, 222 }, { 96, 239 }, { 85, 239 }, { 85, 222 }, { 87, 222 } };
+static const BBPoint kPianoKeyArea11[] = { { 94, 192 }, { 99, 192 }, { 99, 222 }, { 94, 222 } };
+static const BBPoint kPianoKeyArea12[] = { { 99, 192 }, { 107, 192 }, { 107, 239 }, { 96, 239 }, { 96, 222 }, { 99, 222 } };
+static const BBPoint kPianoKeyArea13[] = { { 107, 192 }, { 118, 192 }, { 118, 239 }, { 107, 239 } };
 
 static const BBPolygon kPianoKeyAreas[] = {
-	{kPianoKeyArea1, ARRAYSIZE(kPianoKeyArea1)},
-	{kPianoKeyArea2, ARRAYSIZE(kPianoKeyArea2)},
-	{kPianoKeyArea3, ARRAYSIZE(kPianoKeyArea3)},
-	{kPianoKeyArea4, ARRAYSIZE(kPianoKeyArea4)},
-	{kPianoKeyArea5, ARRAYSIZE(kPianoKeyArea5)},
-	{kPianoKeyArea6, ARRAYSIZE(kPianoKeyArea6)},
-	{kPianoKeyArea7, ARRAYSIZE(kPianoKeyArea7)},
-	{kPianoKeyArea8, ARRAYSIZE(kPianoKeyArea8)},
-	{kPianoKeyArea9, ARRAYSIZE(kPianoKeyArea9)},
-	{kPianoKeyArea10, ARRAYSIZE(kPianoKeyArea10)},
-	{kPianoKeyArea11, ARRAYSIZE(kPianoKeyArea11)},
-	{kPianoKeyArea12, ARRAYSIZE(kPianoKeyArea12)},
-	{kPianoKeyArea13, ARRAYSIZE(kPianoKeyArea13)},
+	{ kPianoKeyArea1, ARRAYSIZE(kPianoKeyArea1) },
+	{ kPianoKeyArea2, ARRAYSIZE(kPianoKeyArea2) },
+	{ kPianoKeyArea3, ARRAYSIZE(kPianoKeyArea3) },
+	{ kPianoKeyArea4, ARRAYSIZE(kPianoKeyArea4) },
+	{ kPianoKeyArea5, ARRAYSIZE(kPianoKeyArea5) },
+	{ kPianoKeyArea6, ARRAYSIZE(kPianoKeyArea6) },
+	{ kPianoKeyArea7, ARRAYSIZE(kPianoKeyArea7) },
+	{ kPianoKeyArea8, ARRAYSIZE(kPianoKeyArea8) },
+	{ kPianoKeyArea9, ARRAYSIZE(kPianoKeyArea9) },
+	{ kPianoKeyArea10, ARRAYSIZE(kPianoKeyArea10) },
+	{ kPianoKeyArea11, ARRAYSIZE(kPianoKeyArea11) },
+	{ kPianoKeyArea12, ARRAYSIZE(kPianoKeyArea12) },
+	{ kPianoKeyArea13, ARRAYSIZE(kPianoKeyArea13) },
 };
 
 static const BBPoint kObjPoints[] = {
-	{161, 189}, {269, 189}, {161, 208}, {279, 208}, {172, 208},
-	{141, 224}, {257, 191}, {257, 199}, {148, 223}, {124, 224},
-	{ 29, 192}, {182, 220}, {245, 220}, {269, 220}, {161, 220},
-	{203, 220}, {224, 220}, {123, 189}, {123, 199}, {123, 209},
-	{134, 224}, { 29, 185}, {124, 224}, {226, 127}, {226, 127},
-	{209, 141}, {244, 141}, {226, 127}, { 99, 107}, { 99, 107},
-	{ 76, 137}, {118, 136}, { 99, 107}, {195, 104}, {100,  78}
+	{ 161, 189 }, { 269, 189 }, { 161, 208 }, { 279, 208 }, { 172, 208 }, { 141, 224 }, { 257, 191 }, { 257, 199 }, { 148, 223 }, { 124, 224 }, { 29, 192 }, { 182, 220 }, { 245, 220 }, { 269, 220 }, { 161, 220 }, { 203, 220 }, { 224, 220 }, { 123, 189 }, { 123, 199 }, { 123, 209 }, { 134, 224 }, { 29, 185 }, { 124, 224 }, { 226, 127 }, { 226, 127 }, { 209, 141 }, { 244, 141 }, { 226, 127 }, { 99, 107 }, { 99, 107 }, { 76, 137 }, { 118, 136 }, { 99, 107 }, { 195, 104 }, { 100, 78 }
 };
 
 static const MinigameBbAirGuitar::PianoKeyInfo kPianoKeyInfos[] = {
-	{ 30, 192, 0},
-	{ 38, 192, 5},
-	{ 41, 192, 1},
-	{ 49, 192, 5},
-	{ 52, 192, 2},
-	{ 63, 192, 3},
-	{ 71, 192, 5},
-	{ 74, 192, 1},
-	{ 82, 192, 5},
-	{ 85, 192, 1},
-	{ 94, 192, 5},
-	{ 96, 192, 2},
-	{107, 192, 4}
+	{ 30, 192, 0 },
+	{ 38, 192, 5 },
+	{ 41, 192, 1 },
+	{ 49, 192, 5 },
+	{ 52, 192, 2 },
+	{ 63, 192, 3 },
+	{ 71, 192, 5 },
+	{ 74, 192, 1 },
+	{ 82, 192, 5 },
+	{ 85, 192, 1 },
+	{ 94, 192, 5 },
+	{ 96, 192, 2 },
+	{ 107, 192, 4 }
 };
 
-static const Rect kRect2 = {29, 189, 290, 239};
-static const Rect kPianoRect = {29, 192, 118, 239};
+static const Rect kRect2 = { 29, 189, 290, 239 };
+static const Rect kPianoRect = { 29, 192, 118, 239 };
 
 static const Rect kPlayerButtonRects[] = {
-	{123, 189, 145, 199},
-	{123, 199, 145, 209},
-	{123, 209, 145, 220},
-	{148, 223, 156, 236},
-	{161, 189, 182, 205},
-	{161, 208, 171, 218},
-	{161, 220, 182, 231},
-	{182, 220, 203, 231},
-	{203, 220, 224, 231},
-	{224, 220, 245, 231},
-	{245, 220, 266, 231},
-	{269, 220, 290, 231},
-	{269, 189, 290, 205},
-	{279, 208, 290, 218}
+	{ 123, 189, 145, 199 },
+	{ 123, 199, 145, 209 },
+	{ 123, 209, 145, 220 },
+	{ 148, 223, 156, 236 },
+	{ 161, 189, 182, 205 },
+	{ 161, 208, 171, 218 },
+	{ 161, 220, 182, 231 },
+	{ 182, 220, 203, 231 },
+	{ 203, 220, 224, 231 },
+	{ 224, 220, 245, 231 },
+	{ 245, 220, 266, 231 },
+	{ 269, 220, 290, 231 },
+	{ 269, 189, 290, 205 },
+	{ 279, 208, 290, 218 }
 };
 
 static const BBPoint kPointsTbl1[] = {
-	{196, 191},	{202, 191}, {207, 191}, {212, 191}, {217, 191},
-	{223, 191}, {228, 191}, {233, 191}, {238, 191}, {244, 191},
-	{249, 191}
+	{ 196, 191 }, { 202, 191 }, { 207, 191 }, { 212, 191 }, { 217, 191 }, { 223, 191 }, { 228, 191 }, { 233, 191 }, { 238, 191 }, { 244, 191 }, { 249, 191 }
 };
 
 static const BBPoint kPointsTbl2[] = {
-	{196, 199}, {202, 199}, {207, 199}, {212, 199}, {217, 199},
-	{223, 199}, {228, 199}, {233, 199}, {238, 199}, {244, 199},
-	{249, 199}
+	{ 196, 199 }, { 202, 199 }, { 207, 199 }, { 212, 199 }, { 217, 199 }, { 223, 199 }, { 228, 199 }, { 233, 199 }, { 238, 199 }, { 244, 199 }, { 249, 199 }
 };
 
-static const struct { int frameIndex; byte flag; } kNoteFrameTbl[13] = {
-	{2, 0}, {2, 1}, {3, 0}, {3, 1}, {4, 0},
-	{5, 0}, {5, 1}, {6, 0}, {6, 1}, {0, 0},
-	{0, 1}, {1, 0}, {2, 0}
+static const struct {
+	int frameIndex;
+	byte flag;
+} kNoteFrameTbl[13] = {
+	{ 2, 0 }, { 2, 1 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 5, 0 }, { 5, 1 }, { 6, 0 }, { 6, 1 }, { 0, 0 }, { 0, 1 }, { 1, 0 }, { 2, 0 }
 };
 
 const int kTrackBarMinX = 172;
@@ -152,9 +143,7 @@ bool MinigameBbAirGuitar::ptInPoly(const BBPolygon *poly, int x, int y) {
 	bool result = false;
 	if (pointsCount > 0)
 		for (int i = 0, j = pointsCount - 1; i < pointsCount; j = i++)
-			if (((points[i].y > y) != (points[j].y > y)) &&
-				(x < (points[j].x - points[i].x) * (y - points[i].y) /
-				(points[j].y - points[i].y) + points[i].x))
+			if (((points[i].y > y) != (points[j].y > y)) && (x < (points[j].x - points[i].x) * (y - points[i].y) / (points[j].y - points[i].y) + points[i].x))
 				result = !result;
 	return result;
 }
@@ -180,9 +169,8 @@ void MinigameBbAirGuitar::buildDrawList0(DrawList &drawList) {
 			drawList.add(obj->anim->frameIndices[obj->frameIndex], obj->x, obj->y, obj->y + 16);
 	}
 
-	if (_titleScreenSpriteIndex> 0)
+	if (_titleScreenSpriteIndex > 0)
 		drawList.add(_titleScreenSpriteIndex, 0, 0, 0);
-
 }
 
 void MinigameBbAirGuitar::buildDrawList1(DrawList &drawList) {
@@ -236,7 +224,6 @@ void MinigameBbAirGuitar::buildDrawList1(DrawList &drawList) {
 
 	if (_backgroundSpriteIndex > 0)
 		drawList.add(_backgroundSpriteIndex, 0, 0, 0);
-
 }
 
 void MinigameBbAirGuitar::drawSprites() {
@@ -288,7 +275,6 @@ void MinigameBbAirGuitar::initObjects0() {
 	_objects[2].x = 280;
 	_objects[2].y = 240;
 	_objects[2].kind = 2;
-
 }
 
 void MinigameBbAirGuitar::initObjects1() {
@@ -399,7 +385,6 @@ void MinigameBbAirGuitar::initObjects1() {
 	_track[0].noteNum = -1;
 	stop();
 	changePatch(0);
-
 }
 
 bool MinigameBbAirGuitar::updateStatus(int mouseX, int mouseY, uint mouseButtons) {
@@ -439,10 +424,9 @@ bool MinigameBbAirGuitar::updateStatus0(int mouseX, int mouseY, uint mouseButton
 				obj->ticks = obj->anim->frameTicks[obj->frameIndex];
 			}
 		}
-
 	}
 
-  	return true;
+	return true;
 }
 
 bool MinigameBbAirGuitar::updateStatus1(int mouseX, int mouseY, uint mouseButtons) {
@@ -659,7 +643,6 @@ bool MinigameBbAirGuitar::updateStatus1(int mouseX, int mouseY, uint mouseButton
 							calcTotalTicks2();
 						}
 						break;
-
 					}
 				}
 			}
@@ -715,7 +698,6 @@ bool MinigameBbAirGuitar::updateStatus1(int mouseX, int mouseY, uint mouseButton
 			_objects[14].frameIndex = 1;
 		}
 		break;
-
 	}
 
 	updateObjs();
@@ -784,7 +766,7 @@ bool MinigameBbAirGuitar::run(bool fromMainGame) {
 
 	loadSounds();
 
-	while (!_vm->shouldQuit() &&!_gameDone) {
+	while (!_vm->shouldQuit() && !_gameDone) {
 		_vm->updateEvents();
 		update();
 	}
@@ -829,7 +811,6 @@ void MinigameBbAirGuitar::update() {
 	drawSprites();
 
 	_vm->_system->delayMillis(10);
-
 }
 
 void MinigameBbAirGuitar::play() {
@@ -843,7 +824,6 @@ void MinigameBbAirGuitar::play() {
 		noteOn(_track[_trackIndex].noteNum);
 	}
 }
-
 
 void MinigameBbAirGuitar::record() {
 	_playerMode = 2;
@@ -976,7 +956,7 @@ void MinigameBbAirGuitar::afterButtonReleased() {
 		case 25:
 		case 26:
 			noteOff(_currButtonNum - 14);
-		break;
+			break;
 		}
 	}
 
@@ -1090,7 +1070,6 @@ void MinigameBbAirGuitar::noteOn(int noteNum) {
 			_objects[27].ticks = getAnimation(27)->frameTicks[0];
 		}
 	}
-
 }
 
 void MinigameBbAirGuitar::noteOff(int noteNum) {
@@ -1160,7 +1139,6 @@ void MinigameBbAirGuitar::noteOff(int noteNum) {
 			_objects[27].ticks = -1;
 		}
 	}
-
 }
 
 void MinigameBbAirGuitar::resetObjs() {
@@ -1230,8 +1208,8 @@ bool MinigameBbAirGuitar::querySaveModifiedDialog() {
 		Original discard button caption: "Who cares?  It sucked!"
 	*/
 	GUI::MessageDialog query("Hey Beavis - you didn't save that last Jam!",
-		"Save it!",
-		"It sucked!");
+	                         "Save it!",
+	                         "It sucked!");
 	return query.runModal() == GUI::kMessageOK;
 }
 

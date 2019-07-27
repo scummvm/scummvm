@@ -28,9 +28,9 @@
 #include "hopkins/hopkins.h"
 #include "hopkins/objects.h"
 
-#include "common/system.h"
 #include "common/endian.h"
 #include "common/file.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 
 namespace Hopkins {
@@ -325,7 +325,7 @@ int TalkManager::dialogQuestion(bool animatedFl) {
 	}
 
 	_vm->_events->refreshScreenAndEvents();
-  return retVal;
+	return retVal;
 }
 
 int TalkManager::dialogAnswer(int idx, bool animatedFl) {
@@ -556,7 +556,7 @@ int TalkManager::countBoxLines(int idx, const Common::String &file) {
 
 	// Separate strings
 	for (int i = 0; i < 2048; i++) {
-		if ( decryptBuf[i] == 10 || decryptBuf[i] == 13)
+		if (decryptBuf[i] == 10 || decryptBuf[i] == 13)
 			decryptBuf[i] = 0;
 	}
 
@@ -641,7 +641,7 @@ void TalkManager::startCharacterAnim0(int startIdx, bool readOnlyFl) {
 				break;
 			if (_vm->_globals->_speed != 501)
 				_vm->_graphicsMan->fastDisplay(_characterSprite, _vm->_events->_startPos.x + READ_LE_INT16(&_characterAnim[2 * idx]),
-				    READ_LE_INT16(&_characterAnim[2 * idx + 2]), _characterAnim[2 * idx + 8]);
+				                               READ_LE_INT16(&_characterAnim[2 * idx + 2]), _characterAnim[2 * idx + 8]);
 			idx += 5;
 		} while (_vm->_globals->_speed != 501);
 	}
@@ -829,10 +829,10 @@ void TalkManager::handleAnswer(int zone, int verb) {
 
 			if (opcodeType == 2)
 				// GOTO
-				lastOpcodeResult =  _vm->_script->handleGoto(ptr + 20 * lastOpcodeResult);
+				lastOpcodeResult = _vm->_script->handleGoto(ptr + 20 * lastOpcodeResult);
 			else if (opcodeType == 3)
 				// IF
-				lastOpcodeResult =  _vm->_script->handleIf(ptr, lastOpcodeResult);
+				lastOpcodeResult = _vm->_script->handleIf(ptr, lastOpcodeResult);
 
 			if (lastOpcodeResult == -1)
 				error("Invalid IFF function");

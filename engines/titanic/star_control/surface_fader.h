@@ -35,6 +35,7 @@ class CSurfaceFader {
 private:
 	byte *_dataP;
 	bool _fadeIn;
+
 private:
 	/**
 	 * Create a faded version of the source surface for the new step
@@ -45,10 +46,12 @@ private:
 	 * Sets up an internal surface to match the size of the specified one
 	 */
 	bool setupSurface(CScreenManager *screenManager, CVideoSurface *srcSurface);
+
 public:
 	int _index;
 	int _count;
 	CVideoSurface *_videoSurface;
+
 public:
 	CSurfaceFader();
 	~CSurfaceFader();

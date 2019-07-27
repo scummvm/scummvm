@@ -38,8 +38,10 @@ class CSGTNavigation : public CGameObject {
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
+
 protected:
 	static CSGTNavigationStatics *_statics;
+
 public:
 	CLASSDEF;
 	static void init();

@@ -23,12 +23,12 @@
 #ifndef MOHAWK_CSTIME_H
 #define MOHAWK_CSTIME_H
 
-#include "mohawk/mohawk.h"
 #include "mohawk/console.h"
 #include "mohawk/cstime_graphics.h"
+#include "mohawk/mohawk.h"
 
-#include "common/random.h"
 #include "common/list.h"
+#include "common/random.h"
 
 namespace Mohawk {
 
@@ -112,8 +112,14 @@ enum {
 };
 
 struct CSTimeEvent {
-	CSTimeEvent() : type(0), param1(0), param2(0) { }
-	CSTimeEvent(uint16 t, uint16 p1, uint16 p2) : type(t), param1(p1), param2(p2) { }
+	CSTimeEvent()
+	  : type(0)
+	  , param1(0)
+	  , param2(0) {}
+	CSTimeEvent(uint16 t, uint16 p1, uint16 p2)
+	  : type(t)
+	  , param1(p1)
+	  , param2(p2) {}
 
 	uint16 type;
 	uint16 param1;

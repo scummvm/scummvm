@@ -31,11 +31,15 @@ class CWheelSpin : public CBackground {
 	DECLARE_MESSAGE_MAP;
 	bool SignalObject(CSignalObject *msg);
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+
 public:
 	bool _active;
+
 public:
 	CLASSDEF;
-	CWheelSpin() : CBackground(), _active(false) {}
+	CWheelSpin()
+	  : CBackground()
+	  , _active(false) {}
 
 	/**
 	 * Save the data for the class to file

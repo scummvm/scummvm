@@ -32,6 +32,7 @@ class CNoNutBowl : public CBackground {
 	bool ActMsg(CActMsg *msg);
 	bool ReplaceBowlAndNutsMsg(CReplaceBowlAndNutsMsg *msg);
 	bool NutPuzzleMsg(CNutPuzzleMsg *msg);
+
 public:
 	CLASSDEF;
 

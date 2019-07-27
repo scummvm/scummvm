@@ -23,10 +23,10 @@
 #ifndef BACKENDS_FS_STDIOSTREAM_H
 #define BACKENDS_FS_STDIOSTREAM_H
 
-#include "common/scummsys.h"
 #include "common/noncopyable.h"
-#include "common/stream.h"
+#include "common/scummsys.h"
 #include "common/str.h"
+#include "common/stream.h"
 
 class StdioStream : public Common::SeekableReadStream, public Common::SeekableWriteStream, public Common::NonCopyable {
 protected:

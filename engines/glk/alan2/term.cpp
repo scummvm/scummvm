@@ -20,13 +20,13 @@
  *
  */
 
-#include "glk/alan2/main.h"
 #include "glk/alan2/term.h"
+#include "glk/alan2/main.h"
 
 namespace Glk {
 namespace Alan2 {
 
-/*======================================================================
+	/*======================================================================
 
   getPageSize()
 
@@ -34,10 +34,10 @@ namespace Alan2 {
   from the header.
 
  */
-void getPageSize() {
-	paglen = 0;
-	pagwidth = 0;
-}
+	void getPageSize() {
+		paglen = 0;
+		pagwidth = 0;
+	}
 
 } // End of namespace Alan2
 } // End of namespace Glk

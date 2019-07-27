@@ -25,7 +25,7 @@
 
 namespace AGOS {
 
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 // Feeble Files
 struct VgaFile1Header_Feeble {
@@ -66,7 +66,6 @@ struct AnimationHeader_Simon {
 	uint16 scriptOffs;
 } PACKED_STRUCT;
 
-
 // Elvira 1/2 and Waxworks
 struct ImageHeader_WW {
 	uint16 id;
@@ -95,20 +94,20 @@ struct VgaFile1Header_Common {
 	uint16 x_5;
 } PACKED_STRUCT;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h" // END STRUCT PACKING
 
 enum DrawFlags {
-	kDFFlip           = 0x1,
-	kDFNonTrans       = 0x2,
-	kDFSkipStoreBG    = 0x4,
-	kDFCompressed     = 0x8,
+	kDFFlip = 0x1,
+	kDFNonTrans = 0x2,
+	kDFSkipStoreBG = 0x4,
+	kDFCompressed = 0x8,
 	kDFCompressedFlip = 0x10,
-	kDFMasked         = 0x20,
+	kDFMasked = 0x20,
 
 	// Feeble specific
-	kDFOverlayed      = 0x10,
-	kDFScaled         = 0x40,
-	kDFShaded         = 0x80
+	kDFOverlayed = 0x10,
+	kDFScaled = 0x40,
+	kDFShaded = 0x80
 };
 
 struct VC10_state {

@@ -20,23 +20,21 @@
  *
  */
 
-#include "common/system.h"
 #include "common/config-manager.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 
-#include "parallaction/parallaction.h"
 #include "parallaction/exec.h"
 #include "parallaction/input.h"
+#include "parallaction/parallaction.h"
 #include "parallaction/parser.h"
 #include "parallaction/saveload.h"
 #include "parallaction/sound.h"
 #include "parallaction/walk.h"
 
-
 namespace Parallaction {
 
-#define INITIAL_FREE_SARCOPHAGUS_SLOT_X	200
-
+#define INITIAL_FREE_SARCOPHAGUS_SLOT_X 200
 
 class LocationName {
 
@@ -54,7 +52,7 @@ public:
 		_hasCharacter = false;
 	}
 
-	void bind(const char*);
+	void bind(const char *);
 
 	const char *location() const {
 		return _location.c_str();
@@ -80,8 +78,6 @@ public:
 		return _buf.c_str();
 	}
 };
-
-
 
 /*
 	bind accept the following input formats:
@@ -120,8 +116,8 @@ void LocationName::bind(const char *s) {
 			_hasSlide = true;
 			_slide = list[0];
 
-			list.remove_at(0);		// removes slide name
-			list.remove_at(0);		// removes 'slide'
+			list.remove_at(0); // removes slide name
+			list.remove_at(0); // removes 'slide'
 		}
 
 		if (list.size() == 2) {
@@ -131,11 +127,14 @@ void LocationName::bind(const char *s) {
 	}
 
 	_location = list[0];
-	_buf = s;		// kept as reference
+	_buf = s; // kept as reference
 }
 
-Parallaction_ns::Parallaction_ns(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction(syst, gameDesc),
-	_locationParser(0), _programParser(0), _walker(0) {
+Parallaction_ns::Parallaction_ns(OSystem *syst, const PARALLACTIONGameDescription *gameDesc)
+  : Parallaction(syst, gameDesc)
+  , _locationParser(0)
+  , _programParser(0)
+  , _walker(0) {
 	_soundManI = 0;
 	_score = 0;
 	_inTestResult = 0;
@@ -248,15 +247,14 @@ void Parallaction_ns::freeFonts() {
 	delete _menuFont;
 	delete _introFont;
 
-	_menuFont  = 0;
+	_menuFont = 0;
 	_dialogueFont = 0;
 	_labelFont = 0;
 	_introFont = 0;
 }
 
-
-void Parallaction_ns::callFunction(uint index, void* parm) {
-	assert(index < 25);	// magic value 25 is maximum # of callables for Nippon Safes
+void Parallaction_ns::callFunction(uint index, void *parm) {
+	assert(index < 25); // magic value 25 is maximum # of callables for Nippon Safes
 
 	(this->*_callables[index])(parm);
 }
@@ -299,7 +297,7 @@ Common::Error Parallaction_ns::go() {
 	return Common::kNoError;
 }
 
-void Parallaction_ns::changeBackground(const char* background, const char* mask, const char* path) {
+void Parallaction_ns::changeBackground(const char *background, const char *mask, const char *path) {
 	Palette pal;
 
 	uint16 v2 = 0;
@@ -325,10 +323,9 @@ void Parallaction_ns::changeBackground(const char* background, const char* mask,
 	_gfx->setBackground(kBackgroundLocation, info);
 }
 
-
 void Parallaction_ns::runPendingZones() {
 	if (_activeZone) {
-		ZonePtr z = _activeZone;	// speak Zone or sound
+		ZonePtr z = _activeZone; // speak Zone or sound
 		_activeZone.reset();
 		runZone(z);
 	}
@@ -397,7 +394,6 @@ void Parallaction_ns::changeLocation() {
 		_location._startPosition.x = -1000;
 	}
 
-
 	_gfx->setBlackPalette();
 	_gfx->updateScreen();
 
@@ -427,7 +423,6 @@ void Parallaction_ns::changeLocation() {
 	_newLocationName.clear();
 }
 
-
 void Parallaction_ns::parseLocation(const char *filename) {
 	debugC(1, kDebugParser, "parseLocation('%s')", filename);
 
@@ -444,7 +439,7 @@ void Parallaction_ns::parseLocation(const char *filename) {
 
 	// this loads animation scripts
 	AnimationList::iterator it = _location._animations.begin();
-	for ( ; it != _location._animations.end(); ++it) {
+	for (; it != _location._animations.end(); ++it) {
 		if (!(*it)->_scriptName.empty()) {
 			loadProgram(*it, (*it)->_scriptName.c_str());
 		}
@@ -453,8 +448,6 @@ void Parallaction_ns::parseLocation(const char *filename) {
 	debugC(1, kDebugParser, "parseLocation('%s') done", filename);
 	return;
 }
-
-
 
 void Parallaction_ns::changeCharacter(const char *name) {
 	debugC(1, kDebugExec, "changeCharacter(%s)", name);
@@ -553,7 +546,6 @@ void Parallaction_ns::updateWalkers() {
 	_walker->walk();
 }
 
-
 void Parallaction_ns::scheduleWalk(int16 x, int16 y, bool fromUser) {
 	AnimationPtr a = _char._ani;
 
@@ -565,4 +557,4 @@ void Parallaction_ns::scheduleWalk(int16 x, int16 y, bool fromUser) {
 	g_engineFlags |= kEngineWalking;
 }
 
-}// namespace Parallaction
+} // namespace Parallaction

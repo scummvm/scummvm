@@ -71,7 +71,7 @@ Command::ExecuteResult SpecialShowCommand::execute(ScriptExecutionContext &scrip
 }
 
 Common::String SpecialShowCommand::debugString() const {
-	const char *modes[] = {"PUZZLE_HINT", "COMPUTER_PUZZLE"};
+	const char *modes[] = { "PUZZLE_HINT", "COMPUTER_PUZZLE" };
 	return Common::String::format("SPECIALSHOW %s", modes[static_cast<int>(_mode)]);
 }
 

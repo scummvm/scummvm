@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 
@@ -47,9 +46,18 @@
 namespace Queen {
 
 Logic::Logic(QueenEngine *vm)
-	: _credits(NULL), _objectData(NULL), _roomData(NULL), _sfxName(NULL),
-	_itemData(NULL), _graphicData(NULL), _walkOffData(NULL), _objectDescription(NULL),
-	_furnitureData(NULL), _actorData(NULL), _graphicAnim(NULL), _vm(vm) {
+  : _credits(NULL)
+  , _objectData(NULL)
+  , _roomData(NULL)
+  , _sfxName(NULL)
+  , _itemData(NULL)
+  , _graphicData(NULL)
+  , _walkOffData(NULL)
+  , _objectDescription(NULL)
+  , _furnitureData(NULL)
+  , _actorData(NULL)
+  , _graphicAnim(NULL)
+  , _vm(vm) {
 	_joe.x = _joe.y = 0;
 	_joe.scale = 100;
 	_joe.walk = JWM_NORMAL;
@@ -83,10 +91,14 @@ void Logic::readQueenJas() {
 	uint8 *jas = _vm->resource()->loadFile("QUEEN.JAS", 20);
 	uint8 *ptr = jas;
 
-	_numRooms = READ_BE_UINT16(ptr); ptr += 2;
-	_numNames = READ_BE_UINT16(ptr); ptr += 2;
-	_numObjects = READ_BE_UINT16(ptr); ptr += 2;
-	_numDescriptions = READ_BE_UINT16(ptr); ptr += 2;
+	_numRooms = READ_BE_UINT16(ptr);
+	ptr += 2;
+	_numNames = READ_BE_UINT16(ptr);
+	ptr += 2;
+	_numObjects = READ_BE_UINT16(ptr);
+	ptr += 2;
+	_numDescriptions = READ_BE_UINT16(ptr);
+	ptr += 2;
 
 	_objectData = new ObjectData[_numObjects + 1];
 	memset(&_objectData[0], 0, sizeof(ObjectData));
@@ -97,29 +109,32 @@ void Logic::readQueenJas() {
 	_roomData = new uint16[_numRooms + 2];
 	_roomData[0] = 0;
 	for (i = 1; i <= (_numRooms + 1); i++) {
-		_roomData[i] = READ_BE_UINT16(ptr);	ptr += 2;
+		_roomData[i] = READ_BE_UINT16(ptr);
+		ptr += 2;
 	}
 	_roomData[_numRooms + 1] = _numObjects;
 
-	if ((_vm->resource()->isDemo() && _vm->resource()->getPlatform() == Common::kPlatformDOS) ||
-		(_vm->resource()->isInterview() && _vm->resource()->getPlatform() == Common::kPlatformAmiga)) {
+	if ((_vm->resource()->isDemo() && _vm->resource()->getPlatform() == Common::kPlatformDOS) || (_vm->resource()->isInterview() && _vm->resource()->getPlatform() == Common::kPlatformAmiga)) {
 		_sfxName = NULL;
 	} else {
 		_sfxName = new uint16[_numRooms + 1];
 		_sfxName[0] = 0;
 		for (i = 1; i <= _numRooms; i++) {
-			_sfxName[i] = READ_BE_UINT16(ptr); ptr += 2;
+			_sfxName[i] = READ_BE_UINT16(ptr);
+			ptr += 2;
 		}
 	}
 
-	_numItems = READ_BE_UINT16(ptr); ptr += 2;
+	_numItems = READ_BE_UINT16(ptr);
+	ptr += 2;
 	_itemData = new ItemData[_numItems + 1];
 	memset(&_itemData[0], 0, sizeof(ItemData));
 	for (i = 1; i <= _numItems; i++) {
 		_itemData[i].readFromBE(ptr);
 	}
 
-	_numGraphics = READ_BE_UINT16(ptr); ptr += 2;
+	_numGraphics = READ_BE_UINT16(ptr);
+	ptr += 2;
 	_graphicData = new GraphicData[_numGraphics + 1];
 	memset(&_graphicData[0], 0, sizeof(GraphicData));
 	for (i = 1; i <= _numGraphics; i++) {
@@ -128,14 +143,16 @@ void Logic::readQueenJas() {
 
 	_vm->grid()->readDataFrom(_numObjects, _numRooms, ptr);
 
-	_numWalkOffs = READ_BE_UINT16(ptr);	ptr += 2;
+	_numWalkOffs = READ_BE_UINT16(ptr);
+	ptr += 2;
 	_walkOffData = new WalkOffData[_numWalkOffs + 1];
 	memset(&_walkOffData[0], 0, sizeof(WalkOffData));
 	for (i = 1; i <= _numWalkOffs; i++) {
 		_walkOffData[i].readFromBE(ptr);
 	}
 
-	_numObjDesc = READ_BE_UINT16(ptr); ptr += 2;
+	_numObjDesc = READ_BE_UINT16(ptr);
+	ptr += 2;
 	_objectDescription = new ObjectDescription[_numObjDesc + 1];
 	memset(&_objectDescription[0], 0, sizeof(ObjectDescription));
 	for (i = 1; i <= _numObjDesc; i++) {
@@ -144,9 +161,11 @@ void Logic::readQueenJas() {
 
 	_vm->command()->readCommandsFrom(ptr);
 
-	_entryObj = READ_BE_UINT16(ptr); ptr += 2;
+	_entryObj = READ_BE_UINT16(ptr);
+	ptr += 2;
 
-	_numFurniture = READ_BE_UINT16(ptr); ptr += 2;
+	_numFurniture = READ_BE_UINT16(ptr);
+	ptr += 2;
 	_furnitureData = new FurnitureData[_numFurniture + 1];
 	memset(&_furnitureData[0], 0, sizeof(FurnitureData));
 	for (i = 1; i <= _numFurniture; i++) {
@@ -154,10 +173,14 @@ void Logic::readQueenJas() {
 	}
 
 	// Actors
-	_numActors = READ_BE_UINT16(ptr); ptr += 2;
-	_numAAnim = READ_BE_UINT16(ptr); ptr += 2;
-	_numAName = READ_BE_UINT16(ptr); ptr += 2;
-	_numAFile = READ_BE_UINT16(ptr); ptr += 2;
+	_numActors = READ_BE_UINT16(ptr);
+	ptr += 2;
+	_numAAnim = READ_BE_UINT16(ptr);
+	ptr += 2;
+	_numAName = READ_BE_UINT16(ptr);
+	ptr += 2;
+	_numAFile = READ_BE_UINT16(ptr);
+	ptr += 2;
 
 	_actorData = new ActorData[_numActors + 1];
 	memset(&_actorData[0], 0, sizeof(ActorData));
@@ -165,7 +188,8 @@ void Logic::readQueenJas() {
 		_actorData[i].readFromBE(ptr);
 	}
 
-	_numGraphicAnim = READ_BE_UINT16(ptr); ptr += 2;
+	_numGraphicAnim = READ_BE_UINT16(ptr);
+	ptr += 2;
 
 	_graphicAnim = new GraphicAnim[_numGraphicAnim + 1];
 	if (_numGraphicAnim == 0) {
@@ -259,7 +283,7 @@ uint16 Logic::findBob(uint16 obj) const {
 						img -= 5000;
 					}
 
-					assert (img <= _numGraphics);
+					assert(img <= _numGraphics);
 
 					if (_graphicData[img].lastFrame != 0) {
 						++idxAnimated;
@@ -302,7 +326,7 @@ uint16 Logic::findFrame(uint16 obj) const {
 		for (uint16 i = _roomData[room] + 1; i < obj; ++i) {
 			img = _objectData[i].image;
 			if (img <= -10) {
-				const GraphicData* pgd = &_graphicData[-(img + 10)];
+				const GraphicData *pgd = &_graphicData[-(img + 10)];
 				if (pgd->lastFrame != 0) {
 					// skip all the frames of the animation
 					idx += ABS(pgd->lastFrame) - pgd->firstFrame + 1;
@@ -316,7 +340,7 @@ uint16 Logic::findFrame(uint16 obj) const {
 				if (img > 5000) {
 					img -= 5000;
 				}
-				const GraphicData* pgd = &_graphicData[img];
+				const GraphicData *pgd = &_graphicData[img];
 				uint16 lastFrame = ABS(pgd->lastFrame);
 				if (pgd->firstFrame < 0) {
 					idx += lastFrame;
@@ -330,7 +354,7 @@ uint16 Logic::findFrame(uint16 obj) const {
 
 		img = _objectData[obj].image;
 		if (img <= -10) {
-			const GraphicData* pgd = &_graphicData[-(img + 10)];
+			const GraphicData *pgd = &_graphicData[-(img + 10)];
 			if (pgd->lastFrame != 0) {
 				idx += ABS(pgd->lastFrame) - pgd->firstFrame + 1;
 			} else {
@@ -693,7 +717,7 @@ uint16 Logic::joeFace() {
 			}
 			frame = 37;
 		} else if ((joeFacing() == DIR_LEFT && joePrevFacing() == DIR_RIGHT)
-			||  (joeFacing() == DIR_RIGHT && joePrevFacing() == DIR_LEFT)) {
+		           || (joeFacing() == DIR_RIGHT && joePrevFacing() == DIR_LEFT)) {
 			pbs->frameNum = 36;
 			_vm->update();
 		}
@@ -901,7 +925,7 @@ int16 Logic::previousInventoryItem(int16 first) const {
 		if (_itemData[i].name > 0)
 			return i;
 
-	return 0;	//nothing found
+	return 0; //nothing found
 }
 
 int16 Logic::nextInventoryItem(int16 first) const {
@@ -913,7 +937,7 @@ int16 Logic::nextInventoryItem(int16 first) const {
 		if (_itemData[i].name > 0)
 			return i;
 
-	return 0;	//nothing found
+	return 0; //nothing found
 }
 
 void Logic::removeDuplicateItems() {
@@ -934,7 +958,7 @@ uint16 Logic::numItemsInventory() const {
 
 void Logic::inventoryInsertItem(uint16 itemNum, bool refresh) {
 	int16 item = _inventoryItem[0] = (int16)itemNum;
-	_itemData[itemNum].name = ABS(_itemData[itemNum].name);	//set visible
+	_itemData[itemNum].name = ABS(_itemData[itemNum].name); //set visible
 	for (int i = 1; i < 4; i++) {
 		item = nextInventoryItem(item);
 		_inventoryItem[i] = item;
@@ -947,7 +971,7 @@ void Logic::inventoryInsertItem(uint16 itemNum, bool refresh) {
 
 void Logic::inventoryDeleteItem(uint16 itemNum, bool refresh) {
 	int16 item = (int16)itemNum;
-	_itemData[itemNum].name = -ABS(_itemData[itemNum].name);	//set invisible
+	_itemData[itemNum].name = -ABS(_itemData[itemNum].name); //set invisible
 	for (int i = 0; i < 4; i++) {
 		item = nextInventoryItem(item);
 		_inventoryItem[i] = item;
@@ -994,11 +1018,11 @@ void Logic::objectCopy(int dummyObjectIndex, int realObjectIndex) {
 	// images are greater than COPY_TO Object images then swap the objects around.
 
 	ObjectData *dummyObject = objectData(dummyObjectIndex);
-	ObjectData *realObject  = objectData(realObjectIndex);
+	ObjectData *realObject = objectData(realObjectIndex);
 
 	int fromState = (dummyObject->name < 0) ? -1 : 0;
 
-	int frameCountReal  = 1;
+	int frameCountReal = 1;
 	int frameCountDummy = 1;
 
 	int graphic = realObject->image;
@@ -1161,8 +1185,7 @@ void Logic::handleSpecialArea(Direction facing, uint16 areaNum, uint16 walkDataN
 		break;
 	}
 
-	while (strlen(nextCut) > 4 &&
-		scumm_stricmp(nextCut + strlen(nextCut) - 4, ".CUT") == 0) {
+	while (strlen(nextCut) > 4 && scumm_stricmp(nextCut + strlen(nextCut) - 4, ".CUT") == 0) {
 		playCutaway(nextCut, nextCut);
 	}
 }
@@ -1172,7 +1195,7 @@ void Logic::handlePinnacleRoom() {
 	_vm->graphics()->putCameraOnBob(-1);
 	displayRoom(ROOM_JUNGLE_PINNACLE, RDM_NOFADE_JOE, 100, 2, true);
 
-	BobSlot *joe   = _vm->graphics()->bob(6);
+	BobSlot *joe = _vm->graphics()->bob(6);
 	BobSlot *piton = _vm->graphics()->bob(7);
 
 	// set scrolling value to mouse position to avoid glitch
@@ -1240,12 +1263,12 @@ void Logic::handlePinnacleRoom() {
 		uint16 obj;
 		int16 song;
 	} cmds[] = {
-		{ 0x2A,  3 },
+		{ 0x2A, 3 },
 		{ 0x29, 16 },
-		{ 0x2F,  6 },
-		{ 0x2C,  7 },
-		{ 0x2B,  3 },
-		{ 0x30,  3 }
+		{ 0x2F, 6 },
+		{ 0x2C, 7 },
+		{ 0x2B, 3 },
+		{ 0x30, 3 }
 	};
 	for (int i = 0; i < ARRAYSIZE(cmds); ++i) {
 		if (cmds[i].obj == prevObj) {
@@ -1275,13 +1298,17 @@ void Logic::update() {
 void Logic::saveState(byte *&ptr) {
 	uint16 i;
 	for (i = 0; i < 4; i++) {
-		WRITE_BE_UINT16(ptr, _inventoryItem[i]); ptr += 2;
+		WRITE_BE_UINT16(ptr, _inventoryItem[i]);
+		ptr += 2;
 	}
 
-	WRITE_BE_UINT16(ptr, _vm->graphics()->bob(0)->x); ptr += 2;
-	WRITE_BE_UINT16(ptr, _vm->graphics()->bob(0)->y); ptr += 2;
+	WRITE_BE_UINT16(ptr, _vm->graphics()->bob(0)->x);
+	ptr += 2;
+	WRITE_BE_UINT16(ptr, _vm->graphics()->bob(0)->y);
+	ptr += 2;
 
-	WRITE_BE_UINT16(ptr, _currentRoom); ptr += 2;
+	WRITE_BE_UINT16(ptr, _currentRoom);
+	ptr += 2;
 
 	for (i = 1; i <= _numObjects; i++)
 		_objectData[i].writeToBE(ptr);
@@ -1290,7 +1317,8 @@ void Logic::saveState(byte *&ptr) {
 		_itemData[i].writeToBE(ptr);
 
 	for (i = 0; i < GAME_STATE_COUNT; i++) {
-		WRITE_BE_UINT16(ptr, _gameState[i]); ptr += 2;
+		WRITE_BE_UINT16(ptr, _gameState[i]);
+		ptr += 2;
 	}
 
 	for (i = 0; i < TALK_SELECTED_COUNT; i++)
@@ -1299,10 +1327,12 @@ void Logic::saveState(byte *&ptr) {
 	for (i = 1; i <= _numWalkOffs; i++)
 		_walkOffData[i].writeToBE(ptr);
 
-	WRITE_BE_UINT16(ptr, _joe.facing); ptr += 2;
+	WRITE_BE_UINT16(ptr, _joe.facing);
+	ptr += 2;
 
 	// V1
-	WRITE_BE_UINT16(ptr, _puzzleAttemptCount); ptr += 2;
+	WRITE_BE_UINT16(ptr, _puzzleAttemptCount);
+	ptr += 2;
 	for (i = 1; i <= _numObjDesc; i++)
 		_objectDescription[i].writeToBE(ptr);
 }
@@ -1310,13 +1340,17 @@ void Logic::saveState(byte *&ptr) {
 void Logic::loadState(uint32 ver, byte *&ptr) {
 	uint16 i;
 	for (i = 0; i < 4; i++) {
-		_inventoryItem[i] = (int16)READ_BE_INT16(ptr); ptr += 2;
+		_inventoryItem[i] = (int16)READ_BE_INT16(ptr);
+		ptr += 2;
 	}
 
-	_joe.x = (int16)READ_BE_INT16(ptr); ptr += 2;
-	_joe.y = (int16)READ_BE_INT16(ptr); ptr += 2;
+	_joe.x = (int16)READ_BE_INT16(ptr);
+	ptr += 2;
+	_joe.y = (int16)READ_BE_INT16(ptr);
+	ptr += 2;
 
-	_currentRoom = READ_BE_UINT16(ptr); ptr += 2;
+	_currentRoom = READ_BE_UINT16(ptr);
+	ptr += 2;
 
 	for (i = 1; i <= _numObjects; i++)
 		_objectData[i].readFromBE(ptr);
@@ -1325,7 +1359,8 @@ void Logic::loadState(uint32 ver, byte *&ptr) {
 		_itemData[i].readFromBE(ptr);
 
 	for (i = 0; i < GAME_STATE_COUNT; i++) {
-		_gameState[i] = (int16)READ_BE_INT16(ptr); ptr += 2;
+		_gameState[i] = (int16)READ_BE_INT16(ptr);
+		ptr += 2;
 	}
 
 	for (i = 0; i < TALK_SELECTED_COUNT; i++)
@@ -1334,10 +1369,12 @@ void Logic::loadState(uint32 ver, byte *&ptr) {
 	for (i = 1; i <= _numWalkOffs; i++)
 		_walkOffData[i].readFromBE(ptr);
 
-	_joe.facing = READ_BE_UINT16(ptr); ptr += 2;
+	_joe.facing = READ_BE_UINT16(ptr);
+	ptr += 2;
 
 	if (ver >= 1) {
-		_puzzleAttemptCount = READ_BE_UINT16(ptr); ptr += 2;
+		_puzzleAttemptCount = READ_BE_UINT16(ptr);
+		ptr += 2;
 
 		for (i = 1; i <= _numObjDesc; i++)
 			_objectDescription[i].readFromBE(ptr);
@@ -1497,8 +1534,8 @@ void Logic::asmMakeFrankGrowing() {
 		_vm->update();
 	}
 
-	objectData(521)->name =  ABS(objectData(521)->name); // Dinoray
-	objectData(526)->name =  ABS(objectData(526)->name); // Frank obj
+	objectData(521)->name = ABS(objectData(521)->name); // Dinoray
+	objectData(526)->name = ABS(objectData(526)->name); // Frank obj
 	objectData(522)->name = -ABS(objectData(522)->name); // TMPD object off
 	objectData(525)->name = -ABS(objectData(525)->name); // Floda guards off
 	objectData(523)->name = -ABS(objectData(523)->name); // Sparky object off
@@ -1546,7 +1583,7 @@ void Logic::asmEndGame() {
 	while (n--) {
 		_vm->update();
 	}
-//	debug("Game completed.");
+	//	debug("Game completed.");
 	_vm->quitGame();
 }
 
@@ -1714,7 +1751,7 @@ void Logic::asmMakeLightningHitPlane() {
 	_vm->graphics()->putCameraOnBob(-1);
 	short iy = 0, x, ydir = -1, j, k;
 
-	BobSlot *planeBob     = _vm->graphics()->bob(5);
+	BobSlot *planeBob = _vm->graphics()->bob(5);
 	BobSlot *lightningBob = _vm->graphics()->bob(20);
 
 	planeBob->y = 135;
@@ -1756,7 +1793,7 @@ void Logic::asmMakeLightningHitPlane() {
 	_vm->sound()->playSfx(currentRoomSfx());
 
 	_vm->bankMan()->unpack(18, lightningBob->frameNum, 15);
-	_vm->bankMan()->unpack(4,  planeBob    ->frameNum, 15);
+	_vm->bankMan()->unpack(4, planeBob->frameNum, 15);
 
 	// Plane plunges into the jungle!
 	BobSlot *fireBob = _vm->graphics()->bob(6);
@@ -1778,7 +1815,7 @@ void Logic::asmMakeLightningHitPlane() {
 
 		if (k < 40) {
 			_vm->bankMan()->unpack(j, planeBob->frameNum, 15);
-			_vm->bankMan()->unpack(k, fireBob ->frameNum, 15);
+			_vm->bankMan()->unpack(k, fireBob->frameNum, 15);
 			k++;
 			j++;
 
@@ -1859,7 +1896,7 @@ void Logic::asmScaleTitle() {
 	bob->scale = 100;
 
 	int i;
-	for (i = 5; i <= 100; i +=5) {
+	for (i = 5; i <= 100; i += 5) {
 		bob->scale = i;
 		bob->y -= 4;
 		_vm->update();
@@ -1882,9 +1919,9 @@ void Logic::asmPanRightToHugh() {
 	BobSlot *bob_thugA1 = _vm->graphics()->bob(20);
 	BobSlot *bob_thugA2 = _vm->graphics()->bob(21);
 	BobSlot *bob_thugA3 = _vm->graphics()->bob(22);
-	BobSlot *bob_hugh1  = _vm->graphics()->bob(1);
-	BobSlot *bob_hugh2  = _vm->graphics()->bob(23);
-	BobSlot *bob_hugh3  = _vm->graphics()->bob(24);
+	BobSlot *bob_hugh1 = _vm->graphics()->bob(1);
+	BobSlot *bob_hugh2 = _vm->graphics()->bob(23);
+	BobSlot *bob_hugh3 = _vm->graphics()->bob(24);
 	BobSlot *bob_thugB1 = _vm->graphics()->bob(25);
 	BobSlot *bob_thugB2 = _vm->graphics()->bob(26);
 
@@ -1935,8 +1972,8 @@ void Logic::asmMakeWhiteFlash() {
 }
 
 void Logic::asmPanRightToJoeAndRita() { // cdint.cut
-	BobSlot *bob_box   = _vm->graphics()->bob(20);
-	BobSlot *bob_beam  = _vm->graphics()->bob(21);
+	BobSlot *bob_box = _vm->graphics()->bob(20);
+	BobSlot *bob_beam = _vm->graphics()->bob(21);
 	BobSlot *bob_crate = _vm->graphics()->bob(22);
 	BobSlot *bob_clock = _vm->graphics()->bob(23);
 	BobSlot *bob_hands = _vm->graphics()->bob(24);
@@ -1946,8 +1983,8 @@ void Logic::asmPanRightToJoeAndRita() { // cdint.cut
 
 	_vm->update();
 
-	bob_box  ->x += 280 * 2;
-	bob_beam ->x += 30;
+	bob_box->x += 280 * 2;
+	bob_beam->x += 30;
 	bob_crate->x += 180 * 3;
 
 	int horizontalScroll = _vm->display()->horizontalScroll();
@@ -1960,8 +1997,8 @@ void Logic::asmPanRightToJoeAndRita() { // cdint.cut
 
 		_vm->display()->horizontalScroll(horizontalScroll);
 
-		bob_box  ->x -= 2;
-		bob_beam ->x -= 1;
+		bob_box->x -= 2;
+		bob_beam->x -= 1;
 		bob_crate->x -= 3;
 		bob_clock->x -= 2;
 		bob_hands->x -= 2;
@@ -2000,7 +2037,7 @@ void Logic::asmPanLeftToBomb() {
 }
 
 void Logic::asmEndDemo() {
-//	debug("Flight of the Amazon Queen, released January 95.");
+	//	debug("Flight of the Amazon Queen, released January 95.");
 	_vm->quitGame();
 }
 
@@ -2045,7 +2082,7 @@ void Logic::asmInterviewIntro() {
 }
 
 void Logic::asmEndInterview() {
-//	debug("Interactive Interview copyright (c) 1995, IBI.");
+	//	debug("Interactive Interview copyright (c) 1995, IBI.");
 	_vm->quitGame();
 }
 
@@ -2089,7 +2126,7 @@ void LogicDemo::setupSpecialMoveTable() {
 	_specialMoves[4] = &LogicDemo::asmMakeJoeUseUnderwear;
 	_specialMoves[14] = &LogicDemo::asmEndDemo;
 	if (_vm->resource()->getPlatform() == Common::kPlatformDOS) {
-		_specialMoves[5]  = &LogicDemo::asmSwitchToDressPalette;
+		_specialMoves[5] = &LogicDemo::asmSwitchToDressPalette;
 	}
 }
 
@@ -2167,12 +2204,12 @@ void LogicGame::setupSpecialMoveTable() {
 	_specialMoves[2] = &LogicGame::asmMakeJoeUseDress;
 	_specialMoves[3] = &LogicGame::asmMakeJoeUseNormalClothes;
 	_specialMoves[4] = &LogicGame::asmMakeJoeUseUnderwear;
-	_specialMoves[7] = &LogicGame::asmStartCarAnimation;       // room 74
-	_specialMoves[8] = &LogicGame::asmStopCarAnimation;        // room 74
-	_specialMoves[9] = &LogicGame::asmStartFightAnimation;     // room 69
-	_specialMoves[10] = &LogicGame::asmWaitForFrankPosition;   // c69e.cut
-	_specialMoves[11] = &LogicGame::asmMakeFrankGrowing;       // c69z.cut
-	_specialMoves[12] = &LogicGame::asmMakeRobotGrowing;       // c69z.cut
+	_specialMoves[7] = &LogicGame::asmStartCarAnimation; // room 74
+	_specialMoves[8] = &LogicGame::asmStopCarAnimation; // room 74
+	_specialMoves[9] = &LogicGame::asmStartFightAnimation; // room 69
+	_specialMoves[10] = &LogicGame::asmWaitForFrankPosition; // c69e.cut
+	_specialMoves[11] = &LogicGame::asmMakeFrankGrowing; // c69z.cut
+	_specialMoves[12] = &LogicGame::asmMakeRobotGrowing; // c69z.cut
 	_specialMoves[14] = &LogicGame::asmEndGame;
 	_specialMoves[15] = &LogicGame::asmPutCameraOnDino;
 	_specialMoves[16] = &LogicGame::asmPutCameraOnJoe;
@@ -2192,18 +2229,18 @@ void LogicGame::setupSpecialMoveTable() {
 	_specialMoves[33] = &LogicGame::asmAttemptPuzzle;
 	_specialMoves[34] = &LogicGame::asmScrollTitle;
 	if (_vm->resource()->getPlatform() == Common::kPlatformDOS) {
-		_specialMoves[5]  = &LogicGame::asmSwitchToDressPalette;
-		_specialMoves[6]  = &LogicGame::asmSwitchToNormalPalette;
+		_specialMoves[5] = &LogicGame::asmSwitchToDressPalette;
+		_specialMoves[6] = &LogicGame::asmSwitchToNormalPalette;
 		_specialMoves[13] = &LogicGame::asmShrinkRobot;
-		_specialMoves[17] = &LogicGame::asmAltIntroPanRight;      // cintr.cut
-		_specialMoves[18] = &LogicGame::asmAltIntroPanLeft;       // cintr.cut
+		_specialMoves[17] = &LogicGame::asmAltIntroPanRight; // cintr.cut
+		_specialMoves[18] = &LogicGame::asmAltIntroPanLeft; // cintr.cut
 		_specialMoves[27] = &LogicGame::asmSmooch;
 		_specialMoves[32] = &LogicGame::asmShakeScreen;
 		_specialMoves[34] = &LogicGame::asmScaleTitle;
 		_specialMoves[36] = &LogicGame::asmPanRightToHugh;
 		_specialMoves[37] = &LogicGame::asmMakeWhiteFlash;
 		_specialMoves[38] = &LogicGame::asmPanRightToJoeAndRita;
-		_specialMoves[39] = &LogicGame::asmPanLeftToBomb;         // cdint.cut
+		_specialMoves[39] = &LogicGame::asmPanLeftToBomb; // cdint.cut
 	}
 }
 

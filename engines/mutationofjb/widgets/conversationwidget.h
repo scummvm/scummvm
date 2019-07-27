@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_CONVERSATIONWIDGET_H
 #define MUTATIONOFJB_CONVERSATIONWIDGET_H
 
-#include "mutationofjb/widgets/widget.h"
 #include "graphics/surface.h"
+#include "mutationofjb/widgets/widget.h"
 
 namespace MutationOfJB {
 

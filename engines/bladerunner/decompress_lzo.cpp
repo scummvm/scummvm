@@ -44,14 +44,16 @@ static inline void copy(uint8 **dst, const uint8 **src, int count) {
 	*dst += count;
 	*src += count;
 
-	do { *d++ = *s++; } while (--count);
+	do {
+		*d++ = *s++;
+	} while (--count);
 }
 
 int decompress_lzo1x(const uint8 *in, size_t inLen, uint8 *out, size_t *outLen) {
 	uint32 t;
 	uint8 *op;
 	const uint8 *ip, *m_pos;
-	const uint8 * const ip_end = in + inLen;
+	const uint8 *const ip_end = in + inLen;
 
 	*outLen = 0;
 
@@ -75,7 +77,7 @@ int decompress_lzo1x(const uint8 *in, size_t inLen, uint8 *out, size_t *outLen) 
 			t = 15 + decode_count(&ip);
 		copy(&op, &ip, t + 3);
 
-first_literal_run:
+	first_literal_run:
 		t = *ip++;
 		if (t >= 16)
 			goto match;
@@ -84,7 +86,7 @@ first_literal_run:
 		goto match_done;
 
 		for (;;) {
-match:
+		match:
 			if (t >= 64) {
 				m_pos = op - 1 - ((t >> 2) & 7) - (*ip++ << 3);
 				t = (t >> 5) - 1;
@@ -111,16 +113,16 @@ match:
 				goto match_done;
 			}
 
-copy_match:
+		copy_match:
 			copy(&op, &m_pos, t + 2);
 
-match_done:
+		match_done:
 			t = ip[-2] & 3;
 			if (t == 0)
 				break;
 
-match_next:
- 			assert(t > 0 && t <= 3);
+		match_next:
+			assert(t > 0 && t <= 3);
 			copy(&op, &ip, t);
 			t = *ip++;
 		}

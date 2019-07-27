@@ -22,16 +22,17 @@
 
 #include "graphics/cursorman.h"
 
-#include "prince/prince.h"
 #include "prince/cursor.h"
 #include "prince/debugger.h"
+#include "prince/prince.h"
 #include "prince/script.h"
 
 #include "common/debug.h"
 
 namespace Prince {
 
-Cursor::Cursor() : _surface(nullptr) {
+Cursor::Cursor()
+  : _surface(nullptr) {
 }
 
 Cursor::~Cursor() {
@@ -80,20 +81,19 @@ void PrinceEngine::changeCursor(uint16 curId) {
 	case 3:
 		curSurface = _cursor3->getSurface();
 		Common::Point mousePos = _system->getEventManager()->getMousePos();
-		mousePos.x = CLIP(mousePos.x, (int16) 315, (int16) 639);
-		mousePos.y = CLIP(mousePos.y, (int16) 0, (int16) 170);
+		mousePos.x = CLIP(mousePos.x, (int16)315, (int16)639);
+		mousePos.y = CLIP(mousePos.y, (int16)0, (int16)170);
 		_system->warpMouse(mousePos.x, mousePos.y);
 		break;
 	}
 
 	CursorMan.replaceCursorPalette(_roomBmp->getPalette(), 0, 255);
 	CursorMan.replaceCursor(
-		curSurface->getBasePtr(0, 0),
-		curSurface->w, curSurface->h,
-		0, 0,
-		255, false,
-		&curSurface->format
-	);
+	  curSurface->getBasePtr(0, 0),
+	  curSurface->w, curSurface->h,
+	  0, 0,
+	  255, false,
+	  &curSurface->format);
 	CursorMan.showMouse(true);
 }
 

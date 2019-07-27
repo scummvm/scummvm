@@ -20,9 +20,9 @@
  *
  */
 
-#include "scumm/scumm.h"
 #include "scumm/imuse/instrument.h"
 #include "audio/mididrv.h"
+#include "scumm/scumm.h"
 
 namespace Scumm {
 
@@ -33,93 +33,94 @@ static struct {
 	byte program;
 }
 
-roland_to_gm_map[] = {
-	// Monkey Island 2 instruments
-	// TODO: Complete
-	{ "badspit   ",  62 },
-	{ "Big Drum  ", 116 },
-	{ "burp      ",  58 },
-//	{ "dinkfall  ", ??? },
-//	{ "Fire Pit  ", ??? },
-	{ "foghorn   ",  60 },
-	{ "glop      ",  39 },
-//	{ "jacob's la", ??? },
-	{ "LeshBass  ",  33 },
-//	{ "lowsnort  ", ??? },
-	{ "ML explosn", 127 },
-	{ "ReggaeBass",  32 },
-//	{ "rope fall ", ??? },
-	{ "rumble    ",  89 },
-	{ "SdTrk Bend",  97 },
-//	{ "snort     ", ??? },
-	{ "spitting  ",  62 },
-	{ "Swell 1   ",  95 },
-	{ "Swell 2   ",  95 },
-	{ "thnderclap", 127 }
+roland_to_gm_map[]
+  = {
+	    // Monkey Island 2 instruments
+	    // TODO: Complete
+	    { "badspit   ", 62 },
+	    { "Big Drum  ", 116 },
+	    { "burp      ", 58 },
+	    //	{ "dinkfall  ", ??? },
+	    //	{ "Fire Pit  ", ??? },
+	    { "foghorn   ", 60 },
+	    { "glop      ", 39 },
+	    //	{ "jacob's la", ??? },
+	    { "LeshBass  ", 33 },
+	    //	{ "lowsnort  ", ??? },
+	    { "ML explosn", 127 },
+	    { "ReggaeBass", 32 },
+	    //	{ "rope fall ", ??? },
+	    { "rumble    ", 89 },
+	    { "SdTrk Bend", 97 },
+	    //	{ "snort     ", ??? },
+	    { "spitting  ", 62 },
+	    { "Swell 1   ", 95 },
+	    { "Swell 2   ", 95 },
+	    { "thnderclap", 127 }
 
-	// Fate of Atlantis instruments
-	// TODO: Build
-//	{ "*aah!     ", ??? },
-//	{ "*ooh!     ", ??? },
-//	{ "*ShotFar4 ", ??? },
-//	{ "*splash3  ", ??? },
-//	{ "*torpedo5 ", ??? },
-//	{ "*whip3    ", ??? },
-//	{ "*woodknock", ??? },
-//	{ "35 lavabub", ??? },
-//	{ "49 bzzt!  ", ??? },
-//	{ "applause  ", ??? },
-//	{ "Arabongo  ", ??? },
-//	{ "Big Drum  ", ??? }, // DUPLICATE (todo: confirm)
-//	{ "bodythud1 ", ??? },
-//	{ "boneKLOK2 ", ??? },
-//	{ "boom10    ", ??? },
-//	{ "boom11    ", ??? },
-//	{ "boom15    ", ??? },
-//	{ "boxclik1a ", ??? },
-//	{ "brassbonk3", ??? },
-//	{ "carstart  ", ??? },
-//	{ "cb tpt 2  ", ??? },
-//	{ "cell door ", ??? },
-//	{ "chains    ", ??? },
-//	{ "crash     ", ??? },
-//	{ "crsrt/idl3", ??? },
-//	{ "Fire Pit  ", ??? }, // DUPLICATE (todo: confirm)
-//	{ "Fzooom    ", ??? },
-//	{ "Fzooom 2  ", ??? },
-//	{ "ghostwhosh", ??? },
-//	{ "glasssmash", ??? },
-//	{ "gloop2    ", ??? },
-//	{ "gunShotNea", ??? },
-//	{ "idoorclse ", ??? },
-//	{ "knife     ", ??? },
-//	{ "lavacmbl4 ", ??? },
-//	{ "Mellow Str", ??? },
-//	{ "mtlheater1", ??? },
-//	{ "pachinko5 ", ??? },
-//	{ "Ping1     ", ??? },
-//	{ "rockcrunch", ??? },
-//	{ "rumble    ", ??? }, // DUPLICATE (todo: confirm)
-//	{ "runngwatr ", ??? },
-//	{ "scrape2   ", ??? },
-//	{ "snakeHiss ", ??? },
-//	{ "snort     ", ??? }, // DUPLICATE (todo: confirm)
-//	{ "spindle4  ", ??? },
-//	{ "splash2   ", ??? },
-//	{ "squirel   ", ??? },
-//	{ "steam3    ", ??? },
-//	{ "stonwheel6", ??? },
-//	{ "street    ", ??? },
-//	{ "trickle4  ", ??? }
-};
+	    // Fate of Atlantis instruments
+	    // TODO: Build
+	    //	{ "*aah!     ", ??? },
+	    //	{ "*ooh!     ", ??? },
+	    //	{ "*ShotFar4 ", ??? },
+	    //	{ "*splash3  ", ??? },
+	    //	{ "*torpedo5 ", ??? },
+	    //	{ "*whip3    ", ??? },
+	    //	{ "*woodknock", ??? },
+	    //	{ "35 lavabub", ??? },
+	    //	{ "49 bzzt!  ", ??? },
+	    //	{ "applause  ", ??? },
+	    //	{ "Arabongo  ", ??? },
+	    //	{ "Big Drum  ", ??? }, // DUPLICATE (todo: confirm)
+	    //	{ "bodythud1 ", ??? },
+	    //	{ "boneKLOK2 ", ??? },
+	    //	{ "boom10    ", ??? },
+	    //	{ "boom11    ", ??? },
+	    //	{ "boom15    ", ??? },
+	    //	{ "boxclik1a ", ??? },
+	    //	{ "brassbonk3", ??? },
+	    //	{ "carstart  ", ??? },
+	    //	{ "cb tpt 2  ", ??? },
+	    //	{ "cell door ", ??? },
+	    //	{ "chains    ", ??? },
+	    //	{ "crash     ", ??? },
+	    //	{ "crsrt/idl3", ??? },
+	    //	{ "Fire Pit  ", ??? }, // DUPLICATE (todo: confirm)
+	    //	{ "Fzooom    ", ??? },
+	    //	{ "Fzooom 2  ", ??? },
+	    //	{ "ghostwhosh", ??? },
+	    //	{ "glasssmash", ??? },
+	    //	{ "gloop2    ", ??? },
+	    //	{ "gunShotNea", ??? },
+	    //	{ "idoorclse ", ??? },
+	    //	{ "knife     ", ??? },
+	    //	{ "lavacmbl4 ", ??? },
+	    //	{ "Mellow Str", ??? },
+	    //	{ "mtlheater1", ??? },
+	    //	{ "pachinko5 ", ??? },
+	    //	{ "Ping1     ", ??? },
+	    //	{ "rockcrunch", ??? },
+	    //	{ "rumble    ", ??? }, // DUPLICATE (todo: confirm)
+	    //	{ "runngwatr ", ??? },
+	    //	{ "scrape2   ", ??? },
+	    //	{ "snakeHiss ", ??? },
+	    //	{ "snort     ", ??? }, // DUPLICATE (todo: confirm)
+	    //	{ "spindle4  ", ??? },
+	    //	{ "splash2   ", ??? },
+	    //	{ "squirel   ", ??? },
+	    //	{ "steam3    ", ??? },
+	    //	{ "stonwheel6", ??? },
+	    //	{ "street    ", ??? },
+	    //	{ "trickle4  ", ??? }
+    };
 
 // This emulates the percussion bank setup LEC used with the MT-32,
 // where notes 24 - 34 were assigned instruments without reverb.
 // It also fixes problems on GS devices that map sounds to these
 // notes by default.
 const byte Instrument::_gmRhythmMap[35] = {
-	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	0,  0,  0,  0,  0,  0,  0,  0, 36, 37, 38, 39, 40, 41, 66, 47,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 36, 37, 38, 39, 40, 41, 66, 47,
 	65, 48, 56
 };
 
@@ -135,17 +136,13 @@ public:
 	void send(MidiChannel *mc);
 	void copy_to(Instrument *dest) { dest->program(_program, _mt32); }
 	bool is_valid() {
-		return (_program < 128) &&
-		       ((_native_mt32 == _mt32) || _native_mt32
-		        ? (MidiDriver::_gmToMt32[_program] < 128)
-		        : (MidiDriver::_mt32ToGm[_program] < 128));
+		return (_program < 128) && ((_native_mt32 == _mt32) || _native_mt32 ? (MidiDriver::_gmToMt32[_program] < 128) : (MidiDriver::_mt32ToGm[_program] < 128));
 	}
 };
 
 class Instrument_AdLib : public InstrumentInternal {
 private:
-
-#include "common/pack-start.h"  // START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 	struct AdLibInstrument {
 		byte flags_1;
@@ -170,7 +167,7 @@ private:
 		byte duration;
 	} PACKED_STRUCT;
 
-#include "common/pack-end.h"    // END STRUCT PACKING
+#include "common/pack-end.h" // END STRUCT PACKING
 
 	AdLibInstrument _instrument;
 
@@ -185,8 +182,7 @@ public:
 
 class Instrument_Roland : public InstrumentInternal {
 private:
-
-#include "common/pack-start.h"  // START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 	struct RolandInstrument {
 		byte roland_id;
@@ -247,7 +243,7 @@ private:
 		byte checksum;
 	} PACKED_STRUCT;
 
-#include "common/pack-end.h"    // END STRUCT PACKING
+#include "common/pack-end.h" // END STRUCT PACKING
 
 	RolandInstrument _instrument;
 
@@ -387,9 +383,9 @@ void Instrument::saveLoadWithSerializer(Common::Serializer &s) {
 //
 ////////////////////////////////////////
 
-Instrument_Program::Instrument_Program(byte program, bool mt32) :
-	_program(program),
-	_mt32(mt32) {
+Instrument_Program::Instrument_Program(byte program, bool mt32)
+  : _program(program)
+  , _mt32(mt32) {
 	if (program > 127)
 		_program = 255;
 }
@@ -493,8 +489,8 @@ void Instrument_Roland::send(MidiChannel *mc) {
 		// Remap instrument to appropriate address space.
 		int address = 0x008000;
 		_instrument.address[0] = (address >> 14) & 0x7F;
-		_instrument.address[1] = (address >>  7) & 0x7F;
-		_instrument.address[2] = (address      ) & 0x7F;
+		_instrument.address[1] = (address >> 7) & 0x7F;
+		_instrument.address[2] = (address)&0x7F;
 
 		// Recompute the checksum.
 		byte checksum = 0;
@@ -553,8 +549,8 @@ void Instrument_PcSpk::send(MidiChannel *mc) {
 //
 ////////////////////////////////////////
 
-Instrument_MacSfx::Instrument_MacSfx(byte program) :
-	_program(program) {
+Instrument_MacSfx::Instrument_MacSfx(byte program)
+  : _program(program) {
 	if (program > 127) {
 		_program = 255;
 	}

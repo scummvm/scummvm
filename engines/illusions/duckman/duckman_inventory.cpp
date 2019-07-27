@@ -20,20 +20,20 @@
  *
  */
 
-#include "illusions/duckman/illusions_duckman.h"
 #include "illusions/duckman/duckman_inventory.h"
+#include "engines/util.h"
 #include "illusions/actor.h"
 #include "illusions/cursor.h"
+#include "illusions/duckman/illusions_duckman.h"
 #include "illusions/input.h"
 #include "illusions/resources/scriptresource.h"
-#include "engines/util.h"
 
 namespace Illusions {
 
 // DuckmanInventory
 
 DuckmanInventory::DuckmanInventory(IllusionsEngine_Duckman *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 	initInventory();
 }
 
@@ -41,33 +41,33 @@ DuckmanInventory::~DuckmanInventory() {
 }
 
 static const struct DMInventoryItem kInventoryItems[21] = {
-	{0x40011, 0xE005B},
-	{0x40099, 0xE001B},
-	{0x4000F, 0xE000C},
-	{0x40042, 0xE0012},
-	{0x40044, 0xE000F},
-	{0x40029, 0xE000D},
-	{0x400A7, 0xE005D},
-	{0x40096, 0xE001C},
-	{0x40077, 0xE0010},
-	{0x4008A, 0xE0033},
-	{0x4004B, 0xE0045},
-	{0x40054, 0xE0021},
-	{0x400C6, 0xE005A},
-	{0x4000B, 0xE005E},
-	{0x4005F, 0xE0016},
-	{0x40072, 0xE0017},
-	{0x400AA, 0xE005F},
-	{0x400B8, 0xE0050},
-	{0x4001F, 0xE001A},
-	{0x40095, 0xE0060},
-	{0x40041, 0xE0053}
+	{ 0x40011, 0xE005B },
+	{ 0x40099, 0xE001B },
+	{ 0x4000F, 0xE000C },
+	{ 0x40042, 0xE0012 },
+	{ 0x40044, 0xE000F },
+	{ 0x40029, 0xE000D },
+	{ 0x400A7, 0xE005D },
+	{ 0x40096, 0xE001C },
+	{ 0x40077, 0xE0010 },
+	{ 0x4008A, 0xE0033 },
+	{ 0x4004B, 0xE0045 },
+	{ 0x40054, 0xE0021 },
+	{ 0x400C6, 0xE005A },
+	{ 0x4000B, 0xE005E },
+	{ 0x4005F, 0xE0016 },
+	{ 0x40072, 0xE0017 },
+	{ 0x400AA, 0xE005F },
+	{ 0x400B8, 0xE0050 },
+	{ 0x4001F, 0xE001A },
+	{ 0x40095, 0xE0060 },
+	{ 0x40041, 0xE0053 }
 };
 
 void DuckmanInventory::initInventory() {
 	for (int y = 0; y < 4; y++) {
 		for (int x = 0; x < 5; x++) {
-			_inventorySlots.push_back(DMInventorySlot( 64 + x * 48,  52 + y * 32));
+			_inventorySlots.push_back(DMInventorySlot(64 + x * 48, 52 + y * 32));
 		}
 	}
 
@@ -100,7 +100,6 @@ void DuckmanInventory::openInventory() {
 			}
 		}
 	}
-
 }
 
 void DuckmanInventory::addInventoryItem(uint32 objectId) {

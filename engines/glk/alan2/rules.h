@@ -28,9 +28,9 @@
 namespace Glk {
 namespace Alan2 {
 
-/* TYPES */
+	/* TYPES */
 
-extern void rules(void);
+	extern void rules(void);
 
 } // End of namespace Alan2
 } // End of namespace Glk

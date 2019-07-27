@@ -117,7 +117,8 @@ void AGOSEngine::drawMenuStrip(uint windowNum, uint menuNum) {
 			windowPutChar(window, 32);
 
 		srcPtr = tmp;
-		uint verb = READ_BE_UINT16(srcPtr); srcPtr += 2;
+		uint verb = READ_BE_UINT16(srcPtr);
+		srcPtr += 2;
 
 		while (*srcPtr != 0) {
 			windowPutChar(window, *srcPtr++);

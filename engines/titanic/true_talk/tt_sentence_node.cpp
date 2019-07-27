@@ -20,15 +20,19 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "titanic/true_talk/tt_sentence_node.h"
+#include "common/textconsole.h"
 
 namespace Titanic {
 
-TTsentenceNode::TTsentenceNode() : TTnode(), _wordP(nullptr) {
+TTsentenceNode::TTsentenceNode()
+  : TTnode()
+  , _wordP(nullptr) {
 }
 
-TTsentenceNode::TTsentenceNode(TTword *word) : TTnode(), _wordP(word) {
+TTsentenceNode::TTsentenceNode(TTword *word)
+  : TTnode()
+  , _wordP(word) {
 }
 
 } // End of namespace Titanic

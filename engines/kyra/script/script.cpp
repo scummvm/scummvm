@@ -27,8 +27,12 @@
 #include "common/endian.h"
 
 namespace Kyra {
-EMCInterpreter::EMCInterpreter(KyraEngine_v1 *vm) : _vm(vm), _scriptData(0), _filename(0) {
-#define OPCODE(x) { &EMCInterpreter::x, #x }
+EMCInterpreter::EMCInterpreter(KyraEngine_v1 *vm)
+  : _vm(vm)
+  , _scriptData(0)
+  , _filename(0) {
+#define OPCODE(x) \
+	{ &EMCInterpreter::x, #x }
 	static const OpcodeEntry opcodes[] = {
 		// 0x00
 		OPCODE(op_jmp),
@@ -61,14 +65,14 @@ EMCInterpreter::EMCInterpreter(KyraEngine_v1 *vm) : _vm(vm), _scriptData(0), _fi
 
 bool EMCInterpreter::callback(Common::IFFChunk &chunk) {
 	switch (chunk._type) {
-	case MKTAG('T','E','X','T'):
+	case MKTAG('T', 'E', 'X', 'T'):
 		_scriptData->text = new byte[chunk._size];
 		assert(_scriptData->text);
 		if (chunk._stream->read(_scriptData->text, chunk._size) != chunk._size)
 			error("Couldn't read TEXT chunk from file '%s'", _filename);
 		break;
 
-	case MKTAG('O','R','D','R'):
+	case MKTAG('O', 'R', 'D', 'R'):
 		_scriptData->ordr = new uint16[chunk._size >> 1];
 		assert(_scriptData->ordr);
 		if (chunk._stream->read(_scriptData->ordr, chunk._size) != chunk._size)
@@ -78,7 +82,7 @@ bool EMCInterpreter::callback(Common::IFFChunk &chunk) {
 			_scriptData->ordr[i] = READ_BE_UINT16(&_scriptData->ordr[i]);
 		break;
 
-	case MKTAG('D','A','T','A'):
+	case MKTAG('D', 'A', 'T', 'A'):
 		_scriptData->data = new uint16[chunk._size >> 1];
 		assert(_scriptData->data);
 		if (chunk._stream->read(_scriptData->data, chunk._size) != chunk._size)
@@ -99,7 +103,7 @@ bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Commo
 	Common::SeekableReadStream *stream = _vm->resource()->createReadStream(filename);
 	if (!stream) {
 		error("Couldn't open script file '%s'", filename);
-		return false;  // for compilers that don't support NORETURN
+		return false; // for compilers that don't support NORETURN
 	}
 
 	memset(scriptData, 0, sizeof(EMCData));
@@ -108,7 +112,7 @@ bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Commo
 	_filename = filename;
 
 	IFFParser iff(*stream);
-	Common::Functor1Mem< Common::IFFChunk &, bool, EMCInterpreter > c(this, &EMCInterpreter::callback);
+	Common::Functor1Mem<Common::IFFChunk &, bool, EMCInterpreter> c(this, &EMCInterpreter::callback);
 	iff.parse(c);
 
 	if (!_scriptData->ordr)
@@ -148,7 +152,7 @@ void EMCInterpreter::init(EMCState *scriptStat, const EMCData *data) {
 	scriptStat->dataPtr = data;
 	scriptStat->ip = 0;
 	scriptStat->stack[EMCState::kStackLastEntry] = 0;
-	scriptStat->bp = EMCState::kStackSize+1;
+	scriptStat->bp = EMCState::kStackSize + 1;
 	scriptStat->sp = EMCState::kStackLastEntry;
 }
 
@@ -162,11 +166,11 @@ bool EMCInterpreter::start(EMCState *script, int function) {
 
 	if (_vm->game() == GI_KYRA1) {
 		if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
-			script->ip = &script->dataPtr->data[functionOffset+1];
+			script->ip = &script->dataPtr->data[functionOffset + 1];
 		else
 			script->ip = &script->dataPtr->data[functionOffset];
 	} else {
-		script->ip = &script->dataPtr->data[functionOffset+1];
+		script->ip = &script->dataPtr->data[functionOffset + 1];
 	}
 
 	return true;

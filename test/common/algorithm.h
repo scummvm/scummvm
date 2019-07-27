@@ -1,12 +1,12 @@
 #include <cxxtest/TestSuite.h>
 
-#include "common/util.h"
-#include "common/func.h"
 #include "common/algorithm.h"
+#include "common/func.h"
 #include "common/list.h"
+#include "common/util.h"
 
 class AlgorithmTestSuite : public CxxTest::TestSuite {
-	template<typename T, class StrictWeakOrdering>
+	template <typename T, class StrictWeakOrdering>
 	bool checkSort(T first, T last, StrictWeakOrdering comp = StrictWeakOrdering()) {
 		if (first == last)
 			return true;
@@ -35,7 +35,7 @@ class AlgorithmTestSuite : public CxxTest::TestSuite {
 	 * @param other_first: The first element of the collection to be compared.
 	 * @return true if, for each index i in [one_first, one_last), A[i] == B[i], false otherwise.
 	 */
-	template<typename It>
+	template <typename It>
 	bool checkEqual(It one_first, It one_last, It other_first) {
 		if (one_first == one_last)
 			return true;
@@ -55,12 +55,14 @@ class AlgorithmTestSuite : public CxxTest::TestSuite {
 
 	struct Item {
 		int value;
-		Item(int v) : value(v) {}
+		Item(int v)
+		  : value(v) {}
 
 		bool operator<(const Item &r) const {
 			return value < r.value;
 		}
 	};
+
 public:
 	void test_check_sort() {
 		const int arraySorted[] = { 1, 2, 3, 3, 4, 5 };
@@ -115,7 +117,7 @@ public:
 		const int n = 1000;
 
 		Common::List<Item> list;
-		for(int i = 0; i < n; ++i)
+		for (int i = 0; i < n; ++i)
 			list.push_back(Item(i * 0xDEADBEEF % 1337));
 
 		Common::sort(list.begin(), list.end(), Common::Less<Item>());

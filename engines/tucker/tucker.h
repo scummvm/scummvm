@@ -23,13 +23,13 @@
 #ifndef TUCKER_TUCKER_H
 #define TUCKER_TUCKER_H
 
-#include "common/file.h"
-#include "common/util.h"
 #include "common/endian.h"
 #include "common/events.h"
+#include "common/file.h"
 #include "common/random.h"
 #include "common/savefile.h"
 #include "common/stream.h"
+#include "common/util.h"
 
 #include "video/flic_decoder.h"
 
@@ -54,23 +54,23 @@ class RewindableAudioStream;
 namespace Tucker {
 
 enum CursorStyle {
-	kCursorNormal     = 0,
-	kCursorTalk       = 1,
+	kCursorNormal = 0,
+	kCursorTalk = 1,
 	kCursorArrowRight = 2,
-	kCursorArrowUp    = 3,
-	kCursorArrowLeft  = 4,
-	kCursorArrowDown  = 5,
-	kCursorMap        = 6
+	kCursorArrowUp = 3,
+	kCursorArrowLeft = 4,
+	kCursorArrowDown = 5,
+	kCursorMap = 6
 };
 
 enum CursorState {
-	kCursorStateNormal         = 0,
-	kCursorStateDialog         = 1,
+	kCursorStateNormal = 0,
+	kCursorStateDialog = 1,
 	kCursorStateDisabledHidden = 2
 };
 
 enum PanelState {
-	kPanelStateNormal    = 0,
+	kPanelStateNormal = 0,
 	kPanelStateShrinking = 1,
 	kPanelStateExpanding = 2
 };
@@ -81,132 +81,132 @@ enum PanelStyle {
 };
 
 enum PanelType {
-	kPanelTypeNormal           = 0,
-	kPanelTypeEmpty            = 1,
+	kPanelTypeNormal = 0,
+	kPanelTypeEmpty = 1,
 	kPanelTypeLoadSavePlayQuit = 2,
 	kPanelTypeLoadSaveSavegame = 3
 };
 
 enum Verb {
-	kVerbWalk  = 0,
-	kVerbLook  = 1,
-	kVerbTalk  = 2,
-	kVerbOpen  = 3,
+	kVerbWalk = 0,
+	kVerbLook = 1,
+	kVerbTalk = 2,
+	kVerbOpen = 3,
 	kVerbClose = 4,
-	kVerbGive  = 5,
-	kVerbTake  = 6,
-	kVerbMove  = 7,
-	kVerbUse   = 8,
+	kVerbGive = 5,
+	kVerbTake = 6,
+	kVerbMove = 7,
+	kVerbUse = 8,
 
 	kVerbFirst = kVerbWalk,
-	kVerbLast  = kVerbUse
+	kVerbLast = kVerbUse
 };
 
 enum VerbPreposition {
 	kVerbPrepositionNone = 0,
 
 	kVerbPrepositionWith = 11,
-	kVerbPrepositionTo   = 12
+	kVerbPrepositionTo = 12
 };
 
 enum Part {
-	kPartInit  = 0,
-	kPartOne   = 1,
-	kPartTwo   = 2,
+	kPartInit = 0,
+	kPartOne = 1,
+	kPartTwo = 2,
 	kPartThree = 3
 };
 
 enum Location {
-	kLocationNone                      =  0,
+	kLocationNone = 0,
 
-	kLocationHotelRoom                 =  1,
-	kLocationBackAlley                 =  2,
-	kLocationSeedyStreet               =  3,
-	kLocationBakersShop                =  4,
-	kLocationBakersKitchen             =  5,
-	kLocationStripJoint                =  6,
-	kLocationPoliceHQ                  =  7,
-	kLocationPoliceCell                =  8,
-	kLocationMall                      =  9,
-	kLocationFishShop                  = 10,
-	kLocationBurgerJoint               = 11,
-	kLocationRecordShop                = 12,
-	kLocationDentist                   = 13,
-	kLocationPlugShop                  = 14,
-	kLocationTouristInfo               = 15,
-	kLocationPark                      = 16,
-	kLocationRoystonsHomeHallway       = 17,
-	kLocationRoystonsHomeBoxroom       = 18,
-	kLocationDocks                     = 19,
-	kLocationOutsideMuseum             = 20,
-	kLocationInsideMuseum              = 21,
-	kLocationFishingTrawler            = 22,
-	kLocationWarehouseCutscene         = 23,
-	kLocationStoreRoom                 = 24,
-	kLocationVentSystem                = 25,
-	kLocationSubwayTunnel              = 26,
-	kLocationStrangeRoom               = 27,
-	kLocationTopCorridor               = 28,
-	kLocationSubmarineHangar           = 29,
-	kLocationBunkRoom                  = 30,
-	kLocationBottomCorridor            = 31,
-	kLocationKitchen                   = 32,
-	kLocationCommandCentre             = 33,
-	kLocationSubmarineHatch            = 34,
-	kLocationSubmarineWalkway          = 35,
-	kLocationSubmarineBridge           = 36,
-	kLocationSubmarineOffice           = 37,
-	kLocationSubmarineEngineRoom       = 38,
-	kLocationLuxuryApartment           = 39,
-	kLocationFarDocks                  = 40,
-	kLocationAlleyway                  = 41,
-	kLocationBasement                  = 42,
-	kLocationTateTowerEntrance         = 43,
-	kLocationRooftop                   = 44,
-	kLocationConferenceRoom            = 45,
-	kLocationAnteChamber               = 46,
-	kLocationHelipad                   = 47,
-	kLocationCorridor                  = 48,
-	kLocationWaitingRoom               = 49,
+	kLocationHotelRoom = 1,
+	kLocationBackAlley = 2,
+	kLocationSeedyStreet = 3,
+	kLocationBakersShop = 4,
+	kLocationBakersKitchen = 5,
+	kLocationStripJoint = 6,
+	kLocationPoliceHQ = 7,
+	kLocationPoliceCell = 8,
+	kLocationMall = 9,
+	kLocationFishShop = 10,
+	kLocationBurgerJoint = 11,
+	kLocationRecordShop = 12,
+	kLocationDentist = 13,
+	kLocationPlugShop = 14,
+	kLocationTouristInfo = 15,
+	kLocationPark = 16,
+	kLocationRoystonsHomeHallway = 17,
+	kLocationRoystonsHomeBoxroom = 18,
+	kLocationDocks = 19,
+	kLocationOutsideMuseum = 20,
+	kLocationInsideMuseum = 21,
+	kLocationFishingTrawler = 22,
+	kLocationWarehouseCutscene = 23,
+	kLocationStoreRoom = 24,
+	kLocationVentSystem = 25,
+	kLocationSubwayTunnel = 26,
+	kLocationStrangeRoom = 27,
+	kLocationTopCorridor = 28,
+	kLocationSubmarineHangar = 29,
+	kLocationBunkRoom = 30,
+	kLocationBottomCorridor = 31,
+	kLocationKitchen = 32,
+	kLocationCommandCentre = 33,
+	kLocationSubmarineHatch = 34,
+	kLocationSubmarineWalkway = 35,
+	kLocationSubmarineBridge = 36,
+	kLocationSubmarineOffice = 37,
+	kLocationSubmarineEngineRoom = 38,
+	kLocationLuxuryApartment = 39,
+	kLocationFarDocks = 40,
+	kLocationAlleyway = 41,
+	kLocationBasement = 42,
+	kLocationTateTowerEntrance = 43,
+	kLocationRooftop = 44,
+	kLocationConferenceRoom = 45,
+	kLocationAnteChamber = 46,
+	kLocationHelipad = 47,
+	kLocationCorridor = 48,
+	kLocationWaitingRoom = 49,
 	kLocationkLocationCorridorCutscene = 50,
-	kLocationCells                     = 51,
-	kLocationMachineRoom               = 52,
-	kLocationRecordShopPartThree       = 53,
-	kLocationPlugShopPartThree         = 54,
-	kLocationTouristInfoPartThree      = 55,
-	kLocationDentistPartThree          = 56,
-	kLocationFishShopPartThree         = 57,
-	kLocationInsideMuseumPartThree     = 58,
-	kLocationBakersShopPartThree       = 59,
-	kLocationStripJointPartThree       = 60,
-	kLocationParkPartThree             = 61,
-	kLocationDocksPartThree            = 62,
-	kLocationTV                        = 63,
-	kLocationSewer                     = 64,
-	kLocationSeedyStreetPartThree      = 65,
-	kLocationMallPartThree             = 66,
-	kLocationBurgerJointPartThree      = 67,
-	kLocationOutsideMuseumPartThree    = 68,
-	kLocation69Cutscene                = 69,
-	kLocationComputerScreen            = 70,
-	kLocationParkCutscene              = 71,
-	kLocationSeedyStreetCutscene       = 72,
-	kLocationJesusCutscene1            = 73,
-	kLocationCredits                   = 74,
-	kLocation75Cutscene                = 75,
-	kLocationBeachCutscene             = 76,
-	kLocationHospitalCutscene          = 77,
-	kLocation78Cutscene                = 78,
-	kLocationElvisCutscene             = 79,
-	kLocationPyramidCutscene           = 80,
-	kLocationCleopatraCutscene         = 81,
-	kLocationJesusCutscene2            = 82,
+	kLocationCells = 51,
+	kLocationMachineRoom = 52,
+	kLocationRecordShopPartThree = 53,
+	kLocationPlugShopPartThree = 54,
+	kLocationTouristInfoPartThree = 55,
+	kLocationDentistPartThree = 56,
+	kLocationFishShopPartThree = 57,
+	kLocationInsideMuseumPartThree = 58,
+	kLocationBakersShopPartThree = 59,
+	kLocationStripJointPartThree = 60,
+	kLocationParkPartThree = 61,
+	kLocationDocksPartThree = 62,
+	kLocationTV = 63,
+	kLocationSewer = 64,
+	kLocationSeedyStreetPartThree = 65,
+	kLocationMallPartThree = 66,
+	kLocationBurgerJointPartThree = 67,
+	kLocationOutsideMuseumPartThree = 68,
+	kLocation69Cutscene = 69,
+	kLocationComputerScreen = 70,
+	kLocationParkCutscene = 71,
+	kLocationSeedyStreetCutscene = 72,
+	kLocationJesusCutscene1 = 73,
+	kLocationCredits = 74,
+	kLocation75Cutscene = 75,
+	kLocationBeachCutscene = 76,
+	kLocationHospitalCutscene = 77,
+	kLocation78Cutscene = 78,
+	kLocationElvisCutscene = 79,
+	kLocationPyramidCutscene = 80,
+	kLocationCleopatraCutscene = 81,
+	kLocationJesusCutscene2 = 82,
 
-	kLocationNewPart                   = 98,
-	kLocationMap                       = 99,
+	kLocationNewPart = 98,
+	kLocationMap = 99,
 
-	kLocationInit                      =  1,
-	kLocationInitDemo                  =  9
+	kLocationInit = 1,
+	kLocationInitDemo = 9
 };
 
 struct Action {
@@ -271,7 +271,7 @@ struct SpriteFrame {
 
 struct SpriteAnimation {
 	int _numParts;
-	int _rotateFlag;  // Useless variable
+	int _rotateFlag; // Useless variable
 	int _firstFrameIndex;
 };
 
@@ -377,15 +377,15 @@ enum CompressedSoundType {
 
 class CompressedSound {
 public:
-
-	CompressedSound() : _compressedSoundType(-1), _compressedSoundFlags(0) {}
+	CompressedSound()
+	  : _compressedSoundType(-1)
+	  , _compressedSoundFlags(0) {}
 
 	void openFile();
 	void closeFile();
 	Audio::RewindableAudioStream *load(CompressedSoundType type, int num);
 
 private:
-
 	int _compressedSoundType;
 	uint16 _compressedSoundFlags;
 	Common::File _fCompressedSound;
@@ -408,9 +408,8 @@ Common::String generateGameStateFileName(const char *target, int slot, bool pref
 
 class AnimationSequencePlayer;
 
-class TuckerEngine: public Engine {
+class TuckerEngine : public Engine {
 public:
-
 	enum {
 		kLocationAnimationsTableSize = 20,
 		kLocationObjectsTableSize = 10,
@@ -456,8 +455,8 @@ public:
 	WARN_UNUSED_RESULT static SavegameError readSavegameHeader(const char *target, int slot, SavegameHeader &header);
 	bool isAutosaveAllowed();
 	static bool isAutosaveAllowed(const char *target);
-protected:
 
+protected:
 	int getRandomNumber();
 	void allocateBuffers();
 	void freeBuffers();
@@ -742,7 +741,8 @@ protected:
 	void updateSprite_locationNum81_1(int i);
 	void updateSprite_locationNum82(int i);
 
-	template<class S> SavegameError saveOrLoadGameStateData(S &s);
+	template <class S>
+	SavegameError saveOrLoadGameStateData(S &s);
 	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error saveGameState(int slot, const Common::String &description);
 	Common::Error writeSavegame(int slot, const Common::String &description, bool autosave = false);
@@ -773,12 +773,12 @@ protected:
 	void loadCharSizeDta();
 	void loadPanel();
 	void loadBudSpr();
-	int  loadCTable01(int *framesCount);
+	int loadCTable01(int *framesCount);
 	void loadCTable02();
 	void loadLoc();
 	void loadObj();
 	void loadData();
-	int  loadDataHelper(int offset, int index);
+	int loadDataHelper(int offset, int index);
 	void loadPanObj();
 	void loadData3();
 	void loadData4();
@@ -866,7 +866,7 @@ protected:
 
 	PanelStyle _panelStyle;
 	PanelState _panelState;
-	PanelType  _panelType;
+	PanelType _panelType;
 	bool _forceRedrawPanelItems;
 	int _redrawPanelItemsCounter;
 	int _panelObjectsOffsetTable[50];
@@ -1097,7 +1097,6 @@ struct SoundSequenceDataList {
 
 class AnimationSequencePlayer {
 public:
-
 	enum {
 		kSequenceFrameTime = 55
 	};
@@ -1115,7 +1114,6 @@ public:
 	void mainLoop();
 
 private:
-
 	void syncTime();
 	void loadSounds(int num);
 	Audio::RewindableAudioStream *loadSound(int index, AnimationSoundType type);

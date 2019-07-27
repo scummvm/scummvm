@@ -51,6 +51,7 @@ class Indeo4Decoder : public IndeoDecoderBase {
 		DCTransformPtr *_dcTrans;
 		bool _is2dTrans;
 	};
+
 public:
 	Indeo4Decoder(uint16 width, uint16 height, uint bitsPerPixel = 16);
 	virtual ~Indeo4Decoder() {}
@@ -58,6 +59,7 @@ public:
 	virtual const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
 
 	static bool isIndeo4(Common::SeekableReadStream &stream);
+
 protected:
 	/**
 	 * Decode the Indeo 4 picture header.
@@ -99,6 +101,7 @@ protected:
 	 * Decodes optional transparency data within Indeo4 frames
 	 */
 	virtual int decodeTransparency();
+
 private:
 	int scaleTileSize(int defSize, int sizeFactor);
 

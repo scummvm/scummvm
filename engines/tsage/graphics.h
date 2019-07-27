@@ -23,12 +23,12 @@
 #ifndef TSAGE_GRAPHICS_H
 #define TSAGE_GRAPHICS_H
 
-#include "tsage/events.h"
-#include "tsage/saveload.h"
 #include "common/list.h"
 #include "common/rect.h"
 #include "common/system.h"
 #include "graphics/screen.h"
+#include "tsage/events.h"
+#include "tsage/saveload.h"
 
 namespace TsAGE {
 
@@ -40,8 +40,10 @@ class Region;
  */
 class Rect : public Common::Rect, public Serialisable {
 public:
-	Rect() : Common::Rect() {}
-	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : Common::Rect(x1, y1, x2, y2) {}
+	Rect()
+	  : Common::Rect() {}
+	Rect(int16 x1, int16 y1, int16 x2, int16 y2)
+	  : Common::Rect(x1, y1, x2, y2) {}
 
 	void set(int16 x1, int16 y1, int16 x2, int16 y2);
 	void collapse(int dx, int dy);
@@ -60,41 +62,53 @@ public:
 	uint8 foreground;
 	uint8 background;
 
-	GfxColors() : foreground(0), background(0) {}
+	GfxColors()
+	  : foreground(0)
+	  , background(0) {}
 };
 
 class LineSlice {
 public:
 	int xs, xe;
 
-	LineSlice() { xs = 0; xe = 0; }
-	LineSlice(int xStart, int xEnd) { xs = xStart; xe = xEnd; }
+	LineSlice() {
+		xs = 0;
+		xe = 0;
+	}
+	LineSlice(int xStart, int xEnd) {
+		xs = xStart;
+		xe = xEnd;
+	}
 };
 
-enum FrameFlag { FRAME_FLIP_CENTROID_X = 4, FRAME_FLIP_CENTROID_Y = 8 };
+enum FrameFlag { FRAME_FLIP_CENTROID_X = 4,
+	               FRAME_FLIP_CENTROID_Y = 8 };
 
 /**
  * Surface class. This derivces from Graphics::Screen because it has
  * logic we'll need for our own Screen class that derives from this one
  */
- class GfxSurface: public Graphics::Screen {
+class GfxSurface : public Graphics::Screen {
 private:
 	int _lockSurfaceCtr;
 	Graphics::ManagedSurface _rawSurface;
 
 	bool _disableUpdates;
 	Rect _bounds;
- protected:
-	 /**
+
+protected:
+	/**
 	  * Override the addDirtyRect from Graphics::Screen, since for standard
 	  * surfaces we don't need dirty rects to be tracked
 	  */
-	 virtual void addDirtyRect(const Common::Rect &r) {}
+	virtual void addDirtyRect(const Common::Rect &r) {}
+
 public:
 	Common::Point _centroid;
 	int _transColor;
 	Rect _clipRect;
 	byte _flags;
+
 public:
 	GfxSurface();
 	GfxSurface(const GfxSurface &s);
@@ -108,7 +122,7 @@ public:
 	const Rect &getBounds() const { return _bounds; }
 
 	void copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds,
-		Region *priorityRegion = NULL, const byte *shadowMap = NULL);
+	              Region *priorityRegion = NULL, const byte *shadowMap = NULL);
 	void copyFrom(GfxSurface &src, Rect destBounds, Region *priorityRegion = NULL) {
 		copyFrom(src, src.getBounds(), destBounds, priorityRegion);
 	}
@@ -124,10 +138,14 @@ public:
 	static bool displayText(const Common::String &msg, const Common::Point &pt = Common::Point(160, 100));
 };
 
-enum TextAlign {ALIGN_LEFT = 0, ALIGN_CENTER = 1, ALIGN_RIGHT = 2, ALIGN_JUSTIFIED = 3};
+enum TextAlign { ALIGN_LEFT = 0,
+	               ALIGN_CENTER = 1,
+	               ALIGN_RIGHT = 2,
+	               ALIGN_JUSTIFIED = 3 };
 
 class GfxFont {
 	friend class GfxFontBackup;
+
 private:
 	GfxManager *_gfxManager;
 	// Raw font details
@@ -135,6 +153,7 @@ private:
 	int _numChars;
 	Common::Point _fontSize;
 	int _bpp;
+
 public:
 	// Font fields
 	Common::Point _edgeSize;
@@ -144,6 +163,7 @@ public:
 	GfxColors _colors2;
 	uint32 _fontNumber;
 	Common::Point _topLeft;
+
 public:
 	GfxFont();
 	virtual ~GfxFont();
@@ -157,7 +177,10 @@ public:
 	void getStringBounds(const char *s, Rect &bounds, int maxWidth);
 
 	void setOwner(GfxManager *owner) { _gfxManager = owner; }
-	void setPosition(int xp, int yp) { _position.x = xp; _position.y = yp; }
+	void setPosition(int xp, int yp) {
+		_position.x = xp;
+		_position.y = yp;
+	}
 	int writeChar(const char ch);
 	void writeString(const char *s);
 	void writeString(const char *s, int numChars);
@@ -170,12 +193,13 @@ private:
 	Common::Point _position;
 	GfxColors _colors;
 	uint32 _fontNumber;
+
 public:
 	GfxFontBackup();
 	~GfxFontBackup();
 };
 
-enum GFX_FLAGS {GFXFLAG_THICK_FRAME = 8};
+enum GFX_FLAGS { GFXFLAG_THICK_FRAME = 8 };
 
 class GfxManager;
 
@@ -189,6 +213,7 @@ public:
 	GfxColors _fontColors;
 	byte _color1, _color2, _color3;
 	uint16 _keycode;
+
 public:
 	GfxElement();
 	virtual ~GfxElement() {}
@@ -210,6 +235,7 @@ public:
 	int _resNum;
 	int _rlbNum;
 	int _cursorNum;
+
 public:
 	GfxImage();
 
@@ -225,6 +251,7 @@ public:
 	Common::String _message;
 	TextAlign _textAlign;
 	int _width;
+
 public:
 	GfxMessage();
 	virtual ~GfxMessage() {}
@@ -238,10 +265,13 @@ public:
 class GfxButton : public GfxElement {
 private:
 	void setFocus();
+
 public:
 	Common::String _message;
+
 public:
-	GfxButton() : GfxElement() {}
+	GfxButton()
+	  : GfxElement() {}
 	virtual ~GfxButton() {}
 
 	void setText(const Common::String &s) {
@@ -258,12 +288,14 @@ public:
 class GfxManager {
 private:
 	GfxSurface &_surface;
+
 public:
 	GfxManager *_oldManager;
 	Common::Point _topLeft;
 	Rect _bounds;
 	Rect _pane0Rect4;
 	GfxFont _font;
+
 public:
 	GfxManager();
 	GfxManager(GfxSurface &s);
@@ -322,6 +354,7 @@ public:
 	GfxElementList _elements;
 	GfxButton *_defaultButton;
 	GfxSurface *_savedArea;
+
 public:
 	GfxDialog();
 	virtual ~GfxDialog();

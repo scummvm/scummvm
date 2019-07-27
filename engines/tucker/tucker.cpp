@@ -20,14 +20,14 @@
  *
  */
 
-#include "common/config-manager.h"
-#include "common/events.h"
-#include "common/system.h"
 #include "common/archive.h"
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/error.h"
+#include "common/events.h"
 #include "common/keyboard.h"
 #include "common/savefile.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 
 #include "engines/util.h"
@@ -36,13 +36,16 @@
 #include "graphics/palette.h"
 #include "gui/debugger.h"
 
-#include "tucker/tucker.h"
 #include "tucker/graphics.h"
+#include "tucker/tucker.h"
 
 namespace Tucker {
 
 TuckerEngine::TuckerEngine(OSystem *system, Common::Language language, uint32 flags)
-	: Engine(system), _gameLang(language), _gameFlags(flags), _rnd("tucker") {
+  : Engine(system)
+  , _gameLang(language)
+  , _gameFlags(flags)
+  , _rnd("tucker") {
 	_console = new TuckerConsole(this);
 
 	resetVariables();
@@ -213,7 +216,7 @@ void TuckerEngine::resetVariables() {
 
 	_panelStyle = kPanelStyleIcons;
 	_panelState = kPanelStateNormal;
-	_panelType  = kPanelTypeNormal;
+	_panelType = kPanelTypeNormal;
 	_forceRedrawPanelItems = true;
 	_redrawPanelItemsCounter = 0;
 	memset(_panelObjectsOffsetTable, 0, sizeof(_panelObjectsOffsetTable));
@@ -376,10 +379,10 @@ void TuckerEngine::mainLoop() {
 		_infoBarBuf[getPositionForLine(kVerbPrepositionWith, _infoBarBuf)] = 'c';
 	}
 
-	_data5Buf    = loadFile("data5.c", nullptr);
-	_bgTextBuf   = loadFile("bgtext.c", nullptr);
+	_data5Buf = loadFile("data5.c", nullptr);
+	_bgTextBuf = loadFile("bgtext.c", nullptr);
 	_charNameBuf = loadFile("charname.c", nullptr);
-	_csDataBuf   = loadFile("csdata.c", nullptr);
+	_csDataBuf = loadFile("csdata.c", nullptr);
 	_csDataSize = _fileLoadSize;
 
 	_currentSaveLoadGameState = 1;
@@ -392,7 +395,7 @@ void TuckerEngine::mainLoop() {
 	_flagsTable[219] = 1;
 	_flagsTable[105] = 1;
 
-	_spriteAnimationFrameIndex =  _spriteAnimationsTable[14]._firstFrameIndex;
+	_spriteAnimationFrameIndex = _spriteAnimationsTable[14]._firstFrameIndex;
 
 	if (ConfMan.hasKey("save_slot")) {
 		const int slot = ConfMan.getInt("save_slot");
@@ -828,7 +831,7 @@ void TuckerEngine::updateMouseState() {
 			_gameHintsStringNum = 0;
 		}
 		_rightMouseButtonPressed = (_mouseButtonsMask & 2) != 0;
-		_mouseWheelUp   = _mouseButtonsMask & 4;
+		_mouseWheelUp = _mouseButtonsMask & 4;
 		_mouseWheelDown = _mouseButtonsMask & 8;
 		_mouseButtonsMask = 0;
 		if (_prevMousePosX == _mousePosX && _prevMousePosY == _mousePosY) {
@@ -853,7 +856,7 @@ void TuckerEngine::updateMouseState() {
 }
 
 void TuckerEngine::updateCharPositionHelper() {
-	setCursorState(kCursorStateDisabledHidden );
+	setCursorState(kCursorStateDisabledHidden);
 	_charSpeechSoundCounter = kDefaultCharSpeechSoundCounter;
 	_currentActionVerb = kVerbWalk;
 	startSpeechSound(_speechSoundNum, _speechVolume);
@@ -936,7 +939,7 @@ void TuckerEngine::updateCharPosition() {
 		}
 	}
 	int actionKey = _currentActionObj2Num * 1000000 + _currentInfoString2SourceType * 100000 + _currentActionVerb * 10000 + _currentInfoString1SourceType * 1000 + _currentActionObj1Num;
-	debug(3, "updateCharPosition() actionKey %d",  actionKey);
+	debug(3, "updateCharPosition() actionKey %d", actionKey);
 	bool skip = false;
 	Action *action = nullptr;
 	for (int i = 0; i < _actionsCount && !skip; ++i) {
@@ -1188,8 +1191,7 @@ void TuckerEngine::stopSounds() {
 
 void TuckerEngine::playSounds() {
 	for (int i = 0; i < _locationSoundsCount; ++i) {
-		if (_locationSoundsTable[i]._type == 1 || _locationSoundsTable[i]._type == 2 || _locationSoundsTable[i]._type == 5 ||
-			(_locationSoundsTable[i]._type == 7 && _flagsTable[_locationSoundsTable[i]._flagNum] == _locationSoundsTable[i]._flagValueStartFx)) {
+		if (_locationSoundsTable[i]._type == 1 || _locationSoundsTable[i]._type == 2 || _locationSoundsTable[i]._type == 5 || (_locationSoundsTable[i]._type == 7 && _flagsTable[_locationSoundsTable[i]._flagNum] == _locationSoundsTable[i]._flagValueStartFx)) {
 			startSound(_locationSoundsTable[i]._offset, i, _locationSoundsTable[i]._volume);
 		}
 	}
@@ -1525,7 +1527,7 @@ void TuckerEngine::redrawPanelOverBackground() {
 void TuckerEngine::drawConversationTexts() {
 	int y = 141;
 	bool flag = false;
-	for (int i = 0; i <  _conversationOptionsCount; ++i) {
+	for (int i = 0; i < _conversationOptionsCount; ++i) {
 		int color = 108;
 		if ((_mousePosY > y && _mousePosY < y + 11) || _nextTableToLoadIndex == i) {
 			color = 106;
@@ -1884,7 +1886,7 @@ void TuckerEngine::drawCurrentSprite() {
 		xPos -= chr->_xSize + chr->_xOffset - 14;
 	}
 	Graphics::decodeRLE_248(_locationBackgroundGfxBuf + yPos * 640 + xPos, _spritesGfxBuf + chr->_sourceOffset, chr->_xSize, chr->_ySize,
-		chr->_yOffset, _locationHeightTable[_location], _mirroredDrawing, whitelistReservedColors);
+	                        chr->_yOffset, _locationHeightTable[_location], _mirroredDrawing, whitelistReservedColors);
 	addDirtyRect(xPos, yPos, chr->_xSize, chr->_ySize);
 	if (_currentSpriteAnimationLength > 1) {
 		SpriteFrame *chr2 = &_spriteFramesTable[_currentSpriteAnimationFrame2];
@@ -1896,7 +1898,7 @@ void TuckerEngine::drawCurrentSprite() {
 			xPos -= chr2->_xSize + chr2->_xOffset - 14;
 		}
 		Graphics::decodeRLE_248(_locationBackgroundGfxBuf + yPos * 640 + xPos, _spritesGfxBuf + chr2->_sourceOffset, chr2->_xSize, chr2->_ySize,
-			chr2->_yOffset, _locationHeightTable[_location], _mirroredDrawing, whitelistReservedColors);
+		                        chr2->_yOffset, _locationHeightTable[_location], _mirroredDrawing, whitelistReservedColors);
 		addDirtyRect(xPos, yPos, chr2->_xSize, chr2->_ySize);
 	}
 }
@@ -2056,8 +2058,8 @@ void TuckerEngine::drawSprite(int num) {
 			Graphics::decodeRLE_248(dstPtr, srcPtr, srcW, srcH, 0, s->_yMaxBackground, s->_flipX);
 			break;
 		}
-		const int xR = (srcX +  s->_gfxBackgroundOffset) % 640;
-		const int yR =  srcY + (s->_gfxBackgroundOffset  / 640);
+		const int xR = (srcX + s->_gfxBackgroundOffset) % 640;
+		const int yR = srcY + (s->_gfxBackgroundOffset / 640);
 		addDirtyRect(xR, yR, srcW, srcH);
 	}
 }
@@ -3189,12 +3191,12 @@ static const struct {
 	{ "c0v", kCode_no3 },
 	{ "end", kCode_end },
 	{ "fad", kCode_fad },
-	{ "fw",  kCode_fw  },
+	{ "fw", kCode_fw },
 	{ "flx", kCode_flx },
 	{ "fxx", kCode_fxx },
-	{ "fx",  kCode_fx  },
+	{ "fx", kCode_fx },
 	{ "gfg", kCode_gfg },
-	{ "gv",  kCode_gv  },
+	{ "gv", kCode_gv },
 	{ "loc", kCode_loc },
 	{ "mof", kCode_mof },
 	{ "opt", kCode_opt },
@@ -3204,7 +3206,7 @@ static const struct {
 	{ "sse", kCode_sse },
 	{ "ssp", kCode_ssp },
 	{ "s0p", kCode_s0p },
-	{ "sp",  kCode_sp  },
+	{ "sp", kCode_sp },
 	{ "tpo", kCode_tpo },
 	{ "wa+", kCode_wa_ },
 	{ "wsm", kCode_wsm },
@@ -3880,16 +3882,14 @@ void TuckerEngine::setActionForInventoryObject() {
 	}
 	// Items with unary usage i.e. "Use X", rather than "Use X on Y"
 	if (
-		(_part == kPartTwo && _actionObj1Num == 19) || // radio
-		(_part == kPartThree && (
-			 _actionObj1Num ==  3 || // pizza
-			 _actionObj1Num ==  6 || // raincoat
-			 _actionObj1Num == 17 || // ear plugs
-			 _actionObj1Num == 18 || // glue
-			 _actionObj1Num == 33 || // peg
-			(_actionObj1Num == 42 && _selectedObjectNum == 18) // skate + cue
-		))
-	) {
+	  (_part == kPartTwo && _actionObj1Num == 19) || // radio
+	  (_part == kPartThree && (_actionObj1Num == 3 || // pizza
+	                           _actionObj1Num == 6 || // raincoat
+	                           _actionObj1Num == 17 || // ear plugs
+	                           _actionObj1Num == 18 || // glue
+	                           _actionObj1Num == 33 || // peg
+	                           (_actionObj1Num == 42 && _selectedObjectNum == 18) // skate + cue
+	                           ))) {
 		_actionVerbLocked = false;
 		_actionRequiresTwoObjects = false;
 		_locationMaskCounter = 1;

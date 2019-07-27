@@ -23,10 +23,9 @@
 #include "backends/plugins/elf/version.h"
 
 #ifdef USE_ELF_LOADER
-	#ifdef __PLAYSTATION2__
-	const char *gScummVMPluginBuildDate = "Git Master"; /* ScummVM Git Master */
-	#else
-	const char *gScummVMPluginBuildDate __attribute__((visibility("hidden"))) =
-		__DATE__ " " __TIME__;
-	#endif
+#	ifdef __PLAYSTATION2__
+const char *gScummVMPluginBuildDate = "Git Master"; /* ScummVM Git Master */
+#	else
+const char *gScummVMPluginBuildDate __attribute__((visibility("hidden"))) = __DATE__ " " __TIME__;
+#	endif
 #endif

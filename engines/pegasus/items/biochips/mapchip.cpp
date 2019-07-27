@@ -23,17 +23,17 @@
  *
  */
 
-#include "pegasus/gamestate.h"
-#include "pegasus/ai/ai_area.h"
 #include "pegasus/items/biochips/mapchip.h"
+#include "pegasus/ai/ai_area.h"
+#include "pegasus/gamestate.h"
 #include "pegasus/neighborhood/neighborhood.h"
 
 namespace Pegasus {
 
 MapChip *g_map = 0;
 
-MapChip::MapChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
-		BiochipItem(id, neighborhood, room, direction) {
+MapChip::MapChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction)
+  : BiochipItem(id, neighborhood, room, direction) {
 	g_map = this;
 	setItemState(kMapUnavailable);
 }

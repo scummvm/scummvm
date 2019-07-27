@@ -22,15 +22,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
-#include "common/system.h"
 #include "common/events.h"
 #include "common/memstream.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 
 #include "graphics/cursorman.h"
 
-#include "sword2/sword2.h"
 #include "sword2/console.h"
 #include "sword2/controls.h"
 #include "sword2/defs.h"
@@ -42,29 +40,30 @@
 #include "sword2/resman.h"
 #include "sword2/screen.h"
 #include "sword2/sound.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
 // Pointer resource id's
 
 enum {
-	CROSHAIR	= 18,
-	EXIT0		= 788,
-	EXIT1		= 789,
-	EXIT2		= 790,
-	EXIT3		= 791,
-	EXIT4		= 792,
-	EXIT5		= 793,
-	EXIT6		= 794,
-	EXIT7		= 795,
-	EXITDOWN	= 796,
-	EXITUP		= 797,
-	MOUTH		= 787,
-	NORMAL		= 17,
-	PICKUP		= 3099,
-	SCROLL_L	= 1440,
-	SCROLL_R	= 1441,
-	USE		= 3100
+	CROSHAIR = 18,
+	EXIT0 = 788,
+	EXIT1 = 789,
+	EXIT2 = 790,
+	EXIT3 = 791,
+	EXIT4 = 792,
+	EXIT5 = 793,
+	EXIT6 = 794,
+	EXIT7 = 795,
+	EXITDOWN = 796,
+	EXITUP = 797,
+	MOUTH = 787,
+	NORMAL = 17,
+	PICKUP = 3099,
+	SCROLL_L = 1440,
+	SCROLL_R = 1441,
+	USE = 3100
 };
 
 Mouse::Mouse(Sword2Engine *vm) {
@@ -286,7 +285,6 @@ int Mouse::menuClick(int menu_items) {
 	else
 		menuIconWidth = RDMENU_ICONWIDE;
 
-
 	if (x < RDMENU_ICONSTART)
 		return -1;
 
@@ -339,8 +337,9 @@ void Mouse::systemMenuMouse() {
 	// Do nothing if using PSX version and are on TOP menu.
 
 	if ((icon_list[hit] == OPTIONS_ICON || icon_list[hit] == QUIT_ICON
-		|| icon_list[hit] == SAVE_ICON || icon_list[hit] == RESTORE_ICON
-		|| icon_list[hit] == RESTART_ICON) && Sword2Engine::isPsx())
+	     || icon_list[hit] == SAVE_ICON || icon_list[hit] == RESTORE_ICON
+	     || icon_list[hit] == RESTART_ICON)
+	    && Sword2Engine::isPsx())
 		return;
 
 	// No save when dead
@@ -378,36 +377,26 @@ void Mouse::systemMenuMouse() {
 	// call the relevant screen
 
 	switch (hit) {
-	case 0:
-		{
-			OptionsDialog dialog(_vm);
-			dialog.runModal();
-		}
-		break;
-	case 1:
-		{
-			QuitDialog dialog(_vm);
-			dialog.runModal();
-		}
-		break;
-	case 2:
-		{
-			SaveDialog dialog(_vm);
-			dialog.runModal();
-		}
-		break;
-	case 3:
-		{
-			RestoreDialog dialog(_vm);
-			dialog.runModal();
-		}
-		break;
-	case 4:
-		{
-			RestartDialog dialog(_vm);
-			dialog.runModal();
-		}
-		break;
+	case 0: {
+		OptionsDialog dialog(_vm);
+		dialog.runModal();
+	} break;
+	case 1: {
+		QuitDialog dialog(_vm);
+		dialog.runModal();
+	} break;
+	case 2: {
+		SaveDialog dialog(_vm);
+		dialog.runModal();
+	} break;
+	case 3: {
+		RestoreDialog dialog(_vm);
+		dialog.runModal();
+	} break;
+	case 4: {
+		RestartDialog dialog(_vm);
+		dialog.runModal();
+	} break;
 	}
 
 	// Menu stays open on death screen. Otherwise it's closed.
@@ -527,8 +516,8 @@ void Mouse::dragMouse() {
 		_vm->_logic->setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
 
 		debug(2, "Used \"%s\" on \"%s\"",
-			_vm->_resman->fetchName(_vm->_logic->readVar(OBJECT_HELD), buf1),
-			_vm->_resman->fetchName(_vm->_logic->readVar(CLICKED_ID), buf2));
+		      _vm->_resman->fetchName(_vm->_logic->readVar(OBJECT_HELD), buf1),
+		      _vm->_resman->fetchName(_vm->_logic->readVar(CLICKED_ID), buf2));
 
 		// Hide menu - back to normal menu mode
 
@@ -568,8 +557,8 @@ void Mouse::dragMouse() {
 		hideMouse();
 
 		debug(2, "Used \"%s\" on \"%s\"",
-			_vm->_resman->fetchName(_vm->_logic->readVar(OBJECT_HELD), buf1),
-			_vm->_resman->fetchName(_vm->_logic->readVar(COMBINE_BASE), buf2));
+		      _vm->_resman->fetchName(_vm->_logic->readVar(OBJECT_HELD), buf1),
+		      _vm->_resman->fetchName(_vm->_logic->readVar(COMBINE_BASE), buf2));
 	}
 
 	// Refresh the menu
@@ -625,7 +614,7 @@ void Mouse::menuMouse() {
 		hideMouse();
 
 		debug(2, "Right-click on \"%s\" icon",
-			_vm->_resman->fetchName(_vm->_logic->readVar(OBJECT_HELD)));
+		      _vm->_resman->fetchName(_vm->_logic->readVar(OBJECT_HELD)));
 
 		return;
 	}
@@ -653,7 +642,7 @@ void Mouse::menuMouse() {
 		setLuggage(_masterMenuList[hit].luggage_resource);
 
 		debug(2, "Left-clicked on \"%s\" icon - switch to drag mode",
-			_vm->_resman->fetchName(_vm->_logic->readVar(OBJECT_HELD)));
+		      _vm->_resman->fetchName(_vm->_logic->readVar(OBJECT_HELD)));
 	}
 }
 
@@ -807,11 +796,11 @@ void Mouse::normalMouse() {
 	if (me->buttons & RD_LEFTBUTTONDOWN) {
 		_vm->_logic->writeVar(LEFT_BUTTON, 1);
 		_vm->_logic->writeVar(RIGHT_BUTTON, 0);
-		_buttonClick = 0;	// for re-click
+		_buttonClick = 0; // for re-click
 	} else {
 		_vm->_logic->writeVar(LEFT_BUTTON, 0);
 		_vm->_logic->writeVar(RIGHT_BUTTON, 1);
-		_buttonClick = 1;	// for re-click
+		_buttonClick = 1; // for re-click
 	}
 
 	// These might be required by the action script about to be run
@@ -855,14 +844,14 @@ void Mouse::normalMouse() {
 
 		if (_vm->_logic->readVar(OBJECT_HELD))
 			debug(2, "Used \"%s\" on \"%s\"",
-				_vm->_resman->fetchName(_vm->_logic->readVar(OBJECT_HELD), buf1),
-				_vm->_resman->fetchName(_vm->_logic->readVar(CLICKED_ID), buf2));
+			      _vm->_resman->fetchName(_vm->_logic->readVar(OBJECT_HELD), buf1),
+			      _vm->_resman->fetchName(_vm->_logic->readVar(CLICKED_ID), buf2));
 		else if (_vm->_logic->readVar(LEFT_BUTTON))
 			debug(2, "Left-clicked on \"%s\"",
-				_vm->_resman->fetchName(_vm->_logic->readVar(CLICKED_ID)));
-		else	// RIGHT BUTTON
+			      _vm->_resman->fetchName(_vm->_logic->readVar(CLICKED_ID)));
+		else // RIGHT BUTTON
 			debug(2, "Right-clicked on \"%s\"",
-				_vm->_resman->fetchName(_vm->_logic->readVar(CLICKED_ID)));
+			      _vm->_resman->fetchName(_vm->_logic->readVar(CLICKED_ID)));
 	}
 }
 
@@ -876,7 +865,6 @@ uint32 Mouse::chooseMouse() {
 		menuIconWidth = RDMENU_PSXICONWIDE;
 	else
 		menuIconWidth = RDMENU_ICONWIDE;
-
 
 	uint i;
 
@@ -939,7 +927,7 @@ uint32 Mouse::chooseMouse() {
 		}
 
 		for (; i < 15; i++)
-			setMenuIcon(RDMENU_BOTTOM, (uint8) i, NULL);
+			setMenuIcon(RDMENU_BOTTOM, (uint8)i, NULL);
 
 		showMenu(RDMENU_BOTTOM);
 		setMouse(NORMAL_MOUSE_ID);
@@ -1162,8 +1150,8 @@ uint32 Mouse::checkMouseList() {
 	return 0;
 }
 
-#define POINTER_TEXT_WIDTH	640		// just in case!
-#define POINTER_TEXT_PEN	184		// white
+#define POINTER_TEXT_WIDTH 640 // just in case!
+#define POINTER_TEXT_PEN 184 // white
 
 void Mouse::createPointerText(uint32 text_id, uint32 pointer_res) {
 	uint32 local_text;
@@ -1313,11 +1301,11 @@ void Mouse::createPointerText(uint32 text_id, uint32 pointer_res) {
 	getPos(x, y);
 
 	_pointerTextBlocNo = _vm->_fontRenderer->buildNewBloc(
-		text + 2, x + xOffset,
-		y + yOffset,
-		POINTER_TEXT_WIDTH, POINTER_TEXT_PEN,
-		RDSPR_TRANS | RDSPR_DISPLAYALIGN,
-		_vm->_speechFontId, justification);
+	  text + 2, x + xOffset,
+	  y + yOffset,
+	  POINTER_TEXT_WIDTH, POINTER_TEXT_PEN,
+	  RDSPR_TRANS | RDSPR_DISPLAYALIGN,
+	  _vm->_speechFontId, justification);
 
 	// now ok to close the text file
 	_vm->_resman->closeResource(text_res);
@@ -1408,7 +1396,7 @@ void Mouse::addHuman() {
 	// info
 
 	if (_vm->_debugger->_testingSnR) {
-		uint8 black[3] = {   0,  0,    0 };
+		uint8 black[3] = { 0, 0, 0 };
 		uint8 white[3] = { 255, 255, 255 };
 
 		// Testing logic scripts by simulating instant Save & Restore
@@ -1595,12 +1583,12 @@ void Mouse::drawMouse() {
 
 	if (_luggageAnim.data)
 		decompressMouse(mouseData, _luggageAnim.data, 0,
-			_luggageAnim.mousew, _luggageAnim.mouseh,
-			mouse_width, deltaX, deltaY);
+		                _luggageAnim.mousew, _luggageAnim.mouseh,
+		                mouse_width, deltaX, deltaY);
 
 	if (_mouseAnim.data)
 		decompressMouse(mouseData, _mouseAnim.data, _mouseFrame,
-			_mouseAnim.mousew, _mouseAnim.mouseh, mouse_width);
+		                _mouseAnim.mousew, _mouseAnim.mouseh, mouse_width);
 
 	// Fix height for mouse sprite in PSX version
 	if (Sword2Engine::isPsx()) {
@@ -1649,7 +1637,7 @@ int32 Mouse::setMouseAnim(byte *ma, int32 size, int32 mouseFlash) {
 	free(_mouseAnim.data);
 	_mouseAnim.data = NULL;
 
-	if (ma)	{
+	if (ma) {
 		if (mouseFlash == RDMOUSE_FLASH)
 			_mouseFrame = 0;
 		else
@@ -1695,7 +1683,7 @@ int32 Mouse::setLuggageAnim(byte *ma, int32 size) {
 	free(_luggageAnim.data);
 	_luggageAnim.data = NULL;
 
-	if (ma)	{
+	if (ma) {
 		Common::MemoryReadStream readS(ma, size);
 
 		_luggageAnim.runTimeComp = readS.readByte();

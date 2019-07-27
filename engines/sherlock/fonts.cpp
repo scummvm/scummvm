@@ -20,12 +20,12 @@
  *
  */
 
-#include "common/system.h"
-#include "common/platform.h"
 #include "sherlock/fonts.h"
+#include "common/platform.h"
+#include "common/system.h"
 #include "sherlock/image_file.h"
-#include "sherlock/surface.h"
 #include "sherlock/sherlock.h"
+#include "sherlock/surface.h"
 
 namespace Sherlock {
 
@@ -140,8 +140,7 @@ void Fonts::setFont(int fontNum) {
 		_yOffsets[idx] = 0;
 
 		if (IS_ROSE_TATTOO) {
-			if ((idx >= 129 && idx < 135) || (idx >= 136 && idx < 143) || (idx >= 147 && idx < 155) ||
-					(idx >= 156 && idx < 165))
+			if ((idx >= 129 && idx < 135) || (idx >= 136 && idx < 143) || (idx >= 147 && idx < 155) || (idx >= 156 && idx < 165))
 				_yOffsets[idx] = 1;
 			else if ((idx >= 143 && idx < 146) || idx == 165)
 				_yOffsets[idx] = 2;
@@ -196,7 +195,7 @@ inline byte Fonts::translateChar(byte c) {
 }
 
 void Fonts::writeString(BaseSurface *surface, const Common::String &str,
-		const Common::Point &pt, int overrideColor) {
+                        const Common::Point &pt, int overrideColor) {
 	Common::Point charPos = pt;
 
 	if (!_font)

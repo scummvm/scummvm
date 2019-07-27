@@ -31,10 +31,10 @@ namespace Testbed {
 
 namespace XXXtests {
 
-// Helper functions for XXX tests
+	// Helper functions for XXX tests
 
-// will contain function declarations for XXX tests
-// add more here
+	// will contain function declarations for XXX tests
+	// add more here
 
 } // End of namespace XXXtests
 
@@ -57,7 +57,6 @@ public:
 	const char *getDescription() const {
 		return "Some Arbit description";
 	}
-
 };
 
 } // End of namespace Testbed

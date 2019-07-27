@@ -29,73 +29,73 @@
 namespace Mohawk {
 namespace RivenStacks {
 
-/**
+	/**
  * Jungle Island
  */
-class JSpit : public DomeSpit {
-public:
-	JSpit(MohawkEngine_Riven *vm);
+	class JSpit : public DomeSpit {
+	public:
+		JSpit(MohawkEngine_Riven *vm);
 
-	// RivenStack API
-	virtual void installCardTimer() override;
+		// RivenStack API
+		virtual void installCardTimer() override;
 
-	// External commands - Rebel Tunnel Puzzle
-	void xreseticons(const ArgumentArray &args);
-	void xicon(const ArgumentArray &args);
-	void xcheckicons(const ArgumentArray &args);
-	void xtoggleicon(const ArgumentArray &args);
-	void xjtunnel103_pictfix(const ArgumentArray &args);
-	void xjtunnel104_pictfix(const ArgumentArray &args);
-	void xjtunnel105_pictfix(const ArgumentArray &args);
-	void xjtunnel106_pictfix(const ArgumentArray &args);
+		// External commands - Rebel Tunnel Puzzle
+		void xreseticons(const ArgumentArray &args);
+		void xicon(const ArgumentArray &args);
+		void xcheckicons(const ArgumentArray &args);
+		void xtoggleicon(const ArgumentArray &args);
+		void xjtunnel103_pictfix(const ArgumentArray &args);
+		void xjtunnel104_pictfix(const ArgumentArray &args);
+		void xjtunnel105_pictfix(const ArgumentArray &args);
+		void xjtunnel106_pictfix(const ArgumentArray &args);
 
-	// External commands - Lower the gallows carriage
-	void xvga1300_carriage(const ArgumentArray &args);
+		// External commands - Lower the gallows carriage
+		void xvga1300_carriage(const ArgumentArray &args);
 
-	// External commands - Dome
-	void xjdome25_resetsliders(const ArgumentArray &args);
-	void xjdome25_slidermd(const ArgumentArray &args);
-	void xjdome25_slidermw(const ArgumentArray &args);
-	void xjscpbtn(const ArgumentArray &args);
-	void xjisland3500_domecheck(const ArgumentArray &args);
+		// External commands - Dome
+		void xjdome25_resetsliders(const ArgumentArray &args);
+		void xjdome25_slidermd(const ArgumentArray &args);
+		void xjdome25_slidermw(const ArgumentArray &args);
+		void xjscpbtn(const ArgumentArray &args);
+		void xjisland3500_domecheck(const ArgumentArray &args);
 
-	// External commands - Whark Elevator
-	void xhandlecontroldown(const ArgumentArray &args);
-	void xhandlecontrolmid(const ArgumentArray &args);
-	void xhandlecontrolup(const ArgumentArray &args);
+		// External commands - Whark Elevator
+		void xhandlecontroldown(const ArgumentArray &args);
+		void xhandlecontrolmid(const ArgumentArray &args);
+		void xhandlecontrolup(const ArgumentArray &args);
 
-	// External commands - Beetle
-	void xjplaybeetle_550(const ArgumentArray &args);
-	void xjplaybeetle_600(const ArgumentArray &args);
-	void xjplaybeetle_950(const ArgumentArray &args);
-	void xjplaybeetle_1050(const ArgumentArray &args);
-	void xjplaybeetle_1450(const ArgumentArray &args);
+		// External commands - Beetle
+		void xjplaybeetle_550(const ArgumentArray &args);
+		void xjplaybeetle_600(const ArgumentArray &args);
+		void xjplaybeetle_950(const ArgumentArray &args);
+		void xjplaybeetle_1050(const ArgumentArray &args);
+		void xjplaybeetle_1450(const ArgumentArray &args);
 
-	// External commands - Creatures in the Lagoon
-	void xjlagoon700_alert(const ArgumentArray &args);
-	void xjlagoon800_alert(const ArgumentArray &args);
-	void xjlagoon1500_alert(const ArgumentArray &args);
+		// External commands - Creatures in the Lagoon
+		void xjlagoon700_alert(const ArgumentArray &args);
+		void xjlagoon800_alert(const ArgumentArray &args);
+		void xjlagoon1500_alert(const ArgumentArray &args);
 
-	// External commands - Play the Whark Game
-	void xschool280_playwhark(const ArgumentArray &args);
-	void xjschool280_resetleft(const ArgumentArray &args); // DVD only
-	void xjschool280_resetright(const ArgumentArray &args); // DVD only
+		// External commands - Play the Whark Game
+		void xschool280_playwhark(const ArgumentArray &args);
+		void xjschool280_resetleft(const ArgumentArray &args); // DVD only
+		void xjschool280_resetright(const ArgumentArray &args); // DVD only
 
-	// External commands - Demo-specific
-	void xjatboundary(const ArgumentArray &args);
+		// External commands - Demo-specific
+		void xjatboundary(const ArgumentArray &args);
 
-	// Timer callbacks
-	void sunnersTopStairsTimer();
-	void sunnersMidStairsTimer();
-	void sunnersLowerStairsTimer();
-	void sunnersBeachTimer();
+		// Timer callbacks
+		void sunnersTopStairsTimer();
+		void sunnersMidStairsTimer();
+		void sunnersLowerStairsTimer();
+		void sunnersBeachTimer();
 
-private:
-	int jspitElevatorLoop();
-	void redrawWharkNumberPuzzle(uint16 overlay, uint16 number);
+	private:
+		int jspitElevatorLoop();
+		void redrawWharkNumberPuzzle(uint16 overlay, uint16 number);
 
-	void sunnersPlayVideo(RivenVideo *video, uint32 destCardGlobalId, bool sunnersShouldFlee);
-};
+		void sunnersPlayVideo(RivenVideo *video, uint32 destCardGlobalId, bool sunnersShouldFlee);
+	};
 
 } // End of namespace RivenStacks
 } // End of namespace Mohawk

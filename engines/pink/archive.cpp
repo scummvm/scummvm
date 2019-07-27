@@ -23,9 +23,6 @@
 #include "common/debug.h"
 #include "common/file.h"
 
-#include "pink/objects/condition.h"
-#include "pink/objects/module.h"
-#include "pink/objects/side_effect.h"
 #include "pink/objects/actions/action_hide.h"
 #include "pink/objects/actions/action_play_with_sfx.h"
 #include "pink/objects/actions/action_sound.h"
@@ -38,11 +35,14 @@
 #include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/actors/pda_button_actor.h"
 #include "pink/objects/actors/supporting_actor.h"
+#include "pink/objects/condition.h"
 #include "pink/objects/handlers/handler.h"
 #include "pink/objects/handlers/handler_timer.h"
+#include "pink/objects/module.h"
 #include "pink/objects/pages/game_page.h"
 #include "pink/objects/sequences/seq_timer.h"
 #include "pink/objects/sequences/sequence.h"
+#include "pink/objects/side_effect.h"
 #include "pink/objects/walk/walk_location.h"
 
 namespace Pink {
@@ -51,56 +51,56 @@ static const struct RuntimeClass {
 	const char *name;
 	int id;
 } classMap[] = {
-	{"ActionHide", kActionHide},
-	{"ActionLoop", kActionLoop},
-	{"ActionPlay", kActionPlay},
-	{"ActionPlayWithSfx", kActionPlayWithSfx},
-	{"ActionSfx", kActionSfx},
-	{"ActionSound", kActionSound},
-	{"ActionStill", kActionStill},
-	{"ActionTalk", kActionTalk},
-	{"ActionText", kActionText},
-	{"Actor", kActor},
-	{"AudioInfoPDAButton", kAudioInfoPDAButton},
-	{"ConditionGameVariable", kConditionGameVariable},
-	{"ConditionInventoryItemOwner", kConditionInventoryItemOwner},
-	{"ConditionModuleVariable", kConditionModuleVariable},
-	{"ConditionNotInventoryItemOwner", kConditionNotInventoryItemOwner},
-	{"ConditionNotModuleVariable", kConditionNotModuleVariable},
-	{"ConditionNotPageVariable", kConditionNotPageVariable},
-	{"ConditionPageVariable", kConditionPageVariable},
-	{"CursorActor", kCursorActor},
-	{"GamePage", kGamePage},
-	{"HandlerLeftClick", kHandlerLeftClick},
-	{"HandlerStartPage", kHandlerStartPage},
-	{"HandlerTimer", kHandlerTimer},
-	{"HandlerTimerActions", kHandlerTimerActions},
-	{"HandlerTimerSequences", kHandlerTimerSequences},
-	{"HandlerUseClick", kHandlerUseClick},
-	{"InventoryActor", kInventoryActor},
-	{"InventoryItem", kInventoryItem},
-	{"LeadActor", kLeadActor},
-	{"ModuleProxy", kModuleProxy},
-	{"PDAButtonActor", kPDAButtonActor},
-	{"ParlSqPink", kParlSqPink},
-	{"PubPink", kPubPink},
-	{"SeqTimer", kSeqTimer},
-	{"Sequence", kSequence},
-	{"SequenceAudio", kSequenceAudio},
-	{"SequenceItem", kSequenceItem},
-	{"SequenceItemDefaultAction", kSequenceItemDefaultAction},
-	{"SequenceItemLeader", kSequenceItemLeader},
-	{"SequenceItemLeaderAudio", kSequenceItemLeaderAudio},
-	{"SideEffectExit", kSideEffectExit},
-	{"SideEffectGameVariable", kSideEffectGameVariable},
-	{"SideEffectInventoryItemOwner", kSideEffectInventoryItemOwner},
-	{"SideEffectLocation", kSideEffectLocation},
-	{"SideEffectModuleVariable", kSideEffectModuleVariable},
-	{"SideEffectPageVariable", kSideEffectPageVariable},
-	{"SideEffectRandomPageVariable", kSideEffectRandomPageVariable},
-	{"SupportingActor", kSupportingActor},
-	{"WalkAction", kWalkAction},
-	{"WalkLocation", kWalkLocation}
+	{ "ActionHide", kActionHide },
+	{ "ActionLoop", kActionLoop },
+	{ "ActionPlay", kActionPlay },
+	{ "ActionPlayWithSfx", kActionPlayWithSfx },
+	{ "ActionSfx", kActionSfx },
+	{ "ActionSound", kActionSound },
+	{ "ActionStill", kActionStill },
+	{ "ActionTalk", kActionTalk },
+	{ "ActionText", kActionText },
+	{ "Actor", kActor },
+	{ "AudioInfoPDAButton", kAudioInfoPDAButton },
+	{ "ConditionGameVariable", kConditionGameVariable },
+	{ "ConditionInventoryItemOwner", kConditionInventoryItemOwner },
+	{ "ConditionModuleVariable", kConditionModuleVariable },
+	{ "ConditionNotInventoryItemOwner", kConditionNotInventoryItemOwner },
+	{ "ConditionNotModuleVariable", kConditionNotModuleVariable },
+	{ "ConditionNotPageVariable", kConditionNotPageVariable },
+	{ "ConditionPageVariable", kConditionPageVariable },
+	{ "CursorActor", kCursorActor },
+	{ "GamePage", kGamePage },
+	{ "HandlerLeftClick", kHandlerLeftClick },
+	{ "HandlerStartPage", kHandlerStartPage },
+	{ "HandlerTimer", kHandlerTimer },
+	{ "HandlerTimerActions", kHandlerTimerActions },
+	{ "HandlerTimerSequences", kHandlerTimerSequences },
+	{ "HandlerUseClick", kHandlerUseClick },
+	{ "InventoryActor", kInventoryActor },
+	{ "InventoryItem", kInventoryItem },
+	{ "LeadActor", kLeadActor },
+	{ "ModuleProxy", kModuleProxy },
+	{ "PDAButtonActor", kPDAButtonActor },
+	{ "ParlSqPink", kParlSqPink },
+	{ "PubPink", kPubPink },
+	{ "SeqTimer", kSeqTimer },
+	{ "Sequence", kSequence },
+	{ "SequenceAudio", kSequenceAudio },
+	{ "SequenceItem", kSequenceItem },
+	{ "SequenceItemDefaultAction", kSequenceItemDefaultAction },
+	{ "SequenceItemLeader", kSequenceItemLeader },
+	{ "SequenceItemLeaderAudio", kSequenceItemLeaderAudio },
+	{ "SideEffectExit", kSideEffectExit },
+	{ "SideEffectGameVariable", kSideEffectGameVariable },
+	{ "SideEffectInventoryItemOwner", kSideEffectInventoryItemOwner },
+	{ "SideEffectLocation", kSideEffectLocation },
+	{ "SideEffectModuleVariable", kSideEffectModuleVariable },
+	{ "SideEffectPageVariable", kSideEffectPageVariable },
+	{ "SideEffectRandomPageVariable", kSideEffectRandomPageVariable },
+	{ "SupportingActor", kSupportingActor },
+	{ "WalkAction", kWalkAction },
+	{ "WalkLocation", kWalkLocation }
 };
 
 static Object *createObject(int objectId) {
@@ -210,14 +210,16 @@ static Object *createObject(int objectId) {
 	}
 }
 
-Archive::Archive(Common::SeekableReadStream  *stream)
-	: _readStream(stream), _writeStream(nullptr) {
+Archive::Archive(Common::SeekableReadStream *stream)
+  : _readStream(stream)
+  , _writeStream(nullptr) {
 	_objectMap.push_back(0);
 	_objectIdMap.push_back(kNullObject);
 }
 
 Archive::Archive(Common::WriteStream *stream)
-	: _writeStream(stream), _readStream(nullptr) {
+  : _writeStream(stream)
+  , _readStream(nullptr) {
 	_objectMap.push_back(0);
 	_objectIdMap.push_back(kNullObject);
 }
@@ -247,7 +249,7 @@ Object *Archive::parseObject(bool &isCopyReturned) {
 	if (obTag == 0x0000) {
 		return nullptr;
 	} else if (obTag == 0xffff) {
-		/* int schema = */_readStream->readUint16LE();
+		/* int schema = */ _readStream->readUint16LE();
 
 		int size = _readStream->readUint16LE();
 		_readStream->read(className, size);
@@ -256,7 +258,8 @@ Object *Archive::parseObject(bool &isCopyReturned) {
 		objectId = findObjectId(className + 1);
 
 		res = createObject(objectId);
-		if (!res) error("Class %s is not implemented", className);
+		if (!res)
+			error("Class %s is not implemented", className);
 
 		_objectMap.push_back(res);
 		_objectIdMap.push_back(objectId);
@@ -285,7 +288,7 @@ Object *Archive::parseObject(bool &isCopyReturned) {
 }
 
 static int runtimeClassCmp(const void *key, const void *elem) {
-	return strcmp((const char *)key, *(const char * const *)elem);
+	return strcmp((const char *)key, *(const char *const *)elem);
 }
 
 uint Archive::findObjectId(const char *name) {

@@ -30,11 +30,15 @@ namespace Titanic {
 class CPickUp : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
+
 protected:
 	bool _enabled;
+
 public:
 	CLASSDEF;
-	CPickUp() : CGameObject(), _enabled(false) {}
+	CPickUp()
+	  : CGameObject()
+	  , _enabled(false) {}
 
 	/**
 	 * Save the data for the class to file

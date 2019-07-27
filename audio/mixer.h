@@ -23,8 +23,8 @@
 #ifndef AUDIO_MIXER_H
 #define AUDIO_MIXER_H
 
-#include "common/types.h"
 #include "common/noncopyable.h"
+#include "common/types.h"
 
 namespace Audio {
 
@@ -42,8 +42,10 @@ class SoundHandle {
 	friend class Channel;
 	friend class MixerImpl;
 	uint32 _val;
+
 public:
-	inline SoundHandle() : _val(0xFFFFFFFF) {}
+	inline SoundHandle()
+	  : _val(0xFFFFFFFF) {}
 };
 
 /**
@@ -69,8 +71,6 @@ public:
 	Mixer() {}
 	virtual ~Mixer() {}
 
-
-
 	/**
 	 * Is the mixer ready and setup? This may not be the case on systems which
 	 * don't support digital sound output. In that case, the mixer proc may
@@ -82,7 +82,6 @@ public:
 	 * @todo get rid of this?
 	 */
 	virtual bool isReady() const = 0;
-
 
 	/**
 	 * Start playing the given audio stream.
@@ -105,15 +104,16 @@ public:
 	 * @param reverseStereo	a flag indicating whether left and right channels shall be swapped
 	 */
 	virtual void playStream(
-		SoundType type,
-		SoundHandle *handle,
-		AudioStream *stream,
-		int id = -1,
-		byte volume = kMaxChannelVolume,
-		int8 balance = 0,
-		DisposeAfterUse::Flag autofreeStream = DisposeAfterUse::YES,
-		bool permanent = false,
-		bool reverseStereo = false) = 0;
+	  SoundType type,
+	  SoundHandle *handle,
+	  AudioStream *stream,
+	  int id = -1,
+	  byte volume = kMaxChannelVolume,
+	  int8 balance = 0,
+	  DisposeAfterUse::Flag autofreeStream = DisposeAfterUse::YES,
+	  bool permanent = false,
+	  bool reverseStereo = false)
+	  = 0;
 
 	/**
 	 * Stop all currently playing sounds.
@@ -133,8 +133,6 @@ public:
 	 * @param handle the sound to affect
 	 */
 	virtual void stopHandle(SoundHandle handle) = 0;
-
-
 
 	/**
 	 * Pause/unpause all sounds, including all regular and permanent
@@ -160,8 +158,6 @@ public:
 	 */
 	virtual void pauseHandle(SoundHandle handle, bool paused) = 0;
 
-
-
 	/**
 	 * Check if a sound with the given ID is active.
 	 *
@@ -185,7 +181,6 @@ public:
 	 * @return true if the sound is active
 	 */
 	virtual bool isSoundHandleActive(SoundHandle handle) = 0;
-
 
 	/**
 	 * Set the mute state for a given sound type.
@@ -278,7 +273,6 @@ public:
 	 */
 	virtual uint getOutputRate() const = 0;
 };
-
 
 } // End of namespace Audio
 

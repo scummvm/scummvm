@@ -87,29 +87,43 @@ private:
 	void sendToChannel(byte channel, byte command, byte op1, byte op2);
 
 	struct Channel {
-		uint8 patch;			// Patch setting
-		uint8 volume;			// Channel volume (0-63)
-		uint8 pan;				// Pan setting (0-127, 64 is center)
-		uint8 holdPedal;		// Hold pedal setting (0 to 63 is off, 127 to 64 is on)
-		uint8 extraVoices;		// The number of additional voices this channel optimally needs
-		uint16 pitchWheel;		// Pitch wheel setting (0-16383, 8192 is center)
-		uint8 lastVoice;		// Last voice used for this MIDI channel
-		bool enableVelocity;	// Enable velocity control (SCI0)
+		uint8 patch; // Patch setting
+		uint8 volume; // Channel volume (0-63)
+		uint8 pan; // Pan setting (0-127, 64 is center)
+		uint8 holdPedal; // Hold pedal setting (0 to 63 is off, 127 to 64 is on)
+		uint8 extraVoices; // The number of additional voices this channel optimally needs
+		uint16 pitchWheel; // Pitch wheel setting (0-16383, 8192 is center)
+		uint8 lastVoice; // Last voice used for this MIDI channel
+		bool enableVelocity; // Enable velocity control (SCI0)
 
-		Channel() : patch(0), volume(127), pan(64), holdPedal(0), extraVoices(0),
-					pitchWheel(8192), lastVoice(0), enableVelocity(false) { }
+		Channel()
+		  : patch(0)
+		  , volume(127)
+		  , pan(64)
+		  , holdPedal(0)
+		  , extraVoices(0)
+		  , pitchWheel(8192)
+		  , lastVoice(0)
+		  , enableVelocity(false) {}
 	};
 
 	struct Voice {
-		int8 channel;			// MIDI channel that this voice is assigned to or -1
-		int8 note;				// Currently playing MIDI note or -1
-		int bank;				// Current bank setting or -1
-		int patch;				// Currently playing patch or -1
-		uint8 velocity;			// Note velocity
-		bool isSustained;		// Flag indicating a note that is being sustained by the hold pedal
-		uint16 age;				// Age of the current note
+		int8 channel; // MIDI channel that this voice is assigned to or -1
+		int8 note; // Currently playing MIDI note or -1
+		int bank; // Current bank setting or -1
+		int patch; // Currently playing patch or -1
+		uint8 velocity; // Note velocity
+		bool isSustained; // Flag indicating a note that is being sustained by the hold pedal
+		uint16 age; // Age of the current note
 
-		Voice() : channel(-1), note(-1), bank(-1), patch(-1), velocity(0), isSustained(false), age(0) { }
+		Voice()
+		  : channel(-1)
+		  , note(-1)
+		  , bank(-1)
+		  , patch(-1)
+		  , velocity(0)
+		  , isSustained(false)
+		  , age(0) {}
 	};
 
 	bool _playSwitch;
@@ -126,7 +140,12 @@ private:
 	byte _sysExBuf[kMaxSysExSize];
 };
 
-MidiPlayer_Fb01::MidiPlayer_Fb01(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _timerParam(NULL), _timerProc(NULL) {
+MidiPlayer_Fb01::MidiPlayer_Fb01(SciVersion version)
+  : MidiPlayer(version)
+  , _playSwitch(true)
+  , _masterVolume(15)
+  , _timerParam(NULL)
+  , _timerProc(NULL) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI);
 	_driver = MidiDriver::createMidi(dev);
 
@@ -495,7 +514,7 @@ int MidiPlayer_Fb01::open(ResourceManager *resMan) {
 		Common::File f;
 
 		if (f.open("IMF.DRV")) {
-			Common::SpanOwner<SciSpan<const byte> > buf;
+			Common::SpanOwner<SciSpan<const byte>> buf;
 			buf->allocateFromStream(f);
 
 			// Search for start of sound bank

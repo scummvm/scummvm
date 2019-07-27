@@ -31,7 +31,8 @@ class Screen_v2;
 class KyraEngine_HoF;
 
 class TextDisplayer_HoF : public TextDisplayer {
-friend class KyraEngine_HoF;
+	friend class KyraEngine_HoF;
+
 public:
 	TextDisplayer_HoF(KyraEngine_HoF *vm, Screen_v2 *screen);
 
@@ -43,6 +44,7 @@ public:
 
 	char *preprocessString(const char *str);
 	void calcWidestLineBounds(int &x1, int &x2, int w, int x);
+
 private:
 	KyraEngine_HoF *_vm;
 };

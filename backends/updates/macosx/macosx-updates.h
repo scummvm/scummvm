@@ -27,7 +27,7 @@
 
 #if defined(MACOSX) && defined(USE_SPARKLE)
 
-#include "common/updates.h"
+#	include "common/updates.h"
 
 class MacOSXUpdateManager : public Common::UpdateManager {
 public:

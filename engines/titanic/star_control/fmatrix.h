@@ -38,6 +38,7 @@ public:
 	FVector _row1;
 	FVector _row2;
 	FVector _row3;
+
 public:
 	FMatrix();
 	FMatrix(const FVector &, const FVector &, const FVector &);

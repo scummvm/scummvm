@@ -26,10 +26,10 @@
 namespace Glk {
 namespace Alan2 {
 
-extern void reverseHdr(AcdHdr *hdr);
-extern void reverseACD(Boolean v25);
-extern void reverse(Aword *word);
-extern Aword reversed(Aword word);
+	extern void reverseHdr(AcdHdr *hdr);
+	extern void reverseACD(Boolean v25);
+	extern void reverse(Aword *word);
+	extern Aword reversed(Aword word);
 
 } // End of namespace Alan2
 } // End of namespace Glk

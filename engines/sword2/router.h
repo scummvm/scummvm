@@ -54,9 +54,9 @@ struct BarData {
 	int16 ymin;
 	int16 xmax;
 	int16 ymax;
-	int16 dx;	// x2 - x1
-	int16 dy;	// y2 - y1
-	int32 co;	// co = (y1*dx) - (x1*dy) from an equation for a line y*dx = x*dy + co
+	int16 dx; // x2 - x1
+	int16 dy; // y2 - y1
+	int32 co; // co = (y1*dx) - (x1*dy) from an equation for a line y*dx = x*dy + co
 };
 
 struct NodeData {
@@ -68,18 +68,18 @@ struct NodeData {
 };
 
 // because we only have 2 megas in the game!
-#define TOTAL_ROUTE_SLOTS	2
+#define TOTAL_ROUTE_SLOTS 2
 
-#define MAX_FRAMES_PER_CYCLE	16
-#define NO_DIRECTIONS		8
-#define MAX_FRAMES_PER_CHAR	(MAX_FRAMES_PER_CYCLE * NO_DIRECTIONS)
-#define ROUTE_END_FLAG		255
+#define MAX_FRAMES_PER_CYCLE 16
+#define NO_DIRECTIONS 8
+#define MAX_FRAMES_PER_CHAR (MAX_FRAMES_PER_CYCLE * NO_DIRECTIONS)
+#define ROUTE_END_FLAG 255
 
-#define MAX_WALKGRIDS		10
+#define MAX_WALKGRIDS 10
 
-#define	O_WALKANIM_SIZE		600	// max number of nodes in router output
-#define	O_GRID_SIZE		200	// max 200 lines & 200 points
-#define	O_ROUTE_SIZE		50	// max number of modules in a route
+#define O_WALKANIM_SIZE 600 // max number of nodes in router output
+#define O_GRID_SIZE 200 // max 200 lines & 200 points
+#define O_ROUTE_SIZE 50 // max number of modules in a route
 
 struct RouteData {
 	int32 x;
@@ -99,7 +99,7 @@ class Router {
 private:
 	Sword2Engine *_vm;
 
-	int16 _standbyX;	// see fnSetStandbyCoords()
+	int16 _standbyX; // see fnSetStandbyCoords()
 	int16 _standbyY;
 	int16 _standbyDir;
 
@@ -139,8 +139,8 @@ private:
 	int32 _firstStandingTurnLeftFrame;
 	int32 _firstStandingTurnRightFrame;
 
-	int32 _firstWalkingTurnLeftFrame;	// left walking turn
-	int32 _firstWalkingTurnRightFrame;	// right walking turn
+	int32 _firstWalkingTurnLeftFrame; // left walking turn
+	int32 _firstWalkingTurnRightFrame; // right walking turn
 
 	uint32 _firstSlowInFrame[NO_DIRECTIONS];
 
@@ -193,7 +193,10 @@ private:
 	void plotCross(int16 x, int16 y, uint8 color);
 
 public:
-	Router(Sword2Engine *vm) : _vm(vm), _diagonalx(0), _diagonaly(0) {
+	Router(Sword2Engine *vm)
+	  : _vm(vm)
+	  , _diagonalx(0)
+	  , _diagonaly(0) {
 		memset(_routeSlots, 0, sizeof(_routeSlots));
 		memset(_bars, 0, sizeof(_bars));
 		memset(_node, 0, sizeof(_node));

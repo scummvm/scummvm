@@ -36,49 +36,94 @@ enum MessageFlag {
 	MSGFLAG_CLASS_DEF = 4
 };
 
-#define MESSAGE0(NAME) \
-	class NAME: public CMessage { \
-	public: NAME() : CMessage() {} \
-	CLASSDEF; \
-	static bool isSupportedBy(const CTreeItem *item) { \
-		return supports(item, _type); } \
-}
-#define MESSAGE1(NAME, F1, N1, V1) \
-	class NAME: public CMessage { \
-	public: F1 _##N1; \
-	NAME() : CMessage(), _##N1(V1) {} \
-	NAME(F1 N1) : CMessage(), _##N1(N1) {} \
-	CLASSDEF; \
-	static bool isSupportedBy(const CTreeItem *item) { \
-		return supports(item, _type); } \
-}
-#define MESSAGE2(NAME, F1, N1, V1, F2, N2, V2) \
-	class NAME: public CMessage { \
-	public: F1 _##N1; F2 _##N2; \
-	NAME() : CMessage(), _##N1(V1), _##N2(V2) {} \
-	NAME(F1 N1, F2 N2) : CMessage(), _##N1(N1), _##N2(N2) {} \
-	CLASSDEF; \
-	static bool isSupportedBy(const CTreeItem *item) { \
-		return supports(item, _type); } \
-}
+#define MESSAGE0(NAME)                                 \
+	class NAME : public CMessage {                       \
+	public:                                              \
+		NAME()                                             \
+		  : CMessage() {}                                  \
+		CLASSDEF;                                          \
+		static bool isSupportedBy(const CTreeItem *item) { \
+			return supports(item, _type);                    \
+		}                                                  \
+	}
+#define MESSAGE1(NAME, F1, N1, V1)                     \
+	class NAME : public CMessage {                       \
+	public:                                              \
+		F1 _##N1;                                          \
+		NAME()                                             \
+		  : CMessage()                                     \
+		  , _##N1(V1) {}                                   \
+		NAME(F1 N1)                                        \
+		  : CMessage()                                     \
+		  , _##N1(N1) {}                                   \
+		CLASSDEF;                                          \
+		static bool isSupportedBy(const CTreeItem *item) { \
+			return supports(item, _type);                    \
+		}                                                  \
+	}
+#define MESSAGE2(NAME, F1, N1, V1, F2, N2, V2)         \
+	class NAME : public CMessage {                       \
+	public:                                              \
+		F1 _##N1;                                          \
+		F2 _##N2;                                          \
+		NAME()                                             \
+		  : CMessage()                                     \
+		  , _##N1(V1)                                      \
+		  , _##N2(V2) {}                                   \
+		NAME(F1 N1, F2 N2)                                 \
+		  : CMessage()                                     \
+		  , _##N1(N1)                                      \
+		  , _##N2(N2) {}                                   \
+		CLASSDEF;                                          \
+		static bool isSupportedBy(const CTreeItem *item) { \
+			return supports(item, _type);                    \
+		}                                                  \
+	}
 #define MESSAGE3(NAME, F1, N1, V1, F2, N2, V2, F3, N3, V3) \
-	class NAME: public CMessage { \
-	public: F1 _##N1; F2 _##N2; F3 _##N3; \
-	NAME() : CMessage(), _##N1(V1), _##N2(V2), _##N3(V3) {} \
-	NAME(F1 N1, F2 N2, F3 N3) : CMessage(), _##N1(N1), _##N2(N2), _##N3(N3) {} \
-	CLASSDEF; \
-	static bool isSupportedBy(const CTreeItem *item) { \
-		return supports(item, _type); } \
-}
+	class NAME : public CMessage {                           \
+	public:                                                  \
+		F1 _##N1;                                              \
+		F2 _##N2;                                              \
+		F3 _##N3;                                              \
+		NAME()                                                 \
+		  : CMessage()                                         \
+		  , _##N1(V1)                                          \
+		  , _##N2(V2)                                          \
+		  , _##N3(V3) {}                                       \
+		NAME(F1 N1, F2 N2, F3 N3)                              \
+		  : CMessage()                                         \
+		  , _##N1(N1)                                          \
+		  , _##N2(N2)                                          \
+		  , _##N3(N3) {}                                       \
+		CLASSDEF;                                              \
+		static bool isSupportedBy(const CTreeItem *item) {     \
+			return supports(item, _type);                        \
+		}                                                      \
+	}
 #define MESSAGE4(NAME, F1, N1, V1, F2, N2, V2, F3, N3, V3, F4, N4, V4) \
-	class NAME: public CMessage { \
-	public: F1 _##N1; F2 _##N2; F3 _##N3; F4 _##N4; \
-	NAME() : CMessage(), _##N1(V1), _##N2(V2), _##N3(V3), _##N4(V4) {} \
-	NAME(F1 N1, F2 N2, F3 N3, F4 N4) : CMessage(), _##N1(N1), _##N2(N2), _##N3(N3), _##N4(N4) {} \
-	CLASSDEF; \
-	static bool isSupportedBy(const CTreeItem *item) { \
-		return supports(item, _type); } \
-}
+	class NAME : public CMessage {                                       \
+	public:                                                              \
+		F1 _##N1;                                                          \
+		F2 _##N2;                                                          \
+		F3 _##N3;                                                          \
+		F4 _##N4;                                                          \
+		NAME()                                                             \
+		  : CMessage()                                                     \
+		  , _##N1(V1)                                                      \
+		  , _##N2(V2)                                                      \
+		  , _##N3(V3)                                                      \
+		  , _##N4(V4) {}                                                   \
+		NAME(F1 N1, F2 N2, F3 N3, F4 N4)                                   \
+		  : CMessage()                                                     \
+		  , _##N1(N1)                                                      \
+		  , _##N2(N2)                                                      \
+		  , _##N3(N3)                                                      \
+		  , _##N4(N4) {}                                                   \
+		CLASSDEF;                                                          \
+		static bool isSupportedBy(const CTreeItem *item) {                 \
+			return supports(item, _type);                                    \
+		}                                                                  \
+	}
 
 class CCarry;
 class CCharacter;
@@ -95,6 +140,7 @@ private:
 	 * Find a map entry that supports the given class
 	 */
 	static const MSGMAP_ENTRY *findMapEntry(const CTreeItem *treeItem, const ClassDef *classDef);
+
 public:
 	CLASSDEF;
 	CMessage();
@@ -104,14 +150,14 @@ public:
 	 * and optionally it's children
 	 */
 	bool execute(CTreeItem *target, const ClassDef *classDef = nullptr,
-		int flags = MSGFLAG_SCAN | MSGFLAG_BREAK_IF_HANDLED);
+	             int flags = MSGFLAG_SCAN | MSGFLAG_BREAK_IF_HANDLED);
 
 	/**
 	 * Executes the message, passing it on to the designated target,
 	 * and optionally it's children
 	 */
 	bool execute(const CString &target, const ClassDef *classDef = nullptr,
-		int flags = MSGFLAG_SCAN | MSGFLAG_BREAK_IF_HANDLED);
+	             int flags = MSGFLAG_SCAN | MSGFLAG_BREAK_IF_HANDLED);
 
 	/**
 	 * Makes the passed item execute the message
@@ -175,9 +221,15 @@ public:
 	byte _textR;
 	byte _textG;
 	byte _textB;
+
 public:
 	CLASSDEF;
-	CEditControlMsg() : _mode(EDIT_INIT), _param(0), _textR(0), _textG(0), _textB(0) {}
+	CEditControlMsg()
+	  : _mode(EDIT_INIT)
+	  , _param(0)
+	  , _textR(0)
+	  , _textG(0)
+	  , _textB(0) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
 		return CMessage::supports(item, _type);
@@ -191,11 +243,18 @@ public:
 	uint _timerCtr;
 	int _actionVal;
 	CString _action;
+
 public:
 	CLASSDEF;
-	CTimerMsg() : CTimeMsg(), _timerCtr(0), _actionVal(0) {}
-	CTimerMsg(uint ticks, uint timerCtr, int actionVal, const CString &action) :
-		CTimeMsg(ticks), _timerCtr(timerCtr), _actionVal(actionVal), _action(action) {}
+	CTimerMsg()
+	  : CTimeMsg()
+	  , _timerCtr(0)
+	  , _actionVal(0) {}
+	CTimerMsg(uint ticks, uint timerCtr, int actionVal, const CString &action)
+	  : CTimeMsg(ticks)
+	  , _timerCtr(timerCtr)
+	  , _actionVal(actionVal)
+	  , _action(action) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
 		return supports(item, _type);
@@ -205,6 +264,7 @@ public:
 class CShowTextMsg : public CMessage {
 public:
 	CString _message;
+
 public:
 	CLASSDEF;
 	CShowTextMsg();
@@ -217,29 +277,44 @@ public:
 };
 
 enum MissiveOMatAction {
-	MESSAGE_NONE = 1, MESSAGE_SHOW = 2, NEXT_MESSAGE = 3, PRIOR_MESSAGE = 4,
-	MESSAGE_5 = 5, MESSAGE_DOWN = 6, MESSAGE_UP = 7, REDRAW_MESSAGE = 8,
+	MESSAGE_NONE = 1,
+	MESSAGE_SHOW = 2,
+	NEXT_MESSAGE = 3,
+	PRIOR_MESSAGE = 4,
+	MESSAGE_5 = 5,
+	MESSAGE_DOWN = 6,
+	MESSAGE_UP = 7,
+	REDRAW_MESSAGE = 8,
 	MESSAGE_STARTUP = 9
 };
 
 enum Movement {
-	MOVE_NONE = 0, MOVE_FORWARDS, MOVE_BACKWARDS, TURN_LEFT, TURN_RIGHT
+	MOVE_NONE = 0,
+	MOVE_FORWARDS,
+	MOVE_BACKWARDS,
+	TURN_LEFT,
+	TURN_RIGHT
 };
 
 enum ChangeMusicAction {
-	MUSIC_NONE = 0, MUSIC_STOP = 1, MUSIC_START = 2
+	MUSIC_NONE = 0,
+	MUSIC_STOP = 1,
+	MUSIC_START = 2
 };
 
 class CMovementMsg : public CMessage {
 public:
 	Movement _movement;
 	Point _posToUse;
+
 public:
 	CLASSDEF;
-	CMovementMsg() : _movement(MOVE_NONE) {}
-	CMovementMsg(Movement move) : _movement(move) {}
-	CMovementMsg(Common::KeyCode key) :
-		_movement(getMovement(key)) {}
+	CMovementMsg()
+	  : _movement(MOVE_NONE) {}
+	CMovementMsg(Movement move)
+	  : _movement(move) {}
+	CMovementMsg(Common::KeyCode key)
+	  : _movement(getMovement(key)) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
 		return supports(item, _type);
@@ -250,7 +325,6 @@ public:
 	 */
 	static Movement getMovement(Common::KeyCode keycode);
 };
-
 
 MESSAGE1(CActMsg, CString, action, "");
 MESSAGE1(CActivationmsg, CString, value, "");

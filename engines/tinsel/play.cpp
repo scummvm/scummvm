@@ -21,6 +21,7 @@
  * Plays films within a scene, takes into account the actor in each 'column'.								|
  */
 
+#include "tinsel/play.h"
 #include "common/coroutines.h"
 #include "tinsel/actors.h"
 #include "tinsel/background.h"
@@ -30,32 +31,31 @@
 #include "tinsel/multiobj.h"
 #include "tinsel/object.h"
 #include "tinsel/pid.h"
-#include "tinsel/play.h"
 #include "tinsel/polygons.h"
 #include "tinsel/rince.h"
 #include "tinsel/sched.h"
 #include "tinsel/scn.h"
 #include "tinsel/sound.h"
 #include "tinsel/timers.h"
-#include "tinsel/tinlib.h"	// Stand()
+#include "tinsel/tinlib.h" // Stand()
 
 namespace Tinsel {
 
 struct PPINIT {
-	SCNHANDLE hFilm;	// The 'film'
-	int16	x;			// } Co-ordinates from the play()
-	int16	y;			// } - set to (-1, -1) if none.
-	int16	z;			// normally 0, set if from restore
-	int16	speed;		// Film speed
-	int16	actorid;	// Set if called from an actor code block
-	uint8	splay;		// Set if called from splay()
-	uint8	bTop;		// Set if called from topplay()
-	uint8	bRestore;
-	int16	sf;			// SlowFactor - only used for moving actors
-	int16	column;		// Column number, first column = 0
+	SCNHANDLE hFilm; // The 'film'
+	int16 x; // } Co-ordinates from the play()
+	int16 y; // } - set to (-1, -1) if none.
+	int16 z; // normally 0, set if from restore
+	int16 speed; // Film speed
+	int16 actorid; // Set if called from an actor code block
+	uint8 splay; // Set if called from splay()
+	uint8 bTop; // Set if called from topplay()
+	uint8 bRestore;
+	int16 sf; // SlowFactor - only used for moving actors
+	int16 column; // Column number, first column = 0
 
-	uint8	escOn;
-	int32	myescEvent;
+	uint8 escOn;
+	int32 myescEvent;
 };
 
 //----------------- LOCAL GLOBAL DATA --------------------
@@ -73,15 +73,15 @@ static int g_soundReelWait;
  * Poke the background palette into an image.
  */
 static void PokeInPalette(SCNHANDLE hMulFrame) {
-	const FRAME *pFrame;		// Pointer to frame
-	IMAGE *pim;		// Pointer to image
+	const FRAME *pFrame; // Pointer to frame
+	IMAGE *pim; // Pointer to image
 
 	// Could be an empty column
 	if (hMulFrame) {
 		pFrame = (const FRAME *)LockMem(hMulFrame);
 
 		// get pointer to image
-		pim = (IMAGE *)LockMem(READ_32(pFrame));	// handle to image
+		pim = (IMAGE *)LockMem(READ_32(pFrame)); // handle to image
 
 		pim->hImgPal = TO_32(BgPal());
 	}
@@ -91,23 +91,23 @@ static void PokeInPalette(SCNHANDLE hMulFrame) {
  * Poke the background palette into an image.
  */
 void PokeInPalette(const MULTI_INIT *pmi) {
-	FRAME	*pFrame;		// Pointer to frame
-	IMAGE	*pim;			// Pointer to image
+	FRAME *pFrame; // Pointer to frame
+	IMAGE *pim; // Pointer to image
 
 	// Could be an empty column
 	if (pmi->hMulFrame) {
 		pFrame = (FRAME *)LockMem(FROM_32(pmi->hMulFrame));
 
 		// get pointer to image
-		pim = (IMAGE *)LockMem(READ_32(pFrame));	// handle to image
+		pim = (IMAGE *)LockMem(READ_32(pFrame)); // handle to image
 
 		pim->hImgPal = TO_32(BgPal());
 	}
 }
 
 int32 NoNameFunc(int actorID, bool bNewMover) {
-	PMOVER	pActor;
-	int32	retval;
+	PMOVER pActor;
+	int32 retval;
 
 	pActor = GetMover(actorID);
 
@@ -213,7 +213,7 @@ static uint32 GetZfactor(int actorID, PMOVER pMover, bool bNewMover) {
  * @param speed				Film speed
  */
 static void SoundReel(CORO_PARAM, SCNHANDLE hFilm, int column, int speed,
-					int myescEvent, int actorCol) {
+                      int myescEvent, int actorCol) {
 	FILM *pFilm;
 	FREEL *pReel;
 	ANI_SCRIPT *pAni;
@@ -221,23 +221,23 @@ static void SoundReel(CORO_PARAM, SCNHANDLE hFilm, int column, int speed,
 	short x, y;
 
 	CORO_BEGIN_CONTEXT;
-		int myId;
-		int myNum;
-		int frameNumber;
-		int speed;
-		int sampleNumber;
-		bool bFinished;
-		bool bLooped;
-		int reelActor;
+	int myId;
+	int myNum;
+	int frameNumber;
+	int speed;
+	int sampleNumber;
+	bool bFinished;
+	bool bLooped;
+	int reelActor;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
 	if (actorCol) {
-		PMULTI_INIT pmi;		// MULTI_INIT structure
+		PMULTI_INIT pmi; // MULTI_INIT structure
 
 		pReel = GetReel(hFilm, actorCol - 1);
-		pmi = (PMULTI_INIT) LockMem(FROM_32(pReel->mobj));
+		pmi = (PMULTI_INIT)LockMem(FROM_32(pReel->mobj));
 		_ctx->reelActor = (int32)FROM_32(pmi->mulID);
 	} else
 		_ctx->reelActor = 0;
@@ -257,7 +257,7 @@ static void SoundReel(CORO_PARAM, SCNHANDLE hFilm, int column, int speed,
 		pAni = (ANI_SCRIPT *)LockMem(FROM_32(pReel->script));
 
 		if (_ctx->speed == -1) {
-			_ctx->speed = (ONE_SECOND/FROM_32(pFilm->frate));
+			_ctx->speed = (ONE_SECOND / FROM_32(pFilm->frate));
 
 			// Restored reel
 			for (;;) {
@@ -272,7 +272,7 @@ static void SoundReel(CORO_PARAM, SCNHANDLE hFilm, int column, int speed,
 				// but they really dont happen
 				// OH YES THEY DO
 				else if (FROM_32(pAni[_ctx->frameNumber].op) == ANI_ADJUSTX
-					||	 FROM_32(pAni[_ctx->frameNumber].op) == ANI_ADJUSTY) {
+				         || FROM_32(pAni[_ctx->frameNumber].op) == ANI_ADJUSTY) {
 					_ctx->frameNumber += 2;
 				} else if (FROM_32(pAni[_ctx->frameNumber].op) == ANI_ADJUSTXY) {
 					_ctx->frameNumber += 3;
@@ -346,7 +346,7 @@ static void SoundReel(CORO_PARAM, SCNHANDLE hFilm, int column, int speed,
 				x = -1;
 
 			_vm->_sound->playSample(_ctx->sampleNumber, 0, _ctx->bLooped, x, y, PRIORITY_SCRIPT,
-					Audio::Mixer::kSFXSoundType);
+			                        Audio::Mixer::kSFXSoundType);
 
 			break;
 		}
@@ -387,8 +387,7 @@ static void ResSoundReel(CORO_PARAM, const void *param) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	CORO_INVOKE_ARGS(SoundReel, (CORO_SUBCTX, g_soundReels[i].hFilm, g_soundReels[i].column,
-		-1, 0, g_soundReels[i].actorCol));
+	CORO_INVOKE_ARGS(SoundReel, (CORO_SUBCTX, g_soundReels[i].hFilm, g_soundReels[i].column, -1, 0, g_soundReels[i].actorCol));
 
 	CORO_KILL_SELF();
 	CORO_END_CODE;
@@ -419,29 +418,29 @@ static void SoundReelWaitCheck() {
  */
 static void t1PlayReel(CORO_PARAM, const PPINIT *ppi) {
 	CORO_BEGIN_CONTEXT;
-		OBJECT	*pPlayObj;	// Object
-		ANIM	thisAnim;	// Animation structure
+	OBJECT *pPlayObj; // Object
+	ANIM thisAnim; // Animation structure
 
-		bool	mActor;		// Gets set if this is a moving actor
-		bool	lifeNoMatter;
-		bool	replaced;
+	bool mActor; // Gets set if this is a moving actor
+	bool lifeNoMatter;
+	bool replaced;
 
-		const FREEL *pfreel;	// The 'column' to play
-		int		stepCount;
-		int		frameCount;
-		int		reelActor;
-		PMOVER	pActor;
-		int tmpX, tmpY;
+	const FREEL *pfreel; // The 'column' to play
+	int stepCount;
+	int frameCount;
+	int reelActor;
+	PMOVER pActor;
+	int tmpX, tmpY;
 	CORO_END_CONTEXT(_ctx);
 
 	// FIXME: Avoid non-const global vars
-	static int	firstColZ = 0;	// Z-position of column zero
-	static int32	fColZfactor = 0;	// Z-factor of column zero's actor
+	static int firstColZ = 0; // Z-position of column zero
+	static int32 fColZfactor = 0; // Z-factor of column zero's actor
 
 	CORO_BEGIN_CODE(_ctx);
 
-	const MULTI_INIT *pmi;		// MULTI_INIT structure
-	bool	bNewMover;	// Gets set if a moving actor that isn't in scene yet
+	const MULTI_INIT *pmi; // MULTI_INIT structure
+	bool bNewMover; // Gets set if a moving actor that isn't in scene yet
 
 	const FILM *pfilm;
 
@@ -472,14 +471,14 @@ static void t1PlayReel(CORO_PARAM, const PPINIT *ppi) {
 
 		// It may be the last non-talk film though
 		if (ActorIsTalking(_ctx->reelActor))
-			SetActorPlayFilm(_ctx->reelActor, ppi->hFilm);	// Revert to this film after talk
+			SetActorPlayFilm(_ctx->reelActor, ppi->hFilm); // Revert to this film after talk
 
 		return;
 	}
 	if (ActorIsTalking(_ctx->reelActor)) {
 		// Note: will delete this and there'll be no need to store the talk film!
 		if (ppi->hFilm != GetActorTalkFilm(_ctx->reelActor)) {
-			SetActorPlayFilm(_ctx->reelActor, ppi->hFilm);	// Revert to this film after talk
+			SetActorPlayFilm(_ctx->reelActor, ppi->hFilm); // Revert to this film after talk
 			return;
 		}
 	} else {
@@ -537,7 +536,7 @@ static void t1PlayReel(CORO_PARAM, const PPINIT *ppi) {
 	if (ppi->actorid == 0 && !actorAlive(_ctx->reelActor))
 		_ctx->lifeNoMatter = true;
 
-	InitStepAnimScript(&_ctx->thisAnim, _ctx->pPlayObj,  FROM_32(_ctx->pfreel->script), ppi->speed);
+	InitStepAnimScript(&_ctx->thisAnim, _ctx->pPlayObj, FROM_32(_ctx->pfreel->script), ppi->speed);
 
 	// If first column, set Z position as per
 	// Otherwise, column 0's + column number
@@ -646,7 +645,7 @@ static void t1PlayReel(CORO_PARAM, const PPINIT *ppi) {
 
 	if (_ctx->mActor) {
 		if (!_ctx->replaced)
-			unHideMovingActor(_ctx->reelActor);	// Restore moving actor
+			unHideMovingActor(_ctx->reelActor); // Restore moving actor
 
 		// Update it's co-ordinates if this is an splay()
 		if (ppi->splay)
@@ -675,27 +674,27 @@ static void t1PlayReel(CORO_PARAM, const PPINIT *ppi) {
  * @param column		Column number, first column = 0
  */
 static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHANDLE hFilm,
-		int column, int myescEvent, bool bTop) {
+                       int column, int myescEvent, bool bTop) {
 	CORO_BEGIN_CONTEXT;
-		bool bReplaced;
-		bool bGotHidden;
-		int	stepCount;
-		int	frameCount;
-		bool bEscapedAlready;
-		bool	bPrinciple;	// true if this is the first column in a film for one actor
-		bool	bRelative;	// true if relative specified in script
+	bool bReplaced;
+	bool bGotHidden;
+	int stepCount;
+	int frameCount;
+	bool bEscapedAlready;
+	bool bPrinciple; // true if this is the first column in a film for one actor
+	bool bRelative; // true if relative specified in script
 
-		FREEL		*pFreel;
-		MULTI_INIT	*pmi;	// MULTI_INIT structure
-		POBJECT		pPlayObj;	// Object
-		ANIM		thisAnim;	// Animation structure
+	FREEL *pFreel;
+	MULTI_INIT *pmi; // MULTI_INIT structure
+	POBJECT pPlayObj; // Object
+	ANIM thisAnim; // Animation structure
 
-		int	reelActor;			// Which actor this reel belongs to
-		PMOVER	pMover;			// set if it's a moving actor
-		bool	bNewMover;		// Gets set if a moving actor that isn't in scene yet
+	int reelActor; // Which actor this reel belongs to
+	PMOVER pMover; // set if it's a moving actor
+	bool bNewMover; // Gets set if a moving actor that isn't in scene yet
 
-		int	filmNumber;
-		int	myZ;				// Remember for hide/unhide
+	int filmNumber;
+	int myZ; // Remember for hide/unhide
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -712,8 +711,7 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 	_ctx->pmi = (MULTI_INIT *)LockMem(FROM_32(_ctx->pFreel->mobj));
 
 	if ((int32)FROM_32(_ctx->pmi->mulID) == -2) {
-		CORO_INVOKE_ARGS(SoundReel, (CORO_SUBCTX, hFilm, column, speed, myescEvent,
-			FROM_32(_ctx->pmi->otherFlags) & OTH_RELATEDACTOR));
+		CORO_INVOKE_ARGS(SoundReel, (CORO_SUBCTX, hFilm, column, speed, myescEvent, FROM_32(_ctx->pmi->otherFlags) & OTH_RELATEDACTOR));
 		return;
 	}
 
@@ -728,14 +726,14 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 
 		// It may be the last non-talk film though
 		if (ActorIsTalking(_ctx->reelActor))
-			SetActorPlayFilm(_ctx->reelActor, hFilm);	// Revert to this film after talk
+			SetActorPlayFilm(_ctx->reelActor, hFilm); // Revert to this film after talk
 
 		return;
 	}
 	if (ActorIsTalking(_ctx->reelActor)) {
 		// Note: will delete this and there'll be no need to store the talk film!
 		if (hFilm != GetActorTalkFilm(_ctx->reelActor)) {
-			SetActorPlayFilm(_ctx->reelActor, hFilm);	// Revert to this film after talk
+			SetActorPlayFilm(_ctx->reelActor, hFilm); // Revert to this film after talk
 			return;
 		}
 	} else {
@@ -796,8 +794,8 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 	/*
 	 * Sort out x and y
 	 */
-	assert( ((FROM_32(_ctx->pmi->otherFlags) & OTH_RELATIVE) && !(FROM_32(_ctx->pmi->otherFlags) & OTH_ABSOLUTE))
-		|| ((FROM_32(_ctx->pmi->otherFlags) & OTH_ABSOLUTE) && !(FROM_32(_ctx->pmi->otherFlags) & OTH_RELATIVE)) );
+	assert(((FROM_32(_ctx->pmi->otherFlags) & OTH_RELATIVE) && !(FROM_32(_ctx->pmi->otherFlags) & OTH_ABSOLUTE))
+	       || ((FROM_32(_ctx->pmi->otherFlags) & OTH_ABSOLUTE) && !(FROM_32(_ctx->pmi->otherFlags) & OTH_RELATIVE)));
 
 	_ctx->bRelative = FROM_32(_ctx->pmi->otherFlags) & OTH_RELATIVE;
 
@@ -808,7 +806,7 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 		else
 			StoreActorPos(_ctx->reelActor, x, y);
 	} else if (x == -1 && y == -1)
-		x = y = 0;		// Use (0,0) if no specified
+		x = y = 0; // Use (0,0) if no specified
 
 	// Add embedded co-ords
 	MultiSetAniXY(_ctx->pPlayObj, x + FROM_32(_ctx->pmi->mulX), y + FROM_32(_ctx->pmi->mulY));
@@ -822,8 +820,8 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 		SoundReelWaitCheck();
 	} else {
 		// FIXME: Avoid non-const global vars
-		static int baseZposn;		// Z-position of column zero
-		static uint32 baseZfact;	// Z-factor of column zero's actor
+		static int baseZposn; // Z-position of column zero
+		static uint32 baseZfact; // Z-factor of column zero's actor
 
 		// N.B. It HAS been ensured that the first column gets here first
 
@@ -835,7 +833,7 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 			if (bTop)
 				baseZposn += Z_TOPPLAY;
 		} else if (column == 0
-				|| GetZfactor(_ctx->reelActor, _ctx->pMover, _ctx->bNewMover) > baseZfact) {
+		           || GetZfactor(_ctx->reelActor, _ctx->pMover, _ctx->bNewMover) > baseZfact) {
 			// Subsequent columns are based on this one
 
 			baseZfact = GetZfactor(_ctx->reelActor, _ctx->pMover, _ctx->bNewMover);
@@ -855,8 +853,7 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 	 */
 	InitStepAnimScript(&_ctx->thisAnim, _ctx->pPlayObj, FROM_32(_ctx->pFreel->script), speed);
 
-	if (bRestore || (ActorEsc(_ctx->reelActor) == true &&
-				ActorEev(_ctx->reelActor) != GetEscEvents())) {
+	if (bRestore || (ActorEsc(_ctx->reelActor) == true && ActorEev(_ctx->reelActor) != GetEscEvents())) {
 		// From restore, step to jump or end
 		SkipFrames(&_ctx->thisAnim, -1);
 	}
@@ -905,10 +902,10 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 				_ctx->bEscapedAlready = true;
 			}
 
-//WHY???		UpdateActorEsc(reelActor, GetEscEvents());
-// The above line of code, not commented out would fix the coffee pot flash
-// but why was it commented out?
-// The extra boolean is used instead, 'cos it's release week and I want to play it safe!
+			//WHY???		UpdateActorEsc(reelActor, GetEscEvents());
+			// The above line of code, not commented out would fix the coffee pot flash
+			// but why was it commented out?
+			// The extra boolean is used instead, 'cos it's release week and I want to play it safe!
 		}
 	}
 
@@ -939,8 +936,7 @@ static void PlayProcess(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CODE(_ctx);
 
 	if (TinselV2)
-		CORO_INVOKE_ARGS(t2PlayReel, (CORO_SUBCTX, ppi->x, ppi->y, ppi->bRestore, ppi->speed,
-			ppi->hFilm, ppi->column, ppi->myescEvent, ppi->bTop));
+		CORO_INVOKE_ARGS(t2PlayReel, (CORO_SUBCTX, ppi->x, ppi->y, ppi->bRestore, ppi->speed, ppi->hFilm, ppi->column, ppi->myescEvent, ppi->bTop));
 	else
 		CORO_INVOKE_1(t1PlayReel, ppi);
 
@@ -949,10 +945,9 @@ static void PlayProcess(CORO_PARAM, const void *param) {
 
 // *******************************************************
 
-
 // To handle the play()-talk(), talk()-play(), talk()-talk() and play()-play() scenarios
 void NewestFilm(SCNHANDLE film, const FREEL *reel) {
-	const MULTI_INIT *pmi;		// MULTI_INIT structure
+	const MULTI_INIT *pmi; // MULTI_INIT structure
 
 	// Get the MULTI_INIT structure
 	pmi = (const MULTI_INIT *)LockMem(FROM_32(reel->mobj));
@@ -970,7 +965,7 @@ void NewestFilm(SCNHANDLE film, const FREEL *reel) {
  *   column's process kicks in first.
  */
 void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay, bool sfact, bool escOn,
-			  int myescEvent, bool bTop) {
+              int myescEvent, bool bTop) {
 	assert(hFilm != 0); // Trying to play NULL film
 	const FILM *pFilm;
 
@@ -984,7 +979,7 @@ void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay
 
 	// Now allowed empty films!
 	if (pFilm->numreels == 0)
-		return;                 // Nothing to do!
+		return; // Nothing to do!
 
 	ppi.hFilm = hFilm;
 	ppi.x = x;
@@ -1029,11 +1024,11 @@ void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int myescEvent, bool bT
  * Play the first column directly from the parent process.
  */
 void PlayFilmc(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay, bool sfact,
-			   bool escOn, int myescEvent, bool bTop) {
+               bool escOn, int myescEvent, bool bTop) {
 	CORO_BEGIN_CONTEXT;
-		PPINIT ppi;
-		int i;
-		int loopCount;
+	PPINIT ppi;
+	int i;
+	int loopCount;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -1045,7 +1040,7 @@ void PlayFilmc(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool spla
 
 	// Now allowed empty films!
 	if (pFilm->numreels == 0)
-		return;                 //  Already played to completion!
+		return; //  Already played to completion!
 
 	_ctx->ppi.hFilm = hFilm;
 	_ctx->ppi.x = x;
@@ -1144,20 +1139,20 @@ void RestoreActorReels(SCNHANDLE hFilm, int actor, int x, int y) {
 
 	int i;
 	FREEL *pFreel;
-	PMULTI_INIT	pmi;		// MULTI_INIT structure
+	PMULTI_INIT pmi; // MULTI_INIT structure
 
 	ppi.hFilm = hFilm;
 	ppi.x = (short)x;
 	ppi.y = (short)y;
 	ppi.bRestore = true;
-	ppi.speed = (short)(ONE_SECOND/FROM_32(pFilm->frate));
+	ppi.speed = (short)(ONE_SECOND / FROM_32(pFilm->frate));
 	ppi.bTop = false;
 	ppi.myescEvent = 0;
 
 	// Search backwards for now as later column will be the one
 	for (i = (int)FROM_32(pFilm->numreels) - 1; i >= 0; i--) {
 		pFreel = &pFilm->reels[i];
-		pmi = (PMULTI_INIT) LockMem(FROM_32(pFreel->mobj));
+		pmi = (PMULTI_INIT)LockMem(FROM_32(pFreel->mobj));
 		if ((int32)FROM_32(pmi->mulID) == actor) {
 			ppi.column = (short)i;
 			NewestFilm(hFilm, &pFilm->reels[i]);

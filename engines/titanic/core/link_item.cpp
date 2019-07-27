@@ -34,9 +34,7 @@ Movement CLinkItem::getMovementFromCursor(CursorId cursorId) {
 		return TURN_LEFT;
 	else if (cursorId == CURSOR_MOVE_RIGHT)
 		return TURN_RIGHT;
-	else if (cursorId == CURSOR_MOVE_FORWARD || cursorId == CURSOR_MOVE_THROUGH ||
-			cursorId == CURSOR_DOWN || cursorId == CURSOR_LOOK_UP ||
-			cursorId == CURSOR_LOOK_DOWN || cursorId == CURSOR_MAGNIFIER)
+	else if (cursorId == CURSOR_MOVE_FORWARD || cursorId == CURSOR_MOVE_THROUGH || cursorId == CURSOR_DOWN || cursorId == CURSOR_LOOK_UP || cursorId == CURSOR_LOOK_DOWN || cursorId == CURSOR_MAGNIFIER)
 		return MOVE_FORWARDS;
 	else if (cursorId == CURSOR_BACKWARDS)
 		return MOVE_BACKWARDS;
@@ -44,7 +42,8 @@ Movement CLinkItem::getMovementFromCursor(CursorId cursorId) {
 		return MOVE_NONE;
 }
 
-CLinkItem::CLinkItem() : CNamedItem() {
+CLinkItem::CLinkItem()
+  : CNamedItem() {
 	_roomNumber = -1;
 	_nodeNumber = -1;
 	_viewNumber = -1;
@@ -65,21 +64,21 @@ CString CLinkItem::formName() {
 	switch (_linkMode) {
 	case 1:
 		return CString::format("_PANL,%d,%s,%s", node->_nodeNumber,
-			view->getName().c_str(), destView->getName().c_str());
+		                       view->getName().c_str(), destView->getName().c_str());
 
 	case 2:
 		return CString::format("_PANR,%d,%s,%s", node->_nodeNumber,
-			view->getName().c_str(), destView->getName().c_str());
+		                       view->getName().c_str(), destView->getName().c_str());
 
 	case 3:
 		return CString::format("_TRACK,%d,%s,%d,%s",
-			node->_nodeNumber, view->getName().c_str(),
-			destNode->_nodeNumber, destView->getName().c_str());
+		                       node->_nodeNumber, view->getName().c_str(),
+		                       destNode->_nodeNumber, destView->getName().c_str());
 
 	case 4:
 		return CString::format("_EXIT,%d,%d,%s,%d,%d,%s",
-			room->_roomNumber, node->_nodeNumber, view->getName().c_str(),
-			destRoom->_roomNumber, destNode->_nodeNumber, destView->getName().c_str());
+		                       room->_roomNumber, node->_nodeNumber, view->getName().c_str(),
+		                       destRoom->_roomNumber, destNode->_nodeNumber, destView->getName().c_str());
 
 	default:
 		return getName().c_str();
@@ -157,13 +156,11 @@ bool CLinkItem::connectsTo(CViewItem *destView) const {
 	CNodeItem *destNode = destView->findNode();
 	CRoomItem *destRoom = destNode->findRoom();
 
-	return _viewNumber == destView->_viewNumber &&
-		_nodeNumber == destNode->_nodeNumber &&
-		_roomNumber == destRoom->_roomNumber;
+	return _viewNumber == destView->_viewNumber && _nodeNumber == destNode->_nodeNumber && _roomNumber == destRoom->_roomNumber;
 }
 
 void CLinkItem::setDestination(int roomNumber, int nodeNumber,
-		int viewNumber, int linkMode) {
+                               int viewNumber, int linkMode) {
 	_roomNumber = roomNumber;
 	_nodeNumber = nodeNumber;
 	_viewNumber = viewNumber;

@@ -24,8 +24,8 @@
 #define ENGINES_SAVESTATE_H
 
 #include "common/array.h"
-#include "common/str.h"
 #include "common/ptr.h"
+#include "common/str.h"
 
 namespace Graphics {
 struct Surface;

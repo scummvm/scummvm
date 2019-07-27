@@ -28,10 +28,10 @@
 namespace Tinsel {
 
 static const double TinselFilterTable[4][2] = {
-	{0, 0 },
-	{0.9375, 0},
-	{1.796875, -0.8125},
-	{1.53125, -0.859375}
+	{ 0, 0 },
+	{ 0.9375, 0 },
+	{ 1.796875, -0.8125 },
+	{ 1.53125, -0.859375 }
 };
 
 void Tinsel_ADPCMStream::readBufferTinselHeader() {
@@ -51,7 +51,7 @@ void Tinsel_ADPCMStream::readBufferTinselHeader() {
 		// Truncate
 		start &= 0x1F;
 
-		_status.predictor = ((double) 1.0) / ((unsigned long long int)1 << start);
+		_status.predictor = ((double)1.0) / ((unsigned long long int)1 << start);
 	}
 
 	_status.K0 = TinselFilterTable[filterVal][0];
@@ -68,7 +68,7 @@ int16 Tinsel_ADPCMStream::decodeTinsel(int16 code, double eVal) {
 	_status.d1 = _status.d0;
 	_status.d0 = sample;
 
-	return (int16) CLIP<double>(sample, -32768.0, 32767.0);
+	return (int16)CLIP<double>(sample, -32768.0, 32767.0);
 }
 
 int Tinsel4_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
@@ -90,7 +90,7 @@ int Tinsel4_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 			// Read 1 byte = 8 bits = two 4 bit blocks
 			data = _stream->readByte();
 			buffer[samples] = decodeTinsel((data << 8) & 0xF000, eVal);
-			buffer[samples+1] = decodeTinsel((data << 12) & 0xF000, eVal);
+			buffer[samples + 1] = decodeTinsel((data << 12) & 0xF000, eVal);
 		}
 	}
 
@@ -133,9 +133,7 @@ int Tinsel6_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 				_blockPos[0]++;
 				break;
 			}
-
 		}
-
 	}
 
 	return samples;
@@ -163,6 +161,5 @@ int Tinsel8_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 
 	return samples;
 }
-
 
 } // End of namespace Tinsel

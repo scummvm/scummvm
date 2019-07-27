@@ -22,12 +22,12 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objects.h"
-#include "fullpipe/ngiarchive.h"
-#include "fullpipe/statics.h"
-#include "fullpipe/messages.h"
 #include "fullpipe/interaction.h"
+#include "fullpipe/messages.h"
 #include "fullpipe/motion.h"
+#include "fullpipe/ngiarchive.h"
+#include "fullpipe/objects.h"
+#include "fullpipe/statics.h"
 
 #include "fullpipe/constants.h"
 #include "fullpipe/objectnames.h"
@@ -51,7 +51,7 @@ Common::Point StepArray::getCurrPoint() const {
 	}
 
 	return Common::Point(_points[_currPointIndex].x,
-						 _points[_currPointIndex].y);
+	                     _points[_currPointIndex].y);
 }
 
 Common::Point StepArray::getPoint(int index, int offset) const {
@@ -117,7 +117,8 @@ StaticANIObject::~StaticANIObject() {
 	g_fp->_aniHandler->detachAllObjects();
 }
 
-StaticANIObject::StaticANIObject(StaticANIObject *src) : GameObject(src) {
+StaticANIObject::StaticANIObject(StaticANIObject *src)
+  : GameObject(src) {
 	_shadowsOn = src->_shadowsOn;
 	_field_30 = src->_field_30;
 	_field_34 = 1;
@@ -556,7 +557,7 @@ void StaticANIObject::draw() {
 	debugC(6, kDebugDrawing, "StaticANIObject::draw() (%s) [%d] [%d, %d]", transCyrillic(_objectName), _id, _ox, _oy);
 
 	if (_shadowsOn && g_fp->_currentScene && g_fp->_currentScene->_shadows
-		&& (getCurrDimensions().x != 1 || getCurrDimensions().y != 1)) {
+	    && (getCurrDimensions().x != 1 || getCurrDimensions().y != 1)) {
 
 		DynamicPhase *dyn;
 
@@ -578,7 +579,7 @@ void StaticANIObject::draw() {
 				const Dims dims = shd->getDimensions();
 				int midx = _ox - dims.x / 2 - dyn->_someX;
 				int midy = _oy - dims.y / 2 - dyn->_someY + rect.bottom - 3;
-				int shdw =  dims.y;
+				int shdw = dims.y;
 
 				int px;
 				if (!_movement || (_flags & 0x20))
@@ -665,7 +666,6 @@ void StaticANIObject::setSpeed(int speed) {
 			}
 		}
 	}
-
 }
 
 void StaticANIObject::setAlpha(int alpha) {
@@ -817,7 +817,7 @@ void StaticANIObject::update(int counterdiff) {
 			const Common::Point point = _movement->getCurrDynamicPhaseXY();
 			const Common::Point pointS = _statics->getSomeXY();
 			_movement->setOXY(_ox + point.x + _movement->_mx - pointS.x,
-							  _oy + point.y + _movement->_my - pointS.y);
+			                  _oy + point.y + _movement->_my - pointS.y);
 		}
 	} else {
 		if (_statics) {
@@ -909,7 +909,7 @@ void StaticANIObject::stopAnim_maybe() {
 			if (!_movement->_currMovement) {
 				if (_movement->_currDynamicPhaseIndex)
 					goto L11;
-L8:
+			L8:
 				_statics = _movement->_staticsObj1;
 				point = _movement->getCurrDynamicPhaseXY();
 				_ox -= point.x;
@@ -932,9 +932,9 @@ L8:
 			if (!_movement->_currDynamicPhaseIndex)
 				goto L8;
 		}
-L11:
+	L11:
 		_statics = _movement->_staticsObj2;
-L12:
+	L12:
 		point = _statics->getSomeXY();
 
 		_statics->_x = _ox - point.x;
@@ -1149,7 +1149,6 @@ void StaticANIObject::startAnimSteps(int movementId, int messageQueueId, int x, 
 		return;
 	}
 
-
 	if (_movement || !_statics)
 		return;
 
@@ -1354,7 +1353,8 @@ Statics::Statics() {
 	_data = nullptr;
 }
 
-Statics::Statics(Statics *src, bool reverse) : DynamicPhase(src, reverse) {
+Statics::Statics(Statics *src, bool reverse)
+  : DynamicPhase(src, reverse) {
 	_staticsId = src->_staticsId;
 
 	if (reverse) {
@@ -1376,7 +1376,7 @@ bool Statics::load(MfcArchive &file) {
 
 	_staticsName = file.readPascalString();
 	debugC(6, kDebugXML, "%% <STATICS id=\"%s\" name=\"%s\" %s />",
-		g_fp->gameIdToStr(_staticsId).c_str(), transCyrillic(_staticsName), DynamicPhase::toXML().c_str());
+	       g_fp->gameIdToStr(_staticsId).c_str(), transCyrillic(_staticsName), DynamicPhase::toXML().c_str());
 
 	_picture.load(file);
 
@@ -1404,7 +1404,7 @@ Common::Point Statics::getCenter() const {
 	}
 
 	return Common::Point(rect.left + _rect.width() / 2,
-						 rect.top + _rect.height() / 2);
+	                     rect.top + _rect.height() / 2);
 }
 
 Movement::Movement() {
@@ -1481,7 +1481,8 @@ Movement::Movement(Movement *src, StaticANIObject *ani) {
 	updateCurrDynamicPhase();
 }
 
-Movement::Movement(Movement *src, int *oldIdxs, int newSize, StaticANIObject *ani) : GameObject(src) {
+Movement::Movement(Movement *src, int *oldIdxs, int newSize, StaticANIObject *ani)
+  : GameObject(src) {
 	_lastFrameSpecialFlag = 0;
 	_updateFlag1 = 1;
 	_staticsObj1 = 0;
@@ -1623,7 +1624,7 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 		}
 
 		debugC(6, kDebugXML, "%% <MOVEMENT %s staticsId=\"%s\" mX=%d my=%d staticsId2=\"%s\" m2x=%d m2y=%d>",
-			GameObject::toXML().c_str(), g_fp->gameIdToStr(staticsid).c_str(), _mx, _my, g_fp->gameIdToStr(staticsid2).c_str(), _m2x, _m2y);
+		       GameObject::toXML().c_str(), g_fp->gameIdToStr(staticsid).c_str(), _mx, _my, g_fp->gameIdToStr(staticsid2).c_str(), _m2x, _m2y);
 
 		for (int i = 0; i < dynCount; i++)
 			debugC(6, kDebugXML, "%% <PHASE %s />", _dynamicPhases[i]->toXML().c_str());
@@ -1878,11 +1879,11 @@ bool Movement::gotoNextFrame(void (*callback1)(int, Common::Point *point, int, i
 	if (!callback2) {
 		if (_currMovement) {
 			if ((uint)_currDynamicPhaseIndex == _currMovement->_dynamicPhases.size() - 1
-				&& !(_currMovement->_dynamicPhases.back()->_countdown)) {
+			    && !(_currMovement->_dynamicPhases.back()->_countdown)) {
 				return false;
 			}
 		} else if ((uint)_currDynamicPhaseIndex == _dynamicPhases.size() - 1
-					&& !(_dynamicPhases.back()->_countdown)) {
+		           && !(_dynamicPhases.back()->_countdown)) {
 			return false;
 		}
 	}
@@ -2038,7 +2039,7 @@ bool Movement::gotoPrevFrame() {
 
 void Movement::gotoFirstFrame() {
 	while (_currDynamicPhaseIndex)
-			gotoPrevFrame();
+		gotoPrevFrame();
 }
 
 void Movement::gotoLastFrame() {
@@ -2066,7 +2067,7 @@ Common::Point Movement::getCenter() const {
 	}
 
 	return Common::Point(rect.left + _currDynamicPhase->_rect.width() / 2,
-						 rect.top + _currDynamicPhase->_rect.height() / 2);
+	                     rect.top + _currDynamicPhase->_rect.height() / 2);
 }
 
 DynamicPhase::DynamicPhase() {
@@ -2141,8 +2142,8 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 
 Common::String DynamicPhase::toXML() {
 	return Common::String::format("f7c=%d left=%d top=%d right=%d bottom=%d sX=%d sY=%d dynFlags=%d %s",
-			_field_7C, _rect.left, _rect.top, _rect.right, _rect.bottom, _someX, _someY, _dynFlags,
-			StaticPhase::toXML().c_str());
+	                              _field_7C, _rect.left, _rect.top, _rect.right, _rect.bottom, _someX, _someY, _dynFlags,
+	                              StaticPhase::toXML().c_str());
 }
 
 bool DynamicPhase::load(MfcArchive &file) {

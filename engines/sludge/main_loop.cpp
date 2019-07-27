@@ -36,11 +36,11 @@
 #include "sludge/objtypes.h"
 #include "sludge/people.h"
 #include "sludge/region.h"
-#include "sludge/statusba.h"
-#include "sludge/sound.h"
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
+#include "sludge/sound.h"
 #include "sludge/speech.h"
+#include "sludge/statusba.h"
 #include "sludge/timing.h"
 
 namespace Sludge {
@@ -85,4 +85,4 @@ int main_loop(Common::String filename) {
 }
 
 }
- // End of namespace Sludge
+// End of namespace Sludge

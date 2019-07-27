@@ -35,7 +35,8 @@ protected:
 	byte _encbyte;
 
 public:
-	BaseScummFile() : _encbyte(0) {}
+	BaseScummFile()
+	  : _encbyte(0) {}
 	void setEnc(byte value) { _encbyte = value; }
 
 	virtual bool open(const Common::String &filename) = 0;
@@ -54,9 +55,9 @@ public:
 
 class ScummFile : public BaseScummFile {
 protected:
-	int32	_subFileStart;
-	int32	_subFileLen;
-	bool	_myEos; // Have we read past the end of the subfile?
+	int32 _subFileStart;
+	int32 _subFileLen;
+	bool _myEos; // Have we read past the end of the subfile?
 
 	void setSubfileRange(int32 start, int32 len);
 	void resetSubfile();
@@ -67,7 +68,10 @@ public:
 	virtual bool open(const Common::String &filename);
 	bool openSubFile(const Common::String &filename);
 
-	void clearErr() { _myEos = false; BaseScummFile::clearErr(); }
+	void clearErr() {
+		_myEos = false;
+		BaseScummFile::clearErr();
+	}
 
 	bool eos() const;
 	int32 pos() const;
@@ -137,8 +141,11 @@ private:
 	const SteamIndexFile &_indexFile;
 
 	bool openWithSubRange(const Common::String &filename, int32 subFileStart, int32 subFileLen);
+
 public:
-	ScummSteamFile(const SteamIndexFile &indexFile) : ScummFile(), _indexFile(indexFile) {}
+	ScummSteamFile(const SteamIndexFile &indexFile)
+	  : ScummFile()
+	  , _indexFile(indexFile) {}
 
 	bool open(const Common::String &filename);
 };

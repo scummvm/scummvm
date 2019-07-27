@@ -26,17 +26,17 @@
 
 #include "backends/platform/wince/wince-sdl.h"
 
-static void (WINAPI *_SHIdleTimerReset)(void) = NULL;
+static void(WINAPI *_SHIdleTimerReset)(void) = NULL;
 static HANDLE(WINAPI *_SetPowerRequirement)(PVOID, int, ULONG, PVOID, ULONG) = NULL;
-static DWORD (WINAPI *_ReleasePowerRequirement)(HANDLE) = NULL;
+static DWORD(WINAPI *_ReleasePowerRequirement)(HANDLE) = NULL;
 static HANDLE _hPowerManagement = NULL;
 static DWORD _lastTime = 0;
 static DWORD REG_bat = 0, REG_ac = 0, REG_disp = 0, bat_timeout = 0;
 static bool REG_tampered = false;
 #ifdef __GNUC__
 extern "C" void WINAPI SystemIdleTimerReset(void);
-#define SPI_SETBATTERYIDLETIMEOUT   251
-#define SPI_GETBATTERYIDLETIMEOUT   252
+#	define SPI_SETBATTERYIDLETIMEOUT 251
+#	define SPI_GETBATTERYIDLETIMEOUT 252
 #endif
 
 #define TIMER_TRIGGER 9000
@@ -49,13 +49,13 @@ DWORD CEDevice::reg_access(const TCHAR *key, const TCHAR *val, DWORD data) {
 		return data;
 
 	cbdata = sizeof(DWORD);
-	if (RegQueryValueEx(regkey, val, NULL, NULL, (LPBYTE) &tmpval, &cbdata) != ERROR_SUCCESS) {
+	if (RegQueryValueEx(regkey, val, NULL, NULL, (LPBYTE)&tmpval, &cbdata) != ERROR_SUCCESS) {
 		RegCloseKey(regkey);
 		return data;
 	}
 
 	cbdata = sizeof(DWORD);
-	if (RegSetValueEx(regkey, val, 0, REG_DWORD, (LPBYTE) &data, cbdata) != ERROR_SUCCESS) {
+	if (RegSetValueEx(regkey, val, 0, REG_DWORD, (LPBYTE)&data, cbdata) != ERROR_SUCCESS) {
 		RegCloseKey(regkey);
 		return data;
 	}
@@ -86,18 +86,18 @@ void CEDevice::init() {
 	}
 	dll = LoadLibrary(TEXT("coredll.dll"));
 	if (dll) {
-		_SetPowerRequirement = (HANDLE (*)(PVOID, int, ULONG, PVOID, ULONG))GetProcAddress(dll, TEXT("SetPowerRequirement"));
-		_ReleasePowerRequirement = (DWORD (*)(HANDLE))GetProcAddress(dll, TEXT("ReleasePowerRequirement"));
+		_SetPowerRequirement = (HANDLE(*)(PVOID, int, ULONG, PVOID, ULONG))GetProcAddress(dll, TEXT("SetPowerRequirement"));
+		_ReleasePowerRequirement = (DWORD(*)(HANDLE))GetProcAddress(dll, TEXT("ReleasePowerRequirement"));
 	}
 	if (_SetPowerRequirement)
-		_hPowerManagement = _SetPowerRequirement((PVOID) TEXT("BKL1:"), 0, 1, (PVOID) NULL, 0);
+		_hPowerManagement = _SetPowerRequirement((PVOID)TEXT("BKL1:"), 0, 1, (PVOID)NULL, 0);
 	_lastTime = GetTickCount();
 
 	// older devices
-	REG_bat = REG_ac = REG_disp = 2 * 60 * 60 * 1000;   // 2hrs should do it
+	REG_bat = REG_ac = REG_disp = 2 * 60 * 60 * 1000; // 2hrs should do it
 	backlight_xchg();
 	REG_tampered = true;
-	SystemParametersInfo(SPI_GETBATTERYIDLETIMEOUT, 0, (void *) &bat_timeout, 0);
+	SystemParametersInfo(SPI_GETBATTERYIDLETIMEOUT, 0, (void *)&bat_timeout, 0);
 	SystemParametersInfo(SPI_SETBATTERYIDLETIMEOUT, 60 * 60 * 2, NULL, SPIF_SENDCHANGE);
 }
 

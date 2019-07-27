@@ -27,14 +27,19 @@
 
 #include "common/debug.h"
 #include "common/endian.h"
+#include "common/ptr.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
-#include "common/ptr.h"
 #include "graphics/surface.h"
 
 namespace TeenAgent {
 
-Font::Font() : _gridColor(0xd0), _shadowColor(0), _height(0), _widthPack(0), _data(0) {
+Font::Font()
+  : _gridColor(0xd0)
+  , _shadowColor(0)
+  , _height(0)
+  , _widthPack(0)
+  , _data(0) {
 }
 
 Font::~Font() {
@@ -106,7 +111,8 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c, byte color) 
 }
 
 static uint findInStr(const Common::String &str, char c, uint pos = 0) {
-	while (pos < str.size() && str[pos] != c) ++pos;
+	while (pos < str.size() && str[pos] != c)
+		++pos;
 	return pos;
 }
 

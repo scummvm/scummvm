@@ -19,7 +19,6 @@
 
 #include "internals.h"
 
-#include "Synth.h"
 #include "Analog.h"
 #include "BReverbModel.h"
 #include "File.h"
@@ -30,10 +29,11 @@
 #include "PartialManager.h"
 #include "Poly.h"
 #include "ROMInfo.h"
+#include "Synth.h"
 #include "TVA.h"
 
 #if MT32EMU_MONITOR_SYSEX > 0
-#include "mmath.h"
+#	include "mmath.h"
 #endif
 
 namespace MT32Emu {
@@ -71,10 +71,10 @@ static const ControlROMMap ControlROMMaps[8] = {
 	{ "ctrl_mt32_1_05", OLD_MT32_COMPATIBLE, 0x3000, 128, 0x8000, 0x0000, false, 0xC000, 0x4000, false, 0x3200, 30, 0x7414, 85, 0x57C7, 0x57E2, 0x57D0, 0x5252, 0x525E, 0x526E, 0x520A, 0x70CA, 19 },
 	{ "ctrl_mt32_1_06", OLD_MT32_COMPATIBLE, 0x3000, 128, 0x8000, 0x0000, false, 0xC000, 0x4000, false, 0x3200, 30, 0x7414, 85, 0x57D9, 0x57F4, 0x57E2, 0x5264, 0x5270, 0x5280, 0x521C, 0x70CA, 19 },
 	{ "ctrl_mt32_1_07", OLD_MT32_COMPATIBLE, 0x3000, 128, 0x8000, 0x0000, false, 0xC000, 0x4000, false, 0x3200, 30, 0x73fe, 85, 0x57B1, 0x57CC, 0x57BA, 0x523C, 0x5248, 0x5258, 0x51F4, 0x70B0, 19 }, // MT-32 revision 1
-	{"ctrl_mt32_bluer", OLD_MT32_COMPATIBLE, 0x3000, 128, 0x8000, 0x0000, false, 0xC000, 0x4000, false, 0x3200, 30, 0x741C, 85, 0x57E5, 0x5800, 0x57EE, 0x5270, 0x527C, 0x528C, 0x5228, 0x70CE, 19 }, // MT-32 Blue Ridge mod
-	{"ctrl_mt32_2_04",   CM32L_COMPATIBLE,   0x8100, 128, 0x8000, 0x8000, true,  0x8080, 0x8000, true,  0x8500, 30, 0x8580, 85, 0x4F5D, 0x4F78, 0x4F66, 0x4899, 0x489D, 0x48B6, 0x48CD, 0x5A58, 19 },
-	{"ctrl_cm32l_1_00",  CM32L_COMPATIBLE,   0x8100, 256, 0x8000, 0x8000, true,  0x8080, 0x8000, true,  0x8500, 64, 0x8580, 85, 0x4F65, 0x4F80, 0x4F6E, 0x48A1, 0x48A5, 0x48BE, 0x48D5, 0x5A6C, 19 },
-	{"ctrl_cm32l_1_02",  CM32L_COMPATIBLE,   0x8100, 256, 0x8000, 0x8000, true,  0x8080, 0x8000, true,  0x8500, 64, 0x8580, 85, 0x4F93, 0x4FAE, 0x4F9C, 0x48CB, 0x48CF, 0x48E8, 0x48FF, 0x5A96, 19 }  // CM-32L
+	{ "ctrl_mt32_bluer", OLD_MT32_COMPATIBLE, 0x3000, 128, 0x8000, 0x0000, false, 0xC000, 0x4000, false, 0x3200, 30, 0x741C, 85, 0x57E5, 0x5800, 0x57EE, 0x5270, 0x527C, 0x528C, 0x5228, 0x70CE, 19 }, // MT-32 Blue Ridge mod
+	{ "ctrl_mt32_2_04", CM32L_COMPATIBLE, 0x8100, 128, 0x8000, 0x8000, true, 0x8080, 0x8000, true, 0x8500, 30, 0x8580, 85, 0x4F5D, 0x4F78, 0x4F66, 0x4899, 0x489D, 0x48B6, 0x48CD, 0x5A58, 19 },
+	{ "ctrl_cm32l_1_00", CM32L_COMPATIBLE, 0x8100, 256, 0x8000, 0x8000, true, 0x8080, 0x8000, true, 0x8500, 64, 0x8580, 85, 0x4F65, 0x4F80, 0x4F6E, 0x48A1, 0x48A5, 0x48BE, 0x48D5, 0x5A6C, 19 },
+	{ "ctrl_cm32l_1_02", CM32L_COMPATIBLE, 0x8100, 256, 0x8000, 0x8000, true, 0x8080, 0x8000, true, 0x8500, 64, 0x8580, 85, 0x4F93, 0x4FAE, 0x4F9C, 0x48CB, 0x48CF, 0x48E8, 0x48FF, 0x5A96, 19 } // CM-32L
 	// (Note that old MT-32 ROMs actually have 86 entries for rhythmTemp)
 };
 
@@ -90,7 +90,8 @@ static inline PartialState getPartialState(PartialManager *partialManager, unsig
 
 template <class I, class O>
 static inline void convertSampleFormat(const I *inBuffer, O *outBuffer, const Bit32u len) {
-	if (inBuffer == NULL || outBuffer == NULL) return;
+	if (inBuffer == NULL || outBuffer == NULL)
+		return;
 
 	const I *inBufferEnd = inBuffer + len;
 	while (inBuffer < inBufferEnd) {
@@ -139,7 +140,8 @@ protected:
 	}
 
 public:
-	Renderer(Synth &useSynth) : synth(useSynth) {}
+	Renderer(Synth &useSynth)
+	  : synth(useSynth) {}
 
 	virtual ~Renderer() {}
 
@@ -168,10 +170,9 @@ class RendererImpl : public Renderer {
 	}
 
 public:
-	RendererImpl(Synth &useSynth) :
-		Renderer(useSynth),
-		tmpBuffers(createTmpBuffers())
-	{}
+	RendererImpl(Synth &useSynth)
+	  : Renderer(useSynth)
+	  , tmpBuffers(createTmpBuffers()) {}
 
 	void render(IntSample *stereoStream, Bit32u len);
 	void render(FloatSample *stereoStream, Bit32u len);
@@ -221,16 +222,15 @@ Bit8u Synth::calcSysexChecksum(const Bit8u *data, const Bit32u len, const Bit8u 
 }
 
 Bit32u Synth::getStereoOutputSampleRate(AnalogOutputMode analogOutputMode) {
-	static const unsigned int SAMPLE_RATES[] = {SAMPLE_RATE, SAMPLE_RATE, SAMPLE_RATE * 3 / 2, SAMPLE_RATE * 3};
+	static const unsigned int SAMPLE_RATES[] = { SAMPLE_RATE, SAMPLE_RATE, SAMPLE_RATE * 3 / 2, SAMPLE_RATE * 3 };
 
 	return SAMPLE_RATES[analogOutputMode];
 }
 
-Synth::Synth(ReportHandler *useReportHandler) :
-	mt32ram(*new MemParams),
-	mt32default(*new MemParams),
-	extensions(*new Extensions)
-{
+Synth::Synth(ReportHandler *useReportHandler)
+  : mt32ram(*new MemParams)
+  , mt32default(*new MemParams)
+  , extensions(*new Extensions) {
 	opened = false;
 	reverbOverridden = false;
 	partialCount = DEFAULT_MAX_PARTIALS;
@@ -331,8 +331,10 @@ void Synth::printDebug(const char *fmt, ...) {
 }
 
 void Synth::setReverbEnabled(bool newReverbEnabled) {
-	if (!opened) return;
-	if (isReverbEnabled() == newReverbEnabled) return;
+	if (!opened)
+		return;
+	if (isReverbEnabled() == newReverbEnabled)
+		return;
 	if (newReverbEnabled) {
 		bool oldReverbOverridden = reverbOverridden;
 		reverbOverridden = false;
@@ -359,7 +361,8 @@ bool Synth::isReverbOverridden() const {
 }
 
 void Synth::setReverbCompatibilityMode(bool mt32CompatibleMode) {
-	if (!opened || (isMT32ReverbCompatibilityMode() == mt32CompatibleMode)) return;
+	if (!opened || (isMT32ReverbCompatibilityMode() == mt32CompatibleMode))
+		return;
 	bool oldReverbEnabled = isReverbEnabled();
 	setReverbEnabled(false);
 	for (int i = 0; i < 4; i++) {
@@ -395,9 +398,11 @@ MIDIDelayMode Synth::getMIDIDelayMode() const {
 }
 
 void Synth::setOutputGain(float newOutputGain) {
-	if (newOutputGain < 0.0f) newOutputGain = -newOutputGain;
+	if (newOutputGain < 0.0f)
+		newOutputGain = -newOutputGain;
 	outputGain = newOutputGain;
-	if (analog != NULL) analog->setSynthOutputGain(newOutputGain);
+	if (analog != NULL)
+		analog->setSynthOutputGain(newOutputGain);
 }
 
 float Synth::getOutputGain() const {
@@ -405,9 +410,11 @@ float Synth::getOutputGain() const {
 }
 
 void Synth::setReverbOutputGain(float newReverbOutputGain) {
-	if (newReverbOutputGain < 0.0f) newReverbOutputGain = -newReverbOutputGain;
+	if (newReverbOutputGain < 0.0f)
+		newReverbOutputGain = -newReverbOutputGain;
 	reverbOutputGain = newReverbOutputGain;
-	if (analog != NULL) analog->setReverbOutputGain(newReverbOutputGain, isMT32ReverbCompatibilityMode());
+	if (analog != NULL)
+		analog->setReverbOutputGain(newReverbOutputGain, isMT32ReverbCompatibilityMode());
 }
 
 float Synth::getReverbOutputGain() const {
@@ -434,8 +441,8 @@ bool Synth::loadControlROM(const ROMImage &controlROMImage) {
 	File *file = controlROMImage.getFile();
 	const ROMInfo *controlROMInfo = controlROMImage.getROMInfo();
 	if ((controlROMInfo == NULL)
-			|| (controlROMInfo->type != ROMInfo::Control)
-			|| (controlROMInfo->pairType != ROMInfo::Full)) {
+	    || (controlROMInfo->type != ROMInfo::Control)
+	    || (controlROMInfo->pairType != ROMInfo::Full)) {
 #if MT32EMU_MONITOR_INIT
 		printDebug("Invalid Control ROM Info provided");
 #endif
@@ -468,8 +475,8 @@ bool Synth::loadPCMROM(const ROMImage &pcmROMImage) {
 	File *file = pcmROMImage.getFile();
 	const ROMInfo *pcmROMInfo = pcmROMImage.getROMInfo();
 	if ((pcmROMInfo == NULL)
-			|| (pcmROMInfo->type != ROMInfo::PCM)
-			|| (pcmROMInfo->pairType != ROMInfo::Full)) {
+	    || (pcmROMInfo->type != ROMInfo::PCM)
+	    || (pcmROMInfo->pairType != ROMInfo::Full)) {
 		return false;
 	}
 #if MT32EMU_MONITOR_INIT
@@ -487,7 +494,7 @@ bool Synth::loadPCMROM(const ROMImage &pcmROMImage) {
 		Bit8u s = *(fileData++);
 		Bit8u c = *(fileData++);
 
-		int order[16] = {0, 9, 1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 15, 8};
+		int order[16] = { 0, 9, 1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 15, 8 };
 
 		Bit16s log = 0;
 		for (int u = 0; u < 15; u++) {
@@ -770,22 +777,22 @@ bool Synth::open(const ROMImage &controlROMImage, const ROMImage &pcmROMImage, B
 	setReverbOutputGain(reverbOutputGain);
 
 	switch (getSelectedRendererType()) {
-		case RendererType_BIT16S:
-			renderer = new RendererImpl<IntSample>(*this);
+	case RendererType_BIT16S:
+		renderer = new RendererImpl<IntSample>(*this);
 #if MT32EMU_MONITOR_INIT
-			printDebug("Using integer 16-bit samples in renderer and wave generator");
+		printDebug("Using integer 16-bit samples in renderer and wave generator");
 #endif
-			break;
-		case RendererType_FLOAT:
-			renderer = new RendererImpl<FloatSample>(*this);
+		break;
+	case RendererType_FLOAT:
+		renderer = new RendererImpl<FloatSample>(*this);
 #if MT32EMU_MONITOR_INIT
-			printDebug("Using float 32-bit samples in renderer and wave generator");
+		printDebug("Using float 32-bit samples in renderer and wave generator");
 #endif
-			break;
-		default:
-			printDebug("Synth: Unknown renderer type %i\n", getSelectedRendererType());
-			dispose();
-			return false;
+		break;
+	default:
+		printDebug("Synth: Unknown renderer type %i\n", getSelectedRendererType());
+		dispose();
+		return false;
 	}
 
 	opened = true;
@@ -851,7 +858,8 @@ void Synth::flushMIDIQueue() {
 	if (midiQueue != NULL) {
 		for (;;) {
 			const MidiEvent *midiEvent = midiQueue->peekMidiEvent();
-			if (midiEvent == NULL) break;
+			if (midiEvent == NULL)
+				break;
 			if (midiEvent->sysexData == NULL) {
 				playMsgNow(midiEvent->shortMessageData);
 			} else {
@@ -866,14 +874,16 @@ void Synth::flushMIDIQueue() {
 Bit32u Synth::setMIDIEventQueueSize(Bit32u useSize) {
 	static const Bit32u MAX_QUEUE_SIZE = (1 << 24); // This results in about 256 Mb - much greater than any reasonable value
 
-	if (midiQueue == NULL) return 0;
+	if (midiQueue == NULL)
+		return 0;
 	flushMIDIQueue();
 
 	// Find a power of 2 that is >= useSize
 	Bit32u binarySize = 1;
 	if (useSize < MAX_QUEUE_SIZE) {
 		// Using simple linear search as this isn't time critical
-		while (binarySize < useSize) binarySize <<= 1;
+		while (binarySize < useSize)
+			binarySize <<= 1;
 	} else {
 		binarySize = MAX_QUEUE_SIZE;
 	}
@@ -885,13 +895,13 @@ Bit32u Synth::setMIDIEventQueueSize(Bit32u useSize) {
 Bit32u Synth::getShortMessageLength(Bit32u msg) {
 	if ((msg & 0xF0) == 0xF0) {
 		switch (msg & 0xFF) {
-			case 0xF1:
-			case 0xF3:
-				return 2;
-			case 0xF2:
-				return 3;
-			default:
-				return 1;
+		case 0xF1:
+		case 0xF3:
+			return 2;
+		case 0xF2:
+			return 3;
+		default:
+			return 1;
 		}
 	}
 	// NOTE: This calculation isn't quite correct
@@ -900,7 +910,7 @@ Bit32u Synth::getShortMessageLength(Bit32u msg) {
 }
 
 Bit32u Synth::addMIDIInterfaceDelay(Bit32u len, Bit32u timestamp) {
-	Bit32u transferTime =  Bit32u(double(len) * MIDI_DATA_TRANSFER_RATE);
+	Bit32u transferTime = Bit32u(double(len) * MIDI_DATA_TRANSFER_RATE);
 	// Dealing with wrapping
 	if (Bit32s(timestamp - lastReceivedMIDIEventTimestamp) < 0) {
 		timestamp = lastReceivedMIDIEventTimestamp;
@@ -923,13 +933,16 @@ bool Synth::playMsg(Bit32u msg, Bit32u timestamp) {
 		reportHandler->onMIDISystemRealtime(Bit8u(msg & 0xFF));
 		return true;
 	}
-	if (midiQueue == NULL) return false;
+	if (midiQueue == NULL)
+		return false;
 	if (midiDelayMode != MIDIDelayMode_IMMEDIATE) {
 		timestamp = addMIDIInterfaceDelay(getShortMessageLength(msg), timestamp);
 	}
-	if (!activated) activated = true;
+	if (!activated)
+		activated = true;
 	do {
-		if (midiQueue->pushShortMessage(msg, timestamp)) return true;
+		if (midiQueue->pushShortMessage(msg, timestamp))
+			return true;
 	} while (reportHandler->onMIDIQueueOverflow());
 	return false;
 }
@@ -939,19 +952,23 @@ bool Synth::playSysex(const Bit8u *sysex, Bit32u len) {
 }
 
 bool Synth::playSysex(const Bit8u *sysex, Bit32u len, Bit32u timestamp) {
-	if (midiQueue == NULL) return false;
+	if (midiQueue == NULL)
+		return false;
 	if (midiDelayMode == MIDIDelayMode_DELAY_ALL) {
 		timestamp = addMIDIInterfaceDelay(len, timestamp);
 	}
-	if (!activated) activated = true;
+	if (!activated)
+		activated = true;
 	do {
-		if (midiQueue->pushSysex(sysex, len, timestamp)) return true;
+		if (midiQueue->pushSysex(sysex, len, timestamp))
+			return true;
 	} while (reportHandler->onMIDIQueueOverflow());
 	return false;
 }
 
 void Synth::playMsgNow(Bit32u msg) {
-	if (!opened) return;
+	if (!opened)
+		return;
 
 	// NOTE: Active sense IS implemented in real hardware. However, realtime processing is clearly out of the library scope.
 	//       It is assumed that realtime consumers of the library respond to these MIDI events as appropriate.
@@ -972,7 +989,8 @@ void Synth::playMsgNow(Bit32u msg) {
 	}
 	for (Bit32u i = extensions.abortingPartIx; i <= 8; i++) {
 		const Bit32u partNum = chanParts[i];
-		if (partNum > 8) break;
+		if (partNum > 8)
+			break;
 		playMsgOnPart(partNum, code, note, velocity);
 		if (isAbortingPoly()) {
 			extensions.abortingPartIx = i;
@@ -984,11 +1002,13 @@ void Synth::playMsgNow(Bit32u msg) {
 }
 
 void Synth::playMsgOnPart(Bit8u part, Bit8u code, Bit8u note, Bit8u velocity) {
-	if (!opened) return;
+	if (!opened)
+		return;
 
 	Bit32u bend;
 
-	if (!activated) activated = true;
+	if (!activated)
+		activated = true;
 	//printDebug("Synth::playMsgOnPart(%02x, %02x, %02x, %02x)", part, code, note, velocity);
 	switch (code) {
 	case 0x8:
@@ -1007,18 +1027,18 @@ void Synth::playMsgOnPart(Bit8u part, Bit8u code, Bit8u note, Bit8u velocity) {
 		break;
 	case 0xB: // Control change
 		switch (note) {
-		case 0x01:  // Modulation
+		case 0x01: // Modulation
 			//printDebug("Modulation: %d", velocity);
 			parts[part]->setModulation(velocity);
 			break;
 		case 0x06:
 			parts[part]->setDataEntryMSB(velocity);
 			break;
-		case 0x07:  // Set volume
+		case 0x07: // Set volume
 			//printDebug("Volume set: %d", velocity);
 			parts[part]->setVolume(velocity);
 			break;
-		case 0x0A:  // Pan
+		case 0x0A: // Pan
 			//printDebug("Pan set: %d", velocity);
 			parts[part]->setPan(velocity);
 			break;
@@ -1196,7 +1216,8 @@ void Synth::readSysex(Bit8u /*device*/, const Bit8u * /*sysex*/, Bit32u /*len*/)
 }
 
 void Synth::writeSysex(Bit8u device, const Bit8u *sysex, Bit32u len) {
-	if (!opened) return;
+	if (!opened)
+		return;
 	reportHandler->onMIDIMessagePlayed();
 	Bit32u addr = (sysex[0] << 16) | (sysex[1] << 8) | (sysex[2]);
 	addr = MT32EMU_MEMADDR(addr);
@@ -1210,7 +1231,7 @@ void Synth::writeSysex(Bit8u device, const Bit8u *sysex, Bit32u len) {
 #if MT32EMU_MONITOR_SYSEX > 0
 		printDebug("WRITE-CHANNEL: Channel %d temp area 0x%06x", device, MT32EMU_SYSEXMEMADDR(addr));
 #endif
-		if (/*addr >= MT32EMU_MEMADDR(0x000000) && */addr < MT32EMU_MEMADDR(0x010000)) {
+		if (/*addr >= MT32EMU_MEMADDR(0x000000) && */ addr < MT32EMU_MEMADDR(0x010000)) {
 			addr += MT32EMU_MEMADDR(0x030000);
 			Bit8u *chanParts = extensions.chantable[device];
 			if (*chanParts > 8) {
@@ -1219,7 +1240,8 @@ void Synth::writeSysex(Bit8u device, const Bit8u *sysex, Bit32u len) {
 #endif
 			} else {
 				for (Bit32u partIx = 0; partIx <= 8; partIx++) {
-					if (chanParts[partIx] > 8) break;
+					if (chanParts[partIx] > 8)
+						break;
 					int offset;
 					if (chanParts[partIx] == 8) {
 #if MT32EMU_MONITOR_SYSEX > 0
@@ -1247,7 +1269,8 @@ void Synth::writeSysex(Bit8u device, const Bit8u *sysex, Bit32u len) {
 #endif
 			} else {
 				for (Bit32u partIx = 0; partIx <= 8; partIx++) {
-					if (chanParts[partIx] > 8) break;
+					if (chanParts[partIx] > 8)
+						break;
 					int offset;
 					if (chanParts[partIx] == 8) {
 #if MT32EMU_MONITOR_SYSEX > 0
@@ -1297,7 +1320,8 @@ void Synth::writeSysexGlobal(Bit32u addr, const Bit8u *sysex, Bit32u len) {
 }
 
 void Synth::readMemory(Bit32u addr, Bit32u len, Bit8u *data) {
-	if (!opened) return;
+	if (!opened)
+		return;
 	const MemoryRegion *region = findMemoryRegion(addr);
 	if (region != NULL) {
 		readMemoryRegion(region, addr, len, data);
@@ -1383,7 +1407,7 @@ void Synth::readMemoryRegion(const MemoryRegion *region, Bit32u addr, Bit32u len
 		for (m = 0; m < len; m += 2) {
 			data[m] = 0xff;
 			if (m + 1 < len) {
-				data[m+1] = Bit8u(region->type);
+				data[m + 1] = Bit8u(region->type);
 			}
 		}
 	}
@@ -1481,80 +1505,80 @@ void Synth::writeMemoryRegion(const MemoryRegion *region, Bit32u addr, Bit32u le
 			memcpy(instrumentName, timbre->common.name, 10);
 			instrumentName[10] = 0;
 			printDebug("WRITE-TIMBRE (%d-%d@%d..%d): %d; name=\"%s\"", first, last, off, off + len, i, instrumentName);
-#if MT32EMU_MONITOR_TIMBRES >= 2
-#define DT(x) printDebug(" " #x ": %d", timbre->x)
+#	if MT32EMU_MONITOR_TIMBRES >= 2
+#		define DT(x) printDebug(" " #    x ": %d", timbre->x)
 			DT(common.partialStructure12);
 			DT(common.partialStructure34);
 			DT(common.partialMute);
 			DT(common.noSustain);
 
-#define DTP(x) \
-			DT(partial[x].wg.pitchCoarse); \
-			DT(partial[x].wg.pitchFine); \
-			DT(partial[x].wg.pitchKeyfollow); \
-			DT(partial[x].wg.pitchBenderEnabled); \
-			DT(partial[x].wg.waveform); \
-			DT(partial[x].wg.pcmWave); \
-			DT(partial[x].wg.pulseWidth); \
+#		define DTP(x)                                 \
+			DT(partial[x].wg.pitchCoarse);               \
+			DT(partial[x].wg.pitchFine);                 \
+			DT(partial[x].wg.pitchKeyfollow);            \
+			DT(partial[x].wg.pitchBenderEnabled);        \
+			DT(partial[x].wg.waveform);                  \
+			DT(partial[x].wg.pcmWave);                   \
+			DT(partial[x].wg.pulseWidth);                \
 			DT(partial[x].wg.pulseWidthVeloSensitivity); \
-			DT(partial[x].pitchEnv.depth); \
-			DT(partial[x].pitchEnv.veloSensitivity); \
-			DT(partial[x].pitchEnv.timeKeyfollow); \
-			DT(partial[x].pitchEnv.time[0]); \
-			DT(partial[x].pitchEnv.time[1]); \
-			DT(partial[x].pitchEnv.time[2]); \
-			DT(partial[x].pitchEnv.time[3]); \
-			DT(partial[x].pitchEnv.level[0]); \
-			DT(partial[x].pitchEnv.level[1]); \
-			DT(partial[x].pitchEnv.level[2]); \
-			DT(partial[x].pitchEnv.level[3]); \
-			DT(partial[x].pitchEnv.level[4]); \
-			DT(partial[x].pitchLFO.rate); \
-			DT(partial[x].pitchLFO.depth); \
-			DT(partial[x].pitchLFO.modSensitivity); \
-			DT(partial[x].tvf.cutoff); \
-			DT(partial[x].tvf.resonance); \
-			DT(partial[x].tvf.keyfollow); \
-			DT(partial[x].tvf.biasPoint); \
-			DT(partial[x].tvf.biasLevel); \
-			DT(partial[x].tvf.envDepth); \
-			DT(partial[x].tvf.envVeloSensitivity); \
-			DT(partial[x].tvf.envDepthKeyfollow); \
-			DT(partial[x].tvf.envTimeKeyfollow); \
-			DT(partial[x].tvf.envTime[0]); \
-			DT(partial[x].tvf.envTime[1]); \
-			DT(partial[x].tvf.envTime[2]); \
-			DT(partial[x].tvf.envTime[3]); \
-			DT(partial[x].tvf.envTime[4]); \
-			DT(partial[x].tvf.envLevel[0]); \
-			DT(partial[x].tvf.envLevel[1]); \
-			DT(partial[x].tvf.envLevel[2]); \
-			DT(partial[x].tvf.envLevel[3]); \
-			DT(partial[x].tva.level); \
-			DT(partial[x].tva.veloSensitivity); \
-			DT(partial[x].tva.biasPoint1); \
-			DT(partial[x].tva.biasLevel1); \
-			DT(partial[x].tva.biasPoint2); \
-			DT(partial[x].tva.biasLevel2); \
-			DT(partial[x].tva.envTimeKeyfollow); \
-			DT(partial[x].tva.envTimeVeloSensitivity); \
-			DT(partial[x].tva.envTime[0]); \
-			DT(partial[x].tva.envTime[1]); \
-			DT(partial[x].tva.envTime[2]); \
-			DT(partial[x].tva.envTime[3]); \
-			DT(partial[x].tva.envTime[4]); \
-			DT(partial[x].tva.envLevel[0]); \
-			DT(partial[x].tva.envLevel[1]); \
-			DT(partial[x].tva.envLevel[2]); \
+			DT(partial[x].pitchEnv.depth);               \
+			DT(partial[x].pitchEnv.veloSensitivity);     \
+			DT(partial[x].pitchEnv.timeKeyfollow);       \
+			DT(partial[x].pitchEnv.time[0]);             \
+			DT(partial[x].pitchEnv.time[1]);             \
+			DT(partial[x].pitchEnv.time[2]);             \
+			DT(partial[x].pitchEnv.time[3]);             \
+			DT(partial[x].pitchEnv.level[0]);            \
+			DT(partial[x].pitchEnv.level[1]);            \
+			DT(partial[x].pitchEnv.level[2]);            \
+			DT(partial[x].pitchEnv.level[3]);            \
+			DT(partial[x].pitchEnv.level[4]);            \
+			DT(partial[x].pitchLFO.rate);                \
+			DT(partial[x].pitchLFO.depth);               \
+			DT(partial[x].pitchLFO.modSensitivity);      \
+			DT(partial[x].tvf.cutoff);                   \
+			DT(partial[x].tvf.resonance);                \
+			DT(partial[x].tvf.keyfollow);                \
+			DT(partial[x].tvf.biasPoint);                \
+			DT(partial[x].tvf.biasLevel);                \
+			DT(partial[x].tvf.envDepth);                 \
+			DT(partial[x].tvf.envVeloSensitivity);       \
+			DT(partial[x].tvf.envDepthKeyfollow);        \
+			DT(partial[x].tvf.envTimeKeyfollow);         \
+			DT(partial[x].tvf.envTime[0]);               \
+			DT(partial[x].tvf.envTime[1]);               \
+			DT(partial[x].tvf.envTime[2]);               \
+			DT(partial[x].tvf.envTime[3]);               \
+			DT(partial[x].tvf.envTime[4]);               \
+			DT(partial[x].tvf.envLevel[0]);              \
+			DT(partial[x].tvf.envLevel[1]);              \
+			DT(partial[x].tvf.envLevel[2]);              \
+			DT(partial[x].tvf.envLevel[3]);              \
+			DT(partial[x].tva.level);                    \
+			DT(partial[x].tva.veloSensitivity);          \
+			DT(partial[x].tva.biasPoint1);               \
+			DT(partial[x].tva.biasLevel1);               \
+			DT(partial[x].tva.biasPoint2);               \
+			DT(partial[x].tva.biasLevel2);               \
+			DT(partial[x].tva.envTimeKeyfollow);         \
+			DT(partial[x].tva.envTimeVeloSensitivity);   \
+			DT(partial[x].tva.envTime[0]);               \
+			DT(partial[x].tva.envTime[1]);               \
+			DT(partial[x].tva.envTime[2]);               \
+			DT(partial[x].tva.envTime[3]);               \
+			DT(partial[x].tva.envTime[4]);               \
+			DT(partial[x].tva.envLevel[0]);              \
+			DT(partial[x].tva.envLevel[1]);              \
+			DT(partial[x].tva.envLevel[2]);              \
 			DT(partial[x].tva.envLevel[3]);
 
 			DTP(0);
 			DTP(1);
 			DTP(2);
 			DTP(3);
-#undef DTP
-#undef DT
-#endif
+#		undef DTP
+#		undef DT
+#	endif
 #endif
 			// FIXME:KG: Not sure if the stuff below should be done (for rhythm and/or parts)...
 			// Does the real MT-32 automatically do this?
@@ -1588,10 +1612,10 @@ void Synth::writeMemoryRegion(const MemoryRegion *region, Bit32u addr, Bit32u le
 		}
 		if (off <= SYSTEM_CHAN_ASSIGN_END_OFF && off + len > SYSTEM_CHAN_ASSIGN_START_OFF) {
 			int firstPart = off - SYSTEM_CHAN_ASSIGN_START_OFF;
-			if(firstPart < 0)
+			if (firstPart < 0)
 				firstPart = 0;
 			int lastPart = off + len - SYSTEM_CHAN_ASSIGN_START_OFF;
-			if(lastPart > 8)
+			if (lastPart > 8)
 				lastPart = 8;
 			refreshSystemChanAssign(Bit8u(firstPart), Bit8u(lastPart));
 		}
@@ -1687,7 +1711,8 @@ void Synth::refreshSystemChanAssign(Bit8u firstPart, Bit8u lastPart) {
 			parts[i]->resetAllControllers();
 		}
 		Bit8u chan = mt32ram.system.chanAssign[i];
-		if (chan > 15) continue;
+		if (chan > 15)
+			continue;
 		Bit8u *chanParts = extensions.chantable[chan];
 		for (Bit32u j = 0; j <= 8; j++) {
 			if (chanParts[j] > 8) {
@@ -1718,7 +1743,8 @@ void Synth::refreshSystem() {
 }
 
 void Synth::reset() {
-	if (!opened) return;
+	if (!opened)
+		return;
 #if MT32EMU_MONITOR_SYSEX > 0
 	printDebug("RESET");
 #endif
@@ -1788,7 +1814,9 @@ void MidiEvent::setSysex(const Bit8u *useSysexData, Bit32u useSysexLength, Bit32
 	memcpy(dstSysexData, useSysexData, sysexLength);
 }
 
-MidiEventQueue::MidiEventQueue(Bit32u useRingBufferSize) : ringBuffer(new MidiEvent[useRingBufferSize]), ringBufferMask(useRingBufferSize - 1) {
+MidiEventQueue::MidiEventQueue(Bit32u useRingBufferSize)
+  : ringBuffer(new MidiEvent[useRingBufferSize])
+  , ringBufferMask(useRingBufferSize - 1) {
 	reset();
 }
 
@@ -1804,7 +1832,8 @@ void MidiEventQueue::reset() {
 bool MidiEventQueue::pushShortMessage(Bit32u shortMessageData, Bit32u timestamp) {
 	Bit32u newEndPosition = (endPosition + 1) & ringBufferMask;
 	// Is ring buffer full?
-	if (startPosition == newEndPosition) return false;
+	if (startPosition == newEndPosition)
+		return false;
 	ringBuffer[endPosition].setShortMessage(shortMessageData, timestamp);
 	endPosition = newEndPosition;
 	return true;
@@ -1813,7 +1842,8 @@ bool MidiEventQueue::pushShortMessage(Bit32u shortMessageData, Bit32u timestamp)
 bool MidiEventQueue::pushSysex(const Bit8u *sysexData, Bit32u sysexLength, Bit32u timestamp) {
 	Bit32u newEndPosition = (endPosition + 1) & ringBufferMask;
 	// Is ring buffer full?
-	if (startPosition == newEndPosition) return false;
+	if (startPosition == newEndPosition)
+		return false;
 	ringBuffer[endPosition].setSysex(sysexData, sysexLength, timestamp);
 	endPosition = newEndPosition;
 	return true;
@@ -1888,22 +1918,22 @@ void RendererImpl<Sample>::doRenderAndConvert(O *stereoStream, Bit32u len) {
 	}
 }
 
-template<>
+template <>
 void RendererImpl<IntSample>::render(IntSample *stereoStream, Bit32u len) {
 	doRender(stereoStream, len);
 }
 
-template<>
+template <>
 void RendererImpl<IntSample>::render(FloatSample *stereoStream, Bit32u len) {
 	doRenderAndConvert(stereoStream, len);
 }
 
-template<>
+template <>
 void RendererImpl<FloatSample>::render(IntSample *stereoStream, Bit32u len) {
 	doRenderAndConvert(stereoStream, len);
 }
 
-template<>
+template <>
 void RendererImpl<FloatSample>::render(FloatSample *stereoStream, Bit32u len) {
 	doRender(stereoStream, len);
 }
@@ -1963,8 +1993,7 @@ static inline void convertStreamsFormat(const DACOutputStreams<I> &inStreams, co
 }
 
 template <class Sample>
-void RendererImpl<Sample>::doRenderStreams(const DACOutputStreams<Sample> &streams, Bit32u len)
-{
+void RendererImpl<Sample>::doRenderStreams(const DACOutputStreams<Sample> &streams, Bit32u len) {
 	DACOutputStreams<Sample> tmpStreams = streams;
 	while (len > 0) {
 		// We need to ensure zero-duration notes will play so add minimum 1-sample delay.
@@ -2021,22 +2050,22 @@ void RendererImpl<Sample>::doRenderAndConvertStreams(const DACOutputStreams<O> &
 	}
 }
 
-template<>
+template <>
 void RendererImpl<IntSample>::renderStreams(const DACOutputStreams<IntSample> &streams, Bit32u len) {
 	doRenderStreams(streams, len);
 }
 
-template<>
+template <>
 void RendererImpl<IntSample>::renderStreams(const DACOutputStreams<FloatSample> &streams, Bit32u len) {
 	doRenderAndConvertStreams(streams, len);
 }
 
-template<>
+template <>
 void RendererImpl<FloatSample>::renderStreams(const DACOutputStreams<IntSample> &streams, Bit32u len) {
 	doRenderAndConvertStreams(streams, len);
 }
 
-template<>
+template <>
 void RendererImpl<FloatSample>::renderStreams(const DACOutputStreams<FloatSample> &streams, Bit32u len) {
 	doRenderStreams(streams, len);
 }
@@ -2059,11 +2088,10 @@ void Synth::renderStreams(const DACOutputStreams<float> &streams, Bit32u len) {
 }
 
 void Synth::renderStreams(
-	Bit16s *nonReverbLeft, Bit16s *nonReverbRight,
-	Bit16s *reverbDryLeft, Bit16s *reverbDryRight,
-	Bit16s *reverbWetLeft, Bit16s *reverbWetRight,
-	Bit32u len)
-{
+  Bit16s *nonReverbLeft, Bit16s *nonReverbRight,
+  Bit16s *reverbDryLeft, Bit16s *reverbDryRight,
+  Bit16s *reverbWetLeft, Bit16s *reverbWetRight,
+  Bit32u len) {
 	DACOutputStreams<IntSample> streams = {
 		nonReverbLeft, nonReverbRight,
 		reverbDryLeft, reverbDryRight,
@@ -2073,11 +2101,10 @@ void Synth::renderStreams(
 }
 
 void Synth::renderStreams(
-	float *nonReverbLeft, float *nonReverbRight,
-	float *reverbDryLeft, float *reverbDryRight,
-	float *reverbWetLeft, float *reverbWetRight,
-	Bit32u len)
-{
+  float *nonReverbLeft, float *nonReverbRight,
+  float *reverbDryLeft, float *reverbDryRight,
+  float *reverbWetLeft, float *reverbWetRight,
+  Bit32u len) {
 	DACOutputStreams<FloatSample> streams = {
 		nonReverbLeft, nonReverbRight,
 		reverbDryLeft, reverbDryRight,
@@ -2091,20 +2118,20 @@ void Synth::renderStreams(
 template <>
 void RendererImpl<IntSample>::produceLA32Output(IntSample *buffer, Bit32u len) {
 	switch (synth.getDACInputMode()) {
-		case DACInputMode_GENERATION2:
-			while (len--) {
-				*buffer = (*buffer & 0x8000) | ((*buffer << 1) & 0x7FFE) | ((*buffer >> 14) & 0x0001);
-				++buffer;
-			}
-			break;
-		case DACInputMode_NICE:
-			while (len--) {
-				*buffer = Synth::clipSampleEx(IntSampleEx(*buffer) << 1);
-				++buffer;
-			}
-			break;
-		default:
-			break;
+	case DACInputMode_GENERATION2:
+		while (len--) {
+			*buffer = (*buffer & 0x8000) | ((*buffer << 1) & 0x7FFE) | ((*buffer >> 14) & 0x0001);
+			++buffer;
+		}
+		break;
+	case DACInputMode_NICE:
+		while (len--) {
+			*buffer = Synth::clipSampleEx(IntSampleEx(*buffer) << 1);
+			++buffer;
+		}
+		break;
+	default:
+		break;
 	}
 }
 
@@ -2190,8 +2217,10 @@ void RendererImpl<Sample>::produceStreams(const DACOutputStreams<Sample> &stream
 			if (!getReverbModel().process(reverbDryLeft, reverbDryRight, streams.reverbWetLeft, streams.reverbWetRight, len)) {
 				printDebug("RendererImpl: Invalid call to BReverbModel::process()!\n");
 			}
-			if (streams.reverbWetLeft != NULL) convertSamplesToOutput(streams.reverbWetLeft, len);
-			if (streams.reverbWetRight != NULL) convertSamplesToOutput(streams.reverbWetRight, len);
+			if (streams.reverbWetLeft != NULL)
+				convertSamplesToOutput(streams.reverbWetLeft, len);
+			if (streams.reverbWetRight != NULL)
+				convertSamplesToOutput(streams.reverbWetRight, len);
 		} else {
 			Synth::muteSampleBuffer(streams.reverbWetLeft, len);
 			Synth::muteSampleBuffer(streams.reverbWetRight, len);
@@ -2206,8 +2235,10 @@ void RendererImpl<Sample>::produceStreams(const DACOutputStreams<Sample> &stream
 			produceLA32Output(nonReverbRight, len);
 			convertSamplesToOutput(nonReverbRight, len);
 		}
-		if (streams.reverbDryLeft != NULL) convertSamplesToOutput(reverbDryLeft, len);
-		if (streams.reverbDryRight != NULL) convertSamplesToOutput(reverbDryRight, len);
+		if (streams.reverbDryLeft != NULL)
+			convertSamplesToOutput(reverbDryLeft, len);
+		if (streams.reverbDryRight != NULL)
+			convertSamplesToOutput(reverbDryRight, len);
 	} else {
 		muteStreams(streams, len);
 	}
@@ -2268,7 +2299,8 @@ void Synth::getPartStates(bool *partStates) const {
 }
 
 Bit32u Synth::getPartStates() const {
-	if (!opened) return 0;
+	if (!opened)
+		return 0;
 	bool partStates[9];
 	getPartStates(partStates);
 	Bit32u bitSet = 0;
@@ -2297,7 +2329,8 @@ void Synth::getPartialStates(Bit8u *partialStates) const {
 		Bit8u packedStates = 0;
 		for (unsigned int i = 0; i < 4; i++) {
 			unsigned int partialNum = (4 * quartNum) + i;
-			if (partialCount <= partialNum) break;
+			if (partialCount <= partialNum)
+				break;
 			PartialState partialState = getPartialState(partialManager, partialNum);
 			packedStates |= (partialState & 3) << (2 * i);
 		}

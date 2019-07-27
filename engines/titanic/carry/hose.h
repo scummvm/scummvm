@@ -30,7 +30,8 @@ namespace Titanic {
 struct CHoseStatics {
 	int _actionVal;
 	CString _actionTarget;
-	CHoseStatics() : _actionVal(0) {}
+	CHoseStatics()
+	  : _actionVal(0) {}
 };
 
 class CHose : public CCarry {
@@ -40,10 +41,13 @@ class CHose : public CCarry {
 	bool UseWithCharMsg(CUseWithCharMsg *msg);
 	bool HoseConnectedMsg(CHoseConnectedMsg *msg);
 	bool DropZoneLostObjectMsg(CDropZoneLostObjectMsg *msg);
+
 protected:
 	CString _unused1;
+
 public:
 	static CHoseStatics *_statics;
+
 public:
 	CLASSDEF;
 	CHose();

@@ -23,11 +23,11 @@
 #ifndef SCUMM_PLAYERS_PLAYER_V4A_H
 #define SCUMM_PLAYERS_PLAYER_V4A_H
 
+#include "audio/mixer.h"
+#include "audio/mods/tfmx.h"
 #include "common/scummsys.h"
 #include "common/util.h"
 #include "scumm/music.h"
-#include "audio/mixer.h"
-#include "audio/mods/tfmx.h"
 
 class Mixer;
 
@@ -47,8 +47,8 @@ public:
 	virtual void startSound(int sound);
 	virtual void stopSound(int sound);
 	virtual void stopAllSounds();
-	virtual int  getMusicTimer();
-	virtual int  getSoundStatus(int sound) const;
+	virtual int getMusicTimer();
+	virtual int getSoundStatus(int sound) const;
 
 private:
 	ScummEngine *const _vm;
@@ -64,7 +64,7 @@ private:
 
 	struct SfxChan {
 		int id;
-//		byte type;
+		//		byte type;
 	} _sfxSlots[4];
 
 	int8 _initState; // < 0: failed, 0: uninitialized, > 0: initialized
@@ -78,13 +78,13 @@ private:
 
 	void setSfxSlot(int channel, int id, byte type = 0) {
 		_sfxSlots[channel].id = id;
-//		_sfxSlots[channel].type = type;
+		//		_sfxSlots[channel].type = type;
 	}
 
 	void clearSfxSlots() {
-		for (int i = 0; i < ARRAYSIZE(_sfxSlots); ++i){
+		for (int i = 0; i < ARRAYSIZE(_sfxSlots); ++i) {
 			_sfxSlots[i].id = 0;
-//			_sfxSlots[i].type = 0;
+			//			_sfxSlots[i].type = 0;
 		}
 	}
 

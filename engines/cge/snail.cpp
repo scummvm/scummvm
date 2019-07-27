@@ -25,35 +25,41 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#include "cge/general.h"
-#include "cge/sound.h"
 #include "cge/snail.h"
-#include "cge/vga13h.h"
-#include "cge/text.h"
 #include "cge/cge_main.h"
 #include "cge/events.h"
+#include "cge/general.h"
+#include "cge/sound.h"
+#include "cge/text.h"
+#include "cge/vga13h.h"
 #include "cge/walk.h"
 
 namespace CGE {
 
 const char *CommandHandler::_commandText[] = {
-	"LABEL",  "PAUSE",  "WAIT",    "LEVEL",   "HIDE",
-	"SAY",    "INF",    "TIME",    "CAVE",    "KILL",
-	"RSEQ",   "SEQ",    "SEND",    "SWAP",    "KEEP",
-	"GIVE",   "IF",     "GAME",    "SETX0",   "SETY0",
-	"SLAVE",  "SETXY",  "RELX",    "RELY",    "RELZ",
-	"SETX",   "SETY",   "SETZ",    "TRANS",   "PORT",
-	"NEXT",   "NNEXT",  "TNEXT",   "RNNEXT",  "RTNEXT",
-	"RMNEAR", "RMTAKE", "FLAG",    "SETREF",  "BACKPT",
-	"FLASH",  "LIGHT",  "SETHB",   "SETVB",   "WALK",
-	"REACH",  "COVER",  "UNCOVER", "CLEAR",   "TALK",
-	"MOUSE",  "SOUND",  "COUNT",   NULL
+	"LABEL", "PAUSE", "WAIT", "LEVEL", "HIDE",
+	"SAY", "INF", "TIME", "CAVE", "KILL",
+	"RSEQ", "SEQ", "SEND", "SWAP", "KEEP",
+	"GIVE", "IF", "GAME", "SETX0", "SETY0",
+	"SLAVE", "SETXY", "RELX", "RELY", "RELZ",
+	"SETX", "SETY", "SETZ", "TRANS", "PORT",
+	"NEXT", "NNEXT", "TNEXT", "RNNEXT", "RTNEXT",
+	"RMNEAR", "RMTAKE", "FLAG", "SETREF", "BACKPT",
+	"FLASH", "LIGHT", "SETHB", "SETVB", "WALK",
+	"REACH", "COVER", "UNCOVER", "CLEAR", "TALK",
+	"MOUSE", "SOUND", "COUNT", NULL
 };
 
 CommandHandler::CommandHandler(CGEEngine *vm, bool turbo)
-	: _turbo(turbo), _busy(false), _textDelay(false),
-	  _timerExpiry(0), _talkEnable(true),
-	  _head(0), _tail(0), _commandList((Command *)malloc(sizeof(Command) * 256)), _vm(vm) {
+  : _turbo(turbo)
+  , _busy(false)
+  , _textDelay(false)
+  , _timerExpiry(0)
+  , _talkEnable(true)
+  , _head(0)
+  , _tail(0)
+  , _commandList((Command *)malloc(sizeof(Command) * 256))
+  , _vm(vm) {
 }
 
 CommandHandler::~CommandHandler() {
@@ -158,7 +164,7 @@ void CommandHandler::runCommand() {
 				break;
 		}
 
-		Sprite *spr = ((tailCmd->_ref >= 0) ? _vm->locate(tailCmd->_ref) : ((Sprite *) tailCmd->_spritePtr));
+		Sprite *spr = ((tailCmd->_ref >= 0) ? _vm->locate(tailCmd->_ref) : ((Sprite *)tailCmd->_spritePtr));
 		switch (tailCmd->_commandType) {
 		case kCmdLabel:
 			break;
@@ -169,8 +175,7 @@ void CommandHandler::runCommand() {
 			break;
 		case kCmdWait:
 			if (spr) {
-				if (spr->seqTest(tailCmd->_val) &&
-					(tailCmd->_val >= 0 || spr != _vm->_hero || _vm->_hero->_tracePtr < 0)) {
+				if (spr->seqTest(tailCmd->_val) && (tailCmd->_val >= 0 || spr != _vm->_hero || _vm->_hero->_tracePtr < 0)) {
 					_timerExpiry = g_system->getMillis() + spr->_time * kCommandFrameDelay;
 				} else {
 					_busy = false;
@@ -227,7 +232,7 @@ void CommandHandler::runCommand() {
 			_vm->snCover(spr, tailCmd->_val);
 			break;
 		case kCmdUncover:
-			_vm->snUncover(spr, (tailCmd->_val >= 0) ? _vm->locate(tailCmd->_val) : ((Sprite *) tailCmd->_spritePtr));
+			_vm->snUncover(spr, (tailCmd->_val >= 0) ? _vm->locate(tailCmd->_val) : ((Sprite *)tailCmd->_spritePtr));
 			break;
 		case kCmdKeep:
 			_vm->snKeep(spr, tailCmd->_val);
@@ -357,7 +362,7 @@ void CommandHandler::runCommand() {
 			_vm->snZTrim(spr);
 			break;
 		case kCmdGhost:
-			_vm->snGhost((Bitmap *) tailCmd->_spritePtr);
+			_vm->snGhost((Bitmap *)tailCmd->_spritePtr);
 			break;
 		default:
 			warning("Unhandled snc->_com in SNMouse(bool)");
@@ -401,8 +406,8 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 			}
 		}
 		if (dup[1] == NULL) {
-			dup[1] = _vga->_showQ->locate(16003);    // pan
-			dup[2] = _vga->_showQ->locate(16004);    // pani
+			dup[1] = _vga->_showQ->locate(16003); // pan
+			dup[2] = _vga->_showQ->locate(16004); // pani
 		}
 
 		if (_game) { // continue game
@@ -411,69 +416,68 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 			if (hand && Stage > kDressed)
 				++hand;
 			if (i >= 0 && (dup[i] == spr && newRandom(3) == 0)) {
-				_commandHandler->addCommand(kCmdSeq, -1, 3, dup[0]);               // Yes
-				_commandHandler->addCommand(kCmdSeq, -1, 3, dup[1]);               // Yes
-				_commandHandler->addCommand(kCmdSeq, -1, 3, dup[2]);               // Yes
-				_commandHandler->addCommand(kCmdTNext, -1, 0, dup[0]);             // Reset Take
-				_commandHandler->addCommand(kCmdTNext, -1, 0, dup[1]);             // Reset Take
-				_commandHandler->addCommand(kCmdTNext, -1, 0, dup[2]);             // Reset Take
-				_commandHandler->addCommand(kCmdNNext, -1, 0, dup[0]);             // Reset Near
-				_commandHandler->addCommand(kCmdPause, -1, 72, NULL);              // Pause the game for 72/80 second
-				_commandHandler->addCommand(kCmdSay, 1, 16009, NULL);              // Say "I win.."
-				_commandHandler->addCommand(kCmdSay, buref, 16010, NULL);          // Say "Go Sit..."
-				_commandHandler->addCommand(kCmdSay, 1, 16011, NULL);              // Say "I prefer not"
+				_commandHandler->addCommand(kCmdSeq, -1, 3, dup[0]); // Yes
+				_commandHandler->addCommand(kCmdSeq, -1, 3, dup[1]); // Yes
+				_commandHandler->addCommand(kCmdSeq, -1, 3, dup[2]); // Yes
+				_commandHandler->addCommand(kCmdTNext, -1, 0, dup[0]); // Reset Take
+				_commandHandler->addCommand(kCmdTNext, -1, 0, dup[1]); // Reset Take
+				_commandHandler->addCommand(kCmdTNext, -1, 0, dup[2]); // Reset Take
+				_commandHandler->addCommand(kCmdNNext, -1, 0, dup[0]); // Reset Near
+				_commandHandler->addCommand(kCmdPause, -1, 72, NULL); // Pause the game for 72/80 second
+				_commandHandler->addCommand(kCmdSay, 1, 16009, NULL); // Say "I win.."
+				_commandHandler->addCommand(kCmdSay, buref, 16010, NULL); // Say "Go Sit..."
+				_commandHandler->addCommand(kCmdSay, 1, 16011, NULL); // Say "I prefer not"
 
 				if (hand) {
-					_commandHandler->addCommand(kCmdSend, 16060 + hand, 16, NULL);   // Give hand
-					_commandHandler->addCommand(kCmdSeq, buref, 4, NULL);            // Take off
-					_commandHandler->addCommand(kCmdSeq, 16060 + hand, 1, NULL);     // start one of the Bartender animations
+					_commandHandler->addCommand(kCmdSend, 16060 + hand, 16, NULL); // Give hand
+					_commandHandler->addCommand(kCmdSeq, buref, 4, NULL); // Take off
+					_commandHandler->addCommand(kCmdSeq, 16060 + hand, 1, NULL); // start one of the Bartender animations
 					_commandHandler->addCommand(kCmdSound, 16060 + hand, 16002, NULL); // Play tear sound
-					_commandHandler->addCommand(kCmdWait, 16060 + hand, 3, NULL);    // Take up
+					_commandHandler->addCommand(kCmdWait, 16060 + hand, 3, NULL); // Take up
 					_commandHandler->addCommand(kCmdSwap, buref, buref + 100, NULL); // Open hand
-					_commandHandler->addCommand(kCmdSeq, 16016, Stage, NULL);        // Start Belongings animation
-					_commandHandler->addCommand(kCmdSend, 16060 + hand, -1, NULL);   // Hide hand
-					_commandHandler->addCommand(kCmdWait, 16060 + hand, -1, NULL);   // Stop moving hand
+					_commandHandler->addCommand(kCmdSeq, 16016, Stage, NULL); // Start Belongings animation
+					_commandHandler->addCommand(kCmdSend, 16060 + hand, -1, NULL); // Hide hand
+					_commandHandler->addCommand(kCmdWait, 16060 + hand, -1, NULL); // Stop moving hand
 				} else {
-					_commandHandler->addCommand(kCmdSeq, buref, 4, NULL);            // Take off
+					_commandHandler->addCommand(kCmdSeq, buref, 4, NULL); // Take off
 					_commandHandler->addCommand(kCmdSound, 16060 + hand, 16002, NULL); // Play tear sound
-					_commandHandler->addCommand(kCmdWait, buref, -1, NULL);          // Will take off
+					_commandHandler->addCommand(kCmdWait, buref, -1, NULL); // Will take off
 					_commandHandler->addCommand(kCmdSwap, buref, buref + 100, NULL); // Open hand
-					_commandHandler->addCommand(kCmdSeq, 16016, Stage, NULL);        // Start Belongings animation
+					_commandHandler->addCommand(kCmdSeq, 16016, Stage, NULL); // Start Belongings animation
 				}
-				_commandHandler->addCommand(kCmdPause, -1, 72, NULL);              // Pause the game for 72/80 second
-				_commandHandler->addCommand(kCmdSeq, -1, 0, dup[1]);               // Get away (Him)
+				_commandHandler->addCommand(kCmdPause, -1, 72, NULL); // Pause the game for 72/80 second
+				_commandHandler->addCommand(kCmdSeq, -1, 0, dup[1]); // Get away (Him)
 				_commandHandler->addCommand(kCmdSetXY, -1, 203 + kScrWidth * 49, dup[1]);
 				_commandHandler->addCommand(kCmdSetZ, -1, 7, dup[1]);
-				_commandHandler->addCommand(kCmdSeq, -1, 0, dup[2]);               // Get Away (Her)
+				_commandHandler->addCommand(kCmdSeq, -1, 0, dup[2]); // Get Away (Her)
 				_commandHandler->addCommand(kCmdSetXY, -1, 182 + kScrWidth * 62, dup[2]);
 				_commandHandler->addCommand(kCmdSetZ, -1, 9, dup[2]);
 				_game = false;
 				return;
 			} else {
-				_commandHandler->addCommand(kCmdSeq, -1, 2, dup[0]);               // reset animation sequence
-				_commandHandler->addCommand(kCmdSeq, -1, 2, dup[1]);               // reset animation sequence
-				_commandHandler->addCommand(kCmdSeq, -1, 2, dup[2]);               // reset animation sequence
-				_commandHandler->addCommand(kCmdPause, -1, 72, NULL);              // Pause the game for 72/80 second
+				_commandHandler->addCommand(kCmdSeq, -1, 2, dup[0]); // reset animation sequence
+				_commandHandler->addCommand(kCmdSeq, -1, 2, dup[1]); // reset animation sequence
+				_commandHandler->addCommand(kCmdSeq, -1, 2, dup[2]); // reset animation sequence
+				_commandHandler->addCommand(kCmdPause, -1, 72, NULL); // Pause the game for 72/80 second
 			}
 		}
-		_commandHandler->addCommand(kCmdWalk, 198, 134, NULL);                 // Go to place
-		_commandHandler->addCommand(kCmdWait, 1, -1, NULL);                    // Stop moving
-		_commandHandler->addCommand(kCmdCover, 1, 16101, NULL);                // Man to beat
-		_commandHandler->addCommand(kCmdSeq, 16101, 1, NULL);                  // Start Chief animation (16dupnia)
-		_commandHandler->addCommand(kCmdWait, 16101, 5, NULL);                 // wait
-		_commandHandler->addCommand(kCmdPause, 16101, 24, NULL);               // Pause the game for 24/80 second
-		_commandHandler->addCommand(kCmdSeq, 16040, 1, NULL);                  // Start Slap animation (16plask)
-		_commandHandler->addCommand(kCmdSound, 16101, 16001, NULL);            // Play "Slap" sound
-		_commandHandler->addCommand(kCmdPause, 16101, 24, NULL);               // Pause the game for 24/80 second
-		_commandHandler->addCommand(kCmdSeq, 16040, 0, NULL);                  // Reset animation sequence
-		_commandHandler->addCommand(kCmdWait, 16101, -1, NULL);                // stay
-		_commandHandler->addCommand(kCmdUncover, 1, 16101, NULL);              // SDS
+		_commandHandler->addCommand(kCmdWalk, 198, 134, NULL); // Go to place
+		_commandHandler->addCommand(kCmdWait, 1, -1, NULL); // Stop moving
+		_commandHandler->addCommand(kCmdCover, 1, 16101, NULL); // Man to beat
+		_commandHandler->addCommand(kCmdSeq, 16101, 1, NULL); // Start Chief animation (16dupnia)
+		_commandHandler->addCommand(kCmdWait, 16101, 5, NULL); // wait
+		_commandHandler->addCommand(kCmdPause, 16101, 24, NULL); // Pause the game for 24/80 second
+		_commandHandler->addCommand(kCmdSeq, 16040, 1, NULL); // Start Slap animation (16plask)
+		_commandHandler->addCommand(kCmdSound, 16101, 16001, NULL); // Play "Slap" sound
+		_commandHandler->addCommand(kCmdPause, 16101, 24, NULL); // Pause the game for 24/80 second
+		_commandHandler->addCommand(kCmdSeq, 16040, 0, NULL); // Reset animation sequence
+		_commandHandler->addCommand(kCmdWait, 16101, -1, NULL); // stay
+		_commandHandler->addCommand(kCmdUncover, 1, 16101, NULL); // SDS
 		if (!_game) {
-			_commandHandler->addCommand(kCmdSay, buref, 16008, NULL);            // say "Guess!"
+			_commandHandler->addCommand(kCmdSay, buref, 16008, NULL); // say "Guess!"
 			_game = true;
 		}
-		}
-		break;
+	} break;
 	case 2:
 		if (_sprTv == NULL) {
 			_sprTv = _vga->_showQ->locate(20700);
@@ -511,19 +515,19 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 		bool hit = (_sprK1->_seqPtr + _sprK2->_seqPtr + _sprK3->_seqPtr == 15);
 		if (hit) {
 			if (spr->_ref == 1) {
-				_commandHandler->addCommand(kCmdSay,       1, 20003, NULL);       // hurray!
-				_commandHandler->addCommand(kCmdSeq,   20011,     2, NULL);       // Camera away
-				_commandHandler->addCommand(kCmdSend,  20701,    -1, NULL);       // move dice1 to scene -1
-				_commandHandler->addCommand(kCmdSend,  20702,    -1, NULL);       // move dice2 to scene -1
-				_commandHandler->addCommand(kCmdSend,  20703,    -1, NULL);       // move dice3 to scene -1
-				_commandHandler->addCommand(kCmdSend,  20700,    -1, NULL);       // move TV to scene -1
-				_commandHandler->addCommand(kCmdKeep,  20007,     0, NULL);       // to pocket
-				_commandHandler->addCommand(kCmdSend,  20006,    20, NULL);       // Move Coin to scene 20
-				_commandHandler->addCommand(kCmdSound, 20006, 20002, NULL);       // Play Coin sound
-				_commandHandler->addCommand(kCmdSay,   20002, 20004, NULL);	      // Say "Luck guy..."
-				_commandHandler->addCommand(kCmdSend,  20010,    20, NULL);       // Move Paper to scene 20
-				_commandHandler->addCommand(kCmdSound, 20010, 20003, NULL);       // Play "ksh" sound! (fx20003.wav)
-				_commandHandler->addCommand(kCmdSay,   20001, 20005, NULL);       // Say "Congratulations"
+				_commandHandler->addCommand(kCmdSay, 1, 20003, NULL); // hurray!
+				_commandHandler->addCommand(kCmdSeq, 20011, 2, NULL); // Camera away
+				_commandHandler->addCommand(kCmdSend, 20701, -1, NULL); // move dice1 to scene -1
+				_commandHandler->addCommand(kCmdSend, 20702, -1, NULL); // move dice2 to scene -1
+				_commandHandler->addCommand(kCmdSend, 20703, -1, NULL); // move dice3 to scene -1
+				_commandHandler->addCommand(kCmdSend, 20700, -1, NULL); // move TV to scene -1
+				_commandHandler->addCommand(kCmdKeep, 20007, 0, NULL); // to pocket
+				_commandHandler->addCommand(kCmdSend, 20006, 20, NULL); // Move Coin to scene 20
+				_commandHandler->addCommand(kCmdSound, 20006, 20002, NULL); // Play Coin sound
+				_commandHandler->addCommand(kCmdSay, 20002, 20004, NULL); // Say "Luck guy..."
+				_commandHandler->addCommand(kCmdSend, 20010, 20, NULL); // Move Paper to scene 20
+				_commandHandler->addCommand(kCmdSound, 20010, 20003, NULL); // Play "ksh" sound! (fx20003.wav)
+				_commandHandler->addCommand(kCmdSay, 20001, 20005, NULL); // Say "Congratulations"
 				_game = false;
 				return;
 			} else
@@ -549,49 +553,49 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 
 		switch (spr->_ref) {
 		case 1:
-			_commandHandler->addCommand(kCmdSay,   20001, 20011, NULL);        // Say "It'a my turn"
-			_commandHandler->addCommand(kCmdSeq,   20001,     1, NULL);        // Throw dice
-			_commandHandler->addCommand(kCmdWait,  20001,     1, NULL);        // wait
-			_commandHandler->addCommand(kCmdSetZ,  20700,     2, NULL);        // hide dice
-			_commandHandler->addCommand(kCmdHide,  20007,     1, NULL);        // hide dice
-			_commandHandler->addCommand(kCmdWait,  20001,    16, NULL);        // wait
-			_commandHandler->addCommand(kCmdSeq,   20007,     1, NULL);        // Start dice animation (20kosci)
-			_commandHandler->addCommand(kCmdHide,  20007,     0, NULL);        // unhide
-			_commandHandler->addCommand(kCmdSound, 20007, 20001, NULL);        // Play Dice sound
-			_commandHandler->addCommand(kCmdWait,  20007,    -1, NULL);        // the end
-			_commandHandler->addCommand(kCmdGame,  20001,     2, NULL);        // again!
+			_commandHandler->addCommand(kCmdSay, 20001, 20011, NULL); // Say "It'a my turn"
+			_commandHandler->addCommand(kCmdSeq, 20001, 1, NULL); // Throw dice
+			_commandHandler->addCommand(kCmdWait, 20001, 1, NULL); // wait
+			_commandHandler->addCommand(kCmdSetZ, 20700, 2, NULL); // hide dice
+			_commandHandler->addCommand(kCmdHide, 20007, 1, NULL); // hide dice
+			_commandHandler->addCommand(kCmdWait, 20001, 16, NULL); // wait
+			_commandHandler->addCommand(kCmdSeq, 20007, 1, NULL); // Start dice animation (20kosci)
+			_commandHandler->addCommand(kCmdHide, 20007, 0, NULL); // unhide
+			_commandHandler->addCommand(kCmdSound, 20007, 20001, NULL); // Play Dice sound
+			_commandHandler->addCommand(kCmdWait, 20007, -1, NULL); // the end
+			_commandHandler->addCommand(kCmdGame, 20001, 2, NULL); // again!
 			break;
 
 		case 20001:
-			_commandHandler->addCommand(kCmdSay,   20002, 20012, NULL);        // Say "Now it's mine"
-			_commandHandler->addCommand(kCmdSeq,   20002,     1, NULL);        // Throw dice
-			_commandHandler->addCommand(kCmdWait,  20002,     3, NULL);        // wait
-			_commandHandler->addCommand(kCmdSetZ,  20700,     2, NULL);        // hide dice
-			_commandHandler->addCommand(kCmdHide,  20007,     1, NULL);        // hide dice
-			_commandHandler->addCommand(kCmdWait,  20002,    10, NULL);        // wait
-			_commandHandler->addCommand(kCmdSeq,   20007,     2, NULL);        // Start dice animation (20kosci)
-			_commandHandler->addCommand(kCmdHide,  20007,     0, NULL);        // unhide
-			_commandHandler->addCommand(kCmdSound, 20007, 20001, NULL);        // Play Dice sound
-			_commandHandler->addCommand(kCmdWait,  20007,    -1, NULL);        // the end
-			_commandHandler->addCommand(kCmdGame,  20002,     2, NULL);        // again!
+			_commandHandler->addCommand(kCmdSay, 20002, 20012, NULL); // Say "Now it's mine"
+			_commandHandler->addCommand(kCmdSeq, 20002, 1, NULL); // Throw dice
+			_commandHandler->addCommand(kCmdWait, 20002, 3, NULL); // wait
+			_commandHandler->addCommand(kCmdSetZ, 20700, 2, NULL); // hide dice
+			_commandHandler->addCommand(kCmdHide, 20007, 1, NULL); // hide dice
+			_commandHandler->addCommand(kCmdWait, 20002, 10, NULL); // wait
+			_commandHandler->addCommand(kCmdSeq, 20007, 2, NULL); // Start dice animation (20kosci)
+			_commandHandler->addCommand(kCmdHide, 20007, 0, NULL); // unhide
+			_commandHandler->addCommand(kCmdSound, 20007, 20001, NULL); // Play Dice sound
+			_commandHandler->addCommand(kCmdWait, 20007, -1, NULL); // the end
+			_commandHandler->addCommand(kCmdGame, 20002, 2, NULL); // again!
 			break;
 
 		case 20002:
-			_commandHandler->addCommand(kCmdSay,   20002, 20010, NULL);        // "Roll the bones!"
-			_commandHandler->addCommand(kCmdWalk,  20005,    -1, NULL);        // Walk to table
-			_commandHandler->addCommand(kCmdWait,      1,    -1, NULL);        // Wait
-			_commandHandler->addCommand(kCmdCover,     1, 20101, NULL);        // grasol ??
-			_commandHandler->addCommand(kCmdSeq,   20101,     1, NULL);        // Start Chief animation (20solgra)
-			_commandHandler->addCommand(kCmdWait,  20101,     5, NULL);        // Wait
-			_commandHandler->addCommand(kCmdSetZ,  20700,     2, NULL);        // Hide dice
-			_commandHandler->addCommand(kCmdHide,  20007,     1, NULL);        // Hide dice
-			_commandHandler->addCommand(kCmdWait,  20101,    15, NULL);        // wait
-			_commandHandler->addCommand(kCmdSeq,   20007,     1, NULL);        // Start dice animation (20kosci)
-			_commandHandler->addCommand(kCmdHide,  20007,     0, NULL);        // Unhide
-			_commandHandler->addCommand(kCmdSound, 20007, 20001, NULL);        // Play Dice sound
-			_commandHandler->addCommand(kCmdWait,  20101,    -1, NULL);        // the end
-			_commandHandler->addCommand(kCmdUncover,   1, 20101, NULL);        // SDS ??
-			_commandHandler->addCommand(kCmdGame,      1,     2, NULL);        // again!
+			_commandHandler->addCommand(kCmdSay, 20002, 20010, NULL); // "Roll the bones!"
+			_commandHandler->addCommand(kCmdWalk, 20005, -1, NULL); // Walk to table
+			_commandHandler->addCommand(kCmdWait, 1, -1, NULL); // Wait
+			_commandHandler->addCommand(kCmdCover, 1, 20101, NULL); // grasol ??
+			_commandHandler->addCommand(kCmdSeq, 20101, 1, NULL); // Start Chief animation (20solgra)
+			_commandHandler->addCommand(kCmdWait, 20101, 5, NULL); // Wait
+			_commandHandler->addCommand(kCmdSetZ, 20700, 2, NULL); // Hide dice
+			_commandHandler->addCommand(kCmdHide, 20007, 1, NULL); // Hide dice
+			_commandHandler->addCommand(kCmdWait, 20101, 15, NULL); // wait
+			_commandHandler->addCommand(kCmdSeq, 20007, 1, NULL); // Start dice animation (20kosci)
+			_commandHandler->addCommand(kCmdHide, 20007, 0, NULL); // Unhide
+			_commandHandler->addCommand(kCmdSound, 20007, 20001, NULL); // Play Dice sound
+			_commandHandler->addCommand(kCmdWait, 20101, -1, NULL); // the end
+			_commandHandler->addCommand(kCmdUncover, 1, 20101, NULL); // SDS ??
+			_commandHandler->addCommand(kCmdGame, 1, 2, NULL); // again!
 			break;
 		}
 	}
@@ -666,7 +670,7 @@ void CGEEngine::pocFul() {
 	_commandHandler->addCommand(kCmdSeq, -1, kSeqPocketFull, _hero);
 	_commandHandler->addCommand(kCmdSound, -1, 2, _hero); // Play the 'hum-hum" sound (fx00002)
 	_commandHandler->addCommand(kCmdWait, -1, -1, _hero);
-	_commandHandler->addCommand(kCmdSay,  1, kPocketFull, _hero);
+	_commandHandler->addCommand(kCmdSay, 1, kPocketFull, _hero);
 }
 
 void CGEEngine::hide1(Sprite *spr) {
@@ -698,9 +702,9 @@ void CGEEngine::feedSnail(Sprite *spr, SnList snq) {
 	CommandHandler::Command *comtab = spr->snList(snq);
 	CommandHandler::Command *c = comtab + ptr;
 
-	if (findPocket(NULL) < 0) {                 // no empty pockets?
+	if (findPocket(NULL) < 0) { // no empty pockets?
 		CommandHandler::Command *p;
-		for (p = c; p->_commandType != kCmdNext; p++) {     // find KEEP command
+		for (p = c; p->_commandType != kCmdNext; p++) { // find KEEP command
 			if (p->_commandType == kCmdKeep) {
 				pocFul();
 				return;
@@ -721,16 +725,16 @@ void CGEEngine::feedSnail(Sprite *spr, SnList snq) {
 				if (*idx != kNoPtr) {
 					int v;
 					switch (c->_val) {
-					case -1 :
+					case -1:
 						v = c - comtab + 1;
 						break;
-					case -2 :
+					case -2:
 						v = c - comtab;
 						break;
-					case -3 :
+					case -3:
 						v = -1;
 						break;
-					default :
+					default:
 						v = c->_val;
 						break;
 					}
@@ -744,8 +748,8 @@ void CGEEngine::feedSnail(Sprite *spr, SnList snq) {
 		if (c->_commandType == kCmdIf) {
 			Sprite *s = (c->_ref < 0) ? spr : locate(c->_ref);
 			if (s) { // sprite extsts
-				if (! s->seqTest(-1))
-					c = comtab + c->_val;                // not parked
+				if (!s->seqTest(-1))
+					c = comtab + c->_val; // not parked
 				else
 					++c;
 			} else
@@ -783,7 +787,6 @@ void CGEEngine::snRNNext(Sprite *spr, int p) {
 		if (spr->_nearPtr != kNoPtr)
 			spr->_nearPtr += p;
 }
-
 
 void CGEEngine::snRTNext(Sprite *spr, int p) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snRTNext(spr, %d)", p);
@@ -1096,7 +1099,7 @@ void CGEEngine::snKeep(Sprite *spr, int stp) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snKeep(spr, %d)", stp);
 
 	selectPocket(-1);
-	if (spr && ! spr->_flags._kept && _pocket[_pocPtr] == NULL) {
+	if (spr && !spr->_flags._kept && _pocket[_pocPtr] == NULL) {
 		int16 oldRepeat = _sound->getRepeat();
 		_sound->setRepeat(1);
 		snSound(spr, 3);
@@ -1105,7 +1108,7 @@ void CGEEngine::snKeep(Sprite *spr, int stp) {
 		spr->_scene = 0;
 		spr->_flags._kept = true;
 		spr->gotoxy(kPocketX + kPocketDX * _pocPtr + kPocketDX / 2 - spr->_w / 2,
-		          kPocketY + kPocketDY / 2 - spr->_h / 2);
+		            kPocketY + kPocketDY / 2 - spr->_h / 2);
 		if (stp >= 0)
 			spr->step(stp);
 	}

@@ -57,7 +57,6 @@ public:
 	void setSwitchLocalDataNear(bool newValue) { _switchLocalDataNear = newValue; }
 
 protected:
-
 	struct ScriptRegs {
 		int16 reg0;
 		int16 reg1;
@@ -175,9 +174,7 @@ protected:
 	void sfRestoreStackPtr();
 	void sfSaveStackPtr();
 	void sfPlayMovie();
-
 };
-
 
 } // End of namespace Toltecs
 

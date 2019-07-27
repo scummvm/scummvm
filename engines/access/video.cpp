@@ -25,7 +25,8 @@
 
 namespace Access {
 
-VideoPlayer::VideoPlayer(AccessEngine *vm) : Manager(vm) {
+VideoPlayer::VideoPlayer(AccessEngine *vm)
+  : Manager(vm) {
 	_vidSurface = nullptr;
 	_videoData = nullptr;
 	_startCoord = nullptr;
@@ -171,9 +172,9 @@ void VideoPlayer::copyVideo() {
 
 	// Figure out the dirty rect area for the video frame
 	Common::Rect r = Common::Rect(_vm->_vidX - _vm->_screen->_bufferStart.x,
-		_vm->_vidY - _vm->_screen->_bufferStart.y,
-		_vm->_vidX - _vm->_screen->_bufferStart.x + _header._width,
-		_vm->_vidY - _vm->_screen->_bufferStart.y + _header._height);
+	                              _vm->_vidY - _vm->_screen->_bufferStart.y,
+	                              _vm->_vidX - _vm->_screen->_bufferStart.x + _header._width,
+	                              _vm->_vidY - _vm->_screen->_bufferStart.y + _header._height);
 	if (!_vm->_screen->clip(r))
 		return;
 	_vm->_newRects.push_back(r);

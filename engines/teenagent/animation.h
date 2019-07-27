@@ -28,12 +28,14 @@
 
 namespace TeenAgent {
 
-class Animation  {
+class Animation {
 public:
 	uint16 id, x, y;
 	bool loop, paused, ignore;
 
-	enum Type {kTypeLan, kTypeVaria, kTypeInventory};
+	enum Type { kTypeLan,
+		          kTypeVaria,
+		          kTypeInventory };
 
 	Animation();
 	~Animation();

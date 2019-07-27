@@ -21,10 +21,10 @@
  */
 
 #include "titanic/pet_control/pet_quit.h"
+#include "titanic/game_manager.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/pet_control/pet_real_life.h"
 #include "titanic/support/rect.h"
-#include "titanic/game_manager.h"
 
 namespace Titanic {
 

@@ -22,17 +22,16 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
-
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
@@ -71,14 +70,13 @@ int scene26_updateCursor() {
 			g_fp->_cursorId = PIC_CSR_GOL;
 
 		// WORKAROUND: Fixing cursor
-		if (g_fp->_objectIdAtCursor == PIC_SC26_LTRUBA &&
-			(g_fp->_cursorId == PIC_CSR_GOU || g_fp->_cursorId == PIC_CSR_GOD || g_fp->_cursorId == PIC_CSR_GOR))
-				g_fp->_cursorId = PIC_CSR_GOL;
+		if (g_fp->_objectIdAtCursor == PIC_SC26_LTRUBA && (g_fp->_cursorId == PIC_CSR_GOU || g_fp->_cursorId == PIC_CSR_GOD || g_fp->_cursorId == PIC_CSR_GOR))
+			g_fp->_cursorId = PIC_CSR_GOL;
 	} else {
 		g_fp->_cursorId = PIC_CSR_ITN;
 	}
 
-  return g_fp->_cursorId;
+	return g_fp->_cursorId;
 }
 
 void sceneHandler26_updateDrop() {
@@ -149,7 +147,7 @@ void sceneHandler26_testVent() {
 			g_fp->playSound(SND_26_019, 0);
 
 		if (g_fp->getObjectState(sO_Pool) == g_fp->getObjectEnumState(sO_Pool, sO_Overfull)
-			|| g_fp->getObjectState(sO_Pool) == g_fp->getObjectEnumState(sO_Pool, sO_Full))
+		    || g_fp->getObjectState(sO_Pool) == g_fp->getObjectEnumState(sO_Pool, sO_Full))
 			g_fp->playSound(SND_26_003, 0);
 
 		if (g_fp->getObjectState(sO_Valve1_26) == g_fp->getObjectEnumState(sO_Valve1_26, sO_Opened)) {
@@ -164,8 +162,8 @@ void sceneHandler26_testVent() {
 			g_fp->playSound(SND_26_019, 0);
 
 		if (g_fp->getObjectState(sO_Pool) == g_fp->getObjectEnumState(sO_Pool, sO_Overfull)
-			 || g_fp->getObjectState(sO_Pool) == g_fp->getObjectEnumState(sO_Pool, sO_Full)
-			 || g_fp->getObjectState(sO_Pool) == g_fp->getObjectEnumState(sO_Pool, sO_HalfFull))
+		    || g_fp->getObjectState(sO_Pool) == g_fp->getObjectEnumState(sO_Pool, sO_Full)
+		    || g_fp->getObjectState(sO_Pool) == g_fp->getObjectEnumState(sO_Pool, sO_HalfFull))
 			g_fp->playSound(SND_26_003, 0);
 
 		if (g_fp->getObjectState(sO_Valve1_26) == g_fp->getObjectEnumState(sO_Valve1_26, sO_Opened)) {
@@ -312,29 +310,27 @@ int sceneHandler26(ExCommand *cmd) {
 		sceneHandler26_showVent();
 		break;
 
-	case MSG_SC26_CLICKVENT:
-		{
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT, cmd->_param);
+	case MSG_SC26_CLICKVENT: {
+		StaticANIObject *ani = g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT, cmd->_param);
 
-			if (ani && ani->_id == ANI_VENT)
-				sceneHandler26_clickVent(ani, cmd);
+		if (ani && ani->_id == ANI_VENT)
+			sceneHandler26_clickVent(ani, cmd);
 
-			break;
-		}
+		break;
+	}
 
 	case MSG_SC26_HIDEVENT:
 		sceneHandler26_hideVent();
 		break;
 
-	case 29:
-		{
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+	case 29: {
+		StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
-			if (ani && ani->_id == ANI_VENT)
-				sceneHandler26_clickVent(ani, cmd);
+		if (ani && ani->_id == ANI_VENT)
+			sceneHandler26_clickVent(ani, cmd);
 
-			break;
-		}
+		break;
+	}
 
 	case 33:
 		if (g_fp->_aniMan2) {

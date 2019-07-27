@@ -32,6 +32,7 @@ class CMusicSwitchInversion : public CMusicSwitch {
 	bool MusicSettingChangedMsg(CMusicSettingChangedMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool QueryMusicControlSettingMsg(CQueryMusicControlSettingMsg *msg);
+
 public:
 	CLASSDEF;
 

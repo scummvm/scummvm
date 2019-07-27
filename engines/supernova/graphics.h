@@ -61,21 +61,21 @@ public:
 	byte *_encodedImage;
 
 	struct Section {
-		int16  x1;
-		int16  x2;
-		byte   y1;
-		byte   y2;
-		byte   next;
+		int16 x1;
+		int16 x2;
+		byte y1;
+		byte y2;
+		byte next;
 		uint16 addressLow;
-		byte   addressHigh;
+		byte addressHigh;
 	} _section[kMaxSections];
 
 	struct ClickField {
-		int16  x1;
-		int16  x2;
-		byte   y1;
-		byte   y2;
-		byte   next;
+		int16 x1;
+		int16 x2;
+		byte y1;
+		byte y2;
+		byte next;
 	} _clickField[kMaxClickFields];
 
 private:

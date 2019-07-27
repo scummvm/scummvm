@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/debug.h"
 #include "common/mutex.h"
+#include "common/debug.h"
 #include "common/system.h"
 
 namespace Common {
@@ -43,17 +43,17 @@ void Mutex::unlock() {
 	g_system->unlockMutex(_mutex);
 }
 
-
 #pragma mark -
 
-
 StackLock::StackLock(MutexRef mutex, const char *mutexName)
-	: _mutex(mutex), _mutexName(mutexName) {
+  : _mutex(mutex)
+  , _mutexName(mutexName) {
 	lock();
 }
 
 StackLock::StackLock(const Mutex &mutex, const char *mutexName)
-	: _mutex(mutex._mutex), _mutexName(mutexName) {
+  : _mutex(mutex._mutex)
+  , _mutexName(mutexName) {
 	lock();
 }
 

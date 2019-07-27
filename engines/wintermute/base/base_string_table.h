@@ -29,7 +29,6 @@
 #ifndef WINTERMUTE_BASE_STRING_TABLE_H
 #define WINTERMUTE_BASE_STRING_TABLE_H
 
-
 #include "common/hashmap.h"
 #include "engines/wintermute/base/base.h"
 
@@ -48,11 +47,11 @@ public:
 	virtual ~BaseStringTable();
 	char *getKey(const char *str) const;
 	bool persist(BasePersistenceManager *persistMgr);
+
 private:
 	Common::HashMap<Common::String, Common::String> _strings;
 	Common::Array<Common::String> _filenames;
 	typedef Common::HashMap<Common::String, Common::String>::const_iterator StringsIter;
-
 };
 
 } // End of namespace Wintermute

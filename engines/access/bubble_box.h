@@ -23,20 +23,24 @@
 #ifndef ACCESS_BUBBLE_BOX_H
 #define ACCESS_BUBBLE_BOX_H
 
-#include "common/scummsys.h"
+#include "access/data.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/str-array.h"
 #include "common/stream.h"
 #include "common/types.h"
 #include "graphics/surface.h"
-#include "access/data.h"
 
 namespace Access {
 
 class AccessEngine;
 
-enum BoxType { TYPE_0 = 0, TYPE_1 = 1, TYPE_2 = 2, TYPE_3 = 3, kBoxTypeFileDialog = 4 };
+enum BoxType { TYPE_0 = 0,
+	             TYPE_1 = 1,
+	             TYPE_2 = 2,
+	             TYPE_3 = 3,
+	             kBoxTypeFileDialog = 4 };
 
 class BubbleBox : public Manager {
 private:
@@ -74,6 +78,7 @@ public:
 	Common::Rect _btnUpPos;
 	Common::Rect _btnDownPos;
 	Common::Array<Common::Rect> _bubbles;
+
 public:
 	BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w, int h, int val1, int val2, int val3, int val4, Common::String title);
 

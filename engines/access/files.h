@@ -23,11 +23,11 @@
 #ifndef ACCESS_FILES_H
 #define ACCESS_FILES_H
 
-#include "common/scummsys.h"
+#include "access/decompress.h"
 #include "common/array.h"
 #include "common/file.h"
+#include "common/scummsys.h"
 #include "graphics/managed_surface.h"
-#include "access/decompress.h"
 
 namespace Access {
 
@@ -38,7 +38,10 @@ struct FileIdent {
 	int _subfile;
 
 	FileIdent();
-	FileIdent(int fileNum, int subfile) { _fileNum = fileNum; _subfile = subfile; }
+	FileIdent(int fileNum, int subfile) {
+		_fileNum = fileNum;
+		_subfile = subfile;
+	}
 
 	void load(Common::SeekableReadStream &s);
 };
@@ -54,9 +57,11 @@ class FileManager;
 
 class Resource {
 	friend class FileManager;
+
 private:
 	Common::File _file;
 	byte *_data;
+
 public:
 	Common::SeekableReadStream *_stream;
 	int _size;
@@ -92,10 +97,12 @@ private:
 	* Open up a sub-file resource within an alrady opened container file.
 	*/
 	void gotoAppended(Resource *file, int subfile);
+
 public:
 	int _fileNumber;
 	Common::Array<uint32> _fileIndex;
 	bool _setPaletteFlag;
+
 public:
 	FileManager(AccessEngine *vm);
 	~FileManager();

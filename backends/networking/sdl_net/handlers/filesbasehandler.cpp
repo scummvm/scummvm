@@ -32,7 +32,8 @@ FilesBaseHandler::FilesBaseHandler() {}
 FilesBaseHandler::~FilesBaseHandler() {}
 
 Common::String FilesBaseHandler::parentPath(Common::String path) {
-	if (path.size() && (path.lastChar() == '/' || path.lastChar() == '\\')) path.deleteLastChar();
+	if (path.size() && (path.lastChar() == '/' || path.lastChar() == '\\'))
+		path.deleteLastChar();
 	if (!path.empty()) {
 		for (int i = path.size() - 1; i >= 0; --i)
 			if (i == 0 || path[i] == '/' || path[i] == '\\') {
@@ -55,7 +56,8 @@ bool FilesBaseHandler::transformPath(Common::String &path, Common::String &prefi
 		prefixToRemove = ConfMan.get("rootpath", "cloud");
 		if (prefixToRemove.size() && prefixToRemove.lastChar() != '/' && prefixToRemove.lastChar() != '\\')
 			prefixToRemove += '/';
-		if (prefixToRemove == "/") prefixToRemove = "";
+		if (prefixToRemove == "/")
+			prefixToRemove = "";
 		path.erase(0, 5);
 		if (path.size() && (path[0] == '/' || path[0] == '\\'))
 			path.deleteChar(0); // if that was "/root/ab/c", it becomes "/ab/c", but we need "ab/c"

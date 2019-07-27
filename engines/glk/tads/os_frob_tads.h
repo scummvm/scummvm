@@ -42,12 +42,12 @@ namespace TADS {
 #define HAVE_STDINT_
 
 #if 0
-#include "common.h"
+#	include "common.h"
 #endif
 
 /* Used by the base code to inhibit "unused parameter" compiler warnings. */
 #ifndef VARUSED
-#define VARUSED(var) (void)var
+#	define VARUSED(var) (void)var
 #endif
 
 /* We assume that the C-compiler is mostly ANSI compatible. */
@@ -69,7 +69,7 @@ namespace TADS {
 
 /* Copies a struct into another.  ANSI C allows the assignment operator
  * to be used with structs. */
-#define OSCPYSTRUCT(x,y) ((x)=(y))
+#define OSCPYSTRUCT(x, y) ((x) = (y))
 
 /* Link error messages into the application. */
 #define ERR_LINK_MESSAGES
@@ -91,42 +91,42 @@ namespace TADS {
 
 #define OSFNMAX 255
 
-/**
+	/**
  * File handle structure for osfxxx functions
  * Note that we need to define it as a Common::Stream since the type is used by
  * TADS for both reading and writing files
  */
-typedef Common::Stream osfildef;
+	typedef Common::Stream osfildef;
 
-/* Directory handle for searches via os_open_dir() et al. */
-typedef Common::FSNode *osdirhdl_t;
+	/* Directory handle for searches via os_open_dir() et al. */
+	typedef Common::FSNode *osdirhdl_t;
 
 /* file type/mode bits */
-#define OSFMODE_FILE    S_IFREG
-#define OSFMODE_DIR     S_IFDIR
-#define OSFMODE_CHAR    S_IFCHR
-#define OSFMODE_BLK     S_IFBLK
-#define OSFMODE_PIPE    S_IFIFO
+#define OSFMODE_FILE S_IFREG
+#define OSFMODE_DIR S_IFDIR
+#define OSFMODE_CHAR S_IFCHR
+#define OSFMODE_BLK S_IFBLK
+#define OSFMODE_PIPE S_IFIFO
 #ifdef S_IFLNK
-#define OSFMODE_LINK    S_IFLNK
+#	define OSFMODE_LINK S_IFLNK
 #else
-#define OSFMODE_LINK    0
+#	define OSFMODE_LINK 0
 #endif
 #ifdef S_IFSOCK
-#define OSFMODE_SOCKET  S_IFSOCK
+#	define OSFMODE_SOCKET S_IFSOCK
 #else
-#define OSFMODE_SOCKET  0
+#	define OSFMODE_SOCKET 0
 #endif
 
 /* File attribute bits. */
-#define OSFATTR_HIDDEN  0x0001
-#define OSFATTR_SYSTEM  0x0002
-#define OSFATTR_READ    0x0004
-#define OSFATTR_WRITE   0x0008
+#define OSFATTR_HIDDEN 0x0001
+#define OSFATTR_SYSTEM 0x0002
+#define OSFATTR_READ 0x0004
+#define OSFATTR_WRITE 0x0008
 
-/* Get a file's stat() type. */
-int osfmode( const char* fname, int follow_links, unsigned long* mode,
-             unsigned long* attr );
+	/* Get a file's stat() type. */
+	int osfmode(const char *fname, int follow_links, unsigned long *mode,
+	            unsigned long *attr);
 
 #if 0
 /* The maximum width of a line of text.
@@ -135,7 +135,7 @@ int osfmode( const char* fname, int follow_links, unsigned long* mode,
  * interpreter is run inside a console or terminal with more columns
  * than the value defined here, weird things will happen, so we go safe
  * and use a large value. */
-#define OS_MAXWIDTH 255
+#	define OS_MAXWIDTH 255
 #endif
 
 /* Disable the Tads swap file; computers have plenty of RAM these days.
@@ -153,7 +153,6 @@ int osfmode( const char* fname, int follow_links, unsigned long* mode,
 #define OSFSK_SET SEEK_SET /* Set position relative to the start of the file. */
 #define OSFSK_CUR SEEK_CUR /* Set position relative to the current file position. */
 #define OSFSK_END SEEK_END /* Set position relative to the end of the file. */
-
 
 /* ============= Functions follow ================ */
 
@@ -177,11 +176,11 @@ int osfmode( const char* fname, int follow_links, unsigned long* mode,
  * We don't provide any kind of "compilation progress display", so we
  * just define this as an empty macro.
  */
-#define os_progress(fname,linenum)
+#define os_progress(fname, linenum)
 
- /* ============= File Access ================ */
+	/* ============= File Access ================ */
 
- /*
+	/*
  *   Test access to a file - i.e., determine if the file exists.  Returns
  *   zero if the file exists, non-zero if not.  (The semantics may seem
  *   backwards, but this is consistent with the conventions used by most of
@@ -190,10 +189,9 @@ int osfmode( const char* fname, int follow_links, unsigned long* mode,
  *   returns zero; if the file doesn't exist, accessing it gets an error,
  *   hence a non-zero return code.)
  */
-int osfacc(const char *fname);
+	int osfacc(const char *fname);
 
-
- /*
+	/*
  *   Open text file for reading.  This opens the file with read-only access;
  *   we're not allowed to write to the file using this handle.  Returns NULL
  *   on error.
@@ -214,9 +212,9 @@ int osfacc(const char *fname);
  *   process already has and thus we can't guarantee that other processes
  *   won't write to the file while we have it open.
  */
-osfildef *osfoprt(const char *fname, os_filetype_t typ);
+	osfildef *osfoprt(const char *fname, os_filetype_t typ);
 
-/*
+	/*
 *   Open a text file for "volatile" reading: we open the file with read-only
 *   access, and we explicitly accept instability in the file's contents due
 *   to other processes simultaneously writing to the file.  On systems that
@@ -224,56 +222,56 @@ osfildef *osfoprt(const char *fname, os_filetype_t typ);
 *   none" mode, meaning that other processes can simultaneously open the
 *   file for reading and/or writing even while have the file open.
 */
-osfildef *osfoprtv(const char *fname, os_filetype_t typ);
+	osfildef *osfoprtv(const char *fname, os_filetype_t typ);
 
-/*
+	/*
 *   Open text file for writing; returns NULL on error.  If the file already
 *   exists, this truncates the file to zero length, deleting any existing
 *   contents.
 */
-osfildef *osfopwt(const char *fname, os_filetype_t typ);
+	osfildef *osfopwt(const char *fname, os_filetype_t typ);
 
-/*
+	/*
 *   Open text file for reading and writing, keeping the file's existing
 *   contents if the file already exists or creating a new file if no such
 *   file exists.  Returns NULL on error.
 */
-osfildef *osfoprwt(const char *fname, os_filetype_t typ);
+	osfildef *osfoprwt(const char *fname, os_filetype_t typ);
 
-/*
+	/*
 *   Open text file for reading/writing.  If the file already exists,
 *   truncate the existing contents to zero length.  Create a new file if it
 *   doesn't already exist.  Return null on error.
 */
-osfildef *osfoprwtt(const char *fname, os_filetype_t typ);
+	osfildef *osfoprwtt(const char *fname, os_filetype_t typ);
 
-/*
+	/*
 *   Open binary file for writing; returns NULL on error.  If the file
 *   exists, this truncates the existing contents to zero length.
 */
-osfildef *osfopwb(const char *fname, os_filetype_t typ);
+	osfildef *osfopwb(const char *fname, os_filetype_t typ);
 
-/*
+	/*
 *   Open source file for reading - use the appropriate text or binary
 *   mode.
 */
-osfildef *osfoprs(const char *fname, os_filetype_t typ);
+	osfildef *osfoprs(const char *fname, os_filetype_t typ);
 
-/*
+	/*
 *   Open binary file for reading; returns NULL on error.
 */
-osfildef *osfoprb(const char *fname, os_filetype_t typ);
+	osfildef *osfoprb(const char *fname, os_filetype_t typ);
 
-/*
+	/*
 *   Open binary file for 'volatile' reading; returns NULL on error.
 *   ("Volatile" means that we'll accept writes from other processes while
 *   reading, so the file should be opened in "deny none" mode or the
 *   equivalent, to the extent that the local system supports file sharing
 *   modes.)
 */
-osfildef *osfoprbv(const char *fname, os_filetype_t typ);
+	osfildef *osfoprbv(const char *fname, os_filetype_t typ);
 
-/*
+	/*
 *   Open binary file for random-access reading/writing.  If the file already
 *   exists, keep the existing contents; if the file doesn't already exist,
 *   create a new empty file.
@@ -300,9 +298,9 @@ osfildef *osfoprbv(const char *fname, os_filetype_t typ);
 *
 *   Return null on error.
 */
-osfildef *osfoprwb(const char *fname, os_filetype_t typ);
+	osfildef *osfoprwb(const char *fname, os_filetype_t typ);
 
-/*
+	/*
 *   Open binary file for random-access reading/writing.  If the file already
 *   exists, truncate the existing contents (i.e., delete the contents of the
 *   file, resetting it to a zero-length file).  Create a new file if it
@@ -315,9 +313,9 @@ osfildef *osfoprwb(const char *fname, os_filetype_t typ);
 *
 *   Return null on error.
 */
-osfildef *osfoprwtb(const char *fname, os_filetype_t typ);
+	osfildef *osfoprwtb(const char *fname, os_filetype_t typ);
 
-/*
+	/*
 *   Duplicate a file handle.  Returns a new osfildef* handle that accesses
 *   the same open file as an existing osfildef* handle.  The new handle is
 *   independent of the original handle, with its own seek position,
@@ -349,9 +347,9 @@ osfildef *osfoprwtb(const char *fname, os_filetype_t typ);
 *   simply remove them, as most platforms don't distinguish text and binary
 *   modes anyway.)
 */
-osfildef *osfdup(osfildef *orig, const char *mode);
+	osfildef *osfdup(osfildef *orig, const char *mode);
 
-/*
+	/*
 *   Set a file's type information.  This is primarily for implementations on
 *   Mac OS 9 and earlier, where the file system keeps file-type metadata
 *   separate from the filename.  On such systems, this can be used to set
@@ -360,32 +358,32 @@ osfildef *osfdup(osfildef *orig, const char *mode);
 *   On most systems, there's no such thing as file-type metadata, in which
 *   case this function should simply be stubbed out with an empty function.
 */
-void os_settype(const char *f, os_filetype_t typ);
+	void os_settype(const char *f, os_filetype_t typ);
 
-/*
+	/*
  *   Get a line of text from a text file.  Uses fgets semantics.
  */
-char *osfgets(char *buf, size_t len, osfildef *fp);
+	char *osfgets(char *buf, size_t len, osfildef *fp);
 
-/*
+	/*
 *   Write a line of text to a text file.  Uses fputs semantics.
 */
-int osfputs(const char *buf, osfildef *fp);
+	int osfputs(const char *buf, osfildef *fp);
 
-/*
+	/*
 *   Write to a text file.  os_fprintz() takes a null-terminated string,
 *   while os_fprint() takes an explicit separate length argument that might
 *   not end with a null terminator.
 */
-void os_fprintz(osfildef *fp, const char *str);
-void os_fprint(osfildef *fp, const char *str, size_t len);
+	void os_fprintz(osfildef *fp, const char *str);
+	void os_fprint(osfildef *fp, const char *str, size_t len);
 
-/*
+	/*
 *   Write bytes to file.  Return 0 on success, non-zero on error.
 */
-int osfwb(osfildef *fp, const void *buf, size_t bufl);
+	int osfwb(osfildef *fp, const void *buf, size_t bufl);
 
-/*
+	/*
 *   Flush buffered writes to a file.  This ensures that any bytes written to
 *   the file (with osfwb(), os_fprint(), etc) are actually sent out to the
 *   operating system, rather than being buffered in application memory for
@@ -408,31 +406,31 @@ int osfwb(osfildef *fp, const void *buf, size_t bufl);
 *   reason that they'd occur on an ordinary write - a full disk, a hardware
 *   failure, etc.
 */
-int osfflush(osfildef *fp);
+	int osfflush(osfildef *fp);
 
-/*
+	/*
 *   Read a character from a file.  Provides the same semantics as fgetc().
 */
-int osfgetc(osfildef *fp);
+	int osfgetc(osfildef *fp);
 
-/*
+	/*
 *   Read bytes from file.  Return 0 on success, non-zero on error.
 */
-int osfrb(osfildef *fp, void *buf, size_t bufl);
+	int osfrb(osfildef *fp, void *buf, size_t bufl);
 
-/*
+	/*
 *   Read bytes from file and return the number of bytes read.  0
 *   indicates that no bytes could be read.
 */
-size_t osfrbc(osfildef *fp, void *buf, size_t bufl);
+	size_t osfrbc(osfildef *fp, void *buf, size_t bufl);
 
-/*
+	/*
 *   Get the current seek location in the file.  The first byte of the
 *   file has seek position 0.
 */
-long osfpos(osfildef *fp);
+	long osfpos(osfildef *fp);
 
-/*
+	/*
 *   Seek to a location in the file.  The first byte of the file has seek
 *   position 0.  Returns zero on success, non-zero on error.
 *
@@ -444,9 +442,9 @@ long osfpos(osfildef *fp);
 *.  OSFSK_CUR - set position relative to the current file position
 *.  OSFSK_END - set position relative to the end of the file
 */
-int osfseek(osfildef *fp, long pos, int mode);
+	int osfseek(osfildef *fp, long pos, int mode);
 
-/*
+	/*
 *   Close a file.
 *
 *   If the OS implementation uses buffered writes, this routine guarantees
@@ -455,14 +453,14 @@ int osfseek(osfildef *fp, long pos, int mode);
 *   since this function doesn't return any error indication, a caller could
 *   use osfflush() first to check for errors on any final buffered writes.
 */
-void osfcls(osfildef *fp);
+	void osfcls(osfildef *fp);
 
-/*
+	/*
 *   Delete a file.  Returns zero on success, non-zero on error.
 */
-int osfdel(const char *fname);
+	int osfdel(const char *fname);
 
-/*
+	/*
 *   Rename/move a file.  This should apply the usual C rename() behavior.
 *   Renames the old file to the new name, which may be in a new directory
 *   location if supported on the local system; moves across devices,
@@ -470,10 +468,10 @@ int osfdel(const char *fname);
 *   local system's rules.  If the new file already exists, results are
 *   undefined.  Returns true on success, false on failure.
 */
-int os_rename_file(const char *oldname, const char *newname);
+	int os_rename_file(const char *oldname, const char *newname);
 
-/* ------------------------------------------------------------------------ */
-/*
+	/* ------------------------------------------------------------------------ */
+	/*
  *   Look for a file in the "standard locations": current directory, program
  *   directory, PATH-like environment variables, etc.  The actual standard
  *   locations are specific to each platform; the implementation is free to
@@ -491,12 +489,11 @@ int os_rename_file(const char *oldname, const char *newname);
  *   Returns true (non-zero) if a copy of the file was located, false (zero)
  *   if the file could not be found in any of the standard locations.  
  */
-bool os_locate(const char *fname, int flen, const char *arg0,
-              char *buf, size_t bufsiz);
+	bool os_locate(const char *fname, int flen, const char *arg0,
+	               char *buf, size_t bufsiz);
 
-
-/* ------------------------------------------------------------------------ */
-/*
+	/* ------------------------------------------------------------------------ */
+	/*
  *   Create and open a temporary file.  The file must be opened to allow
  *   both reading and writing, and must be in "binary" mode rather than
  *   "text" mode, if the system makes such a distinction.  Returns null on
@@ -544,9 +541,9 @@ bool os_locate(const char *fname, int flen, const char *arg0,
  *   follows: if 'fname' is non-null, return fopen(fname,"w+b"); otherwise,
  *   set buf[0] to '\0' and return tmpfile().  
  */
-osfildef *os_create_tempfile(const char *fname, char *buf);
+	osfildef *os_create_tempfile(const char *fname, char *buf);
 
-/*
+	/*
  *   Delete a temporary file - this is used to delete a file created with
  *   os_create_tempfile().  For most platforms, this can simply be defined
  *   the same way as osfdel().  For platforms where the operating system or
@@ -571,16 +568,16 @@ osfildef *os_create_tempfile(const char *fname, char *buf);
  *   library calls as follows: if 'fname' is non-null and fname[0] != '\0',
  *   then call remove(fname); otherwise do nothing.  
  */
-int osfdel_temp(const char *fname);
+	int osfdel_temp(const char *fname);
 
-/*
+	/*
  *   Get the temporary file path.  This should fill in the buffer with a
  *   path prefix (suitable for strcat'ing a filename onto) for a good
  *   directory for a temporary file, such as the swap file.  
  */
-void os_get_tmp_path(char *buf);
+	void os_get_tmp_path(char *buf);
 
-/* 
+	/* 
  *   Generate a name for a temporary file.  This constructs a random file
  *   path in the system temp directory that isn't already used by an existing
  *   file.
@@ -605,15 +602,14 @@ void os_get_tmp_path(char *buf);
  *   system temporary directory defined, or the temp directory is so full of
  *   other files that we can't find an unused filename.  
  */
-int os_gen_temp_filename(char *buf, size_t buflen);
+	int os_gen_temp_filename(char *buf, size_t buflen);
 
-
-/* ------------------------------------------------------------------------ */
-/*
+	/* ------------------------------------------------------------------------ */
+	/*
 *   Basic directory/folder management routines
 */
 
-/*
+	/*
 *   Switch to a new working directory.
 *
 *   This is meant to behave similarly to the Unix concept of a working
@@ -624,17 +620,17 @@ int os_gen_temp_filename(char *buf, size_t buflen);
 *   local system notation.  File operations on filenames specified with
 *   absolute paths, of course, ignore the working directory.
 */
-void os_set_pwd(const char *dir);
+	void os_set_pwd(const char *dir);
 
-/*
+	/*
 *   Switch the working directory to the directory containing the given
 *   file.  Generally, this routine should only need to parse the filename
 *   enough to determine the part that's the directory path, then use
 *   os_set_pwd() to switch to that directory.
 */
-void os_set_pwd_file(const char *filename);
+	void os_set_pwd_file(const char *filename);
 
-/*
+	/*
 *   Create a directory.  This creates a new directory/folder with the given
 *   name, which may be given as a relative or absolute path.  Returns true
 *   on success, false on failure.
@@ -657,9 +653,9 @@ void os_set_pwd_file(const char *filename);
 *   accepts; e.g., on Unix, "/dir/sub/folder" and "/dir/sub/folder/" should
 *   be considered equivalent.
 */
-bool os_mkdir(const char *dir, int create_parents);
+	bool os_mkdir(const char *dir, int create_parents);
 
-/*
+	/*
 *   Remove a directory.  Returns true on success, false on failure.
 *
 *   If the directory isn't already empty, this routine fails.  That is, the
@@ -675,24 +671,23 @@ bool os_mkdir(const char *dir, int create_parents);
 *   special objects that are automatically or implicitly present in all
 *   directories, such as the Unix "." and ".." relative links.)
 */
-bool os_rmdir(const char *dir);
+	bool os_rmdir(const char *dir);
 
-
-/* ------------------------------------------------------------------------ */
-/*
+	/* ------------------------------------------------------------------------ */
+	/*
 *   Filename manipulation routines
 */
 
-/* apply a default extension to a filename, if it doesn't already have one */
-void os_defext(char *fname, const char *ext);
+	/* apply a default extension to a filename, if it doesn't already have one */
+	void os_defext(char *fname, const char *ext);
 
-/* unconditionally add an extention to a filename */
-void os_addext(char *fname, const char *ext);
+	/* unconditionally add an extention to a filename */
+	void os_addext(char *fname, const char *ext);
 
-/* remove the extension from a filename */
-void os_remext(char *fname);
+	/* remove the extension from a filename */
+	void os_remext(char *fname);
 
-/*
+	/*
 *   Compare two file names/paths for syntactic equivalence.  Returns true if
 *   the names are equivalent names according to the local file system's
 *   syntax conventions, false if not.  This does a syntax-only comparison of
@@ -719,9 +714,9 @@ void os_remext(char *fname);
 *
 *   - it doesn't follow symbolic links in the file system
 */
-bool os_file_names_equal(const char *a, const char *b);
+	bool os_file_names_equal(const char *a, const char *b);
 
-/*
+	/*
 *   Get a pointer to the root name portion of a filename.  This is the part
 *   of the filename after any path or directory prefix.  For example, on
 *   Unix, given the string "/home/mjr/deep.gam", this function should return
@@ -740,9 +735,9 @@ bool os_file_names_equal(const char *a, const char *b);
 *   call.  For these reasons, it's required that the return value point to a
 *   position within the original string passed in 'buf'.
 */
-const char *os_get_root_name(const char *buf);
+	const char *os_get_root_name(const char *buf);
 
-/*
+	/*
 *   Determine whether a filename specifies an absolute or relative path.
 *   This is used to analyze filenames provided by the user (for example,
 *   in a #include directive, or on a command line) to determine if the
@@ -755,9 +750,9 @@ const char *os_get_root_name(const char *buf);
 *   Returns true if the filename specifies an absolute path, false if
 *   not.
 */
-bool os_is_file_absolute(const char *fname);
+	bool os_is_file_absolute(const char *fname);
 
-/*
+	/*
 *   Extract the path from a filename.  Fills in pathbuf with the path
 *   portion of the filename.  If the filename has no path, the pathbuf
 *   should be set appropriately for the current directory (on Unix or DOS,
@@ -794,9 +789,9 @@ bool os_is_file_absolute(const char *fname);
 *   determine whether "Hard Disk" was a local subdirectory or a volume name.
 *
 */
-void os_get_path_name(char *pathbuf, size_t pathbuflen, const char *fname);
+	void os_get_path_name(char *pathbuf, size_t pathbuflen, const char *fname);
 
-/*
+	/*
 *   Build a full path name, given a path and a filename.  The path may have
 *   been specified by the user, or may have been extracted from another file
 *   via os_get_path_name().  This routine must take care to add path
@@ -858,10 +853,10 @@ void os_get_path_name(char *pathbuf, size_t pathbuflen, const char *fname);
 *.   [home]mjr.dir + deep.gam -> [home.mjr]deep.gam
 *.   [home] + [.mjr]deep.gam -> [home.mjr]deep.gam
 */
-void os_build_full_path(char *fullpathbuf, size_t fullpathbuflen,
-	const char *path, const char *filename);
+	void os_build_full_path(char *fullpathbuf, size_t fullpathbuflen,
+	                        const char *path, const char *filename);
 
-/*
+	/*
 *   Combine a path and a filename to form a full path to the file.  This is
 *   *almost* the same as os_build_full_path(), but if the 'filename' element
 *   is a special relative link, such as Unix '.' or '..', this preserves
@@ -883,11 +878,10 @@ void os_build_full_path(char *fullpathbuf, size_t fullpathbuflen,
 *.    [home.mjr] + deep.gam -> [home.mjr]deep.gam
 *.    [home.mjr] + [-] -> [home.mjr.-]
 */
-void os_combine_paths(char *fullpathbuf, size_t pathbuflen,
-	const char *path, const char *filename);
+	void os_combine_paths(char *fullpathbuf, size_t pathbuflen,
+	                      const char *path, const char *filename);
 
-
-/*
+	/*
 *   Get the absolute, fully qualified filename for a file.  This fills in
 *   'result_buf' with the absolute path to the given file, taking into
 *   account the current working directory and any other implied environment
@@ -920,10 +914,10 @@ void os_combine_paths(char *fullpathbuf, size_t pathbuflen,
 *   to an absolute path, the routine copies the original filename to the
 *   result buffer exactly as given, and returns false.
 */
-bool os_get_abs_filename(char *result_buf, size_t result_buf_size,
-	const char *filename);
+	bool os_get_abs_filename(char *result_buf, size_t result_buf_size,
+	                         const char *filename);
 
-/*
+	/*
 *   Get the relative version of the given filename path 'filename', relative
 *   to the given base directory 'basepath'.  Both paths must be given in
 *   absolute format.
@@ -965,10 +959,10 @@ bool os_get_abs_filename(char *result_buf, size_t result_buf_size,
 *.    SYS$:[mjr.games] | SYS$:[mjr.tads]deep.gam -> [-.tads]deep.gam
 *.    SYS$:[mjr.games] | DISK$:[mjr]deep.gam -> DISK$[mjr]deep.gam (ret false)
 */
-bool os_get_rel_path(char *result_buf, size_t result_buf_size,
-	const char *basepath, const char *filename);
+	bool os_get_rel_path(char *result_buf, size_t result_buf_size,
+	                     const char *basepath, const char *filename);
 
-/*
+	/*
 *   Determine if the given file is in the given directory.  Returns true if
 *   so, false if not.  'filename' is a relative or absolute file name;
 *   'path' is a relative or absolute directory path, such as one returned
@@ -1007,13 +1001,11 @@ bool os_get_rel_path(char *result_buf, size_t result_buf_size,
 *   converting the file and directory names to absolute paths and resolving
 *   all symbolic links and relative notation before comparing the paths.
 */
-bool os_is_file_in_dir(const char *filename, const char *path,
-	bool include_subdirs, bool match_self);
+	bool os_is_file_in_dir(const char *filename, const char *path,
+	                       bool include_subdirs, bool match_self);
 
-
-
-/* ------------------------------------------------------------------------ */
-/*
+	/* ------------------------------------------------------------------------ */
+	/*
  *   Convert an OS filename path to URL-style format.  This isn't a true URL
  *   conversion; rather, it simply expresses a filename in Unix-style
  *   notation, as a series of path elements separated by '/' characters.
@@ -1093,10 +1085,10 @@ bool os_is_file_in_dir(const char *filename, const char *path,
  *   range 0-127 as plain ASCII, and everything else as opaque.  I.e., do not
  *   quote or otherwise modify characters outside the 0-127 range.  
  */
-void os_cvt_dir_url(char *result_buf, size_t result_buf_size,
-                    const char *src_path);
+	void os_cvt_dir_url(char *result_buf, size_t result_buf_size,
+	                    const char *src_path);
 
-/*
+	/*
  *   Convert a URL-style path into a filename path expressed in the local
  *   file system's syntax.  Fills in result_buf with a file path, constructed
  *   using the local file system syntax, that corresponds to the path in
@@ -1191,9 +1183,8 @@ void os_cvt_dir_url(char *result_buf, size_t result_buf_size,
  *   
  *   Character sets: use the same rules as for os_cvt_dir_url().  
  */
-void os_cvt_url_dir(char *result_buf, size_t result_buf_size,
-                    const char *src_url);
-
+	void os_cvt_url_dir(char *result_buf, size_t result_buf_size,
+	                    const char *src_url);
 
 } // End of namespace TADS
 } // End of namespace Glk

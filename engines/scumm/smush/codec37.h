@@ -29,7 +29,6 @@ namespace Scumm {
 
 class Codec37Decoder {
 private:
-
 	int32 _deltaSize;
 	byte *_deltaBufs[2];
 	byte *_deltaBuf;
@@ -44,6 +43,7 @@ private:
 public:
 	Codec37Decoder(int width, int height);
 	~Codec37Decoder();
+
 protected:
 	void maketable(int, int);
 	void proc1(byte *dst, const byte *src, int32, int, int, int, int16 *);
@@ -51,6 +51,7 @@ protected:
 	void proc3WithoutFDFE(byte *dst, const byte *src, int32, int, int, int, int16 *);
 	void proc4WithFDFE(byte *dst, const byte *src, int32, int, int, int, int16 *);
 	void proc4WithoutFDFE(byte *dst, const byte *src, int32, int, int, int, int16 *);
+
 public:
 	void decode(byte *dst, const byte *src);
 };

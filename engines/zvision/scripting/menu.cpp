@@ -20,8 +20,8 @@
  *
  */
 
-#include "zvision/graphics/render_manager.h"
 #include "zvision/scripting/menu.h"
+#include "zvision/graphics/render_manager.h"
 
 namespace ZVision {
 
@@ -43,8 +43,8 @@ MenuHandler::MenuHandler(ZVision *engine) {
 	menuBarFlag = 0xFFFF;
 }
 
-MenuZGI::MenuZGI(ZVision *engine) :
-	MenuHandler(engine) {
+MenuZGI::MenuZGI(ZVision *engine)
+  : MenuHandler(engine) {
 	menuMouseFocus = -1;
 	inMenu = false;
 	scrolled[0] = false;
@@ -128,9 +128,10 @@ void MenuZGI::onMouseUp(const Common::Point &Pos) {
 					int itemspace = (600 - 28) / itemCount;
 
 					if (Common::Rect(scrollPos[kMenuItem] + itemspace * i, 0,
-					                 scrollPos[kMenuItem] + itemspace * i + 28, 32).contains(Pos)) {
+					                 scrollPos[kMenuItem] + itemspace * i + 28, 32)
+					      .contains(Pos)) {
 						int32 mouseItem = _engine->getScriptManager()->getStateValue(StateKey_InventoryItem);
-						if (mouseItem >= 0  && mouseItem < 0xE0) {
+						if (mouseItem >= 0 && mouseItem < 0xE0) {
 							_engine->getScriptManager()->inventoryDrop(mouseItem);
 							_engine->getScriptManager()->inventoryAdd(_engine->getScriptManager()->getStateValue(StateKey_Inv_StartSlot + i));
 							_engine->getScriptManager()->setStateValue(StateKey_Inv_StartSlot + i, mouseItem);
@@ -156,10 +157,10 @@ void MenuZGI::onMouseUp(const Common::Point &Pos) {
 					if (itemnum)
 						if (_engine->getScriptManager()->getStateValue(StateKey_InventoryItem) == 0 || _engine->getScriptManager()->getStateValue(StateKey_InventoryItem) >= 0xE0)
 							if (Common::Rect(668 + 47 * i - scrollPos[kMenuMagic], 0,
-							                 668 + 47 * i - scrollPos[kMenuMagic] + 28, 32).contains(Pos))
+							                 668 + 47 * i - scrollPos[kMenuMagic] + 28, 32)
+							      .contains(Pos))
 								_engine->getScriptManager()->setStateValue(StateKey_Active_Spell, itemnum);
 				}
-
 			}
 			break;
 
@@ -170,16 +171,18 @@ void MenuZGI::onMouseUp(const Common::Point &Pos) {
 				if (Common::Rect(320 + 135,
 				                 scrollPos[kMenuMain],
 				                 320 + 135 + 135,
-				                 scrollPos[kMenuMain] + 32).contains(Pos)) {
+				                 scrollPos[kMenuMain] + 32)
+				      .contains(Pos)) {
 					_engine->ifQuit();
 				}
 
 			// Settings
 			if (menuBarFlag & kMenubarSettings)
-				if (Common::Rect(320 ,
+				if (Common::Rect(320,
 				                 scrollPos[kMenuMain],
 				                 320 + 135,
-				                 scrollPos[kMenuMain] + 32).contains(Pos)) {
+				                 scrollPos[kMenuMain] + 32)
+				      .contains(Pos)) {
 					_engine->getScriptManager()->changeLocation('g', 'j', 'p', 'e', 0);
 				}
 
@@ -188,7 +191,8 @@ void MenuZGI::onMouseUp(const Common::Point &Pos) {
 				if (Common::Rect(320 - 135,
 				                 scrollPos[kMenuMain],
 				                 320,
-				                 scrollPos[kMenuMain] + 32).contains(Pos)) {
+				                 scrollPos[kMenuMain] + 32)
+				      .contains(Pos)) {
 					_engine->getScriptManager()->changeLocation('g', 'j', 'r', 'e', 0);
 				}
 
@@ -197,7 +201,8 @@ void MenuZGI::onMouseUp(const Common::Point &Pos) {
 				if (Common::Rect(320 - 135 * 2,
 				                 scrollPos[kMenuMain],
 				                 320 - 135,
-				                 scrollPos[kMenuMain] + 32).contains(Pos)) {
+				                 scrollPos[kMenuMain] + 32)
+				      .contains(Pos)) {
 					_engine->getScriptManager()->changeLocation('g', 'j', 's', 'e', 0);
 				}
 			break;
@@ -228,15 +233,15 @@ void MenuZGI::onMouseMove(const Common::Point &Pos) {
 					int itemspace = (600 - 28) / itemCount;
 
 					if (Common::Rect(scrollPos[kMenuItem] + itemspace * i, 0,
-					                 scrollPos[kMenuItem] + itemspace * i + 28, 32).contains(Pos)) {
+					                 scrollPos[kMenuItem] + itemspace * i + 28, 32)
+					      .contains(Pos)) {
 						mouseOnItem = i;
 						break;
 					}
 				}
 
 				if (lastItem != mouseOnItem)
-					if (_engine->getScriptManager()->getStateValue(StateKey_Inv_StartSlot + mouseOnItem) ||
-					        _engine->getScriptManager()->getStateValue(StateKey_Inv_StartSlot + lastItem))
+					if (_engine->getScriptManager()->getStateValue(StateKey_Inv_StartSlot + mouseOnItem) || _engine->getScriptManager()->getStateValue(StateKey_Inv_StartSlot + lastItem))
 						redraw = true;
 			}
 			break;
@@ -247,17 +252,16 @@ void MenuZGI::onMouseMove(const Common::Point &Pos) {
 				mouseOnItem = -1;
 				for (int i = 0; i < 12; i++) {
 					if (Common::Rect(668 + 47 * i - scrollPos[kMenuMagic], 0,
-					                 668 + 47 * i - scrollPos[kMenuMagic] + 28, 32).contains(Pos)) {
+					                 668 + 47 * i - scrollPos[kMenuMagic] + 28, 32)
+					      .contains(Pos)) {
 						mouseOnItem = i;
 						break;
 					}
 				}
 
 				if (lastItem != mouseOnItem)
-					if (_engine->getScriptManager()->getStateValue(StateKey_Spell_1 + mouseOnItem) ||
-					        _engine->getScriptManager()->getStateValue(StateKey_Spell_1 + lastItem))
+					if (_engine->getScriptManager()->getStateValue(StateKey_Spell_1 + mouseOnItem) || _engine->getScriptManager()->getStateValue(StateKey_Spell_1 + lastItem))
 						redraw = true;
-
 			}
 			break;
 
@@ -270,16 +274,18 @@ void MenuZGI::onMouseMove(const Common::Point &Pos) {
 				if (Common::Rect(320 + 135,
 				                 scrollPos[kMenuMain],
 				                 320 + 135 + 135,
-				                 scrollPos[kMenuMain] + 32).contains(Pos)) {
+				                 scrollPos[kMenuMain] + 32)
+				      .contains(Pos)) {
 					mouseOnItem = kMainMenuExit;
 				}
 
 			// Settings
 			if (menuBarFlag & kMenubarSettings)
-				if (Common::Rect(320 ,
+				if (Common::Rect(320,
 				                 scrollPos[kMenuMain],
 				                 320 + 135,
-				                 scrollPos[kMenuMain] + 32).contains(Pos)) {
+				                 scrollPos[kMenuMain] + 32)
+				      .contains(Pos)) {
 					mouseOnItem = kMainMenuPrefs;
 				}
 
@@ -288,7 +294,8 @@ void MenuZGI::onMouseMove(const Common::Point &Pos) {
 				if (Common::Rect(320 - 135,
 				                 scrollPos[kMenuMain],
 				                 320,
-				                 scrollPos[kMenuMain] + 32).contains(Pos)) {
+				                 scrollPos[kMenuMain] + 32)
+				      .contains(Pos)) {
 					mouseOnItem = kMainMenuLoad;
 				}
 
@@ -297,20 +304,20 @@ void MenuZGI::onMouseMove(const Common::Point &Pos) {
 				if (Common::Rect(320 - 135 * 2,
 				                 scrollPos[kMenuMain],
 				                 320 - 135,
-				                 scrollPos[kMenuMain] + 32).contains(Pos)) {
+				                 scrollPos[kMenuMain] + 32)
+				      .contains(Pos)) {
 					mouseOnItem = kMainMenuSave;
 				}
 
 			if (lastItem != mouseOnItem)
 				redraw = true;
-		}
-		break;
+		} break;
 
 		default:
 			int cur_menu = menuMouseFocus;
 			if (Common::Rect(64, 0, 64 + 512, 8).contains(Pos)) { // Main
 				menuMouseFocus = kMenuMain;
-				scrolled[kMenuMain]  = false;
+				scrolled[kMenuMain] = false;
 				scrollPos[kMenuMain] = menuBack[kMenuMain][1].h - menuBack[kMenuMain][0].h;
 				_engine->getScriptManager()->setStateValue(StateKey_MenuState, 2);
 			}
@@ -318,7 +325,7 @@ void MenuZGI::onMouseMove(const Common::Point &Pos) {
 			if (menuBarFlag & kMenubarMagic)
 				if (Common::Rect(640 - 28, 0, 640, 32).contains(Pos)) { // Magic
 					menuMouseFocus = kMenuMagic;
-					scrolled[kMenuMagic]  = false;
+					scrolled[kMenuMagic] = false;
 					scrollPos[kMenuMagic] = 28;
 					_engine->getScriptManager()->setStateValue(StateKey_MenuState, 3);
 				}
@@ -326,7 +333,7 @@ void MenuZGI::onMouseMove(const Common::Point &Pos) {
 			if (menuBarFlag & kMenubarItems)
 				if (Common::Rect(0, 0, 28, 32).contains(Pos)) { // Items
 					menuMouseFocus = kMenuItem;
-					scrolled[kMenuItem]  = false;
+					scrolled[kMenuItem] = false;
 					scrollPos[kMenuItem] = 28 - 600;
 					_engine->getScriptManager()->setStateValue(StateKey_MenuState, 1);
 				}
@@ -549,8 +556,8 @@ void MenuZGI::process(uint32 deltatime) {
 	}
 }
 
-MenuNemesis::MenuNemesis(ZVision *engine) :
-	MenuHandler(engine) {
+MenuNemesis::MenuNemesis(ZVision *engine)
+  : MenuHandler(engine) {
 	inMenu = false;
 	scrolled = false;
 	scrollPos = 0;
@@ -578,7 +585,7 @@ MenuNemesis::~MenuNemesis() {
 	menuBar.free();
 }
 
-static const int16 buts[4][2] = { {120 , 64}, {144, 184}, {128, 328}, {120, 456} };
+static const int16 buts[4][2] = { { 120, 64 }, { 144, 184 }, { 128, 328 }, { 120, 456 } };
 
 void MenuNemesis::onMouseUp(const Common::Point &Pos) {
 	if (Pos.y < 40) {
@@ -587,7 +594,8 @@ void MenuNemesis::onMouseUp(const Common::Point &Pos) {
 			if (Common::Rect(buts[3][1],
 			                 scrollPos,
 			                 buts[3][0] + buts[3][1],
-			                 scrollPos + 32).contains(Pos)) {
+			                 scrollPos + 32)
+			      .contains(Pos)) {
 				_engine->ifQuit();
 				frm = 5;
 				redraw = true;
@@ -598,7 +606,8 @@ void MenuNemesis::onMouseUp(const Common::Point &Pos) {
 			if (Common::Rect(buts[2][1],
 			                 scrollPos,
 			                 buts[2][0] + buts[2][1],
-			                 scrollPos + 32).contains(Pos)) {
+			                 scrollPos + 32)
+			      .contains(Pos)) {
 				_engine->getScriptManager()->changeLocation('g', 'j', 'p', 'e', 0);
 				frm = 5;
 				redraw = true;
@@ -609,7 +618,8 @@ void MenuNemesis::onMouseUp(const Common::Point &Pos) {
 			if (Common::Rect(buts[1][1],
 			                 scrollPos,
 			                 buts[1][0] + buts[1][1],
-			                 scrollPos + 32).contains(Pos)) {
+			                 scrollPos + 32)
+			      .contains(Pos)) {
 				_engine->getScriptManager()->changeLocation('g', 'j', 'r', 'e', 0);
 				frm = 5;
 				redraw = true;
@@ -620,7 +630,8 @@ void MenuNemesis::onMouseUp(const Common::Point &Pos) {
 			if (Common::Rect(buts[0][1],
 			                 scrollPos,
 			                 buts[0][0] + buts[0][1],
-			                 scrollPos + 32).contains(Pos)) {
+			                 scrollPos + 32)
+			      .contains(Pos)) {
 				_engine->getScriptManager()->changeLocation('g', 'j', 's', 'e', 0);
 				frm = 5;
 				redraw = true;
@@ -644,7 +655,8 @@ void MenuNemesis::onMouseMove(const Common::Point &Pos) {
 			if (Common::Rect(buts[3][1],
 			                 scrollPos,
 			                 buts[3][0] + buts[3][1],
-			                 scrollPos + 32).contains(Pos)) {
+			                 scrollPos + 32)
+			      .contains(Pos)) {
 				mouseOnItem = kMainMenuExit;
 			}
 
@@ -653,7 +665,8 @@ void MenuNemesis::onMouseMove(const Common::Point &Pos) {
 			if (Common::Rect(buts[2][1],
 			                 scrollPos,
 			                 buts[2][0] + buts[2][1],
-			                 scrollPos + 32).contains(Pos)) {
+			                 scrollPos + 32)
+			      .contains(Pos)) {
 				mouseOnItem = kMainMenuPrefs;
 			}
 
@@ -662,7 +675,8 @@ void MenuNemesis::onMouseMove(const Common::Point &Pos) {
 			if (Common::Rect(buts[1][1],
 			                 scrollPos,
 			                 buts[1][0] + buts[1][1],
-			                 scrollPos + 32).contains(Pos)) {
+			                 scrollPos + 32)
+			      .contains(Pos)) {
 				mouseOnItem = kMainMenuLoad;
 			}
 
@@ -671,7 +685,8 @@ void MenuNemesis::onMouseMove(const Common::Point &Pos) {
 			if (Common::Rect(buts[0][1],
 			                 scrollPos,
 			                 buts[0][0] + buts[0][1],
-			                 scrollPos + 32).contains(Pos)) {
+			                 scrollPos + 32)
+			      .contains(Pos)) {
 				mouseOnItem = kMainMenuSave;
 			}
 

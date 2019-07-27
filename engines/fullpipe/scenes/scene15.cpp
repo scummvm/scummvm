@@ -22,17 +22,16 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
-
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
@@ -79,7 +78,7 @@ void scene15_initScene(Scene *sc) {
 	else
 		g_vars->scene15_plusminus->_statics = g_vars->scene15_plusminus->getStaticsById(ST_PMS_PLUS);
 
- 	g_vars->scene15_ladder = sc->getPictureObjectById(PIC_SC15_LADDER, 0);
+	g_vars->scene15_ladder = sc->getPictureObjectById(PIC_SC15_LADDER, 0);
 	g_vars->scene15_boot = sc->getStaticANIObject1ById(ANI_BOOT_15, -1);
 
 	if (g_fp->getObjectState(sO_Boot_15) != g_fp->getObjectEnumState(sO_Boot_15, sO_IsPresent))
@@ -104,7 +103,7 @@ int sceneHandler15(ExCommand *cmd) {
 	if (cmd->_messageKind != 17)
 		return 0;
 
-	switch(cmd->_messageNum) {
+	switch (cmd->_messageNum) {
 	case MSG_LIFT_CLOSEDOOR:
 		g_fp->lift_closedoorSeq();
 		break;
@@ -159,24 +158,23 @@ int sceneHandler15(ExCommand *cmd) {
 		g_fp->lift_hoverButton(cmd);
 		break;
 
-	case 29:
-		{
-			if (g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC15_LADDER) {
-				handleObjectInteraction(g_fp->_aniMan, g_fp->_currentScene->getPictureObjectById(PIC_SC15_DTRUBA, 0), cmd->_param);
-				cmd->_messageKind = 0;
+	case 29: {
+		if (g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC15_LADDER) {
+			handleObjectInteraction(g_fp->_aniMan, g_fp->_currentScene->getPictureObjectById(PIC_SC15_DTRUBA, 0), cmd->_param);
+			cmd->_messageKind = 0;
 
-				return 0;
-			}
-
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-
-			if (ani && ani->_id == ANI_LIFTBUTTON) {
-				g_fp->lift_animateButton(ani);
-
-				cmd->_messageKind = 0;
-			}
-			break;
+			return 0;
 		}
+
+		StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+
+		if (ani && ani->_id == ANI_LIFTBUTTON) {
+			g_fp->lift_animateButton(ani);
+
+			cmd->_messageKind = 0;
+		}
+		break;
+	}
 
 	case 30:
 		// nop

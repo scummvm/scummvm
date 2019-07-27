@@ -24,16 +24,20 @@
 
 #ifdef ENABLE_KEYMAPPER
 
-#include "common/system.h"
+#	include "common/system.h"
 
-#include "backends/keymapper/hardware-input.h"
-#include "backends/keymapper/keymapper-defaults.h"
+#	include "backends/keymapper/hardware-input.h"
+#	include "backends/keymapper/keymapper-defaults.h"
 
-#define KEYMAP_KEY_PREFIX "keymap_"
+#	define KEYMAP_KEY_PREFIX "keymap_"
 
 namespace Common {
 
-Keymap::Keymap(const Keymap& km) : _actions(km._actions), _keymap(), _nonkeymap(), _configDomain(0) {
+Keymap::Keymap(const Keymap &km)
+  : _actions(km._actions)
+  , _keymap()
+  , _nonkeymap()
+  , _configDomain(0) {
 	List<Action *>::iterator it;
 
 	for (it = _actions.begin(); it != _actions.end(); ++it) {
@@ -116,7 +120,7 @@ const Action *Keymap::findAction(const char *id) const {
 	return 0;
 }
 
-Action *Keymap::getMappedAction(const KeyState& ks) const {
+Action *Keymap::getMappedAction(const KeyState &ks) const {
 	HashMap<KeyState, Action *>::iterator it;
 
 	it = _keymap.find(ks);
@@ -152,11 +156,11 @@ void Keymap::loadMappings(const HardwareInputSet *hwKeys) {
 	Common::KeymapperDefaultBindings *defaults = g_system->getKeymapperDefaultBindings();
 
 	HashMap<String, const HardwareInput *> mappedInputs;
-	List<Action*>::iterator it;
+	List<Action *>::iterator it;
 	String prefix = KEYMAP_KEY_PREFIX + _name + "_";
 
 	for (it = _actions.begin(); it != _actions.end(); ++it) {
-		Action* ua = *it;
+		Action *ua = *it;
 		String actionId(ua->id);
 		String confKey = prefix + actionId;
 

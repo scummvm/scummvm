@@ -26,12 +26,11 @@
 #include "common/system.h"
 #include "video/qt_decoder.h"
 
+#include "pegasus/ai/ai_area.h"
 #include "pegasus/cursor.h"
 #include "pegasus/energymonitor.h"
 #include "pegasus/gamestate.h"
 #include "pegasus/interface.h"
-#include "pegasus/pegasus.h"
-#include "pegasus/ai/ai_area.h"
 #include "pegasus/items/biochips/biochipitem.h"
 #include "pegasus/neighborhood/caldoria/caldoria.h"
 #include "pegasus/neighborhood/caldoria/caldoria4dsystem.h"
@@ -39,6 +38,7 @@
 #include "pegasus/neighborhood/caldoria/caldoriamessages.h"
 #include "pegasus/neighborhood/caldoria/caldoriamirror.h"
 #include "pegasus/neighborhood/tsa/fulltsa.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -168,8 +168,9 @@ void SinclairCallBack::callBack() {
 	_caldoria->checkInterruptSinclair();
 }
 
-Caldoria::Caldoria(InputHandler* nextHandler, PegasusEngine *owner)
-		: Neighborhood(nextHandler, owner, "Caldoria", kCaldoriaID), _sinclairInterrupt(this) {
+Caldoria::Caldoria(InputHandler *nextHandler, PegasusEngine *owner)
+  : Neighborhood(nextHandler, owner, "Caldoria", kCaldoriaID)
+  , _sinclairInterrupt(this) {
 	setIsItemTaken(kKeyCard);
 	setIsItemTaken(kOrangeJuiceGlassEmpty);
 	GameState.setTakenItemID(kOrangeJuiceGlassFull, GameState.isTakenItemID(kOrangeJuiceGlassEmpty));
@@ -287,8 +288,7 @@ public:
 
 // Return true if player is on 53 east and Sinclair is shot.
 bool AIBombActiveCondition::fireCondition() {
-	return GameState.getCurrentRoom() == kCaldoria53 && GameState.getCurrentDirection() == kEast &&
-			GameState.getCaldoriaSinclairShot();
+	return GameState.getCurrentRoom() == kCaldoria53 && GameState.getCurrentDirection() == kEast && GameState.getCaldoriaSinclairShot();
 }
 
 void Caldoria::setUpAIRules() {
@@ -344,7 +344,7 @@ void Caldoria::setUpAIRules() {
 			rule = new AIRule(locCondition, ruleAction);
 			g_AIArea->addAIRule(rule);
 		}
- 	}
+	}
 }
 
 uint16 Caldoria::getDateResID() const {
@@ -739,15 +739,15 @@ void Caldoria::arriveAt(const RoomID room, const DirectionConstant direction) {
 	case kCaldoria56:
 		if (!GameState.getCaldoriaGunAimed())
 			// Fall through...
-	case kCaldoria49:
-	case kCaldoria50:
-	case kCaldoria51:
-	case kCaldoria52:
-	case kCaldoria53:
-	case kCaldoria54:
-	case kCaldoria55:
-		if (GameState.getCaldoriaSinclairShot())
-			setCurrentAlternate(kAltCaldoriaSinclairDown);
+		case kCaldoria49:
+		case kCaldoria50:
+		case kCaldoria51:
+		case kCaldoria52:
+		case kCaldoria53:
+		case kCaldoria54:
+		case kCaldoria55:
+			if (GameState.getCaldoriaSinclairShot())
+				setCurrentAlternate(kAltCaldoriaSinclairDown);
 		break;
 	}
 
@@ -977,22 +977,22 @@ void Caldoria::setUpRoofTop() {
 			startExtraSequence(kCa53EastShootSinclair, kExtraCompletedFlag, false);
 		else
 			// Fall through...
-	case kCaldoria49:
-	case kCaldoria50:
-	case kCaldoria51:
-	case kCaldoria52:
-	case kCaldoria53:
-	case kCaldoria54:
-	case kCaldoria55:
-		if (!GameState.getCaldoriaSinclairShot()) {
-			if (GameState.getCaldoriaSawVoiceAnalysis() && !_utilityFuse.isFuseLit()) {
-				_utilityFuse.primeFuse(GameState.getCaldoriaFuseTimeLimit());
-				_utilityFuse.setFunctor(new Common::Functor0Mem<void, Caldoria>(this, &Caldoria::sinclairTimerExpired));
-				_utilityFuse.lightFuse();
+		case kCaldoria49:
+		case kCaldoria50:
+		case kCaldoria51:
+		case kCaldoria52:
+		case kCaldoria53:
+		case kCaldoria54:
+		case kCaldoria55:
+			if (!GameState.getCaldoriaSinclairShot()) {
+				if (GameState.getCaldoriaSawVoiceAnalysis() && !_utilityFuse.isFuseLit()) {
+					_utilityFuse.primeFuse(GameState.getCaldoriaFuseTimeLimit());
+					_utilityFuse.setFunctor(new Common::Functor0Mem<void, Caldoria>(this, &Caldoria::sinclairTimerExpired));
+					_utilityFuse.lightFuse();
+				}
+			} else {
+				setCurrentAlternate(kAltCaldoriaSinclairDown);
 			}
-		} else {
-			setCurrentAlternate(kAltCaldoriaSinclairDown);
-		}
 		break;
 	}
 }
@@ -1864,13 +1864,13 @@ void Caldoria::checkInterruptSinclair() {
 
 		if (currentTime < entry.movieStart + kSinclairInterruptionTime2)
 			_sinclairInterrupt.scheduleCallBack(kTriggerTimeFwd, entry.movieStart + kSinclairInterruptionTime2,
-					_navMovie.getScale());
+			                                    _navMovie.getScale());
 		else if (currentTime < entry.movieStart + kSinclairInterruptionTime3)
 			_sinclairInterrupt.scheduleCallBack(kTriggerTimeFwd, entry.movieStart + kSinclairInterruptionTime3,
-					_navMovie.getScale());
+			                                    _navMovie.getScale());
 		else if (currentTime < entry.movieStart + kSinclairInterruptionTime4)
 			_sinclairInterrupt.scheduleCallBack(kTriggerTimeFwd, entry.movieStart + kSinclairInterruptionTime4,
-					_navMovie.getScale());
+			                                    _navMovie.getScale());
 	}
 }
 

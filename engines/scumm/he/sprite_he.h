@@ -21,30 +21,30 @@
  */
 
 #if !defined(SCUMM_HE_SPRITE_HE_H) && defined(ENABLE_HE)
-#define SCUMM_HE_SPRITE_HE_H
+#	define SCUMM_HE_SPRITE_HE_H
 
-#include "common/serializer.h"
+#	include "common/serializer.h"
 
 namespace Scumm {
 
 enum SpriteFlags {
-	kSFChanged           = 0x1,
-	kSFNeedRedraw        = 0x2,
-	kSFScaled            = 0x10,
-	kSFRotated           = 0x20,
-	kSFDoubleBuffered    = 0x1000,
-	kSFYFlipped          = 0x2000,
-	kSFXFlipped          = 0x4000,
-	kSFActive            = 0x8000,
-	kSFRemapPalette      = 0x80000,
-	kSFAutoAnim          = 0x200000,
-	kSFMarkDirty         = 0x400000,
-	kSFBlitDirectly      = 0x2000000,
-	kSFImageless         = 0x40000000
+	kSFChanged = 0x1,
+	kSFNeedRedraw = 0x2,
+	kSFScaled = 0x10,
+	kSFRotated = 0x20,
+	kSFDoubleBuffered = 0x1000,
+	kSFYFlipped = 0x2000,
+	kSFXFlipped = 0x4000,
+	kSFActive = 0x8000,
+	kSFRemapPalette = 0x80000,
+	kSFAutoAnim = 0x200000,
+	kSFMarkDirty = 0x400000,
+	kSFBlitDirectly = 0x2000000,
+	kSFImageless = 0x40000000
 };
 
 enum SpriteGroupFlags {
-	kSGFClipBox     = (1 << 0)
+	kSGFClipBox = (1 << 0)
 };
 
 struct SpriteInfo {
@@ -264,6 +264,7 @@ public:
 	void resetGroup(int spriteGroupId);
 	void resetTables(bool refreshScreen);
 	void setSpriteImage(int spriteId, int imageNum);
+
 private:
 	ScummEngine_v90he *_vm;
 };

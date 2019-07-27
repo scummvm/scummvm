@@ -43,6 +43,7 @@ public:
 
 	virtual void touch(uint16 mask, V2D pos, Common::KeyCode keyCode);
 	void tick();
+
 private:
 	CGE2Engine *_vm;
 };

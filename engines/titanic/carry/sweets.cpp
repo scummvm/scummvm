@@ -25,10 +25,11 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CSweets, CCarry)
-	ON_MESSAGE(MouseButtonUpMsg)
+ON_MESSAGE(MouseButtonUpMsg)
 END_MESSAGE_MAP()
 
-CSweets::CSweets() : CCarry() {
+CSweets::CSweets()
+  : CCarry() {
 }
 
 void CSweets::save(SimpleFile *file, int indent) {

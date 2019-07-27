@@ -25,11 +25,11 @@
 #include "gui/widgets/edittext.h"
 #include "gui/widgets/list.h"
 
+#include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "common/system.h"
-#include "common/algorithm.h"
 #if defined(USE_SYSDIALOGS)
-#include "common/dialogs.h"
+#	include "common/dialogs.h"
 #endif
 
 #include "common/translation.h"
@@ -50,7 +50,7 @@ enum {
  */
 
 BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
-	: Dialog("Browser") {
+  : Dialog("Browser") {
 
 	_title = title;
 	_isDirBrowser = dirBrowser;

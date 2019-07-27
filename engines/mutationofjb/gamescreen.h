@@ -23,16 +23,16 @@
 #ifndef MUTATIONOFJB_GUI_H
 #define MUTATIONOFJB_GUI_H
 
+#include "mutationofjb/guiscreen.h"
 #include "mutationofjb/inventory.h"
 #include "mutationofjb/script.h"
-#include "mutationofjb/guiscreen.h"
 #include "mutationofjb/widgets/buttonwidget.h"
-#include "mutationofjb/widgets/inventorywidget.h"
 #include "mutationofjb/widgets/gamewidget.h"
+#include "mutationofjb/widgets/inventorywidget.h"
 
 #include "common/array.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 
 #include "graphics/surface.h"
 

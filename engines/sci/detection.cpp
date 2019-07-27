@@ -20,7 +20,6 @@
  *
  */
 
-#include "engines/advancedDetector.h"
 #include "base/plugins.h"
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -28,110 +27,111 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
-#include "graphics/thumbnail.h"
+#include "engines/advancedDetector.h"
 #include "graphics/surface.h"
+#include "graphics/thumbnail.h"
 
-#include "sci/sci.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/savegame.h"
 #include "sci/engine/script.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/state.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
 // Titles of the games
 static const PlainGameDescriptor s_sciGameTitles[] = {
-	{"sci",             "Sierra SCI Game"},
-	{"sci-fanmade",     "Fanmade SCI Game"},
+	{ "sci", "Sierra SCI Game" },
+	{ "sci-fanmade", "Fanmade SCI Game" },
 	// === SCI0 games =========================================================
-	{"astrochicken",    "Astro Chicken"},
-	{"christmas1988",   "Christmas Card 1988"},
-	{"iceman",          "Codename: Iceman"},
-	{"camelot",         "Conquests of Camelot: King Arthur, Quest for the Grail"},
-	{"funseeker",       "Fun Seeker's Guide"},
-	{"hoyle1",          "Hoyle Official Book of Games: Volume 1"},
-	{"hoyle2",          "Hoyle Official Book of Games: Volume 2"},
-	{"kq4sci",          "King's Quest IV: The Perils of Rosella"},	// Note: There was also an AGI version of this
-	{"laurabow",        "Laura Bow: The Colonel's Bequest"},
-	{"lsl2",            "Leisure Suit Larry 2: Goes Looking for Love (in Several Wrong Places)"},
-	{"lsl3",            "Leisure Suit Larry 3: Passionate Patti in Pursuit of the Pulsating Pectorals"},
-	{"mothergoose",     "Mixed-Up Mother Goose"},
-	{"pq2",             "Police Quest II: The Vengeance"},
-	{"qfg1",            "Quest for Glory I: So You Want to Be a Hero"},	// Note: There was also a SCI11 VGA remake of this (further down)
-	{"sq3",             "Space Quest III: The Pirates of Pestulon"},
+	{ "astrochicken", "Astro Chicken" },
+	{ "christmas1988", "Christmas Card 1988" },
+	{ "iceman", "Codename: Iceman" },
+	{ "camelot", "Conquests of Camelot: King Arthur, Quest for the Grail" },
+	{ "funseeker", "Fun Seeker's Guide" },
+	{ "hoyle1", "Hoyle Official Book of Games: Volume 1" },
+	{ "hoyle2", "Hoyle Official Book of Games: Volume 2" },
+	{ "kq4sci", "King's Quest IV: The Perils of Rosella" }, // Note: There was also an AGI version of this
+	{ "laurabow", "Laura Bow: The Colonel's Bequest" },
+	{ "lsl2", "Leisure Suit Larry 2: Goes Looking for Love (in Several Wrong Places)" },
+	{ "lsl3", "Leisure Suit Larry 3: Passionate Patti in Pursuit of the Pulsating Pectorals" },
+	{ "mothergoose", "Mixed-Up Mother Goose" },
+	{ "pq2", "Police Quest II: The Vengeance" },
+	{ "qfg1", "Quest for Glory I: So You Want to Be a Hero" }, // Note: There was also a SCI11 VGA remake of this (further down)
+	{ "sq3", "Space Quest III: The Pirates of Pestulon" },
 	// === SCI01 games ========================================================
-	{"qfg2",            "Quest for Glory II: Trial by Fire"},
-	{"kq1sci",          "King's Quest I: Quest for the Crown"},	// Note: There was also an AGI version of this
+	{ "qfg2", "Quest for Glory II: Trial by Fire" },
+	{ "kq1sci", "King's Quest I: Quest for the Crown" }, // Note: There was also an AGI version of this
 	// === SCI1 games =========================================================
-	{"castlebrain",     "Castle of Dr. Brain"},
-	{"christmas1990",   "Christmas Card 1990: The Seasoned Professional"},
-	{"cnick-lsl",       "Crazy Nick's Software Picks: Leisure Suit Larry's Casino"},
-	{"cnick-kq",        "Crazy Nick's Software Picks: King Graham's Board Game Challenge"},
-	{"cnick-laurabow",  "Crazy Nick's Software Picks: Parlor Games with Laura Bow"},
-	{"cnick-longbow",   "Crazy Nick's Software Picks: Robin Hood's Game of Skill and Chance"},
-	{"cnick-sq",        "Crazy Nick's Software Picks: Roger Wilco's Spaced Out Game Pack"},
-	{"ecoquest",        "EcoQuest: The Search for Cetus"},	// floppy is SCI1, CD SCI1.1
-	{"fairytales",      "Mixed-up Fairy Tales"},
-	{"hoyle3",          "Hoyle Official Book of Games: Volume 3"},
-	{"jones",           "Jones in the Fast Lane"},
-	{"kq5",             "King's Quest V: Absence Makes the Heart Go Yonder"},
-	{"longbow",         "Conquests of the Longbow: The Adventures of Robin Hood"},
-	{"lsl1sci",         "Leisure Suit Larry in the Land of the Lounge Lizards"},	// Note: There was also an AGI version of this
-	{"lsl5",            "Leisure Suit Larry 5: Passionate Patti Does a Little Undercover Work"},
-	{"mothergoose256",  "Mixed-Up Mother Goose"},
-	{"msastrochicken",  "Ms. Astro Chicken"},
-	{"pq1sci",          "Police Quest: In Pursuit of the Death Angel"},	// Note: There was also an AGI version of this
-	{"pq3",             "Police Quest III: The Kindred"},
-	{"sq1sci",          "Space Quest I: The Sarien Encounter"},	// Note: There was also an AGI version of this
-	{"sq4",             "Space Quest IV: Roger Wilco and the Time Rippers"},	// floppy is SCI1, CD SCI1.1
+	{ "castlebrain", "Castle of Dr. Brain" },
+	{ "christmas1990", "Christmas Card 1990: The Seasoned Professional" },
+	{ "cnick-lsl", "Crazy Nick's Software Picks: Leisure Suit Larry's Casino" },
+	{ "cnick-kq", "Crazy Nick's Software Picks: King Graham's Board Game Challenge" },
+	{ "cnick-laurabow", "Crazy Nick's Software Picks: Parlor Games with Laura Bow" },
+	{ "cnick-longbow", "Crazy Nick's Software Picks: Robin Hood's Game of Skill and Chance" },
+	{ "cnick-sq", "Crazy Nick's Software Picks: Roger Wilco's Spaced Out Game Pack" },
+	{ "ecoquest", "EcoQuest: The Search for Cetus" }, // floppy is SCI1, CD SCI1.1
+	{ "fairytales", "Mixed-up Fairy Tales" },
+	{ "hoyle3", "Hoyle Official Book of Games: Volume 3" },
+	{ "jones", "Jones in the Fast Lane" },
+	{ "kq5", "King's Quest V: Absence Makes the Heart Go Yonder" },
+	{ "longbow", "Conquests of the Longbow: The Adventures of Robin Hood" },
+	{ "lsl1sci", "Leisure Suit Larry in the Land of the Lounge Lizards" }, // Note: There was also an AGI version of this
+	{ "lsl5", "Leisure Suit Larry 5: Passionate Patti Does a Little Undercover Work" },
+	{ "mothergoose256", "Mixed-Up Mother Goose" },
+	{ "msastrochicken", "Ms. Astro Chicken" },
+	{ "pq1sci", "Police Quest: In Pursuit of the Death Angel" }, // Note: There was also an AGI version of this
+	{ "pq3", "Police Quest III: The Kindred" },
+	{ "sq1sci", "Space Quest I: The Sarien Encounter" }, // Note: There was also an AGI version of this
+	{ "sq4", "Space Quest IV: Roger Wilco and the Time Rippers" }, // floppy is SCI1, CD SCI1.1
 	// === SCI1.1 games =======================================================
-	{"christmas1992",   "Christmas Card 1992"},
-	{"ecoquest2",       "EcoQuest II: Lost Secret of the Rainforest"},
-	{"freddypharkas",   "Freddy Pharkas: Frontier Pharmacist"},
-	{"hoyle4",          "Hoyle Classic Card Games"},
-	{"inndemo",         "ImagiNation Network (INN) Demo"},
-	{"kq6",             "King's Quest VI: Heir Today, Gone Tomorrow"},
-	{"laurabow2",       "Laura Bow 2: The Dagger of Amon Ra"},
-	{"qfg1vga",         "Quest for Glory I: So You Want to Be a Hero"},	// Note: There was also a SCI0 version of this (further up)
-	{"qfg3",            "Quest for Glory III: Wages of War"},
-	{"sq5",             "Space Quest V: The Next Mutation"},
-	{"islandbrain",     "The Island of Dr. Brain"},
-	{"lsl6",            "Leisure Suit Larry 6: Shape Up or Slip Out!"},
-	{"pepper",          "Pepper's Adventure in Time"},
-	{"slater",          "Slater & Charlie Go Camping"},
-	{"gk1demo",         "Gabriel Knight: Sins of the Fathers"},
-	{"qfg4demo",        "Quest for Glory IV: Shadows of Darkness"},
-	{"pq4demo",         "Police Quest IV: Open Season"},
+	{ "christmas1992", "Christmas Card 1992" },
+	{ "ecoquest2", "EcoQuest II: Lost Secret of the Rainforest" },
+	{ "freddypharkas", "Freddy Pharkas: Frontier Pharmacist" },
+	{ "hoyle4", "Hoyle Classic Card Games" },
+	{ "inndemo", "ImagiNation Network (INN) Demo" },
+	{ "kq6", "King's Quest VI: Heir Today, Gone Tomorrow" },
+	{ "laurabow2", "Laura Bow 2: The Dagger of Amon Ra" },
+	{ "qfg1vga", "Quest for Glory I: So You Want to Be a Hero" }, // Note: There was also a SCI0 version of this (further up)
+	{ "qfg3", "Quest for Glory III: Wages of War" },
+	{ "sq5", "Space Quest V: The Next Mutation" },
+	{ "islandbrain", "The Island of Dr. Brain" },
+	{ "lsl6", "Leisure Suit Larry 6: Shape Up or Slip Out!" },
+	{ "pepper", "Pepper's Adventure in Time" },
+	{ "slater", "Slater & Charlie Go Camping" },
+	{ "gk1demo", "Gabriel Knight: Sins of the Fathers" },
+	{ "qfg4demo", "Quest for Glory IV: Shadows of Darkness" },
+	{ "pq4demo", "Police Quest IV: Open Season" },
 	// === SCI1.1+ games ======================================================
-	{"catdate",         "The Dating Pool"},
+	{ "catdate", "The Dating Pool" },
 	// === SCI2 games =========================================================
-	{"gk1",             "Gabriel Knight: Sins of the Fathers"},
-	{"pq4",             "Police Quest IV: Open Season"}, // floppy is SCI2, CD SCI2.1
-	{"qfg4",            "Quest for Glory IV: Shadows of Darkness"},	// floppy is SCI2, CD SCI2.1
+	{ "gk1", "Gabriel Knight: Sins of the Fathers" },
+	{ "pq4", "Police Quest IV: Open Season" }, // floppy is SCI2, CD SCI2.1
+	{ "qfg4", "Quest for Glory IV: Shadows of Darkness" }, // floppy is SCI2, CD SCI2.1
 	// === SCI2.1 games ========================================================
-	{"hoyle5",          "Hoyle Classic Games"},
-	{"hoyle5bridge",    "Hoyle Bridge"},
-	{"hoyle5children",  "Hoyle Children's Collection"},
-	{"hoyle5solitaire", "Hoyle Solitaire"},
-	{"chest",           "Inside the Chest"},	// aka Behind the Developer's Shield
-	{"gk2",             "The Beast Within: A Gabriel Knight Mystery"},
-	{"kq7",             "King's Quest VII: The Princeless Bride"},
-	{"kquestions",      "King's Questions"},
-	{"lsl6hires",       "Leisure Suit Larry 6: Shape Up or Slip Out!"},
-	{"mothergoosehires","Mixed-Up Mother Goose Deluxe"},
-	{"phantasmagoria",  "Phantasmagoria"},
-	{"pqswat",          "Police Quest: SWAT"},
-	{"shivers",         "Shivers"},
-	{"sq6",             "Space Quest 6: The Spinal Frontier"},
-	{"torin",           "Torin's Passage"},
+	{ "hoyle5", "Hoyle Classic Games" },
+	{ "hoyle5bridge", "Hoyle Bridge" },
+	{ "hoyle5children", "Hoyle Children's Collection" },
+	{ "hoyle5solitaire", "Hoyle Solitaire" },
+	{ "chest", "Inside the Chest" }, // aka Behind the Developer's Shield
+	{ "gk2", "The Beast Within: A Gabriel Knight Mystery" },
+	{ "kq7", "King's Quest VII: The Princeless Bride" },
+	{ "kquestions", "King's Questions" },
+	{ "lsl6hires", "Leisure Suit Larry 6: Shape Up or Slip Out!" },
+	{ "mothergoosehires", "Mixed-Up Mother Goose Deluxe" },
+	{ "phantasmagoria", "Phantasmagoria" },
+	{ "pqswat", "Police Quest: SWAT" },
+	{ "shivers", "Shivers" },
+	{ "sq6", "Space Quest 6: The Spinal Frontier" },
+	{ "torin", "Torin's Passage" },
 	// === SCI3 games =========================================================
-	{"lsl7",            "Leisure Suit Larry 7: Love for Sail!"},
-	{"lighthouse",      "Lighthouse: The Dark Being"},
-	{"phantasmagoria2", "Phantasmagoria 2: A Puzzle of Flesh"},
+	{ "lsl7", "Leisure Suit Larry 7: Love for Sail!" },
+	{ "lighthouse", "Lighthouse: The Dark Being" },
+	{ "phantasmagoria2", "Phantasmagoria 2: A Puzzle of Flesh" },
 	//{"shivers2",        "Shivers II: Harvest of Souls"},	// Not SCI
-	{"rama",            "RAMA"},
-	{0, 0}
+	{ "rama", "RAMA" },
+	{ 0, 0 }
 };
 
 struct GameIdStrToEnum {
@@ -140,85 +140,85 @@ struct GameIdStrToEnum {
 };
 
 static const GameIdStrToEnum s_gameIdStrToEnum[] = {
-	{ "astrochicken",    GID_ASTROCHICKEN },
-	{ "camelot",         GID_CAMELOT },
-	{ "castlebrain",     GID_CASTLEBRAIN },
-	{ "chest",           GID_CHEST },
-	{ "christmas1988",   GID_CHRISTMAS1988 },
-	{ "christmas1990",   GID_CHRISTMAS1990 },
-	{ "christmas1992",   GID_CHRISTMAS1992 },
-	{ "cnick-kq",        GID_CNICK_KQ },
-	{ "cnick-laurabow",  GID_CNICK_LAURABOW },
-	{ "cnick-longbow",   GID_CNICK_LONGBOW },
-	{ "cnick-lsl",       GID_CNICK_LSL },
-	{ "cnick-sq",        GID_CNICK_SQ },
-	{ "ecoquest",        GID_ECOQUEST },
-	{ "ecoquest2",       GID_ECOQUEST2 },
-	{ "fairytales",      GID_FAIRYTALES },
-	{ "freddypharkas",   GID_FREDDYPHARKAS },
-	{ "funseeker",       GID_FUNSEEKER },
-	{ "gk1demo",         GID_GK1DEMO },
-	{ "gk1",             GID_GK1 },
-	{ "gk2",             GID_GK2 },
-	{ "hoyle1",          GID_HOYLE1 },
-	{ "hoyle2",          GID_HOYLE2 },
-	{ "hoyle3",          GID_HOYLE3 },
-	{ "hoyle4",          GID_HOYLE4 },
-	{ "hoyle5",          GID_HOYLE5 },
-	{ "hoyle5bridge",    GID_HOYLE5 },
-	{ "hoyle5children",  GID_HOYLE5 },
+	{ "astrochicken", GID_ASTROCHICKEN },
+	{ "camelot", GID_CAMELOT },
+	{ "castlebrain", GID_CASTLEBRAIN },
+	{ "chest", GID_CHEST },
+	{ "christmas1988", GID_CHRISTMAS1988 },
+	{ "christmas1990", GID_CHRISTMAS1990 },
+	{ "christmas1992", GID_CHRISTMAS1992 },
+	{ "cnick-kq", GID_CNICK_KQ },
+	{ "cnick-laurabow", GID_CNICK_LAURABOW },
+	{ "cnick-longbow", GID_CNICK_LONGBOW },
+	{ "cnick-lsl", GID_CNICK_LSL },
+	{ "cnick-sq", GID_CNICK_SQ },
+	{ "ecoquest", GID_ECOQUEST },
+	{ "ecoquest2", GID_ECOQUEST2 },
+	{ "fairytales", GID_FAIRYTALES },
+	{ "freddypharkas", GID_FREDDYPHARKAS },
+	{ "funseeker", GID_FUNSEEKER },
+	{ "gk1demo", GID_GK1DEMO },
+	{ "gk1", GID_GK1 },
+	{ "gk2", GID_GK2 },
+	{ "hoyle1", GID_HOYLE1 },
+	{ "hoyle2", GID_HOYLE2 },
+	{ "hoyle3", GID_HOYLE3 },
+	{ "hoyle4", GID_HOYLE4 },
+	{ "hoyle5", GID_HOYLE5 },
+	{ "hoyle5bridge", GID_HOYLE5 },
+	{ "hoyle5children", GID_HOYLE5 },
 	{ "hoyle5solitaire", GID_HOYLE5 },
-	{ "iceman",          GID_ICEMAN },
-	{ "inndemo",         GID_INNDEMO },
-	{ "islandbrain",     GID_ISLANDBRAIN },
-	{ "jones",           GID_JONES },
-	{ "kq1sci",          GID_KQ1 },
-	{ "kq4sci",          GID_KQ4 },
-	{ "kq5",             GID_KQ5 },
-	{ "kq6",             GID_KQ6 },
-	{ "kq7",             GID_KQ7 },
-	{ "kquestions",      GID_KQUESTIONS },
-	{ "laurabow",        GID_LAURABOW },
-	{ "laurabow2",       GID_LAURABOW2 },
-	{ "lighthouse",      GID_LIGHTHOUSE },
-	{ "longbow",         GID_LONGBOW },
-	{ "lsl1sci",         GID_LSL1 },
-	{ "lsl2",            GID_LSL2 },
-	{ "lsl3",            GID_LSL3 },
-	{ "lsl5",            GID_LSL5 },
-	{ "lsl6",            GID_LSL6 },
-	{ "lsl6hires",       GID_LSL6HIRES },
-	{ "lsl7",            GID_LSL7 },
-	{ "mothergoose",     GID_MOTHERGOOSE },
-	{ "mothergoose256",  GID_MOTHERGOOSE256 },
-	{ "mothergoosehires",GID_MOTHERGOOSEHIRES },
-	{ "msastrochicken",  GID_MSASTROCHICKEN },
-	{ "pepper",          GID_PEPPER },
-	{ "phantasmagoria",  GID_PHANTASMAGORIA },
+	{ "iceman", GID_ICEMAN },
+	{ "inndemo", GID_INNDEMO },
+	{ "islandbrain", GID_ISLANDBRAIN },
+	{ "jones", GID_JONES },
+	{ "kq1sci", GID_KQ1 },
+	{ "kq4sci", GID_KQ4 },
+	{ "kq5", GID_KQ5 },
+	{ "kq6", GID_KQ6 },
+	{ "kq7", GID_KQ7 },
+	{ "kquestions", GID_KQUESTIONS },
+	{ "laurabow", GID_LAURABOW },
+	{ "laurabow2", GID_LAURABOW2 },
+	{ "lighthouse", GID_LIGHTHOUSE },
+	{ "longbow", GID_LONGBOW },
+	{ "lsl1sci", GID_LSL1 },
+	{ "lsl2", GID_LSL2 },
+	{ "lsl3", GID_LSL3 },
+	{ "lsl5", GID_LSL5 },
+	{ "lsl6", GID_LSL6 },
+	{ "lsl6hires", GID_LSL6HIRES },
+	{ "lsl7", GID_LSL7 },
+	{ "mothergoose", GID_MOTHERGOOSE },
+	{ "mothergoose256", GID_MOTHERGOOSE256 },
+	{ "mothergoosehires", GID_MOTHERGOOSEHIRES },
+	{ "msastrochicken", GID_MSASTROCHICKEN },
+	{ "pepper", GID_PEPPER },
+	{ "phantasmagoria", GID_PHANTASMAGORIA },
 	{ "phantasmagoria2", GID_PHANTASMAGORIA2 },
-	{ "pq1sci",          GID_PQ1 },
-	{ "pq2",             GID_PQ2 },
-	{ "pq3",             GID_PQ3 },
-	{ "pq4",             GID_PQ4 },
-	{ "pq4demo",         GID_PQ4DEMO },
-	{ "pqswat",          GID_PQSWAT },
-	{ "qfg1",            GID_QFG1 },
-	{ "qfg1vga",         GID_QFG1VGA },
-	{ "qfg2",            GID_QFG2 },
-	{ "qfg3",            GID_QFG3 },
-	{ "qfg4",            GID_QFG4 },
-	{ "qfg4demo",        GID_QFG4DEMO },
-	{ "rama",            GID_RAMA },
-	{ "sci-fanmade",     GID_FANMADE },
-	{ "shivers",         GID_SHIVERS },
+	{ "pq1sci", GID_PQ1 },
+	{ "pq2", GID_PQ2 },
+	{ "pq3", GID_PQ3 },
+	{ "pq4", GID_PQ4 },
+	{ "pq4demo", GID_PQ4DEMO },
+	{ "pqswat", GID_PQSWAT },
+	{ "qfg1", GID_QFG1 },
+	{ "qfg1vga", GID_QFG1VGA },
+	{ "qfg2", GID_QFG2 },
+	{ "qfg3", GID_QFG3 },
+	{ "qfg4", GID_QFG4 },
+	{ "qfg4demo", GID_QFG4DEMO },
+	{ "rama", GID_RAMA },
+	{ "sci-fanmade", GID_FANMADE },
+	{ "shivers", GID_SHIVERS },
 	//{ "shivers2",        GID_SHIVERS2 },	// Not SCI
-	{ "slater",          GID_SLATER },
-	{ "sq1sci",          GID_SQ1 },
-	{ "sq3",             GID_SQ3 },
-	{ "sq4",             GID_SQ4 },
-	{ "sq5",             GID_SQ5 },
-	{ "sq6",             GID_SQ6 },
-	{ "torin",           GID_TORIN },
+	{ "slater", GID_SLATER },
+	{ "sq1sci", GID_SQ1 },
+	{ "sq3", GID_SQ3 },
+	{ "sq4", GID_SQ4 },
+	{ "sq5", GID_SQ5 },
+	{ "sq6", GID_SQ6 },
+	{ "torin", GID_TORIN },
 	{ NULL, (SciGameId)-1 }
 };
 
@@ -229,77 +229,81 @@ struct OldNewIdTableEntry {
 };
 
 static const OldNewIdTableEntry s_oldNewTable[] = {
-	{ "archive",    "chest",            SCI_VERSION_NONE       },
-	{ "arthur",		"camelot",			SCI_VERSION_NONE       },
-	{ "brain",      "castlebrain",      SCI_VERSION_1_MIDDLE   },	// Amiga
-	{ "brain",      "castlebrain",      SCI_VERSION_1_LATE     },
-	{ "demo",		"christmas1988",	SCI_VERSION_NONE       },
-	{ "card",       "christmas1990",    SCI_VERSION_1_EARLY,   },
-	{ "card",       "christmas1992",    SCI_VERSION_1_1        },
-	{ "RH Budget",	"cnick-longbow",	SCI_VERSION_NONE       },
+	{ "archive", "chest", SCI_VERSION_NONE },
+	{ "arthur", "camelot", SCI_VERSION_NONE },
+	{ "brain", "castlebrain", SCI_VERSION_1_MIDDLE }, // Amiga
+	{ "brain", "castlebrain", SCI_VERSION_1_LATE },
+	{ "demo", "christmas1988", SCI_VERSION_NONE },
+	{
+	  "card",
+	  "christmas1990",
+	  SCI_VERSION_1_EARLY,
+	},
+	{ "card", "christmas1992", SCI_VERSION_1_1 },
+	{ "RH Budget", "cnick-longbow", SCI_VERSION_NONE },
 	// iceman is the same
-	{ "icedemo",	"iceman",			SCI_VERSION_NONE       },
+	{ "icedemo", "iceman", SCI_VERSION_NONE },
 	// longbow is the same
-	{ "eco",		"ecoquest",			SCI_VERSION_NONE       },
-	{ "eco2",		"ecoquest2",		SCI_VERSION_NONE       },	// EcoQuest 2 demo
-	{ "rain",		"ecoquest2",		SCI_VERSION_NONE       },	// EcoQuest 2 full
-	{ "tales",		"fairytales",		SCI_VERSION_NONE       },
-	{ "fp",			"freddypharkas",	SCI_VERSION_NONE       },
-	{ "emc",		"funseeker",		SCI_VERSION_NONE       },
-	{ "gk",			"gk1",				SCI_VERSION_NONE       },
+	{ "eco", "ecoquest", SCI_VERSION_NONE },
+	{ "eco2", "ecoquest2", SCI_VERSION_NONE }, // EcoQuest 2 demo
+	{ "rain", "ecoquest2", SCI_VERSION_NONE }, // EcoQuest 2 full
+	{ "tales", "fairytales", SCI_VERSION_NONE },
+	{ "fp", "freddypharkas", SCI_VERSION_NONE },
+	{ "emc", "funseeker", SCI_VERSION_NONE },
+	{ "gk", "gk1", SCI_VERSION_NONE },
 	// gk2 is the same
-	{ "gk2demo",	"gk2",				SCI_VERSION_NONE       },
-	{ "hoyledemo",	"hoyle1",			SCI_VERSION_NONE       },
-	{ "cardgames",	"hoyle1",			SCI_VERSION_NONE       },
-	{ "solitare",	"hoyle2",			SCI_VERSION_NONE       },
-	{ "hoyle3",	    "hoyle3",			SCI_VERSION_NONE       },
-	{ "hoyle4",	    "hoyle4",			SCI_VERSION_1_1        },
-	{ "hoyle4",	    "hoyle5",			SCI_VERSION_2_1_MIDDLE },
-	{ "brain",      "islandbrain",      SCI_VERSION_1_1        },
-	{ "demo000",	"kq1sci",			SCI_VERSION_NONE       },
-	{ "kq1",		"kq1sci",			SCI_VERSION_NONE       },
-	{ "kq4",		"kq4sci",			SCI_VERSION_NONE       },
+	{ "gk2demo", "gk2", SCI_VERSION_NONE },
+	{ "hoyledemo", "hoyle1", SCI_VERSION_NONE },
+	{ "cardgames", "hoyle1", SCI_VERSION_NONE },
+	{ "solitare", "hoyle2", SCI_VERSION_NONE },
+	{ "hoyle3", "hoyle3", SCI_VERSION_NONE },
+	{ "hoyle4", "hoyle4", SCI_VERSION_1_1 },
+	{ "hoyle4", "hoyle5", SCI_VERSION_2_1_MIDDLE },
+	{ "brain", "islandbrain", SCI_VERSION_1_1 },
+	{ "demo000", "kq1sci", SCI_VERSION_NONE },
+	{ "kq1", "kq1sci", SCI_VERSION_NONE },
+	{ "kq4", "kq4sci", SCI_VERSION_NONE },
 	// kq5 is the same
 	// kq6 is the same
-	{ "kq7cd",		"kq7",				SCI_VERSION_NONE       },
-	{ "quizgame-demo", "kquestions",    SCI_VERSION_NONE       },
-	{ "mm1",		"laurabow",			SCI_VERSION_NONE       },
-	{ "cb1",		"laurabow",			SCI_VERSION_NONE       },
-	{ "lb2",		"laurabow2",		SCI_VERSION_NONE       },
-	{ "rh",			"longbow",			SCI_VERSION_NONE       },
-	{ "ll1",		"lsl1sci",			SCI_VERSION_NONE       },
-	{ "lsl1",		"lsl1sci",			SCI_VERSION_NONE       },
+	{ "kq7cd", "kq7", SCI_VERSION_NONE },
+	{ "quizgame-demo", "kquestions", SCI_VERSION_NONE },
+	{ "mm1", "laurabow", SCI_VERSION_NONE },
+	{ "cb1", "laurabow", SCI_VERSION_NONE },
+	{ "lb2", "laurabow2", SCI_VERSION_NONE },
+	{ "rh", "longbow", SCI_VERSION_NONE },
+	{ "ll1", "lsl1sci", SCI_VERSION_NONE },
+	{ "lsl1", "lsl1sci", SCI_VERSION_NONE },
 	// lsl2 is the same
-	{ "lsl3",		"lsl3",				SCI_VERSION_NONE       },
-	{ "ll5",		"lsl5",				SCI_VERSION_NONE       },
+	{ "lsl3", "lsl3", SCI_VERSION_NONE },
+	{ "ll5", "lsl5", SCI_VERSION_NONE },
 	// lsl5 is the same
 	// lsl6 is the same
-	{ "mg",			"mothergoose",		SCI_VERSION_NONE       },
-	{ "twisty",		"pepper",			SCI_VERSION_NONE       },
-	{ "scary",      "phantasmagoria",   SCI_VERSION_NONE       },
+	{ "mg", "mothergoose", SCI_VERSION_NONE },
+	{ "twisty", "pepper", SCI_VERSION_NONE },
+	{ "scary", "phantasmagoria", SCI_VERSION_NONE },
 	// TODO: distinguish the full version of Phantasmagoria from the demo
-	{ "pq1",		"pq1sci",			SCI_VERSION_NONE       },
-	{ "pq",			"pq2",				SCI_VERSION_NONE       },
+	{ "pq1", "pq1sci", SCI_VERSION_NONE },
+	{ "pq", "pq2", SCI_VERSION_NONE },
 	// pq3 is the same
 	// pq4 is the same
-	{ "hq",			"qfg1",				SCI_VERSION_NONE       },	// QFG1 SCI0/EGA
-	{ "glory",      "qfg1",             SCI_VERSION_0_LATE     },	// QFG1 SCI0/EGA
-	{ "trial",		"qfg2",				SCI_VERSION_NONE       },
-	{ "hq2demo",	"qfg2",				SCI_VERSION_NONE       },
+	{ "hq", "qfg1", SCI_VERSION_NONE }, // QFG1 SCI0/EGA
+	{ "glory", "qfg1", SCI_VERSION_0_LATE }, // QFG1 SCI0/EGA
+	{ "trial", "qfg2", SCI_VERSION_NONE },
+	{ "hq2demo", "qfg2", SCI_VERSION_NONE },
 	// rama is the same
 	// TODO: distinguish the full version of rama from the demo
-	{ "thegame",	"slater",			SCI_VERSION_NONE       },
-	{ "sq1demo",	"sq1sci",			SCI_VERSION_NONE       },
-	{ "sq1",		"sq1sci",			SCI_VERSION_NONE       },
+	{ "thegame", "slater", SCI_VERSION_NONE },
+	{ "sq1demo", "sq1sci", SCI_VERSION_NONE },
+	{ "sq1", "sq1sci", SCI_VERSION_NONE },
 	// sq3 is the same
 	// sq4 is the same
 	// sq5 is the same
 	// sq6 is the same
 	// TODO: distinguish the full version of SQ6 from the demo
 	// torin is the same
-	{ "l7",			"lsl7",				SCI_VERSION_NONE       },
-	{ "p2",			"phantasmagoria2",	SCI_VERSION_NONE       },
-	{ "lite",		"lighthouse",		SCI_VERSION_NONE       },
+	{ "l7", "lsl7", SCI_VERSION_NONE },
+	{ "p2", "phantasmagoria2", SCI_VERSION_NONE },
+	{ "lite", "lighthouse", SCI_VERSION_NONE },
 
 	{ "", "", SCI_VERSION_NONE }
 };
@@ -317,15 +321,10 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 	// If the game has less than the expected scripts, it's a demo
 	uint32 demoThreshold = 100;
 	// ...but there are some exceptions
-	if (sierraId == "brain" || sierraId == "lsl1" ||
-		sierraId == "mg" || sierraId == "pq" ||
-		sierraId == "jones" ||
-		sierraId == "cardgames" || sierraId == "solitare" ||
-		sierraId == "catdate" ||
-		sierraId == "hoyle4")
+	if (sierraId == "brain" || sierraId == "lsl1" || sierraId == "mg" || sierraId == "pq" || sierraId == "jones" || sierraId == "cardgames" || sierraId == "solitare" || sierraId == "catdate" || sierraId == "hoyle4")
 		demoThreshold = 40;
 	if (sierraId == "hoyle3")
-		demoThreshold = 45;	// cnick-kq has 42 scripts. The actual hoyle 3 demo has 27.
+		demoThreshold = 45; // cnick-kq has 42 scripts. The actual hoyle 3 demo has 27.
 	if (sierraId == "fp" || sierraId == "gk" || sierraId == "pq4")
 		demoThreshold = 150;
 
@@ -351,7 +350,7 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 			return "msastrochicken";
 	}
 
-	if (sierraId == "torin" && resources.size() == 226)	// Torin's Passage demo
+	if (sierraId == "torin" && resources.size() == 226) // Torin's Passage demo
 		*gameFlags |= ADGF_DEMO;
 
 	for (const OldNewIdTableEntry *cur = s_oldNewTable; cur->oldId[0]; ++cur) {
@@ -389,142 +388,95 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 #include "sci/detection_tables.h"
 
 static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_EGA_UNDITHER,
-		{
-			_s("Skip EGA dithering pass (full color backgrounds)"),
-			_s("Skip dithering pass in EGA games, graphics are shown with full colors"),
-			"disable_dithering",
-			false
-		}
-	},
+	{ GAMEOPTION_EGA_UNDITHER,
+	  { _s("Skip EGA dithering pass (full color backgrounds)"),
+	    _s("Skip dithering pass in EGA games, graphics are shown with full colors"),
+	    "disable_dithering",
+	    false } },
 
-	{
-		GAMEOPTION_HIGH_RESOLUTION_GRAPHICS,
-		{
-			_s("Enable high resolution graphics"),
-			_s("Enable high resolution graphics/content"),
-			"enable_high_resolution_graphics",
-			true
-		}
-	},
+	{ GAMEOPTION_HIGH_RESOLUTION_GRAPHICS,
+	  { _s("Enable high resolution graphics"),
+	    _s("Enable high resolution graphics/content"),
+	    "enable_high_resolution_graphics",
+	    true } },
 
-	{
-		GAMEOPTION_ENABLE_BLACK_LINED_VIDEO,
-		{
-			_s("Enable black-lined video"),
-			_s("Draw black lines over videos to increase their apparent sharpness"),
-			"enable_black_lined_video",
-			false
-		}
-	},
+	{ GAMEOPTION_ENABLE_BLACK_LINED_VIDEO,
+	  { _s("Enable black-lined video"),
+	    _s("Draw black lines over videos to increase their apparent sharpness"),
+	    "enable_black_lined_video",
+	    false } },
 
 #ifdef USE_RGB_COLOR
-	{
-		GAMEOPTION_HQ_VIDEO,
-		{
-			_s("Use high-quality video scaling"),
-			_s("Use linear interpolation when upscaling videos, where possible"),
-			"enable_hq_video",
-			true
-		}
-	},
+	{ GAMEOPTION_HQ_VIDEO,
+	  { _s("Use high-quality video scaling"),
+	    _s("Use linear interpolation when upscaling videos, where possible"),
+	    "enable_hq_video",
+	    true } },
 #endif
 
-	{
-		GAMEOPTION_LARRYSCALE,
-		{
-			_s("Use high-quality \"LarryScale\" cel scaling"),
-			_s("Use special cartoon scaler for drawing character sprites"),
-			"enable_larryscale",
-			true
-		}
-	},
+	{ GAMEOPTION_LARRYSCALE,
+	  { _s("Use high-quality \"LarryScale\" cel scaling"),
+	    _s("Use special cartoon scaler for drawing character sprites"),
+	    "enable_larryscale",
+	    true } },
 
-	{
-		GAMEOPTION_PREFER_DIGITAL_SFX,
-		{
-			_s("Prefer digital sound effects"),
-			_s("Prefer digital sound effects instead of synthesized ones"),
-			"prefer_digitalsfx",
-			true
-		}
-	},
+	{ GAMEOPTION_PREFER_DIGITAL_SFX,
+	  { _s("Prefer digital sound effects"),
+	    _s("Prefer digital sound effects instead of synthesized ones"),
+	    "prefer_digitalsfx",
+	    true } },
 
-	{
-		GAMEOPTION_ORIGINAL_SAVELOAD,
-		{
-			_s("Use original save/load screens"),
-			_s("Use the original save/load screens instead of the ScummVM ones"),
-			"originalsaveload",
-			false
-		}
-	},
+	{ GAMEOPTION_ORIGINAL_SAVELOAD,
+	  { _s("Use original save/load screens"),
+	    _s("Use the original save/load screens instead of the ScummVM ones"),
+	    "originalsaveload",
+	    false } },
 
-	{
-		GAMEOPTION_FB01_MIDI,
-		{
-			_s("Use IMF/Yamaha FB-01 for MIDI output"),
-			_s("Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI output"),
-			"native_fb01",
-			false
-		}
-	},
+	{ GAMEOPTION_FB01_MIDI,
+	  { _s("Use IMF/Yamaha FB-01 for MIDI output"),
+	    _s("Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI output"),
+	    "native_fb01",
+	    false } },
 
 	// Jones in the Fast Lane - CD audio tracks or resource.snd
 	{
-		GAMEOPTION_JONES_CDAUDIO,
-		{
-			_s("Use CD audio"),
-			_s("Use CD audio instead of in-game audio, if available"),
-			"use_cdaudio",
-			true
-		}
-	},
+	  GAMEOPTION_JONES_CDAUDIO,
+	  { _s("Use CD audio"),
+	    _s("Use CD audio instead of in-game audio, if available"),
+	    "use_cdaudio",
+	    true } },
 
 	// KQ6 Windows - windows cursors
 	{
-		GAMEOPTION_KQ6_WINDOWS_CURSORS,
-		{
-			_s("Use Windows cursors"),
-			_s("Use the Windows cursors (smaller and monochrome) instead of the DOS ones"),
-			"windows_cursors",
-			false
-		}
-	},
+	  GAMEOPTION_KQ6_WINDOWS_CURSORS,
+	  { _s("Use Windows cursors"),
+	    _s("Use the Windows cursors (smaller and monochrome) instead of the DOS ones"),
+	    "windows_cursors",
+	    false } },
 
 	// SQ4 CD - silver cursors
 	{
-		GAMEOPTION_SQ4_SILVER_CURSORS,
-		{
-			_s("Use silver cursors"),
-			_s("Use the alternate set of silver cursors instead of the normal golden ones"),
-			"silver_cursors",
-			false
-		}
-	},
+	  GAMEOPTION_SQ4_SILVER_CURSORS,
+	  { _s("Use silver cursors"),
+	    _s("Use the alternate set of silver cursors instead of the normal golden ones"),
+	    "silver_cursors",
+	    false } },
 
 	// Phantasmagoria 2 - content censoring option
 	{
-		GAMEOPTION_ENABLE_CENSORING,
-		{
-			_s("Enable content censoring"),
-			_s("Enable the game's built-in optional content censoring"),
-			"enable_censoring",
-			false
-		}
-	},
+	  GAMEOPTION_ENABLE_CENSORING,
+	  { _s("Enable content censoring"),
+	    _s("Enable the game's built-in optional content censoring"),
+	    "enable_censoring",
+	    false } },
 
 	// KQ7 - Upscale videos to double their size (The in-game "Full screen" video setting)
 	{
-		GAMEOPTION_UPSCALE_VIDEOS,
-	{
-		_s("Upscale videos"),
-		_s("Upscale videos to double their size"),
-		"enable_video_upscale",
-		true
-	}
-	},
+	  GAMEOPTION_UPSCALE_VIDEOS,
+	  { _s("Upscale videos"),
+	    _s("Upscale videos to double their size"),
+	    "enable_video_upscale",
+	    true } },
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
@@ -557,7 +509,8 @@ static const char *directoryGlobs[] = {
 
 class SciMetaEngine : public AdvancedMetaEngine {
 public:
-	SciMetaEngine() : AdvancedMetaEngine(Sci::SciGameDescriptions, sizeof(ADGameDescription), s_sciGameTitles, optionsList) {
+	SciMetaEngine()
+	  : AdvancedMetaEngine(Sci::SciGameDescriptions, sizeof(ADGameDescription), s_sciGameTitles, optionsList) {
 		_singleId = "sci";
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
@@ -567,11 +520,11 @@ public:
 	virtual const char *getName() const {
 		return "SCI ["
 #ifdef ENABLE_SCI32
-			"all games"
+		       "all games"
 #else
-			"SCI0, SCI01, SCI10, SCI11"
+		       "SCI0, SCI01, SCI10, SCI11"
 #endif
-			"]";
+		       "]";
 	}
 
 	virtual const char *getOriginalCopyright() const {
@@ -615,7 +568,7 @@ ADDetectedGame SciMetaEngine::fallbackDetect(const FileMap &allFiles, const Comm
 	s_fallbackDesc.extra = "";
 	s_fallbackDesc.language = Common::EN_ANY;
 	s_fallbackDesc.flags = ADGF_NO_FLAGS;
-	s_fallbackDesc.platform = Common::kPlatformDOS;	// default to PC platform
+	s_fallbackDesc.platform = Common::kPlatformDOS; // default to PC platform
 	s_fallbackDesc.gameId = "sci";
 	s_fallbackDesc.guiOptions = GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI);
 
@@ -640,27 +593,25 @@ ADDetectedGame SciMetaEngine::fallbackDetect(const FileMap &allFiles, const Comm
 	}
 
 	if (allFiles.contains("resource.000") || allFiles.contains("resource.001")
-		|| allFiles.contains("ressci.000") || allFiles.contains("ressci.001"))
+	    || allFiles.contains("ressci.000") || allFiles.contains("ressci.001"))
 		foundRes000 = true;
 
 	// Data1 contains both map and volume for SCI1.1+ Mac games
 	if (allFiles.contains("Data1")) {
 		foundResMap = foundRes000 = true;
-		 s_fallbackDesc.platform = Common::kPlatformMacintosh;
+		s_fallbackDesc.platform = Common::kPlatformMacintosh;
 	}
 
 	// Determine the game platform
 	// The existence of any of these files indicates an Amiga game
-	if (allFiles.contains("9.pat") || allFiles.contains("spal") ||
-		allFiles.contains("patch.005") || allFiles.contains("bank.001"))
-			s_fallbackDesc.platform = Common::kPlatformAmiga;
+	if (allFiles.contains("9.pat") || allFiles.contains("spal") || allFiles.contains("patch.005") || allFiles.contains("bank.001"))
+		s_fallbackDesc.platform = Common::kPlatformAmiga;
 
 	// The existence of 7.pat or patch.200 indicates a Mac game
 	if (allFiles.contains("7.pat") || allFiles.contains("patch.200"))
 		s_fallbackDesc.platform = Common::kPlatformMacintosh;
 
 	// The data files for Atari ST versions are the same as their DOS counterparts
-
 
 	// If these files aren't found, it can't be SCI
 	if (!foundResMap && !foundRes000)
@@ -715,7 +666,7 @@ ADDetectedGame SciMetaEngine::fallbackDetect(const FileMap &allFiles, const Comm
 	uint seeker = 0;
 	if (text) {
 		while (seeker < text->size()) {
-			if (text->getUint8At(seeker) == '#')  {
+			if (text->getUint8At(seeker) == '#') {
 				if (seeker + 1 < text->size())
 					s_fallbackDesc.language = charToScummVMLanguage(text->getUint8At(seeker + 1));
 				break;
@@ -730,13 +681,12 @@ ADDetectedGame SciMetaEngine::fallbackDetect(const FileMap &allFiles, const Comm
 		}
 	}
 
-
 	// Fill in "extra" field
 
 	// Is this an EGA version that might have a VGA pendant? Then we want
 	// to mark it as such in the "extra" field.
 	const bool markAsEGA = (gameViews == kViewEga && s_fallbackDesc.platform != Common::kPlatformAmiga
-			&& getSciVersion() > SCI_VERSION_1_EGA_ONLY);
+	                        && getSciVersion() > SCI_VERSION_1_EGA_ONLY);
 
 	const bool isDemo = (s_fallbackDesc.flags & ADGF_DEMO);
 	const bool isCD = (s_fallbackDesc.flags & ADGF_CD);
@@ -785,28 +735,19 @@ bool SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 }
 
 bool SciMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime);
+	return (f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup) || (f == kSupportsDeleteSave) || (f == kSavesSupportMetaInfo) || (f == kSavesSupportThumbnail) || (f == kSavesSupportCreationDate) || (f == kSavesSupportPlayTime);
 }
 
 bool SciEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime); // ||
-		//(f == kSupportsSavingDuringRuntime);
-		// We can't allow saving through ScummVM menu, because
-		//  a) lots of games don't like saving everywhere (e.g. castle of dr. brain)
-		//  b) some games even dont allow saving in certain rooms (e.g. lsl6)
-		//  c) somehow some games even get mad when doing this (execstackbase was 1 all of a sudden in lsl3)
-		//  d) for sci0/sci01 games we should at least wait till status bar got drawn, although this may not be enough
-		// we can't make sure that the scripts are fine with us saving at a specific location, doing so may work sometimes
-		//  and some other times it won't work.
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime); // ||
+	//(f == kSupportsSavingDuringRuntime);
+	// We can't allow saving through ScummVM menu, because
+	//  a) lots of games don't like saving everywhere (e.g. castle of dr. brain)
+	//  b) some games even dont allow saving in certain rooms (e.g. lsl6)
+	//  c) somehow some games even get mad when doing this (execstackbase was 1 all of a sudden in lsl3)
+	//  d) for sci0/sci01 games we should at least wait till status bar got drawn, although this may not be enough
+	// we can't make sure that the scripts are fine with us saving at a specific location, doing so may work sometimes
+	//  and some other times it won't work.
 }
 
 SaveStateList SciMetaEngine::listSaves(const char *target) const {
@@ -963,8 +904,7 @@ bool SciEngine::canLoadGameStateCurrently() {
 #ifdef ENABLE_SCI32
 	const Common::String &guiOptions = ConfMan.get("guioptions");
 	if (getSciVersion() >= SCI_VERSION_2) {
-		if (ConfMan.getBool("originalsaveload") ||
-			Common::checkGameGUIOption(GUIO_NOLAUNCHLOAD, guiOptions)) {
+		if (ConfMan.getBool("originalsaveload") || Common::checkGameGUIOption(GUIO_NOLAUNCHLOAD, guiOptions)) {
 
 			return false;
 		}
@@ -982,7 +922,7 @@ bool SciEngine::canSaveGameStateCurrently() {
 } // End of namespace Sci
 
 #if PLUGIN_ENABLED_DYNAMIC(SCI)
-	REGISTER_PLUGIN_DYNAMIC(SCI, PLUGIN_TYPE_ENGINE, Sci::SciMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(SCI, PLUGIN_TYPE_ENGINE, Sci::SciMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(SCI, PLUGIN_TYPE_ENGINE, Sci::SciMetaEngine);
+REGISTER_PLUGIN_STATIC(SCI, PLUGIN_TYPE_ENGINE, Sci::SciMetaEngine);
 #endif

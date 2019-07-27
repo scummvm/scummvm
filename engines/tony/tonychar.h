@@ -37,7 +37,10 @@ namespace Tony {
 class RMTony : public RMCharacter {
 private:
 	enum CharacterDirection {
-		UP, DOWN, LEFT, RIGHT
+		UP,
+		DOWN,
+		LEFT,
+		RIGHT
 	};
 
 public:

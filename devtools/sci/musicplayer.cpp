@@ -21,13 +21,13 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#	include <config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include <sfx_iterator_internal.h>
-#include <sfx_engine.h>
-#include <sfx_core.h>
 #include <resource.h>
+#include <sfx_core.h>
+#include <sfx_engine.h>
+#include <sfx_iterator_internal.h>
 
 #define DUMMY_SOUND_HANDLE 0xdeadbeef
 
@@ -41,7 +41,7 @@ build_iterator(resource_mgr_t *resmgr, int song_nr, int type, songit_id_t id) {
 	return songit_new(song->data, song->size, type, id);
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
 	resource_mgr_t *resmgr;
 	sfx_state_t sound;
 	int res_version = SCI_VERSION_AUTODETECT;
@@ -67,7 +67,7 @@ int main(int argc, char** argv) {
 	}
 
 	if (!(resmgr = scir_new_resource_manager(argv[1], res_version,
-	               0, 1024 * 128))) {
+	                                         0, 1024 * 128))) {
 		fprintf(stderr, "Could not find any resources; quitting.\n");
 		return 2;
 	}
@@ -90,7 +90,8 @@ int main(int argc, char** argv) {
 			return 2;
 		}
 		sfx_song_set_status(&sound, DUMMY_SOUND_HANDLE, SOUND_STATUS_PLAYING);
-		while (sfx_poll(&sound, &dummy1, &dummy2) != SI_FINISHED) {}
+		while (sfx_poll(&sound, &dummy1, &dummy2) != SI_FINISHED) {
+		}
 	}
 	sfx_exit(&sound);
 	scir_free_resource_manager(resmgr);

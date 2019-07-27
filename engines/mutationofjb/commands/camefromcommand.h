@@ -23,22 +23,25 @@
 #ifndef MUTATIONOFJB_CAMEFROMCOMMAND_H
 #define MUTATIONOFJB_CAMEFROMCOMMAND_H
 
-#include "mutationofjb/commands/conditionalcommand.h"
 #include "common/scummsys.h"
+#include "mutationofjb/commands/conditionalcommand.h"
 
 namespace MutationOfJB {
 
 class CameFromCommandParser : public ConditionalCommandParser {
 public:
-	CameFromCommandParser() : ConditionalCommandParser(true) {}
+	CameFromCommandParser()
+	  : ConditionalCommandParser(true) {}
 	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command);
 };
 
 class CameFromCommand : public ConditionalCommand {
 public:
-	CameFromCommand(uint8 sceneId) : _sceneId(sceneId) {}
+	CameFromCommand(uint8 sceneId)
+	  : _sceneId(sceneId) {}
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const;
+
 private:
 	uint8 _sceneId;
 };
@@ -46,4 +49,3 @@ private:
 }
 
 #endif
-

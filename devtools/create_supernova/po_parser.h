@@ -31,9 +31,10 @@ struct PoMessage {
 	char *msgid;
 	char *msgctxt;
 
-	PoMessage(const char *translation, const char *message, const char *context = NULL) :
-	msgstr(NULL), msgid(NULL), msgctxt(NULL)
-	{
+	PoMessage(const char *translation, const char *message, const char *context = NULL)
+	  : msgstr(NULL)
+	  , msgid(NULL)
+	  , msgctxt(NULL) {
 		if (translation != NULL && *translation != '\0') {
 			msgstr = new char[1 + strlen(translation)];
 			strcpy(msgstr, translation);

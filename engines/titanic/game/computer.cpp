@@ -26,9 +26,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CComputer, CBackground)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MovieEndMsg)
 END_MESSAGE_MAP()
 
 void CComputer::save(SimpleFile *file, int indent) {

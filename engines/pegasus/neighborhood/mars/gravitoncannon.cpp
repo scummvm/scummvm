@@ -43,9 +43,9 @@ static const CoordType kGravitonMaxScreenWidth = 78;
 static const CoordType kGravitonMaxScreenHeight = 46;
 
 static const float kGravitonWidth = convertScreenHToSpaceX(kShuttleWindowMidH + kGravitonMaxScreenWidth / 2, kGravitonMinDistance)
-		- convertScreenHToSpaceX(kShuttleWindowMidH - kGravitonMaxScreenWidth / 2, kGravitonMinDistance);
+  - convertScreenHToSpaceX(kShuttleWindowMidH - kGravitonMaxScreenWidth / 2, kGravitonMinDistance);
 static const float kGravitonHeight = convertScreenVToSpaceY(kShuttleWindowMidV - kGravitonMaxScreenHeight / 2, kGravitonMinDistance)
-		- convertScreenVToSpaceY(kShuttleWindowMidV + kGravitonMaxScreenHeight / 2, kGravitonMinDistance);
+  - convertScreenVToSpaceY(kShuttleWindowMidV + kGravitonMaxScreenHeight / 2, kGravitonMinDistance);
 
 GravitonCannon::GravitonCannon() {
 	_weaponDuration = kGravitonTime;

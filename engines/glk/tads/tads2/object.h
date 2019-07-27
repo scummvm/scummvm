@@ -30,12 +30,12 @@
 
 namespace Glk {
 namespace TADS {
-namespace TADS2 {
+	namespace TADS2 {
 
-/**
+		/**
  * object number
  */
-typedef ushort objnum;
+		typedef ushort objnum;
 
 /**
  * For non-class objects, we'll leave some space free in the object so
@@ -45,9 +45,9 @@ typedef ushort objnum;
  */
 #define OBJEXTRA 64
 
-#   define   OBJFCLS   0x01                            /* object is a class */
+#define OBJFCLS 0x01 /* object is a class */
 
-/**
+		/**
  * The object structure is actually laid out portably, using unaligned
  * 2-byte arrays, stored least significant byte first, for each ushort
  * (including the objnum array for the superclasses).  The actual
@@ -85,30 +85,30 @@ typedef ushort objnum;
  * follow the index, this can be used to deduce how large a space
  * is available for the index itself.
  */
-typedef uchar objdef;
-#define OBJDEFSIZ 14   /* "sizeof(objdef)" - size of object header w/o sc's */
+		typedef uchar objdef;
+#define OBJDEFSIZ 14 /* "sizeof(objdef)" - size of object header w/o sc's */
 
 /* object flags */
-#define OBJFCLASS  1                                   /* object is a class */
-#define OBJFINDEX  2                         /* object has a property index */
-#define OBJFMOD    4      /* object has been modified by a newer definition */
+#define OBJFCLASS 1 /* object is a class */
+#define OBJFINDEX 2 /* object has a property index */
+#define OBJFMOD 4 /* object has been modified by a newer definition */
 
-/* undo context */
-struct objucxdef {
-    mcmcxdef *objucxmem;                           /* cache manager context */
-    errcxdef *objucxerr;                                   /* error context */
-    ushort    objucxsiz;                         /* size of the undo buffer */
-    ushort    objucxhead;                  /* head (position of next write) */
-    ushort    objucxtail;               /* tail (position of oldest record) */
-    ushort    objucxprv;                           /* previous head pointer */
-    ushort    objucxtop;                      /* highest head value written */
-    void    (*objucxcun)(void *ctx, uchar *data);
-                                              /* apply a client undo record */
-    ushort  (*objucxcsz)(void *ctx, uchar *data);
-                                        /* get size of a client undo record */
-    void     *objucxccx;                             /* client undo context */
-    uchar     objucxbuf[1];                                  /* undo buffer */
-};
+		/* undo context */
+		struct objucxdef {
+			mcmcxdef *objucxmem; /* cache manager context */
+			errcxdef *objucxerr; /* error context */
+			ushort objucxsiz; /* size of the undo buffer */
+			ushort objucxhead; /* head (position of next write) */
+			ushort objucxtail; /* tail (position of oldest record) */
+			ushort objucxprv; /* previous head pointer */
+			ushort objucxtop; /* highest head value written */
+			void (*objucxcun)(void *ctx, uchar *data);
+			/* apply a client undo record */
+			ushort (*objucxcsz)(void *ctx, uchar *data);
+			/* get size of a client undo record */
+			void *objucxccx; /* client undo context */
+			uchar objucxbuf[1]; /* undo buffer */
+		};
 
 /*
  *   Undo records are kept in a circular buffer allocated as part of an
@@ -138,11 +138,11 @@ struct objucxdef {
  *   a "savepoint."  Normally, all changes back to a savepoint will be
  *   undone.  
  */
-#define OBJUADD    1             /* a property was added (undo by deleting) */
-#define OBJUCHG    2   /* a property was changed (change back to old value) */
-#define OBJUSAV    3          /* savepoint marker (no property information) */
-#define OBJUOVR    4     /* override original property (set orig to IGNORE) */
-#define OBJUCLI    5                /* client undo record (any client data) */
+#define OBJUADD 1 /* a property was added (undo by deleting) */
+#define OBJUCHG 2 /* a property was changed (change back to old value) */
+#define OBJUSAV 3 /* savepoint marker (no property information) */
+#define OBJUOVR 4 /* override original property (set orig to IGNORE) */
+#define OBJUCLI 5 /* client undo record (any client data) */
 
 /*
  *   After the control byte (OBJUxxx), the object number, property
@@ -158,7 +158,7 @@ struct objucxdef {
 
 /* given an object pointer, get a pointer to the first prpdef */
 /* prpdef *objprp(objdef *objptr); */
-#define objprp(o) ((prpdef *)(objsc(o) + 2*objnsc(o)))
+#define objprp(o) ((prpdef *)(objsc(o) + 2 * objnsc(o)))
 
 /* given an object pointer, get number of properties in the prpdef */
 /* int objnprop(objdef *objptr); */
@@ -166,7 +166,7 @@ struct objucxdef {
 
 /* set number of properties */
 /* void objsnp(objdef *objptr, int newnum); */
-#define objsnp(o,n) oswp2(((char *)(o)) + 6, n)
+#define objsnp(o, n) oswp2(((char *)(o)) + 6, n)
 
 /* given an object pointer, get offset of free space */
 /* int objfree(objdef *objptr); */
@@ -174,7 +174,7 @@ struct objucxdef {
 
 /* set free space pointer */
 /* void objsfree(objdef *objptr, int newfree); */
-#define objsfree(o,n) oswp2(((char *)(o)) + 8, n)
+#define objsfree(o, n) oswp2(((char *)(o)) + 8, n)
 
 /* get number of static properties */
 /* ushort objstat(objdef *objptr); */
@@ -182,7 +182,7 @@ struct objucxdef {
 
 /* set number of static properties */
 /* void objsetst(objdef *objptr, int newstat); */
-#define objsetst(o,n) oswp2(((char *)(o)) + 10, n)
+#define objsetst(o, n) oswp2(((char *)(o)) + 10, n)
 
 /* get reset size (size of static properties) */
 /* ushort objrst(objdef *objptr); */
@@ -190,8 +190,8 @@ struct objucxdef {
 
 /* set reset size */
 /* void objsetrst(objdef *objptr, uint newrst); */
-#define objsetrst(o,n) oswp2(((char *)(o)) + 12, n)
- 
+#define objsetrst(o, n) oswp2(((char *)(o)) + 12, n)
+
 /* given an object pointer, get first superclass pointer */
 /* uchar *objsc(objdef *objptr); */
 #define objsc(o) (((uchar *)(o)) + OBJDEFSIZ)
@@ -202,12 +202,12 @@ struct objucxdef {
 
 /* set number of superclasses */
 /* void objsnsc(objdef *objptr, int num); */
-#define objsnsc(o,n) oswp2(((char *)(o)) + 4, n)
+#define objsnsc(o, n) oswp2(((char *)(o)) + 4, n)
 
 /* given a prpdef, get the next prpdef */
 /* prpdef *objpnxt(prpdef *p); */
 #define objpnxt(p) \
- ((prpdef *)(((uchar *)(p)) + PRPHDRSIZ + prpsize(p)))
+	((prpdef *)(((uchar *)(p)) + PRPHDRSIZ + prpsize(p)))
 
 /* get pointer to free prpdef */
 /* prpdef *objpfre(objdef *objptr); */
@@ -215,19 +215,19 @@ struct objucxdef {
 
 /* given a prpdef and an object pointer, compute the prpdef offset */
 /* uint objpofs(objdef *objptr, prpdef *propptr); */
-#define objpofs(o,p) ((uint)((p) ? (((uchar *)(p)) - ((uchar *)(o))) : 0))
+#define objpofs(o, p) ((uint)((p) ? (((uchar *)(p)) - ((uchar *)(o))) : 0))
 
 /* given an object pointer and a property offset, get prpdef pointer */
 /* prpdef *objofsp(objdef *objptr, uint propofs); */
-#define objofsp(o,ofs) ((prpdef *)((ofs) ? (((uchar *)(o)) + (ofs)) : 0))
+#define objofsp(o, ofs) ((prpdef *)((ofs) ? (((uchar *)(o)) + (ofs)) : 0))
 
-/*
+		/*
  *   Get the first superclass of an object.  If it doesn't have any
  *   superclasses, return invalid.
  */
-objnum objget1sc(mcmcxdef *ctx, objnum objn);
+		objnum objget1sc(mcmcxdef *ctx, objnum objn);
 
-/*
+		/*
  *   Get an object's property WITHOUT INHERITANCE.  If the object has the
  *   indicated property set, the byte OFFSET of the prpdef within the
  *   object is returned.  The offset will remain valid until any type of
@@ -235,17 +235,17 @@ objnum objget1sc(mcmcxdef *ctx, objnum objn);
  *   objsetp, or an undo operation).  An offset of zero means that the
  *   property was not set in the object.
  */
-uint objgetp(mcmcxdef *ctx, objnum objn, prpnum prop,
-             dattyp *typptr);
+		uint objgetp(mcmcxdef *ctx, objnum objn, prpnum prop,
+		             dattyp *typptr);
 
-/*
+		/*
  *   Get the *ending* offset of the given property's value, without any
  *   inheritance.  Returns the byte offset one past the end of the
  *   property's data.  
  */
-uint objgetp_end(mcmcxdef *ctx, objnum objn, prpnum prop);
+		uint objgetp_end(mcmcxdef *ctx, objnum objn, prpnum prop);
 
-/*
+		/*
  *   Get a property of an object, either from the object or from a
  *   superclass (inherited).  If the inh flag is TRUE, we do not look
  *   at all in the object itself, but restrict our search to inherited
@@ -257,36 +257,36 @@ uint objgetp_end(mcmcxdef *ctx, objnum objn, prpnum prop);
  *   sets a property in the object (such as objdelp, objsetp, or an
  *   undo operation).
  */
-uint objgetap(mcmcxdef *ctx, noreg objnum objn, prpnum prop,
-              objnum *orn, int inh);
+		uint objgetap(mcmcxdef *ctx, noreg objnum objn, prpnum prop,
+		              objnum *orn, int inh);
 
-/*
+		/*
  *   expand an object by a requested amount, returning a pointer to the
  *   object's new location if it must be moved.  The object will be
  *   unlocked and relocked by this call.  On return, the actual amount
  *   of space ADDED to the object will be returned.
  */
-objdef *objexp(mcmcxdef *ctx, objnum obj, ushort *siz);
+		objdef *objexp(mcmcxdef *ctx, objnum obj, ushort *siz);
 
-/*
+		/*
  *   Set an object's property, deleting the original value of the
  *   property if it existed.  If an undo context is provided, write an
  *   undo record for the change; if the undo context pointer is null, no
  *   undo information is retained. 
  */
-void objsetp(mcmcxdef *ctx, objnum obj, prpnum prop,
-             dattyp typ, const void *val, objucxdef *undoctx);
+		void objsetp(mcmcxdef *ctx, objnum obj, prpnum prop,
+		             dattyp typ, const void *val, objucxdef *undoctx);
 
-/* 
+		/* 
  *   Delete a property.  If mark_only is true, we'll only mark the
  *   property as deleted without actually reclaiming its space; this is
  *   necessary when removing a code property (type DAT_CODE) any time
  *   other code properties may follow, because p-code is not entirely
  *   self-relative and thus can't always be relocated within an object. 
  */
-void objdelp(mcmcxdef *mctx, objnum objn, prpnum prop, int mark_only);
+		void objdelp(mcmcxdef *mctx, objnum objn, prpnum prop, int mark_only);
 
-/*
+		/*
  *   Set up for emitting code into an object.  Writes a property header
  *   of type 'code', and returns the offset of the next free byte in the
  *   object.  Call objendemt when done.  The datatype argument is
@@ -294,56 +294,56 @@ void objdelp(mcmcxdef *mctx, objnum objn, prpnum prop, int mark_only);
  *   mechanism, since parser lists must be converted to run-time
  *   lists via the code generator.
  */
-uint objemt(mcmcxdef *ctx, objnum objn, prpnum prop, dattyp typ);
+		uint objemt(mcmcxdef *ctx, objnum objn, prpnum prop, dattyp typ);
 
-/* done emitting code into property, finish setting object info */
-void objendemt(mcmcxdef *ctx, objnum objn, prpnum prop, uint endofs);
+		/* done emitting code into property, finish setting object info */
+		void objendemt(mcmcxdef *ctx, objnum objn, prpnum prop, uint endofs);
 
-/*
+		/*
  *   Determine if undo records should be kept.  Undo records should be
  *   kept only if a savepoint is present in the undo log.  If no savepoint
  *   is present, adding undo records would be useless, since it will not
  *   be possible to apply the undo information. 
  */
-int objuok(objucxdef *undoctx);
+		int objuok(objucxdef *undoctx);
 
-/*
+		/*
  *   Reserve space in an undo buffer, deleting old records as needed.
  *   Returns a pointer to the reserved space. 
  */
-uchar *objures(objucxdef *undoctx, uchar cmd, ushort siz);
+		uchar *objures(objucxdef *undoctx, uchar cmd, ushort siz);
 
-/* advance the tail pointer in an undo buffer over the record it points to */
-void objutadv(objucxdef *undoctx);
+		/* advance the tail pointer in an undo buffer over the record it points to */
+		void objutadv(objucxdef *undoctx);
 
-/* apply one undo record, and remove it from undo list */
-void obj1undo(mcmcxdef *mctx, objucxdef *undoctx);
+		/* apply one undo record, and remove it from undo list */
+		void obj1undo(mcmcxdef *mctx, objucxdef *undoctx);
 
-/*
+		/*
  *   Undo back to the most recent savepoint.  If there is no savepoint in
  *   the undo list, NOTHING will be undone.  This prevents reaching an
  *   inconsistent state in which some, but not all, of the operations
  *   between two savepoints are undone: either all operations between two
  *   savepoints will be undone, or none will. 
  */
-void objundo(mcmcxdef *mctx, objucxdef *undoctx);
+		void objundo(mcmcxdef *mctx, objucxdef *undoctx);
 
-/* set an undo savepoint */
-void objusav(objucxdef *undoctx);
+		/* set an undo savepoint */
+		void objusav(objucxdef *undoctx);
 
-/* initialize undo context */
-objucxdef *objuini(mcmcxdef *memctx, ushort undosiz,
-                   void (*undocb)(void *ctx, uchar *data),
-                   ushort (*sizecb)(void *ctx, uchar *data),
-                   void *callctx);
+		/* initialize undo context */
+		objucxdef *objuini(mcmcxdef *memctx, ushort undosiz,
+		                   void (*undocb)(void *ctx, uchar *data),
+		                   ushort (*sizecb)(void *ctx, uchar *data),
+		                   void *callctx);
 
-/* free the undo context - releases memory allocated by objuini() */
-void objuterm(objucxdef *undoctx);
+		/* free the undo context - releases memory allocated by objuini() */
+		void objuterm(objucxdef *undoctx);
 
-/* discard all undo context (for times such as restarting) */
-void objulose(objucxdef *undoctx);
+		/* discard all undo context (for times such as restarting) */
+		void objulose(objucxdef *undoctx);
 
-/*
+		/*
  *   Allocate and initialize a new object.  The caller specifies the
  *   number of superclasses to be allocated, and the amount of space (in
  *   bytes) for the object's property data.  The caller must fill in the
@@ -351,20 +351,20 @@ void objulose(objucxdef *undoctx);
  *   and is initialized with no properties.  A pointer to the object's
  *   memory is returned, and *objnptr receives the object number.
  */
-objdef *objnew(mcmcxdef *mctx, int sccnt, ushort propspace,
-               objnum *objnptr, int classflg);
-            
-/* initialize an already allocated object */
-void objini(mcmcxdef *mctx, int sccnt, objnum objn, int classflg);
+		objdef *objnew(mcmcxdef *mctx, int sccnt, ushort propspace,
+		               objnum *objnptr, int classflg);
 
-/*
+		/* initialize an already allocated object */
+		void objini(mcmcxdef *mctx, int sccnt, objnum objn, int classflg);
+
+		/*
  *   Add space for additional superclasses to an object.  The object can
  *   already have some properties set (if it doesn't, it can just be
  *   reinitialized).
  */
-void objaddsc(mcmcxdef *mctx, int sccnt, objnum objn);
+		void objaddsc(mcmcxdef *mctx, int sccnt, objnum objn);
 
-/*
+		/*
  *   Delete an object's properties and superclasses.  The 'mindel'
  *   parameter specifies the minimum property number to be deleted.
  *   Properties below this are considered "system" properties that are not
@@ -374,22 +374,21 @@ void objaddsc(mcmcxdef *mctx, int sccnt, objnum objn);
  *   and superclasses must be deleted except the source property, which is
  *   retained even after recompilation. 
  */
-void objclr(mcmcxdef *mctx, objnum objn, prpnum mindel);
+		void objclr(mcmcxdef *mctx, objnum objn, prpnum mindel);
 
-/* Build or rebuild an object's property index */
-void objindx(mcmcxdef *mctx, objnum objn);
+		/* Build or rebuild an object's property index */
+		void objindx(mcmcxdef *mctx, objnum objn);
 
-/* set up just-compiled object: mark static part and original properties */
-void objcomp(mcmcxdef *mctx, objnum objn, int for_debug);
+		/* set up just-compiled object: mark static part and original properties */
+		void objcomp(mcmcxdef *mctx, objnum objn, int for_debug);
 
-/* revert an object to original post-compilation state */
-void objrevert(void *mctx, mcmon objn);
+		/* revert an object to original post-compilation state */
+		void objrevert(void *mctx, mcmon objn);
 
-/* reset 'ignore' flags for a newly reconstructed object */
-void objsetign(mcmcxdef *mctx, objnum objn);
+		/* reset 'ignore' flags for a newly reconstructed object */
+		void objsetign(mcmcxdef *mctx, objnum objn);
 
-
-} // End of namespace TADS2
+	} // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk
 

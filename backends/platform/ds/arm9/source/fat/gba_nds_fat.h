@@ -25,7 +25,7 @@
 
 // Maximum number of files open at once
 // Increase this to open more files, decrease to save memory
-#define MAX_FILES_OPEN	16
+#define MAX_FILES_OPEN 16
 
 // Allow file writing
 // Disable this to remove file writing support
@@ -41,19 +41,19 @@
 
 // When compiling for NDS, make sure NDS is defined
 #ifndef NDS
- #if defined ARM9 || defined ARM7
-  #define NDS
- #endif
+#	if defined ARM9 || defined ARM7
+#		define NDS
+#	endif
 #endif
 
 #ifdef NDS
- #include <nds/ndstypes.h>
+#	include <nds/ndstypes.h>
 #else
- #include "gba_types.h"
+#	include "gba_types.h"
 #endif
 
 #ifdef FILE_TIME_SUPPORT
- #include <time.h>
+#	include <time.h>
 #endif
 
 //---------------------------------------------------------------
@@ -65,34 +65,37 @@ extern "C" {
 //---------------------------------------------------------------
 // Important constants
 
-
 enum {
-	MAX_FILENAME_LENGTH = 256	// Maximum LFN length. Don't change this one
+	MAX_FILENAME_LENGTH = 256 // Maximum LFN length. Don't change this one
 };
 
 // File Constants
 #ifndef EOF
-#define EOF -1
-#define SEEK_SET	0
-#define SEEK_CUR	1
-#define SEEK_END	2
+#	define EOF -1
+#	define SEEK_SET 0
+#	define SEEK_CUR 1
+#	define SEEK_END 2
 #endif
 
 // File attributes
-#define ATTRIB_ARCH	0x20			// Archive
-#define ATTRIB_DIR	0x10			// Directory
-#define ATTRIB_LFN	0x0F			// Long file name
-#define ATTRIB_VOL	0x08			// Volume
-#define ATTRIB_SYS	0x04			// System
-#define ATTRIB_HID	0x02			// Hidden
-#define ATTRIB_RO	0x01			// Read only
-
+#define ATTRIB_ARCH 0x20 // Archive
+#define ATTRIB_DIR 0x10 // Directory
+#define ATTRIB_LFN 0x0F // Long file name
+#define ATTRIB_VOL 0x08 // Volume
+#define ATTRIB_SYS 0x04 // System
+#define ATTRIB_HID 0x02 // Hidden
+#define ATTRIB_RO 0x01 // Read only
 
 // Directory Constants
-typedef enum {FT_NONE, FT_FILE, FT_DIR} FILE_TYPE;
+typedef enum { FT_NONE,
+	             FT_FILE,
+	             FT_DIR } FILE_TYPE;
 
 // Filesystem type
-typedef enum {FS_UNKNOWN, FS_FAT12, FS_FAT16, FS_FAT32} FS_TYPE;
+typedef enum { FS_UNKNOWN,
+	             FS_FAT12,
+	             FS_FAT16,
+	             FS_FAT32 } FS_TYPE;
 
 // Open file information structure
 typedef struct
@@ -100,21 +103,20 @@ typedef struct
 	u32 firstCluster;
 	u32 length;
 	u32 curPos;
-	u32 curClus;			// Current cluster to read from
-	int curSect;			// Current sector within cluster
-	int curByte;			// Current byte within sector
-	char readBuffer[512];	// Buffer used for unaligned reads
-	u32 appClus;			// Cluster to append to
-	int appSect;			// Sector within cluster for appending
-	int appByte;			// Byte within sector for appending
-	bool read;	// Can read from file
-	bool write;	// Can write to file
-	bool append;// Can append to file
-	bool inUse;	// This file is open
-	u32 dirEntSector;	// The sector where the directory entry is stored
-	int dirEntOffset;	// The offset within the directory sector
-}	FAT_FILE;
-
+	u32 curClus; // Current cluster to read from
+	int curSect; // Current sector within cluster
+	int curByte; // Current byte within sector
+	char readBuffer[512]; // Buffer used for unaligned reads
+	u32 appClus; // Cluster to append to
+	int appSect; // Sector within cluster for appending
+	int appByte; // Byte within sector for appending
+	bool read; // Can read from file
+	bool write; // Can write to file
+	bool append; // Can append to file
+	bool inUse; // This file is open
+	u32 dirEntSector; // The sector where the directory entry is stored
+	int dirEntOffset; // The offset within the directory sector
+} FAT_FILE;
 
 //-----------------------------------------------------------------
 // CF Card functions
@@ -125,7 +127,7 @@ Reads the FAT information from the CF card.
 You need to call this before reading any files.
 bool return OUT: true if successful.
 -----------------------------------------------------------------*/
-bool FAT_InitFiles (void);
+bool FAT_InitFiles(void);
 
 /*-----------------------------------------------------------------
 FAT_FreeFiles
@@ -133,7 +135,7 @@ Closes all open files then resets the CF card.
 Call this before exiting back to the GBAMP
 bool return OUT: true if successful.
 -----------------------------------------------------------------*/
-bool FAT_FreeFiles (void);
+bool FAT_FreeFiles(void);
 
 /*-----------------------------------------------------------------
 FAT_GetAlias
@@ -143,7 +145,7 @@ char* alias OUT: will be filled with the alias (short filename),
 	should be at least 13 bytes long
 bool return OUT: return true if successful
 -----------------------------------------------------------------*/
-bool FAT_GetAlias (char* alias);
+bool FAT_GetAlias(char *alias);
 
 /*-----------------------------------------------------------------
 FAT_GetLongFilename
@@ -153,7 +155,7 @@ char* filename: OUT will be filled with the filename, should be at
 	least 256 bytes long
 bool return OUT: return true if successful
 -----------------------------------------------------------------*/
-bool FAT_GetLongFilename (char* filename);
+bool FAT_GetLongFilename(char *filename);
 
 /*-----------------------------------------------------------------
 FAT_GetFileSize
@@ -161,21 +163,21 @@ Get the file size of the last file found or openned.
 This idea is based on a modification by MoonShine
 u32 return OUT: the file size
 -----------------------------------------------------------------*/
-u32 FAT_GetFileSize (void);
+u32 FAT_GetFileSize(void);
 
 /*-----------------------------------------------------------------
 FAT_GetFileCluster
 Get the first cluster of the last file found or openned.
 u32 return OUT: the file start cluster
 -----------------------------------------------------------------*/
-u32 FAT_GetFileCluster (void);
+u32 FAT_GetFileCluster(void);
 
 /*-----------------------------------------------------------------
 FAT_GetFileAttributes
 Get the attributes of the last file found or openned.
 u8 return OUT: the file's attributes
 -----------------------------------------------------------------*/
-u8 FAT_GetFileAttributes (void);
+u8 FAT_GetFileAttributes(void);
 
 #ifdef CAN_WRITE_TO_DISC
 /*-----------------------------------------------------------------
@@ -186,7 +188,7 @@ u8 attributes IN: The attribute values to assign
 u8 mask IN: Detemines which attributes are changed
 u8 return OUT: the file's new attributes
 -----------------------------------------------------------------*/
-u8 FAT_SetFileAttributes (const char* filename, u8 attributes, u8 mask);
+u8 FAT_SetFileAttributes(const char *filename, u8 attributes, u8 mask);
 #endif
 
 #ifdef FILE_TIME_SUPPORT
@@ -195,14 +197,14 @@ FAT_GetFileCreationTime
 Get the creation time of the last file found or openned.
 time_t return OUT: the file's creation time
 -----------------------------------------------------------------*/
-time_t FAT_GetFileCreationTime (void);
+time_t FAT_GetFileCreationTime(void);
 
 /*-----------------------------------------------------------------
 FAT_GetFileLastWriteTime
 Get the creation time of the last file found or openned.
 time_t return OUT: the file's creation time
 -----------------------------------------------------------------*/
-time_t FAT_GetFileLastWriteTime (void);
+time_t FAT_GetFileLastWriteTime(void);
 #endif
 
 /*-----------------------------------------------------------------
@@ -213,7 +215,7 @@ char* filename: OUT filename, must be at least 13 chars long
 FILE_TYPE return: OUT returns FT_NONE if failed,
 	FT_FILE if it found a file and FT_DIR if it found a directory
 -----------------------------------------------------------------*/
-FILE_TYPE FAT_FindNextFile (char* filename);
+FILE_TYPE FAT_FindNextFile(char *filename);
 
 /*-----------------------------------------------------------------
 FAT_FindFirstFile
@@ -223,7 +225,7 @@ char* filename: OUT filename, must be at least 13 chars long
 FILE_TYPE return: OUT returns FT_NONE if failed,
 	FT_FILE if it found a file and FT_DIR if it found a directory
 -----------------------------------------------------------------*/
-FILE_TYPE FAT_FindFirstFile (char* filename);
+FILE_TYPE FAT_FindFirstFile(char *filename);
 
 /*-----------------------------------------------------------------
 FAT_FindFirstFileLFN
@@ -233,7 +235,7 @@ char* lfn: OUT long file name, must be at least 256 chars long
 FILE_TYPE return: OUT returns FT_NONE if failed,
 	FT_FILE if it found a file and FT_DIR if it found a directory
 -----------------------------------------------------------------*/
-FILE_TYPE FAT_FindFirstFileLFN(char* lfn);
+FILE_TYPE FAT_FindFirstFileLFN(char *lfn);
 
 /*-----------------------------------------------------------------
 FAT_FindNextFileLFN
@@ -243,7 +245,7 @@ char* lfn: OUT long file name, must be at least 256 chars long
 FILE_TYPE return: OUT returns FT_NONE if failed,
 	FT_FILE if it found a file and FT_DIR if it found a directory
 -----------------------------------------------------------------*/
-FILE_TYPE FAT_FindNextFileLFN(char* lfn);
+FILE_TYPE FAT_FindNextFileLFN(char *lfn);
 
 /*-----------------------------------------------------------------
 FAT_FileExists
@@ -252,19 +254,19 @@ char* filename: IN filename of the file to look for
 FILE_TYPE return: OUT returns FT_NONE if there is now file with
 	that name, FT_FILE if it is a file and FT_DIR if it is a directory
 -----------------------------------------------------------------*/
-FILE_TYPE FAT_FileExists (const char* filename);
+FILE_TYPE FAT_FileExists(const char *filename);
 
 /*-----------------------------------------------------------------
 FAT_GetFileSystemType
 FS_TYPE return: OUT returns the current file system type
 -----------------------------------------------------------------*/
-FS_TYPE FAT_GetFileSystemType (void);
+FS_TYPE FAT_GetFileSystemType(void);
 
 /*-----------------------------------------------------------------
 FAT_GetFileSystemTotalSize
 u32 return: OUT returns the total disk space (used + free)
 -----------------------------------------------------------------*/
-u32 FAT_GetFileSystemTotalSize (void);
+u32 FAT_GetFileSystemTotalSize(void);
 
 /*-----------------------------------------------------------------
 FAT_chdir
@@ -273,8 +275,7 @@ const char* path: IN null terminated string of directory separated by
 	forward slashes, / is root
 bool return: OUT returns true if successful
 -----------------------------------------------------------------*/
-bool FAT_chdir (const char* path);
-
+bool FAT_chdir(const char *path);
 
 //-----------------------------------------------------------------
 // File functions
@@ -290,7 +291,7 @@ const char* mode: IN mode to open file in
 FAT_FILE* return: OUT handle to open file, returns -1 if the file
 	couldn't be openned
 -----------------------------------------------------------------*/
-FAT_FILE* FAT_fopen(const char* path, const char* mode);
+FAT_FILE *FAT_fopen(const char *path, const char *mode);
 
 /*-----------------------------------------------------------------
 FAT_fclose(file)
@@ -298,7 +299,7 @@ Closes a file
 FAT_FILE* file: IN handle of the file to close
 bool return OUT: true if successful, false if not
 -----------------------------------------------------------------*/
-bool FAT_fclose (FAT_FILE* file);
+bool FAT_fclose(FAT_FILE *file);
 
 /*-----------------------------------------------------------------
 FAT_ftell(file)
@@ -306,7 +307,7 @@ Returns the current position in a file
 FAT_FILE* file: IN handle of an open file
 u32 OUT: Current position
 -----------------------------------------------------------------*/
-u32 FAT_ftell (FAT_FILE* file);
+u32 FAT_ftell(FAT_FILE *file);
 
 /*-----------------------------------------------------------------
 FAT_fseek(file, offset, origin)
@@ -316,7 +317,7 @@ u32 offset IN: position to seek to, relative to origin
 int origin IN: origin to seek from
 int OUT: Returns 0 if successful, -1 if not
 -----------------------------------------------------------------*/
-int FAT_fseek(FAT_FILE* file, s32 offset, int origin);
+int FAT_fseek(FAT_FILE *file, s32 offset, int origin);
 
 /*-----------------------------------------------------------------
 FAT_fread(buffer, size, count, file)
@@ -331,7 +332,7 @@ u32 count IN: number of items to read
 FAT_FILE* file IN: Handle of an open file
 u32 OUT: returns the actual number of bytes read
 -----------------------------------------------------------------*/
-u32 FAT_fread (void* buffer, u32 size, u32 count, FAT_FILE* file);
+u32 FAT_fread(void *buffer, u32 size, u32 count, FAT_FILE *file);
 
 #ifdef CAN_WRITE_TO_DISC
 /*-----------------------------------------------------------------
@@ -347,7 +348,7 @@ u32 count IN: number of items to write
 FAT_FILE* file IN: Handle of an open file
 u32 OUT: returns the actual number of bytes written
 -----------------------------------------------------------------*/
-u32 FAT_fwrite (const void* buffer, u32 size, u32 count, FAT_FILE* file);
+u32 FAT_fwrite(const void *buffer, u32 size, u32 count, FAT_FILE *file);
 #endif
 
 /*-----------------------------------------------------------------
@@ -356,7 +357,7 @@ Returns true if the end of file has been reached
 FAT_FILE* file IN: Handle of an open file
 bool return OUT: true if EOF, false if not
 -----------------------------------------------------------------*/
-bool FAT_feof(FAT_FILE* file);
+bool FAT_feof(FAT_FILE *file);
 
 #ifdef CAN_WRITE_TO_DISC
 /*-----------------------------------------------------------------
@@ -365,7 +366,7 @@ Deletes the file or empty directory sepecified in path
 const char* path IN: Path of item to delete
 int return OUT: zero if successful, non-zero if not
 -----------------------------------------------------------------*/
-int FAT_remove (const char* path);
+int FAT_remove(const char *path);
 #endif
 
 #ifdef CAN_WRITE_TO_DISC
@@ -376,7 +377,7 @@ Makes a new directory, so long as no other directory or file has
 const char* path IN: Path and filename of directory to make
 int return OUT: zero if successful, non-zero if not
 -----------------------------------------------------------------*/
-int FAT_mkdir (const char* path);
+int FAT_mkdir(const char *path);
 #endif
 
 /*-----------------------------------------------------------------
@@ -385,7 +386,7 @@ Gets the next character in the file
 FAT_FILE* file IN: Handle of open file
 bool return OUT: character if successful, EOF if not
 -----------------------------------------------------------------*/
-char FAT_fgetc (FAT_FILE* file);
+char FAT_fgetc(FAT_FILE *file);
 
 #ifdef CAN_WRITE_TO_DISC
 /*-----------------------------------------------------------------
@@ -395,7 +396,7 @@ char c IN: Character to be written
 FAT_FILE* handle IN: Handle of open file
 bool return OUT: character if successful, EOF if not
 -----------------------------------------------------------------*/
-char FAT_fputc (char c, FAT_FILE* file);
+char FAT_fputc(char c, FAT_FILE *file);
 #endif
 
 /*-----------------------------------------------------------------
@@ -417,7 +418,7 @@ bool return OUT: character if successful, EOF if not
 	* Added check for unix style text files
 	* Removed seek when no newline is found, since it isn't necessary
 -------------------------------------------------------------------*/
-char *FAT_fgets(char *tgtBuffer, int num, FAT_FILE* file) ;
+char *FAT_fgets(char *tgtBuffer, int num, FAT_FILE *file);
 
 #ifdef CAN_WRITE_TO_DISC
 /*-----------------------------------------------------------------
@@ -433,13 +434,13 @@ bool return OUT: number of characters written if successful,
 	* Uses FAT_FILE instead of int
 	* writtenBytes is now u32 instead of int
 -------------------------------------------------------------------*/
-int FAT_fputs (const char *string, FAT_FILE* file);
+int FAT_fputs(const char *string, FAT_FILE *file);
 #endif
 
 //------------------------------------------------------------------
 #ifdef __cplusplus
-}	   // extern "C"
+} // extern "C"
 #endif
 //------------------------------------------------------------------
 
-#endif	// ifndef _GBA_NDS_FAT
+#endif // ifndef _GBA_NDS_FAT

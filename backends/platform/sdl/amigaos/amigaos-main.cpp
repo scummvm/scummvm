@@ -24,10 +24,10 @@
 
 #if defined(__amigaos4__)
 
-#include "backends/fs/amigaos4/amigaos4-fs.h"
-#include "backends/platform/sdl/amigaos/amigaos.h"
-#include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
+#	include "backends/fs/amigaos4/amigaos4-fs.h"
+#	include "backends/platform/sdl/amigaos/amigaos.h"
+#	include "backends/plugins/sdl/sdl-provider.h"
+#	include "base/main.h"
 
 int main(int argc, char *argv[]) {
 
@@ -45,19 +45,19 @@ int main(int argc, char *argv[]) {
 		TEXT apppath[1024] = "AppPaths";
 
 		if (IDOS->DevNameFromLock(lock,
-			progpath,
-			sizeof(progpath),
-			DN_FULLPATH)) {
+		                          progpath,
+		                          sizeof(progpath),
+		                          DN_FULLPATH)) {
 
 			// Stop any "Insert volume..." type requesters
 			oldwin = IDOS->SetProcWindow((APTR)-1);
 
 			// Finally, set the variable to the path the executable was run from
-			IDOS->AddPart( apppath, appname, 1024);
-			IDOS->SetVar( apppath, progpath, -1, GVF_GLOBAL_ONLY|GVF_SAVE_VAR );
+			IDOS->AddPart(apppath, appname, 1024);
+			IDOS->SetVar(apppath, progpath, -1, GVF_GLOBAL_ONLY | GVF_SAVE_VAR);
 
 			// Turn system requesters back on
-			IDOS->SetProcWindow( oldwin );
+			IDOS->SetProcWindow(oldwin);
 		}
 	}
 
@@ -71,9 +71,9 @@ int main(int argc, char *argv[]) {
 	// Pre initialize the backend
 	((OSystem_AmigaOS *)g_system)->init();
 
-#ifdef DYNAMIC_MODULES
+#	ifdef DYNAMIC_MODULES
 	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
-#endif
+#	endif
 
 	// Invoke the actual ScummVM main entry point
 	int res = scummvm_main(argc, argv);

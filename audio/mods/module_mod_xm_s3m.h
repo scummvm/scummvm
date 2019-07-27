@@ -76,8 +76,8 @@ struct Note {
 	byte key;
 	byte instrument;
 	byte volume;
-	byte effect;	// effect type
-	byte param;		// parameter of effect
+	byte effect; // effect type
+	byte param; // parameter of effect
 };
 
 struct Pattern {
@@ -95,12 +95,12 @@ struct Pattern {
 };
 
 struct Sample {
-	char name[32];		// sample name
-	int16 finetune;		// fine tune
-	int16 volume;		// volume
-	int length;		// loop start
-	int loopStart;		// loop start
-	int loopLength;	// loop length
+	char name[32]; // sample name
+	int16 finetune; // fine tune
+	int16 volume; // volume
+	int length; // loop start
+	int loopStart; // loop start
+	int loopLength; // loop length
 	int16 panning;
 	int16 relNote;
 	int16 *data;

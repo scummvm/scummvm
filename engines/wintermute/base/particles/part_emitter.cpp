@@ -27,26 +27,27 @@
  */
 
 #include "engines/wintermute/base/particles/part_emitter.h"
-#include "engines/wintermute/base/particles/part_particle.h"
-#include "engines/wintermute/math/vector2.h"
-#include "engines/wintermute/math/matrix4.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
-#include "engines/wintermute/base/scriptables/script_stack.h"
-#include "engines/wintermute/base/base_engine.h"
-#include "engines/wintermute/base/timer.h"
-#include "engines/wintermute/base/base_region.h"
-#include "engines/wintermute/base/base_file_manager.h"
-#include "engines/wintermute/base/gfx/base_renderer.h"
-#include "engines/wintermute/utils/utils.h"
-#include "common/str.h"
 #include "common/math.h"
+#include "common/str.h"
+#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_region.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/base/particles/part_particle.h"
+#include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/base/timer.h"
+#include "engines/wintermute/math/matrix4.h"
+#include "engines/wintermute/math/vector2.h"
+#include "engines/wintermute/utils/utils.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(PartEmitter, false)
 
 //////////////////////////////////////////////////////////////////////////
-PartEmitter::PartEmitter(BaseGame *inGame, BaseScriptHolder *owner) : BaseObject(inGame) {
+PartEmitter::PartEmitter(BaseGame *inGame, BaseScriptHolder *owner)
+  : BaseObject(inGame) {
 	_width = _height = 0;
 
 	_border.setEmpty();
@@ -92,7 +93,6 @@ PartEmitter::PartEmitter(BaseGame *inGame, BaseScriptHolder *owner) : BaseObject
 	_owner = owner;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 PartEmitter::~PartEmitter(void) {
 	for (uint32 i = 0; i < _particles.size(); i++) {
@@ -104,7 +104,6 @@ PartEmitter::~PartEmitter(void) {
 		delete _forces[i];
 	}
 	_forces.clear();
-
 
 	for (uint32 i = 0; i < _sprites.size(); i++) {
 		delete[] _sprites[i];
@@ -198,9 +197,9 @@ bool PartEmitter::initParticle(PartParticle *particle, uint32 currentTime, uint3
 	float growthRate = BaseUtils::randomFloat(_growthRate1, _growthRate2);
 
 	if (!_border.isRectEmpty()) {
-		int thicknessLeft   = (int)(_borderThicknessLeft   - (float)_borderThicknessLeft   * posZ / 100.0f);
-		int thicknessRight  = (int)(_borderThicknessRight  - (float)_borderThicknessRight  * posZ / 100.0f);
-		int thicknessTop    = (int)(_borderThicknessTop    - (float)_borderThicknessTop    * posZ / 100.0f);
+		int thicknessLeft = (int)(_borderThicknessLeft - (float)_borderThicknessLeft * posZ / 100.0f);
+		int thicknessRight = (int)(_borderThicknessRight - (float)_borderThicknessRight * posZ / 100.0f);
+		int thicknessTop = (int)(_borderThicknessTop - (float)_borderThicknessTop * posZ / 100.0f);
 		int thicknessBottom = (int)(_borderThicknessBottom - (float)_borderThicknessBottom * posZ / 100.0f);
 
 		particle->_border = _border;
@@ -240,7 +239,6 @@ bool PartEmitter::initParticle(PartParticle *particle, uint32 currentTime, uint3
 	particle->_isDead = DID_FAIL(particle->setSprite(_sprites[spriteIndex]));
 	particle->fadeIn(currentTime, _fadeInTime);
 
-
 	if (particle->_isDead) {
 		return STATUS_FAILED;
 	} else {
@@ -268,7 +266,6 @@ bool PartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 			numLive++;
 		}
 	}
-
 
 	// we're understaffed
 	if (numLive < _maxParticles) {
@@ -350,7 +347,6 @@ bool PartEmitter::start() {
 	_running = true;
 	_batchesGenerated = 0;
 
-
 	if (_overheadTime > 0) {
 		uint32 delta = 500;
 		int steps = _overheadTime / delta;
@@ -421,7 +417,6 @@ PartForce *PartEmitter::addForceByName(const Common::String &name) {
 	return force;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool PartEmitter::addForce(const Common::String &name, PartForce::TForceType type, int posX, int posY, float angle, float strength) {
 	PartForce *force = addForceByName(name);
@@ -453,7 +448,6 @@ bool PartEmitter::removeForce(const Common::String &name) {
 	return STATUS_FAILED;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
@@ -463,9 +457,9 @@ bool PartEmitter::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "SetBorder") == 0) {
 		stack->correctParams(4);
-		int borderX      = stack->pop()->getInt();
-		int borderY      = stack->pop()->getInt();
-		int borderWidth  = stack->pop()->getInt();
+		int borderX = stack->pop()->getInt();
+		int borderY = stack->pop()->getInt();
+		int borderWidth = stack->pop()->getInt();
 		int borderHeight = stack->pop()->getInt();
 
 		stack->pushBool(DID_SUCCEED(setBorder(borderX, borderY, borderWidth, borderHeight)));
@@ -477,9 +471,9 @@ bool PartEmitter::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetBorderThickness") == 0) {
 		stack->correctParams(4);
-		int left   = stack->pop()->getInt();
-		int right  = stack->pop()->getInt();
-		int top    = stack->pop()->getInt();
+		int left = stack->pop()->getInt();
+		int right = stack->pop()->getInt();
+		int top = stack->pop()->getInt();
 		int bottom = stack->pop()->getInt();
 
 		stack->pushBool(DID_SUCCEED(setBorderThickness(left, right, top, bottom)));
@@ -878,7 +872,6 @@ ScValue *PartEmitter::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool PartEmitter::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
@@ -1145,14 +1138,10 @@ bool PartEmitter::scSetProperty(const char *name, ScValue *value) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 const char *PartEmitter::scToString() {
 	return "[particle emitter]";
 }
-
-
-
 
 //////////////////////////////////////////////////////////////////////////
 bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
@@ -1214,7 +1203,6 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferCharPtr(TMEMBER(_emitEvent));
 	persistMgr->transferPtr(TMEMBER_PTR(_owner));
-
 
 	_sprites.persist(persistMgr);
 

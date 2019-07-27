@@ -20,18 +20,19 @@
  *
  */
 
- // Based off ffmpeg's RPZA decoder
+// Based off ffmpeg's RPZA decoder
 
 #include "image/codecs/rpza.h"
 
 #include "common/debug.h"
-#include "common/system.h"
 #include "common/stream.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 
 namespace Image {
 
-RPZADecoder::RPZADecoder(uint16 width, uint16 height) : Codec() {
+RPZADecoder::RPZADecoder(uint16 width, uint16 height)
+  : Codec() {
 	_format = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 	_ditherPalette = 0;
 	_dirtyPalette = false;
@@ -53,15 +54,15 @@ RPZADecoder::~RPZADecoder() {
 	delete[] _colorMap;
 }
 
-#define ADVANCE_BLOCK() \
-	blockPtr += 4; \
-	if (blockPtr >= endPtr) { \
-		blockPtr += pitch * 3; \
+#define ADVANCE_BLOCK()        \
+	blockPtr += 4;               \
+	if (blockPtr >= endPtr) {    \
+		blockPtr += pitch * 3;     \
 		endPtr = blockPtr + pitch; \
-	} \
-	totalBlocks--; \
-	if (totalBlocks < 0) \
-		error("rpza block counter just went negative (this should not happen)") \
+	}                            \
+	totalBlocks--;               \
+	if (totalBlocks < 0)         \
+	error("rpza block counter just went negative (this should not happen)")
 
 struct BlockDecoderRaw {
 	static inline void drawFillBlock(uint16 *blockPtr, uint16 pitch, uint16 color, const byte *colorMap) {
@@ -205,7 +206,7 @@ struct BlockDecoderDither {
 	}
 };
 
-template<typename PixelInt, typename BlockDecoder>
+template <typename PixelInt, typename BlockDecoder>
 static inline void decodeFrameTmpl(Common::SeekableReadStream &stream, PixelInt *ptr, uint16 pitch, uint16 blockWidth, uint16 blockHeight, const byte *colorMap) {
 	uint16 colorA = 0, colorB = 0;
 	uint16 color4[4];

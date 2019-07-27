@@ -25,7 +25,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPETPellerator, CPETTransport)
-	ON_MESSAGE(PETActivateMsg)
+ON_MESSAGE(PETActivateMsg)
 END_MESSAGE_MAP()
 
 void CPETPellerator::save(SimpleFile *file, int indent) {

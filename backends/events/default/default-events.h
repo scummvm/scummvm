@@ -21,30 +21,29 @@
  */
 
 #if !defined(BACKEND_EVENTS_DEFAULT_H) && !defined(DISABLE_DEFAULT_EVENTMANAGER)
-#define BACKEND_EVENTS_DEFAULT_H
+#	define BACKEND_EVENTS_DEFAULT_H
 
-#include "common/events.h"
-#include "common/queue.h"
+#	include "common/events.h"
+#	include "common/queue.h"
 
 namespace Common {
-#ifdef ENABLE_KEYMAPPER
+#	ifdef ENABLE_KEYMAPPER
 class Keymapper;
-#endif
-#ifdef ENABLE_VKEYBD
+#	endif
+#	ifdef ENABLE_VKEYBD
 class VirtualKeyboard;
-#endif
+#	endif
 }
 
-
 class DefaultEventManager : public Common::EventManager, Common::EventObserver {
-#ifdef ENABLE_VKEYBD
+#	ifdef ENABLE_VKEYBD
 	Common::VirtualKeyboard *_vk;
-#endif
+#	endif
 
-#ifdef ENABLE_KEYMAPPER
+#	ifdef ENABLE_KEYMAPPER
 	Common::Keymapper *_keymapper;
 	bool _remap;
-#endif
+#	endif
 
 	Common::ArtificialEventSource _artificialEventSource;
 
@@ -72,6 +71,7 @@ class DefaultEventManager : public Common::EventManager, Common::EventObserver {
 	uint32 _keyRepeatTime;
 
 	void handleKeyRepeat();
+
 public:
 	DefaultEventManager(Common::EventSource *boss);
 	~DefaultEventManager();
@@ -87,15 +87,15 @@ public:
 	virtual int shouldQuit() const override { return _shouldQuit; }
 	virtual int shouldRTL() const override { return _shouldRTL; }
 	virtual void resetRTL() override { _shouldRTL = false; }
-#ifdef FORCE_RTL
+#	ifdef FORCE_RTL
 	virtual void resetQuit() override { _shouldQuit = false; }
-#endif
+#	endif
 
-#ifdef ENABLE_KEYMAPPER
-	 // IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
-	 // this, please talk to tsoliman and/or LordHoto.
+#	ifdef ENABLE_KEYMAPPER
+	// IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
+	// this, please talk to tsoliman and/or LordHoto.
 	virtual Common::Keymapper *getKeymapper() override { return _keymapper; }
-#endif
+#	endif
 
 	/**
 	 * Controls whether repeated key down events are generated while a key is pressed

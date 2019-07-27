@@ -36,13 +36,14 @@ namespace Hugo {
 /**
  * Enumerate overlay file types
  */
-enum OvlType {kOvlBoundary, kOvlOverlay, kOvlBase};
+enum OvlType { kOvlBoundary,
+	             kOvlOverlay,
+	             kOvlBase };
 
-struct UifHdr {                                      // UIF font/image look up
-	uint16  _size;                                   // Size of uif item
-	uint32  _offset;                                 // Offset of item in file
+struct UifHdr { // UIF font/image look up
+	uint16 _size; // Size of uif item
+	uint32 _offset; // Offset of item in file
 };
-
 
 class FileManager {
 public:
@@ -51,20 +52,20 @@ public:
 
 	SoundPtr getSound(const int16 sound, uint16 *size);
 
-	void     readBootFile();
-	void     readImage(const int objNum, Object *objPtr);
-	void     readUIFImages();
-	void     readUIFItem(const int16 id, byte *buf);
-	bool     restoreGame(const int16 slot);
-	bool     saveGame(const int16 slot, const Common::String &descrip);
+	void readBootFile();
+	void readImage(const int objNum, Object *objPtr);
+	void readUIFImages();
+	void readUIFItem(const int16 id, byte *buf);
+	bool restoreGame(const int16 slot);
+	bool saveGame(const int16 slot, const Common::String &descrip);
 
 	// Name scenery and objects picture databases
-	const char *getBootFilename()    const;
-	const char *getObjectFilename()  const;
+	const char *getBootFilename() const;
+	const char *getObjectFilename() const;
 	const char *getSceneryFilename() const;
-	const char *getSoundFilename()   const;
-	const char *getStringFilename()  const;
-	const char *getUifFilename()     const;
+	const char *getSoundFilename() const;
+	const char *getStringFilename() const;
+	const char *getUifFilename() const;
 
 	virtual void openDatabaseFiles() = 0;
 	virtual void closeDatabaseFiles() = 0;
@@ -77,11 +78,11 @@ public:
 
 protected:
 	HugoEngine *_vm;
-	static const int kMaxUifs = 32;                 // Max possible uif items in hdr
-	static const int kMaxSounds = 64;               // Max number of sounds
-	static const int kRepeatMask = 0xC0;            // Top 2 bits mean a repeat code
-	static const int kLengthMask = 0x3F;            // Lower 6 bits are length
-	static const int kNumColors = 16;               // Num colors to save in palette
+	static const int kMaxUifs = 32; // Max possible uif items in hdr
+	static const int kMaxSounds = 64; // Max number of sounds
+	static const int kRepeatMask = 0xC0; // Top 2 bits mean a repeat code
+	static const int kLengthMask = 0x3F; // Lower 6 bits are length
+	static const int kNumColors = 16; // Num colors to save in palette
 
 	/**
 	 * Structure of scenery file lookup entry
@@ -97,28 +98,28 @@ protected:
 		uint32 _baseLength;
 	};
 
-	struct PCCHeader {                              // Structure of PCX file header
-		byte   _mfctr, _vers, _enc, _bpx;
-		uint16 _x1, _y1, _x2, _y2;                  // bounding box
+	struct PCCHeader { // Structure of PCX file header
+		byte _mfctr, _vers, _enc, _bpx;
+		uint16 _x1, _y1, _x2, _y2; // bounding box
 		uint16 _xres, _yres;
-		byte   _palette[3 * kNumColors];            // EGA color palette
-		byte   _vmode, _planes;
-		uint16 _bytesPerLine;                       // Bytes per line
-		byte   _fill2[60];
-	};                                              // Header of a PCC file
+		byte _palette[3 * kNumColors]; // EGA color palette
+		byte _vmode, _planes;
+		uint16 _bytesPerLine; // Bytes per line
+		byte _fill2[60];
+	}; // Header of a PCC file
 
 	bool _firstUIFFl;
-	UifHdr _UIFHeader[kMaxUifs];                    // Lookup for uif fonts/images
+	UifHdr _UIFHeader[kMaxUifs]; // Lookup for uif fonts/images
 
-	Common::File _stringArchive;                    // Handle for string file
-	Common::File _sceneryArchive1;                  // Handle for scenery file
-	Common::File _objectsArchive;                   // Handle for objects file
+	Common::File _stringArchive; // Handle for string file
+	Common::File _sceneryArchive1; // Handle for scenery file
+	Common::File _objectsArchive; // Handle for objects file
 
 	Seq *readPCX(Common::SeekableReadStream &f, Seq *seqPtr, byte *imagePtr, const bool firstFl, const char *name);
 
 	// If this is the first call, read the lookup table
 	bool _hasReadHeader;
-	SoundHdr _soundHdr[kMaxSounds];                    // Sound lookup table
+	SoundHdr _soundHdr[kMaxSounds]; // Sound lookup table
 
 private:
 	UifHdr *getUIFHeader(const Uif id);
@@ -146,7 +147,8 @@ public:
 	virtual void openDatabaseFiles();
 	virtual void readBackground(const int screenIndex);
 	virtual void readOverlay(const int screenNum, ImagePtr image, OvlType overlayType);
-	const   char *fetchString(const int index);
+	const char *fetchString(const int index);
+
 private:
 	char *_fetchStringBuf;
 };
@@ -160,8 +162,9 @@ public:
 	void openDatabaseFiles();
 	void readBackground(const int screenIndex);
 	void readOverlay(const int screenNum, ImagePtr image, OvlType overlayType);
+
 private:
-	Common::File _sceneryArchive2;                  // Handle for scenery file
+	Common::File _sceneryArchive2; // Handle for scenery file
 };
 
 class FileManager_v2w : public FileManager_v2d {

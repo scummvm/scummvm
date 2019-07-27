@@ -31,54 +31,56 @@ class SherlockEngine;
 
 namespace Scalpel {
 
-class Settings {
-private:
-	SherlockEngine *_vm;
+	class Settings {
+	private:
+		SherlockEngine *_vm;
 
-	Settings(SherlockEngine *vm) : _vm(vm) {
-		_hotkeyExit = 0;
-		_hotkeyMusic = 0;
-		_hotkeyPortraits = 0;
-		_hotkeyNewFontStyle = 0;
-		_hotkeySoundEffects = 0;
-		_hotkeyWindows = 0;
-		_hotkeyAutoHelp = 0;
-		_hotkeyVoices = 0;
-		_hotkeyFade = 0;
+		Settings(SherlockEngine *vm)
+		  : _vm(vm) {
+			_hotkeyExit = 0;
+			_hotkeyMusic = 0;
+			_hotkeyPortraits = 0;
+			_hotkeyNewFontStyle = 0;
+			_hotkeySoundEffects = 0;
+			_hotkeyWindows = 0;
+			_hotkeyAutoHelp = 0;
+			_hotkeyVoices = 0;
+			_hotkeyFade = 0;
 
-		memset(_hotkeysIndexed, 0, sizeof(_hotkeysIndexed));
-	}
+			memset(_hotkeysIndexed, 0, sizeof(_hotkeysIndexed));
+		}
 
-	byte _hotkeyExit;
-	byte _hotkeyMusic;
-	byte _hotkeyPortraits;
-	byte _hotkeyNewFontStyle;
-	byte _hotkeySoundEffects;
-	byte _hotkeyWindows;
-	byte _hotkeyAutoHelp;
-	byte _hotkeyVoices;
-	byte _hotkeyFade;
+		byte _hotkeyExit;
+		byte _hotkeyMusic;
+		byte _hotkeyPortraits;
+		byte _hotkeyNewFontStyle;
+		byte _hotkeySoundEffects;
+		byte _hotkeyWindows;
+		byte _hotkeyAutoHelp;
+		byte _hotkeyVoices;
+		byte _hotkeyFade;
 
-	byte _hotkeysIndexed[12];
+		byte _hotkeysIndexed[12];
 
-	/**
+		/**
 	 * Draws the interface for the settings window
 	 */
-	void drawInterface(bool flag);
+		void drawInterface(bool flag);
 
-	/**
+		/**
 	 * Draws the buttons for the settings dialog
 	 */
-	int drawButtons(const Common::Point &pt, int key);
-public:
-	/**
+		int drawButtons(const Common::Point &pt, int key);
+
+	public:
+		/**
 	 * Handles input when the settings window is being shown
 	 * @remarks		Whilst this would in theory be better in the Journal class, since it displays in
 	 *		the user interface, it uses so many internal UI fields, that it sort of made some sense
 	 *		to put it in the UserInterface class.
 	 */
-	static void show(SherlockEngine *vm);
-};
+		static void show(SherlockEngine *vm);
+	};
 
 } // End of namespace Scalpel
 

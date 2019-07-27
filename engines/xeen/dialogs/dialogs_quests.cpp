@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "xeen/dialogs/dialogs_quests.h"
+#include "common/scummsys.h"
 #include "xeen/events.h"
 #include "xeen/party.h"
 #include "xeen/xeen.h"
@@ -51,7 +51,10 @@ void Quests::execute() {
 	addButtons();
 	loadQuestNotes();
 
-	enum { QUEST_ITEMS, CURRENT_QUESTS, AUTO_NOTES } mode = QUEST_ITEMS;
+	enum { QUEST_ITEMS,
+		     CURRENT_QUESTS,
+		     AUTO_NOTES } mode
+	  = QUEST_ITEMS;
 	bool windowFlag;
 	if (windows[29]._enabled) {
 		windowFlag = false;
@@ -76,7 +79,7 @@ void Quests::execute() {
 			headerShown = false;
 			for (int idx = 0; idx < itemsCount; ++idx) {
 				if (party._questItems[idx]) {
-					if (!count ) {
+					if (!count) {
 						if (_vm->getGameID() == GType_Swords)
 							lines[count++] = Res.SWORDS_OF_XEEN_LINE;
 						else if (idx < 35)
@@ -108,8 +111,8 @@ void Quests::execute() {
 
 					if (multiFlag) {
 						lines[count++] = Common::String::format("%d %s%c",
-							party._questItems[idx], questItemNames[idx],
-							party._questItems[idx] == 1 ? ' ' : 's');
+						                                        party._questItems[idx], questItemNames[idx],
+						                                        party._questItems[idx] == 1 ? ' ' : 's');
 					} else {
 						lines[count++] = questItemNames[idx];
 					}
@@ -120,12 +123,11 @@ void Quests::execute() {
 				windows[30].writeString(Res.NO_QUEST_ITEMS);
 			} else {
 				windows[30].writeString(Common::String::format(Res.QUEST_ITEMS_DATA,
-					lines[topRow].c_str(), lines[topRow + 1].c_str(),
-					lines[topRow + 2].c_str(), lines[topRow + 3].c_str(),
-					lines[topRow + 4].c_str(), lines[topRow + 5].c_str(),
-					lines[topRow + 6].c_str(), lines[topRow + 7].c_str(),
-					lines[topRow + 8].c_str()
-				));
+				                                               lines[topRow].c_str(), lines[topRow + 1].c_str(),
+				                                               lines[topRow + 2].c_str(), lines[topRow + 3].c_str(),
+				                                               lines[topRow + 4].c_str(), lines[topRow + 5].c_str(),
+				                                               lines[topRow + 6].c_str(), lines[topRow + 7].c_str(),
+				                                               lines[topRow + 8].c_str()));
 			}
 			break;
 
@@ -153,7 +155,7 @@ void Quests::execute() {
 				lines[1] = Res.NO_CURRENT_QUESTS;
 
 			windows[30].writeString(Common::String::format(Res.CURRENT_QUESTS_DATA,
-				lines[topRow].c_str(), lines[topRow + 1].c_str(), lines[topRow + 2].c_str()));
+			                                               lines[topRow].c_str(), lines[topRow + 1].c_str(), lines[topRow + 2].c_str()));
 			break;
 
 		case AUTO_NOTES: {
@@ -196,12 +198,11 @@ void Quests::execute() {
 				lines[1] = Res.NO_AUTO_NOTES;
 
 			windows[30].writeString(Common::String::format(Res.AUTO_NOTES_DATA,
-				lines[topRow].c_str(), lines[topRow + 1].c_str(),
-				lines[topRow + 2].c_str(), lines[topRow + 3].c_str(),
-				lines[topRow + 4].c_str(), lines[topRow + 5].c_str(),
-				lines[topRow + 6].c_str(), lines[topRow + 7].c_str(),
-				lines[topRow + 8].c_str()
-			));
+			                                               lines[topRow].c_str(), lines[topRow + 1].c_str(),
+			                                               lines[topRow + 2].c_str(), lines[topRow + 3].c_str(),
+			                                               lines[topRow + 4].c_str(), lines[topRow + 5].c_str(),
+			                                               lines[topRow + 6].c_str(), lines[topRow + 7].c_str(),
+			                                               lines[topRow + 8].c_str()));
 			break;
 		}
 		}
@@ -266,7 +267,6 @@ void Quests::execute() {
 
 void Quests::addButtons() {
 	_iconSprites.load("quest.icn");
-
 
 	addButton(Common::Rect(12, 109, 36, 129), Common::KEYCODE_i, &_iconSprites);
 	addButton(Common::Rect(80, 109, 104, 129), Common::KEYCODE_q, &_iconSprites);

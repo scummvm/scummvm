@@ -20,15 +20,15 @@
  *
  */
 
-#include "common/util.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
 
-#include "gob/sound/sounddesc.h"
 #include "gob/resources.h"
+#include "gob/sound/sounddesc.h"
 
 namespace Gob {
 
@@ -52,16 +52,16 @@ SoundDesc::~SoundDesc() {
 }
 
 void SoundDesc::swap(SoundDesc &desc) {
-	SWAP(_repCount  , desc._repCount);
-	SWAP(_frequency , desc._frequency);
-	SWAP(_flag      , desc._flag);
-	SWAP(_id        , desc._id);
+	SWAP(_repCount, desc._repCount);
+	SWAP(_frequency, desc._frequency);
+	SWAP(_flag, desc._flag);
+	SWAP(_id, desc._id);
 	SWAP(_mixerFlags, desc._mixerFlags);
-	SWAP(_resource  , desc._resource);
-	SWAP(_data      , desc._data);
-	SWAP(_dataPtr   , desc._dataPtr);
-	SWAP(_size      , desc._size);
-	SWAP(_type      , desc._type);
+	SWAP(_resource, desc._resource);
+	SWAP(_data, desc._data);
+	SWAP(_dataPtr, desc._dataPtr);
+	SWAP(_size, desc._size);
+	SWAP(_type, desc._type);
 }
 
 void SoundDesc::set(SoundType type, byte *data, uint32 dSize) {
@@ -139,7 +139,6 @@ void SoundDesc::convToSigned() {
 	} else
 		for (uint32 i = 0; i < _size; i++)
 			_dataPtr[i] ^= 0x80;
-
 }
 
 int16 SoundDesc::calcFadeOutLength(int16 frequency) {
@@ -157,7 +156,7 @@ bool SoundDesc::loadSND(byte *data, uint32 dSize) {
 	_type = SOUND_SND;
 	_data = data;
 	_dataPtr = data + 6;
-	_frequency = MAX((int16) READ_BE_UINT16(data + 4), (int16) 4700);
+	_frequency = MAX((int16)READ_BE_UINT16(data + 4), (int16)4700);
 	_flag = data[0] ? (data[0] & 0x7F) : 8;
 	data[0] = 0;
 	_size = MIN(READ_BE_UINT32(data), dSize - 6);

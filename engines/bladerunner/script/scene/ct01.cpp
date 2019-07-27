@@ -26,18 +26,18 @@ namespace BladeRunner {
 
 enum kCT01Loops {
 	kCT01LoopInshotFromCT12WithSpinner = 0, //   0 -  14
-	kCT01LoopInshot                    = 1, //  15 - 194
-	kCT01LoopMainLoop                  = 2, // 195 - 255
-	kCT01LoopDoorAnim                  = 4, // 256 - 315
-	kCT01LoopOutshot                   = 5, // 316 - 435
-	kCT01LoopInshotFromCT12NoSpinner   = 6, // 436 - 450
-	kCT01LoopMainLoopNoSpinner         = 7  // 451 - 511
+	kCT01LoopInshot = 1, //  15 - 194
+	kCT01LoopMainLoop = 2, // 195 - 255
+	kCT01LoopDoorAnim = 4, // 256 - 315
+	kCT01LoopOutshot = 5, // 316 - 435
+	kCT01LoopInshotFromCT12NoSpinner = 6, // 436 - 450
+	kCT01LoopMainLoopNoSpinner = 7 // 451 - 511
 };
 
 enum kCT01Exits {
-	kCT01ExitCT02    = 0,
-	kCT01ExitCT03    = 1,
-	kCT01ExitCT12    = 2,
+	kCT01ExitCT02 = 0,
+	kCT01ExitCT03 = 1,
+	kCT01ExitCT12 = 2,
 	kCT01ExitSpinner = 3
 };
 
@@ -54,8 +54,7 @@ void SceneScriptCT01::InitializeScene() {
 		Game_Flag_Reset(kFlagCT12toCT01);
 		Setup_Scene_Information(-419.0f, -6.5f, 696.0f, 28);
 		if (Global_Variable_Query(kVariableChapter) != 2
-		 && Global_Variable_Query(kVariableChapter) != 3
-		) {
+		    && Global_Variable_Query(kVariableChapter) != 3) {
 			if (Game_Flag_Query(kFlagSpinnerAtCT01)) {
 				Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kCT01LoopInshotFromCT12WithSpinner, false);
 			} else {
@@ -70,10 +69,9 @@ void SceneScriptCT01::InitializeScene() {
 			// Note: kFlagSpinnerAtCT01 reset (original) is not handled the same was as in NR01 but it still works
 			// Note 2: Gordo sitting at the diner overlaps with the counter bar in front of him
 			//         so the loop will be prevented from playing when he is there.
-			if ( Global_Variable_Query(kVariableChapter) < 4
+			if (Global_Variable_Query(kVariableChapter) < 4
 			    && Actor_Query_Which_Set_In(kActorGordo) != kSetCT01_CT12
-			    && Random_Query(1, 2) == 1
-			) {
+			    && Random_Query(1, 2) == 1) {
 				// enhancement: don't always play
 				Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kCT01LoopInshot, false);
 			}
@@ -106,19 +104,19 @@ void SceneScriptCT01::InitializeScene() {
 	if (Game_Flag_Query(kFlagSpinnerAtCT01)) {
 		Scene_Exit_Add_2D_Exit(kCT01ExitSpinner, 0, 286, 158, 350, 2);
 	}
-	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50,    1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBL1, 40, -100, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBR1, 40,  100, 1);
-	Ambient_Sounds_Add_Sound(kSfxDISH1,   10, 30, 16, 20,    0, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxDISH2,   10, 30, 16, 20,    0, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxDISH3,   10, 30, 16, 20,    0, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxDISH4,   10, 30, 16, 20,    0, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBR1, 40, 100, 1);
+	Ambient_Sounds_Add_Sound(kSfxDISH1, 10, 30, 16, 20, 0, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxDISH2, 10, 30, 16, 20, 0, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxDISH3, 10, 30, 16, 20, 0, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxDISH4, 10, 30, 16, 20, 0, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 0, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  10, 40, 33, 50,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSPIN3A,  10, 40, 33, 50,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B, 10, 40, 33, 50, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN3A, 10, 40, 33, 50, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 20, 40, 33, 50, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 20, 40, 33, 50, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 20, 40, 33, 50, -100, 100, -101, -101, 0, 0);
@@ -166,10 +164,10 @@ bool SceneScriptCT01::MouseClick(int x, int y) {
 }
 
 bool SceneScriptCT01::ClickedOn3DObject(const char *objectName, bool a2) {
-//	if ("ASIANSITTINGANDEATI" == objectName) { //bug?
+	//	if ("ASIANSITTINGANDEATI" == objectName) { //bug?
 	if (Object_Query_Click("ASIANSITTINGANDEATI", objectName)) {
 		Actor_Face_Object(kActorMcCoy, "ASIANSITTINGANDEATI", true);
-		Actor_Says(kActorMcCoy, 365, 13);    // Excuse me, pal!
+		Actor_Says(kActorMcCoy, 365, 13); // Excuse me, pal!
 		Actor_Says(kActorHowieLee, 160, 13); // I take care of you soon, McCoy. Real busy tonight.
 		return true;
 	}
@@ -205,11 +203,11 @@ bool SceneScriptCT01::ClickedOnActor(int actorId) {
 						}
 						Actor_Modify_Friendliness_To_Other(kActorHowieLee, kActorMcCoy, -10);
 					} else if (Actor_Query_Friendliness_To_Other(kActorHowieLee, kActorMcCoy) < 50) {
-						Actor_Says(kActorMcCoy, 310, 11);    // keeping out of trouble...?
+						Actor_Says(kActorMcCoy, 310, 11); // keeping out of trouble...?
 						Actor_Says(kActorHowieLee, 190, 13); // I look like I got time for chit-er chat-er?
 					} else if (Actor_Query_Friendliness_To_Other(kActorHowieLee, kActorMcCoy) <= 55) {
 						Actor_Says(kActorMcCoy, 330, 13);
-						Actor_Says(kActorHowieLee, 160, 15);  // real busy tonight
+						Actor_Says(kActorHowieLee, 160, 15); // real busy tonight
 					} else { // friendly > 55
 						Actor_Says(kActorMcCoy, 310, 11);
 						Actor_Says(kActorHowieLee, 10, 16);
@@ -218,8 +216,7 @@ bool SceneScriptCT01::ClickedOnActor(int actorId) {
 			} else {
 				// Original: Howie begins with friendliness of 60, max can be 65, lowest is 52
 				if (!Game_Flag_Query(kFlagCT01TalkToHowieAfterZubenMissing)
-				 && Actor_Query_Friendliness_To_Other(kActorHowieLee, kActorMcCoy) >= 40
-				) {
+				    && Actor_Query_Friendliness_To_Other(kActorHowieLee, kActorMcCoy) >= 40) {
 					dialogueWithHowieLee();
 					Actor_Set_Goal_Number(kActorHowieLee, kGoalHowieLeeDefault);
 					return true;
@@ -346,14 +343,14 @@ bool SceneScriptCT01::ClickedOnExit(int exitId) {
 			Game_Flag_Reset(kFlagMcCoyInTyrellBuilding);
 			Game_Flag_Reset(kFlagMcCoyInDNARow);
 			Game_Flag_Reset(kFlagMcCoyInBradburyBuilding);
-//if (_vm->_cutContent) {
-//			// Restored spinner door opens/ closes, so we disable this for now
-//			// NOTE: Reverted this cut content since this might be annoying
-//                   as it slows down the pacing...
-//			int spinnerDest = Spinner_Interface_Choose_Dest(kCT01LoopDoorAnim, false);
-//} else {
+			//if (_vm->_cutContent) {
+			//			// Restored spinner door opens/ closes, so we disable this for now
+			//			// NOTE: Reverted this cut content since this might be annoying
+			//                   as it slows down the pacing...
+			//			int spinnerDest = Spinner_Interface_Choose_Dest(kCT01LoopDoorAnim, false);
+			//} else {
 			int spinnerDest = Spinner_Interface_Choose_Dest(-1, false);
-//}
+			//}
 
 			switch (spinnerDest) {
 			case kSpinnerDestinationPoliceStation:
@@ -450,15 +447,13 @@ bool SceneScriptCT01::ClickedOn2DRegion(int region) {
 
 void SceneScriptCT01::SceneFrameAdvanced(int frame) {
 	if ((frame < 316
-	  || frame > 435
-	 )
-	 && ((frame - 1) % 10) == 0
-	) {
+	     || frame > 435)
+	    && ((frame - 1) % 10) == 0) {
 		Ambient_Sounds_Play_Sound(Random_Query(kSfxNEON5, kSfxNEON6), 25, 30, 30, 0);
 	}
 
 	if (frame == 23) {
-		Ambient_Sounds_Play_Sound(kSfxCARDOWN3, 40,  99,   0,  0);
+		Ambient_Sounds_Play_Sound(kSfxCARDOWN3, 40, 99, 0, 0);
 	}
 
 	if (_vm->_cutContent) {
@@ -472,12 +467,11 @@ void SceneScriptCT01::SceneFrameAdvanced(int frame) {
 	}
 
 	if (frame == 316) {
-		Ambient_Sounds_Play_Sound(kSfxCARUP3B,  50, -50, 100, 99);
+		Ambient_Sounds_Play_Sound(kSfxCARUP3B, 50, -50, 100, 99);
 	}
 
 	if (frame == 196
-	 || frame == 452
-	) {
+	    || frame == 452) {
 		int v3 = Random_Query(0, 6);
 		if (v3 == 0) {
 			Overlay_Play("ct01spnr", 0, false, true, 0);
@@ -513,8 +507,7 @@ void SceneScriptCT01::PlayerWalkedIn() {
 		if (_vm->_cutContent) {
 			// unpause generic walkers here, less chance to collide with McCOy while he enters the scene
 			if (Game_Flag_Query(kFlagArrivedFromSpinner1)
-				&& Global_Variable_Query(kVariableGenericWalkerConfig) < 0
-			) {
+			    && Global_Variable_Query(kVariableGenericWalkerConfig) < 0) {
 				Global_Variable_Set(kVariableGenericWalkerConfig, 2);
 			}
 		}
@@ -553,7 +546,7 @@ void SceneScriptCT01::PlayerWalkedOut() {
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		if (!Game_Flag_Query(kFlagMcCoyInTyrellBuilding)) {
 			// don't play this outtake when going to Tyrell Building
-			Outtake_Play(kOuttakeTowards3, true, -1);   // available in Acts 1, 2, 3
+			Outtake_Play(kOuttakeTowards3, true, -1); // available in Acts 1, 2, 3
 		}
 	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
@@ -569,19 +562,16 @@ void SceneScriptCT01::dialogueWithHowieLee() {
 	}
 
 	if (
-	 (   Actor_Clue_Query(kActorMcCoy, kClueChopstickWrapper)
-	  || Actor_Clue_Query(kActorMcCoy, kClueSushiMenu)
-	 )
-	 && !Game_Flag_Query(kFlagCT01Evidence1Linked)
-	) {
+	  (Actor_Clue_Query(kActorMcCoy, kClueChopstickWrapper)
+	   || Actor_Clue_Query(kActorMcCoy, kClueSushiMenu))
+	  && !Game_Flag_Query(kFlagCT01Evidence1Linked)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(50, 5, 5, 4); // RUNCITER CLUES
 	}
 
-	if ( Actor_Clue_Query(kActorMcCoy, kClueChopstickWrapper)
-	 &&  Actor_Clue_Query(kActorMcCoy, kClueSushiMenu)
-	 &&  Game_Flag_Query(kFlagCT01Evidence1Linked)
-	 && !Game_Flag_Query(kFlagCT01Evidence2Linked)
-	) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueChopstickWrapper)
+	    && Actor_Clue_Query(kActorMcCoy, kClueSushiMenu)
+	    && Game_Flag_Query(kFlagCT01Evidence1Linked)
+	    && !Game_Flag_Query(kFlagCT01Evidence2Linked)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(60, 3, 5, 5); // MORE RUNCITER CLUES
 	}
 
@@ -592,7 +582,7 @@ void SceneScriptCT01::dialogueWithHowieLee() {
 	}
 
 	if ((Actor_Clue_Query(kActorMcCoy, kClueCarColorAndMake)
-	    || (_vm->_cutContent && Actor_Clue_Query(kActorMcCoy, kClueLabPaintTransfer)))
+	     || (_vm->_cutContent && Actor_Clue_Query(kActorMcCoy, kClueLabPaintTransfer)))
 	    && Actor_Clue_Query(kActorMcCoy, kClueDispatchHitAndRun) // this clue is now acquired in restored Cut Content
 	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(90, 5, 4, 5); // HIT AND RUN
@@ -659,8 +649,7 @@ void SceneScriptCT01::dialogueWithHowieLee() {
 		if (((!_vm->_cutContent && Actor_Query_Friendliness_To_Other(kActorHowieLee, kActorMcCoy) > 49)
 		     || Actor_Query_Friendliness_To_Other(kActorHowieLee, kActorMcCoy) > 59)
 		    && (Global_Variable_Query(kVariableChinyen) > 10
-		     || Query_Difficulty_Level() == kGameDifficultyEasy)
-		) {
+		        || Query_Difficulty_Level() == kGameDifficultyEasy)) {
 			Actor_Says(kActorHowieLee, 50, kAnimationModeTalk);
 			Actor_Says(kActorHowieLee, 60, kAnimationModeTalk);
 			if (_vm->_cutContent) {

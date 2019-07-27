@@ -28,30 +28,30 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 
-#include "sword2/sword2.h"
+#include "sword2/animation.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"
 #include "sword2/logic.h"
 #include "sword2/maketext.h"
 #include "sword2/resman.h"
-#include "sword2/sound.h"
 #include "sword2/screen.h"
-#include "sword2/animation.h"
+#include "sword2/sound.h"
+#include "sword2/sword2.h"
 
 #include "graphics/palette.h"
 
 #include "gui/message.h"
 
 #ifdef USE_MPEG2
-#include "video/avi_decoder.h"
+#	include "video/avi_decoder.h"
 #endif
 
 #ifdef USE_ZLIB
-#include "video/dxa_decoder.h"
+#	include "video/dxa_decoder.h"
 #endif
 
-#include "video/smk_decoder.h"
 #include "video/psx_decoder.h"
+#include "video/smk_decoder.h"
 
 #include "engines/util.h"
 
@@ -62,7 +62,8 @@ namespace Sword2 {
 ///////////////////////////////////////////////////////////////////////////////
 
 MoviePlayer::MoviePlayer(Sword2Engine *vm, OSystem *system, Video::VideoDecoder *decoder, DecoderType decoderType)
-	: _vm(vm), _system(system) {
+  : _vm(vm)
+  , _system(system) {
 	_decoderType = decoderType;
 	_decoder = decoder;
 
@@ -232,17 +233,17 @@ void MoviePlayer::closeTextObject(uint32 index, Graphics::Surface *screen, uint1
 	}
 }
 
-#define PUT_PIXEL(c) \
+#define PUT_PIXEL(c)                      \
 	switch (screen->format.bytesPerPixel) { \
-	case 1: \
-		*dst = (c); \
-		break; \
-	case 2: \
-		WRITE_UINT16(dst, (c)); \
-		break; \
-	case 4: \
-		WRITE_UINT32(dst, (c)); \
-		break; \
+	case 1:                                 \
+		*dst = (c);                           \
+		break;                                \
+	case 2:                                 \
+		WRITE_UINT16(dst, (c));               \
+		break;                                \
+	case 4:                                 \
+		WRITE_UINT32(dst, (c));               \
+		break;                                \
 	}
 
 void MoviePlayer::drawTextObject(uint32 index, Graphics::Surface *screen, uint16 pitch) {

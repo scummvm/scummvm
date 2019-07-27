@@ -47,7 +47,6 @@ public:
 	virtual void drawToBuffer(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput, byte *buffer, int16 width, int16 height) {}
 };
 
-
 /**
  * Font class, handles loading of font resources and drawing characters to screen
  *  every font resource has its own instance of this class

@@ -20,18 +20,19 @@
  *
  */
 
-#include "illusions/duckman/illusions_duckman.h"
 #include "illusions/duckman/duckman_videoplayer.h"
+#include "engines/util.h"
+#include "illusions/duckman/illusions_duckman.h"
 #include "illusions/input.h"
 #include "illusions/screen.h"
-#include "engines/util.h"
 
 namespace Illusions {
 
 // DuckmanVideoPlayer
 
 DuckmanVideoPlayer::DuckmanVideoPlayer(IllusionsEngine_Duckman *vm)
-	: _vm(vm), _videoDecoder(0) {
+  : _vm(vm)
+  , _videoDecoder(0) {
 }
 
 DuckmanVideoPlayer::~DuckmanVideoPlayer() {
@@ -72,8 +73,8 @@ void DuckmanVideoPlayer::update() {
 		if (frame && frame->format.bytesPerPixel == g_system->getScreenFormat().bytesPerPixel) {
 			const int width = MIN(frame->w, backSurface->w);
 			const int height = MIN(frame->h, backSurface->h);
-			const byte *src = (const byte*)frame->getPixels();
-			byte *dest = (byte*)backSurface->getPixels();
+			const byte *src = (const byte *)frame->getPixels();
+			byte *dest = (byte *)backSurface->getPixels();
 			for (int yc = 0; yc < height; ++yc) {
 				memcpy(dest, src, width);
 				src += frame->pitch;

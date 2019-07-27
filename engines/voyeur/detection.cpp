@@ -23,11 +23,11 @@
 #include "voyeur/voyeur.h"
 
 #include "base/plugins.h"
+#include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/str-array.h"
-#include "common/memstream.h"
-#include "engines/advancedDetector.h"
 #include "common/system.h"
+#include "engines/advancedDetector.h"
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
 
@@ -58,15 +58,16 @@ bool VoyeurEngine::getIsDemo() const {
 } // End of namespace Voyeur
 
 static const PlainGameDescriptor voyeurGames[] = {
-	{"voyeur", "Voyeur"},
-	{0, 0}
+	{ "voyeur", "Voyeur" },
+	{ 0, 0 }
 };
 
 #include "voyeur/detection_tables.h"
 
 class VoyeurMetaEngine : public AdvancedMetaEngine {
 public:
-	VoyeurMetaEngine() : AdvancedMetaEngine(Voyeur::gameDescriptions, sizeof(Voyeur::VoyeurGameDescription), voyeurGames) {
+	VoyeurMetaEngine()
+	  : AdvancedMetaEngine(Voyeur::gameDescriptions, sizeof(Voyeur::VoyeurGameDescription), voyeurGames) {
 		_maxScanDepth = 3;
 	}
 
@@ -87,20 +88,11 @@ public:
 };
 
 bool VoyeurMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-	    (f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup) || (f == kSupportsDeleteSave) || (f == kSavesSupportMetaInfo) || (f == kSavesSupportThumbnail) || (f == kSimpleSavesNames);
 }
 
 bool Voyeur::VoyeurEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
 bool VoyeurMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -174,9 +166,8 @@ SaveStateDescriptor VoyeurMetaEngine::querySaveMetaInfos(const char *target, int
 	return SaveStateDescriptor();
 }
 
-
 #if PLUGIN_ENABLED_DYNAMIC(VOYEUR)
-	REGISTER_PLUGIN_DYNAMIC(VOYEUR, PLUGIN_TYPE_ENGINE, VoyeurMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(VOYEUR, PLUGIN_TYPE_ENGINE, VoyeurMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(VOYEUR, PLUGIN_TYPE_ENGINE, VoyeurMetaEngine);
+REGISTER_PLUGIN_STATIC(VOYEUR, PLUGIN_TYPE_ENGINE, VoyeurMetaEngine);
 #endif

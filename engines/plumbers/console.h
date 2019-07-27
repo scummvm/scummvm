@@ -36,7 +36,7 @@ public:
 	explicit Console();
 	virtual ~Console(void) {}
 
-	bool Cmd_allowSkip(int argc, const char** argv);
+	bool Cmd_allowSkip(int argc, const char **argv);
 };
 }
 

@@ -26,8 +26,8 @@ namespace Titanic {
 
 bool TTadj::_staticFlag;
 
-TTadj::TTadj(TTstring &str, WordClass wordClass, int val2, int val3, int val4) :
-		TTmajorWord(str, wordClass, val2, val3) {
+TTadj::TTadj(TTstring &str, WordClass wordClass, int val2, int val3, int val4)
+  : TTmajorWord(str, wordClass, val2, val3) {
 	if (val4 >= 0 && val4 <= 9) {
 		_val = val4;
 	} else {
@@ -36,7 +36,8 @@ TTadj::TTadj(TTstring &str, WordClass wordClass, int val2, int val3, int val4) :
 	}
 }
 
-TTadj::TTadj(const TTadj *src) : TTmajorWord(src) {
+TTadj::TTadj(const TTadj *src)
+  : TTmajorWord(src) {
 	if (src->getStatus()) {
 		_val = 0;
 		_status = SS_5;

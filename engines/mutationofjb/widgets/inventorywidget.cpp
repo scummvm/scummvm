@@ -26,10 +26,10 @@
 #include "mutationofjb/gamescreen.h"
 #include "mutationofjb/inventory.h"
 
-#include "common/str.h"
-#include "common/rect.h"
-#include "common/util.h"
 #include "common/events.h"
+#include "common/rect.h"
+#include "common/str.h"
+#include "common/util.h"
 
 #include "graphics/managed_surface.h"
 
@@ -44,11 +44,11 @@ enum {
 	INVENTORY_ITEMS_LINES = 5
 };
 
-InventoryWidget::InventoryWidget(GuiScreen &gui, const Common::Array<Graphics::Surface> &inventorySurfaces) :
-	Widget(gui, Common::Rect(INVENTORY_START_X, INVENTORY_START_Y, INVENTORY_START_X + Inventory::VISIBLE_ITEMS * INVENTORY_ITEM_WIDTH, INVENTORY_START_Y + INVENTORY_ITEM_HEIGHT)),
-	_surfaces(inventorySurfaces),
-	_callback(nullptr),
-	_hoveredItemPos(-1) {}
+InventoryWidget::InventoryWidget(GuiScreen &gui, const Common::Array<Graphics::Surface> &inventorySurfaces)
+  : Widget(gui, Common::Rect(INVENTORY_START_X, INVENTORY_START_Y, INVENTORY_START_X + Inventory::VISIBLE_ITEMS * INVENTORY_ITEM_WIDTH, INVENTORY_START_Y + INVENTORY_ITEM_HEIGHT))
+  , _surfaces(inventorySurfaces)
+  , _callback(nullptr)
+  , _hoveredItemPos(-1) {}
 
 void InventoryWidget::drawInventoryItem(Graphics::ManagedSurface &surface, const Common::String &item, int pos) {
 	const int index = _gui.getGame().getAssets().getInventoryItemDefList().findItemIndex(item);

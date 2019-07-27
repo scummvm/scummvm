@@ -22,10 +22,10 @@
 
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 
-#ifndef KYRA_TEXT_EOB_H
-#define KYRA_TEXT_EOB_H
+#	ifndef KYRA_TEXT_EOB_H
+#		define KYRA_TEXT_EOB_H
 
-#include "common/scummsys.h"
+#		include "common/scummsys.h"
 
 namespace Kyra {
 
@@ -115,6 +115,6 @@ private:
 
 } // End of namespace Kyra
 
-#endif
+#	endif
 
 #endif // ENABLE_EOB || ENABLE_LOL

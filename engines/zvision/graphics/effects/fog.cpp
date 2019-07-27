@@ -24,14 +24,14 @@
 
 #include "zvision/graphics/effects/fog.h"
 
-#include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/scripting/script_manager.h"
+#include "zvision/zvision.h"
 
 namespace ZVision {
 
-FogFx::FogFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, EffectMap *Map, const Common::String &clouds):
-	GraphicsEffect(engine, key, region, ported) {
+FogFx::FogFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, EffectMap *Map, const Common::String &clouds)
+  : GraphicsEffect(engine, key, region, ported) {
 
 	_map = Map;
 

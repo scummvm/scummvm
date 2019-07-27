@@ -31,18 +31,18 @@ namespace Testbed {
 
 namespace FStests {
 
-// Note: These tests require a game-data directory
-// So would work if game-path is set in the launcher or invoked as ./scummvm --path="path-to-testbed-data" testbed
-// from commandline
+	// Note: These tests require a game-data directory
+	// So would work if game-path is set in the launcher or invoked as ./scummvm --path="path-to-testbed-data" testbed
+	// from commandline
 
-// Helper functions for FS tests
-bool readDataFromFile(Common::FSDirectory *directory, const char *file);
+	// Helper functions for FS tests
+	bool readDataFromFile(Common::FSDirectory *directory, const char *file);
 
-// will contain function declarations for FS tests
-TestExitStatus testReadFile();
-TestExitStatus testWriteFile();
-TestExitStatus testOpeningSaveFile();
-// add more here
+	// will contain function declarations for FS tests
+	TestExitStatus testReadFile();
+	TestExitStatus testWriteFile();
+	TestExitStatus testOpeningSaveFile();
+	// add more here
 
 } // End of namespace FStests
 

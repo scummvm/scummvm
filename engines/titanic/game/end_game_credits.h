@@ -33,9 +33,11 @@ class CEndGameCredits : public CGameObject {
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool TimerMsg(CTimerMsg *msg);
+
 private:
 	bool _flag;
 	Point _frameRange;
+
 public:
 	CLASSDEF;
 	CEndGameCredits();

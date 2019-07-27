@@ -27,25 +27,25 @@ namespace Scumm {
 
 // pnetwin.h
 
-#define PN_PRIORITY_HIGH							0x00000001
+#define PN_PRIORITY_HIGH 0x00000001
 
-#define PN_SENDTYPE_INDIVIDUAL						1
-#define PN_SENDTYPE_GROUP							2
-#define PN_SENDTYPE_HOST							3
-#define PN_SENDTYPE_ALL								4
+#define PN_SENDTYPE_INDIVIDUAL 1
+#define PN_SENDTYPE_GROUP 2
+#define PN_SENDTYPE_HOST 3
+#define PN_SENDTYPE_ALL 4
 
-#define MAX_GAME_NAME								128				/* Used for the multiplayer networking code */
-#define MAX_PLAYER_NAME								128				/* Used for the multiplayer networking code */
-#define MAX_PROVIDER_NAME							128
-#define MAX_SESSION_NAME							128
+#define MAX_GAME_NAME 128 /* Used for the multiplayer networking code */
+#define MAX_PLAYER_NAME 128 /* Used for the multiplayer networking code */
+#define MAX_PROVIDER_NAME 128
+#define MAX_SESSION_NAME 128
 
-#define MAX_GAMES_POLLED							16
-#define MAX_PROVIDERS								16
+#define MAX_GAMES_POLLED 16
+#define MAX_PROVIDERS 16
 
-#define PACKETTYPE_REMOTESTARTSCRIPT				1
-#define PACKETTYPE_REMOTESTARTSCRIPTRETURN			2
-#define PACKETTYPE_REMOTESTARTSCRIPTRESULT			3
-#define PACKETTYPE_REMOTESENDSCUMMARRAY				4
+#define PACKETTYPE_REMOTESTARTSCRIPT 1
+#define PACKETTYPE_REMOTESTARTSCRIPTRETURN 2
+#define PACKETTYPE_REMOTESTARTSCRIPTRESULT 3
+#define PACKETTYPE_REMOTESENDSCUMMARRAY 4
 
 const int SESSION_ERROR = 0;
 const int USER_CREATED_SESSION = 1;
@@ -54,12 +54,12 @@ const int USER_JOINED_SESSION = 2;
 const int TCPIP_PROVIDER = -1;
 const int NO_PROVIDER = -2;
 
-const int MAX_PACKET_SIZE = 4096;	// bytes
+const int MAX_PACKET_SIZE = 4096; // bytes
 const int MAX_HOSTNAME_SIZE = 256;
 const int MAX_IP_SIZE = 32;
-const char LOCAL_HOST[] = "127.0.0.1";	//localhost
+const char LOCAL_HOST[] = "127.0.0.1"; //localhost
 
-#define NULL_IP "";						//no IP address (causes enumsessions to search local subnet)
+#define NULL_IP ""; //no IP address (causes enumsessions to search local subnet)
 
 } // End of namespace Scumm
 

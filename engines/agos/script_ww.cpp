@@ -20,14 +20,12 @@
  *
  */
 
-
-
 #include "agos/agos.h"
 #include "agos/intern.h"
 
 namespace AGOS {
 
-#define OPCODE(x)	_OPCODE(AGOSEngine_Waxworks, x)
+#define OPCODE(x) _OPCODE(AGOSEngine_Waxworks, x)
 
 void AGOSEngine_Waxworks::setupOpcodes() {
 	static const OpcodeEntryWaxworks opcodes[] = {
@@ -278,7 +276,7 @@ void AGOSEngine_Waxworks::setupOpcodes() {
 
 void AGOSEngine_Waxworks::executeOpcode(int opcode) {
 	OpcodeProcWaxworks op = _opcodesWaxworks[opcode].proc;
-	(this->*op) ();
+	(this->*op)();
 }
 
 // -----------------------------------------------------------------------

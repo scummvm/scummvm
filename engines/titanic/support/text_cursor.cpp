@@ -21,18 +21,26 @@
  */
 
 #include "titanic/support/text_cursor.h"
+#include "common/textconsole.h"
 #include "titanic/events.h"
 #include "titanic/support/screen_manager.h"
 #include "titanic/titanic.h"
-#include "common/textconsole.h"
 
 namespace Titanic {
 
-CTextCursor::CTextCursor(CScreenManager *screenManager) :
-		_screenManager(screenManager), _active(false), _blinkVisible(false),
-		_backRenderSurface(nullptr), _frontRenderSurface(nullptr),
-		_blinkDelay(300), _size(2, 10), _priorBlinkTime(0),
-		_cursorR(0), _cursorG(0), _cursorB(0), _mode(-1) {
+CTextCursor::CTextCursor(CScreenManager *screenManager)
+  : _screenManager(screenManager)
+  , _active(false)
+  , _blinkVisible(false)
+  , _backRenderSurface(nullptr)
+  , _frontRenderSurface(nullptr)
+  , _blinkDelay(300)
+  , _size(2, 10)
+  , _priorBlinkTime(0)
+  , _cursorR(0)
+  , _cursorG(0)
+  , _cursorB(0)
+  , _mode(-1) {
 	_surface = screenManager->createSurface(10, 10, 16);
 }
 
@@ -79,7 +87,7 @@ void CTextCursor::draw() {
 		if (!cursorRect.isEmpty()) {
 			// Draw cursor onto the screen
 			_backRenderSurface->_ddSurface->fillRect(&cursorRect,
-				_cursorR, _cursorG, _cursorB);
+			                                         _cursorR, _cursorG, _cursorB);
 		}
 
 		//_screenManager->blitFrom(SURFACE_BACKBUFFER, _surface, &_pos);

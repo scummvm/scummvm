@@ -29,9 +29,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMusicConsoleButton, CMusicPlayer)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(SetMusicControlsMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(SetMusicControlsMsg)
 END_MESSAGE_MAP()
 
 void CMusicConsoleButton::save(SimpleFile *file, int indent) {
@@ -59,8 +59,8 @@ bool CMusicConsoleButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		startedMsg.execute("Music Room Phonograph");
 
 		if (CMusicRoom::_musicHandler->checkInstrument(SNAKE)
-				&& CMusicRoom::_musicHandler->checkInstrument(PIANO)
-				&& CMusicRoom::_musicHandler->checkInstrument(BASS)) {
+		    && CMusicRoom::_musicHandler->checkInstrument(PIANO)
+		    && CMusicRoom::_musicHandler->checkInstrument(BASS)) {
 			// All three instruments have the correct settings
 			CCorrectMusicPlayedMsg correctMsg;
 			correctMsg.execute(findRoom());

@@ -24,8 +24,8 @@
 #define GRAPHICS_CURSORMAN_H
 
 #include "common/scummsys.h"
-#include "common/stack.h"
 #include "common/singleton.h"
+#include "common/stack.h"
 #include "graphics/pixelformat.h"
 
 namespace Graphics {
@@ -162,6 +162,7 @@ public:
 	void replaceCursorPalette(const byte *colors, uint start, uint num);
 
 	void lock(bool locked);
+
 private:
 	friend class Common::Singleton<SingletonBaseType>;
 	// Even though this is basically the default constructor we implement it
@@ -207,6 +208,6 @@ private:
 
 } // End of namespace Graphics
 
-#define CursorMan	(::Graphics::CursorManager::instance())
+#define CursorMan (::Graphics::CursorManager::instance())
 
 #endif

@@ -20,8 +20,8 @@
  *
  */
 
-#include "prince/prince.h"
 #include "engines/advancedDetector.h"
+#include "prince/prince.h"
 
 namespace Prince {
 
@@ -49,92 +49,64 @@ Common::Language PrinceEngine::getLanguage() const {
 } // End of namespace Prince
 
 static const PlainGameDescriptor princeGames[] = {
-	{"prince", "The Prince and the Coward"},
-	{0, 0}
+	{ "prince", "The Prince and the Coward" },
+	{ 0, 0 }
 };
 
 namespace Prince {
 static const PrinceGameDescription gameDescriptions[] = {
-	{
-		{
-			"prince",
-			"Galador: Der Fluch des Prinzen",
-			AD_ENTRY1s("databank.ptc", "5fa03833177331214ec1354761b1d2ee", 3565031),
-			Common::DE_DEU,
-			Common::kPlatformWindows,
-			ADGF_USEEXTRAASTITLE | ADGF_TESTING,
-			GUIO1(GUIO_NONE)
-		},
-		kPrinceDataDE
-	},
-	{
-		{
-			"prince",
-			"Ksiaze i Tchorz",
-			AD_ENTRY1s("databank.ptc", "48ec9806bda9d152acbea8ce31c93c49", 3435298),
-			Common::PL_POL,
-			Common::kPlatformWindows,
-			ADGF_USEEXTRAASTITLE | ADGF_TESTING,
-			GUIO1(GUIO_NONE)
-		},
-		kPrinceDataPL
-	},
-	{
-		{
-			"prince",
-			"",
-			AD_ENTRY1s("talktxt.dat", "02bb2372f19aca3c65896ed81b2cefb3", 125702),
-			Common::RU_RUS,
-			Common::kPlatformWindows,
-			ADGF_TESTING | GF_EXTRACTED,
-			GUIO1(GUIO_NONE)
-		},
-		kPrinceDataDE
-	},
-	{
-		{
-			"prince",
-			"",
-			AD_ENTRY1s("databank.ptc", "a67b55730f3d7064921bd2a59e1063a3", 3892982),
-			Common::RU_RUS,
-			Common::kPlatformWindows,
-			ADGF_TESTING | GF_NOVOICES,
-			GUIO1(GUIO_NONE)
-		},
-		kPrinceDataDE
-	},
-	{
-		{
-			"prince",
-			"",
-			{
-				{"databank.ptc", 0, "5fa03833177331214ec1354761b1d2ee", 3565031},
-				{"prince_translation.dat", 0, 0, -1},
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_TESTING | GF_TRANSLATED,
-			GUIO1(GUIO_NONE)
-		},
-		kPrinceDataDE
-	},
-	{
-		{
-			"prince",
-			"",
-			{
-				{"databank.ptc", 0, "48ec9806bda9d152acbea8ce31c93c49", 3435298},
-				{"prince_translation.dat", 0, 0, -1},
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_TESTING | GF_TRANSLATED,
-			GUIO1(GUIO_NONE)
-		},
-		kPrinceDataPL
-	},
+	{ { "prince",
+	    "Galador: Der Fluch des Prinzen",
+	    AD_ENTRY1s("databank.ptc", "5fa03833177331214ec1354761b1d2ee", 3565031),
+	    Common::DE_DEU,
+	    Common::kPlatformWindows,
+	    ADGF_USEEXTRAASTITLE | ADGF_TESTING,
+	    GUIO1(GUIO_NONE) },
+	  kPrinceDataDE },
+	{ { "prince",
+	    "Ksiaze i Tchorz",
+	    AD_ENTRY1s("databank.ptc", "48ec9806bda9d152acbea8ce31c93c49", 3435298),
+	    Common::PL_POL,
+	    Common::kPlatformWindows,
+	    ADGF_USEEXTRAASTITLE | ADGF_TESTING,
+	    GUIO1(GUIO_NONE) },
+	  kPrinceDataPL },
+	{ { "prince",
+	    "",
+	    AD_ENTRY1s("talktxt.dat", "02bb2372f19aca3c65896ed81b2cefb3", 125702),
+	    Common::RU_RUS,
+	    Common::kPlatformWindows,
+	    ADGF_TESTING | GF_EXTRACTED,
+	    GUIO1(GUIO_NONE) },
+	  kPrinceDataDE },
+	{ { "prince",
+	    "",
+	    AD_ENTRY1s("databank.ptc", "a67b55730f3d7064921bd2a59e1063a3", 3892982),
+	    Common::RU_RUS,
+	    Common::kPlatformWindows,
+	    ADGF_TESTING | GF_NOVOICES,
+	    GUIO1(GUIO_NONE) },
+	  kPrinceDataDE },
+	{ { "prince",
+	    "",
+	    { { "databank.ptc", 0, "5fa03833177331214ec1354761b1d2ee", 3565031 },
+	      { "prince_translation.dat", 0, 0, -1 },
+	      AD_LISTEND },
+	    Common::EN_ANY,
+	    Common::kPlatformWindows,
+	    ADGF_TESTING | GF_TRANSLATED,
+	    GUIO1(GUIO_NONE) },
+	  kPrinceDataDE },
+	{ { "prince",
+	    "",
+	    { { "databank.ptc", 0, "48ec9806bda9d152acbea8ce31c93c49", 3435298 },
+	      { "prince_translation.dat", 0, 0, -1 },
+	      AD_LISTEND },
+	    Common::EN_ANY,
+	    Common::kPlatformWindows,
+	    ADGF_TESTING | GF_TRANSLATED,
+	    GUIO1(GUIO_NONE) },
+	  kPrinceDataPL },
 	{ AD_TABLE_END_MARKER, kPrinceDataUNK }
 };
 
@@ -147,15 +119,16 @@ const static char *directoryGlobs[] = {
 
 class PrinceMetaEngine : public AdvancedMetaEngine {
 public:
-	PrinceMetaEngine() : AdvancedMetaEngine(Prince::gameDescriptions, sizeof(Prince::PrinceGameDescription), princeGames) {
+	PrinceMetaEngine()
+	  : AdvancedMetaEngine(Prince::gameDescriptions, sizeof(Prince::PrinceGameDescription), princeGames) {
 		_singleId = "prince";
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
 
-        virtual const char *getName() const {
-                return "The Prince and the Coward";
-        }
+	virtual const char *getName() const {
+		return "The Prince and the Coward";
+	}
 
 	virtual const char *getOriginalCopyright() const {
 		return "The Prince and the Coward (C) 1996-97 Metropolis";
@@ -170,22 +143,11 @@ public:
 };
 
 bool PrinceMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsDeleteSave) || (f == kSavesSupportMetaInfo) || (f == kSavesSupportThumbnail) || (f == kSavesSupportCreationDate) || (f == kSavesSupportPlayTime) || (f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup) || (f == kSimpleSavesNames);
 }
 
 bool Prince::PrinceEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime) ||
-		(f == kSupportsRTL);
+	return (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime) || (f == kSupportsRTL);
 }
 
 SaveStateList PrinceMetaEngine::listSaves(const char *target) const {
@@ -241,8 +203,7 @@ SaveStateDescriptor PrinceMetaEngine::querySaveMetaInfos(const char *target, int
 		char buffer[kSavegameStrSize + 1];
 		f->read(buffer, kSavegameStrSize + 1);
 
-		bool hasHeader = !strncmp(buffer, kSavegameStr, kSavegameStrSize + 1) &&
-			Prince::PrinceEngine::readSavegameHeader(f, header, false);
+		bool hasHeader = !strncmp(buffer, kSavegameStr, kSavegameStrSize + 1) && Prince::PrinceEngine::readSavegameHeader(f, header, false);
 		delete f;
 
 		if (!hasHeader) {

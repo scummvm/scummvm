@@ -20,16 +20,18 @@
  *
  */
 
-#include "common/file.h"
-#include "wage/wage.h"
 #include "wage/debugger.h"
+#include "common/file.h"
 #include "wage/entities.h"
 #include "wage/script.h"
+#include "wage/wage.h"
 #include "wage/world.h"
 
 namespace Wage {
 
-Debugger::Debugger(WageEngine *engine) : GUI::Debugger(), _engine(engine) {
+Debugger::Debugger(WageEngine *engine)
+  : GUI::Debugger()
+  , _engine(engine) {
 	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("scenes", WRAP_METHOD(Debugger, Cmd_ListScenes));
 	registerCmd("script", WRAP_METHOD(Debugger, Cmd_Script));

@@ -34,8 +34,8 @@ enum {
 	FRAC_LO_MASK = ((1L << FRAC_BITS) - 1),
 	FRAC_HI_MASK = ((1L << FRAC_BITS) - 1) << FRAC_BITS,
 
-	FRAC_ONE = (1L << FRAC_BITS),		// 1.0
-	FRAC_HALF = (1L << (FRAC_BITS-1))	// 0.5
+	FRAC_ONE = (1L << FRAC_BITS), // 1.0
+	FRAC_HALF = (1L << (FRAC_BITS - 1)) // 0.5
 };
 
 /**

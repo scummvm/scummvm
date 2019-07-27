@@ -42,7 +42,7 @@ class NamedObject : public Object {
 public:
 	NamedObject() {}
 	NamedObject(const Common::String &name)
-			: _name(name) {}
+	  : _name(name) {}
 
 	void deserialize(Archive &archive) { _name = archive.readString(); }
 

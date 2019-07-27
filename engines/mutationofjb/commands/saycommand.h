@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_SAYCOMMAND_H
 #define MUTATIONOFJB_SAYCOMMAND_H
 
-#include "mutationofjb/commands/seqcommand.h"
 #include "common/str.h"
+#include "mutationofjb/commands/seqcommand.h"
 
 namespace MutationOfJB {
 
@@ -37,13 +37,14 @@ public:
 
 class SayCommand : public SeqCommand {
 public:
-	SayCommand(const Common::String &lineToSay, const Common::String &voiceFile, bool waitForPrevious, bool talkingAnimation) :
-		_lineToSay(lineToSay),
-		_voiceFile(voiceFile),
-		_waitForPrevious(waitForPrevious),
-		_talkingAnimation(talkingAnimation) {}
+	SayCommand(const Common::String &lineToSay, const Common::String &voiceFile, bool waitForPrevious, bool talkingAnimation)
+	  : _lineToSay(lineToSay)
+	  , _voiceFile(voiceFile)
+	  , _waitForPrevious(waitForPrevious)
+	  , _talkingAnimation(talkingAnimation) {}
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const override;
+
 private:
 	Common::String _lineToSay;
 	Common::String _voiceFile;

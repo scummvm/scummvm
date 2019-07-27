@@ -35,8 +35,10 @@ class CCDROM : public CGameObject {
 	bool MouseDragEndMsg(CMouseDragEndMsg *msg);
 	bool MouseDragMoveMsg(CMouseDragMoveMsg *msg);
 	bool ActMsg(CActMsg *msg);
+
 private:
 	Point _centroid;
+
 public:
 	CLASSDEF;
 	CCDROM();

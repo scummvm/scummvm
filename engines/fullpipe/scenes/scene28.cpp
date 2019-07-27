@@ -22,17 +22,17 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
 #include "fullpipe/floaters.h"
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
@@ -62,7 +62,7 @@ int scene28_updateCursor() {
 void sceneHandler28_lift1ShowAfter() {
 	StaticANIObject *ani = g_fp->_currentScene->getStaticANIObject1ById(ANI_MAN_28, -1);
 
-	g_fp->_aniMan->_statics = g_fp->_aniMan->getStaticsById(ST_MAN_SIT|0x4000);
+	g_fp->_aniMan->_statics = g_fp->_aniMan->getStaticsById(ST_MAN_SIT | 0x4000);
 	g_fp->_aniMan->setOXY(ani->_ox + 7, ani->_oy);
 	g_fp->_aniMan->_priority = ani->_priority;
 	g_fp->_aniMan->show1(-1, -1, -1, 0);
@@ -145,7 +145,7 @@ void sceneHandler28_trySecondaryPers() {
 		mq->getExCommandByIndex(0)->_y += 40;
 		mq->getExCommandByIndex(0)->_param = 3;
 		mq->setParamInt(-1, 3);
-		mq->chain( 0);
+		mq->chain(0);
 
 		g_vars->scene28_beardedDirection = !g_vars->scene28_beardedDirection;
 	} else {
@@ -250,18 +250,32 @@ void sceneHandler28_clickLift(int numLift) {
 	debugC(2, kDebugSceneLogic, "scene28: clickLift(%d)", numLift);
 
 	switch (numLift) {
-	case 0: x = 600; break;
-	case 1: x = 824; break;
-	case 2: x = 1055; break;
-	case 3: x = 1286; break;
-	case 4: x = 1517; break;
-	case 5: x = 1748; break;
-	case 6: x = 1979; break;
+	case 0:
+		x = 600;
+		break;
+	case 1:
+		x = 824;
+		break;
+	case 2:
+		x = 1055;
+		break;
+	case 3:
+		x = 1286;
+		break;
+	case 4:
+		x = 1517;
+		break;
+	case 5:
+		x = 1748;
+		break;
+	case 6:
+		x = 1979;
+		break;
 	}
 
 	if (abs(x - g_fp->_aniMan->_ox) > 1 || abs(472 - g_fp->_aniMan->_oy) > 1
-		|| g_fp->_aniMan->_movement
-		|| g_fp->_aniMan->_statics->_staticsId != ST_MAN_UP) {
+	    || g_fp->_aniMan->_movement
+	    || g_fp->_aniMan->_statics->_staticsId != ST_MAN_UP) {
 		debugC(2, kDebugSceneLogic, "scene28: clickLift: overwrite");
 
 		MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, x, 472, 1, ST_MAN_UP);
@@ -398,38 +412,37 @@ int sceneHandler28(ExCommand *cmd) {
 		g_fp->_aniMan->_flags &= 0xFEFF;
 		break;
 
-	case 29:
-		{
-			if (g_vars->scene28_lift6inside) {
-				chainObjQueue(g_fp->_aniMan, QU_SC28_LIFT6_END, 1);
+	case 29: {
+		if (g_vars->scene28_lift6inside) {
+			chainObjQueue(g_fp->_aniMan, QU_SC28_LIFT6_END, 1);
 
-				g_fp->playTrack(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_28"), "MUSIC", 1);
+			g_fp->playTrack(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_28"), "MUSIC", 1);
 
-				g_vars->scene28_lift6inside = false;
-			}
-
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-
-			if (ani)
-				if (ani->_id == ANI_LIFT || ani->_id == ANI_LIFT_28 ) {
-					sceneHandler28_clickLift(ani->_odelay);
-
-					cmd->_messageKind = 0;
-					break;
-				}
-
-			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
-				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
-
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
-					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
-						|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0))
-						g_fp->processArcade(cmd);
-				}
-			}
-			break;
+			g_vars->scene28_lift6inside = false;
 		}
+
+		StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+
+		if (ani)
+			if (ani->_id == ANI_LIFT || ani->_id == ANI_LIFT_28) {
+				sceneHandler28_clickLift(ani->_odelay);
+
+				cmd->_messageKind = 0;
+				break;
+			}
+
+		if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
+			int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
+
+			if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
+				if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
+				    || (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0))
+					g_fp->processArcade(cmd);
+			}
+		}
+		break;
+	}
 
 	case 33:
 		if (g_fp->_aniMan2) {

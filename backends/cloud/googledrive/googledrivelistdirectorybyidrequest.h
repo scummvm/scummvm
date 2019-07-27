@@ -24,38 +24,39 @@
 #define BACKENDS_CLOUD_GOOGLEDRIVE_GOOGLEDRIVELISTDIRECTORYBYIDREQUEST_H
 
 #include "backends/cloud/storage.h"
+#include "backends/networking/curl/curljsonrequest.h"
 #include "backends/networking/curl/request.h"
 #include "common/callback.h"
-#include "backends/networking/curl/curljsonrequest.h"
 
 namespace Cloud {
 namespace GoogleDrive {
 
-class GoogleDriveStorage;
+	class GoogleDriveStorage;
 
-class GoogleDriveListDirectoryByIdRequest: public Networking::Request {
-	Common::String _requestedId;
-	GoogleDriveStorage *_storage;
+	class GoogleDriveListDirectoryByIdRequest : public Networking::Request {
+		Common::String _requestedId;
+		GoogleDriveStorage *_storage;
 
-	Storage::ListDirectoryCallback _listDirectoryCallback;
-	Common::Array<StorageFile> _files;
-	Request *_workingRequest;
-	bool _ignoreCallback;
-	Common::String _date;
+		Storage::ListDirectoryCallback _listDirectoryCallback;
+		Common::Array<StorageFile> _files;
+		Request *_workingRequest;
+		bool _ignoreCallback;
+		Common::String _date;
 
-	void start();
-	void makeRequest(Common::String pageToken);
-	void responseCallback(Networking::JsonResponse response);
-	void errorCallback(Networking::ErrorResponse error);
-	void finishListing(Common::Array<StorageFile> &files);
-public:
-	GoogleDriveListDirectoryByIdRequest(GoogleDriveStorage *storage, Common::String id, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb);
-	virtual ~GoogleDriveListDirectoryByIdRequest();
+		void start();
+		void makeRequest(Common::String pageToken);
+		void responseCallback(Networking::JsonResponse response);
+		void errorCallback(Networking::ErrorResponse error);
+		void finishListing(Common::Array<StorageFile> &files);
 
-	virtual void handle();
-	virtual void restart();
-	virtual Common::String date() const;
-};
+	public:
+		GoogleDriveListDirectoryByIdRequest(GoogleDriveStorage *storage, Common::String id, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb);
+		virtual ~GoogleDriveListDirectoryByIdRequest();
+
+		virtual void handle();
+		virtual void restart();
+		virtual Common::String date() const;
+	};
 
 } // End of namespace GoogleDrive
 } // End of namespace Cloud

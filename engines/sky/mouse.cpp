@@ -20,24 +20,23 @@
  *
  */
 
-
+#include "sky/mouse.h"
 #include "common/events.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "graphics/cursorman.h"
+#include "sky/compact.h"
 #include "sky/disk.h"
 #include "sky/logic.h"
-#include "sky/mouse.h"
 #include "sky/sky.h"
 #include "sky/skydefs.h"
 #include "sky/struc.h"
-#include "sky/compact.h"
 
 namespace Sky {
 
-#define MICE_FILE	60300
-#define NO_MAIN_OBJECTS	24
-#define NO_LINC_OBJECTS	21
+#define MICE_FILE 60300
+#define NO_MAIN_OBJECTS 24
+#define NO_LINC_OBJECTS 21
 
 uint32 Mouse::_mouseMainObjects[24] = {
 	65,
@@ -105,9 +104,9 @@ Mouse::Mouse(OSystem *system, Disk *skyDisk, SkyCompact *skyCompact) {
 	_objectMouseData = _skyDisk->loadFile(MICE_FILE + 1);
 }
 
-Mouse::~Mouse( ){
-	free (_miceData);
-	free (_objectMouseData);
+Mouse::~Mouse() {
+	free(_miceData);
+	free(_objectMouseData);
 }
 
 void Mouse::replaceMouseCursors(uint16 fileNo) {
@@ -120,7 +119,7 @@ bool Mouse::fnAddHuman() {
 	//could still be switched out at high-level
 
 	if (!Logic::_scriptVariables[MOUSE_STOP]) {
-		Logic::_scriptVariables[MOUSE_STATUS] |= 6;	//cursor & mouse
+		Logic::_scriptVariables[MOUSE_STATUS] |= 6; //cursor & mouse
 
 		if (_mouseY < 2) //stop mouse activating top line
 			_mouseY = 2;
@@ -135,7 +134,7 @@ bool Mouse::fnAddHuman() {
 		//surely this script should be run just in case
 		//I am going to try it anyway
 		if (Logic::_scriptVariables[GET_OFF])
-			_skyLogic->script((uint16)Logic::_scriptVariables[GET_OFF],(uint16)(Logic::_scriptVariables[GET_OFF] >> 16));
+			_skyLogic->script((uint16)Logic::_scriptVariables[GET_OFF], (uint16)(Logic::_scriptVariables[GET_OFF] >> 16));
 
 		Logic::_scriptVariables[SPECIAL_ITEM] = 0xFFFFFFFF;
 		Logic::_scriptVariables[GET_OFF] = RESET_MOUSE;
@@ -227,7 +226,7 @@ void Mouse::mouseEngine() {
 				buttonEngine1();
 		}
 	}
-	_mouseB = 0;	//don't save up buttons
+	_mouseB = 0; //don't save up buttons
 }
 
 void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
@@ -240,10 +239,14 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 			Compact *itemData = _skyCompact->fetchCpt(itemNum);
 			currentList++;
 			if ((itemData->screen == Logic::_scriptVariables[SCREEN]) && (itemData->status & 16)) {
-				if (itemData->xcood + ((int16)itemData->mouseRelX) > xPos) continue;
-				if (itemData->xcood + ((int16)itemData->mouseRelX) + itemData->mouseSizeX < xPos) continue;
-				if (itemData->ycood + ((int16)itemData->mouseRelY) > yPos) continue;
-				if (itemData->ycood + ((int16)itemData->mouseRelY) + itemData->mouseSizeY < yPos) continue;
+				if (itemData->xcood + ((int16)itemData->mouseRelX) > xPos)
+					continue;
+				if (itemData->xcood + ((int16)itemData->mouseRelX) + itemData->mouseSizeX < xPos)
+					continue;
+				if (itemData->ycood + ((int16)itemData->mouseRelY) > yPos)
+					continue;
+				if (itemData->ycood + ((int16)itemData->mouseRelY) + itemData->mouseSizeY < yPos)
+					continue;
 				// we've hit the item
 				if (Logic::_scriptVariables[SPECIAL_ITEM] == itemNum)
 					return;
@@ -263,7 +266,7 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 		Logic::_scriptVariables[SPECIAL_ITEM] = 0;
 
 		if (Logic::_scriptVariables[GET_OFF])
-			_skyLogic->script((uint16)Logic::_scriptVariables[GET_OFF],(uint16)(Logic::_scriptVariables[GET_OFF] >> 16));
+			_skyLogic->script((uint16)Logic::_scriptVariables[GET_OFF], (uint16)(Logic::_scriptVariables[GET_OFF] >> 16));
 		Logic::_scriptVariables[GET_OFF] = 0;
 	}
 }
@@ -281,7 +284,7 @@ void Mouse::buttonEngine1() {
 	//checks for clicking on special item
 	//"compare the size of this routine to S1 mouse_button"
 
-	if (_mouseB) {	//anything pressed?
+	if (_mouseB) { //anything pressed?
 		Logic::_scriptVariables[BUTTON] = _mouseB;
 		if (Logic::_scriptVariables[SPECIAL_ITEM]) { //over anything?
 			Compact *item = _skyCompact->fetchCpt(Logic::_scriptVariables[SPECIAL_ITEM]);

@@ -30,15 +30,15 @@
 namespace Glk {
 namespace Alan3 {
 
-/* DATA */
-extern Aword *freq;     /* Cumulated character frequencies for text decoding */
+	/* DATA */
+	extern Aword *freq; /* Cumulated character frequencies for text decoding */
 
-/* FUNCTIONS */
+	/* FUNCTIONS */
 
-extern void startDecoding(void);
-extern int decodeChar(void);
-extern void *pushDecode(void);
-extern void popDecode(void *info);
+	extern void startDecoding(void);
+	extern int decodeChar(void);
+	extern void *pushDecode(void);
+	extern void popDecode(void *info);
 
 } // End of namespace Alan3
 } // End of namespace Glk

@@ -20,25 +20,28 @@
  *
  */
 
-#include "common/util.h"
 #include "common/stack.h"
+#include "common/util.h"
 #include "graphics/primitives.h"
 
-#include "sci/sci.h"
 #include "sci/engine/features.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/coordadjuster.h"
-#include "sci/graphics/ports.h"
-#include "sci/graphics/paint16.h"
 #include "sci/graphics/font.h"
+#include "sci/graphics/paint16.h"
+#include "sci/graphics/ports.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/text16.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
 GfxText16::GfxText16(GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen)
-	: _cache(cache), _ports(ports), _paint16(paint16), _screen(screen) {
+  : _cache(cache)
+  , _ports(ports)
+  , _paint16(paint16)
+  , _screen(screen) {
 	init();
 }
 
@@ -94,13 +97,14 @@ int16 GfxText16::CodeProcessing(const char *&text, GuiResourceId orgFontId, int1
 	signed char curCodeParm;
 
 	// Find the end of the textcode
-	while ((++textCodeSize) && (*text != 0) && (*text++ != 0x7C)) { }
+	while ((++textCodeSize) && (*text != 0) && (*text++ != 0x7C)) {
+	}
 
 	// possible TextCodes:
 	//  c -> sets textColor to current port pen color
 	//  cX -> sets textColor to _textColors[X-1]
 	curCode = textCode[0];
-	curCodeParm = strtol(textCode+1, NULL, 10);
+	curCodeParm = strtol(textCode + 1, NULL, 10);
 	if (!Common::isDigit(textCode[1])) {
 		curCodeParm = -1;
 	}
@@ -145,14 +149,14 @@ int16 GfxText16::CodeProcessing(const char *&text, GuiResourceId orgFontId, int1
 // Has actually punctuation and characters in it, that may not be the first in a line
 // SCI1 didn't check for exclamation nor question marks, us checking for those too shouldn't be bad
 static const uint16 text16_shiftJIS_punctuation[] = {
-	0x4181,	0x4281, 0x7681, 0x7881, 0x4981, 0x4881, 0
+	0x4181, 0x4281, 0x7681, 0x7881, 0x4981, 0x4881, 0
 };
 
 // Table from Quest for Glory 1 PC-98 (SCI01)
 // has pronunciation and small combining form characters on top (details right after this table)
 static const uint16 text16_shiftJIS_punctuation_SCI01[] = {
-	0x9F82, 0xA182, 0xA382, 0xA582, 0xA782, 0xC182, 0xE182, 0xE382, 0xE582, 0xEC82,	0x4083, 0x4283,
-	0x4483, 0x4683, 0x4883, 0x6283, 0x8383, 0x8583, 0x8783, 0x8E83, 0x9583, 0x9683,	0x5B81, 0x4181,
+	0x9F82, 0xA182, 0xA382, 0xA582, 0xA782, 0xC182, 0xE182, 0xE382, 0xE582, 0xEC82, 0x4083, 0x4283,
+	0x4483, 0x4683, 0x4883, 0x6283, 0x8383, 0x8583, 0x8783, 0x8E83, 0x9583, 0x9683, 0x5B81, 0x4181,
 	0x4281, 0x7681, 0x7881, 0x4981, 0x4881, 0
 };
 
@@ -176,7 +180,6 @@ static const uint16 text16_shiftJIS_punctuation_SCI01[] = {
 // 0x9583 -> combining form
 // 0x9683 -> abbreviation for the kanji (ka), the counter for months, places or provisions
 // 0x5b81 -> low line / underscore (full width)
-
 
 // return max # of chars to fit maxwidth with full words, does not include
 // breaking space
@@ -210,7 +213,8 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 		switch (curChar) {
 		case 0x7C:
 			if (getSciVersion() >= SCI_VERSION_1_1) {
-				curCharCount++; textPtr++;
+				curCharCount++;
+				textPtr++;
 				curCharCount += CodeProcessing(textPtr, orgFontId, previousPenColor, false);
 				continue;
 			}
@@ -225,15 +229,18 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 		case 0xD:
 			// Check, if 0xA is following, if so include it as well
 			if ((*(const byte *)(textPtr + 1)) == 0xA) {
-				curCharCount++; textPtr++;
+				curCharCount++;
+				textPtr++;
 			}
 			// fall through
 		case 0xA:
 		case 0x9781: // this one is used by SQ4/japanese as line break as well (was added for SCI1/PC98)
-			curCharCount++; textPtr++;
+			curCharCount++;
+			textPtr++;
 			if (curChar > 0xFF) {
 				// skip another byte in case char is double-byte (PC-98)
-				curCharCount++; textPtr++;
+				curCharCount++;
+				textPtr++;
 			}
 			// fall through
 		case 0:
@@ -264,11 +271,13 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 		curWidth = tempWidth;
 
 		// go to next character
-		curCharCount++; textPtr++;
+		curCharCount++;
+		textPtr++;
 		if (curChar > 0xFF) {
 			// Double-Byte
-			curCharCount++; textPtr++;
-		 }
+			curCharCount++;
+			textPtr++;
+		}
 	}
 
 	if (lastSpaceCharCount) {
@@ -287,8 +296,9 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 
 			// PC-9801 SCI actually added the last character, which shouldn't fit anymore, still onto the
 			//  screen in case maxWidth wasn't fully reached with the last character
-			if (( maxWidth - 1 ) > curWidth) {
-				curCharCount += 2; textPtr += 2;
+			if ((maxWidth - 1) > curWidth) {
+				curCharCount += 2;
+				textPtr += 2;
 
 				curChar = (*(const byte *)textPtr);
 				if (_font->isDoubleByte(curChar)) {
@@ -323,7 +333,8 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 					break;
 				}
 				// Character is not acceptable, seek backward in the text
-				curCharCount -= 2; textPtr -= 2;
+				curCharCount -= 2;
+				textPtr -= 2;
 				if (textPtr < textStartPtr)
 					error("Seeking back went too far, data corruption?");
 
@@ -346,7 +357,8 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 			//  Fixes #10000 where the notebook in LB1 room 786 displays "INCOMPLETE" with
 			//  a width that's too short which would have otherwise wrapped the last "E".
 			if (_useEarlyGetLongestTextCalculations) {
-				curCharCount++; textPtr++;
+				curCharCount++;
+				textPtr++;
 			}
 		}
 
@@ -363,7 +375,8 @@ void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId org
 	GuiResourceId previousFontId = GetFontId();
 	int16 previousPenColor = _ports->_curPort->penClr;
 
-	textWidth = 0; textHeight = 0;
+	textWidth = 0;
+	textHeight = 0;
 
 	GetFont();
 	if (_font) {
@@ -378,7 +391,7 @@ void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId org
 			case 0x0A:
 			case 0x0D:
 			case 0x9781: // this one is used by SQ4/japanese as line break as well
-				textHeight = MAX<int16> (textHeight, _ports->_curPort->fontHeight);
+				textHeight = MAX<int16>(textHeight, _ports->_curPort->fontHeight);
 				break;
 			case 0x7C:
 				if (getSciVersion() >= SCI_VERSION_1_1) {
@@ -388,7 +401,7 @@ void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId org
 				// fall through
 				// FIXME: fall through intended?
 			default:
-				textHeight = MAX<int16> (textHeight, _ports->_curPort->fontHeight);
+				textHeight = MAX<int16>(textHeight, _ports->_curPort->fontHeight);
 				textWidth += _font->getCharWidth(curChar);
 			}
 		}
@@ -596,8 +609,10 @@ void GfxText16::Box(const char *text, uint16 languageSplitter, bool show, const 
 		kanjiRect.left &= 0xFFC;
 		kanjiRect.right = kanjiRect.left + maxTextWidth;
 		kanjiRect.bottom = kanjiRect.top + hline;
-		kanjiRect.left *= 2; kanjiRect.right *= 2;
-		kanjiRect.top *= 2; kanjiRect.bottom *= 2;
+		kanjiRect.left *= 2;
+		kanjiRect.right *= 2;
+		kanjiRect.top *= 2;
+		kanjiRect.bottom *= 2;
 		_screen->copyDisplayRectToScreen(kanjiRect);
 	}
 }

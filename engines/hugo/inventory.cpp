@@ -30,26 +30,27 @@
 #include "common/debug.h"
 #include "common/system.h"
 
-#include "hugo/hugo.h"
-#include "hugo/game.h"
-#include "hugo/file.h"
-#include "hugo/schedule.h"
 #include "hugo/display.h"
-#include "hugo/mouse.h"
+#include "hugo/file.h"
+#include "hugo/game.h"
+#include "hugo/hugo.h"
 #include "hugo/inventory.h"
-#include "hugo/parser.h"
+#include "hugo/mouse.h"
 #include "hugo/object.h"
+#include "hugo/parser.h"
+#include "hugo/schedule.h"
 
 namespace Hugo {
 
-static const int kMaxDisp = (kXPix / kInvDx);       // Max icons displayable
+static const int kMaxDisp = (kXPix / kInvDx); // Max icons displayable
 
-InventoryHandler::InventoryHandler(HugoEngine *vm) : _vm(vm) {
+InventoryHandler::InventoryHandler(HugoEngine *vm)
+  : _vm(vm) {
 	_invent = nullptr;
 	_firstIconId = 0;
-	_inventoryState  = kInventoryOff;               // Inventory icon bar state
-	_inventoryHeight = 0;                           // Inventory icon bar pos
-	_inventoryObjId  = -1;                          // Inventory object selected (none)
+	_inventoryState = kInventoryOff; // Inventory icon bar state
+	_inventoryHeight = 0; // Inventory icon bar pos
+	_inventoryObjId = -1; // Inventory object selected (none)
 	_maxInvent = 0;
 }
 
@@ -107,9 +108,9 @@ void InventoryHandler::constructInventory(const int16 imageTotNumb, int displayN
 	// If needed, copy arrows - reduce number of icons displayable
 	if (scrollFl) { // Display at first and last icon positions
 		_vm->_screen->moveImage(_vm->_screen->getGUIBuffer(), 0, 0, kInvDx, kInvDy, kXPix, _vm->_screen->getIconBuffer(), 0, 0, kXPix);
-		_vm->_screen->moveImage(_vm->_screen->getGUIBuffer(), kInvDx, 0, kInvDx, kInvDy, kXPix, _vm->_screen->getIconBuffer(), kInvDx *(kMaxDisp - 1), 0, kXPix);
+		_vm->_screen->moveImage(_vm->_screen->getGUIBuffer(), kInvDx, 0, kInvDx, kInvDy, kXPix, _vm->_screen->getIconBuffer(), kInvDx * (kMaxDisp - 1), 0, kXPix);
 		displayNumb = MIN(displayNumb, kMaxDisp - kArrowNumb);
-	} else  // No, override first index - we can show 'em all!
+	} else // No, override first index - we can show 'em all!
 		firstObjId = 0;
 
 	// Copy inventory icons to remaining positions
@@ -125,12 +126,12 @@ void InventoryHandler::constructInventory(const int16 imageTotNumb, int displayN
 
 				// Compute dest coordinates in dib_i
 				int16 ix = ((scrollFl) ? displayed + 1 : displayed) * kInvDx;
-				displayed++;                        // Count number displayed
+				displayed++; // Count number displayed
 
 				// Copy the icon
 				_vm->_screen->moveImage(_vm->_screen->getGUIBuffer(), ux, uy, kInvDx, kInvDy, kXPix, _vm->_screen->getIconBuffer(), ix, 0, kXPix);
 			}
-			carried++;                              // Count number carried
+			carried++; // Count number carried
 		}
 	}
 }
@@ -142,8 +143,8 @@ void InventoryHandler::constructInventory(const int16 imageTotNumb, int displayN
 int16 InventoryHandler::processInventory(const int action, ...) {
 	debugC(1, kDebugInventory, "processInventory(int action, ...)");
 
-	int16 imageNumb;                                // Total number of inventory items
-	int displayNumb;                                // Total number displayed/carried
+	int16 imageNumb; // Total number of inventory items
+	int displayNumb; // Total number displayed/carried
 	// Compute total number and number displayed, i.e. number carried
 	for (imageNumb = 0, displayNumb = 0; imageNumb < _maxInvent && _invent[imageNumb] != -1; imageNumb++) {
 		if (_vm->_object->isCarried(_invent[imageNumb]))
@@ -152,40 +153,40 @@ int16 InventoryHandler::processInventory(const int action, ...) {
 
 	// Will we need the scroll arrows?
 	bool scrollFl = displayNumb > kMaxDisp;
-	va_list marker;                                 // Args used for D_ADD operation
-	int16 cursorx, cursory;                         // Current cursor position
-	int16 objId = -1;                               // Return objid under cursor
+	va_list marker; // Args used for D_ADD operation
+	int16 cursorx, cursory; // Current cursor position
+	int16 objId = -1; // Return objid under cursor
 
 	switch (action) {
-	case kInventoryActionInit:                      // Initialize inventory display
+	case kInventoryActionInit: // Initialize inventory display
 		constructInventory(imageNumb, displayNumb, scrollFl, _firstIconId);
 		break;
-	case kInventoryActionLeft:                      // Scroll left by one icon
+	case kInventoryActionLeft: // Scroll left by one icon
 		_firstIconId = MAX(0, _firstIconId - 1);
 		constructInventory(imageNumb, displayNumb, scrollFl, _firstIconId);
 		break;
-	case kInventoryActionRight:                     // Scroll right by one icon
+	case kInventoryActionRight: // Scroll right by one icon
 		_firstIconId = MIN(displayNumb, _firstIconId + 1);
 		constructInventory(imageNumb, displayNumb, scrollFl, _firstIconId);
 		break;
-	case kInventoryActionGet:                       // Return object id under cursor
+	case kInventoryActionGet: // Return object id under cursor
 		// Get cursor position from variable argument list
-		va_start(marker, action);                   // Initialize variable arguments
-		cursorx = va_arg(marker, int);              // Cursor x
-		cursory = va_arg(marker, int);              // Cursor y
-		va_end(marker);                             // Reset variable arguments
+		va_start(marker, action); // Initialize variable arguments
+		cursorx = va_arg(marker, int); // Cursor x
+		cursory = va_arg(marker, int); // Cursor y
+		va_end(marker); // Reset variable arguments
 
-		cursory -= kDibOffY;                        // Icon bar is at true zero
-		if (cursory > 0 && cursory < kInvDy) {      // Within icon bar?
-			int16 i = cursorx / kInvDx;             // Compute icon index
-			if (scrollFl) {                         // Scroll buttons displayed
-				if (i == 0) {                       // Left scroll button
+		cursory -= kDibOffY; // Icon bar is at true zero
+		if (cursory > 0 && cursory < kInvDy) { // Within icon bar?
+			int16 i = cursorx / kInvDx; // Compute icon index
+			if (scrollFl) { // Scroll buttons displayed
+				if (i == 0) { // Left scroll button
 					objId = kLeftArrow;
 				} else {
-					if (i == kMaxDisp - 1)          // Right scroll button
+					if (i == kMaxDisp - 1) // Right scroll button
 						objId = kRightArrow;
-					else                            // Adjust for scroll
-						i += _firstIconId - 1;      // i is icon index
+					else // Adjust for scroll
+						i += _firstIconId - 1; // i is icon index
 				}
 			}
 
@@ -203,7 +204,7 @@ int16 InventoryHandler::processInventory(const int action, ...) {
 		}
 		break;
 	}
-	return objId;                                   // For the INV_GET action
+	return objId; // For the INV_GET action
 }
 
 /**
@@ -215,11 +216,11 @@ void InventoryHandler::runInventory() {
 	debugC(1, kDebugInventory, "runInventory");
 
 	switch (_inventoryState) {
-	case kInventoryOff:                             // Icon bar off screen
+	case kInventoryOff: // Icon bar off screen
 		break;
-	case kInventoryUp:                              // Icon bar moving up
-		_inventoryHeight -= kStepDy;                // Move the icon bar up
-		if (_inventoryHeight <= 0)                  // Limit travel
+	case kInventoryUp: // Icon bar moving up
+		_inventoryHeight -= kStepDy; // Move the icon bar up
+		if (_inventoryHeight <= 0) // Limit travel
 			_inventoryHeight = 0;
 
 		// Move visible portion to _frontBuffer, restore uncovered portion, display results
@@ -227,34 +228,34 @@ void InventoryHandler::runInventory() {
 		_vm->_screen->moveImage(_vm->_screen->getBackBufferBackup(), 0, _inventoryHeight + kDibOffY, kXPix, kStepDy, kXPix, _vm->_screen->getFrontBuffer(), 0, _inventoryHeight + kDibOffY, kXPix);
 		_vm->_screen->displayRect(0, kDibOffY, kXPix, _inventoryHeight + kStepDy);
 
-		if (_inventoryHeight == 0) {                // Finished moving up?
+		if (_inventoryHeight == 0) { // Finished moving up?
 			// Yes, restore dibs and exit back to game state machine
 			_vm->_screen->moveImage(_vm->_screen->getBackBufferBackup(), 0, 0, kXPix, kYPix, kXPix, _vm->_screen->getBackBuffer(), 0, 0, kXPix);
 			_vm->_screen->moveImage(_vm->_screen->getBackBuffer(), 0, 0, kXPix, kYPix, kXPix, _vm->_screen->getFrontBuffer(), 0, 0, kXPix);
-			_vm->_object->updateImages();           // Add objects back into display list for restore
+			_vm->_object->updateImages(); // Add objects back into display list for restore
 			_inventoryState = kInventoryOff;
 			gameStatus._viewState = kViewPlay;
 		}
 		break;
-	case kInventoryDown:                            // Icon bar moving down
+	case kInventoryDown: // Icon bar moving down
 		// If this is the first step, initialize dib_i
 		// and get any icon/text out of _frontBuffer
 		if (_inventoryHeight == 0) {
 			processInventory(kInventoryActionInit); // Initialize dib_i
 			_vm->_screen->displayList(kDisplayRestore); // Restore _frontBuffer
-			_vm->_object->updateImages();           // Rebuild _frontBuffer without icons/text
+			_vm->_object->updateImages(); // Rebuild _frontBuffer without icons/text
 			_vm->_screen->displayList(kDisplayDisplay); // Blit display list to screen
 		}
 
-		_inventoryHeight += kStepDy;                // Move the icon bar down
-		if (_inventoryHeight > kInvDy)              // Limit travel
+		_inventoryHeight += kStepDy; // Move the icon bar down
+		if (_inventoryHeight > kInvDy) // Limit travel
 			_inventoryHeight = kInvDy;
 
 		// Move visible portion to _frontBuffer, display results
 		_vm->_screen->moveImage(_vm->_screen->getIconBuffer(), 0, 0, kXPix, _inventoryHeight, kXPix, _vm->_screen->getFrontBuffer(), 0, kDibOffY, kXPix);
 		_vm->_screen->displayRect(0, kDibOffY, kXPix, _inventoryHeight);
 
-		if (_inventoryHeight == kInvDy) {           // Finished moving down?
+		if (_inventoryHeight == kInvDy) { // Finished moving down?
 			// Yes, prepare view dibs for special inventory display since
 			// we can't refresh objects while icon bar overlayed...
 			// 1. Save backing store _backBuffer in temporary dib_c
@@ -266,14 +267,13 @@ void InventoryHandler::runInventory() {
 			_inventoryState = kInventoryActive;
 		}
 		break;
-	case kInventoryActive:                          // Inventory active
-		_vm->_parser->charHandler();                // Still allow commands
+	case kInventoryActive: // Inventory active
+		_vm->_parser->charHandler(); // Still allow commands
 		_vm->_screen->displayList(kDisplayRestore); // Restore previous background
 		_vm->_screen->displayList(kDisplayDisplay); // Blit the display list to screen
 		break;
 	}
 }
-
 
 /**
  * Find index of dragged icon

@@ -29,7 +29,6 @@
 #ifndef WINTERMUTE_ADITEM_H
 #define WINTERMUTE_ADITEM_H
 
-
 #include "engines/wintermute/ad/ad_talk_holder.h"
 
 namespace Wintermute {
@@ -57,6 +56,7 @@ public:
 	virtual bool scSetProperty(const char *name, ScValue *value) override;
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	virtual const char *scToString() override;
+
 private:
 	bool _displayAmount;
 	int32 _amount;

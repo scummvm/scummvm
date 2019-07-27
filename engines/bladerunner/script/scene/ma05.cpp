@@ -25,9 +25,9 @@
 namespace BladeRunner {
 
 enum kMA05Loops {
-	kMA05LoopInshot   = 0, //  0 -  29 // Frame 29 (in Acts 1 and 2 this ties in with Frame 30 of the Loop Main, in Act 5 it ties with frame 60?!)
+	kMA05LoopInshot = 0, //  0 -  29 // Frame 29 (in Acts 1 and 2 this ties in with Frame 30 of the Loop Main, in Act 5 it ties with frame 60?!)
 	kMA05LoopMainLoop = 1, // 30 -  90
-	kMA05LoopSpinner  = 3  // 91 - 150 // Frame 150 ties in with Frame 30 of Loop Main
+	kMA05LoopSpinner = 3 // 91 - 150 // Frame 150 ties in with Frame 30 of Loop Main
 };
 
 enum kMA05Exits {
@@ -45,18 +45,18 @@ void SceneScriptMA05::InitializeScene() {
 #endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 	Scene_Exit_Add_2D_Exit(kMA05ExitMA04, 432, 21, 471, 226, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxROOFRAN1, 90,    0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxROOFRAN1, 90, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxROOFAIR1, 40, -100, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 50,   60, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 50, 60, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 0, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  10, 100, 25,  50,    0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSPIN3A,  10, 100, 25,  50,    0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 10,  70, 50, 100,    0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 10,  70, 50, 100,    0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSIREN2,  10,  70, 25,  25, -100, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B, 10, 100, 25, 50, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN3A, 10, 100, 25, 50, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 10, 70, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 10, 70, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSIREN2, 10, 70, 25, 25, -100, 0, -101, -101, 0, 0);
 	if (isPhoneRinging()) {
 		Ambient_Sounds_Add_Sound(kSfxVIDFONE1, 3, 3, 32, 32, 100, 100, -101, -101, 0, 0);
 	}
@@ -151,12 +151,12 @@ void SceneScriptMA05::DialogueQueueFlushed(int a1) {
 
 bool SceneScriptMA05::isPhoneRinging() {
 	return Global_Variable_Query(kVariableChapter) == 5
-		&& !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallClovis)
-		&& !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallCrystal)
-		&& !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallDektora1)
-		&& !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallDektora2)
-		&& !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallLucy1)
-		&& !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallLucy2);
+	  && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallClovis)
+	  && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallCrystal)
+	  && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallDektora1)
+	  && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallDektora2)
+	  && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallLucy1)
+	  && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallLucy2);
 }
 
 } // End of namespace BladeRunner

@@ -23,12 +23,12 @@
 #ifndef SCUMMAPP_H
 #define SCUMMAPP_H
 
-#include <eikapp.h>
 #include <e32base.h>
+#include <eikapp.h>
 #include <sdlapp.h>
 
 #if defined(EPOC_AS_APP) && !defined(UIQ3) && !defined(S60V3)
-#include "ECompXL.h"
+#	include "ECompXL.h"
 #endif
 
 class CScummApp : public CSDLApp {
@@ -43,9 +43,9 @@ public:
 	TInt ViewResourceId();
 #endif
 	TUid AppDllUid() const;
-	void GetDataFolder(TDes& aDataFolder);
+	void GetDataFolder(TDes &aDataFolder);
 #if defined(EPOC_AS_APP) && !defined(UIQ3) && !defined(S60V3)
-	TECompXL    iECompXL;
+	TECompXL iECompXL;
 #endif
 };
 #endif

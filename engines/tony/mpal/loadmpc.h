@@ -32,27 +32,26 @@ namespace Tony {
 
 namespace MPAL {
 
-/****************************************************************************\
+	/****************************************************************************\
 *       Function prototypes
 \****************************************************************************/
 
-/**
+	/**
  * Reads and interprets the MPC file, and create structures for various directives
  * in the global variables
  *
  * @param lpBuf				Buffer containing the MPC file data, excluding the header.
  * @returns		True if succeeded OK, false if failure.
  */
-bool parseMpc(const byte *lpBuf);
+	bool parseMpc(const byte *lpBuf);
 
-/**
+	/**
  * Frees any data allocated from the parsing of the MPC file
  */
-void freeMpc();
+	void freeMpc();
 
 } // end of namespace MPAL
 
 } // end of namespace Tony
 
 #endif
-

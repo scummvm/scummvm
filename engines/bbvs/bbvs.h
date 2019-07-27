@@ -62,88 +62,88 @@ class SoundMan;
 #define BBVS_SAVEGAME_VERSION 0
 
 enum {
-	GF_GUILANGSWITCH =    (1 << 0) // If GUI language switch is required for menus
+	GF_GUILANGSWITCH = (1 << 0) // If GUI language switch is required for menus
 };
 
 enum {
-	kVerbLook      = 0,
-	kVerbUse       = 1,
-	kVerbTalk      = 2,
-	kVerbWalk      = 3,
-	kVerbInvItem   = 4,
-	kVerbShowInv   = 5
+	kVerbLook = 0,
+	kVerbUse = 1,
+	kVerbTalk = 2,
+	kVerbWalk = 3,
+	kVerbInvItem = 4,
+	kVerbShowInv = 5
 };
 
 enum {
-	kITNone         = 0,
-	kITEmpty        = 1,
-	KITSceneObject  = 2,
-	kITBgObject     = 3,
-	kITDialog       = 4,
-	kITScroll       = 5,
-	kITSceneExit    = 6,
-	kITInvItem      = 7
+	kITNone = 0,
+	kITEmpty = 1,
+	KITSceneObject = 2,
+	kITBgObject = 3,
+	kITDialog = 4,
+	kITScroll = 5,
+	kITSceneExit = 6,
+	kITInvItem = 7
 };
 
 enum {
-	kGSScene        = 0,
-	kGSInventory    = 1,
-	kGSVerbs        = 2,
-	kGSWait         = 3,
-	kGSDialog       = 4,
-	kGSWaitDialog   = 5
+	kGSScene = 0,
+	kGSInventory = 1,
+	kGSVerbs = 2,
+	kGSWait = 3,
+	kGSDialog = 4,
+	kGSWaitDialog = 5
 };
 
 enum {
-	kActionCmdStop                  = 0,
-	kActionCmdWalkObject            = 3,
-	kActionCmdMoveObject            = 4,
-	kActionCmdAnimObject            = 5,
-	kActionCmdSetCameraPos          = 7,
-	kActionCmdPlaySpeech            = 8,
-	kActionCmdPlaySound             = 10,
-	kActionCmdStartBackgroundSound  = 11,
-	kActionCmdStopBackgroundSound   = 12
+	kActionCmdStop = 0,
+	kActionCmdWalkObject = 3,
+	kActionCmdMoveObject = 4,
+	kActionCmdAnimObject = 5,
+	kActionCmdSetCameraPos = 7,
+	kActionCmdPlaySpeech = 8,
+	kActionCmdPlaySound = 10,
+	kActionCmdStartBackgroundSound = 11,
+	kActionCmdStopBackgroundSound = 12
 };
 
 enum {
-	kCondUnused                     = 1,
-	kCondSceneObjectVerb            = 2,
-	kCondBgObjectVerb               = 3,
-	kCondSceneObjectInventory       = 4,
-	kCondBgObjectInventory          = 5,
-	kCondHasInventoryItem           = 6,
-	kCondHasNotInventoryItem        = 7,
-	kCondIsGameVar                  = 8,
-	kCondIsNotGameVar               = 9,
-	kCondIsPrevSceneNum             = 10,
-	kCondIsCurrTalkObject           = 11,
-	kCondIsDialogItem               = 12,
-	kCondIsCameraNum                = 13,
-	kCondIsNotPrevSceneNum          = 14,
-	kCondDialogItem0                = 15,
-	kCondIsButtheadAtBgObject       = 16,
-	kCondIsNotSceneVisited          = 17,
-	kCondIsSceneVisited             = 18,
-	kCondIsCameraNumTransition      = 19
+	kCondUnused = 1,
+	kCondSceneObjectVerb = 2,
+	kCondBgObjectVerb = 3,
+	kCondSceneObjectInventory = 4,
+	kCondBgObjectInventory = 5,
+	kCondHasInventoryItem = 6,
+	kCondHasNotInventoryItem = 7,
+	kCondIsGameVar = 8,
+	kCondIsNotGameVar = 9,
+	kCondIsPrevSceneNum = 10,
+	kCondIsCurrTalkObject = 11,
+	kCondIsDialogItem = 12,
+	kCondIsCameraNum = 13,
+	kCondIsNotPrevSceneNum = 14,
+	kCondDialogItem0 = 15,
+	kCondIsButtheadAtBgObject = 16,
+	kCondIsNotSceneVisited = 17,
+	kCondIsSceneVisited = 18,
+	kCondIsCameraNumTransition = 19
 };
 
 enum {
-	kActResAddInventoryItem     = 1,
-	kActResRemoveInventoryItem  = 2,
-	kActResSetGameVar           = 3,
-	kActResUnsetGameVar         = 4,
-	kActResStartDialog          = 5,
-	kActResChangeScene          = 6
+	kActResAddInventoryItem = 1,
+	kActResRemoveInventoryItem = 2,
+	kActResSetGameVar = 3,
+	kActResUnsetGameVar = 4,
+	kActResStartDialog = 5,
+	kActResChangeScene = 6
 };
 
 enum {
-	kLeftButtonClicked  = 1,
+	kLeftButtonClicked = 1,
 	kRightButtonClicked = 2,
-	kLeftButtonDown     = 4,
-	kRightButtonDown    = 8,
-	kAnyButtonClicked   = kLeftButtonClicked | kRightButtonClicked,
-	kAnyButtonDown      = kLeftButtonDown | kRightButtonDown
+	kLeftButtonDown = 4,
+	kRightButtonDown = 8,
+	kAnyButtonClicked = kLeftButtonClicked | kRightButtonClicked,
+	kAnyButtonDown = kLeftButtonDown | kRightButtonDown
 };
 
 struct BBPoint {
@@ -174,7 +174,9 @@ struct SceneObject {
 	int xIncr, yIncr;
 	int turnValue, turnCount, turnTicks;
 	Common::Point walkDestPt;
-	SceneObject() : sceneObjectDef(0), anim(0) {
+	SceneObject()
+	  : sceneObjectDef(0)
+	  , anim(0) {
 	}
 };
 
@@ -211,7 +213,7 @@ const int kGameVarsCount = 2000;
 const int kSceneVisitedCount = 64;
 
 const int kMainMenu = 44;
-const int kCredits  = 45;
+const int kCredits = 45;
 
 const int kMaxDistance = 0xFFFFFF;
 static const int8 kWalkTurnTbl[] = {
@@ -222,6 +224,7 @@ class BbvsEngine : public Engine {
 protected:
 	Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
+
 public:
 	BbvsEngine(OSystem *syst, const ADGameDescription *gd);
 	~BbvsEngine();
@@ -287,7 +290,7 @@ public:
 	uint32 _currActionCommandTimeStamp;
 	int _currActionCommandIndex;
 
-	Common::Array<Action*> _walkAreaActions;
+	Common::Array<Action *> _walkAreaActions;
 
 	SceneObject _sceneObjects[kSceneObjectsCount];
 	Common::Array<SceneObjectAction> _sceneObjectActions;
@@ -424,7 +427,6 @@ public:
 	void saveSnapshot();
 
 	void writeContinueSavegame();
-
 };
 
 } // End of namespace Bbvs

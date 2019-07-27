@@ -23,31 +23,37 @@
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/carry/carry.h"
 #include "titanic/core/project_item.h"
-#include "titanic/messages/messages.h"
-#include "titanic/messages/pet_messages.h"
 #include "titanic/game_manager.h"
 #include "titanic/game_state.h"
+#include "titanic/messages/messages.h"
+#include "titanic/messages/pet_messages.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPetControl, CGameObject)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(MouseDragStartMsg)
-	ON_MESSAGE(MouseDragMoveMsg)
-	ON_MESSAGE(MouseDragEndMsg)
-	ON_MESSAGE(MouseButtonUpMsg)
-	ON_MESSAGE(MouseDoubleClickMsg)
-	ON_MESSAGE(MouseWheelMsg)
-	ON_MESSAGE(KeyCharMsg)
-	ON_MESSAGE(VirtualKeyCharMsg)
-	ON_MESSAGE(TimerMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(MouseDragMoveMsg)
+ON_MESSAGE(MouseDragEndMsg)
+ON_MESSAGE(MouseButtonUpMsg)
+ON_MESSAGE(MouseDoubleClickMsg)
+ON_MESSAGE(MouseWheelMsg)
+ON_MESSAGE(KeyCharMsg)
+ON_MESSAGE(VirtualKeyCharMsg)
+ON_MESSAGE(TimerMsg)
 END_MESSAGE_MAP()
 
-CPetControl::CPetControl() : CGameObject(),
-		_currentArea(PET_CONVERSATION), _inputLockCount(0), _areaLockCount(0),
-		_areaChangeType(-1), _activeNPC(nullptr), _remoteTarget(nullptr),
-		_hiddenRoom(nullptr), _drawBounds(20, 350, 620, 480) {
+CPetControl::CPetControl()
+  : CGameObject()
+  , _currentArea(PET_CONVERSATION)
+  , _inputLockCount(0)
+  , _areaLockCount(0)
+  , _areaChangeType(-1)
+  , _activeNPC(nullptr)
+  , _remoteTarget(nullptr)
+  , _hiddenRoom(nullptr)
+  , _drawBounds(20, 350, 620, 480) {
 	_sections[PET_INVENTORY] = &_inventory;
 	_sections[PET_CONVERSATION] = &_conversations;
 	_sections[PET_REMOTE] = &_remote;
@@ -98,14 +104,7 @@ void CPetControl::reset() {
 }
 
 bool CPetControl::isValid() {
-	return _conversations.isValid(this) &&
-		_rooms.isValid(this) &&
-		_remote.isValid(this) &&
-		_inventory.isValid(this) &&
-		_starfield.isValid(this) &&
-		_realLife.isValid(this) &&
-		_translation.isValid(this) &&
-		_frame.isValid(this);
+	return _conversations.isValid(this) && _rooms.isValid(this) && _remote.isValid(this) && _inventory.isValid(this) && _starfield.isValid(this) && _realLife.isValid(this) && _translation.isValid(this) && _frame.isValid(this);
 }
 
 void CPetControl::loadAreas(SimpleFile *file, int param) {
@@ -472,7 +471,7 @@ void CPetControl::addToInventory(CGameObject *item) {
 }
 
 void CPetControl::removeFromInventory(CGameObject *item, CTreeItem *newParent,
-		bool refreshUI, bool sendMsg) {
+                                      bool refreshUI, bool sendMsg) {
 	if (item && newParent) {
 		item->detach();
 		item->addUnder(newParent);
@@ -651,7 +650,7 @@ bool CPetControl::dismissBot(const CString &name) {
 	bool result = false;
 	CDismissBotMsg dismissMsg;
 	for (CTreeItem *treeItem = view->getFirstChild(); treeItem;
-			treeItem = treeItem->scan(view)) {
+	     treeItem = treeItem->scan(view)) {
 		CGameObject *obj = dynamic_cast<CGameObject *>(treeItem);
 		if (obj) {
 			if (!obj->getName().compareToIgnoreCase(name))
@@ -673,10 +672,9 @@ bool CPetControl::isDoorOrBellbotPresent() const {
 		return false;
 
 	for (CTreeItem *treeItem = view->getFirstChild(); treeItem;
-			treeItem = treeItem->scan(view)) {
+	     treeItem = treeItem->scan(view)) {
 		CString name = treeItem->getName();
-		if (dynamic_cast<CGameObject *>(treeItem) &&
-				(name.containsIgnoreCase("Doorbot") || name.containsIgnoreCase("BellBot")))
+		if (dynamic_cast<CGameObject *>(treeItem) && (name.containsIgnoreCase("Doorbot") || name.containsIgnoreCase("BellBot")))
 			return true;
 	}
 

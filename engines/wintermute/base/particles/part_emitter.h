@@ -29,7 +29,6 @@
 #ifndef WINTERMUTE_PARTEMITTER_H
 #define WINTERMUTE_PARTEMITTER_H
 
-
 #include "engines/wintermute/base/base_object.h"
 #include "engines/wintermute/base/particles/part_force.h"
 
@@ -67,7 +66,6 @@ public:
 	virtual bool scSetProperty(const char *name, ScValue *value);
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
-
 
 private:
 	int32 _width;

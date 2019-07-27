@@ -22,15 +22,15 @@
 
 #include "base/plugins.h"
 
-#include "engines/advancedDetector.h"
 #include "common/file.h"
 #include "common/md5.h"
 #include "common/savefile.h"
+#include "engines/advancedDetector.h"
 
 #include "tinsel/bmv.h"
 #include "tinsel/cursor.h"
+#include "tinsel/savescn.h" // needed by TinselMetaEngine::listSaves
 #include "tinsel/tinsel.h"
-#include "tinsel/savescn.h"	// needed by TinselMetaEngine::listSaves
 
 namespace Tinsel {
 
@@ -74,17 +74,18 @@ bool TinselEngine::isV1CD() const {
 } // End of namespace Tinsel
 
 static const PlainGameDescriptor tinselGames[] = {
-	{"tinsel", "Tinsel engine game"},
-	{"dw", "Discworld"},
-	{"dw2", "Discworld 2: Missing Presumed ...!?"},
-	{0, 0}
+	{ "tinsel", "Tinsel engine game" },
+	{ "dw", "Discworld" },
+	{ "dw2", "Discworld 2: Missing Presumed ...!?" },
+	{ 0, 0 }
 };
 
 #include "tinsel/detection_tables.h"
 
 class TinselMetaEngine : public AdvancedMetaEngine {
 public:
-	TinselMetaEngine() : AdvancedMetaEngine(Tinsel::gameDescriptions, sizeof(Tinsel::TinselGameDescription), tinselGames) {
+	TinselMetaEngine()
+	  : AdvancedMetaEngine(Tinsel::gameDescriptions, sizeof(Tinsel::TinselGameDescription), tinselGames) {
 		_singleId = "tinsel";
 	}
 
@@ -107,14 +108,7 @@ public:
 };
 
 bool TinselMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSimpleSavesNames) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSavesSupportCreationDate);
+	return (f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup) || (f == kSupportsDeleteSave) || (f == kSimpleSavesNames) || (f == kSavesSupportMetaInfo) || (f == kSavesSupportPlayTime) || (f == kSavesSupportCreationDate);
 }
 
 bool Tinsel::TinselEngine::hasFeature(EngineFeature f) const {
@@ -130,7 +124,7 @@ bool Tinsel::TinselEngine::hasFeature(EngineFeature f) const {
 		// for a second time.
 		(f == kSupportsRTL) ||
 #endif
-		(f == kSupportsLoadingDuringRuntime);
+	  (f == kSupportsLoadingDuringRuntime);
 }
 
 SaveStateDescriptor TinselMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
@@ -143,8 +137,8 @@ SaveStateDescriptor TinselMetaEngine::querySaveMetaInfos(const char *target, int
 		return SaveStateDescriptor();
 	}
 
-	file->readUint32LE();		// skip id
-	file->readUint32LE();		// skip size
+	file->readUint32LE(); // skip id
+	file->readUint32LE(); // skip size
 	uint32 ver = file->readUint32LE();
 	char saveDesc[Tinsel::SG_DESC_LEN];
 	file->read(saveDesc, sizeof(saveDesc));
@@ -189,9 +183,9 @@ SaveStateList TinselMetaEngine::listSaves(const char *target) const {
 		const Common::String &fname = *file;
 		Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fname);
 		if (in) {
-			in->readUint32LE();		// skip id
-			in->readUint32LE();		// skip size
-			in->readUint32LE();		// skip version
+			in->readUint32LE(); // skip id
+			in->readUint32LE(); // skip size
+			in->readUint32LE(); // skip version
 			char saveDesc[Tinsel::SG_DESC_LEN];
 			in->read(saveDesc, sizeof(saveDesc));
 
@@ -266,7 +260,7 @@ ADDetectedGame TinselMetaEngine::fallbackDetect(const FileMap &allFilesXXX, cons
 
 		Common::String tstr = file->getName();
 
-		allFiles[tstr] = *file;	// Record the presence of this file
+		allFiles[tstr] = *file; // Record the presence of this file
 	}
 
 	// Check which files are included in some dw2 ADGameDescription *and* present
@@ -387,9 +381,9 @@ void TinselMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(TINSEL)
-	REGISTER_PLUGIN_DYNAMIC(TINSEL, PLUGIN_TYPE_ENGINE, TinselMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(TINSEL, PLUGIN_TYPE_ENGINE, TinselMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(TINSEL, PLUGIN_TYPE_ENGINE, TinselMetaEngine);
+REGISTER_PLUGIN_STATIC(TINSEL, PLUGIN_TYPE_ENGINE, TinselMetaEngine);
 #endif
 
 namespace Tinsel {
@@ -431,10 +425,10 @@ Common::Error TinselEngine::loadGameState(int slot) {
 	}
 
 	if (listSlot == -1)
-		return Common::kUnknownError;	// TODO: proper error code
+		return Common::kUnknownError; // TODO: proper error code
 
 	RestoreGame(listSlot);
-	return Common::kNoError;	// TODO: return success/failure
+	return Common::kNoError; // TODO: return success/failure
 }
 
 #if 0

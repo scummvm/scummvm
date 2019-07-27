@@ -21,8 +21,8 @@
  */
 
 #include "mutationofjb/commands/conditionalcommand.h"
-#include "mutationofjb/script.h"
 #include "common/scummsys.h"
+#include "mutationofjb/script.h"
 
 namespace MutationOfJB {
 
@@ -41,11 +41,10 @@ void ConditionalCommandParser::finish(ScriptParseContext &) {
 	_tags.clear();
 }
 
-
-ConditionalCommand::ConditionalCommand() :
-	_trueCommand(nullptr),
-	_falseCommand(nullptr),
-	_cachedResult(false) {}
+ConditionalCommand::ConditionalCommand()
+  : _trueCommand(nullptr)
+  , _falseCommand(nullptr)
+  , _cachedResult(false) {}
 
 Command *ConditionalCommand::getTrueCommand() const {
 	return _trueCommand;

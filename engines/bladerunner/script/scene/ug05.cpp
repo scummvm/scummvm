@@ -26,12 +26,11 @@ namespace BladeRunner {
 
 void SceneScriptUG05::InitializeScene() {
 	if (Game_Flag_Query(kFlagHF07toUG06)) {
-		if ( Game_Flag_Query(kFlagHF05PoliceArrived)
-		 && !Game_Flag_Query(kFlagHF07Hole)
-		) {
+		if (Game_Flag_Query(kFlagHF05PoliceArrived)
+		    && !Game_Flag_Query(kFlagHF07Hole)) {
 			Setup_Scene_Information(-356.35f, 132.77f, -1092.36f, 389);
 		} else {
-			Setup_Scene_Information( -180.0f,  37.28f,  -1124.0f, 296);
+			Setup_Scene_Information(-180.0f, 37.28f, -1124.0f, 296);
 		}
 	} else {
 		Setup_Scene_Information(0.0f, -1.37f, 0.0f, 0);
@@ -43,31 +42,30 @@ void SceneScriptUG05::InitializeScene() {
 		Scene_Exit_Add_2D_Exit(1, 303, 422, 639, 479, 2);
 	}
 	if (!Game_Flag_Query(kFlagHF05PoliceArrived)
-	 ||  Game_Flag_Query(kFlagHF07Hole)
-	) {
+	    || Game_Flag_Query(kFlagHF07Hole)) {
 		Scene_Exit_Add_2D_Exit(2, 352, 256, 393, 344, 0);
 	}
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRUNOFF, 28, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1,   40, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED2,   40, 0, 1);
-	Ambient_Sounds_Add_Sound(kSfxPIPER1,   2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBANG2,    2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBANG3,    2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBANG4,    2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSQUEAK1,  2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSQUEAK2,  2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxYELL1M1,  2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxYELL1M3,  2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxGRUNT1M2, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxGRUNT2M3, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBANG1,    2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBANG5,    2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSQUEAK3,  2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBANG6,    2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN1,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN2,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN3,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1, 40, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED2, 40, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxPIPER1, 2, 190, 12, 16, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBANG2, 2, 190, 12, 16, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBANG3, 2, 190, 12, 16, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBANG4, 2, 190, 12, 16, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSQUEAK1, 2, 190, 12, 16, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSQUEAK2, 2, 190, 12, 16, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxYELL1M1, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxYELL1M3, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT1M2, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT2M3, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBANG1, 2, 190, 12, 16, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBANG5, 2, 190, 12, 16, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSQUEAK3, 2, 190, 12, 16, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBANG6, 2, 190, 12, 16, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN3, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagHF07Hole)) {
 		Scene_Loop_Set_Default(2);
@@ -95,10 +93,9 @@ bool SceneScriptUG05::ClickedOnActor(int actorId) {
 	if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, actorId, 30, true, false)) {
 		Actor_Face_Actor(kActorMcCoy, actorId, true);
 
-		if ( actorId == kActorOfficerGrayford
-		 &&  Game_Flag_Query(kFlagHF07Hole)
-		 && !Game_Flag_Query(kFlagUG05TalkToPolice)
-		) {
+		if (actorId == kActorOfficerGrayford
+		    && Game_Flag_Query(kFlagHF07Hole)
+		    && !Game_Flag_Query(kFlagUG05TalkToPolice)) {
 			Actor_Says(kActorOfficerGrayford, 220, -1);
 			Actor_Says(kActorMcCoy, 5540, 14);
 			Actor_Says(kActorOfficerGrayford, 230, -1);
@@ -125,9 +122,8 @@ bool SceneScriptUG05::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptUG05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if ( Game_Flag_Query(kFlagHF05PoliceArrived)
-		 && !Game_Flag_Query(kFlagHF07Hole)
-		) {
+		if (Game_Flag_Query(kFlagHF05PoliceArrived)
+		    && !Game_Flag_Query(kFlagHF07Hole)) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -356.35f, 132.77f, -1092.36f, 0, false, false, false);
 			Game_Flag_Set(kFlagUG06toHF07);
 			Set_Enter(kSetHF07, kSceneHF07);
@@ -221,9 +217,8 @@ void SceneScriptUG05::PlayerWalkedIn() {
 	}
 
 	if (Game_Flag_Query(kFlagHF07toUG06)) {
-		if ( Game_Flag_Query(kFlagHF05PoliceArrived)
-		 && !Game_Flag_Query(kFlagHF07Hole)
-		) {
+		if (Game_Flag_Query(kFlagHF05PoliceArrived)
+		    && !Game_Flag_Query(kFlagHF07Hole)) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -288.35f, 132.77f, -1092.36f, 0, true, false, false);
 		} else {
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 2, false, kAnimationModeIdle);
@@ -246,13 +241,11 @@ void SceneScriptUG05::DialogueQueueFlushed(int a1) {
 
 int SceneScriptUG05::getAffectionTowardsActor() {
 	if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsDektora
-	 && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraGone
-	) {
+	    && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraGone) {
 		return kActorDektora;
 	}
 	if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy
-	 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyGone
-	) {
+	    && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyGone) {
 		return kActorLucy;
 	}
 	return -1;

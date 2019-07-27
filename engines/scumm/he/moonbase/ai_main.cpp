@@ -22,12 +22,12 @@
 
 #include "scumm/he/intern_he.h"
 
-#include "scumm/he/moonbase/moonbase.h"
 #include "scumm/he/moonbase/ai_main.h"
-#include "scumm/he/moonbase/ai_traveller.h"
-#include "scumm/he/moonbase/ai_targetacquisition.h"
-#include "scumm/he/moonbase/ai_types.h"
 #include "scumm/he/moonbase/ai_pattern.h"
+#include "scumm/he/moonbase/ai_targetacquisition.h"
+#include "scumm/he/moonbase/ai_traveller.h"
+#include "scumm/he/moonbase/ai_types.h"
+#include "scumm/he/moonbase/moonbase.h"
 
 namespace Scumm {
 
@@ -124,7 +124,7 @@ enum {
 	SCALE_Y = 50,
 	SCALE_Z = 50,
 
-	GRAVITY_CONSTANT = (MAX_LAUNCH_POWER *MAX_LAUNCH_POWER) / MAX_FIRING_DISTANCE,
+	GRAVITY_CONSTANT = (MAX_LAUNCH_POWER * MAX_LAUNCH_POWER) / MAX_FIRING_DISTANCE,
 
 	HEIGHT_LOW = 20,
 
@@ -152,7 +152,8 @@ enum {
 	TREE_DEPTH = 2
 };
 
-AI::AI(ScummEngine_v100he *vm) : _vm(vm) {
+AI::AI(ScummEngine_v100he *vm)
+  : _vm(vm) {
 	memset(_aiType, 0, sizeof(_aiType));
 	_aiState = STATE_CHOOSE_BEHAVIOR;
 	_behavior = 2;
@@ -231,7 +232,6 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 	static int lastAngle[5];
 	static int lastPower[5];
 
-
 	static int sourceHub;
 	static int target;
 
@@ -245,7 +245,6 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 
 	static int OLflag = 0;
 	static int TAflag = 0;
-
 
 	Node *retNode;
 	static int retNodeFlag;
@@ -428,8 +427,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 		_aiState = STATE_INIT_APPROACH_TARGET;
 		break;
 
-	case STATE_INIT_APPROACH_TARGET:
-	{
+	case STATE_INIT_APPROACH_TARGET: {
 		int closestOL = getClosestUnit(targetX, targetY, 900, currentPlayer, 1, BUILDING_OFFENSIVE_LAUNCHER, 1);
 
 		if (closestOL && (_behavior == OFFENSE_MODE)) {
@@ -438,101 +436,100 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 		}
 	}
 
-	// get closest hub...if attack mode and almost close enough, maybe throw an offense
-	if ((_behavior == OFFENSE_MODE) && (getPlayerEnergy() > 6)) {
-		if (!_vm->_rnd.getRandomNumber(2)) {
-			int closestHub = getClosestUnit(targetX, targetY, getMaxX(), currentPlayer, 1, BUILDING_MAIN_BASE, 1);
+		// get closest hub...if attack mode and almost close enough, maybe throw an offense
+		if ((_behavior == OFFENSE_MODE) && (getPlayerEnergy() > 6)) {
+			if (!_vm->_rnd.getRandomNumber(2)) {
+				int closestHub = getClosestUnit(targetX, targetY, getMaxX(), currentPlayer, 1, BUILDING_MAIN_BASE, 1);
 
-			int dist = getDistance(targetX, targetY, getHubX(closestHub), getHubY(closestHub));
+				int dist = getDistance(targetX, targetY, getHubX(closestHub), getHubY(closestHub));
 
-			if ((dist > 470) && (dist < 900)) {
-				int closestOL = getClosestUnit(targetX, targetY, 900, currentPlayer, 1, BUILDING_OFFENSIVE_LAUNCHER, 0);
+				if ((dist > 470) && (dist < 900)) {
+					int closestOL = getClosestUnit(targetX, targetY, 900, currentPlayer, 1, BUILDING_OFFENSIVE_LAUNCHER, 0);
 
-				if (!closestOL) {
-					// Launch an OL
-					OLflag = 1;
-					targetX = getHubX(closestHub);
-					targetY = getHubY(closestHub);
+					if (!closestOL) {
+						// Launch an OL
+						OLflag = 1;
+						targetX = getHubX(closestHub);
+						targetY = getHubY(closestHub);
 
-					_aiState = STATE_DEFEND_TARGET;
-					break;
+						_aiState = STATE_DEFEND_TARGET;
+						break;
+					}
 				}
 			}
 		}
-	}
 
-	if ((_behavior == OFFENSE_MODE) && (_aiType[currentPlayer]->getID() == RANGER) && (getPlayerEnergy() > 2)) {
-		int closestHub = getClosestUnit(targetX, targetY, getMaxX(), currentPlayer, 1, BUILDING_MAIN_BASE, 1);
-		int dist = getDistance(targetX, targetY, getHubX(closestHub), getHubY(closestHub));
+		if ((_behavior == OFFENSE_MODE) && (_aiType[currentPlayer]->getID() == RANGER) && (getPlayerEnergy() > 2)) {
+			int closestHub = getClosestUnit(targetX, targetY, getMaxX(), currentPlayer, 1, BUILDING_MAIN_BASE, 1);
+			int dist = getDistance(targetX, targetY, getHubX(closestHub), getHubY(closestHub));
 
-		if (dist < 750) {
-			_aiState = STATE_OFFEND_TARGET;
-			break;
-		}
-	}
-
-	myTree = initApproachTarget(targetX, targetY, &retNode);
-
-	// If no need to approach, apply appropriate behavior
-	if (retNode == myTree->getBaseNode()) {
-		switch (_behavior) {
-		case 0:
-			_aiState = STATE_ENERGIZE_TARGET;
-			break;
-
-		case 1:
-			_aiState = STATE_OFFEND_TARGET;
-			break;
-
-		case 2:
-			_aiState = STATE_DEFEND_TARGET;
-			break;
-
-		case -1:
-			_aiState = STATE_LAUNCH;
-			break;
-
-		default:
-			break;
+			if (dist < 750) {
+				_aiState = STATE_OFFEND_TARGET;
+				break;
+			}
 		}
 
-		delete myTree;
-		myTree = NULL;
-		break;
-	}
+		myTree = initApproachTarget(targetX, targetY, &retNode);
 
-	delete retNode;
-	retNode = NULL;
+		// If no need to approach, apply appropriate behavior
+		if (retNode == myTree->getBaseNode()) {
+			switch (_behavior) {
+			case 0:
+				_aiState = STATE_ENERGIZE_TARGET;
+				break;
 
-	if (getPlayerEnergy() < 7) {
-		if (!_vm->_rnd.getRandomNumber(3)) {
-			_behavior = DEFENSE_MODE;
-			_aiState = STATE_CHOOSE_TARGET;
-		} else {
-			if (launchAction == NULL) {
-				launchAction = new int[4];
+			case 1:
+				_aiState = STATE_OFFEND_TARGET;
+				break;
+
+			case 2:
+				_aiState = STATE_DEFEND_TARGET;
+				break;
+
+			case -1:
+				_aiState = STATE_LAUNCH;
+				break;
+
+			default:
+				break;
 			}
 
-			if (!_vm->_rnd.getRandomNumber(2)) {
-				launchAction[1] = ITEM_TIME_EXPIRED;
+			delete myTree;
+			myTree = NULL;
+			break;
+		}
+
+		delete retNode;
+		retNode = NULL;
+
+		if (getPlayerEnergy() < 7) {
+			if (!_vm->_rnd.getRandomNumber(3)) {
+				_behavior = DEFENSE_MODE;
+				_aiState = STATE_CHOOSE_TARGET;
 			} else {
-				launchAction[1] = SKIP_TURN;
+				if (launchAction == NULL) {
+					launchAction = new int[4];
+				}
+
+				if (!_vm->_rnd.getRandomNumber(2)) {
+					launchAction[1] = ITEM_TIME_EXPIRED;
+				} else {
+					launchAction[1] = SKIP_TURN;
+				}
+
+				_aiState = STATE_LAUNCH;
 			}
 
-			_aiState = STATE_LAUNCH;
+			delete myTree;
+			myTree = NULL;
+			break;
 		}
 
-		delete myTree;
-		myTree = NULL;
+		_aiState = STATE_CRAWLER_DECISION;
 		break;
-	}
-
-	_aiState = STATE_CRAWLER_DECISION;
-	break;
 
 	// If behavior is offense, possibly just chuck a crawler
-	case STATE_CRAWLER_DECISION:
-	{
+	case STATE_CRAWLER_DECISION: {
 		// Brace just here to scope throwCrawler
 		int throwCrawler = 0;
 
@@ -594,12 +591,11 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 	}
 
 	// ApproachTarget returns NULL if target is already reachable
-	case STATE_APPROACH_TARGET:
-		{
-			int x, y;
-			Node *currentNode = NULL;
-			launchAction = approachTarget(myTree, x, y, &currentNode);
-		}
+	case STATE_APPROACH_TARGET: {
+		int x, y;
+		Node *currentNode = NULL;
+		launchAction = approachTarget(myTree, x, y, &currentNode);
+	}
 
 		if (launchAction != NULL) {
 			if (launchAction[0] == -1) {
@@ -762,8 +758,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 			myTree = NULL;
 			_aiState = STATE_LAUNCH;
 		}
-	}
-	break;
+	} break;
 
 	default:
 		break;
@@ -805,7 +800,8 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 		} else {
 			assert((launchAction[LAUNCH_UNIT] >= 0) && (launchAction[LAUNCH_UNIT] <= 18));
 
-			if ((launchAction[LAUNCH_UNIT] < 0) || (launchAction[LAUNCH_UNIT] > 18)) launchAction[LAUNCH_UNIT] = 0;
+			if ((launchAction[LAUNCH_UNIT] < 0) || (launchAction[LAUNCH_UNIT] > 18))
+				launchAction[LAUNCH_UNIT] = 0;
 
 			_vm->writeVar(_vm->VAR_U32_USER_VAR_B, launchAction[LAUNCH_UNIT]);
 		}
@@ -843,7 +839,8 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 				safeAngle = 1;
 			}
 
-			if (!safeAngle) angleAdjustment = 0;
+			if (!safeAngle)
+				angleAdjustment = 0;
 
 			debugC(DEBUG_MOONBASE_AI, "Angle adjustment = %d", angleAdjustment);
 			_vm->writeVar(_vm->VAR_U32_USER_VAR_C, launchAction[LAUNCH_ANGLE] + angleAdjustment);
@@ -878,7 +875,6 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 				_vm->writeVar(_vm->VAR_U32_USER_VAR_D, -1);
 			}
 		}
-
 
 		if ((launchAction[LAUNCH_SOURCE_HUB] > 0) && (launchAction[LAUNCH_SOURCE_HUB] <= 500)) {
 			int nearbyOpponents = getUnitsWithinRadius(getHubX(launchAction[LAUNCH_SOURCE_HUB]), getHubY(launchAction[LAUNCH_SOURCE_HUB]), 180);
@@ -949,8 +945,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 
 		{
 			// Checking for patterns
-			if ((_aiType[currentPlayer]->getID() != CRAWLER_CHUCKER) &&
-					(_aiType[currentPlayer]->getID() != ENERGY_HOG) && (getBuildingStackPtr() > 5))
+			if ((_aiType[currentPlayer]->getID() != CRAWLER_CHUCKER) && (_aiType[currentPlayer]->getID() != ENERGY_HOG) && (getBuildingStackPtr() > 5))
 				_moveList[currentPlayer]->addPattern(rSh, rU, rP, rA);
 
 			int patternFound = _moveList[currentPlayer]->evaluatePattern(rSh, rU, rP, rA);
@@ -1100,7 +1095,7 @@ int AI::chooseBehavior() {
 		return DEFENSE_MODE;
 		break;
 
-	default:  //BRUTAKAS
+	default: //BRUTAKAS
 		dominantMode = OFFENSE_MODE;
 		break;
 	}
@@ -1123,7 +1118,6 @@ int AI::chooseBehavior() {
 			eneCon = 5;
 		}
 
-
 		// loop through energy pool array
 		int energyPoolScummArray = getEnergyPoolsArray();
 		int numPools = getNumberOfPools();
@@ -1145,7 +1139,6 @@ int AI::chooseBehavior() {
 			int energyUnits = getUnitsWithinRadius(poolX, poolY, radius + 30);
 			int energyCounter = 0;
 			int energyBuilding = _vm->_moonbase->readFromArray(energyUnits, 0, energyCounter);
-
 
 			while (energyBuilding) {
 				energyCounter++;
@@ -1192,13 +1185,14 @@ int AI::chooseBehavior() {
 			eneCon--;
 	}
 
-
 	// offense mode
 	{
 		debugC(DEBUG_MOONBASE_AI, "Starting Offense Behavior Selection");
 
-		if (dominantMode == OFFENSE_MODE) offCon = 3;
-		else offCon = 5;
+		if (dominantMode == OFFENSE_MODE)
+			offCon = 3;
+		else
+			offCon = 5;
 
 		int enemyArray = getEnemyUnitsVisible(currentPlayer);
 		int enemyX = 0;
@@ -1232,7 +1226,6 @@ int AI::chooseBehavior() {
 						nearEnemyHub = 1;
 				}
 
-
 				if (closestHub || closestOL) {
 					int numDefenders = 0;
 					int defArray = getUnitsWithinRadius(enemyX, enemyY, 170);
@@ -1242,9 +1235,7 @@ int AI::chooseBehavior() {
 					while (defenseBuilding) {
 						defCounter++;
 
-						if (((getBuildingType(defenseBuilding) == BUILDING_ANTI_AIR) ||
-								(getBuildingType(defenseBuilding) == BUILDING_SHIELD)) &&
-									(getBuildingOwner(defenseBuilding) != currentPlayer)) {
+						if (((getBuildingType(defenseBuilding) == BUILDING_ANTI_AIR) || (getBuildingType(defenseBuilding) == BUILDING_SHIELD)) && (getBuildingOwner(defenseBuilding) != currentPlayer)) {
 							if (getBuildingState(defenseBuilding) == 0)
 								numDefenders++;
 						}
@@ -1262,9 +1253,7 @@ int AI::chooseBehavior() {
 						while (defenseBuilding2) {
 							defCounter++;
 
-							if (((getBuildingType(defenseBuilding2) == BUILDING_ANTI_AIR) ||
-									(getBuildingType(defenseBuilding2) == BUILDING_SHIELD)) &&
-										(getBuildingOwner(defenseBuilding2) != currentPlayer))
+							if (((getBuildingType(defenseBuilding2) == BUILDING_ANTI_AIR) || (getBuildingType(defenseBuilding2) == BUILDING_SHIELD)) && (getBuildingOwner(defenseBuilding2) != currentPlayer))
 								if (getBuildingState(defenseBuilding2) == 0)
 									numDefenders++;
 
@@ -1272,7 +1261,6 @@ int AI::chooseBehavior() {
 						}
 
 						_vm->_moonbase->deallocateArray(defArray2);
-
 					}
 
 					if ((!numDefenders) && (nearEnemyHub)) {
@@ -1446,7 +1434,7 @@ int AI::chooseTarget(int behavior) {
 	int currentPlayer = getCurrentPlayer();
 
 	int selection = 0;
-	int selectionValues[50] = {0};
+	int selectionValues[50] = { 0 };
 	int selectionDist = 10000000;
 
 	if (behavior == ENERGY_MODE) {
@@ -1503,7 +1491,6 @@ int AI::chooseTarget(int behavior) {
 					selectionDist = thisDist;
 				}
 			}
-
 		}
 
 		debugC(DEBUG_MOONBASE_AI, "Pool selected: %d   dist: %d", selection, selectionDist);
@@ -1617,7 +1604,7 @@ int AI::chooseTarget(int behavior) {
 						}
 					}
 
-					if (thisWorth > savedWorth)  {
+					if (thisWorth > savedWorth) {
 						savedWorth = thisWorth;
 						returnBuilding = nearAttackableArray[i];
 					}
@@ -1658,7 +1645,6 @@ int AI::chooseTarget(int behavior) {
 
 		int type = 0;
 		int worth = 0;
-
 
 		int attackedX = 0;
 		int attackedY = 0;
@@ -1855,10 +1841,10 @@ int *AI::approachTarget(Tree *myTree, int &xTarget, int &yTarget, Node **current
 
 		if (retTraveller->getWaterFlag()) {
 			int powAngle = getPowerAngleFromPoint(retTraveller->getWaterSourceX(),
-												retTraveller->getWaterSourceY(),
-												retTraveller->getWaterDestX(),
-												retTraveller->getWaterDestY(),
-												15);
+			                                      retTraveller->getWaterSourceY(),
+			                                      retTraveller->getWaterDestX(),
+			                                      retTraveller->getWaterDestY(),
+			                                      15);
 
 			powAngle = abs(powAngle);
 			int power = powAngle / 360;
@@ -1876,7 +1862,6 @@ int *AI::approachTarget(Tree *myTree, int &xTarget, int &yTarget, Node **current
 			retVal[2] = retTraveller->getAngleTo();
 			retVal[3] = retTraveller->getPowerTo();
 		}
-
 
 		int whoseTurn = getCurrentPlayer();
 
@@ -1914,7 +1899,7 @@ Tree *AI::initAcquireTarget(int targetX, int targetY, Node **retNode) {
 
 	int unitsArray = getUnitsWithinRadius(targetX + 7, targetY, 211);
 
-	debugC(DEBUG_MOONBASE_AI, "Target Coords: <%d, %d>    Source Coords: <%d, %d>", targetX, targetY, getHubX(sourceHub) , getHubY(sourceHub));
+	debugC(DEBUG_MOONBASE_AI, "Target Coords: <%d, %d>    Source Coords: <%d, %d>", targetX, targetY, getHubX(sourceHub), getHubY(sourceHub));
 
 	myBaseTarget->setEnemyDefenses(unitsArray, targetX, targetY);
 
@@ -1963,7 +1948,6 @@ int *AI::acquireTarget(int targetX, int targetY, Tree *myTree, int &errorCode) {
 	int shotTargetY = thisSortie->getShotPosY();
 	int theTarget = getClosestUnit(shotTargetX + 5, shotTargetY, getMaxX(), 0, 0, 0, 0, 0);
 
-
 	int sourceOL = 0;
 	int sourceX = thisSortie->getSourcePosX();
 	int sourceY = thisSortie->getSourcePosY();
@@ -1978,7 +1962,8 @@ int *AI::acquireTarget(int targetX, int targetY, Tree *myTree, int &errorCode) {
 		sourceY = getHubY(sourceOL);
 	}
 
-	if (!sourceHub) sourceHub = getClosestUnit(sourceX + 5, sourceY, getMaxX(), currentPlayer, 1, BUILDING_MAIN_BASE, 1, 0);
+	if (!sourceHub)
+		sourceHub = getClosestUnit(sourceX + 5, sourceY, getMaxX(), currentPlayer, 1, BUILDING_MAIN_BASE, 1, 0);
 
 	int powAngle = getPowerAngleFromPoint(sourceX, sourceY, shotTargetX, shotTargetY, 15, sourceOL);
 	debugC(DEBUG_MOONBASE_AI, "The source (%d: <%d, %d>)    The target (%d: <%d, %d>)", sourceHub, sourceX, sourceY, theTarget, shotTargetX, shotTargetY);
@@ -2139,7 +2124,7 @@ int *AI::energizeTarget(int &targetX, int &targetY, int index) {
 							result = 1;
 						} else {
 							// Drop a bridge for the cord
-							int yCoord  = -result / getMaxX();
+							int yCoord = -result / getMaxX();
 							int xCoord = -result - (yCoord * getMaxX());
 
 							if (checkIfWaterState(xCoord, yCoord)) {
@@ -2300,7 +2285,6 @@ int *AI::offendTarget(int &targetX, int &targetY, int index) {
 		retVal[1] = SKIP_TURN;
 		return retVal;
 	}
-
 
 	if ((thisUnit->getType() == BUILDING_CRAWLER) && (unit == SKIP_TURN)) {
 		retVal = new int[4];
@@ -2614,7 +2598,8 @@ int AI::getLastAttacked(int &x, int &y) {
 	x = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 2, D_GET_LAST_ATTACKED_X, currentPlayer);
 	y = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 2, D_GET_LAST_ATTACKED_Y, currentPlayer);
 
-	if (x || y) return 1;
+	if (x || y)
+		return 1;
 
 	return 0;
 }
@@ -2627,7 +2612,8 @@ int AI::getPlayerTeam(int player) {
 int AI::getBuildingTeam(int building) {
 	assert((building >= 1) && (building <= 500));
 
-	if (getBuildingOwner(building) == 0) return 0;
+	if (getBuildingOwner(building) == 0)
+		return 0;
 
 	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_GET_SCUMM_DATA], 2, D_GET_BUILDING_TEAM, building);
 	return retVal;
@@ -2667,7 +2653,8 @@ int AI::checkForAngleOverlap(int unit, int angle) {
 	assert(angle > -721);
 	assert(angle < 721);
 
-	if (!unit) return 0;
+	if (!unit)
+		return 0;
 
 	int retVal = _vm->_moonbase->callScummFunction(_mcpParams[F_CHECK_FOR_ANGLE_OVERLAP], 2, unit, angle);
 	return retVal;
@@ -2759,7 +2746,7 @@ int AI::energyPoolSize(int pool) {
 
 	case 63:
 		return 60;
-	
+
 	default:
 		return 0;
 	}
@@ -2809,7 +2796,6 @@ int AI::simulateBuildingLaunch(int x, int y, int power, int angle, int numSteps,
 	int terrainType = 0;
 	int passedBeyondUnit = 0;
 	int currentDist = 0;
-
 
 	if (!numSteps)
 		numSteps = 1;
@@ -2960,7 +2946,8 @@ int AI::simulateWeaponLaunch(int x, int y, int power, int angle, int numSteps) {
 	int passedBeyondUnit = 0;
 	int currentDist = 0;
 
-	if (!numSteps) numSteps = 1;
+	if (!numSteps)
+		numSteps = 1;
 
 	if (!sXSpeed && !sYSpeed) {
 		sZSpeed = (static_cast<int>(.70711 * power));

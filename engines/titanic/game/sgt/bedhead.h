@@ -67,9 +67,11 @@ class CBedhead : public CSGTStateRoom {
 	DECLARE_MESSAGE_MAP;
 	bool TurnOn(CTurnOn *msg);
 	bool TurnOff(CTurnOff *msg);
+
 private:
 	TurnOnEntries _on;
 	TurnOffEntries _off;
+
 public:
 	CLASSDEF;
 	CBedhead();

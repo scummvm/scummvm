@@ -22,24 +22,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
 #include "common/rect.h"
 #include "common/system.h"
 
-#include "sword2/sword2.h"
+#include "sword2/controls.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"
-#include "sword2/controls.h"
 #include "sword2/mouse.h"
 #include "sword2/resman.h"
 #include "sword2/screen.h"
 #include "sword2/sound.h"
+#include "sword2/sword2.h"
 
-#define	MAX_STRING_LEN    64	// 20 was too low; better to be safe ;)
-#define CHARACTER_OVERLAP 2	// overlap characters by 3 pixels
+#define MAX_STRING_LEN 64 // 20 was too low; better to be safe ;)
+#define CHARACTER_OVERLAP 2 // overlap characters by 3 pixels
 
 // our fonts start on SPACE character (32)
-#define SIZE_OF_CHAR_SET  (256 - 32)
+#define SIZE_OF_CHAR_SET (256 - 32)
 
 namespace Sword2 {
 
@@ -140,7 +139,7 @@ public:
 };
 
 FontRendererGui::FontRendererGui(Sword2Engine *vm, int fontId)
-	: _vm(vm) {
+  : _vm(vm) {
 	byte *font = _vm->_resman->openResource(fontId);
 	SpriteInfo sprite;
 
@@ -254,7 +253,10 @@ void FontRendererGui::drawText(uint32 textId, int x, int y, int alignment) {
 //
 
 Dialog::Dialog(Sword2Engine *vm)
-	: _numWidgets(0), _finish(false), _result(0), _vm(vm) {
+  : _numWidgets(0)
+  , _finish(false)
+  , _result(0)
+  , _vm(vm) {
 	_vm->_screen->setFullPalette(CONTROL_PANEL_PALETTE);
 	_vm->_screen->clearScene();
 	_vm->_screen->updateDisplay();
@@ -409,7 +411,10 @@ int Dialog::runModal() {
 //
 
 Widget::Widget(Dialog *parent, int states)
-	: _vm(parent->_vm), _parent(parent), _numStates(states), _state(0) {
+  : _vm(parent->_vm)
+  , _parent(parent)
+  , _numStates(states)
+  , _state(0) {
 	_sprites = (SpriteInfo *)calloc(states, sizeof(SpriteInfo));
 	_surfaces = (WidgetSurface *)calloc(states, sizeof(WidgetSurface));
 
@@ -461,7 +466,7 @@ void Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) 
 		// Points to just after last cdt_entry, i.e. start of color
 		// table
 		colTablePtr = _vm->fetchAnimHeader(file) + AnimHeader::size()
-			+ anim_head.noAnimFrames * CdtEntry::size();
+		  + anim_head.noAnimFrames * CdtEntry::size();
 		break;
 	}
 
@@ -541,7 +546,7 @@ void Widget::paint(Common::Rect *clipRect) {
 class Button : public Widget {
 public:
 	Button(Dialog *parent, int x, int y, int w, int h)
-		: Widget(parent, 2) {
+	  : Widget(parent, 2) {
 		setHitRect(x, y, w, h);
 	}
 
@@ -572,7 +577,8 @@ private:
 
 public:
 	ScrollButton(Dialog *parent, int x, int y, int w, int h)
-		: Widget(parent, 2), _holdCounter(0) {
+	  : Widget(parent, 2)
+	  , _holdCounter(0) {
 		setHitRect(x, y, w, h);
 	}
 
@@ -611,8 +617,11 @@ private:
 
 public:
 	Switch(Dialog *parent, int x, int y, int w, int h)
-		: Widget(parent, 2), _holding(false), _value(false),
-		  _upState(0), _downState(1) {
+	  : Widget(parent, 2)
+	  , _holding(false)
+	  , _value(false)
+	  , _upState(0)
+	  , _downState(1) {
 		setHitRect(x, y, w, h);
 	}
 
@@ -684,10 +693,14 @@ private:
 
 public:
 	Slider(Dialog *parent, Widget *background, int max,
-		int x, int y, int w, int h, int step, Widget *base = NULL)
-		: Widget(parent, 1), _background(background),
-		  _dragging(false), _value(0), _targetValue(0),
-		  _maxValue(max), _valueStep(step) {
+	       int x, int y, int w, int h, int step, Widget *base = NULL)
+	  : Widget(parent, 1)
+	  , _background(background)
+	  , _dragging(false)
+	  , _value(0)
+	  , _targetValue(0)
+	  , _maxValue(max)
+	  , _valueStep(step) {
 		setHitRect(x, y, w, h);
 
 		if (_valueStep <= 0)
@@ -794,7 +807,8 @@ public:
  * The "mini" dialog.
  */
 
-MiniDialog::MiniDialog(Sword2Engine *vm, uint32 headerTextId, uint32 okTextId, uint32 cancelTextId) : Dialog(vm) {
+MiniDialog::MiniDialog(Sword2Engine *vm, uint32 headerTextId, uint32 okTextId, uint32 cancelTextId)
+  : Dialog(vm) {
 	_headerTextId = headerTextId;
 	_okTextId = okTextId;
 	_cancelTextId = cancelTextId;
@@ -835,7 +849,8 @@ void MiniDialog::onAction(Widget *widget, int result) {
 		setResult(0);
 }
 
-StartDialog::StartDialog(Sword2Engine *vm) : MiniDialog(vm, 0) {}
+StartDialog::StartDialog(Sword2Engine *vm)
+  : MiniDialog(vm, 0) {}
 
 int StartDialog::runModal() {
 	while (1) {
@@ -863,7 +878,8 @@ int StartDialog::runModal() {
  * The restart dialog.
  */
 
-RestartDialog::RestartDialog(Sword2Engine *vm) : MiniDialog(vm, TEXT_RESTART) {}
+RestartDialog::RestartDialog(Sword2Engine *vm)
+  : MiniDialog(vm, TEXT_RESTART) {}
 
 int RestartDialog::runModal() {
 	int result = MiniDialog::runModal();
@@ -878,7 +894,8 @@ int RestartDialog::runModal() {
  * The quit dialog.
  */
 
-QuitDialog::QuitDialog(Sword2Engine *vm) : MiniDialog(vm, TEXT_QUIT) {}
+QuitDialog::QuitDialog(Sword2Engine *vm)
+  : MiniDialog(vm, TEXT_QUIT) {}
 
 int QuitDialog::runModal() {
 	int result = MiniDialog::runModal();
@@ -893,7 +910,8 @@ int QuitDialog::runModal() {
  * The game settings dialog.
  */
 
-OptionsDialog::OptionsDialog(Sword2Engine *vm) : Dialog(vm) {
+OptionsDialog::OptionsDialog(Sword2Engine *vm)
+  : Dialog(vm) {
 	_fr = new FontRendererGui(_vm, _vm->_controlsFontId);
 
 	_mixer = _vm->_mixer;
@@ -1065,7 +1083,9 @@ private:
 
 public:
 	Slot(Dialog *parent, int x, int y, int w, int h)
-		: Widget(parent, 2), _clickable(false), _editable(false) {
+	  : Widget(parent, 2)
+	  , _clickable(false)
+	  , _editable(false) {
 		setHitRect(x, y, w, h);
 		_text[0] = 0;
 	}
@@ -1160,7 +1180,8 @@ public:
 	}
 };
 
-SaveRestoreDialog::SaveRestoreDialog(Sword2Engine *vm, int mode) : Dialog(vm) {
+SaveRestoreDialog::SaveRestoreDialog(Sword2Engine *vm, int mode)
+  : Dialog(vm) {
 	int i;
 
 	_mode = mode;

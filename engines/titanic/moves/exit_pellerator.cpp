@@ -27,9 +27,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CExitPellerator, CGameObject)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(StatusChangeMsg)
-	ON_MESSAGE(ChangeSeasonMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(ChangeSeasonMsg)
 END_MESSAGE_MAP()
 
 CExitPelleratorStatics *CExitPellerator::_statics;
@@ -97,7 +97,6 @@ bool CExitPellerator::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		default:
 			petDisplayMessage(2, EXIT_FROM_OTHER_SIDE);
 			CPellerator::_soundHandle = queueSound(TRANSLATE("z#438.wav", "z#183.wav"), CPellerator::_soundHandle);
-
 		}
 	} else if (name == "ExitPellerator2") {
 		if (_statics->_v2 == 2) {

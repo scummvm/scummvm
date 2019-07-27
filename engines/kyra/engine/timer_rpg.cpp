@@ -22,10 +22,10 @@
 
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 
-#include "kyra/engine/kyra_rpg.h"
-#include "kyra/engine/timer.h"
+#	include "kyra/engine/kyra_rpg.h"
+#	include "kyra/engine/timer.h"
 
-#include "common/system.h"
+#	include "common/system.h"
 
 namespace Kyra {
 

@@ -26,7 +26,9 @@
 
 namespace Common {
 
-IFFParser::IFFParser(ReadStream *stream, bool disposeStream) : _stream(stream), _disposeStream(disposeStream) {
+IFFParser::IFFParser(ReadStream *stream, bool disposeStream)
+  : _stream(stream)
+  , _disposeStream(disposeStream) {
 	setInputStream(stream);
 }
 
@@ -76,8 +78,8 @@ void IFFParser::parse(IFFCallback &callback) {
 	} while (!stop);
 }
 
-
-PackBitsReadStream::PackBitsReadStream(Common::ReadStream &input) : _input(&input) {
+PackBitsReadStream::PackBitsReadStream(Common::ReadStream &input)
+  : _input(&input) {
 }
 
 PackBitsReadStream::~PackBitsReadStream() {
@@ -108,7 +110,7 @@ uint32 PackBitsReadStream::read(void *dataPtr, uint32 dataSize) {
 			for (; lenR > lenW; lenR--) {
 				_input->readByte();
 			}
-		} else {  // len > 128
+		} else { // len > 128
 			// expand run
 			lenW = MIN((256 - lenR) + 1, left);
 			byte val = _input->readByte();

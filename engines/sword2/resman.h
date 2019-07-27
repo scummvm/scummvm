@@ -22,15 +22,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef	SWORD2_RESMAN_H
-#define	SWORD2_RESMAN_H
+#ifndef SWORD2_RESMAN_H
+#define SWORD2_RESMAN_H
 
 namespace Common {
 class File;
 }
 
 #define MAX_MEM_CACHE (8 * 1024 * 1024) // we keep up to 8 megs of resource data files in memory
-#define	MAX_res_files 20
+#define MAX_res_files 20
 
 namespace Sword2 {
 
@@ -74,7 +74,7 @@ private:
 	uint32 _usedMem; // amount of used memory in bytes
 
 public:
-	ResourceManager(Sword2Engine *vm);	// read in the config file
+	ResourceManager(Sword2Engine *vm); // read in the config file
 	~ResourceManager();
 
 	bool init();

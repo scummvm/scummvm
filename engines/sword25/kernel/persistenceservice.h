@@ -54,15 +54,15 @@ public:
 	static uint getSlotCount();
 	static Common::String getSavegameDirectory();
 
-	void            reloadSlots();
-	bool            isSlotOccupied(uint slotID);
-	bool            isSavegameCompatible(uint slotID);
-	int             getSavegameVersion(uint slotID);
+	void reloadSlots();
+	bool isSlotOccupied(uint slotID);
+	bool isSavegameCompatible(uint slotID);
+	int getSavegameVersion(uint slotID);
 	Common::String &getSavegameDescription(uint slotID);
 	Common::String &getSavegameFilename(uint slotID);
 
-	bool            saveGame(uint slotID, const Common::String &screenshotFilename);
-	bool            loadGame(uint slotID);
+	bool saveGame(uint slotID, const Common::String &screenshotFilename);
+	bool loadGame(uint slotID);
 
 private:
 	struct Impl;

@@ -22,11 +22,11 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objects.h"
+#include "fullpipe/gameloader.h"
 #include "fullpipe/messages.h"
 #include "fullpipe/modal.h"
+#include "fullpipe/objects.h"
 #include "fullpipe/statics.h"
-#include "fullpipe/gameloader.h"
 
 namespace Fullpipe {
 
@@ -37,7 +37,8 @@ ExCommand::ExCommand() {
 	_parId = 0;
 }
 
-ExCommand::ExCommand(ExCommand *src) : Message(*src) {
+ExCommand::ExCommand(ExCommand *src)
+  : Message(*src) {
 	_field_3C = 1;
 	_messageNum = src->_messageNum;
 	_excFlags = src->_excFlags;
@@ -48,8 +49,8 @@ ExCommand *ExCommand::createClone() {
 	return new ExCommand(this);
 }
 
-ExCommand::ExCommand(int16 parentId, int messageKind, int messageNum, int x, int y, int a7, int a8, int sceneClickX, int sceneClickY, int a11) :
-	Message(parentId, messageKind, x, y, a7, a8, sceneClickX, sceneClickY, a11) {
+ExCommand::ExCommand(int16 parentId, int messageKind, int messageNum, int x, int y, int a7, int a8, int sceneClickX, int sceneClickY, int a11)
+  : Message(parentId, messageKind, x, y, a7, a8, sceneClickX, sceneClickY, a11) {
 	_field_3C = 1;
 	_messageNum = messageNum;
 	_excFlags = 0;
@@ -60,11 +61,11 @@ struct exDesc {
 	byte num;
 	const char *name;
 } static const exTypes[] = {
-	{ 1,  "START_MOVEMENT" },
-	{ 5,  "SHOW" },
+	{ 1, "START_MOVEMENT" },
+	{ 5, "SHOW" },
 	{ 17, "MESSAGE" },
 	{ 63, "USER" },
-	{ 0,  "" }
+	{ 0, "" }
 };
 
 static const char *exCommandType2str(int type) {
@@ -108,8 +109,8 @@ bool ExCommand::load(MfcArchive &file) {
 	_objtype = kObjTypeExCommand;
 
 	debugC(6, kDebugXML, "%% <COMMAND parent=%d cmd=%s x=%d y=%d f14=%d sceneX=%d sceneY=%d f20=%d f24=%d param=%d f2c=%d f30=%d f34=%d num=%d flags=%d parId=%d />",
-			_parentId, exCommandType2str(_messageKind), _x, _y, _z, _sceneClickX, _sceneClickY, _field_20, _field_24, _param, _field_2C,
-			_field_30, _field_34, _messageNum, _excFlags, _parId);
+	       _parentId, exCommandType2str(_messageKind), _x, _y, _z, _sceneClickX, _sceneClickY, _field_20, _field_24, _param, _field_2C,
+	       _field_30, _field_34, _messageNum, _excFlags, _parId);
 
 	return true;
 }
@@ -167,18 +168,21 @@ void ExCommand::firef34() {
 
 			sendMessage();
 
-			if (!_field_30 )
+			if (!_field_30)
 				setf3c(_field_2C);
 		}
 	}
 }
 
-ExCommand2::ExCommand2(int messageKind, int parentId, const PointList &points) : ExCommand(parentId, messageKind, 0, 0, 0, 0, 1, 0, 0, 0) {
+ExCommand2::ExCommand2(int messageKind, int parentId, const PointList &points)
+  : ExCommand(parentId, messageKind, 0, 0, 0, 0, 1, 0, 0, 0) {
 	_objtype = kObjTypeExCommand2;
 	_points = points;
 }
 
-ExCommand2::ExCommand2(ExCommand2 *src) : ExCommand(src), _points(src->_points) {}
+ExCommand2::ExCommand2(ExCommand2 *src)
+  : ExCommand(src)
+  , _points(src->_points) {}
 
 ExCommand2 *ExCommand2::createClone() {
 	return new ExCommand2(this);
@@ -222,7 +226,8 @@ ObjstateCommand::ObjstateCommand() {
 	_objtype = kObjTypeObjstateCommand;
 }
 
-ObjstateCommand::ObjstateCommand(ObjstateCommand *src) : ExCommand(src) {
+ObjstateCommand::ObjstateCommand(ObjstateCommand *src)
+  : ExCommand(src) {
 	_value = src->_value;
 	_objtype = kObjTypeObjstateCommand;
 
@@ -567,7 +572,7 @@ void MessageQueue::setParamInt(int key1, int key2) {
 		ExCommand *ex = getExCommandByIndex(i);
 		int k = ex->_messageKind;
 		if ((k == 1 || k == 20 || k == 5 || k == 6 || k == 2 || k == 18 || k == 19 || k == 22 || k == 55)
-					&& ex->_param == key1)
+		    && ex->_param == key1)
 			ex->_param = key2;
 	}
 }
@@ -600,8 +605,8 @@ void MessageQueue::changeParam28ForObjectId(int objId, int oldParam28, int newPa
 		int k = ex->_messageKind;
 
 		if ((k == 1 || k == 20 || k == 5 || k == 6 || k == 2 || k == 18 || k == 19 || k == 22 || k == 55)
-			 && ex->_param == oldParam28
-			 && ex->_parentId == objId)
+		    && ex->_param == oldParam28
+		    && ex->_parentId == objId)
 			ex->_param = newParam28;
 	}
 }

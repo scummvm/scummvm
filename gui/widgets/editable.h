@@ -25,9 +25,9 @@
 
 #include "common/keyboard.h"
 #include "common/str.h"
-#include "gui/widget.h"
 #include "gui/ThemeEngine.h"
 #include "gui/object.h"
+#include "gui/widget.h"
 
 namespace Common {
 struct Rect;
@@ -42,22 +42,23 @@ namespace GUI {
 class EditableWidget : public Widget, public CommandSender {
 public:
 	typedef Common::String String;
+
 protected:
-	String		_editString;
+	String _editString;
 
-	uint32		_cmd;
+	uint32 _cmd;
 
-	bool		_caretVisible;
-	uint32		_caretTime;
-	int			_caretPos;
+	bool _caretVisible;
+	uint32 _caretTime;
+	int _caretPos;
 
-	bool		_caretInverse;
+	bool _caretInverse;
 
-	int			_editScrollOffset;
+	int _editScrollOffset;
 
-	ThemeEngine::FontStyle  _font;
+	ThemeEngine::FontStyle _font;
 
-	ThemeEngine::TextInversionState  _inversion;
+	ThemeEngine::TextInversionState _inversion;
 
 public:
 	EditableWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip = 0, uint32 cmd = 0);
@@ -67,7 +68,7 @@ public:
 	void init();
 
 	virtual void setEditString(const String &str);
-	virtual const String &getEditString() const		{ return _editString; }
+	virtual const String &getEditString() const { return _editString; }
 
 	virtual void handleTickle();
 	virtual bool handleKeyDown(Common::KeyState state);

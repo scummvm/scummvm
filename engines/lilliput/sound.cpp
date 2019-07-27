@@ -20,17 +20,17 @@
  *
  */
 
-#include "lilliput/lilliput.h"
 #include "lilliput/sound.h"
+#include "lilliput/lilliput.h"
 
 #include "common/debug.h"
 
 namespace Lilliput {
 
 static const byte _aliasArr[40] = {
-	44,  0,  1,  2, 37,  3, 24,   45, 20, 19,
-	16, 10, 11, 12, 41, 39, 40,   21, 22, 23,
-	 4,  5,  6, 52,  7,  8,  9,   33, 13, 14,
+	44, 0, 1, 2, 37, 3, 24, 45, 20, 19,
+	16, 10, 11, 12, 41, 39, 40, 21, 22, 23,
+	4, 5, 6, 52, 7, 8, 9, 33, 13, 14,
 	15, 18, 26, 25, 38, 29, 36, 0xFF, 28, 40
 };
 
@@ -41,7 +41,7 @@ static const bool _loopArr[40] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-static const byte _soundType [40] = {
+static const byte _soundType[40] = {
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 	1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	1, 1, 0, 0, 1, 1, 1, 0, 0, 0,

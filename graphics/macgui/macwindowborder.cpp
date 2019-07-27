@@ -29,7 +29,9 @@ namespace Graphics {
 
 using namespace Graphics::MacGUIConstants;
 
-MacWindowBorder::MacWindowBorder() : _activeInitialized(false), _inactiveInitialized(false) {
+MacWindowBorder::MacWindowBorder()
+  : _activeInitialized(false)
+  , _inactiveInitialized(false) {
 	_activeBorder = nullptr;
 	_inactiveBorder = nullptr;
 	_hasOffsets = false;

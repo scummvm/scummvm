@@ -22,12 +22,12 @@
 
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 
-#ifndef KYRA_GUI_EOB_H
-#define KYRA_GUI_EOB_H
+#	ifndef KYRA_GUI_EOB_H
+#		define KYRA_GUI_EOB_H
 
-#include "kyra/gui/gui.h"
+#		include "kyra/gui/gui.h"
 
-#ifdef ENABLE_EOB
+#		ifdef ENABLE_EOB
 
 namespace Kyra {
 
@@ -44,6 +44,7 @@ class Screen_EoB;
 class GUI_EoB : public GUI {
 	friend class EoBCoreEngine;
 	friend class CharacterGenerator;
+
 public:
 	GUI_EoB(EoBCoreEngine *vm);
 	virtual ~GUI_EoB();
@@ -166,8 +167,8 @@ private:
 
 } // End of namespace Kyra
 
-#endif // ENABLE_EOB
+#		endif // ENABLE_EOB
 
-#endif
+#	endif
 
 #endif // ENABLE_EOB || ENABLE_LOL

@@ -20,12 +20,12 @@
  *
  */
 
+#include "../common/codyvdirx.h"
+#include "codyvdfs.h"
 #include <sifman.h>
 #include <sifrpc.h>
-#include <thbase.h>
 #include <stdio.h>
-#include "codyvdfs.h"
-#include "../common/codyvdirx.h"
+#include <thbase.h>
 
 struct t_SifRpcDataQueue qd;
 struct t_SifRpcServerData sd0;
@@ -87,7 +87,7 @@ void *driveStandby(void *data) {
 	} else
 		*(int *)data = -0x101;
 
-	do {	// wait until drive detected disc type
+	do { // wait until drive detected disc type
 		type = CdGetDiskType();
 		if (DISC_NOT_READY(type))
 			DelayThread(10 * 1000);
@@ -99,15 +99,15 @@ void *driveStandby(void *data) {
 
 void *rpcServer(int func, void *data, int size) {
 	switch (func) {
-		case READ_RTC:
-			return rpcReadClock(data);
-		case DRIVE_STOP:
-			return driveStop(data);
-		case DRIVE_STANDBY:
-			return driveStandby(data);
-		default:
-			printf("Unknown RPC command %d\n", func);
-			return NULL;
+	case READ_RTC:
+		return rpcReadClock(data);
+	case DRIVE_STOP:
+		return driveStop(data);
+	case DRIVE_STANDBY:
+		return driveStandby(data);
+	default:
+		printf("Unknown RPC command %d\n", func);
+		return NULL;
 	}
 	return NULL;
 }

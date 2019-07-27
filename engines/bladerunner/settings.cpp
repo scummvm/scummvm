@@ -95,8 +95,8 @@ bool Settings::openNewScene() {
 	}
 
 	int currentSet = _vm->_scene->getSetId();
-	int newSet     = _newSet;
-	int newScene   = _newScene;
+	int newSet = _newSet;
+	int newScene = _newScene;
 
 	_newSet = -1;
 	_newScene = -1;

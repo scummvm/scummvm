@@ -21,13 +21,13 @@
  */
 
 #include "mohawk/cstime_game.h"
+#include "common/events.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 #include "mohawk/cstime_ui.h"
 #include "mohawk/cstime_view.h"
 #include "mohawk/resource.h"
 #include "mohawk/sound.h"
-#include "common/events.h"
-#include "common/system.h"
-#include "common/textconsole.h"
 
 namespace Mohawk {
 
@@ -78,7 +78,10 @@ bool Region::containsPoint(Common::Point &pos) const {
 	return false;
 }
 
-CSTimeChar::CSTimeChar(MohawkEngine_CSTime *vm, CSTimeScene *scene, uint id) : _vm(vm), _scene(scene), _id(id) {
+CSTimeChar::CSTimeChar(MohawkEngine_CSTime *vm, CSTimeScene *scene, uint id)
+  : _vm(vm)
+  , _scene(scene)
+  , _id(id) {
 	_resting = true;
 	_flappingState = 0xffff;
 	_surfingState = 0;
@@ -120,8 +123,7 @@ void CSTimeChar::idle() {
 
 void CSTimeChar::setupAmbientAnims(bool onetime) {
 	CSTimeConversation *conv = _vm->getCase()->getCurrConversation();
-	if (_unknown1 == 0xffff || !_unknown2 || !_ambients.size() || !_resting || !_enabled ||
-		(conv->getState() != (uint)~0 && conv->getSourceChar() == _id)) {
+	if (_unknown1 == 0xffff || !_unknown2 || !_ambients.size() || !_resting || !_enabled || (conv->getState() != (uint)~0 && conv->getSourceChar() == _id)) {
 		setupRestPos();
 		_resting = true;
 		return;
@@ -378,7 +380,9 @@ void CSTimeChar::stopFlapping() {
 	setupAmbientAnims(true);
 }
 
-CSTimeConversation::CSTimeConversation(MohawkEngine_CSTime *vm, uint id) : _vm(vm), _id(id) {
+CSTimeConversation::CSTimeConversation(MohawkEngine_CSTime *vm, uint id)
+  : _vm(vm)
+  , _id(id) {
 	clear();
 
 	Common::SeekableReadStream *convStream = _vm->getResource(ID_CONV, id * 10 + 500);
@@ -524,7 +528,7 @@ void CSTimeConversation::mouseDown(Common::Point &pos) {
 
 	for (uint i = 0; i < _itemsToDisplay.size(); i++) {
 		Common::Rect thisRect = _vm->getInterface()->_dialogTextRect;
-		thisRect.top += 1 + i*15;
+		thisRect.top += 1 + i * 15;
 		thisRect.bottom = thisRect.top + 15;
 		if (!thisRect.contains(pos))
 			continue;
@@ -543,7 +547,7 @@ void CSTimeConversation::mouseMove(Common::Point &pos) {
 
 	for (uint i = 0; i < _itemsToDisplay.size(); i++) {
 		Common::Rect thisRect = _vm->getInterface()->_dialogTextRect;
-		thisRect.top += 1 + i*15;
+		thisRect.top += 1 + i * 15;
 		thisRect.bottom = thisRect.top + 15;
 		if (!thisRect.contains(pos))
 			continue;
@@ -580,7 +584,7 @@ void CSTimeConversation::mouseUp(Common::Point &pos) {
 
 	CSTimeQaR &qar = _qars[_itemsToDisplay[_currEntry]];
 	Common::Rect thisRect = _vm->getInterface()->_dialogTextRect;
-	thisRect.top += 1 + _currEntry*15;
+	thisRect.top += 1 + _currEntry * 15;
 	thisRect.bottom = thisRect.top + 15;
 	if (!thisRect.contains(pos))
 		return;
@@ -650,7 +654,9 @@ void CSTimeConversation::unhighlightLine(uint line) {
 	_vm->getInterface()->displayDialogLine(qar.questionStringId, line, qar.finished ? 13 : 32);
 }
 
-CSTimeCase::CSTimeCase(MohawkEngine_CSTime *vm, uint id) : _vm(vm), _id(id) {
+CSTimeCase::CSTimeCase(MohawkEngine_CSTime *vm, uint id)
+  : _vm(vm)
+  , _id(id) {
 	_vm->loadResourceFile(Common::String::format("Cases/C%dText", id));
 	// We load this early, so we can use the text for debugging.
 	loadRolloverText();
@@ -753,7 +759,10 @@ CSTimeScene *CSTimeCase::getCurrScene() {
 	return _scenes[_currScene - 1];
 }
 
-CSTimeScene::CSTimeScene(MohawkEngine_CSTime *vm, CSTimeCase *case_, uint id) : _vm(vm), _case(case_), _id(id) {
+CSTimeScene::CSTimeScene(MohawkEngine_CSTime *vm, CSTimeCase *case_, uint id)
+  : _vm(vm)
+  , _case(case_)
+  , _id(id) {
 	_visitCount = 0;
 	_activeChar = NULL;
 	_currHotspot = 0xffff;
@@ -1019,17 +1028,17 @@ void CSTimeScene::mouseMove(Common::Point &pos) {
 
 	if (_vm->getInterface()->getState() != kCSTimeInterfaceStateDragging) {
 		switch (_vm->getInterface()->cursorGetShape()) {
-			case 2:
-			case 13:
-				_vm->getInterface()->cursorSetShape(1);
-				break;
-			case 5:
-			case 14:
-				_vm->getInterface()->cursorSetShape(4);
-				break;
-			case 11:
-				_vm->getInterface()->cursorSetShape(10);
-				break;
+		case 2:
+		case 13:
+			_vm->getInterface()->cursorSetShape(1);
+			break;
+		case 5:
+		case 14:
+			_vm->getInterface()->cursorSetShape(4);
+			break;
+		case 11:
+			_vm->getInterface()->cursorSetShape(10);
+			break;
 		}
 	}
 
@@ -1099,7 +1108,7 @@ void CSTimeScene::idleAmbientAnims() {
 
 bool CSTimeScene::eventIsActive() {
 	return _vm->NISIsRunning() /* TODO || _vm->soundIsPlaying()*/ || _vm->getCurrentEventType() == kCSTimeEventWaitForClick
-		|| _activeChar->_flappingState != 0xffff || _vm->getInterface()->getState() == kCSTimeInterfaceDroppedInventory;
+	  || _activeChar->_flappingState != 0xffff || _vm->getInterface()->getState() == kCSTimeInterfaceDroppedInventory;
 }
 
 void CSTimeScene::cursorOverHotspot(uint id) {
@@ -1209,16 +1218,17 @@ void CSTimeScene::setCursorForCurrentPoint() {
 			continue;
 		if (_hotspots[i].cursor == 2) {
 			_vm->getInterface()->cursorSetShape(13);
-		} else switch (_vm->getInterface()->cursorGetShape()) {
-		case 8:
-			break;
-		case 12:
-			_vm->getInterface()->cursorSetShape(11);
-			break;
-		default:
-			_vm->getInterface()->cursorSetShape(2);
-			break;
-		}
+		} else
+			switch (_vm->getInterface()->cursorGetShape()) {
+			case 8:
+				break;
+			case 12:
+				_vm->getInterface()->cursorSetShape(11);
+				break;
+			default:
+				_vm->getInterface()->cursorSetShape(2);
+				break;
+			}
 		return;
 	}
 
@@ -1228,7 +1238,7 @@ void CSTimeScene::setCursorForCurrentPoint() {
 void CSTimeScene::drawHotspots() {
 	for (uint i = 0; i < _hotspots.size(); i++) {
 		for (uint j = 0; j < _hotspots[i].region._rects.size(); j++) {
-			_vm->_gfx->drawRect(_hotspots[i].region._rects[j], 10 + 5*i);
+			_vm->_gfx->drawRect(_hotspots[i].region._rects[j], 10 + 5 * i);
 		}
 	}
 }

@@ -45,10 +45,15 @@ struct PatchData {
 	const char *_fileName;
 	bool _deletePatchFile;
 
-	PatchData(const char *fileName): _fileName(fileName), _deletePatchFile(true) {
+	PatchData(const char *fileName)
+	  : _fileName(fileName)
+	  , _deletePatchFile(true) {
 		_patchFile = new Common::File();
 	}
-	PatchData(Common::File *patchFile, const char *fileName): _patchFile(patchFile), _fileName(fileName), _deletePatchFile(false) {
+	PatchData(Common::File *patchFile, const char *fileName)
+	  : _patchFile(patchFile)
+	  , _fileName(fileName)
+	  , _deletePatchFile(false) {
 	}
 
 	~PatchData() {
@@ -59,14 +64,18 @@ struct PatchData {
 };
 
 struct ResourceData {
-	uint32 id;		// SAGA2
-	uint32 category;	// SAGA2
+	uint32 id; // SAGA2
+	uint32 category; // SAGA2
 	size_t offset;
 	size_t size;
 	PatchData *patchData;
 
-	ResourceData() :
-		id(0), category(0), offset(0), size(0), patchData(NULL) {
+	ResourceData()
+	  : id(0)
+	  , category(0)
+	  , offset(0)
+	  , size(0)
+	  , patchData(NULL) {
 	}
 
 	~ResourceData() {
@@ -76,35 +85,38 @@ struct ResourceData {
 		}
 	}
 
-	bool isExternal() {	// SAGA2
-		return ((offset & (1L<<31)) != 0L);
+	bool isExternal() { // SAGA2
+		return ((offset & (1L << 31)) != 0L);
 	}
 };
 
 typedef Common::Array<ResourceData> ResourceDataArray;
 
 class ResourceContext {
-friend class Resource;
-public:
+	friend class Resource;
 
-	ResourceContext():
-		_fileName(NULL), _fileType(0), _isCompressed(false), _serial(0),
-		_isBigEndian(false),
-		_fileSize(0) {
+public:
+	ResourceContext()
+	  : _fileName(NULL)
+	  , _fileType(0)
+	  , _isCompressed(false)
+	  , _serial(0)
+	  , _isBigEndian(false)
+	  , _fileSize(0) {
 	}
 
-	virtual ~ResourceContext() { }
+	virtual ~ResourceContext() {}
 
-	bool isCompressed() const {	return _isCompressed; }
+	bool isCompressed() const { return _isCompressed; }
 	uint16 fileType() const { return _fileType; }
 	int32 fileSize() const { return _fileSize; }
 	int serial() const { return _serial; }
 	bool isBigEndian() const { return _isBigEndian; }
-	const char * fileName() const {	return _fileName; }
+	const char *fileName() const { return _fileName; }
 
 	Common::File *getFile(ResourceData *resourceData) {
 		Common::File *file;
-		const char * fn;
+		const char *fn;
 		if (resourceData && resourceData->patchData != NULL) {
 			file = resourceData->patchData->_patchFile;
 			fn = resourceData->patchData->_fileName;
@@ -144,11 +156,12 @@ public:
 		}
 		return -1;
 	}
+
 protected:
 	const char *_fileName;
 	uint16 _fileType;
 	bool _isCompressed;
-	int _serial;					// IHNM speech files
+	int _serial; // IHNM speech files
 
 	bool _isBigEndian;
 	ResourceDataArray _table;
@@ -160,7 +173,7 @@ protected:
 
 	virtual bool loadMacMIDI() { return false; }
 	virtual bool loadRes(uint32 contextOffset, uint32 contextSize) = 0;
-	virtual void processPatches(Resource *resource, const GamePatchDescription *patchFiles) { }
+	virtual void processPatches(Resource *resource, const GamePatchDescription *patchFiles) {}
 };
 
 typedef Common::List<ResourceContext *> ResourceContextList;
@@ -200,7 +213,8 @@ public:
 	virtual void loadGlobalResources(int chapter, int actorsEntrance) = 0;
 
 	ResourceContext *getContext(uint16 fileType, int serial = 0);
-	virtual MetaResource* getMetaResource() = 0;
+	virtual MetaResource *getMetaResource() = 0;
+
 protected:
 	SagaEngine *_vm;
 	ResourceContextList _contexts;
@@ -213,7 +227,7 @@ protected:
 };
 
 // ITE
-class ResourceContext_RSC: public ResourceContext {
+class ResourceContext_RSC : public ResourceContext {
 protected:
 	virtual bool loadMacMIDI();
 	virtual bool loadRes(uint32 contextOffset, uint32 contextSize) {
@@ -224,15 +238,17 @@ protected:
 
 class Resource_RSC : public Resource {
 public:
-	Resource_RSC(SagaEngine *vm) : Resource(vm) {}
+	Resource_RSC(SagaEngine *vm)
+	  : Resource(vm) {}
 	virtual uint32 convertResourceId(uint32 resourceId) {
 		return _vm->isMacResources() ? resourceId - 2 : resourceId;
 	}
 	virtual void loadGlobalResources(int chapter, int actorsEntrance) {}
-	virtual MetaResource* getMetaResource() {
+	virtual MetaResource *getMetaResource() {
 		MetaResource *dummy = 0;
 		return dummy;
 	}
+
 protected:
 	virtual ResourceContext *createContext() {
 		return new ResourceContext_RSC();
@@ -241,7 +257,7 @@ protected:
 
 #ifdef ENABLE_IHNM
 // IHNM
-class ResourceContext_RES: public ResourceContext {
+class ResourceContext_RES : public ResourceContext {
 protected:
 	virtual bool loadRes(uint32 contextOffset, uint32 contextSize) {
 		return loadResV1(0, contextSize);
@@ -251,13 +267,15 @@ protected:
 };
 
 // TODO: move load routines from sndres
-class VoiceResourceContext_RES: public ResourceContext {
+class VoiceResourceContext_RES : public ResourceContext {
 protected:
 	virtual bool loadRes(uint32 contextOffset, uint32 contextSize) {
 		return false;
 	}
+
 public:
-	VoiceResourceContext_RES() : ResourceContext() {
+	VoiceResourceContext_RES()
+	  : ResourceContext() {
 		_fileType = GAME_VOICEFILE;
 		_isBigEndian = true;
 	}
@@ -265,14 +283,17 @@ public:
 
 class Resource_RES : public Resource {
 public:
-	Resource_RES(SagaEngine *vm) : Resource(vm) {}
+	Resource_RES(SagaEngine *vm)
+	  : Resource(vm) {}
 	virtual uint32 convertResourceId(uint32 resourceId) { return resourceId; }
 	virtual void loadGlobalResources(int chapter, int actorsEntrance);
-	virtual MetaResource* getMetaResource() { return &_metaResource; }
+	virtual MetaResource *getMetaResource() { return &_metaResource; }
+
 protected:
 	virtual ResourceContext *createContext() {
 		return new ResourceContext_RES();
 	}
+
 private:
 	MetaResource _metaResource;
 };
@@ -280,7 +301,7 @@ private:
 
 #ifdef ENABLE_SAGA2
 // DINO, FTA2
-class ResourceContext_HRS: public ResourceContext {
+class ResourceContext_HRS : public ResourceContext {
 protected:
 	ResourceDataArray _categories;
 
@@ -296,13 +317,15 @@ protected:
 
 class Resource_HRS : public Resource {
 public:
-	Resource_HRS(SagaEngine *vm) : Resource(vm) {}
+	Resource_HRS(SagaEngine *vm)
+	  : Resource(vm) {}
 	virtual uint32 convertResourceId(uint32 resourceId) { return resourceId; }
 	virtual void loadGlobalResources(int chapter, int actorsEntrance) {}
-	virtual MetaResource* getMetaResource() {
+	virtual MetaResource *getMetaResource() {
 		MetaResource *dummy = 0;
 		return dummy;
 	}
+
 protected:
 	virtual ResourceContext *createContext() {
 		return new ResourceContext_HRS();

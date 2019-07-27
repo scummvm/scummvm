@@ -29,8 +29,8 @@
 #include "fullpipe/scene.h"
 #include "fullpipe/statics.h"
 
-#include "common/file.h"
 #include "common/array.h"
+#include "common/file.h"
 #include "common/list.h"
 #include "common/memstream.h"
 
@@ -54,7 +54,7 @@ bool GameLoader::readSavegame(const char *fname) {
 	header.encSize = saveFile->readUint32LE();
 
 	debugC(3, kDebugLoading, "version: %d magic: %s updateCounter: %d unkField: %d encSize: %d, pos: %d",
-			header.version, header.magic, header.updateCounter, header.unkField, header.encSize, saveFile->pos());
+	       header.version, header.magic, header.updateCounter, header.unkField, header.encSize, saveFile->pos());
 
 	if (header.version != 48)
 		return false;
@@ -407,7 +407,7 @@ GameVar::~GameVar() {
 	if (_varType == 2)
 		free(_value.stringValue);
 
-	if (_parentVarObj && !_prevVarObj ) {
+	if (_parentVarObj && !_prevVarObj) {
 		if (_parentVarObj->_subVars == this) {
 			_parentVarObj->_subVars = _nextVarObj;
 		} else if (_parentVarObj->_field_14 == this) {
@@ -465,8 +465,7 @@ bool GameVar::load(MfcArchive &file) {
 		_value.stringValue = (char *)calloc(str.size() + 1, 1);
 		Common::strlcpy(_value.stringValue, str.c_str(), str.size() + 1);
 		debugC(6, kDebugLoading, "s --> %s", _value.stringValue);
-		}
-		break;
+	} break;
 	default:
 		error("Unknown var type: %d (0x%x)", _varType, _varType);
 	}
@@ -487,7 +486,7 @@ GameVar *GameVar::getSubVarByName(const Common::String &name) {
 
 	if (_subVars != 0) {
 		sv = _subVars;
-		for (;sv && scumm_stricmp(sv->_varName.c_str(), name.c_str()); sv = sv->_nextVarObj)
+		for (; sv && scumm_stricmp(sv->_varName.c_str(), name.c_str()); sv = sv->_nextVarObj)
 			;
 	}
 	return sv;

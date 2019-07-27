@@ -23,9 +23,9 @@
 #ifndef SOURCE_LISTING_PROVIDER_H_
 #define SOURCE_LISTING_PROVIDER_H_
 
+#include "common/str.h"
 #include "engines/wintermute/debugger/error.h"
 #include "engines/wintermute/debugger/listing_provider.h"
-#include "common/str.h"
 
 namespace Wintermute {
 
@@ -41,7 +41,6 @@ public:
 	virtual Listing *getListing(const Common::String &filename, ErrorCode &err) = 0;
 	virtual ErrorCode setPath(const Common::String &path) = 0;
 	virtual Common::String getPath() const = 0;
-
 };
 
 } // End of namespace Wintermute

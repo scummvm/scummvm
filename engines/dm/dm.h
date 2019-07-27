@@ -31,10 +31,10 @@
 #include "engines/engine.h"
 #include "engines/savestate.h"
 
+#include "common/memstream.h"
 #include "common/random.h"
 #include "common/savefile.h"
 #include "common/str.h"
-#include "common/memstream.h"
 
 #include "advancedDetector.h"
 
@@ -103,20 +103,20 @@ enum Direction {
 };
 
 enum ThingType {
-	kDMThingTypeParty = -1,  // @ CM1_THING_TYPE_PARTY
+	kDMThingTypeParty = -1, // @ CM1_THING_TYPE_PARTY
 	kDMThingTypeDoor = 0, // @ C00_THING_TYPE_DOOR
 	kDMThingTypeTeleporter = 1, // @ C01_THING_TYPE_TELEPORTER
 	kDMstringTypeText = 2, // @ C02_THING_TYPE_TEXTSTRING
-	kDMThingTypeSensor = 3,  // @ C03_THING_TYPE_SENSOR
+	kDMThingTypeSensor = 3, // @ C03_THING_TYPE_SENSOR
 	kDMThingTypeGroup = 4, // @ C04_THING_TYPE_GROUP
 	kDMThingTypeWeapon = 5, // @ C05_THING_TYPE_WEAPON
 	kDMThingTypeArmour = 6, // @ C06_THING_TYPE_ARMOUR
-	kDMThingTypeScroll = 7,  // @ C07_THING_TYPE_SCROLL
-	kDMThingTypePotion = 8,  // @ C08_THING_TYPE_POTION
-	kDMThingTypeContainer = 9,  // @ C09_THING_TYPE_CONTAINER
-	kDMThingTypeJunk = 10,  // @ C10_THING_TYPE_JUNK
-	kDMThingTypeProjectile = 14,  // @ C14_THING_TYPE_PROJECTILE
-	kDMThingTypeExplosion = 15,  // @ C15_THING_TYPE_EXPLOSION
+	kDMThingTypeScroll = 7, // @ C07_THING_TYPE_SCROLL
+	kDMThingTypePotion = 8, // @ C08_THING_TYPE_POTION
+	kDMThingTypeContainer = 9, // @ C09_THING_TYPE_CONTAINER
+	kDMThingTypeJunk = 10, // @ C10_THING_TYPE_JUNK
+	kDMThingTypeProjectile = 14, // @ C14_THING_TYPE_PROJECTILE
+	kDMThingTypeExplosion = 15, // @ C15_THING_TYPE_EXPLOSION
 	kDMThingTypeTotal = 16 // +1 than the last (explosionThingType)
 }; // @ C[00..15]_THING_TYPE_...
 
@@ -137,7 +137,7 @@ enum GameMode {
 
 enum LoadgameResult {
 	kDMLoadgameFailure = -1, // @ CM1_LOAD_GAME_FAILURE
-	kDMLoadgameSuccess = 1// @ C01_LOAD_GAME_SUCCESS
+	kDMLoadgameSuccess = 1 // @ C01_LOAD_GAME_SUCCESS
 };
 
 enum MapIndice {
@@ -148,9 +148,9 @@ enum MapIndice {
 #define kDMMaskDecodeEvenIfInvisible 0x8000 // @ MASK0x8000_DECODE_EVEN_IF_INVISIBLE
 #define kDMMaskMergeCycles 0x8000 // @ MASK0x8000_MERGE_CYCLES
 
-#define kDMSlotBoxInventoryFirstSlot 8  // @ C08_SLOT_BOX_INVENTORY_FIRST_SLOT
+#define kDMSlotBoxInventoryFirstSlot 8 // @ C08_SLOT_BOX_INVENTORY_FIRST_SLOT
 #define kDMSlotBoxInventoryActionHand 9 // @ C09_SLOT_BOX_INVENTORY_ACTION_HAND
-#define kDMSlotBoxChestFirstSlot 38     // @ C38_SLOT_BOX_CHEST_FIRST_SLOT
+#define kDMSlotBoxChestFirstSlot 38 // @ C38_SLOT_BOX_CHEST_FIRST_SLOT
 
 struct DMADGameDescription {
 	ADGameDescription _desc;
@@ -168,7 +168,8 @@ class Thing {
 public:
 	uint16 _data;
 
-	Thing() : _data(0) {}
+	Thing()
+	  : _data(0) {}
 	Thing(const Thing &other) { set(other._data); }
 	explicit Thing(uint16 d) { set(d); }
 
@@ -196,7 +197,7 @@ public:
 
 // Note: F0026_MAIN_GetBoundedValue<T> has been replaced by CLIP<T>
 
-#define CALL_MEMBER_FN(object, ptrToMember)  ((object).*(ptrToMember))
+#define CALL_MEMBER_FN(object, ptrToMember) ((object).*(ptrToMember))
 
 struct SaveGameHeader {
 	byte _version;
@@ -248,8 +249,8 @@ public:
 
 	Direction turnDirRight(int16 dir); // @ M17_NEXT
 	Direction turnDirLeft(int16 dir); // @ M19_PREVIOUS
-	Direction returnOppositeDir(int16 dir);	// @ M18_OPPOSITE
-	bool isOrientedWestEast(int16 dir);	// @ M16_IS_ORIENTED_WEST_EAST
+	Direction returnOppositeDir(int16 dir); // @ M18_OPPOSITE
+	bool isOrientedWestEast(int16 dir); // @ M16_IS_ORIENTED_WEST_EAST
 	uint16 normalizeModulo4(int16 dir); // @ M21_NORMALIZE
 
 	int32 filterTime(int32 mapTime); // @ M30_TIME
@@ -258,7 +259,6 @@ public:
 	Thing thingWithNewCell(Thing thing, int16 cell); // @ M15_THING_WITH_NEW_CELL
 	int16 getDistance(int16 mapx1, int16 mapy1, int16 mapx2, int16 mapy2); // @ M38_DISTANCE
 	int32 setMap(int32 mapTime, uint32 map); // @ M31_setMap
-
 
 private:
 	uint16 _dungeonId; // @ G0526_ui_DungeonID
@@ -269,6 +269,7 @@ private:
 	byte *_savedScreenForOpenEntranceDoors; // ad-hoc HACK
 	const DMADGameDescription *_gameVersion;
 	bool _canLoadFromGMM;
+
 public:
 	Console *_console;
 	DisplayMan *_displayMan;
@@ -315,21 +316,21 @@ public:
 	char _stringBuildBuffer[128]; // @ G0353_ac_StringBuildBuffer
 	int16 _waitForInputMaxVerticalBlankCount; // @ G0318_i_WaitForInputMaximumVerticalBlankCount
 
-	Thing _thingNone;				 // @ C0xFFFF_THING_NONE
-	Thing _thingEndOfList;			 // @ C0xFFFE_THING_ENDOFLIST
-	Thing _thingFirstExplosion;		 // @ C0xFF80_THING_FIRST_EXPLOSION
-	Thing _thingExplFireBall;		 // @ C0xFF80_THING_EXPLOSION_FIREBALL
-	Thing _thingExplSlime;			 // @ C0xFF81_THING_EXPLOSION_SLIME
-	Thing _thingExplLightningBolt;	 // @ C0xFF82_THING_EXPLOSION_LIGHTNING_BOLT
+	Thing _thingNone; // @ C0xFFFF_THING_NONE
+	Thing _thingEndOfList; // @ C0xFFFE_THING_ENDOFLIST
+	Thing _thingFirstExplosion; // @ C0xFF80_THING_FIRST_EXPLOSION
+	Thing _thingExplFireBall; // @ C0xFF80_THING_EXPLOSION_FIREBALL
+	Thing _thingExplSlime; // @ C0xFF81_THING_EXPLOSION_SLIME
+	Thing _thingExplLightningBolt; // @ C0xFF82_THING_EXPLOSION_LIGHTNING_BOLT
 	Thing _thingExplHarmNonMaterial; // @ C0xFF83_THING_EXPLOSION_HARM_NON_MATERIAL
-	Thing _thingExplOpenDoor;		 // @ C0xFF84_THING_EXPLOSION_OPEN_DOOR
-	Thing _thingExplPoisonBolt;		 // @ C0xFF86_THING_EXPLOSION_POISON_BOLT
-	Thing _thingExplPoisonCloud;	 // @ C0xFF87_THING_EXPLOSION_POISON_CLOUD
-	Thing _thingExplSmoke;			 // @ C0xFFA8_THING_EXPLOSION_SMOKE
-	Thing _thingExplFluxcage;		 // @ C0xFFB2_THING_EXPLOSION_FLUXCAGE
-	Thing _thingExplRebirthStep1;	 // @ C0xFFE4_THING_EXPLOSION_REBIRTH_STEP1
-	Thing _thingExplRebirthStep2;	 // @ C0xFFE5_THING_EXPLOSION_REBIRTH_STEP2
-	Thing _thingParty;				 // @ C0xFFFF_THING_PARTY
+	Thing _thingExplOpenDoor; // @ C0xFF84_THING_EXPLOSION_OPEN_DOOR
+	Thing _thingExplPoisonBolt; // @ C0xFF86_THING_EXPLOSION_POISON_BOLT
+	Thing _thingExplPoisonCloud; // @ C0xFF87_THING_EXPLOSION_POISON_CLOUD
+	Thing _thingExplSmoke; // @ C0xFFA8_THING_EXPLOSION_SMOKE
+	Thing _thingExplFluxcage; // @ C0xFFB2_THING_EXPLOSION_FLUXCAGE
+	Thing _thingExplRebirthStep1; // @ C0xFFE4_THING_EXPLOSION_REBIRTH_STEP1
+	Thing _thingExplRebirthStep2; // @ C0xFFE5_THING_EXPLOSION_REBIRTH_STEP2
+	Thing _thingParty; // @ C0xFFFF_THING_PARTY
 };
 
 WARN_UNUSED_RESULT bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader *header, bool skipThumbnail = true);

@@ -24,29 +24,27 @@
 
 #ifdef USE_MAD
 
-#include "common/debug.h"
-#include "common/mutex.h"
-#include "common/ptr.h"
-#include "common/queue.h"
-#include "common/stream.h"
-#include "common/substream.h"
-#include "common/textconsole.h"
-#include "common/util.h"
+#	include "common/debug.h"
+#	include "common/mutex.h"
+#	include "common/ptr.h"
+#	include "common/queue.h"
+#	include "common/stream.h"
+#	include "common/substream.h"
+#	include "common/textconsole.h"
+#	include "common/util.h"
 
-#include "audio/audiostream.h"
+#	include "audio/audiostream.h"
 
-#include <mad.h>
+#	include <mad.h>
 
-#if defined(__PSP__)
-	#include "backends/platform/psp/mp3.h"
-#endif
+#	if defined(__PSP__)
+#		include "backends/platform/psp/mp3.h"
+#	endif
 namespace Audio {
 
-
-#pragma mark -
-#pragma mark --- MP3 (MAD) stream ---
-#pragma mark -
-
+#	pragma mark -
+#	pragma mark--- MP3 (MAD) stream ---
+#	pragma mark -
 
 class BaseMP3Stream : public virtual AudioStream {
 public:
@@ -68,9 +66,9 @@ protected:
 	int fillBuffer(Common::ReadStream &stream, int16 *buffer, const int numSamples);
 
 	enum State {
-		MP3_STATE_INIT,	// Need to init the decoder
-		MP3_STATE_READY,	// ready for processing data
-		MP3_STATE_EOS		// end of data reached (may need to loop)
+		MP3_STATE_INIT, // Need to init the decoder
+		MP3_STATE_READY, // ready for processing data
+		MP3_STATE_EOS // end of data reached (may need to loop)
 	};
 
 	uint _posInFrame;
@@ -96,7 +94,7 @@ protected:
 class MP3Stream : private BaseMP3Stream, public SeekableAudioStream {
 public:
 	MP3Stream(Common::SeekableReadStream *inStream,
-	               DisposeAfterUse::Flag dispose);
+	          DisposeAfterUse::Flag dispose);
 
 	int readBuffer(int16 *buffer, const int numSamples);
 	bool seek(const Timestamp &where);
@@ -132,11 +130,10 @@ private:
 	bool _finished;
 };
 
-
-BaseMP3Stream::BaseMP3Stream() :
-	_posInFrame(0),
-	_state(MP3_STATE_INIT),
-	_curTime(mad_timer_zero) {
+BaseMP3Stream::BaseMP3Stream()
+  : _posInFrame(0)
+  , _state(MP3_STATE_INIT)
+  , _curTime(mad_timer_zero) {
 
 	// The MAD_BUFFER_GUARD must always contain zeros (the reason
 	// for this is that the Layer III Huffman decoder of libMAD
@@ -206,7 +203,7 @@ void BaseMP3Stream::readMP3Data(Common::ReadStream &stream) {
 		// Note that we use memmove, as we are reusing the same buffer,
 		// and hence the data regions we copy from and to may overlap.
 		remaining = _stream.bufend - _stream.next_frame;
-		assert(remaining < BUFFER_SIZE);	// Paranoia check
+		assert(remaining < BUFFER_SIZE); // Paranoia check
 		memmove(_buf, _stream.next_frame, remaining);
 	}
 
@@ -258,7 +255,7 @@ void BaseMP3Stream::readHeader(Common::ReadStream &stream) {
 		// be far too slow). Hence we perform this explicitly in a separate step.
 		if (mad_header_decode(&_frame.header, &_stream) == -1) {
 			if (_stream.error == MAD_ERROR_BUFLEN) {
-				readMP3Data(stream);  // Read more data
+				readMP3Data(stream); // Read more data
 				continue;
 			} else if (MAD_RECOVERABLE(_stream.error)) {
 				debug(6, "MP3Stream: Recoverable error in mad_header_decode (%s)", mad_stream_errorstr(&_stream));
@@ -326,10 +323,10 @@ int BaseMP3Stream::fillBuffer(Common::ReadStream &stream, int16 *buffer, const i
 	return samples;
 }
 
-MP3Stream::MP3Stream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag dispose) :
-		BaseMP3Stream(),
-		_inStream(skipID3(inStream, dispose)),
-		_length(0, 1000) {
+MP3Stream::MP3Stream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag dispose)
+  : BaseMP3Stream()
+  , _inStream(skipID3(inStream, dispose))
+  , _length(0, 1000) {
 
 	// Initialize the stream with some data and set the channels and rate
 	// variables
@@ -415,9 +412,9 @@ Common::SeekableReadStream *MP3Stream::skipID3(Common::SeekableReadStream *strea
 	return new Common::SeekableSubReadStream(stream, offset, stream->size(), dispose);
 }
 
-PacketizedMP3Stream::PacketizedMP3Stream(Common::SeekableReadStream &firstPacket) :
-		BaseMP3Stream(),
-		_finished(false) {
+PacketizedMP3Stream::PacketizedMP3Stream(Common::SeekableReadStream &firstPacket)
+  : BaseMP3Stream()
+  , _finished(false) {
 
 	// Load some data to get the channels/rate
 	_queue.push(&firstPacket);
@@ -431,9 +428,9 @@ PacketizedMP3Stream::PacketizedMP3Stream(Common::SeekableReadStream &firstPacket
 	_queue.clear();
 }
 
-PacketizedMP3Stream::PacketizedMP3Stream(uint channels, uint rate) :
-		BaseMP3Stream(),
-		_finished(false) {
+PacketizedMP3Stream::PacketizedMP3Stream(uint channels, uint rate)
+  : BaseMP3Stream()
+  , _finished(false) {
 	_channels = channels;
 	_rate = rate;
 }
@@ -522,26 +519,25 @@ void PacketizedMP3Stream::finish() {
 	_finished = true;
 }
 
-
-#pragma mark -
-#pragma mark --- MP3 factory functions ---
-#pragma mark -
+#	pragma mark -
+#	pragma mark--- MP3 factory functions ---
+#	pragma mark -
 
 SeekableAudioStream *makeMP3Stream(
-	Common::SeekableReadStream *stream,
-	DisposeAfterUse::Flag disposeAfterUse) {
+  Common::SeekableReadStream *stream,
+  DisposeAfterUse::Flag disposeAfterUse) {
 
-#if defined(__PSP__)
+#	if defined(__PSP__)
 	SeekableAudioStream *s = 0;
 
 	if (Mp3PspStream::isOkToCreateStream())
 		s = new Mp3PspStream(stream, disposeAfterUse);
 
-	if (!s)	// go to regular MAD mp3 stream if ME fails
+	if (!s) // go to regular MAD mp3 stream if ME fails
 		s = new MP3Stream(stream, disposeAfterUse);
-#else
+#	else
 	SeekableAudioStream *s = new MP3Stream(stream, disposeAfterUse);
-#endif
+#	endif
 	if (s && s->endOfData()) {
 		delete s;
 		return 0;
@@ -557,7 +553,6 @@ PacketizedAudioStream *makePacketizedMP3Stream(Common::SeekableReadStream &first
 PacketizedAudioStream *makePacketizedMP3Stream(uint channels, uint rate) {
 	return new PacketizedMP3Stream(channels, rate);
 }
-
 
 } // End of namespace Audio
 

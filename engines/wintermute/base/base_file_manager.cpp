@@ -27,25 +27,24 @@
  */
 
 #include "engines/wintermute/base/base_file_manager.h"
+#include "common/config-manager.h"
+#include "common/debug.h"
+#include "common/file.h"
+#include "common/fs.h"
+#include "common/savefile.h"
+#include "common/str.h"
+#include "common/system.h"
+#include "common/textconsole.h"
+#include "common/tokenizer.h"
+#include "common/unzip.h"
+#include "common/util.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 #include "engines/wintermute/base/file/base_disk_file.h"
-#include "engines/wintermute/base/file/base_savefile_manager_file.h"
-#include "engines/wintermute/base/file/base_save_thumb_file.h"
 #include "engines/wintermute/base/file/base_package.h"
-#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/file/base_save_thumb_file.h"
+#include "engines/wintermute/base/file/base_savefile_manager_file.h"
 #include "engines/wintermute/wintermute.h"
-#include "common/debug.h"
-#include "common/str.h"
-#include "common/tokenizer.h"
-#include "common/textconsole.h"
-#include "common/util.h"
-#include "common/config-manager.h"
-#include "common/system.h"
-#include "common/fs.h"
-#include "common/file.h"
-#include "common/savefile.h"
-#include "common/fs.h"
-#include "common/unzip.h"
 
 namespace Wintermute {
 
@@ -67,7 +66,6 @@ BaseFileManager::BaseFileManager(Common::Language lang, bool detectionMode) {
 BaseFileManager::~BaseFileManager() {
 	cleanup();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFileManager::cleanup() {
@@ -232,57 +230,57 @@ bool BaseFileManager::registerPackages() {
 					if (_language != Common::EN_ANY) {
 						continue;
 					}
-				// Chinese
+					// Chinese
 				} else if (fileName == "chinese.dcp" || fileName == "xlanguage_nz.dcp" || fileName == "chinese_language_pack.dcp") {
 					if (_language != Common::ZH_CNA) {
 						continue;
 					}
-				// Czech
+					// Czech
 				} else if (fileName == "czech.dcp" || fileName == "xlanguage_cz.dcp" || fileName == "czech_language_pack.dcp") {
 					if (_language != Common::CZ_CZE) {
 						continue;
 					}
-				// French
+					// French
 				} else if (fileName == "french.dcp" || fileName == "xlanguage_fr.dcp" || fileName == "french_language_pack.dcp") {
 					if (_language != Common::FR_FRA) {
 						continue;
 					}
-				// German
+					// German
 				} else if (fileName == "german.dcp" || fileName == "xlanguage_de.dcp" || fileName == "german_language_pack.dcp") {
 					if (_language != Common::DE_DEU) {
 						continue;
 					}
-				// Italian
+					// Italian
 				} else if (fileName == "italian.dcp" || fileName == "xlanguage_it.dcp" || fileName == "italian_language_pack.dcp") {
 					if (_language != Common::IT_ITA) {
 						continue;
 					}
-				// Latvian
+					// Latvian
 				} else if (fileName == "latvian.dcp" || fileName == "xlanguage_lv.dcp" || fileName == "latvian_language_pack.dcp") {
 					if (_language != Common::LV_LAT) {
 						continue;
 					}
-				// Polish
+					// Polish
 				} else if (fileName == "polish.dcp" || fileName == "xlanguage_pl.dcp" || fileName == "polish_language_pack.dcp") {
 					if (_language != Common::PL_POL) {
 						continue;
 					}
-				// Portuguese
+					// Portuguese
 				} else if (fileName == "portuguese.dcp" || fileName == "xlanguage_pt.dcp" || fileName == "portuguese_language_pack.dcp") {
 					if (_language != Common::PT_BRA) {
 						continue;
 					}
-				// Russian
+					// Russian
 				} else if (fileName == "russian.dcp" || fileName == "xlanguage_ru.dcp" || fileName == "russian_language_pack.dcp") {
 					if (_language != Common::RU_RUS) {
 						continue;
 					}
-				// Spanish
+					// Spanish
 				} else if (fileName == "spanish.dcp" || fileName == "xlanguage_es.dcp" || fileName == "spanish_language_pack.dcp") {
 					if (_language != Common::ES_ESP) {
 						continue;
 					}
-				// generic
+					// generic
 				} else if (fileName.hasPrefix("xlanguage_")) {
 					warning("Unknown language package: %s", fileName.c_str());
 					continue;
@@ -293,14 +291,14 @@ bool BaseFileManager::registerPackages() {
 		}
 	}
 
-//	debugC(kWintermuteDebugFileAccess | kWintermuteDebugLog, "  Registered %d files in %d package(s)", _files.size(), _packages.size());
+	//	debugC(kWintermuteDebugFileAccess | kWintermuteDebugLog, "  Registered %d files in %d package(s)", _files.size(), _packages.size());
 
 	return STATUS_OK;
 }
 
 bool BaseFileManager::registerPackage(Common::FSNode file, const Common::String &filename, bool searchSignature) {
 	PackageSet *pack = new PackageSet(file, filename, searchSignature);
-	_packages.add(file.getName(), pack, pack->getPriority() , true);
+	_packages.add(file.getName(), pack, pack->getPriority(), true);
 
 	return STATUS_OK;
 }
@@ -353,7 +351,7 @@ bool BaseFileManager::hasFile(const Common::String &filename) {
 		return true;
 	}
 	if (_packages.hasFile(filename)) {
-		return true;    // We don't bother checking if the file can actually be opened, something bigger is wrong if that is the case.
+		return true; // We don't bother checking if the file can actually be opened, something bigger is wrong if that is the case.
 	}
 	if (!_detectionMode && _resources->hasFile(filename)) {
 		return true;
@@ -379,7 +377,6 @@ Common::SeekableReadStream *BaseFileManager::openFile(const Common::String &file
 	return file;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 Common::WriteStream *BaseFileManager::openFileForWrite(const Common::String &filename) {
 	if (strcmp(filename.c_str(), "") == 0) {
@@ -389,7 +386,6 @@ Common::WriteStream *BaseFileManager::openFileForWrite(const Common::String &fil
 
 	return openFileForWriteRaw(filename);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFileManager::closeFile(Common::SeekableReadStream *File) {
@@ -402,7 +398,6 @@ bool BaseFileManager::closeFile(Common::SeekableReadStream *File) {
 	}
 	return STATUS_FAILED;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 Common::SeekableReadStream *BaseFileManager::openFileRaw(const Common::String &filename) {
@@ -442,7 +437,7 @@ Common::SeekableReadStream *BaseFileManager::openFileRaw(const Common::String &f
 		return ret;
 	}
 
-	debugC(kWintermuteDebugFileAccess ,"BFileManager::OpenFileRaw - Failed to open %s", filename.c_str());
+	debugC(kWintermuteDebugFileAccess, "BFileManager::OpenFileRaw - Failed to open %s", filename.c_str());
 	return nullptr;
 }
 
@@ -455,7 +450,7 @@ Common::WriteStream *BaseFileManager::openFileForWriteRaw(const Common::String &
 		return ret;
 	}
 
-	debugC(kWintermuteDebugFileAccess ,"BFileManager::OpenFileRaw - Failed to open %s", filename.c_str());
+	debugC(kWintermuteDebugFileAccess, "BFileManager::OpenFileRaw - Failed to open %s", filename.c_str());
 	return nullptr;
 }
 

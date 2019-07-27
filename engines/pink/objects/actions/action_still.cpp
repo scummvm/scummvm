@@ -24,9 +24,9 @@
 
 #include "pink/archive.h"
 #include "pink/cel_decoder.h"
-#include "pink/pink.h"
 #include "pink/objects/actions/action_still.h"
 #include "pink/objects/actors/actor.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
@@ -37,7 +37,7 @@ void ActionStill::deserialize(Archive &archive) {
 
 void ActionStill::toConsole() {
 	debugC(6, kPinkDebugLoadingObjects, "\tActionStill: _name = %s, _fileName = %s, _z =%u _startFrame = %u",
-		  _name.c_str(), _fileName.c_str(), _z, _startFrame);
+	       _name.c_str(), _fileName.c_str(), _z, _startFrame);
 }
 
 void ActionStill::end() {

@@ -23,9 +23,9 @@
 #ifndef MUTATIONOFJB_INVENTORYITEMDEFINITIONLIST_H
 #define MUTATIONOFJB_INVENTORYITEMDEFINITIONLIST_H
 
-#include "common/str.h"
 #include "common/hash-str.h"
 #include "common/hashmap.h"
+#include "common/str.h"
 
 namespace MutationOfJB {
 

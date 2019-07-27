@@ -31,19 +31,19 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CTelevision, CGameObject)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(ChangeSeasonMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(PETUpMsg)
-	ON_MESSAGE(PETDownMsg)
-	ON_MESSAGE(StatusChangeMsg)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(PETActivateMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(ShipSettingMsg)
-	ON_MESSAGE(TurnOff)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(LightsMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(ChangeSeasonMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(PETUpMsg)
+ON_MESSAGE(PETDownMsg)
+ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(PETActivateMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(ShipSettingMsg)
+ON_MESSAGE(TurnOff)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(LightsMsg)
 END_MESSAGE_MAP()
 
 int CTelevision::_seasonFrame;
@@ -53,8 +53,13 @@ int CTelevision::_eyeFloorNum;
 bool CTelevision::_channel4Glyph;
 bool CTelevision::_eyeFlag;
 
-CTelevision::CTelevision() : CBackground(), _channelNum(1),
-	_channelsCount(7), _isOn(false), _unused(0), _soundHandle(0) {
+CTelevision::CTelevision()
+  : CBackground()
+  , _channelNum(1)
+  , _channelsCount(7)
+  , _isOn(false)
+  , _unused(0)
+  , _soundHandle(0) {
 }
 
 void CTelevision::init() {

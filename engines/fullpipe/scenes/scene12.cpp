@@ -22,16 +22,16 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objects.h"
-#include "fullpipe/objectnames.h"
+#include "fullpipe/behavior.h"
 #include "fullpipe/constants.h"
-#include "fullpipe/motion.h"
-#include "fullpipe/scenes.h"
-#include "fullpipe/scene.h"
 #include "fullpipe/floaters.h"
 #include "fullpipe/messages.h"
+#include "fullpipe/motion.h"
+#include "fullpipe/objectnames.h"
+#include "fullpipe/objects.h"
+#include "fullpipe/scene.h"
+#include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
-#include "fullpipe/behavior.h"
 
 namespace Fullpipe {
 

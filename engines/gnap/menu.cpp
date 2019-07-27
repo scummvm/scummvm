@@ -24,12 +24,12 @@
 #include "common/savefile.h"
 #include "common/translation.h"
 
-#include "gui/saveload.h"
 #include "graphics/thumbnail.h"
+#include "gui/saveload.h"
 
-#include "gnap/gnap.h"
 #include "gnap/datarchive.h"
 #include "gnap/gamesys.h"
+#include "gnap/gnap.h"
 #include "gnap/resource.h"
 
 namespace Gnap {
@@ -121,7 +121,7 @@ void GnapEngine::initMenuQuitQueryHotspots() {
 void GnapEngine::initSaveLoadHotspots() {
 	int curId = 0;
 
-	for (int i = 0; i < 7; ++i ) {
+	for (int i = 0; i < 7; ++i) {
 		int top = 31 * i + 74;
 		_hotspots[curId]._rect = Common::Rect(288, top, 379, top + 22);
 		_hotspots[curId]._flags = SF_GRAB_CURSOR;
@@ -169,14 +169,14 @@ void GnapEngine::insertInventorySprites() {
 	for (int index = 0; index < 30 && _menuSpritesIndex < 9; ++index) {
 		if (invHas(index)) {
 			_gameSys->drawSpriteToSurface(_menuBackgroundSurface,
-				_hotspots[_menuSpritesIndex]._rect.left - 93, _hotspots[_menuSpritesIndex]._rect.top, 0x10000);
+			                              _hotspots[_menuSpritesIndex]._rect.left - 93, _hotspots[_menuSpritesIndex]._rect.top, 0x10000);
 			_menuInventorySprites[_menuSpritesIndex] = _gameSys->createSurface(getInventoryItemSpriteNum(index) | 0x10000);
 			if (index != _grabCursorSpriteIndex) {
 				_menuInventoryIndices[_menuSpritesIndex] = index;
 				_gameSys->insertSpriteDrawItem(_menuInventorySprites[_menuSpritesIndex],
-					_hotspots[_menuSpritesIndex]._rect.left + ((79 - _menuInventorySprites[_menuSpritesIndex]->w) / 2),
-					_hotspots[_menuSpritesIndex]._rect.top + ((66 - _menuInventorySprites[_menuSpritesIndex]->h) / 2),
-					261);
+				                               _hotspots[_menuSpritesIndex]._rect.left + ((79 - _menuInventorySprites[_menuSpritesIndex]->w) / 2),
+				                               _hotspots[_menuSpritesIndex]._rect.top + ((66 - _menuInventorySprites[_menuSpritesIndex]->h) / 2),
+				                               261);
 			}
 			_hotspots[_menuSpritesIndex]._flags = SF_GRAB_CURSOR;
 			++_menuSpritesIndex;
@@ -305,16 +305,16 @@ void GnapEngine::runMenu() {
 
 	removeDeviceIconActive();
 
-	freeMenuSprite();//??? CHECKME
+	freeMenuSprite(); //??? CHECKME
 }
 
 void GnapEngine::updateMenuStatusInventory() {
 	static const struct {
 		int item1, item2, resultItem;
 	} kCombineItems[] = {
-		{kItemGrass, kItemMud, kItemDisguise},
-		{kItemDice, kItemQuarterWithHole, kItemDiceQuarterHole},
-		{kItemPill, kItemBucketWithBeer, kItemBucketWithPill}
+		{ kItemGrass, kItemMud, kItemDisguise },
+		{ kItemDice, kItemQuarterWithHole, kItemDiceQuarterHole },
+		{ kItemPill, kItemBucketWithBeer, kItemBucketWithPill }
 	};
 
 	updateGrabCursorSprite(0, 0);
@@ -351,15 +351,14 @@ void GnapEngine::updateMenuStatusInventory() {
 	} else if (_sceneClickedHotspot != -1 && _menuInventoryIndices[_sceneClickedHotspot] == -1 && _grabCursorSpriteIndex != -1) {
 		_menuInventoryIndices[_sceneClickedHotspot] = _grabCursorSpriteIndex;
 		_gameSys->insertSpriteDrawItem(_menuInventorySprites[_sceneClickedHotspot],
-			_hotspots[_sceneClickedHotspot]._rect.left + ((79 - _menuInventorySprites[_sceneClickedHotspot]->w) / 2),
-			_hotspots[_sceneClickedHotspot]._rect.top + (66 - _menuInventorySprites[_sceneClickedHotspot]->h) / 2,
-			261);
+		                               _hotspots[_sceneClickedHotspot]._rect.left + ((79 - _menuInventorySprites[_sceneClickedHotspot]->w) / 2),
+		                               _hotspots[_sceneClickedHotspot]._rect.top + (66 - _menuInventorySprites[_sceneClickedHotspot]->h) / 2,
+		                               261);
 		setGrabCursorSprite(-1);
 	} else if (_sceneClickedHotspot != -1 && _menuInventoryIndices[_sceneClickedHotspot] != -1 && _grabCursorSpriteIndex != -1) {
 		int combineIndex = -1;
 		for (int i = 0; i < ARRAYSIZE(kCombineItems); ++i) {
-			if ((_grabCursorSpriteIndex == kCombineItems[i].item1 && _menuInventoryIndices[_sceneClickedHotspot] == kCombineItems[i].item2) ||
-				(_grabCursorSpriteIndex == kCombineItems[i].item2 && _menuInventoryIndices[_sceneClickedHotspot] == kCombineItems[i].item1)) {
+			if ((_grabCursorSpriteIndex == kCombineItems[i].item1 && _menuInventoryIndices[_sceneClickedHotspot] == kCombineItems[i].item2) || (_grabCursorSpriteIndex == kCombineItems[i].item2 && _menuInventoryIndices[_sceneClickedHotspot] == kCombineItems[i].item1)) {
 				combineIndex = i;
 				break;
 			}
@@ -423,7 +422,7 @@ void GnapEngine::updateMenuStatusMainMenu() {
 					}
 
 					while (!_mouseClickState._left && !isKeyStatus1(Common::KEYCODE_ESCAPE) && !isKeyStatus1(Common::KEYCODE_RETURN)
-							&& !isKeyStatus1(Common::KEYCODE_SPACE) && !_timers[2] && !_gameDone)
+					       && !isKeyStatus1(Common::KEYCODE_SPACE) && !_timers[2] && !_gameDone)
 						gameUpdateTick();
 
 					playSound(0x108F5, false);
@@ -486,11 +485,11 @@ void GnapEngine::updateMenuStatusMainMenu() {
 		}
 	}
 #else
-	// NOTE:
-	// This is the code for the original behavior.
-	// It's currently not working prolery, but could be
-	// fixed to replace the ScummVM screens currently
-	// used.
+		// NOTE:
+		// This is the code for the original behavior.
+		// It's currently not working prolery, but could be
+		// fixed to replace the ScummVM screens currently
+		// used.
 		_timers[2] = 10;
 		playSound(0x108F4, false);
 		_gameSys->removeSpriteDrawItem(_menuSprite1, 262);
@@ -527,7 +526,7 @@ void GnapEngine::updateMenuStatusMainMenu() {
 
 Common::Error GnapEngine::saveGameState(int slot, const Common::String &desc) {
 	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(
-		generateSaveName(slot));
+	  generateSaveName(slot));
 	if (!out)
 		return Common::kCreatingFileFailed;
 
@@ -628,7 +627,7 @@ WARN_UNUSED_RESULT bool GnapEngine::readSavegameHeader(Common::InSaveFile *in, G
 
 Common::Error GnapEngine::loadGameState(int slot) {
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
-		generateSaveName(slot));
+	  generateSaveName(slot));
 	if (!saveFile)
 		return Common::kReadingFailed;
 

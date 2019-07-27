@@ -21,12 +21,12 @@
  */
 
 #include "sherlock/debugger.h"
-#include "sherlock/sherlock.h"
+#include "common/str-array.h"
 #include "sherlock/music.h"
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/scalpel/scalpel_debugger.h"
+#include "sherlock/sherlock.h"
 #include "sherlock/tattoo/tattoo_debugger.h"
-#include "common/str-array.h"
 
 namespace Sherlock {
 
@@ -37,17 +37,19 @@ Debugger *Debugger::init(SherlockEngine *vm) {
 		return new Scalpel::ScalpelDebugger(vm);
 }
 
-Debugger::Debugger(SherlockEngine *vm) : GUI::Debugger(), _vm(vm) {
+Debugger::Debugger(SherlockEngine *vm)
+  : GUI::Debugger()
+  , _vm(vm) {
 	_showAllLocations = LOC_DISABLED;
 
-	registerCmd("continue",	     WRAP_METHOD(Debugger, cmdExit));
-	registerCmd("scene",         WRAP_METHOD(Debugger, cmdScene));
-	registerCmd("song",          WRAP_METHOD(Debugger, cmdSong));
-	registerCmd("songs",         WRAP_METHOD(Debugger, cmdListSongs));
-	registerCmd("listfiles",     WRAP_METHOD(Debugger, cmdListFiles));
-	registerCmd("dumpfile",      WRAP_METHOD(Debugger, cmdDumpFile));
-	registerCmd("locations",     WRAP_METHOD(Debugger, cmdLocations));
-	registerCmd("flag",          WRAP_METHOD(Debugger, cmdFlag));
+	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("scene", WRAP_METHOD(Debugger, cmdScene));
+	registerCmd("song", WRAP_METHOD(Debugger, cmdSong));
+	registerCmd("songs", WRAP_METHOD(Debugger, cmdListSongs));
+	registerCmd("listfiles", WRAP_METHOD(Debugger, cmdListFiles));
+	registerCmd("dumpfile", WRAP_METHOD(Debugger, cmdDumpFile));
+	registerCmd("locations", WRAP_METHOD(Debugger, cmdLocations));
+	registerCmd("flag", WRAP_METHOD(Debugger, cmdFlag));
 }
 
 void Debugger::postEnter() {

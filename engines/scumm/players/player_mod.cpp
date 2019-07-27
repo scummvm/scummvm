@@ -20,16 +20,16 @@
  *
  */
 
-
 #include "scumm/players/player_mod.h"
+#include "audio/decoders/raw.h"
 #include "audio/mixer.h"
 #include "audio/rate.h"
-#include "audio/decoders/raw.h"
 
 namespace Scumm {
 
 Player_MOD::Player_MOD(Audio::Mixer *mixer)
-	: _mixer(mixer), _sampleRate(mixer->getOutputRate()) {
+  : _mixer(mixer)
+  , _sampleRate(mixer->getOutputRate()) {
 	int i;
 	_mixamt = 0;
 	_mixpos = 0;
@@ -86,7 +86,7 @@ void Player_MOD::startChannel(int id, void *data, int size, int rate, uint8 vol,
 			break;
 	}
 	if (i == MOD_MAXCHANS) {
-		warning("player_mod - too many music channels playing (%i max)",MOD_MAXCHANS);
+		warning("player_mod - too many music channels playing (%i max)", MOD_MAXCHANS);
 		return;
 	}
 	_channels[i].id = id;
@@ -156,8 +156,8 @@ void Player_MOD::setChannelFreq(int id, int freq) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i < MOD_MAXCHANS; i++) {
 		if (_channels[i].id == id) {
-			if (freq > 31400)	// this is about as high as WinUAE goes
-				freq = 31400;	// can't easily verify on my own Amiga
+			if (freq > 31400) // this is about as high as WinUAE goes
+				freq = 31400; // can't easily verify on my own Amiga
 			_channels[i].freq = freq;
 			break;
 		}
@@ -199,9 +199,9 @@ void Player_MOD::do_mix(int16 *data, uint len) {
 					_channels[i].ctr += delta;
 					int32 cpos = _channels[i].pos * cfrac / 0x10000;
 					while (_channels[i].ctr >= 0x10000) {
-						if (_channels[i].input->readBuffer(&_channels[i].pos, 1) != 1) {	// out of data
+						if (_channels[i].input->readBuffer(&_channels[i].pos, 1) != 1) { // out of data
 							stopChannel(_channels[i].id);
-							goto skipchan;	// exit 2 loops at once
+							goto skipchan; // exit 2 loops at once
 						}
 						_channels[i].ctr -= 0x10000;
 						if (_channels[i].ctr > 0x10000)
@@ -225,7 +225,7 @@ void Player_MOD::do_mix(int16 *data, uint len) {
 					Audio::clampedAdd(data[(dpos + j) * 2 + 1], pos * vol_r / Audio::Mixer::kMaxMixerVolume);
 				}
 			}
-skipchan:		;	// channel ran out of data
+		skipchan:; // channel ran out of data
 		}
 		dpos += dlen;
 	}

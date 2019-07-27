@@ -24,8 +24,8 @@
 
 #include "graphics/thumbnail.h"
 
-#include "pink/pink.h"
 #include "pink/objects/module.h"
+#include "pink/pink.h"
 
 namespace Pink {
 

@@ -30,47 +30,49 @@
 #include "common/textconsole.h"
 
 #ifdef ENABLE_CSTIME
-#include "mohawk/cstime.h"
+#	include "mohawk/cstime.h"
 #endif
 
 #ifdef ENABLE_MYST
-#include "mohawk/myst.h"
-#include "mohawk/myst_areas.h"
-#include "mohawk/myst_card.h"
-#include "mohawk/myst_graphics.h"
-#include "mohawk/myst_scripts.h"
-#include "mohawk/myst_sound.h"
+#	include "mohawk/myst.h"
+#	include "mohawk/myst_areas.h"
+#	include "mohawk/myst_card.h"
+#	include "mohawk/myst_graphics.h"
+#	include "mohawk/myst_scripts.h"
+#	include "mohawk/myst_sound.h"
 #endif
 
 #ifdef ENABLE_RIVEN
-#include "mohawk/riven.h"
-#include "mohawk/riven_card.h"
-#include "mohawk/riven_sound.h"
-#include "mohawk/riven_stack.h"
-#include "mohawk/riven_stacks/domespit.h"
+#	include "mohawk/riven.h"
+#	include "mohawk/riven_card.h"
+#	include "mohawk/riven_sound.h"
+#	include "mohawk/riven_stack.h"
+#	include "mohawk/riven_stacks/domespit.h"
 #endif
 
 namespace Mohawk {
 
 #ifdef ENABLE_MYST
 
-MystConsole::MystConsole(MohawkEngine_Myst *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("changeCard",			WRAP_METHOD(MystConsole, Cmd_ChangeCard));
-	registerCmd("curCard",			WRAP_METHOD(MystConsole, Cmd_CurCard));
-	registerCmd("var",				WRAP_METHOD(MystConsole, Cmd_Var));
-	registerCmd("curStack",			WRAP_METHOD(MystConsole, Cmd_CurStack));
-	registerCmd("changeStack",		WRAP_METHOD(MystConsole, Cmd_ChangeStack));
-	registerCmd("drawImage",			WRAP_METHOD(MystConsole, Cmd_DrawImage));
-	registerCmd("drawRect",			WRAP_METHOD(MystConsole, Cmd_DrawRect));
-	registerCmd("setResourceEnable",	WRAP_METHOD(MystConsole, Cmd_SetResourceEnable));
-	registerCmd("playSound",			WRAP_METHOD(MystConsole, Cmd_PlaySound));
-	registerCmd("stopSound",			WRAP_METHOD(MystConsole, Cmd_StopSound));
-	registerCmd("playMovie",			WRAP_METHOD(MystConsole, Cmd_PlayMovie));
-	registerCmd("disableInitOpcodes",	WRAP_METHOD(MystConsole, Cmd_DisableInitOpcodes));
-	registerCmd("cache",				WRAP_METHOD(MystConsole, Cmd_Cache));
-	registerCmd("resources",			WRAP_METHOD(MystConsole, Cmd_Resources));
-	registerCmd("quickTest",            WRAP_METHOD(MystConsole, Cmd_QuickTest));
-	registerVar("show_resource_rects",  &_vm->_showResourceRects);
+MystConsole::MystConsole(MohawkEngine_Myst *vm)
+  : GUI::Debugger()
+  , _vm(vm) {
+	registerCmd("changeCard", WRAP_METHOD(MystConsole, Cmd_ChangeCard));
+	registerCmd("curCard", WRAP_METHOD(MystConsole, Cmd_CurCard));
+	registerCmd("var", WRAP_METHOD(MystConsole, Cmd_Var));
+	registerCmd("curStack", WRAP_METHOD(MystConsole, Cmd_CurStack));
+	registerCmd("changeStack", WRAP_METHOD(MystConsole, Cmd_ChangeStack));
+	registerCmd("drawImage", WRAP_METHOD(MystConsole, Cmd_DrawImage));
+	registerCmd("drawRect", WRAP_METHOD(MystConsole, Cmd_DrawRect));
+	registerCmd("setResourceEnable", WRAP_METHOD(MystConsole, Cmd_SetResourceEnable));
+	registerCmd("playSound", WRAP_METHOD(MystConsole, Cmd_PlaySound));
+	registerCmd("stopSound", WRAP_METHOD(MystConsole, Cmd_StopSound));
+	registerCmd("playMovie", WRAP_METHOD(MystConsole, Cmd_PlayMovie));
+	registerCmd("disableInitOpcodes", WRAP_METHOD(MystConsole, Cmd_DisableInitOpcodes));
+	registerCmd("cache", WRAP_METHOD(MystConsole, Cmd_Cache));
+	registerCmd("resources", WRAP_METHOD(MystConsole, Cmd_Resources));
+	registerCmd("quickTest", WRAP_METHOD(MystConsole, Cmd_QuickTest));
+	registerVar("show_resource_rects", &_vm->_showResourceRects);
 }
 
 MystConsole::~MystConsole() {
@@ -235,7 +237,7 @@ bool MystConsole::Cmd_PlaySound(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_sound->playEffect((uint16) atoi(argv[1]));
+	_vm->_sound->playEffect((uint16)atoi(argv[1]));
 
 	return false;
 }
@@ -333,14 +335,16 @@ bool MystConsole::Cmd_QuickTest(int argc, const char **argv) {
 	for (uint i = 0; i < ARRAYSIZE(mystStackNames); i++) {
 		MystStack stackId = static_cast<MystStack>(i);
 		if (stackId == kDemoStack || stackId == kMakingOfStack
-		    || stackId == kDemoSlidesStack || stackId == kDemoPreviewStack) continue;
+		    || stackId == kDemoSlidesStack || stackId == kDemoPreviewStack)
+			continue;
 
 		debug("Loading stack %s", mystStackNames[stackId]);
 		_vm->changeToStack(stackId, default_start_card[stackId], 0, 0);
 
 		Common::Array<uint16> ids = _vm->getResourceIDList(ID_VIEW);
 		for (uint j = 0; j < ids.size(); j++) {
-			if (ids[j] == 4632) continue;
+			if (ids[j] == 4632)
+				continue;
 
 			debug("Loading card %d", ids[j]);
 			_vm->changeToCard(ids[j], kTransitionCopy);
@@ -373,31 +377,32 @@ bool MystConsole::Cmd_QuickTest(int argc, const char **argv) {
 
 #ifdef ENABLE_RIVEN
 
-RivenConsole::RivenConsole(MohawkEngine_Riven *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("changeCard",     WRAP_METHOD(RivenConsole, Cmd_ChangeCard));
-	registerCmd("curCard",        WRAP_METHOD(RivenConsole, Cmd_CurCard));
-	registerCmd("dumpCard",       WRAP_METHOD(RivenConsole, Cmd_DumpCard));
-	registerCmd("var",            WRAP_METHOD(RivenConsole, Cmd_Var));
-	registerCmd("playSound",      WRAP_METHOD(RivenConsole, Cmd_PlaySound));
-	registerCmd("playSLST",       WRAP_METHOD(RivenConsole, Cmd_PlaySLST));
-	registerCmd("stopSound",      WRAP_METHOD(RivenConsole, Cmd_StopSound));
-	registerCmd("curStack",       WRAP_METHOD(RivenConsole, Cmd_CurStack));
-	registerCmd("dumpStack",      WRAP_METHOD(RivenConsole, Cmd_DumpStack));
-	registerCmd("changeStack",    WRAP_METHOD(RivenConsole, Cmd_ChangeStack));
-	registerCmd("hotspots",       WRAP_METHOD(RivenConsole, Cmd_Hotspots));
-	registerCmd("zipMode",        WRAP_METHOD(RivenConsole, Cmd_ZipMode));
-	registerCmd("dumpScript",     WRAP_METHOD(RivenConsole, Cmd_DumpScript));
-	registerCmd("listZipCards",   WRAP_METHOD(RivenConsole, Cmd_ListZipCards));
-	registerCmd("getRMAP",        WRAP_METHOD(RivenConsole, Cmd_GetRMAP));
-	registerCmd("combos",         WRAP_METHOD(RivenConsole, Cmd_Combos));
-	registerCmd("sliderState",    WRAP_METHOD(RivenConsole, Cmd_SliderState));
-	registerCmd("quickTest",      WRAP_METHOD(RivenConsole, Cmd_QuickTest));
-	registerVar("show_hotspots",  &_vm->_showHotspots);
+RivenConsole::RivenConsole(MohawkEngine_Riven *vm)
+  : GUI::Debugger()
+  , _vm(vm) {
+	registerCmd("changeCard", WRAP_METHOD(RivenConsole, Cmd_ChangeCard));
+	registerCmd("curCard", WRAP_METHOD(RivenConsole, Cmd_CurCard));
+	registerCmd("dumpCard", WRAP_METHOD(RivenConsole, Cmd_DumpCard));
+	registerCmd("var", WRAP_METHOD(RivenConsole, Cmd_Var));
+	registerCmd("playSound", WRAP_METHOD(RivenConsole, Cmd_PlaySound));
+	registerCmd("playSLST", WRAP_METHOD(RivenConsole, Cmd_PlaySLST));
+	registerCmd("stopSound", WRAP_METHOD(RivenConsole, Cmd_StopSound));
+	registerCmd("curStack", WRAP_METHOD(RivenConsole, Cmd_CurStack));
+	registerCmd("dumpStack", WRAP_METHOD(RivenConsole, Cmd_DumpStack));
+	registerCmd("changeStack", WRAP_METHOD(RivenConsole, Cmd_ChangeStack));
+	registerCmd("hotspots", WRAP_METHOD(RivenConsole, Cmd_Hotspots));
+	registerCmd("zipMode", WRAP_METHOD(RivenConsole, Cmd_ZipMode));
+	registerCmd("dumpScript", WRAP_METHOD(RivenConsole, Cmd_DumpScript));
+	registerCmd("listZipCards", WRAP_METHOD(RivenConsole, Cmd_ListZipCards));
+	registerCmd("getRMAP", WRAP_METHOD(RivenConsole, Cmd_GetRMAP));
+	registerCmd("combos", WRAP_METHOD(RivenConsole, Cmd_Combos));
+	registerCmd("sliderState", WRAP_METHOD(RivenConsole, Cmd_SliderState));
+	registerCmd("quickTest", WRAP_METHOD(RivenConsole, Cmd_QuickTest));
+	registerVar("show_hotspots", &_vm->_showHotspots);
 }
 
 RivenConsole::~RivenConsole() {
 }
-
 
 bool RivenConsole::Cmd_ChangeCard(int argc, const char **argv) {
 	if (argc < 2) {
@@ -587,7 +592,7 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 		// deriven.
 		debugN("\n\nDumping scripts for %s\'s card %d!\n", argv[1], (uint16)atoi(argv[3]));
 		debugN("==================================\n\n");
-		Common::SeekableReadStream *cardStream = _vm->getResource(MKTAG('C','A','R','D'), (uint16)atoi(argv[3]));
+		Common::SeekableReadStream *cardStream = _vm->getResource(MKTAG('C', 'A', 'R', 'D'), (uint16)atoi(argv[3]));
 		cardStream->seek(4);
 		RivenScriptList scriptList = _vm->_scriptMan->readScripts(cardStream);
 		for (uint32 i = 0; i < scriptList.size(); i++) {
@@ -600,13 +605,13 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 		debugN("\n\nDumping scripts for %s\'s card %d hotspots!\n", argv[1], (uint16)atoi(argv[3]));
 		debugN("===========================================\n\n");
 
-		Common::SeekableReadStream *hsptStream = _vm->getResource(MKTAG('H','S','P','T'), (uint16)atoi(argv[3]));
+		Common::SeekableReadStream *hsptStream = _vm->getResource(MKTAG('H', 'S', 'P', 'T'), (uint16)atoi(argv[3]));
 
 		uint16 hotspotCount = hsptStream->readUint16BE();
 
 		for (uint16 i = 0; i < hotspotCount; i++) {
 			debugN("Hotspot %d:\n", i);
-			hsptStream->seek(22, SEEK_CUR);	// Skip non-script related stuff
+			hsptStream->seek(22, SEEK_CUR); // Skip non-script related stuff
 			RivenScriptList scriptList = _vm->_scriptMan->readScripts(hsptStream);
 			for (uint32 j = 0; j < scriptList.size(); j++) {
 				debugN("\tStream Type %d:\n", scriptList[j].type);
@@ -699,18 +704,24 @@ bool RivenConsole::Cmd_QuickTest(int argc, const char **argv) {
 
 		Common::Array<uint16> cardIds = _vm->getResourceIDList(ID_CARD);
 		for (uint16 i = 0; i < cardIds.size(); i++) {
-			if (_vm->shouldQuit()) break;
+			if (_vm->shouldQuit())
+				break;
 
 			uint16 cardId = cardIds[i];
-			if (stackId == kStackTspit && cardId == 366) continue; // Cut card with invalid links
-			if (stackId == kStackTspit && cardId == 412) continue; // Cut card with invalid links
-			if (stackId == kStackTspit && cardId == 486) continue; // Cut card with invalid links
-			if (stackId == kStackBspit && cardId == 465) continue; // Cut card with invalid links
-			if (stackId == kStackJspit && cardId == 737) continue; // Cut card with invalid links
+			if (stackId == kStackTspit && cardId == 366)
+				continue; // Cut card with invalid links
+			if (stackId == kStackTspit && cardId == 412)
+				continue; // Cut card with invalid links
+			if (stackId == kStackTspit && cardId == 486)
+				continue; // Cut card with invalid links
+			if (stackId == kStackBspit && cardId == 465)
+				continue; // Cut card with invalid links
+			if (stackId == kStackJspit && cardId == 737)
+				continue; // Cut card with invalid links
 
 			debug("Loading card %d", cardId);
 			RivenScriptPtr script = _vm->_scriptMan->createScriptFromData(1,
-			                            kRivenCommandChangeCard, 1, cardId);
+			                                                              kRivenCommandChangeCard, 1, cardId);
 			_vm->_scriptMan->runScript(script, true);
 
 			_vm->_gfx->setTransitionMode(kRivenTransitionModeDisabled);
@@ -749,11 +760,13 @@ bool RivenConsole::Cmd_QuickTest(int argc, const char **argv) {
 
 #endif // ENABLE_RIVEN
 
-LivingBooksConsole::LivingBooksConsole(MohawkEngine_LivingBooks *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("playSound",			WRAP_METHOD(LivingBooksConsole, Cmd_PlaySound));
-	registerCmd("stopSound",			WRAP_METHOD(LivingBooksConsole, Cmd_StopSound));
-	registerCmd("drawImage",			WRAP_METHOD(LivingBooksConsole, Cmd_DrawImage));
-	registerCmd("changePage",			WRAP_METHOD(LivingBooksConsole, Cmd_ChangePage));
+LivingBooksConsole::LivingBooksConsole(MohawkEngine_LivingBooks *vm)
+  : GUI::Debugger()
+  , _vm(vm) {
+	registerCmd("playSound", WRAP_METHOD(LivingBooksConsole, Cmd_PlaySound));
+	registerCmd("stopSound", WRAP_METHOD(LivingBooksConsole, Cmd_StopSound));
+	registerCmd("drawImage", WRAP_METHOD(LivingBooksConsole, Cmd_DrawImage));
+	registerCmd("changePage", WRAP_METHOD(LivingBooksConsole, Cmd_ChangePage));
 }
 
 LivingBooksConsole::~LivingBooksConsole() {
@@ -813,15 +826,17 @@ bool LivingBooksConsole::Cmd_ChangePage(int argc, const char **argv) {
 
 #ifdef ENABLE_CSTIME
 
-CSTimeConsole::CSTimeConsole(MohawkEngine_CSTime *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("playSound",			WRAP_METHOD(CSTimeConsole, Cmd_PlaySound));
-	registerCmd("stopSound",			WRAP_METHOD(CSTimeConsole, Cmd_StopSound));
-	registerCmd("drawImage",			WRAP_METHOD(CSTimeConsole, Cmd_DrawImage));
-	registerCmd("drawSubimage",			WRAP_METHOD(CSTimeConsole, Cmd_DrawSubimage));
-	registerCmd("changeCase",			WRAP_METHOD(CSTimeConsole, Cmd_ChangeCase));
-	registerCmd("changeScene",			WRAP_METHOD(CSTimeConsole, Cmd_ChangeScene));
-	registerCmd("caseVariable",			WRAP_METHOD(CSTimeConsole, Cmd_CaseVariable));
-	registerCmd("invItem",			WRAP_METHOD(CSTimeConsole, Cmd_InvItem));
+CSTimeConsole::CSTimeConsole(MohawkEngine_CSTime *vm)
+  : GUI::Debugger()
+  , _vm(vm) {
+	registerCmd("playSound", WRAP_METHOD(CSTimeConsole, Cmd_PlaySound));
+	registerCmd("stopSound", WRAP_METHOD(CSTimeConsole, Cmd_StopSound));
+	registerCmd("drawImage", WRAP_METHOD(CSTimeConsole, Cmd_DrawImage));
+	registerCmd("drawSubimage", WRAP_METHOD(CSTimeConsole, Cmd_DrawSubimage));
+	registerCmd("changeCase", WRAP_METHOD(CSTimeConsole, Cmd_ChangeCase));
+	registerCmd("changeScene", WRAP_METHOD(CSTimeConsole, Cmd_ChangeScene));
+	registerCmd("caseVariable", WRAP_METHOD(CSTimeConsole, Cmd_CaseVariable));
+	registerCmd("invItem", WRAP_METHOD(CSTimeConsole, Cmd_InvItem));
 }
 
 CSTimeConsole::~CSTimeConsole() {

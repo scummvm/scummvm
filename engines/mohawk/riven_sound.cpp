@@ -25,21 +25,20 @@
 
 #include "audio/audiostream.h"
 
-#include "mohawk/riven_sound.h"
+#include "mohawk/resource.h"
 #include "mohawk/riven.h"
 #include "mohawk/riven_card.h"
-#include "mohawk/resource.h"
+#include "mohawk/riven_sound.h"
 #include "mohawk/sound.h"
 
 namespace Mohawk {
 
-RivenSoundManager::RivenSoundManager(MohawkEngine_Riven *vm) :
-		_vm(vm),
-		_effect(nullptr),
-		_mainAmbientSoundId(-1),
-		_effectPlayOnDraw(false),
-		_nextFadeUpdate(0) {
-
+RivenSoundManager::RivenSoundManager(MohawkEngine_Riven *vm)
+  : _vm(vm)
+  , _effect(nullptr)
+  , _mainAmbientSoundId(-1)
+  , _effectPlayOnDraw(false)
+  , _nextFadeUpdate(0) {
 }
 
 RivenSoundManager::~RivenSoundManager() {
@@ -52,7 +51,7 @@ Audio::RewindableAudioStream *RivenSoundManager::makeAudioStream(uint16 id) {
 }
 
 void RivenSoundManager::playSound(uint16 id, uint16 volume, bool playOnDraw) {
-	debug (0, "Playing sound %d", id);
+	debug(0, "Playing sound %d", id);
 
 	stopSound();
 
@@ -73,7 +72,7 @@ void RivenSoundManager::playSound(uint16 id, uint16 volume, bool playOnDraw) {
 
 void RivenSoundManager::playCardSound(const Common::String &name, uint16 volume, bool playOnDraw) {
 	Common::String fullName = Common::String::format("%d_%s_1", _vm->getCard()->getId(), name.c_str());
-	uint16 id =_vm->findResourceID(ID_TWAV, fullName);
+	uint16 id = _vm->findResourceID(ID_TWAV, fullName);
 	playSound(id, volume, playOnDraw);
 }
 
@@ -311,14 +310,13 @@ bool RivenSoundManager::isEffectPlaying() const {
 	return _effect != nullptr && _effect->isPlaying();
 }
 
-RivenSound::RivenSound(MohawkEngine_Riven *vm, Audio::RewindableAudioStream *rewindStream, Audio::Mixer::SoundType mixerType) :
-		_vm(vm),
-		_volume(Audio::Mixer::kMaxChannelVolume),
-		_balance(0),
-		_looping(false),
-		_stream(rewindStream),
-		_mixerType(mixerType) {
-
+RivenSound::RivenSound(MohawkEngine_Riven *vm, Audio::RewindableAudioStream *rewindStream, Audio::Mixer::SoundType mixerType)
+  : _vm(vm)
+  , _volume(Audio::Mixer::kMaxChannelVolume)
+  , _balance(0)
+  , _looping(false)
+  , _stream(rewindStream)
+  , _mixerType(mixerType) {
 }
 
 bool RivenSound::isPlaying() const {
@@ -400,16 +398,15 @@ uint16 RivenSound::getVolume() const {
 	return _volume;
 }
 
-RivenSoundManager::AmbientSound::AmbientSound() :
-		sound(nullptr),
-		targetVolume(0),
-		targetBalance(0) {
-
+RivenSoundManager::AmbientSound::AmbientSound()
+  : sound(nullptr)
+  , targetVolume(0)
+  , targetBalance(0) {
 }
 
-RivenSoundManager::AmbientSoundList::AmbientSoundList() :
-		fading(false),
-		suspend(false) {
+RivenSoundManager::AmbientSoundList::AmbientSoundList()
+  : fading(false)
+  , suspend(false) {
 }
 
 } // End of namespace Mohawk

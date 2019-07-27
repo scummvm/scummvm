@@ -28,19 +28,19 @@
 #include "common/endian.h"
 #include "common/events.h"
 #include "common/file.h"
-#include "common/savefile.h"
 #include "common/keyboard.h"
 #include "common/random.h"
 #include "common/rect.h"
 #include "common/rendermode.h"
+#include "common/savefile.h"
 #include "common/serializer.h"
 #include "common/str.h"
 #include "common/textconsole.h"
-#include "graphics/surface.h"
 #include "graphics/sjis.h"
+#include "graphics/surface.h"
 
-#include "scumm/gfx.h"
 #include "scumm/detection.h"
+#include "scumm/gfx.h"
 #include "scumm/script.h"
 
 #ifdef __DS__
@@ -52,7 +52,7 @@
  * occur. Japanese mode and SCUMM 5 FM-Towns games will not work without
  * dual layer (and 16 bit color) support.
  */
-#define DISABLE_TOWNS_DUAL_LAYER_MODE
+#	define DISABLE_TOWNS_DUAL_LAYER_MODE
 #endif
 
 namespace GUI {
@@ -111,69 +111,69 @@ enum {
  */
 enum GameFeatures {
 	/** A demo, not a full blown game. */
-	GF_DEMO                = 1 << 0,
+	GF_DEMO = 1 << 0,
 
 	/** Games with the AKOS costume system (ScummEngine_v7 and subclasses, HE games). */
-	GF_NEW_COSTUMES        = 1 << 2,
+	GF_NEW_COSTUMES = 1 << 2,
 
 	/** Games using XOR encrypted data files. */
-	GF_USE_KEY             = 1 << 4,
+	GF_USE_KEY = 1 << 4,
 
 	/** Small header games (ScummEngine_v4 and subclasses). */
-	GF_SMALL_HEADER        = 1 << 5,
+	GF_SMALL_HEADER = 1 << 5,
 
 	/** Old bundle games (ScummEngine_v3old and subclasses). */
-	GF_OLD_BUNDLE          = 1 << 6,
+	GF_OLD_BUNDLE = 1 << 6,
 
 	/** EGA games. */
-	GF_16COLOR             = 1 << 7,
+	GF_16COLOR = 1 << 7,
 
 	/** VGA versions of V3 games.  Equivalent to (version == 3 && not GF_16COLOR) */
-	GF_OLD256              = 1 << 8,
+	GF_OLD256 = 1 << 8,
 
 	/** Games which have Audio CD tracks. */
-	GF_AUDIOTRACKS         = 1 << 9,
+	GF_AUDIOTRACKS = 1 << 9,
 
 	/**
 	 * Games using only very few local variables in scripts.
 	 * Apparently that is only the case for 256 color version of Indy3.
 	 */
-	GF_FEW_LOCALS          = 1 << 11,
+	GF_FEW_LOCALS = 1 << 11,
 
 	/** HE games for which localized versions exist */
-	GF_HE_LOCALIZED        = 1 << 13,
+	GF_HE_LOCALIZED = 1 << 13,
 
 	/**
 	 *  HE games with more global scripts and different sprite handling
 	 *  i.e. read it as HE version 9.85. Used for HE98 only.
 	 */
-	GF_HE_985             = 1 << 14,
+	GF_HE_985 = 1 << 14,
 
 	/** HE games with 16 bit color */
-	GF_16BIT_COLOR         = 1 << 15,
+	GF_16BIT_COLOR = 1 << 15,
 
 	/**
 	 * SCUMM v5-v7 Mac games stored in a container file
 	 * Used to differentiate between m68k and PPC versions of Indy4
 	 */
-	GF_MAC_CONTAINER       = 1 << 16
+	GF_MAC_CONTAINER = 1 << 16
 };
 
 /* SCUMM Debug Channels */
 void debugC(int level, const char *s, ...) GCC_PRINTF(2, 3);
 
 enum {
-	DEBUG_GENERAL	=	1 << 0,		// General debug
-	DEBUG_SCRIPTS	=	1 << 2,		// Track script execution (start/stop/pause)
-	DEBUG_OPCODES	=	1 << 3,		// Track opcode invocations
-	DEBUG_VARS	=	1 << 4,		// Track variable changes
-	DEBUG_RESOURCE	=	1 << 5,		// Track resource loading / allocation
-	DEBUG_IMUSE	=	1 << 6,		// Track iMUSE events
-	DEBUG_SOUND	=	1 << 7,		// General Sound Debug
-	DEBUG_ACTORS	=	1 << 8,		// General Actor Debug
-	DEBUG_INSANE	=	1 << 9,		// Track INSANE
-	DEBUG_SMUSH	=	1 << 10,		// Track SMUSH
-	DEBUG_MOONBASE_AI = 1 << 11		// Moonbase AI
+	DEBUG_GENERAL = 1 << 0, // General debug
+	DEBUG_SCRIPTS = 1 << 2, // Track script execution (start/stop/pause)
+	DEBUG_OPCODES = 1 << 3, // Track opcode invocations
+	DEBUG_VARS = 1 << 4, // Track variable changes
+	DEBUG_RESOURCE = 1 << 5, // Track resource loading / allocation
+	DEBUG_IMUSE = 1 << 6, // Track iMUSE events
+	DEBUG_SOUND = 1 << 7, // General Sound Debug
+	DEBUG_ACTORS = 1 << 8, // General Actor Debug
+	DEBUG_INSANE = 1 << 9, // Track INSANE
+	DEBUG_SMUSH = 1 << 10, // Track SMUSH
+	DEBUG_MOONBASE_AI = 1 << 11 // Moonbase AI
 };
 
 struct VerbSlot;
@@ -186,20 +186,20 @@ enum {
 	 * Apparantly only used in very old games (so far only NESCostumeRenderer
 	 * checks it).
 	 */
-	LIGHTMODE_actor_use_base_palette	= 1 << 0,
+	LIGHTMODE_actor_use_base_palette = 1 << 0,
 
 	/**
 	 * Lighting flag that indicates whether the room is currently lit. Normally
 	 * always on. Used for rooms in which the light can be switched "off".
 	 */
-	LIGHTMODE_room_lights_on			= 1 << 1,
+	LIGHTMODE_room_lights_on = 1 << 1,
 
 	/**
 	 * Lighting flag that indicates whether a flashlight like device is active.
 	 * Used in Loom (flashlight follows the actor) and Indy 3 (flashlight
 	 * follows the mouse). Only has any effect if the room lights are off.
 	 */
-	LIGHTMODE_flashlight_on				= 1 << 2,
+	LIGHTMODE_flashlight_on = 1 << 2,
 
 	/**
 	 * Lighting flag that indicates whether actors are to be drawn with their
@@ -208,7 +208,7 @@ enum {
 	 * Note: It is tempting to 'merge' these two flags, but since flags can
 	 * check their values, this is probably not a good idea.
 	 */
-	LIGHTMODE_actor_use_colors	= 1 << 3
+	LIGHTMODE_actor_use_colors = 1 << 3
 	//
 };
 
@@ -216,7 +216,7 @@ enum {
 	MBS_LEFT_CLICK = 0x8000,
 	MBS_RIGHT_CLICK = 0x4000,
 	MBS_MOUSE_MASK = (MBS_LEFT_CLICK | MBS_RIGHT_CLICK),
-	MBS_MAX_KEY	= 0x0200
+	MBS_MAX_KEY = 0x0200
 };
 
 enum ScummGameId {
@@ -236,7 +236,7 @@ enum ScummGameId {
 	GID_TENTACLE,
 	GID_ZAK,
 
-	GID_HEGAME,      // Generic name for all HE games with default behavior
+	GID_HEGAME, // Generic name for all HE games with default behavior
 	GID_PUTTDEMO,
 	GID_FBEAR,
 	GID_PUTTMOON,
@@ -247,7 +247,7 @@ enum ScummGameId {
 	GID_BIRTHDAYYELLOW,
 	GID_TREASUREHUNT,
 	GID_PUTTRACE,
-	GID_FUNSHOP,	// Used for all three funshops
+	GID_FUNSHOP, // Used for all three funshops
 	GID_FOOTBALL,
 	GID_FOOTBALL2002,
 	GID_SOCCER,
@@ -258,7 +258,7 @@ enum ScummGameId {
 	GID_BASKETBALL,
 	GID_MOONBASE,
 	GID_PJGAMES,
-	GID_HECUP		// CUP demos
+	GID_HECUP // CUP demos
 };
 
 struct SentenceTab {
@@ -305,7 +305,6 @@ struct ScummEngine_v0_Delays {
 	uint _objectStripRedrawCount;
 	uint _actorRedrawCount;
 	uint _actorLimbRedrawDrawCount;
-
 };
 
 enum WhereIsObject {
@@ -324,14 +323,14 @@ struct SaveStateMetaInfos {
 };
 
 enum UserStates {
-	USERSTATE_SET_FREEZE      = 0x01,   // freeze scripts if USERSTATE_FREEZE_ON is set, unfreeze otherwise
-	USERSTATE_SET_CURSOR      = 0x02,   // shows cursor if USERSTATE_CURSOR_ON is set, hides it otherwise
-	USERSTATE_SET_IFACE       = 0x04,   // change user-interface (sentence-line, inventory, verb-area)
-	USERSTATE_FREEZE_ON       = 0x08,   // only interpreted if USERSTATE_SET_FREEZE is set
-	USERSTATE_CURSOR_ON       = 0x10,   // only interpreted if USERSTATE_SET_CURSOR is set
-	USERSTATE_IFACE_SENTENCE  = 0x20,   // only interpreted if USERSTATE_SET_IFACE is set
-	USERSTATE_IFACE_INVENTORY = 0x40,   // only interpreted if USERSTATE_SET_IFACE is set
-	USERSTATE_IFACE_VERBS     = 0x80    // only interpreted if USERSTATE_SET_IFACE is set
+	USERSTATE_SET_FREEZE = 0x01, // freeze scripts if USERSTATE_FREEZE_ON is set, unfreeze otherwise
+	USERSTATE_SET_CURSOR = 0x02, // shows cursor if USERSTATE_CURSOR_ON is set, hides it otherwise
+	USERSTATE_SET_IFACE = 0x04, // change user-interface (sentence-line, inventory, verb-area)
+	USERSTATE_FREEZE_ON = 0x08, // only interpreted if USERSTATE_SET_FREEZE is set
+	USERSTATE_CURSOR_ON = 0x10, // only interpreted if USERSTATE_SET_CURSOR is set
+	USERSTATE_IFACE_SENTENCE = 0x20, // only interpreted if USERSTATE_SET_IFACE is set
+	USERSTATE_IFACE_INVENTORY = 0x40, // only interpreted if USERSTATE_SET_IFACE is set
+	USERSTATE_IFACE_VERBS = 0x80 // only interpreted if USERSTATE_SET_IFACE is set
 };
 
 #define USERSTATE_IFACE_ALL (USERSTATE_IFACE_SENTENCE | USERSTATE_IFACE_INVENTORY | USERSTATE_IFACE_VERBS)
@@ -469,7 +468,7 @@ protected:
 
 	// Event handling
 public:
-	void parseEvents();	// Used by IMuseDigital::startSound
+	void parseEvents(); // Used by IMuseDigital::startSound
 protected:
 	virtual void parseEvent(Common::Event event);
 
@@ -506,17 +505,18 @@ protected:
 	byte _fastMode;
 
 	byte _numActors;
-	Actor **_actors;	// Has _numActors elements
+	Actor **_actors; // Has _numActors elements
 	Actor **_sortedActors;
 
 	byte *_arraySlot;
 	uint16 *_inventory;
 	uint16 *_newNames;
+
 public:
-	// VAR is a wrapper around scummVar, which attempts to include additional
-	// useful information should an illegal var access be detected.
-	#define VAR(x)	scummVar(x, #x, __FILE__, __LINE__)
-	int32& scummVar(byte var, const char *varName, const char *file, int line) {
+// VAR is a wrapper around scummVar, which attempts to include additional
+// useful information should an illegal var access be detected.
+#define VAR(x) scummVar(x, #x, __FILE__, __LINE__)
+	int32 &scummVar(byte var, const char *varName, const char *file, int line) {
 		if (var == 0xFF) {
 			error("Illegal access to variable %s in file %s, line %d", varName, file, line);
 		}
@@ -543,10 +543,11 @@ protected:
 	int _numRoomVariables;
 	int _numPalettes, _numSprites, _numTalkies, _numUnk;
 	int _HEHeapSize;
+
 public:
-	int _numLocalScripts, _numImages, _numRooms, _numScripts, _numSounds;	// Used by HE games
-	int _numCostumes;	// FIXME - should be protected, used by Actor::remapActorPalette
-	int32 _numCharsets;	// FIXME - should be protected, used by CharsetRenderer
+	int _numLocalScripts, _numImages, _numRooms, _numScripts, _numSounds; // Used by HE games
+	int _numCostumes; // FIXME - should be protected, used by Actor::remapActorPalette
+	int32 _numCharsets; // FIXME - should be protected, used by CharsetRenderer
 
 	BaseCostumeLoader *_costumeLoader;
 	BaseCostumeRenderer *_costumeRenderer;
@@ -564,9 +565,9 @@ protected:
 	int _curPalIndex;
 
 public:
-	byte _currentRoom;	// FIXME - should be protected but Actor::isInCurrentRoom uses it
-	int _roomResource;  // FIXME - should be protected but Sound::pauseSounds uses it
-	bool _egoPositioned;	// Used by Actor::putActor, hence public
+	byte _currentRoom; // FIXME - should be protected but Actor::isInCurrentRoom uses it
+	int _roomResource; // FIXME - should be protected but Sound::pauseSounds uses it
+	bool _egoPositioned; // Used by Actor::putActor, hence public
 
 	FilenamePattern _filenamePattern;
 
@@ -611,7 +612,7 @@ protected:
 	virtual void saveLoadWithSerializer(Common::Serializer &s);
 	void saveResource(Common::Serializer &ser, ResType type, ResId idx);
 	void loadResource(Common::Serializer &ser, ResType type, ResId idx);
-	void loadResourceOLD(Common::Serializer &ser, ResType type, ResId idx);	// "Obsolete"
+	void loadResourceOLD(Common::Serializer &ser, ResType type, ResId idx); // "Obsolete"
 
 	virtual Common::SeekableReadStream *openSaveFileForReading(int slot, bool compat, Common::String &fileName);
 	virtual Common::WriteStream *openSaveFileForWriting(int slot, bool compat, Common::String &fileName);
@@ -633,7 +634,7 @@ public:
 
 	Common::String getTargetName() const { return _targetName; }
 
-// thumbnail + info stuff
+	// thumbnail + info stuff
 public:
 	static bool querySaveMetaInfos(const char *target, int slot, int heversion, Common::String &desc, Graphics::Surface *&thumbnail, SaveStateMetaInfos *&timeInfos);
 
@@ -646,7 +647,7 @@ protected:
 	uint32 _localScriptOffsets[1024];
 	const byte *_scriptPointer;
 	const byte *_scriptOrgPointer;
-	const byte * const *_lastCodePtr;
+	const byte *const *_lastCodePtr;
 	byte _opcode;
 	byte _currentScript;
 	int _scummStackPos;
@@ -659,7 +660,7 @@ protected:
 	const char *getOpcodeDesc(byte i);
 
 	void initializeLocals(int slot, int *vars);
-	int	getScriptSlot();
+	int getScriptSlot();
 
 	void startScene(int room, Actor *a, int b);
 	bool startManiac();
@@ -726,6 +727,7 @@ protected:
 	/* Should be in Resource class */
 	BaseScummFile *_fileHandle;
 	uint32 _fileOffset;
+
 public:
 	/** The name of the (macintosh/rescumm style) container file, if any. */
 	Common::String _containerFile;
@@ -739,22 +741,22 @@ protected:
 	int _resourceHeaderSize;
 	byte _resourceMapper[128];
 	const byte *_resourceLastSearchBuf; // FIXME: need to put it to savefile?
-	uint32 _resourceLastSearchSize;    // FIXME: need to put it to savefile?
+	uint32 _resourceLastSearchSize; // FIXME: need to put it to savefile?
 
 	virtual void allocateArrays();
 	void openRoom(int room);
 	void closeRoom();
 	void deleteRoomOffsets();
 	virtual void readRoomsOffsets();
-	void askForDisk(const char *filename, int disknum);	// TODO: Use Common::String
-	bool openResourceFile(const Common::String &filename, byte encByte);	// TODO: Use Common::String
+	void askForDisk(const char *filename, int disknum); // TODO: Use Common::String
+	bool openResourceFile(const Common::String &filename, byte encByte); // TODO: Use Common::String
 
 	void loadPtrToResource(ResType type, ResId idx, const byte *ptr);
 	virtual int readResTypeList(ResType type);
-//	void allocResTypeData(ResType type, uint32 tag, int num, int mode);
-//	byte *createResource(int type, int index, uint32 size);
+	//	void allocResTypeData(ResType type, uint32 tag, int num, int mode);
+	//	byte *createResource(int type, int index, uint32 size);
 	int loadResource(ResType type, ResId idx);
-//	void nukeResource(ResType type, ResId idx);
+	//	void nukeResource(ResType type, ResId idx);
 	int getResourceRoomNr(ResType type, ResId idx);
 	virtual uint32 getResourceRoomOffset(ResType type, ResId idx);
 	int getResourceSize(ResType type, ResId idx);
@@ -786,6 +788,7 @@ protected:
 	void nukeCharset(int i);
 
 	int _lastLoadedRoom;
+
 public:
 	const byte *findResourceData(uint32 tag, const byte *ptr);
 	const byte *findResource(uint32 tag, const byte *ptr);
@@ -814,8 +817,9 @@ protected:
 	int findLocalObjectSlot();
 	void addObjectToInventory(uint obj, uint room);
 	void updateObjectStates();
+
 public:
-	bool getClass(int obj, int cls) const;		// Used in actor.cpp, hence public
+	bool getClass(int obj, int cls) const; // Used in actor.cpp, hence public
 protected:
 	void putClass(int obj, int cls, bool set);
 	int getState(int obj);
@@ -831,7 +835,10 @@ protected:
 	virtual int actorToObj(int actor);
 	int getObjX(int obj);
 	int getObjY(int obj);
-	void getObjectXYPos(int object, int &x, int &y)	{ int dir; getObjectXYPos(object, x, y, dir); }
+	void getObjectXYPos(int object, int &x, int &y) {
+		int dir;
+		getObjectXYPos(object, x, y, dir);
+	}
 	void getObjectXYPos(int object, int &x, int &y, int &dir);
 	int getObjOldDir(int obj);
 	int getObjNewDir(int obj);
@@ -840,13 +847,13 @@ protected:
 	int whereIsObject(int object) const;
 	int findObject(int x, int y);
 	void findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint object, uint room);
-public:
-	int getObjectOrActorXY(int object, int &x, int &y);	// Used in actor.cpp, hence public
-	int getDist(int x, int y, int x2, int y2);	// Also used in actor.cpp
-protected:
 
+public:
+	int getObjectOrActorXY(int object, int &x, int &y); // Used in actor.cpp, hence public
+	int getDist(int x, int y, int x2, int y2); // Also used in actor.cpp
+protected:
 	int getObjActToObjActDist(int a, int b); // Not sure how to handle
-	const byte *getObjOrActorName(int obj);		 // these three..
+	const byte *getObjOrActorName(int obj); // these three..
 	void setObjectName(int obj);
 
 	void addObjectToDrawQue(int object);
@@ -915,7 +922,7 @@ public:
 
 	virtual void actorTalk(const byte *msg);
 	void stopTalk();
-	int getTalkingActor();		// Wrapper around VAR_TALK_ACTOR for V1 Maniac
+	int getTalkingActor(); // Wrapper around VAR_TALK_ACTOR for V1 Maniac
 	void setTalkingActor(int variable);
 
 	// Generic costume code
@@ -924,11 +931,12 @@ public:
 protected:
 	/* Should be in Graphics class? */
 	uint16 _screenB, _screenH;
+
 public:
 	int _roomHeight, _roomWidth;
 	int _screenHeight, _screenWidth;
-	VirtScreen _virtscr[4];		// Virtual screen areas
-	CameraData camera;			// 'Camera' - viewport
+	VirtScreen _virtscr[4]; // Virtual screen areas
+	CameraData camera; // 'Camera' - viewport
 
 	int _screenStartStrip, _screenEndStrip;
 	int _screenTop;
@@ -938,7 +946,7 @@ public:
 	Graphics::PixelFormat _outputPixelFormat;
 
 protected:
-	ColorCycle _colorCycle[16];	// Palette cycles
+	ColorCycle _colorCycle[16]; // Palette cycles
 	uint8 _colorUsedByCycle[256];
 
 	uint32 _ENCD_offs, _EXCD_offs;
@@ -965,6 +973,7 @@ protected:
 	bool _doEffect;
 
 	bool _snapScroll;
+
 public:
 	bool isLightOn() const;
 
@@ -974,7 +983,7 @@ protected:
 	void initScreens(int b, int h);
 	void initVirtScreen(VirtScreenNumber slot, int top, int width, int height, bool twobufs, bool scrollable);
 	void initBGBuffers(int height);
-	void initCycl(const byte *ptr);	// Color cycle
+	void initCycl(const byte *ptr); // Color cycle
 
 	void decodeNESBaseTiles();
 
@@ -1018,13 +1027,15 @@ protected:
 	void stopCycle(int i);
 	virtual void palManipulateInit(int resID, int start, int end, int time);
 	void palManipulate();
+
 public:
 	uint8 *getHEPaletteSlot(uint16 palSlot);
 	uint16 get16BitColor(uint8 r, uint8 g, uint8 b);
-	int remapPaletteColor(int r, int g, int b, int threshold);		// Used by Actor::remapActorPalette
+	int remapPaletteColor(int r, int g, int b, int threshold); // Used by Actor::remapActorPalette
 	void readPCEPalette(const byte **ptr, byte **dest, int numEntries);
 	void colorPCEToRGB(uint16 color, byte *r, byte *g, byte *b);
 	void setPCETextPalette(uint8 color);
+
 protected:
 	void moveMemInPalRes(int start, int end, byte direction);
 	void setShadowPalette(int slot, int redScale, int greenScale, int blueScale, int startColor, int endColor);
@@ -1035,9 +1046,10 @@ protected:
 
 public:
 	void markRectAsDirty(VirtScreenNumber virt, int left, int right, int top, int bottom, int dirtybit = 0);
-	void markRectAsDirty(VirtScreenNumber virt, const Common::Rect& rect, int dirtybit = 0) {
+	void markRectAsDirty(VirtScreenNumber virt, const Common::Rect &rect, int dirtybit = 0) {
 		markRectAsDirty(virt, rect.left, rect.right, rect.top, rect.bottom, dirtybit);
 	}
+
 protected:
 	// Screen rendering
 	byte *_compositeBuf;
@@ -1222,7 +1234,7 @@ protected:
 	int convertStringMessage(byte *dst, int dstSize, int var);
 
 public:
-	Common::Language _language;	// Accessed by a hack in NutRenderer::loadFont
+	Common::Language _language; // Accessed by a hack in NutRenderer::loadFont
 
 	// Used by class ScummDialog:
 	virtual void translateText(const byte *text, byte *trans_buff);
@@ -1238,7 +1250,6 @@ protected:
 	byte *_2byteFontPtr;
 
 public:
-
 	/* Scumm Vars */
 	byte VAR_KEYPRESS;
 	byte VAR_SYNC;
@@ -1344,12 +1355,12 @@ public:
 	byte VAR_MUSIC_BUNDLE_LOADED;
 	byte VAR_VOICE_BUNDLE_LOADED;
 
-	byte VAR_LEFTBTN_DOWN;	// V7/V8
-	byte VAR_RIGHTBTN_DOWN;	// V7/V8
-	byte VAR_LEFTBTN_HOLD;	// V6/V72HE/V7/V8
-	byte VAR_RIGHTBTN_HOLD;	// V6/V72HE/V7/V8
-	byte VAR_SAVELOAD_SCRIPT;	// V6/V7 (not HE)
-	byte VAR_SAVELOAD_SCRIPT2;	// V6/V7 (not HE)
+	byte VAR_LEFTBTN_DOWN; // V7/V8
+	byte VAR_RIGHTBTN_DOWN; // V7/V8
+	byte VAR_LEFTBTN_HOLD; // V6/V72HE/V7/V8
+	byte VAR_RIGHTBTN_HOLD; // V6/V72HE/V7/V8
+	byte VAR_SAVELOAD_SCRIPT; // V6/V7 (not HE)
+	byte VAR_SAVELOAD_SCRIPT2; // V6/V7 (not HE)
 
 	// V6/V7 specific variables (FT & Sam & Max specific)
 	byte VAR_CHARSET_MASK;
@@ -1365,20 +1376,20 @@ public:
 	byte VAR_ACTIVE_OBJECT2;
 
 	// HE specific variables
-	byte VAR_REDRAW_ALL_ACTORS;		// Used in setActorRedrawFlags()
-	byte VAR_SKIP_RESET_TALK_ACTOR;		// Used in setActorCostume()
+	byte VAR_REDRAW_ALL_ACTORS; // Used in setActorRedrawFlags()
+	byte VAR_SKIP_RESET_TALK_ACTOR; // Used in setActorCostume()
 
-	byte VAR_SOUND_CHANNEL;			// Used in o_startSound()
-	byte VAR_TALK_CHANNEL;			// Used in startHETalkSound()
-	byte VAR_SOUNDCODE_TMR;			// Used in processSoundCode()
-	byte VAR_RESERVED_SOUND_CHANNELS;	// Used in findFreeSoundChannel()
+	byte VAR_SOUND_CHANNEL; // Used in o_startSound()
+	byte VAR_TALK_CHANNEL; // Used in startHETalkSound()
+	byte VAR_SOUNDCODE_TMR; // Used in processSoundCode()
+	byte VAR_RESERVED_SOUND_CHANNELS; // Used in findFreeSoundChannel()
 
-	byte VAR_MAIN_SCRIPT;			// Used in scummLoop()
+	byte VAR_MAIN_SCRIPT; // Used in scummLoop()
 
-	byte VAR_SCRIPT_CYCLE;			// Used in runScript()/runObjectScript()
-	byte VAR_NUM_SCRIPT_CYCLES;		// Used in runAllScripts()
+	byte VAR_SCRIPT_CYCLE; // Used in runScript()/runObjectScript()
+	byte VAR_NUM_SCRIPT_CYCLES; // Used in runAllScripts()
 
-	byte VAR_QUIT_SCRIPT;			// Used in confirmExitDialog()
+	byte VAR_QUIT_SCRIPT; // Used in confirmExitDialog()
 
 	// Exists both in V7 and in V72HE:
 	byte VAR_NUM_GLOBAL_OBJS;
@@ -1397,10 +1408,10 @@ public:
 
 protected:
 	void towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, int srcX, int srcY, int w, int h);
-#ifdef USE_RGB_COLOR
+#	ifdef USE_RGB_COLOR
 	void towns_setPaletteFromPtr(const byte *ptr, int numcolor = -1);
 	void towns_setTextPaletteFromPtr(const byte *ptr);
-#endif
+#	endif
 	void towns_setupPalCycleField(int x1, int y1, int x2, int y2);
 	void towns_processPalCycleField();
 	void towns_resetPalCycleFields();

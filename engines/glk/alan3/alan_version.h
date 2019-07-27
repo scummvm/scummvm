@@ -28,7 +28,7 @@
 namespace Glk {
 namespace Alan3 {
 
-extern const Product alan;
+	extern const Product alan;
 
 } // End of namespace Alan3
 } // End of namespace Glk

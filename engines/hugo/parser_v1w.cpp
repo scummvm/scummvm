@@ -31,20 +31,21 @@
 
 #include "common/debug.h"
 
-#include "hugo/hugo.h"
-#include "hugo/parser.h"
-#include "hugo/file.h"
-#include "hugo/schedule.h"
-#include "hugo/route.h"
 #include "hugo/display.h"
-#include "hugo/util.h"
-#include "hugo/sound.h"
-#include "hugo/object.h"
-#include "hugo/text.h"
+#include "hugo/file.h"
+#include "hugo/hugo.h"
 #include "hugo/inventory.h"
+#include "hugo/object.h"
+#include "hugo/parser.h"
+#include "hugo/route.h"
+#include "hugo/schedule.h"
+#include "hugo/sound.h"
+#include "hugo/text.h"
+#include "hugo/util.h"
 
 namespace Hugo {
-Parser_v1w::Parser_v1w(HugoEngine *vm) : Parser_v3d(vm) {
+Parser_v1w::Parser_v1w(HugoEngine *vm)
+  : Parser_v3d(vm) {
 }
 
 Parser_v1w::~Parser_v1w() {
@@ -65,7 +66,7 @@ void Parser_v1w::lineHandler() {
 		return;
 	}
 
-	Utils::strlwr(_vm->_line);                      // Convert to lower case
+	Utils::strlwr(_vm->_line); // Convert to lower case
 
 	// God Mode cheat commands:
 	// goto <screen>                                Takes hero to named screen
@@ -132,7 +133,7 @@ void Parser_v1w::lineHandler() {
 	}
 
 	// Empty line
-	if (*_vm->_line == '\0')                        // Empty line
+	if (*_vm->_line == '\0') // Empty line
 		return;
 	if (strspn(_vm->_line, " ") == strlen(_vm->_line)) // Nothing but spaces!
 		return;
@@ -143,7 +144,7 @@ void Parser_v1w::lineHandler() {
 		return;
 	}
 
-	char farComment[kCompLineSize * 5] = "";        // hold 5 line comment if object not nearby
+	char farComment[kCompLineSize * 5] = ""; // hold 5 line comment if object not nearby
 
 	// Test for nearby objects referenced explicitly
 	for (int i = 0; i < _vm->_object->_numObj; i++) {
@@ -188,7 +189,7 @@ void Parser_v1w::lineHandler() {
 	if (verb == _vm->_text->getVerb(_vm->_look, 0) && _vm->_maze._enabledFl) {
 		Utils::notifyBox(_vm->_text->getTextParser(kTBMaze));
 		_vm->_object->showTakeables();
-	} else if (verb && noun) {                      // A combination I didn't think of
+	} else if (verb && noun) { // A combination I didn't think of
 		Utils::notifyBox(_vm->_text->getTextParser(kTBNoPoint));
 	} else if (noun) {
 		Utils::notifyBox(_vm->_text->getTextParser(kTBNoun));

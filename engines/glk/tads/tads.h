@@ -29,43 +29,44 @@
 namespace Glk {
 namespace TADS {
 
-/**
+	/**
  * tads game interpreter
  */
-class TADS : public GlkAPI {
-protected:
-	winid_t story_win, status_win;
-	uint mainfg, mainbg;
-	uint statusfg, statusbg;
-public:
-	/**
+	class TADS : public GlkAPI {
+	protected:
+		winid_t story_win, status_win;
+		uint mainfg, mainbg;
+		uint statusfg, statusbg;
+
+	public:
+		/**
 	 * Constructor
 	 */
-	TADS(OSystem *syst, const GlkGameDescription &gameDesc);
+		TADS(OSystem *syst, const GlkGameDescription &gameDesc);
 
-	/**
+		/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override { return INTERPRETER_SCOTT; }
+		virtual InterpreterType getInterpreterType() const override { return INTERPRETER_SCOTT; }
 
-	/**
+		/**
 	  * Returns true whether a given feature is supported by the engine
 	  */
-	virtual bool hasFeature(EngineFeature f) const override;
+		virtual bool hasFeature(EngineFeature f) const override;
 
-	/**
+		/**
 	 * Load a savegame from the passed Quetzal file chunk stream
 	 */
-	virtual Common::Error readSaveData(Common::SeekableReadStream *rs) override;
+		virtual Common::Error readSaveData(Common::SeekableReadStream *rs) override;
 
-	/**
+		/**
 	 * Save the game. The passed write stream represents access to the UMem chunk
 	 * in the Quetzal save file that will be created
 	 */
-	virtual Common::Error writeGameData(Common::WriteStream *ws) override;
-};
+		virtual Common::Error writeGameData(Common::WriteStream *ws) override;
+	};
 
-extern TADS *g_vm;
+	extern TADS *g_vm;
 
 } // End of namespace TADS
 } // End of namespace Glk

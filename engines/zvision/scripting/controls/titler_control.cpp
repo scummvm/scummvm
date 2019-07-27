@@ -24,17 +24,17 @@
 
 #include "zvision/scripting/controls/titler_control.h"
 
-#include "zvision/zvision.h"
-#include "zvision/text/text.h"
-#include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/text/text.h"
+#include "zvision/zvision.h"
 
 #include "common/stream.h"
 
 namespace ZVision {
 
 TitlerControl::TitlerControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)
-	: Control(engine, key, CONTROL_TITLER) {
+  : Control(engine, key, CONTROL_TITLER) {
 
 	_surface = NULL;
 	_curString = -1;

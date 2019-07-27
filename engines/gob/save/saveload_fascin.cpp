@@ -20,35 +20,34 @@
  *
  */
 
-#include "gob/save/saveload.h"
-#include "gob/save/saveconverter.h"
 #include "gob/inter.h"
+#include "gob/save/saveconverter.h"
+#include "gob/save/saveload.h"
 #include "gob/variables.h"
 
 namespace Gob {
 
 SaveLoad_Fascination::SaveFile SaveLoad_Fascination::_saveFiles[] = {
-	{ "cat.cat",    kSaveModeSave, -1, 0, "savegame catalog"},
-	{ "save0.inf",  kSaveModeSave,  0, 0, "savegame"},
-	{ "save1.inf",  kSaveModeSave,  1, 0, "savegame"},
-	{ "save2.inf",  kSaveModeSave,  2, 0, "savegame"},
-	{ "save3.inf",  kSaveModeSave,  3, 0, "savegame"},
-	{ "save4.inf",  kSaveModeSave,  4, 0, "savegame"},
-	{ "save5.inf",  kSaveModeSave,  5, 0, "savegame"},
-	{ "save6.inf",  kSaveModeSave,  6, 0, "savegame"},
-	{ "save7.inf",  kSaveModeSave,  7, 0, "savegame"},
-	{ "save8.inf",  kSaveModeSave,  8, 0, "savegame"},
-	{ "save9.inf",  kSaveModeSave,  9, 0, "savegame"},
-	{ "save10.inf", kSaveModeSave, 10, 0, "savegame"},
-	{ "save11.inf", kSaveModeSave, 11, 0, "savegame"},
-	{ "save12.inf", kSaveModeSave, 12, 0, "savegame"},
-	{ "save13.inf", kSaveModeSave, 13, 0, "savegame"},
-	{ "save14.inf", kSaveModeSave, 14, 0, "savegame"},
+	{ "cat.cat", kSaveModeSave, -1, 0, "savegame catalog" },
+	{ "save0.inf", kSaveModeSave, 0, 0, "savegame" },
+	{ "save1.inf", kSaveModeSave, 1, 0, "savegame" },
+	{ "save2.inf", kSaveModeSave, 2, 0, "savegame" },
+	{ "save3.inf", kSaveModeSave, 3, 0, "savegame" },
+	{ "save4.inf", kSaveModeSave, 4, 0, "savegame" },
+	{ "save5.inf", kSaveModeSave, 5, 0, "savegame" },
+	{ "save6.inf", kSaveModeSave, 6, 0, "savegame" },
+	{ "save7.inf", kSaveModeSave, 7, 0, "savegame" },
+	{ "save8.inf", kSaveModeSave, 8, 0, "savegame" },
+	{ "save9.inf", kSaveModeSave, 9, 0, "savegame" },
+	{ "save10.inf", kSaveModeSave, 10, 0, "savegame" },
+	{ "save11.inf", kSaveModeSave, 11, 0, "savegame" },
+	{ "save12.inf", kSaveModeSave, 12, 0, "savegame" },
+	{ "save13.inf", kSaveModeSave, 13, 0, "savegame" },
+	{ "save14.inf", kSaveModeSave, 14, 0, "savegame" },
 };
 
-
-SaveLoad_Fascination::GameHandler::File::File(GobEngine *vm, const char *base) :
-	SlotFileIndexed(vm, SaveLoad_Fascination::kSlotCount, base, "s") {
+SaveLoad_Fascination::GameHandler::File::File(GobEngine *vm, const char *base)
+  : SlotFileIndexed(vm, SaveLoad_Fascination::kSlotCount, base, "s") {
 }
 
 SaveLoad_Fascination::GameHandler::File::~File() {
@@ -62,11 +61,11 @@ int SaveLoad_Fascination::GameHandler::File::getSlotRemainder(int32 offset) cons
 	return ((offset - kIndexSize) % 320);
 }
 
-
 SaveLoad_Fascination::GameHandler::GameHandler(GobEngine *vm, const char *target,
-		int slot, byte *index, bool *hasIndex) : SaveHandler(vm) {
+                                               int slot, byte *index, bool *hasIndex)
+  : SaveHandler(vm) {
 
-	_index    = index;
+	_index = index;
 	_hasIndex = hasIndex;
 
 	_slot = slot;
@@ -102,7 +101,7 @@ bool SaveLoad_Fascination::GameHandler::load(int16 dataVar, int32 size, int32 of
 	if ((offset == 0) && (_slot == -1)) {
 		// Save index
 
-		if (((uint32) size) != kIndexSize) {
+		if (((uint32)size) != kIndexSize) {
 			warning("Requested index has wrong size (%d)", size);
 			return false;
 		}
@@ -116,7 +115,7 @@ bool SaveLoad_Fascination::GameHandler::load(int16 dataVar, int32 size, int32 of
 		uint32 slot = _slot;
 		int slotRem = 0;
 		if (_slot == -1) {
-			slot    = _slotFile->getSlot(offset);
+			slot = _slotFile->getSlot(offset);
 			slotRem = _slotFile->getSlotRemainder(offset);
 		}
 
@@ -124,7 +123,7 @@ bool SaveLoad_Fascination::GameHandler::load(int16 dataVar, int32 size, int32 of
 
 		if ((slot >= kSlotCount) || (slotRem != 0) || (size != 320)) {
 			warning("Invalid loading procedure (%d, %d, %d, %d, %d)",
-					dataVar, size, offset, slot, slotRem);
+			        dataVar, size, offset, slot, slotRem);
 			return false;
 		}
 
@@ -135,8 +134,8 @@ bool SaveLoad_Fascination::GameHandler::load(int16 dataVar, int32 size, int32 of
 		// New save, load directly
 		reader = new SaveReader(2, slot, slotFile);
 
-		SavePartInfo info(kSlotNameLength, (uint32) _vm->getGameType(), 0,
-				_vm->getEndianness(), varSize);
+		SavePartInfo info(kSlotNameLength, (uint32)_vm->getGameType(), 0,
+		                  _vm->getEndianness(), varSize);
 		SavePartVars vars(_vm, size);
 
 		if (!reader->load()) {
@@ -184,7 +183,7 @@ bool SaveLoad_Fascination::GameHandler::save(int16 dataVar, int32 size, int32 of
 	if ((offset == 0) && (_slot == -1)) {
 		// Save index
 
-		if (((uint32) size) != kIndexSize) {
+		if (((uint32)size) != kIndexSize) {
 			warning("Requested index has wrong size (%d)", size);
 			return false;
 		}
@@ -199,7 +198,7 @@ bool SaveLoad_Fascination::GameHandler::save(int16 dataVar, int32 size, int32 of
 		uint32 slot = _slot;
 		int slotRem = 0;
 		if (_slot == -1) {
-			slot    = _slotFile->getSlot(offset);
+			slot = _slotFile->getSlot(offset);
 			slotRem = _slotFile->getSlotRemainder(offset);
 		}
 
@@ -207,7 +206,7 @@ bool SaveLoad_Fascination::GameHandler::save(int16 dataVar, int32 size, int32 of
 
 		if ((slot >= kSlotCount) || (slotRem != 0) || (size != 320)) {
 			warning("Invalid saving procedure (%d, %d, %d, %d, %d)",
-					dataVar, size, offset, slot, slotRem);
+			        dataVar, size, offset, slot, slotRem);
 			return false;
 		}
 
@@ -222,8 +221,8 @@ bool SaveLoad_Fascination::GameHandler::save(int16 dataVar, int32 size, int32 of
 		Common::String slotFile = _slotFile->build(slot);
 
 		SaveWriter writer(2, slot, slotFile);
-		SavePartInfo info(kSlotNameLength, (uint32) _vm->getGameType(), 0,
-				_vm->getEndianness(), varSize);
+		SavePartInfo info(kSlotNameLength, (uint32)_vm->getGameType(), 0,
+		                  _vm->getEndianness(), varSize);
 		SavePartVars vars(_vm, size);
 
 		// Write the description
@@ -247,15 +246,14 @@ void SaveLoad_Fascination::GameHandler::buildIndex(byte *buffer) const {
 	if (varSize == 0)
 		return;
 
-	SavePartInfo info(kSlotNameLength, (uint32) _vm->getGameType(),
-			0, _vm->getEndianness(), varSize);
+	SavePartInfo info(kSlotNameLength, (uint32)_vm->getGameType(),
+	                  0, _vm->getEndianness(), varSize);
 
 	_slotFile->buildIndex(buffer, info, 0);
 }
 
-
-SaveLoad_Fascination::SaveLoad_Fascination(GobEngine *vm, const char *targetName) :
-		SaveLoad(vm) {
+SaveLoad_Fascination::SaveLoad_Fascination(GobEngine *vm, const char *targetName)
+  : SaveLoad(vm) {
 
 	memset(_index, 0, kIndexSize);
 	_hasIndex = false;

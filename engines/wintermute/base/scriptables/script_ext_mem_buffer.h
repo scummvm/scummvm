@@ -29,7 +29,6 @@
 #ifndef WINTERMUTE_SXMEMBUFFER_H
 #define WINTERMUTE_SXMEMBUFFER_H
 
-
 #include "engines/wintermute/base/base_scriptable.h"
 
 namespace Wintermute {
@@ -46,6 +45,7 @@ public:
 	SXMemBuffer(BaseGame *inGame, void *buffer);
 	virtual ~SXMemBuffer();
 	virtual void *scToMemBuffer();
+
 private:
 	int32 _size;
 

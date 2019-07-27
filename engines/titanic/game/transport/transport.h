@@ -29,9 +29,11 @@ namespace Titanic {
 
 class CTransport : public CMobile {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	CString _string1;
 	CString _string2;
+
 public:
 	CLASSDEF;
 	CTransport();

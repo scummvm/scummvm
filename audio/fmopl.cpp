@@ -232,7 +232,9 @@ void OPL::stop() {
 
 bool OPL::_hasInstance = false;
 
-RealOPL::RealOPL() : _baseFreq(0), _remainingTicks(0) {
+RealOPL::RealOPL()
+  : _baseFreq(0)
+  , _remainingTicks(0) {
 }
 
 RealOPL::~RealOPL() {
@@ -289,11 +291,11 @@ void RealOPL::onTimer() {
 			(*_callback)();
 }
 
-EmulatedOPL::EmulatedOPL() :
-	_nextTick(0),
-	_samplesPerTick(0),
-	_baseFreq(0),
-	_handle(new Audio::SoundHandle()) {
+EmulatedOPL::EmulatedOPL()
+  : _nextTick(0)
+  , _samplesPerTick(0)
+  , _baseFreq(0)
+  , _handle(new Audio::SoundHandle()) {
 }
 
 EmulatedOPL::~EmulatedOPL() {

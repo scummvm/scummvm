@@ -20,15 +20,15 @@
  *
  */
 
-#include "backends/platform/sdl/sdl-sys.h"
 #include "ToolbarHandler.h"
+#include "backends/platform/sdl/sdl-sys.h"
 
 namespace CEGUI {
 
-ToolbarHandler::ToolbarHandler():
-	_current(""), _active(NULL) {
+ToolbarHandler::ToolbarHandler()
+  : _current("")
+  , _active(NULL) {
 }
-
 
 bool ToolbarHandler::add(const String &name, const Toolbar &toolbar) {
 	_toolbarMap[name] = (Toolbar *)&toolbar;
@@ -50,7 +50,7 @@ bool ToolbarHandler::setActive(const String &name) {
 		return false;
 	if (_current == name)
 		return true;
-	_active->action(0, 0, false);   // make sure any items are unpushed when changing toolbars (e.g. forced VK->main panel)
+	_active->action(0, 0, false); // make sure any items are unpushed when changing toolbars (e.g. forced VK->main panel)
 	_current = name;
 	_active = _toolbarMap[name];
 	_active->forceRedraw();

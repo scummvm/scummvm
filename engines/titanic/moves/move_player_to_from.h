@@ -30,8 +30,10 @@ namespace Titanic {
 class CMovePlayerToFrom : public CMovePlayerTo {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+
 private:
 	CString _string2;
+
 public:
 	CLASSDEF;
 	CMovePlayerToFrom();

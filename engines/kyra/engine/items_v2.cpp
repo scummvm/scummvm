@@ -30,7 +30,7 @@ void KyraEngine_v2::initItemList(int size) {
 
 	_itemList = new ItemDefinition[size];
 	assert(_itemList);
-	memset(_itemList, 0, sizeof(ItemDefinition)*size);
+	memset(_itemList, 0, sizeof(ItemDefinition) * size);
 	_itemListSize = size;
 
 	resetItemList();

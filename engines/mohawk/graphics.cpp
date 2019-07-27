@@ -20,9 +20,9 @@
  *
  */
 
+#include "mohawk/graphics.h"
 #include "mohawk/mohawk.h"
 #include "mohawk/resource.h"
-#include "mohawk/graphics.h"
 
 #include "common/system.h"
 #include "engines/util.h"
@@ -30,12 +30,17 @@
 
 namespace Mohawk {
 
-MohawkSurface::MohawkSurface() : _surface(nullptr), _palette(nullptr) {
+MohawkSurface::MohawkSurface()
+  : _surface(nullptr)
+  , _palette(nullptr) {
 	_offsetX = 0;
 	_offsetY = 0;
 }
 
-MohawkSurface::MohawkSurface(Graphics::Surface *surface, byte *palette, int offsetX, int offsetY) : _palette(palette), _offsetX(offsetX), _offsetY(offsetY) {
+MohawkSurface::MohawkSurface(Graphics::Surface *surface, byte *palette, int offsetX, int offsetY)
+  : _palette(palette)
+  , _offsetX(offsetX)
+  , _offsetY(offsetY) {
 	assert(surface);
 
 	_surface = surface;
@@ -78,7 +83,7 @@ GraphicsManager::~GraphicsManager() {
 void GraphicsManager::clearCache() {
 	for (Common::HashMap<uint16, MohawkSurface *>::iterator it = _cache.begin(); it != _cache.end(); it++)
 		delete it->_value;
-	for (Common::HashMap<uint16, Common::Array<MohawkSurface *> >::iterator it = _subImageCache.begin(); it != _subImageCache.end(); it++) {
+	for (Common::HashMap<uint16, Common::Array<MohawkSurface *>>::iterator it = _subImageCache.begin(); it != _subImageCache.end(); it++) {
 		Common::Array<MohawkSurface *> &array = it->_value;
 		for (uint i = 0; i < array.size(); i++)
 			delete array[i];

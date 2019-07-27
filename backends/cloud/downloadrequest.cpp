@@ -26,9 +26,16 @@
 
 namespace Cloud {
 
-DownloadRequest::DownloadRequest(Storage *storage, Storage::BoolCallback callback, Networking::ErrorCallback ecb, Common::String remoteFileId, Common::DumpFile *dumpFile):
-	Request(nullptr, ecb), _boolCallback(callback), _localFile(dumpFile), _remoteFileId(remoteFileId), _storage(storage),
-	_remoteFileStream(nullptr), _workingRequest(nullptr), _ignoreCallback(false), _buffer(new byte[DOWNLOAD_REQUEST_BUFFER_SIZE]) {
+DownloadRequest::DownloadRequest(Storage *storage, Storage::BoolCallback callback, Networking::ErrorCallback ecb, Common::String remoteFileId, Common::DumpFile *dumpFile)
+  : Request(nullptr, ecb)
+  , _boolCallback(callback)
+  , _localFile(dumpFile)
+  , _remoteFileId(remoteFileId)
+  , _storage(storage)
+  , _remoteFileStream(nullptr)
+  , _workingRequest(nullptr)
+  , _ignoreCallback(false)
+  , _buffer(new byte[DOWNLOAD_REQUEST_BUFFER_SIZE]) {
 	start();
 }
 
@@ -50,10 +57,9 @@ void DownloadRequest::start() {
 	_ignoreCallback = false;
 
 	_workingRequest = _storage->streamFileById(
-		_remoteFileId,
-		new Common::Callback<DownloadRequest, Networking::NetworkReadStreamResponse>(this, &DownloadRequest::streamCallback),
-		new Common::Callback<DownloadRequest, Networking::ErrorResponse>(this, &DownloadRequest::streamErrorCallback)
-	);
+	  _remoteFileId,
+	  new Common::Callback<DownloadRequest, Networking::NetworkReadStreamResponse>(this, &DownloadRequest::streamCallback),
+	  new Common::Callback<DownloadRequest, Networking::ErrorResponse>(this, &DownloadRequest::streamErrorCallback));
 }
 
 void DownloadRequest::streamCallback(Networking::NetworkReadStreamResponse response) {

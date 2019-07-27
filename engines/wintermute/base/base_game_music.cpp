@@ -30,14 +30,15 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
+#include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
-#include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/sound/base_sound.h"
 
 namespace Wintermute {
 
-BaseGameMusic::BaseGameMusic(BaseGame *gameRef) : _gameRef(gameRef) {
+BaseGameMusic::BaseGameMusic(BaseGame *gameRef)
+  : _gameRef(gameRef) {
 	for (int i = 0; i < NUM_MUSIC_CHANNELS; i++) {
 		_music[i] = nullptr;
 		_musicStartTime[i] = 0;
@@ -86,7 +87,6 @@ bool BaseGameMusic::playMusic(int channel, const char *filename, bool looping, u
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGameMusic::stopMusic(int channel) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
@@ -104,7 +104,6 @@ bool BaseGameMusic::stopMusic(int channel) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGameMusic::pauseMusic(int channel) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
@@ -119,7 +118,6 @@ bool BaseGameMusic::pauseMusic(int channel) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGameMusic::resumeMusic(int channel) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
@@ -133,7 +131,6 @@ bool BaseGameMusic::resumeMusic(int channel) {
 		return STATUS_FAILED;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGameMusic::setMusicStartTime(int channel, uint32 time) {
@@ -187,7 +184,6 @@ bool BaseGameMusic::updateMusicCrossfade() {
 		_music[_musicCrossfadeChannel1]->stop();
 		//_music[_musicCrossfadeChannel1]->setVolume(GlobMusicVol);
 		_music[_musicCrossfadeChannel1]->setVolumePercent(100);
-
 
 		if (_musicCrossfadeSwap) {
 			// swap channels
@@ -249,7 +245,6 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 
 		ScValue *valLoopStart = stack->pop();
 		uint32 loopStart = (uint32)(valLoopStart->isNULL() ? 0 : valLoopStart->getInt());
-
 
 		if (DID_FAIL(playMusic(channel, filename, looping, loopStart))) {
 			stack->pushBool(false);

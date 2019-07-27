@@ -95,7 +95,8 @@ private:
 
 class RIFFArchive : public Archive {
 public:
-	RIFFArchive() : Archive() { _startOffset = 0; }
+	RIFFArchive()
+	  : Archive() { _startOffset = 0; }
 	~RIFFArchive() {}
 
 	bool openStream(Common::SeekableReadStream *stream, uint32 startOffset = 0);
@@ -106,7 +107,8 @@ public:
 
 class RIFXArchive : public Archive {
 public:
-	RIFXArchive() : Archive(){ _isBigEndian = true; }
+	RIFXArchive()
+	  : Archive() { _isBigEndian = true; }
 	~RIFXArchive() {}
 
 	bool openStream(Common::SeekableReadStream *stream, uint32 startOffset = 0);

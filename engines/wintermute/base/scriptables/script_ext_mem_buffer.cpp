@@ -26,12 +26,12 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/base_scriptable.h"
-#include "engines/wintermute/base/scriptables/script_stack.h"
-#include "engines/wintermute/base/scriptables/script.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_ext_mem_buffer.h"
 #include "common/file.h"
+#include "engines/wintermute/base/base_scriptable.h"
+#include "engines/wintermute/base/scriptables/script.h"
+#include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 
 namespace Wintermute {
 
@@ -42,7 +42,8 @@ BaseScriptable *makeSXMemBuffer(BaseGame *inGame, ScStack *stack) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-SXMemBuffer::SXMemBuffer(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
+SXMemBuffer::SXMemBuffer(BaseGame *inGame, ScStack *stack)
+  : BaseScriptable(inGame) {
 	stack->correctParams(1);
 	_buffer = nullptr;
 	_size = 0;
@@ -52,11 +53,11 @@ SXMemBuffer::SXMemBuffer(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGa
 }
 
 //////////////////////////////////////////////////////////////////////////
-SXMemBuffer::SXMemBuffer(BaseGame *inGame, void *buffer) : BaseScriptable(inGame) {
+SXMemBuffer::SXMemBuffer(BaseGame *inGame, void *buffer)
+  : BaseScriptable(inGame) {
 	_size = 0;
 	_buffer = buffer;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 SXMemBuffer::~SXMemBuffer() {
@@ -130,7 +131,6 @@ const char *SXMemBuffer::scToString() {
 	return "[membuffer object]";
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
 	//////////////////////////////////////////////////////////////////////////
@@ -188,7 +188,7 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 		if (!checkBounds(script, start, sizeof(short))) {
 			stack->pushNULL();
 		} else {
-			stack->pushInt(65536 + * (short *)((byte *)_buffer + start));
+			stack->pushInt(65536 + *(short *)((byte *)_buffer + start));
 		}
 
 		return STATUS_OK;
@@ -278,7 +278,7 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 			stack->pushNULL();
 		} else {
 			void *pointer = *(void **)((byte *)_buffer + start);
-			SXMemBuffer *buf = new SXMemBuffer(_gameRef,  pointer);
+			SXMemBuffer *buf = new SXMemBuffer(_gameRef, pointer);
 			stack->pushNative(buf, false);
 		}
 		return STATUS_OK;
@@ -421,7 +421,6 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 			*/
 			// TODO fix
 			stack->pushBool(false);
-
 		}
 		return STATUS_OK;
 	}
@@ -444,7 +443,6 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 		return STATUS_FAILED;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 ScValue *SXMemBuffer::scGetProperty(const Common::String &name) {
@@ -469,7 +467,6 @@ ScValue *SXMemBuffer::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool SXMemBuffer::scSetProperty(const char *name, ScValue *value) {
 	/*
@@ -489,9 +486,9 @@ bool SXMemBuffer::scSetProperty(const char *name, ScValue *value) {
 	    }
 	    return STATUS_OK;
 	}
-	else*/ return BaseScriptable::scSetProperty(name, value);
+	else*/
+	return BaseScriptable::scSetProperty(name, value);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool SXMemBuffer::persist(BasePersistenceManager *persistMgr) {
@@ -515,7 +512,6 @@ bool SXMemBuffer::persist(BasePersistenceManager *persistMgr) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 int SXMemBuffer::scCompare(BaseScriptable *val) {

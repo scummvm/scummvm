@@ -21,7 +21,7 @@
  * Text utility defines
  */
 
-#ifndef TINSEL_TINLIB_H	// prevent multiple includes
+#ifndef TINSEL_TINLIB_H // prevent multiple includes
 #define TINSEL_TINLIB_H
 
 #include "tinsel/dw.h"
@@ -31,12 +31,19 @@
 namespace Tinsel {
 
 enum EXTREME {
-	EX_USEXY, EX_BOTTOM, EX_BOTTOMLEFT,
-	EX_BOTTOMRIGHT, EX_LEFT, EX_RIGHT,
-	EX_TOP, EX_TOPLEFT, EX_TOPRIGHT
+	EX_USEXY,
+	EX_BOTTOM,
+	EX_BOTTOMLEFT,
+	EX_BOTTOMRIGHT,
+	EX_LEFT,
+	EX_RIGHT,
+	EX_TOP,
+	EX_TOPLEFT,
+	EX_TOPRIGHT
 };
 
-enum WHICH_VER {VER_GLITTER, VER_COMPILE};
+enum WHICH_VER { VER_GLITTER,
+	               VER_COMPILE };
 #define VER_LEN 10
 
 // Support functions
@@ -59,8 +66,11 @@ void SetTextPal(COLORREF col);
 
 void KeepOnScreen(OBJECT *pText, int *pTextX, int *pTextY);
 
-enum SPEECH_TYPE { IS_SAY, IS_SAYAT, IS_TALK, IS_TALKAT };
+enum SPEECH_TYPE { IS_SAY,
+	                 IS_SAYAT,
+	                 IS_TALK,
+	                 IS_TALKAT };
 
 } // End of namespace Tinsel
 
-#endif		// TINSEL_TINLIB_H
+#endif // TINSEL_TINLIB_H

@@ -24,8 +24,8 @@
 #include "common/rect.h"
 
 #include "toon/anim.h"
-#include "toon/toon.h"
 #include "toon/tools.h"
+#include "toon/toon.h"
 
 namespace Toon {
 
@@ -116,7 +116,8 @@ bool Animation::loadAnimation(const Common::String &file) {
 	return true;
 }
 
-Animation::Animation(ToonEngine *vm) : _vm(vm) {
+Animation::Animation(ToonEngine *vm)
+  : _vm(vm) {
 	_palette = NULL;
 	_numFrames = 0;
 	_frames = NULL;
@@ -163,7 +164,7 @@ void Animation::drawFrame(Graphics::Surface &surface, int32 frame, int16 xx, int
 	int16 offsX = 0;
 	int16 offsY = 0;
 
-	_vm->addDirtyRect(xx + _x1 + _frames[frame]._x1, yy + _y1 + _frames[frame]._y1, xx + rectX + _x1 + _frames[frame]._x1 , yy + rectY + _y1 + _frames[frame]._y1);
+	_vm->addDirtyRect(xx + _x1 + _frames[frame]._x1, yy + _y1 + _frames[frame]._y1, xx + rectX + _x1 + _frames[frame]._x1, yy + rectY + _y1 + _frames[frame]._y1);
 
 	if (xx + _x1 + _frames[frame]._x1 < 0) {
 		offsX = -(xx + _x1 + _frames[frame]._x1);
@@ -437,7 +438,8 @@ void AnimationInstance::update(int32 timeIncrement) {
 	}
 }
 
-AnimationInstance::AnimationInstance(ToonEngine *vm, AnimationInstanceType type) : _vm(vm) {
+AnimationInstance::AnimationInstance(ToonEngine *vm, AnimationInstanceType type)
+  : _vm(vm) {
 	_id = 0;
 	_type = type;
 	_animation = 0;
@@ -691,10 +693,11 @@ void AnimationInstance::reset() {
 	_currentTime = 0;
 }
 
-AnimationManager::AnimationManager(ToonEngine *vm) : _vm(vm) {
+AnimationManager::AnimationManager(ToonEngine *vm)
+  : _vm(vm) {
 }
 
-bool AnimationManager::hasInstance(AnimationInstance* instance) {
+bool AnimationManager::hasInstance(AnimationInstance *instance) {
 	for (uint32 i = 0; i < _instances.size(); i++) {
 		if (_instances[i] == instance)
 			return true;
@@ -702,7 +705,7 @@ bool AnimationManager::hasInstance(AnimationInstance* instance) {
 	return false;
 }
 
-void AnimationManager::updateInstance(AnimationInstance* instance) {
+void AnimationManager::updateInstance(AnimationInstance *instance) {
 	// simply remove and readd the instance in the ordered list
 	removeInstance(instance);
 	addInstance(instance);

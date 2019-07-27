@@ -34,12 +34,16 @@ class CThrowTVDownWell : public CGameObject {
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool TimerMsg(CTimerMsg *msg);
 	bool MovieFrameMsg(CMovieFrameMsg *msg);
+
 public:
 	CString _viewName;
 	bool _flag;
+
 public:
 	CLASSDEF;
-	CThrowTVDownWell() : CGameObject(), _flag(false) {}
+	CThrowTVDownWell()
+	  : CGameObject()
+	  , _flag(false) {}
 
 	/**
 	 * Save the data for the class to file

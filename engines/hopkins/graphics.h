@@ -23,10 +23,10 @@
 #ifndef HOPKINS_GRAPHICS_H
 #define HOPKINS_GRAPHICS_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/endian.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 #include "graphics/surface.h"
 
@@ -85,6 +85,7 @@ private:
 
 	void lockScreen();
 	void unlockScreen();
+
 public:
 	byte _paletteBuffer[PALETTE_SIZE * 2];
 	byte _colorTable[PALETTE_EXT_BLOCK_SIZE];
@@ -122,6 +123,7 @@ public:
 	bool _showLines;
 
 	byte *_palettePixels;
+
 public:
 	GraphicsManager(HopkinsEngine *vm);
 	~GraphicsManager();

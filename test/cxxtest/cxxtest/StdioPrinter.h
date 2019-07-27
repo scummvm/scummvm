@@ -9,14 +9,12 @@
 
 #include <cxxtest/StdioFilePrinter.h>
 
-namespace CxxTest
-{
-    class StdioPrinter : public StdioFilePrinter
-    {
-    public:
-        StdioPrinter( FILE *o = stdout, const char *preLine = ":", const char *postLine = "" ) :
-            StdioFilePrinter( o, preLine, postLine ) {}
-    };
+namespace CxxTest {
+class StdioPrinter : public StdioFilePrinter {
+public:
+	StdioPrinter(FILE *o = stdout, const char *preLine = ":", const char *postLine = "")
+	  : StdioFilePrinter(o, preLine, postLine) {}
+};
 }
 
 #endif // __cxxtest__StdioPrinter_h__

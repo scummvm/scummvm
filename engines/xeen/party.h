@@ -23,9 +23,9 @@
 #ifndef XEEN_PARTY_H
 #define XEEN_PARTY_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
 #include "xeen/character.h"
 #include "xeen/combat.h"
@@ -34,17 +34,26 @@
 namespace Xeen {
 
 enum Direction {
-	DIR_NORTH = 0, DIR_EAST = 1, DIR_SOUTH = 2, DIR_WEST = 3, DIR_ALL = 4
+	DIR_NORTH = 0,
+	DIR_EAST = 1,
+	DIR_SOUTH = 2,
+	DIR_WEST = 3,
+	DIR_ALL = 4
 };
 
-enum Difficulty { ADVENTURER = 0, WARRIOR = 1 };
+enum Difficulty { ADVENTURER = 0,
+	                WARRIOR = 1 };
 
 enum ConsumableType {
-	CONS_GOLD = 0, CONS_GEMS = 1, CONS_FOOD = 2, CONS_CONDITION = 3
+	CONS_GOLD = 0,
+	CONS_GEMS = 1,
+	CONS_FOOD = 2,
+	CONS_CONDITION = 3
 };
 
 enum PartyBank {
-	WHERE_PARTY = 0, WHERE_BANK = 1
+	WHERE_PARTY = 0,
+	WHERE_BANK = 1
 };
 
 #define TOTAL_CHARACTERS 30
@@ -57,9 +66,10 @@ enum PartyBank {
 #define TOTAL_QUEST_FLAGS 56
 #define MAX_TREASURE_ITEMS 10
 
-class Roster: public Common::Array<Character> {
+class Roster : public Common::Array<Character> {
 public:
 	SpriteResource _charFaces[TOTAL_CHARACTERS];
+
 public:
 	Roster();
 
@@ -75,6 +85,7 @@ public:
 	XeenItem *_categories[4];
 	bool _hasItems;
 	int _gems, _gold;
+
 public:
 	Treasure();
 
@@ -111,6 +122,7 @@ public:
 	BlacksmithItems _armor;
 	BlacksmithItems _accessories;
 	BlacksmithItems _misc;
+
 public:
 	/**
 	 * Constructor
@@ -153,6 +165,7 @@ public:
 class Party {
 	friend class Character;
 	friend class InventoryItems;
+
 private:
 	static XeenEngine *_vm;
 	Character _itemsCharacter;
@@ -178,6 +191,7 @@ private:
 	 * Applies interest to any gold and gems in the player's bank account
 	 */
 	void giveBankInterest();
+
 public:
 	// Dynamic data that's saved
 	Direction _mazeDirection;
@@ -198,7 +212,7 @@ public:
 	bool _cloudsCompleted;
 	bool _darkSideCompleted;
 	bool _worldCompleted;
-	int _ctr24;		// Unused counter
+	int _ctr24; // Unused counter
 	int _day;
 	uint _year;
 	int _minutes;
@@ -223,6 +237,7 @@ public:
 	bool _questFlags[60];
 	int _questItems[TOTAL_QUEST_ITEMS];
 	bool _characterFlags[30][24];
+
 public:
 	// Other party related runtime data
 	Roster _roster;
@@ -237,6 +252,7 @@ public:
 	bool _dead;
 	Treasure _treasure;
 	Treasure _savedTreasure;
+
 public:
 	Party(XeenEngine *vm);
 
@@ -314,4 +330,4 @@ public:
 
 } // End of namespace Xeen
 
-#endif	/* XEEN_PARTY_H */
+#endif /* XEEN_PARTY_H */

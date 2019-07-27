@@ -23,26 +23,27 @@
 // Scripting module: Script resource handling functions
 #include "saga/saga.h"
 
-#include "saga/gfx.h"
 #include "saga/console.h"
+#include "saga/gfx.h"
 
-#include "saga/animation.h"
-#include "saga/script.h"
-#include "saga/interface.h"
-#include "saga/itedata.h"
-#include "saga/scene.h"
-#include "saga/events.h"
 #include "saga/actor.h"
-#include "saga/objectmap.h"
+#include "saga/animation.h"
+#include "saga/events.h"
+#include "saga/interface.h"
 #include "saga/isomap.h"
+#include "saga/itedata.h"
+#include "saga/objectmap.h"
 #include "saga/resource.h"
+#include "saga/scene.h"
+#include "saga/script.h"
 
 namespace Saga {
 
 #define RID_SCENE1_VOICE_START 57
 #define RID_SCENE1_VOICE_END 186
 
-SAGA1Script::SAGA1Script(SagaEngine *vm) : Script(vm) {
+SAGA1Script::SAGA1Script(SagaEngine *vm)
+  : Script(vm) {
 	ResourceContext *resourceContext;
 	ByteArray resourceData;
 	int prevTell;
@@ -84,9 +85,9 @@ SAGA1Script::SAGA1Script(SagaEngine *vm) : Script(vm) {
 	_vm->_resource->loadResource(resourceContext, scriptResourceId, resourceData);
 
 	// Create logical script LUT from resource
-	if (resourceData.size() % 22 == 0) {			// ITE CD
+	if (resourceData.size() % 22 == 0) { // ITE CD
 		_modulesLUTEntryLen = 22;
-	} else if (resourceData.size() % 16 == 0) {	// ITE disk, IHNM
+	} else if (resourceData.size() % 16 == 0) { // ITE disk, IHNM
 		_modulesLUTEntryLen = 16;
 	} else {
 		error("Script::Script() Invalid script lookup table length (%i)", (int)resourceData.size());
@@ -132,13 +133,13 @@ SAGA1Script::SAGA1Script(SagaEngine *vm) : Script(vm) {
 
 	// Setup script functions
 	switch (_vm->getGameId()) {
-		case GID_ITE:
-			setupITEScriptFuncList();
-			break;
+	case GID_ITE:
+		setupITEScriptFuncList();
+		break;
 #ifdef ENABLE_IHNM
-		case GID_IHNM:
-			setupIHNMScriptFuncList();
-			break;
+	case GID_IHNM:
+		setupIHNMScriptFuncList();
+		break;
 #endif
 	}
 }
@@ -147,7 +148,8 @@ SAGA1Script::~SAGA1Script() {
 	debug(8, "Shutting down scripting subsystem.");
 }
 
-SAGA2Script::SAGA2Script(SagaEngine *vm) : Script(vm) {
+SAGA2Script::SAGA2Script(SagaEngine *vm)
+  : Script(vm) {
 	ByteArray resourceData;
 
 	debug(8, "Initializing scripting subsystem");
@@ -158,7 +160,7 @@ SAGA2Script::SAGA2Script(SagaEngine *vm) : Script(vm) {
 	}
 
 	// Script export segment (lookup table)
-	uint32 saga2ExportSegId = MKTAG('_','E','X','P');
+	uint32 saga2ExportSegId = MKTAG('_', 'E', 'X', 'P');
 	int32 entryNum = _scriptContext->getEntryNum(saga2ExportSegId);
 	if (entryNum < 0)
 		error("Unable to locate the script's export segment");
@@ -193,245 +195,245 @@ SAGA2Script::~SAGA2Script() {
 
 // Initializes the scripting module.
 // Loads script resource look-up table, initializes script data system
-Script::Script(SagaEngine *vm) : _vm(vm) {
-
+Script::Script(SagaEngine *vm)
+  : _vm(vm) {
 }
 
 // Shut down script module gracefully; free all allocated module resources
 Script::~Script() {
-
 }
 
 // Script opcodes
-#define OPCODE(x) {&Script::x, #x}
+#define OPCODE(x) \
+	{ &Script::x, #x }
 
 void Script::setupScriptOpcodeList() {
 	static const ScriptOpDescription SAGA1ScriptOpcodes[] = {
-		OPCODE(opDummy),		// 00: Undefined
+		OPCODE(opDummy), // 00: Undefined
 		// Internal operations
-		OPCODE(opNextBlock),	// 01: Continue execution at next block
-		OPCODE(opDup),			// 02: Duplicate 16-bit value on stack
-		OPCODE(opDrop),			// 03: Drop 16-bit value on stack
+		OPCODE(opNextBlock), // 01: Continue execution at next block
+		OPCODE(opDup), // 02: Duplicate 16-bit value on stack
+		OPCODE(opDrop), // 03: Drop 16-bit value on stack
 		// Primary values
-		OPCODE(opZero),			// 04: Push a zero on the stack
-		OPCODE(opOne),			// 05: Push a one on the stack
-		OPCODE(opConstInt),		// 06: Constant integer
-		OPCODE(opDummy),		// 07: Constant ID reference (unused)
-		OPCODE(opStrLit),		// 08: String literal
-		OPCODE(opDummy),		// 09: Symbol address (unused)
-		OPCODE(opDummy),		// 10: Symbol contents (unused)
+		OPCODE(opZero), // 04: Push a zero on the stack
+		OPCODE(opOne), // 05: Push a one on the stack
+		OPCODE(opConstInt), // 06: Constant integer
+		OPCODE(opDummy), // 07: Constant ID reference (unused)
+		OPCODE(opStrLit), // 08: String literal
+		OPCODE(opDummy), // 09: Symbol address (unused)
+		OPCODE(opDummy), // 10: Symbol contents (unused)
 		// References within this module
-		OPCODE(opGetFlag),		// 11: Read flag bit
-		OPCODE(opGetInt),		// 12: Read integer
-		OPCODE(opDummy),		// 13: Read string (unused)
-		OPCODE(opDummy),		// 14: Read id (unused)
-		OPCODE(opPutFlag),		// 15: Write flag bit
-		OPCODE(opPutInt),		// 16: Write integer
-		OPCODE(opDummy),		// 17: Write string (unused)
-		OPCODE(opDummy),		// 18: Write id (unused)
+		OPCODE(opGetFlag), // 11: Read flag bit
+		OPCODE(opGetInt), // 12: Read integer
+		OPCODE(opDummy), // 13: Read string (unused)
+		OPCODE(opDummy), // 14: Read id (unused)
+		OPCODE(opPutFlag), // 15: Write flag bit
+		OPCODE(opPutInt), // 16: Write integer
+		OPCODE(opDummy), // 17: Write string (unused)
+		OPCODE(opDummy), // 18: Write id (unused)
 		// Void versions, which consume their arguments
-		OPCODE(opPutFlagV),		// 19: Write flag bit
-		OPCODE(opPutIntV),		// 20: Write integer
-		OPCODE(opDummy),		// 21: Write string (unused)
-		OPCODE(opDummy),		// 22: Write id (unused)
+		OPCODE(opPutFlagV), // 19: Write flag bit
+		OPCODE(opPutIntV), // 20: Write integer
+		OPCODE(opDummy), // 21: Write string (unused)
+		OPCODE(opDummy), // 22: Write id (unused)
 		// Function calling
-		OPCODE(opCall),			// 23: Call function
-		OPCODE(opCcall),		// 24: Call C function
-		OPCODE(opCcallV),		// 25: Call C function ()
-		OPCODE(opEnter),		// 26: Enter a function
-		OPCODE(opReturn),		// 27: Return from a function
-		OPCODE(opReturnV),		// 28: Return from a function ()
+		OPCODE(opCall), // 23: Call function
+		OPCODE(opCcall), // 24: Call C function
+		OPCODE(opCcallV), // 25: Call C function ()
+		OPCODE(opEnter), // 26: Enter a function
+		OPCODE(opReturn), // 27: Return from a function
+		OPCODE(opReturnV), // 28: Return from a function ()
 		// Branching
-		OPCODE(opJmp),			// 29
-		OPCODE(opJmpTrueV),		// 30: Test argument and consume it
-		OPCODE(opJmpFalseV),	// 31: Test argument and consume it
-		OPCODE(opJmpTrue),		// 32: Test argument but don't consume it
-		OPCODE(opJmpFalse),		// 33: Test argument but don't consume it
-		OPCODE(opJmpSwitch),	// 34: Switch (integer)
-		OPCODE(opDummy),		// 35: Switch (string) (unused)
-		OPCODE(opJmpRandom),	// 36: Random jump
+		OPCODE(opJmp), // 29
+		OPCODE(opJmpTrueV), // 30: Test argument and consume it
+		OPCODE(opJmpFalseV), // 31: Test argument and consume it
+		OPCODE(opJmpTrue), // 32: Test argument but don't consume it
+		OPCODE(opJmpFalse), // 33: Test argument but don't consume it
+		OPCODE(opJmpSwitch), // 34: Switch (integer)
+		OPCODE(opDummy), // 35: Switch (string) (unused)
+		OPCODE(opJmpRandom), // 36: Random jump
 		// Unary operators
-		OPCODE(opNegate),		// 37
-		OPCODE(opNot),			// 38
-		OPCODE(opCompl),		// 39
-		OPCODE(opIncV),			// 40: Increment, don't push
-		OPCODE(opDecV),			// 41: Increment, don't push
-		OPCODE(opPostInc),		// 42
-		OPCODE(opPostDec),		// 43
+		OPCODE(opNegate), // 37
+		OPCODE(opNot), // 38
+		OPCODE(opCompl), // 39
+		OPCODE(opIncV), // 40: Increment, don't push
+		OPCODE(opDecV), // 41: Increment, don't push
+		OPCODE(opPostInc), // 42
+		OPCODE(opPostDec), // 43
 		// Arithmetic
-		OPCODE(opAdd),			// 44
-		OPCODE(opSub),			// 45
-		OPCODE(opMul),			// 46
-		OPCODE(opDiv),			// 47
-		OPCODE(opMod),			// 48
+		OPCODE(opAdd), // 44
+		OPCODE(opSub), // 45
+		OPCODE(opMul), // 46
+		OPCODE(opDiv), // 47
+		OPCODE(opMod), // 48
 		// Conditional
-		OPCODE(opDummy),		// 49: opConditional (unused)
-		OPCODE(opDummy),		// 50: opComma (unused)
+		OPCODE(opDummy), // 49: opConditional (unused)
+		OPCODE(opDummy), // 50: opComma (unused)
 		// Comparison
-		OPCODE(opEq),			// 51
-		OPCODE(opNe),			// 52
-		OPCODE(opGt),			// 53
-		OPCODE(opLt),			// 54
-		OPCODE(opGe),			// 55
-		OPCODE(opLe),			// 56
+		OPCODE(opEq), // 51
+		OPCODE(opNe), // 52
+		OPCODE(opGt), // 53
+		OPCODE(opLt), // 54
+		OPCODE(opGe), // 55
+		OPCODE(opLe), // 56
 		// String comparison
-		OPCODE(opDummy),		// 57: opStrEq (unused)
-		OPCODE(opDummy),		// 58: opStrNe (unused)
-		OPCODE(opDummy),		// 59: opStrGt (unused)
-		OPCODE(opDummy),		// 60: opStrLt (unused)
-		OPCODE(opDummy),		// 61: opStrGe (unused)
-		OPCODE(opDummy),		// 62: opStrLe (unused)
+		OPCODE(opDummy), // 57: opStrEq (unused)
+		OPCODE(opDummy), // 58: opStrNe (unused)
+		OPCODE(opDummy), // 59: opStrGt (unused)
+		OPCODE(opDummy), // 60: opStrLt (unused)
+		OPCODE(opDummy), // 61: opStrGe (unused)
+		OPCODE(opDummy), // 62: opStrLe (unused)
 		// Shift
-		OPCODE(opRsh),			// 63
-		OPCODE(opLsh),			// 64
+		OPCODE(opRsh), // 63
+		OPCODE(opLsh), // 64
 		// Bitwise
-		OPCODE(opAnd),			// 65
-		OPCODE(opOr),			// 66
-		OPCODE(opXor),			// 67
+		OPCODE(opAnd), // 65
+		OPCODE(opOr), // 66
+		OPCODE(opXor), // 67
 		// Logical
-		OPCODE(opLAnd),			// 68
-		OPCODE(opLOr),			// 69
-		OPCODE(opLXor),			// 70
+		OPCODE(opLAnd), // 68
+		OPCODE(opLOr), // 69
+		OPCODE(opLXor), // 70
 		// String manipulation
-		OPCODE(opDummy),		// 71: opStrCat, string concatenation (unused)
-		OPCODE(opDummy),		// 72: opStrFormat, string formatting (unused)
+		OPCODE(opDummy), // 71: opStrCat, string concatenation (unused)
+		OPCODE(opDummy), // 72: opStrFormat, string formatting (unused)
 		// Assignment
-		OPCODE(opDummy),		// 73: assign (unused)
-		OPCODE(opDummy),		// 74: += (unused)
-		OPCODE(opDummy),		// 75: -= (unused)
-		OPCODE(opDummy),		// 76: *= (unused)
-		OPCODE(opDummy),		// 77: /= (unused)
-		OPCODE(opDummy),		// 78: %= (unused)
-		OPCODE(opDummy),		// 79: <<= (unused)
-		OPCODE(opDummy),		// 80: >>= (unused)
-		OPCODE(opDummy),		// 81: and (unused)
-		OPCODE(opDummy),		// 82: or (unused)
+		OPCODE(opDummy), // 73: assign (unused)
+		OPCODE(opDummy), // 74: += (unused)
+		OPCODE(opDummy), // 75: -= (unused)
+		OPCODE(opDummy), // 76: *= (unused)
+		OPCODE(opDummy), // 77: /= (unused)
+		OPCODE(opDummy), // 78: %= (unused)
+		OPCODE(opDummy), // 79: <<= (unused)
+		OPCODE(opDummy), // 80: >>= (unused)
+		OPCODE(opDummy), // 81: and (unused)
+		OPCODE(opDummy), // 82: or (unused)
 		// Special
-		OPCODE(opSpeak),		// 83
-		OPCODE(opDialogBegin),	// 84
-		OPCODE(opDialogEnd),	// 85
-		OPCODE(opReply),		// 86
-		OPCODE(opAnimate)		// 87
+		OPCODE(opSpeak), // 83
+		OPCODE(opDialogBegin), // 84
+		OPCODE(opDialogEnd), // 85
+		OPCODE(opReply), // 86
+		OPCODE(opAnimate) // 87
 	};
 
 #ifdef ENABLE_SAGA2
 	static const ScriptOpDescription SAGA2ScriptOpcodes[] = {
-		OPCODE(opDummy),		// 00: Undefined
+		OPCODE(opDummy), // 00: Undefined
 		// Internal operations
-		OPCODE(opNextBlock),	// 01: Continue execution at next block
-		OPCODE(opDup),			// 02: Duplicate 16-bit value on stack
-		OPCODE(opDrop),			// 03: Drop 16-bit value on stack
+		OPCODE(opNextBlock), // 01: Continue execution at next block
+		OPCODE(opDup), // 02: Duplicate 16-bit value on stack
+		OPCODE(opDrop), // 03: Drop 16-bit value on stack
 		// Primary values
-		OPCODE(opZero),			// 04: Push a zero on the stack
-		OPCODE(opOne),			// 05: Push a one on the stack
-		OPCODE(opConstInt),		// 06: Constant integer
-		OPCODE(opDummy),		// 07: Constant ID reference (unused)
-		OPCODE(opStrLit),		// 08: String literal
-		OPCODE(opDummy),		// 09: Symbol address (unused)
-		OPCODE(opDummy),		// 10: Symbol contents (unused)
-		OPCODE(opDummy),		// 11: Reference to "this" (unused)
-		OPCODE(opDummy),		// 12: Dereference of an ID (unused)
+		OPCODE(opZero), // 04: Push a zero on the stack
+		OPCODE(opOne), // 05: Push a one on the stack
+		OPCODE(opConstInt), // 06: Constant integer
+		OPCODE(opDummy), // 07: Constant ID reference (unused)
+		OPCODE(opStrLit), // 08: String literal
+		OPCODE(opDummy), // 09: Symbol address (unused)
+		OPCODE(opDummy), // 10: Symbol contents (unused)
+		OPCODE(opDummy), // 11: Reference to "this" (unused)
+		OPCODE(opDummy), // 12: Dereference of an ID (unused)
 		// References within this module
-		OPCODE(opGetFlag),		// 13: Read flag bit
-		OPCODE(opGetByte),		// 14: Read byte
-		OPCODE(opGetInt),		// 15: Read integer
-		OPCODE(opDummy),		// 16: Read string (unused)
-		OPCODE(opDummy),		// 17: Read id (unused)
-		OPCODE(opPutFlag),		// 18: Write flag bit
-		OPCODE(opPutByte),		// 19: Write byte
-		OPCODE(opPutInt),		// 20: Write integer
-		OPCODE(opDummy),		// 21: Write string (unused)
-		OPCODE(opDummy),		// 22: Write id (unused)
-		OPCODE(opDummy),		// 23: Push effective address (unused)
+		OPCODE(opGetFlag), // 13: Read flag bit
+		OPCODE(opGetByte), // 14: Read byte
+		OPCODE(opGetInt), // 15: Read integer
+		OPCODE(opDummy), // 16: Read string (unused)
+		OPCODE(opDummy), // 17: Read id (unused)
+		OPCODE(opPutFlag), // 18: Write flag bit
+		OPCODE(opPutByte), // 19: Write byte
+		OPCODE(opPutInt), // 20: Write integer
+		OPCODE(opDummy), // 21: Write string (unused)
+		OPCODE(opDummy), // 22: Write id (unused)
+		OPCODE(opDummy), // 23: Push effective address (unused)
 		// Void versions, which consume their arguments
-		OPCODE(opPutFlagV),		// 24: Write flag bit
-		OPCODE(opPutByteV),		// 25: Write byte
-		OPCODE(opPutIntV),		// 26: Write integer
-		OPCODE(opDummy),		// 27: Write string (unused)
-		OPCODE(opDummy),		// 28: Write id (unused)
+		OPCODE(opPutFlagV), // 24: Write flag bit
+		OPCODE(opPutByteV), // 25: Write byte
+		OPCODE(opPutIntV), // 26: Write integer
+		OPCODE(opDummy), // 27: Write string (unused)
+		OPCODE(opDummy), // 28: Write id (unused)
 		// Function calling
-		OPCODE(opCallNear),		// 29: Call function in the same segment
-		OPCODE(opCallFar),		// 30: Call function in other segment
-		OPCODE(opCcall),		// 31: Call C function
-		OPCODE(opCcallV),		// 32: Call C function ()
-		OPCODE(opCallMember),	// 33: Call member function
-		OPCODE(opCallMemberV),	// 34: Call member function ()
-		OPCODE(opEnter),		// 35: Enter a function
-		OPCODE(opReturn),		// 36: Return from a function
-		OPCODE(opReturnV),		// 37: Return from a function ()
+		OPCODE(opCallNear), // 29: Call function in the same segment
+		OPCODE(opCallFar), // 30: Call function in other segment
+		OPCODE(opCcall), // 31: Call C function
+		OPCODE(opCcallV), // 32: Call C function ()
+		OPCODE(opCallMember), // 33: Call member function
+		OPCODE(opCallMemberV), // 34: Call member function ()
+		OPCODE(opEnter), // 35: Enter a function
+		OPCODE(opReturn), // 36: Return from a function
+		OPCODE(opReturnV), // 37: Return from a function ()
 		// Branching
-		OPCODE(opJmp),			// 38
-		OPCODE(opJmpTrueV),		// 39: Test argument and consume it
-		OPCODE(opJmpFalseV),	// 40: Test argument and consume it
-		OPCODE(opJmpTrue),		// 41: Test argument but don't consume it
-		OPCODE(opJmpFalse),		// 42: Test argument but don't consume it
-		OPCODE(opJmpSwitch),	// 43: Switch (integer)
-		OPCODE(opDummy),		// 44: Switch (string) (unused)
-		OPCODE(opJmpRandom),	// 45: Random jump
+		OPCODE(opJmp), // 38
+		OPCODE(opJmpTrueV), // 39: Test argument and consume it
+		OPCODE(opJmpFalseV), // 40: Test argument and consume it
+		OPCODE(opJmpTrue), // 41: Test argument but don't consume it
+		OPCODE(opJmpFalse), // 42: Test argument but don't consume it
+		OPCODE(opJmpSwitch), // 43: Switch (integer)
+		OPCODE(opDummy), // 44: Switch (string) (unused)
+		OPCODE(opJmpRandom), // 45: Random jump
 		// Unary operators
-		OPCODE(opNegate),		// 46
-		OPCODE(opNot),			// 47
-		OPCODE(opCompl),		// 48
-		OPCODE(opIncV),			// 49: Increment, don't push
-		OPCODE(opDecV),			// 50: Increment, don't push
-		OPCODE(opPostInc),		// 51
-		OPCODE(opPostDec),		// 52
+		OPCODE(opNegate), // 46
+		OPCODE(opNot), // 47
+		OPCODE(opCompl), // 48
+		OPCODE(opIncV), // 49: Increment, don't push
+		OPCODE(opDecV), // 50: Increment, don't push
+		OPCODE(opPostInc), // 51
+		OPCODE(opPostDec), // 52
 		// Arithmetic
-		OPCODE(opAdd),			// 53
-		OPCODE(opSub),			// 54
-		OPCODE(opMul),			// 55
-		OPCODE(opDiv),			// 56
-		OPCODE(opMod),			// 57
+		OPCODE(opAdd), // 53
+		OPCODE(opSub), // 54
+		OPCODE(opMul), // 55
+		OPCODE(opDiv), // 56
+		OPCODE(opMod), // 57
 		// Conditional
-		OPCODE(opDummy),		// 58: opConditional (unused)
-		OPCODE(opDummy),		// 59: opComma (unused)
+		OPCODE(opDummy), // 58: opConditional (unused)
+		OPCODE(opDummy), // 59: opComma (unused)
 		// Comparison
-		OPCODE(opEq),			// 60
-		OPCODE(opNe),			// 61
-		OPCODE(opGt),			// 62
-		OPCODE(opLt),			// 63
-		OPCODE(opGe),			// 64
-		OPCODE(opLe),			// 65
+		OPCODE(opEq), // 60
+		OPCODE(opNe), // 61
+		OPCODE(opGt), // 62
+		OPCODE(opLt), // 63
+		OPCODE(opGe), // 64
+		OPCODE(opLe), // 65
 		// String comparison
-		OPCODE(opDummy),		// 66: opStrEq (unused)
-		OPCODE(opDummy),		// 67: opStrNe (unused)
-		OPCODE(opDummy),		// 68: opStrGt (unused)
-		OPCODE(opDummy),		// 69: opStrLt (unused)
-		OPCODE(opDummy),		// 70: opStrGe (unused)
-		OPCODE(opDummy),		// 71: opStrLe (unused)
+		OPCODE(opDummy), // 66: opStrEq (unused)
+		OPCODE(opDummy), // 67: opStrNe (unused)
+		OPCODE(opDummy), // 68: opStrGt (unused)
+		OPCODE(opDummy), // 69: opStrLt (unused)
+		OPCODE(opDummy), // 70: opStrGe (unused)
+		OPCODE(opDummy), // 71: opStrLe (unused)
 		// Shift
-		OPCODE(opRsh),			// 72
-		OPCODE(opLsh),			// 73
+		OPCODE(opRsh), // 72
+		OPCODE(opLsh), // 73
 		// Bitwise
-		OPCODE(opAnd),			// 74
-		OPCODE(opOr),			// 75
-		OPCODE(opXor),			// 76
+		OPCODE(opAnd), // 74
+		OPCODE(opOr), // 75
+		OPCODE(opXor), // 76
 		// Logical
-		OPCODE(opLAnd),			// 77
-		OPCODE(opLOr),			// 78
-		OPCODE(opLXor),			// 79
+		OPCODE(opLAnd), // 77
+		OPCODE(opLOr), // 78
+		OPCODE(opLXor), // 79
 		// String manipulation
-		OPCODE(opDummy),		// 80: opStrCat, string concatenation (unused)
-		OPCODE(opDummy),		// 81: opStrFormat, string formatting (unused)
+		OPCODE(opDummy), // 80: opStrCat, string concatenation (unused)
+		OPCODE(opDummy), // 81: opStrFormat, string formatting (unused)
 		// Assignment
-		OPCODE(opDummy),		// 82: assign (unused)
-		OPCODE(opDummy),		// 83: += (unused)
-		OPCODE(opDummy),		// 84: -= (unused)
-		OPCODE(opDummy),		// 85: *= (unused)
-		OPCODE(opDummy),		// 86: /= (unused)
-		OPCODE(opDummy),		// 87: %= (unused)
-		OPCODE(opDummy),		// 88: <<= (unused)
-		OPCODE(opDummy),		// 89: >>= (unused)
-		OPCODE(opDummy),		// 90: and (unused)
-		OPCODE(opDummy),		// 91: or (unused)
+		OPCODE(opDummy), // 82: assign (unused)
+		OPCODE(opDummy), // 83: += (unused)
+		OPCODE(opDummy), // 84: -= (unused)
+		OPCODE(opDummy), // 85: *= (unused)
+		OPCODE(opDummy), // 86: /= (unused)
+		OPCODE(opDummy), // 87: %= (unused)
+		OPCODE(opDummy), // 88: <<= (unused)
+		OPCODE(opDummy), // 89: >>= (unused)
+		OPCODE(opDummy), // 90: and (unused)
+		OPCODE(opDummy), // 91: or (unused)
 		// Special
-		OPCODE(opSpeak),		// 92
-		OPCODE(opDialogBegin),	// 93
-		OPCODE(opDialogEnd),	// 94
-		OPCODE(opReply),		// 95
-		OPCODE(opAnimate),		// 96
-		OPCODE(opJmpSeedRandom),// 97: Seeded random jump
-		OPCODE(opDummy)			// 98: Get seeded export number (unused)
+		OPCODE(opSpeak), // 92
+		OPCODE(opDialogBegin), // 93
+		OPCODE(opDialogEnd), // 94
+		OPCODE(opReply), // 95
+		OPCODE(opAnimate), // 96
+		OPCODE(opJmpSeedRandom), // 97: Seeded random jump
+		OPCODE(opDummy) // 98: Get seeded export number (unused)
 	};
 #endif
 
@@ -443,7 +445,6 @@ void Script::setupScriptOpcodeList() {
 #endif
 	}
 }
-
 
 void Script::opDup(SCRIPTOP_PARAMS) {
 	thread->push(thread->stackTop());
@@ -577,8 +578,7 @@ void Script::opCallFar(SCRIPTOP_PARAMS) {
 void Script::opCcall(SCRIPTOP_PARAMS) {
 	byte argumentsCount = scriptS->readByte();
 	uint16 functionNumber = scriptS->readUint16LE();
-	if (functionNumber >= ((_vm->getGameId() == GID_IHNM) ?
-						   IHNM_SCRIPT_FUNCTION_MAX : ITE_SCRIPT_FUNCTION_MAX)) {
+	if (functionNumber >= ((_vm->getGameId() == GID_IHNM) ? IHNM_SCRIPT_FUNCTION_MAX : ITE_SCRIPT_FUNCTION_MAX)) {
 		error("Script::opCcall() Invalid script function number (%d)", functionNumber);
 	}
 
@@ -599,16 +599,16 @@ void Script::opCcall(SCRIPTOP_PARAMS) {
 	if (scriptFunction == &Saga::Script::sfVsetTrack) {
 		stopParsing = true;
 		breakOut = true;
-		return;		// cause abortAllThreads called and _this_ thread destroyed
+		return; // cause abortAllThreads called and _this_ thread destroyed
 	}
 #endif
 
 	thread->_stackTopIndex = checkStackTopIndex;
 
-	thread->push(thread->_returnValue);		// return value
+	thread->push(thread->_returnValue); // return value
 
 	if (thread->_flags & kTFlagAsleep)
-		breakOut = true;	// break out of loop!
+		breakOut = true; // break out of loop!
 }
 
 void Script::opCallMember(SCRIPTOP_PARAMS) {
@@ -626,8 +626,7 @@ void Script::opCallMemberV(SCRIPTOP_PARAMS) {
 void Script::opCcallV(SCRIPTOP_PARAMS) {
 	byte argumentsCount = scriptS->readByte();
 	uint16 functionNumber = scriptS->readUint16LE();
-	if (functionNumber >= ((_vm->getGameId() == GID_IHNM) ?
-						   IHNM_SCRIPT_FUNCTION_MAX : ITE_SCRIPT_FUNCTION_MAX)) {
+	if (functionNumber >= ((_vm->getGameId() == GID_IHNM) ? IHNM_SCRIPT_FUNCTION_MAX : ITE_SCRIPT_FUNCTION_MAX)) {
 		error("Script::opCcallV() Invalid script function number (%d)", functionNumber);
 	}
 
@@ -641,21 +640,21 @@ void Script::opCcallV(SCRIPTOP_PARAMS) {
 	if (scriptFunction == &Saga::Script::sfScriptGotoScene) {
 		stopParsing = true;
 		breakOut = true;
-		return;		// cause abortAllThreads called and _this_ thread destroyed
+		return; // cause abortAllThreads called and _this_ thread destroyed
 	}
 
 #ifdef ENABLE_IHNM
 	if (scriptFunction == &Saga::Script::sfVsetTrack) {
 		stopParsing = true;
 		breakOut = true;
-		return;		// cause abortAllThreads called and _this_ thread destroyed
+		return; // cause abortAllThreads called and _this_ thread destroyed
 	}
 #endif
 
 	thread->_stackTopIndex = checkStackTopIndex;
 
 	if (thread->_flags & kTFlagAsleep)
-		breakOut = true;	// break out of loop!
+		breakOut = true; // break out of loop!
 }
 
 void Script::opEnter(SCRIPTOP_PARAMS) {
@@ -665,7 +664,7 @@ void Script::opEnter(SCRIPTOP_PARAMS) {
 }
 
 void Script::opReturn(SCRIPTOP_PARAMS) {
-	thread->_returnValue = thread->pop();		// return value
+	thread->_returnValue = thread->pop(); // return value
 
 	thread->_stackTopIndex = thread->_frameIndex;
 	thread->_frameIndex = thread->pop();
@@ -948,8 +947,7 @@ void Script::opSpeak(SCRIPTOP_PARAMS) {
 	// scripts change to scene 5, but do not clear the cutaway that appears
 	// before Gorrister's speech starts, resulting in a deadlock. We do this
 	// manually here.
-	if (_vm->getGameId() == GID_IHNM && _vm->_scene->currentChapterNumber() == 1 &&
-		_vm->_scene->currentSceneNumber() == 5 && _vm->_anim->hasCutaway()) {
+	if (_vm->getGameId() == GID_IHNM && _vm->_scene->currentChapterNumber() == 1 && _vm->_scene->currentSceneNumber() == 5 && _vm->_anim->hasCutaway()) {
 		_vm->_anim->returnFromCutaway();
 	}
 #endif
@@ -978,8 +976,7 @@ void Script::opSpeak(SCRIPTOP_PARAMS) {
 	// now data contains last string index
 
 	if (_vm->getFeatures() & GF_ITE_DOS_DEMO) {
-		if ((_vm->_scene->currentSceneNumber() == ITE_DEFAULT_SCENE) &&
-			(iparam1 >= 288) && (iparam1 <= (RID_SCENE1_VOICE_END - RID_SCENE1_VOICE_START + 288))) {
+		if ((_vm->_scene->currentSceneNumber() == ITE_DEFAULT_SCENE) && (iparam1 >= 288) && (iparam1 <= (RID_SCENE1_VOICE_END - RID_SCENE1_VOICE_START + 288))) {
 			sampleResourceId = RID_SCENE1_VOICE_START + iparam1 - 288;
 		}
 	} else {
@@ -1112,7 +1109,7 @@ void Script::loadModuleBase(ModuleData &module, const ByteArray &resourceData) {
 
 	uint entryPointsCount = scriptS.readUint16();
 	scriptS.readUint16(); //skip
-	uint16 entryPointsTableOffset;	// offset of entrypoint table in moduleBase
+	uint16 entryPointsTableOffset; // offset of entrypoint table in moduleBase
 	entryPointsTableOffset = scriptS.readUint16();
 	scriptS.readUint16(); //skip
 
@@ -1187,7 +1184,6 @@ void Script::showVerb(int statusColor) {
 		_vm->_interface->setStatusText(statusString.c_str(), statusColor);
 		return;
 	}
-
 
 	if (objectTypeId(_currentObject[1]) != kGameObjectNone) {
 		object2Name = _vm->getObjectName(_currentObject[1]);
@@ -1298,25 +1294,25 @@ bool Script::isNonInteractiveDemo() {
 }
 
 void Script::setLeftButtonVerb(int verb) {
-	int		oldVerb = _currentVerb;
+	int oldVerb = _currentVerb;
 
 	_currentVerb = _leftButtonVerb = verb;
 
-	if ((_currentVerb != oldVerb) && (_vm->_interface->getMode() == kPanelMain)){
-			if (oldVerb > getVerbType(kVerbNone))
-				_vm->_interface->setVerbState(oldVerb, 2);
+	if ((_currentVerb != oldVerb) && (_vm->_interface->getMode() == kPanelMain)) {
+		if (oldVerb > getVerbType(kVerbNone))
+			_vm->_interface->setVerbState(oldVerb, 2);
 
-			if (_currentVerb > getVerbType(kVerbNone))
-				_vm->_interface->setVerbState(_currentVerb, 2);
+		if (_currentVerb > getVerbType(kVerbNone))
+			_vm->_interface->setVerbState(_currentVerb, 2);
 	}
 }
 
 void Script::setRightButtonVerb(int verb) {
-	int		oldVerb = _rightButtonVerb;
+	int oldVerb = _rightButtonVerb;
 
 	_rightButtonVerb = verb;
 
-	if ((_rightButtonVerb != oldVerb) && (_vm->_interface->getMode() == kPanelMain)){
+	if ((_rightButtonVerb != oldVerb) && (_vm->_interface->getMode() == kPanelMain)) {
 		if (oldVerb > getVerbType(kVerbNone))
 			_vm->_interface->setVerbState(oldVerb, 2);
 
@@ -1338,7 +1334,7 @@ void Script::doVerb() {
 
 	if (_pendingVerb == getVerbType(kVerbGive)) {
 		scriptEntrypointNumber = _vm->_actor->getObjectScriptEntrypointNumber(_pendingObject[1]);
-		if (_vm->_actor->getObjectFlags(_pendingObject[1]) & (kFollower|kProtagonist|kExtended)) {
+		if (_vm->_actor->getObjectFlags(_pendingObject[1]) & (kFollower | kProtagonist | kExtended)) {
 			scriptModuleNumber = 0;
 		} else {
 			scriptModuleNumber = _vm->_scene->getScriptModuleNumber();
@@ -1370,7 +1366,7 @@ void Script::doVerb() {
 			if (objectType & (kGameObjectActor | kGameObjectObject)) {
 				scriptEntrypointNumber = _vm->_actor->getObjectScriptEntrypointNumber(_pendingObject[0]);
 
-				if ((objectType == kGameObjectActor) && !(_vm->_actor->getObjectFlags(_pendingObject[0]) & (kFollower|kProtagonist|kExtended))) {
+				if ((objectType == kGameObjectActor) && !(_vm->_actor->getObjectFlags(_pendingObject[0]) & (kFollower | kProtagonist | kExtended))) {
 					scriptModuleNumber = _vm->_scene->getScriptModuleNumber();
 				} else {
 					scriptModuleNumber = 0;
@@ -1410,10 +1406,10 @@ void Script::doVerb() {
 		event.time = 0;
 		event.param = scriptModuleNumber;
 		event.param2 = scriptEntrypointNumber;
-		event.param3 = _pendingVerb;		// Action
-		event.param4 = _pendingObject[0];	// Object
-		event.param5 = _pendingObject[1];	// With Object
-		event.param6 = (objectType == kGameObjectActor) ? _pendingObject[0] : ID_PROTAG;		// Actor
+		event.param3 = _pendingVerb; // Action
+		event.param4 = _pendingObject[0]; // Object
+		event.param5 = _pendingObject[1]; // With Object
+		event.param6 = (objectType == kGameObjectActor) ? _pendingObject[0] : ID_PROTAG; // Actor
 		_vm->_events->queue(event);
 
 	} else {
@@ -1499,10 +1495,9 @@ void Script::hitObject(bool leftButton) {
 		else
 			showVerb();
 	}
-
 }
 
-void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
+void Script::playfieldClick(const Point &mousePoint, bool leftButton) {
 	Location pickLocation;
 	const HitZone *hitZone;
 	Point specialPoint;
@@ -1510,10 +1505,7 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 	_vm->incrementMouseClickCount();
 	_vm->_actor->abortSpeech();
 
-	if ((_vm->_actor->_protagonist->_currentAction != kActionWait) &&
-		(_vm->_actor->_protagonist->_currentAction != kActionFreeze) &&
-		(_vm->_actor->_protagonist->_currentAction != kActionWalkToLink) &&
-		(_vm->_actor->_protagonist->_currentAction != kActionWalkToPoint)) {
+	if ((_vm->_actor->_protagonist->_currentAction != kActionWait) && (_vm->_actor->_protagonist->_currentAction != kActionFreeze) && (_vm->_actor->_protagonist->_currentAction != kActionWalkToLink) && (_vm->_actor->_protagonist->_currentAction != kActionWalkToPoint)) {
 		return;
 	}
 	if (_pendingVerb > getVerbType(kVerbNone)) {
@@ -1528,7 +1520,6 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 		_pendingVerb = getVerbType(kVerbWalkTo);
 	}
 
-
 	// tiled stuff
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 		_vm->_isoMap->screenPointToTileCoords(mousePoint, pickLocation);
@@ -1536,11 +1527,10 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 		pickLocation.fromScreenPoint(mousePoint);
 	}
 
-
 	hitZone = NULL;
 
 	if (objectTypeId(_pendingObject[0]) == kGameObjectHitZone) {
-		 hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(_pendingObject[0]));
+		hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(_pendingObject[0]));
 	} else {
 		if ((_pendingVerb == getVerbType(kVerbUse)) && (objectTypeId(_pendingObject[1]) == kGameObjectHitZone)) {
 			hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(_pendingObject[1]));
@@ -1582,12 +1572,8 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 	}
 
 	if (_vm->getGameId() == GID_ITE) {
-		if ((_pendingVerb == getVerbType(kVerbWalkTo)) ||
-			(_pendingVerb == getVerbType(kVerbPickUp)) ||
-			(_pendingVerb == getVerbType(kVerbOpen)) ||
-			(_pendingVerb == getVerbType(kVerbClose)) ||
-			(_pendingVerb == getVerbType(kVerbUse))) {
-				_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
+		if ((_pendingVerb == getVerbType(kVerbWalkTo)) || (_pendingVerb == getVerbType(kVerbPickUp)) || (_pendingVerb == getVerbType(kVerbOpen)) || (_pendingVerb == getVerbType(kVerbClose)) || (_pendingVerb == getVerbType(kVerbUse))) {
+			_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
 		} else {
 			if (_pendingVerb == getVerbType(kVerbLookAt)) {
 				if (objectTypeId(_pendingObject[0]) != kGameObjectActor) {
@@ -1596,9 +1582,8 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 					doVerb();
 				}
 			} else {
-				if ((_pendingVerb == getVerbType(kVerbTalkTo)) ||
-					(_pendingVerb == getVerbType(kVerbGive))) {
-						doVerb();
+				if ((_pendingVerb == getVerbType(kVerbTalkTo)) || (_pendingVerb == getVerbType(kVerbGive))) {
+					doVerb();
 				}
 			}
 		}
@@ -1607,38 +1592,29 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 #ifdef ENABLE_IHNM
 	if (_vm->getGameId() == GID_IHNM) {
 
-		if ((_pendingVerb == getVerbType(kVerbWalkTo)) ||
-			(_pendingVerb == getVerbType(kVerbPickUp)) ||
-			(_pendingVerb == getVerbType(kVerbOpen)) ||
-			(_pendingVerb == getVerbType(kVerbClose)) ||
-			(_pendingVerb == getVerbType(kVerbUse))) {
-				_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
+		if ((_pendingVerb == getVerbType(kVerbWalkTo)) || (_pendingVerb == getVerbType(kVerbPickUp)) || (_pendingVerb == getVerbType(kVerbOpen)) || (_pendingVerb == getVerbType(kVerbClose)) || (_pendingVerb == getVerbType(kVerbUse))) {
+			_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
 
-				// Auto-use no-walk hitzones in IHNM, needed for Benny's chapter
-				if (_pendingVerb == getVerbType(kVerbWalkTo) &&
-					hitZone != NULL && (hitZone->getFlags() & kHitZoneNoWalk)) {
-					_pendingVerb = getVerbType(kVerbUse);
-					if (objectTypeId(_pendingObject[0]) == kGameObjectActor) {
-						_vm->_actor->actorFaceTowardsObject(ID_PROTAG, _pendingObject[0]);
-						doVerb();
-					}
+			// Auto-use no-walk hitzones in IHNM, needed for Benny's chapter
+			if (_pendingVerb == getVerbType(kVerbWalkTo) && hitZone != NULL && (hitZone->getFlags() & kHitZoneNoWalk)) {
+				_pendingVerb = getVerbType(kVerbUse);
+				if (objectTypeId(_pendingObject[0]) == kGameObjectActor) {
+					_vm->_actor->actorFaceTowardsObject(ID_PROTAG, _pendingObject[0]);
+					doVerb();
 				}
+			}
 
-				// Auto-use hitzone with id 24576 (the exit to the left) in screens 16 - 19
-				// (screens with Gorrister's heart) in IHNM. For some reason, this zone does
-				// not have a corresponding action zone, so we auto-use it here, like the exits
-				// in Benny's chapter
-				if (_vm->_scene->currentChapterNumber() == 1 &&
-					_vm->_scene->currentSceneNumber() >= 16 &&
-					_vm->_scene->currentSceneNumber() <= 19 &&
-					_pendingVerb == getVerbType(kVerbWalkTo) &&
-					hitZone != NULL && hitZone->getHitZoneId() == 24576) {
-					_pendingVerb = getVerbType(kVerbUse);
-					if (objectTypeId(_pendingObject[0]) == kGameObjectActor) {
-						_vm->_actor->actorFaceTowardsObject(ID_PROTAG, _pendingObject[0]);
-						doVerb();
-					}
+			// Auto-use hitzone with id 24576 (the exit to the left) in screens 16 - 19
+			// (screens with Gorrister's heart) in IHNM. For some reason, this zone does
+			// not have a corresponding action zone, so we auto-use it here, like the exits
+			// in Benny's chapter
+			if (_vm->_scene->currentChapterNumber() == 1 && _vm->_scene->currentSceneNumber() >= 16 && _vm->_scene->currentSceneNumber() <= 19 && _pendingVerb == getVerbType(kVerbWalkTo) && hitZone != NULL && hitZone->getHitZoneId() == 24576) {
+				_pendingVerb = getVerbType(kVerbUse);
+				if (objectTypeId(_pendingObject[0]) == kGameObjectActor) {
+					_vm->_actor->actorFaceTowardsObject(ID_PROTAG, _pendingObject[0]);
+					doVerb();
 				}
+			}
 
 		} else {
 			if (_pendingVerb == getVerbType(kVerbLookAt)) {
@@ -1649,18 +1625,16 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 					doVerb();
 				}
 			} else {
-				if ((_pendingVerb == getVerbType(kVerbTalkTo)) ||
-					(_pendingVerb == getVerbType(kVerbGive))) {
-						doVerb();
+				if ((_pendingVerb == getVerbType(kVerbTalkTo)) || (_pendingVerb == getVerbType(kVerbGive))) {
+					doVerb();
 				}
 			}
 		}
 	}
 #endif
-
 }
 
-void Script::whichObject(const Point& mousePoint) {
+void Script::whichObject(const Point &mousePoint) {
 	uint16 objectId;
 	int16 objectFlags;
 	int newRightButtonVerb;
@@ -1670,8 +1644,8 @@ void Script::whichObject(const Point& mousePoint) {
 	Point pickPoint;
 	Location pickLocation;
 	int hitZoneIndex;
-	const HitZone * hitZone;
-	PanelButton * panelButton;
+	const HitZone *hitZone;
+	PanelButton *panelButton;
 
 	objectId = ID_NOTHING;
 	objectFlags = 0;
@@ -1712,14 +1686,10 @@ void Script::whichObject(const Point& mousePoint) {
 					bool actorIsFollower = (actor->_flags & kFollower);
 					bool actorCanBeUsed = (actor->_flags & kUsable);
 
-					if ( _currentVerb == getVerbType(kVerbPickUp) ||
-						 _currentVerb == getVerbType(kVerbOpen) ||
-						 _currentVerb == getVerbType(kVerbClose) ||
-						(_currentVerb == getVerbType(kVerbGive) && !_firstObjectSet) ||
-						(_currentVerb == getVerbType(kVerbUse) && !_firstObjectSet && !(actorIsFollower || actorCanBeUsed))) {
-							objectId = ID_NOTHING;
-							newObjectId = ID_NOTHING;
-						}
+					if (_currentVerb == getVerbType(kVerbPickUp) || _currentVerb == getVerbType(kVerbOpen) || _currentVerb == getVerbType(kVerbClose) || (_currentVerb == getVerbType(kVerbGive) && !_firstObjectSet) || (_currentVerb == getVerbType(kVerbUse) && !_firstObjectSet && !(actorIsFollower || actorCanBeUsed))) {
+						objectId = ID_NOTHING;
+						newObjectId = ID_NOTHING;
+					}
 				}
 			}
 

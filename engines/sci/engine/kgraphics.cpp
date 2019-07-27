@@ -29,30 +29,30 @@
 
 #include "gui/message.h"
 
-#include "sci/sci.h"
-#include "sci/event.h"
-#include "sci/resource.h"
 #include "sci/engine/features.h"
 #include "sci/engine/guest_additions.h"
-#include "sci/engine/savegame.h"
-#include "sci/engine/state.h"
-#include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
+#include "sci/engine/savegame.h"
+#include "sci/engine/selector.h"
+#include "sci/engine/state.h"
+#include "sci/event.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
 #include "sci/graphics/controls16.h"
 #include "sci/graphics/cursor.h"
-#include "sci/graphics/palette.h"
 #include "sci/graphics/paint16.h"
+#include "sci/graphics/palette.h"
 #include "sci/graphics/picture.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/remap.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/text16.h"
 #include "sci/graphics/view.h"
+#include "sci/resource.h"
+#include "sci/sci.h"
 #ifdef ENABLE_SCI32
-#include "sci/graphics/text32.h"
+#	include "sci/graphics/text32.h"
 #endif
 
 namespace Sci {
@@ -65,7 +65,7 @@ static int16 adjustGraphColor(int16 color) {
 	// at least FillBox (only one of the functions using adjustGraphColor)
 	// behaves like this.
 	if (g_sci->getResMan()->getViewType() == kViewEga)
-		return color & 0x0F;	// 0 - 15
+		return color & 0x0F; // 0 - 15
 	else
 		return color;
 }
@@ -199,11 +199,11 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 	case 10:
 		// Freddy pharkas, when using the whiskey glass to read the prescription (bug #3034973)
 		g_sci->_gfxCursor->kernelSetZoomZone(argv[0].toUint16(),
-			Common::Rect(argv[1].toUint16(), argv[2].toUint16(), argv[3].toUint16(), argv[4].toUint16()),
-			argv[5].toUint16(), argv[6].toUint16(), argv[7].toUint16(),
-			argv[8].toUint16(), argv[9].toUint16());
+		                                     Common::Rect(argv[1].toUint16(), argv[2].toUint16(), argv[3].toUint16(), argv[4].toUint16()),
+		                                     argv[5].toUint16(), argv[6].toUint16(), argv[7].toUint16(),
+		                                     argv[8].toUint16(), argv[9].toUint16());
 		break;
-	default :
+	default:
 		error("kSetCursor: Unhandled case: %d arguments given", argc);
 		break;
 	}
@@ -238,8 +238,10 @@ static Common::Rect getGraphRect(reg_t *argv) {
 	int16 y = argv[0].toSint16();
 	int16 x1 = argv[3].toSint16();
 	int16 y1 = argv[2].toSint16();
-	if (x > x1) SWAP(x, x1);
-	if (y > y1) SWAP(y, y1);
+	if (x > x1)
+		SWAP(x, x1);
+	if (y > y1)
+		SWAP(y, y1);
 	return Common::Rect(x, y, x1, y1);
 }
 
@@ -356,7 +358,8 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
-	textWidth = dest[3].toUint16(); textHeight = dest[2].toUint16();
+	textWidth = dest[3].toUint16();
+	textHeight = dest[2].toUint16();
 
 	uint16 languageSplitter = 0;
 	Common::String splitText = g_sci->strSplitLanguage(text.c_str(), &languageSplitter, sep);
@@ -368,8 +371,7 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 	// attempt to draw a very large window (larger than the screen) to
 	// show the text, and crash.
 	// Fixes bug #3306417.
-	if (textWidth >= g_sci->_gfxScreen->getDisplayWidth() ||
-		textHeight >= g_sci->_gfxScreen->getDisplayHeight()) {
+	if (textWidth >= g_sci->_gfxScreen->getDisplayWidth() || textHeight >= g_sci->_gfxScreen->getDisplayHeight()) {
 		// TODO: Is this needed for SCI32 as well?
 		if (g_sci->_gfxText16) {
 			warning("kTextSize: string would be too big to fit on screen. Trimming it");
@@ -463,7 +465,7 @@ reg_t kIsItSkip(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kCelHigh(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId viewId = argv[0].toSint16();
-	if (viewId == -1)	// Happens in SCI32
+	if (viewId == -1) // Happens in SCI32
 		return NULL_REG;
 	int16 loopNo = argv[1].toSint16();
 	int16 celNo = (argc >= 3) ? argv[2].toSint16() : 0;
@@ -476,7 +478,7 @@ reg_t kCelHigh(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kCelWide(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId viewId = argv[0].toSint16();
-	if (viewId == -1)	// Happens in SCI32
+	if (viewId == -1) // Happens in SCI32
 		return NULL_REG;
 	int16 loopNo = argv[1].toSint16();
 	int16 celNo = (argc >= 3) ? argv[2].toSint16() : 0;
@@ -546,8 +548,8 @@ reg_t kOnControl(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, result);
 }
 
-#define K_DRAWPIC_FLAGS_MIRRORED			(1 << 14)
-#define K_DRAWPIC_FLAGS_ANIMATIONBLACKOUT	(1 << 15)
+#define K_DRAWPIC_FLAGS_MIRRORED (1 << 14)
+#define K_DRAWPIC_FLAGS_ANIMATIONBLACKOUT (1 << 15)
 
 reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId pictureId = argv[0].toUint16();
@@ -812,8 +814,10 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 // when challenging jones - one button is a duplicate and also has lower-right
 // which is 0, 0)
 Common::Rect kControlCreateRect(int16 x, int16 y, int16 x1, int16 y1) {
-	if (x > x1) x1 = x;
-	if (y > y1) y1 = y;
+	if (x > x1)
+		x1 = x;
+	if (y > y1)
+		y1 = y;
 	return Common::Rect(x, y, x1, y1);
 }
 
@@ -838,8 +842,8 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	bool isAlias = false;
 
 	rect = kControlCreateRect(x, y,
-				readSelectorValue(s->_segMan, controlObject, SELECTOR(nsRight)),
-				readSelectorValue(s->_segMan, controlObject, SELECTOR(nsBottom)));
+	                          readSelectorValue(s->_segMan, controlObject, SELECTOR(nsRight)),
+	                          readSelectorValue(s->_segMan, controlObject, SELECTOR(nsBottom)));
 
 	if (!textReference.isNull())
 		text = s->_segMan->getString(textReference);
@@ -919,7 +923,8 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		}
 
 		// Count string entries in NULL terminated string list
-		listCount = 0; listSeeker = textReference;
+		listCount = 0;
+		listSeeker = textReference;
 		while (s->_segMan->strlen(listSeeker) > 0) {
 			listCount++;
 			listSeeker.incOffset(maxChars);
@@ -927,7 +932,8 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 
 		// TODO: This is rather convoluted... It would be a lot cleaner
 		// if sciw_new_list_control would take a list of Common::String
-		cursorPos = 0; upperPos = 0;
+		cursorPos = 0;
+		upperPos = 0;
 		if (listCount) {
 			// We create a pointer-list to the different strings, we also find out whats upper and cursor position
 			listSeeker = textReference;
@@ -993,11 +999,11 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 			// check if checkDirButton is still enabled, in that case we are called the first time during that room
 			if (!(readSelectorValue(s->_segMan, changeDirButton, SELECTOR(state)) & SCI_CONTROLS_STYLE_DISABLED)) {
 				showScummVMDialog(_("Characters saved inside ScummVM are shown "
-						"automatically. Character files saved in the original "
-						"interpreter need to be put inside ScummVM's saved games "
-						"directory and a prefix needs to be added depending on which "
-						"game it was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' "
-						"for Quest for Glory 2. Example: 'qfg2-thief.sav'."));
+				                    "automatically. Character files saved in the original "
+				                    "interpreter need to be put inside ScummVM's saved games "
+				                    "directory and a prefix needs to be added depending on which "
+				                    "game it was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' "
+				                    "for Quest for Glory 2. Example: 'qfg2-thief.sav'."));
 			}
 		}
 
@@ -1145,16 +1151,16 @@ reg_t kDisposeWindow(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kNewWindow(EngineState *s, int argc, reg_t *argv) {
-	Common::Rect rect1 (argv[1].toSint16(), argv[0].toSint16(), argv[3].toSint16(), argv[2].toSint16());
+	Common::Rect rect1(argv[1].toSint16(), argv[0].toSint16(), argv[3].toSint16(), argv[2].toSint16());
 	Common::Rect rect2;
 	int argextra = argc >= 13 ? 4 : 0; // Triggers in PQ3 and SCI1.1 games, argc 13 for DOS argc 15 for mac
-	int	style = argv[5 + argextra].toSint16();
-	int	priority = (argc > 6 + argextra) ? argv[6 + argextra].toSint16() : -1;
+	int style = argv[5 + argextra].toSint16();
+	int priority = (argc > 6 + argextra) ? argv[6 + argextra].toSint16() : -1;
 	int colorPen = adjustGraphColor((argc > 7 + argextra) ? argv[7 + argextra].toSint16() : 0);
 	int colorBack = adjustGraphColor((argc > 8 + argextra) ? argv[8 + argextra].toSint16() : 255);
 
 	if (argc >= 13)
-		rect2 = Common::Rect (argv[5].toSint16(), argv[4].toSint16(), argv[7].toSint16(), argv[6].toSint16());
+		rect2 = Common::Rect(argv[5].toSint16(), argv[4].toSint16(), argv[7].toSint16(), argv[6].toSint16());
 
 	Common::String title;
 	if (argv[4 + argextra].getSegment()) {
@@ -1197,10 +1203,14 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 	Common::String text;
 
 	if (textp.getSegment()) {
-		argc--; argv++;
+		argc--;
+		argv++;
 		text = s->_segMan->getString(textp);
 	} else {
-		argc--; argc--; argv++; argv++;
+		argc--;
+		argc--;
+		argv++;
+		argv++;
 		text = g_sci->getKernel()->lookupText(textp, index);
 	}
 
@@ -1243,14 +1253,14 @@ reg_t kShow(EngineState *s, int argc, reg_t *argv) {
 	uint16 map = argv[0].toUint16();
 
 	switch (map) {
-	case 1:	// Visual, substituted by display for us
+	case 1: // Visual, substituted by display for us
 		g_sci->_gfxScreen->debugShowMap(3);
 		break;
-	case 2:	// Priority
+	case 2: // Priority
 		g_sci->_gfxScreen->debugShowMap(1);
 		break;
-	case 3:	// Control
-	case 4:	// Control
+	case 3: // Control
+	case 4: // Control
 		g_sci->_gfxScreen->debugShowMap(2);
 		break;
 	default:
@@ -1269,17 +1279,15 @@ reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
 		uint16 percent = argv[1].toUint16();
 		g_sci->_gfxRemap16->resetRemapping();
 		g_sci->_gfxRemap16->setRemappingPercent(254, percent);
-		}
-		break;
-	case 1:	{ // remap by range
+	} break;
+	case 1: { // remap by range
 		uint16 from = argv[1].toUint16();
 		uint16 to = argv[2].toUint16();
 		uint16 base = argv[3].toUint16();
 		g_sci->_gfxRemap16->resetRemapping();
 		g_sci->_gfxRemap16->setRemappingRange(254, from, to, base);
-		}
-		break;
-	case 2:	// turn remapping off (unused)
+	} break;
+	case 2: // turn remapping off (unused)
 		error("Unused subop kRemapColors(2) has been called");
 		break;
 	default:
@@ -1301,16 +1309,14 @@ reg_t kRemapColorsKawa(EngineState *s, int argc, reg_t *argv) {
 		uint16 percent = argv[2].toUint16();
 		g_sci->_gfxRemap16->resetRemapping();
 		g_sci->_gfxRemap16->setRemappingPercent(from, percent);
-		}
-		break;
+	} break;
 	case 2: { // remap by range
 		uint16 from = argv[1].toUint16();
 		uint16 to = argv[2].toUint16();
 		uint16 base = argv[3].toUint16();
 		g_sci->_gfxRemap16->resetRemapping();
 		g_sci->_gfxRemap16->setRemappingRange(254, from, to, base);
-		}
-		break;
+	} break;
 	default:
 		error("Unsupported SCI32-style kRemapColors(%d) has been called", operation);
 		break;

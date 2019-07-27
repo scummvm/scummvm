@@ -87,7 +87,6 @@ typedef enum {
 	RESPONSE_ONCE_GAME
 } TResponseType;
 
-
 typedef enum {
 	TALK_SKIP_LEFT = 0,
 	TALK_SKIP_RIGHT = 1,

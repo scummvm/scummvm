@@ -50,7 +50,6 @@ typedef int cycle_count;
 typedef int sound_sample;
 typedef sound_sample fc_point[2];
 
-
 class WaveformGenerator {
 public:
 	WaveformGenerator();
@@ -72,8 +71,8 @@ public:
 	reg12 output();
 
 protected:
-	const WaveformGenerator* sync_source;
-	WaveformGenerator* sync_dest;
+	const WaveformGenerator *sync_source;
+	WaveformGenerator *sync_dest;
 
 	// Tell whether the accumulator MSB was set high on this cycle.
 	bool msb_rising;
@@ -131,7 +130,7 @@ public:
 	void enable_filter(bool enable);
 
 	void updateClock(cycle_count delta_t,
-		sound_sample voice1, sound_sample voice2, sound_sample voice3);
+	                 sound_sample voice1, sound_sample voice2, sound_sample voice3);
 	void reset();
 
 	// Write registers.
@@ -184,9 +183,9 @@ protected:
 	// Cutoff frequency tables.
 	// FC is an 11 bit register.
 	sound_sample f0_6581[2048];
-	sound_sample* f0;
+	sound_sample *f0;
 	static fc_point f0_points_6581[];
-	fc_point* f0_points;
+	fc_point *f0_points;
 	int f0_count;
 
 	friend class SID;
@@ -196,7 +195,9 @@ class EnvelopeGenerator {
 public:
 	EnvelopeGenerator();
 
-	enum State { ATTACK, DECAY_SUSTAIN, RELEASE };
+	enum State { ATTACK,
+		           DECAY_SUSTAIN,
+		           RELEASE };
 
 	void updateClock(cycle_count delta_t);
 	void reset();
@@ -281,7 +282,7 @@ public:
 	// Range [-2048*255, 2047*255].
 	sound_sample output() {
 		// Multiply oscillator output with envelope output.
-		return (wave.output() - wave_zero)*envelope.output() + voice_DC;
+		return (wave.output() - wave_zero) * envelope.output() + voice_DC;
 	}
 
 protected:
@@ -297,7 +298,6 @@ protected:
 	friend class SID;
 };
 
-
 class SID {
 public:
 	SID();
@@ -306,11 +306,11 @@ public:
 	void enable_filter(bool enable);
 	void enable_external_filter(bool enable);
 	bool set_sampling_parameters(double clock_freq,
-		double sample_freq, double pass_freq = -1,
-		double filter_scale = 0.97);
+	                             double sample_freq, double pass_freq = -1,
+	                             double filter_scale = 0.97);
 
 	void updateClock(cycle_count delta_t);
-	int updateClock(cycle_count& delta_t, short* buf, int n, int interleave = 1);
+	int updateClock(cycle_count &delta_t, short *buf, int n, int interleave = 1);
 	void reset();
 
 	// Read/write registers.

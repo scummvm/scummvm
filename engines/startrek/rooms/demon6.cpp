@@ -276,7 +276,7 @@ void Room::demon6UseCrewmanOnCase() {
 		if (_roomVar.demon.insultedStephenRecently)
 			return;
 		showText(TX_SPEAKER_STEPHEN, 44, true);
-		TextRef choices1[] = {TX_SPEAKER_KIRK, 1, 6, 3, TX_BLANK};
+		TextRef choices1[] = { TX_SPEAKER_KIRK, 1, 6, 3, TX_BLANK };
 		TextRef choice = showMultipleTexts(choices1, true);
 
 		if (choice == 0) {
@@ -286,7 +286,7 @@ void Room::demon6UseCrewmanOnCase() {
 			demon6StephenDescribesItemsInCase();
 		} else if (choice == 2) {
 			showText(TX_SPEAKER_STEPHEN, 31, true);
-			TextRef choices3[] = {TX_SPEAKER_KIRK, 1, 6, TX_BLANK};
+			TextRef choices3[] = { TX_SPEAKER_KIRK, 1, 6, TX_BLANK };
 			choice = showMultipleTexts(choices3, true);
 
 			if (choice == 0)
@@ -581,7 +581,7 @@ int Room::demon6ShowCaseProcessSelection(Sprite *sprites, Sprite *clickedSprite,
 	clickedSprite->bitmap.reset();
 	int i = clickedSprite - sprites;
 	visible ^= (0x10 >> i);
-	
+
 	return visible;
 }
 

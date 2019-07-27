@@ -23,8 +23,8 @@
 #ifndef SCI_INCLUDE_FEATURES_H
 #define SCI_INCLUDE_FEATURES_H
 
-#include "sci/resource.h"
 #include "sci/engine/seg_manager.h"
+#include "sci/resource.h"
 
 namespace Sci {
 
@@ -131,9 +131,7 @@ public:
 		// MGDX is assumed to not have transparent picture planes since it
 		// was released before SQ6, but this has not been verified since it
 		// cannot be disassembled at the moment (Phar Lap Windows-only release)
-		return getSciVersion() >= SCI_VERSION_2_1_MIDDLE &&
-			gid != GID_SQ6 &&
-			gid != GID_MOTHERGOOSEHIRES;
+		return getSciVersion() >= SCI_VERSION_2_1_MIDDLE && gid != GID_SQ6 && gid != GID_MOTHERGOOSEHIRES;
 	}
 
 	inline bool hasMidPaletteCode() const {
@@ -141,13 +139,10 @@ public:
 	}
 
 	inline bool hasLatePaletteCode() const {
-		return getSciVersion() > SCI_VERSION_2_1_MIDDLE ||
-			g_sci->getGameId() == GID_GK2 ||
-			g_sci->getGameId() == GID_PQSWAT ||
-			// Guessing that Shivers has the late palette code because it has a
-			// brightness slider
-			g_sci->getGameId() == GID_SHIVERS ||
-			g_sci->getGameId() == GID_TORIN;
+		return getSciVersion() > SCI_VERSION_2_1_MIDDLE || g_sci->getGameId() == GID_GK2 || g_sci->getGameId() == GID_PQSWAT ||
+		  // Guessing that Shivers has the late palette code because it has a
+		  // brightness slider
+		  g_sci->getGameId() == GID_SHIVERS || g_sci->getGameId() == GID_TORIN;
 	}
 
 	inline bool VMDOpenStopsAudio() const {
@@ -156,9 +151,7 @@ public:
 		// No: SQ6
 		// TODO: Optional extra flag to kPlayVMD which defaults to Yes: PQ:SWAT
 		// TODO: SCI3, GK2 (GK2's VMD code is closer to SCI3 than SCI21)
-		return getSciVersion() == SCI_VERSION_2_1_MIDDLE &&
-			g_sci->getGameId() != GID_SQ6 &&
-			g_sci->getGameId() != GID_GK2;
+		return getSciVersion() == SCI_VERSION_2_1_MIDDLE && g_sci->getGameId() != GID_SQ6 && g_sci->getGameId() != GID_GK2;
 	}
 
 	inline bool usesAlternateSelectors() const {
@@ -216,7 +209,7 @@ public:
 	MoveCountType detectMoveCountType();
 
 	int detectPlaneIdBase();
-	
+
 	bool handleMoveCount() { return detectMoveCountType() == kIncrementMoveCount; }
 
 	bool usesCdTrack() { return _usesCdTrack; }

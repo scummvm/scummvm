@@ -22,9 +22,9 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "dc.h"
 #include "backends/fs/abstract-fs.h"
 #include "backends/fs/stdiostream.h"
+#include "dc.h"
 
 #include <ronin/cdfs.h>
 #include <stdio.h>
@@ -42,7 +42,8 @@ protected:
 	Common::String _path;
 
 public:
-	RoninCDFileNode(const Common::String &path) : _path(path) {}
+	RoninCDFileNode(const Common::String &path)
+	  : _path(path) {}
 
 	virtual bool exists() const { return true; }
 	virtual Common::String getName() const { return lastPathComponent(_path, '/'); }
@@ -65,7 +66,8 @@ public:
 /* A directory */
 class RoninCDDirectoryNode : public RoninCDFileNode {
 public:
-	RoninCDDirectoryNode(const Common::String &path) : RoninCDFileNode(path) {}
+	RoninCDDirectoryNode(const Common::String &path)
+	  : RoninCDFileNode(path) {}
 
 	virtual bool isDirectory() const { return true; }
 	virtual AbstractFSNode *getChild(const Common::String &n) const;
@@ -76,7 +78,8 @@ public:
 /* A file/directory which does not exist */
 class RoninCDNonexistingNode : public RoninCDFileNode {
 public:
-	RoninCDNonexistingNode(const Common::String &path) : RoninCDFileNode(path) {}
+	RoninCDNonexistingNode(const Common::String &path)
+	  : RoninCDFileNode(path) {}
 
 	virtual bool exists() const { return false; }
 	virtual bool isReadable() const { return false; }
@@ -91,7 +94,7 @@ AbstractFSNode *RoninCDFileNode::makeFileNodePath(const Common::String &path) {
 	if ((fd = open(path.c_str(), O_RDONLY)) >= 0) {
 		close(fd);
 		return new RoninCDFileNode(path);
-	} else if ((fd = open(path.c_str(), O_DIR|O_RDONLY)) >= 0) {
+	} else if ((fd = open(path.c_str(), O_DIR | O_RDONLY)) >= 0) {
 		close(fd);
 		return new RoninCDDirectoryNode(path);
 	} else {
@@ -151,7 +154,6 @@ AbstractFSNode *RoninCDFileNode::getParent() const {
 
 	return new RoninCDDirectoryNode(Common::String(start, end - start));
 }
-
 
 Common::SeekableReadStream *RoninCDFileNode::createReadStream() {
 	return StdioStream::makeFromPath(getPath().c_str(), false);

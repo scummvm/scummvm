@@ -28,16 +28,16 @@
 namespace Glk {
 namespace Alan3 {
 
-/* TYPES */
-typedef struct StateStackStructure *StateStackP;
+	/* TYPES */
+	typedef struct StateStackStructure *StateStackP;
 
-/* FUNCTIONS */
-extern StateStackP createStateStack(int elementSize);
-extern bool stateStackIsEmpty(StateStackP stateStack);
-extern void pushGameState(StateStackP stateStack, void *state);
-extern void popGameState(StateStackP stateStack, void *state, char **playerCommandPointer);
-extern void attachPlayerCommandsToLastState(StateStackP stateStack, char *playerCommand);
-extern void deleteStateStack(StateStackP stateStack);
+	/* FUNCTIONS */
+	extern StateStackP createStateStack(int elementSize);
+	extern bool stateStackIsEmpty(StateStackP stateStack);
+	extern void pushGameState(StateStackP stateStack, void *state);
+	extern void popGameState(StateStackP stateStack, void *state, char **playerCommandPointer);
+	extern void attachPlayerCommandsToLastState(StateStackP stateStack, char *playerCommand);
+	extern void deleteStateStack(StateStackP stateStack);
 
 } // End of namespace Alan3
 } // End of namespace Glk

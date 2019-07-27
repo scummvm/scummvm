@@ -25,8 +25,8 @@
 #include "bladerunner/script/ai_script.h"
 
 #include "bladerunner/bladerunner.h"
-#include "bladerunner/game_info.h"
 #include "bladerunner/crimes_database.h"
+#include "bladerunner/game_info.h"
 #include "bladerunner/savefile.h"
 
 #include "common/debug.h"
@@ -67,20 +67,20 @@ ActorClues::ActorClues(BladeRunnerEngine *vm, int cluesLimit) {
 void ActorClues::acquire(int clueId, bool flag2, int fromActorId) {
 	int clueIndex = findClueIndex(clueId);
 	if (clueIndex == -1) { // prevent assertion fault
-	//	debug("Actor could not acquire clue: \"%s\" from %d", _vm->_crimesDatabase->getClueText(clueId), fromActorId);
+		//	debug("Actor could not acquire clue: \"%s\" from %d", _vm->_crimesDatabase->getClueText(clueId), fromActorId);
 		return;
 	} else {
 		_clues[clueIndex].flags |= 0x01;
 		_clues[clueIndex].flags = (_clues[clueIndex].flags & ~0x02) | ((flag2 << 1) & 0x02);
 		_clues[clueIndex].fromActorId = fromActorId;
-	// debug("Actor acquired clue: \"%s\" from %d", _vm->_crimesDatabase->getClueText(clueId), fromActorId);
+		// debug("Actor acquired clue: \"%s\" from %d", _vm->_crimesDatabase->getClueText(clueId), fromActorId);
 	}
 }
 
 void ActorClues::lose(int clueId) {
 	int clueIndex = findClueIndex(clueId);
 	if (clueIndex == -1) { // prevent assertion fault
-	//	debug("Actor could not lose clue: \"%s\"", _vm->_crimesDatabase->getClueText(clueId));
+		//	debug("Actor could not lose clue: \"%s\"", _vm->_crimesDatabase->getClueText(clueId));
 		return;
 	} else {
 		_clues[clueIndex].flags = 0;
@@ -222,12 +222,12 @@ int ActorClues::findAcquirableCluesFromActor(int actorId, int targetActorId, Clu
 	int count = 0;
 	int cluesCount = actor->_clues->getCount();
 
-	for (int i = 0; i < cluesCount; i++) 	{
+	for (int i = 0; i < cluesCount; i++) {
 		int clueId = actor->_clues->getClueIdByIndex(i);
 
 		if (actor->_clues->isAcquired(clueId)
-				&& otherActor->_clues->getWeight(clueId) > 0
-				&& !otherActor->_clues->isAcquired(clueId)) {
+		    && otherActor->_clues->getWeight(clueId) > 0
+		    && !otherActor->_clues->isAcquired(clueId)) {
 			list[count].clueId = clueId;
 			list[count].modifier = 0;
 
@@ -241,7 +241,7 @@ int ActorClues::findAcquirableCluesFromActor(int actorId, int targetActorId, Clu
 int ActorClues::getFromActorId(int clueId) const {
 	int clueIndex = findClueIndex(clueId);
 	if (clueIndex == -1) {
-		return  -1;
+		return -1;
 	}
 
 	return _clues[clueIndex].fromActorId;
@@ -360,9 +360,9 @@ void ActorClues::remove(int index) {
 	// 	debug("Actor removed clue: \"%s\"", _vm->_crimesDatabase->getClueText(_clues[index].clueId));
 	// }
 
-	_clues[index].clueId      = -1;
-	_clues[index].weight      = 0;
-	_clues[index].flags       = 0;
+	_clues[index].clueId = -1;
+	_clues[index].weight = 0;
+	_clues[index].flags = 0;
 	_clues[index].fromActorId = -1;
 
 	_clues[index].field3 = -1;

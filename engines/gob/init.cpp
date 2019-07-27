@@ -22,23 +22,23 @@
 
 #include "common/endian.h"
 
-#include "gob/gob.h"
-#include "gob/init.h"
-#include "gob/global.h"
-#include "gob/util.h"
 #include "gob/dataio.h"
 #include "gob/draw.h"
 #include "gob/game.h"
-#include "gob/script.h"
-#include "gob/palanim.h"
+#include "gob/global.h"
+#include "gob/gob.h"
+#include "gob/init.h"
 #include "gob/inter.h"
+#include "gob/palanim.h"
+#include "gob/script.h"
+#include "gob/util.h"
 #include "gob/video.h"
 #include "gob/videoplayer.h"
 
 #include "gob/sound/sound.h"
 
-#include "gob/demos/scnplayer.h"
 #include "gob/demos/batplayer.h"
+#include "gob/demos/scnplayer.h"
 
 #include "gob/pregob/pregob.h"
 
@@ -46,7 +46,8 @@ namespace Gob {
 
 const char *const Init::_fontNames[] = { "jeulet1.let", "jeulet2.let", "jeucar1.let", "jeumath.let" };
 
-Init::Init(GobEngine *vm) : _vm(vm) {
+Init::Init(GobEngine *vm)
+  : _vm(vm) {
 	_palDesc = 0;
 }
 
@@ -190,7 +191,7 @@ void Init::initGame() {
 				byte *sprite = _vm->_dataIO->getFile("coktel.ims", size);
 				if (sprite) {
 					_vm->_video->drawPackedSprite(sprite, 320, 200, 0, 0, 0,
-							*_vm->_draw->_frontSurface);
+					                              *_vm->_draw->_frontSurface);
 					_vm->_palAnim->fade(_palDesc, 0, 0);
 					_vm->_util->delay(500);
 
@@ -205,7 +206,6 @@ void Init::initGame() {
 
 		_vm->_sound->cdStop();
 		_vm->_sound->cdUnloadLIC();
-
 	}
 
 	delete _palDesc;

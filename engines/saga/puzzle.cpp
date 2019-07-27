@@ -24,10 +24,10 @@
 
 #include "saga/actor.h"
 #include "saga/interface.h"
-#include "saga/scene.h"
-#include "saga/sprite.h"
 #include "saga/puzzle.h"
 #include "saga/render.h"
+#include "saga/scene.h"
+#include "saga/sprite.h"
 
 #include "common/system.h"
 #include "common/timer.h"
@@ -36,20 +36,20 @@ namespace Saga {
 
 #define ITE_ACTOR_PUZZLE 176
 
-#define PUZZLE_X_OFFSET		72
-#define PUZZLE_Y_OFFSET		46
+#define PUZZLE_X_OFFSET 72
+#define PUZZLE_Y_OFFSET 46
 
-#define PUZZLE_FIT			0x01   // 1 when in correct position
-#define PUZZLE_MOVED		0x04   // 1 when somewhere in the box
-#define PUZZLE_ALL_SET		PUZZLE_FIT | PUZZLE_MOVED
+#define PUZZLE_FIT 0x01 // 1 when in correct position
+#define PUZZLE_MOVED 0x04 // 1 when somewhere in the box
+#define PUZZLE_ALL_SET PUZZLE_FIT | PUZZLE_MOVED
 
 // Puzzle portraits
-#define RID_ITE_SAKKA_APPRAISING	6
-#define RID_ITE_SAKKA_DENIAL		7
-#define RID_ITE_SAKKA_EXCITED		8
-#define RID_ITE_JFERRET_SERIOUS		9
-#define RID_ITE_JFERRET_GOOFY		10
-#define RID_ITE_JFERRET_ALOOF		11
+#define RID_ITE_SAKKA_APPRAISING 6
+#define RID_ITE_SAKKA_DENIAL 7
+#define RID_ITE_SAKKA_EXCITED 8
+#define RID_ITE_JFERRET_SERIOUS 9
+#define RID_ITE_JFERRET_GOOFY 10
+#define RID_ITE_JFERRET_ALOOF 11
 
 const char portraitList[] = {
 	RID_ITE_JFERRET_SERIOUS,
@@ -66,7 +66,10 @@ enum rifOptions {
 	kROHint = 3
 };
 
-Puzzle::Puzzle(SagaEngine *vm) : _vm(vm), _solved(false), _active(false) {
+Puzzle::Puzzle(SagaEngine *vm)
+  : _vm(vm)
+  , _solved(false)
+  , _active(false) {
 	_lang = 0;
 
 	if (_vm->getLanguage() == Common::DE_DEU)
@@ -93,41 +96,41 @@ Puzzle::Puzzle(SagaEngine *vm) : _vm(vm), _solved(false), _active(false) {
 	_hintSpeaker = 0;
 	_slidePointX = _slidePointY = 0;
 
-	initPieceInfo(0, 268,  18,  0, 0,  0 + PUZZLE_X_OFFSET,   0 + PUZZLE_Y_OFFSET, 0, 3,
-		  Point(0, 1),  Point(0, 62), Point(15, 31), Point(0, 0), Point(0, 0), Point(0, 0));
-	initPieceInfo(1, 270,  52,  0, 0,  0 + PUZZLE_X_OFFSET,  32 + PUZZLE_Y_OFFSET, 0, 4,
-		  Point(0, 31), Point(0, 47), Point(39, 47), Point(15, 1), Point(0, 0), Point(0, 0));
-	initPieceInfo(2, 19,  51,  0, 0,  0 + PUZZLE_X_OFFSET,   0 + PUZZLE_Y_OFFSET, 0, 4,
-		  Point(0, 0), Point(23, 46), Point(39, 15), Point(31, 0), Point(0, 0), Point(0, 0));
-	initPieceInfo(3, 73,   0,  0, 0,   32 + PUZZLE_X_OFFSET,   0 + PUZZLE_Y_OFFSET, 0, 6,
-		  Point(0, 0), Point(8, 16), Point(0, 31), Point(31, 31), Point(39, 15), Point(31, 0));
-	initPieceInfo(4, 0,  35,  0, 0,   64 + PUZZLE_X_OFFSET,  16 + PUZZLE_Y_OFFSET, 0, 4,
-		  Point(0, 15), Point(15, 46), Point(23, 32), Point(7, 1), Point(0, 0), Point(0, 0));
-	initPieceInfo(5, 215,   0,  0, 0,   24 + PUZZLE_X_OFFSET,  32 + PUZZLE_Y_OFFSET, 0, 6,
-		  Point(0, 15), Point(8, 31), Point(39, 31), Point(47, 16), Point(39, 0), Point(8, 0));
-	initPieceInfo(6, 159,   0,  0, 0,   32 + PUZZLE_X_OFFSET,  48 + PUZZLE_Y_OFFSET, 0, 5,
-		  Point(0, 16), Point(8, 31), Point(55, 31), Point(39, 1), Point(32, 15), Point(0, 0));
-	initPieceInfo(7, 9,  70,  0, 0,   80 + PUZZLE_X_OFFSET,  32 + PUZZLE_Y_OFFSET, 0, 5,
-		  Point(0, 31), Point(8, 47), Point(23, 47), Point(31, 31), Point(15, 1), Point(0, 0));
-	initPieceInfo(8, 288,  18,  0, 0,   96 + PUZZLE_X_OFFSET,   0 + PUZZLE_Y_OFFSET, 0, 4,
-		  Point(0, 31), Point(15, 62), Point(31, 32), Point(15, 1), Point(0, 0), Point(0, 0));
-	initPieceInfo(9, 112,   0,  0, 0,  112 + PUZZLE_X_OFFSET,   0 + PUZZLE_Y_OFFSET, 0, 4,
-		  Point(0, 0), Point(16, 31), Point(47, 31), Point(31, 0), Point(0, 0), Point(0, 0));
-	initPieceInfo(10, 27,  89,  0, 0,  104 + PUZZLE_X_OFFSET,  32 + PUZZLE_Y_OFFSET, 0, 4,
-		  Point(0, 47), Point(31, 47), Point(31, 0), Point(24, 0), Point(0, 0), Point(0, 0));
-	initPieceInfo(11, 43,   0,  0, 0,  136 + PUZZLE_X_OFFSET,  32 + PUZZLE_Y_OFFSET, 0, 6,
-		  Point(0, 0), Point(0, 47), Point(15, 47), Point(15, 15), Point(31, 15), Point(23, 0));
-	initPieceInfo(12, 0,   0,  0, 0,  144 + PUZZLE_X_OFFSET,   0 + PUZZLE_Y_OFFSET, 0, 4,
-		  Point(0, 0), Point(24, 47), Point(39, 47), Point(39, 0), Point(0, 0), Point(0, 0));
-	initPieceInfo(13, 262,   0,  0, 0,   64 + PUZZLE_X_OFFSET,   0 + PUZZLE_Y_OFFSET, 0, 3,
-		  Point(0, 0), Point(23, 46), Point(47, 0), Point(0, 0), Point(0, 0), Point(0, 0));
-	initPieceInfo(14, 271, 103,  0, 0,  152 + PUZZLE_X_OFFSET,  48 + PUZZLE_Y_OFFSET, 0, 4,
-		  Point(0, 0), Point(0, 31), Point(31, 31), Point(31, 0), Point(0, 0), Point(0, 0));
+	initPieceInfo(0, 268, 18, 0, 0, 0 + PUZZLE_X_OFFSET, 0 + PUZZLE_Y_OFFSET, 0, 3,
+	              Point(0, 1), Point(0, 62), Point(15, 31), Point(0, 0), Point(0, 0), Point(0, 0));
+	initPieceInfo(1, 270, 52, 0, 0, 0 + PUZZLE_X_OFFSET, 32 + PUZZLE_Y_OFFSET, 0, 4,
+	              Point(0, 31), Point(0, 47), Point(39, 47), Point(15, 1), Point(0, 0), Point(0, 0));
+	initPieceInfo(2, 19, 51, 0, 0, 0 + PUZZLE_X_OFFSET, 0 + PUZZLE_Y_OFFSET, 0, 4,
+	              Point(0, 0), Point(23, 46), Point(39, 15), Point(31, 0), Point(0, 0), Point(0, 0));
+	initPieceInfo(3, 73, 0, 0, 0, 32 + PUZZLE_X_OFFSET, 0 + PUZZLE_Y_OFFSET, 0, 6,
+	              Point(0, 0), Point(8, 16), Point(0, 31), Point(31, 31), Point(39, 15), Point(31, 0));
+	initPieceInfo(4, 0, 35, 0, 0, 64 + PUZZLE_X_OFFSET, 16 + PUZZLE_Y_OFFSET, 0, 4,
+	              Point(0, 15), Point(15, 46), Point(23, 32), Point(7, 1), Point(0, 0), Point(0, 0));
+	initPieceInfo(5, 215, 0, 0, 0, 24 + PUZZLE_X_OFFSET, 32 + PUZZLE_Y_OFFSET, 0, 6,
+	              Point(0, 15), Point(8, 31), Point(39, 31), Point(47, 16), Point(39, 0), Point(8, 0));
+	initPieceInfo(6, 159, 0, 0, 0, 32 + PUZZLE_X_OFFSET, 48 + PUZZLE_Y_OFFSET, 0, 5,
+	              Point(0, 16), Point(8, 31), Point(55, 31), Point(39, 1), Point(32, 15), Point(0, 0));
+	initPieceInfo(7, 9, 70, 0, 0, 80 + PUZZLE_X_OFFSET, 32 + PUZZLE_Y_OFFSET, 0, 5,
+	              Point(0, 31), Point(8, 47), Point(23, 47), Point(31, 31), Point(15, 1), Point(0, 0));
+	initPieceInfo(8, 288, 18, 0, 0, 96 + PUZZLE_X_OFFSET, 0 + PUZZLE_Y_OFFSET, 0, 4,
+	              Point(0, 31), Point(15, 62), Point(31, 32), Point(15, 1), Point(0, 0), Point(0, 0));
+	initPieceInfo(9, 112, 0, 0, 0, 112 + PUZZLE_X_OFFSET, 0 + PUZZLE_Y_OFFSET, 0, 4,
+	              Point(0, 0), Point(16, 31), Point(47, 31), Point(31, 0), Point(0, 0), Point(0, 0));
+	initPieceInfo(10, 27, 89, 0, 0, 104 + PUZZLE_X_OFFSET, 32 + PUZZLE_Y_OFFSET, 0, 4,
+	              Point(0, 47), Point(31, 47), Point(31, 0), Point(24, 0), Point(0, 0), Point(0, 0));
+	initPieceInfo(11, 43, 0, 0, 0, 136 + PUZZLE_X_OFFSET, 32 + PUZZLE_Y_OFFSET, 0, 6,
+	              Point(0, 0), Point(0, 47), Point(15, 47), Point(15, 15), Point(31, 15), Point(23, 0));
+	initPieceInfo(12, 0, 0, 0, 0, 144 + PUZZLE_X_OFFSET, 0 + PUZZLE_Y_OFFSET, 0, 4,
+	              Point(0, 0), Point(24, 47), Point(39, 47), Point(39, 0), Point(0, 0), Point(0, 0));
+	initPieceInfo(13, 262, 0, 0, 0, 64 + PUZZLE_X_OFFSET, 0 + PUZZLE_Y_OFFSET, 0, 3,
+	              Point(0, 0), Point(23, 46), Point(47, 0), Point(0, 0), Point(0, 0), Point(0, 0));
+	initPieceInfo(14, 271, 103, 0, 0, 152 + PUZZLE_X_OFFSET, 48 + PUZZLE_Y_OFFSET, 0, 4,
+	              Point(0, 0), Point(0, 31), Point(31, 31), Point(31, 0), Point(0, 0), Point(0, 0));
 }
 
 void Puzzle::initPieceInfo(int i, int16 curX, int16 curY, byte offX, byte offY, int16 trgX,
-						   int16 trgY, uint8 flag, uint8 count, Point point0, Point point1,
-						   Point point2, Point point3, Point point4, Point point5) {
+                           int16 trgY, uint8 flag, uint8 count, Point point0, Point point1,
+                           Point point2, Point point3, Point point4, Point point5) {
 	_pieceInfo[i].curX = curX;
 	_pieceInfo[i].curY = curY;
 	_pieceInfo[i].offX = offX;
@@ -143,7 +146,6 @@ void Puzzle::initPieceInfo(int i, int16 curX, int16 curY, byte offX, byte offY, 
 	_pieceInfo[i].point[4] = point4;
 	_pieceInfo[i].point[5] = point5;
 }
-
 
 void Puzzle::execute() {
 	_active = true;
@@ -211,7 +213,7 @@ void Puzzle::drawCurrentPiece() {
 	_vm->_actor->getSpriteParams(puzzle, frameNumber, spriteList);
 
 	_vm->_sprite->draw(*spriteList, _puzzlePiece,
-			   Point(_pieceInfo[_puzzlePiece].curX, _pieceInfo[_puzzlePiece].curY), 256, true);
+	                   Point(_pieceInfo[_puzzlePiece].curX, _pieceInfo[_puzzlePiece].curY), 256, true);
 }
 
 void Puzzle::movePiece(Point mousePt) {
@@ -255,7 +257,7 @@ void Puzzle::handleClick(Point mousePt) {
 		return;
 	}
 
-	for (int j = 0; j < PUZZLE_PIECES; j++)	{
+	for (int j = 0; j < PUZZLE_PIECES; j++) {
 		int i = _piecePriority[j];
 		int adjX = mousePt.x - _pieceInfo[i].curX;
 		int adjY = mousePt.y - _pieceInfo[i].curY;
@@ -279,7 +281,7 @@ void Puzzle::handleClick(Point mousePt) {
 	int newy = mousePt.y - _pieceInfo[_puzzlePiece].offY;
 
 	if (newx != _pieceInfo[_puzzlePiece].curX
-		|| newy != _pieceInfo[_puzzlePiece].curY) {
+	    || newy != _pieceInfo[_puzzlePiece].curY) {
 		_pieceInfo[_puzzlePiece].curX = newx;
 		_pieceInfo[_puzzlePiece].curY = newy;
 	}
@@ -290,7 +292,7 @@ void Puzzle::alterPiecePriority() {
 	for (int i = 1; i < PUZZLE_PIECES; i++) {
 		if (_puzzlePiece == _piecePriority[i]) {
 			for (int j = i - 1; j >= 0; j--)
-				_piecePriority[j+1] = _piecePriority[j];
+				_piecePriority[j + 1] = _piecePriority[j];
 			_piecePriority[0] = _puzzlePiece;
 			break;
 		}
@@ -306,7 +308,7 @@ void Puzzle::slidePiece(int x1, int y1, int x2, int y2) {
 	y1 += _pieceInfo[_puzzlePiece].offY;
 
 	count = pathLine(slidePoints, 0, Point(x1, y1),
-		 Point(x2 + _pieceInfo[_puzzlePiece].offX, y2 + _pieceInfo[_puzzlePiece].offY));
+	                 Point(x2 + _pieceInfo[_puzzlePiece].offX, y2 + _pieceInfo[_puzzlePiece].offY));
 
 	if (count > 1) {
 		int factor = count / 4;
@@ -370,7 +372,7 @@ void Puzzle::dropPiece(Point mousePt) {
 
 		// is the piece at the target location
 		if (newx == _pieceInfo[_puzzlePiece].trgX
-				&& newy == _pieceInfo[_puzzlePiece].trgY) {
+		    && newy == _pieceInfo[_puzzlePiece].trgY) {
 			_pieceInfo[_puzzlePiece].flag |= (PUZZLE_MOVED | PUZZLE_FIT);
 		} else {
 			_pieceInfo[_puzzlePiece].flag &= ~PUZZLE_FIT;
@@ -385,14 +387,14 @@ void Puzzle::dropPiece(Point mousePt) {
 
 		// slide piece from current position to new position
 		slidePiece(_pieceInfo[_puzzlePiece].curX, _pieceInfo[_puzzlePiece].curY,
-					newx, newy);
+		           newx, newy);
 	}
 
 	// is the puzzle completed?
 
 	_solved = true;
 	for (int i = 0; i < PUZZLE_PIECES; i++)
-		if ((_pieceInfo[i].flag & PUZZLE_FIT) == 0)	{
+		if ((_pieceInfo[i].flag & PUZZLE_FIT) == 0) {
 			_solved = false;
 			break;
 		}
@@ -423,7 +425,7 @@ void Puzzle::solicitHint() {
 		}
 
 		_hintRqState = _hintNextRqState;
-		_vm->getTimerManager()->installTimerProc(&hintTimerCallback, 100*1000000/3, this, "sagaPuzzleHint");
+		_vm->getTimerManager()->installTimerProc(&hintTimerCallback, 100 * 1000000 / 3, this, "sagaPuzzleHint");
 		break;
 
 	case kRQNoHint:
@@ -446,11 +448,11 @@ void Puzzle::solicitHint() {
 		//	Roll to see if Sakka scolds
 		if (_vm->_rnd.getRandomNumber(1)) {
 			_hintRqState = kRQSakkaDenies;
-			_vm->getTimerManager()->installTimerProc(&hintTimerCallback, 200*1000000, this, "sagaPuzzleHint");
+			_vm->getTimerManager()->installTimerProc(&hintTimerCallback, 200 * 1000000, this, "sagaPuzzleHint");
 		} else {
 			_hintRqState = kRQSpeaking;
 			_hintNextRqState = kRQHintRequested;
-			_vm->getTimerManager()->installTimerProc(&hintTimerCallback, 50*1000000, this, "sagaPuzzleHint");
+			_vm->getTimerManager()->installTimerProc(&hintTimerCallback, 50 * 1000000, this, "sagaPuzzleHint");
 		}
 
 		break;
@@ -463,7 +465,7 @@ void Puzzle::solicitHint() {
 
 		_hintRqState = kRQSpeaking;
 		_hintNextRqState = kRQHintRequestedStage2;
-		_vm->getTimerManager()->installTimerProc(&hintTimerCallback, 50*1000000, this, "sagaPuzzleHint");
+		_vm->getTimerManager()->installTimerProc(&hintTimerCallback, 50 * 1000000, this, "sagaPuzzleHint");
 
 		_vm->_interface->converseClear();
 		_vm->_interface->converseAddText(optionsStr[_lang][kROAccept], 0, 1, 0, 0);
@@ -473,7 +475,7 @@ void Puzzle::solicitHint() {
 		break;
 
 	case kRQHintRequestedStage2:
-		if (_vm->_rnd.getRandomNumber(1)) {			//	Skip Reply part
+		if (_vm->_rnd.getRandomNumber(1)) { //	Skip Reply part
 			i = _vm->_rnd.getRandomNumber(NUM_WHINES - 1);
 			_vm->_actor->nonActorSpeech(_hintBox, &whineStr[_lang][i], 1, PUZZLE_WHINE_SOUNDS + i * 3 + _hintSpeaker, 0);
 		}
@@ -502,15 +504,15 @@ void Puzzle::solicitHint() {
 
 void Puzzle::handleReply(int reply) {
 	switch (reply) {
-	case 0:		// Quit the puzzle
+	case 0: // Quit the puzzle
 		exitPuzzle();
 		break;
 
-	case 1:		// Accept the hint
+	case 1: // Accept the hint
 		giveHint();
 		break;
 
-	case 2:		// Decline the hint
+	case 2: // Decline the hint
 		_vm->_actor->abortSpeech();
 		_hintRqState = kRQNoHint;
 		_vm->getTimerManager()->removeTimerProc(&hintTimerCallback);
@@ -531,8 +533,7 @@ void Puzzle::giveHint() {
 	for (i = 0; i < PUZZLE_PIECES; i++)
 		total += _pieceInfo[i].flag & PUZZLE_FIT;
 
-	if (_hintCount == 0 && (_pieceInfo[1].flag & PUZZLE_FIT
-			|| _pieceInfo[12].flag & PUZZLE_FIT))
+	if (_hintCount == 0 && (_pieceInfo[1].flag & PUZZLE_FIT || _pieceInfo[12].flag & PUZZLE_FIT))
 		_hintCount++;
 	if (_hintCount == 1 && _pieceInfo[14].flag & PUZZLE_FIT)
 		_hintCount++;
@@ -550,7 +551,7 @@ void Puzzle::giveHint() {
 		for (i = PUZZLE_PIECES - 1; i >= 0; i--) {
 			piece = _piecePriority[i];
 			if (_pieceInfo[piece].flag & PUZZLE_MOVED
-					&& !(_pieceInfo[piece].flag & PUZZLE_FIT)) {
+			    && !(_pieceInfo[piece].flag & PUZZLE_FIT)) {
 				if (_helpCount < 12)
 					_helpCount++;
 				break;
@@ -564,7 +565,7 @@ void Puzzle::giveHint() {
 
 			_vm->_actor->nonActorSpeech(_hintBox, &hintPtr, 1, PUZZLE_TOOL_SOUNDS + _hintSpeaker + piece * 3, 0);
 		} else {
-				//	If no pieces are in the wrong place
+			//	If no pieces are in the wrong place
 			_vm->_actor->nonActorSpeech(_hintBox, &hintStr[_lang][3], 1, PUZZLE_HINT_SOUNDS + 3 * 3 + _hintSpeaker, 0);
 		}
 	}

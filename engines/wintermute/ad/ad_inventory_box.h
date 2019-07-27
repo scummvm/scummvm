@@ -29,8 +29,8 @@
 #ifndef WINTERMUTE_ADINVENTORYBOX_H
 #define WINTERMUTE_ADINVENTORYBOX_H
 
-#include "engines/wintermute/base/base_object.h"
 #include "common/rect.h"
+#include "engines/wintermute/base/base_object.h"
 
 namespace Wintermute {
 class UIButton;
@@ -53,6 +53,7 @@ public:
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
+
 private:
 	bool _exclusive;
 	int32 _scrollBy;

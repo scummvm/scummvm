@@ -24,8 +24,8 @@
 
 #include "graphics/thumbnail.h"
 
-#include "illusions/illusions.h"
 #include "illusions/gamestate.h"
+#include "illusions/illusions.h"
 
 namespace Illusions {
 

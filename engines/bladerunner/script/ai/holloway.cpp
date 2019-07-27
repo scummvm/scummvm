@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptHolloway::AIScriptHolloway(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptHolloway::AIScriptHolloway(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 	_flag = false;
 }
 
@@ -59,8 +60,7 @@ void AIScriptHolloway::TimerExpired(int timer) {
 
 void AIScriptHolloway::CompletedMovementTrack() {
 	if (Actor_Query_Goal_Number(kActorHolloway) < 245
-	 && Actor_Query_Goal_Number(kActorHolloway) > 239
-	) {
+	    && Actor_Query_Goal_Number(kActorHolloway) > 239) {
 		Loop_Actor_Walk_To_Actor(kActorHolloway, kActorMcCoy, 24, false, false);
 		Actor_Set_Goal_Number(kActorHolloway, kGoalHollowayApproachMcCoy);
 	}
@@ -88,8 +88,7 @@ void AIScriptHolloway::OtherAgentExitedThisScene(int otherActorId) {
 
 void AIScriptHolloway::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
 	if (otherActorId == kActorMcCoy
-	 && Actor_Query_Goal_Number(kActorHolloway) == kGoalHollowayApproachMcCoy
-	) {
+	    && Actor_Query_Goal_Number(kActorHolloway) == kGoalHollowayApproachMcCoy) {
 		AI_Countdown_Timer_Reset(kActorHolloway, kActorTimerAIScriptCustomTask0);
 		Actor_Set_Goal_Number(kActorHolloway, kGoalHollowayKnockOutMcCoy);
 	}
@@ -236,8 +235,7 @@ bool AIScriptHolloway::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		if (_animationFrame == 0
-		 && _flag
-		) {
+		    && _flag) {
 			*animation = 717;
 			_animationState = 0;
 		} else {
@@ -364,17 +362,17 @@ bool AIScriptHolloway::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptHolloway::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptHolloway::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptHolloway::ReachedMovementTrackWaypoint(int waypointId) {

@@ -54,10 +54,10 @@ public:
 
 	int readBuffer(int16 *buffer, const int numSamples);
 
-	bool isStereo() const	{ return false; }
-	bool endOfData() const	{ return false; }
+	bool isStereo() const { return false; }
+	bool endOfData() const { return false; }
 	bool endOfStream() const { return false; }
-	int getRate() const	{ return _rate; }
+	int getRate() const { return _rate; }
 
 protected:
 	Common::Mutex _mutex;

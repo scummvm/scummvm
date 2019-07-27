@@ -28,44 +28,64 @@
 #ifndef CGE2_VGA13H_H
 #define CGE2_VGA13H_H
 
-#include "common/serializer.h"
-#include "common/events.h"
-#include "graphics/surface.h"
-#include "cge2/general.h"
 #include "cge2/bitmap.h"
+#include "cge2/cge2.h"
+#include "cge2/general.h"
 #include "cge2/snail.h"
 #include "cge2/spare.h"
-#include "cge2/cge2.h"
+#include "common/events.h"
+#include "common/serializer.h"
+#include "graphics/surface.h"
 
 namespace CGE2 {
 
-#define kFadeStep        2
-#define kVgaColDark      207
-#define kVgaColDarkGray  225 /*219*/
-#define kVgaColGray      231
+#define kFadeStep 2
+#define kVgaColDark 207
+#define kVgaColDarkGray 225 /*219*/
+#define kVgaColGray 231
 #define kVgaColLightGray 237
-#define kPixelTransp     0xFE
-#define kNoSeq           (-1)
-#define kNoPtr           ((uint8)-1)
-#define kSprExt          ".SPR"
-#define kPalCount        256
-#define kPalSize         (kPalCount * 3)
+#define kPixelTransp 0xFE
+#define kNoSeq (-1)
+#define kNoPtr ((uint8)-1)
+#define kSprExt ".SPR"
+#define kPalCount 256
+#define kPalSize (kPalCount * 3)
 
 class FXP {
 	int32 v;
+
 public:
-	FXP(void) : v(0) {}
-	FXP (int i0, int f0 = 0) : v((i0 * 256) + ((i0 < 0) ? -f0 : f0)) {}
-	FXP &operator=(const int &x) { v = x << 8; return *this; }
-	FXP operator+(const FXP &x) const { FXP y; y.v = v + x.v; return y; }
-	FXP operator-(const FXP &x) const { FXP y; y.v = v - x.v; return y; }
+	FXP(void)
+	  : v(0) {}
+	FXP(int i0, int f0 = 0)
+	  : v((i0 * 256) + ((i0 < 0) ? -f0 : f0)) {}
+	FXP &operator=(const int &x) {
+		v = x << 8;
+		return *this;
+	}
+	FXP operator+(const FXP &x) const {
+		FXP y;
+		y.v = v + x.v;
+		return y;
+	}
+	FXP operator-(const FXP &x) const {
+		FXP y;
+		y.v = v - x.v;
+		return y;
+	}
 	FXP operator*(const FXP &x) const;
 	FXP operator/(const FXP &x) const;
 
 	friend int &operator+=(int &a, const FXP &b) { return a += b.trunc(); }
 	friend int &operator-=(int &a, const FXP &b) { return a -= b.trunc(); }
-	friend FXP &operator+=(FXP &a, const int &b) { a.v += b << 8; return a; }
-	friend FXP &operator-=(FXP &a, const int &b) { a.v -= b << 8; return a; }
+	friend FXP &operator+=(FXP &a, const int &b) {
+		a.v += b << 8;
+		return a;
+	}
+	friend FXP &operator-=(FXP &a, const int &b) {
+		a.v -= b << 8;
+		return a;
+	}
 	friend bool operator==(const FXP &a, const FXP &b) { return a.v == b.v; }
 	friend bool operator!=(const FXP &a, const FXP &b) { return a.v != b.v; }
 	friend bool operator<(const FXP &a, const FXP &b) { return a.v < b.v; }
@@ -79,22 +99,29 @@ public:
 class V3D {
 public:
 	FXP _x, _y, _z;
-	V3D() { }
-	V3D(FXP x, FXP y, FXP z = 0) : _x(x), _y(y), _z(z) { }
-	V3D(const V3D &p) : _x(p._x), _y(p._y), _z(p._z) { }
+	V3D() {}
+	V3D(FXP x, FXP y, FXP z = 0)
+	  : _x(x)
+	  , _y(y)
+	  , _z(z) {}
+	V3D(const V3D &p)
+	  : _x(p._x)
+	  , _y(p._y)
+	  , _z(p._z) {}
 	V3D operator+(const V3D &p) const { return V3D(_x + p._x, _y + p._y, _z + p._z); }
 	V3D operator-(const V3D &p) const { return V3D(_x - p._x, _y - p._y, _z - p._z); }
 	V3D operator*(long n) const { return V3D(_x * n, _y * n, _z * n); }
-	V3D operator/ (long n) const { return V3D(_x / n, _y / n, _z / n); }
+	V3D operator/(long n) const { return V3D(_x / n, _y / n, _z / n); }
 	bool operator==(const V3D &p) const { return _x == p._x && _y == p._y && _z == p._z; }
 	bool operator!=(const V3D &p) const { return _x != p._x || _y != p._y || _z != p._z; }
-	V3D& operator+=(const V3D &x) { return *this = *this + x; }
-	V3D& operator-=(const V3D &x) { return *this = *this - x; }
+	V3D &operator+=(const V3D &x) { return *this = *this + x; }
+	V3D &operator-=(const V3D &x) { return *this = *this - x; }
 	void sync(Common::Serializer &s);
 };
 
 class V2D : public Common::Point {
 	CGE2Engine *_vm;
+
 public:
 	V2D &operator=(const V3D &p3) {
 		FXP m = _vm->_eye->_z / (p3._z - _vm->_eye->_z);
@@ -104,23 +131,33 @@ public:
 		y = posy.round();
 		return *this;
 	}
-	V2D(CGE2Engine *vm) : _vm(vm) { }
-	V2D(CGE2Engine *vm, const V3D &p3) : _vm(vm) { *this = p3; }
-	V2D(CGE2Engine *vm, int posx, int posy) : _vm(vm), Common::Point(posx, posy) { }
-	bool operator<(const V2D &p) const { return (x < p.x) && (y <  p.y); }
+	V2D(CGE2Engine *vm)
+	  : _vm(vm) {}
+	V2D(CGE2Engine *vm, const V3D &p3)
+	  : _vm(vm) { *this = p3; }
+	V2D(CGE2Engine *vm, int posx, int posy)
+	  : _vm(vm)
+	  , Common::Point(posx, posy) {}
+	bool operator<(const V2D &p) const { return (x < p.x) && (y < p.y); }
 	bool operator<=(const V2D &p) const { return (x <= p.x) && (y <= p.y); }
-	bool operator>(const V2D &p) const { return (x > p.x) && (y >  p.y); }
+	bool operator>(const V2D &p) const { return (x > p.x) && (y > p.y); }
 	bool operator>=(const V2D &p) const { return (x >= p.x) && (y >= p.y); }
 	V2D operator+(const V2D &p) const { return V2D(_vm, x + p.x, y + p.y); }
 	V2D operator-(const V2D &p) const { return V2D(_vm, x - p.x, y - p.y); }
-	bool operator==(const V3D &p) const { V3D tmp(x, y); return tmp._x == p._x && tmp._y == p._y && tmp._z == p._z; }
-	bool operator!=(const V3D &p) const { V3D tmp(x, y); return tmp._x != p._x || tmp._y != p._y || tmp._z == p._z; }
+	bool operator==(const V3D &p) const {
+		V3D tmp(x, y);
+		return tmp._x == p._x && tmp._y == p._y && tmp._z == p._z;
+	}
+	bool operator!=(const V3D &p) const {
+		V3D tmp(x, y);
+		return tmp._x != p._x || tmp._y != p._y || tmp._z == p._z;
+	}
 	bool operator==(const V2D &p) const { return x == p.x && y == p.y; }
 	uint16 area() { return x * y; }
 	bool limited(const V2D &p) {
 		return ((x < p.x) && (y < p.y));
 	}
-	V2D scale (int z) {
+	V2D scale(int z) {
 		FXP m = _vm->_eye->_z / (_vm->_eye->_z - z);
 		FXP posx = m * x;
 		FXP posy = m * y;
@@ -155,32 +192,35 @@ class Sprite {
 protected:
 	SprExt *_ext;
 	CGE2Engine *_vm;
+
 public:
 	int _ref;
 	signed char _scene;
 	struct Flags {
-		bool _hide;       // general visibility switch
-		bool _drag;       // sprite is moveable
-		bool _hold;       // sprite is held with mouse
-		bool _trim;       // Trim flag
-		bool _slav;       // slave object
-		bool _kill;       // dispose memory after remove
-		bool _xlat;       // 2nd way display: xlat table
-		bool _port;       // portable
-		bool _kept;       // kept in pocket
-		bool _frnt;       // stay in front of sprite
-		bool _east;       // talk to east (in opposite to west)
-		bool _near;       // Near action lock
-		bool _shad;       // shadow
-		bool _back;       // 'send to background' request
-		bool _zmov;       // sprite needs Z-update in queue
-		bool _tran;       // transparent (untouchable)
+		bool _hide; // general visibility switch
+		bool _drag; // sprite is moveable
+		bool _hold; // sprite is held with mouse
+		bool _trim; // Trim flag
+		bool _slav; // slave object
+		bool _kill; // dispose memory after remove
+		bool _xlat; // 2nd way display: xlat table
+		bool _port; // portable
+		bool _kept; // kept in pocket
+		bool _frnt; // stay in front of sprite
+		bool _east; // talk to east (in opposite to west)
+		bool _near; // Near action lock
+		bool _shad; // shadow
+		bool _back; // 'send to background' request
+		bool _zmov; // sprite needs Z-update in queue
+		bool _tran; // transparent (untouchable)
 	} _flags;
 	V2D _pos2D;
 	V3D _pos3D;
 	V2D _siz;
 	uint16 _time;
-	struct { byte _ptr, _cnt; } _actionCtrl[kActions];
+	struct {
+		byte _ptr, _cnt;
+	} _actionCtrl[kActions];
 	int _seqPtr;
 	int _seqCnt;
 	int _shpCnt;
@@ -229,16 +269,20 @@ public:
 	virtual void touch(uint16 mask, V2D pos, Common::KeyCode keyCode);
 	virtual void tick();
 	virtual void setScene(int c);
-	void clrHide() { if (_ext) _ext->_b0 = nullptr; }
+	void clrHide() {
+		if (_ext)
+			_ext->_b0 = nullptr;
+	}
 
 	void sync(Common::Serializer &s);
 
-	static void (*notify) ();
+	static void (*notify)();
 };
 
 class Queue {
 	Sprite *_head;
 	Sprite *_tail;
+
 public:
 	Queue(bool show);
 
@@ -276,7 +320,9 @@ public:
 	bool _mono;
 	Graphics::Surface *_page[4];
 	Dac *_sysPal;
-	struct { uint8 _org, _len, _cnt, _dly; } _rot;
+	struct {
+		uint8 _org, _len, _cnt, _dly;
+	} _rot;
 
 	Vga(CGE2Engine *vm);
 	~Vga();
@@ -297,8 +343,9 @@ public:
 	void dacToPal(const Dac *tab, byte *palData);
 };
 
-class Speaker: public Sprite {
+class Speaker : public Sprite {
 	CGE2Engine *_vm;
+
 public:
 	Speaker(CGE2Engine *vm);
 };

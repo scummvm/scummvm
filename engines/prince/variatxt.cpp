@@ -25,7 +25,9 @@
 
 namespace Prince {
 
-VariaTxt::VariaTxt() : _dataSize(0), _data(nullptr) {
+VariaTxt::VariaTxt()
+  : _dataSize(0)
+  , _data(nullptr) {
 }
 
 VariaTxt::~VariaTxt() {
@@ -35,7 +37,6 @@ VariaTxt::~VariaTxt() {
 		_data = nullptr;
 	}
 }
-
 
 bool VariaTxt::loadStream(Common::SeekableReadStream &stream) {
 	_dataSize = stream.size();

@@ -68,7 +68,7 @@ class Opponent;
 class Fight : public EventHandler {
 public:
 	enum FightEndType {
-		kFightEndWin  = 0,
+		kFightEndWin = 0,
 		kFightEndLost = 1,
 		kFightEndExit = 2
 	};

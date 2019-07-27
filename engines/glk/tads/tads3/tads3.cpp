@@ -24,15 +24,16 @@
 
 namespace Glk {
 namespace TADS {
-namespace TADS3 {
+	namespace TADS3 {
 
-TADS3::TADS3(OSystem *syst, const GlkGameDescription &gameDesc) : TADS(syst, gameDesc) {
-}
+		TADS3::TADS3(OSystem *syst, const GlkGameDescription &gameDesc)
+		  : TADS(syst, gameDesc) {
+		}
 
-void TADS3::runGame() {
-	// TODO
-}
+		void TADS3::runGame() {
+			// TODO
+		}
 
-} // End of namespace TADS2
+	} // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk

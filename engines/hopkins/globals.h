@@ -23,9 +23,9 @@
 #ifndef HOPKINS_GLOBALS_H
 #define HOPKINS_GLOBALS_H
 
+#include "common/events.h"
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "common/events.h"
 
 namespace Hopkins {
 
@@ -42,67 +42,67 @@ struct CharacterLocation {
 };
 
 enum SauvegardeOffset {
-	svLastMouseCursor = 1
-	, svLastZoneNum = 2
-	, svLastObjectIndex = 3
-	, svDialogField4 = 4
-	, svLastScreenId = 5
-	, svLastPrevScreenId = 6
-	, svLastInventoryItem = 8
-	, svLastInvMouseCursor = 9
-	, svLastSavegameSlot = 10
-	, svFreedHostageFl = 80
-	, svField94 = 94
-	, svField95 = 95
-	, svForestAvailableFl = 113
-	, svHutBurningFl = 117
-	, svHopkinsCloneFl = 121
-	, svAlternateSpriteFl = 122
-	, svHeavenGuardGoneFl = 123
-	, svField132 = 132
-	, svField133 = 133
-	, svGameWonFl = 135
-	, svCinemaCurtainCond1 = 166
-	, svCinemaCurtainCond2 = 167
-	, svBankAttackAnimPlayedFl = 170
-	, svCopCall1PlayedFl = 171
-	, svCopCall2PlayedFl = 172
-	, svField173 = 173
-	, svField176 = 176
-	, svPoolDogGoneFl = 177
-	, svCinemaDogGoneFl = 181
-	, svField183 = 183
-	, svField184 = 184
-	, svField186 = 186
-	, svField188 = 188
-	, svField200 = 200
-	, svField214 = 214
-	, svBombBoxOpenedFl = 220
-	, svBombDisarmedFl = 225
-	, svField228 = 228
-	, svField231 = 231
-	, svField253 = 253
-	, svField261 = 261
-	, svField270 = 270
-	, svField300 = 300
-	, svBaseElevatorCond1 = 311
-	, svBaseFireFl = 312
-	, svSecondElevatorAvailableFl = 318
-	, svField320 = 320
-	, svEscapeLeftJailFl = 330
-	, svField333 = 333
-	, svField338 = 338
-	, svField339 = 339
-	, svField340 = 340
-	, svField341 = 341
-	, svField352 = 352
-	, svField353 = 353
-	, svField354 = 354
-	, svField355 = 355
-	, svField356 = 356
-	, svField357 = 357
-	, svField399 = 399
-	, svField401 = 401
+	svLastMouseCursor = 1,
+	svLastZoneNum = 2,
+	svLastObjectIndex = 3,
+	svDialogField4 = 4,
+	svLastScreenId = 5,
+	svLastPrevScreenId = 6,
+	svLastInventoryItem = 8,
+	svLastInvMouseCursor = 9,
+	svLastSavegameSlot = 10,
+	svFreedHostageFl = 80,
+	svField94 = 94,
+	svField95 = 95,
+	svForestAvailableFl = 113,
+	svHutBurningFl = 117,
+	svHopkinsCloneFl = 121,
+	svAlternateSpriteFl = 122,
+	svHeavenGuardGoneFl = 123,
+	svField132 = 132,
+	svField133 = 133,
+	svGameWonFl = 135,
+	svCinemaCurtainCond1 = 166,
+	svCinemaCurtainCond2 = 167,
+	svBankAttackAnimPlayedFl = 170,
+	svCopCall1PlayedFl = 171,
+	svCopCall2PlayedFl = 172,
+	svField173 = 173,
+	svField176 = 176,
+	svPoolDogGoneFl = 177,
+	svCinemaDogGoneFl = 181,
+	svField183 = 183,
+	svField184 = 184,
+	svField186 = 186,
+	svField188 = 188,
+	svField200 = 200,
+	svField214 = 214,
+	svBombBoxOpenedFl = 220,
+	svBombDisarmedFl = 225,
+	svField228 = 228,
+	svField231 = 231,
+	svField253 = 253,
+	svField261 = 261,
+	svField270 = 270,
+	svField300 = 300,
+	svBaseElevatorCond1 = 311,
+	svBaseFireFl = 312,
+	svSecondElevatorAvailableFl = 318,
+	svField320 = 320,
+	svEscapeLeftJailFl = 330,
+	svField333 = 333,
+	svField338 = 338,
+	svField339 = 339,
+	svField340 = 340,
+	svField341 = 341,
+	svField352 = 352,
+	svField353 = 353,
+	svField354 = 354,
+	svField355 = 355,
+	svField356 = 356,
+	svField357 = 357,
+	svField399 = 399,
+	svField401 = 401
 };
 
 // As Script engine directly access savegame fields,
@@ -112,7 +112,7 @@ struct Savegame {
 	CharacterLocation _cloneHopkins;
 	CharacterLocation _realHopkins;
 	CharacterLocation _samantha;
-	int16 _inventory[35];	// Originally at offset 1300 of data array
+	int16 _inventory[35]; // Originally at offset 1300 of data array
 	int16 _mapCarPosX;
 	int16 _mapCarPosY;
 };
@@ -125,9 +125,13 @@ struct CreditItem {
 	byte _line[50];
 };
 
-enum Language { LANG_EN = 0, LANG_FR = 1, LANG_SP = 2};
+enum Language { LANG_EN = 0,
+	              LANG_FR = 1,
+	              LANG_SP = 2 };
 
-enum PlayerCharacter { CHARACTER_HOPKINS = 0, CHARACTER_HOPKINS_CLONE = 1, CHARACTER_SAMANTHA = 2 };
+enum PlayerCharacter { CHARACTER_HOPKINS = 0,
+	                     CHARACTER_HOPKINS_CLONE = 1,
+	                     CHARACTER_SAMANTHA = 2 };
 
 enum Directions {
 	DIR_NONE = -1,

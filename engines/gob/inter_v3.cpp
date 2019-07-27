@@ -23,24 +23,26 @@
 #include "common/endian.h"
 #include "common/file.h"
 
-#include "gob/gob.h"
-#include "gob/inter.h"
-#include "gob/global.h"
 #include "gob/dataio.h"
 #include "gob/draw.h"
 #include "gob/game.h"
-#include "gob/script.h"
+#include "gob/global.h"
+#include "gob/gob.h"
+#include "gob/inter.h"
 #include "gob/resources.h"
+#include "gob/script.h"
 #include "gob/sound/sound.h"
 
 namespace Gob {
 
 #define OPCODEVER Inter_v3
-#define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
-#define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
-#define OPCODEGOB(i, x)   _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
+#define OPCODEDRAW(i, x) _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
+#define OPCODEFUNC(i, x) _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
+#define OPCODEGOB(i, x) _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 
-Inter_v3::Inter_v3(GobEngine *vm) : Inter_v2(vm), _ignoreSpeakerOff(false) {
+Inter_v3::Inter_v3(GobEngine *vm)
+  : Inter_v2(vm)
+  , _ignoreSpeakerOff(false) {
 }
 
 void Inter_v3::setupOpcodesDraw() {
@@ -56,18 +58,18 @@ void Inter_v3::setupOpcodesFunc() {
 }
 
 void Inter_v3::setupOpcodesGob() {
-	OPCODEGOB(  0, o2_loadInfogramesIns);
-	OPCODEGOB(  1, o2_startInfogrames);
-	OPCODEGOB(  2, o2_stopInfogrames);
+	OPCODEGOB(0, o2_loadInfogramesIns);
+	OPCODEGOB(1, o2_startInfogrames);
+	OPCODEGOB(2, o2_stopInfogrames);
 
-	OPCODEGOB( 10, o2_playInfogrames);
+	OPCODEGOB(10, o2_playInfogrames);
 
 	OPCODEGOB(100, o3_wobble);
 }
 
 void Inter_v3::o3_speakerOn(OpFuncParams &params) {
 	int16 frequency = _vm->_game->_script->readValExpr();
-	int32 length    = -1;
+	int32 length = -1;
 
 	_ignoreSpeakerOff = false;
 

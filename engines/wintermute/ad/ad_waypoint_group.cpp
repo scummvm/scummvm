@@ -28,8 +28,8 @@
 
 #include "engines/wintermute/ad/ad_waypoint_group.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
-#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
@@ -40,19 +40,18 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(AdWaypointGroup, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdWaypointGroup::AdWaypointGroup(BaseGame *inGame) : BaseObject(inGame) {
+AdWaypointGroup::AdWaypointGroup(BaseGame *inGame)
+  : BaseObject(inGame) {
 	_active = true;
 	_editorSelectedPoint = -1;
 	_lastMimicScale = -1;
 	_lastMimicX = _lastMimicY = INT_MIN;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 AdWaypointGroup::~AdWaypointGroup() {
 	cleanup();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void AdWaypointGroup::cleanup() {
@@ -62,7 +61,6 @@ void AdWaypointGroup::cleanup() {
 	_points.clear();
 	_editorSelectedPoint = -1;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdWaypointGroup::loadFile(const char *filename) {
@@ -80,12 +78,10 @@ bool AdWaypointGroup::loadFile(const char *filename) {
 		_gameRef->LOG(0, "Error parsing WAYPOINTS file '%s'", filename);
 	}
 
-
 	delete[] buffer;
 
 	return ret;
 }
-
 
 TOKEN_DEF_START
 TOKEN_DEF(WAYPOINTS)
@@ -138,8 +134,7 @@ bool AdWaypointGroup::loadBuffer(char *buffer, bool complete) {
 			int x, y;
 			parser.scanStr(params, "%d,%d", &x, &y);
 			_points.add(new BasePoint(x, y));
-		}
-		break;
+		} break;
 
 		case TOKEN_EDITOR_SELECTED:
 			parser.scanStr(params, "%b", &_editorSelected);
@@ -166,7 +161,6 @@ bool AdWaypointGroup::loadBuffer(char *buffer, bool complete) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdWaypointGroup::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "WAYPOINTS {\n");
@@ -188,7 +182,6 @@ bool AdWaypointGroup::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdWaypointGroup::persist(BasePersistenceManager *persistMgr) {
 
@@ -203,7 +196,6 @@ bool AdWaypointGroup::persist(BasePersistenceManager *persistMgr) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 ScValue *AdWaypointGroup::scGetProperty(const Common::String &name) {
@@ -228,7 +220,6 @@ ScValue *AdWaypointGroup::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdWaypointGroup::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
@@ -243,7 +234,6 @@ bool AdWaypointGroup::scSetProperty(const char *name, ScValue *value) {
 		return BaseObject::scSetProperty(name, value);
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdWaypointGroup::mimic(AdWaypointGroup *wpt, float scale, int argX, int argY) {

@@ -32,311 +32,340 @@
 namespace Xeen {
 
 enum LocationAction {
-	BANK = 0, BLACKSMITH = 1, GUILD = 2, TAVERN = 3, TEMPLE = 4,
-	TRAINING = 5, ARENA = 6, NO_ACTION = 7, REAPER = 8, GOLEM = 9,
-	DWARF_MINE = 10, SPHINX = 11, PYRAMID = 12, DWARF_TOWN = 13
+	BANK = 0,
+	BLACKSMITH = 1,
+	GUILD = 2,
+	TAVERN = 3,
+	TEMPLE = 4,
+	TRAINING = 5,
+	ARENA = 6,
+	NO_ACTION = 7,
+	REAPER = 8,
+	GOLEM = 9,
+	DWARF_MINE = 10,
+	SPHINX = 11,
+	PYRAMID = 12,
+	DWARF_TOWN = 13
 };
 
 class XeenEngine;
 
 namespace Locations {
 
-class BaseLocation : public ButtonContainer {
-protected:
-	LocationAction _locationActionId;
-	Common::Array<SpriteResource> _townSprites;
-	SpriteResource _icons1, _icons2;
-	int _townMaxId;
-	const int &_ccNum;
-	int _animFrame;
-	Common::String _vocName, _songName;
-	Common::Point _animPos;
-	int _drawFrameIndex;
-	uint _farewellTime;
-	int _drawCtr1, _drawCtr2;
-	bool _exitToUi;
-protected:
-	/**
+	class BaseLocation : public ButtonContainer {
+	protected:
+		LocationAction _locationActionId;
+		Common::Array<SpriteResource> _townSprites;
+		SpriteResource _icons1, _icons2;
+		int _townMaxId;
+		const int &_ccNum;
+		int _animFrame;
+		Common::String _vocName, _songName;
+		Common::Point _animPos;
+		int _drawFrameIndex;
+		uint _farewellTime;
+		int _drawCtr1, _drawCtr2;
+		bool _exitToUi;
+
+	protected:
+		/**
 	 * Draw the window
 	 */
-	void drawWindow();
+		void drawWindow();
 
-	/**
+		/**
 	 * Generates the display text for the location, for a given character
 	 */
-	virtual Common::String createLocationText(Character &ch) { return ""; }
+		virtual Common::String createLocationText(Character &ch) { return ""; }
 
-	/**
+		/**
 	 * Draw the visual background
 	 */
-	virtual void drawBackground();
+		virtual void drawBackground();
 
-	/**
+		/**
 	 * Handles options for the particular location
 	 */
-	virtual Character *doOptions(Character *c) { return c; }
+		virtual Character *doOptions(Character *c) { return c; }
 
-	/**
+		/**
 	 * Handle any farewell
 	 */
-	virtual void farewell() {}
-public:
-	BaseLocation(LocationAction action);
-	virtual ~BaseLocation();
+		virtual void farewell() {}
 
-	/**
+	public:
+		BaseLocation(LocationAction action);
+		virtual ~BaseLocation();
+
+		/**
 	 * Show the town location
 	 */
-	virtual int show();
+		virtual int show();
 
-	/**
+		/**
 	 * Draws the animated parts
 	 */
-	void drawAnim(bool flag);
+		void drawAnim(bool flag);
 
-	/**
+		/**
 	 * Waits for a brief pause, checking for any key or mouse events
 	 */
-	int wait();
-};
+		int wait();
+	};
 
-class BankLocation : public BaseLocation {
-private:
-	/**
+	class BankLocation : public BaseLocation {
+	private:
+		/**
 	 * Handles deposits or withdrawls fro the bank
 	 */
-	void depositWithdrawl(PartyBank whereId);
-protected:
-	/**
+		void depositWithdrawl(PartyBank whereId);
+
+	protected:
+		/**
 	 * Generates the display text for the location, for a given character
 	 */
-	virtual Common::String createLocationText(Character &ch);
+		virtual Common::String createLocationText(Character &ch);
 
-	/**
+		/**
 	 * Draw the visual background
 	 */
-	virtual void drawBackground();
+		virtual void drawBackground();
 
-	/**
+		/**
 	 * Handles options for the particular location
 	 */
-	virtual Character *doOptions(Character *c);
-public:
-	BankLocation();
-	virtual ~BankLocation() {}
-};
+		virtual Character *doOptions(Character *c);
 
-class BlacksmithLocation : public BaseLocation {
-protected:
-	/**
+	public:
+		BankLocation();
+		virtual ~BankLocation() {}
+	};
+
+	class BlacksmithLocation : public BaseLocation {
+	protected:
+		/**
 	* Generates the display text for the location, for a given character
 	*/
-	virtual Common::String createLocationText(Character &ch);
+		virtual Common::String createLocationText(Character &ch);
 
-	/**
+		/**
 	 * Handle any farewell
 	 */
-	virtual void farewell();
+		virtual void farewell();
 
-	/**
+		/**
 	 * Handles options for the particular location
 	 */
-	virtual Character *doOptions(Character *c);
-public:
-	BlacksmithLocation();
-	virtual ~BlacksmithLocation() {}
-};
+		virtual Character *doOptions(Character *c);
 
-class GuildLocation : public BaseLocation {
-protected:
-	/**
+	public:
+		BlacksmithLocation();
+		virtual ~BlacksmithLocation() {}
+	};
+
+	class GuildLocation : public BaseLocation {
+	protected:
+		/**
 	 * Generates the display text for the location, for a given character
 	 */
-	virtual Common::String createLocationText(Character &ch);
+		virtual Common::String createLocationText(Character &ch);
 
-	/**
+		/**
 	 * Handles options for the particular location
 	 */
-	virtual Character *doOptions(Character *c);
-public:
-	GuildLocation();
-	virtual ~GuildLocation() {}
-};
+		virtual Character *doOptions(Character *c);
 
-class TavernLocation : public BaseLocation {
-private:
-	int _v21;
-	uint _v22;
-	int _v23;
-	int _v24;
-protected:
-	/**
+	public:
+		GuildLocation();
+		virtual ~GuildLocation() {}
+	};
+
+	class TavernLocation : public BaseLocation {
+	private:
+		int _v21;
+		uint _v22;
+		int _v23;
+		int _v24;
+
+	protected:
+		/**
 	* Generates the display text for the location, for a given character
 	*/
-	virtual Common::String createLocationText(Character &ch);
+		virtual Common::String createLocationText(Character &ch);
 
-	/**
+		/**
 	 * Handle any farewell
 	 */
-	virtual void farewell();
+		virtual void farewell();
 
-	/**
+		/**
 	 * Handles options for the particular location
 	 */
-	virtual Character *doOptions(Character *c);
-public:
-	TavernLocation();
-	virtual ~TavernLocation() {}
-};
+		virtual Character *doOptions(Character *c);
 
-class TempleLocation : public BaseLocation {
-private:
-	int _currentCharLevel;
-	int _donation;
-	int _healCost;
-	int _uncurseCost;
-	int _dayOfWeek;
-	int _v10, _v11, _v12;
-	int _v13, _v14;
-	bool _blessed;
-	int _v5, _v6;
-protected:
-	/**
+	public:
+		TavernLocation();
+		virtual ~TavernLocation() {}
+	};
+
+	class TempleLocation : public BaseLocation {
+	private:
+		int _currentCharLevel;
+		int _donation;
+		int _healCost;
+		int _uncurseCost;
+		int _dayOfWeek;
+		int _v10, _v11, _v12;
+		int _v13, _v14;
+		bool _blessed;
+		int _v5, _v6;
+
+	protected:
+		/**
 	* Generates the display text for the location, for a given character
 	*/
-	virtual Common::String createLocationText(Character &ch);
+		virtual Common::String createLocationText(Character &ch);
 
-	/**
+		/**
 	 * Handles options for the particular location
 	 */
-	virtual Character *doOptions(Character *c);
-public:
-	TempleLocation();
-	virtual ~TempleLocation() {}
-};
+		virtual Character *doOptions(Character *c);
 
-class TrainingLocation : public BaseLocation {
-private:
-	int _charIndex;
-	bool _charsTrained[MAX_ACTIVE_PARTY];
-	uint _experienceToNextLevel;
-	uint _maxLevel;
-protected:
-	/**
+	public:
+		TempleLocation();
+		virtual ~TempleLocation() {}
+	};
+
+	class TrainingLocation : public BaseLocation {
+	private:
+		int _charIndex;
+		bool _charsTrained[MAX_ACTIVE_PARTY];
+		uint _experienceToNextLevel;
+		uint _maxLevel;
+
+	protected:
+		/**
 	 * Generates the display text for the location, for a given character
 	 */
-	virtual Common::String createLocationText(Character &ch);
+		virtual Common::String createLocationText(Character &ch);
 
-	/**
+		/**
 	 * Handles options for the particular location
 	 */
-	virtual Character *doOptions(Character *c);
-public:
-	TrainingLocation();
-	virtual ~TrainingLocation() {}
-};
+		virtual Character *doOptions(Character *c);
 
-class ArenaLocation : public BaseLocation {
-public:
-	ArenaLocation();
-	virtual ~ArenaLocation() {}
+	public:
+		TrainingLocation();
+		virtual ~TrainingLocation() {}
+	};
 
-	/**
+	class ArenaLocation : public BaseLocation {
+	public:
+		ArenaLocation();
+		virtual ~ArenaLocation() {}
+
+		/**
 	 * Show the town location
 	 */
-	virtual int show();
-};
+		virtual int show();
+	};
 
-class CutsceneLocation : public BaseLocation {
-protected:
-	Subtitles _subtitles;
-	int _mazeId;
-	Direction _mazeDir;
-	Common::Point _mazePos;
-	bool _keyFound;
-protected:
-	/**
+	class CutsceneLocation : public BaseLocation {
+	protected:
+		Subtitles _subtitles;
+		int _mazeId;
+		Direction _mazeDir;
+		Common::Point _mazePos;
+		bool _keyFound;
+
+	protected:
+		/**
 	 * Sets the new location
 	 */
-	void setNewLocation();
-public:
-	CutsceneLocation(LocationAction action);
-};
+		void setNewLocation();
 
-class ReaperCutscene : public CutsceneLocation {
-private:
-	/**
+	public:
+		CutsceneLocation(LocationAction action);
+	};
+
+	class ReaperCutscene : public CutsceneLocation {
+	private:
+		/**
 	 * Get the new location
 	 */
-	void getNewLocation();
-public:
-	ReaperCutscene();
-	virtual ~ReaperCutscene() {}
+		void getNewLocation();
 
-	/**
+	public:
+		ReaperCutscene();
+		virtual ~ReaperCutscene() {}
+
+		/**
 	 * Show the town location
 	 */
-	virtual int show();
-};
+		virtual int show();
+	};
 
-class GolemCutscene : public CutsceneLocation {
-private:
-	/**
+	class GolemCutscene : public CutsceneLocation {
+	private:
+		/**
 	 * Get the new location
 	 */
-	void getNewLocation(); 
-public:
-	GolemCutscene();
-	virtual ~GolemCutscene() {}
+		void getNewLocation();
 
-	/**
+	public:
+		GolemCutscene();
+		virtual ~GolemCutscene() {}
+
+		/**
 	 * Show the town location
 	 */
-	virtual int show();
-};
+		virtual int show();
+	};
 
-class DwarfCutscene : public CutsceneLocation {
-private:
-	/**
+	class DwarfCutscene : public CutsceneLocation {
+	private:
+		/**
 	 * Get the new location
 	 */
-	void getNewLocation();
-public:
-	DwarfCutscene();
-	virtual ~DwarfCutscene() {}
+		void getNewLocation();
 
-	/**
+	public:
+		DwarfCutscene();
+		virtual ~DwarfCutscene() {}
+
+		/**
 	 * Show the town location
 	 */
-	virtual int show();
-};
+		virtual int show();
+	};
 
-class SphinxCutscene : public CutsceneLocation {
-private:
-	/**
+	class SphinxCutscene : public CutsceneLocation {
+	private:
+		/**
 	 * Get the new location
 	 */
-	void getNewLocation();
-public:
-	SphinxCutscene();
-	virtual ~SphinxCutscene() {}
+		void getNewLocation();
 
-	/**
+	public:
+		SphinxCutscene();
+		virtual ~SphinxCutscene() {}
+
+		/**
 	 * Show the town location
 	 */
-	virtual int show();
-};
+		virtual int show();
+	};
 
-class PyramidLocation : public BaseLocation {
-public:
-	PyramidLocation();
-	virtual ~PyramidLocation() {}
+	class PyramidLocation : public BaseLocation {
+	public:
+		PyramidLocation();
+		virtual ~PyramidLocation() {}
 
-	/**
+		/**
 	 * Show the town location
 	 */
-	virtual int show();
-};
+		virtual int show();
+	};
 
 } // End of namespace Locations
 
@@ -344,20 +373,23 @@ class LocationMessage : public Locations::BaseLocation {
 private:
 	SpriteResource _iconSprites;
 
-	LocationMessage() : Locations::BaseLocation(NO_ACTION) { setWaitBounds(); }
+	LocationMessage()
+	  : Locations::BaseLocation(NO_ACTION) { setWaitBounds(); }
 
 	bool execute(int portrait, const Common::String &name,
-		const Common::String &text, int confirm);
+	             const Common::String &text, int confirm);
 
 	void loadButtons();
+
 public:
 	static bool show(int portrait, const Common::String &name,
-		const Common::String &text, int confirm);
+	                 const Common::String &text, int confirm);
 };
 
 class LocationManager {
 private:
 	Locations::BaseLocation *_location;
+
 public:
 	LocationManager();
 

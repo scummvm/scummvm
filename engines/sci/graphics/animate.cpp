@@ -20,33 +20,41 @@
  *
  */
 
-#include "common/util.h"
 #include "common/stack.h"
+#include "common/util.h"
 #include "graphics/primitives.h"
 
 #include "sci/console.h"
-#include "sci/sci.h"
-#include "sci/event.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/script_patches.h"
-#include "sci/engine/state.h"
 #include "sci/engine/selector.h"
+#include "sci/engine/state.h"
 #include "sci/engine/vm.h"
+#include "sci/event.h"
+#include "sci/graphics/animate.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
 #include "sci/graphics/cursor.h"
-#include "sci/graphics/ports.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/palette.h"
-#include "sci/graphics/view.h"
+#include "sci/graphics/ports.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/transitions.h"
-#include "sci/graphics/animate.h"
+#include "sci/graphics/view.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
 GfxAnimate::GfxAnimate(EngineState *state, ScriptPatcher *scriptPatcher, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen, GfxPalette *palette, GfxCursor *cursor, GfxTransitions *transitions)
-	: _s(state), _scriptPatcher(scriptPatcher), _cache(cache), _ports(ports), _paint16(paint16), _screen(screen), _palette(palette), _cursor(cursor), _transitions(transitions) {
+  : _s(state)
+  , _scriptPatcher(scriptPatcher)
+  , _cache(cache)
+  , _ports(ports)
+  , _paint16(paint16)
+  , _screen(screen)
+  , _palette(palette)
+  , _cursor(cursor)
+  , _transitions(transitions) {
 	init();
 }
 
@@ -73,8 +81,8 @@ void GfxAnimate::init() {
 // Signature for fastCast detection
 static const uint16 fastCastSignature[] = {
 	SIG_MAGICDWORD,
-	0x35, 0x00,                      // ldi 00
-	0xa1, 84,                        // sag global[84d]
+	0x35, 0x00, // ldi 00
+	0xa1, 84, // sag global[84d]
 	SIG_END
 };
 
@@ -106,7 +114,7 @@ bool GfxAnimate::detectFastCast() {
 	const reg_t gameVMObject = g_sci->getGameObject();
 	reg_t gameSuperVMObject = segMan->getObject(gameVMObject)->getSuperClassSelector();
 	uint32 magicDWord = 0; // platform-specific BE/LE for performance
-	int    magicDWordOffset = 0;
+	int magicDWordOffset = 0;
 
 	if (gameSuperVMObject.isNull()) {
 		gameSuperVMObject = gameVMObject; // Just in case. According to sci.cpp this may happen in KQ5CD, when loading saved games before r54510
@@ -277,9 +285,9 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 
 		if (it->signal & kSignalNoUpdate) {
 			if ((it->signal & (kSignalForceUpdate | kSignalViewUpdated))
-				||   (it->signal & kSignalHidden  && !(it->signal & kSignalRemoveView))
-				|| (!(it->signal & kSignalHidden) &&   it->signal & kSignalRemoveView)
-				||   (it->signal & kSignalAlwaysUpdate))
+			    || (it->signal & kSignalHidden && !(it->signal & kSignalRemoveView))
+			    || (!(it->signal & kSignalHidden) && it->signal & kSignalRemoveView)
+			    || (it->signal & kSignalAlwaysUpdate))
 				old_picNotValid++;
 			it->signal &= ~kSignalStopUpdate;
 		} else {
@@ -349,7 +357,7 @@ void GfxAnimate::applyGlobalScaling(AnimateList::iterator entry, GfxView *view) 
 	if ((celHeight == 0) || (fixedPortY == 0))
 		error("global scaling panic");
 
-	entry->scaleY = ( maxCelHeight * fixedEntryY ) / fixedPortY;
+	entry->scaleY = (maxCelHeight * fixedEntryY) / fixedPortY;
 	entry->scaleY = (entry->scaleY * 128) / celHeight;
 
 	entry->scaleX = entry->scaleY;
@@ -399,7 +407,7 @@ void GfxAnimate::update() {
 				if (_screen->_picNotValid != 1) {
 					_paint16->bitsRestore(bitsHandle);
 					it->showBitsFlag = true;
-				} else	{
+				} else {
 					_paint16->bitsFree(bitsHandle);
 				}
 				writeSelectorValue(_s->_segMan, it->object, SELECTOR(underBits), 0);
@@ -437,7 +445,7 @@ void GfxAnimate::update() {
 			} else {
 				it->signal &= ~kSignalRemoveView;
 				if (it->signal & kSignalIgnoreActor)
-					bitsHandle = _paint16->bitsSave(it->celRect, GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY);
+					bitsHandle = _paint16->bitsSave(it->celRect, GFX_SCREEN_MASK_VISUAL | GFX_SCREEN_MASK_PRIORITY);
 				else
 					bitsHandle = _paint16->bitsSave(it->celRect, GFX_SCREEN_MASK_ALL);
 				writeSelector(_s->_segMan, it->object, SELECTOR(underBits), bitsHandle);
@@ -493,8 +501,7 @@ void GfxAnimate::updateScreen(byte oldPicNotValid) {
 	Common::Rect workerRect;
 
 	for (it = _list.begin(); it != end; ++it) {
-		if (it->showBitsFlag || !(it->signal & (kSignalRemoveView | kSignalNoUpdate) ||
-										(!(it->signal & kSignalRemoveView) && (it->signal & kSignalNoUpdate) && oldPicNotValid))) {
+		if (it->showBitsFlag || !(it->signal & (kSignalRemoveView | kSignalNoUpdate) || (!(it->signal & kSignalRemoveView) && (it->signal & kSignalNoUpdate) && oldPicNotValid))) {
 			lsRect.left = readSelectorValue(_s->_segMan, it->object, SELECTOR(lsLeft));
 			lsRect.top = readSelectorValue(_s->_segMan, it->object, SELECTOR(lsTop));
 			lsRect.right = readSelectorValue(_s->_segMan, it->object, SELECTOR(lsRight));
@@ -560,12 +567,12 @@ void GfxAnimate::reAnimate(Common::Rect rect) {
 		AnimateArray::iterator it;
 		AnimateArray::iterator end = _lastCastData.end();
 		for (it = _lastCastData.begin(); it != end; ++it) {
-			it->castHandle = _paint16->bitsSave(it->celRect, GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY);
+			it->castHandle = _paint16->bitsSave(it->celRect, GFX_SCREEN_MASK_VISUAL | GFX_SCREEN_MASK_PRIORITY);
 			_paint16->drawCel(it->viewId, it->loopNo, it->celNo, it->celRect, it->priority, it->paletteNo, it->scaleX, it->scaleY);
 		}
 		_paint16->bitsShow(rect);
 		// restoring
-		while (it != _lastCastData.begin()) {		// FIXME: HACK, this iterator use is not very safe
+		while (it != _lastCastData.begin()) { // FIXME: HACK, this iterator use is not very safe
 			it--;
 			_paint16->bitsRestore(it->castHandle);
 		}
@@ -633,7 +640,6 @@ void GfxAnimate::addToPicDrawView(GuiResourceId viewId, int16 loopNo, int16 celN
 		_paint16->fillRect(celRect, GFX_SCREEN_MASK_CONTROL, 0, 0, control);
 	}
 }
-
 
 void GfxAnimate::animateShowPic() {
 	Port *picPort = _ports->_picWind;
@@ -736,9 +742,9 @@ void GfxAnimate::throttleSpeed() {
 			int16 onlyHeight = onlyCast->celRect.height();
 			int16 onlyWidth = onlyCast->celRect.width();
 			if (((onlyWidth == 12) && (onlyHeight == 35)) || // regular benchmark view ("fred", "Speedy", "ego")
-				((onlyWidth == 29) && (onlyHeight == 45)) || // King's Quest 5 french "fred"
-				((onlyWidth == 1) && (onlyHeight == 5)) || // Freddy Pharkas "fred"
-				((onlyWidth == 1) && (onlyHeight == 1))) { // Laura Bow 2 Talkie
+			    ((onlyWidth == 29) && (onlyHeight == 45)) || // King's Quest 5 french "fred"
+			    ((onlyWidth == 1) && (onlyHeight == 5)) || // Freddy Pharkas "fred"
+			    ((onlyWidth == 1) && (onlyHeight == 1))) { // Laura Bow 2 Talkie
 				// check further that there is only one cel in that view
 				GfxView *onlyView = _cache->getView(onlyCast->viewId);
 				if ((onlyView->getLoopCount() == 1) && (onlyView->getCelCount(0))) {
@@ -796,11 +802,11 @@ void GfxAnimate::printAnimateList(Console *con) {
 		int16 scriptNo = scr ? scr->getScriptNumber() : -1;
 
 		con->debugPrintf("%04x:%04x (%s), script %d, view %d (%d, %d), pal %d, "
-			"at %d, %d, scale %d, %d / %d (z: %d, prio: %d, shown: %d, signal: %d)\n",
-			PRINT_REG(it->object), _s->_segMan->getObjectName(it->object),
-			scriptNo, it->viewId, it->loopNo, it->celNo, it->paletteNo,
-			it->x, it->y, it->scaleX, it->scaleY, it->scaleSignal,
-			it->z, it->priority, it->showBitsFlag, it->signal);
+		                 "at %d, %d, scale %d, %d / %d (z: %d, prio: %d, shown: %d, signal: %d)\n",
+		                 PRINT_REG(it->object), _s->_segMan->getObjectName(it->object),
+		                 scriptNo, it->viewId, it->loopNo, it->celNo, it->paletteNo,
+		                 it->x, it->y, it->scaleX, it->scaleY, it->scaleSignal,
+		                 it->z, it->priority, it->showBitsFlag, it->signal);
 	}
 }
 

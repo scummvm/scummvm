@@ -42,7 +42,6 @@ namespace Common {
 class SeekableReadStream;
 }
 
-
 namespace Audio {
 
 class PacketizedAudioStream;
@@ -54,12 +53,12 @@ class SeekableAudioStream;
 // Usually, if the audio stream we're trying to play has the FourCC header
 // string intact, it's easy to discern which encoding is used
 enum ADPCMType {
-	kADPCMOki,                 // Dialogic/Oki ADPCM (aka VOX)
-	kADPCMMSIma,               // Microsoft IMA ADPCM
-	kADPCMMS,                  // Microsoft ADPCM
-	kADPCMDVI,                 // Intel DVI IMA ADPCM
-	kADPCMApple,               // Apple QuickTime IMA ADPCM
-	kADPCMDK3                  // Duck DK3 IMA ADPCM
+	kADPCMOki, // Dialogic/Oki ADPCM (aka VOX)
+	kADPCMMSIma, // Microsoft IMA ADPCM
+	kADPCMMS, // Microsoft ADPCM
+	kADPCMDVI, // Intel DVI IMA ADPCM
+	kADPCMApple, // Apple QuickTime IMA ADPCM
+	kADPCMDK3 // Duck DK3 IMA ADPCM
 };
 
 /**
@@ -76,12 +75,12 @@ enum ADPCMType {
  * @return   a new RewindableAudioStream, or NULL, if an error occurred
  */
 SeekableAudioStream *makeADPCMStream(
-    Common::SeekableReadStream *stream,
-    DisposeAfterUse::Flag disposeAfterUse,
-    uint32 size, ADPCMType type,
-    int rate,
-    int channels,
-    uint32 blockAlign = 0);
+  Common::SeekableReadStream *stream,
+  DisposeAfterUse::Flag disposeAfterUse,
+  uint32 size, ADPCMType type,
+  int rate,
+  int channels,
+  uint32 blockAlign = 0);
 
 /**
  * Creates a PacketizedAudioStream that will automatically queue
@@ -98,10 +97,10 @@ SeekableAudioStream *makeADPCMStream(
  * @return The new PacketizedAudioStream or NULL, if the type isn't supported.
  */
 PacketizedAudioStream *makePacketizedADPCMStream(
-	ADPCMType type,
-	int rate,
-	int channels,
-	uint32 blockAlign = 0);
+  ADPCMType type,
+  int rate,
+  int channels,
+  uint32 blockAlign = 0);
 
 } // End of namespace Audio
 

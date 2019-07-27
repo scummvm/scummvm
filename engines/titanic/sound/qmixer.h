@@ -29,32 +29,32 @@
 namespace Titanic {
 
 enum QMixFlag {
-	QMIX_OPENSINGLE		= 0,	// Open the single channel specified by iChannel
-	QMIX_OPENALL		= 1,	// Opens all the channels, iChannel ignored
-	QMIX_OPENCOUNT		= 2,	// Open iChannel Channels (eg. if iChannel = 4 will create channels 0-3)
-	QMIX_OPENAVAILABLE	= 3,	// Open the first unopened channel, and return channel number
+	QMIX_OPENSINGLE = 0, // Open the single channel specified by iChannel
+	QMIX_OPENALL = 1, // Opens all the channels, iChannel ignored
+	QMIX_OPENCOUNT = 2, // Open iChannel Channels (eg. if iChannel = 4 will create channels 0-3)
+	QMIX_OPENAVAILABLE = 3, // Open the first unopened channel, and return channel number
 
 	// Channel function flags
-	QMIX_ALL				= 0x01,	// apply to all channels
-	QMIX_NOREMIX			= 0x02,	// don't remix
-	QMIX_CONTROL_NOREMIX	= 0x04,	// don't remix
-	QMIX_USEONCE			= 0x10	// settings are temporary
+	QMIX_ALL = 0x01, // apply to all channels
+	QMIX_NOREMIX = 0x02, // don't remix
+	QMIX_CONTROL_NOREMIX = 0x04, // don't remix
+	QMIX_USEONCE = 0x10 // settings are temporary
 };
 
 // qsWaveMixEnableChannel flags:  if mode==0, use conventional, high-performance
 // stereo mixer.  Non-zero modes imply some form of additional processing.
 enum QMixChannelFlag {
-	QMIX_CHANNEL_STEREO			= 0x0000,	// Perform stereo mixing
-	QMIX_CHANNEL_QSOUND			= 0x0001,	// Perform QSound localization (default)
-	QMIX_CHANNEL_DOPPLER		= 0x0002,	// Calculate velocity using position updates
-	QMIX_CHANNEL_RANGE			= 0x0004,	// Do range effects
-	QMIX_CHANNEL_ELEVATION		= 0x0008,	// Do elevation effects
-	QMIX_CHANNEL_NODOPPLERPITCH	= 0x0010,	// Disable Doppler pitch shift for this channel
-	QMIX_CHANNEL_PITCH_COPY		= 0x0000,	// Pitch shifting using copying (fastest)
-	QMIX_CHANNEL_PITCH_LINEAR	= 0x0100,	// Pitch shifting using linear interpolation (better but slower)
-	QMIX_CHANNEL_PITCH_SPLINE	= 0x0200,	// Pitch shifting using spline interpolation (better yet, but much slower)
-	QMIX_CHANNEL_PITCH_FILTER	= 0x0300,	// Pitch shifting using FIR filter (best, but slowest)
-	QMIX_CHANNEL_PITCH_MASK		= 0x0700	// Bits reserved for pitch types
+	QMIX_CHANNEL_STEREO = 0x0000, // Perform stereo mixing
+	QMIX_CHANNEL_QSOUND = 0x0001, // Perform QSound localization (default)
+	QMIX_CHANNEL_DOPPLER = 0x0002, // Calculate velocity using position updates
+	QMIX_CHANNEL_RANGE = 0x0004, // Do range effects
+	QMIX_CHANNEL_ELEVATION = 0x0008, // Do elevation effects
+	QMIX_CHANNEL_NODOPPLERPITCH = 0x0010, // Disable Doppler pitch shift for this channel
+	QMIX_CHANNEL_PITCH_COPY = 0x0000, // Pitch shifting using copying (fastest)
+	QMIX_CHANNEL_PITCH_LINEAR = 0x0100, // Pitch shifting using linear interpolation (better but slower)
+	QMIX_CHANNEL_PITCH_SPLINE = 0x0200, // Pitch shifting using spline interpolation (better yet, but much slower)
+	QMIX_CHANNEL_PITCH_FILTER = 0x0300, // Pitch shifting using FIR filter (best, but slowest)
+	QMIX_CHANNEL_PITCH_MASK = 0x0700 // Bits reserved for pitch types
 };
 
 /**
@@ -69,16 +69,16 @@ enum QMixChannelFlag {
  * in the iChannel field.
  */
 enum QMixPlayFlag {
-	QMIX_QUEUEWAVE			= 0x0000,	// Queue on channel
-	QMIX_CLEARQUEUE			= 0x0001,	// Clear queue on channel
-	QMIX_USELRUCHANNEL		= 0x0002,	// See notes above
-	QMIX_HIGHPRIORITY		= 0x0004,
-	QMIX_WAIT				= 0x0008,	// Queue to be played with other sounds
-	QMIX_IMMEDIATE			= 0x0020,	// Apply volume/pan changes without interpolation
+	QMIX_QUEUEWAVE = 0x0000, // Queue on channel
+	QMIX_CLEARQUEUE = 0x0001, // Clear queue on channel
+	QMIX_USELRUCHANNEL = 0x0002, // See notes above
+	QMIX_HIGHPRIORITY = 0x0004,
+	QMIX_WAIT = 0x0008, // Queue to be played with other sounds
+	QMIX_IMMEDIATE = 0x0020, // Apply volume/pan changes without interpolation
 
-	QMIX_PLAY_SETEVENT		= 0x0100,	// Calls SetEvent in the original library when done
-	QMIX_PLAY_PULSEEVENT	= 0x0200,	// Calls PulseEvent in the original library when done
-	QMIX_PLAY_NOTIFYSTOP	= 0x0400	// Do callback even when stopping or flushing sound
+	QMIX_PLAY_SETEVENT = 0x0100, // Calls SetEvent in the original library when done
+	QMIX_PLAY_PULSEEVENT = 0x0200, // Calls PulseEvent in the original library when done
+	QMIX_PLAY_NOTIFYSTOP = 0x0400 // Do callback even when stopping or flushing sound
 };
 
 /**
@@ -87,20 +87,37 @@ enum QMixPlayFlag {
 struct QMIXCONFIG {
 	uint32 dwSize;
 	uint32 dwFlags;
-	uint32 dwSamplingRate;   // Sampling rate in Hz
+	uint32 dwSamplingRate; // Sampling rate in Hz
 	void *lpIDirectSound;
 	const void *lpGuid;
-	int iChannels;          // Number of channels
-	int iOutput;            // if 0, uses best output device
-	int iLatency;           // (in ms) if 0, uses default for output device
-	int iMath;              // style of math
+	int iChannels; // Number of channels
+	int iOutput; // if 0, uses best output device
+	int iLatency; // (in ms) if 0, uses default for output device
+	int iMath; // style of math
 	uint hwnd;
 
-	QMIXCONFIG() : dwSize(40), dwFlags(0), dwSamplingRate(0), lpIDirectSound(nullptr),
-		lpGuid(nullptr), iChannels(0), iOutput(0), iLatency(0), iMath(0), hwnd(0) {}
-	QMIXCONFIG(uint32 rate, int channels, int latency) : dwSize(40),  dwFlags(0),
-		dwSamplingRate(rate), iChannels(channels), iLatency(latency),
-		lpIDirectSound(nullptr), lpGuid(nullptr), iOutput(0), iMath(0), hwnd(0) {}
+	QMIXCONFIG()
+	  : dwSize(40)
+	  , dwFlags(0)
+	  , dwSamplingRate(0)
+	  , lpIDirectSound(nullptr)
+	  , lpGuid(nullptr)
+	  , iChannels(0)
+	  , iOutput(0)
+	  , iLatency(0)
+	  , iMath(0)
+	  , hwnd(0) {}
+	QMIXCONFIG(uint32 rate, int channels, int latency)
+	  : dwSize(40)
+	  , dwFlags(0)
+	  , dwSamplingRate(rate)
+	  , iChannels(channels)
+	  , iLatency(latency)
+	  , lpIDirectSound(nullptr)
+	  , lpGuid(nullptr)
+	  , iOutput(0)
+	  , iMath(0)
+	  , hwnd(0) {}
 };
 
 /**
@@ -111,53 +128,80 @@ struct QSVECTOR {
 	double y;
 	double z;
 
-	QSVECTOR() : x(0.0), y(0.0), z(0.0) {}
-	QSVECTOR(double xp, double yp, double zp) : x(xp), y(yp), z(zp) {}
+	QSVECTOR()
+	  : x(0.0)
+	  , y(0.0)
+	  , z(0.0) {}
+	QSVECTOR(double xp, double yp, double zp)
+	  : x(xp)
+	  , y(yp)
+	  , z(zp) {}
 };
 
 /**
  * Polar positioning
  */
 struct QSPOLAR {
-	double azimuth;		// degrees
-	double range;		// meters
-	double elevation;	// degrees
+	double azimuth; // degrees
+	double range; // meters
+	double elevation; // degrees
 
-	QSPOLAR() : azimuth(0.0), range(0.0), elevation(0.0) {}
-	QSPOLAR(double azimuth_, double range_, double elevation_) :
-		azimuth(azimuth_), range(range_), elevation(elevation_) {}
+	QSPOLAR()
+	  : azimuth(0.0)
+	  , range(0.0)
+	  , elevation(0.0) {}
+	QSPOLAR(double azimuth_, double range_, double elevation_)
+	  : azimuth(azimuth_)
+	  , range(range_)
+	  , elevation(elevation_) {}
 };
 
 struct QMIX_DISTANCES {
-	int cbSize;			// Structure size
-	double minDistance;	// sounds are at full volume if closer than this
-	double maxDistance;	// sounds are muted if further away than this
-	double scale;		// relative amount to adjust rolloff by
+	int cbSize; // Structure size
+	double minDistance; // sounds are at full volume if closer than this
+	double maxDistance; // sounds are muted if further away than this
+	double scale; // relative amount to adjust rolloff by
 
-	QMIX_DISTANCES() : cbSize(16), minDistance(0.0), maxDistance(0.0), scale(0.0) {}
-	QMIX_DISTANCES(double minDistance_, double maxDistance_, double scale_) :
-		cbSize(16), minDistance(minDistance_), maxDistance(maxDistance_), scale(scale_) {}
+	QMIX_DISTANCES()
+	  : cbSize(16)
+	  , minDistance(0.0)
+	  , maxDistance(0.0)
+	  , scale(0.0) {}
+	QMIX_DISTANCES(double minDistance_, double maxDistance_, double scale_)
+	  : cbSize(16)
+	  , minDistance(minDistance_)
+	  , maxDistance(maxDistance_)
+	  , scale(scale_) {}
 };
 
 typedef void (*LPQMIXDONECALLBACK)(int iChannel, CWaveFile *lpWave, void *dwUser);
 
 struct QMIXPLAYPARAMS {
-	uint dwSize;		// Size of the play structure
-	void *lpImage;		// Additional preprocessed audio for high performance
-	uint hwndNotify;	// if set, WOM_OPEN and WOM_DONE messages sent to that window
-	LPQMIXDONECALLBACK callback;	// Callback function
-	void *dwUser;					// User data accompanying callback
+	uint dwSize; // Size of the play structure
+	void *lpImage; // Additional preprocessed audio for high performance
+	uint hwndNotify; // if set, WOM_OPEN and WOM_DONE messages sent to that window
+	LPQMIXDONECALLBACK callback; // Callback function
+	void *dwUser; // User data accompanying callback
 	int lStart;
 	int lStartLoop;
 	int lEndLoop;
 	int lEnd;
-	const void *lpChannelParams;	// initialize with these parameters
+	const void *lpChannelParams; // initialize with these parameters
 	// Properties introduced by ScummVM
 	Audio::Mixer::SoundType _soundType;
 
-	QMIXPLAYPARAMS() : dwSize(36), lpImage(nullptr), hwndNotify(0), callback(nullptr),
-		dwUser(nullptr), lStart(0), lStartLoop(0), lEndLoop(0), lEnd(0),
-		lpChannelParams(nullptr), _soundType(Audio::Mixer::kPlainSoundType)  {}
+	QMIXPLAYPARAMS()
+	  : dwSize(36)
+	  , lpImage(nullptr)
+	  , hwndNotify(0)
+	  , callback(nullptr)
+	  , dwUser(nullptr)
+	  , lStart(0)
+	  , lStartLoop(0)
+	  , lEndLoop(0)
+	  , lEnd(0)
+	  , lpChannelParams(nullptr)
+	  , _soundType(Audio::Mixer::kPlainSoundType) {}
 };
 
 /**
@@ -179,11 +223,19 @@ class QMixer {
 		LPQMIXDONECALLBACK _callback;
 		int _loops;
 		void *_userData;
-		SoundEntry() : _started(false), _waveFile(nullptr), _callback(nullptr),
-			_loops(0), _userData(nullptr) {}
+		SoundEntry()
+		  : _started(false)
+		  , _waveFile(nullptr)
+		  , _callback(nullptr)
+		  , _loops(0)
+		  , _userData(nullptr) {}
 
-		SoundEntry(CWaveFile *waveFile, LPQMIXDONECALLBACK callback, int loops, void *userData) :
-			_started(false), _waveFile(waveFile), _callback(callback), _loops(loops), _userData(userData) {}
+		SoundEntry(CWaveFile *waveFile, LPQMIXDONECALLBACK callback, int loops, void *userData)
+		  : _started(false)
+		  , _waveFile(waveFile)
+		  , _callback(callback)
+		  , _loops(loops)
+		  , _userData(userData) {}
 	};
 	struct ChannelEntry {
 		// Currently playing and any following queued sounds for the channel
@@ -201,9 +253,15 @@ class QMixer {
 		double _distance;
 		bool _resetDistance;
 
-		ChannelEntry() : _volume(0), _panRate(0), _volumeChangeStart(0),
-			_volumeChangeEnd(0), _volumeStart(0), _volumeEnd(0),
-			_distance(0.0), _resetDistance(true) {}
+		ChannelEntry()
+		  : _volume(0)
+		  , _panRate(0)
+		  , _volumeChangeStart(0)
+		  , _volumeChangeEnd(0)
+		  , _volumeStart(0)
+		  , _volumeEnd(0)
+		  , _distance(0.0)
+		  , _resetDistance(true) {}
 
 		/**
 		 * Calculates the raw volume level to pass to ScummVM playStream, taking
@@ -211,10 +269,13 @@ class QMixer {
 		 */
 		byte getRawVolume() const;
 	};
+
 private:
 	Common::Array<ChannelEntry> _channels;
+
 protected:
 	Audio::Mixer *_mixer;
+
 public:
 	QMixer(Audio::Mixer *mixer);
 	virtual ~QMixer();

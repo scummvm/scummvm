@@ -34,6 +34,7 @@ class CCrushedTV : public CCarry {
 	bool ActMsg(CActMsg *msg);
 	bool UseWithCharMsg(CUseWithCharMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+
 public:
 	CLASSDEF;
 	CCrushedTV();

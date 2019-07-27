@@ -23,8 +23,8 @@
 #ifndef TITANIC_PET_FRAME_H
 #define TITANIC_PET_FRAME_H
 
-#include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_gfx_element.h"
+#include "titanic/pet_control/pet_section.h"
 
 namespace Titanic {
 
@@ -42,11 +42,13 @@ private:
 	CPetGfxElement _val3;
 	CPetGfxElement _background;
 	CPetGfxElement _squares[7];
+
 private:
 	/**
 	 * Called to set the owning PET instance and set some initial state
 	 */
 	bool setPetControl(CPetControl *petControl);
+
 public:
 	CPetFrame();
 

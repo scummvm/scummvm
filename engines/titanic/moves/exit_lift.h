@@ -30,8 +30,10 @@ namespace Titanic {
 class CExitLift : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+
 public:
 	CString _viewName;
+
 public:
 	CLASSDEF;
 	CExitLift();

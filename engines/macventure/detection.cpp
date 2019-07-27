@@ -22,16 +22,17 @@
 
 #include "base/plugins.h"
 
-#include "engines/advancedDetector.h"
 #include "common/system.h"
+#include "engines/advancedDetector.h"
 
 #include "macventure/macventure.h"
 
 namespace MacVenture {
 
-#define ADGF_DEFAULT (ADGF_DROPLANGUAGE|ADGF_DROPPLATFORM|ADGF_MACRESFORK)
+#define ADGF_DEFAULT (ADGF_DROPLANGUAGE | ADGF_DROPPLATFORM | ADGF_MACRESFORK)
 
-#define BASEGAME(n, v, f, md5, s) {n, v, AD_ENTRY1s(f, md5, s), Common::EN_ANY, Common::kPlatformMacintosh, ADGF_DEFAULT, GUIO0()}
+#define BASEGAME(n, v, f, md5, s) \
+	{ n, v, AD_ENTRY1s(f, md5, s), Common::EN_ANY, Common::kPlatformMacintosh, ADGF_DEFAULT, GUIO0() }
 
 static const ADGameDescription gameDescriptions[] = {
 	BASEGAME("shadowgate", "Zojoi Rerelease", "Shadowgate.bin", "ebbfbcbf93938bd2900cb0c0213b19ad", 68974), // Zojoi Rerelease
@@ -47,8 +48,8 @@ const char *MacVentureEngine::getGameFileName() const {
 
 static const PlainGameDescriptor macventureGames[] = {
 	{ "shadowgate", "Shadowgate" },
-	{ "deja_vu", "Deja Vu"},
-	{ "deja_vu2", "Deja Vu II"},
+	{ "deja_vu", "Deja Vu" },
+	{ "deja_vu2", "Deja Vu II" },
 	{ 0, 0 }
 };
 
@@ -58,7 +59,8 @@ SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot, bool s
 
 class MacVentureMetaEngine : public AdvancedMetaEngine {
 public:
-	MacVentureMetaEngine() : AdvancedMetaEngine(MacVenture::gameDescriptions, sizeof(ADGameDescription), macventureGames) {
+	MacVentureMetaEngine()
+	  : AdvancedMetaEngine(MacVenture::gameDescriptions, sizeof(ADGameDescription), macventureGames) {
 		_guiOptions = GUIO0();
 		_md5Bytes = 5000000; // TODO: Upper limit, adjust it once all games are added
 	}
@@ -80,21 +82,11 @@ protected:
 };
 
 bool MacVentureMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime);
+	return (f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup) || (f == kSupportsDeleteSave) || (f == kSavesSupportMetaInfo) || (f == kSavesSupportThumbnail) || (f == kSavesSupportCreationDate) || (f == kSavesSupportPlayTime);
 }
 
 bool MacVentureEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
 SaveStateList MacVentureMetaEngine::listSaves(const char *target) const {
@@ -147,7 +139,6 @@ void MacVentureMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(Common::String::format("%s.%03d", target, slot));
 }
 
-
 SaveStateDescriptor MacVentureMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	SaveStateDescriptor desc;
@@ -174,7 +165,7 @@ SaveStateDescriptor MacVentureMetaEngine::querySaveMetaInfos(const char *target,
 } // End of namespace MacVenture
 
 #if PLUGIN_ENABLED_DYNAMIC(MACVENTURE)
- REGISTER_PLUGIN_DYNAMIC(MACVENTURE, PLUGIN_TYPE_ENGINE, MacVenture::MacVentureMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(MACVENTURE, PLUGIN_TYPE_ENGINE, MacVenture::MacVentureMetaEngine);
 #else
- REGISTER_PLUGIN_STATIC(MACVENTURE, PLUGIN_TYPE_ENGINE, MacVenture::MacVentureMetaEngine);
+REGISTER_PLUGIN_STATIC(MACVENTURE, PLUGIN_TYPE_ENGINE, MacVenture::MacVentureMetaEngine);
 #endif

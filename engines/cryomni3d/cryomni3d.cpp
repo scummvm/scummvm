@@ -20,12 +20,12 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "common/debug-channels.h"
 #include "common/error.h"
+#include "common/scummsys.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
-#include "common/debug-channels.h"
 
 #include "common/events.h"
 #include "common/file.h"
@@ -42,9 +42,14 @@
 namespace CryOmni3D {
 
 CryOmni3DEngine::CryOmni3DEngine(OSystem *syst,
-                                 const CryOmni3DGameDescription *gamedesc) : Engine(syst), _gameDescription(gamedesc),
-	_canLoadSave(false), _fontManager(), _sprites(), _dragStatus(kDragStatus_NoDrag),
-	_autoRepeatNextEvent(uint(-1)) {
+                                 const CryOmni3DGameDescription *gamedesc)
+  : Engine(syst)
+  , _gameDescription(gamedesc)
+  , _canLoadSave(false)
+  , _fontManager()
+  , _sprites()
+  , _dragStatus(kDragStatus_NoDrag)
+  , _autoRepeatNextEvent(uint(-1)) {
 	if (!_mixer->isReady()) {
 		error("Sound initialization failed");
 	}
@@ -90,7 +95,7 @@ DATSeekableStream *CryOmni3DEngine::getStaticData(uint32 gameId, uint16 version)
 	}
 
 	DATSeekableStream *gameStream = DATSeekableStream::getGame(datFile, gameId, version, getLanguage(),
-	                                getPlatform());
+	                                                           getPlatform());
 	if (!gameStream) {
 		delete datFile;
 		error("Failed to find game in cryomni3d.dat file");
@@ -101,7 +106,7 @@ DATSeekableStream *CryOmni3DEngine::getStaticData(uint32 gameId, uint16 version)
 }
 
 Common::String CryOmni3DEngine::prepareFileName(const Common::String &baseName,
-        const char *const *extensions) const {
+                                                const char *const *extensions) const {
 	Common::String fname(baseName);
 
 	int lastDotPos = fname.size() - 1;
@@ -292,8 +297,7 @@ bool CryOmni3DEngine::pollEvents() {
 
 	// Merge current button state with any buttons pressed since last poll
 	// That's to avoid missed clicks
-	buttonMask = g_system->getEventManager()->getButtonState() |
-	             transitionalMask;
+	buttonMask = g_system->getEventManager()->getButtonState() | transitionalMask;
 	if (buttonMask & 0x1) {
 		_lastMouseButton = 1;
 	} else if (buttonMask & 0x2) {
@@ -382,7 +386,7 @@ bool CryOmni3DEngine::checkKeysPressed(uint numKeys, ...) {
 		va_start(va, numKeys);
 		for (uint i = 0; i < numKeys; i++) {
 			// Compiler says that KeyCode is promoted to int, so we need this ugly cast
-			Common::KeyCode match = (Common::KeyCode) va_arg(va, int);
+			Common::KeyCode match = (Common::KeyCode)va_arg(va, int);
 			if (match == kc) {
 				found = true;
 				break;

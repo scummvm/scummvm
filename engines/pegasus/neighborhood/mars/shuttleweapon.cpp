@@ -23,19 +23,20 @@
  *
  */
 
+#include "pegasus/neighborhood/mars/shuttleweapon.h"
 #include "pegasus/neighborhood/mars/constants.h"
 #include "pegasus/neighborhood/mars/robotship.h"
-#include "pegasus/neighborhood/mars/shuttleweapon.h"
 #include "pegasus/neighborhood/mars/spacejunk.h"
 
 namespace Pegasus {
 
-ShuttleWeapon::ShuttleWeapon() : IdlerAnimation(kNoDisplayElement) {
+ShuttleWeapon::ShuttleWeapon()
+  : IdlerAnimation(kNoDisplayElement) {
 	setScale(kShuttleWeaponScale);
 	_weaponDuration = kShuttleWeaponScale * 2;
 	setSegment(0, _weaponDuration);
 	setBounds(kShuttleWindowLeft, kShuttleWindowTop, kShuttleWindowLeft + kShuttleWindowWidth,
-			kShuttleWindowTop + kShuttleWindowHeight);
+	          kShuttleWindowTop + kShuttleWindowHeight);
 	setDisplayOrder(kShuttleWeaponFrontOrder);
 }
 

@@ -23,8 +23,8 @@
  *
  */
 
-#include "pegasus/pegasus.h"
 #include "pegasus/neighborhood/mars/reactor.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -39,9 +39,10 @@ static const ResIDType kReactorChoicesPICTID = 905;
 static const CoordType kCurrentGuessLeft = kNavAreaLeft + 146;
 static const CoordType kCurrentGuessTop = kNavAreaTop + 90;
 
-ReactorGuess::ReactorGuess(const DisplayElementID id) : DisplayElement(id) {
+ReactorGuess::ReactorGuess(const DisplayElementID id)
+  : DisplayElement(id) {
 	setBounds(kCurrentGuessLeft, kCurrentGuessTop, kCurrentGuessLeft + kCurrentGuessWidth,
-			kCurrentGuessTop + kCurrentGuessHeight);
+	          kCurrentGuessTop + kCurrentGuessHeight);
 	setDisplayOrder(kMonitorLayer);
 	_currentGuess[0] = -1;
 	_currentGuess[1] = -1;
@@ -98,9 +99,10 @@ static const ResIDType kReactorChoiceHilitePICTID = 901;
 static const CoordType kReactorChoiceHiliteLeft = kNavAreaLeft + 116;
 static const CoordType kReactorChoiceHiliteTop = kNavAreaTop + 158;
 
-ReactorChoiceHighlight::ReactorChoiceHighlight(const DisplayElementID id) : DisplayElement(id) {
+ReactorChoiceHighlight::ReactorChoiceHighlight(const DisplayElementID id)
+  : DisplayElement(id) {
 	setBounds(kReactorChoiceHiliteLeft, kReactorChoiceHiliteTop, kReactorChoiceHiliteLeft + kReactorChoiceHiliteWidth,
-			kReactorChoiceHiliteTop + kReactorChoiceHiliteHeight);
+	          kReactorChoiceHiliteTop + kReactorChoiceHiliteHeight);
 	setDisplayOrder(kMonitorLayer);
 }
 
@@ -133,7 +135,7 @@ static const CoordType kReactorHistoryWidth = 128;
 static const CoordType kReactorHistoryHeight = 168;
 
 static const CoordType kColorWidths[5] = { 24, 25, 25, 26, 27 };
-static const CoordType kColorHeights[5] = { 14, 15, 17, 17, 19};
+static const CoordType kColorHeights[5] = { 14, 15, 17, 17, 19 };
 
 static const CoordType kHistoryLefts[5][3] = {
 	{ 302 + kNavAreaLeft, 329 + kNavAreaLeft, 357 + kNavAreaLeft },
@@ -183,9 +185,10 @@ static const CoordType kReactorHistoryTop = kNavAreaTop + 39;
 static const CoordType kAnswerLeft = kNavAreaLeft + 304;
 static const CoordType kAnswerTop = kNavAreaTop + 180;
 
-ReactorHistory::ReactorHistory(const DisplayElementID id) : DisplayElement(id) {
+ReactorHistory::ReactorHistory(const DisplayElementID id)
+  : DisplayElement(id) {
 	setBounds(kReactorHistoryLeft, kReactorHistoryTop, kReactorHistoryLeft + kReactorHistoryWidth,
-			kReactorHistoryTop + kReactorHistoryHeight);
+	          kReactorHistoryTop + kReactorHistoryHeight);
 	setDisplayOrder(kMonitorLayer);
 	_numGuesses = 0;
 	_answer[0] = -1;

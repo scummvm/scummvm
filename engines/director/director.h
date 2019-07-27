@@ -27,8 +27,8 @@
 #include "common/substream.h"
 
 #include "common/hashmap.h"
-#include "engines/engine.h"
 #include "director/cast.h"
+#include "engines/engine.h"
 
 #define CHANNEL_COUNT 30
 
@@ -56,13 +56,13 @@ class Score;
 class Cast;
 
 enum {
-	kDebugLingoExec		= 1 << 0,
-	kDebugLingoCompile	= 1 << 1,
-	kDebugLoading		= 1 << 2,
-	kDebugImages		= 1 << 3,
-	kDebugText			= 1 << 4,
-	kDebugEvents		= 1 << 5,
-	kDebugLingoParse	= 1 << 6
+	kDebugLingoExec = 1 << 0,
+	kDebugLingoCompile = 1 << 1,
+	kDebugLoading = 1 << 2,
+	kDebugImages = 1 << 3,
+	kDebugText = 1 << 4,
+	kDebugEvents = 1 << 5,
+	kDebugLingoParse = 1 << 6
 };
 
 struct MovieReference {

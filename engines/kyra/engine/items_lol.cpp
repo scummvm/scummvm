@@ -22,8 +22,8 @@
 
 #ifdef ENABLE_LOL
 
-#include "kyra/engine/lol.h"
-#include "kyra/graphics/screen_lol.h"
+#	include "kyra/engine/lol.h"
+#	include "kyra/graphics/screen_lol.h"
 
 namespace Kyra {
 
@@ -280,7 +280,6 @@ bool LoLEngine::isItemMoveable(Item itemIndex) {
 		return false;
 
 	return true;
-
 }
 
 void LoLEngine::deleteItem(Item itemIndex) {
@@ -366,7 +365,6 @@ void LoLEngine::setItemPosition(Item item, uint16 x, uint16 y, int flyingHeight,
 		_itemsInPlay[item].shpCurFrame_flg |= 0x4000;
 	else
 		_itemsInPlay[item].shpCurFrame_flg &= 0xBFFF;
-
 
 	assignItemToBlock(&_levelBlockProperties[block].assignedObjects, item);
 	reassignDrawObjects(_currentDirection, item, &_levelBlockProperties[block], false);
@@ -539,7 +537,7 @@ void LoLEngine::updateFlyingObject(FlyingObject *t) {
 	middle of a block (or making the monsters align to the middle before casting them) wouldn't help here
 	(and wouldn't be faithful to the original either).
 	*/
-	int collisionType = checkBlockBeforeObjectPlacement(x, y, /*_itemProperties[_itemsInPlay[t->item].itemPropertyIndex].flags & 0x4000 ? 256 :*/ 63,  t->flags, t->wallFlags);
+	int collisionType = checkBlockBeforeObjectPlacement(x, y, /*_itemProperties[_itemsInPlay[t->item].itemPropertyIndex].flags & 0x4000 ? 256 :*/ 63, t->flags, t->wallFlags);
 	if (collisionType) {
 		endObjectFlight(t, x, y, collisionType);
 	} else {

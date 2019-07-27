@@ -41,11 +41,11 @@ enum {
 	// heard if the game audio is at the same level as movies. The game normally
 	// sets defaults so that the in-game volume is 85 and movies are 127, so we
 	// will just use 85 as the maximum volume.
-	kPhant2VolumeMax       = 85,
+	kPhant2VolumeMax = 85,
 
-	kRamaVolumeMax         = 16,
-	kLSL6HiresUIVolumeMax  = 13,
-	kHoyle5VolumeMax       = 8,
+	kRamaVolumeMax = 16,
+	kLSL6HiresUIVolumeMax = 13,
+	kHoyle5VolumeMax = 8,
 	kLSL6HiresSubtitleFlag = 105
 };
 #endif
@@ -365,8 +365,8 @@ private:
 	void syncMasterVolumeToScummVM(const int16 masterVolume) const;
 
 #ifdef ENABLE_SCI32
-#pragma mark -
-#pragma mark Globals volume sync
+#	pragma mark -
+#	pragma mark Globals volume sync
 
 private:
 	/**
@@ -405,8 +405,8 @@ private:
 	 */
 	void syncGK1AudioVolumeToScummVM(const reg_t soundObj, const int16 volume) const;
 
-#pragma mark -
-#pragma mark Audio UI sync
+#	pragma mark -
+#	pragma mark Audio UI sync
 
 private:
 	/**
@@ -431,8 +431,8 @@ private:
 	void syncSQ6UI() const;
 	void syncTorinUI(const int16 musicVolume, const int16 sfxVolume, const int16 speechVolume) const;
 
-#pragma mark -
-#pragma mark Talk speed sync
+#	pragma mark -
+#	pragma mark Talk speed sync
 
 private:
 	/**

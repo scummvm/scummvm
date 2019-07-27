@@ -20,10 +20,10 @@
  *
  */
 
-#include "config.h"
-#include "common/translation.h"
-#include "backends/platform/tizen/system.h"
 #include "backends/platform/tizen/fs.h"
+#include "backends/platform/tizen/system.h"
+#include "common/translation.h"
+#include "config.h"
 
 #include <FAppApp.h>
 
@@ -36,7 +36,7 @@ using namespace Tizen::App;
 //
 Common::String fromString(const Tizen::Base::String &in) {
 	ByteBuffer *buf = StringUtil::StringToUtf8N(in);
-	Common::String result((const char*)buf->GetPointer());
+	Common::String result((const char *)buf->GetPointer());
 	delete buf;
 	return result;
 }
@@ -44,10 +44,9 @@ Common::String fromString(const Tizen::Base::String &in) {
 //
 // TizenFileStream
 //
-class TizenFileStream :
-	public Common::SeekableReadStream,
-	public Common::WriteStream,
-	public Common::NonCopyable {
+class TizenFileStream : public Common::SeekableReadStream,
+                        public Common::WriteStream,
+                        public Common::NonCopyable {
 public:
 	static TizenFileStream *makeFromPath(const String &path, bool writeMode);
 
@@ -74,11 +73,11 @@ private:
 	File *_file;
 };
 
-TizenFileStream::TizenFileStream(File *ioFile, bool writeMode) :
-	_bufferIndex(0),
-	_bufferLength(0),
-	_writeMode(writeMode),
-	_file(ioFile) {
+TizenFileStream::TizenFileStream(File *ioFile, bool writeMode)
+  : _bufferIndex(0)
+  , _bufferLength(0)
+  , _writeMode(writeMode)
+  , _file(ioFile) {
 	AppAssert(ioFile != 0);
 }
 
@@ -376,8 +375,7 @@ bool TizenFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 				}
 
 				// Honor the chosen mode
-				if ((mode == Common::FSNode::kListFilesOnly && dirEntry.IsDirectory()) ||
-						(mode == Common::FSNode::kListDirectoriesOnly && !dirEntry.IsDirectory())) {
+				if ((mode == Common::FSNode::kListFilesOnly && dirEntry.IsDirectory()) || (mode == Common::FSNode::kListDirectoriesOnly && !dirEntry.IsDirectory())) {
 					continue;
 				}
 				myList.push_back(new TizenFilesystemNode(_path, ::fromString(fileName)));
@@ -399,7 +397,7 @@ bool TizenFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 }
 
 AbstractFSNode *TizenFilesystemNode::getParent() const {
-  logEntered();
+	logEntered();
 	if (_path == "/") {
 		return 0; // The filesystem root has no parent
 	}
@@ -409,7 +407,7 @@ AbstractFSNode *TizenFilesystemNode::getParent() const {
 
 	// Strip of the last component. We make use of the fact that at this
 	// point, path is guaranteed to be normalized
-	while (end > start && *(end-1) != '/') {
+	while (end > start && *(end - 1) != '/') {
 		end--;
 	}
 

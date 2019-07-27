@@ -20,11 +20,11 @@
  *
  */
 
-#include "config.h"
 #include "visualstudio.h"
+#include "config.h"
 
-#include <fstream>
 #include <algorithm>
+#include <fstream>
 
 namespace CreateProjectTool {
 
@@ -32,8 +32,8 @@ namespace CreateProjectTool {
 // Visual Studio Provider (Visual Studio 2008)
 //////////////////////////////////////////////////////////////////////////
 
-VisualStudioProvider::VisualStudioProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion& msvc)
-	: MSVCProvider(global_warnings, project_warnings, version, msvc) {
+VisualStudioProvider::VisualStudioProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion &msvc)
+  : MSVCProvider(global_warnings, project_warnings, version, msvc) {
 }
 
 const char *VisualStudioProvider::getProjectExtension() {
@@ -54,11 +54,15 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 	project << "<?xml version=\"1.0\" encoding=\"windows-1252\"?>\n"
 	           "<VisualStudioProject\n"
 	           "\tProjectType=\"Visual C++\"\n"
-	           "\tVersion=\"" << _version << ".00\"\n"
-	           "\tName=\"" << name << "\"\n"
-	           "\tProjectGUID=\"{" << uuid << "}\"\n"
-	           "\tRootNamespace=\"" << name << "\"\n"
-	           "\tKeyword=\"Win32Proj\"\n";
+	           "\tVersion=\""
+	        << _version << ".00\"\n"
+	                       "\tName=\""
+	        << name << "\"\n"
+	                   "\tProjectGUID=\"{"
+	        << uuid << "}\"\n"
+	                   "\tRootNamespace=\""
+	        << name << "\"\n"
+	                   "\tKeyword=\"Win32Proj\"\n";
 
 	project << "\tTargetFrameworkVersion=\"131072\"\n";
 
@@ -70,7 +74,7 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 	           "\t<Configurations>\n";
 
 	// Check for project-specific warnings:
-	std::map< std::string, std::list<std::string> >::iterator warningsIterator = _projectWarnings.find(name);
+	std::map<std::string, std::list<std::string>>::iterator warningsIterator = _projectWarnings.find(name);
 
 	if (setup.devTools || setup.tests || name == setup.projectName) {
 		std::string libraries;
@@ -100,11 +104,11 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 		std::string warnings = "";
 		if (warningsIterator != _projectWarnings.end())
 			for (StringList::const_iterator i = warningsIterator->second.begin(); i != warningsIterator->second.end(); ++i)
-				warnings +=  *i + ';';
+				warnings += *i + ';';
 
 		std::string toolConfig;
-		toolConfig  = (!warnings.empty() ? "DisableSpecificWarnings=\"" + warnings + "\"" : "");
-		toolConfig += (disableEditAndContinue   ? "DebugInformationFormat=\"3\" " : "");
+		toolConfig = (!warnings.empty() ? "DisableSpecificWarnings=\"" + warnings + "\"" : "");
+		toolConfig += (disableEditAndContinue ? "DebugInformationFormat=\"3\" " : "");
 		toolConfig += (enableLanguageExtensions ? "DisableLanguageExtensions=\"false\" " : "");
 
 		// Win32
@@ -144,39 +148,45 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 
 void VisualStudioProvider::outputConfiguration(std::ostream &project, const BuildSetup &setup, const std::string &libraries, const std::string &config, const std::string &platform, const std::string &props, const bool isWin32) {
 	project << "\t\t<Configuration Name=\"" << config << "|" << platform << "\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\" << setup.projectDescription << "_" << config << props << ".vsprops\">\n"
-	           "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" DebugInformationFormat=\"3\" />\n"
-	           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/" << setup.projectName << ".exe\"\n"
-	           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n"
-	           "\t\t\t/>\n";
+	                                                                                                                                                                                            "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" DebugInformationFormat=\"3\" />\n"
+	                                                                                                                                                                                            "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/"
+	        << setup.projectName << ".exe\"\n"
+	                                "\t\t\t\tAdditionalDependencies=\""
+	        << libraries << "\"\n"
+	                        "\t\t\t/>\n";
 	outputBuildEvents(project, setup, isWin32);
 	project << "\t\t</Configuration>\n";
 }
 
 void VisualStudioProvider::outputConfiguration(const BuildSetup &setup, std::ostream &project, const std::string &toolConfig, const std::string &config, const std::string &platform, const std::string &props) {
 	project << "\t\t<Configuration Name=\"" << config << "|" << platform << "\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\" << setup.projectDescription << "_" << config << props << ".vsprops\">\n"
-	           "\t\t\t<Tool Name=\"VCCLCompilerTool\" "<< toolConfig << "/>\n"
-	           "\t\t</Configuration>\n";
+	                                                                                                                                                                                            "\t\t\t<Tool Name=\"VCCLCompilerTool\" "
+	        << toolConfig << "/>\n"
+	                         "\t\t</Configuration>\n";
 }
 
 void VisualStudioProvider::outputBuildEvents(std::ostream &project, const BuildSetup &setup, const bool isWin32) {
 	if (!setup.devTools && !setup.tests && setup.runBuildEvents) {
 		project << "\t\t\t<Tool\tName=\"VCPreBuildEventTool\"\n"
-		           "\t\t\t\tCommandLine=\"" << getPreBuildEvent() << "\"\n"
-		           "\t\t\t/>\n"
-		           "\t\t\t<Tool\tName=\"VCPostBuildEventTool\"\n"
-		           "\t\t\t\tCommandLine=\"" << getPostBuildEvent(isWin32, setup) << "\"\n"
-		           "\t\t\t/>\n";
+		           "\t\t\t\tCommandLine=\""
+		        << getPreBuildEvent() << "\"\n"
+		                                 "\t\t\t/>\n"
+		                                 "\t\t\t<Tool\tName=\"VCPostBuildEventTool\"\n"
+		                                 "\t\t\t\tCommandLine=\""
+		        << getPostBuildEvent(isWin32, setup) << "\"\n"
+		                                                "\t\t\t/>\n";
 	}
 
 	// Generate runner file before build for tests
 	if (setup.tests) {
 		project << "\t\t\t<Tool\tName=\"VCPreBuildEventTool\"\n"
-			"\t\t\t\tCommandLine=\"" << getTestPreBuildEvent(setup) << "\"\n"
-			"\t\t\t/>\n";
+		           "\t\t\t\tCommandLine=\""
+		        << getTestPreBuildEvent(setup) << "\"\n"
+		                                          "\t\t\t/>\n";
 
 		project << "\t\t\t<Tool\tName=\"VCPostBuildEventTool\"\n"
-			"\t\t\t\tCommandLine=\"$(TargetPath)\" IgnoreExitCode=\"true\"\n"
-			"\t\t\t/>\n";
+		           "\t\t\t\tCommandLine=\"$(TargetPath)\" IgnoreExitCode=\"true\"\n"
+		           "\t\t\t/>\n";
 	}
 }
 
@@ -196,7 +206,7 @@ void VisualStudioProvider::writeReferences(const BuildSetup &setup, std::ofstrea
 void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix, bool runBuildEvents) {
 	std::string warnings;
 	for (StringList::const_iterator i = _globalWarnings.begin(); i != _globalWarnings.end(); ++i)
-		warnings +=  *i + ';';
+		warnings += *i + ';';
 
 	std::string definesList;
 	for (StringList::const_iterator i = defines.begin(); i != defines.end(); ++i) {
@@ -213,17 +223,25 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 	              "<VisualStudioPropertySheet\n"
 	              "\tProjectType=\"Visual C++\"\n"
 	              "\tVersion=\"8.00\"\n"
-	              "\tName=\"" << setup.projectDescription << "_Global\"\n"
-	              "\tOutputDirectory=\"$(ConfigurationName)" << bits << "\"\n"
-	              "\tIntermediateDirectory=\"$(ConfigurationName)" << bits << "/$(ProjectName)\"\n"
-	              "\t>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCCLCompilerTool\"\n"
-	              "\t\tDisableLanguageExtensions=\"" << (setup.devTools ? "false" : "true") << "\"\n"
-	              "\t\tDisableSpecificWarnings=\"" << warnings << "\"\n"
-	              "\t\tAdditionalIncludeDirectories=\".\\;" << prefix << ";" << prefix << "\\engines;$(" << LIBS_DEFINE << ")\\include;$(" << LIBS_DEFINE << ")\\include\\SDL;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "\"\n"
-	              "\t\tPreprocessorDefinitions=\"" << definesList << "\"\n"
-	              "\t\tExceptionHandling=\"" << ((setup.devTools || setup.tests || _version == 14) ? "1" : "0") << "\"\n";
+	              "\tName=\""
+	           << setup.projectDescription << "_Global\"\n"
+	                                          "\tOutputDirectory=\"$(ConfigurationName)"
+	           << bits << "\"\n"
+	                      "\tIntermediateDirectory=\"$(ConfigurationName)"
+	           << bits << "/$(ProjectName)\"\n"
+	                      "\t>\n"
+	                      "\t<Tool\n"
+	                      "\t\tName=\"VCCLCompilerTool\"\n"
+	                      "\t\tDisableLanguageExtensions=\""
+	           << (setup.devTools ? "false" : "true") << "\"\n"
+	                                                     "\t\tDisableSpecificWarnings=\""
+	           << warnings << "\"\n"
+	                          "\t\tAdditionalIncludeDirectories=\".\\;"
+	           << prefix << ";" << prefix << "\\engines;$(" << LIBS_DEFINE << ")\\include;$(" << LIBS_DEFINE << ")\\include\\SDL;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "\"\n"
+	                                                                                                                                                                                      "\t\tPreprocessorDefinitions=\""
+	           << definesList << "\"\n"
+	                             "\t\tExceptionHandling=\""
+	           << ((setup.devTools || setup.tests || _version == 14) ? "1" : "0") << "\"\n";
 
 #if NEEDS_RTTI
 	properties << "\t\tRuntimeTypeInfo=\"true\"\n";
@@ -248,13 +266,15 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 		properties << "\t\tEntryPointSymbol=\"WinMainCRTStartup\"\n";
 
 	properties << "\t\tAdditionalLibraryDirectories=\"$(" << LIBS_DEFINE << ")\\lib\\" << ((bits == 32) ? "x86" : "x64") << "\"\n"
-	              "\t/>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCResourceCompilerTool\"\n"
-	              "\t\tAdditionalIncludeDirectories=\".\\;" << prefix << "\"\n"
-	              "\t\tPreprocessorDefinitions=\"" << definesList << "\"\n"
-	              "\t/>\n"
-	              "</VisualStudioPropertySheet>\n";
+	                                                                                                                        "\t/>\n"
+	                                                                                                                        "\t<Tool\n"
+	                                                                                                                        "\t\tName=\"VCResourceCompilerTool\"\n"
+	                                                                                                                        "\t\tAdditionalIncludeDirectories=\".\\;"
+	           << prefix << "\"\n"
+	                        "\t\tPreprocessorDefinitions=\""
+	           << definesList << "\"\n"
+	                             "\t/>\n"
+	                             "</VisualStudioPropertySheet>\n";
 
 	properties.flush();
 }
@@ -270,11 +290,13 @@ void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelea
 	              "<VisualStudioPropertySheet\n"
 	              "\tProjectType=\"Visual C++\"\n"
 	              "\tVersion=\"8.00\"\n"
-	              "\tName=\"" << setup.projectDescription << "_" << configuration << outputBitness << "\"\n"
-	              "\tInheritedPropertySheets=\".\\" << setup.projectDescription << "_Global" << (isWin32 ? "" : "64") << ".vsprops\"\n"
-	              "\t>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCCLCompilerTool\"\n";
+	              "\tName=\""
+	           << setup.projectDescription << "_" << configuration << outputBitness << "\"\n"
+	                                                                                   "\tInheritedPropertySheets=\".\\"
+	           << setup.projectDescription << "_Global" << (isWin32 ? "" : "64") << ".vsprops\"\n"
+	                                                                                "\t>\n"
+	                                                                                "\t<Tool\n"
+	                                                                                "\t\tName=\"VCCLCompilerTool\"\n";
 
 	if (isRelease) {
 		properties << "\t\tEnableIntrinsicFunctions=\"true\"\n"
@@ -284,13 +306,14 @@ void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelea
 		              "\t\tBufferSecurityCheck=\"false\"\n"
 		              "\t\tDebugInformationFormat=\"0\"\n"
 		              "\t\tRuntimeLibrary=\"0\"\n"
-		              "\t\tAdditionalOption=\"" << (configuration == "Analysis" ? "/analyze" : "") << "\"\n"
-		              "\t/>\n"
-		              "\t<Tool\n"
-		              "\t\tName=\"VCLinkerTool\"\n"
-		              "\t\tLinkIncremental=\"1\"\n"
-		              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
-		              "\t\tSetChecksum=\"true\"\n";
+		              "\t\tAdditionalOption=\""
+		           << (configuration == "Analysis" ? "/analyze" : "") << "\"\n"
+		                                                                 "\t/>\n"
+		                                                                 "\t<Tool\n"
+		                                                                 "\t\tName=\"VCLinkerTool\"\n"
+		                                                                 "\t\tLinkIncremental=\"1\"\n"
+		                                                                 "\t\tIgnoreDefaultLibraryNames=\"\"\n"
+		                                                                 "\t\tSetChecksum=\"true\"\n";
 	} else {
 		properties << "\t\tOptimization=\"0\"\n"
 		              "\t\tPreprocessorDefinitions=\"WIN32\"\n"
@@ -299,14 +322,16 @@ void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelea
 		              "\t\tRuntimeLibrary=\"1\"\n"
 		              "\t\tEnableFunctionLevelLinking=\"true\"\n"
 		              "\t\tWarnAsError=\"false\"\n"
-		              "\t\tDebugInformationFormat=\"" << (isWin32 ? "4" : "3") << "\"\n" // For x64 format "4" (Edit and continue) is not supported, thus we default to "3"
-		              "\t\tAdditionalOption=\"" << (configuration == "Analysis" ? "/analyze" : "") << "\"\n"
-		              "\t/>\n"
-		              "\t<Tool\n"
-		              "\t\tName=\"VCLinkerTool\"\n"
-		              "\t\tLinkIncremental=\"2\"\n"
-		              "\t\tGenerateDebugInformation=\"true\"\n"
-		              "\t\tIgnoreDefaultLibraryNames=\"libcmt.lib\"\n";
+		              "\t\tDebugInformationFormat=\""
+		           << (isWin32 ? "4" : "3") << "\"\n" // For x64 format "4" (Edit and continue) is not supported, thus we default to "3"
+		                                       "\t\tAdditionalOption=\""
+		           << (configuration == "Analysis" ? "/analyze" : "") << "\"\n"
+		                                                                 "\t/>\n"
+		                                                                 "\t<Tool\n"
+		                                                                 "\t\tName=\"VCLinkerTool\"\n"
+		                                                                 "\t\tLinkIncremental=\"2\"\n"
+		                                                                 "\t\tGenerateDebugInformation=\"true\"\n"
+		                                                                 "\t\tIgnoreDefaultLibraryNames=\"libcmt.lib\"\n";
 	}
 
 	properties << "\t/>\n"

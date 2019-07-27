@@ -21,8 +21,8 @@
  */
 
 #include "titanic/star_control/matrix_transform.h"
-#include "titanic/star_control/fpose.h"
 #include "common/textconsole.h"
+#include "titanic/star_control/fpose.h"
 
 namespace Titanic {
 
@@ -39,19 +39,18 @@ void CMatrixTransform::copyFrom(const CMatrixTransform &src) {
 }
 
 double CMatrixTransform::fn1() const {
-	return _vector._x * _vector._x + _vector._y * _vector._y +
-		_vector._z * _vector._z + _field0 * _field0;
+	return _vector._x * _vector._x + _vector._y * _vector._y + _vector._z * _vector._z + _field0 * _field0;
 }
 
 double CMatrixTransform::fn2(const CMatrixTransform &src) {
 	return _field0 * src._field0 + _vector._x * src._vector._x
-		+ _vector._y * src._vector._y + _vector._z * src._vector._z;
+	  + _vector._y * src._vector._y + _vector._z * src._vector._z;
 }
 
 CMatrixTransform CMatrixTransform::resize(double factor) const {
 	CMatrixTransform dest;
 	dest.setup(_field0 * factor, _vector._x * factor, _vector._y * factor,
-		_vector._z * factor);
+	           _vector._z * factor);
 	return dest;
 }
 
@@ -140,7 +139,7 @@ CMatrixTransform CMatrixTransform::fn5(double percent, const CMatrixTransform &s
 
 	t2 = sub1.resize(val2);
 	dest.setup(t2._field0 + t1._field0, t1._vector._x + t2._vector._x,
-		t1._vector._y + t2._vector._y, t1._vector._z + t2._vector._z);
+	           t1._vector._y + t2._vector._y, t1._vector._z + t2._vector._z);
 	return dest;
 }
 

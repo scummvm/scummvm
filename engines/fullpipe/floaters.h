@@ -36,7 +36,10 @@ struct FloaterArray1 {
 	int val1;
 	int val2;
 
-	FloaterArray1() { val1 = 0; val2 = 0; }
+	FloaterArray1() {
+		val1 = 0;
+		val2 = 0;
+	}
 };
 
 struct FloaterArray2 {
@@ -55,8 +58,21 @@ struct FloaterArray2 {
 	int val15;
 	int fflags;
 
-	FloaterArray2() : ani(nullptr), val2(0), val3(0), val4(0), val5(0), val6(0), val7(0), val8(0),
-		val9(0.0), val11(0.0), val13(0), countdown(0), val15(0), fflags(0) {}
+	FloaterArray2()
+	  : ani(nullptr)
+	  , val2(0)
+	  , val3(0)
+	  , val4(0)
+	  , val5(0)
+	  , val6(0)
+	  , val7(0)
+	  , val8(0)
+	  , val9(0.0)
+	  , val11(0.0)
+	  , val13(0)
+	  , countdown(0)
+	  , val15(0)
+	  , fflags(0) {}
 };
 
 class Floaters {

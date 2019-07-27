@@ -28,32 +28,52 @@ namespace Graphics {
 
 const int SCALE_THRESHOLD = 0x100;
 
-ManagedSurface::ManagedSurface() :
-		w(_innerSurface.w), h(_innerSurface.h), pitch(_innerSurface.pitch), format(_innerSurface.format),
-		_disposeAfterUse(DisposeAfterUse::NO), _owner(nullptr) {
+ManagedSurface::ManagedSurface()
+  : w(_innerSurface.w)
+  , h(_innerSurface.h)
+  , pitch(_innerSurface.pitch)
+  , format(_innerSurface.format)
+  , _disposeAfterUse(DisposeAfterUse::NO)
+  , _owner(nullptr) {
 }
 
-ManagedSurface::ManagedSurface(ManagedSurface &surf) :
-		w(_innerSurface.w), h(_innerSurface.h), pitch(_innerSurface.pitch), format(_innerSurface.format),
-		_disposeAfterUse(DisposeAfterUse::NO), _owner(nullptr) {
+ManagedSurface::ManagedSurface(ManagedSurface &surf)
+  : w(_innerSurface.w)
+  , h(_innerSurface.h)
+  , pitch(_innerSurface.pitch)
+  , format(_innerSurface.format)
+  , _disposeAfterUse(DisposeAfterUse::NO)
+  , _owner(nullptr) {
 	*this = surf;
 }
 
-ManagedSurface::ManagedSurface(int width, int height) :
-		w(_innerSurface.w), h(_innerSurface.h), pitch(_innerSurface.pitch), format(_innerSurface.format),
-		_disposeAfterUse(DisposeAfterUse::NO), _owner(nullptr) {
+ManagedSurface::ManagedSurface(int width, int height)
+  : w(_innerSurface.w)
+  , h(_innerSurface.h)
+  , pitch(_innerSurface.pitch)
+  , format(_innerSurface.format)
+  , _disposeAfterUse(DisposeAfterUse::NO)
+  , _owner(nullptr) {
 	create(width, height);
 }
 
-ManagedSurface::ManagedSurface(int width, int height, const Graphics::PixelFormat &pixelFormat) :
-		w(_innerSurface.w), h(_innerSurface.h), pitch(_innerSurface.pitch), format(_innerSurface.format),
-		_disposeAfterUse(DisposeAfterUse::NO), _owner(nullptr) {
+ManagedSurface::ManagedSurface(int width, int height, const Graphics::PixelFormat &pixelFormat)
+  : w(_innerSurface.w)
+  , h(_innerSurface.h)
+  , pitch(_innerSurface.pitch)
+  , format(_innerSurface.format)
+  , _disposeAfterUse(DisposeAfterUse::NO)
+  , _owner(nullptr) {
 	create(width, height, pixelFormat);
 }
 
-ManagedSurface::ManagedSurface(ManagedSurface &surf, const Common::Rect &bounds) :
-		w(_innerSurface.w), h(_innerSurface.h), pitch(_innerSurface.pitch), format(_innerSurface.format),
-		_disposeAfterUse(DisposeAfterUse::NO), _owner(nullptr) {
+ManagedSurface::ManagedSurface(ManagedSurface &surf, const Common::Rect &bounds)
+  : w(_innerSurface.w)
+  , h(_innerSurface.h)
+  , pitch(_innerSurface.pitch)
+  , format(_innerSurface.format)
+  , _disposeAfterUse(DisposeAfterUse::NO)
+  , _owner(nullptr) {
 	create(surf, bounds);
 }
 
@@ -68,8 +88,7 @@ ManagedSurface &ManagedSurface::operator=(ManagedSurface &surf) {
 	if (surf._disposeAfterUse == DisposeAfterUse::YES) {
 		// Create a new surface and copy the pixels from the source surface
 		create(surf.w, surf.h, surf.format);
-		Common::copy((const byte *)surf.getPixels(), (const byte *)surf.getPixels() +
-			surf.w * surf.h * surf.format.bytesPerPixel, (byte *)this->getPixels());
+		Common::copy((const byte *)surf.getPixels(), (const byte *)surf.getPixels() + surf.w * surf.h * surf.format.bytesPerPixel, (byte *)this->getPixels());
 	} else {
 		// Source isn't managed, so simply copy its fields
 		_owner = surf._owner;
@@ -136,8 +155,7 @@ void ManagedSurface::copyFrom(const ManagedSurface &surf) {
 }
 
 bool ManagedSurface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) {
-	if (destBounds.left >= this->w || destBounds.top >= this->h ||
-			destBounds.right <= 0 || destBounds.bottom <= 0)
+	if (destBounds.left >= this->w || destBounds.top >= this->h || destBounds.right <= 0 || destBounds.bottom <= 0)
 		return false;
 
 	// Clip the bounds if necessary to fit on-screen
@@ -173,10 +191,10 @@ void ManagedSurface::blitFrom(const Surface &src, const Common::Point &destPos) 
 }
 
 void ManagedSurface::blitFrom(const Surface &src, const Common::Rect &srcRect,
-		const Common::Point &destPos) {
+                              const Common::Point &destPos) {
 	Common::Rect srcBounds = srcRect;
 	Common::Rect destBounds(destPos.x, destPos.y, destPos.x + srcRect.width(),
-		destPos.y + srcRect.height());
+	                        destPos.y + srcRect.height());
 	uint destPixel;
 	byte rSrc, gSrc, bSrc, aSrc;
 	byte rDest, gDest, bDest;
@@ -201,12 +219,12 @@ void ManagedSurface::blitFrom(const Surface &src, const Common::Rect &srcRect,
 			Common::copy(srcP, srcP + srcBounds.width() * format.bytesPerPixel, destP);
 		} else {
 			for (int x = 0; x < srcBounds.width(); ++x,
-					srcP += src.format.bytesPerPixel,
-					destP += format.bytesPerPixel) {
+			         srcP += src.format.bytesPerPixel,
+			         destP += format.bytesPerPixel) {
 				src.format.colorToARGB(src.format.bytesPerPixel == 2 ? *(const uint16 *)srcP : *(const uint32 *)srcP,
-					aSrc, rSrc, gSrc, bSrc);
+				                       aSrc, rSrc, gSrc, bSrc);
 				format.colorToRGB(format.bytesPerPixel == 2 ? *(const uint16 *)destP : *(const uint32 *)destP,
-					rDest, gDest, bDest);
+				                  rDest, gDest, bDest);
 
 				if (aSrc == 0) {
 					// Completely transparent, so skip
@@ -238,22 +256,20 @@ void ManagedSurface::blitFrom(const Surface &src, const Common::Rect &srcRect,
 
 void ManagedSurface::transBlitFrom(const Surface &src, uint transColor, bool flipped, uint overrideColor) {
 	transBlitFrom(src, Common::Rect(0, 0, src.w, src.h), Common::Rect(0, 0, this->w, this->h),
-		transColor, flipped, overrideColor);
+	              transColor, flipped, overrideColor);
 }
 
 void ManagedSurface::transBlitFrom(const Surface &src, const Common::Point &destPos,
-		uint transColor, bool flipped, uint overrideColor) {
-	transBlitFrom(src, Common::Rect(0, 0, src.w, src.h), Common::Rect(destPos.x, destPos.y,
-		destPos.x + src.w, destPos.y + src.h), transColor, flipped, overrideColor);
+                                   uint transColor, bool flipped, uint overrideColor) {
+	transBlitFrom(src, Common::Rect(0, 0, src.w, src.h), Common::Rect(destPos.x, destPos.y, destPos.x + src.w, destPos.y + src.h), transColor, flipped, overrideColor);
 }
 
 void ManagedSurface::transBlitFrom(const Surface &src, const Common::Rect &srcRect,
-		const Common::Point &destPos, uint transColor, bool flipped, uint overrideColor) {
-	transBlitFrom(src, srcRect, Common::Rect(destPos.x, destPos.y,
-		destPos.x + srcRect.width(), destPos.y + srcRect.height()), transColor, flipped, overrideColor);
+                                   const Common::Point &destPos, uint transColor, bool flipped, uint overrideColor) {
+	transBlitFrom(src, srcRect, Common::Rect(destPos.x, destPos.y, destPos.x + srcRect.width(), destPos.y + srcRect.height()), transColor, flipped, overrideColor);
 }
 
-template<typename TSRC, typename TDEST>
+template <typename TSRC, typename TDEST>
 void transBlit(const Surface &src, const Common::Rect &srcRect, Surface &dest, const Common::Rect &destRect, TSRC transColor, bool flipped, uint overrideColor) {
 	int scaleX = SCALE_THRESHOLD * srcRect.width() / destRect.width();
 	int scaleY = SCALE_THRESHOLD * srcRect.height() / destRect.height();
@@ -309,13 +325,13 @@ void transBlit(const Surface &src, const Common::Rect &srcRect, Surface &dest, c
 	}
 }
 
-#define HANDLE_BLIT(SRC_BYTES, DEST_BYTES, SRC_TYPE, DEST_TYPE) \
-	if (src.format.bytesPerPixel == SRC_BYTES && format.bytesPerPixel == DEST_BYTES) \
+#define HANDLE_BLIT(SRC_BYTES, DEST_BYTES, SRC_TYPE, DEST_TYPE)                                                \
+	if (src.format.bytesPerPixel == SRC_BYTES && format.bytesPerPixel == DEST_BYTES)                             \
 		transBlit<SRC_TYPE, DEST_TYPE>(src, srcRect, _innerSurface, destRect, transColor, flipped, overrideColor); \
 	else
 
 void ManagedSurface::transBlitFrom(const Surface &src, const Common::Rect &srcRect,
-	const Common::Rect &destRect, uint transColor, bool flipped, uint overrideColor) {
+                                   const Common::Rect &destRect, uint transColor, bool flipped, uint overrideColor) {
 	if (src.w == 0 || src.h == 0 || destRect.width() == 0 || destRect.height() == 0)
 		return;
 
@@ -324,7 +340,7 @@ void ManagedSurface::transBlitFrom(const Surface &src, const Common::Rect &srcRe
 	HANDLE_BLIT(4, 4, uint32, uint32)
 	HANDLE_BLIT(2, 4, uint16, uint32)
 	HANDLE_BLIT(4, 2, uint32, uint16)
-		error("Surface::transBlitFrom: bytesPerPixel must be 1, 2, or 4");
+	error("Surface::transBlitFrom: bytesPerPixel must be 1, 2, or 4");
 
 	// Mark the affected area
 	addDirtyRect(destRect);

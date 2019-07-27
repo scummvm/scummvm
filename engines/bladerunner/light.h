@@ -23,12 +23,12 @@
 #ifndef BLADERUNNER_LIGHT_H
 #define BLADERUNNER_LIGHT_H
 
-#include "bladerunner/matrix.h"
 #include "bladerunner/color.h"
+#include "bladerunner/matrix.h"
 
 #include "common/stream.h"
 
-namespace Common{
+namespace Common {
 class ReadStream;
 }
 
@@ -44,35 +44,35 @@ class Light {
 protected:
 	Common::String _name;
 
-	int       _frameCount;
-	int       _animated;
-	int       _animatedParameters;
+	int _frameCount;
+	int _animated;
+	int _animatedParameters;
 	Matrix4x3 _matrix;
-	Color     _color;
-	float     _falloffStart;
-	float     _falloffEnd;
-	float     _angleStart;
-	float     _angleEnd;
-	float    *_animationData;
-	float    *_m11ptr;
-	float    *_m12ptr;
-	float    *_m13ptr;
-	float    *_m14ptr;
-	float    *_m21ptr;
-	float    *_m22ptr;
-	float    *_m23ptr;
-	float    *_m24ptr;
-	float    *_m31ptr;
-	float    *_m32ptr;
-	float    *_m33ptr;
-	float    *_m34ptr;
-	float    *_colorRPtr;
-	float    *_colorGPtr;
-	float    *_colorBPtr;
-	float    *_falloffStartPtr;
-	float    *_falloffEndPtr;
-	float    *_angleStartPtr;
-	float    *_angleEndPtr;
+	Color _color;
+	float _falloffStart;
+	float _falloffEnd;
+	float _angleStart;
+	float _angleEnd;
+	float *_animationData;
+	float *_m11ptr;
+	float *_m12ptr;
+	float *_m13ptr;
+	float *_m14ptr;
+	float *_m21ptr;
+	float *_m22ptr;
+	float *_m23ptr;
+	float *_m24ptr;
+	float *_m31ptr;
+	float *_m32ptr;
+	float *_m33ptr;
+	float *_m34ptr;
+	float *_colorRPtr;
+	float *_colorGPtr;
+	float *_colorBPtr;
+	float *_falloffStartPtr;
+	float *_falloffEndPtr;
+	float *_angleStartPtr;
+	float *_angleEndPtr;
 
 public:
 	Light();

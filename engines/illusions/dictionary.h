@@ -33,16 +33,16 @@ class FontResource;
 struct Sequence;
 struct TalkEntry;
 
-template<class T>
+template <class T>
 class DictionaryHashMap {
 protected:
-	typedef Common::List<T*> List;
+	typedef Common::List<T *> List;
 	typedef typename List::iterator ListIterator;
-	typedef Common::HashMap<uint32, List*> Map;
+	typedef Common::HashMap<uint32, List *> Map;
 	typedef typename Map::iterator MapIterator;
 	Map _map;
-public:
 
+public:
 	~DictionaryHashMap() {
 		for (MapIterator it = _map.begin(); it != _map.end(); ++it) {
 			delete it->_value;
@@ -55,8 +55,8 @@ public:
 		if (it != _map.end())
 			list = it->_value;
 		else {
-			 list = new List();
-			 _map[id] = list;
+			list = new List();
+			_map[id] = list;
 		}
 		list->push_back(value);
 	}
@@ -80,12 +80,10 @@ public:
 			return it->_value->back();
 		return 0;
 	}
-
 };
 
 class Dictionary {
 public:
-
 	void addActorType(uint32 id, ActorType *actorType);
 	void removeActorType(uint32 id);
 	ActorType *findActorType(uint32 id);

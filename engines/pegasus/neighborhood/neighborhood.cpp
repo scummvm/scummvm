@@ -26,6 +26,7 @@
 #include "common/debug.h"
 #include "common/stream.h"
 
+#include "pegasus/ai/ai_area.h"
 #include "pegasus/compass.h"
 #include "pegasus/cursor.h"
 #include "pegasus/energymonitor.h"
@@ -34,12 +35,11 @@
 #include "pegasus/input.h"
 #include "pegasus/interaction.h"
 #include "pegasus/interface.h"
-#include "pegasus/pegasus.h"
-#include "pegasus/ai/ai_area.h"
 #include "pegasus/items/biochips/mapchip.h"
 #include "pegasus/neighborhood/neighborhood.h"
 #include "pegasus/neighborhood/tsa/fulltsa.h"
 #include "pegasus/neighborhood/tsa/tinytsa.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -56,9 +56,16 @@ static const TimeValue kStridingSlop = 39;
 Neighborhood *g_neighborhood = 0;
 
 Neighborhood::Neighborhood(InputHandler *nextHandler, PegasusEngine *vm, const Common::String &resName, NeighborhoodID id)
-		: InputHandler(nextHandler), IDObject(id), _vm(vm), _resName(resName), _navMovie(kNavMovieID), _stridingCallBack(this),
-		_neighborhoodNotification(kNeighborhoodNotificationID, (NotificationManager *)vm), _pushIn(kNoDisplayElement),
-		_turnPush(kTurnPushID), _croppedMovie(kCroppedMovieID) {
+  : InputHandler(nextHandler)
+  , IDObject(id)
+  , _vm(vm)
+  , _resName(resName)
+  , _navMovie(kNavMovieID)
+  , _stridingCallBack(this)
+  , _neighborhoodNotification(kNeighborhoodNotificationID, (NotificationManager *)vm)
+  , _pushIn(kNoDisplayElement)
+  , _turnPush(kTurnPushID)
+  , _croppedMovie(kCroppedMovieID) {
 	GameState.setOpenDoorLocation(kNoRoomID, kNoDirection);
 	_currentAlternate = 0;
 	_currentActivation = kActivateHotSpotAlways;
@@ -442,7 +449,7 @@ void Neighborhood::serviceActionQueue() {
 }
 
 void Neighborhood::requestAction(const QueueRequestType requestType, const ExtraID extra, const TimeValue in, const TimeValue out,
-		const InputBits interruptionFilter, const NotificationFlags flags) {
+                                 const InputBits interruptionFilter, const NotificationFlags flags) {
 
 	QueueRequest request;
 
@@ -493,8 +500,7 @@ void Neighborhood::requestDelay(const TimeValue delayDuration, const TimeScale d
 }
 
 bool operator==(const QueueRequest &arg1, const QueueRequest &arg2) {
-	return arg1.requestType == arg2.requestType && arg1.extra == arg2.extra &&
-			arg1.start == arg2.start && arg1.stop == arg2.stop;
+	return arg1.requestType == arg2.requestType && arg1.extra == arg2.extra && arg1.start == arg2.start && arg1.stop == arg2.stop;
 }
 
 bool operator!=(const QueueRequest &arg1, const QueueRequest &arg2) {
@@ -591,8 +597,7 @@ void Neighborhood::keepStriding(ExitTable::Entry &nextExitEntry) {
 
 void Neighborhood::stopStriding() {
 	_navMovie.stop();
-	_neighborhoodNotification.setNotificationFlags(kNeighborhoodMovieCompletedFlag |
-			kMoveForwardCompletedFlag, kNeighborhoodMovieCompletedFlag | kMoveForwardCompletedFlag);
+	_neighborhoodNotification.setNotificationFlags(kNeighborhoodMovieCompletedFlag | kMoveForwardCompletedFlag, kNeighborhoodMovieCompletedFlag | kMoveForwardCompletedFlag);
 }
 
 // Compass support
@@ -656,7 +661,7 @@ void Neighborhood::activateHotspots() {
 		HotspotInfoTable::Entry entry = *it;
 
 		if (entry.hotspotRoom == GameState.getCurrentRoom() && entry.hotspotDirection == GameState.getCurrentDirection()
-				&& (entry.hotspotActivation == _currentActivation || entry.hotspotActivation == kActivateHotSpotAlways)) {
+		    && (entry.hotspotActivation == _currentActivation || entry.hotspotActivation == kActivateHotSpotAlways)) {
 			Hotspot *hotspot = _vm->getAllHotspots().findHotspotByID(entry.hotspot);
 			if (hotspot)
 				activateOneHotspot(entry, hotspot);
@@ -1150,8 +1155,7 @@ void Neighborhood::activateCurrentView(const RoomID room, const DirectionConstan
 void Neighborhood::activateOneHotspot(HotspotInfoTable::Entry &entry, Hotspot *hotspot) {
 	switch (_vm->getDragType()) {
 	case kDragInventoryUse:
-		if ((hotspot->getHotspotFlags() & kDropItemSpotFlag) != 0 &&
-				_vm->getDraggingItem()->getObjectID() == entry.hotspotItem)
+		if ((hotspot->getHotspotFlags() & kDropItemSpotFlag) != 0 && _vm->getDraggingItem()->getObjectID() == entry.hotspotItem)
 			hotspot->setActive();
 		break;
 	case kDragInventoryPickup:
@@ -1161,7 +1165,7 @@ void Neighborhood::activateOneHotspot(HotspotInfoTable::Entry &entry, Hotspot *h
 	default:
 		if ((hotspot->getHotspotFlags() & kPickUpBiochipSpotFlag) != 0) {
 			Item *item = _vm->getAllItems().findItemByID(entry.hotspotItem);
-			if (item &&	item->getItemNeighborhood() == getObjectID())
+			if (item && item->getItemNeighborhood() == getObjectID())
 				hotspot->setActive();
 		} else {
 			HotSpotFlags flags = hotspot->getHotspotFlags();
@@ -1193,7 +1197,7 @@ void Neighborhood::startSpotOnceOnly(TimeValue startTime, TimeValue stopTime) {
 }
 
 void Neighborhood::startMovieSequence(const TimeValue startTime, const TimeValue stopTime, NotificationFlags flags, bool loopSequence,
-		const InputBits interruptionInput, const TimeValue strideStop) {
+                                      const InputBits interruptionInput, const TimeValue strideStop) {
 	if (!loopSequence && g_AIArea)
 		g_AIArea->lockAIOut();
 
@@ -1367,8 +1371,7 @@ void Neighborhood::setUpAIRules() {
 	if (g_AIArea) {
 		g_AIArea->forceAIUnlocked();
 
-		if (!_vm->isOldDemo() && (getObjectID() == kPrehistoricID || getObjectID() == kNoradAlphaID ||
-				getObjectID() == kNoradDeltaID || getObjectID() == kMarsID || getObjectID() == kWSCID)) {
+		if (!_vm->isOldDemo() && (getObjectID() == kPrehistoricID || getObjectID() == kNoradAlphaID || getObjectID() == kNoradDeltaID || getObjectID() == kMarsID || getObjectID() == kWSCID)) {
 
 			AIEnergyMonitorCondition *condition50 = new AIEnergyMonitorCondition(kWorriedEnergy);
 			AIPlayMessageAction *message = new AIPlayMessageAction("Images/AI/Globals/XGLOB4A", false);
@@ -1498,9 +1501,7 @@ void Neighborhood::loadLoopSound2(const Common::String &soundName, uint16 volume
 			// HACK: Some ambient loops are actually sound effects, like Ares waiting at
 			// the reactor and Poseidon at the launch console. Detect these and use the
 			// SFX volume instead of ambience.
-			if (soundName == "Sounds/Mars/Robot Loop.aiff" ||
-					soundName == "Sounds/Norad/Breathing Typing.22K.AIFF" ||
-					soundName == "Sounds/Norad/N54NAS.32K.AIFF")
+			if (soundName == "Sounds/Mars/Robot Loop.aiff" || soundName == "Sounds/Norad/Breathing Typing.22K.AIFF" || soundName == "Sounds/Norad/N54NAS.32K.AIFF")
 				_loop2Fader.setMasterVolume(_vm->getSoundFXLevel());
 			else
 				_loop2Fader.setMasterVolume(_vm->getAmbienceLevel());
@@ -1553,7 +1554,7 @@ void Neighborhood::showExtraView(uint32 extraID) {
 }
 
 void Neighborhood::startExtraLongSequence(const uint32 firstExtra, const uint32 lastExtra, NotificationFlags flags,
-		const InputBits interruptionFilter) {
+                                          const InputBits interruptionFilter) {
 	ExtraTable::Entry firstEntry, lastEntry;
 	getExtraEntry(firstExtra, firstEntry);
 

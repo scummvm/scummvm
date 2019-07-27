@@ -20,19 +20,18 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "tsage/resources.h"
 #include "common/endian.h"
 #include "common/file.h"
+#include "common/scummsys.h"
 #include "common/stack.h"
 #include "common/util.h"
-#include "tsage/resources.h"
 #include "tsage/tsage.h"
 
 namespace TsAGE {
 
-
 MemoryManager::MemoryManager() {
-	_memoryPool = new MemoryHeader*[MEMORY_POOL_SIZE];
+	_memoryPool = new MemoryHeader *[MEMORY_POOL_SIZE];
 	Common::fill(&_memoryPool[0], &_memoryPool[MEMORY_POOL_SIZE], (MemoryHeader *)NULL);
 }
 
@@ -111,7 +110,7 @@ void MemoryManager::incLocks(const byte *p) {
 
 /*-------------------------------------------------------------------------*/
 
-static uint16 bitMasks[4] = {0x1ff, 0x3ff, 0x7ff, 0xfff};
+static uint16 bitMasks[4] = { 0x1ff, 0x3ff, 0x7ff, 0xfff };
 
 uint16 BitReader::readToken() {
 	assert((numBits >= 9) && (numBits <= 12));
@@ -134,8 +133,9 @@ uint16 BitReader::readToken() {
 
 /*-------------------------------------------------------------------------*/
 
-TLib::TLib(MemoryManager &memManager, const Common::String &filename) :
-		_filename(filename), _memoryManager(memManager) {
+TLib::TLib(MemoryManager &memManager, const Common::String &filename)
+  : _filename(filename)
+  , _memoryManager(memManager) {
 
 	// If the resource strings list isn't yet loaded, load them
 	if (_resStrings.size() == 0) {
@@ -215,7 +215,7 @@ byte *TLib::getResource(uint16 id, bool suppressErrors) {
 	uint bytesWritten = 0;
 
 	uint16 ctrCurrent = 0x102, ctrMax = 0x200;
-	uint16 word_48050 = 0, currentToken = 0, word_48054 =0;
+	uint16 word_48050 = 0, currentToken = 0, word_48054 = 0;
 	byte byte_49068 = 0, byte_49069 = 0;
 
 	const uint tableSize = 0x1000;
@@ -411,8 +411,7 @@ byte *TLib::getSubResource(int resNum, int rlbNum, int index, uint *size, bool s
 
 	int numEntries = READ_LE_UINT16(dataIn);
 	uint32 entryOffset = READ_LE_UINT32(dataIn + 2 + (index - 1) * 4);
-	uint32 nextOffset = (index == numEntries) ?
-			_memoryManager.getSize(dataIn) : READ_LE_UINT32(dataIn + 2 + index * 4);
+	uint32 nextOffset = (index == numEntries) ? _memoryManager.getSize(dataIn) : READ_LE_UINT32(dataIn + 2 + index * 4);
 	*size = nextOffset - entryOffset;
 	assert(*size < (1024 * 1024));
 
@@ -538,7 +537,7 @@ Common::String ResourceManager::getMessage(int resNum, int lineNum, bool suppres
  * in the index, return the index entry for it, and move the file to the start of the resource
  */
 bool ResourceManager::scanIndex(Common::File &f, ResourceType resType, int rlbNum, int resNum,
-									  ResourceEntry &resEntry) {
+                                ResourceEntry &resEntry) {
 	// Load the root section index
 	ResourceList resList;
 	loadSection(f, resList);
@@ -566,7 +565,7 @@ void ResourceManager::loadSection(Common::File &f, ResourceList &resources) {
 	if (f.readUint32BE() != 0x544D492D)
 		error("Data block is not valid Rlb data");
 
-	/*uint8 unknown1 = */f.readByte();
+	/*uint8 unknown1 = */ f.readByte();
 	uint16 numEntries = f.readByte();
 
 	for (uint i = 0; i < numEntries; ++i) {

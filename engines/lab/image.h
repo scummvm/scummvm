@@ -32,7 +32,7 @@
 #define LAB_IMAGE_H
 
 namespace Common {
-	class File;
+class File;
 }
 
 namespace Lab {
@@ -47,8 +47,18 @@ public:
 	uint16 _height;
 	byte *_imageData;
 
-	Image(LabEngine *vm) : _width(0), _height(0), _imageData(nullptr), _vm(vm), _autoFree(true) {}
-	Image(int w, int h, byte *d, LabEngine *vm, bool autoFree = true) : _width(w), _height(h), _imageData(d), _vm(vm), _autoFree(autoFree) {}
+	Image(LabEngine *vm)
+	  : _width(0)
+	  , _height(0)
+	  , _imageData(nullptr)
+	  , _vm(vm)
+	  , _autoFree(true) {}
+	Image(int w, int h, byte *d, LabEngine *vm, bool autoFree = true)
+	  : _width(w)
+	  , _height(h)
+	  , _imageData(d)
+	  , _vm(vm)
+	  , _autoFree(autoFree) {}
 	Image(Common::File *s, LabEngine *vm);
 	~Image();
 

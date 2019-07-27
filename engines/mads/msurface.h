@@ -23,8 +23,8 @@
 #ifndef MADS_MSURFACE_H
 #define MADS_MSURFACE_H
 
-#include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "graphics/screen.h"
 #include "mads/palette.h"
 
@@ -58,8 +58,10 @@ private:
 	 * Helper method for calculating new dimensions when scaling a sprite
 	 */
 	int scaleValue(int value, int scale, int err);
+
 protected:
 	static MADSEngine *_vm;
+
 public:
 	/**
 	 * Sets the engine reference used all surfaces
@@ -70,18 +72,21 @@ public:
 	* Base method for descendents to load their contents
 	*/
 	virtual void load(const Common::String &resName) {}
+
 public:
 	/**
 	 * Basic constructor
 	 */
-	BaseSurface() : Graphics::Screen(0, 0) {
-		free();		// Free the 0x0 surface allocated by Graphics::Screen
+	BaseSurface()
+	  : Graphics::Screen(0, 0) {
+		free(); // Free the 0x0 surface allocated by Graphics::Screen
 	}
 
 	/**
 	 * Constructor for a surface with fixed dimensions
 	 */
-	BaseSurface(int width, int height) : Graphics::Screen(width, height) {}
+	BaseSurface(int width, int height)
+	  : Graphics::Screen(width, height) {}
 
 	/**
 	 * Destructor
@@ -153,7 +158,7 @@ public:
 	 * map as it's done
 	 */
 	void copyRectTranslate(BaseSurface &srcSurface, const byte *paletteMap,
-		const Common::Point &destPos, const Common::Rect &srcRect);
+	                       const Common::Point &destPos, const Common::Rect &srcRect);
 
 	/**
 	 * Copys a sub-section of another surface into the current one.
@@ -166,7 +171,7 @@ public:
 	 * @param transparentColor	Transparency palette index
 	 */
 	void copyFrom(BaseSurface &src, const Common::Point &destPos, int depth, DepthSurface *depthSurface,
-		int scale, bool flipped, int transparentColor = -1);
+	              int scale, bool flipped, int transparentColor = -1);
 };
 
 class MSurface : public BaseSurface {
@@ -176,9 +181,12 @@ protected:
 	 * surfaces we don't need dirty rects to be tracked
 	 */
 	virtual void addDirtyRect(const Common::Rect &r) {}
+
 public:
-	MSurface() : BaseSurface() {}
-	MSurface(int width, int height) : BaseSurface(width, height) {}
+	MSurface()
+	  : BaseSurface() {}
+	MSurface(int width, int height)
+	  : BaseSurface(width, height) {}
 };
 
 class DepthSurface : public MSurface {
@@ -191,7 +199,9 @@ public:
 	/**
 	 * Constructor
 	 */
-	DepthSurface() : MSurface(), _depthStyle(0) {}
+	DepthSurface()
+	  : MSurface()
+	  , _depthStyle(0) {}
 
 	/**
 	 * Returns the depth at a given position

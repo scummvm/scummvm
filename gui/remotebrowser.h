@@ -23,11 +23,11 @@
 #ifndef GUI_REMOTEBROWSER_DIALOG_H
 #define GUI_REMOTEBROWSER_DIALOG_H
 
-#include "gui/dialog.h"
 #include "common/fs.h"
+#include "gui/dialog.h"
+#include <backends/cloud/storage.h>
 #include <backends/cloud/storagefile.h>
 #include <backends/networking/curl/request.h>
-#include <backends/cloud/storage.h>
 
 namespace GUI {
 
@@ -46,14 +46,14 @@ public:
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void handleTickle();
 
-	const Cloud::StorageFile	&getResult() { return _choice; }
+	const Cloud::StorageFile &getResult() { return _choice; }
 
 protected:
-	ListWidget		*_fileList;
-	StaticTextWidget	*_currentPath;
+	ListWidget *_fileList;
+	StaticTextWidget *_currentPath;
 	Cloud::StorageFile _node, _backupNode;
 	Common::Array<Cloud::StorageFile> _nodeContent;
-	Common::HashMap<Common::String, Common::Array<Cloud::StorageFile> > _rememberedNodeContents;
+	Common::HashMap<Common::String, Common::Array<Cloud::StorageFile>> _rememberedNodeContents;
 	Cloud::StorageFile _choice;
 	bool _navigationLocked;
 	bool _updateList;

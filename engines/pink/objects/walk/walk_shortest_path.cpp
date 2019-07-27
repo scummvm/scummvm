@@ -26,14 +26,14 @@
 namespace Pink {
 
 WalkShortestPath::WalkShortestPath(WalkMgr *manager)
-	: _manager(manager)
-{}
+  : _manager(manager) {}
 
 WalkLocation *WalkShortestPath::next(WalkLocation *start, WalkLocation *destination) {
 	if (start == destination)
 		return nullptr;
 	add(start, 0.0, 0);
-	while (build() != destination) {}
+	while (build() != destination) {
+	}
 	return getNearestNeighbor(destination);
 }
 
@@ -73,7 +73,7 @@ WalkLocation *WalkShortestPath::build() {
 }
 
 WalkLocation *WalkShortestPath::getNearestNeighbor(WalkLocation *location) {
-	for(uint i = 0; i < _visited.size(); ++i) {
+	for (uint i = 0; i < _visited.size(); ++i) {
 		if (_visited[i] == location)
 			return _nearestNeigbor[i];
 	}

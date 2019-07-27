@@ -20,9 +20,9 @@
  *
  */
 
+#include "audio/decoders/aiff.h"
 #include "audio/decoders/wave.h"
 #include "common/file.h"
-#include "audio/decoders/aiff.h"
 #include "common/system.h"
 
 #include "director/sound.h"
@@ -38,7 +38,7 @@ DirectorSound::DirectorSound() {
 	_speaker = new Audio::PCSpeaker();
 	_pcSpeakerHandle = new Audio::SoundHandle();
 	_mixer->playStream(Audio::Mixer::kSFXSoundType,
-		_pcSpeakerHandle, _speaker, -1, 50, 0, DisposeAfterUse::NO, true);
+	                   _pcSpeakerHandle, _speaker, -1, 50, 0, DisposeAfterUse::NO, true);
 }
 
 DirectorSound::~DirectorSound() {

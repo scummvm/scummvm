@@ -26,7 +26,8 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CParcel, CCarry);
 
-CParcel::CParcel() : CCarry() {
+CParcel::CParcel()
+  : CCarry() {
 }
 
 void CParcel::save(SimpleFile *file, int indent) {

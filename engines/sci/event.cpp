@@ -20,18 +20,18 @@
  *
  */
 
-#include "common/system.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/system.h"
 
-#include "sci/sci.h"
-#include "sci/event.h"
 #include "sci/console.h"
-#include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
+#include "sci/engine/state.h"
+#include "sci/event.h"
+#include "sci/sci.h"
 #ifdef ENABLE_SCI32
-#include "sci/graphics/cursor32.h"
-#include "sci/graphics/frameout.h"
+#	include "sci/graphics/cursor32.h"
+#	include "sci/graphics/frameout.h"
 #endif
 #include "sci/graphics/screen.h"
 
@@ -43,20 +43,20 @@ struct ScancodeRow {
 };
 
 static const ScancodeRow scancodeAltifyRows[] = {
-	{ 0x10, "QWERTYUIOP[]"  },
+	{ 0x10, "QWERTYUIOP[]" },
 	{ 0x1e, "ASDFGHJKL;'\\" },
-	{ 0x2c, "ZXCVBNM,./"    }
+	{ 0x2c, "ZXCVBNM,./" }
 };
 
 static const byte codePageMap88591ToDOS[0x80] = {
-	 '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', // 0x8x
-	 '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', // 0x9x
-	 '?', 0xad, 0x9b, 0x9c,  '?', 0x9d,  '?', 0x9e,  '?',  '?', 0xa6, 0xae, 0xaa,  '?',  '?',  '?', // 0xAx
-	 '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', 0xa7, 0xaf, 0xac, 0xab,  '?', 0xa8, // 0xBx
-	 '?',  '?',  '?',  '?', 0x8e, 0x8f, 0x92, 0x80,  '?', 0x90,  '?',  '?',  '?',  '?',  '?',  '?', // 0xCx
-	 '?', 0xa5,  '?',  '?',  '?',  '?', 0x99,  '?',  '?',  '?',  '?',  '?', 0x9a,  '?',  '?', 0xe1, // 0xDx
-	0x85, 0xa0, 0x83,  '?', 0x84, 0x86, 0x91, 0x87, 0x8a, 0x82, 0x88, 0x89, 0x8d, 0xa1, 0x8c, 0x8b, // 0xEx
-	 '?', 0xa4, 0x95, 0xa2, 0x93,  '?', 0x94,  '?',  '?', 0x97, 0xa3, 0x96, 0x81,  '?',  '?', 0x98  // 0xFx
+	'?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', // 0x8x
+	'?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', // 0x9x
+	'?', 0xad, 0x9b, 0x9c, '?', 0x9d, '?', 0x9e, '?', '?', 0xa6, 0xae, 0xaa, '?', '?', '?', // 0xAx
+	'?', '?', '?', '?', '?', '?', '?', '?', '?', '?', 0xa7, 0xaf, 0xac, 0xab, '?', 0xa8, // 0xBx
+	'?', '?', '?', '?', 0x8e, 0x8f, 0x92, 0x80, '?', 0x90, '?', '?', '?', '?', '?', '?', // 0xCx
+	'?', 0xa5, '?', '?', '?', '?', 0x99, '?', '?', '?', '?', '?', 0x9a, '?', '?', 0xe1, // 0xDx
+	0x85, 0xa0, 0x83, '?', 0x84, 0x86, 0x91, 0x87, 0x8a, 0x82, 0x88, 0x89, 0x8d, 0xa1, 0x8c, 0x8b, // 0xEx
+	'?', 0xa4, 0x95, 0xa2, 0x93, '?', 0x94, '?', '?', 0x97, 0xa3, 0x96, 0x81, '?', '?', 0x98 // 0xFx
 };
 
 struct SciKeyConversion {
@@ -66,32 +66,32 @@ struct SciKeyConversion {
 };
 
 static const SciKeyConversion keyMappings[] = {
-	{ Common::KEYCODE_UP          , kSciKeyUp       , kSciKeyUp       },
-	{ Common::KEYCODE_DOWN        , kSciKeyDown     , kSciKeyDown     },
-	{ Common::KEYCODE_RIGHT       , kSciKeyRight    , kSciKeyRight    },
-	{ Common::KEYCODE_LEFT        , kSciKeyLeft     , kSciKeyLeft     },
-	{ Common::KEYCODE_INSERT      , kSciKeyInsert   , kSciKeyInsert   },
-	{ Common::KEYCODE_HOME        , kSciKeyHome     , kSciKeyHome     },
-	{ Common::KEYCODE_END         , kSciKeyEnd      , kSciKeyEnd      },
-	{ Common::KEYCODE_PAGEUP      , kSciKeyPageUp   , kSciKeyPageUp   },
-	{ Common::KEYCODE_PAGEDOWN    , kSciKeyPageDown , kSciKeyPageDown },
-	{ Common::KEYCODE_DELETE      , kSciKeyDelete   , kSciKeyDelete   },
-	{ Common::KEYCODE_KP0         , kSciKeyInsert   , '0'             },
-	{ Common::KEYCODE_KP1         , kSciKeyEnd      , '1'             },
-	{ Common::KEYCODE_KP2         , kSciKeyDown     , '2'             },
-	{ Common::KEYCODE_KP3         , kSciKeyPageDown , '3'             },
-	{ Common::KEYCODE_KP4         , kSciKeyLeft     , '4'             },
-	{ Common::KEYCODE_KP5         , kSciKeyCenter   , '5'             },
-	{ Common::KEYCODE_KP6         , kSciKeyRight    , '6'             },
-	{ Common::KEYCODE_KP7         , kSciKeyHome     , '7'             },
-	{ Common::KEYCODE_KP8         , kSciKeyUp       , '8'             },
-	{ Common::KEYCODE_KP9         , kSciKeyPageUp   , '9'             },
-	{ Common::KEYCODE_KP_PERIOD   , kSciKeyDelete   , '.'             },
-	{ Common::KEYCODE_KP_ENTER    , kSciKeyEnter    , kSciKeyEnter    },
-	{ Common::KEYCODE_KP_PLUS     , '+'             , '+'             },
-	{ Common::KEYCODE_KP_MINUS    , '-'             , '-'             },
-	{ Common::KEYCODE_KP_MULTIPLY , '*'             , '*'             },
-	{ Common::KEYCODE_KP_DIVIDE   , '/'             , '/'             }
+	{ Common::KEYCODE_UP, kSciKeyUp, kSciKeyUp },
+	{ Common::KEYCODE_DOWN, kSciKeyDown, kSciKeyDown },
+	{ Common::KEYCODE_RIGHT, kSciKeyRight, kSciKeyRight },
+	{ Common::KEYCODE_LEFT, kSciKeyLeft, kSciKeyLeft },
+	{ Common::KEYCODE_INSERT, kSciKeyInsert, kSciKeyInsert },
+	{ Common::KEYCODE_HOME, kSciKeyHome, kSciKeyHome },
+	{ Common::KEYCODE_END, kSciKeyEnd, kSciKeyEnd },
+	{ Common::KEYCODE_PAGEUP, kSciKeyPageUp, kSciKeyPageUp },
+	{ Common::KEYCODE_PAGEDOWN, kSciKeyPageDown, kSciKeyPageDown },
+	{ Common::KEYCODE_DELETE, kSciKeyDelete, kSciKeyDelete },
+	{ Common::KEYCODE_KP0, kSciKeyInsert, '0' },
+	{ Common::KEYCODE_KP1, kSciKeyEnd, '1' },
+	{ Common::KEYCODE_KP2, kSciKeyDown, '2' },
+	{ Common::KEYCODE_KP3, kSciKeyPageDown, '3' },
+	{ Common::KEYCODE_KP4, kSciKeyLeft, '4' },
+	{ Common::KEYCODE_KP5, kSciKeyCenter, '5' },
+	{ Common::KEYCODE_KP6, kSciKeyRight, '6' },
+	{ Common::KEYCODE_KP7, kSciKeyHome, '7' },
+	{ Common::KEYCODE_KP8, kSciKeyUp, '8' },
+	{ Common::KEYCODE_KP9, kSciKeyPageUp, '9' },
+	{ Common::KEYCODE_KP_PERIOD, kSciKeyDelete, '.' },
+	{ Common::KEYCODE_KP_ENTER, kSciKeyEnter, kSciKeyEnter },
+	{ Common::KEYCODE_KP_PLUS, '+', '+' },
+	{ Common::KEYCODE_KP_MINUS, '-', '-' },
+	{ Common::KEYCODE_KP_MULTIPLY, '*', '*' },
+	{ Common::KEYCODE_KP_DIVIDE, '/', '/' }
 };
 
 struct MouseEventConversion {
@@ -100,20 +100,21 @@ struct MouseEventConversion {
 };
 
 static const MouseEventConversion mouseEventMappings[] = {
-	{ Common::EVENT_LBUTTONDOWN , kSciEventMousePress   },
-	{ Common::EVENT_RBUTTONDOWN , kSciEventMousePress   },
-	{ Common::EVENT_MBUTTONDOWN , kSciEventMousePress   },
-	{ Common::EVENT_LBUTTONUP   , kSciEventMouseRelease },
-	{ Common::EVENT_RBUTTONUP   , kSciEventMouseRelease },
-	{ Common::EVENT_MBUTTONUP   , kSciEventMouseRelease }
+	{ Common::EVENT_LBUTTONDOWN, kSciEventMousePress },
+	{ Common::EVENT_RBUTTONDOWN, kSciEventMousePress },
+	{ Common::EVENT_MBUTTONDOWN, kSciEventMousePress },
+	{ Common::EVENT_LBUTTONUP, kSciEventMouseRelease },
+	{ Common::EVENT_RBUTTONUP, kSciEventMouseRelease },
+	{ Common::EVENT_MBUTTONUP, kSciEventMouseRelease }
 };
 
-EventManager::EventManager(bool fontIsExtended) :
-	_fontIsExtended(fontIsExtended)
+EventManager::EventManager(bool fontIsExtended)
+  : _fontIsExtended(fontIsExtended)
 #ifdef ENABLE_SCI32
-	, _hotRectanglesActive(false)
+  , _hotRectanglesActive(false)
 #endif
-	{}
+{
+}
 
 EventManager::~EventManager() {
 }
@@ -142,10 +143,10 @@ static int altify(char ch) {
 
 SciEvent EventManager::getScummVMEvent() {
 #ifdef ENABLE_SCI32
-	SciEvent input   = { kSciEventNone, kSciKeyModNone, 0, Common::Point(), Common::Point(), -1 };
+	SciEvent input = { kSciEventNone, kSciKeyModNone, 0, Common::Point(), Common::Point(), -1 };
 	SciEvent noEvent = { kSciEventNone, kSciKeyModNone, 0, Common::Point(), Common::Point(), -1 };
 #else
-	SciEvent input   = { kSciEventNone, kSciKeyModNone, 0, Common::Point() };
+	SciEvent input = { kSciEventNone, kSciKeyModNone, 0, Common::Point() };
 	SciEvent noEvent = { kSciEventNone, kSciKeyModNone, 0, Common::Point() };
 #endif
 
@@ -423,7 +424,8 @@ SciEvent EventManager::getSciEvent(SciEventType mask) {
 void EventManager::flushEvents() {
 	Common::EventManager *em = g_system->getEventManager();
 	Common::Event event;
-	while (em->pollEvent(event)) {}
+	while (em->pollEvent(event)) {
+	}
 	_events.clear();
 }
 

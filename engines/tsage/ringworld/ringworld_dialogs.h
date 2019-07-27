@@ -23,84 +23,91 @@
 #ifndef TSAGE_RINGWORLD_DIALOGS_H
 #define TSAGE_RINGWORLD_DIALOGS_H
 
-#include "tsage/dialogs.h"
-#include "tsage/events.h"
-#include "tsage/graphics.h"
 #include "common/list.h"
 #include "common/rect.h"
 #include "common/system.h"
+#include "tsage/dialogs.h"
+#include "tsage/events.h"
+#include "tsage/graphics.h"
 
 namespace TsAGE {
 
 namespace Ringworld {
 
-class RightClickButton : public GfxButton {
-private:
-	GfxSurface *_savedButton;
-public:
-	int _buttonIndex;
+	class RightClickButton : public GfxButton {
+	private:
+		GfxSurface *_savedButton;
 
-	RightClickButton(int buttonIndex, int xp, int yp);
-	~RightClickButton() { delete _savedButton; }
+	public:
+		int _buttonIndex;
 
-	virtual void highlight();
-};
+		RightClickButton(int buttonIndex, int xp, int yp);
+		~RightClickButton() { delete _savedButton; }
 
-class RightClickDialog : public GfxDialog {
-private:
-	GfxSurface _surface;
-	RightClickButton *_highlightedButton;
-	int _selectedAction;
-	RightClickButton _walkButton, _lookButton, _useButton, _talkButton, _inventoryButton, _optionsButton;
+		virtual void highlight();
+	};
 
-	RightClickButton *findButton(const Common::Point &pt);
-public:
-	RightClickDialog();
-	~RightClickDialog();
+	class RightClickDialog : public GfxDialog {
+	private:
+		GfxSurface _surface;
+		RightClickButton *_highlightedButton;
+		int _selectedAction;
+		RightClickButton _walkButton, _lookButton, _useButton, _talkButton, _inventoryButton, _optionsButton;
 
-	virtual void draw();
-	virtual bool process(Event &event);
-	void execute();
-};
+		RightClickButton *findButton(const Common::Point &pt);
 
-class OptionsDialog : public ModalDialog {
-private:
-	GfxButton _btnSave, _btnRestore, _btnRestart;
-	GfxButton _btnQuit, _btnResume;
-	GfxButton _btnSound;
-	GfxMessage _gfxMessage;
-public:
-	OptionsDialog();
-	virtual ~OptionsDialog() {}
-	GfxButton *execute() { return GfxDialog::execute(&_btnResume); }
+	public:
+		RightClickDialog();
+		~RightClickDialog();
 
-	static void show();
-};
+		virtual void draw();
+		virtual bool process(Event &event);
+		void execute();
+	};
 
-/*--------------------------------------------------------------------------*/
+	class OptionsDialog : public ModalDialog {
+	private:
+		GfxButton _btnSave, _btnRestore, _btnRestart;
+		GfxButton _btnQuit, _btnResume;
+		GfxButton _btnSound;
+		GfxMessage _gfxMessage;
 
-class GfxInvImage : public GfxImage {
-public:
-	InvObject *_invObject;
-public:
-	GfxInvImage() : GfxImage(), _invObject(NULL) {}
+	public:
+		OptionsDialog();
+		virtual ~OptionsDialog() {}
+		GfxButton *execute() { return GfxDialog::execute(&_btnResume); }
 
-	virtual bool process(Event &event);
-};
+		static void show();
+	};
+
+	/*--------------------------------------------------------------------------*/
+
+	class GfxInvImage : public GfxImage {
+	public:
+		InvObject *_invObject;
+
+	public:
+		GfxInvImage()
+		  : GfxImage()
+		  , _invObject(NULL) {}
+
+		virtual bool process(Event &event);
+	};
 
 #define MAX_INVOBJECT_DISPLAY 20
 
-class InventoryDialog : public ModalDialog {
-private:
-	Common::Array<GfxInvImage *> _images;
-	GfxButton _btnOk, _btnLook;
-public:
-	InventoryDialog();
-	virtual ~InventoryDialog();
-	void execute();
+	class InventoryDialog : public ModalDialog {
+	private:
+		Common::Array<GfxInvImage *> _images;
+		GfxButton _btnOk, _btnLook;
 
-	static void show();
-};
+	public:
+		InventoryDialog();
+		virtual ~InventoryDialog();
+		void execute();
+
+		static void show();
+	};
 
 } // End of namespace Ringworld
 

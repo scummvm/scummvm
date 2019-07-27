@@ -25,8 +25,8 @@
 // Data
 #include "lastexpress/data/animation.h"
 #include "lastexpress/data/cursor.h"
-#include "lastexpress/data/snd.h"
 #include "lastexpress/data/scene.h"
+#include "lastexpress/data/snd.h"
 
 #include "lastexpress/fight/fight.h"
 
@@ -60,12 +60,12 @@ enum StartMenuButtons {
 	kButtonVolume,
 	kButtonVolumeUp,
 	kButtonVolumeUpPushed,
-	kButtonBrightnessDownPushed,    // 5
+	kButtonBrightnessDownPushed, // 5
 	kButtonBrightnessDown,
 	kButtonBrightness,
 	kButtonBrightnessUp,
 	kButtonBrightnessUpPushed,
-	kButtonQuit,                    // 10
+	kButtonQuit, // 10
 	kButtonQuitPushed
 };
 
@@ -76,7 +76,7 @@ enum StartMenuEggButtons {
 	kButtonRewindPushed,
 	kButtonForward,
 	kButtonForwardPushed,
-	kButtonCredits,                // 5
+	kButtonCredits, // 5
 	kButtonCreditsPushed,
 	kButtonContinue
 };
@@ -88,32 +88,32 @@ enum StartMenuTooltips {
 	kTooltipInsertCd3,
 	kTooltipContinueGame,
 	kTooltipReplayGame,
-	kTooltipContinueRewoundGame,    // 5
+	kTooltipContinueRewoundGame, // 5
 	kTooltipViewGameEnding,
 	kTooltipStartAnotherGame,
 	kTooltipVolumeUp,
 	kTooltipVolumeDown,
-	kTooltipBrightnessUp,           // 10
+	kTooltipBrightnessUp, // 10
 	kTooltipBrightnessDown,
 	kTooltipQuit,
 	kTooltipRewindParis,
 	kTooltipForwardStrasbourg,
-	kTooltipRewindStrasbourg,      // 15
+	kTooltipRewindStrasbourg, // 15
 	kTooltipRewindMunich,
 	kTooltipForwardMunich,
 	kTooltipForwardVienna,
 	kTooltipRewindVienna,
-	kTooltipRewindBudapest,        // 20
+	kTooltipRewindBudapest, // 20
 	kTooltipForwardBudapest,
 	kTooltipForwardBelgrade,
 	kTooltipRewindBelgrade,
 	kTooltipForwardConstantinople,
-	kTooltipSwitchBlueGame,        // 25
+	kTooltipSwitchBlueGame, // 25
 	kTooltipSwitchRedGame,
 	kTooltipSwitchGoldGame,
 	kTooltipSwitchGreenGame,
 	kTooltipSwitchTealGame,
-	kTooltipSwitchPurpleGame,      // 30
+	kTooltipSwitchPurpleGame, // 30
 	kTooltipPlayNewGame,
 	kTooltipCredits,
 	kTooltipFastForward,
@@ -129,24 +129,46 @@ static const struct {
 	StartMenuTooltips rewind;
 	StartMenuTooltips forward;
 } _cityButtonsInfo[7] = {
-	{kTimeCityParis, 64, kTooltipRewindParis, kTooltipRewindParis},
-	{kTimeCityStrasbourg, 128, kTooltipRewindStrasbourg, kTooltipForwardStrasbourg},
-	{kTimeCityMunich, 129, kTooltipRewindMunich, kTooltipForwardMunich},
-	{kTimeCityVienna, 130, kTooltipRewindVienna, kTooltipForwardVienna},
-	{kTimeCityBudapest, 131, kTooltipRewindBudapest, kTooltipForwardBudapest},
-	{kTimeCityBelgrade, 132, kTooltipRewindBelgrade, kTooltipForwardBelgrade},
-	{kTimeCityConstantinople, 192, kTooltipForwardConstantinople, kTooltipForwardConstantinople}
+	{ kTimeCityParis, 64, kTooltipRewindParis, kTooltipRewindParis },
+	{ kTimeCityStrasbourg, 128, kTooltipRewindStrasbourg, kTooltipForwardStrasbourg },
+	{ kTimeCityMunich, 129, kTooltipRewindMunich, kTooltipForwardMunich },
+	{ kTimeCityVienna, 130, kTooltipRewindVienna, kTooltipForwardVienna },
+	{ kTimeCityBudapest, 131, kTooltipRewindBudapest, kTooltipForwardBudapest },
+	{ kTimeCityBelgrade, 132, kTooltipRewindBelgrade, kTooltipForwardBelgrade },
+	{ kTimeCityConstantinople, 192, kTooltipForwardConstantinople, kTooltipForwardConstantinople }
 };
 
 //////////////////////////////////////////////////////////////////////////
 // Menu
 //////////////////////////////////////////////////////////////////////////
-Menu::Menu(LastExpressEngine *engine) : _engine(engine),
-	_seqTooltips(NULL), _seqEggButtons(NULL), _seqButtons(NULL), _seqAcorn(NULL), _seqCity1(NULL), _seqCity2(NULL), _seqCity3(NULL), _seqCredits(NULL),
-	_gameId(kGameBlue), _hasShownStartScreen(false), _hasShownIntro(false),
-	_isShowingCredits(false), _isGameStarted(false), _isShowingMenu(false),
-	_creditsSequenceIndex(0), _checkHotspotsTicks(15),  _mouseFlags(Common::EVENT_INVALID), _lastHotspot(NULL),
-	_currentTime(kTimeNone), _lowerTime(kTimeNone), _time(kTimeNone), _currentIndex(0), _index(0), _lastIndex(0), _delta(0), _handleTimeDelta(false) {
+Menu::Menu(LastExpressEngine *engine)
+  : _engine(engine)
+  , _seqTooltips(NULL)
+  , _seqEggButtons(NULL)
+  , _seqButtons(NULL)
+  , _seqAcorn(NULL)
+  , _seqCity1(NULL)
+  , _seqCity2(NULL)
+  , _seqCity3(NULL)
+  , _seqCredits(NULL)
+  , _gameId(kGameBlue)
+  , _hasShownStartScreen(false)
+  , _hasShownIntro(false)
+  , _isShowingCredits(false)
+  , _isGameStarted(false)
+  , _isShowingMenu(false)
+  , _creditsSequenceIndex(0)
+  , _checkHotspotsTicks(15)
+  , _mouseFlags(Common::EVENT_INVALID)
+  , _lastHotspot(NULL)
+  , _currentTime(kTimeNone)
+  , _lowerTime(kTimeNone)
+  , _time(kTimeNone)
+  , _currentIndex(0)
+  , _index(0)
+  , _lastIndex(0)
+  , _delta(0)
+  , _handleTimeDelta(false) {
 
 	_clock = new Clock(_engine);
 	_trainLine = new TrainLine(_engine);
@@ -279,7 +301,7 @@ void Menu::eventMouse(const Common::Event &ev) {
 	}
 }
 
-void Menu::eventTick(const Common::Event&) {
+void Menu::eventTick(const Common::Event &) {
 	if (hasTimeDelta())
 		adjustTime();
 	else if (_handleTimeDelta)
@@ -373,7 +395,7 @@ void Menu::show(bool doSavegame, SavegameType type, uint32 value) {
 bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 	bool clicked = (type == Common::EVENT_LBUTTONUP);
 
-	switch(action) {
+	switch (action) {
 	default:
 		hideOverlays();
 		break;
@@ -510,7 +532,7 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 				}
 			}
 
-			if (!getEvent(kEventIntro))	{
+			if (!getEvent(kEventIntro)) {
 				getEvent(kEventIntro) = 1;
 
 				getSoundQueue()->fade(kSoundTagIntro);
@@ -569,7 +591,7 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 		}
 
 		// Stupid tooltips ids are not in order, so we can't just increment them...
-		switch(_gameId) {
+		switch (_gameId) {
 		default:
 			break;
 

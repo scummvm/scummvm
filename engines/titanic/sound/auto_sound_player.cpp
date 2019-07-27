@@ -25,16 +25,24 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CAutoSoundPlayer, CGameObject)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(TurnOff)
-	ON_MESSAGE(SignalObject)
-	ON_MESSAGE(SetVolumeMsg)
-	ON_MESSAGE(LoadSuccessMsg)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(TurnOff)
+ON_MESSAGE(SignalObject)
+ON_MESSAGE(SetVolumeMsg)
+ON_MESSAGE(LoadSuccessMsg)
 END_MESSAGE_MAP()
 
-CAutoSoundPlayer::CAutoSoundPlayer() : CGameObject(),
-	_unused(0), _volume(70), _balance(0), _repeated(false), _soundHandle(-1),
-	_stopSeconds(0), _startSeconds(-1), _active(false), _isVectorSound(false) {
+CAutoSoundPlayer::CAutoSoundPlayer()
+  : CGameObject()
+  , _unused(0)
+  , _volume(70)
+  , _balance(0)
+  , _repeated(false)
+  , _soundHandle(-1)
+  , _stopSeconds(0)
+  , _startSeconds(-1)
+  , _active(false)
+  , _isVectorSound(false) {
 }
 
 void CAutoSoundPlayer::save(SimpleFile *file, int indent) {

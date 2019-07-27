@@ -27,8 +27,6 @@ static const char *const kEoB1ChargenStrings2AmigaEnglish[12] = {
 	"Name:"
 };
 
-
-
 static const StringListProvider kEoB1ChargenStrings2AmigaEnglishProvider = { ARRAYSIZE(kEoB1ChargenStrings2AmigaEnglish), kEoB1ChargenStrings2AmigaEnglish };
 
 static const char *const kEoB1ChargenStatStringsAmigaEnglish[12] = {
@@ -128,7 +126,10 @@ static const char *const kEoB1BonusStringsAmigaEnglish[3] = {
 static const StringListProvider kEoB1BonusStringsAmigaEnglishProvider = { ARRAYSIZE(kEoB1BonusStringsAmigaEnglish), kEoB1BonusStringsAmigaEnglish };
 
 static const char *const kEoB1TurnUndeadStringAmigaEnglish[1] = {
-	"\x06\x06""%s uses the power to turn undead!""\x06\x1F""\r"
+	"\x06\x06"
+	"%s uses the power to turn undead!"
+	"\x06\x1F"
+	"\r"
 };
 
 static const StringListProvider kEoB1TurnUndeadStringAmigaEnglishProvider = { ARRAYSIZE(kEoB1TurnUndeadStringAmigaEnglish), kEoB1TurnUndeadStringAmigaEnglish };
@@ -627,7 +628,10 @@ static const char *const kEoB1CharStatusStrings131AmigaEnglish[1] = {
 static const StringListProvider kEoB1CharStatusStrings131AmigaEnglishProvider = { ARRAYSIZE(kEoB1CharStatusStrings131AmigaEnglish), kEoB1CharStatusStrings131AmigaEnglish };
 
 static const char *const kEoB1LevelGainStringsAmigaEnglish[1] = {
-	"\x06\x06""%s has gained a level of experience.""\x06\x1F""\r"
+	"\x06\x06"
+	"%s has gained a level of experience."
+	"\x06\x1F"
+	"\r"
 };
 
 static const StringListProvider kEoB1LevelGainStringsAmigaEnglishProvider = { ARRAYSIZE(kEoB1LevelGainStringsAmigaEnglish), kEoB1LevelGainStringsAmigaEnglish };
@@ -896,4 +900,3 @@ static const char *const kEoB1MonsterDistAttStringsAmigaEnglish[5] = {
 };
 
 static const StringListProvider kEoB1MonsterDistAttStringsAmigaEnglishProvider = { ARRAYSIZE(kEoB1MonsterDistAttStringsAmigaEnglish), kEoB1MonsterDistAttStringsAmigaEnglish };
-

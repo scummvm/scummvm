@@ -43,8 +43,8 @@
 #define SWORD25_RENDEROBJECTMANAGER_H
 
 #include "common/rect.h"
-#include "sword25/kernel/common.h"
 #include "sword25/gfx/renderobjectptr.h"
+#include "sword25/kernel/common.h"
 #include "sword25/kernel/persistable.h"
 
 #include "sword25/gfx/microtiles.h"
@@ -61,7 +61,9 @@ struct RenderObjectQueueItem {
 	Common::Rect _bbox;
 	int _version;
 	RenderObjectQueueItem(RenderObject *renderObject, const Common::Rect &bbox, int version)
-		: _renderObject(renderObject), _bbox(bbox), _version(version) {}
+	  : _renderObject(renderObject)
+	  , _bbox(bbox)
+	  , _version(version) {}
 };
 
 class RenderObjectQueue : public Common::List<RenderObjectQueueItem> {
@@ -128,7 +130,7 @@ public:
 
 private:
 	bool _frameStarted;
-	typedef Common::Array<RenderObjectPtr<TimedRenderObject> > RenderObjectList;
+	typedef Common::Array<RenderObjectPtr<TimedRenderObject>> RenderObjectList;
 	RenderObjectList _timedRenderObjects;
 
 	MicroTileArray *_uta;
@@ -138,7 +140,7 @@ private:
 	// ---------------------------
 	// Der Baum legt die hierachische Ordnung der BS_RenderObjects fest.
 	// Zu weiteren Informationen siehe: "renderobject.h"
-	RenderObjectPtr<RenderObject>     _rootPtr;      // Die Wurzel der Baumes
+	RenderObjectPtr<RenderObject> _rootPtr; // Die Wurzel der Baumes
 };
 
 } // End of namespace Sword25

@@ -21,14 +21,13 @@
  */
 
 #include "scumm/cdda.h"
-#include "common/stream.h"
 #include "audio/audiostream.h"
+#include "common/stream.h"
 
 namespace Scumm {
 
-
 #pragma mark -
-#pragma mark --- CDDA stream ---
+#pragma mark--- CDDA stream ---
 #pragma mark -
 
 #define START_OF_CDDA_DATA 800
@@ -55,8 +54,10 @@ public:
 	Audio::Timestamp getLength() const { return _length; }
 };
 
-CDDAStream::CDDAStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) :
-	_stream(stream), _disposeAfterUse(disposeAfterUse), _pos(START_OF_CDDA_DATA) {
+CDDAStream::CDDAStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse)
+  : _stream(stream)
+  , _disposeAfterUse(disposeAfterUse)
+  , _pos(START_OF_CDDA_DATA) {
 	_stream->seek(START_OF_CDDA_DATA, SEEK_SET);
 	// The total size of CDDA.SOU is 289,808,802 bytes or (289808802 - 800) / 1177 = 246226 blocks
 	// We also deduct the shift values to return the correct length
@@ -86,7 +87,7 @@ bool CDDAStream::seek(const Audio::Timestamp &where) {
 int CDDAStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples;
 
-	for (samples = 0 ; samples < numSamples && !_stream->eos() ; ) {
+	for (samples = 0; samples < numSamples && !_stream->eos();) {
 		if (!((_pos - START_OF_CDDA_DATA) % BLOCK_SIZE)) {
 			byte shiftVal = _stream->readByte();
 			_shiftLeft = shiftVal >> 4;
@@ -101,12 +102,12 @@ int CDDAStream::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 #pragma mark -
-#pragma mark --- CDDA factory functions ---
+#pragma mark--- CDDA factory functions ---
 #pragma mark -
 
 Audio::SeekableAudioStream *makeCDDAStream(
-	Common::SeekableReadStream *stream,
-	DisposeAfterUse::Flag disposeAfterUse) {
+  Common::SeekableReadStream *stream,
+  DisposeAfterUse::Flag disposeAfterUse) {
 	Audio::SeekableAudioStream *s = new CDDAStream(stream, disposeAfterUse);
 	if (s && s->endOfData()) {
 		delete s;

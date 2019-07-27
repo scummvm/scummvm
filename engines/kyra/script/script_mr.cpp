@@ -21,8 +21,8 @@
  */
 
 #include "kyra/engine/kyra_mr.h"
-#include "kyra/text/text_mr.h"
 #include "kyra/resource/resource.h"
+#include "kyra/text/text_mr.h"
 
 #include "common/system.h"
 
@@ -51,7 +51,7 @@ int KyraEngine_MR::o3_setCharacterPos(EMCState *script) {
 
 int KyraEngine_MR::o3_defineObject(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_defineObject(%p) (%d, '%s', %d, %d, %d, %d, %d, %d)", (const void *)script,
-			stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
+	       stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
 	TalkObject &obj = _talkObjectList[stackPos(0)];
 	strcpy(obj.filename, stackPosString(1));
 	obj.sceneAnim = stackPos(2);
@@ -253,7 +253,7 @@ int KyraEngine_MR::o3_wipeDownMouseItem(EMCState *script) {
 
 	if (_itemInHand >= 0) {
 		backUpGfxRect32x32(x, y);
-		uint8 *shape = getShapePtr(_itemInHand+248);
+		uint8 *shape = getShapePtr(_itemInHand + 248);
 		for (int curY = y, height = 20; height > 0; height -= 2, curY += 2) {
 			restoreGfxRect32x32(x, y);
 			_screen->setNewShapeHeight(shape, height);
@@ -356,14 +356,14 @@ int KyraEngine_MR::o3_drawSceneShapeOnPage(EMCState *script) {
 
 int KyraEngine_MR::o3_checkInRect(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_checkInRect(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script,
-			stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+	       stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	const int x1 = stackPos(0);
 	const int y1 = stackPos(1);
 	const int x2 = stackPos(2);
 	const int y2 = stackPos(3);
 	int x = stackPos(4), y = stackPos(5);
 	if (_itemInHand >= 0) {
-		const int8 *desc = &_itemBuffer2[_itemInHand*2];
+		const int8 *desc = &_itemBuffer2[_itemInHand * 2];
 		x -= 12;
 		x += desc[0];
 		y -= 19;
@@ -379,7 +379,7 @@ int KyraEngine_MR::o3_checkInRect(EMCState *script) {
 int KyraEngine_MR::o3_updateConversations(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_updateConversations(%p) (%d)", (const void *)script, stackPos(0));
 	int dlgIndex = stackPos(0);
-	switch (_currentChapter-2) {
+	switch (_currentChapter - 2) {
 	case 0:
 		dlgIndex -= 34;
 		break;
@@ -401,7 +401,7 @@ int KyraEngine_MR::o3_updateConversations(EMCState *script) {
 	}
 
 	int convs[4];
-	Common::fill(convs, convs+4, -1);
+	Common::fill(convs, convs + 4, -1);
 
 	if (_currentChapter == 1) {
 		switch (_mainCharacter.dlgIndex) {
@@ -596,7 +596,7 @@ int KyraEngine_MR::o3_setSceneDim(EMCState *script) {
 
 int KyraEngine_MR::o3_setSceneAnimPosAndFrame(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_setSceneAnimPosAndFrame(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script,
-			stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+	       stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	SceneAnim &anim = _sceneAnims[stackPos(0)];
 	const int newX2 = stackPos(1);
 	const int newY2 = stackPos(2);
@@ -665,7 +665,7 @@ int KyraEngine_MR::o3_enableInventory(EMCState *script) {
 
 int KyraEngine_MR::o3_enterNewScene(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_enterNewScene(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0),
-		stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	       stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 
 	_screen->hideMouse();
 	enterNewScene(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
@@ -809,7 +809,7 @@ int KyraEngine_MR::o3_blockOutWalkableRegion(EMCState *script) {
 	if (y2 > _maskPageMaxY)
 		y2 = _maskPageMaxY;
 
-	_screen->blockOutRegion(x1, y1, x2-x1+1, y2-y1+1);
+	_screen->blockOutRegion(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
 	return 0;
 }
 
@@ -841,8 +841,8 @@ int KyraEngine_MR::o3_hideGoodConscience(EMCState *script) {
 
 int KyraEngine_MR::o3_defineSceneAnim(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_defineSceneAnim(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, '%s')",
-		(const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7),
-		stackPos(8), stackPos(9), stackPos(10), stackPos(11), stackPosString(12));
+	       (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7),
+	       stackPos(8), stackPos(9), stackPos(10), stackPos(11), stackPosString(12));
 	const int animId = stackPos(0);
 	SceneAnim &anim = _sceneAnims[animId];
 
@@ -942,7 +942,7 @@ int KyraEngine_MR::o3_setConversationState(EMCState *script) {
 	const int dlgIndex = stackPos(1);
 	const int value = stackPos(2);
 
-	switch (_currentChapter-2) {
+	switch (_currentChapter - 2) {
 	case 0:
 		id -= 34;
 		break;
@@ -971,7 +971,7 @@ int KyraEngine_MR::o3_getConversationState(EMCState *script) {
 	int id = stackPos(0);
 	const int dlgIndex = _mainCharacter.dlgIndex;
 
-	switch (_currentChapter-2) {
+	switch (_currentChapter - 2) {
 	case 0:
 		id -= 34;
 		break;
@@ -1062,10 +1062,10 @@ int KyraEngine_MR::o3_customChatFinish(EMCState *script) {
 
 int KyraEngine_MR::o3_setupSceneAnimObject(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_setupSceneAnimObject(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %s)", (const void *)script,
-			stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9),
-			stackPos(10), stackPos(11), stackPosString(12));
+	       stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9),
+	       stackPos(10), stackPos(11), stackPosString(12));
 	setupSceneAnimObject(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8),
-						stackPos(9), stackPos(10), stackPos(11), stackPosString(12));
+	                     stackPos(9), stackPos(10), stackPos(11), stackPosString(12));
 	return 0;
 }
 

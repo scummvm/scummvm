@@ -16,8 +16,12 @@ static const char *const k1IntroStringsDOSCDItalian[51] = {
 	"...Ora ti ho trasformato in pietra          ",
 	"...tutto tranne i tuoi occhi  ",
 	"Non verso lacrime per Kyrandia...        ",
-	"...per""\x95"" non posso negarti le tue.             ",
-	"Malcolm il Buffone ""\x8A"" libero! ",
+	"...per"
+	"\x95"
+	" non posso negarti le tue.             ",
+	"Malcolm il Buffone "
+	"\x8A"
+	" libero! ",
 	"Ora controlla la Kyragemma...         ",
 	"..\nfonte di tutta la magia di Kyrandia!             ",
 	"",
@@ -28,7 +32,13 @@ static const char *const k1IntroStringsDOSCDItalian[51] = {
 	"Non saltare sull'albero!   ",
 	"Non saltare su QUESTO albero, piccoletto!   ",
 	"Boo!",
-	"Cos""\x8D"" ""\x8A"" pi""\x97"" divertente!        ",
+	"Cos"
+	"\x8D"
+	" "
+	"\x8A"
+	" pi"
+	"\x97"
+	" divertente!        ",
 	"...non credete? ",
 	"Ha ha HA...",
 	"Le mie dita! Riesco a muoverle!                   ",
@@ -36,18 +46,26 @@ static const char *const k1IntroStringsDOSCDItalian[51] = {
 	"Brandon!",
 	"NONNO!!! Ce l'abbiamo fatta!",
 	"NO! Ce l'HAI fatta! ",
-	"Lunga vita al R""\x8A"" Brandon! ",
+	"Lunga vita al R"
+	"\x8A"
+	" Brandon! ",
 	"Lunga vita ai Mistici Reali!              ",
 	"Ed ora, Ricostruiamo Kyrandia insieme!     ",
 	"Ben detto! ",
 	"Come prima cosa...",
 	"...proclamo i Sandali, calzatura ufficiale di Kyrandia!!!                    ",
 	"Ben fatto, Brandon!",
-	"La terra non piange pi""\x97""...",
+	"La terra non piange pi"
+	"\x97"
+	"...",
 	"Ci hai salvato tutti!      ",
 	"Cara Brynn...    ",
-	"Malcolm ""\x8A"" fuggito!  ",
-	"Presto verr""\x85"" a prendermi.      ",
+	"Malcolm "
+	"\x8A"
+	" fuggito!  ",
+	"Presto verr"
+	"\x85"
+	" a prendermi.      ",
 	"Ti prego, aiuta Brandon...        ",
 	""
 };
@@ -188,14 +206,20 @@ static const char *const k1DroppedStringsDOSCDItalian[2] = {
 static const StringListProvider k1DroppedStringsDOSCDItalianProvider = { ARRAYSIZE(k1DroppedStringsDOSCDItalian), k1DroppedStringsDOSCDItalian };
 
 static const char *const k1NoDropStringsDOSCDItalian[2] = {
-	"Non puoi pi""\x97"" lasciare nulla qui.          ",
-	"Non puoi metterlo l""\x8D"".           "
+	"Non puoi pi"
+	"\x97"
+	" lasciare nulla qui.          ",
+	"Non puoi metterlo l"
+	"\x8D"
+	".           "
 };
 
 static const StringListProvider k1NoDropStringsDOSCDItalianProvider = { ARRAYSIZE(k1NoDropStringsDOSCDItalian), k1NoDropStringsDOSCDItalian };
 
 static const char *const k1PutDownStringDOSCDItalian[1] = {
-	"Forse devo prima mettere gi""\x97"" questo.         "
+	"Forse devo prima mettere gi"
+	"\x97"
+	" questo.         "
 };
 
 static const StringListProvider k1PutDownStringDOSCDItalianProvider = { ARRAYSIZE(k1PutDownStringDOSCDItalian), k1PutDownStringDOSCDItalian };
@@ -207,20 +231,28 @@ static const char *const k1WaitAmuletStringDOSCDItalian[1] = {
 static const StringListProvider k1WaitAmuletStringDOSCDItalianProvider = { ARRAYSIZE(k1WaitAmuletStringDOSCDItalian), k1WaitAmuletStringDOSCDItalian };
 
 static const char *const k1BlackJewelStringDOSCDItalian[1] = {
-	"E' un gioiello, ma perch""\x8A"" mai ""\x8A"" nero?     "
+	"E' un gioiello, ma perch"
+	"\x8A"
+	" mai "
+	"\x8A"
+	" nero?     "
 };
 
 static const StringListProvider k1BlackJewelStringDOSCDItalianProvider = { ARRAYSIZE(k1BlackJewelStringDOSCDItalian), k1BlackJewelStringDOSCDItalian };
 
 static const char *const k1HealingTipStringDOSCDItalian[1] = {
-	"Grande, mi pu""\x95"" essere utile in caso mi dovessi ferire"
+	"Grande, mi pu"
+	"\x95"
+	" essere utile in caso mi dovessi ferire"
 };
 
 static const StringListProvider k1HealingTipStringDOSCDItalianProvider = { ARRAYSIZE(k1HealingTipStringDOSCDItalian), k1HealingTipStringDOSCDItalian };
 
 static const char *const k1PoisonGoneStringDOSCDItalian[2] = {
 	"Grande!",
-	"L'effetto del veleno ""\x8A"" sparito!  "
+	"L'effetto del veleno "
+	"\x8A"
+	" sparito!  "
 };
 
 static const StringListProvider k1PoisonGoneStringDOSCDItalianProvider = { ARRAYSIZE(k1PoisonGoneStringDOSCDItalian), k1PoisonGoneStringDOSCDItalian };
@@ -229,7 +261,8 @@ static const char *const k1ThePoisonStringsDOSCDItalian[4] = {
 	"Il veleno...",
 	"Non riesco a respirare...  ",
 	"Non mi sento molto bene...    ",
-	"\xAD""E' un serpente velenoso!      "
+	"\xAD"
+	"E' un serpente velenoso!      "
 };
 
 static const StringListProvider k1ThePoisonStringsDOSCDItalianProvider = { ARRAYSIZE(k1ThePoisonStringsDOSCDItalian), k1ThePoisonStringsDOSCDItalian };
@@ -255,13 +288,19 @@ static const char *const k1MagicJewelStringsDOSCDItalian[1] = {
 static const StringListProvider k1MagicJewelStringsDOSCDItalianProvider = { ARRAYSIZE(k1MagicJewelStringsDOSCDItalian), k1MagicJewelStringsDOSCDItalian };
 
 static const char *const k1FlaskFullStringDOSCDItalian[1] = {
-	"La Bottiglia ""\x8A""  gi""\xA0"" piena    "
+	"La Bottiglia "
+	"\x8A"
+	"  gi"
+	"\xA0"
+	" piena    "
 };
 
 static const StringListProvider k1FlaskFullStringDOSCDItalianProvider = { ARRAYSIZE(k1FlaskFullStringDOSCDItalian), k1FlaskFullStringDOSCDItalian };
 
 static const char *const k1FullFlaskStringDOSCDItalian[4] = {
-	"La bottiglietta ""\x8A"" piena\rdi acqua gassata     ",
+	"La bottiglietta "
+	"\x8A"
+	" piena\rdi acqua gassata     ",
 	"L'ampolla contiene acqua salata    ",
 	"L'ampolla contiene acqua minerale     ",
 	"Acqua magica"
@@ -276,7 +315,9 @@ static const char *const k1OutroHomeStringDOSCDItalian[1] = {
 static const StringListProvider k1OutroHomeStringDOSCDItalianProvider = { ARRAYSIZE(k1OutroHomeStringDOSCDItalian), k1OutroHomeStringDOSCDItalian };
 
 static const char *const k1VeryCleverStringDOSCDItalian[1] = {
-	"Intelligente! ma ""\x8A"" tutto inutile...   "
+	"Intelligente! ma "
+	"\x8A"
+	" tutto inutile...   "
 };
 
 static const StringListProvider k1VeryCleverStringDOSCDItalianProvider = { ARRAYSIZE(k1VeryCleverStringDOSCDItalian), k1VeryCleverStringDOSCDItalian };
@@ -312,8 +353,36 @@ static const char *const k1GUIStringsDOSCDItalian[35] = {
 	"OFF      ",
 	"Si ",
 	"No ",
-	"?""\x0F"")+F""\x0F"")+L""\x0F"")+T""\x0F"")+[""\x0F"")+h""\x0F"")+y""\x0F"")+""\x89\x0F"")+""\x97\x0F"")+""\x9D\x0F"")+""\xA5\x0F"")+""\xAC\x0F"")+Velocit""\x85"" Camminata    ",
-	"Velocit""\x85"" Testo  ",
+	"?"
+	"\x0F"
+	")+F"
+	"\x0F"
+	")+L"
+	"\x0F"
+	")+T"
+	"\x0F"
+	")+["
+	"\x0F"
+	")+h"
+	"\x0F"
+	")+y"
+	"\x0F"
+	")+"
+	"\x89\x0F"
+	")+"
+	"\x97\x0F"
+	")+"
+	"\x9D\x0F"
+	")+"
+	"\xA5\x0F"
+	")+"
+	"\xAC\x0F"
+	")+Velocit"
+	"\x85"
+	" Camminata    ",
+	"Velocit"
+	"\x85"
+	" Testo  ",
 	"Musica         ",
 	"Effetti Sonori",
 	"Voce/Testo"
@@ -343,4 +412,3 @@ static const char *const k1ConfigStringsDOSCDItalian[12] = {
 };
 
 static const StringListProvider k1ConfigStringsDOSCDItalianProvider = { ARRAYSIZE(k1ConfigStringsDOSCDItalian), k1ConfigStringsDOSCDItalian };
-

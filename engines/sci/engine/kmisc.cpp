@@ -23,21 +23,21 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 
-#include "sci/sci.h"
 #include "sci/debug.h"
-#include "sci/event.h"
-#include "sci/engine/state.h"
-#include "sci/engine/kernel.h"
 #include "sci/engine/gc.h"
+#include "sci/engine/kernel.h"
+#include "sci/engine/state.h"
+#include "sci/event.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/palette.h"
+#include "sci/sci.h"
 #ifdef ENABLE_SCI32
-#include "sci/graphics/cursor32.h"
+#	include "sci/graphics/cursor32.h"
 #endif
-#include "sci/graphics/maciconbar.h"
 #include "sci/console.h"
+#include "sci/graphics/maciconbar.h"
 #ifdef ENABLE_SCI32
-#include "sci/engine/hoyle5poker.h"
+#	include "sci/engine/hoyle5poker.h"
 #endif
 
 namespace Sci {
@@ -104,8 +104,7 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 		// #3109139 (which occurs because a police officer instantly teleports
 		// just before Roger exits and shoots him). We throttle these scenes a
 		// bit more, in order to prevent timer bugs related to the sequel police.
-		if (s->currentRoomNumber() == 405 || s->currentRoomNumber() == 406 ||
-			s->currentRoomNumber() == 410 || s->currentRoomNumber() == 411) {
+		if (s->currentRoomNumber() == 405 || s->currentRoomNumber() == 406 || s->currentRoomNumber() == 410 || s->currentRoomNumber() == 411) {
 			s->_throttleTrigger = true;
 			neededSleep = 60;
 		}
@@ -238,20 +237,19 @@ reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 		error("kGetTime called in SCI0 with mode %d (expected 0 or 1)", mode);
 
 	switch (mode) {
-	case KGETTIME_TICKS :
+	case KGETTIME_TICKS:
 		retval = g_sci->getTickCount();
 		debugC(kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
 		break;
-	case KGETTIME_TIME_12HOUR :
+	case KGETTIME_TIME_12HOUR:
 		retval = ((loc_time.tm_hour % 12) << 12) | (loc_time.tm_min << 6) | (loc_time.tm_sec);
 		debugC(kDebugLevelTime, "GetTime(12h) returns %d", retval);
 		break;
-	case KGETTIME_TIME_24HOUR :
+	case KGETTIME_TIME_24HOUR:
 		retval = (loc_time.tm_hour << 11) | (loc_time.tm_min << 5) | (loc_time.tm_sec >> 1);
 		debugC(kDebugLevelTime, "GetTime(24h) returns %d", retval);
 		break;
-	case KGETTIME_DATE :
-	{
+	case KGETTIME_DATE: {
 		// SCI0 late: Year since 1920 (0 = 1920, 1 = 1921, etc)
 		// SCI01 and newer: Year since 1980 (0 = 1980, 1 = 1981, etc)
 		// Atari ST SCI0 late versions use the newer base year.
@@ -272,12 +270,12 @@ reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 }
 
 enum {
-	K_MEMORY_ALLOCATE_CRITICAL		= 1,
-	K_MEMORY_ALLOCATE_NONCRITICAL   = 2,
-	K_MEMORY_FREE					= 3,
-	K_MEMORY_MEMCPY					= 4,
-	K_MEMORY_PEEK					= 5,
-	K_MEMORY_POKE					= 6
+	K_MEMORY_ALLOCATE_CRITICAL = 1,
+	K_MEMORY_ALLOCATE_NONCRITICAL = 2,
+	K_MEMORY_FREE = 3,
+	K_MEMORY_MEMCPY = 4,
+	K_MEMORY_PEEK = 5,
+	K_MEMORY_POKE = 6
 };
 
 reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
@@ -311,7 +309,7 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 		s->_segMan->allocDynmem(byteCount, "kMemory() non-critical", &s->r_acc);
 		break;
 	}
-	case K_MEMORY_FREE :
+	case K_MEMORY_FREE:
 		if (!s->_segMan->freeDynmem(argv[1])) {
 			if (g_sci->getGameId() == GID_QFG1VGA) {
 				// Ignore script bug in QFG1VGA, when closing any conversation dialog with esc
@@ -321,12 +319,12 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 			}
 		}
 		break;
-	case K_MEMORY_MEMCPY : {
+	case K_MEMORY_MEMCPY: {
 		int size = argv[3].toUint16();
 		s->_segMan->memcpy(argv[1], argv[2], size);
 		break;
 	}
-	case K_MEMORY_PEEK : {
+	case K_MEMORY_PEEK: {
 		if (!argv[1].getSegment()) {
 			// This occurs in KQ5CD when interacting with certain objects
 			warning("Attempt to peek invalid memory at %04x:%04x", PRINT_REG(argv[1]));
@@ -348,7 +346,7 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 		}
 		break;
 	}
-	case K_MEMORY_POKE : {
+	case K_MEMORY_POKE: {
 		SegmentRef ref = s->_segMan->dereference(argv[1]);
 
 		if (!ref.isValid() || ref.maxSize < 2) {
@@ -361,7 +359,7 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 				error("Attempt to poke memory reference %04x:%04x to %04x:%04x", PRINT_REG(argv[2]), PRINT_REG(argv[1]));
 				return s->r_acc;
 			}
-			WRITE_SCIENDIAN_UINT16(ref.raw, argv[2].getOffset());		// Amiga versions are BE
+			WRITE_SCIENDIAN_UINT16(ref.raw, argv[2].getOffset()); // Amiga versions are BE
 		} else {
 			if (ref.skipByte)
 				error("Attempt to poke memory at odd offset %04X:%04X", PRINT_REG(argv[1]));
@@ -419,9 +417,7 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 		s->_segMan->strcpy(data, "");
 	} else if (setting == "game") {
 		// Hoyle 5 startup, specifies the number of the game to start.
-		if (g_sci->getGameId() == GID_HOYLE5 &&
-			!g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 100)) &&
-			g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 700))) {
+		if (g_sci->getGameId() == GID_HOYLE5 && !g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 100)) && g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 700))) {
 			// Special case for Hoyle 5 Bridge: only one game is included (Bridge),
 			// so mimic the setting in 700.cfg and set the starting room number to 700.
 			s->_segMan->strcpy(data, "700");
@@ -457,7 +453,7 @@ reg_t kGetSierraProfileInt(EngineState *s, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
-	Common::String category = s->_segMan->getString(argv[0]);	// always "config"
+	Common::String category = s->_segMan->getString(argv[0]); // always "config"
 	category.toLowercase();
 	Common::String setting = s->_segMan->getString(argv[1]);
 	setting.toLowercase();
@@ -551,15 +547,15 @@ reg_t kMacPlatform(EngineState *s, int argc, reg_t *argv) {
 			g_sci->_gfxCursor32->setMacCursorRemapList(argc - 1, argv + 1);
 		else
 #endif
-		if (getSciVersion() != SCI_VERSION_1_1)
+		  if (getSciVersion() != SCI_VERSION_1_1)
 			warning("Unknown SCI1 kMacPlatform(0) call");
 		break;
 	case 4: // Handle icon bar code
 		return kIconBar(s, argc - 1, argv + 1);
 	case 7: // Unknown, but always return -1
 		return SIGNAL_REG;
-	case 1:	// Unknown, calls QuickDraw region functions (KQ5, QFG1VGA, Dr. Brain 1)
-		break;	// removed warning, as it produces a lot of spam in the console
+	case 1: // Unknown, calls QuickDraw region functions (KQ5, QFG1VGA, Dr. Brain 1)
+		break; // removed warning, as it produces a lot of spam in the console
 	case 2: // Unknown, "UseNextWaitEvent" (Various)
 	case 3: // Unknown, "ProcessOpenDocuments" (Various)
 	case 5: // Unknown, plays a sound (KQ7)
@@ -581,10 +577,10 @@ enum kSciPlatforms {
 
 reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 	enum Operation {
-		kPlatformUnknown        = 0,
-		kPlatformGetPlatform    = 4,
-		kPlatformUnknown5       = 5,
-		kPlatformIsHiRes        = 6,
+		kPlatformUnknown = 0,
+		kPlatformGetPlatform = 4,
+		kPlatformUnknown5 = 5,
+		kPlatformIsHiRes = 6,
 		kPlatformWin311OrHigher = 7
 	};
 
@@ -637,10 +633,10 @@ extern void showScummVMDialog(const Common::String &message);
 #ifdef ENABLE_SCI32
 reg_t kPlatform32(EngineState *s, int argc, reg_t *argv) {
 	enum Operation {
-		kGetPlatform   = 0,
-		kGetCDSpeed    = 1,
+		kGetPlatform = 0,
+		kGetCDSpeed = 1,
 		kGetColorDepth = 2,
-		kGetCDDrive    = 3
+		kGetCDDrive = 3
 	};
 
 	Operation operation;
@@ -662,12 +658,12 @@ reg_t kPlatform32(EngineState *s, int argc, reg_t *argv) {
 		case Common::kPlatformWindows:
 			return make_reg(0, kSciPlatformWindows);
 		case Common::kPlatformMacintosh:
-#ifdef ENABLE_SCI32_MAC
+#	ifdef ENABLE_SCI32_MAC
 			// For Mac versions, kPlatform(0) with other args has more functionality
 			if (argc > 1)
 				return kMacPlatform(s, argc - 1, argv + 1);
 			else
-#endif
+#	endif
 				return make_reg(0, kSciPlatformMacintosh);
 		default:
 			error("Unknown platform %d", g_sci->getPlatform());
@@ -703,13 +699,13 @@ reg_t kWinDLL(EngineState *s, int argc, reg_t *argv) {
 	Common::String dllName = s->_segMan->getString(argv[1]);
 
 	switch (operation) {
-	case 0:	// load DLL
+	case 0: // load DLL
 		// This is originally a call to LoadLibrary() and to the Watcom function GetIndirectFunctionHandle
-		return make_reg(0, 1000);	// fake ID for loaded DLL, normally returned from Windows LoadLibrary()
+		return make_reg(0, 1000); // fake ID for loaded DLL, normally returned from Windows LoadLibrary()
 	case 1: // free DLL
 		// In the original, FreeLibrary() was called here for the loaded DLL
 		return TRUE_REG;
-	case 2:	// call DLL function
+	case 2: // call DLL function
 		if (dllName == "PENGIN16.DLL") {
 			// Poker engine logic for Hoyle 5
 			// This is originally a call to the Watcom function InvokeIndirectFunction()
@@ -737,26 +733,24 @@ reg_t kKawaHacks(EngineState *s, int argc, reg_t *argv) {
 		uint16 from = argv[1].toUint16();
 		uint16 to = argv[2].toUint16();
 		Palette pal = g_sci->_gfxPalette16->_sysPalette;
-		for (uint16 i = from; i <= to; i++)
-		{
+		for (uint16 i = from; i <= to; i++) {
 			pal.colors[i].r = 255 - pal.colors[i].r;
 			pal.colors[i].g = 255 - pal.colors[i].g;
 			pal.colors[i].b = 255 - pal.colors[i].b;
 		}
 		g_sci->_gfxPalette16->set(&pal, true);
- 		return NULL_REG;
+		return NULL_REG;
 	}
- 	case 2: // SetTitleColors
+	case 2: // SetTitleColors
 		// Unused, would change the colors for plain windows' title bars.
 		return NULL_REG;
 	case 3: // IsDebug
- 		// Return 1 if running with an internal debugger, 2 if we have AddMenu support, 3 if both.
+		// Return 1 if running with an internal debugger, 2 if we have AddMenu support, 3 if both.
 		return make_reg(0, 3);
 	}
 	return NULL_REG;
 }
-reg_t kKawaDbugStr(EngineState *s, int argc, reg_t *argv)
-{
+reg_t kKawaDbugStr(EngineState *s, int argc, reg_t *argv) {
 	debug("%s", Common::String::format(s->_segMan->getString(argv[0]).c_str(), argc - 1, argv + 1).c_str());
 	return NULL_REG;
 }
@@ -784,19 +778,15 @@ reg_t kStub(EngineState *s, int argc, reg_t *argv) {
 
 	Common::String warningMsg;
 	if (kernelSubCallNr == -1) {
-		warningMsg = "Dummy function k" + kernel->getKernelName(kernelCallNr) +
-		             Common::String::format("[%x]", kernelCallNr);
+		warningMsg = "Dummy function k" + kernel->getKernelName(kernelCallNr) + Common::String::format("[%x]", kernelCallNr);
 	} else {
-		warningMsg = "Dummy function k" + kernel->getKernelName(kernelCallNr, kernelSubCallNr) +
-		             Common::String::format("[%x:%x]", kernelCallNr, kernelSubCallNr);
-
+		warningMsg = "Dummy function k" + kernel->getKernelName(kernelCallNr, kernelSubCallNr) + Common::String::format("[%x:%x]", kernelCallNr, kernelSubCallNr);
 	}
 
-	warningMsg += " invoked. Params: " +
-	              Common::String::format("%d", argc) + " (";
+	warningMsg += " invoked. Params: " + Common::String::format("%d", argc) + " (";
 
 	for (int i = 0; i < argc; i++) {
-		warningMsg +=  Common::String::format("%04x:%04x", PRINT_REG(argv[i]));
+		warningMsg += Common::String::format("%04x:%04x", PRINT_REG(argv[i]));
 		warningMsg += (i == argc - 1 ? ")" : ", ");
 	}
 

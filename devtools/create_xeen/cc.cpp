@@ -20,13 +20,13 @@
  *
  */
 
- // Disable symbol overrides so that we can use system headers.
+// Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
 #ifdef main
-#undef main
+#	undef main
 #endif // main
 
 #include "cc.h"

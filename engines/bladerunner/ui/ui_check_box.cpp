@@ -24,16 +24,16 @@
 
 #include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/game_constants.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/time.h"
-#include "bladerunner/game_constants.h"
 #include "bladerunner/ui/kia.h"
 #include "bladerunner/ui/kia_shapes.h"
 
 namespace BladeRunner {
 
 UICheckBox::UICheckBox(BladeRunnerEngine *vm, UIComponentCallback *valueChangedCallback, void *callbackData, Common::Rect rect, int style, bool isChecked)
-	: UIComponent(vm) {
+  : UIComponent(vm) {
 
 	_valueChangedCallback = valueChangedCallback;
 	_callbackData = callbackData;
@@ -53,7 +53,6 @@ UICheckBox::UICheckBox(BladeRunnerEngine *vm, UIComponentCallback *valueChangedC
 	_rect = rect;
 	_isChecked = isChecked;
 }
-
 
 void UICheckBox::draw(Graphics::Surface &surface) {
 	if (_rect.right > _rect.left && _rect.bottom > _rect.top) {
@@ -115,7 +114,7 @@ void UICheckBox::setChecked(bool isChecked) {
 
 void UICheckBox::handleMouseMove(int mouseX, int mouseY) {
 	if (_rect.contains(mouseX, mouseY)) {
-		if (!_hasFocus && _isEnabled && !_isPressed ) {
+		if (!_hasFocus && _isEnabled && !_isPressed) {
 			_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxTEXT3), 100, 0, 0, 50, 0);
 		}
 		_hasFocus = true;

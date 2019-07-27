@@ -32,10 +32,10 @@
 #include "pegasus/util.h"
 
 namespace Common {
-	class Error;
-	class ReadStream;
-	class WriteStream;
-	class SeekableReadStream;
+class Error;
+class ReadStream;
+class WriteStream;
+class SeekableReadStream;
 }
 
 namespace Pegasus {
@@ -86,11 +86,11 @@ struct ItemExtraInfo {
 // Individual inventory items are stored in these resource types.
 // Resource ID is item ID + kItemBaseResID.
 
-static const uint32 kItemInfoResType = MKTAG('I', 't', 'e', 'm');       // JMPItemInfoHandle
-static const uint32 kLeftAreaInfoResType = MKTAG('L', 'e', 'f', 't');   // ItemStateInfoHandle
+static const uint32 kItemInfoResType = MKTAG('I', 't', 'e', 'm'); // JMPItemInfoHandle
+static const uint32 kLeftAreaInfoResType = MKTAG('L', 'e', 'f', 't'); // ItemStateInfoHandle
 static const uint32 kMiddleAreaInfoResType = MKTAG('M', 'i', 'd', 'l'); // ItemStateInfoHandle
-static const uint32 kRightAreaInfoResType = MKTAG('R', 'g', 'h', 't');  // ItemStateInfoHandle
-static const uint32 kItemExtraInfoResType = MKTAG('I', 'X', 't', 'r');	 // ItemExtraInfoHandle
+static const uint32 kRightAreaInfoResType = MKTAG('R', 'g', 'h', 't'); // ItemStateInfoHandle
+static const uint32 kItemExtraInfoResType = MKTAG('I', 'X', 't', 'r'); // ItemExtraInfoHandle
 
 static const uint16 kItemBaseResID = 128;
 
@@ -344,7 +344,7 @@ public:
 
 protected:
 	NeighborhoodID _itemNeighborhood;
-	RoomID	_itemRoom;
+	RoomID _itemRoom;
 	DirectionConstant _itemDirection;
 	ActorID _itemOwnerID;
 	WeightType _itemWeight;

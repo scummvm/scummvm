@@ -33,6 +33,7 @@ class LogicHErace : public LogicHE {
 private:
 	float *_userData;
 	double *_userDataD;
+
 public:
 	LogicHErace(ScummEngine_v90he *vm);
 	~LogicHErace();
@@ -57,7 +58,8 @@ private:
 	void op_sub3(float arg);
 };
 
-LogicHErace::LogicHErace(ScummEngine_v90he *vm) : LogicHE(vm) {
+LogicHErace::LogicHErace(ScummEngine_v90he *vm)
+  : LogicHE(vm) {
 	// Originally it used 0x930 and stored both floats and doubles inside
 	_userData = (float *)calloc(550, sizeof(float));
 	_userDataD = (double *)calloc(30, sizeof(double));
@@ -123,7 +125,6 @@ int32 LogicHErace::dispatch(int op, int numArgs, int32 *args) {
 	default:
 		res = 0;
 		break;
-
 	}
 
 	return res;
@@ -165,10 +166,10 @@ int32 LogicHErace::op_1100(int32 *args) {
 	// _userData[532] seems to be some kind of global scale factor
 	_userData[532] = (float)args[10];
 
-	_userData[524] = (float)args[8];	// not used
-	_userData[525] = (float)args[9];	// not used
-	_userData[522] = (float)args[6] / args[10];	// not used
-	_userData[523] = (float)args[7] / args[10];	// only used to compute 528 and 529
+	_userData[524] = (float)args[8]; // not used
+	_userData[525] = (float)args[9]; // not used
+	_userData[522] = (float)args[6] / args[10]; // not used
+	_userData[523] = (float)args[7] / args[10]; // only used to compute 528 and 529
 
 	// The following two are some kind of scale factors
 	_userData[526] = (float)args[6] / args[8] / args[10];
@@ -313,7 +314,7 @@ int32 LogicHErace::op_1140(int32 *args) {
 
 	// We start by normalizing the vector described by arg2 and arg3.
 	// So compute its length and divide the x and y coordinates
-	const double sq = sqrt(x*x + y*y);
+	const double sq = sqrt(x * x + y * y);
 	x /= sq;
 	y /= sq;
 
@@ -324,11 +325,11 @@ int32 LogicHErace::op_1140(int32 *args) {
 	double projX = args[0] - 2 * scalarProduct * x;
 	double projY = args[1] - 2 * scalarProduct * y;
 
-	projX = projX * 20.0 / 23.0;	// FIXME: Why is this here?
+	projX = projX * 20.0 / 23.0; // FIXME: Why is this here?
 
 	writeScummVar(108, (int32)projX);
 
-	if (args[3] >= 0)	// FIXME: Why is this here?
+	if (args[3] >= 0) // FIXME: Why is this here?
 		projY = projY * 5.0 / 6.0;
 
 	writeScummVar(109, (int32)projY);

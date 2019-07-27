@@ -20,13 +20,13 @@
  *
  */
 
-#include "sci/sci.h"
 #include "sci/engine/state.h"
+#include "sci/sci.h"
 
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
-#include "sci/sound/midiparser_sci.h"
 #include "sci/sound/drivers/mididriver.h"
+#include "sci/sound/midiparser_sci.h"
 
 namespace Sci {
 
@@ -43,8 +43,8 @@ enum SciMidiCommands {
 
 //  MidiParser_SCI
 //
-MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion, SciMusic *music) :
-	MidiParser() {
+MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion, SciMusic *music)
+  : MidiParser() {
 	_soundVersion = soundVersion;
 	_music = music;
 	// mididata contains delta in 1/60th second
@@ -210,7 +210,7 @@ void MidiParser_SCI::midiMixChannels() {
 				if (!validateNextRead(channel))
 					goto end;
 				midiParam = channel->data[channel->curPos++];
-			} else {// running status
+			} else { // running status
 				midiParam = midiCommand;
 				midiCommand = channel->prev;
 			}
@@ -234,7 +234,7 @@ void MidiParser_SCI::midiMixChannels() {
 
 end:
 	// Insert stop event
-	*outData++ = 0;    // Delta
+	*outData++ = 0; // Delta
 	*outData++ = 0xFF; // Meta event
 	*outData++ = 0x2F; // End of track (EOT)
 	*outData++ = 0x00;
@@ -410,11 +410,11 @@ void MidiParser_SCI::sendInitCommands() {
 	// Reset all the parameters of the channels used by this song
 	for (int i = 0; i < 16; ++i) {
 		if (_channelUsed[i]) {
-			sendToDriver(0xB0 | i, 0x07, 127);	// Reset volume to maximum
-			sendToDriver(0xB0 | i, 0x0A, 64);	// Reset panning to center
-			sendToDriver(0xB0 | i, 0x40, 0);	// Reset hold pedal to none
-			sendToDriver(0xB0 | i, 0x4E, 0);	// Reset velocity to none
-			sendToDriver(0xE0 | i,    0, 64);	// Reset pitch wheel to center
+			sendToDriver(0xB0 | i, 0x07, 127); // Reset volume to maximum
+			sendToDriver(0xB0 | i, 0x0A, 64); // Reset panning to center
+			sendToDriver(0xB0 | i, 0x40, 0); // Reset hold pedal to none
+			sendToDriver(0xB0 | i, 0x4E, 0); // Reset velocity to none
+			sendToDriver(0xE0 | i, 0, 64); // Reset pitch wheel to center
 		}
 	}
 }
@@ -460,7 +460,6 @@ void MidiParser_SCI::sendToDriver(uint32 midi) {
 		channelVolume = channelVolume * _volume / 127;
 		midi = (midi & 0xFFFF) | ((channelVolume & 0xFF) << 16);
 	}
-
 
 	// Channel remapping
 	byte midiChannel = midi & 0xf;
@@ -641,10 +640,10 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			break;
 		default:
 			warning(
-					"MidiParser_SCI::parseNextEvent: Unsupported event code %x",
-					info.event);
+			  "MidiParser_SCI::parseNextEvent: Unsupported event code %x",
+			  info.event);
 		} // // System Common, Meta or SysEx event
-	}// switch (info.command())
+	} // switch (info.command())
 }
 
 bool MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
@@ -655,7 +654,7 @@ bool MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 
 	switch (info.command()) {
 	case 0xC:
-		if (info.channel() == 0xF) {// SCI special case
+		if (info.channel() == 0xF) { // SCI special case
 			if (info.basic.param1 != kSetSignalLoop) {
 				// At least in kq5/french&mac the first scene in the intro has
 				// a song that sets signal to 4 immediately on tick 0. Signal
@@ -720,7 +719,7 @@ bool MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 		// Handle common special events
 		switch (info.basic.param1) {
 		case kSetReverb:
-			if (info.basic.param2 == 127)		// Set global reverb instead
+			if (info.basic.param2 == 127) // Set global reverb instead
 				_pSnd->reverb = _music->getGlobalReverb();
 			else
 				_pSnd->reverb = info.basic.param2;
@@ -759,7 +758,6 @@ bool MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 					}
 					_pSnd->dataInc += inc;
 					debugC(4, kDebugLevelSound, "datainc %04x", inc);
-
 				}
 				return true;
 			case kResetOnPause:
@@ -773,17 +771,17 @@ bool MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 				// Obscure SCI commands - ignored
 				return true;
 			// Standard MIDI commands
-			case 0x01:	// mod wheel
-			case 0x04:	// foot controller
-			case 0x07:	// channel volume
-			case 0x0A:	// pan
-			case 0x0B:	// expression
-			case 0x40:	// sustain
-			case 0x79:	// reset all
-			case 0x7B:	// notes off
+			case 0x01: // mod wheel
+			case 0x04: // foot controller
+			case 0x07: // channel volume
+			case 0x0A: // pan
+			case 0x0B: // expression
+			case 0x40: // sustain
+			case 0x79: // reset all
+			case 0x7B: // notes off
 				// These are all handled by the music driver, so ignore them
 				break;
-			case 0x4B:	// voice mapping
+			case 0x4B: // voice mapping
 				// TODO: is any support for this needed at the MIDI parser level?
 				warning("Unhanded SCI MIDI command 0x%x - voice mapping (parameter %d)", info.basic.param1, info.basic.param2);
 				return true;
@@ -791,13 +789,12 @@ bool MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 				warning("Unhandled SCI MIDI command 0x%x (parameter %d)", info.basic.param1, info.basic.param2);
 				return true;
 			}
-
 		}
 
 		// Break to let parent handle the rest.
 		break;
 	case 0xF: // META event
-		if (info.ext.type == 0x2F) {// end of track reached
+		if (info.ext.type == 0x2F) { // end of track reached
 			if (_pSnd->loop)
 				_pSnd->loop--;
 			// QFG3 abuses the hold flag. Its scripts call kDoSoundSetHold,
@@ -825,7 +822,6 @@ bool MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 		// Break to let parent handle the rest.
 		break;
 	}
-
 
 	// Let parent handle the rest
 	return MidiParser::processEvent(info, fireEvents);
@@ -855,7 +851,7 @@ void MidiParser_SCI::allNotesOff() {
 	// Turn off all active notes
 	for (i = 0; i < 128; ++i) {
 		for (j = 0; j < 16; ++j) {
-			if ((_activeNotes[i] & (1 << j)) && (_channelRemap[j] != -1)){
+			if ((_activeNotes[i] & (1 << j)) && (_channelRemap[j] != -1)) {
 				sendToDriver(0x80 | j, i, 0);
 			}
 		}
@@ -925,7 +921,7 @@ void MidiParser_SCI::remapChannel(int channel, int devChannel) {
 	if (devChannel == -1)
 		return;
 
-//	debug("  restoring state: channel %d on devChannel %d", channel, devChannel);
+	//	debug("  restoring state: channel %d on devChannel %d", channel, devChannel);
 
 	// restore state
 	ChannelState &s = _channelState[channel];

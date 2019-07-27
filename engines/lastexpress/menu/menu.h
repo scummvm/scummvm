@@ -91,12 +91,12 @@ private:
 
 	// Start menu overlay elements
 	enum StartMenuOverlay {
-		kOverlayTooltip,            // 0
+		kOverlayTooltip, // 0
 		kOverlayEggButtons,
 		kOverlayButtons,
 		kOverlayAcorn,
 		kOverlayCity1,
-		kOverlayCity2,              // 5
+		kOverlayCity2, // 5
 		kOverlayCity3,
 		kOverlayCredits
 	};
@@ -122,7 +122,6 @@ private:
 	bool _isShowingCredits;
 	bool _isGameStarted;
 	bool _isShowingMenu;
-
 
 	uint16 _creditsSequenceIndex;
 
@@ -174,8 +173,8 @@ private:
 
 	//////////////////////////////////////////////////////////////////////////
 	// Time
-	uint32 _currentTime;  // current game time
-	uint32 _lowerTime;    // lower time value
+	uint32 _currentTime; // current game time
+	uint32 _lowerTime; // lower time value
 	uint32 _time;
 
 	uint32 _currentIndex; // current savegame entry

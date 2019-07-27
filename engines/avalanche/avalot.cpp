@@ -29,10 +29,10 @@
 
 #include "avalanche/avalanche.h"
 
+#include "common/config-manager.h"
 #include "common/math.h"
 #include "common/random.h"
 #include "common/system.h"
-#include "common/config-manager.h"
 #include "graphics/palette.h"
 
 namespace Avalanche {
@@ -75,8 +75,8 @@ namespace Avalanche {
 		7     = wall with door and candles,
 		F     = straight-through corridor. */
 
-const char AvalancheEngine::kSpludwicksOrder[3] = {kObjectOnion, kObjectInk, kObjectMushroom};
-const uint16 AvalancheEngine::kNotes[12] = {196, 220, 247, 262, 294, 330, 350, 392, 440, 494, 523, 587};
+const char AvalancheEngine::kSpludwicksOrder[3] = { kObjectOnion, kObjectInk, kObjectMushroom };
+const uint16 AvalancheEngine::kNotes[12] = { 196, 220, 247, 262, 294, 330, 350, 392, 440, 494, 523, 587 };
 
 Room AvalancheEngine::_whereIs[29] = {
 	// The Lads
@@ -109,10 +109,8 @@ Room AvalancheEngine::_whereIs[29] = {
 	kRoomYours, // Arkata
 	kRoomGeidas, // Geida
 	kRoomDummy, // nobody allocated here!
-	kRoomWiseWomans  // The Wise Woman.
+	kRoomWiseWomans // The Wise Woman.
 };
-
-
 
 void AvalancheEngine::handleKeyDown(Common::Event &event) {
 	_sound->click();
@@ -149,7 +147,7 @@ void AvalancheEngine::handleKeyDown(Common::Event &event) {
 			break;
 		default:
 			break;
-	}
+		}
 
 	switch (event.kbd.keycode) {
 	case Common::KEYCODE_UP:
@@ -281,9 +279,9 @@ void AvalancheEngine::init() {
  */
 void AvalancheEngine::callVerb(VerbCode id) {
 	if (id == _parser->kPardon) {
-		Common::String tmpStr = Common::String::format("The f5 key lets you do a particular action in certain " \
-			"situations. However, at the moment there is nothing assigned to it. You may press alt-A to see " \
-			"what the current setting of this key is.");
+		Common::String tmpStr = Common::String::format("The f5 key lets you do a particular action in certain "
+		                                               "situations. However, at the moment there is nothing assigned to it. You may press alt-A to see "
+		                                               "what the current setting of this key is.");
 		_dialogs->displayText(tmpStr);
 	} else
 		_parser->doVerb(id);
@@ -320,7 +318,7 @@ void AvalancheEngine::unScramble() {
 void AvalancheEngine::loadAlso(byte num) {
 	for (int i = 0; i < 31; i++) {
 		for (int j = 0; j < 2; j++) {
-			if (_also[i][j] != nullptr)  {
+			if (_also[i][j] != nullptr) {
 				delete _also[i][j];
 				_also[i][j] = nullptr;
 			}
@@ -388,7 +386,7 @@ void AvalancheEngine::loadAlso(byte num) {
 	}
 
 	_flags.clear();
-	for (int i = 0;  i < 26; i++)
+	for (int i = 0; i < 26; i++)
 		_flags += file.readByte();
 
 	int16 size = file.readByte();
@@ -402,7 +400,7 @@ void AvalancheEngine::loadAlso(byte num) {
 	for (int i = 0; i < _lineNum; i++) {
 		// We had to check if the lines are within the borders of the screen.
 		if ((_lines[i]._x1 >= 0) && (_lines[i]._x1 < kScreenWidth) && (_lines[i]._y1 >= 0) && (_lines[i]._y1 < kScreenHeight)
-			&& (_lines[i]._x2 >= 0) && (_lines[i]._x2 < kScreenWidth) && (_lines[i]._y2 >= 0) && (_lines[i]._y2 < kScreenHeight))
+		    && (_lines[i]._x2 >= 0) && (_lines[i]._x2 < kScreenWidth) && (_lines[i]._y2 >= 0) && (_lines[i]._y2 < kScreenHeight))
 			_graphics->setAlsoLine(_lines[i]._x1, _lines[i]._y1, _lines[i]._x2, _lines[i]._y2, _lines[i]._color);
 	}
 	CursorMan.showMouse(true);
@@ -469,7 +467,7 @@ void AvalancheEngine::exitRoom(byte x) {
 	switch (x) {
 	case kRoomSpludwicks:
 		_timer->loseTimer(Timer::kReasonAvariciusTalks);
-		 _avariciusTalk = 0;
+		_avariciusTalk = 0;
 		// He doesn't HAVE to be talking for this to work. It just deletes it IF it exists.
 		break;
 	case kRoomBridge:
@@ -698,13 +696,13 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 		if (ped > 0) {
 			AnimationType *spr1 = _animation->_sprites[1];
 			switch (_cardiffQuestionNum) {
-			case 0 : // You've answered NONE of his questions.
+			case 0: // You've answered NONE of his questions.
 				spr1->init(9, false);
 				_animation->appearPed(1, 1);
 				spr1->walkTo(2);
 				_timer->addTimer(47, Timer::kProcCardiffSurvey, Timer::kReasonCardiffsurvey);
 				break;
-			case 5 :
+			case 5:
 				_magics[1]._operation = kMagicNothing;
 				break; // You've answered ALL his questions. => nothing happens.
 			default: // You've answered SOME of his questions.
@@ -762,7 +760,7 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 
 	case kRoomArgentPub:
 		if (_wonNim)
-			_background->draw(-1, -1, 0);   // No lute by the settle.
+			_background->draw(-1, -1, 0); // No lute by the settle.
 		_malagauche = 0; // Ready to boot Malagauche
 		if (_givenBadgeToIby) {
 			_background->draw(-1, -1, 7);
@@ -813,7 +811,7 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 		break;
 
 	case kRoomOutsideArgentPub:
-		if (ped == 2)  {
+		if (ped == 2) {
 			_background->draw(-1, -1, 5);
 			_graphics->refreshBackground();
 			_sequence->startMusicRoomSeq();
@@ -833,8 +831,7 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 
 		spr1->_callEachStepFl = true;
 		spr1->_eachStepProc = Animation::kProcFaceAvvy; // She always faces Avvy.
-		}
-		break;
+	} break;
 
 	case kRoomInsideCardiffCastle:
 		if (ped > 0) {
@@ -853,7 +850,7 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 		break;
 
 	case kRoomAvvysGarden:
-		if (ped == 1)  {
+		if (ped == 1) {
 			_background->draw(-1, -1, 1);
 			_graphics->refreshBackground();
 			_sequence->startGardenSeq();
@@ -863,7 +860,7 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 	case kRoomEntranceHall:
 	case kRoomInsideAbbey:
 	case kRoomYourHall:
-		if (ped == 2)  {
+		if (ped == 2) {
 #if 0
 			// It was the original:
 			_celer->show_one(-1, -1, 2);
@@ -958,7 +955,7 @@ void AvalancheEngine::drawToolbar() {
 
 void AvalancheEngine::drawScore() {
 	uint16 score = _score;
-	int8 numbers[3] = {0, 0, 0};
+	int8 numbers[3] = { 0, 0, 0 };
 	for (int i = 0; i < 2; i++) {
 		byte divisor = 1;
 		for (int j = 0; j < (2 - i); j++)
@@ -1098,7 +1095,7 @@ void AvalancheEngine::guideAvvy(Common::Point cursorPos) {
 	case 8:
 		_animation->setMoveSpeed(0, kDirDownRight);
 		break;
-	}    // No other values are possible.
+	} // No other values are possible.
 
 	drawDirection();
 }
@@ -1301,7 +1298,7 @@ uint16 AvalancheEngine::bearing(byte whichPed) {
 
 	int16 deltaX = avvy->_x - curPed->_x;
 	int16 deltaY = avvy->_y - curPed->_y;
-	uint16 result = Common::rad2deg<float,uint16>(atan((float)deltaY / (float)deltaX)); // TODO: Would atan2 be preferable?
+	uint16 result = Common::rad2deg<float, uint16>(atan((float)deltaY / (float)deltaX)); // TODO: Would atan2 be preferable?
 	if (avvy->_x < curPed->_x) {
 		return result + 90;
 	} else {
@@ -1485,28 +1482,28 @@ bool AvalancheEngine::decreaseMoney(uint16 amount) {
 
 Common::String AvalancheEngine::getName(People whose) {
 	static const char lads[17][20] = {
-		"Avalot",     "Spludwick",  "Crapulus",  "Dr. Duck",  "Malagauche",
-		"Friar Tuck", "Robin Hood", "Cwytalot",  "du Lustie", "the Duke of Cardiff",
-		"Dogfood",    "A trader",   "Ibythneth", "Ayles",     "Port",
-		"Spurge",     "Jacques"
+		"Avalot", "Spludwick", "Crapulus", "Dr. Duck", "Malagauche",
+		"Friar Tuck", "Robin Hood", "Cwytalot", "du Lustie", "the Duke of Cardiff",
+		"Dogfood", "A trader", "Ibythneth", "Ayles", "Port",
+		"Spurge", "Jacques"
 	};
 
-	static const char lasses[4][15] = {"Arkata", "Geida", "\0xB1", "the Wise Woman"};
+	static const char lasses[4][15] = { "Arkata", "Geida", "\0xB1", "the Wise Woman" };
 
 	if (whose <= kPeopleJacques)
 		return Common::String(lads[whose - kPeopleAvalot]);
 	else if ((whose >= kPeopleArkata) && (whose <= kPeopleWisewoman))
 		return Common::String(lasses[whose - kPeopleArkata]);
 	else
-		error("getName() - Unexpected character id %d", (byte) whose);
+		error("getName() - Unexpected character id %d", (byte)whose);
 }
 
 Common::String AvalancheEngine::getItem(byte which) {
 	static const char items[kObjectNum][18] = {
-		"some wine",       "your money-bag", "your bodkin", "a potion",          "a chastity belt",
-		"a crossbow bolt", "a crossbow",     "a lute",      "a pilgrim's badge", "a mushroom",
-		"a key",           "a bell",         "a scroll",    "a pen",             "some ink",
-		"your clothes",    "a habit",        "an onion"
+		"some wine", "your money-bag", "your bodkin", "a potion", "a chastity belt",
+		"a crossbow bolt", "a crossbow", "a lute", "a pilgrim's badge", "a mushroom",
+		"a key", "a bell", "a scroll", "a pen", "some ink",
+		"your clothes", "a habit", "an onion"
 	};
 
 	Common::String result;

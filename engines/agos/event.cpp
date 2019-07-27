@@ -23,8 +23,8 @@
 #include "agos/agos.h"
 #include "agos/animation.h"
 #include "agos/debugger.h"
-#include "agos/sound.h"
 #include "agos/intern.h"
+#include "agos/sound.h"
 
 #include "common/events.h"
 #include "common/system.h"
@@ -35,7 +35,6 @@
 #include "gui/about.h"
 
 #include "graphics/surface.h"
-
 
 namespace AGOS {
 
@@ -210,7 +209,7 @@ void AGOSEngine::addVgaEvent(uint16 num, uint8 type, const byte *codePtr, uint16
 	_videoLockOut &= ~1;
 }
 
-void AGOSEngine::deleteVgaEvent(VgaTimerEntry * vte) {
+void AGOSEngine::deleteVgaEvent(VgaTimerEntry *vte) {
 	_videoLockOut |= 1;
 
 	if (vte + 1 <= _nextVgaTimerToProcess) {
@@ -327,39 +326,111 @@ void AGOSEngine::scrollEvent() {
 }
 
 static const byte _image1[32] = {
-	0x3A, 0x37, 0x3B, 0x37,
-	0x3A, 0x3E, 0x3F, 0x3E,
-	0x37, 0x3F, 0x31, 0x3F,
-	0x37, 0x3F, 0x31, 0x3F,
-	0x3A, 0x3E, 0x3F, 0x3E,
-	0x3A, 0x37, 0x3B, 0x37,
+	0x3A,
+	0x37,
+	0x3B,
+	0x37,
+	0x3A,
+	0x3E,
+	0x3F,
+	0x3E,
+	0x37,
+	0x3F,
+	0x31,
+	0x3F,
+	0x37,
+	0x3F,
+	0x31,
+	0x3F,
+	0x3A,
+	0x3E,
+	0x3F,
+	0x3E,
+	0x3A,
+	0x37,
+	0x3B,
+	0x37,
 };
 
 static const byte _image2[32] = {
-	0x3A, 0x3A, 0x3B, 0x3A,
-	0x3A, 0x37, 0x3E, 0x37,
-	0x3A, 0x37, 0x3E, 0x37,
-	0x3A, 0x37, 0x3E, 0x37,
-	0x3A, 0x37, 0x3E, 0x37,
-	0x3A, 0x3A, 0x3B, 0x3A,
+	0x3A,
+	0x3A,
+	0x3B,
+	0x3A,
+	0x3A,
+	0x37,
+	0x3E,
+	0x37,
+	0x3A,
+	0x37,
+	0x3E,
+	0x37,
+	0x3A,
+	0x37,
+	0x3E,
+	0x37,
+	0x3A,
+	0x37,
+	0x3E,
+	0x37,
+	0x3A,
+	0x3A,
+	0x3B,
+	0x3A,
 };
 
 static const byte _image3[32] = {
-	0x3A, 0x32, 0x3B, 0x32,
-	0x3A, 0x39, 0x3F, 0x39,
-	0x32, 0x3F, 0x31, 0x3F,
-	0x32, 0x3F, 0x31, 0x3F,
-	0x3A, 0x39, 0x3F, 0x39,
-	0x3A, 0x32, 0x3B, 0x32,
+	0x3A,
+	0x32,
+	0x3B,
+	0x32,
+	0x3A,
+	0x39,
+	0x3F,
+	0x39,
+	0x32,
+	0x3F,
+	0x31,
+	0x3F,
+	0x32,
+	0x3F,
+	0x31,
+	0x3F,
+	0x3A,
+	0x39,
+	0x3F,
+	0x39,
+	0x3A,
+	0x32,
+	0x3B,
+	0x32,
 };
 
 static const byte _image4[32] = {
-	0x3A, 0x3A, 0x3B, 0x3A,
-	0x3A, 0x32, 0x39, 0x32,
-	0x3A, 0x32, 0x38, 0x32,
-	0x3A, 0x32, 0x38, 0x32,
-	0x3A, 0x32, 0x39, 0x32,
-	0x3A, 0x3A, 0x3B, 0x3A,
+	0x3A,
+	0x3A,
+	0x3B,
+	0x3A,
+	0x3A,
+	0x32,
+	0x39,
+	0x32,
+	0x3A,
+	0x32,
+	0x38,
+	0x32,
+	0x3A,
+	0x32,
+	0x38,
+	0x32,
+	0x3A,
+	0x32,
+	0x39,
+	0x32,
+	0x3A,
+	0x3A,
+	0x3B,
+	0x3A,
 };
 
 void AGOSEngine::drawStuff(const byte *src, uint xoffs) {
@@ -377,7 +448,7 @@ void AGOSEngine::drawStuff(const byte *src, uint xoffs) {
 	_system->unlockScreen();
 }
 
-void AGOSEngine::playerDamageEvent(VgaTimerEntry * vte, uint dx) {
+void AGOSEngine::playerDamageEvent(VgaTimerEntry *vte, uint dx) {
 	// Draws damage indicator gauge when player hit
 	_nextVgaTimerToProcess = vte + 1;
 
@@ -399,7 +470,7 @@ void AGOSEngine::playerDamageEvent(VgaTimerEntry * vte, uint dx) {
 	}
 }
 
-void AGOSEngine::monsterDamageEvent(VgaTimerEntry * vte, uint dx) {
+void AGOSEngine::monsterDamageEvent(VgaTimerEntry *vte, uint dx) {
 	// Draws damage indicator gauge when monster hit
 	_nextVgaTimerToProcess = vte + 1;
 
@@ -457,8 +528,7 @@ void AGOSEngine::delay(uint amount) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode >= Common::KEYCODE_0 && event.kbd.keycode <= Common::KEYCODE_9
-					&& (event.kbd.hasFlags(Common::KBD_ALT) ||
-						event.kbd.hasFlags(Common::KBD_CTRL))) {
+				    && (event.kbd.hasFlags(Common::KBD_ALT) || event.kbd.hasFlags(Common::KBD_CTRL))) {
 					_saveLoadSlot = event.kbd.keycode - Common::KEYCODE_0;
 
 					// There is no save slot 0
@@ -695,49 +765,87 @@ void AGOSEngine_DIMP::dimpIdle() {
 					while (z == 0) {
 						n = _rnd.getRandomNumber(2);
 						switch (n) {
-							case(0):
-								if (_variableArray[110] > 2)
-									break;
-								n = _rnd.getRandomNumber(6);
-								switch (n) {
-									case(0): loadSoundFile("And01.wav");break;
-									case(1): loadSoundFile("And02.wav");break;
-									case(2): loadSoundFile("And03.wav");break;
-									case(3): loadSoundFile("And04.wav");break;
-									case(4): loadSoundFile("And05.wav");break;
-									case(5): loadSoundFile("And06.wav");break;
-									case(6): loadSoundFile("And07.wav");break;
-								}
-								z = 1;
+						case (0):
+							if (_variableArray[110] > 2)
 								break;
-							case(1):
-								if (_variableArray[111] > 2)
-									break;
-								n = _rnd.getRandomNumber(6);
-								switch (n) {
-									case(0): loadSoundFile("And08.wav");break;
-									case(1): loadSoundFile("And09.wav");break;
-									case(2): loadSoundFile("And0a.wav");break;
-									case(3): loadSoundFile("And0b.wav");break;
-									case(4): loadSoundFile("And0c.wav");break;
-									case(5): loadSoundFile("And0d.wav");break;
-									case(6): loadSoundFile("And0e.wav");break;
-								}
-								z = 1;
+							n = _rnd.getRandomNumber(6);
+							switch (n) {
+							case (0):
+								loadSoundFile("And01.wav");
 								break;
-							case(2):
-								if (_variableArray[112] > 2)
-									break;
-								n = _rnd.getRandomNumber(4);
-								switch (n) {
-									case(0): loadSoundFile("And0f.wav");break;
-									case(1): loadSoundFile("And0g.wav");break;
-									case(2): loadSoundFile("And0h.wav");break;
-									case(3): loadSoundFile("And0i.wav");break;
-									case(4): loadSoundFile("And0j.wav");break;
-								}
-								z = 1;
+							case (1):
+								loadSoundFile("And02.wav");
 								break;
+							case (2):
+								loadSoundFile("And03.wav");
+								break;
+							case (3):
+								loadSoundFile("And04.wav");
+								break;
+							case (4):
+								loadSoundFile("And05.wav");
+								break;
+							case (5):
+								loadSoundFile("And06.wav");
+								break;
+							case (6):
+								loadSoundFile("And07.wav");
+								break;
+							}
+							z = 1;
+							break;
+						case (1):
+							if (_variableArray[111] > 2)
+								break;
+							n = _rnd.getRandomNumber(6);
+							switch (n) {
+							case (0):
+								loadSoundFile("And08.wav");
+								break;
+							case (1):
+								loadSoundFile("And09.wav");
+								break;
+							case (2):
+								loadSoundFile("And0a.wav");
+								break;
+							case (3):
+								loadSoundFile("And0b.wav");
+								break;
+							case (4):
+								loadSoundFile("And0c.wav");
+								break;
+							case (5):
+								loadSoundFile("And0d.wav");
+								break;
+							case (6):
+								loadSoundFile("And0e.wav");
+								break;
+							}
+							z = 1;
+							break;
+						case (2):
+							if (_variableArray[112] > 2)
+								break;
+							n = _rnd.getRandomNumber(4);
+							switch (n) {
+							case (0):
+								loadSoundFile("And0f.wav");
+								break;
+							case (1):
+								loadSoundFile("And0g.wav");
+								break;
+							case (2):
+								loadSoundFile("And0h.wav");
+								break;
+							case (3):
+								loadSoundFile("And0i.wav");
+								break;
+							case (4):
+								loadSoundFile("And0j.wav");
+								break;
+							}
+							z = 1;
+							break;
 						}
 					}
 				}

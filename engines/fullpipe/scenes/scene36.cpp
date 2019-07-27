@@ -22,17 +22,16 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
-
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
@@ -63,7 +62,7 @@ int sceneHandler36(ExCommand *cmd) {
 			if (g_vars->scene36_scissors)
 				if (g_vars->scene36_scissors->_flags & 4)
 					if (g_fp->_aniMan->isIdle())
-						if (!(g_fp->_aniMan->_flags & 0x100) && g_fp->_msgObjectId2 != g_vars->scene36_scissors->_id ) {
+						if (!(g_fp->_aniMan->_flags & 0x100) && g_fp->_msgObjectId2 != g_vars->scene36_scissors->_id) {
 							handleObjectInteraction(g_fp->_aniMan, g_vars->scene36_scissors, cmd->_param);
 
 							cmd->_messageKind = 0;

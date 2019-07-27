@@ -28,18 +28,18 @@
 // -- DOS VGA Floppy --
 
 {
-	{
-		"crousti",
-		"",
-		AD_ENTRY1s("intro.stk", "63fd795818fa72c32b903bbd99e18ea1", 851926),
-		PT_POR,
-		kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
+	{ "crousti",
+	  "",
+	  AD_ENTRY1s("intro.stk", "63fd795818fa72c32b903bbd99e18ea1", 851926),
+	  PT_POR,
+	  kPlatformDOS,
+	  ADGF_NO_FLAGS,
+	  GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
 	kGameTypeCrousti,
 	kFeaturesAdLib,
-	0, 0, 0
+	0,
+	0,
+	0
 },
 
 #endif // GOB_DETECTION_TABLES_CROUSTI_H

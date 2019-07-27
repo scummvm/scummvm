@@ -31,58 +31,58 @@ class Surface;
 
 namespace Geisha {
 
-/** A meter measuring a value. */
-class Meter {
-public:
-	enum Direction {
-		kFillToLeft,
-		kFillToRight
+	/** A meter measuring a value. */
+	class Meter {
+	public:
+		enum Direction {
+			kFillToLeft,
+			kFillToRight
+		};
+
+		Meter(int16 x, int16 y, int16 width, int16 height,
+		      uint8 frontColor, uint8 backColor, int32 maxValue,
+		      Direction direction);
+		~Meter();
+
+		/** Return the max value the meter is measuring. */
+		int32 getMaxValue() const;
+		/** Return the current value the meter is measuring. */
+		int32 getValue() const;
+
+		/** Set the current value the meter is measuring. */
+		void setValue(int32 value);
+
+		/** Set the current value the meter is measuring to the max value. */
+		void setMaxValue();
+
+		/** Increase the current value the meter is measuring, returning the overflow. */
+		int32 increase(int32 n = 1);
+		/** Decrease the current value the meter is measuring, returning the underflow. */
+		int32 decrease(int32 n = 1);
+
+		/** Draw the meter onto the surface and return the affected rectangle. */
+		void draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
+
+	private:
+		int16 _x;
+		int16 _y;
+		int16 _width;
+		int16 _height;
+
+		uint8 _frontColor;
+		uint8 _backColor;
+
+		int32 _value;
+		int32 _maxValue;
+
+		Direction _direction;
+
+		bool _needUpdate;
+
+		Surface *_surface;
+
+		void update();
 	};
-
-	Meter(int16 x, int16 y, int16 width, int16 height,
-	      uint8 frontColor, uint8 backColor, int32 maxValue,
-	      Direction direction);
-	~Meter();
-
-	/** Return the max value the meter is measuring. */
-	int32 getMaxValue() const;
-	/** Return the current value the meter is measuring. */
-	int32 getValue() const;
-
-	/** Set the current value the meter is measuring. */
-	void setValue(int32 value);
-
-	/** Set the current value the meter is measuring to the max value. */
-	void setMaxValue();
-
-	/** Increase the current value the meter is measuring, returning the overflow. */
-	int32 increase(int32 n = 1);
-	/** Decrease the current value the meter is measuring, returning the underflow. */
-	int32 decrease(int32 n = 1);
-
-	/** Draw the meter onto the surface and return the affected rectangle. */
-	void draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
-
-private:
-	int16 _x;
-	int16 _y;
-	int16 _width;
-	int16 _height;
-
-	uint8 _frontColor;
-	uint8 _backColor;
-
-	int32 _value;
-	int32 _maxValue;
-
-	Direction _direction;
-
-	bool _needUpdate;
-
-	Surface *_surface;
-
-	void update();
-};
 
 } // End of namespace Geisha
 

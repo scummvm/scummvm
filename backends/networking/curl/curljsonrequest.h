@@ -24,8 +24,8 @@
 #define BACKENDS_NETWORKING_CURL_CURLJSONREQUEST_H
 
 #include "backends/networking/curl/curlrequest.h"
-#include "common/memstream.h"
 #include "common/json.h"
+#include "common/memstream.h"
 
 namespace Networking {
 
@@ -34,7 +34,7 @@ typedef Common::BaseCallback<JsonResponse> *JsonCallback;
 
 #define CURL_JSON_REQUEST_BUFFER_SIZE 512 * 1024
 
-class CurlJsonRequest: public CurlRequest {
+class CurlJsonRequest : public CurlRequest {
 protected:
 	JsonCallback _jsonCallback;
 	Common::MemoryWriteStreamDynamic _contentsStream;

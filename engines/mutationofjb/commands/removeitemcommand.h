@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_REMOVEITEMCOMMAND_H
 #define MUTATIONOFJB_REMOVEITEMCOMMAND_H
 
-#include "mutationofjb/commands/seqcommand.h"
 #include "common/str.h"
+#include "mutationofjb/commands/seqcommand.h"
 
 namespace MutationOfJB {
 
@@ -37,10 +37,12 @@ public:
 
 class RemoveItemCommand : public SeqCommand {
 public:
-	RemoveItemCommand(const Common::String &item) : _item(item) {}
+	RemoveItemCommand(const Common::String &item)
+	  : _item(item) {}
 
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const override;
+
 private:
 	Common::String _item;
 };

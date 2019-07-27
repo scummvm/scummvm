@@ -24,7 +24,7 @@
 #define KYRA_TEXT_LOL_H
 
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
-#include "kyra/text/text_rpg.h"
+#	include "kyra/text/text_rpg.h"
 #endif
 #include "common/scummsys.h"
 

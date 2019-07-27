@@ -23,13 +23,16 @@
 #ifndef LURE_PALETTE_H
 #define LURE_PALETTE_H
 
-#include "lure/luredefs.h"
 #include "lure/disk.h"
+#include "lure/luredefs.h"
 #include "lure/memory.h"
 
 namespace Lure {
 
-enum PaletteSource {DEFAULT, RGB, RGB64, EGA};
+enum PaletteSource { DEFAULT,
+	                   RGB,
+	                   RGB64,
+	                   EGA };
 
 class Palette {
 private:
@@ -38,6 +41,7 @@ private:
 
 	void convertRgb64Palette(const byte *srcPalette, uint16 srcNumEntries);
 	void convertEGAPalette(const byte *srcPalette);
+
 public:
 	Palette();
 	Palette(uint16 srcNumEntries, const byte *srcData, PaletteSource paletteSource);
@@ -57,6 +61,7 @@ class PaletteCollection {
 private:
 	Palette **_palettes;
 	uint8 _numPalettes;
+
 public:
 	PaletteCollection(uint16 resourceId);
 	~PaletteCollection();

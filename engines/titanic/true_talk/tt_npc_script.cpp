@@ -21,17 +21,17 @@
  */
 
 #include "titanic/true_talk/tt_npc_script.h"
+#include "common/algorithm.h"
+#include "common/textconsole.h"
 #include "titanic/core/project_item.h"
 #include "titanic/game_manager.h"
 #include "titanic/messages/messages.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/support/files_manager.h"
-#include "titanic/true_talk/tt_sentence.h"
-#include "titanic/true_talk/true_talk_manager.h"
 #include "titanic/titanic.h"
 #include "titanic/translation.h"
-#include "common/algorithm.h"
-#include "common/textconsole.h"
+#include "titanic/true_talk/true_talk_manager.h"
+#include "titanic/true_talk/tt_sentence.h"
 
 namespace Titanic {
 
@@ -126,9 +126,11 @@ void TTnpcData::copyData() {
 /*------------------------------------------------------------------------*/
 
 TTnpcScriptBase::TTnpcScriptBase(int charId_, const char *charClass, int v2,
-		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
-		TTscriptBase(0, charClass, v2, charName, v3, v4, v5, v6, v7),
-		_charId(charId_), _field54(0), _val2(val2) {
+                                 const char *charName, int v3, int val2, int v4, int v5, int v6, int v7)
+  : TTscriptBase(0, charClass, v2, charName, v3, v4, v5, v6, v7)
+  , _charId(charId_)
+  , _field54(0)
+  , _val2(val2) {
 }
 
 /*------------------------------------------------------------------------*/
@@ -144,10 +146,17 @@ void TTnpcScript::deinit() {
 }
 
 TTnpcScript::TTnpcScript(int charId_, const char *charClass, int v2,
-		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
-		TTnpcScriptBase(charId_, charClass, v2, charName, v3, val2, v4, v5, v6, v7),
-		_entryCount(0), _field68(0), _field6C(0), _rangeResetCtr(0),
-		_currentDialNum(0), _dialDelta(0), _field7C(0), _itemStringP(nullptr), _field2CC(false) {
+                         const char *charName, int v3, int val2, int v4, int v5, int v6, int v7)
+  : TTnpcScriptBase(charId_, charClass, v2, charName, v3, val2, v4, v5, v6, v7)
+  , _entryCount(0)
+  , _field68(0)
+  , _field6C(0)
+  , _rangeResetCtr(0)
+  , _currentDialNum(0)
+  , _dialDelta(0)
+  , _field7C(0)
+  , _itemStringP(nullptr)
+  , _field2CC(false) {
 	CTrueTalkManager::_v2 = 0;
 	Common::fill(&_dialValues[0], &_dialValues[DIALS_ARRAY_COUNT], 0);
 
@@ -282,15 +291,14 @@ bool TTnpcScript::handleWord(uint id) const {
 }
 
 int TTnpcScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
-		uint tag1, uint tag2, uint remainder) {
+                             uint tag1, uint tag2, uint remainder) {
 	if (_quotes.empty())
 		return 1;
 
 	for (uint idx = 3; idx < _quotes.size(); ++idx) {
 		const TThandleQuoteEntry *qe = &_quotes[idx];
 
-		if (qe->_tag1 == tag1 && 
-				(qe->_tag2 == tag2 || qe->_tag2 < MKTAG('A', 'A', 'A', 'A'))) {
+		if (qe->_tag1 == tag1 && (qe->_tag2 == tag2 || qe->_tag2 < MKTAG('A', 'A', 'A', 'A'))) {
 			uint threshold = qe->_tag2;
 			if (threshold > 0 && threshold < 100) {
 				if (!tag2)
@@ -316,7 +324,8 @@ int TTnpcScript::handleQuote(const TTroomScript *roomScript, const TTsentence *s
 				}
 
 				dialogueId = ((remainder + _quotes._incr) % 100) >= (uint)rangeLimit
-					? quote._tag2 : quote._tag1;
+				  ? quote._tag2
+				  : quote._tag1;
 			}
 
 			addResponse(getDialogueId(dialogueId));
@@ -841,12 +850,12 @@ int TTnpcScript::processEntries(const TTsentenceEntries *entries, uint entryCoun
 			bool flag;
 			if (entry._fieldC || entry._string10.empty()) {
 				flag = sentence->fn1(entry._string8, entry._fieldC,
-					entry._string14, entry._string18, entry._string1C,
-					entry._field20, entry._field28, 0, nullptr);
+				                     entry._string14, entry._string18, entry._string1C,
+				                     entry._field20, entry._field28, 0, nullptr);
 			} else {
 				flag = sentence->fn3(entry._string8, entry._string10,
-					entry._string14, entry._string18, entry._string1C,
-					entry._string24, entry._field28, 0, nullptr);
+				                     entry._string14, entry._string18, entry._string1C,
+				                     entry._string24, entry._field28, 0, nullptr);
 			}
 
 			if (flag) {
@@ -862,7 +871,7 @@ int TTnpcScript::processEntries(const TTsentenceEntries *entries, uint entryCoun
 						flag = false;
 					} else {
 						int result = doSentenceEntry(entry._field2C & 0xFFFFFF, &entry._field0,
-							roomScript, sentence);
+						                             roomScript, sentence);
 						if (result == 2)
 							return 2;
 						flag = !result;

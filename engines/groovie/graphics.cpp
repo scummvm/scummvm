@@ -30,8 +30,11 @@
 
 namespace Groovie {
 
-GraphicsMan::GraphicsMan(GroovieEngine *vm) :
-	_vm(vm), _changed(false), _fading(0), _fadeStartTime(0) {
+GraphicsMan::GraphicsMan(GroovieEngine *vm)
+  : _vm(vm)
+  , _changed(false)
+  , _fading(0)
+  , _fadeStartTime(0) {
 	// Create the game surfaces
 	_foreground.create(640, 320, _vm->_pixelFormat);
 	_background.create(640, 320, _vm->_pixelFormat);
@@ -154,15 +157,20 @@ void GraphicsMan::applyFading(int step) {
 		factorR = (step << 2);
 		factorG = (step << 1);
 		factorB = step;
-		if (factorR > 256) factorR = 256;
-		if (factorG > 256) factorG = 256;
-		if (factorB > 256) factorB = 256;
+		if (factorR > 256)
+			factorR = 256;
+		if (factorG > 256)
+			factorG = 256;
+		if (factorB > 256)
+			factorB = 256;
 	} else if (_fading == 2) {
 		// Fading out
 		factorR = 256 - step;
 		factorG = 256 - (step << 1);
-		if (factorR < 0) factorR = 0;
-		if (factorG < 0) factorG = 0;
+		if (factorR < 0)
+			factorR = 0;
+		if (factorG < 0)
+			factorG = 0;
 		factorB = factorG;
 	}
 

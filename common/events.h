@@ -24,9 +24,9 @@
 #define COMMON_EVENTS_H
 
 #include "common/keyboard.h"
+#include "common/noncopyable.h"
 #include "common/queue.h"
 #include "common/rect.h"
-#include "common/noncopyable.h"
 
 #include "common/list.h"
 #include "common/singleton.h"
@@ -112,7 +112,10 @@ struct JoystickState {
 	 */
 	int8 button;
 
-	JoystickState() : axis(0), position(0), button(0) {}
+	JoystickState()
+	  : axis(0)
+	  , position(0)
+	  , button(0) {}
 };
 
 /**
@@ -183,7 +186,9 @@ struct Event {
 	 */
 	JoystickState joystick;
 
-	Event() : type(EVENT_INVALID), kbdRepeat(false) {
+	Event()
+	  : type(EVENT_INVALID)
+	  , kbdRepeat(false) {
 #ifdef ENABLE_KEYMAPPER
 		customType = 0;
 #endif
@@ -228,13 +233,14 @@ public:
 class ArtificialEventSource : public EventSource {
 protected:
 	Queue<Event> _artificialEventQueue;
+
 public:
 	void addEvent(const Event &ev) {
 		_artificialEventQueue.push(ev);
 	}
 
 	bool pollEvent(Event &ev) {
-	if (!_artificialEventQueue.empty()) {
+		if (!_artificialEventQueue.empty()) {
 			ev = _artificialEventQueue.pop();
 			return true;
 		} else {
@@ -301,17 +307,22 @@ public:
 
 class DefaultEventMapper : public EventMapper {
 public:
-	DefaultEventMapper() : _delayedEvents(), _delayedEffectiveTime(0) {}
+	DefaultEventMapper()
+	  : _delayedEvents()
+	  , _delayedEffectiveTime(0) {}
 	// EventMapper interface
 	virtual List<Event> mapEvent(const Event &ev, EventSource *source);
 	virtual List<Event> getDelayedEvents();
+
 protected:
 	virtual void addDelayedEvent(uint32 millis, Event ev);
 
 	struct DelayedEventsEntry {
 		const uint32 timerOffset;
 		const Event event;
-		DelayedEventsEntry(const uint32 offset, const Event ev) : timerOffset(offset), event(ev) { }
+		DelayedEventsEntry(const uint32 offset, const Event ev)
+		  : timerOffset(offset)
+		  , event(ev) {}
 	};
 
 	Queue<DelayedEventsEntry> _delayedEvents;
@@ -397,6 +408,7 @@ public:
 	 * This takes the "autoFree" flag passed to registerObserver into account.
 	 */
 	void unregisterObserver(EventObserver *obs);
+
 private:
 	bool _autoFreeMapper;
 	EventMapper *_mapper;
@@ -439,7 +451,6 @@ public:
 		LBUTTON = 1 << 0,
 		RBUTTON = 1 << 1
 	};
-
 
 	/**
 	 * Initialize the event manager.

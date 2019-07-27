@@ -22,21 +22,22 @@
 
 #include "audio/mixer.h"
 
-#include "common/savefile.h"
 #include "common/config-manager.h"
+#include "common/savefile.h"
 #include "common/translation.h"
 
 #include "gui/saveload.h"
 
-#include "toltecs/toltecs.h"
 #include "toltecs/menu.h"
 #include "toltecs/palette.h"
 #include "toltecs/render.h"
 #include "toltecs/resource.h"
+#include "toltecs/toltecs.h"
 
 namespace Toltecs {
 
-MenuSystem::MenuSystem(ToltecsEngine *vm) : _vm(vm) {
+MenuSystem::MenuSystem(ToltecsEngine *vm)
+  : _vm(vm) {
 	_background = nullptr;
 	_running = false;
 	_currMenuID = _newMenuID = kMenuIdNone;
@@ -59,7 +60,7 @@ int MenuSystem::run(MenuID menuId) {
 	// Save original background
 	Graphics::Surface backgroundOrig;
 	backgroundOrig.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
-	memcpy(backgroundOrig.getBasePtr(0,0), _vm->_screen->_frontScreen, 640 * 400);
+	memcpy(backgroundOrig.getBasePtr(0, 0), _vm->_screen->_frontScreen, 640 * 400);
 
 	_currMenuID = kMenuIdNone;
 	_newMenuID = menuId;
@@ -86,7 +87,7 @@ int MenuSystem::run(MenuID menuId) {
 	}
 
 	// Restore original background
-	memcpy(_vm->_screen->_frontScreen, backgroundOrig.getBasePtr(0,0), 640 * 400);
+	memcpy(_vm->_screen->_frontScreen, backgroundOrig.getBasePtr(0, 0), 640 * 400);
 	_vm->_system->copyRectToScreen(_vm->_screen->_frontScreen, 640, 0, 0, 640, 400);
 	_vm->_system->updateScreen();
 
@@ -179,18 +180,18 @@ void MenuSystem::handleMouseClick(int x, int y) {
 	}
 }
 
-void MenuSystem::handleKeyDown(const Common::KeyState& kbd) {
+void MenuSystem::handleKeyDown(const Common::KeyState &kbd) {
 	if (_editingDescription) {
 		if (kbd.keycode >= Common::KEYCODE_SPACE && kbd.keycode <= Common::KEYCODE_z) {
 			_editingDescriptionItem->caption += kbd.ascii;
 			restoreRect(_editingDescriptionItem->rect.left, _editingDescriptionItem->rect.top,
-				_editingDescriptionItem->rect.width() + 1, _editingDescriptionItem->rect.height() - 2);
+			            _editingDescriptionItem->rect.width() + 1, _editingDescriptionItem->rect.height() - 2);
 			setItemCaption(_editingDescriptionItem, _editingDescriptionItem->caption.c_str());
 			drawItem(_editingDescriptionID, true);
 		} else if (kbd.keycode == Common::KEYCODE_BACKSPACE) {
 			_editingDescriptionItem->caption.deleteLastChar();
 			restoreRect(_editingDescriptionItem->rect.left, _editingDescriptionItem->rect.top,
-				_editingDescriptionItem->rect.width() + 1, _editingDescriptionItem->rect.height() - 2);
+			            _editingDescriptionItem->rect.width() + 1, _editingDescriptionItem->rect.height() - 2);
 			setItemCaption(_editingDescriptionItem, _editingDescriptionItem->caption.c_str());
 			drawItem(_editingDescriptionID, true);
 		} else if (kbd.keycode == Common::KEYCODE_RETURN) {
@@ -222,7 +223,7 @@ MenuSystem::Item *MenuSystem::getItem(ItemID id) {
 
 void MenuSystem::setItemCaption(Item *item, const char *caption) {
 	Font font(_vm->_res->load(_vm->_screen->getFontResIndex(item->fontNum))->data);
-	int width = font.getTextWidth((const byte*)caption);
+	int width = font.getTextWidth((const byte *)caption);
 	int height = font.getHeight();
 	if (width & 1)
 		width++;
@@ -492,12 +493,12 @@ void MenuSystem::drawString(int16 x, int16 y, int w, uint fontNum, byte color, c
 	fontNum = _vm->_screen->getFontResIndex(fontNum);
 	Font font(_vm->_res->load(fontNum)->data);
 	if (w) {
-		int width = font.getTextWidth((const byte*)text);
+		int width = font.getTextWidth((const byte *)text);
 		if (width & 1)
 			width++;
 		x = x + w - width / 2;
 	}
-	_vm->_screen->drawString(x, y - font.getHeight(), color, fontNum, (const byte*)text, -1, NULL, true);
+	_vm->_screen->drawString(x, y - font.getHeight(), color, fontNum, (const byte *)text, -1, NULL, true);
 	_needRedraw = true;
 }
 
@@ -514,7 +515,7 @@ int MenuSystem::loadSavegamesList() {
 
 	Common::StringArray filenames;
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
-	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+	Common::sort(filenames.begin(), filenames.end()); // Sort (hopefully ensuring we are sorted numerically..)
 
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
@@ -618,7 +619,7 @@ void MenuSystem::drawVolumeBar(ItemID itemID) {
 	char text[21];
 
 	switch (itemID) {
-	case kItemIdMaster:	// unused in ScummVM, always 20
+	case kItemIdMaster: // unused in ScummVM, always 20
 		y = 130 + 25 * 0;
 		volume = 20;
 		break;
@@ -634,7 +635,7 @@ void MenuSystem::drawVolumeBar(ItemID itemID) {
 		y = 130 + 25 * 3;
 		volume = _vm->_cfgSoundFXVolume;
 		break;
-	case kItemIdBackground:	// unused in ScummVM, always 20
+	case kItemIdBackground: // unused in ScummVM, always 20
 		y = 130 + 25 * 4;
 		volume = 20;
 		break;

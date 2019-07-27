@@ -33,42 +33,42 @@ const struct GameOpt {
 	// of any other description
 	const char *desc;
 } g_gameOptions[] = {
-	{ GUIO_NOSUBTITLES,  "sndNoSubs" },
-	{ GUIO_NOMUSIC,      "sndNoMusic" },
-	{ GUIO_NOSPEECH,     "sndNoSpeech" },
-	{ GUIO_NOSFX,        "sndNoSFX" },
-	{ GUIO_NOMIDI,       "sndNoMIDI" },
+	{ GUIO_NOSUBTITLES, "sndNoSubs" },
+	{ GUIO_NOMUSIC, "sndNoMusic" },
+	{ GUIO_NOSPEECH, "sndNoSpeech" },
+	{ GUIO_NOSFX, "sndNoSFX" },
+	{ GUIO_NOMIDI, "sndNoMIDI" },
 	{ GUIO_LINKSPEECHTOSFX, "sndLinkSpeechToSfx" },
-	{ GUIO_LINKMUSICTOSFX,  "sndLinkMusicToSfx" },
-	{ GUIO_NOSPEECHVOLUME,  "sndNoSpchVolume" },
+	{ GUIO_LINKMUSICTOSFX, "sndLinkMusicToSfx" },
+	{ GUIO_NOSPEECHVOLUME, "sndNoSpchVolume" },
 
 	{ GUIO_NOLAUNCHLOAD, "launchNoLoad" },
 
-	{ GUIO_MIDIPCSPK,    "midiPCSpk" },
-	{ GUIO_MIDICMS,      "midiCMS" },
-	{ GUIO_MIDIPCJR,     "midiPCJr" },
-	{ GUIO_MIDIADLIB,    "midiAdLib" },
-	{ GUIO_MIDIC64,      "midiC64" },
-	{ GUIO_MIDIAMIGA,    "midiAmiga" },
-	{ GUIO_MIDIAPPLEIIGS,"midiAppleIIgs" },
-	{ GUIO_MIDITOWNS,    "midiTowns" },
-	{ GUIO_MIDIPC98,     "midiPC98" },
-	{ GUIO_MIDIMT32,     "midiMt32" },
-	{ GUIO_MIDIGM,       "midiGM" },
+	{ GUIO_MIDIPCSPK, "midiPCSpk" },
+	{ GUIO_MIDICMS, "midiCMS" },
+	{ GUIO_MIDIPCJR, "midiPCJr" },
+	{ GUIO_MIDIADLIB, "midiAdLib" },
+	{ GUIO_MIDIC64, "midiC64" },
+	{ GUIO_MIDIAMIGA, "midiAmiga" },
+	{ GUIO_MIDIAPPLEIIGS, "midiAppleIIgs" },
+	{ GUIO_MIDITOWNS, "midiTowns" },
+	{ GUIO_MIDIPC98, "midiPC98" },
+	{ GUIO_MIDIMT32, "midiMt32" },
+	{ GUIO_MIDIGM, "midiGM" },
 
-	{ GUIO_NOASPECT,     "noAspect" },
+	{ GUIO_NOASPECT, "noAspect" },
 
 	{ GUIO_RENDERHERCGREEN, "hercGreen" },
 	{ GUIO_RENDERHERCAMBER, "hercAmber" },
-	{ GUIO_RENDERCGA,       "cga" },
-	{ GUIO_RENDEREGA,       "ega" },
-	{ GUIO_RENDERVGA,       "vga" },
-	{ GUIO_RENDERAMIGA,     "amiga" },
-	{ GUIO_RENDERFMTOWNS,   "fmtowns" },
-	{ GUIO_RENDERPC9821,    "pc9821" },
-	{ GUIO_RENDERPC9801,    "pc9801" },
-	{ GUIO_RENDERAPPLE2GS,  "2gs" },
-	{ GUIO_RENDERATARIST,   "atari" },
+	{ GUIO_RENDERCGA, "cga" },
+	{ GUIO_RENDEREGA, "ega" },
+	{ GUIO_RENDERVGA, "vga" },
+	{ GUIO_RENDERAMIGA, "amiga" },
+	{ GUIO_RENDERFMTOWNS, "fmtowns" },
+	{ GUIO_RENDERPC9821, "pc9821" },
+	{ GUIO_RENDERPC9801, "pc9801" },
+	{ GUIO_RENDERAPPLE2GS, "2gs" },
+	{ GUIO_RENDERATARIST, "atari" },
 	{ GUIO_RENDERMACINTOSH, "macintosh" },
 
 	{ GUIO_GAMEOPTIONS1, "gameOption1" },
@@ -129,12 +129,10 @@ const String getGameGUIOptionsDescription(const String &options) {
 void updateGameGUIOptions(const String &options, const String &langOption) {
 	const String newOptionString = getGameGUIOptionsDescription(options) + " " + langOption;
 
-	if ((!options.empty() && !ConfMan.hasKey("guioptions")) ||
-	    (ConfMan.hasKey("guioptions") && ConfMan.get("guioptions") != newOptionString)) {
+	if ((!options.empty() && !ConfMan.hasKey("guioptions")) || (ConfMan.hasKey("guioptions") && ConfMan.get("guioptions") != newOptionString)) {
 		ConfMan.set("guioptions", newOptionString);
 		ConfMan.flushToDisk();
 	}
 }
-
 
 } // End of namespace Common

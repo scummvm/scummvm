@@ -20,10 +20,10 @@
  *
  */
 
+#include "neverhood/modules/module1800.h"
 #include "neverhood/diskplayerscene.h"
 #include "neverhood/menumodule.h"
 #include "neverhood/navigationscene.h"
-#include "neverhood/modules/module1800.h"
 
 namespace Neverhood {
 
@@ -38,7 +38,7 @@ static const uint32 kModule1800SoundList[] = {
 };
 
 Module1800::Module1800(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule) {
+  : Module(vm, parentModule) {
 
 	_vm->_soundMan->addSoundList(0x04A14718, kModule1800SoundList);
 	_vm->_soundMan->setSoundListParams(kModule1800SoundList, true, 50, 600, 10, 150);
@@ -52,7 +52,6 @@ Module1800::Module1800(NeverhoodEngine *vm, Module *parentModule, int which)
 		createScene(0, 0);
 	else
 		createScene(3, 1);
-
 }
 
 Module1800::~Module1800() {
@@ -60,8 +59,8 @@ Module1800::~Module1800() {
 }
 
 void Module1800::createScene(int sceneNum, int which) {
-	static const byte kNavigationTypes00[] = {1, 0, 2, 0};
-	static const byte kNavigationTypes01[] = {5};
+	static const byte kNavigationTypes00[] = { 1, 0, 2, 0 };
+	static const byte kNavigationTypes01[] = { 5 };
 	debug(1, "Module1800::createScene(%d, %d)", sceneNum, which);
 	_sceneNum = sceneNum;
 	switch (_sceneNum) {

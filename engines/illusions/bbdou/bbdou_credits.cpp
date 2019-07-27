@@ -20,18 +20,18 @@
  *
  */
 
-#include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/bbdou/bbdou_credits.h"
 #include "illusions/actor.h"
+#include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/dictionary.h"
+#include "illusions/resources/scriptresource.h"
 #include "illusions/textdrawer.h"
 #include "illusions/time.h"
-#include "illusions/resources/scriptresource.h"
 
 namespace Illusions {
 
 BbdouCredits::BbdouCredits(IllusionsEngine_BBDOU *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 }
 
 BbdouCredits::~BbdouCredits() {
@@ -75,7 +75,6 @@ void BbdouCredits::drawNextLine() {
 			drawTextToControl(objectId, rightText, 4);
 		}
 	}
-
 }
 
 void charToWChar(const char *text, uint16 *wtext, uint size) {
@@ -107,7 +106,6 @@ void BbdouCredits::drawTextToControl(uint32 objectId, const char *text, uint ali
 	textDrawer.wrapText(font, wtext, &dimensions, Common::Point(0, 0), alignment, outText);
 	textDrawer.drawText(_vm->_screen, control->_actor->_surface, 0, 0);
 	control->_actor->_flags |= Illusions::ACTOR_FLAG_4000;
-
 }
 
 bool BbdouCredits::readNextLine(uint &leftIndex, uint &rightIndex) {
@@ -214,7 +212,10 @@ void BbdouCredits::updateTexts(int yIncr) {
 // CreditsThread
 
 CreditsThread::CreditsThread(IllusionsEngine_BBDOU *vm, BbdouCredits *credits, uint32 threadId, float speedModifier)
-	: Thread(vm, threadId, 0, 0), _speedModifier(speedModifier), _lastFraction(0.0), _credits(credits) {
+  : Thread(vm, threadId, 0, 0)
+  , _speedModifier(speedModifier)
+  , _lastFraction(0.0)
+  , _credits(credits) {
 	_type = kTTSpecialThread;
 	_lastUpdateTime = getCurrentTime();
 }

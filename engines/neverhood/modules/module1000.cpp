@@ -26,7 +26,7 @@
 namespace Neverhood {
 
 Module1000::Module1000(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule) {
+  : Module(vm, parentModule) {
 
 	_musicFileHash = getGlobalVar(V_ENTRANCE_OPEN) ? 0x81106480 : 0x00103144;
 
@@ -39,7 +39,6 @@ Module1000::Module1000(NeverhoodEngine *vm, Module *parentModule, int which)
 		createScene(0, 0);
 	else if (which == 1)
 		createScene(1, 1);
-
 }
 
 Module1000::~Module1000() {
@@ -120,7 +119,9 @@ void Module1000::updateScene() {
 }
 
 Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _asDoor(NULL), _asWindow(NULL) {
+  : Scene(vm, parentModule)
+  , _asDoor(NULL)
+  , _asWindow(NULL) {
 
 	Sprite *tempSprite;
 
@@ -181,7 +182,6 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	_asHammer = insertSprite<AsScene1001Hammer>(_asDoor);
-
 }
 
 Scene1001::~Scene1001() {
@@ -228,7 +228,10 @@ uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _isKlaymenFloor(false), _isClimbingLadder(false), _asKlaymenPeekHand(nullptr) {
+  : Scene(vm, parentModule)
+  , _isKlaymenFloor(false)
+  , _isClimbingLadder(false)
+  , _asKlaymenPeekHand(nullptr) {
 
 	NRect tempClipRect;
 	Sprite *tempSprite;
@@ -302,7 +305,7 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	tempSprite = insertStaticSprite(0xB3242310, 825);
 	tempClipRect.set(tempSprite->getDrawRect().x, tempSprite->getDrawRect().y,
-		_ssLadderArchPart2->getDrawRect().x2(), _ssLadderArchPart2->getDrawRect().y2());
+	                 _ssLadderArchPart2->getDrawRect().x2(), _ssLadderArchPart2->getDrawRect().y2());
 
 	_asRing1 = insertSprite<AsScene1002Ring>(this, false, 258, 191, _ssCeiling->getDrawRect().y, false);
 	_asRing2 = insertSprite<AsScene1002Ring>(this, false, 297, 189, _ssCeiling->getDrawRect().y, false);
@@ -325,7 +328,6 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	loadSound(1, 0x60755842);
 	loadSound(2, 0x616D5821);
-
 }
 
 Scene1002::~Scene1002() {
@@ -459,7 +461,8 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene1004::Scene1004(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _paletteAreaStatus(-1) {
+  : Scene(vm, parentModule)
+  , _paletteAreaStatus(-1) {
 
 	Sprite *tempSprite;
 
@@ -509,7 +512,6 @@ Scene1004::Scene1004(NeverhoodEngine *vm, Module *parentModule, int which)
 	_asKlaymenLadderHands->setClipRect(_klaymen->getClipRect());
 
 	_asTrashCan = insertSprite<AsScene1004TrashCan>();
-
 }
 
 void Scene1004::update() {
@@ -557,7 +559,7 @@ void Scene1004::updatePaletteArea() {
 }
 
 Scene1005::Scene1005(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule) {
+  : Scene(vm, parentModule) {
 
 	SetMessageHandler(&Scene1005::handleMessage);
 
@@ -575,7 +577,6 @@ Scene1005::Scene1005(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	drawTextToBackground();
-
 }
 
 uint32 Scene1005::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -598,7 +599,7 @@ void Scene1005::drawTextToBackground() {
 	textResource.load(0x80283101);
 	textStart = textResource.getString(textIndex, textEnd);
 	while (textStart < textEnd) {
-		fontSurface->drawString(_background->getSurface(), 188, y, (const byte*)textStart);
+		fontSurface->drawString(_background->getSurface(), 188, y, (const byte *)textStart);
 		y += 36;
 		textStart += strlen(textStart) + 1;
 	}

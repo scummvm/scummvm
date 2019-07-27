@@ -29,10 +29,10 @@
 #ifndef WINTERMUTE_BASE_SOUNDMGR_H
 #define WINTERMUTE_BASE_SOUNDMGR_H
 
-#include "engines/wintermute/coll_templ.h"
-#include "engines/wintermute/base/base.h"
 #include "audio/mixer.h"
 #include "common/array.h"
+#include "engines/wintermute/base/base.h"
+#include "engines/wintermute/coll_templ.h"
 
 namespace Wintermute {
 class BaseSoundBuffer;
@@ -59,6 +59,7 @@ public:
 	virtual ~BaseSoundMgr();
 	Common::Array<BaseSoundBuffer *> _sounds;
 	void saveSettings();
+
 private:
 	int32 _volumeMasterPercent; // Necessary to avoid round-offs.
 	bool setMasterVolume(byte percent);

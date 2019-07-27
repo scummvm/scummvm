@@ -23,31 +23,30 @@
 #ifndef GOB_GOBLIN_H
 #define GOB_GOBLIN_H
 
-#include "gob/util.h"
 #include "gob/mult.h"
-#include "gob/variables.h"
 #include "gob/sound/sounddesc.h"
+#include "gob/util.h"
+#include "gob/variables.h"
 
 namespace Gob {
 
-#define TYPE_USUAL		0
-#define TYPE_AMORPHOUS	1
-#define TYPE_MOBILE		3
+#define TYPE_USUAL 0
+#define TYPE_AMORPHOUS 1
+#define TYPE_MOBILE 3
 
 class Goblin {
 
 public:
-
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 	struct Gob_State {
 		int16 animation;
 		int16 layer;
 		int16 unk0;
 		int16 unk1;
-		int16 sndItem;  // high/low byte - sound sample index
-		int16 freq;     // high/low byte * 100 - frequency
-		int16 repCount;	// high/low byte - repeat count
+		int16 sndItem; // high/low byte - sound sample index
+		int16 freq; // high/low byte * 100 - frequency
+		int16 repCount; // high/low byte - repeat count
 		int16 sndFrame;
 	} PACKED_STRUCT;
 
@@ -95,7 +94,7 @@ public:
 		char y;
 	} PACKED_STRUCT;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h" // END STRUCT PACKING
 
 	Gob_Object *_goblins[4];
 	int16 _currentGoblin;
@@ -103,7 +102,7 @@ public:
 	int16 _gobStateLayer;
 	char _goesAtTarget;
 	char _readyToAct;
-	int16 _gobAction;	// 0 - move, 3 - do action, 4 - pick
+	int16 _gobAction; // 0 - move, 3 - do action, 4 - pick
 	// goblins: 0 - picker, 1 - fighter, 2 - mage
 	Gob_Pos _gobPositions[3];
 	int16 _gobDestX;
@@ -197,10 +196,10 @@ public:
 	void playSound(SoundDesc &snd, int16 repCount, int16 freq);
 	void drawObjects();
 	void animateObjects();
-	int16 getObjMaxFrame(Gob_Object * obj);
-	bool objIntersected(Gob_Object * obj1, Gob_Object * obj2);
-	void setMultStates(Gob_Object * gobDesc);
-	int16 nextLayer(Gob_Object * gobDesc);
+	int16 getObjMaxFrame(Gob_Object *obj);
+	bool objIntersected(Gob_Object *obj1, Gob_Object *obj2);
+	void setMultStates(Gob_Object *gobDesc);
+	int16 nextLayer(Gob_Object *gobDesc);
 	void showBoredom(int16 gobIndex);
 	void switchGoblin(int16 index);
 	void zeroObjects();
@@ -223,12 +222,14 @@ public:
 	void animate(Mult::Mult_Object *obj);
 
 	virtual void handleGoblins() = 0;
-	virtual void placeObject(Gob_Object * objDesc, char animated,
-			int16 index, int16 x, int16 y, int16 state) = 0;
+	virtual void placeObject(Gob_Object *objDesc, char animated,
+	                         int16 index, int16 x, int16 y, int16 state)
+	  = 0;
 	virtual void freeObjects() = 0;
 	virtual void initiateMove(Mult::Mult_Object *obj) = 0;
 	virtual void moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
-			int16 nextAct, int16 framesCount) = 0;
+	                         int16 nextAct, int16 framesCount)
+	  = 0;
 
 	Goblin(GobEngine *vm);
 	virtual ~Goblin();
@@ -247,28 +248,29 @@ protected:
 	void targetDummyItem(Gob_Object *gobDesc);
 	void targetItem();
 	void moveFindItem(int16 posX, int16 posY);
-	void moveCheckSelect(int16 framesCount, Gob_Object * gobDesc,
-			int16 *pGobIndex, int16 *nextAct);
+	void moveCheckSelect(int16 framesCount, Gob_Object *gobDesc,
+	                     int16 *pGobIndex, int16 *nextAct);
 	void moveInitStep(int16 framesCount, int16 action, int16 cont,
-					  Gob_Object *gobDesc, int16 *pGobIndex, int16 *pNextAct);
+	                  Gob_Object *gobDesc, int16 *pGobIndex, int16 *pNextAct);
 	void moveTreatRopeStairs(Gob_Object *gobDesc);
 	void playSounds(Mult::Mult_Object *obj);
 
 	virtual bool isMovement(int8 state) = 0;
 	virtual void advMovement(Mult::Mult_Object *obj, int8 state) = 0;
 	virtual void movePathFind(Mult::Mult_Object *obj,
-			Gob_Object *gobDesc, int16 nextAct) = 0;
+	                          Gob_Object *gobDesc, int16 nextAct)
+	  = 0;
 };
 
 class Goblin_v1 : public Goblin {
 public:
 	virtual void handleGoblins() {}
-	virtual void placeObject(Gob_Object * objDesc, char animated,
-			int16 index, int16 x, int16 y, int16 state);
+	virtual void placeObject(Gob_Object *objDesc, char animated,
+	                         int16 index, int16 x, int16 y, int16 state);
 	virtual void freeObjects();
 	virtual void initiateMove(Mult::Mult_Object *obj);
 	virtual void moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
-			int16 nextAct, int16 framesCount);
+	                         int16 nextAct, int16 framesCount);
 
 	Goblin_v1(GobEngine *vm);
 	virtual ~Goblin_v1() {}
@@ -277,18 +279,18 @@ protected:
 	virtual bool isMovement(int8 state) { return false; }
 	virtual void advMovement(Mult::Mult_Object *obj, int8 state) {}
 	virtual void movePathFind(Mult::Mult_Object *obj,
-			Gob_Object *gobDesc, int16 nextAct);
+	                          Gob_Object *gobDesc, int16 nextAct);
 };
 
 class Goblin_v2 : public Goblin_v1 {
 public:
 	virtual void handleGoblins();
-	virtual void placeObject(Gob_Object * objDesc, char animated,
-			int16 index, int16 x, int16 y, int16 state);
+	virtual void placeObject(Gob_Object *objDesc, char animated,
+	                         int16 index, int16 x, int16 y, int16 state);
 	virtual void freeObjects();
 	virtual void initiateMove(Mult::Mult_Object *obj);
 	virtual void moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
-			int16 nextAct, int16 framesCount);
+	                         int16 nextAct, int16 framesCount);
 
 	Goblin_v2(GobEngine *vm);
 	virtual ~Goblin_v2() {}
@@ -297,13 +299,13 @@ protected:
 	virtual bool isMovement(int8 state);
 	virtual void advMovement(Mult::Mult_Object *obj, int8 state);
 	virtual void movePathFind(Mult::Mult_Object *obj,
-			Gob_Object *gobDesc, int16 nextAct);
+	                          Gob_Object *gobDesc, int16 nextAct);
 };
 
 class Goblin_v3 : public Goblin_v2 {
 public:
-	virtual void placeObject(Gob_Object * objDesc, char animated,
-			int16 index, int16 x, int16 y, int16 state);
+	virtual void placeObject(Gob_Object *objDesc, char animated,
+	                         int16 index, int16 x, int16 y, int16 state);
 
 	Goblin_v3(GobEngine *vm);
 	virtual ~Goblin_v3() {}
@@ -316,9 +318,9 @@ protected:
 class Goblin_v4 : public Goblin_v3 {
 public:
 	virtual void movePathFind(Mult::Mult_Object *obj,
-			Gob_Object *gobDesc, int16 nextAct);
+	                          Gob_Object *gobDesc, int16 nextAct);
 	virtual void moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
-			int16 nextAct, int16 framesCount);
+	                         int16 nextAct, int16 framesCount);
 
 	Goblin_v4(GobEngine *vm);
 	virtual ~Goblin_v4() {}

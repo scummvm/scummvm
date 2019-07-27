@@ -24,64 +24,62 @@
 #define WINCE_PORTDEFS_H
 
 #ifndef _WIN32_WCE
-#error For use on WinCE only
+#	error For use on WinCE only
 #endif
 
 // Missing string/stdlib/assert declarations for WinCE 2.xx
 #if _WIN32_WCE < 300
 
-	#define GUI_ONLY_FULLSCREEN
-	#define GUI_ENABLE_KEYSDIALOG
+#	define GUI_ONLY_FULLSCREEN
+#	define GUI_ENABLE_KEYSDIALOG
 
-	void *calloc(size_t n, size_t s);
-	int isalnum(int c);
-	int isdigit(int c);
-	int isprint(int c);
-	int isspace(int c);
-	char *strrchr(const char *s, int c);
-	void assert(void *expression);
-	void assert(int expression);
-	long int strtol(const char *nptr, char **endptr, int base);
-	char *strpbrk(const char *s, const char *accept);
+void *calloc(size_t n, size_t s);
+int isalnum(int c);
+int isdigit(int c);
+int isprint(int c);
+int isspace(int c);
+char *strrchr(const char *s, int c);
+void assert(void *expression);
+void assert(int expression);
+long int strtol(const char *nptr, char **endptr, int base);
+char *strpbrk(const char *s, const char *accept);
 
 #endif
-
 
 #ifndef __GNUC__
-	void *bsearch(const void *, const void *, size_t, size_t, int (*x)(const void *, const void *));
-	typedef int ptrdiff_t;
-	void GetCurrentDirectory(int len, char *buf);
-	#define INVALID_FILE_ATTRIBUTES 0xffffffff
+void *bsearch(const void *, const void *, size_t, size_t, int (*x)(const void *, const void *));
+typedef int ptrdiff_t;
+void GetCurrentDirectory(int len, char *buf);
+#	define INVALID_FILE_ATTRIBUTES 0xffffffff
 #else
-	#include <math.h>
-	#undef GetCurrentDirectory
-	extern "C" void GetCurrentDirectory(int len, char *buf);
-	#define snprintf _snprintf
-	#define fopen wce_fopen
+#	include <math.h>
+#	undef GetCurrentDirectory
+extern "C" void GetCurrentDirectory(int len, char *buf);
+#	define snprintf _snprintf
+#	define fopen wce_fopen
 #endif
 
+#include <assert.h>
+#include <ctype.h>
+#include <io.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <io.h>
-#include <stdarg.h>
-#include <assert.h>
-#include <ctype.h>
 //#include <direct.h>
 #include <new>
 
 #ifdef __MINGW32CE__
-	void *bsearch(const void *, const void *, size_t, size_t, int (*x)(const void *, const void *));
+void *bsearch(const void *, const void *, size_t, size_t, int (*x)(const void *, const void *));
 #endif
 int remove(const char *path);
 int _access(const char *path, int mode);
 extern "C" {
-	char *wce_getcwd(char *buf, int size);
+char *wce_getcwd(char *buf, int size);
 }
 
 void drawError(char *);
 
 #define vsnprintf _vsnprintf
-
 
 #endif

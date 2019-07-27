@@ -51,14 +51,14 @@ protected:
 	virtual void onTimer() {}
 
 public:
-	MidiDriver_Emulated(Audio::Mixer *mixer) :
-		_mixer(mixer),
-		_isOpen(false),
-		_timerProc(0),
-		_timerParam(0),
-		_nextTick(0),
-		_samplesPerTick(0),
-		_baseFreq(250) {
+	MidiDriver_Emulated(Audio::Mixer *mixer)
+	  : _mixer(mixer)
+	  , _isOpen(false)
+	  , _timerProc(0)
+	  , _timerParam(0)
+	  , _nextTick(0)
+	  , _samplesPerTick(0)
+	  , _baseFreq(250) {
 	}
 
 	// MidiDriver API

@@ -22,31 +22,31 @@
 
 /* Support for compiling shared library. */
 #ifdef MT32EMU_SHARED
-#if defined _WIN32 || defined __CYGWIN__
-#ifdef _MSC_VER
-#ifdef mt32emu_EXPORTS
-#define MT32EMU_EXPORT_ATTRIBUTE _declspec(dllexport)
-#else /* #ifdef mt32emu_EXPORTS */
-#define MT32EMU_EXPORT_ATTRIBUTE _declspec(dllimport)
-#endif /* #ifdef mt32emu_EXPORTS */
-#else /* #ifdef _MSC_VER */
-#ifdef mt32emu_EXPORTS
-#define MT32EMU_EXPORT_ATTRIBUTE __attribute__ ((dllexport))
-#else /* #ifdef mt32emu_EXPORTS */
-#define MT32EMU_EXPORT_ATTRIBUTE __attribute__ ((dllimport))
-#endif /* #ifdef mt32emu_EXPORTS */
-#endif /* #ifdef _MSC_VER */
-#else /* #if defined _WIN32 || defined __CYGWIN__ */
-#define MT32EMU_EXPORT_ATTRIBUTE __attribute__ ((visibility("default")))
-#endif /* #if defined _WIN32 || defined __CYGWIN__ */
+#	if defined _WIN32 || defined __CYGWIN__
+#		ifdef _MSC_VER
+#			ifdef mt32emu_EXPORTS
+#				define MT32EMU_EXPORT_ATTRIBUTE _declspec(dllexport)
+#			else /* #ifdef mt32emu_EXPORTS */
+#				define MT32EMU_EXPORT_ATTRIBUTE _declspec(dllimport)
+#			endif /* #ifdef mt32emu_EXPORTS */
+#		else /* #ifdef _MSC_VER */
+#			ifdef mt32emu_EXPORTS
+#				define MT32EMU_EXPORT_ATTRIBUTE __attribute__((dllexport))
+#			else /* #ifdef mt32emu_EXPORTS */
+#				define MT32EMU_EXPORT_ATTRIBUTE __attribute__((dllimport))
+#			endif /* #ifdef mt32emu_EXPORTS */
+#		endif /* #ifdef _MSC_VER */
+#	else /* #if defined _WIN32 || defined __CYGWIN__ */
+#		define MT32EMU_EXPORT_ATTRIBUTE __attribute__((visibility("default")))
+#	endif /* #if defined _WIN32 || defined __CYGWIN__ */
 #else /* #ifdef MT32EMU_SHARED */
-#define MT32EMU_EXPORT_ATTRIBUTE
+#	define MT32EMU_EXPORT_ATTRIBUTE
 #endif /* #ifdef MT32EMU_SHARED */
 
 #if MT32EMU_EXPORTS_TYPE == 1 || MT32EMU_EXPORTS_TYPE == 2
-#define MT32EMU_EXPORT
+#	define MT32EMU_EXPORT
 #else
-#define MT32EMU_EXPORT MT32EMU_EXPORT_ATTRIBUTE
+#	define MT32EMU_EXPORT MT32EMU_EXPORT_ATTRIBUTE
 #endif
 
 /* Useful constants */
@@ -93,25 +93,24 @@
 
 #if defined(__cplusplus) && MT32EMU_API_TYPE != 1
 
-namespace MT32Emu
-{
+namespace MT32Emu {
 const unsigned int SAMPLE_RATE = MT32EMU_SAMPLE_RATE;
-#undef MT32EMU_SAMPLE_RATE
+#	undef MT32EMU_SAMPLE_RATE
 
 const unsigned int DEFAULT_MAX_PARTIALS = MT32EMU_DEFAULT_MAX_PARTIALS;
-#undef MT32EMU_DEFAULT_MAX_PARTIALS
+#	undef MT32EMU_DEFAULT_MAX_PARTIALS
 
 const unsigned int MAX_SAMPLES_PER_RUN = MT32EMU_MAX_SAMPLES_PER_RUN;
-#undef MT32EMU_MAX_SAMPLES_PER_RUN
+#	undef MT32EMU_MAX_SAMPLES_PER_RUN
 
 const unsigned int DEFAULT_MIDI_EVENT_QUEUE_SIZE = MT32EMU_DEFAULT_MIDI_EVENT_QUEUE_SIZE;
-#undef MT32EMU_DEFAULT_MIDI_EVENT_QUEUE_SIZE
+#	undef MT32EMU_DEFAULT_MIDI_EVENT_QUEUE_SIZE
 
 const unsigned int MAX_STREAM_BUFFER_SIZE = MT32EMU_MAX_STREAM_BUFFER_SIZE;
-#undef MT32EMU_MAX_STREAM_BUFFER_SIZE
+#	undef MT32EMU_MAX_STREAM_BUFFER_SIZE
 
 const unsigned int SYSEX_BUFFER_SIZE = MT32EMU_SYSEX_BUFFER_SIZE;
-#undef MT32EMU_SYSEX_BUFFER_SIZE
+#	undef MT32EMU_SYSEX_BUFFER_SIZE
 }
 
 #endif /* #if defined(__cplusplus) && MT32EMU_API_TYPE != 1 */

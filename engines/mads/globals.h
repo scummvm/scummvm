@@ -23,8 +23,8 @@
 #ifndef MADS_GLOBALS_H
 #define MADS_GLOBALS_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
 #include "mads/resources.h"
 

@@ -24,8 +24,8 @@
 #define GRAPHICS_MACGUI_MACWINDOWMANAGER_H
 
 #include "common/array.h"
-#include "common/list.h"
 #include "common/events.h"
+#include "common/list.h"
 
 #include "graphics/font.h"
 #include "graphics/fontman.h"
@@ -34,34 +34,34 @@
 namespace Graphics {
 
 namespace MacGUIConstants {
-enum {
-	kDesktopArc = 7
-};
+	enum {
+		kDesktopArc = 7
+	};
 
-enum {
-	kColorBlack = 0,
-	kColorGray = 1,
-	kColorWhite = 2,
-	kColorGreen = 3,
-	kColorGreen2 = 4,
-	kColorCount
-};
+	enum {
+		kColorBlack = 0,
+		kColorGray = 1,
+		kColorWhite = 2,
+		kColorGreen = 3,
+		kColorGreen2 = 4,
+		kColorCount
+	};
 
-enum {
-	kPatternSolid = 1,
-	kPatternStripes = 2,
-	kPatternCheckers = 3,
-	kPatternCheckers2 = 4,
-	kPatternLightGray = 5,
-	kPatternDarkGray = 6
-};
+	enum {
+		kPatternSolid = 1,
+		kPatternStripes = 2,
+		kPatternCheckers = 3,
+		kPatternCheckers2 = 4,
+		kPatternLightGray = 5,
+		kPatternDarkGray = 6
+	};
 
-enum {
-	kWMModeNone         = 0,
-	kWMModeNoDesktop    = (1 << 0),
-	kWMModeAutohideMenu = (1 << 1),
-	kWMModalMenuMode = (1 << 2)
-};
+	enum {
+		kWMModeNone = 0,
+		kWMModeNoDesktop = (1 << 0),
+		kWMModeAutohideMenu = (1 << 1),
+		kWMModalMenuMode = (1 << 2)
+	};
 
 }
 using namespace MacGUIConstants;
@@ -84,8 +84,12 @@ struct MacPlotData {
 	int thickness;
 	uint bgColor;
 
-	MacPlotData(Graphics::ManagedSurface *s, MacPatterns *p, int f, int t, uint bg) :
-		surface(s), patterns(p), fillType(f), thickness(t), bgColor(bg) {
+	MacPlotData(Graphics::ManagedSurface *s, MacPatterns *p, int f, int t, uint bg)
+	  : surface(s)
+	  , patterns(p)
+	  , fillType(f)
+	  , thickness(t)
+	  , bgColor(bg) {
 	}
 };
 

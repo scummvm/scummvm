@@ -23,8 +23,8 @@
 #ifndef SCUMM_GFX_H
 #define SCUMM_GFX_H
 
-#include "common/system.h"
 #include "common/list.h"
+#include "common/system.h"
 
 #include "graphics/surface.h"
 
@@ -69,10 +69,10 @@ struct CameraData {
 
 /** Virtual screen identifiers */
 enum VirtScreenNumber {
-	kMainVirtScreen = 0,	// The 'stage'
-	kTextVirtScreen = 1,	// In V0-V3 games: the area where text is printed
-	kVerbVirtScreen = 2,	// The verb area
-	kUnkVirtScreen = 3		// ?? Not sure what this one is good for...
+	kMainVirtScreen = 0, // The 'stage'
+	kTextVirtScreen = 1, // In V0-V3 games: the area where text is printed
+	kVerbVirtScreen = 2, // The verb area
+	kUnkVirtScreen = 3 // ?? Not sure what this one is good for...
 };
 
 /**
@@ -191,7 +191,7 @@ struct ColorCycle {
 
 struct StripTable;
 
-#define CHARSET_MASK_TRANSPARENCY	 0xFD
+#define CHARSET_MASK_TRANSPARENCY 0xFD
 #define CHARSET_MASK_TRANSPARENCY_32 0xFDFDFDFD
 
 class Gdi {
@@ -245,16 +245,16 @@ protected:
 	int getZPlanes(const byte *smap_ptr, const byte *zplane_list[9], bool bmapImage) const;
 
 	virtual bool drawStrip(byte *dstPtr, VirtScreen *vs,
-					int x, int y, const int width, const int height,
-					int stripnr, const byte *smap_ptr);
+	                       int x, int y, const int width, const int height,
+	                       int stripnr, const byte *smap_ptr);
 
 	virtual void decodeMask(int x, int y, const int width, const int height,
-	                int stripnr, int numzbuf, const byte *zplane_list[9],
-	                bool transpStrip, byte flag);
+	                        int stripnr, int numzbuf, const byte *zplane_list[9],
+	                        bool transpStrip, byte flag);
 
 	virtual void prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
-					const int x, const int y, const int width, const int height,
-	                int stripnr, int numstrip);
+	                               const int x, const int y, const int width, const int height,
+	                               int stripnr, int numstrip);
 
 public:
 	Gdi(ScummEngine *vm);
@@ -280,9 +280,9 @@ public:
 	void resetBackground(int top, int bottom, int strip);
 
 	enum DrawBitmapFlags {
-		dbAllowMaskOr   = 1 << 0,
+		dbAllowMaskOr = 1 << 0,
 		dbDrawMaskOnAll = 1 << 1,
-		dbObjectMode    = 2 << 2
+		dbObjectMode = 2 << 2
 	};
 };
 
@@ -294,12 +294,13 @@ protected:
 	void decompressTMSK(byte *dst, const byte *tmsk, const byte *src, int height) const;
 
 	virtual void decodeMask(int x, int y, const int width, const int height,
-	                int stripnr, int numzbuf, const byte *zplane_list[9],
-	                bool transpStrip, byte flag);
+	                        int stripnr, int numzbuf, const byte *zplane_list[9],
+	                        bool transpStrip, byte flag);
 
 	virtual void prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
-					const int x, const int y, const int width, const int height,
-	                int stripnr, int numstrip);
+	                               const int x, const int y, const int width, const int height,
+	                               int stripnr, int numstrip);
+
 public:
 	GdiHE(ScummEngine *vm);
 };
@@ -310,7 +311,7 @@ protected:
 		byte nametable[16][64], nametableObj[16][64];
 		byte attributes[64], attributesObj[64];
 		byte masktable[16][8], masktableObj[16][8];
-		int  objX;
+		int objX;
 		bool hasmask;
 	} _NES;
 
@@ -322,16 +323,16 @@ protected:
 	void drawStripNESMask(byte *dst, int stripnr, int top, int height) const;
 
 	virtual bool drawStrip(byte *dstPtr, VirtScreen *vs,
-					int x, int y, const int width, const int height,
-					int stripnr, const byte *smap_ptr);
+	                       int x, int y, const int width, const int height,
+	                       int stripnr, const byte *smap_ptr);
 
 	virtual void decodeMask(int x, int y, const int width, const int height,
-	                int stripnr, int numzbuf, const byte *zplane_list[9],
-	                bool transpStrip, byte flag);
+	                        int stripnr, int numzbuf, const byte *zplane_list[9],
+	                        bool transpStrip, byte flag);
 
 	virtual void prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
-					const int x, const int y, const int width, const int height,
-	                int stripnr, int numstrip);
+	                               const int x, const int y, const int width, const int height,
+	                               int stripnr, int numstrip);
 
 public:
 	GdiNES(ScummEngine *vm);
@@ -365,16 +366,16 @@ protected:
 	void drawStripPCEngineMask(byte *dst, int stripnr, int top, int height) const;
 
 	virtual bool drawStrip(byte *dstPtr, VirtScreen *vs,
-					int x, int y, const int width, const int height,
-					int stripnr, const byte *smap_ptr);
+	                       int x, int y, const int width, const int height,
+	                       int stripnr, const byte *smap_ptr);
 
 	virtual void decodeMask(int x, int y, const int width, const int height,
-	                int stripnr, int numzbuf, const byte *zplane_list[9],
-	                bool transpStrip, byte flag);
+	                        int stripnr, int numzbuf, const byte *zplane_list[9],
+	                        bool transpStrip, byte flag);
 
 	virtual void prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
-					const int x, const int y, const int width, const int height,
-	                int stripnr, int numstrip);
+	                               const int x, const int y, const int width, const int height,
+	                               int stripnr, int numstrip);
 
 public:
 	GdiPCEngine(ScummEngine *vm);
@@ -402,16 +403,16 @@ protected:
 	void drawStripV1Mask(byte *dst, int stripnr, int width, int height) const;
 
 	virtual bool drawStrip(byte *dstPtr, VirtScreen *vs,
-					int x, int y, const int width, const int height,
-					int stripnr, const byte *smap_ptr);
+	                       int x, int y, const int width, const int height,
+	                       int stripnr, const byte *smap_ptr);
 
 	virtual void decodeMask(int x, int y, const int width, const int height,
-	                int stripnr, int numzbuf, const byte *zplane_list[9],
-	                bool transpStrip, byte flag);
+	                        int stripnr, int numzbuf, const byte *zplane_list[9],
+	                        bool transpStrip, byte flag);
 
 	virtual void prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
-					const int x, const int y, const int width, const int height,
-	                int stripnr, int numstrip);
+	                               const int x, const int y, const int width, const int height,
+	                               int stripnr, int numstrip);
 
 public:
 	GdiV1(ScummEngine *vm);
@@ -428,16 +429,16 @@ protected:
 	StripTable *generateStripTable(const byte *src, int width, int height, StripTable *table) const;
 
 	virtual bool drawStrip(byte *dstPtr, VirtScreen *vs,
-					int x, int y, const int width, const int height,
-					int stripnr, const byte *smap_ptr);
+	                       int x, int y, const int width, const int height,
+	                       int stripnr, const byte *smap_ptr);
 
 	virtual void decodeMask(int x, int y, const int width, const int height,
-	                int stripnr, int numzbuf, const byte *zplane_list[9],
-	                bool transpStrip, byte flag);
+	                        int stripnr, int numzbuf, const byte *zplane_list[9],
+	                        bool transpStrip, byte flag);
 
 	virtual void prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
-					const int x, const int y, const int width, const int height,
-	                int stripnr, int numstrip);
+	                               const int x, const int y, const int width, const int height,
+	                               int stripnr, int numstrip);
 
 public:
 	GdiV2(ScummEngine *vm);
@@ -450,6 +451,7 @@ public:
 class GdiHE16bit : public GdiHE {
 protected:
 	virtual void writeRoomColor(byte *dst, byte color) const;
+
 public:
 	GdiHE16bit(ScummEngine *vm);
 };

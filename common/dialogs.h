@@ -23,8 +23,8 @@
 #ifndef COMMON_DIALOG_MANAGER_H
 #define COMMON_DIALOG_MANAGER_H
 
-#include "common/scummsys.h"
 #include "common/fs.h"
+#include "common/scummsys.h"
 
 #if defined(USE_SYSDIALOGS)
 
@@ -39,9 +39,9 @@ public:
 	 * Values representing the user response to a dialog
 	 */
 	enum DialogResult {
-		kDialogError = -1,	///< Dialog couldn't be displayed
-		kDialogCancel = 0,	///< User cancelled the dialog (Cancel/No/Close buttons)
-		kDialogOk = 1		///< User confirmed the dialog (OK/Yes buttons)
+		kDialogError = -1, ///< Dialog couldn't be displayed
+		kDialogCancel = 0, ///< User cancelled the dialog (Cancel/No/Close buttons)
+		kDialogOk = 1 ///< User confirmed the dialog (OK/Yes buttons)
 	};
 
 	DialogManager() {}

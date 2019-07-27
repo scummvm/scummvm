@@ -21,84 +21,78 @@
  */
 
 #include "glk/alan3/msg.h"
-#include "glk/alan3/memory.h"
-#include "glk/alan3/inter.h"
 #include "glk/alan3/exe.h"
+#include "glk/alan3/inter.h"
 #include "glk/alan3/lists.h"
+#include "glk/alan3/memory.h"
 
 namespace Glk {
 namespace Alan3 {
 
-/* PUBLIC DATA */
-MessageEntry *msgs;         /* Message table pointer */
+	/* PUBLIC DATA */
+	MessageEntry *msgs; /* Message table pointer */
 
-/*======================================================================*/
-void printMessage(MsgKind msg) {    /* IN - message number */
-	Context ctx;
-	interpret(ctx, msgs[msg].stms);
-}
-
-
-static void (*errorHandler)(MsgKind msg) = NULL;
-
-/*======================================================================*/
-void setErrorHandler(void (*handler)(MsgKind msg)) { /* IN - The error message number */
-	// N.B. The error handler must not return because the standard handler does not...
-	errorHandler = handler;
-}
-
-
-/*======================================================================*/
-void error(CONTEXT, MsgKind msgno) { /* IN - The error message number */
-	if (errorHandler != NULL)
-		errorHandler(msgno);
-	else {
-		/* Print an error message and longjmp to main loop. */
-		if (msgno != NO_MSG)
-			printMessage(msgno);
-		LONG_JUMP_LABEL("returnError");
+	/*======================================================================*/
+	void printMessage(MsgKind msg) { /* IN - message number */
+		Context ctx;
+		interpret(ctx, msgs[msg].stms);
 	}
-}
 
+	static void (*errorHandler)(MsgKind msg) = NULL;
 
-/*======================================================================*/
-void abortPlayerCommand(CONTEXT) {
-	error(context, NO_MSG);
-}
+	/*======================================================================*/
+	void setErrorHandler(void (*handler)(MsgKind msg)) { /* IN - The error message number */
+		// N.B. The error handler must not return because the standard handler does not...
+		errorHandler = handler;
+	}
 
+	/*======================================================================*/
+	void error(CONTEXT, MsgKind msgno) { /* IN - The error message number */
+		if (errorHandler != NULL)
+			errorHandler(msgno);
+		else {
+			/* Print an error message and longjmp to main loop. */
+			if (msgno != NO_MSG)
+				printMessage(msgno);
+			LONG_JUMP_LABEL("returnError");
+		}
+	}
 
-/*======================================================================*/
-void printMessageWithInstanceParameter(MsgKind message, int instanceId) {
-	ParameterArray parameters = newParameterArray();
-	addParameterForInstance(parameters, instanceId);
-	printMessageWithParameters(message, parameters);
-	freeParameterArray(parameters);
-}
+	/*======================================================================*/
+	void abortPlayerCommand(CONTEXT) {
+		error(context, NO_MSG);
+	}
 
+	/*======================================================================*/
+	void printMessageWithInstanceParameter(MsgKind message, int instanceId) {
+		ParameterArray parameters = newParameterArray();
+		addParameterForInstance(parameters, instanceId);
+		printMessageWithParameters(message, parameters);
+		freeParameterArray(parameters);
+	}
 
-/*======================================================================*/
-void printMessageUsing2InstanceParameters(MsgKind message, int instance1, int instance2) {
-	ParameterArray parameters = newParameterArray();
-	addParameterForInstance(parameters, instance1);
-	addParameterForInstance(parameters, instance2);
-	printMessageWithParameters(message, parameters);
-	freeParameterArray(parameters);
-}
+	/*======================================================================*/
+	void printMessageUsing2InstanceParameters(MsgKind message, int instance1, int instance2) {
+		ParameterArray parameters = newParameterArray();
+		addParameterForInstance(parameters, instance1);
+		addParameterForInstance(parameters, instance2);
+		printMessageWithParameters(message, parameters);
+		freeParameterArray(parameters);
+	}
 
+	/*======================================================================*/
+	void printMessageWithParameters(MsgKind msg, Parameter *messageParameters) {
+		Parameter *savedParameters = newParameterArray();
+		Context ctx;
 
-/*======================================================================*/
-void printMessageWithParameters(MsgKind msg, Parameter *messageParameters) {
-	Parameter *savedParameters = newParameterArray();
-	Context ctx;
+		copyParameterArray(savedParameters, globalParameters);
+		copyParameterArray(globalParameters, messageParameters);
 
-	copyParameterArray(savedParameters, globalParameters);
-	copyParameterArray(globalParameters, messageParameters);
+		interpret(ctx, msgs[msg].stms);
 
-	interpret(ctx, msgs[msg].stms);
-
-	copyParameterArray(globalParameters, savedParameters);
-	freeParameterArray(savedParameters);
-}
+		copyParameterArray(globalParameters, savedParameters);
+		freeParameterArray(savedParameters);
+	}
 
 } // End of namespace Alan3
 } // End of namespace Glk

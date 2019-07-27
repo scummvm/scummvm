@@ -31,7 +31,9 @@ namespace Xeen {
 #define FONT_HEIGHT 8
 #define DEFAULT_BG_COLOR 0x99
 
-enum Justify { JUSTIFY_NONE = 0, JUSTIFY_CENTER = 1, JUSTIFY_RIGHT = 2 };
+enum Justify { JUSTIFY_NONE = 0,
+	             JUSTIFY_CENTER = 1,
+	             JUSTIFY_RIGHT = 2 };
 
 struct FontData {
 	static const byte *_fontData;
@@ -42,7 +44,7 @@ struct FontData {
 	static Justify _fontJustify;
 };
 
-class FontSurface: public XSurface, public FontData {
+class FontSurface : public XSurface, public FontData {
 private:
 	const char *_displayString;
 	bool _msgWraps;
@@ -76,8 +78,10 @@ private:
 	 * Wrie a character to the surface
 	 */
 	void writeChar(char c, const Common::Rect &clipRect);
+
 public:
 	Common::Point &_writePos;
+
 public:
 	FontSurface();
 	FontSurface(int wv, int hv);

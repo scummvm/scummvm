@@ -23,24 +23,25 @@
 #ifndef MADS_SCENE_H
 #define MADS_SCENE_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
+#include "mads/animation.h"
 #include "mads/assets.h"
-#include "mads/screen.h"
 #include "mads/hotspots.h"
 #include "mads/messages.h"
 #include "mads/msurface.h"
-#include "mads/scene_data.h"
-#include "mads/animation.h"
 #include "mads/rails.h"
+#include "mads/scene_data.h"
+#include "mads/screen.h"
 #include "mads/sequence.h"
 #include "mads/sprites.h"
 #include "mads/user_interface.h"
 
 namespace MADS {
 
-enum { RETURNING_FROM_DIALOG = -2, RETURNING_FROM_LOADING = -1 };
+enum { RETURNING_FROM_DIALOG = -2,
+	     RETURNING_FROM_LOADING = -1 };
 
 class Scene {
 private:
@@ -77,8 +78,10 @@ private:
 	 * Checks for a highlighted hotspot, and updates the cursor accordingly
 	 */
 	void updateCursor();
+
 protected:
 	MADSEngine *_vm;
+
 public:
 	SceneLogic *_sceneLogic;
 	MSurface _sceneSurface;
@@ -262,7 +265,7 @@ public:
 	void deleteSequence(int idx);
 	void loadSpeech(int idx);
 	void playSpeech(int idx);
-	void sceneScale(int yFront, int maxScale, int yBack,  int minScale);
+	void sceneScale(int yFront, int maxScale, int yBack, int minScale);
 	void animations_tick();
 
 	int _speechReady;

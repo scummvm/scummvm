@@ -23,12 +23,12 @@
 #ifndef SCUMM_PLAYERS_PLAYER_SID_H
 #define SCUMM_PLAYERS_PLAYER_SID_H
 
-#include "common/mutex.h"
-#include "common/scummsys.h"
-#include "scumm/music.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/softsynth/sid.h"
+#include "common/mutex.h"
+#include "common/scummsys.h"
+#include "scumm/music.h"
 
 namespace Scumm {
 
@@ -60,8 +60,8 @@ public:
 	virtual void startSound(int sound);
 	virtual void stopSound(int sound);
 	virtual void stopAllSounds();
-	virtual int  getSoundStatus(int sound) const;
-	virtual int  getMusicTimer();
+	virtual int getSoundStatus(int sound) const;
+	virtual int getMusicTimer();
 
 	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -88,7 +88,7 @@ private:
 	VideoStandard _videoSystem;
 
 	int _music_timer;
-	uint8* _music;
+	uint8 *_music;
 
 private:
 	void initMusic(int songResIndex); // $7de6
@@ -103,7 +103,7 @@ private:
 	void func_3674(int channel); // $3674
 	void resetPlayerState(); // $48f7
 	void processSongData(int channel); // $4939
-	void readSetSIDFilterAndProps(int *offset, uint8* dataPtr);  // $49e7
+	void readSetSIDFilterAndProps(int *offset, uint8 *dataPtr); // $49e7
 	void saveSongPos(int y, int channel);
 	void updateFreq(int channel);
 	void resetFreqDelta(int channel);
@@ -129,7 +129,7 @@ private:
 	void reserveChannel(int channel, uint8 prioValue, int chanResIndex); // $4ffe
 	void unlockCodeLocation(); // $513e
 	void lockCodeLocation(); // $514f
-	void func_7eae(int channel, uint8* songFileDataPtr); // $7eae
+	void func_7eae(int channel, uint8 *songFileDataPtr); // $7eae
 	void func_819b(int channel); // $819b
 	void buildStepTbl(int step); // $82B4
 	int reserveSoundFilter(uint8 value, uint8 chanResIndex); // $4ED0
@@ -154,9 +154,9 @@ private:
 	uint8 SIDReg23Stuff;
 	uint8 SIDReg24;
 
-	uint8* chanFileData[3];
+	uint8 *chanFileData[3];
 	uint16 chanDataOffset[3];
-	uint8* songPosPtr[7];
+	uint8 *songPosPtr[7];
 
 	// 0..2: freq value voice1/2/3
 	// 3:    filter freq
@@ -173,8 +173,8 @@ private:
 
 	uint16 freqDelta[7];
 	int freqDeltaCounter[7];
-	uint8* swapSongPosPtr[3];
-	uint8* swapVec5[3];
+	uint8 *swapSongPosPtr[3];
+	uint8 *swapVec5[3];
 	uint16 swapVec8[3];
 	uint16 swapVec10[3];
 	uint16 swapFreqReg[3];
@@ -187,17 +187,17 @@ private:
 	// never read (needed by scumm engine?)
 	//bool curChannelActive;
 
-	uint8* vec20[7];
+	uint8 *vec20[7];
 
-	uint8* swapVec20[3];
+	uint8 *swapVec20[3];
 
 	// resource status (never read)
 	// bit7: some flag
 	// bit6..0: counter (use-count?), maybe just bit0 as flag (used/unused?)
 	uint8 resStatus[70];
 
-	uint8* songFileOrChanBufData;
-	uint8* actSongFileData;
+	uint8 *songFileOrChanBufData;
+	uint8 *actSongFileData;
 
 	uint16 stepTbl[33];
 

@@ -20,36 +20,36 @@
  *
  */
 
-#include "engines/game.h"
 #include "common/gui_options.h"
 #include "common/language.h"
+#include "engines/game.h"
 
 namespace Glk {
 namespace Alan3 {
 
-const PlainGameDescriptor ALAN3_GAME_LIST[] = {
-	{ "alan3", "Alan3 Game" },
+	const PlainGameDescriptor ALAN3_GAME_LIST[] = {
+		{ "alan3", "Alan3 Game" },
 
-	{ "christmasparty", "The Christmas Party" },
-	{ "deadleaves", "City of Dead Leaves" },
-	{ "fishmess", "Fish Mess" },
-	{ "hwmurders", "Hollywood Murders" },
-	{ "misguided", "Mis/Guided" },
-	{ "room206", "Room 206" },
+		{ "christmasparty", "The Christmas Party" },
+		{ "deadleaves", "City of Dead Leaves" },
+		{ "fishmess", "Fish Mess" },
+		{ "hwmurders", "Hollywood Murders" },
+		{ "misguided", "Mis/Guided" },
+		{ "room206", "Room 206" },
 
-	{ nullptr, nullptr }
-};
+		{ nullptr, nullptr }
+	};
 
-const GlkDetectionEntry ALAN3_GAMES[] = {
-	DT_ENTRY0("christmasparty", "86b87969d124c213632398980ec87c23", 94892),
-	DT_ENTRY0("deadleaves", "7c228698507508043d1d3938695e28cd", 90139),
-	DT_ENTRY0("fishmess", "e9952cfbe2adef5dcef82abd57661f60", 312561),
-	DT_ENTRY0("hwmurders", "abadbb15faf7f0b7324222fdea6bd495", 213539),
-	DT_ENTRY0("misguided", "cc2c6e724d599e731efa9b7a34ae4f51", 672613),
-	DT_ENTRY0("room206", "eb5711ecfad102ee4d9fda7fcb3ddf78", 364156),
+	const GlkDetectionEntry ALAN3_GAMES[] = {
+		DT_ENTRY0("christmasparty", "86b87969d124c213632398980ec87c23", 94892),
+		DT_ENTRY0("deadleaves", "7c228698507508043d1d3938695e28cd", 90139),
+		DT_ENTRY0("fishmess", "e9952cfbe2adef5dcef82abd57661f60", 312561),
+		DT_ENTRY0("hwmurders", "abadbb15faf7f0b7324222fdea6bd495", 213539),
+		DT_ENTRY0("misguided", "cc2c6e724d599e731efa9b7a34ae4f51", 672613),
+		DT_ENTRY0("room206", "eb5711ecfad102ee4d9fda7fcb3ddf78", 364156),
 
-	DT_END_MARKER
-};
+		DT_END_MARKER
+	};
 
 } // End of namespace Alan3
 } // End of namespace Glk

@@ -33,10 +33,10 @@ namespace Scumm {
 class ScummEngine_v0 : public ScummEngine_v2 {
 protected:
 	enum CurrentMode {
-		kModeCutscene = 0,   // cutscene active
-		kModeKeypad = 1,     // kid selection / dial pad / save-load dialog
-		kModeNoNewKid = 2,   // verb "new kid" disabled (e.g. when entering lab)
-		kModeNormal = 3      // normal playing mode
+		kModeCutscene = 0, // cutscene active
+		kModeKeypad = 1, // kid selection / dial pad / save-load dialog
+		kModeNoNewKid = 2, // verb "new kid" disabled (e.g. when entering lab)
+		kModeNormal = 3 // normal playing mode
 	};
 
 	enum WalkToObjectState {
@@ -50,13 +50,13 @@ protected:
 	byte _currentMode;
 	byte _currentLights;
 
-	int _activeVerb;		// selected verb
-	int _activeObject;		// 1st selected object (see OBJECT_V0())
-	int _activeObject2;		// 2nd selected object or actor (see OBJECT_V0())
+	int _activeVerb; // selected verb
+	int _activeObject; // 1st selected object (see OBJECT_V0())
+	int _activeObject2; // 2nd selected object or actor (see OBJECT_V0())
 
-	int _cmdVerb;			// script verb
-	int _cmdObject;			// 1st script object (see OBJECT_V0())
-	int _cmdObject2;		// 2nd script object or actor (see OBJECT_V0())
+	int _cmdVerb; // script verb
+	int _cmdObject; // 1st script object (see OBJECT_V0())
+	int _cmdObject2; // 2nd script object or actor (see OBJECT_V0())
 	int _sentenceNestedCount;
 
 	int _walkToObject;
@@ -176,7 +176,6 @@ protected:
 	byte VAR_IS_SOUND_RUNNING;
 	byte VAR_ACTIVE_VERB;
 };
-
 
 } // End of namespace Scumm
 

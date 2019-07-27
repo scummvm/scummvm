@@ -24,8 +24,8 @@
 #define SKY_COMPACT_H
 
 #include "sky/sky.h"
-#include "sky/struc.h"
 #include "sky/skydefs.h"
+#include "sky/struc.h"
 
 namespace Common {
 class File;
@@ -69,28 +69,29 @@ public:
 	uint16 *getTurnTable(Compact *cpt, uint16 dir);
 	void *getCompactElem(Compact *cpt, uint16 off);
 	bool cptIsId(Compact *cpt, uint16 id);
-	uint8	*createResetData(uint16 gameVersion);
-	uint16	_numSaveIds;
-	uint16	*_saveIds;
+	uint8 *createResetData(uint16 gameVersion);
+	uint16 _numSaveIds;
+	uint16 *_saveIds;
 	// - debugging functions
 	uint16 findCptId(void *cpt);
 	uint16 findCptId(const char *cptName);
 	uint16 giveNumDataLists();
 	uint16 giveDataListLen(uint16 listNum);
 	const char *nameForType(uint16 type);
+
 private:
 	void checkAndFixOfficerBluntError();
 
-	uint16  _numDataLists;
-	uint16  *_dataListLen;
-	uint16  *_rawBuf;
-	char	*_asciiBuf;
+	uint16 _numDataLists;
+	uint16 *_dataListLen;
+	uint16 *_rawBuf;
+	char *_asciiBuf;
 	Compact ***_compacts;
-	char    ***_cptNames;
-	uint16	**_cptSizes;
-	uint16  **_cptTypes;
-	Common::File	*_cptFile;
-	uint32	_resetDataPos;
+	char ***_cptNames;
+	uint16 **_cptSizes;
+	uint16 **_cptTypes;
+	Common::File *_cptFile;
+	uint32 _resetDataPos;
 	static const char *const _typeNames[NUM_CPT_TYPES];
 };
 

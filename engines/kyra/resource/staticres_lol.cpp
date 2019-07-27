@@ -20,10 +20,10 @@
  *
  */
 
-#include "kyra/resource/resource.h"
 #include "kyra/engine/lol.h"
 #include "kyra/graphics/screen_lol.h"
 #include "kyra/gui/gui_lol.h"
+#include "kyra/resource/resource.h"
 #include "kyra/sound/sound_intern.h"
 
 #ifdef ENABLE_LOL
@@ -134,7 +134,6 @@ bool StaticResource::loadCompassData(Common::SeekableReadStream &stream, void *&
 		t->y = stream.readByte();
 		t->flags = stream.readByte();
 	};
-
 
 	ptr = defs;
 	return true;
@@ -307,7 +306,7 @@ void LoLEngine::initStaticResource() {
 
 	const char *const *tmpSndList = _staticres->loadStrings(kLoLIngameSfxFiles, _ingameSoundListSize);
 	if (tmpSndList) {
-		_ingameSoundList = new char*[_ingameSoundListSize];
+		_ingameSoundList = new char *[_ingameSoundListSize];
 		for (int i = 0; i < _ingameSoundListSize; i++) {
 			_ingameSoundList[i] = new char[strlen(tmpSndList[i]) + 1];
 			strcpy(_ingameSoundList[i], tmpSndList[i]);
@@ -368,7 +367,7 @@ void LoLEngine::initStaticResource() {
 
 	_buttonCallbacks.clear();
 	_buttonCallbacks.reserve(95);
-#define cb(x) _buttonCallbacks.push_back(BUTTON_FUNCTOR(LoLEngine, this, &LoLEngine::x))
+#	define cb(x) _buttonCallbacks.push_back(BUTTON_FUNCTOR(LoLEngine, this, &LoLEngine::x))
 	// 0x00
 	cb(clickedUpArrow);
 	cb(clickedDownArrow);
@@ -466,7 +465,7 @@ void LoLEngine::initStaticResource() {
 	cb(clickedAutomap);
 	cb(clickedLamp);
 	cb(clickedStatusIcon);
-#undef cb
+#	undef cb
 }
 
 void GUI_LoL::initStaticData() {
@@ -688,15 +687,15 @@ const uint8 LoLEngine::_chargenFrameTableTalkie[] = {
 };
 
 const uint8 LoLEngine::_chargenFrameTableFloppy[] = {
-	0,  1,  2,  3,  4,  5,  4,  3,  2,
-	1,  0,  0,  1,  2,  3,  4,  5,  6,
-	7,  8,  9, 10, 11, 12, 13, 14, 15
+	0, 1, 2, 3, 4, 5, 4, 3, 2,
+	1, 0, 0, 1, 2, 3, 4, 5, 6,
+	7, 8, 9, 10, 11, 12, 13, 14, 15
 };
 
 const uint16 LoLEngine::_selectionPosTable[] = {
-	0x6F, 0x00, 0x8F, 0x00, 0xAF, 0x00,  0xCF, 0x00,
-	0xEF, 0x00, 0x6F, 0x20, 0x8F, 0x20,  0xAF, 0x20,
-	0xCF, 0x20, 0xEF, 0x20, 0x6F, 0x40,  0x8F, 0x40,
+	0x6F, 0x00, 0x8F, 0x00, 0xAF, 0x00, 0xCF, 0x00,
+	0xEF, 0x00, 0x6F, 0x20, 0x8F, 0x20, 0xAF, 0x20,
+	0xCF, 0x20, 0xEF, 0x20, 0x6F, 0x40, 0x8F, 0x40,
 	0xAF, 0x40, 0xCF, 0x40, 0xEF, 0x40, 0x10F, 0x00
 };
 
@@ -771,10 +770,7 @@ const uint8 LoLEngine::_clock2Timers[] = {
 const uint8 LoLEngine::_numClock2Timers = ARRAYSIZE(LoLEngine::_clock2Timers);
 
 const int8 LoLEngine::_mapCoords[12][4] = {
-	{  0,  7,  0, -5 }, { -5,  0,  6,  0 }, {  7,  5,  7,  1 },
-	{  5,  6,  4,  6 }, {  0,  7,  0, -1 }, { -3,  0,  6,  0 },
-	{  6,  7,  6, -3 }, { -3,  5,  6,  5 }, {  1,  5,  1,  1 },
-	{  3,  1,  3,  1 }, { -1,  6, -1, -8 }, { -7, -1,  5, -1 }
+	{ 0, 7, 0, -5 }, { -5, 0, 6, 0 }, { 7, 5, 7, 1 }, { 5, 6, 4, 6 }, { 0, 7, 0, -1 }, { -3, 0, 6, 0 }, { 6, 7, 6, -3 }, { -3, 5, 6, 5 }, { 1, 5, 1, 1 }, { 3, 1, 3, 1 }, { -1, 6, -1, -8 }, { -7, -1, 5, -1 }
 };
 
 const KyraRpgGUISettings LoLEngine::_guiSettings = {
@@ -783,11 +779,11 @@ const KyraRpgGUISettings LoLEngine::_guiSettings = {
 };
 
 const MistOfDoomAnimData LoLEngine::_mistAnimData[] = {
-	{  0,   7,   7,  13, 155 },
-	{  0,  16,  16,  17, 155 },
-	{  0,  24,  24,  24, 174 },
-	{  0,  19,  19,  19, 174 },
-	{  0,  16,  16,  17, 175 },
+	{ 0, 7, 7, 13, 155 },
+	{ 0, 16, 16, 17, 155 },
+	{ 0, 24, 24, 24, 174 },
+	{ 0, 19, 19, 19, 174 },
+	{ 0, 16, 16, 17, 175 },
 };
 
 const char *const LoLEngine::_outroShapeFileTable[] = {
@@ -799,45 +795,45 @@ const char *const LoLEngine::_outroShapeFileTable[] = {
 };
 
 const uint8 LoLEngine::_outroFrameTable[] = {
-	 0,  0,  0,  0,  0,  1,  2,  3,
-	 0,  1,  2,  3,  8,  9, 10, 11,
-	 8,  9, 10, 11,  4,  5,  6,  7
+	0, 0, 0, 0, 0, 1, 2, 3,
+	0, 1, 2, 3, 8, 9, 10, 11,
+	8, 9, 10, 11, 4, 5, 6, 7
 };
 
 const int16 LoLEngine::_outroRightMonsterPos[] = {
-	205,  55, 205,  55, 205,  55, 205,  55,
-	205,  56, 207,  57, 208,  58, 210,  59,
-	213,  60, 216,  61, 220,  61, 225,  61,
-	230,  61, 235,  61, 240,  61, 240,  61,
-	240,  61, 240,  61, 240,  61, 240,  61,
-	240,  61, 265,  61, 290,  61, 315,  61
+	205, 55, 205, 55, 205, 55, 205, 55,
+	205, 56, 207, 57, 208, 58, 210, 59,
+	213, 60, 216, 61, 220, 61, 225, 61,
+	230, 61, 235, 61, 240, 61, 240, 61,
+	240, 61, 240, 61, 240, 61, 240, 61,
+	240, 61, 265, 61, 290, 61, 315, 61
 };
 
 const int16 LoLEngine::_outroLeftMonsterPos[] = {
-	 92,  55,  92,  55,  92,  55,  92,  55,
-	 92,  56,  90,  57,  85,  58,  77,  59,
-	 67,  60,  57,  61,  47,  61,  35,  61,
-	 35,  61,  35,  61,  35,  61,  35,  61,
-	 35,  61,  35,  61,  35,  61,  35,  61,
-	 35,  61,  10,  61, -20,  61, -45,  61
+	92, 55, 92, 55, 92, 55, 92, 55,
+	92, 56, 90, 57, 85, 58, 77, 59,
+	67, 60, 57, 61, 47, 61, 35, 61,
+	35, 61, 35, 61, 35, 61, 35, 61,
+	35, 61, 35, 61, 35, 61, 35, 61,
+	35, 61, 10, 61, -20, 61, -45, 61
 };
 
 const int16 LoLEngine::_outroRightDoorPos[] = {
-	200,  41, 200,  29, 200,  17, 200,   5,
-	200,  -7, 200,  -7, 200,  -7, 200,  -7,
-	200,   5, 200,  17, 200,  29, 200,  41,
-	200,  41, 200,  41, 200,  41, 200,  41,
-	200,  41, 200,  41, 200,  41, 200,  41,
-	200,  41, 200,  41, 200,  41, 200,  41
+	200, 41, 200, 29, 200, 17, 200, 5,
+	200, -7, 200, -7, 200, -7, 200, -7,
+	200, 5, 200, 17, 200, 29, 200, 41,
+	200, 41, 200, 41, 200, 41, 200, 41,
+	200, 41, 200, 41, 200, 41, 200, 41,
+	200, 41, 200, 41, 200, 41, 200, 41
 };
 
 const int16 LoLEngine::_outroLeftDoorPos[] = {
-	 72,  41,  72,  29,  72,  17,  72,   5,
-	 72,  -7,  72,  -7,  72,  -7,  72,  -7,
-	 72,   5,  72,  17,  72,  29,  72,  41,
-	 72,  41,  72,  41,  72,  41,  72,  41,
-	 72,  41,  72,  41,  72,  41,  72,  41,
-	 72,  41,  72,  41,  72,  41,  72,  41
+	72, 41, 72, 29, 72, 17, 72, 5,
+	72, -7, 72, -7, 72, -7, 72, -7,
+	72, 5, 72, 17, 72, 29, 72, 41,
+	72, 41, 72, 41, 72, 41, 72, 41,
+	72, 41, 72, 41, 72, 41, 72, 41,
+	72, 41, 72, 41, 72, 41, 72, 41
 };
 
 const int LoLEngine::_outroMonsterScaleTableX[] = {

@@ -26,7 +26,7 @@
 #ifndef ENGINEDATA_H
 #define ENGINEDATA_H
 
-const char *engineDataEn[] =  {
+const char *engineDataEn[] = {
 	"[2][ ][YES][NO]",
 	"Go to",
 	"Someone enters, looks surprised, but says nothing",
@@ -133,7 +133,7 @@ const char *engineDataFr[] = {
 	NULL
 };
 
-const char *engineDataDe[] =  {
+const char *engineDataDe[] = {
 	"[2][ ][JA][NEIN]",
 	"gehen",
 	"Jemand kommt herein, scheint erstaunt, sagt nichts",

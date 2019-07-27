@@ -29,8 +29,8 @@
  *
  */
 
-#include "sword25/script/luascript.h"
 #include "sword25/script/luabindhelper.h"
+#include "sword25/script/luascript.h"
 
 namespace Sword25 {
 
@@ -54,8 +54,8 @@ static int warning(lua_State *L) {
 }
 
 static const luaL_reg GLOBAL_FUNCTIONS[] = {
-	{"warning", warning},
-	{0, 0}
+	{ "warning", warning },
+	{ 0, 0 }
 };
 
 bool LuaScriptEngine::registerStandardLibExtensions() {

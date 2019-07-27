@@ -21,17 +21,17 @@
  */
 
 #include "prince/script.h"
-#include "prince/prince.h"
+#include "prince/animation.h"
 #include "prince/flags.h"
-#include "prince/variatxt.h"
 #include "prince/font.h"
 #include "prince/hero.h"
+#include "prince/prince.h"
 #include "prince/resource.h"
-#include "prince/animation.h"
+#include "prince/variatxt.h"
 
-#include "common/debug.h"
-#include "common/debug-channels.h"
 #include "common/archive.h"
+#include "common/debug-channels.h"
+#include "common/debug.h"
 #include "common/memstream.h"
 
 namespace Prince {
@@ -85,7 +85,10 @@ int Room::getOptionOffset(int option) {
 	}
 }
 
-Script::Script(PrinceEngine *vm) : _vm(vm), _data(nullptr), _dataSize(0) {
+Script::Script(PrinceEngine *vm)
+  : _vm(vm)
+  , _data(nullptr)
+  , _dataSize(0) {
 }
 
 Script::~Script() {
@@ -432,10 +435,15 @@ int32 InterpreterFlags::getFlagValue(Flags::Id flagId) {
 	return _flags[(uint32)flagId - kFlagMask];
 }
 
-Interpreter::Interpreter(PrinceEngine *vm, Script *script, InterpreterFlags *flags) :
-	_vm(vm), _script(script), _flags(flags),
-	_stacktop(0), _opcodeNF(false), _opcodeEnd(false),
-	_waitFlag(0), _result(true) {
+Interpreter::Interpreter(PrinceEngine *vm, Script *script, InterpreterFlags *flags)
+  : _vm(vm)
+  , _script(script)
+  , _flags(flags)
+  , _stacktop(0)
+  , _opcodeNF(false)
+  , _opcodeEnd(false)
+  , _waitFlag(0)
+  , _result(true) {
 
 	// Initialize the script
 	_mode = "fg";
@@ -482,9 +490,9 @@ uint32 Interpreter::step(uint32 opcodePC) {
 
 		if (_lastOpcode >= kNumOpcodes)
 			error(
-				"Trying to execute unknown opcode @0x%04X: %02d",
-				_currentInstruction,
-				_lastOpcode);
+			  "Trying to execute unknown opcode @0x%04X: %02d",
+			  _currentInstruction,
+			  _lastOpcode);
 
 		// Execute the current opcode
 		OpcodeFunc op = _opcodes[_lastOpcode];
@@ -808,7 +816,7 @@ void Interpreter::O_UPDATEON() {
 }
 
 // Not used in script
-void Interpreter::O_UPDATE () {
+void Interpreter::O_UPDATE() {
 	error("O_UPDATE");
 }
 
@@ -1160,7 +1168,7 @@ void Interpreter::O_REMWALKAREA() {
 	error("O_REMWALKAREA");
 }
 
- // Not used in script
+// Not used in script
 void Interpreter::O_RESTOREWALKAREA() {
 	error("O_RESTOREWALKAREA");
 }
@@ -1257,7 +1265,7 @@ void Interpreter::O_SETHEROANIM() {
 	}
 	if (hero != nullptr) {
 		hero->freeHeroAnim();
-		if (hero ->_specAnim == nullptr) {
+		if (hero->_specAnim == nullptr) {
 			hero->_specAnim = new Animation();
 			if (offset < 100) {
 				const Common::String animName = Common::String::format("AN%02d", offset);
@@ -1967,7 +1975,7 @@ Interpreter::OpcodeFunc Interpreter::_opcodes[kNumOpcodes] = {
 	&Interpreter::O__WAIT,
 	&Interpreter::O_UPDATEOFF,
 	&Interpreter::O_UPDATEON,
-	&Interpreter::O_UPDATE ,
+	&Interpreter::O_UPDATE,
 	&Interpreter::O_CLS,
 	&Interpreter::O__CALL,
 	&Interpreter::O_RETURN,

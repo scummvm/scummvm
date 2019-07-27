@@ -25,9 +25,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CSGTTV, CSGTStateRoom)
-	ON_MESSAGE(TurnOff)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(TurnOff)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(MovieEndMsg)
 END_MESSAGE_MAP()
 
 void CSGTTV::save(SimpleFile *file, int indent) {
@@ -53,8 +53,7 @@ bool CSGTTV::TurnOff(CTurnOff *msg) {
 }
 
 bool CSGTTV::TurnOn(CTurnOn *msg) {
-	if (CSGTStateRoom::_statics->_tv == "Closed" &&
-			CSGTStateRoom::_statics->_bedfoot != "Closed") {
+	if (CSGTStateRoom::_statics->_tv == "Closed" && CSGTStateRoom::_statics->_bedfoot != "Closed") {
 		CSGTStateRoom::_statics->_tv = "Open";
 		setVisible(true);
 		_isClosed = false;

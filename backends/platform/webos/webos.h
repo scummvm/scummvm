@@ -23,8 +23,8 @@
 #ifndef PLATFORM_SDL_WEBOS_H
 #define PLATFORM_SDL_WEBOS_H
 
-#include "common/system.h"
 #include "backends/platform/sdl/posix/posix.h"
+#include "common/system.h"
 
 class OSystem_SDL_WebOS : public OSystem_POSIX {
 public:

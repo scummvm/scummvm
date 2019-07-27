@@ -24,14 +24,13 @@
 
 #if defined(SAMSUNGTV)
 
-#include "backends/platform/samsungtv/samsungtv.h"
-#include "backends/events/samsungtvsdl/samsungtvsdl-events.h"
-#include "backends/graphics/samsungtvsdl/samsungtvsdl-graphics.h"
-#include "common/textconsole.h"
+#	include "backends/events/samsungtvsdl/samsungtvsdl-events.h"
+#	include "backends/graphics/samsungtvsdl/samsungtvsdl-graphics.h"
+#	include "backends/platform/samsungtv/samsungtv.h"
+#	include "common/textconsole.h"
 
 OSystem_SDL_SamsungTV::OSystem_SDL_SamsungTV()
-	:
-	OSystem_POSIX("/mtd_rwarea/.scummvmrc") {
+  : OSystem_POSIX("/mtd_rwarea/.scummvmrc") {
 }
 
 void OSystem_SDL_SamsungTV::initBackend() {
@@ -54,7 +53,8 @@ void OSystem_SDL_SamsungTV::fatalError() {
 	delete this;
 	// FIXME
 	warning("fatal error");
-	for (;;) {}
+	for (;;) {
+	}
 }
 
 #endif

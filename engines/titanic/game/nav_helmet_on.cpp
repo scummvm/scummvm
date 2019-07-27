@@ -21,13 +21,13 @@
  */
 
 #include "titanic/game/nav_helmet_on.h"
-#include "titanic/pet_control/pet_control.h"
 #include "titanic/messages/pet_messages.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CNavHelmetOn, CNavHelmet)
-	ON_MESSAGE(MouseButtonUpMsg)
+ON_MESSAGE(MouseButtonUpMsg)
 END_MESSAGE_MAP()
 
 void CNavHelmetOn::save(SimpleFile *file, int indent) {

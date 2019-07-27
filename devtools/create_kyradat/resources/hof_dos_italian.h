@@ -4,35 +4,49 @@ static const char *const k2SeqplayStringsDOSItalian[103] = {
 	"...e albero dopo albero.",
 	"Kyrandia cessa di esistere!",
 	"I Mistici Reali sono sconcertati.",
-	"Ogni testo ""\x8A"" stato consultato.",
+	"Ogni testo "
+	"\x8A"
+	" stato consultato.",
 	"Perfino Marko e il suo nuovo assistente sono stati invitati alla conferenza.",
 	"Per fortuna, Mano ha esperienza in queste situazioni.",
 	"E finalmente un piano viene approvato...",
 	"...occorre un'Ancora magica di Pietra...",
 	"...da recuperare al centro della terra.",
-	"Zanthia, la pi""\x97"" giovane tra i Mistici di Kyrandia, ""\x8A"" stata scelta per recuperare la Pietra.",
+	"Zanthia, la pi"
+	"\x97"
+	" giovane tra i Mistici di Kyrandia, "
+	"\x8A"
+	" stata scelta per recuperare la Pietra.",
 	"Grazie per aver giocato a The Hand of Fate.",
 	"Questi mirtilli dovrebbero bastare ad aprire un portale per il centro della terra.",
 	" MY ",
 	" MY ",
 	"Hey! Hanno rubato tutto il mio equipaggiamento!",
 	" MY ",
-	"Se pensano che ci arrivi a piedi fin laggi""\x97"", sono proprio dei pazzi!",
+	"Se pensano che ci arrivi a piedi fin laggi"
+	"\x97"
+	", sono proprio dei pazzi!",
 	" MY ",
 	" DUMMY STRNG... ",
 	"Muoviti Fauno!",
-	"C'""\x8A"" mancato un pelo!",
+	"C'"
+	"\x8A"
+	" mancato un pelo!",
 	"L'hai detto amico. Io ho smesso con la caccia!",
 	"Ribbit.",
 	"Quante volte devo dirtelo? Sei un rospo.",
 	"Oh no! Abbiamo finito il formaggio!",
 	"Proviamo con questo cerume. E' arancione.",
-	"Mami, non ""\x8A"" che alla fine mi trasformano in un golf?",
+	"Mami, non "
+	"\x8A"
+	" che alla fine mi trasformano in un golf?",
 	"Via di qui, shoo!",
 	"Tu tagli, e io scelgo.",
 	"No. Tu tagli e io scelgo.",
 	"Sono sempre convinta che si trattasse di un'assoluta cretinata.",
-	"Aw, non capirai mai niente di poesia. Facciamoci un'altra birra che ""\x8A"" meglio!",
+	"Aw, non capirai mai niente di poesia. Facciamoci un'altra birra che "
+	"\x8A"
+	" meglio!",
 	"Executive Producer",
 	"Brett W. Sperry",
 	"Director",
@@ -105,4 +119,3 @@ static const char *const k2SeqplayStringsDOSItalian[103] = {
 };
 
 static const StringListProvider k2SeqplayStringsDOSItalianProvider = { ARRAYSIZE(k2SeqplayStringsDOSItalian), k2SeqplayStringsDOSItalian };
-

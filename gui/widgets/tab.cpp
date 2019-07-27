@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/util.h"
 #include "gui/widgets/tab.h"
+#include "common/util.h"
 #include "gui/gui-manager.h"
 
 #include "gui/ThemeEval.h"
@@ -29,19 +29,21 @@
 namespace GUI {
 
 enum {
-	kCmdLeft  = 'LEFT',
+	kCmdLeft = 'LEFT',
 	kCmdRight = 'RGHT'
 };
 
 static const int kTabTitleSpacing = 2 * 5;
 
 TabWidget::TabWidget(GuiObject *boss, int x, int y, int w, int h)
-	: Widget(boss, x, y, w, h), _bodyBackgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
+  : Widget(boss, x, y, w, h)
+  , _bodyBackgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
 	init();
 }
 
 TabWidget::TabWidget(GuiObject *boss, const String &name)
-	: Widget(boss, name), _bodyBackgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
+  : Widget(boss, name)
+  , _bodyBackgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
 	init();
 }
 
@@ -177,7 +179,6 @@ void TabWidget::setActiveTab(int tabID) {
 		g_gui.scheduleTopDialogRedraw();
 	}
 }
-
 
 void TabWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	Widget::handleCommand(sender, cmd, data);
@@ -321,8 +322,8 @@ void TabWidget::drawWidget() {
 		widths.push_back(_tabs[i]._tabWidth);
 	}
 	g_gui.theme()->drawDialogBackground(
-			Common::Rect(_x + _bodyLP, _y + _bodyTP, _x + _w - _bodyRP, _y + _h - _bodyBP + _tabHeight),
-			_bodyBackgroundType);
+	  Common::Rect(_x + _bodyLP, _y + _bodyTP, _x + _w - _bodyRP, _y + _h - _bodyBP + _tabHeight),
+	  _bodyBackgroundType);
 
 	g_gui.theme()->drawTab(Common::Rect(_x, _y, _x + _w, _y + _h), _tabHeight, widths, tabs,
 	                       _activeTab - _firstVisibleTab);
@@ -352,14 +353,13 @@ bool TabWidget::containsWidget(Widget *w) const {
 	return containsWidgetInChain(_firstWidget, w);
 }
 
-
 Widget *TabWidget::findWidget(int x, int y) {
 	if (y < _tabHeight) {
 		if (_navButtonsVisible) {
 			if (y >= _butTP && y < _butTP + _butH) {
 				if (x >= _w - _butRP - _butW * 2 - 2 && x < _w - _butRP - _butW - 2)
 					return _navLeft;
-				if (x >= _w - _butRP - _butW &&  x < _w - _butRP)
+				if (x >= _w - _butRP - _butW && x < _w - _butRP)
 					return _navRight;
 			}
 		}
@@ -391,8 +391,8 @@ void TabWidget::computeLastVisibleTab(bool adjustFirstIfRoom) {
 
 	if (adjustFirstIfRoom) {
 		// If possible, scroll to fit if there's unused space to the right
-		while (_firstVisibleTab > 0 && _tabs[_firstVisibleTab-1]._tabWidth <= availableWidth) {
-			availableWidth -= _tabs[_firstVisibleTab-1]._tabWidth;
+		while (_firstVisibleTab > 0 && _tabs[_firstVisibleTab - 1]._tabWidth <= availableWidth) {
+			availableWidth -= _tabs[_firstVisibleTab - 1]._tabWidth;
 			_firstVisibleTab--;
 		}
 	}

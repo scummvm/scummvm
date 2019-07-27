@@ -25,17 +25,22 @@
 
 class PspTimer {
 public:
-	typedef void (* CallbackFunc)(void);
-	PspTimer() : _callback(0), _interval(0), _threadId(-1), _init(false) {}
+	typedef void (*CallbackFunc)(void);
+	PspTimer()
+	  : _callback(0)
+	  , _interval(0)
+	  , _threadId(-1)
+	  , _init(false) {}
 	void stop() { _init = false; }
 	bool start();
 	~PspTimer() { stop(); }
 	void setCallback(CallbackFunc cb) { _callback = cb; }
 	void setIntervalMs(uint32 interval) { _interval = interval * 1000; }
-	static int thread(SceSize, void *__this);		// static thread to use as bridge
+	static int thread(SceSize, void *__this); // static thread to use as bridge
 	void timerThread();
+
 private:
-	CallbackFunc _callback;	// pointer to timer callback
+	CallbackFunc _callback; // pointer to timer callback
 	uint32 _interval;
 	int _threadId;
 	bool _init;

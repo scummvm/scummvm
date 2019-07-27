@@ -25,7 +25,7 @@
 
 #ifdef ENABLE_HE
 
-#include "common/winexe_pe.h"
+#	include "common/winexe_pe.h"
 
 namespace Scumm {
 
@@ -39,12 +39,12 @@ public:
 
 	int readFromArray(int array, int y, int x);
 	void deallocateArray(int array);
-	int callScummFunction(int scriptNumber, int paramCount,...);
+	int callScummFunction(int scriptNumber, int paramCount, ...);
 
 	void blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, const Common::Rect *clipBox,
-			 uint8 *wizd, int srcx, int srcy, int rawROP, int paramROP);
+	                     uint8 *wizd, int srcx, int srcy, int rawROP, int paramROP);
 	void blitDistortion(byte *bufferData, const int bufferWidth, const int bufferHeight, const int bufferPitch,
-			const Common::Rect *optionalClippingRect, byte *dataStream, const int x, const int y, byte *altSourceBuffer);
+	                    const Common::Rect *optionalClippingRect, byte *dataStream, const int x, const int y, byte *altSourceBuffer);
 
 	// FOW Stuff
 	bool isFOW(int resNum, int state, uint32 conditionBits) {
@@ -57,8 +57,7 @@ public:
 	bool setFOWImage(int id);
 
 	void setFOWInfo(int fowInfoArray, int downDim, int acrossDim, int viewX, int viewY, int clipX1,
-		int clipY1, int clipX2, int clipY2, int technique, int nFrame);
-
+	                int clipY1, int clipX2, int clipY2, int technique, int nFrame);
 
 	void renderFOW(uint8 *destSurface, int dstPitch, int dstType, int dstw, int dsth, int flags);
 
@@ -72,9 +71,9 @@ public:
 	uint32 _fowSentinelConditionBits;
 
 	AI *_ai;
-#ifdef USE_SDL_NET
+#	ifdef USE_SDL_NET
 	Net *_net;
-#endif
+#	endif
 
 private:
 	ScummEngine_v100he *_vm;

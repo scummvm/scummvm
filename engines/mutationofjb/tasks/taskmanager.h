@@ -38,7 +38,8 @@ class Task;
  */
 class TaskManager {
 public:
-	TaskManager(Game &game) : _game(game) {}
+	TaskManager(Game &game)
+	  : _game(game) {}
 
 	/**
 	 * Adds the task to the internal list and starts it.

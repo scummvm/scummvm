@@ -38,11 +38,11 @@
 namespace Glk {
 namespace TADS {
 
-extern void os_put_buffer(const char *buf, size_t len);
+	extern void os_put_buffer(const char *buf, size_t len);
 
-extern void os_get_buffer(char *buf, size_t len, size_t init);
+	extern void os_get_buffer(char *buf, size_t len, size_t init);
 
-extern char *os_fill_buffer(char *buf, size_t len);
+	extern char *os_fill_buffer(char *buf, size_t len);
 
 } // End of namespace TADS
 } // End of namespace Glk

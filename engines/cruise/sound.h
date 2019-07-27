@@ -37,9 +37,11 @@ private:
 	Audio::Mixer *_mixer;
 	CruiseEngine *_vm;
 	int _genVolume;
+
 protected:
 	PCSoundDriver *_soundDriver;
 	PCSoundFxPlayer *_player;
+
 public:
 	PCSound(Audio::Mixer *mixer, CruiseEngine *vm);
 	virtual ~PCSound();

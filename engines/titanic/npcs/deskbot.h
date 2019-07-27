@@ -40,12 +40,15 @@ class CDeskbot : public CTrueTalkNPC {
 	bool TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMsg *msg);
 	bool TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg);
 	bool TurnOff(CTurnOff *msg);
+
 private:
 	static int _v1;
 	static int _v2;
+
 public:
 	bool _deskbotActive;
 	PassengerClass _classNum;
+
 public:
 	CLASSDEF;
 	CDeskbot();

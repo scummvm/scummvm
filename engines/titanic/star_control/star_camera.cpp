@@ -23,11 +23,11 @@
 #include "titanic/star_control/star_camera.h"
 #include "titanic/debugger.h"
 #include "titanic/star_control/camera_mover.h"
+#include "titanic/star_control/error_code.h"
 #include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/fpoint.h"
 #include "titanic/star_control/marked_camera_mover.h"
 #include "titanic/star_control/unmarked_camera_mover.h"
-#include "titanic/star_control/error_code.h"
 #include "titanic/support/simple_file.h"
 #include "titanic/titanic.h"
 
@@ -39,13 +39,20 @@ const double rowScale2 = 1000000.0;
 FMatrix *CStarCamera::_priorOrientation;
 FMatrix *CStarCamera::_newOrientation;
 
-CStarCamera::CStarCamera(const CNavigationInfo *data) :
-		_starLockState(ZERO_LOCKED), _mover(nullptr), _isMoved(false), _isInLockingProcess(false) {
+CStarCamera::CStarCamera(const CNavigationInfo *data)
+  : _starLockState(ZERO_LOCKED)
+  , _mover(nullptr)
+  , _isMoved(false)
+  , _isInLockingProcess(false) {
 	setMoverType(data);
 }
 
-CStarCamera::CStarCamera(CViewport *src) :
-		_starLockState(ZERO_LOCKED), _mover(nullptr), _isMoved(false), _isInLockingProcess(false), _viewport(src) {
+CStarCamera::CStarCamera(CViewport *src)
+  : _starLockState(ZERO_LOCKED)
+  , _mover(nullptr)
+  , _isMoved(false)
+  , _isInLockingProcess(false)
+  , _viewport(src) {
 }
 
 void CStarCamera::init() {
@@ -60,11 +67,11 @@ void CStarCamera::deinit() {
 	_newOrientation = nullptr;
 }
 
-bool CStarCamera::isLocked() { 
+bool CStarCamera::isLocked() {
 	return _mover->isLocked();
 }
 
-bool CStarCamera::isNotInLockingProcess() { 
+bool CStarCamera::isNotInLockingProcess() {
 	return !_isInLockingProcess;
 }
 
@@ -231,7 +238,7 @@ FVector CStarCamera::getRelativePos(int index, const FVector &src) {
 	}
 
 	dest._x = ((val + src._x) * _viewport._centerVector._x)
-		/ (_viewport._centerVector._y * src._z);
+	  / (_viewport._centerVector._y * src._z);
 	dest._y = src._y * _viewport._centerVector._x / (_viewport._centerVector._z * src._z);
 	dest._z = src._z;
 	return dest;
@@ -255,7 +262,7 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 	if (isLocked())
 		return;
 
-	switch(_starLockState) {
+	switch (_starLockState) {
 	case ZERO_LOCKED: {
 		FPose subX(X_AXIS, angles._y);
 		FPose subY(Y_AXIS, -angles._x); // needs to be negative or looking left will cause the view to go right
@@ -299,9 +306,7 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		tempV6 -= tempV1;
 
 		float unusedScale = 0.0;
-		if (!tempV4.normalize(unusedScale) ||
-				!tempV5.normalize(unusedScale) ||
-				!tempV6.normalize(unusedScale)) {
+		if (!tempV4.normalize(unusedScale) || !tempV5.normalize(unusedScale) || !tempV6.normalize(unusedScale)) {
 			// Do the normalization, put the scale amount in unusedScale,
 			// but if it is unsuccessful, crash
 			assert(unusedScale);
@@ -374,10 +379,8 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		mrow2 -= tempV3;
 		mrow3 -= tempV3;
 
-		float unusedScale=0.0;
-		if (!mrow1.normalize(unusedScale) ||
-				!mrow2.normalize(unusedScale) ||
-				!mrow3.normalize(unusedScale)) {
+		float unusedScale = 0.0;
+		if (!mrow1.normalize(unusedScale) || !mrow2.normalize(unusedScale) || !mrow3.normalize(unusedScale)) {
 			// Do the normalization, put the scale amount in unusedScale,
 			// but if it is unsuccessful, crash
 			assert(unusedScale);
@@ -505,14 +508,14 @@ bool CStarCamera::lockMarker1(FVector v1, FVector firstStarPosition, FVector v3)
 
 	FMatrix matrix = _viewport.getOrientation();
 	const FVector &pos = _viewport._position;
-	_mover->transitionBetweenOrientations(v3, tempV, pos, matrix); // TODO: pos does not get used in this function, 
-																// i.e., _mover has CUnmarkedCameraMover handle which means
-																// CUnmarkedCameraMover::transitionBetweenOrientations gets called
+	_mover->transitionBetweenOrientations(v3, tempV, pos, matrix); // TODO: pos does not get used in this function,
+	  // i.e., _mover has CUnmarkedCameraMover handle which means
+	  // CUnmarkedCameraMover::transitionBetweenOrientations gets called
 
 	CStarVector *sv = new CStarVector(this, firstStarPosition);
 	_mover->setVector(sv);
 
-	return	true;
+	return true;
 }
 
 bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosition) {
@@ -564,7 +567,6 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosi
 	tempV3._z = newOr._row3._z * rowScale2 + m4._row1._z;
 	m4._vector = tempV3;
 
-
 	FVector viewPosition2 = oldPos.matProdRowVect(m10);
 	m3 = m4.compose2(m10);
 
@@ -582,12 +584,8 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosi
 	m13._row2 -= m13._row1;
 	m13._vector -= m13._row1;
 
-
-
-	float unusedScale=0.0;
-	if (!m13._row2.normalize(unusedScale) ||
-			!m13._row3.normalize(unusedScale) ||
-			!m13._vector.normalize(unusedScale) ) {
+	float unusedScale = 0.0;
+	if (!m13._row2.normalize(unusedScale) || !m13._row3.normalize(unusedScale) || !m13._vector.normalize(unusedScale)) {
 		// Do the normalizations, put the scale amount in unusedScale,
 		// but if any of the normalizations are unsuccessful, crash
 		assert(unusedScale);
@@ -598,13 +596,13 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosi
 	FVector newPos = m13._row1;
 	FMatrix oldOr = _viewport.getOrientation();
 
-	// WORKAROUND: set old position to new position (1st argument), this prevents 
+	// WORKAROUND: set old position to new position (1st argument), this prevents
 	// locking issues when locking the 2nd star. Fixes #9961.
 	_mover->transitionBetweenPosOrients(newPos, newPos, oldOr, newOr);
 	CStarVector *sv = new CStarVector(this, secondStarPosition);
 	_mover->setVector(sv);
 
-	return	true;
+	return true;
 }
 
 bool CStarCamera::lockMarker3(CViewport *viewport, const FVector &thirdStarPosition) {
@@ -617,7 +615,7 @@ bool CStarCamera::lockMarker3(CViewport *viewport, const FVector &thirdStarPosit
 	FVector newPos = viewport->_position;
 	//FVector oldPos = _viewport._position;
 
-	// WORKAROUND: set old position to new position (1st argument), this prevents 
+	// WORKAROUND: set old position to new position (1st argument), this prevents
 	// locking issues when locking the 3rd star. Fixes #9961.
 	_mover->transitionBetweenPosOrients(newPos, newPos, oldOr, newOr);
 
@@ -632,15 +630,15 @@ float CStarCamera::calcAngleForMinDist(FVector &x, FVector &y, float &minDistanc
 	minDistance = (float)1.0e20;
 	float minDegree = 0.0;
 	float degInc = 1.0; // one degree steps
-	int nDegrees = floor(360.0/degInc);
+	int nDegrees = floor(360.0 / degInc);
 	for (int i = 0; i < nDegrees; ++i) {
 		tempPos = y;
-		tempPos.rotVectAxisY((float)degInc*i);
+		tempPos.rotVectAxisY((float)degInc * i);
 		float distance = x.getDistance(tempPos);
 
 		if (distance < minDistance) {
 			minDistance = distance;
-			minDegree = (float) degInc*i;
+			minDegree = (float)degInc * i;
 		}
 	}
 	return minDegree;

@@ -31,21 +31,20 @@
 //
 // ---------------------------------------------------------------------------
 
-
 #include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
 
-#include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"
 #include "sword2/logic.h"
-#include "sword2/object.h"
 #include "sword2/mouse.h"
+#include "sword2/object.h"
 #include "sword2/resman.h"
 #include "sword2/saveload.h"
 #include "sword2/screen.h"
 #include "sword2/sound.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
@@ -83,7 +82,7 @@ uint32 Sword2Engine::saveGame(uint16 slotNo, const byte *desc) {
 	// Script no. 7 - 'george_savedata_request' calls fnPassPlayerSaveData
 	_logic->runResScript(CUR_PLAYER_ID, 7);
 
-	writeS.writeUint32LE(0);	// Checksum
+	writeS.writeUint32LE(0); // Checksum
 	writeS.write(description, SAVE_DESCRIPTION_LEN);
 	writeS.writeUint32LE(_resman->fetchLen(1));
 	writeS.writeUint32LE(screenInfo->background_layer_id);
@@ -285,20 +284,20 @@ uint32 Sword2Engine::restoreFromBuffer(byte *buffer, uint32 size) {
 	uint32 scriptNo = 0;
 
 	switch (obMega.getMegasetRes()) {
-	case 36:		// GeoMega:
-		scriptNo = 9;	// script no.9	- 'player_is_george'
+	case 36: // GeoMega:
+		scriptNo = 9; // script no.9	- 'player_is_george'
 		break;
-	case 2003:		// GeoMegaB:
-		scriptNo = 13;	// script no.13 - 'player_is_georgeB'
+	case 2003: // GeoMegaB:
+		scriptNo = 13; // script no.13 - 'player_is_georgeB'
 		break;
-	case 1366:		// NicMegaA:
-		scriptNo = 11;	// script no.11 - 'player_is_nicoA'
+	case 1366: // NicMegaA:
+		scriptNo = 11; // script no.11 - 'player_is_nicoA'
 		break;
-	case 1437:		// NicMegaB:
-		scriptNo = 12;	// script no.12 - 'player_is_nicoB'
+	case 1437: // NicMegaB:
+		scriptNo = 12; // script no.12 - 'player_is_nicoB'
 		break;
-	case 1575:		// NicMegaC:
-		scriptNo = 10;	// script no.10 - 'player_is_nicoC'
+	case 1575: // NicMegaC:
+		scriptNo = 10; // script no.10 - 'player_is_nicoC'
 		break;
 	}
 

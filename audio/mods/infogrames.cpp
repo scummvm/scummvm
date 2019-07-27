@@ -71,9 +71,7 @@ bool Infogrames::Instruments::load(Common::SeekableReadStream &ins) {
 	for (i = 0; (i < 32) && !ins.eos(); i++) {
 		offset[i] = ins.readUint32BE();
 		offsetRepeat[i] = ins.readUint32BE();
-		if ((offset[i] > fsize) || (offsetRepeat[i] > fsize) ||
-				(offset[i] < (ins.pos() + 4)) ||
-				(offsetRepeat[i] < (ins.pos() + 4))) {
+		if ((offset[i] > fsize) || (offsetRepeat[i] > fsize) || (offset[i] < (ins.pos() + 4)) || (offsetRepeat[i] < (ins.pos() + 4))) {
 			// Definitely no real entry anymore
 			ins.seek(-8, SEEK_CUR);
 			break;
@@ -106,31 +104,30 @@ void Infogrames::Instruments::unload() {
 	init();
 }
 
-const uint8 Infogrames::tickCount[] =
-	{2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96};
-const uint16 Infogrames::periods[] =
-	{0x6ACC, 0x64CC, 0x5F25, 0x59CE, 0x54C3, 0x5003, 0x4B86, 0x4747, 0x4346,
-	 0x3F8B, 0x3BF3, 0x3892, 0x3568, 0x3269, 0x2F93, 0x2CEA, 0x2A66, 0x2801,
-	 0x2566, 0x23A5, 0x21AF, 0x1FC4, 0x1DFE, 0x1C4E, 0x1ABC, 0x1936, 0x17CC,
-	 0x1676, 0x1533, 0x1401, 0x12E4, 0x11D5, 0x10D4, 0x0FE3, 0x0EFE, 0x0E26,
-	 0x0D5B, 0x0C9B, 0x0BE5, 0x0B3B, 0x0A9B, 0x0A02, 0x0972, 0x08E9, 0x0869,
-	 0x07F1, 0x077F, 0x0713, 0x06AD, 0x064D, 0x05F2, 0x059D, 0x054D, 0x0500,
-	 0x04B8, 0x0475, 0x0435, 0x03F8, 0x03BF, 0x038A, 0x0356, 0x0326, 0x02F9,
-	 0x02CF, 0x02A6, 0x0280, 0x025C, 0x023A, 0x021A, 0x01FC, 0x01E0, 0x01C5,
-	 0x01AB, 0x0193, 0x017D, 0x0167, 0x0153, 0x0140, 0x012E, 0x011D, 0x010D,
-	 0x00FE, 0x00F0, 0x00E2, 0x00D6, 0x00CA, 0x00BE, 0x00B4, 0x00AA, 0x00A0,
-	 0x0097, 0x008F, 0x0087, 0x007F, 0x0078, 0x0070, 0x0060, 0x0050, 0x0040,
-	 0x0030, 0x0020, 0x0010, 0x0000, 0x0000, 0x0020, 0x2020, 0x2020, 0x2020,
-	 0x2020, 0x3030, 0x3030, 0x3020, 0x2020, 0x2020, 0x2020, 0x2020, 0x2020,
-	 0x2020, 0x2020, 0x2020, 0x2090, 0x4040, 0x4040, 0x4040, 0x4040, 0x4040,
-	 0x4040, 0x4040, 0x400C, 0x0C0C, 0x0C0C, 0x0C0C, 0x0C0C, 0x0C40, 0x4040,
-	 0x4040, 0x4040, 0x0909, 0x0909, 0x0909, 0x0101, 0x0101, 0x0101, 0x0101,
-	 0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 0x4040, 0x4040, 0x4040,
-	 0x0A0A, 0x0A0A, 0x0A0A, 0x0202, 0x0202, 0x0202, 0x0202, 0x0202, 0x0202,
-	 0x0202, 0x0202, 0x0202, 0x0202, 0x4040, 0x4040, 0x2000};
+const uint8 Infogrames::tickCount[] = { 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96 };
+const uint16 Infogrames::periods[] = { 0x6ACC, 0x64CC, 0x5F25, 0x59CE, 0x54C3, 0x5003, 0x4B86, 0x4747, 0x4346,
+	                                     0x3F8B, 0x3BF3, 0x3892, 0x3568, 0x3269, 0x2F93, 0x2CEA, 0x2A66, 0x2801,
+	                                     0x2566, 0x23A5, 0x21AF, 0x1FC4, 0x1DFE, 0x1C4E, 0x1ABC, 0x1936, 0x17CC,
+	                                     0x1676, 0x1533, 0x1401, 0x12E4, 0x11D5, 0x10D4, 0x0FE3, 0x0EFE, 0x0E26,
+	                                     0x0D5B, 0x0C9B, 0x0BE5, 0x0B3B, 0x0A9B, 0x0A02, 0x0972, 0x08E9, 0x0869,
+	                                     0x07F1, 0x077F, 0x0713, 0x06AD, 0x064D, 0x05F2, 0x059D, 0x054D, 0x0500,
+	                                     0x04B8, 0x0475, 0x0435, 0x03F8, 0x03BF, 0x038A, 0x0356, 0x0326, 0x02F9,
+	                                     0x02CF, 0x02A6, 0x0280, 0x025C, 0x023A, 0x021A, 0x01FC, 0x01E0, 0x01C5,
+	                                     0x01AB, 0x0193, 0x017D, 0x0167, 0x0153, 0x0140, 0x012E, 0x011D, 0x010D,
+	                                     0x00FE, 0x00F0, 0x00E2, 0x00D6, 0x00CA, 0x00BE, 0x00B4, 0x00AA, 0x00A0,
+	                                     0x0097, 0x008F, 0x0087, 0x007F, 0x0078, 0x0070, 0x0060, 0x0050, 0x0040,
+	                                     0x0030, 0x0020, 0x0010, 0x0000, 0x0000, 0x0020, 0x2020, 0x2020, 0x2020,
+	                                     0x2020, 0x3030, 0x3030, 0x3020, 0x2020, 0x2020, 0x2020, 0x2020, 0x2020,
+	                                     0x2020, 0x2020, 0x2020, 0x2090, 0x4040, 0x4040, 0x4040, 0x4040, 0x4040,
+	                                     0x4040, 0x4040, 0x400C, 0x0C0C, 0x0C0C, 0x0C0C, 0x0C0C, 0x0C40, 0x4040,
+	                                     0x4040, 0x4040, 0x0909, 0x0909, 0x0909, 0x0101, 0x0101, 0x0101, 0x0101,
+	                                     0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 0x4040, 0x4040, 0x4040,
+	                                     0x0A0A, 0x0A0A, 0x0A0A, 0x0202, 0x0202, 0x0202, 0x0202, 0x0202, 0x0202,
+	                                     0x0202, 0x0202, 0x0202, 0x0202, 0x4040, 0x4040, 0x2000 };
 
 Infogrames::Infogrames(Instruments &ins, bool stereo, int rate,
-		int interruptFreq) : Paula(stereo, rate, interruptFreq) {
+                       int interruptFreq)
+  : Paula(stereo, rate, interruptFreq) {
 	_instruments = &ins;
 	_data = 0;
 	_repCount = -1;
@@ -235,13 +232,7 @@ bool Infogrames::load(Common::SeekableReadStream &dum) {
 	}
 	_cmdBlocks = _data + dataStr.pos() + 2;
 
-	if ((_volSlideBlocks > (_data + size)) ||
-			(_periodSlideBlocks > (_data + size)) ||
-			(_chn[0].cmdBlockIndices > (_data + size)) ||
-			(_chn[1].cmdBlockIndices > (_data + size)) ||
-			(_chn[2].cmdBlockIndices > (_data + size)) ||
-			(_chn[3].cmdBlockIndices > (_data + size)) ||
-			(_cmdBlocks > (_data + size)))
+	if ((_volSlideBlocks > (_data + size)) || (_periodSlideBlocks > (_data + size)) || (_chn[0].cmdBlockIndices > (_data + size)) || (_chn[1].cmdBlockIndices > (_data + size)) || (_chn[2].cmdBlockIndices > (_data + size)) || (_chn[3].cmdBlockIndices > (_data + size)) || (_cmdBlocks > (_data + size)))
 		return false;
 
 	startPaula();
@@ -275,7 +266,7 @@ void Infogrames::getNextSample(Channel &chn) {
 		if (_speedCounter == 0)
 			chn.ticks--;
 		if (chn.ticks != 0) {
-			_volume = MAX((int16) 0, tune(chn.volSlide, 0));
+			_volume = MAX((int16)0, tune(chn.volSlide, 0));
 			_period = tune(chn.periodSlide, chn.period);
 			return;
 		} else {
@@ -288,14 +279,12 @@ void Infogrames::getNextSample(Channel &chn) {
 		while (cont || ((cmdBlock = *chn.cmdBlocks) != 0xFF)) {
 			if (!cont) {
 				chn.cmdBlocks++;
-				chn.cmds = _subSong +
-					READ_BE_UINT16(_cmdBlocks + (cmdBlock * 2));
+				chn.cmds = _subSong + READ_BE_UINT16(_cmdBlocks + (cmdBlock * 2));
 			} else
 				cont = false;
 			while ((cmd = *chn.cmds) != 0xFF) {
 				chn.cmds++;
-				if (cmd & 128)
-				{
+				if (cmd & 128) {
 					switch (cmd & 0xE0) {
 					case 0x80: // 100xxxxx - Set ticks
 						chn.ticks = tickCount[cmd & 0xF];
@@ -318,11 +307,10 @@ void Infogrames::getNextSample(Channel &chn) {
 					case 0xE0: // 111xxxxx - Extended
 						switch (cmd & 0x1F) {
 						case 0: // Set period modifier
-							chn.periodMod = (int8) *chn.cmds++;
+							chn.periodMod = (int8)*chn.cmds++;
 							break;
 						case 1: // Set continuous period slide
-							chn.periodSlide.data =
-								_periodSlideBlocks + *chn.cmds++ * 13 + 1;
+							chn.periodSlide.data = _periodSlideBlocks + *chn.cmds++ * 13 + 1;
 							chn.periodSlide.amount = 0;
 							chn.periodSlide.dataOffset = 0;
 							chn.periodSlide.finetunePos = 0;
@@ -332,8 +320,7 @@ void Infogrames::getNextSample(Channel &chn) {
 							chn.periodSlide.flags = 0x81;
 							break;
 						case 2: // Set non-continuous period slide
-							chn.periodSlide.data =
-								_periodSlideBlocks + *chn.cmds++ * 13 + 1;
+							chn.periodSlide.data = _periodSlideBlocks + *chn.cmds++ * 13 + 1;
 							chn.periodSlide.amount = 0;
 							chn.periodSlide.dataOffset = 0;
 							chn.periodSlide.finetunePos = 0;
@@ -367,7 +354,7 @@ void Infogrames::getNextSample(Channel &chn) {
 					chn.periodSlide.curDelay2 = 0;
 					chn.periodSlide.flags |= 1;
 					chn.periodSlide.flags &= ~4;
-					_volume = MAX((int16) 0, tune(chn.volSlide, 0));
+					_volume = MAX((int16)0, tune(chn.volSlide, 0));
 					_period = tune(chn.periodSlide, chn.period);
 					return;
 				}
@@ -389,7 +376,7 @@ int16 Infogrames::tune(Slide &slide, int16 start) const {
 	data = slide.data + slide.dataOffset;
 
 	if (slide.flags & 1)
-		slide.finetunePos += (int8) data[1];
+		slide.finetunePos += (int8)data[1];
 	slide.flags &= ~1;
 
 	start += slide.finetunePos - slide.finetuneNeg;
@@ -452,8 +439,7 @@ void Infogrames::interrupt() {
 		_speedCounter = _speed;
 
 	// End reached?
-	if ((_chn[0].flags & 64) && (_chn[1].flags & 64) &&
-			(_chn[2].flags & 64) && (_chn[3].flags & 64)) {
+	if ((_chn[0].flags & 64) && (_chn[1].flags & 64) && (_chn[2].flags & 64) && (_chn[3].flags & 64)) {
 		if (_repCount > 0) {
 			_repCount--;
 			init();

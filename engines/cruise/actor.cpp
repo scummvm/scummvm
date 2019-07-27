@@ -28,7 +28,7 @@
 namespace Cruise {
 
 enum AnimPathIds {
-	ANIM_WAIT	= -1,
+	ANIM_WAIT = -1,
 	ANIM_FINISH = -2,
 	ANIM_STATIC = -3
 };
@@ -37,9 +37,7 @@ bool isAnimFinished(int overlayIdx, int idx, actorStruct *pStartEntry, int objTy
 	actorStruct *pCurrentEntry = pStartEntry->next;
 
 	while (pCurrentEntry) {
-		if ((pCurrentEntry->overlayNumber == overlayIdx || overlayIdx == -1) &&
-		        (pCurrentEntry->idx == idx || idx == -1) &&
-		        (pCurrentEntry->type == objType || objType == -1)) {
+		if ((pCurrentEntry->overlayNumber == overlayIdx || overlayIdx == -1) && (pCurrentEntry->idx == idx || idx == -1) && (pCurrentEntry->type == objType || objType == -1)) {
 			if (pCurrentEntry->pathId != ANIM_FINISH) {
 				return false;
 			}
@@ -56,9 +54,11 @@ actorStruct *findActor(actorStruct *pStartEntry, int overlayIdx, int objIdx, int
 
 	while (pCurrentEntry) {
 		if ((pCurrentEntry->overlayNumber == overlayIdx
-		        || overlayIdx == -1) && (pCurrentEntry->idx == objIdx
-		                                 || objIdx == -1) && (pCurrentEntry->type == type
-		                                                      || type == -1)) {
+		     || overlayIdx == -1)
+		    && (pCurrentEntry->idx == objIdx
+		        || objIdx == -1)
+		    && (pCurrentEntry->type == type
+		        || type == -1)) {
 			return pCurrentEntry;
 		}
 
@@ -313,7 +313,7 @@ int point_proche(int16 table[][2]) {
 			}
 			_vm->_polyStructs = &_vm->_polyStructExp;
 		}
-		if (!flag_obstacle) {	/* dans flag_obstacle --> couleur du point */
+		if (!flag_obstacle) { /* dans flag_obstacle --> couleur du point */
 			x1 = table_ptselect[0][0];
 			y1 = table_ptselect[0][1];
 
@@ -447,7 +447,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 	(*nclick)++;
 	_vm->_polyStructs = &_vm->_polyStructNorm;
 
-	if (*nclick == 2) {	// second point
+	if (*nclick == 2) { // second point
 		int x1 = table_ptselect[0][0];
 		int y1 = table_ptselect[0][1];
 		int x2 = table_ptselect[1][0];
@@ -575,7 +575,7 @@ int16 computePathfinding(MovementEntry &moveInfo, int16 x, int16 y, int16 destX,
 	if (!flagCt) {
 		int16 *ptr;
 		int i = 0;
-		for (; i < NUM_PERSONS; i++) {	// 10 = num perso
+		for (; i < NUM_PERSONS; i++) { // 10 = num perso
 			if (!persoTable[i]) {
 				break;
 			}
@@ -588,7 +588,7 @@ int16 computePathfinding(MovementEntry &moveInfo, int16 x, int16 y, int16 destX,
 			return -1;
 		}
 
-		perso = persoTable[i] = (persoStruct *) MemAlloc(sizeof(persoStruct));
+		perso = persoTable[i] = (persoStruct *)MemAlloc(sizeof(persoStruct));
 
 		ptr = perso->solution[0];
 
@@ -652,7 +652,7 @@ int16 computePathfinding(MovementEntry &moveInfo, int16 x, int16 y, int16 destX,
 		return (-1);
 	}
 
-	perso = persoTable[num] = (persoStruct *) MemAlloc(sizeof(persoStruct));
+	perso = persoTable[num] = (persoStruct *)MemAlloc(sizeof(persoStruct));
 
 	perso->inc_jo1 = stepX;
 	perso->inc_jo2 = stepY;
@@ -712,8 +712,7 @@ void processAnimation() {
 		if (!currentActor->freeze && ((currentActor->type == ATP_MOUSE) || (currentActor->type == 1))) {
 			getMultipleObjectParam(currentActor->overlayNumber, currentActor->idx, &params);
 
-			if (((animationStart && !currentActor->flag) || (!animationStart && currentActor->x_dest != -1
-					&& currentActor->y_dest != -1)) && (currentActor->type == ATP_MOUSE)) {
+			if (((animationStart && !currentActor->flag) || (!animationStart && currentActor->x_dest != -1 && currentActor->y_dest != -1)) && (currentActor->type == ATP_MOUSE)) {
 				// mouse animation
 				if (!animationStart) {
 					aniX = currentActor->x_dest;
@@ -725,7 +724,7 @@ void processAnimation() {
 				}
 
 				currentActor->pathId = computePathfinding(moveInfo, params.X, params.Y,
-					aniX, aniY, currentActor->stepX, currentActor->stepY, currentActor->pathId);
+				                                          aniX, aniY, currentActor->stepX, currentActor->stepY, currentActor->pathId);
 
 				if (currentActor->pathId == ANIM_WAIT) {
 					if ((currentActor->endDirection != -1) && (currentActor->endDirection != currentActor->startDirection)) {
@@ -743,31 +742,30 @@ void processAnimation() {
 					currentActor->phase = ANIM_PHASE_STATIC;
 					currentActor->counter = -1;
 				}
-			} else
-				if ((currentActor->type == 1) && (currentActor->x_dest != -1) && (currentActor->y_dest != -1)) {
-					// track animation
-					currentActor->pathId = computePathfinding(moveInfo, params.X, params.Y, currentActor->x_dest, currentActor->y_dest, currentActor->stepX, currentActor->stepY, currentActor->pathId);
+			} else if ((currentActor->type == 1) && (currentActor->x_dest != -1) && (currentActor->y_dest != -1)) {
+				// track animation
+				currentActor->pathId = computePathfinding(moveInfo, params.X, params.Y, currentActor->x_dest, currentActor->y_dest, currentActor->stepX, currentActor->stepY, currentActor->pathId);
 
-					currentActor->x_dest = -1;
-					currentActor->y_dest = -1;
+				currentActor->x_dest = -1;
+				currentActor->y_dest = -1;
 
-					if (currentActor->pathId == ANIM_WAIT) {
-						if ((currentActor->endDirection != -1) && (currentActor->endDirection != currentActor->startDirection)) {
-							currentActor->phase = ANIM_PHASE_STATIC_END;
-							currentActor->nextDirection = currentActor->endDirection;
-							currentActor->endDirection = -1;
-							currentActor->counter = 0;
-						} else {
-							currentActor->pathId = -2;
-							currentActor->flag = 0;
-							currentActor->endDirection = -1;
-							currentActor->phase = ANIM_PHASE_WAIT;
-						}
+				if (currentActor->pathId == ANIM_WAIT) {
+					if ((currentActor->endDirection != -1) && (currentActor->endDirection != currentActor->startDirection)) {
+						currentActor->phase = ANIM_PHASE_STATIC_END;
+						currentActor->nextDirection = currentActor->endDirection;
+						currentActor->endDirection = -1;
+						currentActor->counter = 0;
 					} else {
-						currentActor->phase = ANIM_PHASE_STATIC;
-						currentActor->counter = -1;
+						currentActor->pathId = -2;
+						currentActor->flag = 0;
+						currentActor->endDirection = -1;
+						currentActor->phase = ANIM_PHASE_WAIT;
 					}
+				} else {
+					currentActor->phase = ANIM_PHASE_STATIC;
+					currentActor->counter = -1;
 				}
+			}
 
 			animationStart = false;
 
@@ -778,8 +776,7 @@ void processAnimation() {
 				// , so 'break' statements should *not* be used at the end of case areas
 				switch (currentActor->phase) {
 				case ANIM_PHASE_STATIC_END:
-				case ANIM_PHASE_STATIC:
-				{
+				case ANIM_PHASE_STATIC: {
 					// In-place (on the spot) animationos
 
 					if ((currentActor->counter == -1) && (currentActor->phase == ANIM_PHASE_STATIC)) {
@@ -804,8 +801,8 @@ void processAnimation() {
 					}
 
 					if ((currentActor->counter >= 0)
-					        && ((currentActor->phase == ANIM_PHASE_STATIC_END)
-					            || (currentActor->phase == ANIM_PHASE_STATIC))) {
+					    && ((currentActor->phase == ANIM_PHASE_STATIC_END)
+					        || (currentActor->phase == ANIM_PHASE_STATIC))) {
 						int newA;
 						int inc = 1;
 						int t_inc = currentActor->startDirection - 1;
@@ -828,7 +825,7 @@ void processAnimation() {
 								currentActor->startDirection = 0;
 
 							if (currentActor->startDirection < 0)
-								currentActor-> startDirection = 3;
+								currentActor->startDirection = 3;
 
 							currentActor->counter = 0;
 
@@ -844,20 +841,19 @@ void processAnimation() {
 									newA = -newA;
 
 								set_anim(currentActor->overlayNumber, currentActor->idx,
-									currentActor->start, params.X, params.Y, newA, currentActor->poly);
+								         currentActor->start, params.X, params.Y, newA, currentActor->poly);
 								break;
 							}
 						} else {
-							set_anim(currentActor->overlayNumber,currentActor->idx, currentActor->start,
-								params.X, params.Y, newA, currentActor->poly);
+							set_anim(currentActor->overlayNumber, currentActor->idx, currentActor->start,
+							         params.X, params.Y, newA, currentActor->poly);
 							break;
 						}
 					}
 				}
-				// fall through
+					// fall through
 
-				case ANIM_PHASE_MOVE:
-				{
+				case ANIM_PHASE_MOVE: {
 					// Walk animations
 
 					if (currentActor->counter >= 1) {
@@ -891,20 +887,19 @@ void processAnimation() {
 							newA = actor_move[currentActor->startDirection][currentActor->counter++];
 						}
 						set_anim(currentActor->overlayNumber, currentActor->idx, currentActor->start,
-							currentActor->x, currentActor->y, newA, currentActor->poly);
+						         currentActor->x, currentActor->y, newA, currentActor->poly);
 						break;
 					}
 				}
-				// fall through
+					// fall through
 
-				case ANIM_PHASE_END:
-				{
+				case ANIM_PHASE_END: {
 					// End of walk animation
 
 					int newA = actor_end[currentActor->startDirection][0];
 
 					set_anim(currentActor->overlayNumber, currentActor->idx, currentActor->start,
-						currentActor->x, currentActor->y, newA, currentActor->poly);
+					         currentActor->x, currentActor->y, newA, currentActor->poly);
 
 					currentActor->pathId = ANIM_FINISH;
 					currentActor->phase = ANIM_PHASE_WAIT;

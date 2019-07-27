@@ -23,10 +23,10 @@
  *
  */
 
+#include "pegasus/items/itemdragger.h"
 #include "pegasus/elements.h"
 #include "pegasus/hotspot.h"
 #include "pegasus/pegasus.h"
-#include "pegasus/items/itemdragger.h"
 
 namespace Pegasus {
 
@@ -126,8 +126,11 @@ void SpriteDragger::pinPointInRect(const Common::Rect &r, Common::Point &pt) {
 	pt.y = CLIP<int>(pt.y, r.top, r.bottom - 1);
 }
 
-ItemDragger::ItemDragger(PegasusEngine *owner) : _inventoryDropSpot(kInventoryDropSpotID), _biochipDropSpot(kBiochipDropSpotID),
-		_inventoryHighlight(kInventoryDropHighlightID), _biochipHighlight(kBiochipDropHighlightID) {
+ItemDragger::ItemDragger(PegasusEngine *owner)
+  : _inventoryDropSpot(kInventoryDropSpotID)
+  , _biochipDropSpot(kBiochipDropSpotID)
+  , _inventoryHighlight(kInventoryDropHighlightID)
+  , _biochipHighlight(kBiochipDropHighlightID) {
 	_owner = owner;
 
 	Common::Rect r(kInventoryDropLeft, kInventoryDropTop, kInventoryDropRight, kInventoryDropBottom);

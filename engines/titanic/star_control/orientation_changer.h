@@ -34,6 +34,7 @@ public:
 	FMatrix _maxOrient;
 	CMatrixTransform _sub1;
 	CMatrixTransform _sub2;
+
 public:
 	/**
 	 * Loads the constraints for the minimum and maximum orientation

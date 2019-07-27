@@ -20,23 +20,22 @@
  *
  */
 
-#include "backends/platform/sdl/sdl-sys.h"
 #include "PanelKeyboard.h"
+#include "backends/platform/sdl/sdl-sys.h"
 
 namespace CEGUI {
 
-const char KEYBOARD_MAPPING_ALPHA[][14] = { {"abcdefghijklm"}, {"nopqrstuvwxyz"} };
-const char KEYBOARD_MAPPING_NUMERIC[][6] = { {"12345"}, {"67890"} };
-const int  KEYBOARD_MAPPING_SPECIAL[][3][2] = { { {1, SDLK_ESCAPE}, {224, SDLK_UP}, {32, SDLK_SPACE} },
-	{ {224, SDLK_LEFT}, {224, SDLK_DOWN}, {224, SDLK_RIGHT} }
-};
+const char KEYBOARD_MAPPING_ALPHA[][14] = { { "abcdefghijklm" }, { "nopqrstuvwxyz" } };
+const char KEYBOARD_MAPPING_NUMERIC[][6] = { { "12345" }, { "67890" } };
+const int KEYBOARD_MAPPING_SPECIAL[][3][2] = { { { 1, SDLK_ESCAPE }, { 224, SDLK_UP }, { 32, SDLK_SPACE } },
+	                                             { { 224, SDLK_LEFT }, { 224, SDLK_DOWN }, { 224, SDLK_RIGHT } } };
 
-PanelKeyboard::PanelKeyboard(WORD reference) : Toolbar() {
+PanelKeyboard::PanelKeyboard(WORD reference)
+  : Toolbar() {
 	setBackground(reference);
 	_state = false;
 	_lastKey.setKey(0);
 }
-
 
 PanelKeyboard::~PanelKeyboard() {
 }

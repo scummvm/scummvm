@@ -52,7 +52,7 @@ public:
 	void leave();
 
 	/** Get a card resource (hotspot) by its index in the resource list */
-	template<class T>
+	template <class T>
 	T *getResource(uint index);
 
 	/** The list of resources in the card */
@@ -176,7 +176,7 @@ private:
 	void runExitScript();
 };
 
-template<class T>
+template <class T>
 T *MystCard::getResource(uint index) {
 	T *resource = dynamic_cast<T *>(_resources[index]);
 

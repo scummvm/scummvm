@@ -80,7 +80,7 @@ void CStarPoints1::draw(CSurfaceArea *surface, CStarCamera *camera) {
 
 	vector1._z = vTemp._x * pose._row1._z + vTemp._y * pose._row2._z + vTemp._z * pose._row3._z + pose._vector._z;
 	vector1._x = vTemp._x * pose._row1._x + vTemp._y * pose._row2._x + vTemp._z * pose._row3._x + pose._vector._x;
-	vector1._y = vTemp._x * pose._row1._y + vTemp._y * pose._row2._y + vTemp._z * pose._row3._y + pose._vector._y; 
+	vector1._y = vTemp._x * pose._row1._y + vTemp._y * pose._row2._y + vTemp._z * pose._row3._y + pose._vector._y;
 
 	for (uint idx = 1; idx < _data.size(); ++idx) {
 		const FVector &sv = _data[idx];

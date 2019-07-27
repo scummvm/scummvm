@@ -46,6 +46,7 @@ private:
 	byte *_palette;
 	uint16 _paletteColorCount;
 	int _transColor;
+
 public:
 	RawDecoder();
 	~RawDecoder();

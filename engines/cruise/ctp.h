@@ -28,23 +28,29 @@
 namespace Cruise {
 
 struct ctpVar19SubStruct {
-	uint16 boxIdx;		//0
-	uint16 type;		//2
-	uint16 minX;		//4
-	uint16 maxX;		//6
-	uint16 minY;		//8
-	uint16 maxY;		//A
+	uint16 boxIdx; //0
+	uint16 type; //2
+	uint16 minX; //4
+	uint16 maxX; //6
+	uint16 minY; //8
+	uint16 maxY; //A
 };
 
 struct ctpVar19Struct {
-	struct ctpVar19Struct *field_0;	//0
+	struct ctpVar19Struct *field_0; //0
 	ctpVar19SubStruct subStruct;
 };
 
 class CtEntry {
 public:
-	CtEntry(int16 xs, int16 xe) { minX = xs; maxX = xe; }
-	CtEntry() { minX = 0; maxX = 0; }
+	CtEntry(int16 xs, int16 xe) {
+		minX = xs;
+		maxX = xe;
+	}
+	CtEntry() {
+		minX = 0;
+		maxX = 0;
+	}
 
 	int16 minX;
 	int16 maxX;
@@ -61,7 +67,7 @@ public:
 
 extern uint8 *ctpVar17;
 
-int initCt(const char * ctpName);
+int initCt(const char *ctpName);
 int computeDistance(int varX, int varY, int paramX, int paramY);
 
 int getNode(int nodeResult[2], int nodeId);

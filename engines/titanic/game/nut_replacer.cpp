@@ -25,8 +25,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CNutReplacer, CGameObject)
-	ON_MESSAGE(ReplaceBowlAndNutsMsg)
-	ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(ReplaceBowlAndNutsMsg)
+ON_MESSAGE(MovieEndMsg)
 END_MESSAGE_MAP()
 
 void CNutReplacer::save(SimpleFile *file, int indent) {

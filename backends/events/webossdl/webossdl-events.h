@@ -21,9 +21,9 @@
  */
 
 #if !defined(BACKEND_EVENTS_SDL_WEBOS_H) && !defined(DISABLE_DEFAULT_EVENTMANAGER)
-#define BACKEND_EVENTS_SDL_WEBOS_H
+#	define BACKEND_EVENTS_SDL_WEBOS_H
 
-#include "backends/events/sdl/sdl-events.h"
+#	include "backends/events/sdl/sdl-events.h"
 
 /**
  * SDL events manager for WebOS
@@ -40,21 +40,28 @@ public:
 		SWIPE_PERCENT_HORIZ = 15,
 		SWIPE_PERCENT_VERT = 20
 	};
-	WebOSSdlEventSource() :
-			_gestureDown(false),
-			_dragStartTime(0), _dragging(false),
-			_curX(0), _curY(0),
-			_screenX(0), _screenY(0),
-			_trackpadMode(false), _autoDragMode(true),
-			_doClick(true),
-			_queuedDragTime(0), _queuedEscapeUpTime(0), _queuedSpaceUpTime(0),
-			_queuedRUpTime(0),
-			_firstPoll(true) {
+	WebOSSdlEventSource()
+	  : _gestureDown(false)
+	  , _dragStartTime(0)
+	  , _dragging(false)
+	  , _curX(0)
+	  , _curY(0)
+	  , _screenX(0)
+	  , _screenY(0)
+	  , _trackpadMode(false)
+	  , _autoDragMode(true)
+	  , _doClick(true)
+	  , _queuedDragTime(0)
+	  , _queuedEscapeUpTime(0)
+	  , _queuedSpaceUpTime(0)
+	  , _queuedRUpTime(0)
+	  , _firstPoll(true) {
 		for (int i = 0; i < MAX_FINGERS; i++) {
 			_fingerDown[i] = false;
 			_screenDownTime[i] = _dragDiffX[i] = _dragDiffY[i] = 0;
 		}
 	};
+
 protected:
 	// Inidicates if gesture area is pressed down or not.
 	bool _gestureDown;
@@ -97,7 +104,7 @@ protected:
 
 	// Event queues
 	uint32 _queuedDragTime, _queuedEscapeUpTime, _queuedSpaceUpTime,
-		_queuedRUpTime;
+	  _queuedRUpTime;
 
 	// SDL overrides
 	virtual void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event);

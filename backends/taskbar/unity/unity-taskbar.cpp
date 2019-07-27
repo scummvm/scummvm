@@ -26,13 +26,13 @@
 
 #if defined(POSIX) && defined(USE_TASKBAR) && defined(USE_UNITY)
 
-#define GLIB_DISABLE_DEPRECATION_WARNINGS
+#	define GLIB_DISABLE_DEPRECATION_WARNINGS
 
-#include "backends/taskbar/unity/unity-taskbar.h"
+#	include "backends/taskbar/unity/unity-taskbar.h"
 
-#include "common/textconsole.h"
+#	include "common/textconsole.h"
 
-#include <unity.h>
+#	include <unity.h>
 
 UnityTaskbarManager::UnityTaskbarManager() {
 	/*

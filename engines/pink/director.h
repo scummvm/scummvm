@@ -31,11 +31,11 @@
 #include "graphics/screen.h"
 
 namespace Common {
-	class PEResources;
+class PEResources;
 }
 
 namespace Graphics {
-	class MacMenu;
+class MacMenu;
 }
 
 namespace Pink {
@@ -94,6 +94,5 @@ private:
 };
 
 } // End of namespace Pink
-
 
 #endif

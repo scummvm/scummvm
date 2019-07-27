@@ -27,7 +27,10 @@
 namespace GUI {
 
 Animation::Animation()
-		: _startTime(0), _duration(0), _finished(false), _finishOnEnd(true) {
+  : _startTime(0)
+  , _duration(0)
+  , _finished(false)
+  , _finishOnEnd(true) {
 }
 
 Animation::~Animation() {
@@ -54,7 +57,7 @@ void Animation::update(Drawable *drawable, long currentTime) {
 		finishAnimation();
 	} else {
 		// Calculate the interpolated value
-		interpolation = (currentTime - _startTime) / (float) (_duration);
+		interpolation = (currentTime - _startTime) / (float)(_duration);
 	}
 
 	// Activate the interpolator if present

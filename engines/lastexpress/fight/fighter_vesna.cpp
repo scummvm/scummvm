@@ -37,7 +37,8 @@ namespace LastExpress {
 //////////////////////////////////////////////////////////////////////////
 // Player
 //////////////////////////////////////////////////////////////////////////
-FighterPlayerVesna::FighterPlayerVesna(LastExpressEngine *engine) : Fighter(engine) {
+FighterPlayerVesna::FighterPlayerVesna(LastExpressEngine *engine)
+  : Fighter(engine) {
 	_sequences.push_back(loadSequence("2005cr.seq"));
 	_sequences.push_back(loadSequence("2005cdr.seq"));
 	_sequences.push_back(loadSequence("2005cbr.seq"));
@@ -141,7 +142,8 @@ bool FighterPlayerVesna::canInteract(FightAction action) {
 //////////////////////////////////////////////////////////////////////////
 // Opponent
 //////////////////////////////////////////////////////////////////////////
-FighterOpponentVesna::FighterOpponentVesna(LastExpressEngine *engine) : Opponent(engine) {
+FighterOpponentVesna::FighterOpponentVesna(LastExpressEngine *engine)
+  : Opponent(engine) {
 	_sequences.push_back(loadSequence("2005or.seq"));
 	_sequences.push_back(loadSequence("2005oam.seq"));
 	_sequences.push_back(loadSequence("2005oar.seq"));

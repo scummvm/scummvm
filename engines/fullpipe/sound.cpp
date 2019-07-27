@@ -22,19 +22,19 @@
 
 #include "fullpipe/fullpipe.h"
 
+#include "fullpipe/messages.h"
+#include "fullpipe/ngiarchive.h"
 #include "fullpipe/objects.h"
 #include "fullpipe/scene.h"
 #include "fullpipe/sound.h"
-#include "fullpipe/ngiarchive.h"
-#include "fullpipe/messages.h"
 #include "fullpipe/statics.h"
 
-#include "common/config-manager.h"
-#include "common/memstream.h"
-#include "audio/mixer.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/vorbis.h"
 #include "audio/decoders/wave.h"
+#include "audio/mixer.h"
+#include "common/config-manager.h"
+#include "common/memstream.h"
 
 namespace Fullpipe {
 
@@ -76,14 +76,14 @@ Sound *SoundList::getSoundItemById(int id) {
 	return nullptr;
 }
 
-Sound::Sound() :
-	_id(0),
-	_directSoundBuffer(0),
-	_directSoundBuffers(),
-	_soundData(nullptr),
-	_handle(new Audio::SoundHandle()),
-	_volume(100),
-	_objectId(0) {}
+Sound::Sound()
+  : _id(0)
+  , _directSoundBuffer(0)
+  , _directSoundBuffers()
+  , _soundData(nullptr)
+  , _handle(new Audio::SoundHandle())
+  , _volume(100)
+  , _objectId(0) {}
 
 Sound::~Sound() {
 	freeSound();
@@ -96,7 +96,7 @@ bool Sound::load(MfcArchive &file, NGIArchive *archive) {
 	MemoryObject::load(file);
 
 	_id = file.readUint32LE();
-	/*_description = */file.readPascalString();
+	/*_description = */ file.readPascalString();
 
 	assert(g_fp->_gameProjectVersion >= 6);
 
@@ -218,7 +218,7 @@ void Sound::freeSound() {
 }
 
 int Sound::getVolume() {
-	return g_fp->_mixer->getChannelVolume(*_handle) * 39;  // 0..10000
+	return g_fp->_mixer->getChannelVolume(*_handle) * 39; // 0..10000
 }
 
 void Sound::stop() {

@@ -23,15 +23,18 @@
 #ifndef TITANIC_GAME_LOCATION_H
 #define TITANIC_GAME_LOCATION_H
 
-#include "titanic/support/simple_file.h"
 #include "titanic/core/node_item.h"
 #include "titanic/core/room_item.h"
 #include "titanic/core/view_item.h"
+#include "titanic/support/simple_file.h"
 
 namespace Titanic {
 
 enum PassengerClass {
-	UNCHECKED = 4, THIRD_CLASS = 3, SECOND_CLASS = 2, FIRST_CLASS = 1,
+	UNCHECKED = 4,
+	THIRD_CLASS = 3,
+	SECOND_CLASS = 2,
+	FIRST_CLASS = 1,
 	NO_CLASS = 0
 };
 
@@ -45,6 +48,7 @@ private:
 	int _roomNumber;
 	int _nodeNumber;
 	int _viewNumber;
+
 public:
 	CGameLocation(CGameState *owner);
 

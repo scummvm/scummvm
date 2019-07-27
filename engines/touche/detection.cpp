@@ -21,9 +21,9 @@
  */
 
 #include "common/config-manager.h"
-#include "engines/advancedDetector.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "engines/advancedDetector.h"
 
 #include "base/plugins.h"
 
@@ -38,77 +38,69 @@ namespace Touche {
 
 static const ADGameDescription gameDescriptions[] = {
 	{ // retail version
-		"touche",
-		"",
-		AD_ENTRY1s("touche.dat", "2af0177f8887e3430f345e6b4d8b1414", 26350211),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO0()
-	},
+	  "touche",
+	  "",
+	  AD_ENTRY1s("touche.dat", "2af0177f8887e3430f345e6b4d8b1414", 26350211),
+	  Common::EN_ANY,
+	  Common::kPlatformDOS,
+	  ADGF_NO_FLAGS,
+	  GUIO0() },
 	{ // retail version - tracker item #1601818
-		"touche",
-		"",
-		AD_ENTRY1s("touche.dat", "95967f0b51d2e813e99ca00325098340", 26350190),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO0()
-	},
+	  "touche",
+	  "",
+	  AD_ENTRY1s("touche.dat", "95967f0b51d2e813e99ca00325098340", 26350190),
+	  Common::EN_ANY,
+	  Common::kPlatformDOS,
+	  ADGF_NO_FLAGS,
+	  GUIO0() },
 	{ // retail version
-		"touche",
-		"",
-		AD_ENTRY1s("touche.dat", "1caa20bb4d4fc2ce8eb867b6610082b3", 26558232),
-		Common::FR_FRA,
-		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO0()
-	},
+	  "touche",
+	  "",
+	  AD_ENTRY1s("touche.dat", "1caa20bb4d4fc2ce8eb867b6610082b3", 26558232),
+	  Common::FR_FRA,
+	  Common::kPlatformDOS,
+	  ADGF_NO_FLAGS,
+	  GUIO0() },
 	{ // retail version - tracker item #1598643
-		"touche",
-		"",
-		AD_ENTRY1s("touche.dat", "be2ae6454b3325e410946f2322547cd4", 26625537),
-		Common::DE_DEU,
-		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO0()
-	},
+	  "touche",
+	  "",
+	  AD_ENTRY1s("touche.dat", "be2ae6454b3325e410946f2322547cd4", 26625537),
+	  Common::DE_DEU,
+	  Common::kPlatformDOS,
+	  ADGF_NO_FLAGS,
+	  GUIO0() },
 	{ // retail version - tracker item #1681643
-		"touche",
-		"",
-		AD_ENTRY1s("touche.dat", "64e95ba1decf5a5a60f8fa1840f40c62", 26529523),
-		Common::ES_ESP,
-		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO0()
-	},
+	  "touche",
+	  "",
+	  AD_ENTRY1s("touche.dat", "64e95ba1decf5a5a60f8fa1840f40c62", 26529523),
+	  Common::ES_ESP,
+	  Common::kPlatformDOS,
+	  ADGF_NO_FLAGS,
+	  GUIO0() },
 	{ // fan-made translation (http://www.iagtg.net/) - tracker item #1602360
-		"touche",
-		"",
-		AD_ENTRY1s("touche.dat", "1f442331d4b327c3488a9f6ffe9bdd25", 26367792),
-		Common::IT_ITA,
-		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO0()
-	},
+	  "touche",
+	  "",
+	  AD_ENTRY1s("touche.dat", "1f442331d4b327c3488a9f6ffe9bdd25", 26367792),
+	  Common::IT_ITA,
+	  Common::kPlatformDOS,
+	  ADGF_NO_FLAGS,
+	  GUIO0() },
 	{ // retail version - tracker item #1800500
-		"touche",
-		"",
-		AD_ENTRY1s("touche.dat", "42d19a0bef65465109020440a9caa228", 26487370),
-		Common::PL_POL,
-		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO0()
-	},
+	  "touche",
+	  "",
+	  AD_ENTRY1s("touche.dat", "42d19a0bef65465109020440a9caa228", 26487370),
+	  Common::PL_POL,
+	  Common::kPlatformDOS,
+	  ADGF_NO_FLAGS,
+	  GUIO0() },
 	{ // demo version
-		"touche",
-		"Demo",
-		AD_ENTRY1s("touche.dat", "ddaed436445b2e77294ed19e8ae4aa2c", 8720683),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_DEMO,
-		GUIO0()
-	},
+	  "touche",
+	  "Demo",
+	  AD_ENTRY1s("touche.dat", "ddaed436445b2e77294ed19e8ae4aa2c", 8720683),
+	  Common::EN_ANY,
+	  Common::kPlatformDOS,
+	  ADGF_DEMO,
+	  GUIO0() },
 	AD_TABLE_END_MARKER
 };
 
@@ -126,7 +118,8 @@ static const char *directoryGlobs[] = {
 
 class ToucheMetaEngine : public AdvancedMetaEngine {
 public:
-	ToucheMetaEngine() : AdvancedMetaEngine(Touche::gameDescriptions, sizeof(ADGameDescription), toucheGames) {
+	ToucheMetaEngine()
+	  : AdvancedMetaEngine(Touche::gameDescriptions, sizeof(ADGameDescription), toucheGames) {
 		_md5Bytes = 4096;
 		_singleId = "touche";
 		_maxScanDepth = 2;
@@ -153,18 +146,11 @@ public:
 };
 
 bool ToucheMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave);
+	return (f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup) || (f == kSupportsDeleteSave);
 }
 
 bool Touche::ToucheEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime) ||
-		(f == kSupportsSubtitleOptions);
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime) || (f == kSupportsSubtitleOptions);
 }
 
 bool ToucheMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -213,7 +199,7 @@ void ToucheMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(TOUCHE)
-	REGISTER_PLUGIN_DYNAMIC(TOUCHE, PLUGIN_TYPE_ENGINE, ToucheMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(TOUCHE, PLUGIN_TYPE_ENGINE, ToucheMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(TOUCHE, PLUGIN_TYPE_ENGINE, ToucheMetaEngine);
+REGISTER_PLUGIN_STATIC(TOUCHE, PLUGIN_TYPE_ENGINE, ToucheMetaEngine);
 #endif

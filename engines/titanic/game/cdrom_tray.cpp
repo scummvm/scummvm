@@ -20,21 +20,22 @@
  *
  */
 
-#include "titanic/core/room_item.h"
 #include "titanic/game/cdrom_tray.h"
+#include "titanic/core/room_item.h"
 #include "titanic/messages/messages.h"
 #include "titanic/translation.h"
 
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CCDROMTray, CGameObject)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(StatusChangeMsg)
 END_MESSAGE_MAP()
 
-
-CCDROMTray::CCDROMTray() : CGameObject(), _isOpened(false) {
+CCDROMTray::CCDROMTray()
+  : CGameObject()
+  , _isOpened(false) {
 }
 
 void CCDROMTray::save(SimpleFile *file, int indent) {

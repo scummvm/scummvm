@@ -23,21 +23,25 @@
 #ifndef WINTERMUTE_RECT32_H
 #define WINTERMUTE_RECT32_H
 
+#include "common/rect.h"
 #include "common/system.h"
 #include "engines/wintermute/math/floatpoint.h"
-#include "common/rect.h"
 
 namespace Wintermute {
 
 struct Point32 {
 	int32 x;
 	int32 y;
-	Point32() : x(0), y(0) {}
-	Point32(int32 x1, int32 y1) : x(x1), y(y1) {}
+	Point32()
+	  : x(0)
+	  , y(0) {}
+	Point32(int32 x1, int32 y1)
+	  : x(x1)
+	  , y(y1) {}
 	bool operator==(const Point32 &p) const { return x == p.x && y == p.y; }
 	bool operator!=(const Point32 &p) const { return x != p.x || y != p.y; }
-	Point32 operator+(const Point32 &delta) const {	return Point32(x + delta.x, y + delta.y);	}
-	Point32 operator-(const Point32 &delta) const {	return Point32(x - delta.x, y - delta.y);	}
+	Point32 operator+(const Point32 &delta) const { return Point32(x + delta.x, y + delta.y); }
+	Point32 operator-(const Point32 &delta) const { return Point32(x - delta.x, y - delta.y); }
 
 	Point32 &operator+=(const Point32 &delta) {
 		x += delta.x;
@@ -52,20 +56,34 @@ struct Point32 {
 	}
 
 	operator FloatPoint() {
-		return FloatPoint(x,y);
+		return FloatPoint(x, y);
 	}
-
-
 };
 
 struct Rect32 {
-	int32 top, left;        ///< The point at the top left of the rectangle (part of the rect).
-	int32 bottom, right;    ///< The point at the bottom right of the rectangle (not part of the rect).
+	int32 top, left; ///< The point at the top left of the rectangle (part of the rect).
+	int32 bottom, right; ///< The point at the bottom right of the rectangle (not part of the rect).
 
-	Rect32() : top(0), left(0), bottom(0), right(0) {}
-	Rect32(int32 w, int32 h) : top(0), left(0), bottom(h), right(w) {}
-	Rect32(const Common::Rect &rect) : top(rect.top), left(rect.left), bottom(rect.bottom), right(rect.right) {}
-	Rect32(int32 x1, int32 y1, int32 x2, int32 y2) : top(y1), left(x1), bottom(y2), right(x2) {
+	Rect32()
+	  : top(0)
+	  , left(0)
+	  , bottom(0)
+	  , right(0) {}
+	Rect32(int32 w, int32 h)
+	  : top(0)
+	  , left(0)
+	  , bottom(h)
+	  , right(w) {}
+	Rect32(const Common::Rect &rect)
+	  : top(rect.top)
+	  , left(rect.left)
+	  , bottom(rect.bottom)
+	  , right(rect.right) {}
+	Rect32(int32 x1, int32 y1, int32 x2, int32 y2)
+	  : top(y1)
+	  , left(x1)
+	  , bottom(y2)
+	  , right(x2) {
 		assert(isValidRect());
 	}
 	bool operator==(const Rect32 &rhs) const {
@@ -99,16 +117,16 @@ struct Rect32 {
 	}
 
 	void offsetRect(int dx, int dy) {
-		left   += dx;
-		top    += dy;
-		right  += dx;
+		left += dx;
+		top += dy;
+		right += dx;
 		bottom += dy;
 	}
 
 	void setRect(int32 newLeft, int32 newTop, int32 newRight, int32 newBottom) {
-		this->left   = newLeft;
-		this->top    = newTop;
-		this->right  = newRight;
+		this->left = newLeft;
+		this->top = newTop;
+		this->right = newRight;
 		this->bottom = newBottom;
 	}
 

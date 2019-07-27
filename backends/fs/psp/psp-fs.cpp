@@ -34,30 +34,30 @@
 // (which then wouldn't be portable, though).
 // Anyway, for now we just disable the printf override globally
 // for the PSP port
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+#	define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+#	define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
+#	define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
+#	define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 
-#include "backends/fs/psp/psp-fs.h"
-#include "backends/fs/psp/psp-stream.h"
-#include "common/bufferedstream.h"
-#include "engines/engine.h"
+#	include "backends/fs/psp/psp-fs.h"
+#	include "backends/fs/psp/psp-stream.h"
+#	include "common/bufferedstream.h"
+#	include "engines/engine.h"
 
-#include <sys/stat.h>
-#include <unistd.h>
+#	include <sys/stat.h>
+#	include <unistd.h>
 
-#include <pspkernel.h>
+#	include <pspkernel.h>
 
-#define	ROOT_PATH	"ms0:/"
+#	define ROOT_PATH "ms0:/"
 
 //#define __PSP_PRINT_TO_FILE__
 //#define __PSP_DEBUG_FUNCS__ /* For debugging function calls */
 //#define __PSP_DEBUG_PRINT__	/* For debug printouts */
-#include "backends/platform/psp/trace.h"
+#	include "backends/platform/psp/trace.h"
 
 PSPFilesystemNode::PSPFilesystemNode() {
 	_isDirectory = true;
@@ -92,7 +92,7 @@ bool PSPFilesystemNode::exists() const {
 	int ret = 0;
 
 	if (PowerMan.beginCriticalSection() == PowerManager::Blocked)
-		PSP_DEBUG_PRINT_FUNC("Suspended\n");	// Make sure to block in case of suspend
+		PSP_DEBUG_PRINT_FUNC("Suspended\n"); // Make sure to block in case of suspend
 
 	PSP_DEBUG_PRINT_FUNC("path [%s]\n", _path.c_str());
 
@@ -107,7 +107,7 @@ bool PSPFilesystemNode::isReadable() const {
 	int ret = 0;
 
 	if (PowerMan.beginCriticalSection() == PowerManager::Blocked)
-		PSP_DEBUG_PRINT_FUNC("Suspended\n");	// Make sure to block in case of suspend
+		PSP_DEBUG_PRINT_FUNC("Suspended\n"); // Make sure to block in case of suspend
 
 	PSP_DEBUG_PRINT_FUNC("path [%s]\n", _path.c_str());
 
@@ -122,7 +122,7 @@ bool PSPFilesystemNode::isWritable() const {
 	int ret = 0;
 
 	if (PowerMan.beginCriticalSection() == PowerManager::Blocked)
-		PSP_DEBUG_PRINT_FUNC("Suspended\n");	// Make sure to block in case of suspend
+		PSP_DEBUG_PRINT_FUNC("Suspended\n"); // Make sure to block in case of suspend
 
 	PSP_DEBUG_PRINT_FUNC("path [%s]\n", _path.c_str());
 
@@ -131,7 +131,6 @@ bool PSPFilesystemNode::isWritable() const {
 
 	return ret == 0;
 }
-
 
 AbstractFSNode *PSPFilesystemNode::getChild(const Common::String &n) const {
 	DEBUG_ENTER_FUNC();
@@ -160,11 +159,11 @@ bool PSPFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool 
 	bool ret = true;
 
 	if (PowerMan.beginCriticalSection() == PowerManager::Blocked)
-		PSP_DEBUG_PRINT_FUNC("Suspended\n");	// Make sure to block in case of suspend
+		PSP_DEBUG_PRINT_FUNC("Suspended\n"); // Make sure to block in case of suspend
 
 	PSP_DEBUG_PRINT_FUNC("Current path[%s]\n", _path.c_str());
 
-	int dfd  = sceIoDopen(_path.c_str());
+	int dfd = sceIoDopen(_path.c_str());
 	if (dfd > 0) {
 		SceIoDirent dir;
 		memset(&dir, 0, sizeof(dir));
@@ -190,8 +189,7 @@ bool PSPFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool 
 			PSP_DEBUG_PRINT_FUNC("Child[%s], %s\n", entry._path.c_str(), entry._isDirectory ? "dir" : "file");
 
 			// Honor the chosen mode
-			if ((mode == Common::FSNode::kListFilesOnly && entry._isDirectory) ||
-			        (mode == Common::FSNode::kListDirectoriesOnly && !entry._isDirectory))
+			if ((mode == Common::FSNode::kListFilesOnly && entry._isDirectory) || (mode == Common::FSNode::kListDirectoriesOnly && !entry._isDirectory))
 				continue;
 
 			myList.push_back(new PSPFilesystemNode(entry));

@@ -25,7 +25,7 @@
 namespace Neverhood {
 
 SsScene1705WallSymbol::SsScene1705WallSymbol(NeverhoodEngine *vm, uint32 fileHash, int symbolIndex)
-	: StaticSprite(vm, fileHash, 100) {
+  : StaticSprite(vm, fileHash, 100) {
 
 	_x = _spriteResource.getPosition().x + symbolIndex * 30;
 	_y = _spriteResource.getPosition().y + 160;
@@ -33,7 +33,9 @@ SsScene1705WallSymbol::SsScene1705WallSymbol(NeverhoodEngine *vm, uint32 fileHas
 }
 
 SsScene1705Tape::SsScene1705Tape(NeverhoodEngine *vm, Scene *parentScene, uint32 tapeIndex, int surfacePriority, int16 x, int16 y, uint32 fileHash)
-	: StaticSprite(vm, fileHash, surfacePriority, x - 24, y - 4), _parentScene(parentScene), _tapeIndex(tapeIndex) {
+  : StaticSprite(vm, fileHash, surfacePriority, x - 24, y - 4)
+  , _parentScene(parentScene)
+  , _tapeIndex(tapeIndex) {
 
 	if (!getSubVar(VA_HAS_TAPE, _tapeIndex) && !getSubVar(VA_IS_TAPE_INSERTED, _tapeIndex)) {
 		SetMessageHandler(&SsScene1705Tape::handleMessage);
@@ -66,7 +68,7 @@ uint32 SsScene1705Tape::handleMessage(int messageNum, const MessageParam &param,
 }
 
 KmScene1705::KmScene1705(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+  : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }

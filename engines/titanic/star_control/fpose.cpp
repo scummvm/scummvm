@@ -21,8 +21,8 @@
  */
 
 #include "titanic/star_control/fpose.h"
-#include "titanic/star_control/matrix_transform.h"
 #include "titanic/star_control/matrix_inv.h"
+#include "titanic/star_control/matrix_transform.h"
 
 #include "common/math.h"
 
@@ -55,7 +55,8 @@ FPose::FPose(Axis axis, float amount) {
 	setRotationMatrix(axis, amount);
 }
 
-FPose::FPose(const FPose &src) : FMatrix() {
+FPose::FPose(const FPose &src)
+  : FMatrix() {
 	copyFrom(src);
 }
 
@@ -173,18 +174,18 @@ FPose FPose::inverseTransform() const {
 	matrix_inv._row2._z = _row3._y;
 	matrix_inv._row3._z = _row3._z;
 
-	float A[16]={_row1._x,_row1._y,_row1._z, 0.0,
-				 _row2._x,_row2._y,_row2._z, 0.0,
-				 _row3._x,_row3._y,_row3._z, 0.0,
-				 _vector._x,_vector._y,_vector._z, 1.0};
+	float A[16] = { _row1._x, _row1._y, _row1._z, 0.0,
+		              _row2._x, _row2._y, _row2._z, 0.0,
+		              _row3._x, _row3._y, _row3._z, 0.0,
+		              _vector._x, _vector._y, _vector._z, 1.0 };
 	// Inverse matrix
-	float B[16]={};
+	float B[16] = {};
 
 	// B contains inverse of A
-	matrix4Inverse<float>(A,B);	
-	matrix_inv._vector._x=B[12];
-	matrix_inv._vector._y=B[13];
-	matrix_inv._vector._z=B[14];
+	matrix4Inverse<float>(A, B);
+	matrix_inv._vector._x = B[12];
+	matrix_inv._vector._y = B[13];
+	matrix_inv._vector._z = B[14];
 
 	return matrix_inv;
 }

@@ -20,8 +20,8 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/resources/midiresource.h"
+#include "illusions/illusions.h"
 
 namespace Illusions {
 
@@ -35,9 +35,9 @@ void MidiGroupResourceLoader::load(Resource *resource) {
 }
 
 bool MidiGroupResourceLoader::isFlag(int flag) {
-	return
-		flag == kRlfLoadFile/* ||
-		flag == kRlfFreeDataAfterLoad*/;
+	return flag == kRlfLoadFile /* ||
+		flag == kRlfFreeDataAfterLoad*/
+	  ;
 }
 
 // MidiMusic
@@ -52,7 +52,8 @@ void MidiMusic::load(Common::SeekableReadStream &stream) {
 // MidiGroupResource
 
 MidiGroupResource::MidiGroupResource()
-	: _midiMusicCount(0), _midiMusic(0) {
+  : _midiMusicCount(0)
+  , _midiMusic(0) {
 }
 
 MidiGroupResource::~MidiGroupResource() {
@@ -72,13 +73,13 @@ void MidiGroupResource::load(byte *data, uint32 dataSize) {
 	for (uint i = 0; i < _midiMusicCount; ++i) {
 		_midiMusic[i].load(stream);
 	}
-
 }
 
 // MidiGroupInstance
 
 MidiGroupInstance::MidiGroupInstance(IllusionsEngine *vm)
-	: _vm(vm), _midiGroupResource(0) {
+  : _vm(vm)
+  , _midiGroupResource(0) {
 }
 
 void MidiGroupInstance::load(Resource *resource) {

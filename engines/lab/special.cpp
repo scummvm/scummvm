@@ -102,9 +102,9 @@ void LabEngine::loadJournalData() {
 	Common::String filename = "Lab:Rooms/j";
 
 	bool bridge = _conditions->in(kCondBridge0) || _conditions->in(kCondBridge1);
-	bool dirty  = _conditions->in(kCondDirty);
-	bool news   = !_conditions->in(kCondNoNews);
-	bool clean  = !_conditions->in(kCondNoClean);
+	bool dirty = _conditions->in(kCondDirty);
+	bool news = !_conditions->in(kCondNoNews);
+	bool clean = !_conditions->in(kCondNoClean);
 
 	if (bridge && clean && news)
 		filename += '8';
@@ -131,9 +131,9 @@ void LabEngine::loadJournalData() {
 	_journalTextTitle = _resource->getText("Lab:Rooms/jt");
 
 	Common::File *journalFile = _resource->openDataFile("P:JImage");
-	_journalButtonList.push_back(_interface->createButton( 80, _utils->vgaScaleY(162) + _utils->svgaCord(1), 0,  Common::KEYCODE_LEFT,  new Image(journalFile, this), new Image(journalFile, this)));	// back
-	_journalButtonList.push_back(_interface->createButton(194, _utils->vgaScaleY(162) + _utils->svgaCord(1), 2,  Common::KEYCODE_RIGHT, new Image(journalFile, this), new Image(journalFile, this)));	// forward
-	_journalButtonList.push_back(_interface->createButton(144, _utils->vgaScaleY(164) - _utils->svgaCord(1), 1, Common::KEYCODE_ESCAPE, new Image(journalFile, this), new Image(journalFile, this)));	// cancel
+	_journalButtonList.push_back(_interface->createButton(80, _utils->vgaScaleY(162) + _utils->svgaCord(1), 0, Common::KEYCODE_LEFT, new Image(journalFile, this), new Image(journalFile, this))); // back
+	_journalButtonList.push_back(_interface->createButton(194, _utils->vgaScaleY(162) + _utils->svgaCord(1), 2, Common::KEYCODE_RIGHT, new Image(journalFile, this), new Image(journalFile, this))); // forward
+	_journalButtonList.push_back(_interface->createButton(144, _utils->vgaScaleY(164) - _utils->svgaCord(1), 1, Common::KEYCODE_ESCAPE, new Image(journalFile, this), new Image(journalFile, this))); // cancel
 	delete journalFile;
 
 	_anim->_noPalChange = true;
@@ -209,8 +209,8 @@ void LabEngine::drawJournal(uint16 wipenum, bool needFade) {
 	else
 		turnPage((wipenum == 1));
 
-	_interface->toggleButton(_interface->getButton(0), 15, (_journalPage > 0));	// back button
-	_interface->toggleButton(_interface->getButton(2), 15, (!_lastPage));	// forward button
+	_interface->toggleButton(_interface->getButton(0), 15, (_journalPage > 0)); // back button
+	_interface->toggleButton(_interface->getButton(2), 15, (!_lastPage)); // forward button
 
 	if (needFade)
 		_graphics->fade(true);
@@ -237,13 +237,12 @@ void LabEngine::processJournal() {
 		if (!msg)
 			continue;
 
-		MessageClass msgClass  = msg->_msgClass;
+		MessageClass msgClass = msg->_msgClass;
 
-		if ((msgClass == kMessageRightClick) ||
-			((msgClass == kMessageRawKey) && (msg->_code == Common::KEYCODE_ESCAPE)))
+		if ((msgClass == kMessageRightClick) || ((msgClass == kMessageRawKey) && (msg->_code == Common::KEYCODE_ESCAPE)))
 			return;
 		else if (msgClass == kMessageButtonUp) {
-			uint16 buttonId  = msg->_code;
+			uint16 buttonId = msg->_code;
 			if (buttonId == 0) {
 				if (_journalPage >= 2) {
 					_journalPage -= 2;
@@ -258,7 +257,7 @@ void LabEngine::processJournal() {
 				}
 			}
 		}
-	}	// while
+	} // while
 }
 
 void LabEngine::doJournal() {
@@ -381,10 +380,9 @@ void LabEngine::processMonitor(const Common::String &ntext, TextFont *monitorFon
 		if (!msg)
 			continue;
 
-		MessageClass msgClass  = msg->_msgClass;
+		MessageClass msgClass = msg->_msgClass;
 
-		if ((msgClass == kMessageRightClick) ||
-				((msgClass == kMessageRawKey) && (msg->_code == Common::KEYCODE_ESCAPE)))
+		if ((msgClass == kMessageRightClick) || ((msgClass == kMessageRawKey) && (msg->_code == Common::KEYCODE_ESCAPE)))
 			return;
 
 		if (msgClass == kMessageLeftClick) {
@@ -436,7 +434,7 @@ void LabEngine::processMonitor(const Common::String &ntext, TextFont *monitorFon
 				}
 			}
 		}
-	}	// while
+	} // while
 }
 
 void LabEngine::doMonitor(const Common::String background, const Common::String textfile, bool isinteractive, Common::Rect textRect) {

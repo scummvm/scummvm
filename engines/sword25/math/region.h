@@ -32,11 +32,11 @@
 #ifndef SWORD25_REGION_H
 #define SWORD25_REGION_H
 
+#include "common/rect.h"
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/persistable.h"
-#include "sword25/math/vertex.h"
 #include "sword25/math/polygon.h"
-#include "common/rect.h"
+#include "sword25/math/vertex.h"
 
 namespace Sword25 {
 

@@ -53,7 +53,6 @@ bool CelDecoder::loadStream(Common::SeekableReadStream *stream) {
 	return true;
 }
 
-
 uint16 CelDecoder::getTransparentColourIndex() {
 	CelVideoTrack *track = (CelVideoTrack *)getTrack(0);
 	if (!track)
@@ -86,7 +85,9 @@ void CelDecoder::setEndOfTrack() {
 }
 
 CelDecoder::CelVideoTrack::CelVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader)
-		: FlicVideoTrack(stream, frameCount, width, height, 1), _center(0, 0), _transparentColourIndex(0) {
+  : FlicVideoTrack(stream, frameCount, width, height, 1)
+  , _center(0, 0)
+  , _transparentColourIndex(0) {
 	readHeader();
 }
 
@@ -95,7 +96,7 @@ CelDecoder::CelVideoTrack::CelVideoTrack(Common::SeekableReadStream *stream, uin
 
 void CelDecoder::CelVideoTrack::readPrefixChunk() {
 	_fileStream->seek(0x80);
-	/* uint32 chunkSize = */_fileStream->readUint32LE();
+	/* uint32 chunkSize = */ _fileStream->readUint32LE();
 	uint16 chunkType = _fileStream->readUint16LE();
 	if (chunkType != PREFIX_TYPE)
 		return;
@@ -174,7 +175,6 @@ void CelDecoder::CelVideoTrack::skipFrame() {
 
 	if (_curFrame == 0)
 		_transparentColourIndex = *(byte *)_surface->getBasePtr(0, 0);
-
 }
 
 const Graphics::Surface *CelDecoder::CelVideoTrack::decodeNextFrame() {

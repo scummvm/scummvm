@@ -70,14 +70,12 @@ public:
  * @param rowWriter			An object with a callback method accepting the lines of the target image
  */
 void larryScale(
-	int srcWidth, int srcHeight,
-	LarryScaleColor transparentColor,
-	RowReader &rowReader,
-	int dstWidth, int dstHeight,
-	RowWriter &rowWriter
-);
+  int srcWidth, int srcHeight,
+  LarryScaleColor transparentColor,
+  RowReader &rowReader,
+  int dstWidth, int dstHeight,
+  RowWriter &rowWriter);
 
 }
 
 #endif
-

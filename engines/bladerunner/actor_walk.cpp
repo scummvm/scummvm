@@ -73,14 +73,14 @@ bool ActorWalk::setup(int actorId, bool runFlag, const Vector3 &from, const Vect
 		} else {
 			stop(actorId, true, kAnimationModeCombatIdle, kAnimationModeIdle);
 		}
-//		debug("actor id: %d, arrived: %d - false setup 01", actorId, (*arrived)? 1:0);
+		//		debug("actor id: %d, arrived: %d - false setup 01", actorId, (*arrived)? 1:0);
 		return false;
 	}
 
 	if (r == -1) {
 		stop(actorId, true, kAnimationModeCombatIdle, kAnimationModeIdle);
 		*arrived = true;
-//		debug("actor id: %d, arrived: %d - false setup 02", actorId, (*arrived)? 1:0);
+		//		debug("actor id: %d, arrived: %d - false setup 02", actorId, (*arrived)? 1:0);
 		return false;
 	}
 
@@ -109,7 +109,7 @@ bool ActorWalk::setup(int actorId, bool runFlag, const Vector3 &from, const Vect
 	if (next.x == _current.x && next.z == _current.z) {
 		stop(actorId, true, kAnimationModeCombatIdle, kAnimationModeIdle);
 		*arrived = true;
-//		debug("actor id: %d, arrived: %d - false setup 03", actorId, (*arrived)? 1:0);
+		//		debug("actor id: %d, arrived: %d - false setup 03", actorId, (*arrived)? 1:0);
 		return false;
 	}
 
@@ -118,7 +118,7 @@ bool ActorWalk::setup(int actorId, bool runFlag, const Vector3 &from, const Vect
 	_running = runFlag;
 	_status = 2;
 
-//	debug("actor id: %d, arrived: %d - true setup 01", actorId, (*arrived)? 1:0);
+	//	debug("actor id: %d, arrived: %d - true setup 01", actorId, (*arrived)? 1:0);
 	return true;
 }
 
@@ -216,10 +216,10 @@ bool ActorWalk::tick(int actorId, float stepDistance, bool mustReachWalkDestinat
 	if (_facing >= 1024) {
 		_facing = (_facing % 1024);
 	} else if (_facing < 0) {
-		_facing  = (-1) * _facing;
+		_facing = (-1) * _facing;
 		_facing = (_facing % 1024);
 		if (_facing > 0) {
-			_facing  = 1024 - _facing; // this will always be in [1, 1023]
+			_facing = 1024 - _facing; // this will always be in [1, 1023]
 		}
 	}
 #endif
@@ -396,9 +396,8 @@ bool ActorWalk::addNearActors(int skipActorId) {
 		assert(_vm->_actors[i] != nullptr);
 
 		if (_vm->_actors[skipActorId] != nullptr
-		 && _vm->_actors[i]->getSetId() == setId
-		 && i != skipActorId
-		) {
+		    && _vm->_actors[i]->getSetId() == setId
+		    && i != skipActorId) {
 			if (_nearActors.contains(i)) {
 				_nearActors.setVal(i, false);
 			} else if (_vm->_actors[skipActorId]->distanceFromActor(i) <= 48.0f) {
@@ -416,7 +415,7 @@ void ActorWalk::obstaclesAddNearActors(int actorId) const {
 		Actor *otherActor = _vm->_actors[it->_key];
 		assert(otherActor != nullptr);
 
-		if ( otherActor->isRetired()) {
+		if (otherActor->isRetired()) {
 			continue;
 		}
 		Vector3 otherPosition = otherActor->getPosition();
@@ -438,7 +437,7 @@ int ActorWalk::nextOnPath(int actorId, const Vector3 &from, const Vector3 &to, V
 	next = from;
 
 	if (distance(from, to) < 6.0) {
-//		debug("Id: %d Distance: %f::Result -1", actorId, distance(from, to));
+		//		debug("Id: %d Distance: %f::Result -1", actorId, distance(from, to));
 		return -1;
 	}
 
@@ -447,11 +446,11 @@ int ActorWalk::nextOnPath(int actorId, const Vector3 &from, const Vector3 &to, V
 		return 1;
 	}
 	if (_vm->_scene->_set->findWalkbox(to.x, to.z) == -1) {
-//		debug("Id: %d No walkbox::Result 0", actorId);
+		//		debug("Id: %d No walkbox::Result 0", actorId);
 		return 0;
 	}
 	if (_vm->_sceneObjects->existsOnXZ(actorId + kSceneObjectOffsetActors, to.x, to.z, false, false)) {
-//		debug("Actor Id: %d existsOnXZ::Result 0", actorId);
+		//		debug("Actor Id: %d existsOnXZ::Result 0", actorId);
 		return 0;
 	}
 	Vector3 next1;
@@ -459,7 +458,7 @@ int ActorWalk::nextOnPath(int actorId, const Vector3 &from, const Vector3 &to, V
 		next = next1;
 		return 1;
 	}
-//	debug("Id: %d DEFAULTED::Result 0", actorId);
+	//	debug("Id: %d DEFAULTED::Result 0", actorId);
 	return 0;
 }
 

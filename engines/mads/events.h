@@ -23,16 +23,21 @@
 #ifndef MADS_EVENTS_H
 #define MADS_EVENTS_H
 
-#include "common/scummsys.h"
 #include "common/events.h"
+#include "common/scummsys.h"
 #include "common/stack.h"
 #include "mads/assets.h"
 #include "mads/sprites.h"
 
 namespace MADS {
 
-enum CursorType { CURSOR_NONE = 0, CURSOR_ARROW = 1, CURSOR_WAIT = 2, CURSOR_GO_DOWN = 3,
-	CURSOR_GO_UP = 4, CURSOR_GO_LEFT = 5, CURSOR_GO_RIGHT = 6 };
+enum CursorType { CURSOR_NONE = 0,
+	                CURSOR_ARROW = 1,
+	                CURSOR_WAIT = 2,
+	                CURSOR_GO_DOWN = 3,
+	                CURSOR_GO_UP = 4,
+	                CURSOR_GO_LEFT = 5,
+	                CURSOR_GO_RIGHT = 6 };
 
 #define GAME_FRAME_RATE 50
 #define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE)
@@ -58,6 +63,7 @@ private:
 	 * Updates the cursor image when the current cursor changes
 	 */
 	void changeCursor();
+
 public:
 	SpriteAsset *_cursorSprites;
 	CursorType _cursorId;
@@ -71,6 +77,7 @@ public:
 	int _mouseStatusCopy;
 	bool _mouseMoved;
 	Common::Stack<Common::KeyState> _pendingKeys;
+
 public:
 	/**
 	 * Constructor

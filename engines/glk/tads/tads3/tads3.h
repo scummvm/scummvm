@@ -27,30 +27,30 @@
 
 namespace Glk {
 namespace TADS {
-namespace TADS3 {
+	namespace TADS3 {
 
-/**
+		/**
  * TADS 3 game interpreter
  */
-class TADS3 : public TADS {
-public:
-	/**
+		class TADS3 : public TADS {
+		public:
+			/**
 	 * Constructor
 	 */
-	TADS3(OSystem *syst, const GlkGameDescription &gameDesc);
+			TADS3(OSystem *syst, const GlkGameDescription &gameDesc);
 
-	/**
+			/**
 	 * Execute the game
 	 */
-	virtual void runGame() override;
+			virtual void runGame() override;
 
-	/**
+			/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override { return INTERPRETER_TADS3; }
-};
+			virtual InterpreterType getInterpreterType() const override { return INTERPRETER_TADS3; }
+		};
 
-} // End of namespace TADS3
+	} // End of namespace TADS3
 } // End of namespace TADS
 } // End of namespace Glk
 

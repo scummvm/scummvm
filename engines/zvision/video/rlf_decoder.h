@@ -126,7 +126,7 @@ private:
 		uint32 _frameBufferByteSize;
 
 		Common::SeekableReadStream *_readStream;
-	};	// RLFVideoTrack
+	}; // RLFVideoTrack
 };
 
 } // End of namespace ZVision

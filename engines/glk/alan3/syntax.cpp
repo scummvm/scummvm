@@ -21,75 +21,69 @@
  */
 
 #include "glk/alan3/syntax.h"
-#include "glk/alan3/word.h"
-#include "glk/alan3/msg.h"
-#include "glk/alan3/lists.h"
 #include "glk/alan3/compatibility.h"
+#include "glk/alan3/lists.h"
+#include "glk/alan3/msg.h"
+#include "glk/alan3/word.h"
 
 namespace Glk {
 namespace Alan3 {
 
-/* PUBLIC DATA */
-SyntaxEntry *stxs;      /* Syntax table pointer */
+	/* PUBLIC DATA */
+	SyntaxEntry *stxs; /* Syntax table pointer */
 
+	/* PRIVATE TYPES & DATA */
 
-/* PRIVATE TYPES & DATA */
+	/*+++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++*/
-
-/*======================================================================*/
-ElementEntry *elementTreeOf(SyntaxEntry *stx) {
-	return (ElementEntry *) pointerTo(stx->elms);
-}
-
-
-/*----------------------------------------------------------------------*/
-static SyntaxEntry *findSyntaxEntryForPreBeta2(int verbCode, SyntaxEntry *foundStx) {
-	SyntaxEntryPreBeta2 *stx;
-	for (stx = (SyntaxEntryPreBeta2 *)stxs; !isEndOfArray(stx); stx++)
-		if (stx->code == verbCode) {
-			foundStx = (SyntaxEntry *)stx;
-			break;
-		}
-	return (foundStx);
-}
-
-
-/*----------------------------------------------------------------------*/
-static SyntaxEntry *findSyntaxEntry(int verbCode) {
-	SyntaxEntry *stx;
-	for (stx = stxs; !isEndOfArray(stx); stx++)
-		if (stx->code == verbCode) {
-			return stx;
-			break;
-		}
-	return NULL;
-}
-
-
-/*======================================================================*/
-SyntaxEntry *findSyntaxTreeForVerb(CONTEXT, int verbCode) {
-	SyntaxEntry *foundStx = NULL;
-	if (isPreBeta2(header->version)) {
-		foundStx = findSyntaxEntryForPreBeta2(verbCode, foundStx);
-	} else {
-		foundStx = findSyntaxEntry(verbCode);
+	/*======================================================================*/
+	ElementEntry *elementTreeOf(SyntaxEntry *stx) {
+		return (ElementEntry *)pointerTo(stx->elms);
 	}
-	if (foundStx == NULL)
-		// No matching syntax
-		R0CALL1(error, M_WHAT)
-	return foundStx;
-}
 
+	/*----------------------------------------------------------------------*/
+	static SyntaxEntry *findSyntaxEntryForPreBeta2(int verbCode, SyntaxEntry *foundStx) {
+		SyntaxEntryPreBeta2 *stx;
+		for (stx = (SyntaxEntryPreBeta2 *)stxs; !isEndOfArray(stx); stx++)
+			if (stx->code == verbCode) {
+				foundStx = (SyntaxEntry *)stx;
+				break;
+			}
+		return (foundStx);
+	}
 
-/*======================================================================*/
-char *parameterNameInSyntax(int syntaxNumber, int parameterNumber) {
-	Aaddr adr = addressAfterTable(header->parameterMapAddress, sizeof(ParameterMapEntry));
-	Aaddr *syntaxParameterNameTable = (Aaddr *)pointerTo(memory[adr]);
-	Aaddr *parameterNameTable = (Aaddr *)pointerTo(syntaxParameterNameTable[syntaxNumber - 1]);
-	return stringAt(parameterNameTable[parameterNumber - 1]);
-}
+	/*----------------------------------------------------------------------*/
+	static SyntaxEntry *findSyntaxEntry(int verbCode) {
+		SyntaxEntry *stx;
+		for (stx = stxs; !isEndOfArray(stx); stx++)
+			if (stx->code == verbCode) {
+				return stx;
+				break;
+			}
+		return NULL;
+	}
+
+	/*======================================================================*/
+	SyntaxEntry *findSyntaxTreeForVerb(CONTEXT, int verbCode) {
+		SyntaxEntry *foundStx = NULL;
+		if (isPreBeta2(header->version)) {
+			foundStx = findSyntaxEntryForPreBeta2(verbCode, foundStx);
+		} else {
+			foundStx = findSyntaxEntry(verbCode);
+		}
+		if (foundStx == NULL)
+			// No matching syntax
+			R0CALL1(error, M_WHAT)
+		return foundStx;
+	}
+
+	/*======================================================================*/
+	char *parameterNameInSyntax(int syntaxNumber, int parameterNumber) {
+		Aaddr adr = addressAfterTable(header->parameterMapAddress, sizeof(ParameterMapEntry));
+		Aaddr *syntaxParameterNameTable = (Aaddr *)pointerTo(memory[adr]);
+		Aaddr *parameterNameTable = (Aaddr *)pointerTo(syntaxParameterNameTable[syntaxNumber - 1]);
+		return stringAt(parameterNameTable[parameterNumber - 1]);
+	}
 
 } // End of namespace Alan3
 } // End of namespace Glk

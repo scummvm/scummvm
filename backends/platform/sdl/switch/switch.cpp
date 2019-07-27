@@ -22,20 +22,20 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
 #include "backends/platform/sdl/switch/switch.h"
 #include "backends/events/switchsdl/switchsdl-events.h"
-#include "backends/saves/posix/posix-saves.h"
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "backends/fs/posix/posix-fs.h"
+#include "backends/saves/posix/posix-saves.h"
+#include "common/config-manager.h"
+#include "common/scummsys.h"
 
 OSystem_Switch::OSystem_Switch(Common::String baseConfigName)
-	: _baseConfigName(baseConfigName) {
+  : _baseConfigName(baseConfigName) {
 }
 
 void OSystem_Switch::init() {
-	
+
 	// Initialze File System Factory
 	_fsFactory = new POSIXFilesystemFactory();
 
@@ -90,8 +90,7 @@ void OSystem_Switch::initBackend() {
 }
 
 bool OSystem_Switch::hasFeature(Feature f) {
-	return (f == kFeatureTouchpadMode ||
-		OSystem_SDL::hasFeature(f));
+	return (f == kFeatureTouchpadMode || OSystem_SDL::hasFeature(f));
 }
 
 void OSystem_Switch::setFeatureState(Feature f, bool enable) {

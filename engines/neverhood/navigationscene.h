@@ -40,11 +40,12 @@ public:
 	bool isTurning() const { return _isTurning; }
 	int getFrameNumber() const { return _smackerPlayer->getFrameNumber(); }
 	uint32 getNavigationListId() const { return _navigationListId; }
+
 protected:
 	SmackerPlayer *_smackerPlayer;
 	bool _smackerDone;
 	NavigationList *_navigationList;
-	uint32 _navigationListId;	// used for debugging
+	uint32 _navigationListId; // used for debugging
 	int _navigationIndex;
 	uint32 _smackerFileHash;
 	bool _interactive;

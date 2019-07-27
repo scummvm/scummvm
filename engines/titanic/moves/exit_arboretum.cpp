@@ -26,14 +26,17 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CExitArboretum, CMovePlayerTo)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(ChangeSeasonMsg)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(TurnOff)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(ChangeSeasonMsg)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(TurnOff)
 END_MESSAGE_MAP()
 
-CExitArboretum::CExitArboretum() : CMovePlayerTo(),
-		_seasonNum(SEASON_SUMMER), _exitDirection(0), _enabled(true) {
+CExitArboretum::CExitArboretum()
+  : CMovePlayerTo()
+  , _seasonNum(SEASON_SUMMER)
+  , _exitDirection(0)
+  , _enabled(true) {
 }
 
 void CExitArboretum::save(SimpleFile *file, int indent) {

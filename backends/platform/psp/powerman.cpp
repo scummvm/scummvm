@@ -40,15 +40,22 @@ inline void PowerManager::debugPM() {
 	                _PMStatus, _listCounter, _criticalCounter, sceKernelGetThreadId(), _error);
 }
 
-
 /*******************************************
 *
 *	Constructor
 *
 ********************************************/
-PowerManager::PowerManager() : _pauseFlag(false), _pauseFlagOld(false), _pauseClientState(UNPAUSED),
-								_suspendFlag(false), _flagMutex(true), _listMutex(true),
-								_criticalCounter(0), _listCounter(0), _error(0), _PMStatus(kInitDone) {}
+PowerManager::PowerManager()
+  : _pauseFlag(false)
+  , _pauseFlagOld(false)
+  , _pauseClientState(UNPAUSED)
+  , _suspendFlag(false)
+  , _flagMutex(true)
+  , _listMutex(true)
+  , _criticalCounter(0)
+  , _listCounter(0)
+  , _error(0)
+  , _PMStatus(kInitDone) {}
 
 /*******************************************
 *
@@ -114,20 +121,19 @@ PowerManager::~PowerManager() {
 void PowerManager::pollPauseEngine() {
 	DEBUG_ENTER_FUNC();
 
-
-	bool pause = _pauseFlag;		// We copy so as not to have multiple values
+	bool pause = _pauseFlag; // We copy so as not to have multiple values
 
 	if (pause != _pauseFlagOld) {
 		if (g_engine) { // Check to see if we have an engine
 			if (pause && _pauseClientState == UNPAUSED) {
-				_pauseClientState = PAUSING;		// Tell PM we're in the middle of pausing
+				_pauseClientState = PAUSING; // Tell PM we're in the middle of pausing
 				g_engine->pauseEngine(true);
 				PSP_DEBUG_PRINT_FUNC("Pausing engine\n");
-				_pauseClientState = PAUSED;			// Tell PM we're done pausing
+				_pauseClientState = PAUSED; // Tell PM we're done pausing
 			} else if (!pause && _pauseClientState == PAUSED) {
 				g_engine->pauseEngine(false);
 				PSP_DEBUG_PRINT_FUNC("Unpausing for resume\n");
-				_pauseClientState = UNPAUSED;		// Tell PM we're unpaused
+				_pauseClientState = UNPAUSED; // Tell PM we're unpaused
 			}
 		}
 		_pauseFlagOld = pause;
@@ -180,18 +186,18 @@ void PowerManager::endCriticalSection() {
 	_criticalCounter--;
 
 	if (_criticalCounter <= 0) {
-		if (_suspendFlag) {		// If the PM is sleeping, this flag must be set
-				PSP_DEBUG_PRINT_FUNC("PM is asleep. Waking it up.\n");
-				debugPM();
+		if (_suspendFlag) { // If the PM is sleeping, this flag must be set
+			PSP_DEBUG_PRINT_FUNC("PM is asleep. Waking it up.\n");
+			debugPM();
 
-				_pmSleep.releaseAll();
+			_pmSleep.releaseAll();
 
-				PSP_DEBUG_PRINT_FUNC("Woke up the PM\n");
+			PSP_DEBUG_PRINT_FUNC("Woke up the PM\n");
 
-				debugPM();
+			debugPM();
 		}
 
-		if (_criticalCounter < 0) {	// Check for bad usage of critical sections
+		if (_criticalCounter < 0) { // Check for bad usage of critical sections
 			PSP_ERROR("Critical counter[%d]!!!\n", _criticalCounter);
 			debugPM();
 		}
@@ -209,9 +215,9 @@ void PowerManager::suspend() {
 	DEBUG_ENTER_FUNC();
 
 	if (_pauseFlag)
-		return;					// Very important - make sure we only suspend once
+		return; // Very important - make sure we only suspend once
 
-	scePowerLock(0);			// Also critical to make sure PSP doesn't suspend before we're done
+	scePowerLock(0); // Also critical to make sure PSP doesn't suspend before we're done
 
 	// The first stage of suspend is pausing the engine if possible. We don't want to cause files
 	// to block, or we might not get the engine to pause. On the other hand, we might wait for polling
@@ -222,13 +228,13 @@ void PowerManager::suspend() {
 
 	// Now we wait, giving the engine thread some time to find our flag.
 	for (int i = 0; i < 10 && _pauseClientState == UNPAUSED; i++)
-		PspThread::delayMicros(50000);	// We wait 50 msec x 10 times = 0.5 seconds
+		PspThread::delayMicros(50000); // We wait 50 msec x 10 times = 0.5 seconds
 
-	if (_pauseClientState == PAUSING) {	// Our event has been acknowledged. Let's wait until the client is done.
+	if (_pauseClientState == PAUSING) { // Our event has been acknowledged. Let's wait until the client is done.
 		_PMStatus = kWaitForClientToFinishPausing;
 
 		while (_pauseClientState != PAUSED)
-			PspThread::delayMicros(50000);	// We wait 50 msec at a time
+			PspThread::delayMicros(50000); // We wait 50 msec at a time
 	}
 
 	// It's possible that the polling thread missed our pause event, but there's
@@ -273,7 +279,7 @@ void PowerManager::suspend() {
 	_listMutex.unlock();
 	_PMStatus = kDoneSuspend;
 
-	scePowerUnlock(0);				// Allow the PSP to go to sleep now
+	scePowerUnlock(0); // Allow the PSP to go to sleep now
 
 	_PMStatus = kDonePowerUnlock;
 }
@@ -294,7 +300,7 @@ void PowerManager::resume() {
 	_PMStatus = kCheckingPauseFlag;
 
 	if (!_pauseFlag)
-		return;						// Make sure we can only resume once
+		return; // Make sure we can only resume once
 
 	_PMStatus = kGettingListMutexResume;
 
@@ -334,7 +340,7 @@ void PowerManager::resume() {
 
 	_PMStatus = kDoneResume;
 
-	_pauseFlag = false;	// Signal engine to unpause -- no mutex needed
+	_pauseFlag = false; // Signal engine to unpause -- no mutex needed
 
-	scePowerUnlock(0);	// Allow new suspends
+	scePowerUnlock(0); // Allow new suspends
 }

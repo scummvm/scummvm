@@ -185,7 +185,9 @@ uint32 Archive::convertTagToUppercase(uint32 tag) {
 
 // Mac Archive code
 
-MacArchive::MacArchive() : Archive(), _resFork(0) {
+MacArchive::MacArchive()
+  : Archive()
+  , _resFork(0) {
 }
 
 MacArchive::~MacArchive() {
@@ -357,9 +359,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 	uint32 rifxType = subStream.readUint32();
 
-	if (rifxType != MKTAG('M', 'V', '9', '3') && 
-		rifxType != MKTAG('A', 'P', 'P', 'L') && 
-		rifxType != MKTAG('M', 'C', '9', '5'))
+	if (rifxType != MKTAG('M', 'V', '9', '3') && rifxType != MKTAG('A', 'P', 'P', 'L') && rifxType != MKTAG('M', 'C', '9', '5'))
 		return false;
 
 	if (subStream.readUint32() != MKTAG('i', 'm', 'a', 'p'))
@@ -400,7 +400,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		uint32 unk2 = subStream.readUint32();
 
 		debug(3, "Found RIFX resource index %d: '%s', %d @ 0x%08x (%d), flags: %x unk1: %x unk2: %x",
-			i, tag2str(tag), size, offset, offset, flags, unk1, unk2);
+		      i, tag2str(tag), size, offset, offset, flags, unk1, unk2);
 
 		Resource res;
 		res.offset = offset;
@@ -418,12 +418,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		else if (tag == MKTAG('C', 'A', 'S', '*'))
 			casRes = &resources[resources.size() - 1];
 		// or the children of
-		else if (tag == MKTAG('S', 'T', 'X', 'T') ||
-				 tag == MKTAG('B', 'I', 'T', 'D') ||
-				 tag == MKTAG('D', 'I', 'B', ' ') ||
-				 tag == MKTAG('R', 'T', 'E', '0') ||
-				 tag == MKTAG('R', 'T', 'E', '1') ||
-				 tag == MKTAG('R', 'T', 'E', '2'))
+		else if (tag == MKTAG('S', 'T', 'X', 'T') || tag == MKTAG('B', 'I', 'T', 'D') || tag == MKTAG('D', 'I', 'B', ' ') || tag == MKTAG('R', 'T', 'E', '0') || tag == MKTAG('R', 'T', 'E', '1') || tag == MKTAG('R', 'T', 'E', '2'))
 			_types[tag][i] = res;
 	}
 
@@ -525,6 +520,5 @@ Resource RIFXArchive::getResourceDetail(uint32 tag, uint16 id) {
 
 	return resMap[id];
 }
-
 
 } // End of namespace Director

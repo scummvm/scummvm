@@ -28,8 +28,11 @@
 
 namespace Image {
 
-HLZDecoder::HLZDecoder(int width, int height) : Codec(),
-	_width(width), _height(height), _surface(nullptr) {
+HLZDecoder::HLZDecoder(int width, int height)
+  : Codec()
+  , _width(width)
+  , _height(height)
+  , _surface(nullptr) {
 }
 
 HLZDecoder::~HLZDecoder() {
@@ -74,7 +77,7 @@ static inline uint getReg(Common::SeekableReadStream &stream, uint32 *size, uint
 
 void HLZDecoder::decodeFrameInPlace(Common::SeekableReadStream &stream, uint32 size, byte *dst) {
 	bool eof = false;
-	bool checkSize = (size != (uint32) - 1);
+	bool checkSize = (size != (uint32)-1);
 	byte *orig = dst;
 	uint32 reg = 0;
 	int regBits = 0;

@@ -34,17 +34,21 @@
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
-#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
+#include "dreamweb/sound.h"
 
 namespace DreamWeb {
 
-DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gameDesc) :
-	Engine(syst), _gameDescription(gameDesc), _rnd("dreamweb"),
-	_exText(kNumExTexts),
-	_setDesc(kNumSetTexts), _blockDesc(kNumBlockTexts),
-	_roomDesc(kNumRoomTexts), _freeDesc(kNumFreeTexts),
-	_personText(kNumPersonTexts) {
+DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gameDesc)
+  : Engine(syst)
+  , _gameDescription(gameDesc)
+  , _rnd("dreamweb")
+  , _exText(kNumExTexts)
+  , _setDesc(kNumSetTexts)
+  , _blockDesc(kNumBlockTexts)
+  , _roomDesc(kNumRoomTexts)
+  , _freeDesc(kNumFreeTexts)
+  , _personText(kNumPersonTexts) {
 
 	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Animation Debug Flag");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
@@ -62,7 +66,7 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	// ES and FR CD release use a different data file prefix
 	// and speech directory naming.
 	if (isCD()) {
-		switch(getLanguage()) {
+		switch (getLanguage()) {
 		case Common::ES_ESP:
 			_datafilePrefix = "DREAMWSP.";
 			_speechDirName = "SPANISH";
@@ -77,7 +81,7 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 		}
 	}
 
-	_openChangeSize = kInventx+(4*kItempicsize);
+	_openChangeSize = kInventx + (4 * kItempicsize);
 	_quitRequested = false;
 
 	_speechLoaded = false;
@@ -247,7 +251,7 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	for (uint i = 0; i < 96; i++)
 		memset(&_backdropFlags[i], 0, sizeof(BackdropMapFlag));
 
-	for (uint i = 0; i < kNumReelRoutines+1; i++)
+	for (uint i = 0; i < kNumReelRoutines + 1; i++)
 		memset(&_reelRoutines[i], 0, sizeof(ReelRoutine));
 
 	_personData = 0;
@@ -258,7 +262,7 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	for (uint i = 0; i < 30; i++)
 		memset(&_ryanInvList[i], 0, sizeof(ObjectRef));
 
-	for (uint i = 0; i < 11*10; i++)
+	for (uint i = 0; i < 11 * 10; i++)
 		memset(&_mapFlags[i], 0, sizeof(MapFlag));
 
 	for (uint i = 0; i < kNumChanges; i++)
@@ -318,7 +322,7 @@ void DreamWebEngine::processEvents() {
 	Common::Event event;
 	int softKey;
 	while (_eventMan->pollEvent(event)) {
-		switch(event.type) {
+		switch (event.type) {
 		case Common::EVENT_RTL:
 			quit();
 			break;
@@ -332,7 +336,7 @@ void DreamWebEngine::processEvents() {
 					break;
 
 				case Common::KEYCODE_f:
-					setSpeed(_speed != 20? 20: 1);
+					setSpeed(_speed != 20 ? 20 : 1);
 					break;
 
 				case Common::KEYCODE_g:
@@ -374,22 +378,18 @@ void DreamWebEngine::processEvents() {
 			softKey = 0;
 
 			debug(1, "DreamWebEngine::processEvents() KeyDown keycode:%d ascii:0x%02x", event.kbd.keycode, event.kbd.ascii);
-			if ((event.kbd.ascii >= 'a' && event.kbd.ascii <= 'z') ||
-				(event.kbd.ascii >= 'A' && event.kbd.ascii <= 'Z')) {
+			if ((event.kbd.ascii >= 'a' && event.kbd.ascii <= 'z') || (event.kbd.ascii >= 'A' && event.kbd.ascii <= 'Z')) {
 				softKey = event.kbd.ascii & ~0x20; // (& ~0x20) forces ascii codes for a-z to map to A-Z
-			} else if (event.kbd.ascii == '-' ||
-				event.kbd.ascii == ' ' ||
-				(event.kbd.ascii >= '0' && event.kbd.ascii <= '9')) {
+			} else if (event.kbd.ascii == '-' || event.kbd.ascii == ' ' || (event.kbd.ascii >= '0' && event.kbd.ascii <= '9')) {
 				softKey = event.kbd.ascii;
 			} else if (event.kbd.keycode >= Common::KEYCODE_KP0 && event.kbd.keycode <= Common::KEYCODE_KP9) {
 				softKey = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 			} else if (event.kbd.keycode == Common::KEYCODE_KP_MINUS) {
 				softKey = '-';
-			} else if (event.kbd.keycode == Common::KEYCODE_BACKSPACE ||
-				event.kbd.keycode == Common::KEYCODE_DELETE) {
+			} else if (event.kbd.keycode == Common::KEYCODE_BACKSPACE || event.kbd.keycode == Common::KEYCODE_DELETE) {
 				softKey = 8;
 			} else if (event.kbd.keycode == Common::KEYCODE_RETURN
-				|| event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
+			           || event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
 				softKey = 13;
 			}
 
@@ -457,7 +457,7 @@ void DreamWebEngine::getPalette(uint8 *data, uint start, uint count) {
 
 void DreamWebEngine::setPalette(const uint8 *data, uint start, uint count) {
 	assert(start + count <= 256);
-	uint8 fixed[3*256];
+	uint8 fixed[3 * 256];
 	for (uint i = 0; i < count * 3; ++i) {
 		fixed[i] = data[i] << 2;
 	}
@@ -487,7 +487,8 @@ void DreamWebEngine::printUnderMonitor() {
 			if (*src < 231)
 				*dst++ = *src++;
 			else {
-				++dst; ++src;
+				++dst;
+				++src;
 			}
 		}
 		dst += kScreenwidth - 170;
@@ -503,9 +504,9 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 	if (c < 128)
 		return c;
 
-	switch(getLanguage()) {
+	switch (getLanguage()) {
 	case Common::DE_DEU:
-		switch(c) {
+		switch (c) {
 		case 129:
 			return 'Z' + 3;
 		case 132:
@@ -524,7 +525,7 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 			return c;
 		}
 	case Common::ES_ESP:
-		switch(c) {
+		switch (c) {
 		case 160:
 			return 'Z' + 1;
 		case 130:
@@ -550,7 +551,7 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 		}
 	case Common::FR_FRA:
 	case Common::IT_ITA:
-		switch(c) {
+		switch (c) {
 		case 133:
 			return 'Z' + 1;
 		case 130:

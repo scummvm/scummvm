@@ -31,19 +31,24 @@ struct CEnterExitSecClassMiniLiftStatics {
 	CString _viewName;
 	int _state;
 
-	CEnterExitSecClassMiniLiftStatics() : _state(1) {}
+	CEnterExitSecClassMiniLiftStatics()
+	  : _state(1) {}
 };
 
 class CEnterExitSecClassMiniLift : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
+
 private:
 	static CEnterExitSecClassMiniLiftStatics *_statics;
 	int _roomNum;
+
 public:
 	CLASSDEF;
-	CEnterExitSecClassMiniLift() : CGameObject(), _roomNum(0) {}
+	CEnterExitSecClassMiniLift()
+	  : CGameObject()
+	  , _roomNum(0) {}
 	static void init();
 	static void deinit();
 

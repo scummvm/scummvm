@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptTaffyPatron::AIScriptTaffyPatron(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptTaffyPatron::AIScriptTaffyPatron(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 }
 
 void AIScriptTaffyPatron::Initialize() {
@@ -167,17 +168,17 @@ bool AIScriptTaffyPatron::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptTaffyPatron::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptTaffyPatron::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptTaffyPatron::ReachedMovementTrackWaypoint(int waypointId) {

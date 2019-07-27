@@ -20,18 +20,19 @@
  *
  */
 
-#include "common/util.h"
 #include "common/endian.h"
+#include "common/util.h"
 
-#include "gob/gob.h"
-#include "gob/script.h"
 #include "gob/dataio.h"
 #include "gob/expression.h"
+#include "gob/gob.h"
+#include "gob/script.h"
 #include "gob/videoplayer.h"
 
 namespace Gob {
 
-Script::Script(GobEngine *vm) : _vm(vm) {
+Script::Script(GobEngine *vm)
+  : _vm(vm) {
 	_expression = new Expression(vm);
 
 	_finished = true;
@@ -68,7 +69,7 @@ uint32 Script::peek(byte *data, int32 size, int32 offset) const {
 
 	if (totOffset < 1)
 		return 0;
-	if (((uint32) totOffset) >= _totSize)
+	if (((uint32)totOffset) >= _totSize)
 		return 0;
 
 	int32 toPeek = MIN<int32>(size, _totSize - totOffset);
@@ -103,7 +104,7 @@ bool Script::seek(int32 offset, int whence) {
 	else if (whence == SEEK_END)
 		offset += _totSize;
 
-	if ((offset < 0) || (((uint32) offset) >= _totSize))
+	if ((offset < 0) || (((uint32)offset) >= _totSize))
 		return false;
 
 	// Cannot seek into the header
@@ -141,7 +142,7 @@ int32 Script::getOffset(byte *ptr) const {
 byte *Script::getData(int32 offset) const {
 	if (!_totData)
 		return 0;
-	if ((offset < 0) || (((uint32) offset) >= _totSize))
+	if ((offset < 0) || (((uint32)offset) >= _totSize))
 		return 0;
 
 	return _totData + offset;
@@ -162,15 +163,15 @@ byte Script::readByte() {
 }
 
 char Script::readChar() {
-	return (char) readByte();
+	return (char)readByte();
 }
 
 uint8 Script::readUint8() {
-	return (uint8) readByte();
+	return (uint8)readByte();
 }
 
 uint16 Script::readUint16() {
-	byte v[2] = {0, 0};
+	byte v[2] = { 0, 0 };
 	uint32 n;
 
 	n = read(v, 2);
@@ -180,7 +181,7 @@ uint16 Script::readUint16() {
 }
 
 uint32 Script::readUint32() {
-	byte v[4] = {0, 0, 0, 0};
+	byte v[4] = { 0, 0, 0, 0 };
 	uint32 n;
 
 	n = read(v, 4);
@@ -190,21 +191,22 @@ uint32 Script::readUint32() {
 }
 
 int8 Script::readInt8() {
-	return (int8) readByte();
+	return (int8)readByte();
 }
 
 int16 Script::readInt16() {
-	return (int16) readUint16();
+	return (int16)readUint16();
 }
 
 int32 Script::readInt32() {
-	return (int32) readUint32();
+	return (int32)readUint32();
 }
 
 char *Script::readString(int32 length) {
 	if (length < 0) {
 		length = 0;
-		while (_totPtr[length++] != '\0') { }
+		while (_totPtr[length++] != '\0') {
+		}
 	}
 
 	char *string = (char *)_totPtr;
@@ -223,11 +225,11 @@ byte Script::peekByte(int32 offset) {
 }
 
 char Script::peekChar(int32 offset) {
-	return (char) peekByte(offset);
+	return (char)peekByte(offset);
 }
 
 uint8 Script::peekUint8(int32 offset) {
-	return (uint8) peekByte(offset);
+	return (uint8)peekByte(offset);
 }
 
 uint16 Script::peekUint16(int32 offset) {
@@ -247,15 +249,15 @@ uint32 Script::peekUint32(int32 offset) {
 }
 
 int8 Script::peekInt8(int32 offset) {
-	return (int8) peekByte(offset);
+	return (int8)peekByte(offset);
 }
 
 int16 Script::peekInt16(int32 offset) {
-	return (int16) peekUint16(offset);
+	return (int16)peekUint16(offset);
 }
 
 int32 Script::peekInt32(int32 offset) {
-	return (int32) peekUint32(offset);
+	return (int32)peekUint32(offset);
 }
 
 char *Script::peekString(int32 offset) {
@@ -311,8 +313,7 @@ bool Script::evalBool() {
 	_expression->printExpr(99);
 
 	_expression->parseExpr(99, &type);
-	if ( (type == GOB_TRUE) ||
-	    ((type == TYPE_IMM_INT16) && _expression->getResultInt()))
+	if ((type == GOB_TRUE) || ((type == TYPE_IMM_INT16) && _expression->getResultInt()))
 		return true;
 	else
 		return false;

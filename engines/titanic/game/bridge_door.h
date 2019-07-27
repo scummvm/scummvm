@@ -32,6 +32,7 @@ class CBridgeDoor : public CGameObject {
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
+
 public:
 	CLASSDEF;
 

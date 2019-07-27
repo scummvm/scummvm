@@ -20,16 +20,16 @@
  *
  */
 
-#include "common/system.h"
 #include "common/events.h"
+#include "common/system.h"
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
 #include "chewy/cursor.h"
 #include "chewy/graphics.h"
-#include "chewy/scene.h"
 #include "chewy/resource.h"
+#include "chewy/scene.h"
 #include "chewy/sound.h"
 #include "chewy/text.h"
 #include "chewy/video/cfo_decoder.h"
@@ -42,33 +42,33 @@ namespace Chewy {
 #define MAX_SOUNDS 3
 
 struct SoundInfo {
-	uint16 enable[MAX_SOUNDS];	// flag, 0 = disable, 1 = enable
+	uint16 enable[MAX_SOUNDS]; // flag, 0 = disable, 1 = enable
 	int16 index[MAX_SOUNDS];
 	uint16 start[MAX_SOUNDS];
 	uint16 channel[MAX_SOUNDS];
 	uint16 volume[MAX_SOUNDS];
 	uint16 repeatCount[MAX_SOUNDS];
-	uint16 stereo[MAX_SOUNDS];	// stereo position for the SFX
+	uint16 stereo[MAX_SOUNDS]; // stereo position for the SFX
 };
 
 // Animated details - scene animations
 struct AnimatedDetails {
 	int16 x;
 	int16 y;
-	byte startFlag;     // 0: no animation
+	byte startFlag; // 0: no animation
 	byte repeat;
 	int16 startSprite;
 	int16 endSprite;
 	int16 spriteCount;
 	uint16 delay;
 	uint16 delayCount;
-	uint16 reverse;     // 0: play normally, 1: play in reverse
-	uint16 timerStart;  // seconds until detail is started (0: no timer)
+	uint16 reverse; // 0: play normally, 1: play in reverse
+	uint16 timerStart; // seconds until detail is started (0: no timer)
 	uint16 zIndex;
-	byte loadFlag;      // 0: load animation in memory immediately, 1: load animation in memory when it is played
+	byte loadFlag; // 0: load animation in memory immediately, 1: load animation in memory when it is played
 	byte zoom;
 	SoundInfo soundInfo;
-	byte showOneFrame;  // show a sprite, 0: none, 1: before animation, 2: after animation
+	byte showOneFrame; // show a sprite, 0: none, 1: before animation, 2: after animation
 	byte currentFrame;
 };
 
@@ -94,7 +94,7 @@ struct RoomInfo {
 	byte picNum;
 	byte autoMoveCount;
 	byte loadTaf;
-	Common::String tafName;	// 14 bytes
+	Common::String tafName; // 14 bytes
 	byte zoomFactor;
 	// 1 byte dummy
 };
@@ -102,7 +102,7 @@ struct RoomInfo {
 struct AutoMove {
 	int16 x;
 	int16 y;
-	byte spriteNum;	// sprite number to draw when the end point is reached
+	byte spriteNum; // sprite number to draw when the end point is reached
 	// 1 byte dummy
 };
 
@@ -125,7 +125,8 @@ struct SceneInfo {
 	//uint32 hotspotSoundPtr[MAX_DETAILS][MAX_SOUNDS];	// unused
 };
 
-Scene::Scene(ChewyEngine *vm) : _vm(vm) {
+Scene::Scene(ChewyEngine *vm)
+  : _vm(vm) {
 	_sceneInfo = new SceneInfo();
 	_vm->_graphics->setDescSurface(Common::Point(-1, -1));
 }
@@ -240,13 +241,13 @@ void Scene::loadSceneInfo() {
 	uint32 header = indexFile.readUint32BE();
 	if (header != headerRDI)
 		error("Invalid resource - %s", sceneIndexFileName);
-	indexFile.skip(2);	// room count, unused (set to 100)
+	indexFile.skip(2); // room count, unused (set to 100)
 
 	indexFile.seek(sceneInfoSize * _curScene, SEEK_CUR);
 
 	_sceneInfo->staticDetailsCount = indexFile.readUint16LE();
 	_sceneInfo->animatedDetailsCount = indexFile.readUint16LE();
-	indexFile.skip(4);	// pointer to sprites
+	indexFile.skip(4); // pointer to sprites
 
 	// Animated details
 	for (int i = 0; i < MAX_DETAILS; i++) {
@@ -286,7 +287,7 @@ void Scene::loadSceneInfo() {
 		_sceneInfo->staticDetails[i].spriteNum = indexFile.readSint16LE();
 		_sceneInfo->staticDetails[i].zIndex = indexFile.readUint16LE();
 		_sceneInfo->staticDetails[i].hide = indexFile.readByte();
-		indexFile.readByte();	// padding
+		indexFile.readByte(); // padding
 	}
 
 	// Hotspots
@@ -326,13 +327,13 @@ void Scene::loadSceneInfo() {
 		_sceneInfo->roomInfo.tafName += indexFile.readByte();
 
 	_sceneInfo->roomInfo.zoomFactor = indexFile.readByte();
-	indexFile.readByte();	// padding
+	indexFile.readByte(); // padding
 
 	for (int i = 0; i < MAX_AUTOMOVE; i++) {
 		_sceneInfo->autoMove[i].x = indexFile.readSint16LE();
 		_sceneInfo->autoMove[i].y = indexFile.readSint16LE();
 		_sceneInfo->autoMove[i].spriteNum = indexFile.readByte();
-		indexFile.readByte();	// padding
+		indexFile.readByte(); // padding
 		if (i > _sceneInfo->roomInfo.autoMoveCount && !(_sceneInfo->autoMove[i].x <= 0 || _sceneInfo->autoMove[i].y <= 0))
 			warning("Auto move %d should be unused, but it isn't (max auto move items are %d)", i, _sceneInfo->roomInfo.autoMoveCount);
 	}

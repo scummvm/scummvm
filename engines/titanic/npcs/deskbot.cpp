@@ -21,8 +21,8 @@
  */
 
 #include "titanic/npcs/deskbot.h"
-#include "titanic/pet_control/pet_control.h"
 #include "titanic/game_manager.h"
+#include "titanic/pet_control/pet_control.h"
 #include "titanic/translation.h"
 
 namespace Titanic {
@@ -40,24 +40,26 @@ static const char *const IDLE_NAMES[] = {
 };
 
 BEGIN_MESSAGE_MAP(CDeskbot, CTrueTalkNPC)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(TrueTalkTriggerActionMsg)
-	ON_MESSAGE(NPCPlayTalkingAnimationMsg)
-	ON_MESSAGE(NPCPlayIdleAnimationMsg)
-	ON_MESSAGE(TrueTalkNotifySpeechStartedMsg)
-	ON_MESSAGE(TrueTalkNotifySpeechEndedMsg)
-	ON_MESSAGE(TurnOff)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(TrueTalkTriggerActionMsg)
+ON_MESSAGE(NPCPlayTalkingAnimationMsg)
+ON_MESSAGE(NPCPlayIdleAnimationMsg)
+ON_MESSAGE(TrueTalkNotifySpeechStartedMsg)
+ON_MESSAGE(TrueTalkNotifySpeechEndedMsg)
+ON_MESSAGE(TurnOff)
 END_MESSAGE_MAP()
 
 int CDeskbot::_v1;
 int CDeskbot::_v2;
 
-CDeskbot::CDeskbot() : CTrueTalkNPC(), _deskbotActive(false),
-		_classNum(NO_CLASS) {
+CDeskbot::CDeskbot()
+  : CTrueTalkNPC()
+  , _deskbotActive(false)
+  , _classNum(NO_CLASS) {
 }
 
 void CDeskbot::save(SimpleFile *file, int indent) {

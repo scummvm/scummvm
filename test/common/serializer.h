@@ -6,6 +6,7 @@
 class SerializerTestSuite : public CxxTest::TestSuite {
 	Common::SeekableReadStream *_inStreamV1;
 	Common::SeekableReadStream *_inStreamV2;
+
 public:
 	void setUp() {
 		// Our pseudo data format is as follows:
@@ -16,18 +17,18 @@ public:
 		// * sint16, LE (available only in v1)
 		// * byte       (always available)
 		static const byte contents_v1[] = {
-			'M', 'A', 'G', 'I',		// magic id
-			0x01, 0x00, 0x00, 0x00,	// Version
-			0x06, 0x07, 			// uint16, BE (available in v1 onward)
-			0xfe, 0xff, 			// sint16, LE (available only in v1)
-			0x0a					// byte       (always available)
+			'M', 'A', 'G', 'I', // magic id
+			0x01, 0x00, 0x00, 0x00, // Version
+			0x06, 0x07, // uint16, BE (available in v1 onward)
+			0xfe, 0xff, // sint16, LE (available only in v1)
+			0x0a // byte       (always available)
 		};
 		static const byte contents_v2[] = {
-			'M', 'A', 'G', 'I',		// magic id
-			0x02, 0x00, 0x00, 0x00,	// Version
-			0x02, 0x03, 0x04, 0x05,	// uint32, LE (available in v2 onward)
-			0x06, 0x07, 			// uint16, BE (available in v1 onward)
-			0x0a					// byte       (always available)
+			'M', 'A', 'G', 'I', // magic id
+			0x02, 0x00, 0x00, 0x00, // Version
+			0x02, 0x03, 0x04, 0x05, // uint32, LE (available in v2 onward)
+			0x06, 0x07, // uint16, BE (available in v1 onward)
+			0x0a // byte       (always available)
 		};
 
 		_inStreamV1 = new Common::MemoryReadStream(contents_v1, sizeof(contents_v1));
@@ -41,7 +42,7 @@ public:
 
 	// A method which reads a v1 file
 	void readVersioned_v1(Common::SeekableReadStream *stream, Common::Serializer::Version version) {
-		Common::Serializer  ser(stream, 0);
+		Common::Serializer ser(stream, 0);
 
 		TS_ASSERT(ser.matchBytes("MAGI", 4));
 
@@ -62,7 +63,7 @@ public:
 
 	// A method which reads a v2 file
 	void readVersioned_v2(Common::SeekableReadStream *stream, Common::Serializer::Version version) {
-		Common::Serializer  ser(stream, 0);
+		Common::Serializer ser(stream, 0);
 
 		TS_ASSERT(ser.matchBytes("MAGI", 4));
 

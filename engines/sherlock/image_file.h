@@ -25,8 +25,8 @@
 
 #include "common/array.h"
 #include "common/file.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/rect.h"
 #include "common/str.h"
 #include "common/stream.h"
@@ -89,8 +89,10 @@ private:
 	 * Gets the palette at the start of the sprite file
 	 */
 	void loadPalette(Common::SeekableReadStream &stream);
+
 public:
 	byte _palette[256 * 3];
+
 public:
 	ImageFile();
 	ImageFile(const Common::String &name, bool skipPal = false, bool animImages = false);
@@ -100,11 +102,11 @@ public:
 };
 
 enum ImageFile3DOType {
-	kImageFile3DOType_Animation    = 0,
-	kImageFile3DOType_Cel          = 1,
+	kImageFile3DOType_Animation = 0,
+	kImageFile3DOType_Cel = 1,
 	kImageFile3DOType_CelAnimation = 2,
-	kImageFile3DOType_RoomFormat   = 3,
-	kImageFile3DOType_Font         = 4
+	kImageFile3DOType_RoomFormat = 3,
+	kImageFile3DOType_Font = 4
 };
 
 struct ImageFile3DOPixelLookupTable {
@@ -167,16 +169,17 @@ private:
 	byte _buffer[STREAMING_BUFFER_SIZE];
 	bool _compressed;
 	bool _active;
+
 public:
 	ImageFrame _imageFrame;
 
-	Common::Point _position;		// Animation position
-	Common::Rect _oldBounds;		// Bounds of previous frame
-	Common::Rect _removeBounds;		// Remove area for just drawn frame
+	Common::Point _position; // Animation position
+	Common::Rect _oldBounds; // Bounds of previous frame
+	Common::Rect _removeBounds; // Remove area for just drawn frame
 
-	int _flags;						// Flags
-	int _scaleVal;					// Specifies the scale amount
-	int _zPlacement;				// Used by doBgAnim for determining Z order
+	int _flags; // Flags
+	int _scaleVal; // Specifies the scale amount
+	int _zPlacement; // Used by doBgAnim for determining Z order
 public:
 	StreamingImageFile();
 	~StreamingImageFile();

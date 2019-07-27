@@ -21,12 +21,12 @@
  */
 
 #include "lure/res.h"
-#include "lure/disk.h"
-#include "lure/scripts.h"
-#include "lure/screen.h"
-#include "lure/lure.h"
 #include "common/endian.h"
 #include "common/events.h"
+#include "lure/disk.h"
+#include "lure/lure.h"
+#include "lure/screen.h"
+#include "lure/scripts.h"
 
 namespace Lure {
 
@@ -36,7 +36,8 @@ Resources &Resources::getReference() {
 	return *int_resources;
 }
 
-Resources::Resources() : _rnd(LureEngine::getReference().rnd()) {
+Resources::Resources()
+  : _rnd(LureEngine::getReference().rnd()) {
 	int_resources = this;
 	reloadData();
 
@@ -118,19 +119,18 @@ void Resources::reloadData() {
 	mb = d.getEntry(ROOM_DATA_RESOURCE_ID);
 	paths = d.getEntry(ROOM_PATHS_RESOURCE_ID);
 
-	offset = (uint16 *) mb->data();
+	offset = (uint16 *)mb->data();
 	while ((offsetVal = READ_LE_UINT16(offset++)) != 0xffff) {
 		if (offsetVal != 0) {
 			// Get room resource
-			RoomResource *rec = (RoomResource *) (mb->data() + offsetVal);
+			RoomResource *rec = (RoomResource *)(mb->data() + offsetVal);
 
 			RoomData *newEntry = new RoomData(rec, paths);
 			_roomData.push_back(RoomDataList::value_type(newEntry));
 
 			uint8 numExits = rec->numExits;
 			if (numExits > 0) {
-				RoomExitResource *exitRes = (RoomExitResource *)
-					(mb->data() + offsetVal + sizeof(RoomResource));
+				RoomExitResource *exitRes = (RoomExitResource *)(mb->data() + offsetVal + sizeof(RoomResource));
 
 				for (uint16 exitCtr = 0; exitCtr < numExits; ++exitCtr, ++exitRes) {
 					RoomExitData *exit = new RoomExitData(exitRes);
@@ -147,13 +147,13 @@ void Resources::reloadData() {
 	ctr = 0;
 	for (;;) {
 		offsetVal = READ_LE_UINT16(mb->data() + (ctr * 2));
-		if (offsetVal == 0xffff) break;
+		if (offsetVal == 0xffff)
+			break;
 
 		if (offsetVal != 0) {
 			RoomData *room = getRoom(ctr);
 			if (room) {
-				RoomExitHotspotResource *re = (RoomExitHotspotResource *)
-					(mb->data() + offsetVal);
+				RoomExitHotspotResource *re = (RoomExitHotspotResource *)(mb->data() + offsetVal);
 				while (READ_LE_UINT16(&re->hotspotId) != 0xffff) {
 					RoomExitHotspotData *newEntry = new RoomExitHotspotData(re);
 					room->exitHotspots.push_back(RoomExitHotspotList::value_type(newEntry));
@@ -167,7 +167,7 @@ void Resources::reloadData() {
 
 	// Load room joins
 	mb = d.getEntry(ROOM_EXIT_JOINS_RESOURCE_ID);
-	RoomExitJoinResource *joinRec = (RoomExitJoinResource *) mb->data();
+	RoomExitJoinResource *joinRec = (RoomExitJoinResource *)mb->data();
 	while (READ_LE_UINT16(&joinRec->hotspot1Id) != 0xffff) {
 		RoomExitJoinData *newEntry = new RoomExitJoinData(joinRec);
 		_exitJoins.push_back(RoomExitJoinList::value_type(newEntry));
@@ -181,10 +181,11 @@ void Resources::reloadData() {
 
 	// Load the lookup list of support data indexes used in the script engine
 	numCharOffsets = 0;
-	offset = (uint16 *) mb->data();
-	while (READ_LE_UINT16(offset++) != 0xffff) ++numCharOffsets;
+	offset = (uint16 *)mb->data();
+	while (READ_LE_UINT16(offset++) != 0xffff)
+		++numCharOffsets;
 	_charOffsets = new uint16[numCharOffsets];
-	offset = (uint16 *) mb->data();
+	offset = (uint16 *)mb->data();
 	for (ctr = 0; ctr < numCharOffsets; ++ctr, ++offset)
 		_charOffsets[ctr] = READ_LE_UINT16(offset);
 
@@ -199,7 +200,7 @@ void Resources::reloadData() {
 	// Loop through loading the schedules
 	ctr = 0;
 	while ((startOffset = READ_LE_UINT16(++offset)) != 0xffff) {
-		CharacterScheduleResource *res = (CharacterScheduleResource *) (mb->data() + startOffset);
+		CharacterScheduleResource *res = (CharacterScheduleResource *)(mb->data() + startOffset);
 		CharacterScheduleSet *newEntry = new CharacterScheduleSet(res, ++ctr);
 		_charSchedules.push_back(CharacterScheduleList::value_type(newEntry));
 	}
@@ -207,7 +208,7 @@ void Resources::reloadData() {
 
 	// Load the hotspot list
 	mb = d.getEntry(HOTSPOT_DATA_RESOURCE_ID);
-	HotspotResource *hsRec = (HotspotResource *) mb->data();
+	HotspotResource *hsRec = (HotspotResource *)mb->data();
 	while (READ_LE_UINT16(&hsRec->hotspotId) != 0xffff) {
 		HotspotData *newEntry = new HotspotData(hsRec);
 		_hotspotData.push_back(HotspotDataList::value_type(newEntry));
@@ -218,7 +219,7 @@ void Resources::reloadData() {
 
 	// Load the hotspot overrides
 	mb = d.getEntry(HOTSPOT_OVERRIDE_DATA_RESOURCE_ID);
-	HotspotOverrideResource *hsoRec = (HotspotOverrideResource *) mb->data();
+	HotspotOverrideResource *hsoRec = (HotspotOverrideResource *)mb->data();
 	while (READ_LE_UINT16(&hsoRec->hotspotId) != 0xffff) {
 		HotspotOverrideData *newEntry = new HotspotOverrideData(hsoRec);
 		_hotspotOverrides.push_back(HotspotOverrideList::value_type(newEntry));
@@ -228,22 +229,22 @@ void Resources::reloadData() {
 
 	// Load the animation list
 	mb = d.getEntry(ANIM_DATA_RESOURCE_ID);
-	HotspotAnimResource *animRec = (HotspotAnimResource *) mb->data();
+	HotspotAnimResource *animRec = (HotspotAnimResource *)mb->data();
 	while (READ_LE_UINT16(&animRec->animRecordId) != 0xffff) {
 		HotspotAnimData *newEntry = new HotspotAnimData(animRec);
 		_animData.push_back(HotspotAnimList::value_type(newEntry));
 
 		// Handle any direction frames
 		AnimRecordTemp dirEntries[4] = {
-			{FROM_LE_16(animRec->leftOffset), &newEntry->leftFrames},
-			{FROM_LE_16(animRec->rightOffset), &newEntry->rightFrames},
-			{FROM_LE_16(animRec->upOffset), &newEntry->upFrames},
-			{FROM_LE_16(animRec->downOffset), &newEntry->downFrames}};
+			{ FROM_LE_16(animRec->leftOffset), &newEntry->leftFrames },
+			{ FROM_LE_16(animRec->rightOffset), &newEntry->rightFrames },
+			{ FROM_LE_16(animRec->upOffset), &newEntry->upFrames },
+			{ FROM_LE_16(animRec->downOffset), &newEntry->downFrames }
+		};
 		for (int dirCtr = 0; dirCtr < 4; ++dirCtr) {
 			offsetVal = dirEntries[dirCtr].offset;
 			if (offsetVal != 0) {
-				MovementResource *moveRec = (MovementResource *)
-					(mb->data() + offsetVal);
+				MovementResource *moveRec = (MovementResource *)(mb->data() + offsetVal);
 				while (READ_LE_UINT16(&moveRec->frameNumber) != 0xffff) {
 					MovementData *newMove = new MovementData(moveRec);
 					dirEntries[dirCtr].list->push_back(MovementDataList::value_type(newMove));
@@ -259,9 +260,9 @@ void Resources::reloadData() {
 	// Hotspot scripts
 	mb = d.getEntry(HOTSPOT_SCRIPT_LIST_RESOURCE_ID);
 	uint16 numEntries = mb->size() / 2;
-	uint16 *srcVal = (uint16 *) mb->data();
+	uint16 *srcVal = (uint16 *)mb->data();
 	uint16 *destVal = _hotspotScriptData = (uint16 *)
-		Memory::alloc(numEntries * sizeof(uint16));
+	  Memory::alloc(numEntries * sizeof(uint16));
 	for (ctr = 0; ctr < numEntries; ++ctr, ++srcVal, ++destVal) {
 		*destVal = READ_LE_UINT16(srcVal);
 	}
@@ -269,24 +270,24 @@ void Resources::reloadData() {
 
 	// Handle the hotspot action lists
 	mb = d.getEntry(ACTION_LIST_RESOURCE_ID);
-	v = (uint16 *) mb->data();
+	v = (uint16 *)mb->data();
 	while ((recordId = READ_LE_UINT16(v)) != 0xffff) {
 		++v;
 		offsetVal = READ_LE_UINT16(v);
 		++v;
 
 		HotspotActionList *list = new HotspotActionList(
-			recordId, mb->data() + offsetVal);
+		  recordId, mb->data() + offsetVal);
 		_actionsList.push_back(HotspotActionSet::value_type(list));
 	}
 	delete mb;
 
 	// Read in the talk data header
 	mb = d.getEntry(TALK_HEADER_RESOURCE_ID);
-	TalkHeaderResource *thHeader = (TalkHeaderResource *) mb->data();
+	TalkHeaderResource *thHeader = (TalkHeaderResource *)mb->data();
 	uint16 hotspotId;
 	while ((hotspotId = READ_LE_UINT16(&thHeader->hotspotId)) != 0xffff) {
-		uint16 *offsets = (uint16 *) (mb->data() + READ_LE_UINT16(&thHeader->offset));
+		uint16 *offsets = (uint16 *)(mb->data() + READ_LE_UINT16(&thHeader->offset));
 		TalkHeaderData *newEntry = new TalkHeaderData(hotspotId, offsets);
 
 		_talkHeaders.push_back(TalkHeaderList::value_type(newEntry));
@@ -298,27 +299,27 @@ void Resources::reloadData() {
 	mb = d.getEntry(TALK_DATA_RESOURCE_ID);
 
 	// First get the list of give talk Ids
-	v = (uint16 *) mb->data();
+	v = (uint16 *)mb->data();
 
 	for (int talkIndex = 0; talkIndex < NUM_GIVE_TALK_IDS; ++talkIndex)
 		_giveTalkIds.push_back(READ_LE_UINT16(v++));
 
 	// Get the following talk ata
 
-	byte *dataStart = (byte *) v;
-	TalkDataHeaderResource *tdHeader = (TalkDataHeaderResource *) dataStart;
+	byte *dataStart = (byte *)v;
+	TalkDataHeaderResource *tdHeader = (TalkDataHeaderResource *)dataStart;
 
 	while ((recordId = READ_LE_UINT16(&tdHeader->recordId)) != 0xffff) {
 		TalkData *data = new TalkData(recordId);
 
-		TalkDataResource *entry = (TalkDataResource *) (dataStart + READ_LE_UINT16(&tdHeader->listOffset));
+		TalkDataResource *entry = (TalkDataResource *)(dataStart + READ_LE_UINT16(&tdHeader->listOffset));
 		while (READ_LE_UINT16(&entry->preSequenceId) != 0xffff) {
 			TalkEntryData *newEntry = new TalkEntryData(entry);
 			data->entries.push_back(TalkEntryList::value_type(newEntry));
 			++entry;
 		}
 
-		entry = (TalkDataResource *) (dataStart + READ_LE_UINT16(&tdHeader->responsesOffset));
+		entry = (TalkDataResource *)(dataStart + READ_LE_UINT16(&tdHeader->responsesOffset));
 		while (READ_LE_UINT16(&entry->preSequenceId) != 0xffff) {
 			TalkEntryData *newEntry = new TalkEntryData(entry);
 			data->responses.push_back(TalkEntryList::value_type(newEntry));
@@ -332,7 +333,7 @@ void Resources::reloadData() {
 
 	// Load in the list of room exit coordinates
 	mb = d.getEntry(EXIT_COORDINATES_RESOURCE_ID);
-	RoomExitCoordinateEntryResource *coordRec = (RoomExitCoordinateEntryResource *) mb->data();
+	RoomExitCoordinateEntryResource *coordRec = (RoomExitCoordinateEntryResource *)mb->data();
 	while (READ_LE_UINT16(coordRec) != 0xffff) {
 		RoomExitCoordinates *newEntry = new RoomExitCoordinates(coordRec);
 		_coordinateList.push_back(RoomExitCoordinatesList::value_type(newEntry));
@@ -342,7 +343,7 @@ void Resources::reloadData() {
 
 	// Load the list of room exit hotspot Ids
 	mb = d.getEntry(EXIT_HOTSPOT_ID_LIST);
-	RoomExitIndexedHotspotResource *indexedRec = (RoomExitIndexedHotspotResource *) mb->data();
+	RoomExitIndexedHotspotResource *indexedRec = (RoomExitIndexedHotspotResource *)mb->data();
 	while (READ_LE_UINT16(indexedRec) != 0xffff) {
 		_indexedRoomExitHospots.push_back(RoomExitIndexedHotspotList::value_type(new RoomExitIndexedHotspotData(indexedRec)));
 		indexedRec++;
@@ -389,7 +390,8 @@ RoomData *Resources::getRoom(uint16 roomNumber) {
 
 	for (i = _roomData.begin(); i != _roomData.end(); ++i) {
 		RoomData *rec = (*i).get();
-		if (rec->roomNumber == roomNumber) return rec;
+		if (rec->roomNumber == roomNumber)
+			return rec;
 	}
 
 	return NULL;
@@ -398,13 +400,12 @@ RoomData *Resources::getRoom(uint16 roomNumber) {
 bool Resources::checkHotspotExtent(HotspotData *hotspot) {
 	uint16 roomNum = hotspot->roomNumber;
 	RoomData *room = getRoom(roomNum);
-	return (hotspot->startX >= room->clippingXStart) && ((room->clippingXEnd == 0) ||
-			(hotspot->startX + 32 < room->clippingXEnd));
+	return (hotspot->startX >= room->clippingXStart) && ((room->clippingXEnd == 0) || (hotspot->startX + 32 < room->clippingXEnd));
 }
 
 void Resources::insertPaletteSubset(Palette &p) {
-	p.palette()->copyFrom(_paletteSubset->palette(), 0, 129*4, 60*4);
-	p.palette()->copyFrom(_paletteSubset->palette(), 60*4, 220*4, 8*4);
+	p.palette()->copyFrom(_paletteSubset->palette(), 0, 129 * 4, 60 * 4);
+	p.palette()->copyFrom(_paletteSubset->palette(), 60 * 4, 220 * 4, 8 * 4);
 }
 
 byte *Resources::getCursor(uint8 cursorNum) {
@@ -434,7 +435,8 @@ byte *Resources::getCursor(uint8 cursorNum) {
 
 	// Post-process the cells to adjust the color
 	for (int index = 0; index < CURSOR_SIZE; ++index) {
-		if (_cursor[index] == 3) _cursor[index] = 15;
+		if (_cursor[index] == 3)
+			_cursor[index] = 15;
 	}
 
 	return &_cursor[0];
@@ -445,7 +447,8 @@ HotspotData *Resources::getHotspot(uint16 hotspotId) {
 
 	for (i = _hotspotData.begin(); i != _hotspotData.end(); ++i) {
 		HotspotData *rec = (*i).get();
-		if (rec->hotspotId == hotspotId) return rec;
+		if (rec->hotspotId == hotspotId)
+			return rec;
 	}
 
 	return NULL;
@@ -456,19 +459,20 @@ Hotspot *Resources::getActiveHotspot(uint16 hotspotId) {
 
 	for (i = _activeHotspots.begin(); i != _activeHotspots.end(); ++i) {
 		Hotspot *rec = (*i).get();
-		if (rec->hotspotId() == hotspotId) return rec;
+		if (rec->hotspotId() == hotspotId)
+			return rec;
 	}
 
 	return NULL;
 }
-
 
 HotspotOverrideData *Resources::getHotspotOverride(uint16 hotspotId) {
 	HotspotOverrideList::iterator i;
 
 	for (i = _hotspotOverrides.begin(); i != _hotspotOverrides.end(); ++i) {
 		HotspotOverrideData *rec = (*i).get();
-		if (rec->hotspotId == hotspotId) return rec;
+		if (rec->hotspotId == hotspotId)
+			return rec;
 	}
 
 	return NULL;
@@ -479,7 +483,8 @@ HotspotAnimData *Resources::getAnimation(uint16 animRecordId) {
 
 	for (i = _animData.begin(); i != _animData.end(); ++i) {
 		HotspotAnimData *rec = (*i).get();
-		if (rec->animRecordId == animRecordId) return rec;
+		if (rec->animRecordId == animRecordId)
+			return rec;
 	}
 
 	return NULL;
@@ -502,7 +507,7 @@ uint16 Resources::getHotspotAction(uint16 actionsOffset, Action action) {
 	HotspotActionList *list = _actionsList.getActions(actionsOffset);
 	uint16 offset = (!list) ? 0 : list->getActionOffset(action);
 	debugC(ERROR_DETAILED, kLureDebugHotspots,
-		"Resources::getHotspotAction actionsOffset=%xh result=%xh", actionsOffset, offset);
+	       "Resources::getHotspotAction actionsOffset=%xh result=%xh", actionsOffset, offset);
 	return offset;
 }
 
@@ -510,7 +515,8 @@ TalkHeaderData *Resources::getTalkHeader(uint16 hotspotId) {
 	TalkHeaderList::iterator i;
 	for (i = _talkHeaders.begin(); i != _talkHeaders.end(); ++i) {
 		TalkHeaderData *rec = (*i).get();
-		if (rec->characterId == hotspotId) return rec;
+		if (rec->characterId == hotspotId)
+			return rec;
 	}
 	return NULL;
 }
@@ -543,12 +549,13 @@ void Resources::setTalkingCharacter(uint16 id) {
 		addHotspot(hotspot);
 	}
 }
-uint16 englishLoadOffsets[] = {0x3afe, 0x41BD, 0x7167, 0x7172, 0x8617, 0x88ac, 0};
+uint16 englishLoadOffsets[] = { 0x3afe, 0x41BD, 0x7167, 0x7172, 0x8617, 0x88ac, 0 };
 
 Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 	Resources &resources = Resources::getReference();
 	HotspotData *res = getHotspot(hotspotId);
-	if (!res) return NULL;
+	if (!res)
+		return NULL;
 	res->roomNumber &= 0x7fff; // clear any suppression bit in room #
 
 	// Make sure that the hotspot isn't already active
@@ -607,7 +614,7 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 		default:
 			// All others simply activate the hotspot
 			warning("Hotspot %d uses unknown load offset index %d",
-				res->hotspotId, res->loadOffset);
+			        res->hotspotId, res->loadOffset);
 		}
 
 		if (loadFlag) {
@@ -615,8 +622,10 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 			assert(hotspot);
 
 			// Special post-load handling
-			if (res->loadOffset == 3) hotspot->setPersistant(true);
-			if (res->loadOffset == 5) hotspot->handleTalkDialog();
+			if (res->loadOffset == 3)
+				hotspot->setPersistant(true);
+			if (res->loadOffset == 5)
+				hotspot->handleTalkDialog();
 			if (hotspotId == CASTLE_SKORL_ID) {
 				// The Castle skorl has a default room #99, so it needs to be adjusted dynamically
 				res->npcSchedule.clear();
@@ -682,8 +691,7 @@ void Resources::deactivateHotspot(uint16 hotspotId, bool isDestId) {
 
 	while (i != _activeHotspots.end()) {
 		Hotspot const &h = **i;
-		if ((!isDestId && (h.hotspotId() == hotspotId)) ||
-			(isDestId && (h.destHotspotId() == hotspotId) && (h.hotspotId() == 0xffff))) {
+		if ((!isDestId && (h.hotspotId() == hotspotId)) || (isDestId && (h.destHotspotId() == hotspotId) && (h.hotspotId() == 0xffff))) {
 			_activeHotspots.erase(i);
 			break;
 		}
@@ -711,7 +719,8 @@ uint16 Resources::numInventoryItems() {
 	HotspotDataList &list = _hotspotData;
 	HotspotDataList::iterator i;
 	for (i = list.begin(); i != list.end(); ++i) {
-		if ((*i)->roomNumber == PLAYER_ID) ++numItems;
+		if ((*i)->roomNumber == PLAYER_ID)
+			++numItems;
 	}
 
 	return numItems;
@@ -723,7 +732,8 @@ void Resources::copyCursorTo(Surface *s, uint8 cursorNum, int16 x, int16 y) {
 
 	for (int yP = 0; yP < CURSOR_HEIGHT; ++yP) {
 		for (int xP = 0; xP < CURSOR_WIDTH; ++xP) {
-			if (*pSrc != 0) *pDest = *pSrc;
+			if (*pSrc != 0)
+				*pDest = *pSrc;
 			++pSrc;
 			++pDest;
 		}

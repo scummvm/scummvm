@@ -30,9 +30,18 @@
 namespace Xeen {
 
 enum ItemsMode {
-	ITEMMODE_CHAR_INFO = 0, ITEMMODE_BUY = 1, ITEMMODE_SELL = 2, ITEMMODE_3 = 3,
-	ITEMMODE_RECHARGE = 4, ITEMMODE_5 = 5, ITEMMODE_ENCHANT = 6, ITEMMODE_COMBAT = 7, ITEMMODE_8 = 8,
-	ITEMMODE_REPAIR = 9, ITEMMODE_IDENTIFY = 10, ITEMMODE_TO_GOLD = 11,
+	ITEMMODE_CHAR_INFO = 0,
+	ITEMMODE_BUY = 1,
+	ITEMMODE_SELL = 2,
+	ITEMMODE_3 = 3,
+	ITEMMODE_RECHARGE = 4,
+	ITEMMODE_5 = 5,
+	ITEMMODE_ENCHANT = 6,
+	ITEMMODE_COMBAT = 7,
+	ITEMMODE_8 = 8,
+	ITEMMODE_REPAIR = 9,
+	ITEMMODE_IDENTIFY = 10,
+	ITEMMODE_TO_GOLD = 11,
 	ITEMMODE_INVALID = -1
 };
 
@@ -44,7 +53,9 @@ private:
 	Character *_oldCharacter;
 	DrawStruct _itemsDrawList[INV_ITEMS_TOTAL];
 
-	ItemsDialog(XeenEngine *vm) : ButtonContainer(vm), _oldCharacter(nullptr) {}
+	ItemsDialog(XeenEngine *vm)
+	  : ButtonContainer(vm)
+	  , _oldCharacter(nullptr) {}
 
 	Character *execute(Character *c, ItemsMode mode);
 
@@ -62,12 +73,13 @@ private:
 	 * Calculate the cost of an item, or charges renaming for Misc items as appropriate
 	 */
 	int calcItemCost(Character *c, int itemIndex, ItemsMode mode, int skillLevel,
-		ItemCategory category);
+	                 ItemCategory category);
 
 	int doItemOptions(Character &c, int actionIndex, int itemIndex,
-		ItemCategory category, ItemsMode mode);
+	                  ItemCategory category, ItemsMode mode);
 
 	void itemToGold(Character &c, int itemIndex, ItemCategory category, ItemsMode mode);
+
 public:
 	static Character *show(XeenEngine *vm, Character *c, ItemsMode mode);
 };
@@ -78,8 +90,10 @@ private:
 	int _actionIndex;
 	InventoryItems &_items;
 
-	ItemSelectionDialog(XeenEngine *vm, int actionIndex, InventoryItems &items) : ButtonContainer(vm),
-			_actionIndex(actionIndex), _items(items) {
+	ItemSelectionDialog(XeenEngine *vm, int actionIndex, InventoryItems &items)
+	  : ButtonContainer(vm)
+	  , _actionIndex(actionIndex)
+	  , _items(items) {
 		loadButtons();
 	}
 
@@ -93,6 +107,7 @@ private:
 	 * Loads buttons
 	 */
 	void loadButtons();
+
 public:
 	/**
 	 * Shows the dialog
@@ -102,7 +117,6 @@ public:
 	 */
 	static int show(int actionIndex, InventoryItems &items);
 };
-
 
 } // End of namespace Xeen
 

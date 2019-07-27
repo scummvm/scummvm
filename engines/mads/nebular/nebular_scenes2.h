@@ -25,298 +25,304 @@
 
 #include "common/scummsys.h"
 #include "mads/game.h"
-#include "mads/scene.h"
 #include "mads/nebular/nebular_scenes.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
 namespace Nebular {
 
-class Scene2xx : public NebularScene {
-protected:
-	/**
+	class Scene2xx : public NebularScene {
+	protected:
+		/**
 	 * Plays an appropriate sound when entering a scene
 	 */
-	void setAAName();
+		void setAAName();
 
-	/**
+		/**
 	 * Updates the prefix used for getting player sprites for the scene
 	 */
-	void setPlayerSpritesPrefix();
+		void setPlayerSpritesPrefix();
 
-	void sceneEntrySound();
-public:
-	Scene2xx(MADSEngine *vm) : NebularScene(vm) {}
-};
+		void sceneEntrySound();
 
-class Scene201 : public Scene2xx {
-private:
-	bool _pterodactylFlag;
+	public:
+		Scene2xx(MADSEngine *vm)
+		  : NebularScene(vm) {}
+	};
 
-public:
-	Scene201(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	class Scene201 : public Scene2xx {
+	private:
+		bool _pterodactylFlag;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void actions();
-};
+	public:
+		Scene201(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene202 : public Scene2xx {
-private:
-	bool _activeMsgFl, _ladderTopFl, _waitingMeteoFl, _toStationFl, _toTeleportFl;
-	int _ladderHotspotId, _lastRoute, _stationCounter, _meteoFrame;
-	uint32 _meteoClock1, _meteoClock2, _startTime;
-	bool _meteorologistSpecial;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void actions();
+	};
 
-	int subStep1(int randVal);
-	int subStep2(int randVal);
-	int subStep3(int randVal);
-	int subStep4(int randVal);
+	class Scene202 : public Scene2xx {
+	private:
+		bool _activeMsgFl, _ladderTopFl, _waitingMeteoFl, _toStationFl, _toTeleportFl;
+		int _ladderHotspotId, _lastRoute, _stationCounter, _meteoFrame;
+		uint32 _meteoClock1, _meteoClock2, _startTime;
+		bool _meteorologistSpecial;
 
-public:
-	Scene202(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		int subStep1(int randVal);
+		int subStep2(int randVal);
+		int subStep3(int randVal);
+		int subStep4(int randVal);
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
+	public:
+		Scene202(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-	void setRandomKernelMessage();
-};
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
 
-class Scene203 : public Scene2xx {
-private:
-	bool _rhotundaEat2Fl, _rhotundaEatFl;
+		void setRandomKernelMessage();
+	};
 
-public:
-	Scene203(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	class Scene203 : public Scene2xx {
+	private:
+		bool _rhotundaEat2Fl, _rhotundaEatFl;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene203(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene205 : public Scene2xx {
-private:
-	uint32 _lastFishTime, _chickenTime;
-	bool _beingKicked;
-	int _kernelMessage;
-	Conversation _dialog1;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	void handleWomanSpeech(int quoteId);
+	class Scene205 : public Scene2xx {
+	private:
+		uint32 _lastFishTime, _chickenTime;
+		bool _beingKicked;
+		int _kernelMessage;
+		Conversation _dialog1;
 
-public:
-	Scene205(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		void handleWomanSpeech(int quoteId);
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void actions();
-};
+	public:
+		Scene205(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene207 : public Scene2xx {
-private:
-	bool _vultureFl, _spiderFl, _eyeFl;
-	int _spiderHotspotId, _vultureHotspotId;
-	int32 _spiderTime, _vultureTime;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void actions();
+	};
 
-	void moveVulture();
-	void moveSpider();
+	class Scene207 : public Scene2xx {
+	private:
+		bool _vultureFl, _spiderFl, _eyeFl;
+		int _spiderHotspotId, _vultureHotspotId;
+		int32 _spiderTime, _vultureTime;
 
-public:
-	Scene207(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		void moveVulture();
+		void moveSpider();
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene207(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene208 : public Scene2xx {
-private:
-	bool _rhotundaTurnFl, _boundingFl;
-	int32 _rhotundaTime;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	void updateTrap();
-	void subAction(int mode);
+	class Scene208 : public Scene2xx {
+	private:
+		bool _rhotundaTurnFl, _boundingFl;
+		int32 _rhotundaTime;
 
-public:
-	Scene208(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		void updateTrap();
+		void subAction(int mode);
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene208(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene209 : public Scene2xx {
-private:
-	bool _dodgeFl, _forceDodgeFl, _shouldDodgeFl;
-	bool _pitchFl;
-	bool _fallFl, _forceFallFl, _shouldFallFl;
-	bool _playingAnimFl, _playingDialogFl;
-	int _pauseMode, _pauseCounterThreshold, _pauseCounter;
-	bool _removeMonkeyFl;
-	int _monkeyPosition;
-	bool _shootReadyFl, _startShootingInTimerFl, _shootMissedLastFl;
-	bool _binocularsDroppedFl;
-	int _dialogAbortVal;
-	int _counter;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	void handlePause();
-	void initPauseCounterThreshold();
-	void handlePeek();
-	void handleVerticalMove();
-	void handleLookStay();
-	void handleLookRight();
-	void handleBlink();
-	void handleGetBinoculars();
-	void handleStandFromPeek();
-	void handleDodge();
-	void handleBinocularBlink();
-	void handleBinocularScan();
-	void handleJumpInTree();
-	void handleTongue();
-	void handleMonkeyFall();
-	void handleJumpAndHide();
-	void handleMonkeyEating();
-	void handleMonkey1();
-	void handleStandBlink();
-	void handleMonkey2();
+	class Scene209 : public Scene2xx {
+	private:
+		bool _dodgeFl, _forceDodgeFl, _shouldDodgeFl;
+		bool _pitchFl;
+		bool _fallFl, _forceFallFl, _shouldFallFl;
+		bool _playingAnimFl, _playingDialogFl;
+		int _pauseMode, _pauseCounterThreshold, _pauseCounter;
+		bool _removeMonkeyFl;
+		int _monkeyPosition;
+		bool _shootReadyFl, _startShootingInTimerFl, _shootMissedLastFl;
+		bool _binocularsDroppedFl;
+		int _dialogAbortVal;
+		int _counter;
 
-public:
-	Scene209(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		void handlePause();
+		void initPauseCounterThreshold();
+		void handlePeek();
+		void handleVerticalMove();
+		void handleLookStay();
+		void handleLookRight();
+		void handleBlink();
+		void handleGetBinoculars();
+		void handleStandFromPeek();
+		void handleDodge();
+		void handleBinocularBlink();
+		void handleBinocularScan();
+		void handleJumpInTree();
+		void handleTongue();
+		void handleMonkeyFall();
+		void handleJumpAndHide();
+		void handleMonkeyEating();
+		void handleMonkey1();
+		void handleStandBlink();
+		void handleMonkey2();
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene209(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene210 : public Scene2xx {
-private:
-	int _curDialogNode;
-	int _nextHandsPlace;
-	int _twinkleAnimationType;
-	int _twinklesCurrentFrame;
-	bool _shouldTalk, _shouldFaceRex, _shouldMoveHead;
-	bool _stopWalking;
-	bool _twinklesTalking;
-	bool _twinklesTalk2;
-	int _doorway;
-	Common::String _subQuote2;
-	Conversation _conv1, _conv2, _conv3;
-	Conversation _conv5, _conv6, _conv7, _conv8;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	void handleConversations();
-	void handleConversation1();
-	void handleConversation2();
-	void handleConversation3();
-	void handleConversation5();
-	void handleConversation6();
-	void handleConversation7();
-	void handleConversation8();
-	void setDialogNode(int node);
-	void handleTwinklesSpeech(int quoteId, int shiftX, uint32 delay);
-	void newNode(int node);
-	void restoreDialogNode(int node, int msgId, int posY);
+	class Scene210 : public Scene2xx {
+	private:
+		int _curDialogNode;
+		int _nextHandsPlace;
+		int _twinkleAnimationType;
+		int _twinklesCurrentFrame;
+		bool _shouldTalk, _shouldFaceRex, _shouldMoveHead;
+		bool _stopWalking;
+		bool _twinklesTalking;
+		bool _twinklesTalk2;
+		int _doorway;
+		Common::String _subQuote2;
+		Conversation _conv1, _conv2, _conv3;
+		Conversation _conv5, _conv6, _conv7, _conv8;
 
-public:
-	Scene210(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		void handleConversations();
+		void handleConversation1();
+		void handleConversation2();
+		void handleConversation3();
+		void handleConversation5();
+		void handleConversation6();
+		void handleConversation7();
+		void handleConversation8();
+		void setDialogNode(int node);
+		void handleTwinklesSpeech(int quoteId, int shiftX, uint32 delay);
+		void newNode(int node);
+		void restoreDialogNode(int node, int msgId, int posY);
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene210(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene211 : public Scene2xx {
-private:
-	bool _ambushFl, _wakeFl;
-	int _monkeyFrame, _scrollY;
-	uint32 _monkeyTime;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-public:
-	Scene211(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	class Scene211 : public Scene2xx {
+	private:
+		bool _ambushFl, _wakeFl;
+		int _monkeyFrame, _scrollY;
+		uint32 _monkeyTime;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene211(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene212 : public Scene2xx {
-public:
-	Scene212(MADSEngine *vm) : Scene2xx(vm) {}
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-class Scene213 : public SceneTeleporter {
-public:
-	Scene213(MADSEngine *vm) : SceneTeleporter(vm) {}
+	class Scene212 : public Scene2xx {
+	public:
+		Scene212(MADSEngine *vm)
+		  : Scene2xx(vm) {}
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void actions();
-};
+	class Scene213 : public SceneTeleporter {
+	public:
+		Scene213(MADSEngine *vm)
+		  : SceneTeleporter(vm) {}
 
-class Scene214 : public Scene2xx {
-private:
-	uint32 _devilTime;
-	bool _devilRunningFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void actions();
+	};
 
-public:
-	Scene214(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	class Scene214 : public Scene2xx {
+	private:
+		uint32 _devilTime;
+		bool _devilRunningFl;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void actions();
-};
+	public:
+		Scene214(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene215 : public Scene2xx {
-public:
-	Scene215(MADSEngine *vm) : Scene2xx(vm) {}
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void actions();
+	};
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void actions();
-};
+	class Scene215 : public Scene2xx {
+	public:
+		Scene215(MADSEngine *vm)
+		  : Scene2xx(vm) {}
 
-class Scene216 : public Scene2xx {
-public:
-	Scene216(MADSEngine *vm) : Scene2xx(vm) {}
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void actions();
+	};
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void actions() {};
-};
+	class Scene216 : public Scene2xx {
+	public:
+		Scene216(MADSEngine *vm)
+		  : Scene2xx(vm) {}
+
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void actions() {};
+	};
 
 } // End of namespace Nebular
 

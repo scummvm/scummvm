@@ -42,8 +42,8 @@ public:
 	virtual void startSound(int sound);
 	virtual void stopSound(int sound);
 	virtual void stopAllSounds();
-//	virtual int  getMusicTimer();
-	virtual int  getSoundStatus(int sound) const;
+	//	virtual int  getMusicTimer();
+	virtual int getSoundStatus(int sound) const;
 
 	// AudioStream API
 	virtual int readBuffer(int16 *buffer, const int numSamples);
@@ -64,7 +64,7 @@ protected:
 
 	void lowPassFilter(int16 *data, uint len);
 	void squareGenerator(int channel, int freq, int vol,
-						int noiseFeedback, int16 *sample, uint len);
+	                     int noiseFeedback, int16 *sample, uint len);
 };
 
 } // End of namespace Scumm

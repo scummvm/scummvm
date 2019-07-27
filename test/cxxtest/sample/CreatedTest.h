@@ -2,8 +2,8 @@
 #define __CREATEDTEST_H
 
 #include <cxxtest/TestSuite.h>
-#include <string.h>
 #include <memory.h>
+#include <string.h>
 
 //
 // This test suite shows what to do when your test case
@@ -11,21 +11,20 @@
 // As an example, this test suite requires a non-default constructor.
 //
 
-class CreatedTest : public CxxTest::TestSuite
-{
-    char *_buffer;
+class CreatedTest : public CxxTest::TestSuite {
+	char *_buffer;
+
 public:
-    CreatedTest( unsigned size ) : _buffer( new char[size] ) {}
-    virtual ~CreatedTest() { delete[] _buffer; }
+	CreatedTest(unsigned size)
+	  : _buffer(new char[size]) {}
+	virtual ~CreatedTest() { delete[] _buffer; }
 
-    static CreatedTest *createSuite() { return new CreatedTest( 16 ); }
-    static void destroySuite( CreatedTest *suite ) { delete suite; }
+	static CreatedTest *createSuite() { return new CreatedTest(16); }
+	static void destroySuite(CreatedTest *suite) { delete suite; }
 
-    void test_nothing()
-    {
-        TS_FAIL( "Nothing to test" );
-    }
+	void test_nothing() {
+		TS_FAIL("Nothing to test");
+	}
 };
-
 
 #endif // __CREATEDTEST_H

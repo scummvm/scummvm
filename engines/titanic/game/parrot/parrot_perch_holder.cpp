@@ -21,17 +21,17 @@
  */
 
 #include "titanic/game/parrot/parrot_perch_holder.h"
-#include "titanic/game/cage.h"
 #include "titanic/core/project_item.h"
+#include "titanic/game/cage.h"
 #include "titanic/npcs/parrot.h"
 
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CParrotPerchHolder, CMultiDropTarget)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(StatusChangeMsg)
-	ON_MESSAGE(DropObjectMsg)
-	ON_MESSAGE(ActMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(DropObjectMsg)
+ON_MESSAGE(ActMsg)
 END_MESSAGE_MAP()
 
 void CParrotPerchHolder::save(SimpleFile *file, int indent) {
@@ -51,7 +51,7 @@ bool CParrotPerchHolder::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		} else if (CParrot::_state == PARROT_IN_CAGE) {
 			CTrueTalkTriggerActionMsg triggerMsg(280252, 0, 0);
 			triggerMsg.execute(getRoot(), CParrot::_type,
-				MSGFLAG_CLASS_DEF | MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_SCAN);
+			                   MSGFLAG_CLASS_DEF | MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_SCAN);
 		}
 	}
 

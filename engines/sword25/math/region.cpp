@@ -33,16 +33,20 @@
 #include "sword25/kernel/outputpersistenceblock.h"
 
 #include "sword25/math/region.h"
-#include "sword25/math/walkregion.h"
 #include "sword25/math/regionregistry.h"
+#include "sword25/math/walkregion.h"
 
 namespace Sword25 {
 
-Region::Region() : _valid(false), _type(RT_REGION) {
+Region::Region()
+  : _valid(false)
+  , _type(RT_REGION) {
 	RegionRegistry::instance().registerObject(this);
 }
 
-Region::Region(InputPersistenceBlock &reader, uint handle) : _valid(false), _type(RT_REGION) {
+Region::Region(InputPersistenceBlock &reader, uint handle)
+  : _valid(false)
+  , _type(RT_REGION) {
 	RegionRegistry::instance().registerObject(this, handle);
 	unpersist(reader);
 }
@@ -114,7 +118,6 @@ bool Region::init(const Polygon &contour, const Common::Array<Polygon> *pHoles) 
 		}
 	}
 
-
 	// Initialize bounding box
 	updateBoundingBox();
 
@@ -130,10 +133,14 @@ void Region::updateBoundingBox() {
 		int maxY = _polygons[0].vertices[0].y;
 
 		for (int i = 1; i < _polygons[0].vertexCount; i++) {
-			if (_polygons[0].vertices[i].x < minX) minX = _polygons[0].vertices[i].x;
-			else if (_polygons[0].vertices[i].x > maxX) maxX = _polygons[0].vertices[i].x;
-			if (_polygons[0].vertices[i].y < minY) minY = _polygons[0].vertices[i].y;
-			else if (_polygons[0].vertices[i].y > maxY) maxY = _polygons[0].vertices[i].y;
+			if (_polygons[0].vertices[i].x < minX)
+				minX = _polygons[0].vertices[i].x;
+			else if (_polygons[0].vertices[i].x > maxX)
+				maxX = _polygons[0].vertices[i].x;
+			if (_polygons[0].vertices[i].y < minY)
+				minY = _polygons[0].vertices[i].y;
+			else if (_polygons[0].vertices[i].y > maxY)
+				maxY = _polygons[0].vertices[i].y;
 		}
 
 		_boundingBox = Common::Rect(minX, minY, maxX + 1, maxY + 1);
@@ -269,8 +276,7 @@ Vertex Region::findClosestPointOnLine(const Vertex &lineStart, const Vertex &lin
 	float vector2Length = sqrt(vector2X * vector2X + vector2Y * vector2Y);
 	vector2X /= vector2Length;
 	vector2Y /= vector2Length;
-	float distance = sqrt(static_cast<float>((lineStart.x - lineEnd.x) * (lineStart.x - lineEnd.x) +
-	                       (lineStart.y - lineEnd.y) * (lineStart.y - lineEnd.y)));
+	float distance = sqrt(static_cast<float>((lineStart.x - lineEnd.x) * (lineStart.x - lineEnd.x) + (lineStart.y - lineEnd.y) * (lineStart.y - lineEnd.y)));
 	float dot = vector1X * vector2X + vector1Y * vector2Y;
 
 	if (dot <= 0)
@@ -288,9 +294,11 @@ bool Region::isLineOfSight(const Vertex &a, const Vertex &b) const {
 
 	// The line must be within the contour polygon, and outside of any hole polygons
 	Common::Array<Polygon>::const_iterator iter = _polygons.begin();
-	if (!(*iter).isLineInterior(a, b)) return false;
+	if (!(*iter).isLineInterior(a, b))
+		return false;
 	for (iter++; iter != _polygons.end(); iter++)
-		if (!(*iter).isLineExterior(a, b)) return false;
+		if (!(*iter).isLineExterior(a, b))
+			return false;
 
 	return true;
 }
@@ -342,8 +350,7 @@ bool Region::unpersist(InputPersistenceBlock &reader) {
 Vertex Region::getCentroid() const {
 	if (_polygons.size() > 0)
 		return _polygons[0].getCentroid();
-	return
-	    Vertex();
+	return Vertex();
 }
 
 } // End of namespace Sword25

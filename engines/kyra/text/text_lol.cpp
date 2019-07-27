@@ -22,18 +22,21 @@
 
 #ifdef ENABLE_LOL
 
-#include "kyra/text/text_lol.h"
-#include "kyra/engine/lol.h"
-#include "kyra/graphics/screen_lol.h"
-#include "kyra/engine/timer.h"
-#include "kyra/sound/sound.h"
+#	include "kyra/text/text_lol.h"
+#	include "kyra/engine/lol.h"
+#	include "kyra/engine/timer.h"
+#	include "kyra/graphics/screen_lol.h"
+#	include "kyra/sound/sound.h"
 
-#include "common/system.h"
+#	include "common/system.h"
 
 namespace Kyra {
 
-TextDisplayer_LoL::TextDisplayer_LoL(LoLEngine *engine, Screen_LoL *screenLoL) : TextDisplayer_rpg(engine, screenLoL),
-	_vm(engine), _screen(screenLoL), _scriptTextParameter(0) {
+TextDisplayer_LoL::TextDisplayer_LoL(LoLEngine *engine, Screen_LoL *screenLoL)
+  : TextDisplayer_rpg(engine, screenLoL)
+  , _vm(engine)
+  , _screen(screenLoL)
+  , _scriptTextParameter(0) {
 
 	memset(_stringParameters, 0, 15 * sizeof(char *));
 	_buffer = new char[600];

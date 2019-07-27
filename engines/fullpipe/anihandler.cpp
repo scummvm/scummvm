@@ -22,10 +22,10 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/utils.h"
-#include "fullpipe/statics.h"
-#include "fullpipe/motion.h"
 #include "fullpipe/messages.h"
+#include "fullpipe/motion.h"
+#include "fullpipe/statics.h"
+#include "fullpipe/utils.h"
 
 namespace Fullpipe {
 
@@ -48,14 +48,14 @@ MessageQueue *AniHandler::makeQueue(StaticANIObject *ani, int staticsIndex, int,
 #else
 	int stid;
 #endif
-		if (ani->_movement) {
-			stid = ani->_movement->_staticsObj2->_staticsId;
-		} else {
-			if (!ani->_statics)
-				return 0;
+	if (ani->_movement) {
+		stid = ani->_movement->_staticsObj2->_staticsId;
+	} else {
+		if (!ani->_statics)
+			return 0;
 
-			stid = ani->_statics->_staticsId;
-		}
+		stid = ani->_statics->_staticsId;
+	}
 #if 0
 	}
 #endif
@@ -99,7 +99,7 @@ MessageQueue *AniHandler::makeQueue(StaticANIObject *ani, int staticsIndex, int,
 			ex->_messageNum = _items[idx].subItems[subidx].movement->_id;
 		} else {
 #endif
-			ex = new ExCommand(ani->_id, 1, _items[idx].subItems[subidx].movement->_id, 0, 0, 0, 1, 0, 0, 0);
+		ex = new ExCommand(ani->_id, 1, _items[idx].subItems[subidx].movement->_id, 0, 0, 0, 1, 0, 0, 0);
 #if 0
 		}
 #endif
@@ -237,7 +237,6 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 
 	if (!mov)
 		return 0;
-
 
 	int itemIdx = getIndex(mkQueue->ani->_id);
 	int subIdx = getStaticsIndexById(itemIdx, mkQueue->staticsId1);
@@ -558,8 +557,7 @@ int AniHandler::seekWay(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 			if (recalc < 0)
 				continue;
 
-			if (!item.subItems[subIdx].movement || item.subItems[subIdx].field_8 > recalc + 1 ||
-				(item.subItems[subIdx].field_8 == recalc + 1 && item.subItems[subIdx].field_C > newsz)) {
+			if (!item.subItems[subIdx].movement || item.subItems[subIdx].field_8 > recalc + 1 || (item.subItems[subIdx].field_8 == recalc + 1 && item.subItems[subIdx].field_C > newsz)) {
 				item.subItems[subIdx].movement = mov;
 				item.subItems[subIdx].staticsIndex = stidx;
 				item.subItems[subIdx].field_8 = recalc + 1;

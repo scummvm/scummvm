@@ -60,7 +60,7 @@ void GraphicsManager::forgetSpriteBank(SpriteBank &forgetme) {
 			forgetme.sprites[i].burnSurface.free();
 		}
 
-		delete []forgetme.sprites;
+		delete[] forgetme.sprites;
 		forgetme.sprites = NULL;
 	}
 }
@@ -212,11 +212,10 @@ bool GraphicsManager::loadSpriteBank(int fileNum, SpriteBank &loadhere, bool isF
 		loadhere.myPalette.r[i + startIndex] = (byte)readStream->readByte();
 		loadhere.myPalette.g[i + startIndex] = (byte)readStream->readByte();
 		loadhere.myPalette.b[i + startIndex] = (byte)readStream->readByte();
-		loadhere.myPalette.pal[i + startIndex] =
-				(uint16)g_sludge->getOrigPixelFormat()->RGBToColor(
-						loadhere.myPalette.r[i + startIndex],
-						loadhere.myPalette.g[i + startIndex],
-						loadhere.myPalette.b[i + startIndex]);
+		loadhere.myPalette.pal[i + startIndex] = (uint16)g_sludge->getOrigPixelFormat()->RGBToColor(
+		  loadhere.myPalette.r[i + startIndex],
+		  loadhere.myPalette.g[i + startIndex],
+		  loadhere.myPalette.b[i + startIndex]);
 	}
 	loadhere.myPalette.originalRed = loadhere.myPalette.originalGreen = loadhere.myPalette.originalBlue = 255;
 
@@ -285,7 +284,7 @@ void GraphicsManager::pasteSpriteToBackDrop(int x1, int y1, Sprite &single, cons
 	y1 -= single.yhot;
 	Graphics::TransparentSurface tmp(single.surface, false);
 	tmp.blit(_backdropSurface, x1, y1, Graphics::FLIP_NONE, nullptr,
-			TS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
+	         TS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
 }
 
 // burnSpriteToBackDrop adds text in the colour specified by setBurnColour
@@ -303,7 +302,7 @@ void GraphicsManager::burnSpriteToBackDrop(int x1, int y1, Sprite &single, const
 	y1 -= single.yhot - 1;
 	Graphics::TransparentSurface tmp(single.surface, false);
 	tmp.blit(_backdropSurface, x1, y1, Graphics::FLIP_NONE, nullptr,
-			TS_RGB(_currentBurnR, _currentBurnG, _currentBurnB));
+	         TS_RGB(_currentBurnR, _currentBurnG, _currentBurnB));
 }
 
 void GraphicsManager::fontSprite(bool flip, int x, int y, Sprite &single, const SpritePalette &fontPal) {
@@ -317,7 +316,6 @@ void GraphicsManager::fontSprite(bool flip, int x, int y, Sprite &single, const 
 	if (single.burnSurface.getPixels() != nullptr) {
 		Graphics::TransparentSurface tmp2(single.burnSurface, false);
 		tmp2.blit(_renderSurface, x1, y1, (flip ? Graphics::FLIP_H : Graphics::FLIP_NONE), 0, TS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
-
 	}
 }
 
@@ -344,7 +342,7 @@ void GraphicsManager::blendColor(Graphics::Surface *blitted, uint32 color, Graph
 }
 
 Graphics::Surface *GraphicsManager::applyLightmapToSprite(Graphics::Surface *&blitted, OnScreenPerson *thisPerson, bool mirror, int x, int y, int x1, int y1, int diffX, int diffY) {
-	Graphics::Surface * toDetele = nullptr;
+	Graphics::Surface *toDetele = nullptr;
 
 	// if light map is used
 	bool light = !(thisPerson->extra & EXTRA_NOLITE);
@@ -373,10 +371,10 @@ Graphics::Surface *GraphicsManager::applyLightmapToSprite(Graphics::Surface *&bl
 			Common::Rect rect_none(x1, y1, x1 + diffX, y1 + diffY);
 			Common::Rect rect_h(_sceneWidth - x1 - diffX, y1, _sceneWidth - x1, y1 + diffY);
 			tmp.blit(*blitted, 0, 0,
-					(mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE),
-					(mirror ? &rect_h : &rect_none),
-					TS_ARGB(255, 255, 255, 255),
-					blitted->w, blitted->h, Graphics::BLEND_MULTIPLY);
+			         (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE),
+			         (mirror ? &rect_h : &rect_none),
+			         TS_ARGB(255, 255, 255, 255),
+			         blitted->w, blitted->h, Graphics::BLEND_MULTIPLY);
 		}
 	} else {
 		curLight[0] = curLight[1] = curLight[2] = 255;
@@ -386,15 +384,15 @@ Graphics::Surface *GraphicsManager::applyLightmapToSprite(Graphics::Surface *&bl
 	float fr, fg, fb;
 	fr = fg = fb = 0.0F;
 	if (thisPerson->colourmix) {
-		fr = curLight[0]*thisPerson->r * thisPerson->colourmix / 65025 / 255.0F;
-		fg = curLight[1]*thisPerson->g * thisPerson->colourmix / 65025 / 255.0F;
-		fb = curLight[2]*thisPerson->b * thisPerson->colourmix / 65025 / 255.0F;
+		fr = curLight[0] * thisPerson->r * thisPerson->colourmix / 65025 / 255.0F;
+		fg = curLight[1] * thisPerson->g * thisPerson->colourmix / 65025 / 255.0F;
+		fb = curLight[2] * thisPerson->b * thisPerson->colourmix / 65025 / 255.0F;
 	}
 
 	uint32 primaryColor = TS_ARGB((uint8)(255 - thisPerson->transparency),
-			(uint8)(fr + curLight[0] * (255 - thisPerson->colourmix) / 255.f),
-			(uint8)(fg + curLight[1] * (255 - thisPerson->colourmix) / 255.f),
-			(uint8)(fb + curLight[2] * (255 - thisPerson->colourmix) / 255.f));
+	                              (uint8)(fr + curLight[0] * (255 - thisPerson->colourmix) / 255.f),
+	                              (uint8)(fg + curLight[1] * (255 - thisPerson->colourmix) / 255.f),
+	                              (uint8)(fb + curLight[2] * (255 - thisPerson->colourmix) / 255.f));
 
 	uint32 secondaryColor = TS_ARGB(0, (uint8)(fr * 255), (uint8)(fg * 255), (uint8)(fb * 255));
 
@@ -472,7 +470,7 @@ bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, 
 
 	// Are we pointing at the sprite?
 	if (_vm->_evtMan->mouseX() >= x1 && _vm->_evtMan->mouseX() <= x2
-			&& _vm->_evtMan->mouseY() >= y1 && _vm->_evtMan->mouseY() <= y2) {
+	    && _vm->_evtMan->mouseY() >= y1 && _vm->_evtMan->mouseY() <= y2) {
 		if (thisPerson->extra & EXTRA_RECTANGULAR)
 			return true;
 

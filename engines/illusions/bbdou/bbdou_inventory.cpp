@@ -20,36 +20,45 @@
  *
  */
 
-#include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/bbdou/bbdou_inventory.h"
+#include "illusions/actor.h"
 #include "illusions/bbdou/bbdou_cursor.h"
 #include "illusions/bbdou/bbdou_specialcode.h"
-#include "illusions/actor.h"
+#include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/camera.h"
 #include "illusions/dictionary.h"
 #include "illusions/input.h"
 
 namespace Illusions {
 
-typedef Common::Functor2Mem<TriggerFunction*, uint32, void, BbdouInventory> InventoryTriggerFunctionCallback;
+typedef Common::Functor2Mem<TriggerFunction *, uint32, void, BbdouInventory> InventoryTriggerFunctionCallback;
 
 // InventoryItem
 
 InventoryItem::InventoryItem(uint32 objectId, uint32 sequenceId)
-	: _objectId(objectId), _sequenceId(sequenceId),
-	_assigned(false), _flag(false), _timesPresent(0), _fieldE(0) {
+  : _objectId(objectId)
+  , _sequenceId(sequenceId)
+  , _assigned(false)
+  , _flag(false)
+  , _timesPresent(0)
+  , _fieldE(0) {
 }
 
 // InventorySlot
 
 InventorySlot::InventorySlot(uint32 namedPointId)
-	: _namedPointId(namedPointId), _objectId(0), _inventoryItem(0) {
+  : _namedPointId(namedPointId)
+  , _objectId(0)
+  , _inventoryItem(0) {
 }
 
 // InventoryBag
 
 InventoryBag::InventoryBag(IllusionsEngine_BBDOU *vm, uint32 sceneId)
-	: _vm(vm), _sceneId(sceneId), _isActive(false), _fieldA(0) {
+  : _vm(vm)
+  , _sceneId(sceneId)
+  , _isActive(false)
+  , _fieldA(0) {
 }
 
 void InventoryBag::registerInventorySlot(uint32 namedPointId) {
@@ -82,7 +91,7 @@ void InventoryBag::removeInventoryItem(InventoryItem *inventoryItem) {
 
 bool InventoryBag::hasInventoryItem(uint32 objectId) {
 	for (InventorySlotsIterator it = _inventorySlots.begin();
-		it != _inventorySlots.end(); ++it) {
+	     it != _inventorySlots.end(); ++it) {
 		InventorySlot *inventorySlot = *it;
 		InventoryItem *inventoryItem = inventorySlot->_inventoryItem;
 		if (inventoryItem && inventoryItem->_objectId == objectId)
@@ -93,7 +102,7 @@ bool InventoryBag::hasInventoryItem(uint32 objectId) {
 
 void InventoryBag::buildItems() {
 	for (InventorySlotsIterator it = _inventorySlots.begin();
-		it != _inventorySlots.end(); ++it) {
+	     it != _inventorySlots.end(); ++it) {
 		InventorySlot *inventorySlot = *it;
 		InventoryItem *inventoryItem = inventorySlot->_inventoryItem;
 		if (inventoryItem) {
@@ -106,7 +115,7 @@ void InventoryBag::buildItems() {
 
 void InventoryBag::clear() {
 	for (InventorySlotsIterator it = _inventorySlots.begin();
-		it != _inventorySlots.end(); ++it) {
+	     it != _inventorySlots.end(); ++it) {
 		InventorySlot *inventorySlot = *it;
 		inventorySlot->_inventoryItem = 0;
 	}
@@ -138,7 +147,9 @@ InventorySlot *InventoryBag::findClosestSlot(Common::Point putPos, int index) {
 // BbdouInventory
 
 BbdouInventory::BbdouInventory(IllusionsEngine_BBDOU *vm, BbdouSpecialCode *bbdou)
-	: _vm(vm), _bbdou(bbdou), _activeInventorySceneId(0) {
+  : _vm(vm)
+  , _bbdou(bbdou)
+  , _activeInventorySceneId(0) {
 }
 
 void BbdouInventory::registerInventoryBag(uint32 sceneId) {
@@ -186,8 +197,7 @@ void BbdouInventory::removeInventoryItem(uint32 objectId) {
 
 bool BbdouInventory::hasInventoryItem(uint32 objectId) {
 	for (uint i = 0; i < _inventoryItems.size(); ++i) {
-		if (_inventoryItems[i]->_objectId == objectId &&
-			_inventoryItems[i]->_assigned)
+		if (_inventoryItems[i]->_objectId == objectId && _inventoryItems[i]->_assigned)
 			return true;
 	}
 	return false;
@@ -205,7 +215,7 @@ void BbdouInventory::open() {
 		_index = 1;
 		inventoryBag->_isActive = true;
 		for (InventoryBag::InventorySlotsIterator it = inventoryBag->_inventorySlots.begin();
-			it != inventoryBag->_inventorySlots.end(); ++it) {
+		     it != inventoryBag->_inventorySlots.end(); ++it) {
 			InventorySlot *inventorySlot = *it;
 			Common::Point slotPos = _vm->getNamedPointPosition(inventorySlot->_namedPointId);
 			Control *control = _vm->_dict->getObjectControl(inventorySlot->_objectId);
@@ -229,7 +239,7 @@ void BbdouInventory::close() {
 		return;
 	InventoryBag *inventoryBag = getInventoryBag(_vm->getCurrentScene());
 	for (InventoryBag::InventorySlotsIterator it = inventoryBag->_inventorySlots.begin();
-		it != inventoryBag->_inventorySlots.end(); ++it) {
+	     it != inventoryBag->_inventorySlots.end(); ++it) {
 		InventorySlot *inventorySlot = *it;
 		Control *control = _vm->_dict->getObjectControl(inventorySlot->_objectId);
 		control->startSequenceActor(0x00060187, 2, 0);
@@ -259,7 +269,7 @@ void BbdouInventory::refresh() {
 		return;
 	InventoryBag *inventoryBag = getInventoryBag(_activeInventorySceneId);
 	for (InventoryBag::InventorySlotsIterator it = inventoryBag->_inventorySlots.begin();
-		it != inventoryBag->_inventorySlots.end(); ++it) {
+	     it != inventoryBag->_inventorySlots.end(); ++it) {
 		InventorySlot *inventorySlot = *it;
 		Control *control = _vm->_dict->getObjectControl(inventorySlot->_objectId);
 		InventoryItem *inventoryItem = inventorySlot->_inventoryItem;
@@ -279,9 +289,7 @@ void BbdouInventory::buildItems(InventoryBag *inventoryBag) {
 	inventoryBag->buildItems();
 	for (InventoryItemsIterator it = _inventoryItems.begin(); it != _inventoryItems.end(); ++it) {
 		InventoryItem *inventoryItem = *it;
-		if (inventoryItem->_assigned && !inventoryItem->_flag &&
-			inventoryItem->_timesPresent == 0 &&
-			inventoryItem->_objectId != _bbdou->_cursor->_data._holdingObjectId)
+		if (inventoryItem->_assigned && !inventoryItem->_flag && inventoryItem->_timesPresent == 0 && inventoryItem->_objectId != _bbdou->_cursor->_data._holdingObjectId)
 			inventoryBag->addInventoryItem(inventoryItem, 0);
 	}
 }
@@ -348,7 +356,6 @@ void BbdouInventory::cause0x1B0001(TriggerFunction *triggerFunction, uint32 call
 		_vm->causeTrigger(foundSceneId, foundVerbId, foundObjectId2, foundObjectId, callingThreadId);
 	else
 		_vm->notifyThreadId(callingThreadId);
-
 }
 
 void BbdouInventory::cause0x1B0002(TriggerFunction *triggerFunction, uint32 callingThreadId) {

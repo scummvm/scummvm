@@ -21,28 +21,30 @@
  */
 
 #include "watch_instance.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/debuggable/debuggable_script.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/debugger/watch.h"
 
 namespace Wintermute {
 
-WatchInstance::WatchInstance(Watch* watch, DebuggableScript* script) : _watch(watch), _script(script), _lastValue(nullptr) {}
+WatchInstance::WatchInstance(Watch *watch, DebuggableScript *script)
+  : _watch(watch)
+  , _script(script)
+  , _lastValue(nullptr) {}
 WatchInstance::~WatchInstance() { delete _lastValue; }
 
 void WatchInstance::evaluate() {
 	if (_watch->isEnabled()) {
 		if (!_watch->getFilename().compareTo(_script->_filename)) {
 
-			if(_lastValue == nullptr) {
+			if (_lastValue == nullptr) {
 				_lastValue = new ScValue(_script->_gameRef);
 				// ^^ This here is NULL by default
 			}
-			ScValue* currentValue = _script->resolveName(_watch->getSymbol());
-			if(ScValue::compare(
-					currentValue,
-					_lastValue
-					)) {
+			ScValue *currentValue = _script->resolveName(_watch->getSymbol());
+			if (ScValue::compare(
+			      currentValue,
+			      _lastValue)) {
 				_lastValue->copy(currentValue);
 				_watch->trigger(this);
 			}

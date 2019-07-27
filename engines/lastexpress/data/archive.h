@@ -59,15 +59,15 @@ private:
 
 	// File entry
 	struct HPFEntry {
-		uint32 offset;          ///< Offset (in sectors of 2048 bytes)
-		uint32 size;            ///< Size (in sectors of 2048 bytes)
-		uint16 isOnHD;          ///< File location (1: on HD; 0: on CD)
+		uint32 offset; ///< Offset (in sectors of 2048 bytes)
+		uint32 size; ///< Size (in sectors of 2048 bytes)
+		uint16 isOnHD; ///< File location (1: on HD; 0: on CD)
 	};
 
 	typedef Common::HashMap<Common::String, HPFEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
 
-	FileMap _files;             ///< List of files
-	Common::String _filename;   ///< Filename of the archive
+	FileMap _files; ///< List of files
+	Common::String _filename; ///< Filename of the archive
 };
 
 } // End of namespace LastExpress

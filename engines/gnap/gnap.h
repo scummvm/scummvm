@@ -36,17 +36,17 @@
 #include "common/winexe.h"
 #include "common/winexe_pe.h"
 #include "engines/engine.h"
+#include "graphics/font.h"
+#include "graphics/fontman.h"
+#include "graphics/fonts/ttf.h"
 #include "graphics/pixelformat.h"
 #include "graphics/wincursor.h"
-#include "graphics/fontman.h"
-#include "graphics/font.h"
-#include "graphics/fonts/ttf.h"
 
+#include "gnap/character.h"
 #include "gnap/debugger.h"
+#include "gnap/music.h"
 #include "gnap/resource.h"
 #include "gnap/scenes/scenecore.h"
-#include "gnap/character.h"
-#include "gnap/music.h"
 
 struct ADGameDescription;
 
@@ -64,7 +64,9 @@ class MusicPlayer;
 struct MouseButtonState {
 	bool _left;
 	bool _right;
-	MouseButtonState() : _left(false), _right(false) {
+	MouseButtonState()
+	  : _left(false)
+	  , _right(false) {
 	}
 };
 
@@ -88,127 +90,127 @@ struct Hotspot {
 const int kMaxTimers = 10;
 
 enum GnapDebugChannels {
-	kDebugBasic	= 1 << 0,
+	kDebugBasic = 1 << 0,
 	kDebugMusic = 1 << 1
 };
 
 enum {
-	SF_NONE				= 0x0000,
-	SF_LOOK_CURSOR		= 0x0001,
-	SF_GRAB_CURSOR		= 0x0002,
-	SF_TALK_CURSOR		= 0x0004,
-	SF_PLAT_CURSOR		= 0x0008,
-	SF_DISABLED			= 0x0010,
-	SF_WALKABLE			= 0x0020,
-	SF_EXIT_L_CURSOR	= 0x0040,
-	SF_EXIT_R_CURSOR	= 0x0080,
-	SF_EXIT_U_CURSOR	= 0x0100,
-	SF_EXIT_D_CURSOR	= 0x0200,
-	SF_EXIT_NW_CURSOR	= 0x0400,
-	SF_EXIT_NE_CURSOR	= 0x0800,
-	SF_EXIT_SW_CURSOR	= 0x1000,
-	SF_EXIT_SE_CURSOR	= 0x2000
+	SF_NONE = 0x0000,
+	SF_LOOK_CURSOR = 0x0001,
+	SF_GRAB_CURSOR = 0x0002,
+	SF_TALK_CURSOR = 0x0004,
+	SF_PLAT_CURSOR = 0x0008,
+	SF_DISABLED = 0x0010,
+	SF_WALKABLE = 0x0020,
+	SF_EXIT_L_CURSOR = 0x0040,
+	SF_EXIT_R_CURSOR = 0x0080,
+	SF_EXIT_U_CURSOR = 0x0100,
+	SF_EXIT_D_CURSOR = 0x0200,
+	SF_EXIT_NW_CURSOR = 0x0400,
+	SF_EXIT_NE_CURSOR = 0x0800,
+	SF_EXIT_SW_CURSOR = 0x1000,
+	SF_EXIT_SE_CURSOR = 0x2000
 };
 
 enum {
-	LOOK_CURSOR		= 0,
-	GRAB_CURSOR		= 1,
-	TALK_CURSOR		= 2,
-	PLAT_CURSOR		= 3,
-	NOLOOK_CURSOR	= 4,
-	NOGRAB_CURSOR	= 5,
-	NOTALK_CURSOR	= 6,
-	NOPLAT_CURSOR	= 7,
-	EXIT_L_CURSOR	= 8,
-	EXIT_R_CURSOR	= 9,
-	EXIT_U_CURSOR	= 10,
-	EXIT_D_CURSOR	= 11,
-	EXIT_NE_CURSOR	= 12,
-	EXIT_NW_CURSOR	= 13,
-	EXIT_SE_CURSOR	= 14,
-	EXIT_SW_CURSOR	= 15,
-	WAIT_CURSOR		= 16
+	LOOK_CURSOR = 0,
+	GRAB_CURSOR = 1,
+	TALK_CURSOR = 2,
+	PLAT_CURSOR = 3,
+	NOLOOK_CURSOR = 4,
+	NOGRAB_CURSOR = 5,
+	NOTALK_CURSOR = 6,
+	NOPLAT_CURSOR = 7,
+	EXIT_L_CURSOR = 8,
+	EXIT_R_CURSOR = 9,
+	EXIT_U_CURSOR = 10,
+	EXIT_D_CURSOR = 11,
+	EXIT_NE_CURSOR = 12,
+	EXIT_NW_CURSOR = 13,
+	EXIT_SE_CURSOR = 14,
+	EXIT_SW_CURSOR = 15,
+	WAIT_CURSOR = 16
 };
 
 enum {
-	kGSPullOutDevice			= 0,
-	kGSPullOutDeviceNonWorking	= 1,
-	kGSIdle						= 2,
-	kGSBrainPulsating			= 3,
-	kGSImpossible				= 4,
-	kGSScratchingHead			= 5,
-	kGSDeflect					= 6,
-	kGSUseDevice				= 7,
-	kGSMoan1					= 8,
-	kGSMoan2					= 9
+	kGSPullOutDevice = 0,
+	kGSPullOutDeviceNonWorking = 1,
+	kGSIdle = 2,
+	kGSBrainPulsating = 3,
+	kGSImpossible = 4,
+	kGSScratchingHead = 5,
+	kGSDeflect = 6,
+	kGSUseDevice = 7,
+	kGSMoan1 = 8,
+	kGSMoan2 = 9
 };
 
 enum {
-	kItemMagazine			= 0,
-	kItemMud				= 1,
-	kItemGrass				= 2,
-	kItemDisguise			= 3,
-	kItemNeedle				= 4,
-	kItemTwig				= 5,
-	kItemGas				= 6,
-	kItemKeys				= 7,
-	kItemDice				= 8,
-	kItemTongs				= 9,
-	kItemQuarter			= 10,
-	kItemQuarterWithHole	= 11,
-	kItemDiceQuarterHole	= 12,
-	kItemWrench				= 13,
-	kItemCowboyHat			= 14,
-	kItemGroceryStoreHat	= 15,
-	kItemBanana				= 16,
-	kItemTickets			= 17,
-	kItemPicture			= 18,
-	kItemEmptyBucket		= 19,
-	kItemBucketWithBeer		= 20,
-	kItemBucketWithPill		= 21,
-	kItemPill				= 22,
-	kItemHorn				= 23,
-	kItemJoint				= 24,
-	kItemChickenBucket		= 25,
-	kItemGum				= 26,
-	kItemSpring				= 27,
-	kItemLightbulb			= 28,
-	kItemCereals			= 29
+	kItemMagazine = 0,
+	kItemMud = 1,
+	kItemGrass = 2,
+	kItemDisguise = 3,
+	kItemNeedle = 4,
+	kItemTwig = 5,
+	kItemGas = 6,
+	kItemKeys = 7,
+	kItemDice = 8,
+	kItemTongs = 9,
+	kItemQuarter = 10,
+	kItemQuarterWithHole = 11,
+	kItemDiceQuarterHole = 12,
+	kItemWrench = 13,
+	kItemCowboyHat = 14,
+	kItemGroceryStoreHat = 15,
+	kItemBanana = 16,
+	kItemTickets = 17,
+	kItemPicture = 18,
+	kItemEmptyBucket = 19,
+	kItemBucketWithBeer = 20,
+	kItemBucketWithPill = 21,
+	kItemPill = 22,
+	kItemHorn = 23,
+	kItemJoint = 24,
+	kItemChickenBucket = 25,
+	kItemGum = 26,
+	kItemSpring = 27,
+	kItemLightbulb = 28,
+	kItemCereals = 29
 };
 
 enum {
-	kGFPlatypus				= 0,
-	kGFMudTaken				= 1,
-	kGFNeedleTaken			= 2,
-	kGFTwigTaken			= 3,
-	kGFUnk04				= 4,
-	kGFKeysTaken			= 5,
-	kGFGrassTaken			= 6,
-	kGFBarnPadlockOpen		= 7,
-	kGFTruckFilledWithGas	= 8,
-	kGFTruckKeysUsed		= 9,
-	kGFPlatypusDisguised	= 10,
-	kGFSceneFlag1			= 11,
-	kGFGnapControlsToyUFO	= 12,
-	kGFUnk13				= 13, // Tongue Fight Won?
-	kGFUnk14				= 14,
-	kGFSpringTaken			= 15,
-	kGFUnk16				= 16,
-	kGFJointTaken			= 17,
-	kGFUnk18				= 18,
-	kGFGroceryStoreHatTaken	= 19,
-	kGFPictureTaken			= 20,
-	kGFUnk21				= 21,
-	kGFUnk22				= 22,
-	kGFUnk23				= 23,
-	kGFUnk24				= 24,
-	kGFUnk25				= 25,
+	kGFPlatypus = 0,
+	kGFMudTaken = 1,
+	kGFNeedleTaken = 2,
+	kGFTwigTaken = 3,
+	kGFUnk04 = 4,
+	kGFKeysTaken = 5,
+	kGFGrassTaken = 6,
+	kGFBarnPadlockOpen = 7,
+	kGFTruckFilledWithGas = 8,
+	kGFTruckKeysUsed = 9,
+	kGFPlatypusDisguised = 10,
+	kGFSceneFlag1 = 11,
+	kGFGnapControlsToyUFO = 12,
+	kGFUnk13 = 13, // Tongue Fight Won?
+	kGFUnk14 = 14,
+	kGFSpringTaken = 15,
+	kGFUnk16 = 16,
+	kGFJointTaken = 17,
+	kGFUnk18 = 18,
+	kGFGroceryStoreHatTaken = 19,
+	kGFPictureTaken = 20,
+	kGFUnk21 = 21,
+	kGFUnk22 = 22,
+	kGFUnk23 = 23,
+	kGFUnk24 = 24,
+	kGFUnk25 = 25,
 	kGFPlatypusTalkingToAssistant = 26,
-	kGFUnk27				= 27,
-	kGFUnk28				= 28,
-	kGFGasTaken				= 29,
-	kGFUnk30				= 30,
-	kGFUnk31				= 31
+	kGFUnk27 = 27,
+	kGFUnk28 = 28,
+	kGFGasTaken = 29,
+	kGFUnk30 = 30,
+	kGFUnk31 = 31
 };
 
 struct GnapSavegameHeader {
@@ -223,9 +225,11 @@ class GnapEngine : public Engine {
 protected:
 	Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
+
 public:
 	GnapEngine(OSystem *syst, const ADGameDescription *gd);
 	~GnapEngine();
+
 private:
 	const ADGameDescription *_gameDescription;
 	Graphics::PixelFormat _pixelFormat;
@@ -326,7 +330,7 @@ public:
 	void delayTicksCursor(int val);
 
 	void setHotspot(int index, int16 x1, int16 y1, int16 x2, int16 y2, uint16 flags = SF_NONE,
-		int16 walkX = -1, int16 walkY = -1);
+	                int16 walkX = -1, int16 walkY = -1);
 	int getHotspotIndexAtPos(Common::Point pos);
 	void updateCursorByHotspot();
 	int getClickedHotspotId();

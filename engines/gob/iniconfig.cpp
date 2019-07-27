@@ -33,8 +33,8 @@ INIConfig::~INIConfig() {
 }
 
 bool INIConfig::getValue(Common::String &result, const Common::String &file,
-		const Common::String &section, const Common::String &key,
-		const Common::String &def) {
+                         const Common::String &section, const Common::String &key,
+                         const Common::String &def) {
 
 	Config config;
 	if (!getConfig(file, config)) {
@@ -53,7 +53,7 @@ bool INIConfig::getValue(Common::String &result, const Common::String &file,
 }
 
 bool INIConfig::setValue(const Common::String &file, const Common::String &section,
-		const Common::String &key, const Common::String &value) {
+                         const Common::String &key, const Common::String &value) {
 
 	Config config;
 	if (!getConfig(file, config))
@@ -73,7 +73,7 @@ bool INIConfig::getConfig(const Common::String &file, Config &config) {
 }
 
 bool INIConfig::openConfig(const Common::String &file, Config &config) {
-	config.config  = new Common::INIFile();
+	config.config = new Common::INIFile();
 	config.created = false;
 
 	if (!config.config->loadFromFile(file)) {
@@ -82,14 +82,13 @@ bool INIConfig::openConfig(const Common::String &file, Config &config) {
 		return false;
 	}
 
-
 	_configs.setVal(file, config);
 
 	return true;
 }
 
 bool INIConfig::createConfig(const Common::String &file, Config &config) {
-	config.config  = new Common::INIFile();
+	config.config = new Common::INIFile();
 	config.created = true;
 
 	_configs.setVal(file, config);

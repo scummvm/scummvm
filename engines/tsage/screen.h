@@ -23,8 +23,8 @@
 #ifndef TSAGE_SCREEN_H
 #define TSAGE_SCREEN_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 #include "graphics/screen.h"
 #include "tsage/graphics.h"
 
@@ -44,6 +44,7 @@ class Screen : public GfxSurface {
 	virtual void addDirtyRect(const Common::Rect &r) {
 		Graphics::Screen::addDirtyRect(r);
 	}
+
 public:
 	/**
 	 * Constructor

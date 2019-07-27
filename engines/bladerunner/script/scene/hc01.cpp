@@ -27,9 +27,9 @@ namespace BladeRunner {
 void SceneScriptHC01::InitializeScene() {
 	Music_Play(kMusicArabLoop, 31, 0, 2, -1, 1, 2);
 	if (Game_Flag_Query(kFlagHC02toHC01)) {
-		Setup_Scene_Information( 64.0f, 0.14f,  83.0f, 266);
+		Setup_Scene_Information(64.0f, 0.14f, 83.0f, 266);
 	} else if (Game_Flag_Query(kFlagHC03toHC01)) {
-		Setup_Scene_Information(607.0f, 0.14f,   9.0f, 530);
+		Setup_Scene_Information(607.0f, 0.14f, 9.0f, 530);
 	} else {
 		Setup_Scene_Information(780.0f, 0.14f, 153.0f, 815);
 	}
@@ -41,19 +41,19 @@ void SceneScriptHC01::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(2, 117, 0, 286, 319, 0);
 	if (_vm->_cutContent && !Game_Flag_Query(kFlagMcCoyCommentsOnAnimoids)) {
 		Scene_2D_Region_Add(0, 110, 385, 200, 450); // cage 1
-		Scene_2D_Region_Add(1, 20, 249, 110, 319);  // cage 2
+		Scene_2D_Region_Add(1, 20, 249, 110, 319); // cage 2
 	}
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 50, 50, 0);
-	Ambient_Sounds_Add_Looping_Sound(kSfxHCLOOP1,  50, 50, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM8,   3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM2,   3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM3,   3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM4,   3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM5,   3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM6,   3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM7,   3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM1,   3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxHCLOOP1, 50, 50, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM8, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM2, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM3, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM4, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM5, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM6, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM7, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM1, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfx67_0470R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfx67_0480R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfx67_0500R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
@@ -100,16 +100,14 @@ bool SceneScriptHC01::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool SceneScriptHC01::ClickedOnActor(int actorId) {
 	if (actorId == kActorIzo
-	 && (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoGoToHC01
-	  || Actor_Query_Goal_Number(kActorIzo) == kGoalIzoDefault
-	 )
-	) {
+	    && (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoGoToHC01
+	        || Actor_Query_Goal_Number(kActorIzo) == kGoalIzoDefault)) {
 		AI_Movement_Track_Pause(kActorIzo);
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 624.43f, 0.14f, 83.0f, 0, true, false, false)) {
 			if (!Game_Flag_Query(kFlagHC01IzoTalk1)) {
 				Actor_Face_Actor(kActorIzo, kActorMcCoy, true);
 				if (_vm->_cutContent) {
-					Actor_Says_With_Pause(kActorIzo,  0, 0.2f, 13);
+					Actor_Says_With_Pause(kActorIzo, 0, 0.2f, 13);
 				}
 				Actor_Says_With_Pause(kActorIzo, 10, 0.2f, 13);
 				Actor_Face_Actor(kActorMcCoy, kActorIzo, true);
@@ -196,7 +194,7 @@ bool SceneScriptHC01::ClickedOnExit(int exitId) {
 
 bool SceneScriptHC01::ClickedOn2DRegion(int region) {
 	if (_vm->_cutContent) {
-		if (!Game_Flag_Query(kFlagMcCoyCommentsOnAnimoids) && (region == 0 || region == 1) ) {
+		if (!Game_Flag_Query(kFlagMcCoyCommentsOnAnimoids) && (region == 0 || region == 1)) {
 			Game_Flag_Set(kFlagMcCoyCommentsOnAnimoids);
 			//Actor_Face_Heading(kActorMcCoy, 389, false);
 			Actor_Face_XYZ(kActorMcCoy, 740.89f, 60.29f, 220.12f, true);
@@ -213,27 +211,24 @@ bool SceneScriptHC01::ClickedOn2DRegion(int region) {
 void SceneScriptHC01::SceneFrameAdvanced(int frame) {
 	Set_Fade_Color(1.0f, 1.0f, 1.0f);
 	if (frame >= 61
-	 && frame < 65
-	) {
+	    && frame < 65) {
 		Set_Fade_Density((frame - 61) / 4.0f);
 	} else if (frame >= 65
-	        && frame < 93
-	) {
+	           && frame < 93) {
 		Set_Fade_Density(1.0f);
 	} else if (frame >= 93
-	        && frame < 106
-	) {
+	           && frame < 106) {
 		Set_Fade_Density((105 - frame) / 13.0f);
 	} else {
 		Set_Fade_Density(0.0f);
 	}
 
 	if (frame == 61) {
-		Ambient_Sounds_Play_Sound(kSfxCAMERA2,  90,   0,   0, 0);
+		Ambient_Sounds_Play_Sound(kSfxCAMERA2, 90, 0, 0, 0);
 	}
 
 	if (frame == 65) {
-		Ambient_Sounds_Play_Sound(kSfxRUNAWAY1, 50,   0, 100, 0);
+		Ambient_Sounds_Play_Sound(kSfxRUNAWAY1, 50, 0, 100, 0);
 	}
 
 	if (frame == 80) {
@@ -282,9 +277,8 @@ void SceneScriptHC01::dialogueWithIzo() {
 	if (Actor_Clue_Query(kActorMcCoy, kCluePeruvianLadyInterview)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1020, 6, 7, 3); // DRAGONFLY JEWERLY
 	} else if (Actor_Clue_Query(kActorMcCoy, kClueDragonflyEarring)
-	        || Actor_Clue_Query(kActorMcCoy, kClueBombingSuspect)
-	        || Actor_Clue_Query(kActorMcCoy, kClueDragonflyAnklet)
-	) {
+	           || Actor_Clue_Query(kActorMcCoy, kClueBombingSuspect)
+	           || Actor_Clue_Query(kActorMcCoy, kClueDragonflyAnklet)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1010, 6, 7, 3); // INSECT JEWELRY
 	}
 	if (Actor_Clue_Query(kActorMcCoy, kClueBobInterview1)) {
@@ -327,8 +321,7 @@ void SceneScriptHC01::dialogueWithIzo() {
 			Actor_Says(kActorIzo, 250, 13);
 			Actor_Modify_Friendliness_To_Other(kActorIzo, kActorMcCoy, -1);
 			if (Actor_Query_Friendliness_To_Other(kActorIzo, kActorMcCoy) < 47
-			 && Query_Difficulty_Level() == kGameDifficultyEasy
-			) {
+			    && Query_Difficulty_Level() == kGameDifficultyEasy) {
 				takePhotoAndRunAway();
 			}
 		}
@@ -375,7 +368,7 @@ void SceneScriptHC01::dialogueWithIzo() {
 			}
 		}
 		if (answer == 1010 // INSECT JEWELRY
-		 || answer == 1020 // DRAGONFLY JEWERLY
+		    || answer == 1020 // DRAGONFLY JEWERLY
 		) {
 			Actor_Says_With_Pause(kActorMcCoy, 1120, 0.9f, 17);
 			Actor_Says(kActorIzo, 250, 13);

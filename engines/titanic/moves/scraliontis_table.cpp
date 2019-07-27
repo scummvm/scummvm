@@ -25,13 +25,17 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CScraliontisTable, CRestaurantPanHandler)
-	ON_MESSAGE(MouseMoveMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(MaitreDDefeatedMsg)
+ON_MESSAGE(MouseMoveMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MaitreDDefeatedMsg)
 END_MESSAGE_MAP()
 
-CScraliontisTable::CScraliontisTable() : CRestaurantPanHandler(),
-		_fieldE0(false), _counter(0), _ticks(0), _fieldEC(false) {
+CScraliontisTable::CScraliontisTable()
+  : CRestaurantPanHandler()
+  , _fieldE0(false)
+  , _counter(0)
+  , _ticks(0)
+  , _fieldEC(false) {
 }
 
 void CScraliontisTable::save(SimpleFile *file, int indent) {
@@ -69,8 +73,7 @@ bool CScraliontisTable::MouseMoveMsg(CMouseMoveMsg *msg) {
 bool CScraliontisTable::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (_fieldEC) {
 		changeView(_destination, _armPickedUp ? _armDestination : _armlessDestination);
-	}
-	else if (!_ticks || (getTicksCount() - _ticks) >= 5000) {
+	} else if (!_ticks || (getTicksCount() - _ticks) >= 5000) {
 		CTriggerNPCEvent triggerMsg(119);
 		triggerMsg.execute("MaitreD");
 		_ticks = getTicksCount();

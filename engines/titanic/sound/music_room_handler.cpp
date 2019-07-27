@@ -21,16 +21,20 @@
  */
 
 #include "titanic/sound/music_room_handler.h"
-#include "titanic/sound/sound_manager.h"
-#include "titanic/events.h"
 #include "titanic/core/project_item.h"
+#include "titanic/events.h"
+#include "titanic/sound/sound_manager.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
 
-CMusicRoomHandler::CMusicRoomHandler(CProjectItem *project, CSoundManager *soundManager) :
-		_project(project), _soundManager(soundManager), _active(false),
-		_soundHandle(-1), _waveFile(nullptr), _volume(100) {
+CMusicRoomHandler::CMusicRoomHandler(CProjectItem *project, CSoundManager *soundManager)
+  : _project(project)
+  , _soundManager(soundManager)
+  , _active(false)
+  , _soundHandle(-1)
+  , _waveFile(nullptr)
+  , _volume(100) {
 	_instrumentsActive = 0;
 	_isPlaying = false;
 	_startTicks = _soundStartTicks = 0;
@@ -121,10 +125,10 @@ void CMusicRoomHandler::stop() {
 
 bool CMusicRoomHandler::checkInstrument(MusicInstrument instrument) const {
 	return (_array1[instrument]._speedControl + _array2[instrument]._speedControl) == 0
-		&& (_array1[instrument]._pitchControl + _array2[instrument]._pitchControl) == 0
-		&& _array1[instrument]._directionControl == _array2[instrument]._directionControl
-		&& _array1[instrument]._inversionControl == _array2[instrument]._inversionControl
-		&& _array1[instrument]._muteControl == _array2[instrument]._muteControl;
+	  && (_array1[instrument]._pitchControl + _array2[instrument]._pitchControl) == 0
+	  && _array1[instrument]._directionControl == _array2[instrument]._directionControl
+	  && _array1[instrument]._inversionControl == _array2[instrument]._inversionControl
+	  && _array1[instrument]._muteControl == _array2[instrument]._muteControl;
 }
 
 void CMusicRoomHandler::setSpeedControl2(MusicInstrument instrument, int value) {
@@ -180,7 +184,7 @@ void CMusicRoomHandler::start() {
 }
 
 bool CMusicRoomHandler::update() {
-	uint currentTicks =  g_system->getMillis();
+	uint currentTicks = g_system->getMillis();
 
 	if (!_startTicks) {
 		start();
@@ -214,12 +218,12 @@ void CMusicRoomHandler::updateAudio() {
 		Common::fill(audioData, audioData + size, 0);
 
 		for (MusicInstrument instrument = BELLS; instrument <= BASS;
-				instrument = (MusicInstrument)((int)instrument + 1)) {
+		     instrument = (MusicInstrument)((int)instrument + 1)) {
 			CMusicRoomInstrument *musicWave = _instruments[instrument];
 
 			// Iterate through each of the four instruments and do an additive
 			// read that will merge their data onto the output buffer
-			for (count = size, ptr = audioData; count > 0; ) {
+			for (count = size, ptr = audioData; count > 0;) {
 				int amount = musicWave->read(ptr, count * 2);
 				if (amount > 0) {
 					count -= amount / sizeof(uint16);
@@ -245,7 +249,7 @@ void CMusicRoomHandler::updateInstruments() {
 
 	if (_active && _soundStartTicks) {
 		for (MusicInstrument instrument = BELLS; instrument <= BASS;
-				instrument = (MusicInstrument)((int)instrument + 1)) {
+		     instrument = (MusicInstrument)((int)instrument + 1)) {
 			MusicRoomInstrument &ins1 = _array1[instrument];
 			MusicRoomInstrument &ins2 = _array2[instrument];
 			CMusicRoomInstrument *ins = _instruments[instrument];

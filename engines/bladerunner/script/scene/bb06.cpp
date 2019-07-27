@@ -26,37 +26,36 @@ namespace BladeRunner {
 
 void SceneScriptBB06::InitializeScene() {
 	if (Game_Flag_Query(kFlagBB51toBB06a)) {
-		Setup_Scene_Information(  76.0f, 0.0f,   79.0f, 622);
+		Setup_Scene_Information(76.0f, 0.0f, 79.0f, 622);
 	} else if (Game_Flag_Query(kFlagBB51toBB06b)) {
-		Setup_Scene_Information(  55.0f, 0.0f,  -96.0f, 761);
+		Setup_Scene_Information(55.0f, 0.0f, -96.0f, 761);
 	} else if (Game_Flag_Query(kFlagBB07toBB06)) {
 		Setup_Scene_Information(-115.0f, 0.0f, -103.0f, 375);
 		Game_Flag_Reset(kFlagBB07toBB06);
 	} else {
-		Setup_Scene_Information( -37.0f, 0.0f,  178.0f,   0);
+		Setup_Scene_Information(-37.0f, 0.0f, 178.0f, 0);
 	}
 
-	Scene_Exit_Add_2D_Exit(0,   0,  43,  14, 478, 3);
-	Scene_Exit_Add_2D_Exit(1, 425,   0, 639, 361, 0);
+	Scene_Exit_Add_2D_Exit(0, 0, 43, 14, 478, 3);
+	Scene_Exit_Add_2D_Exit(1, 425, 0, 639, 361, 0);
 	Scene_Exit_Add_2D_Exit(3, 195, 164, 239, 280, 3);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 28, 0, 1);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN1,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN2,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY4,  2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY5,  2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY6,  2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY7,  2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN3,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBMOVE1, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBMOVE2, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBMOVE3, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHAUNT1,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHAUNT2,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY4, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY5, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY6, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY7, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN3, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE1, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE2, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE3, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHAUNT1, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHAUNT2, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagBB51toBB06a)
-	 || Game_Flag_Query(kFlagBB51toBB06b)
-	) {
+	    || Game_Flag_Query(kFlagBB51toBB06b)) {
 		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
 		Scene_Loop_Set_Default(1);
 		Game_Flag_Reset(kFlagBB51toBB06a);
@@ -120,7 +119,7 @@ bool SceneScriptBB06::ClickedOn3DObject(const char *objectName, bool a2) {
 			// that the second overlay will play after the first has completed one loop
 			// and it will persist (across save games too).
 			Game_Flag_Set(kFlagBB06AndroidDestroyed);
-			Overlay_Play("BB06OVER", 0, true, true,  0);
+			Overlay_Play("BB06OVER", 0, true, true, 0);
 			Overlay_Play("BB06OVER", 1, true, false, 0);
 			Un_Combat_Target_Object("BOX31");
 			return true;
@@ -197,7 +196,7 @@ bool SceneScriptBB06::ClickedOn2DRegion(int region) {
 
 void SceneScriptBB06::SceneFrameAdvanced(int frame) {
 	if (frame == 34) {
-		Ambient_Sounds_Play_Sound(kSfxPNEUM5,  40, -50, -50, 10);
+		Ambient_Sounds_Play_Sound(kSfxPNEUM5, 40, -50, -50, 10);
 	}
 #if BLADERUNNER_ORIGINAL_BUGS // Sebastian's Doll Fix
 #else

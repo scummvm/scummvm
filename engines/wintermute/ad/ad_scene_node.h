@@ -29,10 +29,9 @@
 #ifndef WINTERMUTE_ADSCENENODE_H
 #define WINTERMUTE_ADSCENENODE_H
 
-
-#include "engines/wintermute/ad/ad_types.h"    // Added by ClassView
-#include "engines/wintermute/ad/ad_region.h"   // Added by ClassView
 #include "engines/wintermute/ad/ad_entity.h"
+#include "engines/wintermute/ad/ad_region.h" // Added by ClassView
+#include "engines/wintermute/ad/ad_types.h" // Added by ClassView
 
 namespace Wintermute {
 
@@ -46,7 +45,6 @@ public:
 	TObjectType _type;
 	AdSceneNode(BaseGame *inGame);
 	virtual ~AdSceneNode();
-
 };
 
 }

@@ -37,10 +37,12 @@ class CBrain : public CCarry {
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 	bool PassOnDragStartMsg(CPassOnDragStartMsg *msg);
 	bool PETGainedObjectMsg(CPETGainedObjectMsg *msg);
+
 private:
 	Point _pos1;
 	bool _pieceAdded;
 	bool _perchGained;
+
 public:
 	CLASSDEF;
 	CBrain();

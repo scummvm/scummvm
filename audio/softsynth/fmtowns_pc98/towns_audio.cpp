@@ -23,15 +23,16 @@
 #include "audio/softsynth/fmtowns_pc98/towns_audio.h"
 #include "audio/softsynth/fmtowns_pc98/towns_pc98_fmsynth.h"
 
+#include "backends/audiocd/audiocd.h"
 #include "common/debug.h"
 #include "common/endian.h"
-#include "common/util.h"
 #include "common/textconsole.h"
-#include "backends/audiocd/audiocd.h"
+#include "common/util.h"
 
 class TownsAudio_WaveTable {
-friend class TownsAudioInterfaceInternal;
-friend class TownsAudio_PcmChannel;
+	friend class TownsAudioInterfaceInternal;
+	friend class TownsAudio_PcmChannel;
+
 public:
 	TownsAudio_WaveTable();
 	~TownsAudio_WaveTable();
@@ -136,6 +137,7 @@ private:
 class TownsAudioInterfaceInternal : public TownsPC98_FmSynth {
 private:
 	TownsAudioInterfaceInternal(Audio::Mixer *mixer, TownsAudioInterface *owner, TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling = false);
+
 public:
 	~TownsAudioInterfaceInternal();
 
@@ -275,13 +277,27 @@ private:
 	static const uint8 _fmDefaultInstrument[];
 };
 
-TownsAudioInterfaceInternal::TownsAudioInterfaceInternal(Audio::Mixer *mixer, TownsAudioInterface *owner, TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling) :
-	TownsPC98_FmSynth(mixer, kTypeTowns, externalMutexHandling),
-	_fmInstruments(0), _pcmInstruments(0), _pcmChan(0), _waveTables(0), _waveTablesTotalDataSize(0),
-	_baserate(55125.0f / (float)mixer->getOutputRate()), _tickLength(0), _timer(0), _drv(driver), _drvOwner(owner),
-	_pcmSfxChanMask(0),	_musicVolume(Audio::Mixer::kMaxMixerVolume), _sfxVolume(Audio::Mixer::kMaxMixerVolume),
-	_outputVolumeFlags(0), _fmChanPlaying(0),
-	_numReservedChannels(0), _numWaveTables(0), _updateOutputVol(false), _ready(false) {
+TownsAudioInterfaceInternal::TownsAudioInterfaceInternal(Audio::Mixer *mixer, TownsAudioInterface *owner, TownsAudioInterfacePluginDriver *driver, bool externalMutexHandling)
+  : TownsPC98_FmSynth(mixer, kTypeTowns, externalMutexHandling)
+  , _fmInstruments(0)
+  , _pcmInstruments(0)
+  , _pcmChan(0)
+  , _waveTables(0)
+  , _waveTablesTotalDataSize(0)
+  , _baserate(55125.0f / (float)mixer->getOutputRate())
+  , _tickLength(0)
+  , _timer(0)
+  , _drv(driver)
+  , _drvOwner(owner)
+  , _pcmSfxChanMask(0)
+  , _musicVolume(Audio::Mixer::kMaxMixerVolume)
+  , _sfxVolume(Audio::Mixer::kMaxMixerVolume)
+  , _outputVolumeFlags(0)
+  , _fmChanPlaying(0)
+  , _numReservedChannels(0)
+  , _numWaveTables(0)
+  , _updateOutputVol(false)
+  , _ready(false) {
 
 #define INTCB(x) &TownsAudioInterfaceInternal::intf_##x
 	static const TownsAudioIntfCallback intfCb[] = {
@@ -724,7 +740,7 @@ int TownsAudioInterfaceInternal::intf_enableTimerB(va_list &args) {
 int TownsAudioInterfaceInternal::intf_loadSamples(va_list &args) {
 	uint32 dest = va_arg(args, uint32);
 	int size = va_arg(args, int);
-	uint8 *src = va_arg(args, uint8*);
+	uint8 *src = va_arg(args, uint8 *);
 
 	if (dest >= 65536 || size == 0 || size > 65536)
 		return 3;
@@ -733,7 +749,7 @@ int TownsAudioInterfaceInternal::intf_loadSamples(va_list &args) {
 		// This means that some sfx would not play. Since we don't really need the memory limit,
 		// I have commented out the error return and added a debug message instead.
 		debugN(9, "FM-TOWNS AUDIO: exceeding wave memory size by %d bytes", size + dest - 65536);
-		// return 5;
+	// return 5;
 
 	int dwIndex = _numWaveTables - 1;
 	for (uint32 t = _waveTablesTotalDataSize; dwIndex && (dest < t); dwIndex--)
@@ -988,8 +1004,8 @@ int TownsAudioInterfaceInternal::intf_resetOutputVolume(va_list &args) {
 
 int TownsAudioInterfaceInternal::intf_getOutputVolume(va_list &args) {
 	int chanType = va_arg(args, int);
-	int *left = va_arg(args, int*);
-	int *right = va_arg(args, int*);
+	int *left = va_arg(args, int *);
+	int *right = va_arg(args, int *);
 
 	uint8 chan = (chanType & 0x40) ? 8 : 12;
 	chanType &= 3;
@@ -1045,7 +1061,7 @@ int TownsAudioInterfaceInternal::intf_getOutputVolume2(va_list &args) {
 	return 0;
 }
 
-int TownsAudioInterfaceInternal::intf_getOutputMute (va_list &args) {
+int TownsAudioInterfaceInternal::intf_getOutputMute(va_list &args) {
 	return 0;
 }
 
@@ -1541,7 +1557,7 @@ void TownsAudioInterfaceInternal::updateOutputVolumeInternal() {
 	uint32 maxVol = MAX(_outputLevel[12] * (_outputMute[12] ^ 1), _outputLevel[13] * (_outputMute[13] ^ 1));
 
 	int volume = (int)(((float)(maxVol * 255) / 63.0f));
-	int balance = maxVol ? (int)( ( ((int)_outputLevel[13] * (_outputMute[13] ^ 1) - _outputLevel[12] * (_outputMute[12] ^ 1)) * 127) / (float)maxVol) : 0;
+	int balance = maxVol ? (int)((((int)_outputLevel[13] * (_outputMute[13] ^ 1) - _outputLevel[12] * (_outputMute[12] ^ 1)) * 127) / (float)maxVol) : 0;
 
 	g_system->getAudioCDManager()->setVolume(volume);
 	g_system->getAudioCDManager()->setBalance(balance);
@@ -1747,8 +1763,8 @@ void TownsAudio_PcmChannel::setPitch(uint32 pt) {
 	_stepPitch = pt & 0xffff;
 	_step = (_stepNote * _stepPitch) >> 14;
 
-//	if (_pcmChanUnkFlag & _chanFlags[chan])
-//		 unk[chan] = (((p->step * 1000) << 11) / 98) / 20833;
+	//	if (_pcmChanUnkFlag & _chanFlags[chan])
+	//		 unk[chan] = (((p->step * 1000) << 11) / 98) / 20833;
 
 	/*else*/
 	if (_activeEffect && (_step > 2048))
@@ -1881,11 +1897,11 @@ void TownsAudio_PcmChannel::envRelease() {
 		_envStep = _envCurrentLevel = 1;
 }
 
-const uint16 TownsAudio_PcmChannel::_pcmPhase1[] =  {
+const uint16 TownsAudio_PcmChannel::_pcmPhase1[] = {
 	0x879B, 0x0F37, 0x1F58, 0x306E, 0x4288, 0x55B6, 0x6A08, 0x7F8F, 0x965E, 0xAE88, 0xC882, 0xE341
 };
 
-const uint16 TownsAudio_PcmChannel::_pcmPhase2[] =  {
+const uint16 TownsAudio_PcmChannel::_pcmPhase2[] = {
 	0xFEFE, 0xF1A0, 0xE411, 0xD744, 0xCB2F, 0xBFC7, 0xB504, 0xAAE2, 0xA144, 0x9827, 0x8FAC
 };
 

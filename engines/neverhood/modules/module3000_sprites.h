@@ -23,10 +23,10 @@
 #ifndef NEVERHOOD_MODULES_MODULE3000_SPRITES_H
 #define NEVERHOOD_MODULES_MODULE3000_SPRITES_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
-#include "neverhood/scene.h"
 #include "neverhood/modules/module1200.h"
+#include "neverhood/neverhood.h"
+#include "neverhood/scene.h"
 
 namespace Neverhood {
 
@@ -37,6 +37,7 @@ class Scene3009;
 class SsScene3009FireCannonButton : public StaticSprite {
 public:
 	SsScene3009FireCannonButton(NeverhoodEngine *vm, Scene3009 *parentScene);
+
 protected:
 	Scene3009 *_parentScene;
 	bool _isClicked;
@@ -50,6 +51,7 @@ public:
 	void show();
 	void hide();
 	void startBlinking();
+
 protected:
 	int _blinkCountdown;
 	bool _blinkToggle;
@@ -67,6 +69,7 @@ class SsScene3009SymbolArrow : public StaticSprite {
 public:
 	SsScene3009SymbolArrow(NeverhoodEngine *vm, Sprite *asSymbol, int index);
 	void hide();
+
 protected:
 	Sprite *_asSymbol;
 	int _index;
@@ -81,6 +84,7 @@ class AsScene3009VerticalIndicator : public AnimatedSprite {
 public:
 	AsScene3009VerticalIndicator(NeverhoodEngine *vm, Scene3009 *parentScene, int index);
 	void show();
+
 protected:
 	Scene3009 *_parentScene;
 	bool _enabled;
@@ -93,6 +97,7 @@ public:
 	void show();
 	void stMoveLeft();
 	void stMoveRight();
+
 protected:
 	Scene3009 *_parentScene;
 	bool _enabled;
@@ -105,6 +110,7 @@ class AsScene3009Symbol : public AnimatedSprite {
 public:
 	AsScene3009Symbol(NeverhoodEngine *vm, Scene3009 *parentScene, int symbolPosition);
 	void hide();
+
 protected:
 	Scene3009 *_parentScene;
 	int _symbolPosition;
@@ -120,6 +126,7 @@ class SsScene3010DeadBoltButton : public StaticSprite {
 public:
 	SsScene3010DeadBoltButton(NeverhoodEngine *vm, Scene *parentScene, int buttonIndex, int initCountdown, bool initDisabled);
 	void setCountdown(int count);
+
 protected:
 	Scene *_parentScene;
 	int _buttonIndex;
@@ -139,6 +146,7 @@ public:
 	void setCountdown(int count);
 	void lock();
 	void unlock(bool skipAnim);
+
 protected:
 	Scene *_parentScene;
 	int _boltIndex;
@@ -159,6 +167,7 @@ protected:
 class SsScene3011Button : public StaticSprite {
 public:
 	SsScene3011Button(NeverhoodEngine *vm, Scene *parentScene, bool flag);
+
 protected:
 	Scene *_parentScene;
 	int _countdown;
@@ -174,6 +183,7 @@ public:
 	void stopSymbolSound();
 	void change(int symbolIndex, bool isNoisy);
 	int getSymbolIndex() { return _largeSymbol ? _symbolIndex : _symbolIndex - 12; }
+
 protected:
 	bool _largeSymbol;
 	bool _isNoisy;

@@ -42,6 +42,7 @@ public:
 
 	BaseImage *_thumbnail;
 	BaseImage *_scummVMThumb;
+
 private:
 	BaseImage *storeThumb(bool doFlip, int width, int height);
 	BaseGame *_gameRef;

@@ -21,19 +21,18 @@
  */
 
 #include "common/system.h"
-#include "common/util.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
-#include "parallaction/parallaction.h"
 #include "parallaction/exec.h"
 #include "parallaction/input.h"
+#include "parallaction/parallaction.h"
 #include "parallaction/parser.h"
 #include "parallaction/saveload.h"
 #include "parallaction/sound.h"
 #include "parallaction/walk.h"
 
 namespace Parallaction {
-
 
 const char *Parallaction_br::_partNames[] = {
 	"PART0",
@@ -43,8 +42,11 @@ const char *Parallaction_br::_partNames[] = {
 	"PART4"
 };
 
-Parallaction_br::Parallaction_br(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction(syst, gameDesc),
-	_locationParser(0), _programParser(0), _soundManI(0) {
+Parallaction_br::Parallaction_br(OSystem *syst, const PARALLACTIONGameDescription *gameDesc)
+  : Parallaction(syst, gameDesc)
+  , _locationParser(0)
+  , _programParser(0)
+  , _soundManI(0) {
 	_audioCommandsNamesRes = 0;
 	_part = 0;
 	_nextPart = 0;
@@ -70,11 +72,11 @@ Common::Error Parallaction_br::init() {
 		} else {
 			_disk = new DosDisk_br(this);
 		}
-		_disk->setLanguage(2);					// NOTE: language is now hardcoded to English. Original used command-line parameters.
+		_disk->setLanguage(2); // NOTE: language is now hardcoded to English. Original used command-line parameters.
 		_soundManI = new DosSoundMan_br(this);
 	} else {
 		_disk = new AmigaDisk_br(this);
-		_disk->setLanguage(2);					// NOTE: language is now hardcoded to English. Original used command-line parameters.
+		_disk->setLanguage(2); // NOTE: language is now hardcoded to English. Original used command-line parameters.
 		_soundManI = new AmigaSoundMan_br(this);
 	}
 
@@ -129,8 +131,8 @@ Parallaction_br::~Parallaction_br() {
 	delete _walker;
 }
 
-void Parallaction_br::callFunction(uint index, void* parm) {
-	assert(index < 6);	// magic value 6 is maximum # of callables for Big Red Adventure
+void Parallaction_br::callFunction(uint index, void *parm) {
+	assert(index < 6); // magic value 6 is maximum # of callables for Big Red Adventure
 
 	(this->*_callables[index])(parm);
 }
@@ -167,11 +169,11 @@ Common::Error Parallaction_br::go() {
 			_input->_inputMode = Input::kInputModeGame;
 		} else {
 			startGui(splash);
-			 // don't show splash after first time
+			// don't show splash after first time
 			splash = false;
 		}
 
-//		initCharacter();
+		//		initCharacter();
 
 		while (((g_engineFlags & kEngineReturn) == 0) && (!shouldQuit())) {
 			runGame();
@@ -184,10 +186,9 @@ Common::Error Parallaction_br::go() {
 	return Common::kNoError;
 }
 
-
 void Parallaction_br::freeFonts() {
 	delete _menuFont;
-	_menuFont  = 0;
+	_menuFont = 0;
 
 	delete _dialogueFont;
 	_dialogueFont = 0;
@@ -196,29 +197,28 @@ void Parallaction_br::freeFonts() {
 	_labelFont = 0;
 }
 
-
 void Parallaction_br::runPendingZones() {
 	ZonePtr z;
 
 	_cmdExec->runSuspended();
 
 	if (_activeZone) {
-		z = _activeZone;	// speak Zone or sound
+		z = _activeZone; // speak Zone or sound
 		_activeZone.reset();
 		if (ACTIONTYPE(z) == kZoneSpeak && z->u._speakDialogue) {
 			enterDialogueMode(z);
 		} else {
-			runZone(z);			// FIXME: BRA doesn't handle sound yet
+			runZone(z); // FIXME: BRA doesn't handle sound yet
 		}
 	}
 
 	if (_activeZone2) {
-		z = _activeZone2;	// speak Zone or sound
+		z = _activeZone2; // speak Zone or sound
 		_activeZone2.reset();
 		if (ACTIONTYPE(z) == kZoneSpeak && z->u._speakDialogue) {
 			enterDialogueMode(z);
 		} else {
-			runZone(z);			// FIXME: BRA doesn't handle sound yet
+			runZone(z); // FIXME: BRA doesn't handle sound yet
 		}
 	}
 }
@@ -243,18 +243,17 @@ void Parallaction_br::freeLocation(bool removeAll) {
 
 	// save zone and animation flags
 	ZoneList::iterator zit = _location._zones.begin();
-	for ( ; zit != _location._zones.end(); ++zit) {
+	for (; zit != _location._zones.end(); ++zit) {
 		restoreOrSaveZoneFlags(*zit, false);
 	}
 	AnimationList::iterator ait = _location._animations.begin();
-	for ( ; ait != _location._animations.end(); ++ait) {
+	for (; ait != _location._animations.end(); ++ait) {
 		restoreOrSaveZoneFlags(*ait, false);
 	}
 
 	_location._animations.remove(_char._ani);
 	_location.cleanup(removeAll);
 	_location._animations.push_front(_char._ani);
-
 }
 
 void Parallaction_br::cleanupGame() {
@@ -276,7 +275,6 @@ void Parallaction_br::cleanupGame() {
 	memset(_locationNames, 0, sizeof(_locationNames));
 	memset(_zoneFlags, 0, sizeof(_zoneFlags));
 }
-
 
 void Parallaction_br::changeLocation() {
 	if (_newLocationName.empty()) {
@@ -393,16 +391,15 @@ void Parallaction_br::parseLocation(const char *filename) {
 
 	// load background, mask and path
 	_disk->loadScenery(*out._info,
-		out._backgroundName.empty() ? 0 : out._backgroundName.c_str(),
-		out._maskName.empty()       ? 0 : out._maskName.c_str(),
-		out._pathName.empty()       ? 0 : out._pathName.c_str());
+	                   out._backgroundName.empty() ? 0 : out._backgroundName.c_str(),
+	                   out._maskName.empty() ? 0 : out._maskName.c_str(),
+	                   out._pathName.empty() ? 0 : out._pathName.c_str());
 	// assign background
 	_gfx->setBackground(kBackgroundLocation, out._info);
 
-
 	// process zones
 	ZoneList::iterator zit = _location._zones.begin();
-	for ( ; zit != _location._zones.end(); ++zit) {
+	for (; zit != _location._zones.end(); ++zit) {
 		ZonePtr z = *zit;
 		// restore the flags if the location has already been visited
 		restoreOrSaveZoneFlags(z, visited);
@@ -425,7 +422,7 @@ void Parallaction_br::parseLocation(const char *filename) {
 
 	// process animations
 	AnimationList::iterator ait = _location._animations.begin();
-	for ( ; ait != _location._animations.end(); ++ait) {
+	for (; ait != _location._animations.end(); ++ait) {
 		// restore the flags if the location has already been visited
 		restoreOrSaveZoneFlags(*ait, visited);
 
@@ -457,8 +454,6 @@ void Parallaction_br::loadProgram(AnimationPtr a, const char *filename) {
 	return;
 }
 
-
-
 void Parallaction_br::changeCharacter(const char *name) {
 
 	const char *charName = _char.getName();
@@ -485,7 +480,7 @@ bool Parallaction_br::counterExists(const Common::String &name) {
 	return Table::notFound != _countersNames->lookup(name.c_str());
 }
 
-int	Parallaction_br::getCounterValue(const Common::String &name) {
+int Parallaction_br::getCounterValue(const Common::String &name) {
 	int index = _countersNames->lookup(name.c_str());
 	if (index != Table::notFound) {
 		return _counters[index - 1];
@@ -510,9 +505,9 @@ void Parallaction_br::testCounterCondition(const Common::String &name, int op, i
 	int c = _counters[index - 1];
 
 // these definitions must match those in parser_br.cpp
-#define CMD_TEST		25
-#define CMD_TEST_GT		26
-#define CMD_TEST_LT		27
+#define CMD_TEST 25
+#define CMD_TEST_GT 26
+#define CMD_TEST_LT 27
 
 	bool res = false;
 	switch (op) {

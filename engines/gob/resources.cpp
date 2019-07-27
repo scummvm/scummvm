@@ -20,26 +20,26 @@
  *
  */
 
-#include "common/util.h"
 #include "common/endian.h"
 #include "common/memstream.h"
+#include "common/util.h"
 
-#include "gob/gob.h"
-#include "gob/resources.h"
-#include "gob/totfile.h"
 #include "gob/dataio.h"
 #include "gob/game.h"
 #include "gob/global.h"
+#include "gob/gob.h"
+#include "gob/resources.h"
+#include "gob/totfile.h"
 
 namespace Gob {
 
 Resource::Resource(byte *data, int32 size, bool needFree,
-		int16 width, int16 height) {
+                   int16 width, int16 height) {
 
-	_data     = data;
-	_size     = size;
-	_width    = width;
-	_height   = height;
+	_data = data;
+	_size = size;
+	_width = width;
+	_height = height;
 	_needFree = needFree;
 
 	_stream = new Common::MemoryReadStream(data, size);
@@ -72,7 +72,6 @@ Common::SeekableReadStream *Resource::stream() const {
 	return _stream;
 }
 
-
 TextItem::TextItem(byte *data, int32 size) {
 	_data = data;
 	_size = size;
@@ -96,11 +95,10 @@ Common::SeekableReadStream *TextItem::stream() const {
 	return _stream;
 }
 
-
 Resources::TOTResourceTable::TOTResourceTable() {
 	itemsCount = 0;
-	unknown    = (byte)0;
-	items      = NULL;
+	unknown = (byte)0;
+	items = NULL;
 	dataOffset = 0u;
 }
 
@@ -108,24 +106,22 @@ Resources::TOTResourceTable::~TOTResourceTable() {
 	delete[] items;
 }
 
-
 Resources::EXTResourceTable::EXTResourceTable() {
 	itemsCount = 0;
-	unknown    = 0;
-	items      = 0;
+	unknown = 0;
+	items = 0;
 }
 
 Resources::EXTResourceTable::~EXTResourceTable() {
 	delete[] items;
 }
 
-
 Resources::TOTTextTable::TOTTextTable() {
-	needFree   = false;
+	needFree = false;
 	itemsCount = 0;
-	data       = NULL;
-	size       = 0;
-	items      = NULL;
+	data = NULL;
+	size = 0;
+	items = NULL;
 }
 
 Resources::TOTTextTable::~TOTTextTable() {
@@ -134,8 +130,8 @@ Resources::TOTTextTable::~TOTTextTable() {
 		delete[] data;
 }
 
-
-Resources::Resources(GobEngine *vm) : _vm(vm) {
+Resources::Resources(GobEngine *vm)
+  : _vm(vm) {
 	unload(false);
 }
 
@@ -241,8 +237,7 @@ bool Resources::loadTOTResourceTable() {
 
 	_totResStart = totProps.scriptEnd;
 
-	if ((totProps.resourcesOffset == 0xFFFFFFFF) ||
-	    (totProps.resourcesOffset == 0))
+	if ((totProps.resourcesOffset == 0xFFFFFFFF) || (totProps.resourcesOffset == 0))
 		// No resources here
 		return false;
 
@@ -251,14 +246,12 @@ bool Resources::loadTOTResourceTable() {
 	stream->seek(totProps.resourcesOffset);
 	_totResourceTable->itemsCount = stream->readSint16LE();
 
-	uint32 resSize = _totResourceTable->itemsCount * kTOTResItemSize +
-	                 kTOTResTableSize;
+	uint32 resSize = _totResourceTable->itemsCount * kTOTResItemSize + kTOTResTableSize;
 
 	_totResourceTable->dataOffset = totProps.resourcesOffset + resSize;
 
-
 	// Would the table actually fit into the TOT?
-	if ((totProps.resourcesOffset + resSize) > ((uint32) stream->size()))
+	if ((totProps.resourcesOffset + resSize) > ((uint32)stream->size()))
 		return false;
 
 	_totResourceTable->unknown = stream->readByte();
@@ -268,8 +261,8 @@ bool Resources::loadTOTResourceTable() {
 		TOTResourceItem &item = _totResourceTable->items[i];
 
 		item.offset = stream->readSint32LE();
-		item.size   = stream->readUint16LE();
-		item.width  = stream->readSint16LE();
+		item.size = stream->readUint16LE();
+		item.width = stream->readSint16LE();
 		item.height = stream->readSint16LE();
 
 		if (item.offset < 0) {
@@ -302,7 +295,7 @@ bool Resources::loadEXTResourceTable() {
 		return false;
 
 	_extResourceTable->itemsCount = stream->readSint16LE();
-	_extResourceTable->unknown    = stream->readByte();
+	_extResourceTable->unknown = stream->readByte();
 
 	if (_extResourceTable->itemsCount > 0)
 		_extResourceTable->items = new EXTResourceItem[_extResourceTable->itemsCount];
@@ -311,8 +304,8 @@ bool Resources::loadEXTResourceTable() {
 		EXTResourceItem &item = _extResourceTable->items[i];
 
 		item.offset = stream->readUint32LE();
-		item.size   = stream->readUint16LE();
-		item.width  = stream->readUint16LE();
+		item.size = stream->readUint16LE();
+		item.width = stream->readUint16LE();
 		item.height = stream->readUint16LE();
 
 		if (item.offset < 0) {
@@ -320,8 +313,7 @@ bool Resources::loadEXTResourceTable() {
 			item.offset = -item.offset - 1;
 		} else {
 			item.type = kResourceEXT;
-			item.offset += kEXTResTableSize +
-			               kEXTResItemSize * _extResourceTable->itemsCount;
+			item.offset += kEXTResTableSize + kEXTResItemSize * _extResourceTable->itemsCount;
 		}
 
 		item.packed = (item.width & 0x8000) != 0;
@@ -347,19 +339,19 @@ bool Resources::loadTOTTextTable(const Common::String &fileBase) {
 	if (!stream)
 		return false;
 
-	if (totProps.textsOffset == ((uint32) -1))
+	if (totProps.textsOffset == ((uint32)-1))
 		// No texts
 		return true;
 
 	_totTextTable = new TOTTextTable;
 
 	if (totProps.textsOffset == 0) {
-		_totTextTable->data     = loadTOTLocTexts(fileBase, _totTextTable->size);
+		_totTextTable->data = loadTOTLocTexts(fileBase, _totTextTable->size);
 		_totTextTable->needFree = true;
 	} else {
-		_totTextTable->data     = _totData + totProps.textsOffset - _totResStart;
+		_totTextTable->data = _totData + totProps.textsOffset - _totResStart;
 		_totTextTable->needFree = false;
-		_totTextTable->size     = totProps.textsSize;
+		_totTextTable->size = totProps.textsSize;
 	}
 
 	if (_totTextTable->data) {
@@ -371,7 +363,7 @@ bool Resources::loadTOTTextTable(const Common::String &fileBase) {
 			TOTTextItem &item = _totTextTable->items[i];
 
 			item.offset = totTextTable.readSint16LE();
-			item.size   = totTextTable.readSint16LE();
+			item.size = totTextTable.readSint16LE();
 		}
 	}
 
@@ -444,7 +436,7 @@ bool Resources::loadEXFile() {
 }
 
 Common::String Resources::getLocTextFile(const Common::String &fileBase,
-		int language) {
+                                         int language) {
 
 	Common::String locTextFile = fileBase + ".";
 	switch (language) {
@@ -507,7 +499,6 @@ byte *Resources::loadTOTLocTexts(const Common::String &fileBase, int32 &size) {
 			locTextFile = getLocTextFile(fileBase, kLanguageBritish);
 			if (!locTextFile.empty())
 				_vm->_global->_language = kLanguageBritish;
-
 		}
 
 		if (locTextFile.empty()) {
@@ -520,11 +511,10 @@ byte *Resources::loadTOTLocTexts(const Common::String &fileBase, int32 &size) {
 				}
 			}
 		}
-
 	}
 
 	debugC(1, kDebugFileIO, "Using language %d for %s",
-			_vm->_global->_language, _totFile.c_str());
+	       _vm->_global->_language, _totFile.c_str());
 
 	if (locTextFile.empty())
 		return 0;
@@ -548,7 +538,7 @@ Resource *Resources::getResource(uint16 id, int16 *width, int16 *height) const {
 		return 0;
 
 	if (width)
-		*width  = resource->getWidth();
+		*width = resource->getWidth();
 	if (height)
 		*height = resource->getHeight();
 
@@ -571,7 +561,7 @@ TextItem *Resources::getTextItem(uint16 id) const {
 
 	if ((totItem.offset + totItem.size) > (_totTextTable->size)) {
 		warning("TOT text %d offset %d out of range (%s, %d, %d)",
-			id, totItem.offset, _totFile.c_str(), _totSize, totItem.size);
+		        id, totItem.offset, _totFile.c_str(), _totSize, totItem.size);
 		return 0;
 	}
 
@@ -586,14 +576,14 @@ byte *Resources::getTexts() const {
 }
 
 bool Resources::dumpResource(const Resource &resource,
-		const Common::String &fileName) const {
+                             const Common::String &fileName) const {
 
 	Common::DumpFile dump;
 
 	if (!dump.open(fileName))
 		return false;
 
-	if (dump.write(resource.getData(), resource.getSize()) != ((uint32) resource.getSize()))
+	if (dump.write(resource.getData(), resource.getSize()) != ((uint32)resource.getSize()))
 		return false;
 
 	if (!dump.flush())
@@ -606,7 +596,7 @@ bool Resources::dumpResource(const Resource &resource,
 }
 
 bool Resources::dumpResource(const Resource &resource, uint16 id,
-		const Common::String &ext) const {
+                             const Common::String &ext) const {
 
 	Common::String fileName = _fileBase;
 
@@ -620,8 +610,8 @@ bool Resources::dumpResource(const Resource &resource, uint16 id,
 Resource *Resources::getTOTResource(uint16 id) const {
 	if (!_totResourceTable || (id >= _totResourceTable->itemsCount)) {
 		warning("Trying to load non-existent TOT resource (%s, %d/%d)",
-				_totFile.c_str(), id,
-				_totResourceTable ? (_totResourceTable->itemsCount - 1) : -1);
+		        _totFile.c_str(), id,
+		        _totResourceTable ? (_totResourceTable->itemsCount - 1) : -1);
 		return 0;
 	}
 
@@ -637,7 +627,7 @@ Resource *Resources::getTOTResource(uint16 id) const {
 
 	if (!data) {
 		warning("Failed to load TOT resource (%s, %d/%d, %d)",
-				_totFile.c_str(), id, _totResourceTable->itemsCount - 1, totItem.type);
+		        _totFile.c_str(), id, _totResourceTable->itemsCount - 1, totItem.type);
 		return 0;
 	}
 
@@ -647,8 +637,8 @@ Resource *Resources::getTOTResource(uint16 id) const {
 Resource *Resources::getEXTResource(uint16 id) const {
 	if (!_extResourceTable || (id > _extResourceTable->itemsCount)) {
 		warning("Trying to load non-existent EXT resource (%s, %d/%d)",
-				_totFile.c_str(), id,
-				_extResourceTable ? (_extResourceTable->itemsCount - 1) : -1);
+		        _totFile.c_str(), id,
+		        _extResourceTable ? (_extResourceTable->itemsCount - 1) : -1);
 		return 0;
 	}
 
@@ -675,7 +665,7 @@ Resource *Resources::getEXTResource(uint16 id) const {
 
 	if (!data) {
 		warning("Failed to load EXT resource (%s, %d/%d, %d)",
-				_totFile.c_str(), id, _extResourceTable->itemsCount - 1, extItem.type);
+		        _totFile.c_str(), id, _extResourceTable->itemsCount - 1, extItem.type);
 		return 0;
 	}
 
@@ -699,9 +689,9 @@ byte *Resources::getTOTData(TOTResourceItem &totItem) const {
 
 	int32 offset = _totResourceTable->dataOffset + totItem.offset - _totResStart;
 
-	if ((offset < 0) || (((uint32) (offset + totItem.size)) > _totSize)) {
+	if ((offset < 0) || (((uint32)(offset + totItem.size)) > _totSize)) {
 		warning("TOT data %d offset %d out of range (%s, %d, %d)",
-				totItem.index, totItem.offset, _totFile.c_str(), _totSize, totItem.size);
+		        totItem.index, totItem.offset, _totFile.c_str(), _totSize, totItem.size);
 		return 0;
 	}
 
@@ -713,7 +703,7 @@ byte *Resources::getIMData(TOTResourceItem &totItem) const {
 		return 0;
 
 	int32 indexOffset = totItem.index * 4;
-	if ((indexOffset < 0) || (((uint32) indexOffset) >= _imSize))
+	if ((indexOffset < 0) || (((uint32)indexOffset) >= _imSize))
 		return 0;
 
 	uint32 offset = READ_LE_UINT32(_imData + indexOffset);

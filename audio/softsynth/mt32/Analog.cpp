@@ -135,7 +135,7 @@ public:
 template <class SampleEx>
 class CoarseLowPassFilter : public AbstractLowPassFilter<SampleEx> {
 private:
-	const SampleEx * const lpfTaps;
+	const SampleEx *const lpfTaps;
 	SampleEx ringBuffer[COARSE_LPF_DELAY_LINE_LENGTH];
 	unsigned int ringBufferPosition;
 
@@ -143,10 +143,9 @@ public:
 	static inline const SampleEx *getLPFTaps(const bool oldMT32AnalogLPF);
 	static inline SampleEx normaliseSample(const SampleEx sample);
 
-	explicit CoarseLowPassFilter(const bool oldMT32AnalogLPF) :
-		lpfTaps(getLPFTaps(oldMT32AnalogLPF)),
-		ringBufferPosition(0)
-	{
+	explicit CoarseLowPassFilter(const bool oldMT32AnalogLPF)
+	  : lpfTaps(getLPFTaps(oldMT32AnalogLPF))
+	  , ringBufferPosition(0) {
 		Synth::muteSampleBuffer(ringBuffer, COARSE_LPF_DELAY_LINE_LENGTH);
 	}
 
@@ -168,8 +167,8 @@ public:
 
 class AccurateLowPassFilter : public AbstractLowPassFilter<IntSampleEx>, public AbstractLowPassFilter<FloatSample> {
 private:
-	const FloatSample * const LPF_TAPS;
-	const Bit32u (* const deltas)[ACCURATE_LPF_NUMBER_OF_PHASES];
+	const FloatSample *const LPF_TAPS;
+	const Bit32u (*const deltas)[ACCURATE_LPF_NUMBER_OF_PHASES];
 	const unsigned int phaseIncrement;
 	const unsigned int outputSampleRate;
 
@@ -211,12 +210,11 @@ public:
 	SampleEx synthGain;
 	SampleEx reverbGain;
 
-	AnalogImpl(const AnalogOutputMode mode, const bool oldMT32AnalogLPF) :
-		leftChannelLPF(AbstractLowPassFilter<SampleEx>::createLowPassFilter(mode, oldMT32AnalogLPF)),
-		rightChannelLPF(AbstractLowPassFilter<SampleEx>::createLowPassFilter(mode, oldMT32AnalogLPF)),
-		synthGain(0),
-		reverbGain(0)
-	{}
+	AnalogImpl(const AnalogOutputMode mode, const bool oldMT32AnalogLPF)
+	  : leftChannelLPF(AbstractLowPassFilter<SampleEx>::createLowPassFilter(mode, oldMT32AnalogLPF))
+	  , rightChannelLPF(AbstractLowPassFilter<SampleEx>::createLowPassFilter(mode, oldMT32AnalogLPF))
+	  , synthGain(0)
+	  , reverbGain(0) {}
 
 	~AnalogImpl() {
 		delete &leftChannelLPF;
@@ -267,8 +265,7 @@ public:
 };
 
 Analog *Analog::createAnalog(const AnalogOutputMode mode, const bool oldMT32AnalogLPF, const RendererType rendererType) {
-	switch (rendererType)
-	{
+	switch (rendererType) {
 	case RendererType_BIT16S:
 		return new AnalogImpl<IntSampleEx>(mode, oldMT32AnalogLPF);
 	case RendererType_FLOAT:
@@ -277,49 +274,49 @@ Analog *Analog::createAnalog(const AnalogOutputMode mode, const bool oldMT32Anal
 	return NULL;
 }
 
-template<>
+template <>
 bool AnalogImpl<IntSampleEx>::process(IntSample *outStream, const IntSample *nonReverbLeft, const IntSample *nonReverbRight, const IntSample *reverbDryLeft, const IntSample *reverbDryRight, const IntSample *reverbWetLeft, const IntSample *reverbWetRight, Bit32u outLength) {
 	produceOutput(outStream, nonReverbLeft, nonReverbRight, reverbDryLeft, reverbDryRight, reverbWetLeft, reverbWetRight, outLength);
 	return true;
 }
 
-template<>
+template <>
 bool AnalogImpl<FloatSample>::process(IntSample *, const IntSample *, const IntSample *, const IntSample *, const IntSample *, const IntSample *, const IntSample *, Bit32u) {
 	return false;
 }
 
-template<>
+template <>
 bool AnalogImpl<IntSampleEx>::process(FloatSample *, const FloatSample *, const FloatSample *, const FloatSample *, const FloatSample *, const FloatSample *, const FloatSample *, Bit32u) {
 	return false;
 }
 
-template<>
+template <>
 bool AnalogImpl<FloatSample>::process(FloatSample *outStream, const FloatSample *nonReverbLeft, const FloatSample *nonReverbRight, const FloatSample *reverbDryLeft, const FloatSample *reverbDryRight, const FloatSample *reverbWetLeft, const FloatSample *reverbWetRight, Bit32u outLength) {
 	produceOutput(outStream, nonReverbLeft, nonReverbRight, reverbDryLeft, reverbDryRight, reverbWetLeft, reverbWetRight, outLength);
 	return true;
 }
 
-template<>
+template <>
 void AnalogImpl<IntSampleEx>::setSynthOutputGain(const float useSynthGain) {
 	synthGain = getIntOutputGain(useSynthGain);
 }
 
-template<>
+template <>
 void AnalogImpl<IntSampleEx>::setReverbOutputGain(const float useReverbGain, const bool mt32ReverbCompatibilityMode) {
 	reverbGain = getIntOutputGain(getActualReverbOutputGain(useReverbGain, mt32ReverbCompatibilityMode));
 }
 
-template<>
+template <>
 void AnalogImpl<FloatSample>::setSynthOutputGain(const float useSynthGain) {
 	synthGain = useSynthGain;
 }
 
-template<>
+template <>
 void AnalogImpl<FloatSample>::setReverbOutputGain(const float useReverbGain, const bool mt32ReverbCompatibilityMode) {
 	reverbGain = getActualReverbOutputGain(useReverbGain, mt32ReverbCompatibilityMode);
 }
 
-template<>
+template <>
 AbstractLowPassFilter<IntSampleEx> &AbstractLowPassFilter<IntSampleEx>::createLowPassFilter(AnalogOutputMode mode, bool oldMT32AnalogLPF) {
 	switch (mode) {
 	case AnalogOutputMode_COARSE:
@@ -333,48 +330,47 @@ AbstractLowPassFilter<IntSampleEx> &AbstractLowPassFilter<IntSampleEx>::createLo
 	}
 }
 
-template<>
+template <>
 AbstractLowPassFilter<FloatSample> &AbstractLowPassFilter<FloatSample>::createLowPassFilter(AnalogOutputMode mode, bool oldMT32AnalogLPF) {
 	switch (mode) {
-		case AnalogOutputMode_COARSE:
-			return *new CoarseLowPassFilter<FloatSample>(oldMT32AnalogLPF);
-		case AnalogOutputMode_ACCURATE:
-			return *new AccurateLowPassFilter(oldMT32AnalogLPF, false);
-		case AnalogOutputMode_OVERSAMPLED:
-			return *new AccurateLowPassFilter(oldMT32AnalogLPF, true);
-		default:
-			return *new NullLowPassFilter<FloatSample>;
+	case AnalogOutputMode_COARSE:
+		return *new CoarseLowPassFilter<FloatSample>(oldMT32AnalogLPF);
+	case AnalogOutputMode_ACCURATE:
+		return *new AccurateLowPassFilter(oldMT32AnalogLPF, false);
+	case AnalogOutputMode_OVERSAMPLED:
+		return *new AccurateLowPassFilter(oldMT32AnalogLPF, true);
+	default:
+		return *new NullLowPassFilter<FloatSample>;
 	}
 }
 
-template<>
+template <>
 const IntSampleEx *CoarseLowPassFilter<IntSampleEx>::getLPFTaps(const bool oldMT32AnalogLPF) {
 	return oldMT32AnalogLPF ? COARSE_LPF_INT_TAPS_MT32 : COARSE_LPF_INT_TAPS_CM32L;
 }
 
-template<>
+template <>
 const FloatSample *CoarseLowPassFilter<FloatSample>::getLPFTaps(const bool oldMT32AnalogLPF) {
 	return oldMT32AnalogLPF ? COARSE_LPF_FLOAT_TAPS_MT32 : COARSE_LPF_FLOAT_TAPS_CM32L;
 }
 
-template<>
+template <>
 IntSampleEx CoarseLowPassFilter<IntSampleEx>::normaliseSample(const IntSampleEx sample) {
 	return sample >> COARSE_LPF_INT_FRACTION_BITS;
 }
 
-template<>
+template <>
 FloatSample CoarseLowPassFilter<FloatSample>::normaliseSample(const FloatSample sample) {
 	return sample;
 }
 
-AccurateLowPassFilter::AccurateLowPassFilter(const bool oldMT32AnalogLPF, const bool oversample) :
-	LPF_TAPS(oldMT32AnalogLPF ? ACCURATE_LPF_TAPS_MT32 : ACCURATE_LPF_TAPS_CM32L),
-	deltas(oversample ? ACCURATE_LPF_DELTAS_OVERSAMPLED : ACCURATE_LPF_DELTAS_REGULAR),
-	phaseIncrement(oversample ? ACCURATE_LPF_PHASE_INCREMENT_OVERSAMPLED : ACCURATE_LPF_PHASE_INCREMENT_REGULAR),
-	outputSampleRate(SAMPLE_RATE * ACCURATE_LPF_NUMBER_OF_PHASES / phaseIncrement),
-	ringBufferPosition(0),
-	phase(0)
-{
+AccurateLowPassFilter::AccurateLowPassFilter(const bool oldMT32AnalogLPF, const bool oversample)
+  : LPF_TAPS(oldMT32AnalogLPF ? ACCURATE_LPF_TAPS_MT32 : ACCURATE_LPF_TAPS_CM32L)
+  , deltas(oversample ? ACCURATE_LPF_DELTAS_OVERSAMPLED : ACCURATE_LPF_DELTAS_REGULAR)
+  , phaseIncrement(oversample ? ACCURATE_LPF_PHASE_INCREMENT_OVERSAMPLED : ACCURATE_LPF_PHASE_INCREMENT_REGULAR)
+  , outputSampleRate(SAMPLE_RATE * ACCURATE_LPF_NUMBER_OF_PHASES / phaseIncrement)
+  , ringBufferPosition(0)
+  , phase(0) {
 	Synth::muteSampleBuffer(ringBuffer, ACCURATE_LPF_DELAY_LINE_LENGTH);
 }
 

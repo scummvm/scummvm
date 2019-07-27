@@ -34,24 +34,24 @@ namespace MacVenture {
 
 static const PPICHuff PPIC1Huff = {
 	// Masks
-	{ 0x0000,0x2000,0x4000,0x5000,0x6000,0x7000,0x8000,0x9000,0xa000,
-	0xb000,0xc000,0xd000,0xd800,0xe000,0xe800,0xf000,0xf800 },
+	{ 0x0000, 0x2000, 0x4000, 0x5000, 0x6000, 0x7000, 0x8000, 0x9000, 0xa000,
+	  0xb000, 0xc000, 0xd000, 0xd800, 0xe000, 0xe800, 0xf000, 0xf800 },
 	// Lens
-	{ 3,3,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5 },
+	{ 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5 },
 	// Symbols
-	{ 0x00,0x0f,0x03,0x05,0x06,0x07,0x08,0x09,0x0a,0x0c,0xff,0x01,
-	0x02,0x04,0x0b,0x0d,0xe }
+	{ 0x00, 0x0f, 0x03, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0c, 0xff, 0x01,
+	  0x02, 0x04, 0x0b, 0x0d, 0xe }
 };
 
 static const PPICHuff PPIC2Huff = {
 	// Masks
-	{ 0x0000,0x4000,0x8000,0xc000,0xc800,0xd000,0xd800,0xe000,0xe800,
-	0xf000,0xf400,0xf600,0xf800,0xfa00,0xfc00,0xfe00,0xff00 },
+	{ 0x0000, 0x4000, 0x8000, 0xc000, 0xc800, 0xd000, 0xd800, 0xe000, 0xe800,
+	  0xf000, 0xf400, 0xf600, 0xf800, 0xfa00, 0xfc00, 0xfe00, 0xff00 },
 	// Lens
-	{ 2,2,2,5,5,5,5,5,5,6,7,7,7,7,7,8,8 },
+	{ 2, 2, 2, 5, 5, 5, 5, 5, 5, 6, 7, 7, 7, 7, 7, 8, 8 },
 	// Symbols
-	{ 0xff,0x00,0x0f,0x01,0x03,0x07,0x0e,0x0c,0x08,0x06,0x02,0x04,
-	0x09,0x0d,0x0b,0x0a,0x05 }
+	{ 0xff, 0x00, 0x0f, 0x01, 0x03, 0x07, 0x0e, 0x0c, 0x08, 0x06, 0x02, 0x04,
+	  0x09, 0x0d, 0x0b, 0x0a, 0x05 }
 };
 
 // Used to load the huffman table in PPIC3 decoding
@@ -165,17 +165,20 @@ void ImageAsset::decodePPIC0(Common::BitStream32BEMSB &stream, Common::Array<byt
 			v = stream.peekBits(32);
 			stream.skip(16);
 			v >>= 16 - (stream.pos() % 8);
-			data[p] = (v >> 8) & 0xff; p++;
-			data[p] = v & 0xff; p++;
+			data[p] = (v >> 8) & 0xff;
+			p++;
+			data[p] = v & 0xff;
+			p++;
 		}
 		if (bytes) {
 			v = stream.getBits(bytes);
 			v <<= 16 - bytes;
-			data[p] = (v >> 8) & 0xff; p++;
-			data[p] = v & 0xff; p++;
+			data[p] = (v >> 8) & 0xff;
+			p++;
+			data[p] = v & 0xff;
+			p++;
 		}
 	}
-
 }
 
 void ImageAsset::decodePPIC1(Common::BitStream32BEMSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
@@ -228,7 +231,7 @@ void ImageAsset::decodePPIC3(Common::BitStream32BEMSB &stream, Common::Array<byt
 		mask += 1 << (16 - bits);
 	}
 	huff.masks[0xf] = mask;
-	while (mask&(1 << (16 - bits))) {
+	while (mask & (1 << (16 - bits))) {
 		bits++;
 	}
 	huff.masks[0x10] = mask | (1 << (16 - bits));
@@ -259,7 +262,7 @@ void ImageAsset::decodeHuffGraphic(const PPICHuff &huff, Common::BitStream32BEMS
 	uint16 pos = 0;
 	for (uint y = 0; y < bitHeight; y++) {
 		uint16 x = 0;
-		for (; x < bitWidth >> 3; x++) {
+		for (; x<bitWidth>> 3; x++) {
 			byte hi = walkHuff(huff, stream) << 4;
 			data[pos++] = walkHuff(huff, stream) | hi;
 		}
@@ -341,7 +344,7 @@ byte ImageAsset::walkHuff(const PPICHuff &huff, Common::BitStream32BEMSB &stream
 	}
 	uint16 dw = stream.peekBits(16);
 	uint16 i = 0;
-	for (;i < 16; i++) {
+	for (; i < 16; i++) {
 		if (huff.masks[i + 1] > dw) {
 			break;
 		}
@@ -517,8 +520,7 @@ void ImageAsset::blitXOR(Graphics::ManagedSurface *target, int ox, int oy, const
 				assert(ox + x <= target->w);
 				assert(oy + y <= target->h);
 				byte p = *((byte *)target->getBasePtr(ox + x, oy + y));
-				*((byte *)target->getBasePtr(ox + x, oy + y)) =
-					(p == kColorWhite) ? kColorBlack : kColorWhite;
+				*((byte *)target->getBasePtr(ox + x, oy + y)) = (p == kColorWhite) ? kColorBlack : kColorWhite;
 			}
 		}
 	}

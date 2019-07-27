@@ -24,52 +24,55 @@
 #ifndef TINSEL_SAVESCN_H
 #define TINSEL_SAVESCN_H
 
-#include "tinsel/actors.h"	// SAVED_ACTOR
-#include "tinsel/dw.h"	// SCNHANDLE
-#include "tinsel/rince.h"	// SAVED_MOVER
-#include "tinsel/pcode.h"	// INT_CONTEXT
+#include "tinsel/actors.h" // SAVED_ACTOR
+#include "tinsel/dw.h" // SCNHANDLE
+#include "tinsel/pcode.h" // INT_CONTEXT
 #include "tinsel/play.h"
 #include "tinsel/polygons.h"
-#include "tinsel/scroll.h"	// SCROLLDATA
+#include "tinsel/rince.h" // SAVED_MOVER
+#include "tinsel/scroll.h" // SCROLLDATA
 #include "tinsel/sysvar.h"
 
 namespace Tinsel {
 
 enum {
-	SG_DESC_LEN	= 40,	// Max. saved game description length
-	MAX_SAVED_FILES	= 100
+	SG_DESC_LEN = 40, // Max. saved game description length
+	MAX_SAVED_FILES = 100
 };
 
 struct SAVED_DATA {
-	SCNHANDLE	SavedSceneHandle;		// Scene handle
-	SCNHANDLE	SavedBgroundHandle;		// Background handle
-	SAVED_MOVER	SavedMoverInfo[MAX_MOVERS];	// Moving actors
-	SAVED_ACTOR	SavedActorInfo[MAX_SAVED_ACTORS];	// } Actors
-	int			NumSavedActors;				// }
-	int			SavedLoffset, SavedToffset;	// Screen offsets
-	INT_CONTEXT	SavedICInfo[MAX_INTERPRET];	// Interpret contexts
-	bool		SavedDeadPolys[MAX_POLY];
-	bool		SavedControl;
-	SCNHANDLE	SavedMidi;			// }
-	bool		SavedLoop;			// } Midi
-	bool		SavedNoBlocking;
-	SCROLLDATA	SavedNoScrollData;
+	SCNHANDLE SavedSceneHandle; // Scene handle
+	SCNHANDLE SavedBgroundHandle; // Background handle
+	SAVED_MOVER SavedMoverInfo[MAX_MOVERS]; // Moving actors
+	SAVED_ACTOR SavedActorInfo[MAX_SAVED_ACTORS]; // } Actors
+	int NumSavedActors; // }
+	int SavedLoffset, SavedToffset; // Screen offsets
+	INT_CONTEXT SavedICInfo[MAX_INTERPRET]; // Interpret contexts
+	bool SavedDeadPolys[MAX_POLY];
+	bool SavedControl;
+	SCNHANDLE SavedMidi; // }
+	bool SavedLoop; // } Midi
+	bool SavedNoBlocking;
+	SCROLLDATA SavedNoScrollData;
 
 	// Tinsel 2 fields
-	Z_POSITIONS	zPositions[NUM_ZPOSITIONS];
-	byte		savedActorZ[MAX_SAVED_ACTOR_Z];
-	POLY_VOLATILE	SavedPolygonStuff[MAX_POLY];
-	uint32		SavedTune[3];			// Music
-	bool		bTinselDim;
-	int			SavedScrollFocus;
-	int			SavedSystemVars[SV_TOPVALID];
-	SOUNDREELS	SavedSoundReels[MAX_SOUNDREELS];
+	Z_POSITIONS zPositions[NUM_ZPOSITIONS];
+	byte savedActorZ[MAX_SAVED_ACTOR_Z];
+	POLY_VOLATILE SavedPolygonStuff[MAX_POLY];
+	uint32 SavedTune[3]; // Music
+	bool bTinselDim;
+	int SavedScrollFocus;
+	int SavedSystemVars[SV_TOPVALID];
+	SOUNDREELS SavedSoundReels[MAX_SOUNDREELS];
 };
 
-
 enum SRSTATE {
-	SR_IDLE, SR_DORESTORE, SR_DONERESTORE,
-	SR_DOSAVE, SR_DONESAVE,	SR_ABORTED
+	SR_IDLE,
+	SR_DORESTORE,
+	SR_DONERESTORE,
+	SR_DOSAVE,
+	SR_DONESAVE,
+	SR_ABORTED
 };
 
 void TinselRestoreScene(bool bFade);
@@ -79,9 +82,9 @@ void DoSaveScene(SAVED_DATA *sd);
 
 bool IsRestoringScene();
 
-
-enum letype{
-	LE_NAME, LE_DESC
+enum letype {
+	LE_NAME,
+	LE_DESC
 };
 
 char *ListEntry(int i, letype which);
@@ -101,4 +104,4 @@ void FreeSaveScenes();
 
 } // End of namespace Tinsel
 
-#endif	/* TINSEL_SAVESCN_H */
+#endif /* TINSEL_SAVESCN_H */

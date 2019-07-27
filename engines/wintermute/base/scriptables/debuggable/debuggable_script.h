@@ -38,6 +38,7 @@ class DebuggableScript : public ScScript {
 	virtual void preInstHook(uint32 inst) override;
 	virtual void postInstHook(uint32 inst) override;
 	void setStepDepth(int depth);
+
 public:
 	DebuggableScript(BaseGame *inGame, DebuggableScEngine *engine);
 	virtual ~DebuggableScript();

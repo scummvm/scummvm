@@ -64,7 +64,7 @@ enum {
 	kSludgeDebugSound = 1 << 6
 };
 
-class SludgeEngine: public Engine {
+class SludgeEngine : public Engine {
 protected:
 	// Engine APIs
 	virtual Common::Error run();

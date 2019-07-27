@@ -23,21 +23,22 @@
 #ifndef ABOUT_DIALOG_H
 #define ABOUT_DIALOG_H
 
-#include "gui/dialog.h"
-#include "common/str.h"
 #include "common/array.h"
 #include "common/keyboard.h"
+#include "common/str.h"
+#include "gui/dialog.h"
 
 namespace GUI {
 
 class AboutDialog : public Dialog {
 	typedef Common::Array<Common::String> StringArray;
+
 protected:
-	int			_scrollPos;
-	uint32		_scrollTime;
-	StringArray	_lines;
-	uint32		_lineHeight;
-	bool		_willClose;
+	int _scrollPos;
+	uint32 _scrollTime;
+	StringArray _lines;
+	uint32 _lineHeight;
+	bool _willClose;
 
 	int _xOff, _yOff;
 

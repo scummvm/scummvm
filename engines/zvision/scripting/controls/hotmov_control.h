@@ -29,7 +29,7 @@
 #include "common/rect.h"
 
 namespace Video {
-	class VideoDecoder;
+class VideoDecoder;
 }
 
 namespace ZVision {
@@ -41,12 +41,13 @@ public:
 	~HotMovControl();
 
 private:
-	int32  _framesCount;
-	int32  _cycle;
-	int32  _cyclesCount;
+	int32 _framesCount;
+	int32 _cycle;
+	int32 _cyclesCount;
 	Video::VideoDecoder *_animation;
 	Common::Rect _rectangle;
 	Common::Array<Common::Rect> _frames;
+
 public:
 	bool onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
 	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);

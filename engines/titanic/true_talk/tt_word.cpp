@@ -21,14 +21,20 @@
  */
 
 #include "titanic/true_talk/tt_word.h"
-#include "titanic/true_talk/tt_string_node.h"
 #include "titanic/titanic.h"
+#include "titanic/true_talk/tt_string_node.h"
 
 namespace Titanic {
 
-TTword::TTword(const TTstring &str, WordClass wordClass, int id) : _text(str),
-		_wordClass(wordClass), _id(id), _tag(0), _field24(0),
-		_field28(0), _synP(nullptr), _nextP(nullptr) {
+TTword::TTword(const TTstring &str, WordClass wordClass, int id)
+  : _text(str)
+  , _wordClass(wordClass)
+  , _id(id)
+  , _tag(0)
+  , _field24(0)
+  , _field28(0)
+  , _synP(nullptr)
+  , _nextP(nullptr) {
 	_status = str.getStatus() == SS_VALID ? SS_VALID : SS_5;
 }
 

@@ -30,29 +30,30 @@
 namespace Cloud {
 namespace Id {
 
-class IdStorage;
+	class IdStorage;
 
-class IdResolveIdRequest: public Networking::Request {
-	Common::String _requestedPath;
-	IdStorage *_storage;
-	Storage::UploadCallback _uploadCallback;
-	Common::String _currentDirectory;
-	Common::String _currentDirectoryId;
-	Request *_workingRequest;
-	bool _ignoreCallback;
+	class IdResolveIdRequest : public Networking::Request {
+		Common::String _requestedPath;
+		IdStorage *_storage;
+		Storage::UploadCallback _uploadCallback;
+		Common::String _currentDirectory;
+		Common::String _currentDirectoryId;
+		Request *_workingRequest;
+		bool _ignoreCallback;
 
-	void start();
-	void listNextDirectory(StorageFile fileToReturn);
-	void listedDirectoryCallback(Storage::FileArrayResponse response);
-	void listedDirectoryErrorCallback(Networking::ErrorResponse error);
-	void finishFile(StorageFile file);
-public:
-	IdResolveIdRequest(IdStorage *storage, Common::String path, Storage::UploadCallback cb, Networking::ErrorCallback ecb, bool recursive = false); //TODO: why upload?
-	virtual ~IdResolveIdRequest();
+		void start();
+		void listNextDirectory(StorageFile fileToReturn);
+		void listedDirectoryCallback(Storage::FileArrayResponse response);
+		void listedDirectoryErrorCallback(Networking::ErrorResponse error);
+		void finishFile(StorageFile file);
 
-	virtual void handle();
-	virtual void restart();
-};
+	public:
+		IdResolveIdRequest(IdStorage *storage, Common::String path, Storage::UploadCallback cb, Networking::ErrorCallback ecb, bool recursive = false); //TODO: why upload?
+		virtual ~IdResolveIdRequest();
+
+		virtual void handle();
+		virtual void restart();
+	};
 
 } // End of namespace Id
 } // End of namespace Cloud

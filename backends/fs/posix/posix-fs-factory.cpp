@@ -24,17 +24,17 @@
 
 // Re-enable some forbidden symbols to avoid clashes with stat.h and unistd.h.
 // Also with clock() in sys/time.h in some Mac OS X SDKs.
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
-#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
-#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
-#define FORBIDDEN_SYMBOL_EXCEPTION_exit		//Needed for IRIX's unistd.h
-#define FORBIDDEN_SYMBOL_EXCEPTION_random
-#define FORBIDDEN_SYMBOL_EXCEPTION_srandom
+#	define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+#	define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
+#	define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
+#	define FORBIDDEN_SYMBOL_EXCEPTION_exit //Needed for IRIX's unistd.h
+#	define FORBIDDEN_SYMBOL_EXCEPTION_random
+#	define FORBIDDEN_SYMBOL_EXCEPTION_srandom
 
-#include "backends/fs/posix/posix-fs-factory.h"
-#include "backends/fs/posix/posix-fs.h"
+#	include "backends/fs/posix/posix-fs-factory.h"
+#	include "backends/fs/posix/posix-fs.h"
 
-#include <unistd.h>
+#	include <unistd.h>
 
 AbstractFSNode *POSIXFilesystemFactory::makeRootFileNode() const {
 	return new POSIXFilesystemNode("/");

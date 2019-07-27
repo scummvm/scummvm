@@ -26,24 +26,24 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-
 #include "engines/wintermute/video/video_theora_player.h"
-#include "engines/wintermute/base/base_game.h"
+#include "common/system.h"
 #include "engines/wintermute/base/base_file_manager.h"
-#include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
 #include "engines/wintermute/base/sound/base_sound_manager.h"
-#include "video/theora_decoder.h"
 #include "engines/wintermute/wintermute.h"
-#include "common/system.h"
+#include "video/theora_decoder.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(VideoTheoraPlayer, false)
 
 //////////////////////////////////////////////////////////////////////////
-VideoTheoraPlayer::VideoTheoraPlayer(BaseGame *inGame) : BaseClass(inGame) {
+VideoTheoraPlayer::VideoTheoraPlayer(BaseGame *inGame)
+  : BaseClass(inGame) {
 	SetDefaults();
 }
 
@@ -124,7 +124,7 @@ bool VideoTheoraPlayer::initialize(const Common::String &filename, const Common:
 		return STATUS_FAILED;
 	}
 
-#if defined (USE_THEORADEC)
+#if defined(USE_THEORADEC)
 	_theoraDecoder = new Video::TheoraDecoder();
 #else
 	warning("VideoTheoraPlayer::initialize - Theora support not compiled in, video will be skipped: %s", filename.c_str());
@@ -151,7 +151,6 @@ bool VideoTheoraPlayer::initialize(const Common::String &filename, const Common:
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool VideoTheoraPlayer::resetStream() {
 	warning("VidTheoraPlayer::resetStream - hacked");
@@ -167,7 +166,7 @@ bool VideoTheoraPlayer::resetStream() {
 		return STATUS_FAILED;
 	}
 
-#if defined (USE_THEORADEC)
+#if defined(USE_THEORADEC)
 	_theoraDecoder = new Video::TheoraDecoder();
 #else
 	return STATUS_FAILED;
@@ -247,8 +246,7 @@ bool VideoTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame,
 		_playZoom = MIN(zoomX, zoomY);
 		_posX = (int)((_gameRef->_renderer->getWidth() - width * (_playZoom / 100)) / 2);
 		_posY = (int)((_gameRef->_renderer->getHeight() - height * (_playZoom / 100)) / 2);
-	}
-	break;
+	} break;
 
 	case VID_PLAY_CENTER:
 		_playZoom = 100.0f;
@@ -455,7 +453,6 @@ byte VideoTheoraPlayer::getAlphaAt(int x, int y) const {
 		return 0xFF;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 inline int intlog(int num) {

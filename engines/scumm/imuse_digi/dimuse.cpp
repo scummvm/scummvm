@@ -24,16 +24,16 @@
 #include "common/timer.h"
 
 #include "scumm/actor.h"
-#include "scumm/scumm_v7.h"
-#include "scumm/sound.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse_digi/dimuse_bndmgr.h"
 #include "scumm/imuse_digi/dimuse_codecs.h"
 #include "scumm/imuse_digi/dimuse_track.h"
+#include "scumm/scumm_v7.h"
+#include "scumm/sound.h"
 
 #include "audio/audiostream.h"
-#include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "audio/mixer.h"
 
 namespace Scumm {
 
@@ -43,7 +43,8 @@ void IMuseDigital::timer_handler(void *refCon) {
 }
 
 IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer, int fps)
-	: _vm(scumm), _mixer(mixer) {
+  : _vm(scumm)
+  , _mixer(mixer) {
 	assert(_vm);
 	assert(mixer);
 
@@ -250,7 +251,7 @@ void IMuseDigital::callback() {
 
 				if (track->curRegion == -1) {
 					switchToNextRegion(track);
-					if (!track->stream)	// Seems we reached the end of the stream
+					if (!track->stream) // Seems we reached the end of the stream
 						continue;
 				}
 
@@ -344,7 +345,7 @@ void IMuseDigital::callback() {
 
 					if (_sound->isEndOfRegion(track->soundDesc, track->curRegion)) {
 						switchToNextRegion(track);
-						if (!track->stream)	// Seems we reached the end of the stream
+						if (!track->stream) // Seems we reached the end of the stream
 							break;
 					}
 					feedSize -= curFeedSize;

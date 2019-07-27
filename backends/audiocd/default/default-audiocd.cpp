@@ -55,7 +55,7 @@ void DefaultAudioCDManager::close() {
 }
 
 bool DefaultAudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
-		Audio::Mixer::SoundType soundType) {
+                                 Audio::Mixer::SoundType soundType) {
 	stop();
 
 	if (numLoops != 0 || startFrame != 0) {
@@ -86,7 +86,7 @@ bool DefaultAudioCDManager::play(int track, int numLoops, int startFrame, int du
 			*/
 			_emulating = true;
 			_mixer->playStream(soundType, &_handle,
-			                        Audio::makeLoopingAudioStream(stream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops), -1, _cd.volume, _cd.balance);
+			                   Audio::makeLoopingAudioStream(stream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops), -1, _cd.volume, _cd.balance);
 			return true;
 		}
 	}
@@ -163,4 +163,3 @@ bool DefaultAudioCDManager::openRealCD() {
 
 	return openCD(drive);
 }
-

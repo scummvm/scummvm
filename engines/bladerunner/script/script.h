@@ -33,7 +33,7 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 
 class ScriptBase {
-friend class SceneScript;
+	friend class SceneScript;
 
 protected:
 	BladeRunnerEngine *_vm;
@@ -218,7 +218,7 @@ protected:
 	float World_Waypoint_Query_Z(int waypointId);
 	void Combat_Cover_Waypoint_Set_Data(int coverWaypointId, int a2, int setId, int a4, float x, float y, float z);
 	void Combat_Flee_Waypoint_Set_Data(int fleeWaypointId, int a2, int setId, int a4, float x, float y, float z, int a8);
-	void Police_Maze_Target_Track_Add(int itemId, float startX, float startY, float startZ, float endX, float endY, float endZ, int steps, const int* instructions, bool isActive);
+	void Police_Maze_Target_Track_Add(int itemId, float startX, float startY, float startZ, float endX, float endY, float endZ, int steps, const int *instructions, bool isActive);
 	int Police_Maze_Query_Score();
 	void Police_Maze_Zero_Score();
 	void Police_Maze_Increment_Score(int delta);

@@ -24,15 +24,15 @@
 #define AMIGAOS_FILESYSTEM_H
 
 #ifdef __USE_INLINE__
-#undef __USE_INLINE__
+#	undef __USE_INLINE__
 #endif
 
-#include <proto/exec.h>
 #include <proto/dos.h>
+#include <proto/exec.h>
 #include <stdio.h>
 
 #ifndef USE_NEWLIB
-#include <strings.h>
+#	include <strings.h>
 #endif
 
 #include "backends/fs/abstract-fs.h"
@@ -118,6 +118,5 @@ public:
 	virtual Common::WriteStream *createWriteStream();
 	virtual bool create(bool isDirectoryFlag);
 };
-
 
 #endif

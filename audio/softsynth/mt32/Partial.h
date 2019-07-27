@@ -18,13 +18,13 @@
 #ifndef MT32EMU_PARTIAL_H
 #define MT32EMU_PARTIAL_H
 
-#include "globals.h"
-#include "internals.h"
-#include "Types.h"
-#include "Structures.h"
+#include "LA32FloatWaveGenerator.h"
 #include "LA32Ramp.h"
 #include "LA32WaveGenerator.h"
-#include "LA32FloatWaveGenerator.h"
+#include "Structures.h"
+#include "Types.h"
+#include "globals.h"
+#include "internals.h"
 
 namespace MT32Emu {
 

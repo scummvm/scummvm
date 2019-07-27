@@ -22,35 +22,34 @@
 
 #if defined(MAEMO)
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_getenv
+#	define FORBIDDEN_SYMBOL_EXCEPTION_getenv
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
+#	include "common/config-manager.h"
+#	include "common/scummsys.h"
 
-#include "backends/platform/maemo/maemo.h"
-#include "backends/events/maemosdl/maemosdl-events.h"
-#include "backends/graphics/maemosdl/maemosdl-graphics.h"
-#include "backends/keymapper/keymapper.h"
-#include "backends/keymapper/keymapper-defaults.h"
-#include "common/textconsole.h"
-#include "common/translation.h"
+#	include "backends/events/maemosdl/maemosdl-events.h"
+#	include "backends/graphics/maemosdl/maemosdl-graphics.h"
+#	include "backends/keymapper/keymapper-defaults.h"
+#	include "backends/keymapper/keymapper.h"
+#	include "backends/platform/maemo/maemo.h"
+#	include "common/textconsole.h"
+#	include "common/translation.h"
 
 namespace Maemo {
 
 OSystem_SDL_Maemo::OSystem_SDL_Maemo()
-	:
-	_eventObserver(0),
-	OSystem_POSIX() {
+  : _eventObserver(0)
+  , OSystem_POSIX() {
 }
 
 OSystem_SDL_Maemo::~OSystem_SDL_Maemo() {
 	delete _eventObserver;
-#ifdef ENABLE_KEYMAPPER
+#	ifdef ENABLE_KEYMAPPER
 	delete _keymapperDefaultBindings;
-#endif
+#	endif
 }
 
-#ifdef ENABLE_KEYMAPPER
+#	ifdef ENABLE_KEYMAPPER
 static void registerDefaultKeyBindings(Common::KeymapperDefaultBindings *_keymapperDefaultBindings, Model _model) {
 	_keymapperDefaultBindings->setDefaultBinding("gui", "REMP", "HOME");
 	_keymapperDefaultBindings->setDefaultBinding("global", "REMP", "HOME");
@@ -68,7 +67,7 @@ static void registerDefaultKeyBindings(Common::KeymapperDefaultBindings *_keymap
 		_keymapperDefaultBindings->setDefaultBinding("global", "VIRT", "FULLSCREEN");
 	}
 
-	if (_model.hasMenuKey )
+	if (_model.hasMenuKey)
 		_keymapperDefaultBindings->setDefaultBinding("global", "MENU", "MENU");
 	else
 		_keymapperDefaultBindings->setDefaultBinding("global", "MENU", "S+C+M");
@@ -78,7 +77,7 @@ static void registerDefaultKeyBindings(Common::KeymapperDefaultBindings *_keymap
 	_keymapperDefaultBindings->setDefaultBinding("maemo", "RCLK", "ZOOMPLUS");
 	_keymapperDefaultBindings->setDefaultBinding("maemo", "CLKM", "ZOOMMINUS");
 }
-#endif
+#	endif
 
 void OSystem_SDL_Maemo::init() {
 	// Use an iconless window for Maemo
@@ -103,16 +102,16 @@ void OSystem_SDL_Maemo::initBackend() {
 	if (_eventObserver == 0)
 		_eventObserver = new MaemoSdlEventObserver((MaemoSdlEventSource *)_eventSource);
 
-#ifdef ENABLE_KEYMAPPER
+#	ifdef ENABLE_KEYMAPPER
 	if (_keymapperDefaultBindings == 0)
 		_keymapperDefaultBindings = new Common::KeymapperDefaultBindings();
-#endif
+#	endif
 
 	_model = detectModel();
 
-#ifdef ENABLE_KEYMAPPER
+#	ifdef ENABLE_KEYMAPPER
 	registerDefaultKeyBindings(_keymapperDefaultBindings, _model);
-#endif
+#	endif
 
 	// Call parent implementation of this method
 	OSystem_POSIX::initBackend();
@@ -133,9 +132,11 @@ void OSystem_SDL_Maemo::setXWindowName(const char *caption) {
 		Display *dpy = info.info.x11.display;
 		Window win;
 		win = info.info.x11.fswindow;
-		if (win) XStoreName(dpy, win, caption);
+		if (win)
+			XStoreName(dpy, win, caption);
 		win = info.info.x11.wmwindow;
-		if (win) XStoreName(dpy, win, caption);
+		if (win)
+			XStoreName(dpy, win, caption);
 	}
 }
 
@@ -162,12 +163,12 @@ void OSystem_SDL_Maemo::setWindowCaption(const char *caption) {
 }
 
 static const Model models[] = {
-	{"SU-18", kModelType770, "770", false, true},
-	{"RX-34", kModelTypeN800, "N800", false, true},
-	{"RX-44", kModelTypeN810, "N810", true, true},
-	{"RX-48", kModelTypeN810, "N810W", true, true},
-	{"RX-51", kModelTypeN900, "N900", true, false},
-	{0, kModelTypeInvalid, 0, true, true}
+	{ "SU-18", kModelType770, "770", false, true },
+	{ "RX-34", kModelTypeN800, "N800", false, true },
+	{ "RX-44", kModelTypeN810, "N810", true, true },
+	{ "RX-48", kModelTypeN810, "N810W", true, true },
+	{ "RX-51", kModelTypeN900, "N900", true, false },
+	{ 0, kModelTypeInvalid, 0, true, true }
 };
 
 const Maemo::Model OSystem_SDL_Maemo::detectModel() {
@@ -180,16 +181,16 @@ const Maemo::Model OSystem_SDL_Maemo::detectModel() {
 	return *model;
 }
 
-#ifdef ENABLE_KEYMAPPER
+#	ifdef ENABLE_KEYMAPPER
 static const Common::KeyTableEntry maemoKeys[] = {
 	// Function keys
-	{"MENU", Common::KEYCODE_F11, 0, "Menu", false},
-	{"HOME", Common::KEYCODE_F12, 0, "Home", false},
-	{"FULLSCREEN", Common::KEYCODE_F13, 0, "FullScreen", false},
-	{"ZOOMPLUS", Common::KEYCODE_F14, 0, "Zoom+", false},
-	{"ZOOMMINUS", Common::KEYCODE_F15, 0, "Zoom-", false},
+	{ "MENU", Common::KEYCODE_F11, 0, "Menu", false },
+	{ "HOME", Common::KEYCODE_F12, 0, "Home", false },
+	{ "FULLSCREEN", Common::KEYCODE_F13, 0, "FullScreen", false },
+	{ "ZOOMPLUS", Common::KEYCODE_F14, 0, "Zoom+", false },
+	{ "ZOOMMINUS", Common::KEYCODE_F15, 0, "Zoom-", false },
 
-	{0, Common::KEYCODE_INVALID, 0, 0, false}
+	{ 0, Common::KEYCODE_INVALID, 0, 0, false }
 };
 
 Common::HardwareInputSet *OSystem_SDL_Maemo::getHardwareInputSet() {
@@ -219,7 +220,7 @@ Common::Keymap *OSystem_SDL_Maemo::getGlobalKeymap() {
 
 	return globalMap;
 }
-#endif
+#	endif
 
 void OSystem_SDL_Maemo::initObserver() {
 	assert(_eventManager);

@@ -20,105 +20,105 @@
  *
  */
 
+#include "tony/mpal/memory.h"
 #include "common/algorithm.h"
 #include "common/textconsole.h"
-#include "tony/mpal/memory.h"
 
 namespace Tony {
 
 namespace MPAL {
 
-/****************************************************************************\
+	/****************************************************************************\
 *       MemoryManager methods
 \****************************************************************************/
 
-/**
+	/**
  * Allocates a new memory block
  * @return					Returns a MemoryItem instance for the new block
  */
-MpalHandle MemoryManager::allocate(uint32 size, uint flags) {
-	MemoryItem *newItem = (MemoryItem *)malloc(sizeof(MemoryItem) + size);
-	newItem->_id = BLOCK_ID;
-	newItem->_size = size;
-	newItem->_lockCount = 0;
+	MpalHandle MemoryManager::allocate(uint32 size, uint flags) {
+		MemoryItem *newItem = (MemoryItem *)malloc(sizeof(MemoryItem) + size);
+		newItem->_id = BLOCK_ID;
+		newItem->_size = size;
+		newItem->_lockCount = 0;
 
-	// If requested, clear the allocated data block
-	if ((flags & GMEM_ZEROINIT) != 0) {
-		byte *dataP = newItem->_data;
-		Common::fill(dataP, dataP + size, 0);
+		// If requested, clear the allocated data block
+		if ((flags & GMEM_ZEROINIT) != 0) {
+			byte *dataP = newItem->_data;
+			Common::fill(dataP, dataP + size, 0);
+		}
+
+		return (MpalHandle)newItem;
 	}
 
-	return (MpalHandle)newItem;
-}
-
-/**
+	/**
  * Allocates a new memory block and returns its data pointer
  * @return					Data pointer to allocated block
  */
-void *MemoryManager::alloc(uint32 size, uint flags) {
-	MemoryItem *item = (MemoryItem *)allocate(size, flags);
-	++item->_lockCount;
-	return &item->_data[0];
-}
+	void *MemoryManager::alloc(uint32 size, uint flags) {
+		MemoryItem *item = (MemoryItem *)allocate(size, flags);
+		++item->_lockCount;
+		return &item->_data[0];
+	}
 
-#define OFFSETOF(type, field)    ((size_t) &(((type *) 0)->field))
+#define OFFSETOF(type, field) ((size_t) & (((type *)0)->field))
 
-/**
+	/**
  * Returns a reference to the MemoryItem for a gien byte pointer
  * @param block				Byte pointer
  */
-MemoryItem *MemoryManager::getItem(MpalHandle handle) {
-	MemoryItem *rec = (MemoryItem *)((byte *)handle - OFFSETOF(MemoryItem, _data));
-	assert(rec->_id == BLOCK_ID);
-	return rec;
-}
+	MemoryItem *MemoryManager::getItem(MpalHandle handle) {
+		MemoryItem *rec = (MemoryItem *)((byte *)handle - OFFSETOF(MemoryItem, _data));
+		assert(rec->_id == BLOCK_ID);
+		return rec;
+	}
 
-/**
+	/**
  * Returns a size of a memory block given its pointer
  */
-uint32 MemoryManager::getSize(MpalHandle handle) {
-	MemoryItem *item = (MemoryItem *)handle;
-	assert(item->_id == BLOCK_ID);
-	return item->_size;
-}
+	uint32 MemoryManager::getSize(MpalHandle handle) {
+		MemoryItem *item = (MemoryItem *)handle;
+		assert(item->_id == BLOCK_ID);
+		return item->_size;
+	}
 
-/**
+	/**
  * Erases a given item
  */
-void MemoryManager::freeBlock(MpalHandle handle) {
-	MemoryItem *item = (MemoryItem *)handle;
-	assert(item->_id == BLOCK_ID);
-	free(item);
-}
+	void MemoryManager::freeBlock(MpalHandle handle) {
+		MemoryItem *item = (MemoryItem *)handle;
+		assert(item->_id == BLOCK_ID);
+		free(item);
+	}
 
-/**
+	/**
  * Erases a given item
  */
-void MemoryManager::destroyItem(MpalHandle handle) {
-	MemoryItem *item = getItem(handle);
-	assert(item->_id == BLOCK_ID);
-	free(item);
-}
+	void MemoryManager::destroyItem(MpalHandle handle) {
+		MemoryItem *item = getItem(handle);
+		assert(item->_id == BLOCK_ID);
+		free(item);
+	}
 
-/**
+	/**
  * Locks an item for access
  */
-byte *MemoryManager::lockItem(MpalHandle handle) {
-	MemoryItem *item = (MemoryItem *)handle;
-	assert(item->_id == BLOCK_ID);
-	++item->_lockCount;
-	return &item->_data[0];
-}
+	byte *MemoryManager::lockItem(MpalHandle handle) {
+		MemoryItem *item = (MemoryItem *)handle;
+		assert(item->_id == BLOCK_ID);
+		++item->_lockCount;
+		return &item->_data[0];
+	}
 
-/**
+	/**
  * Unlocks a locked item
  */
-void MemoryManager::unlockItem(MpalHandle handle) {
-	MemoryItem *item = (MemoryItem *)handle;
-	assert(item->_id == BLOCK_ID);
-	assert(item->_lockCount > 0);
-	--item->_lockCount;
-}
+	void MemoryManager::unlockItem(MpalHandle handle) {
+		MemoryItem *item = (MemoryItem *)handle;
+		assert(item->_id == BLOCK_ID);
+		assert(item->_lockCount > 0);
+		--item->_lockCount;
+	}
 
 } // end of namespace MPAL
 

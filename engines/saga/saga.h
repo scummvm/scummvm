@@ -26,8 +26,8 @@
 #include "engines/engine.h"
 
 #include "common/array.h"
-#include "common/random.h"
 #include "common/memstream.h"
+#include "common/random.h"
 #include "common/textconsole.h"
 
 #include "saga/gfx.h"
@@ -82,7 +82,7 @@ class ResourceContext;
 
 // #define SAGA_DEBUG 1		// define for test functions
 #define SAGA_IMAGE_DATA_OFFSET 776
-#define SAGA_IMAGE_HEADER_LEN  8
+#define SAGA_IMAGE_HEADER_LEN 8
 
 // Note that IHNM has a smaller save title size than ITE
 // We allocate the ITE save title size in savegames, to
@@ -117,30 +117,30 @@ enum GameIds {
 
 enum GameFileTypes {
 	// Common
-	GAME_RESOURCEFILE     = 1 << 0,    // Game resources
-	GAME_SCRIPTFILE       = 1 << 1,    // Game scripts
-	GAME_SOUNDFILE        = 1 << 2,    // SFX (also contains voices and MIDI music in SAGA 2 games)
-	GAME_VOICEFILE        = 1 << 3,    // Voices (also contains SFX in the ITE floppy version)
+	GAME_RESOURCEFILE = 1 << 0, // Game resources
+	GAME_SCRIPTFILE = 1 << 1, // Game scripts
+	GAME_SOUNDFILE = 1 << 2, // SFX (also contains voices and MIDI music in SAGA 2 games)
+	GAME_VOICEFILE = 1 << 3, // Voices (also contains SFX in the ITE floppy version)
 	// ITE specific
-	GAME_DIGITALMUSICFILE = 1 << 4,    // ITE digital music, added by Wyrmkeep
-	GAME_MACBINARY        = 1 << 5,    // ITE Mac CD Guild
-	GAME_DEMOFILE         = 1 << 6,    // Early ITE demo
-	GAME_SWAPENDIAN       = 1 << 7,    // Used to identify the BE voice file in the ITE combined version
+	GAME_DIGITALMUSICFILE = 1 << 4, // ITE digital music, added by Wyrmkeep
+	GAME_MACBINARY = 1 << 5, // ITE Mac CD Guild
+	GAME_DEMOFILE = 1 << 6, // Early ITE demo
+	GAME_SWAPENDIAN = 1 << 7, // Used to identify the BE voice file in the ITE combined version
 	// IHNM specific
-	GAME_MUSICFILE_FM     = 1 << 8,    // IHNM
-	GAME_MUSICFILE_GM     = 1 << 9,    // IHNM, ITE Mac CD Guild
-	GAME_PATCHFILE        = 1 << 10,   // IHNM patch file (patch.re_/patch.res)
+	GAME_MUSICFILE_FM = 1 << 8, // IHNM
+	GAME_MUSICFILE_GM = 1 << 9, // IHNM, ITE Mac CD Guild
+	GAME_PATCHFILE = 1 << 10, // IHNM patch file (patch.re_/patch.res)
 	// SAGA 2 (Dinotopia, FTA2)
-	GAME_IMAGEFILE        = 1 << 11,   // Game images
-	GAME_OBJRESOURCEFILE  = 1 << 12    // Game object data
+	GAME_IMAGEFILE = 1 << 11, // Game images
+	GAME_OBJRESOURCEFILE = 1 << 12 // Game object data
 };
 
 enum GameFeatures {
-	GF_ITE_FLOPPY        = 1 << 0,
-	GF_ITE_DOS_DEMO      = 1 << 1,
+	GF_ITE_FLOPPY = 1 << 0,
+	GF_ITE_DOS_DEMO = 1 << 1,
 	GF_EXTRA_ITE_CREDITS = 1 << 2,
 	GF_8BIT_UNSIGNED_PCM = 1 << 3,
-	GF_IHNM_COLOR_FIX    = 1 << 4
+	GF_IHNM_COLOR_FIX = 1 << 4
 };
 
 enum VerbTypeIds {
@@ -159,7 +159,6 @@ enum VerbTypeIds {
 	kVerbITEBegin = 12,
 	kVerbITEWalkOnly = 13,
 	kVerbITELookOnly = 14,
-
 
 	kVerbIHNMNone = 0,
 	kVerbIHNMWalk = 1,
@@ -310,11 +309,11 @@ enum GameObjectTypes {
 };
 
 enum ScriptTimings {
-	kScriptTimeTicksPerSecond = (728L/10L),
-	kRepeatSpeedTicks = (728L/10L)/3,
+	kScriptTimeTicksPerSecond = (728L / 10L),
+	kRepeatSpeedTicks = (728L / 10L) / 3,
 	kNormalFadeDuration = 320, // 64 steps, 5 msec each
-	kQuickFadeDuration = 64,  // 64 steps, 1 msec each
-	kPuzzleHintTime = 30000000L  // 30 secs. used in timer
+	kQuickFadeDuration = 64, // 64 steps, 1 msec each
+	kPuzzleHintTime = 30000000L // 30 secs. used in timer
 };
 
 enum Directions {
@@ -329,8 +328,8 @@ enum Directions {
 };
 
 enum HitZoneFlags {
-	kHitZoneEnabled = (1 << 0),   // Zone is enabled
-	kHitZoneExit = (1 << 1),      // Causes char to exit
+	kHitZoneEnabled = (1 << 0), // Zone is enabled
+	kHitZoneExit = (1 << 1), // Causes char to exit
 
 	//	The following flag causes the zone to act differently.
 	//	When the actor hits the zone, it will immediately begin walking
@@ -456,8 +455,8 @@ public:
 
 class ByteArrayReadStreamEndian : public Common::MemoryReadStreamEndian {
 public:
-	ByteArrayReadStreamEndian(const ByteArray & byteArray, bool bigEndian = false)
-		: Common::MemoryReadStreamEndian(byteArray.getBuffer(), byteArray.size(), bigEndian) {
+	ByteArrayReadStreamEndian(const ByteArray &byteArray, bool bigEndian = false)
+	  : Common::MemoryReadStreamEndian(byteArray.getBuffer(), byteArray.size(), bigEndian) {
 	}
 };
 
@@ -534,7 +533,6 @@ public:
 	Puzzle *_puzzle;
 	Resource *_resource;
 
-
 	// Random number generator
 	Common::RandomSource _rnd;
 
@@ -556,6 +554,7 @@ public:
 	void loadStrings(StringsTable &stringsTable, const ByteArray &stringsData);
 
 	const char *getObjectName(uint16 objectId) const;
+
 public:
 	int processInput();
 	Point mousePos() const;
@@ -588,7 +587,7 @@ public:
 		return tick * 1000 / kScriptTimeTicksPerSecond;
 	}
 
- private:
+private:
 	uint _saveFilesCount;
 	SaveFileData _saveFiles[MAX_SAVES];
 	SaveGameHeader _saveHeader;
@@ -597,7 +596,7 @@ public:
 	bool _rightMouseButtonPressed;
 	int _mouseClickCount;
 
-//current game description
+	//current game description
 	int _gameNumber;
 	const SAGAGameDescription *_gameDescription;
 	Common::String _gameTitle;
@@ -628,7 +627,7 @@ public:
 
 	const ADGameFileDescription *getFilesDescriptions() const;
 
-	const Common::Rect &getDisplayClip() const { return _displayClip;}
+	const Common::Rect &getDisplayClip() const { return _displayClip; }
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &desc);
 	bool canLoadGameStateCurrently();
@@ -639,7 +638,6 @@ public:
 	void getExcuseInfo(int verb, const char *&textString, int &soundResourceId);
 
 private:
-
 public:
 	ColorId KnownColor2ColorId(KnownColor knownColor);
 	void setTalkspeed(int talkspeed);

@@ -28,45 +28,50 @@
 namespace Glk {
 namespace AdvSys {
 
-/**
+	/**
  * Interface class that sits between AdvSys and the GLK base, providing methods for
  * input and output
  */
-class GlkInterface : public GlkAPI {
-private:
-	winid_t _window;
-protected:
-	int _saveSlot;
-	Common::String _pendingLine;
-protected:
-	/**
+	class GlkInterface : public GlkAPI {
+	private:
+		winid_t _window;
+
+	protected:
+		int _saveSlot;
+		Common::String _pendingLine;
+
+	protected:
+		/**
 	 * GLK initialization
 	 */
-	bool initialize();
+		bool initialize();
 
-	/**
+		/**
 	 * Print a string
 	 * @param msg		String
 	 */
-	void print(const Common::String &msg);
+		void print(const Common::String &msg);
 
-	/**
+		/**
 	 * Print a number
 	 * @param number	Number to print
 	 */
-	void print(int number);
+		void print(int number);
 
-	/**
+		/**
 	 * Get an input line
 	 */
-	Common::String readLine();
-public:
-	/**
+		Common::String readLine();
+
+	public:
+		/**
 	 * Constructor
 	 */
-	GlkInterface(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-		_window(nullptr), _saveSlot(-1) {}
-};
+		GlkInterface(OSystem *syst, const GlkGameDescription &gameDesc)
+		  : GlkAPI(syst, gameDesc)
+		  , _window(nullptr)
+		  , _saveSlot(-1) {}
+	};
 
 } // End of namespace AdvSys
 } // End of namespace Glk

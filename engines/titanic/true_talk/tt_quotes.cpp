@@ -21,14 +21,17 @@
  */
 
 #include "titanic/true_talk/tt_quotes.h"
+#include "common/algorithm.h"
 #include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
-#include "common/algorithm.h"
 
 namespace Titanic {
 
-TTquotes::TTquotes() : _loaded(false), _dataP(nullptr), _dataSize(0),
-		_field544(0) {
+TTquotes::TTquotes()
+  : _loaded(false)
+  , _dataP(nullptr)
+  , _dataSize(0)
+  , _field544(0) {
 	Common::fill(&_tags[0], &_tags[256], 0);
 }
 
@@ -68,7 +71,7 @@ void TTquotes::load() {
 	delete r;
 }
 
-int TTquotes::find(const char *str)  const {
+int TTquotes::find(const char *str) const {
 	if (!str || !*str)
 		return 0;
 
@@ -134,8 +137,7 @@ int TTquotes::find(const char *startP, const char *endP) const {
 				}
 			} while (destP[destIndex]);
 
-			if (!destP[destIndex] && (srcP[srcIndex] <= '*' ||
-					(srcP[srcIndex] == 's' && srcP[srcIndex + 1] <= '*')))
+			if (!destP[destIndex] && (srcP[srcIndex] <= '*' || (srcP[srcIndex] == 's' && srcP[srcIndex + 1] <= '*')))
 				return _tags[entry._tagIndex];
 		}
 	}

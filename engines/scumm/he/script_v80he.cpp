@@ -22,24 +22,24 @@
 
 #ifdef ENABLE_HE
 
-#include "common/archive.h"
-#include "common/ini-file.h"
-#include "common/config-manager.h"
-#include "common/macresman.h"
-#include "common/savefile.h"
-#include "common/str.h"
+#	include "common/archive.h"
+#	include "common/config-manager.h"
+#	include "common/ini-file.h"
+#	include "common/macresman.h"
+#	include "common/savefile.h"
+#	include "common/str.h"
 
-#include "scumm/actor.h"
-#include "scumm/charset.h"
-#include "scumm/he/intern_he.h"
-#include "scumm/object.h"
-#include "scumm/resource.h"
-#include "scumm/scumm.h"
-#include "scumm/he/sound_he.h"
+#	include "scumm/actor.h"
+#	include "scumm/charset.h"
+#	include "scumm/he/intern_he.h"
+#	include "scumm/he/sound_he.h"
+#	include "scumm/object.h"
+#	include "scumm/resource.h"
+#	include "scumm/scumm.h"
 
 namespace Scumm {
 
-#define OPCODE(i, x)	_opcodes[i]._OPCODE(ScummEngine_v80he, x)
+#	define OPCODE(i, x) _opcodes[i]._OPCODE(ScummEngine_v80he, x)
 
 void ScummEngine_v80he::setupOpcodes() {
 	ScummEngine_v72he::setupOpcodes();
@@ -252,7 +252,7 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 	iniFile.setKey((char *)option, (char *)section, (char *)string);
 	iniFile.saveToSaveFile(convertSavePath(filename));
 
-	debug(1,"o80_writeConfigFile: Filename %s Section %s Option %s String %s", filename, section, option, string);
+	debug(1, "o80_writeConfigFile: Filename %s Section %s Option %s String %s", filename, section, option, string);
 }
 
 void ScummEngine_v80he::o80_cursorCommand() {
@@ -272,36 +272,36 @@ void ScummEngine_v80he::o80_cursorCommand() {
 		a = pop();
 		_wiz->loadWizCursor(a, b);
 		break;
-	case 0x90:		// SO_CURSOR_ON Turn cursor on
+	case 0x90: // SO_CURSOR_ON Turn cursor on
 		_cursor.state = 1;
 		break;
-	case 0x91:		// SO_CURSOR_OFF Turn cursor off
+	case 0x91: // SO_CURSOR_OFF Turn cursor off
 		_cursor.state = 0;
 		break;
-	case 0x92:		// SO_USERPUT_ON
+	case 0x92: // SO_USERPUT_ON
 		_userPut = 1;
 		break;
-	case 0x93:		// SO_USERPUT_OFF
+	case 0x93: // SO_USERPUT_OFF
 		_userPut = 0;
 		break;
-	case 0x94:		// SO_CURSOR_SOFT_ON Turn soft cursor on
+	case 0x94: // SO_CURSOR_SOFT_ON Turn soft cursor on
 		_cursor.state++;
 		if (_cursor.state > 1)
 			error("Cursor state greater than 1 in script");
 		break;
-	case 0x95:		// SO_CURSOR_SOFT_OFF Turn soft cursor off
+	case 0x95: // SO_CURSOR_SOFT_OFF Turn soft cursor off
 		_cursor.state--;
 		break;
-	case 0x96:		// SO_USERPUT_SOFT_ON
+	case 0x96: // SO_USERPUT_SOFT_ON
 		_userPut++;
 		break;
-	case 0x97:		// SO_USERPUT_SOFT_OFF
+	case 0x97: // SO_USERPUT_SOFT_OFF
 		_userPut--;
 		break;
-	case 0x9C:		// SO_CHARSET_SET
+	case 0x9C: // SO_CHARSET_SET
 		initCharset(pop());
 		break;
-	case 0x9D:		// SO_CHARSET_COLOR
+	case 0x9D: // SO_CHARSET_COLOR
 		getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < 16; i++)
 			_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)args[i];
@@ -362,7 +362,6 @@ void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int step, int typ
 
 	y = y1;
 	x = x1;
-
 
 	if (type == 2) {
 		ActorHE *a = (ActorHE *)derefActor(id, "drawLine");
@@ -492,7 +491,6 @@ void ScummEngine_v80he::o80_drawLine() {
 	default:
 		error("o80_drawLine: default case %d", subOp);
 	}
-
 }
 
 void ScummEngine_v80he::o80_pickVarRandom() {

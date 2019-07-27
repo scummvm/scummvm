@@ -26,11 +26,17 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPET, CGameObject)
-	ON_MESSAGE(ShowTextMsg)
+ON_MESSAGE(ShowTextMsg)
 END_MESSAGE_MAP()
 
-CPET::CPET() : CGameObject(), _fieldBC(0), _fieldC0(3),
-	_fieldC4(0), _fieldC8(0), _fieldD8(0), _fieldDC(0) {
+CPET::CPET()
+  : CGameObject()
+  , _fieldBC(0)
+  , _fieldC0(3)
+  , _fieldC4(0)
+  , _fieldC8(0)
+  , _fieldD8(0)
+  , _fieldDC(0) {
 }
 
 void CPET::save(SimpleFile *file, int indent) {

@@ -23,22 +23,24 @@
 #ifndef HOPKINS_COMPUTER_H
 #define HOPKINS_COMPUTER_H
 
+#include "common/rect.h"
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "common/rect.h"
 
 namespace Hopkins {
 
 class HopkinsEngine;
 
-enum ComputerEnum { COMPUTER_HOPKINS = 1, COMPUTER_SAMANTHA = 2, COMPUTER_PUBLIC = 3 };
+enum ComputerEnum { COMPUTER_HOPKINS = 1,
+	                  COMPUTER_SAMANTHA = 2,
+	                  COMPUTER_PUBLIC = 3 };
 
 class ComputerManager {
 private:
 	HopkinsEngine *_vm;
 
 	struct MenuItem {
-		int  _lineSize;
+		int _lineSize;
 		char _line[90];
 	};
 

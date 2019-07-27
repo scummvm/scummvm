@@ -57,7 +57,6 @@ protected:
 	uint16 _flags;
 	Audio::QueuingAudioStream *_audioStream;
 
-
 private:
 	// Synchronization stuff
 	bool _begunPlaying;

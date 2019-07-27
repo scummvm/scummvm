@@ -23,13 +23,13 @@
 #include "common/scummsys.h"
 
 #include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/debug.h"
 #include "common/error.h"
-#include "graphics/surface.h"
-#include "graphics/screen.h"
-#include "graphics/palette.h"
 #include "common/system.h"
+#include "graphics/palette.h"
+#include "graphics/screen.h"
+#include "graphics/surface.h"
 
 #include "engines/util.h"
 
@@ -40,7 +40,9 @@ namespace Cryo {
 
 CryoEngine *g_ed = nullptr;
 
-CryoEngine::CryoEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+CryoEngine::CryoEngine(OSystem *syst, const ADGameDescription *gameDesc)
+  : Engine(syst)
+  , _gameDescription(gameDesc) {
 	_rnd = new Common::RandomSource("cryo");
 	_debugger = nullptr;
 
@@ -71,7 +73,7 @@ Common::Error CryoEngine::run() {
 	_debugger = new Debugger(this);
 
 	///// CLTimer
-	_timerTicks = 0;   // incremented in realtime
+	_timerTicks = 0; // incremented in realtime
 
 	// Initialize graphics using following:
 	initGraphics(320, 200);

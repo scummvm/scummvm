@@ -62,7 +62,12 @@ Fight::FightData::~FightData() {
 	SAFE_DELETE(opponent);
 }
 
-Fight::Fight(LastExpressEngine *engine) : _engine(engine), _data(NULL), _endType(kFightEndLost), _state(0), _handleTimer(false) {
+Fight::Fight(LastExpressEngine *engine)
+  : _engine(engine)
+  , _data(NULL)
+  , _endType(kFightEndLost)
+  , _state(0)
+  , _handleTimer(false) {
 }
 
 Fight::~Fight() {
@@ -216,7 +221,7 @@ Fight::FightEndType Fight::setup(FightType type) {
 
 	// Compute scene to use
 	SceneIndex sceneIndex;
-	switch(type) {
+	switch (type) {
 	default:
 		sceneIndex = kSceneFightDefault;
 		break;
@@ -329,27 +334,27 @@ void Fight::loadData(FightType type) {
 		break;
 
 	case kFightMilos:
-		_data->player   = new FighterPlayerMilos(_engine);
+		_data->player = new FighterPlayerMilos(_engine);
 		_data->opponent = new FighterOpponentMilos(_engine);
 		break;
 
 	case kFightAnna:
-		_data->player   = new FighterPlayerAnna(_engine);
+		_data->player = new FighterPlayerAnna(_engine);
 		_data->opponent = new FighterOpponentAnna(_engine);
 		break;
 
 	case kFightIvo:
-		_data->player   = new FighterPlayerIvo(_engine);
+		_data->player = new FighterPlayerIvo(_engine);
 		_data->opponent = new FighterOpponentIvo(_engine);
 		break;
 
 	case kFightSalko:
-		_data->player   = new FighterPlayerSalko(_engine);
+		_data->player = new FighterPlayerSalko(_engine);
 		_data->opponent = new FighterOpponentSalko(_engine);
 		break;
 
 	case kFightVesna:
-		_data->player   = new FighterPlayerVesna(_engine);
+		_data->player = new FighterPlayerVesna(_engine);
 		_data->opponent = new FighterOpponentVesna(_engine);
 		break;
 	}
@@ -370,7 +375,7 @@ void Fight::loadData(FightType type) {
 		goto end_load;
 	}
 
-	switch(type) {
+	switch (type) {
 	default:
 		break;
 

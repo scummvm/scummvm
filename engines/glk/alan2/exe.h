@@ -26,59 +26,59 @@
 /* Header file for instruction execution unit in Alan interpreter
  */
 
-#include "glk/alan2/types.h"
 #include "glk/alan2/jumps.h"
+#include "glk/alan2/types.h"
 
 namespace Glk {
 namespace Alan2 {
 
-/* The event queue */
-extern EvtqElem eventq[];   /* Event queue */
-extern int etop;        /* Event queue top pointer */
-extern Boolean looking;     /* LOOKING? flag */
-extern int dscrstkp;        /* Point into describe stack */
+	/* The event queue */
+	extern EvtqElem eventq[]; /* Event queue */
+	extern int etop; /* Event queue top pointer */
+	extern Boolean looking; /* LOOKING? flag */
+	extern int dscrstkp; /* Point into describe stack */
 
-extern void sys(Aword fpos, Aword len);
-extern Boolean confirm(MsgKind msgno);
-extern Aptr attribute(Aword item, Aword atr);
-extern void say(Aword item);
-extern void saynum(Aword num);
-extern void saystr(char *str);
-extern Aptr strattr(Aword id, Aword atr);
-extern void setstr(Aword id, Aword atr, Aword str);
-extern void getstr(Aword fpos, Aword len);
-extern void print(Aword fpos, Aword len);
-extern void look(void);
-extern void make(Aword id, Aword atr, Aword val);
-extern void set(Aword id, Aword atr, Aword val);
-extern void incr(Aword id, Aword atr, Aword step);
-extern void decr(Aword id, Aword atr, Aword step);
-extern void use(Aword act, Aword scr);
-extern void describe(Aword id);
-extern void list(Aword cnt);
-extern void locate(Aword id, Aword whr);
-extern void empty(Aword cnt, Aword whr);
-extern void score(Aword sc);
-extern void visits(Aword v);
-extern void schedule(Aword evt, Aword whr, Aword aft);
-extern void cancl(Aword evt);
-extern void quit(CONTEXT);
-extern void restart(void);
-extern void save(void);
-extern void restore(void);
-extern void say(Aword id);
-extern void sayint(Aword val);
-extern Aword rnd(Aword from, Aword to);
-extern Abool btw(Aint val, Aint from, Aint to);
-extern Aword contains(Aptr string, Aptr substring);
-extern Abool streq(char a[], char b[]);
-extern Abool in(Aword obj, Aword cnt);
-extern Aword where(Aword item);
-extern Aint agrmax(Aword atr, Aword whr);
-extern Aint agrsum(Aword atr, Aword whr);
-extern Aint agrcount(Aword whr);
-extern Abool isHere(Aword item);
-extern Abool isNear(Aword item);
+	extern void sys(Aword fpos, Aword len);
+	extern Boolean confirm(MsgKind msgno);
+	extern Aptr attribute(Aword item, Aword atr);
+	extern void say(Aword item);
+	extern void saynum(Aword num);
+	extern void saystr(char *str);
+	extern Aptr strattr(Aword id, Aword atr);
+	extern void setstr(Aword id, Aword atr, Aword str);
+	extern void getstr(Aword fpos, Aword len);
+	extern void print(Aword fpos, Aword len);
+	extern void look(void);
+	extern void make(Aword id, Aword atr, Aword val);
+	extern void set(Aword id, Aword atr, Aword val);
+	extern void incr(Aword id, Aword atr, Aword step);
+	extern void decr(Aword id, Aword atr, Aword step);
+	extern void use(Aword act, Aword scr);
+	extern void describe(Aword id);
+	extern void list(Aword cnt);
+	extern void locate(Aword id, Aword whr);
+	extern void empty(Aword cnt, Aword whr);
+	extern void score(Aword sc);
+	extern void visits(Aword v);
+	extern void schedule(Aword evt, Aword whr, Aword aft);
+	extern void cancl(Aword evt);
+	extern void quit(CONTEXT);
+	extern void restart(void);
+	extern void save(void);
+	extern void restore(void);
+	extern void say(Aword id);
+	extern void sayint(Aword val);
+	extern Aword rnd(Aword from, Aword to);
+	extern Abool btw(Aint val, Aint from, Aint to);
+	extern Aword contains(Aptr string, Aptr substring);
+	extern Abool streq(char a[], char b[]);
+	extern Abool in(Aword obj, Aword cnt);
+	extern Aword where(Aword item);
+	extern Aint agrmax(Aword atr, Aword whr);
+	extern Aint agrsum(Aword atr, Aword whr);
+	extern Aint agrcount(Aword whr);
+	extern Abool isHere(Aword item);
+	extern Abool isNear(Aword item);
 
 } // End of namespace Alan2
 } // End of namespace Glk

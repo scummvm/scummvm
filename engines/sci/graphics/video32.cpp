@@ -20,39 +20,41 @@
  *
  */
 
-#include "audio/mixer.h"                 // for Audio::Mixer::kSFXSoundType
-#include "common/config-manager.h"       // for ConfMan
-#include "common/textconsole.h"          // for warning, error
+#include "audio/mixer.h" // for Audio::Mixer::kSFXSoundType
+#include "common/config-manager.h" // for ConfMan
+#include "common/textconsole.h" // for warning, error
 #ifndef USE_RGB_COLOR
-#include "common/translation.h"          // for _
+#	include "common/translation.h" // for _
 #endif
-#include "common/util.h"                 // for ARRAYSIZE
-#include "common/system.h"               // for g_system
-#include "engine.h"                      // for Engine, g_engine
-#include "graphics/colormasks.h"         // for createPixelFormat
-#include "graphics/palette.h"            // for PaletteManager
+#include "common/system.h" // for g_system
+#include "common/util.h" // for ARRAYSIZE
+#include "engine.h" // for Engine, g_engine
+#include "graphics/colormasks.h" // for createPixelFormat
+#include "graphics/palette.h" // for PaletteManager
 #include "graphics/transparent_surface.h" // for TransparentSurface
-#include "sci/console.h"                 // for Console
-#include "sci/engine/features.h"         // for GameFeatures
-#include "sci/engine/state.h"            // for EngineState
-#include "sci/engine/vm_types.h"         // for reg_t
-#include "sci/event.h"                   // for SciEvent, EventManager, SCI_...
-#include "sci/graphics/celobj32.h"       // for CelInfo32, ::kLowResX, ::kLo...
-#include "sci/graphics/cursor32.h"       // for GfxCursor32
-#include "sci/graphics/frameout.h"       // for GfxFrameout
-#include "sci/graphics/helpers.h"        // for Color, Palette
-#include "sci/graphics/palette32.h"      // for GfxPalette32
-#include "sci/graphics/plane32.h"        // for Plane, PlanePictureCodes::kP...
-#include "sci/graphics/screen_item32.h"  // for ScaleInfo, ScreenItem, Scale...
-#include "sci/resource.h"                // for ResourceManager, ResourceId,...
-#include "sci/sci.h"                     // for SciEngine, g_sci, getSciVersion
-#include "sci/sound/audio32.h"           // for Audio32
-#include "sci/video/seq_decoder.h"       // for SEQDecoder
-#include "video/avi_decoder.h"           // for AVIDecoder
-#include "video/coktel_decoder.h"        // for AdvancedVMDDecoder
+#include "sci/console.h" // for Console
+#include "sci/engine/features.h" // for GameFeatures
+#include "sci/engine/state.h" // for EngineState
+#include "sci/engine/vm_types.h" // for reg_t
+#include "sci/event.h" // for SciEvent, EventManager, SCI_...
+#include "sci/graphics/celobj32.h" // for CelInfo32, ::kLowResX, ::kLo...
+#include "sci/graphics/cursor32.h" // for GfxCursor32
+#include "sci/graphics/frameout.h" // for GfxFrameout
+#include "sci/graphics/helpers.h" // for Color, Palette
+#include "sci/graphics/palette32.h" // for GfxPalette32
+#include "sci/graphics/plane32.h" // for Plane, PlanePictureCodes::kP...
+#include "sci/graphics/screen_item32.h" // for ScaleInfo, ScreenItem, Scale...
 #include "sci/graphics/video32.h"
+#include "sci/resource.h" // for ResourceManager, ResourceId,...
+#include "sci/sci.h" // for SciEngine, g_sci, getSciVersion
+#include "sci/sound/audio32.h" // for Audio32
+#include "sci/video/seq_decoder.h" // for SEQDecoder
+#include "video/avi_decoder.h" // for AVIDecoder
+#include "video/coktel_decoder.h" // for AdvancedVMDDecoder
 
-namespace Graphics { struct Surface; }
+namespace Graphics {
+struct Surface;
+}
 
 namespace Sci {
 
@@ -177,7 +179,7 @@ VideoPlayer::EventFlags VideoPlayer::checkForEvent(const EventFlags flags) {
 	if ((flags & kEventFlagEscapeKey) && event.type == kSciEventKeyDown) {
 		if (getSciVersion() < SCI_VERSION_3) {
 			while ((event = _eventMan->getSciEvent(kSciEventKeyDown)),
-				   event.type != kSciEventNone) {
+			       event.type != kSciEventNone) {
 				if (event.character == kSciKeyEsc) {
 					return kEventFlagEscapeKey;
 				}
@@ -240,7 +242,7 @@ void VideoPlayer::renderFrame(const Graphics::Surface &nextFrame) const {
 #elif 1
 		{
 #else
-		}
+	}
 #endif
 			convertedFrame = tsUnscaledFrame.scaleT<Graphics::FILTER_NEAREST>(_drawRect.width(), _drawRect.height());
 		}
@@ -295,8 +297,8 @@ void VideoPlayer::setDrawRect(const int16 x, const int16 y, const int16 width, c
 
 #pragma mark SEQPlayer
 
-SEQPlayer::SEQPlayer(EventManager *eventMan) :
-	VideoPlayer(eventMan) {}
+SEQPlayer::SEQPlayer(EventManager *eventMan)
+  : VideoPlayer(eventMan) {}
 
 void SEQPlayer::play(const Common::String &fileName, const int16 numTicks, const int16, const int16) {
 
@@ -335,9 +337,9 @@ void SEQPlayer::play(const Common::String &fileName, const int16 numTicks, const
 #pragma mark -
 #pragma mark AVIPlayer
 
-AVIPlayer::AVIPlayer(EventManager *eventMan) :
-	VideoPlayer(eventMan, new Video::AVIDecoder()),
-	_status(kAVINotOpen) {
+AVIPlayer::AVIPlayer(EventManager *eventMan)
+  : VideoPlayer(eventMan, new Video::AVIDecoder())
+  , _status(kAVINotOpen) {
 	_decoder->setSoundType(Audio::Mixer::kSFXSoundType);
 }
 
@@ -494,40 +496,48 @@ uint16 AVIPlayer::getDuration() const {
 #pragma mark -
 #pragma mark VMDPlayer
 
-VMDPlayer::VMDPlayer(EventManager *eventMan, SegManager *segMan) :
-	VideoPlayer(eventMan, new Video::AdvancedVMDDecoder(Audio::Mixer::kSFXSoundType)),
-	_segMan(segMan),
+VMDPlayer::VMDPlayer(EventManager *eventMan, SegManager *segMan)
+  : VideoPlayer(eventMan, new Video::AdvancedVMDDecoder(Audio::Mixer::kSFXSoundType))
+  , _segMan(segMan)
+  ,
 
-	_isOpen(false),
-	_isInitialized(false),
-	_bundledVmd(nullptr),
-	_yieldFrame(0),
-	_yieldInterval(0),
-	_lastYieldedFrameNo(0),
+  _isOpen(false)
+  , _isInitialized(false)
+  , _bundledVmd(nullptr)
+  , _yieldFrame(0)
+  , _yieldInterval(0)
+  , _lastYieldedFrameNo(0)
+  ,
 
-	_plane(nullptr),
-	_screenItem(nullptr),
-	_planeIsOwned(true),
-	_priority(0),
-	_doublePixels(false),
-	_stretchVertical(false),
-	_blackLines(false),
-	_leaveScreenBlack(false),
-	_leaveLastFrame(false),
-	_ignorePalettes(false),
+  _plane(nullptr)
+  , _screenItem(nullptr)
+  , _planeIsOwned(true)
+  , _priority(0)
+  , _doublePixels(false)
+  , _stretchVertical(false)
+  , _blackLines(false)
+  , _leaveScreenBlack(false)
+  , _leaveLastFrame(false)
+  , _ignorePalettes(false)
+  ,
 
-	_blackoutPlane(nullptr),
+  _blackoutPlane(nullptr)
+  ,
 
-	_startColor(0),
-	_endColor(255),
+  _startColor(0)
+  , _endColor(255)
+  ,
 #ifdef SCI_VMD_BLACK_PALETTE
-	_blackPalette(false),
+  _blackPalette(false)
+  ,
 #endif
-	_boostPercent(100),
-	_boostStartColor(0),
-	_boostEndColor(255),
+  _boostPercent(100)
+  , _boostStartColor(0)
+  , _boostEndColor(255)
+  ,
 
-	_showCursor(false) {}
+  _showCursor(false) {
+}
 
 VMDPlayer::~VMDPlayer() {
 	close();
@@ -584,7 +594,7 @@ void VMDPlayer::init(int16 x, int16 y, const PlayFlags flags, const int16 boostP
 	if (getSciVersion() < SCI_VERSION_3) {
 		x &= ~1;
 	}
-	
+
 	if (upscaleVideos) {
 		x = (screenWidth - width) / 2;
 		y = (screenHeight - height) / 2;
@@ -735,9 +745,7 @@ VMDPlayer::EventFlags VMDPlayer::checkForEvent(const EventFlags flags) {
 		return kEventFlagEnd;
 	}
 
-	if (_yieldInterval > 0 &&
-		currentFrameNo != _lastYieldedFrameNo &&
-		(currentFrameNo % _yieldInterval) == 0) {
+	if (_yieldInterval > 0 && currentFrameNo != _lastYieldedFrameNo && (currentFrameNo % _yieldInterval) == 0) {
 
 		_lastYieldedFrameNo = currentFrameNo;
 		return kEventFlagYieldToVM;
@@ -1023,12 +1031,12 @@ void VMDPlayer::restrictPalette(const uint8 startColor, const int16 endColor) {
 #pragma mark -
 #pragma mark DuckPlayer
 
-DuckPlayer::DuckPlayer(EventManager *eventMan, SegManager *segMan) :
-	VideoPlayer(eventMan, new Video::AVIDecoder()),
-	_plane(nullptr),
-	_status(kDuckClosed),
-	_volume(Audio::Mixer::kMaxChannelVolume),
-	_doFrameOut(false) {
+DuckPlayer::DuckPlayer(EventManager *eventMan, SegManager *segMan)
+  : VideoPlayer(eventMan, new Video::AVIDecoder())
+  , _plane(nullptr)
+  , _status(kDuckClosed)
+  , _volume(Audio::Mixer::kMaxChannelVolume)
+  , _doFrameOut(false) {
 	_decoder->setSoundType(Audio::Mixer::kSFXSoundType);
 }
 
@@ -1046,14 +1054,13 @@ void DuckPlayer::open(const GuiResourceId resourceId, const int displayMode, con
 	_decoder->setVolume(_volume);
 
 	_doublePixels = displayMode != 0;
-	_blackLines = ConfMan.getBool("enable_black_lined_video") &&
-				 (displayMode == 1 || displayMode == 3);
+	_blackLines = ConfMan.getBool("enable_black_lined_video") && (displayMode == 1 || displayMode == 3);
 
 	// SSCI seems to incorrectly calculate the draw rect by scaling the origin
 	// in addition to the width/height for the BR point
 	setDrawRect(x, y,
-				(_decoder->getWidth() << (_doublePixels ? 1 : 0)),
-				(_decoder->getHeight() << (_doublePixels ? 1 : 0)));
+	            (_decoder->getWidth() << (_doublePixels ? 1 : 0)),
+	            (_decoder->getHeight() << (_doublePixels ? 1 : 0)));
 
 	g_sci->_gfxCursor32->hide();
 

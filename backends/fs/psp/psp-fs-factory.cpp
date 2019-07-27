@@ -34,15 +34,15 @@
 // (which then wouldn't be portable, though).
 // Anyway, for now we just disable the printf override globally
 // for the PSP port
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+#	define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
+#	define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
-#include "backends/fs/psp/psp-fs-factory.h"
-#include "backends/fs/psp/psp-fs.h"
-#include "backends/platform/psp/powerman.h"
+#	include "backends/fs/psp/psp-fs-factory.h"
+#	include "backends/fs/psp/psp-fs.h"
+#	include "backends/platform/psp/powerman.h"
 
-#include <unistd.h>
+#	include <unistd.h>
 
 namespace Common {
 DECLARE_SINGLETON(PSPFilesystemFactory);

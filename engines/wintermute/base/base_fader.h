@@ -29,7 +29,6 @@
 #ifndef WINTERMUTE_BASE_FADER_H
 #define WINTERMUTE_BASE_FADER_H
 
-
 #include "engines/wintermute/base/base_object.h"
 
 namespace Wintermute {
@@ -45,6 +44,7 @@ public:
 	DECLARE_PERSISTENT(BaseFader, BaseObject)
 	BaseFader(BaseGame *inGame);
 	virtual ~BaseFader();
+
 private:
 	bool _system;
 	bool _active;

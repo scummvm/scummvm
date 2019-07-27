@@ -32,10 +32,12 @@ class IllusionsEngine;
 
 class GenericResourceLoader : public BaseResourceLoader {
 public:
-	GenericResourceLoader(IllusionsEngine *vm) : _vm(vm) {}
+	GenericResourceLoader(IllusionsEngine *vm)
+	  : _vm(vm) {}
 	virtual ~GenericResourceLoader() {}
 	virtual void load(Resource *resource);
 	virtual bool isFlag(int flag);
+
 protected:
 	IllusionsEngine *_vm;
 };

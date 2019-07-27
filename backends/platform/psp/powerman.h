@@ -24,8 +24,8 @@
 #define POWERMAN_H
 
 #include "backends/platform/psp/thread.h"
-#include "common/singleton.h"
 #include "common/list.h"
+#include "common/singleton.h"
 
 /*
  *  Implement this class (interface) if you want to use PowerManager's suspend callback functionality
@@ -45,18 +45,18 @@ public:
 *	This ability is very useful for managing the PSPIoStream class, but may be found useful by other classes as well.
 *
 *******************************************************************************************************/
-class PowerManager: public Common::Singleton<PowerManager> {
+class PowerManager : public Common::Singleton<PowerManager> {
 
 public:
-	int blockOnSuspend();								/* block if suspending */
-	bool beginCriticalSection();	/* Use a critical section to block (if suspend was already pressed) */
-	void endCriticalSection();							/* and to prevent the PSP from suspending in a particular section */
-	bool registerForSuspend(Suspendable *item);			/* register to be called to suspend/resume */
-	bool unregisterForSuspend(Suspendable *item);		/* remove from suspend/resume list */
-	void suspend();									/* callback to have all items in list suspend */
-	void resume();									/* callback to have all items in list resume */
+	int blockOnSuspend(); /* block if suspending */
+	bool beginCriticalSection(); /* Use a critical section to block (if suspend was already pressed) */
+	void endCriticalSection(); /* and to prevent the PSP from suspending in a particular section */
+	bool registerForSuspend(Suspendable *item); /* register to be called to suspend/resume */
+	bool unregisterForSuspend(Suspendable *item); /* remove from suspend/resume list */
+	void suspend(); /* callback to have all items in list suspend */
+	void resume(); /* callback to have all items in list resume */
 	// Functions for pausing the engine
-	void pollPauseEngine();							/* Poll whether the engine should be paused */
+	void pollPauseEngine(); /* Poll whether the engine should be paused */
 
 	enum {
 		Error = -1,
@@ -75,20 +75,20 @@ private:
 	PowerManager();
 	~PowerManager();
 
-	Common::List<Suspendable *> _suspendList;		// list to register in
+	Common::List<Suspendable *> _suspendList; // list to register in
 
-	volatile bool _pauseFlag;						// For pausing, which is before suspending
-	volatile bool _pauseFlagOld;					// Save the last state of the flag while polling
-	volatile PauseState _pauseClientState;			// Pause state of the target
+	volatile bool _pauseFlag; // For pausing, which is before suspending
+	volatile bool _pauseFlagOld; // Save the last state of the flag while polling
+	volatile PauseState _pauseClientState; // Pause state of the target
 
-	volatile bool _suspendFlag;						// protected variable
-	PspMutex _flagMutex;							// mutex to access access flag
-	PspMutex _listMutex;							// mutex to access Suspendable list
-	PspCondition _threadSleep;						// signal to synchronize accessing threads
-	PspCondition _pmSleep;							// signal to wake up the PM from a critical section
-	volatile int _criticalCounter;					// Counter of how many threads are in a critical section
-	int _error;										// error code - PM can't talk to us. For debugging
-	volatile int _PMStatus;							// What the PM is doing. for debugging
+	volatile bool _suspendFlag; // protected variable
+	PspMutex _flagMutex; // mutex to access access flag
+	PspMutex _listMutex; // mutex to access Suspendable list
+	PspCondition _threadSleep; // signal to synchronize accessing threads
+	PspCondition _pmSleep; // signal to wake up the PM from a critical section
+	volatile int _criticalCounter; // Counter of how many threads are in a critical section
+	int _error; // error code - PM can't talk to us. For debugging
+	volatile int _PMStatus; // What the PM is doing. for debugging
 
 	// States for PM to be in (used for debugging)
 	enum PMState {
@@ -117,16 +117,15 @@ private:
 		kDoneResume
 	};
 
-	volatile int _listCounter;						/* How many people are in the list - just for debugging */
+	volatile int _listCounter; /* How many people are in the list - just for debugging */
 
-	void debugPM();									/* print info about the PM */
+	void debugPM(); /* print info about the PM */
 
 public:
 	int getPMStatus() const { return _PMStatus; }
-
 };
 
 // For easy access
-#define PowerMan	PowerManager::instance()
+#define PowerMan PowerManager::instance()
 
 #endif /* POWERMAN_H */

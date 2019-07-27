@@ -26,14 +26,15 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/wintypes.h"
-#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/wintypes.h"
 
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
-BaseSurface::BaseSurface(BaseGame *inGame) : BaseClass(inGame) {
+BaseSurface::BaseSurface(BaseGame *inGame)
+  : BaseClass(inGame) {
 	_referenceCount = 0;
 
 	_width = _height = 0;
@@ -50,7 +51,6 @@ BaseSurface::BaseSurface(BaseGame *inGame) : BaseClass(inGame) {
 	_lastUsedTime = 0;
 	_valid = false;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 BaseSurface::~BaseSurface() {
@@ -79,7 +79,6 @@ bool BaseSurface::create(int width, int height) {
 	return STATUS_FAILED;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurface::startPixelOp() {
 	return STATUS_FAILED;
@@ -90,37 +89,30 @@ bool BaseSurface::endPixelOp() {
 	return STATUS_FAILED;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurface::getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a) {
 	return STATUS_FAILED;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurface::putPixel(int x, int y, byte r, byte g, byte b, int a) {
 	return STATUS_FAILED;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurface::comparePixel(int x, int y, byte r, byte g, byte b, int a) {
 	return false;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 bool BaseSurface::isTransparentAtLite(int x, int y) {
 	return false;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurface::invalidate() {
 	return STATUS_FAILED;
 }
-
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurface::prepareToDraw() {
@@ -133,7 +125,6 @@ bool BaseSurface::prepareToDraw() {
 		return STATUS_OK;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseSurface::setSize(int width, int height) {

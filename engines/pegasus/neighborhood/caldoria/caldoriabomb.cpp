@@ -23,10 +23,10 @@
  *
  */
 
-#include "pegasus/gamestate.h"
-#include "pegasus/pegasus.h"
-#include "pegasus/neighborhood/caldoria/caldoria.h"
 #include "pegasus/neighborhood/caldoria/caldoriabomb.h"
+#include "pegasus/gamestate.h"
+#include "pegasus/neighborhood/caldoria/caldoria.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -56,7 +56,7 @@ static const CoordType kVertextHotSpotHeight = 24;
 static const NotificationFlags kBombTimerExpiredFlag = 1;
 
 static const VertexType kBombLevelOne[] = {
-	0, 1, 0, 1, 0,			// hot vertices first.
+	0, 1, 0, 1, 0, // hot vertices first.
 	1, 1, 0, 1, 1,
 	1, 1, 0, 1, 0,
 	1, 1, 0, 1, 1,
@@ -68,7 +68,7 @@ static const VertexType kBombLevelOne[] = {
 	0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0,
 
-	9,						// 9 edges in this level
+	9, // 9 edges in this level
 
 	kEdgeOneFourth,
 	3,
@@ -1000,7 +1000,8 @@ bool allEdgesUsed(BombEdgeList edges) {
 	return true;
 }
 
-BombGrid::BombGrid(const DisplayElementID id) : Picture(id) {
+BombGrid::BombGrid(const DisplayElementID id)
+  : Picture(id) {
 	Common::Rect bounds(0, 0, kBombGridWidth, kBombGridHeight);
 
 	allocateSurface(bounds);
@@ -1098,7 +1099,8 @@ void BombGrid::drawEdges(BombEdgeList edges) {
 	gfx->setCurSurface(gfx->getWorkArea());
 }
 
-BombTimer::BombTimer(const DisplayElementID id) : IdlerAnimation(id) {
+BombTimer::BombTimer(const DisplayElementID id)
+  : IdlerAnimation(id) {
 	_middle = -1;
 	_leftImage.getImageFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kTimerLeftPICTID);
 	_rightImage.getImageFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kTimerRightPICTID);
@@ -1144,13 +1146,15 @@ void BombTimer::timeChanged(const TimeValue newTime) {
 	}
 }
 
-#define CREATE_BOMB_LEVEL(num, data) \
+#define CREATE_BOMB_LEVEL(num, data)              \
 	_bombLevel[num] = new VertexType[sizeof(data)]; \
 	memcpy(_bombLevel[num], data, sizeof(data))
 
-CaldoriaBomb::CaldoriaBomb(Neighborhood *owner, NotificationManager *manager) :
-		GameInteraction(kCaldoriaBombInteractionID, owner), _grid(kCaldoriaBombGridID),
-		_timer(kCaldoriaBombTimerID), _timerNotification(kCaldoriaBombTimerNotificationID, manager) {
+CaldoriaBomb::CaldoriaBomb(Neighborhood *owner, NotificationManager *manager)
+  : GameInteraction(kCaldoriaBombInteractionID, owner)
+  , _grid(kCaldoriaBombGridID)
+  , _timer(kCaldoriaBombTimerID)
+  , _timerNotification(kCaldoriaBombTimerNotificationID, manager) {
 	CREATE_BOMB_LEVEL(0, kBombLevelOne);
 	CREATE_BOMB_LEVEL(1, kBombLevelTwo);
 	CREATE_BOMB_LEVEL(2, kBombLevelThree);
@@ -1200,7 +1204,7 @@ void CaldoriaBomb::openInteraction() {
 	for (VertexType i = 0; i < 25; i++) {
 		_vertexHotspot[i] = new Hotspot(i + kVertextHotSpotBaseID);
 		r.moveTo(vertToX(i) + kCaldoriaBombGridLeft - kVertextHotSpotWidth / 2 + 6,
-				vertToY(i) + kCaldoriaBombGridTop - kVertextHotSpotHeight / 2 + 6);
+		         vertToY(i) + kCaldoriaBombGridTop - kVertextHotSpotHeight / 2 + 6);
 		_vertexHotspot[i]->setArea(r);
 		_vertexHotspot[i]->setHotspotFlags(kNeighborhoodSpotFlag | kClickSpotFlag);
 		g_allHotspots.push_back(_vertexHotspot[i]);
@@ -1320,49 +1324,49 @@ void CaldoriaBomb::handleInput(const Input &input, const Hotspot *hotspot) {
 	GameInteraction::handleInput(input, hotspot);
 
 	switch (_lastVertex) {
-	case -2:			// Flash back to yellow.
+	case -2: // Flash back to yellow.
 		if (tickCount() > _flashTime + kOnTime1) {
 			replaceUsedEdges(_bombLevel[_currentLevel], 2, 3);
 			_grid.drawEdges(_bombLevel[_currentLevel]);
 			_lastVertex = -3;
 		}
 		break;
-	case -3:			// Flash back to red.
+	case -3: // Flash back to red.
 		if (tickCount() > _flashTime + kOffTime1) {
 			replaceUsedEdges(_bombLevel[_currentLevel], 3, 2);
 			_grid.drawEdges(_bombLevel[_currentLevel]);
 			_lastVertex = -4;
 		}
 		break;
-	case -4:			// Flash all to yellow.
+	case -4: // Flash all to yellow.
 		if (tickCount() > _flashTime + kOnTime2) {
 			setAllUsedEdgesUsed(_bombLevel[_currentLevel], 1);
 			_grid.drawEdges(_bombLevel[_currentLevel]);
 			_lastVertex = -5;
 		}
 		break;
-	case -5:			// Flash all to red.
+	case -5: // Flash all to red.
 		if (tickCount() > _flashTime + kOffTime2) {
 			setAllUsedEdgesUsed(_bombLevel[_currentLevel], 2);
 			_grid.drawEdges(_bombLevel[_currentLevel]);
 			_lastVertex = -6;
 		}
 		break;
-	case -6:			// Flash all to yellow.
+	case -6: // Flash all to yellow.
 		if (tickCount() > _flashTime + kOnTime3) {
 			setAllUsedEdgesUsed(_bombLevel[_currentLevel], 1);
 			_grid.drawEdges(_bombLevel[_currentLevel]);
 			_lastVertex = -7;
 		}
 		break;
-	case -7:			// Flash all to red.
+	case -7: // Flash all to red.
 		if (tickCount() > _flashTime + kOffTime3) {
 			setAllUsedEdgesUsed(_bombLevel[_currentLevel], 2);
 			_grid.drawEdges(_bombLevel[_currentLevel]);
 			_lastVertex = -8;
 		}
 		break;
-	case -8:			// Restore to normal.
+	case -8: // Restore to normal.
 		if (tickCount() > _flashTime + kOnTime4) {
 			setAllEdgesUsed(_bombLevel[_currentLevel], 0);
 			_grid.drawEdges(_bombLevel[_currentLevel]);
@@ -1371,28 +1375,28 @@ void CaldoriaBomb::handleInput(const Input &input, const Hotspot *hotspot) {
 		break;
 
 	// Flash grid after success.
-	case -20:			// Flash off.
+	case -20: // Flash off.
 		if (tickCount() > _flashTime + kOnTime1) {
 			setAllEdgesUsed(_bombLevel[_currentLevel], 4);
 			_grid.drawEdges(_bombLevel[_currentLevel]);
 			_lastVertex = -21;
 		}
 		break;
-	case -21:			// Flash on.
+	case -21: // Flash on.
 		if (tickCount() > _flashTime + kOffTime1) {
 			setAllEdgesUsed(_bombLevel[_currentLevel], 1);
 			_grid.drawEdges(_bombLevel[_currentLevel]);
 			_lastVertex = -22;
 		}
 		break;
-	case -22:			// Flash off.
+	case -22: // Flash off.
 		if (tickCount() > _flashTime + kOnTime2) {
 			setAllEdgesUsed(_bombLevel[_currentLevel], 4);
 			_grid.drawEdges(_bombLevel[_currentLevel]);
 			_lastVertex = -23;
 		}
 		break;
-	case -23:			// Flash on.
+	case -23: // Flash on.
 		if (tickCount() > _flashTime + kOffTime2) {
 			setAllEdgesUsed(_bombLevel[_currentLevel], 1);
 			_grid.drawEdges(_bombLevel[_currentLevel]);

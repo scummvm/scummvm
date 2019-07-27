@@ -25,8 +25,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CGamesConsole, CBackground)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(LeaveViewMsg)
 END_MESSAGE_MAP()
 
 void CGamesConsole::save(SimpleFile *file, int indent) {

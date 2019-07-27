@@ -33,12 +33,17 @@ class CGondolierSong : public CRoomAutoSoundPlayer {
 	bool SignalObject(CSignalObject *msg);
 	bool SetVolumeMsg(CSetVolumeMsg *msg);
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
+
 public:
 	bool _enabled;
 	int _value;
+
 public:
 	CLASSDEF;
-	CGondolierSong() : CRoomAutoSoundPlayer(), _enabled(true), _value(0) {}
+	CGondolierSong()
+	  : CRoomAutoSoundPlayer()
+	  , _enabled(true)
+	  , _value(0) {}
 
 	/**
 	 * Save the data for the class to file

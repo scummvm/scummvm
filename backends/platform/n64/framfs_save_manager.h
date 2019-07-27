@@ -39,7 +39,8 @@ private:
 	bool seek(int32 offs, int whence);
 
 public:
-	InFRAMSave() : fd(NULL) { }
+	InFRAMSave()
+	  : fd(NULL) {}
 
 	~InFRAMSave() {
 		if (fd != NULL)
@@ -75,7 +76,8 @@ public:
 		return framfs_tell(fd);
 	}
 
-	OutFRAMSave(const char *_filename) : fd(NULL) {
+	OutFRAMSave(const char *_filename)
+	  : fd(NULL) {
 		fd = framfs_open(_filename, "w");
 	}
 
@@ -144,6 +146,5 @@ public:
 
 	virtual Common::StringArray listSavefiles(const Common::String &pattern);
 };
-
 
 #endif

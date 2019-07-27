@@ -23,8 +23,8 @@
 #ifndef TITANIC_PET_LOAD_SAVE_H
 #define TITANIC_PET_LOAD_SAVE_H
 
-#include "titanic/pet_control/pet_glyphs.h"
 #include "titanic/gfx/text_control.h"
+#include "titanic/pet_control/pet_glyphs.h"
 
 namespace Titanic {
 
@@ -51,12 +51,14 @@ private:
 	 * Checks if a point is within a given saveame slot
 	 */
 	bool isSlotHighlighted(int index, const Point &pt);
+
 protected:
 	CTextControl _slotNames[SAVEGAME_SLOTS_COUNT];
 	bool _slotInUse[SAVEGAME_SLOTS_COUNT];
 	CPetGfxElement _btnLoadSave;
 	CPetGfxElement _gutter;
 	static int _savegameSlotNum;
+
 protected:
 	/**
 	 * Reset the slot names list
@@ -67,6 +69,7 @@ protected:
 	 * Highlight one of the slots
 	 */
 	void highlightSlot(int index);
+
 public:
 	/**
 	 * Setup the glyph

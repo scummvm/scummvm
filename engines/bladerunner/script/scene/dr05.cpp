@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 enum kDR05Loops {
-	kDR05LoopMainLoop      = 0,
+	kDR05LoopMainLoop = 0,
 	kDR05LoopMainDestroyed = 2
 };
 
@@ -69,8 +69,7 @@ bool SceneScriptDR05::MouseClick(int x, int y) {
 bool SceneScriptDR05::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("T2 DOORWAY", objectName)) {
 		if (!Game_Flag_Query(kFlagNotUsed276)
-		 &&  Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiDefault
-		) {
+		    && Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiDefault) {
 			Actor_Face_Object(kActorMcCoy, "T2 DOORWAY", true);
 			Actor_Says(kActorMcCoy, 1020, 14);
 			Actor_Says(kActorMoraji, 90, 13);
@@ -97,9 +96,8 @@ bool SceneScriptDR05::ClickedOnItem(int itemId, bool a2) {
 			Game_Flag_Set(kFlagDR05BombWillExplode);
 			Actor_Set_Goal_Number(kActorMoraji, kGoalMorajiChooseFate);
 		} else if (!Game_Flag_Query(kFlagDR05BombExploded)
-		        && !Loop_Actor_Walk_To_Item(kActorMcCoy, kItemBomb, 24, true, true)
-		        &&  Actor_Query_Goal_Number(kActorMoraji) != kGoalMorajiRunOut
-		) {
+		           && !Loop_Actor_Walk_To_Item(kActorMcCoy, kItemBomb, 24, true, true)
+		           && Actor_Query_Goal_Number(kActorMoraji) != kGoalMorajiRunOut) {
 			if (!Actor_Query_Goal_Number(kActorMoraji)) {
 				Actor_Says_With_Pause(kActorMcCoy, 1015, 0.1f, 12);
 				Actor_Says(kActorMoraji, 70, 13);
@@ -110,9 +108,8 @@ bool SceneScriptDR05::ClickedOnItem(int itemId, bool a2) {
 	}
 
 	if (itemId == kItemChain
-	 && Player_Query_Combat_Mode()
-	 && Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiDefault
-	) {
+	    && Player_Query_Combat_Mode()
+	    && Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiDefault) {
 		Overlay_Play("DR05OVER", 1, false, true, 0);
 		Item_Remove_From_World(kItemChain);
 		Game_Flag_Set(kFlagDR05ChainShot);
@@ -157,9 +154,8 @@ void SceneScriptDR05::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptDR05::PlayerWalkedIn() {
 	if (!Game_Flag_Query(kFlagDR05ExplodedEntered)
-	 && !Game_Flag_Query(kFlagDR05ChainShot)
-	 &&  Game_Flag_Query(kFlagDR05BombExploded)
-	) {
+	    && !Game_Flag_Query(kFlagDR05ChainShot)
+	    && Game_Flag_Query(kFlagDR05BombExploded)) {
 		Item_Remove_From_World(kItemChain);
 	}
 
@@ -187,8 +183,7 @@ void SceneScriptDR05::PlayerWalkedIn() {
 	}
 
 	if (!Game_Flag_Query(kFlagDR05MorajiTalk)
-	 &&  Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiDefault
-	) {
+	    && Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiDefault) {
 		Actor_Face_Actor(kActorMcCoy, kActorMoraji, true);
 		Actor_Says(kActorMcCoy, 1010, 13);
 		Actor_Face_Item(kActorMcCoy, kItemBomb, true);
@@ -206,9 +201,8 @@ void SceneScriptDR05::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 
 	if (Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiFreed
-	 || Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiGetUp
-	 || Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiScream
-	) {
+	    || Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiGetUp
+	    || Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiScream) {
 		Actor_Set_Goal_Number(kActorMoraji, kGoalMorajiRunOut);
 		//return true;
 	}

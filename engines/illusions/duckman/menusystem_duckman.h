@@ -57,8 +57,9 @@ public:
 	DuckmanMenuSystem(IllusionsEngine_Duckman *vm);
 	~DuckmanMenuSystem();
 	void runMenu(MenuChoiceOffsets menuChoiceOffsets, int16 *menuChoiceOffset,
-		uint32 menuId, uint32 duration, uint timeOutMenuChoiceIndex, uint32 menuCallerThreadId);
-public://protected:
+	             uint32 menuId, uint32 duration, uint timeOutMenuChoiceIndex, uint32 menuCallerThreadId);
+
+public: //protected:
 	IllusionsEngine_Duckman *_vm;
 	BaseMenu *_menus[kDuckmanLastMenuIndex];
 	void clearMenus();
@@ -82,15 +83,17 @@ public://protected:
 	virtual void setGameState(int gameState);
 	virtual void setMenuCursorNum(int cursorNum);
 	virtual void playSoundEffect(int sfxId);
+
 private:
 	MenuItem *createOptionsSliderMenuItem(MenuActionUpdateSlider **action, const Common::String &text,
-										  SliderActionType type, BaseMenu *baseMenu);
-	};
+	                                      SliderActionType type, BaseMenu *baseMenu);
+};
 
 class MenuActionInventoryAddRemove : public BaseMenuAction {
 public:
 	MenuActionInventoryAddRemove(BaseMenuSystem *menuSystem, IllusionsEngine_Duckman *vm, uint choiceIndex);
 	virtual void execute();
+
 protected:
 	IllusionsEngine_Duckman *_vm;
 	int _choiceIndex;
@@ -105,6 +108,7 @@ public:
 
 	virtual void execute();
 	void setSliderValue(uint8 newValue);
+
 protected:
 	IllusionsEngine_Duckman *_vm;
 	SliderActionType _type;
@@ -116,12 +120,12 @@ protected:
 class MenuActionResetOptionSliders : public BaseMenuAction {
 public:
 	MenuActionResetOptionSliders(BaseMenuSystem *menuSystem,
-								 MenuActionUpdateSlider *sfxSlider,
-								 MenuActionUpdateSlider *musiclider,
-								 MenuActionUpdateSlider *speechSlider,
-								 MenuActionUpdateSlider *textDurationSlider
-	);
+	                             MenuActionUpdateSlider *sfxSlider,
+	                             MenuActionUpdateSlider *musiclider,
+	                             MenuActionUpdateSlider *speechSlider,
+	                             MenuActionUpdateSlider *textDurationSlider);
 	virtual void execute();
+
 protected:
 	MenuActionUpdateSlider *_sfxSlider;
 	MenuActionUpdateSlider *_musiclider;

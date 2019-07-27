@@ -22,17 +22,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
 #include "common/memstream.h"
 #include "common/textconsole.h"
 
-#include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"
 #include "sword2/logic.h"
 #include "sword2/resman.h"
 #include "sword2/router.h"
 #include "sword2/screen.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
@@ -104,8 +103,8 @@ namespace Sword2 {
 // Walk-Grid Header - taken directly from old "header.h" in STD_INC
 
 struct WalkGridHeader {
-	int32 numBars;		// number of bars on the floor
-	int32 numNodes;		// number of nodes
+	int32 numBars; // number of bars on the floor
+	int32 numNodes; // number of nodes
 };
 
 uint8 Router::returnSlotNo(uint32 megaId) {
@@ -279,7 +278,7 @@ int32 Router::routeFinder(byte *ob_mega, byte *ob_walkdata, int32 x, int32 y, in
 		break;
 	}
 
-	return routeFlag;	// send back null route
+	return routeFlag; // send back null route
 }
 
 int32 Router::getRoute() {
@@ -519,7 +518,7 @@ void Router::smoothCheck(int32 &k, int32 best, int32 p, int32 dirS, int32 dirD) 
 
 	// set up sd0-ss2 to reflect possible movement in each direction
 
-	if (dirS == 0 || dirS == 4) {	// vert and diag
+	if (dirS == 0 || dirS == 4) { // vert and diag
 		ddx = ldx;
 		ddy = (ldx * _diagonaly) / _diagonalx;
 		dsy = ldy - ddy;
@@ -552,7 +551,7 @@ void Router::smoothCheck(int32 &k, int32 best, int32 p, int32 dirS, int32 dirD) 
 	}
 
 	switch (best) {
-	case 0:		// halfsquare, diagonal, halfsquare
+	case 0: // halfsquare, diagonal, halfsquare
 		_smoothPath[k].x = x + dsx / 2;
 		_smoothPath[k].y = y + dsy / 2;
 		_smoothPath[k].dir = dirS;
@@ -572,7 +571,7 @@ void Router::smoothCheck(int32 &k, int32 best, int32 p, int32 dirS, int32 dirD) 
 		k++;
 
 		break;
-	case 1:		// square, diagonal
+	case 1: // square, diagonal
 		_smoothPath[k].x = x + dsx;
 		_smoothPath[k].y = y + dsy;
 		_smoothPath[k].dir = dirS;
@@ -586,7 +585,7 @@ void Router::smoothCheck(int32 &k, int32 best, int32 p, int32 dirS, int32 dirD) 
 		k++;
 
 		break;
-	case 2:		// diagonal square
+	case 2: // diagonal square
 		_smoothPath[k].x = x + ddx;
 		_smoothPath[k].y = y + ddy;
 		_smoothPath[k].dir = dirD;
@@ -600,7 +599,7 @@ void Router::smoothCheck(int32 &k, int32 best, int32 p, int32 dirS, int32 dirD) 
 		k++;
 
 		break;
-	default:	// halfdiagonal, square, halfdiagonal
+	default: // halfdiagonal, square, halfdiagonal
 		_smoothPath[k].x = x + ddx / 2;
 		_smoothPath[k].y = y + ddy / 2;
 		_smoothPath[k].dir = dirD;
@@ -753,7 +752,7 @@ void Router::earlySlowOut(byte *ob_mega, byte *ob_walkdata) {
 
 			walkAnim[walk_pc].frame += _firstSlowOutFrame + ((walkAnim[walk_pc].frame / _framesPerStep) * (_numberOfSlowOutFrames - _framesPerStep));
 			walkAnim[walk_pc].step = 0;
-			debug(5, "SLOW-OUT FRAME: walkAnim[%d].frame = %d",walk_pc, walkAnim[walk_pc].frame);
+			debug(5, "SLOW-OUT FRAME: walkAnim[%d].frame = %d", walk_pc, walkAnim[walk_pc].frame);
 			walk_pc++;
 		} while (walkAnim[walk_pc].step > 0);
 
@@ -781,7 +780,7 @@ void Router::earlySlowOut(byte *ob_mega, byte *ob_walkdata) {
 	}
 
 	// end of sequence
-	walkAnim[walk_pc].frame	= 512;
+	walkAnim[walk_pc].frame = 512;
 
 	// so that this doesn't happen again while 'george_walking' is still
 	// '2'
@@ -816,7 +815,7 @@ void Router::addSlowOutFrames(WalkData *walkAnim) {
 			// because no longer a normal walk-step
 			walkAnim[slowOutFrameNo].step = 0;
 
-			debug(5, "walkAnim[%d].frame = %d",slowOutFrameNo,walkAnim[slowOutFrameNo].frame);
+			debug(5, "walkAnim[%d].frame = %d", slowOutFrameNo, walkAnim[slowOutFrameNo].frame);
 			slowOutFrameNo++;
 		} while (slowOutFrameNo < _lastCount);
 
@@ -1021,7 +1020,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 				_moduleX = module16X >> 16;
 				_moduleY = module16Y >> 16;
 				walkAnim[_stepCount].frame = module;
-				walkAnim[_stepCount].step = step;	// normally 0,1,2,3,4,5,0,1,2,etc
+				walkAnim[_stepCount].step = step; // normally 0,1,2,3,4,5,0,1,2,etc
 				walkAnim[_stepCount].dir = _currentDir;
 				walkAnim[_stepCount].x = _moduleX;
 				walkAnim[_stepCount].y = _moduleY;
@@ -1038,7 +1037,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 			errorY = errorY * stepY;
 
 			if (errorX < 0 || errorY < 0) {
-				_modularPath[p].num = 0;	// the end of the path
+				_modularPath[p].num = 0; // the end of the path
 
 				// okay those last steps took us past our
 				// target but do we want to scoot or moonwalk
@@ -1068,8 +1067,8 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 					}
 				}
 
-				errorX = _modularPath[p].x - walkAnim[_stepCount-1].x;
-				errorY = _modularPath[p].y - walkAnim[_stepCount-1].y;
+				errorX = _modularPath[p].x - walkAnim[_stepCount - 1].x;
+				errorY = _modularPath[p].y - walkAnim[_stepCount - 1].y;
 
 				// okay we've reached the end but we still
 				// have an error
@@ -1108,7 +1107,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 
 				// check each turn condition in turn
 
-				 // only for george
+				// only for george
 				if (lastDir != 99 && _currentDir != 99 && _walkData.usingWalkingTurnFrames) {
 					// 1 and -7 going right -1 and 7 going
 					// left
@@ -1486,7 +1485,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 
 	int32 p;
 
-	 for (p = 1; _modularPath[p].dir < NO_DIRECTIONS; ++p) {
+	for (p = 1; _modularPath[p].dir < NO_DIRECTIONS; ++p) {
 		while (_modularPath[p].num > 0) {
 			_currentDir = _modularPath[p].dir;
 			if (_currentDir < NO_DIRECTIONS) {
@@ -1504,7 +1503,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 					_moduleX = module16X >> 16;
 					_moduleY = module16Y >> 16;
 					walkAnim[_stepCount].frame = module;
-					walkAnim[_stepCount].step = step;	// normally 0,1,2,3,4,5,0,1,2,etc
+					walkAnim[_stepCount].step = step; // normally 0,1,2,3,4,5,0,1,2,etc
 					walkAnim[_stepCount].dir = _currentDir;
 					walkAnim[_stepCount].x = _moduleX;
 					walkAnim[_stepCount].y = _moduleY;
@@ -1788,7 +1787,7 @@ int32 Router::newCheck(int32 status, int32 x1, int32 y1, int32 x2, int32 y2) {
 				step2 = check(x1 + ldx / 2, y1, x1 + ldx / 2 + dlx, y2);
 				if (step2 != 0) {
 					step3 = check(x1 + ldx / 2 + dlx, y2, x2, y2);
-					if (step3 != 0)	{
+					if (step3 != 0) {
 						steps = step1 + step2 + step3;
 						options |= 1;
 					}
@@ -1822,8 +1821,8 @@ int32 Router::newCheck(int32 status, int32 x1, int32 y1, int32 x2, int32 y2) {
 		ldx = 0;
 
 		// options are square, diagonal a code 1 route
-		step1 = check(x1 ,y1, x1, y1 + ldy);
-		if (step1 != 0)	{
+		step1 = check(x1, y1, x1, y1 + ldy);
+		if (step1 != 0) {
 			step2 = check(x1, y1 + ldy, x2, y2);
 			if (step2 != 0) {
 				steps = step1 + step2;
@@ -1865,7 +1864,7 @@ int32 Router::newCheck(int32 status, int32 x1, int32 y1, int32 x2, int32 y2) {
 				step2 = check(x1 + dlx / 2, y1 + dly / 2, x1 + dlx / 2, y1 + ldy + dly / 2);
 				if (step2 != 0) {
 					step3 = check(x1 + dlx / 2, y1 + ldy + dly / 2, x2, y2);
-					if (step3 != 0)	{
+					if (step3 != 0) {
 						steps = step1 + step2 + step3;
 						options |= 8;
 					}
@@ -1914,7 +1913,7 @@ bool Router::lineCheck(int32 x1, int32 y1, int32 x2, int32 y2) {
 	int32 dirx = x2 - x1;
 	int32 diry = y2 - y1;
 
-	int32 co = (y1 * dirx) - (x1 * diry);		// new line equation
+	int32 co = (y1 * dirx) - (x1 * diry); // new line equation
 
 	for (int i = 0; i < _nBars && linesCrossed; i++) {
 		// skip if not on module
@@ -1923,7 +1922,7 @@ bool Router::lineCheck(int32 x1, int32 y1, int32 x2, int32 y2) {
 			// but all this arithmetic we must have loads of time
 
 			// slope it he slope between the two lines
-			int32 slope = (_bars[i].dx * diry) - (_bars[i].dy *dirx);
+			int32 slope = (_bars[i].dx * diry) - (_bars[i].dy * dirx);
 			// assuming parallel lines don't cross
 			if (slope != 0) {
 				// calculate x intercept and check its on both
@@ -2352,8 +2351,8 @@ void Router::loadWalkGrid() {
 	byte *fPolygrid;
 	uint16 fPolygridLen;
 
-	_nBars	= 0;	// reset counts
-	_nNodes	= 1;	// leave node 0 for start-node
+	_nBars = 0; // reset counts
+	_nNodes = 1; // leave node 0 for start-node
 
 	// STATIC GRIDS (added/removed by object logics)
 
@@ -2410,7 +2409,7 @@ void Router::loadWalkGrid() {
 			// walkgrid
 
 			_nBars += floorHeader.numBars;
-			_nNodes	+= floorHeader.numNodes;
+			_nNodes += floorHeader.numNodes;
 		}
 	}
 }

@@ -42,15 +42,16 @@ class EncryptedStream;
 
 // sample info
 struct SmpInfo {
-	const uint8  *_saddr;                              // address
-	uint16  _slen;                                     // length
-	uint16  _span;                                     // left/right pan (0-15)
-	int     _counter;                                  // number of time the sample should be played
+	const uint8 *_saddr; // address
+	uint16 _slen; // length
+	uint16 _span; // left/right pan (0-15)
+	int _counter; // number of time the sample should be played
 };
 
 class DataCk {
 	byte *_buf;
 	int _ckSize;
+
 public:
 	DataCk(byte *buf, int bufSize);
 	~DataCk();
@@ -75,6 +76,7 @@ public:
 	void setRepeat(int16 count);
 	void stop();
 	void checkSoundHandles();
+
 private:
 	int _soundRepeatCount;
 	CGE2Engine *_vm;
@@ -91,6 +93,7 @@ class Fx {
 
 	DataCk *loadWave(EncryptedStream *file);
 	Common::String name(int ref, int sub);
+
 public:
 	DataCk *_current;
 
@@ -101,7 +104,7 @@ public:
 	DataCk *load(int ref, int sub = 0);
 };
 
-class MusicPlayer: public Audio::MidiPlayer {
+class MusicPlayer : public Audio::MidiPlayer {
 private:
 	CGE2Engine *_vm;
 	byte *_data;
@@ -113,6 +116,7 @@ private:
 
 	// Stop MIDI File
 	void sndMidiStop();
+
 public:
 	explicit MusicPlayer(CGE2Engine *vm);
 	~MusicPlayer();

@@ -25,10 +25,12 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CEnterBombRoom, CMovePlayerTo)
-	ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseButtonDownMsg)
 END_MESSAGE_MAP()
 
-CEnterBombRoom::CEnterBombRoom() : CMovePlayerTo(), _fieldC8(0) {
+CEnterBombRoom::CEnterBombRoom()
+  : CMovePlayerTo()
+  , _fieldC8(0) {
 }
 
 void CEnterBombRoom::save(SimpleFile *file, int indent) {

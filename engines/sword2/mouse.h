@@ -27,13 +27,13 @@
 
 #include "common/rect.h"
 
-#define MENU_MASTER_OBJECT	44
+#define MENU_MASTER_OBJECT 44
 
-#define	MAX_SUBJECT_LIST 30	// is that enough?
+#define MAX_SUBJECT_LIST 30 // is that enough?
 
-#define TOTAL_subjects		(375 - 256 + 1)	// the speech subject bar
-#define TOTAL_engine_pockets	(15 + 10)	// +10 for overflow
-#define	TOTAL_mouse_list 50
+#define TOTAL_subjects (375 - 256 + 1) // the speech subject bar
+#define TOTAL_engine_pockets (15 + 10) // +10 for overflow
+#define TOTAL_mouse_list 50
 
 namespace Sword2 {
 
@@ -42,15 +42,15 @@ struct BuildUnit;
 
 // Menubar defines.
 
-#define RDMENU_TOP		0
-#define RDMENU_BOTTOM		1
+#define RDMENU_TOP 0
+#define RDMENU_BOTTOM 1
 
 enum {
-	MOUSE_normal		= 0,	// normal in game
-	MOUSE_menu		= 1,	// menu chooser
-	MOUSE_drag		= 2,	// dragging luggage
-	MOUSE_system_menu	= 3,	// system menu chooser
-	MOUSE_holding		= 4	// special
+	MOUSE_normal = 0, // normal in game
+	MOUSE_menu = 1, // menu chooser
+	MOUSE_drag = 2, // dragging luggage
+	MOUSE_system_menu = 3, // system menu chooser
+	MOUSE_holding = 4 // special
 };
 
 enum {
@@ -66,19 +66,19 @@ enum {
 	RDMENU_ALMOST_HIDDEN
 };
 
-#define RDMENU_ICONWIDE		35
-#define RDMENU_PSXICONWIDE	36
-#define RDMENU_ICONDEEP		30
-#define RDMENU_ICONSTART	24
-#define RDMENU_ICONSPACING	5
-#define RDMENU_MAXPOCKETS	15
+#define RDMENU_ICONWIDE 35
+#define RDMENU_PSXICONWIDE 36
+#define RDMENU_ICONDEEP 30
+#define RDMENU_ICONSTART 24
+#define RDMENU_ICONSPACING 5
+#define RDMENU_MAXPOCKETS 15
 
-#define MOUSE_ANIM_HEADER_SIZE	6
+#define MOUSE_ANIM_HEADER_SIZE 6
 
 struct MouseAnim {
-	uint8 runTimeComp;	// type of runtime compression used for the
-				// frame data
-	uint8 noAnimFrames;	// number of frames in the anim
+	uint8 runTimeComp; // type of runtime compression used for the
+	  // frame data
+	uint8 noAnimFrames; // number of frames in the anim
 	int8 xHotSpot;
 	int8 yHotSpot;
 	uint8 mousew;
@@ -110,7 +110,7 @@ struct MouseUnit {
 
 // Array of these for subject menu build up
 
- struct SubjectUnit {
+struct SubjectUnit {
 	uint32 res;
 	uint32 ref;
 };
@@ -118,9 +118,9 @@ struct MouseUnit {
 // define these in a script and then register them with the system
 
 struct MenuObject {
-	int32 icon_resource;	// icon graphic graphic
-	int32 luggage_resource;	// luggage icon resource (for attaching to
-				// mouse pointer)
+	int32 icon_resource; // icon graphic graphic
+	int32 luggage_resource; // luggage icon resource (for attaching to
+	  // mouse pointer)
 };
 
 class Mouse {
@@ -165,17 +165,17 @@ private:
 
 	uint32 _mouseMode;
 
-	bool _mouseStatus;		// Human 0 on/1 off
-	bool _mouseModeLocked;		// 0 not !0 mode cannot be changed from
-					// normal mouse to top menu (i.e. when
-					// carrying big objects)
-	uint32 _realLuggageItem;	// Last minute for pause mode
+	bool _mouseStatus; // Human 0 on/1 off
+	bool _mouseModeLocked; // 0 not !0 mode cannot be changed from
+	  // normal mouse to top menu (i.e. when
+	  // carrying big objects)
+	uint32 _realLuggageItem; // Last minute for pause mode
 	uint32 _currentLuggageResource;
-	uint32 _oldButton;		// For the re-click stuff - must be
-					// the same button you see
+	uint32 _oldButton; // For the re-click stuff - must be
+	  // the same button you see
 	uint32 _buttonClick;
 	uint32 _pointerTextBlocNo;
-	uint32 _playerActivityDelay;	// Player activity delay counter
+	uint32 _playerActivityDelay; // Player activity delay counter
 
 	bool _examiningMenuIcon;
 

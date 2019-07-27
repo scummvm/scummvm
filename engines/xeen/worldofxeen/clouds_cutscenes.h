@@ -30,69 +30,74 @@
 namespace Xeen {
 namespace WorldOfXeen {
 
-class CloudsCutscenes : public Cutscenes {
-private:
-	static const char *const _INTRO_VOCS[14];
-	static const int _INTRO_FRAMES_LOOKUP[14];
-	static const int _INTRO_FRAMES_VALS[8][32];
-	static const uint _INTRO_FRAMES_WAIT[8][32];
-	static const byte _DECODE_TABLE1[256];
-	static const byte _DECODE_TABLE2[256];
-private:
-	Subtitles _subtitles;
-	SpriteResource _mirror, _mirrBack;
-	int _mergeX;
-private:
-	void loadScreen(const Common::String &name);
+	class CloudsCutscenes : public Cutscenes {
+	private:
+		static const char *const _INTRO_VOCS[14];
+		static const int _INTRO_FRAMES_LOOKUP[14];
+		static const int _INTRO_FRAMES_VALS[8][32];
+		static const uint _INTRO_FRAMES_WAIT[8][32];
+		static const byte _DECODE_TABLE1[256];
+		static const byte _DECODE_TABLE2[256];
 
-	/**
+	private:
+		Subtitles _subtitles;
+		SpriteResource _mirror, _mirrBack;
+		int _mergeX;
+
+	private:
+		void loadScreen(const Common::String &name);
+
+		/**
 	 * Shows the Clouds of Xeen title screen
 	 */
-	bool showCloudsTitle();
+		bool showCloudsTitle();
 
-	/**
+		/**
 	 * Inner implementation of the the Clouds of Xeen intro sequence
 	 */
-	bool showCloudsIntroInner();
+		bool showCloudsIntroInner();
 
-	/**
+		/**
 	 * Shows part 1 of the Clouds of Xeen ending, with the castle being destroyed
 	 */
-	bool showCloudsEnding1();
+		bool showCloudsEnding1();
 
-	/**
+		/**
 	 * Shows part 2 of the Clouds of Xeen ending, King Roland's throneroom
 	 */
-	bool showCloudsEnding2();
+		bool showCloudsEnding2();
 
-	/**
+		/**
 	 * Shows part 3 of the Clouds of Xeen ending, which shows a display
 	 * of the game's monsters
 	 */
-	bool showCloudsEnding3();
+		bool showCloudsEnding3();
 
-	/**
+		/**
 	 * Shows part 4 of the Clouds of Xeen ending, the final score
 	 */
-	bool showCloudsEnding4(uint finalScore);
+		bool showCloudsEnding4(uint finalScore);
 
-	/**
+		/**
 	 * Shows part 5 of the Clouds of Xeen ending, final king display
 	 */
-	bool showCloudsEnding5();
-public:
-	CloudsCutscenes(XeenEngine *vm) : Cutscenes(vm), _mergeX(0) {}
+		bool showCloudsEnding5();
 
-	/**
+	public:
+		CloudsCutscenes(XeenEngine *vm)
+		  : Cutscenes(vm)
+		  , _mergeX(0) {}
+
+		/**
 	 * Shows the Clouds of Xeen intro sequence
 	 */
-	bool showCloudsIntro();
+		bool showCloudsIntro();
 
-	/**
+		/**
 	 * Shows the Clouds of Xeen ending sequence
 	 */
-	void showCloudsEnding(uint finalScore);
-};
+		void showCloudsEnding(uint finalScore);
+	};
 
 } // End of namespace WorldOfXeen
 } // End of namespace Xeen

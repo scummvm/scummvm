@@ -22,7 +22,6 @@
 
 // Verb and hitarea handling
 
-
 #include "agos/agos.h"
 #include "agos/intern.h"
 
@@ -36,12 +35,11 @@ void AGOSEngine_PN::boxController(uint x, uint y, uint mode) {
 
 	do {
 		if (!(ha->flags & kOBFBoxDisabled)) {
-			if (x >= ha->x && y >= ha->y && x - ha->x < ha->width && y - ha->y < ha->height &&
-				best_ha == NULL) {
+			if (x >= ha->x && y >= ha->y && x - ha->x < ha->width && y - ha->y < ha->height && best_ha == NULL) {
 				best_ha = ha;
 			} else {
 				if (ha->flags & kOBFBoxSelected) {
-					hitarea_leave(ha , true);
+					hitarea_leave(ha, true);
 					ha->flags &= ~kOBFBoxSelected;
 				}
 			}
@@ -143,8 +141,7 @@ void AGOSEngine_PN::hitBox1(HitArea *ha) {
 	} else if (!(ha->flags & kOBFNoShowName)) {
 		_mousePrintFG++;
 		_mouseString1 = _mouseString;
-		_mouseString = (const char*)"showname \0";
-
+		_mouseString = (const char *)"showname \0";
 	}
 }
 
@@ -163,8 +160,7 @@ void AGOSEngine_PN::hitBox4(HitArea *ha) {
 		return;
 
 	uint16 num = ha->msg1 & ~0x8000;
-	if ((_videoLockOut & 0x10) && !(ha->flags & (kOBFInventoryBox | kOBFRoomBox)) &&
-		!testContainer(num)) {
+	if ((_videoLockOut & 0x10) && !(ha->flags & (kOBFInventoryBox | kOBFRoomBox)) && !testContainer(num)) {
 		return;
 	}
 

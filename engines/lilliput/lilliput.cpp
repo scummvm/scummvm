@@ -20,19 +20,19 @@
  *
  */
 
-#include "common/system.h"
-#include "common/random.h"
-#include "common/error.h"
-#include "common/debug-channels.h"
 #include "common/config-manager.h"
-#include "common/textconsole.h"
-#include "common/memstream.h"
+#include "common/debug-channels.h"
+#include "common/error.h"
 #include "common/events.h"
+#include "common/memstream.h"
+#include "common/random.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
 
-#include "lilliput/lilliput.h"
 #include "engines/util.h"
+#include "lilliput/lilliput.h"
 #include "lilliput/script.h"
 #include "lilliput/sound.h"
 
@@ -41,62 +41,62 @@ namespace Lilliput {
 LilliputEngine *LilliputEngine::s_Engine = 0;
 
 static const byte _basisPalette[768] = {
-	0,  0,  0,  0,  0,  42, 0,  42, 0,  0,  42, 42,
-	42, 0,  0,  42, 0,  42, 42, 21, 0,  42, 42, 42,
+	0, 0, 0, 0, 0, 42, 0, 42, 0, 0, 42, 42,
+	42, 0, 0, 42, 0, 42, 42, 21, 0, 42, 42, 42,
 	21, 21, 21, 21, 21, 63, 21, 63, 21, 21, 63, 63,
 	63, 21, 21, 63, 21, 63, 63, 63, 21, 63, 63, 63,
 	63, 63, 63, 59, 59, 59, 54, 54, 54, 50, 50, 50,
 	46, 46, 46, 42, 42, 42, 38, 38, 38, 33, 33, 33,
 	29, 29, 29, 25, 25, 25, 21, 21, 21, 17, 17, 17,
-	13, 13, 13, 8,  8,  8,  4,  4,  4,  0,  0,  0,
+	13, 13, 13, 8, 8, 8, 4, 4, 4, 0, 0, 0,
 	63, 54, 54, 63, 46, 46, 63, 39, 39, 63, 31, 31,
-	63, 23, 23, 63, 16, 16, 63, 8,  8,  63, 0,  0,
-	57, 0,  0,  51, 0,  0,  45, 0,  0,  39, 0,  0,
-	33, 0,  0,  28, 0,  0,  22, 0,  0,  16, 0,  0,
+	63, 23, 23, 63, 16, 16, 63, 8, 8, 63, 0, 0,
+	57, 0, 0, 51, 0, 0, 45, 0, 0, 39, 0, 0,
+	33, 0, 0, 28, 0, 0, 22, 0, 0, 16, 0, 0,
 	63, 58, 54, 63, 54, 46, 63, 50, 39, 63, 46, 31,
-	63, 42, 23, 63, 38, 16, 63, 34, 8,  63, 30, 0,
-	57, 27, 0,  51, 24, 0,  45, 21, 0,  39, 19, 0,
-	33, 16, 0,  28, 14, 0,  22, 11, 0,  16, 8,  0,
+	63, 42, 23, 63, 38, 16, 63, 34, 8, 63, 30, 0,
+	57, 27, 0, 51, 24, 0, 45, 21, 0, 39, 19, 0,
+	33, 16, 0, 28, 14, 0, 22, 11, 0, 16, 8, 0,
 	63, 63, 54, 63, 63, 46, 63, 63, 39, 63, 63, 31,
-	63, 62, 23, 63, 61, 16, 63, 61, 8,  63, 61, 0,
-	57, 54, 0,  51, 49, 0,  45, 43, 0,  39, 39, 0,
-	33, 33, 0,  28, 27, 0,  22, 21, 0,  16, 16, 0,
+	63, 62, 23, 63, 61, 16, 63, 61, 8, 63, 61, 0,
+	57, 54, 0, 51, 49, 0, 45, 43, 0, 39, 39, 0,
+	33, 33, 0, 28, 27, 0, 22, 21, 0, 16, 16, 0,
 	62, 63, 54, 59, 61, 47, 56, 59, 42, 53, 58, 36,
 	50, 56, 32, 47, 54, 26, 44, 52, 22, 41, 50, 17,
-	36, 46, 14, 32, 42, 11, 28, 37, 8,  24, 33, 6,
-	20, 29, 4,  16, 25, 2,  13, 20, 1,  10, 16, 0,
+	36, 46, 14, 32, 42, 11, 28, 37, 8, 24, 33, 6,
+	20, 29, 4, 16, 25, 2, 13, 20, 1, 10, 16, 0,
 	54, 63, 54, 48, 61, 48, 43, 59, 43, 38, 58, 38,
 	33, 56, 33, 29, 54, 29, 25, 52, 24, 21, 50, 20,
-	16, 46, 16, 14, 42, 13, 10, 37, 9,  8,  33, 7,
-	6,  29, 4,  4,  25, 2,  2,  20, 1,  1,  16, 0,
+	16, 46, 16, 14, 42, 13, 10, 37, 9, 8, 33, 7,
+	6, 29, 4, 4, 25, 2, 2, 20, 1, 1, 16, 0,
 	59, 63, 63, 53, 63, 63, 47, 62, 63, 41, 61, 62,
 	35, 60, 62, 30, 59, 62, 24, 57, 62, 18, 55, 62,
-	20, 52, 56, 15, 47, 50, 11, 42, 45, 8,  37, 39,
-	5,  32, 33, 3,  27, 27, 1,  22, 22, 0,  16, 16,
+	20, 52, 56, 15, 47, 50, 11, 42, 45, 8, 37, 39,
+	5, 32, 33, 3, 27, 27, 1, 22, 22, 0, 16, 16,
 	54, 59, 63, 46, 56, 63, 39, 53, 63, 31, 50, 63,
-	23, 47, 63, 16, 44, 63, 8,  42, 63, 0,  39, 63,
-	0,  35, 57, 0,  31, 51, 0,  27, 45, 0,  23, 39,
-	0,  19, 33, 0,  16, 28, 0,  12, 22, 0,  9,  16,
+	23, 47, 63, 16, 44, 63, 8, 42, 63, 0, 39, 63,
+	0, 35, 57, 0, 31, 51, 0, 27, 45, 0, 23, 39,
+	0, 19, 33, 0, 16, 28, 0, 12, 22, 0, 9, 16,
 	54, 54, 63, 46, 47, 63, 39, 39, 63, 31, 32, 63,
-	23, 24, 63, 16, 16, 63, 8,  9,  63, 0,  1,  63,
-	0,  1,  57, 0,  1,  51, 0,  0,  45, 0,  0,  39,
-	0,  0,  33, 0,  0,  28, 0,  0,  22, 0,  0,  16,
+	23, 24, 63, 16, 16, 63, 8, 9, 63, 0, 1, 63,
+	0, 1, 57, 0, 1, 51, 0, 0, 45, 0, 0, 39,
+	0, 0, 33, 0, 0, 28, 0, 0, 22, 0, 0, 16,
 	54, 63, 54, 47, 63, 46, 39, 63, 39, 32, 63, 31,
-	24, 63, 23, 16, 63, 16, 8,  63, 8,  0,  63, 0,
-	0,  56, 0,  0,  49, 0,  0,  43, 0,  0,  36, 0,
-	0,  30, 0,  0,  23, 0,  0,  16, 0,  0,  10, 0,
+	24, 63, 23, 16, 63, 16, 8, 63, 8, 0, 63, 0,
+	0, 56, 0, 0, 49, 0, 0, 43, 0, 0, 36, 0,
+	0, 30, 0, 0, 23, 0, 0, 16, 0, 0, 10, 0,
 	63, 54, 63, 63, 46, 63, 63, 39, 63, 63, 31, 63,
-	63, 23, 63, 63, 16, 63, 63, 8,  63, 63, 0,  63,
-	56, 0,  57, 50, 0,  51, 45, 0,  45, 39, 0,  39,
-	33, 0,  33, 27, 0,  28, 22, 0,  22, 16, 0,  16,
+	63, 23, 63, 63, 16, 63, 63, 8, 63, 63, 0, 63,
+	56, 0, 57, 50, 0, 51, 45, 0, 45, 39, 0, 39,
+	33, 0, 33, 27, 0, 28, 22, 0, 22, 16, 0, 16,
 	63, 58, 55, 63, 56, 52, 63, 54, 49, 63, 53, 47,
 	63, 51, 44, 63, 49, 41, 63, 47, 39, 63, 46, 36,
 	63, 44, 32, 63, 41, 28, 63, 39, 24, 60, 37, 23,
 	58, 35, 22, 55, 34, 21, 52, 32, 20, 50, 31, 19,
 	47, 30, 18, 45, 28, 17, 42, 26, 16, 40, 25, 15,
 	39, 24, 14, 36, 23, 13, 34, 22, 12, 32, 20, 11,
-	29, 19, 10, 27, 18, 9,  23, 16, 8,  21, 15, 7,
-	18, 14, 6,  16, 12, 6,  14, 11, 5,  10, 8,  3,
+	29, 19, 10, 27, 18, 9, 23, 16, 8, 21, 15, 7,
+	18, 14, 6, 16, 12, 6, 14, 11, 5, 10, 8, 3,
 	63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63,
 	63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63,
 	63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63,
@@ -107,12 +107,13 @@ static const byte _basisPalette[768] = {
 	63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63
 };
 
-
-LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd) : Engine(syst), _gameDescription(gd) {
+LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
+  : Engine(syst)
+  , _gameDescription(gd) {
 	_system = syst;
 	DebugMan.addDebugChannel(kDebugEngine, "Engine", "Engine debug level");
 	DebugMan.addDebugChannel(kDebugScript, "Script", "Script debug level");
-	DebugMan.addDebugChannel(kDebugSound,  "Sound",  "Sound debug level");
+	DebugMan.addDebugChannel(kDebugSound, "Sound", "Sound debug level");
 	DebugMan.addDebugChannel(kDebugEngineTBC, "EngineTBC", "Engine debug level");
 	DebugMan.addDebugChannel(kDebugScriptTBC, "ScriptTBC", "Script debug level");
 
@@ -442,7 +443,6 @@ void LilliputEngine::restoreSurfaceSpeech() {
 	}
 }
 
-
 void LilliputEngine::displayInterfaceHotspots() {
 	debugC(2, kDebugEngine, "displayInterfaceHotspots()");
 
@@ -463,8 +463,8 @@ void LilliputEngine::displayLandscape() {
 	int index = (_scriptHandler->_viewportPos.y * 64 + _scriptHandler->_viewportPos.x) * 4;
 
 	for (int posY = 0; posY < 8; posY++) {
-		for (int posX = 0; posX < 8 ; posX++) {
-			assert (index < 16384);
+		for (int posX = 0; posX < 8; posX++) {
+			assert(index < 16384);
 			displayIsometricBlock(_savedSurfaceGameArea2, _bufferIsoMap[index], posX, posY, 0);
 			index += 4;
 		}
@@ -475,7 +475,7 @@ void LilliputEngine::displayLandscape() {
 // Display dialog bubble
 void LilliputEngine::displaySpeechBubble() {
 	debugC(2, kDebugEngine, "displaySpeechBubble()");
-	static const byte _array15976[16] = {244, 248, 250, 250, 252, 252, 252, 252, 252, 252, 252, 252, 250, 250, 248, 244};
+	static const byte _array15976[16] = { 244, 248, 250, 250, 252, 252, 252, 252, 252, 252, 252, 252, 250, 250, 248, 244 };
 
 	int index = 192;
 
@@ -975,10 +975,7 @@ void LilliputEngine::checkInteractions() {
 
 		for (int index2 = _numCharacters - 1; index2 >= 0; index2--) {
 			byte _newStatus = 0;
-			if ((index != index2) &&
-				(_characterCarried[index] != index2) &&
-				(_characterCarried[index2] != index) &&
-				(_characterTypes[index2] & 2) == 0) {
+			if ((index != index2) && (_characterCarried[index] != index2) && (_characterCarried[index2] != index) && (_characterTypes[index2] & 2) == 0) {
 				int d1 = _scriptHandler->_characterTilePos[index2].x;
 				int d2 = _scriptHandler->_characterTilePos[index2].y;
 
@@ -1051,7 +1048,7 @@ void LilliputEngine::checkInteractions() {
 
 			if (v2 != _newStatus) {
 				_scriptHandler->_characterScriptEnabled[index] = 1;
-				v2 =  _newStatus;
+				v2 = _newStatus;
 			}
 			_scriptHandler->_interactions[index2 + (index * 40)] = (v1 << 8) + v2;
 		}
@@ -1114,7 +1111,6 @@ void LilliputEngine::displayChar(int index, int var1) {
 		indexVga += 320;
 		indexChar += 4;
 	}
-
 }
 
 void LilliputEngine::sortCharacters() {
@@ -1170,7 +1166,7 @@ void LilliputEngine::scrollToViewportCharacterTarget() {
 	Common::Point newPos = _scriptHandler->_viewportPos;
 
 	if (tileX >= 1) {
-		if (tileX > 6){
+		if (tileX > 6) {
 			newPos.x += 4;
 			if (newPos.x > 56)
 				newPos.x = 56;
@@ -1331,7 +1327,7 @@ void LilliputEngine::checkSpeechClosing() {
 byte LilliputEngine::getDirection(Common::Point param1, Common::Point param2) {
 	debugC(2, kDebugEngine, "getDirection(%d - %d, %d - %d)", param1.x, param1.y, param2.x, param2.y);
 
-	static const byte _directionsArray[8] = {0, 2, 0, 1, 3, 2, 3, 1};
+	static const byte _directionsArray[8] = { 0, 2, 0, 1, 3, 2, 3, 1 };
 
 	Common::Point var1 = param2;
 	Common::Point var2 = param1;
@@ -1404,11 +1400,7 @@ void LilliputEngine::homeInPathFinding(int index) {
 		return;
 	}
 
-	if ((enclosureDst != -1) &&
-		(_characterTargetPos[index].x >= _enclosureRect[enclosureSrc].left) &&
-		(_characterTargetPos[index].x <= _enclosureRect[enclosureSrc].right) &&
-		(_characterTargetPos[index].y >= _enclosureRect[enclosureSrc].top) &&
-		(_characterTargetPos[index].y <= _enclosureRect[enclosureSrc].bottom)) {
+	if ((enclosureDst != -1) && (_characterTargetPos[index].x >= _enclosureRect[enclosureSrc].left) && (_characterTargetPos[index].x <= _enclosureRect[enclosureSrc].right) && (_characterTargetPos[index].y >= _enclosureRect[enclosureSrc].top) && (_characterTargetPos[index].y <= _enclosureRect[enclosureSrc].bottom)) {
 		_characterSubTargetPos[index] = _portalPos[enclosureDst];
 		return;
 	}
@@ -1455,7 +1447,7 @@ void LilliputEngine::homeInPathFinding(int index) {
 void LilliputEngine::homeInChooseDirection(int index) {
 	debugC(2, kDebugEngine, "homeInChooseDirection(%d)", index);
 
-	static const int16 mapArrayMove[4] = {4, -256, 256, -4};
+	static const int16 mapArrayMove[4] = { 4, -256, 256, -4 };
 
 	_curCharacterTilePos = _scriptHandler->_characterTilePos[index];
 
@@ -1502,8 +1494,8 @@ void LilliputEngine::homeInChooseDirection(int index) {
 byte LilliputEngine::homeInAvoidDeadEnds(int indexb, int indexs) {
 	debugC(2, kDebugEngine, "homeInAvoidDeadEnds(%d, %d)", indexb, indexs);
 
-	static const int8 constDirX[4] = {1, 0, 0, -1};
-	static const int8 constDirY[4] = {0, -1, 1, 0};
+	static const int8 constDirX[4] = { 1, 0, 0, -1 };
+	static const int8 constDirY[4] = { 0, -1, 1, 0 };
 
 	Common::Point tmpPos = Common::Point(_curCharacterTilePos.x + constDirX[indexb], _curCharacterTilePos.y + constDirY[indexb]);
 
@@ -1533,7 +1525,7 @@ int16 LilliputEngine::checkEnclosure(Common::Point pos) {
 int16 LilliputEngine::checkOuterEnclosure(Common::Point pos) {
 	debugC(2, kDebugEngine, "checkOuterEnclosure(%d, %d)", pos.x, pos.y);
 
-	for (int i = _rectNumb - 1; i >= 0 ; --i) {
+	for (int i = _rectNumb - 1; i >= 0; --i) {
 		if ((pos.x >= _enclosureRect[i].left) && (pos.x <= _enclosureRect[i].right) && (pos.y >= _enclosureRect[i].top) && (pos.y <= _enclosureRect[i].bottom))
 			return i;
 	}
@@ -1543,8 +1535,8 @@ int16 LilliputEngine::checkOuterEnclosure(Common::Point pos) {
 void LilliputEngine::evaluateDirections(int index) {
 	debugC(2, kDebugEngine, "evaluateDirections(%d)", index);
 
-	static const int8 arrayMoveX[4] = {1, 0, 0, -1};
-	static const int8 arrayMoveY[4] = {0, -1, 1, 0};
+	static const int8 arrayMoveX[4] = { 1, 0, 0, -1 };
+	static const int8 arrayMoveY[4] = { 0, -1, 1, 0 };
 
 	int16 arrayDistance[4];
 
@@ -1582,7 +1574,7 @@ void LilliputEngine::addCharToBuf(byte character) {
 void LilliputEngine::numberToString(int param1) {
 	debugC(2, kDebugEngine, "numberToString(%d)", param1);
 
-	static const int exp10[6] = {10000, 1000, 100, 10, 1};
+	static const int exp10[6] = { 10000, 1000, 100, 10, 1 };
 
 	int var1 = param1;
 	bool hideZeros = true;
@@ -1715,7 +1707,7 @@ byte LilliputEngine::sequenceSound(int index, Common::Point var1) {
 
 	int param4x = ((index | 0xFF00) >> 8);
 	_soundHandler->playSound(var1.y, _scriptHandler->_viewportPos,
-		_scriptHandler->_characterTilePos[index], Common::Point(param4x, 0));
+	                         _scriptHandler->_characterTilePos[index], Common::Point(param4x, 0));
 	return kSeqRepeat;
 }
 
@@ -2059,14 +2051,14 @@ byte LilliputEngine::sequenceMoveCharacter(int idx, int moveType, int poseType) 
 void LilliputEngine::turnCharacter1(int index) {
 	debugC(2, kDebugEngine, "turnCharacter1(%d)", index);
 
-	static const byte nextDirection[4] = {1, 3, 0, 2};
+	static const byte nextDirection[4] = { 1, 3, 0, 2 };
 	_characterDirectionArray[index] = nextDirection[_characterDirectionArray[index]];
 }
 
 void LilliputEngine::turnCharacter2(int index) {
 	debugC(2, kDebugEngine, "turnCharacter2(%d)", index);
 
-	static const byte nextDirection[4] = {2, 0, 3, 1};
+	static const byte nextDirection[4] = { 2, 0, 3, 1 };
 	_characterDirectionArray[index] = nextDirection[_characterDirectionArray[index]];
 }
 
@@ -2328,8 +2320,7 @@ void LilliputEngine::pollEvent() {
 				_mouseDisplayPos = newMousePos;
 			}
 			_lastEventType = event.type;
-			}
-			break;
+		} break;
 		case Common::EVENT_QUIT:
 			_shouldQuit = true;
 			break;
@@ -2346,8 +2337,7 @@ void LilliputEngine::pollEvent() {
 			}
 
 			_lastEventType = event.type;
-			}
-			break;
+		} break;
 		default:
 			break;
 		}
@@ -2439,7 +2429,8 @@ void LilliputEngine::loadRules() {
 		Common::KEYCODE_k, Common::KEYCODE_l, Common::KEYCODE_m, Common::KEYCODE_n, Common::KEYCODE_o,
 		Common::KEYCODE_p, Common::KEYCODE_q, Common::KEYCODE_r, Common::KEYCODE_s, Common::KEYCODE_t,
 		Common::KEYCODE_u, Common::KEYCODE_v, Common::KEYCODE_w, Common::KEYCODE_x, Common::KEYCODE_y,
-		Common::KEYCODE_z};
+		Common::KEYCODE_z
+	};
 	Common::File f;
 	uint16 curWord;
 
@@ -2591,13 +2582,13 @@ void LilliputEngine::loadRules() {
 
 	// Chunk 13
 	_interfaceHotspotNumb = f.readUint16LE();
-	for (int i = 0 ; i < 20; i++)
+	for (int i = 0; i < 20; i++)
 		_interfaceTwoStepAction[i] = f.readByte();
 
-	for (int i = 0 ; i < 20; i++)
+	for (int i = 0; i < 20; i++)
 		_interfaceHotspots[i].x = f.readSint16LE();
 
-	for (int i = 0 ; i < 20; i++)
+	for (int i = 0; i < 20; i++)
 		_interfaceHotspots[i].y = f.readSint16LE();
 
 	for (int i = 0; i < 20; i++) {
@@ -2625,7 +2616,7 @@ void LilliputEngine::displayVGAFile(Common::String fileName) {
 	debugC(1, kDebugEngine, "displayVGAFile(%s)", fileName.c_str());
 
 	byte *buffer = loadVGA(fileName, 64000, true);
-	memcpy(_mainSurface->getPixels(), buffer, 320*200);
+	memcpy(_mainSurface->getPixels(), buffer, 320 * 200);
 	_system->copyRectToScreen((byte *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
 	_system->updateScreen();
 }
@@ -2803,13 +2794,13 @@ void LilliputEngine::initialize() {
 	debugC(1, kDebugEngine, "initialize");
 
 	_rnd = new Common::RandomSource("robin");
-	_rnd->setSeed(42);                              // Kick random number generator
+	_rnd->setSeed(42); // Kick random number generator
 	_shouldQuit = false;
 
 	for (int i = 0; i < 4; i++) {
 		_smallAnims[i]._active = false;
 		_smallAnims[i]._pos = Common::Point(0, 0);
-		for (int j = 0; j < 8; j ++)
+		for (int j = 0; j < 8; j++)
 			_smallAnims[i]._frameIndex[j] = 0;
 	}
 }
@@ -2827,7 +2818,7 @@ byte *LilliputEngine::getCharacterAttributesPtr(int16 index) {
 void LilliputEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
-//	_sound->syncVolume();
+	//	_sound->syncVolume();
 }
 
 Common::String LilliputEngine::getSavegameFilename(int slot) {
@@ -2836,7 +2827,7 @@ Common::String LilliputEngine::getSavegameFilename(int slot) {
 
 Common::Event LilliputEngine::_keyboard_getch() {
 	warning("getch()");
-	while(_keyboard_nextIndex == _keyboard_oldIndex)
+	while (_keyboard_nextIndex == _keyboard_oldIndex)
 		pollEvent();
 
 	Common::Event tmpEvent = _keyboard_buffer[_keyboard_oldIndex];

@@ -34,12 +34,14 @@ class CParrotSuccUBus : public CSuccUBus {
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool LeaveNodeMsg(CLeaveNodeMsg *msg);
+
 public:
 	bool _hoseConnected;
 	CString _pumpingTarget;
 	int _pumpingSound;
 	int _hoseRemovalStartFrame;
 	int _hoseRemovalEndFrame;
+
 public:
 	CLASSDEF;
 	CParrotSuccUBus();

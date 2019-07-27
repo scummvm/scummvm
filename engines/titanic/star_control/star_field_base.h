@@ -27,7 +27,7 @@
 
 namespace Titanic {
 
-class CStarFieldBase: public CBaseStars {
+class CStarFieldBase : public CBaseStars {
 public:
 	virtual ~CStarFieldBase() {}
 
@@ -37,7 +37,7 @@ public:
 	 * Selects a star
 	 */
 	virtual bool selectStar(CSurfaceArea *surfaceArea, CStarCamera *camera,
-		const Common::Point &pt, void *handler = nullptr);
+	                        const Common::Point &pt, void *handler = nullptr);
 
 	virtual bool loadStar();
 

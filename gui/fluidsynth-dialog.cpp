@@ -23,45 +23,45 @@
 #include "gui/fluidsynth-dialog.h"
 #include "gui/gui-manager.h"
 #include "gui/message.h"
-#include "gui/widgets/tab.h"
 #include "gui/widgets/popup.h"
+#include "gui/widgets/tab.h"
 
 #include "common/config-manager.h"
-#include "common/translation.h"
 #include "common/debug.h"
+#include "common/translation.h"
 
 namespace GUI {
 
 enum {
-	kActivateChorusCmd		= 'acho',
-	kChorusVoiceCountChangedCmd	= 'cvcc',
-	kChorusLevelChangedCmd		= 'clec',
-	kChorusSpeedChangedCmd		= 'cspc',
-	kChorusDepthChangedCmd		= 'cdec',
+	kActivateChorusCmd = 'acho',
+	kChorusVoiceCountChangedCmd = 'cvcc',
+	kChorusLevelChangedCmd = 'clec',
+	kChorusSpeedChangedCmd = 'cspc',
+	kChorusDepthChangedCmd = 'cdec',
 
-	kActivateReverbCmd		= 'arev',
-	kReverbRoomSizeChangedCmd	= 'rrsc',
-	kReverbDampingChangedCmd	= 'rdac',
-	kReverbWidthChangedCmd		= 'rwic',
-	kReverbLevelChangedCmd		= 'rlec',
+	kActivateReverbCmd = 'arev',
+	kReverbRoomSizeChangedCmd = 'rrsc',
+	kReverbDampingChangedCmd = 'rdac',
+	kReverbWidthChangedCmd = 'rwic',
+	kReverbLevelChangedCmd = 'rlec',
 
-	kResetSettingsCmd		= 'rese'
+	kResetSettingsCmd = 'rese'
 };
 
 enum {
-	kWaveFormTypeSine		= 0,
-	kWaveFormTypeTriangle		= 1
+	kWaveFormTypeSine = 0,
+	kWaveFormTypeTriangle = 1
 };
 
 enum {
-	kInterpolationNone		= 0,
-	kInterpolationLinear		= 1,
-	kInterpolation4thOrder		= 2,
-	kInterpolation7thOrder		= 3
+	kInterpolationNone = 0,
+	kInterpolationLinear = 1,
+	kInterpolation4thOrder = 2,
+	kInterpolation7thOrder = 3
 };
 
 FluidSynthSettingsDialog::FluidSynthSettingsDialog()
-	: Dialog("FluidSynthSettings") {
+  : Dialog("FluidSynthSettings") {
 	_domain = Common::ConfigManager::kApplicationDomain;
 
 	_tabWidget = new TabWidget(this, "FluidSynthSettings.TabWidget");

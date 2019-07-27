@@ -104,7 +104,6 @@ enum {
 	kExitDownCursor = 12 // only in Hokus Pokus
 };
 
-
 // values are from Hokus Pokus
 enum {
 	kPokusLoadingCursorID = 135,
@@ -153,68 +152,68 @@ enum {
 	kSampleRate = 22050
 };
 
-static const char * const kPinkGame = "PinkGame";
+static const char *const kPinkGame = "PinkGame";
 
-static const char * const kPeril = "peril";
+static const char *const kPeril = "peril";
 
-static const char * const kCloseAction = "Close";
-static const char * const kIdleAction = "Idle";
-static const char * const kOpenAction = "Open";
-static const char * const kShowAction = "Show";
-static const char * const kHideAction = "Hide";
-static const char * const kInactiveAction = "Inactive";
+static const char *const kCloseAction = "Close";
+static const char *const kIdleAction = "Idle";
+static const char *const kOpenAction = "Open";
+static const char *const kShowAction = "Show";
+static const char *const kHideAction = "Hide";
+static const char *const kInactiveAction = "Inactive";
 
-static const char * const kInventoryWindowActor = "InventoryWindow";
-static const char * const kInventoryItemActor = "InventoryItem";
-static const char * const kInventoryRightArrowActor = "InventoryRightArrow";
-static const char * const kInventoryLeftArrowActor = "InventoryLeftArrow";
+static const char *const kInventoryWindowActor = "InventoryWindow";
+static const char *const kInventoryItemActor = "InventoryItem";
+static const char *const kInventoryRightArrowActor = "InventoryRightArrow";
+static const char *const kInventoryLeftArrowActor = "InventoryLeftArrow";
 
-static const char * const kAudioInfoActor = "AudioInfo";
-static const char * const kPdaButtonActor = "PDAButton";
+static const char *const kAudioInfoActor = "AudioInfo";
+static const char *const kPdaButtonActor = "PDAButton";
 
-static const char * const kCursorNameExit = "Exit";
-static const char * const kCursorNameExitUp = "ExitUp";
-static const char * const kCursorNameExitLeft = "ExitLeft";
-static const char * const kCursorNameExitRight = "ExitRight";
-static const char * const kCursorNameExitForward = "ExitForward";
-static const char * const kCursorNameExitBackWards = "ExitBackwards";
+static const char *const kCursorNameExit = "Exit";
+static const char *const kCursorNameExitUp = "ExitUp";
+static const char *const kCursorNameExitLeft = "ExitLeft";
+static const char *const kCursorNameExitRight = "ExitRight";
+static const char *const kCursorNameExitForward = "ExitForward";
+static const char *const kCursorNameExitBackWards = "ExitBackwards";
 
-static const char * const kClickable = "Clickable";
-static const char * const kCursor = "Cursor";
+static const char *const kClickable = "Clickable";
+static const char *const kCursor = "Cursor";
 
-static const char * const kFoodPuzzle = "FoodPuzzle";
-static const char * const kJackson = "Jackson";
-static const char * const kBolted = "Bolted";
-static const char * const kDrunkLocation = "DrunkLocation";
-static const char * const kDrunk = "Drunk";
+static const char *const kFoodPuzzle = "FoodPuzzle";
+static const char *const kJackson = "Jackson";
+static const char *const kBolted = "Bolted";
+static const char *const kDrunkLocation = "DrunkLocation";
+static const char *const kDrunk = "Drunk";
 
-static const char * const kBoy = "Boy";
-static const char * const kSirBaldley = "SirBaldley";
-static const char * const kBoyBlocked = "BoyBlocked";
+static const char *const kBoy = "Boy";
+static const char *const kSirBaldley = "SirBaldley";
+static const char *const kBoyBlocked = "BoyBlocked";
 
-static const char * const kUndefinedValue = "UNDEFINED";
-static const char * const kTrueValue = "TRUE";
+static const char *const kUndefinedValue = "UNDEFINED";
+static const char *const kTrueValue = "TRUE";
 
-static const char * const kCountryWheel = "CountryWheel";
-static const char * const kDomainWheel = "DomainWheel";
+static const char *const kCountryWheel = "CountryWheel";
+static const char *const kDomainWheel = "DomainWheel";
 
-static const char * const kLocator = "Locator";
+static const char *const kLocator = "Locator";
 
-static const char * const kPreviousPageButton = "PreviousPageButton";
-static const char * const kDomainButton = "DomainButton";
-static const char * const kNavigatorButton = "NavigatorButton";
+static const char *const kPreviousPageButton = "PreviousPageButton";
+static const char *const kDomainButton = "DomainButton";
+static const char *const kNavigatorButton = "NavigatorButton";
 
-static const char * const kNavigatePage = "NAVIGATE";
+static const char *const kNavigatePage = "NAVIGATE";
 
-static const char * const kSfx = "SFX";
+static const char *const kSfx = "SFX";
 
-static const char * const kRightHand = "RightHand";
-static const char * const kLeftHand = "LeftHand";
+static const char *const kRightHand = "RightHand";
+static const char *const kLeftHand = "LeftHand";
 
-static const char * const kLeft1Name = "Left1";
-static const char * const kLeft2Name = "Left2";
-static const char * const kLeft3Name = "Left3";
-static const char * const kLeft4Name = "Left4";
+static const char *const kLeft1Name = "Left1";
+static const char *const kLeft2Name = "Left2";
+static const char *const kLeft3Name = "Left3";
+static const char *const kLeft4Name = "Left4";
 
 } // End of namespace Pink
 

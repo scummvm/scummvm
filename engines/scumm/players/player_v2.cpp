@@ -25,16 +25,15 @@
 
 namespace Scumm {
 
-#define SPK_DECAY   0xa000              /* Depends on sample rate */
-#define PCJR_DECAY  0xa000              /* Depends on sample rate */
+#define SPK_DECAY 0xa000 /* Depends on sample rate */
+#define PCJR_DECAY 0xa000 /* Depends on sample rate */
 
-#define NG_PRESET 0x0f35        /* noise generator preset */
-#define FB_WNOISE 0x12000       /* feedback for white noise */
-#define FB_PNOISE 0x08000       /* feedback for periodic noise */
-
+#define NG_PRESET 0x0f35 /* noise generator preset */
+#define FB_WNOISE 0x12000 /* feedback for white noise */
+#define FB_PNOISE 0x08000 /* feedback for periodic noise */
 
 Player_V2::Player_V2(ScummEngine *scumm, Audio::Mixer *mixer, bool pcjr)
-	: Player_V2Base(scumm, mixer, pcjr) {
+  : Player_V2Base(scumm, mixer, pcjr) {
 
 	int i;
 
@@ -72,7 +71,7 @@ Player_V2::~Player_V2() {
 	_mixer->stopHandle(_soundHandle);
 }
 
-void Player_V2::setMusicVolume (int vol) {
+void Player_V2::setMusicVolume(int vol) {
 	if (vol > 255)
 		vol = 255;
 
@@ -87,7 +86,7 @@ void Player_V2::setMusicVolume (int vol) {
 		else
 			_volumetable[i] = (int)out;
 
-		out /= 1.258925412;         /* = 10 ^ (2/20) = 2dB */
+		out /= 1.258925412; /* = 10 ^ (2/20) = 2dB */
 	}
 	_volumetable[15] = 0;
 }
@@ -126,7 +125,7 @@ void Player_V2::startSound(int nr) {
 	assert(data);
 
 	int cprio = _current_data ? *(_current_data + _header_len) : 0;
-	int prio  = *(data + _header_len);
+	int prio = *(data + _header_len);
 	int nprio = _next_data ? *(_next_data + _header_len) : 0;
 
 	int restartable = *(data + _header_len + 1);
@@ -134,10 +133,10 @@ void Player_V2::startSound(int nr) {
 	if (!_current_nr || cprio <= prio) {
 		int tnr = _current_nr;
 		int tprio = cprio;
-		byte *tdata  = _current_data;
+		byte *tdata = _current_data;
 
 		chainSound(nr, data);
-		nr   = tnr;
+		nr = tnr;
 		prio = tprio;
 		data = tdata;
 		restartable = data ? *(data + _header_len + 1) : 0;
@@ -150,9 +149,9 @@ void Player_V2::startSound(int nr) {
 	}
 
 	if (nr != _current_nr
-		&& restartable
-		&& (!_next_nr
-		|| nprio <= prio)) {
+	    && restartable
+	    && (!_next_nr
+	        || nprio <= prio)) {
 
 		_next_nr = nr;
 		_next_data = data;
@@ -192,14 +191,15 @@ int Player_V2::readBuffer(int16 *data, const int numSamples) {
 void Player_V2::lowPassFilter(int16 *sample, uint len) {
 	for (uint i = 0; i < len; i++) {
 		_level = (int)(_level * _decay
-				+ sample[0] * (0x10000 - _decay)) >> 16;
+		               + sample[0] * (0x10000 - _decay))
+		  >> 16;
 		sample[0] = sample[1] = _level;
 		sample += 2;
 	}
 }
 
 void Player_V2::squareGenerator(int channel, int freq, int vol,
-								int noiseFeedback, int16 *sample, uint len) {
+                                int noiseFeedback, int16 *sample, uint len) {
 	int32 period = _update_step * freq;
 	int32 nsample;
 	if (period == 0)
@@ -233,9 +233,7 @@ void Player_V2::squareGenerator(int channel, int freq, int vol,
 		if (_timer_output & (1 << channel))
 			duration -= _timer_count[channel];
 
-		nsample = *sample +
-			(((int32) (duration - (1 << (FIXP_SHIFT - 1)))
-				* (int32) _volumetable[vol]) >> FIXP_SHIFT);
+		nsample = *sample + (((int32)(duration - (1 << (FIXP_SHIFT - 1))) * (int32)_volumetable[vol]) >> FIXP_SHIFT);
 		/* overflow: clip value */
 		if (nsample > 0x7fff)
 			nsample = 0x7fff;
@@ -252,8 +250,8 @@ void Player_V2::generateSpkSamples(int16 *data, uint len) {
 	int winning_channel = -1;
 	for (int i = 0; i < 4; i++) {
 		if (winning_channel == -1
-			&& _channels[i].d.volume
-			&& _channels[i].d.time_left) {
+		    && _channels[i].d.volume
+		    && _channels[i].d.time_left) {
 			winning_channel = i;
 		}
 	}
@@ -261,7 +259,7 @@ void Player_V2::generateSpkSamples(int16 *data, uint len) {
 	memset(data, 0, 2 * sizeof(int16) * len);
 	if (winning_channel != -1) {
 		squareGenerator(0, _channels[winning_channel].d.freq, 0,
-				0, data, len);
+		                0, data, len);
 	} else if (_level == 0)
 		/* shortcut: no sound is being played. */
 		return;
@@ -281,16 +279,15 @@ void Player_V2::generatePCjrSamples(int16 *data, uint len) {
 		if (_channels[i].d.volume && _channels[i].d.time_left) {
 			for (j = 0; j < i; j++) {
 				if (_channels[j].d.volume
-					&& _channels[j].d.time_left
-					&& freq == (_channels[j].d.freq >> 6)) {
+				    && _channels[j].d.time_left
+				    && freq == (_channels[j].d.freq >> 6)) {
 					/* HACK: this channel is playing at
 					 * the same frequency as another.
 					 * Synchronize it to the same phase to
 					 * prevent interference.
 					 */
 					_timer_count[i] = _timer_count[j];
-					_timer_output ^= (1 << i) &
-						(_timer_output ^ _timer_output << (i - j));
+					_timer_output ^= (1 << i) & (_timer_output ^ _timer_output << (i - j));
 				}
 			}
 		}
@@ -298,7 +295,7 @@ void Player_V2::generatePCjrSamples(int16 *data, uint len) {
 
 	for (i = 0; i < 4; i++) {
 		freq = _channels[i].d.freq >> 6;
-		vol  = (65535 - _channels[i].d.volume) >> 12;
+		vol = (65535 - _channels[i].d.volume) >> 12;
 		if (!_channels[i].d.volume || !_channels[i].d.time_left) {
 			_timer_count[i] -= len << FIXP_SHIFT;
 			if (_timer_count[i] < 0)
@@ -310,7 +307,7 @@ void Player_V2::generatePCjrSamples(int16 *data, uint len) {
 			int noiseFB = (freq & 4) ? FB_WNOISE : FB_PNOISE;
 			int n = (freq & 3);
 
-			freq = (n == 3) ? 2 * (_channels[2].d.freq>>6) : 1 << (5 + n);
+			freq = (n == 3) ? 2 * (_channels[2].d.freq >> 6) : 1 << (5 + n);
 			hasdata = true;
 			squareGenerator(i, freq, vol, noiseFB, data, len);
 		}

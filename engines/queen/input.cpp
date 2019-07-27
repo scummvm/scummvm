@@ -20,13 +20,12 @@
  *
  */
 
-
 #include "common/events.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 
-#include "queen/queen.h"
 #include "queen/input.h"
+#include "queen/queen.h"
 
 namespace Queen {
 
@@ -36,7 +35,7 @@ const char *const Input::_commandKeys[] = {
 	"ofdnepau", // French
 	"acsdgpqu", // Italian
 	"ocmglptu", // Hebrew
-	"acodmthu"  // Spanish
+	"acodmthu" // Spanish
 };
 
 const Verb Input::_verbKeys[] = {
@@ -50,12 +49,22 @@ const Verb Input::_verbKeys[] = {
 	VERB_USE
 };
 
-Input::Input(Common::Language language, OSystem *system) :
-	_system(system), _eventMan(system->getEventManager()), _fastMode(false),
-	_keyVerb(VERB_NONE), _cutawayRunning(false), _canQuit(false),
-	_cutawayQuit(false), _dialogueRunning(false), _talkQuit(false),
-	_quickSave(false), _quickLoad(false), _debugger(false), _inKey(Common::KEYCODE_INVALID),
-	_mouseButton(0), _idleTime(0) {
+Input::Input(Common::Language language, OSystem *system)
+  : _system(system)
+  , _eventMan(system->getEventManager())
+  , _fastMode(false)
+  , _keyVerb(VERB_NONE)
+  , _cutawayRunning(false)
+  , _canQuit(false)
+  , _cutawayQuit(false)
+  , _dialogueRunning(false)
+  , _talkQuit(false)
+  , _quickSave(false)
+  , _quickLoad(false)
+  , _debugger(false)
+  , _inKey(Common::KEYCODE_INVALID)
+  , _mouseButton(0)
+  , _idleTime(0) {
 
 	switch (language) {
 	case Common::EN_ANY:
@@ -202,7 +211,7 @@ void Input::checkKeys() {
 		break;
 	}
 
-	_inKey = Common::KEYCODE_INVALID;	// reset
+	_inKey = Common::KEYCODE_INVALID; // reset
 }
 
 Common::Point Input::getMousePos() const {

@@ -23,14 +23,13 @@
 #ifndef _DSOPTIONS_H_
 #define _DSOPTIONS_H_
 
-
+#include "common/config-manager.h"
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "common/config-manager.h"
 
+#include "gui/dialog.h"
 #include "gui/object.h"
 #include "gui/widget.h"
-#include "gui/dialog.h"
 #include "gui/widgets/tab.h"
 #include "scumm/dialogs.h"
 
@@ -71,8 +70,7 @@ protected:
 	GUI::CheckboxWidget *_touchPadStyle;
 	GUI::CheckboxWidget *_screenTaps;
 
-	bool	_radioButtonMode;
-
+	bool _radioButtonMode;
 };
 
 extern void showOptionsDialog();

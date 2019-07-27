@@ -23,8 +23,8 @@
 #ifndef BACKENDS_GRAPHICS_OPENGL_OPENGL_GRAPHICS_H
 #define BACKENDS_GRAPHICS_OPENGL_OPENGL_GRAPHICS_H
 
-#include "backends/graphics/opengl/opengl-sys.h"
 #include "backends/graphics/opengl/framebuffer.h"
+#include "backends/graphics/opengl/opengl-sys.h"
 #include "backends/graphics/windowed.h"
 
 #include "common/frac.h"
@@ -100,7 +100,7 @@ public:
 	virtual Graphics::Surface *lockScreen() override;
 	virtual void unlockScreen() override;
 
-	virtual void setFocusRectangle(const Common::Rect& rect) override;
+	virtual void setFocusRectangle(const Common::Rect &rect) override;
 	virtual void clearFocusRectangle() override;
 
 	virtual int16 getOverlayWidth() const override;
@@ -172,11 +172,18 @@ protected:
 	// Transaction support
 	//
 	struct VideoState {
-		VideoState() : valid(false), gameWidth(0), gameHeight(0),
+		VideoState()
+		  : valid(false)
+		  , gameWidth(0)
+		  , gameHeight(0)
+		  ,
 #ifdef USE_RGB_COLOR
-		    gameFormat(),
+		  gameFormat()
+		  ,
 #endif
-		    aspectRatioCorrection(false), graphicsMode(GFX_OPENGL), filtering(true) {
+		  aspectRatioCorrection(false)
+		  , graphicsMode(GFX_OPENGL)
+		  , filtering(true) {
 		}
 
 		bool valid;
@@ -192,11 +199,11 @@ protected:
 		bool operator==(const VideoState &right) {
 			return gameWidth == right.gameWidth && gameHeight == right.gameHeight
 #ifdef USE_RGB_COLOR
-			    && gameFormat == right.gameFormat
+			  && gameFormat == right.gameFormat
 #endif
-			    && aspectRatioCorrection == right.aspectRatioCorrection
-			    && graphicsMode == right.graphicsMode
-				&& filtering == right.filtering;
+			  && aspectRatioCorrection == right.aspectRatioCorrection
+			  && graphicsMode == right.graphicsMode
+			  && filtering == right.filtering;
 		}
 
 		bool operator!=(const VideoState &right) {

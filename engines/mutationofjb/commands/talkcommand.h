@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_TALKCOMMAND_H
 #define MUTATIONOFJB_TALKCOMMAND_H
 
-#include "mutationofjb/commands/seqcommand.h"
 #include "common/scummsys.h"
+#include "mutationofjb/commands/seqcommand.h"
 #include "mutationofjb/tasks/task.h"
 
 namespace MutationOfJB {
@@ -44,7 +44,8 @@ public:
 		CARNIVAL_TICKET_SELLER_MODE
 	};
 
-	TalkCommand(Mode mode) : _mode(mode) {}
+	TalkCommand(Mode mode)
+	  : _mode(mode) {}
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const override;
 

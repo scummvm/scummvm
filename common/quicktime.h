@@ -32,13 +32,13 @@
 #define COMMON_QUICKTIME_H
 
 #include "common/array.h"
+#include "common/rational.h"
 #include "common/scummsys.h"
 #include "common/stream.h"
-#include "common/rational.h"
 #include "common/types.h"
 
 namespace Common {
-	class MacResManager;
+class MacResManager;
 
 /**
  * Parser for QuickTime/MPEG-4 files.

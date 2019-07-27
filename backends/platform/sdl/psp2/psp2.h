@@ -25,7 +25,7 @@
 
 #include "backends/platform/sdl/sdl.h"
 #ifdef __PSP2_DEBUG__
-#include <psp2shell.h>
+#	include <psp2shell.h>
 #endif
 
 class OSystem_PSP2 : public OSystem_SDL {

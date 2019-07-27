@@ -40,8 +40,10 @@ namespace DM {
 
 class Scent {
 	uint16 _scent;
+
 public:
-	explicit Scent(uint16 scent = 0): _scent(scent) {}
+	explicit Scent(uint16 scent = 0)
+	  : _scent(scent) {}
 
 	uint16 getMapX() { return _scent & 0x1F; }
 	uint16 getMapY() { return (_scent >> 5) & 0x1F; }
@@ -438,10 +440,10 @@ public:
 	void setSlot(ChampionSlot slot, Thing val) { _slots[slot] = val; }
 
 	Skill &getSkill(ChampionSkill skill) { return _skills[skill]; }
-	void setSkillExp(ChampionSkill skill,  int32 val) { _skills[skill]._experience = val; }
-	void setSkillTempExp(ChampionSkill skill,  int16 val) { _skills[skill]._temporaryExperience= val; }
+	void setSkillExp(ChampionSkill skill, int32 val) { _skills[skill]._experience = val; }
+	void setSkillTempExp(ChampionSkill skill, int16 val) { _skills[skill]._temporaryExperience = val; }
 
-	byte& getStatistic(ChampionStatType type, ChampionStatValue valType) { return _statistics[type][valType]; }
+	byte &getStatistic(ChampionStatType type, ChampionStatValue valType) { return _statistics[type][valType]; }
 	void setStatistic(ChampionStatType type, ChampionStatValue valType, byte newVal) { _statistics[type][valType] = newVal; }
 
 	uint16 getAttributes() { return _attributes; }
@@ -465,7 +467,10 @@ class Spell {
 public:
 	Spell() {}
 	Spell(int32 symbols, byte baseSkillReq, byte skillIndex, uint16 attributes)
-	: _symbols(symbols), _baseRequiredSkillLevel(baseSkillReq), _skillIndex(skillIndex), _attributes(attributes) {}
+	  : _symbols(symbols)
+	  , _baseRequiredSkillLevel(baseSkillReq)
+	  , _skillIndex(skillIndex)
+	  , _attributes(attributes) {}
 
 	int32 _symbols; /* Most significant byte: 0 (spell definition does not include power symbol) / not 0 (spell definition includes power symbol) */
 	byte _baseRequiredSkillLevel;
@@ -485,19 +490,18 @@ class ChampionMan {
 
 	int16 getDecodedValue(char *string, uint16 characterCount); // @ F0279_CHAMPION_GetDecodedValue
 	void drawHealthOrStaminaOrManaValue(int16 posy, int16 currVal, int16 maxVal); // @ F0289_CHAMPION_DrawHealthOrStaminaOrManaValue
-	uint16 getHandSlotIndex(uint16 slotBoxIndex);// @ M70_HAND_SLOT_INDEX
+	uint16 getHandSlotIndex(uint16 slotBoxIndex); // @ M70_HAND_SLOT_INDEX
 	int16 _championPendingWounds[4]; // @ G0410_ai_ChampionPendingWounds
 	int16 _championPendingDamage[4]; // @ G0409_ai_ChampionPendingDamage
 
 	void initConstants();
 
 public:
-
 	Champion *_champions; // @ K0071_as_Champions
-	uint16 _partyChampionCount;	// @ G0305_ui_PartyChampionCount
+	uint16 _partyChampionCount; // @ G0305_ui_PartyChampionCount
 	bool _partyDead; // @ G0303_B_PartyDead
 	Thing _leaderHandObject; // @ G0414_T_LeaderHandObject
-	ChampionIndex _leaderIndex;	// @ G0411_i_LeaderIndex
+	ChampionIndex _leaderIndex; // @ G0411_i_LeaderIndex
 	uint16 _candidateChampionOrdinal; // @ G0299_ui_CandidateChampionOrdinal
 	bool _partyIsSleeping; // @ G0300_B_PartyIsSleeping
 	uint16 _actingChampionOrdinal; // @ G0506_ui_ActingChampionOrdinal
@@ -523,10 +527,10 @@ public:
 	void drawHealthStaminaManaValues(Champion *champ); // @ F0290_CHAMPION_DrawHealthStaminaManaValues
 	void drawSlot(uint16 champIndex, int16 slotIndex); // @ F0291_CHAMPION_DrawSlot
 	void renameChampion(Champion *champ); // @ F0281_CHAMPION_Rename
-	uint16 getSkillLevel(int16 champIndex, uint16 skillIndex);// @ F0303_CHAMPION_GetSkillLevel
+	uint16 getSkillLevel(int16 champIndex, uint16 skillIndex); // @ F0303_CHAMPION_GetSkillLevel
 	Common::String getStringFromInteger(uint16 val, bool padding, uint16 paddingCharCount); // @ F0288_CHAMPION_GetStringFromInteger
 	void applyModifiersToStatistics(Champion *champ, int16 slotIndex, int16 iconIndex,
-									int16 modifierFactor, Thing thing); // @ F0299_CHAMPION_ApplyObjectModifiersToStatistics
+	                                int16 modifierFactor, Thing thing); // @ F0299_CHAMPION_ApplyObjectModifiersToStatistics
 	bool hasObjectIconInSlotBoxChanged(int16 slotBoxIndex, Thing thing); // @ F0295_CHAMPION_HasObjectIconInSlotBoxChanged
 	void drawChangedObjectIcons(); // @ F0296_CHAMPION_DrawChangedObjectIcons
 	void addObjectInSlot(ChampionIndex champIndex, Thing thing, ChampionSlot slotIndex); // @ F0301_CHAMPION_AddObjectInSlot
@@ -536,15 +540,15 @@ public:
 	Thing getObjectRemovedFromSlot(uint16 champIndex, uint16 slotIndex); // @ F0300_CHAMPION_GetObjectRemovedFromSlot
 	void decrementStamina(int16 championIndex, int16 decrement); // @ F0325_CHAMPION_DecrementStamina
 	int16 addPendingDamageAndWounds_getDamage(int16 champIndex, int16 attack, int16 allowedWounds,
-												   uint16 attackType); // @ F0321_CHAMPION_AddPendingDamageAndWounds_GetDamage
+	                                          uint16 attackType); // @ F0321_CHAMPION_AddPendingDamageAndWounds_GetDamage
 	int16 getWoundDefense(int16 champIndex, uint16 woundIndex); // @ F0313_CHAMPION_GetWoundDefense
 	uint16 getStatisticAdjustedAttack(Champion *champ, uint16 statIndex, uint16 attack); // @ F0307_CHAMPION_GetStatisticAdjustedAttack
 	void wakeUp(); // @ F0314_CHAMPION_WakeUp
-	int16 getThrowingStaminaCost(Thing thing);// @ F0305_CHAMPION_GetThrowingStaminaCost
+	int16 getThrowingStaminaCost(Thing thing); // @ F0305_CHAMPION_GetThrowingStaminaCost
 	void disableAction(uint16 champIndex, uint16 ticks); // @ F0330_CHAMPION_DisableAction
-	void addSkillExperience(uint16 champIndex, uint16 skillIndex, uint16 exp);// @ F0304_CHAMPION_AddSkillExperience
+	void addSkillExperience(uint16 champIndex, uint16 skillIndex, uint16 exp); // @ F0304_CHAMPION_AddSkillExperience
 	int16 getDamagedChampionCount(uint16 attack, int16 wounds,
-												 int16 attackType); // @ F0324_CHAMPION_DamageAll_GetDamagedChampionCount
+	                              int16 attackType); // @ F0324_CHAMPION_DamageAll_GetDamagedChampionCount
 	int16 getTargetChampionIndex(int16 mapX, int16 mapY, uint16 cell); // @ F0286_CHAMPION_GetTargetChampionIndex
 	int16 getDexterity(Champion *champ); // @ F0311_CHAMPION_GetDexterity
 	bool isLucky(Champion *champ, uint16 percentage); // @ F0308_CHAMPION_IsLucky
@@ -555,13 +559,13 @@ public:
 	void putObjectInLeaderHand(Thing thing, bool setMousePointer); // @ F0297_CHAMPION_PutObjectInLeaderHand
 	int16 getMovementTicks(Champion *champ); // @ F0310_CHAMPION_GetMovementTicks
 	bool isAmmunitionCompatibleWithWeapon(uint16 champIndex, uint16 weaponSlotIndex,
-											   uint16 ammunitionSlotIndex); // @ F0294_CHAMPION_IsAmmunitionCompatibleWithWeapon
+	                                      uint16 ammunitionSlotIndex); // @ F0294_CHAMPION_IsAmmunitionCompatibleWithWeapon
 	void drawAllChampionStates(); // @ F0293_CHAMPION_DrawAllChampionStates
 	void viAltarRebirth(uint16 champIndex); // @ F0283_CHAMPION_ViAltarRebirth
 	void clickOnSlotBox(uint16 slotBoxIndex); // @ F0302_CHAMPION_ProcessCommands28To65_ClickOnSlotBox
 	bool isProjectileSpellCast(uint16 champIndex, Thing thing, int16 kineticEnergy, uint16 requiredManaAmount); // @ F0327_CHAMPION_IsProjectileSpellCast
 	void championShootProjectile(Champion *champ, Thing thing, int16 kineticEnergy,
-									  int16 attack, int16 stepEnergy); // @ F0326_CHAMPION_ShootProjectile
+	                             int16 attack, int16 stepEnergy); // @ F0326_CHAMPION_ShootProjectile
 	void applyAndDrawPendingDamageAndWounds(); // @ F0320_CHAMPION_ApplyAndDrawPendingDamageAndWounds
 	void championKill(uint16 champIndex); // @ F0319_CHAMPION_Kill
 	void dropAllObjects(uint16 champIndex); // @ F0318_CHAMPION_DropAllObjects

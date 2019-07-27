@@ -20,34 +20,32 @@
  *
  */
 
-
-
 #ifdef ENABLE_AGOS2
 
-#include "common/endian.h"
-#include "common/events.h"
-#include "common/file.h"
-#include "common/system.h"
-#include "common/textconsole.h"
-#include "common/translation.h"
+#	include "common/endian.h"
+#	include "common/events.h"
+#	include "common/file.h"
+#	include "common/system.h"
+#	include "common/textconsole.h"
+#	include "common/translation.h"
 
-#include "graphics/cursorman.h"
-#include "graphics/palette.h"
-#include "graphics/surface.h"
+#	include "graphics/cursorman.h"
+#	include "graphics/palette.h"
+#	include "graphics/surface.h"
 
-#include "agos/animation.h"
-#include "agos/intern.h"
-#include "agos/agos.h"
+#	include "agos/agos.h"
+#	include "agos/animation.h"
+#	include "agos/intern.h"
 
-#include "audio/audiostream.h"
-#include "audio/decoders/wave.h"
+#	include "audio/audiostream.h"
+#	include "audio/decoders/wave.h"
 
-#include "gui/message.h"
+#	include "gui/message.h"
 
 namespace AGOS {
 
 MoviePlayer::MoviePlayer(AGOSEngine_Feeble *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 	_mixer = _vm->_mixer;
 
 	_leftButtonDown = false;
@@ -232,7 +230,7 @@ const char *const MoviePlayerDXA::_sequenceList[90] = {
 };
 
 MoviePlayerDXA::MoviePlayerDXA(AGOSEngine_Feeble *vm, const char *name)
-	: MoviePlayer(vm) {
+  : MoviePlayer(vm) {
 	debug(0, "Creating DXA cutscene player");
 
 	memset(baseName, 0, sizeof(baseName));
@@ -242,8 +240,7 @@ MoviePlayerDXA::MoviePlayerDXA(AGOSEngine_Feeble *vm, const char *name)
 }
 
 bool MoviePlayerDXA::load() {
-	if ((_vm->getPlatform() == Common::kPlatformAmiga || _vm->getPlatform() == Common::kPlatformMacintosh) &&
-		_vm->_language != Common::EN_ANY) {
+	if ((_vm->getPlatform() == Common::kPlatformAmiga || _vm->getPlatform() == Common::kPlatformMacintosh) && _vm->_language != Common::EN_ANY) {
 		_sequenceNum = 0;
 		for (uint i = 0; i < 90; i++) {
 			if (!scumm_stricmp(baseName, _sequenceList[i]))
@@ -378,7 +375,7 @@ bool MoviePlayerDXA::processFrame() {
 void MoviePlayerDXA::readSoundData(Common::SeekableReadStream *stream) {
 	uint32 tag = stream->readUint32BE();
 
-	if (tag == MKTAG('W','A','V','E')) {
+	if (tag == MKTAG('W', 'A', 'V', 'E')) {
 		uint32 size = stream->readUint32BE();
 
 		if (_sequenceNum) {
@@ -410,9 +407,9 @@ void MoviePlayerDXA::readSoundData(Common::SeekableReadStream *stream) {
 // Movie player for Smacker movies
 ///////////////////////////////////////////////////////////////////////////////
 
-
 MoviePlayerSMK::MoviePlayerSMK(AGOSEngine_Feeble *vm, const char *name)
-	: MoviePlayer(vm), SmackerDecoder() {
+  : MoviePlayer(vm)
+  , SmackerDecoder() {
 	debug(0, "Creating SMK cutscene player");
 
 	memset(baseName, 0, sizeof(baseName));

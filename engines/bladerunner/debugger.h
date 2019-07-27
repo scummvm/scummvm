@@ -37,30 +37,30 @@ class BladeRunnerEngine;
 class View;
 
 enum DebuggerDrawnObjectType {
-	debuggerObjTypeUndefined     = 99,
-	debuggerObjTypeActor 	     =  0,
-	debuggerObjType3dObject      =  1,
-	debuggerObjTypeItem          =  2,
-	debuggerObjTypeRegionNormal  =  3,
-	debuggerObjTypeRegionExit    =  4,
-	debuggerObjTypeWaypointNorm  =  5,
-	debuggerObjTypeWaypoingFlee  =  6,
-	debuggerObjTypeWaypointCover =  7,
-	debuggerObjTypeWalkbox       =  8,
-	debuggerObjTypeEffect        =  9,
-	debuggerObjTypeLight         = 10,
-	debuggerObjTypeFog           = 11
+	debuggerObjTypeUndefined = 99,
+	debuggerObjTypeActor = 0,
+	debuggerObjType3dObject = 1,
+	debuggerObjTypeItem = 2,
+	debuggerObjTypeRegionNormal = 3,
+	debuggerObjTypeRegionExit = 4,
+	debuggerObjTypeWaypointNorm = 5,
+	debuggerObjTypeWaypoingFlee = 6,
+	debuggerObjTypeWaypointCover = 7,
+	debuggerObjTypeWalkbox = 8,
+	debuggerObjTypeEffect = 9,
+	debuggerObjTypeLight = 10,
+	debuggerObjTypeFog = 11
 };
 
-class Debugger : public GUI::Debugger{
+class Debugger : public GUI::Debugger {
 	BladeRunnerEngine *_vm;
 
 	static const uint kMaxSpecificObjectsDrawnCount = 100;
 
 	struct DebuggerDrawnObject {
-		int                     sceneId;
-		int                     setId;
-		int                     objId;
+		int sceneId;
+		int setId;
+		int objId;
 		DebuggerDrawnObjectType type;
 	};
 

@@ -107,7 +107,7 @@ public:
 
 	void handleCommand(GUI::CommandSender *sender, uint32 command, uint32 data);
 
-	const Common::String &getEditString() const	{ return _text->getEditString(); }
+	const Common::String &getEditString() const { return _text->getEditString(); }
 
 protected:
 	GUI::EditTextWidget *_text;

@@ -23,14 +23,14 @@
 #ifndef ILLUSIONS_MENUSYSTEM_H
 #define ILLUSIONS_MENUSYSTEM_H
 
-#include "illusions/actor.h"
-#include "illusions/graphics.h"
-#include "illusions/resources/fontresource.h"
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/stack.h"
 #include "common/str.h"
 #include "graphics/surface.h"
+#include "illusions/actor.h"
+#include "illusions/graphics.h"
+#include "illusions/resources/fontresource.h"
 
 namespace Illusions {
 
@@ -46,9 +46,10 @@ public:
 	MenuItem(const Common::String text, BaseMenuAction *action);
 	~MenuItem();
 	void executeAction(const Common::Point &point);
-	const Common::String& getText() const { return _text; }
+	const Common::String &getText() const { return _text; }
 	void setText(const Common::String &text) { _text = text; }
-	const Common::Point& getMouseClickPoint() { return _mouseClickPoint; };
+	const Common::Point &getMouseClickPoint() { return _mouseClickPoint; };
+
 protected:
 	Common::String _text;
 	BaseMenuAction *_action;
@@ -58,17 +59,18 @@ protected:
 class BaseMenu {
 public:
 	BaseMenu(BaseMenuSystem *menuSystem, uint32 fontId, byte backgroundColor, byte borderColor, byte textColor, byte fieldE,
-		uint defaultMenuItemIndex);
+	         uint defaultMenuItemIndex);
 	virtual ~BaseMenu();
 	void addText(const Common::String text);
 	void addMenuItem(MenuItem *menuItem);
 	uint getHeaderLinesCount();
-	const Common::String& getHeaderLine(uint index);
+	const Common::String &getHeaderLine(uint index);
 	uint getMenuItemsCount();
 	MenuItem *getMenuItem(uint index);
 	virtual void enterMenu();
-public://protected://TODO
-	typedef Common::Array<MenuItem*> MenuItems;
+
+public: //protected://TODO
+	typedef Common::Array<MenuItem *> MenuItems;
 	BaseMenuSystem *_menuSystem;
 	uint32 _fontId;
 	byte _backgroundColor, _borderColor, _textColor, _fieldE;
@@ -78,7 +80,7 @@ public://protected://TODO
 	MenuItems _menuItems;
 };
 
-class MenuStack : public Common::Stack<BaseMenu*> {
+class MenuStack : public Common::Stack<BaseMenu *> {
 };
 
 typedef Common::Array<int16> MenuChoiceOffsets;
@@ -113,6 +115,7 @@ public:
 	virtual int getGameState() = 0;
 	virtual void setGameState(int gameState) = 0;
 	virtual void setMenuCursorNum(int cursorNum) = 0;
+
 protected:
 	IllusionsEngine *_vm;
 	MenuStack _menuStack;
@@ -178,6 +181,7 @@ public:
 	void appendNewLine();
 	void finalize();
 	uint16 *getText() { return _text; }
+
 protected:
 	uint16 _text[kMenuTextSize];
 	uint _pos;
@@ -190,6 +194,7 @@ public:
 	BaseMenuAction(BaseMenuSystem *menuSystem);
 	virtual ~BaseMenuAction() {}
 	virtual void execute() = 0;
+
 protected:
 	BaseMenuSystem *_menuSystem;
 };
@@ -200,6 +205,7 @@ class MenuActionEnterMenu : public BaseMenuAction {
 public:
 	MenuActionEnterMenu(BaseMenuSystem *menuSystem, int menuId);
 	virtual void execute();
+
 protected:
 	int _menuId;
 };
@@ -218,6 +224,7 @@ class MenuActionReturnChoice : public BaseMenuAction {
 public:
 	MenuActionReturnChoice(BaseMenuSystem *menuSystem, uint choiceIndex);
 	virtual void execute();
+
 protected:
 	int _choiceIndex;
 };
@@ -228,6 +235,7 @@ class MenuActionEnterQueryMenu : public BaseMenuAction {
 public:
 	MenuActionEnterQueryMenu(BaseMenuSystem *menuSystem, int menuId, uint confirmationChoiceIndex);
 	virtual void execute();
+
 protected:
 	int _menuId;
 	uint _confirmationChoiceIndex;
@@ -237,6 +245,7 @@ class MenuActionLoadGame : public BaseMenuAction {
 public:
 	MenuActionLoadGame(BaseMenuSystem *menuSystem, uint choiceIndex);
 	virtual void execute();
+
 protected:
 	uint _choiceIndex;
 };
@@ -245,6 +254,7 @@ class MenuActionSaveGame : public BaseMenuAction {
 public:
 	MenuActionSaveGame(BaseMenuSystem *menuSystem, uint choiceIndex);
 	virtual void execute();
+
 protected:
 	uint _choiceIndex;
 };

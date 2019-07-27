@@ -28,19 +28,19 @@
 
 #include "backends/platform/ps2/fileio.h"
 
-#include <tamtypes.h>
-#include <kernel.h>
-#include <fileio.h>
 #include <assert.h>
+#include <fileio.h>
+#include <kernel.h>
 #include <string.h>
+#include <tamtypes.h>
 
-#include "common/config-manager.h"
-#include "common/file.h"
-#include "engines/engine.h"
 #include "backends/platform/ps2/asyncfio.h"
 #include "backends/platform/ps2/eecodyvdfs.h"
 #include "backends/platform/ps2/ps2debug.h"
 #include "backends/platform/ps2/systemps2.h"
+#include "common/config-manager.h"
+#include "common/file.h"
+#include "engines/engine.h"
 
 #define __PS2_FILE_SEMA__ 1
 
@@ -109,8 +109,7 @@ bool Ps2File::open(const char *name, int mode) {
 		if (_mode == O_RDONLY) {
 			_fileSize = fio.seek(_fd, 0, SEEK_END);
 			fio.seek(_fd, 0, SEEK_SET);
-		}
-		else
+		} else
 			_fileSize = 0;
 
 		dbg_printf("  _mode = %x\n", _mode);
@@ -138,8 +137,7 @@ bool Ps2File::open(const char *name, int mode) {
 		}
 
 		fio.close(_fd);
-	}
-	else
+	} else
 		_fileSize = 0; /* new file */
 
 	_fd = fio.open(name, mode);
@@ -154,12 +152,11 @@ bool Ps2File::open(const char *name, int mode) {
 			if (mode == O_RDONLY) {
 				/* DANGER: for w* modes it will truncate your fine files */
 				fio.seek(_fd, 0, SEEK_SET);
-			}
-			else if (_mode & O_APPEND) {
+			} else if (_mode & O_APPEND) {
 				fio.seek(_fd, 0, _fileSize);
 				_filePos = _fileSize;
 			}
-			#if 0 /* file already trunc'd when opened as w* -> moved up */
+#	if 0 /* file already trunc'd when opened as w* -> moved up */
 			if (mode != O_RDONLY) {
 				fio.read(_fd, _cacheBuf, _fileSize);
 				r = fio.sync(_fd);
@@ -167,7 +164,7 @@ bool Ps2File::open(const char *name, int mode) {
 				assert(r == _fileSize);
 				// _fileSize = fio.seek(_fd, 0, SEEK_END);
 			}
-			#endif
+#	endif
 		}
 
 		dbg_printf("  _mode = %x\n", _mode);
@@ -232,18 +229,18 @@ int Ps2File::seek(int32 offset, int origin) {
 	int seekDest;
 	int res = -1;
 	switch (origin) {
-		case SEEK_SET:
-			seekDest = offset;
-			break;
-		case SEEK_CUR:
-			seekDest = _filePos + offset;
-			break;
-		case SEEK_END:
-			seekDest = _fileSize + offset;
-			break;
-		default:
-			seekDest = -1;
-			break;
+	case SEEK_SET:
+		seekDest = offset;
+		break;
+	case SEEK_CUR:
+		seekDest = _filePos + offset;
+		break;
+	case SEEK_END:
+		seekDest = _fileSize + offset;
+		break;
+	default:
+		seekDest = -1;
+		break;
 	}
 	if ((seekDest >= 0) && (seekDest <= (int)_fileSize)) {
 		// uint32 _rseek = fio.sync(_fd);
@@ -253,8 +250,7 @@ int Ps2File::seek(int32 offset, int origin) {
 		// _cacheSize = 0;
 		_eof = false;
 		res = 0;
-	}
-	else {
+	} else {
 		_eof = true;
 	}
 
@@ -360,8 +356,8 @@ uint32 Ps2File::read(void *dest, uint32 len) {
 		return 0;
 	}
 
-	if ((_filePos+len) > _fileSize) {
-		len = _fileSize-_filePos;
+	if ((_filePos + len) > _fileSize) {
+		len = _fileSize - _filePos;
 		_eof = true;
 	}
 
@@ -437,7 +433,6 @@ uint32 Ps2File::write(const void *src, uint32 len) {
 	return len;
 }
 
-
 PS2FileStream *PS2FileStream::makeFromPath(const Common::String &path, bool writeMode) {
 	Ps2File *file = new Ps2File();
 
@@ -450,7 +445,8 @@ PS2FileStream *PS2FileStream::makeFromPath(const Common::String &path, bool writ
 	return 0;
 }
 
-PS2FileStream::PS2FileStream(Ps2File *handle) : _handle(handle) {
+PS2FileStream::PS2FileStream(Ps2File *handle)
+  : _handle(handle) {
 	assert(handle);
 }
 
@@ -501,15 +497,13 @@ int32 PS2FileStream::size() const {
 	return _handle->size();
 }
 
-
-
 FILE *ps2_fopen(const char *fname, const char *mode) {
 	Ps2File *file = new Ps2File();
 	int _mode = O_RDONLY;
 
 	dbg_printf("fopen(%s, %s)\n", fname, mode);
 
-	if (mode[0] == 'r' && mode [1] == 'w')
+	if (mode[0] == 'r' && mode[1] == 'w')
 		_mode = O_RDWR;
 	else if (mode[0] == 'w')
 		_mode = O_WRONLY | O_CREAT;
@@ -530,7 +524,6 @@ int ps2_fclose(FILE *stream) {
 
 	return 0;
 }
-
 
 size_t ps2_fread(void *buf, size_t r, size_t n, FILE *stream) {
 	assert(r != 0);

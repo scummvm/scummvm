@@ -23,26 +23,34 @@
  *
  */
 
+#include "pegasus/interface.h"
+#include "pegasus/ai/ai_area.h"
 #include "pegasus/compass.h"
 #include "pegasus/energymonitor.h"
-#include "pegasus/interface.h"
-#include "pegasus/pegasus.h"
-#include "pegasus/ai/ai_area.h"
 #include "pegasus/items/biochips/biochipitem.h"
 #include "pegasus/items/inventory/inventoryitem.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
 Interface *g_interface = 0;
 
-Interface::Interface() : InputHandler(0), _interfaceNotification(kInterfaceNotificationID, (NotificationManager *)((PegasusEngine *)g_engine)),
-			_currentItemSpot(kCurrentItemSpotID), _currentBiochipSpot(kCurrentBiochipSpotID),
-			_background1(kInterface1ID), _background2(kInterface2ID), _background3(kInterface3ID),
-			_background4(kInterface4ID), _datePicture(kDateID), _inventoryPush(kInventoryPushID),
-			_inventoryLid(kInventoryLidID, kNoDisplayElement),
-			_inventoryPanel(kNoDisplayElement, (InputHandler *)((PegasusEngine *)g_engine), ((PegasusEngine *)g_engine)->getItemsInventory()),
-			_biochipPush(kBiochipPushID), _biochipLid(kBiochipLidID, kNoDisplayElement),
-			_biochipPanel(kNoDisplayElement, (InputHandler *)((PegasusEngine *)g_engine), ((PegasusEngine *)g_engine)->getBiochipsInventory()) {
+Interface::Interface()
+  : InputHandler(0)
+  , _interfaceNotification(kInterfaceNotificationID, (NotificationManager *)((PegasusEngine *)g_engine))
+  , _currentItemSpot(kCurrentItemSpotID)
+  , _currentBiochipSpot(kCurrentBiochipSpotID)
+  , _background1(kInterface1ID)
+  , _background2(kInterface2ID)
+  , _background3(kInterface3ID)
+  , _background4(kInterface4ID)
+  , _datePicture(kDateID)
+  , _inventoryPush(kInventoryPushID)
+  , _inventoryLid(kInventoryLidID, kNoDisplayElement)
+  , _inventoryPanel(kNoDisplayElement, (InputHandler *)((PegasusEngine *)g_engine), ((PegasusEngine *)g_engine)->getItemsInventory())
+  , _biochipPush(kBiochipPushID)
+  , _biochipLid(kBiochipLidID, kNoDisplayElement)
+  , _biochipPanel(kNoDisplayElement, (InputHandler *)((PegasusEngine *)g_engine), ((PegasusEngine *)g_engine)->getBiochipsInventory()) {
 	g_energyMonitor = 0;
 	_previousHandler = 0;
 	_inventoryRaised = false;

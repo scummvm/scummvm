@@ -71,7 +71,7 @@ public:
 	void tick(int x, int y);
 	bool isInactive() const;
 
-// private:
+	// private:
 	Vector3 getXYZ(int x, int y) const;
 };
 

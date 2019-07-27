@@ -20,22 +20,22 @@
  *
  */
 
-#include "prince/prince.h"
-#include "prince/graphics.h"
 #include "prince/flags.h"
-#include "prince/script.h"
+#include "prince/graphics.h"
 #include "prince/hero.h"
+#include "prince/prince.h"
+#include "prince/script.h"
 
-#include "common/savefile.h"
-#include "common/system.h"
 #include "common/config-manager.h"
 #include "common/memstream.h"
+#include "common/savefile.h"
+#include "common/system.h"
 #include "common/translation.h"
 
-#include "graphics/thumbnail.h"
-#include "graphics/surface.h"
 #include "graphics/palette.h"
 #include "graphics/scaler.h"
+#include "graphics/surface.h"
+#include "graphics/thumbnail.h"
 
 #include "gui/saveload.h"
 
@@ -78,15 +78,15 @@ bool PrinceEngine::scummVMSaveLoadDialog(bool isSave) {
 }
 
 WARN_UNUSED_RESULT bool PrinceEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail) {
-	header.version     = 0;
+	header.version = 0;
 	header.saveName.clear();
-	header.thumbnail   = nullptr;
-	header.saveYear    = 0;
-	header.saveMonth   = 0;
-	header.saveDay     = 0;
-	header.saveHour    = 0;
+	header.thumbnail = nullptr;
+	header.saveYear = 0;
+	header.saveMonth = 0;
+	header.saveDay = 0;
+	header.saveHour = 0;
 	header.saveMinutes = 0;
-	header.playTime    = 0;
+	header.playTime = 0;
 
 	// Get the savegame version
 	header.version = in->readByte();
@@ -104,12 +104,12 @@ WARN_UNUSED_RESULT bool PrinceEngine::readSavegameHeader(Common::InSaveFile *in,
 	}
 
 	// Read in save date/time
-	header.saveYear    = in->readSint16LE();
-	header.saveMonth   = in->readSint16LE();
-	header.saveDay     = in->readSint16LE();
-	header.saveHour    = in->readSint16LE();
+	header.saveYear = in->readSint16LE();
+	header.saveMonth = in->readSint16LE();
+	header.saveDay = in->readSint16LE();
+	header.saveHour = in->readSint16LE();
 	header.saveMinutes = in->readSint16LE();
-	header.playTime    = in->readUint32LE();
+	header.playTime = in->readUint32LE();
 
 	return true;
 }
@@ -420,7 +420,6 @@ void PrinceEngine::syncGame(Common::SeekableReadStream *readStream, Common::Writ
 		// Script
 		_interpreter->setBgOpcodePC(0);
 		_interpreter->setFgOpcodePC(_script->_scriptInfo.restoreGame);
-
 	}
 }
 

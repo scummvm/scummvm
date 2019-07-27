@@ -45,8 +45,9 @@ public:
 	BBDOUMenuSystem(IllusionsEngine_BBDOU *vm);
 	~BBDOUMenuSystem();
 	void runMenu(MenuChoiceOffsets menuChoiceOffsets, int16 *menuChoiceOffset,
-		uint32 menuId, uint32 duration, uint timeOutMenuChoiceIndex, uint32 menuCallerThreadId);
-public://protected:
+	             uint32 menuId, uint32 duration, uint timeOutMenuChoiceIndex, uint32 menuCallerThreadId);
+
+public: //protected:
 	IllusionsEngine_BBDOU *_vm;
 	BaseMenu *_menus[kBBDOULastMenuIndex];
 	void clearMenus();

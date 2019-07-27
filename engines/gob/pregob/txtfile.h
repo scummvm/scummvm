@@ -23,14 +23,14 @@
 #ifndef GOB_PREGOB_TXTFILE_H
 #define GOB_PREGOB_TXTFILE_H
 
-#include "common/system.h"
-#include "common/str.h"
 #include "common/array.h"
+#include "common/str.h"
+#include "common/system.h"
 
 #include "gob/backbuffer.h"
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Gob {
@@ -61,13 +61,13 @@ public:
 
 	LineArray &getLines();
 
-	bool draw(           Surface &surface, const Font * const *fonts, uint fontCount, int color = -1);
-	bool draw(uint line, Surface &surface, const Font * const *fonts, uint fontCount, int color = -1);
+	bool draw(Surface &surface, const Font *const *fonts, uint fontCount, int color = -1);
+	bool draw(uint line, Surface &surface, const Font *const *fonts, uint fontCount, int color = -1);
 
-	bool draw(           Surface &surface, int16 &left, int16 &top, int16 &right, int16 &bottom,
-	          const Font * const *fonts, uint fontCount, int color = -1);
+	bool draw(Surface &surface, int16 &left, int16 &top, int16 &right, int16 &bottom,
+	          const Font *const *fonts, uint fontCount, int color = -1);
 	bool draw(uint line, Surface &surface, int16 &left, int16 &top, int16 &right, int16 &bottom,
-	          const Font * const *fonts, uint fontCount, int color = -1);
+	          const Font *const *fonts, uint fontCount, int color = -1);
 
 	bool clear(Surface &surface, int16 &left, int16 &top, int16 &right, int16 &bottom);
 
@@ -79,11 +79,10 @@ private:
 	Common::String getStr(Common::SeekableReadStream &txt);
 	int getInt(Common::SeekableReadStream &txt);
 
-
-	bool getArea(           int16 &left, int16 &top, int16 &right, int16 &bottom,
-	             const Font * const *fonts, uint fontCount) const;
+	bool getArea(int16 &left, int16 &top, int16 &right, int16 &bottom,
+	             const Font *const *fonts, uint fontCount) const;
 	bool getArea(uint line, int16 &left, int16 &top, int16 &right, int16 &bottom,
-	             const Font * const *fonts, uint fontCount) const;
+	             const Font *const *fonts, uint fontCount) const;
 };
 
 } // End of namespace Gob

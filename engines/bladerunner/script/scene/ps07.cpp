@@ -29,17 +29,17 @@ void SceneScriptPS07::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 610, 0, 639, 479, 1);
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
 	Ambient_Sounds_Add_Looping_Sound(kSfxLABAMB3, 80, 0, 1);
-	Ambient_Sounds_Add_Sound(kSfxTUBES1,   5, 20,  5, 10,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxLABMISC1, 5, 30,  5, 10,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxLABMISC2, 2, 20,  5, 10,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxLABMISC3, 2, 10, 10, 20,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxLABMISC4, 2, 10, 10, 20,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxLABMISC5, 2, 10, 10, 20,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxLABMISC6, 2, 10, 10, 20,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxLABMISC7, 2, 30, 10, 15,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxLABMISC8, 2, 20, 10, 15,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxLABMISC9, 5, 20, 10, 15,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTUBES4,   5, 30,  5,  8, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTUBES1, 5, 20, 5, 10, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC1, 5, 30, 5, 10, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC2, 2, 20, 5, 10, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC3, 2, 10, 10, 20, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC4, 2, 10, 10, 20, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC5, 2, 10, 10, 20, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC6, 2, 10, 10, 20, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC7, 2, 30, 10, 15, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC8, 2, 20, 10, 15, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC9, 5, 20, 10, 15, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTUBES4, 5, 30, 5, 8, -100, 100, -101, -101, 0, 0);
 }
 
 void SceneScriptPS07::SceneLoaded() {
@@ -74,12 +74,10 @@ bool SceneScriptPS07::ClickedOnActor(int actorId) {
 		}
 
 		if (!Game_Flag_Query(kFlagPS07KleinTalkClues)
-		 && (Game_Flag_Query(kFlagMcCoyHasShellCasings)
-		  || Game_Flag_Query(kFlagMcCoyHasOfficersStatement)
-		  || Game_Flag_Query(kFlagMcCoyHasPaintTransfer)
-		  || Game_Flag_Query(kFlagMcCoyHasChromeDebris)
-		 )
-		) {
+		    && (Game_Flag_Query(kFlagMcCoyHasShellCasings)
+		        || Game_Flag_Query(kFlagMcCoyHasOfficersStatement)
+		        || Game_Flag_Query(kFlagMcCoyHasPaintTransfer)
+		        || Game_Flag_Query(kFlagMcCoyHasChromeDebris))) {
 			Actor_Face_Actor(kActorKlein, kActorMcCoy, true);
 			Actor_Says(kActorKlein, 30, 12);
 			Game_Flag_Set(kFlagPS07KleinTalkClues);
@@ -89,9 +87,8 @@ bool SceneScriptPS07::ClickedOnActor(int actorId) {
 			}
 		}
 
-		if ( Game_Flag_Query(kFlagMcCoyHasShellCasings)
-		 && !Game_Flag_Query(kFlagPS07KleinTalkShellCasings)
-		) {
+		if (Game_Flag_Query(kFlagMcCoyHasShellCasings)
+		    && !Game_Flag_Query(kFlagPS07KleinTalkShellCasings)) {
 			Game_Flag_Set(kFlagPS07KleinTalkShellCasings);
 			Actor_Clue_Acquire(kActorMcCoy, kClueLabShellCasings, false, kActorKlein);
 			Actor_Says(kActorKlein, 50, 16);
@@ -105,9 +102,8 @@ bool SceneScriptPS07::ClickedOnActor(int actorId) {
 			return true;
 		}
 
-		if ( Game_Flag_Query(kFlagMcCoyHasOfficersStatement)
-		 && !Game_Flag_Query(kFlagPS07KleinTalkOfficersStatement)
-		) {
+		if (Game_Flag_Query(kFlagMcCoyHasOfficersStatement)
+		    && !Game_Flag_Query(kFlagPS07KleinTalkOfficersStatement)) {
 			Game_Flag_Set(kFlagPS07KleinTalkOfficersStatement);
 			Actor_Clue_Acquire(kActorMcCoy, kClueLabCorpses, false, kActorKlein);
 			Actor_Says(kActorKlein, 100, 13);
@@ -128,9 +124,8 @@ bool SceneScriptPS07::ClickedOnActor(int actorId) {
 			return true;
 		}
 
-		if ( Game_Flag_Query(kFlagMcCoyHasPaintTransfer)
-		 && !Game_Flag_Query(kFlagPS07KleinTalkPaintTransfer)
-		) {
+		if (Game_Flag_Query(kFlagMcCoyHasPaintTransfer)
+		    && !Game_Flag_Query(kFlagPS07KleinTalkPaintTransfer)) {
 			Game_Flag_Set(kFlagPS07KleinTalkPaintTransfer);
 			Actor_Clue_Acquire(kActorMcCoy, kClueLabPaintTransfer, false, kActorKlein);
 			Actor_Says(kActorKlein, 170, 14);
@@ -145,9 +140,8 @@ bool SceneScriptPS07::ClickedOnActor(int actorId) {
 			return true;
 		}
 
-		if ( Game_Flag_Query(kFlagMcCoyHasChromeDebris)
-		 && !Game_Flag_Query(kFlagPS07KleinTalkChromeDebris)
-		) {
+		if (Game_Flag_Query(kFlagMcCoyHasChromeDebris)
+		    && !Game_Flag_Query(kFlagPS07KleinTalkChromeDebris)) {
 			Game_Flag_Set(kFlagPS07KleinTalkChromeDebris);
 			Actor_Says(kActorKlein, 220, 12);
 			Actor_Says(kActorMcCoy, 4190, 13);
@@ -160,7 +154,6 @@ bool SceneScriptPS07::ClickedOnActor(int actorId) {
 		return true;
 	}
 	return false;
-
 }
 
 bool SceneScriptPS07::ClickedOnItem(int itemId, bool a2) {

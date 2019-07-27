@@ -24,13 +24,13 @@
 
 #include "zvision/graphics/effects/wave.h"
 
-#include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/zvision.h"
 
 namespace ZVision {
 
-WaveFx::WaveFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, int16 frames, int16 centerX, int16 centerY, float ampl, float waveln, float spd):
-	GraphicsEffect(engine, key, region, ported) {
+WaveFx::WaveFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, int16 frames, int16 centerX, int16 centerY, float ampl, float waveln, float spd)
+  : GraphicsEffect(engine, key, region, ported) {
 
 	_frame = 0;
 	_frameCount = frames;
@@ -68,10 +68,10 @@ WaveFx::~WaveFx() {
 
 const Graphics::Surface *WaveFx::draw(const Graphics::Surface &srcSubRect) {
 	for (int16 y = 0; y < _halfHeight; y++) {
-		uint16 *abc  = (uint16 *)_surface.getBasePtr(0, y);
-		uint16 *abc2  = (uint16 *)_surface.getBasePtr(0, _halfHeight + y);
-		uint16 *abc3  = (uint16 *)_surface.getBasePtr(_halfWidth, y);
-		uint16 *abc4  = (uint16 *)_surface.getBasePtr(_halfWidth, _halfHeight + y);
+		uint16 *abc = (uint16 *)_surface.getBasePtr(0, y);
+		uint16 *abc2 = (uint16 *)_surface.getBasePtr(0, _halfHeight + y);
+		uint16 *abc3 = (uint16 *)_surface.getBasePtr(_halfWidth, y);
+		uint16 *abc4 = (uint16 *)_surface.getBasePtr(_halfWidth, _halfHeight + y);
 
 		for (int16 x = 0; x < _halfWidth; x++) {
 			int8 amnt = _ampls[_frame][x + _halfWidth * y];

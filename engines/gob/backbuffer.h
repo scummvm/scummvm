@@ -38,19 +38,19 @@ protected:
 	void trashBuffer();
 	void resizeBuffer(uint16 width, uint16 height);
 
-	bool saveScreen   (const Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
-	bool restoreScreen(      Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
+	bool saveScreen(const Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
+	bool restoreScreen(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
 
 	bool hasBuffer() const;
 	bool hasSavedBackground() const;
 
 private:
 	Surface *_background; ///< The saved background.
-	bool _saved;          ///< Was the background saved?
+	bool _saved; ///< Was the background saved?
 
-	int16 _saveLeft;   ///< The left position of the saved background.
-	int16 _saveTop;    ///< The top of the saved background.
-	int16 _saveRight;  ///< The right position of the saved background.
+	int16 _saveLeft; ///< The left position of the saved background.
+	int16 _saveTop; ///< The top of the saved background.
+	int16 _saveRight; ///< The right position of the saved background.
 	int16 _saveBottom; ///< The bottom position of the saved background.
 };
 

@@ -29,12 +29,12 @@
  *
  */
 
-#include "common/memstream.h"
-#include "sword25/gfx/image/image.h"
 #include "sword25/gfx/image/imgloader.h"
+#include "common/memstream.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "image/png.h"
+#include "sword25/gfx/image/image.h"
 
 namespace Sword25 {
 
@@ -61,10 +61,12 @@ bool ImgLoader::decodePNGImage(const byte *fileDataPtr, uint fileSize, Graphics:
 
 bool ImgLoader::decodeThumbnailImage(const byte *pFileData, uint fileSize, Graphics::Surface *dest) {
 	assert(dest);
-	const byte *src = pFileData + 4;	// skip header
-	uint width = READ_LE_UINT16(src); src += 2;
-	uint height = READ_LE_UINT16(src); src += 2;
-	src++;	// version, ignored for now
+	const byte *src = pFileData + 4; // skip header
+	uint width = READ_LE_UINT16(src);
+	src += 2;
+	uint height = READ_LE_UINT16(src);
+	src += 2;
+	src++; // version, ignored for now
 
 	dest->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 	uint32 *dst = (uint32 *)dest->getBasePtr(0, 0); // treat as uint32, for pixelformat output

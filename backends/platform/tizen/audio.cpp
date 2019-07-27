@@ -20,27 +20,27 @@
  *
  */
 
-#include <FSysSettingInfo.h>
 #include <FAppAppRegistry.h>
+#include <FSysSettingInfo.h>
 
 #include "backends/platform/tizen/audio.h"
 #include "backends/platform/tizen/system.h"
 
-#define TIMER_INTERVAL		10
-#define VOLUME				96
-#define MIN_TIMER_INTERVAL	5
+#define TIMER_INTERVAL 10
+#define VOLUME 96
+#define MIN_TIMER_INTERVAL 5
 
-AudioThread::AudioThread() :
-	_mixer(0),
-	_timer(0),
-	_audioOut(0),
-	_head(0),
-	_tail(0),
-	_ready(0),
-	_interval(TIMER_INTERVAL),
-	_playing(-1),
-	_size(0),
-	_muted(true) {
+AudioThread::AudioThread()
+  : _mixer(0)
+  , _timer(0)
+  , _audioOut(0)
+  , _head(0)
+  , _tail(0)
+  , _ready(0)
+  , _interval(TIMER_INTERVAL)
+  , _playing(-1)
+  , _size(0)
+  , _muted(true) {
 }
 
 Audio::MixerImpl *AudioThread::Construct(OSystem *system) {
@@ -94,7 +94,7 @@ bool AudioThread::OnStart(void) {
 	}
 
 	if (IsFailed(_audioOut->Prepare(AUDIO_TYPE_PCM_S16_LE,
-			AUDIO_CHANNEL_TYPE_STEREO, sampleRate))) {
+	                                AUDIO_CHANNEL_TYPE_STEREO, sampleRate))) {
 		AppLog("Failed to prepare AudioOut %d", sampleRate);
 		return false;
 	}
@@ -172,7 +172,6 @@ void AudioThread::OnAudioOutBufferEndReached(Tizen::Media::AudioOut &src) {
 			_interval = MIN_TIMER_INTERVAL;
 		}
 	}
-
 }
 
 void AudioThread::OnTimerExpired(Timer &timer) {
@@ -194,4 +193,3 @@ void AudioThread::OnTimerExpired(Timer &timer) {
 
 	_timer->Start(_interval);
 }
-

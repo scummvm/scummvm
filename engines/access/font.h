@@ -23,11 +23,11 @@
 #ifndef ACCESS_FONT_H
 #define ACCESS_FONT_H
 
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "common/rect.h"
 #include "access/asurface.h"
 #include "access/data.h"
+#include "common/array.h"
+#include "common/rect.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
@@ -44,13 +44,16 @@ protected:
 	int _bitWidth;
 	int _height;
 	Common::Array<Graphics::Surface> _chars;
+
 protected:
 	/**
 	 * Constructor
 	 */
 	Font(byte firstCharIndex);
+
 public:
 	static byte _fontColors[4];
+
 public:
 	/**
 	 * Destructor
@@ -86,7 +89,6 @@ public:
 	 * Draw a character on a given surface
 	 */
 	int drawChar(BaseSurface *s, char c, Common::Point &pt);
-
 };
 
 class AmazonFont : public Font {
@@ -95,14 +97,15 @@ private:
 	 * Load the given font data
 	 */
 	void load(const int *fontIndex, const byte *fontData);
+
 public:
 	/**
 	 * Constructor
 	 */
-	AmazonFont(const int *fontIndex, const byte *fontData) : Font(32) {
+	AmazonFont(const int *fontIndex, const byte *fontData)
+	  : Font(32) {
 		load(fontIndex, fontData);
 	}
-
 };
 
 class MartianFont : public Font {
@@ -111,13 +114,13 @@ private:
 	 * Load the given font data
 	 */
 	void load(Common::SeekableReadStream &s);
+
 public:
 	/**
 	* Constructor
 	*/
 	MartianFont(int height, Common::SeekableReadStream &s);
 };
-
 
 class FontManager {
 public:
@@ -126,6 +129,7 @@ public:
 	int _printMaxX;
 	Font *_font1;
 	Font *_font2;
+
 public:
 	/**
 	 * Constructor

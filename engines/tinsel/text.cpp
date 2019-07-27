@@ -21,12 +21,12 @@
  * Text utilities.
  */
 
+#include "tinsel/text.h" // text defines
 #include "tinsel/dw.h"
-#include "tinsel/graphics.h"	// object plotting
+#include "tinsel/graphics.h" // object plotting
 #include "tinsel/handle.h"
-#include "tinsel/sched.h"	// process scheduler defines
-#include "tinsel/strres.h"	// g_bMultiByte
-#include "tinsel/text.h"	// text defines
+#include "tinsel/sched.h" // process scheduler defines
+#include "tinsel/strres.h" // g_bMultiByte
 
 namespace Tinsel {
 
@@ -36,9 +36,9 @@ namespace Tinsel {
  * @param pFont			Which font to use for dimensions
  */
 int StringLengthPix(char *szStr, const FONT *pFont) {
-	int strLen;	// accumulated length of string
-	byte	c;
-	SCNHANDLE	hImg;
+	int strLen; // accumulated length of string
+	byte c;
+	SCNHANDLE hImg;
 
 	// while not end of string or end of line
 	for (strLen = 0; (c = *szStr) != EOS_CHAR && c != LF_CHAR; szStr++) {
@@ -105,11 +105,11 @@ int JustifyText(char *szStr, int xPos, const FONT *pFont, int mode) {
  * @param sleepTime		Sleep time between each character (if non-zero)
  */
 OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
-					  int xPos, int yPos, SCNHANDLE hFont, int mode, int sleepTime) {
-	int xJustify;	// x position of text after justification
-	int yOffset;	// offset to next line of text
-	OBJECT *pFirst;	// head of multi-object text list
-	OBJECT *pChar = 0;	// object ptr for the character
+                      int xPos, int yPos, SCNHANDLE hFont, int mode, int sleepTime) {
+	int xJustify; // x position of text after justification
+	int yOffset; // offset to next line of text
+	OBJECT *pFirst; // head of multi-object text list
+	OBJECT *pChar = 0; // object ptr for the character
 	byte c;
 	SCNHANDLE hImg;
 	const IMAGE *pImg;
@@ -147,34 +147,34 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 
 				// add font spacing for a space character
 				xJustify += FROM_32(pFont->spaceSize);
-			} else {	// printable character
+			} else { // printable character
 
-				int aniX, aniY;		// char image animation offsets
+				int aniX, aniY; // char image animation offsets
 
 				OBJ_INIT oi;
-				oi.hObjImg  = FROM_32(pFont->fontInit.hObjImg);
+				oi.hObjImg = FROM_32(pFont->fontInit.hObjImg);
 				oi.objFlags = FROM_32(pFont->fontInit.objFlags);
-				oi.objID    = FROM_32(pFont->fontInit.objID);
-				oi.objX     = FROM_32(pFont->fontInit.objX);
-				oi.objY     = FROM_32(pFont->fontInit.objY);
-				oi.objZ     = FROM_32(pFont->fontInit.objZ);
+				oi.objID = FROM_32(pFont->fontInit.objID);
+				oi.objX = FROM_32(pFont->fontInit.objX);
+				oi.objY = FROM_32(pFont->fontInit.objY);
+				oi.objZ = FROM_32(pFont->fontInit.objZ);
 
 				// allocate and init a character object
 				if (pFirst == NULL)
 					// first time - init head of list
-					pFirst = pChar = InitObject(&oi);	// FIXME: endian issue using fontInit!!!
+					pFirst = pChar = InitObject(&oi); // FIXME: endian issue using fontInit!!!
 				else
 					// chain to multi-char list
-					pChar = pChar->pSlave = InitObject(&oi);	// FIXME: endian issue using fontInit!!!
+					pChar = pChar->pSlave = InitObject(&oi); // FIXME: endian issue using fontInit!!!
 
 				// convert image handle to pointer
 				pImg = (const IMAGE *)LockMem(hImg);
 
 				// fill in character object
-				pChar->hImg   = hImg;			// image def
-				pChar->width  = FROM_16(pImg->imgWidth);		// width of chars bitmap
-				pChar->height = FROM_16(pImg->imgHeight) & ~C16_FLAG_MASK;	// height of chars bitmap
-				pChar->hBits  = FROM_32(pImg->hImgBits);		// bitmap
+				pChar->hImg = hImg; // image def
+				pChar->width = FROM_16(pImg->imgWidth); // width of chars bitmap
+				pChar->height = FROM_16(pImg->imgHeight) & ~C16_FLAG_MASK; // height of chars bitmap
+				pChar->hBits = FROM_32(pImg->hImgBits); // bitmap
 
 				// check for absolute positioning
 				if (mode & TXT_ABSOLUTE)

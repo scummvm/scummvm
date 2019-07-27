@@ -24,22 +24,23 @@
 
 #include "gui/message.h"
 
+#include "gob/draw.h"
+#include "gob/game.h"
+#include "gob/global.h"
 #include "gob/gob.h"
 #include "gob/inter.h"
-#include "gob/global.h"
-#include "gob/game.h"
-#include "gob/script.h"
-#include "gob/draw.h"
 #include "gob/save/saveload.h"
+#include "gob/script.h"
 
 namespace Gob {
 
 #define OPCODEVER Inter_v5
-#define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
-#define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
-#define OPCODEGOB(i, x)   _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
+#define OPCODEDRAW(i, x) _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
+#define OPCODEFUNC(i, x) _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
+#define OPCODEGOB(i, x) _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 
-Inter_v5::Inter_v5(GobEngine *vm) : Inter_v4(vm) {
+Inter_v5::Inter_v5(GobEngine *vm)
+  : Inter_v4(vm) {
 }
 
 void Inter_v5::setupOpcodesDraw() {
@@ -56,47 +57,47 @@ void Inter_v5::setupOpcodesFunc() {
 }
 
 void Inter_v5::setupOpcodesGob() {
-	OPCODEGOB(  0, o5_spaceShooter);
-	OPCODEGOB(  1, o5_spaceShooter);
-	OPCODEGOB(  2, o5_spaceShooter);
-	OPCODEGOB(  3, o5_spaceShooter);
+	OPCODEGOB(0, o5_spaceShooter);
+	OPCODEGOB(1, o5_spaceShooter);
+	OPCODEGOB(2, o5_spaceShooter);
+	OPCODEGOB(3, o5_spaceShooter);
 
-	OPCODEGOB( 33, o5_spaceShooter);
+	OPCODEGOB(33, o5_spaceShooter);
 
-	OPCODEGOB( 34, o5_spaceShooter);
-	OPCODEGOB( 37, o5_spaceShooter);
+	OPCODEGOB(34, o5_spaceShooter);
+	OPCODEGOB(37, o5_spaceShooter);
 
-	OPCODEGOB( 80, o5_getSystemCDSpeed);
-	OPCODEGOB( 81, o5_getSystemRAM);
-	OPCODEGOB( 82, o5_getSystemCPUSpeed);
-	OPCODEGOB( 83, o5_getSystemDrawSpeed);
-	OPCODEGOB( 84, o5_totalSystemSpecs);
+	OPCODEGOB(80, o5_getSystemCDSpeed);
+	OPCODEGOB(81, o5_getSystemRAM);
+	OPCODEGOB(82, o5_getSystemCPUSpeed);
+	OPCODEGOB(83, o5_getSystemDrawSpeed);
+	OPCODEGOB(84, o5_totalSystemSpecs);
 
-	OPCODEGOB( 85, o5_saveSystemSpecs);
-	OPCODEGOB( 86, o5_loadSystemSpecs);
+	OPCODEGOB(85, o5_saveSystemSpecs);
+	OPCODEGOB(86, o5_loadSystemSpecs);
 
-	OPCODEGOB( 87, o5_spaceShooter);
-	OPCODEGOB( 88, o5_spaceShooter);
-	OPCODEGOB( 89, o5_spaceShooter);
-	OPCODEGOB( 90, o5_spaceShooter);
+	OPCODEGOB(87, o5_spaceShooter);
+	OPCODEGOB(88, o5_spaceShooter);
+	OPCODEGOB(89, o5_spaceShooter);
+	OPCODEGOB(90, o5_spaceShooter);
 
-	OPCODEGOB( 91, o5_spaceShooter);
-	OPCODEGOB( 92, o5_gob92);
-	OPCODEGOB( 93, o5_spaceShooter);
-	OPCODEGOB( 94, o5_spaceShooter);
+	OPCODEGOB(91, o5_spaceShooter);
+	OPCODEGOB(92, o5_gob92);
+	OPCODEGOB(93, o5_spaceShooter);
+	OPCODEGOB(94, o5_spaceShooter);
 
-	OPCODEGOB( 95, o5_gob95);
-	OPCODEGOB( 96, o5_gob96);
-	OPCODEGOB( 97, o5_gob97);
-	OPCODEGOB( 98, o5_gob98);
+	OPCODEGOB(95, o5_gob95);
+	OPCODEGOB(96, o5_gob96);
+	OPCODEGOB(97, o5_gob97);
+	OPCODEGOB(98, o5_gob98);
 
-	OPCODEGOB( 99, o5_spaceShooter);
+	OPCODEGOB(99, o5_spaceShooter);
 	OPCODEGOB(100, o5_gob100);
 	OPCODEGOB(200, o5_gob200);
 }
 
 void Inter_v5::o5_deleteFile() {
-	const char *file =_vm->_game->_script->evalString();
+	const char *file = _vm->_game->_script->evalString();
 
 	debugC(2, kDebugFileIO, "Delete file \"%s\"", file);
 
@@ -200,7 +201,7 @@ void Inter_v5::o5_initScreen() {
 	_vm->_global->_setAllPalette = true;
 
 	_vm->_util->setMousePos(_vm->_global->_inter_mouseX,
-			_vm->_global->_inter_mouseY);
+	                        _vm->_global->_inter_mouseY);
 	_vm->_util->clearPalette();
 
 	_vm->_draw->initScreen();
@@ -243,12 +244,12 @@ void Inter_v5::o5_istrlen(OpFuncParams &params) {
 			len = strlen(GET_VARO_STR(strVar1));
 	}
 
-	writeVar(strVar2, type, (int32) len);
+	writeVar(strVar2, type, (int32)len);
 }
 
 void Inter_v5::o5_spaceShooter(OpGobParams &params) {
 	warning("Dynasty Stub: Space shooter: %d, %d, %s",
-			params.extraData, params.paramCount, _vm->_game->_curTotFile.c_str());
+	        params.extraData, params.paramCount, _vm->_game->_curTotFile.c_str());
 
 	if (params.paramCount < 4) {
 		warning("Space shooter variable counter < 4");
@@ -264,8 +265,8 @@ void Inter_v5::o5_spaceShooter(OpGobParams &params) {
 
 	if (params.extraData != 0) {
 		// we need to return 1 for the shooter mission 34. There is only one planet to choose from in the map.
-		WRITE_VARO_UINT32(var1,(params.extraData == 34) ? 1 : 2);
-		WRITE_VARO_UINT32(var2,0);
+		WRITE_VARO_UINT32(var1, (params.extraData == 34) ? 1 : 2);
+		WRITE_VARO_UINT32(var2, 0);
 	} else {
 		if (params.paramCount < 5) {
 			warning("Space shooter variable counter < 5");
@@ -339,7 +340,7 @@ void Inter_v5::o5_totalSystemSpecs(OpGobParams &params) {
 void Inter_v5::o5_saveSystemSpecs(OpGobParams &params) {
 	warning("Dynasty Stub: Saving system specifications");
 
-/*
+	/*
 	FILE *f = fopen("SAVE\\SPEED.INF", w);
 	fwrite(&_cdSpeed,   sizeof(_cdSpeed),   1, f);
 	fwrite(&_ram,       sizeof(_ram),       1, f);
@@ -353,7 +354,7 @@ void Inter_v5::o5_saveSystemSpecs(OpGobParams &params) {
 void Inter_v5::o5_loadSystemSpecs(OpGobParams &params) {
 	warning("Dynasty Stub: Loading system specifications");
 
-/*
+	/*
 	FILE *f = fopen("SAVE\\SPEED.INF", r);
 	fread(&_cdSpeed,   sizeof(_cdSpeed),   1, f);
 	fread(&_ram,       sizeof(_ram),       1, f);
@@ -363,7 +364,7 @@ void Inter_v5::o5_loadSystemSpecs(OpGobParams &params) {
 	fclose(f);
 */
 
-/*
+	/*
 	speedSum = MAX(_cdSpeed, 150);
 	speedSum += (_ram << 3);
 	speedSum += (_cpuSpeed << 3);
@@ -411,7 +412,7 @@ void Inter_v5::o5_gob96(OpGobParams &params) {
 	speedThrottle1 = READ_VAR_UINT16(_vm->_game->_script->readInt16());
 
 	warning("Dynasty Stub: GobFunc 96: %d, %d, %d, %d",
-			speedThrottle4, speedThrottle3, speedThrottle2, speedThrottle1);
+	        speedThrottle4, speedThrottle3, speedThrottle2, speedThrottle1);
 
 	// TODO
 }

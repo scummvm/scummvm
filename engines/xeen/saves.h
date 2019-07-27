@@ -23,8 +23,8 @@
 #ifndef XEEN_SAVES_H
 #define XEEN_SAVES_H
 
-#include "common/scummsys.h"
 #include "common/savefile.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
 #include "common/str.h"
 #include "graphics/surface.h"
@@ -44,6 +44,7 @@ struct XeenSavegameHeader {
 class SavesManager {
 private:
 	Common::String _targetName;
+
 private:
 	/**
 	 * Support method that generates a savegame name
@@ -55,9 +56,11 @@ private:
 	 * Initializes a new savegame
 	 */
 	void reset();
+
 public:
 	bool _wonWorld;
 	bool _wonDarkSide;
+
 public:
 	SavesManager(const Common::String &targetName);
 	~SavesManager();
@@ -102,4 +105,4 @@ public:
 
 } // End of namespace Xeen
 
-#endif	/* XEEN_SAVES_H */
+#endif /* XEEN_SAVES_H */

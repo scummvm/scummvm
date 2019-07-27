@@ -24,8 +24,8 @@
 #define SHERLOCK_TATTOO_WIDGET_LAB_H
 
 #include "common/scummsys.h"
-#include "sherlock/tattoo/widget_base.h"
 #include "sherlock/objects.h"
+#include "sherlock/tattoo/widget_base.h"
 
 namespace Sherlock {
 
@@ -33,31 +33,33 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-class WidgetLab: public WidgetBase {
-private:
-	Object *_labObject;
+	class WidgetLab : public WidgetBase {
+	private:
+		Object *_labObject;
 
-	/**
+		/**
 	 * Display tooltips of an object being dragged along with any object the dragged
 	 * object is currently over
 	 */
-	void displayLabNames();
-public:
-	Common::String _remainingText;
-public:
-	WidgetLab(SherlockEngine *vm);
-	virtual ~WidgetLab() {}
+		void displayLabNames();
 
-	/**
+	public:
+		Common::String _remainingText;
+
+	public:
+		WidgetLab(SherlockEngine *vm);
+		virtual ~WidgetLab() {}
+
+		/**
 	 * Summon the window
 	 */
-	virtual void summonWindow();
+		virtual void summonWindow();
 
-	/**
+		/**
 	 * Handle event processing
 	 */
-	virtual void handleEvents();
-};
+		virtual void handleEvents();
+	};
 
 } // End of namespace Tattoo
 

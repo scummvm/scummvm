@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE1900_SPRITES_H
 #define NEVERHOOD_MODULES_MODULE1900_SPRITES_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -39,6 +39,7 @@ public:
 	void fallOff(int newPositionIndex, int fallOffDelay);
 	bool isPluggedIn() { return _isPluggedIn; }
 	bool isMoving() { return _isMoving; }
+
 protected:
 	Scene1907 *_parentScene;
 	int _elementIndex;
@@ -76,6 +77,7 @@ class AsScene1907WaterHint : public AnimatedSprite {
 public:
 	AsScene1907WaterHint(NeverhoodEngine *vm);
 	void show();
+
 protected:
 	void update();
 	uint32 hmShowing(int messageNum, const MessageParam &param, Entity *sender);
@@ -87,6 +89,7 @@ public:
 	SsScene1907UpDownButton(NeverhoodEngine *vm, Scene1907 *parentScene, AsScene1907Symbol *asScene1907Symbol);
 	void setToUpPosition();
 	void setToDownPosition();
+
 protected:
 	Scene1907 *_parentScene;
 	AsScene1907Symbol *_asScene1907Symbol;
@@ -98,6 +101,7 @@ protected:
 class KmScene1901 : public Klaymen {
 public:
 	KmScene1901(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };

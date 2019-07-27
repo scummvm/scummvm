@@ -24,31 +24,31 @@
 namespace BladeRunner {
 
 enum kUG18Loops {
-	kUG18LoopTrainsArriving            = 0, //   0 -  59
-	kUG18LoopMainLoop                  = 1, //  60 - 120 (4 seconds in 15 fps)
-	kUG18LoopTrainsLeaving             = 3, // 121 - 180
-	kUG18LoopMainLoopNoTrains          = 4  // 181 - 241 (4 seconds in 15 fps)
+	kUG18LoopTrainsArriving = 0, //   0 -  59
+	kUG18LoopMainLoop = 1, //  60 - 120 (4 seconds in 15 fps)
+	kUG18LoopTrainsLeaving = 3, // 121 - 180
+	kUG18LoopMainLoopNoTrains = 4 // 181 - 241 (4 seconds in 15 fps)
 };
 
-static const int kUG18TrainsSecondsOfLoopNoTrains    =    4;
-static const int kUG18TrainsSecondsOfLoopWithTrains  =    4;
-static const int kUG18TrainsCountUpMaxMarginWalkedIn =   12;
-static const int kUG18TrainsCountUpMinMarginWalkedIn =    4;
-static const int kUG18TrainsCountUpTargetRegular     =  600;
-static const int kUG18TrainsCountUpMinMarginRegular  =   65;
+static const int kUG18TrainsSecondsOfLoopNoTrains = 4;
+static const int kUG18TrainsSecondsOfLoopWithTrains = 4;
+static const int kUG18TrainsCountUpMaxMarginWalkedIn = 12;
+static const int kUG18TrainsCountUpMinMarginWalkedIn = 4;
+static const int kUG18TrainsCountUpTargetRegular = 600;
+static const int kUG18TrainsCountUpMinMarginRegular = 65;
 
 // values for re-purposed global variable kVariableUG18StateOfTrains
 enum kUG18TrainsState {
-	kUG18NoTrains                      = 0,
-	kUG18TrainsUnloading               = 1
+	kUG18NoTrains = 0,
+	kUG18TrainsUnloading = 1
 };
 
 // values for re-purposed global variable kVariableUG18StateOfGuzzaCorpse
 enum kUG18StateOfGuzzaCorpse {
-	kUG18GuzzaNoCorpse           = 0,
-	kUG18GuzzaCorpseFloatsDown   = 1,
+	kUG18GuzzaNoCorpse = 0,
+	kUG18GuzzaCorpseFloatsDown = 1,
 	kUG18GuzzaCorpseStuckInPipes = 2,
-	kUG18GuzzaCorpseDissolves    = 3
+	kUG18GuzzaCorpseDissolves = 3
 };
 
 void SceneScriptUG18::InitializeScene() {
@@ -66,30 +66,30 @@ void SceneScriptUG18::InitializeScene() {
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRUNOFF, 71, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxBOILPOT2, 45, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1,   76, 0, 1);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP1,  2,  20, 25, 33, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP2,  2,  20, 25, 33, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP3,  2,  20, 25, 33, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP4,  2,  20, 25, 33, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxYELL1M3,  2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxYELL1M1,  2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxGRUNT1M1, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxGRUNT2M2, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxGRUNT2M3, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP5,  2,  20, 25, 25, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN1,   5,  50, 47, 57, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN2,   5,  50, 47, 57, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN3,   5,  50, 47, 57, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSTEAM1,   5,  50, 47, 57, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSTEAM3,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSTEAM6A,  5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBMOVE1,  5,  50, 27, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBMOVE2,  5,  50, 27, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBMOVE3,  5,  50, 27, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxZUBWLK1,  5,  50, 27, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxZUBWLK2,  5,  50, 27, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxZUBWLK3,  5,  50, 27, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxZUBWLK4,  5,  50, 27, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1, 76, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP1, 2, 20, 25, 33, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP2, 2, 20, 25, 33, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP3, 2, 20, 25, 33, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP4, 2, 20, 25, 33, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxYELL1M3, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxYELL1M1, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT1M1, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT2M2, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT2M3, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP5, 2, 20, 25, 25, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1, 5, 50, 47, 57, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2, 5, 50, 47, 57, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN3, 5, 50, 47, 57, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSTEAM1, 5, 50, 47, 57, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSTEAM3, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSTEAM6A, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE1, 5, 50, 27, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE2, 5, 50, 27, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE3, 5, 50, 27, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxZUBWLK1, 5, 50, 27, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxZUBWLK2, 5, 50, 27, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxZUBWLK3, 5, 50, 27, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxZUBWLK4, 5, 50, 27, 37, -100, 100, -101, -101, 0, 0);
 
 	if (_vm->_cutContent) {
 		if (Global_Variable_Query(kVariableUG18StateOfTrains) == kUG18NoTrains) {
@@ -109,10 +109,9 @@ void SceneScriptUG18::InitializeScene() {
 		Scene_Loop_Set_Default(kUG18LoopMainLoopNoTrains);
 	}
 
-	if ( Game_Flag_Query(kFlagCallWithGuzza)
-	 && !Game_Flag_Query(kFlagUG18GuzzaScene)
-	 &&  Global_Variable_Query(kVariableChapter) == 4
-	) {
+	if (Game_Flag_Query(kFlagCallWithGuzza)
+	    && !Game_Flag_Query(kFlagUG18GuzzaScene)
+	    && Global_Variable_Query(kVariableChapter) == 4) {
 		Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaUG18Wait);
 		Actor_Set_Goal_Number(kActorClovis, kGoalClovisUG18Wait);
 		Actor_Set_Goal_Number(kActorSadik, kGoalSadikUG18Wait);
@@ -138,10 +137,9 @@ void SceneScriptUG18::SceneLoaded() {
 		}
 	}
 
-	if ( Game_Flag_Query(kFlagCallWithGuzza)
-	 && !Game_Flag_Query(kFlagUG18GuzzaScene)
-	 &&  Global_Variable_Query(kVariableChapter) == 4
-	) {
+	if (Game_Flag_Query(kFlagCallWithGuzza)
+	    && !Game_Flag_Query(kFlagUG18GuzzaScene)
+	    && Global_Variable_Query(kVariableChapter) == 4) {
 		Item_Add_To_World(kItemBriefcase, kModelAnimationBriefcase, kSetUG18, -55.21f, 0.0f, -302.17f, 0, 12, 12, false, true, false, true);
 	}
 }
@@ -190,10 +188,10 @@ bool SceneScriptUG18::ClickedOn2DRegion(int region) {
 }
 
 void SceneScriptUG18::SceneFrameAdvanced(int frame) {
-//	kUG18LoopTrainsArriving            = 0, //   0 -  59
-//	kUG18LoopMainLoop                  = 1, //  60 - 120
-//	kUG18LoopTrainsLeaving             = 3, // 121 - 180
-//	kUG18LoopMainLoopNoTrains          = 4  // 181 - 241
+	//	kUG18LoopTrainsArriving            = 0, //   0 -  59
+	//	kUG18LoopMainLoop                  = 1, //  60 - 120
+	//	kUG18LoopTrainsLeaving             = 3, // 121 - 180
+	//	kUG18LoopMainLoopNoTrains          = 4  // 181 - 241
 	if (_vm->_cutContent) {
 		if (frame == 0) {
 			Ambient_Sounds_Play_Sound(Random_Query(kSfxBBGRN1, kSfxBBGRN3), 35, 0, 30, 50);
@@ -229,8 +227,8 @@ void SceneScriptUG18::SceneFrameAdvanced(int frame) {
 			Ambient_Sounds_Play_Sound(kSfxSUBWAY1, 24, 30, 0, 50);
 		}
 
-		if (frame == 119    //  end of main loop unloading // works better than using the 120 value
-		   || frame ==  240 //  end of main loop no trains
+		if (frame == 119 //  end of main loop unloading // works better than using the 120 value
+		    || frame == 240 //  end of main loop no trains
 		) {
 			if (Global_Variable_Query(kVariableUG18CountUpForNextTrainAction) < kUG18TrainsCountUpTargetRegular) {
 				if (Global_Variable_Query(kVariableUG18StateOfTrains) == kUG18NoTrains) {
@@ -288,8 +286,7 @@ void SceneScriptUG18::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 		switch (newGoal) {
 		case kGoalSadikUG18Decide:
 			if (Actor_Query_Friendliness_To_Other(kActorClovis, kActorMcCoy) > 55
-			 && Game_Flag_Query(kFlagMcCoyRetiredHuman)
-			) {
+			    && Game_Flag_Query(kFlagMcCoyRetiredHuman)) {
 				Actor_Says(kActorClovis, 660, 13); // Brother, you killed a human...
 				Actor_Says(kActorMcCoy, 5995, 13);
 				Actor_Says(kActorClovis, 670, 13);
@@ -332,12 +329,12 @@ void SceneScriptUG18::PlayerWalkedIn() {
 			case kUG18GuzzaCorpseFloatsDown:
 				Global_Variable_Set(kVariableUG18StateOfGuzzaCorpse, kUG18GuzzaCorpseStuckInPipes);
 				// same logic as using the BB06OVER for doll explosion case in BB06
-				Overlay_Play("UG18OVR2", 0, true, true,  0);
+				Overlay_Play("UG18OVR2", 0, true, true, 0);
 				Overlay_Play("UG18OVR2", 1, true, false, 0);
 				break;
 			case kUG18GuzzaCorpseStuckInPipes:
 				Global_Variable_Set(kVariableUG18StateOfGuzzaCorpse, kUG18GuzzaCorpseDissolves);
-				Overlay_Play("UG18OVR2", 1, true, true,  0);
+				Overlay_Play("UG18OVR2", 1, true, true, 0);
 				Overlay_Play("UG18OVR2", 2, false, false, 0);
 				break;
 			case kUG18GuzzaCorpseDissolves:
@@ -352,10 +349,9 @@ void SceneScriptUG18::PlayerWalkedIn() {
 
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -488.71f, 0.0f, 123.59f, 0, false, false, false);
 
-	if ( Game_Flag_Query(kFlagCallWithGuzza)
-	 && !Game_Flag_Query(kFlagUG18GuzzaScene)
-	 &&  Actor_Query_Is_In_Current_Set(kActorGuzza)
-	) {
+	if (Game_Flag_Query(kFlagCallWithGuzza)
+	    && !Game_Flag_Query(kFlagUG18GuzzaScene)
+	    && Actor_Query_Is_In_Current_Set(kActorGuzza)) {
 		Scene_Exits_Disable();
 		talkWithGuzza();
 		talkWithClovis();
@@ -415,7 +411,7 @@ void SceneScriptUG18::DialogueQueueFlushed(int a1) {
 		Actor_Change_Animation_Mode(kActorGuzza, 61);
 		if (_vm->_cutContent) {
 			// same logic as using the BB06OVER for doll explosion case in BB06
-			Overlay_Play("UG18OVER", 1, true, true,  0);
+			Overlay_Play("UG18OVER", 1, true, true, 0);
 			Overlay_Play("UG18OVER", 2, true, false, 0);
 			Global_Variable_Set(kVariableUG18StateOfGuzzaCorpse, kUG18GuzzaCorpseFloatsDown);
 		} else {
@@ -470,7 +466,7 @@ void SceneScriptUG18::DialogueQueueFlushed(int a1) {
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		if (_vm->_cutContent) {
 			// same logic as using the BB06OVER for doll explosion case in BB06
-			Overlay_Play("UG18OVER", 1, true, true,  0);
+			Overlay_Play("UG18OVER", 1, true, true, 0);
 			Overlay_Play("UG18OVER", 2, true, false, 0);
 			Global_Variable_Set(kVariableUG18StateOfGuzzaCorpse, kUG18GuzzaCorpseFloatsDown);
 		}
@@ -569,8 +565,7 @@ void SceneScriptUG18::talkWithGuzza() {
 		Actor_Says(kActorGuzza, 1020, 13);
 		Actor_Says(kActorGuzza, 1030, 14);
 	} else if (Global_Variable_Query(kVariableAffectionTowards) > 1
-			|| Player_Query_Agenda() == kPlayerAgendaSurly
-	) {
+	           || Player_Query_Agenda() == kPlayerAgendaSurly) {
 		Actor_Modify_Friendliness_To_Other(kActorClovis, kActorMcCoy, 20);
 		Actor_Modify_Friendliness_To_Other(kActorSadik, kActorMcCoy, 10);
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -117.13f, 0.0f, -284.47f, 0, false, false, false);

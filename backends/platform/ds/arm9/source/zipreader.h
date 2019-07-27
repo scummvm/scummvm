@@ -32,18 +32,18 @@
 class ZipFile {
 
 	struct FileHeader {
-		char magic[4];		// Header (0x04034B50)			0
-		u16 minVersion;		// Version needed to extract	4
-		u16 flags;			// Flags						6
-		u16 comp;			// Compression method			8
-		u16 modTime;		// Last modified file time		A
-		u16 modDate;		// Last modified file data		C
-		u32 crc32;			// CRC32						F
-		u32 compSize;		// Compressed size
-		u32 fileSize;		// Uncompressed file size
-		u16 nameLength;		// Length of the filename
-		u16 extraLength;	// Length of any extra data
-	} __attribute__ ((packed));
+		char magic[4]; // Header (0x04034B50)			0
+		u16 minVersion; // Version needed to extract	4
+		u16 flags; // Flags						6
+		u16 comp; // Compression method			8
+		u16 modTime; // Last modified file time		A
+		u16 modDate; // Last modified file data		C
+		u32 crc32; // CRC32						F
+		u32 compSize; // Compressed size
+		u32 fileSize; // Uncompressed file size
+		u16 nameLength; // Length of the filename
+		u16 extraLength; // Length of any extra data
+	} __attribute__((packed));
 
 	char *_zipFile;
 	char _directory[128];
@@ -75,6 +75,5 @@ public:
 
 	bool currentFileInFolder();
 };
-
 
 #endif

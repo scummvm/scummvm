@@ -21,44 +21,44 @@
  */
 
 #include "gui/predictivedialog.h"
+#include "gui/ThemeEval.h"
+#include "gui/gui-manager.h"
 #include "gui/widget.h"
 #include "gui/widgets/edittext.h"
-#include "gui/gui-manager.h"
-#include "gui/ThemeEval.h"
 
 #include "common/config-manager.h"
-#include "common/translation.h"
-#include "common/events.h"
 #include "common/debug.h"
-#include "common/system.h"
-#include "common/keyboard.h"
+#include "common/events.h"
 #include "common/file.h"
+#include "common/keyboard.h"
 #include "common/savefile.h"
+#include "common/system.h"
+#include "common/translation.h"
 
 #if defined(__DS__) && defined(ENABLE_AGI)
-#include "backends/platform/ds/arm9/source/wordcompletion.h"
+#	include "backends/platform/ds/arm9/source/wordcompletion.h"
 #endif
 
 namespace GUI {
 
 enum {
 	kCancelCmd = 'CNCL',
-	kOkCmd     = '__OK',
-	kBut1Cmd   = 'BUT1',
-	kBut2Cmd   = 'BUT2',
-	kBut3Cmd   = 'BUT3',
-	kBut4Cmd   = 'BUT4',
-	kBut5Cmd   = 'BUT5',
-	kBut6Cmd   = 'BUT6',
-	kBut7Cmd   = 'BUT7',
-	kBut8Cmd   = 'BUT8',
-	kBut9Cmd   = 'BUT9',
-	kBut0Cmd   = 'BUT0',
-	kNextCmd   = 'NEXT',
-	kAddCmd    = '_ADD',
-	kModeCmd   = 'MODE',
-	kDelCmd    = '_DEL',
-	kTestCmd   = 'TEST'
+	kOkCmd = '__OK',
+	kBut1Cmd = 'BUT1',
+	kBut2Cmd = 'BUT2',
+	kBut3Cmd = 'BUT3',
+	kBut4Cmd = 'BUT4',
+	kBut5Cmd = 'BUT5',
+	kBut6Cmd = 'BUT6',
+	kBut7Cmd = 'BUT7',
+	kBut8Cmd = 'BUT8',
+	kBut9Cmd = 'BUT9',
+	kBut0Cmd = 'BUT0',
+	kNextCmd = 'NEXT',
+	kAddCmd = '_ADD',
+	kModeCmd = 'MODE',
+	kDelCmd = '_DEL',
+	kTestCmd = 'TEST'
 };
 
 enum {
@@ -67,24 +67,25 @@ enum {
 	kModeAbc = 2
 };
 
-PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
+PredictiveDialog::PredictiveDialog()
+  : Dialog("Predictive") {
 	new StaticTextWidget(this, "Predictive.Headline", "Enter Text");
 
-	_button[kCancelAct] =  new ButtonWidget(this, "Predictive.Cancel",  _("Cancel")   , 0, kCancelCmd);
-	_button[kOkAct] =      new ButtonWidget(this, "Predictive.OK",      _("Ok")       , 0, kOkCmd);
-	_button[kButton1Act] = new ButtonWidget(this, "Predictive.Button1", "1  `-.&"     , 0, kBut1Cmd);
-	_button[kButton2Act] = new ButtonWidget(this, "Predictive.Button2", "2  abc"      , 0, kBut2Cmd);
-	_button[kButton3Act] = new ButtonWidget(this, "Predictive.Button3", "3  def"      , 0, kBut3Cmd);
-	_button[kButton4Act] = new ButtonWidget(this, "Predictive.Button4", "4  ghi"      , 0, kBut4Cmd);
-	_button[kButton5Act] = new ButtonWidget(this, "Predictive.Button5", "5  jkl"      , 0, kBut5Cmd);
-	_button[kButton6Act] = new ButtonWidget(this, "Predictive.Button6", "6  mno"      , 0, kBut6Cmd);
-	_button[kButton7Act] = new ButtonWidget(this, "Predictive.Button7", "7  pqrs"     , 0, kBut7Cmd);
-	_button[kButton8Act] = new ButtonWidget(this, "Predictive.Button8", "8  tuv"      , 0, kBut8Cmd);
-	_button[kButton9Act] = new ButtonWidget(this, "Predictive.Button9", "9  wxyz"     , 0, kBut9Cmd);
-	_button[kButton0Act] = new ButtonWidget(this, "Predictive.Button0", "0"           , 0, kBut0Cmd);
+	_button[kCancelAct] = new ButtonWidget(this, "Predictive.Cancel", _("Cancel"), 0, kCancelCmd);
+	_button[kOkAct] = new ButtonWidget(this, "Predictive.OK", _("Ok"), 0, kOkCmd);
+	_button[kButton1Act] = new ButtonWidget(this, "Predictive.Button1", "1  `-.&", 0, kBut1Cmd);
+	_button[kButton2Act] = new ButtonWidget(this, "Predictive.Button2", "2  abc", 0, kBut2Cmd);
+	_button[kButton3Act] = new ButtonWidget(this, "Predictive.Button3", "3  def", 0, kBut3Cmd);
+	_button[kButton4Act] = new ButtonWidget(this, "Predictive.Button4", "4  ghi", 0, kBut4Cmd);
+	_button[kButton5Act] = new ButtonWidget(this, "Predictive.Button5", "5  jkl", 0, kBut5Cmd);
+	_button[kButton6Act] = new ButtonWidget(this, "Predictive.Button6", "6  mno", 0, kBut6Cmd);
+	_button[kButton7Act] = new ButtonWidget(this, "Predictive.Button7", "7  pqrs", 0, kBut7Cmd);
+	_button[kButton8Act] = new ButtonWidget(this, "Predictive.Button8", "8  tuv", 0, kBut8Cmd);
+	_button[kButton9Act] = new ButtonWidget(this, "Predictive.Button9", "9  wxyz", 0, kBut9Cmd);
+	_button[kButton0Act] = new ButtonWidget(this, "Predictive.Button0", "0", 0, kBut0Cmd);
 	// I18N: You must leave "#" as is, only word 'next' is translatable
-	_button[kNextAct] =    new ButtonWidget(this, "Predictive.Next",    _("#  next")  , 0, kNextCmd);
-	_button[kAddAct] =     new ButtonWidget(this, "Predictive.Add",     _("add")      , 0, kAddCmd);
+	_button[kNextAct] = new ButtonWidget(this, "Predictive.Next", _("#  next"), 0, kNextCmd);
+	_button[kAddAct] = new ButtonWidget(this, "Predictive.Add", _("add"), 0, kAddCmd);
 	_button[kAddAct]->setEnabled(false);
 
 #ifndef DISABLE_FANCY_THEMES
@@ -94,7 +95,7 @@ PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 		((PicButtonWidget *)_button[kDelAct])->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageDelButton));
 	} else
 #endif
-		_button[kDelAct] = new ButtonWidget(this, "Predictive.Delete" , _("<") , 0, kDelCmd);
+		_button[kDelAct] = new ButtonWidget(this, "Predictive.Delete", _("<"), 0, kDelCmd);
 	// I18N: Pre means 'Predictive', leave '*' as is
 	_button[kModeAct] = new ButtonWidget(this, "Predictive.Pre", _("*  Pre"), 0, kModeCmd);
 	_editText = new EditTextWidget(this, "Predictive.Word", _search, 0, 0, 0);
@@ -168,7 +169,7 @@ void PredictiveDialog::reflowLayout() {
 		((PicButtonWidget *)_button[kDelAct])->useThemeTransparency(true);
 		((PicButtonWidget *)_button[kDelAct])->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageDelButton));
 	} else {
-		_button[kDelAct] = new ButtonWidget(this, "Predictive.Delete" , _("<") , 0, kDelCmd);
+		_button[kDelAct] = new ButtonWidget(this, "Predictive.Delete", _("<"), 0, kDelCmd);
 	}
 #endif
 
@@ -231,7 +232,6 @@ void PredictiveDialog::handleKeyDown(Common::KeyState state) {
 			_curPressedButton = kAddAct;
 		else
 			_curPressedButton = ButtonId(_lastButton - 1);
-
 
 		if (_mode != kModeAbc && _lastButton == kCancelAct)
 			_curPressedButton = kOkAct;
@@ -446,16 +446,16 @@ void PredictiveDialog::processButton(ButtonId button) {
 		"1", "2", "3",
 		"4", "5", "6",
 		"7", "8", "9",
-		     "0"
+		"0"
 	};
 
 	static const char *const buttons[] = {
-		"'-.&",  "abc", "def",
-		"ghi",  "jkl", "mno",
+		"'-.&", "abc", "def",
+		"ghi", "jkl", "mno",
 		"pqrs", "tuv", "wxyz",
-		"next",    "add",
+		"next", "add",
 		"<",
-		"Cancel",  "OK",
+		"Cancel", "OK",
 		"Pre", "(0) ", NULL
 	};
 
@@ -608,7 +608,7 @@ void PredictiveDialog::processButton(ButtonId button) {
 }
 
 void PredictiveDialog::mergeDicts() {
-	_unitedDict.dictLineCount  = _predictiveDict.dictLineCount + _userDict.dictLineCount;
+	_unitedDict.dictLineCount = _predictiveDict.dictLineCount + _userDict.dictLineCount;
 	_unitedDict.dictLine = (char **)calloc(_unitedDict.dictLineCount, sizeof(char *));
 
 	if (!_unitedDict.dictLine) {
@@ -817,15 +817,13 @@ void PredictiveDialog::addWord(Dict &dict, const Common::String &word, const Com
 				if (searchWord(_predictiveDict.dictLine[predictLine], tmpCode)) {
 					// if code and word is in predictive dictionary, we need to copy
 					// this line to user dictionary
-					int len = (predictLine == _predictiveDict.dictLineCount - 1) ? &_predictiveDict.dictText[_predictiveDict.dictTextSize] - _predictiveDict.dictLine[predictLine] :
-					          _predictiveDict.dictLine[predictLine + 1] - _predictiveDict.dictLine[predictLine];
+					int len = (predictLine == _predictiveDict.dictLineCount - 1) ? &_predictiveDict.dictText[_predictiveDict.dictTextSize] - _predictiveDict.dictLine[predictLine] : _predictiveDict.dictLine[predictLine + 1] - _predictiveDict.dictLine[predictLine];
 					newLine = (char *)malloc(len);
 					strncpy(newLine, _predictiveDict.dictLine[predictLine], len);
 				} else {
 					// if there is no word in predictive dictionary, we need to copy to
 					// user dictionary mathed line + new word.
-					int len = (predictLine == _predictiveDict.dictLineCount - 1) ? &_predictiveDict.dictText[_predictiveDict.dictTextSize] - _predictiveDict.dictLine[predictLine] :
-					          _predictiveDict.dictLine[predictLine + 1] - _predictiveDict.dictLine[predictLine];
+					int len = (predictLine == _predictiveDict.dictLineCount - 1) ? &_predictiveDict.dictText[_predictiveDict.dictTextSize] - _predictiveDict.dictLine[predictLine] : _predictiveDict.dictLine[predictLine + 1] - _predictiveDict.dictLine[predictLine];
 					newLine = (char *)malloc(len + word.size() + 1);
 					char *ptr = newLine;
 					strncpy(ptr, _predictiveDict.dictLine[predictLine], len);

@@ -24,13 +24,13 @@
 
 #include "saga/saga.h"
 
-#include "saga/gfx.h"
-#include "saga/scene.h"
-#include "saga/resource.h"
 #include "saga/font.h"
+#include "saga/gfx.h"
+#include "saga/resource.h"
+#include "saga/scene.h"
 
-#include "saga/sprite.h"
 #include "saga/render.h"
+#include "saga/sprite.h"
 
 namespace Saga {
 
@@ -39,7 +39,8 @@ namespace Saga {
 #define RID_IHNMDEMO_ARROW_SPRITES 8
 #define RID_IHNMDEMO_SAVEREMINDER_SPRITES 9
 
-Sprite::Sprite(SagaEngine *vm) : _vm(vm) {
+Sprite::Sprite(SagaEngine *vm)
+  : _vm(vm) {
 	debug(8, "Initializing sprite subsystem...");
 
 	// Load sprite module resource context
@@ -242,8 +243,7 @@ void Sprite::drawClip(const Point &spritePointer, int width, int height, const b
 
 	// validate src, dst buffers
 	assert(_vm->_gfx->getBackBufferPixels() <= bufRowPointer);
-	assert((_vm->_gfx->getBackBufferPixels() + (_vm->getDisplayInfo().width * _vm->getDisplayInfo().height)) >=
-		(byte *)(bufRowPointer + backBufferPitch * (cHeight - 1) + cWidth));
+	assert((_vm->_gfx->getBackBufferPixels() + (_vm->getDisplayInfo().width * _vm->getDisplayInfo().height)) >= (byte *)(bufRowPointer + backBufferPitch * (cHeight - 1) + cWidth));
 	assert((const byte *)spriteBuffer <= srcRowPointer);
 	assert(((const byte *)spriteBuffer + (width * height)) >= (const byte *)(srcRowPointer + width * (cHeight - 1) + cWidth));
 
@@ -274,7 +274,7 @@ void Sprite::drawClip(const Point &spritePointer, int width, int height, const b
 
 void Sprite::draw(SpriteList &spriteList, uint spriteNumber, const Point &screenCoord, int scale, bool clipToScene) {
 	const byte *spriteBuffer = NULL;
-	int width  = 0;
+	int width = 0;
 	int height = 0;
 	int xAlign = 0;
 	int yAlign = 0;
@@ -290,7 +290,7 @@ void Sprite::draw(SpriteList &spriteList, uint spriteNumber, const Point &screen
 
 void Sprite::draw(SpriteList &spriteList, uint spriteNumber, const Rect &screenRect, int scale, bool clipToScene) {
 	const byte *spriteBuffer = NULL;
-	int width  = 0;
+	int width = 0;
 	int height = 0;
 	int xAlign = 0;
 	int spw;
@@ -316,7 +316,7 @@ bool Sprite::hitTest(SpriteList &spriteList, uint spriteNumber, const Point &scr
 	const byte *spriteBuffer = NULL;
 	int i, j;
 	const byte *srcRowPointer;
-	int width  = 0;
+	int width = 0;
 	int height = 0;
 	int xAlign = 0;
 	int yAlign = 0;
@@ -347,7 +347,7 @@ void Sprite::drawOccluded(SpriteList &spriteList, uint spriteNumber, const Point
 	const byte *sourcePointer;
 	byte *destPointer;
 	byte *maskPointer;
-	int width  = 0;
+	int width = 0;
 	int height = 0;
 	int xAlign = 0;
 	int yAlign = 0;
@@ -411,7 +411,7 @@ void Sprite::drawOccluded(SpriteList &spriteList, uint spriteNumber, const Point
 	}
 
 	_vm->_render->addDirtyRect(Common::Rect(clipData.drawSource.x, clipData.drawSource.y,
-								clipData.drawSource.x + width, clipData.drawSource.y + height));
+	                                        clipData.drawSource.x + width, clipData.drawSource.y + height));
 }
 
 void Sprite::decodeRLEBuffer(const byte *inputBuffer, size_t inLength, size_t outLength) {
@@ -436,7 +436,7 @@ void Sprite::decodeRLEBuffer(const byte *inputBuffer, size_t inLength, size_t ou
 		fg_runcount = readS.readByte();
 
 		for (c = 0; c < bg_runcount && !readS.eos(); c++) {
-			*outPointer = (byte) 0;
+			*outPointer = (byte)0;
 			if (outPointer < outPointerEnd)
 				outPointer++;
 			else
@@ -482,6 +482,5 @@ void Sprite::scaleBuffer(const byte *src, int width, int height, int scale, size
 		}
 	}
 }
-
 
 } // End of namespace Saga

@@ -23,22 +23,23 @@
 #include "common/util.h"
 
 #include "sci/console.h"
-#include "sci/sci.h"
 #include "sci/engine/features.h"
 #include "sci/engine/gc.h"
 #include "sci/engine/kernel.h"
-#include "sci/engine/state.h"
 #include "sci/engine/selector.h"
-#include "sci/graphics/screen.h"
-#include "sci/graphics/paint16.h"
+#include "sci/engine/state.h"
 #include "sci/graphics/animate.h"
-#include "sci/graphics/text16.h"
+#include "sci/graphics/paint16.h"
 #include "sci/graphics/ports.h"
+#include "sci/graphics/screen.h"
+#include "sci/graphics/text16.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
 GfxPorts::GfxPorts(SegManager *segMan, GfxScreen *screen)
-	: _segMan(segMan), _screen(screen) {
+  : _segMan(segMan)
+  , _screen(screen) {
 }
 
 GfxPorts::~GfxPorts() {
@@ -305,8 +306,7 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 	// KQ1sci, KQ4, iceman, QfG2 always add windows to the back of the list.
 	// KQ5CD checks style.
 	// Hoyle3-demo also always adds to the back (#3036763).
-	bool forceToBack = (getSciVersion() <= SCI_VERSION_1_EGA_ONLY) ||
-	                   (g_sci->getGameId() == GID_HOYLE3 && g_sci->isDemo());
+	bool forceToBack = (getSciVersion() <= SCI_VERSION_1_EGA_ONLY) || (g_sci->getGameId() == GID_HOYLE3 && g_sci->isDemo());
 
 	if (!forceToBack && (style & SCI_WINDOWMGR_STYLE_TOPMOST))
 		_windowList.push_front(pwnd);
@@ -366,8 +366,7 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 	// should not clip, same as what Sierra does. However, this will result in
 	// having invalid rectangles with negative coordinates. For this reason, we
 	// adjust the containing rectangle instead.
-	if (pwnd->dims.top < 0 && g_sci->getPlatform() == Common::kPlatformMacintosh &&
-		(style & SCI_WINDOWMGR_STYLE_USER) && _wmgrPort->top + pwnd->dims.top >= 0) {
+	if (pwnd->dims.top < 0 && g_sci->getPlatform() == Common::kPlatformMacintosh && (style & SCI_WINDOWMGR_STYLE_USER) && _wmgrPort->top + pwnd->dims.top >= 0) {
 		// Offset the final rect top by the requested pixels
 		wmprect.top += pwnd->dims.top;
 	}
@@ -425,8 +424,7 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 	if (restoreRect == 0)
 		pwnd->restoreRect = pwnd->dims;
 
-	if (pwnd->restoreRect.top < 0 && g_sci->getPlatform() == Common::kPlatformMacintosh &&
-		(style & SCI_WINDOWMGR_STYLE_USER) && _wmgrPort->top + pwnd->restoreRect.top >= 0) {
+	if (pwnd->restoreRect.top < 0 && g_sci->getPlatform() == Common::kPlatformMacintosh && (style & SCI_WINDOWMGR_STYLE_USER) && _wmgrPort->top + pwnd->restoreRect.top >= 0) {
 		// Special case for Dr. Brain 1 Mac (check above), applied to the
 		// restore rectangle.
 		pwnd->restoreRect.moveTo(pwnd->restoreRect.left, wmprect.top);
@@ -466,9 +464,9 @@ void GfxPorts::drawWindow(Window *pWnd) {
 		if (!(wndStyle & SCI_WINDOWMGR_STYLE_NOFRAME)) {
 			r.top++;
 			r.left++;
-			_paint16->frameRect(r);// draw shadow
+			_paint16->frameRect(r); // draw shadow
 			r.translate(-1, -1);
-			_paint16->frameRect(r);// draw actual window frame
+			_paint16->frameRect(r); // draw actual window frame
 
 			if (wndStyle & SCI_WINDOWMGR_STYLE_TITLE) {
 				if (getSciVersion() <= SCI_VERSION_0_LATE) {
@@ -751,9 +749,9 @@ void GfxPorts::printWindowList(Console *con) {
 		if ((*it)->isWindow()) {
 			Window *wnd = ((Window *)*it);
 			con->debugPrintf("%d: '%s' at %d, %d, (%d, %d, %d, %d), drawn: %d, style: %d\n",
-					wnd->id, wnd->title.c_str(), wnd->left, wnd->top,
-					wnd->rect.left, wnd->rect.top, wnd->rect.right, wnd->rect.bottom,
-					wnd->bDrawn, wnd->wndStyle);
+			                 wnd->id, wnd->title.c_str(), wnd->left, wnd->top,
+			                 wnd->rect.left, wnd->rect.top, wnd->rect.right, wnd->rect.bottom,
+			                 wnd->bDrawn, wnd->wndStyle);
 		}
 	}
 }

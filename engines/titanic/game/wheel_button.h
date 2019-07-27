@@ -32,10 +32,12 @@ class CWheelButton : public CBackground {
 	bool SignalObject(CSignalObject *msg);
 	bool TimerMsg(CTimerMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
+
 public:
 	bool _blinking;
 	int _timerId;
 	int _unused5;
+
 public:
 	CLASSDEF;
 	CWheelButton();

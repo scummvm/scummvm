@@ -22,24 +22,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
-#include "common/system.h"
 #include "common/file.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 
-#include "sword2/sword2.h"
+#include "sword2/animation.h"
+#include "sword2/console.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"
-#include "sword2/screen.h"
-#include "sword2/console.h"
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
 #include "sword2/maketext.h"
 #include "sword2/mouse.h"
 #include "sword2/resman.h"
 #include "sword2/router.h"
+#include "sword2/screen.h"
 #include "sword2/sound.h"
-#include "sword2/animation.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
@@ -126,9 +125,9 @@ int32 Logic::fnAnim(int32 *params) {
 
 	// Normal forward animation
 	return _router->doAnimate(
-		decodePtr(params[0]),
-		decodePtr(params[1]),
-		params[2], false);
+	  decodePtr(params[0]),
+	  decodePtr(params[1]),
+	  params[2], false);
 }
 
 int32 Logic::fnRandom(int32 *params) {
@@ -166,8 +165,8 @@ int32 Logic::fnInteract(int32 *params) {
 	// params:	0 id of target from which we derive action script
 	//		  reference
 
-	writeVar(PLAYER_ACTION, 0);		// must clear this
-	logicUp((params[0] << 16) | 2);		// 3rd script of clicked on id
+	writeVar(PLAYER_ACTION, 0); // must clear this
+	logicUp((params[0] << 16) | 2); // 3rd script of clicked on id
 
 	// Out, up and around again - pc is saved for current level to be
 	// returned to.
@@ -207,11 +206,11 @@ int32 Logic::fnWalk(int32 *params) {
 	//		6 target direction (8 means end walk on ANY direction)
 
 	return _router->doWalk(
-		decodePtr(params[0]),
-		decodePtr(params[1]),
-		decodePtr(params[2]),
-		decodePtr(params[3]),
-		params[4], params[5], params[6]);
+	  decodePtr(params[0]),
+	  decodePtr(params[1]),
+	  decodePtr(params[2]),
+	  decodePtr(params[3]),
+	  params[4], params[5], params[6]);
 }
 
 /**
@@ -226,11 +225,11 @@ int32 Logic::fnWalkToAnim(int32 *params) {
 	//		4 anim resource id
 
 	return _router->walkToAnim(
-		decodePtr(params[0]),
-		decodePtr(params[1]),
-		decodePtr(params[2]),
-		decodePtr(params[3]),
-		params[4]);
+	  decodePtr(params[0]),
+	  decodePtr(params[1]),
+	  decodePtr(params[2]),
+	  decodePtr(params[3]),
+	  params[4]);
 }
 
 /**
@@ -245,11 +244,11 @@ int32 Logic::fnTurn(int32 *params) {
 	//		4 target direction
 
 	return _router->doFace(
-		decodePtr(params[0]),
-		decodePtr(params[1]),
-		decodePtr(params[2]),
-		decodePtr(params[3]),
-		params[4]);
+	  decodePtr(params[0]),
+	  decodePtr(params[1]),
+	  decodePtr(params[2]),
+	  decodePtr(params[3]),
+	  params[4]);
 }
 
 /**
@@ -266,9 +265,9 @@ int32 Logic::fnStandAt(int32 *params) {
 	//		4 target direction
 
 	_router->standAt(
-		decodePtr(params[0]),
-		decodePtr(params[1]),
-		params[2], params[3], params[4]);
+	  decodePtr(params[0]),
+	  decodePtr(params[1]),
+	  params[2], params[3], params[4]);
 	return IR_CONT;
 }
 
@@ -286,8 +285,8 @@ int32 Logic::fnStand(int32 *params) {
 	ObjectMega obMega(ob_mega);
 
 	_router->standAt(
-		decodePtr(params[0]),
-		ob_mega, obMega.getFeetX(), obMega.getFeetY(), params[2]);
+	  decodePtr(params[0]),
+	  ob_mega, obMega.getFeetX(), obMega.getFeetY(), params[2]);
 	return IR_CONT;
 }
 
@@ -301,9 +300,9 @@ int32 Logic::fnStandAfterAnim(int32 *params) {
 	//		2 anim resource id
 
 	_router->standAfterAnim(
-		decodePtr(params[0]),
-		decodePtr(params[1]),
-		params[2]);
+	  decodePtr(params[0]),
+	  decodePtr(params[1]),
+	  params[2]);
 	return IR_CONT;
 }
 
@@ -338,11 +337,11 @@ int32 Logic::fnMegaTableAnim(int32 *params) {
 
 	// Normal forward anim
 	return _router->megaTableAnimate(
-		decodePtr(params[0]),
-		decodePtr(params[1]),
-		decodePtr(params[2]),
-		decodePtr(params[3]),
-		false);
+	  decodePtr(params[0]),
+	  decodePtr(params[1]),
+	  decodePtr(params[2]),
+	  decodePtr(params[3]),
+	  false);
 }
 
 int32 Logic::fnAddMenuObject(int32 *params) {
@@ -437,9 +436,9 @@ int32 Logic::fnRegisterFrame(int32 *params) {
 	//		2 pointer to mega structure or NULL if not a mega
 
 	_vm->_screen->registerFrame(
-		decodePtr(params[0]),
-		decodePtr(params[1]),
-		decodePtr(params[2]));
+	  decodePtr(params[0]),
+	  decodePtr(params[1]),
+	  decodePtr(params[2]));
 	return IR_CONT;
 }
 
@@ -476,7 +475,7 @@ int32 Logic::fnUpdatePlayerStats(int32 *params) {
 	writeVar(SCROLL_OFFSET_X, screenInfo->scroll_offset_x);
 
 	debug(5, "fnUpdatePlayerStats: %d %d",
-		obMega.getFeetX(), obMega.getFeetY());
+	      obMega.getFeetX(), obMega.getFeetY());
 
 	return IR_CONT;
 }
@@ -541,11 +540,11 @@ int32 Logic::fnFaceXY(int32 *params) {
 	//		5 target y-coord
 
 	return _router->faceXY(
-		decodePtr(params[0]),
-		decodePtr(params[1]),
-		decodePtr(params[2]),
-		decodePtr(params[3]),
-		params[4], params[5]);
+	  decodePtr(params[0]),
+	  decodePtr(params[1]),
+	  decodePtr(params[2]),
+	  decodePtr(params[3]),
+	  params[4], params[5]);
 }
 
 /**
@@ -725,11 +724,11 @@ int32 Logic::fnWalkToTalkToMega(int32 *params) {
 	//		5 separation
 
 	return _router->walkToTalkToMega(
-		decodePtr(params[0]),
-		decodePtr(params[1]),
-		decodePtr(params[2]),
-		decodePtr(params[3]),
-		params[4], params[5]);
+	  decodePtr(params[0]),
+	  decodePtr(params[1]),
+	  decodePtr(params[2]),
+	  decodePtr(params[3]),
+	  params[4], params[5]);
 }
 
 int32 Logic::fnFadeDown(int32 *params) {
@@ -745,16 +744,16 @@ int32 Logic::fnFadeDown(int32 *params) {
 }
 
 enum {
-	S_OB_GRAPHIC	= 0,
-	S_OB_SPEECH	= 1,
-	S_OB_LOGIC	= 2,
-	S_OB_MEGA	= 3,
+	S_OB_GRAPHIC = 0,
+	S_OB_SPEECH = 1,
+	S_OB_LOGIC = 2,
+	S_OB_MEGA = 3,
 
-	S_TEXT		= 4,
-	S_WAV		= 5,
-	S_ANIM		= 6,
-	S_DIR_TABLE	= 7,
-	S_ANIM_MODE	= 8
+	S_TEXT = 4,
+	S_WAV = 5,
+	S_ANIM = 6,
+	S_DIR_TABLE = 7,
+	S_ANIM_MODE = 8
 };
 
 /**
@@ -1050,8 +1049,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		// Note that we now have TWO click-delays - one for LEFT
 		// button, one for RIGHT BUTTON
 
-		if ((!_leftClickDelay && me && (me->buttons & RD_LEFTBUTTONDOWN)) ||
-		    (!_rightClickDelay && me && (me->buttons & RD_RIGHTBUTTONDOWN))) {
+		if ((!_leftClickDelay && me && (me->buttons & RD_LEFTBUTTONDOWN)) || (!_rightClickDelay && me && (me->buttons & RD_RIGHTBUTTONDOWN))) {
 			// Mouse click, after click_delay has expired -> end
 			// the speech.
 
@@ -1152,23 +1150,23 @@ int32 Logic::fnSetWalkGrid(int32 *params) {
  */
 
 enum {
-	INS_talk		= 1,
-	INS_anim		= 2,
-	INS_reverse_anim	= 3,
-	INS_walk		= 4,
-	INS_turn		= 5,
-	INS_face		= 6,
-	INS_trace		= 7,
-	INS_no_sprite		= 8,
-	INS_sort		= 9,
-	INS_foreground		= 10,
-	INS_background		= 11,
-	INS_table_anim		= 12,
-	INS_reverse_table_anim	= 13,
-	INS_walk_to_anim	= 14,
-	INS_set_frame		= 15,
-	INS_stand_after_anim	= 16,
-	INS_quit		= 42
+	INS_talk = 1,
+	INS_anim = 2,
+	INS_reverse_anim = 3,
+	INS_walk = 4,
+	INS_turn = 5,
+	INS_face = 6,
+	INS_trace = 7,
+	INS_no_sprite = 8,
+	INS_sort = 9,
+	INS_foreground = 10,
+	INS_background = 11,
+	INS_table_anim = 12,
+	INS_reverse_table_anim = 13,
+	INS_walk_to_anim = 14,
+	INS_set_frame = 15,
+	INS_stand_after_anim = 16,
+	INS_quit = 42
 };
 
 int32 Logic::fnSpeechProcess(int32 *params) {
@@ -1197,15 +1195,15 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 		case 0:
 			break;
 		case INS_talk:
-			pars[0] = params[0];		// ob_graphic
-			pars[1] = params[1];		// ob_speech
-			pars[2] = params[2];		// ob_logic
-			pars[3] = params[3];		// ob_mega
-			pars[4] = obSpeech.getIns1();	// encoded text number
-			pars[5] = obSpeech.getIns2();	// wav res id
-			pars[6] = obSpeech.getIns3();	// anim res id
-			pars[7] = obSpeech.getIns4();	// anim table res id
-			pars[8] = obSpeech.getIns5();	// animation mode - 0 lip synced, 1 just straight animation
+			pars[0] = params[0]; // ob_graphic
+			pars[1] = params[1]; // ob_speech
+			pars[2] = params[2]; // ob_logic
+			pars[3] = params[3]; // ob_mega
+			pars[4] = obSpeech.getIns1(); // encoded text number
+			pars[5] = obSpeech.getIns2(); // wav res id
+			pars[6] = obSpeech.getIns3(); // anim res id
+			pars[7] = obSpeech.getIns4(); // anim table res id
+			pars[8] = obSpeech.getIns5(); // animation mode - 0 lip synced, 1 just straight animation
 
 			if (fnISpeak(pars) != IR_REPEAT) {
 				obSpeech.setCommand(0);
@@ -1214,11 +1212,11 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 
 			return IR_REPEAT;
 		case INS_turn:
-			pars[0] = params[2];		// ob_logic
-			pars[1] = params[0];		// ob_graphic
-			pars[2] = params[3];		// ob_mega
-			pars[3] = params[4];		// ob_walkdata
-			pars[4] = obSpeech.getIns1();	// direction to turn to
+			pars[0] = params[2]; // ob_logic
+			pars[1] = params[0]; // ob_graphic
+			pars[2] = params[3]; // ob_mega
+			pars[3] = params[4]; // ob_walkdata
+			pars[4] = obSpeech.getIns1(); // direction to turn to
 
 			if (fnTurn(pars) != IR_REPEAT) {
 				obSpeech.setCommand(0);
@@ -1227,11 +1225,11 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 
 			return IR_REPEAT;
 		case INS_face:
-			pars[0] = params[2];		// ob_logic
-			pars[1] = params[0];		// ob_graphic
-			pars[2] = params[3];		// ob_mega
-			pars[3] = params[4];		// ob_walkdata
-			pars[4] = obSpeech.getIns1();	// target
+			pars[0] = params[2]; // ob_logic
+			pars[1] = params[0]; // ob_graphic
+			pars[2] = params[3]; // ob_mega
+			pars[3] = params[4]; // ob_walkdata
+			pars[4] = obSpeech.getIns1(); // target
 
 			if (fnFaceMega(pars) != IR_REPEAT) {
 				obSpeech.setCommand(0);
@@ -1240,9 +1238,9 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 
 			return IR_REPEAT;
 		case INS_anim:
-			pars[0] = params[2];		// ob_logic
-			pars[1] = params[0];		// ob_graphic
-			pars[2] = obSpeech.getIns1();	// anim res
+			pars[0] = params[2]; // ob_logic
+			pars[1] = params[0]; // ob_graphic
+			pars[2] = obSpeech.getIns1(); // anim res
 
 			if (fnAnim(pars) != IR_REPEAT) {
 				obSpeech.setCommand(0);
@@ -1251,9 +1249,9 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 
 			return IR_REPEAT;
 		case INS_reverse_anim:
-			pars[0] = params[2];		// ob_logic
-			pars[1] = params[0];		// ob_graphic
-			pars[2] = obSpeech.getIns1();	// anim res
+			pars[0] = params[2]; // ob_logic
+			pars[1] = params[0]; // ob_graphic
+			pars[2] = obSpeech.getIns1(); // anim res
 
 			if (fnReverseAnim(pars) != IR_REPEAT) {
 				obSpeech.setCommand(0);
@@ -1262,10 +1260,10 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 
 			return IR_REPEAT;
 		case INS_table_anim:
-			pars[0] = params[2];		// ob_logic
-			pars[1] = params[0];		// ob_graphic
-			pars[2] = params[3];		// ob_mega
-			pars[3] = obSpeech.getIns1();	// pointer to anim table
+			pars[0] = params[2]; // ob_logic
+			pars[1] = params[0]; // ob_graphic
+			pars[2] = params[3]; // ob_mega
+			pars[3] = obSpeech.getIns1(); // pointer to anim table
 
 			if (fnMegaTableAnim(pars) != IR_REPEAT) {
 				obSpeech.setCommand(0);
@@ -1274,10 +1272,10 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 
 			return IR_REPEAT;
 		case INS_reverse_table_anim:
-			pars[0] = params[2];		// ob_logic
-			pars[1] = params[0];		// ob_graphic
-			pars[2] = params[3];		// ob_mega
-			pars[3] = obSpeech.getIns1();	// pointer to anim table
+			pars[0] = params[2]; // ob_logic
+			pars[1] = params[0]; // ob_graphic
+			pars[2] = params[3]; // ob_mega
+			pars[3] = obSpeech.getIns1(); // pointer to anim table
 
 			if (fnReverseMegaTableAnim(pars) != IR_REPEAT) {
 				obSpeech.setCommand(0);
@@ -1286,37 +1284,37 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 
 			return IR_REPEAT;
 		case INS_no_sprite:
-			fnNoSprite(params);		// ob_graphic
+			fnNoSprite(params); // ob_graphic
 
 			obSpeech.setCommand(0);
 			obSpeech.setWaitState(1);
 			return IR_REPEAT;
 		case INS_sort:
-			fnSortSprite(params);		// ob_graphic
+			fnSortSprite(params); // ob_graphic
 
 			obSpeech.setCommand(0);
 			obSpeech.setWaitState(1);
 			return IR_REPEAT;
 		case INS_foreground:
-			fnForeSprite(params);		// ob_graphic
+			fnForeSprite(params); // ob_graphic
 
 			obSpeech.setCommand(0);
 			obSpeech.setWaitState(1);
 			return IR_REPEAT;
 		case INS_background:
-			fnBackSprite(params);		// ob_graphic
+			fnBackSprite(params); // ob_graphic
 
 			obSpeech.setCommand(0);
 			obSpeech.setWaitState(1);
 			return IR_REPEAT;
 		case INS_walk:
-			pars[0] = params[2];		// ob_logic
-			pars[1] = params[0];		// ob_graphic
-			pars[2] = params[3];		// ob_mega
-			pars[3] = params[4];		// ob_walkdata
-			pars[4] = obSpeech.getIns1();	// target x
-			pars[5] = obSpeech.getIns2();	// target y
-			pars[6] = obSpeech.getIns3();	// target direction
+			pars[0] = params[2]; // ob_logic
+			pars[1] = params[0]; // ob_graphic
+			pars[2] = params[3]; // ob_mega
+			pars[3] = params[4]; // ob_walkdata
+			pars[4] = obSpeech.getIns1(); // target x
+			pars[5] = obSpeech.getIns2(); // target y
+			pars[6] = obSpeech.getIns3(); // target direction
 
 			if (fnWalk(pars) != IR_REPEAT) {
 				obSpeech.setCommand(0);
@@ -1325,11 +1323,11 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 
 			return IR_REPEAT;
 		case INS_walk_to_anim:
-			pars[0] = params[2];		// ob_logic
-			pars[1] = params[0];		// ob_graphic
-			pars[2] = params[3];		// ob_mega
-			pars[3] = params[4];		// ob_walkdata
-			pars[4] = obSpeech.getIns1();	// anim resource
+			pars[0] = params[2]; // ob_logic
+			pars[1] = params[0]; // ob_graphic
+			pars[2] = params[3]; // ob_mega
+			pars[3] = params[4]; // ob_walkdata
+			pars[4] = obSpeech.getIns1(); // anim resource
 
 			if (fnWalkToAnim(pars) != IR_REPEAT) {
 				obSpeech.setCommand(0);
@@ -1338,9 +1336,9 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 
 			return IR_REPEAT;
 		case INS_stand_after_anim:
-			pars[0] = params[0];		// ob_graphic
-			pars[1] = params[3];		// ob_mega
-			pars[2] = obSpeech.getIns1();	// anim resource
+			pars[0] = params[0]; // ob_graphic
+			pars[1] = params[3]; // ob_mega
+			pars[2] = obSpeech.getIns1(); // anim resource
 
 			fnStandAfterAnim(pars);
 
@@ -1348,9 +1346,9 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			obSpeech.setWaitState(1);
 			return IR_REPEAT;
 		case INS_set_frame:
-			pars[0] = params[0];		// ob_graphic
-			pars[1] = obSpeech.getIns1();	// anim_resource
-			pars[2] = obSpeech.getIns2();	// FIRST_FRAME or LAST_FRAME
+			pars[0] = params[0]; // ob_graphic
+			pars[1] = obSpeech.getIns1(); // anim_resource
+			pars[2] = obSpeech.getIns2(); // FIRST_FRAME or LAST_FRAME
 			fnSetFrame(pars);
 
 			obSpeech.setCommand(0);
@@ -1593,7 +1591,7 @@ int32 Logic::fnNewScript(int32 *params) {
 
 	// params:	0 id of script
 
-	writeVar(PLAYER_ACTION, 0);		// must clear this
+	writeVar(PLAYER_ACTION, 0); // must clear this
 	logicReplace(params[0]);
 	return IR_TERMINATE;
 }
@@ -1647,11 +1645,11 @@ int32 Logic::fnReverseMegaTableAnim(int32 *params) {
 
 	// Reverse anim
 	return _router->megaTableAnimate(
-		decodePtr(params[0]),
-		decodePtr(params[1]),
-		decodePtr(params[2]),
-		decodePtr(params[3]),
-		true);
+	  decodePtr(params[0]),
+	  decodePtr(params[1]),
+	  decodePtr(params[2]),
+	  decodePtr(params[3]),
+	  true);
 }
 
 int32 Logic::fnReverseAnim(int32 *params) {
@@ -1661,9 +1659,9 @@ int32 Logic::fnReverseAnim(int32 *params) {
 
 	// Reverse anim
 	return _router->doAnimate(
-		decodePtr(params[0]),
-		decodePtr(params[1]),
-		params[2], true);
+	  decodePtr(params[0]),
+	  decodePtr(params[1]),
+	  params[2], true);
 }
 
 /**
@@ -1691,7 +1689,7 @@ int32 Logic::fnAddToKillList(int32 *params) {
 			return IR_CONT;
 	}
 
-	assert(_kills < OBJECT_KILL_LIST_SIZE);	// no room at the inn
+	assert(_kills < OBJECT_KILL_LIST_SIZE); // no room at the inn
 
 	_objectKillList[_kills++] = id;
 
@@ -1793,9 +1791,9 @@ int32 Logic::fnStandAtAnim(int32 *params) {
 	//		2 anim resource id
 
 	_router->standAtAnim(
-		decodePtr(params[0]),
-		decodePtr(params[1]),
-		params[2]);
+	  decodePtr(params[0]),
+	  decodePtr(params[1]),
+	  params[2]);
 	return IR_CONT;
 }
 
@@ -1889,17 +1887,17 @@ int32 Logic::fnColor(int32 *params) {
 }
 
 #ifdef SWORD2_DEBUG
-#define BLACK	0
-#define WHITE	1
-#define RED	2
-#define GREEN	3
-#define BLUE	4
+#	define BLACK 0
+#	define WHITE 1
+#	define RED 2
+#	define GREEN 3
+#	define BLUE 4
 
-static const uint8 black[3]	= {  0,    0,   0 };
-static const uint8 white[3]	= { 255, 255, 255 };
-static const uint8 red[3]	= { 255,   0,   0 };
-static const uint8 green[3]	= {   0, 255,   0 };
-static const uint8 blue[3]	= {   0,   0, 255 };
+static const uint8 black[3] = { 0, 0, 0 };
+static const uint8 white[3] = { 255, 255, 255 };
+static const uint8 red[3] = { 255, 0, 0 };
+static const uint8 green[3] = { 0, 255, 0 };
+static const uint8 blue[3] = { 0, 0, 255 };
 #endif
 
 int32 Logic::fnFlash(int32 *params) {
@@ -1976,8 +1974,8 @@ int32 Logic::fnGetPlayerSaveData(int32 *params) {
 
 		int32 pars[3];
 
-		pars[0] = params[1];			// ob_graphic;
-		pars[1] = params[2];			// ob_mega
+		pars[0] = params[1]; // ob_graphic;
+		pars[1] = params[2]; // ob_mega
 		pars[2] = obMega.getCurDir();
 
 		fnStand(pars);
@@ -2104,11 +2102,11 @@ int32 Logic::fnFaceMega(int32 *params) {
 	//		4 id of target mega to face
 
 	return _router->faceMega(
-		decodePtr(params[0]),
-		decodePtr(params[1]),
-		decodePtr(params[2]),
-		decodePtr(params[3]),
-		params[4]);
+	  decodePtr(params[0]),
+	  decodePtr(params[1]),
+	  decodePtr(params[2]),
+	  decodePtr(params[3]),
+	  params[4]);
 }
 
 int32 Logic::fnPlaySequence(int32 *params) {

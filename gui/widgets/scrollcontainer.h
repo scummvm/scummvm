@@ -23,13 +23,13 @@
 #ifndef GUI_WIDGETS_SCROLLCONTAINER_H
 #define GUI_WIDGETS_SCROLLCONTAINER_H
 
-#include "gui/widget.h"
 #include "common/str.h"
+#include "gui/widget.h"
 #include "scrollbar.h"
 
 namespace GUI {
 
-class ScrollContainerWidget: public Widget, public CommandSender {
+class ScrollContainerWidget : public Widget, public CommandSender {
 	ScrollBarWidget *_verticalScroll;
 	int16 _scrolledX, _scrolledY;
 	uint16 _limitH;
@@ -58,10 +58,10 @@ public:
 protected:
 	// We overload getChildY to make sure child widgets are positioned correctly.
 	// Essentially this compensates for the space taken up by the tab title header.
-	int16	getChildX() const override;
-	int16	getChildY() const override;
-	uint16	getWidth() const override;
-	uint16	getHeight() const override;
+	int16 getChildX() const override;
+	int16 getChildY() const override;
+	uint16 getWidth() const override;
+	uint16 getHeight() const override;
 
 	void drawWidget() override;
 

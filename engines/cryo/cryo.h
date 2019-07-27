@@ -23,20 +23,20 @@
 #ifndef CRYO_CRYO_H
 #define CRYO_CRYO_H
 
-#include "common/scummsys.h"
 #include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/debug.h"
 #include "common/error.h"
 #include "common/random.h"
+#include "common/scummsys.h"
 #include "engines/engine.h"
-#include "gui/debugger.h"
-#include "graphics/surface.h"
 #include "graphics/screen.h"
+#include "graphics/surface.h"
+#include "gui/debugger.h"
 
+#include "cryo/debugger.h"
 #include "cryo/eden.h"
 #include "cryo/video.h"
-#include "cryo/debugger.h"
 
 struct ADGameDescription;
 
@@ -48,8 +48,8 @@ class Console;
 enum {
 	kCryoDebugExample = 1 << 0,
 	kCryoDebugExample2 = 1 << 1
-	                     // next new channel must be 1 << 2 (4)
-	                     // the current limitation is 32 debug channels (1 << 31 is the last one)
+	// next new channel must be 1 << 2 (4)
+	// the current limitation is 32 debug channels (1 << 31 is the last one)
 };
 
 class CryoEngine : public Engine {

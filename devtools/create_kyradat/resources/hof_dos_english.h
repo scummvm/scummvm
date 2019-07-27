@@ -105,4 +105,3 @@ static const char *const k2SeqplayStringsDOSEnglish[103] = {
 };
 
 static const StringListProvider k2SeqplayStringsDOSEnglishProvider = { ARRAYSIZE(k2SeqplayStringsDOSEnglish), k2SeqplayStringsDOSEnglish };
-

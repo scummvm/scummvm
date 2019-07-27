@@ -24,38 +24,39 @@
 #include "common/file.h"
 #include "common/memstream.h"
 
-#include "gob/gob.h"
 #include "gob/demos/demoplayer.h"
-#include "gob/global.h"
-#include "gob/util.h"
 #include "gob/draw.h"
+#include "gob/global.h"
+#include "gob/gob.h"
 #include "gob/inter.h"
-#include "gob/videoplayer.h"
 #include "gob/sound/sound.h"
+#include "gob/util.h"
+#include "gob/videoplayer.h"
 
 namespace Gob {
 
 DemoPlayer::Script DemoPlayer::_scripts[] = {
-	{kScriptSourceFile, "demo.scn"},
-	{kScriptSourceFile, "wdemo.s24"},
-	{kScriptSourceFile, "play123.scn"},
-	{kScriptSourceFile, "e.scn"},
-	{kScriptSourceFile, "i.scn"},
-	{kScriptSourceFile, "s.scn"},
-	{kScriptSourceDirect,
-		"slide machu.imd 20\nslide conseil.imd 20\nslide cons.imd 20\n" \
-		"slide tumia.imd 1\nslide tumib.imd 1\nslide tumic.imd 1\n"     \
-		"slide tumid.imd 1\nslide post.imd 1\nslide posta.imd 1\n"      \
-		"slide postb.imd 1\nslide postc.imd 1\nslide xdome.imd 20\n"    \
-		"slide xant.imd 20\nslide tum.imd 20\nslide voile.imd 20\n"     \
-		"slide int.imd 20\nslide voila.imd 1\nslide voilb.imd 1\n"},
-	{kScriptSourceFile, "coktelplayer.scn"},
-	{kScriptSourceFile, "demogb.scn"},
-	{kScriptSourceFile, "demoall.scn"},
-	{kScriptSourceFile, "demofra.scn"}
+	{ kScriptSourceFile, "demo.scn" },
+	{ kScriptSourceFile, "wdemo.s24" },
+	{ kScriptSourceFile, "play123.scn" },
+	{ kScriptSourceFile, "e.scn" },
+	{ kScriptSourceFile, "i.scn" },
+	{ kScriptSourceFile, "s.scn" },
+	{ kScriptSourceDirect,
+	  "slide machu.imd 20\nslide conseil.imd 20\nslide cons.imd 20\n"
+	  "slide tumia.imd 1\nslide tumib.imd 1\nslide tumic.imd 1\n"
+	  "slide tumid.imd 1\nslide post.imd 1\nslide posta.imd 1\n"
+	  "slide postb.imd 1\nslide postc.imd 1\nslide xdome.imd 20\n"
+	  "slide xant.imd 20\nslide tum.imd 20\nslide voile.imd 20\n"
+	  "slide int.imd 20\nslide voila.imd 1\nslide voilb.imd 1\n" },
+	{ kScriptSourceFile, "coktelplayer.scn" },
+	{ kScriptSourceFile, "demogb.scn" },
+	{ kScriptSourceFile, "demoall.scn" },
+	{ kScriptSourceFile, "demofra.scn" }
 };
 
-DemoPlayer::DemoPlayer(GobEngine *vm) : _vm(vm) {
+DemoPlayer::DemoPlayer(GobEngine *vm)
+  : _vm(vm) {
 	_autoDouble = false;
 	_doubleMode = false;
 	_rebase0 = false;
@@ -92,13 +93,12 @@ bool DemoPlayer::play(uint32 index) {
 	case kScriptSourceFile:
 		return play(script.script);
 
-	case kScriptSourceDirect:
-		{
-			Common::MemoryReadStream stream((const byte *)script.script, strlen(script.script));
+	case kScriptSourceDirect: {
+		Common::MemoryReadStream stream((const byte *)script.script, strlen(script.script));
 
-			init();
-			return playStream(stream);
-		}
+		init();
+		return playStream(stream);
+	}
 
 	default:
 		return false;
@@ -118,7 +118,6 @@ void DemoPlayer::init() {
 	_vm->_draw->_cursorIndex = -1;
 
 	_vm->_util->longDelay(200); // Letting everything settle
-
 }
 
 void DemoPlayer::clearScreen() {
@@ -163,7 +162,7 @@ void DemoPlayer::playVideo(const char *fileName) {
 		if (_autoDouble) {
 			int16 defX = _rebase0 ? 0 : _vm->_vidPlayer->getDefaultX();
 			int16 defY = _rebase0 ? 0 : _vm->_vidPlayer->getDefaultY();
-			int16 right  = defX + _vm->_vidPlayer->getWidth()  - 1;
+			int16 right = defX + _vm->_vidPlayer->getWidth() - 1;
 			int16 bottom = defY + _vm->_vidPlayer->getHeight() - 1;
 
 			_doubleMode = ((right < 320) && (bottom < 200));
@@ -189,8 +188,8 @@ void DemoPlayer::playADL(const char *params) {
 		end = params + strlen(params);
 
 	Common::String fileName(params, end);
-	bool  waitEsc = true;
-	int32 repeat  = -1;
+	bool waitEsc = true;
+	int32 repeat = -1;
 
 	if (*end != '\0') {
 		const char *start = end + 1;
@@ -217,9 +216,9 @@ void DemoPlayer::playVideoDoubled(int slot) {
 
 	VideoPlayer::Properties props;
 
-	props.x            = _rebase0 ? 0 : -1;
-	props.y            = _rebase0 ? 0 : -1;
-	props.flags        = VideoPlayer::kFlagScreenSurface;
+	props.x = _rebase0 ? 0 : -1;
+	props.y = _rebase0 ? 0 : -1;
+	props.flags = VideoPlayer::kFlagScreenSurface;
 	props.waitEndFrame = false;
 
 	_vm->_vidPlayer->evaluateFlags(props);
@@ -230,23 +229,23 @@ void DemoPlayer::playVideoDoubled(int slot) {
 
 	for (uint i = 0; i < _vm->_vidPlayer->getFrameCount(slot); i++) {
 		props.startFrame = _vm->_vidPlayer->getCurrentFrame(slot) + 1;
-		props.lastFrame  = _vm->_vidPlayer->getCurrentFrame(slot) + 1;
+		props.lastFrame = _vm->_vidPlayer->getCurrentFrame(slot) + 1;
 
 		_vm->_vidPlayer->play(slot, props);
 
 		const Common::List<Common::Rect> *rects = _vm->_vidPlayer->getDirtyRects(slot);
 		if (rects) {
 			for (Common::List<Common::Rect>::const_iterator rect = rects->begin(); rect != rects->end(); ++rect) {
-				int16 w  = rect->right  - rect->left;
-				int16 h  = rect->bottom - rect->top;
+				int16 w = rect->right - rect->left;
+				int16 h = rect->bottom - rect->top;
 				int16 wD = (rect->left * 2) + (w * 2);
-				int16 hD = (rect->top  * 2) + (h * 2);
+				int16 hD = (rect->top * 2) + (h * 2);
 
 				_vm->_draw->_frontSurface->blitScaled(*_vm->_draw->_spritesArray[0],
-						rect->left, rect->top, rect->right - 1, rect->bottom - 1, rect->left * 2, rect->top * 2, 2);
+				                                      rect->left, rect->top, rect->right - 1, rect->bottom - 1, rect->left * 2, rect->top * 2, 2);
 
 				_vm->_draw->dirtiedRect(_vm->_draw->_frontSurface,
-						rect->left * 2, rect->top * 2, wD, hD);
+				                        rect->left * 2, rect->top * 2, wD, hD);
 			}
 		}
 
@@ -266,7 +265,6 @@ void DemoPlayer::playVideoDoubled(int slot) {
 
 		_vm->_vidPlayer->waitEndFrame(slot);
 	}
-
 }
 
 void DemoPlayer::playADL(const Common::String &fileName, bool waitEsc, int32 repeat) {
@@ -297,7 +295,7 @@ void DemoPlayer::evaluateVideoMode(const char *mode) {
 
 	// Only applicable when we actually can double
 	if (_vm->is640x480() || _vm->is800x600()) {
-		if      (!scumm_strnicmp(mode, "AUTO", 4))
+		if (!scumm_strnicmp(mode, "AUTO", 4))
 			_autoDouble = true;
 		else if (!scumm_strnicmp(mode, "VGA", 3))
 			_doubleMode = true;

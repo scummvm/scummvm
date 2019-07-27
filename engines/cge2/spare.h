@@ -34,9 +34,11 @@ namespace CGE2 {
 
 class Spare {
 	CGE2Engine *_vm;
-	Common::Array<Sprite*> _container;
+	Common::Array<Sprite *> _container;
+
 public:
-	Spare(CGE2Engine *vm) : _vm(vm) {}
+	Spare(CGE2Engine *vm)
+	  : _vm(vm) {}
 	~Spare() { clear(); }
 	void store(Sprite *spr);
 	Sprite *locate(int ref);

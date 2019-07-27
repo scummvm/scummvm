@@ -24,10 +24,10 @@
 #define TITANIC_PET_REMOTE_H
 
 #include "common/array.h"
-#include "titanic/pet_control/pet_section.h"
+#include "titanic/gfx/text_control.h"
 #include "titanic/pet_control/pet_glyphs.h"
 #include "titanic/pet_control/pet_remote_glyphs.h"
-#include "titanic/gfx/text_control.h"
+#include "titanic/pet_control/pet_section.h"
 
 namespace Titanic {
 
@@ -46,6 +46,7 @@ private:
 	CPetGfxElement _receive;
 	CPetGfxElement _call;
 	CTextControl _text;
+
 private:
 	/**
 	 * Setup the control
@@ -86,6 +87,7 @@ private:
 	 * Load a single room glyph
 	 */
 	bool loadGlyph(int glyphIndex);
+
 public:
 	CPetRemote();
 

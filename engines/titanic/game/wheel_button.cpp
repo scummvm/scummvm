@@ -25,13 +25,16 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CWheelButton, CBackground)
-	ON_MESSAGE(SignalObject)
-	ON_MESSAGE(TimerMsg)
-	ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(SignalObject)
+ON_MESSAGE(TimerMsg)
+ON_MESSAGE(LeaveViewMsg)
 END_MESSAGE_MAP()
 
-CWheelButton::CWheelButton() : CBackground(),
-	_blinking(false), _timerId(0), _unused5(0) {
+CWheelButton::CWheelButton()
+  : CBackground()
+  , _blinking(false)
+  , _timerId(0)
+  , _unused5(0) {
 }
 
 void CWheelButton::save(SimpleFile *file, int indent) {

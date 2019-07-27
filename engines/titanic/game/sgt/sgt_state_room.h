@@ -51,14 +51,17 @@ class CSGTStateRoom : public CBackground {
 	bool VisibleMsg(CVisibleMsg *msg);
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
 	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
+
 protected:
 	static CSGTStateRoomStatics *_statics;
+
 protected:
 	bool _isClosed;
 	bool _displayFlag;
 	int _savedFrame;
 	bool _savedIsClosed;
 	bool _savedVisible;
+
 public:
 	CLASSDEF;
 	CSGTStateRoom();

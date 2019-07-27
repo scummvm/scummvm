@@ -23,7 +23,6 @@
 #ifndef CINE_UNPACK_H
 #define CINE_UNPACK_H
 
-
 #include "common/scummsys.h"
 
 namespace Cine {
@@ -47,6 +46,7 @@ public:
 	 * @return True if no errors were detected in the source data and unpacking was successful, otherwise false.
 	 */
 	bool unpack(const byte *src, uint srcLen, byte *dst, uint dstLen);
+
 private:
 	/**
 	 * Reads an unsigned big endian 32-bit integer from the source stream and goes backwards 4 bytes.
@@ -95,18 +95,19 @@ private:
 	 * @param numBytes Amount of bytes to copy
 	 */
 	void copyRelocatedBytes(uint offset, uint numBytes);
+
 private:
-	uint32 _crc;      ///< Error-detecting code (This should be zero after successful unpacking)
+	uint32 _crc; ///< Error-detecting code (This should be zero after successful unpacking)
 	uint32 _chunk32b; ///< The current internal 32-bit chunk of source data
-	byte *_dst;       ///< Pointer to the current position in the destination buffer
+	byte *_dst; ///< Pointer to the current position in the destination buffer
 	const byte *_src; ///< Pointer to the current position in the source buffer
 
 	// These are used for detecting errors (e.g. out of bounds issues) during unpacking
-	bool _error;           ///< Did an error occur during unpacking?
+	bool _error; ///< Did an error occur during unpacking?
 	const byte *_srcBegin; ///< Source buffer's beginning
-	const byte *_srcEnd;   ///< Source buffer's end
-	byte *_dstBegin;       ///< Destination buffer's beginning
-	byte *_dstEnd;         ///< Destination buffer's end
+	const byte *_srcEnd; ///< Source buffer's end
+	byte *_dstBegin; ///< Destination buffer's beginning
+	byte *_dstEnd; ///< Destination buffer's end
 };
 
 } // End of namespace Cine

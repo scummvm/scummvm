@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "queen/state.h"
 
 namespace Queen {

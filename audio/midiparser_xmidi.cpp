@@ -52,15 +52,15 @@ protected:
 	// a special Miles Audio class for usage in this XMIDI-class, because other engines use this
 	// XMIDI-parser but w/o using Miles Audio drivers.
 	XMidiNewTimbreListProc _newTimbreListProc;
-	MidiDriver_BASE       *_newTimbreListDriver;
+	MidiDriver_BASE *_newTimbreListDriver;
 
-	byte  *_tracksTimbreList[120]; ///< Timbre-List for each track.
+	byte *_tracksTimbreList[120]; ///< Timbre-List for each track.
 	uint32 _tracksTimbreListSize[120]; ///< Size of the Timbre-List for each track.
-	byte  *_activeTrackTimbreList;
+	byte *_activeTrackTimbreList;
 	uint32 _activeTrackTimbreListSize;
 
 protected:
-	uint32 readVLQ2(byte * &data);
+	uint32 readVLQ2(byte *&data);
 	void parseNextEvent(EventInfo &info);
 
 	virtual void resetTracking() {
@@ -80,14 +80,13 @@ public:
 		_activeTrackTimbreList = NULL;
 		_activeTrackTimbreListSize = 0;
 	}
-	~MidiParser_XMIDI() { }
+	~MidiParser_XMIDI() {}
 
 	bool loadMusic(byte *data, uint32 size);
 };
 
-
 // This is a special XMIDI variable length quantity
-uint32 MidiParser_XMIDI::readVLQ2(byte * &pos) {
+uint32 MidiParser_XMIDI::readVLQ2(byte *&pos) {
 	uint32 value = 0;
 	while (!(pos[0] & 0x80)) {
 		value += *pos++;
@@ -134,19 +133,19 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 
 		switch (info.basic.param1) {
 		// Simplified XMIDI looping.
-		case 0x74: {	// XMIDI_CONTROLLER_FOR_LOOP
-				byte *pos = _position._playPos;
-				if (_loopCount < ARRAYSIZE(_loop) - 1)
-					_loopCount++;
-				else
-					warning("XMIDI: Exceeding maximum loop count %d", ARRAYSIZE(_loop));
+		case 0x74: { // XMIDI_CONTROLLER_FOR_LOOP
+			byte *pos = _position._playPos;
+			if (_loopCount < ARRAYSIZE(_loop) - 1)
+				_loopCount++;
+			else
+				warning("XMIDI: Exceeding maximum loop count %d", ARRAYSIZE(_loop));
 
-				_loop[_loopCount].pos = pos;
-				_loop[_loopCount].repeat = info.basic.param2;
-				break;
-			}
+			_loop[_loopCount].pos = pos;
+			_loop[_loopCount].repeat = info.basic.param2;
+			break;
+		}
 
-		case 0x75:	// XMIDI_CONTROLLER_NEXT_BREAK
+		case 0x75: // XMIDI_CONTROLLER_NEXT_BREAK
 			if (_loopCount >= 0) {
 				if (info.basic.param2 < 64) {
 					// End the current loop.
@@ -165,23 +164,23 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 			}
 			break;
 
-		case 0x77:	// XMIDI_CONTROLLER_CALLBACK_TRIG
+		case 0x77: // XMIDI_CONTROLLER_CALLBACK_TRIG
 			if (_callbackProc)
 				_callbackProc(info.basic.param2, _callbackData);
 			break;
 
-		case 0x6e:	// XMIDI_CONTROLLER_CHAN_LOCK
-		case 0x6f:	// XMIDI_CONTROLLER_CHAN_LOCK_PROT
-		case 0x70:	// XMIDI_CONTROLLER_VOICE_PROT
-		case 0x71:	// XMIDI_CONTROLLER_TIMBRE_PROT
-		case 0x72:	// XMIDI_CONTROLLER_BANK_CHANGE
-		case 0x73:	// XMIDI_CONTROLLER_IND_CTRL_PREFIX
-		case 0x76:	// XMIDI_CONTROLLER_CLEAR_BB_COUNT
-		case 0x78:	// XMIDI_CONTROLLER_SEQ_BRANCH_INDEX
+		case 0x6e: // XMIDI_CONTROLLER_CHAN_LOCK
+		case 0x6f: // XMIDI_CONTROLLER_CHAN_LOCK_PROT
+		case 0x70: // XMIDI_CONTROLLER_VOICE_PROT
+		case 0x71: // XMIDI_CONTROLLER_TIMBRE_PROT
+		case 0x72: // XMIDI_CONTROLLER_BANK_CHANGE
+		case 0x73: // XMIDI_CONTROLLER_IND_CTRL_PREFIX
+		case 0x76: // XMIDI_CONTROLLER_CLEAR_BB_COUNT
+		case 0x78: // XMIDI_CONTROLLER_SEQ_BRANCH_INDEX
 		default:
 			if (info.basic.param1 >= 0x6e && info.basic.param1 <= 0x78) {
 				warning("Unsupported XMIDI controller %d (0x%2x)",
-					info.basic.param1, info.basic.param1);
+				        info.basic.param1, info.basic.param1);
 			}
 		}
 
@@ -329,7 +328,6 @@ bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
 				return false;
 			}
 			pos += 4;
-
 		}
 
 		// Ok it's an XMIDI.

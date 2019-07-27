@@ -32,21 +32,20 @@
 
 namespace CGE {
 
-#define kMenuBarVM       1
-#define kMenuBarHM       3
-#define kMenuBarLT       kVgaColLightGray
-#define kMenuBarRB       kVgaColDarkGray
-
+#define kMenuBarVM 1
+#define kMenuBarHM 3
+#define kMenuBarLT kVgaColLightGray
+#define kMenuBarRB kVgaColDarkGray
 
 struct Choice {
 	const char *_text;
 	void (CGEEngine::*Proc)();
 };
 
-
 class MenuBar : public Talk {
 public:
 	MenuBar(CGEEngine *vm, uint16 w);
+
 private:
 	CGEEngine *_vm;
 };
@@ -59,6 +58,7 @@ public:
 	Vmenu(CGEEngine *vm, Choice *list, int x, int y);
 	~Vmenu();
 	virtual void touch(uint16 mask, int x, int y, Common::KeyCode keyCode);
+
 private:
 	char *_vmgt;
 	CGEEngine *_vm;

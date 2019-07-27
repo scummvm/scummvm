@@ -28,8 +28,14 @@
 
 namespace CEGUI {
 
-GUIElement::GUIElement(int x, int y, int width, int height) :
-	_background(0), _drawn(false), _visible(true), _x(x), _y(y), _width(width), _height(height) {
+GUIElement::GUIElement(int x, int y, int width, int height)
+  : _background(0)
+  , _drawn(false)
+  , _visible(true)
+  , _x(x)
+  , _y(y)
+  , _width(width)
+  , _height(height) {
 }
 
 bool GUIElement::setBackground(WORD backgroundReference) {

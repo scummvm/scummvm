@@ -38,16 +38,16 @@
 
 #include "tinsel/adpcm.h"
 #include "tinsel/config.h"
-#include "tinsel/sound.h"
-#include "tinsel/music.h"
 #include "tinsel/handle.h"
+#include "tinsel/music.h"
+#include "tinsel/sound.h"
 #include "tinsel/sysvar.h"
 
 enum {
 	MUSIC_JUMP = -1,
 	MUSIC_END = -2,
 
-	BLMAGIC  = -3458,
+	BLMAGIC = -3458,
 
 	DIM_SPEED = 8
 };
@@ -58,8 +58,8 @@ namespace Tinsel {
 
 // sound buffer structure used for MIDI data and samples
 struct SOUND_BUFFER {
-	uint8 *pDat;		// pointer to actual buffer
-	uint32 size;		// size of the buffer
+	uint8 *pDat; // pointer to actual buffer
+	uint32 size; // size of the buffer
 };
 
 // FIXME: Avoid non-const global vars
@@ -67,47 +67,47 @@ struct SOUND_BUFFER {
 // MIDI buffer
 static SOUND_BUFFER g_midiBuffer = { 0, 0 };
 
-static SCNHANDLE	g_currentMidi = 0;
-static bool		g_currentLoop = false;
+static SCNHANDLE g_currentMidi = 0;
+static bool g_currentLoop = false;
 
 // We allocate 155 entries because that's the maximum, used in the SCN version
 static SCNHANDLE g_midiOffsets[155];
 
 static const int enhancedAudioGRAVersion[] = {
-	 1,   2,   1,   1,   3,   3,   4,   4,   5,   6, //   1-10
-	 1,   7,   8,   9,  10,   3,  11,  11,  12,  13, //  11-20
-	13,  13,  13,  13,  14,  13,  13,  15,  16,  17, //  21-30
-	15,  18,  19,  20, 338,  21,  21,  22,  22,  23, //  31-40
-	24,  25,  26,  27,  28,  29,  30,  31,  32,  33, //  41-50
-	34,  35,  35,  36,  37,  38,  39,  39,  39,  39, //  51-60
-	40,  39,  41,  41,  42,  43,  42,  44,  45,  41, //  61-70
-	46,  48,  47,  48,  49,  50,  51,  52,  53,  54, //  71-80
-	55,  56,  57,  58,  59,  60,  61,  62,  63,  61, //  81-90
-	64,  65,  66,  67,  68,  69,  70,  68,  71,  72, //  91-100
-	73,  74,  75,  12,  76,  77,  78,  79,  80,   4, // 101-110
-	81,  82,  83,  82,  81,  84,  85,  86,  87,  88, // 111-120
-	89,  90,  88,   2,   2,   2,   2,   2,   2,  60, // 121-130
-	91,  92,  93,  94,  94,  95,  96,  52,   4,  97, // 131-140
-	98,  99,  99                                     // 141-143
+	1, 2, 1, 1, 3, 3, 4, 4, 5, 6, //   1-10
+	1, 7, 8, 9, 10, 3, 11, 11, 12, 13, //  11-20
+	13, 13, 13, 13, 14, 13, 13, 15, 16, 17, //  21-30
+	15, 18, 19, 20, 338, 21, 21, 22, 22, 23, //  31-40
+	24, 25, 26, 27, 28, 29, 30, 31, 32, 33, //  41-50
+	34, 35, 35, 36, 37, 38, 39, 39, 39, 39, //  51-60
+	40, 39, 41, 41, 42, 43, 42, 44, 45, 41, //  61-70
+	46, 48, 47, 48, 49, 50, 51, 52, 53, 54, //  71-80
+	55, 56, 57, 58, 59, 60, 61, 62, 63, 61, //  81-90
+	64, 65, 66, 67, 68, 69, 70, 68, 71, 72, //  91-100
+	73, 74, 75, 12, 76, 77, 78, 79, 80, 4, // 101-110
+	81, 82, 83, 82, 81, 84, 85, 86, 87, 88, // 111-120
+	89, 90, 88, 2, 2, 2, 2, 2, 2, 60, // 121-130
+	91, 92, 93, 94, 94, 95, 96, 52, 4, 97, // 131-140
+	98, 99, 99 // 141-143
 };
 
 static const int enhancedAudioSCNVersion[] = {
-	 301, 302,   2,    1,   1, 301, 302,   3,   3,   4, //   1-10
-	   4,   5,   6,    1,   7,   8,   9,  10,   8,  11, //  11-20
-	  11,  12,  13,   13,  13,  13,  13,  14,  13,  13, //  21-30
-	  15,  16,  17,   15,  18,  19,  20, 338,  21,  21, //  31-40
-	 341, 342,  22,   22,  23,  24,  25,  26,  27,  28, //  41-50
-	  29,  30,  31,   32,  33,  34,  35,  35,  36,  37, //  51-60
-	  38,  39,  39,   39,  39,  40,  39,  41,  41,  42, //  61-70
-	  43,  42,  44,   45,  41,  46,  48,  47,  48,  49, //  71-80
-	  50,  51,  52,   53,  54,  55,  56,  57,  58,  59, //  81-90
-	  60,  61,  62,   63,  61,  64,  65,  66,  67,  68, //  91-100
-	  69,  70,  68,   71,  72,  73,  74,  75,  12,  76, // 101-110
-	  77,  78,  79,   80,   4,   4,  82,  83,  77,   4, // 111-120
-	  84,  85,  86, 3124,  88,  89,  90,  88,   2,   2, // 121-130
-	   2,   2,   2,    2,   2,   2,   2,   2,   2,   2, // 131-140
-	3142,  91,  92,   93,  94,  94,  95,  96,  52,   4, // 141-150
-	  97,  98,  99,   99                                // 151-154
+	301, 302, 2, 1, 1, 301, 302, 3, 3, 4, //   1-10
+	4, 5, 6, 1, 7, 8, 9, 10, 8, 11, //  11-20
+	11, 12, 13, 13, 13, 13, 13, 14, 13, 13, //  21-30
+	15, 16, 17, 15, 18, 19, 20, 338, 21, 21, //  31-40
+	341, 342, 22, 22, 23, 24, 25, 26, 27, 28, //  41-50
+	29, 30, 31, 32, 33, 34, 35, 35, 36, 37, //  51-60
+	38, 39, 39, 39, 39, 40, 39, 41, 41, 42, //  61-70
+	43, 42, 44, 45, 41, 46, 48, 47, 48, 49, //  71-80
+	50, 51, 52, 53, 54, 55, 56, 57, 58, 59, //  81-90
+	60, 61, 62, 63, 61, 64, 65, 66, 67, 68, //  91-100
+	69, 70, 68, 71, 72, 73, 74, 75, 12, 76, // 101-110
+	77, 78, 79, 80, 4, 4, 82, 83, 77, 4, // 111-120
+	84, 85, 86, 3124, 88, 89, 90, 88, 2, 2, // 121-130
+	2, 2, 2, 2, 2, 2, 2, 2, 2, 2, // 131-140
+	3142, 91, 92, 93, 94, 94, 95, 96, 52, 4, // 141-150
+	97, 98, 99, 99 // 151-154
 };
 
 int GetTrackNumber(SCNHANDLE hMidi) {
@@ -140,7 +140,7 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 	SetMidiVolume(mute ? 0 : _vm->_config->_musicVolume);
 
 	// the index and length of the last tune loaded
-	uint32 dwSeqLen = 0;	// length of the sequence
+	uint32 dwSeqLen = 0; // length of the sequence
 
 	// Support for external music from the music enhancement project
 	if (_vm->getFeatures() & GF_ENHANCED_AUDIO_SUPPORT) {
@@ -220,9 +220,9 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 		// Only in the GRA version dwFileOffset can be "38888", just to be sure, we
 		// check for the SCN files feature flag not being set though.
 		if (_vm->getGameID() == GID_DW1 && dwFileOffset == 38888 && !(_vm->getFeatures() & GF_SCNFILES)) {
-			_vm->_midiMusic->send(0x7F07B0 |  3);
-			_vm->_midiMusic->send(0x7F07B0 |  5);
-			_vm->_midiMusic->send(0x7F07B0 |  8);
+			_vm->_midiMusic->send(0x7F07B0 | 3);
+			_vm->_midiMusic->send(0x7F07B0 | 5);
+			_vm->_midiMusic->send(0x7F07B0 | 8);
 			_vm->_midiMusic->send(0x7F07B0 | 10);
 			_vm->_midiMusic->send(0x7F07B0 | 13);
 		}
@@ -260,7 +260,6 @@ bool StopMidi() {
 	_vm->_midiMusic->stop();
 	return true;
 }
-
 
 /**
  * Gets the volume of the MIDI music.
@@ -301,7 +300,7 @@ void OpenMidiFiles() {
 		for (int i = 0; i < ARRAYSIZE(g_midiOffsets); i++)
 			g_midiOffsets[i] = 0;
 
-		midiStream.skip(4);	// skip file header
+		midiStream.skip(4); // skip file header
 
 		while (!midiStream.eos() && !midiStream.err() && midiStream.pos() != fileSize) {
 			assert(curTrack < ARRAYSIZE(g_midiOffsets));
@@ -650,7 +649,7 @@ PCMMusicPlayer::PCMMusicPlayer() {
 	_end = true;
 
 	_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType,
-			&_handle, this, -1, _volume, 0, DisposeAfterUse::NO, true);
+	                        &_handle, this, -1, _volume, 0, DisposeAfterUse::NO, true);
 }
 
 PCMMusicPlayer::~PCMMusicPlayer() {
@@ -699,8 +698,7 @@ int PCMMusicPlayer::readBuffer(int16 *buffer, const int numSamples) {
 			_silenceSamples -= n;
 			samplesLeft -= n;
 
-		} else if (_curChunk &&
-		          ((_state == S_MID) || (_state == S_NEXT) || (_state == S_NEW))) {
+		} else if (_curChunk && ((_state == S_MID) || (_state == S_NEXT) || (_state == S_NEW))) {
 			int n = _curChunk->readBuffer(buffer, samplesLeft);
 
 			buffer += n;
@@ -737,11 +735,11 @@ void PCMMusicPlayer::getTunePlaying(void *voidPtr, int length) {
 
 	assert(length == (3 * sizeof(int32)));
 
-	int32 *p = (int32 *) voidPtr;
+	int32 *p = (int32 *)voidPtr;
 
 	_mState = _state;
 
-	p[0] = (int32) _mState;
+	p[0] = (int32)_mState;
 	p[1] = _scriptNum;
 	p[2] = _scriptIndex;
 }
@@ -751,9 +749,9 @@ void PCMMusicPlayer::restoreThatTune(void *voidPtr) {
 
 	debugC(DEBUG_DETAILED, kTinselDebugMusic, "restoreThatTune");
 
-	int32 *p = (int32 *) voidPtr;
+	int32 *p = (int32 *)voidPtr;
 
-	_mState = (State) p[0];
+	_mState = (State)p[0];
 	_scriptNum = p[1];
 	_scriptIndex = p[2];
 
@@ -767,7 +765,7 @@ void PCMMusicPlayer::restoreThatTune(void *voidPtr) {
 }
 
 void PCMMusicPlayer::setMusicSceneDetails(SCNHANDLE hScript,
-		SCNHANDLE hSegment, const char *fileName) {
+                                          SCNHANDLE hSegment, const char *fileName) {
 
 	Common::StackLock lock(_mutex);
 
@@ -804,8 +802,7 @@ bool PCMMusicPlayer::getMusicTinselDimmed() const {
 }
 
 void PCMMusicPlayer::dim(bool bTinselDim) {
-	if (_dimmed || (_volume == 0) ||
-			(_state == S_IDLE) || !_curChunk || (SysVar(SV_MUSICDIMFACTOR) == 0))
+	if (_dimmed || (_volume == 0) || (_state == S_IDLE) || !_curChunk || (SysVar(SV_MUSICDIMFACTOR) == 0))
 		return;
 
 	_dimmed = true;
@@ -817,13 +814,13 @@ void PCMMusicPlayer::dim(bool bTinselDim) {
 	// Iterate down, negative iteration
 	if (!_dimIteration)
 		_dimPosition = _volume;
-	_dimIteration = (_dimmedVolume - _volume)/DIM_SPEED;
+	_dimIteration = (_dimmedVolume - _volume) / DIM_SPEED;
 
 	debugC(DEBUG_DETAILED, kTinselDebugMusic, "Dimming music from %d to %d, steps %d", _dimPosition, _dimmedVolume, _dimIteration);
 
 	// And SFX
 	if (SysVar(SYS_SceneFxDimFactor))
-		_vm->_sound->setSFXVolumes(255 - 255/SysVar(SYS_SceneFxDimFactor));
+		_vm->_sound->setSFXVolumes(255 - 255 / SysVar(SYS_SceneFxDimFactor));
 }
 
 void PCMMusicPlayer::unDim(bool bTinselUnDim) {
@@ -838,7 +835,7 @@ void PCMMusicPlayer::unDim(bool bTinselUnDim) {
 	// Iterate up, positive iteration
 	if (!_dimIteration)
 		_dimPosition = _dimmedVolume;
-	_dimIteration = (_volume - _dimmedVolume)/DIM_SPEED;
+	_dimIteration = (_volume - _dimmedVolume) / DIM_SPEED;
 
 	debugC(DEBUG_DETAILED, kTinselDebugMusic, "UnDimming music from %d to %d, steps %d", _dimPosition, _volume, _dimIteration);
 
@@ -847,16 +844,12 @@ void PCMMusicPlayer::unDim(bool bTinselUnDim) {
 }
 
 void PCMMusicPlayer::dimIteration() {
-	if (_dimIteration != 0)
-	{
+	if (_dimIteration != 0) {
 		_dimPosition += _dimIteration;
-		if (_dimPosition >= _volume)
-		{
+		if (_dimPosition >= _volume) {
 			_dimPosition = _volume;
 			_dimIteration = 0;
-		}
-		else if (_dimPosition <= _dimmedVolume)
-		{
+		} else if (_dimPosition <= _dimmedVolume) {
 			_dimPosition = _dimmedVolume;
 			_dimIteration = 0;
 		}
@@ -874,7 +867,7 @@ void PCMMusicPlayer::startFadeOut(int ticks) {
 	if (_dimmed) {
 		// Start from dimmed volume and go from there
 		_dimmed = false;
-		_fadeOutVolume = _volume - _volume/SysVar(SV_MUSICDIMFACTOR);
+		_fadeOutVolume = _volume - _volume / SysVar(SV_MUSICDIMFACTOR);
 	} else
 		_fadeOutVolume = _volume;
 
@@ -918,20 +911,20 @@ bool PCMMusicPlayer::getNextChunk() {
 
 		if (snum == MUSIC_JUMP || snum == MUSIC_END) {
 			// Let usual code sort it out!
-			_scriptIndex--;    // Undo increment
+			_scriptIndex--; // Undo increment
 			_forcePlay = true; // Force a Play
-			_state = S_END1;   // 'Goto' S_END1
+			_state = S_END1; // 'Goto' S_END1
 			break;
 		}
 
-		musicSegments = (MusicSegment *) LockMem(_hSegment);
+		musicSegments = (MusicSegment *)LockMem(_hSegment);
 
 		assert(FROM_32(musicSegments[snum].numChannels) == 1);
 		assert(FROM_32(musicSegments[snum].bitsPerSample) == 16);
 
 		sampleOffset = FROM_32(musicSegments[snum].sampleOffset);
 		sampleLength = FROM_32(musicSegments[snum].sampleLength);
-		sampleCLength = (((sampleLength + 63) & ~63)*33)/64;
+		sampleCLength = (((sampleLength + 63) & ~63) * 33) / 64;
 
 		if (!file.open(_filename))
 			error(CANNOT_FIND_FILE, _filename.c_str());
@@ -940,7 +933,7 @@ bool PCMMusicPlayer::getNextChunk() {
 		if (file.eos() || file.err() || (uint32)file.pos() != sampleOffset)
 			error(FILE_IS_CORRUPT, _filename.c_str());
 
-		buffer = (byte *) malloc(sampleCLength);
+		buffer = (byte *)malloc(sampleCLength);
 		assert(buffer);
 
 		// read all of the sample
@@ -948,23 +941,24 @@ bool PCMMusicPlayer::getNextChunk() {
 			error(FILE_IS_CORRUPT, _filename.c_str());
 
 		debugC(DEBUG_DETAILED, kTinselDebugMusic, "Creating ADPCM music chunk with size %d, "
-				"offset %d (script %d.%d)", sampleCLength, sampleOffset,
-				_scriptNum, _scriptIndex - 1);
+		                                          "offset %d (script %d.%d)",
+		       sampleCLength, sampleOffset,
+		       _scriptNum, _scriptIndex - 1);
 
 		sampleStream = new Common::MemoryReadStream(buffer, sampleCLength, DisposeAfterUse::YES);
 
 		delete _curChunk;
 		_curChunk = new Tinsel8_ADPCMStream(sampleStream, DisposeAfterUse::YES, sampleCLength,
-				22050, 1, 32);
+		                                    22050, 1, 32);
 
 		_state = S_MID;
 		return true;
 
 	case S_END1:
 		debugC(DEBUG_DETAILED, kTinselDebugMusic, "Music reached state S_END1 (script %d.%d)",
-				_scriptNum, _scriptIndex);
+		       _scriptNum, _scriptIndex);
 
-		script = scriptBuffer = (int32 *) LockMem(_hScript);
+		script = scriptBuffer = (int32 *)LockMem(_hScript);
 
 		id = _scriptNum;
 		while (id--)
@@ -975,7 +969,7 @@ bool PCMMusicPlayer::getNextChunk() {
 			_state = S_END2;
 		} else {
 			if (snum == MUSIC_JUMP)
-				_scriptIndex = FROM_32(script[_scriptIndex+1]);
+				_scriptIndex = FROM_32(script[_scriptIndex + 1]);
 
 			_state = _forcePlay ? S_NEW : S_NEXT;
 			_forcePlay = false;
@@ -985,14 +979,14 @@ bool PCMMusicPlayer::getNextChunk() {
 
 	case S_END2:
 		debugC(DEBUG_DETAILED, kTinselDebugMusic, "Music reached state S_END2 (script %d.%d)",
-				_scriptNum, _scriptIndex);
+		       _scriptNum, _scriptIndex);
 
 		_silenceSamples = 11025; // Half a second of silence
 		return true;
 
 	case S_END3:
 		debugC(DEBUG_DETAILED, kTinselDebugMusic, "Music reached state S_END3 (script %d.%d)",
-				_scriptNum, _scriptIndex);
+		       _scriptNum, _scriptIndex);
 
 		stop();
 		_state = S_IDLE;
@@ -1029,12 +1023,12 @@ void PCMMusicPlayer::stop() {
 	_end = true;
 }
 
-void CurrentMidiFacts(SCNHANDLE	*pMidi, bool *pLoop) {
+void CurrentMidiFacts(SCNHANDLE *pMidi, bool *pLoop) {
 	*pMidi = g_currentMidi;
 	*pLoop = g_currentLoop;
 }
 
-void RestoreMidiFacts(SCNHANDLE	Midi, bool Loop) {
+void RestoreMidiFacts(SCNHANDLE Midi, bool Loop) {
 	StopMidi();
 
 	g_currentMidi = Midi;

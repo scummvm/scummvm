@@ -23,25 +23,25 @@
 #ifndef PSPSTREAM_H_
 #define PSPSTREAM_H_
 
-#include <pspkerneltypes.h>
 #include "backends/platform/psp/powerman.h"
+#include <pspkerneltypes.h>
 //#include "common/list.h"
 #include "common/noncopyable.h"
-#include "common/stream.h"
 #include "common/str.h"
+#include "common/stream.h"
 
 /**
  *  Class to handle special suspend/resume needs of PSP IO Streams
  */
 class PspIoStream : public Common::SeekableReadStream, public Common::WriteStream, public Common::NonCopyable, public Suspendable {
 protected:
-	SceUID _handle;		// file handle
+	SceUID _handle; // file handle
 	Common::String _path;
 	int _fileSize;
-	bool _writeMode;	// for resuming in the right mode
-	int _physicalPos;	// physical position in file
-	int _pos;			// position. Sometimes virtual
-	bool _eos;			// EOS flag
+	bool _writeMode; // for resuming in the right mode
+	int _physicalPos; // physical position in file
+	int _pos; // position. Sometimes virtual
+	bool _eos; // EOS flag
 
 	enum {
 		SuspendError = 2,
@@ -49,8 +49,8 @@ protected:
 	};
 
 	// debug stuff
-	mutable int _error;		// file error state
-	int _errorSuspend;			// for debugging
+	mutable int _error; // file error state
+	int _errorSuspend; // for debugging
 	mutable int _errorSource;
 	int _errorPos;
 	SceUID _errorHandle;
@@ -59,7 +59,6 @@ protected:
 	bool physicalSeekFromCur(int32 offset);
 
 public:
-
 	/**
 	 * Given a path, invoke fopen on that path and wrap the result in a
 	 * PspIoStream instance.
@@ -69,7 +68,7 @@ public:
 	PspIoStream(const Common::String &path, bool writeMode);
 	virtual ~PspIoStream();
 
-	SceUID open();		// open the file pointed to by the file path
+	SceUID open(); // open the file pointed to by the file path
 
 	bool err() const;
 	void clearErr();
@@ -84,8 +83,8 @@ public:
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
 
 	// for suspending
-	int suspend();		/* Suspendable interface (power manager) */
-	int resume();		/* " " */
+	int suspend(); /* Suspendable interface (power manager) */
+	int resume(); /* " " */
 };
 
 #endif /* PSPSTREAM_H_ */

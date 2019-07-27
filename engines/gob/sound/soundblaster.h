@@ -41,11 +41,11 @@ public:
 	~SoundBlaster();
 
 	void playSample(SoundDesc &sndDesc, int16 repCount,
-			int16 frequency, int16 fadeLength = 0);
+	                int16 frequency, int16 fadeLength = 0);
 	void stopSound(int16 fadeLength, SoundDesc *sndDesc = 0);
 
 	void playComposition(const int16 *composition, int16 freqVal,
-			SoundDesc *sndDescs = 0, int8 sndCount = 60);
+	                     SoundDesc *sndDescs = 0, int8 sndCount = 60);
 	void stopComposition();
 	void endComposition();
 
@@ -64,7 +64,7 @@ protected:
 	SoundDesc *_curSoundDesc;
 
 	void setSample(SoundDesc &sndDesc, int16 repCount,
-			int16 frequency, int16 fadeLength);
+	               int16 frequency, int16 fadeLength);
 	void checkEndSample();
 	void endFade();
 

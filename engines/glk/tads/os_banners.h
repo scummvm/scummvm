@@ -34,8 +34,8 @@
 namespace Glk {
 namespace TADS {
 
-/* ------------------------------------------------------------------------ */
-/*
+	/* ------------------------------------------------------------------------ */
+	/*
  *   External Banner Interface.  This interface provides the ability to
  *   divide the display window into multiple sub-windows, each with its own
  *   independent contents.
@@ -104,7 +104,7 @@ namespace TADS {
  *   can do nothing.  
  */
 
-/* 
+	/* 
  *   Create a banner window.  'info' gives the desired parameters for the new
  *   banner.
  *   
@@ -177,18 +177,17 @@ namespace TADS {
  *   top/bottom-aligned banners, but not left/right-aligned), so callers must
  *   be prepared for this routine to return null.  
  */
-void *os_banner_create(void *parent, int where, void *other, int wintype,
-                       int align, int siz, int siz_units,
-                       unsigned long style);
-
+	void *os_banner_create(void *parent, int where, void *other, int wintype,
+	                       int align, int siz, int siz_units,
+	                       unsigned long style);
 
 /*
  *   insertion positions 
  */
-#define OS_BANNER_FIRST   1
-#define OS_BANNER_LAST    2
-#define OS_BANNER_BEFORE  3
-#define OS_BANNER_AFTER   4
+#define OS_BANNER_FIRST 1
+#define OS_BANNER_LAST 2
+#define OS_BANNER_BEFORE 3
+#define OS_BANNER_AFTER 4
 
 /*
  *   banner types 
@@ -207,7 +206,7 @@ void *os_banner_create(void *parent, int where, void *other, int wintype,
  *   a fixed-pitch font will allow the calling code to rely on using spaces
  *   to align text within the window.  
  */
-#define OS_BANNER_TYPE_TEXT       1
+#define OS_BANNER_TYPE_TEXT 1
 
 /* 
  *   "Text grid" window.  This type of window is similar to an normal text
@@ -232,23 +231,21 @@ void *os_banner_create(void *parent, int where, void *other, int wintype,
  *   implementations must use fixed-pitch fonts for these windows.  This
  *   applies even to platforms where proportional fonts are available.  
  */
-#define OS_BANNER_TYPE_TEXTGRID   2
-
+#define OS_BANNER_TYPE_TEXTGRID 2
 
 /* 
  *   banner alignment types 
  */
-#define OS_BANNER_ALIGN_TOP       0
-#define OS_BANNER_ALIGN_BOTTOM    1
-#define OS_BANNER_ALIGN_LEFT      2
-#define OS_BANNER_ALIGN_RIGHT     3
+#define OS_BANNER_ALIGN_TOP 0
+#define OS_BANNER_ALIGN_BOTTOM 1
+#define OS_BANNER_ALIGN_LEFT 2
+#define OS_BANNER_ALIGN_RIGHT 3
 
 /*
  *   size units 
  */
-#define OS_BANNER_SIZE_PCT  1
-#define OS_BANNER_SIZE_ABS  2
-
+#define OS_BANNER_SIZE_PCT 1
+#define OS_BANNER_SIZE_ABS 2
 
 /* 
  *   banner style flags 
@@ -264,14 +261,14 @@ void *os_banner_create(void *parent, int where, void *other, int wintype,
  *   Note that character-mode platforms generally do NOT respect the border
  *   style, since doing so takes up too much screen space.  
  */
-#define OS_BANNER_STYLE_BORDER     0x00000001
+#define OS_BANNER_STYLE_BORDER 0x00000001
 
 /*
  *   The banner has a vertical/horizontal scrollbar.  Character-mode
  *   platforms generally do not support scrollbars.  
  */
-#define OS_BANNER_STYLE_VSCROLL    0x00000002
-#define OS_BANNER_STYLE_HSCROLL    0x00000004
+#define OS_BANNER_STYLE_VSCROLL 0x00000002
+#define OS_BANNER_STYLE_HSCROLL 0x00000004
 
 /* 
  *   Automatically scroll the banner vertically/horizontally whenever new
@@ -353,7 +350,7 @@ void *os_banner_create(void *parent, int where, void *other, int wintype,
  *   assume auto-vscroll when this style is set.  This style can be ignored
  *   with text grid windows.  
  */
-#define OS_BANNER_STYLE_MOREMODE  0x00000040
+#define OS_BANNER_STYLE_MOREMODE 0x00000040
 
 /*
  *   This banner is a horizontal/vertical "strut" for sizing purposes.  This
@@ -365,11 +362,10 @@ void *os_banner_create(void *parent, int where, void *other, int wintype,
  *   parent's overall content size is the larger of the parent's internal
  *   content size and this banner's content size.  
  */
-#define OS_BANNER_STYLE_HSTRUT    0x00000080
-#define OS_BANNER_STYLE_VSTRUT    0x00000100
+#define OS_BANNER_STYLE_HSTRUT 0x00000080
+#define OS_BANNER_STYLE_VSTRUT 0x00000100
 
-
-/* 
+	/* 
  *   Delete a banner.  This removes the banner from the display, which
  *   requires recalculating the entire screen's layout to reallocate this
  *   banner's space to other windows.  When this routine returns, the banner
@@ -386,9 +382,9 @@ void *os_banner_create(void *parent, int where, void *other, int wintype,
  *   caller is responsible for explicitly deleting the children even after
  *   deleting their parent.  
  */
-void os_banner_delete(void *banner_handle);
+	void os_banner_delete(void *banner_handle);
 
-/*
+	/*
  *   "Orphan" a banner.  This tells the osifc implementation that the caller
  *   wishes to sever all of its ties with the banner (as part of program
  *   termination, for example), but that the calling program does not
@@ -410,31 +406,30 @@ void os_banner_delete(void *banner_handle);
  *   previous program has terminated, it would want to delete any orphaned
  *   banners from the previous program when loading a new program.  
  */
-void os_banner_orphan(void *banner_handle);
+	void os_banner_orphan(void *banner_handle);
 
-/*
+	/*
  *   Banner information structure.  This is filled in by the system-specific
  *   implementation in os_banner_getinfo().  
  */
-struct os_banner_info_t
-{
-    /* alignment */
-    int align;
+	struct os_banner_info_t {
+		/* alignment */
+		int align;
 
-    /* style flags - these indicate the style flags actually in use */
-    unsigned long style;
+		/* style flags - these indicate the style flags actually in use */
+		unsigned long style;
 
-    /* 
+		/* 
      *   Actual on-screen size of the banner, in rows and columns.  If the
      *   banner is displayed in a proportional font or can display multiple
      *   fonts of different sizes, this is approximated by the number of "0"
      *   characters in the window's default font that will fit in the
      *   window's display area.  
      */
-    int rows;
-    int columns;
+		int rows;
+		int columns;
 
-    /*
+		/*
      *   Actual on-screen size of the banner in pixels.  This is meaningful
      *   only for full HTML interpreter; for text-only interpreters, these
      *   are always set to zero.
@@ -443,10 +438,10 @@ struct os_banner_info_t
      *   aren't meaningful unless this is a full HTML interpreter.  Text-only
      *   interpreters should always set these to zero, even on GUI OS's.  
      */
-    int pix_width;
-    int pix_height;
+		int pix_width;
+		int pix_height;
 
-    /* 
+		/* 
      *   OS line wrapping flag.  If this is set, the window uses OS-level
      *   line wrapping because the window uses a proportional font, so the
      *   caller does not need to (and should not) perform line breaking in
@@ -456,11 +451,11 @@ struct os_banner_info_t
      *   Callers can note this information once and expect it to remain
      *   fixed through the window's lifetime.  
      */
-    int os_line_wrap;
-};
-typedef struct os_banner_info_t os_banner_info_t;
+		int os_line_wrap;
+	};
+	typedef struct os_banner_info_t os_banner_info_t;
 
-/* 
+	/* 
  *   Get information on the banner - fills in the information structure with
  *   the banner's current settings.  Note that this should indicate the
  *   ACTUAL properties of the banner, not the requested properties; this
@@ -471,9 +466,9 @@ typedef struct os_banner_info_t os_banner_info_t;
  *   not.  This can return false if the underlying OS window has already
  *   been closed by a user action, for example.  
  */
-int os_banner_getinfo(void *banner_handle, os_banner_info_t *info);
+	int os_banner_getinfo(void *banner_handle, os_banner_info_t *info);
 
-/* 
+	/* 
  *   Get the character width/height of the banner, for layout purposes.  This
  *   gives the size of the banner in character cells.
  *   
@@ -492,13 +487,13 @@ int os_banner_getinfo(void *banner_handle, os_banner_info_t *info);
  *   windows using proportional fonts, as os_banner_getinfo() does; these can
  *   simply return zero when a proportional font is in use.  
  */
-int os_banner_get_charwidth(void *banner_handle);
-int os_banner_get_charheight(void *banner_handle);
+	int os_banner_get_charwidth(void *banner_handle);
+	int os_banner_get_charheight(void *banner_handle);
 
-/* clear the contents of a banner */
-void os_banner_clear(void *banner_handle);
+	/* clear the contents of a banner */
+	void os_banner_clear(void *banner_handle);
 
-/* 
+	/* 
  *   Display output on a banner.  Writes the output to the window on the
  *   display at the current output position.
  *   
@@ -541,15 +536,15 @@ void os_banner_clear(void *banner_handle);
  *   Text grid banners must ALWAYS clip - these banners should never perform
  *   any line wrapping.  
  */
-void os_banner_disp(void *banner_handle, const char *txt, size_t len);
+	void os_banner_disp(void *banner_handle, const char *txt, size_t len);
 
-/*
+	/*
  *   Set the text attributes in a banner, for subsequent text displays.
  *   'attr' is a (bitwise-OR'd) combination of OS_ATTR_xxx values. 
  */
-void os_banner_set_attr(void *banner_handle, int attr);
+	void os_banner_set_attr(void *banner_handle, int attr);
 
-/* 
+	/* 
  *   Set the text color in a banner, for subsequent text displays.  The 'fg'
  *   and 'bg' colors are given as RGB or parameterized colors; see the
  *   definition of os_color_t for details.
@@ -558,21 +553,21 @@ void os_banner_set_attr(void *banner_handle, int attr);
  *   used; the appropriate HTML code should simply be displayed to the
  *   banner instead.  
  */
-void os_banner_set_color(void *banner_handle, os_color_t fg, os_color_t bg);
+	void os_banner_set_color(void *banner_handle, os_color_t fg, os_color_t bg);
 
-/* 
+	/* 
  *   Set the screen color in the banner - this is analogous to the screen
  *   color in the main text area.
  *   
  *   If the underlying renderer is HTML-enabled, then this should not be
  *   used; the HTML <BODY> tag should be used instead.  
  */
-void os_banner_set_screen_color(void *banner_handle, os_color_t color);
+	void os_banner_set_screen_color(void *banner_handle, os_color_t color);
 
-/* flush output on a banner */
-void os_banner_flush(void *banner_handle);
+	/* flush output on a banner */
+	void os_banner_flush(void *banner_handle);
 
-/*
+	/*
  *   Set the banner's size.  The size has the same meaning as in
  *   os_banner_create().
  *   
@@ -589,10 +584,10 @@ void os_banner_flush(void *banner_handle);
  *   size-to-contents should set the requested size even when 'is_advisory'
  *   is true.  
  */
-void os_banner_set_size(void *banner_handle, int siz, int siz_units,
-                        int is_advisory);
+	void os_banner_set_size(void *banner_handle, int siz, int siz_units,
+	                        int is_advisory);
 
-/* 
+	/* 
  *   Set the banner to the size of its current contents.  This can be used
  *   to set the banner's size after some text (or other material) has been
  *   displayed to the banner, so that the size can be set according to the
@@ -602,16 +597,16 @@ void os_banner_set_size(void *banner_handle, int siz, int siz_units,
  *   Subsequent calls to os_banner_getinfo() will thus indicate a requested
  *   size according to the size set here.  
  */
-void os_banner_size_to_contents(void *banner_handle);
+	void os_banner_size_to_contents(void *banner_handle);
 
-/* 
+	/* 
  *   Turn HTML mode on/off in the banner window.  If the underlying renderer
  *   doesn't support HTML, these have no effect.  
  */
-void os_banner_start_html(void *banner_handle);
-void os_banner_end_html(void *banner_handle);
+	void os_banner_start_html(void *banner_handle);
+	void os_banner_end_html(void *banner_handle);
 
-/*
+	/*
  *   Set the output coordinates in a text grid window.  The grid window is
  *   arranged into character cells numbered from row zero, column zero for
  *   the upper left cell.  This function can only be used if the window was
@@ -623,7 +618,7 @@ void os_banner_end_html(void *banner_handle);
  *   os_banner_size_to_contents().  This simply sets the coordinates where
  *   any subsequent text is displayed.  
  */
-void os_banner_goto(void *banner_handle, int row, int col);
+	void os_banner_goto(void *banner_handle, int row, int col);
 
 } // End of namespace TADS
 } // End of namespace Glk

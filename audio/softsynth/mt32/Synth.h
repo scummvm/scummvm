@@ -22,9 +22,9 @@
 #include <cstddef>
 #include <cstring>
 
-#include "globals.h"
-#include "Types.h"
 #include "Enumerations.h"
+#include "Types.h"
+#include "globals.h"
 
 namespace MT32Emu {
 
@@ -114,18 +114,18 @@ public:
 };
 
 class Synth {
-friend class DefaultMidiStreamParser;
-friend class Part;
-friend class Partial;
-friend class PartialManager;
-friend class Poly;
-friend class Renderer;
-friend class RhythmPart;
-friend class SamplerateAdapter;
-friend class SoxrAdapter;
-friend class TVA;
-friend class TVF;
-friend class TVP;
+	friend class DefaultMidiStreamParser;
+	friend class Part;
+	friend class Partial;
+	friend class PartialManager;
+	friend class Poly;
+	friend class Renderer;
+	friend class RhythmPart;
+	friend class SamplerateAdapter;
+	friend class SoxrAdapter;
+	friend class TVA;
+	friend class TVF;
+	friend class TVP;
 
 private:
 	// **************************** Implementation fields **************************
@@ -250,12 +250,14 @@ public:
 
 	template <class S>
 	static inline void muteSampleBuffer(S *buffer, Bit32u len) {
-		if (buffer == NULL) return;
+		if (buffer == NULL)
+			return;
 		memset(buffer, 0, len * sizeof(S));
 	}
 
 	static inline void muteSampleBuffer(float *buffer, Bit32u len) {
-		if (buffer == NULL) return;
+		if (buffer == NULL)
+			return;
 		// FIXME: Use memset() where compatibility is guaranteed (if this turns out to be a win)
 		while (len--) {
 			*(buffer++) = 0.0f;

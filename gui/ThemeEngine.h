@@ -23,19 +23,18 @@
 #ifndef GUI_THEME_ENGINE_H
 #define GUI_THEME_ENGINE_H
 
-#include "common/scummsys.h"
 #include "common/fs.h"
 #include "common/hash-str.h"
 #include "common/hashmap.h"
 #include "common/list.h"
-#include "common/str.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
+#include "common/str.h"
 
-#include "graphics/surface.h"
-#include "graphics/transparent_surface.h"
 #include "graphics/font.h"
 #include "graphics/pixelformat.h"
-
+#include "graphics/surface.h"
+#include "graphics/transparent_surface.h"
 
 #define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.27"
 
@@ -169,12 +168,12 @@ public:
 
 	/// Widget background type
 	enum WidgetBackground {
-		kWidgetBackgroundNo,            ///< No background at all
-		kWidgetBackgroundPlain,         ///< Simple background, this may not include borders
-		kWidgetBackgroundBorder,        ///< Same as kWidgetBackgroundPlain just with a border
-		kWidgetBackgroundBorderSmall,   ///< Same as kWidgetBackgroundPlain just with a small border
-		kWidgetBackgroundEditText,      ///< Background used for edit text fields
-		kWidgetBackgroundSlider         ///< Background used for sliders
+		kWidgetBackgroundNo, ///< No background at all
+		kWidgetBackgroundPlain, ///< Simple background, this may not include borders
+		kWidgetBackgroundBorder, ///< Same as kWidgetBackgroundPlain just with a border
+		kWidgetBackgroundBorderSmall, ///< Same as kWidgetBackgroundPlain just with a small border
+		kWidgetBackgroundEditText, ///< Background used for edit text fields
+		kWidgetBackgroundSlider ///< Background used for sliders
 	};
 
 	/// Dialog background type
@@ -189,10 +188,10 @@ public:
 
 	/// State of the widget to be drawn
 	enum State {
-		kStateDisabled,     ///< Indicates that the widget is disabled, that does NOT include that it is invisible
-		kStateEnabled,      ///< Indicates that the widget is enabled
-		kStateHighlight,    ///< Indicates that the widget is highlighted by the user
-		kStatePressed       ///< Indicates that the widget is pressed, currently works for buttons
+		kStateDisabled, ///< Indicates that the widget is disabled, that does NOT include that it is invisible
+		kStateEnabled, ///< Indicates that the widget is enabled
+		kStateHighlight, ///< Indicates that the widget is highlighted by the user
+		kStatePressed ///< Indicates that the widget is pressed, currently works for buttons
 	};
 
 	typedef State WidgetStateInfo;
@@ -200,7 +199,7 @@ public:
 	/// Text inversion state of the text to be draw
 	enum TextInversionState {
 		kTextInversionNone, ///< Indicates that the text should not be drawn inverted
-		kTextInversion,     ///< Indicates that the text should be drawn inverted, but not focused
+		kTextInversion, ///< Indicates that the text should be drawn inverted, but not focused
 		kTextInversionFocus ///< Indicates that the text should be drawn inverted, and focused
 	};
 
@@ -214,47 +213,47 @@ public:
 
 	/// Font style selector
 	enum FontStyle {
-		kFontStyleBold = 0,         ///< A bold font. This is also the default font.
-		kFontStyleNormal = 1,       ///< A normal font.
-		kFontStyleItalic = 2,       ///< Italic styled font.
-		kFontStyleFixedNormal = 3,  ///< Fixed size font.
-		kFontStyleFixedBold = 4,    ///< Fixed size bold font.
-		kFontStyleFixedItalic = 5,  ///< Fixed size italic font.
-		kFontStyleTooltip = 6,      ///< Tiny console font
-		kFontStyleConsole = 7,      ///< Debug console font
+		kFontStyleBold = 0, ///< A bold font. This is also the default font.
+		kFontStyleNormal = 1, ///< A normal font.
+		kFontStyleItalic = 2, ///< Italic styled font.
+		kFontStyleFixedNormal = 3, ///< Fixed size font.
+		kFontStyleFixedBold = 4, ///< Fixed size bold font.
+		kFontStyleFixedItalic = 5, ///< Fixed size italic font.
+		kFontStyleTooltip = 6, ///< Tiny console font
+		kFontStyleConsole = 7, ///< Debug console font
 		kFontStyleMax
 	};
 
 	/// Font color selector
 	enum FontColor {
-		kFontColorNormal = 0,       ///< The default color of the theme
-		kFontColorAlternate = 1,    ///< Alternative font color
+		kFontColorNormal = 0, ///< The default color of the theme
+		kFontColorAlternate = 1, ///< Alternative font color
 		kFontColorMax
 	};
 
 	/// Function used to process areas other than the current dialog
 	enum ShadingStyle {
-		kShadingNone,       ///< No special post processing
-		kShadingDim,        ///< Dimming unused areas
-		kShadingLuminance   ///< Converting colors to luminance for unused areas
+		kShadingNone, ///< No special post processing
+		kShadingDim, ///< Dimming unused areas
+		kShadingLuminance ///< Converting colors to luminance for unused areas
 	};
 
 	/// AlphaBitmap scale mode selector
 	enum AutoScaleMode {
-		kAutoScaleNone = 0,		///< Use image dimensions
-		kAutoScaleStretch = 1,	///< Stretch image to full widget size
-		kAutoScaleFit = 2,		///< Scale image to widget size but keep aspect ratio
+		kAutoScaleNone = 0, ///< Use image dimensions
+		kAutoScaleStretch = 1, ///< Stretch image to full widget size
+		kAutoScaleFit = 2, ///< Scale image to widget size but keep aspect ratio
 		kAutoScaleNinePatch = 3 ///< 9-patch image
 	};
 
 	// Special image ids for images used in the GUI
-	static const char *const kImageLogo;      ///< ScummVM logo used in the launcher
+	static const char *const kImageLogo; ///< ScummVM logo used in the launcher
 	static const char *const kImageLogoSmall; ///< ScummVM logo used in the GMM
-	static const char *const kImageSearch;    ///< Search tool image used in the launcher
-	static const char *const kImageEraser;     ///< Clear input image used in the launcher
+	static const char *const kImageSearch; ///< Search tool image used in the launcher
+	static const char *const kImageEraser; ///< Clear input image used in the launcher
 	static const char *const kImageDelButton; ///< Delete characters in the predictive dialog
-	static const char *const kImageList;      ///< List image used in save/load chooser selection
-	static const char *const kImageGrid;      ///< Grid image used in save/load chooser selection
+	static const char *const kImageList; ///< List image used in save/load chooser selection
+	static const char *const kImageGrid; ///< Grid image used in save/load chooser selection
 	static const char *const kImageStopButton; ///< Stop recording button in recorder onscreen dialog
 	static const char *const kImageEditButton; ///< Edit recording metadata in recorder onscreen dialog
 	static const char *const kImageSwitchModeButton; ///< Switch mode button in recorder onscreen dialog
@@ -263,10 +262,10 @@ public:
 	static const char *const kImageEditSmallButton; ///< Edit recording metadata in recorder onscreen dialog (for 320xY)
 	static const char *const kImageSwitchModeSmallButton; ///< Switch mode button in recorder onscreen dialog (for 320xY)
 	static const char *const kImageFastReplaySmallButton; ///< Fast playback mode button in recorder onscreen dialog (for 320xY)
-	static const char *const kImageDropboxLogo;      ///< Dropbox logo used in the StorageWizardDialog
-	static const char *const kImageOneDriveLogo;      ///< OneDrive logo used in the StorageWizardDialog
-	static const char *const kImageGoogleDriveLogo;      ///< Google Drive logo used in the StorageWizardDialog
-	static const char *const kImageBoxLogo;      ///< Box logo used in the StorageWizardDialog
+	static const char *const kImageDropboxLogo; ///< Dropbox logo used in the StorageWizardDialog
+	static const char *const kImageOneDriveLogo; ///< OneDrive logo used in the StorageWizardDialog
+	static const char *const kImageGoogleDriveLogo; ///< Google Drive logo used in the StorageWizardDialog
+	static const char *const kImageBoxLogo; ///< Box logo used in the StorageWizardDialog
 
 	/**
 	 * Graphics mode enumeration.
@@ -274,9 +273,9 @@ public:
 	 * surface.
 	 */
 	enum GraphicsMode {
-		kGfxDisabled = 0,   ///< No GFX
-		kGfxStandard,  ///< Standard (aliased) renderer.
-		kGfxAntialias  ///< Optimized AA renderer.
+		kGfxDisabled = 0, ///< No GFX
+		kGfxStandard, ///< Standard (aliased) renderer.
+		kGfxAntialias ///< Optimized AA renderer.
 	};
 
 	/** Constant value to expand dirty rectangles, to make sure they are fully copied */
@@ -313,7 +312,6 @@ public:
 	void hideCursor();
 
 	void disable();
-
 
 	/**
 	 * Query the set up pixel format.
@@ -353,7 +351,6 @@ public:
 	 * Copy the entire backbuffer surface to the screen surface
 	 */
 	void copyBackBufferToScreen();
-
 
 	/** @name FONT MANAGEMENT METHODS */
 	//@{
@@ -433,8 +430,6 @@ public:
 
 	//@}
 
-
-
 	/**
 	 * Actual implementation of a dirty rect handling.
 	 * Dirty rectangles are queued on a list, merged and optimized
@@ -443,7 +438,6 @@ public:
 	 * @param r Area of the dirty rect.
 	 */
 	void addDirtyRect(Common::Rect r);
-
 
 	/**
 	 * Returns the DrawData enumeration value that represents the given string
@@ -458,7 +452,6 @@ public:
 
 	TextData getTextData(DrawData ddId) const;
 	TextColor getTextColor(DrawData ddId) const;
-
 
 	/**
 	 * Interface for ThemeParser class: Parsed DrawSteps are added via this function.
@@ -482,7 +475,6 @@ public:
 	 */
 	bool addDrawData(const Common::String &data, bool cached);
 
-
 	/**
 	 * Interface for the ThemeParser class: Loads a font to use on the GUI from the given
 	 * filename.
@@ -501,7 +493,6 @@ public:
 	 * @param r, g, b Color of the font.
 	 */
 	bool addTextColor(TextColor colorId, int r, int g, int b);
-
 
 	/**
 	 * Interface for the ThemeParser class: Loads a bitmap file to use on the GUI.
@@ -591,7 +582,6 @@ public:
 	int getGraphicsMode() const { return _graphicsMode; }
 
 protected:
-
 	/**
 	 * Loads the given theme into the ThemeEngine.
 	 *
@@ -655,6 +645,7 @@ public:
 	 * Lists all theme files useable.
 	 */
 	static void listUsableThemes(Common::List<ThemeDescriptor> &list);
+
 private:
 	static bool themeConfigUsable(const Common::FSNode &node, Common::String &themeName);
 	static bool themeConfigUsable(const Common::ArchiveMember &member, Common::String &themeName);
@@ -722,7 +713,7 @@ protected:
 	/** List of all the dirty screens that must be blitted to the overlay. */
 	Common::List<Common::Rect> _dirtyScreen;
 
-	bool _initOk;  ///< Class and renderer properly initialized
+	bool _initOk; ///< Class and renderer properly initialized
 	bool _themeOk; ///< Theme data successfully loaded.
 	bool _enabled; ///< Whether the Theme is currently shown on the overlay
 

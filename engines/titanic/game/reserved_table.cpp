@@ -28,8 +28,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CReservedTable, CGameObject)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(PlayerTriesRestaurantTableMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(PlayerTriesRestaurantTableMsg)
 END_MESSAGE_MAP()
 
 void CReservedTable::save(SimpleFile *file, int indent) {

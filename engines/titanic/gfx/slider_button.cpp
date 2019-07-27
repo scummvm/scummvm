@@ -25,15 +25,18 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CSliderButton, CSTButton)
-	ON_MESSAGE(MouseButtonUpMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(MouseDragMoveMsg)
-	ON_MESSAGE(StatusChangeMsg)
-	ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(MouseButtonUpMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseDragMoveMsg)
+ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(EnterViewMsg)
 END_MESSAGE_MAP()
 
-CSliderButton::CSliderButton() : CSTButton(), _field114(0),
-		_field118(0), _field11C(0) {
+CSliderButton::CSliderButton()
+  : CSTButton()
+  , _field114(0)
+  , _field118(0)
+  , _field11C(0) {
 }
 
 void CSliderButton::save(SimpleFile *file, int indent) {

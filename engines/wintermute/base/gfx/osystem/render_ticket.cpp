@@ -26,22 +26,21 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-
-#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/osystem/render_ticket.h"
+#include "common/textconsole.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
 #include "graphics/transform_tools.h"
-#include "common/textconsole.h"
 
 namespace Wintermute {
 
-RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Graphics::TransformStruct transform) :
-	_owner(owner),
-	_srcRect(*srcRect),
-	_dstRect(*dstRect),
-	_isValid(true),
-	_wantsDraw(true),
-	_transform(transform) {
+RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Graphics::TransformStruct transform)
+  : _owner(owner)
+  , _srcRect(*srcRect)
+  , _dstRect(*dstRect)
+  , _isValid(true)
+  , _wantsDraw(true)
+  , _transform(transform) {
 	if (surf) {
 		_surface = new Graphics::Surface();
 		_surface->create((uint16)srcRect->width(), (uint16)srcRect->height(), surf->format);
@@ -69,9 +68,7 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 			_surface->free();
 			delete _surface;
 			_surface = temp;
-		} else if ((dstRect->width() != srcRect->width() ||
-					dstRect->height() != srcRect->height()) &&
-					_transform._numTimesX * _transform._numTimesY == 1) {
+		} else if ((dstRect->width() != srcRect->width() || dstRect->height() != srcRect->height()) && _transform._numTimesX * _transform._numTimesY == 1) {
 			Graphics::TransparentSurface src(*_surface, false);
 			Graphics::Surface *temp;
 			if (owner->_gameRef->getBilinearFiltering()) {
@@ -96,11 +93,7 @@ RenderTicket::~RenderTicket() {
 }
 
 bool RenderTicket::operator==(const RenderTicket &t) const {
-	if ((t._owner != _owner) ||
-		(t._transform != _transform)  ||
-		(t._dstRect != _dstRect) ||
-		(t._srcRect != _srcRect)
-	) {
+	if ((t._owner != _owner) || (t._transform != _transform) || (t._dstRect != _dstRect) || (t._srcRect != _srcRect)) {
 		return false;
 	}
 	return true;
@@ -189,7 +182,6 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect
 					subRect.clip(*clipRect);
 					subRect.translate(-x, -y);
 					src.blit(*_targetSurface, basex + x + subRect.left, basey + y + subRect.top, _transform._flip, &subRect, _transform._rgbaMod, subRect.width(), subRect.height(), _transform._blendMode);
-
 				}
 
 				x += w;

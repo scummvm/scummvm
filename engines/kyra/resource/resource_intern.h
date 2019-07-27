@@ -26,8 +26,8 @@
 #include "common/archive.h"
 #include "common/hash-str.h"
 #include "common/hashmap.h"
-#include "common/str.h"
 #include "common/list.h"
+#include "common/str.h"
 
 namespace Kyra {
 
@@ -36,8 +36,12 @@ class Resource;
 class PlainArchive : public Common::Archive {
 public:
 	struct Entry {
-		Entry() : offset(0), size(0) {}
-		Entry(uint32 o, uint32 s) : offset(o), size(s) {}
+		Entry()
+		  : offset(0)
+		  , size(0) {}
+		Entry(uint32 o, uint32 s)
+		  : offset(o)
+		  , size(s) {}
 
 		uint32 offset;
 		uint32 size;
@@ -53,6 +57,7 @@ public:
 	int listMembers(Common::ArchiveMemberList &list) const;
 	const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+
 private:
 	typedef Common::HashMap<Common::String, Entry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
 
@@ -69,6 +74,7 @@ public:
 	int listMembers(Common::ArchiveMemberList &list) const;
 	const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+
 private:
 	Common::ArchiveMemberPtr _file;
 
@@ -96,6 +102,7 @@ public:
 	int listMembers(Common::ArchiveMemberList &list) const;
 	const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+
 private:
 	struct Entry {
 		byte *data;
@@ -105,7 +112,6 @@ private:
 	typedef Common::HashMap<Common::String, Entry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
 	FileMap _files;
 };
-
 
 class ResArchiveLoader {
 public:

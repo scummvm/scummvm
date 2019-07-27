@@ -26,7 +26,6 @@
 
 #include "graphics/cursorman.h"
 
-#include "toltecs/toltecs.h"
 #include "toltecs/animation.h"
 #include "toltecs/menu.h"
 #include "toltecs/movie.h"
@@ -36,26 +35,28 @@
 #include "toltecs/script.h"
 #include "toltecs/segmap.h"
 #include "toltecs/sound.h"
+#include "toltecs/toltecs.h"
 
 namespace Toltecs {
 
 static const VarType varTypes[] = {
-	vtByte, vtWord, vtWord, vtByte, vtWord,  //  0 - 4
-	vtWord, vtWord, vtWord, vtWord, vtWord,  //  5 - 9
-	vtWord, vtWord, vtByte, vtWord, vtWord,  // 10 - 14
-	vtWord, vtWord, vtWord, vtWord, vtWord,  // 15 - 19
-	vtWord, vtWord                           // 20 - 21
+	vtByte, vtWord, vtWord, vtByte, vtWord, //  0 - 4
+	vtWord, vtWord, vtWord, vtWord, vtWord, //  5 - 9
+	vtWord, vtWord, vtByte, vtWord, vtWord, // 10 - 14
+	vtWord, vtWord, vtWord, vtWord, vtWord, // 15 - 19
+	vtWord, vtWord // 20 - 21
 };
 
 static const char *varNames[] = {
-	"mouseDisabled", "mouseY",        "mouseX",            "mouseButton",   "verbLineY",        //  0 - 4
-	"verbLineX",     "verbLineWidth", "verbLineCount",     "verbLineNum",   "talkTextItemNum",  //  5 - 9
-	"talkTextY",     "talkTextX",     "talkTextFontColor", "cameraY",       "cameraX",          // 10 - 14
-	"walkSpeedY",    "walkSpeedX",    "flag01",            "sceneResIndex", "guiHeight",        // 15 - 19
-	"sceneHeight",   "sceneWidth"                                                               // 20 - 21
+	"mouseDisabled", "mouseY", "mouseX", "mouseButton", "verbLineY", //  0 - 4
+	"verbLineX", "verbLineWidth", "verbLineCount", "verbLineNum", "talkTextItemNum", //  5 - 9
+	"talkTextY", "talkTextX", "talkTextFontColor", "cameraY", "cameraX", // 10 - 14
+	"walkSpeedY", "walkSpeedX", "flag01", "sceneResIndex", "guiHeight", // 15 - 19
+	"sceneHeight", "sceneWidth" // 20 - 21
 };
 
-ScriptInterpreter::ScriptInterpreter(ToltecsEngine *vm) : _vm(vm) {
+ScriptInterpreter::ScriptInterpreter(ToltecsEngine *vm)
+  : _vm(vm) {
 
 	_stack = new byte[kScriptStackSize];
 
@@ -67,7 +68,6 @@ ScriptInterpreter::ScriptInterpreter(ToltecsEngine *vm) : _vm(vm) {
 	_slots[kMaxScriptSlots - 1].data = new byte[_slots[kMaxScriptSlots - 1].size];
 
 	setupScriptFunctions();
-
 }
 
 ScriptInterpreter::~ScriptInterpreter() {
@@ -79,8 +79,8 @@ ScriptInterpreter::~ScriptInterpreter() {
 }
 
 typedef Common::Functor0Mem<void, ScriptInterpreter> ScriptFunctionF;
-#define RegisterScriptFunction(x) \
-	_scriptFuncs.push_back(new ScriptFunctionF(this, &ScriptInterpreter::x));  \
+#define RegisterScriptFunction(x)                                           \
+	_scriptFuncs.push_back(new ScriptFunctionF(this, &ScriptInterpreter::x)); \
 	_scriptFuncNames.push_back(#x);
 void ScriptInterpreter::setupScriptFunctions() {
 
@@ -165,7 +165,6 @@ void ScriptInterpreter::setupScriptFunctions() {
 	// 65
 	RegisterScriptFunction(sfPlayMovie);
 	RegisterScriptFunction(sfNop);
-
 }
 
 void ScriptInterpreter::loadScript(uint resIndex, uint slotIndex) {
@@ -258,8 +257,7 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 	debug(2, "opcode = %d", opcode);
 
 	switch (opcode) {
-	case 0:
-	{
+	case 0: {
 		// ok
 		_subCode = _code;
 		byte length = readByte();
@@ -487,7 +485,6 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 		// The original ignores invalid opcodes as well - bug #3604025.
 		warning("Invalid opcode %d", opcode);
 	}
-
 }
 
 void ScriptInterpreter::execScriptFunction(uint16 index) {
@@ -501,28 +498,50 @@ int16 ScriptInterpreter::getGameVar(uint variable) {
 	debug(2, "ScriptInterpreter::getGameVar(%d{%s})", variable, varNames[variable]);
 
 	switch (variable) {
-	case  0: return _vm->_mouseDisabled;
-	case  1: return _vm->_mouseY;
-	case  2: return _vm->_mouseX;
-	case  3: return _vm->_mouseButton;
-	case  4: return _vm->_screen->_verbLineY;
-	case  5: return _vm->_screen->_verbLineX;
-	case  6: return _vm->_screen->_verbLineWidth;
-	case  7: return _vm->_screen->_verbLineCount;
-	case  8: return _vm->_screen->_verbLineNum;
-	case  9: return _vm->_screen->_talkTextItemNum;
-	case 10: return _vm->_screen->_talkTextY;
-	case 11: return _vm->_screen->_talkTextX;
-	case 12: return _vm->_screen->_talkTextFontColor;
-	case 13: return _vm->_cameraY;
-	case 14: return _vm->_cameraX;
-	case 15: return _vm->_walkSpeedY;
-	case 16: return _vm->_walkSpeedX;
-	case 17: return _vm->_flag01;
-	case 18: return _vm->_sceneResIndex;
-	case 19: return _vm->_guiHeight;
-	case 20: return _vm->_sceneHeight;
-	case 21: return _vm->_sceneWidth;
+	case 0:
+		return _vm->_mouseDisabled;
+	case 1:
+		return _vm->_mouseY;
+	case 2:
+		return _vm->_mouseX;
+	case 3:
+		return _vm->_mouseButton;
+	case 4:
+		return _vm->_screen->_verbLineY;
+	case 5:
+		return _vm->_screen->_verbLineX;
+	case 6:
+		return _vm->_screen->_verbLineWidth;
+	case 7:
+		return _vm->_screen->_verbLineCount;
+	case 8:
+		return _vm->_screen->_verbLineNum;
+	case 9:
+		return _vm->_screen->_talkTextItemNum;
+	case 10:
+		return _vm->_screen->_talkTextY;
+	case 11:
+		return _vm->_screen->_talkTextX;
+	case 12:
+		return _vm->_screen->_talkTextFontColor;
+	case 13:
+		return _vm->_cameraY;
+	case 14:
+		return _vm->_cameraX;
+	case 15:
+		return _vm->_walkSpeedY;
+	case 16:
+		return _vm->_walkSpeedX;
+	case 17:
+		return _vm->_flag01;
+	case 18:
+		return _vm->_sceneResIndex;
+	case 19:
+		return _vm->_guiHeight;
+	case 20:
+		return _vm->_sceneHeight;
+	case 21:
+		return _vm->_sceneWidth;
 	default:
 		warning("Getting unimplemented game variable %s (%d)", varNames[variable], variable);
 		return 0;
@@ -772,7 +791,7 @@ void ScriptInterpreter::sfSetDeltaAnimPalette() {
 }
 
 void ScriptInterpreter::sfSetUnkPaletteEffect() {
-	error("ScriptInterpreter::sfSetUnkPaletteEffect called");	// unused
+	error("ScriptInterpreter::sfSetUnkPaletteEffect called"); // unused
 }
 
 void ScriptInterpreter::sfBuildColorTransTable() {
@@ -827,10 +846,10 @@ void ScriptInterpreter::sfFindMouseInRectIndex1() {
 	if (_vm->_mouseY < _vm->_cameraHeight) {
 		int16 slotIndex = arg16(5);
 		index = _vm->findRectAtPoint(getSlotData(slotIndex) + arg16(3),
-			_vm->_mouseX + _vm->_cameraX,
-			_vm->_mouseY + _vm->_cameraY,
-			arg16(11) + 1, arg16(7),
-			getSlotData(slotIndex) + _slots[slotIndex].size);
+		                             _vm->_mouseX + _vm->_cameraX,
+		                             _vm->_mouseY + _vm->_cameraY,
+		                             arg16(11) + 1, arg16(7),
+		                             getSlotData(slotIndex) + _slots[slotIndex].size);
 	}
 	localWrite16(arg16(9), index);
 }
@@ -841,10 +860,10 @@ void ScriptInterpreter::sfFindMouseInRectIndex2() {
 		if (_vm->_mouseY < _vm->_cameraHeight) {
 			int16 slotIndex = arg16(5);
 			index = _vm->findRectAtPoint(getSlotData(slotIndex) + arg16(3),
-				_vm->_mouseX + _vm->_cameraX,
-				_vm->_mouseY + _vm->_cameraY,
-				0, arg16(7),
-				getSlotData(slotIndex) + _slots[slotIndex].size);
+			                             _vm->_mouseX + _vm->_cameraX,
+			                             _vm->_mouseY + _vm->_cameraY,
+			                             0, arg16(7),
+			                             getSlotData(slotIndex) + _slots[slotIndex].size);
 		}
 	}
 	localWrite16(arg16(9), index);

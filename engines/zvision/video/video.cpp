@@ -24,18 +24,18 @@
 #include "common/system.h"
 #include "video/video_decoder.h"
 #if defined(USE_MPEG2) && defined(USE_A52)
-#include "video/mpegps_decoder.h"
+#	include "video/mpegps_decoder.h"
 #endif
 #include "engines/util.h"
 #include "graphics/surface.h"
 
-#include "zvision/zvision.h"
 #include "zvision/core/clock.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/scripting/script_manager.h"
 #include "zvision/text/subtitles.h"
 #include "zvision/video/rlf_decoder.h"
 #include "zvision/video/zork_avi_decoder.h"
+#include "zvision/zvision.h"
 
 namespace ZVision {
 
@@ -50,7 +50,7 @@ Video::VideoDecoder *ZVision::loadAnimation(const Common::String &fileName) {
 		animation = new ZorkAVIDecoder();
 #if defined(USE_MPEG2) && defined(USE_A52)
 	else if (tmpFileName.hasSuffix(".vob")) {
- 		double amplification = getVobAmplification(tmpFileName);
+		double amplification = getVobAmplification(tmpFileName);
 		animation = new Video::MPEGPSDecoder(amplification);
 	}
 #endif

@@ -32,7 +32,8 @@ class Sequencer;
 
 struct SequenceActorState {
 	SequenceActorState(const Common::String actor)
-			: actorName(actor), _segment(0) {}
+	  : actorName(actor)
+	  , _segment(0) {}
 
 	void execute(uint segment, Sequence *sequence, bool loadingSave) const;
 

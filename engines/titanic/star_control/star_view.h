@@ -50,6 +50,7 @@ private:
 	CGameObject *_homePhotoMask;
 	bool _field218;
 	bool _showingPhoto;
+
 private:
 	void fn18(CStarCamera *camera);
 	void fn19(int v);
@@ -68,7 +69,8 @@ private:
 	 * Handles resizing the surface
 	 */
 	void resizeSurface(CScreenManager *scrManager, int width, int height,
-		CVideoSurface **surface);
+	                   CVideoSurface **surface);
+
 public:
 	CStarView();
 	~CStarView();

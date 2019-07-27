@@ -36,10 +36,8 @@
  *
  */
 
-
 #include "kyra/sound/drivers/adlib.h"
 #include "audio/fmopl.h"
-
 
 #define CALLBACKS_PER_SECOND 72
 
@@ -73,8 +71,7 @@ AdLibDriver::AdLibDriver(Audio::Mixer *mixer, int version) {
 	_callbackTimer = 0xFF;
 	_unkValue1 = _unkValue2 = _unkValue4 = _unkValue5 = 0;
 	_unkValue6 = _unkValue7 = _unkValue8 = _unkValue9 = _unkValue10 = 0;
-	_unkValue11 = _unkValue12 = _unkValue13 = _unkValue14 = _unkValue15 =
-	_unkValue16 = _unkValue17 = _unkValue18 = _unkValue19 = _unkValue20 = 0;
+	_unkValue11 = _unkValue12 = _unkValue13 = _unkValue14 = _unkValue15 = _unkValue16 = _unkValue17 = _unkValue18 = _unkValue19 = _unkValue20 = 0;
 
 	_tablePtr1 = _tablePtr2 = 0;
 
@@ -1035,7 +1032,8 @@ int AdLibDriver::update_setNoteSpacing(const uint8 *&dataptr, Channel &channel, 
 
 int AdLibDriver::update_jump(const uint8 *&dataptr, Channel &channel, uint8 value) {
 	--dataptr;
-	int16 add = READ_LE_UINT16(dataptr); dataptr += 2;
+	int16 add = READ_LE_UINT16(dataptr);
+	dataptr += 2;
 	if (_version == 1)
 		dataptr = _soundData + add - 191;
 	else
@@ -1047,7 +1045,8 @@ int AdLibDriver::update_jump(const uint8 *&dataptr, Channel &channel, uint8 valu
 
 int AdLibDriver::update_jumpToSubroutine(const uint8 *&dataptr, Channel &channel, uint8 value) {
 	--dataptr;
-	int16 add = READ_LE_UINT16(dataptr); dataptr += 2;
+	int16 add = READ_LE_UINT16(dataptr);
+	dataptr += 2;
 	channel.dataptrStack[channel.dataptrStackPos++] = dataptr;
 	if (_version < 3)
 		dataptr = _soundData + add - 191;
@@ -1116,7 +1115,8 @@ int AdLibDriver::update_setupSecondaryEffect1(const uint8 *&dataptr, Channel &ch
 	// since the sound data is exactly the same.
 	// In DOSBox the teleporters will sound different in EOB I and II, due to different sound
 	// data offsets.
-	channel.offset = READ_LE_UINT16(dataptr) - 191; dataptr += 2;
+	channel.offset = READ_LE_UINT16(dataptr) - 191;
+	dataptr += 2;
 	channel.secondaryEffect = &AdLibDriver::secondaryEffect1;
 	return 0;
 }
@@ -1657,7 +1657,8 @@ int AdLibDriver::updateCallback56(const uint8 *&dataptr, Channel &channel, uint8
 
 // static res
 
-#define COMMAND(x) { &AdLibDriver::x, #x }
+#define COMMAND(x) \
+	{ &AdLibDriver::x, #x }
 
 void AdLibDriver::setupParserOpcodeTable() {
 	static const ParserOpcode parserOpcodeTable[] = {

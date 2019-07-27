@@ -24,22 +24,22 @@
 
 #if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(MIPS_TARGET)
 
-#include "backends/plugins/elf/shorts-segment-manager.h"
+#	include "backends/plugins/elf/shorts-segment-manager.h"
 
-#include "common/debug.h"
-#include "common/textconsole.h"
+#	include "common/debug.h"
+#	include "common/textconsole.h"
 
-extern char __plugin_hole_start;	// Indicates start of hole in program file for shorts
-extern char __plugin_hole_end;		// Indicates end of hole in program file
-extern char _gp[];					// Value of gp register
+extern char __plugin_hole_start; // Indicates start of hole in program file for shorts
+extern char __plugin_hole_end; // Indicates end of hole in program file
+extern char _gp[]; // Value of gp register
 
 namespace Common {
-DECLARE_SINGLETON(ShortSegmentManager);	// For singleton
+DECLARE_SINGLETON(ShortSegmentManager); // For singleton
 }
 
 ShortSegmentManager::ShortSegmentManager() {
-	_shortsStart = &__plugin_hole_start ;	//shorts segment begins at the plugin hole we made when linking
-	_shortsEnd = &__plugin_hole_end;		//and ends at the end of that hole.
+	_shortsStart = &__plugin_hole_start; //shorts segment begins at the plugin hole we made when linking
+	_shortsEnd = &__plugin_hole_end; //and ends at the end of that hole.
 }
 
 ShortSegmentManager::Segment *ShortSegmentManager::newSegment(uint32 size, char *origAddr) {
@@ -57,23 +57,23 @@ ShortSegmentManager::Segment *ShortSegmentManager::newSegment(uint32 size, char 
 	}
 
 	if ((Elf32_Addr)lastAddress & 3)
-		lastAddress += 4 - ((Elf32_Addr)lastAddress & 3);	// Round up to multiple of 4
+		lastAddress += 4 - ((Elf32_Addr)lastAddress & 3); // Round up to multiple of 4
 
 	if (lastAddress + size > _shortsEnd) {
 		warning("elfloader: No space in shorts segment for %x bytes. Last address is %p, max address is %p.",
-				size, lastAddress, _shortsEnd);
+		        size, lastAddress, _shortsEnd);
 		return 0;
 	}
 
-	Segment *seg = new Segment(lastAddress, size, origAddr);	// Create a new segment
+	Segment *seg = new Segment(lastAddress, size, origAddr); // Create a new segment
 
 	if (lastAddress + size > _highestAddress)
-		_highestAddress = lastAddress + size;	// Keep track of maximum
+		_highestAddress = lastAddress + size; // Keep track of maximum
 
 	_list.insert(i, seg);
 
 	debug(2, "elfloader: Shorts segment size %x allocated. End = %p. Remaining space = %x. Highest so far is %p.",
-			size, lastAddress + size, _shortsEnd - _list.back()->getEnd(), _highestAddress);
+	      size, lastAddress + size, _shortsEnd - _list.back()->getEnd(), _highestAddress);
 
 	return seg;
 }

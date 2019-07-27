@@ -25,9 +25,9 @@
 
 #include "mohawk/graphics.h"
 
+#include "common/array.h"
 #include "common/scummsys.h"
 #include "common/stream.h"
-#include "common/array.h"
 #include "graphics/surface.h"
 
 namespace Mohawk {
@@ -73,7 +73,7 @@ struct BitmapHeader {
 		uint16 tableSize;
 		byte rgbBits;
 		byte colorCount;
-		byte* palette;   // In 8bpp only
+		byte *palette; // In 8bpp only
 	} colorTable;
 };
 
@@ -148,7 +148,9 @@ private:
 // Mohawk Bitmap format.
 class MystBitmap : public MohawkBitmap {
 public:
-	MystBitmap() : MohawkBitmap(), _bitsPerPixel(8) {}
+	MystBitmap()
+	  : MohawkBitmap()
+	  , _bitsPerPixel(8) {}
 	~MystBitmap() override {}
 
 	MohawkSurface *decodeImage(Common::SeekableReadStream *stream) override;
@@ -164,7 +166,8 @@ private:
 
 class LivingBooksBitmap_v1 : public MohawkBitmap {
 public:
-	LivingBooksBitmap_v1() : MohawkBitmap() {}
+	LivingBooksBitmap_v1()
+	  : MohawkBitmap() {}
 	~LivingBooksBitmap_v1() override {}
 
 	MohawkSurface *decodeImage(Common::SeekableReadStream *stream) override;
@@ -175,7 +178,8 @@ protected:
 
 class DOSBitmap : public MohawkBitmap {
 public:
-	DOSBitmap() : MohawkBitmap() {}
+	DOSBitmap()
+	  : MohawkBitmap() {}
 	~DOSBitmap() override {}
 
 	MohawkSurface *decodeImage(Common::SeekableReadStream *stream) override;

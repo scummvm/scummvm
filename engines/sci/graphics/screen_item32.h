@@ -30,15 +30,19 @@
 namespace Sci {
 
 enum ScaleSignals32 {
-	kScaleSignalNone           = 0,
-	kScaleSignalManual         = 1,
+	kScaleSignalNone = 0,
+	kScaleSignalManual = 1,
 	kScaleSignalVanishingPoint = 2
 };
 
 struct ScaleInfo {
 	int x, y, max;
 	ScaleSignals32 signal;
-	ScaleInfo() : x(128), y(128), max(100), signal(kScaleSignalNone) {}
+	ScaleInfo()
+	  : x(128)
+	  , y(128)
+	  , max(100)
+	  , signal(kScaleSignalNone) {}
 };
 
 class CelObj;

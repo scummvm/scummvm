@@ -20,9 +20,9 @@
  *
  */
 
-#include "director/director.h"
-#include "director/cachedmactext.h"
 #include "director/cast.h"
+#include "director/cachedmactext.h"
+#include "director/director.h"
 #include "director/score.h"
 
 namespace Director {
@@ -75,10 +75,10 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 		for (uint32 s = 0; s < stringLength; s++)
 			stream.readByte();
 
-		/*uint16 width =*/ stream.readUint16LE(); //maybe?
+		/*uint16 width =*/stream.readUint16LE(); //maybe?
 		initialRect = Score::readRect(stream);
 
-		/*uint32 somethingElse =*/ stream.readUint32();
+		/*uint32 somethingElse =*/stream.readUint32();
 		boundingRect = Score::readRect(stream);
 
 		bitsPerPixel = stream.readUint16();
@@ -131,7 +131,7 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 				warning("TextCast: t: %x", t);
 			}
 
-			initialRect = Score::readRect(stream); 
+			initialRect = Score::readRect(stream);
 		}
 
 		textShadow = static_cast<SizeType>(stream.readByte());
@@ -177,11 +177,11 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 		fontSize = 12;
 
 		stream.readUint32();
-		stream.readUint32(); 
+		stream.readUint32();
 		stream.readUint32();
 		stream.readUint32();
 		uint16 skip = stream.readUint16();
-		for (int i = 0; i < skip; i++) 
+		for (int i = 0; i < skip; i++)
 			stream.readUint32();
 
 		stream.readUint32();
@@ -215,11 +215,11 @@ void TextCast::importStxt(const Stxt *stxt) {
 	_ftext = stxt->_ftext;
 }
 
-void TextCast::importRTE(byte* text) 	{
+void TextCast::importRTE(byte *text) {
 	//assert(rteList.size() == 3);
 	//child0 is probably font data.
 	//child1 is the raw text.
-	_ftext = Common::String((char*)text);
+	_ftext = Common::String((char *)text);
 	//child2 is positional?
 }
 
@@ -252,7 +252,8 @@ ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
 	modified = 0;
 }
 
-ButtonCast::ButtonCast(Common::ReadStreamEndian &stream, uint16 version) : TextCast(stream, version) {
+ButtonCast::ButtonCast(Common::ReadStreamEndian &stream, uint16 version)
+  : TextCast(stream, version) {
 	if (version < 4) {
 		buttonType = static_cast<ButtonType>(stream.readUint16BE());
 	} else {

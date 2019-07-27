@@ -30,8 +30,10 @@ namespace Titanic {
 class CExitBridge : public CMovePlayerTo {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+
 private:
 	CString _viewName;
+
 public:
 	CLASSDEF;
 	CExitBridge();

@@ -22,17 +22,17 @@
 
 #include "made/made.h"
 #include "made/console.h"
+#include "made/database.h"
+#include "made/music.h"
 #include "made/pmvplayer.h"
 #include "made/resource.h"
 #include "made/screen.h"
-#include "made/database.h"
 #include "made/script.h"
-#include "made/music.h"
 
 #include "common/config-manager.h"
+#include "common/error.h"
 #include "common/events.h"
 #include "common/system.h"
-#include "common/error.h"
 
 #include "engines/util.h"
 
@@ -49,12 +49,14 @@ struct GameSettings {
 };
 
 static const GameSettings madeSettings[] = {
-	{"made", "Made game", 0, 0, 0},
+	{ "made", "Made game", 0, 0, 0 },
 
-	{NULL, NULL, 0, 0, NULL}
+	{ NULL, NULL, 0, 0, NULL }
 };
 
-MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc)
+  : Engine(syst)
+  , _gameDescription(gameDesc) {
 
 	_eventNum = 0;
 	_eventMouseX = _eventMouseY = 0;
@@ -128,7 +130,7 @@ void MadeEngine::syncSoundSettings() {
 
 	_music->setVolume(mute ? 0 : ConfMan.getInt("music_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType,
-									mute ? 0 : ConfMan.getInt("sfx_volume"));
+	                              mute ? 0 : ConfMan.getInt("sfx_volume"));
 }
 
 int16 MadeEngine::getTicks() {
@@ -216,11 +218,11 @@ void MadeEngine::handleEvents() {
 			// Supported keys taken from http://www.allgame.com/game.php?id=13542&tab=controls
 
 			switch (event.kbd.keycode) {
-			case Common::KEYCODE_KP_PLUS:	// action (same as left mouse click)
-				_eventNum = 1;		// left mouse button up
+			case Common::KEYCODE_KP_PLUS: // action (same as left mouse click)
+				_eventNum = 1; // left mouse button up
 				break;
-			case Common::KEYCODE_KP_MINUS:	// inventory (same as right mouse click)
-				_eventNum = 3;		// right mouse button up
+			case Common::KEYCODE_KP_MINUS: // inventory (same as right mouse click)
+				_eventNum = 3; // right mouse button up
 				break;
 			case Common::KEYCODE_UP:
 			case Common::KEYCODE_KP8:
@@ -242,10 +244,10 @@ void MadeEngine::handleEvents() {
 				_eventMouseX = MIN<int16>(319, _eventMouseX + 1);
 				g_system->warpMouse(_eventMouseX, _eventMouseY);
 				break;
-			case Common::KEYCODE_F1:		// menu
-			case Common::KEYCODE_F2:		// save game
-			case Common::KEYCODE_F3:		// load game
-			case Common::KEYCODE_F4:		// repeat last message
+			case Common::KEYCODE_F1: // menu
+			case Common::KEYCODE_F2: // save game
+			case Common::KEYCODE_F3: // load game
+			case Common::KEYCODE_F4: // repeat last message
 				_eventNum = 5;
 				_eventKey = (event.kbd.keycode - Common::KEYCODE_F1) + 21;
 				break;
@@ -268,12 +270,10 @@ void MadeEngine::handleEvents() {
 
 		default:
 			break;
-
 		}
 	}
 
 	_system->getAudioCDManager()->update();
-
 }
 
 Common::Error MadeEngine::run() {
@@ -316,7 +316,7 @@ Common::Error MadeEngine::run() {
 		_dat->open("rodneys.dat");
 		_res->open("rodneys.prj");
 	} else {
-		error ("Unknown MADE game");
+		error("Unknown MADE game");
 	}
 
 	if ((getFeatures() & GF_CD) || (getFeatures() & GF_CD_COMPRESSED))

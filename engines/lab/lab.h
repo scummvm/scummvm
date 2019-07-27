@@ -20,7 +20,7 @@
  *
  */
 
- /*
+/*
  * This code is based on Labyrinth of Time code with assistance of
  *
  * Copyright (c) 1993 Terra Nova Development
@@ -31,10 +31,10 @@
 #ifndef LAB_LAB_H
 #define LAB_LAB_H
 
-#include "common/system.h"
 #include "common/random.h"
 #include "common/rect.h"
 #include "common/savefile.h"
+#include "common/system.h"
 #include "engines/engine.h"
 #include "engines/savestate.h"
 
@@ -86,7 +86,7 @@ struct CrumbData {
 	uint16 _crumbDirection;
 };
 
-#define MAX_CRUMBS          128
+#define MAX_CRUMBS 128
 
 typedef Common::List<Rule> RuleList;
 typedef Common::List<Action> ActionList;
@@ -383,7 +383,7 @@ private:
 	void freeMapData();
 	void freeScreens();
 	bool processEvent(MessageClass tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
-		uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 buttonId, uint16 &actionMode);
+	                  uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 buttonId, uint16 &actionMode);
 
 	/**
 	 * Gets the current inventory name.
@@ -472,7 +472,7 @@ private:
 	/**
 	 * Sets the current close up data.
 	 */
-	void setCurrentClose(Common::Point pos, const CloseData **closePtrList, bool useAbsoluteCoords, bool next=false);
+	void setCurrentClose(Common::Point pos, const CloseData **closePtrList, bool useAbsoluteCoords, bool next = false);
 
 	/**
 	 * Takes the currently selected item.

@@ -32,6 +32,7 @@ class CSeasonalMusicPlayer : public CAutoMusicPlayerBase {
 	bool ChangeSeasonMsg(CChangeSeasonMsg *msg);
 	bool ArboretumGateMsg(CArboretumGateMsg *msg);
 	bool ChangeMusicMsg(CChangeMusicMsg *msg);
+
 private:
 	bool _isSpring;
 	bool _isSummer;
@@ -41,6 +42,7 @@ private:
 	VolumeMode _summerMode;
 	VolumeMode _autumnMode;
 	VolumeMode _winterMode;
+
 public:
 	CLASSDEF;
 	CSeasonalMusicPlayer();

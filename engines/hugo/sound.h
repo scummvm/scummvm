@@ -30,8 +30,8 @@
 #ifndef HUGO_SOUND_H
 #define HUGO_SOUND_H
 
-#include "audio/mixer.h"
 #include "audio/midiplayer.h"
+#include "audio/mixer.h"
 
 namespace Audio {
 class PCSpeaker;
@@ -69,9 +69,9 @@ public:
 
 	static const int kHugoCNT = 1190000;
 
-	int8 _pcspkrTimer;                              // Timer (ticks) for note being played
-	int8 _pcspkrOctave;                             // Current octave 1..7
-	int8 _pcspkrNoteDuration;                       // Current length of note (ticks)
+	int8 _pcspkrTimer; // Timer (ticks) for note being played
+	int8 _pcspkrOctave; // Current octave 1..7
+	int8 _pcspkrNoteDuration; // Current length of note (ticks)
 
 	const char *_DOSSongPtr;
 	const char *_DOSIntroSong;
@@ -88,8 +88,9 @@ public:
 	void checkMusic();
 	void loadIntroSong(Common::ReadStream &in);
 	void initPcspkrPlayer();
+
 protected:
-	byte _curPriority;                              // Priority of currently playing sound
+	byte _curPriority; // Priority of currently playing sound
 
 private:
 	HugoEngine *_vm;

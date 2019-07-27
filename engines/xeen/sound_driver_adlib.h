@@ -26,7 +26,7 @@
 #include "xeen/sound_driver.h"
 
 namespace OPL {
-	class OPL;
+class OPL;
 }
 
 namespace Xeen {
@@ -37,13 +37,16 @@ class SoundDriverAdlib : public SoundDriver {
 		uint8 _value;
 
 		RegisterValue(int regNum, int value) {
-			_regNum = regNum; _value = value;
+			_regNum = regNum;
+			_value = value;
 		}
 	};
+
 private:
 	static const byte OPERATOR1_INDEXES[CHANNEL_COUNT];
 	static const byte OPERATOR2_INDEXES[CHANNEL_COUNT];
 	static const uint WAVEFORMS[24];
+
 private:
 	OPL::OPL *_opl;
 	Common::Queue<RegisterValue> _queue;
@@ -54,6 +57,7 @@ private:
 	int _field181;
 	int _field182;
 	int _musicVolume, _sfxVolume;
+
 private:
 	/**
 	 * Initializes the state of the Adlib OPL driver
@@ -105,6 +109,7 @@ private:
 	 * Calculates the scaling/volume level to output based on sfx or music master volume
 	 */
 	byte calculateLevel(byte level, bool isFx);
+
 protected:
 	virtual bool musSetInstrument(const byte *&srcP, byte param);
 	virtual bool musSetPitchWheel(const byte *&srcP, byte param);
@@ -135,6 +140,7 @@ protected:
 	 * Does a reset of any sound effect
 	 */
 	virtual void resetFX();
+
 public:
 	/**
 	 * Constructor

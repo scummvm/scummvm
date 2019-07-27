@@ -23,8 +23,8 @@
 #ifndef SWORD1_CONTROL_H
 #define SWORD1_CONTROL_H
 
-#include "common/scummsys.h"
 #include "common/events.h"
+#include "common/scummsys.h"
 #include "common/str-array.h"
 #include "sword1/sworddefs.h"
 
@@ -42,7 +42,7 @@ class Mouse;
 class Music;
 class Sound;
 
-#define SAVEGAME_HEADER MKTAG('B','S','_','1')
+#define SAVEGAME_HEADER MKTAG('B', 'S', '_', '1')
 #define SAVEGAME_VERSION 2
 
 #define MAX_BUTTONS 16
@@ -61,6 +61,7 @@ public:
 	bool isSaveslot();
 	uint8 _id;
 	uint8 _flag;
+
 private:
 	int _frameIdx;
 	uint16 _x, _y;
@@ -144,7 +145,7 @@ private:
 	ControlButton *_buttons[MAX_BUTTONS];
 	static const ButtonInfo _deathButtons[3], _panelButtons[7], _saveButtons[16], _volumeButtons[4];
 	static const uint8 _languageStrings[8 * 20][43];
-	const uint8(*_lStrings)[43];
+	const uint8 (*_lStrings)[43];
 	Common::SaveFileManager *_saveFileMan;
 	ObjectMan *_objMan;
 	ResMan *_resMan;

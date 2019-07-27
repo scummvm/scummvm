@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "queen/sound.h"
 
 namespace Queen {
@@ -930,7 +929,7 @@ const TuneData Sound::_tune[] = {
 	{ { 40, 0 }, { 0, 0 }, 1, 0 },
 
 	/* 25 - Waterfall Off */
-	{ {-3, 0 }, { 0, 0 }, 1, 0 },
+	{ { -3, 0 }, { 0, 0 }, 1, 0 },
 
 	/* 26 - Wave Torch */
 	{ { 0, 0 }, { 121, 0 }, 2, 0 },
@@ -1478,7 +1477,6 @@ const TuneData Sound::_tune[] = {
 	/* 207 - Frank Destroyed */
 	{ { 25, 1044, 0 }, { 0, 0 }, 1, 0 },
 
-
 	/* 208 - Jaspar Eats */
 	{ { 0, 0 }, { 134, 0 }, 2, 0 },
 
@@ -1906,6 +1904,5 @@ const char *const Sound::_sfxName[] = {
 };
 
 const int16 Sound::_jungleList[] = { 15, 16, 17, 18, 7, 8, 9, 10, 11, 12, 13, 14, 0 };
-
 
 } // End of namespace Queen

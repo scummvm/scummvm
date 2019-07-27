@@ -25,9 +25,9 @@
 namespace CEGUI {
 
 // Not to be drawn on game screen !
-Toolbar::Toolbar() : GUIElement(0, 0, 320, 40) {
+Toolbar::Toolbar()
+  : GUIElement(0, 0, 320, 40) {
 }
-
 
 Toolbar::~Toolbar() {
 }

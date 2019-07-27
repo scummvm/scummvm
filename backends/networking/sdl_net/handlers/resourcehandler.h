@@ -27,8 +27,9 @@
 
 namespace Networking {
 
-class ResourceHandler: public BaseHandler {
+class ResourceHandler : public BaseHandler {
 	static const char *determineMimeType(Common::String &filename);
+
 public:
 	ResourceHandler();
 	virtual ~ResourceHandler();

@@ -35,7 +35,9 @@ private:
 	DrawStruct _drawList[24];
 	int _cursorCell;
 
-	CharacterInfo(XeenEngine *vm) : ButtonContainer(vm), _cursorCell(0) {}
+	CharacterInfo(XeenEngine *vm)
+	  : ButtonContainer(vm)
+	  , _cursorCell(0) {}
 
 	void execute(int charIndex);
 
@@ -60,6 +62,7 @@ private:
 	void showCursor(bool flag);
 
 	bool expandStat(int attrib, const Character &c);
+
 public:
 	static void show(XeenEngine *vm, int charIndex);
 };

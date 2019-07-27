@@ -24,8 +24,8 @@
 #define PRINCE_ARCHIVE_H
 
 #include "common/archive.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 
 namespace Prince {
 

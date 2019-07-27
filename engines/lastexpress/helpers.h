@@ -27,7 +27,7 @@
 // Misc helpers
 //////////////////////////////////////////////////////////////////////////
 
-#define LOW_BYTE(w)           ((unsigned char)(((unsigned long)(w)) & 0xff))
+#define LOW_BYTE(w) ((unsigned char)(((unsigned long)(w)) & 0xff))
 
 // Misc
 #define getArchive(name) _engine->getResourceManager()->getFileStream(name)
@@ -81,10 +81,18 @@
 #define showScene(index, type) _engine->getGraphicsManager()->draw(getScenes()->get(index), type);
 
 #define askForRedraw() _engine->getGraphicsManager()->change()
-#define redrawScreen() do { _engine->getGraphicsManager()->update(); _engine->_system->updateScreen(); } while (false)
+#define redrawScreen()                       \
+	do {                                       \
+		_engine->getGraphicsManager()->update(); \
+		_engine->_system->updateScreen();        \
+	} while (false)
 
 // Used to delete entity sequences
-#define SAFE_DELETE(_p) do { delete (_p); (_p) = NULL; } while (false)
+#define SAFE_DELETE(_p) \
+	do {                  \
+		delete (_p);        \
+		(_p) = NULL;        \
+	} while (false)
 
 //////////////////////////////////////////////////////////////////////////
 // Output
@@ -96,6 +104,5 @@ extern const char *g_entityNames[];
 #define ACTION_NAME(action) (action > 18 ? Common::String::format("%d", action).c_str() : g_actionNames[action])
 #define DIRECTION_NAME(direction) (direction >= 6 ? "INVALID" : g_directionNames[direction])
 #define ENTITY_NAME(index) (index >= 40 ? "INVALID" : g_entityNames[index])
-
 
 #endif // LASTEXPRESS_HELPERS_H

@@ -23,23 +23,24 @@
 #ifndef ACCESS_AMAZON_PLAYER_H
 #define ACCESS_AMAZON_PLAYER_H
 
-#include "common/scummsys.h"
 #include "access/player.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
 namespace Amazon {
 
-class AmazonEngine;
+	class AmazonEngine;
 
-class AmazonPlayer : public Player {
-private:
-	AmazonEngine *_game;
-public:
-	AmazonPlayer(AccessEngine *vm);
+	class AmazonPlayer : public Player {
+	private:
+		AmazonEngine *_game;
 
-	virtual void load();
-};
+	public:
+		AmazonPlayer(AccessEngine *vm);
+
+		virtual void load();
+	};
 
 } // End of namespace Amazon
 

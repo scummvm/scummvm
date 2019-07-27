@@ -23,9 +23,9 @@
 #ifndef NEVERHOOD_SMACKERPLAYER_H
 #define NEVERHOOD_SMACKERPLAYER_H
 
-#include "video/smk_decoder.h"
-#include "neverhood/neverhood.h"
 #include "neverhood/entity.h"
+#include "neverhood/neverhood.h"
+#include "video/smk_decoder.h"
 
 namespace Neverhood {
 
@@ -38,6 +38,7 @@ public:
 	virtual void draw();
 	void setSmackerFrame(const Graphics::Surface *smackerFrame);
 	void unsetSmackerFrame();
+
 protected:
 	const Graphics::Surface *_smackerFrame;
 };
@@ -68,6 +69,7 @@ public:
 	void rewind();
 	bool isDone() { return getFrameNumber() + 1 == getFrameCount(); }
 	NeverhoodSmackerDecoder *getSmackerDecoder() const { return _smackerDecoder; }
+
 protected:
 	Scene *_scene;
 	Palette *_palette;

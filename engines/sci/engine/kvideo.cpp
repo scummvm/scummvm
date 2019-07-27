@@ -20,32 +20,32 @@
  *
  */
 
-#include "engines/util.h"
-#include "sci/engine/kernel.h"
-#include "sci/engine/state.h"
-#include "sci/graphics/helpers.h"
-#include "sci/graphics/cursor.h"
-#include "sci/graphics/palette.h"
-#include "sci/graphics/screen.h"
-#include "sci/util.h"
 #include "common/events.h"
 #include "common/keyboard.h"
 #include "common/span.h"
 #include "common/str.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "engines/util.h"
 #include "graphics/palette.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
-#include "video/video_decoder.h"
+#include "sci/engine/kernel.h"
+#include "sci/engine/state.h"
+#include "sci/graphics/cursor.h"
+#include "sci/graphics/helpers.h"
+#include "sci/graphics/palette.h"
+#include "sci/graphics/screen.h"
+#include "sci/util.h"
+#include "sci/video/seq_decoder.h"
 #include "video/avi_decoder.h"
 #include "video/qt_decoder.h"
-#include "sci/video/seq_decoder.h"
+#include "video/video_decoder.h"
 #ifdef ENABLE_SCI32
-#include "sci/engine/guest_additions.h"
-#include "sci/graphics/frameout.h"
-#include "sci/graphics/video32.h"
-#include "sci/video/robot_decoder.h"
+#	include "sci/engine/guest_additions.h"
+#	include "sci/graphics/frameout.h"
+#	include "sci/graphics/video32.h"
+#	include "sci/video/robot_decoder.h"
 #endif
 
 namespace Sci {
@@ -53,7 +53,7 @@ namespace Sci {
 void playVideo(Video::VideoDecoder &videoDecoder) {
 	videoDecoder.start();
 
-	Common::SpanOwner<SciSpan<byte> > scaleBuffer;
+	Common::SpanOwner<SciSpan<byte>> scaleBuffer;
 	byte bytesPerPixel = videoDecoder.getPixelFormat().bytesPerPixel;
 	uint16 width = videoDecoder.getWidth();
 	uint16 height = videoDecoder.getHeight();
@@ -240,7 +240,8 @@ reg_t kRobotGetFrameSize(EngineState *s, int argc, reg_t *argv) {
 		make_reg(0, frameRect.left),
 		make_reg(0, frameRect.top),
 		make_reg(0, frameRect.right - 1),
-		make_reg(0, frameRect.bottom - 1) };
+		make_reg(0, frameRect.bottom - 1)
+	};
 	outRect->setElements(0, 4, values);
 
 	return make_reg(0, numFramesTotal);
@@ -352,9 +353,7 @@ reg_t kShowMovieWinCue(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kShowMovieWinPlayUntilEvent(EngineState *s, int argc, reg_t *argv) {
-	const int defaultFlags =
-		AVIPlayer::kEventFlagEnd |
-		AVIPlayer::kEventFlagEscapeKey;
+	const int defaultFlags = AVIPlayer::kEventFlagEnd | AVIPlayer::kEventFlagEscapeKey;
 
 	// argv[0] is the movie number, which is not used by this method
 	const AVIPlayer::EventFlags flags = (AVIPlayer::EventFlags)(argc > 1 ? argv[1].toUint16() : defaultFlags);

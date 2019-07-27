@@ -25,33 +25,46 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
-#include "engines/util.h"
-#include "common/system.h"
-#include "common/file.h"
 #include "common/endian.h"
+#include "common/file.h"
+#include "common/system.h"
+#include "engines/util.h"
 #include "graphics/palette.h"
 
-#include "dm/gfx.h"
-#include "dm/dungeonman.h"
-#include "dm/group.h"
-#include "dm/timeline.h"
 #include "dm/champion.h"
+#include "dm/dungeonman.h"
 #include "dm/eventman.h"
+#include "dm/gfx.h"
+#include "dm/group.h"
 #include "dm/lzw.h"
 #include "dm/text.h"
+#include "dm/timeline.h"
 
 namespace DM {
 
 FieldAspect::FieldAspect(uint16 native, uint16 base, uint16 transparent, byte mask, uint16 byteWidth, uint16 height, uint16 xPos, uint16 bitplane)
-	: _nativeBitmapRelativeIndex(native), _baseStartUnitIndex(base), _transparentColor(transparent), _mask(mask),
-	_byteWidth(byteWidth), _height(height), _xPos(xPos), _bitplaneWordCount(bitplane) {}
+  : _nativeBitmapRelativeIndex(native)
+  , _baseStartUnitIndex(base)
+  , _transparentColor(transparent)
+  , _mask(mask)
+  , _byteWidth(byteWidth)
+  , _height(height)
+  , _xPos(xPos)
+  , _bitplaneWordCount(bitplane) {}
 
-FieldAspect::FieldAspect() : _nativeBitmapRelativeIndex(0), _baseStartUnitIndex(0), _transparentColor(0),
-	_mask(0), _byteWidth(0), _height(0), _xPos(0), _bitplaneWordCount(0) {}
+FieldAspect::FieldAspect()
+  : _nativeBitmapRelativeIndex(0)
+  , _baseStartUnitIndex(0)
+  , _transparentColor(0)
+  , _mask(0)
+  , _byteWidth(0)
+  , _height(0)
+  , _xPos(0)
+  , _bitplaneWordCount(0) {}
 
 DoorFrames::DoorFrames(Frame f1, Frame f2_1, Frame f2_2, Frame f2_3,
-		Frame f3_1, Frame f3_2, Frame f3_3,
-		Frame f4_1, Frame f4_2, Frame f4_3) {
+                       Frame f3_1, Frame f3_2, Frame f3_3,
+                       Frame f4_1, Frame f4_2, Frame f4_3) {
 	_closedOrDestroyed = f1;
 	_vertical[0] = f2_1;
 	_vertical[1] = f2_2;
@@ -64,7 +77,8 @@ DoorFrames::DoorFrames(Frame f1, Frame f2_1, Frame f2_2, Frame f2_3,
 	_rightHorizontal[2] = f4_3;
 }
 
-DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
+DisplayMan::DisplayMan(DMEngine *dmEngine)
+  : _vm(dmEngine) {
 	_bitmapScreen = nullptr;
 	_bitmaps = nullptr;
 	_grapItemCount = 0;
@@ -97,7 +111,7 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	for (int i = 0; i < 2; i++) {
 		for (int j = 0; j < 16; j++) {
 			_currMapWallOrnInfo[j].nativeIndice = 0;
-			_currMapWallOrnInfo[j].coordinateSet= 0;
+			_currMapWallOrnInfo[j].coordinateSet = 0;
 			_currMapFloorOrnInfo[j].nativeIndice = 0;
 			_currMapFloorOrnInfo[j].coordinateSet = 0;
 		}
@@ -173,394 +187,400 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 }
 
 void DisplayMan::initConstants() {
-	const byte palChangesDoorButtonAndWallOrnD3[16] = {0, 0, 120, 30, 40, 30, 0, 60, 30, 90, 100, 110, 0, 10, 0, 20}; // @ G0198_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D3
-	const byte palChangesDoorButtonAndWallOrnD2[16] = {0, 120, 10, 30, 40, 30, 60, 70, 50, 90, 100, 110, 0, 20, 140, 130}; // @ G0199_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D2
-	const FieldAspect fieldAspects188[12] = { // @ G0188_as_Graphic558_FieldAspects
-	/* { NativeBitmapRelativeIndex, BaseStartUnitIndex, Transparent color, Mask, ByteWidth, Height, X, BitPlaneWordCount } */
-		FieldAspect(0, 63, 0x8A, 0xFF,  0,   0,  0, 64),  /* D3C */
-		FieldAspect(0, 63, 0x0A, 0x80, 48,  51, 11, 64),  /* D3L */
-		FieldAspect(0, 63, 0x0A, 0x00, 48,  51,  0, 64),  /* D3R */
-		FieldAspect(0, 60, 0x8A, 0xFF,  0,   0,  0, 64),  /* D2C */
-		FieldAspect(0, 63, 0x0A, 0x81, 40,  71,  5, 64),  /* D2L */
-		FieldAspect(0, 63, 0x0A, 0x01, 40,  71,  0, 64),  /* D2R */
-		FieldAspect(0, 61, 0x8A, 0xFF,  0,   0,  0, 64),  /* D1C */
-		FieldAspect(0, 63, 0x0A, 0x82, 32, 111,  0, 64),  /* D1L */
-		FieldAspect(0, 63, 0x0A, 0x02, 32, 111,  0, 64),  /* D1R */
-		FieldAspect(0, 59, 0x8A, 0xFF,  0,   0,  0, 64),  /* D0C */
-		FieldAspect(0, 63, 0x0A, 0x83, 16, 136,  0, 64),  /* D0L */
-		FieldAspect(0, 63, 0x0A, 0x03, 16, 136,  0, 64)   /* D0R */
+	const byte palChangesDoorButtonAndWallOrnD3[16] = { 0, 0, 120, 30, 40, 30, 0, 60, 30, 90, 100, 110, 0, 10, 0, 20 }; // @ G0198_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D3
+	const byte palChangesDoorButtonAndWallOrnD2[16] = { 0, 120, 10, 30, 40, 30, 60, 70, 50, 90, 100, 110, 0, 20, 140, 130 }; // @ G0199_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D2
+	const FieldAspect fieldAspects188[12] = {
+		// @ G0188_as_Graphic558_FieldAspects
+		/* { NativeBitmapRelativeIndex, BaseStartUnitIndex, Transparent color, Mask, ByteWidth, Height, X, BitPlaneWordCount } */
+		FieldAspect(0, 63, 0x8A, 0xFF, 0, 0, 0, 64), /* D3C */
+		FieldAspect(0, 63, 0x0A, 0x80, 48, 51, 11, 64), /* D3L */
+		FieldAspect(0, 63, 0x0A, 0x00, 48, 51, 0, 64), /* D3R */
+		FieldAspect(0, 60, 0x8A, 0xFF, 0, 0, 0, 64), /* D2C */
+		FieldAspect(0, 63, 0x0A, 0x81, 40, 71, 5, 64), /* D2L */
+		FieldAspect(0, 63, 0x0A, 0x01, 40, 71, 0, 64), /* D2R */
+		FieldAspect(0, 61, 0x8A, 0xFF, 0, 0, 0, 64), /* D1C */
+		FieldAspect(0, 63, 0x0A, 0x82, 32, 111, 0, 64), /* D1L */
+		FieldAspect(0, 63, 0x0A, 0x02, 32, 111, 0, 64), /* D1R */
+		FieldAspect(0, 59, 0x8A, 0xFF, 0, 0, 0, 64), /* D0C */
+		FieldAspect(0, 63, 0x0A, 0x83, 16, 136, 0, 64), /* D0L */
+		FieldAspect(0, 63, 0x0A, 0x03, 16, 136, 0, 64) /* D0R */
 	};
 
-	const ExplosionAspect explosionAspects[k4_ExplosionAspectCount] = { // @ G0211_as_Graphic558_ExplosionAspects
+	const ExplosionAspect explosionAspects[k4_ExplosionAspectCount] = {
+		// @ G0211_as_Graphic558_ExplosionAspects
 		// ByteWidth, Height
-		ExplosionAspect(80, 111),   // Fire
-		ExplosionAspect(64,  97),   // Spell
-		ExplosionAspect(80,  91),   // Poison
-		ExplosionAspect(80,  91)    // Death
+		ExplosionAspect(80, 111), // Fire
+		ExplosionAspect(64, 97), // Spell
+		ExplosionAspect(80, 91), // Poison
+		ExplosionAspect(80, 91) // Death
 	};
 
-	const byte palChangeSmoke[16] = {0, 10, 20, 30, 40, 50, 120, 10, 80, 90, 100, 110, 120, 130, 140, 150}; // @ G0212_auc_Graphic558_PaletteChanges_Smoke
+	const byte palChangeSmoke[16] = { 0, 10, 20, 30, 40, 50, 120, 10, 80, 90, 100, 110, 120, 130, 140, 150 }; // @ G0212_auc_Graphic558_PaletteChanges_Smoke
 	const byte projectileScales[7] = {
-		13,   /* D4 Back  */
-		16,   /* D4 Front */
-		19,   /* D3 Back  */
-		22,   /* D3 Front */
-		25,   /* D2 Back  */
-		28,   /* D2 Front */
-		32    /* D1 Back  */
+		13, /* D4 Back  */
+		16, /* D4 Front */
+		19, /* D3 Back  */
+		22, /* D3 Front */
+		25, /* D2 Back  */
+		28, /* D2 Front */
+		32 /* D1 Back  */
 	};
 
-	const Frame frameWalls163[12] = { // @ G0163_as_Graphic558_Frame_Walls
+	const Frame frameWalls163[12] = {
+		// @ G0163_as_Graphic558_Frame_Walls
 		/* { X1, X2, Y1, Y2, pixelWidth, Height, X, Y } */
-		Frame(74, 149, 25,  75,  64,  51,  18, 0),  /* D3C */
-		Frame(0,  83, 25,  75,  64,  51,  32, 0),   /* D3L */
-		Frame(139, 223, 25,  75,  64,  51,   0, 0), /* D3R */
-		Frame(60, 163, 20,  90,  72,  71,  16, 0),  /* D2C */
-		Frame(0,  74, 20,  90,  72,  71,  61, 0),   /* D2L */
-		Frame(149, 223, 20,  90,  72,  71,   0, 0), /* D2R */
-		Frame(32, 191,  9, 119, 128, 111,  48, 0),  /* D1C */
-		Frame(0,  63,  9, 119, 128, 111, 192, 0),   /* D1L */
-		Frame(160, 223,  9, 119, 128, 111,   0, 0), /* D1R */
-		Frame(0, 223,  0, 135,   0,   0,   0, 0),   /* D0C */
-		Frame(0,  31,  0, 135,  16, 136,   0, 0),   /* D0L */
-		Frame(192, 223,  0, 135,  16, 136,   0, 0)  /* D0R */
+		Frame(74, 149, 25, 75, 64, 51, 18, 0), /* D3C */
+		Frame(0, 83, 25, 75, 64, 51, 32, 0), /* D3L */
+		Frame(139, 223, 25, 75, 64, 51, 0, 0), /* D3R */
+		Frame(60, 163, 20, 90, 72, 71, 16, 0), /* D2C */
+		Frame(0, 74, 20, 90, 72, 71, 61, 0), /* D2L */
+		Frame(149, 223, 20, 90, 72, 71, 0, 0), /* D2R */
+		Frame(32, 191, 9, 119, 128, 111, 48, 0), /* D1C */
+		Frame(0, 63, 9, 119, 128, 111, 192, 0), /* D1L */
+		Frame(160, 223, 9, 119, 128, 111, 0, 0), /* D1R */
+		Frame(0, 223, 0, 135, 0, 0, 0, 0), /* D0C */
+		Frame(0, 31, 0, 135, 16, 136, 0, 0), /* D0L */
+		Frame(192, 223, 0, 135, 16, 136, 0, 0) /* D0R */
 	};
 
-	const CreatureAspect creatureAspects219[k27_CreatureTypeCount] = { // @ G0219_as_Graphic558_CreatureAspects
-	/* { FirstNativeBitmapRelativeIndex, FirstDerivedBitmapIndex, pixelWidthFront, HeightFront,
+	const CreatureAspect creatureAspects219[k27_CreatureTypeCount] = {
+		// @ G0219_as_Graphic558_CreatureAspects
+		/* { FirstNativeBitmapRelativeIndex, FirstDerivedBitmapIndex, pixelWidthFront, HeightFront,
 		 pixelWidthSide, HeightSide, pixelWidthAttack, HeightAttack, CoordinateSet / TransparentColor,
 		 Replacement Color Set Index for color 10 / Replacement Color Set Index for color 9 } */
-		CreatureAspect(0, 0, 56 ,  84, 56 ,  84, 56 ,  84, 0x1D, 0x01),    /* Creature #00 Giant Scorpion / Scorpion */
-		CreatureAspect(4, 0, 32 ,  66,  0 ,   0, 32 ,  69, 0x0B, 0x20),    /* Creature #01 Swamp Slime / Slime Devil */
-		CreatureAspect(6, 0, 24 ,  48, 24 ,  48,  0 ,   0, 0x0B, 0x00),    /* Creature #02 Giggler */
-		CreatureAspect(10, 0, 32 ,  61,  0 ,   0, 32 ,  61, 0x24, 0x31),   /* Creature #03 Wizard Eye / Flying Eye */
-		CreatureAspect(12, 0, 32 ,  64, 56 ,  64, 32 ,  64, 0x14, 0x34),   /* Creature #04 Pain Rat / Hellhound */
-		CreatureAspect(16, 0, 24 ,  49, 40 ,  49,  0 ,   0, 0x18, 0x34),   /* Creature #05 Ruster */
-		CreatureAspect(19, 0, 32 ,  60,  0 ,   0, 32 ,  60, 0x0D, 0x00),   /* Creature #06 Screamer */
-		CreatureAspect(21, 0, 32 ,  43,  0 ,   0, 32 ,  64, 0x04, 0x00),   /* Creature #07 Rockpile / Rock pile */
-		CreatureAspect(23, 0, 32 ,  83,  0 ,   0, 32 ,  93, 0x04, 0x00),   /* Creature #08 Ghost / Rive */
-		CreatureAspect(25, 0, 32 , 101, 32 , 101, 32 , 101, 0x14, 0x00),   /* Creature #09 Stone Golem */
-		CreatureAspect(29, 0, 32 ,  82, 32 ,  82, 32 ,  83, 0x04, 0x00),   /* Creature #10 Mummy */
-		CreatureAspect(33, 0, 32 ,  80,  0 ,   0, 32 ,  99, 0x14, 0x00),   /* Creature #11 Black Flame */
-		CreatureAspect(35, 0, 32 ,  80, 32 ,  80, 32 ,  76, 0x04, 0x00),   /* Creature #12 Skeleton */
-		CreatureAspect(39, 0, 32 ,  96, 56 ,  93, 32 ,  90, 0x1D, 0x20),   /* Creature #13 Couatl */
-		CreatureAspect(43, 0, 32 ,  49, 16 ,  49, 32 ,  56, 0x04, 0x30),   /* Creature #14 Vexirk */
-		CreatureAspect(47, 0, 32 ,  59, 56 ,  43, 32 ,  67, 0x14, 0x78),   /* Creature #15 Magenta Worm / Worm */
-		CreatureAspect(51, 0, 32 ,  83, 32 ,  74, 32 ,  74, 0x04, 0x65),   /* Creature #16 Trolin / Ant Man */
-		CreatureAspect(55, 0, 24 ,  49, 24 ,  53, 24 ,  53, 0x24, 0x00),   /* Creature #17 Giant Wasp / Muncher */
-		CreatureAspect(59, 0, 32 ,  89, 32 ,  89, 32 ,  89, 0x04, 0x00),   /* Creature #18 Animated Armour / Deth Knight */
-		CreatureAspect(63, 0, 32 ,  84, 32 ,  84, 32 ,  84, 0x0D, 0xA9),   /* Creature #19 Materializer / Zytaz */
-		CreatureAspect(67, 0, 56 ,  27,  0 ,   0, 56 ,  80, 0x04, 0x65),   /* Creature #20 Water Elemental */
-		CreatureAspect(69, 0, 56 ,  77, 56 ,  81, 56 ,  77, 0x04, 0xA9),   /* Creature #21 Oitu */
-		CreatureAspect(73, 0, 32 ,  87, 32 ,  89, 32 ,  89, 0x04, 0xCB),   /* Creature #22 Demon */
-		CreatureAspect(77, 0, 32 ,  96, 32 ,  94, 32 ,  96, 0x04, 0x00),   /* Creature #23 Lord Chaos */
-		CreatureAspect(81, 0, 64 ,  94, 72 ,  94, 64 ,  94, 0x04, 0xCB),   /* Creature #24 Red Dragon / Dragon */
-		CreatureAspect(85, 0, 32 ,  93,  0 ,   0,  0 ,   0, 0x04, 0xCB),   /* Creature #25 Lord Order */
-		CreatureAspect(86, 0, 32 ,  93,  0 ,   0,  0 ,   0, 0x04, 0xCB)    /* Creature #26 Grey Lord */
+		CreatureAspect(0, 0, 56, 84, 56, 84, 56, 84, 0x1D, 0x01), /* Creature #00 Giant Scorpion / Scorpion */
+		CreatureAspect(4, 0, 32, 66, 0, 0, 32, 69, 0x0B, 0x20), /* Creature #01 Swamp Slime / Slime Devil */
+		CreatureAspect(6, 0, 24, 48, 24, 48, 0, 0, 0x0B, 0x00), /* Creature #02 Giggler */
+		CreatureAspect(10, 0, 32, 61, 0, 0, 32, 61, 0x24, 0x31), /* Creature #03 Wizard Eye / Flying Eye */
+		CreatureAspect(12, 0, 32, 64, 56, 64, 32, 64, 0x14, 0x34), /* Creature #04 Pain Rat / Hellhound */
+		CreatureAspect(16, 0, 24, 49, 40, 49, 0, 0, 0x18, 0x34), /* Creature #05 Ruster */
+		CreatureAspect(19, 0, 32, 60, 0, 0, 32, 60, 0x0D, 0x00), /* Creature #06 Screamer */
+		CreatureAspect(21, 0, 32, 43, 0, 0, 32, 64, 0x04, 0x00), /* Creature #07 Rockpile / Rock pile */
+		CreatureAspect(23, 0, 32, 83, 0, 0, 32, 93, 0x04, 0x00), /* Creature #08 Ghost / Rive */
+		CreatureAspect(25, 0, 32, 101, 32, 101, 32, 101, 0x14, 0x00), /* Creature #09 Stone Golem */
+		CreatureAspect(29, 0, 32, 82, 32, 82, 32, 83, 0x04, 0x00), /* Creature #10 Mummy */
+		CreatureAspect(33, 0, 32, 80, 0, 0, 32, 99, 0x14, 0x00), /* Creature #11 Black Flame */
+		CreatureAspect(35, 0, 32, 80, 32, 80, 32, 76, 0x04, 0x00), /* Creature #12 Skeleton */
+		CreatureAspect(39, 0, 32, 96, 56, 93, 32, 90, 0x1D, 0x20), /* Creature #13 Couatl */
+		CreatureAspect(43, 0, 32, 49, 16, 49, 32, 56, 0x04, 0x30), /* Creature #14 Vexirk */
+		CreatureAspect(47, 0, 32, 59, 56, 43, 32, 67, 0x14, 0x78), /* Creature #15 Magenta Worm / Worm */
+		CreatureAspect(51, 0, 32, 83, 32, 74, 32, 74, 0x04, 0x65), /* Creature #16 Trolin / Ant Man */
+		CreatureAspect(55, 0, 24, 49, 24, 53, 24, 53, 0x24, 0x00), /* Creature #17 Giant Wasp / Muncher */
+		CreatureAspect(59, 0, 32, 89, 32, 89, 32, 89, 0x04, 0x00), /* Creature #18 Animated Armour / Deth Knight */
+		CreatureAspect(63, 0, 32, 84, 32, 84, 32, 84, 0x0D, 0xA9), /* Creature #19 Materializer / Zytaz */
+		CreatureAspect(67, 0, 56, 27, 0, 0, 56, 80, 0x04, 0x65), /* Creature #20 Water Elemental */
+		CreatureAspect(69, 0, 56, 77, 56, 81, 56, 77, 0x04, 0xA9), /* Creature #21 Oitu */
+		CreatureAspect(73, 0, 32, 87, 32, 89, 32, 89, 0x04, 0xCB), /* Creature #22 Demon */
+		CreatureAspect(77, 0, 32, 96, 32, 94, 32, 96, 0x04, 0x00), /* Creature #23 Lord Chaos */
+		CreatureAspect(81, 0, 64, 94, 72, 94, 64, 94, 0x04, 0xCB), /* Creature #24 Red Dragon / Dragon */
+		CreatureAspect(85, 0, 32, 93, 0, 0, 0, 0, 0x04, 0xCB), /* Creature #25 Lord Order */
+		CreatureAspect(86, 0, 32, 93, 0, 0, 0, 0, 0x04, 0xCB) /* Creature #26 Grey Lord */
 	};
 	static ObjectAspect objectAspects209[k85_ObjAspectCount] = { // @ G0209_as_Graphic558_ObjectAspects
-		/* FirstNativeBitmapRelativeIndex, FirstDerivedBitmapRelativeIndex, ByteWidth, Height, GraphicInfo, CoordinateSet */
-		ObjectAspect(0,   0, 24, 27, 0x11, 0),
-		ObjectAspect(2,   6, 24,  8, 0x00, 1),
-		ObjectAspect(3,   8,  8, 18, 0x00, 1),
-		ObjectAspect(4,  10,  8,  8, 0x00, 1),
-		ObjectAspect(5,  12,  8,  4, 0x00, 1),
-		ObjectAspect(6,  14, 16, 11, 0x00, 1),
-		ObjectAspect(7,  16, 24, 13, 0x00, 0),
-		ObjectAspect(8,  18, 32, 16, 0x00, 0),
-		ObjectAspect(9,  20, 40, 24, 0x00, 0),
-		ObjectAspect(10,  22, 16, 20, 0x00, 1),
-		ObjectAspect(11,  24, 40, 20, 0x00, 0),
-		ObjectAspect(12,  26, 32,  4, 0x00, 1),
-		ObjectAspect(13,  28, 40,  8, 0x00, 1),
-		ObjectAspect(14,  30, 32, 17, 0x00, 0),
-		ObjectAspect(15,  32, 40, 17, 0x00, 2),
-		ObjectAspect(16,  34, 16,  9, 0x00, 1),
-		ObjectAspect(17,  36, 24,  5, 0x00, 1),
-		ObjectAspect(18,  38, 16,  9, 0x00, 0),
-		ObjectAspect(19,  40,  8,  4, 0x00, 1),
-		ObjectAspect(20,  42, 32, 21, 0x00, 2),
-		ObjectAspect(21,  44, 32, 25, 0x00, 2),
-		ObjectAspect(22,  46, 32, 14, 0x00, 1),
-		ObjectAspect(23,  48, 32, 26, 0x00, 2),
-		ObjectAspect(24,  50, 32, 16, 0x00, 0),
-		ObjectAspect(25,  52, 32, 16, 0x00, 0),
-		ObjectAspect(26,  54, 16, 16, 0x00, 1),
-		ObjectAspect(27,  56, 16, 15, 0x00, 1),
-		ObjectAspect(28,  58, 16, 13, 0x00, 1),
-		ObjectAspect(29,  60, 16, 10, 0x00, 1),
-		ObjectAspect(30,  62, 40, 24, 0x00, 0),
-		ObjectAspect(31,  64, 40,  9, 0x00, 1),
-		ObjectAspect(32,  66, 16,  3, 0x00, 1),
-		ObjectAspect(33,  68, 32,  5, 0x00, 1),
-		ObjectAspect(34,  70, 40, 16, 0x00, 0),
-		ObjectAspect(35,  72,  8,  7, 0x00, 1),
-		ObjectAspect(36,  74, 32,  7, 0x00, 1),
-		ObjectAspect(37,  76, 24, 14, 0x00, 0),
-		ObjectAspect(38,  78, 16,  8, 0x00, 0),
-		ObjectAspect(39,  80,  8,  3, 0x00, 1),
-		ObjectAspect(40,  82, 40,  9, 0x00, 1),
-		ObjectAspect(41,  84, 24, 14, 0x00, 0),
-		ObjectAspect(42,  86, 40, 20, 0x00, 0),
-		ObjectAspect(43,  88, 40, 15, 0x00, 1),
-		ObjectAspect(44,  90, 32, 10, 0x00, 1),
-		ObjectAspect(45,  92, 32, 19, 0x00, 0),
-		ObjectAspect(46,  94, 40, 25, 0x00, 2),
-		ObjectAspect(47,  96, 24,  7, 0x00, 1),
-		ObjectAspect(48,  98,  8,  7, 0x00, 1),
-		ObjectAspect(49, 100, 16,  5, 0x00, 1),
-		ObjectAspect(50, 102,  8,  9, 0x00, 1),
-		ObjectAspect(51, 104, 32, 11, 0x00, 1),
-		ObjectAspect(52, 106, 32, 14, 0x00, 0),
-		ObjectAspect(53, 108, 24, 20, 0x00, 0),
-		ObjectAspect(54, 110, 16, 14, 0x00, 1),
-		ObjectAspect(55, 112, 32, 23, 0x00, 0),
-		ObjectAspect(56, 114, 24, 16, 0x00, 0),
-		ObjectAspect(57, 116, 32, 25, 0x00, 0),
-		ObjectAspect(58, 118, 24, 25, 0x00, 0),
-		ObjectAspect(59, 120,  8,  8, 0x00, 1),
-		ObjectAspect(60, 122,  8,  7, 0x00, 1),
-		ObjectAspect(61, 124,  8,  8, 0x00, 1),
-		ObjectAspect(62, 126,  8,  8, 0x00, 1),
-		ObjectAspect(63, 128,  8,  5, 0x00, 1),
-		ObjectAspect(64, 130,  8, 13, 0x01, 1),
-		ObjectAspect(65, 134, 16, 13, 0x00, 1),
-		ObjectAspect(66, 136, 16, 14, 0x00, 0),
-		ObjectAspect(67, 138, 16, 10, 0x00, 1),
-		ObjectAspect(68, 140,  8, 18, 0x00, 1),
-		ObjectAspect(69, 142,  8, 17, 0x00, 1),
-		ObjectAspect(70, 144, 32, 18, 0x00, 0),
-		ObjectAspect(71, 146, 16, 23, 0x00, 0),
-		ObjectAspect(72, 148, 16, 24, 0x00, 0),
-		ObjectAspect(73, 150, 16, 15, 0x00, 0),
-		ObjectAspect(74, 152,  8,  7, 0x00, 1),
-		ObjectAspect(75, 154,  8, 15, 0x00, 1),
-		ObjectAspect(76, 156,  8,  9, 0x00, 1),
-		ObjectAspect(77, 158, 16, 14, 0x00, 0),
-		ObjectAspect(78, 160,  8,  8, 0x00, 1),
-		ObjectAspect(79, 162, 16,  9, 0x00, 1),
-		ObjectAspect(80, 164,  8, 13, 0x01, 1),
-		ObjectAspect(81, 168,  8, 18, 0x00, 1),
-		ObjectAspect(82, 170, 24, 28, 0x00, 0),
-		ObjectAspect(83, 172, 40, 13, 0x00, 1),
-		ObjectAspect(84, 174,  8,  4, 0x00, 1),
-		ObjectAspect(85, 176, 32, 17, 0x00, 0)
+		                                                           /* FirstNativeBitmapRelativeIndex, FirstDerivedBitmapRelativeIndex, ByteWidth, Height, GraphicInfo, CoordinateSet */
+		                                                           ObjectAspect(0, 0, 24, 27, 0x11, 0),
+		                                                           ObjectAspect(2, 6, 24, 8, 0x00, 1),
+		                                                           ObjectAspect(3, 8, 8, 18, 0x00, 1),
+		                                                           ObjectAspect(4, 10, 8, 8, 0x00, 1),
+		                                                           ObjectAspect(5, 12, 8, 4, 0x00, 1),
+		                                                           ObjectAspect(6, 14, 16, 11, 0x00, 1),
+		                                                           ObjectAspect(7, 16, 24, 13, 0x00, 0),
+		                                                           ObjectAspect(8, 18, 32, 16, 0x00, 0),
+		                                                           ObjectAspect(9, 20, 40, 24, 0x00, 0),
+		                                                           ObjectAspect(10, 22, 16, 20, 0x00, 1),
+		                                                           ObjectAspect(11, 24, 40, 20, 0x00, 0),
+		                                                           ObjectAspect(12, 26, 32, 4, 0x00, 1),
+		                                                           ObjectAspect(13, 28, 40, 8, 0x00, 1),
+		                                                           ObjectAspect(14, 30, 32, 17, 0x00, 0),
+		                                                           ObjectAspect(15, 32, 40, 17, 0x00, 2),
+		                                                           ObjectAspect(16, 34, 16, 9, 0x00, 1),
+		                                                           ObjectAspect(17, 36, 24, 5, 0x00, 1),
+		                                                           ObjectAspect(18, 38, 16, 9, 0x00, 0),
+		                                                           ObjectAspect(19, 40, 8, 4, 0x00, 1),
+		                                                           ObjectAspect(20, 42, 32, 21, 0x00, 2),
+		                                                           ObjectAspect(21, 44, 32, 25, 0x00, 2),
+		                                                           ObjectAspect(22, 46, 32, 14, 0x00, 1),
+		                                                           ObjectAspect(23, 48, 32, 26, 0x00, 2),
+		                                                           ObjectAspect(24, 50, 32, 16, 0x00, 0),
+		                                                           ObjectAspect(25, 52, 32, 16, 0x00, 0),
+		                                                           ObjectAspect(26, 54, 16, 16, 0x00, 1),
+		                                                           ObjectAspect(27, 56, 16, 15, 0x00, 1),
+		                                                           ObjectAspect(28, 58, 16, 13, 0x00, 1),
+		                                                           ObjectAspect(29, 60, 16, 10, 0x00, 1),
+		                                                           ObjectAspect(30, 62, 40, 24, 0x00, 0),
+		                                                           ObjectAspect(31, 64, 40, 9, 0x00, 1),
+		                                                           ObjectAspect(32, 66, 16, 3, 0x00, 1),
+		                                                           ObjectAspect(33, 68, 32, 5, 0x00, 1),
+		                                                           ObjectAspect(34, 70, 40, 16, 0x00, 0),
+		                                                           ObjectAspect(35, 72, 8, 7, 0x00, 1),
+		                                                           ObjectAspect(36, 74, 32, 7, 0x00, 1),
+		                                                           ObjectAspect(37, 76, 24, 14, 0x00, 0),
+		                                                           ObjectAspect(38, 78, 16, 8, 0x00, 0),
+		                                                           ObjectAspect(39, 80, 8, 3, 0x00, 1),
+		                                                           ObjectAspect(40, 82, 40, 9, 0x00, 1),
+		                                                           ObjectAspect(41, 84, 24, 14, 0x00, 0),
+		                                                           ObjectAspect(42, 86, 40, 20, 0x00, 0),
+		                                                           ObjectAspect(43, 88, 40, 15, 0x00, 1),
+		                                                           ObjectAspect(44, 90, 32, 10, 0x00, 1),
+		                                                           ObjectAspect(45, 92, 32, 19, 0x00, 0),
+		                                                           ObjectAspect(46, 94, 40, 25, 0x00, 2),
+		                                                           ObjectAspect(47, 96, 24, 7, 0x00, 1),
+		                                                           ObjectAspect(48, 98, 8, 7, 0x00, 1),
+		                                                           ObjectAspect(49, 100, 16, 5, 0x00, 1),
+		                                                           ObjectAspect(50, 102, 8, 9, 0x00, 1),
+		                                                           ObjectAspect(51, 104, 32, 11, 0x00, 1),
+		                                                           ObjectAspect(52, 106, 32, 14, 0x00, 0),
+		                                                           ObjectAspect(53, 108, 24, 20, 0x00, 0),
+		                                                           ObjectAspect(54, 110, 16, 14, 0x00, 1),
+		                                                           ObjectAspect(55, 112, 32, 23, 0x00, 0),
+		                                                           ObjectAspect(56, 114, 24, 16, 0x00, 0),
+		                                                           ObjectAspect(57, 116, 32, 25, 0x00, 0),
+		                                                           ObjectAspect(58, 118, 24, 25, 0x00, 0),
+		                                                           ObjectAspect(59, 120, 8, 8, 0x00, 1),
+		                                                           ObjectAspect(60, 122, 8, 7, 0x00, 1),
+		                                                           ObjectAspect(61, 124, 8, 8, 0x00, 1),
+		                                                           ObjectAspect(62, 126, 8, 8, 0x00, 1),
+		                                                           ObjectAspect(63, 128, 8, 5, 0x00, 1),
+		                                                           ObjectAspect(64, 130, 8, 13, 0x01, 1),
+		                                                           ObjectAspect(65, 134, 16, 13, 0x00, 1),
+		                                                           ObjectAspect(66, 136, 16, 14, 0x00, 0),
+		                                                           ObjectAspect(67, 138, 16, 10, 0x00, 1),
+		                                                           ObjectAspect(68, 140, 8, 18, 0x00, 1),
+		                                                           ObjectAspect(69, 142, 8, 17, 0x00, 1),
+		                                                           ObjectAspect(70, 144, 32, 18, 0x00, 0),
+		                                                           ObjectAspect(71, 146, 16, 23, 0x00, 0),
+		                                                           ObjectAspect(72, 148, 16, 24, 0x00, 0),
+		                                                           ObjectAspect(73, 150, 16, 15, 0x00, 0),
+		                                                           ObjectAspect(74, 152, 8, 7, 0x00, 1),
+		                                                           ObjectAspect(75, 154, 8, 15, 0x00, 1),
+		                                                           ObjectAspect(76, 156, 8, 9, 0x00, 1),
+		                                                           ObjectAspect(77, 158, 16, 14, 0x00, 0),
+		                                                           ObjectAspect(78, 160, 8, 8, 0x00, 1),
+		                                                           ObjectAspect(79, 162, 16, 9, 0x00, 1),
+		                                                           ObjectAspect(80, 164, 8, 13, 0x01, 1),
+		                                                           ObjectAspect(81, 168, 8, 18, 0x00, 1),
+		                                                           ObjectAspect(82, 170, 24, 28, 0x00, 0),
+		                                                           ObjectAspect(83, 172, 40, 13, 0x00, 1),
+		                                                           ObjectAspect(84, 174, 8, 4, 0x00, 1),
+		                                                           ObjectAspect(85, 176, 32, 17, 0x00, 0)
 	};
 
-	static ProjectileAspect projectileAspect[k14_ProjectileAspectCount] = { // @ G0210_as_Graphic558_ProjectileAspects
+	static ProjectileAspect projectileAspect[k14_ProjectileAspectCount] = {
+		// @ G0210_as_Graphic558_ProjectileAspects
 		/* ProjectileAspect( FirstNativeBitmapRelativeIndex, FirstDerivedBitmapRelativeIndex, ByteWidth, Height, GraphicInfo ) */
-		ProjectileAspect(0,   0, 32, 11, 0x0011),   /* Arrow */
-		ProjectileAspect(3,  18, 16, 11, 0x0011),   /* Dagger */
-		ProjectileAspect(6,  36, 24, 47, 0x0010),   /* Axe - Executioner */
-		ProjectileAspect(9,  54, 32, 15, 0x0112),   /* Explosion Lightning Bolt */
-		ProjectileAspect(11,  54, 32, 12, 0x0011),   /* Slayer */
-		ProjectileAspect(14,  72, 24, 47, 0x0010),   /* Stone Club */
-		ProjectileAspect(17,  90, 24, 47, 0x0010),   /* Club */
-		ProjectileAspect(20, 108, 16, 11, 0x0011),   /* Poison Dart */
-		ProjectileAspect(23, 126, 48, 18, 0x0011),   /* Storm - Side Splitter - Diamond Edge - Falchion - Ra Blade - Rapier - Biter - Samurai Sword - Sword - Dragon Fang */
-		ProjectileAspect(26, 144,  8, 15, 0x0012),   /* Throwing Star */
-		ProjectileAspect(28, 156, 16, 28, 0x0103),   /* Explosion Fireball */
-		ProjectileAspect(29, 156, 16, 11, 0x0103),   /* Explosion Default */
-		ProjectileAspect(30, 156, 16, 28, 0x0103),   /* Explosion Slime */
+		ProjectileAspect(0, 0, 32, 11, 0x0011), /* Arrow */
+		ProjectileAspect(3, 18, 16, 11, 0x0011), /* Dagger */
+		ProjectileAspect(6, 36, 24, 47, 0x0010), /* Axe - Executioner */
+		ProjectileAspect(9, 54, 32, 15, 0x0112), /* Explosion Lightning Bolt */
+		ProjectileAspect(11, 54, 32, 12, 0x0011), /* Slayer */
+		ProjectileAspect(14, 72, 24, 47, 0x0010), /* Stone Club */
+		ProjectileAspect(17, 90, 24, 47, 0x0010), /* Club */
+		ProjectileAspect(20, 108, 16, 11, 0x0011), /* Poison Dart */
+		ProjectileAspect(23, 126, 48, 18, 0x0011), /* Storm - Side Splitter - Diamond Edge - Falchion - Ra Blade - Rapier - Biter - Samurai Sword - Sword - Dragon Fang */
+		ProjectileAspect(26, 144, 8, 15, 0x0012), /* Throwing Star */
+		ProjectileAspect(28, 156, 16, 28, 0x0103), /* Explosion Fireball */
+		ProjectileAspect(29, 156, 16, 11, 0x0103), /* Explosion Default */
+		ProjectileAspect(30, 156, 16, 28, 0x0103), /* Explosion Slime */
 		ProjectileAspect(31, 156, 16, 24, 0x0103) /* Explosion Poison Bolt Poison Cloud */
 	};
 
 	/* Atari ST: { 0x003, 0x055, 0x773, 0x420, 0x774, 0x000, 0x040, 0x500, 0x642, 0x775, 0x742, 0x760, 0x750, 0x000, 0x310, 0x776 }, RGB colors are different */
-	static uint16 palCredits[16] = {0x006, 0x0AA, 0xFF6, 0x840, 0xFF8, 0x000, 0x080, 0xA00, 0xC84, 0xFFA, 0xF84, 0xFC0, 0xFA0, 0x000, 0x620, 0xFFC}; // @ G0019_aui_Graphic562_Palette_Credits
+	static uint16 palCredits[16] = { 0x006, 0x0AA, 0xFF6, 0x840, 0xFF8, 0x000, 0x080, 0xA00, 0xC84, 0xFFA, 0xF84, 0xFC0, 0xFA0, 0x000, 0x620, 0xFFC }; // @ G0019_aui_Graphic562_Palette_Credits
 	static uint16 palDungeonView[6][16] = { // @ G0021_aaui_Graphic562_Palette_DungeonView
-		/* Atari ST: { 0x000, 0x333, 0x444, 0x310, 0x066, 0x420, 0x040, 0x060, 0x700, 0x750, 0x643, 0x770, 0x222, 0x555, 0x007, 0x777 }, RGB colors are different */
-		{ 0x000, 0x666, 0x888, 0x620, 0x0CC, 0x840, 0x080, 0x0C0, 0xF00, 0xFA0, 0xC86, 0xFF0, 0x444, 0xAAA, 0x00F, 0xFFF },
-		/* Atari ST: { 0x000, 0x222, 0x333, 0x310, 0x066, 0x410, 0x030, 0x050, 0x600, 0x640, 0x532, 0x760, 0x111, 0x444, 0x006, 0x666 }, RGB colors are different */
-		{ 0x000, 0x444, 0x666, 0x620, 0x0CC, 0x820, 0x060, 0x0A0, 0xC00, 0x000, 0x000, 0xFC0, 0x222, 0x888, 0x00C, 0xCCC },
-		/* Atari ST: { 0x000, 0x111, 0x222, 0x210, 0x066, 0x310, 0x020, 0x040, 0x500, 0x530, 0x421, 0x750, 0x000, 0x333, 0x005, 0x555 }, RGB colors are different */
-		{ 0x000, 0x222, 0x444, 0x420, 0x0CC, 0x620, 0x040, 0x080, 0xA00, 0x000, 0x000, 0xFA0, 0x000, 0x666, 0x00A, 0xAAA },
-		/* Atari ST: { 0x000, 0x000, 0x111, 0x100, 0x066, 0x210, 0x010, 0x030, 0x400, 0x420, 0x310, 0x640, 0x000, 0x222, 0x004, 0x444 }, RGB colors are different */
-		{ 0x000, 0x000, 0x222, 0x200, 0x0CC, 0x420, 0x020, 0x060, 0x800, 0x000, 0x000, 0xC80, 0x000, 0x444, 0x008, 0x888 },
-		/* Atari ST: { 0x000, 0x000, 0x000, 0x000, 0x066, 0x100, 0x000, 0x020, 0x300, 0x310, 0x200, 0x530, 0x000, 0x111, 0x003, 0x333 }, RGB colors are different */
-		{ 0x000, 0x000, 0x000, 0x000, 0x0CC, 0x200, 0x000, 0x040, 0x600, 0x000, 0x000, 0xA60, 0x000, 0x222, 0x006, 0x666 },
-		/* Atari ST: { 0x000, 0x000, 0x000, 0x000, 0x066, 0x000, 0x000, 0x010, 0x200, 0x200, 0x100, 0x320, 0x000, 0x000, 0x002, 0x222 }, RGB colors are different */
-		{ 0x000, 0x000, 0x000, 0x000, 0x0CC, 0x000, 0x000, 0x020, 0x400, 0x000, 0x000, 0x640, 0x000, 0x000, 0x004, 0x444 }
+		                                      /* Atari ST: { 0x000, 0x333, 0x444, 0x310, 0x066, 0x420, 0x040, 0x060, 0x700, 0x750, 0x643, 0x770, 0x222, 0x555, 0x007, 0x777 }, RGB colors are different */
+		                                      { 0x000, 0x666, 0x888, 0x620, 0x0CC, 0x840, 0x080, 0x0C0, 0xF00, 0xFA0, 0xC86, 0xFF0, 0x444, 0xAAA, 0x00F, 0xFFF },
+		                                      /* Atari ST: { 0x000, 0x222, 0x333, 0x310, 0x066, 0x410, 0x030, 0x050, 0x600, 0x640, 0x532, 0x760, 0x111, 0x444, 0x006, 0x666 }, RGB colors are different */
+		                                      { 0x000, 0x444, 0x666, 0x620, 0x0CC, 0x820, 0x060, 0x0A0, 0xC00, 0x000, 0x000, 0xFC0, 0x222, 0x888, 0x00C, 0xCCC },
+		                                      /* Atari ST: { 0x000, 0x111, 0x222, 0x210, 0x066, 0x310, 0x020, 0x040, 0x500, 0x530, 0x421, 0x750, 0x000, 0x333, 0x005, 0x555 }, RGB colors are different */
+		                                      { 0x000, 0x222, 0x444, 0x420, 0x0CC, 0x620, 0x040, 0x080, 0xA00, 0x000, 0x000, 0xFA0, 0x000, 0x666, 0x00A, 0xAAA },
+		                                      /* Atari ST: { 0x000, 0x000, 0x111, 0x100, 0x066, 0x210, 0x010, 0x030, 0x400, 0x420, 0x310, 0x640, 0x000, 0x222, 0x004, 0x444 }, RGB colors are different */
+		                                      { 0x000, 0x000, 0x222, 0x200, 0x0CC, 0x420, 0x020, 0x060, 0x800, 0x000, 0x000, 0xC80, 0x000, 0x444, 0x008, 0x888 },
+		                                      /* Atari ST: { 0x000, 0x000, 0x000, 0x000, 0x066, 0x100, 0x000, 0x020, 0x300, 0x310, 0x200, 0x530, 0x000, 0x111, 0x003, 0x333 }, RGB colors are different */
+		                                      { 0x000, 0x000, 0x000, 0x000, 0x0CC, 0x200, 0x000, 0x040, 0x600, 0x000, 0x000, 0xA60, 0x000, 0x222, 0x006, 0x666 },
+		                                      /* Atari ST: { 0x000, 0x000, 0x000, 0x000, 0x066, 0x000, 0x000, 0x010, 0x200, 0x200, 0x100, 0x320, 0x000, 0x000, 0x002, 0x222 }, RGB colors are different */
+		                                      { 0x000, 0x000, 0x000, 0x000, 0x0CC, 0x000, 0x000, 0x020, 0x400, 0x000, 0x000, 0x640, 0x000, 0x000, 0x004, 0x444 }
 	};
 
-	static byte palChangesCreatureD3[16] = {0, 120, 10, 30, 40, 30, 0, 60, 30, 0, 0, 110, 0, 20, 0, 130}; // @ G0221_auc_Graphic558_PaletteChanges_Creature_D3
-	static byte palChangesCreatureD2[16] = {0, 10, 20, 30, 40, 30, 60, 70, 50, 0, 0, 110, 120, 130, 140, 150}; // @ G0222_auc_Graphic558_PaletteChanges_Creature_D2
-	static byte palChangesNoChanges[16] = {0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150}; // @ G0017_auc_Graphic562_PaletteChanges_NoChanges
-	static byte palChangesFloorOrnD3[16] = {0, 120, 10, 30, 40, 30, 0, 60, 30, 90, 100, 110, 0, 20, 140, 130}; // @ G0213_auc_Graphic558_PaletteChanges_FloorOrnament_D3
-	static byte palChangesFloorOrnD2[16] = {0, 10, 20, 30, 40, 30, 60, 70, 50, 90, 100, 110, 120, 130, 140, 150}; // @ G0214_auc_Graphic558_PaletteChanges_FloorOrnament_D2
+	static byte palChangesCreatureD3[16] = { 0, 120, 10, 30, 40, 30, 0, 60, 30, 0, 0, 110, 0, 20, 0, 130 }; // @ G0221_auc_Graphic558_PaletteChanges_Creature_D3
+	static byte palChangesCreatureD2[16] = { 0, 10, 20, 30, 40, 30, 60, 70, 50, 0, 0, 110, 120, 130, 140, 150 }; // @ G0222_auc_Graphic558_PaletteChanges_Creature_D2
+	static byte palChangesNoChanges[16] = { 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150 }; // @ G0017_auc_Graphic562_PaletteChanges_NoChanges
+	static byte palChangesFloorOrnD3[16] = { 0, 120, 10, 30, 40, 30, 0, 60, 30, 90, 100, 110, 0, 20, 140, 130 }; // @ G0213_auc_Graphic558_PaletteChanges_FloorOrnament_D3
+	static byte palChangesFloorOrnD2[16] = { 0, 10, 20, 30, 40, 30, 60, 70, 50, 90, 100, 110, 120, 130, 140, 150 }; // @ G0214_auc_Graphic558_PaletteChanges_FloorOrnament_D2
 
 	static byte const wallOrnamentCoordSets[8][13][6] = { // @ G0205_aaauc_Graphic558_WallOrnamentCoordinateSets
-			/* { X1, X2, Y1, Y2, ByteWidth, Height } */
-			{
-					{80,  83, 41,  45,  8,   5},   /* D3L */
-					{140, 143, 41,  45,  8,   5},  /* D3R */
-					{16,  29, 39,  50,  8,  12},   /* D3L */
-					{107, 120, 39,  50,  8,  12},  /* D3C */
-					{187, 200, 39,  50,  8,  12},  /* D3R */
-					{67,  77, 40,  49,  8,  10},   /* D2L */
-					{146, 156, 40,  49,  8,  10},  /* D2R */
-					{0,  17, 38,  55, 16,  18},    /* D2L */
-					{102, 123, 38,  55, 16,  18},  /* D2C */
-					{206, 223, 38,  55, 16,  18},  /* D2R */
-					{48,  63, 38,  56,  8,  19},   /* D1L */
-					{160, 175, 38,  56,  8,  19},  /* D1R */
-					{96, 127, 36,  63, 16,  28}    /* D1C */
-			},
-			{
-					{74,  82, 41,  60,  8,  20},   /* D3L */
-					{141, 149, 41,  60,  8,  20},  /* D3R */
-					{1,  47, 37,  63, 24,  27},    /* D3L */
-					{88, 134, 37,  63, 24,  27},   /* D3C */
-					{171, 217, 37,  63, 24,  27},  /* D3R */
-					{61,  76, 38,  67,  8,  30},   /* D2L */
-					{147, 162, 38,  67,  8,  30},  /* D2R */
-					{0,  43, 37,  73, 32,  37},    /* D2L */
-					{80, 143, 37,  73, 32,  37},   /* D2C */
-					{180, 223, 37,  73, 32,  37},  /* D2R */
-					{32,  63, 36,  83, 16,  48},   /* D1L */
-					{160, 191, 36,  83, 16,  48},  /* D1R */
-					{64, 159, 36,  91, 48,  56}    /* D1C */
-			},
-			{
-					{80,  83, 66,  70,  8,   5},   /* D3L */
-					{140, 143, 66,  70,  8,   5},  /* D3R */
-					{16,  29, 64,  75,  8,  12},   /* D3L */
-					{106, 119, 64,  75,  8,  12},  /* D3C */
-					{187, 200, 64,  75,  8,  12},  /* D3R */
-					{67,  77, 74,  83,  8,  10},   /* D2L */
-					{146, 156, 74,  83,  8,  10},  /* D2R */
-					{0,  17, 73,  90, 16,  18},    /* D2L */
-					{100, 121, 73,  90, 16,  18},  /* D2C */
-					{206, 223, 73,  90, 16,  18},  /* D2R */
-					{48,  63, 84, 102,  8,  19},   /* D1L */
-					{160, 175, 84, 102,  8,  19},  /* D1R */
-					{96, 127, 92, 119, 16,  28}    /* D1C */
-			},
-			{
-					{80,  83, 49,  53,  8,   5},   /* D3L */
-					{140, 143, 49,  53,  8,   5},  /* D3R */
-					{16,  29, 50,  61,  8,  12},   /* D3L */
-					{106, 119, 50,  61,  8,  12},  /* D3C */
-					{187, 200, 50,  61,  8,  12},  /* D3R */
-					{67,  77, 53,  62,  8,  10},   /* D2L */
-					{146, 156, 53,  62,  8,  10},  /* D2R */
-					{0,  17, 55,  72, 16,  18},    /* D2L */
-					{100, 121, 55,  72, 16,  18},  /* D2C */
-					{206, 223, 55,  72, 16,  18},  /* D2R */
-					{48,  63, 57,  75,  8,  19},   /* D1L */
-					{160, 175, 57,  75,  8,  19},  /* D1R */
-					{96, 127, 64,  91, 16,  28}    /* D1C */
-			},
-			{
-					{75,  90, 40,  44,  8,   5},   /* D3L */
-					{133, 148, 40,  44,  8,   5},  /* D3R */
-					{1,  48, 44,  49, 24,   6},    /* D3L */
-					{88, 135, 44,  49, 24,   6},   /* D3C */
-					{171, 218, 44,  49, 24,   6},  /* D3R */
-					{60,  77, 40,  46, 16,   7},   /* D2L */
-					{146, 163, 40,  46, 16,   7},  /* D2R */
-					{0,  35, 43,  50, 32,   8},    /* D2L */
-					{80, 143, 43,  50, 32,   8},   /* D2C */
-					{184, 223, 43,  50, 32,   8},  /* D2R */
-					{32,  63, 41,  52, 16,  12},   /* D1L */
-					{160, 191, 41,  52, 16,  12},  /* D1R */
-					{64, 159, 41,  52, 48,  12}    /* D1C */
-			},
-			{
-					{78,  85, 36,  51,  8,  16},   /* D3L */
-					{138, 145, 36,  51,  8,  16},  /* D3R */
-					{10,  41, 34,  53, 16,  20},   /* D3L */
-					{98, 129, 34,  53, 16,  20},   /* D3C */
-					{179, 210, 34,  53, 16,  20},  /* D3R */
-					{66,  75, 34,  56,  8,  23},   /* D2L */
-					{148, 157, 34,  56,  8,  23},  /* D2R */
-					{0,  26, 33,  61, 24,  29},    /* D2L */
-					{91, 133, 33,  61, 24,  29},   /* D2C */
-					{194, 223, 33,  61, 24,  29},  /* D2R */
-					{41,  56, 31,  65,  8,  35},   /* D1L */
-					{167, 182, 31,  65,  8,  35},  /* D1R */
-					{80, 143, 29,  71, 32,  43}    /* D1C */
-			},
-			{
-					{75,  82, 25,  75,  8,  51},   /* D3L */
-					{142, 149, 25,  75,  8,  51},  /* D3R */
-					{12,  60, 25,  75, 32,  51},   /* D3L */
-					{88, 136, 25,  75, 32,  51},   /* D3C */
-					{163, 211, 25,  75, 32,  51},  /* D3R */
-					{64,  73, 20,  90,  8,  71},   /* D2L */
-					{150, 159, 20,  90,  8,  71},  /* D2R */
-					{0,  38, 20,  90, 32,  71},    /* D2L */
-					{82, 142, 20,  90, 32,  71},   /* D2C */
-					{184, 223, 20,  90, 32,  71},  /* D2R */
-					{41,  56,  9, 119,  8, 111},   /* D1L */
-					{169, 184,  9, 119,  8, 111},  /* D1R */
-					{64, 159,  9, 119, 48, 111}    /* D1C */
-			},
-			{
-					{74,  85, 25,  75,  8,  51},   /* D3L */
-					{137, 149, 25,  75,  8,  51},  /* D3R */
-					{0,  75, 25,  75, 40,  51},    /* D3L Atari ST: {   0,  83, 25,  75, 48,  51 } */
-					{74, 149, 25,  75, 40,  51},   /* D3C Atari ST: {  74, 149, 25,  75, 48,  51 } */
-					{148, 223, 25,  75, 40,  51},  /* D3R Atari ST: { 139, 223, 25,  75, 48,  51 } */
-					{60,  77, 20,  90, 16,  71},   /* D2L */
-					{146, 163, 20,  90, 16,  71},  /* D2R */
-					{0,  74, 20,  90, 56,  71},    /* D2L */
-					{60, 163, 20,  90, 56,  71},   /* D2C */
-					{149, 223, 20,  90, 56,  71},  /* D2R */
-					{32,  63,  9, 119, 16, 111},   /* D1L */
-					{160, 191,  9, 119, 16, 111},  /* D1R */
-					{32, 191,  9, 119, 80, 111}    /* D1C */
-			}
+		                                                    /* { X1, X2, Y1, Y2, ByteWidth, Height } */
+		                                                    {
+		                                                      { 80, 83, 41, 45, 8, 5 }, /* D3L */
+		                                                      { 140, 143, 41, 45, 8, 5 }, /* D3R */
+		                                                      { 16, 29, 39, 50, 8, 12 }, /* D3L */
+		                                                      { 107, 120, 39, 50, 8, 12 }, /* D3C */
+		                                                      { 187, 200, 39, 50, 8, 12 }, /* D3R */
+		                                                      { 67, 77, 40, 49, 8, 10 }, /* D2L */
+		                                                      { 146, 156, 40, 49, 8, 10 }, /* D2R */
+		                                                      { 0, 17, 38, 55, 16, 18 }, /* D2L */
+		                                                      { 102, 123, 38, 55, 16, 18 }, /* D2C */
+		                                                      { 206, 223, 38, 55, 16, 18 }, /* D2R */
+		                                                      { 48, 63, 38, 56, 8, 19 }, /* D1L */
+		                                                      { 160, 175, 38, 56, 8, 19 }, /* D1R */
+		                                                      { 96, 127, 36, 63, 16, 28 } /* D1C */
+		                                                    },
+		                                                    {
+		                                                      { 74, 82, 41, 60, 8, 20 }, /* D3L */
+		                                                      { 141, 149, 41, 60, 8, 20 }, /* D3R */
+		                                                      { 1, 47, 37, 63, 24, 27 }, /* D3L */
+		                                                      { 88, 134, 37, 63, 24, 27 }, /* D3C */
+		                                                      { 171, 217, 37, 63, 24, 27 }, /* D3R */
+		                                                      { 61, 76, 38, 67, 8, 30 }, /* D2L */
+		                                                      { 147, 162, 38, 67, 8, 30 }, /* D2R */
+		                                                      { 0, 43, 37, 73, 32, 37 }, /* D2L */
+		                                                      { 80, 143, 37, 73, 32, 37 }, /* D2C */
+		                                                      { 180, 223, 37, 73, 32, 37 }, /* D2R */
+		                                                      { 32, 63, 36, 83, 16, 48 }, /* D1L */
+		                                                      { 160, 191, 36, 83, 16, 48 }, /* D1R */
+		                                                      { 64, 159, 36, 91, 48, 56 } /* D1C */
+		                                                    },
+		                                                    {
+		                                                      { 80, 83, 66, 70, 8, 5 }, /* D3L */
+		                                                      { 140, 143, 66, 70, 8, 5 }, /* D3R */
+		                                                      { 16, 29, 64, 75, 8, 12 }, /* D3L */
+		                                                      { 106, 119, 64, 75, 8, 12 }, /* D3C */
+		                                                      { 187, 200, 64, 75, 8, 12 }, /* D3R */
+		                                                      { 67, 77, 74, 83, 8, 10 }, /* D2L */
+		                                                      { 146, 156, 74, 83, 8, 10 }, /* D2R */
+		                                                      { 0, 17, 73, 90, 16, 18 }, /* D2L */
+		                                                      { 100, 121, 73, 90, 16, 18 }, /* D2C */
+		                                                      { 206, 223, 73, 90, 16, 18 }, /* D2R */
+		                                                      { 48, 63, 84, 102, 8, 19 }, /* D1L */
+		                                                      { 160, 175, 84, 102, 8, 19 }, /* D1R */
+		                                                      { 96, 127, 92, 119, 16, 28 } /* D1C */
+		                                                    },
+		                                                    {
+		                                                      { 80, 83, 49, 53, 8, 5 }, /* D3L */
+		                                                      { 140, 143, 49, 53, 8, 5 }, /* D3R */
+		                                                      { 16, 29, 50, 61, 8, 12 }, /* D3L */
+		                                                      { 106, 119, 50, 61, 8, 12 }, /* D3C */
+		                                                      { 187, 200, 50, 61, 8, 12 }, /* D3R */
+		                                                      { 67, 77, 53, 62, 8, 10 }, /* D2L */
+		                                                      { 146, 156, 53, 62, 8, 10 }, /* D2R */
+		                                                      { 0, 17, 55, 72, 16, 18 }, /* D2L */
+		                                                      { 100, 121, 55, 72, 16, 18 }, /* D2C */
+		                                                      { 206, 223, 55, 72, 16, 18 }, /* D2R */
+		                                                      { 48, 63, 57, 75, 8, 19 }, /* D1L */
+		                                                      { 160, 175, 57, 75, 8, 19 }, /* D1R */
+		                                                      { 96, 127, 64, 91, 16, 28 } /* D1C */
+		                                                    },
+		                                                    {
+		                                                      { 75, 90, 40, 44, 8, 5 }, /* D3L */
+		                                                      { 133, 148, 40, 44, 8, 5 }, /* D3R */
+		                                                      { 1, 48, 44, 49, 24, 6 }, /* D3L */
+		                                                      { 88, 135, 44, 49, 24, 6 }, /* D3C */
+		                                                      { 171, 218, 44, 49, 24, 6 }, /* D3R */
+		                                                      { 60, 77, 40, 46, 16, 7 }, /* D2L */
+		                                                      { 146, 163, 40, 46, 16, 7 }, /* D2R */
+		                                                      { 0, 35, 43, 50, 32, 8 }, /* D2L */
+		                                                      { 80, 143, 43, 50, 32, 8 }, /* D2C */
+		                                                      { 184, 223, 43, 50, 32, 8 }, /* D2R */
+		                                                      { 32, 63, 41, 52, 16, 12 }, /* D1L */
+		                                                      { 160, 191, 41, 52, 16, 12 }, /* D1R */
+		                                                      { 64, 159, 41, 52, 48, 12 } /* D1C */
+		                                                    },
+		                                                    {
+		                                                      { 78, 85, 36, 51, 8, 16 }, /* D3L */
+		                                                      { 138, 145, 36, 51, 8, 16 }, /* D3R */
+		                                                      { 10, 41, 34, 53, 16, 20 }, /* D3L */
+		                                                      { 98, 129, 34, 53, 16, 20 }, /* D3C */
+		                                                      { 179, 210, 34, 53, 16, 20 }, /* D3R */
+		                                                      { 66, 75, 34, 56, 8, 23 }, /* D2L */
+		                                                      { 148, 157, 34, 56, 8, 23 }, /* D2R */
+		                                                      { 0, 26, 33, 61, 24, 29 }, /* D2L */
+		                                                      { 91, 133, 33, 61, 24, 29 }, /* D2C */
+		                                                      { 194, 223, 33, 61, 24, 29 }, /* D2R */
+		                                                      { 41, 56, 31, 65, 8, 35 }, /* D1L */
+		                                                      { 167, 182, 31, 65, 8, 35 }, /* D1R */
+		                                                      { 80, 143, 29, 71, 32, 43 } /* D1C */
+		                                                    },
+		                                                    {
+		                                                      { 75, 82, 25, 75, 8, 51 }, /* D3L */
+		                                                      { 142, 149, 25, 75, 8, 51 }, /* D3R */
+		                                                      { 12, 60, 25, 75, 32, 51 }, /* D3L */
+		                                                      { 88, 136, 25, 75, 32, 51 }, /* D3C */
+		                                                      { 163, 211, 25, 75, 32, 51 }, /* D3R */
+		                                                      { 64, 73, 20, 90, 8, 71 }, /* D2L */
+		                                                      { 150, 159, 20, 90, 8, 71 }, /* D2R */
+		                                                      { 0, 38, 20, 90, 32, 71 }, /* D2L */
+		                                                      { 82, 142, 20, 90, 32, 71 }, /* D2C */
+		                                                      { 184, 223, 20, 90, 32, 71 }, /* D2R */
+		                                                      { 41, 56, 9, 119, 8, 111 }, /* D1L */
+		                                                      { 169, 184, 9, 119, 8, 111 }, /* D1R */
+		                                                      { 64, 159, 9, 119, 48, 111 } /* D1C */
+		                                                    },
+		                                                    {
+		                                                      { 74, 85, 25, 75, 8, 51 }, /* D3L */
+		                                                      { 137, 149, 25, 75, 8, 51 }, /* D3R */
+		                                                      { 0, 75, 25, 75, 40, 51 }, /* D3L Atari ST: {   0,  83, 25,  75, 48,  51 } */
+		                                                      { 74, 149, 25, 75, 40, 51 }, /* D3C Atari ST: {  74, 149, 25,  75, 48,  51 } */
+		                                                      { 148, 223, 25, 75, 40, 51 }, /* D3R Atari ST: { 139, 223, 25,  75, 48,  51 } */
+		                                                      { 60, 77, 20, 90, 16, 71 }, /* D2L */
+		                                                      { 146, 163, 20, 90, 16, 71 }, /* D2R */
+		                                                      { 0, 74, 20, 90, 56, 71 }, /* D2L */
+		                                                      { 60, 163, 20, 90, 56, 71 }, /* D2C */
+		                                                      { 149, 223, 20, 90, 56, 71 }, /* D2R */
+		                                                      { 32, 63, 9, 119, 16, 111 }, /* D1L */
+		                                                      { 160, 191, 9, 119, 16, 111 }, /* D1R */
+		                                                      { 32, 191, 9, 119, 80, 111 } /* D1C */
+		                                                    }
 	};
 
 	static uint16 const doorOrnCoordSets[4][3][6] = { // @ G0207_aaauc_Graphic558_DoorOrnamentCoordinateSets
-			/* { X1, X2, Y1, Y2, ByteWidth, Height } */
-			{
-					{17, 31,  8, 17,  8, 10},   /* D3LCR */
-					{22, 42, 11, 23, 16, 13},   /* D2LCR */
-					{32, 63, 13, 31, 16, 19}    /* D1LCR */
-			},
-			{
-					{0, 47,  0, 40, 24, 41},    /* D3LCR */
-					{0, 63,  0, 60, 32, 61},    /* D2LCR */
-					{0, 95,  0, 87, 48, 88}     /* D1LCR */
-			},
-			{
-					{17, 31, 15, 24,  8, 10},   /* D3LCR */
-					{22, 42, 22, 34, 16, 13},   /* D2LCR */
-					{32, 63, 31, 49, 16, 19}    /* D1LCR */
-			},
-			{
-					{23, 35, 31, 39,  8,  9},   /* D3LCR */
-					{30, 48, 41, 52, 16, 12},   /* D2LCR */
-					{44, 75, 61, 79, 16, 19}    /* D1LCR */
-			}
+		                                                /* { X1, X2, Y1, Y2, ByteWidth, Height } */
+		                                                {
+		                                                  { 17, 31, 8, 17, 8, 10 }, /* D3LCR */
+		                                                  { 22, 42, 11, 23, 16, 13 }, /* D2LCR */
+		                                                  { 32, 63, 13, 31, 16, 19 } /* D1LCR */
+		                                                },
+		                                                {
+		                                                  { 0, 47, 0, 40, 24, 41 }, /* D3LCR */
+		                                                  { 0, 63, 0, 60, 32, 61 }, /* D2LCR */
+		                                                  { 0, 95, 0, 87, 48, 88 } /* D1LCR */
+		                                                },
+		                                                {
+		                                                  { 17, 31, 15, 24, 8, 10 }, /* D3LCR */
+		                                                  { 22, 42, 22, 34, 16, 13 }, /* D2LCR */
+		                                                  { 32, 63, 31, 49, 16, 19 } /* D1LCR */
+		                                                },
+		                                                {
+		                                                  { 23, 35, 31, 39, 8, 9 }, /* D3LCR */
+		                                                  { 30, 48, 41, 52, 16, 12 }, /* D2LCR */
+		                                                  { 44, 75, 61, 79, 16, 19 } /* D1LCR */
+		                                                }
 	};
 
-	static byte const doorButtonCoordSet[1] = {0}; // @ G0197_auc_Graphic558_DoorButtonCoordinateSet
+	static byte const doorButtonCoordSet[1] = { 0 }; // @ G0197_auc_Graphic558_DoorButtonCoordinateSet
 	static uint16 const doorButtonCoordSets[1][4][6] = { // @ G0208_aaauc_Graphic558_DoorButtonCoordinateSets
-			// X1, X2, Y1, Y2, ByteWidth, Height
-			{ {199, 204, 41, 44, 8, 4},   /* D3R */
-					{136, 141, 41, 44, 8, 4},   /* D3C */
-					{144, 155, 42, 47, 8, 6},   /* D2C */
-					{160, 175, 44, 52, 8, 9}    /* D1C */
-			}
+		                                                   // X1, X2, Y1, Y2, ByteWidth, Height
+		                                                   {
+		                                                     { 199, 204, 41, 44, 8, 4 }, /* D3R */
+		                                                     { 136, 141, 41, 44, 8, 4 }, /* D3C */
+		                                                     { 144, 155, 42, 47, 8, 6 }, /* D2C */
+		                                                     { 160, 175, 44, 52, 8, 9 } /* D1C */
+		                                                   }
 	};
 
 	_doorButtonCoordSet[0] = doorButtonCoordSet[0];
 
-	for(int a = 0; a < 1; ++a)
-		for(int b = 0; b < 4; ++b)
-			for(int c = 0; c < 6; ++c)
+	for (int a = 0; a < 1; ++a)
+		for (int b = 0; b < 4; ++b)
+			for (int c = 0; c < 6; ++c)
 				_doorButtonCoordSets[a][b][c] = doorButtonCoordSets[a][b][c];
 
-	for(int a = 0; a < 8; ++a)
-		for(int b = 0; b < 13; ++b)
-			for(int c = 0; c < 6; ++c)
+	for (int a = 0; a < 8; ++a)
+		for (int b = 0; b < 13; ++b)
+			for (int c = 0; c < 6; ++c)
 				_wallOrnamentCoordSets[a][b][c] = wallOrnamentCoordSets[a][b][c];
 
-    for(int a = 0; a < 4; ++a)
-		for(int b = 0; b < 3; ++b)
-			for(int c = 0; c < 6; ++c)
+	for (int a = 0; a < 4; ++a)
+		for (int b = 0; b < 3; ++b)
+			for (int c = 0; c < 6; ++c)
 				_doorOrnCoordSets[a][b][c] = doorOrnCoordSets[a][b][c];
 
 	_frameWallD3R2 = Frame(208, 223, 25, 73, 8, 49, 0, 0); // @ G0712_s_Graphic558_Frame_Wall_D3R2
@@ -603,16 +623,16 @@ void DisplayMan::initConstants() {
 		_projectileAspect[i] = projectileAspect[i];
 
 	_doorFrameD1C = new DoorFrames( // @ G0186_s_Graphic558_Frames_Door_D1C
-	   Frame(64, 159, 17, 102, 48, 88, 0, 0),	 /* Closed Or Destroyed */
-	   Frame(64, 159, 17, 38, 48, 88, 0, 66),	 /* Vertical Closed one fourth */
-	   Frame(64, 159, 17, 60, 48, 88, 0, 44),	 /* Vertical Closed half */
-	   Frame(64, 159, 17, 82, 48, 88, 0, 22),	 /* Vertical Closed three fourth */
-	   Frame(64, 75, 17, 102, 48, 88, 36, 0),	 /* Left Horizontal Closed one fourth */
-	   Frame(64, 87, 17, 102, 48, 88, 24, 0),	 /* Left Horizontal Closed half */
-	   Frame(64, 99, 17, 102, 48, 88, 12, 0),	 /* Left Horizontal Closed three fourth */
-	   Frame(148, 159, 17, 102, 48, 88, 48, 0), /* Right Horizontal Closed one fourth */
-	   Frame(136, 159, 17, 102, 48, 88, 48, 0), /* Right Horizontal Closed half */
-	   Frame(124, 159, 17, 102, 48, 88, 48, 0)	 /* Right Horizontal Closed three fourth */
+	  Frame(64, 159, 17, 102, 48, 88, 0, 0), /* Closed Or Destroyed */
+	  Frame(64, 159, 17, 38, 48, 88, 0, 66), /* Vertical Closed one fourth */
+	  Frame(64, 159, 17, 60, 48, 88, 0, 44), /* Vertical Closed half */
+	  Frame(64, 159, 17, 82, 48, 88, 0, 22), /* Vertical Closed three fourth */
+	  Frame(64, 75, 17, 102, 48, 88, 36, 0), /* Left Horizontal Closed one fourth */
+	  Frame(64, 87, 17, 102, 48, 88, 24, 0), /* Left Horizontal Closed half */
+	  Frame(64, 99, 17, 102, 48, 88, 12, 0), /* Left Horizontal Closed three fourth */
+	  Frame(148, 159, 17, 102, 48, 88, 48, 0), /* Right Horizontal Closed one fourth */
+	  Frame(136, 159, 17, 102, 48, 88, 48, 0), /* Right Horizontal Closed half */
+	  Frame(124, 159, 17, 102, 48, 88, 48, 0) /* Right Horizontal Closed three fourth */
 	);
 
 	_boxThievesEyeViewPortVisibleArea = Box(64, 159, 19, 113); // @ G0106_s_Graphic558_Box_ThievesEye_ViewportVisibleArea
@@ -681,7 +701,6 @@ void DisplayMan::setUpScreens(uint16 width, uint16 height) {
 	_tmpBitmap = new byte[_screenWidth * _screenHeight];
 }
 
-
 void DisplayMan::initializeGraphicData() {
 	_bitmapCeiling = new byte[224 * 29];
 	_bitmapFloor = new byte[224 * 70];
@@ -703,8 +722,8 @@ void DisplayMan::initializeGraphicData() {
 	_bitmapViewport = new byte[224 * 136]();
 
 	if (!_derivedBitmapByteCount) {
-        _derivedBitmapByteCount = new uint16[k730_DerivedBitmapMaximumCount];
-    }
+		_derivedBitmapByteCount = new uint16[k730_DerivedBitmapMaximumCount];
+	}
 	if (!_derivedBitmaps) {
 		_derivedBitmaps = new byte *[k730_DerivedBitmapMaximumCount];
 		for (uint16 i = 0; i < k730_DerivedBitmapMaximumCount; ++i)
@@ -919,7 +938,7 @@ void DisplayMan::allocateFlippedWallBitmaps() {
 void DisplayMan::drawDoorBitmap(Frame *frame) {
 	if (frame->_srcByteWidth) {
 		blitToBitmap(_tmpBitmap, _bitmapViewport, frame->_box, frame->_srcX, frame->_srcY,
-						  frame->_srcByteWidth, k112_byteWidthViewport, kDMColorFlesh, frame->_srcHeight, k136_heightViewport);
+		             frame->_srcByteWidth, k112_byteWidthViewport, kDMColorFlesh, frame->_srcHeight, k136_heightViewport);
 	}
 }
 
@@ -927,7 +946,7 @@ void DisplayMan::drawDoorFrameBitmapFlippedHorizontally(byte *bitmap, Frame *fra
 	if (frame->_srcByteWidth) {
 		flipBitmapHorizontal(bitmap, frame->_srcByteWidth, frame->_srcHeight);
 		blitToBitmap(bitmap, _bitmapViewport, frame->_box, frame->_srcX, frame->_srcY,
-						  frame->_srcByteWidth, k112_byteWidthViewport, kDMColorFlesh, frame->_srcHeight, k136_heightViewport);
+		             frame->_srcByteWidth, k112_byteWidthViewport, kDMColorFlesh, frame->_srcHeight, k136_heightViewport);
 	}
 }
 
@@ -957,11 +976,11 @@ void DisplayMan::drawDoorButton(int16 doorButtonOrdinal, DoorButton doorButton) 
 				uint16 *coordSetBlueGoat = _doorButtonCoordSets[coordSet][kDMDoorButtonD1C];
 				byte *bitmapNative = getNativeBitmapOrGraphic(nativeBitmapIndex);
 				blitToBitmapShrinkWithPalChange(bitmapNative, getDerivedBitmap(doorButtonOrdinal),
-													 coordSetBlueGoat[4] << 1, coordSetBlueGoat[5],
-													 // modified code line
-													 coordSetRedEagle[4] << 1,
-													 coordSetRedEagle[5],
-													 (doorButton == kDMDoorButtonD2C) ? _palChangesDoorButtonAndWallOrnD2 : _palChangesDoorButtonAndWallOrnD3);
+				                                coordSetBlueGoat[4] << 1, coordSetBlueGoat[5],
+				                                // modified code line
+				                                coordSetRedEagle[4] << 1,
+				                                coordSetRedEagle[5],
+				                                (doorButton == kDMDoorButtonD2C) ? _palChangesDoorButtonAndWallOrnD2 : _palChangesDoorButtonAndWallOrnD3);
 
 				addDerivedBitmap(doorButtonOrdinal);
 			}
@@ -969,7 +988,7 @@ void DisplayMan::drawDoorButton(int16 doorButtonOrdinal, DoorButton doorButton) 
 		}
 		Box blitBox(coordSetRedEagle[0], coordSetRedEagle[1], coordSetRedEagle[2], coordSetRedEagle[3]);
 		blitToBitmap(bitmap, _bitmapViewport, blitBox, 0, 0,
-						  coordSetRedEagle[4], k112_byteWidthViewport, kDMColorFlesh, coordSetRedEagle[5], k136_heightViewport);
+		             coordSetRedEagle[4], k112_byteWidthViewport, kDMColorFlesh, coordSetRedEagle[5], k136_heightViewport);
 	}
 }
 
@@ -984,7 +1003,7 @@ void DisplayMan::viewportBlitToScreen() {
 	Box box(0, 223, 33, 168);
 
 	blitToBitmap(_bitmapViewport, _bitmapScreen, box, 0, 0, k112_byteWidthViewport, k160_byteWidthScreen, kDMColorNoTransparency,
-					  k136_heightViewport, k200_heightScreen);
+	             k136_heightViewport, k200_heightScreen);
 }
 
 void DisplayMan::loadIntoBitmap(uint16 index, byte *destBitmap) {
@@ -1012,7 +1031,7 @@ void DisplayMan::loadIntoBitmap(uint16 index, byte *destBitmap) {
 				destBitmap[k++] = nibble2;
 		} else if (nibble1 == 0xB) {
 			uint8 byte1 = data[nextByteIndex++];
-for (int j = 0; j < byte1 + 1; ++j, ++k)
+			for (int j = 0; j < byte1 + 1; ++j, ++k)
 				destBitmap[k] = destBitmap[k - width];
 			destBitmap[k++] = nibble2;
 		} else if (nibble1 == 0xF) {
@@ -1038,13 +1057,13 @@ for (int j = 0; j < byte1 + 1; ++j, ++k)
 }
 
 void DisplayMan::blitToBitmap(byte *srcBitmap, byte *destBitmap, const Box &box, uint16 srcX, uint16 srcY, uint16 srcByteWidth,
-								   uint16 destByteWidth, Color transparent, int16 srcHeight, int16 destHight) {
+                              uint16 destByteWidth, Color transparent, int16 srcHeight, int16 destHight) {
 	uint16 srcWidth = srcByteWidth * 2;
 	uint16 destWidth = destByteWidth * 2;
 	for (uint16 y = 0; y < box._rect.bottom + 1 - box._rect.top; ++y) { // + 1 for inclusive boundaries
 		for (uint16 x = 0; x < box._rect.right + 1 - box._rect.left; ++x) { // + 1 for inclusive boundaries
 			if (srcX + x < srcWidth && y + srcY < srcHeight
-				&& box._rect.left + x < destWidth && y + box._rect.top < destHight) {
+			    && box._rect.left + x < destWidth && y + box._rect.top < destHight) {
 				byte srcPixel = srcBitmap[srcWidth * (y + srcY) + srcX + x];
 				if (srcPixel != transparent)
 					destBitmap[destWidth * (y + box._rect.top) + box._rect.left + x] = srcPixel;
@@ -1064,9 +1083,9 @@ void DisplayMan::fillBoxBitmap(byte *destBitmap, Box &box, Color color, int16 by
 		memset(destBitmap + y * byteWidth * 2 + box._rect.left, color, sizeof(byte) * (box._rect.right - box._rect.left + 1)); // + 1 for inclusive boundaries
 }
 
-void DisplayMan::blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask, byte *tmp, Box& box,
-											   int16 lastUnitIndex, int16 firstUnitIndex, int16 destByteWidth, Color transparent,
-											   int16 xPos, int16 yPos, int16 destHeight, int16 height2) {
+void DisplayMan::blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask, byte *tmp, Box &box,
+                                               int16 lastUnitIndex, int16 firstUnitIndex, int16 destByteWidth, Color transparent,
+                                               int16 xPos, int16 yPos, int16 destHeight, int16 height2) {
 
 	// FIXME: does not produce the same effect as the original
 
@@ -1112,7 +1131,7 @@ void DisplayMan::flipBitmapVertical(byte *bitmap, uint16 byteWidth, uint16 heigh
 	delete[] tmp;
 }
 
-byte *DisplayMan::getExplosionBitmap(uint16 explosionAspIndex, uint16 scale, int16& returnByteWidth, int16& returnHeight) {
+byte *DisplayMan::getExplosionBitmap(uint16 explosionAspIndex, uint16 scale, int16 &returnByteWidth, int16 &returnHeight) {
 	ExplosionAspect *explAsp = &_explosionAspects[explosionAspIndex];
 	if (scale > 32)
 		scale = 32;
@@ -1128,7 +1147,7 @@ byte *DisplayMan::getExplosionBitmap(uint16 explosionAspIndex, uint16 scale, int
 		byte *nativeBitmap = getNativeBitmapOrGraphic(MIN(explosionAspIndex, (uint16)kDMExplosionAspectPoison) + kDMGraphicIdxFirstExplosion);
 		bitmap = getDerivedBitmap(derBitmapIndex);
 		blitToBitmapShrinkWithPalChange(nativeBitmap, bitmap, explAsp->_byteWidth, explAsp->_height, pixelWidth * 2, height,
-			(explosionAspIndex == kDMExplosionAspectSmoke) ? _palChangeSmoke : _palChangesNoChanges);
+		                                (explosionAspIndex == kDMExplosionAspectSmoke) ? _palChangeSmoke : _palChangesNoChanges);
 		addDerivedBitmap(derBitmapIndex);
 	}
 
@@ -1200,51 +1219,52 @@ void DisplayMan::copyBitmapAndFlipHorizontal(byte *srcBitmap, byte *destBitmap, 
 
 void DisplayMan::drawFloorOrnament(uint16 floorOrnOrdinal, ViewFloor viewFloorIndex) {
 	static byte g191_floorOrnNativeBitmapndexInc[9] = { // @ G0191_auc_Graphic558_FloorOrnamentNativeBitmapIndexIncrements
-		0,   /* D3L */
-		1,   /* D3C */
-		0,   /* D3R */
-		2,   /* D2L */
-		3,   /* D2C */
-		2,   /* D2R */
-		4,   /* D1L */
-		5,   /* D1C */
-		4};  /* D1R */
+		                                                  0, /* D3L */
+		                                                  1, /* D3C */
+		                                                  0, /* D3R */
+		                                                  2, /* D2L */
+		                                                  3, /* D2C */
+		                                                  2, /* D2R */
+		                                                  4, /* D1L */
+		                                                  5, /* D1C */
+		                                                  4
+	}; /* D1R */
 
 	static uint16 g206_floorOrnCoordSets[3][9][6] = { // @ G0206_aaauc_Graphic558_FloorOrnamentCoordinateSets
-		/* { X1, X2, Y1, Y2, ByteWidth, Height } */
-		{
-			{32,  79, 66,  71, 24,  6},   /* D3L */
-			{96, 127, 66,  71, 16,  6},   /* D3C */
-			{144, 191, 66,  71, 24,  6},  /* D3R */
-			{0,  63, 77,  87, 32, 11},    /* D2L */
-			{80, 143, 77,  87, 32, 11},   /* D2C */
-			{160, 223, 77,  87, 32, 11},  /* D2R */
-			{0,  31, 92, 116, 16, 25},    /* D1L */
-			{80, 143, 92, 116, 32, 25},   /* D1C */
-			{192, 223, 92, 116, 16, 25}   /* D1R */
-		},
-		{
-			{0,  95, 66,  74, 48,  9},    /* D3L */
-			{64, 159, 66,  74, 48,  9},   /* D3C */
-			{128, 223, 66,  74, 48,  9},  /* D3R */
-			{0,  79, 75,  89, 40, 15},    /* D2L */
-			{56, 167, 75,  89, 56, 15},   /* D2C */
-			{144, 223, 75,  89, 40, 15},  /* D2R */
-			{0,  63, 90, 118, 32, 29},    /* D1L */
-			{32, 191, 90, 118, 80, 29},   /* D1C */
-			{160, 223, 90, 118, 32, 29}   /* D1R */
-		},
-		{
-			{42,  57, 68,  72,  8,  5},   /* D3L */
-			{104, 119, 68,  72,  8,  5},  /* D3C */
-			{166, 181, 68,  72,  8,  5},  /* D3R */
-			{9,  40, 80,  85, 16,  6},    /* D2L */
-			{96, 127, 80,  85, 16,  6},   /* D2C */
-			{183, 214, 80,  85, 16,  6},  /* D2R */
-			{0,  15, 97, 108,  8, 12},    /* D1L */
-			{96, 127, 97, 108, 16, 12},   /* D1C */
-			{208, 223, 97, 108,  8, 12}   /* D1R */
-		}
+		                                                /* { X1, X2, Y1, Y2, ByteWidth, Height } */
+		                                                {
+		                                                  { 32, 79, 66, 71, 24, 6 }, /* D3L */
+		                                                  { 96, 127, 66, 71, 16, 6 }, /* D3C */
+		                                                  { 144, 191, 66, 71, 24, 6 }, /* D3R */
+		                                                  { 0, 63, 77, 87, 32, 11 }, /* D2L */
+		                                                  { 80, 143, 77, 87, 32, 11 }, /* D2C */
+		                                                  { 160, 223, 77, 87, 32, 11 }, /* D2R */
+		                                                  { 0, 31, 92, 116, 16, 25 }, /* D1L */
+		                                                  { 80, 143, 92, 116, 32, 25 }, /* D1C */
+		                                                  { 192, 223, 92, 116, 16, 25 } /* D1R */
+		                                                },
+		                                                {
+		                                                  { 0, 95, 66, 74, 48, 9 }, /* D3L */
+		                                                  { 64, 159, 66, 74, 48, 9 }, /* D3C */
+		                                                  { 128, 223, 66, 74, 48, 9 }, /* D3R */
+		                                                  { 0, 79, 75, 89, 40, 15 }, /* D2L */
+		                                                  { 56, 167, 75, 89, 56, 15 }, /* D2C */
+		                                                  { 144, 223, 75, 89, 40, 15 }, /* D2R */
+		                                                  { 0, 63, 90, 118, 32, 29 }, /* D1L */
+		                                                  { 32, 191, 90, 118, 80, 29 }, /* D1C */
+		                                                  { 160, 223, 90, 118, 32, 29 } /* D1R */
+		                                                },
+		                                                {
+		                                                  { 42, 57, 68, 72, 8, 5 }, /* D3L */
+		                                                  { 104, 119, 68, 72, 8, 5 }, /* D3C */
+		                                                  { 166, 181, 68, 72, 8, 5 }, /* D3R */
+		                                                  { 9, 40, 80, 85, 16, 6 }, /* D2L */
+		                                                  { 96, 127, 80, 85, 16, 6 }, /* D2C */
+		                                                  { 183, 214, 80, 85, 16, 6 }, /* D2R */
+		                                                  { 0, 15, 97, 108, 8, 12 }, /* D1L */
+		                                                  { 96, 127, 97, 108, 16, 12 }, /* D1C */
+		                                                  { 208, 223, 97, 108, 8, 12 } /* D1R */
+		                                                }
 	};
 
 	if (!floorOrnOrdinal)
@@ -1255,13 +1275,12 @@ void DisplayMan::drawFloorOrnament(uint16 floorOrnOrdinal, ViewFloor viewFloorIn
 		floorOrnOrdinal--;
 		uint16 floorOrnIndex = floorOrnOrdinal;
 		int16 nativeBitmapIndex = _currMapFloorOrnInfo[floorOrnIndex].nativeIndice
-			+ g191_floorOrnNativeBitmapndexInc[viewFloorIndex];
+		  + g191_floorOrnNativeBitmapndexInc[viewFloorIndex];
 		uint16 *coordSets = g206_floorOrnCoordSets[_currMapFloorOrnInfo[floorOrnIndex].coordinateSet][viewFloorIndex];
 		byte *bitmap;
 		if ((viewFloorIndex == kDMViewFloorD1R) || (viewFloorIndex == kDMViewFloorD2R)
-			|| (viewFloorIndex == kDMViewFloorD3R)
-			|| ((floorOrnIndex == k15_FloorOrnFootprints) && _useFlippedWallAndFootprintsBitmap &&
-			((viewFloorIndex == kDMViewFloorD1C) || (viewFloorIndex == kDMViewFloorD2C) || (viewFloorIndex == kDMViewFloorD3C)))) {
+		    || (viewFloorIndex == kDMViewFloorD3R)
+		    || ((floorOrnIndex == k15_FloorOrnFootprints) && _useFlippedWallAndFootprintsBitmap && ((viewFloorIndex == kDMViewFloorD1C) || (viewFloorIndex == kDMViewFloorD2C) || (viewFloorIndex == kDMViewFloorD3C)))) {
 			bitmap = _tmpBitmap;
 			copyBitmapAndFlipHorizontal(getNativeBitmapOrGraphic(nativeBitmapIndex), bitmap, coordSets[4], coordSets[5]);
 		} else
@@ -1315,9 +1334,8 @@ void DisplayMan::drawDoor(uint16 doorThingIndex, DoorState doorState, int16 *doo
 }
 
 void DisplayMan::drawDoorOrnament(int16 doorOrnOrdinal, DoorOrnament doorOrnament) {
-	static byte palChangesDoorOrnD3[16] = {0, 120, 10, 30, 40, 30, 0, 60, 30, 90, 100, 110, 0, 20, 0, 130}; // @ G0200_auc_Graphic558_PaletteChanges_DoorOrnament_D3
-	static byte palChangesDoorOrnd2[16] = {0, 10, 20, 30, 40, 30, 60, 70, 50, 90, 100, 110, 120, 130, 140, 150}; // @ G0201_auc_Graphic558_PaletteChanges_DoorOrnament_D2
-
+	static byte palChangesDoorOrnD3[16] = { 0, 120, 10, 30, 40, 30, 0, 60, 30, 90, 100, 110, 0, 20, 0, 130 }; // @ G0200_auc_Graphic558_PaletteChanges_DoorOrnament_D3
+	static byte palChangesDoorOrnd2[16] = { 0, 10, 20, 30, 40, 30, 60, 70, 50, 90, 100, 110, 120, 130, 140, 150 }; // @ G0201_auc_Graphic558_PaletteChanges_DoorOrnament_D2
 
 	int16 height = doorOrnOrdinal;
 
@@ -1374,7 +1392,7 @@ void DisplayMan::drawCeilingPit(int16 nativeBitmapIndex, Frame *frame, int16 map
 	}
 }
 
-void DisplayMan::blitToViewport(byte *bitmap, Box& box, int16 byteWidth, Color transparent, int16 height) {
+void DisplayMan::blitToViewport(byte *bitmap, Box &box, int16 byteWidth, Color transparent, int16 height) {
 	blitToBitmap(bitmap, _bitmapViewport, box, 0, 0, byteWidth, k112_byteWidthViewport, transparent, height, k136_heightViewport);
 }
 
@@ -1402,24 +1420,23 @@ void DisplayMan::drawWallSetBitmap(byte *bitmap, Frame &f) {
 	blitToBitmap(bitmap, _bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth, k112_byteWidthViewport, kDMColorFlesh, f._srcHeight, k136_heightViewport);
 }
 
-
 void DisplayMan::drawSquareD3L(Direction dir, int16 posX, int16 posY) {
 	static Frame doorFrameLeftD3L = Frame(0, 31, 28, 70, 16, 43, 0, 0); // @ G0164_s_Graphic558_Frame_DoorFrameLeft_D3L
 	static Frame frameStairsUpFrontD3L = Frame(0, 79, 25, 70, 40, 46, 0, 0); // @ G0110_s_Graphic558_Frame_StairsUpFront_D3L
 	static Frame frameStairsDownFrontD3L = Frame(0, 79, 28, 68, 40, 41, 0, 0); // @ G0121_s_Graphic558_Frame_StairsDownFront_D3L
 	static Frame frameFloorPitD3L = Frame(0, 79, 66, 73, 40, 8, 0, 0); // @ G0140_s_Graphic558_Frame_FloorPit_D3L
 	static DoorFrames doorFrameD3L = DoorFrames( // @ G0179_s_Graphic558_Frames_Door_D3L
-	/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-		Frame(24, 71, 28, 67, 24, 41, 0, 0),   /* Closed Or Destroyed */
-		Frame(24, 71, 28, 38, 24, 41, 0, 30),  /* Vertical Closed one fourth */
-		Frame(24, 71, 28, 48, 24, 41, 0, 20),  /* Vertical Closed half */
-		Frame(24, 71, 28, 58, 24, 41, 0, 10),  /* Vertical Closed three fourth */
-		Frame(24, 29, 28, 67, 24, 41, 18, 0),  /* Left Horizontal Closed one fourth */
-		Frame(24, 35, 28, 67, 24, 41, 12, 0),  /* Left Horizontal Closed half */
-		Frame(24, 41, 28, 67, 24, 41, 6, 0),   /* Left Horizontal Closed three fourth */
-		Frame(66, 71, 28, 67, 24, 41, 24, 0),  /* Right Horizontal Closed one fourth */
-		Frame(60, 71, 28, 67, 24, 41, 24, 0),  /* Right Horizontal Closed half */
-		Frame(54, 71, 28, 67, 24, 41, 24, 0)   /* Right Horizontal Closed three fourth */
+	  /* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
+	  Frame(24, 71, 28, 67, 24, 41, 0, 0), /* Closed Or Destroyed */
+	  Frame(24, 71, 28, 38, 24, 41, 0, 30), /* Vertical Closed one fourth */
+	  Frame(24, 71, 28, 48, 24, 41, 0, 20), /* Vertical Closed half */
+	  Frame(24, 71, 28, 58, 24, 41, 0, 10), /* Vertical Closed three fourth */
+	  Frame(24, 29, 28, 67, 24, 41, 18, 0), /* Left Horizontal Closed one fourth */
+	  Frame(24, 35, 28, 67, 24, 41, 12, 0), /* Left Horizontal Closed half */
+	  Frame(24, 41, 28, 67, 24, 41, 6, 0), /* Left Horizontal Closed three fourth */
+	  Frame(66, 71, 28, 67, 24, 41, 24, 0), /* Right Horizontal Closed one fourth */
+	  Frame(60, 71, 28, 67, 24, 41, 24, 0), /* Right Horizontal Closed half */
+	  Frame(54, 71, 28, 67, 24, 41, 24, 0) /* Right Horizontal Closed three fourth */
 	);
 
 	uint16 squareAspect[5];
@@ -1457,7 +1474,7 @@ void DisplayMan::drawSquareD3L(Direction dir, int16 posX, int16 posY) {
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD3L, kDMCellOrderDoorPass1BackLeftBackRight);
 		drawWallSetBitmap(_bitmapWallSetDoorFrameLeftD3L, doorFrameLeftD3L);
 		drawDoor(squareAspect[kDMSquareAspectDoorThingIndex], (DoorState)squareAspect[kDMSquareAspectDoorState],
-					  _doorNativeBitmapIndexFrontD3LCR, getBitmapByteCount(48, 41), kDMDoorOrnamentD3LCR, &doorFrameD3L);
+		         _doorNativeBitmapIndexFrontD3LCR, getBitmapByteCount(48, 41), kDMDoorOrnamentD3LCR, &doorFrameD3L);
 		order = kDMCellOrderDoorPass2FrontLeftFrontRight;
 		break;
 	case kDMElementTypePit:
@@ -1488,17 +1505,17 @@ void DisplayMan::drawSquareD3R(Direction dir, int16 posX, int16 posY) {
 	static Frame frameStairsDownFrontD3R = Frame(149, 223, 28, 68, 40, 41, 5, 0); // @ G0123_s_Graphic558_Frame_StairsDownFront_D3R
 	static Frame frameFloorPitD3R = Frame(144, 223, 66, 73, 40, 8, 0, 0); // @ G0142_s_Graphic558_Frame_FloorPit_D3R
 	static DoorFrames doorFrameD3R = DoorFrames( // @ G0181_s_Graphic558_Frames_Door_D3R
-		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-		Frame(150, 197, 28, 67, 24, 41, 0, 0),	/* Closed Or Destroyed */
-		Frame(150, 197, 28, 38, 24, 41, 0, 30),	/* Vertical Closed one fourth */
-		Frame(150, 197, 28, 48, 24, 41, 0, 20),	/* Vertical Closed half */
-		Frame(150, 197, 28, 58, 24, 41, 0, 10),	/* Vertical Closed three fourth */
-		Frame(150, 153, 28, 67, 24, 41, 18, 0),	/* Left Horizontal Closed one fourth */
-		Frame(150, 161, 28, 67, 24, 41, 12, 0),	/* Left Horizontal Closed half */
-		Frame(150, 167, 28, 67, 24, 41, 6, 0),	/* Left Horizontal Closed three fourth */
-		Frame(192, 197, 28, 67, 24, 41, 24, 0),	/* Right Horizontal Closed one fourth */
-		Frame(186, 197, 28, 67, 24, 41, 24, 0),	/* Right Horizontal Closed half */
-		Frame(180, 197, 28, 67, 24, 41, 24, 0)	/* Right Horizontal Closed three fourth */
+	  /* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
+	  Frame(150, 197, 28, 67, 24, 41, 0, 0), /* Closed Or Destroyed */
+	  Frame(150, 197, 28, 38, 24, 41, 0, 30), /* Vertical Closed one fourth */
+	  Frame(150, 197, 28, 48, 24, 41, 0, 20), /* Vertical Closed half */
+	  Frame(150, 197, 28, 58, 24, 41, 0, 10), /* Vertical Closed three fourth */
+	  Frame(150, 153, 28, 67, 24, 41, 18, 0), /* Left Horizontal Closed one fourth */
+	  Frame(150, 161, 28, 67, 24, 41, 12, 0), /* Left Horizontal Closed half */
+	  Frame(150, 167, 28, 67, 24, 41, 6, 0), /* Left Horizontal Closed three fourth */
+	  Frame(192, 197, 28, 67, 24, 41, 24, 0), /* Right Horizontal Closed one fourth */
+	  Frame(186, 197, 28, 67, 24, 41, 24, 0), /* Right Horizontal Closed half */
+	  Frame(180, 197, 28, 67, 24, 41, 24, 0) /* Right Horizontal Closed three fourth */
 	);
 
 	CellOrder order = kDMCellOrderNone;
@@ -1540,8 +1557,8 @@ void DisplayMan::drawSquareD3R(Direction dir, int16 posX, int16 posY) {
 			drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), kDMDoorButtonD3R);
 
 		drawDoor(squareAspect[kDMSquareAspectDoorThingIndex],
-					  (DoorState)squareAspect[kDMSquareAspectDoorState], _doorNativeBitmapIndexFrontD3LCR,
-					  getBitmapByteCount(48, 41), kDMDoorOrnamentD3LCR, &doorFrameD3R);
+		         (DoorState)squareAspect[kDMSquareAspectDoorState], _doorNativeBitmapIndexFrontD3LCR,
+		         getBitmapByteCount(48, 41), kDMDoorOrnamentD3LCR, &doorFrameD3R);
 		break;
 	case kDMElementTypePit:
 		if (!squareAspect[kDMSquareAspectPitInvisible])
@@ -1572,17 +1589,17 @@ void DisplayMan::drawSquareD3C(Direction dir, int16 posX, int16 posY) {
 	static Frame frameStairsDownFrontD3C = Frame(64, 159, 28, 70, 48, 43, 0, 0); // @ G0122_s_Graphic558_Frame_StairsDownFront_D3C
 	static Frame frameFloorPitD3C = Frame(64, 159, 66, 73, 48, 8, 0, 0); // @ G0141_s_Graphic558_Frame_FloorPit_D3C
 	static DoorFrames doorFrameD3C = DoorFrames( // @ G0180_s_Graphic558_Frames_Door_D3C
-		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-		Frame(88, 135, 28, 67, 24, 41, 0, 0),		/* Closed Or Destroyed */
-		Frame(88, 135, 28, 38, 24, 41, 0, 30),		/* Vertical Closed one fourth */
-		Frame(88, 135, 28, 48, 24, 41, 0, 20),		/* Vertical Closed half */
-		Frame(88, 135, 28, 58, 24, 41, 0, 10),		/* Vertical Closed three fourth */
-		Frame(88, 93, 28, 67, 24, 41, 18, 0),		/* Left Horizontal Closed one fourth */
-		Frame(88, 99, 28, 67, 24, 41, 12, 0),		/* Left Horizontal Closed half */
-		Frame(88, 105, 28, 67, 24, 41, 6, 0),		/* Left Horizontal Closed three fourth */
-		Frame(130, 135, 28, 67, 24, 41, 24, 0),		/* Right Horizontal Closed one fourth */
-		Frame(124, 135, 28, 67, 24, 41, 24, 0),		/* Right Horizontal Closed half */
-		Frame(118, 135, 28, 67, 24, 41, 24, 0)		/* Right Horizontal Closed three fourth */
+	  /* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
+	  Frame(88, 135, 28, 67, 24, 41, 0, 0), /* Closed Or Destroyed */
+	  Frame(88, 135, 28, 38, 24, 41, 0, 30), /* Vertical Closed one fourth */
+	  Frame(88, 135, 28, 48, 24, 41, 0, 20), /* Vertical Closed half */
+	  Frame(88, 135, 28, 58, 24, 41, 0, 10), /* Vertical Closed three fourth */
+	  Frame(88, 93, 28, 67, 24, 41, 18, 0), /* Left Horizontal Closed one fourth */
+	  Frame(88, 99, 28, 67, 24, 41, 12, 0), /* Left Horizontal Closed half */
+	  Frame(88, 105, 28, 67, 24, 41, 6, 0), /* Left Horizontal Closed three fourth */
+	  Frame(130, 135, 28, 67, 24, 41, 24, 0), /* Right Horizontal Closed one fourth */
+	  Frame(124, 135, 28, 67, 24, 41, 24, 0), /* Right Horizontal Closed half */
+	  Frame(118, 135, 28, 67, 24, 41, 24, 0) /* Right Horizontal Closed three fourth */
 	);
 
 	uint16 squareAspect[5];
@@ -1620,7 +1637,7 @@ void DisplayMan::drawSquareD3C(Direction dir, int16 posX, int16 posY) {
 			drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), kDMDoorButtonD3C);
 
 		drawDoor(squareAspect[kDMSquareAspectDoorThingIndex], (DoorState)squareAspect[kDMSquareAspectDoorState],
-					  _doorNativeBitmapIndexFrontD3LCR, getBitmapByteCount(48, 41), kDMDoorOrnamentD3LCR, &doorFrameD3C);
+		         _doorNativeBitmapIndexFrontD3LCR, getBitmapByteCount(48, 41), kDMDoorOrnamentD3LCR, &doorFrameD3C);
 		order = kDMCellOrderDoorPass2FrontLeftFrontRight;
 		break;
 	case kDMElementTypePit:
@@ -1652,17 +1669,17 @@ void DisplayMan::drawSquareD2L(Direction dir, int16 posX, int16 posY) {
 	static Frame frameFloorPitD2L = Frame(0, 79, 77, 88, 40, 12, 0, 0); // @ G0143_s_Graphic558_Frame_FloorPit_D2L
 	static Frame FrameCeilingPitD2L = Frame(0, 79, 19, 23, 40, 5, 0, 0); // @ G0152_s_Graphic558_Frame_CeilingPit_D2L
 	static DoorFrames doorFrameD2L = DoorFrames( // @ G0182_s_Graphic558_Frames_Door_D2L
-		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-		Frame(0, 63, 24, 82, 32, 61, 0, 0),	   /* Closed Or Destroyed */
-		Frame(0, 63, 24, 39, 32, 61, 0, 45),   /* Vertical Closed one fourth */
-		Frame(0, 63, 24, 54, 32, 61, 0, 30),   /* Vertical Closed half */
-		Frame(0, 63, 24, 69, 32, 61, 0, 15),   /* Vertical Closed three fourth */
-		Frame(0, 7, 24, 82, 32, 61, 24, 0),    /* Left Horizontal Closed one fourth */
-		Frame(0, 15, 24, 82, 32, 61, 16, 0),   /* Left Horizontal Closed half */
-		Frame(0, 23, 24, 82, 32, 61, 8, 0),    /* Left Horizontal Closed three fourth */
-		Frame(56, 63, 24, 82, 32, 61, 32, 0),  /* Right Horizontal Closed one fourth */
-		Frame(48, 63, 24, 82, 32, 61, 32, 0),  /* Right Horizontal Closed half */
-		Frame(40, 63, 24, 82, 32, 61, 32, 0)   /* Right Horizontal Closed three fourth */
+	  /* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
+	  Frame(0, 63, 24, 82, 32, 61, 0, 0), /* Closed Or Destroyed */
+	  Frame(0, 63, 24, 39, 32, 61, 0, 45), /* Vertical Closed one fourth */
+	  Frame(0, 63, 24, 54, 32, 61, 0, 30), /* Vertical Closed half */
+	  Frame(0, 63, 24, 69, 32, 61, 0, 15), /* Vertical Closed three fourth */
+	  Frame(0, 7, 24, 82, 32, 61, 24, 0), /* Left Horizontal Closed one fourth */
+	  Frame(0, 15, 24, 82, 32, 61, 16, 0), /* Left Horizontal Closed half */
+	  Frame(0, 23, 24, 82, 32, 61, 8, 0), /* Left Horizontal Closed three fourth */
+	  Frame(56, 63, 24, 82, 32, 61, 32, 0), /* Right Horizontal Closed one fourth */
+	  Frame(48, 63, 24, 82, 32, 61, 32, 0), /* Right Horizontal Closed half */
+	  Frame(40, 63, 24, 82, 32, 61, 32, 0) /* Right Horizontal Closed three fourth */
 	);
 
 	CellOrder order = kDMCellOrderNone;
@@ -1700,12 +1717,12 @@ void DisplayMan::drawSquareD2L(Direction dir, int16 posX, int16 posY) {
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD2L, kDMCellOrderDoorPass1BackLeftBackRight);
 		drawWallSetBitmap(_bitmapWallSetDoorFrameTopD2LCR, doorFrameTopD2L);
 		drawDoor(squareAspect[kDMSquareAspectDoorThingIndex], (DoorState)squareAspect[kDMSquareAspectDoorState], _doorNativeBitmapIndexFrontD2LCR,
-					  getBitmapByteCount(64, 61), kDMDoorOrnamentD2LCR, &doorFrameD2L);
+		         getBitmapByteCount(64, 61), kDMDoorOrnamentD2LCR, &doorFrameD2L);
 		order = kDMCellOrderDoorPass2FrontLeftFrontRight;
 		break;
 	case kDMElementTypePit:
 		drawFloorPitOrStairsBitmap(squareAspect[kDMSquareAspectPitInvisible] ? kDMGraphicIdxFloorPitInvisibleD2L : kDMGraphicIdxFloorPitD2L,
-										frameFloorPitD2L);
+		                           frameFloorPitD2L);
 		// fall through
 	case kDMElementTypeTeleporter:
 	case kDMElementTypeCorridor:
@@ -1735,17 +1752,17 @@ void DisplayMan::drawSquareD2R(Direction dir, int16 posX, int16 posY) {
 	static Frame frameFloorPitD2R = Frame(144, 223, 77, 88, 40, 12, 0, 0); // @ G0145_s_Graphic558_Frame_FloorPit_D2R
 	static Frame frameCeilingPitD2R = Frame(144, 223, 19, 23, 40, 5, 0, 0); // @ G0154_s_Graphic558_Frame_CeilingPit_D2R
 	static DoorFrames doorFrameD2R = DoorFrames( // @ G0184_s_Graphic558_Frames_Door_D2R
-		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-		Frame(160, 223, 24, 82, 32, 61, 0, 0),	/* Closed Or Destroyed */
-		Frame(160, 223, 24, 39, 32, 61, 0, 45),	/* Vertical Closed one fourth */
-		Frame(160, 223, 24, 54, 32, 61, 0, 30),	/* Vertical Closed half */
-		Frame(160, 223, 24, 69, 32, 61, 0, 15),	/* Vertical Closed three fourth */
-		Frame(160, 167, 24, 82, 32, 61, 24, 0),	/* Left Horizontal Closed one fourth */
-		Frame(160, 175, 24, 82, 32, 61, 16, 0),	/* Left Horizontal Closed half */
-		Frame(160, 183, 24, 82, 32, 61, 8, 0),	/* Left Horizontal Closed three fourth */
-		Frame(216, 223, 24, 82, 32, 61, 32, 0),	/* Right Horizontal Closed one fourth */
-		Frame(208, 223, 24, 82, 32, 61, 32, 0),	/* Right Horizontal Closed half */
-		Frame(200, 223, 24, 82, 32, 61, 32, 0)  /* Right Horizontal Closed three fourth */
+	  /* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
+	  Frame(160, 223, 24, 82, 32, 61, 0, 0), /* Closed Or Destroyed */
+	  Frame(160, 223, 24, 39, 32, 61, 0, 45), /* Vertical Closed one fourth */
+	  Frame(160, 223, 24, 54, 32, 61, 0, 30), /* Vertical Closed half */
+	  Frame(160, 223, 24, 69, 32, 61, 0, 15), /* Vertical Closed three fourth */
+	  Frame(160, 167, 24, 82, 32, 61, 24, 0), /* Left Horizontal Closed one fourth */
+	  Frame(160, 175, 24, 82, 32, 61, 16, 0), /* Left Horizontal Closed half */
+	  Frame(160, 183, 24, 82, 32, 61, 8, 0), /* Left Horizontal Closed three fourth */
+	  Frame(216, 223, 24, 82, 32, 61, 32, 0), /* Right Horizontal Closed one fourth */
+	  Frame(208, 223, 24, 82, 32, 61, 32, 0), /* Right Horizontal Closed half */
+	  Frame(200, 223, 24, 82, 32, 61, 32, 0) /* Right Horizontal Closed three fourth */
 	);
 
 	CellOrder order = kDMCellOrderNone;
@@ -1787,12 +1804,12 @@ void DisplayMan::drawSquareD2R(Direction dir, int16 posX, int16 posY) {
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD2R, kDMCellOrderDoorPass1BackRightBackLeft);
 		drawWallSetBitmap(_bitmapWallSetDoorFrameTopD2LCR, doorFrameTopD2R);
 		drawDoor(squareAspect[kDMSquareAspectDoorThingIndex], (DoorState)squareAspect[kDMSquareAspectDoorState],
-					  _doorNativeBitmapIndexFrontD2LCR, getBitmapByteCount(64, 61), kDMDoorOrnamentD2LCR, &doorFrameD2R);
+		         _doorNativeBitmapIndexFrontD2LCR, getBitmapByteCount(64, 61), kDMDoorOrnamentD2LCR, &doorFrameD2R);
 		order = kDMCellOrderDoorPass2FrontRightFrontLeft;
 		break;
 	case kDMElementTypePit:
 		drawFloorPitOrStairsBitmapFlippedHorizontally(
-			squareAspect[kDMSquareAspectPitInvisible] ? kDMGraphicIdxFloorPitInvisibleD2L : kDMGraphicIdxFloorPitD2L, frameFloorPitD2R);
+		  squareAspect[kDMSquareAspectPitInvisible] ? kDMGraphicIdxFloorPitInvisibleD2L : kDMGraphicIdxFloorPitD2L, frameFloorPitD2R);
 		// fall through
 	case kDMElementTypeTeleporter:
 	case kDMElementTypeCorridor:
@@ -1822,17 +1839,17 @@ void DisplayMan::drawSquareD2C(Direction dir, int16 posX, int16 posY) {
 	static Frame frameFloorPitD2C = Frame(64, 159, 77, 88, 48, 12, 0, 0); // @ G0144_s_Graphic558_Frame_FloorPit_D2C
 	static Frame frameCeilingPitD2C = Frame(64, 159, 19, 23, 48, 5, 0, 0); // @ G0153_s_Graphic558_Frame_CeilingPit_D2C
 	static DoorFrames doorFrameD2C = DoorFrames( // @ G0183_s_Graphic558_Frames_Door_D2C
-		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-		Frame(80, 143, 24, 82, 32, 61, 0, 0),    /* Closed Or Destroyed */
-		Frame(80, 143, 24, 39, 32, 61, 0, 45),   /* Vertical Closed one fourth */
-		Frame(80, 143, 24, 54, 32, 61, 0, 30),   /* Vertical Closed half */
-		Frame(80, 143, 24, 69, 32, 61, 0, 15),   /* Vertical Closed three fourth */
-		Frame(80, 87, 24, 82, 32, 61, 24, 0),    /* Left Horizontal Closed one fourth */
-		Frame(80, 95, 24, 82, 32, 61, 16, 0),    /* Left Horizontal Closed half */
-		Frame(80, 103, 24, 82, 32, 61, 8, 0),    /* Left Horizontal Closed three fourth */
-		Frame(136, 143, 24, 82, 32, 61, 32, 0),  /* Right Horizontal Closed one fourth */
-		Frame(128, 143, 24, 82, 32, 61, 32, 0),  /* Right Horizontal Closed half */
-		Frame(120, 143, 24, 82, 32, 61, 32, 0)   /* Right Horizontal Closed three fourth */
+	  /* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
+	  Frame(80, 143, 24, 82, 32, 61, 0, 0), /* Closed Or Destroyed */
+	  Frame(80, 143, 24, 39, 32, 61, 0, 45), /* Vertical Closed one fourth */
+	  Frame(80, 143, 24, 54, 32, 61, 0, 30), /* Vertical Closed half */
+	  Frame(80, 143, 24, 69, 32, 61, 0, 15), /* Vertical Closed three fourth */
+	  Frame(80, 87, 24, 82, 32, 61, 24, 0), /* Left Horizontal Closed one fourth */
+	  Frame(80, 95, 24, 82, 32, 61, 16, 0), /* Left Horizontal Closed half */
+	  Frame(80, 103, 24, 82, 32, 61, 8, 0), /* Left Horizontal Closed three fourth */
+	  Frame(136, 143, 24, 82, 32, 61, 32, 0), /* Right Horizontal Closed one fourth */
+	  Frame(128, 143, 24, 82, 32, 61, 32, 0), /* Right Horizontal Closed half */
+	  Frame(120, 143, 24, 82, 32, 61, 32, 0) /* Right Horizontal Closed three fourth */
 	);
 
 	CellOrder order = kDMCellOrderNone;
@@ -1871,7 +1888,7 @@ void DisplayMan::drawSquareD2C(Direction dir, int16 posX, int16 posY) {
 			drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), kDMDoorButtonD2C);
 
 		drawDoor(squareAspect[kDMSquareAspectDoorThingIndex], (DoorState)squareAspect[kDMSquareAspectDoorState],
-					  _doorNativeBitmapIndexFrontD2LCR, getBitmapByteCount(64, 61), kDMDoorOrnamentD2LCR, &doorFrameD2C);
+		         _doorNativeBitmapIndexFrontD2LCR, getBitmapByteCount(64, 61), kDMDoorOrnamentD2LCR, &doorFrameD2C);
 		order = kDMCellOrderDoorPass2FrontLeftFrontRight;
 		break;
 	case kDMElementTypePit:
@@ -1905,17 +1922,17 @@ void DisplayMan::drawSquareD1L(Direction dir, int16 posX, int16 posY) {
 	static Frame frameFloorPitD1L = Frame(0, 63, 93, 116, 32, 24, 0, 0); // @ G0146_s_Graphic558_Frame_FloorPit_D1L
 	static Frame frameCeilingPitD1L = Frame(0, 63, 8, 16, 32, 9, 0, 0); // @ G0155_s_Graphic558_Frame_CeilingPit_D1L
 	static DoorFrames doorFrameD1L = DoorFrames( // @ G0185_s_Graphic558_Frames_Door_D1L
-		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-		Frame(0, 31, 17, 102, 48, 88, 64, 0),   /* Closed Or Destroyed */
-		Frame(0, 31, 17, 38, 48, 88, 64, 66),   /* Vertical Closed one fourth */
-		Frame(0, 31, 17, 60, 48, 88, 64, 44),   /* Vertical Closed half */
-		Frame(0, 31, 17, 82, 48, 88, 64, 22),   /* Vertical Closed three fourth */
-		Frame(0, 0, 0, 0, 0, 0, 0, 0),          /* Left Horizontal Closed one fourth */
-		Frame(0, 0, 0, 0, 0, 0, 0, 0),          /* Left Horizontal Closed half */
-		Frame(0, 0, 0, 0, 0, 0, 0, 0),          /* Left Horizontal Closed three fourth */
-		Frame(20, 31, 17, 102, 48, 88, 48, 0),  /* Right Horizontal Closed one fourth */
-		Frame(8, 31, 17, 102, 48, 88, 48, 0),   /* Right Horizontal Closed half */
-		Frame(0, 31, 17, 102, 48, 88, 52, 0)    /* Right Horizontal Closed three fourth */
+	  /* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
+	  Frame(0, 31, 17, 102, 48, 88, 64, 0), /* Closed Or Destroyed */
+	  Frame(0, 31, 17, 38, 48, 88, 64, 66), /* Vertical Closed one fourth */
+	  Frame(0, 31, 17, 60, 48, 88, 64, 44), /* Vertical Closed half */
+	  Frame(0, 31, 17, 82, 48, 88, 64, 22), /* Vertical Closed three fourth */
+	  Frame(0, 0, 0, 0, 0, 0, 0, 0), /* Left Horizontal Closed one fourth */
+	  Frame(0, 0, 0, 0, 0, 0, 0, 0), /* Left Horizontal Closed half */
+	  Frame(0, 0, 0, 0, 0, 0, 0, 0), /* Left Horizontal Closed three fourth */
+	  Frame(20, 31, 17, 102, 48, 88, 48, 0), /* Right Horizontal Closed one fourth */
+	  Frame(8, 31, 17, 102, 48, 88, 48, 0), /* Right Horizontal Closed half */
+	  Frame(0, 31, 17, 102, 48, 88, 52, 0) /* Right Horizontal Closed three fourth */
 	);
 
 	CellOrder order = kDMCellOrderNone;
@@ -1956,7 +1973,7 @@ void DisplayMan::drawSquareD1L(Direction dir, int16 posX, int16 posY) {
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD1L, kDMCellOrderDoorPass1BackRight);
 		drawWallSetBitmap(_bitmapWallSetDoorFrameTopD1LCR, doorFrameTopD1L);
 		drawDoor(squareAspect[kDMSquareAspectDoorThingIndex], (DoorState)squareAspect[kDMSquareAspectDoorState],
-					  _doorNativeBitmapIndexFrontD1LCR, getBitmapByteCount(96, 88), kDMDoorOrnamentD1LCR, &doorFrameD1L);
+		         _doorNativeBitmapIndexFrontD1LCR, getBitmapByteCount(96, 88), kDMDoorOrnamentD1LCR, &doorFrameD1L);
 		order = kDMCellOrderDoorPass2FrontRight;
 		break;
 	case kDMElementTypePit:
@@ -1965,7 +1982,7 @@ void DisplayMan::drawSquareD1L(Direction dir, int16 posX, int16 posY) {
 	case kDMElementTypeTeleporter:
 	case kDMElementTypeCorridor:
 		order = kDMCellOrderBackRightFrontRight;
-		 /* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
+		/* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], kDMViewFloorD1L);
 		drawCeilingPit(kDMGraphicIdxCeilingPitD1L, &frameCeilingPitD1L, posX, posY, false);
 		break;
@@ -1990,17 +2007,17 @@ void DisplayMan::drawSquareD1R(Direction dir, int16 posX, int16 posY) {
 	static Frame frameFloorPitD1R = Frame(160, 223, 93, 116, 32, 24, 0, 0); // @ G0148_s_Graphic558_Frame_FloorPit_D1R
 	static Frame frameCeilingPitD1R = Frame(160, 223, 8, 16, 32, 9, 0, 0); // @ G0157_s_Graphic558_Frame_CeilingPit_D1R
 	static DoorFrames doorFrameD1R = DoorFrames( // @ G0187_s_Graphic558_Frames_Door_D1R
-		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-		Frame(192, 223, 17, 102, 48, 88, 0, 0),   /* Closed Or Destroyed */
-		Frame(192, 223, 17, 38, 48, 88, 0, 66),   /* Vertical Closed one fourth */
-		Frame(192, 223, 17, 60, 48, 88, 0, 44),   /* Vertical Closed half */
-		Frame(192, 223, 17, 82, 48, 88, 0, 22),   /* Vertical Closed three fourth */
-		Frame(192, 203, 17, 102, 48, 88, 36, 0),  /* Left Horizontal Closed one fourth */
-		Frame(192, 215, 17, 102, 48, 88, 24, 0),  /* Left Horizontal Closed half */
-		Frame(192, 223, 17, 102, 48, 88, 12, 0),  /* Left Horizontal Closed three fourth */
-		Frame(0, 0, 0, 0, 0, 0, 0, 0),            /* Right Horizontal Closed one fourth */
-		Frame(0, 0, 0, 0, 0, 0, 0, 0),            /* Right Horizontal Closed half */
-		Frame(0, 0, 0, 0, 0, 0, 0, 0)             /* Right Horizontal Closed three fourth */
+	  /* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
+	  Frame(192, 223, 17, 102, 48, 88, 0, 0), /* Closed Or Destroyed */
+	  Frame(192, 223, 17, 38, 48, 88, 0, 66), /* Vertical Closed one fourth */
+	  Frame(192, 223, 17, 60, 48, 88, 0, 44), /* Vertical Closed half */
+	  Frame(192, 223, 17, 82, 48, 88, 0, 22), /* Vertical Closed three fourth */
+	  Frame(192, 203, 17, 102, 48, 88, 36, 0), /* Left Horizontal Closed one fourth */
+	  Frame(192, 215, 17, 102, 48, 88, 24, 0), /* Left Horizontal Closed half */
+	  Frame(192, 223, 17, 102, 48, 88, 12, 0), /* Left Horizontal Closed three fourth */
+	  Frame(0, 0, 0, 0, 0, 0, 0, 0), /* Right Horizontal Closed one fourth */
+	  Frame(0, 0, 0, 0, 0, 0, 0, 0), /* Right Horizontal Closed half */
+	  Frame(0, 0, 0, 0, 0, 0, 0, 0) /* Right Horizontal Closed three fourth */
 	);
 
 	CellOrder order = kDMCellOrderNone;
@@ -2040,12 +2057,13 @@ void DisplayMan::drawSquareD1R(Direction dir, int16 posX, int16 posY) {
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD1R, kDMCellOrderDoorPass1BackLeft);
 		drawWallSetBitmap(_bitmapWallSetDoorFrameTopD1LCR, doorFrameTopD1R);
 		drawDoor(squareAspect[kDMSquareAspectDoorThingIndex], (DoorState)squareAspect[kDMSquareAspectDoorState],
-					  _doorNativeBitmapIndexFrontD1LCR, getBitmapByteCount(96, 88), kDMDoorOrnamentD1LCR, &doorFrameD1R);
+		         _doorNativeBitmapIndexFrontD1LCR, getBitmapByteCount(96, 88), kDMDoorOrnamentD1LCR, &doorFrameD1R);
 		order = kDMCellOrderDoorPass2FrontLeft;
 		break;
 	case kDMElementTypePit:
 		drawFloorPitOrStairsBitmapFlippedHorizontally(squareAspect[kDMSquareAspectPitInvisible] ? kDMGraphicIdxFloorPitInvisibleD1L
-														   : kDMGraphicIdxFloorPitD1L, frameFloorPitD1R);
+		                                                                                        : kDMGraphicIdxFloorPitD1L,
+		                                              frameFloorPitD1R);
 		// fall through
 	case kDMElementTypeTeleporter:
 	case kDMElementTypeCorridor:
@@ -2101,11 +2119,11 @@ void DisplayMan::drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 		if (championMan._party._event73Count_ThievesEye) {
 			isDerivedBitmapInCache(kDMDerivedBitmapThievesEyeVisibleArea);
 			blitToBitmap(_bitmapViewport, getDerivedBitmap(kDMDerivedBitmapThievesEyeVisibleArea),
-							  boxThievesEyeVisibleArea, _boxThievesEyeViewPortVisibleArea._rect.left, _boxThievesEyeViewPortVisibleArea._rect.top,
-							  k112_byteWidthViewport, 48, kDMColorNoTransparency, 136, 95);
+			             boxThievesEyeVisibleArea, _boxThievesEyeViewPortVisibleArea._rect.left, _boxThievesEyeViewPortVisibleArea._rect.top,
+			             k112_byteWidthViewport, 48, kDMColorNoTransparency, 136, 95);
 			byte *bitmap = getNativeBitmapOrGraphic(kDMGraphicIdxHoleInWall);
 			blitToBitmap(bitmap, getDerivedBitmap(kDMDerivedBitmapThievesEyeVisibleArea),
-							  boxThievesEyeVisibleArea, 0, 0, 48, 48, kDMColorFlesh, 95, 95);
+			             boxThievesEyeVisibleArea, 0, 0, 48, 48, kDMColorFlesh, 95, 95);
 		}
 		drawWallSetBitmapWithoutTransparency(_bitmapWallSetD1LCR, _frameWalls163[kDMViewSquareD1C]);
 		if (isDrawnWallOrnAnAlcove(squareAspect[kDMSquareFrontWallOrnOrd], kDMViewWallD1CFront))
@@ -2113,8 +2131,8 @@ void DisplayMan::drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 
 		if (championMan._party._event73Count_ThievesEye) {
 			blitToBitmap(getDerivedBitmap(kDMDerivedBitmapThievesEyeVisibleArea),
-							  _bitmapViewport, _boxThievesEyeViewPortVisibleArea, 0, 0,
-							  48, k112_byteWidthViewport, kDMColorGold, 95, k136_heightViewport); /* BUG0_74 */
+			             _bitmapViewport, _boxThievesEyeViewPortVisibleArea, 0, 0,
+			             48, k112_byteWidthViewport, kDMColorGold, 95, k136_heightViewport); /* BUG0_74 */
 			addDerivedBitmap(kDMDerivedBitmapThievesEyeVisibleArea);
 			releaseBlock(kDMDerivedBitmapThievesEyeVisibleArea | 0x8000);
 		}
@@ -2129,7 +2147,7 @@ void DisplayMan::drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 			drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), kDMDoorButtonD1C);
 
 		drawDoor(squareAspect[kDMSquareAspectDoorThingIndex], (DoorState)squareAspect[kDMSquareAspectDoorState],
-					  _doorNativeBitmapIndexFrontD1LCR, getBitmapByteCount(96, 88), kDMDoorOrnamentD1LCR, _doorFrameD1C);
+		         _doorNativeBitmapIndexFrontD1LCR, getBitmapByteCount(96, 88), kDMDoorOrnamentD1LCR, _doorFrameD1C);
 		order = kDMCellOrderDoorPass2FrontLeftFrontRight;
 		break;
 	case kDMElementTypePit:
@@ -2199,7 +2217,8 @@ void DisplayMan::drawSquareD0R(Direction dir, int16 posX, int16 posY) {
 		return;
 	case kDMElementTypePit:
 		drawFloorPitOrStairsBitmapFlippedHorizontally(squareAspect[kDMSquareAspectPitInvisible] ? kDMGraphicIdxFloorPitInvisibleD0L
-														   : kDMGraphicIdxFloorPitD0L, frameFloorPitD0R);
+		                                                                                        : kDMGraphicIdxFloorPitD0L,
+		                                              frameFloorPitD0R);
 		// fall through
 	case kDMElementTypeCorridor:
 	case kDMElementTypeDoorSide:
@@ -2237,8 +2256,8 @@ void DisplayMan::drawSquareD0C(Direction dir, int16 posX, int16 posY) {
 		if (championMan._party._event73Count_ThievesEye) {
 			memmove(_tmpBitmap, _bitmapWallSetDoorFrameFront, 32 * 123);
 			blitToBitmap(getNativeBitmapOrGraphic(kDMGraphicIdxHoleInWall),
-							  _tmpBitmap, boxThievesEyeHoleInDoorFrame, doorFrameD0C._box._rect.left - _boxThievesEyeViewPortVisibleArea._rect.left,
-							  0, 48, 16, kDMColorGold, 95, 123);
+			             _tmpBitmap, boxThievesEyeHoleInDoorFrame, doorFrameD0C._box._rect.left - _boxThievesEyeViewPortVisibleArea._rect.left,
+			             0, 48, 16, kDMColorGold, 95, 123);
 			drawWallSetBitmap(_tmpBitmap, doorFrameD0C);
 		} else
 			drawWallSetBitmap(_bitmapWallSetDoorFrameFront, doorFrameD0C);
@@ -2422,106 +2441,110 @@ void DisplayMan::loadWallSet(WallSet set) {
 	loadIntoBitmap(graphicIndice++, _bitmapWallSetD3L2);
 
 	copyBitmapAndFlipHorizontal(_bitmapWallSetDoorFrameLeftD1C, _bitmapWallSetDoorFrameRightD1C,
-									_doorFrameRightD1C._srcByteWidth, _doorFrameRightD1C._srcHeight);
+	                            _doorFrameRightD1C._srcByteWidth, _doorFrameRightD1C._srcHeight);
 	copyBitmapAndFlipHorizontal(_bitmapWallSetD3L2, _bitmapWallSetD3R2,
-									_frameWallD3R2._srcByteWidth, _frameWallD3R2._srcHeight);
+	                            _frameWallD3R2._srcByteWidth, _frameWallD3R2._srcHeight);
 }
 
 void DisplayMan::loadCurrentMapGraphics() {
 	static Box boxWallD3LCR = Box(0, 115, 0, 50); // @ G0161_s_Graphic558_Box_WallBitmap_D3LCR
 	static Box boxWallD2LCR = Box(0, 135, 0, 70); // @ G0162_s_Graphic558_Box_WallBitmap_D2LCR
-	static byte doorOrnCoordIndices[12] = { // @ G0196_auc_Graphic558_DoorOrnamentCoordinateSetIndices
-		0,   /* Door Ornament #00 Square Grid */
-		1,   /* Door Ornament #01 Iron Bars */
-		1,   /* Door Ornament #02 Jewels */
-		1,   /* Door Ornament #03 Wooden Bars */
-		0,   /* Door Ornament #04 Arched Grid */
-		2,   /* Door Ornament #05 Block Lock */
-		3,   /* Door Ornament #06 Corner Lock */
-		1,   /* Door Ornament #07 Black door */
-		2,   /* Door Ornament #08 Red Triangle Lock */
-		2,   /* Door Ornament #09 Triangle Lock */
-		1,   /* Door Ornament #10 Ra Door */
-		1    /* Door Ornament #11 Iron Door Damages */
+	static byte doorOrnCoordIndices[12] = {
+		// @ G0196_auc_Graphic558_DoorOrnamentCoordinateSetIndices
+		0, /* Door Ornament #00 Square Grid */
+		1, /* Door Ornament #01 Iron Bars */
+		1, /* Door Ornament #02 Jewels */
+		1, /* Door Ornament #03 Wooden Bars */
+		0, /* Door Ornament #04 Arched Grid */
+		2, /* Door Ornament #05 Block Lock */
+		3, /* Door Ornament #06 Corner Lock */
+		1, /* Door Ornament #07 Black door */
+		2, /* Door Ornament #08 Red Triangle Lock */
+		2, /* Door Ornament #09 Triangle Lock */
+		1, /* Door Ornament #10 Ra Door */
+		1 /* Door Ornament #11 Iron Door Damages */
 	};
-	static byte floorOrnCoordSetIndices[9] = { // @ G0195_auc_Graphic558_FloorOrnamentCoordinateSetIndices
-		0,   /* Floor Ornament 00 Square Grate */
-		0,   /* Floor Ornament 01 Square Pressure Pad */
-		0,   /* Floor Ornament 02 Moss */
-		0,   /* Floor Ornament 03 Round Grate */
-		2,   /* Floor Ornament 04 Round Pressure Plate */
-		0,   /* Floor Ornament 05 Black Flame Pit */
-		0,   /* Floor Ornament 06 Crack */
-		2,   /* Floor Ornament 07 Tiny Pressure Pad */
-		0    /* Floor Ornament 08 Puddle */
+	static byte floorOrnCoordSetIndices[9] = {
+		// @ G0195_auc_Graphic558_FloorOrnamentCoordinateSetIndices
+		0, /* Floor Ornament 00 Square Grate */
+		0, /* Floor Ornament 01 Square Pressure Pad */
+		0, /* Floor Ornament 02 Moss */
+		0, /* Floor Ornament 03 Round Grate */
+		2, /* Floor Ornament 04 Round Pressure Plate */
+		0, /* Floor Ornament 05 Black Flame Pit */
+		0, /* Floor Ornament 06 Crack */
+		2, /* Floor Ornament 07 Tiny Pressure Pad */
+		0 /* Floor Ornament 08 Puddle */
 	};
-	static byte g194_WallOrnCoordSetIndices[60] = { // @ G0194_auc_Graphic558_WallOrnamentCoordinateSetIndices
-		1,   /* Wall Ornament 00 Unreadable Inscription */
-		1,   /* Wall Ornament 01 Square Alcove */
-		1,   /* Wall Ornament 02 Vi Altar */
-		1,   /* Wall Ornament 03 Arched Alcove */
-		0,   /* Wall Ornament 04 Hook */
-		0,   /* Wall Ornament 05 Iron Lock */
-		0,   /* Wall Ornament 06 Wood Ring */
-		0,   /* Wall Ornament 07 Small Switch */
-		0,   /* Wall Ornament 08 Dent 1 */
-		0,   /* Wall Ornament 09 Dent 2 */
-		0,   /* Wall Ornament 10 Iron Ring */
-		2,   /* Wall Ornament 11 Crack */
-		3,   /* Wall Ornament 12 Slime Outlet */
-		0,   /* Wall Ornament 13 Dent 3 */
-		0,   /* Wall Ornament 14 Tiny Switch */
-		0,   /* Wall Ornament 15 Green Switch Out */
-		0,   /* Wall Ornament 16 Blue Switch Out */
-		0,   /* Wall Ornament 17 Coin Slot */
-		0,   /* Wall Ornament 18 Double Iron Lock */
-		0,   /* Wall Ornament 19 Square Lock */
-		0,   /* Wall Ornament 20 Winged Lock */
-		0,   /* Wall Ornament 21 Onyx Lock */
-		0,   /* Wall Ornament 22 Stone Lock */
-		0,   /* Wall Ornament 23 Cross Lock */
-		0,   /* Wall Ornament 24 Topaz Lock */
-		0,   /* Wall Ornament 25 Skeleton Lock */
-		0,   /* Wall Ornament 26 Gold Lock */
-		0,   /* Wall Ornament 27 Tourquoise Lock */
-		0,   /* Wall Ornament 28 Emerald Lock */
-		0,   /* Wall Ornament 29 Ruby Lock */
-		0,   /* Wall Ornament 30 Ra Lock */
-		0,   /* Wall Ornament 31 Master Lock */
-		0,   /* Wall Ornament 32 Gem Hole */
-		2,   /* Wall Ornament 33 Slime */
-		2,   /* Wall Ornament 34 Grate */
-		1,   /* Wall Ornament 35 Fountain */
-		1,   /* Wall Ornament 36 Manacles */
-		1,   /* Wall Ornament 37 Ghoul's Head */
-		1,   /* Wall Ornament 38 Empty Torch Holder */
-		1,   /* Wall Ornament 39 Scratches */
-		4,   /* Wall Ornament 40 Poison Holes */
-		4,   /* Wall Ornament 41 Fireball Holes */
-		4,   /* Wall Ornament 42 Dagger Holes */
-		5,   /* Wall Ornament 43 Champion Mirror */
-		0,   /* Wall Ornament 44 Lever Up */
-		0,   /* Wall Ornament 45 Lever Down */
-		1,   /* Wall Ornament 46 Full Torch Holder */
-		0,   /* Wall Ornament 47 Red Switch Out */
-		0,   /* Wall Ornament 48 Eye Switch */
-		0,   /* Wall Ornament 49 Big Switch Out */
-		2,   /* Wall Ornament 50 Crack Switch Out */
-		0,   /* Wall Ornament 51 Green Switch In */
-		0,   /* Wall Ornament 52 Blue Switch In */
-		0,   /* Wall Ornament 53 Red Switch In */
-		0,   /* Wall Ornament 54 Big Switch In */
-		2,   /* Wall Ornament 55 Crack Switch In. Atari ST Version 1.0 1987-12-08: 0  */
-		6,   /* Wall Ornament 56 Amalgam (Encased Gem) */
-		6,   /* Wall Ornament 57 Amalgam (Free Gem) */
-		6,   /* Wall Ornament 58 Amalgam (Without Gem) */
-		7    /* Wall Ornament 59 Lord Order (Outside) */
+	static byte g194_WallOrnCoordSetIndices[60] = {
+		// @ G0194_auc_Graphic558_WallOrnamentCoordinateSetIndices
+		1, /* Wall Ornament 00 Unreadable Inscription */
+		1, /* Wall Ornament 01 Square Alcove */
+		1, /* Wall Ornament 02 Vi Altar */
+		1, /* Wall Ornament 03 Arched Alcove */
+		0, /* Wall Ornament 04 Hook */
+		0, /* Wall Ornament 05 Iron Lock */
+		0, /* Wall Ornament 06 Wood Ring */
+		0, /* Wall Ornament 07 Small Switch */
+		0, /* Wall Ornament 08 Dent 1 */
+		0, /* Wall Ornament 09 Dent 2 */
+		0, /* Wall Ornament 10 Iron Ring */
+		2, /* Wall Ornament 11 Crack */
+		3, /* Wall Ornament 12 Slime Outlet */
+		0, /* Wall Ornament 13 Dent 3 */
+		0, /* Wall Ornament 14 Tiny Switch */
+		0, /* Wall Ornament 15 Green Switch Out */
+		0, /* Wall Ornament 16 Blue Switch Out */
+		0, /* Wall Ornament 17 Coin Slot */
+		0, /* Wall Ornament 18 Double Iron Lock */
+		0, /* Wall Ornament 19 Square Lock */
+		0, /* Wall Ornament 20 Winged Lock */
+		0, /* Wall Ornament 21 Onyx Lock */
+		0, /* Wall Ornament 22 Stone Lock */
+		0, /* Wall Ornament 23 Cross Lock */
+		0, /* Wall Ornament 24 Topaz Lock */
+		0, /* Wall Ornament 25 Skeleton Lock */
+		0, /* Wall Ornament 26 Gold Lock */
+		0, /* Wall Ornament 27 Tourquoise Lock */
+		0, /* Wall Ornament 28 Emerald Lock */
+		0, /* Wall Ornament 29 Ruby Lock */
+		0, /* Wall Ornament 30 Ra Lock */
+		0, /* Wall Ornament 31 Master Lock */
+		0, /* Wall Ornament 32 Gem Hole */
+		2, /* Wall Ornament 33 Slime */
+		2, /* Wall Ornament 34 Grate */
+		1, /* Wall Ornament 35 Fountain */
+		1, /* Wall Ornament 36 Manacles */
+		1, /* Wall Ornament 37 Ghoul's Head */
+		1, /* Wall Ornament 38 Empty Torch Holder */
+		1, /* Wall Ornament 39 Scratches */
+		4, /* Wall Ornament 40 Poison Holes */
+		4, /* Wall Ornament 41 Fireball Holes */
+		4, /* Wall Ornament 42 Dagger Holes */
+		5, /* Wall Ornament 43 Champion Mirror */
+		0, /* Wall Ornament 44 Lever Up */
+		0, /* Wall Ornament 45 Lever Down */
+		1, /* Wall Ornament 46 Full Torch Holder */
+		0, /* Wall Ornament 47 Red Switch Out */
+		0, /* Wall Ornament 48 Eye Switch */
+		0, /* Wall Ornament 49 Big Switch Out */
+		2, /* Wall Ornament 50 Crack Switch Out */
+		0, /* Wall Ornament 51 Green Switch In */
+		0, /* Wall Ornament 52 Blue Switch In */
+		0, /* Wall Ornament 53 Red Switch In */
+		0, /* Wall Ornament 54 Big Switch In */
+		2, /* Wall Ornament 55 Crack Switch In. Atari ST Version 1.0 1987-12-08: 0  */
+		6, /* Wall Ornament 56 Amalgam (Encased Gem) */
+		6, /* Wall Ornament 57 Amalgam (Free Gem) */
+		6, /* Wall Ornament 58 Amalgam (Without Gem) */
+		7 /* Wall Ornament 59 Lord Order (Outside) */
 	};
 	static byte g192_AlcoveOrnIndices[k3_AlcoveOrnCount] = { // @ G0192_auc_Graphic558_AlcoveOrnamentIndices
-		1,   /* Square Alcove */
-		2,   /* Vi Altar */
-		3};  /* Arched Alcove */
-	static int16 g193_FountainOrnIndices[k1_FountainOrnCount] = {35}; // @ G0193_ai_Graphic558_FountainOrnamentIndices
+		                                                       1, /* Square Alcove */
+		                                                       2, /* Vi Altar */
+		                                                       3
+	}; /* Arched Alcove */
+	static int16 g193_FountainOrnIndices[k1_FountainOrnCount] = { 35 }; // @ G0193_ai_Graphic558_FountainOrnamentIndices
 
 	DungeonMan &dungeon = *_vm->_dungeonMan;
 
@@ -2531,21 +2554,21 @@ void DisplayMan::loadCurrentMapGraphics() {
 	_useByteBoxCoordinates = true;
 
 	copyBitmapAndFlipHorizontal(_bitmapWallD3LCRNative = _bitmapWallSetD3LCR, _tmpBitmap,
-									_frameWalls163[kDMViewSquareD3C]._srcByteWidth, _frameWalls163[kDMViewSquareD3C]._srcHeight);
+	                            _frameWalls163[kDMViewSquareD3C]._srcByteWidth, _frameWalls163[kDMViewSquareD3C]._srcHeight);
 	fillBitmap(_bitmapWallD3LCRFlipped, kDMColorFlesh, 64, 51);
 	blitToBitmap(_tmpBitmap, _bitmapWallD3LCRFlipped, boxWallD3LCR, 11, 0, 64, 64, kDMColorNoTransparency, 51, 51);
 
 	copyBitmapAndFlipHorizontal(_bitmapWallD2LCRNative = _bitmapWallSetD2LCR, _tmpBitmap,
-									_frameWalls163[kDMViewSquareD2C]._srcByteWidth, _frameWalls163[kDMViewSquareD2C]._srcHeight);
+	                            _frameWalls163[kDMViewSquareD2C]._srcByteWidth, _frameWalls163[kDMViewSquareD2C]._srcHeight);
 	fillBitmap(_bitmapWallD2LCRFlipped, kDMColorFlesh, 72, 71);
 	blitToBitmap(_tmpBitmap, _bitmapWallD2LCRFlipped, boxWallD2LCR, 8, 0, 72, 72, kDMColorNoTransparency, 71, 71);
 
 	copyBitmapAndFlipHorizontal(_bitmapWallD1LCRNative = _bitmapWallSetD1LCR, _bitmapWallD1LCRFlipped,
-									_frameWalls163[kDMViewSquareD1C]._srcByteWidth, _frameWalls163[kDMViewSquareD1C]._srcHeight);
+	                            _frameWalls163[kDMViewSquareD1C]._srcByteWidth, _frameWalls163[kDMViewSquareD1C]._srcHeight);
 	copyBitmapAndFlipHorizontal(_bitmapWallD0LNative = _bitmapWallSetWallD0L, _bitmapWallD0RFlipped,
-									_frameWalls163[kDMViewSquareD0L]._srcByteWidth, _frameWalls163[kDMViewSquareD0L]._srcHeight);
+	                            _frameWalls163[kDMViewSquareD0L]._srcByteWidth, _frameWalls163[kDMViewSquareD0L]._srcHeight);
 	copyBitmapAndFlipHorizontal(_bitmapWallD0RNative = _bitmapWallSetWallD0R, _bitmapWallD0LFlipped,
-									_frameWalls163[kDMViewSquareD0L]._srcByteWidth, _frameWalls163[kDMViewSquareD0L]._srcHeight);
+	                            _frameWalls163[kDMViewSquareD0L]._srcByteWidth, _frameWalls163[kDMViewSquareD0L]._srcHeight);
 
 	int16 val = dungeon._currMap->_wallSet * k18_StairsGraphicCount + k90_FirstStairs;
 	_stairsNativeBitmapIndexUpFrontD3L = val++;
@@ -2610,9 +2633,9 @@ void DisplayMan::loadCurrentMapGraphics() {
 		byte *coords = _wallOrnamentCoordSets[_currMapWallOrnInfo[ornamentIndex].coordinateSet][0];
 
 		for (uint16 counter = kDMDerivedBitmapFirstWallOrnament + (ornamentIndex * 4),
-					index = counter + 4;
-			counter < index;
-			coords += ((index - counter) == 2) ? 18 : 12) {
+		            index = counter + 4;
+		     counter < index;
+		     coords += ((index - counter) == 2) ? 18 : 12) {
 
 			releaseBlock(counter | 0x8000);
 			_derivedBitmapByteCount[counter++] = coords[4] * coords[5];
@@ -2626,8 +2649,6 @@ void DisplayMan::loadCurrentMapGraphics() {
 		_currMapFloorOrnInfo[i].coordinateSet = floorOrnCoordSetIndices[ornIndice];
 	}
 
-
-
 	for (uint16 i = 0; i < currMap._doorOrnCount; ++i) {
 		uint16 ornIndice = _currMapDoorOrnIndices[i];
 		_currMapDoorOrnInfo[i].nativeIndice = k303_FirstDoorOrn + ornIndice;
@@ -2636,7 +2657,8 @@ void DisplayMan::loadCurrentMapGraphics() {
 		uint16 *coords = _doorOrnCoordSets[_currMapDoorOrnInfo[i].coordinateSet][0];
 
 		for (uint16 nativeIndice = kDMDerivedBitmapFirstDoorOrnamentD3 + i * 2,
-					index = nativeIndice + 2; nativeIndice < index; coords += 6) {
+		            index = nativeIndice + 2;
+		     nativeIndice < index; coords += 6) {
 			releaseBlock(nativeIndice | 0x8000);
 			_derivedBitmapByteCount[nativeIndice++] = coords[4] * coords[5];
 		}
@@ -2668,21 +2690,22 @@ void DisplayMan::loadCurrentMapGraphics() {
 }
 
 void DisplayMan::applyCreatureReplColors(int replacedColor, int replacementColor) {
-	CreatureReplColorSet creatureReplColorSets[13] = { // @ G0220_as_Graphic558_CreatureReplacementColorSets
+	CreatureReplColorSet creatureReplColorSets[13] = {
+		// @ G0220_as_Graphic558_CreatureReplacementColorSets
 		/* { Color, Color, Color, Color, Color, Color, D2 replacement color index (x10), D3 replacement color index (x10) } */
-		CreatureReplColorSet(0x0CA0, 0x0A80, 0x0860, 0x0640, 0x0420, 0x0200,  90,  90),    /* Atari ST: { 0x0650, 0x0540, 0x0430, 0x0320, 0x0210, 0x0100,  90,  90 }, RGB colors are different */
-		CreatureReplColorSet(0x0060, 0x0040, 0x0020, 0x0000, 0x0000, 0x0000,   0,   0),    /* Atari ST: { 0x0030, 0x0020, 0x0010, 0x0000, 0x0000, 0x0000,   0,   0 }, */
-		CreatureReplColorSet(0x0860, 0x0640, 0x0420, 0x0200, 0x0000, 0x0000, 100, 100),    /* Atari ST: { 0x0430, 0x0320, 0x0210, 0x0100, 0x0000, 0x0000, 100, 100 }, */
-		CreatureReplColorSet(0x0640, 0x0420, 0x0200, 0x0000, 0x0000, 0x0000,  90,   0),    /* Atari ST: { 0x0320, 0x0210, 0x0100, 0x0000, 0x0000, 0x0000,  90,   0 }, */
-		CreatureReplColorSet(0x000A, 0x0008, 0x0006, 0x0004, 0x0002, 0x0000,  90, 100),    /* Atari ST: { 0x0005, 0x0004, 0x0003, 0x0002, 0x0001, 0x0000,  90, 100 }, */
-		CreatureReplColorSet(0x0008, 0x0006, 0x0004, 0x0002, 0x0000, 0x0000, 100,   0),    /* Atari ST: { 0x0004, 0x0003, 0x0002, 0x0001, 0x0000, 0x0000, 100,   0 }, */
-		CreatureReplColorSet(0x0808, 0x0606, 0x0404, 0x0202, 0x0000, 0x0000,  90,   0),    /* Atari ST: { 0x0404, 0x0303, 0x0202, 0x0101, 0x0000, 0x0000,  90,   0 }, */
-		CreatureReplColorSet(0x0A0A, 0x0808, 0x0606, 0x0404, 0x0202, 0x0000, 100,  90),    /* Atari ST: { 0x0505, 0x0404, 0x0303, 0x0202, 0x0101, 0x0000, 100,  90 }, */
-		CreatureReplColorSet(0x0FA0, 0x0C80, 0x0A60, 0x0840, 0x0620, 0x0400, 100,  50),    /* Atari ST: { 0x0750, 0x0640, 0x0530, 0x0420, 0x0310, 0x0200, 100,  50 }, */
-		CreatureReplColorSet(0x0F80, 0x0C60, 0x0A40, 0x0820, 0x0600, 0x0200,  50,  70),    /* Atari ST: { 0x0740, 0x0630, 0x0520, 0x0410, 0x0300, 0x0100,  50,  30 }, D3 replacement color index is different */
-		CreatureReplColorSet(0x0800, 0x0600, 0x0400, 0x0200, 0x0000, 0x0000, 100, 120),    /* Atari ST: { 0x0400, 0x0300, 0x0200, 0x0100, 0x0000, 0x0000, 100, 100 }, D3 replacement color index is different */
-		CreatureReplColorSet(0x0600, 0x0400, 0x0200, 0x0000, 0x0000, 0x0000, 120,   0),    /* Atari ST: { 0x0300, 0x0200, 0x0100, 0x0000, 0x0000, 0x0000, 120,   0 }, */
-		CreatureReplColorSet(0x0C86, 0x0A64, 0x0842, 0x0620, 0x0400, 0x0200, 100,  50)     /* Atari ST: { 0x0643, 0x0532, 0x0421, 0x0310, 0x0200, 0x0100, 100,  50 } }; */
+		CreatureReplColorSet(0x0CA0, 0x0A80, 0x0860, 0x0640, 0x0420, 0x0200, 90, 90), /* Atari ST: { 0x0650, 0x0540, 0x0430, 0x0320, 0x0210, 0x0100,  90,  90 }, RGB colors are different */
+		CreatureReplColorSet(0x0060, 0x0040, 0x0020, 0x0000, 0x0000, 0x0000, 0, 0), /* Atari ST: { 0x0030, 0x0020, 0x0010, 0x0000, 0x0000, 0x0000,   0,   0 }, */
+		CreatureReplColorSet(0x0860, 0x0640, 0x0420, 0x0200, 0x0000, 0x0000, 100, 100), /* Atari ST: { 0x0430, 0x0320, 0x0210, 0x0100, 0x0000, 0x0000, 100, 100 }, */
+		CreatureReplColorSet(0x0640, 0x0420, 0x0200, 0x0000, 0x0000, 0x0000, 90, 0), /* Atari ST: { 0x0320, 0x0210, 0x0100, 0x0000, 0x0000, 0x0000,  90,   0 }, */
+		CreatureReplColorSet(0x000A, 0x0008, 0x0006, 0x0004, 0x0002, 0x0000, 90, 100), /* Atari ST: { 0x0005, 0x0004, 0x0003, 0x0002, 0x0001, 0x0000,  90, 100 }, */
+		CreatureReplColorSet(0x0008, 0x0006, 0x0004, 0x0002, 0x0000, 0x0000, 100, 0), /* Atari ST: { 0x0004, 0x0003, 0x0002, 0x0001, 0x0000, 0x0000, 100,   0 }, */
+		CreatureReplColorSet(0x0808, 0x0606, 0x0404, 0x0202, 0x0000, 0x0000, 90, 0), /* Atari ST: { 0x0404, 0x0303, 0x0202, 0x0101, 0x0000, 0x0000,  90,   0 }, */
+		CreatureReplColorSet(0x0A0A, 0x0808, 0x0606, 0x0404, 0x0202, 0x0000, 100, 90), /* Atari ST: { 0x0505, 0x0404, 0x0303, 0x0202, 0x0101, 0x0000, 100,  90 }, */
+		CreatureReplColorSet(0x0FA0, 0x0C80, 0x0A60, 0x0840, 0x0620, 0x0400, 100, 50), /* Atari ST: { 0x0750, 0x0640, 0x0530, 0x0420, 0x0310, 0x0200, 100,  50 }, */
+		CreatureReplColorSet(0x0F80, 0x0C60, 0x0A40, 0x0820, 0x0600, 0x0200, 50, 70), /* Atari ST: { 0x0740, 0x0630, 0x0520, 0x0410, 0x0300, 0x0100,  50,  30 }, D3 replacement color index is different */
+		CreatureReplColorSet(0x0800, 0x0600, 0x0400, 0x0200, 0x0000, 0x0000, 100, 120), /* Atari ST: { 0x0400, 0x0300, 0x0200, 0x0100, 0x0000, 0x0000, 100, 100 }, D3 replacement color index is different */
+		CreatureReplColorSet(0x0600, 0x0400, 0x0200, 0x0000, 0x0000, 0x0000, 120, 0), /* Atari ST: { 0x0300, 0x0200, 0x0100, 0x0000, 0x0000, 0x0000, 120,   0 }, */
+		CreatureReplColorSet(0x0C86, 0x0A64, 0x0842, 0x0620, 0x0400, 0x0200, 100, 50) /* Atari ST: { 0x0643, 0x0532, 0x0421, 0x0310, 0x0200, 0x0100, 100,  50 } }; */
 	};
 
 	for (int16 i = 0; i < 6; ++i)
@@ -2695,49 +2718,51 @@ void DisplayMan::applyCreatureReplColors(int replacedColor, int replacementColor
 void DisplayMan::drawFloorPitOrStairsBitmap(uint16 nativeIndex, Frame &f) {
 	if (f._srcByteWidth)
 		blitToBitmap(getNativeBitmapOrGraphic(nativeIndex), _bitmapViewport, f._box, f._srcX, f._srcY,
-						f._srcByteWidth, k112_byteWidthViewport, kDMColorFlesh, f._srcHeight, k136_heightViewport);
+		             f._srcByteWidth, k112_byteWidthViewport, kDMColorFlesh, f._srcHeight, k136_heightViewport);
 }
 
 void DisplayMan::drawFloorPitOrStairsBitmapFlippedHorizontally(uint16 nativeIndex, Frame &f) {
 	if (f._srcByteWidth) {
 		copyBitmapAndFlipHorizontal(getNativeBitmapOrGraphic(nativeIndex), _tmpBitmap, f._srcByteWidth, f._srcHeight);
 		blitToBitmap(_tmpBitmap, _bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth,
-						k112_byteWidthViewport, kDMColorFlesh, f._srcHeight, k136_heightViewport);
+		             k112_byteWidthViewport, kDMColorFlesh, f._srcHeight, k136_heightViewport);
 	}
 }
 
 bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex) {
 	static Box boxWallPatchBehindInscription = Box(110, 113, 37, 63); // @ G0202_ac_Graphic558_Box_WallPatchBehindInscription
-	static const byte inscriptionLineY[4] = { // @ G0203_auc_Graphic558_InscriptionLineY
-		48,   /* 1 Line  */
-		59,   /* 2 lines */
-		75,   /* 3 lines */
-		86    /* 4 lines */
+	static const byte inscriptionLineY[4] = {
+		// @ G0203_auc_Graphic558_InscriptionLineY
+		48, /* 1 Line  */
+		59, /* 2 lines */
+		75, /* 3 lines */
+		86 /* 4 lines */
 	};
-	static const byte wallOrnDerivedBitmapIndexIncrement[12] = { // @ G0190_auc_Graphic558_WallOrnamentDerivedBitmapIndexIncrement
-		0,   /* D3L Right */
-		0,   /* D3R Left */
-		1,   /* D3L Front */
-		1,   /* D3C Front */
-		1,   /* D3R Front */
-		2,   /* D2L Right */
-		2,   /* D2R Left */
-		3,   /* D2L Front */
-		3,   /* D2C Front */
-		3,   /* D2R Front */
-		4,   /* D1L Right */
-		4    /* D1R Left */
+	static const byte wallOrnDerivedBitmapIndexIncrement[12] = {
+		// @ G0190_auc_Graphic558_WallOrnamentDerivedBitmapIndexIncrement
+		0, /* D3L Right */
+		0, /* D3R Left */
+		1, /* D3L Front */
+		1, /* D3C Front */
+		1, /* D3R Front */
+		2, /* D2L Right */
+		2, /* D2R Left */
+		3, /* D2L Front */
+		3, /* D2C Front */
+		3, /* D2R Front */
+		4, /* D1L Right */
+		4 /* D1R Left */
 	};
 
-	static byte unreadableInscriptionBoxY2[15] = { // @ G0204_auc_Graphic558_UnreadableInscriptionBoxY2
+	static byte unreadableInscriptionBoxY2[15] = {
+		// @ G0204_auc_Graphic558_UnreadableInscriptionBoxY2
 		/* { Y for 1 line, Y for 2 lines, Y for 3 lines } */
-		45, 48, 53,   /* D3L Right, D3R Left */
-		43, 49, 56,   /* D3L Front, D3C Front, D3R Front */
-		42, 49, 56,   /* D2L Right, D2R Left */
-		46, 53, 63,   /* D2L Front, D2C Front, D2R Front */
-		46, 57, 68    /* D1L Right, D1R Left */
+		45, 48, 53, /* D3L Right, D3R Left */
+		43, 49, 56, /* D3L Front, D3C Front, D3R Front */
+		42, 49, 56, /* D2L Right, D2R Left */
+		46, 53, 63, /* D2L Front, D2C Front, D2R Front */
+		46, 57, 68 /* D1L Right, D1R Left */
 	};
-
 
 	static Box boxChampionPortraitOnWall = Box(96, 127, 35, 63); // G0109_s_Graphic558_Box_ChampionPortraitOnWall
 
@@ -2860,23 +2885,22 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 
 	Box tmpBox(ornCoordSet[0], ornCoordSet[1], ornCoordSet[2], ornCoordSet[3]);
 	blitToBitmap(ornBlitBitmap, _bitmapViewport, tmpBox, blitPosX, 0,
-		ornCoordSet[4], k112_byteWidthViewport, kDMColorFlesh, ornCoordSet[5], k136_heightViewport);
+	             ornCoordSet[4], k112_byteWidthViewport, kDMColorFlesh, ornCoordSet[5], k136_heightViewport);
 
 	if ((viewWallIndex == kDMViewWallD1CFront) && _championPortraitOrdinal--) {
 		blitToBitmap(getNativeBitmapOrGraphic(kDMGraphicIdxChampionPortraits), _bitmapViewport, boxChampionPortraitOnWall,
-			(_championPortraitOrdinal & 0x0007) << 5, (_championPortraitOrdinal >> 3) * 29,
-			k128_byteWidth, k112_byteWidthViewport, kDMColorDarkGary, 87, k136_heightViewport); /* A portrait is 32x29 pixels */
+		             (_championPortraitOrdinal & 0x0007) << 5, (_championPortraitOrdinal >> 3) * 29,
+		             k128_byteWidth, k112_byteWidthViewport, kDMColorDarkGary, 87, k136_heightViewport); /* A portrait is 32x29 pixels */
 	}
 
 	return isAlcove;
 }
 
 void DisplayMan::blitToBitmapShrinkWithPalChange(byte *srcBitmap, byte *destBitmap,
-													  int16 srcPixelWidth, int16 srcHeight,
-													  int16 destPixelWidth, int16 destHeight, byte *palChange) {
+                                                 int16 srcPixelWidth, int16 srcHeight,
+                                                 int16 destPixelWidth, int16 destHeight, byte *palChange) {
 	warning("DUMMY CODE: f129_blitToBitmapShrinkWithPalChange");
 	warning("MISSING CODE: No palette change takes place in f129_blitToBitmapShrinkWithPalChange");
-
 
 	destPixelWidth = (destPixelWidth + 1) & 0xFFFE;
 
@@ -2906,13 +2930,13 @@ uint32 DisplayMan::getCompressedDataSize(uint16 index) {
 	return _packedItemPos[index + 1] - _packedItemPos[index];
 }
 
-void DisplayMan::drawField(FieldAspect *fieldAspect, Box& box) {
+void DisplayMan::drawField(FieldAspect *fieldAspect, Box &box) {
 	byte *bitmapMask = nullptr;
 
 	if (fieldAspect->_mask != kMaskFieldAspectNoMask) {
 		bitmapMask = _tmpBitmap;
 		memmove(bitmapMask, getNativeBitmapOrGraphic(kDMGraphicIdxFieldMaskD3R + getFlag(fieldAspect->_mask, kMaskFieldAspectIndex)),
-				fieldAspect->_height * fieldAspect->_byteWidth * 2);
+		        fieldAspect->_height * fieldAspect->_byteWidth * 2);
 		if (getFlag(fieldAspect->_mask, kMaskFieldAspectFlipMask)) {
 			flipBitmapHorizontal(bitmapMask, fieldAspect->_byteWidth, fieldAspect->_height);
 		}
@@ -2921,8 +2945,8 @@ void DisplayMan::drawField(FieldAspect *fieldAspect, Box& box) {
 	isDerivedBitmapInCache(kDMDerivedBitmapViewport);
 	byte *bitmap = getNativeBitmapOrGraphic(kDMGraphicIdxFieldTeleporter + fieldAspect->_nativeBitmapRelativeIndex);
 	blitBoxFilledWithMaskedBitmap(bitmap, _bitmapViewport, bitmapMask, getDerivedBitmap(kDMDerivedBitmapViewport), box,
-									   _vm->getRandomNumber(2) + fieldAspect->_baseStartUnitIndex, _vm->getRandomNumber(32), k112_byteWidthViewport,
-									   (Color)fieldAspect->_transparentColor, fieldAspect->_xPos, 0, 136, fieldAspect->_bitplaneWordCount);
+	                              _vm->getRandomNumber(2) + fieldAspect->_baseStartUnitIndex, _vm->getRandomNumber(32), k112_byteWidthViewport,
+	                              (Color)fieldAspect->_transparentColor, fieldAspect->_xPos, 0, 136, fieldAspect->_bitplaneWordCount);
 	addDerivedBitmap(kDMDerivedBitmapViewport);
 	releaseBlock(kDMDerivedBitmapViewport | 0x8000);
 }
@@ -2936,22 +2960,22 @@ int16 DisplayMan::getScaledDimension(int16 dimension, int16 scale) {
 }
 
 void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Direction directionParam, int16 mapXpos,
-							  int16 mapYpos, int16 viewSquareIndex, CellOrder cellOrder) {
+                                                           int16 mapYpos, int16 viewSquareIndex, CellOrder cellOrder) {
 	int16 AL_0_creatureIndexRed;
 #define AL_1_viewSquareExplosionIndex viewSquareIndex
 	int16 L0126_i_Multiple;
-#define AL_2_viewCell      L0126_i_Multiple
-#define AL_2_cellPurpleMan          L0126_i_Multiple
+#define AL_2_viewCell L0126_i_Multiple
+#define AL_2_cellPurpleMan L0126_i_Multiple
 #define AL_2_explosionSize L0126_i_Multiple
 	int16 L0127_i_Multiple;
-#define AL_4_thingType            L0127_i_Multiple
-#define AL_4_nativeBitmapIndex    L0127_i_Multiple
-#define AL_4_xPos                    L0127_i_Multiple
-#define AL_4_groupCells           L0127_i_Multiple
-#define AL_4_normalizdByteWidth  L0127_i_Multiple
-#define AL_4_yPos                    L0127_i_Multiple
-#define AL_4_projectileAspect     L0127_i_Multiple
-#define AL_4_explosionType        L0127_i_Multiple
+#define AL_4_thingType L0127_i_Multiple
+#define AL_4_nativeBitmapIndex L0127_i_Multiple
+#define AL_4_xPos L0127_i_Multiple
+#define AL_4_groupCells L0127_i_Multiple
+#define AL_4_normalizdByteWidth L0127_i_Multiple
+#define AL_4_yPos L0127_i_Multiple
+#define AL_4_projectileAspect L0127_i_Multiple
+#define AL_4_explosionType L0127_i_Multiple
 #define AL_4_explosionAspectIndex L0127_i_Multiple
 	ObjectAspect *objectAspect;
 	uint32 remainingViewCellOrdinalsToProcess;
@@ -2971,11 +2995,11 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 	Thing firstThingToDraw; /* Initialized to thingParam and never changed afterwards. Used as a backup of the specified first object to draw */
 	uint16 L0147_ui_Multiple;
 #define AL_10_viewSquareIndexBackup L0147_ui_Multiple
-#define AL_10_explosionScaleIndex   L0147_ui_Multiple
+#define AL_10_explosionScaleIndex L0147_ui_Multiple
 	int16 cellCounter;
 	uint16 objectShiftIndex;
 	uint16 L0150_ui_Multiple = 0;
-#define AL_8_shiftSetIndex        L0150_ui_Multiple
+#define AL_8_shiftSetIndex L0150_ui_Multiple
 #define AL_8_projectileScaleIndex L0150_ui_Multiple
 	CreatureAspect *creatureAspectStruct = nullptr;
 	int16 creatureSize = 0;
@@ -3005,181 +3029,187 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 	/* This is the full dungeon view */
 	static Box boxExplosionPatternD0C = Box(0, 223, 0, 135); // @ G0105_s_Graphic558_Box_ExplosionPattern_D0C
 
-	static byte explosionBaseScales[5] = { // @ G0216_auc_Graphic558_ExplosionBaseScales
-		10,  /* D4 */
-		16,  /* D3 */
-		23,  /* D2 */
-		32,  /* D1 */
-		32   /* D0 */
+	static byte explosionBaseScales[5] = {
+		// @ G0216_auc_Graphic558_ExplosionBaseScales
+		10, /* D4 */
+		16, /* D3 */
+		23, /* D2 */
+		32, /* D1 */
+		32 /* D0 */
 	};
 
 	static byte objectPileShiftSetIndices[16][2] = { // @ G0217_aauc_Graphic558_ObjectPileShiftSetIndices
-	/* { X shift index, Y shift index } */
-		{2, 5},
-		{0, 6},
-		{5, 7},
-		{3, 0},
-		{7, 1},
-		{1, 2},
-		{6, 3},
-		{3, 3},
-		{5, 5},
-		{2, 6},
-		{7, 7},
-		{1, 0},
-		{3, 1},
-		{6, 2},
-		{1, 3},
-		{5, 3}
+		                                               /* { X shift index, Y shift index } */
+		                                               { 2, 5 },
+		                                               { 0, 6 },
+		                                               { 5, 7 },
+		                                               { 3, 0 },
+		                                               { 7, 1 },
+		                                               { 1, 2 },
+		                                               { 6, 3 },
+		                                               { 3, 3 },
+		                                               { 5, 5 },
+		                                               { 2, 6 },
+		                                               { 7, 7 },
+		                                               { 1, 0 },
+		                                               { 3, 1 },
+		                                               { 6, 2 },
+		                                               { 1, 3 },
+		                                               { 5, 3 }
 	};
 
 	static byte objectCoordinateSets[3][10][5][2] = { // @ G0218_aaaauc_Graphic558_ObjectCoordinateSets
-	/* { {X, Y }, {X, Y }, {X, Y }, {X, Y }, {X, Y } } */
-		{
-			{{  0,   0}, {  0,   0}, {125,  72}, { 95,  72}, {112, 64}},     /* D3C */
-			{{  0,   0}, {  0,   0}, { 62,  72}, { 25,  72}, { 24, 64}},     /* D3L */
-			{{  0,   0}, {  0,   0}, {200,  72}, {162,  72}, {194, 64}},     /* D3R */
-			{{ 92,  78}, {132,  78}, {136,  86}, { 88,  86}, {112, 74}},     /* D2C */
-			{{ 10,  78}, { 53,  78}, { 41,  86}, {  0,   0}, {  3, 74}},     /* D2L */
-			{{171,  78}, {218,  78}, {  0,   0}, {183,  86}, {219, 74}},     /* D2R */
-			{{ 83,  96}, {141,  96}, {148, 111}, { 76, 111}, {112, 94}},     /* D1C */
-			{{  0,   0}, { 26,  96}, {  5, 111}, {  0,   0}, {  0,  0}},     /* D1L */
-			{{197,  96}, {  0,   0}, {  0,   0}, {220, 111}, {  0,  0}},     /* D1R */
-			{{ 66, 131}, {158, 131}, {  0,   0}, {  0,   0}, {  0,  0}}      /* D0C */
-		},
-		{
-			{{  0,   0}, {  0,   0}, {125,  72}, { 95,  72}, {112, 63}},     /* D3C */
-			{{  0,   0}, {  0,   0}, { 62,  72}, { 25,  72}, { 24, 63}},     /* D3L */
-			{{  0,   0}, {  0,   0}, {200,  72}, {162,  72}, {194, 63}},     /* D3R */
-			{{ 92,  78}, {132,  78}, {136,  86}, { 88,  86}, {112, 73}},     /* D2C */
-			{{ 10,  78}, { 53,  78}, { 41,  86}, {  0,   0}, {  3, 73}},     /* D2L */
-			{{171,  78}, {218,  78}, {  0,   0}, {183,  86}, {219, 73}},     /* D2R */
-			{{ 83,  96}, {141,  96}, {148, 111}, { 76, 111}, {112, 89}},     /* D1C */
-			{{  0,   0}, { 26,  96}, {  5, 111}, {  0,   0}, {  0,  0}},     /* D1L */
-			{{197,  96}, {  0,   0}, {  0,   0}, {220, 111}, {  0,  0}},     /* D1R */
-			{{ 66, 131}, {158, 131}, {  0,   0}, {  0,   0}, {  0,  0}}      /* D0C */
-		},
-		{
-			{{  0,   0}, {  0,   0}, {125,  75}, { 95,  75}, {112, 65}},     /* D3C */
-			{{  0,   0}, {  0,   0}, { 62,  75}, { 25,  75}, { 24, 65}},     /* D3L */
-			{{  0,   0}, {  0,   0}, {200,  75}, {162,  75}, {194, 65}},     /* D3R */
-			{{ 92,  81}, {132,  81}, {136,  88}, { 88,  88}, {112, 76}},     /* D2C */
-			{{ 10,  81}, { 53,  81}, { 41,  88}, {  0,   0}, {  3, 76}},     /* D2L */
-			{{171,  81}, {218,  81}, {  0,   0}, {183,  88}, {219, 76}},     /* D2R */
-			{{ 83,  98}, {141,  98}, {148, 115}, { 76, 115}, {112, 98}},     /* D1C */
-			{{  0,   0}, { 26,  98}, {  5, 115}, {  0,   0}, {  0,  0}},     /* D1L */
-			{{197,  98}, {  0,   0}, {  0,   0}, {220, 115}, {  0,  0}},     /* D1R */
-			{{ 66, 135}, {158, 135}, {  0,   0}, {  0,   0}, {  0,  0}}      /* D0C */
-		}
+		                                                /* { {X, Y }, {X, Y }, {X, Y }, {X, Y }, {X, Y } } */
+		                                                {
+		                                                  { { 0, 0 }, { 0, 0 }, { 125, 72 }, { 95, 72 }, { 112, 64 } }, /* D3C */
+		                                                  { { 0, 0 }, { 0, 0 }, { 62, 72 }, { 25, 72 }, { 24, 64 } }, /* D3L */
+		                                                  { { 0, 0 }, { 0, 0 }, { 200, 72 }, { 162, 72 }, { 194, 64 } }, /* D3R */
+		                                                  { { 92, 78 }, { 132, 78 }, { 136, 86 }, { 88, 86 }, { 112, 74 } }, /* D2C */
+		                                                  { { 10, 78 }, { 53, 78 }, { 41, 86 }, { 0, 0 }, { 3, 74 } }, /* D2L */
+		                                                  { { 171, 78 }, { 218, 78 }, { 0, 0 }, { 183, 86 }, { 219, 74 } }, /* D2R */
+		                                                  { { 83, 96 }, { 141, 96 }, { 148, 111 }, { 76, 111 }, { 112, 94 } }, /* D1C */
+		                                                  { { 0, 0 }, { 26, 96 }, { 5, 111 }, { 0, 0 }, { 0, 0 } }, /* D1L */
+		                                                  { { 197, 96 }, { 0, 0 }, { 0, 0 }, { 220, 111 }, { 0, 0 } }, /* D1R */
+		                                                  { { 66, 131 }, { 158, 131 }, { 0, 0 }, { 0, 0 }, { 0, 0 } } /* D0C */
+		                                                },
+		                                                {
+		                                                  { { 0, 0 }, { 0, 0 }, { 125, 72 }, { 95, 72 }, { 112, 63 } }, /* D3C */
+		                                                  { { 0, 0 }, { 0, 0 }, { 62, 72 }, { 25, 72 }, { 24, 63 } }, /* D3L */
+		                                                  { { 0, 0 }, { 0, 0 }, { 200, 72 }, { 162, 72 }, { 194, 63 } }, /* D3R */
+		                                                  { { 92, 78 }, { 132, 78 }, { 136, 86 }, { 88, 86 }, { 112, 73 } }, /* D2C */
+		                                                  { { 10, 78 }, { 53, 78 }, { 41, 86 }, { 0, 0 }, { 3, 73 } }, /* D2L */
+		                                                  { { 171, 78 }, { 218, 78 }, { 0, 0 }, { 183, 86 }, { 219, 73 } }, /* D2R */
+		                                                  { { 83, 96 }, { 141, 96 }, { 148, 111 }, { 76, 111 }, { 112, 89 } }, /* D1C */
+		                                                  { { 0, 0 }, { 26, 96 }, { 5, 111 }, { 0, 0 }, { 0, 0 } }, /* D1L */
+		                                                  { { 197, 96 }, { 0, 0 }, { 0, 0 }, { 220, 111 }, { 0, 0 } }, /* D1R */
+		                                                  { { 66, 131 }, { 158, 131 }, { 0, 0 }, { 0, 0 }, { 0, 0 } } /* D0C */
+		                                                },
+		                                                {
+		                                                  { { 0, 0 }, { 0, 0 }, { 125, 75 }, { 95, 75 }, { 112, 65 } }, /* D3C */
+		                                                  { { 0, 0 }, { 0, 0 }, { 62, 75 }, { 25, 75 }, { 24, 65 } }, /* D3L */
+		                                                  { { 0, 0 }, { 0, 0 }, { 200, 75 }, { 162, 75 }, { 194, 65 } }, /* D3R */
+		                                                  { { 92, 81 }, { 132, 81 }, { 136, 88 }, { 88, 88 }, { 112, 76 } }, /* D2C */
+		                                                  { { 10, 81 }, { 53, 81 }, { 41, 88 }, { 0, 0 }, { 3, 76 } }, /* D2L */
+		                                                  { { 171, 81 }, { 218, 81 }, { 0, 0 }, { 183, 88 }, { 219, 76 } }, /* D2R */
+		                                                  { { 83, 98 }, { 141, 98 }, { 148, 115 }, { 76, 115 }, { 112, 98 } }, /* D1C */
+		                                                  { { 0, 0 }, { 26, 98 }, { 5, 115 }, { 0, 0 }, { 0, 0 } }, /* D1L */
+		                                                  { { 197, 98 }, { 0, 0 }, { 0, 0 }, { 220, 115 }, { 0, 0 } }, /* D1R */
+		                                                  { { 66, 135 }, { 158, 135 }, { 0, 0 }, { 0, 0 }, { 0, 0 } } /* D0C */
+		                                                }
 	};
 
-	static int16 shiftSets[3][8] = { // @ G0223_aac_Graphic558_ShiftSets
-		{0, 1, 2, 3, 0, -3, -2, -1},   /* D0 Back or D1 Front */
-		{0, 1, 1, 2, 0, -2, -1, -1},   /* D1 Back or D2 Front */
-		{0, 1, 1, 1, 0, -1, -1, -1}    /* D2 Back or D3 Front */
+	static int16 shiftSets[3][8] = {
+		// @ G0223_aac_Graphic558_ShiftSets
+		{ 0, 1, 2, 3, 0, -3, -2, -1 }, /* D0 Back or D1 Front */
+		{ 0, 1, 1, 2, 0, -2, -1, -1 }, /* D1 Back or D2 Front */
+		{ 0, 1, 1, 1, 0, -1, -1, -1 } /* D2 Back or D3 Front */
 	};
 
 	static byte creatureCoordinateSets[3][11][5][2] = { // @ G0224_aaaauc_Graphic558_CreatureCoordinateSets
-	/* { { X, Y }, { X, Y }, { X, Y }, { X, Y }, { X, Y } } */
-		{
-			{{ 95,  70}, {127,  70}, {129,  75}, { 93,  75}, {111,  72}},     /* D3C */
-			{{131,  70}, {163,  70}, {158,  75}, {120,  75}, {145,  72}},     /* D3L */
-			{{ 59,  70}, { 91,  70}, {107,  75}, { 66,  75}, { 79,  72}},     /* D3R */
-			{{ 92,  81}, {131,  81}, {132,  90}, { 91,  90}, {111,  85}},     /* D2C */
-			{{ 99,  81}, {146,  81}, {135,  90}, { 80,  90}, {120,  85}},     /* D2L */
-			{{ 77,  81}, {124,  81}, {143,  90}, { 89,  90}, {105,  85}},     /* D2R */
-			{{ 83, 103}, {141, 103}, {148, 119}, { 76, 119}, {109, 111}},     /* D1C */
-			{{ 46, 103}, {118, 103}, {101, 119}, {  0,   0}, { 79, 111}},     /* D1L */
-			{{107, 103}, {177, 103}, {  0,   0}, {123, 119}, {144, 111}},     /* D1R */
-			{{  0,   0}, { 67, 135}, {  0,   0}, {  0,   0}, {  0,   0}},     /* D0L */
-			{{156, 135}, {  0,   0}, {  0,   0}, {  0,   0}, {  0,   0}}      /* D0R */
-		},
-		{
-			{{ 94,  75}, {128,  75}, {111,  70}, {111,  72}, {111,  75}},     /* D3C */
-			{{120,  75}, {158,  75}, {149,  70}, {145,  72}, {150,  75}},     /* D3L */
-			{{ 66,  75}, {104,  75}, { 75,  70}, { 79,  72}, { 73,  75}},     /* D3R */
-			{{ 91,  90}, {132,  90}, {111,  83}, {111,  85}, {111,  90}},     /* D2C */
-			{{ 80,  90}, {135,  90}, {125,  83}, {120,  85}, {125,  90}},     /* D2L */
-			{{ 89,  90}, {143,  90}, { 99,  83}, {105,  85}, { 98,  90}},     /* D2R */
-			{{ 81, 119}, {142, 119}, {111, 105}, {111, 111}, {111, 119}},     /* D1C */
-			{{  0,   0}, {101, 119}, { 84, 105}, { 70, 111}, { 77, 119}},     /* D1L */
-			{{123, 119}, {  0,   0}, {139, 105}, {153, 111}, {146, 119}},     /* D1R */
-			{{  0,   0}, { 83, 130}, { 57, 121}, { 47, 126}, { 57, 130}},     /* D0L */
-			{{140, 130}, {  0,   0}, {166, 121}, {176, 126}, {166, 130}}      /* D0R */
-		},
-		{
-			{{ 95,  59}, {127,  59}, {129,  61}, { 93,  61}, {111,  60}},     /* D3C */
-			{{131,  59}, {163,  59}, {158,  61}, {120,  61}, {145,  60}},     /* D3L */
-			{{ 59,  59}, { 91,  59}, {107,  61}, { 66,  61}, { 79,  60}},     /* D3R */
-			{{ 92,  65}, {131,  65}, {132,  67}, { 91,  67}, {111,  66}},     /* D2C */
-			{{ 99,  65}, {146,  65}, {135,  67}, { 80,  67}, {120,  66}},     /* D2L */
-			{{ 77,  65}, {124,  65}, {143,  67}, { 89,  67}, {105,  66}},     /* D2R */
-			{{ 83,  79}, {141,  79}, {148,  85}, { 76,  85}, {111,  81}},     /* D1C */
-			{{ 46,  79}, {118,  79}, {101,  85}, {  0,   0}, { 79,  81}},     /* D1L */
-			{{107,  79}, {177,  79}, {  0,   0}, {123,  85}, {144,  81}},     /* D1R */
-			{{  0,   0}, { 67,  96}, {  0,   0}, {  0,   0}, {  0,   0}},     /* D0L */
-			{{156,  96}, {  0,   0}, {  0,   0}, {  0,   0}, {  0,   0}}      /* D0R */
-		}
+		                                                  /* { { X, Y }, { X, Y }, { X, Y }, { X, Y }, { X, Y } } */
+		                                                  {
+		                                                    { { 95, 70 }, { 127, 70 }, { 129, 75 }, { 93, 75 }, { 111, 72 } }, /* D3C */
+		                                                    { { 131, 70 }, { 163, 70 }, { 158, 75 }, { 120, 75 }, { 145, 72 } }, /* D3L */
+		                                                    { { 59, 70 }, { 91, 70 }, { 107, 75 }, { 66, 75 }, { 79, 72 } }, /* D3R */
+		                                                    { { 92, 81 }, { 131, 81 }, { 132, 90 }, { 91, 90 }, { 111, 85 } }, /* D2C */
+		                                                    { { 99, 81 }, { 146, 81 }, { 135, 90 }, { 80, 90 }, { 120, 85 } }, /* D2L */
+		                                                    { { 77, 81 }, { 124, 81 }, { 143, 90 }, { 89, 90 }, { 105, 85 } }, /* D2R */
+		                                                    { { 83, 103 }, { 141, 103 }, { 148, 119 }, { 76, 119 }, { 109, 111 } }, /* D1C */
+		                                                    { { 46, 103 }, { 118, 103 }, { 101, 119 }, { 0, 0 }, { 79, 111 } }, /* D1L */
+		                                                    { { 107, 103 }, { 177, 103 }, { 0, 0 }, { 123, 119 }, { 144, 111 } }, /* D1R */
+		                                                    { { 0, 0 }, { 67, 135 }, { 0, 0 }, { 0, 0 }, { 0, 0 } }, /* D0L */
+		                                                    { { 156, 135 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 } } /* D0R */
+		                                                  },
+		                                                  {
+		                                                    { { 94, 75 }, { 128, 75 }, { 111, 70 }, { 111, 72 }, { 111, 75 } }, /* D3C */
+		                                                    { { 120, 75 }, { 158, 75 }, { 149, 70 }, { 145, 72 }, { 150, 75 } }, /* D3L */
+		                                                    { { 66, 75 }, { 104, 75 }, { 75, 70 }, { 79, 72 }, { 73, 75 } }, /* D3R */
+		                                                    { { 91, 90 }, { 132, 90 }, { 111, 83 }, { 111, 85 }, { 111, 90 } }, /* D2C */
+		                                                    { { 80, 90 }, { 135, 90 }, { 125, 83 }, { 120, 85 }, { 125, 90 } }, /* D2L */
+		                                                    { { 89, 90 }, { 143, 90 }, { 99, 83 }, { 105, 85 }, { 98, 90 } }, /* D2R */
+		                                                    { { 81, 119 }, { 142, 119 }, { 111, 105 }, { 111, 111 }, { 111, 119 } }, /* D1C */
+		                                                    { { 0, 0 }, { 101, 119 }, { 84, 105 }, { 70, 111 }, { 77, 119 } }, /* D1L */
+		                                                    { { 123, 119 }, { 0, 0 }, { 139, 105 }, { 153, 111 }, { 146, 119 } }, /* D1R */
+		                                                    { { 0, 0 }, { 83, 130 }, { 57, 121 }, { 47, 126 }, { 57, 130 } }, /* D0L */
+		                                                    { { 140, 130 }, { 0, 0 }, { 166, 121 }, { 176, 126 }, { 166, 130 } } /* D0R */
+		                                                  },
+		                                                  {
+		                                                    { { 95, 59 }, { 127, 59 }, { 129, 61 }, { 93, 61 }, { 111, 60 } }, /* D3C */
+		                                                    { { 131, 59 }, { 163, 59 }, { 158, 61 }, { 120, 61 }, { 145, 60 } }, /* D3L */
+		                                                    { { 59, 59 }, { 91, 59 }, { 107, 61 }, { 66, 61 }, { 79, 60 } }, /* D3R */
+		                                                    { { 92, 65 }, { 131, 65 }, { 132, 67 }, { 91, 67 }, { 111, 66 } }, /* D2C */
+		                                                    { { 99, 65 }, { 146, 65 }, { 135, 67 }, { 80, 67 }, { 120, 66 } }, /* D2L */
+		                                                    { { 77, 65 }, { 124, 65 }, { 143, 67 }, { 89, 67 }, { 105, 66 } }, /* D2R */
+		                                                    { { 83, 79 }, { 141, 79 }, { 148, 85 }, { 76, 85 }, { 111, 81 } }, /* D1C */
+		                                                    { { 46, 79 }, { 118, 79 }, { 101, 85 }, { 0, 0 }, { 79, 81 } }, /* D1L */
+		                                                    { { 107, 79 }, { 177, 79 }, { 0, 0 }, { 123, 85 }, { 144, 81 } }, /* D1R */
+		                                                    { { 0, 0 }, { 67, 96 }, { 0, 0 }, { 0, 0 }, { 0, 0 } }, /* D0L */
+		                                                    { { 156, 96 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 } } /* D0R */
+		                                                  }
 	};
 
-	static int16 explosionCoordinatesArray[15][2][2] = { // @ G0226_aaai_Graphic558_ExplosionCoordinates
-	/* { { Front Left X, Front Left Y }, { Front Right X, Front Right Y } } */
-		{{100, 47}, {122, 47}},   /* D4C */
-		{{ 52, 47}, { 76, 47}},   /* D4L */
-		{{148, 47}, {172, 47}},   /* D4R */
-		{{ 95, 50}, {127, 50}},   /* D3C */
-		{{ 31, 50}, { 63, 50}},   /* D3L */
-		{{159, 50}, {191, 50}},   /* D3R */
-		{{ 92, 53}, {131, 53}},   /* D2C */
-		{{ -3, 53}, { 46, 53}},   /* D2L */
-		{{177, 53}, {226, 53}},   /* D2R */
-		{{ 83, 57}, {141, 57}},   /* D1C */
-		{{-54, 57}, { 18, 57}},   /* D1L */
-		{{207, 57}, {277, 57}},   /* D1R */
-		{{  0,  0}, {  0,  0}},   /* D0C */
-		{{-73, 60}, {-33, 60}},   /* D0L */
-		{{256, 60}, {296, 60}}    /* D0R */
+	static int16 explosionCoordinatesArray[15][2][2] = {
+		// @ G0226_aaai_Graphic558_ExplosionCoordinates
+		/* { { Front Left X, Front Left Y }, { Front Right X, Front Right Y } } */
+		{ { 100, 47 }, { 122, 47 } }, /* D4C */
+		{ { 52, 47 }, { 76, 47 } }, /* D4L */
+		{ { 148, 47 }, { 172, 47 } }, /* D4R */
+		{ { 95, 50 }, { 127, 50 } }, /* D3C */
+		{ { 31, 50 }, { 63, 50 } }, /* D3L */
+		{ { 159, 50 }, { 191, 50 } }, /* D3R */
+		{ { 92, 53 }, { 131, 53 } }, /* D2C */
+		{ { -3, 53 }, { 46, 53 } }, /* D2L */
+		{ { 177, 53 }, { 226, 53 } }, /* D2R */
+		{ { 83, 57 }, { 141, 57 } }, /* D1C */
+		{ { -54, 57 }, { 18, 57 } }, /* D1L */
+		{ { 207, 57 }, { 277, 57 } }, /* D1R */
+		{ { 0, 0 }, { 0, 0 } }, /* D0C */
+		{ { -73, 60 }, { -33, 60 } }, /* D0L */
+		{ { 256, 60 }, { 296, 60 } } /* D0R */
 	};
 
-	static int16 rebirthStep2ExplosionCoordinates[7][3] = { // @ G0227_aai_Graphic558_RebirthStep2ExplosionCoordinates
-	/* { X, Y, Scale } */
-		{113, 57, 12},   /* D3C */
-		{ 24, 57, 12},   /* D3L */
-		{195, 57, 12},   /* D3R */
-		{111, 63, 16},   /* D2C */
-		{ 12, 63, 16},   /* D2L */
-		{213, 63, 16},   /* D2R */
-		{112, 76, 24}    /* D1C */
+	static int16 rebirthStep2ExplosionCoordinates[7][3] = {
+		// @ G0227_aai_Graphic558_RebirthStep2ExplosionCoordinates
+		/* { X, Y, Scale } */
+		{ 113, 57, 12 }, /* D3C */
+		{ 24, 57, 12 }, /* D3L */
+		{ 195, 57, 12 }, /* D3R */
+		{ 111, 63, 16 }, /* D2C */
+		{ 12, 63, 16 }, /* D2L */
+		{ 213, 63, 16 }, /* D2R */
+		{ 112, 76, 24 } /* D1C */
 	};
 
-	static int16 rebirthStep1ExplosionCoordinates[7][3] = { // @ G0228_aai_Graphic558_RebirthStep1ExplosionCoordinates
-	/* { X, Y, Scale } */
-		{112, 53, 15},   /* D3C */
-		{ 24, 53, 15},   /* D3L */
-		{194, 53, 15},   /* D3R */
-		{112, 59, 20},   /* D2C */
-		{ 15, 59, 20},   /* D2L */
-		{208, 59, 20},   /* D2R */
-		{112, 70, 32} /* D1C */
+	static int16 rebirthStep1ExplosionCoordinates[7][3] = {
+		// @ G0228_aai_Graphic558_RebirthStep1ExplosionCoordinates
+		/* { X, Y, Scale } */
+		{ 112, 53, 15 }, /* D3C */
+		{ 24, 53, 15 }, /* D3L */
+		{ 194, 53, 15 }, /* D3R */
+		{ 112, 59, 20 }, /* D2C */
+		{ 15, 59, 20 }, /* D2L */
+		{ 208, 59, 20 }, /* D2R */
+		{ 112, 70, 32 } /* D1C */
 	};
 
-	static int16 centeredExplosionCoordinates[15][2] = { // @ G0225_aai_Graphic558_CenteredExplosionCoordinates
+	static int16 centeredExplosionCoordinates[15][2] = {
+		// @ G0225_aai_Graphic558_CenteredExplosionCoordinates
 		/* { X, Y } */
-		{111, 47},   /* D4C */
-		{ 57, 47},   /* D4L */
-		{167, 47},   /* D4R */
-		{111, 50},   /* D3C */
-		{ 45, 50},   /* D3L */
-		{179, 50},   /* D3R */
-		{111, 53},   /* D2C */
-		{ 20, 53},   /* D2L */
-		{205, 53},   /* D2R */
-		{111, 57},   /* D1C */
-		{-30, 57},   /* D1L */
-		{253, 57},   /* D1R */
-		{111, 60},   /* D0C */
-		{-53, 60},   /* D0L */
-		{276, 60}    /* D0R */
+		{ 111, 47 }, /* D4C */
+		{ 57, 47 }, /* D4L */
+		{ 167, 47 }, /* D4R */
+		{ 111, 50 }, /* D3C */
+		{ 45, 50 }, /* D3L */
+		{ 179, 50 }, /* D3R */
+		{ 111, 53 }, /* D2C */
+		{ 20, 53 }, /* D2L */
+		{ 205, 53 }, /* D2R */
+		{ 111, 57 }, /* D1C */
+		{ -30, 57 }, /* D1L */
+		{ 253, 57 }, /* D1R */
+		{ 111, 60 }, /* D0C */
+		{ -53, 60 }, /* D0L */
+		{ 276, 60 } /* D0R */
 	};
 
 	if (thingParam == _vm->_thingEndOfList)
@@ -3253,10 +3283,8 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 				coordinateSet = objectCoordinateSets[objectAspect->_coordinateSet][viewSquareIndex][AL_2_viewCell];
 				if (!coordinateSet[1]) /* If object is not visible */
 					continue;
-T0115015_DrawProjectileAsObject:
-				flipHorizontal = getFlag(objectAspect->_graphicInfo, k0x0001_ObjectFlipOnRightMask) &&
-					!useAlcoveObjectImage &&
-					((viewLane == kDMViewLaneRight) || ((viewLane == kDMViewLaneCenter) && ((AL_2_viewCell == kDMViewCellFrontRight) || (AL_2_viewCell == kDMViewCellBackRight))));
+			T0115015_DrawProjectileAsObject:
+				flipHorizontal = getFlag(objectAspect->_graphicInfo, k0x0001_ObjectFlipOnRightMask) && !useAlcoveObjectImage && ((viewLane == kDMViewLaneRight) || ((viewLane == kDMViewLaneCenter) && ((AL_2_viewCell == kDMViewCellFrontRight) || (AL_2_viewCell == kDMViewCellBackRight))));
 				/* Flip horizontally if object graphic requires it and is not being drawn in an alcove and the object is either on the right lane or on the right column of the center lane */
 				paddingPixelCount = 0;
 
@@ -3290,7 +3318,7 @@ T0115015_DrawProjectileAsObject:
 						derivedBitmapIndex += 2;
 						paddingPixelCount = (7 - ((byteWidth - 1) & 0x0007)) << 1;
 					} else if (useAlcoveObjectImage)
-							derivedBitmapIndex += 4;
+						derivedBitmapIndex += 4;
 
 					if (isDerivedBitmapInCache(derivedBitmapIndex))
 						bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex);
@@ -3362,7 +3390,7 @@ T0115015_DrawProjectileAsObject:
 			break; /* End of processing when drawing objects in an alcove */
 		if (viewSquareIndex < kDMViewSquareD3C)
 			break; /* End of processing if square is too far away at D4 */
-				   /* Draw creatures */
+		/* Draw creatures */
 		drawingLastBackRowCell = ((AL_2_viewCell <= kDMViewCellFrontRight) || (cellCounter == 1)) && (!remainingViewCellOrdinalsToProcess || ((remainingViewCellOrdinalsToProcess & 0x0000000F) >= 3)); /* If (draw cell on the back row or second cell being processed) and (no more cells to draw or next cell to draw is a cell on the front row) */
 		if ((groupThing == _vm->_thingNone) || drawCreaturesCompleted)
 			goto T0115129_DrawProjectiles; /* Skip code to draw creatures */
@@ -3432,7 +3460,7 @@ T0115015_DrawProjectileAsObject:
 		if (viewSquareIndex > kDMViewSquareD0C)
 			viewSquareIndex--;
 
-T0115077_DrawSecondHalfSquareCreature:
+	T0115077_DrawSecondHalfSquareCreature:
 		coordinateSet = creatureCoordinateSets[((CreatureAspect *)objectAspect)->getCoordSet()][viewSquareIndex][AL_2_viewCell];
 		if (!coordinateSet[1])
 			goto T0115126_CreatureNotVisible;
@@ -3554,9 +3582,7 @@ T0115077_DrawSecondHalfSquareCreature:
 				addDerivedBitmap(derivedBitmapIndex);
 			}
 			if ((useCreatureSideBitmap && (creatureDirectionDelta == 1)) || /* If creature is viewed from the right, the side view must be flipped */
-				(useCreatureAttackBitmap && getFlag(creatureAspectInt, kDMAspectMaskActiveGroupFlipBitmap)) ||
-				(useCreatureSpecialD2FrontBitmap && getFlag(creatureGraphicInfoRed, kDMCreatureMaskSpecialD2FrontIsFlipped)) ||
-				(useFlippedHorizontallyCreatureFrontImage && getFlag(creatureGraphicInfoRed, kDMCreatureMaskFlipNonAttack))) { /* If the graphic should be flipped */
+			    (useCreatureAttackBitmap && getFlag(creatureAspectInt, kDMAspectMaskActiveGroupFlipBitmap)) || (useCreatureSpecialD2FrontBitmap && getFlag(creatureGraphicInfoRed, kDMCreatureMaskSpecialD2FrontIsFlipped)) || (useFlippedHorizontallyCreatureFrontImage && getFlag(creatureGraphicInfoRed, kDMCreatureMaskFlipNonAttack))) { /* If the graphic should be flipped */
 				if (!useFlippedHorizontallyCreatureFrontImage || !derivedBitmapInCache) {
 					AL_4_normalizdByteWidth = getNormalizedByteWidth(byteWidth);
 					if (!useFlippedHorizontallyCreatureFrontImage) {
@@ -3595,7 +3621,7 @@ T0115077_DrawSecondHalfSquareCreature:
 			AL_0_creaturePosX = creaturePaddingPixelCount + (byteWidth - AL_4_xPos - 1);
 
 		blitToBitmap(bitmapRedBanana, _bitmapViewport, boxByteGreen, AL_0_creaturePosX, 0, getNormalizedByteWidth(byteWidth), k112_byteWidthViewport, (Color)transparentColor, heightRedEagle, 136);
-T0115126_CreatureNotVisible:
+	T0115126_CreatureNotVisible:
 		if (twoHalfSquareCreaturesFrontView) {
 			twoHalfSquareCreaturesFrontView = false;
 			creatureAspectInt = activeGroup->_aspect[!creatureIndexGreen]; /* Aspect of the other creature in the pair */
@@ -3607,7 +3633,7 @@ T0115126_CreatureNotVisible:
 			goto T0115077_DrawSecondHalfSquareCreature;
 		}
 		/* Draw projectiles */
-T0115129_DrawProjectiles:
+	T0115129_DrawProjectiles:
 		//If there is no projectile to draw or if projectiles are not visible on the specified square or on the cell being drawn
 		if (!squareHasProjectile)
 			continue;
@@ -3737,7 +3763,7 @@ T0115129_DrawProjectiles:
 					goto T0115015_DrawProjectileAsObject; /* Go to code section to draw an object. Once completed, it jumps back to T0115171_BackFromT0115015_DrawProjectileAsObject below */
 				}
 			}
-T0115171_BackFromT0115015_DrawProjectileAsObject:;
+		T0115171_BackFromT0115015_DrawProjectileAsObject:;
 		} while ((thingParam = dungeon.getNextThing(thingParam)) != _vm->_thingEndOfList);
 	} while (remainingViewCellOrdinalsToProcess);
 
@@ -3829,7 +3855,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 					explosionScale = MAX(4, (MAX(48, explosion->getAttack() + 1) * explosionBaseScales[AL_10_explosionScaleIndex]) >> 8) & (int)0xFFFE;
 				}
 				bitmapRedBanana = getExplosionBitmap(AL_4_explosionAspectIndex, explosionScale, byteWidth, heightRedEagle);
-T0115200_DrawExplosion:
+			T0115200_DrawExplosion:
 				bool flipVertical = _vm->getRandomNumber(2);
 				paddingPixelCount = 0;
 				flipHorizontal = _vm->getRandomNumber(2);
@@ -3853,7 +3879,7 @@ T0115200_DrawExplosion:
 				else {
 					AL_4_xPos = MAX(paddingPixelCount, int16(byteWidth - AL_4_xPos - 1)); /* BUG0_07 Graphical glitch when drawing explosions. If an explosion bitmap is cropped because it is only partly visible on the left side of the viewport (boxByteGreen.X1 = 0) and the bitmap is not flipped horizontally (flipHorizontal = false) then the variable paddingPixelCount is not set before being used here. Its previous value (defined while drawing something else) is used and may cause an incorrect bitmap to be drawn */
 
-																				   /* BUG0_06 Graphical glitch when drawing projectiles or explosions. If a projectile or explosion bitmap is cropped because it is only partly visible on the left side of the viewport (boxByteGreen.X1 = 0) and the bitmap is flipped horizontally (flipHorizontal = true) then a wrong part of the bitmap is drawn on screen. To fix this bug, "+ paddingPixelCount" must be added to the second parameter of this function call */
+					/* BUG0_06 Graphical glitch when drawing projectiles or explosions. If a projectile or explosion bitmap is cropped because it is only partly visible on the left side of the viewport (boxByteGreen.X1 = 0) and the bitmap is flipped horizontally (flipHorizontal = true) then a wrong part of the bitmap is drawn on screen. To fix this bug, "+ paddingPixelCount" must be added to the second parameter of this function call */
 				}
 
 				if (boxByteGreen._rect.right <= boxByteGreen._rect.left)
@@ -3874,7 +3900,7 @@ T0115200_DrawExplosion:
 				blitToBitmap(bitmapRedBanana, _bitmapViewport, boxByteGreen, AL_4_xPos, 0, byteWidth, k112_byteWidthViewport, kDMColorFlesh, heightRedEagle, k136_heightViewport);
 			}
 		}
-	} while ((thingParam = dungeon.getNextThing(thingParam))!= _vm->_thingEndOfList);
+	} while ((thingParam = dungeon.getNextThing(thingParam)) != _vm->_thingEndOfList);
 
 	if ((fluxcageExplosion != 0) && (doorFrontViewDrawingPass != 1) && !_doNotDrawFluxcagesDuringEndgame) { /* Fluxcage is an explosion displayed as a field (like teleporters), above all other graphics */
 		AL_1_viewSquareExplosionIndex -= 3; /* Convert square index for explosions back to square index */

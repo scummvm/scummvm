@@ -29,9 +29,8 @@
 #ifndef WINTERMUTE_UIOBJECT_H
 #define WINTERMUTE_UIOBJECT_H
 
-
 #include "engines/wintermute/base/base_object.h"
-#include "engines/wintermute/dctypes.h"    // Added by ClassView
+#include "engines/wintermute/dctypes.h" // Added by ClassView
 
 namespace Wintermute {
 
@@ -39,7 +38,6 @@ class UITiledImage;
 class BaseFont;
 class UIObject : public BaseObject {
 public:
-
 	bool getTotalOffset(int *offsetX, int *offsetY);
 	bool focus();
 	virtual bool handleMouse(TMouseEvent event, TMouseButton button);

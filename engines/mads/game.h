@@ -23,32 +23,38 @@
 #ifndef MADS_GAME_H
 #define MADS_GAME_H
 
-#include "common/scummsys.h"
 #include "common/savefile.h"
-#include "common/str-array.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
+#include "common/str-array.h"
 #include "mads/audio.h"
-#include "mads/scene.h"
+#include "mads/camera.h"
 #include "mads/game_data.h"
 #include "mads/globals.h"
 #include "mads/inventory.h"
 #include "mads/player.h"
+#include "mads/scene.h"
 #include "mads/screen.h"
-#include "mads/camera.h"
 
 namespace MADS {
 
 class MADSEngine;
 
 enum KernelMode {
-	KERNEL_GAME_LOAD = 0, KERNEL_SECTION_PRELOAD = 1, KERNEL_SECTION_INIT = 2,
-	KERNEL_ROOM_PRELOAD = 3, KERNEL_ROOM_INIT = 4, KERNEL_ACTIVE_CODE = 5
+	KERNEL_GAME_LOAD = 0,
+	KERNEL_SECTION_PRELOAD = 1,
+	KERNEL_SECTION_INIT = 2,
+	KERNEL_ROOM_PRELOAD = 3,
+	KERNEL_ROOM_INIT = 4,
+	KERNEL_ACTIVE_CODE = 5
 };
 
 enum SyncType {
-	SYNC_SEQ = 1, SYNC_PLAYER = 2, SYNC_ANIM = 3, SYNC_CLOCK = 4
+	SYNC_SEQ = 1,
+	SYNC_PLAYER = 2,
+	SYNC_ANIM = 3,
+	SYNC_CLOCK = 4
 };
-
 
 #define MADS_SAVEGAME_VERSION 1
 
@@ -77,6 +83,7 @@ private:
 	 * Load quotes data
 	 */
 	void loadQuotes();
+
 protected:
 	MADSEngine *_vm;
 	MSurface *_surface;

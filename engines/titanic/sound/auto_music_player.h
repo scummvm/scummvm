@@ -23,8 +23,8 @@
 #ifndef TITANIC_AUTO_MUSIC_PLAYER_H
 #define TITANIC_AUTO_MUSIC_PLAYER_H
 
-#include "titanic/sound/auto_music_player_base.h"
 #include "titanic/messages/messages.h"
+#include "titanic/sound/auto_music_player_base.h"
 
 namespace Titanic {
 
@@ -32,8 +32,10 @@ class CAutoMusicPlayer : public CAutoMusicPlayerBase {
 	DECLARE_MESSAGE_MAP;
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
 	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
+
 private:
 	CString _leaveRoomSound;
+
 public:
 	CLASSDEF;
 	CAutoMusicPlayer();

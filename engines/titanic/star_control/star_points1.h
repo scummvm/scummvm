@@ -23,8 +23,8 @@
 #ifndef TITANIC_STAR_POINTS1_H
 #define TITANIC_STAR_POINTS1_H
 
-#include "titanic/star_control/fvector.h"
 #include "common/array.h"
+#include "titanic/star_control/fvector.h"
 
 namespace Titanic {
 
@@ -34,10 +34,14 @@ class CSurfaceArea;
 class CStarPoints1 {
 	struct CStarPointEntry : public FVector {
 		bool _flag;
-		CStarPointEntry() : FVector(), _flag(false) {}
+		CStarPointEntry()
+		  : FVector()
+		  , _flag(false) {}
 	};
+
 private:
 	Common::Array<CStarPointEntry> _data;
+
 public:
 	CStarPoints1();
 

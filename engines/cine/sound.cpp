@@ -20,14 +20,14 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/mutex.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/timer.h"
-#include "common/mutex.h"
-#include "common/config-manager.h"
 
 #include "cine/cine.h"
 #include "cine/sound.h"
@@ -35,9 +35,9 @@
 #include "backends/audiocd/audiocd.h"
 
 #include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
 #include "audio/fmopl.h"
 #include "audio/mididrv.h"
-#include "audio/decoders/raw.h"
 #include "audio/mods/soundfx.h"
 
 namespace Cine {
@@ -61,7 +61,6 @@ public:
 	void findNote(int freq, int *note, int *oct) const;
 
 protected:
-
 	static const int _noteTable[];
 	static const int _noteTableCount;
 };
@@ -161,7 +160,8 @@ const int AdLibSoundDriver::_voiceOperatorsTableCount = ARRAYSIZE(_voiceOperator
 // Future Wars AdLib driver
 class AdLibSoundDriverINS : public AdLibSoundDriver {
 public:
-	AdLibSoundDriverINS(Audio::Mixer *mixer) : AdLibSoundDriver(mixer) {}
+	AdLibSoundDriverINS(Audio::Mixer *mixer)
+	  : AdLibSoundDriver(mixer) {}
 	virtual const char *getInstrumentExtension() const { return ".INS"; }
 	virtual void loadInstrument(const byte *data, AdLibSoundInstrument *asi);
 	virtual void setChannelFrequency(int channel, int frequency);
@@ -171,7 +171,8 @@ public:
 // Operation Stealth AdLib driver
 class AdLibSoundDriverADL : public AdLibSoundDriver {
 public:
-	AdLibSoundDriverADL(Audio::Mixer *mixer) : AdLibSoundDriver(mixer) {}
+	AdLibSoundDriverADL(Audio::Mixer *mixer)
+	  : AdLibSoundDriver(mixer) {}
 	virtual const char *getInstrumentExtension() const { return ".ADL"; }
 	virtual void loadInstrument(const byte *data, AdLibSoundInstrument *asi);
 	virtual void setChannelFrequency(int channel, int frequency);
@@ -204,7 +205,6 @@ private:
 
 class PCSoundFxPlayer {
 public:
-
 	PCSoundFxPlayer(PCSoundDriver *driver);
 	~PCSoundFxPlayer();
 
@@ -221,7 +221,6 @@ public:
 	};
 
 private:
-
 	void update();
 	void handleEvents();
 	void handlePattern(int channel, const byte *patternData);
@@ -240,7 +239,6 @@ private:
 	PCSoundDriver *_driver;
 	Common::Mutex _mutex;
 };
-
 
 void PCSoundDriver::findNote(int freq, int *note, int *oct) const {
 	if (freq > 0x777)
@@ -275,7 +273,9 @@ void PCSoundDriver::resetChannel(int channel) {
 }
 
 AdLibSoundDriver::AdLibSoundDriver(Audio::Mixer *mixer)
-	: _upCb(0), _upRef(0), _mixer(mixer) {
+  : _upCb(0)
+  , _upRef(0)
+  , _mixer(mixer) {
 
 	_opl = OPL::Config::create();
 	if (!_opl || !_opl->init())
@@ -371,7 +371,7 @@ void AdLibSoundDriver::setupInstrument(const byte *data, int channel) {
 	int mod, car, tmp;
 	const AdLibRegisterSoundInstrument *reg;
 
-	if (ins->mode != 0)  {
+	if (ins->mode != 0) {
 		mod = _operatorsTable[_voiceOperatorsTable[2 * ins->channel + 0]];
 		car = _operatorsTable[_voiceOperatorsTable[2 * ins->channel + 1]];
 	} else {
@@ -444,11 +444,16 @@ void AdLibSoundDriver::loadRegisterInstrument(const byte *data, AdLibRegisterSou
 void AdLibSoundDriverINS::loadInstrument(const byte *data, AdLibSoundInstrument *asi) {
 	asi->mode = *data++;
 	asi->channel = *data++;
-	loadRegisterInstrument(data, &asi->regMod); data += 26;
-	loadRegisterInstrument(data, &asi->regCar); data += 26;
-	asi->waveSelectMod = data[0] & 3; data += 2;
-	asi->waveSelectCar = data[0] & 3; data += 2;
-	asi->amDepth = data[0]; data += 2;
+	loadRegisterInstrument(data, &asi->regMod);
+	data += 26;
+	loadRegisterInstrument(data, &asi->regCar);
+	data += 26;
+	asi->waveSelectMod = data[0] & 3;
+	data += 2;
+	asi->waveSelectCar = data[0] & 3;
+	data += 2;
+	asi->amDepth = data[0];
+	data += 2;
 }
 
 void AdLibSoundDriverINS::setChannelFrequency(int channel, int frequency) {
@@ -508,8 +513,10 @@ void AdLibSoundDriverADL::loadInstrument(const byte *data, AdLibSoundInstrument 
 	asi->waveSelectCar = *data++ & 3;
 	asi->amDepth = *data++;
 	++data;
-	loadRegisterInstrument(data, &asi->regMod); data += 26;
-	loadRegisterInstrument(data, &asi->regCar); data += 26;
+	loadRegisterInstrument(data, &asi->regMod);
+	data += 26;
+	loadRegisterInstrument(data, &asi->regCar);
+	data += 26;
 }
 
 void AdLibSoundDriverADL::setChannelFrequency(int channel, int frequency) {
@@ -585,7 +592,9 @@ void AdLibSoundDriverADL::playSample(const byte *data, int size, int channel, in
 }
 
 MidiSoundDriverH32::MidiSoundDriverH32(MidiDriver *output)
-	: _output(output), _callback(0), _mutex() {
+  : _output(output)
+  , _callback(0)
+  , _mutex() {
 }
 
 MidiSoundDriverH32::~MidiSoundDriverH32() {
@@ -613,7 +622,7 @@ void MidiSoundDriverH32::setUpdateCallback(UpdateCallback upCb, void *ref) {
 void MidiSoundDriverH32::setupChannel(int channel, const byte *data, int instrument, int volume) {
 	Common::StackLock lock(_mutex);
 
-	if (volume < 0 ||  volume > 100)
+	if (volume < 0 || volume > 100)
 		volume = 0;
 
 	if (!data)
@@ -681,8 +690,8 @@ void MidiSoundDriverH32::writeInstrument(int offset, const byte *data, int size)
 	sysEx[2] = 0x16;
 	sysEx[3] = 0x12;
 	sysEx[4] = (offset >> 16) & 0xFF;
-	sysEx[5] = (offset >>  8) & 0xFF;
-	sysEx[6] = (offset >>  0) & 0xFF;
+	sysEx[5] = (offset >> 8) & 0xFF;
+	sysEx[6] = (offset >> 0) & 0xFF;
 	int copySize = MIN(246, size);
 	memcpy(&sysEx[7], data, copySize);
 
@@ -699,7 +708,7 @@ void MidiSoundDriverH32::selectInstrument(int channel, int timbreGroup, int timb
 
 	byte sysEx[24] = {
 		0x41, 0x10, 0x16, 0x12,
-		0x00, 0x00, 0x00,       // offset
+		0x00, 0x00, 0x00, // offset
 		0x00, // Timbre group   _ timbreGroup * 64 + timbreNumber should be the
 		0x00, // Timbre number /  MT-32 instrument in case timbreGroup is 0 or 1.
 		0x18, // Key shift (= 0)
@@ -716,13 +725,12 @@ void MidiSoundDriverH32::selectInstrument(int channel, int timbreGroup, int timb
 		0x00, // dummy
 		0x00, // dummy
 		0x00, // dummy
-		0x00  // checksum
+		0x00 // checksum
 	};
 
-
 	sysEx[4] = (offset >> 16) & 0xFF;
-	sysEx[5] = (offset >>  8) & 0xFF;
-	sysEx[6] = (offset >>  0) & 0xFF;
+	sysEx[5] = (offset >> 8) & 0xFF;
+	sysEx[6] = (offset >> 0) & 0xFF;
 
 	sysEx[7] = timbreGroup;
 	sysEx[8] = timbreNumber;
@@ -740,7 +748,9 @@ void MidiSoundDriverH32::selectInstrument(int channel, int timbreGroup, int timb
 }
 
 PCSoundFxPlayer::PCSoundFxPlayer(PCSoundDriver *driver)
-	: _playing(false), _driver(driver), _mutex() {
+  : _playing(false)
+  , _driver(driver)
+  , _mutex() {
 	memset(_instrumentsData, 0, sizeof(_instrumentsData));
 	_sfxData = NULL;
 	_fadeOutCounter = 0;
@@ -901,9 +911,9 @@ void PCSoundFxPlayer::unload() {
 	_sfxData = NULL;
 }
 
-
 PCSound::PCSound(Audio::Mixer *mixer, CineEngine *vm)
-	: Sound(mixer, vm), _soundDriver(0) {
+  : Sound(mixer, vm)
+  , _soundDriver(0) {
 
 	_currentMusic = 0;
 	_currentMusicStatus = 0;
@@ -961,7 +971,17 @@ static const char *const musicFileNames[11] = {
 };
 
 static uint8 musicCDTracks[11] = {
-	20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 22,
+	20,
+	21,
+	22,
+	23,
+	24,
+	25,
+	26,
+	27,
+	28,
+	30,
+	22,
 };
 
 void PCSound::loadMusic(const char *name) {
@@ -992,7 +1012,7 @@ void PCSound::playMusic() {
 
 static uint8 bgCDTracks[49] = {
 	0, 21, 21, 23, 0, 29, 0, 0, 0, 0,
-	0, 27,  0,  0, 0, 0, 0, 0, 0, 0,
+	0, 27, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 22, 22, 23, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -1052,7 +1072,10 @@ void PCSound::stopSound(int channel) {
 }
 
 PaulaSound::PaulaSound(Audio::Mixer *mixer, CineEngine *vm)
-	: Sound(mixer, vm), _sfxTimer(0), _musicTimer(0), _musicFadeTimer(0) {
+  : Sound(mixer, vm)
+  , _sfxTimer(0)
+  , _musicTimer(0)
+  , _musicFadeTimer(0) {
 	_moduleStream = 0;
 	// The original is using the following timer frequency:
 	// 0.709379Mhz / 8000 = 88.672375Hz

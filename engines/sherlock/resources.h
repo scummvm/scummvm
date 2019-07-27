@@ -25,11 +25,11 @@
 
 #include "common/array.h"
 #include "common/file.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/rect.h"
-#include "common/str.h"
 #include "common/str-array.h"
+#include "common/str.h"
 #include "common/stream.h"
 #include "graphics/surface.h"
 
@@ -42,9 +42,14 @@ struct LibraryEntry {
 	uint32 _offset, _size;
 	int _index;
 
-	LibraryEntry() : _index(0), _offset(0), _size(0) {}
-	LibraryEntry(int index, uint32 offset, uint32 size) :
-		_index(index), _offset(offset), _size(size) {}
+	LibraryEntry()
+	  : _index(0)
+	  , _offset(0)
+	  , _size(0) {}
+	LibraryEntry(int index, uint32 offset, uint32 size)
+	  : _index(index)
+	  , _offset(offset)
+	  , _size(size) {}
 };
 typedef Common::HashMap<Common::String, LibraryEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> LibraryIndex;
 typedef Common::HashMap<Common::String, LibraryIndex, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> LibraryIndexes;
@@ -55,6 +60,7 @@ class Cache {
 private:
 	SherlockEngine *_vm;
 	CacheHash _resources;
+
 public:
 	Cache(SherlockEngine *_vm);
 
@@ -92,6 +98,7 @@ private:
 	 * Reads in the index from a library file, and caches its index for later use
 	 */
 	void loadLibraryIndex(const Common::String &libFilename, Common::SeekableReadStream *stream, bool isNewStyle);
+
 public:
 	Resources(SherlockEngine *vm);
 

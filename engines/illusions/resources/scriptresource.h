@@ -23,8 +23,8 @@
 #ifndef ILLUSIONS_SCRIPTRESOURCE_H
 #define ILLUSIONS_SCRIPTRESOURCE_H
 
-#include "illusions/resourcesystem.h"
 #include "common/file.h"
+#include "illusions/resourcesystem.h"
 
 namespace Illusions {
 
@@ -32,10 +32,12 @@ class IllusionsEngine;
 
 class ScriptResourceLoader : public BaseResourceLoader {
 public:
-	ScriptResourceLoader(IllusionsEngine *vm) : _vm(vm) {}
+	ScriptResourceLoader(IllusionsEngine *vm)
+	  : _vm(vm) {}
 	virtual ~ScriptResourceLoader() {}
 	virtual void load(Resource *resource);
 	virtual bool isFlag(int flag);
+
 protected:
 	IllusionsEngine *_vm;
 };
@@ -50,6 +52,7 @@ public:
 	uint32 getSize();
 	void writeToStream(Common::WriteStream *out);
 	bool readFromStream(Common::ReadStream *in);
+
 public:
 	uint _count;
 	byte *_properties;
@@ -68,6 +71,7 @@ public:
 	uint32 getSize();
 	void writeToStream(Common::WriteStream *out);
 	bool readFromStream(Common::ReadStream *in);
+
 public:
 	uint _count;
 	byte *_blockCounters;
@@ -87,6 +91,7 @@ public:
 	void load(byte *dataStart, Common::SeekableReadStream &stream);
 	bool findTriggerCause(uint32 verbId, uint32 objectId2, uint32 &codeOffs);
 	void fixupSceneInfosDuckman();
+
 public:
 	uint32 _objectId;
 	uint _causesCount;
@@ -101,6 +106,7 @@ public:
 	bool findTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &codeOffs);
 	void getResources(uint &resourcesCount, uint32 *&resources);
 	void fixupSceneInfosDuckman();
+
 protected:
 	uint16 _id;
 	uint16 _unk;
@@ -122,6 +128,7 @@ public:
 	SceneInfo *getSceneInfo(uint32 index);
 	uint32 getObjectActorTypeId(uint32 objectId);
 	uint32 getMainActorObjectId() const { return _mainActorObjectId; }
+
 public:
 	byte *_data;
 	uint32 _dataSize;
@@ -144,6 +151,7 @@ public:
 	ScriptInstance(IllusionsEngine *vm);
 	virtual void load(Resource *resource);
 	virtual void unload();
+
 public:
 	IllusionsEngine *_vm;
 };

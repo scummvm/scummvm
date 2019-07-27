@@ -27,10 +27,10 @@
  */
 
 #include "engines/wintermute/base/file/base_file_entry.h"
-#include "engines/wintermute/base/file/base_package.h"
 #include "common/stream.h"
 #include "common/substream.h"
 #include "common/zlib.h"
+#include "engines/wintermute/base/file/base_package.h"
 
 namespace Wintermute {
 
@@ -63,7 +63,6 @@ BaseFileEntry::BaseFileEntry() {
 
 	_journalTime = 0;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 BaseFileEntry::~BaseFileEntry() {

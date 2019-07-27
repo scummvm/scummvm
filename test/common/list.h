@@ -2,9 +2,8 @@
 
 #include "common/list.h"
 
-class ListTestSuite : public CxxTest::TestSuite
-{
-	public:
+class ListTestSuite : public CxxTest::TestSuite {
+public:
 	void test_empty_clear() {
 		Common::List<int> container;
 		TS_ASSERT(container.empty());
@@ -15,7 +14,7 @@ class ListTestSuite : public CxxTest::TestSuite
 		TS_ASSERT(container.empty());
 	}
 
-	public:
+public:
 	void test_size() {
 		Common::List<int> container;
 		TS_ASSERT_EQUALS(container.size(), (unsigned int)0);
@@ -216,7 +215,6 @@ class ListTestSuite : public CxxTest::TestSuite
 		iter = container.reverse_begin();
 		TS_ASSERT_DIFFERS(iter, container.end());
 
-
 		TS_ASSERT_EQUALS(*iter, -11);
 		--iter;
 		TS_ASSERT_DIFFERS(iter, container.end());
@@ -249,7 +247,7 @@ class ListTestSuite : public CxxTest::TestSuite
 	void test_front_back_push_pop() {
 		Common::List<int> container;
 
-		container.push_back( 42);
+		container.push_back(42);
 		container.push_back(-23);
 
 		TS_ASSERT_EQUALS(container.front(), 42);
@@ -258,18 +256,18 @@ class ListTestSuite : public CxxTest::TestSuite
 		container.front() = -17;
 		container.back() = 163;
 		TS_ASSERT_EQUALS(container.front(), -17);
-		TS_ASSERT_EQUALS(container.back(),  163);
+		TS_ASSERT_EQUALS(container.back(), 163);
 
 		container.pop_front();
 		TS_ASSERT_EQUALS(container.front(), 163);
-		TS_ASSERT_EQUALS(container.back(),  163);
+		TS_ASSERT_EQUALS(container.back(), 163);
 
 		container.push_front(99);
 		TS_ASSERT_EQUALS(container.front(), 99);
-		TS_ASSERT_EQUALS(container.back(),  163);
+		TS_ASSERT_EQUALS(container.back(), 163);
 
 		container.pop_back();
 		TS_ASSERT_EQUALS(container.front(), 99);
-		TS_ASSERT_EQUALS(container.back(),  99);
+		TS_ASSERT_EQUALS(container.back(), 99);
 	}
 };

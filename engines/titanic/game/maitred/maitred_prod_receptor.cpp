@@ -26,10 +26,10 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMaitreDProdReceptor, CGameObject)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(MouseMoveMsg)
-	ON_MESSAGE(ProdMaitreDMsg)
-	ON_MESSAGE(DisableMaitreDProdReceptor)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseMoveMsg)
+ON_MESSAGE(ProdMaitreDMsg)
+ON_MESSAGE(DisableMaitreDProdReceptor)
 END_MESSAGE_MAP()
 
 void CMaitreDProdReceptor::save(SimpleFile *file, int indent) {

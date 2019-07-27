@@ -23,12 +23,11 @@
 #ifndef GRAPHICS_FONTMAN_H
 #define GRAPHICS_FONTMAN_H
 
+#include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/scummsys.h"
 #include "common/singleton.h"
 #include "common/str.h"
-#include "common/hashmap.h"
-#include "common/hash-str.h"
-
 
 namespace Graphics {
 
@@ -117,10 +116,9 @@ private:
 	Common::String _localizedFontName;
 };
 
-
 } // End of namespace Graphics
 
 /** Shortcut for accessing the font manager. */
-#define FontMan		(Graphics::FontManager::instance())
+#define FontMan (Graphics::FontManager::instance())
 
 #endif

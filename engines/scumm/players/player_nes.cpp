@@ -22,14 +22,14 @@
 
 #ifndef DISABLE_NES_APU
 
-#include "engines/engine.h"
-#include "scumm/players/player_nes.h"
-#include "scumm/scumm.h"
-#include "audio/mixer.h"
+#	include "scumm/players/player_nes.h"
+#	include "audio/mixer.h"
+#	include "engines/engine.h"
+#	include "scumm/scumm.h"
 
 namespace Scumm {
 
-static const byte channelMask[4] = {1, 2, 4, 8};
+static const byte channelMask[4] = { 1, 2, 4, 8 };
 
 static const uint16 freqTable[64] = {
 	0x07F0, 0x077E, 0x0712, 0x06AE, 0x064E, 0x05F3, 0x059E, 0x054D,
@@ -53,7 +53,7 @@ static const byte releaseCmd[16] = {
 	0x0F, 0x00, 0x00, 0x09, 0x00, 0x14, 0x15, 0x00,
 	0x00, 0x00, 0x1B, 0x1B, 0x0F, 0x0F, 0x0F, 0x0F
 };
-static const byte nextCmd[28] =	{
+static const byte nextCmd[28] = {
 	0xFF, 0xFF, 0xFF, 0xFF, 0x17, 0xFF, 0x07, 0xFF,
 	0xFF, 0x0A, 0x09, 0x0C, 0x00, 0x00, 0x00, 0x00,
 	0x11, 0x12, 0x11, 0x03, 0xFF, 0xFF, 0x18, 0x00,
@@ -68,520 +68,548 @@ static const byte nextDelay[28] = {
 
 namespace APUe {
 
-static const byte LengthCounts[32] = {
-	0x0A,0xFE,
-	0x14,0x02,
-	0x28,0x04,
-	0x50,0x06,
-	0xA0,0x08,
-	0x3C,0x0A,
-	0x0E,0x0C,
-	0x1A,0x0E,
+	static const byte LengthCounts[32] = {
+		0x0A, 0xFE,
+		0x14, 0x02,
+		0x28, 0x04,
+		0x50, 0x06,
+		0xA0, 0x08,
+		0x3C, 0x0A,
+		0x0E, 0x0C,
+		0x1A, 0x0E,
 
-	0x0C,0x10,
-	0x18,0x12,
-	0x30,0x14,
-	0x60,0x16,
-	0xC0,0x18,
-	0x48,0x1A,
-	0x10,0x1C,
-	0x20,0x1E
-};
+		0x0C, 0x10,
+		0x18, 0x12,
+		0x30, 0x14,
+		0x60, 0x16,
+		0xC0, 0x18,
+		0x48, 0x1A,
+		0x10, 0x1C,
+		0x20, 0x1E
+	};
 
-class SoundGen {
-protected:
-	byte wavehold;
-	uint32 freq;	// short
-	uint32 CurD;
+	class SoundGen {
+	protected:
+		byte wavehold;
+		uint32 freq; // short
+		uint32 CurD;
 
-public:
-	byte Timer;
-	int32 Pos;
-	uint32 Cycles;	// short
+	public:
+		byte Timer;
+		int32 Pos;
+		uint32 Cycles; // short
 
-	inline byte GetTimer() const { return Timer; }
-};
+		inline byte GetTimer() const { return Timer; }
+	};
 
-class Square : public SoundGen {
-protected:
-	byte volume, envelope, duty, swpspeed, swpdir, swpstep, swpenab;
-	byte Vol;
-	byte EnvCtr, Envelope, BendCtr;
-	bool Enabled, ValidFreq, Active;
-	bool EnvClk, SwpClk;
+	class Square : public SoundGen {
+	protected:
+		byte volume, envelope, duty, swpspeed, swpdir, swpstep, swpenab;
+		byte Vol;
+		byte EnvCtr, Envelope, BendCtr;
+		bool Enabled, ValidFreq, Active;
+		bool EnvClk, SwpClk;
 
-	void CheckActive();
+		void CheckActive();
 
-public:
-	void Reset();
-	void Write(int Reg, byte Val);
-	void Run();
-	void QuarterFrame();
-	void HalfFrame();
-};
+	public:
+		void Reset();
+		void Write(int Reg, byte Val);
+		void Run();
+		void QuarterFrame();
+		void HalfFrame();
+	};
 
-static const int8 Duties[4][8] = {
-	{-4,+4,-4,-4,-4,-4,-4,-4},
-	{-4,+4,+4,-4,-4,-4,-4,-4},
-	{-4,+4,+4,+4,+4,-4,-4,-4},
-	{+4,-4,-4,+4,+4,+4,+4,+4}
-};
+	static const int8 Duties[4][8] = {
+		{ -4, +4, -4, -4, -4, -4, -4, -4 },
+		{ -4, +4, +4, -4, -4, -4, -4, -4 },
+		{ -4, +4, +4, +4, +4, -4, -4, -4 },
+		{ +4, -4, -4, +4, +4, +4, +4, +4 }
+	};
 
-void Square::Reset() {
-	memset(this, 0, sizeof(*this));
-	Cycles = 1;
-	EnvCtr = 1;
-	BendCtr = 1;
-}
-
-void Square::CheckActive() {
-	ValidFreq = (freq >= 0x8) && ((swpdir) || !((freq + (freq >> swpstep)) & 0x800));
-	Active = Timer && ValidFreq;
-	Pos = Active ? (Duties[duty][CurD] * Vol) : 0;
-}
-
-void Square::Write(int Reg, byte Val) {
-	switch (Reg) {
-	case 0:
-		volume = Val & 0xF;
-		envelope = Val & 0x10;
-		wavehold = Val & 0x20;
-		duty = (Val >> 6) & 0x3;
-		Vol = envelope ? volume : Envelope;
-		break;
-
-	case 1:
-		swpstep = Val & 0x07;
-		swpdir = Val & 0x08;
-		swpspeed = (Val >> 4) & 0x7;
-		swpenab = Val & 0x80;
-		SwpClk = true;
-		break;
-
-	case 2:
-		freq &= 0x700;
-		freq |= Val;
-		break;
-
-	case 3:
-		freq &= 0xFF;
-		freq |= (Val & 0x7) << 8;
-
-		if (Enabled)
-			Timer = LengthCounts[(Val >> 3) & 0x1F];
-
-		CurD = 0;
-		EnvClk = true;
-		break;
-
-	case 4:
-		Enabled = (Val != 0);
-		if (!Enabled)
-			Timer = 0;
-		break;
-	}
-	CheckActive();
-}
-
-void Square::Run() {
-	Cycles = (freq + 1) << 1;
-	CurD = (CurD + 1) & 0x7;
-
-	if (Active)
-		Pos = Duties[duty][CurD] * Vol;
-}
-
-void Square::QuarterFrame() {
-	if (EnvClk) {
-		EnvClk = false;
-		Envelope = 0xF;
-		EnvCtr = volume + 1;
-	} else if (!--EnvCtr) {
-		EnvCtr = volume + 1;
-
-		if (Envelope)
-			Envelope--;
-		else
-			Envelope = wavehold ? 0xF : 0x0;
+	void Square::Reset() {
+		memset(this, 0, sizeof(*this));
+		Cycles = 1;
+		EnvCtr = 1;
+		BendCtr = 1;
 	}
 
-	Vol = envelope ? volume : Envelope;
-	CheckActive();
-}
+	void Square::CheckActive() {
+		ValidFreq = (freq >= 0x8) && ((swpdir) || !((freq + (freq >> swpstep)) & 0x800));
+		Active = Timer && ValidFreq;
+		Pos = Active ? (Duties[duty][CurD] * Vol) : 0;
+	}
 
-void Square::HalfFrame() {
-	if (!--BendCtr) {
-		BendCtr = swpspeed + 1;
+	void Square::Write(int Reg, byte Val) {
+		switch (Reg) {
+		case 0:
+			volume = Val & 0xF;
+			envelope = Val & 0x10;
+			wavehold = Val & 0x20;
+			duty = (Val >> 6) & 0x3;
+			Vol = envelope ? volume : Envelope;
+			break;
 
-		if (swpenab && swpstep && ValidFreq) {
-			int sweep = freq >> swpstep;
-			// FIXME: Is -sweep or ~sweep correct???
-			freq += swpdir ? -sweep : sweep;
+		case 1:
+			swpstep = Val & 0x07;
+			swpdir = Val & 0x08;
+			swpspeed = (Val >> 4) & 0x7;
+			swpenab = Val & 0x80;
+			SwpClk = true;
+			break;
+
+		case 2:
+			freq &= 0x700;
+			freq |= Val;
+			break;
+
+		case 3:
+			freq &= 0xFF;
+			freq |= (Val & 0x7) << 8;
+
+			if (Enabled)
+				Timer = LengthCounts[(Val >> 3) & 0x1F];
+
+			CurD = 0;
+			EnvClk = true;
+			break;
+
+		case 4:
+			Enabled = (Val != 0);
+			if (!Enabled)
+				Timer = 0;
+			break;
 		}
+		CheckActive();
 	}
 
-	if (SwpClk) {
-		SwpClk = false;
-		BendCtr = swpspeed + 1;
+	void Square::Run() {
+		Cycles = (freq + 1) << 1;
+		CurD = (CurD + 1) & 0x7;
+
+		if (Active)
+			Pos = Duties[duty][CurD] * Vol;
 	}
 
-	if (Timer && !wavehold)
-		Timer--;
+	void Square::QuarterFrame() {
+		if (EnvClk) {
+			EnvClk = false;
+			Envelope = 0xF;
+			EnvCtr = volume + 1;
+		} else if (!--EnvCtr) {
+			EnvCtr = volume + 1;
 
-	CheckActive();
-}
+			if (Envelope)
+				Envelope--;
+			else
+				Envelope = wavehold ? 0xF : 0x0;
+		}
 
-
-class Triangle : public SoundGen {
-protected:
-	byte linear;
-	byte LinCtr;
-	bool Enabled, Active;
-	bool LinClk;
-
-	void CheckActive();
-
-public:
-	void Reset();
-	void Write(int Reg, byte Val);
-	void Run();
-	void QuarterFrame();
-	void HalfFrame();
-};
-
-static const int8 TriDuty[32] = {
-	-8,-7,-6,-5,-4,-3,-2,-1,
-	+0,+1,+2,+3,+4,+5,+6,+7,
-	+7,+6,+5,+4,+3,+2,+1,+0,
-	-1,-2,-3,-4,-5,-6,-7,-8
-};
-
-void Triangle::Reset() {
-	memset(this, 0, sizeof(*this));
-	Cycles = 1;
-}
-
-void Triangle::CheckActive() {
-	Active = Timer && LinCtr;
-
-	if (freq < 4)
-		Pos = 0;	// beyond hearing range
-	else
-		Pos = TriDuty[CurD] * 8;
-}
-
-void Triangle::Write(int Reg, byte Val) {
-	switch (Reg) {
-	case 0:
-		linear = Val & 0x7F;
-		wavehold = (Val >> 7) & 0x1;
-		break;
-
-	case 2:
-		freq &= 0x700;
-		freq |= Val;
-		break;
-
-	case 3:
-		freq &= 0xFF;
-		freq |= (Val & 0x7) << 8;
-
-		if (Enabled)
-			Timer = LengthCounts[(Val >> 3) & 0x1F];
-
-		LinClk = true;
-		break;
-
-	case 4:
-		Enabled = (Val != 0);
-		if (!Enabled)
-			Timer = 0;
-		break;
+		Vol = envelope ? volume : Envelope;
+		CheckActive();
 	}
-	CheckActive();
-}
 
-void Triangle::Run() {
-	Cycles = freq + 1;
+	void Square::HalfFrame() {
+		if (!--BendCtr) {
+			BendCtr = swpspeed + 1;
 
-	if (Active) {
-		CurD++;
-		CurD &= 0x1F;
+			if (swpenab && swpstep && ValidFreq) {
+				int sweep = freq >> swpstep;
+				// FIXME: Is -sweep or ~sweep correct???
+				freq += swpdir ? -sweep : sweep;
+			}
+		}
+
+		if (SwpClk) {
+			SwpClk = false;
+			BendCtr = swpspeed + 1;
+		}
+
+		if (Timer && !wavehold)
+			Timer--;
+
+		CheckActive();
+	}
+
+	class Triangle : public SoundGen {
+	protected:
+		byte linear;
+		byte LinCtr;
+		bool Enabled, Active;
+		bool LinClk;
+
+		void CheckActive();
+
+	public:
+		void Reset();
+		void Write(int Reg, byte Val);
+		void Run();
+		void QuarterFrame();
+		void HalfFrame();
+	};
+
+	static const int8 TriDuty[32] = {
+		-8, -7, -6, -5, -4, -3, -2, -1,
+		+0, +1, +2, +3, +4, +5, +6, +7,
+		+7, +6, +5, +4, +3, +2, +1, +0,
+		-1, -2, -3, -4, -5, -6, -7, -8
+	};
+
+	void Triangle::Reset() {
+		memset(this, 0, sizeof(*this));
+		Cycles = 1;
+	}
+
+	void Triangle::CheckActive() {
+		Active = Timer && LinCtr;
 
 		if (freq < 4)
-			Pos = 0;	// beyond hearing range
+			Pos = 0; // beyond hearing range
 		else
 			Pos = TriDuty[CurD] * 8;
 	}
-}
 
-void Triangle::QuarterFrame() {
-	if (LinClk)
-		LinCtr = linear;
-	else if (LinCtr)
-		LinCtr--;
+	void Triangle::Write(int Reg, byte Val) {
+		switch (Reg) {
+		case 0:
+			linear = Val & 0x7F;
+			wavehold = (Val >> 7) & 0x1;
+			break;
 
-	if (!wavehold)
-		LinClk = false;
+		case 2:
+			freq &= 0x700;
+			freq |= Val;
+			break;
 
-	CheckActive();
-}
+		case 3:
+			freq &= 0xFF;
+			freq |= (Val & 0x7) << 8;
 
-void Triangle::HalfFrame() {
-	if (Timer && !wavehold)
-		Timer--;
+			if (Enabled)
+				Timer = LengthCounts[(Val >> 3) & 0x1F];
 
-	CheckActive();
-}
+			LinClk = true;
+			break;
 
-class Noise : public SoundGen {
-protected:
-	byte volume, envelope, datatype;
-	byte Vol;
-	byte EnvCtr, Envelope;
-	bool Enabled;
-	bool EnvClk;
+		case 4:
+			Enabled = (Val != 0);
+			if (!Enabled)
+				Timer = 0;
+			break;
+		}
+		CheckActive();
+	}
 
-	void CheckActive();
+	void Triangle::Run() {
+		Cycles = freq + 1;
 
-public:
-	void Reset();
-	void Write(int Reg, byte Val);
-	void Run();
-	void QuarterFrame();
-	void HalfFrame();
-};
+		if (Active) {
+			CurD++;
+			CurD &= 0x1F;
 
-static const uint32 NoiseFreq[16] = {
-	0x004,0x008,0x010,0x020,0x040,0x060,0x080,0x0A0,
-	0x0CA,0x0FE,0x17C,0x1FC,0x2FA,0x3F8,0x7F2,0xFE4
-};
+			if (freq < 4)
+				Pos = 0; // beyond hearing range
+			else
+				Pos = TriDuty[CurD] * 8;
+		}
+	}
 
-void Noise::Reset() {
-	memset(this, 0, sizeof(*this));
-	CurD = 1;
-	Cycles = 1;
-	EnvCtr = 1;
+	void Triangle::QuarterFrame() {
+		if (LinClk)
+			LinCtr = linear;
+		else if (LinCtr)
+			LinCtr--;
 
-}
+		if (!wavehold)
+			LinClk = false;
 
-void Noise::Write(int Reg, byte Val) {
-	switch (Reg) {
-	case 0:
-		volume = Val & 0x0F;
-		envelope = Val & 0x10;
-		wavehold = Val & 0x20;
+		CheckActive();
+	}
+
+	void Triangle::HalfFrame() {
+		if (Timer && !wavehold)
+			Timer--;
+
+		CheckActive();
+	}
+
+	class Noise : public SoundGen {
+	protected:
+		byte volume, envelope, datatype;
+		byte Vol;
+		byte EnvCtr, Envelope;
+		bool Enabled;
+		bool EnvClk;
+
+		void CheckActive();
+
+	public:
+		void Reset();
+		void Write(int Reg, byte Val);
+		void Run();
+		void QuarterFrame();
+		void HalfFrame();
+	};
+
+	static const uint32 NoiseFreq[16] = {
+		0x004, 0x008, 0x010, 0x020, 0x040, 0x060, 0x080, 0x0A0,
+		0x0CA, 0x0FE, 0x17C, 0x1FC, 0x2FA, 0x3F8, 0x7F2, 0xFE4
+	};
+
+	void Noise::Reset() {
+		memset(this, 0, sizeof(*this));
+		CurD = 1;
+		Cycles = 1;
+		EnvCtr = 1;
+	}
+
+	void Noise::Write(int Reg, byte Val) {
+		switch (Reg) {
+		case 0:
+			volume = Val & 0x0F;
+			envelope = Val & 0x10;
+			wavehold = Val & 0x20;
+			Vol = envelope ? volume : Envelope;
+
+			if (Timer)
+				Pos = ((CurD & 0x4000) ? -2 : 2) * Vol;
+			break;
+
+		case 2:
+			freq = Val & 0xF;
+			datatype = Val & 0x80;
+			break;
+
+		case 3:
+			if (Enabled)
+				Timer = LengthCounts[(Val >> 3) & 0x1F];
+
+			EnvClk = true;
+			break;
+
+		case 4:
+			Enabled = (Val != 0);
+			if (!Enabled)
+				Timer = 0;
+			break;
+		}
+	}
+
+	void Noise::Run() {
+		Cycles = NoiseFreq[freq]; /* no + 1 here */
+
+		if (datatype)
+			CurD = (CurD << 1) | (((CurD >> 14) ^ (CurD >> 8)) & 0x1);
+		else
+			CurD = (CurD << 1) | (((CurD >> 14) ^ (CurD >> 13)) & 0x1);
+
+		if (Timer)
+			Pos = ((CurD & 0x4000) ? -2 : 2) * Vol;
+	}
+
+	void Noise::QuarterFrame() {
+		if (EnvClk) {
+			EnvClk = false;
+			Envelope = 0xF;
+			EnvCtr = volume + 1;
+		} else if (!--EnvCtr) {
+			EnvCtr = volume + 1;
+
+			if (Envelope)
+				Envelope--;
+			else
+				Envelope = wavehold ? 0xF : 0x0;
+		}
+
 		Vol = envelope ? volume : Envelope;
 
 		if (Timer)
 			Pos = ((CurD & 0x4000) ? -2 : 2) * Vol;
-		break;
-
-	case 2:
-		freq = Val & 0xF;
-		datatype = Val & 0x80;
-		break;
-
-	case 3:
-		if (Enabled)
-			Timer = LengthCounts[(Val >> 3) & 0x1F];
-
-		EnvClk = true;
-		break;
-
-	case 4:
-		Enabled = (Val != 0);
-		if (!Enabled)
-			Timer = 0;
-		break;
-	}
-}
-
-void Noise::Run() {
-	Cycles = NoiseFreq[freq];	/* no + 1 here */
-
-	if (datatype)
-		CurD = (CurD << 1) | (((CurD >> 14) ^ (CurD >> 8)) & 0x1);
-	else
-		CurD = (CurD << 1) | (((CurD >> 14) ^ (CurD >> 13)) & 0x1);
-
-	if (Timer)
-		Pos = ((CurD & 0x4000) ? -2 : 2) * Vol;
-}
-
-void Noise::QuarterFrame() {
-	if (EnvClk) {
-		EnvClk = false;
-		Envelope = 0xF;
-		EnvCtr = volume + 1;
-	} else if (!--EnvCtr) {
-		EnvCtr = volume + 1;
-
-		if (Envelope)
-			Envelope--;
-		else
-			Envelope = wavehold ? 0xF : 0x0;
 	}
 
-	Vol = envelope ? volume : Envelope;
-
-	if (Timer)
-		Pos = ((CurD & 0x4000) ? -2 : 2) * Vol;
-}
-
-void Noise::HalfFrame() {
-	if (Timer && !wavehold)
-		Timer--;
-}
-
-class APU {
-protected:
-	int	BufPos;
-	int	SampleRate;
-
-	Square _square0;
-	Square _square1;
-	Triangle _triangle;
-	Noise _noise;
-
-	struct {
-		uint32 Cycles;
-		int Num;
-	} Frame;
-
-public:
-	APU(int rate) : SampleRate(rate) {
-		Reset();
+	void Noise::HalfFrame() {
+		if (Timer && !wavehold)
+			Timer--;
 	}
 
-	void WriteReg(int Addr, byte Val);
-	byte Read4015();
-	void Reset ();
-	int16 GetSample();
-};
+	class APU {
+	protected:
+		int BufPos;
+		int SampleRate;
 
-void APU::WriteReg(int Addr, byte Val) {
-	switch (Addr) {
-	case 0x000:	_square0.Write(0,Val);	break;
-	case 0x001:	_square0.Write(1,Val);	break;
-	case 0x002:	_square0.Write(2,Val);	break;
-	case 0x003:	_square0.Write(3,Val);	break;
-	case 0x004:	_square1.Write(0,Val);	break;
-	case 0x005:	_square1.Write(1,Val);	break;
-	case 0x006:	_square1.Write(2,Val);	break;
-	case 0x007:	_square1.Write(3,Val);	break;
-	case 0x008:	_triangle.Write(0,Val);	break;
-	case 0x009:	_triangle.Write(1,Val);	break;
-	case 0x00A:	_triangle.Write(2,Val);	break;
-	case 0x00B:	_triangle.Write(3,Val);	break;
-	case 0x00C:	_noise.Write(0,Val);	break;
-	case 0x00D:	_noise.Write(1,Val);	break;
-	case 0x00E:	_noise.Write(2,Val);	break;
-	case 0x00F:	_noise.Write(3,Val);	break;
-	case 0x015:	_square0.Write(4,Val & 0x1);
-				_square1.Write(4,Val & 0x2);
-				_triangle.Write(4,Val & 0x4);
-				_noise.Write(4,Val & 0x8);
-		break;
-	}
-}
+		Square _square0;
+		Square _square1;
+		Triangle _triangle;
+		Noise _noise;
 
-byte APU::Read4015() {
-	byte result =
-		(( _square0.GetTimer()) ? 0x01 : 0) |
-		(( _square1.GetTimer()) ? 0x02 : 0) |
-		((_triangle.GetTimer()) ? 0x04 : 0) |
-		((   _noise.GetTimer()) ? 0x08 : 0);
-	return result;
-}
+		struct {
+			uint32 Cycles;
+			int Num;
+		} Frame;
 
-void APU::Reset () {
-	BufPos = 0;
-
-	_square0.Reset();
-	_square1.Reset();
-	_triangle.Reset();
-	_noise.Reset();
-
-	Frame.Num = 0;
-	Frame.Cycles = 1;
-}
-
-template<class T>
-int step(T &obj, int sampcycles, uint frame_Cycles, int frame_Num) {
-	int samppos = 0;
-	while (sampcycles) {
-		// Compute the maximal amount we can step ahead before triggering
-		// an action (i.e. compute the minimum of sampcycles, frame_Cycles
-		// and obj.Cycles).
-		uint max_step = sampcycles;
-		if (max_step > frame_Cycles)
-			max_step = frame_Cycles;
-		if (max_step > obj.Cycles)
-			max_step = obj.Cycles;
-
-		// During all but the last of these steps, we just add the value of obj.Pos
-		// to samppos -- so we can to that all at once with a simple multiplication:
-		samppos += obj.Pos * (max_step - 1);
-
-		// Now step ahead...
-		sampcycles -= max_step;
-		frame_Cycles -= max_step;
-		obj.Cycles -= max_step;
-
-		if (!frame_Cycles) {
-			frame_Cycles = 7457;
-
-			if (frame_Num < 4) {
-				obj.QuarterFrame();
-
-				if (frame_Num & 1)
-					frame_Cycles++;
-				else
-					obj.HalfFrame();
-
-				frame_Num++;
-			} else
-				frame_Num = 0;
+	public:
+		APU(int rate)
+		  : SampleRate(rate) {
+			Reset();
 		}
 
-		if (!obj.Cycles)
-			obj.Run();
+		void WriteReg(int Addr, byte Val);
+		byte Read4015();
+		void Reset();
+		int16 GetSample();
+	};
 
-		samppos += obj.Pos;
+	void APU::WriteReg(int Addr, byte Val) {
+		switch (Addr) {
+		case 0x000:
+			_square0.Write(0, Val);
+			break;
+		case 0x001:
+			_square0.Write(1, Val);
+			break;
+		case 0x002:
+			_square0.Write(2, Val);
+			break;
+		case 0x003:
+			_square0.Write(3, Val);
+			break;
+		case 0x004:
+			_square1.Write(0, Val);
+			break;
+		case 0x005:
+			_square1.Write(1, Val);
+			break;
+		case 0x006:
+			_square1.Write(2, Val);
+			break;
+		case 0x007:
+			_square1.Write(3, Val);
+			break;
+		case 0x008:
+			_triangle.Write(0, Val);
+			break;
+		case 0x009:
+			_triangle.Write(1, Val);
+			break;
+		case 0x00A:
+			_triangle.Write(2, Val);
+			break;
+		case 0x00B:
+			_triangle.Write(3, Val);
+			break;
+		case 0x00C:
+			_noise.Write(0, Val);
+			break;
+		case 0x00D:
+			_noise.Write(1, Val);
+			break;
+		case 0x00E:
+			_noise.Write(2, Val);
+			break;
+		case 0x00F:
+			_noise.Write(3, Val);
+			break;
+		case 0x015:
+			_square0.Write(4, Val & 0x1);
+			_square1.Write(4, Val & 0x2);
+			_triangle.Write(4, Val & 0x4);
+			_noise.Write(4, Val & 0x8);
+			break;
+		}
 	}
 
-	return samppos;
-}
-
-int16 APU::GetSample() {
-	int samppos = 0;
-
-	const int sampcycles = 1+(1789773-BufPos-1)/SampleRate;
-	BufPos = BufPos + sampcycles * SampleRate - 1789773;
-
-	samppos += step( _square0, sampcycles, Frame.Cycles, Frame.Num);
-	samppos += step( _square1, sampcycles, Frame.Cycles, Frame.Num);
-	samppos += step(_triangle, sampcycles, Frame.Cycles, Frame.Num);
-	samppos += step(   _noise, sampcycles, Frame.Cycles, Frame.Num);
-
-	uint tmp = sampcycles;
-	while (tmp >= Frame.Cycles) {
-		tmp -= Frame.Cycles;
-		Frame.Cycles = 7457;
-
-		if (Frame.Num < 4) {
-			if (Frame.Num & 1)
-				Frame.Cycles++;
-			Frame.Num++;
-		} else
-			Frame.Num = 0;
+	byte APU::Read4015() {
+		byte result = ((_square0.GetTimer()) ? 0x01 : 0) | ((_square1.GetTimer()) ? 0x02 : 0) | ((_triangle.GetTimer()) ? 0x04 : 0) | ((_noise.GetTimer()) ? 0x08 : 0);
+		return result;
 	}
 
-	Frame.Cycles -= tmp;
+	void APU::Reset() {
+		BufPos = 0;
 
-	return (samppos << 6) / sampcycles;
-}
+		_square0.Reset();
+		_square1.Reset();
+		_triangle.Reset();
+		_noise.Reset();
+
+		Frame.Num = 0;
+		Frame.Cycles = 1;
+	}
+
+	template <class T>
+	int step(T &obj, int sampcycles, uint frame_Cycles, int frame_Num) {
+		int samppos = 0;
+		while (sampcycles) {
+			// Compute the maximal amount we can step ahead before triggering
+			// an action (i.e. compute the minimum of sampcycles, frame_Cycles
+			// and obj.Cycles).
+			uint max_step = sampcycles;
+			if (max_step > frame_Cycles)
+				max_step = frame_Cycles;
+			if (max_step > obj.Cycles)
+				max_step = obj.Cycles;
+
+			// During all but the last of these steps, we just add the value of obj.Pos
+			// to samppos -- so we can to that all at once with a simple multiplication:
+			samppos += obj.Pos * (max_step - 1);
+
+			// Now step ahead...
+			sampcycles -= max_step;
+			frame_Cycles -= max_step;
+			obj.Cycles -= max_step;
+
+			if (!frame_Cycles) {
+				frame_Cycles = 7457;
+
+				if (frame_Num < 4) {
+					obj.QuarterFrame();
+
+					if (frame_Num & 1)
+						frame_Cycles++;
+					else
+						obj.HalfFrame();
+
+					frame_Num++;
+				} else
+					frame_Num = 0;
+			}
+
+			if (!obj.Cycles)
+				obj.Run();
+
+			samppos += obj.Pos;
+		}
+
+		return samppos;
+	}
+
+	int16 APU::GetSample() {
+		int samppos = 0;
+
+		const int sampcycles = 1 + (1789773 - BufPos - 1) / SampleRate;
+		BufPos = BufPos + sampcycles * SampleRate - 1789773;
+
+		samppos += step(_square0, sampcycles, Frame.Cycles, Frame.Num);
+		samppos += step(_square1, sampcycles, Frame.Cycles, Frame.Num);
+		samppos += step(_triangle, sampcycles, Frame.Cycles, Frame.Num);
+		samppos += step(_noise, sampcycles, Frame.Cycles, Frame.Num);
+
+		uint tmp = sampcycles;
+		while (tmp >= Frame.Cycles) {
+			tmp -= Frame.Cycles;
+			Frame.Cycles = 7457;
+
+			if (Frame.Num < 4) {
+				if (Frame.Num & 1)
+					Frame.Cycles++;
+				Frame.Num++;
+			} else
+				Frame.Num = 0;
+		}
+
+		Frame.Cycles -= tmp;
+
+		return (samppos << 6) / sampcycles;
+	}
 
 } // End of namespace APUe
 
@@ -627,7 +655,7 @@ Player_NES::~Player_NES() {
 	delete _apu;
 }
 
-void Player_NES::setMusicVolume (int vol) {
+void Player_NES::setMusicVolume(int vol) {
 	_maxvol = vol;
 }
 
@@ -721,7 +749,7 @@ void Player_NES::sound_play() {
 	playMusic();
 }
 
-void Player_NES::playSFX (int nr) {
+void Player_NES::playSFX(int nr) {
 	if (--_slot[nr].framesleft)
 		return;
 
@@ -768,7 +796,7 @@ void Player_NES::playMusic() {
 
 	wasSFXplaying = isSFXplaying;
 	if (!--_slot[2].framesleft) {
-top:
+	top:
 		int b = _slot[2].data[_slot[2].offset++];
 		if (b == 0xFF) {
 			_slot[2].id = -1;
@@ -913,7 +941,8 @@ top:
 				chainCommand(x);
 				break;
 
-			case 0x0B:	case 0x1A:
+			case 0x0B:
+			case 0x1A:
 				_mchan[x].envflags = 0x70;
 				_mchan[x].volume = 0x6F;
 				_mchan[x].voldelta = 0;

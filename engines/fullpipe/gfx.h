@@ -26,8 +26,8 @@
 #include "common/ptr.h"
 
 namespace Graphics {
-	struct Surface;
-	struct TransparentSurface;
+struct Surface;
+struct TransparentSurface;
 }
 
 namespace Fullpipe {
@@ -130,7 +130,7 @@ protected:
 };
 
 class BigPicture : public Picture {
-  public:
+public:
 	BigPicture() {}
 	virtual ~BigPicture() {}
 
@@ -139,7 +139,7 @@ class BigPicture : public Picture {
 };
 
 class GameObject : public CObject {
-  public:
+public:
 	int16 _odelay;
 	int _field_8;
 	int16 _flags;
@@ -150,7 +150,7 @@ class GameObject : public CObject {
 	int _priority;
 	int _field_20;
 
-  public:
+public:
 	GameObject();
 	GameObject(GameObject *src);
 
@@ -174,7 +174,10 @@ public:
 	PictureObject(PictureObject *src);
 
 	virtual bool load(MfcArchive &file, bool bigPicture);
-	virtual bool load(MfcArchive &file) { assert(0); return false; } // Disable base class
+	virtual bool load(MfcArchive &file) {
+		assert(0);
+		return false;
+	} // Disable base class
 
 	Dims getDimensions() const { return _picture->getDimensions(); }
 	void draw();
@@ -232,7 +235,7 @@ class Shadows : public CObject {
 	int _movementId;
 	ShadowsItemArray _items;
 
-  public:
+public:
 	Shadows();
 	virtual bool load(MfcArchive &file);
 	void init();

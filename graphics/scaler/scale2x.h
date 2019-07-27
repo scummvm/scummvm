@@ -19,50 +19,47 @@
  */
 
 #ifndef SCALER_SCALE2X_H
-#define SCALER_SCALE2X_H
+#	define SCALER_SCALE2X_H
 
-#if defined(_MSC_VER)
-#define __restrict__
-#endif
+#	if defined(_MSC_VER)
+#		define __restrict__
+#	endif
 
-#ifdef __sgi
-#define __restrict__ __restrict
-#endif
-
+#	ifdef __sgi
+#		define __restrict__ __restrict
+#	endif
 
 typedef unsigned char scale2x_uint8;
 typedef unsigned short scale2x_uint16;
 typedef unsigned scale2x_uint32;
 
-void scale2x_8_def(scale2x_uint8* dst0, scale2x_uint8* dst1, const scale2x_uint8* src0, const scale2x_uint8* src1, const scale2x_uint8* src2, unsigned count);
-void scale2x_16_def(scale2x_uint16* dst0, scale2x_uint16* dst1, const scale2x_uint16* src0, const scale2x_uint16* src1, const scale2x_uint16* src2, unsigned count);
-void scale2x_32_def(scale2x_uint32* dst0, scale2x_uint32* dst1, const scale2x_uint32* src0, const scale2x_uint32* src1, const scale2x_uint32* src2, unsigned count);
+void scale2x_8_def(scale2x_uint8 *dst0, scale2x_uint8 *dst1, const scale2x_uint8 *src0, const scale2x_uint8 *src1, const scale2x_uint8 *src2, unsigned count);
+void scale2x_16_def(scale2x_uint16 *dst0, scale2x_uint16 *dst1, const scale2x_uint16 *src0, const scale2x_uint16 *src1, const scale2x_uint16 *src2, unsigned count);
+void scale2x_32_def(scale2x_uint32 *dst0, scale2x_uint32 *dst1, const scale2x_uint32 *src0, const scale2x_uint32 *src1, const scale2x_uint32 *src2, unsigned count);
 
-#if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
+#	if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 
-void scale2x_8_mmx(scale2x_uint8* dst0, scale2x_uint8* dst1, const scale2x_uint8* src0, const scale2x_uint8* src1, const scale2x_uint8* src2, unsigned count);
-void scale2x_16_mmx(scale2x_uint16* dst0, scale2x_uint16* dst1, const scale2x_uint16* src0, const scale2x_uint16* src1, const scale2x_uint16* src2, unsigned count);
-void scale2x_32_mmx(scale2x_uint32* dst0, scale2x_uint32* dst1, const scale2x_uint32* src0, const scale2x_uint32* src1, const scale2x_uint32* src2, unsigned count);
+void scale2x_8_mmx(scale2x_uint8 *dst0, scale2x_uint8 *dst1, const scale2x_uint8 *src0, const scale2x_uint8 *src1, const scale2x_uint8 *src2, unsigned count);
+void scale2x_16_mmx(scale2x_uint16 *dst0, scale2x_uint16 *dst1, const scale2x_uint16 *src0, const scale2x_uint16 *src1, const scale2x_uint16 *src2, unsigned count);
+void scale2x_32_mmx(scale2x_uint32 *dst0, scale2x_uint32 *dst1, const scale2x_uint32 *src0, const scale2x_uint32 *src1, const scale2x_uint32 *src2, unsigned count);
 
 /**
  * End the use of the MMX instructions.
  * This function must be called before using any floating-point operations.
  */
-static inline void scale2x_mmx_emms(void)
-{
-	__asm__ __volatile__ (
-		"emms"
-	);
+static inline void scale2x_mmx_emms(void) {
+	__asm__ __volatile__(
+	  "emms");
 }
 
-#endif
+#	endif
 
-#if defined(USE_ARM_SCALER_ASM)
+#	if defined(USE_ARM_SCALER_ASM)
 
-extern "C" void scale2x_8_arm(scale2x_uint8* dst0, scale2x_uint8* dst1, const scale2x_uint8* src0, const scale2x_uint8* src1, const scale2x_uint8* src2, unsigned count);
-extern "C" void scale2x_16_arm(scale2x_uint16* dst0, scale2x_uint16* dst1, const scale2x_uint16* src0, const scale2x_uint16* src1, const scale2x_uint16* src2, unsigned count);
-extern "C" void scale2x_32_arm(scale2x_uint32* dst0, scale2x_uint32* dst1, const scale2x_uint32* src0, const scale2x_uint32* src1, const scale2x_uint32* src2, unsigned count);
+extern "C" void scale2x_8_arm(scale2x_uint8 *dst0, scale2x_uint8 *dst1, const scale2x_uint8 *src0, const scale2x_uint8 *src1, const scale2x_uint8 *src2, unsigned count);
+extern "C" void scale2x_16_arm(scale2x_uint16 *dst0, scale2x_uint16 *dst1, const scale2x_uint16 *src0, const scale2x_uint16 *src1, const scale2x_uint16 *src2, unsigned count);
+extern "C" void scale2x_32_arm(scale2x_uint32 *dst0, scale2x_uint32 *dst1, const scale2x_uint32 *src0, const scale2x_uint32 *src1, const scale2x_uint32 *src2, unsigned count);
 
-#endif
+#	endif
 
 #endif

@@ -29,14 +29,14 @@
 #ifndef TONY_GFXENGINE_H
 #define TONY_GFXENGINE_H
 
+#include "common/rect.h"
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "common/rect.h"
-#include "tony/mpal/memory.h"
 #include "tony/game.h"
 #include "tony/gfxcore.h"
 #include "tony/input.h"
 #include "tony/inventory.h"
+#include "tony/mpal/memory.h"
 #include "tony/tonychar.h"
 #include "tony/utils.h"
 
@@ -69,15 +69,18 @@ private:
 	int _nWipeStep;
 
 	bool _bMustEnterMenu;
+
 protected:
 	static void itemIrq(uint32 dwItem, int nPattern, int nStatus);
 	void initForNewLocation(int nLoc, RMPoint ptTonyStart, RMPoint start);
+
 public:
 	bool _bWiping;
 	Common::Rect _rcWipeEllipse;
 	bool _bGUIOption;
 	bool _bGUIInterface;
 	bool _bGUIInventory;
+
 public:
 	RMGfxEngine();
 	virtual ~RMGfxEngine();

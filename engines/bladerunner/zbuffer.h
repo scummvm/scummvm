@@ -32,24 +32,23 @@ namespace BladeRunner {
 #define MAX_DIRTY_RECTS 20
 
 class ZBufferDirtyRects {
-	int          _count;
+	int _count;
 	Common::Rect _rects[MAX_DIRTY_RECTS];
 
 public:
-	ZBufferDirtyRects() :
-		_count(0)
-	{}
+	ZBufferDirtyRects()
+	  : _count(0) {}
 
 	void reset();
 	bool add(Common::Rect rect);
 	void extendExisting();
-	int  getCount() const;
+	int getCount() const;
 	bool popRect(Common::Rect *rect);
 };
 
 class ZBuffer {
-	int     _width;
-	int     _height;
+	int _width;
+	int _height;
 
 	uint16 *_zbuf1;
 	uint16 *_zbuf2;

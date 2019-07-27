@@ -28,18 +28,18 @@
 // -- DOS VGA Floppy --
 
 {
-	{
-		"ajworld",
-		"",
-		AD_ENTRY1s("intro.stk", "e453bea7b28a67c930764d945f64d898", 3913628),
-		EN_ANY,
-		kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
+	{ "ajworld",
+	  "",
+	  AD_ENTRY1s("intro.stk", "e453bea7b28a67c930764d945f64d898", 3913628),
+	  EN_ANY,
+	  kPlatformDOS,
+	  ADGF_NO_FLAGS,
+	  GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
 	kGameTypeAJWorld,
 	kFeaturesAdLib,
-	0, 0, 0
+	0,
+	0,
+	0
 },
 
 #endif // GOB_DETECTION_TABLES_AJWORLD_H

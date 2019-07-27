@@ -23,11 +23,11 @@
 #ifndef SCI_UTIL_H
 #define SCI_UTIL_H
 
-#include "common/span.h"
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/scummsys.h"
+#include "common/span.h"
 #include "common/str.h"
 #include "common/textconsole.h"
 
@@ -66,11 +66,14 @@ namespace SciSpanInternal {
 		typedef typename Common::Conditional<IsConst, const span_value_type, span_value_type>::type *pointer;
 		typedef typename Common::Conditional<IsConst, const span_value_type, span_value_type>::type &reference;
 
-		inline SciSpanIterator() : super_type() {}
+		inline SciSpanIterator()
+		  : super_type() {}
 
-		inline SciSpanIterator(span_type *span, const difference_type index) : super_type(span, index) {}
+		inline SciSpanIterator(span_type *span, const difference_type index)
+		  : super_type(span, index) {}
 
-		inline SciSpanIterator(const SciSpanIterator &other) : super_type(other) {}
+		inline SciSpanIterator(const SciSpanIterator &other)
+		  : super_type(other) {}
 
 		inline SciSpanIterator &operator=(const SciSpanIterator &other) {
 			super_type::operator=(other);
@@ -135,7 +138,8 @@ class SciSpanImpl : public Common::NamedSpanImpl<ValueType, Derived> {
 	typedef Derived<ValueType> derived_type;
 
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
-	template <typename T, template <typename> class U> friend class SciSpanImpl;
+	template <typename T, template <typename> class U>
+	friend class SciSpanImpl;
 #endif
 #if CXXTEST_RUNNING
 	friend class ::SpanTestSuite;
@@ -153,16 +157,18 @@ public:
 	typedef typename super_type::reference reference;
 	typedef typename super_type::const_reference const_reference;
 
-	inline SciSpanImpl() : super_type() {}
+	inline SciSpanImpl()
+	  : super_type() {}
 
 	inline SciSpanImpl(const pointer data_,
-					   const size_type size_,
-					   const Common::String &name_ = Common::String(),
-					   const size_type sourceByteOffset_ = 0) :
-		super_type(data_, size_, name_, sourceByteOffset_) {}
+	                   const size_type size_,
+	                   const Common::String &name_ = Common::String(),
+	                   const size_type sourceByteOffset_ = 0)
+	  : super_type(data_, size_, name_, sourceByteOffset_) {}
 
 	template <typename Other>
-	inline SciSpanImpl(const Other &other) : super_type(other) {}
+	inline SciSpanImpl(const Other &other)
+	  : super_type(other) {}
 
 	inline const_iterator cbegin() const { return const_iterator(&this->impl(), 0); }
 	inline const_iterator cend() const { return const_iterator(&this->impl(), this->size()); }
@@ -213,11 +219,11 @@ public:
 #pragma mark -
 #pragma mark SciSpanImpl - ForwardIterator
 
-// Spans that are used as ForwardIterators must not be allowed inside of
-// SpanOwner, since this will result in the wrong pointer to memory to be
-// deleted
+	// Spans that are used as ForwardIterators must not be allowed inside of
+	// SpanOwner, since this will result in the wrong pointer to memory to be
+	// deleted
 private:
-	typedef typename Common::RemoveConst<Derived<ValueType> >::type mutable_derived_type;
+	typedef typename Common::RemoveConst<Derived<ValueType>>::type mutable_derived_type;
 
 public:
 	inline const_reference operator*() const {
@@ -261,16 +267,18 @@ class SciSpan : public SciSpanImpl<ValueType, SciSpan> {
 public:
 	COMMON_SPAN_TYPEDEFS
 
-	inline SciSpan() : super_type() {}
+	inline SciSpan()
+	  : super_type() {}
 
 	inline SciSpan(const pointer data_,
-				   const size_type size_,
-				   const Common::String &name_ = Common::String(),
-				   const size_type sourceByteOffset_ = 0) :
-		super_type(data_, size_, name_, sourceByteOffset_) {}
+	               const size_type size_,
+	               const Common::String &name_ = Common::String(),
+	               const size_type sourceByteOffset_ = 0)
+	  : super_type(data_, size_, name_, sourceByteOffset_) {}
 
 	template <typename Other>
-	inline SciSpan(const Other &other) : super_type(other) {}
+	inline SciSpan(const Other &other)
+	  : super_type(other) {}
 };
 
 } // End of namespace Sci

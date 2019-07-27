@@ -21,61 +21,57 @@
  */
 
 #include "glk/alan3/literal.h"
-#include "glk/alan3/types.h"
 #include "glk/alan3/memory.h"
+#include "glk/alan3/types.h"
 
 namespace Glk {
 namespace Alan3 {
 
-/* PUBLIC DATA */
-int litCount = 0;
-static LiteralEntry literalTable[100];
-LiteralEntry *literals = literalTable;
+	/* PUBLIC DATA */
+	int litCount = 0;
+	static LiteralEntry literalTable[100];
+	LiteralEntry *literals = literalTable;
 
+	/* PRIVATE TYPES & DATA */
 
-/* PRIVATE TYPES & DATA */
+	/*+++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+	/*======================================================================*/
+	int instanceFromLiteral(int literalIndex) {
+		return literalIndex + header->instanceMax;
+	}
 
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++*/
+	/*----------------------------------------------------------------------*/
+	void createIntegerLiteral(int integerValue) {
+		litCount++;
+		literals[litCount]._class = header->integerClassId;
+		literals[litCount].type = NUMERIC_LITERAL;
+		literals[litCount].value = integerValue;
+	}
 
-/*======================================================================*/
-int instanceFromLiteral(int literalIndex) {
-	return literalIndex + header->instanceMax;
-}
+	/*----------------------------------------------------------------------*/
+	void createStringLiteral(char *unquotedString) {
+		litCount++;
+		literals[litCount]._class = header->stringClassId;
+		literals[litCount].type = STRING_LITERAL;
+		literals[litCount].value = toAptr(strdup(unquotedString));
+	}
 
-/*----------------------------------------------------------------------*/
-void createIntegerLiteral(int integerValue) {
-	litCount++;
-	literals[litCount]._class = header->integerClassId;
-	literals[litCount].type = NUMERIC_LITERAL;
-	literals[litCount].value = integerValue;
-}
+	/*----------------------------------------------------------------------*/
+	void freeLiterals() {
+		int i;
 
-/*----------------------------------------------------------------------*/
-void createStringLiteral(char *unquotedString) {
-	litCount++;
-	literals[litCount]._class = header->stringClassId;
-	literals[litCount].type = STRING_LITERAL;
-	literals[litCount].value = toAptr(strdup(unquotedString));
-}
+		for (i = 0; i <= litCount; i++)
+			if (literals[i].type == STRING_LITERAL && literals[i].value != 0) {
+				deallocate((void *)fromAptr(literals[i].value));
+			}
+		litCount = 0;
+	}
 
-/*----------------------------------------------------------------------*/
-void freeLiterals() {
-	int i;
-
-	for (i = 0; i <= litCount; i++)
-		if (literals[i].type == STRING_LITERAL && literals[i].value != 0) {
-			deallocate((void *)fromAptr(literals[i].value));
-		}
-	litCount = 0;
-}
-
-
-
-/*======================================================================*/
-int literalFromInstance(int instance) {
-	return instance - header->instanceMax;
-}
+	/*======================================================================*/
+	int literalFromInstance(int instance) {
+		return instance - header->instanceMax;
+	}
 
 } // End of namespace Alan3
 } // End of namespace Glk

@@ -25,9 +25,9 @@
 namespace BladeRunner {
 
 enum kNR11Loops {
-	kNR11LoopMainLoop         = 0,
-	kNR11LoopGunshots         = 2,
-	kNR11LoopMainLoopFires    = 3,
+	kNR11LoopMainLoop = 0,
+	kNR11LoopGunshots = 2,
+	kNR11LoopMainLoopFires = 3,
 	kNR11LoopMainLoopBurnedUp = 5
 };
 
@@ -41,10 +41,10 @@ void SceneScriptNR11::InitializeScene() {
 	}
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTDRONE1, 22, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED5,   33, 0, 1);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN1,  2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN2,  2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN3,  2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED5, 33, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN3, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxBBMOVE1, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxBBMOVE2, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxBBMOVE3, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
@@ -132,24 +132,23 @@ bool SceneScriptNR11::MouseClick(int x, int y) {
 bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool combatMode) {
 
 	if (Object_Query_Click("CLOTHING02", objectName)
-	 || Object_Query_Click("BOX27", objectName)
-	 || Object_Query_Click("BOX39", objectName)
+	    || Object_Query_Click("BOX27", objectName)
+	    || Object_Query_Click("BOX39", objectName)
 #if BLADERUNNER_ORIGINAL_BUGS
-	 // in our bugfixes this object is removed
-	 || Object_Query_Click("BOX44", objectName)
+	    // in our bugfixes this object is removed
+	    || Object_Query_Click("BOX44", objectName)
 #endif // BLADERUNNER_ORIGINAL_BUGS
-	 || Object_Query_Click("DRESS", objectName)
-	 || Object_Query_Click("COATRACK", objectName)
-	 || Object_Query_Click("COLUMN3 DETS", objectName)
-	 || Object_Query_Click("COLUMN PIPE01", objectName)
-	 || Object_Query_Click("RECTANGLE02", objectName)
-	 || Object_Query_Click("COLUMN04", objectName)
-	 || Object_Query_Click("COATRACK01", objectName)
-	 || Object_Query_Click("SHIRT", objectName)
-	 || Object_Query_Click("SKIRT 02", objectName)
-	 || Object_Query_Click("CLOTHING B 03", objectName)
-	 || Object_Query_Click("BUST BUST", objectName)
-	) {
+	    || Object_Query_Click("DRESS", objectName)
+	    || Object_Query_Click("COATRACK", objectName)
+	    || Object_Query_Click("COLUMN3 DETS", objectName)
+	    || Object_Query_Click("COLUMN PIPE01", objectName)
+	    || Object_Query_Click("RECTANGLE02", objectName)
+	    || Object_Query_Click("COLUMN04", objectName)
+	    || Object_Query_Click("COATRACK01", objectName)
+	    || Object_Query_Click("SHIRT", objectName)
+	    || Object_Query_Click("SKIRT 02", objectName)
+	    || Object_Query_Click("CLOTHING B 03", objectName)
+	    || Object_Query_Click("BUST BUST", objectName)) {
 		if (combatMode) {
 			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleNR11StopWaiting);
 			Scene_Exits_Disable();
@@ -179,8 +178,7 @@ bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool combatMode)
 					Actor_Says(kActorMcCoy, 3840, 18);
 					Delay(1000);
 					if (Actor_Query_Friendliness_To_Other(kActorDektora, kActorMcCoy) > 59
-					 && Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsNone
-					) {
+					    && Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsNone) {
 						Music_Play(kMusicLoveSong, 35, 0, 3, -1, 0, 0);
 					}
 					Loop_Actor_Walk_To_XYZ(kActorDektora, -135.0f, 0.33f, -267.0f, 0, false, false, false);
@@ -205,8 +203,7 @@ bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool combatMode)
 					Actor_Says(kActorDektora, 1070, 14);
 					Actor_Modify_Friendliness_To_Other(kActorDektora, kActorMcCoy, 5);
 					if (Actor_Query_Friendliness_To_Other(kActorDektora, kActorMcCoy) > 55
-					 && Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsNone
-					) {
+					    && Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsNone) {
 						Global_Variable_Set(kVariableAffectionTowards, kAffectionTowardsDektora);
 						Actor_Says(kActorDektora, 1130, 17);
 						Actor_Says(kActorMcCoy, 6365, 12);
@@ -265,35 +262,35 @@ bool SceneScriptNR11::ClickedOn2DRegion(int region) {
 
 void SceneScriptNR11::SceneFrameAdvanced(int frame) {
 	if (frame == 62) {
-		Ambient_Sounds_Play_Sound(kSfxMCGUN1,  40, 100, 100, 10);
+		Ambient_Sounds_Play_Sound(kSfxMCGUN1, 40, 100, 100, 10);
 	}
 
 	if (frame == 67) {
-		Ambient_Sounds_Play_Sound(kSfxMCGUN1,  30,  90,  90, 10);
+		Ambient_Sounds_Play_Sound(kSfxMCGUN1, 30, 90, 90, 10);
 	}
 
 	if (frame == 74) {
-		Ambient_Sounds_Play_Sound(kSfxMCGUN2,  50,  83,  83, 10);
+		Ambient_Sounds_Play_Sound(kSfxMCGUN2, 50, 83, 83, 10);
 	}
 
 	if (frame == 80) {
-		Ambient_Sounds_Play_Sound(kSfxMCGUN1,  60,  65,  65, 10);
+		Ambient_Sounds_Play_Sound(kSfxMCGUN1, 60, 65, 65, 10);
 	}
 
 	if (frame == 92) {
-		Ambient_Sounds_Play_Sound(kSfxMCGUN2,  30,  50,  50, 10);
+		Ambient_Sounds_Play_Sound(kSfxMCGUN2, 30, 50, 50, 10);
 	}
 
 	if (frame == 97) {
-		Ambient_Sounds_Play_Sound(kSfxMCGUN1,  50, -40, -40, 10);
+		Ambient_Sounds_Play_Sound(kSfxMCGUN1, 50, -40, -40, 10);
 	}
 
 	if (frame == 103) {
-		Ambient_Sounds_Play_Sound(kSfxMCGUN2,  40, -27, -27, 10);
+		Ambient_Sounds_Play_Sound(kSfxMCGUN2, 40, -27, -27, 10);
 	}
 
 	if (frame == 109) {
-		Ambient_Sounds_Play_Sound(kSfxMCGUN1,  60, -20, -20, 10);
+		Ambient_Sounds_Play_Sound(kSfxMCGUN1, 60, -20, -20, 10);
 	}
 
 	if (frame == 62) {
@@ -318,8 +315,7 @@ void SceneScriptNR11::SceneFrameAdvanced(int frame) {
 		Game_Flag_Reset(kFlagNR11SteeleShoot);
 	} else {
 		if (frame < 61
-		 || frame > 120
-		) {
+		    || frame > 120) {
 			//return false;
 			return;
 		}
@@ -392,7 +388,6 @@ void SceneScriptNR11::PlayerWalkedIn() {
 }
 
 void SceneScriptNR11::PlayerWalkedOut() {
-
 }
 
 void SceneScriptNR11::DialogueQueueFlushed(int a1) {

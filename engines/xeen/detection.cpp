@@ -20,15 +20,15 @@
  *
  */
 
-#include "xeen/xeen.h"
-#include "xeen/worldofxeen/worldofxeen.h"
 #include "xeen/swordsofxeen/swordsofxeen.h"
+#include "xeen/worldofxeen/worldofxeen.h"
+#include "xeen/xeen.h"
 
 #include "base/plugins.h"
 #include "common/savefile.h"
-#include "engines/advancedDetector.h"
 #include "common/system.h"
 #include "common/translation.h"
+#include "engines/advancedDetector.h"
 
 #define MAX_SAVES 99
 
@@ -73,43 +73,35 @@ static const PlainGameDescriptor XeenGames[] = {
 	{ "darksideofxeen", "Might and Magic V: Dark Side of Xeen" },
 	{ "worldofxeen", "Might and Magic: World of Xeen" },
 	{ "swordsofxeen", "Might and Magic: Swords of Xeen" },
-	{0, 0}
+	{ 0, 0 }
 };
 
-#define GAMEOPTION_SHOW_ITEM_COSTS	GUIO_GAMEOPTIONS1
-#define GAMEOPTION_DURABLE_ARMOR	GUIO_GAMEOPTIONS2
+#define GAMEOPTION_SHOW_ITEM_COSTS GUIO_GAMEOPTIONS1
+#define GAMEOPTION_DURABLE_ARMOR GUIO_GAMEOPTIONS2
 
 #include "xeen/detection_tables.h"
 
-
 static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_SHOW_ITEM_COSTS,
-		{
-			_s("Show item costs in standard inventory mode"),
-			_s("Shows item costs in standard inventory mode, allowing the value of items to be compared"),
-			"ShowItemCosts",
-			false
-		}
-	},
+	{ GAMEOPTION_SHOW_ITEM_COSTS,
+	  { _s("Show item costs in standard inventory mode"),
+	    _s("Shows item costs in standard inventory mode, allowing the value of items to be compared"),
+	    "ShowItemCosts",
+	    false } },
 
-	{
-		GAMEOPTION_DURABLE_ARMOR,
-		{
-			_s("More durable armor"),
-			_s("Armor won't break until character is at -80HP, rather than merely -10HP"),
-			"DurableArmor",
-			false
-		}
-	},
+	{ GAMEOPTION_DURABLE_ARMOR,
+	  { _s("More durable armor"),
+	    _s("Armor won't break until character is at -80HP, rather than merely -10HP"),
+	    "DurableArmor",
+	    false } },
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
 class XeenMetaEngine : public AdvancedMetaEngine {
 public:
-	XeenMetaEngine() : AdvancedMetaEngine(Xeen::gameDescriptions, sizeof(Xeen::XeenGameDescription),
-			XeenGames, optionsList) {
+	XeenMetaEngine()
+	  : AdvancedMetaEngine(Xeen::gameDescriptions, sizeof(Xeen::XeenGameDescription),
+	                       XeenGames, optionsList) {
 		_maxScanDepth = 3;
 	}
 
@@ -130,22 +122,11 @@ public:
 };
 
 bool XeenMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup) || (f == kSupportsDeleteSave) || (f == kSavesSupportMetaInfo) || (f == kSavesSupportCreationDate) || (f == kSavesSupportPlayTime) || (f == kSavesSupportThumbnail) || (f == kSimpleSavesNames);
 }
 
 bool Xeen::XeenEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
 bool XeenMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -232,9 +213,8 @@ SaveStateDescriptor XeenMetaEngine::querySaveMetaInfos(const char *target, int s
 	return SaveStateDescriptor();
 }
 
-
 #if PLUGIN_ENABLED_DYNAMIC(XEEN)
-	REGISTER_PLUGIN_DYNAMIC(XEEN, PLUGIN_TYPE_ENGINE, XeenMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(XEEN, PLUGIN_TYPE_ENGINE, XeenMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(XEEN, PLUGIN_TYPE_ENGINE, XeenMetaEngine);
+REGISTER_PLUGIN_STATIC(XEEN, PLUGIN_TYPE_ENGINE, XeenMetaEngine);
 #endif

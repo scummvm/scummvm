@@ -31,11 +31,11 @@
 
 #include "common/textconsole.h"
 
-#include "sword25/script/luacallback.h"
 #include "sword25/script/luabindhelper.h"
+#include "sword25/script/luacallback.h"
 
-#include "sword25/util/lua/lua.h"
 #include "sword25/util/lua/lauxlib.h"
+#include "sword25/util/lua/lua.h"
 
 const char *CALLBACKTABLE_NAME = "__CALLBACKS";
 

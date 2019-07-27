@@ -24,14 +24,25 @@
 
 namespace Networking {
 
-ErrorResponse::ErrorResponse(Request *rq):
-	request(rq), interrupted(false), failed(true), response(""), httpResponseCode(-1) {}
+ErrorResponse::ErrorResponse(Request *rq)
+  : request(rq)
+  , interrupted(false)
+  , failed(true)
+  , response("")
+  , httpResponseCode(-1) {}
 
-ErrorResponse::ErrorResponse(Request *rq, bool interrupt, bool failure, Common::String resp, long httpCode):
-	request(rq), interrupted(interrupt), failed(failure), response(resp), httpResponseCode(httpCode) {}
+ErrorResponse::ErrorResponse(Request *rq, bool interrupt, bool failure, Common::String resp, long httpCode)
+  : request(rq)
+  , interrupted(interrupt)
+  , failed(failure)
+  , response(resp)
+  , httpResponseCode(httpCode) {}
 
-Request::Request(DataCallback cb, ErrorCallback ecb):
-	_callback(cb), _errorCallback(ecb), _state(PROCESSING), _retryInSeconds(0) {}
+Request::Request(DataCallback cb, ErrorCallback ecb)
+  : _callback(cb)
+  , _errorCallback(ecb)
+  , _state(PROCESSING)
+  , _retryInSeconds(0) {}
 
 Request::~Request() {
 	delete _callback;

@@ -23,14 +23,15 @@
  *
  */
 
-#include "pegasus/constants.h"
 #include "pegasus/notification.h"
+#include "pegasus/constants.h"
 
 namespace Pegasus {
 
 typedef ReceiverList::iterator ReceiverIterator;
 
-Notification::Notification(const NotificationID id, NotificationManager *owner) : IDObject(id) {
+Notification::Notification(const NotificationID id, NotificationManager *owner)
+  : IDObject(id) {
 	_owner = owner;
 	_currentFlags = kNoNotificationFlags;
 	if (_owner)
@@ -90,11 +91,11 @@ void Notification::checkReceivers() {
 // Receiver entries are equal if their receivers are equal.
 
 int operator==(const ReceiverEntry &entry1, const ReceiverEntry &entry2) {
-	return	entry1.receiver == entry2.receiver;
+	return entry1.receiver == entry2.receiver;
 }
 
 int operator!=(const ReceiverEntry &entry1, const ReceiverEntry &entry2) {
-	return	entry1.receiver != entry2.receiver;
+	return entry1.receiver != entry2.receiver;
 }
 
 NotificationReceiver::NotificationReceiver() {

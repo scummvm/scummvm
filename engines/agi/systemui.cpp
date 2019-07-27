@@ -20,11 +20,11 @@
  *
  */
 
+#include "agi/systemui.h"
 #include "agi/agi.h"
 #include "agi/graphics.h"
-#include "agi/text.h"
 #include "agi/keyboard.h"
-#include "agi/systemui.h"
+#include "agi/text.h"
 
 namespace Agi {
 
@@ -259,7 +259,7 @@ bool SystemUI::askForCommand(Common::String &commandText) {
 
 int16 SystemUI::figureOutAutomaticSaveGameSlot(const char *automaticSaveDescription) {
 	int16 matchedGameSlotId = -1;
-	int16 freshGameSlotId   = -1;
+	int16 freshGameSlotId = -1;
 
 	// Fill saved game slot cache
 	readSavedGameSlots(false, false); // don't filter, but also don't include auto-save slot
@@ -281,7 +281,7 @@ int16 SystemUI::figureOutAutomaticSaveGameSlot(const char *automaticSaveDescript
 
 int16 SystemUI::figureOutAutomaticRestoreGameSlot(const char *automaticSaveDescription) {
 	int16 matchedGameSlotId = -1;
-	int16 freshGameSlotId   = -1;
+	int16 freshGameSlotId = -1;
 
 	// Fill saved game slot cache
 	readSavedGameSlots(true, false); // filter non-existant/invalid saves, also don't include auto-save slot
@@ -431,7 +431,7 @@ void SystemUI::savedGameSlot_KeyPress(uint16 newKey) {
 	int16 slotCount = _savedGameArray.size();
 	int16 newUpmostSlotNr = _savedGameUpmostSlotNr;
 	int16 newSelectedSlotNr = _savedGameSelectedSlotNr;
-	bool  slotsScrolled = false;
+	bool slotsScrolled = false;
 
 	switch (newKey) {
 	case AGI_KEY_ENTER:
@@ -524,7 +524,7 @@ void SystemUI::savedGameSlot_KeyPress(uint16 newKey) {
 			drawSlots = true;
 		}
 
-		_savedGameUpmostSlotNr   = newUpmostSlotNr;
+		_savedGameUpmostSlotNr = newUpmostSlotNr;
 		_savedGameSelectedSlotNr = newSelectedSlotNr;
 		if (drawSlots) {
 			drawSavedGameSlots();
@@ -540,8 +540,8 @@ void SystemUI::clearSavedGameSlots() {
 }
 
 void SystemUI::createSavedGameDisplayText(char *destDisplayText, const char *actualDescription, int16 slotId, bool fillUpWithSpaces) {
-	char  fillUpChar = fillUpWithSpaces ? ' ' : 0x00;
-	char  slotIdChar[3];
+	char fillUpChar = fillUpWithSpaces ? ' ' : 0x00;
+	char slotIdChar[3];
 	int16 actualDescriptionLen = 0;
 
 	// clear with spaces
@@ -570,11 +570,11 @@ void SystemUI::readSavedGameSlots(bool filterNonexistant, bool withAutoSaveSlot)
 	int16 loopSlotId = 0;
 	SystemUISavedGameEntry savedGameEntry;
 	Common::String saveDescription;
-	uint32         saveDate = 0;
-	uint32         saveTime = 0;
-	bool           saveIsValid = false;
+	uint32 saveDate = 0;
+	uint32 saveTime = 0;
+	bool saveIsValid = false;
 
-	int16  mostRecentSlotNr = -1;
+	int16 mostRecentSlotNr = -1;
 	uint32 mostRecentSlotSaveDate = 0;
 	uint32 mostRecentSlotSaveTime = 0;
 
@@ -612,8 +612,8 @@ void SystemUI::readSavedGameSlots(bool filterNonexistant, bool withAutoSaveSlot)
 						continue;
 				}
 
-				savedGameEntry.slotId  = loopSlotId;
-				savedGameEntry.exists  = false;
+				savedGameEntry.slotId = loopSlotId;
+				savedGameEntry.exists = false;
 				savedGameEntry.isValid = false;
 				memset(savedGameEntry.description, 0, sizeof(savedGameEntry.description));
 				createSavedGameDisplayText(savedGameEntry.displayText, "", loopSlotId, true);
@@ -649,7 +649,7 @@ void SystemUI::readSavedGameSlots(bool filterNonexistant, bool withAutoSaveSlot)
 			}
 		}
 
-		savedGameEntry.exists  = true;
+		savedGameEntry.exists = true;
 		savedGameEntry.isValid = saveIsValid;
 		memset(savedGameEntry.description, 0, sizeof(savedGameEntry.description));
 		strncpy(savedGameEntry.description, saveDescription.c_str(), SYSTEMUI_SAVEDGAME_DESCRIPTION_LEN);
@@ -994,15 +994,19 @@ Common::Rect SystemUI::createRect(int16 x, int16 adjX, int16 y, int16 adjY, int1
 	case DISPLAY_UPSCALED_DISABLED:
 		break;
 	case DISPLAY_UPSCALED_640x400:
-		adjX *= 2; adjY *= 2;
-		adjWidth *= 2; adjHeight *= 2;
+		adjX *= 2;
+		adjY *= 2;
+		adjWidth *= 2;
+		adjHeight *= 2;
 		break;
 	default:
 		assert(0);
 		break;
 	}
-	x += adjX; y += adjY;
-	width += adjWidth; height += adjHeight;
+	x += adjX;
+	y += adjY;
+	width += adjWidth;
+	height += adjHeight;
 	Common::Rect newRect(width, height);
 	newRect.moveTo(x, y);
 	return newRect;
@@ -1046,8 +1050,8 @@ void SystemUI::drawButton(SystemUIButtonEntry *button) {
 // Note: It seems that Apple IIgs AGI used a system font for the buttons (and the menu)
 // We use the regular 8x8 Sierra Apple IIgs font, that's why our buttons are not the exact same width
 void SystemUI::drawButtonAppleIIgs(SystemUIButtonEntry *button) {
-	byte  foregroundColor = 0;
-	byte  backgroundColor = 15;
+	byte foregroundColor = 0;
+	byte backgroundColor = 15;
 	byte *edgeBitmap = nullptr;
 
 	if (button->active) {
@@ -1128,8 +1132,8 @@ void SystemUI::drawButtonAppleIIgsEdgePixels(int16 x, int16 adjX, int16 y, int16
 }
 
 void SystemUI::drawButtonAmiga(SystemUIButtonEntry *button) {
-	byte  foregroundColor;
-	byte  backgroundColor;
+	byte foregroundColor;
+	byte backgroundColor;
 
 	if (!button->active)
 		foregroundColor = 15;
@@ -1158,8 +1162,8 @@ void SystemUI::drawButtonAmiga(SystemUIButtonEntry *button) {
 }
 
 void SystemUI::drawButtonAtariST(SystemUIButtonEntry *button) {
-	byte  foregroundColor = 0;
-	byte  backgroundColor = 15;
+	byte foregroundColor = 0;
+	byte backgroundColor = 15;
 
 	if (button->active) {
 		SWAP<byte>(foregroundColor, backgroundColor);

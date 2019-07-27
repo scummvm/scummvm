@@ -29,7 +29,7 @@
 
 class SDLPluginProvider : public FilePluginProvider {
 protected:
-	Plugin* createPlugin(const Common::FSNode &node) const;
+	Plugin *createPlugin(const Common::FSNode &node) const;
 };
 
 #endif // defined(DYNAMIC_MODULES) && defined(SDL_BACKEND)

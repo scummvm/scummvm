@@ -23,14 +23,13 @@
 #ifndef CHEWY_CHEWY_H
 #define CHEWY_CHEWY_H
 
-
-#include "common/scummsys.h"
 #include "common/file.h"
-#include "common/util.h"
-#include "common/str.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/random.h"
+#include "common/scummsys.h"
+#include "common/str.h"
+#include "common/util.h"
 
 #include "engines/engine.h"
 

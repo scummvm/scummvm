@@ -30,9 +30,11 @@ namespace Titanic {
 class CWheelSpinHorn : public CWheelSpin {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+
 public:
 	CString _soundName;
 	CString _message;
+
 public:
 	CLASSDEF;
 

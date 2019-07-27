@@ -24,13 +24,13 @@
 
 #include "zvision/graphics/effects/light.h"
 
-#include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/zvision.h"
 
 namespace ZVision {
 
-LightFx::LightFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, EffectMap *Map, int8 delta, int8 minD, int8 maxD):
-	GraphicsEffect(engine, key, region, ported) {
+LightFx::LightFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, EffectMap *Map, int8 delta, int8 minD, int8 maxD)
+  : GraphicsEffect(engine, key, region, ported) {
 	_map = Map;
 	_delta = delta;
 	_up = true;

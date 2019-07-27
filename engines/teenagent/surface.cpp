@@ -24,12 +24,14 @@
 #include "teenagent/pack.h"
 #include "teenagent/teenagent.h"
 
-#include "common/stream.h"
 #include "common/debug.h"
+#include "common/stream.h"
 
 namespace TeenAgent {
 
-Surface::Surface() : x(0), y(0) {
+Surface::Surface()
+  : x(0)
+  , y(0) {
 }
 
 Surface::~Surface() {

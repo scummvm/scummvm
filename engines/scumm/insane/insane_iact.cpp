@@ -20,15 +20,15 @@
  *
  */
 
+#include "scumm/insane/insane.h"
 #include "scumm/scumm_v7.h"
 #include "scumm/smush/smush_player.h"
-#include "scumm/insane/insane.h"
 
 namespace Scumm {
 
 void Insane::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
-					  int16 par1, int16 par2, int16 par3, int16 par4) {
+                      int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
+                      int16 par1, int16 par2, int16 par3, int16 par4) {
 	if (_keyboardDisable)
 		return;
 
@@ -57,8 +57,8 @@ void Insane::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
-					  int16 par1, int16 par2, int16 par3, int16 par4) {
+                        int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
+                        int16 par1, int16 par2, int16 par3, int16 par4) {
 	int16 par5, par6, par7, par9, par11, par13;
 
 	switch (par1) {
@@ -96,15 +96,15 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		if (par2 != 13)
 			break;
 
-		b.readUint16LE();			// +8
-		b.readUint16LE();			// +10
-		par7 = b.readUint16LE();	// +12 dx
-		b.readUint16LE();			// +14
-		par9 = b.readUint16LE();	// +16 bx
-		b.readUint16LE();			// +18
-		par11 = b.readUint16LE();	// +20 cx
-		b.readUint16LE();			// +22
-		par13 = b.readUint16LE();	// +24 ax
+		b.readUint16LE(); // +8
+		b.readUint16LE(); // +10
+		par7 = b.readUint16LE(); // +12 dx
+		b.readUint16LE(); // +14
+		par9 = b.readUint16LE(); // +16 bx
+		b.readUint16LE(); // +18
+		par11 = b.readUint16LE(); // +20 cx
+		b.readUint16LE(); // +22
+		par13 = b.readUint16LE(); // +24 ax
 
 		if (par13 > _actor[0].x || par11 < _actor[0].x) {
 			_tiresRustle = true;
@@ -120,8 +120,8 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	case 6:
 		switch (par2) {
 		case 38:
-			smlayer_drawSomething(renderBitmap, codecparam, 50-19, 20-13, 3,
-								  _smush_iconsNut, 7, 0, 0);
+			smlayer_drawSomething(renderBitmap, codecparam, 50 - 19, 20 - 13, 3,
+			                      _smush_iconsNut, 7, 0, 0);
 			_roadBranch = true;
 			_iactSceneId = par4;
 			break;
@@ -132,7 +132,7 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		case 11:
 			if (_approachAnim >= 1 && _approachAnim <= 4 && !_needSceneSwitch)
 				queueSceneSwitch(13, _smush_minefiteFlu, "minefite.san", 64, 0,
-								 _continueFrame1, 1300);
+				                 _continueFrame1, 1300);
 			break;
 		case 9:
 			par5 = b.readUint16LE(); // si
@@ -164,8 +164,8 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 	if (_approachAnim < 0 || _approachAnim > 4)
 		if (readArray(8)) {
-			smlayer_drawSomething(renderBitmap, codecparam, 270-19, 20-18, 3,
-								  _smush_iconsNut, 20, 0, 0);
+			smlayer_drawSomething(renderBitmap, codecparam, 270 - 19, 20 - 18, 3,
+			                      _smush_iconsNut, 20, 0, 0);
 			_benHasGoggles = true;
 		}
 }
@@ -284,8 +284,8 @@ void Insane::removeEnemyFromMetList(int32 enemy1) {
 }
 
 void Insane::iactScene3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
-					  int16 command, int16 par1, int16, int16) {
+                        int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
+                        int16 command, int16 par1, int16, int16) {
 	int par2, par3;
 	if (command == 6) {
 		if (par1 == 9) {
@@ -307,8 +307,8 @@ void Insane::iactScene3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
-					  int16 par1, int16 par2, int16 par3, int16 par4) {
+                        int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
+                        int16 par1, int16 par2, int16 par3, int16 par4) {
 	int16 par5;
 
 	switch (par1) {
@@ -341,8 +341,8 @@ void Insane::iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		switch (par2) {
 		case 38:
 
-			smlayer_drawSomething(renderBitmap, codecparam, 270-19, 20-13, 3,
-								  _smush_icons2Nut, 10, 0, 0);
+			smlayer_drawSomething(renderBitmap, codecparam, 270 - 19, 20 - 13, 3,
+			                      _smush_icons2Nut, 10, 0, 0);
 			_roadBranch = true;
 			_iactSceneId = par4;
 			break;
@@ -350,8 +350,8 @@ void Insane::iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			if (readArray(4) != 0)
 				return;
 
-			smlayer_drawSomething(renderBitmap, codecparam, 160-13, 20-10, 3, // QW
-								  _smush_icons2Nut, 8, 0, 0);
+			smlayer_drawSomething(renderBitmap, codecparam, 160 - 13, 20 - 10, 3, // QW
+			                      _smush_icons2Nut, 8, 0, 0);
 			_roadStop = true;
 			break;
 		case 8:
@@ -368,12 +368,12 @@ void Insane::iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				return;
 
 			_carIsBroken = true;
-			smlayer_drawSomething(renderBitmap, codecparam, 160-13, 20-10, 3, // QW
-								  _smush_icons2Nut, 8, 0, 0);
+			smlayer_drawSomething(renderBitmap, codecparam, 160 - 13, 20 - 10, 3, // QW
+			                      _smush_icons2Nut, 8, 0, 0);
 			break;
 		case 11:
-			smlayer_drawSomething(renderBitmap, codecparam, 50-19, 20-13, 3,
-								  _smush_icons2Nut, 9, 0, 0);
+			smlayer_drawSomething(renderBitmap, codecparam, 50 - 19, 20 - 13, 3,
+			                      _smush_icons2Nut, 9, 0, 0);
 			_roadBranch = true;
 			_iactSceneId = par4;
 			break;
@@ -383,8 +383,8 @@ void Insane::iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
-					  int16 par1, int16 par2, int16 par3, int16 par4) {
+                        int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
+                        int16 par1, int16 par2, int16 par3, int16 par4) {
 	int16 par5;
 
 	switch (par1) {
@@ -426,8 +426,8 @@ void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	case 6:
 		switch (par2) {
 		case 38:
-			smlayer_drawSomething(renderBitmap, codecparam, 270-19, 20-13, 3,
-								  _smush_icons2Nut, 10, 0, 0);
+			smlayer_drawSomething(renderBitmap, codecparam, 270 - 19, 20 - 13, 3,
+			                      _smush_icons2Nut, 10, 0, 0);
 			_roadBranch = true;
 			_iactSceneId = par4;
 			break;
@@ -436,8 +436,8 @@ void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				return;
 
 			_roadStop = true;
-			smlayer_drawSomething(renderBitmap, codecparam, 160-13, 20-10, 3, //QW
-								  _smush_icons2Nut, 8, 0, 0);
+			smlayer_drawSomething(renderBitmap, codecparam, 160 - 13, 20 - 10, 3, //QW
+			                      _smush_icons2Nut, 8, 0, 0);
 			break;
 		case 8:
 			if (readArray(4) == 0 || readArray(6) == 0)
@@ -453,12 +453,12 @@ void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				return;
 
 			_carIsBroken = true;
-			smlayer_drawSomething(renderBitmap, codecparam, 160-13, 20-10, 3, //QW
-								  _smush_icons2Nut, 8, 0, 0);
+			smlayer_drawSomething(renderBitmap, codecparam, 160 - 13, 20 - 10, 3, //QW
+			                      _smush_icons2Nut, 8, 0, 0);
 			break;
 		case 11:
-			smlayer_drawSomething(renderBitmap, codecparam, 50-19, 20-13, 3,
-								  _smush_icons2Nut, 9, 0, 0);
+			smlayer_drawSomething(renderBitmap, codecparam, 50 - 19, 20 - 13, 3,
+			                      _smush_icons2Nut, 9, 0, 0);
 			_roadBranch = true;
 			_iactSceneId = par4;
 			break;
@@ -468,8 +468,8 @@ void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
-					  int16 par1, int16 par2, int16 par3, int16 par4) {
+                         int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
+                         int16 par1, int16 par2, int16 par3, int16 par4) {
 	switch (par1) {
 	case 2:
 	case 3:
@@ -483,7 +483,7 @@ void Insane::iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		switch (par2) {
 		case 38:
 			smlayer_drawSomething(renderBitmap, codecparam, 28, 48, 1,
-								  _smush_iconsNut, 6, 0, 0);
+			                      _smush_iconsNut, 6, 0, 0);
 			_roadBranch = true;
 			_iactSceneId = par4;
 			if (_counter1 <= 4) {
@@ -491,19 +491,19 @@ void Insane::iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					smlayer_startSfx(94);
 
 				smlayer_showStatusMsg(-1, renderBitmap, codecparam, 24, 167, 1,
-									  2, 0, "%s", handleTrsTag(5000));
+				                      2, 0, "%s", handleTrsTag(5000));
 			}
 			_objectDetected = true;
 			break;
 		case 10:
 			smlayer_drawSomething(renderBitmap, codecparam, 28, 48, 1,
-								  _smush_iconsNut, 6, 0, 0);
+			                      _smush_iconsNut, 6, 0, 0);
 			if (_counter1 <= 4) {
 				if (_counter1 == 4)
 					smlayer_startSfx(94);
 
 				smlayer_showStatusMsg(-1, renderBitmap, codecparam, 24, 167, 1,
-									  2, 0, "%s", handleTrsTag(5001));
+				                      2, 0, "%s", handleTrsTag(5001));
 			}
 			_objectDetected = true;
 			_mineCaveIsNear = true;
@@ -514,8 +514,8 @@ void Insane::iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::iactScene21(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
-					  int16 par1, int16 par2, int16 par3, int16 par4) {
+                         int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
+                         int16 par1, int16 par2, int16 par3, int16 par4) {
 	// void implementation
 }
 

@@ -25,34 +25,34 @@
 
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "gui/Key.h"
 #include "gui/Actions.h"
+#include "gui/Key.h"
 
 namespace GUI {
 
 #define ACTION_VERSION 7
 
 enum actionType {
-        ACTION_UP = 0,
-        ACTION_DOWN,
-        ACTION_LEFT,
-        ACTION_RIGHT,
-        ACTION_LEFTCLICK,
-        ACTION_RIGHTCLICK,
-        ACTION_SAVE,
-        ACTION_SKIP,
-        ACTION_ZONE,
-		ACTION_MULTI,
-		ACTION_SWAPCHAR,
-		ACTION_SKIP_TEXT,
-		ACTION_PAUSE,
-		ACTION_FASTMODE,
-		ACTION_QUIT,
-		ACTION_DEBUGGER,
-		ACTION_MAINMENU,
-		ACTION_VKB,
-		ACTION_KEYMAPPER,
-		ACTION_LAST
+	ACTION_UP = 0,
+	ACTION_DOWN,
+	ACTION_LEFT,
+	ACTION_RIGHT,
+	ACTION_LEFTCLICK,
+	ACTION_RIGHTCLICK,
+	ACTION_SAVE,
+	ACTION_SKIP,
+	ACTION_ZONE,
+	ACTION_MULTI,
+	ACTION_SWAPCHAR,
+	ACTION_SKIP_TEXT,
+	ACTION_PAUSE,
+	ACTION_FASTMODE,
+	ACTION_QUIT,
+	ACTION_DEBUGGER,
+	ACTION_MAINMENU,
+	ACTION_VKB,
+	ACTION_KEYMAPPER,
+	ACTION_LAST
 };
 
 class SymbianActions : public Actions {

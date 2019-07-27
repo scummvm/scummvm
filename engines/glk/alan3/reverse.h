@@ -30,12 +30,12 @@
 namespace Glk {
 namespace Alan3 {
 
-/* Functions: */
+	/* Functions: */
 
-extern void reverseHdr(ACodeHeader *hdr);
-extern void reverseACD(void);
-extern void reverse(Aword *word);
-extern Aword reversed(Aword word);
+	extern void reverseHdr(ACodeHeader *hdr);
+	extern void reverseACD(void);
+	extern void reverse(Aword *word);
+	extern Aword reversed(Aword word);
 
 } // End of namespace Alan3
 } // End of namespace Glk

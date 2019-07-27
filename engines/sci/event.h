@@ -29,22 +29,22 @@
 namespace Sci {
 
 enum SciEventType {
-	kSciEventNone         = 0,
-	kSciEventMousePress   = 1,
+	kSciEventNone = 0,
+	kSciEventMousePress = 1,
 	kSciEventMouseRelease = 1 << 1,
-	kSciEventMouse        = kSciEventMousePress | kSciEventMouseRelease,
-	kSciEventKeyDown      = 1 << 2,
-	kSciEventKeyUp        = 1 << 3,
-	kSciEventKey          = kSciEventKeyDown | kSciEventKeyUp,
-	kSciEventDirection    = 1 << 6,
-	kSciEventSaid         = 1 << 7,
+	kSciEventMouse = kSciEventMousePress | kSciEventMouseRelease,
+	kSciEventKeyDown = 1 << 2,
+	kSciEventKeyUp = 1 << 3,
+	kSciEventKey = kSciEventKeyDown | kSciEventKeyUp,
+	kSciEventDirection = 1 << 6,
+	kSciEventSaid = 1 << 7,
 #ifdef ENABLE_SCI32
 	kSciEventHotRectangle = 1 << 10,
 #endif
-	kSciEventQuit         = 1 << 11,
-	kSciEventPeek         = 1 << 15,
+	kSciEventQuit = 1 << 11,
+	kSciEventPeek = 1 << 15,
 
-	kSciEventAny          = ~kSciEventPeek
+	kSciEventAny = ~kSciEventPeek
 };
 
 inline SciEventType operator|(const SciEventType a, const SciEventType b) {
@@ -56,61 +56,61 @@ inline SciEventType &operator|=(SciEventType &a, const SciEventType b) {
 }
 
 enum SciKeyCode {
-	kSciKeyEtx       = 3,
+	kSciKeyEtx = 3,
 	kSciKeyBackspace = 8,
-	kSciKeyTab       = '\t',
-	kSciKeyEnter     = 13,
-	kSciKeyEsc       = 27,
-	kSciKeyShiftTab  = 15 << 8,
+	kSciKeyTab = '\t',
+	kSciKeyEnter = 13,
+	kSciKeyEsc = 27,
+	kSciKeyShiftTab = 15 << 8,
 
-	kSciKeyHome      = 71 << 8, // numpad 7
-	kSciKeyUp        = 72 << 8, // numpad 8
-	kSciKeyPageUp    = 73 << 8, // numpad 9
-	kSciKeyLeft      = 75 << 8, // numpad 4
-	kSciKeyCenter    = 76 << 8, // numpad 5
-	kSciKeyRight     = 77 << 8, // numpad 6
-	kSciKeyEnd       = 79 << 8, // numpad 1
-	kSciKeyDown      = 80 << 8, // numpad 2
-	kSciKeyPageDown  = 81 << 8, // numpad 3
-	kSciKeyInsert    = 82 << 8, // numpad 0
-	kSciKeyDelete    = 83 << 8, // numpad .
+	kSciKeyHome = 71 << 8, // numpad 7
+	kSciKeyUp = 72 << 8, // numpad 8
+	kSciKeyPageUp = 73 << 8, // numpad 9
+	kSciKeyLeft = 75 << 8, // numpad 4
+	kSciKeyCenter = 76 << 8, // numpad 5
+	kSciKeyRight = 77 << 8, // numpad 6
+	kSciKeyEnd = 79 << 8, // numpad 1
+	kSciKeyDown = 80 << 8, // numpad 2
+	kSciKeyPageDown = 81 << 8, // numpad 3
+	kSciKeyInsert = 82 << 8, // numpad 0
+	kSciKeyDelete = 83 << 8, // numpad .
 
-	kSciKeyF1        = 59 << 8,
-	kSciKeyF2        = 60 << 8,
-	kSciKeyF3        = 61 << 8,
-	kSciKeyF4        = 62 << 8,
-	kSciKeyF5        = 63 << 8,
-	kSciKeyF6        = 64 << 8,
-	kSciKeyF7        = 65 << 8,
-	kSciKeyF8        = 66 << 8,
-	kSciKeyF9        = 67 << 8,
-	kSciKeyF10       = 68 << 8,
+	kSciKeyF1 = 59 << 8,
+	kSciKeyF2 = 60 << 8,
+	kSciKeyF3 = 61 << 8,
+	kSciKeyF4 = 62 << 8,
+	kSciKeyF5 = 63 << 8,
+	kSciKeyF6 = 64 << 8,
+	kSciKeyF7 = 65 << 8,
+	kSciKeyF8 = 66 << 8,
+	kSciKeyF9 = 67 << 8,
+	kSciKeyF10 = 68 << 8,
 
-	kSciKeyShiftF1   = 84 << 8,
-	kSciKeyShiftF2   = 85 << 8,
-	kSciKeyShiftF3   = 86 << 8,
-	kSciKeyShiftF4   = 87 << 8,
-	kSciKeyShiftF5   = 88 << 8,
-	kSciKeyShiftF6   = 89 << 8,
-	kSciKeyShiftF7   = 90 << 8,
-	kSciKeyShiftF8   = 91 << 8,
-	kSciKeyShiftF9   = 92 << 8,
-	kSciKeyShiftF10  = 93 << 8
+	kSciKeyShiftF1 = 84 << 8,
+	kSciKeyShiftF2 = 85 << 8,
+	kSciKeyShiftF3 = 86 << 8,
+	kSciKeyShiftF4 = 87 << 8,
+	kSciKeyShiftF5 = 88 << 8,
+	kSciKeyShiftF6 = 89 << 8,
+	kSciKeyShiftF7 = 90 << 8,
+	kSciKeyShiftF8 = 91 << 8,
+	kSciKeyShiftF9 = 92 << 8,
+	kSciKeyShiftF10 = 93 << 8
 };
 
 enum SciKeyModifiers {
-	kSciKeyModNone      = 0,
-	kSciKeyModRShift    = 1,
-	kSciKeyModLShift    = 1 << 1,
-	kSciKeyModShift     = kSciKeyModRShift | kSciKeyModLShift,
-	kSciKeyModCtrl      = 1 << 2,
-	kSciKeyModAlt       = 1 << 3,
-	kSciKeyModScrLock   = 1 << 4,
-	kSciKeyModNumLock   = 1 << 5,
-	kSciKeyModCapsLock  = 1 << 6,
-	kSciKeyModInsert    = 1 << 7,
+	kSciKeyModNone = 0,
+	kSciKeyModRShift = 1,
+	kSciKeyModLShift = 1 << 1,
+	kSciKeyModShift = kSciKeyModRShift | kSciKeyModLShift,
+	kSciKeyModCtrl = 1 << 2,
+	kSciKeyModAlt = 1 << 3,
+	kSciKeyModScrLock = 1 << 4,
+	kSciKeyModNumLock = 1 << 5,
+	kSciKeyModCapsLock = 1 << 6,
+	kSciKeyModInsert = 1 << 7,
 	kSciKeyModNonSticky = kSciKeyModRShift | kSciKeyModLShift | kSciKeyModCtrl | kSciKeyModAlt,
-	kSciKeyModAll       = ~kSciKeyModNone
+	kSciKeyModAll = ~kSciKeyModNone
 };
 
 inline SciKeyModifiers &operator|=(SciKeyModifiers &a, SciKeyModifiers b) {

@@ -24,11 +24,16 @@
 #define COMMON_TYPE_TRAITS_H
 
 namespace Common {
-	template <bool b, class T, class U> struct Conditional { typedef T type; };
-	template <class T, class U> struct Conditional<false, T, U> { typedef U type; };
-	template <typename T> struct RemoveConst { typedef T type; };
-	template <typename T> struct RemoveConst<const T> { typedef T type; };
-	template <typename T> struct AddConst { typedef const T type; };
+template <bool b, class T, class U>
+struct Conditional { typedef T type; };
+template <class T, class U>
+struct Conditional<false, T, U> { typedef U type; };
+template <typename T>
+struct RemoveConst { typedef T type; };
+template <typename T>
+struct RemoveConst<const T> { typedef T type; };
+template <typename T>
+struct AddConst { typedef const T type; };
 } // End of namespace Common
 
 #endif

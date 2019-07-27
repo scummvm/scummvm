@@ -29,24 +29,26 @@
  *
  */
 
-#include "sword25/sword25.h"
 #include "sword25/sfx/soundengine.h"
-#include "sword25/package/packagemanager.h"
-#include "sword25/kernel/resource.h"
 #include "sword25/kernel/inputpersistenceblock.h"
 #include "sword25/kernel/outputpersistenceblock.h"
+#include "sword25/kernel/resource.h"
+#include "sword25/package/packagemanager.h"
+#include "sword25/sword25.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/vorbis.h"
 
-#include "common/system.h"
 #include "common/config-manager.h"
+#include "common/system.h"
 
 namespace Sword25 {
 
 class SoundResource : public Resource {
 public:
-	SoundResource(const Common::String &fileName) : Resource(fileName, Resource::TYPE_SOUND), _fname(fileName) {}
+	SoundResource(const Common::String &fileName)
+	  : Resource(fileName, Resource::TYPE_SOUND)
+	  , _fname(fileName) {}
 	virtual ~SoundResource() {
 		debugC(1, kDebugSound, "SoundResource: Unloading file %s", _fname.c_str());
 	}
@@ -55,8 +57,8 @@ private:
 	Common::String _fname;
 };
 
-
-SoundEngine::SoundEngine(Kernel *pKernel) : ResourceService(pKernel) {
+SoundEngine::SoundEngine(Kernel *pKernel)
+  : ResourceService(pKernel) {
 	if (!registerScriptBindings())
 		error("Script bindings could not be registered.");
 	else
@@ -236,7 +238,7 @@ uint SoundEngine::playSoundEx(const Common::String &fileName, SOUND_TYPES type, 
 void SoundEngine::setSoundVolume(uint handle, float volume) {
 	debugC(1, kDebugSound, "SoundEngine::setSoundVolume(%d, %f)", handle, volume);
 
-	SndHandle* sndHandle = findHandle(handle);
+	SndHandle *sndHandle = findHandle(handle);
 	if (sndHandle != NULL) {
 		sndHandle->volume = volume;
 		_mixer->setChannelVolume(sndHandle->handle, (byte)(volume * 255));
@@ -246,7 +248,7 @@ void SoundEngine::setSoundVolume(uint handle, float volume) {
 void SoundEngine::setSoundPanning(uint handle, float pan) {
 	debugC(1, kDebugSound, "SoundEngine::setSoundPanning(%d, %f)", handle, pan);
 
-	SndHandle* sndHandle = findHandle(handle);
+	SndHandle *sndHandle = findHandle(handle);
 	if (sndHandle != NULL) {
 		sndHandle->pan = pan;
 		_mixer->setChannelBalance(sndHandle->handle, (int8)(pan * 127));
@@ -256,7 +258,7 @@ void SoundEngine::setSoundPanning(uint handle, float pan) {
 void SoundEngine::pauseSound(uint handle) {
 	debugC(1, kDebugSound, "SoundEngine::pauseSound(%d)", handle);
 
-	SndHandle* sndHandle = findHandle(handle);
+	SndHandle *sndHandle = findHandle(handle);
 	if (sndHandle != NULL)
 		_mixer->pauseHandle(sndHandle->handle, true);
 }
@@ -264,7 +266,7 @@ void SoundEngine::pauseSound(uint handle) {
 void SoundEngine::resumeSound(uint handle) {
 	debugC(1, kDebugSound, "SoundEngine::resumeSound(%d)", handle);
 
-	SndHandle* sndHandle = findHandle(handle);
+	SndHandle *sndHandle = findHandle(handle);
 	if (sndHandle != NULL)
 		_mixer->pauseHandle(sndHandle->handle, false);
 }
@@ -272,7 +274,7 @@ void SoundEngine::resumeSound(uint handle) {
 void SoundEngine::stopSound(uint handle) {
 	debugC(1, kDebugSound, "SoundEngine::stopSound(%d)", handle);
 
-	SndHandle* sndHandle = findHandle(handle);
+	SndHandle *sndHandle = findHandle(handle);
 	if (sndHandle != NULL)
 		_mixer->stopHandle(sndHandle->handle);
 }
@@ -288,7 +290,7 @@ bool SoundEngine::isSoundPaused(uint handle) {
 bool SoundEngine::isSoundPlaying(uint handle) {
 	debugC(1, kDebugSound, "SoundEngine::isSoundPlaying(%d)", handle);
 
-	SndHandle* sndHandle = findHandle(handle);
+	SndHandle *sndHandle = findHandle(handle);
 	if (sndHandle == NULL)
 		return false;
 	return _mixer->isSoundHandleActive(sndHandle->handle);
@@ -297,7 +299,7 @@ bool SoundEngine::isSoundPlaying(uint handle) {
 float SoundEngine::getSoundVolume(uint handle) {
 	debugC(1, kDebugSound, "SoundEngine::getSoundVolume(%d)", handle);
 
-	SndHandle* sndHandle = findHandle(handle);
+	SndHandle *sndHandle = findHandle(handle);
 	if (sndHandle == NULL)
 		return 0.f;
 	return (float)_mixer->getChannelVolume(sndHandle->handle) / 255.0f;
@@ -306,7 +308,7 @@ float SoundEngine::getSoundVolume(uint handle) {
 float SoundEngine::getSoundPanning(uint handle) {
 	debugC(1, kDebugSound, "SoundEngine::getSoundPanning(%d)", handle);
 
-	SndHandle* sndHandle = findHandle(handle);
+	SndHandle *sndHandle = findHandle(handle);
 	if (sndHandle == NULL)
 		return 0.f;
 	return (float)_mixer->getChannelBalance(sndHandle->handle) / 127.0f;
@@ -391,16 +393,16 @@ bool SoundEngine::unpersist(InputPersistenceBlock &reader) {
 	return reader.isGood();
 }
 
-SndHandle::SndHandle() :
-		type(kFreeHandle),
-		id(0),
-		sndType(-1),
-		volume(0),
-		pan(0),
-		loop(false),
-		loopStart(0),
-		loopEnd(0),
-		layer(0) {
+SndHandle::SndHandle()
+  : type(kFreeHandle)
+  , id(0)
+  , sndType(-1)
+  , volume(0)
+  , pan(0)
+  , loop(false)
+  , loopStart(0)
+  , loopEnd(0)
+  , layer(0) {
 }
 
 } // End of namespace Sword25

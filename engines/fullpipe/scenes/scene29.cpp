@@ -22,17 +22,16 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
-
+#include "fullpipe/interaction.h"
 
 #define DEBUG 0
 
@@ -212,7 +211,7 @@ bool sceneHandler29_checkRedBallHit(StaticANIObject *ani, int maxx) {
 		return false;
 
 	if ((ani->_ox >= g_vars->scene29_manX + 42 || ani->_ox <= g_vars->scene29_manX + 8)
-		&& (ani->_ox < g_vars->scene29_manX + 8 || maxx > g_vars->scene29_manX + 27))
+	    && (ani->_ox < g_vars->scene29_manX + 8 || maxx > g_vars->scene29_manX + 27))
 		return false;
 
 	if (!g_fp->_aniMan->_movement)
@@ -221,7 +220,7 @@ bool sceneHandler29_checkRedBallHit(StaticANIObject *ani, int maxx) {
 	int phase = g_fp->_aniMan->_movement->_currDynamicPhaseIndex;
 
 	if (g_fp->_aniMan->_movement->_id != MV_MAN29_BEND && g_fp->_aniMan->_movement->_id != MV_MAN29_RUN
-		&& (g_fp->_aniMan->_movement->_id != MV_MAN29_JUMP || (phase >= 3 && phase <= 6)))
+	    && (g_fp->_aniMan->_movement->_id != MV_MAN29_JUMP || (phase >= 3 && phase <= 6)))
 		return false;
 	else
 		return true;
@@ -482,7 +481,7 @@ void sceneHandler29_clickPorter(ExCommand *cmd) {
 
 	if (g_vars->scene29_manX <= g_vars->scene29_porter->_ox) {
 		if (ABS(351 - g_vars->scene29_manX) > 1 || ABS(443 - g_vars->scene29_manY) > 1
-			|| g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
+		    || g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
 			if (g_fp->_msgX != 351 || g_fp->_msgY != 443) {
 				MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, 351, 443, 1, ST_MAN_RIGHT);
 
@@ -500,7 +499,7 @@ void sceneHandler29_clickPorter(ExCommand *cmd) {
 		g_vars->scene29_manY = g_fp->_aniMan->_oy;
 
 		if (ABS(1582 - g_vars->scene29_manX) > 1 || ABS(445 - g_fp->_aniMan->_oy) > 1
-			|| g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != (0x4000 | ST_MAN_RIGHT)) {
+		    || g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != (0x4000 | ST_MAN_RIGHT)) {
 			if (g_fp->_msgX != 1582 || g_fp->_msgY != 445) {
 				MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, 1582, 445, 1, (0x4000 | ST_MAN_RIGHT));
 
@@ -539,7 +538,7 @@ void sceneHandler29_shootersEscape() {
 		g_fp->_aniMan->setOXY(g_vars->scene29_manX, g_vars->scene29_manY);
 
 		if (g_vars->scene29_manX > 1310 && !g_vars->scene29_shooter1->_movement && !g_vars->scene29_shooter2->_movement
-				&& g_vars->scene29_shooter1->_statics->_staticsId == ST_STR1_RIGHT) {
+		    && g_vars->scene29_shooter1->_statics->_staticsId == ST_STR1_RIGHT) {
 			debugC(2, kDebugSceneLogic, "scene29: shootersEscape");
 
 			g_vars->scene29_shootCountdown = 0;
@@ -569,7 +568,7 @@ void sceneHandler29_manRideBack() {
 
 void sceneHandler29_shoot() {
 	if (g_vars->scene29_arcadeIsOn && g_vars->scene29_manX < 1310) {
-		if (g_fp->_rnd.getRandomNumber(32767) <= 16383|| g_vars->scene29_shooter1->_movement || g_vars->scene29_shooter1->_statics->_staticsId != ST_STR1_RIGHT) {
+		if (g_fp->_rnd.getRandomNumber(32767) <= 16383 || g_vars->scene29_shooter1->_movement || g_vars->scene29_shooter1->_statics->_staticsId != ST_STR1_RIGHT) {
 			if (!g_vars->scene29_shooter2->_movement && g_vars->scene29_shooter2->_statics->_staticsId == ST_STR2_RIGHT) {
 				if (g_vars->scene29_shooter2->_flags & 4) {
 					g_vars->scene29_shooter2->startAnim(MV_STR2_SHOOT, 0, -1);
@@ -672,8 +671,6 @@ void sceneHandler29_animBearded() {
 		g_vars->scene29_bearders[i]->wbcounter++;
 	}
 }
-
-
 
 int sceneHandler29(ExCommand *cmd) {
 	if (cmd->_messageKind != 17)

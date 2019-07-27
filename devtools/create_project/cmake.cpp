@@ -20,8 +20,8 @@
  *
  */
 
-#include "config.h"
 #include "cmake.h"
+#include "config.h"
 
 #include <algorithm>
 #include <cstring>
@@ -31,35 +31,35 @@
 namespace CreateProjectTool {
 
 CMakeProvider::CMakeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version)
-	: ProjectProvider(global_warnings, project_warnings, version) {
+  : ProjectProvider(global_warnings, project_warnings, version) {
 }
 
 const CMakeProvider::Library *CMakeProvider::getLibraryFromFeature(const char *feature, bool useSDL2) const {
 	static const Library s_libraries[] = {
-		{ "sdl",       kSDLVersion1,   "FindSDL",      "SDL",      "SDL_INCLUDE_DIR",       "SDL_LIBRARY",         0            },
-		{ "sdl",       kSDLVersion2,   0,              "SDL2",     0,                       "SDL2_LIBRARIES",      0            },
-		{ "freetype",  kSDLVersionAny, "FindFreetype", "Freetype", "FREETYPE_INCLUDE_DIRS", "FREETYPE_LIBRARIES",  0            },
-		{ "libz",      kSDLVersionAny, "FindZLIB",     "ZLIB",     "ZLIB_INCLUDE_DIRS",     "ZLIB_LIBRARIES",      0            },
-		{ "png",       kSDLVersionAny, "FindPNG",      "PNG",      "PNG_INCLUDE_DIRS",      "PNG_LIBRARIES",       0            },
-		{ "jpeg",      kSDLVersionAny, "FindJPEG",     "JPEG",     "JPEG_INCLUDE_DIRS",     "JPEG_LIBRARIES",      0            },
-		{ "mpeg2",     kSDLVersionAny, "FindMPEG2",    "MPEG2",    "MPEG2_INCLUDE_DIRS",    "MPEG2_mpeg2_LIBRARY", 0            },
-		{ "flac",      kSDLVersionAny, 0,              0,          0,                       0,                     "FLAC"       },
-		{ "mad",       kSDLVersionAny, 0,              0,          0,                       0,                     "mad"        },
-		{ "ogg",       kSDLVersionAny, 0,              0,          0,                       0,                     "ogg"        },
-		{ "vorbis",    kSDLVersionAny, 0,              0,          0,                       0,                     "vorbisfile vorbis" },
-		{ "tremor",    kSDLVersionAny, 0,              0,          0,                       0,                     "vorbisidec" },
-		{ "theora",    kSDLVersionAny, 0,              0,          0,                       0,                     "theoradec"  },
-		{ "fluidsynth",kSDLVersionAny, 0,              0,          0,                       0,                     "fluidsynth" },
-		{ "faad",      kSDLVersionAny, 0,              0,          0,                       0,                     "faad"       },
-		{ "libcurl",   kSDLVersionAny, "FindCURL",     "CURL",     "CURL_INCLUDE_DIRS",     "CURL_LIBRARIES",      0            },
-		{ "sdlnet",    kSDLVersion1,   "FindSDL_net",  "SDL_net",  "SDL_NET_INCLUDE_DIRS",  "SDL_NET_LIBRARIES",   0            },
-		{ "sdlnet",    kSDLVersion2,   0,              0,          0,                       0,                     "SDL2_net"   }
+		{ "sdl", kSDLVersion1, "FindSDL", "SDL", "SDL_INCLUDE_DIR", "SDL_LIBRARY", 0 },
+		{ "sdl", kSDLVersion2, 0, "SDL2", 0, "SDL2_LIBRARIES", 0 },
+		{ "freetype", kSDLVersionAny, "FindFreetype", "Freetype", "FREETYPE_INCLUDE_DIRS", "FREETYPE_LIBRARIES", 0 },
+		{ "libz", kSDLVersionAny, "FindZLIB", "ZLIB", "ZLIB_INCLUDE_DIRS", "ZLIB_LIBRARIES", 0 },
+		{ "png", kSDLVersionAny, "FindPNG", "PNG", "PNG_INCLUDE_DIRS", "PNG_LIBRARIES", 0 },
+		{ "jpeg", kSDLVersionAny, "FindJPEG", "JPEG", "JPEG_INCLUDE_DIRS", "JPEG_LIBRARIES", 0 },
+		{ "mpeg2", kSDLVersionAny, "FindMPEG2", "MPEG2", "MPEG2_INCLUDE_DIRS", "MPEG2_mpeg2_LIBRARY", 0 },
+		{ "flac", kSDLVersionAny, 0, 0, 0, 0, "FLAC" },
+		{ "mad", kSDLVersionAny, 0, 0, 0, 0, "mad" },
+		{ "ogg", kSDLVersionAny, 0, 0, 0, 0, "ogg" },
+		{ "vorbis", kSDLVersionAny, 0, 0, 0, 0, "vorbisfile vorbis" },
+		{ "tremor", kSDLVersionAny, 0, 0, 0, 0, "vorbisidec" },
+		{ "theora", kSDLVersionAny, 0, 0, 0, 0, "theoradec" },
+		{ "fluidsynth", kSDLVersionAny, 0, 0, 0, 0, "fluidsynth" },
+		{ "faad", kSDLVersionAny, 0, 0, 0, 0, "faad" },
+		{ "libcurl", kSDLVersionAny, "FindCURL", "CURL", "CURL_INCLUDE_DIRS", "CURL_LIBRARIES", 0 },
+		{ "sdlnet", kSDLVersion1, "FindSDL_net", "SDL_net", "SDL_NET_INCLUDE_DIRS", "SDL_NET_LIBRARIES", 0 },
+		{ "sdlnet", kSDLVersion2, 0, 0, 0, 0, "SDL2_net" }
 	};
 
 	for (unsigned int i = 0; i < sizeof(s_libraries) / sizeof(s_libraries[0]); i++) {
 		bool matchingSDL = (s_libraries[i].sdlVersion == kSDLVersionAny)
-		                   || (useSDL2 && s_libraries[i].sdlVersion == kSDLVersion2)
-		                   || (!useSDL2 && s_libraries[i].sdlVersion == kSDLVersion1);
+		  || (useSDL2 && s_libraries[i].sdlVersion == kSDLVersion2)
+		  || (!useSDL2 && s_libraries[i].sdlVersion == kSDLVersion1);
 		if (std::strcmp(feature, s_libraries[i].feature) == 0 && matchingSDL) {
 			return &s_libraries[i];
 		}
@@ -75,7 +75,8 @@ void CMakeProvider::createWorkspace(const BuildSetup &setup) {
 		error("Could not open \"" + filename + "\" for writing");
 
 	workspace << "cmake_minimum_required(VERSION 3.2)\n"
-			"project(" << setup.projectDescription << ")\n\n";
+	             "project("
+	          << setup.projectDescription << ")\n\n";
 
 	workspace << "# Define the engines and subengines\n";
 	writeEngines(setup, workspace);
@@ -83,8 +84,9 @@ void CMakeProvider::createWorkspace(const BuildSetup &setup) {
 	workspace << "# Generate options for the engines\n";
 	writeEngineOptions(workspace);
 
-	workspace << "include_directories(${" << setup.projectDescription << "_SOURCE_DIR}/" <<  setup.filePrefix << " ${" << setup.projectDescription << "_SOURCE_DIR}/" <<  setup.filePrefix << "/engines "
-			"$ENV{"<<LIBS_DEFINE<<"}/include .)\n\n";
+	workspace << "include_directories(${" << setup.projectDescription << "_SOURCE_DIR}/" << setup.filePrefix << " ${" << setup.projectDescription << "_SOURCE_DIR}/" << setup.filePrefix << "/engines "
+	                                                                                                                                                                                        "$ENV{"
+	          << LIBS_DEFINE << "}/include .)\n\n";
 
 	workspace << "# Libraries and features\n\n";
 	writeFeatureLibSearch(setup, workspace, "sdl");
@@ -98,7 +100,8 @@ void CMakeProvider::createWorkspace(const BuildSetup &setup) {
 	workspace << "include_directories(${SDL2_INCLUDE_DIRS})\n\n";
 
 	for (FeatureList::const_iterator i = setup.features.begin(), end = setup.features.end(); i != end; ++i) {
-		if (!i->enable || featureExcluded(i->name)) continue;
+		if (!i->enable || featureExcluded(i->name))
+			continue;
 
 		writeFeatureLibSearch(setup, workspace, i->name);
 		workspace << "add_definitions(-D" << i->define << ")\n";
@@ -158,7 +161,8 @@ void CMakeProvider::writeSubEngines(const BuildSetup &setup, std::ofstream &work
 		workspace << "set(SUB_ENGINES_" << engineName;
 		for (StringList::const_iterator j = i->subEngines.begin(), subEnd = i->subEngines.end(); j != subEnd; ++j) {
 			const EngineDesc &subEngine = findEngineDesc(*j, setup.engines);
-			if (!subEngine.enable) continue;
+			if (!subEngine.enable)
+				continue;
 
 			std::string subEngineName;
 			std::transform(j->begin(), j->end(), std::back_inserter(subEngineName), toupper);
@@ -172,7 +176,7 @@ void CMakeProvider::writeSubEngines(const BuildSetup &setup, std::ofstream &work
 }
 
 void CMakeProvider::createProjectFile(const std::string &name, const std::string &, const BuildSetup &setup, const std::string &moduleDir,
-                                           const StringList &includeList, const StringList &excludeList) {
+                                      const StringList &includeList, const StringList &excludeList) {
 
 	const std::string projectFile = setup.outputDir + "/CMakeLists.txt";
 	std::ofstream project(projectFile.c_str(), std::ofstream::out | std::ofstream::app);
@@ -201,7 +205,6 @@ void CMakeProvider::createProjectFile(const std::string &name, const std::string
 	else
 		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix);
 
-
 	project << ")\n\n";
 	if (name != setup.projectName) {
 		project << "endif()\n";
@@ -216,10 +219,12 @@ void CMakeProvider::createProjectFile(const std::string &name, const std::string
 		project << "target_link_libraries(" << name << " ${" << sdlLibrary->librariesVar << "})\n";
 
 		for (FeatureList::const_iterator i = setup.features.begin(), end = setup.features.end(); i != end; ++i) {
-			if (!i->enable || featureExcluded(i->name)) continue;
+			if (!i->enable || featureExcluded(i->name))
+				continue;
 
 			const Library *library = getLibraryFromFeature(i->name, setup.useSDL2);
-			if (!library) continue;
+			if (!library)
+				continue;
 
 			if (library->librariesVar) {
 				project << "target_link_libraries(" << name << " ${" << library->librariesVar << "})\n";
@@ -257,7 +262,7 @@ void CMakeProvider::writeDefines(const BuildSetup &setup, std::ofstream &output)
 }
 
 void CMakeProvider::writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
-                                                const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix) {
+                                           const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix) {
 
 	for (FileNode::NodeList::const_iterator i = dir.children.begin(); i != dir.children.end(); ++i) {
 		const FileNode *node = *i;
@@ -302,7 +307,7 @@ void CMakeProvider::writeEnginesLibrariesHandling(const BuildSetup &setup, std::
 	workspace << "        set_property(TARGET ${ENGINE_LIB} PROPERTY CXX_STANDARD 11)\n";
 	workspace << "        set_property(TARGET ${ENGINE_LIB} PROPERTY CXX_STANDARD_REQUIRED ON)\n\n";
 	workspace << "        # Link against the engine\n";
-	workspace << "        target_link_libraries("<< setup.projectName <<" ${ENGINE_LIB})\n";
+	workspace << "        target_link_libraries(" << setup.projectName << " ${ENGINE_LIB})\n";
 	workspace << "    endif()\n";
 	workspace << "endforeach()\n\n";
 }
@@ -319,8 +324,7 @@ void CMakeProvider::writeEngineDefinitions(std::ofstream &workspace) const {
 }
 
 bool CMakeProvider::featureExcluded(const char *name) const {
-	return std::strcmp(name, "nasm") == 0 ||
-			std::strcmp(name, "updates") == 0 ; // NASM is not supported for now
+	return std::strcmp(name, "nasm") == 0 || std::strcmp(name, "updates") == 0; // NASM is not supported for now
 }
 
 const EngineDesc &CMakeProvider::findEngineDesc(const std::string &name, const EngineDescList &engines) const {
@@ -328,7 +332,6 @@ const EngineDesc &CMakeProvider::findEngineDesc(const std::string &name, const E
 		if (i->name == name) {
 			return *i;
 		}
-
 	}
 
 	error("Unable to find requested engine");

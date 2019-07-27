@@ -33,7 +33,7 @@ enum {
 	KEYBOARD_BOTTOM_Y = 105
 };
 
-void createKeyEvent(int keyNum, Common::Event& event);
+void createKeyEvent(int keyNum, Common::Event &event);
 
 void drawKeyboard(int tileBase, int mapBase, u16 *saveSpace);
 void restoreVRAM(int tileBase, int mapBase, u16 *saveSpace);

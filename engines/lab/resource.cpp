@@ -39,7 +39,8 @@
 
 namespace Lab {
 
-Resource::Resource(LabEngine *vm) : _vm(vm) {
+Resource::Resource(LabEngine *vm)
+  : _vm(vm) {
 	readStaticText();
 }
 
@@ -167,7 +168,7 @@ Common::String Resource::translateFileName(const Common::String filename) {
 				fileNameStrFinal = "PICT/";
 			} else {
 				fileNameStrFinal = "LABFONTS/";
-				upperFilename += "T";	// all the Amiga fonts have a ".FONT" suffix
+				upperFilename += "T"; // all the Amiga fonts have a ".FONT" suffix
 			}
 		}
 	} else if (upperFilename.hasPrefix("LAB:")) {

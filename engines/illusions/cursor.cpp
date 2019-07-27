@@ -20,15 +20,15 @@
  *
  */
 
-#include "illusions/illusions.h"
-#include "illusions/actor.h"
 #include "illusions/cursor.h"
+#include "illusions/actor.h"
+#include "illusions/illusions.h"
 #include "illusions/input.h"
 
 namespace Illusions {
 
 Cursor::Cursor(IllusionsEngine *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 	_status = 1;
 	_control = 0;
 	_x = 320;
@@ -52,19 +52,19 @@ void Cursor::place(Control *control, uint32 sequenceId) {
 
 void Cursor::setActorIndex(int actorIndex, int a, int b) {
 	static int kCursorMap[13][2][2] = {
-		{{ 1,  2}, { 0,  0}},
-		{{ 3,  4}, { 0,  0}},
-		{{ 5,  6}, {13, 14}},
-		{{ 7,  8}, { 0,  0}},
-		{{ 9, 10}, { 0,  0}},
-		{{11, 12}, { 0,  0}},
-		{{ 1,  2}, { 0,  0}},
-		{{ 0,  0}, { 0,  0}},
-		{{ 0,  0}, { 0,  0}},
-		{{15, 16}, { 0,  0}},
-		{{17, 18}, { 0,  0}},
-		{{19, 20}, { 0,  0}},
-		{{21, 22}, { 0,  0}}
+		{ { 1, 2 }, { 0, 0 } },
+		{ { 3, 4 }, { 0, 0 } },
+		{ { 5, 6 }, { 13, 14 } },
+		{ { 7, 8 }, { 0, 0 } },
+		{ { 9, 10 }, { 0, 0 } },
+		{ { 11, 12 }, { 0, 0 } },
+		{ { 1, 2 }, { 0, 0 } },
+		{ { 0, 0 }, { 0, 0 } },
+		{ { 0, 0 }, { 0, 0 } },
+		{ { 15, 16 }, { 0, 0 } },
+		{ { 17, 18 }, { 0, 0 } },
+		{ { 19, 20 }, { 0, 0 } },
+		{ { 21, 22 }, { 0, 0 } }
 	};
 	_control->_actor->_actorIndex = kCursorMap[actorIndex - 1][b][a - 1];
 }

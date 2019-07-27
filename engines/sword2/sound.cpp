@@ -32,19 +32,18 @@
 //
 // ---------------------------------------------------------------------------
 
-
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 
-#include "sword2/sword2.h"
+#include "sword2/console.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"
-#include "sword2/console.h"
 #include "sword2/logic.h"
 #include "sword2/resman.h"
 #include "sword2/sound.h"
+#include "sword2/sword2.h"
 
 #include "audio/decoders/wave.h"
 #include "audio/decoders/xa.h"
@@ -240,9 +239,9 @@ void Sound::playMovieSound(int32 res, int type) {
 		}
 
 		_vm->_mixer->playStream(
-			Audio::Mixer::kMusicSoundType, handle, input,
-			-1, Audio::Mixer::kMaxChannelVolume, 0,
-			DisposeAfterUse::YES, false, isReverseStereo());
+		  Audio::Mixer::kMusicSoundType, handle, input,
+		  -1, Audio::Mixer::kMaxChannelVolume, 0,
+		  DisposeAfterUse::YES, false, isReverseStereo());
 	} else {
 		warning("Sound::playMovieSound: Could not allocate %d bytes\n", len);
 	}
@@ -368,8 +367,8 @@ int32 Sound::playFx(Audio::SoundHandle *handle, byte *data, uint32 len, uint8 vo
 	assert(input);
 
 	_vm->_mixer->playStream(soundType, handle,
-	                             Audio::makeLoopingAudioStream(input, loop ? 0 : 1),
-	                             -1, vol, pan, DisposeAfterUse::YES, false, isReverseStereo());
+	                        Audio::makeLoopingAudioStream(input, loop ? 0 : 1),
+	                        -1, vol, pan, DisposeAfterUse::YES, false, isReverseStereo());
 
 	return RD_OK;
 }
@@ -421,10 +420,10 @@ void Sound::printFxQueue() {
 			}
 
 			Debug_Printf("%d: res: %d ('%s') %s (%d) delay: %d vol: %d pan: %d\n",
-				i, _fxQueue[i].resource,
-				_vm->_resman->fetchName(_fxQueue[i].resource),
-				type, _fxQueue[i].type, _fxQueue[i].delay,
-				_fxQueue[i].volume, _fxQueue[i].pan);
+			             i, _fxQueue[i].resource,
+			             _vm->_resman->fetchName(_fxQueue[i].resource),
+			             type, _fxQueue[i].type, _fxQueue[i].delay,
+			             _fxQueue[i].volume, _fxQueue[i].pan);
 		} else {
 			freeSlots++;
 		}

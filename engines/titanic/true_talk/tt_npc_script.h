@@ -24,8 +24,8 @@
 #define TITANIC_TT_NPC_SCRIPT_H
 
 #include "titanic/support/simple_file.h"
-#include "titanic/true_talk/tt_script_base.h"
 #include "titanic/true_talk/script_support.h"
+#include "titanic/true_talk/tt_script_base.h"
 
 namespace Titanic {
 
@@ -38,6 +38,7 @@ class TTroomScript;
 struct TTnpcData {
 private:
 	int _array[136];
+
 public:
 	TTnpcData();
 	int &operator[](int idx) { return _array[idx]; }
@@ -51,12 +52,14 @@ class TTnpcScriptBase : public TTscriptBase {
 protected:
 	int _field54;
 	int _val2;
+
 public:
 	int _charId;
+
 public:
 	TTnpcScriptBase(int charId, const char *charClass, int v2,
-		const char *charName, int v3, int val2, int v4,
-		int v5, int v6, int v7);
+	                const char *charName, int v3, int val2, int v4,
+	                int v5, int v6, int v7);
 
 	/**
 	 * Chooses and adds a conversation response based on a specified tag Id.
@@ -89,8 +92,10 @@ public:
 class TTnpcScript : public TTnpcScriptBase {
 private:
 	int translateByArray(int id);
+
 protected:
 	static TTsentenceEntries *_defaultEntries;
+
 protected:
 	Common::Array<TTnpcScriptResponse> _responses;
 	int _valuesPerResponse;
@@ -111,6 +116,7 @@ protected:
 	int _dialValues[DIALS_ARRAY_COUNT];
 	TTnpcData _data;
 	bool _field2CC;
+
 protected:
 	/**
 	 * Loads response data for the NPC from the given resource
@@ -215,13 +221,15 @@ protected:
 	 * Uses a porition of the state _array to set up a new response
 	 */
 	void setResponseFromArray(int index, int id);
+
 public:
 	static void init();
 	static void deinit();
+
 public:
 	TTnpcScript(int charId, const char *charClass, int v2,
-		const char *charName, int v3, int val2, int v4,
-		int v5, int v6, int v7);
+	            const char *charName, int v3, int val2, int v4,
+	            int v5, int v6, int v7);
 
 	virtual void addResponse(int id);
 
@@ -269,7 +277,7 @@ public:
 	virtual bool handleWord(uint id) const;
 
 	virtual int handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
-		uint tag1, uint tag2, uint remainder);
+	                        uint tag1, uint tag2, uint remainder);
 
 	/**
 	 * Returns true if the NPC's dial region affects quote responses

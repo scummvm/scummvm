@@ -23,8 +23,8 @@
 #ifndef SCI_INCLUDE_ENGINE_H
 #define SCI_INCLUDE_ENGINE_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
 #include "common/str-array.h"
 
@@ -33,9 +33,9 @@ class SeekableReadStream;
 class WriteStream;
 }
 
-#include "sci/sci.h"
 #include "sci/engine/file.h"
 #include "sci/engine/seg_manager.h"
+#include "sci/sci.h"
 
 #include "sci/parser/vocabulary.h"
 
@@ -71,16 +71,16 @@ enum {
 };
 
 enum VideoFlags {
-	kNone            = 0,
-	kDoubled         = 1 << 0,
-	kDropFrames      = 1 << 1,
-	kBlackLines      = 1 << 2,
-	kUnkBit3         = 1 << 3,
-	kGammaBoost      = 1 << 4,
-	kHoldBlackFrame  = 1 << 5,
-	kHoldLastFrame   = 1 << 6,
-	kUnkBit7         = 1 << 7,
-	kStretch         = 1 << 8
+	kNone = 0,
+	kDoubled = 1 << 0,
+	kDropFrames = 1 << 1,
+	kBlackLines = 1 << 2,
+	kUnkBit3 = 1 << 3,
+	kGammaBoost = 1 << 4,
+	kHoldBlackFrame = 1 << 5,
+	kHoldLastFrame = 1 << 6,
+	kUnkBit7 = 1 << 7,
+	kStretch = 1 << 8
 };
 
 /**
@@ -111,7 +111,7 @@ public:
 	/* Non-VM information */
 
 	uint32 lastWaitTime; /**< The last time the game invoked Wait() */
-	uint32 _screenUpdateTime;	/**< The last time the game updated the screen */
+	uint32 _screenUpdateTime; /**< The last time the game updated the screen */
 
 	void speedThrottler(uint32 neededSleep);
 	uint16 wait(uint16 ticks);
@@ -131,7 +131,7 @@ public:
 	DirSeeker _dirseeker;
 
 	int16 _lastSaveVirtualId; // last virtual id fed to kSaveGame, if no kGetSaveFiles was called inbetween
-	int16 _lastSaveNewId;    // last newly created filename-id by kSaveGame
+	int16 _lastSaveNewId; // last newly created filename-id by kSaveGame
 
 	// see detection.cpp / SciEngine::loadGameState()
 	int _delayedRestoreGameId; // the saved game id, that it supposed to get restored (triggered by ScummVM menu)
@@ -152,7 +152,7 @@ public:
 	 * the same stack. This variable contains the stack base for the current vm.
 	 */
 	int executionStackBase;
-	bool _executionStackPosChanged;   /**< Set to true if the execution stack position should be re-evaluated by the vm */
+	bool _executionStackPosChanged; /**< Set to true if the execution stack position should be re-evaluated by the vm */
 
 	// Registers
 	reg_t r_acc; /**< Accumulator */
@@ -164,10 +164,10 @@ public:
 
 	// Script state
 	ExecStack *xs;
-	reg_t *variables[4];		///< global, local, temp, param, as immediate pointers
-	reg_t *variablesBase[4];	///< Used for referencing VM ops
-	SegmentId variablesSegment[4];	///< Same as above, contains segment IDs
-	int variablesMax[4];		///< Max. values for all variables
+	reg_t *variables[4]; ///< global, local, temp, param, as immediate pointers
+	reg_t *variablesBase[4]; ///< Used for referencing VM ops
+	SegmentId variablesSegment[4]; ///< Same as above, contains segment IDs
+	int variablesMax[4]; ///< Max. values for all variables
 
 	AbortGameState abortScriptProcessing;
 	int16 gameIsRestarting; // is set when restarting (=1) or restoring the game (=2)

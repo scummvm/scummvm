@@ -23,9 +23,9 @@
 #ifndef TITANIC_PET_SOUND_H
 #define TITANIC_PET_SOUND_H
 
-#include "titanic/pet_control/pet_glyphs.h"
-#include "titanic/pet_control/pet_gfx_element.h"
 #include "titanic/gfx/text_control.h"
+#include "titanic/pet_control/pet_gfx_element.h"
+#include "titanic/pet_control/pet_glyphs.h"
 #include "titanic/pet_control/pet_slider.h"
 
 namespace Titanic {
@@ -34,8 +34,12 @@ class CPetRealLife;
 
 class CPetSound : public CPetGlyph {
 	enum SliderType {
-		MASTER_SLIDER = 0, MUSIC_SLIDER = 1, PARROT_SLIDER = 2, SPEECH_SLIDER = 3
+		MASTER_SLIDER = 0,
+		MUSIC_SLIDER = 1,
+		PARROT_SLIDER = 2,
+		SPEECH_SLIDER = 3
 	};
+
 private:
 	CPetGfxElement _element;
 	CPetSoundSlider _masterVolume;
@@ -48,11 +52,13 @@ private:
 	CTextControl _textSpeechVolume;
 	CPetSlider *_draggingSlider;
 	SliderType _draggingSliderNum;
+
 private:
 	/**
 	 * Called when a slider has changed
 	 */
 	void sliderChanged(double offset, SliderType sliderNum);
+
 public:
 	CPetSound();
 

@@ -29,8 +29,8 @@
 
 #ifndef INTRO_H
 #define INTRO_H
-#include "graphics/surface.h"
 #include "graphics/fonts/winfont.h"
+#include "graphics/surface.h"
 
 namespace Hugo {
 
@@ -62,8 +62,8 @@ protected:
 
 	byte *_introX;
 	byte *_introY;
-	byte  _introXSize;
-	int16 _introTicks;                              // Count calls to introPlay()
+	byte _introXSize;
+	int16 _introTicks; // Count calls to introPlay()
 };
 
 class intro_v1w : public IntroHandler {
@@ -84,6 +84,7 @@ public:
 	void preNewGame();
 	void introInit();
 	bool introPlay();
+
 private:
 	int _introState;
 };

@@ -27,10 +27,10 @@
 
 #ifdef ENABLE_KEYMAPPER
 
-#include "common/keyboard.h"
-#include "common/list.h"
-#include "common/str.h"
-#include "common/textconsole.h"
+#	include "common/keyboard.h"
+#	include "common/list.h"
+#	include "common/str.h"
+#	include "common/textconsole.h"
 
 namespace Common {
 
@@ -70,10 +70,16 @@ struct HardwareInput {
 	KeyState key;
 
 	HardwareInput(String i, HardwareInputCode ic = 0, String desc = "")
-		: id(i), inputCode(ic), description(desc), type(kHardwareInputTypeGeneric) { }
+	  : id(i)
+	  , inputCode(ic)
+	  , description(desc)
+	  , type(kHardwareInputTypeGeneric) {}
 
 	HardwareInput(String i, KeyState ky, String desc = "")
-		: id(i), key(ky), description(desc), type(kHardwareInputTypeKeyboard) { }
+	  : id(i)
+	  , key(ky)
+	  , description(desc)
+	  , type(kHardwareInputTypeKeyboard) {}
 };
 
 struct HardwareInputTableEntry {
@@ -110,7 +116,6 @@ struct ModifierTableEntry {
  */
 class HardwareInputSet {
 public:
-
 	/**
 	 * Add hardware input keys to the set out of key and modifier tables.
 	 * @param useDefault	auto-add the built-in default inputs
@@ -127,7 +132,7 @@ public:
 
 	const HardwareInput *findHardwareInput(const HardwareInputCode code) const;
 
-	const HardwareInput *findHardwareInput(const KeyState& keystate) const;
+	const HardwareInput *findHardwareInput(const KeyState &keystate) const;
 
 	const List<const HardwareInput *> &getHardwareInputs() const { return _inputs; }
 
@@ -149,7 +154,6 @@ public:
 	void removeHardwareInput(const HardwareInput *input);
 
 private:
-
 	List<const HardwareInput *> _inputs;
 };
 

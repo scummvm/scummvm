@@ -27,7 +27,7 @@
 
 #if defined(WIN32) && defined(USE_SPARKLE)
 
-#include "common/updates.h"
+#	include "common/updates.h"
 
 class Win32UpdateManager : public Common::UpdateManager {
 public:

@@ -20,17 +20,17 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/camera.h"
+#include "illusions/actor.h"
 #include "illusions/fixedpoint.h"
+#include "illusions/illusions.h"
 #include "illusions/resources/backgroundresource.h"
 #include "illusions/time.h"
-#include "illusions/actor.h"
 
 namespace Illusions {
 
 Camera::Camera(IllusionsEngine *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 	init();
 	_activeState._cameraMode = 6;
 	_activeState._paused = false;
@@ -246,7 +246,6 @@ void Camera::popCameraMode() {
 		stopPan();
 		break;
 	}
-
 }
 
 void Camera::clearCameraModeStack() {
@@ -272,7 +271,7 @@ void Camera::update(uint32 currTime) {
 
 	if (_activeState._cameraMode != 6) {
 
-		if (!isPanFinished() &&	updatePan(currTime)) {
+		if (!isPanFinished() && updatePan(currTime)) {
 			/* Unused
 			if (_activeState._cameraMode == 1 || _activeState._cameraMode == 5)
 				nullsub_2();
@@ -289,9 +288,7 @@ void Camera::update(uint32 currTime) {
 				_activeState._cameraMode = 3;
 			}
 		}
-
 	}
-
 }
 
 void Camera::setBounds(Common::Point minPt, Common::Point maxPt) {
@@ -389,7 +386,6 @@ void Camera::updateMode1(uint32 currTime) {
 		_activeState._panStartTime = _activeState._time28;
 		recalcPan(oldPanTime);
 	}
-
 }
 
 void Camera::updateMode2(uint32 currTime) {
@@ -425,8 +421,7 @@ void Camera::updateMode2(uint32 currTime) {
 	} else if (_activeState._pointFlags) {
 		_activeState._pointFlags = 0;
 		_activeState._panTargetPoint = _activeState._currPan;
-  	}
-
+	}
 }
 
 void Camera::updateMode3(uint32 currTime) {
@@ -451,7 +446,6 @@ void Camera::updateMode3(uint32 currTime) {
 		recalcPan(currTime);
 		_activeState._cameraMode = 4;
 	}
-
 }
 
 bool Camera::updatePan(uint32 currTime) {
@@ -503,7 +497,6 @@ void Camera::recalcPan(uint32 currTime) {
 		_activeState._someX = (_activeState._panTargetPoint.x - _activeState._currPan2.x) << 16;
 		_activeState._someY = (_activeState._panTargetPoint.y - _activeState._currPan2.y) << 16;
 	}
-
 }
 
 bool Camera::calcPointFlags(Common::Point &pt, WRect &rect, uint &outFlags) {
@@ -527,9 +520,9 @@ bool Camera::calcPointFlags(Common::Point &pt, WRect &rect, uint &outFlags) {
 
 void Camera::clipPanTargetPoint() {
 	_activeState._panTargetPoint.x = CLIP(_activeState._panTargetPoint.x,
-		_activeState._bounds._topLeft.x, _activeState._bounds._bottomRight.x);
+	                                      _activeState._bounds._topLeft.x, _activeState._bounds._bottomRight.x);
 	_activeState._panTargetPoint.y = CLIP(_activeState._panTargetPoint.y,
-		_activeState._bounds._topLeft.y, _activeState._bounds._bottomRight.y);
+	                                      _activeState._bounds._topLeft.y, _activeState._bounds._bottomRight.y);
 }
 
 void Camera::init() {

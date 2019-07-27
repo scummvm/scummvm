@@ -36,8 +36,7 @@ char *getText(int textIndex, int overlayIndex) {
 		return NULL;
 	}
 
-	return overlayTable[overlayIndex].ovlData->stringTable[textIndex].
-	       string;
+	return overlayTable[overlayIndex].ovlData->stringTable[textIndex].string;
 }
 
 } // End of namespace Cruise

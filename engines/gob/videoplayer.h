@@ -30,8 +30,8 @@
 
 #include "graphics/surface.h"
 
-#include "gob/util.h"
 #include "gob/draw.h"
+#include "gob/util.h"
 
 namespace Video {
 class CoktelDecoder;
@@ -45,21 +45,21 @@ class DataStream;
 class VideoPlayer {
 public:
 	enum Flags {
-		kFlagNone                  = 0x000000,
+		kFlagNone = 0x000000,
 		kFlagUseBackSurfaceContent = 0x000040, ///< Use the back surface as a video "base".
-		kFlagFrontSurface          = 0x000080, ///< Draw directly into the front surface.
-		kFlagNoVideo               = 0x000100, ///< Only sound.
-		kFlagOtherSurface          = 0x000800, ///< Draw into a specific sprite.
-		kFlagScreenSurface         = 0x400000  ///< Draw into a newly created sprite of screen dimensions.
+		kFlagFrontSurface = 0x000080, ///< Draw directly into the front surface.
+		kFlagNoVideo = 0x000100, ///< Only sound.
+		kFlagOtherSurface = 0x000800, ///< Draw into a specific sprite.
+		kFlagScreenSurface = 0x400000 ///< Draw into a newly created sprite of screen dimensions.
 	};
 
 	/** Video format. */
 	enum Type {
-		kVideoTypeTry    = -1, ///< Try any format.
-		kVideoTypeIMD    =  0,
-		kVideoTypePreIMD =  1, ///< Early IMD format found in Fascination.
-		kVideoTypeVMD    =  2,
-		kVideoTypeRMD    =  3  ///< VMD containing "reversed" video.
+		kVideoTypeTry = -1, ///< Try any format.
+		kVideoTypeIMD = 0,
+		kVideoTypePreIMD = 1, ///< Early IMD format found in Fascination.
+		kVideoTypeVMD = 2,
+		kVideoTypeRMD = 3 ///< VMD containing "reversed" video.
 	};
 
 	struct Properties {
@@ -67,9 +67,9 @@ public:
 
 		int sprite; ///< The sprite onto which to draw the video.
 
-		int32 x;      ///< X coordinate of the video.
-		int32 y;      ///< Y coordinate of the video.
-		int32 width;  ///< Width of the video.
+		int32 x; ///< X coordinate of the video.
+		int32 y; ///< Y coordinate of the video.
+		int32 width; ///< Width of the video.
 		int32 height; ///< Height of the video.
 
 		uint32 flags; ///< Video flags.
@@ -77,17 +77,17 @@ public:
 		bool switchColorMode; ///< Switch between paletted / true color modes?
 
 		int32 startFrame; ///< Frame to start playback from.
-		int32 lastFrame;  ///< Frame to stop playback at.
-		int32 endFrame;   ///< Last frame of this playback cycle.
+		int32 lastFrame; ///< Frame to stop playback at.
+		int32 endFrame; ///< Last frame of this playback cycle.
 
 		bool forceSeek; ///< Force the seeking to the start frame.
 
 		int16 breakKey; ///< Keycode of the break/abort key.
 
-		uint16 palCmd;      ///< Palette command.
-		 int16 palStart;    ///< Palette entry to start with.
-		 int16 palEnd;      ///< Palette entry to end at.
-		 int32 palFrame;    ///< Frame to apply the palette command at.
+		uint16 palCmd; ///< Palette command.
+		int16 palStart; ///< Palette entry to start with.
+		int16 palEnd; ///< Palette entry to end at.
+		int32 palFrame; ///< Frame to apply the palette command at.
 
 		bool noBlock; ///< Non-blocking "live" video?
 
@@ -107,7 +107,7 @@ public:
 
 	void evaluateFlags(Properties &properties);
 
-	int  openVideo(bool primary, const Common::String &file, Properties &properties);
+	int openVideo(bool primary, const Common::String &file, Properties &properties);
 	bool closeVideo(int slot = 0);
 
 	void closeLiveSound();
@@ -133,26 +133,26 @@ public:
 
 	Common::String getFileName(int slot = 0) const;
 
-	uint32 getFrameCount  (int slot = 0) const;
+	uint32 getFrameCount(int slot = 0) const;
 	uint32 getCurrentFrame(int slot = 0) const;
-	uint16 getWidth       (int slot = 0) const;
-	uint16 getHeight      (int slot = 0) const;
-	uint16 getDefaultX    (int slot = 0) const;
-	uint16 getDefaultY    (int slot = 0) const;
+	uint16 getWidth(int slot = 0) const;
+	uint16 getHeight(int slot = 0) const;
+	uint16 getDefaultX(int slot = 0) const;
+	uint16 getDefaultY(int slot = 0) const;
 
 	const Common::List<Common::Rect> *getDirtyRects(int slot = 0) const;
 
-	bool                      hasEmbeddedFile(const Common::String &fileName, int slot = 0) const;
+	bool hasEmbeddedFile(const Common::String &fileName, int slot = 0) const;
 	Common::SeekableReadStream *getEmbeddedFile(const Common::String &fileName, int slot = 0);
 
 	int32 getSubtitleIndex(int slot = 0) const;
 
 	void writeVideoInfo(const Common::String &file, int16 varX, int16 varY,
-			int16 varFrames, int16 varWidth, int16 varHeight);
+	                    int16 varFrames, int16 varWidth, int16 varHeight);
 
 	bool copyFrame(int slot, Surface &dest,
-			uint16 left, uint16 top, uint16 width, uint16 height, uint16 x, uint16 y,
-			int32 transp = -1) const;
+	               uint16 left, uint16 top, uint16 width, uint16 height, uint16 x, uint16 y,
+	               int32 transp = -1) const;
 
 private:
 	struct Video {

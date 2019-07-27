@@ -22,10 +22,10 @@
 
 #include <switch.h>
 
-#include "common/scummsys.h"
 #include "backends/platform/sdl/switch/switch.h"
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
+#include "common/scummsys.h"
 
 int main(int argc, char *argv[]) {
 

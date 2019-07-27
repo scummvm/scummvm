@@ -27,8 +27,8 @@
 
 #include "graphics/surface.h"
 
-#include "common/rect.h"
 #include "common/list.h"
+#include "common/rect.h"
 
 namespace ZVision {
 
@@ -84,7 +84,6 @@ private:
 
 	bool eligeblity(int itemId);
 	Common::Rect paint(const Common::Point &point);
-
 };
 
 } // End of namespace ZVision

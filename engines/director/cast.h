@@ -143,7 +143,7 @@ public:
 
 	Common::String _ftext;
 	void importStxt(const Stxt *stxt);
-	void importRTE(byte* text);
+	void importRTE(byte *text);
 	CachedMacText *cachedMacText;
 };
 
@@ -167,8 +167,6 @@ public:
 	uint32 id;
 };
 
-
-
 struct CastInfo {
 	Common::String script;
 	Common::String name;
@@ -180,7 +178,10 @@ struct CastInfo {
 struct Label {
 	Common::String name;
 	uint16 number;
-	Label(Common::String name1, uint16 number1) { name = name1; number = number1; }
+	Label(Common::String name1, uint16 number1) {
+		name = name1;
+		number = number1;
+	}
 };
 
 } // End of namespace Director

@@ -23,13 +23,13 @@
 #ifndef GOB_SOUND_MUSPLAYER_H
 #define GOB_SOUND_MUSPLAYER_H
 
-#include "common/str.h"
 #include "common/array.h"
+#include "common/str.h"
 
 #include "gob/sound/adlib.h"
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Gob {
@@ -67,7 +67,7 @@ private:
 
 	Common::Array<Timbre> _timbres;
 
-	byte  *_songData;
+	byte *_songData;
 	uint32 _songDataSize;
 
 	const byte *_playPos;
@@ -87,15 +87,14 @@ private:
 
 	byte _lastCommand;
 
-
 	void unloadSND();
 	void unloadMUS();
 
-	bool readSNDHeader (Common::SeekableReadStream &snd, int &timbreCount, int &timbrePos);
-	bool readSNDTimbres(Common::SeekableReadStream &snd, int  timbreCount, int  timbrePos);
+	bool readSNDHeader(Common::SeekableReadStream &snd, int &timbreCount, int &timbrePos);
+	bool readSNDTimbres(Common::SeekableReadStream &snd, int timbreCount, int timbrePos);
 
 	bool readMUSHeader(Common::SeekableReadStream &mus);
-	bool readMUSSong  (Common::SeekableReadStream &mus);
+	bool readMUSSong(Common::SeekableReadStream &mus);
 
 	void setInstrument(uint8 voice, uint8 instrument);
 	void skipToTiming();

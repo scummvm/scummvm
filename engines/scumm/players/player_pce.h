@@ -23,11 +23,11 @@
 #ifndef SCUMM_PLAYERS_PLAYER_PCE_H
 #define SCUMM_PLAYERS_PLAYER_PCE_H
 
-#include "common/scummsys.h"
-#include "common/mutex.h"
-#include "scumm/music.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "common/mutex.h"
+#include "common/scummsys.h"
+#include "scumm/music.h"
 
 // PCE sound engine is only used by Loom, which requires 16bit color support
 #ifdef USE_RGB_COLOR
@@ -67,8 +67,8 @@ private:
 		uint16 controlVecShort09;
 		uint16 controlVecShort10;
 
-		const byte* soundDataPtr;
-		const byte* controlBufferPos;
+		const byte *soundDataPtr;
+		const byte *controlBufferPos;
 	};
 
 public:
@@ -79,8 +79,8 @@ public:
 	virtual void startSound(int sound);
 	virtual void stopSound(int sound);
 	virtual void stopAllSounds();
-	virtual int  getSoundStatus(int sound) const;
-	virtual int  getMusicTimer();
+	virtual int getSoundStatus(int sound) const;
+	virtual int getMusicTimer();
 
 	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -102,7 +102,7 @@ private:
 
 	// number of samples per timer period
 	int _samplesPerPeriod;
-	int16* _sampleBuffer;
+	int16 *_sampleBuffer;
 	int _sampleBufferCnt;
 
 	void init();

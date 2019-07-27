@@ -70,13 +70,18 @@ static const uint32 kRadioMusicFileHashes[] = {
 };
 
 enum {
-	MENU_MODULE			= 9999
+	MENU_MODULE = 9999
 };
 
 GameModule::GameModule(NeverhoodEngine *vm)
-	: Module(vm, NULL), _moduleNum(-1), _prevChildObject(NULL), _prevModuleNum(-1),
-	_restoreGameRequested(false), _restartGameRequested(false), _canRequestMainMenu(true),
-	_mainMenuRequested(false) {
+  : Module(vm, NULL)
+  , _moduleNum(-1)
+  , _prevChildObject(NULL)
+  , _prevModuleNum(-1)
+  , _restoreGameRequested(false)
+  , _restartGameRequested(false)
+  , _canRequestMainMenu(true)
+  , _mainMenuRequested(false) {
 
 	// Other initializations moved to actual engine class
 	_vm->_soundMan->playSoundThree(0x002D0031, 0x08861079);
@@ -326,7 +331,6 @@ uint32 GameModule::getCurrRadioMusicFileHash() {
 	return (musicIndex % 5 != 0) ? 0 : kRadioMusicFileHashes[CLIP<uint>(musicIndex / 5, 0, 17)];
 }
 
-
 uint32 GameModule::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Module::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
@@ -390,11 +394,11 @@ void GameModule::startup() {
 	setGlobalVar(V_SHRINK_LIGHTS_ON, 0);
 	// <<<DEBUG
 
-#if 1
+#	if 1
 	_vm->gameState().which = 0;
 	_vm->gameState().sceneNum = 0;
 	createModule(2400, 0);
-#endif
+#	endif
 
 #endif
 }
@@ -690,7 +694,7 @@ void GameModule::updateModule() {
 			createModule(2300, 1);
 			break;
 		case 2300:
-		debug(1, "module 23000 _moduleResult : %d", _moduleResult);
+			debug(1, "module 23000 _moduleResult : %d", _moduleResult);
 			if (_moduleResult == 2)
 				createModule(1200, 0);
 			else if (_moduleResult == 0)
@@ -829,7 +833,7 @@ void GameModule::updateMenuModule() {
 }
 
 NonRepeatingRandomNumbers::NonRepeatingRandomNumbers(Common::RandomSource *rnd, int count)
-	: _rnd(rnd) {
+  : _rnd(rnd) {
 	for (int i = 0; i < count; i++)
 		push_back(i);
 }

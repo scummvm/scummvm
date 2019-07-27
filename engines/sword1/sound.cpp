@@ -20,16 +20,15 @@
  *
  */
 
-
 #include "common/endian.h"
 
-#include "common/util.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
-#include "sword1/sound.h"
-#include "sword1/resman.h"
 #include "sword1/logic.h"
+#include "sword1/resman.h"
+#include "sword1/sound.h"
 #include "sword1/sword1.h"
 
 #include "audio/audiostream.h"
@@ -45,7 +44,7 @@ namespace Sword1 {
 #define SPEECH_FLAGS (Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN)
 
 Sound::Sound(Audio::Mixer *mixer, ResMan *pResMan)
-	: _rnd("sword1sound") {
+  : _rnd("sword1sound") {
 	_mixer = mixer;
 	_resMan = pResMan;
 	_bigEndianSpeech = false;
@@ -134,7 +133,7 @@ void Sound::checkSpeechFileEndianness() {
 		_bigEndianSpeech = true;
 		data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size, &beOk);
 		double be_diff = endiannessHeuristicValue(data, size, maxSamples);
-		delete [] data;
+		delete[] data;
 		// Set the big endian flag
 		if (leOk && !beOk)
 			_bigEndianSpeech = false;
@@ -151,7 +150,7 @@ void Sound::checkSpeechFileEndianness() {
 	}
 }
 
-double Sound::endiannessHeuristicValue(int16* data, uint32 dataSize, uint32 &maxSamples) {
+double Sound::endiannessHeuristicValue(int16 *data, uint32 dataSize, uint32 &maxSamples) {
 	if (!data)
 		return 50000.; // the heuristic value for the wrong endianess is about 21000 (1/3rd of the 16 bits range)
 
@@ -171,7 +170,6 @@ double Sound::endiannessHeuristicValue(int16* data, uint32 dataSize, uint32 &max
 	maxSamples = cpt;
 	return diff_sum / cpt;
 }
-
 
 int Sound::addToQueue(int32 fxNo) {
 	bool alreadyInQueue = false;
@@ -279,8 +277,7 @@ void Sound::playSample(QueueElement *elem) {
 	uint8 *sampleData = (uint8 *)_resMan->fetchRes(getSampleId(elem->id));
 	for (uint16 cnt = 0; cnt < MAX_ROOMS_PER_FX; cnt++) {
 		if (_fxList[elem->id].roomVolList[cnt].roomNo) {
-			if ((_fxList[elem->id].roomVolList[cnt].roomNo == (int)Logic::_scriptVars[SCREEN]) ||
-			        (_fxList[elem->id].roomVolList[cnt].roomNo == -1)) {
+			if ((_fxList[elem->id].roomVolList[cnt].roomNo == (int)Logic::_scriptVars[SCREEN]) || (_fxList[elem->id].roomVolList[cnt].roomNo == -1)) {
 
 				uint8 volL = (_fxList[elem->id].roomVolList[cnt].leftVol * 10 * _sfxVolL) / 255;
 				uint8 volR = (_fxList[elem->id].roomVolList[cnt].rightVol * 10 * _sfxVolR) / 255;
@@ -301,8 +298,8 @@ void Sound::playSample(QueueElement *elem) {
 					if (READ_LE_UINT16(sampleData + 0x16) == 2)
 						flags |= Audio::FLAG_STEREO;
 					Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
-					                                 Audio::makeRawStream(sampleData + 0x2C, size, 11025, flags, DisposeAfterUse::NO),
-					                                 (_fxList[elem->id].type == FX_LOOP) ? 0 : 1);
+					  Audio::makeRawStream(sampleData + 0x2C, size, 11025, flags, DisposeAfterUse::NO),
+					  (_fxList[elem->id].type == FX_LOOP) ? 0 : 1);
 					_mixer->playStream(Audio::Mixer::kSFXSoundType, &elem->handle, stream, elem->id, volume, pan);
 				}
 			}
@@ -452,7 +449,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 		return false;
 }
 
-int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size, bool* ok) {
+int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size, bool *ok) {
 	uint8 *fBuf = (uint8 *)malloc(cSize);
 	_cowFile.seek(index);
 	_cowFile.read(fBuf, cSize);

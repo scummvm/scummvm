@@ -21,21 +21,24 @@
  */
 
 #include "gob/console.h"
+#include "gob/cheater.h"
+#include "gob/dataio.h"
 #include "gob/gob.h"
 #include "gob/inter.h"
-#include "gob/dataio.h"
-#include "gob/cheater.h"
 
 namespace Gob {
 
-GobConsole::GobConsole(GobEngine *vm) : GUI::Debugger(), _vm(vm), _cheater(0) {
-	registerCmd("varSize",      WRAP_METHOD(GobConsole, cmd_varSize));
-	registerCmd("dumpVars",     WRAP_METHOD(GobConsole, cmd_dumpVars));
-	registerCmd("var8",         WRAP_METHOD(GobConsole, cmd_var8));
-	registerCmd("var16",        WRAP_METHOD(GobConsole, cmd_var16));
-	registerCmd("var32",        WRAP_METHOD(GobConsole, cmd_var32));
-	registerCmd("varString",    WRAP_METHOD(GobConsole, cmd_varString));
-	registerCmd("cheat",        WRAP_METHOD(GobConsole, cmd_cheat));
+GobConsole::GobConsole(GobEngine *vm)
+  : GUI::Debugger()
+  , _vm(vm)
+  , _cheater(0) {
+	registerCmd("varSize", WRAP_METHOD(GobConsole, cmd_varSize));
+	registerCmd("dumpVars", WRAP_METHOD(GobConsole, cmd_dumpVars));
+	registerCmd("var8", WRAP_METHOD(GobConsole, cmd_var8));
+	registerCmd("var16", WRAP_METHOD(GobConsole, cmd_var16));
+	registerCmd("var32", WRAP_METHOD(GobConsole, cmd_var32));
+	registerCmd("varString", WRAP_METHOD(GobConsole, cmd_varString));
+	registerCmd("cheat", WRAP_METHOD(GobConsole, cmd_cheat));
 	registerCmd("listArchives", WRAP_METHOD(GobConsole, cmd_listArchives));
 }
 
@@ -181,7 +184,7 @@ bool GobConsole::cmd_listArchives(int argc, const char **argv) {
 	debugPrintf("--------------------------------\n");
 	for (Common::Array<ArchiveInfo>::const_iterator it = info.begin(); it != info.end(); ++it)
 		if (!it->name.empty())
-		debugPrintf("%13s |   %d  | %d\n", it->name.c_str(), it->base, it->fileCount);
+			debugPrintf("%13s |   %d  | %d\n", it->name.c_str(), it->base, it->fileCount);
 
 	return true;
 }

@@ -29,9 +29,9 @@
 #ifndef WINTERMUTE_ADSCENESTATE_H
 #define WINTERMUTE_ADSCENESTATE_H
 
-#include "engines/wintermute/persistent.h"
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/coll_templ.h"
+#include "engines/wintermute/persistent.h"
 
 namespace Wintermute {
 class AdNodeState;
@@ -43,6 +43,7 @@ public:
 	DECLARE_PERSISTENT(AdSceneState, BaseClass)
 	AdSceneState(BaseGame *inGame);
 	virtual ~AdSceneState();
+
 private:
 	char *_filename;
 	BaseArray<AdNodeState *> _nodeStates;

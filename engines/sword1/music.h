@@ -23,12 +23,12 @@
 #ifndef SWORD1_MUSIC_H
 #define SWORD1_MUSIC_H
 
-#include "common/scummsys.h"
-#include "common/mutex.h"
-#include "common/file.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/rate.h"
+#include "common/file.h"
+#include "common/mutex.h"
+#include "common/scummsys.h"
 
 namespace Sword1 {
 
@@ -40,8 +40,11 @@ private:
 	int32 _fading;
 	int32 _fadeSamples;
 	Audio::AudioStream *_audioSource;
+
 public:
-	MusicHandle() : _fading(0), _audioSource(NULL) {}
+	MusicHandle()
+	  : _fading(0)
+	  , _audioSource(NULL) {}
 	virtual int readBuffer(int16 *buffer, const int numSamples);
 	bool play(const Common::String &filename, bool loop);
 	bool playPSX(uint16 id, bool loop);

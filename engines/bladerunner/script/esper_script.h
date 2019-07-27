@@ -31,7 +31,8 @@ class BladeRunnerEngine;
 
 class ESPERScript : ScriptBase {
 public:
-	ESPERScript(BladeRunnerEngine *vm) : ScriptBase(vm) {}
+	ESPERScript(BladeRunnerEngine *vm)
+	  : ScriptBase(vm) {}
 
 	void initialize();
 	void photoSelected(int photoId);

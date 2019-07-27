@@ -20,13 +20,16 @@
  *
  */
 
+#include "scumm/he/moonbase/net_main.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/he/moonbase/moonbase.h"
-#include "scumm/he/moonbase/net_main.h"
 
 namespace Scumm {
 
-Net::Net(ScummEngine_v100he *vm) : _latencyTime(1), _fakeLatency(false), _vm(vm) {
+Net::Net(ScummEngine_v100he *vm)
+  : _latencyTime(1)
+  , _fakeLatency(false)
+  , _vm(vm) {
 	//some defaults for fields
 }
 

@@ -23,7 +23,7 @@
 #if defined(__ANDROID__)
 
 // Allow use of stuff in <time.h>
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+#	define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
 // Disable printf override in common/forbidden.h to avoid
 // clashes with log.h from the Android SDK.
@@ -37,13 +37,13 @@
 // (which then wouldn't be portable, though).
 // Anyway, for now we just disable the printf override globally
 // for the Android port
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+#	define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#include "common/endian.h"
-#include "graphics/conversion.h"
+#	include "common/endian.h"
+#	include "graphics/conversion.h"
 
-#include "backends/platform/android/android.h"
-#include "backends/platform/android/jni.h"
+#	include "backends/platform/android/android.h"
+#	include "backends/platform/android/jni.h"
 
 static inline GLfixed xdiv(int numerator, int denominator) {
 	assert(numerator < (1 << 16));
@@ -85,7 +85,7 @@ int OSystem_Android::getGraphicsMode() const {
 	return _graphicsMode;
 }
 
-#ifdef USE_RGB_COLOR
+#	ifdef USE_RGB_COLOR
 Graphics::PixelFormat OSystem_Android::getScreenFormat() const {
 	return _game_texture->getPixelFormat();
 }
@@ -102,11 +102,10 @@ Common::List<Graphics::PixelFormat> OSystem_Android::getSupportedFormats() const
 }
 
 void OSystem_Android::initTexture(GLESBaseTexture **texture,
-									uint width, uint height,
-									const Graphics::PixelFormat *format) {
+                                  uint width, uint height,
+                                  const Graphics::PixelFormat *format) {
 	assert(texture);
-	Graphics::PixelFormat format_clut8 =
-		Graphics::PixelFormat::createFormatCLUT8();
+	Graphics::PixelFormat format_clut8 = Graphics::PixelFormat::createFormatCLUT8();
 	Graphics::PixelFormat format_current;
 	Graphics::PixelFormat format_new;
 
@@ -123,7 +122,7 @@ void OSystem_Android::initTexture(GLESBaseTexture **texture,
 	if (format_current != format_new) {
 		if (*texture)
 			LOGD("switching pixel format from: %s",
-					(*texture)->getPixelFormat().toString().c_str());
+			     (*texture)->getPixelFormat().toString().c_str());
 
 		delete *texture;
 
@@ -139,18 +138,18 @@ void OSystem_Android::initTexture(GLESBaseTexture **texture,
 			// TODO what now?
 			if (format_new != format_clut8)
 				LOGE("unsupported pixel format: %s",
-					format_new.toString().c_str());
+				     format_new.toString().c_str());
 
 			*texture = new GLESFakePalette565Texture;
 		}
 
 		LOGD("new pixel format: %s",
-				(*texture)->getPixelFormat().toString().c_str());
+		     (*texture)->getPixelFormat().toString().c_str());
 	}
 
 	(*texture)->allocBuffer(width, height);
 }
-#endif
+#	endif
 
 void OSystem_Android::initSurface() {
 	LOGD("initializing surface");
@@ -258,20 +257,20 @@ void OSystem_Android::initOverlay() {
 
 	_overlay_texture->allocBuffer(overlay_width, overlay_height);
 	_overlay_texture->setDrawRect(0, 0,
-									_egl_surface_width, _egl_surface_height);
+	                              _egl_surface_width, _egl_surface_height);
 }
 
 void OSystem_Android::initSize(uint width, uint height,
-								const Graphics::PixelFormat *format) {
+                               const Graphics::PixelFormat *format) {
 	ENTER("%d, %d, %p", width, height, format);
 
 	GLTHREADCHECK;
 
-#ifdef USE_RGB_COLOR
+#	ifdef USE_RGB_COLOR
 	initTexture(&_game_texture, width, height, format);
-#else
+#	else
 	_game_texture->allocBuffer(width, height);
-#endif
+#	endif
 
 	updateScreenRect();
 	updateEventScale();
@@ -338,8 +337,7 @@ void OSystem_Android::updateScreenRect() {
 		float screen_ar;
 		if (dpi[0] != 0.0 && dpi[1] != 0.0) {
 			// horizontal orientation
-			screen_ar = (dpi[1] * _egl_surface_width) /
-						(dpi[0] * _egl_surface_height);
+			screen_ar = (dpi[1] * _egl_surface_width) / (dpi[0] * _egl_surface_height);
 		} else {
 			screen_ar = float(_egl_surface_width) / float(_egl_surface_height);
 		}
@@ -375,9 +373,9 @@ int16 OSystem_Android::getWidth() {
 void OSystem_Android::setPalette(const byte *colors, uint start, uint num) {
 	ENTER("%p, %u, %u", colors, start, num);
 
-#ifdef USE_RGB_COLOR
+#	ifdef USE_RGB_COLOR
 	assert(_game_texture->hasPalette());
-#endif
+#	endif
 
 	GLTHREADCHECK;
 
@@ -394,9 +392,9 @@ void OSystem_Android::setPalette(const byte *colors, uint start, uint num) {
 void OSystem_Android::grabPalette(byte *colors, uint start, uint num) const {
 	ENTER("%p, %u, %u", colors, start, num);
 
-#ifdef USE_RGB_COLOR
+#	ifdef USE_RGB_COLOR
 	assert(_game_texture->hasPalette());
-#endif
+#	endif
 
 	GLTHREADCHECK;
 
@@ -408,7 +406,7 @@ void OSystem_Android::grabPalette(byte *colors, uint start, uint num) const {
 }
 
 void OSystem_Android::copyRectToScreen(const void *buf, int pitch,
-										int x, int y, int w, int h) {
+                                       int x, int y, int w, int h) {
 	ENTER("%p, %d, %d, %d, %d, %d", buf, pitch, x, y, w, h);
 
 	GLTHREADCHECK;
@@ -424,10 +422,7 @@ void OSystem_Android::updateScreen() {
 	if (!JNI::haveSurface())
 		return;
 
-	if (!_force_redraw &&
-			!_game_texture->dirty() &&
-			!_overlay_texture->dirty() &&
-			!_mouse_texture->dirty())
+	if (!_force_redraw && !_game_texture->dirty() && !_overlay_texture->dirty() && !_mouse_texture->dirty())
 		return;
 
 	_force_redraw = false;
@@ -440,10 +435,7 @@ void OSystem_Android::updateScreen() {
 
 	GLCALL(glPushMatrix());
 
-	if (_shake_offset != 0 ||
-			(!_focus_rect.isEmpty() &&
-			!Common::Rect(_game_texture->width(),
-							_game_texture->height()).contains(_focus_rect))) {
+	if (_shake_offset != 0 || (!_focus_rect.isEmpty() && !Common::Rect(_game_texture->width(), _game_texture->height()).contains(_focus_rect))) {
 		// These are the only cases where _game_texture doesn't
 		// cover the entire screen.
 		clearScreen(kClear);
@@ -452,9 +444,9 @@ void OSystem_Android::updateScreen() {
 		GLCALL(glTranslatex(0, -_shake_offset << 16, 0));
 	}
 
-// TODO this doesn't work on those sucky drivers, do it differently
-//	if (_show_overlay)
-//		GLCALL(glColor4ub(0x9f, 0x9f, 0x9f, 0x9f));
+	// TODO this doesn't work on those sucky drivers, do it differently
+	//	if (_show_overlay)
+	//		GLCALL(glColor4ub(0x9f, 0x9f, 0x9f, 0x9f));
 
 	if (_focus_rect.isEmpty()) {
 		_game_texture->drawTextureRect();
@@ -462,13 +454,13 @@ void OSystem_Android::updateScreen() {
 		GLCALL(glPushMatrix());
 
 		GLCALL(glScalex(xdiv(_egl_surface_width, _focus_rect.width()),
-						xdiv(_egl_surface_height, _focus_rect.height()),
-						1 << 16));
+		                xdiv(_egl_surface_height, _focus_rect.height()),
+		                1 << 16));
 		GLCALL(glTranslatex(-_focus_rect.left << 16,
-							-_focus_rect.top << 16, 0));
+		                    -_focus_rect.top << 16, 0));
 		GLCALL(glScalex(xdiv(_game_texture->width(), _egl_surface_width),
-						xdiv(_game_texture->height(), _egl_surface_height),
-						1 << 16));
+		                xdiv(_game_texture->height(), _egl_surface_height),
+		                1 << 16));
 
 		_game_texture->drawTextureRect();
 
@@ -478,8 +470,8 @@ void OSystem_Android::updateScreen() {
 	int cs = _mouse_targetscale;
 
 	if (_show_overlay) {
-// TODO see above
-//		GLCALL(glColor4ub(0xff, 0xff, 0xff, 0xff));
+		// TODO see above
+		//		GLCALL(glColor4ub(0xff, 0xff, 0xff, 0xff));
 
 		// ugly, but the modern theme sets a wacko factor, only god knows why
 		cs = 1;
@@ -495,29 +487,29 @@ void OSystem_Android::updateScreen() {
 		// Scale up ScummVM -> OpenGL (pixel) coordinates
 		if (_show_overlay) {
 			GLCALL(glScalex(xdiv(_egl_surface_width,
-									_overlay_texture->width()),
-							xdiv(_egl_surface_height,
-									_overlay_texture->height()),
-							1 << 16));
+			                     _overlay_texture->width()),
+			                xdiv(_egl_surface_height,
+			                     _overlay_texture->height()),
+			                1 << 16));
 		} else {
 			const Common::Rect &r = _game_texture->getDrawRect();
 
 			GLCALL(glTranslatex(r.left << 16,
-								r.top << 16,
-								0));
+			                    r.top << 16,
+			                    0));
 			GLCALL(glScalex(xdiv(r.width(), _game_texture->width()),
-							xdiv(r.height(), _game_texture->height()),
-							1 << 16));
+			                xdiv(r.height(), _game_texture->height()),
+			                1 << 16));
 		}
 
 		GLCALL(glTranslatex((-_mouse_hotspot.x * cs) << 16,
-							(-_mouse_hotspot.y * cs) << 16,
-							0));
+		                    (-_mouse_hotspot.y * cs) << 16,
+		                    0));
 
 		// Note the extra half texel to position the mouse in
 		// the middle of the x,y square:
 		GLCALL(glTranslatex((mouse.x << 16) | 1 << 15,
-							(mouse.y << 16) | 1 << 15, 0));
+		                    (mouse.y << 16) | 1 << 15, 0));
 
 		GLCALL(glScalex(cs << 16, cs << 16, 1 << 16));
 
@@ -568,7 +560,7 @@ void OSystem_Android::fillScreen(uint32 col) {
 	_game_texture->fillBuffer(col);
 }
 
-void OSystem_Android::setFocusRectangle(const Common::Rect& rect) {
+void OSystem_Android::setFocusRectangle(const Common::Rect &rect) {
 	ENTER("%d, %d, %d, %d", rect.left, rect.top, rect.right, rect.bottom);
 
 	if (_enable_zoning) {
@@ -642,7 +634,7 @@ void OSystem_Android::grabOverlay(void *buf, int pitch) {
 }
 
 void OSystem_Android::copyRectToOverlay(const void *buf, int pitch,
-										int x, int y, int w, int h) {
+                                        int x, int y, int w, int h) {
 	ENTER("%p, %d, %d, %d, %d, %d", buf, pitch, x, y, w, h);
 
 	GLTHREADCHECK;
@@ -671,15 +663,15 @@ bool OSystem_Android::showMouse(bool visible) {
 }
 
 void OSystem_Android::setMouseCursor(const void *buf, uint w, uint h,
-										int hotspotX, int hotspotY,
-										uint32 keycolor, bool dontScale,
-										const Graphics::PixelFormat *format) {
+                                     int hotspotX, int hotspotY,
+                                     uint32 keycolor, bool dontScale,
+                                     const Graphics::PixelFormat *format) {
 	ENTER("%p, %u, %u, %d, %d, %u, %d, %p", buf, w, h, hotspotX, hotspotY,
-			keycolor, dontScale, format);
+	      keycolor, dontScale, format);
 
 	GLTHREADCHECK;
 
-#ifdef USE_RGB_COLOR
+#	ifdef USE_RGB_COLOR
 	if (format && format->bytesPerPixel > 1) {
 		if (_mouse_texture != _mouse_texture_rgb) {
 			LOGD("switching to rgb mouse cursor");
@@ -699,7 +691,7 @@ void OSystem_Android::setMouseCursor(const void *buf, uint w, uint h,
 		delete _mouse_texture_rgb;
 		_mouse_texture_rgb = 0;
 	}
-#endif
+#	endif
 
 	_mouse_texture->allocBuffer(w, h);
 
@@ -727,8 +719,8 @@ void OSystem_Android::setMouseCursor(const void *buf, uint w, uint h,
 
 		// meh, a 16bit cursor without alpha bits... this is so silly
 		if (!crossBlit(tmp, (const byte *)buf, pitch, w * 2, w, h,
-						_mouse_texture->getPixelFormat(),
-						*format)) {
+		               _mouse_texture->getPixelFormat(),
+		               *format)) {
 			LOGE("crossblit failed");
 
 			delete[] tmp;
@@ -756,9 +748,8 @@ void OSystem_Android::setMouseCursor(const void *buf, uint w, uint h,
 }
 
 void OSystem_Android::setCursorPaletteInternal(const byte *colors,
-												uint start, uint num) {
-	const Graphics::PixelFormat &pf =
-		_mouse_texture_palette->getPalettePixelFormat();
+                                               uint start, uint num) {
+	const Graphics::PixelFormat &pf = _mouse_texture_palette->getPalettePixelFormat();
 	byte *p = _mouse_texture_palette->palette() + start * 2;
 
 	for (uint i = 0; i < num; ++i, colors += 3, p += 2)
@@ -769,7 +760,7 @@ void OSystem_Android::setCursorPaletteInternal(const byte *colors,
 }
 
 void OSystem_Android::setCursorPalette(const byte *colors,
-										uint start, uint num) {
+                                       uint start, uint num) {
 	ENTER("%p, %u, %u", colors, start, num);
 
 	GLTHREADCHECK;
@@ -794,10 +785,8 @@ void OSystem_Android::disableCursorPalette() {
 		const byte *src = _game_texture->palette_const();
 		byte *dst = _mouse_texture_palette->palette();
 
-		const Graphics::PixelFormat &pf_src =
-			_game_texture->getPalettePixelFormat();
-		const Graphics::PixelFormat &pf_dst =
-			_mouse_texture_palette->getPalettePixelFormat();
+		const Graphics::PixelFormat &pf_src = _game_texture->getPalettePixelFormat();
+		const Graphics::PixelFormat &pf_dst = _mouse_texture_palette->getPalettePixelFormat();
 
 		uint8 r, g, b;
 

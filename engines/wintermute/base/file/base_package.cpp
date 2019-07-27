@@ -26,14 +26,14 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/file/base_package.h"
+#include "common/debug.h"
+#include "common/file.h"
+#include "common/stream.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/file/base_file_entry.h"
 #include "engines/wintermute/base/file/dcpackage.h"
 #include "engines/wintermute/wintermute.h"
-#include "common/file.h"
-#include "common/stream.h"
-#include "common/debug.h"
 
 namespace Wintermute {
 
@@ -71,16 +71,14 @@ static bool findPackageSignature(Common::SeekableReadStream *f, uint32 *offset) 
 
 		for (uint32 i = 0; i < toRead - 8; i++)
 			if (!memcmp(buf + i, signature, 8)) {
-				*offset =  startPos + i;
+				*offset = startPos + i;
 				return true;
 			}
 
 		bytesRead = bytesRead + toRead - 16;
 		startPos = startPos + toRead - 16;
-
 	}
 	return false;
-
 }
 
 void TPackageHeader::readFromStream(Common::ReadStream *stream) {
@@ -91,7 +89,7 @@ void TPackageHeader::readFromStream(Common::ReadStream *stream) {
 	_gameVersion = stream->readUint32LE();
 
 	_priority = stream->readByte();
-	
+
 	// HACK: reversion1 and reversion2 for Linux & Mac use some hacked Wintermute
 	// They provide "xlanguage_*.dcp" packages with 0x00 priority and change priority for a single package in runtime
 	// We already filter unwanted "xlanguage_*.dcp" packages at BaseFileManager::registerPackages()
@@ -99,7 +97,7 @@ void TPackageHeader::readFromStream(Common::ReadStream *stream) {
 	if (_priority == 0 && BaseEngine::instance().getGameId().hasPrefix("reversion")) {
 		_priority = 0x02;
 	}
-	
+
 	_cd = stream->readByte();
 	_masterIndex = stream->readByte();
 	stream->readByte(); // To align the next byte...
@@ -170,7 +168,7 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 		pkgName = nullptr;
 
 		if (!hdr._masterIndex) {
-			pkg->_cd = 0;    // override CD to fixed disk
+			pkg->_cd = 0; // override CD to fixed disk
 		}
 		_packages.push_back(pkg);
 
@@ -179,7 +177,7 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 
 		for (uint32 j = 0; j < numFiles; j++) {
 			char *name;
-			uint32 offset, length, compLength, flags;/*, timeDate1, timeDate2;*/
+			uint32 offset, length, compLength, flags; /*, timeDate1, timeDate2;*/
 
 			nameLength = stream->readByte();
 			name = new char[nameLength];
@@ -222,7 +220,7 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 			} else {
 				// current package has higher priority than the registered
 				// TODO: This cast might be a bit ugly.
-				BaseFileEntry *filePtr = (BaseFileEntry *) &*(_filesIter->_value);
+				BaseFileEntry *filePtr = (BaseFileEntry *)&*(_filesIter->_value);
 				if (pkg->_priority > filePtr->_package->_priority) {
 					filePtr->_package = pkg;
 					filePtr->_offset = offset;

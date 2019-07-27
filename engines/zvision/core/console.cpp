@@ -24,17 +24,17 @@
 
 #include "zvision/core/console.h"
 
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
+#include "zvision/graphics/cursors/cursor.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/sound/zork_raw.h"
 #include "zvision/text/string_manager.h"
 #include "zvision/video/zork_avi_decoder.h"
-#include "zvision/sound/zork_raw.h"
-#include "zvision/graphics/cursors/cursor.h"
+#include "zvision/zvision.h"
 
-#include "common/system.h"
-#include "common/file.h"
 #include "common/bufferedstream.h"
+#include "common/file.h"
+#include "common/system.h"
 
 #include "gui/debugger.h"
 
@@ -42,7 +42,9 @@
 
 namespace ZVision {
 
-Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
+Console::Console(ZVision *engine)
+  : GUI::Debugger()
+  , _engine(engine) {
 	registerCmd("loadvideo", WRAP_METHOD(Console, cmdLoadVideo));
 	registerCmd("loadsound", WRAP_METHOD(Console, cmdLoadSound));
 	registerCmd("raw2wav", WRAP_METHOD(Console, cmdRawToWav));
@@ -149,7 +151,6 @@ bool Console::cmdRawToWav(int argc, const char **argv) {
 
 	delete[] buffer;
 
-
 	return true;
 }
 
@@ -205,7 +206,7 @@ bool Console::cmdLocation(int argc, const char **argv) {
 	Location curLocation = _engine->getScriptManager()->getCurrentLocation();
 	Common::String scrFile = Common::String::format("%c%c%c%c.scr", curLocation.world, curLocation.room, curLocation.node, curLocation.view);
 	debugPrintf("Current location: world '%c', room '%c', node '%c', view '%c', offset %d, script %s\n",
-				curLocation.world, curLocation.room, curLocation.node, curLocation.view, curLocation.offset, scrFile.c_str());
+	            curLocation.world, curLocation.room, curLocation.node, curLocation.view, curLocation.offset, scrFile.c_str());
 
 	if (argc != 6) {
 		debugPrintf("Use %s <char: world> <char: room> <char:node> <char:view> <int: x offset> to change your location\n", argv[0]);

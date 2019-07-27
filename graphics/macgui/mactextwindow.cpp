@@ -20,13 +20,13 @@
  *
  */
 
-#include "common/timer.h"
 #include "common/system.h"
+#include "common/timer.h"
 
-#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macfontmanager.h"
-#include "graphics/macgui/mactextwindow.h"
 #include "graphics/macgui/macmenu.h"
+#include "graphics/macgui/mactextwindow.h"
+#include "graphics/macgui/macwindowmanager.h"
 
 namespace Graphics {
 
@@ -43,8 +43,8 @@ enum {
 
 static void cursorTimerHandler(void *refCon);
 
-MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler) :
-		MacWindow(wm->getLastId(), true, true, true, wm) {
+MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler)
+  : MacWindow(wm->getLastId(), true, true, true, wm) {
 
 	_font = font;
 	_menu = menu;
@@ -238,8 +238,7 @@ void MacTextWindow::clearSelection() {
 }
 
 bool MacTextWindow::isCutAllowed() {
-	if (_selectedText.startRow >= (int)(_mactext->getLineCount() - _inputTextHeight) &&
-			_selectedText.endRow  >= (int)(_mactext->getLineCount() - _inputTextHeight))
+	if (_selectedText.startRow >= (int)(_mactext->getLineCount() - _inputTextHeight) && _selectedText.endRow >= (int)(_mactext->getLineCount() - _inputTextHeight))
 		return true;
 
 	return false;
@@ -314,7 +313,7 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 	}
 
 	if (hasAllFocus())
-		return MacWindow::processEvent(event);	// Pass it to upstream
+		return MacWindow::processEvent(event); // Pass it to upstream
 
 	if (event.type == Common::EVENT_WHEELUP) {
 		scroll(-2);
@@ -363,8 +362,7 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 			if (_inTextSelection) {
 				_inTextSelection = false;
 
-				if (_selectedText.endY == -1 ||
-						(_selectedText.endX == _selectedText.startX && _selectedText.endY == _selectedText.startY)) {
+				if (_selectedText.endY == -1 || (_selectedText.endX == _selectedText.startX && _selectedText.endY == _selectedText.startY)) {
 					_selectedText.startY = _selectedText.endY = -1;
 					_contentIsDirty = true;
 					_menu->enableCommand("Edit", "Copy", false);
@@ -425,8 +423,8 @@ void MacTextWindow::updateTextSelection(int x, int y) {
 	_mactext->getRowCol(x, y, &_selectedText.endX, &_selectedText.endY, &_selectedText.endRow, &_selectedText.endCol);
 
 	debug(3, "s: %d,%d (%d, %d) e: %d,%d (%d, %d)", _selectedText.startX, _selectedText.startY,
-			_selectedText.startRow, _selectedText.startCol, _selectedText.endX,
-			_selectedText.endY, _selectedText.endRow, _selectedText.endCol);
+	      _selectedText.startRow, _selectedText.startCol, _selectedText.endX,
+	      _selectedText.endY, _selectedText.endRow, _selectedText.endCol);
 
 	_contentIsDirty = true;
 }
@@ -494,6 +492,5 @@ void MacTextWindow::undrawCursor() {
 	_cursorState = false;
 	_cursorDirty = true;
 }
-
 
 } // End of namespace Graphics

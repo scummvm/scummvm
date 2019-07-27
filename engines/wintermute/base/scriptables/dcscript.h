@@ -31,7 +31,7 @@
 
 namespace Wintermute {
 
-#define SCRIPT_MAGIC   0xDEC0ADDE
+#define SCRIPT_MAGIC 0xDEC0ADDE
 #define SCRIPT_VERSION 0x0102
 
 // value types
@@ -45,7 +45,6 @@ typedef enum {
 	VAL_NATIVE,
 	VAL_VARIABLE_REF
 } TValType;
-
 
 // script states
 typedef enum {
@@ -122,7 +121,6 @@ typedef enum {
 	TYPE_DOUBLE,
 	TYPE_MEMBUFFER
 } TExternalType;
-
 
 // call types
 typedef enum {

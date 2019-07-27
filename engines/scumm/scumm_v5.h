@@ -199,7 +199,6 @@ protected:
 	void o5_walkActorToObject();
 };
 
-
 } // End of namespace Scumm
 
 #endif

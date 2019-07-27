@@ -23,10 +23,10 @@
 #ifndef TEENAGENT_RESOURCES_H
 #define TEENAGENT_RESOURCES_H
 
+#include "graphics/surface.h"
+#include "teenagent/font.h"
 #include "teenagent/pack.h"
 #include "teenagent/segment.h"
-#include "teenagent/font.h"
-#include "graphics/surface.h"
 
 struct ADGameDescription;
 
@@ -1131,15 +1131,15 @@ const uint16 dsAddr_swappedBarmanMugFlag = 0xdbe8; // 1 byte
 // Barman Passed Out Flag : 0xdbe9
 const uint16 dsAddr_barmanPassedOutFlag = 0xdbe9; // 1 byte
 // Counter for Mansion Intrusion Attempts : 0xdbea
-const uint16 dsAddr_mansionEntryCount = 0xdbea;// 1 byte
+const uint16 dsAddr_mansionEntryCount = 0xdbea; // 1 byte
 // Unused Byte : 0xdbeb
 // John Noty Outside Mansion Door Flag : 0xdbec
 const uint16 dsAddr_johnNotyOutsideMansionDoorFlag = 0xdbec; // 1 byte
 // Unused Byte : 0xdbed
 // Lovestruck By Anne Flag : 0xdbee
-const uint16 dsAddr_lovestruckByAnneFlag = 0xdbee;// 1 byte
+const uint16 dsAddr_lovestruckByAnneFlag = 0xdbee; // 1 byte
 // Mansion Handle in Door Hole Flag : 0xdbef
-const uint16 dsAddr_mansionHandleInDoorHoleFlag = 0xdbef;// 1 byte
+const uint16 dsAddr_mansionHandleInDoorHoleFlag = 0xdbef; // 1 byte
 // Got Password Need to Speak To Barman Flag : 0xdbf0
 const uint16 dsAddr_gotPasswordNeedSpeakBarmanFlag = 0xdbf0; // 1 byte
 // Mansion Already Used Time Pills Flag : 0xdbf1
@@ -1190,6 +1190,7 @@ public:
 	uint16 getDialogAddr(uint16 dialogNum) { return dialogOffsets[dialogNum]; }
 
 	Segment eseg;
+
 private:
 	void precomputeDialogOffsets();
 

@@ -29,83 +29,84 @@
 namespace Cloud {
 namespace OneDrive {
 
-class OneDriveStorage: public Cloud::Storage {
-	static char *KEY, *SECRET;
+	class OneDriveStorage : public Cloud::Storage {
+		static char *KEY, *SECRET;
 
-	static void loadKeyAndSecret();
+		static void loadKeyAndSecret();
 
-	Common::String _token, _uid, _refreshToken;
+		Common::String _token, _uid, _refreshToken;
 
-	/** This private constructor is called from loadFromConfig(). */
-	OneDriveStorage(Common::String token, Common::String uid, Common::String refreshToken);
+		/** This private constructor is called from loadFromConfig(). */
+		OneDriveStorage(Common::String token, Common::String uid, Common::String refreshToken);
 
-	void tokenRefreshed(BoolCallback callback, Networking::JsonResponse response);
-	void codeFlowComplete(BoolResponse response);
-	void codeFlowFailed(Networking::ErrorResponse error);
+		void tokenRefreshed(BoolCallback callback, Networking::JsonResponse response);
+		void codeFlowComplete(BoolResponse response);
+		void codeFlowFailed(Networking::ErrorResponse error);
 
-	/** Constructs StorageInfo based on JSON response from cloud. */
-	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse json);
+		/** Constructs StorageInfo based on JSON response from cloud. */
+		void infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse json);
 
-	void fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse response);
-public:
-	/** This constructor uses OAuth code flow to get tokens. */
-	OneDriveStorage(Common::String code);
-	virtual ~OneDriveStorage();
+		void fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse response);
 
-	/**
+	public:
+		/** This constructor uses OAuth code flow to get tokens. */
+		OneDriveStorage(Common::String code);
+		virtual ~OneDriveStorage();
+
+		/**
 	 * Storage methods, which are used by CloudManager to save
 	 * storage in configuration file.
 	 */
 
-	/**
+		/**
 	 * Save storage data using ConfMan.
 	 * @param keyPrefix all saved keys must start with this prefix.
 	 * @note every Storage must write keyPrefix + "type" key
 	 *       with common value (e.g. "Dropbox").
 	 */
-	virtual void saveConfig(Common::String keyPrefix);
+		virtual void saveConfig(Common::String keyPrefix);
 
-	/**
+		/**
 	* Return unique storage name.
 	* @returns  some unique storage name (for example, "Dropbox (user@example.com)")
 	*/
-	virtual Common::String name() const;
+		virtual Common::String name() const;
 
-	/** Public Cloud API comes down there. */
+		/** Public Cloud API comes down there. */
 
-	/** Returns ListDirectoryStatus struct with list of files. */
-	virtual Networking::Request *listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
+		/** Returns ListDirectoryStatus struct with list of files. */
+		virtual Networking::Request *listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
 
-	/** Returns UploadStatus struct with info about uploaded file. */
-	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback);
+		/** Returns UploadStatus struct with info about uploaded file. */
+		virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback);
 
-	/** Returns pointer to Networking::NetworkReadStream. */
-	virtual Networking::Request *streamFileById(Common::String path, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback);
+		/** Returns pointer to Networking::NetworkReadStream. */
+		virtual Networking::Request *streamFileById(Common::String path, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback);
 
-	/** Calls the callback when finished. */
-	virtual Networking::Request *createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback);
+		/** Calls the callback when finished. */
+		virtual Networking::Request *createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback);
 
-	/** Returns the StorageInfo struct. */
-	virtual Networking::Request *info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback);
+		/** Returns the StorageInfo struct. */
+		virtual Networking::Request *info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback);
 
-	/** Returns storage's saves directory path with the trailing slash. */
-	virtual Common::String savesDirectoryPath();
+		/** Returns storage's saves directory path with the trailing slash. */
+		virtual Common::String savesDirectoryPath();
 
-	/**
+		/**
 	 * Load token and user id from configs and return OneDriveStorage for those.
 	 * @return pointer to the newly created OneDriveStorage or 0 if some problem occured.
 	 */
-	static OneDriveStorage *loadFromConfig(Common::String keyPrefix);
+		static OneDriveStorage *loadFromConfig(Common::String keyPrefix);
 
-	/**
+		/**
 	 * Gets new access_token. If <code> passed is "", refresh_token is used.
 	 * Use "" in order to refresh token and pass a callback, so you could
 	 * continue your work when new token is available.
 	 */
-	void getAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback = nullptr, Common::String code = "");
+		void getAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback = nullptr, Common::String code = "");
 
-	Common::String accessToken() const { return _token; }
-};
+		Common::String accessToken() const { return _token; }
+	};
 
 } // End of namespace OneDrive
 } // End of namespace Cloud

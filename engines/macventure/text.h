@@ -31,8 +31,8 @@
 #ifndef MACVENTURE_TEXT_H
 #define MACVENTURE_TEXT_H
 
-#include "macventure/macventure.h"
 #include "macventure/hufflists.h"
+#include "macventure/macventure.h"
 
 namespace MacVenture {
 typedef uint32 ObjID;
@@ -64,7 +64,6 @@ private:
 	bool _isOld;
 
 	Common::String _decoded;
-
 };
 
 } // End of namespace MacVenture

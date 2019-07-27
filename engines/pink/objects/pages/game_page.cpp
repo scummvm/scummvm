@@ -20,19 +20,23 @@
  *
  */
 
+#include "pink/objects/pages/game_page.h"
 #include "pink/cursor_mgr.h"
-#include "pink/pink.h"
 #include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/handlers/handler.h"
-#include "pink/objects/pages/game_page.h"
 #include "pink/objects/sequences/sequencer.h"
 #include "pink/objects/walk/walk_mgr.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
 GamePage::GamePage()
-	: _module(nullptr), _cursorMgr(nullptr), _walkMgr(nullptr),
-	_sequencer(nullptr), _isLoaded(false), _memFile(nullptr)  {}
+  : _module(nullptr)
+  , _cursorMgr(nullptr)
+  , _walkMgr(nullptr)
+  , _sequencer(nullptr)
+  , _isLoaded(false)
+  , _memFile(nullptr) {}
 
 GamePage::~GamePage() {
 	clear();
@@ -194,9 +198,12 @@ void GamePage::clear() {
 
 	_handlers.clear();
 
-	delete _cursorMgr; _cursorMgr = nullptr;
-	delete _sequencer; _sequencer = nullptr;
-	delete _walkMgr; _walkMgr = nullptr;
+	delete _cursorMgr;
+	_cursorMgr = nullptr;
+	delete _sequencer;
+	_sequencer = nullptr;
+	delete _walkMgr;
+	_walkMgr = nullptr;
 }
 
 } // End of namespace Pink

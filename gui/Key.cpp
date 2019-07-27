@@ -24,16 +24,22 @@
 
 namespace GUI {
 
-Key::Key() :
-_ascii(0), _keycode(0), _flags(0) {
+Key::Key()
+  : _ascii(0)
+  , _keycode(0)
+  , _flags(0) {
 }
 
-Key::Key(int ascii) :
-_ascii(ascii), _keycode(ascii), _flags(0) {
+Key::Key(int ascii)
+  : _ascii(ascii)
+  , _keycode(ascii)
+  , _flags(0) {
 }
 
-Key::Key(int ascii, int keycode, int flags) :
-_ascii(ascii), _keycode(keycode), _flags(flags) {
+Key::Key(int ascii, int keycode, int flags)
+  : _ascii(ascii)
+  , _keycode(keycode)
+  , _flags(flags) {
 }
 
 void Key::setKey(int ascii) {

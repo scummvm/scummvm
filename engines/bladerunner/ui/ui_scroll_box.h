@@ -45,55 +45,55 @@ class UIScrollBox : public UIComponent {
 
 	struct Line {
 		Common::String text;
-		int    lineData;
-		int    flags;
+		int lineData;
+		int flags;
 		uint32 checkboxFrame;
 	};
 
-	int                   _selectedLineState;
-	int                   _scrollUpButtonState;
-	int                   _scrollDownButtonState;
-	int                   _scrollAreaUpState;
-	int                   _scrollAreaDownState;
-	int                   _scrollBarState;
+	int _selectedLineState;
+	int _scrollUpButtonState;
+	int _scrollDownButtonState;
+	int _scrollAreaUpState;
+	int _scrollAreaDownState;
+	int _scrollBarState;
 
-	int                   _hoveredLine;
-	int                   _selectedLineIndex;
+	int _hoveredLine;
+	int _selectedLineIndex;
 
-	bool                  _scrollUpButtonHover;
-	bool                  _scrollDownButtonHover;
-	bool                  _scrollAreaUpHover;
-	bool                  _scrollAreaDownHover;
-	bool                  _scrollBarHover;
+	bool _scrollUpButtonHover;
+	bool _scrollDownButtonHover;
+	bool _scrollAreaUpHover;
+	bool _scrollAreaDownHover;
+	bool _scrollBarHover;
 
-	bool                  _mouseButton;
+	bool _mouseButton;
 
-	UIScrollBoxCallback  *_lineSelectedCallback;
-	void                 *_callbackData;
+	UIScrollBoxCallback *_lineSelectedCallback;
+	void *_callbackData;
 
-	bool                  _isVisible;
-	int                   _style;
-	bool                  _center;
+	bool _isVisible;
+	int _style;
+	bool _center;
 
-	uint32                _timeLastScroll;
-	uint32                _timeLastCheckbox;
-	uint32                _timeLastHighlight;
+	uint32 _timeLastScroll;
+	uint32 _timeLastCheckbox;
+	uint32 _timeLastHighlight;
 
-	int                   _highlightFrame;
+	int _highlightFrame;
 
-	Common::Rect          _rect;
-	Common::Rect          _scrollBarRect;
+	Common::Rect _rect;
+	Common::Rect _scrollBarRect;
 
-	int                   _lineCount;
-	int                   _maxLineCount;
+	int _lineCount;
+	int _maxLineCount;
 	Common::Array<Line *> _lines;
-	int                   _maxLinesVisible;
-	int                   _firstLineVisible;
+	int _maxLinesVisible;
+	int _firstLineVisible;
 
-	bool                  _mouseOver;
+	bool _mouseOver;
 
 public:
-	UIScrollBox(BladeRunnerEngine *vm, UIScrollBoxCallback *lineSelectedCallback, void *callbackData, int maxLineCount, int style, bool center, Common::Rect rect,Common::Rect scrollBarRect);
+	UIScrollBox(BladeRunnerEngine *vm, UIScrollBoxCallback *lineSelectedCallback, void *callbackData, int maxLineCount, int style, bool center, Common::Rect rect, Common::Rect scrollBarRect);
 	~UIScrollBox();
 
 	void draw(Graphics::Surface &surface) override;

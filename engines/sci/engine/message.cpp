@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "sci/engine/message.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/seg_manager.h"
@@ -55,11 +54,14 @@ public:
 
 	virtual bool findRecord(const MessageTuple &tuple, MessageRecord &record) = 0;
 
-	virtual ~MessageReader() { }
+	virtual ~MessageReader() {}
 
 protected:
 	MessageReader(const SciSpan<const byte> &data, uint headerSize, uint recordSize)
-		: _data(data), _headerSize(headerSize), _recordSize(recordSize), _messageCount(0) { }
+	  : _data(data)
+	  , _headerSize(headerSize)
+	  , _recordSize(recordSize)
+	  , _messageCount(0) {}
 
 	const SciSpan<const byte> _data;
 	const uint _headerSize;
@@ -69,7 +71,8 @@ protected:
 
 class MessageReaderV2 : public MessageReader {
 public:
-	MessageReaderV2(const SciSpan<const byte> &data) : MessageReader(data, 6, 4) { }
+	MessageReaderV2(const SciSpan<const byte> &data)
+	  : MessageReader(data, 6, 4) {}
 
 	bool findRecord(const MessageTuple &tuple, MessageRecord &record) {
 		SciSpan<const byte> recordPtr = _data.subspan(_headerSize);
@@ -97,13 +100,14 @@ public:
 
 class MessageReaderV3 : public MessageReader {
 public:
-	MessageReaderV3(const SciSpan<const byte> &data) : MessageReader(data, 8, 10) { }
+	MessageReaderV3(const SciSpan<const byte> &data)
+	  : MessageReader(data, 8, 10) {}
 
 	bool findRecord(const MessageTuple &tuple, MessageRecord &record) {
 		SciSpan<const byte> recordPtr = _data.subspan(_headerSize);
 		for (uint i = 0; i < _messageCount; i++) {
 			if ((recordPtr[0] == tuple.noun) && (recordPtr[1] == tuple.verb)
-				&& (recordPtr[2] == tuple.cond) && (recordPtr[3] == tuple.seq)) {
+			    && (recordPtr[2] == tuple.cond) && (recordPtr[3] == tuple.seq)) {
 				record.tuple = tuple;
 				record.refTuple = MessageTuple();
 				record.talker = recordPtr[4];
@@ -125,13 +129,14 @@ public:
 
 class MessageReaderV4 : public MessageReader {
 public:
-	MessageReaderV4(const SciSpan<const byte> &data) : MessageReader(data, 10, 11) { }
+	MessageReaderV4(const SciSpan<const byte> &data)
+	  : MessageReader(data, 10, 11) {}
 
 	bool findRecord(const MessageTuple &tuple, MessageRecord &record) {
 		SciSpan<const byte> recordPtr = _data.subspan(_headerSize);
 		for (uint i = 0; i < _messageCount; i++) {
 			if ((recordPtr[0] == tuple.noun) && (recordPtr[1] == tuple.verb)
-				&& (recordPtr[2] == tuple.cond) && (recordPtr[3] == tuple.seq)) {
+			    && (recordPtr[2] == tuple.cond) && (recordPtr[3] == tuple.seq)) {
 				record.tuple = tuple;
 				record.refTuple = MessageTuple(recordPtr[7], recordPtr[8], recordPtr[9]);
 				record.talker = recordPtr[4];
@@ -156,13 +161,14 @@ public:
 // the talker and the string...
 class MessageReaderV4_MacSCI32 : public MessageReader {
 public:
-	MessageReaderV4_MacSCI32(const SciSpan<const byte> &data) : MessageReader(data, 10, 12) { }
+	MessageReaderV4_MacSCI32(const SciSpan<const byte> &data)
+	  : MessageReader(data, 10, 12) {}
 
 	bool findRecord(const MessageTuple &tuple, MessageRecord &record) {
 		SciSpan<const byte> recordPtr = _data.subspan(_headerSize);
 		for (uint i = 0; i < _messageCount; i++) {
 			if ((recordPtr[0] == tuple.noun) && (recordPtr[1] == tuple.verb)
-				&& (recordPtr[2] == tuple.cond) && (recordPtr[3] == tuple.seq)) {
+			    && (recordPtr[2] == tuple.cond) && (recordPtr[3] == tuple.seq)) {
 				record.tuple = tuple;
 				record.refTuple = MessageTuple(recordPtr[8], recordPtr[9], recordPtr[10]);
 				record.talker = recordPtr[4];
@@ -213,7 +219,7 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 	case 5: // v5 seems to be compatible with v4
 #endif
 #ifdef ENABLE_SCI32_MAC
-		// SCI32 Mac is different than SCI32 DOS/Win here
+	  // SCI32 Mac is different than SCI32 DOS/Win here
 		if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2_1_EARLY)
 			reader = new MessageReaderV4_MacSCI32(*res);
 		else

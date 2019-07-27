@@ -28,8 +28,18 @@ namespace Neverhood {
 // Sprite
 
 Sprite::Sprite(NeverhoodEngine *vm, int objectPriority)
-	: Entity(vm, objectPriority), _x(0), _y(0), _spriteUpdateCb(NULL), _filterXCb(NULL), _filterYCb(NULL),
-	_dataResource(vm), _doDeltaX(false), _doDeltaY(false), _needRefresh(false), _flags(0), _surface(NULL) {
+  : Entity(vm, objectPriority)
+  , _x(0)
+  , _y(0)
+  , _spriteUpdateCb(NULL)
+  , _filterXCb(NULL)
+  , _filterYCb(NULL)
+  , _dataResource(vm)
+  , _doDeltaX(false)
+  , _doDeltaY(false)
+  , _needRefresh(false)
+  , _flags(0)
+  , _surface(NULL) {
 
 	_drawOffset.x = 0;
 	_drawOffset.y = 0;
@@ -110,23 +120,24 @@ void Sprite::setClipRect(int16 x1, int16 y1, int16 x2, int16 y2) {
 	clipRect.y2 = y2;
 }
 
-void Sprite::setClipRect(NRect& clipRect) {
+void Sprite::setClipRect(NRect &clipRect) {
 	_surface->getClipRect() = clipRect;
 }
 
-void Sprite::setClipRect(NDrawRect& drawRect) {
+void Sprite::setClipRect(NDrawRect &drawRect) {
 	setClipRect(drawRect.x, drawRect.y, drawRect.x2(), drawRect.y2());
 }
 
 // StaticSprite
 
 StaticSprite::StaticSprite(NeverhoodEngine *vm, int objectPriority)
-	: Sprite(vm, objectPriority), _spriteResource(vm) {
-
+  : Sprite(vm, objectPriority)
+  , _spriteResource(vm) {
 }
 
 StaticSprite::StaticSprite(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority, int16 x, int16 y)
-	: Sprite(vm, 0), _spriteResource(vm) {
+  : Sprite(vm, 0)
+  , _spriteResource(vm) {
 
 	_spriteResource.load(fileHash, true);
 	createSurface(surfacePriority, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
@@ -145,7 +156,7 @@ void StaticSprite::loadSprite(uint32 fileHash, uint flags, int surfacePriority, 
 		_drawOffset.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	else if (flags & kSLFCenteredDrawOffset)
 		_drawOffset.set(-(_spriteResource.getDimensions().width / 2), -(_spriteResource.getDimensions().height / 2),
-			_spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+		                _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	if (flags & kSLFDefPosition) {
 		_x = _spriteResource.getPosition().x;
 		_y = _spriteResource.getPosition().y;
@@ -182,19 +193,20 @@ void StaticSprite::updatePosition() {
 		_surface->drawSpriteResourceEx(_spriteResource, _doDeltaX, _doDeltaY, _drawOffset.width, _drawOffset.height);
 		_needRefresh = false;
 	}
-
 }
 
 // AnimatedSprite
 
 AnimatedSprite::AnimatedSprite(NeverhoodEngine *vm, int objectPriority)
-	: Sprite(vm, objectPriority), _animResource(vm) {
+  : Sprite(vm, objectPriority)
+  , _animResource(vm) {
 
 	init();
 }
 
 AnimatedSprite::AnimatedSprite(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority, int16 x, int16 y)
-	: Sprite(vm, 1100), _animResource(vm) {
+  : Sprite(vm, 1100)
+  , _animResource(vm) {
 
 	init();
 	SetUpdateHandler(&AnimatedSprite::update);
@@ -348,9 +360,7 @@ void AnimatedSprite::updateAnim() {
 			_currStickFrameIndex = MAX<int16>(0, _animResource.getFrameIndex(_newStickFrameHash));
 			_newStickFrameHash = 0;
 		}
-
 	}
-
 }
 
 void AnimatedSprite::updatePosition() {
@@ -374,7 +384,6 @@ void AnimatedSprite::updatePosition() {
 		_surface->drawAnimResource(_animResource, _currFrameIndex, _doDeltaX, _doDeltaY, _drawOffset.width, _drawOffset.height);
 		_needRefresh = false;
 	}
-
 }
 
 void AnimatedSprite::updateFrameIndex() {

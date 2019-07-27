@@ -27,11 +27,11 @@
 #include "hopkins/graphics.h"
 #include "hopkins/hopkins.h"
 
-#include "common/system.h"
-#include "graphics/palette.h"
 #include "common/file.h"
 #include "common/rect.h"
+#include "common/system.h"
 #include "engines/util.h"
+#include "graphics/palette.h"
 
 namespace Hopkins {
 
@@ -385,7 +385,7 @@ void AnimationManager::loadAnim(const Common::String &animName) {
 		error("Invalid animation File: %s", filename.c_str());
 
 	const char *files[6] = { &filename1[0], &filename2[0], &filename3[0], &filename4[0],
-			&filename5[0], &filename6[0] };
+		                       &filename5[0], &filename6[0] };
 
 	for (int idx = 0; idx <= 5; ++idx) {
 		if (files[idx][0]) {
@@ -448,7 +448,7 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 	Bank[idx]._data = fileDataPtr;
 
 	int objectDataIdx = 0;
-	for(objectDataIdx = 0; objectDataIdx <= 249; objectDataIdx++) {
+	for (objectDataIdx = 0; objectDataIdx <= 249; objectDataIdx++) {
 		int width = _vm->_objectsMan->getWidth(fileDataPtr, objectDataIdx);
 		int height = _vm->_objectsMan->getHeight(fileDataPtr, objectDataIdx);
 		if (!width && !height)

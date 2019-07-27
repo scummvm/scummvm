@@ -37,21 +37,21 @@
  */
 
 #ifdef MT32EMU_API_TYPE
-#if MT32EMU_API_TYPE == 0 && (MT32EMU_EXPORTS_TYPE == 1 || MT32EMU_EXPORTS_TYPE == 2)
-#error Incompatible setting MT32EMU_API_TYPE=0
-#elif MT32EMU_API_TYPE == 1 && (MT32EMU_EXPORTS_TYPE == 0 || MT32EMU_EXPORTS_TYPE == 2)
-#error Incompatible setting MT32EMU_API_TYPE=1
-#elif MT32EMU_API_TYPE == 2 && (MT32EMU_EXPORTS_TYPE == 0)
-#error Incompatible setting MT32EMU_API_TYPE=2
-#elif MT32EMU_API_TYPE == 3 && (MT32EMU_EXPORTS_TYPE == 0 || MT32EMU_EXPORTS_TYPE == 2)
-#error Incompatible setting MT32EMU_API_TYPE=3
-#endif
+#	if MT32EMU_API_TYPE == 0 && (MT32EMU_EXPORTS_TYPE == 1 || MT32EMU_EXPORTS_TYPE == 2)
+#		error Incompatible setting MT32EMU_API_TYPE=0
+#	elif MT32EMU_API_TYPE == 1 && (MT32EMU_EXPORTS_TYPE == 0 || MT32EMU_EXPORTS_TYPE == 2)
+#		error Incompatible setting MT32EMU_API_TYPE=1
+#	elif MT32EMU_API_TYPE == 2 && (MT32EMU_EXPORTS_TYPE == 0)
+#		error Incompatible setting MT32EMU_API_TYPE=2
+#	elif MT32EMU_API_TYPE == 3 && (MT32EMU_EXPORTS_TYPE == 0 || MT32EMU_EXPORTS_TYPE == 2)
+#		error Incompatible setting MT32EMU_API_TYPE=3
+#	endif
 #else /* #ifdef MT32EMU_API_TYPE */
-#if 0 < MT32EMU_EXPORTS_TYPE && MT32EMU_EXPORTS_TYPE < 3
-#define MT32EMU_API_TYPE MT32EMU_EXPORTS_TYPE
-#else
-#define MT32EMU_API_TYPE 0
-#endif
+#	if 0 < MT32EMU_EXPORTS_TYPE && MT32EMU_EXPORTS_TYPE < 3
+#		define MT32EMU_API_TYPE MT32EMU_EXPORTS_TYPE
+#	else
+#		define MT32EMU_API_TYPE 0
+#	endif
 #endif /* #ifdef MT32EMU_API_TYPE */
 
 /* MT32EMU_SHARED should be defined when building shared library, especially for Windows platforms. */
@@ -63,21 +63,21 @@
 
 #if !defined(__cplusplus) || MT32EMU_API_TYPE == 1
 
-#include "c_interface/c_interface.h"
+#	include "c_interface/c_interface.h"
 
 #elif MT32EMU_API_TYPE == 2 || MT32EMU_API_TYPE == 3
 
-#include "c_interface/cpp_interface.h"
+#	include "c_interface/cpp_interface.h"
 
 #else /* #if !defined(__cplusplus) || MT32EMU_API_TYPE == 1 */
 
-#include "Types.h"
-#include "File.h"
-#include "FileStream.h"
-#include "ROMInfo.h"
-#include "Synth.h"
-#include "MidiStreamParser.h"
-#include "SampleRateConverter.h"
+#	include "File.h"
+#	include "FileStream.h"
+#	include "MidiStreamParser.h"
+#	include "ROMInfo.h"
+#	include "SampleRateConverter.h"
+#	include "Synth.h"
+#	include "Types.h"
 
 #endif /* #if !defined(__cplusplus) || MT32EMU_API_TYPE == 1 */
 

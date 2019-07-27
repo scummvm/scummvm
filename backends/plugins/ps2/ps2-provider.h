@@ -22,16 +22,16 @@
 
 #if defined(DYNAMIC_MODULES) && defined(__PLAYSTATION2__)
 
-#ifndef BACKENDS_PLUGINS_PS2_PROVIDER_H
-#define BACKENDS_PLUGINS_PS2_PROVIDER_H
+#	ifndef BACKENDS_PLUGINS_PS2_PROVIDER_H
+#		define BACKENDS_PLUGINS_PS2_PROVIDER_H
 
-#include "backends/plugins/elf/elf-provider.h"
+#		include "backends/plugins/elf/elf-provider.h"
 
 class PS2PluginProvider : public ELFPluginProvider {
 public:
 	Plugin *createPlugin(const Common::FSNode &node) const;
 };
 
-#endif // BACKENDS_PLUGINS_PS2_PROVIDER_H
+#	endif // BACKENDS_PLUGINS_PS2_PROVIDER_H
 
 #endif // defined(DYNAMIC_MODULES) && defined(__PLAYSTATION2__)

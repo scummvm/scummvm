@@ -27,12 +27,10 @@
 #include "common/substream.h"
 #include "common/textconsole.h"
 #include "image/iff.h"
-#include "parallaction/parser.h"
 #include "parallaction/parallaction.h"
-
+#include "parallaction/parser.h"
 
 namespace Parallaction {
-
 
 //  HACK: Several archives ('de', 'en', 'fr' and 'disk0') in the multi-lingual
 //  Amiga version of Nippon Safes, and one archive ('fr') in the Amiga Demo of
@@ -44,31 +42,31 @@ namespace Parallaction {
 //  When an archive is opened in Amiga multi-lingual version, the header is
 //  checked again NDOS to detect when a smaller archive is used.
 //
-#define SIZEOF_SMALL_ARCHIVE		12778
+#define SIZEOF_SMALL_ARCHIVE 12778
 
-#define ARCHIVE_FILENAMES_OFS		0x16
+#define ARCHIVE_FILENAMES_OFS 0x16
 
-#define NORMAL_ARCHIVE_FILES_NUM	384
-#define SMALL_ARCHIVE_FILES_NUM		180
+#define NORMAL_ARCHIVE_FILES_NUM 384
+#define SMALL_ARCHIVE_FILES_NUM 180
 
-#define NORMAL_ARCHIVE_SIZES_OFS	0x3016
-#define SMALL_ARCHIVE_SIZES_OFS		0x1696
+#define NORMAL_ARCHIVE_SIZES_OFS 0x3016
+#define SMALL_ARCHIVE_SIZES_OFS 0x1696
 
-#define NORMAL_ARCHIVE_DATA_OFS		0x4000
-#define SMALL_ARCHIVE_DATA_OFS		0x1966
+#define NORMAL_ARCHIVE_DATA_OFS 0x4000
+#define SMALL_ARCHIVE_DATA_OFS 0x1966
 
-#define MAX_ARCHIVE_ENTRIES			384
+#define MAX_ARCHIVE_ENTRIES 384
 
 class NSArchive : public Common::Archive {
 
-	Common::SeekableReadStream	*_stream;
+	Common::SeekableReadStream *_stream;
 
-	char			_archiveDir[MAX_ARCHIVE_ENTRIES][32];
-	uint32			_archiveLengths[MAX_ARCHIVE_ENTRIES];
-	uint32			_archiveOffsets[MAX_ARCHIVE_ENTRIES];
-	uint32			_numFiles;
+	char _archiveDir[MAX_ARCHIVE_ENTRIES][32];
+	uint32 _archiveLengths[MAX_ARCHIVE_ENTRIES];
+	uint32 _archiveOffsets[MAX_ARCHIVE_ENTRIES];
+	uint32 _numFiles;
 
-	uint32			lookup(const char *name) const;
+	uint32 lookup(const char *name) const;
 
 public:
 	NSArchive(Common::SeekableReadStream *stream, Common::Platform platform, uint32 features);
@@ -80,8 +78,8 @@ public:
 	const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
 };
 
-
-NSArchive::NSArchive(Common::SeekableReadStream *stream, Common::Platform platform, uint32 features) : _stream(stream) {
+NSArchive::NSArchive(Common::SeekableReadStream *stream, Common::Platform platform, uint32 features)
+  : _stream(stream) {
 	if (!_stream) {
 		error("NSArchive: invalid stream passed to constructor");
 	}
@@ -91,14 +89,14 @@ NSArchive::NSArchive(Common::SeekableReadStream *stream, Common::Platform platfo
 		if (features & GF_DEMO) {
 			isSmallArchive = stream->size() == SIZEOF_SMALL_ARCHIVE;
 		} else if (features & GF_LANG_MULT) {
-			isSmallArchive = (stream->readUint32BE() != MKTAG('N','D','O','S'));
+			isSmallArchive = (stream->readUint32BE() != MKTAG('N', 'D', 'O', 'S'));
 		}
 	}
 
 	_numFiles = (isSmallArchive) ? SMALL_ARCHIVE_FILES_NUM : NORMAL_ARCHIVE_FILES_NUM;
 
 	_stream->seek(ARCHIVE_FILENAMES_OFS);
-	_stream->read(_archiveDir, _numFiles*32);
+	_stream->read(_archiveDir, _numFiles * 32);
 
 	_stream->seek((isSmallArchive) ? SMALL_ARCHIVE_SIZES_OFS : NORMAL_ARCHIVE_SIZES_OFS);
 
@@ -108,7 +106,6 @@ NSArchive::NSArchive(Common::SeekableReadStream *stream, Common::Platform platfo
 		_archiveLengths[i] = _stream->readUint32BE();
 		dataOffset += _archiveLengths[i];
 	}
-
 }
 
 NSArchive::~NSArchive() {
@@ -117,8 +114,9 @@ NSArchive::~NSArchive() {
 
 uint32 NSArchive::lookup(const char *name) const {
 	uint32 i = 0;
-	for ( ; i < _numFiles; i++) {
-		if (!scumm_stricmp(_archiveDir[i], name)) break;
+	for (; i < _numFiles; i++) {
+		if (!scumm_stricmp(_archiveDir[i], name))
+			break;
 	}
 	return i;
 }
@@ -130,7 +128,8 @@ Common::SeekableReadStream *NSArchive::createReadStreamForMember(const Common::S
 		return 0;
 
 	uint32 index = lookup(name.c_str());
-	if (index == _numFiles) return 0;
+	if (index == _numFiles)
+		return 0;
 
 	debugC(9, kDebugDisk, "NSArchive::createReadStreamForMember: '%s' found in slot %i", name.c_str(), index);
 
@@ -163,13 +162,13 @@ const Common::ArchiveMemberPtr NSArchive::getMember(const Common::String &name) 
 	return Common::SharedPtr<Common::GenericArchiveMember>(new Common::GenericArchiveMember(item, this));
 }
 
+#define HIGHEST_PRIORITY 9
+#define NORMAL_ARCHIVE_PRIORITY 5
+#define LOW_ARCHIVE_PRIORITY 2
+#define LOWEST_ARCHIVE_PRIORITY 1
 
-#define HIGHEST_PRIORITY		9
-#define NORMAL_ARCHIVE_PRIORITY		5
-#define LOW_ARCHIVE_PRIORITY		2
-#define LOWEST_ARCHIVE_PRIORITY		1
-
-Disk_ns::Disk_ns(Parallaction *vm) : _vm(vm) {
+Disk_ns::Disk_ns(Parallaction *vm)
+  : _vm(vm) {
 	Common::FSDirectory *baseDir = new Common::FSDirectory(ConfMan.get("path"));
 	_sset.add("basedir", baseDir, HIGHEST_PRIORITY);
 }
@@ -189,8 +188,7 @@ Common::SeekableReadStream *Disk_ns::openFile(const char *filename) {
 	return stream;
 }
 
-
-void Disk_ns::addArchive(const Common::String& name, int priority) {
+void Disk_ns::addArchive(const Common::String &name, int priority) {
 	Common::SeekableReadStream *stream = _sset.createReadStreamForMember(name);
 	if (!stream)
 		error("Disk_ns::addArchive() couldn't find archive '%s'", name.c_str());
@@ -201,7 +199,7 @@ void Disk_ns::addArchive(const Common::String& name, int priority) {
 	_sset.add(name, arc, priority);
 }
 
-Common::String Disk_ns::selectArchive(const Common::String& name) {
+Common::String Disk_ns::selectArchive(const Common::String &name) {
 	Common::String oldName = _resArchiveName;
 
 	if (_sset.hasArchive(name)) {
@@ -237,9 +235,9 @@ void Disk_ns::setLanguage(uint16 language) {
 
 #pragma mark -
 
-
-DosDisk_ns::DosDisk_ns(Parallaction* vm) : Disk_ns(vm), _gfx(NULL) {
-
+DosDisk_ns::DosDisk_ns(Parallaction *vm)
+  : Disk_ns(vm)
+  , _gfx(NULL) {
 }
 
 DosDisk_ns::~DosDisk_ns() {
@@ -250,7 +248,7 @@ void DosDisk_ns::init() {
 	addArchive("disk1", LOW_ARCHIVE_PRIORITY);
 }
 
-Common::SeekableReadStream *DosDisk_ns::tryOpenFile(const char* name) {
+Common::SeekableReadStream *DosDisk_ns::tryOpenFile(const char *name) {
 	debugC(3, kDebugDisk, "DosDisk_ns::tryOpenFile(%s)", name);
 
 	Common::SeekableReadStream *stream = _sset.createReadStreamForMember(name);
@@ -262,7 +260,7 @@ Common::SeekableReadStream *DosDisk_ns::tryOpenFile(const char* name) {
 	return _sset.createReadStreamForMember(path);
 }
 
-Script* Disk_ns::loadLocation(const char *name) {
+Script *Disk_ns::loadLocation(const char *name) {
 	char path[PATH_LEN];
 	const char *charName = _vm->_char.getBaseName();
 
@@ -284,7 +282,7 @@ Script* Disk_ns::loadLocation(const char *name) {
 	return new Script(stream, true);
 }
 
-Script* Disk_ns::loadScript(const char* name) {
+Script *Disk_ns::loadScript(const char *name) {
 	debugC(1, kDebugDisk, "Disk_ns::loadScript '%s'", name);
 	char path[PATH_LEN];
 	sprintf(path, "%s.script", name);
@@ -321,14 +319,13 @@ void DosDisk_ns::decodeCnv(byte *data, uint16 numFrames, uint16 width, uint16 he
 	}
 }
 
-Cnv* DosDisk_ns::loadCnv(const char *filename) {
+Cnv *DosDisk_ns::loadCnv(const char *filename) {
 	Common::SeekableReadStream *stream = openFile(filename);
 	assert(stream);
 	return makeCnv(stream);
 }
 
-
-GfxObj* DosDisk_ns::loadTalk(const char *name) {
+GfxObj *DosDisk_ns::loadTalk(const char *name) {
 
 	const char *ext = strstr(name, ".talk");
 	if (ext) {
@@ -346,8 +343,7 @@ GfxObj* DosDisk_ns::loadTalk(const char *name) {
 	return new GfxObj(0, loadCnv(v20), name);
 }
 
-
-GfxObj* DosDisk_ns::loadHead(const char* name) {
+GfxObj *DosDisk_ns::loadHead(const char *name) {
 	char path[PATH_LEN];
 	sprintf(path, "%shead", name);
 	path[8] = '\0';
@@ -355,33 +351,29 @@ GfxObj* DosDisk_ns::loadHead(const char* name) {
 	return new GfxObj(0, loadCnv(path));
 }
 
-
-Frames* DosDisk_ns::loadPointer(const char *name) {
+Frames *DosDisk_ns::loadPointer(const char *name) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.cnv", name);
 	return loadCnv(path);
 }
 
-
-Font* DosDisk_ns::loadFont(const char* name) {
+Font *DosDisk_ns::loadFont(const char *name) {
 	char path[PATH_LEN];
 	sprintf(path, "%scnv.cnv", name);
 	return createFont(name, loadCnv(path));
 }
 
-
-GfxObj* DosDisk_ns::loadObjects(const char *name, uint8 part) {
+GfxObj *DosDisk_ns::loadObjects(const char *name, uint8 part) {
 	char path[PATH_LEN];
 	sprintf(path, "%sobj.cnv", name);
 	return new GfxObj(0, loadCnv(path), name);
 }
 
-
-GfxObj* DosDisk_ns::loadStatic(const char* name) {
+GfxObj *DosDisk_ns::loadStatic(const char *name) {
 	return new GfxObj(0, loadCnv(name), name);
 }
 
-Frames* DosDisk_ns::loadFrames(const char* name) {
+Frames *DosDisk_ns::loadFrames(const char *name) {
 	return loadCnv(name);
 }
 
@@ -424,8 +416,8 @@ void DosDisk_ns::unpackBackground(Common::ReadStream *stream, byte *screen, byte
 		// then unpacks the bits to the destination buffers
 		for (uint32 i = 0; i < storageLen; i++, j++) {
 			byte b = storage[i];
-			path[j/8] |= ((b & 0x80) >> 7) << (j & 7);
-			mask[j/4] |= ((b & 0x60) >> 5) << ((j & 3) << 1);
+			path[j / 8] |= ((b & 0x80) >> 7) << (j & 7);
+			mask[j / 4] |= ((b & 0x60) >> 5) << ((j & 3) << 1);
 			screen[j] = b & 0x1F;
 		}
 	}
@@ -450,11 +442,11 @@ void DosDisk_ns::createMaskAndPathBuffers(BackgroundInfo &info) {
 	info._path->bigEndian = true;
 }
 
-void DosDisk_ns::loadBackground(BackgroundInfo& info, const char *filename) {
+void DosDisk_ns::loadBackground(BackgroundInfo &info, const char *filename) {
 	Common::SeekableReadStream *stream = openFile(filename);
 
-	info.width = _vm->_screenWidth;	// 320
-	info.height = _vm->_screenHeight;	// 200
+	info.width = _vm->_screenWidth; // 320
+	info.height = _vm->_screenHeight; // 200
 
 	// read palette
 	byte tmp[3];
@@ -487,14 +479,13 @@ void DosDisk_ns::loadBackground(BackgroundInfo& info, const char *filename) {
 	delete stream;
 }
 
-
-void DosDisk_ns::loadSlide(BackgroundInfo& info, const char *filename) {
+void DosDisk_ns::loadSlide(BackgroundInfo &info, const char *filename) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.slide", filename);
 	loadBackground(info, path);
 }
 
-void DosDisk_ns::loadScenery(BackgroundInfo& info, const char *name, const char *mask, const char* path) {
+void DosDisk_ns::loadScenery(BackgroundInfo &info, const char *name, const char *mask, const char *path) {
 	char filename[PATH_LEN];
 	sprintf(filename, "%s.dyn", name);
 
@@ -521,30 +512,23 @@ void DosDisk_ns::loadScenery(BackgroundInfo& info, const char *name, const char 
 	delete stream;
 }
 
-Table* DosDisk_ns::loadTable(const char* name) {
+Table *DosDisk_ns::loadTable(const char *name) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.tab", name);
 	return createTableFromStream(100, openFile(path));
 }
 
-Common::SeekableReadStream* DosDisk_ns::loadMusic(const char* name) {
+Common::SeekableReadStream *DosDisk_ns::loadMusic(const char *name) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.mid", name);
 	return openFile(path);
 }
 
-
-Common::SeekableReadStream* DosDisk_ns::loadSound(const char* name) {
+Common::SeekableReadStream *DosDisk_ns::loadSound(const char *name) {
 	return 0;
 }
 
-
-
-
-
-
 #pragma mark -
-
 
 /* the decoder presented here is taken from pplib by Stuart Caie. The
  * following statement comes from the original source.
@@ -553,30 +537,35 @@ Common::SeekableReadStream* DosDisk_ns::loadSound(const char* name) {
  * placed in the Public Domain on 2003-09-18 by Stuart Caie.
  */
 
-#define PP_READ_BITS(nbits, var) do {				\
-	bit_cnt = (nbits); (var) = 0;				\
-	while (bits_left < bit_cnt) {				\
-		if (buf < src) return 0;			\
-		bit_buffer |= *--buf << bits_left;		\
-		bits_left += 8;					\
-	}							\
-	bits_left -= bit_cnt;					\
-	while (bit_cnt--) {					\
-		(var) = ((var) << 1) | (bit_buffer & 1);	\
-		bit_buffer >>= 1;				\
-	}							\
-} while (0)
+#define PP_READ_BITS(nbits, var)               \
+	do {                                         \
+		bit_cnt = (nbits);                         \
+		(var) = 0;                                 \
+		while (bits_left < bit_cnt) {              \
+			if (buf < src)                           \
+				return 0;                              \
+			bit_buffer |= *--buf << bits_left;       \
+			bits_left += 8;                          \
+		}                                          \
+		bits_left -= bit_cnt;                      \
+		while (bit_cnt--) {                        \
+			(var) = ((var) << 1) | (bit_buffer & 1); \
+			bit_buffer >>= 1;                        \
+		}                                          \
+	} while (0)
 
-#define PP_BYTE_OUT(byte) do {					\
-	if (out <= dest) return 0;				\
-	*--out = (byte); written++;				\
-} while (0)
-
+#define PP_BYTE_OUT(byte) \
+	do {                    \
+		if (out <= dest)      \
+			return 0;           \
+		*--out = (byte);      \
+		written++;            \
+	} while (0)
 
 class PowerPackerStream : public Common::SeekableReadStream {
 
 	SeekableReadStream *_stream;
-	bool				_dispose;
+	bool _dispose;
 
 private:
 	int ppDecrunchBuffer(byte *src, byte *dest, uint32 src_len, uint32 dest_len) {
@@ -584,10 +573,12 @@ private:
 		byte *buf, *out, *dest_end, *off_lens, bits_left = 0, bit_cnt;
 		uint32 bit_buffer = 0, x, todo, offbits, offset, written = 0;
 
-		if (!src || !dest) return 0;
+		if (!src || !dest)
+			return 0;
 
 		/* set up input and output pointers */
-		off_lens = src; src = &src[4];
+		off_lens = src;
+		src = &src[4];
 		buf = &src[src_len];
 
 		out = dest_end = &dest[dest_len];
@@ -599,29 +590,44 @@ private:
 		while (written < dest_len) {
 			PP_READ_BITS(1, x);
 			if (x == 0) {
-				  /* bit==0: literal, then match. bit==1: just match */
-				  todo = 1; do { PP_READ_BITS(2, x); todo += x; } while (x == 3);
-				  while (todo--) { PP_READ_BITS(8, x); PP_BYTE_OUT(x); }
+				/* bit==0: literal, then match. bit==1: just match */
+				todo = 1;
+				do {
+					PP_READ_BITS(2, x);
+					todo += x;
+				} while (x == 3);
+				while (todo--) {
+					PP_READ_BITS(8, x);
+					PP_BYTE_OUT(x);
+				}
 
-				  /* should we end decoding on a literal, break out of the main loop */
-				  if (written == dest_len) break;
+				/* should we end decoding on a literal, break out of the main loop */
+				if (written == dest_len)
+					break;
 			}
 
 			/* match: read 2 bits for initial offset bitlength / match length */
 			PP_READ_BITS(2, x);
 			offbits = off_lens[x];
-			todo = x+2;
+			todo = x + 2;
 			if (x == 3) {
 				PP_READ_BITS(1, x);
-				if (x == 0) offbits = 7;
+				if (x == 0)
+					offbits = 7;
 				PP_READ_BITS(offbits, offset);
-				do { PP_READ_BITS(3, x); todo += x; } while (x == 7);
-			}
-			else {
+				do {
+					PP_READ_BITS(3, x);
+					todo += x;
+				} while (x == 7);
+			} else {
 				PP_READ_BITS(offbits, offset);
 			}
-			if (&out[offset] >= dest_end) return 0; /* match_overflow */
-			while (todo--) { x = out[offset]; PP_BYTE_OUT(x); }
+			if (&out[offset] >= dest_end)
+				return 0; /* match_overflow */
+			while (todo--) {
+				x = out[offset];
+				PP_BYTE_OUT(x);
+			}
 		}
 
 		/* all output bytes written without error */
@@ -650,7 +656,6 @@ private:
 #endif
 		default:
 			eff = 0;
-
 		}
 
 		return eff;
@@ -677,7 +682,7 @@ public:
 		stream.seek(4, SEEK_SET);
 		stream.read(src, crlen);
 
-		ppDecrunchBuffer(src, dest, crlen-8, decrlen);
+		ppDecrunchBuffer(src, dest, crlen - 8, decrlen);
 
 		free(src);
 		_stream = new Common::MemoryReadStream(dest, decrlen, DisposeAfterUse::YES);
@@ -685,7 +690,8 @@ public:
 	}
 
 	~PowerPackerStream() {
-		if (_dispose) delete _stream;
+		if (_dispose)
+			delete _stream;
 	}
 
 	int32 size() const {
@@ -709,15 +715,11 @@ public:
 	}
 };
 
-
-
-
-AmigaDisk_ns::AmigaDisk_ns(Parallaction *vm) : Disk_ns(vm) {
+AmigaDisk_ns::AmigaDisk_ns(Parallaction *vm)
+  : Disk_ns(vm) {
 }
 
-
 AmigaDisk_ns::~AmigaDisk_ns() {
-
 }
 
 void AmigaDisk_ns::init() {
@@ -730,7 +732,7 @@ void AmigaDisk_ns::init() {
 	}
 }
 
-#define NUM_PLANES		5
+#define NUM_PLANES 5
 
 /*
 	unpackFrame transforms images from 5-bitplanes format to
@@ -742,10 +744,10 @@ void AmigaDisk_ns::unpackFrame(byte *dst, byte *src, uint16 planeSize) {
 
 	for (uint32 j = 0; j < planeSize; j++) {
 		s0 = src[j];
-		s1 = src[j+planeSize];
-		s2 = src[j+planeSize*2];
-		s3 = src[j+planeSize*3];
-		s4 = src[j+planeSize*4];
+		s1 = src[j + planeSize];
+		s2 = src[j + planeSize * 2];
+		s3 = src[j + planeSize * 3];
+		s4 = src[j + planeSize * 4];
 
 		for (uint32 k = 0; k < 8; k++) {
 			mask = 1 << (7 - k);
@@ -756,9 +758,7 @@ void AmigaDisk_ns::unpackFrame(byte *dst, byte *src, uint16 planeSize) {
 			t4 = (s4 & mask ? 1 << 4 : 0);
 			*dst++ = t0 | t1 | t2 | t3 | t4;
 		}
-
 	}
-
 }
 
 /*
@@ -792,11 +792,8 @@ void AmigaDisk_ns::patchFrame(byte *dst, byte *dlta, uint16 bytesPerPlane, uint1
 				ofs += wordsPerLine;
 				size--;
 			}
-
 		}
-
 	}
-
 }
 
 // FIXME: no mask is loaded
@@ -808,7 +805,7 @@ void AmigaDisk_ns::unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 b
 	uint16 planeSize = bytesPerPlane * height;
 
 	for (uint32 i = 0; i < numFrames; i++) {
-		if (READ_BE_UINT32(src) == MKTAG('D','L','T','A')) {
+		if (READ_BE_UINT32(src) == MKTAG('D', 'L', 'T', 'A')) {
 
 			uint size = READ_BE_UINT32(src + 4);
 
@@ -830,9 +827,7 @@ void AmigaDisk_ns::unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 b
 	}
 
 	free(tempBuffer);
-
 }
-
 
 void AmigaDisk_ns::decodeCnv(byte *data, uint16 numFrames, uint16 width, uint16 height, Common::SeekableReadStream *stream) {
 	byte bytesPerPlane = width / 8;
@@ -846,19 +841,19 @@ void AmigaDisk_ns::decodeCnv(byte *data, uint16 numFrames, uint16 width, uint16 
 
 #undef NUM_PLANES
 
-Frames* AmigaDisk_ns::loadPointer(const char* name) {
+Frames *AmigaDisk_ns::loadPointer(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadPointer");
 	Common::SeekableReadStream *stream = openFile(name);
 	return makeCnv(stream);
 }
 
-GfxObj* AmigaDisk_ns::loadStatic(const char* name) {
+GfxObj *AmigaDisk_ns::loadStatic(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadStatic '%s'", name);
 	Common::SeekableReadStream *s = openFile(name);
 	return new GfxObj(0, makeCnv(s), name);
 }
 
-Common::SeekableReadStream *AmigaDisk_ns::tryOpenFile(const char* name) {
+Common::SeekableReadStream *AmigaDisk_ns::tryOpenFile(const char *name) {
 	debugC(3, kDebugDisk, "AmigaDisk_ns::tryOpenFile(%s)", name);
 
 	PowerPackerStream *ret;
@@ -886,14 +881,13 @@ Common::SeekableReadStream *AmigaDisk_ns::tryOpenFile(const char* name) {
 	return 0;
 }
 
-
 /*
 	FIXME: mask values are not computed correctly for level 1 and 2
 
 	NOTE: this routine is only able to build masks for Nippon Safes, since mask widths are hardcoded
 	into the main loop.
 */
-void AmigaDisk_ns::buildMask(byte* buf) {
+void AmigaDisk_ns::buildMask(byte *buf) {
 
 	byte mask1[16] = { 0, 0x80, 0x20, 0xA0, 8, 0x88, 0x28, 0xA8, 2, 0x82, 0x22, 0xA2, 0xA, 0x8A, 0x2A, 0xAA };
 	byte mask0[16] = { 0, 0x40, 0x10, 0x50, 4, 0x44, 0x14, 0x54, 1, 0x41, 0x11, 0x51, 0x5, 0x45, 0x15, 0x55 };
@@ -904,18 +898,16 @@ void AmigaDisk_ns::buildMask(byte* buf) {
 	for (int32 i = 0; i < _vm->_screenHeight; i++) {
 
 		memcpy(plane0, buf, 40);
-		memcpy(plane1, buf+40, 40);
+		memcpy(plane1, buf + 40, 40);
 
 		for (uint32 j = 0; j < 40; j++) {
 			*buf++ = mask0[(plane0[j] & 0xF0) >> 4] | mask1[(plane1[j] & 0xF0) >> 4];
 			*buf++ = mask0[plane0[j] & 0xF] | mask1[plane1[j] & 0xF];
 		}
-
 	}
 }
 
-
-void AmigaDisk_ns::loadBackground(BackgroundInfo& info, const char *name) {
+void AmigaDisk_ns::loadBackground(BackgroundInfo &info, const char *name) {
 	Common::SeekableReadStream *s = openFile(name);
 	Image::IFFDecoder decoder;
 	decoder.loadStream(*s);
@@ -947,7 +939,7 @@ void AmigaDisk_ns::loadBackground(BackgroundInfo& info, const char *name) {
 	}
 }
 
-void AmigaDisk_ns::loadMask_internal(BackgroundInfo& info, const char *name) {
+void AmigaDisk_ns::loadMask_internal(BackgroundInfo &info, const char *name) {
 	debugC(5, kDebugDisk, "AmigaDisk_ns::loadMask_internal(%s)", name);
 
 	char path[PATH_LEN];
@@ -956,7 +948,7 @@ void AmigaDisk_ns::loadMask_internal(BackgroundInfo& info, const char *name) {
 	Common::SeekableReadStream *s = tryOpenFile(path);
 	if (!s) {
 		debugC(5, kDebugDisk, "Mask file not found");
-		return;	// no errors if missing mask files: not every location has one
+		return; // no errors if missing mask files: not every location has one
 	}
 
 	Image::IFFDecoder decoder;
@@ -967,9 +959,9 @@ void AmigaDisk_ns::loadMask_internal(BackgroundInfo& info, const char *name) {
 	const byte *p = decoder.getPalette();
 	byte r, g, b;
 	for (uint i = 0; i < 4; i++) {
-		r = p[i*3];
-		g = p[i*3+1];
-		b = p[i*3+2];
+		r = p[i * 3];
+		g = p[i * 3 + 1];
+		b = p[i * 3 + 2];
 		info.layers[i] = (((r << 4) & 0xF00) | (g & 0xF0) | (b >> 4)) & 0xFF;
 	}
 
@@ -980,14 +972,14 @@ void AmigaDisk_ns::loadMask_internal(BackgroundInfo& info, const char *name) {
 	info._mask->bigEndian = true;
 }
 
-void AmigaDisk_ns::loadPath_internal(BackgroundInfo& info, const char *name) {
+void AmigaDisk_ns::loadPath_internal(BackgroundInfo &info, const char *name) {
 
 	char path[PATH_LEN];
 	sprintf(path, "%s.path", name);
 
 	Common::SeekableReadStream *s = tryOpenFile(path);
 	if (!s) {
-		return;	// no errors if missing path files: not every location has one
+		return; // no errors if missing path files: not every location has one
 	}
 
 	Image::IFFDecoder decoder;
@@ -1002,7 +994,7 @@ void AmigaDisk_ns::loadPath_internal(BackgroundInfo& info, const char *name) {
 	info._path->bigEndian = true;
 }
 
-void AmigaDisk_ns::loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path) {
+void AmigaDisk_ns::loadScenery(BackgroundInfo &info, const char *background, const char *mask, const char *path) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadScenery '%s', '%s'", background, mask);
 
 	char filename[PATH_LEN];
@@ -1021,13 +1013,13 @@ void AmigaDisk_ns::loadScenery(BackgroundInfo& info, const char* background, con
 	return;
 }
 
-void AmigaDisk_ns::loadSlide(BackgroundInfo& info, const char *name) {
+void AmigaDisk_ns::loadSlide(BackgroundInfo &info, const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadSlide '%s'", name);
 	loadBackground(info, name);
 	return;
 }
 
-Frames* AmigaDisk_ns::loadFrames(const char* name) {
+Frames *AmigaDisk_ns::loadFrames(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadFrames '%s'", name);
 
 	char path[PATH_LEN];
@@ -1040,7 +1032,7 @@ Frames* AmigaDisk_ns::loadFrames(const char* name) {
 	return makeCnv(s);
 }
 
-GfxObj* AmigaDisk_ns::loadHead(const char* name) {
+GfxObj *AmigaDisk_ns::loadHead(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadHead '%s'", name);
 	char path[PATH_LEN];
 	sprintf(path, "%s.head", name);
@@ -1048,8 +1040,7 @@ GfxObj* AmigaDisk_ns::loadHead(const char* name) {
 	return new GfxObj(0, makeCnv(s), name);
 }
 
-
-GfxObj* AmigaDisk_ns::loadObjects(const char *name, uint8 part) {
+GfxObj *AmigaDisk_ns::loadObjects(const char *name, uint8 part) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadObjects");
 
 	char path[PATH_LEN];
@@ -1062,8 +1053,7 @@ GfxObj* AmigaDisk_ns::loadObjects(const char *name, uint8 part) {
 	return new GfxObj(0, makeCnv(s), name);
 }
 
-
-GfxObj* AmigaDisk_ns::loadTalk(const char *name) {
+GfxObj *AmigaDisk_ns::loadTalk(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadTalk '%s'", name);
 
 	char path[PATH_LEN];
@@ -1079,7 +1069,7 @@ GfxObj* AmigaDisk_ns::loadTalk(const char *name) {
 	return new GfxObj(0, makeCnv(s), name);
 }
 
-Table* AmigaDisk_ns::loadTable(const char* name) {
+Table *AmigaDisk_ns::loadTable(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadTable '%s'", name);
 
 	char path[PATH_LEN];
@@ -1095,7 +1085,7 @@ Table* AmigaDisk_ns::loadTable(const char* name) {
 	return createTableFromStream(100, openFile(path));
 }
 
-Font* AmigaDisk_ns::loadFont(const char* name) {
+Font *AmigaDisk_ns::loadFont(const char *name) {
 	debugC(1, kDebugDisk, "AmigaFullDisk::loadFont '%s'", name);
 
 	char path[PATH_LEN];
@@ -1108,12 +1098,11 @@ Font* AmigaDisk_ns::loadFont(const char* name) {
 	return font;
 }
 
-
-Common::SeekableReadStream* AmigaDisk_ns::loadMusic(const char* name) {
+Common::SeekableReadStream *AmigaDisk_ns::loadMusic(const char *name) {
 	return tryOpenFile(name);
 }
 
-Common::SeekableReadStream* AmigaDisk_ns::loadSound(const char* name) {
+Common::SeekableReadStream *AmigaDisk_ns::loadSound(const char *name) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.snd", name);
 

@@ -22,13 +22,13 @@
 
 #ifdef ENABLE_LOL
 
-#include "kyra/engine/lol.h"
-#include "kyra/graphics/screen_lol.h"
-#include "kyra/resource/resource.h"
-#include "kyra/engine/timer.h"
+#	include "kyra/engine/lol.h"
+#	include "kyra/engine/timer.h"
+#	include "kyra/graphics/screen_lol.h"
+#	include "kyra/resource/resource.h"
 
-#include "common/endian.h"
-#include "common/system.h"
+#	include "common/endian.h"
+#	include "common/system.h"
 
 namespace Kyra {
 
@@ -158,7 +158,7 @@ void LoLEngine::loadLevelWallData(int index, bool mapShapes) {
 		d += 2;
 
 		if (mapShapes) {
-			int16 sh = (int16) READ_LE_UINT16(d);
+			int16 sh = (int16)READ_LE_UINT16(d);
 			if (sh > 0)
 				_wllShapeMap[c] = assignLevelDecorationShapes(sh);
 			else
@@ -713,7 +713,7 @@ void LoLEngine::calcCoordinates(uint16 &x, uint16 &y, int block, uint16 xOffs, u
 }
 
 void LoLEngine::calcCoordinatesForSingleCharacter(int charNum, uint16 &x, uint16 &y) {
-	static const uint8 xOffsets[] = {  0x80, 0x00, 0x00, 0x40, 0xC0, 0x00, 0x40, 0x80, 0xC0 };
+	static const uint8 xOffsets[] = { 0x80, 0x00, 0x00, 0x40, 0xC0, 0x00, 0x40, 0x80, 0xC0 };
 	int c = countActiveCharacters();
 	if (!c)
 		return;
@@ -1231,7 +1231,6 @@ void LoLEngine::drawScene(int pageNum) {
 	_sceneUpdateRequired = false;
 }
 
-
 void LoLEngine::setWallType(int block, int wall, int val) {
 	if (wall == -1) {
 		for (int i = 0; i < 4; i++)
@@ -1503,8 +1502,7 @@ void LoLEngine::drawDecorations(int index) {
 					if (ix < 0) {
 						x = _dscShapeX[s] + xOffs + ((_levelDecorationProperties[l].shapeX[shpIx] * scaleW) >> 8);
 						if (ix == _dscShapeIndex[s]) {
-							x = _dscShapeX[s] - ((_levelDecorationProperties[l].shapeX[shpIx] * scaleW) >> 8) -
-							     _screen->getShapeScaledWidth(shapeData, scaleW) - xOffs;
+							x = _dscShapeX[s] - ((_levelDecorationProperties[l].shapeX[shpIx] * scaleW) >> 8) - _screen->getShapeScaledWidth(shapeData, scaleW) - xOffs;
 						}
 						flags = 0x105;
 					} else {

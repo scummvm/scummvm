@@ -30,10 +30,10 @@
 #define WINTERMUTE_BASE_FILE_MANAGER_H
 
 #include "common/archive.h"
-#include "common/str.h"
-#include "common/fs.h"
 #include "common/file.h"
+#include "common/fs.h"
 #include "common/language.h"
+#include "common/str.h"
 
 namespace Wintermute {
 class BaseFileManager {
@@ -52,6 +52,7 @@ public:
 	// Used only for detection
 	bool registerPackages(const Common::FSList &fslist);
 	static BaseFileManager *getEngineInstance();
+
 private:
 	typedef enum {
 		PATH_PACKAGE,

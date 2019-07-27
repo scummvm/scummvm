@@ -54,6 +54,7 @@ public:
 	bool add(uint16 v, uint16 fracX, uint16 fracY);
 	void save(Common::WriteStream *fp);
 	void draw();
+
 private:
 	ParallaxLayers _parallaxLayers;
 

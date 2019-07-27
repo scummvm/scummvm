@@ -37,8 +37,10 @@ class TTword;
 
 class TTsentenceConcept : public TTconceptNode {
 public:
-	TTsentenceConcept() : TTconceptNode() {}
-	TTsentenceConcept(const TTsentenceConcept &src) : TTconceptNode(src) {}
+	TTsentenceConcept()
+	  : TTconceptNode() {}
+	TTsentenceConcept(const TTsentenceConcept &src)
+	  : TTconceptNode(src) {}
 	virtual ~TTsentenceConcept();
 
 	/**
@@ -55,11 +57,13 @@ private:
 	TTsentenceNode *_nodesP;
 	int _field5C;
 	int _status;
+
 private:
 	/**
 	 * Copy sentence data from a given source
 	 */
 	void copyFrom(const TTsentence &src);
+
 public:
 	TTsentenceConcept _sentenceConcept;
 	TTstring _initialLine;
@@ -69,9 +73,10 @@ public:
 	TTroomScript *_roomScript;
 	TTnpcScript *_npcScript;
 	int _category;
+
 public:
 	TTsentence(int inputCtr, const TTstring &line, CScriptHandler *owner,
-		TTroomScript *roomScript, TTnpcScript *npcScript);
+	           TTroomScript *roomScript, TTnpcScript *npcScript);
 	TTsentence(const TTsentence *src);
 	~TTsentence();
 
@@ -110,10 +115,10 @@ public:
 	int storeVocabHit(TTword *word);
 
 	bool fn1(const CString &str, int wordId1, const CString &str1, const CString &str2,
-		const CString &str3, int wordId2, int val1, int val2, const TTconceptNode *node) const;
+	         const CString &str3, int wordId2, int val1, int val2, const TTconceptNode *node) const;
 	bool fn3(const CString &str1, const CString &str2, const CString &str3,
-		const CString &str4, const CString &str5, const CString &str6,
-		int val1, int val2, const TTconceptNode *node) const;
+	         const CString &str4, const CString &str5, const CString &str6,
+	         int val1, int val2, const TTconceptNode *node) const;
 	bool fn2(int slotIndex, const TTstring &str, const TTconceptNode *node = nullptr) const;
 	bool fn4(int mode, int wordId, const TTconceptNode *node = nullptr) const;
 

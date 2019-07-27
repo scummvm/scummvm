@@ -24,14 +24,13 @@
 #include "bbvs/dialogs.h"
 #include "bbvs/gamemodule.h"
 #include "bbvs/graphics.h"
-#include "bbvs/sound.h"
-#include "bbvs/spritemodule.h"
-#include "bbvs/minigames/minigame.h"
 #include "bbvs/minigames/bbairguitar.h"
 #include "bbvs/minigames/bbant.h"
 #include "bbvs/minigames/bbloogie.h"
 #include "bbvs/minigames/bbtennis.h"
 #include "bbvs/minigames/minigame.h"
+#include "bbvs/sound.h"
+#include "bbvs/spritemodule.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/aiff.h"
@@ -52,21 +51,11 @@
 namespace Bbvs {
 
 static const BBPoint kInventorySlotPositions[] = {
-	{ 66, 191}, { 94, 217}, {192, 217}, {159, 213}, {228,  49},
-	{137,  49}, {168, 165}, {101,  55}, {177,  46}, {165, 165},
-	{202,  74}, {141,  53}, {164, 164}, {165,  78}, {167,  71},
-	{142, 188}, {171, 100}, {250, 216}, {200,  72}, {200,  72},
-	{101,  82}, { 67,  93}, {133,  87}, {123, 220}, {199, 129},
-	{188, 192}, {102,  82}, {188, 192}, { 99, 170}, { 68, 126},
-	{159, 130}, {102, 116}, {207, 157}, {130, 141}, {236, 100},
-	{102, 197}, {141, 186}, {200, 102}, {221, 220}, {222, 188},
-	{135,  93}, {134, 145}, { 96, 224}, {128, 224}, {160, 224},
-	{192, 224}, {224, 224}, {240, 224}, {256, 224}, {  0,   0}
+	{ 66, 191 }, { 94, 217 }, { 192, 217 }, { 159, 213 }, { 228, 49 }, { 137, 49 }, { 168, 165 }, { 101, 55 }, { 177, 46 }, { 165, 165 }, { 202, 74 }, { 141, 53 }, { 164, 164 }, { 165, 78 }, { 167, 71 }, { 142, 188 }, { 171, 100 }, { 250, 216 }, { 200, 72 }, { 200, 72 }, { 101, 82 }, { 67, 93 }, { 133, 87 }, { 123, 220 }, { 199, 129 }, { 188, 192 }, { 102, 82 }, { 188, 192 }, { 99, 170 }, { 68, 126 }, { 159, 130 }, { 102, 116 }, { 207, 157 }, { 130, 141 }, { 236, 100 }, { 102, 197 }, { 141, 186 }, { 200, 102 }, { 221, 220 }, { 222, 188 }, { 135, 93 }, { 134, 145 }, { 96, 224 }, { 128, 224 }, { 160, 224 }, { 192, 224 }, { 224, 224 }, { 240, 224 }, { 256, 224 }, { 0, 0 }
 };
 
 static const BBRect kVerbRects[6] = {
-	{-32,  -2, 19, 27}, {-33, -33, 19, 27}, { 12,  -2, 19, 27},
-	{ 13, -33, 19, 27}, {-10,   8, 19, 27}, {-11, -49, 19, 27}
+	{ -32, -2, 19, 27 }, { -33, -33, 19, 27 }, { 12, -2, 19, 27 }, { 13, -33, 19, 27 }, { -10, 8, 19, 27 }, { -11, -49, 19, 27 }
 };
 
 static const byte kTurnTbl[] = {
@@ -78,8 +67,9 @@ bool WalkArea::contains(const Common::Point &pt) const {
 	return Common::Rect(x, y, x + width, y + height).contains(pt);
 }
 
-BbvsEngine::BbvsEngine(OSystem *syst, const ADGameDescription *gd) :
-	Engine(syst), _gameDescription(gd) {
+BbvsEngine::BbvsEngine(OSystem *syst, const ADGameDescription *gd)
+  : Engine(syst)
+  , _gameDescription(gd) {
 
 	_random = new Common::RandomSource("bbvs");
 	_currActionCommandIndex = -1;
@@ -120,7 +110,7 @@ BbvsEngine::BbvsEngine(OSystem *syst, const ADGameDescription *gd) :
 	Engine::syncSoundSettings();
 
 #ifdef USE_TRANSLATION
-	_oldGUILanguage	= TransMan.getCurrentLanguage();
+	_oldGUILanguage = TransMan.getCurrentLanguage();
 
 	if (gd->flags & GF_GUILANGSWITCH)
 		TransMan.setLanguage(getLanguageLocale(gd->language));
@@ -134,7 +124,6 @@ BbvsEngine::~BbvsEngine() {
 #endif
 
 	delete _random;
-
 }
 
 void BbvsEngine::newGame() {
@@ -193,8 +182,7 @@ Common::Error BbvsEngine::run() {
 			updateGame();
 		else if (_currSceneNum == kMainMenu)
 			runMainMenu();
-		else if (_currSceneNum == kCredits &&
-			(_mouseButtons & kAnyButtonClicked)) {
+		else if (_currSceneNum == kCredits && (_mouseButtons & kAnyButtonClicked)) {
 			_mouseButtons &= ~kAnyButtonClicked;
 			_newSceneNum = kMainMenu;
 		}
@@ -217,10 +205,7 @@ Common::Error BbvsEngine::run() {
 }
 
 bool BbvsEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
 void BbvsEngine::updateEvents() {
@@ -236,23 +221,23 @@ void BbvsEngine::updateEvents() {
 			_keyCode = Common::KEYCODE_INVALID;
 			break;
 		case Common::EVENT_MOUSEMOVE:
-  			_mouseX = event.mouse.x;
-  			_mouseY = event.mouse.y;
-  			break;
+			_mouseX = event.mouse.x;
+			_mouseY = event.mouse.y;
+			break;
 		case Common::EVENT_LBUTTONDOWN:
 			_mouseButtons |= kLeftButtonClicked;
 			_mouseButtons |= kLeftButtonDown;
-  			break;
+			break;
 		case Common::EVENT_LBUTTONUP:
 			_mouseButtons &= ~kLeftButtonDown;
-  			break;
+			break;
 		case Common::EVENT_RBUTTONDOWN:
 			_mouseButtons |= kRightButtonClicked;
 			_mouseButtons |= kRightButtonDown;
-  			break;
+			break;
 		case Common::EVENT_RBUTTONUP:
 			_mouseButtons &= ~kRightButtonDown;
-  			break;
+			break;
 		case Common::EVENT_QUIT:
 			quitGame();
 			break;
@@ -327,7 +312,6 @@ void BbvsEngine::updateGame() {
 	}
 
 	_system->delayMillis(10);
-
 }
 
 void BbvsEngine::updateBackgroundSounds() {
@@ -459,7 +443,6 @@ bool BbvsEngine::update(int mouseX, int mouseY, uint mouseButtons, Common::KeyCo
 		updateDialog(mouseButtons & kLeftButtonClicked);
 		updateCommon();
 		break;
-
 	}
 
 	return true;
@@ -496,8 +479,8 @@ void BbvsEngine::buildDrawList(DrawList &drawList) {
 			Animation *anim = sceneObject->anim;
 			if (anim) {
 				drawList.add(anim->frameSpriteIndices[sceneObject->frameIndex],
-					(sceneObject->x / 65536) - _cameraPos.x, (sceneObject->y / 65536) - _cameraPos.y,
-					sceneObject->y / 65536);
+				             (sceneObject->x / 65536) - _cameraPos.x, (sceneObject->y / 65536) - _cameraPos.y,
+				             sceneObject->y / 65536);
 			}
 		}
 
@@ -511,16 +494,16 @@ void BbvsEngine::buildDrawList(DrawList &drawList) {
 				if (i != 4) {
 					int index = (i == _activeItemIndex) ? 17 : 16;
 					drawList.add(_gameModule->getGuiSpriteIndex(index), _verbPos.x + kVerbRects[i].x - _cameraPos.x,
-						_verbPos.y + kVerbRects[i].y - _cameraPos.y, 499);
+					             _verbPos.y + kVerbRects[i].y - _cameraPos.y, 499);
 				}
 			}
 			// Verbs background
 			drawList.add(_gameModule->getGuiSpriteIndex(13), _verbPos.x - _cameraPos.x,
-				_verbPos.y - _cameraPos.y, 500);
+			             _verbPos.y - _cameraPos.y, 500);
 			// Selected inventory item
 			if (_currInventoryItem >= 0) {
 				drawList.add(_gameModule->getInventoryItemSpriteIndex(2 * _currInventoryItem), _verbPos.x - _cameraPos.x,
-					_verbPos.y - _cameraPos.y + 27, 500);
+				             _verbPos.y - _cameraPos.y + 27, 500);
 			}
 		}
 
@@ -535,13 +518,11 @@ void BbvsEngine::buildDrawList(DrawList &drawList) {
 					iconX += 32;
 				}
 		}
-
 	}
 
 	// Mouse cursor
 	if (_mouseCursorSpriteIndex > 0 && _mousePos.x >= 0)
 		drawList.add(_mouseCursorSpriteIndex, _mousePos.x - _cameraPos.x, _mousePos.y - _cameraPos.y, 1000);
-
 }
 
 void BbvsEngine::updateVerbs() {
@@ -580,7 +561,6 @@ void BbvsEngine::updateVerbs() {
 		_mouseCursorSpriteIndex = _gameModule->getGuiSpriteIndex(8);
 		break;
 	}
-
 }
 
 void BbvsEngine::updateDialog(bool clicked) {
@@ -632,7 +612,6 @@ void BbvsEngine::updateDialog(bool clicked) {
 			}
 		}
 	}
-
 }
 
 void BbvsEngine::updateInventory(bool clicked) {
@@ -640,7 +619,8 @@ void BbvsEngine::updateInventory(bool clicked) {
 	Common::Rect kInvButtonRects[3] = {
 		Common::Rect(97, 13, 97 + 20, 13 + 26),
 		Common::Rect(135, 15, 135 + 46, 15 + 25),
-		Common::Rect(202, 13, 202 + 20, 13 + 26)};
+		Common::Rect(202, 13, 202 + 20, 13 + 26)
+	};
 
 	if (_mousePos.x < 0) {
 		_mouseCursorSpriteIndex = 0;
@@ -722,8 +702,7 @@ void BbvsEngine::updateInventory(bool clicked) {
 				_currVerbNum = kVerbInvItem;
 				_mouseCursorSpriteIndex = _gameModule->getInventoryItemSpriteIndex(2 * _activeItemIndex);
 			} else if (_currVerbNum == kVerbInvItem) {
-				if ((_currInventoryItem == 22 && _activeItemIndex == 39) ||
-					(_currInventoryItem == 39 && _activeItemIndex == 22)) {
+				if ((_currInventoryItem == 22 && _activeItemIndex == 39) || (_currInventoryItem == 39 && _activeItemIndex == 22)) {
 					_inventoryItemStatus[22] = 0;
 					_inventoryItemStatus[39] = 0;
 					_inventoryItemStatus[40] = 1;
@@ -731,8 +710,7 @@ void BbvsEngine::updateInventory(bool clicked) {
 					_currInventoryItem = 40;
 					_mouseCursorSpriteIndex = _gameModule->getInventoryItemSpriteIndex(40);
 				}
-				if ((_currInventoryItem == 25 && _activeItemIndex == 26) ||
-					(_currInventoryItem == 26 && _activeItemIndex == 25)) {
+				if ((_currInventoryItem == 25 && _activeItemIndex == 26) || (_currInventoryItem == 26 && _activeItemIndex == 25)) {
 					_inventoryItemStatus[26] = 0;
 					_inventoryItemStatus[25] = 0;
 					_inventoryItemStatus[27] = 1;
@@ -755,7 +733,6 @@ void BbvsEngine::updateInventory(bool clicked) {
 		else
 			_mouseCursorSpriteIndex = _gameModule->getGuiSpriteIndex(2 * _currVerbNum);
 	}
-
 }
 
 void BbvsEngine::updateScene(bool clicked) {
@@ -893,7 +870,6 @@ void BbvsEngine::updateScene(bool clicked) {
 				if (_walkMousePos.y >= 240)
 					break;
 			}
-
 		}
 
 		if (_beavisObject->anim) {
@@ -920,9 +896,7 @@ void BbvsEngine::updateScene(bool clicked) {
 			_walkMousePos.x = -1;
 			_walkMousePos.y = -1;
 		}
-
 	}
-
 }
 
 bool BbvsEngine::performActionCommand(ActionCommand *actionCommand) {
@@ -934,41 +908,38 @@ bool BbvsEngine::performActionCommand(ActionCommand *actionCommand) {
 		stopSpeech();
 		return false;
 
-	case kActionCmdWalkObject:
-		{
-			SceneObject *sceneObject = &_sceneObjects[actionCommand->sceneObjectIndex];
-			debug(5, "[%s] walks from (%d, %d) to (%d, %d)", sceneObject->sceneObjectDef->name,
-				sceneObject->x / 65536, sceneObject->y / 65536, actionCommand->walkDest.x, actionCommand->walkDest.y);
-			walkObject(sceneObject, actionCommand->walkDest, actionCommand->param);
-		}
+	case kActionCmdWalkObject: {
+		SceneObject *sceneObject = &_sceneObjects[actionCommand->sceneObjectIndex];
+		debug(5, "[%s] walks from (%d, %d) to (%d, %d)", sceneObject->sceneObjectDef->name,
+		      sceneObject->x / 65536, sceneObject->y / 65536, actionCommand->walkDest.x, actionCommand->walkDest.y);
+		walkObject(sceneObject, actionCommand->walkDest, actionCommand->param);
+	}
 		return true;
 
-	case kActionCmdMoveObject:
-		{
-			SceneObject *sceneObject = &_sceneObjects[actionCommand->sceneObjectIndex];
-			sceneObject->x = actionCommand->walkDest.x * 65536;
-			sceneObject->y = actionCommand->walkDest.y * 65536;
-			sceneObject->xIncr = 0;
-			sceneObject->yIncr = 0;
-			sceneObject->walkCount = 0;
-		}
+	case kActionCmdMoveObject: {
+		SceneObject *sceneObject = &_sceneObjects[actionCommand->sceneObjectIndex];
+		sceneObject->x = actionCommand->walkDest.x * 65536;
+		sceneObject->y = actionCommand->walkDest.y * 65536;
+		sceneObject->xIncr = 0;
+		sceneObject->yIncr = 0;
+		sceneObject->walkCount = 0;
+	}
 		return true;
 
-	case kActionCmdAnimObject:
-		{
-			SceneObject *sceneObject = &_sceneObjects[actionCommand->sceneObjectIndex];
-			if (actionCommand->param == 0) {
-				sceneObject->anim = 0;
-				sceneObject->animIndex = 0;
-				sceneObject->frameTicks = 0;
-				sceneObject->frameIndex = 0;
-			} else if (actionCommand->timeStamp != 0 || sceneObject->anim != _gameModule->getAnimation(actionCommand->param)) {
-				sceneObject->animIndex = actionCommand->param;
-				sceneObject->anim = _gameModule->getAnimation(actionCommand->param);
-				sceneObject->frameIndex = sceneObject->anim->frameCount - 1;
-				sceneObject->frameTicks = 1;
-			}
+	case kActionCmdAnimObject: {
+		SceneObject *sceneObject = &_sceneObjects[actionCommand->sceneObjectIndex];
+		if (actionCommand->param == 0) {
+			sceneObject->anim = 0;
+			sceneObject->animIndex = 0;
+			sceneObject->frameTicks = 0;
+			sceneObject->frameIndex = 0;
+		} else if (actionCommand->timeStamp != 0 || sceneObject->anim != _gameModule->getAnimation(actionCommand->param)) {
+			sceneObject->animIndex = actionCommand->param;
+			sceneObject->anim = _gameModule->getAnimation(actionCommand->param);
+			sceneObject->frameIndex = sceneObject->anim->frameCount - 1;
+			sceneObject->frameTicks = 1;
 		}
+	}
 		return true;
 
 	case kActionCmdSetCameraPos:
@@ -985,29 +956,25 @@ bool BbvsEngine::performActionCommand(ActionCommand *actionCommand) {
 		playSound(actionCommand->param);
 		return true;
 
-	case kActionCmdStartBackgroundSound:
-		{
-			const uint soundIndex = _gameModule->getSceneSoundIndex(actionCommand->param);
-			if (!_backgroundSoundsActive[soundIndex]) {
-				_backgroundSoundsActive[soundIndex] = 1;
-				playSound(actionCommand->param, true);
-			}
+	case kActionCmdStartBackgroundSound: {
+		const uint soundIndex = _gameModule->getSceneSoundIndex(actionCommand->param);
+		if (!_backgroundSoundsActive[soundIndex]) {
+			_backgroundSoundsActive[soundIndex] = 1;
+			playSound(actionCommand->param, true);
 		}
+	}
 		return true;
 
-	case kActionCmdStopBackgroundSound:
-		{
-			const uint soundIndex = _gameModule->getSceneSoundIndex(actionCommand->param);
-			_backgroundSoundsActive[soundIndex] = 0;
-			stopSound(actionCommand->param);
-		}
+	case kActionCmdStopBackgroundSound: {
+		const uint soundIndex = _gameModule->getSceneSoundIndex(actionCommand->param);
+		_backgroundSoundsActive[soundIndex] = 0;
+		stopSound(actionCommand->param);
+	}
 		return true;
 
 	default:
 		return true;
-
 	}
-
 }
 
 bool BbvsEngine::processCurrAction() {
@@ -1046,7 +1013,6 @@ bool BbvsEngine::processCurrAction() {
 				_currCameraNum = actionCommand->param;
 				_newCameraPos = _gameModule->getCameraInit(actionCommand->param)->cameraPos;
 			}
-
 		}
 
 		// Delete entries for SceneObjects without anim
@@ -1062,7 +1028,6 @@ bool BbvsEngine::processCurrAction() {
 			_sceneObjects[_sceneObjectActions[i].sceneObjectIndex].walkCount = 0;
 			_sceneObjects[_sceneObjectActions[i].sceneObjectIndex].turnCount = 0;
 		}
-
 	}
 
 	actionsFinished = true;
@@ -1122,8 +1087,7 @@ void BbvsEngine::updateCommon() {
 
 			ActionCommand *actionCommand = &_currAction->actionCommands[_currActionCommandIndex];
 
-			while (actionCommand->timeStamp == _currActionCommandTimeStamp &&
-				_currActionCommandIndex < (int)_currAction->actionCommands.size()) {
+			while (actionCommand->timeStamp == _currActionCommandTimeStamp && _currActionCommandIndex < (int)_currAction->actionCommands.size()) {
 				if (!performActionCommand(actionCommand)) {
 					_gameState = kGSScene;
 					evalActionResults(_currAction->results);
@@ -1153,9 +1117,7 @@ void BbvsEngine::updateCommon() {
 					}
 				}
 			}
-
 		}
-
 	}
 
 	for (int i = 0; i < _gameModule->getSceneObjectDefsCount(); ++i) {
@@ -1210,7 +1172,6 @@ void BbvsEngine::updateCommon() {
 				sceneObject->frameIndex = 0;
 			sceneObject->frameTicks = sceneObject->anim->frameTicks[sceneObject->frameIndex];
 		}
-
 	}
 
 	if (!_currAction && _buttheadObject) {
@@ -1262,7 +1223,6 @@ void BbvsEngine::updateCommon() {
 			}
 		}
 	}
-
 }
 
 void BbvsEngine::updateSceneObjectsTurnValue() {
@@ -1298,7 +1258,6 @@ void BbvsEngine::playSpeech(int soundNum) {
 	fd->open(sndFilename);
 	Audio::AudioStream *audioStream = Audio::makeAIFFStream(fd, DisposeAfterUse::YES);
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechSoundHandle, audioStream);
-
 }
 
 void BbvsEngine::stopSpeech() {
@@ -1378,7 +1337,7 @@ void BbvsEngine::runMainMenu() {
 
 void BbvsEngine::checkEasterEgg(char key) {
 
-	static const char * const kEasterEggStrings[] = {
+	static const char *const kEasterEggStrings[] = {
 		"BOIDUTS",
 		"YNNIF",
 		"SKCUS",
@@ -1400,7 +1359,6 @@ void BbvsEngine::checkEasterEgg(char key) {
 			}
 		}
 	}
-
 }
 
 } // End of namespace Bbvs

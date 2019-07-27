@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "base/plugins.h"
 #include "base/version.h"
 #include "common/archive.h"
@@ -44,15 +43,15 @@
 
 namespace StarTrek {
 
-StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gamedesc) :
-	Engine(syst),
-	_gameDescription(gamedesc),
-	_randomSource("Star Trek"),
-	_kirkActor(&_actorList[0]),
-	_spockActor(&_actorList[1]),
-	_mccoyActor(&_actorList[2]),
-	_redshirtActor(&_actorList[3]),
-	_sineTable(1024) {
+StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gamedesc)
+  : Engine(syst)
+  , _gameDescription(gamedesc)
+  , _randomSource("Star Trek")
+  , _kirkActor(&_actorList[0])
+  , _spockActor(&_actorList[1])
+  , _mccoyActor(&_actorList[2])
+  , _redshirtActor(&_actorList[3])
+  , _sineTable(1024) {
 
 	if (getPlatform() != Common::kPlatformDOS)
 		error("Only DOS versions of Star Trek: 25th Anniversary are currently supported");
@@ -401,7 +400,7 @@ Common::MemoryReadStreamEndian *StarTrekEngine::loadFile(Common::String filename
 
 	bool bigEndian = getPlatform() == Common::kPlatformAmiga;
 
-	for (int i = filename.size() - 1; ; i--) {
+	for (int i = filename.size() - 1;; i--) {
 		if (filename[i] == '.') {
 			basename = filename;
 			extension = filename;
@@ -496,8 +495,7 @@ Common::MemoryReadStreamEndian *StarTrekEngine::loadFile(Common::String filename
 	if (!foundData) {
 		// Files can be accessed "sequentially" if their filenames are the same except for
 		// the last character being incremented by one.
-		if ((basename.lastChar() >= '1' && basename.lastChar() <= '9') ||
-		        (basename.lastChar() >= 'B' && basename.lastChar() <= 'Z')) {
+		if ((basename.lastChar() >= '1' && basename.lastChar() <= '9') || (basename.lastChar() >= 'B' && basename.lastChar() <= 'Z')) {
 			basename.setChar(basename.lastChar() - 1, basename.size() - 1);
 			return loadFile(basename + "." + extension, fileIndex + 1);
 		} else

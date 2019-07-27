@@ -24,33 +24,47 @@
 
 #ifdef _WIN32_WCE
 
-#include "common/system.h"
-#include "common/textconsole.h"
-#include "common/translation.h"
-#include "common/mutex.h"
+#	include "common/mutex.h"
+#	include "common/system.h"
+#	include "common/textconsole.h"
+#	include "common/translation.h"
 
-#include "graphics/scaler/downscaler.h"
-#include "graphics/scaler/aspect.h"
-#include "backends/graphics/wincesdl/wincesdl-graphics.h"
-#include "backends/events/wincesdl/wincesdl-events.h"
-#include "backends/platform/wince/wince-sdl.h"
+#	include "backends/events/wincesdl/wincesdl-events.h"
+#	include "backends/graphics/wincesdl/wincesdl-graphics.h"
+#	include "backends/platform/wince/wince-sdl.h"
+#	include "graphics/scaler/aspect.h"
+#	include "graphics/scaler/downscaler.h"
 
-#include "backends/platform/wince/resource.h"
-#include "backends/platform/wince/CEActionsPocket.h"
-#include "backends/platform/wince/CEActionsSmartphone.h"
-#include "backends/platform/wince/CEDevice.h"
-#include "backends/platform/wince/CEScaler.h"
-#include "backends/platform/wince/CEgui/ItemAction.h"
+#	include "backends/platform/wince/CEActionsPocket.h"
+#	include "backends/platform/wince/CEActionsSmartphone.h"
+#	include "backends/platform/wince/CEDevice.h"
+#	include "backends/platform/wince/CEScaler.h"
+#	include "backends/platform/wince/CEgui/ItemAction.h"
+#	include "backends/platform/wince/resource.h"
 
 WINCESdlGraphicsManager::WINCESdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
-	: SurfaceSdlGraphicsManager(sdlEventSource, window),
-	  _panelInitialized(false), _noDoubleTapRMB(false), _noDoubleTapPT(false),
-	  _toolbarHighDrawn(false), _newOrientation(0), _orientationLandscape(0),
-	  _panelVisible(true), _saveActiveToolbar(NAME_MAIN_PANEL), _panelStateForced(false),
-	  _canBeAspectScaled(false), _scalersChanged(false), _saveToolbarState(false),
-	  _mouseBackupOld(NULL), _mouseBackupDim(0), _mouseBackupToolbar(NULL),
-	  _usesEmulatedMouse(false), _forceHideMouse(false), _freeLook(false),
-	  _hasfocus(true), _zoomUp(false), _zoomDown(false) {
+  : SurfaceSdlGraphicsManager(sdlEventSource, window)
+  , _panelInitialized(false)
+  , _noDoubleTapRMB(false)
+  , _noDoubleTapPT(false)
+  , _toolbarHighDrawn(false)
+  , _newOrientation(0)
+  , _orientationLandscape(0)
+  , _panelVisible(true)
+  , _saveActiveToolbar(NAME_MAIN_PANEL)
+  , _panelStateForced(false)
+  , _canBeAspectScaled(false)
+  , _scalersChanged(false)
+  , _saveToolbarState(false)
+  , _mouseBackupOld(NULL)
+  , _mouseBackupDim(0)
+  , _mouseBackupToolbar(NULL)
+  , _usesEmulatedMouse(false)
+  , _forceHideMouse(false)
+  , _freeLook(false)
+  , _hasfocus(true)
+  , _zoomUp(false)
+  , _zoomDown(false) {
 	memset(&_mouseCurState, 0, sizeof(_mouseCurState));
 	if (_isSmartphone) {
 		_cursorX = 20;
@@ -75,7 +89,7 @@ WINCESdlGraphicsManager::WINCESdlGraphicsManager(SdlEventSource *sdlEventSource,
 	create_toolbar();
 	_hasSmartphoneResolution = CEDevice::hasSmartphoneResolution() || CEDevice::isSmartphone();
 	if (_hasSmartphoneResolution)
-		_panelVisible = false;  // init correctly in smartphones
+		_panelVisible = false; // init correctly in smartphones
 
 	_screen = NULL;
 }
@@ -85,27 +99,27 @@ WINCESdlGraphicsManager::WINCESdlGraphicsManager(SdlEventSource *sdlEventSource,
 // Low end devices 240x320
 
 static const OSystem::GraphicsMode s_supportedGraphicsModesLow[] = {
-	{"1x", _s("Normal (no scaling)"), GFX_NORMAL},
-	{0, 0, 0}
+	{ "1x", _s("Normal (no scaling)"), GFX_NORMAL },
+	{ 0, 0, 0 }
 };
 
 // High end device 480x640
 
 static const OSystem::GraphicsMode s_supportedGraphicsModesHigh[] = {
-	{"1x", _s("Normal (no scaling)"), GFX_NORMAL},
-	{"2x", "2x", GFX_DOUBLESIZE},
-#ifndef _MSC_VER // EVC breaks template functions, and I'm tired of fixing them :)
-	{"2xsai", "2xSAI", GFX_2XSAI},
-	{"super2xsai", "Super2xSAI", GFX_SUPER2XSAI},
-	{"supereagle", "SuperEagle", GFX_SUPEREAGLE},
-#endif
-	{"advmame2x", "AdvMAME2x", GFX_ADVMAME2X},
-#ifndef _MSC_VER
-	{"hq2x", "HQ2x", GFX_HQ2X},
-	{"tv2x", "TV2x", GFX_TV2X},
-#endif
-	{"dotmatrix", "DotMatrix", GFX_DOTMATRIX},
-	{0, 0, 0}
+	{ "1x", _s("Normal (no scaling)"), GFX_NORMAL },
+	{ "2x", "2x", GFX_DOUBLESIZE },
+#	ifndef _MSC_VER // EVC breaks template functions, and I'm tired of fixing them :)
+	{ "2xsai", "2xSAI", GFX_2XSAI },
+	{ "super2xsai", "Super2xSAI", GFX_SUPER2XSAI },
+	{ "supereagle", "SuperEagle", GFX_SUPEREAGLE },
+#	endif
+	{ "advmame2x", "AdvMAME2x", GFX_ADVMAME2X },
+#	ifndef _MSC_VER
+	{ "hq2x", "HQ2x", GFX_HQ2X },
+	{ "tv2x", "TV2x", GFX_TV2X },
+#	endif
+	{ "dotmatrix", "DotMatrix", GFX_DOTMATRIX },
+	{ 0, 0, 0 }
 };
 
 const OSystem::GraphicsMode *WINCESdlGraphicsManager::getSupportedGraphicsModes() const {
@@ -130,7 +144,8 @@ void WINCESdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 		_toolbarHighDrawn = false;
 		if (enable) {
 			_panelStateForced = true;
-			if (!_toolbarHandler.visible()) swap_panel_visibility();
+			if (!_toolbarHandler.visible())
+				swap_panel_visibility();
 			//_saveToolbarState = _toolbarHandler.visible();
 			_saveActiveToolbar = _toolbarHandler.activeName();
 			_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
@@ -170,7 +185,7 @@ int WINCESdlGraphicsManager::getDefaultGraphicsMode() const {
 
 void WINCESdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	if (_hasSmartphoneResolution && h == 240)
-		h = 200;  // mainly for the launcher
+		h = 200; // mainly for the launcher
 
 	if (_isSmartphone && !ConfMan.hasKey("landscape")) {
 		ConfMan.setInt("landscape", 1);
@@ -183,7 +198,7 @@ void WINCESdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelForm
 		h = 240; // use the extra 40 pixels height for the toolbar
 	}
 
-	if (h == 400)   // touche engine fixup
+	if (h == 400) // touche engine fixup
 		h += 80;
 
 	if (!_hasSmartphoneResolution) {
@@ -194,11 +209,11 @@ void WINCESdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelForm
 	} else {
 		if (h == 240)
 			_toolbarHandler.setOffset(200);
-		else    // 176x220
+		else // 176x220
 			_toolbarHandler.setOffset(0);
 	}
 
-	if (w != (uint) _videoMode.screenWidth || h != (uint) _videoMode.screenHeight)
+	if (w != (uint)_videoMode.screenWidth || h != (uint)_videoMode.screenHeight)
 		_scalersChanged = false;
 
 	_videoMode.overlayWidth = w;
@@ -308,8 +323,7 @@ void WINCESdlGraphicsManager::switch_zone() {
 	retrieve_mouse_location(x, y);
 
 	for (i = 0; i < TOTAL_ZONES; i++)
-		if (x >= _zones[i].x && y >= _zones[i].y &&
-		        x <= _zones[i].x + _zones[i].width && y <= _zones[i].y + _zones[i].height) {
+		if (x >= _zones[i].x && y >= _zones[i].y && x <= _zones[i].x + _zones[i].width && y <= _zones[i].y + _zones[i].height) {
 			_mouseXZone[i] = x;
 			_mouseYZone[i] = y;
 			break;
@@ -341,7 +355,7 @@ bool WINCESdlGraphicsManager::update_scalers() {
 			return false;
 
 		if ((!_orientationLandscape && (_videoMode.screenWidth == 320 || !_videoMode.screenWidth))
-		        || CEDevice::hasSquareQVGAResolution()) {
+		    || CEDevice::hasSquareQVGAResolution()) {
 			if (OSystem_WINCE3::getScreenWidth() != 320) {
 				_scaleFactorXm = 3;
 				_scaleFactorXd = 4;
@@ -356,7 +370,7 @@ bool WINCESdlGraphicsManager::update_scalers() {
 				_scalerProc = Normal1x;
 			}
 		} else if (_orientationLandscape && (_videoMode.screenWidth == 320 || !_videoMode.screenWidth)) {
-			if (!_panelVisible && !_hasSmartphoneResolution  && !_overlayVisible && _canBeAspectScaled) {
+			if (!_panelVisible && !_hasSmartphoneResolution && !_overlayVisible && _canBeAspectScaled) {
 				_scaleFactorXm = 1;
 				_scaleFactorXd = 1;
 				_scaleFactorYm = 6;
@@ -386,7 +400,7 @@ bool WINCESdlGraphicsManager::update_scalers() {
 
 		return true;
 	} else if (CEDevice::hasWideResolution()) {
-#ifdef USE_ARM_SCALER_ASM
+#	ifdef USE_ARM_SCALER_ASM
 		if (_videoMode.mode == GFX_DOUBLESIZE && (_videoMode.screenWidth == 320 || !_videoMode.screenWidth)) {
 			if (!_panelVisible && !_overlayVisible && _canBeAspectScaled) {
 				_scaleFactorXm = 2;
@@ -404,20 +418,20 @@ bool WINCESdlGraphicsManager::update_scalers() {
 			}
 			return true;
 		}
-#endif
+#	endif
 	} else if (CEDevice::hasSmartphoneResolution()) {
 		if (_videoMode.mode != GFX_NORMAL)
 			return false;
 
 		if (_videoMode.screenWidth > 320)
 			error("Game resolution not supported on Smartphone");
-#ifdef ARM
+#	ifdef ARM
 		_scaleFactorXm = 11;
 		_scaleFactorXd = 16;
-#else
+#	else
 		_scaleFactorXm = 2;
 		_scaleFactorXd = 3;
-#endif
+#	endif
 		_scaleFactorYm = 7;
 		_scaleFactorYd = 8;
 		_scalerProc = SmartphoneLandscape;
@@ -499,7 +513,7 @@ void WINCESdlGraphicsManager::internUpdateScreen() {
 
 	// If the shake position changed, fill the dirty area with blackness
 	if (_currentShakePos != _newShakePos) {
-		SDL_Rect blackrect = {0, 0, _videoMode.screenWidth *_scaleFactorXm / _scaleFactorXd, _newShakePos *_scaleFactorYm / _scaleFactorYd};
+		SDL_Rect blackrect = { 0, 0, _videoMode.screenWidth * _scaleFactorXm / _scaleFactorXd, _newShakePos * _scaleFactorYm / _scaleFactorYd };
 		if (_videoMode.aspectRatioCorrection)
 			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
 		SDL_FillRect(_hwScreen, &blackrect, 0);
@@ -561,8 +575,8 @@ void WINCESdlGraphicsManager::internUpdateScreen() {
 
 		for (r = _dirtyRectList; r != last_rect; ++r) {
 			dst = *r;
-			dst.x++;    // Shift rect by one since 2xSai needs to access the data around
-			dst.y++;    // any pixel to scale it, and we want to avoid mem access crashes.
+			dst.x++; // Shift rect by one since 2xSai needs to access the data around
+			dst.y++; // any pixel to scale it, and we want to avoid mem access crashes.
 			// NOTE: This is also known as BLACK MAGIC, copied from the sdl backend
 			if (SDL_BlitSurface(origSurf, r, srcSurf, &dst) != 0)
 				error("SDL_BlitSurface failed: %s", SDL_GetError());
@@ -592,15 +606,17 @@ void WINCESdlGraphicsManager::internUpdateScreen() {
 
 			// transform
 			shakestretch = _currentShakePos * _scaleFactorYm / _scaleFactorYd;
-			routx = r->x * _scaleFactorXm / _scaleFactorXd;                 // locate position in scaled screen
-			routy = r->y * _scaleFactorYm / _scaleFactorYd + shakestretch;  // adjust for shake offset
+			routx = r->x * _scaleFactorXm / _scaleFactorXd; // locate position in scaled screen
+			routy = r->y * _scaleFactorYm / _scaleFactorYd + shakestretch; // adjust for shake offset
 			routw = r->w * _scaleFactorXm / _scaleFactorXd;
 			routh = r->h * _scaleFactorYm / _scaleFactorYd - shakestretch;
 
 			// clipping destination rectangle inside device screen (more strict, also more tricky but more stable)
 			// note that all current scalers do not make dst rect exceed left/right, unless chosen badly (FIXME)
-			if (_zoomDown)  routy -= 240;           // adjust for zoom position
-			if (routy + routh < 0)  continue;
+			if (_zoomDown)
+				routy -= 240; // adjust for zoom position
+			if (routy + routh < 0)
+				continue;
 			if (routy < 0) {
 				routh += routy;
 				r->y -= routy * _scaleFactorYd / _scaleFactorYm;
@@ -608,13 +624,15 @@ void WINCESdlGraphicsManager::internUpdateScreen() {
 				r->h = routh * _scaleFactorYd / _scaleFactorYm;
 			}
 			if (_orientationLandscape) {
-				if (routy > OSystem_WINCE3::getScreenWidth())   continue;
+				if (routy > OSystem_WINCE3::getScreenWidth())
+					continue;
 				if (routy + routh > OSystem_WINCE3::getScreenWidth()) {
 					routh = OSystem_WINCE3::getScreenWidth() - routy;
 					r->h = routh * _scaleFactorYd / _scaleFactorYm;
 				}
 			} else {
-				if (routy > OSystem_WINCE3::getScreenHeight())  continue;
+				if (routy > OSystem_WINCE3::getScreenHeight())
+					continue;
 				if (routy + routh > OSystem_WINCE3::getScreenHeight()) {
 					routh = OSystem_WINCE3::getScreenHeight() - routy;
 					r->h = routh * _scaleFactorYd / _scaleFactorYm;
@@ -637,7 +655,6 @@ void WINCESdlGraphicsManager::internUpdateScreen() {
 			rout->h = routh + shakestretch;
 			numRectsOut++;
 			rout++;
-
 		}
 		SDL_UnlockSurface(srcSurf);
 		SDL_UnlockSurface(_hwScreen);
@@ -666,7 +683,7 @@ void WINCESdlGraphicsManager::internUpdateScreen() {
 		} else
 			toolbarSurface = _toolbarLow;
 
-		drawToolbarMouse(toolbarSurface, true);     // draw toolbar mouse if applicable
+		drawToolbarMouse(toolbarSurface, true); // draw toolbar mouse if applicable
 
 		// Apply the appropriate scaler
 		SDL_LockSurface(toolbarSurface);
@@ -694,7 +711,7 @@ void WINCESdlGraphicsManager::internUpdateScreen() {
 
 		SDL_UpdateRects(_hwScreen, 1, toolbar_rect);
 
-		drawToolbarMouse(toolbarSurface, false);    // undraw toolbar mouse
+		drawToolbarMouse(toolbarSurface, false); // undraw toolbar mouse
 	}
 
 	// Finally, blit all our changes to the screen
@@ -770,7 +787,7 @@ bool WINCESdlGraphicsManager::setGraphicsMode(int mode) {
 			_videoMode.scaleFactor = 3;
 			_scalerProc = AdvMame3x;
 			break;
-#ifdef USE_HQ_SCALERS
+#	ifdef USE_HQ_SCALERS
 		case GFX_HQ2X:
 			_videoMode.scaleFactor = 2;
 			_scalerProc = HQ2x;
@@ -779,7 +796,7 @@ bool WINCESdlGraphicsManager::setGraphicsMode(int mode) {
 			_videoMode.scaleFactor = 3;
 			_scalerProc = HQ3x;
 			break;
-#endif
+#	endif
 		case GFX_TV2X:
 			_videoMode.scaleFactor = 2;
 			_scalerProc = TV2x;
@@ -795,8 +812,7 @@ bool WINCESdlGraphicsManager::setGraphicsMode(int mode) {
 	}
 
 	// Check if the scaler can be accepted, if not get back to normal scaler
-	if (_videoMode.scaleFactor && ((_videoMode.scaleFactor * _videoMode.screenWidth > OSystem_WINCE3::getScreenWidth() && _videoMode.scaleFactor * _videoMode.screenWidth > OSystem_WINCE3::getScreenHeight())
-	                               || (_videoMode.scaleFactor * _videoMode.screenHeight > OSystem_WINCE3::getScreenWidth() && _videoMode.scaleFactor * _videoMode.screenHeight > OSystem_WINCE3::getScreenHeight()))) {
+	if (_videoMode.scaleFactor && ((_videoMode.scaleFactor * _videoMode.screenWidth > OSystem_WINCE3::getScreenWidth() && _videoMode.scaleFactor * _videoMode.screenWidth > OSystem_WINCE3::getScreenHeight()) || (_videoMode.scaleFactor * _videoMode.screenHeight > OSystem_WINCE3::getScreenWidth() && _videoMode.scaleFactor * _videoMode.screenHeight > OSystem_WINCE3::getScreenHeight()))) {
 		_videoMode.scaleFactor = 1;
 		_scalerProc = Normal1x;
 	}
@@ -811,17 +827,12 @@ bool WINCESdlGraphicsManager::setGraphicsMode(int mode) {
 
 	_forceRedraw = true;
 
-	if (oldScaleFactorXm != _scaleFactorXm ||
-	        oldScaleFactorXd != _scaleFactorXd ||
-	        oldScaleFactorYm != _scaleFactorYm ||
-	        oldScaleFactorYd != _scaleFactorYd) {
+	if (oldScaleFactorXm != _scaleFactorXm || oldScaleFactorXd != _scaleFactorXd || oldScaleFactorYm != _scaleFactorYm || oldScaleFactorYd != _scaleFactorYd) {
 		_scalersChanged = true;
 	} else
 		_scalersChanged = false;
 
-
 	return true;
-
 }
 
 bool WINCESdlGraphicsManager::loadGFXMode() {
@@ -911,7 +922,7 @@ bool WINCESdlGraphicsManager::loadGFXMode() {
 
 	// Toolbar
 	_toolbarHighDrawn = false;
-	uint16 *toolbar_screen = (uint16 *)calloc(320 * 40, sizeof(uint16));    // *not* leaking memory here
+	uint16 *toolbar_screen = (uint16 *)calloc(320 * 40, sizeof(uint16)); // *not* leaking memory here
 	_toolbarLow = SDL_CreateRGBSurfaceFrom(toolbar_screen, 320, 40, 16, 320 * 2, _hwScreen->format->Rmask, _hwScreen->format->Gmask, _hwScreen->format->Bmask, _hwScreen->format->Amask);
 
 	if (_toolbarLow == NULL)
@@ -1003,7 +1014,7 @@ bool WINCESdlGraphicsManager::hotswapGFXMode() {
 	internUpdateScreen();
 
 	// Make sure that a Common::EVENT_SCREEN_CHANGED gets sent later -> FIXME this crashes when no game has been loaded.
-//	_modeChanged = true;
+	//	_modeChanged = true;
 
 	return true;
 }
@@ -1140,7 +1151,7 @@ void WINCESdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, in
 
 	free(_mouseData);
 
-	_mouseData = (byte *) malloc(w * h);
+	_mouseData = (byte *)malloc(w * h);
 	memcpy(_mouseData, buf, w * h);
 
 	if (w > _mouseBackupDim || h > _mouseBackupDim) {
@@ -1148,8 +1159,8 @@ void WINCESdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, in
 		free(_mouseBackupOld);
 		free(_mouseBackupToolbar);
 		uint16 tmp = (w > h) ? w : h;
-		_mouseBackupOld = (byte *) malloc(tmp * tmp * 2);   // can hold 8bpp (playfield) or 16bpp (overlay) data
-		_mouseBackupToolbar = (uint16 *) malloc(tmp * tmp * 2); // 16 bpp
+		_mouseBackupOld = (byte *)malloc(tmp * tmp * 2); // can hold 8bpp (playfield) or 16bpp (overlay) data
+		_mouseBackupToolbar = (uint16 *)malloc(tmp * tmp * 2); // 16 bpp
 		_mouseBackupDim = tmp;
 	}
 }
@@ -1243,17 +1254,17 @@ void WINCESdlGraphicsManager::drawToolbarMouse(SDL_Surface *surf, bool draw) {
 	if (SDL_LockSurface(surf) == -1)
 		error("SDL_LockSurface failed at internDrawToolbarMouse: %s", SDL_GetError());
 
-	uint16 *bak = _mouseBackupToolbar;  // toolbar surfaces are 16bpp
+	uint16 *bak = _mouseBackupToolbar; // toolbar surfaces are 16bpp
 	uint16 *dst;
 	dst = (uint16 *)surf->pixels + y * surf->w + x;
 
-	if (draw) {     // blit it
+	if (draw) { // blit it
 		while (h > 0) {
 			width = w;
 			while (width > 0) {
 				*bak++ = *dst;
 				color = *src++;
-				if (color != _mouseKeyColor)    // transparent color
+				if (color != _mouseKeyColor) // transparent color
 					*dst = 0xFFFF;
 				dst++;
 				width--;
@@ -1263,7 +1274,7 @@ void WINCESdlGraphicsManager::drawToolbarMouse(SDL_Surface *surf, bool draw) {
 			dst += surf->w - w;
 			h--;
 		}
-	} else {        // restore bg
+	} else { // restore bg
 		for (y = 0; y < h; ++y, bak += _mouseBackupDim, dst += surf->w)
 			memcpy(dst, bak, w << 1);
 	}
@@ -1299,7 +1310,7 @@ void WINCESdlGraphicsManager::internDrawMouse() {
 	int w = _mouseCurState.w;
 	int h = _mouseCurState.h;
 	byte color;
-	const byte *src = _mouseData;       // Image representing the mouse
+	const byte *src = _mouseData; // Image representing the mouse
 	int width;
 
 	// clip the mouse rect, and adjust the src pointer accordingly
@@ -1331,8 +1342,8 @@ void WINCESdlGraphicsManager::internDrawMouse() {
 	addDirtyRect(x, y, w, h);
 
 	if (!_overlayVisible) {
-		byte *bak = _mouseBackupOld;        // Surface used to backup the area obscured by the mouse
-		byte *dst;                  // Surface we are drawing into
+		byte *bak = _mouseBackupOld; // Surface used to backup the area obscured by the mouse
+		byte *dst; // Surface we are drawing into
 
 		dst = (byte *)_screen->pixels + y * _videoMode.screenWidth + x;
 		while (h > 0) {
@@ -1340,7 +1351,7 @@ void WINCESdlGraphicsManager::internDrawMouse() {
 			while (width > 0) {
 				*bak++ = *dst;
 				color = *src++;
-				if (color != _mouseKeyColor)    // transparent, don't draw
+				if (color != _mouseKeyColor) // transparent, don't draw
 					*dst = color;
 				dst++;
 				width--;
@@ -1352,8 +1363,8 @@ void WINCESdlGraphicsManager::internDrawMouse() {
 		}
 
 	} else {
-		uint16 *bak = (uint16 *)_mouseBackupOld;    // Surface used to backup the area obscured by the mouse
-		byte *dst;                  // Surface we are drawing into
+		uint16 *bak = (uint16 *)_mouseBackupOld; // Surface used to backup the area obscured by the mouse
+		byte *dst; // Surface we are drawing into
 
 		dst = (byte *)_overlayscreen->pixels + (y + 1) * _overlayscreen->pitch + (x + 1) * 2;
 		while (h > 0) {
@@ -1361,7 +1372,7 @@ void WINCESdlGraphicsManager::internDrawMouse() {
 			while (width > 0) {
 				*bak++ = *(uint16 *)dst;
 				color = *src++;
-				if (color != 0xFF)  // 0xFF = transparent, don't draw
+				if (color != 0xFF) // 0xFF = transparent, don't draw
 					*(uint16 *)dst = SDL_MapRGB(_overlayscreen->format, _currentPalette[color].r, _currentPalette[color].g, _currentPalette[color].b);
 				dst += 2;
 				width--;
@@ -1408,7 +1419,6 @@ void WINCESdlGraphicsManager::undrawMouse() {
 	// Quick check to see if anything has to be drawn at all
 	if (old_mouse_w <= 0 || old_mouse_h <= 0)
 		return;
-
 
 	if (SDL_LockSurface(_overlayVisible ? _overlayscreen : _screen) == -1)
 		error("SDL_LockSurface failed: %s", SDL_GetError());

@@ -33,11 +33,11 @@ class PCSpeaker;
 namespace Agi {
 
 // default attributes
-#define IDA_DEFAULT     0x0F
+#define IDA_DEFAULT 0x0F
 #define IDA_DEFAULT_REV 0xF0
 
-#define IDI_SND_OSCILLATOR_FREQUENCY    1193180
-#define IDI_SND_TIMER_RESOLUTION        0.0182
+#define IDI_SND_OSCILLATOR_FREQUENCY 1193180
+#define IDI_SND_TIMER_RESOLUTION 0.0182
 
 #define kColorDefault 0x1337
 
@@ -115,6 +115,5 @@ private:
 };
 
 } // End of namespace Agi
-
 
 #endif

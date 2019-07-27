@@ -34,11 +34,13 @@ class CSliderButton : public CSTButton {
 	bool MouseDragMoveMsg(CMouseDragMoveMsg *msg);
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
+
 private:
 	int _field114;
 	int _field118;
 	int _field11C;
 	Point _pos1;
+
 public:
 	CLASSDEF;
 	CSliderButton();

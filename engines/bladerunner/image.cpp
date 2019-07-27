@@ -46,7 +46,7 @@ bool Image::open(const Common::String &name) {
 
 	char tag[4] = { 0 };
 	stream->read(tag, 3);
-	uint32 width  = stream->readUint32LE();
+	uint32 width = stream->readUint32LE();
 	uint32 height = stream->readUint32LE();
 
 	// Enforce a reasonable limit
@@ -73,7 +73,7 @@ bool Image::open(const Common::String &name) {
 #endif
 	}
 
-	_surface.init(width, height, 2*width, data, gameDataPixelFormat());
+	_surface.init(width, height, 2 * width, data, gameDataPixelFormat());
 	_surface.convertToInPlace(screenPixelFormat());
 
 	delete[] buf;

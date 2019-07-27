@@ -20,8 +20,6 @@
  *
  */
 
-
-
 #include "common/file.h"
 #include "common/textconsole.h"
 
@@ -63,28 +61,28 @@ byte *AGOSEngine::uncompressToken(byte a, byte *ptr) {
 		_awaitTwoByteToken = a;
 		b = a;
 		a = *ptr++;
-		if (a == 0)		/* Need to return such that next byte   */
-			return 0;	/* is used as two byte token		*/
+		if (a == 0) /* Need to return such that next byte   */
+			return 0; /* is used as two byte token		*/
 
 		_awaitTwoByteToken = 0;
 		ptr1 = _twoByteTokens;
 		while (*ptr1 != a) {
 			ptr1++;
 			count1++;
-			if (*ptr1 == 0)	{	/* If was not a two byte token  */
-				count1 = 0;	/* then was a byte token.	*/
+			if (*ptr1 == 0) { /* If was not a two byte token  */
+				count1 = 0; /* then was a byte token.	*/
 				ptr1 = _byteTokens;
 				while (*ptr1 != a) {
 					ptr1++;
 					count1++;
 				}
-				ptr1 = _byteTokenStrings;		/* Find it */
-				while (count1--)	{
+				ptr1 = _byteTokenStrings; /* Find it */
+				while (count1--) {
 					while (*ptr1++)
 						;
 				}
-				ptr1 = uncompressToken(b, ptr1);	/* Try this one as a two byte token */
-				uncompressText(ptr1);			/* Uncompress rest of this token    */
+				ptr1 = uncompressToken(b, ptr1); /* Try this one as a two byte token */
+				uncompressText(ptr1); /* Uncompress rest of this token    */
 				return ptr;
 			}
 		}
@@ -99,16 +97,16 @@ byte *AGOSEngine::uncompressToken(byte a, byte *ptr) {
 			ptr1++;
 			count1++;
 			if (*ptr1 == 0) {
-				_textBuffer[_textCount++] = a;	/* Not a byte token */
-				return ptr;			/* must be real character */
+				_textBuffer[_textCount++] = a; /* Not a byte token */
+				return ptr; /* must be real character */
 			}
 		}
 		ptr1 = _byteTokenStrings;
-		while (count1--)	{		/* Is a byte token so count */
-			while (*ptr1++)		/* to start of token */
+		while (count1--) { /* Is a byte token so count */
+			while (*ptr1++) /* to start of token */
 				;
 		}
-		uncompressText(ptr1);			/* and do it */
+		uncompressText(ptr1); /* and do it */
 	}
 	return ptr;
 }
@@ -139,15 +137,13 @@ const byte *AGOSEngine::getStringPtrByID(uint16 stringId, bool upperCase) {
 	// WORKAROUND bug #1538873: The French version of Simon 1 and the
 	// Polish version of Simon 2 used excess spaces, at the end of many
 	// messages, so we strip off those excess spaces.
-	if ((getGameType() == GType_SIMON1 && _language == Common::FR_FRA) ||
-		(getGameType() == GType_SIMON2 && _language == Common::PL_POL)) {
+	if ((getGameType() == GType_SIMON1 && _language == Common::FR_FRA) || (getGameType() == GType_SIMON2 && _language == Common::PL_POL)) {
 		uint16 len = strlen((const char *)dst) - 1;
 
 		while (len && dst[len] == 32) {
 			dst[len] = 0;
 			len--;
 		}
-
 	}
 
 	if (upperCase && *dst) {
@@ -178,7 +174,7 @@ TextLocation *AGOSEngine::getTextLocation(uint a) {
 	default:
 		error("getTextLocation: Invalid text location %d", a);
 	}
-	return NULL;	// for compilers that don't support NORETURN
+	return NULL; // for compilers that don't support NORETURN
 }
 
 void AGOSEngine::allocateStringTable(int num) {
@@ -220,7 +216,8 @@ void AGOSEngine::setupStringTable(byte *mem, int num) {
 				;
 		}
 		i = 0;
-l1:		_stringTabPtr[i++] = mem;
+	l1:
+		_stringTabPtr[i++] = mem;
 		num--;
 		if (!num) {
 			_stringTabPos = i;
@@ -349,15 +346,15 @@ static const byte polish_charWidth[226] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 6, 2, 8, 7, 6,10, 8, 2,
+	0, 0, 6, 2, 8, 7, 6, 10, 8, 2,
 	4, 4, 7, 6, 3, 4, 2, 3, 6, 4,
 	6, 6, 7, 6, 6, 6, 6, 6, 2, 8,
 	6, 9, 7, 6, 6, 8, 7, 8, 8, 7,
-	6, 9, 8, 2, 6, 7, 6,10, 8, 9,
-	7, 9, 7, 7, 8, 8, 8,12, 8, 8,
+	6, 9, 8, 2, 6, 7, 6, 10, 8, 9,
+	7, 9, 7, 7, 8, 8, 8, 12, 8, 8,
 	7, 6, 7, 6, 4, 7, 7, 7, 7, 6,
-	7, 7, 4, 7, 6, 2, 3, 6, 2,10,
-	6, 7, 7, 7, 5, 6, 4, 6, 6,10,
+	7, 7, 4, 7, 6, 2, 3, 6, 2, 10,
+	6, 7, 7, 7, 5, 6, 4, 6, 6, 10,
 	6, 6, 6, 0, 0, 0, 0, 0, 8, 6,
 	7, 7, 7, 7, 7, 6, 7, 7, 7, 4,
 	4, 3, 8, 8, 7, 0, 0, 7, 7, 7,
@@ -375,15 +372,15 @@ static const byte charWidth[226] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 6, 2, 4, 8, 6,10, 9, 2,
+	0, 0, 6, 2, 4, 8, 6, 10, 9, 2,
 	4, 4, 6, 6, 3, 4, 2, 3, 6, 4,
 	6, 6, 7, 6, 6, 6, 6, 6, 2, 3,
-	7, 7, 7, 6,11, 8, 7, 8, 8, 7,
-	6, 9, 8, 2, 6, 7, 6,10, 8, 9,
-	7, 9, 7, 7, 8, 8, 8,12, 8, 8,
+	7, 7, 7, 6, 11, 8, 7, 8, 8, 7,
+	6, 9, 8, 2, 6, 7, 6, 10, 8, 9,
+	7, 9, 7, 7, 8, 8, 8, 12, 8, 8,
 	7, 3, 3, 3, 6, 8, 3, 7, 7, 6,
-	7, 7, 4, 7, 6, 2, 3, 6, 2,10,
-	6, 7, 7, 7, 5, 6, 4, 7, 7,10,
+	7, 7, 4, 7, 6, 2, 3, 6, 2, 10,
+	6, 7, 7, 7, 5, 6, 4, 7, 7, 10,
 	6, 6, 6, 0, 0, 0, 0, 0, 8, 6,
 	7, 7, 7, 7, 7, 6, 7, 7, 7, 4,
 	4, 3, 8, 8, 7, 0, 0, 7, 7, 7,
@@ -429,7 +426,6 @@ bool AGOSEngine::printTextOf(uint a, uint x, uint y) {
 
 	if (a >= _numTextBoxes)
 		return false;
-
 
 	stringPtr = getStringPtrByID(_shortText[a]);
 	if (getGameType() == GType_FF) {
@@ -567,147 +563,147 @@ void AGOSEngine_PuzzlePack::printInfoText(const char *itemText) {
 	int flag = (_mouse.y / 32) * 20 + (_mouse.x / 32) + 1300;
 
 	switch (_variableArray[999]) {
-		case 80:
-			if (_variableArray[flag]) {
-				if (_variableArray[flag] == 201)
-					itemName = " Bridge: ";
-				if (_variableArray[flag] == 231 || _variableArray[flag] == 241)
-					itemName = " Log: ";
-				if (_variableArray[flag] == 281)
-					itemName = " Rubble: ";
-				if (_variableArray[flag] == 291)
-					itemName = " Boulder: ";
-				if (_variableArray[flag] == 311)
-					itemName = " Key: ";
-				if (_variableArray[flag] == 312)
-					itemName = " Spanner: ";
-				if (_variableArray[flag] == 321)
-					itemName = " Gate: ";
-				if (_variableArray[flag] == 331)
-					itemName = " Crate: ";
-			} else {
-				flag -= 300;
-				if (_variableArray[flag] == 2)
-					itemName = " Water: ";
-				if (_variableArray[flag] == 5)
-					itemName = " Exit: ";
-				if ((_variableArray[flag] == 5) && (_variableArray[81] == 10))
-					itemName = " Gem: ";
-				if (_variableArray[flag] == 236 || _variableArray[flag] == 246)
-					itemName = " Floating Log: ";
-				if (_variableArray[flag] == 400)
-					itemName = " Valve: ";
-			}
-			break;
+	case 80:
+		if (_variableArray[flag]) {
+			if (_variableArray[flag] == 201)
+				itemName = " Bridge: ";
+			if (_variableArray[flag] == 231 || _variableArray[flag] == 241)
+				itemName = " Log: ";
+			if (_variableArray[flag] == 281)
+				itemName = " Rubble: ";
+			if (_variableArray[flag] == 291)
+				itemName = " Boulder: ";
+			if (_variableArray[flag] == 311)
+				itemName = " Key: ";
+			if (_variableArray[flag] == 312)
+				itemName = " Spanner: ";
+			if (_variableArray[flag] == 321)
+				itemName = " Gate: ";
+			if (_variableArray[flag] == 331)
+				itemName = " Crate: ";
+		} else {
+			flag -= 300;
+			if (_variableArray[flag] == 2)
+				itemName = " Water: ";
+			if (_variableArray[flag] == 5)
+				itemName = " Exit: ";
+			if ((_variableArray[flag] == 5) && (_variableArray[81] == 10))
+				itemName = " Gem: ";
+			if (_variableArray[flag] == 236 || _variableArray[flag] == 246)
+				itemName = " Floating Log: ";
+			if (_variableArray[flag] == 400)
+				itemName = " Valve: ";
+		}
+		break;
 
-		case 81:
-			if (_variableArray[flag]) {
-				if (_variableArray[flag] == 281)
-					itemName = " Cracked Block: ";
-				if (_variableArray[flag] == 291)
-					itemName = " Boulder: ";
-				if (_variableArray[flag] == 331)
-					itemName = " Block: ";
-				if (_variableArray[flag] == 341)
-					itemName = " Switch: ";
-				if (_variableArray[flag] == 343)
-					itemName = " Button: ";
-				if ((_variableArray[flag] > 430) && (_variableArray[flag] < 480))
-					itemName = " Mosaic Block: ";
-			} else {
-				flag -= 300;
-				if (_variableArray[flag] == 5)
-					itemName = " Exit: ";
-				if ((_variableArray[flag] == 5) && (_variableArray[82] == 10))
-					itemName = " Gem: ";
-			}
-			break;
+	case 81:
+		if (_variableArray[flag]) {
+			if (_variableArray[flag] == 281)
+				itemName = " Cracked Block: ";
+			if (_variableArray[flag] == 291)
+				itemName = " Boulder: ";
+			if (_variableArray[flag] == 331)
+				itemName = " Block: ";
+			if (_variableArray[flag] == 341)
+				itemName = " Switch: ";
+			if (_variableArray[flag] == 343)
+				itemName = " Button: ";
+			if ((_variableArray[flag] > 430) && (_variableArray[flag] < 480))
+				itemName = " Mosaic Block: ";
+		} else {
+			flag -= 300;
+			if (_variableArray[flag] == 5)
+				itemName = " Exit: ";
+			if ((_variableArray[flag] == 5) && (_variableArray[82] == 10))
+				itemName = " Gem: ";
+		}
+		break;
 
-		case 82:
-			if (_variableArray[flag]) {
-				if (_variableArray[flag] == 201 || _variableArray[flag] == 211)
-					itemName = " Unstable Track: ";
-				if (_variableArray[flag] == 281)
-					itemName = " Rubble Pile: ";
-				if (_variableArray[flag] == 291)
-					itemName = " Boulder: ";
-				if (_variableArray[flag] == 331)
-					itemName = " Crate: ";
-				if (_variableArray[flag] == 401 || _variableArray[flag] == 405)
-					itemName = " Cart: ";
-			} else {
-				flag -= 300;
-				if (_variableArray[flag] == 4)
-					itemName = " Hole: ";
-				if (_variableArray[flag] == 5)
-					itemName = " Exit: ";
-				if ((_variableArray[flag] == 5) && (_variableArray[83] == 10))
-					itemName = " Gem: ";
-				if ((_variableArray[flag] > 5) && (_variableArray[flag] < 10))
-					itemName = " Buffer Track: ";
-				if ((_variableArray[flag] > 9) && (_variableArray[flag] < 40))
-					itemName = " Track: ";
-				if (_variableArray[flag] == 300)
-					itemName = " Boulder: ";
-			}
-			break;
+	case 82:
+		if (_variableArray[flag]) {
+			if (_variableArray[flag] == 201 || _variableArray[flag] == 211)
+				itemName = " Unstable Track: ";
+			if (_variableArray[flag] == 281)
+				itemName = " Rubble Pile: ";
+			if (_variableArray[flag] == 291)
+				itemName = " Boulder: ";
+			if (_variableArray[flag] == 331)
+				itemName = " Crate: ";
+			if (_variableArray[flag] == 401 || _variableArray[flag] == 405)
+				itemName = " Cart: ";
+		} else {
+			flag -= 300;
+			if (_variableArray[flag] == 4)
+				itemName = " Hole: ";
+			if (_variableArray[flag] == 5)
+				itemName = " Exit: ";
+			if ((_variableArray[flag] == 5) && (_variableArray[83] == 10))
+				itemName = " Gem: ";
+			if ((_variableArray[flag] > 5) && (_variableArray[flag] < 10))
+				itemName = " Buffer Track: ";
+			if ((_variableArray[flag] > 9) && (_variableArray[flag] < 40))
+				itemName = " Track: ";
+			if (_variableArray[flag] == 300)
+				itemName = " Boulder: ";
+		}
+		break;
 
-		case 83:
-			if (_variableArray[flag]) {
-				if (_variableArray[flag] == 201)
-					itemName = " Broken Floor: ";
-				if (_variableArray[flag] == 231 || _variableArray[flag] == 241)
-					itemName = " Barrel: ";
-				if (_variableArray[flag] == 281)
-					itemName = " Cracked Rock: ";
-				if (_variableArray[flag] == 291)
-					itemName = " Spacehopper: ";
-				if (_variableArray[flag] == 311)
-					itemName = " Key: ";
-				if (_variableArray[flag] == 321)
-					itemName = " Trapdoor: ";
-				if (_variableArray[flag] == 324)
-					itemName = " Trapdoor: ";
-				if (_variableArray[flag] == 331)
-					itemName = " Crate: ";
-			} else {
-				flag -= 300;
-				if (_variableArray[flag] == 4)
-					itemName = " Hole: ";
-				if (_variableArray[flag] == 239 || _variableArray[flag] == 249)
-					itemName = " Barrel: ";
-			}
-			break;
+	case 83:
+		if (_variableArray[flag]) {
+			if (_variableArray[flag] == 201)
+				itemName = " Broken Floor: ";
+			if (_variableArray[flag] == 231 || _variableArray[flag] == 241)
+				itemName = " Barrel: ";
+			if (_variableArray[flag] == 281)
+				itemName = " Cracked Rock: ";
+			if (_variableArray[flag] == 291)
+				itemName = " Spacehopper: ";
+			if (_variableArray[flag] == 311)
+				itemName = " Key: ";
+			if (_variableArray[flag] == 321)
+				itemName = " Trapdoor: ";
+			if (_variableArray[flag] == 324)
+				itemName = " Trapdoor: ";
+			if (_variableArray[flag] == 331)
+				itemName = " Crate: ";
+		} else {
+			flag -= 300;
+			if (_variableArray[flag] == 4)
+				itemName = " Hole: ";
+			if (_variableArray[flag] == 239 || _variableArray[flag] == 249)
+				itemName = " Barrel: ";
+		}
+		break;
 
-		case 84:
-			if (_variableArray[flag]) {
-				if (_variableArray[flag] == 201)
-					itemName = " Floating Platform: ";
-				if (_variableArray[flag] == 231)
-					itemName = " Cauldron: ";
-				if (_variableArray[flag] == 281)
-					itemName = " Cracked Block: ";
-				if (_variableArray[flag] == 311 || _variableArray[flag] == 312)
-					itemName = " Key: ";
-				if (_variableArray[flag] == 321 || _variableArray[flag] == 361 || _variableArray[flag] == 371)
-					itemName = " Gate: ";
-				if (_variableArray[flag] == 331)
-					itemName = " Chest: ";
-				if (_variableArray[flag] == 332)
-					itemName = " Jewel: ";
-				if (_variableArray[flag] == 351 || _variableArray[flag] == 352)
-					itemName = " Babies: ";
-			} else {
-				flag -= 300;
-				if (_variableArray[flag] == 6)
-					itemName = " Slime: ";
-				if (_variableArray[flag] == 334)
-					itemName = " Chest: ";
-			}
-			break;
+	case 84:
+		if (_variableArray[flag]) {
+			if (_variableArray[flag] == 201)
+				itemName = " Floating Platform: ";
+			if (_variableArray[flag] == 231)
+				itemName = " Cauldron: ";
+			if (_variableArray[flag] == 281)
+				itemName = " Cracked Block: ";
+			if (_variableArray[flag] == 311 || _variableArray[flag] == 312)
+				itemName = " Key: ";
+			if (_variableArray[flag] == 321 || _variableArray[flag] == 361 || _variableArray[flag] == 371)
+				itemName = " Gate: ";
+			if (_variableArray[flag] == 331)
+				itemName = " Chest: ";
+			if (_variableArray[flag] == 332)
+				itemName = " Jewel: ";
+			if (_variableArray[flag] == 351 || _variableArray[flag] == 352)
+				itemName = " Babies: ";
+		} else {
+			flag -= 300;
+			if (_variableArray[flag] == 6)
+				itemName = " Slime: ";
+			if (_variableArray[flag] == 334)
+				itemName = " Chest: ";
+		}
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	if (itemName != NULL) {
@@ -729,11 +725,11 @@ void AGOSEngine_Feeble::printScreenText(uint vgaSpriteId, uint color, const char
 	height = textHeight;
 
 	talkDelay = (stringLength + 3) / 3;
-		if (_variableArray[86] == 0)
-			talkDelay /= 2;
-		if (_variableArray[86] == 2)
-			talkDelay *= 2;
-		_variableArray[85] = talkDelay * 5;
+	if (_variableArray[86] == 0)
+		talkDelay /= 2;
+	if (_variableArray[86] == 2)
+		talkDelay *= 2;
+	_variableArray[85] = talkDelay * 5;
 
 	assert(stringLength > 0);
 
@@ -746,8 +742,8 @@ void AGOSEngine_Feeble::printScreenText(uint vgaSpriteId, uint color, const char
 			if (spaces != 0)
 				spaces--;
 			while (spaces) {
-					*convertedString2++ = ' ';
-					spaces--;
+				*convertedString2++ = ' ';
+				spaces--;
 			}
 			strcpy(convertedString2, string);
 			break;
@@ -761,8 +757,8 @@ void AGOSEngine_Feeble::printScreenText(uint vgaSpriteId, uint color, const char
 		if (spaces != 0)
 			spaces--;
 		while (spaces) {
-				*convertedString2++ = ' ';
-				spaces--;
+			*convertedString2++ = ' ';
+			spaces--;
 		}
 		b = string2 - string;
 		strncpy(convertedString2, string, b);
@@ -852,7 +848,8 @@ void AGOSEngine_Feeble::sendInteractText(uint16 num, const char *fmt, ...) {
 uint16 AGOSEngine_Waxworks::getBoxSize() {
 	int x;
 	switch (_boxLineCount) {
-	case 1: x = _lineCounts[0];
+	case 1:
+		x = _lineCounts[0];
 		if (x <= 26)
 			return 1;
 		if (x <= 64)
@@ -868,7 +865,8 @@ uint16 AGOSEngine_Waxworks::getBoxSize() {
 			if (checkFit(_linePtrs[0], 48, 5))
 				return 5;
 		return 6;
-	case 2: if (_lineCounts[0] <= 32) {
+	case 2:
+		if (_lineCounts[0] <= 32) {
 			if (_lineCounts[1] <= 32)
 				return 2;
 			if (_lineCounts[1] <= 74)
@@ -907,10 +905,11 @@ uint16 AGOSEngine_Waxworks::getBoxSize() {
 			return 6;
 		}
 		return 6;
-	case 3: if (_lineCounts[0] <= 37) {
+	case 3:
+		if (_lineCounts[0] <= 37) {
 			if (_lineCounts[1] <= 37) {
 				if (_lineCounts[2] <= 37)
-						return 3;
+					return 3;
 				if (_lineCounts[2] <= 84)
 					if (checkFit(_linePtrs[2], 42, 2))
 						return 4;
@@ -958,7 +957,8 @@ uint16 AGOSEngine_Waxworks::getBoxSize() {
 			return 6;
 		}
 		return 6;
-	case 4: if (_lineCounts[0] <= 42) {
+	case 4:
+		if (_lineCounts[0] <= 42) {
 			if (_lineCounts[1] <= 42) {
 				if (_lineCounts[2] <= 42) {
 					if (_lineCounts[3] <= 42)
@@ -974,16 +974,17 @@ uint16 AGOSEngine_Waxworks::getBoxSize() {
 				return 6;
 			}
 			if ((_lineCounts[1] <= 96) && (checkFit(_linePtrs[1], 48, 2)))
-					if ((_lineCounts[2] <= 48) && (_lineCounts[3] <= 48))
-						return 5;
+				if ((_lineCounts[2] <= 48) && (_lineCounts[3] <= 48))
+					return 5;
 			return 6;
 		}
 		if ((_lineCounts[0] <= 96) && (checkFit(_linePtrs[0], 48, 2)))
 			if ((_lineCounts[1] <= 48) && (_lineCounts[2] <= 48) && (_lineCounts[3] <= 48))
 				return 5;
 		return 6;
-	case 5: if ((_lineCounts[0] > 48) || (_lineCounts[1] > 48) || (_lineCounts[2] > 48)
-			|| (_lineCounts[3] > 48) || (_lineCounts[4] > 48))
+	case 5:
+		if ((_lineCounts[0] > 48) || (_lineCounts[1] > 48) || (_lineCounts[2] > 48)
+		    || (_lineCounts[3] > 48) || (_lineCounts[4] > 48))
 			return 6;
 		else
 			return 5;
@@ -991,7 +992,6 @@ uint16 AGOSEngine_Waxworks::getBoxSize() {
 		return 6;
 	}
 }
-
 
 uint16 AGOSEngine_Waxworks::checkFit(char *ptr, int width, int lines) {
 	int countw = 0;
@@ -1048,37 +1048,43 @@ void AGOSEngine_Waxworks::printBox() {
 	changeWindow(5);
 
 	switch (BoxSize) {
-	case 1: _textWindow->x = 10;
+	case 1:
+		_textWindow->x = 10;
 		_textWindow->y = 163;
 		_textWindow->width = 20;
 		_textWindow->height = 1;
 		_textWindow->textMaxLength = 26;
 		break;
-	case 2: _textWindow->x = 8;
+	case 2:
+		_textWindow->x = 8;
 		_textWindow->y = 160;
 		_textWindow->width = 24;
 		_textWindow->height = 2;
 		_textWindow->textMaxLength = 32;
 		break;
-	case 3: _textWindow->x = 6;
+	case 3:
+		_textWindow->x = 6;
 		_textWindow->y = 156;
 		_textWindow->width = 28;
 		_textWindow->height = 3;
 		_textWindow->textMaxLength = 37;
 		break;
-	case 4: _textWindow->x = 4;
+	case 4:
+		_textWindow->x = 4;
 		_textWindow->y = 153;
 		_textWindow->width = 32;
 		_textWindow->height = 4;
 		_textWindow->textMaxLength = 42;
 		break;
-	case 5: _textWindow->x = 2;
+	case 5:
+		_textWindow->x = 2;
 		_textWindow->y = 150;
 		_textWindow->width = 36;
 		_textWindow->height = 5;
 		_textWindow->textMaxLength = 48;
 		break;
-	default:_textWindow->x = 1;
+	default:
+		_textWindow->x = 1;
 		_textWindow->y = 147;
 		_textWindow->width = 38;
 		_textWindow->height = 6;

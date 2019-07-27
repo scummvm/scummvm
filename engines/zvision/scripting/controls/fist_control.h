@@ -29,7 +29,7 @@
 #include "common/rect.h"
 
 namespace Video {
-	class VideoDecoder;
+class VideoDecoder;
 }
 
 namespace ZVision {
@@ -42,12 +42,12 @@ public:
 
 private:
 	uint32 _fiststatus;
-	int   _fistnum;
-	int16  _cursor;
-	int   _order;
+	int _fistnum;
+	int16 _cursor;
+	int _order;
 
-	Common::Array< Common::Array<Common::Rect> > _fistsUp;
-	Common::Array< Common::Array<Common::Rect> > _fistsDwn;
+	Common::Array<Common::Array<Common::Rect>> _fistsUp;
+	Common::Array<Common::Array<Common::Rect>> _fistsDwn;
 
 	int32 _numEntries;
 
@@ -63,8 +63,8 @@ private:
 
 	Video::VideoDecoder *_animation;
 	Common::Rect _anmRect;
-	int32   _soundKey;
-	int32   _animationId;
+	int32 _soundKey;
+	int32 _animationId;
 
 public:
 	bool onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
@@ -73,7 +73,7 @@ public:
 
 private:
 	void readDescFile(const Common::String &fileName);
-	void clearFistArray(Common::Array< Common::Array<Common::Rect> > &arr);
+	void clearFistArray(Common::Array<Common::Array<Common::Rect>> &arr);
 	uint32 readBits(const char *str);
 	int mouseIn(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
 	void getFistParams(const Common::String &inputStr, Common::String &parameter, Common::String &values);

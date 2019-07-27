@@ -23,9 +23,9 @@
 #ifndef ILLUSIONS_BBDOU_BBDOU_INVENTORY_H
 #define ILLUSIONS_BBDOU_BBDOU_INVENTORY_H
 
-#include "illusions/specialcode.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "illusions/specialcode.h"
 
 namespace Illusions {
 
@@ -62,9 +62,10 @@ public:
 	void clear();
 	InventorySlot *getInventorySlot(uint32 objectId);
 	InventorySlot *findClosestSlot(Common::Point putPos, int index);
+
 protected:
 public:
-	typedef Common::Array<InventorySlot*> InventorySlots;
+	typedef Common::Array<InventorySlot *> InventorySlots;
 	typedef InventorySlots::iterator InventorySlotsIterator;
 	IllusionsEngine_BBDOU *_vm;
 	uint32 _sceneId;
@@ -92,12 +93,13 @@ public:
 	void cause0x1B0001(TriggerFunction *triggerFunction, uint32 callingThreadId);
 	void cause0x1B0002(TriggerFunction *triggerFunction, uint32 callingThreadId);
 	void putBackInventoryItem(uint32 objectId, Common::Point cursorPosition);
+
 protected:
-	typedef Common::Array<InventoryItem*> InventoryItems;
+	typedef Common::Array<InventoryItem *> InventoryItems;
 	typedef InventoryItems::iterator InventoryItemsIterator;
 	IllusionsEngine_BBDOU *_vm;
 	BbdouSpecialCode *_bbdou;
-	Common::Array<InventoryBag*> _inventoryBags;
+	Common::Array<InventoryBag *> _inventoryBags;
 	InventoryItems _inventoryItems;
 	uint32 _activeBagSceneId;
 	uint32 _activeInventorySceneId;

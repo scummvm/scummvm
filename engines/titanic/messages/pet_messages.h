@@ -42,16 +42,18 @@ MESSAGE1(CPETStarFieldLockMsg, int, value, 0);
 MESSAGE0(CPETStereoFieldOnOffMsg);
 MESSAGE2(CPETTargetMsg, CString, name, "", int, numValue, -1);
 
-#define PET_MESSAGE(NAME) \
-	class NAME: public CPETTargetMsg { \
-	public: \
-	NAME() : CPETTargetMsg() {} \
-	NAME(const CString &name, int num) : CPETTargetMsg(name, num) {} \
-	CLASSDEF; \
-	static bool isSupportedBy(const CTreeItem *item) { \
-		return supports(item, _type); \
-	} \
-}
+#define PET_MESSAGE(NAME)                              \
+	class NAME : public CPETTargetMsg {                  \
+	public:                                              \
+		NAME()                                             \
+		  : CPETTargetMsg() {}                             \
+		NAME(const CString &name, int num)                 \
+		  : CPETTargetMsg(name, num) {}                    \
+		CLASSDEF;                                          \
+		static bool isSupportedBy(const CTreeItem *item) { \
+			return supports(item, _type);                    \
+		}                                                  \
+	}
 
 PET_MESSAGE(CPETDownMsg);
 PET_MESSAGE(CPETUpMsg);

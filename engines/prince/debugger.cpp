@@ -21,22 +21,26 @@
  */
 
 #include "prince/debugger.h"
-#include "prince/prince.h"
 #include "prince/flags.h"
+#include "prince/prince.h"
 #include "prince/script.h"
 
 namespace Prince {
 
-Debugger::Debugger(PrinceEngine *vm, InterpreterFlags *flags) : GUI::Debugger(), _vm(vm), _locationNr(0), _flags(flags) {
-	registerCmd("continue",		WRAP_METHOD(Debugger, cmdExit));
-	registerCmd("level",			WRAP_METHOD(Debugger, Cmd_DebugLevel));
-	registerCmd("setflag",		WRAP_METHOD(Debugger, Cmd_SetFlag));
-	registerCmd("getflag",		WRAP_METHOD(Debugger, Cmd_GetFlag));
-	registerCmd("clearflag",		WRAP_METHOD(Debugger, Cmd_ClearFlag));
-	registerCmd("viewflc",		WRAP_METHOD(Debugger, Cmd_ViewFlc));
-	registerCmd("initroom",		WRAP_METHOD(Debugger, Cmd_InitRoom));
-	registerCmd("changecursor",	WRAP_METHOD(Debugger, Cmd_ChangeCursor));
-	registerCmd("additem",		WRAP_METHOD(Debugger, Cmd_AddItem));
+Debugger::Debugger(PrinceEngine *vm, InterpreterFlags *flags)
+  : GUI::Debugger()
+  , _vm(vm)
+  , _locationNr(0)
+  , _flags(flags) {
+	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("level", WRAP_METHOD(Debugger, Cmd_DebugLevel));
+	registerCmd("setflag", WRAP_METHOD(Debugger, Cmd_SetFlag));
+	registerCmd("getflag", WRAP_METHOD(Debugger, Cmd_GetFlag));
+	registerCmd("clearflag", WRAP_METHOD(Debugger, Cmd_ClearFlag));
+	registerCmd("viewflc", WRAP_METHOD(Debugger, Cmd_ViewFlc));
+	registerCmd("initroom", WRAP_METHOD(Debugger, Cmd_InitRoom));
+	registerCmd("changecursor", WRAP_METHOD(Debugger, Cmd_ChangeCursor));
+	registerCmd("additem", WRAP_METHOD(Debugger, Cmd_AddItem));
 
 	_cursorNr = 0;
 }

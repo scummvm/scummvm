@@ -20,9 +20,9 @@
  *
  */
 
-#include "gnap/gnap.h"
 #include "gnap/datarchive.h"
 #include "gnap/gamesys.h"
+#include "gnap/gnap.h"
 #include "gnap/resource.h"
 
 namespace Gnap {
@@ -70,7 +70,7 @@ int PlayerGnap::getWalkStopSequenceId(int deltaX, int deltaY) {
 	};
 
 	int id = 3 * (deltaX + 1) + deltaY + 1;
-	assert (id >= 0 && id < 9 );
+	assert(id >= 0 && id < 9);
 	return gnapWalkStopSequenceIds[id];
 }
 
@@ -82,7 +82,7 @@ Facing PlayerGnap::getWalkFacing(int deltaX, int deltaY) {
 	};
 
 	int id = 3 * (deltaX + 1) + deltaY + 1;
-	assert (id >= 0 && id < 9 );
+	assert(id >= 0 && id < 9);
 	return gnapWalkFacings[id];
 }
 
@@ -987,8 +987,7 @@ void PlayerPlat::makeRoom() {
 	do {
 		rndGridY = _vm->getRandom(_vm->_gridMaxY);
 		rndGridX = _vm->getRandom(_vm->_gridMaxX);
-	} while (ABS(rndGridX - _pos.x) > 4 || ABS(rndGridY - _pos.y) > 3 ||
-		_vm->isPointBlocked(rndGridX, rndGridY));
+	} while (ABS(rndGridX - _pos.x) > 4 || ABS(rndGridY - _pos.y) > 3 || _vm->isPointBlocked(rndGridX, rndGridY));
 	walkTo(Common::Point(rndGridX, rndGridY), -1, -1, 1);
 }
 

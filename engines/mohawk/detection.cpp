@@ -22,26 +22,26 @@
 
 #include "base/plugins.h"
 
-#include "engines/advancedDetector.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "engines/advancedDetector.h"
 
 #include "mohawk/livingbooks.h"
 
 #ifdef ENABLE_CSTIME
-#include "mohawk/cstime.h"
+#	include "mohawk/cstime.h"
 #endif
 
 #ifdef ENABLE_MYST
-#include "mohawk/myst.h"
-#include "mohawk/myst_state.h"
+#	include "mohawk/myst.h"
+#	include "mohawk/myst_state.h"
 #endif
 
 #ifdef ENABLE_RIVEN
-#include "mohawk/riven.h"
-#include "mohawk/riven_saveload.h"
+#	include "mohawk/riven.h"
+#	include "mohawk/riven_saveload.h"
 #endif
 
 namespace Mohawk {
@@ -54,7 +54,7 @@ struct MohawkGameDescription {
 	const char *appName;
 };
 
-const char* MohawkEngine::getGameId() const {
+const char *MohawkEngine::getGameId() const {
 	return _gameDescription->desc.gameId;
 }
 
@@ -83,8 +83,7 @@ Common::Language MohawkEngine::getLanguage() const {
 }
 
 bool MohawkEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL);
+	return (f == kSupportsRTL);
 }
 
 Common::String MohawkEngine::getDatafileLanguageName(const char *prefix) const {
@@ -108,10 +107,9 @@ Common::String MohawkEngine::getDatafileLanguageName(const char *prefix) const {
 #ifdef ENABLE_MYST
 
 bool MohawkEngine_Myst::hasFeature(EngineFeature f) const {
-	return
-		MohawkEngine::hasFeature(f)
-		|| (f == kSupportsLoadingDuringRuntime)
-		|| (f == kSupportsSavingDuringRuntime);
+	return MohawkEngine::hasFeature(f)
+	  || (f == kSupportsLoadingDuringRuntime)
+	  || (f == kSupportsSavingDuringRuntime);
 }
 
 #endif
@@ -119,10 +117,9 @@ bool MohawkEngine_Myst::hasFeature(EngineFeature f) const {
 #ifdef ENABLE_RIVEN
 
 bool MohawkEngine_Riven::hasFeature(EngineFeature f) const {
-	return
-		MohawkEngine::hasFeature(f)
-		|| (f == kSupportsLoadingDuringRuntime)
-		|| (f == kSupportsSavingDuringRuntime);
+	return MohawkEngine::hasFeature(f)
+	  || (f == kSupportsLoadingDuringRuntime)
+	  || (f == kSupportsSavingDuringRuntime);
 }
 
 #endif
@@ -130,35 +127,35 @@ bool MohawkEngine_Riven::hasFeature(EngineFeature f) const {
 } // End of Namespace Mohawk
 
 static const PlainGameDescriptor mohawkGames[] = {
-	{"mohawk", "Mohawk Game"},
-	{"myst", "Myst"},
-	{"makingofmyst", "The Making of Myst"},
-	{"riven", "Riven: The Sequel to Myst"},
-	{"cstime", "Where in Time is Carmen Sandiego?"},
-	{"carmentq", "Carmen Sandiego's ThinkQuick Challenge"},
-	{"carmentqc", "Carmen Sandiego's ThinkQuick Challenge Custom Question Creator"},
-	{"maggiesfa", "Maggie's Farmyard Adventure"},
-	{"greeneggs", "Green Eggs and Ham"},
-	{"seussabc", "Dr Seuss's ABC"},
-	{"tortoise", "Aesop's Fables: The Tortoise and the Hare"},
-	{"arthur", "Arthur's Teacher Trouble"},
-	{"grandma", "Just Grandma and Me"},
-	{"ruff", "Ruff's Bone"},
-	{"newkid", "The New Kid on the Block"},
-	{"arthurrace", "Arthur's Reading Race"},
-	{"arthurbday", "Arthur's Birthday"},
-	{"lilmonster", "Little Monster at School"},
-	{"catinthehat", "The Cat in the Hat"},
-	{"rugrats", "Rugrats Adventure Game"},
-	{"lbsampler", "Living Books Sampler"},
-	{"bearfight", "The Berenstain Bears Get in a Fight"},
-	{"beardark", "The Berenstain Bears In The Dark"},
-	{"arthurcomp", "Arthur's Computer Adventure"},
-	{"harryhh","Harry and the Haunted House"},
-	{"stellaluna", "Stellaluna"},
-	{"sheila", "Sheila Rae, the Brave"},
-	{"rugratsps", "Rugrats Print Shop" },
-	{nullptr, nullptr}
+	{ "mohawk", "Mohawk Game" },
+	{ "myst", "Myst" },
+	{ "makingofmyst", "The Making of Myst" },
+	{ "riven", "Riven: The Sequel to Myst" },
+	{ "cstime", "Where in Time is Carmen Sandiego?" },
+	{ "carmentq", "Carmen Sandiego's ThinkQuick Challenge" },
+	{ "carmentqc", "Carmen Sandiego's ThinkQuick Challenge Custom Question Creator" },
+	{ "maggiesfa", "Maggie's Farmyard Adventure" },
+	{ "greeneggs", "Green Eggs and Ham" },
+	{ "seussabc", "Dr Seuss's ABC" },
+	{ "tortoise", "Aesop's Fables: The Tortoise and the Hare" },
+	{ "arthur", "Arthur's Teacher Trouble" },
+	{ "grandma", "Just Grandma and Me" },
+	{ "ruff", "Ruff's Bone" },
+	{ "newkid", "The New Kid on the Block" },
+	{ "arthurrace", "Arthur's Reading Race" },
+	{ "arthurbday", "Arthur's Birthday" },
+	{ "lilmonster", "Little Monster at School" },
+	{ "catinthehat", "The Cat in the Hat" },
+	{ "rugrats", "Rugrats Adventure Game" },
+	{ "lbsampler", "Living Books Sampler" },
+	{ "bearfight", "The Berenstain Bears Get in a Fight" },
+	{ "beardark", "The Berenstain Bears In The Dark" },
+	{ "arthurcomp", "Arthur's Computer Adventure" },
+	{ "harryhh", "Harry and the Haunted House" },
+	{ "stellaluna", "Stellaluna" },
+	{ "sheila", "Sheila Rae, the Brave" },
+	{ "rugratsps", "Rugrats Print Shop" },
+	{ nullptr, nullptr }
 };
 
 #include "mohawk/detection_tables.h"
@@ -174,22 +171,19 @@ static const char *directoryGlobs[] = {
 };
 
 static const ADExtraGuiOptionsMap optionsList[] = {
-		{
-				GAMEOPTION_PLAY_MYST_FLYBY,
-				{
-						_s("Play the Myst fly by movie"),
-						_s("The Myst fly by movie was not played by the original engine."),
-						"playmystflyby",
-						false
-				}
-		},
+	{ GAMEOPTION_PLAY_MYST_FLYBY,
+	  { _s("Play the Myst fly by movie"),
+	    _s("The Myst fly by movie was not played by the original engine."),
+	    "playmystflyby",
+	    false } },
 
-		AD_EXTRA_GUI_OPTIONS_TERMINATOR
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
 class MohawkMetaEngine : public AdvancedMetaEngine {
 public:
-	MohawkMetaEngine() : AdvancedMetaEngine(Mohawk::gameDescriptions, sizeof(Mohawk::MohawkGameDescription), mohawkGames, optionsList) {
+	MohawkMetaEngine()
+	  : AdvancedMetaEngine(Mohawk::gameDescriptions, sizeof(Mohawk::MohawkGameDescription), mohawkGames, optionsList) {
 		_singleId = "mohawk";
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
@@ -217,14 +211,13 @@ public:
 };
 
 bool MohawkMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves)
-		|| (f == kSupportsLoadingDuringStartup)
-		|| (f == kSupportsDeleteSave)
-		|| (f == kSavesSupportMetaInfo)
-		|| (f == kSavesSupportThumbnail)
-		|| (f == kSavesSupportCreationDate)
-		|| (f == kSavesSupportPlayTime);
+	return (f == kSupportsListSaves)
+	  || (f == kSupportsLoadingDuringStartup)
+	  || (f == kSupportsDeleteSave)
+	  || (f == kSavesSupportMetaInfo)
+	  || (f == kSavesSupportThumbnail)
+	  || (f == kSavesSupportCreationDate)
+	  || (f == kSavesSupportPlayTime);
 }
 
 SaveStateList MohawkMetaEngine::listSavesForPrefix(const char *prefix, const char *extension) const {
@@ -360,7 +353,7 @@ bool MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MOHAWK)
-	REGISTER_PLUGIN_DYNAMIC(MOHAWK, PLUGIN_TYPE_ENGINE, MohawkMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(MOHAWK, PLUGIN_TYPE_ENGINE, MohawkMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(MOHAWK, PLUGIN_TYPE_ENGINE, MohawkMetaEngine);
+REGISTER_PLUGIN_STATIC(MOHAWK, PLUGIN_TYPE_ENGINE, MohawkMetaEngine);
 #endif

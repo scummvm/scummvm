@@ -29,7 +29,6 @@
 #ifndef WINTERMUTE_ADRESPONSEBOX_H
 #define WINTERMUTE_ADRESPONSEBOX_H
 
-
 #include "engines/wintermute/base/base_object.h"
 
 namespace Wintermute {
@@ -44,7 +43,7 @@ public:
 	BaseObject *getPrevAccessObject(BaseObject *CurrObject);
 	bool getObjects(BaseArray<UIObject *> &objects, bool interactiveOnly);
 
-	void addResponse(const AdResponse* response);
+	void addResponse(const AdResponse *response);
 	bool handleResponse(const AdResponse *response);
 	bool handleResponseNum(uint32 num);
 	int32 getIdForResponseNum(uint32 num) const;
@@ -77,6 +76,7 @@ public:
 
 	UIWindow *getResponseWindow();
 	uint32 getNumResponses() const;
+
 private:
 	int32 _spacing;
 	int32 _scrollOffset;

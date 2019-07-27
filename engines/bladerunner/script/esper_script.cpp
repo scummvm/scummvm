@@ -266,7 +266,8 @@ bool ESPERScript::SCRIPT_ESPER_DLL_Special_Region_Selected(int photo, int region
 				Actor_Clue_Acquire(kActorMcCoy, kClueClovisflowers, true, -1);
 			}
 			return true;
-		} if (region == 10) {
+		}
+		if (region == 10) {
 			Actor_Voice_Over(4040, kActorVoiceOver);
 			if (!Actor_Clue_Query(kActorMcCoy, kClueLucyWithDektora)) {
 				Actor_Says(kActorMcCoy, 6945, 3);

@@ -22,10 +22,10 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/zvision.h"
 #include "zvision/file/save_manager.h"
-#include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/zvision.h"
 
 #include "common/system.h"
 #include "common/translation.h"
@@ -178,9 +178,7 @@ Common::Error SaveManager::loadGame(int slot) {
 		// situation, which only occurs after the player has moved down the stairs,
 		// and fix it here by setting the correct background, and enabling the
 		// stair exit hotspot.
-		if ((scriptManager->getStateFlag(2411) & Puzzle::DISABLED) &&
-			(scriptManager->getStateFlag(2408) & Puzzle::DISABLED) &&
-			(scriptManager->getStateFlag(4652) & Puzzle::DISABLED)) {
+		if ((scriptManager->getStateFlag(2411) & Puzzle::DISABLED) && (scriptManager->getStateFlag(2408) & Puzzle::DISABLED) && (scriptManager->getStateFlag(4652) & Puzzle::DISABLED)) {
 			_engine->getRenderManager()->setBackgroundImage("tv2fb21c.tga");
 			scriptManager->unsetStateFlag(4652, Puzzle::DISABLED);
 		}
@@ -192,15 +190,15 @@ Common::Error SaveManager::loadGame(int slot) {
 }
 
 bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header, bool skipThumbnail) {
-	header.saveYear    = 0;
-	header.saveMonth   = 0;
-	header.saveDay     = 0;
-	header.saveHour    = 0;
+	header.saveYear = 0;
+	header.saveMonth = 0;
+	header.saveDay = 0;
+	header.saveHour = 0;
 	header.saveMinutes = 0;
-	header.playTime    = 0;
+	header.playTime = 0;
 	header.saveName.clear();
-	header.thumbnail   = nullptr;
-	header.version     = 0;
+	header.thumbnail = nullptr;
+	header.version = 0;
 
 	uint32 tag = in->readUint32BE();
 	// Check if it's original savegame than fill header structure
@@ -222,12 +220,12 @@ bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &hea
 	if (header.version > SAVE_VERSION) {
 		uint tempVersion = header.version;
 		GUI::MessageDialog dialog(
-			Common::String::format(
-				_("This saved game uses version %u, but this engine only "
-				  "supports up to version %d. You will need an updated version "
-				  "of the engine to use this saved game."), tempVersion, SAVE_VERSION
-			),
-		_("OK"));
+		  Common::String::format(
+		    _("This saved game uses version %u, but this engine only "
+		      "supports up to version %d. You will need an updated version "
+		      "of the engine to use this saved game."),
+		    tempVersion, SAVE_VERSION),
+		  _("OK"));
 		dialog.runModal();
 	}
 
@@ -242,14 +240,14 @@ bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &hea
 	}
 
 	// Read in save date/time
-	header.saveYear    = in->readSint16LE();
-	header.saveMonth   = in->readSint16LE();
-	header.saveDay     = in->readSint16LE();
-	header.saveHour    = in->readSint16LE();
+	header.saveYear = in->readSint16LE();
+	header.saveMonth = in->readSint16LE();
+	header.saveDay = in->readSint16LE();
+	header.saveHour = in->readSint16LE();
 	header.saveMinutes = in->readSint16LE();
 
 	if (header.version >= 2) {
-		header.playTime  = in->readUint32LE();
+		header.playTime = in->readUint32LE();
 	}
 
 	return true;
@@ -274,7 +272,6 @@ Common::SeekableReadStream *SaveManager::getSlotFile(uint slot) {
 				saveFile = tmpFile;
 			}
 		}
-
 	}
 
 	return saveFile;

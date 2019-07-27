@@ -68,7 +68,7 @@ public:
 
 class PauseDialog : public InfoDialog {
 public:
-	PauseDialog(MohawkEngine* vm, const Common::String &message);
+	PauseDialog(MohawkEngine *vm, const Common::String &message);
 	void handleKeyDown(Common::KeyState state) override;
 };
 
@@ -119,9 +119,9 @@ private:
 
 	MohawkEngine_Myst *_vm;
 
-	GUI::ButtonWidget    *_loadButton;
-	GUI::ButtonWidget    *_saveButton;
-	GUI::ButtonWidget    *_quitButton;
+	GUI::ButtonWidget *_loadButton;
+	GUI::ButtonWidget *_saveButton;
+	GUI::ButtonWidget *_quitButton;
 
 	GUI::SaveLoadChooser *_loadDialog;
 	GUI::SaveLoadChooser *_saveDialog;

@@ -23,8 +23,8 @@
 #include "groovie/cursor.h"
 #include "groovie/groovie.h"
 
-#include "common/debug.h"
 #include "common/archive.h"
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/macresman.h"
 #include "common/textconsole.h"
@@ -34,8 +34,12 @@ namespace Groovie {
 
 // Cursor Manager
 
-GrvCursorMan::GrvCursorMan(OSystem *system) :
-	_syst(system), _lastTime(0), _current(255), _cursor(NULL), _lastFrame(0) {
+GrvCursorMan::GrvCursorMan(OSystem *system)
+  : _syst(system)
+  , _lastTime(0)
+  , _current(255)
+  , _cursor(NULL)
+  , _lastFrame(0) {
 }
 
 GrvCursorMan::~GrvCursorMan() {
@@ -81,7 +85,6 @@ void GrvCursorMan::animate() {
 	}
 }
 
-
 // t7g Cursor
 
 class Cursor_t7g : public Cursor {
@@ -96,8 +99,8 @@ private:
 	byte *_pal;
 };
 
-Cursor_t7g::Cursor_t7g(uint8 *img, uint8 *pal) :
-	_pal(pal) {
+Cursor_t7g::Cursor_t7g(uint8 *img, uint8 *pal)
+  : _pal(pal) {
 
 	_width = img[0];
 	_height = img[1];
@@ -122,12 +125,11 @@ void Cursor_t7g::showFrame(uint16 frame) {
 	CursorMan.replaceCursor((const byte *)_img + offset, _width, _height, _width >> 1, _height >> 1, 0);
 }
 
-
 // t7g Cursor Manager
 
 #define NUM_IMGS 9
 static const uint16 cursorDataOffsets[NUM_IMGS] = {
-0x0000, 0x182f, 0x3b6d, 0x50cc, 0x6e79, 0x825d, 0x96d7, 0xa455, 0xa776
+	0x0000, 0x182f, 0x3b6d, 0x50cc, 0x6e79, 0x825d, 0x96d7, 0xa455, 0xa776
 };
 
 #define NUM_PALS 7
@@ -135,11 +137,11 @@ static const uint16 cursorDataOffsets[NUM_IMGS] = {
 
 #define NUM_STYLES 11
 // pyramid is cursor 8, eyes are 9 & 10
-const uint GrvCursorMan_t7g::_cursorImg[NUM_STYLES] = {3, 5, 4, 3, 1, 0, 2, 6, 7, 8, 8};
-const uint GrvCursorMan_t7g::_cursorPal[NUM_STYLES] = {0, 0, 0, 0, 2, 0, 1, 3, 5, 4, 6};
+const uint GrvCursorMan_t7g::_cursorImg[NUM_STYLES] = { 3, 5, 4, 3, 1, 0, 2, 6, 7, 8, 8 };
+const uint GrvCursorMan_t7g::_cursorPal[NUM_STYLES] = { 0, 0, 0, 0, 2, 0, 1, 3, 5, 4, 6 };
 
-GrvCursorMan_t7g::GrvCursorMan_t7g(OSystem *system, Common::MacResManager *macResFork) :
-	GrvCursorMan(system) {
+GrvCursorMan_t7g::GrvCursorMan_t7g(OSystem *system, Common::MacResManager *macResFork)
+  : GrvCursorMan(system) {
 
 	Common::SeekableReadStream *robgjd = 0;
 
@@ -231,7 +233,6 @@ byte *GrvCursorMan_t7g::loadPalette(Common::SeekableReadStream &file) {
 	return palette;
 }
 
-
 // v2 Cursor
 
 class Cursor_v2 : public Cursor {
@@ -272,9 +273,9 @@ Cursor_v2::Cursor_v2(Common::File &file) {
 	debugC(5, kDebugCursor, "loop2count?: %d\n", loop2count);
 	for (int l = 0; l < loop2count; l++) {
 		tmp16 = file.readUint16LE();
-		debugC(5, kDebugCursor, "loop2a: %d\n", tmp16);	// Index frame can merge to/from?
+		debugC(5, kDebugCursor, "loop2a: %d\n", tmp16); // Index frame can merge to/from?
 		tmp16 = file.readUint16LE();
-		debugC(5, kDebugCursor, "loop2b: %d\n", tmp16);	// Number of frames?
+		debugC(5, kDebugCursor, "loop2b: %d\n", tmp16); // Number of frames?
 	}
 
 	file.read(pal, 0x20 * 3);
@@ -389,11 +390,10 @@ void Cursor_v2::showFrame(uint16 frame) {
 	CursorMan.replaceCursor((const byte *)(_img + offset), _width, _height, _width >> 1, _height >> 1, 0, false, &_format);
 }
 
-
 // v2 Cursor Manager
 
-GrvCursorMan_v2::GrvCursorMan_v2(OSystem *system) :
-	GrvCursorMan(system) {
+GrvCursorMan_v2::GrvCursorMan_v2(OSystem *system)
+  : GrvCursorMan(system) {
 
 	// Open the icons file
 	Common::File iconsFile;
@@ -403,9 +403,8 @@ GrvCursorMan_v2::GrvCursorMan_v2(OSystem *system) :
 	// Verify the signature
 	uint32 tmp32 = iconsFile.readUint32BE();
 	uint16 tmp16 = iconsFile.readUint16LE();
-	if (tmp32 != MKTAG('i','c','o','n') || tmp16 != 1)
+	if (tmp32 != MKTAG('i', 'c', 'o', 'n') || tmp16 != 1)
 		error("Groovie::Cursor: icons.ph signature failed: %s %d", tag2str(tmp32), tmp16);
-
 
 	// Read the number of icons
 	uint16 nicons = iconsFile.readUint16LE();

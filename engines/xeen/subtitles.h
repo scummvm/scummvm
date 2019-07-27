@@ -35,6 +35,7 @@ private:
 	SpriteResource *_boxSprites;
 	int _lineEnd, _lineSize;
 	Common::String _displayLine;
+
 private:
 	/**
 	 * Loads the string list of all subtitles
@@ -50,6 +51,7 @@ private:
 	 * Returns true if the time for a subtitle frame has expired
 	 */
 	bool timeElapsed() const;
+
 public:
 	/**
 	 * Constructor

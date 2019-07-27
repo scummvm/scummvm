@@ -49,8 +49,8 @@ class ActorClues {
 
 	BladeRunnerEngine *_vm;
 
-	int                 _count;
-	int                 _maxCount;
+	int _count;
+	int _maxCount;
 	Common::Array<Clue> _clues;
 
 public:

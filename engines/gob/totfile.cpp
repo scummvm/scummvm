@@ -23,14 +23,15 @@
 #include "common/str.h"
 #include "common/stream.h"
 
+#include "gob/dataio.h"
 #include "gob/gob.h"
 #include "gob/totfile.h"
-#include "gob/dataio.h"
 #include "gob/videoplayer.h"
 
 namespace Gob {
 
-TOTFile::TOTFile(GobEngine *vm) : _vm(vm) {
+TOTFile::TOTFile(GobEngine *vm)
+  : _vm(vm) {
 	_stream = 0;
 
 	memset(_header, 0, 128);
@@ -82,20 +83,20 @@ bool TOTFile::getProperties(Properties &props) const {
 
 	props.variablesCount = READ_LE_UINT32(_header + 44);
 
-	props.textsOffset     = READ_LE_UINT32(_header + 48);
+	props.textsOffset = READ_LE_UINT32(_header + 48);
 	props.resourcesOffset = READ_LE_UINT32(_header + 52);
 
 	props.animDataSize = READ_LE_UINT16(_header + 56);
 
-	props.imFileNumber   = _header[59];
-	props.exFileNumber   = _header[60];
+	props.imFileNumber = _header[59];
+	props.exFileNumber = _header[60];
 	props.communHandling = _header[61];
 
 	for (int i = 0; i < 14; i++)
 		props.functions[i] = READ_LE_UINT16(_header + 100 + i * 2);
 
-	uint32 fileSize        = _stream->size();
-	uint32 textsOffset     = props.textsOffset;
+	uint32 fileSize = _stream->size();
+	uint32 textsOffset = props.textsOffset;
 	uint32 resourcesOffset = props.resourcesOffset;
 
 	if (textsOffset == 0xFFFFFFFF)
@@ -115,27 +116,27 @@ bool TOTFile::getProperties(Properties &props) const {
 
 		if (props.textsOffset > resourcesOffset) {
 			// First resources, then texts
-			props.textsSize     = fileSize - textsOffset;
+			props.textsSize = fileSize - textsOffset;
 			props.resourcesSize = textsOffset - resourcesOffset;
 		} else {
 			// First texts, then resources
-			props.textsSize     = resourcesOffset - textsOffset;
+			props.textsSize = resourcesOffset - textsOffset;
 			props.resourcesSize = fileSize - resourcesOffset;
 		}
-	} else if (textsOffset     > 0) {
+	} else if (textsOffset > 0) {
 		// Only the texts table exists
 
-		props.textsSize     = fileSize - textsOffset;
+		props.textsSize = fileSize - textsOffset;
 		props.resourcesSize = 0;
 	} else if (resourcesOffset > 0) {
 		// Only the resources table exists
 
-		props.textsSize     = 0;
+		props.textsSize = 0;
 		props.resourcesSize = fileSize - resourcesOffset;
 	} else {
 		// Both don't exists
 
-		props.textsSize     = 0;
+		props.textsSize = 0;
 		props.resourcesSize = 0;
 	}
 

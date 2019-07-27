@@ -20,13 +20,16 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "titanic/true_talk/tt_string_node.h"
+#include "common/textconsole.h"
 
 namespace Titanic {
 
-TTstringNode::TTstringNode() : TTnode(), _file(HANDLE_STDIN),
-		_mode(0), _field1C(0) {
+TTstringNode::TTstringNode()
+  : TTnode()
+  , _file(HANDLE_STDIN)
+  , _mode(0)
+  , _field1C(0) {
 }
 
 void TTstringNode::initialize(int mode) {

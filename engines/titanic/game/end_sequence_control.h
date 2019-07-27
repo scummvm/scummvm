@@ -34,6 +34,7 @@ class CEndSequenceControl : public CGameObject {
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
+
 public:
 	CLASSDEF;
 

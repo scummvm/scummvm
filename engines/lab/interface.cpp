@@ -33,8 +33,8 @@
 #include "lab/lab.h"
 
 #include "lab/dispman.h"
-#include "lab/interface.h"
 #include "lab/image.h"
+#include "lab/interface.h"
 #include "lab/utils.h"
 
 namespace Lab {
@@ -42,7 +42,8 @@ namespace Lab {
 #define CRUMBSWIDTH 24
 #define CRUMBSHEIGHT 24
 
-Interface::Interface(LabEngine *vm) : _vm(vm) {
+Interface::Interface(LabEngine *vm)
+  : _vm(vm) {
 	_screenButtonList = nullptr;
 	_hitButton = nullptr;
 }

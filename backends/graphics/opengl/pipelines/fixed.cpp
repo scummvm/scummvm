@@ -34,11 +34,11 @@ void FixedPipeline::activateInternal() {
 	GL_CALL(glEnableClientState(GL_VERTEX_ARRAY));
 	GL_CALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
 
-#if !USE_FORCED_GLES
+#	if !USE_FORCED_GLES
 	if (g_context.multitextureSupported) {
 		GL_CALL(glActiveTexture(GL_TEXTURE0));
 	}
-#endif
+#	endif
 	GL_CALL(glEnable(GL_TEXTURE_2D));
 }
 

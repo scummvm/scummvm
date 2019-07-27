@@ -34,6 +34,7 @@ namespace DM {
 
 class LoadsaveMan {
 	DMEngine *_vm;
+
 public:
 	explicit LoadsaveMan(DMEngine *vm);
 };

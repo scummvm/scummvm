@@ -22,36 +22,36 @@
 
 #if defined(__WII__)
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
-#define FORBIDDEN_SYMBOL_EXCEPTION_getcwd
+#	define FORBIDDEN_SYMBOL_EXCEPTION_printf
+#	define FORBIDDEN_SYMBOL_EXCEPTION_getcwd
 
-#include <unistd.h>
+#	include <unistd.h>
 
-#include "backends/fs/wii/wii-fs-factory.h"
-#include "backends/fs/wii/wii-fs.h"
+#	include "backends/fs/wii/wii-fs-factory.h"
+#	include "backends/fs/wii/wii-fs.h"
 
-#ifdef USE_WII_DI
-#include <di/di.h>
-#include <iso9660.h>
-#ifdef GAMECUBE
-#include <ogc/dvd.h>
-#endif
-#endif
+#	ifdef USE_WII_DI
+#		include <di/di.h>
+#		include <iso9660.h>
+#		ifdef GAMECUBE
+#			include <ogc/dvd.h>
+#		endif
+#	endif
 
-#ifdef USE_WII_SMB
-#include <network.h>
-#include <smb.h>
-#endif
+#	ifdef USE_WII_SMB
+#		include <network.h>
+#		include <smb.h>
+#	endif
 
 namespace Common {
 DECLARE_SINGLETON(WiiFilesystemFactory);
 }
 
-WiiFilesystemFactory::WiiFilesystemFactory() :
-	_dvdMounted(false),
-	_smbMounted(false),
-	_dvdError(false),
-	_smbError(false) {
+WiiFilesystemFactory::WiiFilesystemFactory()
+  : _dvdMounted(false)
+  , _smbMounted(false)
+  , _dvdError(false)
+  , _smbError(false) {
 }
 
 AbstractFSNode *WiiFilesystemFactory::makeRootFileNode() const {
@@ -72,39 +72,39 @@ AbstractFSNode *WiiFilesystemFactory::makeFileNodePath(const Common::String &pat
 }
 
 void WiiFilesystemFactory::asyncInit() {
-#ifdef USE_WII_SMB
+#	ifdef USE_WII_SMB
 	asyncInitNetwork();
-#endif
+#	endif
 }
 
 void WiiFilesystemFactory::asyncDeinit() {
-#ifdef USE_WII_DI
+#	ifdef USE_WII_DI
 	umount(kDVD);
-#ifndef GAMECUBE
+#		ifndef GAMECUBE
 	DI_Close();
-#endif
-#endif
-#ifdef USE_WII_SMB
+#		endif
+#	endif
+#	ifdef USE_WII_SMB
 	umount(kSMB);
 	net_deinit();
-#endif
+#	endif
 }
 
-#ifdef USE_WII_SMB
+#	ifdef USE_WII_SMB
 void WiiFilesystemFactory::asyncInitNetwork() {
 	net_init_async(NULL, NULL);
 }
 
 void WiiFilesystemFactory::setSMBLoginData(const String &server,
-											const String &share,
-											const String &username,
-											const String &password) {
+                                           const String &share,
+                                           const String &username,
+                                           const String &password) {
 	_smbServer = server;
 	_smbShare = share;
 	_smbUsername = username;
 	_smbPassword = password;
 }
-#endif
+#	endif
 
 bool WiiFilesystemFactory::isMounted(FileSystemType type) {
 	switch (type) {
@@ -128,18 +128,18 @@ bool WiiFilesystemFactory::failedToMount(FileSystemType type) {
 	return false;
 }
 
-#ifdef USE_WII_DI
-#ifndef GAMECUBE
-  const DISC_INTERFACE* dvd = &__io_wiidvd;
-#else
-  const DISC_INTERFACE* dvd = &__io_gcdvd;
-#endif
-#endif
+#	ifdef USE_WII_DI
+#		ifndef GAMECUBE
+const DISC_INTERFACE *dvd = &__io_wiidvd;
+#		else
+const DISC_INTERFACE *dvd = &__io_gcdvd;
+#		endif
+#	endif
 
 void WiiFilesystemFactory::mount(FileSystemType type) {
 	switch (type) {
 	case kDVD:
-#ifdef USE_WII_DI
+#	ifdef USE_WII_DI
 		if (_dvdMounted)
 			break;
 
@@ -152,11 +152,11 @@ void WiiFilesystemFactory::mount(FileSystemType type) {
 			_dvdError = true;
 			printf("ISO9660 mount failed\n");
 		}
-#endif
+#	endif
 		break;
 
 	case kSMB:
-#ifdef USE_WII_SMB
+#	ifdef USE_WII_SMB
 		if (_smbMounted)
 			break;
 
@@ -168,7 +168,7 @@ void WiiFilesystemFactory::mount(FileSystemType type) {
 		}
 
 		if (smbInit(_smbUsername.c_str(), _smbPassword.c_str(),
-					_smbShare.c_str(), _smbServer.c_str())) {
+		            _smbShare.c_str(), _smbServer.c_str())) {
 			_smbMounted = true;
 			_smbError = false;
 			printf("smb mounted\n");
@@ -176,7 +176,7 @@ void WiiFilesystemFactory::mount(FileSystemType type) {
 			_smbError = true;
 			printf("error mounting smb\n");
 		}
-#endif
+#	endif
 		break;
 	}
 }
@@ -184,7 +184,7 @@ void WiiFilesystemFactory::mount(FileSystemType type) {
 void WiiFilesystemFactory::umount(FileSystemType type) {
 	switch (type) {
 	case kDVD:
-#ifdef USE_WII_DI
+#	ifdef USE_WII_DI
 		if (!_dvdMounted)
 			break;
 
@@ -194,11 +194,11 @@ void WiiFilesystemFactory::umount(FileSystemType type) {
 
 		_dvdMounted = false;
 		_dvdError = false;
-#endif
+#	endif
 		break;
 
 	case kSMB:
-#ifdef USE_WII_SMB
+#	ifdef USE_WII_SMB
 		if (!_smbMounted)
 			break;
 
@@ -208,7 +208,7 @@ void WiiFilesystemFactory::umount(FileSystemType type) {
 
 		_smbMounted = false;
 		_smbError = false;
-#endif
+#	endif
 		break;
 	}
 }

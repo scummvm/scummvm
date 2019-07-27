@@ -25,10 +25,10 @@
 
 #include "common/array.h"
 #include "common/hash-str.h"
-#include "common/str.h"
-#include "common/str-array.h"
 #include "common/language.h"
 #include "common/platform.h"
+#include "common/str-array.h"
+#include "common/str.h"
 
 /**
  * A simple structure used to map gameids (like "monkey", "sword1", ...) to
@@ -54,7 +54,8 @@ const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const Pla
 class PlainGameList : public Common::Array<PlainGameDescriptor> {
 public:
 	PlainGameList() {}
-	PlainGameList(const PlainGameList &list) : Common::Array<PlainGameDescriptor>(list) {}
+	PlainGameList(const PlainGameList &list)
+	  : Common::Array<PlainGameDescriptor>(list) {}
 	PlainGameList(const PlainGameDescriptor *g) {
 		while (g->gameId) {
 			push_back(*g);
@@ -72,7 +73,6 @@ enum GameSupportLevel {
 	kUnstableGame // the game is not even ready for public testing yet
 };
 
-
 /**
  * A record describing the properties of a file. Used on the existing
  * files while detecting a game.
@@ -81,7 +81,8 @@ struct FileProperties {
 	int32 size;
 	Common::String md5;
 
-	FileProperties() : size(-1) {}
+	FileProperties()
+	  : size(-1) {}
 };
 
 /**
@@ -100,10 +101,10 @@ struct DetectedGame {
 	DetectedGame();
 	explicit DetectedGame(const PlainGameDescriptor &pgd);
 	DetectedGame(const Common::String &id,
-	               const Common::String &description,
-	               Common::Language language = Common::UNK_LANG,
-	               Common::Platform platform = Common::kPlatformUnknown,
-	               const Common::String &extra = Common::String());
+	             const Common::String &description,
+	             Common::Language language = Common::UNK_LANG,
+	             Common::Platform platform = Common::kPlatformUnknown,
+	             const Common::String &extra = Common::String());
 
 	void setGUIOptions(const Common::String &options);
 	void appendGUIOptions(const Common::String &str);
@@ -165,6 +166,7 @@ struct DetectedGame {
 	void addExtraEntry(const Common::String &key, const Common::String &value) {
 		_extraConfigEntries[key] = value;
 	}
+
 private:
 	/**
 	 * Update the description string by appending (EXTRA/PLATFORM/LANG) to it.

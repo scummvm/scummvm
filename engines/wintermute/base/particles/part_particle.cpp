@@ -27,16 +27,17 @@
  */
 
 #include "engines/wintermute/base/particles/part_particle.h"
-#include "engines/wintermute/base/particles/part_emitter.h"
-#include "engines/wintermute/base/base_sprite.h"
-#include "engines/wintermute/utils/utils.h"
-#include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
+#include "engines/wintermute/base/base_sprite.h"
+#include "engines/wintermute/base/particles/part_emitter.h"
+#include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/utils/utils.h"
 
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-PartParticle::PartParticle(BaseGame *inGame) : BaseClass(inGame) {
+PartParticle::PartParticle(BaseGame *inGame)
+  : BaseClass(inGame) {
 	_pos = Vector2(0.0f, 0.0f);
 	_posZ = 0.0f;
 	_velocity = Vector2(0.0f, 0.0f);
@@ -61,7 +62,6 @@ PartParticle::PartParticle(BaseGame *inGame) : BaseClass(inGame) {
 	_exponentialGrowth = false;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 PartParticle::~PartParticle(void) {
 	delete _sprite;
@@ -79,7 +79,7 @@ bool PartParticle::setSprite(const Common::String &filename) {
 	_sprite = nullptr;
 
 	SystemClassRegistry::getInstance()->_disabled = true;
-	_sprite = new BaseSprite(_gameRef, (BaseObject*)_gameRef);
+	_sprite = new BaseSprite(_gameRef, (BaseObject *)_gameRef);
 	if (_sprite && DID_SUCCEED(_sprite->loadFile(filename))) {
 		SystemClassRegistry::getInstance()->_disabled = false;
 		return STATUS_OK;
@@ -89,7 +89,6 @@ bool PartParticle::setSprite(const Common::String &filename) {
 		SystemClassRegistry::getInstance()->_disabled = false;
 		return STATUS_FAILED;
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -162,8 +161,7 @@ bool PartParticle::update(PartEmitter *emitter, uint32 currentTime, uint32 timer
 				dist = 100.0f / dist;
 
 				_velocity += force->_direction * dist * elapsedTime;
-			}
-			break;
+			} break;
 			}
 		}
 		_pos += _velocity * elapsedTime;
@@ -182,7 +180,6 @@ bool PartParticle::update(PartEmitter *emitter, uint32 currentTime, uint32 timer
 		if (_scale <= 0.0f) {
 			_isDead = true;
 		}
-
 
 		return STATUS_OK;
 	}
@@ -205,7 +202,6 @@ bool PartParticle::display(PartEmitter *emitter) {
 	                        _rotation,
 	                        emitter->_blendMode);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool PartParticle::fadeIn(uint32 currentTime, int fadeTime) {

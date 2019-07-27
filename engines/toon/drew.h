@@ -40,6 +40,7 @@ public:
 	void update(int32 timeIncrement);
 	void playWalkAnim(int32 start, int32 end);
 	int32 getRandomIdleAnim();
+
 protected:
 	int32 _currentScale;
 };

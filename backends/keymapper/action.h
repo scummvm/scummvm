@@ -27,17 +27,17 @@
 
 #ifdef ENABLE_KEYMAPPER
 
-#include "common/events.h"
-#include "common/func.h"
-#include "common/list.h"
-#include "common/str.h"
+#	include "common/events.h"
+#	include "common/func.h"
+#	include "common/list.h"
+#	include "common/str.h"
 
 namespace Common {
 
 struct HardwareInput;
 class Keymap;
 
-#define ACTION_ID_SIZE (5)
+#	define ACTION_ID_SIZE (5)
 
 struct KeyActionEntry {
 	const KeyState ks;
@@ -99,7 +99,6 @@ public:
 
 	void mapInput(const HardwareInput *input);
 	const HardwareInput *getMappedInput() const;
-
 };
 
 } // End of namespace Common

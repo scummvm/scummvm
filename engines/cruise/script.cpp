@@ -20,10 +20,10 @@
  *
  */
 
-#include "cruise/cruise.h"
-#include "cruise/cruise_main.h"
 #include "common/endian.h"
 #include "common/textconsole.h"
+#include "cruise/cruise.h"
+#include "cruise/cruise_main.h"
 
 namespace Cruise {
 
@@ -73,7 +73,7 @@ int32 opcodeType0() {
 
 		if (!ovl) {
 			address = scriptDataPtrTable[typ7];
-		} else	{ // TODO:
+		} else { // TODO:
 			if (!overlayTable[ovl].alreadyLoaded) {
 				return (-7);
 			}
@@ -127,13 +127,13 @@ int32 opcodeType0() {
 }
 
 // save opcode
-int32 opcodeType1()	{
+int32 opcodeType1() {
 	int var = popVar();
 	int offset = 0;
 
 	switch (currentScriptOpcodeType) {
 	case 0:
-		return (0);	// strange, but happens also in original interpreter
+		return (0); // strange, but happens also in original interpreter
 
 	case 5:
 		offset = saveOpcodeVar;
@@ -184,7 +184,7 @@ int32 opcodeType1()	{
 			return 0;
 		}
 		case 2: {
-			assert (ptr);
+			assert(ptr);
 			*(ptr + var_A + offset) = var;
 			return 0;
 		}
@@ -229,7 +229,7 @@ int32 opcodeType2() {
 		index = saveOpcodeVar;
 		// fall through
 	case 1: {
-		uint8* adresse = NULL;
+		uint8 *adresse = NULL;
 		int type = getByteFromScript();
 		int overlay = getByteFromScript();
 
@@ -262,22 +262,21 @@ int32 opcodeType2() {
 			pushPtr(adresse);
 		}
 
-	}
-	break;
+	} break;
 	}
 
 	return 0;
 }
 
-int32 opcodeType10() {	// break
+int32 opcodeType10() { // break
 	return (0);
 }
 
-int32 opcodeType11() {	// break
+int32 opcodeType11() { // break
 	return (1);
 }
 
-int32 opcodeType4() {		// test
+int32 opcodeType4() { // test
 	int boolVar = 0;
 
 	int var1 = popVar();
@@ -393,17 +392,17 @@ int32 opcodeType5() {
 		break;
 
 	case 6:
-		break;	// never
+		break; // never
 
 	case 7:
-		currentScriptPtr->scriptOffset = newSi;	//always
+		currentScriptPtr->scriptOffset = newSi; //always
 		break;
 	}
 
 	return (0);
 }
 
-int32 opcodeType3()	{	// math
+int32 opcodeType3() { // math
 	int pop1 = popVar();
 	int pop2 = popVar();
 
@@ -440,13 +439,12 @@ int32 opcodeType3()	{	// math
 	case 6:
 		pushVar(pop2 & pop1);
 		return (0);
-
 	}
 
 	return 0;
 }
 
-int32 opcodeType9() {		// stop script
+int32 opcodeType9() { // stop script
 	//debug("Stop a script of overlay %s", overlayTable[currentScriptPtr->overlayNumber].overlayName);
 	currentScriptPtr->scriptNumber = -1;
 	return (1);
@@ -491,7 +489,7 @@ uint8 *attacheNewScriptToTail(scriptInstanceStruct *scriptHandlePtr, int16 overl
 
 	if (scriptType < 0) {
 		useArg3Neg = 1;
-		scriptType = (scriptTypeEnum) -scriptType;
+		scriptType = (scriptTypeEnum)-scriptType;
 	}
 
 	if (scriptType == 20)
@@ -510,7 +508,7 @@ uint8 *attacheNewScriptToTail(scriptInstanceStruct *scriptHandlePtr, int16 overl
 	var_C = data3Ptr->sysKey;
 	oldTail = scriptHandlePtr;
 
-	while (oldTail->nextScriptPtr)	// go to the end of the list
+	while (oldTail->nextScriptPtr) // go to the end of the list
 		oldTail = oldTail->nextScriptPtr;
 
 	scriptInstanceStruct *tempPtr = (scriptInstanceStruct *)mallocAndZero(sizeof(scriptInstanceStruct));
@@ -521,7 +519,7 @@ uint8 *attacheNewScriptToTail(scriptInstanceStruct *scriptHandlePtr, int16 overl
 	tempPtr->data = NULL;
 
 	if (var_C)
-		tempPtr->data = (uint8 *) mallocAndZero(var_C);
+		tempPtr->data = (uint8 *)mallocAndZero(var_C);
 
 	tempPtr->dataSize = var_C;
 	tempPtr->nextScriptPtr = NULL;
@@ -529,7 +527,7 @@ uint8 *attacheNewScriptToTail(scriptInstanceStruct *scriptHandlePtr, int16 overl
 	tempPtr->scriptNumber = param;
 	tempPtr->overlayNumber = overlayNumber;
 
-	if (scriptType == 20)   // Obj or not ?
+	if (scriptType == 20) // Obj or not ?
 		tempPtr->sysKey = useArg3Neg;
 	else
 		tempPtr->sysKey = 1;
@@ -539,8 +537,8 @@ uint8 *attacheNewScriptToTail(scriptInstanceStruct *scriptHandlePtr, int16 overl
 	tempPtr->var18 = arg2;
 	tempPtr->var16 = arg1;
 	tempPtr->var1A = arg0;
-	tempPtr->nextScriptPtr = oldTail->nextScriptPtr;   // should always be NULL as it's the tail
-	oldTail->nextScriptPtr = tempPtr;   // attach the new node to the list
+	tempPtr->nextScriptPtr = oldTail->nextScriptPtr; // should always be NULL as it's the tail
+	oldTail->nextScriptPtr = tempPtr; // attach the new node to the list
 
 	return (tempPtr->data);
 }
@@ -572,9 +570,9 @@ int executeScripts(scriptInstanceStruct *ptr) {
 		return (-4);
 
 	currentData3DataPtr = ptr2->dataPtr;
-	scriptDataPtrTable[1] = (uint8 *) ptr->data;
+	scriptDataPtrTable[1] = (uint8 *)ptr->data;
 	scriptDataPtrTable[2] = getDataFromData3(ptr2, 1);
-	scriptDataPtrTable[5] = ovlData->data4Ptr;	// free strings
+	scriptDataPtrTable[5] = ovlData->data4Ptr; // free strings
 	scriptDataPtrTable[6] = ovlData->ptr8;
 	currentScriptPtr = ptr;
 	positionInStack = 0;
@@ -582,18 +580,18 @@ int executeScripts(scriptInstanceStruct *ptr) {
 	do {
 #ifdef SKIP_INTRO
 		if (currentScriptPtr->scriptOffset == 290
-		        && currentScriptPtr->overlayNumber == 4
-		        && currentScriptPtr->scriptNumber == 0) {
+		    && currentScriptPtr->overlayNumber == 4
+		    && currentScriptPtr->scriptNumber == 0) {
 			currentScriptPtr->scriptOffset = 923;
 		}
 #endif
 		opcodeType = getByteFromScript();
 
 		debugC(5, kCruiseDebugScript, "Script %s/%d ip=%d opcode=%d",
-			overlayTable[currentScriptPtr->overlayNumber].overlayName,
-			currentScriptPtr->scriptNumber,
-			currentScriptPtr->scriptOffset,
-			(opcodeType & 0xFB) >> 3);
+		       overlayTable[currentScriptPtr->overlayNumber].overlayName,
+		       currentScriptPtr->scriptNumber,
+		       currentScriptPtr->scriptOffset,
+		       (opcodeType & 0xFB) >> 3);
 
 		currentScriptOpcodeType = opcodeType & 7;
 

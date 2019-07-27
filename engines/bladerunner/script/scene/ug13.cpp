@@ -28,10 +28,10 @@ void SceneScriptUG13::InitializeScene() {
 	if (Game_Flag_Query(kFlagUG18toUG13)) {
 		Setup_Scene_Information(-477.0f, 141.9f, -870.0f, 378);
 	} else if (Game_Flag_Query(kFlagUG15toUG13)) {
-		Setup_Scene_Information(  39.0f, 52.94f, -528.0f, 600);
+		Setup_Scene_Information(39.0f, 52.94f, -528.0f, 600);
 	} else {
 		// arrived from elevator (going down)
-		Setup_Scene_Information( -22.0f, 54.63f, -883.0f, 578);
+		Setup_Scene_Information(-22.0f, 54.63f, -883.0f, 578);
 #if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Set_Invisible(kActorMcCoy, false);
 #else
@@ -47,17 +47,16 @@ void SceneScriptUG13::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(2, 108, 85, 175, 210, 3);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxSTMLOOP7, 15, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1,   40, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED2,   40, 0, 1);
-	Ambient_Sounds_Add_Sound(kSfxYELL1M2,  2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxYELL1M3,  2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1, 40, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED2, 40, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxYELL1M2, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxYELL1M3, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxGRUNT1M1, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxGRUNT2M2, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxGRUNT2M3, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
 
-	if ( Global_Variable_Query(kVariableChapter) == 4
-	 && !Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 4
+	    && !Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)) {
 		Actor_Set_Goal_Number(kActorTransient, 390);
 	}
 
@@ -94,13 +93,11 @@ void SceneScriptUG13::SceneLoaded() {
 	Clickable_Object("BOLLARD");
 	Unclickable_Object("BASKET");
 
-	if ( Global_Variable_Query(kVariableChapter) >= 3
-	 && !Actor_Clue_Query(kActorMcCoy, kClueOriginalRequisitionForm)
-	 &&  Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)
-	 &&  (Actor_Clue_Query(kActorMcCoy, kClueShippingForm)
-	  ||  Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm)
-	 )
-	) {
+	if (Global_Variable_Query(kVariableChapter) >= 3
+	    && !Actor_Clue_Query(kActorMcCoy, kClueOriginalRequisitionForm)
+	    && Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)
+	    && (Actor_Clue_Query(kActorMcCoy, kClueShippingForm)
+	        || Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm))) {
 		Item_Add_To_World(kItemWeaponsOrderForm, kModelAnimationOriginalRequisitionForm, 85, -209.01f, 70.76f, -351.79f, 0, 16, 12, false, true, false, true);
 	}
 }
@@ -147,13 +144,11 @@ bool SceneScriptUG13::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool SceneScriptUG13::ClickedOnActor(int actorId) {
 	if (actorId == kActorTransient
-	 && Global_Variable_Query(kVariableChapter) == 4
-	) {
+	    && Global_Variable_Query(kVariableChapter) == 4) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -248.0f, 44.0f, -390.0f, 12, true, false, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorTransient, true);
 			if (Actor_Query_Goal_Number(kActorTransient) != 6
-			 && Actor_Query_Goal_Number(kActorTransient) != 599
-			) {
+			    && Actor_Query_Goal_Number(kActorTransient) != 599) {
 				if (!Game_Flag_Query(kFlagUG13HomelessTalk1)) {
 					Actor_Face_Actor(kActorMcCoy, kActorTransient, true);
 					Game_Flag_Set(kFlagUG13HomelessTalk1);
@@ -171,9 +166,9 @@ bool SceneScriptUG13::ClickedOnActor(int actorId) {
 						dialogueWithHomeless1();
 					} else {
 						Actor_Face_Actor(kActorMcCoy, kActorTransient, true);
-						Actor_Says(kActorMcCoy, 5600, 14);               // Let me ask you
-						Actor_Says(kActorTransient, 100, 53);            // sleeping, mumbling
-						Actor_Says(kActorMcCoy, 5605, 18);               // I'm talking to you...
+						Actor_Says(kActorMcCoy, 5600, 14); // Let me ask you
+						Actor_Says(kActorTransient, 100, 53); // sleeping, mumbling
+						Actor_Says(kActorMcCoy, 5605, 18); // I'm talking to you...
 						Actor_Start_Speech_Sample(kActorTransient, 110); // sleeping, mumbling
 						Actor_Set_Goal_Number(kActorTransient, 395);
 					}
@@ -241,8 +236,7 @@ bool SceneScriptUG13::ClickedOnExit(int exitId) {
 					// These lines of dialogue are not in the code of the original game
 					if (Actor_Query_Goal_Number(kActorTransient) == 391
 					    || Actor_Query_Goal_Number(kActorTransient) == 395
-					    || Actor_Query_Goal_Number(kActorTransient) == 599
-					) {
+					    || Actor_Query_Goal_Number(kActorTransient) == 599) {
 						Actor_Says(kActorMcCoy, 8522, 14); // Locked
 					} else {
 						Actor_Says(kActorMcCoy, 5555, 14); // How do I get this thing open?
@@ -274,9 +268,8 @@ void SceneScriptUG13::SceneFrameAdvanced(int frame) {
 	}
 
 	if (Game_Flag_Query(kFlagUG13CallElevator)
-	 && frame > 29
-	 && frame < 91
-	) {
+	    && frame > 29
+	    && frame < 91) {
 		Scene_Exit_Add_2D_Exit(0, 394, 205, 464, 281, 0);
 		Game_Flag_Reset(kFlagUG13CallElevator);
 		//return true;
@@ -284,13 +277,11 @@ void SceneScriptUG13::SceneFrameAdvanced(int frame) {
 	}
 
 	if (Game_Flag_Query(kFlagUG08toUG13)
-	 && frame < 25
-	) {
+	    && frame < 25) {
 		Actor_Set_Invisible(kActorMcCoy, true);
 	} else if (Game_Flag_Query(kFlagUG13toUG08)
-	        && frame >= 94
-	        && frame <= 120
-	) {
+	           && frame >= 94
+	           && frame <= 120) {
 		Actor_Set_Invisible(kActorMcCoy, true);
 	} else {
 		Actor_Set_Invisible(kActorMcCoy, false);
@@ -324,9 +315,8 @@ void SceneScriptUG13::PlayerWalkedIn() {
 		Player_Gains_Control();
 	}
 
-	if ( Actor_Query_Goal_Number(kActorTransient) >= 390
-	 && !Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)
-	) {
+	if (Actor_Query_Goal_Number(kActorTransient) >= 390
+	    && !Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)) {
 		if (!Game_Flag_Query(kFlagUG13Entered)) {
 			Game_Flag_Set(kFlagUG13Entered);
 			Actor_Says(kActorTransient, 50, kAnimationModeTalk); // Hey, another one? ...
@@ -343,8 +333,8 @@ void SceneScriptUG13::PlayerWalkedOut() {
 	Actor_Set_Invisible(kActorMcCoy, false);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 	if (Game_Flag_Query(kFlagUG13toUG08)) {
-		Ambient_Sounds_Remove_Sound(kSfxYELL1M2,  false);
-		Ambient_Sounds_Remove_Sound(kSfxYELL1M3,  false);
+		Ambient_Sounds_Remove_Sound(kSfxYELL1M2, false);
+		Ambient_Sounds_Remove_Sound(kSfxYELL1M3, false);
 		Ambient_Sounds_Remove_Sound(kSfxGRUNT1M1, false);
 		Ambient_Sounds_Remove_Sound(kSfxGRUNT2M2, false);
 		Ambient_Sounds_Remove_Sound(kSfxGRUNT2M3, false);
@@ -360,9 +350,9 @@ void SceneScriptUG13::talkAboutGuzza() {
 	Actor_Clue_Acquire(kActorMcCoy, kClueHomelessManInterview2, false, kActorTransient);
 	Actor_Modify_Friendliness_To_Other(kActorTransient, kActorMcCoy, -10);
 	Actor_Says(kActorTransient, 220, 30); // Bunch of times. Last time weren't that long ago.
-	Actor_Says(kActorMcCoy, 5640, 19);    // What was he doing?
+	Actor_Says(kActorMcCoy, 5640, 19); // What was he doing?
 	Actor_Says(kActorTransient, 230, 33); // Collecting guns like always.
-	Actor_Says(kActorMcCoy, 5645, 16);    // Handguns? A blaster like mine?
+	Actor_Says(kActorMcCoy, 5645, 16); // Handguns? A blaster like mine?
 	Actor_Says(kActorTransient, 240, 30); // Handguns, rifles. A whole armful. Took them through that gate.
 #if BLADERUNNER_ORIGINAL_BUGS
 	Actor_Says(kActorTransient, 250, 33); // Dumped them it a sewer. They're gone now. You sure you ain't got nothing to drink?
@@ -372,7 +362,7 @@ void SceneScriptUG13::talkAboutGuzza() {
 	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 
-	Actor_Says(kActorMcCoy, 5650, 14);    // Can you describe him?
+	Actor_Says(kActorMcCoy, 5650, 14); // Can you describe him?
 	Actor_Says(kActorTransient, 260, 32); // Eh, rough guy. Barks out orders a lot. Everybody listens when he's around. A natural.
 }
 
@@ -454,9 +444,9 @@ void SceneScriptUG13::dialogueWithHomeless1() {
 
 	default:
 		Actor_Face_Actor(kActorMcCoy, kActorTransient, true);
-		Actor_Says(kActorMcCoy, 5600, 14);               // Let me ask you
-		Actor_Says(kActorTransient, 100, 53);            // sleeping, mumbling
-		Actor_Says(kActorMcCoy, 5605, 18);               // I'm talking to you...
+		Actor_Says(kActorMcCoy, 5600, 14); // Let me ask you
+		Actor_Says(kActorTransient, 100, 53); // sleeping, mumbling
+		Actor_Says(kActorMcCoy, 5605, 18); // I'm talking to you...
 		Actor_Start_Speech_Sample(kActorTransient, 110); // sleeping, mumbling
 		Actor_Set_Goal_Number(kActorTransient, 395);
 		break;

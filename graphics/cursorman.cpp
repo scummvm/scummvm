@@ -22,8 +22,8 @@
 
 #include "graphics/cursorman.h"
 
-#include "common/system.h"
 #include "common/stack.h"
+#include "common/system.h"
 
 namespace Common {
 DECLARE_SINGLETON(Graphics::CursorManager);
@@ -84,7 +84,6 @@ void CursorManager::popCursor() {
 
 	g_system->showMouse(isVisible());
 }
-
 
 void CursorManager::popAllCursors() {
 	while (!_cursorStack.empty()) {
@@ -238,7 +237,7 @@ CursorManager::Cursor::Cursor(const void *data, uint w, uint h, int hotspotX, in
 #ifdef USE_RGB_COLOR
 	if (!format)
 		_format = Graphics::PixelFormat::createFormatCLUT8();
-	 else
+	else
 		_format = *format;
 	_size = w * h * _format.bytesPerPixel;
 	_keycolor = keycolor & ((1 << (_format.bytesPerPixel << 3)) - 1);

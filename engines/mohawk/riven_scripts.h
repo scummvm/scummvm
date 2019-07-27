@@ -25,8 +25,8 @@
 
 #include "mohawk/riven_stack.h"
 
-#include "common/str-array.h"
 #include "common/ptr.h"
+#include "common/str-array.h"
 #include "common/textconsole.h"
 
 #define DECLARE_OPCODE(x) void x(uint16 op, const ArgumentArray &args)
@@ -39,56 +39,56 @@ namespace Mohawk {
 
 // Script Types
 enum {
-	kMouseDownScript   = 0,
-	kMouseDragScript   = 1,
-	kMouseUpScript     = 2,
-	kMouseEnterScript  = 3,
+	kMouseDownScript = 0,
+	kMouseDragScript = 1,
+	kMouseUpScript = 2,
+	kMouseEnterScript = 3,
 	kMouseInsideScript = 4,
-	kMouseLeaveScript  = 5,
+	kMouseLeaveScript = 5,
 
-	kCardLoadScript    = 6,
-	kCardLeaveScript   = 7,
-	kCardFrameScript   = 8,
-	kCardEnterScript   = 9,
-	kCardUpdateScript  = 10
+	kCardLoadScript = 6,
+	kCardLeaveScript = 7,
+	kCardFrameScript = 8,
+	kCardEnterScript = 9,
+	kCardUpdateScript = 10
 };
 
 enum RivenCommandType {
-	kRivenCommandDrawBitmap          = 1,
-	kRivenCommandChangeCard          = 2,
-	kRivenCommandPlayScriptSLST      = 3,
-	kRivenCommandPlaySound           = 4,
-	kRivenCommandSetVariable         = 7,
-	kRivenCommandSwitch              = 8,
-	kRivenCommandEnableHotspot       = 9,
-	kRivenCommandDisableHotspot      = 10,
-	kRivenCommandStopSound           = 12,
-	kRivenCommandChangeCursor        = 13,
-	kRivenCommandDelay               = 14,
-	kRivenCommandRunExternal         = 17,
-	kRivenCommandTransition          = 18,
-	kRivenCommandRefreshCard         = 19,
-	kRivenCommandBeginScreenUpdate   = 20,
-	kRivenCommandApplyScreenUpdate   = 21,
-	kRivenCommandIncrementVariable   = 24,
-	kRivenCommandChangeStack         = 27,
-	kRivenCommandDisableMovie        = 28,
-	kRivenCommandDisableAllMovies    = 29,
-	kRivenCommandEnableMovie         = 31,
-	kRivenCommandPlayMovieBlocking   = 32,
-	kRivenCommandPlayMovie           = 33,
-	kRivenCommandStopMovie           = 34,
-	kRivenCommandUnk36               = 36,
-	kRivenCommandFadeAmbientSounds   = 37,
-	kRivenCommandStoreMovieOpcode    = 38,
-	kRivenCommandActivatePLST        = 39,
-	kRivenCommandActivateSLST        = 40,
+	kRivenCommandDrawBitmap = 1,
+	kRivenCommandChangeCard = 2,
+	kRivenCommandPlayScriptSLST = 3,
+	kRivenCommandPlaySound = 4,
+	kRivenCommandSetVariable = 7,
+	kRivenCommandSwitch = 8,
+	kRivenCommandEnableHotspot = 9,
+	kRivenCommandDisableHotspot = 10,
+	kRivenCommandStopSound = 12,
+	kRivenCommandChangeCursor = 13,
+	kRivenCommandDelay = 14,
+	kRivenCommandRunExternal = 17,
+	kRivenCommandTransition = 18,
+	kRivenCommandRefreshCard = 19,
+	kRivenCommandBeginScreenUpdate = 20,
+	kRivenCommandApplyScreenUpdate = 21,
+	kRivenCommandIncrementVariable = 24,
+	kRivenCommandChangeStack = 27,
+	kRivenCommandDisableMovie = 28,
+	kRivenCommandDisableAllMovies = 29,
+	kRivenCommandEnableMovie = 31,
+	kRivenCommandPlayMovieBlocking = 32,
+	kRivenCommandPlayMovie = 33,
+	kRivenCommandStopMovie = 34,
+	kRivenCommandUnk36 = 36,
+	kRivenCommandFadeAmbientSounds = 37,
+	kRivenCommandStoreMovieOpcode = 38,
+	kRivenCommandActivatePLST = 39,
+	kRivenCommandActivateSLST = 40,
 	kRivenCommandActivateMLSTAndPlay = 41,
-	kRivenCommandActivateBLST        = 43,
-	kRivenCommandActivateFLST        = 44,
-	kRivenCommandZipMode             = 45,
-	kRivenCommandActivateMLST        = 46,
-	kRivenCommandTimer               = 1001
+	kRivenCommandActivateBLST = 43,
+	kRivenCommandActivateFLST = 44,
+	kRivenCommandZipMode = 45,
+	kRivenCommandActivateMLST = 46,
+	kRivenCommandTimer = 1001
 };
 
 class MohawkEngine_Riven;
@@ -299,13 +299,12 @@ private:
 		const char *desc;
 	};
 
-
 	void setupOpcodes();
 	Common::String describe() const;
 
 	void activateMLST(const MLSTRecord &mlst) const;
 
-	DECLARE_OPCODE(empty) { warning ("Unknown Opcode %04x", op); }
+	DECLARE_OPCODE(empty) { warning("Unknown Opcode %04x", op); }
 
 	// Opcodes
 	DECLARE_OPCODE(drawBitmap);
@@ -388,7 +387,7 @@ private:
 class RivenStackChangeCommand : public RivenCommand {
 public:
 	RivenStackChangeCommand(MohawkEngine_Riven *vm, uint16 stackId, uint32 globalCardId,
-		                        bool byStackId, bool byStackCardId);
+	                        bool byStackId, bool byStackCardId);
 
 	static RivenStackChangeCommand *createFromStream(MohawkEngine_Riven *vm, Common::ReadStream *stream);
 	virtual ~RivenStackChangeCommand();

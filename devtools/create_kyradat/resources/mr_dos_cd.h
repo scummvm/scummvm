@@ -516,16 +516,16 @@ static const FrameControl k3ItemAnimDataDOSCD9FrameControl[6] = {
 };
 
 static const ItemAnimDefinition k3ItemAnimDataDOSCD[10] = {
-	{   3,  3, k3ItemAnimDataDOSCD0FrameControl },
-	{  58,  7, k3ItemAnimDataDOSCD1FrameControl },
-	{  20,  4, k3ItemAnimDataDOSCD2FrameControl },
-	{  19,  4, k3ItemAnimDataDOSCD3FrameControl },
-	{  21,  7, k3ItemAnimDataDOSCD4FrameControl },
-	{   9,  4, k3ItemAnimDataDOSCD5FrameControl },
-	{  57,  7, k3ItemAnimDataDOSCD6FrameControl },
-	{  64, 34, k3ItemAnimDataDOSCD7FrameControl },
-	{  43,  5, k3ItemAnimDataDOSCD8FrameControl },
-	{  59,  6, k3ItemAnimDataDOSCD9FrameControl }
+	{ 3, 3, k3ItemAnimDataDOSCD0FrameControl },
+	{ 58, 7, k3ItemAnimDataDOSCD1FrameControl },
+	{ 20, 4, k3ItemAnimDataDOSCD2FrameControl },
+	{ 19, 4, k3ItemAnimDataDOSCD3FrameControl },
+	{ 21, 7, k3ItemAnimDataDOSCD4FrameControl },
+	{ 9, 4, k3ItemAnimDataDOSCD5FrameControl },
+	{ 57, 7, k3ItemAnimDataDOSCD6FrameControl },
+	{ 64, 34, k3ItemAnimDataDOSCD7FrameControl },
+	{ 43, 5, k3ItemAnimDataDOSCD8FrameControl },
+	{ 59, 6, k3ItemAnimDataDOSCD9FrameControl }
 };
 
 static const ItemAnimDefinitionProvider k3ItemAnimDataDOSCDProvider = { ARRAYSIZE(k3ItemAnimDataDOSCD), k3ItemAnimDataDOSCD };
@@ -553,4 +553,3 @@ static const byte k3ItemStringMapDOSCD[72] = {
 };
 
 static const ByteProvider k3ItemStringMapDOSCDProvider = { ARRAYSIZE(k3ItemStringMapDOSCD), k3ItemStringMapDOSCD };
-

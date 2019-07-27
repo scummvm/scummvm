@@ -51,6 +51,7 @@ public:
 	bool hasRoundFinished();
 	void serveFood();
 	void resetFood();
+
 protected:
 	IllusionsEngine_BBDOU *_vm;
 	uint _totalRoundsCount, _maxRequestedFoodCount;

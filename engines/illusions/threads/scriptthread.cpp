@@ -20,8 +20,8 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/threads/scriptthread.h"
+#include "illusions/illusions.h"
 #include "illusions/scriptopcodes.h"
 
 namespace Illusions {
@@ -29,9 +29,13 @@ namespace Illusions {
 // ScriptThread
 
 ScriptThread::ScriptThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
-	byte *scriptCodeIp, uint32 value8, uint32 valueC, uint32 value10)
-	: Thread(vm, threadId, callingThreadId, notifyFlags), _scriptCodeIp(scriptCodeIp), _value8(value8),
-	_valueC(valueC), _value10(value10), _sequenceStalled(0) {
+                           byte *scriptCodeIp, uint32 value8, uint32 valueC, uint32 value10)
+  : Thread(vm, threadId, callingThreadId, notifyFlags)
+  , _scriptCodeIp(scriptCodeIp)
+  , _value8(value8)
+  , _valueC(valueC)
+  , _value10(value10)
+  , _sequenceStalled(0) {
 	_type = kTTScriptThread;
 	_sceneId = _vm->getCurrentScene();
 }

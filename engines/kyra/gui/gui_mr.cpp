@@ -22,10 +22,10 @@
 
 #include "kyra/gui/gui_mr.h"
 #include "kyra/engine/kyra_mr.h"
-#include "kyra/text/text_mr.h"
-#include "kyra/resource/resource.h"
 #include "kyra/engine/timer.h"
+#include "kyra/resource/resource.h"
 #include "kyra/sound/sound_digital_mr.h"
+#include "kyra/text/text_mr.h"
 
 #include "common/system.h"
 
@@ -38,7 +38,7 @@ void KyraEngine_MR::loadButtonShapes() {
 	uint8 *data = _res->fileData("BUTTONS.SHP", 0);
 	assert(data);
 	for (int i = 0; i <= 10; ++i)
-		addShapeToPool(data, 0x1C7+i, i);
+		addShapeToPool(data, 0x1C7 + i, i);
 	delete[] data;
 
 	Button::Callback callback1 = BUTTON_FUNCTOR(KyraEngine_MR, this, &KyraEngine_MR::callbackButton1);
@@ -296,7 +296,7 @@ void KyraEngine_MR::hideInventory() {
 	}
 
 	_screen->copyRegion(0, 0, 0, 188, 320, 56, 2, 0, Screen::CR_NO_P_CHECK);
-	_screen->copyRegion(0, y, 0, y, 320, 188-y, 2, 0, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(0, y, 0, y, 320, 188 - y, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->showMouse();
 }
 
@@ -328,7 +328,7 @@ void KyraEngine_MR::drawMalcolmsMoodText() {
 	}
 
 	_screen->drawShape(_screen->_curPage, getShapePtr(432), 244, 189, 0, 0);
-	_text->printText(string, x, y+1, 0xFF, 0xF0, 0x00);
+	_text->printText(string, x, y + 1, 0xFF, 0xF0, 0x00);
 	_screen->_curPage = pageBackUp;
 }
 
@@ -370,14 +370,14 @@ void KyraEngine_MR::drawScore(int page, int x, int y) {
 	}
 
 	int shape1 = _score / 100;
-	int shape2 = (_score - shape1*100) / 10;
+	int shape2 = (_score - shape1 * 100) / 10;
 	int shape3 = _score % 10;
 
-	_screen->drawShape(page, getShapePtr(shape1+433), x, y, 0, 0);
+	_screen->drawShape(page, getShapePtr(shape1 + 433), x, y, 0, 0);
 	x += 8;
-	_screen->drawShape(page, getShapePtr(shape2+433), x, y, 0, 0);
+	_screen->drawShape(page, getShapePtr(shape2 + 433), x, y, 0, 0);
 	x += 8;
-	_screen->drawShape(page, getShapePtr(shape3+433), x, y, 0, 0);
+	_screen->drawShape(page, getShapePtr(shape3 + 433), x, y, 0, 0);
 }
 
 void KyraEngine_MR::drawScoreCounting(int oldScore, int newScore, int drawOld, const int x) {
@@ -386,32 +386,32 @@ void KyraEngine_MR::drawScoreCounting(int oldScore, int newScore, int drawOld, c
 		y -= 44;
 
 	int old100 = oldScore / 100;
-	int old010 = (oldScore - old100*100) / 10;
+	int old010 = (oldScore - old100 * 100) / 10;
 	int old001 = oldScore % 10;
 
 	int new100 = newScore / 100;
-	int new010 = (newScore - new100*100) / 10;
+	int new010 = (newScore - new100 * 100) / 10;
 	int new001 = newScore % 10;
 
 	if (drawOld) {
-		_screen->drawShape(0, getShapePtr(old100+433), x +  0, y, 0, 0);
-		_screen->drawShape(0, getShapePtr(old010+433), x +  8, y, 0, 0);
-		_screen->drawShape(0, getShapePtr(old001+433), x + 16, y, 0, 0);
+		_screen->drawShape(0, getShapePtr(old100 + 433), x + 0, y, 0, 0);
+		_screen->drawShape(0, getShapePtr(old010 + 433), x + 8, y, 0, 0);
+		_screen->drawShape(0, getShapePtr(old001 + 433), x + 16, y, 0, 0);
 	}
 
 	if (old100 != new100)
-		_screen->drawShape(0, getShapePtr(old100+443), x +  0, y, 0, 0);
+		_screen->drawShape(0, getShapePtr(old100 + 443), x + 0, y, 0, 0);
 
 	if (old010 != new010)
-		_screen->drawShape(0, getShapePtr(old010+443), x +  8, y, 0, 0);
+		_screen->drawShape(0, getShapePtr(old010 + 443), x + 8, y, 0, 0);
 
-	_screen->drawShape(0, getShapePtr(old001+443), x + 16, y, 0, 0);
+	_screen->drawShape(0, getShapePtr(old001 + 443), x + 16, y, 0, 0);
 
 	_screen->updateScreen();
 
-	_screen->drawShape(0, getShapePtr(new100+433), x +  0, y, 0, 0);
-	_screen->drawShape(0, getShapePtr(new010+433), x +  8, y, 0, 0);
-	_screen->drawShape(0, getShapePtr(new001+433), x + 16, y, 0, 0);
+	_screen->drawShape(0, getShapePtr(new100 + 433), x + 0, y, 0, 0);
+	_screen->drawShape(0, getShapePtr(new010 + 433), x + 8, y, 0, 0);
+	_screen->drawShape(0, getShapePtr(new001 + 433), x + 16, y, 0, 0);
 }
 
 int KyraEngine_MR::getScoreX(const char *str) {
@@ -440,7 +440,7 @@ void KyraEngine_MR::redrawInventory(int page) {
 	for (int i = 0; i < 10; ++i) {
 		clearInventorySlot(i, page);
 		if (_mainCharacter.inventory[i] != kItemNone) {
-			_screen->drawShape(page, getShapePtr(_mainCharacter.inventory[i]+248), _inventoryX[i], _inventoryY[i] + yOffset, 0, 0);
+			_screen->drawShape(page, getShapePtr(_mainCharacter.inventory[i] + 248), _inventoryX[i], _inventoryY[i] + yOffset, 0, 0);
 			drawInventorySlot(page, _mainCharacter.inventory[i], i);
 		}
 	}
@@ -458,7 +458,7 @@ void KyraEngine_MR::clearInventorySlot(int slot, int page) {
 		yOffset = -144;
 	}
 
-	_screen->drawShape(page, getShapePtr(slot+422), _inventoryX[slot], _inventoryY[slot] + yOffset, 0, 0);
+	_screen->drawShape(page, getShapePtr(slot + 422), _inventoryX[slot], _inventoryY[slot] + yOffset, 0, 0);
 }
 
 void KyraEngine_MR::drawInventorySlot(int page, Item item, int slot) {
@@ -468,7 +468,7 @@ void KyraEngine_MR::drawInventorySlot(int page, Item item, int slot) {
 		yOffset = -144;
 	}
 
-	_screen->drawShape(page, getShapePtr(item+248), _inventoryX[slot], _inventoryY[slot] + yOffset, 0, 0);
+	_screen->drawShape(page, getShapePtr(item + 248), _inventoryX[slot], _inventoryY[slot] + yOffset, 0, 0);
 }
 
 int KyraEngine_MR::buttonInventory(Button *button) {
@@ -664,10 +664,10 @@ void KyraEngine_MR::showAlbum() {
 	loadAlbumPageWSA();
 
 	if (_album.leftPage.wsa->opened())
-		_album.leftPage.wsa->displayFrame(_album.leftPage.curFrame, 2, _albumWSAX[_album.nextPage+0], _albumWSAY[_album.nextPage+0], 0x4000, 0, 0);
+		_album.leftPage.wsa->displayFrame(_album.leftPage.curFrame, 2, _albumWSAX[_album.nextPage + 0], _albumWSAY[_album.nextPage + 0], 0x4000, 0, 0);
 
 	if (_album.rightPage.wsa->opened())
-		_album.rightPage.wsa->displayFrame(_album.rightPage.curFrame, 2, _albumWSAX[_album.nextPage+1], _albumWSAY[_album.nextPage+1], 0x4000, 0, 0);
+		_album.rightPage.wsa->displayFrame(_album.rightPage.curFrame, 2, _albumWSAX[_album.nextPage + 1], _albumWSAY[_album.nextPage + 1], 0x4000, 0, 0);
 
 	printAlbumPageText();
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
@@ -708,7 +708,7 @@ void KyraEngine_MR::loadAlbumPage() {
 	} else if (num >= 1 && num <= 6) {
 		--num;
 		num %= 2;
-		filename = Common::String::format("ALBUM%d.CPS", num+1);
+		filename = Common::String::format("ALBUM%d.CPS", num + 1);
 	} else {
 		filename = "ALBUM3.CPS";
 	}
@@ -731,13 +731,13 @@ void KyraEngine_MR::loadAlbumPageWSA() {
 	if (_album.curPage) {
 		filename = Common::String::format("PAGE%x.WSA", _album.curPage);
 		_album.leftPage.wsa->open(filename.c_str(), 1, 0);
-		_album.leftPage.maxFrame = _album.leftPage.wsa->frames()-1;
+		_album.leftPage.maxFrame = _album.leftPage.wsa->frames() - 1;
 	}
 
 	if (_album.curPage != 14) {
-		filename = Common::String::format("PAGE%x.WSA", _album.curPage+1);
+		filename = Common::String::format("PAGE%x.WSA", _album.curPage + 1);
 		_album.rightPage.wsa->open(filename.c_str(), 1, 0);
-		_album.rightPage.maxFrame = _album.rightPage.wsa->frames()-1;
+		_album.rightPage.maxFrame = _album.rightPage.wsa->frames() - 1;
 	}
 }
 
@@ -748,16 +748,16 @@ void KyraEngine_MR::printAlbumPageText() {
 	};
 
 	const int leftY = posY[_album.curPage];
-	const int rightY = posY[_album.curPage+1];
+	const int rightY = posY[_album.curPage + 1];
 
 	for (int i = 0; i < 5; ++i) {
-		const char *str = (const char *)getTableEntry(_album.file, _album.curPage*5+i);
+		const char *str = (const char *)getTableEntry(_album.file, _album.curPage * 5 + i);
 		int y = i * 10 + leftY + 20;
 		printAlbumText(2, str, 20, y, 10);
 	}
 
 	for (int i = 0; i < 5; ++i) {
-		const char *str = (const char *)getTableEntry(_album.file, (_album.curPage+1)*5+i);
+		const char *str = (const char *)getTableEntry(_album.file, (_album.curPage + 1) * 5 + i);
 		int y = i * 10 + rightY + 20;
 		printAlbumText(2, str, 176, y, 10);
 	}
@@ -785,15 +785,15 @@ void KyraEngine_MR::printAlbumText(int page, const char *str, int x, int y, uint
 void KyraEngine_MR::processAlbum() {
 	Button albumButtons[5];
 
-	GUI_V2_BUTTON(albumButtons[0], 36, 0, 0, 1, 1, 1, 0x4487, 0, 130, 190,  10,  10, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+	GUI_V2_BUTTON(albumButtons[0], 36, 0, 0, 1, 1, 1, 0x4487, 0, 130, 190, 10, 10, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
 	albumButtons[0].buttonCallback = BUTTON_FUNCTOR(KyraEngine_MR, this, &KyraEngine_MR::albumPrevPage);
-	GUI_V2_BUTTON(albumButtons[1], 37, 0, 0, 1, 1, 1, 0x4487, 0, 177, 190,  10,  10, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+	GUI_V2_BUTTON(albumButtons[1], 37, 0, 0, 1, 1, 1, 0x4487, 0, 177, 190, 10, 10, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
 	albumButtons[1].buttonCallback = BUTTON_FUNCTOR(KyraEngine_MR, this, &KyraEngine_MR::albumNextPage);
-	GUI_V2_BUTTON(albumButtons[2], 38, 0, 0, 1, 1, 1, 0x4487, 0,   0,   0, 320,   8, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+	GUI_V2_BUTTON(albumButtons[2], 38, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 320, 8, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
 	albumButtons[2].buttonCallback = BUTTON_FUNCTOR(KyraEngine_MR, this, &KyraEngine_MR::albumClose);
-	GUI_V2_BUTTON(albumButtons[3], 39, 0, 0, 1, 1, 1, 0x4487, 0,   8,   8, 144, 180, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+	GUI_V2_BUTTON(albumButtons[3], 39, 0, 0, 1, 1, 1, 0x4487, 0, 8, 8, 144, 180, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
 	albumButtons[3].buttonCallback = BUTTON_FUNCTOR(KyraEngine_MR, this, &KyraEngine_MR::albumPrevPage);
-	GUI_V2_BUTTON(albumButtons[4], 40, 0, 0, 1, 1, 1, 0x4487, 0, 170,   8, 142, 180, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+	GUI_V2_BUTTON(albumButtons[4], 40, 0, 0, 1, 1, 1, 0x4487, 0, 170, 8, 142, 180, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
 	albumButtons[4].buttonCallback = BUTTON_FUNCTOR(KyraEngine_MR, this, &KyraEngine_MR::albumNextPage);
 
 	Button *buttonList = 0;
@@ -820,10 +820,10 @@ void KyraEngine_MR::processAlbum() {
 			loadAlbumPageWSA();
 
 			if (_album.leftPage.wsa->opened())
-				_album.leftPage.wsa->displayFrame(_album.leftPage.curFrame, 2, _albumWSAX[_album.nextPage+0], _albumWSAY[_album.nextPage+0], 0x4000, 0, 0);
+				_album.leftPage.wsa->displayFrame(_album.leftPage.curFrame, 2, _albumWSAX[_album.nextPage + 0], _albumWSAY[_album.nextPage + 0], 0x4000, 0, 0);
 
 			if (_album.rightPage.wsa->opened())
-				_album.rightPage.wsa->displayFrame(_album.rightPage.curFrame, 2, _albumWSAX[_album.nextPage+1], _albumWSAY[_album.nextPage+1], 0x4000, 0, 0);
+				_album.rightPage.wsa->displayFrame(_album.rightPage.curFrame, 2, _albumWSAX[_album.nextPage + 1], _albumWSAY[_album.nextPage + 1], 0x4000, 0, 0);
 
 			printAlbumPageText();
 
@@ -846,7 +846,7 @@ void KyraEngine_MR::processAlbum() {
 
 void KyraEngine_MR::albumNewPage() {
 	int page = _album.nextPage / 2;
-	if (!queryGameFlag(0x84+page)) {
+	if (!queryGameFlag(0x84 + page)) {
 		albumAnim1();
 		delayWithTicks(8);
 
@@ -863,7 +863,7 @@ void KyraEngine_MR::albumNewPage() {
 		delayWithTicks(5);
 		albumAnim2();
 
-		setGameFlag(0x84+page);
+		setGameFlag(0x84 + page);
 		_album.isPage14 = (_album.nextPage == 14);
 	}
 }
@@ -876,7 +876,7 @@ void KyraEngine_MR::albumUpdateAnims() {
 
 	nextRun = _album.leftPage.timer + 5 * _tickLength;
 	if (nextRun < _system->getMillis() && _album.leftPage.wsa->opened()) {
-		_album.leftPage.wsa->displayFrame(_album.leftPage.curFrame, 2, _albumWSAX[_album.nextPage+0], _albumWSAY[_album.nextPage+0], 0x4000, 0, 0);
+		_album.leftPage.wsa->displayFrame(_album.leftPage.curFrame, 2, _albumWSAX[_album.nextPage + 0], _albumWSAY[_album.nextPage + 0], 0x4000, 0, 0);
 		_screen->copyRegion(40, 17, 40, 17, 87, 73, 2, 0, Screen::CR_NO_P_CHECK);
 
 		++_album.leftPage.curFrame;
@@ -895,7 +895,7 @@ void KyraEngine_MR::albumUpdateAnims() {
 
 	nextRun = _album.rightPage.timer + 5 * _tickLength;
 	if (nextRun < _system->getMillis() && _album.rightPage.wsa->opened()) {
-		_album.rightPage.wsa->displayFrame(_album.rightPage.curFrame, 2, _albumWSAX[_album.nextPage+1], _albumWSAY[_album.nextPage+1], 0x4000, 0, 0);
+		_album.rightPage.wsa->displayFrame(_album.rightPage.curFrame, 2, _albumWSAX[_album.nextPage + 1], _albumWSAY[_album.nextPage + 1], 0x4000, 0, 0);
 		_screen->copyRegion(194, 20, 194, 20, 85, 69, 2, 0, Screen::CR_NO_P_CHECK);
 
 		++_album.rightPage.curFrame;
@@ -1033,7 +1033,10 @@ int KyraEngine_MR::albumClose(Button *caller) {
 
 #pragma mark -
 
-GUI_MR::GUI_MR(KyraEngine_MR *vm) : GUI_v2(vm), _vm(vm), _screen(vm->_screen) {
+GUI_MR::GUI_MR(KyraEngine_MR *vm)
+  : GUI_v2(vm)
+  , _vm(vm)
+  , _screen(vm->_screen) {
 }
 
 void GUI_MR::createScreenThumbnail(Graphics::Surface &dst) {
@@ -1457,11 +1460,11 @@ int GUI_MR::audioOptions(Button *caller) {
 	const int menuX = _audioOptions.x;
 	const int menuY = _audioOptions.y;
 
-	const int maxButton = 3;	// 2 if voc is disabled
+	const int maxButton = 3; // 2 if voc is disabled
 
 	for (int i = 0; i < maxButton; ++i) {
-		int x = menuX + _sliderBarsPosition[i*2+0];
-		int y = menuY + _sliderBarsPosition[i*2+1];
+		int x = menuX + _sliderBarsPosition[i * 2 + 0];
+		int y = menuY + _sliderBarsPosition[i * 2 + 1];
 		_screen->drawShape(0, _vm->getShapePtr(0x1CF), x, y, 0, 0);
 		drawSliderBar(i, _vm->getShapePtr(0x1D0));
 		_sliderButtons[0][i].buttonCallback = _sliderHandlerFunctor;
@@ -1572,13 +1575,13 @@ int GUI_MR::sliderHandler(Button *caller) {
 void GUI_MR::drawSliderBar(int slider, const uint8 *shape) {
 	const int menuX = _audioOptions.x;
 	const int menuY = _audioOptions.y;
-	int x = menuX + _sliderBarsPosition[slider*2+0] + 10;
-	int y = menuY + _sliderBarsPosition[slider*2+1];
+	int x = menuX + _sliderBarsPosition[slider * 2 + 0] + 10;
+	int y = menuY + _sliderBarsPosition[slider * 2 + 1];
 
 	int position = _vm->getVolume(KyraEngine_v1::kVolumeEntry(slider));
 
 	position = CLIP(position, 2, 97);
-	_screen->drawShape(0, shape, x+position, y, 0, 0);
+	_screen->drawShape(0, shape, x + position, y, 0, 0);
 }
 
 } // End of namespace Kyra

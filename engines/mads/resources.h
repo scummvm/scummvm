@@ -23,8 +23,8 @@
 #ifndef MADS_RESOURCES_H
 #define MADS_RESOURCES_H
 
-#include "common/scummsys.h"
 #include "common/file.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
 #include "common/str.h"
 
@@ -33,12 +33,19 @@ namespace MADS {
 class MADSEngine;
 
 enum RESPREFIX {
-	RESPREFIX_GL = 1, RESPREFIX_SC = 2, RESPREFIX_RM = 3
+	RESPREFIX_GL = 1,
+	RESPREFIX_SC = 2,
+	RESPREFIX_RM = 3
 };
 
 enum EXTTYPE {
-	EXT_NONE = -1, EXT_SS = 1, EXT_AA = 2, EXT_DAT = 3, EXT_HH = 4,
-	EXT_ART = 5, EXT_INT = 6
+	EXT_NONE = -1,
+	EXT_SS = 1,
+	EXT_AA = 2,
+	EXT_DAT = 3,
+	EXT_HH = 4,
+	EXT_ART = 5,
+	EXT_INT = 6
 };
 
 class Resources {
@@ -50,7 +57,7 @@ public:
 
 	static Common::String formatName(RESPREFIX resType, int id, const Common::String &ext);
 	static Common::String formatName(int prefix, char asciiCh, int id,
-		EXTTYPE extType, const Common::String &suffix);
+	                                 EXTTYPE extType, const Common::String &suffix);
 	static Common::String formatResource(const Common::String &resName, const Common::String &hagFilename);
 	static Common::String formatAAName(int idx);
 };
@@ -63,7 +70,8 @@ public:
 	/**
 	 * Constructor
 	 */
-	File() : Common::File() {}
+	File()
+	  : Common::File() {}
 
 	/**
 	 * Constructor

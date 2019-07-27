@@ -21,12 +21,12 @@
  */
 
 #include "common/system.h"
-#include "graphics/palette.h"
 #include "graphics/cursorman.h"
+#include "graphics/palette.h"
 
 #include "supernova/screen.h"
-#include "supernova/supernova.h"
 #include "supernova/state.h"
+#include "supernova/supernova.h"
 
 namespace Supernova {
 
@@ -53,7 +53,7 @@ bool Room::serialize(Common::WriteStream *out) {
 	out->writeSint32LE(_id);
 	for (int i = 0; i < kMaxSection; ++i)
 		out->writeByte(_shown[i]);
-	for (int i = 0; i < kMaxDialog ; ++i)
+	for (int i = 0; i < kMaxDialog; ++i)
 		out->writeByte(_sentenceRemoved[i]);
 
 	int numObjects = 0;
@@ -91,7 +91,7 @@ bool Room::deserialize(Common::ReadStream *in, int version) {
 	// Prior to version 3, _sentenceRemoved was part of _shown (the last two values)
 	// But on the other hand dialog was not implemented anyway, so we don't even try to
 	// recover it.
-	for (int i = 0; i < kMaxDialog ; ++i)
+	for (int i = 0; i < kMaxDialog; ++i)
 		_sentenceRemoved[i] = version < 3 ? 0 : in->readByte();
 
 	int numObjects = in->readSint32LE();
@@ -159,7 +159,7 @@ bool Room::sentenceRemoved(int sentence, int number) {
 bool Room::allSentencesRemoved(int maxSentence, int number) {
 	if (number <= 0)
 		return false;
-	for (int i = 0, flag = 1 ; i < maxSentence ; ++i, flag <<= 1)
+	for (int i = 0, flag = 1; i < maxSentence; ++i, flag <<= 1)
 		if (!(_sentenceRemoved[number - 1] & flag))
 			return false;
 	return true;
@@ -179,7 +179,6 @@ bool Room::interact(Action verb, Object &obj1, Object &obj2) {
 	return false;
 }
 
-
 Intro::Intro(SupernovaEngine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
@@ -188,38 +187,20 @@ Intro::Intro(SupernovaEngine *vm, GameManager *gm) {
 	_id = INTRO;
 	_shown[0] = kShownFalse;
 
-	_objectState[0] =
-	Object(_id, kStringKeycard, kStringKeycardDescription, KEYCARD,
-		   TAKE | CARRIED | COMBINABLE, 255, 255, 0, NULLROOM, 0);
-	_objectState[1] =
-	Object(_id, kStringKnife, kStringKnifeDescription, KNIFE,
-		   TAKE | CARRIED | COMBINABLE, 255, 255, 0, NULLROOM, 0);
-	_objectState[2] =
-	Object(_id, kStringWatch, kStringDefaultDescription, WATCH,
-		   TAKE | COMBINABLE | CARRIED, 255, 255, 8, NULLROOM, 0);
-	_objectState[3] =
-	Object(_id, kStringDiscman, kStringDiscmanDescription, DISCMAN,
-		   TAKE | COMBINABLE, 255, 255, 0, NULLROOM, 0);
-	_objectState[4] =
-	Object(_id, kStringInventoryMoney, kStringDefaultDescription, MONEY,
-		   TAKE | COMBINABLE, 255, 255, 0);
+	_objectState[0] = Object(_id, kStringKeycard, kStringKeycardDescription, KEYCARD,
+	                         TAKE | CARRIED | COMBINABLE, 255, 255, 0, NULLROOM, 0);
+	_objectState[1] = Object(_id, kStringKnife, kStringKnifeDescription, KNIFE,
+	                         TAKE | CARRIED | COMBINABLE, 255, 255, 0, NULLROOM, 0);
+	_objectState[2] = Object(_id, kStringWatch, kStringDefaultDescription, WATCH,
+	                         TAKE | COMBINABLE | CARRIED, 255, 255, 8, NULLROOM, 0);
+	_objectState[3] = Object(_id, kStringDiscman, kStringDiscmanDescription, DISCMAN,
+	                         TAKE | COMBINABLE, 255, 255, 0, NULLROOM, 0);
+	_objectState[4] = Object(_id, kStringInventoryMoney, kStringDefaultDescription, MONEY,
+	                         TAKE | COMBINABLE, 255, 255, 0);
 
 	_shouldExit = false;
 
-	_introText =
-		_vm->getGameString(kStringIntro1) + '\0' +
-		_vm->getGameString(kStringIntro2) + '\0' +
-		_vm->getGameString(kStringIntro3) + '\0' +
-		_vm->getGameString(kStringIntro4) + '\0' +
-		_vm->getGameString(kStringIntro5) + '\0' +
-		_vm->getGameString(kStringIntro6) + '\0' +
-		_vm->getGameString(kStringIntro7) + '\0' +
-		_vm->getGameString(kStringIntro8) + '\0' +
-		_vm->getGameString(kStringIntro9) + '\0' +
-		_vm->getGameString(kStringIntro10) + '\0' +
-		_vm->getGameString(kStringIntro11) + '\0' +
-		_vm->getGameString(kStringIntro12) + '\0' +
-		_vm->getGameString(kStringIntro13) + '\0';
+	_introText = _vm->getGameString(kStringIntro1) + '\0' + _vm->getGameString(kStringIntro2) + '\0' + _vm->getGameString(kStringIntro3) + '\0' + _vm->getGameString(kStringIntro4) + '\0' + _vm->getGameString(kStringIntro5) + '\0' + _vm->getGameString(kStringIntro6) + '\0' + _vm->getGameString(kStringIntro7) + '\0' + _vm->getGameString(kStringIntro8) + '\0' + _vm->getGameString(kStringIntro9) + '\0' + _vm->getGameString(kStringIntro10) + '\0' + _vm->getGameString(kStringIntro11) + '\0' + _vm->getGameString(kStringIntro12) + '\0' + _vm->getGameString(kStringIntro13) + '\0';
 }
 
 void Intro::onEntrance() {
@@ -253,9 +234,9 @@ void Intro::titleScreen() {
 		_gm->wait(1);
 	titleFadeIn();
 	_vm->renderText(kStringTitleVersion, 295, 190, kColorWhite44);
-	const Common::String& title1 = _vm->getGameString(kStringTitle1);
-	const Common::String& title2 = _vm->getGameString(kStringTitle2);
-	const Common::String& title3 = _vm->getGameString(kStringTitle3);
+	const Common::String &title1 = _vm->getGameString(kStringTitle1);
+	const Common::String &title2 = _vm->getGameString(kStringTitle2);
+	const Common::String &title3 = _vm->getGameString(kStringTitle3);
 	_vm->_screen->renderText(title1, 78 - Screen::textWidth(title1) / 2, 120, kColorLightBlue);
 	_vm->_screen->renderText(title2, 78 - Screen::textWidth(title2) / 2, 132, kColorWhite99);
 	_vm->_screen->renderText(title3, 78 - Screen::textWidth(title3) / 2, 142, kColorWhite99);
@@ -279,8 +260,8 @@ void Intro::titleScreen() {
 }
 
 void Intro::titleFadeIn() {
-	byte titlePaletteColor[] = {0xfe, 0xeb};
-	byte titleNewColor[2][3] = {{255, 255, 255}, {199, 21, 21}};
+	byte titlePaletteColor[] = { 0xfe, 0xeb };
+	byte titleNewColor[2][3] = { { 255, 255, 255 }, { 199, 21, 21 } };
 	byte newColors[2][3];
 
 	for (int brightness = 1; brightness <= 40; ++brightness) {
@@ -312,9 +293,9 @@ bool Intro::animate(int section1, int section2, int duration) {
 }
 
 bool Intro::animate(int section1, int section2, int duration,
-					MessagePosition position, StringId textId) {
+                    MessagePosition position, StringId textId) {
 	Common::KeyCode key = Common::KEYCODE_INVALID;
-	const Common::String& text = _vm->getGameString(textId);
+	const Common::String &text = _vm->getGameString(textId);
 	_vm->renderMessage(text, position);
 	int delay = (MIN(text.size(), (uint)512) + 20) * (10 - duration) * _vm->_textSpeed / 400;
 	while (delay) {
@@ -337,14 +318,14 @@ bool Intro::animate(int section1, int section2, int duration,
 }
 
 bool Intro::animate(int section1, int section2, int section3, int section4,
-					int duration, MessagePosition position, StringId textId) {
+                    int duration, MessagePosition position, StringId textId) {
 	Common::KeyCode key = Common::KEYCODE_INVALID;
-	const Common::String& text = _vm->getGameString(textId);
+	const Common::String &text = _vm->getGameString(textId);
 	_vm->renderMessage(text, position);
 	if (duration == 0)
 		duration = (MIN(text.size(), (uint)512) + 20) * _vm->_textSpeed / 40;
 
-	while(duration) {
+	while (duration) {
 		_vm->renderImage(section1);
 		_vm->renderImage(section3);
 		if (_gm->waitOnInput(2, key)) {
@@ -364,13 +345,14 @@ bool Intro::animate(int section1, int section2, int section3, int section4,
 }
 
 void Intro::cutscene() {
-#define exitOnEscape(X) do { \
-	Common::KeyCode key = Common::KEYCODE_INVALID; \
-	if ((_gm->waitOnInput(X, key) && key == Common::KEYCODE_ESCAPE) || _vm->shouldQuit()) { \
-		CursorMan.showMouse(true); \
-		return; \
-	} \
-} while (0);
+#define exitOnEscape(X)                                                                     \
+	do {                                                                                      \
+		Common::KeyCode key = Common::KEYCODE_INVALID;                                          \
+		if ((_gm->waitOnInput(X, key) && key == Common::KEYCODE_ESCAPE) || _vm->shouldQuit()) { \
+			CursorMan.showMouse(true);                                                            \
+			return;                                                                               \
+		}                                                                                       \
+	} while (0);
 
 	_vm->_system->fillScreen(kColorBlack);
 	_vm->setCurrentImage(31);
@@ -392,7 +374,7 @@ void Intro::cutscene() {
 	_vm->renderImage(3);
 	exitOnEscape(4);
 	_vm->renderImage(4);
-	if (!animate(11, 10, 3)) {// test duration
+	if (!animate(11, 10, 3)) { // test duration
 		_vm->removeMessage();
 		return;
 	}
@@ -416,12 +398,11 @@ void Intro::cutscene() {
 	exitOnEscape(28);
 	_vm->removeMessage();
 
-	StringId textCounting[4] =
-	{kStringIntroCutscene7, kStringIntroCutscene8, kStringIntroCutscene9, kStringIntroCutscene10};
+	StringId textCounting[4] = { kStringIntroCutscene7, kStringIntroCutscene8, kStringIntroCutscene9, kStringIntroCutscene10 };
 	_vm->setCurrentImage(31);
 	_vm->renderImage(0);
 	_vm->paletteBrightness();
-	for (int i = 0; i < 4; ++i){
+	for (int i = 0; i < 4; ++i) {
 		_vm->renderMessage(textCounting[i], kMessageLeft);
 		for (int j = 0; j < 28; ++j) {
 			_vm->renderImage((j % 3) + 1);
@@ -674,7 +655,7 @@ ShipHall::ShipHall(SupernovaEngine *vm, GameManager *gm) {
 bool ShipHall::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_OPEN) && (obj1._id == KITCHEN_HATCH)) {
 		_vm->renderMessage(kStringShipHall1);
-	} else if ((verb == ACTION_USE) && Object::combine(obj1,obj2,KEYCARD2,SLEEP_SLOT)) {
+	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, KEYCARD2, SLEEP_SLOT)) {
 		if (_objectState[2].hasProperty(OPENED)) {
 			_objectState[2].disableProperty(OPENED);
 			_vm->renderImage(3);
@@ -738,8 +719,8 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 		} else if (isSectionVisible(5)) {
 			// Sleep duration in days
 			_vm->renderText(kStringShipSleepCabin4, 30, 85, kColorWhite99);
-			_vm->renderText(Common::String::format("%d",_gm->_state._timeSleep).c_str(),
-							150, 85, kColorWhite99);
+			_vm->renderText(Common::String::format("%d", _gm->_state._timeSleep).c_str(),
+			                150, 85, kColorWhite99);
 			_vm->renderText(kStringShipSleepCabin5, 30, 105, kColorWhite99);
 			_gm->getInput();
 		} else {
@@ -785,8 +766,7 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 
 		_gm->_guiEnabled = true;
 		input.clear();
-	} else if (((verb == ACTION_WALK) || (verb == ACTION_USE)) &&
-			   ((obj1._id == CABINS) || (obj1._id == CABIN))) {
+	} else if (((verb == ACTION_WALK) || (verb == ACTION_USE)) && ((obj1._id == CABINS) || (obj1._id == CABIN))) {
 		room = _gm->_rooms[AIRLOCK];
 		if (!(obj1._id == CABIN) || !isSectionVisible(5)) {
 			_vm->renderMessage(kStringShipSleepCabin10);
@@ -934,7 +914,7 @@ bool ShipCockpit::interact(Action verb, Object &obj1, Object &obj2) {
 	// TODO: distance and remaining time not accurate
 
 	if ((verb == ACTION_LOOK) && (obj1._id == MONITOR)) {
-		char c[2] = {0, 0};
+		char c[2] = { 0, 0 };
 		_gm->_guiEnabled = false;
 		_vm->renderBox(0, 0, 320, 200, kColorBlack);
 		_vm->renderText(kStringShipCockpit1, 50, 50, kColorLightYellow);
@@ -953,7 +933,7 @@ bool ShipCockpit::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderText(kStringShipCockpit6);
 		_vm->renderText(kStringShipCockpit7, 50, 110, kColorLightYellow);
 		_vm->renderText(Common::String::format("%d", _gm->_state._arrivalDaysLeft).c_str(),
-						50, 120, kColorLightYellow);
+		                50, 120, kColorLightYellow);
 		_vm->renderText(kStringShipCockpit8);
 
 		_gm->getInput();
@@ -1036,31 +1016,31 @@ ShipCabinL2::ShipCabinL2(SupernovaEngine *vm, GameManager *gm) {
 	_shown[0] = kShownTrue;
 	_shown[16] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringSlot,kStringSlotDescription,SLOT_KL1,COMBINABLE,31,31,0);
-	_objectState[1] = Object(_id, kStringSlot,kStringSlotDescription,SLOT_KL2,COMBINABLE,32,32,0);
-	_objectState[2] = Object(_id, kStringSlot,kStringSlotDescription,SLOT_KL3,COMBINABLE,33,33,0);
-	_objectState[3] = Object(_id, kStringSlot,kStringSlotDescription,SLOT_KL4,COMBINABLE,45,45,0);
-	_objectState[4] = Object(_id, kStringShelf,kStringDefaultDescription,SHELF_L1,OPENABLE | CLOSED,25,26,17);
-	_objectState[5] = Object(_id, kStringPistol,kStringPistolDescription,PISTOL,TAKE,39,39,20);
-	_objectState[6] = Object(_id, kStringCompartment,kStringDefaultDescription,SHELF_L2,OPENABLE | CLOSED,27,28,18);
-	_objectState[7] = Object(_id, kStringBooks,kStringBooksDescription,NULLOBJECT,UNNECESSARY,40,40,0);
-	_objectState[8] = Object(_id, kStringCompartment,kStringDefaultDescription,SHELF_L3,OPENABLE | CLOSED,29,30,19);
-	_objectState[9] = Object(_id, kStringSpool,kStringSpoolDescription, SPOOL,TAKE | COMBINABLE,41,41,21);
-	_objectState[10] = Object(_id, kStringCompartment,kStringDefaultDescription,SHELF_L4,OPENABLE | CLOSED,43,44,22);
-	_objectState[11] = Object(_id, kStringBook,kStringDefaultDescription,BOOK2,TAKE,46,46,23);
-	_objectState[12] = Object(_id, kStringUnderwear,kStringUnderwearDescription,NULLOBJECT,UNNECESSARY,34,34,0);
-	_objectState[13] = Object(_id, kStringUnderwear,kStringUnderwearDescription,NULLOBJECT,UNNECESSARY,35,35,0);
-	_objectState[14] = Object(_id, kStringClothes,kStringDefaultDescription,NULLOBJECT,UNNECESSARY,36,36,0);
-	_objectState[15] = Object(_id, kStringJunk,kStringJunkDescription,NULLOBJECT,UNNECESSARY,37,37,0);
-	_objectState[16] = Object(_id, kStringJunk,kStringJunkDescription,NULLOBJECT,UNNECESSARY,38,38,0);
-	_objectState[17] = Object(_id, kStringMagnete,kStringMagneteDescription,NULLOBJECT,UNNECESSARY,23,23,0);
-	_objectState[18] = Object(_id, kStringToilet,kStringDefaultDescription,BATHROOM_DOOR,EXIT,255,255,0,BATHROOM,22);
-	_objectState[19] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | OPENED | EXIT,3,3,24 | 128,CORRIDOR,9);
-	_objectState[20] = Object(_id, kStringSlot,kStringSlotDescription,NULLOBJECT,COMBINABLE,0,0,0);
-	_objectState[21] = Object(_id, kStringShelf,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,1,1,0);
-	_objectState[22] = Object(_id, kStringCompartment,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,2,2,0);
-	_objectState[23] = Object(_id, kStringSocket,kStringDefaultDescription,SOCKET,COMBINABLE,4,4,0);
-	_objectState[24] = Object(_id, kStringFolders,kStringFoldersDescription,NULLOBJECT,UNNECESSARY,49,49,0);
+	_objectState[0] = Object(_id, kStringSlot, kStringSlotDescription, SLOT_KL1, COMBINABLE, 31, 31, 0);
+	_objectState[1] = Object(_id, kStringSlot, kStringSlotDescription, SLOT_KL2, COMBINABLE, 32, 32, 0);
+	_objectState[2] = Object(_id, kStringSlot, kStringSlotDescription, SLOT_KL3, COMBINABLE, 33, 33, 0);
+	_objectState[3] = Object(_id, kStringSlot, kStringSlotDescription, SLOT_KL4, COMBINABLE, 45, 45, 0);
+	_objectState[4] = Object(_id, kStringShelf, kStringDefaultDescription, SHELF_L1, OPENABLE | CLOSED, 25, 26, 17);
+	_objectState[5] = Object(_id, kStringPistol, kStringPistolDescription, PISTOL, TAKE, 39, 39, 20);
+	_objectState[6] = Object(_id, kStringCompartment, kStringDefaultDescription, SHELF_L2, OPENABLE | CLOSED, 27, 28, 18);
+	_objectState[7] = Object(_id, kStringBooks, kStringBooksDescription, NULLOBJECT, UNNECESSARY, 40, 40, 0);
+	_objectState[8] = Object(_id, kStringCompartment, kStringDefaultDescription, SHELF_L3, OPENABLE | CLOSED, 29, 30, 19);
+	_objectState[9] = Object(_id, kStringSpool, kStringSpoolDescription, SPOOL, TAKE | COMBINABLE, 41, 41, 21);
+	_objectState[10] = Object(_id, kStringCompartment, kStringDefaultDescription, SHELF_L4, OPENABLE | CLOSED, 43, 44, 22);
+	_objectState[11] = Object(_id, kStringBook, kStringDefaultDescription, BOOK2, TAKE, 46, 46, 23);
+	_objectState[12] = Object(_id, kStringUnderwear, kStringUnderwearDescription, NULLOBJECT, UNNECESSARY, 34, 34, 0);
+	_objectState[13] = Object(_id, kStringUnderwear, kStringUnderwearDescription, NULLOBJECT, UNNECESSARY, 35, 35, 0);
+	_objectState[14] = Object(_id, kStringClothes, kStringDefaultDescription, NULLOBJECT, UNNECESSARY, 36, 36, 0);
+	_objectState[15] = Object(_id, kStringJunk, kStringJunkDescription, NULLOBJECT, UNNECESSARY, 37, 37, 0);
+	_objectState[16] = Object(_id, kStringJunk, kStringJunkDescription, NULLOBJECT, UNNECESSARY, 38, 38, 0);
+	_objectState[17] = Object(_id, kStringMagnete, kStringMagneteDescription, NULLOBJECT, UNNECESSARY, 23, 23, 0);
+	_objectState[18] = Object(_id, kStringToilet, kStringDefaultDescription, BATHROOM_DOOR, EXIT, 255, 255, 0, BATHROOM, 22);
+	_objectState[19] = Object(_id, kStringHatch, kStringDefaultDescription, NULLOBJECT, OPENABLE | OPENED | EXIT, 3, 3, 24 | 128, CORRIDOR, 9);
+	_objectState[20] = Object(_id, kStringSlot, kStringSlotDescription, NULLOBJECT, COMBINABLE, 0, 0, 0);
+	_objectState[21] = Object(_id, kStringShelf, kStringDefaultDescription, NULLOBJECT, OPENABLE | CLOSED, 1, 1, 0);
+	_objectState[22] = Object(_id, kStringCompartment, kStringDefaultDescription, NULLOBJECT, OPENABLE | CLOSED, 2, 2, 0);
+	_objectState[23] = Object(_id, kStringSocket, kStringDefaultDescription, SOCKET, COMBINABLE, 4, 4, 0);
+	_objectState[24] = Object(_id, kStringFolders, kStringFoldersDescription, NULLOBJECT, UNNECESSARY, 49, 49, 0);
 }
 
 bool ShipCabinL2::interact(Action verb, Object &obj1, Object &obj2) {
@@ -1094,10 +1074,10 @@ bool ShipCabinL2::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->closeLocker(this, getObject(10), getObject(3), 22);
 		setSectionVisible(23, false);
 	} else if ((verb == ACTION_TAKE) && (obj1._id == SPOOL) && !obj1.hasProperty(CARRIED)) {
-		getObject(8)->_click = 42;  // empty shelf
+		getObject(8)->_click = 42; // empty shelf
 		return false;
 	} else if ((verb == ACTION_TAKE) && (obj1._id == BOOK2) && !obj1.hasProperty(CARRIED)) {
-		getObject(10)->_click = 47;  // empty shelf
+		getObject(10)->_click = 47; // empty shelf
 		return false;
 	} else
 		return false;
@@ -1118,23 +1098,23 @@ ShipCabinL3::ShipCabinL3(SupernovaEngine *vm, GameManager *gm) {
 	_shown[9] = kShownTrue;
 	_shown[12] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringPoster,kStringPosterDescription1,NULLOBJECT,UNNECESSARY,11,11,0);
-	_objectState[1] = Object(_id, kStringPoster,kStringPosterDescription2,NULLOBJECT,UNNECESSARY,12,12,0);
-	_objectState[2] = Object(_id, kStringSpeaker,kStringDefaultDescription,NULLOBJECT,NULLTYPE,13,13,0);
-	_objectState[3] = Object(_id, kStringMagnete,kStringMagneteDescription,NULLOBJECT,UNNECESSARY,14,14,0);
-	_objectState[4] = Object(_id, kStringRecord,kStringRecordDescription,RECORD,TAKE | COMBINABLE,15,15,8 | 128);
-	_objectState[5] = Object(_id, kStringRecordStand,kStringRecordStandDescription,NULLOBJECT,UNNECESSARY,16,16,0);
-	_objectState[6] = Object(_id, kStringButton,kStringDefaultDescription,TURNTABLE_BUTTON,PRESS,22,22,0);
-	_objectState[7] = Object(_id, kStringTurntable,kStringTurntableDescription,TURNTABLE,UNNECESSARY | COMBINABLE,17,17,0);
-	_objectState[8] = Object(_id, kStringWire,kStringDefaultDescription,WIRE,COMBINABLE,18,18,0);
-	_objectState[9] = Object(_id, kStringWire,kStringDefaultDescription,WIRE2,COMBINABLE,19,19,0);
-	_objectState[10] = Object(_id, kStringPlug,kStringDefaultDescription,PLUG,COMBINABLE,20,20,0);
-	_objectState[11] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | OPENED | EXIT,3,3,24 | 128,CORRIDOR,9);
-	_objectState[12] = Object(_id, kStringSlot,kStringSlotDescription,NULLOBJECT,COMBINABLE,0,0,0);
-	_objectState[13] = Object(_id, kStringShelf,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,1,1,0);
-	_objectState[14] = Object(_id, kStringCompartment,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,2,2,0);
-	_objectState[15] = Object(_id, kStringSocket,kStringDefaultDescription,SOCKET,COMBINABLE,4,4,0);
-	_objectState[16] = Object(_id, kStringToilet,kStringDefaultDescription,BATHROOM_DOOR,EXIT,255,255,0,BATHROOM,22);
+	_objectState[0] = Object(_id, kStringPoster, kStringPosterDescription1, NULLOBJECT, UNNECESSARY, 11, 11, 0);
+	_objectState[1] = Object(_id, kStringPoster, kStringPosterDescription2, NULLOBJECT, UNNECESSARY, 12, 12, 0);
+	_objectState[2] = Object(_id, kStringSpeaker, kStringDefaultDescription, NULLOBJECT, NULLTYPE, 13, 13, 0);
+	_objectState[3] = Object(_id, kStringMagnete, kStringMagneteDescription, NULLOBJECT, UNNECESSARY, 14, 14, 0);
+	_objectState[4] = Object(_id, kStringRecord, kStringRecordDescription, RECORD, TAKE | COMBINABLE, 15, 15, 8 | 128);
+	_objectState[5] = Object(_id, kStringRecordStand, kStringRecordStandDescription, NULLOBJECT, UNNECESSARY, 16, 16, 0);
+	_objectState[6] = Object(_id, kStringButton, kStringDefaultDescription, TURNTABLE_BUTTON, PRESS, 22, 22, 0);
+	_objectState[7] = Object(_id, kStringTurntable, kStringTurntableDescription, TURNTABLE, UNNECESSARY | COMBINABLE, 17, 17, 0);
+	_objectState[8] = Object(_id, kStringWire, kStringDefaultDescription, WIRE, COMBINABLE, 18, 18, 0);
+	_objectState[9] = Object(_id, kStringWire, kStringDefaultDescription, WIRE2, COMBINABLE, 19, 19, 0);
+	_objectState[10] = Object(_id, kStringPlug, kStringDefaultDescription, PLUG, COMBINABLE, 20, 20, 0);
+	_objectState[11] = Object(_id, kStringHatch, kStringDefaultDescription, NULLOBJECT, OPENABLE | OPENED | EXIT, 3, 3, 24 | 128, CORRIDOR, 9);
+	_objectState[12] = Object(_id, kStringSlot, kStringSlotDescription, NULLOBJECT, COMBINABLE, 0, 0, 0);
+	_objectState[13] = Object(_id, kStringShelf, kStringDefaultDescription, NULLOBJECT, OPENABLE | CLOSED, 1, 1, 0);
+	_objectState[14] = Object(_id, kStringCompartment, kStringDefaultDescription, NULLOBJECT, OPENABLE | CLOSED, 2, 2, 0);
+	_objectState[15] = Object(_id, kStringSocket, kStringDefaultDescription, SOCKET, COMBINABLE, 4, 4, 0);
+	_objectState[16] = Object(_id, kStringToilet, kStringDefaultDescription, BATHROOM_DOOR, EXIT, 255, 255, 0, BATHROOM, 22);
 }
 
 bool ShipCabinL3::interact(Action verb, Object &obj1, Object &obj2) {
@@ -1228,15 +1208,15 @@ ShipCabinR1::ShipCabinR1(SupernovaEngine *vm, GameManager *gm) {
 	_shown[1] = kShownTrue;
 	_shown[2] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringImage,kStringImageDescription1,NULLOBJECT,UNNECESSARY,5,5,0);
-	_objectState[1] = Object(_id, kStringDrawingInstruments,kStringDrawingInstrumentsDescription,NULLOBJECT,UNNECESSARY,6,6,0);
-	_objectState[2] = Object(_id, kStringMagnete,kStringMagneteDescription,NULLOBJECT,UNNECESSARY,7,7,0);
-	_objectState[3] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | OPENED | EXIT,3,3,15 | 128,CORRIDOR,5);
-	_objectState[4] = Object(_id, kStringSlot,kStringSlotDescription,NULLOBJECT,COMBINABLE,0,0,0);
-	_objectState[5] = Object(_id, kStringShelf,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,1,1,0);
-	_objectState[6] = Object(_id, kStringCompartment,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,2,2,0);
-	_objectState[7] = Object(_id, kStringSocket,kStringDefaultDescription,SOCKET,COMBINABLE,4,4,0);
-	_objectState[8] = Object(_id, kStringToilet,kStringDefaultDescription,BATHROOM_DOOR,EXIT,255,255,0,BATHROOM,22);
+	_objectState[0] = Object(_id, kStringImage, kStringImageDescription1, NULLOBJECT, UNNECESSARY, 5, 5, 0);
+	_objectState[1] = Object(_id, kStringDrawingInstruments, kStringDrawingInstrumentsDescription, NULLOBJECT, UNNECESSARY, 6, 6, 0);
+	_objectState[2] = Object(_id, kStringMagnete, kStringMagneteDescription, NULLOBJECT, UNNECESSARY, 7, 7, 0);
+	_objectState[3] = Object(_id, kStringHatch, kStringDefaultDescription, NULLOBJECT, OPENABLE | OPENED | EXIT, 3, 3, 15 | 128, CORRIDOR, 5);
+	_objectState[4] = Object(_id, kStringSlot, kStringSlotDescription, NULLOBJECT, COMBINABLE, 0, 0, 0);
+	_objectState[5] = Object(_id, kStringShelf, kStringDefaultDescription, NULLOBJECT, OPENABLE | CLOSED, 1, 1, 0);
+	_objectState[6] = Object(_id, kStringCompartment, kStringDefaultDescription, NULLOBJECT, OPENABLE | CLOSED, 2, 2, 0);
+	_objectState[7] = Object(_id, kStringSocket, kStringDefaultDescription, SOCKET, COMBINABLE, 4, 4, 0);
+	_objectState[8] = Object(_id, kStringToilet, kStringDefaultDescription, BATHROOM_DOOR, EXIT, 255, 255, 0, BATHROOM, 22);
 }
 
 ShipCabinR2::ShipCabinR2(SupernovaEngine *vm, GameManager *gm) {
@@ -1250,15 +1230,15 @@ ShipCabinR2::ShipCabinR2(SupernovaEngine *vm, GameManager *gm) {
 	_shown[4] = kShownTrue;
 	_shown[5] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringChessGame,kStringChessGameDescription1,NULLOBJECT,UNNECESSARY,11,11,0);
-	_objectState[1] = Object(_id, kStringTennisRacket,kStringTennisRacketDescription,NULLOBJECT,UNNECESSARY,8,8,0);
-	_objectState[2] = Object(_id, kStringTennisBall,kStringGenericDescription2,NULLOBJECT,UNNECESSARY,9,9,0);
-	_objectState[3] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | OPENED | EXIT,3,3,15 | 128,CORRIDOR,5);
-	_objectState[4] = Object(_id, kStringSlot,kStringSlotDescription,NULLOBJECT,COMBINABLE,0,0,0);
-	_objectState[5] = Object(_id, kStringShelf,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,1,1,0);
-	_objectState[6] = Object(_id, kStringCompartment,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,2,2,0);
-	_objectState[7] = Object(_id, kStringSocket,kStringDefaultDescription,SOCKET,COMBINABLE,4,4,0);
-	_objectState[8] = Object(_id, kStringToilet,kStringDefaultDescription,BATHROOM_DOOR,EXIT,255,255,0,BATHROOM,22);
+	_objectState[0] = Object(_id, kStringChessGame, kStringChessGameDescription1, NULLOBJECT, UNNECESSARY, 11, 11, 0);
+	_objectState[1] = Object(_id, kStringTennisRacket, kStringTennisRacketDescription, NULLOBJECT, UNNECESSARY, 8, 8, 0);
+	_objectState[2] = Object(_id, kStringTennisBall, kStringGenericDescription2, NULLOBJECT, UNNECESSARY, 9, 9, 0);
+	_objectState[3] = Object(_id, kStringHatch, kStringDefaultDescription, NULLOBJECT, OPENABLE | OPENED | EXIT, 3, 3, 15 | 128, CORRIDOR, 5);
+	_objectState[4] = Object(_id, kStringSlot, kStringSlotDescription, NULLOBJECT, COMBINABLE, 0, 0, 0);
+	_objectState[5] = Object(_id, kStringShelf, kStringDefaultDescription, NULLOBJECT, OPENABLE | CLOSED, 1, 1, 0);
+	_objectState[6] = Object(_id, kStringCompartment, kStringDefaultDescription, NULLOBJECT, OPENABLE | CLOSED, 2, 2, 0);
+	_objectState[7] = Object(_id, kStringSocket, kStringDefaultDescription, SOCKET, COMBINABLE, 4, 4, 0);
+	_objectState[8] = Object(_id, kStringToilet, kStringDefaultDescription, BATHROOM_DOOR, EXIT, 255, 255, 0, BATHROOM, 22);
 }
 
 ShipCabinR3::ShipCabinR3(SupernovaEngine *vm, GameManager *gm) {
@@ -1272,30 +1252,30 @@ ShipCabinR3::ShipCabinR3(SupernovaEngine *vm, GameManager *gm) {
 	_shown[8] = kShownTrue;
 	_shown[15] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringChessGame,kStringChessGameDescription2,CHESS,TAKE | COMBINABLE,12,12,7 | 128);
-	_objectState[1] = Object(_id, kStringBed,kStringBedDescription,NULLOBJECT,NULLTYPE,13,13,0);
-	_objectState[2] = Object(_id, kStringSlot,kStringSlotDescription,SLOT_K1,COMBINABLE,27,27,0);
-	_objectState[3] = Object(_id, kStringSlot,kStringSlotDescription,SLOT_K2,COMBINABLE,28,28,0);
-	_objectState[4] = Object(_id, kStringSlot,kStringSlotDescription,SLOT_K3,COMBINABLE,29,29,0);
-	_objectState[5] = Object(_id, kStringSlot,kStringSlotDescription,SLOT_K4,COMBINABLE,30,30,0);
-	_objectState[6] = Object(_id, kStringCompartment,kStringCompartmentDescription,SHELF1,OPENABLE | CLOSED,14,18,9);
-	_objectState[7] = Object(_id, kStringAlbums,kStringAlbumsDescription,NULLOBJECT,UNNECESSARY,14,14,0);
-	_objectState[8] = Object(_id, kStringCompartment,kStringCompartmentDescription,SHELF2,OPENABLE | CLOSED,15,19,10);
-	_objectState[9] = Object(_id, kStringRope,kStringRopeDescription,ROPE,TAKE | COMBINABLE,15,15,12);
-	_objectState[10] = Object(_id, kStringShelf,kStringShelfDescription,SHELF3,OPENABLE | CLOSED,16,17,11);
-	_objectState[11] = Object(_id, kStringJunk,kStringJunkDescription,NULLOBJECT,UNNECESSARY,20,20,0);
-	_objectState[12] = Object(_id, kStringClothes,kStringClothesDescription,NULLOBJECT,UNNECESSARY,21,21,0);
-	_objectState[13] = Object(_id, kStringUnderwear,kStringDefaultDescription,NULLOBJECT,UNNECESSARY,22,22,0);
-	_objectState[14] = Object(_id, kStringSocks,kStringDefaultDescription,NULLOBJECT,UNNECESSARY,23,23,0);
-	_objectState[15] = Object(_id, kStringCompartment,kStringCompartmentDescription,SHELF4,OPENABLE | CLOSED,24,25,13);
-	_objectState[16] = Object(_id, kStringBook,kStringBookHitchhiker,BOOK,TAKE,26,26,14);
-	_objectState[17] = Object(_id, kStringDiscman,kStringDiscmanDescription,DISCMAN,TAKE | COMBINABLE,33,33,16);
-	_objectState[18] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | EXIT,3,3,15 | 128,CORRIDOR,5);
-	_objectState[19] = Object(_id, kStringSlot,kStringSlotDescription,NULLOBJECT,COMBINABLE,0,0,0);
-	_objectState[20] = Object(_id, kStringShelf,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,1,1,0);
-	_objectState[21] = Object(_id, kStringCompartment,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,2,2,0);
-	_objectState[22] = Object(_id, kStringSocket,kStringDefaultDescription,SOCKET,COMBINABLE,4,4,0);
-	_objectState[23] = Object(_id, kStringToilet,kStringDefaultDescription,BATHROOM_DOOR,EXIT,255,255,0,BATHROOM,22);
+	_objectState[0] = Object(_id, kStringChessGame, kStringChessGameDescription2, CHESS, TAKE | COMBINABLE, 12, 12, 7 | 128);
+	_objectState[1] = Object(_id, kStringBed, kStringBedDescription, NULLOBJECT, NULLTYPE, 13, 13, 0);
+	_objectState[2] = Object(_id, kStringSlot, kStringSlotDescription, SLOT_K1, COMBINABLE, 27, 27, 0);
+	_objectState[3] = Object(_id, kStringSlot, kStringSlotDescription, SLOT_K2, COMBINABLE, 28, 28, 0);
+	_objectState[4] = Object(_id, kStringSlot, kStringSlotDescription, SLOT_K3, COMBINABLE, 29, 29, 0);
+	_objectState[5] = Object(_id, kStringSlot, kStringSlotDescription, SLOT_K4, COMBINABLE, 30, 30, 0);
+	_objectState[6] = Object(_id, kStringCompartment, kStringCompartmentDescription, SHELF1, OPENABLE | CLOSED, 14, 18, 9);
+	_objectState[7] = Object(_id, kStringAlbums, kStringAlbumsDescription, NULLOBJECT, UNNECESSARY, 14, 14, 0);
+	_objectState[8] = Object(_id, kStringCompartment, kStringCompartmentDescription, SHELF2, OPENABLE | CLOSED, 15, 19, 10);
+	_objectState[9] = Object(_id, kStringRope, kStringRopeDescription, ROPE, TAKE | COMBINABLE, 15, 15, 12);
+	_objectState[10] = Object(_id, kStringShelf, kStringShelfDescription, SHELF3, OPENABLE | CLOSED, 16, 17, 11);
+	_objectState[11] = Object(_id, kStringJunk, kStringJunkDescription, NULLOBJECT, UNNECESSARY, 20, 20, 0);
+	_objectState[12] = Object(_id, kStringClothes, kStringClothesDescription, NULLOBJECT, UNNECESSARY, 21, 21, 0);
+	_objectState[13] = Object(_id, kStringUnderwear, kStringDefaultDescription, NULLOBJECT, UNNECESSARY, 22, 22, 0);
+	_objectState[14] = Object(_id, kStringSocks, kStringDefaultDescription, NULLOBJECT, UNNECESSARY, 23, 23, 0);
+	_objectState[15] = Object(_id, kStringCompartment, kStringCompartmentDescription, SHELF4, OPENABLE | CLOSED, 24, 25, 13);
+	_objectState[16] = Object(_id, kStringBook, kStringBookHitchhiker, BOOK, TAKE, 26, 26, 14);
+	_objectState[17] = Object(_id, kStringDiscman, kStringDiscmanDescription, DISCMAN, TAKE | COMBINABLE, 33, 33, 16);
+	_objectState[18] = Object(_id, kStringHatch, kStringDefaultDescription, NULLOBJECT, OPENABLE | EXIT, 3, 3, 15 | 128, CORRIDOR, 5);
+	_objectState[19] = Object(_id, kStringSlot, kStringSlotDescription, NULLOBJECT, COMBINABLE, 0, 0, 0);
+	_objectState[20] = Object(_id, kStringShelf, kStringDefaultDescription, NULLOBJECT, OPENABLE | CLOSED, 1, 1, 0);
+	_objectState[21] = Object(_id, kStringCompartment, kStringDefaultDescription, NULLOBJECT, OPENABLE | CLOSED, 2, 2, 0);
+	_objectState[22] = Object(_id, kStringSocket, kStringDefaultDescription, SOCKET, COMBINABLE, 4, 4, 0);
+	_objectState[23] = Object(_id, kStringToilet, kStringDefaultDescription, BATHROOM_DOOR, EXIT, 255, 255, 0, BATHROOM, 22);
 }
 
 bool ShipCabinR3::interact(Action verb, Object &obj1, Object &obj2) {
@@ -1357,9 +1337,9 @@ ShipCabinBathroom::ShipCabinBathroom(SupernovaEngine *vm, GameManager *gm) {
 	_id = BATHROOM;
 	_shown[0] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringBathroom,kStringBathroomDescription,TOILET,NULLTYPE,0,0,0);
-	_objectState[1] = Object(_id, kStringShower,kStringDefaultDescription,SHOWER,NULLTYPE,1,1,0);
-	_objectState[2] = Object(_id, kStringExit,kStringDefaultDescription,BATHROOM_EXIT,EXIT,255,255,0,CABIN_R3,2);
+	_objectState[0] = Object(_id, kStringBathroom, kStringBathroomDescription, TOILET, NULLTYPE, 0, 0, 0);
+	_objectState[1] = Object(_id, kStringShower, kStringDefaultDescription, SHOWER, NULLTYPE, 1, 1, 0);
+	_objectState[2] = Object(_id, kStringExit, kStringDefaultDescription, BATHROOM_EXIT, EXIT, 255, 255, 0, CABIN_R3, 2);
 }
 
 ShipAirlock::ShipAirlock(SupernovaEngine *vm, GameManager *gm) {
@@ -1371,13 +1351,13 @@ ShipAirlock::ShipAirlock(SupernovaEngine *vm, GameManager *gm) {
 	_shown[0] = kShownTrue;
 	_shown[6] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringHatch,kStringHatchDescription1,NULLOBJECT,EXIT | OPENABLE | OPENED | CLOSED,0,0,0,CORRIDOR,10);
-	_objectState[1] = Object(_id, kStringHatch,kStringHatchDescription2,NULLOBJECT,EXIT | OPENABLE | CLOSED,1,1,0,HOLD,14);
-	_objectState[2] = Object(_id, kStringButton,kStringDefaultDescription,BUTTON1,PRESS,2,2,0);
-	_objectState[3] = Object(_id, kStringButton,kStringDefaultDescription,BUTTON2,PRESS,3,3,0);
-	_objectState[4] = Object(_id, kStringHelmet,kStringHelmetDescription,HELMET,TAKE,4,4,7);
-	_objectState[5] = Object(_id, kStringSuit,kStringSuitDescription,SUIT,TAKE,5,5,8);
-	_objectState[6] = Object(_id, kStringLifeSupport,kStringLifeSupportDescription,LIFESUPPORT,TAKE,6,6,9);
+	_objectState[0] = Object(_id, kStringHatch, kStringHatchDescription1, NULLOBJECT, EXIT | OPENABLE | OPENED | CLOSED, 0, 0, 0, CORRIDOR, 10);
+	_objectState[1] = Object(_id, kStringHatch, kStringHatchDescription2, NULLOBJECT, EXIT | OPENABLE | CLOSED, 1, 1, 0, HOLD, 14);
+	_objectState[2] = Object(_id, kStringButton, kStringDefaultDescription, BUTTON1, PRESS, 2, 2, 0);
+	_objectState[3] = Object(_id, kStringButton, kStringDefaultDescription, BUTTON2, PRESS, 3, 3, 0);
+	_objectState[4] = Object(_id, kStringHelmet, kStringHelmetDescription, HELMET, TAKE, 4, 4, 7);
+	_objectState[5] = Object(_id, kStringSuit, kStringSuitDescription, SUIT, TAKE, 5, 5, 8);
+	_objectState[6] = Object(_id, kStringLifeSupport, kStringLifeSupportDescription, LIFESUPPORT, TAKE, 6, 6, 9);
 }
 
 bool ShipAirlock::interact(Action verb, Object &obj1, Object &obj2) {
@@ -1464,9 +1444,7 @@ bool ShipAirlock::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->wait(2);
 				_vm->renderImage(_gm->invertSection(4));
 				r = _gm->_rooms[AIRLOCK];
-				if (!r->getObject(4)->hasProperty(WORN) ||
-					!r->getObject(5)->hasProperty(WORN) ||
-					!r->getObject(6)->hasProperty(WORN)) {
+				if (!r->getObject(4)->hasProperty(WORN) || !r->getObject(5)->hasProperty(WORN) || !r->getObject(6)->hasProperty(WORN)) {
 					_gm->dead(kStringShipAirlock1);
 					return true;
 				}
@@ -1496,18 +1474,18 @@ ShipHold::ShipHold(SupernovaEngine *vm, GameManager *gm) {
 	_id = HOLD;
 	_shown[0] = kShownTrue;
 
-	_objectState[0] = Object(_id, kNoString,kStringDefaultDescription,HOLD_WIRE,COMBINABLE,255,255,0);
-	_objectState[1] = Object(_id, kStringScrap,kStringScrapDescription1,SCRAP_LK,NULLTYPE,4,4,0);
-	_objectState[2] = Object(_id, kStringTerminalStrip,kStringDefaultDescription,TERMINALSTRIP,COMBINABLE,255,255,0);
-	_objectState[3] = Object(_id, kStringScrap,kStringScrapDescription2,NULLOBJECT,NULLTYPE,5,5,0);
-	_objectState[4] = Object(_id, kStringReactor,kStringReactorDescription,NULLOBJECT,NULLTYPE,6,6,0);
-	_objectState[5] = Object(_id, kStringNozzle,kStringDefaultDescription,NULLOBJECT,NULLTYPE,7,7,0);
-	_objectState[6] = Object(_id, kStringPumpkin,kStringPumpkinDescription,NULLOBJECT,NULLTYPE,8,8,0);
-	_objectState[7] = Object(_id, kStringHatch,kStringDefaultDescription,LANDINGMOD_OUTERHATCH,EXIT | OPENABLE,1,2,2,LANDINGMODULE,6);
-	_objectState[8] = Object(_id, kStringLandingModule,kStringLandingModuleDescription,NULLOBJECT,NULLTYPE,0,0,0);
-	_objectState[9] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,255,255,0,AIRLOCK,22);
-	_objectState[10] = Object(_id, kStringHatch,kStringHatchDescription3,OUTERHATCH_TOP,EXIT | OPENABLE | OPENED,3,3,0,GENERATOR,8);
-	_objectState[11] = Object(_id, kStringGenerator,kStringGeneratorDescription,GENERATOR_TOP,EXIT,12,12,0,GENERATOR,8);
+	_objectState[0] = Object(_id, kNoString, kStringDefaultDescription, HOLD_WIRE, COMBINABLE, 255, 255, 0);
+	_objectState[1] = Object(_id, kStringScrap, kStringScrapDescription1, SCRAP_LK, NULLTYPE, 4, 4, 0);
+	_objectState[2] = Object(_id, kStringTerminalStrip, kStringDefaultDescription, TERMINALSTRIP, COMBINABLE, 255, 255, 0);
+	_objectState[3] = Object(_id, kStringScrap, kStringScrapDescription2, NULLOBJECT, NULLTYPE, 5, 5, 0);
+	_objectState[4] = Object(_id, kStringReactor, kStringReactorDescription, NULLOBJECT, NULLTYPE, 6, 6, 0);
+	_objectState[5] = Object(_id, kStringNozzle, kStringDefaultDescription, NULLOBJECT, NULLTYPE, 7, 7, 0);
+	_objectState[6] = Object(_id, kStringPumpkin, kStringPumpkinDescription, NULLOBJECT, NULLTYPE, 8, 8, 0);
+	_objectState[7] = Object(_id, kStringHatch, kStringDefaultDescription, LANDINGMOD_OUTERHATCH, EXIT | OPENABLE, 1, 2, 2, LANDINGMODULE, 6);
+	_objectState[8] = Object(_id, kStringLandingModule, kStringLandingModuleDescription, NULLOBJECT, NULLTYPE, 0, 0, 0);
+	_objectState[9] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 255, 255, 0, AIRLOCK, 22);
+	_objectState[10] = Object(_id, kStringHatch, kStringHatchDescription3, OUTERHATCH_TOP, EXIT | OPENABLE | OPENED, 3, 3, 0, GENERATOR, 8);
+	_objectState[11] = Object(_id, kStringGenerator, kStringGeneratorDescription, GENERATOR_TOP, EXIT, 12, 12, 0, GENERATOR, 8);
 }
 
 bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
@@ -1521,8 +1499,7 @@ bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderMessage(kStringShipHold1);
 	else if ((verb == ACTION_CLOSE) && (obj1._id == LANDINGMOD_HATCH) && (isSectionVisible(4) || isSectionVisible(6)))
 		_vm->renderMessage(kStringCable1);
-	else if (((verb == ACTION_TAKE) && (obj1._id == HOLD_WIRE)) ||
-			 ((verb == ACTION_USE) && Object::combine(obj1, obj2, HOLD_WIRE, LANDINGMOD_HATCH)))
+	else if (((verb == ACTION_TAKE) && (obj1._id == HOLD_WIRE)) || ((verb == ACTION_USE) && Object::combine(obj1, obj2, HOLD_WIRE, LANDINGMOD_HATCH)))
 		_vm->renderMessage(kStringCable2);
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, TERMINALSTRIP, HOLD_WIRE)) {
 		getObject(0)->_name = kStringWireAndClip;
@@ -1574,12 +1551,12 @@ ShipLandingModule::ShipLandingModule(SupernovaEngine *vm, GameManager *gm) {
 	_id = LANDINGMODULE;
 	_shown[0] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringSocket,kStringDefaultDescription,LANDINGMOD_SOCKET,COMBINABLE,1,1,0);
-	_objectState[1] = Object(_id, kStringButton,kSafetyButtonDescription,LANDINGMOD_BUTTON,PRESS | COMBINABLE,2,2,0);
-	_objectState[2] = Object(_id, kStringMonitor,kStringDefaultDescription,LANDINGMOD_MONITOR,NULLTYPE,3,3,0);
-	_objectState[3] = Object(_id, kStringKeyboard,kStringDefaultDescription,KEYBOARD,NULLTYPE,4,4,0);
-	_objectState[4] = Object(_id, kNoString,kStringDefaultDescription,LANDINGMOD_WIRE,COMBINABLE,255,255,0);
-	_objectState[5] = Object(_id, kStringHatch,kStringDefaultDescription,LANDINGMOD_HATCH,EXIT | OPENABLE | OPENED | COMBINABLE, 0,0,1 | 128,HOLD,10);
+	_objectState[0] = Object(_id, kStringSocket, kStringDefaultDescription, LANDINGMOD_SOCKET, COMBINABLE, 1, 1, 0);
+	_objectState[1] = Object(_id, kStringButton, kSafetyButtonDescription, LANDINGMOD_BUTTON, PRESS | COMBINABLE, 2, 2, 0);
+	_objectState[2] = Object(_id, kStringMonitor, kStringDefaultDescription, LANDINGMOD_MONITOR, NULLTYPE, 3, 3, 0);
+	_objectState[3] = Object(_id, kStringKeyboard, kStringDefaultDescription, KEYBOARD, NULLTYPE, 4, 4, 0);
+	_objectState[4] = Object(_id, kNoString, kStringDefaultDescription, LANDINGMOD_WIRE, COMBINABLE, 255, 255, 0);
+	_objectState[5] = Object(_id, kStringHatch, kStringDefaultDescription, LANDINGMOD_HATCH, EXIT | OPENABLE | OPENED | COMBINABLE, 0, 0, 1 | 128, HOLD, 10);
 }
 
 bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
@@ -1689,19 +1666,19 @@ ShipGenerator::ShipGenerator(SupernovaEngine *vm, GameManager *gm) {
 	_shown[0] = kShownTrue;
 	_shown[5] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringGeneratorWire,kStringDefaultDescription,GENERATOR_WIRE,COMBINABLE,255,255,0);
-	_objectState[1] = Object(_id, kStringEmptySpool,kStringDefaultDescription,NULLOBJECT,UNNECESSARY,255,255,0);
-	_objectState[2] = Object(_id, kStringKeycard2,kStringKeycard2Description,KEYCARD2,COMBINABLE | TAKE,12,12,5 | 128);
-	_objectState[3] = Object(_id, kStringRope,kStringDefaultDescription,GENERATOR_ROPE,COMBINABLE,255,255,0);
-	_objectState[4] = Object(_id, kStringHatch,kStringHatchDescription3,OUTERHATCH,EXIT | OPENABLE,1,2,1,OUTSIDE,22);
-	_objectState[5] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,OPENABLE | CLOSED,3,3,0);
-	_objectState[6] = Object(_id, kStringSlot,kStringSlotDescription,NULLOBJECT,COMBINABLE,4,4,0);
-	_objectState[7] = Object(_id, kStringTrap,kStringDefaultDescription,TRAP,OPENABLE,5,6,2);
-	_objectState[8] = Object(_id, kStringWire,kStringDefaultDescription,NULLOBJECT,NULLTYPE,7,7,0);
-	_objectState[9] = Object(_id, kStringVoltmeter,kStringDefaultDescription,VOLTMETER,NULLTYPE,9,9,0,NULLROOM,0);
-	_objectState[10] = Object(_id, kStringClip,kStringDefaultDescription,CLIP,COMBINABLE,8,8,0);
-	_objectState[11] = Object(_id, kStringWire,kStringWireDescription,SHORT_WIRE,COMBINABLE,10,10,0);
-	_objectState[12] = Object(_id, kStringLadder,kStringDefaultDescription,LADDER,EXIT,0,0,0,HOLD,1);
+	_objectState[0] = Object(_id, kStringGeneratorWire, kStringDefaultDescription, GENERATOR_WIRE, COMBINABLE, 255, 255, 0);
+	_objectState[1] = Object(_id, kStringEmptySpool, kStringDefaultDescription, NULLOBJECT, UNNECESSARY, 255, 255, 0);
+	_objectState[2] = Object(_id, kStringKeycard2, kStringKeycard2Description, KEYCARD2, COMBINABLE | TAKE, 12, 12, 5 | 128);
+	_objectState[3] = Object(_id, kStringRope, kStringDefaultDescription, GENERATOR_ROPE, COMBINABLE, 255, 255, 0);
+	_objectState[4] = Object(_id, kStringHatch, kStringHatchDescription3, OUTERHATCH, EXIT | OPENABLE, 1, 2, 1, OUTSIDE, 22);
+	_objectState[5] = Object(_id, kStringHatch, kStringDefaultDescription, NULLOBJECT, OPENABLE | CLOSED, 3, 3, 0);
+	_objectState[6] = Object(_id, kStringSlot, kStringSlotDescription, NULLOBJECT, COMBINABLE, 4, 4, 0);
+	_objectState[7] = Object(_id, kStringTrap, kStringDefaultDescription, TRAP, OPENABLE, 5, 6, 2);
+	_objectState[8] = Object(_id, kStringWire, kStringDefaultDescription, NULLOBJECT, NULLTYPE, 7, 7, 0);
+	_objectState[9] = Object(_id, kStringVoltmeter, kStringDefaultDescription, VOLTMETER, NULLTYPE, 9, 9, 0, NULLROOM, 0);
+	_objectState[10] = Object(_id, kStringClip, kStringDefaultDescription, CLIP, COMBINABLE, 8, 8, 0);
+	_objectState[11] = Object(_id, kStringWire, kStringWireDescription, SHORT_WIRE, COMBINABLE, 10, 10, 0);
+	_objectState[12] = Object(_id, kStringLadder, kStringDefaultDescription, LADDER, EXIT, 0, 0, 0, HOLD, 1);
 }
 
 bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
@@ -1734,8 +1711,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 			obj1._click = 1;
 			_vm->playSound(kAudioDoorClose);
 		}
-	} else if ((verb == ACTION_WALK) && (obj1._id == OUTERHATCH) &&
-			   isSectionVisible(7)) {
+	} else if ((verb == ACTION_WALK) && (obj1._id == OUTERHATCH) && isSectionVisible(7)) {
 		if (!obj1.hasProperty(OPENED))
 			_vm->renderMessage(kStringShipHold9);
 		else if (!isSectionVisible(11))
@@ -1746,14 +1722,12 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if ((verb == ACTION_TAKE) && (obj1._id == GENERATOR_WIRE))
 		_vm->renderMessage(kStringCable2);
-	else if ((verb == ACTION_PULL) && (obj1._id == SHORT_WIRE) &&
-			 (obj1._click != 11)) {
+	else if ((verb == ACTION_PULL) && (obj1._id == SHORT_WIRE) && (obj1._click != 11)) {
 		_vm->renderImage(3);
 		_vm->renderImage(4);
 		obj1._click = 11;
 		_gm->turnOff();
-	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, SHORT_WIRE, CLIP) &&
-			   (getObject(11)->_click == 11) && !isSectionVisible(9)) {
+	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, SHORT_WIRE, CLIP) && (getObject(11)->_click == 11) && !isSectionVisible(9)) {
 		_vm->renderImage(2);
 		setSectionVisible(3, false);
 		setSectionVisible(4, false);
@@ -1781,8 +1755,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 			setSectionVisible(3, false);
 			return false;
 		}
-	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, GENERATOR_WIRE, CLIP) &&
-			   isSectionVisible(3) && (getObject(0)->_click != 16)) {
+	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, GENERATOR_WIRE, CLIP) && isSectionVisible(3) && (getObject(0)->_click != 16)) {
 		_vm->renderImage(_gm->invertSection(8));
 		_vm->renderImage(2);
 		setSectionVisible(4, false);
@@ -1805,10 +1778,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		obj1._click = 15;
 		_gm->turnOff();
 		_gm->_rooms[HOLD]->setSectionVisible(7, false);
-	} else if ((verb == ACTION_USE) &&
-			   (Object::combine(obj1, obj2, WIRE, CLIP) ||
-				Object::combine(obj1, obj2, SPOOL, CLIP)) &&
-			   isSectionVisible(3)) {
+	} else if ((verb == ACTION_USE) && (Object::combine(obj1, obj2, WIRE, CLIP) || Object::combine(obj1, obj2, SPOOL, CLIP)) && isSectionVisible(3)) {
 		_vm->renderMessage(kStringShipHold11);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == VOLTMETER)) {
 		if (_gm->_state._powerOff)
@@ -1855,10 +1825,9 @@ ShipOuterSpace::ShipOuterSpace(SupernovaEngine *vm, GameManager *gm) {
 	_id = OUTSIDE;
 	_shown[0] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,EXIT,0,0,0,GENERATOR,3);
-	_objectState[1] = Object(_id, kStringRope,kStringDefaultDescription,NULLOBJECT,UNNECESSARY,255,255,0);
+	_objectState[0] = Object(_id, kStringHatch, kStringDefaultDescription, NULLOBJECT, EXIT, 0, 0, 0, GENERATOR, 3);
+	_objectState[1] = Object(_id, kStringRope, kStringDefaultDescription, NULLOBJECT, UNNECESSARY, 255, 255, 0);
 }
-
 
 // Arsano
 ArsanoRocks::ArsanoRocks(SupernovaEngine *vm, GameManager *gm) {
@@ -1869,10 +1838,10 @@ ArsanoRocks::ArsanoRocks(SupernovaEngine *vm, GameManager *gm) {
 	_id = OUTSIDE;
 	_shown[0] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringRope,kStringDefaultDescription,NULLOBJECT,UNNECESSARY | EXIT,0,0,0,GENERATOR,12);
-	_objectState[1] = Object(_id, kStringStone,kStringDefaultDescription,STONE,NULLTYPE,1,1,0);
-	_objectState[2] = Object(_id, kStringStone,kStringDefaultDescription,NULLOBJECT,NULLTYPE,2,2,0);
-	_objectState[3] = Object(_id, kStringCaveOpening,kStringCaveOpeningDescription,NULLOBJECT,NULLTYPE,255,255,0,CAVE,1);
+	_objectState[0] = Object(_id, kStringRope, kStringDefaultDescription, NULLOBJECT, UNNECESSARY | EXIT, 0, 0, 0, GENERATOR, 12);
+	_objectState[1] = Object(_id, kStringStone, kStringDefaultDescription, STONE, NULLTYPE, 1, 1, 0);
+	_objectState[2] = Object(_id, kStringStone, kStringDefaultDescription, NULLOBJECT, NULLTYPE, 2, 2, 0);
+	_objectState[3] = Object(_id, kStringCaveOpening, kStringCaveOpeningDescription, NULLOBJECT, NULLTYPE, 255, 255, 0, CAVE, 1);
 }
 
 void ArsanoRocks::onEntrance() {
@@ -1880,8 +1849,7 @@ void ArsanoRocks::onEntrance() {
 }
 
 bool ArsanoRocks::interact(Action verb, Object &obj1, Object &obj2) {
-	if (((verb == ACTION_PULL) || (verb == ACTION_PRESS)) &&
-		(obj1._id == STONE) && !isSectionVisible(3)) {
+	if (((verb == ACTION_PULL) || (verb == ACTION_PRESS)) && (obj1._id == STONE) && !isSectionVisible(3)) {
 		_vm->renderImage(1);
 		_gm->wait(2);
 		_vm->renderImage(2);
@@ -1903,8 +1871,8 @@ ArsanoCave::ArsanoCave(SupernovaEngine *vm, GameManager *gm) {
 	_fileNumber = 12;
 	_id = CAVE;
 
-	_objectState[0] = Object(_id, kStringExit,kStringExitDescription,NULLOBJECT,EXIT,255,255,0,ROCKS,22);
-	_objectState[1] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,255,255,0,MEETUP,2);
+	_objectState[0] = Object(_id, kStringExit, kStringExitDescription, NULLOBJECT, EXIT, 255, 255, 0, ROCKS, 22);
+	_objectState[1] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 255, 255, 0, MEETUP, 2);
 }
 
 ArsanoMeetup::ArsanoMeetup(SupernovaEngine *vm, GameManager *gm) {
@@ -1917,12 +1885,12 @@ ArsanoMeetup::ArsanoMeetup(SupernovaEngine *vm, GameManager *gm) {
 	_sign = 0;
 	_beacon = 0;
 
-	_objectState[0] = Object(_id, kStringCave,kStringDefaultDescription,NULLOBJECT,EXIT,255,255,0,CAVE,22);
-	_objectState[1] = Object(_id, kStringSign,kStringSignDescription,MEETUP_SIGN,NULLTYPE,0,0,0);
-	_objectState[2] = Object(_id, kStringEntrance,kStringDefaultDescription,DOOR,EXIT,1,1,0,ENTRANCE,7);
-	_objectState[3] = Object(_id, kStringStar,kStringDefaultDescription,STAR,NULLTYPE,2,2,0);
-	_objectState[4] = Object(_id, kStringSpaceshift,kStringDefaultDescription,SPACESHIPS,COMBINABLE,3,3,0);
-	_objectState[5] = Object(_id, kStringSpaceshift,kStringDefaultDescription,SPACESHIP,COMBINABLE,4,4,0);
+	_objectState[0] = Object(_id, kStringCave, kStringDefaultDescription, NULLOBJECT, EXIT, 255, 255, 0, CAVE, 22);
+	_objectState[1] = Object(_id, kStringSign, kStringSignDescription, MEETUP_SIGN, NULLTYPE, 0, 0, 0);
+	_objectState[2] = Object(_id, kStringEntrance, kStringDefaultDescription, DOOR, EXIT, 1, 1, 0, ENTRANCE, 7);
+	_objectState[3] = Object(_id, kStringStar, kStringDefaultDescription, STAR, NULLTYPE, 2, 2, 0);
+	_objectState[4] = Object(_id, kStringSpaceshift, kStringDefaultDescription, SPACESHIPS, COMBINABLE, 3, 3, 0);
+	_objectState[5] = Object(_id, kStringSpaceshift, kStringDefaultDescription, SPACESHIP, COMBINABLE, 4, 4, 0);
 }
 
 void ArsanoMeetup::onEntrance() {
@@ -1954,9 +1922,7 @@ void ArsanoMeetup::animation() {
 }
 
 bool ArsanoMeetup::interact(Action verb, Object &obj1, Object &obj2) {
-	if ((verb == ACTION_WALK) &&
-		((obj1._id == SPACESHIPS) ||
-		 ((obj1._id == SPACESHIP) && !obj1.hasProperty(OPENED)))) {
+	if ((verb == ACTION_WALK) && ((obj1._id == SPACESHIPS) || ((obj1._id == SPACESHIP) && !obj1.hasProperty(OPENED)))) {
 		_vm->renderMessage(kStringArsanoMeetup1);
 	} else if ((verb == ACTION_WALK) && (obj1._id == SPACESHIP))
 		_gm->changeRoom(GLIDER);
@@ -2006,24 +1972,24 @@ ArsanoEntrance::ArsanoEntrance(SupernovaEngine *vm, GameManager *gm) {
 	_id = ENTRANCE;
 	_shown[0] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringPorter,kStringPorterDescription,PORTER,TALK,0,0,0);
-	_objectState[1] = Object(_id, kStringDoor,kStringDefaultDescription,NULLOBJECT,EXIT | OPENABLE | CLOSED,1,1,0,NULLROOM,5);
-	_objectState[2] = Object(_id, kStringSign,kStringSignDescription,KITCHEN_SIGN,NULLTYPE,2,2,0);
-	_objectState[3] = Object(_id, kStringChewingGum,kStringDefaultDescription,SCHNUCK,TAKE,255,255,10+128);
-	_objectState[4] = Object(_id, kStringGummyBears,kStringDefaultDescription,SCHNUCK,TAKE,255,255,11+128);
-	_objectState[5] = Object(_id, kStringChocolateBall,kStringDefaultDescription,SCHNUCK,TAKE,255,255,12+128);
-	_objectState[6] = Object(_id, kStringEgg,kStringDefaultDescription,EGG,TAKE,255,255,13+128);
-	_objectState[7] = Object(_id, kStringLiquorice,kStringDefaultDescription,SCHNUCK,TAKE,255,255,14+128);
-	_objectState[8] = Object(_id, kStringPill,kStringPillDescription,PILL,TAKE,255,255,0);
-	_objectState[9] = Object(_id, kStringSlot,kStringDefaultDescription,CAR_SLOT,COMBINABLE,6,6,0);
-	_objectState[10] = Object(_id, kStringVendingMachine,kStringVendingMachineDescription,NULLOBJECT,NULLTYPE,5,5,0);
-	_objectState[11] = Object(_id, kStringToilet,kStringToiletDescription,ARSANO_BATHROOM,NULLTYPE,255,255,0);
-	_objectState[12] = Object(_id, kStringButton,kStringDefaultDescription,BATHROOM_BUTTON,PRESS,3,3,0);
-	_objectState[13] = Object(_id, kStringSign,kStringSignDescription,BATHROOM_SIGN,NULLTYPE,4,4,0);
-	_objectState[14] = Object(_id, kStringStaircase,kStringDefaultDescription,STAIRCASE,EXIT,8,8,0,REST,3);
-	_objectState[15] = Object(_id, kStringExit,kStringDefaultDescription,MEETUP_EXIT,EXIT,255,255,0,MEETUP,22);
-	_objectState[16] = Object(_id, kStringCoins,kStringCoinsDescription,COINS,TAKE|COMBINABLE,255,255,0);
-	_objectState[17] = Object(_id, kStringTabletPackage,kStringTabletPackageDescription,PILL_HULL,TAKE,255,255,0);
+	_objectState[0] = Object(_id, kStringPorter, kStringPorterDescription, PORTER, TALK, 0, 0, 0);
+	_objectState[1] = Object(_id, kStringDoor, kStringDefaultDescription, NULLOBJECT, EXIT | OPENABLE | CLOSED, 1, 1, 0, NULLROOM, 5);
+	_objectState[2] = Object(_id, kStringSign, kStringSignDescription, KITCHEN_SIGN, NULLTYPE, 2, 2, 0);
+	_objectState[3] = Object(_id, kStringChewingGum, kStringDefaultDescription, SCHNUCK, TAKE, 255, 255, 10 + 128);
+	_objectState[4] = Object(_id, kStringGummyBears, kStringDefaultDescription, SCHNUCK, TAKE, 255, 255, 11 + 128);
+	_objectState[5] = Object(_id, kStringChocolateBall, kStringDefaultDescription, SCHNUCK, TAKE, 255, 255, 12 + 128);
+	_objectState[6] = Object(_id, kStringEgg, kStringDefaultDescription, EGG, TAKE, 255, 255, 13 + 128);
+	_objectState[7] = Object(_id, kStringLiquorice, kStringDefaultDescription, SCHNUCK, TAKE, 255, 255, 14 + 128);
+	_objectState[8] = Object(_id, kStringPill, kStringPillDescription, PILL, TAKE, 255, 255, 0);
+	_objectState[9] = Object(_id, kStringSlot, kStringDefaultDescription, CAR_SLOT, COMBINABLE, 6, 6, 0);
+	_objectState[10] = Object(_id, kStringVendingMachine, kStringVendingMachineDescription, NULLOBJECT, NULLTYPE, 5, 5, 0);
+	_objectState[11] = Object(_id, kStringToilet, kStringToiletDescription, ARSANO_BATHROOM, NULLTYPE, 255, 255, 0);
+	_objectState[12] = Object(_id, kStringButton, kStringDefaultDescription, BATHROOM_BUTTON, PRESS, 3, 3, 0);
+	_objectState[13] = Object(_id, kStringSign, kStringSignDescription, BATHROOM_SIGN, NULLTYPE, 4, 4, 0);
+	_objectState[14] = Object(_id, kStringStaircase, kStringDefaultDescription, STAIRCASE, EXIT, 8, 8, 0, REST, 3);
+	_objectState[15] = Object(_id, kStringExit, kStringDefaultDescription, MEETUP_EXIT, EXIT, 255, 255, 0, MEETUP, 22);
+	_objectState[16] = Object(_id, kStringCoins, kStringCoinsDescription, COINS, TAKE | COMBINABLE, 255, 255, 0);
+	_objectState[17] = Object(_id, kStringTabletPackage, kStringTabletPackageDescription, PILL_HULL, TAKE, 255, 255, 0);
 
 	_dialog1[0] = kStringArsanoDialog7;
 	_dialog1[1] = kStringArsanoDialog1;
@@ -2077,9 +2043,9 @@ void ArsanoEntrance::animation() {
 }
 
 bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
-	static byte row1[6] = {1, 1, 1, 1, 1, 0};
-	static byte row2[6] = {1, 1, 1, 1, 1, 0};
-	static byte row3[6] = {1, 1, 0, 0, 0, 0};
+	static byte row1[6] = { 1, 1, 1, 1, 1, 0 };
+	static byte row2[6] = { 1, 1, 1, 1, 1, 0 };
+	static byte row3[6] = { 1, 1, 0, 0, 0, 0 };
 
 	if ((verb == ACTION_TALK) && (obj1._id == PORTER)) {
 		if (_gm->_rooms[AIRLOCK]->getObject(4)->hasProperty(WORN))
@@ -2250,9 +2216,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 			return false;
 		_gm->_state._language = 1;
 	} else if ((verb == ACTION_WALK) && (obj1._id == MEETUP_EXIT)) {
-		if (!((_gm->_rooms[AIRLOCK]->getObject(4)->hasProperty(WORN)) &&
-			  (_gm->_rooms[AIRLOCK]->getObject(5)->hasProperty(WORN)) &&
-			  (_gm->_rooms[AIRLOCK]->getObject(6)->hasProperty(WORN)))) {
+		if (!((_gm->_rooms[AIRLOCK]->getObject(4)->hasProperty(WORN)) && (_gm->_rooms[AIRLOCK]->getObject(5)->hasProperty(WORN)) && (_gm->_rooms[AIRLOCK]->getObject(6)->hasProperty(WORN)))) {
 			_vm->renderMessage(kStringArsanoEntrance26);
 			_gm->_rooms[AIRLOCK]->getObject(4)->setProperty(WORN);
 			_gm->_rooms[AIRLOCK]->getObject(5)->setProperty(WORN);
@@ -2277,9 +2241,9 @@ ArsanoRemaining::ArsanoRemaining(SupernovaEngine *vm, GameManager *gm) {
 	_id = REST;
 	_shown[0] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringStaircase,kStringDefaultDescription,NULLOBJECT,EXIT,0,0,0,ENTRANCE,17);
-	_objectState[1] = Object(_id, kStringChair,kStringDefaultDescription,NULLOBJECT,EXIT,1,1,0,ROGER,2);
-	_objectState[2] = Object(_id, kStringShoes,kStringShoesDescription,NULLOBJECT,NULLTYPE,2,2,0);
+	_objectState[0] = Object(_id, kStringStaircase, kStringDefaultDescription, NULLOBJECT, EXIT, 0, 0, 0, ENTRANCE, 17);
+	_objectState[1] = Object(_id, kStringChair, kStringDefaultDescription, NULLOBJECT, EXIT, 1, 1, 0, ROGER, 2);
+	_objectState[2] = Object(_id, kStringShoes, kStringShoesDescription, NULLOBJECT, NULLTYPE, 2, 2, 0);
 
 	_chewing = kShownTrue;
 	_i = 0;
@@ -2287,46 +2251,46 @@ ArsanoRemaining::ArsanoRemaining(SupernovaEngine *vm, GameManager *gm) {
 
 void ArsanoRemaining::animation() {
 	switch (_i) {
-	case  0:
+	case 0:
 		_vm->renderImage(1);
 		_vm->renderImage(_gm->invertSection(4));
 		break;
-	case  1:
+	case 1:
 		_vm->renderImage(_gm->invertSection(1));
 		_vm->renderImage(4);
 		break;
-	case  2:
+	case 2:
 		_vm->renderImage(2);
 		_vm->renderImage(_gm->invertSection(4));
 		break;
 
-	case  3:
+	case 3:
 		_vm->renderImage(7); // Dragon
 		_vm->renderImage(_gm->invertSection(2));
 		_vm->renderImage(4);
 		break;
-	case  4:
+	case 4:
 		_vm->renderImage(8);
 		setSectionVisible(7, false);
 		_vm->renderImage(2);
 		_vm->renderImage(_gm->invertSection(4));
 		break;
-	case  5:
+	case 5:
 		_vm->renderImage(_gm->invertSection(8));
 		_vm->renderImage(_gm->invertSection(2));
 		break;
-	case  6:
+	case 6:
 		_vm->renderImage(3);
 		_vm->renderImage(2);
 		break;
-	case  7:
+	case 7:
 		_vm->renderImage(_gm->invertSection(3));
 		_vm->renderImage(_gm->invertSection(2));
 		break;
-	case  8:
+	case 8:
 		_vm->renderImage(3);
 		break;
-	case  9:
+	case 9:
 		_vm->renderImage(14); // Card Player 1
 		_vm->renderImage(4);
 		_vm->renderImage(_gm->invertSection(3));
@@ -2453,15 +2417,15 @@ ArsanoRoger::ArsanoRoger(SupernovaEngine *vm, GameManager *gm) {
 	_id = ROGER;
 	_shown[0] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,255,255,0,REST,19);
-	_objectState[1] = Object(_id, kStringFrogFace,kStringDefaultDescription,ROGER_W,TALK,0,0,0);
-	_objectState[2] = Object(_id, kStringScrible,kStringScribleDescription,NULLOBJECT,NULLTYPE,3,3,0);
-	_objectState[3] = Object(_id, kStringWallet,kStringDefaultDescription,WALLET,TAKE,1,1,4);
-	_objectState[4] = Object(_id, kStringMenu,kStringMenuDescription,NULLOBJECT,UNNECESSARY,2,2,0);
-	_objectState[5] = Object(_id, kStringCup,kStringCupDescription,CUP,UNNECESSARY,4,4,0);
-	_objectState[6] = Object(_id, kStringChessGame,kStringDefaultDescription,NULLOBJECT,UNNECESSARY,255,255,0);
-	_objectState[7] = Object(_id, kStringBill,kStringBillDescription,NULLOBJECT,TAKE|COMBINABLE,255,255,0);
-	_objectState[8] = Object(_id, kStringKeycard3,kStringDefaultDescription,KEYCARD_R,TAKE|COMBINABLE,255,255,0);
+	_objectState[0] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 255, 255, 0, REST, 19);
+	_objectState[1] = Object(_id, kStringFrogFace, kStringDefaultDescription, ROGER_W, TALK, 0, 0, 0);
+	_objectState[2] = Object(_id, kStringScrible, kStringScribleDescription, NULLOBJECT, NULLTYPE, 3, 3, 0);
+	_objectState[3] = Object(_id, kStringWallet, kStringDefaultDescription, WALLET, TAKE, 1, 1, 4);
+	_objectState[4] = Object(_id, kStringMenu, kStringMenuDescription, NULLOBJECT, UNNECESSARY, 2, 2, 0);
+	_objectState[5] = Object(_id, kStringCup, kStringCupDescription, CUP, UNNECESSARY, 4, 4, 0);
+	_objectState[6] = Object(_id, kStringChessGame, kStringDefaultDescription, NULLOBJECT, UNNECESSARY, 255, 255, 0);
+	_objectState[7] = Object(_id, kStringBill, kStringBillDescription, NULLOBJECT, TAKE | COMBINABLE, 255, 255, 0);
+	_objectState[8] = Object(_id, kStringKeycard3, kStringDefaultDescription, KEYCARD_R, TAKE | COMBINABLE, 255, 255, 0);
 
 	_dialog1[0] = kStringDialogArsanoRoger1;
 	_dialog1[1] = kStringDialogArsanoRoger2;
@@ -2506,7 +2470,7 @@ void ArsanoRoger::animation() {
 }
 
 bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
-	static byte row1[6] = {1, 1, 1, 1, 0, 0};
+	static byte row1[6] = { 1, 1, 1, 1, 0, 0 };
 
 	if ((verb == ACTION_TAKE) && (obj1._id == WALLET)) {
 		if (isSectionVisible(3)) {
@@ -2558,8 +2522,7 @@ bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->reply(kStringArsanoRoger35, 2, 2 + 128);
 			}
 		}
-	} else if (((verb == ACTION_USE) && Object::combine(obj1, obj2, CHESS, ROGER_W)) ||
-			   ((verb == ACTION_GIVE) && (obj1._id == CHESS) && (obj2._id == ROGER_W))) {
+	} else if (((verb == ACTION_USE) && Object::combine(obj1, obj2, CHESS, ROGER_W)) || ((verb == ACTION_GIVE) && (obj1._id == CHESS) && (obj2._id == ROGER_W))) {
 		_vm->renderImage(11);
 		_gm->great(0);
 		_gm->say(kStringArsanoRoger36);
@@ -2605,17 +2568,17 @@ ArsanoGlider::ArsanoGlider(SupernovaEngine *vm, GameManager *gm) {
 	_shown[0] = kShownTrue;
 	_sinus = 0;
 
-	_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,255,255,0,MEETUP,15);
-	_objectState[1] = Object(_id, kStringButton,kStringDefaultDescription,GLIDER_BUTTON1,PRESS,0,0,0);
-	_objectState[2] = Object(_id, kStringButton,kStringDefaultDescription,GLIDER_BUTTON2,PRESS,1,1,0);
-	_objectState[3] = Object(_id, kStringButton,kStringDefaultDescription,GLIDER_BUTTON3,PRESS,2,2,0);
-	_objectState[4] = Object(_id, kStringButton,kStringDefaultDescription,GLIDER_BUTTON4,PRESS,3,3,0);
-	_objectState[5] = Object(_id, kStringKeycard,kStringDefaultDescription,GLIDER_KEYCARD,TAKE|COMBINABLE,255,255,0);
-	_objectState[6] = Object(_id, kStringSlot,kStringDefaultDescription,GLIDER_SLOT,COMBINABLE,4,4,0);
-	_objectState[7] = Object(_id, kStringCompartment,kStringDefaultDescription,NULLOBJECT,OPENABLE,5,6,6);
-	_objectState[8] = Object(_id, kStringKeyboard,kStringDefaultDescription,GLIDER_BUTTONS,NULLTYPE,7,7,0);
-	_objectState[9] = Object(_id, kStringAnnouncement,kStringAnnouncementDescription,GLIDER_DISPLAY,NULLTYPE,8,8,0);
-	_objectState[10] = Object(_id, kStringInstruments,kStringAnnouncementDescription,GLIDER_INSTRUMENTS,NULLTYPE,9,9,0);
+	_objectState[0] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 255, 255, 0, MEETUP, 15);
+	_objectState[1] = Object(_id, kStringButton, kStringDefaultDescription, GLIDER_BUTTON1, PRESS, 0, 0, 0);
+	_objectState[2] = Object(_id, kStringButton, kStringDefaultDescription, GLIDER_BUTTON2, PRESS, 1, 1, 0);
+	_objectState[3] = Object(_id, kStringButton, kStringDefaultDescription, GLIDER_BUTTON3, PRESS, 2, 2, 0);
+	_objectState[4] = Object(_id, kStringButton, kStringDefaultDescription, GLIDER_BUTTON4, PRESS, 3, 3, 0);
+	_objectState[5] = Object(_id, kStringKeycard, kStringDefaultDescription, GLIDER_KEYCARD, TAKE | COMBINABLE, 255, 255, 0);
+	_objectState[6] = Object(_id, kStringSlot, kStringDefaultDescription, GLIDER_SLOT, COMBINABLE, 4, 4, 0);
+	_objectState[7] = Object(_id, kStringCompartment, kStringDefaultDescription, NULLOBJECT, OPENABLE, 5, 6, 6);
+	_objectState[8] = Object(_id, kStringKeyboard, kStringDefaultDescription, GLIDER_BUTTONS, NULLTYPE, 7, 7, 0);
+	_objectState[9] = Object(_id, kStringAnnouncement, kStringAnnouncementDescription, GLIDER_DISPLAY, NULLTYPE, 8, 8, 0);
+	_objectState[10] = Object(_id, kStringInstruments, kStringAnnouncementDescription, GLIDER_INSTRUMENTS, NULLTYPE, 9, 9, 0);
 }
 
 void ArsanoGlider::animation() {
@@ -2637,8 +2600,7 @@ bool ArsanoGlider::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderImage(8);
 		getObject(5)->_click = 10;
 		_gm->_inventory.remove(*_gm->_rooms[ROGER]->getObject(8));
-	} else if (((verb == ACTION_TAKE) || (verb == ACTION_PULL)) &&
-			   (obj1._id == GLIDER_KEYCARD)) {
+	} else if (((verb == ACTION_TAKE) || (verb == ACTION_PULL)) && (obj1._id == GLIDER_KEYCARD)) {
 		_vm->renderImage(_gm->invertSection(5));
 		_vm->renderImage(_gm->invertSection(8));
 		getObject(5)->_click = 255;
@@ -2646,8 +2608,7 @@ bool ArsanoGlider::interact(Action verb, Object &obj1, Object &obj2) {
 		for (int i = 9; i <= 22; i++)
 			_vm->renderImage(_gm->invertSection(i));
 		l = r = 0;
-	} else if ((verb == ACTION_PRESS) &&
-			   (obj1._id >= GLIDER_BUTTON1) && (obj1._id <= GLIDER_BUTTON4)) {
+	} else if ((verb == ACTION_PRESS) && (obj1._id >= GLIDER_BUTTON1) && (obj1._id <= GLIDER_BUTTON4)) {
 		int i = obj1._id - GLIDER_BUTTON1 + 1;
 		_vm->renderImage(i);
 		if (isSectionVisible(8)) {
@@ -2733,14 +2694,12 @@ void ArsanoMeetup2::onEntrance() {
 }
 
 bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
-	static byte row1[6] = {1, 1, 0, 0, 0, 0};
-	static byte row2[6] = {1, 1, 0, 0, 0, 0};
-	static byte row3[6] = {1, 1, 1, 1, 0, 0};
-	static byte row4[6] = {2, 1, 0, 0, 0, 0};
+	static byte row1[6] = { 1, 1, 0, 0, 0, 0 };
+	static byte row2[6] = { 1, 1, 0, 0, 0, 0 };
+	static byte row3[6] = { 1, 1, 1, 1, 0, 0 };
+	static byte row4[6] = { 2, 1, 0, 0, 0, 0 };
 
-	if (((verb == ACTION_WALK) &&
-			((obj1._id == SPACESHIP) || (obj1._id == ROGER_W))) ||
-			((verb == ACTION_TALK) && (obj1._id == ROGER_W))) {
+	if (((verb == ACTION_WALK) && ((obj1._id == SPACESHIP) || (obj1._id == ROGER_W))) || ((verb == ACTION_TALK) && (obj1._id == ROGER_W))) {
 		_gm->changeRoom(INTRO);
 		_vm->setCurrentImage(30);
 		_vm->renderImage(0);
@@ -2859,9 +2818,9 @@ ArsanoMeetup3::ArsanoMeetup3(SupernovaEngine *vm, GameManager *gm) {
 	_id = MEETUP3;
 	_shown[0] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringUfo,kStringUfoDescription,UFO,EXIT,0,0,0,NULLROOM,3);
-	_objectState[1] = Object(_id, kStringStar,kStringDefaultDescription,STAR,NULLTYPE,1,1,0);
-	_objectState[2] = Object(_id, kStringCave,kStringDefaultDescription,NULLOBJECT,EXIT,255,255,0,CAVE,22);
+	_objectState[0] = Object(_id, kStringUfo, kStringUfoDescription, UFO, EXIT, 0, 0, 0, NULLROOM, 3);
+	_objectState[1] = Object(_id, kStringStar, kStringDefaultDescription, STAR, NULLTYPE, 1, 1, 0);
+	_objectState[2] = Object(_id, kStringCave, kStringDefaultDescription, NULLOBJECT, EXIT, 255, 255, 0, CAVE, 22);
 
 	_dialog2[0] = kStringArsanoDialog1;
 	_dialog2[1] = kStringDialogArsanoMeetup3_1;
@@ -2876,9 +2835,9 @@ ArsanoMeetup3::ArsanoMeetup3(SupernovaEngine *vm, GameManager *gm) {
 }
 
 bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
-	byte row2[6] = {1, 1, 1, 1, 0, 0};
-	byte row3[6] = {1, 1, 0, 0, 0, 0};
-	byte rowsX[6] = {1, 1, 1, 0, 0, 0};
+	byte row2[6] = { 1, 1, 1, 1, 0, 0 };
+	byte row3[6] = { 1, 1, 0, 0, 0, 0 };
+	byte rowsX[6] = { 1, 1, 1, 0, 0, 0 };
 
 	if ((verb == ACTION_WALK) && (obj1._id == STAR))
 		_vm->renderMessage(kStringArsanoMeetup2);
@@ -3003,16 +2962,16 @@ AxacussCell::AxacussCell(SupernovaEngine *vm, GameManager *gm) {
 	_shown[1] = kShownTrue;
 	_shown[31] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringButton,kStringDefaultDescription,CELL_BUTTON,PRESS,1,1,0);
-	_objectState[1] = Object(_id, kStringDoor,kStringDefaultDescription,CELL_DOOR,EXIT|OPENABLE|CLOSED,0,0,31+128,CORRIDOR4,1);
-	_objectState[2] = Object(_id, kStringTray,kStringTrayDescription,TRAY,UNNECESSARY,255,255,0);
-	_objectState[3] = Object(_id, kStringLamp,kStringLampDescription,NULLOBJECT,COMBINABLE,3,3,0);
-	_objectState[4] = Object(_id, kStringEyes,kStringEyesDescription,NULLOBJECT,NULLTYPE,4,4,0);
-	_objectState[5] = Object(_id, kStringWire,kStringDefaultDescription,CELL_WIRE,COMBINABLE|TAKE,6,6,0);
-	_objectState[6] = Object(_id, kStringSocket,kStringSocketDescription,SOCKET,COMBINABLE,5,5,0);
-	_objectState[7] = Object(_id, kStringMetalBlock,kStringMetalBlockDescription,MAGNET,TAKE|COMBINABLE,255,255,30);
-	_objectState[8] = Object(_id, kStringRobot,kStringRobotDescription,NULLOBJECT,NULLTYPE,255,255,0);
-	_objectState[9] = Object(_id, kStringTable,kStringTableDescription,CELL_TABLE,COMBINABLE,2,2,0);
+	_objectState[0] = Object(_id, kStringButton, kStringDefaultDescription, CELL_BUTTON, PRESS, 1, 1, 0);
+	_objectState[1] = Object(_id, kStringDoor, kStringDefaultDescription, CELL_DOOR, EXIT | OPENABLE | CLOSED, 0, 0, 31 + 128, CORRIDOR4, 1);
+	_objectState[2] = Object(_id, kStringTray, kStringTrayDescription, TRAY, UNNECESSARY, 255, 255, 0);
+	_objectState[3] = Object(_id, kStringLamp, kStringLampDescription, NULLOBJECT, COMBINABLE, 3, 3, 0);
+	_objectState[4] = Object(_id, kStringEyes, kStringEyesDescription, NULLOBJECT, NULLTYPE, 4, 4, 0);
+	_objectState[5] = Object(_id, kStringWire, kStringDefaultDescription, CELL_WIRE, COMBINABLE | TAKE, 6, 6, 0);
+	_objectState[6] = Object(_id, kStringSocket, kStringSocketDescription, SOCKET, COMBINABLE, 5, 5, 0);
+	_objectState[7] = Object(_id, kStringMetalBlock, kStringMetalBlockDescription, MAGNET, TAKE | COMBINABLE, 255, 255, 30);
+	_objectState[8] = Object(_id, kStringRobot, kStringRobotDescription, NULLOBJECT, NULLTYPE, 255, 255, 0);
+	_objectState[9] = Object(_id, kStringTable, kStringTableDescription, CELL_TABLE, COMBINABLE, 2, 2, 0);
 }
 
 void AxacussCell::onEntrance() {
@@ -3080,8 +3039,7 @@ void AxacussCell::animation() {
 		getObject(2)->_click = 255;
 	}
 
-	if ((isSectionVisible(6)) &&
-		((_gm->_state._timeRobot == 310) || (_gm->_state._timeRobot == 610))) {
+	if ((isSectionVisible(6)) && ((_gm->_state._timeRobot == 310) || (_gm->_state._timeRobot == 610))) {
 		_vm->playSound(kAudioRobotShock);
 		_gm->_state._timeRobot = 10000;
 	}
@@ -3092,10 +3050,7 @@ void AxacussCell::animation() {
 bool AxacussCell::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_PRESS) && (obj1._id == CELL_BUTTON))
 		_vm->renderMessage(kStringAxacussCell_2);
-	else if ((verb == ACTION_PULL) && (obj1._id == CELL_WIRE) &&
-			 !isSectionVisible(2) &&
-			 !isSectionVisible(3) &&
-			 !isSectionVisible(5)) {
+	else if ((verb == ACTION_PULL) && (obj1._id == CELL_WIRE) && !isSectionVisible(2) && !isSectionVisible(3) && !isSectionVisible(5)) {
 		if (isSectionVisible(1)) {
 			_vm->renderImage(_gm->invertSection(1));
 			_vm->renderImage(2);
@@ -3109,8 +3064,7 @@ bool AxacussCell::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderImage(5);
 			getObject(5)->_click = 10;
 		}
-	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, CELL_WIRE, SOCKET) &&
-			   !isSectionVisible(1) && !isSectionVisible(4) && !isSectionVisible(6)) {
+	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, CELL_WIRE, SOCKET) && !isSectionVisible(1) && !isSectionVisible(4) && !isSectionVisible(6)) {
 		if (isSectionVisible(2)) {
 			_vm->renderImage(_gm->invertSection(2));
 			_vm->renderImage(1);
@@ -3128,8 +3082,7 @@ bool AxacussCell::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderImage(4);
 			getObject(5)->_click = 9;
 		}
-	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, CELL_WIRE, KNIFE) &&
-			   ((isSectionVisible(1)) || (isSectionVisible(2)))) {
+	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, CELL_WIRE, KNIFE) && ((isSectionVisible(1)) || (isSectionVisible(2)))) {
 		if (isSectionVisible(1))
 			_gm->shock();
 		else {
@@ -3137,11 +3090,7 @@ bool AxacussCell::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderImage(3);
 			getObject(5)->_click = 8;
 		}
-	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, CELL_WIRE, CELL_TABLE) &&
-			   !isSectionVisible(1) &&
-			   !isSectionVisible(2) &&
-			   !isSectionVisible(5) &&
-			   !isSectionVisible(6)) {
+	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, CELL_WIRE, CELL_TABLE) && !isSectionVisible(1) && !isSectionVisible(2) && !isSectionVisible(5) && !isSectionVisible(6)) {
 		if (isSectionVisible(3)) {
 			_vm->renderImage(_gm->invertSection(3));
 			_vm->renderImage(5);
@@ -3203,14 +3152,13 @@ AxacussCorridor1::AxacussCorridor1(SupernovaEngine *vm, GameManager *gm) {
 	_shown[23] = kShownTrue;
 	_shown[25] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,2,2,0,GUARD3,2);
-	_objectState[1] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,3,3,0,CORRIDOR2,22);
+	_objectState[0] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 2, 2, 0, GUARD3, 2);
+	_objectState[1] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 3, 3, 0, CORRIDOR2, 22);
 }
 
 void AxacussCorridor1::onEntrance() {
 	_gm->corridorOnEntrance();
 }
-
 
 AxacussCorridor2::AxacussCorridor2(SupernovaEngine *vm, GameManager *gm) {
 	_vm = vm;
@@ -3227,9 +3175,9 @@ AxacussCorridor2::AxacussCorridor2(SupernovaEngine *vm, GameManager *gm) {
 	_shown[21] = kShownTrue;
 	_shown[24] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,2,2,0,CORRIDOR1,2);
-	_objectState[1] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,3,3,0,CORRIDOR3,22);
-	_objectState[2] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,1,1,0,CORRIDOR4,14);
+	_objectState[0] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 2, 2, 0, CORRIDOR1, 2);
+	_objectState[1] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 3, 3, 0, CORRIDOR3, 22);
+	_objectState[2] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 1, 1, 0, CORRIDOR4, 14);
 }
 
 void AxacussCorridor2::onEntrance() {
@@ -3248,7 +3196,7 @@ AxacussCorridor3::AxacussCorridor3(SupernovaEngine *vm, GameManager *gm) {
 	_shown[19] = kShownTrue;
 	_shown[23] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,2,2,0,CORRIDOR2,2);
+	_objectState[0] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 2, 2, 0, CORRIDOR2, 2);
 }
 
 void AxacussCorridor3::onEntrance() {
@@ -3279,12 +3227,12 @@ AxacussCorridor4::AxacussCorridor4(SupernovaEngine *vm, GameManager *gm) {
 	_shown[20] = kShownTrue;
 	_shown[26] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,0,0,0,CORRIDOR2,10);
-	_objectState[1] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,1,1,0,GUARD,14);
-	_objectState[2] = Object(_id, kStringCellDoor,kStringCellDoorDescription,DOOR,EXIT|OPENABLE|OPENED|CLOSED,7,7,0,CELL,16);
-	_objectState[3] = Object(_id, kStringLaptop,kStringDefaultDescription,NEWSPAPER,TAKE,6,6,8);
-	_objectState[4] = Object(_id, kStringWristwatch,kStringDefaultDescription,WATCH,TAKE|COMBINABLE,255,255,8);
-	_objectState[5] = Object(_id, kStringTable,kStringDefaultDescription,TABLE,COMBINABLE,5,5,0);
+	_objectState[0] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 0, 0, 0, CORRIDOR2, 10);
+	_objectState[1] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 1, 1, 0, GUARD, 14);
+	_objectState[2] = Object(_id, kStringCellDoor, kStringCellDoorDescription, DOOR, EXIT | OPENABLE | OPENED | CLOSED, 7, 7, 0, CELL, 16);
+	_objectState[3] = Object(_id, kStringLaptop, kStringDefaultDescription, NEWSPAPER, TAKE, 6, 6, 8);
+	_objectState[4] = Object(_id, kStringWristwatch, kStringDefaultDescription, WATCH, TAKE | COMBINABLE, 255, 255, 8);
+	_objectState[5] = Object(_id, kStringTable, kStringDefaultDescription, TABLE, COMBINABLE, 5, 5, 0);
 }
 
 void AxacussCorridor4::animation() {
@@ -3296,8 +3244,7 @@ bool AxacussCorridor4::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->takeObject(obj1);
 		if (isSectionVisible(29))
 			_vm->renderImage(29);
-	} else if (((verb == ACTION_USE) && Object::combine(obj1, obj2, TABLE, WATCH)) ||
-			   ((verb == ACTION_GIVE) && (obj1._id == WATCH) && (obj2._id == TABLE))) {
+	} else if (((verb == ACTION_USE) && Object::combine(obj1, obj2, TABLE, WATCH)) || ((verb == ACTION_GIVE) && (obj1._id == WATCH) && (obj2._id == TABLE))) {
 		if (obj1._id == WATCH)
 			_gm->_inventory.remove(obj1);
 		else
@@ -3332,8 +3279,8 @@ AxacussCorridor5::AxacussCorridor5(SupernovaEngine *vm, GameManager *gm) {
 	_shown[23] = kShownTrue;
 	_shown[24] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,DOOR,EXIT,2,2,0,NULLROOM,2);
-	_objectState[1] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,3,3,0,CORRIDOR6,22);
+	_objectState[0] = Object(_id, kStringExit, kStringDefaultDescription, DOOR, EXIT, 2, 2, 0, NULLROOM, 2);
+	_objectState[1] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 3, 3, 0, CORRIDOR6, 22);
 
 	_dialog1[0] = kStringDialogAxacussCorridor5_1;
 	_dialog1[1] = kStringDialogAxacussCorridor5_2;
@@ -3449,9 +3396,9 @@ AxacussCorridor6::AxacussCorridor6(SupernovaEngine *vm, GameManager *gm) {
 	_shown[24] = kShownTrue;
 	_shown[25] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,2,2,0,CORRIDOR5,2);
-	_objectState[1] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,3,3,0,CORRIDOR7,22);
-	_objectState[2] = Object(_id, kStringDoor,kStringDefaultDescription,DOOR,OPENABLE|CLOSED,255,255,0,CORRIDOR8,13);
+	_objectState[0] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 2, 2, 0, CORRIDOR5, 2);
+	_objectState[1] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 3, 3, 0, CORRIDOR7, 22);
+	_objectState[2] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, OPENABLE | CLOSED, 255, 255, 0, CORRIDOR8, 13);
 }
 
 void AxacussCorridor6::onEntrance() {
@@ -3459,8 +3406,7 @@ void AxacussCorridor6::onEntrance() {
 }
 
 bool AxacussCorridor6::interact(Action verb, Object &obj1, Object &obj2) {
-	if ((verb == ACTION_CLOSE) && (obj1._id == DOOR) &&
-			(obj1.hasProperty(OPENED))) {
+	if ((verb == ACTION_CLOSE) && (obj1._id == DOOR) && (obj1.hasProperty(OPENED))) {
 		_vm->renderImage(6);
 		setSectionVisible(7, false);
 		obj1.resetProperty(EXIT | OPENABLE | CLOSED);
@@ -3489,8 +3435,8 @@ AxacussCorridor7::AxacussCorridor7(SupernovaEngine *vm, GameManager *gm) {
 	_shown[24] = kShownTrue;
 	_shown[25] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,2,2,0,CORRIDOR6,2);
-	_objectState[1] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,3,3,0,GUARD,22);
+	_objectState[0] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 2, 2, 0, CORRIDOR6, 2);
+	_objectState[1] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 3, 3, 0, GUARD, 22);
 }
 
 void AxacussCorridor7::onEntrance() {
@@ -3511,8 +3457,8 @@ AxacussCorridor8::AxacussCorridor8(SupernovaEngine *vm, GameManager *gm) {
 	_shown[22] = kShownTrue;
 	_shown[28] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringDoor,kStringDefaultDescription,DOOR,EXIT|OPENABLE,0,0,0,CORRIDOR6,10);
-	_objectState[1] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,3,3,0,BCORRIDOR,22);
+	_objectState[0] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE, 0, 0, 0, CORRIDOR6, 10);
+	_objectState[1] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 3, 3, 0, BCORRIDOR, 22);
 }
 
 void AxacussCorridor8::onEntrance() {
@@ -3557,8 +3503,8 @@ AxacussCorridor9::AxacussCorridor9(SupernovaEngine *vm, GameManager *gm) {
 	_shown[23] = kShownTrue;
 	_shown[28] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,2,2,0,BCORRIDOR,2);
-	_objectState[1] = Object(_id, kStringDoor,kStringDefaultDescription,DOOR,EXIT|OPENABLE,0,0,0,GUARD,10);
+	_objectState[0] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 2, 2, 0, BCORRIDOR, 2);
+	_objectState[1] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE, 0, 0, 0, GUARD, 10);
 }
 
 void AxacussCorridor9::onEntrance() {
@@ -3597,14 +3543,14 @@ AxacussBcorridor::AxacussBcorridor(SupernovaEngine *vm, GameManager *gm) {
 	_shown[0] = kShownTrue;
 	_shown[3] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringPillar,kStringDefaultDescription,PILLAR1,NULLTYPE,4,4,0);
-	_objectState[1] = Object(_id, kStringPillar,kStringDefaultDescription,PILLAR2,NULLTYPE,5,5,0);
-	_objectState[2] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,6,6,0,CORRIDOR8,2);
-	_objectState[3] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,7,7,0,CORRIDOR9,22);
-	_objectState[4] = Object(_id, kStringDoor,kStringDoorDescription1,DOOR1,EXIT|OPENABLE|CLOSED|OCCUPIED,0,0,1,OFFICE_L1,6);
-	_objectState[5] = Object(_id, kStringDoor,kStringDoorDescription2,DOOR2,EXIT|OPENABLE|CLOSED|OCCUPIED,1,1,2,OFFICE_L2,16);
-	_objectState[6] = Object(_id, kStringDoor,kStringDoorDescription3,DOOR3,EXIT|OPENABLE|OPENED,2,2,3,OFFICE_R1,8);
-	_objectState[7] = Object(_id, kStringDoor,kStringDoorDescription4,DOOR4,EXIT|OPENABLE|CLOSED|OCCUPIED,3,3,4,OFFICE_R2,18);
+	_objectState[0] = Object(_id, kStringPillar, kStringDefaultDescription, PILLAR1, NULLTYPE, 4, 4, 0);
+	_objectState[1] = Object(_id, kStringPillar, kStringDefaultDescription, PILLAR2, NULLTYPE, 5, 5, 0);
+	_objectState[2] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 6, 6, 0, CORRIDOR8, 2);
+	_objectState[3] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 7, 7, 0, CORRIDOR9, 22);
+	_objectState[4] = Object(_id, kStringDoor, kStringDoorDescription1, DOOR1, EXIT | OPENABLE | CLOSED | OCCUPIED, 0, 0, 1, OFFICE_L1, 6);
+	_objectState[5] = Object(_id, kStringDoor, kStringDoorDescription2, DOOR2, EXIT | OPENABLE | CLOSED | OCCUPIED, 1, 1, 2, OFFICE_L2, 16);
+	_objectState[6] = Object(_id, kStringDoor, kStringDoorDescription3, DOOR3, EXIT | OPENABLE | OPENED, 2, 2, 3, OFFICE_R1, 8);
+	_objectState[7] = Object(_id, kStringDoor, kStringDoorDescription4, DOOR4, EXIT | OPENABLE | CLOSED | OCCUPIED, 3, 3, 4, OFFICE_R2, 18);
 }
 
 void AxacussBcorridor::onEntrance() {
@@ -3614,8 +3560,7 @@ void AxacussBcorridor::onEntrance() {
 }
 
 bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
-	if (obj1.hasProperty(EXIT) ||
-		((verb == ACTION_USE) && obj1.hasProperty(COMBINABLE) && obj2.hasProperty(EXIT))) {
+	if (obj1.hasProperty(EXIT) || ((verb == ACTION_USE) && obj1.hasProperty(COMBINABLE) && obj2.hasProperty(EXIT))) {
 		_gm->_state._playerHidden = false;
 	}
 
@@ -3633,12 +3578,9 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 			else
 				_gm->_state._eventTime = kMaxTimerValue;
 		}
-	} else if (((verb == ACTION_WALK) || ((verb == ACTION_OPEN) && !obj1.hasProperty(OPENED))) &&
-			   (obj1._id >= DOOR1) && (obj1._id <= DOOR4) &&
-			   obj1.hasProperty(OCCUPIED)) {
+	} else if (((verb == ACTION_WALK) || ((verb == ACTION_OPEN) && !obj1.hasProperty(OPENED))) && (obj1._id >= DOOR1) && (obj1._id <= DOOR4) && obj1.hasProperty(OCCUPIED)) {
 		_vm->renderMessage(kStringDontEnter);
-	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR1) &&
-			   !getObject(4)->hasProperty(OPENED)) {
+	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR1) && !getObject(4)->hasProperty(OPENED)) {
 		if (getObject(4)->hasProperty(OCCUPIED))
 			_vm->renderMessage(kStringDontEnter);
 		else {
@@ -3711,7 +3653,7 @@ AxacussIntersection::AxacussIntersection(SupernovaEngine *vm, GameManager *gm) {
 }
 
 bool AxacussIntersection::interact(Action verb, Object &obj1, Object &obj2) {
-	byte rowsX[6] = {1, 1, 1, 0, 0, 0};
+	byte rowsX[6] = { 1, 1, 1, 0, 0, 0 };
 
 	if (((verb == ACTION_WALK) || (verb == ACTION_OPEN)) && (obj1._id == DOOR) && !isSectionVisible(1))
 		_gm->guardShot();
@@ -3748,13 +3690,13 @@ AxacussExit::AxacussExit(SupernovaEngine *vm, GameManager *gm) {
 	_id = GUARD3;
 	_shown[0] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,255,255,0,CORRIDOR1,22);
-	_objectState[1] = Object(_id, kStringDoor,kStringDefaultDescription,NULLOBJECT,EXIT|OPENABLE|CLOSED,0,0,0,NULLROOM,20);
-	_objectState[2] = Object(_id, kStringDoor,kStringDefaultDescription,NULLOBJECT,EXIT|OPENABLE|CLOSED,1,1,0,NULLROOM,15);
-	_objectState[3] = Object(_id, kStringDoor,kStringDefaultDescription,DOOR,EXIT|OPENABLE,2,2,11,OFFICE_L,0);
-	_objectState[4] = Object(_id, kStringLamp2,kStringDefaultDescription,LAMP,COMBINABLE,3,3,0);
-	_objectState[5] = Object(_id, kStringAxacussan,kStringDefaultDescription,GUARDIAN,TALK,5,5,0);
-	_objectState[6] = Object(_id, kStringImage,kStringGenericDescription5,NULLOBJECT,NULLTYPE,4,4,0);
+	_objectState[0] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 255, 255, 0, CORRIDOR1, 22);
+	_objectState[1] = Object(_id, kStringDoor, kStringDefaultDescription, NULLOBJECT, EXIT | OPENABLE | CLOSED, 0, 0, 0, NULLROOM, 20);
+	_objectState[2] = Object(_id, kStringDoor, kStringDefaultDescription, NULLOBJECT, EXIT | OPENABLE | CLOSED, 1, 1, 0, NULLROOM, 15);
+	_objectState[3] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE, 2, 2, 11, OFFICE_L, 0);
+	_objectState[4] = Object(_id, kStringLamp2, kStringDefaultDescription, LAMP, COMBINABLE, 3, 3, 0);
+	_objectState[5] = Object(_id, kStringAxacussan, kStringDefaultDescription, GUARDIAN, TALK, 5, 5, 0);
+	_objectState[6] = Object(_id, kStringImage, kStringGenericDescription5, NULLOBJECT, NULLTYPE, 4, 4, 0);
 
 	_dialogsX[0] = kStringDialogX1;
 	_dialogsX[1] = kStringDialogX2;
@@ -3762,12 +3704,12 @@ AxacussExit::AxacussExit(SupernovaEngine *vm, GameManager *gm) {
 }
 
 bool AxacussExit::interact(Action verb, Object &obj1, Object &obj2) {
-	byte rowsX[6] = {1, 1, 1, 0, 0, 0};
+	byte rowsX[6] = { 1, 1, 1, 0, 0, 0 };
 
 	if (((verb == ACTION_WALK) || (verb == ACTION_OPEN)) && (obj1._id == DOOR) && !_gm->_state._powerOff)
 		_gm->guard3Shot();
 	else if ((verb == ACTION_TALK) && (obj1._id == GUARDIAN)) {
-		_gm->dialog(3, rowsX, _dialogsX,0);
+		_gm->dialog(3, rowsX, _dialogsX, 0);
 		_gm->guard3Shot();
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, LAMP, MAGNET)) {
 		_gm->_inventory.remove(*_gm->_rooms[CELL]->getObject(7));
@@ -3783,7 +3725,7 @@ bool AxacussExit::interact(Action verb, Object &obj1, Object &obj2) {
 
 		_gm->search(450);
 		_gm->roomBrightness();
-	} else if ((verb == ACTION_USE) && (Object::combine(obj1,obj2,MAGNET,GUARDIAN) || Object::combine(obj1,obj2,KNIFE,GUARDIAN)))
+	} else if ((verb == ACTION_USE) && (Object::combine(obj1, obj2, MAGNET, GUARDIAN) || Object::combine(obj1, obj2, KNIFE, GUARDIAN)))
 		_vm->renderMessage(kStringArsanoEntrance27);
 	else
 		return false;
@@ -3803,23 +3745,21 @@ AxacussOffice1::AxacussOffice1(SupernovaEngine *vm, GameManager *gm) {
 	_shown[9] = kShownTrue;
 	_shown[16] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringDoor,kStringDefaultDescription,DOOR,EXIT|OPENABLE|OPENED,6,6,9,BCORRIDOR,9);
-	_objectState[1] = Object(_id, kStringComputer,kStringDefaultDescription,COMPUTER,COMBINABLE,4,4,0);
-	_objectState[2] = Object(_id, kStringMoney,kStringMoneyDescription1,MONEY,TAKE,255,255,0);
-	_objectState[3] = Object(_id, kStringLocker,kStringLockerDescription,LOCKER,OPENABLE|CLOSED,5,5,0);
-	_objectState[4] = Object(_id, kStringLetter,kStringDefaultDescription,LETTER,UNNECESSARY,3,3,0);
+	_objectState[0] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE | OPENED, 6, 6, 9, BCORRIDOR, 9);
+	_objectState[1] = Object(_id, kStringComputer, kStringDefaultDescription, COMPUTER, COMBINABLE, 4, 4, 0);
+	_objectState[2] = Object(_id, kStringMoney, kStringMoneyDescription1, MONEY, TAKE, 255, 255, 0);
+	_objectState[3] = Object(_id, kStringLocker, kStringLockerDescription, LOCKER, OPENABLE | CLOSED, 5, 5, 0);
+	_objectState[4] = Object(_id, kStringLetter, kStringDefaultDescription, LETTER, UNNECESSARY, 3, 3, 0);
 }
 
 bool AxacussOffice1::interact(Action verb, Object &obj1, Object &obj2) {
 	Common::String input;
-	if ((verb == ACTION_CLOSE) && (obj1._id == DOOR) &&
-			obj1.hasProperty(OPENED)) {
+	if ((verb == ACTION_CLOSE) && (obj1._id == DOOR) && obj1.hasProperty(OPENED)) {
 		_vm->renderImage(_gm->invertSection(9));
 		obj1.disableProperty(OPENED);
 		obj1.setProperty(CLOSED);
 		_vm->playSound(kAudioDoorClose);
-	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR) &&
-			   !getObject(0)->hasProperty(OPENED)) {
+	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR) && !getObject(0)->hasProperty(OPENED)) {
 		_vm->renderImage(9);
 		getObject(0)->disableProperty(CLOSED);
 		getObject(0)->setProperty(OPENED);
@@ -3833,9 +3773,7 @@ bool AxacussOffice1::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderMessage(kStringBroken);
 		else
 			_gm->telomat(0);
-	} else if (((verb == ACTION_OPEN) || (verb == ACTION_USE)) &&
-			   (obj1._id == LOCKER) &&
-			   !obj1.hasProperty(OPENED)) {
+	} else if (((verb == ACTION_OPEN) || (verb == ACTION_USE)) && (obj1._id == LOCKER) && !obj1.hasProperty(OPENED)) {
 		_vm->renderMessage(kStringAxacussOffice1_1);
 		_vm->renderBox(160, 70, 70, 10, kColorDarkBlue);
 		_gm->edit(input, 161, 71, 10);
@@ -3906,16 +3844,15 @@ AxacussOffice2::AxacussOffice2(SupernovaEngine *vm, GameManager *gm) {
 	_shown[9] = kShownTrue;
 	_shown[16] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringDoor,kStringDefaultDescription,DOOR,EXIT|OPENABLE|OPENED,6,6,9,BCORRIDOR,9);
-	_objectState[1] = Object(_id, kStringComputer,kStringDefaultDescription,COMPUTER,COMBINABLE,4,4,0);
-	_objectState[2] = Object(_id, kStringCube,kStringGenericDescription6,NULLOBJECT,NULLTYPE,0,0,0);
-	_objectState[3] = Object(_id, kStringImage,kStringGenericDescription7,NULLOBJECT,NULLTYPE,1,1,0);
-	_objectState[4] = Object(_id, kStringStrangeThing,kStringGenericDescription8,NULLOBJECT,UNNECESSARY,2,2,0);
+	_objectState[0] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE | OPENED, 6, 6, 9, BCORRIDOR, 9);
+	_objectState[1] = Object(_id, kStringComputer, kStringDefaultDescription, COMPUTER, COMBINABLE, 4, 4, 0);
+	_objectState[2] = Object(_id, kStringCube, kStringGenericDescription6, NULLOBJECT, NULLTYPE, 0, 0, 0);
+	_objectState[3] = Object(_id, kStringImage, kStringGenericDescription7, NULLOBJECT, NULLTYPE, 1, 1, 0);
+	_objectState[4] = Object(_id, kStringStrangeThing, kStringGenericDescription8, NULLOBJECT, UNNECESSARY, 2, 2, 0);
 }
 
 bool AxacussOffice2::interact(Action verb, Object &obj1, Object &obj2) {
-	if ((verb == ACTION_CLOSE) && (obj1._id == DOOR) &&
-			obj1.hasProperty(OPENED)) {
+	if ((verb == ACTION_CLOSE) && (obj1._id == DOOR) && obj1.hasProperty(OPENED)) {
 		_vm->renderImage(_gm->invertSection(9));
 		obj1.disableProperty(OPENED);
 		obj1.setProperty(CLOSED);
@@ -3950,23 +3887,21 @@ AxacussOffice3::AxacussOffice3(SupernovaEngine *vm, GameManager *gm) {
 	_shown[1] = kShownTrue;
 	_shown[3] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringDoor,kStringDefaultDescription,DOOR,EXIT|OPENABLE|OPENED,0,0,3,BCORRIDOR,5);
-	_objectState[1] = Object(_id, kStringComputer,kStringDefaultDescription,COMPUTER,COMBINABLE,4,4,0);
-	_objectState[2] = Object(_id, kStringImage,kStringImageDescription2,NULLOBJECT,UNNECESSARY,1,1,0);
-	_objectState[3] = Object(_id, kStringImage,kStringImageDescription2,PAINTING,UNNECESSARY,2,2,0);
-	_objectState[4] = Object(_id, kStringPlant,kStringDefaultDescription,NULLOBJECT,UNNECESSARY,3,3,0);
-	_objectState[5] = Object(_id, kNoString,kStringDefaultDescription,MONEY,TAKE|COMBINABLE,255,255,0);
+	_objectState[0] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE | OPENED, 0, 0, 3, BCORRIDOR, 5);
+	_objectState[1] = Object(_id, kStringComputer, kStringDefaultDescription, COMPUTER, COMBINABLE, 4, 4, 0);
+	_objectState[2] = Object(_id, kStringImage, kStringImageDescription2, NULLOBJECT, UNNECESSARY, 1, 1, 0);
+	_objectState[3] = Object(_id, kStringImage, kStringImageDescription2, PAINTING, UNNECESSARY, 2, 2, 0);
+	_objectState[4] = Object(_id, kStringPlant, kStringDefaultDescription, NULLOBJECT, UNNECESSARY, 3, 3, 0);
+	_objectState[5] = Object(_id, kNoString, kStringDefaultDescription, MONEY, TAKE | COMBINABLE, 255, 255, 0);
 }
 
 bool AxacussOffice3::interact(Action verb, Object &obj1, Object &obj2) {
-	if ((verb == ACTION_CLOSE) && (obj1._id == DOOR) &&
-			obj1.hasProperty(OPENED)) {
+	if ((verb == ACTION_CLOSE) && (obj1._id == DOOR) && obj1.hasProperty(OPENED)) {
 		_vm->renderImage(_gm->invertSection(3));
 		obj1.disableProperty(OPENED);
 		obj1.setProperty(CLOSED);
 		_vm->playSound(kAudioDoorClose);
-	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR) &&
-			   !getObject(0)->hasProperty(OPENED)) {
+	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR) && !getObject(0)->hasProperty(OPENED)) {
 		_vm->renderImage(3);
 		getObject(0)->disableProperty(CLOSED);
 		getObject(0)->setProperty(OPENED);
@@ -3999,10 +3934,10 @@ AxacussOffice4::AxacussOffice4(SupernovaEngine *vm, GameManager *gm) {
 	_shown[2] = kShownTrue;
 	_shown[3] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringDoor,kStringDefaultDescription,DOOR,EXIT|OPENABLE|OPENED,0,0,3,BCORRIDOR,5);
-	_objectState[1] = Object(_id, kStringComputer,kStringDefaultDescription,COMPUTER,COMBINABLE,4,4,0);
-	_objectState[2] = Object(_id, kStringStatue,kStringStatueDescription,NULLOBJECT,UNNECESSARY,6,6,0);
-	_objectState[3] = Object(_id, kStringPlant,kStringPlantDescription,NULLOBJECT,UNNECESSARY,5,5,0);
+	_objectState[0] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE | OPENED, 0, 0, 3, BCORRIDOR, 5);
+	_objectState[1] = Object(_id, kStringComputer, kStringDefaultDescription, COMPUTER, COMBINABLE, 4, 4, 0);
+	_objectState[2] = Object(_id, kStringStatue, kStringStatueDescription, NULLOBJECT, UNNECESSARY, 6, 6, 0);
+	_objectState[3] = Object(_id, kStringPlant, kStringPlantDescription, NULLOBJECT, UNNECESSARY, 5, 5, 0);
 }
 
 bool AxacussOffice4::interact(Action verb, Object &obj1, Object &obj2) {
@@ -4011,8 +3946,7 @@ bool AxacussOffice4::interact(Action verb, Object &obj1, Object &obj2) {
 		obj1.disableProperty(OPENED);
 		obj1.setProperty(CLOSED);
 		_vm->playSound(kAudioDoorClose);
-	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR) &&
-			   !getObject(0)->hasProperty(OPENED)) {
+	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR) && !getObject(0)->hasProperty(OPENED)) {
 		_vm->renderImage(3);
 		getObject(0)->disableProperty(CLOSED);
 		getObject(0)->setProperty(OPENED);
@@ -4042,10 +3976,10 @@ AxacussOffice5::AxacussOffice5(SupernovaEngine *vm, GameManager *gm) {
 	_shown[5] = kShownTrue;
 	_shown[17] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringDoor,kStringDefaultDescription,DOOR,EXIT|OPENABLE|OPENED,6,6,17,GUARD3,9);
-	_objectState[1] = Object(_id, kStringComputer,kStringComputerDescription,COMPUTER,COMBINABLE,4,4,0);
-	_objectState[2] = Object(_id, kStringGraffiti,kStringGraffitiDescription,NULLOBJECT,NULLTYPE,7,7,0);
-	_objectState[3] = Object(_id, kStringMoney,kStringMoneyDescription2,MONEY,TAKE,8,8,0);
+	_objectState[0] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE | OPENED, 6, 6, 17, GUARD3, 9);
+	_objectState[1] = Object(_id, kStringComputer, kStringComputerDescription, COMPUTER, COMBINABLE, 4, 4, 0);
+	_objectState[2] = Object(_id, kStringGraffiti, kStringGraffitiDescription, NULLOBJECT, NULLTYPE, 7, 7, 0);
+	_objectState[3] = Object(_id, kStringMoney, kStringMoneyDescription2, MONEY, TAKE, 8, 8, 0);
 }
 
 void AxacussOffice5::onEntrance() {
@@ -4074,10 +4008,10 @@ AxacussElevator::AxacussElevator(SupernovaEngine *vm, GameManager *gm) {
 	_id = ELEVATOR;
 	_shown[0] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringButton,kStringDefaultDescription,BUTTON1,PRESS,0,0,0);
-	_objectState[1] = Object(_id, kStringButton,kStringDefaultDescription,BUTTON2,PRESS,1,1,0);
-	_objectState[2] = Object(_id, kStringExit,kStringDefaultDescription,DOOR,EXIT,255,255,0,NULLROOM,22);
-	_objectState[3] = Object(_id, kStringJungle,kStringJungleDescription,JUNGLE,NULLTYPE,255,255,0,STATION,2);
+	_objectState[0] = Object(_id, kStringButton, kStringDefaultDescription, BUTTON1, PRESS, 0, 0, 0);
+	_objectState[1] = Object(_id, kStringButton, kStringDefaultDescription, BUTTON2, PRESS, 1, 1, 0);
+	_objectState[2] = Object(_id, kStringExit, kStringDefaultDescription, DOOR, EXIT, 255, 255, 0, NULLROOM, 22);
+	_objectState[3] = Object(_id, kStringJungle, kStringJungleDescription, JUNGLE, NULLTYPE, 255, 255, 0, STATION, 2);
 }
 
 bool AxacussElevator::interact(Action verb, Object &obj1, Object &obj2) {
@@ -4148,8 +4082,8 @@ AxacussStation::AxacussStation(SupernovaEngine *vm, GameManager *gm) {
 	_fileNumber = 5;
 	_id = STATION;
 	_shown[0] = kShownTrue;
-	_objectState[0] = Object(_id, kStringSign,kStringDefaultDescription,STATION_SIGN,NULLTYPE,0,0,0);
-	_objectState[1] = Object(_id, kStringDoor,kStringDefaultDescription,DOOR,EXIT|OPENABLE|CLOSED,1,1,0,NULLROOM,7);
+	_objectState[0] = Object(_id, kStringSign, kStringDefaultDescription, STATION_SIGN, NULLTYPE, 0, 0, 0);
+	_objectState[1] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE | CLOSED, 1, 1, 0, NULLROOM, 7);
 }
 
 bool AxacussStation::interact(Action verb, Object &obj1, Object &obj2) {
@@ -4176,13 +4110,12 @@ AxacussSign::AxacussSign(SupernovaEngine *vm, GameManager *gm) {
 	_shown[0] = kShownTrue;
 	_shown[1] = kShownTrue;
 
-	_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,255,255,0,STATION,22);
-	_objectState[1] = Object(_id, kStringSlot,kStringDefaultDescription,STATION_SLOT,COMBINABLE,0,0,0);
+	_objectState[0] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 255, 255, 0, STATION, 22);
+	_objectState[1] = Object(_id, kStringSlot, kStringDefaultDescription, STATION_SLOT, COMBINABLE, 0, 0, 0);
 }
 
 bool AxacussSign::interact(Action verb, Object &obj1, Object &obj2) {
-	if ((verb == ACTION_USE) && Object::combine(obj1, obj2, STATION_SLOT, MONEY) &&
-		isSectionVisible(1)) {
+	if ((verb == ACTION_USE) && Object::combine(obj1, obj2, STATION_SLOT, MONEY) && isSectionVisible(1)) {
 		_gm->takeMoney(-180);
 		_vm->renderImage(2);
 		setSectionVisible(1, false);
@@ -4193,7 +4126,6 @@ bool AxacussSign::interact(Action verb, Object &obj1, Object &obj2) {
 	return false;
 }
 
-
 Outro::Outro(SupernovaEngine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
@@ -4202,21 +4134,7 @@ Outro::Outro(SupernovaEngine *vm, GameManager *gm) {
 	_id = OUTRO;
 	_shown[0] = kShownFalse;
 
-	_outroText =
-		_vm->getGameString(kStringOutro1) + '\0' +
-		_vm->getGameString(kStringOutro2) + '\0' +
-		_vm->getGameString(kStringOutro3) + '\0' +
-		_vm->getGameString(kStringOutro4) + '\0' +
-		_vm->getGameString(kStringOutro5) + '\0' +
-		_vm->getGameString(kStringOutro6) + '\0' +
-		_vm->getGameString(kStringOutro7) + '\0' +
-		_vm->getGameString(kStringOutro8) + '\0' +
-		_vm->getGameString(kStringOutro9) + '\0' +
-		_vm->getGameString(kStringOutro10) + '\0' +
-		_vm->getGameString(kStringOutro11) + '\0' +
-		_vm->getGameString(kStringOutro12) + '\0' +
-		_vm->getGameString(kStringOutro13) + '\0' +
-		_vm->getGameString(kStringOutro14) + '\0';
+	_outroText = _vm->getGameString(kStringOutro1) + '\0' + _vm->getGameString(kStringOutro2) + '\0' + _vm->getGameString(kStringOutro3) + '\0' + _vm->getGameString(kStringOutro4) + '\0' + _vm->getGameString(kStringOutro5) + '\0' + _vm->getGameString(kStringOutro6) + '\0' + _vm->getGameString(kStringOutro7) + '\0' + _vm->getGameString(kStringOutro8) + '\0' + _vm->getGameString(kStringOutro9) + '\0' + _vm->getGameString(kStringOutro10) + '\0' + _vm->getGameString(kStringOutro11) + '\0' + _vm->getGameString(kStringOutro12) + '\0' + _vm->getGameString(kStringOutro13) + '\0' + _vm->getGameString(kStringOutro14) + '\0';
 }
 
 void Outro::onEntrance() {
@@ -4276,7 +4194,7 @@ void Outro::animate(int filenumber, int section1, int section2, int duration) {
 }
 
 void Outro::animate(int filenumber, int section1, int section2, int duration,
-					MessagePosition position, const char *text) {
+                    MessagePosition position, const char *text) {
 	_vm->renderMessage(text, position);
 	int delay = (Common::strnlen(text, 512) + 20) * (10 - duration) * _vm->_textSpeed / 400;
 	_vm->setCurrentImage(filenumber);
@@ -4293,13 +4211,13 @@ void Outro::animate(int filenumber, int section1, int section2, int duration,
 }
 
 void Outro::animate(int filenumber, int section1, int section2, int section3, int section4,
-					int duration, MessagePosition position, const char *text) {
+                    int duration, MessagePosition position, const char *text) {
 	_vm->renderMessage(text, position);
 	if (duration == 0)
 		duration = (Common::strnlen(text, 512) + 20) * _vm->_textSpeed / 40;
 
 	_vm->setCurrentImage(filenumber);
-	while(duration) {
+	while (duration) {
 		_vm->renderImage(section1);
 		_vm->renderImage(section3);
 		_gm->wait(2);

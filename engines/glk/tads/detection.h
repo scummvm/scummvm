@@ -30,40 +30,41 @@
 namespace Glk {
 namespace TADS {
 
-enum TADSOption { OPTION_TADS2 = 0, OPTION_TADS3 = 1 };
+	enum TADSOption { OPTION_TADS2 = 0,
+		                OPTION_TADS3 = 1 };
 
-/**
+	/**
  * Meta engine for TADS interpreter
  */
-class TADSMetaEngine {
-public:
-	/**
+	class TADSMetaEngine {
+	public:
+		/**
 	 * Get a list of supported games
 	 */
-	static void getSupportedGames(PlainGameList &games);
+		static void getSupportedGames(PlainGameList &games);
 
-	/**
+		/**
 	 * Returns a game description for the given game Id, if it's supported
 	 */
-	static GameDescriptor findGame(const char *gameId);
+		static GameDescriptor findGame(const char *gameId);
 
-	/**
+		/**
 	 * Detect supported games
 	 */
-	static bool detectGames(const Common::FSList &fslist, DetectedGames &gameList);
+		static bool detectGames(const Common::FSList &fslist, DetectedGames &gameList);
 
-	/**
+		/**
 	 * Check for game Id clashes with other sub-engines
 	 */
-	static void detectClashes(Common::StringMap &map);
+		static void detectClashes(Common::StringMap &map);
 
-	/**
+		/**
 	 * Determines whether the given game is TADS 2 or 3
 	 * @param game		Open stream pointing to game file
 	 * @returns			2 for TADS 2, 3 for TADS 3, or -1 for error
 	 */
-	static int getTADSVersion(Common::SeekableReadStream &game);
-};
+		static int getTADSVersion(Common::SeekableReadStream &game);
+	};
 
 } // End of namespace TADS
 } // End of namespace Glk

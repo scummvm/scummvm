@@ -20,16 +20,16 @@
  *
  */
 
-#include "cryo/defs.h"
 #include "cryo/cryo.h"
-#include "cryo/platdefs.h"
 #include "cryo/cryolib.h"
+#include "cryo/defs.h"
 #include "cryo/eden.h"
+#include "cryo/platdefs.h"
 #include "cryo/sound.h"
 
 namespace Cryo {
 
-#define CRYO_DAT_VER 1	// 32-bit integer
+#define CRYO_DAT_VER 1 // 32-bit integer
 
 // Original name: prechargephrases
 void EdenGame::preloadDialogs(int16 vid) {
@@ -134,7 +134,7 @@ void EdenGame::loadIconFile(uint16 num, Icon *buffer) {
 	debug("* Loading icon - Resource %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), offs, size);
 	_bigfile.seek(offs, SEEK_SET);
 
-	int count = size / 18;	// sizeof(Icon)
+	int count = size / 18; // sizeof(Icon)
 	for (int i = 0; i < count; i++) {
 		if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 			buffer[i].sx = _bigfile.readSint16BE();
@@ -144,8 +144,7 @@ void EdenGame::loadIconFile(uint16 num, Icon *buffer) {
 			buffer[i]._cursorId = _bigfile.readUint16BE();
 			buffer[i]._actionId = _bigfile.readUint32BE();
 			buffer[i]._objectId = _bigfile.readUint32BE();
-		}
-		else {
+		} else {
 			buffer[i].sx = _bigfile.readSint16LE();
 			buffer[i].sy = _bigfile.readSint16LE();
 			buffer[i].ex = _bigfile.readSint16LE();
@@ -170,7 +169,7 @@ void EdenGame::loadRoomFile(uint16 num, Room *buffer) {
 	debug("* Loading room - Resource %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), offs, size);
 	_bigfile.seek(offs, SEEK_SET);
 
-	int count = size / 14;	// sizeof(Room)
+	int count = size / 14; // sizeof(Room)
 	for (int i = 0; i < count; i++) {
 		buffer[i]._id = _bigfile.readByte();
 		for (int j = 0; j < 4; j++)
@@ -179,8 +178,7 @@ void EdenGame::loadRoomFile(uint16 num, Room *buffer) {
 		if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 			buffer[i]._bank = _bigfile.readUint16BE();
 			buffer[i]._party = _bigfile.readUint16BE();
-		}
-		else {
+		} else {
 			buffer[i]._bank = _bigfile.readUint16LE();
 			buffer[i]._party = _bigfile.readUint16LE();
 		}
@@ -214,8 +212,7 @@ int EdenGame::loadSound(uint16 num) {
 		free(_voiceSamplesBuffer);
 		_voiceSamplesBuffer = nullptr;
 		_soundAllocated = false; //TODO: bug??? no alloc
-	}
-	else {
+	} else {
 		_voiceSamplesBuffer = (byte *)malloc(size);
 		_soundAllocated = true;
 	}
@@ -283,30 +280,18 @@ void EdenGame::loadpermfiles() {
 	// tab_2CF70
 	const int kNumActionCursors = 299;
 
-	const int expectedDataSize =
-		kNumIcons * 18 +		// sizeof(Icon)
-		kNumRooms * 14 +		// sizeof(Room)
-		kNumFollowers * 16 +	// sizeof(Follower)
-		kNumLabyrinthPath +
-		kNumDinoSpeedForCitaLevel +
-		kNumTabletView +
-		kNumPersoRoomBankTable +
-		kNumGotos * 5 +			// sizeof(Goto)
-		kNumObjects * 12 +		// sizeof(object_t)
-		kNumObjectLocations * 2 +
-		kNumPersons * 18 +		// sizeof(perso_t)
-		kNumCitadel * 34 +		// sizeof(Citadel)
-		kNumCharacterRects * 8 +
-		kNumCharacters * 5 +
-		kNumAreas * 10 +		// (sizeof(Area) - 4)
-		64 * 2 +
-		64 * 2 +
-		kNumActionCursors +
-		12 +
-		3 * 6 * 2 * 3 * 2;
+	const int expectedDataSize = kNumIcons * 18 + // sizeof(Icon)
+	  kNumRooms * 14 + // sizeof(Room)
+	  kNumFollowers * 16 + // sizeof(Follower)
+	  kNumLabyrinthPath + kNumDinoSpeedForCitaLevel + kNumTabletView + kNumPersoRoomBankTable + kNumGotos * 5 + // sizeof(Goto)
+	  kNumObjects * 12 + // sizeof(object_t)
+	  kNumObjectLocations * 2 + kNumPersons * 18 + // sizeof(perso_t)
+	  kNumCitadel * 34 + // sizeof(Citadel)
+	  kNumCharacterRects * 8 + kNumCharacters * 5 + kNumAreas * 10 + // (sizeof(Area) - 4)
+	  64 * 2 + 64 * 2 + kNumActionCursors + 12 + 3 * 6 * 2 * 3 * 2;
 
 	if (f.open("cryo.dat")) {
-		const int dataSize = f.size() - 8 - 4;	// CRYODATA + version
+		const int dataSize = f.size() - 8 - 4; // CRYODATA + version
 		char headerId[9];
 
 		f.read(headerId, 8);
@@ -319,8 +304,7 @@ void EdenGame::loadpermfiles() {
 
 		if (dataSize != expectedDataSize)
 			error("Mismatching data in cryo.dat aux data file (got %d, expected %d)", dataSize, expectedDataSize);
-	}
-	else
+	} else
 		error("Can not load cryo.dat");
 
 	switch (_vm->getPlatform()) {
@@ -380,7 +364,7 @@ void EdenGame::loadpermfiles() {
 	f.read(_dinoSpeedForCitadelLevel, kNumDinoSpeedForCitaLevel);
 	f.read(_tabletView, kNumTabletView);
 	f.read(_personRoomBankTable, kNumPersoRoomBankTable);
-	f.read(_gotos, kNumGotos * 5);	// sizeof(Goto)
+	f.read(_gotos, kNumGotos * 5); // sizeof(Goto)
 
 	for (int i = 0; i < kNumObjects; i++) {
 		_objects[i]._id = f.readByte();
@@ -487,9 +471,8 @@ bool EdenGame::ReadDataSync(uint16 num) {
 			loadpartoffile(1936, _gameLipsync + 7260, pos, len);
 			return true;
 		}
-	}
-	else
-		return ReadDataSyncVOC(num + 1);	//TODO: remove -1 in caller
+	} else
+		return ReadDataSyncVOC(num + 1); //TODO: remove -1 in caller
 	return false;
 }
 
@@ -506,17 +489,18 @@ void EdenGame::expandHSQ(byte *input, byte *output) {
 	byte *src = input;
 	byte *dst = output;
 	byte *ptr;
-	uint16 bit;        // bit
-	uint16 queue = 0;  // queue
+	uint16 bit; // bit
+	uint16 queue = 0; // queue
 	uint16 len = 0;
-	int16  ofs;
-#define GetBit										\
-bit = queue & 1;								\
-queue >>= 1;									\
-if (!queue) {									\
-	queue = (src[1] << 8) | src[0]; src += 2;	\
-	bit = queue & 1;							\
-	queue = (queue >> 1) | 0x8000;				\
+	int16 ofs;
+#define GetBit                      \
+	bit = queue & 1;                  \
+	queue >>= 1;                      \
+	if (!queue) {                     \
+		queue = (src[1] << 8) | src[0]; \
+		src += 2;                       \
+		bit = queue & 1;                \
+		queue = (queue >> 1) | 0x8000;  \
 	}
 
 	for (;;) {
@@ -531,9 +515,8 @@ if (!queue) {									\
 				len = (len << 1) | bit;
 				GetBit;
 				len = (len << 1) | bit;
-				ofs = 0xFF00 | *src++;      //TODO: -256
-			}
-			else {
+				ofs = 0xFF00 | *src++; //TODO: -256
+			} else {
 				ofs = (src[1] << 8) | src[0];
 				src += 2;
 				len = ofs & 7;
@@ -552,4 +535,4 @@ if (!queue) {									\
 	}
 }
 
-}   // namespace Cryo
+} // namespace Cryo

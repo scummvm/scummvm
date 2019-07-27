@@ -40,6 +40,7 @@ public:
 
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const override;
+
 private:
 };
 

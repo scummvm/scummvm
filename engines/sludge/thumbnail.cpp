@@ -35,10 +35,8 @@
 
 namespace Sludge {
 
-bool GraphicsManager::setThumbnailSize(int thumbWidth, int thumbHeight)
-{
-	if (checkSizeValide(thumbWidth, thumbHeight))
-	{
+bool GraphicsManager::setThumbnailSize(int thumbWidth, int thumbHeight) {
+	if (checkSizeValide(thumbWidth, thumbHeight)) {
 		_thumbWidth = thumbWidth;
 		_thumbHeight = thumbHeight;
 		return true;
@@ -55,7 +53,7 @@ bool GraphicsManager::saveThumbnail(Common::WriteStream *stream) {
 		if (!freeze())
 			return false;
 
-		if(!Image::writePNG(*stream, _renderSurface))
+		if (!Image::writePNG(*stream, _renderSurface))
 			return false;
 
 		unfreeze(true);
@@ -105,7 +103,6 @@ void GraphicsManager::showThumbnail(const Common::String &filename, int atX, int
 
 		delete fp;
 		fp = nullptr;
-
 
 		if (atX < 0) {
 			fileWidth += atX;

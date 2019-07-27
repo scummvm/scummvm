@@ -28,7 +28,7 @@
 namespace Glk {
 namespace Alan2 {
 
-extern void getPageSize();
+	extern void getPageSize();
 
 } // End of namespace Alan2
 } // End of namespace Glk

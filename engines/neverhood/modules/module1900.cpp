@@ -33,7 +33,7 @@ static const uint32 kModule1900SoundList[] = {
 };
 
 Module1900::Module1900(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule) {
+  : Module(vm, parentModule) {
 
 	// NOTE: The original has a Scene1908 here as well but it's not used here but in another module...
 
@@ -44,7 +44,6 @@ Module1900::Module1900(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_vm->_soundMan->addSoundList(0x04E1C09C, kModule1900SoundList);
 	_vm->_soundMan->setSoundListParams(kModule1900SoundList, true, 50, 600, 5, 150);
-
 }
 
 Module1900::~Module1900() {
@@ -85,7 +84,7 @@ void Module1900::updateScene() {
 }
 
 Scene1901::Scene1901(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule) {
+  : Scene(vm, parentModule) {
 
 	Sprite *tempSprite;
 
@@ -121,12 +120,16 @@ Scene1901::Scene1901(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	tempSprite = insertStaticSprite(0x4830A402, 1100);
 	_klaymen->setClipRect(tempSprite->getDrawRect().x, 0, 640, 480);
-
 }
 
 Scene1907::Scene1907(NeverhoodEngine *vm, Module *parentModule)
-	: Scene(vm, parentModule), _currMovingSymbolIndex(0), _pluggedInCount(0),
-	_moveDownCountdown(0), _moveUpCountdown(0), _countdown3(0), _hasPlugInFailed(false) {
+  : Scene(vm, parentModule)
+  , _currMovingSymbolIndex(0)
+  , _pluggedInCount(0)
+  , _moveDownCountdown(0)
+  , _moveUpCountdown(0)
+  , _countdown3(0)
+  , _hasPlugInFailed(false) {
 
 	setBackground(0x20628E05);
 	setPalette(0x20628E05);
@@ -156,7 +159,6 @@ Scene1907::Scene1907(NeverhoodEngine *vm, Module *parentModule)
 	loadSound(1, 0x22082A12);
 	loadSound(2, 0x21100A10);
 	loadSound(3, 0x68E25540);
-
 }
 
 void Scene1907::update() {
@@ -192,15 +194,13 @@ void Scene1907::update() {
 		_asWaterHint->show();
 		_moveUpCountdown = 4;
 	}
-
 }
 
 uint32 Scene1907::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case NM_MOUSE_CLICK:
-		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) &&
-			!_hasPlugInFailed && _moveDownCountdown == 0 && _moveUpCountdown == 0 && _countdown3 == 0) {
+		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && !_hasPlugInFailed && _moveDownCountdown == 0 && _moveUpCountdown == 0 && _countdown3 == 0) {
 			leaveScene(0);
 		}
 		break;

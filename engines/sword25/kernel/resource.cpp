@@ -35,9 +35,9 @@
 
 namespace Sword25 {
 
-Resource::Resource(const Common::String &fileName, RESOURCE_TYPES type) :
-	_type(type),
-	_refCount(0) {
+Resource::Resource(const Common::String &fileName, RESOURCE_TYPES type)
+  : _type(type)
+  , _refCount(0) {
 	PackageManager *pPM = Kernel::getInstance()->getPackage();
 	assert(pPM);
 

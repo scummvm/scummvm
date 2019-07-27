@@ -22,13 +22,13 @@
 
 #ifdef ENABLE_LOL
 
-#include "kyra/engine/lol.h"
-#include "kyra/sound/sound.h"
-#include "kyra/resource/resource.h"
+#	include "kyra/engine/lol.h"
+#	include "kyra/resource/resource.h"
+#	include "kyra/sound/sound.h"
 
-#include "common/system.h"
+#	include "common/system.h"
 
-#include "audio/audiostream.h"
+#	include "audio/audiostream.h"
 
 namespace Kyra {
 
@@ -70,7 +70,7 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 	}
 
 	if (file3.empty()) {
-		for (char i = 0; ; i++) {
+		for (char i = 0;; i++) {
 			char symbol = '0' + i;
 			file1 = Common::String::format("%s%c%c.%s", pattern1.c_str(), (char)speaker, symbol, pattern2.c_str());
 			file2 = Common::String::format("%s%c%c.%s", pattern1.c_str(), '_', symbol, pattern2.c_str());

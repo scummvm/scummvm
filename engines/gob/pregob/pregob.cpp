@@ -22,29 +22,29 @@
 
 #include "graphics/cursorman.h"
 
-#include "gob/gob.h"
-#include "gob/global.h"
-#include "gob/util.h"
-#include "gob/surface.h"
-#include "gob/dataio.h"
-#include "gob/palanim.h"
-#include "gob/draw.h"
-#include "gob/video.h"
 #include "gob/aniobject.h"
+#include "gob/dataio.h"
+#include "gob/draw.h"
+#include "gob/global.h"
+#include "gob/gob.h"
+#include "gob/palanim.h"
+#include "gob/surface.h"
+#include "gob/util.h"
+#include "gob/video.h"
 
 #include "gob/sound/sound.h"
 
-#include "gob/pregob/pregob.h"
 #include "gob/pregob/gctfile.h"
-
+#include "gob/pregob/pregob.h"
 
 namespace Gob {
 
-const char  PreGob::kLanguageSuffixShort[5] = { 't',  'g',  'a',  'e',  'i'};
-const char *PreGob::kLanguageSuffixLong [5] = {"fr", "al", "an", "it", "es"};
+const char PreGob::kLanguageSuffixShort[5] = { 't', 'g', 'a', 'e', 'i' };
+const char *PreGob::kLanguageSuffixLong[5] = { "fr", "al", "an", "it", "es" };
 
-
-PreGob::PreGob(GobEngine *vm) : _vm(vm), _fadedOut(false) {
+PreGob::PreGob(GobEngine *vm)
+  : _vm(vm)
+  , _fadedOut(false) {
 }
 
 PreGob::~PreGob() {
@@ -118,8 +118,8 @@ void PreGob::setCursor(Surface &sprite, int16 hotspotX, int16 hotspotY) {
 void PreGob::setCursor(Surface &sprite, int16 left, int16 top, int16 right, int16 bottom,
                        int16 hotspotX, int16 hotspotY) {
 
-	const int width  = right  - left + 1;
-	const int height = bottom - top  + 1;
+	const int width = right - left + 1;
+	const int height = bottom - top + 1;
 
 	if ((width <= 0) || (height <= 0))
 		return;
@@ -147,7 +147,7 @@ bool PreGob::isCursorVisible() const {
 	return CursorMan.isVisible();
 }
 
-void PreGob::loadSounds(const char * const *sounds, uint soundCount) {
+void PreGob::loadSounds(const char *const *sounds, uint soundCount) {
 	freeSounds();
 
 	_sounds.resize(soundCount);

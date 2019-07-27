@@ -20,16 +20,15 @@
  *
  */
 
-
-#include "common/scummsys.h"
 #include "common/events.h"
+#include "common/scummsys.h"
 #include "common/system.h"
 
+#include "cine/bg_list.h"
 #include "cine/main_loop.h"
 #include "cine/object.h"
-#include "cine/various.h"
-#include "cine/bg_list.h"
 #include "cine/sound.h"
+#include "cine/various.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -182,19 +181,19 @@ static void processEvent(Common::Event &event) {
 		case Common::KEYCODE_F11:
 			renderer->showCollisionPage(false);
 			break;
-		case Common::KEYCODE_KP5:   // Emulated left mouse button click
-		case Common::KEYCODE_LEFT:  // Left
-		case Common::KEYCODE_KP4:   // Left
+		case Common::KEYCODE_KP5: // Emulated left mouse button click
+		case Common::KEYCODE_LEFT: // Left
+		case Common::KEYCODE_KP4: // Left
 		case Common::KEYCODE_RIGHT: // Right
-		case Common::KEYCODE_KP6:   // Right
-		case Common::KEYCODE_UP:    // Up
-		case Common::KEYCODE_KP8:   // Up
-		case Common::KEYCODE_DOWN:  // Down
-		case Common::KEYCODE_KP2:   // Down
-		case Common::KEYCODE_KP9:   // Up & Right
-		case Common::KEYCODE_KP7:   // Up & Left
-		case Common::KEYCODE_KP1:   // Down & Left
-		case Common::KEYCODE_KP3:   // Down & Right
+		case Common::KEYCODE_KP6: // Right
+		case Common::KEYCODE_UP: // Up
+		case Common::KEYCODE_KP8: // Up
+		case Common::KEYCODE_DOWN: // Down
+		case Common::KEYCODE_KP2: // Down
+		case Common::KEYCODE_KP9: // Up & Right
+		case Common::KEYCODE_KP7: // Up & Left
+		case Common::KEYCODE_KP1: // Down & Left
+		case Common::KEYCODE_KP3: // Down & Right
 			// Stop ego movement made with keyboard when releasing a known key
 			moveUsingKeyboard(0, 0);
 			break;
@@ -279,9 +278,9 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 
 		menuVar = 0;
 
-//		gfxRedrawPage(page0c, page0, page0c, page0, -1);
-//		gfxWaitVBL();
-//		gfxRedrawMouseCursor();
+		//		gfxRedrawPage(page0c, page0, page0c, page0, -1);
+		//		gfxWaitVBL();
+		//		gfxRedrawMouseCursor();
 
 		inMenu = false;
 		allowPlayerInput = 0;

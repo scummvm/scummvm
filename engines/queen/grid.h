@@ -29,7 +29,7 @@
 namespace Queen {
 
 enum GridScreen {
-	GS_ROOM  = 0,
+	GS_ROOM = 0,
 	GS_PANEL = 1,
 	GS_COUNT = 2
 };
@@ -38,7 +38,6 @@ class QueenEngine;
 
 class Grid {
 public:
-
 	Grid(QueenEngine *vm);
 	~Grid();
 
@@ -101,9 +100,7 @@ public:
 		MAX_AREAS_NUMBER = 11
 	};
 
-
 private:
-
 	struct ZoneSlot {
 		bool valid;
 		Box box;
@@ -129,7 +126,6 @@ private:
 
 	QueenEngine *_vm;
 };
-
 
 } // End of namespace Queen
 

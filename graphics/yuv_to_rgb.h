@@ -48,7 +48,7 @@ public:
 	/** The scale of the luminance values */
 	enum LuminanceScale {
 		kScaleFull, /** Luminance values range from [0, 255] */
-		kScaleITU   /** Luminance values range from [16, 235], the range from ITU-R BT.601 */
+		kScaleITU /** Luminance values range from [16, 235], the range from ITU-R BT.601 */
 	};
 
 	/**

@@ -20,30 +20,30 @@
  *
  */
 
-#include "neverhood/modules/module3000.h"
 #include "neverhood/modules/module3000_sprites.h"
+#include "neverhood/modules/module3000.h"
 
 namespace Neverhood {
 
 // Scene3009
 
 enum {
-	kCTSNull				= 0,
-	kCTSBreakWall			= 1,
-	kCTSWall				= 2,
-	kCTSEmptyness			= 3,
-	kCTSFireRobotNoTarget	= 4,
-	kCTSFireRobotIsTarget	= 5,
-	kCTSFireNoRobot			= 6,
-	kCTSRaiseCannon			= 7,
-	kCTSRightRobotNoTarget	= 8,
-	kCTSRightRobotIsTarget	= 9,
-	kCTSRightNoRobot		= 10,
-	kCTSLeftRobotNoTarget	= 11,
-	kCTSLeftRobotIsTarget	= 12,
-	kCTSLeftNoRobot			= 13,
-	kCTSLowerCannon			= 14,
-	kCTSCount				= 14
+	kCTSNull = 0,
+	kCTSBreakWall = 1,
+	kCTSWall = 2,
+	kCTSEmptyness = 3,
+	kCTSFireRobotNoTarget = 4,
+	kCTSFireRobotIsTarget = 5,
+	kCTSFireNoRobot = 6,
+	kCTSRaiseCannon = 7,
+	kCTSRightRobotNoTarget = 8,
+	kCTSRightRobotIsTarget = 9,
+	kCTSRightNoRobot = 10,
+	kCTSLeftRobotNoTarget = 11,
+	kCTSLeftRobotIsTarget = 12,
+	kCTSLeftNoRobot = 13,
+	kCTSLowerCannon = 14,
+	kCTSCount = 14
 };
 
 static const uint32 kSsScene3009SymbolEdgesFileHashes[] = {
@@ -57,12 +57,12 @@ static const uint32 kSsScene3009TargetLineFileHashes[] = {
 };
 
 static const NPoint kAsScene3009SymbolPoints[] = {
-	{289, 338},
-	{285, 375},
-	{284, 419},
-	{456, 372},
-	{498, 372},
-	{541, 372}
+	{ 289, 338 },
+	{ 285, 375 },
+	{ 284, 419 },
+	{ 456, 372 },
+	{ 498, 372 },
+	{ 541, 372 }
 };
 
 static const uint32 kAsScene3009SymbolFileHashes[] = {
@@ -101,7 +101,9 @@ static const uint32 kSsScene3009SymbolArrowFileHashes2[] = {
 };
 
 SsScene3009FireCannonButton::SsScene3009FireCannonButton(NeverhoodEngine *vm, Scene3009 *parentScene)
-	: StaticSprite(vm, 1400), _parentScene(parentScene), _isClicked(false) {
+  : StaticSprite(vm, 1400)
+  , _parentScene(parentScene)
+  , _isClicked(false) {
 
 	loadSprite(0x120B24B0, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
 	setVisible(false);
@@ -134,7 +136,8 @@ uint32 SsScene3009FireCannonButton::handleMessage(int messageNum, const MessageP
 }
 
 SsScene3009SymbolEdges::SsScene3009SymbolEdges(NeverhoodEngine *vm, int index)
-	: StaticSprite(vm, 1400), _blinkCountdown(0) {
+  : StaticSprite(vm, 1400)
+  , _blinkCountdown(0) {
 
 	loadSprite(kSsScene3009SymbolEdgesFileHashes[index], kSLFDefDrawOffset | kSLFDefPosition, 600);
 	if (getGlobalVar(V_ROBOT_HIT))
@@ -177,7 +180,7 @@ void SsScene3009SymbolEdges::startBlinking() {
 }
 
 SsScene3009TargetLine::SsScene3009TargetLine(NeverhoodEngine *vm, int index)
-	: StaticSprite(vm, 1400) {
+  : StaticSprite(vm, 1400) {
 
 	loadSprite(kSsScene3009TargetLineFileHashes[index], kSLFDefDrawOffset | kSLFDefPosition, 600);
 	setVisible(false);
@@ -189,7 +192,11 @@ void SsScene3009TargetLine::show() {
 }
 
 SsScene3009SymbolArrow::SsScene3009SymbolArrow(NeverhoodEngine *vm, Sprite *asSymbol, int index)
-	: StaticSprite(vm, 1400), _asSymbol(asSymbol), _index(index), _enabled(true), _countdown(0) {
+  : StaticSprite(vm, 1400)
+  , _asSymbol(asSymbol)
+  , _index(index)
+  , _enabled(true)
+  , _countdown(0) {
 
 	_incrDecr = _index % 2;
 
@@ -234,7 +241,9 @@ uint32 SsScene3009SymbolArrow::handleMessage(int messageNum, const MessageParam 
 }
 
 AsScene3009VerticalIndicator::AsScene3009VerticalIndicator(NeverhoodEngine *vm, Scene3009 *parentScene, int index)
-	: AnimatedSprite(vm, 1000), _parentScene(parentScene), _enabled(false) {
+  : AnimatedSprite(vm, 1000)
+  , _parentScene(parentScene)
+  , _enabled(false) {
 
 	_x = 300;
 	_y = getGlobalVar(V_CANNON_RAISED) ? 52 : 266;
@@ -267,7 +276,9 @@ uint32 AsScene3009VerticalIndicator::handleMessage(int messageNum, const Message
 }
 
 AsScene3009HorizontalIndicator::AsScene3009HorizontalIndicator(NeverhoodEngine *vm, Scene3009 *parentScene, uint32 cannonTargetStatus)
-	: AnimatedSprite(vm, 1000), _parentScene(parentScene), _enabled(false) {
+  : AnimatedSprite(vm, 1000)
+  , _parentScene(parentScene)
+  , _enabled(false) {
 
 	_x = getGlobalVar(V_CANNON_TURNED) ? 533 : 92;
 	_y = 150;
@@ -330,7 +341,9 @@ void AsScene3009HorizontalIndicator::stMoveRight() {
 }
 
 AsScene3009Symbol::AsScene3009Symbol(NeverhoodEngine *vm, Scene3009 *parentScene, int symbolPosition)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _symbolPosition(symbolPosition) {
+  : AnimatedSprite(vm, 1100)
+  , _parentScene(parentScene)
+  , _symbolPosition(symbolPosition) {
 
 	_symbolIndex = getSubVar(VA_CURR_CANNON_SYMBOLS, _symbolPosition);
 
@@ -404,9 +417,9 @@ static const uint32 kScene3010DeadBoltButtonFileHashes2[] = {
 };
 
 static const NPoint kAsScene3010DeadBoltPoints[] = {
-	{550, 307},
-	{564, 415},
-	{560, 514}
+	{ 550, 307 },
+	{ 564, 415 },
+	{ 560, 514 }
 };
 
 static const uint32 kAsScene3010DeadBoltFileHashes2[] = {
@@ -422,7 +435,12 @@ static const uint32 kAsScene3010DeadBoltFileHashes1[] = {
 };
 
 SsScene3010DeadBoltButton::SsScene3010DeadBoltButton(NeverhoodEngine *vm, Scene *parentScene, int buttonIndex, int initCountdown, bool initDisabled)
-	: StaticSprite(vm, 900), _parentScene(parentScene), _buttonLocked(false), _countdown1(0), _countdown2(0), _buttonIndex(buttonIndex) {
+  : StaticSprite(vm, 900)
+  , _parentScene(parentScene)
+  , _buttonLocked(false)
+  , _countdown1(0)
+  , _countdown2(0)
+  , _buttonIndex(buttonIndex) {
 
 	_buttonEnabled = getSubVar(VA_LOCKS_DISABLED, kScene3010ButtonNameHashes[_buttonIndex]) != 0;
 	createSurface(400, 88, 95);
@@ -450,7 +468,6 @@ void SsScene3010DeadBoltButton::update() {
 		setVisible(true);
 		setSprite(kScene3010DeadBoltButtonFileHashes2[_buttonIndex]);
 	}
-
 }
 
 uint32 SsScene3010DeadBoltButton::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -491,8 +508,13 @@ void SsScene3010DeadBoltButton::setCountdown(int count) {
 }
 
 AsScene3010DeadBolt::AsScene3010DeadBolt(NeverhoodEngine *vm, Scene *parentScene, int boltIndex, bool initUnlocked)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _boltIndex(boltIndex), _soundToggle(true),
-	_unlocked(false), _locked(false), _countdown(0) {
+  : AnimatedSprite(vm, 1100)
+  , _parentScene(parentScene)
+  , _boltIndex(boltIndex)
+  , _soundToggle(true)
+  , _unlocked(false)
+  , _locked(false)
+  , _countdown(0) {
 
 	_x = kAsScene3010DeadBoltPoints[_boltIndex].x;
 	_y = kAsScene3010DeadBoltPoints[_boltIndex].y;
@@ -515,7 +537,6 @@ AsScene3010DeadBolt::AsScene3010DeadBolt(NeverhoodEngine *vm, Scene *parentScene
 
 	_needRefresh = true;
 	AnimatedSprite::updatePosition();
-
 }
 
 void AsScene3010DeadBolt::update() {
@@ -633,7 +654,9 @@ static const uint32 kAsScene3011SymbolFileHashes[] = {
 };
 
 SsScene3011Button::SsScene3011Button(NeverhoodEngine *vm, Scene *parentScene, bool flag)
-	: StaticSprite(vm, 1400), _parentScene(parentScene), _countdown(0) {
+  : StaticSprite(vm, 1400)
+  , _parentScene(parentScene)
+  , _countdown(0) {
 
 	loadSprite(flag ? 0x11282020 : 0x994D0433, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
 	setVisible(false);
@@ -667,7 +690,10 @@ uint32 SsScene3011Button::handleMessage(int messageNum, const MessageParam &para
 }
 
 AsScene3011Symbol::AsScene3011Symbol(NeverhoodEngine *vm, int symbolIndex, bool largeSymbol)
-	: AnimatedSprite(vm, 1000), _symbolIndex(symbolIndex), _largeSymbol(largeSymbol), _isNoisy(false) {
+  : AnimatedSprite(vm, 1000)
+  , _symbolIndex(symbolIndex)
+  , _largeSymbol(largeSymbol)
+  , _isNoisy(false) {
 
 	if (_largeSymbol) {
 		_x = 310;

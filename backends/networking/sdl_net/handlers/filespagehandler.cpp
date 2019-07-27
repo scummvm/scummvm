@@ -36,43 +36,44 @@ FilesPageHandler::FilesPageHandler() {}
 FilesPageHandler::~FilesPageHandler() {}
 
 namespace {
-Common::String encodeDoubleQuotes(Common::String s) {
-	Common::String result = "";
-	for (uint32 i = 0; i < s.size(); ++i)
-		if (s[i] == '"') {
-			result += "\\\"";
-		} else {
-			result += s[i];
-		}
-	return result;
-}
+	Common::String encodeDoubleQuotes(Common::String s) {
+		Common::String result = "";
+		for (uint32 i = 0; i < s.size(); ++i)
+			if (s[i] == '"') {
+				result += "\\\"";
+			} else {
+				result += s[i];
+			}
+		return result;
+	}
 
-Common::String encodeHtmlEntities(Common::String s) {
-	Common::String result = "";
-	for (uint32 i = 0; i < s.size(); ++i)
-		if (s[i] == '<')
-			result += "&lt;";
-		else if (s[i] == '>')
-			result += "&gt;";
-		else if (s[i] == '&')
-			result += "&amp;";
-		else if (s[i] > (byte)0x7F)
-			result += Common::String::format("&#%d;", (int)s[i]);
-		else result += s[i];
-	return result;
-}
+	Common::String encodeHtmlEntities(Common::String s) {
+		Common::String result = "";
+		for (uint32 i = 0; i < s.size(); ++i)
+			if (s[i] == '<')
+				result += "&lt;";
+			else if (s[i] == '>')
+				result += "&gt;";
+			else if (s[i] == '&')
+				result += "&amp;";
+			else if (s[i] > (byte)0x7F)
+				result += Common::String::format("&#%d;", (int)s[i]);
+			else
+				result += s[i];
+		return result;
+	}
 
-Common::String getDisplayPath(Common::String s) {
-	Common::String result = "";
-	for (uint32 i = 0; i < s.size(); ++i)
-		if (s[i] == '\\')
-			result += '/';
-		else
-			result += s[i];
-	if (result == "")
-		return "/";
-	return result;
-}
+	Common::String getDisplayPath(Common::String s) {
+		Common::String result = "";
+		for (uint32 i = 0; i < s.size(); ++i)
+			if (s[i] == '\\')
+				result += '/';
+			else
+				result += s[i];
+		if (result == "")
+			return "/";
+		return result;
+	}
 }
 
 bool FilesPageHandler::listDirectory(Common::String path, Common::String &content, const Common::String &itemTemplate) {
@@ -180,32 +181,31 @@ void FilesPageHandler::addItem(Common::String &content, const Common::String &it
 /// public
 
 void FilesPageHandler::handle(Client &client) {
-	Common::String response =
-		"<html>" \
-		"<head><title>ScummVM</title></head>" \
-		"<body>" \
-		"<p>{create_directory_desc}</p>" \
-		"<form action=\"create\">" \
-		"<input type=\"hidden\" name=\"path\" value=\"{path}\"/>" \
-		"<input type=\"text\" name=\"directory_name\" value=\"\"/>" \
-		"<input type=\"submit\" value=\"{create_directory_button}\"/>" \
-		"</form>" \
-		"<hr/>" \
-		"<p>{upload_file_desc}</p>" \
-		"<form action=\"upload?path={path}\" method=\"post\" enctype=\"multipart/form-data\">" \
-		"<input type=\"file\" name=\"upload_file-f\" allowdirs multiple/>" \
-		"<span>{or_upload_directory_desc}</span>" \
-		"<input type=\"file\" name=\"upload_file-d\" directory webkitdirectory multiple/>" \
-		"<input type=\"submit\" value=\"{upload_file_button}\"/>" \
-		"</form>"
-		"<hr/>" \
-		"<h1>{index_of_directory}</h1>" \
-		"<table>{content}</table>" \
-		"</body>" \
-		"</html>";
+	Common::String response = "<html>"
+	                          "<head><title>ScummVM</title></head>"
+	                          "<body>"
+	                          "<p>{create_directory_desc}</p>"
+	                          "<form action=\"create\">"
+	                          "<input type=\"hidden\" name=\"path\" value=\"{path}\"/>"
+	                          "<input type=\"text\" name=\"directory_name\" value=\"\"/>"
+	                          "<input type=\"submit\" value=\"{create_directory_button}\"/>"
+	                          "</form>"
+	                          "<hr/>"
+	                          "<p>{upload_file_desc}</p>"
+	                          "<form action=\"upload?path={path}\" method=\"post\" enctype=\"multipart/form-data\">"
+	                          "<input type=\"file\" name=\"upload_file-f\" allowdirs multiple/>"
+	                          "<span>{or_upload_directory_desc}</span>"
+	                          "<input type=\"file\" name=\"upload_file-d\" directory webkitdirectory multiple/>"
+	                          "<input type=\"submit\" value=\"{upload_file_button}\"/>"
+	                          "</form>"
+	                          "<hr/>"
+	                          "<h1>{index_of_directory}</h1>"
+	                          "<table>{content}</table>"
+	                          "</body>"
+	                          "</html>";
 	Common::String itemTemplate = "<tr><td><img src=\"icons/{icon}\"/></td><td><a href=\"{link}\">{name}</a></td><td>{size}</td></tr>\n"; //TODO: load this template too?
 
-																																		  // load stylish response page from the archive
+	// load stylish response page from the archive
 	Common::SeekableReadStream *const stream = HandlerUtils::getArchiveFile(FILES_PAGE_NAME);
 	if (stream)
 		response = HandlerUtils::readEverythingFromStream(stream);

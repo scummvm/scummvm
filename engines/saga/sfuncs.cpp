@@ -24,26 +24,26 @@
 
 #include "saga/saga.h"
 
-#include "saga/gfx.h"
 #include "saga/actor.h"
 #include "saga/animation.h"
 #include "saga/console.h"
 #include "saga/events.h"
 #include "saga/font.h"
+#include "saga/gfx.h"
 #include "saga/interface.h"
-#include "saga/music.h"
 #include "saga/itedata.h"
+#include "saga/music.h"
 #include "saga/puzzle.h"
 #include "saga/render.h"
-#include "saga/sound.h"
-#include "saga/sndres.h"
 #include "saga/resource.h"
+#include "saga/sndres.h"
+#include "saga/sound.h"
 
-#include "saga/script.h"
 #include "saga/objectmap.h"
+#include "saga/script.h"
 
-#include "saga/scene.h"
 #include "saga/isomap.h"
+#include "saga/scene.h"
 
 #include "common/config-manager.h"
 
@@ -139,7 +139,7 @@ void Script::setupITEScriptFuncList() {
 void Script::sfPutString(SCRIPTFUNC_PARAMS) {
 	const char *str = thread->_strings->getString(thread->pop());
 
-	_vm->_console->debugPrintf("sfPutString: %s\n",str);
+	_vm->_console->debugPrintf("sfPutString: %s\n", str);
 	debug(0, "sfPutString: %s", str);
 }
 
@@ -271,47 +271,47 @@ void Script::sfScriptDoAction(SCRIPTFUNC_PARAMS) {
 		theObject = objectId = withObject;
 
 	switch (objectTypeId(objectId)) {
-		case kGameObjectObject:
-			obj = _vm->_actor->getObj(objectId);
-			scriptEntryPointNumber = obj->_scriptEntrypointNumber;
-			if (scriptEntryPointNumber <= 0) {
-				return;
-			}
-			moduleNumber = 0;
-			if (_vm->getGameId() == GID_IHNM)
-				moduleNumber = _vm->_scene->getScriptModuleNumber();
-			break;
-		case kGameObjectActor:
-			actor = _vm->_actor->getActor(objectId);
-			scriptEntryPointNumber = actor->_scriptEntrypointNumber;
-			if (scriptEntryPointNumber <= 0) {
-				return;
-			}
-			if (actor->_flags & (kProtagonist | kFollower)) {
-				moduleNumber = 0;
-			} else {
-				moduleNumber = _vm->_scene->getScriptModuleNumber();
-			}
-			if (_vm->getGameId() == GID_IHNM)
-				moduleNumber = _vm->_scene->getScriptModuleNumber();
-			break;
-		case kGameObjectHitZone:
-		case kGameObjectStepZone:
-			if (objectTypeId(objectId) == kGameObjectHitZone)
-				hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(objectId));
-			else
-				hitZone = _vm->_scene->_actionMap->getHitZone(objectIdToIndex(objectId));
-
-			if (hitZone == NULL)
-				return;
-
-			scriptEntryPointNumber = hitZone->getScriptNumber();
-			moduleNumber = _vm->_scene->getScriptModuleNumber();
-			break;
-		default:
-			// Unknown case, do nothing
-			warning("Script::sfScriptDoAction wrong object type 0x%X", objectId);
+	case kGameObjectObject:
+		obj = _vm->_actor->getObj(objectId);
+		scriptEntryPointNumber = obj->_scriptEntrypointNumber;
+		if (scriptEntryPointNumber <= 0) {
 			return;
+		}
+		moduleNumber = 0;
+		if (_vm->getGameId() == GID_IHNM)
+			moduleNumber = _vm->_scene->getScriptModuleNumber();
+		break;
+	case kGameObjectActor:
+		actor = _vm->_actor->getActor(objectId);
+		scriptEntryPointNumber = actor->_scriptEntrypointNumber;
+		if (scriptEntryPointNumber <= 0) {
+			return;
+		}
+		if (actor->_flags & (kProtagonist | kFollower)) {
+			moduleNumber = 0;
+		} else {
+			moduleNumber = _vm->_scene->getScriptModuleNumber();
+		}
+		if (_vm->getGameId() == GID_IHNM)
+			moduleNumber = _vm->_scene->getScriptModuleNumber();
+		break;
+	case kGameObjectHitZone:
+	case kGameObjectStepZone:
+		if (objectTypeId(objectId) == kGameObjectHitZone)
+			hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(objectId));
+		else
+			hitZone = _vm->_scene->_actionMap->getHitZone(objectIdToIndex(objectId));
+
+		if (hitZone == NULL)
+			return;
+
+		scriptEntryPointNumber = hitZone->getScriptNumber();
+		moduleNumber = _vm->_scene->getScriptModuleNumber();
+		break;
+	default:
+		// Unknown case, do nothing
+		warning("Script::sfScriptDoAction wrong object type 0x%X", objectId);
+		return;
 	}
 
 	event.type = kEvTOneshot;
@@ -320,9 +320,9 @@ void Script::sfScriptDoAction(SCRIPTFUNC_PARAMS) {
 	event.time = 0;
 	event.param = moduleNumber;
 	event.param2 = scriptEntryPointNumber;
-	event.param3 = action;		// Action
-	event.param4 = theObject;	// Object
-	event.param5 = withObject;	// With Object
+	event.param3 = action; // Action
+	event.param4 = theObject; // Object
+	event.param5 = withObject; // With Object
 	event.param6 = objectId;
 	_vm->_events->queue(event);
 }
@@ -470,16 +470,14 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 		_vm->_scene->changeScene(sceneNumber, entrance, (sceneNumber == ITE_SCENE_ENDCREDIT1) ? kTransitionFade : kTransitionNoFade);
 	}
 
-	if (_vm->_interface->getMode() == kPanelPlacard ||
-		_vm->_interface->getMode() == kPanelCutaway ||
-		_vm->_interface->getMode() == kPanelVideo) {
+	if (_vm->_interface->getMode() == kPanelPlacard || _vm->_interface->getMode() == kPanelCutaway || _vm->_interface->getMode() == kPanelVideo) {
 		_vm->_gfx->showCursor(true);
 		_vm->_interface->setMode(kPanelMain);
 	}
 
 	_pendingVerb = _vm->_script->getVerbType(kVerbNone);
 	_currentObject[0] = _currentObject[1] = ID_NOTHING;
-	showVerb();	// calls setStatusText("")
+	showVerb(); // calls setStatusText("")
 
 #ifdef ENABLE_IHNM
 	if (_vm->getGameId() == GID_IHNM) {
@@ -490,7 +488,6 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 		_vm->_gfx->setCursor(kCursorNormal);
 	}
 #endif
-
 }
 
 // Script function #17 (0x11)
@@ -836,8 +833,7 @@ void Script::sfCycleFrames(SCRIPTFUNC_PARAMS) {
 		actor->_actorFlags |= kActorRandom;
 	}
 	if (flags & kCycleReverse) {
-		if (_vm->getGameId() == GID_IHNM &&
-			_vm->_scene->currentChapterNumber() == 2 && _vm->_scene->currentSceneNumber() == 41) {
+		if (_vm->getGameId() == GID_IHNM && _vm->_scene->currentChapterNumber() == 2 && _vm->_scene->currentSceneNumber() == 41) {
 			// WORKAROUND: Prevent Benny from walking backwards after talking to the child via the monitor. This
 			// occurs in the original as well, and is fixed by not setting the kActorBackwards flag at this point
 		} else {
@@ -940,7 +936,7 @@ void Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 	ActorFrameRange *frameRange;
 
 	debug(1, "sfPlaceActor(id = 0x%X, x=%d, y=%d, dir=%d, frameType=%d, frameOffset=%d)", actorId, actor->_location.x,
-		  actor->_location.y, actor->_facingDirection, frameType, frameOffset);
+	      actor->_location.y, actor->_facingDirection, frameType, frameOffset);
 
 	if (frameType >= 0) {
 		frameRange = _vm->_actor->getActorFrameRange(actorId, frameType);
@@ -1038,7 +1034,6 @@ void Script::sfSimulSpeech2(SCRIPTFUNC_PARAMS) {
 	thread->wait(kWaitTypeSpeech);
 }
 
-
 // Script function #48 (0x30)
 // Param1: string rid
 void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
@@ -1132,7 +1127,6 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	event.op = kEventThreadWake;
 	event.param = kWaitTypePlacard;
 	_vm->_events->chain(eventColumns, event);
-
 }
 
 // Script function #49 (0x31)
@@ -1154,7 +1148,6 @@ void Script::sfResumeBgdAnim(SCRIPTFUNC_PARAMS) {
 
 	_vm->_anim->resume(animId, cycles);
 	debug(1, "sfResumeBgdAnimSpeed(%d, %d)", animId, cycles);
-
 }
 
 // Script function #52 (0x34)
@@ -1169,14 +1162,14 @@ void Script::sfThrowActor(SCRIPTFUNC_PARAMS) {
 	actor->_finalTarget.x = thread->pop();
 	actor->_finalTarget.y = thread->pop();
 	actor->_finalTarget.z = actor->_location.z;
-	thread->pop();	// not used
+	thread->pop(); // not used
 	int32 actionCycle = thread->pop();
 	int16 flags = thread->pop();
 
 	actor->_currentAction = kActionFall;
 	actor->_actionCycle = actionCycle;
-	actor->_fallAcceleration	= -20;
-	actor->_fallVelocity = - (actor->_fallAcceleration * actor->_actionCycle) / 2;
+	actor->_fallAcceleration = -20;
+	actor->_fallVelocity = -(actor->_fallAcceleration * actor->_actionCycle) / 2;
 	actor->_fallPosition = actor->_location.z << 4;
 
 	actor->_actionCycle--;
@@ -1191,10 +1184,8 @@ void Script::sfThrowActor(SCRIPTFUNC_PARAMS) {
 void Script::sfWaitWalk(SCRIPTFUNC_PARAMS) {
 	ActorData *actor = _vm->_actor->getActor(thread->pop());
 
-	if ((actor->_currentAction == kActionWalkToPoint) ||
-		(actor->_currentAction == kActionWalkToLink) ||
-		(actor->_currentAction == kActionFall)) {
-			thread->waitWalk(actor);
+	if ((actor->_currentAction == kActionWalkToPoint) || (actor->_currentAction == kActionWalkToLink) || (actor->_currentAction == kActionFall)) {
+		thread->waitWalk(actor);
 	}
 }
 
@@ -1367,7 +1358,6 @@ void Script::sfPickClimbOutPos(SCRIPTFUNC_PARAMS) {
 			protagonist->_location.z = 48;
 			break;
 		}
-
 	}
 }
 
@@ -1388,8 +1378,8 @@ void Script::sfTossRif(SCRIPTFUNC_PARAMS) {
 		protagonist->_finalTarget.z = -40;
 		protagonist->_currentAction = kActionFall;
 		protagonist->_actionCycle = 24;
-		protagonist->_fallAcceleration = - 20;
-		protagonist->_fallVelocity = - (protagonist->_fallAcceleration * 16) / 2 - (44 / 12);
+		protagonist->_fallAcceleration = -20;
+		protagonist->_fallVelocity = -(protagonist->_fallAcceleration * 16) / 2 - (44 / 12);
 		protagonist->_fallPosition = protagonist->_location.z << 4;
 		protagonist->_actionCycle--;
 	}

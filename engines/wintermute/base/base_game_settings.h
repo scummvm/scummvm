@@ -50,12 +50,13 @@ public:
 	char *getKeyFromStringTable(const char *str) const;
 
 	bool persist(BasePersistenceManager *persistMgr);
+
 private:
 	char *_gameFile;
 	int _resWidth;
 	int _resHeight;
 	BaseStringTable *_stringTable;
-// Not ever used:
+	// Not ever used:
 	int _TLMode;
 	bool _compressedSavegames;
 	Common::String _savedGameExt;
@@ -66,7 +67,7 @@ private:
 	bool _allowAboutTab;
 	bool _requireSound;
 	bool _allowDesktopRes;
-// TODO: This can probably be removed completely:
+	// TODO: This can probably be removed completely:
 	bool _richSavedGames;
 };
 

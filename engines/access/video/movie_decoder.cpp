@@ -31,9 +31,9 @@
 #include "access/video/movie_decoder.h"
 
 // for Test-Code
-#include "common/system.h"
 #include "common/events.h"
 #include "common/keyboard.h"
+#include "common/system.h"
 #include "engines/engine.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
@@ -43,7 +43,9 @@
 namespace Access {
 
 AccessVIDMovieDecoder::AccessVIDMovieDecoder()
-	: _stream(0), _videoTrack(0), _audioTrack(0) {
+  : _stream(0)
+  , _videoTrack(0)
+  , _audioTrack(0) {
 	_streamSeekOffset = 0;
 	_streamVideoIndex = 0;
 	_streamAudioIndex = 0;
@@ -54,10 +56,10 @@ AccessVIDMovieDecoder::~AccessVIDMovieDecoder() {
 }
 
 bool AccessVIDMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
-	uint32 videoCodecTag   = 0;
-	uint32 videoHeight     = 0;
-	uint32 videoWidth      = 0;
-	uint16 regularDelay    = 0;
+	uint32 videoCodecTag = 0;
+	uint32 videoHeight = 0;
+	uint32 videoWidth = 0;
+	uint16 regularDelay = 0;
 	uint32 audioSampleRate = 0;
 
 	close();
@@ -77,7 +79,7 @@ bool AccessVIDMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 	//  ?? [word]
 
 	videoCodecTag = _stream->readUint32BE();
-	if (videoCodecTag != MKTAG('V','I','D',0x00)) {
+	if (videoCodecTag != MKTAG('V', 'I', 'D', 0x00)) {
 		warning("AccessVIDMoviePlay: bad codec tag, not a video file?");
 		close();
 		return false;
@@ -180,7 +182,7 @@ bool AccessVIDMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 		IndexCacheEntry indexCacheEntry;
 
 		indexCacheEntry.chunkId = chunkId;
-		indexCacheEntry.offset  = chunkStartOffset;
+		indexCacheEntry.offset = chunkStartOffset;
 
 		_indexCacheTable.push_back(indexCacheEntry);
 
@@ -207,7 +209,8 @@ bool AccessVIDMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 void AccessVIDMovieDecoder::close() {
 	Video::VideoDecoder::close();
 
-	delete _stream; _stream = 0;
+	delete _stream;
+	_stream = 0;
 	_videoTrack = 0;
 
 	_indexCacheTable.clear();
@@ -217,14 +220,14 @@ void AccessVIDMovieDecoder::close() {
 // and also try to get at least 0.5 seconds of audio queued up
 void AccessVIDMovieDecoder::readNextPacket() {
 	uint32 currentMovieTime = getTime();
-	uint32 wantedAudioQueued  = currentMovieTime + 500; // always try to be 0.500 seconds in front of movie time
+	uint32 wantedAudioQueued = currentMovieTime + 500; // always try to be 0.500 seconds in front of movie time
 
 	uint32 streamIndex = 0;
 	IndexCacheEntry indexEntry;
 	bool currentlySeeking = false;
 
-	bool videoDone     = false;
-	bool audioDone     = false;
+	bool videoDone = false;
+	bool audioDone = false;
 
 	// Seek to smallest stream offset
 	if ((_streamVideoIndex <= _streamAudioIndex) || (!_audioTrack)) {
@@ -247,14 +250,14 @@ void AccessVIDMovieDecoder::readNextPacket() {
 		// Check, if stream-index is already cached
 		if (streamIndex < _indexCacheTable.size()) {
 			indexEntry.chunkId = _indexCacheTable[streamIndex].chunkId;
-			indexEntry.offset  = _indexCacheTable[streamIndex].offset;
+			indexEntry.offset = _indexCacheTable[streamIndex].offset;
 			currentlySeeking = false;
 
 		} else {
 			// read from file
 			_stream->seek(_streamSeekOffset);
 			indexEntry.chunkId = _stream->readByte();
-			indexEntry.offset  = _stream->pos();
+			indexEntry.offset = _stream->pos();
 			currentlySeeking = true;
 
 			// and store that as well
@@ -269,7 +272,7 @@ void AccessVIDMovieDecoder::readNextPacket() {
 		if (indexEntry.chunkId == kVIDMovieChunkId_EndOfFile)
 			break;
 
-//		warning("chunk %x", indexEntry.chunkId);
+		//		warning("chunk %x", indexEntry.chunkId);
 
 		switch (indexEntry.chunkId) {
 		case kVIDMovieChunkId_FullFrame:
@@ -641,11 +644,11 @@ bool AccessVIDMovieDecoder::StreamVideoTrack::hasDirtyPalette() const {
 	return _dirtyPalette;
 }
 
-AccessVIDMovieDecoder::StreamAudioTrack::StreamAudioTrack(uint32 sampleRate, Audio::Mixer::SoundType soundType) :
-		AudioTrack(soundType) {
+AccessVIDMovieDecoder::StreamAudioTrack::StreamAudioTrack(uint32 sampleRate, Audio::Mixer::SoundType soundType)
+  : AudioTrack(soundType) {
 	_totalAudioQueued = 0; // currently 0 milliseconds queued
 
-	_sampleRate  = sampleRate;
+	_sampleRate = sampleRate;
 	_stereo = false; // always mono
 
 	_audioStream = Audio::makeQueuingAudioStream(sampleRate, _stereo);

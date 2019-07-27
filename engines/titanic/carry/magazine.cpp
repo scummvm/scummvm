@@ -26,13 +26,14 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMagazine, CCarry)
-	ON_MESSAGE(UseWithCharMsg)
-	ON_MESSAGE(MouseDoubleClickMsg)
-	ON_MESSAGE(VisibleMsg)
-	ON_MESSAGE(UseWithOtherMsg)
+ON_MESSAGE(UseWithCharMsg)
+ON_MESSAGE(MouseDoubleClickMsg)
+ON_MESSAGE(VisibleMsg)
+ON_MESSAGE(UseWithOtherMsg)
 END_MESSAGE_MAP()
 
-CMagazine::CMagazine() : CCarry() {
+CMagazine::CMagazine()
+  : CCarry() {
 }
 
 void CMagazine::save(SimpleFile *file, int indent) {

@@ -59,7 +59,7 @@ struct SoundSample;
 
 class Animation {
 
-typedef void (Animation::* AnimationCallback)();
+	typedef void (Animation::*AnimationCallback)();
 
 public:
 	Animation(DraciEngine *v, int id, uint z, bool playing);
@@ -99,9 +99,9 @@ public:
 	void setRelative(int relx, int rely);
 	int getRelativeX() const { return _displacement.relX; }
 	int getRelativeY() const { return _displacement.relY; }
-	const Displacement &getDisplacement() const { return _displacement; }	// displacement of the whole animation
-	Displacement getCurrentFrameDisplacement() const;	// displacement of the current frame (includes _shift)
-	Common::Point getCurrentFramePosition() const;	// with displacement and shift applied
+	const Displacement &getDisplacement() const { return _displacement; } // displacement of the whole animation
+	Displacement getCurrentFrameDisplacement() const; // displacement of the current frame (includes _shift)
+	Common::Point getCurrentFramePosition() const; // with displacement and shift applied
 
 	void supportsQuickAnimation(bool val) { _canBeQuick = val; }
 
@@ -145,7 +145,7 @@ private:
 
 	uint _currentFrame;
 	uint _z;
-	Common::Point _shift;	// partial sum of _relativeShifts from the beginning of the animation until the current frame
+	Common::Point _shift; // partial sum of _relativeShifts from the beginning of the animation until the current frame
 	bool _hasChangedFrame;
 
 	Displacement _displacement;
@@ -173,11 +173,13 @@ private:
 	DraciEngine *_vm;
 };
 
-
 class AnimationManager {
 
 public:
-	AnimationManager(DraciEngine *vm) : _vm(vm), _lastIndex(-1), _animationPauseCounter(0) {}
+	AnimationManager(DraciEngine *vm)
+	  : _vm(vm)
+	  , _lastIndex(-1)
+	  , _animationPauseCounter(0) {}
 	~AnimationManager() { deleteAll(); }
 
 	void insert(Animation *anim, bool allocateIndex);

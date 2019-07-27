@@ -20,27 +20,19 @@
  *
  */
 
-#include "gnap/gnap.h"
-#include "gnap/gamesys.h"
-#include "gnap/resource.h"
 #include "gnap/scenes/arcade.h"
+#include "gnap/gamesys.h"
+#include "gnap/gnap.h"
+#include "gnap/resource.h"
 
 namespace Gnap {
 
 static const ObstacleDef kObstacleDefs[] = {
-	{0xB4, 15}, {0xCB, 14}, {0xCD, 13}, {0xCF, 15}, {0xBA, 14},
-	{0xCD, 13}, {0xCF, 12}, {0xCB, 15}, {0xBD, 13}, {0xCF, 12},
-	{0xCD, 11}, {0xCB, 15}, {0xB7, 12}, {0xCD, 11}, {0xCB, 10},
-	{0xCF, 15}, {0xCF, 14}, {0xBD, 13}, {0xCF, 12}, {0xCD, 11},
-	{0xCB, 15}, {0xCB, 13}, {0xB4, 12}, {0xCB, 11}, {0xCD, 10},
-	{0xCF, 15}, {0xCD, 12}, {0xBA, 12}, {0xCD, 12}, {0xCF, 12},
-	{0xCB, 15}, {0xCB,  9}, {0xCD,  9}, {0xCF,  9}, {0xCD,  9},
-	{0xCB,  9}, {0xCD,  9}, {0xCF,  5}, {0xBD, 13}, {0xCF,  8},
-	{0xCB,  8}, {0xCD, 15}, {0xB4,  1}, {0xBD,  7}, {0xCF,  7},
-	{0xCD,  7}, {0xCB,  7}, {0xCD,  7}, {0xCF, 15}, {0xCF, 15}
+	{ 0xB4, 15 }, { 0xCB, 14 }, { 0xCD, 13 }, { 0xCF, 15 }, { 0xBA, 14 }, { 0xCD, 13 }, { 0xCF, 12 }, { 0xCB, 15 }, { 0xBD, 13 }, { 0xCF, 12 }, { 0xCD, 11 }, { 0xCB, 15 }, { 0xB7, 12 }, { 0xCD, 11 }, { 0xCB, 10 }, { 0xCF, 15 }, { 0xCF, 14 }, { 0xBD, 13 }, { 0xCF, 12 }, { 0xCD, 11 }, { 0xCB, 15 }, { 0xCB, 13 }, { 0xB4, 12 }, { 0xCB, 11 }, { 0xCD, 10 }, { 0xCF, 15 }, { 0xCD, 12 }, { 0xBA, 12 }, { 0xCD, 12 }, { 0xCF, 12 }, { 0xCB, 15 }, { 0xCB, 9 }, { 0xCD, 9 }, { 0xCF, 9 }, { 0xCD, 9 }, { 0xCB, 9 }, { 0xCD, 9 }, { 0xCF, 5 }, { 0xBD, 13 }, { 0xCF, 8 }, { 0xCB, 8 }, { 0xCD, 15 }, { 0xB4, 1 }, { 0xBD, 7 }, { 0xCF, 7 }, { 0xCD, 7 }, { 0xCB, 7 }, { 0xCD, 7 }, { 0xCF, 15 }, { 0xCF, 15 }
 };
 
-Scene49::Scene49(GnapEngine *vm) : Scene(vm) {
+Scene49::Scene49(GnapEngine *vm)
+  : Scene(vm) {
 	_scoreBarFlash = false;
 	_scoreBarPos = -1;
 	_scoreLevel = -1;
@@ -62,7 +54,7 @@ Scene49::Scene49(GnapEngine *vm) : Scene(vm) {
 }
 
 int Scene49::init() {
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 1);
@@ -158,7 +150,7 @@ void Scene49::checkObstacles() {
 }
 
 void Scene49::updateObstacle(int id) {
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	Scene49Obstacle &obstacle = _obstacles[id];
 	obstacle._currId = obstacle._prevId;
@@ -186,28 +178,26 @@ void Scene49::updateObstacle(int id) {
 			if (obstacle._splashSequenceId) {
 				gameSys.setAnimation(obstacle._collisionSequenceId, obstacle._prevId, id + 2);
 				gameSys.insertSequence(obstacle._collisionSequenceId, obstacle._prevId,
-					obstacle._currSequenceId, obstacle._currId,
-					kSeqSyncWait, 0, 0, -50);
+				                       obstacle._currSequenceId, obstacle._currId,
+				                       kSeqSyncWait, 0, 0, -50);
 				obstacle._currSequenceId = obstacle._collisionSequenceId;
 				_vm->playSound(0xE0, false);
 				increaseScore(30);
-			} else if ((obstacle._laneNum == 1 && _truckSequenceId == 0xB0) ||
-				(obstacle._laneNum == 2 && (_truckSequenceId == 0xB1 || _truckSequenceId == 0xB2)) ||
-				(obstacle._laneNum == 3 && _truckSequenceId == 0xB3)) {
+			} else if ((obstacle._laneNum == 1 && _truckSequenceId == 0xB0) || (obstacle._laneNum == 2 && (_truckSequenceId == 0xB1 || _truckSequenceId == 0xB2)) || (obstacle._laneNum == 3 && _truckSequenceId == 0xB3)) {
 				gameSys.setAnimation(obstacle._passedSequenceId, obstacle._prevId, id + 2);
 				gameSys.insertSequence(obstacle._passedSequenceId, obstacle._prevId,
-					obstacle._currSequenceId, obstacle._currId,
-					kSeqSyncWait, 0, 0, -50);
+				                       obstacle._currSequenceId, obstacle._currId,
+				                       kSeqSyncWait, 0, 0, -50);
 				obstacle._currSequenceId = obstacle._passedSequenceId;
 			} else {
 				gameSys.setAnimation(obstacle._collisionSequenceId, 256, 0);
 				gameSys.setAnimation(obstacle._passedSequenceId, obstacle._prevId, id + 2);
 				gameSys.insertSequence(obstacle._passedSequenceId, obstacle._prevId,
-					obstacle._currSequenceId, obstacle._currId,
-					kSeqSyncWait, 0, 0, -50);
+				                       obstacle._currSequenceId, obstacle._currId,
+				                       kSeqSyncWait, 0, 0, -50);
 				gameSys.insertSequence(obstacle._collisionSequenceId, 256,
-					_truckSequenceId, _truckId,
-					kSeqSyncExists, 0, 0, -50);
+				                       _truckSequenceId, _truckId,
+				                       kSeqSyncExists, 0, 0, -50);
 				_truckSequenceId = obstacle._collisionSequenceId;
 				_truckId = 256;
 				obstacle._currSequenceId = obstacle._passedSequenceId;
@@ -217,8 +207,8 @@ void Scene49::updateObstacle(int id) {
 		} else {
 			gameSys.setAnimation(obstacle._passedSequenceId, obstacle._prevId, id + 2);
 			gameSys.insertSequence(obstacle._passedSequenceId, obstacle._prevId,
-				obstacle._currSequenceId, obstacle._currId,
-				kSeqSyncWait, 0, 0, -50);
+			                       obstacle._currSequenceId, obstacle._currId,
+			                       kSeqSyncWait, 0, 0, -50);
 			obstacle._currSequenceId = obstacle._passedSequenceId;
 		}
 	} else if (obstacle._currSequenceId == obstacle._passedSequenceId) {
@@ -226,8 +216,8 @@ void Scene49::updateObstacle(int id) {
 			if (obstacle._splashSequenceId) {
 				gameSys.setAnimation(obstacle._collisionSequenceId, obstacle._prevId, id + 2);
 				gameSys.insertSequence(obstacle._collisionSequenceId, obstacle._prevId,
-					obstacle._currSequenceId, obstacle._currId,
-					kSeqSyncWait, 0, 0, -50);
+				                       obstacle._currSequenceId, obstacle._currId,
+				                       kSeqSyncWait, 0, 0, -50);
 				obstacle._currSequenceId = obstacle._collisionSequenceId;
 				_vm->playSound(0xE0, false);
 				increaseScore(30);
@@ -235,8 +225,8 @@ void Scene49::updateObstacle(int id) {
 		} else if (obstacle._splashSequenceId) {
 			gameSys.setAnimation(obstacle._splashSequenceId, obstacle._prevId, id + 2);
 			gameSys.insertSequence(obstacle._splashSequenceId, obstacle._prevId,
-				obstacle._currSequenceId, obstacle._currId,
-				kSeqSyncWait, 0, 0, -50);
+			                       obstacle._currSequenceId, obstacle._currId,
+			                       kSeqSyncWait, 0, 0, -50);
 			obstacle._currSequenceId = obstacle._splashSequenceId;
 		}
 	} else {
@@ -284,7 +274,7 @@ void Scene49::clearObstacle(int index) {
 }
 
 void Scene49::run() {
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	bool animToggle6 = false;
 	bool animToggle5 = false;
@@ -508,7 +498,7 @@ void Scene49::run() {
 }
 
 void Scene49::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	for (int i = 0; i < 5; ++i) {
 		if (gameSys.getAnimationStatus(i + 2) == 2) {
@@ -525,7 +515,8 @@ void Scene49::updateAnimations() {
 
 /*****************************************************************************/
 
-Scene50::Scene50(GnapEngine *vm) : Scene(vm) {
+Scene50::Scene50(GnapEngine *vm)
+  : Scene(vm) {
 	_fightDone = false;
 
 	_roundNum = -1;
@@ -718,7 +709,7 @@ bool Scene50::updateEnergyBars(int newLeftBarPos, int newRightBarPos) {
 }
 
 void Scene50::waitForAnim(int animationIndex) {
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	while (gameSys.getAnimationStatus(animationIndex) != 2 && !_vm->_gameDone)
 		_vm->gameUpdateTick();
@@ -898,9 +889,9 @@ void Scene50::playWinBadgeAnim(int tongueNum) {
 
 	if (tongueNum == 1) {
 		if (_leftTongueRoundsWon == 1)
-	  		sequenceId = 0xC3;
+			sequenceId = 0xC3;
 		else
-	  		sequenceId = 0xC4;
+			sequenceId = 0xC4;
 	} else {
 		if (_rightTongueRoundsWon == 1)
 			sequenceId = 0xC5;
@@ -956,8 +947,7 @@ void Scene50::run() {
 
 		updateAnimations();
 
-		if (updateCountdown() ||
-			updateEnergyBars(_leftTongueEnergy, _rightTongueEnergy)) {
+		if (updateCountdown() || updateEnergyBars(_leftTongueEnergy, _rightTongueEnergy)) {
 			bool v0;
 			if (_rightTongueEnergy < _leftTongueEnergy)
 				v0 = tongueWinsRound(1);
@@ -1008,7 +998,8 @@ static const int kDigitPositions[4] = {
 	0x76	Platypus jumping (right)
 */
 
-Scene51::Scene51(GnapEngine *vm) : Scene(vm) {
+Scene51::Scene51(GnapEngine *vm)
+  : Scene(vm) {
 	_dropLoseCash = false;
 
 	_cashAmount = -1;
@@ -1203,7 +1194,7 @@ void Scene51::dropNextItem() {
 
 	_vm->_gameSys->setAnimation(_items[index]._currSequenceId, _items[index]._id, index + 1);
 	_vm->_gameSys->insertSequence(_items[index]._currSequenceId, _items[index]._id, 0, 0,
-		kSeqNone, 0, _items[index]._x, _items[index]._y);
+	                              kSeqNone, 0, _items[index]._x, _items[index]._y);
 
 	_vm->_timers[0] = _dropSpeedTicks;
 
@@ -1613,8 +1604,8 @@ void Scene51::updateCash(int amount) {
 void Scene51::drawDigit(int digit, int position) {
 	if (digit != _digits[position]) {
 		_vm->_gameSys->insertSequence(kDigitSequenceIds[digit], 253 + position,
-			_digitSequenceIds[position], 253 + position,
-			kSeqSyncWait, 0, kDigitPositions[position] - 20, -20);
+		                              _digitSequenceIds[position], 253 + position,
+		                              kSeqSyncWait, 0, kDigitPositions[position] - 20, -20);
 		_digitSequenceIds[position] = kDigitSequenceIds[digit];
 		_digits[position] = digit;
 	}
@@ -1852,7 +1843,8 @@ void Scene51::run() {
 
 /*****************************************************************************/
 
-Scene52::Scene52(GnapEngine *vm) : Scene(vm) {
+Scene52::Scene52(GnapEngine *vm)
+  : Scene(vm) {
 	_gameScore = 0;
 	_aliensInitialized = false;
 	_alienDirection = 0;
@@ -2045,7 +2037,7 @@ void Scene52::fireAlienCannon() {
 		_alienCannonFired[cannonNum] = 1;
 		_vm->_gameSys->setAnimation(_alienCannonSequenceIds[cannonNum], _alienCannonIds[cannonNum] + 256, cannonNum + 9);
 		_vm->_gameSys->insertSequence(_alienCannonSequenceIds[cannonNum], _alienCannonIds[cannonNum] + 256, 0, 0,
-			kSeqNone, 0, _alienCannonPosX[cannonNum], _alienCannonPosY[cannonNum]);
+		                              kSeqNone, 0, _alienCannonPosX[cannonNum], _alienCannonPosY[cannonNum]);
 		_alienCannonPosY[cannonNum] -= 13;
 		_vm->_timers[2] = 5;
 	}
@@ -2099,7 +2091,7 @@ void Scene52::updateAlienCannons() {
 					_alienCannonFired[i] = 0;
 				} else {
 					_vm->_gameSys->insertSequence(_alienCannonSequenceIds[i], 1 - _alienCannonIds[i] + 256, 0, 0,
-						kSeqNone, 0, _alienCannonPosX[i], _alienCannonPosY[i]);
+					                              kSeqNone, 0, _alienCannonPosX[i], _alienCannonPosY[i]);
 					_vm->_gameSys->setAnimation(_alienCannonSequenceIds[i], 1 - _alienCannonIds[i] + 256, i + 9);
 					_alienCannonIds[i] = 1 - _alienCannonIds[i];
 					_alienCannonPosY[i] += 13;
@@ -2263,7 +2255,7 @@ int Scene52::updateHitAlien() {
 			_items[rowNum][hitAlienNum] = -2;
 			_vm->playSound(0x2C, false);
 			_vm->_gameSys->insertSequence(0x21, 266, 0, 0,
-				kSeqNone, 0, _alienLeftX + hitAlienNum * _alienWidth + _alienRowXOfs[rowNum] - 10, ya - _alienHeight);
+			                              kSeqNone, 0, _alienLeftX + hitAlienNum * _alienWidth + _alienRowXOfs[rowNum] - 10, ya - _alienHeight);
 			result = 1;
 		}
 	}

@@ -23,14 +23,16 @@
 #ifndef MADS_ASSETS_H
 #define MADS_ASSETS_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 #include "mads/palette.h"
 
 namespace MADS {
 
 enum AssetFlags {
-	ASSET_TRANSLATE = 1, ASSET_HEADER_ONLY = 2, ASSET_CHAR_INFO = 4,
+	ASSET_TRANSLATE = 1,
+	ASSET_HEADER_ONLY = 2,
+	ASSET_CHAR_INFO = 4,
 	ASSET_SPINNING_OBJECT = 8
 };
 
@@ -77,9 +79,11 @@ private:
 	 * Load the data for the asset
 	 */
 	void load(Common::SeekableReadStream *stream, int flags);
+
 public:
 	SpriteSetCharInfo *_charInfo;
 	int _usageIndex;
+
 public:
 	/**
 	 * Constructor
@@ -99,9 +103,18 @@ public:
 	int getCount() { return _frameCount; }
 	int getFrameRate() const { return _frameRate; }
 	int getPixelSpeed() const { return _pixelSpeed; }
-	Common::Point getFramePos(int index) { assert (index < _frameCount); return Common::Point(_frames[index]._bounds.left, _frames[index]._bounds.top); }
-	int getFrameWidth(int index) { assert (index < _frameCount); return _frames[index]._bounds.width(); }
-	int getFrameHeight(int index) { assert (index < _frameCount); return _frames[index]._bounds.height(); }
+	Common::Point getFramePos(int index) {
+		assert(index < _frameCount);
+		return Common::Point(_frames[index]._bounds.left, _frames[index]._bounds.top);
+	}
+	int getFrameWidth(int index) {
+		assert(index < _frameCount);
+		return _frames[index]._bounds.width();
+	}
+	int getFrameHeight(int index) {
+		assert(index < _frameCount);
+		return _frames[index]._bounds.height();
+	}
 	int getMaxFrameWidth() const { return _maxWidth; }
 	int getMaxFrameHeight() const { return _maxHeight; }
 	MSprite *getFrame(int frameIndex);

@@ -38,61 +38,60 @@ class AmbientSounds {
 	static const int kLoopingSounds = 3;
 
 	struct NonLoopingSound {
-		bool           isActive;
+		bool isActive;
 		Common::String name;
-		int32          hash;
-		int            audioPlayerTrack;
-		uint32         timeMin;
-		uint32         timeMax;
-		uint32         nextPlayTimeStart;
-		uint32         nextPlayTimeDiff;
-		int            volumeMin;
-		int            volumeMax;
-		int            volume;
-		int            panStartMin;
-		int            panStartMax;
-		int            panEndMin;
-		int            panEndMax;
-		int            priority;
+		int32 hash;
+		int audioPlayerTrack;
+		uint32 timeMin;
+		uint32 timeMax;
+		uint32 nextPlayTimeStart;
+		uint32 nextPlayTimeDiff;
+		int volumeMin;
+		int volumeMax;
+		int volume;
+		int panStartMin;
+		int panStartMax;
+		int panEndMin;
+		int panEndMax;
+		int priority;
 	};
 
 	struct LoopingSound {
-		bool           isActive;
+		bool isActive;
 		Common::String name;
-		int32          hash;
-		int            audioPlayerTrack;
-		int            volume;
-		int            pan;
+		int32 hash;
+		int audioPlayerTrack;
+		int volume;
+		int pan;
 	};
 
 	BladeRunnerEngine *_vm;
 
 	NonLoopingSound *_nonLoopingSounds;
-	LoopingSound    *_loopingSounds;
-	int              _ambientVolume;
+	LoopingSound *_loopingSounds;
+	int _ambientVolume;
 
 public:
 	AmbientSounds(BladeRunnerEngine *vm);
 	~AmbientSounds();
 
 	void addSound(
-		int sfxId,
-		uint32 timeMin, uint32 timeMax,
-		int volumeMin, int volumeMax,
-		int panStartMin, int panStartMax,
-		int panEndMin, int panEndMax,
-		int priority, int unk
-	);
+	  int sfxId,
+	  uint32 timeMin, uint32 timeMax,
+	  int volumeMin, int volumeMax,
+	  int panStartMin, int panStartMax,
+	  int panEndMin, int panEndMax,
+	  int priority, int unk);
 	void removeNonLoopingSound(int sfxId, bool stopPlaying);
 	void removeAllNonLoopingSounds(bool stopPlaying);
 
 	void addSpeech(
-		int actorId, int sentenceId,
-		uint32 timeMin, uint32 timeMax,
-		int volumeMin, int volumeMax,
-		int panStartMin, int panStartMax,
-		int panEndMin, int panEndMax,
-		int priority, int unk);
+	  int actorId, int sentenceId,
+	  uint32 timeMin, uint32 timeMax,
+	  int volumeMin, int volumeMax,
+	  int panStartMin, int panStartMax,
+	  int panEndMin, int panEndMax,
+	  int priority, int unk);
 	void playSound(int sfxId, int volume, int panStart, int panEnd, int priority);
 	void playSpeech(int actorId, int sentenceId, int volume, int panStart, int panEnd, int priority);
 
@@ -120,12 +119,12 @@ private:
 	int findLoopingTrackByHash(int32 hash) const;
 
 	void addSoundByName(
-		const Common::String &name,
-		uint32 timeMin, uint32 timeMax,
-		int volumeMin, int volumeMax,
-		int panStartMin, int panStartMax,
-		int panEndMin, int panEndMax,
-		int priority, int unk);
+	  const Common::String &name,
+	  uint32 timeMin, uint32 timeMax,
+	  int volumeMin, int volumeMax,
+	  int panStartMin, int panStartMax,
+	  int panEndMin, int panEndMax,
+	  int priority, int unk);
 
 	void removeNonLoopingSoundByIndex(int index, bool stopPlaying);
 	void removeLoopingSoundByIndex(int index, uint32 delay);

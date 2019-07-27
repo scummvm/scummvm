@@ -23,18 +23,19 @@
 #include "common/str.h"
 #include "common/stream.h"
 
-#include "gob/gob.h"
-#include "gob/dataio.h"
-#include "gob/draw.h"
-#include "gob/decfile.h"
 #include "gob/anifile.h"
 #include "gob/aniobject.h"
+#include "gob/dataio.h"
+#include "gob/decfile.h"
+#include "gob/draw.h"
+#include "gob/gob.h"
 
 #include "gob/pregob/seqfile.h"
 
 namespace Gob {
 
-SEQFile::SEQFile(GobEngine *vm, const Common::String &fileName) : _vm(vm) {
+SEQFile::SEQFile(GobEngine *vm, const Common::String &fileName)
+  : _vm(vm) {
 	for (uint i = 0; i < kObjectCount; i++)
 		_objects[i].object = 0;
 
@@ -101,7 +102,7 @@ void SEQFile::load(Common::SeekableReadStream &seq) {
 		const uint16 frame = seq.readUint16LE();
 		const uint16 index = seq.readUint16LE();
 
-		_bgKeys[i].frame      = frame;
+		_bgKeys[i].frame = frame;
 		_bgKeys[i].background = index < _backgrounds.size() ? _backgrounds[index] : 0;
 	}
 
@@ -120,16 +121,15 @@ void SEQFile::load(Common::SeekableReadStream &seq) {
 			uint16 animation;
 			const ANIFile *ani = findANI(index, animation);
 
-			_animKeys.back().object    = i;
-			_animKeys.back().frame     = frame;
-			_animKeys.back().ani       = ani;
+			_animKeys.back().object = i;
+			_animKeys.back().frame = frame;
+			_animKeys.back().ani = ani;
 			_animKeys.back().animation = animation;
-			_animKeys.back().x         = seq.readSint16LE();
-			_animKeys.back().y         = seq.readSint16LE();
-			_animKeys.back().order     = seq.readSint16LE();
+			_animKeys.back().x = seq.readSint16LE();
+			_animKeys.back().y = seq.readSint16LE();
+			_animKeys.back().order = seq.readSint16LE();
 		}
 	}
-
 }
 
 const ANIFile *SEQFile::findANI(uint16 index, uint16 &animation) {
@@ -165,7 +165,7 @@ void SEQFile::play(bool abortable, uint16 endFrame, uint16 frameRate) {
 		delete _objects[i].object;
 
 		_objects[i].object = 0;
-		_objects[i].order  = 0;
+		_objects[i].order = 0;
 	}
 
 	for (Loops::iterator l = _loops.begin(); l != _loops.end(); ++l)
@@ -339,11 +339,11 @@ void SEQFile::seekFrame(uint16 frame) {
 uint SEQFile::addLoop(uint16 startFrame, uint16 endFrame, uint16 loopCount) {
 	_loops.resize(_loops.size() + 1);
 
-	_loops.back().startFrame  = startFrame;
-	_loops.back().endFrame    = endFrame;
-	_loops.back().loopCount   = loopCount;
+	_loops.back().startFrame = startFrame;
+	_loops.back().endFrame = endFrame;
+	_loops.back().loopCount = loopCount;
 	_loops.back().currentLoop = 0;
-	_loops.back().empty       = false;
+	_loops.back().empty = false;
 
 	return _loops.size() - 1;
 }

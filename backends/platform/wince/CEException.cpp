@@ -92,25 +92,25 @@ void CEException::dumpException(HANDLE file, EXCEPTION_RECORD *exceptionRecord) 
 #if (_WIN32_WCE >= 300)
 	writeBreak(file);
 	switch (exceptionRecord->ExceptionCode) {
-	case EXCEPTION_ACCESS_VIOLATION :
+	case EXCEPTION_ACCESS_VIOLATION:
 		strcpy(exceptionName, "Access Violation");
 		break;
-	case EXCEPTION_ARRAY_BOUNDS_EXCEEDED :
+	case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:
 		strcpy(exceptionName, "Array Bounds Exceeded");
 		break;
-	case EXCEPTION_DATATYPE_MISALIGNMENT :
+	case EXCEPTION_DATATYPE_MISALIGNMENT:
 		strcpy(exceptionName, "Datatype Misalignment");
 		break;
-	case EXCEPTION_IN_PAGE_ERROR :
+	case EXCEPTION_IN_PAGE_ERROR:
 		strcpy(exceptionName, "In Page Error");
 		break;
-	case EXCEPTION_INT_DIVIDE_BY_ZERO :
+	case EXCEPTION_INT_DIVIDE_BY_ZERO:
 		strcpy(exceptionName, "Int Divide By Zero");
 		break;
-	case EXCEPTION_INT_OVERFLOW :
+	case EXCEPTION_INT_OVERFLOW:
 		strcpy(exceptionName, "Int Overflow");
 		break;
-	case EXCEPTION_STACK_OVERFLOW :
+	case EXCEPTION_STACK_OVERFLOW:
 		strcpy(exceptionName, "Stack Overflow");
 		break;
 	default:

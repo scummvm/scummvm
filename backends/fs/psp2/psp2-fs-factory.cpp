@@ -20,9 +20,9 @@
  *
  */
 
+#include "backends/fs/psp2/psp2-fs-factory.h"
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "backends/fs/posix/posix-fs.h"
-#include "backends/fs/psp2/psp2-fs-factory.h"
 
 AbstractFSNode *PSP2FilesystemFactory::makeRootFileNode() const {
 	return new POSIXFilesystemNode("/");

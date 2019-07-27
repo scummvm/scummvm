@@ -20,15 +20,15 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "mads/scene_data.h"
-#include "mads/mads.h"
+#include "common/scummsys.h"
 #include "mads/compression.h"
-#include "mads/screen.h"
-#include "mads/resources.h"
 #include "mads/dragonsphere/dragonsphere_scenes.h"
+#include "mads/mads.h"
 #include "mads/nebular/nebular_scenes.h"
 #include "mads/phantom/phantom_scenes.h"
+#include "mads/resources.h"
+#include "mads/screen.h"
 
 namespace MADS {
 
@@ -96,7 +96,8 @@ void SceneInfo::SpriteInfo::load(Common::SeekableReadStream *f) {
 
 /*------------------------------------------------------------------------*/
 
-SceneInfo::SceneInfo(MADSEngine *vm) : _vm(vm) {
+SceneInfo::SceneInfo(MADSEngine *vm)
+  : _vm(vm) {
 	_sceneId = 0;
 	_artFileNum = 0;
 	_depthStyle = 0;
@@ -128,7 +129,7 @@ SceneInfo *SceneInfo::init(MADSEngine *vm) {
 }
 
 void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
-		int flags, DepthSurface &depthSurface, BaseSurface &bgSurface) {
+                     int flags, DepthSurface &depthSurface, BaseSurface &bgSurface) {
 	bool sceneFlag = sceneId >= 0;
 
 	// Figure out the resource to use
@@ -157,7 +158,7 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 	if (_vm->getGameID() == GType_RexNebular) {
 		_sceneId = infoStream->readUint16LE();
 	} else {
-		infoStream->skip(6);	// actual scene ID (string)
+		infoStream->skip(6); // actual scene ID (string)
 		_sceneId = sceneId;
 	}
 
@@ -289,7 +290,7 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 
 		MSprite *spr = asset->getFrame(si._frameNumber);
 		bgSurface.copyFrom(*spr, si._position, si._depth, &depthSurface,
-			si._scale, false, spr->getTransparencyIndex());
+		                   si._scale, false, spr->getTransparencyIndex());
 	}
 
 	// Free the sprite sets
@@ -334,7 +335,7 @@ void SceneInfo::loadPalette(int sceneId, int artFileNum, const Common::String &r
 		}
 
 		_usageIndex = _vm->_palette->_paletteUsage.process(artHeader._palette,
-			(flags & 0xF800) | 0x8000);
+		                                                   (flags & 0xF800) | 0x8000);
 		if (_usageIndex > 0) {
 			_vm->_palette->_paletteUsage.transform(artHeader._palette);
 
@@ -368,7 +369,7 @@ void SceneInfo::loadMadsV1Background(int sceneId, const Common::String &resName,
 	MadsPack artResource(&artFile);
 
 	// Read inhh the background surface data
-	assert(_width  && _height == bgSurface.h);
+	assert(_width && _height == bgSurface.h);
 	stream = artResource.getItemStream(1);
 	stream->read(bgSurface.getPixels(), bgSurface.w * bgSurface.h);
 	delete stream;
@@ -415,7 +416,7 @@ void SceneInfo::loadMadsV2Background(int sceneId, const Common::String &resName,
 	delete mapStream;
 
 	// Obtain tile map information
-	typedef Common::List<Common::SharedPtr<MSurface> > TileSetList;
+	typedef Common::List<Common::SharedPtr<MSurface>> TileSetList;
 	typedef TileSetList::iterator TileSetIterator;
 	TileSetList tileSet;
 	uint16 *tileMap = new uint16[tileCountMap];
@@ -468,7 +469,7 @@ void SceneInfo::loadMadsV2Background(int sceneId, const Common::String &resName,
 	for (int i = 0; i < tileCount; i++) {
 		tileDataUncomp->seek(i * 4, SEEK_SET);
 		uint32 tileOfs = tileDataUncomp->readUint32LE();
-		MSurface* newTile = new MSurface(tileWidth, tileHeight);
+		MSurface *newTile = new MSurface(tileWidth, tileHeight);
 
 		if (i == tileCount - 1)
 			compressedTileDataSize = tileDataFile.size() - tileOfs;
@@ -484,7 +485,7 @@ void SceneInfo::loadMadsV2Background(int sceneId, const Common::String &resName,
 		tileDataFile.seek(tileDataPack.getDataOffset() + tileOfs, SEEK_SET);
 		tileDataFile.read(compressedTileData, compressedTileDataSize);
 
-		fab.decompress(compressedTileData, compressedTileDataSize, (byte*)newTile->getPixels(), tileWidth * tileHeight);
+		fab.decompress(compressedTileData, compressedTileDataSize, (byte *)newTile->getPixels(), tileWidth * tileHeight);
 		tileSet.push_back(TileSetList::value_type(newTile));
 		delete[] compressedTileData;
 	}
@@ -516,7 +517,8 @@ void SceneInfo::loadMadsV2Background(int sceneId, const Common::String &resName,
 
 /*------------------------------------------------------------------------*/
 
-SceneLogic::SceneLogic(MADSEngine *vm) : _vm(vm) {
+SceneLogic::SceneLogic(MADSEngine *vm)
+  : _vm(vm) {
 	_scene = &_vm->_game->_scene;
 }
 

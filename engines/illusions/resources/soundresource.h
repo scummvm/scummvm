@@ -32,10 +32,12 @@ class IllusionsEngine;
 
 class SoundGroupResourceLoader : public BaseResourceLoader {
 public:
-	SoundGroupResourceLoader(IllusionsEngine *vm) : _vm(vm) {}
+	SoundGroupResourceLoader(IllusionsEngine *vm)
+	  : _vm(vm) {}
 	virtual ~SoundGroupResourceLoader() {}
 	virtual void load(Resource *resource);
 	virtual bool isFlag(int flag);
+
 protected:
 	IllusionsEngine *_vm;
 };
@@ -54,6 +56,7 @@ public:
 	SoundGroupResource();
 	~SoundGroupResource();
 	void load(byte *data, uint32 dataSize);
+
 public:
 	uint _soundEffectsCount;
 	SoundEffect *_soundEffects;
@@ -64,6 +67,7 @@ public:
 	SoundGroupInstance(IllusionsEngine *vm);
 	virtual void load(Resource *resource);
 	virtual void unload();
+
 public:
 	IllusionsEngine *_vm;
 	SoundGroupResource *_soundGroupResource;

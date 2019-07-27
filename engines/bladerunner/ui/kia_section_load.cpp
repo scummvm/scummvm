@@ -24,11 +24,11 @@
 
 #include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/game_constants.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/savefile.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/time.h"
-#include "bladerunner/game_constants.h"
 #include "bladerunner/ui/kia.h"
 #include "bladerunner/ui/kia_shapes.h"
 #include "bladerunner/ui/ui_container.h"
@@ -39,9 +39,10 @@
 
 namespace BladeRunner {
 
-KIASectionLoad::KIASectionLoad(BladeRunnerEngine *vm) : KIASectionBase(vm) {
+KIASectionLoad::KIASectionLoad(BladeRunnerEngine *vm)
+  : KIASectionBase(vm) {
 	_uiContainer = new UIContainer(_vm);
-	_scrollBox   = new UIScrollBox(_vm, scrollBoxCallback, this, 1025, 0, true, Common::Rect(155, 158, 461, 346), Common::Rect(506, 160, 506, 350));
+	_scrollBox = new UIScrollBox(_vm, scrollBoxCallback, this, 1025, 0, true, Common::Rect(155, 158, 461, 346), Common::Rect(506, 160, 506, 350));
 	_uiContainer->add(_scrollBox);
 
 	_timeLast = 0u;

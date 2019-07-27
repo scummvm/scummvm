@@ -52,7 +52,7 @@ protected:
 
 	void insertDisk(byte volume);
 	virtual DataBlockPtr readDataBlockPtr(Common::ReadStream &f) const;
-	virtual void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const { }
+	virtual void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const {}
 	void loadItems(Common::ReadStream &stream);
 	void loadRooms(Common::ReadStream &stream, byte count);
 	void loadMessages(Common::ReadStream &stream, byte count);
@@ -74,7 +74,7 @@ protected:
 	int o_setPic(ScriptEnv &e) override;
 	virtual int o_moveAllItems(ScriptEnv &e);
 	int o_save(ScriptEnv &e) override;
-	int o_restore(ScriptEnv &e) override ;
+	int o_restore(ScriptEnv &e) override;
 	int o_placeItem(ScriptEnv &e) override;
 	virtual int o_tellTime(ScriptEnv &e);
 	virtual int o_setRoomFromVar(ScriptEnv &e);

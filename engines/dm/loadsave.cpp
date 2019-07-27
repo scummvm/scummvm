@@ -24,21 +24,21 @@
 * Based on the Reverse Engineering work of Christophe Fontanel,
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
-#include "common/system.h"
 #include "common/savefile.h"
+#include "common/system.h"
 #include "common/translation.h"
 #include "graphics/thumbnail.h"
 #include "gui/saveload.h"
 
+#include "dm/champion.h"
+#include "dm/dialog.h"
 #include "dm/dm.h"
 #include "dm/dungeonman.h"
-#include "dm/timeline.h"
-#include "dm/group.h"
-#include "dm/champion.h"
-#include "dm/menus.h"
 #include "dm/eventman.h"
+#include "dm/group.h"
+#include "dm/menus.h"
 #include "dm/projexpl.h"
-#include "dm/dialog.h"
+#include "dm/timeline.h"
 
 namespace DM {
 
@@ -156,7 +156,6 @@ LoadgameResult DMEngine::loadgame(int16 slot) {
 	return kDMLoadgameSuccess;
 }
 
-
 void DMEngine::saveGame() {
 	_menuMan->drawDisabledMenu();
 	_eventMan->showMouse();
@@ -235,7 +234,6 @@ void DMEngine::saveGame() {
 			saveAndPlayChoice = kCancel;
 	}
 
-
 	if (saveAndPlayChoice == kSaveAndQuit) {
 		_eventMan->hideMouse();
 		endGame(false);
@@ -250,10 +248,10 @@ Common::String DMEngine::getSavefileName(uint16 slot) {
 	return Common::String::format("%s.%03u", _targetName.c_str(), slot);
 }
 
-#define SAVEGAME_ID       MKTAG('D', 'M', '2', '1')
-#define SAVEGAME_VERSION  1
+#define SAVEGAME_ID MKTAG('D', 'M', '2', '1')
+#define SAVEGAME_VERSION 1
 
-void DMEngine::writeSaveGameHeader(Common::OutSaveFile *out, const Common::String& saveName) {
+void DMEngine::writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName) {
 	out->writeUint32BE(SAVEGAME_ID);
 
 	// Write version
@@ -282,7 +280,7 @@ void DMEngine::writeSaveGameHeader(Common::OutSaveFile *out, const Common::Strin
 	out->writeUint32BE(playTime);
 }
 
-bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescription, int16 saveAndPlayChoice) {
+bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String &saveDescription, int16 saveAndPlayChoice) {
 	Common::String savefileName = getSavefileName(saveSlot);
 	Common::SaveFileManager *saveFileManager = _system->getSavefileManager();
 	Common::OutSaveFile *file = saveFileManager->openForSaving(savefileName);
@@ -361,14 +359,14 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 		file->writeUint16BE(tmp);
 
 		tmp = ((map._randFloorOrnCount & 0xF) << 12) | ((map._floorOrnCount & 0xF) << 8)
-			| ((map._randWallOrnCount & 0xF) << 4) | (map._wallOrnCount & 0xF);
+		  | ((map._randWallOrnCount & 0xF) << 4) | (map._wallOrnCount & 0xF);
 		file->writeUint16BE(tmp);
 
 		tmp = ((map._difficulty & 0xF) << 12) | ((map._creatureTypeCount & 0xF) << 4) | (map._doorOrnCount & 0xF);
 		file->writeUint16BE(tmp);
 
 		tmp = ((map._doorSet1 & 0xF) << 12) | ((map._doorSet0 & 0xF) << 8)
-			| ((map._wallSet & 0xF) << 4) | (map._floorSet & 0xF);
+		  | ((map._wallSet & 0xF) << 4) | (map._floorSet & 0xF);
 		file->writeUint16BE(tmp);
 	}
 
@@ -449,4 +447,3 @@ WARN_UNUSED_RESULT bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeade
 }
 
 }
-

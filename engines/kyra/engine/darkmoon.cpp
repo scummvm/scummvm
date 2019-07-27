@@ -22,13 +22,14 @@
 
 #ifdef ENABLE_EOB
 
-#include "kyra/engine/darkmoon.h"
-#include "kyra/resource/resource.h"
-#include "kyra/sound/sound.h"
+#	include "kyra/engine/darkmoon.h"
+#	include "kyra/resource/resource.h"
+#	include "kyra/sound/sound.h"
 
 namespace Kyra {
 
-DarkMoonEngine::DarkMoonEngine(OSystem *system, const GameFlags &flags) : EoBCoreEngine(system, flags) {
+DarkMoonEngine::DarkMoonEngine(OSystem *system, const GameFlags &flags)
+  : EoBCoreEngine(system, flags) {
 	_dscDoorType5Offs = 0;
 	_numSpells = 70;
 	_menuChoiceInit = 4;
@@ -211,7 +212,7 @@ void DarkMoonEngine::generateMonsterPalettes(const char *file, int16 monsterInde
 
 void DarkMoonEngine::loadMonsterDecoration(Common::SeekableReadStream *stream, int16 monsterIndex) {
 	int len = stream->readUint16LE();
-	Common::List<SpriteDecoration*> activeDecorations;
+	Common::List<SpriteDecoration *> activeDecorations;
 
 	for (int i = 0; i < len; i++) {
 		for (int ii = 0; ii < 6; ii++) {
@@ -518,7 +519,7 @@ void DarkMoonEngine::snd_loadAmigaSounds(int level, int sub) {
 		_amigaCurSoundFile = fileNum;
 
 		int mapCnt = 0;
-		for (int i = 0; i < fileNum + 1; ) {
+		for (int i = 0; i < fileNum + 1;) {
 			if (!_amigaSoundMapExtra[mapCnt++][0])
 				i++;
 		}
@@ -537,12 +538,12 @@ void DarkMoonEngine::snd_loadAmigaSounds(int level, int sub) {
 
 	uint16 sndIndex = 0;
 
-	for (int i = 0; i != level; ) {
+	for (int i = 0; i != level;) {
 		int8 val = _amigaSoundIndex1[sndIndex++];
 		if (val == -1)
 			i++;
 	}
-	
+
 	if (sub)
 		sndIndex += 4;
 

@@ -20,8 +20,8 @@
  *
  */
 
-#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
+#include "dreamweb/sound.h"
 
 namespace DreamWeb {
 
@@ -74,13 +74,13 @@ void DreamWebEngine::selectLocation() {
 			break;
 
 		RectWithCallback destList[] = {
-			{ 238,258,4,44,&DreamWebEngine::nextDest },
-			{ 104,124,4,44,&DreamWebEngine::lastDest },
-			{ 280,308,4,44,&DreamWebEngine::lookAtPlace },
-			{ 104,216,138,192,&DreamWebEngine::destSelect },
-			{ 273,320,157,198,&DreamWebEngine::getBack1 },
-			{ 0,320,0,200,&DreamWebEngine::blank },
-			{ 0xFFFF,0,0,0,0 }
+			{ 238, 258, 4, 44, &DreamWebEngine::nextDest },
+			{ 104, 124, 4, 44, &DreamWebEngine::lastDest },
+			{ 280, 308, 4, 44, &DreamWebEngine::lookAtPlace },
+			{ 104, 216, 138, 192, &DreamWebEngine::destSelect },
+			{ 273, 320, 157, 198, &DreamWebEngine::getBack1 },
+			{ 0, 320, 0, 200, &DreamWebEngine::blank },
+			{ 0xFFFF, 0, 0, 0, 0 }
 		};
 		checkCoords(destList);
 	}
@@ -100,15 +100,13 @@ void DreamWebEngine::selectLocation() {
 void DreamWebEngine::showCity() {
 	clearWork();
 	showFrame(_cityGraphics, 57, 32, 0, 0);
-	showFrame(_cityGraphics, 120+57, 32, 1, 0);
+	showFrame(_cityGraphics, 120 + 57, 32, 1, 0);
 }
 
 void DreamWebEngine::lookAtPlace() {
 	commandOnlyCond(27, 224);
 
-	if (!(_mouseButton & 1) ||
-		_mouseButton == _oldButton ||
-		_destPos >= 15)
+	if (!(_mouseButton & 1) || _mouseButton == _oldButton || _destPos >= 15)
 		return; // noinfo
 
 	delPointer();
@@ -117,7 +115,7 @@ void DreamWebEngine::lookAtPlace() {
 	showFrame(_newplaceGraphics3, 60, 72, 0, 0);
 	showFrame(_newplaceGraphics3, 60, 72 + 55, 4, 0);
 	if (_foreignRelease)
-		showFrame(_newplaceGraphics3, 60, 72+55+21, 4, 0);
+		showFrame(_newplaceGraphics3, 60, 72 + 55 + 21, 4, 0);
 
 	const uint8 *string = (const uint8 *)_travelText.getString(_destPos);
 	findNextColon(&string);
@@ -144,12 +142,12 @@ void DreamWebEngine::locationPic() {
 	byte picture = roomPics[_destPos];
 
 	if (picture >= 6)
-		showFrame(_newplaceGraphics2, 104, 138 + 14, picture - 6, 0);	// Second slot
+		showFrame(_newplaceGraphics2, 104, 138 + 14, picture - 6, 0); // Second slot
 	else
-		showFrame(_newplaceGraphics,  104, 138 + 14, picture + 4, 0);
+		showFrame(_newplaceGraphics, 104, 138 + 14, picture + 4, 0);
 
 	if (_destPos == _realLocation)
-		showFrame(_newplaceGraphics, 104, 140 + 14, 3, 0);	// Currently in this location
+		showFrame(_newplaceGraphics, 104, 140 + 14, 3, 0); // Currently in this location
 
 	const uint8 *string = (const uint8 *)_travelText.getString(_destPos);
 	printDirect(string, 50, 20, 241, 241 & 1);
@@ -165,12 +163,12 @@ void DreamWebEngine::nextDest() {
 	commandOnlyCond(28, 218);
 
 	if (!(_mouseButton & 1) || _oldButton == 1)
-		return;	// nodu
+		return; // nodu
 
 	do {
 		_destPos++;
 		if (_destPos == 15)
-			_destPos = 0;	// last destination
+			_destPos = 0; // last destination
 	} while (!getLocation(_destPos));
 
 	_newTextLine = 1;
@@ -191,12 +189,12 @@ void DreamWebEngine::lastDest() {
 	commandOnlyCond(29, 219);
 
 	if (!(_mouseButton & 1) || _oldButton == 1)
-		return;	// nodd
+		return; // nodd
 
 	do {
 		_destPos--;
 		if (_destPos == 0xFF)
-			_destPos = 15;	// first destination
+			_destPos = 15; // first destination
 	} while (!getLocation(_destPos));
 
 	_newTextLine = 1;
@@ -217,7 +215,7 @@ void DreamWebEngine::destSelect() {
 	commandOnlyCond(30, 222);
 
 	if (!(_mouseButton & 1) || _oldButton == 1)
-		return;	// notrav
+		return; // notrav
 
 	_newLocation = _destPos;
 }

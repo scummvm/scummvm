@@ -20,9 +20,8 @@
  *
  */
 
-
-#include "graphics.h"
 #include "disk.h"
+#include "graphics.h"
 
 #include "common/algorithm.h"
 #include "common/textconsole.h"
@@ -30,17 +29,30 @@
 
 namespace Parallaction {
 
-GfxObj::GfxObj(uint objType, Frames *frames, const char* name) :
-	_name(name), _frames(frames), x(0), y(0), z(0), _prog(0), _flags(0),
-	type(objType), frame(0), layer(3), scale(100), _hasMask(false), _hasPath(false),
-	transparentKey(0), _maskId(0), _pathId(0) {}
+GfxObj::GfxObj(uint objType, Frames *frames, const char *name)
+  : _name(name)
+  , _frames(frames)
+  , x(0)
+  , y(0)
+  , z(0)
+  , _prog(0)
+  , _flags(0)
+  , type(objType)
+  , frame(0)
+  , layer(3)
+  , scale(100)
+  , _hasMask(false)
+  , _hasPath(false)
+  , transparentKey(0)
+  , _maskId(0)
+  , _pathId(0) {}
 
 GfxObj::~GfxObj() {
 	delete _frames;
 }
 
 void GfxObj::release() {
-//	_keep = false;
+	//	_keep = false;
 	delete this;
 }
 
@@ -96,9 +108,9 @@ void Gfx::resetSceneDrawList() {
 	_sceneObjects.reserve(SCENE_DRAWLIST_SIZE);
 }
 
-GfxObj* Gfx::loadAnim(const char *name) {
+GfxObj *Gfx::loadAnim(const char *name) {
 	debugC(1, kDebugGraphics, "Gfx::loadAnim(\"%s\")", name);
-	Frames* frames = _disk->loadFrames(name);
+	Frames *frames = _disk->loadFrames(name);
 	assert(frames);
 
 	GfxObj *obj = new GfxObj(kGfxObjTypeAnim, frames, name);
@@ -110,28 +122,28 @@ GfxObj* Gfx::loadAnim(const char *name) {
 	return obj;
 }
 
-GfxObj* Gfx::loadCharacterAnim(const char *name) {
+GfxObj *Gfx::loadCharacterAnim(const char *name) {
 	return loadAnim(name);
 }
 
-GfxObj* Gfx::loadGet(const char *name) {
+GfxObj *Gfx::loadGet(const char *name) {
 	GfxObj *obj = _disk->loadStatic(name);
 	assert(obj);
 
-	obj->z = kGfxObjGetZ;	// this preset Z value ensures that get zones are drawn after doors but before animations
+	obj->z = kGfxObjGetZ; // this preset Z value ensures that get zones are drawn after doors but before animations
 	obj->type = kGfxObjTypeGet;
 	obj->transparentKey = 0;
 	return obj;
 }
 
-GfxObj* Gfx::loadDoor(const char *name) {
+GfxObj *Gfx::loadDoor(const char *name) {
 	Frames *frames = _disk->loadFrames(name);
 	assert(frames);
 
 	GfxObj *obj = new GfxObj(kGfxObjTypeDoor, frames, name);
 	assert(obj);
 
-	obj->z = kGfxObjDoorZ;	// this preset Z value ensures that doors are drawn first
+	obj->z = kGfxObjDoorZ; // this preset Z value ensures that doors are drawn first
 	obj->transparentKey = 0;
 	return obj;
 }
@@ -166,7 +178,7 @@ void BackgroundInfo::loadGfxObjPath(Parallaction *vm, const char *name, GfxObj *
 	obj->_hasPath = true;
 }
 
-void Gfx::showGfxObj(GfxObj* obj, bool visible) {
+void Gfx::showGfxObj(GfxObj *obj, bool visible) {
 	if (!obj) {
 		return;
 	}
@@ -188,7 +200,7 @@ void Gfx::showGfxObj(GfxObj* obj, bool visible) {
 	}
 }
 
-bool compareZ(const GfxObj* a1, const GfxObj* a2) {
+bool compareZ(const GfxObj *a1, const GfxObj *a2) {
 	return (a1->z == a2->z) ? (a1->_prog < a2->_prog) : (a1->z < a2->z);
 }
 
@@ -229,16 +241,15 @@ void Gfx::drawGfxObject(GfxObj *obj, Graphics::Surface &surf) {
 	} else {
 		unpackBlt(rect, data, obj->getRawSize(obj->frame), &surf, obj->layer, obj->scale, obj->transparentKey);
 	}
-
 }
 
-void Gfx::drawText(Font *font, Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color) {
+void Gfx::drawText(Font *font, Graphics::Surface *surf, uint16 x, uint16 y, const char *text, byte color) {
 	byte *dst = (byte *)surf->getBasePtr(x, y);
 	font->setColor(color);
 	font->drawString(dst, surf->w, text);
 }
 
-void Gfx::unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor) {
+void Gfx::unpackBlt(const Common::Rect &r, byte *data, uint size, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor) {
 	byte *d = _unpackedBitmap;
 	uint pixelsLeftInLine = r.width();
 
@@ -266,7 +277,7 @@ void Gfx::unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surf
 	blt(r, _unpackedBitmap, surf, z, scale, transparentColor);
 }
 
-void Gfx::bltMaskScale(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor) {
+void Gfx::bltMaskScale(const Common::Rect &r, byte *data, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor) {
 	if (scale == 100) {
 		// use optimized path
 		bltMaskNoScale(r, data, surf, z, transparentColor);
@@ -291,15 +302,17 @@ void Gfx::bltMaskScale(const Common::Rect& r, byte *data, Graphics::Surface *sur
 
 	Common::Rect clipper(surf->w, surf->h);
 	dstRect.clip(clipper);
-	if (!dstRect.isValidRect()) return;
+	if (!dstRect.isValidRect())
+		return;
 
 	// clipped source rectangle
 	Common::Rect srcRect;
-	srcRect.left = (dstRect.left - scaledLeft)  * 100 / scale;
+	srcRect.left = (dstRect.left - scaledLeft) * 100 / scale;
 	srcRect.top = (dstRect.top - scaledTop) * 100 / scale;
 	srcRect.setWidth(dstRect.width() * 100 / scale);
 	srcRect.setHeight(dstRect.height() * 100 / scale);
-	if (!srcRect.isValidRect()) return;
+	if (!srcRect.isValidRect())
+		return;
 
 	Common::Point dp;
 	dp.x = dstRect.left;
@@ -339,7 +352,8 @@ void Gfx::bltMaskScale(const Common::Rect& r, byte *data, Graphics::Surface *sur
 			if (*s != transparentColor) {
 				if (_backgroundInfo->hasMask()) {
 					byte v = _backgroundInfo->_mask->getValue(dp.x + col, dp.y + line);
-					if (z >= v) *d2 = *s;
+					if (z >= v)
+						*d2 = *s;
 				} else {
 					*d2 = *s;
 				}
@@ -354,10 +368,9 @@ void Gfx::bltMaskScale(const Common::Rect& r, byte *data, Graphics::Surface *sur
 		d += surf->w;
 		line++;
 	}
-
 }
 
-void Gfx::bltMaskNoScale(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor) {
+void Gfx::bltMaskNoScale(const Common::Rect &r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor) {
 	if (!_backgroundInfo->hasMask() || (z == LAYER_FOREGROUND)) {
 		// use optimized path
 		bltNoMaskNoScale(r, data, surf, transparentColor);
@@ -370,7 +383,8 @@ void Gfx::bltMaskNoScale(const Common::Rect& r, byte *data, Graphics::Surface *s
 	Common::Rect clipper(surf->w, surf->h);
 
 	q.clip(clipper);
-	if (!q.isValidRect()) return;
+	if (!q.isValidRect())
+		return;
 
 	dp.x = q.left;
 	dp.y = q.top;
@@ -389,7 +403,8 @@ void Gfx::bltMaskNoScale(const Common::Rect& r, byte *data, Graphics::Surface *s
 			if (*s != transparentColor) {
 				if (_backgroundInfo->hasMask()) {
 					byte v = _backgroundInfo->_mask->getValue(dp.x + j, dp.y + i);
-					if (z >= v) *d = *s;
+					if (z >= v)
+						*d = *s;
 				} else {
 					*d = *s;
 				}
@@ -402,17 +417,17 @@ void Gfx::bltMaskNoScale(const Common::Rect& r, byte *data, Graphics::Surface *s
 		s += sPitch;
 		d += dPitch;
 	}
-
 }
 
-void Gfx::bltNoMaskNoScale(const Common::Rect& r, byte *data, Graphics::Surface *surf, byte transparentColor) {
+void Gfx::bltNoMaskNoScale(const Common::Rect &r, byte *data, Graphics::Surface *surf, byte transparentColor) {
 	Common::Point dp;
 	Common::Rect q(r);
 
 	Common::Rect clipper(surf->w, surf->h);
 
 	q.clip(clipper);
-	if (!q.isValidRect()) return;
+	if (!q.isValidRect())
+		return;
 
 	dp.x = q.left;
 	dp.y = q.top;
@@ -439,7 +454,7 @@ void Gfx::bltNoMaskNoScale(const Common::Rect& r, byte *data, Graphics::Surface 
 	}
 }
 
-void Gfx::blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor) {
+void Gfx::blt(const Common::Rect &r, byte *data, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor) {
 	bltMaskScale(r, data, surf, z, scale, transparentColor);
 }
 

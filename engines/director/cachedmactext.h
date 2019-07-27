@@ -47,18 +47,17 @@ private:
 	bool _dirty;
 	Graphics::ManagedSurface *_surface;
 	void makeMacText();
+
 public:
 	CachedMacText(TextCast *const textCast,
 	              int version,
 	              int defaultWidth = -1,
-	              Graphics::MacWindowManager *const wm = NULL
-	             );
+	              Graphics::MacWindowManager *const wm = NULL);
 	void setWm(Graphics::MacWindowManager *wm);
 	void clip(int width);
 	void forceDirty();
 	const Graphics::ManagedSurface *getSurface();
 	int getLineCount();
-
 };
 
 } // End of namespace Director

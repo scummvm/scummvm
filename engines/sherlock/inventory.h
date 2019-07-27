@@ -23,8 +23,8 @@
 #ifndef SHERLOCK_INVENTORY_H
 #define SHERLOCK_INVENTORY_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 #include "common/str-array.h"
 #include "sherlock/objects.h"
 #include "sherlock/resources.h"
@@ -46,12 +46,16 @@ enum InvMode {
 };
 
 enum InvNewMode {
-	PLAIN_INVENTORY = 0, LOOK_INVENTORY_MODE = 1, USE_INVENTORY_MODE = 2,
-	GIVE_INVENTORY_MODE = 3, INVENTORY_DONT_DISPLAY = 128
+	PLAIN_INVENTORY = 0,
+	LOOK_INVENTORY_MODE = 1,
+	USE_INVENTORY_MODE = 2,
+	GIVE_INVENTORY_MODE = 3,
+	INVENTORY_DONT_DISPLAY = 128
 };
 
-enum InvSlamMode { SLAM_DONT_DISPLAY, SLAM_DISPLAY = 1, SLAM_SECONDARY_BUFFER };
-
+enum InvSlamMode { SLAM_DONT_DISPLAY,
+	                 SLAM_DISPLAY = 1,
+	                 SLAM_SECONDARY_BUFFER };
 
 struct InventoryItem {
 	int _requiredFlag;
@@ -64,11 +68,14 @@ struct InventoryItem {
 	int _requiredFlag1;
 	UseType _verb;
 
-	InventoryItem() : _requiredFlag(0), _lookFlag(0), _requiredFlag1(0) {}
+	InventoryItem()
+	  : _requiredFlag(0)
+	  , _lookFlag(0)
+	  , _requiredFlag1(0) {}
 	InventoryItem(int requiredFlag, const Common::String &name,
-		const Common::String &description, const Common::String &examine);
+	              const Common::String &description, const Common::String &examine);
 	InventoryItem(int requiredFlag, const Common::String &name,
-		const Common::String &description, const Common::String &examine, const Common::String &verbName);
+	              const Common::String &description, const Common::String &examine, const Common::String &verbName);
 
 	/**
 	 * Synchronize the data for an inventory item
@@ -85,17 +92,19 @@ protected:
 	 * Copy the passed object into the inventory
 	 */
 	void copyToInventory(Object &obj);
+
 public:
 	Common::Array<ImageFile *> _invShapes;
 	bool _invGraphicsLoaded;
 	InvMode _invMode;
 	int _invIndex;
-	int _holdings;		// Used to hold number of visible items in active inventory.
-						// Since Inventory array also contains some special hidden items
+	int _holdings; // Used to hold number of visible items in active inventory.
+	  // Since Inventory array also contains some special hidden items
 	/**
 	 * Free any loaded inventory graphics
 	 */
 	void freeGraphics();
+
 public:
 	static Inventory *init(SherlockEngine *vm);
 	Inventory(SherlockEngine *vm);

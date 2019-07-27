@@ -27,10 +27,10 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CSGTStateRoom, CBackground)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(VisibleMsg)
-	ON_MESSAGE(EnterRoomMsg)
-	ON_MESSAGE(LeaveRoomMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(VisibleMsg)
+ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(LeaveRoomMsg)
 END_MESSAGE_MAP()
 
 CSGTStateRoomStatics *CSGTStateRoom::_statics;
@@ -44,8 +44,13 @@ void CSGTStateRoom::deinit() {
 	delete _statics;
 }
 
-CSGTStateRoom::CSGTStateRoom() : CBackground(), _isClosed(1),
-	_displayFlag(true), _savedFrame(0), _savedIsClosed(true), _savedVisible(true) {
+CSGTStateRoom::CSGTStateRoom()
+  : CBackground()
+  , _isClosed(1)
+  , _displayFlag(true)
+  , _savedFrame(0)
+  , _savedIsClosed(true)
+  , _savedVisible(true) {
 }
 
 void CSGTStateRoom::save(SimpleFile *file, int indent) {
@@ -140,7 +145,7 @@ bool CSGTStateRoom::EnterRoomMsg(CEnterRoomMsg *msg) {
 	if (isEquals("Drawer")) {
 		petSetArea(PET_REMOTE);
 		if (pet->isInAssignedRoom() && getPassengerClass() == 3
-				&& _statics->_announcementFlag) {
+		    && _statics->_announcementFlag) {
 			// Congratulations, you may have won an upgrade
 			playSound(TRANSLATE("b#21.wav", "b#2.wav"));
 			_statics->_announcementFlag = false;

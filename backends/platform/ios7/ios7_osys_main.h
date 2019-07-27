@@ -23,15 +23,15 @@
 #ifndef BACKENDS_PLATFORM_IOS7_IOS7_OSYS_MAIN_H
 #define BACKENDS_PLATFORM_IOS7_IOS7_OSYS_MAIN_H
 
-#include "graphics/surface.h"
-#include "backends/platform/ios7/ios7_common.h"
+#include "audio/mixer_intern.h"
 #include "backends/base-backend.h"
+#include "backends/fs/posix/posix-fs-factory.h"
+#include "backends/platform/ios7/ios7_common.h"
 #include "common/events.h"
 #include "common/str.h"
-#include "audio/mixer_intern.h"
-#include "backends/fs/posix/posix-fs-factory.h"
 #include "graphics/colormasks.h"
 #include "graphics/palette.h"
+#include "graphics/surface.h"
 
 #include <AudioToolbox/AudioQueue.h>
 
@@ -70,9 +70,9 @@ protected:
 	TransactionError _gfxTransactionError;
 
 	// For use with the game texture
-	uint16  _gamePalette[256];
+	uint16 _gamePalette[256];
 	// For use with the mouse texture
-	uint16  _gamePaletteRGBA5551[256];
+	uint16 _gamePaletteRGBA5551[256];
 
 	struct timeval _startTime;
 	uint32 _timeSuspended;
@@ -117,7 +117,6 @@ protected:
 #endif
 
 public:
-
 	OSystem_iOS7();
 	virtual ~OSystem_iOS7();
 
@@ -143,7 +142,7 @@ public:
 	virtual int16 getHeight();
 	virtual int16 getWidth();
 
-    bool touchpadModeEnabled() const;
+	bool touchpadModeEnabled() const;
 
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const { return _framebuffer.format; }
@@ -151,6 +150,7 @@ public:
 #endif
 
 	virtual PaletteManager *getPaletteManager() { return this; }
+
 protected:
 	// PaletteManager API
 	virtual void setPalette(const byte *colors, uint start, uint num);

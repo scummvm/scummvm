@@ -126,7 +126,6 @@ public:
 	 */
 	Timestamp addMsecs(int msecs) const;
 
-
 	// unary minus
 	Timestamp operator-() const;
 
@@ -241,7 +240,6 @@ protected:
 	 */
 	uint _framerateFactor;
 };
-
 
 } // End of namespace Audio
 

@@ -23,13 +23,13 @@
  *
  */
 
-#include "pegasus/ai/ai_area.h"
 #include "pegasus/items/biochips/retscanchip.h"
+#include "pegasus/ai/ai_area.h"
 
 namespace Pegasus {
 
-RetScanChip::RetScanChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
-		BiochipItem(id, neighborhood, room, direction) {
+RetScanChip::RetScanChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction)
+  : BiochipItem(id, neighborhood, room, direction) {
 }
 
 void RetScanChip::searchForLaser() {

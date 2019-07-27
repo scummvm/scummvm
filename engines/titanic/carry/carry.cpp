@@ -31,26 +31,35 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CCarry, CGameObject)
-	ON_MESSAGE(MouseDragStartMsg)
-	ON_MESSAGE(MouseDragMoveMsg)
-	ON_MESSAGE(MouseDragEndMsg)
-	ON_MESSAGE(UseWithCharMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(UseWithOtherMsg)
-	ON_MESSAGE(VisibleMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(RemoveFromGameMsg)
-	ON_MESSAGE(MoveToStartPosMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(PassOnDragStartMsg)
+ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(MouseDragMoveMsg)
+ON_MESSAGE(MouseDragEndMsg)
+ON_MESSAGE(UseWithCharMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(UseWithOtherMsg)
+ON_MESSAGE(VisibleMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(RemoveFromGameMsg)
+ON_MESSAGE(MoveToStartPosMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(PassOnDragStartMsg)
 END_MESSAGE_MAP()
 
-CCarry::CCarry() : CGameObject(), _unused5(0), _canTake(true),
-		_unusedR(0), _unusedG(0), _unusedB(0), _itemFrame(0),
-		_enterFrame(0), _enterFrameSet(false), _visibleFrame(0),
-		_npcUse("None"), _fullViewName("NULL"),
-		_doesNothingMsg(g_vm->_strings[DOESNT_DO_ANYTHING]),
-		_doesntWantMsg(g_vm->_strings[DOESNT_WANT_THIS]) {
+CCarry::CCarry()
+  : CGameObject()
+  , _unused5(0)
+  , _canTake(true)
+  , _unusedR(0)
+  , _unusedG(0)
+  , _unusedB(0)
+  , _itemFrame(0)
+  , _enterFrame(0)
+  , _enterFrameSet(false)
+  , _visibleFrame(0)
+  , _npcUse("None")
+  , _fullViewName("NULL")
+  , _doesNothingMsg(g_vm->_strings[DOESNT_DO_ANYTHING])
+  , _doesntWantMsg(g_vm->_strings[DOESNT_WANT_THIS]) {
 }
 
 void CCarry::save(SimpleFile *file, int indent) {

@@ -95,8 +95,8 @@ private:
 	// 0 lip synced and repeating - 1 normal once through
 	uint32 _speechAnimType;
 
-	uint32 _leftClickDelay;		// click-delay for LEFT mouse button
-	uint32 _rightClickDelay;	// click-delay for RIGHT mouse button
+	uint32 _leftClickDelay; // click-delay for LEFT mouse button
+	uint32 _rightClickDelay; // click-delay for RIGHT mouse button
 
 	// calculated by locateTalker() for use in speech-panning & text-sprite
 	// positioning
@@ -109,7 +109,6 @@ private:
 
 	// Set by fnPassMega()
 	byte _engineMega[56];
-
 
 	bool _cycleSkip;
 	bool _speechRunning;

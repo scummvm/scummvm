@@ -23,9 +23,9 @@
 #ifndef CINE_SOUND_H_
 #define CINE_SOUND_H_
 
-#include "common/util.h"
-#include "common/mutex.h"
 #include "audio/mixer.h"
+#include "common/mutex.h"
+#include "common/util.h"
 
 namespace Audio {
 class AudioStream;
@@ -37,8 +37,9 @@ class CineEngine;
 
 class Sound {
 public:
-
-	Sound(Audio::Mixer *mixer, CineEngine *vm) : _mixer(mixer), _vm(vm) {}
+	Sound(Audio::Mixer *mixer, CineEngine *vm)
+	  : _mixer(mixer)
+	  , _vm(vm) {}
 	virtual ~Sound() {}
 
 	virtual void loadMusic(const char *name) = 0;
@@ -51,7 +52,6 @@ public:
 	virtual void setBgMusic(int num) = 0;
 
 protected:
-
 	Audio::Mixer *_mixer;
 	CineEngine *_vm;
 };
@@ -61,7 +61,6 @@ class PCSoundFxPlayer;
 
 class PCSound : public Sound {
 public:
-
 	PCSound(Audio::Mixer *mixer, CineEngine *vm);
 	virtual ~PCSound();
 
@@ -75,7 +74,6 @@ public:
 	virtual void setBgMusic(int num);
 
 protected:
-
 	PCSoundDriver *_soundDriver;
 	PCSoundFxPlayer *_player;
 
@@ -84,7 +82,6 @@ protected:
 
 class PaulaSound : public Sound {
 public:
-
 	PaulaSound(Audio::Mixer *mixer, CineEngine *vm);
 	virtual ~PaulaSound();
 
@@ -103,7 +100,6 @@ public:
 	};
 
 protected:
-
 	struct SfxChannel {
 		Audio::SoundHandle handle;
 		int volume;
@@ -112,9 +108,9 @@ protected:
 		int stepCount;
 
 		void initialize(int vol, int volStep, int stepCnt) {
-			volume     = vol;
+			volume = vol;
 			volumeStep = volStep;
-			curStep    = stepCount = stepCnt;
+			curStep = stepCount = stepCnt;
 		}
 	};
 	SfxChannel _channelsTable[NUM_CHANNELS];

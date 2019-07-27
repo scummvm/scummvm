@@ -13,8 +13,8 @@ static const char *md5_test_string[] = {
 	"message digest",
 	"abcdefghijklmnopqrstuvwxyz",
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
-	"12345678901234567890123456789012345678901234567890123456789012" \
-		"345678901234567890"
+	"12345678901234567890123456789012345678901234567890123456789012"
+	"345678901234567890"
 };
 
 static const char *md5_test_digest[] = {
@@ -28,7 +28,7 @@ static const char *md5_test_digest[] = {
 };
 
 class MD5TestSuite : public CxxTest::TestSuite {
-	public:
+public:
 	void test_computeStreamMD5() {
 		int i, j;
 		char output[33];
@@ -46,5 +46,4 @@ class MD5TestSuite : public CxxTest::TestSuite {
 			TS_ASSERT_EQUALS(tmp, md5_test_digest[i]);
 		}
 	}
-
 };

@@ -20,8 +20,8 @@
  *
  */
 
-#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
+#include "dreamweb/sound.h"
 
 namespace DreamWeb {
 
@@ -47,7 +47,7 @@ void DreamWebEngine::showRain() {
 			uint8 v = src[j];
 			if (v != 0)
 				*dst = v;
-			dst += kScreenwidth-1; // advance diagonally
+			dst += kScreenwidth - 1; // advance diagonally
 		}
 	}
 
@@ -118,34 +118,34 @@ struct RainLocation {
 };
 
 static const RainLocation rainLocationList[] = {
-	{ 1,44,10,16 },
-	{ 4,11,30,14 },
-	{ 4,22,30,14 },
-	{ 3,33,10,14 },
-	{ 10,33,30,14 },
-	{ 10,22,30,24 },
-	{ 9,22,10,14 },
-	{ 2,33,0,14 },
-	{ 2,22,0,14 },
-	{ 6,11,30,14 },
-	{ 7,11,20,18 },
-	{ 7,0,20,18 },
-	{ 7,0,30,18 },
-	{ 55,44,0,14 },
-	{ 5,22,30,14 },
+	{ 1, 44, 10, 16 },
+	{ 4, 11, 30, 14 },
+	{ 4, 22, 30, 14 },
+	{ 3, 33, 10, 14 },
+	{ 10, 33, 30, 14 },
+	{ 10, 22, 30, 24 },
+	{ 9, 22, 10, 14 },
+	{ 2, 33, 0, 14 },
+	{ 2, 22, 0, 14 },
+	{ 6, 11, 30, 14 },
+	{ 7, 11, 20, 18 },
+	{ 7, 0, 20, 18 },
+	{ 7, 0, 30, 18 },
+	{ 55, 44, 0, 14 },
+	{ 5, 22, 30, 14 },
 
-	{ 8,0,10,18 },
-	{ 8,11,10,18 },
-	{ 8,22,10,18 },
-	{ 8,33,10,18 },
-	{ 8,33,20,18 },
-	{ 8,33,30,18 },
-	{ 8,33,40,18 },
-	{ 8,22,40,18 },
-	{ 8,11,40,18 },
+	{ 8, 0, 10, 18 },
+	{ 8, 11, 10, 18 },
+	{ 8, 22, 10, 18 },
+	{ 8, 33, 10, 18 },
+	{ 8, 33, 20, 18 },
+	{ 8, 33, 30, 18 },
+	{ 8, 33, 40, 18 },
+	{ 8, 22, 40, 18 },
+	{ 8, 11, 40, 18 },
 
-	{ 21,44,20,18 },
-	{ 255,0,0,0 }
+	{ 21, 44, 20, 18 },
+	{ 255, 0, 0, 0 }
 };
 
 void DreamWebEngine::initRain() {
@@ -156,8 +156,7 @@ void DreamWebEngine::initRain() {
 
 	// look up location in rainLocationList to determine rainSpacing
 	for (r = rainLocationList; r->location != 0xff; ++r) {
-		if (r->location == _realLocation &&
-		        r->x == _mapX && r->y == _mapY) {
+		if (r->location == _realLocation && r->x == _mapX && r->y == _mapY) {
 			rainSpacing = r->rainSpacing;
 			break;
 		}
@@ -192,4 +191,3 @@ void DreamWebEngine::initRain() {
 }
 
 } // End of namespace DreamWeb
-

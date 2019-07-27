@@ -26,12 +26,13 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CSeasonalMusicPlayer, CAutoMusicPlayerBase)
-	ON_MESSAGE(ChangeSeasonMsg)
-	ON_MESSAGE(ArboretumGateMsg)
-	ON_MESSAGE(ChangeMusicMsg)
+ON_MESSAGE(ChangeSeasonMsg)
+ON_MESSAGE(ArboretumGateMsg)
+ON_MESSAGE(ChangeMusicMsg)
 END_MESSAGE_MAP()
 
-CSeasonalMusicPlayer::CSeasonalMusicPlayer() : CAutoMusicPlayerBase() {
+CSeasonalMusicPlayer::CSeasonalMusicPlayer()
+  : CAutoMusicPlayerBase() {
 	_isSpring = false;
 	_isSummer = true;
 	_isAutumn = false;

@@ -20,12 +20,12 @@
  *
  */
 
- //#include "common/scummsys.h"
- #include <time.h>
- #include <stdlib.h>
- #include <stdio.h>
- #include <png.h>
- #include <sys/socket.h>
+//#include "common/scummsys.h"
+#include <png.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/socket.h>
+#include <time.h>
 
 //void userWriteFn(png_structp png_ptr, png_bytep data, png_size_t length) {
 //}
@@ -33,12 +33,12 @@
 //void userFlushFn(png_structp png_ptr) {
 //}
 
- // Dummy functions are pulled in so that we don't need to build the plugins with certain libs
+// Dummy functions are pulled in so that we don't need to build the plugins with certain libs
 
- int dummyFunc() {
+int dummyFunc() {
 
 	// For Broken Sword 2.5
- 	volatile int i;
+	volatile int i;
 	i = clock();
 	rename("dummyA", "dummyB");
 

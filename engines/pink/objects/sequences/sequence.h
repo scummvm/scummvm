@@ -23,8 +23,8 @@
 #ifndef PINK_SEQUENCE_H
 #define PINK_SEQUENCE_H
 
-#include "pink/sound.h"
 #include "pink/objects/sequences/sequence_item.h"
+#include "pink/sound.h"
 
 namespace Pink {
 
@@ -37,7 +37,7 @@ public:
 	Sequence();
 	~Sequence();
 
-	void deserialize(Archive &archive) override ;
+	void deserialize(Archive &archive) override;
 	void toConsole() override;
 
 public:
@@ -73,7 +73,7 @@ protected:
 class SequenceAudio : public Sequence {
 public:
 	SequenceAudio()
-		: _leader(nullptr) {}
+	  : _leader(nullptr) {}
 
 	void deserialize(Archive &archive) override;
 	void toConsole() override;

@@ -21,36 +21,36 @@
  */
 
 #if !defined(SCUMM_INSANE_H) && defined(ENABLE_SCUMM_7_8)
-#define SCUMM_INSANE_H
+#	define SCUMM_INSANE_H
 
-#include "scumm/nut_renderer.h"
+#	include "scumm/nut_renderer.h"
 
-#include "scumm/smush/smush_player.h"
+#	include "scumm/smush/smush_player.h"
 
 namespace Scumm {
 
-#define INV_CHAIN    0
-#define INV_CHAINSAW 1
-#define INV_MACE     2
-#define INV_2X4      3
-#define INV_WRENCH   4
-#define INV_BOOT     5
-#define INV_HAND     6
-#define INV_DUST     7
+#	define INV_CHAIN 0
+#	define INV_CHAINSAW 1
+#	define INV_MACE 2
+#	define INV_2X4 3
+#	define INV_WRENCH 4
+#	define INV_BOOT 5
+#	define INV_HAND 6
+#	define INV_DUST 7
 
-#define EN_ROTT1     0 // rottwheeler
-#define EN_ROTT2     1 // rottwheeler
-#define EN_ROTT3     2 // rottwheeler
-#define EN_VULTF1    3 // vulture (redhead female1)
-#define EN_VULTM1    4 // vulture (male with glasses)
-#define EN_VULTF2    5 // vulture (redhead female2)
-#define EN_VULTM2    6 // vulture (initialized as rottwheeler) (male)
-#define EN_CAVEFISH  7 // Cavefish Maximum Fish
-#define EN_TORQUE    8 // Father Torque
-#define EN_BEN       9 // used only with handler
+#	define EN_ROTT1 0 // rottwheeler
+#	define EN_ROTT2 1 // rottwheeler
+#	define EN_ROTT3 2 // rottwheeler
+#	define EN_VULTF1 3 // vulture (redhead female1)
+#	define EN_VULTM1 4 // vulture (male with glasses)
+#	define EN_VULTF2 5 // vulture (redhead female2)
+#	define EN_VULTM2 6 // vulture (initialized as rottwheeler) (male)
+#	define EN_CAVEFISH 7 // Cavefish Maximum Fish
+#	define EN_TORQUE 8 // Father Torque
+#	define EN_BEN 9 // used only with handler
 
 class Insane {
- public:
+public:
 	Insane(ScummEngine_v7 *scumm);
 	~Insane();
 
@@ -59,15 +59,14 @@ class Insane {
 
 	void procPreRendering();
 	void procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-						   int32 setupsan13, int32 curFrame, int32 maxFrame);
+	                       int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags, int16 par1,
-				  int16 par2, int16 par3, int16 par4);
+	              int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags, int16 par1,
+	              int16 par2, int16 par3, int16 par4);
 	void procSKIP(int32 subSize, Common::SeekableReadStream &b);
 	void escapeKeyHandler();
 
- private:
-
+private:
 	ScummEngine_v7 *_vm;
 	SmushPlayer *_player;
 
@@ -182,7 +181,7 @@ class Insane {
 		int32 isEmpty;
 		int32 weapon;
 		int32 sound;
-		char  filename[20];
+		char filename[20];
 		int32 costume4;
 		int32 costume6;
 		int32 costume5;
@@ -219,7 +218,7 @@ class Insane {
 
 	struct act {
 		int32 actor;
-		byte  state;
+		byte state;
 		int32 room;
 		int32 animTilt;
 		int32 tilt;
@@ -262,7 +261,7 @@ class Insane {
 	void initvars();
 	void readFileToMem(const char *name, byte **buf);
 	void startVideo(const char *filename, int num, int argC, int frameRate,
-					 int doMainLoop, byte *fluPtr = 0, int32 startFrame = 0);
+	                int doMainLoop, byte *fluPtr = 0, int32 startFrame = 0);
 	void smush_warpMouse(int x, int y, int buttons);
 	void putActors();
 	void readState();
@@ -272,8 +271,8 @@ class Insane {
 	int loadSceneData(int scene, int flag, int phase);
 	void setSceneCostumes(int sceneId);
 	void setupValues();
-	void setEnemyCostumes ();
-	void smlayer_stopSound (int idx);
+	void setEnemyCostumes();
+	void smlayer_stopSound(int idx);
 	int smlayer_loadSound(int id, int flag, int phase);
 	int smlayer_loadCostume(int id, int phase);
 	void smlayer_setActorCostume(int actornum, int act, int costume);
@@ -290,50 +289,50 @@ class Insane {
 	int32 idx2Tweak();
 	void smush_setToFinish();
 	void postCase11(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					int32 setupsan13, int32 curFrame, int32 maxFrame);
+	                int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void postCase0(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-				   int32 setupsan13, int32 curFrame, int32 maxFrame);
+	               int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void postCase17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					int32 setupsan13, int32 curFrame, int32 maxFrame);
+	                int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void postCase16(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					int32 setupsan13, int32 curFrame, int32 maxFrame);
+	                int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void postCase1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-				   int32 setupsan13, int32 curFrame, int32 maxFrame);
+	               int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void postCase2(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-				   int32 setupsan13, int32 curFrame, int32 maxFrame);
+	               int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void postCase20(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					int32 setupsan13, int32 curFrame, int32 maxFrame);
+	                int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void postCase3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-				   int32 setupsan13, int32 curFrame, int32 maxFrame);
+	               int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void postCase5(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-				   int32 setupsan13, int32 curFrame, int32 maxFrame);
+	               int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void postCase6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-				   int32 setupsan13, int32 curFrame, int32 maxFrame);
+	               int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void postCase8(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-				   int32 setupsan13, int32 curFrame, int32 maxFrame);
+	               int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void postCase9(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-				   int32 setupsan13, int32 curFrame, int32 maxFrame);
+	               int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void postCase10(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					int32 setupsan13, int32 curFrame, int32 maxFrame);
+	                int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void postCase12(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					int32 setupsan13, int32 curFrame, int32 maxFrame);
+	                int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void postCase23(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					int32 setupsan13, int32 curFrame, int32 maxFrame);
+	                int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void postCase14(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					int32 setupsan13, int32 curFrame, int32 maxFrame);
+	                int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void postCaseAll(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					 int32 setupsan13, int32 curFrame, int32 maxFrame);
+	                 int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void postCaseMore(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					  int32 setupsan13, int32 curFrame, int32 maxFrame);
+	                  int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void switchSceneIfNeeded();
 	int smush_changeState(int state);
 	void init_actStruct(int actornum, int actnum, int32 actorval, byte state,
-						  int32 room, int32 animtilt, int32 tilt, int32 frame);
+	                    int32 room, int32 animtilt, int32 tilt, int32 frame);
 	void init_enemyStruct(int n, int32 handler, int32 initializer,
-							   int16 occurences, int32 maxdamage, int32 isEmpty,
-							   int32 field_14, int32 sound, const char *filename,
-							   int32 costume4, int32 costume6, int32 costume5,
-							   int16 field_2C, int32 field_30, int32 field_34);
+	                      int16 occurences, int32 maxdamage, int32 isEmpty,
+	                      int32 field_14, int32 sound, const char *filename,
+	                      int32 costume4, int32 costume6, int32 costume5,
+	                      int16 field_2C, int32 field_30, int32 field_34);
 	int32 enemyHandler(int n, int32, int32, int32);
 	int32 enemyInitializer(int n, int32, int32, int32);
 	int32 enemy0handler(int32, int32, int32);
@@ -361,18 +360,18 @@ class Insane {
 	void smlayer_soundSetPan(int32 sound, int32 pan);
 	void smlayer_soundSetPriority(int32 sound, int32 priority);
 	void smlayer_drawSomething(byte *renderBitmap, int32 codecparam,
-			   int32 arg_8, int32 arg_C, int32 arg_10, NutRenderer *nutfileptr,
-			   int32 arg_18, int32 arg_1C, int32 arg_20);
+	                           int32 arg_8, int32 arg_C, int32 arg_10, NutRenderer *nutfileptr,
+	                           int32 arg_18, int32 arg_1C, int32 arg_20);
 	void smlayer_overrideDrawActorAt(byte *, byte, byte);
 	void queueSceneSwitch(int32 sceneId, byte *fluPtr, const char *filename,
-						  int32 arg_C, int32 arg_10, int32 startFrame, int32 numFrames);
+	                      int32 arg_C, int32 arg_10, int32 startFrame, int32 numFrames);
 	void turnBen(bool battle);
 	void smush_rewindCurrentSan(int arg_0, int arg_4, int arg_8);
 	void smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecparam,
-							   int32 x, int32 y, int32 arg_14, int32 arg_18,
-							   int32 arg_1C, const char *formatString, const char *str);
+	                           int32 x, int32 y, int32 arg_14, int32 arg_18,
+	                           int32 arg_1C, const char *formatString, const char *str);
 	void init_fluConfStruct(int n, int sceneId, byte **fluPtr,
-							const char *filenamePtr, int startFrame, int numFrames);
+	                        const char *filenamePtr, int startFrame, int numFrames);
 	int32 processBenOnRoad(bool flag);
 	void mineChooseRoad(int32 arg_0);
 	void actor02Reaction(int32 buttons);
@@ -399,17 +398,17 @@ class Insane {
 	bool actor0StateFlags2(int state);
 	bool loadScenePropSounds(int32 scenePropNum);
 	void init_scenePropStruct(int32 n, int32 n1, int32 actornum, int32 sound, int32 trsId,
-							  byte r, byte g, byte b, int32 counter, int32 maxCounter,
-							  int32 index);
+	                          byte r, byte g, byte b, int32 counter, int32 maxCounter,
+	                          int32 index);
 	int32 setBenState();
 	bool smlayer_actorNeedRedraw(int actornum, int actnum);
 	void reinitActors();
 	const char *handleTrsTag(int32 trsId);
 	void ouchSoundBen();
 	int32 smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32 step1,
-							   int32 step2, int32 setupsan1, byte *fluPtr, int32 numFrames);
+	                            int32 step2, int32 setupsan1, byte *fluPtr, int32 numFrames);
 	void smush_setupSanFromStart(const char *filename, int32 setupsan2, int32 step1,
-								 int32 step2, int32 setupsan1);
+	                             int32 step2, int32 setupsan1);
 	void smush_setFrameSteps(int32 step1, int32 step2);
 	void smush_setupSanFile(const char *filename, int32 offset, int32 contFrame);
 	void drawSpeedyActor(int32 arg_0);
@@ -428,23 +427,23 @@ class Insane {
 	void ouchSoundEnemy();
 	bool weaponEnemyIsEffective();
 	void iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
-				  int16 par1, int16 par2, int16 par3, int16 par4);
+	                int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
+	                int16 par1, int16 par2, int16 par3, int16 par4);
 	void iactScene3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
-				  int16 command, int16 par1, int16, int16);
+	                int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
+	                int16 command, int16 par1, int16, int16);
 	void iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
-				  int16 par1, int16 par2, int16 par3, int16 par4);
+	                int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
+	                int16 par1, int16 par2, int16 par3, int16 par4);
 	void iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
-				  int16 par1, int16 par2, int16 par3, int16 par4);
+	                int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
+	                int16 par1, int16 par2, int16 par3, int16 par4);
 	void iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
-				  int16 par1, int16 par2, int16 par3, int16 par4);
+	                 int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
+	                 int16 par1, int16 par2, int16 par3, int16 par4);
 	void iactScene21(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
-				  int16 par1, int16 par2, int16 par3, int16 par4);
+	                 int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
+	                 int16 par1, int16 par2, int16 par3, int16 par4);
 	bool isBitSet(int n);
 	void setBit(int n);
 	void clearBit(int n);

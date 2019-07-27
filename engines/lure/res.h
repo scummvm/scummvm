@@ -23,11 +23,11 @@
 #ifndef LURE_RES_H
 #define LURE_RES_H
 
+#include "lure/hotspots.h"
 #include "lure/luredefs.h"
 #include "lure/memory.h"
-#include "lure/res_struct.h"
-#include "lure/hotspots.h"
 #include "lure/palette.h"
+#include "lure/res_struct.h"
 
 #include "common/array.h"
 #include "common/file.h"
@@ -36,8 +36,13 @@
 
 namespace Lure {
 
-enum TalkState {TALK_NONE, TALK_START, TALK_SELECT, TALK_RESPOND, TALK_RESPONSE_WAIT,
-	TALK_RESPOND_2, TALK_RESPOND_3};
+enum TalkState { TALK_NONE,
+	               TALK_START,
+	               TALK_SELECT,
+	               TALK_RESPOND,
+	               TALK_RESPONSE_WAIT,
+	               TALK_RESPOND_2,
+	               TALK_RESPOND_3 };
 
 #define MAX_TALK_SELECTIONS 4
 typedef TalkEntryData *TalkSelections[MAX_TALK_SELECTIONS];
@@ -94,6 +99,7 @@ private:
 
 	void reloadData();
 	void freeData();
+
 public:
 	Resources();
 	~Resources();

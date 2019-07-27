@@ -90,7 +90,7 @@ Tables::Tables() {
 	logsin9[0] = 8191;
 
 	// found from sample analysis
-	static const Bit8u resAmpDecayFactorTable[] = {31, 16, 12, 8, 5, 3, 2, 1};
+	static const Bit8u resAmpDecayFactorTable[] = { 31, 16, 12, 8, 5, 3, 2, 1 };
 	resAmpDecayFactor = resAmpDecayFactorTable;
 }
 

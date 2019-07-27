@@ -32,15 +32,14 @@
 #include "tinsel/tinlib.h"
 #include "tinsel/tinsel.h"
 
-#include "common/serializer.h"
 #include "common/savefile.h"
+#include "common/serializer.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 
 #include "gui/message.h"
 
 namespace Tinsel {
-
 
 /**
  * The current savegame format version.
@@ -59,8 +58,8 @@ namespace Tinsel {
 
 //----------------- GLOBAL GLOBAL DATA --------------------
 
-int	g_thingHeld = 0;
-int	g_restoreCD = 0;
+int g_thingHeld = 0;
+int g_restoreCD = 0;
 SRSTATE g_SRstate = SR_IDLE;
 
 //----------------- EXTERN FUNCTIONS --------------------
@@ -86,15 +85,15 @@ struct SaveGameHeader {
 	uint32 ver;
 	char desc[SG_DESC_LEN];
 	TimeDate dateTime;
-	uint32 playTime;	
+	uint32 playTime;
 	bool scnFlag;
 	byte language;
-	uint16 numInterpreters;			// Savegame version 2 or later only
+	uint16 numInterpreters; // Savegame version 2 or later only
 };
 
 enum {
-	DW1_SAVEGAME_ID = 0x44575399,	// = 'DWSc' = "DiscWorld 1 ScummVM"
-	DW2_SAVEGAME_ID = 0x44573253,	// = 'DW2S' = "DiscWorld 2 ScummVM"
+	DW1_SAVEGAME_ID = 0x44575399, // = 'DWSc' = "DiscWorld 1 ScummVM"
+	DW2_SAVEGAME_ID = 0x44573253, // = 'DW2S' = "DiscWorld 2 ScummVM"
 	SAVEGAME_HEADER_SIZE = 4 + 4 + 4 + SG_DESC_LEN + 7 + 4 + 1 + 1 + 2
 };
 
@@ -103,12 +102,12 @@ enum {
 enum {
 	// FIXME: Save file names in ScummVM can be longer than 8.3, overflowing the
 	// name field in savedFiles. Raising it to 256 as a preliminary fix.
-	FNAMELEN	= 256 // 8.3
+	FNAMELEN = 256 // 8.3
 };
 
 struct SFILES {
-	char	name[FNAMELEN];
-	char	desc[SG_DESC_LEN + 2];
+	char name[FNAMELEN];
+	char desc[SG_DESC_LEN + 2];
 	TimeDate dateTime;
 };
 
@@ -116,8 +115,8 @@ struct SFILES {
 
 // FIXME: Avoid non-const global vars
 
-static int	g_numSfiles = 0;
-static SFILES	g_savedFiles[MAX_SAVED_FILES];
+static int g_numSfiles = 0;
+static SFILES g_savedFiles[MAX_SAVED_FILES];
 
 static bool g_NeedLoad = true;
 
@@ -126,7 +125,7 @@ static int g_RestoreGameNumber = 0;
 static char *g_SaveSceneName = 0;
 static const char *g_SaveSceneDesc = 0;
 static int *g_SaveSceneSsCount = 0;
-static SAVED_DATA *g_SaveSceneSsData = 0;	// points to 'SAVED_DATA ssdata[MAX_NEST]'
+static SAVED_DATA *g_SaveSceneSsData = 0; // points to 'SAVED_DATA ssdata[MAX_NEST]'
 
 //------------- SAVE/LOAD SUPPORT METHODS ----------------
 
@@ -178,8 +177,7 @@ static bool syncSaveGameHeader(Common::Serializer &s, SaveGameHeader &hdr) {
 
 		if (_vm && s.isLoading()) {
 			// If the engine is loaded, ensure the Scn/Gra usage is correct, and it's the correct language
-			if ((hdr.scnFlag != ((_vm->getFeatures() & GF_SCNFILES) != 0)) ||
-					(hdr.language != _vm->_config->_language))
+			if ((hdr.scnFlag != ((_vm->getFeatures() & GF_SCNFILES) != 0)) || (hdr.language != _vm->_config->_language))
 				return false;
 		}
 	}
@@ -190,7 +188,7 @@ static bool syncSaveGameHeader(Common::Serializer &s, SaveGameHeader &hdr) {
 		hdr.numInterpreters = NUM_INTERPRET;
 		s.syncAsUint16LE(hdr.numInterpreters);
 	} else {
-		if(_vm) // See comment above about bug #3387551
+		if (_vm) // See comment above about bug #3387551
 			hdr.numInterpreters = (TinselV2 ? 70 : 64) - 20;
 		else
 			hdr.numInterpreters = 50; // This value doesn't matter since the saved game is being deleted.
@@ -224,7 +222,6 @@ static void syncSavedMover(Common::Serializer &s, SAVED_MOVER &sm) {
 	for (i = 0; i < TOTAL_SCALES; ++i)
 		for (j = 0; j < 4; ++j)
 			s.syncAsUint32LE(sm.talkReels[i][j]);
-
 
 	if (TinselV2) {
 		s.syncAsByte(sm.bHidden);
@@ -335,7 +332,10 @@ static void syncSavedData(Common::Serializer &s, SAVED_DATA &sd, int numInterp) 
 static int cmpTimeDate(const TimeDate &a, const TimeDate &b) {
 	int tmp;
 
-	#define CMP_ENTRY(x) tmp = a.x - b.x; if (tmp != 0) return tmp
+#define CMP_ENTRY(x) \
+	tmp = a.x - b.x;   \
+	if (tmp != 0)      \
+	return tmp
 
 	CMP_ENTRY(tm_year);
 	CMP_ENTRY(tm_mon);
@@ -344,7 +344,7 @@ static int cmpTimeDate(const TimeDate &a, const TimeDate &b) {
 	CMP_ENTRY(tm_min);
 	CMP_ENTRY(tm_sec);
 
-	#undef CMP_ENTRY
+#undef CMP_ENTRY
 
 	return 0;
 }
@@ -362,7 +362,7 @@ int getList(Common::SaveFileManager *saveFileMan, const Common::String &target) 
 
 	int i;
 
-	const Common::String pattern = target +  ".???";
+	const Common::String pattern = target + ".???";
 	Common::StringArray files = saveFileMan->listSavefiles(pattern);
 
 	g_numSfiles = 0;
@@ -383,7 +383,7 @@ int getList(Common::SaveFileManager *saveFileMan, const Common::String &target) 
 		bool validHeader = syncSaveGameHeader(s, hdr);
 		delete f;
 		if (!validHeader) {
-			continue;	// Invalid header, or savegame too new -> skip it
+			continue; // Invalid header, or savegame too new -> skip it
 			// TODO: In SCUMM, we still show an entry for the save, but with description
 			// "incompatible version".
 		}
@@ -433,7 +433,7 @@ char *ListEntry(int i, letype which) {
 }
 
 static bool DoSync(Common::Serializer &s, int numInterp) {
-	int	sg = 0;
+	int sg = 0;
 
 	if (TinselV2) {
 		if (s.isSaving())
@@ -445,8 +445,8 @@ static bool DoSync(Common::Serializer &s, int numInterp) {
 		HoldItem(INV_NOICON);
 
 	syncSavedData(s, *g_srsd, numInterp);
-	syncGlobInfo(s);		// Glitter globals
-	syncInvInfo(s);			// Inventory data
+	syncGlobInfo(s); // Glitter globals
+	syncInvInfo(s); // Inventory data
 
 	// Held object
 	if (s.isSaving())
@@ -463,10 +463,10 @@ static bool DoSync(Common::Serializer &s, int numInterp) {
 			HoldItem(sg);
 	}
 
-	syncTimerInfo(s);		// Timer data
+	syncTimerInfo(s); // Timer data
 	if (!TinselV2)
-		syncPolyInfo(s);		// Dead polygon data
-	syncSCdata(s);			// Hook Scene and delayed scene
+		syncPolyInfo(s); // Dead polygon data
+	syncSCdata(s); // Hook Scene and delayed scene
 
 	s.syncAsSint32LE(*g_SaveSceneSsCount);
 
@@ -491,7 +491,7 @@ static bool DoSync(Common::Serializer &s, int numInterp) {
  * DoRestore
  */
 static bool DoRestore() {
-	Common::InSaveFile *f =  _vm->getSaveFileMan()->openForLoading(g_savedFiles[g_RestoreGameNumber].name);
+	Common::InSaveFile *f = _vm->getSaveFileMan()->openForLoading(g_savedFiles[g_RestoreGameNumber].name);
 
 	if (f == NULL) {
 		return false;
@@ -500,7 +500,7 @@ static bool DoRestore() {
 	Common::Serializer s(f, 0);
 	SaveGameHeader hdr;
 	if (!syncSaveGameHeader(s, hdr)) {
-		delete f;	// Invalid header, or savegame too new -> skip it
+		delete f; // Invalid header, or savegame too new -> skip it
 		return false;
 	}
 
@@ -547,7 +547,7 @@ static void SaveFailure(Common::OutSaveFile *f) {
 		delete f;
 		_vm->getSaveFileMan()->removeSavefile(g_SaveSceneName);
 	}
-	g_SaveSceneName = NULL;	// Invalidate save name
+	g_SaveSceneName = NULL; // Invalidate save name
 	GUI::MessageDialog dialog(_("Failed to save game to file."));
 	dialog.runModal();
 }
@@ -564,8 +564,8 @@ static void DoSave() {
 
 	if (g_SaveSceneName == NULL) {
 		// Generate a new unique save name
-		int	i;
-		int	ano = 1;	// Allocated number
+		int i;
+		int ano = 1; // Allocated number
 
 		while (1) {
 			Common::String fname = _vm->getSavegameFilename(ano);
@@ -582,7 +582,6 @@ static void DoSave() {
 
 		g_SaveSceneName = tmpName;
 	}
-
 
 	if (g_SaveSceneDesc[0] == 0)
 		g_SaveSceneDesc = "unnamed";
@@ -623,7 +622,7 @@ static void DoSave() {
 
 	f->finalize();
 	delete f;
-	g_SaveSceneName = NULL;	// Invalidate save name
+	g_SaveSceneName = NULL; // Invalidate save name
 }
 
 /**
@@ -651,7 +650,6 @@ void ProcessSRQueue() {
 		break;
 	}
 }
-
 
 void RequestSaveGame(char *name, char *desc, SAVED_DATA *sd, int *pSsCount, SAVED_DATA *pSsData) {
 	assert(g_SRstate == SR_IDLE);

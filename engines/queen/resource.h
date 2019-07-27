@@ -24,19 +24,19 @@
 #define QUEEN_RESOURCE_H
 
 #include "common/file.h"
-#include "common/str-array.h"
 #include "common/language.h"
 #include "common/platform.h"
+#include "common/str-array.h"
 #include "queen/defs.h"
 
 namespace Queen {
 
 enum GameFeatures {
-	GF_DEMO      = 1 << 0, // demo
-	GF_TALKIE    = 1 << 1, // equivalent to cdrom version check
-	GF_FLOPPY    = 1 << 2, // floppy, ie. non-talkie version
+	GF_DEMO = 1 << 0, // demo
+	GF_TALKIE = 1 << 1, // equivalent to cdrom version check
+	GF_FLOPPY = 1 << 2, // floppy, ie. non-talkie version
 	GF_INTERVIEW = 1 << 3, // interview demo
-	GF_REBUILT   = 1 << 4  // version rebuilt with the 'compression_queen' tool
+	GF_REBUILT = 1 << 4 // version rebuilt with the 'compression_queen' tool
 };
 
 struct RetailGameVersion {
@@ -65,7 +65,6 @@ struct ResourceEntry {
 
 class Resource {
 public:
-
 	Resource();
 	~Resource();
 
@@ -101,34 +100,33 @@ public:
 	static bool detectVersion(DetectedGameVersion *ver, Common::File *f);
 
 	enum Version {
-		VER_ENG_FLOPPY     = 0,
-		VER_ENG_TALKIE     = 1,
-		VER_FRE_FLOPPY     = 2,
-		VER_FRE_TALKIE     = 3,
-		VER_GER_FLOPPY     = 4,
-		VER_GER_TALKIE     = 5,
-		VER_ITA_FLOPPY     = 6,
-		VER_ITA_TALKIE     = 7,
-		VER_SPA_TALKIE     = 8,
-		VER_HEB_TALKIE	   = 9,
-		VER_DEMO_PCGAMES   = 10,
-		VER_DEMO           = 11,
-		VER_INTERVIEW      = 12,
+		VER_ENG_FLOPPY = 0,
+		VER_ENG_TALKIE = 1,
+		VER_FRE_FLOPPY = 2,
+		VER_FRE_TALKIE = 3,
+		VER_GER_FLOPPY = 4,
+		VER_GER_TALKIE = 5,
+		VER_ITA_FLOPPY = 6,
+		VER_ITA_TALKIE = 7,
+		VER_SPA_TALKIE = 8,
+		VER_HEB_TALKIE = 9,
+		VER_DEMO_PCGAMES = 10,
+		VER_DEMO = 11,
+		VER_INTERVIEW = 12,
 		VER_AMI_ENG_FLOPPY = 13,
-		VER_AMI_DEMO       = 14,
-		VER_AMI_INTERVIEW  = 15,
+		VER_AMI_DEMO = 14,
+		VER_AMI_INTERVIEW = 15,
 
-		VER_COUNT          = 16
+		VER_COUNT = 16
 	};
 
 	enum {
 		JAS_VERSION_OFFSET_DEMO = 0x119A8,
-		JAS_VERSION_OFFSET_INTV	= 0xCF8,
-		JAS_VERSION_OFFSET_PC	= 0x12484
+		JAS_VERSION_OFFSET_INTV = 0xCF8,
+		JAS_VERSION_OFFSET_PC = 0x12484
 	};
 
 protected:
-
 	Common::File _resourceFile;
 
 	int _currentResourceFileNum;

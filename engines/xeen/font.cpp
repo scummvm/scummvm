@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/endian.h"
 #include "xeen/font.h"
+#include "common/endian.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
 
@@ -34,13 +34,19 @@ byte FontData::_bgColor;
 bool FontData::_fontReduced;
 Justify FontData::_fontJustify;
 
-FontSurface::FontSurface() : XSurface(), _msgWraps(false), _displayString(nullptr),
-		_writePos(*FontData::_fontWritePos) {
+FontSurface::FontSurface()
+  : XSurface()
+  , _msgWraps(false)
+  , _displayString(nullptr)
+  , _writePos(*FontData::_fontWritePos) {
 	setTextColor(0);
 }
 
-FontSurface::FontSurface(int wv, int hv) : XSurface(wv, hv),
-		_msgWraps(false), _displayString(nullptr), _writePos(*FontData::_fontWritePos) {
+FontSurface::FontSurface(int wv, int hv)
+  : XSurface(wv, hv)
+  , _msgWraps(false)
+  , _displayString(nullptr)
+  , _writePos(*FontData::_fontWritePos) {
 	create(w, h);
 	setTextColor(0);
 }
@@ -138,7 +144,7 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 					_writePos.x = (bounds.left + bounds.right + 1 - totalWidth) / 2;
 				else
 					_writePos.x = (_writePos.x * 2 - totalWidth) / 2;
- 			}
+			}
 		}
 
 		// Main character display loop
@@ -241,8 +247,8 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 
 		if (!_displayString)
 			break;
-		if ( _displayString > displayEnd && _fontJustify != JUSTIFY_RIGHT && _msgWraps
-				&& newLine(bounds))
+		if (_displayString > displayEnd && _fontJustify != JUSTIFY_RIGHT && _msgWraps
+		    && newLine(bounds))
 			break;
 	}
 
@@ -257,7 +263,7 @@ void FontSurface::writeCharacter(char c, const Common::Rect &clipRect) {
 }
 
 char FontSurface::getNextChar() {
-	return  *_displayString++ & 0x7f;
+	return *_displayString++ & 0x7f;
 }
 
 bool FontSurface::getNextCharWidth(int &total) {
@@ -337,7 +343,8 @@ void FontSurface::writeChar(char c, const Common::Rect &clipRect) {
 	const byte *srcP = &_fontData[charIndex * 16];
 
 	for (int yp = 0; yp < FONT_HEIGHT; ++yp, ++y) {
-		uint16 lineData = READ_LE_UINT16(srcP); srcP += 2;
+		uint16 lineData = READ_LE_UINT16(srcP);
+		srcP += 2;
 		byte *destP = (byte *)getBasePtr(_writePos.x, y);
 
 		// Ignore line if it's outside the clipping rect
@@ -356,7 +363,7 @@ void FontSurface::writeChar(char c, const Common::Rect &clipRect) {
 	}
 
 	addDirtyRect(Common::Rect(_writePos.x, yStart, _writePos.x + FONT_WIDTH,
-		yStart + FONT_HEIGHT));
+	                          yStart + FONT_HEIGHT));
 	_writePos.x += _fontData[0x1000 + charIndex];
 }
 

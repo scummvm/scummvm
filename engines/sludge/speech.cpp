@@ -20,6 +20,7 @@
  *
  */
 
+#include "sludge/speech.h"
 #include "sludge/allfiles.h"
 #include "sludge/backdrop.h"
 #include "sludge/fonttext.h"
@@ -33,7 +34,6 @@
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
 #include "sludge/sound.h"
-#include "sludge/speech.h"
 #include "sludge/sprbanks.h"
 #include "sludge/sprites.h"
 
@@ -94,9 +94,9 @@ void SpeechManager::addSpeechLine(const Common::String &theLine, int x, int &off
 	// Calculate offset
 	if ((xx1 < 5) && (offset < (5 - xx1))) {
 		offset = 5 - xx1;
-	} else if ((xx2 >= ((float) g_system->getWidth() / cameraZoom) - 5)
-			&& (offset > (((float) g_system->getWidth() / cameraZoom) - 5 - xx2))) {
-		offset = ((float) g_system->getWidth() / cameraZoom) - 5 - xx2;
+	} else if ((xx2 >= ((float)g_system->getWidth() / cameraZoom) - 5)
+	           && (offset > (((float)g_system->getWidth() / cameraZoom) - 5 - xx2))) {
+		offset = ((float)g_system->getWidth() / cameraZoom) - 5 - xx2;
 	}
 }
 
@@ -125,9 +125,9 @@ int SpeechManager::wrapSpeechXY(const Common::String &theText, int x, int y, int
 			if (g_sludge->_soundMan->startSound(sampleFile, false)) {
 				speechTime = -10;
 				_speech->lastFile = sampleFile;
-				if (_speechMode == 2) return -10;
+				if (_speechMode == 2)
+					return -10;
 			}
-
 		}
 	}
 	_speech->speechY = y;
@@ -151,13 +151,13 @@ int SpeechManager::wrapSpeechXY(const Common::String &theText, int x, int y, int
 	}
 	addSpeechLine(txt, x, offset);
 	y -= fontHeight / cameraZoom;
-	delete []tmp;
+	delete[] tmp;
 
 	if (y < 0)
 		_speech->speechY -= y;
-	else if (_speech->speechY > cameraY + (float) (g_system->getHeight() - fontHeight / 3) / cameraZoom)
+	else if (_speech->speechY > cameraY + (float)(g_system->getHeight() - fontHeight / 3) / cameraZoom)
 		_speech->speechY = cameraY
-				+ (float) (g_system->getHeight() - fontHeight / 3) / cameraZoom;
+		  + (float)(g_system->getHeight() - fontHeight / 3) / cameraZoom;
 
 	if (offset) {
 		for (SpeechLineList::iterator it = _speech->allSpeech.begin(); it != _speech->allSpeech.end(); ++it) {
@@ -171,10 +171,10 @@ int SpeechManager::wrapSpeechPerson(const Common::String &theText, OnScreenPerso
 	int cameraX = g_sludge->_gfxMan->getCamX();
 	int cameraY = g_sludge->_gfxMan->getCamY();
 	int i = wrapSpeechXY(theText, thePerson.x - cameraX,
-			thePerson.y - cameraY
-					- (thePerson.scale * (thePerson.height - thePerson.floaty))
-					- thePerson.thisType->speechGap,
-			thePerson.thisType->wrapSpeech, sampleFile);
+	                     thePerson.y - cameraY
+	                       - (thePerson.scale * (thePerson.height - thePerson.floaty))
+	                       - thePerson.thisType->speechGap,
+	                     thePerson.thisType->wrapSpeech, sampleFile);
 	if (animPerson) {
 		thePerson.makeTalker();
 		_speech->currentTalker = &thePerson;
@@ -197,14 +197,14 @@ int SpeechManager::wrapSpeech(const Common::String &theText, int objT, int sampl
 		if (thisRegion) {
 			setObjFontColour(thisRegion->thisType);
 			i = wrapSpeechXY(theText,
-					((thisRegion->x1 + thisRegion->x2) >> 1) - cameraX,
-					thisRegion->y1 - thisRegion->thisType->speechGap - cameraY,
-					thisRegion->thisType->wrapSpeech, sampleFile);
+			                 ((thisRegion->x1 + thisRegion->x2) >> 1) - cameraX,
+			                 thisRegion->y1 - thisRegion->thisType->speechGap - cameraY,
+			                 thisRegion->thisType->wrapSpeech, sampleFile);
 		} else {
 			ObjectType *temp = g_sludge->_objMan->findObjectType(objT);
 			setObjFontColour(temp);
 			i = wrapSpeechXY(theText, g_system->getWidth() >> 1, 10, temp->wrapSpeech,
-					sampleFile);
+			                 sampleFile);
 		}
 	}
 	return i;

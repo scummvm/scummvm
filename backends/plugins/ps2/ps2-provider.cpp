@@ -27,14 +27,13 @@
 
 #if defined(DYNAMIC_MODULES) && defined(__PLAYSTATION2__)
 
-#include "backends/plugins/ps2/ps2-provider.h"
-#include "backends/plugins/elf/mips-loader.h"
+#	include "backends/plugins/elf/mips-loader.h"
+#	include "backends/plugins/ps2/ps2-provider.h"
 
-#include <kernel.h>
+#	include <kernel.h>
 
 class PS2DLObject : public MIPSDLObject {
 protected:
-
 	virtual void flushDataCache(void *, uint32) const {
 		FlushCache(0);
 		FlushCache(2);

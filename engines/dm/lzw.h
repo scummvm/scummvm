@@ -33,7 +33,7 @@
 #include "dm/dm.h"
 
 namespace Common {
-	class MemoryReadStream;
+class MemoryReadStream;
 }
 
 namespace DM {
@@ -57,7 +57,7 @@ class LZWdecompressor {
 
 	int16 getNextInputCode(Common::MemoryReadStream &stream, int32 *inputByteCount);
 	void outputCharacter(byte character, byte **out);
-	void operator=(const LZWdecompressor&); // deleted
+	void operator=(const LZWdecompressor &); // deleted
 public:
 	LZWdecompressor();
 	~LZWdecompressor();

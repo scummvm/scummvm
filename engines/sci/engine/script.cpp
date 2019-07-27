@@ -20,14 +20,14 @@
  *
  */
 
-#include "sci/console.h"
-#include "sci/sci.h"
-#include "sci/resource.h"
-#include "sci/util.h"
-#include "sci/engine/features.h"
-#include "sci/engine/state.h"
-#include "sci/engine/kernel.h"
 #include "sci/engine/script.h"
+#include "sci/console.h"
+#include "sci/engine/features.h"
+#include "sci/engine/kernel.h"
+#include "sci/engine/state.h"
+#include "sci/resource.h"
+#include "sci/sci.h"
+#include "sci/util.h"
 
 #include "common/util.h"
 
@@ -39,7 +39,8 @@ const char *sciObjectTypeNames[] = {
 };
 
 Script::Script()
-	: SegmentObj(SEG_TYPE_SCRIPT), _buf() {
+  : SegmentObj(SEG_TYPE_SCRIPT)
+  , _buf() {
 	freeScript();
 }
 
@@ -112,11 +113,13 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 		// As mentioned above, the script and the heap together should not exceed 64KB
 		if (script->size() + heap->size() > 65535)
 			error("Script and heap %d sizes combined exceed 64K. This means a fundamental "
-					"design bug was made regarding SCI1.1 and newer games.\n"
-					"Please report this error to the ScummVM team", script_nr);
+			      "design bug was made regarding SCI1.1 and newer games.\n"
+			      "Please report this error to the ScummVM team",
+			      script_nr);
 	} else if (getSciVersion() == SCI_VERSION_3 && script->size() > 0x3FFFF) {
 		error("Script %d size exceeds 256K (it is %u bytes).\n"
-			  "Please report this error to the ScummVM team", script_nr, script->size());
+		      "Please report this error to the ScummVM team",
+		      script_nr, script->size());
 	}
 
 	uint extraLocalsWorkaround = 0;
@@ -231,10 +234,10 @@ void Script::identifyOffsets() {
 	SciSpan<const byte> scriptDataPtr;
 	SciSpan<const byte> stringStartPtr;
 	SciSpan<const byte> stringDataPtr;
-	byte stringDataByte  = 0;
+	byte stringDataByte = 0;
 	uint16 typeObject_id = 0;
 	uint16 typeString_id = 0;
-	uint16 typeSaid_id   = 0;
+	uint16 typeSaid_id = 0;
 
 	uint16 blockType = 0;
 	uint16 blockSize = 0;
@@ -271,7 +274,7 @@ void Script::identifyOffsets() {
 			blockSize = scriptDataPtr.getUint16LEAt(0);
 			if (blockSize < 4)
 				error("Script::identifyOffsets(): invalid block size in script %d", _nr);
-			blockSize     -= 4; // block size includes block-type UINT16 and block-size UINT16
+			blockSize -= 4; // block size includes block-type UINT16 and block-size UINT16
 			scriptDataPtr += 2;
 
 			if (scriptDataPtr.size() < blockSize)
@@ -281,9 +284,9 @@ void Script::identifyOffsets() {
 			case SCI_OBJ_OBJECT:
 			case SCI_OBJ_CLASS:
 				typeObject_id++;
-				arrayEntry.type       = SCI_SCR_OFFSET_TYPE_OBJECT;
-				arrayEntry.id         = typeObject_id;
-				arrayEntry.offset     = scriptDataPtr - *_buf + 8; // Calculate offset inside script data (VM uses +8)
+				arrayEntry.type = SCI_SCR_OFFSET_TYPE_OBJECT;
+				arrayEntry.id = typeObject_id;
+				arrayEntry.offset = scriptDataPtr - *_buf + 8; // Calculate offset inside script data (VM uses +8)
 				arrayEntry.stringSize = 0;
 				_offsetLookupArray.push_back(arrayEntry);
 				_offsetLookupObjectCount++;
@@ -293,7 +296,7 @@ void Script::identifyOffsets() {
 				// string block detected, we now grab all NUL terminated strings out of this block
 				stringDataPtr = scriptDataPtr.subspan(0, blockSize);
 
-				arrayEntry.type       = SCI_SCR_OFFSET_TYPE_STRING;
+				arrayEntry.type = SCI_SCR_OFFSET_TYPE_STRING;
 
 				for (;;) {
 					if (stringDataPtr.size() < 1) // no more bytes left
@@ -325,8 +328,8 @@ void Script::identifyOffsets() {
 						break;
 
 					typeString_id++;
-					arrayEntry.id         = typeString_id;
-					arrayEntry.offset     = stringStartPtr - *_buf; // Calculate offset inside script data
+					arrayEntry.id = typeString_id;
+					arrayEntry.offset = stringStartPtr - *_buf; // Calculate offset inside script data
 					arrayEntry.stringSize = stringDataPtr - stringStartPtr;
 					_offsetLookupArray.push_back(arrayEntry);
 					_offsetLookupStringCount++;
@@ -337,9 +340,9 @@ void Script::identifyOffsets() {
 				// said block detected, we now try to find every single said "string" inside this block
 				// said strings are terminated with a 0xFF, the string itself may contain words (2 bytes), where
 				//  the second byte of a word may also be a 0xFF.
-				stringDataPtr  = scriptDataPtr.subspan(0, blockSize);
+				stringDataPtr = scriptDataPtr.subspan(0, blockSize);
 
-				arrayEntry.type       = SCI_SCR_OFFSET_TYPE_SAID;
+				arrayEntry.type = SCI_SCR_OFFSET_TYPE_SAID;
 
 				for (;;) {
 					if (stringDataPtr.size() < 1) // no more bytes left
@@ -372,8 +375,8 @@ void Script::identifyOffsets() {
 					}
 
 					typeSaid_id++;
-					arrayEntry.id         = typeSaid_id;
-					arrayEntry.offset     = stringStartPtr - *_buf; // Calculate offset inside script data
+					arrayEntry.id = typeSaid_id;
+					arrayEntry.offset = stringStartPtr - *_buf; // Calculate offset inside script data
 					arrayEntry.stringSize = 0;
 					_offsetLookupArray.push_back(arrayEntry);
 					_offsetLookupSaidCount++;
@@ -384,7 +387,7 @@ void Script::identifyOffsets() {
 				break;
 			}
 
-			scriptDataPtr  += blockSize;
+			scriptDataPtr += blockSize;
 		}
 
 	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
@@ -414,7 +417,7 @@ void Script::identifyOffsets() {
 
 		SciSpan<const byte> endOfStringPtr = scriptDataPtr.subspan(endOfStringOffset);
 
-		scriptDataPtr  += objectStartOffset;
+		scriptDataPtr += objectStartOffset;
 
 		// go through all objects
 		for (;;) {
@@ -422,15 +425,15 @@ void Script::identifyOffsets() {
 				error("Script::identifyOffsets(): unexpected end of script %d", _nr);
 
 			blockType = scriptDataPtr.getUint16SEAt(0);
-			scriptDataPtr  += 2;
+			scriptDataPtr += 2;
 			if (blockType != SCRIPT_OBJECT_MAGIC_NUMBER)
 				break;
 
 			// Object found, add offset of object
 			typeObject_id++;
-			arrayEntry.type       = SCI_SCR_OFFSET_TYPE_OBJECT;
-			arrayEntry.id         = typeObject_id;
-			arrayEntry.offset     = scriptDataPtr - *_buf - 2; // the VM uses a pointer to the Magic-Number
+			arrayEntry.type = SCI_SCR_OFFSET_TYPE_OBJECT;
+			arrayEntry.id = typeObject_id;
+			arrayEntry.offset = scriptDataPtr - *_buf - 2; // the VM uses a pointer to the Magic-Number
 			arrayEntry.stringSize = 0;
 			_offsetLookupArray.push_back(arrayEntry);
 			_offsetLookupObjectCount++;
@@ -442,7 +445,7 @@ void Script::identifyOffsets() {
 			blockSize = numProperties * kPropertySize;
 			if (blockSize < 4)
 				error("Script::identifyOffsets(): invalid block size in script %d", _nr);
-			scriptDataPtr  += 2;
+			scriptDataPtr += 2;
 
 			const uint16 scriptNum = scriptDataPtr.getUint16SEAt(6);
 
@@ -457,7 +460,7 @@ void Script::identifyOffsets() {
 			if (scriptDataPtr.size() < blockSize)
 				error("Script::identifyOffsets(): invalid block size in script %d", _nr);
 
-			scriptDataPtr  += blockSize;
+			scriptDataPtr += blockSize;
 		}
 
 		_codeOffset = hunkPtr - *_buf;
@@ -468,7 +471,7 @@ void Script::identifyOffsets() {
 
 		stringDataPtr = scriptDataPtr.subspan(0, endOfStringPtr - scriptDataPtr);
 
-		arrayEntry.type       = SCI_SCR_OFFSET_TYPE_STRING;
+		arrayEntry.type = SCI_SCR_OFFSET_TYPE_STRING;
 		for (;;) {
 			if (stringDataPtr.size() < 1) // no more bytes left
 				break;
@@ -481,7 +484,7 @@ void Script::identifyOffsets() {
 				if (!stringDataByte) // NUL found, exit this loop
 					break;
 				if (stringDataPtr.size() < 1) {
-				    // no more bytes left
+					// no more bytes left
 					warning("Script::identifyOffsets(): string without terminating NUL in script %d", _nr);
 					break;
 				}
@@ -491,8 +494,8 @@ void Script::identifyOffsets() {
 				break;
 
 			typeString_id++;
-			arrayEntry.id         = typeString_id;
-			arrayEntry.offset     = stringStartPtr - *_buf; // Calculate offset inside script data
+			arrayEntry.id = typeString_id;
+			arrayEntry.offset = stringStartPtr - *_buf; // Calculate offset inside script data
 			arrayEntry.stringSize = stringDataPtr - stringStartPtr;
 			_offsetLookupArray.push_back(arrayEntry);
 			_offsetLookupStringCount++;
@@ -528,9 +531,9 @@ void Script::identifyOffsets() {
 
 			// Object found, add offset of object
 			typeObject_id++;
-			arrayEntry.type       = SCI_SCR_OFFSET_TYPE_OBJECT;
-			arrayEntry.id         = typeObject_id;
-			arrayEntry.offset     = scriptDataPtr - *_buf - 2; // the VM uses a pointer to the Magic-Number
+			arrayEntry.type = SCI_SCR_OFFSET_TYPE_OBJECT;
+			arrayEntry.id = typeObject_id;
+			arrayEntry.offset = scriptDataPtr - *_buf - 2; // the VM uses a pointer to the Magic-Number
 			arrayEntry.stringSize = 0;
 			_offsetLookupArray.push_back(arrayEntry);
 			_offsetLookupObjectCount++;
@@ -541,12 +544,12 @@ void Script::identifyOffsets() {
 			blockSize = scriptDataPtr.getUint16SEAt(0);
 			if (blockSize < 4)
 				error("Script::identifyOffsets(): invalid block size in script %d", _nr);
-			scriptDataPtr  += 2;
+			scriptDataPtr += 2;
 			blockSize -= 4; // blocksize contains UINT16 type and UINT16 size
 			if (scriptDataPtr.size() < blockSize)
 				error("Script::identifyOffsets(): invalid block size in script %d", _nr);
 
-			scriptDataPtr  += blockSize;
+			scriptDataPtr += blockSize;
 		}
 
 		// And now we get all the strings
@@ -558,9 +561,9 @@ void Script::identifyOffsets() {
 			if (sci3RelocationOffset < sci3StringOffset)
 				error("Script::identifyOffsets(): string offset points beyond relocation offset in script %d", _nr);
 
-			stringDataPtr  = _buf->subspan(sci3StringOffset, sci3RelocationOffset - sci3StringOffset);
+			stringDataPtr = _buf->subspan(sci3StringOffset, sci3RelocationOffset - sci3StringOffset);
 
-			arrayEntry.type       = SCI_SCR_OFFSET_TYPE_STRING;
+			arrayEntry.type = SCI_SCR_OFFSET_TYPE_STRING;
 
 			for (;;) {
 				if (stringDataPtr.size() < 1) // no more bytes left
@@ -592,8 +595,8 @@ void Script::identifyOffsets() {
 					break;
 
 				typeString_id++;
-				arrayEntry.id         = typeString_id;
-				arrayEntry.offset     = stringStartPtr - *_buf; // Calculate offset inside script data
+				arrayEntry.id = typeString_id;
+				arrayEntry.offset = stringStartPtr - *_buf; // Calculate offset inside script data
 				arrayEntry.stringSize = stringDataPtr - stringStartPtr;
 				_offsetLookupArray.push_back(arrayEntry);
 				_offsetLookupStringCount++;
@@ -938,7 +941,7 @@ bool Script::isValidOffset(uint32 offset) const {
 SegmentRef Script::dereference(reg_t pointer) {
 	if (pointer.getOffset() > _buf->size()) {
 		error("Script::dereference(): Attempt to dereference invalid pointer %04x:%04x into script %d segment (script size=%u)",
-				  PRINT_REG(pointer), _nr, _buf->size());
+		      PRINT_REG(pointer), _nr, _buf->size());
 		return SegmentRef();
 	}
 
@@ -1037,7 +1040,7 @@ void Script::initializeClasses(SegManager *segMan) {
 				species = seeker.getUint16SEAt(12);
 			classpos += 12;
 		} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
-			isClass = (seeker.getUint16SEAt(14) & kInfoFlagClass);	// -info- selector
+			isClass = (seeker.getUint16SEAt(14) & kInfoFlagClass); // -info- selector
 			species = seeker.getUint16SEAt(10);
 		} else if (getSciVersion() == SCI_VERSION_3) {
 			isClass = (seeker.getUint16SEAt(10) & kInfoFlagClass);
@@ -1059,7 +1062,7 @@ void Script::initializeClasses(SegManager *segMan) {
 
 			if (species < 0 || species >= (int)segMan->classTableSize())
 				error("Invalid species %d(0x%x) unknown max %d(0x%x) while instantiating script %d",
-						  species, species, segMan->classTableSize(), segMan->classTableSize(), _nr);
+				      species, species, segMan->classTableSize(), segMan->classTableSize(), _nr);
 
 			segMan->setClassOffset(species, make_reg32(segMan->getScriptSegment(_nr), classpos));
 		}
@@ -1083,31 +1086,29 @@ void Script::initializeObjectsSci0(SegManager *segMan, SegmentId segmentId) {
 
 			switch (objType) {
 			case SCI_OBJ_OBJECT:
-			case SCI_OBJ_CLASS:
-				{
-					reg_t addr = make_reg(segmentId, seeker - *_buf + 4 - SCRIPT_OBJECT_MAGIC_OFFSET);
-					Object *obj;
-					if (pass == 1) {
-						obj = scriptObjInit(addr);
-						obj->initSpecies(segMan, addr);
-					} else {
-						obj = getObject(addr.getOffset());
-						if (!obj->initBaseObject(segMan, addr)) {
-							if ((_nr == 202 || _nr == 764) && g_sci->getGameId() == GID_KQ5) {
-								// WORKAROUND: Script 202 of KQ5 French and German
-								// (perhaps Spanish too?) has an invalid object.
-								// This is non-fatal. Refer to bugs #3035396 and
-								// #3150767.
-								// Same happens with script 764, it seems to
-								// contain junk towards its end.
-								_objects.erase(addr.toUint16() - SCRIPT_OBJECT_MAGIC_OFFSET);
-							} else {
-								error("Failed to locate base object for object at %04x:%04x in script %d", PRINT_REG(addr), _nr);
-							}
+			case SCI_OBJ_CLASS: {
+				reg_t addr = make_reg(segmentId, seeker - *_buf + 4 - SCRIPT_OBJECT_MAGIC_OFFSET);
+				Object *obj;
+				if (pass == 1) {
+					obj = scriptObjInit(addr);
+					obj->initSpecies(segMan, addr);
+				} else {
+					obj = getObject(addr.getOffset());
+					if (!obj->initBaseObject(segMan, addr)) {
+						if ((_nr == 202 || _nr == 764) && g_sci->getGameId() == GID_KQ5) {
+							// WORKAROUND: Script 202 of KQ5 French and German
+							// (perhaps Spanish too?) has an invalid object.
+							// This is non-fatal. Refer to bugs #3035396 and
+							// #3150767.
+							// Same happens with script 764, it seems to
+							// contain junk towards its end.
+							_objects.erase(addr.toUint16() - SCRIPT_OBJECT_MAGIC_OFFSET);
+						} else {
+							error("Failed to locate base object for object at %04x:%04x in script %d", PRINT_REG(addr), _nr);
 						}
 					}
 				}
-				break;
+			} break;
 
 			default:
 				break;
@@ -1130,7 +1131,7 @@ void Script::initializeObjectsSci11(SegManager *segMan, SegmentId segmentId, boo
 
 		// Copy base from species class, as we need its selector IDs
 		obj->setSuperClassSelector(
-			segMan->getClassAddress(obj->getSuperClassSelector().getOffset(), SCRIPT_GET_LOCK, 0, applyScriptPatches));
+		  segMan->getClassAddress(obj->getSuperClassSelector().getOffset(), SCRIPT_GET_LOCK, 0, applyScriptPatches));
 
 		// -propDict- is used by Obj::isMemberOf to determine if an object
 		// is an instance of a class. For classes, we therefore relocate
@@ -1178,12 +1179,12 @@ void Script::initializeObjectsSci11(SegManager *segMan, SegmentId segmentId, boo
 		const Object *classObj = segMan->getObject(classObject);
 
 		warning("Object %04x:%04x (%s) from %s declares %d variables, "
-				"but its class declares %d variables",
-				PRINT_REG(pos),
-				segMan->getObjectName(pos),
-				_buf->name().c_str(),
-				obj->getVarCount(),
-				classObj->getVarCount());
+		        "but its class declares %d variables",
+		        PRINT_REG(pos),
+		        segMan->getObjectName(pos),
+		        _buf->name().c_str(),
+		        obj->getVarCount(),
+		        classObj->getVarCount());
 	}
 }
 

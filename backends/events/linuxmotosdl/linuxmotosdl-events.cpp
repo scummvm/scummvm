@@ -24,8 +24,8 @@
 
 #if defined(LINUXMOTO)
 
-#include "backends/events/linuxmotosdl/linuxmotosdl-events.h"
-#include "backends/platform/linuxmoto/linuxmoto-sdl.h"
+#	include "backends/events/linuxmotosdl/linuxmotosdl-events.h"
+#	include "backends/platform/linuxmoto/linuxmoto-sdl.h"
 
 enum {
 	GFX_HALF = 12
@@ -34,7 +34,7 @@ enum {
 void LinuxmotoSdlEventSource::preprocessEvents(SDL_Event *event) {
 	if (event->type == SDL_ACTIVEEVENT) {
 		if (event->active.state == SDL_APPINPUTFOCUS && !event->active.gain) {
-			((OSystem_SDL* )g_system)->getMixerManager()->suspendAudio();
+			((OSystem_SDL *)g_system)->getMixerManager()->suspendAudio();
 			for (;;) {
 				if (!SDL_WaitEvent(event)) {
 					SDL_Delay(10);
@@ -45,7 +45,7 @@ void LinuxmotoSdlEventSource::preprocessEvents(SDL_Event *event) {
 				if (event->type != SDL_ACTIVEEVENT)
 					continue;
 				if (event->active.state == SDL_APPINPUTFOCUS && event->active.gain) {
-					((OSystem_SDL* )g_system)->getMixerManager()->resumeAudio();
+					((OSystem_SDL *)g_system)->getMixerManager()->resumeAudio();
 					return;
 				}
 			}
@@ -54,10 +54,11 @@ void LinuxmotoSdlEventSource::preprocessEvents(SDL_Event *event) {
 }
 
 bool LinuxmotoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
-	if (false) {}
+	if (false) {
+	}
 
 	//  Motorol A1200/E6/A1600 remapkey by Lubomyr
-#ifdef MOTOEZX
+#	ifdef MOTOEZX
 	// Quit on MOD+Camera Key on A1200
 	if (ev.key.keysym.sym == SDLK_e) {
 		event.type = Common::EVENT_QUIT;
@@ -73,10 +74,10 @@ bool LinuxmotoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	}
 	// VirtualKeyboard - Camera key
 	else if (ev.key.keysym.sym == SDLK_PAUSE) {
-#ifdef ENABLE_VKEYBD
-                event.type = Common::EVENT_VIRTUAL_KEYBOARD;
-                return true;
-#endif
+#		ifdef ENABLE_VKEYBD
+		event.type = Common::EVENT_VIRTUAL_KEYBOARD;
+		return true;
+#		endif
 	}
 	// Enter - mod+fire key
 	else if (ev.key.keysym.sym == SDLK_b) {
@@ -106,9 +107,9 @@ bool LinuxmotoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	else if (ev.key.keysym.sym == SDLK_d) {
 		ev.key.keysym.sym = SDLK_LEFTBRACKET;
 	}
-#endif
+#	endif
 
-#ifdef MOTOMAGX
+#	ifdef MOTOMAGX
 	// Quit on Clr
 	if (ev.key.keysym.sym == SDLK_BACKSPACE) {
 		event.type = Common::EVENT_QUIT;
@@ -120,14 +121,14 @@ bool LinuxmotoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	}
 	// VirtualKeyboard - Right Soft key
 	else if (ev.key.keysym.sym == SDLK_F11) {
-#ifdef ENABLE_VKEYBD
-                event.type = Common::EVENT_VIRTUAL_KEYBOARD;
-                return true;
-#endif
+#		ifdef ENABLE_VKEYBD
+		event.type = Common::EVENT_VIRTUAL_KEYBOARD;
+		return true;
+#		endif
 	}
-#endif
+#	endif
 
-// Joystick to Mouse
+	// Joystick to Mouse
 	else if (ev.key.keysym.sym == SDLK_LEFT) {
 		if (ev.type == SDL_KEYDOWN) {
 			_km.x_vel = -1 * MULTIPLIER;
@@ -192,7 +193,7 @@ bool LinuxmotoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		return true;
 	} else if (ev.key.keysym.sym == SDLK_PLUS) {
 		// Volume Up to pressing Right Mouse
-		if (ev.key.type == SDL_KEYDOWN ) {
+		if (ev.key.type == SDL_KEYDOWN) {
 			event.type = Common::EVENT_RBUTTONDOWN;
 		} else {
 			event.type = Common::EVENT_RBUTTONUP;

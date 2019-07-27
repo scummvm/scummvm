@@ -27,8 +27,8 @@
 
 #include "graphics/surface.h"
 
-#include "common/rect.h"
 #include "common/list.h"
+#include "common/rect.h"
 
 namespace ZVision {
 

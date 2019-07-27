@@ -26,7 +26,6 @@
 #ifndef PEGASUS_NEIGHBORHOOD_MARS_MARS_H
 #define PEGASUS_NEIGHBORHOOD_MARS_MARS_H
 
-#include "pegasus/neighborhood/neighborhood.h"
 #include "pegasus/neighborhood/mars/constants.h"
 #include "pegasus/neighborhood/mars/energybeam.h"
 #include "pegasus/neighborhood/mars/gravitoncannon.h"
@@ -37,6 +36,7 @@
 #include "pegasus/neighborhood/mars/shuttlehud.h"
 #include "pegasus/neighborhood/mars/spacejunk.h"
 #include "pegasus/neighborhood/mars/tractorbeam.h"
+#include "pegasus/neighborhood/neighborhood.h"
 
 namespace Pegasus {
 
@@ -64,7 +64,8 @@ enum ShuttleWeaponSelection {
 };
 
 class Mars : public Neighborhood {
-friend struct MarsTimerEvent;
+	friend struct MarsTimerEvent;
+
 public:
 	Mars(InputHandler *, PegasusEngine *);
 	virtual ~Mars();

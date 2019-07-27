@@ -31,13 +31,14 @@ class IllusionsEngine;
 class Control;
 struct OpCall;
 
-typedef Common::Functor2<Control*, OpCall&, void> SequenceOpcode;
+typedef Common::Functor2<Control *, OpCall &, void> SequenceOpcode;
 
 class SequenceOpcodes {
 public:
 	SequenceOpcodes(IllusionsEngine *vm);
 	~SequenceOpcodes();
 	void execOpcode(Control *control, OpCall &opCall);
+
 protected:
 	IllusionsEngine *_vm;
 	SequenceOpcode *_opcodes[256];
@@ -89,7 +90,6 @@ protected:
 	void opPlaceSubActor(Control *control, OpCall &opCall);
 	void opStartSubSequence(Control *control, OpCall &opCall);
 	void opStopSubSequence(Control *control, OpCall &opCall);
-
 };
 
 } // End of namespace Illusions

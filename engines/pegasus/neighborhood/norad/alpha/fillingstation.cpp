@@ -23,12 +23,12 @@
  *
  */
 
-#include "pegasus/gamestate.h"
-#include "pegasus/pegasus.h"
-#include "pegasus/items/inventory/airmask.h"
-#include "pegasus/neighborhood/norad/constants.h"
 #include "pegasus/neighborhood/norad/alpha/fillingstation.h"
+#include "pegasus/gamestate.h"
+#include "pegasus/items/inventory/airmask.h"
 #include "pegasus/neighborhood/norad/alpha/noradalpha.h"
+#include "pegasus/neighborhood/norad/constants.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -43,16 +43,7 @@ static const NotificationFlags kFSHeHiliteFinishedFlag = kFSCO2HiliteFinishedFla
 static const NotificationFlags kFSOHiliteFinishedFlag = kFSHeHiliteFinishedFlag << 1;
 static const NotificationFlags kFSNHiliteFinishedFlag = kFSOHiliteFinishedFlag << 1;
 
-static const NotificationFlags kFSNotificationFlags = kFSPowerUpFinishedFlag |
-												kFSSplashFinishedFlag |
-												kFSIntakeWarningFinishedFlag |
-												kFSIntakeHiliteFinishedFlag |
-												kFSDispenseHiliteFinishedFlag |
-												kFSArHiliteFinishedFlag |
-												kFSCO2HiliteFinishedFlag |
-												kFSHeHiliteFinishedFlag |
-												kFSOHiliteFinishedFlag |
-												kFSNHiliteFinishedFlag;
+static const NotificationFlags kFSNotificationFlags = kFSPowerUpFinishedFlag | kFSSplashFinishedFlag | kFSIntakeWarningFinishedFlag | kFSIntakeHiliteFinishedFlag | kFSDispenseHiliteFinishedFlag | kFSArHiliteFinishedFlag | kFSCO2HiliteFinishedFlag | kFSHeHiliteFinishedFlag | kFSOHiliteFinishedFlag | kFSNHiliteFinishedFlag;
 
 static const int16 kNoState = 0;
 static const int16 kMainMenu = 1;
@@ -126,8 +117,10 @@ enum {
 	kFSIntakeInProgressStop = 69600
 };
 
-NoradAlphaFillingStation::NoradAlphaFillingStation(Neighborhood *owner) : GameInteraction(kNoradFillingStationInteractionID, owner),
-		_rightSideMovie(kN01RightSideID), _rightSideNotification(kNoradFillingStationNotificationID, ((PegasusEngine *)g_engine)) {
+NoradAlphaFillingStation::NoradAlphaFillingStation(Neighborhood *owner)
+  : GameInteraction(kNoradFillingStationInteractionID, owner)
+  , _rightSideMovie(kN01RightSideID)
+  , _rightSideNotification(kNoradFillingStationNotificationID, ((PegasusEngine *)g_engine)) {
 	_state = kNoState;
 }
 
@@ -208,7 +201,7 @@ void NoradAlphaFillingStation::showIntakeInProgress(uint16 numSeconds) {
 		}
 	} else {
 		setSegmentState(kFSIntakeInProgressStart, kFSIntakeInProgressStart + _rightSideMovie.getScale() * numSeconds,
-				kFSIntakeWarningFinishedFlag, kNoState);
+		                kFSIntakeWarningFinishedFlag, kNoState);
 	}
 }
 
@@ -238,23 +231,23 @@ void NoradAlphaFillingStation::dispenseGas() {
 			switch (_dispenseItemID) {
 			case kArgonCanister:
 				setSegmentState(kFSArIncompatibleStart, kFSArIncompatibleStop,
-						kFSIntakeWarningFinishedFlag, kNoState);
+				                kFSIntakeWarningFinishedFlag, kNoState);
 				break;
 			case kCO2Item:
 				setSegmentState(kFSCO2IncompatibleStart, kFSCO2IncompatibleStop,
-						kFSIntakeWarningFinishedFlag, kNoState);
+				                kFSIntakeWarningFinishedFlag, kNoState);
 				break;
 			case kHeItem:
 				setSegmentState(kFSHeIncompatibleStart, kFSHeIncompatibleStop,
-						kFSIntakeWarningFinishedFlag, kNoState);
+				                kFSIntakeWarningFinishedFlag, kNoState);
 				break;
 			case kAirMask:
 				setSegmentState(kFSOIncompatibleStart, kFSOIncompatibleStop,
-						kFSIntakeWarningFinishedFlag, kNoState);
+				                kFSIntakeWarningFinishedFlag, kNoState);
 				break;
 			case kNitrogenCanister:
 				setSegmentState(kFSNIncompatibleStart, kFSNIncompatibleStop,
-						kFSIntakeWarningFinishedFlag, kNoState);
+				                kFSIntakeWarningFinishedFlag, kNoState);
 				break;
 			}
 		else {

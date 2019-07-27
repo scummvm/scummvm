@@ -26,35 +26,34 @@ class ResamplerStage;
 /** Model consists of one or more ResampleStage instances connected in a cascade. */
 namespace ResamplerModel {
 
-// Seems to be a good choice for 16-bit integer samples.
-static const double DEFAULT_DB_SNR = 106;
+	// Seems to be a good choice for 16-bit integer samples.
+	static const double DEFAULT_DB_SNR = 106;
 
-// When using linear interpolation, oversampling factor necessary to achieve the DEFAULT_DB_SNR is about 256.
-// This figure is the upper estimation, and it can be found by analysing the frequency response of the linear interpolator.
-// When less SNR is desired, this value should also decrease in accordance.
-static const unsigned int DEFAULT_WINDOWED_SINC_MAX_DOWNSAMPLE_FACTOR = 256;
+	// When using linear interpolation, oversampling factor necessary to achieve the DEFAULT_DB_SNR is about 256.
+	// This figure is the upper estimation, and it can be found by analysing the frequency response of the linear interpolator.
+	// When less SNR is desired, this value should also decrease in accordance.
+	static const unsigned int DEFAULT_WINDOWED_SINC_MAX_DOWNSAMPLE_FACTOR = 256;
 
-// In the default resampler model, the input to the windowed sinc filter is always at least 2x oversampled during upsampling,
-// so oversampling factor of 128 should be sufficient to achieve the DEFAULT_DB_SNR with linear interpolation.
-static const unsigned int DEFAULT_WINDOWED_SINC_MAX_UPSAMPLE_FACTOR = DEFAULT_WINDOWED_SINC_MAX_DOWNSAMPLE_FACTOR / 2;
+	// In the default resampler model, the input to the windowed sinc filter is always at least 2x oversampled during upsampling,
+	// so oversampling factor of 128 should be sufficient to achieve the DEFAULT_DB_SNR with linear interpolation.
+	static const unsigned int DEFAULT_WINDOWED_SINC_MAX_UPSAMPLE_FACTOR = DEFAULT_WINDOWED_SINC_MAX_DOWNSAMPLE_FACTOR / 2;
 
+	enum Quality {
+		// Use when the speed is more important than the audio quality.
+		FASTEST,
+		// Use FAST quality setting of the IIR stage (50% of passband retained).
+		FAST,
+		// Use GOOD quality setting of the IIR stage (77% of passband retained).
+		GOOD,
+		// Use BEST quality setting of the IIR stage (95% of passband retained).
+		BEST
+	};
 
-enum Quality {
-	// Use when the speed is more important than the audio quality.
-	FASTEST,
-	// Use FAST quality setting of the IIR stage (50% of passband retained).
-	FAST,
-	// Use GOOD quality setting of the IIR stage (77% of passband retained).
-	GOOD,
-	// Use BEST quality setting of the IIR stage (95% of passband retained).
-	BEST
-};
+	FloatSampleProvider &createResamplerModel(FloatSampleProvider &source, double sourceSampleRate, double targetSampleRate, Quality quality);
+	FloatSampleProvider &createResamplerModel(FloatSampleProvider &source, ResamplerStage **stages, unsigned int stageCount);
+	FloatSampleProvider &createResamplerModel(FloatSampleProvider &source, ResamplerStage &stage);
 
-FloatSampleProvider &createResamplerModel(FloatSampleProvider &source, double sourceSampleRate, double targetSampleRate, Quality quality);
-FloatSampleProvider &createResamplerModel(FloatSampleProvider &source, ResamplerStage **stages, unsigned int stageCount);
-FloatSampleProvider &createResamplerModel(FloatSampleProvider &source, ResamplerStage &stage);
-
-void freeResamplerModel(FloatSampleProvider &model, FloatSampleProvider &source);
+	void freeResamplerModel(FloatSampleProvider &model, FloatSampleProvider &source);
 
 } // namespace ResamplerModel
 

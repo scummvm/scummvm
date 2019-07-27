@@ -33,7 +33,7 @@
 
 namespace Illusions {
 
-#define ResourceTypeId(x) ((x) & 0xFFFF0000)
+#define ResourceTypeId(x) ((x)&0xFFFF0000)
 
 class BaseResourceLoader;
 class BaseResourceReader;
@@ -59,7 +59,14 @@ struct Resource {
 	int _gameId;
 	Common::String _filename;
 	ResourceInstance *_instance;
-	Resource() : _loaded(false), _resId(0), _sceneId(0), _threadId(0), _data(0), _dataSize(0), _instance(0) {
+	Resource()
+	  : _loaded(false)
+	  , _resId(0)
+	  , _sceneId(0)
+	  , _threadId(0)
+	  , _data(0)
+	  , _dataSize(0)
+	  , _instance(0) {
 	}
 	~Resource() {
 		if (_instance)
@@ -97,50 +104,54 @@ public:
 	Resource *getResource(uint32 resId);
 
 protected:
-	typedef Common::HashMap<uint32, BaseResourceLoader*> ResourceLoadersMap;
+	typedef Common::HashMap<uint32, BaseResourceLoader *> ResourceLoadersMap;
 	typedef ResourceLoadersMap::iterator ResourceLoadersMapIterator;
 	IllusionsEngine *_vm;
 	ResourceLoadersMap _resourceLoaders;
 	BaseResourceLoader *getResourceLoader(uint32 resId);
 
-	typedef Common::Array<Resource*> ResourcesArray;
+	typedef Common::Array<Resource *> ResourcesArray;
 	typedef ResourcesArray::iterator ResourcesArrayIterator;
 	ResourcesArray _resources;
 
-	struct ResourceEqualById : public Common::UnaryFunction<const Resource*, bool> {
+	struct ResourceEqualById : public Common::UnaryFunction<const Resource *, bool> {
 		uint32 _resId;
-		ResourceEqualById(uint32 resId) : _resId(resId) {}
+		ResourceEqualById(uint32 resId)
+		  : _resId(resId) {}
 		bool operator()(const Resource *resource) const {
 			return resource->_resId == _resId;
 		}
 	};
 
-	struct ResourceEqualByValue : public Common::UnaryFunction<const Resource*, bool> {
+	struct ResourceEqualByValue : public Common::UnaryFunction<const Resource *, bool> {
 		const Resource *_resource;
-		ResourceEqualByValue(const Resource *resource) : _resource(resource) {}
+		ResourceEqualByValue(const Resource *resource)
+		  : _resource(resource) {}
 		bool operator()(const Resource *resource) const {
 			return resource == _resource;
 		}
 	};
 
-	struct ResourceEqualBySceneId : public Common::UnaryFunction<const Resource*, bool> {
+	struct ResourceEqualBySceneId : public Common::UnaryFunction<const Resource *, bool> {
 		uint32 _sceneId;
-		ResourceEqualBySceneId(uint32 sceneId) : _sceneId(sceneId) {}
+		ResourceEqualBySceneId(uint32 sceneId)
+		  : _sceneId(sceneId) {}
 		bool operator()(const Resource *resource) const {
 			return resource->_sceneId == _sceneId;
 		}
 	};
 
-	struct ResourceNotEqualByScenes : public Common::UnaryFunction<const Resource*, bool> {
+	struct ResourceNotEqualByScenes : public Common::UnaryFunction<const Resource *, bool> {
 		uint32 _sceneId1, _sceneId2;
-		ResourceNotEqualByScenes(uint32 sceneId1, uint32 sceneId2) : _sceneId1(sceneId1), _sceneId2(sceneId2) {}
+		ResourceNotEqualByScenes(uint32 sceneId1, uint32 sceneId2)
+		  : _sceneId1(sceneId1)
+		  , _sceneId2(sceneId2) {}
 		bool operator()(const Resource *resource) const {
 			return resource->_sceneId != _sceneId1 && resource->_sceneId != _sceneId2;
 		}
 	};
 
 	void unloadResource(Resource *resource);
-
 };
 
 } // End of namespace Illusions

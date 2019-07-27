@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_GOTOCOMMAND_H
 #define MUTATIONOFJB_GOTOCOMMAND_H
 
-#include "mutationofjb/commands/command.h"
 #include "common/str.h"
+#include "mutationofjb/commands/command.h"
 
 namespace MutationOfJB {
 
@@ -39,13 +39,15 @@ public:
 
 class GotoCommand : public Command {
 public:
-	GotoCommand() : _labelCommand(nullptr) {}
+	GotoCommand()
+	  : _labelCommand(nullptr) {}
 
 	void setLabelCommand(LabelCommand *labelCmd);
 
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Command *next() const override;
 	virtual Common::String debugString() const override;
+
 private:
 	LabelCommand *_labelCommand;
 };

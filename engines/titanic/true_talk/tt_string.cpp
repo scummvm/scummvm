@@ -25,11 +25,13 @@
 
 namespace Titanic {
 
-TTstring::TTstring() : _status(SS_VALID) {
+TTstring::TTstring()
+  : _status(SS_VALID) {
 	_data = new TTstringData();
 }
 
-TTstring::TTstring(const char *str) : _status(SS_VALID) {
+TTstring::TTstring(const char *str)
+  : _status(SS_VALID) {
 	_data = new TTstringData(str);
 }
 

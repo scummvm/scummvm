@@ -20,8 +20,8 @@
  *
  */
 
-#include <FBase.h>
 #include <FApp.h>
+#include <FBase.h>
 #include <FSystem.h>
 
 #include "backends/platform/tizen/application.h"
@@ -48,4 +48,3 @@ extern "C" _EXPORT_ int OspMain(int argc, char *pArgv[]) {
 
 	return static_cast<int>(r);
 }
-

@@ -32,7 +32,8 @@
 
 namespace LastExpress {
 
-Entity39::Entity39(LastExpressEngine *engine) : Entity(engine, kEntity39) {
+Entity39::Entity39(LastExpressEngine *engine)
+  : Entity(engine, kEntity39) {
 	ADD_CALLBACK_FUNCTION(Entity39, chapter1);
 	ADD_CALLBACK_FUNCTION(Entity39, chapter2);
 	ADD_CALLBACK_FUNCTION(Entity39, chapter3);
@@ -46,54 +47,54 @@ Entity39::Entity39(LastExpressEngine *engine) : Entity(engine, kEntity39) {
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Entity39, chapter1)
-	if (savepoint.action == kActionDefault)
-		setup_process();
+if (savepoint.action == kActionDefault)
+	setup_process();
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(2, Entity39, chapter2)
-	if (savepoint.action == kActionDefault)
-		setup_process();
+if (savepoint.action == kActionDefault)
+	setup_process();
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(3, Entity39, chapter3)
-	if (savepoint.action == kActionDefault)
-		setup_process();
+if (savepoint.action == kActionDefault)
+	setup_process();
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(4, Entity39, chapter4)
-	if (savepoint.action == kActionDefault)
-		setup_process();
+if (savepoint.action == kActionDefault)
+	setup_process();
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(5, Entity39, chapter5)
-	if (savepoint.action == kActionDefault)
-		setup_process();
+if (savepoint.action == kActionDefault)
+	setup_process();
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(6, Entity39, process)
 // TODO: _sequence & counter do not seem to be touched anywhere else in the code :(
-	switch (savepoint.action) {
-	default:
-		break;
+switch (savepoint.action) {
+default:
+	break;
 
-	case kActionExitCompartment:
+case kActionExitCompartment:
+	getEntities()->drawSequenceRight(kEntity39, (char *)&_sequence);
+	break;
+
+case kActionNone:
+	getData()->car = getEntityData(kEntityPlayer)->car;
+
+	if (*_sequence && !_counter) {
+		_counter++;
 		getEntities()->drawSequenceRight(kEntity39, (char *)&_sequence);
-		break;
-
-	case kActionNone:
-		getData()->car = getEntityData(kEntityPlayer)->car;
-
-		if (*_sequence && !_counter) {
-			_counter++;
-			getEntities()->drawSequenceRight(kEntity39, (char *)&_sequence);
-		}
-		break;
 	}
+	break;
+}
 IMPLEMENT_FUNCTION_END
 
 } // End of namespace LastExpress

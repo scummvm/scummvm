@@ -20,17 +20,22 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "xeen/subtitles.h"
+#include "common/scummsys.h"
 #include "xeen/events.h"
 #include "xeen/files.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {
 
-static const char *SUBTITLE_LINE = "\f35\x3""c\v190\t000%s";
+static const char *SUBTITLE_LINE = "\f35\x3"
+                                   "c\v190\t000%s";
 
-Subtitles::Subtitles() : _lineNum(-1), _boxSprites(nullptr), _lineEnd(0), _lineSize(0) {
+Subtitles::Subtitles()
+  : _lineNum(-1)
+  , _boxSprites(nullptr)
+  , _lineEnd(0)
+  , _lineSize(0) {
 }
 
 Subtitles::~Subtitles() {

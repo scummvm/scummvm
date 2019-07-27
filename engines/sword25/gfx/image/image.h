@@ -40,10 +40,10 @@
 #define SWORD25_IMAGE_H
 
 // Includes
-#include "sword25/kernel/common.h"
 #include "common/rect.h"
-#include "sword25/gfx/graphicengine.h"
 #include "graphics/transparent_surface.h"
+#include "sword25/gfx/graphicengine.h"
+#include "sword25/kernel/common.h"
 
 namespace Sword25 {
 
@@ -116,7 +116,8 @@ public:
 	                  Common::Rect *pPartRect = NULL,
 	                  uint color = BS_ARGB(255, 255, 255, 255),
 	                  int width = -1, int height = -1,
-					  RectangleList *updateRects = 0) = 0;
+	                  RectangleList *updateRects = 0)
+	  = 0;
 
 	/**
 	    @brief fills a rectangular section of the image with a color.

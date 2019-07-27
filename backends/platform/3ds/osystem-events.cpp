@@ -22,12 +22,12 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
-#include "osystem.h"
 #include "backends/timer/default/default-timer.h"
+#include "config.h"
 #include "engines/engine.h"
 #include "gui.h"
 #include "options-dialog.h"
-#include "config.h"
+#include "osystem.h"
 
 namespace _3DS {
 
@@ -48,7 +48,7 @@ static void eventThreadFunc(void *arg) {
 	auto eventQueue = (Common::Queue<Common::Event> *)arg;
 
 	uint32 touchStartTime = osys->getMillis();
-	touchPosition lastTouch = {0, 0};
+	touchPosition lastTouch = { 0, 0 };
 	bool isRightClick = false;
 	float cursorX = 0;
 	float cursorY = 0;
@@ -131,10 +131,14 @@ static void eventThreadFunc(void *arg) {
 		} else if (cursorDeltaX != 0 || cursorDeltaY != 0) {
 			cursorX += cursorDeltaX;
 			cursorY -= cursorDeltaY;
-			if (cursorX < 0) cursorX = 0;
-			if (cursorY < 0) cursorY = 0;
-			if (cursorX > 320) cursorX = 320;
-			if (cursorY > 240) cursorY = 240;
+			if (cursorX < 0)
+				cursorX = 0;
+			if (cursorY < 0)
+				cursorY = 0;
+			if (cursorX > 320)
+				cursorX = 320;
+			if (cursorY > 240)
+				cursorY = 240;
 			lastTouch.px = cursorX;
 			lastTouch.py = cursorY;
 			osys->transformPoint(lastTouch);
@@ -207,29 +211,29 @@ static void aptHookFunc(APT_HookType hookType, void *param) {
 	OSystem_3DS *osys = (OSystem_3DS *)g_system;
 
 	switch (hookType) {
-		case APTHOOK_ONSUSPEND:
-		case APTHOOK_ONSLEEP:
-			if (g_engine)
-				g_engine->pauseEngine(true);
-			osys->sleeping = true;
-			if (R_SUCCEEDED(gspLcdInit())) {
-				GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
-				gspLcdExit();
-			}
-			break;
-		case APTHOOK_ONRESTORE:
-		case APTHOOK_ONWAKEUP:
-			if (g_engine)
-				g_engine->pauseEngine(false);
-			osys->sleeping = false;
-			loadConfig();
-			break;
-		default: {
-			Common::StackLock lock(*eventMutex);
-			Common::Event event;
-			event.type = Common::EVENT_QUIT;
-			g_system->getEventManager()->pushEvent(event);
+	case APTHOOK_ONSUSPEND:
+	case APTHOOK_ONSLEEP:
+		if (g_engine)
+			g_engine->pauseEngine(true);
+		osys->sleeping = true;
+		if (R_SUCCEEDED(gspLcdInit())) {
+			GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
+			gspLcdExit();
 		}
+		break;
+	case APTHOOK_ONRESTORE:
+	case APTHOOK_ONWAKEUP:
+		if (g_engine)
+			g_engine->pauseEngine(false);
+		osys->sleeping = false;
+		loadConfig();
+		break;
+	default: {
+		Common::StackLock lock(*eventMutex);
+		Common::Event event;
+		event.type = Common::EVENT_QUIT;
+		g_system->getEventManager()->pushEvent(event);
+	}
 	}
 }
 

@@ -23,9 +23,9 @@
 #ifndef XEEN_EVENTS_H
 #define XEEN_EVENTS_H
 
-#include "common/scummsys.h"
 #include "common/events.h"
 #include "common/queue.h"
+#include "common/scummsys.h"
 #include "xeen/sprites.h"
 
 namespace Xeen {
@@ -42,9 +42,16 @@ struct PendingEvent {
 	bool _leftButton;
 	bool _rightButton;
 
-	PendingEvent() : _leftButton(false), _rightButton(false) {}
-	PendingEvent(const Common::KeyState &keyState) : _keyState(keyState), _leftButton(false), _rightButton(false) {}
-	PendingEvent(bool leftButton, bool rightButton) : _leftButton(leftButton), _rightButton(rightButton) {}
+	PendingEvent()
+	  : _leftButton(false)
+	  , _rightButton(false) {}
+	PendingEvent(const Common::KeyState &keyState)
+	  : _keyState(keyState)
+	  , _leftButton(false)
+	  , _rightButton(false) {}
+	PendingEvent(bool leftButton, bool rightButton)
+	  : _leftButton(leftButton)
+	  , _rightButton(rightButton) {}
 
 	/**
 	 * Returns true if a keyboard event is pending
@@ -74,8 +81,10 @@ private:
 	 * Handles moving to the next game frame
 	 */
 	void nextFrame();
+
 public:
 	Common::Point _mousePos;
+
 public:
 	EventsManager(XeenEngine *vm);
 	~EventsManager();

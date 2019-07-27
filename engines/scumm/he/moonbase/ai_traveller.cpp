@@ -20,10 +20,10 @@
  *
  */
 
-#include "scumm/he/intern_he.h"
-#include "scumm/he/moonbase/moonbase.h"
 #include "scumm/he/moonbase/ai_traveller.h"
+#include "scumm/he/intern_he.h"
 #include "scumm/he/moonbase/ai_main.h"
+#include "scumm/he/moonbase/moonbase.h"
 
 namespace Scumm {
 
@@ -34,7 +34,8 @@ int Traveller::_maxDist = 0;
 int Traveller::_numToGen = 0;
 int Traveller::_sizeAngleStep = 0;
 
-Traveller::Traveller(AI *ai) : _ai(ai) {
+Traveller::Traveller(AI *ai)
+  : _ai(ai) {
 	_waterFlag = 0;
 	setValueG(0);
 	unsetDisabled();
@@ -50,7 +51,8 @@ Traveller::Traveller(AI *ai) : _ai(ai) {
 	_posX = _posY = 0;
 }
 
-Traveller::Traveller(int originX, int originY, AI *ai) : _ai(ai) {
+Traveller::Traveller(int originX, int originY, AI *ai)
+  : _ai(ai) {
 	_waterFlag = 0;
 	setValueG(0);
 	unsetDisabled();
@@ -71,18 +73,24 @@ void Traveller::adjustPosX(int offsetX) {
 	int maxX = _ai->getMaxX();
 	int deltaX = _posX + offsetX;
 
-	if (deltaX < 0) _posX = maxX + deltaX;
-	else if (deltaX > maxX) _posX = deltaX - maxX;
-	else _posX = deltaX;
+	if (deltaX < 0)
+		_posX = maxX + deltaX;
+	else if (deltaX > maxX)
+		_posX = deltaX - maxX;
+	else
+		_posX = deltaX;
 }
 
 void Traveller::adjustPosY(int offsetY) {
 	int maxY = _ai->getMaxX();
 	int deltaY = _posY + offsetY;
 
-	if (deltaY < 0) _posY = maxY + deltaY;
-	else if (deltaY > maxY) _posY = deltaY - maxY;
-	else _posY = deltaY;
+	if (deltaY < 0)
+		_posY = maxY + deltaY;
+	else if (deltaY > maxY)
+		_posY = deltaY - maxY;
+	else
+		_posY = deltaY;
 }
 
 void Traveller::adjustXY(int offsetX, int offsetY) {
@@ -111,7 +119,8 @@ IContainedObject *Traveller::createChildObj(int index, int &completionFlag) {
 	static int nodeCount = 0;
 	static int completionState = 1;
 
-	if (!index) nodeCount = 0;
+	if (!index)
+		nodeCount = 0;
 
 	nodeCount++;
 
@@ -224,7 +233,7 @@ IContainedObject *Traveller::createChildObj(int index, int &completionFlag) {
 		retTraveller->setValueG(getG() + 7 + (dir * DIRECTION_WEIGHT));
 		lastSuccessful = 1;
 	} else {
-		int yCoord  = -coords / maxX;
+		int yCoord = -coords / maxX;
 		int xCoord = -coords - (yCoord * maxX);
 
 		// If landing fault is because of water, add 1 extra to g and turn on water flag.  Also set coords, and adjust power to water fault location
@@ -271,7 +280,8 @@ int Traveller::checkSuccess() {
 float Traveller::calcT() {
 	assert(!_disabled);
 
-	if (_disabled) return FAILURE;
+	if (_disabled)
+		return FAILURE;
 
 	return (checkSuccess() != SUCCESS) ? (getG() + calcH()) : SUCCESS;
 }

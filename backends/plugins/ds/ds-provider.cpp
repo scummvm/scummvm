@@ -28,11 +28,11 @@
 
 #if defined(DYNAMIC_MODULES) && defined(__DS__)
 
-#include <malloc.h>
-#include <nds.h>
+#	include <malloc.h>
+#	include <nds.h>
 
-#include "backends/plugins/ds/ds-provider.h"
-#include "backends/plugins/elf/arm-loader.h"
+#	include "backends/plugins/ds/ds-provider.h"
+#	include "backends/plugins/elf/arm-loader.h"
 
 class DSDLObject : public ARMDLObject {
 protected:

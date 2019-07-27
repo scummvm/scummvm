@@ -23,16 +23,17 @@
 #ifndef MADS_COMPRESSION_H
 #define MADS_COMPRESSION_H
 
-#include "common/scummsys.h"
 #include "common/endian.h"
 #include "common/memstream.h"
+#include "common/scummsys.h"
 #include "common/stream.h"
 
 #include "mads/mads.h"
 
 namespace MADS {
 
-enum CompressionType { COMPRESS_NONE = 0, COMPRESS_FAB = 1 };
+enum CompressionType { COMPRESS_NONE = 0,
+	                     COMPRESS_FAB = 1 };
 
 struct MadsPackEntry {
 public:
@@ -50,6 +51,7 @@ private:
 	int _dataOffset;
 
 	void initialize(Common::SeekableReadStream *stream);
+
 public:
 	static bool isCompressed(Common::SeekableReadStream *stream);
 	MadsPack(Common::SeekableReadStream *stream);
@@ -59,7 +61,8 @@ public:
 	int getCount() const { return _count; }
 	MadsPackEntry &getItem(int index) const {
 		assert(index < _count);
-		return _items[index]; }
+		return _items[index];
+	}
 	MadsPackEntry &operator[](int index) const {
 		assert(index < _count);
 		return _items[index];
@@ -67,19 +70,20 @@ public:
 	Common::MemoryReadStream *getItemStream(int index) {
 		assert(index < _count);
 		return new Common::MemoryReadStream(_items[index]._data, _items[index]._size,
-			DisposeAfterUse::NO);
+		                                    DisposeAfterUse::NO);
 	}
 	int getDataOffset() const { return _dataOffset; }
 };
 
 class FabDecompressor {
 private:
-    int _bitsLeft;
-    uint32 _bitBuffer;
+	int _bitsLeft;
+	uint32 _bitBuffer;
 	const byte *_srcData, *_srcP;
 	int _srcSize;
 
 	int getBit();
+
 public:
 	void decompress(const byte *srcData, int srcSize, byte *destData, int destSize);
 };

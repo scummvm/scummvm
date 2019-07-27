@@ -24,7 +24,6 @@
 
 #include "common/scummsys.h"
 
-
 namespace Util {
 
 SerializedDouble encodeDouble(double value) {
@@ -41,9 +40,9 @@ SerializedDouble encodeDouble(double value) {
 	uint32 significandTwo = (uint32)(ldexp(shiftedsignificandPart, 31));
 
 	SerializedDouble returnValue;
-	returnValue.significandOne = significandOne;                                // SignificandOne
-	returnValue.signAndSignificandTwo = ((uint32)(value < 0 ? 1 : 0) << 31) |   // Sign
-	                                    significandTwo;                         // SignificandTwo
+	returnValue.significandOne = significandOne; // SignificandOne
+	returnValue.signAndSignificandTwo = ((uint32)(value < 0 ? 1 : 0) << 31) | // Sign
+	  significandTwo; // SignificandTwo
 	returnValue.exponent = (int16)exponent;
 	return returnValue;
 }

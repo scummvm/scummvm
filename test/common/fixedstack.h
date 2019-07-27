@@ -37,7 +37,7 @@ public:
 	void test_top_pop() {
 		Common::FixedStack<int> stack;
 
-		stack.push( 42);
+		stack.push(42);
 		stack.push(-23);
 
 		TS_ASSERT_EQUALS(stack[0], 42);
@@ -56,7 +56,7 @@ public:
 		Common::FixedStack<int> q1, q2;
 
 		for (int i = 0; i <= 4; ++i) {
-			q1.push(4-i);
+			q1.push(4 - i);
 			q2.push(i);
 		}
 

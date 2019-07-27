@@ -29,17 +29,16 @@
 
 class OSystem;
 
-#include "common/events.h"
-#include "common/hashmap.h"
-#include "common/hash-str.h"
-#include "common/keyboard.h"
-#include "common/list.h"
-#include "common/str.h"
-#include "common/fs.h"
+#	include "common/events.h"
+#	include "common/fs.h"
+#	include "common/hash-str.h"
+#	include "common/hashmap.h"
+#	include "common/keyboard.h"
+#	include "common/list.h"
+#	include "common/str.h"
 
-#include "backends/vkeybd/image-map.h"
-#include "graphics/surface.h"
-
+#	include "backends/vkeybd/image-map.h"
+#	include "graphics/surface.h"
 
 namespace Common {
 
@@ -56,7 +55,6 @@ class VirtualKeyboardParser;
  */
 class VirtualKeyboard {
 protected:
-
 	/**
 	 * Enum to describe the different types of events that can be associated
 	 * with an area of the virtual keyboard bitmap.
@@ -95,7 +93,8 @@ protected:
 		 */
 		void *data;
 
-		VKEvent() : data(0) {}
+		VKEvent()
+		  : data(0) {}
 		~VKEvent() {
 			if (data)
 				free(data);
@@ -108,17 +107,18 @@ protected:
 	 * Mode struct encapsulates all the data for each mode of the keyboard
 	 */
 	struct Mode {
-		String              name;
-		String              resolution;
-		String              bitmapName;
-		Graphics::Surface   *image;
-		uint32              transparentColor;
-		ImageMap            imageMap;
-		VKEventMap          events;
-		Rect                displayArea;
-		uint32              displayFontColor;
+		String name;
+		String resolution;
+		String bitmapName;
+		Graphics::Surface *image;
+		uint32 transparentColor;
+		ImageMap imageMap;
+		VKEventMap events;
+		Rect displayArea;
+		uint32 displayFontColor;
 
-		Mode() : image(0) {}
+		Mode()
+		  : image(0) {}
 		~Mode() {
 			if (image) {
 				image->free();
@@ -183,7 +183,6 @@ protected:
 	};
 
 public:
-
 	VirtualKeyboard();
 
 	virtual ~VirtualKeyboard();
@@ -224,7 +223,6 @@ public:
 	}
 
 protected:
-
 	OSystem *_system;
 	DisposablePtr<Archive> _fileArchive;
 
@@ -253,13 +251,12 @@ protected:
 	Mode *_initialMode;
 	Mode *_currentMode;
 
-	HorizontalAlignment  _hAlignment;
-	VerticalAlignment    _vAlignment;
+	HorizontalAlignment _hAlignment;
+	VerticalAlignment _vAlignment;
 
 	String _areaDown;
 
 	bool _submitKeys;
-
 };
 
 } // End of namespace Common

@@ -35,7 +35,9 @@ class Sound;
 // A FLIC decoder, with a modified header and additional custom frames
 class CfoDecoder : public Video::FlicDecoder {
 public:
-	CfoDecoder(Sound *sound) : Video::FlicDecoder(), _sound(sound) {}
+	CfoDecoder(Sound *sound)
+	  : Video::FlicDecoder()
+	  , _sound(sound) {}
 	virtual ~CfoDecoder() {}
 
 	bool loadStream(Common::SeekableReadStream *stream);

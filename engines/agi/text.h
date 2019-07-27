@@ -47,7 +47,7 @@ struct MessageState_Struct {
 	TextPos_Struct wanted_TextPos;
 	bool dialogue_Open;
 	uint8 newline_Char;
-	bool  window_Active;
+	bool window_Active;
 	TextPos_Struct textPos;
 	TextPos_Struct textPos_Edge;
 	int16 textSize_Width;
@@ -61,18 +61,18 @@ struct MessageState_Struct {
 };
 
 // this defines here are for calculating character-size inside the visual-screen!
-#define FONT_VISUAL_WIDTH           4
-#define FONT_VISUAL_HEIGHT          8
+#define FONT_VISUAL_WIDTH 4
+#define FONT_VISUAL_HEIGHT 8
 
-#define FONT_DISPLAY_WIDTH          8
-#define FONT_DISPLAY_HEIGHT         8
-#define FONT_ROW_CHARACTERS         25
-#define FONT_COLUMN_CHARACTERS      40
-#define FONT_BYTES_PER_CHARACTER    8
+#define FONT_DISPLAY_WIDTH 8
+#define FONT_DISPLAY_HEIGHT 8
+#define FONT_ROW_CHARACTERS 25
+#define FONT_COLUMN_CHARACTERS 40
+#define FONT_BYTES_PER_CHARACTER 8
 
-#define HEIGHT_MAX                  20
+#define HEIGHT_MAX 20
 
-#define TEXT_STRING_MAX_SIZE        40
+#define TEXT_STRING_MAX_SIZE 40
 
 class TextMgr {
 private:
@@ -88,11 +88,11 @@ public:
 	void init(SystemUI *systemUI);
 
 	TextPos_Struct _textPos;
-	int16          _textPosArrayCount;
+	int16 _textPosArrayCount;
 	TextPos_Struct _textPosArray[TEXTPOSARRAY_MAX];
 
 	TextAttrib_Struct _textAttrib;
-	int16             _textAttribArrayCount;
+	int16 _textAttribArrayCount;
 	TextAttrib_Struct _textAttribArray[TEXTATTRIBARRAY_MAX];
 
 	uint16 _window_Row_Min;
@@ -160,16 +160,16 @@ public:
 
 	void clearBlockInsideWindow(int16 windowRow, int16 windowColumn, int16 width, byte color);
 
-	bool  _inputEditEnabled;
-	byte  _inputCursorChar;
+	bool _inputEditEnabled;
+	byte _inputCursorChar;
 
-	bool  _optionCommandPromptWindow;
+	bool _optionCommandPromptWindow;
 
-	bool  _promptEnabled;
+	bool _promptEnabled;
 	int16 _promptRow;
 	int16 _promptCursorPos;
-	byte  _prompt[42];
-	byte  _promptPrevious[42];
+	byte _prompt[42];
+	byte _promptPrevious[42];
 
 	bool inputGetEditStatus();
 	void inputEditOn();
@@ -195,10 +195,10 @@ public:
 
 	int16 _inputStringRow;
 	int16 _inputStringColumn;
-	bool  _inputStringEntered;
+	bool _inputStringEntered;
 	int16 _inputStringMaxLen;
 	int16 _inputStringCursorPos;
-	byte  _inputString[42];
+	byte _inputString[42];
 
 	bool stringWasEntered();
 	void stringPos_Get(int16 &row, int16 &column);

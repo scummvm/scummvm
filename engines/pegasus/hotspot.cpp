@@ -138,7 +138,8 @@ void Region::getCenter(Common::Point &point) const {
 	getCenter(point.x, point.y);
 }
 
-Hotspot::Hotspot(const HotSpotID id) : IDObject(id) {
+Hotspot::Hotspot(const HotSpotID id)
+  : IDObject(id) {
 	_spotFlags = kNoHotSpotFlags;
 	_spotActive = false;
 }
@@ -299,7 +300,7 @@ void HotspotList::removeOneHotspot(const HotSpotID id) {
 
 void HotspotList::removeMaskedHotspots(const HotSpotFlags flags) {
 	if (flags != kNoHotSpotFlags) {
-		for (HotspotIterator it = begin(); it != end(); ) {
+		for (HotspotIterator it = begin(); it != end();) {
 			if (((*it)->getHotspotFlags() & flags) != 0)
 				it = erase(it);
 			else

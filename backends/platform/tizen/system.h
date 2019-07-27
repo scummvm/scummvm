@@ -24,42 +24,41 @@
 #define TIZEN_SYSTEM_H
 
 #include <FApp.h>
-#include <FGraphics.h>
-#include <FUi.h>
-#include <FSystem.h>
 #include <FBase.h>
+#include <FGraphics.h>
 #include <FIoFile.h>
+#include <FSystem.h>
+#include <FUi.h>
 
-#include "config.h"
-#include "common/scummsys.h"
 #include "backends/modular-backend.h"
+#include "common/scummsys.h"
+#include "config.h"
 
-#include "backends/platform/tizen/fs.h"
-#include "backends/platform/tizen/form.h"
 #include "backends/platform/tizen/audio.h"
+#include "backends/platform/tizen/form.h"
+#include "backends/platform/tizen/fs.h"
 #include "backends/platform/tizen/graphics.h"
 
 #if defined(_DEBUG)
-#define logEntered() AppLog("%s entered (%s %d)", __FUNCTION__, __FILE__, __LINE__);
-#define logLeaving() AppLog("%s leaving (%s %d)", __FUNCTION__, __FILE__, __LINE__);
+#	define logEntered() AppLog("%s entered (%s %d)", __FUNCTION__, __FILE__, __LINE__);
+#	define logLeaving() AppLog("%s leaving (%s %d)", __FUNCTION__, __FILE__, __LINE__);
 #else
-#define logEntered()
-#define logLeaving()
+#	define logEntered()
+#	define logLeaving()
 #endif
 
 TizenAppForm *systemStart(Tizen::App::Application *app);
 void systemError(const char *message);
 
-#define USER_MESSAGE_EXIT		1000
-#define USER_MESSAGE_EXIT_ERR		1001
+#define USER_MESSAGE_EXIT 1000
+#define USER_MESSAGE_EXIT_ERR 1001
 #define USER_MESSAGE_EXIT_ERR_CONFIG 1002
 
 //
 // TizenSystem
 //
-class TizenSystem :
-	public ModularBackend,
-	Common::EventSource {
+class TizenSystem : public ModularBackend,
+                    Common::EventSource {
 public:
 	TizenSystem(TizenAppForm *appForm);
 	~TizenSystem();

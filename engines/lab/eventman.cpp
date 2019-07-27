@@ -62,7 +62,8 @@ static const byte mouseData[] = {
 #define MOUSE_WIDTH 10
 #define MOUSE_HEIGHT 15
 
-EventManager::EventManager(LabEngine *vm) : _vm(vm) {
+EventManager::EventManager(LabEngine *vm)
+  : _vm(vm) {
 	_leftClick = false;
 	_rightClick = false;
 	_buttonHit = false;

@@ -25,7 +25,6 @@
 
 #include "testbed/testsuite.h"
 
-
 namespace Testbed {
 
 // Shared variables used in mutex handling test
@@ -38,19 +37,19 @@ struct SharedVars {
 
 namespace MiscTests {
 
-// Miscellaneous tests include testing datetime, timers and mutexes
+	// Miscellaneous tests include testing datetime, timers and mutexes
 
-// Helper functions for Misc tests
-Common::String getHumanReadableFormat(const TimeDate &td);
-void timerCallback(void *arg);
-void criticalSection(void *arg);
+	// Helper functions for Misc tests
+	Common::String getHumanReadableFormat(const TimeDate &td);
+	void timerCallback(void *arg);
+	void criticalSection(void *arg);
 
-// will contain function declarations for Misc tests
-TestExitStatus testDateTime();
-TestExitStatus testTimers();
-TestExitStatus testMutexes();
-TestExitStatus testOpenUrl();
-// add more here
+	// will contain function declarations for Misc tests
+	TestExitStatus testDateTime();
+	TestExitStatus testTimers();
+	TestExitStatus testMutexes();
+	TestExitStatus testOpenUrl();
+	// add more here
 
 } // End of namespace MiscTests
 

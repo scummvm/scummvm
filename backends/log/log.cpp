@@ -22,8 +22,8 @@
 
 #include "backends/log/log.h"
 
-#include "common/stream.h"
 #include "common/str.h"
+#include "common/stream.h"
 #include "common/system.h"
 
 #include "base/version.h"
@@ -31,76 +31,78 @@
 namespace Backends {
 namespace Log {
 
-Log::Log(OSystem *system)
-    : _system(system), _stream(0), _startOfLine(true) {
-	assert(system);
-}
-
-void Log::open(Common::WriteStream *stream) {
-	// Close the previous log
-	close();
-
-	_stream = stream;
-
-	// Output information about the ScummVM version at the start of the log
-	// file
-	print(gScummVMFullVersion);
-	print("\n");
-	print(gScummVMFeatures);
-	print("\n");
-	print("--- Log opened.\n");
-	_startOfLine = true;
-}
-
-void Log::close() {
-	if (_stream) {
-		// Output a message to indicate that the log was closed successfully
-		print("--- Log closed successfully.\n");
-
-		delete _stream;
-		_stream = 0;
-	}
-}
-
-void Log::print(const char *message, const bool printTime) {
-	if (!_stream)
-		return;
-
-	while (*message) {
-		if (_startOfLine) {
-			_startOfLine = false;
-			if (printTime)
-				printTimeStamp();
-		}
-
-		const char *msgStart = message;
-		// scan for end of line/string
-		while (*message && *message != '\n')
-			++message;
-
-		if (*message == '\n') {
-			++message;
-			_startOfLine = true;
-		}
-
-		// TODO: It might be wise to check for write errors and/or incomplete
-		// writes here, since losing certain bits of the log is not nice.
-		_stream->write(msgStart, message - msgStart);
+	Log::Log(OSystem *system)
+	  : _system(system)
+	  , _stream(0)
+	  , _startOfLine(true) {
+		assert(system);
 	}
 
-	_stream->flush();
-}
+	void Log::open(Common::WriteStream *stream) {
+		// Close the previous log
+		close();
 
-void Log::printTimeStamp() {
-	TimeDate date;
-	int curMonth;
-	_system->getTimeAndDate(date);
-	curMonth = date.tm_mon + 1; // month is base 0, we need base 1 (1 = january and so on)
+		_stream = stream;
 
-	_stream->writeString(Common::String::format("[%d-%02d-%02d %02d:%02d:%02d] ",
-	                     date.tm_year + 1900, curMonth, date.tm_mday,
-	                     date.tm_hour, date.tm_min, date.tm_sec));
-}
+		// Output information about the ScummVM version at the start of the log
+		// file
+		print(gScummVMFullVersion);
+		print("\n");
+		print(gScummVMFeatures);
+		print("\n");
+		print("--- Log opened.\n");
+		_startOfLine = true;
+	}
+
+	void Log::close() {
+		if (_stream) {
+			// Output a message to indicate that the log was closed successfully
+			print("--- Log closed successfully.\n");
+
+			delete _stream;
+			_stream = 0;
+		}
+	}
+
+	void Log::print(const char *message, const bool printTime) {
+		if (!_stream)
+			return;
+
+		while (*message) {
+			if (_startOfLine) {
+				_startOfLine = false;
+				if (printTime)
+					printTimeStamp();
+			}
+
+			const char *msgStart = message;
+			// scan for end of line/string
+			while (*message && *message != '\n')
+				++message;
+
+			if (*message == '\n') {
+				++message;
+				_startOfLine = true;
+			}
+
+			// TODO: It might be wise to check for write errors and/or incomplete
+			// writes here, since losing certain bits of the log is not nice.
+			_stream->write(msgStart, message - msgStart);
+		}
+
+		_stream->flush();
+	}
+
+	void Log::printTimeStamp() {
+		TimeDate date;
+		int curMonth;
+		_system->getTimeAndDate(date);
+		curMonth = date.tm_mon + 1; // month is base 0, we need base 1 (1 = january and so on)
+
+		_stream->writeString(Common::String::format("[%d-%02d-%02d %02d:%02d:%02d] ",
+		                                            date.tm_year + 1900, curMonth, date.tm_mday,
+		                                            date.tm_hour, date.tm_min, date.tm_sec));
+	}
 
 } // End of namespace Log
 } // End of namespace Backends

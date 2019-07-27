@@ -30,10 +30,9 @@ size_t SoxrAdapter::getInputSamples(void *input_fn_state, soxr_in_t *data, size_
 	return length;
 }
 
-SoxrAdapter::SoxrAdapter(Synth &useSynth, double targetSampleRate, SamplerateConversionQuality quality) :
-	synth(useSynth),
-	inBuffer(new float[CHANNEL_COUNT * MAX_SAMPLES_PER_RUN])
-{
+SoxrAdapter::SoxrAdapter(Synth &useSynth, double targetSampleRate, SamplerateConversionQuality quality)
+  : synth(useSynth)
+  , inBuffer(new float[CHANNEL_COUNT * MAX_SAMPLES_PER_RUN]) {
 	soxr_io_spec_t ioSpec = soxr_io_spec(SOXR_FLOAT32_I, SOXR_FLOAT32_I);
 	unsigned long qualityRecipe;
 	switch (quality) {

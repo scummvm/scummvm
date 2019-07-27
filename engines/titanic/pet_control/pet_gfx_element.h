@@ -27,26 +27,30 @@
 
 namespace Titanic {
 
-class CPetGfxElement: public CPetElement {
+class CPetGfxElement : public CPetElement {
 public:
 	CGameObject *_object0;
 	CGameObject *_object1;
 	CGameObject *_object2;
+
 public:
-	CPetGfxElement() : CPetElement(), _object0(nullptr), _object1(nullptr),
-		_object2(nullptr) {}
+	CPetGfxElement()
+	  : CPetElement()
+	  , _object0(nullptr)
+	  , _object1(nullptr)
+	  , _object2(nullptr) {}
 
 	/**
 	 * Setup the element
 	 */
 	virtual void setup(PetElementMode mode, const CString &name,
-		CPetControl *petControl);
+	                   CPetControl *petControl);
 
 	/**
 	 * Reset the element
 	 */
 	virtual void reset(const CString &name, CPetControl *petControl,
-		PetElementMode mode = MODE_UNSELECTED);
+	                   PetElementMode mode = MODE_UNSELECTED);
 
 	/**
 	 * Draw the item

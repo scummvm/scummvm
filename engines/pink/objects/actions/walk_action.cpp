@@ -20,11 +20,11 @@
  *
  */
 
+#include "pink/objects/actions/walk_action.h"
 #include "pink/archive.h"
 #include "pink/cel_decoder.h"
-#include "pink/pink.h"
-#include "pink/objects/actions/walk_action.h"
 #include "pink/objects/actors/actor.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
@@ -36,7 +36,7 @@ void WalkAction::deserialize(Archive &archive) {
 
 void WalkAction::toConsole() {
 	debugC(6, kPinkDebugLoadingObjects, "\tWalkAction: _name = %s, _fileName = %s, _calcFramePositions = %u",
-		  _name.c_str(), _fileName.c_str(), _toCalcFramePositions);
+	       _name.c_str(), _fileName.c_str(), _toCalcFramePositions);
 }
 
 void WalkAction::onStart() {
@@ -48,8 +48,7 @@ void WalkAction::onStart() {
 			_end.y = getCoordinates().point.y;
 			_start.y = _end.y;
 			_frameCount = _decoder.getFrameCount();
-		}
-		else {
+		} else {
 			_frameCount = (uint)abs(3 * (_start.x - _end.x) / (int)_z);
 			if (!_frameCount)
 				_frameCount = 1;
@@ -63,7 +62,7 @@ void WalkAction::update() {
 	if (_toCalcFramePositions) {
 		if (_curFrame < _frameCount)
 			_curFrame++;
-		const double k = _curFrame / (double) _frameCount;
+		const double k = _curFrame / (double)_frameCount;
 		Common::Point newCenter;
 		newCenter.x = (_end.x - _start.x) * k + _start.x;
 		if (_horizontal) {

@@ -21,10 +21,10 @@
  */
 
 #include "glk/picture.h"
+#include "common/file.h"
 #include "glk/glk.h"
 #include "glk/raw_decoder.h"
 #include "glk/screen.h"
-#include "common/file.h"
 #include "image/jpeg.h"
 #include "image/png.h"
 
@@ -145,8 +145,8 @@ Picture *Pictures::load(uint32 id) {
 
 	pic = new Picture(img->w, img->h, g_system->getScreenFormat());
 	pic->_refCount = 1;
-    pic->_id = id;
-    pic->_scaled = false;
+	pic->_id = id;
+	pic->_scaled = false;
 	if (transColor != -1)
 		pic->clear(pic->getTransparentColor());
 
@@ -158,8 +158,8 @@ Picture *Pictures::load(uint32 id) {
 		uint pal[256];
 		for (uint idx = 0; idx < palCount; ++idx)
 			pal[idx] = pic->format.RGBToColor(palette[idx * 3],
-				palette[idx * 3 + 1], palette[idx * 3 + 2]);
-		
+			                                  palette[idx * 3 + 1], palette[idx * 3 + 2]);
+
 		const byte *srcP = (const byte *)img->getPixels();
 		byte *destP = (byte *)pic->getPixels();
 		for (int idx = 0; idx < img->w * img->h; ++idx, srcP++, destP += pic->format.bytesPerPixel) {
@@ -173,8 +173,8 @@ Picture *Pictures::load(uint32 id) {
 		}
 	}
 
-    store(pic);
-    return pic;
+	store(pic);
+	return pic;
 }
 
 Picture *Pictures::scale(Picture *src, size_t sx, size_t sy) {
@@ -195,8 +195,11 @@ Picture *Pictures::scale(Picture *src, size_t sx, size_t sy) {
 
 /*--------------------------------------------------------------------------*/
 
-Picture::Picture(int width, int height, const Graphics::PixelFormat &fmt) :
-		Graphics::ManagedSurface(width, height, fmt), _refCount(0), _id(0), _scaled(false) {
+Picture::Picture(int width, int height, const Graphics::PixelFormat &fmt)
+  : Graphics::ManagedSurface(width, height, fmt)
+  , _refCount(0)
+  , _id(0)
+  , _scaled(false) {
 
 	// Default transparent color chosen at random
 	_transColor = format.RGBToColor(0x77, 0x77, 0x77);

@@ -20,17 +20,19 @@
  *
  */
 
-#include "common/stream.h"
 #include "common/memstream.h"
+#include "common/stream.h"
 #include "common/textconsole.h"
 
 #include "gob/sound/adlplayer.h"
 
 namespace Gob {
 
-ADLPlayer::ADLPlayer() : AdLib(1000),
-	_songData(0), _songDataSize(0), _playPos(0) {
-
+ADLPlayer::ADLPlayer()
+  : AdLib(1000)
+  , _songData(0)
+  , _songDataSize(0)
+  , _playPos(0) {
 }
 
 ADLPlayer::~ADLPlayer() {
@@ -44,7 +46,7 @@ void ADLPlayer::unload() {
 
 	delete[] _songData;
 
-	_songData     = 0;
+	_songData = 0;
 	_songDataSize = 0;
 
 	_playPos = 0;
@@ -75,7 +77,7 @@ uint32 ADLPlayer::pollMusic(bool first) {
 	if (cmd >= 0xD0) {
 		// Modify an instrument
 
-		if      (_modifyInstrument == 0xFF)
+		if (_modifyInstrument == 0xFF)
 			warning("ADLPlayer: No instrument to modify");
 		else if (_modifyInstrument >= _timbres.size())
 			warning("ADLPlayer: Can't modify invalid instrument %d (%d)", _modifyInstrument, _timbres.size());
@@ -96,7 +98,7 @@ uint32 ADLPlayer::pollMusic(bool first) {
 
 		switch (cmd & 0xF0) {
 		case 0x00: // Note on with volume
-			note   = *_playPos++;
+			note = *_playPos++;
 			volume = *_playPos++;
 
 			setVoiceVolume(voice, volume);
@@ -188,7 +190,7 @@ bool ADLPlayer::readHeader(Common::SeekableReadStream &adl, int &timbreCount) {
 		return false;
 	}
 
-	_soundMode  = adl.readByte();
+	_soundMode = adl.readByte();
 	timbreCount = adl.readByte() + 1;
 
 	adl.skip(1);
@@ -213,7 +215,7 @@ bool ADLPlayer::readTimbres(Common::SeekableReadStream &adl, int timbreCount) {
 
 bool ADLPlayer::readSongData(Common::SeekableReadStream &adl) {
 	_songDataSize = adl.size() - adl.pos();
-	_songData     = new byte[_songDataSize];
+	_songData = new byte[_songDataSize];
 
 	if (adl.read(_songData, _songDataSize) != _songDataSize) {
 		warning("ADLPlayer::readSongData(): Read failed");

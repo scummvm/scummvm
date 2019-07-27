@@ -113,10 +113,10 @@ bool SaveFileManager::readHeader(Common::SeekableReadStream &in, SaveFileHeader 
 
 	header._name = s.readStringSz(kNameLength);
 
-	header._year   = s.readUint16LE();
-	header._month  = s.readUint16LE();
-	header._day    = s.readUint16LE();
-	header._hour   = s.readUint16LE();
+	header._year = s.readUint16LE();
+	header._month = s.readUint16LE();
+	header._day = s.readUint16LE();
+	header._hour = s.readUint16LE();
 	header._minute = s.readUint16LE();
 
 	header._playTime = 0;
@@ -129,15 +129,15 @@ bool SaveFileManager::readHeader(Common::SeekableReadStream &in, SaveFileHeader 
 	// Early check of possible corrupted save file (missing thumbnail and other data)
 	int32 pos = s.pos();
 	int32 sizeOfSaveFile = s.size();
-	if (sizeOfSaveFile > 0 && sizeOfSaveFile < (int32) (pos + 4 + kThumbnailSize)) {
+	if (sizeOfSaveFile > 0 && sizeOfSaveFile < (int32)(pos + 4 + kThumbnailSize)) {
 		warning("Unexpected end of save file \"%s\" (%02d:%02d %02d/%02d/%04d) reached. Size of file was: %d bytes",
-		         header._name.c_str(),
-		         header._hour,
-		         header._minute,
-		         header._day,
-		         header._month,
-		         header._year,
-		         sizeOfSaveFile);
+		        header._name.c_str(),
+		        header._hour,
+		        header._minute,
+		        header._day,
+		        header._month,
+		        header._year,
+		        sizeOfSaveFile);
 		return false;
 	}
 
@@ -178,7 +178,8 @@ bool SaveFileManager::writeHeader(Common::WriteStream &out, SaveFileHeader &head
 	return true;
 }
 
-SaveFileWriteStream::SaveFileWriteStream(Common::WriteStream &s) : _s(s) {}
+SaveFileWriteStream::SaveFileWriteStream(Common::WriteStream &s)
+  : _s(s) {}
 
 void SaveFileWriteStream::debug(char *p) {
 	write(p, strlen(p) + 1);
@@ -246,7 +247,8 @@ void SaveFileWriteStream::writeBoundingBox(const BoundingBox &v, bool serialized
 	}
 }
 
-SaveFileReadStream::SaveFileReadStream(Common::SeekableReadStream &s) : _s(s) {}
+SaveFileReadStream::SaveFileReadStream(Common::SeekableReadStream &s)
+  : _s(s) {}
 
 int32 SaveFileReadStream::readInt() {
 	return readUint32LE();
@@ -312,7 +314,5 @@ BoundingBox SaveFileReadStream::readBoundingBox(bool serialized) {
 
 	return BoundingBox(x0, y0, z0, x1, y1, z1);
 }
-
-
 
 } // End of namespace BladeRunner

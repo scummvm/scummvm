@@ -20,13 +20,11 @@
  *
  */
 
-
 #include "common/system.h"
 
 #include "common/file.h"
 
-#include "graphics/primitives.h"			// for Graphics::drawLine
-
+#include "graphics/primitives.h" // for Graphics::drawLine
 
 #include "parallaction/exec.h"
 #include "parallaction/input.h"
@@ -34,13 +32,11 @@
 #include "parallaction/saveload.h"
 #include "parallaction/sound.h"
 
-
 namespace Parallaction {
 
 /*
 	intro callables data members
 */
-
 
 static uint16 _rightHandPositions[684] = {
 	0x0064, 0x0046, 0x006c, 0x0046, 0x0074, 0x0046, 0x007c, 0x0046,
@@ -154,7 +150,6 @@ void Parallaction_ns::_c_play_boogie(void *parm) {
 	return;
 }
 
-
 void Parallaction_ns::_c_score(void *parm) {
 	_score += 5;
 	return;
@@ -175,7 +170,6 @@ void Parallaction_ns::_c_fade(void *parm) {
 
 	return;
 }
-
 
 void Parallaction_ns::startMovingSarcophagus(ZonePtr sarc) {
 	if (!_moveSarcGetZones[0]) {
@@ -206,7 +200,7 @@ void Parallaction_ns::startMovingSarcophagus(ZonePtr sarc) {
 
 	// calculate destination for the sarcophagus
 	int16 destX = _freeSarcophagusSlotX;
-	_sarcophagusDeltaX = destX - _moveSarcGetZone->getX();			// x movement delta
+	_sarcophagusDeltaX = destX - _moveSarcGetZone->getX(); // x movement delta
 	int16 destY = _moveSarcGetZone->getY() - (_sarcophagusDeltaX / 20); // gently degrade y when moving sideways
 
 	// set the new empty position (maybe this should be done on stopMovingSarcophagus?)
@@ -214,11 +208,11 @@ void Parallaction_ns::startMovingSarcophagus(ZonePtr sarc) {
 
 	// calculate which way and how many steps the character should move
 	int16 numSteps = _sarcophagusDeltaX / 2; // default to right
-	int16 delta = 2;	// default to right
+	int16 delta = 2; // default to right
 	if (_sarcophagusDeltaX < 0) {
 		// move left
-		numSteps = -numSteps;	// keep numSteps positive
-		delta = -delta;			// make delta negative if moving to left
+		numSteps = -numSteps; // keep numSteps positive
+		delta = -delta; // make delta negative if moving to left
 	}
 
 	// GROSS HACK: since there is no obvious way to provide additional parameters to a script,
@@ -243,15 +237,11 @@ void Parallaction_ns::stopMovingSarcophagus() {
 
 	// check if the puzzle has been completed, by verifying the position of
 	// the sarcophagi
-	if (_moveSarcGetZones[0]->getX() == 35 &&
-		_moveSarcGetZones[1]->getX() == 68 &&
-		_moveSarcGetZones[2]->getX() == 101 &&
-		_moveSarcGetZones[3]->getX() == 134 &&
-		_moveSarcGetZones[4]->getX() == 167) {
+	if (_moveSarcGetZones[0]->getX() == 35 && _moveSarcGetZones[1]->getX() == 68 && _moveSarcGetZones[2]->getX() == 101 && _moveSarcGetZones[3]->getX() == 134 && _moveSarcGetZones[4]->getX() == 167) {
 
 		AnimationPtr a = _location.findAnimation("finito");
 		a->_flags |= (kFlagsActive | kFlagsActing);
-		setLocationFlags(0x20);		// GROSS HACK: activates 'finito' flag in dinoit_museo.loc
+		setLocationFlags(0x20); // GROSS HACK: activates 'finito' flag in dinoit_museo.loc
 	}
 
 	// stop moving
@@ -265,9 +255,6 @@ void Parallaction_ns::_c_moveSarc(void *parm) {
 		stopMovingSarcophagus();
 	}
 }
-
-
-
 
 void Parallaction_ns::_c_contaFoglie(void *parm) {
 
@@ -302,8 +289,6 @@ void Parallaction_ns::_c_onMouse(void *parm) {
 	g_engineFlags &= ~kEngineBlockInput;
 	_input->setMouseState(MOUSE_ENABLED_SHOW);
 }
-
-
 
 void Parallaction_ns::_c_setMask(void *parm) {
 
@@ -354,7 +339,7 @@ void Parallaction_ns::_c_frankenstein(void *parm) {
 	Palette pal1;
 
 	for (uint16 i = 0; i < 32; i++) {
-		pal0.setEntry(i, -1, 0, 0);			// leaves reds unchanged while zeroing other components
+		pal0.setEntry(i, -1, 0, 0); // leaves reds unchanged while zeroing other components
 	}
 
 	for (uint16 _di = 0; _di < 30; _di++) {
@@ -372,7 +357,6 @@ void Parallaction_ns::_c_frankenstein(void *parm) {
 	return;
 }
 
-
 void Parallaction_ns::_c_finito(void *parm) {
 
 	_saveLoad->setPartComplete(_char.getBaseName());
@@ -384,7 +368,6 @@ void Parallaction_ns::_c_finito(void *parm) {
 
 	startEndPartSequence();
 
-
 	return;
 }
 
@@ -394,9 +377,9 @@ void Parallaction_ns::_c_ridux(void *parm) {
 }
 
 void Parallaction_ns::_c_testResult(void *parm) {
-	if (_inTestResult) {		// NOTE: _inTestResult has been added because the scripts call _c_testResult multiple times to cope with
-								// the multiple buffering that was used in the original engine. _inTestResult now prevents the engine
-								// from crashing when the scripts are executed.
+	if (_inTestResult) { // NOTE: _inTestResult has been added because the scripts call _c_testResult multiple times to cope with
+		// the multiple buffering that was used in the original engine. _inTestResult now prevents the engine
+		// from crashing when the scripts are executed.
 		return;
 	}
 	_inTestResult = true;
@@ -478,9 +461,10 @@ void Parallaction_ns::_c_moveSheet(void *parm) {
 	r.bottom = 199;
 	_gfx->fillBackground(r, 1);
 
-	if (x >= 104) return;
+	if (x >= 104)
+		return;
 
-	r.left = x+215;
+	r.left = x + 215;
 	r.top = 47;
 	r.right = (x + 247 > 319) ? 319 : (x + 247);
 	r.bottom = 199;
@@ -503,8 +487,8 @@ void Parallaction_ns::_c_sketch(void *parm) {
 	uint16 newx;
 	uint16 newy;
 
-	uint16 oldy = _rightHandPositions[2*(index-1)+1];
-	uint16 oldx = _rightHandPositions[2*(index-1)];
+	uint16 oldy = _rightHandPositions[2 * (index - 1) + 1];
+	uint16 oldx = _rightHandPositions[2 * (index - 1)];
 
 	// WORKAROUND: original code overflowed _rightHandPositions by trying
 	// to access elements at positions 684 and 685. That used to happen
@@ -515,8 +499,8 @@ void Parallaction_ns::_c_sketch(void *parm) {
 		newy = oldy;
 		newx = oldx;
 	} else {
-		newy = _rightHandPositions[2*index+1];
-		newx = _rightHandPositions[2*index];
+		newy = _rightHandPositions[2 * index + 1];
+		newx = _rightHandPositions[2 * index];
 	}
 
 	if (_gfx->_backgroundInfo->hasMask()) {
@@ -531,48 +515,43 @@ void Parallaction_ns::_c_sketch(void *parm) {
 	return;
 }
 
-
-
-
 void Parallaction_ns::_c_shade(void *parm) {
 
 	Common::Rect r(
-		_rightHandAnim->getX() - 36,
-		_rightHandAnim->getY() - 36,
-		_rightHandAnim->getX(),
-		_rightHandAnim->getY()
-	);
+	  _rightHandAnim->getX() - 36,
+	  _rightHandAnim->getY() - 36,
+	  _rightHandAnim->getX(),
+	  _rightHandAnim->getY());
 
-	uint16 _di = r.left/4 + r.top * _gfx->_backgroundInfo->_mask->internalWidth;
+	uint16 _di = r.left / 4 + r.top * _gfx->_backgroundInfo->_mask->internalWidth;
 
 	for (uint16 _si = r.top; _si < r.bottom; _si++) {
-		memset(_gfx->_backgroundInfo->_mask->data + _di, 0, r.width()/4+1);
+		memset(_gfx->_backgroundInfo->_mask->data + _di, 0, r.width() / 4 + 1);
 		_di += _gfx->_backgroundInfo->_mask->internalWidth;
 	}
 
 	return;
-
 }
 
 int16 projectorProgram[] = {
 	0, 50, 1, 50, 2, 49, 3, 49, 4, 48, 5, 48, 6, 47, 7, 47, 8, 46, 9, 46, 10, 45, 11, 45,
-   12, 44, 13, 44, 14, 43, 15, 43, 16, 42, 17, 42, 18, 41, 19, 41, 20, 40, 21, 40, 22, 39,
-   23, 39, 24, 38, 25, 38, 26, 37, 27, 37, 28, 36, 29, 36, 30, 35, 31, 35, 32, 34, 33, 34,
-   34, 33, 35, 33, 36, 32, 37, 32, 38, 31, 39, 31, 40, 30, 41, 30, 42, 29, 43, 29, 44, 28,
-   45, 28, 46, 27, 47, 27, 48, 26, 49, 26, 50, 25, 51, 25, 52, 24, 53, 24, 54, 23, 55, 23,
-   56, 22, 57, 22, 58, 21, 59, 21, 60, 20, 61, 20, 62, 19, 63, 19, 64, 18, 65, 18, 66, 17,
-   67, 17, 68, 16, 69, 16, 70, 15, 71, 15, 72, 14, 73, 14, 74, 13, 75, 13, 76, 12, 77, 12,
-   78, 11, 79, 11, 80, 10, 81, 10, 82, 9, 83, 9, 84, 8, 85, 8, 86, 7, 87, 7, 88, 6, 89, 6,
-   90, 5, 91, 5, 92, 4, 93, 4, 94, 3, 95, 3, 96, 2, 97, 2, 98, 1, 99, 1, 100, 0, 101, 0,
-   102, 1, 103, 1, 104, 2, 105, 2, 106, 3, 107, 3, 108, 4, 109, 4, 110, 5, 111, 5, 112, 6,
-   113, 6, 114, 7, 115, 7, 116, 8, 117, 8, 118, 9, 119, 9, 120, 10, 121, 10, 122, 11, 123,
-   11, 124, 12, 125, 12, 126, 13, 127, 13, 128, 14, 129, 14, 130, 15, 131, 15, 132, 16, 133,
-   16, 134, 17, 135, 17, 136, 18, 137, 18, 138, 19, 139, 19, 140, 20, 141, 20, 142, 21, 143,
-   21, 144, 22, 145, 22, 146, 23, 147, 23, 148, 24, 149, 24, 150, 25, 149, 25, 148, 25, 147,
-   25, 146, 25, 145, 25, 144, 25, 143, 25, 142, 25, 141, 25, 140, 25, 139, 25, 138, 25, 137,
-   25, 136, 25, 135, 25, 134, 25, 133, 25, 132, 25, 131, 25, 130, 25, 129, 25, 128, 25, 127,
-   25, 126, 25, 125, 25, 124, 25, 123, 25, 122, 25, 121, 25, 120, 25, 119, 25, 118, 25, 117,
-   25, 116, 25, 115, 25, 114, 25, 113, 25, 112, 25, 111, 25, 110, 25, -1, -1
+	12, 44, 13, 44, 14, 43, 15, 43, 16, 42, 17, 42, 18, 41, 19, 41, 20, 40, 21, 40, 22, 39,
+	23, 39, 24, 38, 25, 38, 26, 37, 27, 37, 28, 36, 29, 36, 30, 35, 31, 35, 32, 34, 33, 34,
+	34, 33, 35, 33, 36, 32, 37, 32, 38, 31, 39, 31, 40, 30, 41, 30, 42, 29, 43, 29, 44, 28,
+	45, 28, 46, 27, 47, 27, 48, 26, 49, 26, 50, 25, 51, 25, 52, 24, 53, 24, 54, 23, 55, 23,
+	56, 22, 57, 22, 58, 21, 59, 21, 60, 20, 61, 20, 62, 19, 63, 19, 64, 18, 65, 18, 66, 17,
+	67, 17, 68, 16, 69, 16, 70, 15, 71, 15, 72, 14, 73, 14, 74, 13, 75, 13, 76, 12, 77, 12,
+	78, 11, 79, 11, 80, 10, 81, 10, 82, 9, 83, 9, 84, 8, 85, 8, 86, 7, 87, 7, 88, 6, 89, 6,
+	90, 5, 91, 5, 92, 4, 93, 4, 94, 3, 95, 3, 96, 2, 97, 2, 98, 1, 99, 1, 100, 0, 101, 0,
+	102, 1, 103, 1, 104, 2, 105, 2, 106, 3, 107, 3, 108, 4, 109, 4, 110, 5, 111, 5, 112, 6,
+	113, 6, 114, 7, 115, 7, 116, 8, 117, 8, 118, 9, 119, 9, 120, 10, 121, 10, 122, 11, 123,
+	11, 124, 12, 125, 12, 126, 13, 127, 13, 128, 14, 129, 14, 130, 15, 131, 15, 132, 16, 133,
+	16, 134, 17, 135, 17, 136, 18, 137, 18, 138, 19, 139, 19, 140, 20, 141, 20, 142, 21, 143,
+	21, 144, 22, 145, 22, 146, 23, 147, 23, 148, 24, 149, 24, 150, 25, 149, 25, 148, 25, 147,
+	25, 146, 25, 145, 25, 144, 25, 143, 25, 142, 25, 141, 25, 140, 25, 139, 25, 138, 25, 137,
+	25, 136, 25, 135, 25, 134, 25, 133, 25, 132, 25, 131, 25, 130, 25, 129, 25, 128, 25, 127,
+	25, 126, 25, 125, 25, 124, 25, 123, 25, 122, 25, 121, 25, 120, 25, 119, 25, 118, 25, 117,
+	25, 116, 25, 115, 25, 114, 25, 113, 25, 112, 25, 111, 25, 110, 25, -1, -1
 };
 
 void Parallaction_ns::_c_projector(void *) {
@@ -587,6 +566,5 @@ void Parallaction_ns::_c_HBOff(void *) {
 void Parallaction_ns::_c_HBOn(void *) {
 	_gfx->setHalfbriteMode(true);
 }
-
 
 } // namespace Parallaction

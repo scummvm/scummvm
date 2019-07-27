@@ -20,12 +20,12 @@
  *
  */
 
-#include "cruise/cruise_main.h"
 #include "cruise/cruise.h"
+#include "cruise/cruise_main.h"
 #include "cruise/vars.h"
 
-#include "common/serializer.h"
 #include "common/savefile.h"
+#include "common/serializer.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 
@@ -36,9 +36,9 @@ namespace Cruise {
 
 struct overlayRestoreTemporary {
 	int _sBssSize;
-	uint8* _pBss;
+	uint8 *_pBss;
 	int _sNumObj;
-	objectParams* _pObj;
+	objectParams *_pObj;
 };
 
 overlayRestoreTemporary ovlRestoreData[90];
@@ -58,7 +58,8 @@ WARN_UNUSED_RESULT bool readSavegameHeader(Common::InSaveFile *in, CruiseSavegam
 	// Read in the string
 	header.saveName.clear();
 	char ch;
-	while ((ch = (char)in->readByte()) != '\0') header.saveName += ch;
+	while ((ch = (char)in->readByte()) != '\0')
+		header.saveName += ch;
 
 	// Get the thumbnail
 	header.thumbnail = nullptr;
@@ -283,7 +284,7 @@ static void syncOverlays2(Common::Serializer &s) {
 				s.syncAsSint16LE(ovlRestoreData[i]._sBssSize);
 
 				if (ovlRestoreData[i]._sBssSize) {
-					ovlRestoreData[i]._pBss = (uint8 *) mallocAndZero(ovlRestoreData[i]._sBssSize);
+					ovlRestoreData[i]._pBss = (uint8 *)mallocAndZero(ovlRestoreData[i]._sBssSize);
 					assert(ovlRestoreData[i]._pBss);
 
 					s.syncBytes(ovlRestoreData[i]._pBss, ovlRestoreData[i]._sBssSize);
@@ -292,7 +293,7 @@ static void syncOverlays2(Common::Serializer &s) {
 				s.syncAsSint16LE(ovlRestoreData[i]._sNumObj);
 
 				if (ovlRestoreData[i]._sNumObj) {
-					ovlRestoreData[i]._pObj = (objectParams *) mallocAndZero(ovlRestoreData[i]._sNumObj * sizeof(objectParams));
+					ovlRestoreData[i]._pObj = (objectParams *)mallocAndZero(ovlRestoreData[i]._sNumObj * sizeof(objectParams));
 					assert(ovlRestoreData[i]._pObj);
 
 					for (int j = 0; j < ovlRestoreData[i]._sNumObj; j++) {
@@ -316,7 +317,7 @@ void syncScript(Common::Serializer &s, scriptInstanceStruct *entry) {
 
 	if (s.isSaving()) {
 		// Figure out the number of scripts to save
-		scriptInstanceStruct* pCurrent = entry->nextScriptPtr;
+		scriptInstanceStruct *pCurrent = entry->nextScriptPtr;
 		while (pCurrent) {
 			++numScripts;
 			pCurrent = pCurrent->nextScriptPtr;
@@ -443,8 +444,7 @@ static void syncIncrust(Common::Serializer &s) {
 	pl1 = &backgroundIncrustHead;
 
 	for (int i = 0; i < numEntries; ++i) {
-		backgroundIncrustStruct *t = s.isSaving() ? pl :
-			(backgroundIncrustStruct *)mallocAndZero(sizeof(backgroundIncrustStruct));
+		backgroundIncrustStruct *t = s.isSaving() ? pl : (backgroundIncrustStruct *)mallocAndZero(sizeof(backgroundIncrustStruct));
 
 		s.syncAsUint32LE(dummyLong);
 
@@ -597,7 +597,8 @@ static void syncCT(Common::Serializer &s) {
 
 	for (int i = 0; i < 10; i++) {
 		v = 0;
-		if (s.isSaving()) v = (persoTable[i]) ? 1 : 0;
+		if (s.isSaving())
+			v = (persoTable[i]) ? 1 : 0;
 		s.syncAsSint32LE(v);
 
 		if (s.isLoading())
@@ -638,7 +639,6 @@ static void DoSync(Common::Serializer &s) {
 	syncCT(s);
 }
 
-
 void resetPreload() {
 	for (unsigned long int i = 0; i < 64; i++) {
 		if (strlen(preloadData[i].name)) {
@@ -652,7 +652,7 @@ void resetPreload() {
 	}
 }
 
-void unloadOverlay(const char*name, int overlayNumber) {
+void unloadOverlay(const char *name, int overlayNumber) {
 	releaseOverlay(name);
 
 	strcpy(overlayTable[overlayNumber].overlayName, "");
@@ -872,7 +872,6 @@ Common::Error loadSavegameData(int saveGameIdx) {
 					ovlData->arrayObjVar = ovlRestoreData[j]._pObj;
 					ovlData->size9 = ovlRestoreData[j]._sNumObj;
 				}
-
 			}
 		}
 	}
@@ -884,11 +883,8 @@ Common::Error loadSavegameData(int saveGameIdx) {
 	for (int i = 0; i < NUM_FILE_ENTRIES; i++) {
 		if (filesDatabase[i].subData.ptr) {
 			int j = i + 1;
-			for (; j < NUM_FILE_ENTRIES &&
-			        filesDatabase[j].subData.ptr &&
-			        !strcmp(filesDatabase[i].subData.name, filesDatabase[j].subData.name) &&
-			        (filesDatabase[j].subData.index == (j - i));
-			        j++)
+			for (; j < NUM_FILE_ENTRIES && filesDatabase[j].subData.ptr && !strcmp(filesDatabase[i].subData.name, filesDatabase[j].subData.name) && (filesDatabase[j].subData.index == (j - i));
+			     j++)
 				;
 
 			for (int k = i; k < j; k++) {

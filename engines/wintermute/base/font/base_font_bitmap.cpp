@@ -27,16 +27,15 @@
  */
 
 #include "engines/wintermute/base/font/base_font_bitmap.h"
-#include "engines/wintermute/utils/string_util.h"
-#include "engines/wintermute/base/base_parser.h"
-#include "engines/wintermute/base/base_frame.h"
-#include "engines/wintermute/base/gfx/base_surface.h"
-#include "engines/wintermute/base/gfx/base_renderer.h"
-#include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/base_sub_frame.h"
-#include "engines/wintermute/base/base_frame.h"
-#include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_frame.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_parser.h"
+#include "engines/wintermute/base/base_sprite.h"
+#include "engines/wintermute/base/base_sub_frame.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/base/gfx/base_surface.h"
+#include "engines/wintermute/utils/string_util.h"
 
 namespace Wintermute {
 
@@ -47,7 +46,8 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(BaseFontBitmap, false)
 
 //////////////////////////////////////////////////////////////////////
-BaseFontBitmap::BaseFontBitmap(BaseGame *inGame) : BaseFont(inGame) {
+BaseFontBitmap::BaseFontBitmap(BaseGame *inGame)
+  : BaseFont(inGame) {
 	_subframe = nullptr;
 	_sprite = nullptr;
 	_widthsFrame = 0;
@@ -58,7 +58,6 @@ BaseFontBitmap::BaseFontBitmap(BaseGame *inGame) : BaseFont(inGame) {
 	_wholeCell = false;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 BaseFontBitmap::~BaseFontBitmap() {
 	delete _subframe;
@@ -67,18 +66,15 @@ BaseFontBitmap::~BaseFontBitmap() {
 	_sprite = nullptr;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 void BaseFontBitmap::drawText(const byte *text, int x, int y, int width, TTextAlign align, int maxHeight, int maxLength) {
 	textHeightDraw(text, x, y, width, align, true, maxHeight, maxLength);
 }
 
-
 //////////////////////////////////////////////////////////////////////
 int BaseFontBitmap::getTextHeight(const byte *text, int width) {
 	return textHeightDraw(text, 0, 0, width, TAL_LEFT, false);
 }
-
 
 //////////////////////////////////////////////////////////////////////
 int BaseFontBitmap::getTextWidth(const byte *text, int maxLength) {
@@ -103,7 +99,6 @@ int BaseFontBitmap::getTextWidth(const byte *text, int maxLength) {
 
 	return textWidth;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 int BaseFontBitmap::textHeightDraw(const byte *text, int x, int y, int width, TTextAlign align, bool draw, int maxHeight, int maxLength) {
@@ -147,7 +142,7 @@ int BaseFontBitmap::textHeightDraw(const byte *text, int x, int y, int width, TT
 	}
 
 	while (!done) {
-		if (maxHeight > 0 && (numLines + 1)*_tileHeight > maxHeight) {
+		if (maxHeight > 0 && (numLines + 1) * _tileHeight > maxHeight) {
 			if (draw) {
 				_gameRef->_renderer->endSpriteBatch();
 			}
@@ -231,7 +226,6 @@ int BaseFontBitmap::textHeightDraw(const byte *text, int x, int y, int width, TT
 	return numLines * _tileHeight;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 void BaseFontBitmap::drawChar(byte c, int x, int y) {
 	if (_fontextFix) {
@@ -268,7 +262,6 @@ void BaseFontBitmap::drawChar(byte c, int x, int y) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////
 bool BaseFontBitmap::loadFile(const Common::String &filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
@@ -289,7 +282,6 @@ bool BaseFontBitmap::loadFile(const Common::String &filename) {
 
 	return ret;
 }
-
 
 TOKEN_DEF_START
 TOKEN_DEF(FONTEXT_FIX)
@@ -420,7 +412,6 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 			parseEditorProperty(params, false);
 			break;
 		}
-
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		_gameRef->LOG(0, "Syntax error in FONT definition");
@@ -444,7 +435,6 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 			_subframe->setSurface(surfaceFile);
 		}
 	}
-
 
 	if (((_subframe == nullptr || _subframe->_surface == nullptr) && _sprite == nullptr) || _numColumns == 0 || _tileWidth == 0 || _tileHeight == 0) {
 		_gameRef->LOG(0, "Incomplete font definition");
@@ -486,10 +476,8 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 		}
 	}
 
-
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFontBitmap::persist(BasePersistenceManager *persistMgr) {
@@ -509,14 +497,11 @@ bool BaseFontBitmap::persist(BasePersistenceManager *persistMgr) {
 		persistMgr->getBytes(_widths, sizeof(_widths));
 	}
 
-
 	persistMgr->transferBool(TMEMBER(_fontextFix));
 	persistMgr->transferBool(TMEMBER(_wholeCell));
 
-
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 int BaseFontBitmap::getCharWidth(byte index) {
@@ -525,7 +510,6 @@ int BaseFontBitmap::getCharWidth(byte index) {
 	}
 	return _widths[index];
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFontBitmap::getWidths() {
@@ -545,11 +529,9 @@ bool BaseFontBitmap::getWidths() {
 		return STATUS_FAILED;
 	}
 
-
 	for (int i = 0; i < NUM_CHARACTERS; i++) {
 		int xxx = (i % _numColumns) * _tileWidth;
 		int yyy = (i / _numColumns) * _tileHeight;
-
 
 		int minCol = -1;
 		for (int row = 0; row < _tileHeight; row++) {

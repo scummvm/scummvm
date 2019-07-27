@@ -34,24 +34,24 @@ class ANIFile;
 
 namespace OnceUpon {
 
-/** The child running around on the character generator screen. */
-class CharGenChild : public ANIObject {
-public:
-	enum Sound {
-		kSoundNone = 0,
-		kSoundWalk    ,
-		kSoundJump
+	/** The child running around on the character generator screen. */
+	class CharGenChild : public ANIObject {
+	public:
+		enum Sound {
+			kSoundNone = 0,
+			kSoundWalk,
+			kSoundJump
+		};
+
+		CharGenChild(const ANIFile &ani);
+		~CharGenChild();
+
+		/** Advance the animation to the next frame. */
+		void advance();
+
+		/** Should we play a sound right now? */
+		Sound shouldPlaySound() const;
 	};
-
-	CharGenChild(const ANIFile &ani);
-	~CharGenChild();
-
-	/** Advance the animation to the next frame. */
-	void advance();
-
-	/** Should we play a sound right now? */
-	Sound shouldPlaySound() const;
-};
 
 } // End of namespace OnceUpon
 

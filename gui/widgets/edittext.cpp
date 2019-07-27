@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/system.h"
 #include "gui/widgets/edittext.h"
+#include "common/system.h"
 #include "gui/gui-manager.h"
 
 #include "gui/ThemeEval.h"
@@ -29,7 +29,7 @@
 namespace GUI {
 
 EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, const char *tooltip, uint32 cmd, uint32 finishCmd)
-	: EditableWidget(boss, x, y - 1, w, h + 2, tooltip, cmd) {
+  : EditableWidget(boss, x, y - 1, w, h + 2, tooltip, cmd) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
 	_type = kEditTextWidget;
 	_finishCmd = finishCmd;
@@ -41,7 +41,7 @@ EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, cons
 }
 
 EditTextWidget::EditTextWidget(GuiObject *boss, const String &name, const String &text, const char *tooltip, uint32 cmd, uint32 finishCmd)
-	: EditableWidget(boss, name, tooltip, cmd) {
+  : EditableWidget(boss, name, tooltip, cmd) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
 	_type = kEditTextWidget;
 	_finishCmd = finishCmd;
@@ -100,9 +100,9 @@ void EditTextWidget::drawWidget() {
 	setTextDrawableArea(r);
 
 	g_gui.theme()->drawText(
-			Common::Rect(_x + 2 + _leftPadding, _y + 2, _x + _leftPadding + getEditRect().width() + 2, _y + _h),
-			_editString, _state, Graphics::kTextAlignLeft, ThemeEngine::kTextInversionNone,
-			-_editScrollOffset, false, _font, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
+	  Common::Rect(_x + 2 + _leftPadding, _y + 2, _x + _leftPadding + getEditRect().width() + 2, _y + _h),
+	  _editString, _state, Graphics::kTextAlignLeft, ThemeEngine::kTextInversionNone,
+	  -_editScrollOffset, false, _font, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
 }
 
 Common::Rect EditTextWidget::getEditRect() const {

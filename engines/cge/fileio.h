@@ -35,15 +35,15 @@ namespace CGE {
 
 class CGEEngine;
 
-#define kBtSize       1024
-#define kBtKeySize    13
-#define kBtLevel      2
+#define kBtSize 1024
+#define kBtKeySize 13
+#define kBtLevel 2
 #define kBtInnerCount ((kBtSize - 4 /*sizeof(Hea) */) / (kBtKeySize + 2 /*sizeof(Inner) */))
-#define kBtLeafCount  ((kBtSize - 4 /*sizeof(Hea) */) / (kBtKeySize + 4 + 2 /*sizeof(BtKeypack) */))
-#define kBtValNone    0xFFFF
-#define kBtValRoot    0
-#define kCatName      "VOL.CAT"
-#define kDatName      "VOL.DAT"
+#define kBtLeafCount ((kBtSize - 4 /*sizeof(Hea) */) / (kBtKeySize + 4 + 2 /*sizeof(BtKeypack) */))
+#define kBtValNone 0xFFFF
+#define kBtValRoot 0
+#define kCatName "VOL.CAT"
+#define kDatName "VOL.DAT"
 
 struct BtKeypack {
 	char _key[kBtKeySize];
@@ -52,7 +52,7 @@ struct BtKeypack {
 };
 
 struct Inner {
-	uint8  _key[kBtKeySize];
+	uint8 _key[kBtKeySize];
 	uint16 _down;
 };
 
@@ -87,8 +87,8 @@ class ResourceManager {
 	Common::File *_catFile;
 	Common::File *_datFile;
 	void XCrypt(byte *buf, uint16 length);
-public:
 
+public:
 	ResourceManager();
 	~ResourceManager();
 	uint16 read(byte *buf, uint16 length);
@@ -103,6 +103,7 @@ private:
 	CGEEngine *_vm;
 	Common::SeekableReadStream *_readStream;
 	bool _error;
+
 public:
 	EncryptedStream(CGEEngine *vm, const char *name);
 	~EncryptedStream();

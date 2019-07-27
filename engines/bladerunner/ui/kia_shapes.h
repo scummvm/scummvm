@@ -35,8 +35,8 @@ class KIAShapes {
 	static const uint kShapeCount = 132;
 
 	BladeRunnerEngine *_vm;
-	const Shape       *_shapes[kShapeCount];
-	bool               _isLoaded;
+	const Shape *_shapes[kShapeCount];
+	bool _isLoaded;
 
 public:
 	KIAShapes(BladeRunnerEngine *vm);

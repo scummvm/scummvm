@@ -27,7 +27,7 @@
 
 #if defined(__WINS__) && !defined(S60V3) && !defined(UIQ3)
 extern "C" int _chkstk(int /*a*/) {
-_asm {
+	_asm {
 	push ecx
 	cmp eax,_PAGESIZE_
 	lea ecx,[esp] + 8
@@ -63,26 +63,26 @@ _asm {
 #ifdef EPOC_AS_APP
 
 // this function is called automatically by the SymbianOS to deliver the new CApaApplication object
-#if !defined(UIQ3) && !defined(S60V3)
+#	if !defined(UIQ3) && !defined(S60V3)
 EXPORT_C
-#endif
-CApaApplication* NewApplication() {
+#	endif
+CApaApplication *NewApplication() {
 	// Return pointer to newly created CQMApp
 	return new CScummApp;
 }
 
-#if defined(UIQ3) || defined(S60V3)
-#include <eikstart.h>
+#	if defined(UIQ3) || defined(S60V3)
+#		include <eikstart.h>
 // E32Main() contains the program's start up code, the entry point for an EXE.
 GLDEF_C TInt E32Main() {
 	return EikStart::RunApplication(NewApplication);
 }
-#endif
+#	endif
 
 #endif // EPOC_AS_APP
 
 #if !defined(UIQ3) && !defined(S60V3)
-GLDEF_C  TInt E32Dll(TDllReason) {
+GLDEF_C TInt E32Dll(TDllReason) {
 	return KErrNone;
 }
 #endif
@@ -94,7 +94,7 @@ CScummApp::~CScummApp() {
 }
 
 #if defined(UIQ3)
-#include <scummvm.rsg>
+#	include <scummvm.rsg>
 /**
  * Returns the resource id to be used to declare the views supported by this UIQ3 app
  * @return TInt, resource id
@@ -112,8 +112,7 @@ TUid CScummApp::AppDllUid() const {
 	return TUid::Uid(ScummUid);
 }
 
-void CScummApp::GetDataFolder(TDes& aDataFolder)
-{
+void CScummApp::GetDataFolder(TDes &aDataFolder) {
 	aDataFolder = _L("ScummVM");
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////

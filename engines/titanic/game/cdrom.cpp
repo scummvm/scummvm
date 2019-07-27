@@ -27,13 +27,14 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CCDROM, CGameObject)
-	ON_MESSAGE(MouseDragStartMsg)
-	ON_MESSAGE(MouseDragEndMsg)
-	ON_MESSAGE(MouseDragMoveMsg)
-	ON_MESSAGE(ActMsg)
+ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(MouseDragEndMsg)
+ON_MESSAGE(MouseDragMoveMsg)
+ON_MESSAGE(ActMsg)
 END_MESSAGE_MAP()
 
-CCDROM::CCDROM() : CGameObject() {
+CCDROM::CCDROM()
+  : CGameObject() {
 }
 
 void CCDROM::save(SimpleFile *file, int indent) {

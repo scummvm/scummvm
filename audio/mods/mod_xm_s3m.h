@@ -84,8 +84,8 @@ class AudioStream;
  * @param interpolation		interpolation effect level
  */
 AudioStream *makeModXmS3mStream(Common::SeekableReadStream *stream,
-		DisposeAfterUse::Flag disposeAfterUse,
-		int rate = 48000, int interpolation = 0);
+                                DisposeAfterUse::Flag disposeAfterUse,
+                                int rate = 48000, int interpolation = 0);
 
 } // End of namespace Audio
 

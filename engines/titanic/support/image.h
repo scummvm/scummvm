@@ -32,6 +32,7 @@ namespace Titanic {
 class Image : public Graphics::ManagedSurface {
 private:
 	void loadBitmap(Common::SeekableReadStream &s);
+
 public:
 	virtual ~Image() {}
 

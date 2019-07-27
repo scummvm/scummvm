@@ -44,9 +44,9 @@
 // THIS SOFTWARE.
 
 #include "director/cast.h"
-#include "director/util.h"
-#include "director/lingo/lingo.h"
 #include "director/lingo/lingo-gr.h"
+#include "director/lingo/lingo.h"
+#include "director/util.h"
 
 namespace Director {
 
@@ -55,71 +55,71 @@ static struct FuncDescr {
 	const char *name;
 	const char *args;
 } funcDescr[] = {
-	{ 0,					"STOP",			"" },
-	{ Lingo::c_xpop,		"c_xpop",		"" },
-	{ Lingo::c_arraypush,	"c_arraypush",		"i" },
-	{ Lingo::c_printtop,	"c_printtop",	"" },
-	{ Lingo::c_constpush,	"c_constpush",	"i" },
-	{ Lingo::c_voidpush,	"c_voidpush",	"" },
-	{ Lingo::c_fconstpush,	"c_fconstpush",	"f" },
-	{ Lingo::c_stringpush,	"c_stringpush",	"s" },
-	{ Lingo::c_symbolpush,	"c_symbolpush",	"s" },	// D3
-	{ Lingo::c_varpush,		"c_varpush",	"s" },
-	{ Lingo::c_setImmediate,"c_setImmediate","i" },
-	{ Lingo::c_assign,		"c_assign",		"" },
-	{ Lingo::c_eval,		"c_eval",		"s" },
-	{ Lingo::c_theentitypush,"c_theentitypush","ii" }, // entity, field
-	{ Lingo::c_theentityassign,"c_theentityassign","ii" },
-	{ Lingo::c_swap,		"c_swap",		"" },
-	{ Lingo::c_add,			"c_add",		"" },
-	{ Lingo::c_sub,			"c_sub",		"" },
-	{ Lingo::c_mul,			"c_mul",		"" },
-	{ Lingo::c_div,			"c_div",		"" },
-	{ Lingo::c_mod,			"c_mod",		"" },
-	{ Lingo::c_negate,		"c_negate",		"" },
-	{ Lingo::c_ampersand,	"c_ampersand",	"" },
-	{ Lingo::c_after,		"c_after",		"" },	// D3
-	{ Lingo::c_before,		"c_before",		"" },	// D3
-	{ Lingo::c_concat,		"c_concat",		"" },
-	{ Lingo::c_contains,	"c_contains",	"" },
-	{ Lingo::c_starts,		"c_starts",		"" },
-	{ Lingo::c_intersects,	"c_intersects",	"" },
-	{ Lingo::c_within,		"c_within",		"" },
-	{ Lingo::c_charOf,		"c_charOf",		"" },	// D3
-	{ Lingo::c_charToOf,	"c_charToOf",	"" },	// D3
-	{ Lingo::c_itemOf,		"c_itemOf",		"" },	// D3
-	{ Lingo::c_itemToOf,	"c_itemToOf",	"" },	// D3
-	{ Lingo::c_lineOf,		"c_lineOf",		"" },	// D3
-	{ Lingo::c_lineToOf,	"c_lineToOf",	"" },	// D3
-	{ Lingo::c_wordOf,		"c_wordOf",		"" },	// D3
-	{ Lingo::c_wordToOf,	"c_wordToOf",	"" },	// D3
-	{ Lingo::c_and,			"c_and",		"" },
-	{ Lingo::c_or,			"c_or",			"" },
-	{ Lingo::c_not,			"c_not",		"" },
-	{ Lingo::c_eq,			"c_eq",			"" },
-	{ Lingo::c_neq,			"c_neq",		"" },
-	{ Lingo::c_gt,			"c_gt",			"" },
-	{ Lingo::c_lt,			"c_lt",			"" },
-	{ Lingo::c_ge,			"c_ge",			"" },
-	{ Lingo::c_le,			"c_le",			"" },
-	{ Lingo::c_repeatwhilecode,"c_repeatwhilecode","oo" },
-	{ Lingo::c_repeatwithcode,"c_repeatwithcode","ooooos" },
-	{ Lingo::c_exitRepeat,	"c_exitRepeat",	"" },
-	{ Lingo::c_ifcode,		"c_ifcode",		"oooi" },
-	{ Lingo::c_tellcode,	"c_tellcode",	"o" },
-	{ Lingo::c_whencode,	"c_whencode",	"os" },
-	{ Lingo::c_goto,		"c_goto",		"" },
-	{ Lingo::c_gotoloop,	"c_gotoloop",	"" },
-	{ Lingo::c_gotonext,	"c_gotonext",	"" },
-	{ Lingo::c_gotoprevious,"c_gotoprevious","" },
-	{ Lingo::c_play,		"c_play",		"" },
-	{ Lingo::c_playdone,	"c_playdone",	"" },
-	{ Lingo::c_call,		"c_call",		"si" },
-	{ Lingo::c_procret,		"c_procret",	"" },
-	{ Lingo::c_global,		"c_global",		"s" },
-	{ Lingo::c_property,	"c_property",	"s" },
-	{ Lingo::c_instance,	"c_instance",	"s" },
-	{ Lingo::c_open,		"c_open",		"" },
+	{ 0, "STOP", "" },
+	{ Lingo::c_xpop, "c_xpop", "" },
+	{ Lingo::c_arraypush, "c_arraypush", "i" },
+	{ Lingo::c_printtop, "c_printtop", "" },
+	{ Lingo::c_constpush, "c_constpush", "i" },
+	{ Lingo::c_voidpush, "c_voidpush", "" },
+	{ Lingo::c_fconstpush, "c_fconstpush", "f" },
+	{ Lingo::c_stringpush, "c_stringpush", "s" },
+	{ Lingo::c_symbolpush, "c_symbolpush", "s" }, // D3
+	{ Lingo::c_varpush, "c_varpush", "s" },
+	{ Lingo::c_setImmediate, "c_setImmediate", "i" },
+	{ Lingo::c_assign, "c_assign", "" },
+	{ Lingo::c_eval, "c_eval", "s" },
+	{ Lingo::c_theentitypush, "c_theentitypush", "ii" }, // entity, field
+	{ Lingo::c_theentityassign, "c_theentityassign", "ii" },
+	{ Lingo::c_swap, "c_swap", "" },
+	{ Lingo::c_add, "c_add", "" },
+	{ Lingo::c_sub, "c_sub", "" },
+	{ Lingo::c_mul, "c_mul", "" },
+	{ Lingo::c_div, "c_div", "" },
+	{ Lingo::c_mod, "c_mod", "" },
+	{ Lingo::c_negate, "c_negate", "" },
+	{ Lingo::c_ampersand, "c_ampersand", "" },
+	{ Lingo::c_after, "c_after", "" }, // D3
+	{ Lingo::c_before, "c_before", "" }, // D3
+	{ Lingo::c_concat, "c_concat", "" },
+	{ Lingo::c_contains, "c_contains", "" },
+	{ Lingo::c_starts, "c_starts", "" },
+	{ Lingo::c_intersects, "c_intersects", "" },
+	{ Lingo::c_within, "c_within", "" },
+	{ Lingo::c_charOf, "c_charOf", "" }, // D3
+	{ Lingo::c_charToOf, "c_charToOf", "" }, // D3
+	{ Lingo::c_itemOf, "c_itemOf", "" }, // D3
+	{ Lingo::c_itemToOf, "c_itemToOf", "" }, // D3
+	{ Lingo::c_lineOf, "c_lineOf", "" }, // D3
+	{ Lingo::c_lineToOf, "c_lineToOf", "" }, // D3
+	{ Lingo::c_wordOf, "c_wordOf", "" }, // D3
+	{ Lingo::c_wordToOf, "c_wordToOf", "" }, // D3
+	{ Lingo::c_and, "c_and", "" },
+	{ Lingo::c_or, "c_or", "" },
+	{ Lingo::c_not, "c_not", "" },
+	{ Lingo::c_eq, "c_eq", "" },
+	{ Lingo::c_neq, "c_neq", "" },
+	{ Lingo::c_gt, "c_gt", "" },
+	{ Lingo::c_lt, "c_lt", "" },
+	{ Lingo::c_ge, "c_ge", "" },
+	{ Lingo::c_le, "c_le", "" },
+	{ Lingo::c_repeatwhilecode, "c_repeatwhilecode", "oo" },
+	{ Lingo::c_repeatwithcode, "c_repeatwithcode", "ooooos" },
+	{ Lingo::c_exitRepeat, "c_exitRepeat", "" },
+	{ Lingo::c_ifcode, "c_ifcode", "oooi" },
+	{ Lingo::c_tellcode, "c_tellcode", "o" },
+	{ Lingo::c_whencode, "c_whencode", "os" },
+	{ Lingo::c_goto, "c_goto", "" },
+	{ Lingo::c_gotoloop, "c_gotoloop", "" },
+	{ Lingo::c_gotonext, "c_gotonext", "" },
+	{ Lingo::c_gotoprevious, "c_gotoprevious", "" },
+	{ Lingo::c_play, "c_play", "" },
+	{ Lingo::c_playdone, "c_playdone", "" },
+	{ Lingo::c_call, "c_call", "si" },
+	{ Lingo::c_procret, "c_procret", "" },
+	{ Lingo::c_global, "c_global", "s" },
+	{ Lingo::c_property, "c_property", "s" },
+	{ Lingo::c_instance, "c_instance", "s" },
+	{ Lingo::c_open, "c_open", "" },
 	{ 0, 0, 0 }
 };
 
@@ -322,8 +322,7 @@ void Lingo::c_assign() {
 		return;
 	}
 
-	if (d1.u.sym->type != INT && d1.u.sym->type != VOID &&
-			d1.u.sym->type != FLOAT && d1.u.sym->type != STRING) {
+	if (d1.u.sym->type != INT && d1.u.sym->type != VOID && d1.u.sym->type != FLOAT && d1.u.sym->type != STRING) {
 		warning("assignment to non-variable '%s'", d1.u.sym->name.c_str());
 		return;
 	}
@@ -415,7 +414,7 @@ void Lingo::c_theentitypush() {
 	Datum id = g_lingo->pop();
 
 	int entity = READ_UINT32(&e);
-	int field  = READ_UINT32(&f);
+	int field = READ_UINT32(&f);
 
 	Datum d = g_lingo->getTheEntity(entity, id, field);
 	g_lingo->push(d);
@@ -427,7 +426,7 @@ void Lingo::c_theentityassign() {
 	Datum id = g_lingo->pop();
 
 	int entity = READ_UINT32(&e);
-	int field  = READ_UINT32(&f);
+	int field = READ_UINT32(&f);
 
 	Datum d = g_lingo->pop();
 	g_lingo->setTheEntity(entity, id, field, d);
@@ -479,8 +478,7 @@ void Lingo::c_mul() {
 void Lingo::c_div() {
 	Datum d2 = g_lingo->pop();
 
-	if ((d2.type == INT && d2.u.i == 0) ||
-			(d2.type == FLOAT && d2.u.f == 0.0))
+	if ((d2.type == INT && d2.u.i == 0) || (d2.type == FLOAT && d2.u.f == 0.0))
 		error("division by zero");
 
 	Datum d1 = g_lingo->pop();
@@ -833,14 +831,14 @@ void Lingo::c_repeatwhilecode(void) {
 	int savepc = g_lingo->_pc;
 
 	uint body = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
-	uint end =  READ_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
+	uint end = READ_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
 
-	g_lingo->execute(savepc + 2);	/* condition */
+	g_lingo->execute(savepc + 2); /* condition */
 	d = g_lingo->pop();
 	d.toInt();
 
 	while (d.u.i) {
-		g_lingo->execute(body + savepc - 1);	/* body */
+		g_lingo->execute(body + savepc - 1); /* body */
 		if (g_lingo->_returning)
 			break;
 
@@ -849,7 +847,7 @@ void Lingo::c_repeatwhilecode(void) {
 			break;
 		}
 
-		g_lingo->execute(savepc + 2);	/* condition */
+		g_lingo->execute(savepc + 2); /* condition */
 		d = g_lingo->pop();
 		d.toInt();
 	}
@@ -863,10 +861,10 @@ void Lingo::c_repeatwithcode(void) {
 	int savepc = g_lingo->_pc;
 
 	uint init = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
-	uint finish =  READ_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
+	uint finish = READ_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
 	uint body = READ_UINT32(&(*g_lingo->_currentScript)[savepc + 2]);
 	int inc = (int32)READ_UINT32(&(*g_lingo->_currentScript)[savepc + 3]);
-	uint end =  READ_UINT32(&(*g_lingo->_currentScript)[savepc + 4]);
+	uint end = READ_UINT32(&(*g_lingo->_currentScript)[savepc + 4]);
 	Common::String countername((char *)&(*g_lingo->_currentScript)[savepc + 5]);
 	Symbol *counter = g_lingo->lookupVar(countername.c_str());
 
@@ -874,14 +872,14 @@ void Lingo::c_repeatwithcode(void) {
 		error("Cast ref used as index: %s", countername.c_str());
 	}
 
-	g_lingo->execute(init + savepc - 1);	/* condition */
+	g_lingo->execute(init + savepc - 1); /* condition */
 	d = g_lingo->pop();
 	d.toInt();
 	counter->u.i = d.u.i;
 	counter->type = INT;
 
 	while (true) {
-		g_lingo->execute(body + savepc - 1);	/* body */
+		g_lingo->execute(body + savepc - 1); /* body */
 		if (g_lingo->_returning)
 			break;
 
@@ -891,7 +889,7 @@ void Lingo::c_repeatwithcode(void) {
 		}
 
 		counter->u.i += inc;
-		g_lingo->execute(finish + savepc - 1);	/* condition */
+		g_lingo->execute(finish + savepc - 1); /* condition */
 		d = g_lingo->pop();
 		d.toInt();
 
@@ -909,15 +907,15 @@ void Lingo::c_exitRepeat(void) {
 
 void Lingo::c_ifcode() {
 	Datum d;
-	int savepc = g_lingo->_pc;	/* then part */
+	int savepc = g_lingo->_pc; /* then part */
 
-	uint then =    READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
-	uint elsep =   READ_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
-	uint end =     READ_UINT32(&(*g_lingo->_currentScript)[savepc + 2]);
+	uint then = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
+	uint elsep = READ_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
+	uint end = READ_UINT32(&(*g_lingo->_currentScript)[savepc + 2]);
 	uint skipEnd = READ_UINT32(&(*g_lingo->_currentScript)[savepc + 3]);
 
 	debugC(8, kDebugLingoExec, "executing cond (have to %s end)", skipEnd ? "skip" : "execute");
-	g_lingo->execute(savepc + 4);	/* condition */
+	g_lingo->execute(savepc + 4); /* condition */
 
 	d = g_lingo->pop();
 
@@ -968,7 +966,6 @@ void Lingo::c_whencode() {
 void Lingo::c_tellcode() {
 	warning("STUB: c_tellcode");
 }
-
 
 //************************
 // Built-in functions
@@ -1035,7 +1032,7 @@ void Lingo::call(Common::String name, int nargs) {
 	if (!g_lingo->_eventHandlerTypeIds.contains(name)) {
 		Symbol *s = g_lingo->lookupVar(name.c_str(), false);
 		if (s && s->type == OBJECT) {
-			debugC(3, kDebugLingoExec,  "Dereferencing object reference: %s to %s", name.c_str(), s->u.s->c_str());
+			debugC(3, kDebugLingoExec, "Dereferencing object reference: %s to %s", name.c_str(), s->u.s->c_str());
 			name = *s->u.s;
 			sym = g_lingo->getHandler(name);
 		}
@@ -1046,7 +1043,7 @@ void Lingo::call(Common::String name, int nargs) {
 		dropArgs = true;
 	} else {
 		if ((sym->type == BLTIN || sym->type == FBLTIN || sym->type == RBLTIN)
-				&& sym->nargs != -1 && sym->nargs != nargs && sym->maxArgs != nargs) {
+		    && sym->nargs != -1 && sym->nargs != nargs && sym->maxArgs != nargs) {
 			if (sym->nargs == sym->maxArgs)
 				warning("Incorrect number of arguments to handler '%s', expecting %d. Dropping %d stack items", name.c_str(), sym->nargs, nargs);
 			else
@@ -1068,7 +1065,7 @@ void Lingo::call(Common::String name, int nargs) {
 
 	if (sym->nargs != -1 && sym->maxArgs < nargs) {
 		warning("Incorrect number of arguments for function %s (%d, expected %d to %d). Dropping extra %d",
-					name.c_str(), nargs, sym->nargs, sym->maxArgs, nargs - sym->nargs);
+		        name.c_str(), nargs, sym->nargs, sym->maxArgs, nargs - sym->nargs);
 		for (int i = 0; i < nargs - sym->maxArgs; i++)
 			g_lingo->pop();
 	}

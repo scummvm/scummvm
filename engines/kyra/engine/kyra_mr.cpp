@@ -21,17 +21,17 @@
  */
 
 #include "kyra/engine/kyra_mr.h"
-#include "kyra/graphics/wsamovie.h"
-#include "kyra/text/text_mr.h"
-#include "kyra/graphics/vqa.h"
 #include "kyra/engine/timer.h"
+#include "kyra/graphics/vqa.h"
+#include "kyra/graphics/wsamovie.h"
 #include "kyra/gui/debugger.h"
 #include "kyra/gui/gui_mr.h"
 #include "kyra/resource/resource.h"
 #include "kyra/sound/sound_digital_mr.h"
+#include "kyra/text/text_mr.h"
 
-#include "common/system.h"
 #include "common/config-manager.h"
+#include "common/system.h"
 
 namespace Kyra {
 
@@ -50,7 +50,8 @@ const KyraEngine_v2::EngineDesc KyraEngine_MR::_mrEngineDesc = {
 	71
 };
 
-KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngine_v2(system, flags, _mrEngineDesc) {
+KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags)
+  : KyraEngine_v2(system, flags, _mrEngineDesc) {
 	_soundDigital = 0;
 	_musicSoundChannel = -1;
 	_menuAudioFile = "TITLE1";
@@ -331,10 +332,11 @@ void KyraEngine_MR::initMainMenu() {
 
 	_menu = new MainMenu(this);
 	MainMenu::StaticData data = {
-		{ _mainMenuStrings[_lang*4+0], _mainMenuStrings[_lang*4+1], _mainMenuStrings[_lang*4+2], _mainMenuStrings[_lang*4+3], 0 },
+		{ _mainMenuStrings[_lang * 4 + 0], _mainMenuStrings[_lang * 4 + 1], _mainMenuStrings[_lang * 4 + 2], _mainMenuStrings[_lang * 4 + 3], 0 },
 		{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0x80, 0xFF },
 		{ 0x16, 0x19, 0x1A, 0x16 },
-		Screen::FID_8_FNT, 240
+		Screen::FID_8_FNT,
+		240
 	};
 
 	if (_flags.lang == Common::ES_ESP) {
@@ -439,10 +441,10 @@ void KyraEngine_MR::fadeOutMusic(int ticks) {
 }
 
 void KyraEngine_MR::snd_playSoundEffect(int item, int volume) {
-	if (_sfxFileMap[item*2+0] != 0xFF) {
-		assert(_sfxFileMap[item*2+0] < _sfxFileListSize);
-		Common::String filename = Common::String::format("%s", _sfxFileList[_sfxFileMap[item*2+0]]);
-		uint8 priority = _sfxFileMap[item*2+1];
+	if (_sfxFileMap[item * 2 + 0] != 0xFF) {
+		assert(_sfxFileMap[item * 2 + 0] < _sfxFileListSize);
+		Common::String filename = Common::String::format("%s", _sfxFileList[_sfxFileMap[item * 2 + 0]]);
+		uint8 priority = _sfxFileMap[item * 2 + 1];
 
 		_soundDigital->playSound(filename.c_str(), priority, Audio::Mixer::kSFXSoundType, volume);
 	}
@@ -552,7 +554,7 @@ void KyraEngine_MR::startup() {
 	_screen->_curPage = 0;
 
 	_talkObjectList = new TalkObject[88];
-	memset(_talkObjectList, 0, sizeof(TalkObject)*88);
+	memset(_talkObjectList, 0, sizeof(TalkObject) * 88);
 	for (int i = 0; i < 88; ++i)
 		_talkObjectList[i].sceneId = 0xFF;
 
@@ -588,7 +590,7 @@ void KyraEngine_MR::startup() {
 
 	_sceneList = new SceneDesc[98];
 	assert(_sceneList);
-	memset(_sceneList, 0, sizeof(SceneDesc)*98);
+	memset(_sceneList, 0, sizeof(SceneDesc) * 98);
 	_sceneListSize = 98;
 
 	runStartupScript(1, 0);
@@ -629,7 +631,7 @@ void KyraEngine_MR::loadShadowShape() {
 void KyraEngine_MR::loadExtrasShapes() {
 	_screen->loadBitmap("EXTRAS.CSH", 3, 3, 0);
 	for (int i = 0; i < 20; ++i)
-		addShapeToPool(_screen->getCPagePtr(3), i+433, i);
+		addShapeToPool(_screen->getCPagePtr(3), i + 433, i);
 	addShapeToPool(_screen->getCPagePtr(3), 453, 20);
 	addShapeToPool(_screen->getCPagePtr(3), 454, 21);
 }
@@ -637,7 +639,7 @@ void KyraEngine_MR::loadExtrasShapes() {
 void KyraEngine_MR::loadInterfaceShapes() {
 	_screen->loadBitmap("INTRFACE.CSH", 3, 3, 0);
 	for (int i = 422; i <= 432; ++i)
-		addShapeToPool(_screen->getCPagePtr(3), i, i-422);
+		addShapeToPool(_screen->getCPagePtr(3), i, i - 422);
 }
 
 void KyraEngine_MR::loadInterface() {
@@ -650,20 +652,20 @@ void KyraEngine_MR::initItems() {
 	_screen->loadBitmap("ITEMS.CSH", 3, 3, 0);
 
 	for (int i = 248; i <= 319; ++i)
-		addShapeToPool(_screen->getCPagePtr(3), i, i-248);
+		addShapeToPool(_screen->getCPagePtr(3), i, i - 248);
 
 	_screen->loadBitmap("ITEMS2.CSH", 3, 3, 0);
 
 	for (int i = 320; i <= 397; ++i)
-		addShapeToPool(_screen->getCPagePtr(3), i, i-320);
+		addShapeToPool(_screen->getCPagePtr(3), i, i - 320);
 
 	uint32 size = 0;
 	uint8 *itemsDat = _res->fileData("_ITEMS.DAT", &size);
 
-	assert(size >= 72+144);
+	assert(size >= 72 + 144);
 
-	memcpy(_itemBuffer1, itemsDat   ,  72);
-	memcpy(_itemBuffer2, itemsDat+72, 144);
+	memcpy(_itemBuffer1, itemsDat, 72);
+	memcpy(_itemBuffer2, itemsDat + 72, 144);
 
 	delete[] itemsDat;
 
@@ -747,14 +749,14 @@ void KyraEngine_MR::loadCharacterShapes(int newShapes) {
 	for (int i = 0; i < 6; ++i) {
 		char filename[16];
 		strcpy(filename, filenames[i]);
-		filename[numberOffset[i]+0] = highNum;
-		filename[numberOffset[i]+1] = lowNum;
+		filename[numberOffset[i] + 0] = highNum;
+		filename[numberOffset[i] + 1] = lowNum;
 		_res->exists(filename, true);
 		_res->loadFileToBuf(filename, _screenBuffer, 64000);
 		for (int j = startShape[i]; j <= endShape[i]; ++j) {
 			if (j == 87)
 				continue;
-			addShapeToPool(_screenBuffer, j, j-startShape[i]);
+			addShapeToPool(_screenBuffer, j, j - startShape[i]);
 		}
 	}
 
@@ -809,7 +811,9 @@ void KyraEngine_MR::updateCharAnimFrame(int *table) {
 			_mainCharacter.animFrame = 79;
 		break;
 
-	case 1: case 2: case 3:
+	case 1:
+	case 2:
+	case 3:
 		if (_mainCharacter.animFrame < 71 || _mainCharacter.animFrame > 78)
 			_mainCharacter.animFrame = 71;
 		break;
@@ -819,7 +823,9 @@ void KyraEngine_MR::updateCharAnimFrame(int *table) {
 			_mainCharacter.animFrame = 55;
 		break;
 
-	case 5: case 6: case 7:
+	case 5:
+	case 6:
+	case 7:
 		if (_mainCharacter.animFrame < 63 || _mainCharacter.animFrame > 70)
 			_mainCharacter.animFrame = 63;
 		break;
@@ -839,7 +845,7 @@ void KyraEngine_MR::updateCharPal(int unk1) {
 
 	if (layer != _lastCharPalLayer && unk1) {
 		for (int i = 144; i < 168; ++i) {
-			for (int j = 0; j <  3; ++j) {
+			for (int j = 0; j < 3; ++j) {
 				uint8 col = dst[i * 3 + j];
 				int subCol = src[(i - 144) * 3 + j] + sceneDatPal[j];
 				subCol = CLIP(subCol, 0, 63);
@@ -871,8 +877,8 @@ bool KyraEngine_MR::checkCharCollision(int x, int y) {
 	int width = (scale * 37) >> 8;
 	int height = (scale * 76) >> 8;
 
-	int x1 = _mainCharacter.x1 - width/2;
-	int x2 = _mainCharacter.x1 + width/2;
+	int x1 = _mainCharacter.x1 - width / 2;
+	int x2 = _mainCharacter.x1 + width / 2;
 	int y1 = _mainCharacter.y1 - height;
 	int y2 = _mainCharacter.y1;
 
@@ -1150,7 +1156,7 @@ void KyraEngine_MR::updateMouse() {
 
 	for (int i = 0; i < _specialExitCount; ++i) {
 		if (checkSpecialSceneExit(i, mouse.x, mouse.y)) {
-			switch (_specialExitTable[20+i]) {
+			switch (_specialExitTable[20 + i]) {
 			case 0:
 				type = -7;
 				shape = 1;
@@ -1265,7 +1271,7 @@ void KyraEngine_MR::getTableEntry(Common::SeekableReadStream *stream, int id, ch
 	while (id != stream->readUint16LE())
 		++num;
 
-	stream->seek(2+tableEntries*2+num*2, SEEK_SET);
+	stream->seek(2 + tableEntries * 2 + num * 2, SEEK_SET);
 	stream->seek(stream->readUint16LE(), SEEK_SET);
 	char c = 0;
 	while ((c = stream->readByte()) != 0)

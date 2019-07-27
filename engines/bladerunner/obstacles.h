@@ -33,10 +33,10 @@ class SaveFileReadStream;
 class SaveFileWriteStream;
 
 class Obstacles {
-	static const int kVertexCount        = 150;
-	static const int kPolygonCount       =  50;
+	static const int kVertexCount = 150;
+	static const int kPolygonCount = 50;
 	static const int kPolygonVertexCount = 160;
-	static const int kMaxPathSize        = 500;
+	static const int kMaxPathSize = 500;
 
 	enum VertexType {
 		BOTTOM_LEFT,
@@ -51,14 +51,16 @@ class Obstacles {
 	};
 
 	struct Polygon {
-		bool       isPresent;
-		int        verticeCount;
-		RectFloat  rect;
-		Vector2    vertices[kPolygonVertexCount];
+		bool isPresent;
+		int verticeCount;
+		RectFloat rect;
+		Vector2 vertices[kPolygonVertexCount];
 		VertexType vertexType[kPolygonVertexCount];
 
-		Polygon() : isPresent(false), verticeCount(0), vertexType()
-		{}
+		Polygon()
+		  : isPresent(false)
+		  , verticeCount(0)
+		  , vertexType() {}
 	};
 
 	BladeRunnerEngine *_vm;
@@ -66,9 +68,9 @@ class Obstacles {
 	Polygon *_polygons;
 	Polygon *_polygonsBackup;
 	Vector2 *_path;
-	int      _pathSize;
-	int      _count;
-	bool     _backup;
+	int _pathSize;
+	int _count;
+	bool _backup;
 
 	static bool lineLineIntersection(LineSegment a, LineSegment b, Vector2 *intersectionPoint);
 	static bool linePolygonIntersection(LineSegment lineA, VertexType lineAType, Polygon *polyB, Vector2 *intersectionPoint, int *intersectionIndex, int pathLengthSinceLastIntersection);
@@ -96,8 +98,8 @@ public:
 	bool findPolygonVerticeByXZWithinTolerance(float x, float z, int *polygonIndex, int *verticeIndex, int startSearchFromPolygonIdx) const;
 
 	void clearPath();
-	int  buildNegativePath(int polyIndex, int vertStartIndex, Vector2 startPos, int vertEndIndex, Vector2 endPos, Vector2 *path, int pathCapacity, bool *pathBlocked);
-	int  buildPositivePath(int polyIndex, int vertStartIndex, Vector2 startPos, int vertEndIndex, Vector2 endPos, Vector2 *path, int pathCapacity, bool *pathBlocked);
+	int buildNegativePath(int polyIndex, int vertStartIndex, Vector2 startPos, int vertEndIndex, Vector2 endPos, Vector2 *path, int pathCapacity, bool *pathBlocked);
+	int buildPositivePath(int polyIndex, int vertStartIndex, Vector2 startPos, int vertEndIndex, Vector2 endPos, Vector2 *path, int pathCapacity, bool *pathBlocked);
 
 	bool verticesCanIntersect(int lineType0, int lineType1, float x0, float y0, float x1, float y1) const;
 	bool findFarthestAvailablePathVertex(Vector2 *path, int pathSize, Vector3 start, Vector3 *next) const;

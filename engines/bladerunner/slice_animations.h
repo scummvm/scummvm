@@ -31,11 +31,9 @@
 #include "bladerunner/color.h"
 #include "bladerunner/vector.h"
 
-
 namespace BladeRunner {
 
 class BladeRunnerEngine;
-
 
 class SliceAnimations {
 	friend class SliceRenderer;
@@ -43,7 +41,7 @@ class SliceAnimations {
 	struct Animation {
 		uint32 frameCount;
 		uint32 frameSize;
-		float  fps;
+		float fps;
 		Vector3 positionChange;
 		float facingChange;
 		uint32 offset;
@@ -53,27 +51,31 @@ class SliceAnimations {
 		uint16 color555[256];
 		Color256 color[256];
 
-	//	uint16 &operator[](size_t i) { return color555[i]; }
+		//	uint16 &operator[](size_t i) { return color555[i]; }
 	};
 
 	struct Page {
-		void   *_data;
+		void *_data;
 		uint32 _lastAccess;
 
-		Page() : _data(nullptr), _lastAccess(0) {}
+		Page()
+		  : _data(nullptr)
+		  , _lastAccess(0) {}
 	};
 
 	struct PageFile {
-		int                  _fileNumber;
-		SliceAnimations     *_sliceAnimations;
-		Common::File         _files[5];
+		int _fileNumber;
+		SliceAnimations *_sliceAnimations;
+		Common::File _files[5];
 		Common::Array<int32> _pageOffsets;
-		Common::Array<int8>  _pageOffsetsFileIdx;
+		Common::Array<int8> _pageOffsetsFileIdx;
 
-		PageFile(SliceAnimations *sliceAnimations) : _sliceAnimations(sliceAnimations), _fileNumber(-1) {}
+		PageFile(SliceAnimations *sliceAnimations)
+		  : _sliceAnimations(sliceAnimations)
+		  , _fileNumber(-1) {}
 
-		bool  open(const Common::String &name, int8 fileIdx);
-		void  close(int8 fileIdx);
+		bool open(const Common::String &name, int8 fileIdx);
+		void close(int8 fileIdx);
 		void *loadPage(uint32 page);
 	};
 
@@ -84,22 +86,22 @@ class SliceAnimations {
 	uint32 _pageCount;
 	uint32 _paletteCount;
 
-	Common::Array<Palette>      _palettes;
-	Common::Array<Animation>    _animations;
-	Common::Array<Page>         _pages;
+	Common::Array<Palette> _palettes;
+	Common::Array<Animation> _animations;
+	Common::Array<Page> _pages;
 
 	PageFile _coreAnimPageFile;
 	PageFile _framesPageFile;
 
 public:
 	SliceAnimations(BladeRunnerEngine *vm)
-		: _vm(vm)
-		, _coreAnimPageFile(this)
-		, _framesPageFile(this)
-		, _timestamp(0)
-		, _pageSize(0)
-		, _pageCount(0)
-		, _paletteCount(0) {}
+	  : _vm(vm)
+	  , _coreAnimPageFile(this)
+	  , _framesPageFile(this)
+	  , _timestamp(0)
+	  , _pageSize(0)
+	  , _pageCount(0)
+	  , _paletteCount(0) {}
 	~SliceAnimations();
 
 	bool open(const Common::String &name);
@@ -108,13 +110,13 @@ public:
 	bool openFrames(int fileNumber);
 
 	Palette &getPalette(int i) { return _palettes[i]; };
-	void    *getFramePtr(uint32 animation, uint32 frame);
+	void *getFramePtr(uint32 animation, uint32 frame);
 
-	int   getFrameCount(int animation) const { return _animations[animation].frameCount; }
+	int getFrameCount(int animation) const { return _animations[animation].frameCount; }
 	float getFPS(int animation) const { return _animations[animation].fps; }
 
 	Vector3 getPositionChange(int animation) const;
-	float   getFacingChange(int animation) const;
+	float getFacingChange(int animation) const;
 };
 
 } // End of namespace BladeRunner

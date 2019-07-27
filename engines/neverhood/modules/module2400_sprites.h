@@ -23,16 +23,17 @@
 #ifndef NEVERHOOD_MODULES_MODULE2400_SPRITES_H
 #define NEVERHOOD_MODULES_MODULE2400_SPRITES_H
 
-#include "neverhood/neverhood.h"
-#include "neverhood/module.h"
-#include "neverhood/scene.h"
 #include "neverhood/gamemodule.h"
+#include "neverhood/module.h"
+#include "neverhood/neverhood.h"
+#include "neverhood/scene.h"
 
 namespace Neverhood {
 
 class AsScene2401WaterSpit : public AnimatedSprite {
 public:
 	AsScene2401WaterSpit(NeverhoodEngine *vm);
+
 protected:
 	int _soundIndex;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -42,6 +43,7 @@ class AsScene2401FlowingWater : public AnimatedSprite {
 public:
 	AsScene2401FlowingWater(NeverhoodEngine *vm);
 	virtual ~AsScene2401FlowingWater();
+
 protected:
 	bool _isWaterFlowing;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -50,6 +52,7 @@ protected:
 class AsScene2401WaterFlushing : public AnimatedSprite {
 public:
 	AsScene2401WaterFlushing(NeverhoodEngine *vm, int16 x, int16 y);
+
 protected:
 	int _countdown;
 	int _flushLoopCount;
@@ -60,6 +63,7 @@ protected:
 class AsScene2401Door : public AnimatedSprite {
 public:
 	AsScene2401Door(NeverhoodEngine *vm, bool isOpen);
+
 protected:
 	int _countdown;
 	bool _isOpen;
@@ -71,6 +75,7 @@ protected:
 class AsScene2402Door : public AnimatedSprite {
 public:
 	AsScene2402Door(NeverhoodEngine *vm, Scene *parentScene, bool isOpen);
+
 protected:
 	Scene *_parentScene;
 	int _countdown;
@@ -84,6 +89,7 @@ class AsScene2402TV : public AnimatedSprite {
 public:
 	AsScene2402TV(NeverhoodEngine *vm, Klaymen *klaymen);
 	virtual ~AsScene2402TV();
+
 protected:
 	Klaymen *_klaymen;
 	int _countdown1;
@@ -97,6 +103,7 @@ protected:
 class KmScene2401 : public Klaymen {
 public:
 	KmScene2401(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	bool _canSpitPipe;
 	bool _contSpitPipe;
@@ -116,6 +123,7 @@ protected:
 class KmScene2402 : public Klaymen {
 public:
 	KmScene2402(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
@@ -123,6 +131,7 @@ protected:
 class KmScene2403 : public Klaymen {
 public:
 	KmScene2403(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
@@ -130,6 +139,7 @@ protected:
 class KmScene2406 : public Klaymen {
 public:
 	KmScene2406(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };

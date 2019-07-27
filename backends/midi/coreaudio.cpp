@@ -27,7 +27,7 @@
 
 #ifdef MACOSX
 
-#include <AvailabilityMacros.h>
+#	include <AvailabilityMacros.h>
 
 // With the release of Mac OS X 10.5 in October 2007, Apple deprecated the
 // AUGraphNewNode & AUGraphGetNodeInfo APIs in favor of the new AUGraphAddNode &
@@ -46,31 +46,29 @@
 // build an x86 version of this code using the old, deprecated API, you can
 // simply do so by manually enable the USE_DEPRECATED_COREAUDIO_API switch (e.g.
 // by adding setting it suitably in CPPFLAGS).
-#if !defined(USE_DEPRECATED_COREAUDIO_API)
-	#if TARGET_CPU_PPC || TARGET_CPU_PPC64 || !defined(MAC_OS_X_VERSION_10_6)
-		#define USE_DEPRECATED_COREAUDIO_API 1
-	#else
-		#define USE_DEPRECATED_COREAUDIO_API 0
-	#endif
-#endif
+#	if !defined(USE_DEPRECATED_COREAUDIO_API)
+#		if TARGET_CPU_PPC || TARGET_CPU_PPC64 || !defined(MAC_OS_X_VERSION_10_6)
+#			define USE_DEPRECATED_COREAUDIO_API 1
+#		else
+#			define USE_DEPRECATED_COREAUDIO_API 0
+#		endif
+#	endif
 
-#if USE_DEPRECATED_COREAUDIO_API
-	// Try to silence warnings about use of deprecated APIs
-	#undef DEPRECATED_ATTRIBUTE
-	#define DEPRECATED_ATTRIBUTE
-#endif
+#	if USE_DEPRECATED_COREAUDIO_API
+// Try to silence warnings about use of deprecated APIs
+#		undef DEPRECATED_ATTRIBUTE
+#		define DEPRECATED_ATTRIBUTE
+#	endif
 
+#	include "audio/mpu401.h"
+#	include "audio/musicplugin.h"
+#	include "common/config-manager.h"
+#	include "common/error.h"
+#	include "common/textconsole.h"
+#	include "common/util.h"
 
-#include "common/config-manager.h"
-#include "common/error.h"
-#include "common/textconsole.h"
-#include "common/util.h"
-#include "audio/musicplugin.h"
-#include "audio/mpu401.h"
-
-#include <CoreServices/CoreServices.h>
-#include <AudioToolbox/AUGraph.h>
-
+#	include <AudioToolbox/AUGraph.h>
+#	include <CoreServices/CoreServices.h>
 
 // Activating the following switch disables reverb support in the CoreAudio
 // midi backend. Reverb will suck away a *lot* of CPU time, so on slower
@@ -78,15 +76,13 @@
 // TODO: Maybe make this a config option?
 //#define COREAUDIO_DISABLE_REVERB
 
-
 // A macro to simplify error handling a bit.
-#define RequireNoErr(error)                                         \
-do {                                                                \
-	err = error;                                                    \
-	if (err != noErr)                                               \
-		goto bail;                                                  \
-} while (false)
-
+#	define RequireNoErr(error) \
+		do {                      \
+			err = error;            \
+			if (err != noErr)       \
+				goto bail;            \
+		} while (false)
 
 /* CoreAudio MIDI driver
  * By Max Horn / Fingolfin
@@ -109,7 +105,7 @@ private:
 };
 
 MidiDriver_CORE::MidiDriver_CORE()
-	: _auGraph(0) {
+  : _auGraph(0) {
 }
 
 MidiDriver_CORE::~MidiDriver_CORE() {
@@ -130,11 +126,11 @@ int MidiDriver_CORE::open() {
 	RequireNoErr(NewAUGraph(&_auGraph));
 
 	AUNode outputNode, synthNode;
-#if USE_DEPRECATED_COREAUDIO_API
+#	if USE_DEPRECATED_COREAUDIO_API
 	ComponentDescription desc;
-#else
+#	else
 	AudioComponentDescription desc;
-#endif
+#	endif
 
 	// The default output device
 	desc.componentType = kAudioUnitType_Output;
@@ -142,21 +138,21 @@ int MidiDriver_CORE::open() {
 	desc.componentManufacturer = kAudioUnitManufacturer_Apple;
 	desc.componentFlags = 0;
 	desc.componentFlagsMask = 0;
-#if USE_DEPRECATED_COREAUDIO_API
+#	if USE_DEPRECATED_COREAUDIO_API
 	RequireNoErr(AUGraphNewNode(_auGraph, &desc, 0, NULL, &outputNode));
-#else
+#	else
 	RequireNoErr(AUGraphAddNode(_auGraph, &desc, &outputNode));
-#endif
+#	endif
 
 	// The built-in default (softsynth) music device
 	desc.componentType = kAudioUnitType_MusicDevice;
 	desc.componentSubType = kAudioUnitSubType_DLSSynth;
 	desc.componentManufacturer = kAudioUnitManufacturer_Apple;
-#if USE_DEPRECATED_COREAUDIO_API
+#	if USE_DEPRECATED_COREAUDIO_API
 	RequireNoErr(AUGraphNewNode(_auGraph, &desc, 0, NULL, &synthNode));
-#else
+#	else
 	RequireNoErr(AUGraphAddNode(_auGraph, &desc, &synthNode));
-#endif
+#	endif
 
 	// Connect the softsynth to the default output
 	RequireNoErr(AUGraphConnectNodeInput(_auGraph, synthNode, 0, outputNode, 0));
@@ -166,25 +162,24 @@ int MidiDriver_CORE::open() {
 	RequireNoErr(AUGraphInitialize(_auGraph));
 
 	// Get the music device from the graph.
-#if USE_DEPRECATED_COREAUDIO_API
+#	if USE_DEPRECATED_COREAUDIO_API
 	RequireNoErr(AUGraphGetNodeInfo(_auGraph, synthNode, NULL, NULL, NULL, &_synth));
-#else
+#	else
 	RequireNoErr(AUGraphNodeInfo(_auGraph, synthNode, NULL, &_synth));
-#endif
+#	endif
 
 	// Load custom soundfont, if specified
 	if (ConfMan.hasKey("soundfont"))
 		loadSoundFont(ConfMan.get("soundfont").c_str());
 
-#ifdef COREAUDIO_DISABLE_REVERB
+#	ifdef COREAUDIO_DISABLE_REVERB
 	// Disable reverb mode, as that sucks up a lot of CPU power, which can
 	// be painful on low end machines.
 	// TODO: Make this customizable via a config key?
 	UInt32 usesReverb = 0;
-	AudioUnitSetProperty (_synth, kMusicDeviceProperty_UsesInternalReverb,
-		kAudioUnitScope_Global, 0, &usesReverb, sizeof (usesReverb));
-#endif
-
+	AudioUnitSetProperty(_synth, kMusicDeviceProperty_UsesInternalReverb,
+	                     kAudioUnitScope_Global, 0, &usesReverb, sizeof(usesReverb));
+#	endif
 
 	// Finally: Start the graph!
 	RequireNoErr(AUGraphStart(_auGraph));
@@ -206,7 +201,7 @@ void MidiDriver_CORE::loadSoundFont(const char *soundfont) {
 
 	OSStatus err = 0;
 
-#if USE_DEPRECATED_COREAUDIO_API
+#	if USE_DEPRECATED_COREAUDIO_API
 	FSRef fsref;
 	err = FSPathMakeRef((const byte *)soundfont, &fsref, NULL);
 
@@ -222,11 +217,10 @@ void MidiDriver_CORE::loadSoundFont(const char *soundfont) {
 			// SDK (which does not have that symbol).
 			if (err == noErr) {
 				err = AudioUnitSetProperty(
-					_synth,
-					/*kMusicDeviceProperty_SoundBankFSRef*/ 1012, kAudioUnitScope_Global,
-					0,
-					&fsref, sizeof(fsref)
-				);
+				  _synth,
+				  /*kMusicDeviceProperty_SoundBankFSRef*/ 1012, kAudioUnitScope_Global,
+				  0,
+				  &fsref, sizeof(fsref));
 			}
 		} else {
 			// In 10.2, only kMusicDeviceProperty_SoundBankFSSpec is available
@@ -237,32 +231,30 @@ void MidiDriver_CORE::loadSoundFont(const char *soundfont) {
 
 			if (err == noErr) {
 				err = AudioUnitSetProperty(
-					_synth,
-					kMusicDeviceProperty_SoundBankFSSpec, kAudioUnitScope_Global,
-					0,
-					&fsSpec, sizeof(fsSpec)
-				);
+				  _synth,
+				  kMusicDeviceProperty_SoundBankFSSpec, kAudioUnitScope_Global,
+				  0,
+				  &fsSpec, sizeof(fsSpec));
 			}
 		}
 	}
-#else
+#	else
 	// kMusicDeviceProperty_SoundBankURL was added in 10.5 as a replacement
 	// In addition, the File Manager API became deprecated starting in 10.8
 	CFURLRef url = CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault, (const UInt8 *)soundfont, strlen(soundfont), false);
 
 	if (url) {
 		err = AudioUnitSetProperty(
-			_synth,
-			kMusicDeviceProperty_SoundBankURL, kAudioUnitScope_Global,
-			0,
-			&url, sizeof(url)
-		);
+		  _synth,
+		  kMusicDeviceProperty_SoundBankURL, kAudioUnitScope_Global,
+		  0,
+		  &url, sizeof(url));
 
 		CFRelease(url);
 	} else {
 		warning("Failed to allocate CFURLRef from '%s'", soundfont);
 	}
-#endif // USE_DEPRECATED_COREAUDIO_API
+#	endif // USE_DEPRECATED_COREAUDIO_API
 
 	if (err != noErr)
 		error("Failed loading custom sound font '%s' (error %ld)", soundfont, (long)err);
@@ -299,9 +291,8 @@ void MidiDriver_CORE::sysEx(const byte *msg, uint16 length) {
 	buf[length + 1] = 0xF7;
 
 	// Send it
-	MusicDeviceSysEx(_synth, buf, length+2);
+	MusicDeviceSysEx(_synth, buf, length + 2);
 }
-
 
 // Plugin interface
 
@@ -332,9 +323,9 @@ Common::Error CoreAudioMusicPlugin::createInstance(MidiDriver **mididriver, Midi
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(COREAUDIO)
-	//REGISTER_PLUGIN_DYNAMIC(COREAUDIO, PLUGIN_TYPE_MUSIC, CoreAudioMusicPlugin);
+//REGISTER_PLUGIN_DYNAMIC(COREAUDIO, PLUGIN_TYPE_MUSIC, CoreAudioMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(COREAUDIO, PLUGIN_TYPE_MUSIC, CoreAudioMusicPlugin);
+REGISTER_PLUGIN_STATIC(COREAUDIO, PLUGIN_TYPE_MUSIC, CoreAudioMusicPlugin);
 //#endif
 
 #endif // MACOSX

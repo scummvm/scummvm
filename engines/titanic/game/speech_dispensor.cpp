@@ -26,15 +26,20 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CSpeechDispensor, CBackground)
-	ON_MESSAGE(FrameMsg)
-	ON_MESSAGE(MouseButtonUpMsg)
-	ON_MESSAGE(StatusChangeMsg)
-	ON_MESSAGE(ChangeSeasonMsg)
+ON_MESSAGE(FrameMsg)
+ON_MESSAGE(MouseButtonUpMsg)
+ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(ChangeSeasonMsg)
 END_MESSAGE_MAP()
 
-CSpeechDispensor::CSpeechDispensor() : CBackground(), _dragItem(nullptr),
-		_hitCounter(0), _state(0), _speechFallen(false), _failureType(false),
-		_seasonNum(SEASON_SUMMER) {
+CSpeechDispensor::CSpeechDispensor()
+  : CBackground()
+  , _dragItem(nullptr)
+  , _hitCounter(0)
+  , _state(0)
+  , _speechFallen(false)
+  , _failureType(false)
+  , _seasonNum(SEASON_SUMMER) {
 }
 
 void CSpeechDispensor::save(SimpleFile *file, int indent) {
@@ -80,7 +85,7 @@ bool CSpeechDispensor::FrameMsg(CFrameMsg *msg) {
 
 	if (_dragItem) {
 		Point pt(_itemPos.x + _dragItem->_bounds.left,
-			_itemPos.y + _dragItem->_bounds.top);
+		         _itemPos.y + _dragItem->_bounds.top);
 		if (!checkPoint(pt, true))
 			return true;
 

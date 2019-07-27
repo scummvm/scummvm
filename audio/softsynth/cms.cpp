@@ -23,14 +23,14 @@
 #include "audio/softsynth/cms.h"
 #include "audio/null.h"
 
+#include "common/debug.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
-#include "common/debug.h"
 
 // CMS/Gameblaster Emulation taken from DosBox
 
-#define LEFT	0x00
-#define RIGHT	0x01
+#define LEFT 0x00
+#define RIGHT 0x01
 
 static const byte envelope[8][64] = {
 	/* zero amplitude */
@@ -39,47 +39,47 @@ static const byte envelope[8][64] = {
 	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	/* maximum amplitude */
-	{15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
-	 15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
-	 15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
-	 15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15 },
+	{ 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+	  15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+	  15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+	  15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15 },
 	/* single decay */
-	{15,14,13,12,11,10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
+	{ 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
 	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	/* repetitive decay */
-	{15,14,13,12,11,10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
-	 15,14,13,12,11,10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
-	 15,14,13,12,11,10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
-	 15,14,13,12,11,10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 },
+	{ 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
+	  15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
+	  15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
+	  15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 },
 	/* single triangular */
-	{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
-	 15,14,13,12,11,10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
+	{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+	  15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
 	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	/* repetitive triangular */
-	{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
-	 15,14,13,12,11,10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
-	  0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
-	 15,14,13,12,11,10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 },
+	{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+	  15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
+	  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+	  15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 },
 	/* single attack */
-	{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
+	{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
 	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	/* repetitive attack */
-	{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
-	  0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
-	  0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
-	  0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15 }
+	{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+	  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+	  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+	  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 }
 };
 
 static const int amplitude_lookup[16] = {
-	 0*32767/16,  1*32767/16,  2*32767/16,	3*32767/16,
-	 4*32767/16,  5*32767/16,  6*32767/16,	7*32767/16,
-	 8*32767/16,  9*32767/16, 10*32767/16, 11*32767/16,
-	12*32767/16, 13*32767/16, 14*32767/16, 15*32767/16
+	0 * 32767 / 16, 1 * 32767 / 16, 2 * 32767 / 16, 3 * 32767 / 16,
+	4 * 32767 / 16, 5 * 32767 / 16, 6 * 32767 / 16, 7 * 32767 / 16,
+	8 * 32767 / 16, 9 * 32767 / 16, 10 * 32767 / 16, 11 * 32767 / 16,
+	12 * 32767 / 16, 13 * 32767 / 16, 14 * 32767 / 16, 15 * 32767 / 16
 };
 
 void CMSEmulator::portWrite(int port, int val) {
@@ -135,28 +135,17 @@ void CMSEmulator::envelope(int chip, int ch) {
 
 		mask = 15;
 		if (saa->env_bits[ch])
-			mask &= ~1; 	/* 3 bit resolution, mask LSB */
+			mask &= ~1; /* 3 bit resolution, mask LSB */
 
-		saa->channels[ch*3+0].envelope[ LEFT] =
-		saa->channels[ch*3+1].envelope[ LEFT] =
-		saa->channels[ch*3+2].envelope[ LEFT] = ::envelope[mode][step] & mask;
+		saa->channels[ch * 3 + 0].envelope[LEFT] = saa->channels[ch * 3 + 1].envelope[LEFT] = saa->channels[ch * 3 + 2].envelope[LEFT] = ::envelope[mode][step] & mask;
 		if (saa->env_reverse_right[ch] & 0x01) {
-			saa->channels[ch*3+0].envelope[RIGHT] =
-			saa->channels[ch*3+1].envelope[RIGHT] =
-			saa->channels[ch*3+2].envelope[RIGHT] = (15 - ::envelope[mode][step]) & mask;
+			saa->channels[ch * 3 + 0].envelope[RIGHT] = saa->channels[ch * 3 + 1].envelope[RIGHT] = saa->channels[ch * 3 + 2].envelope[RIGHT] = (15 - ::envelope[mode][step]) & mask;
 		} else {
-			saa->channels[ch*3+0].envelope[RIGHT] =
-			saa->channels[ch*3+1].envelope[RIGHT] =
-			saa->channels[ch*3+2].envelope[RIGHT] = ::envelope[mode][step] & mask;
+			saa->channels[ch * 3 + 0].envelope[RIGHT] = saa->channels[ch * 3 + 1].envelope[RIGHT] = saa->channels[ch * 3 + 2].envelope[RIGHT] = ::envelope[mode][step] & mask;
 		}
 	} else {
 		/* envelope mode off, set all envelope factors to 16 */
-		saa->channels[ch*3+0].envelope[ LEFT] =
-		saa->channels[ch*3+1].envelope[ LEFT] =
-		saa->channels[ch*3+2].envelope[ LEFT] =
-		saa->channels[ch*3+0].envelope[RIGHT] =
-		saa->channels[ch*3+1].envelope[RIGHT] =
-		saa->channels[ch*3+2].envelope[RIGHT] = 16;
+		saa->channels[ch * 3 + 0].envelope[LEFT] = saa->channels[ch * 3 + 1].envelope[LEFT] = saa->channels[ch * 3 + 2].envelope[LEFT] = saa->channels[ch * 3 + 0].envelope[RIGHT] = saa->channels[ch * 3 + 1].envelope[RIGHT] = saa->channels[ch * 3 + 2].envelope[RIGHT] = 16;
 	}
 }
 
@@ -165,7 +154,7 @@ void CMSEmulator::update(int chip, int16 *buffer, int length) {
 	int j, ch;
 
 	if (chip == 0) {
-		memset(buffer, 0, sizeof(int16)*length*2);
+		memset(buffer, 0, sizeof(int16) * length * 2);
 	}
 
 	/* if the channels are disabled we're done */
@@ -175,10 +164,18 @@ void CMSEmulator::update(int chip, int16 *buffer, int length) {
 
 	for (ch = 0; ch < 2; ch++) {
 		switch (saa->noise_params[ch]) {
-		case 0: saa->noise[ch].freq = 31250.0 * 2; break;
-		case 1: saa->noise[ch].freq = 15625.0 * 2; break;
-		case 2: saa->noise[ch].freq =  7812.5 * 2; break;
-		case 3: saa->noise[ch].freq = saa->channels[ch * 3].freq; break;
+		case 0:
+			saa->noise[ch].freq = 31250.0 * 2;
+			break;
+		case 1:
+			saa->noise[ch].freq = 15625.0 * 2;
+			break;
+		case 2:
+			saa->noise[ch].freq = 7812.5 * 2;
+			break;
+		case 3:
+			saa->noise[ch].freq = saa->channels[ch * 3].freq;
+			break;
 		}
 	}
 
@@ -189,15 +186,13 @@ void CMSEmulator::update(int chip, int16 *buffer, int length) {
 		/* for each channel */
 		for (ch = 0; ch < 6; ch++) {
 			if (saa->channels[ch].freq == 0.0)
-				saa->channels[ch].freq = (double)((2 * 15625) << saa->channels[ch].octave) /
-				(511.0 - (double)saa->channels[ch].frequency);
+				saa->channels[ch].freq = (double)((2 * 15625) << saa->channels[ch].octave) / (511.0 - (double)saa->channels[ch].frequency);
 
 			/* check the actual position in the square wave */
 			saa->channels[ch].counter -= saa->channels[ch].freq;
 			while (saa->channels[ch].counter < 0) {
 				/* calculate new frequency now after the half wave is updated */
-				saa->channels[ch].freq = (double)((2 * 15625) << saa->channels[ch].octave) /
-					(511.0 - (double)saa->channels[ch].frequency);
+				saa->channels[ch].freq = (double)((2 * 15625) << saa->channels[ch].octave) / (511.0 - (double)saa->channels[ch].frequency);
 
 				saa->channels[ch].counter += _sampleRate;
 				saa->channels[ch].level ^= 1;
@@ -212,9 +207,9 @@ void CMSEmulator::update(int chip, int16 *buffer, int length) {
 			/* if the noise is enabled */
 			if (saa->channels[ch].noise_enable) {
 				/* if the noise level is high (noise 0: chan 0-2, noise 1: chan 3-5) */
-				if (saa->noise[ch/3].level & 1) {
+				if (saa->noise[ch / 3].level & 1) {
 					/* subtract to avoid overflows, also use only half amplitude */
-					output_l -= saa->channels[ch].amplitude[ LEFT] * saa->channels[ch].envelope[ LEFT] / 16 / 2;
+					output_l -= saa->channels[ch].amplitude[LEFT] * saa->channels[ch].envelope[LEFT] / 16 / 2;
 					output_r -= saa->channels[ch].amplitude[RIGHT] * saa->channels[ch].envelope[RIGHT] / 16 / 2;
 				}
 			}
@@ -223,7 +218,7 @@ void CMSEmulator::update(int chip, int16 *buffer, int length) {
 			if (saa->channels[ch].freq_enable) {
 				/* if the channel level is high */
 				if (saa->channels[ch].level & 1) {
-					output_l += saa->channels[ch].amplitude[ LEFT] * saa->channels[ch].envelope[ LEFT] / 16;
+					output_l += saa->channels[ch].amplitude[LEFT] * saa->channels[ch].envelope[LEFT] / 16;
 					output_r += saa->channels[ch].amplitude[RIGHT] * saa->channels[ch].envelope[RIGHT] / 16;
 				}
 			}
@@ -234,15 +229,15 @@ void CMSEmulator::update(int chip, int16 *buffer, int length) {
 			saa->noise[ch].counter -= saa->noise[ch].freq;
 			while (saa->noise[ch].counter < 0) {
 				saa->noise[ch].counter += _sampleRate;
-				if (((saa->noise[ch].level & 0x4000) == 0) == ((saa->noise[ch].level & 0x0040) == 0) )
+				if (((saa->noise[ch].level & 0x4000) == 0) == ((saa->noise[ch].level & 0x0040) == 0))
 					saa->noise[ch].level = (saa->noise[ch].level << 1) | 1;
 				else
 					saa->noise[ch].level <<= 1;
 			}
 		}
 		/* write sound data to the buffer */
-		buffer[j*2+0] = CLIP<int>(buffer[j*2+0] + output_l / 6, -32768, 32767);
-		buffer[j*2+1] = CLIP<int>(buffer[j*2+1] + output_r / 6, -32768, 32767);
+		buffer[j * 2 + 0] = CLIP<int>(buffer[j * 2 + 0] + output_l / 6, -32768, 32767);
+		buffer[j * 2 + 1] = CLIP<int>(buffer[j * 2 + 1] + output_r / 6, -32768, 32767);
 	}
 }
 
@@ -340,7 +335,7 @@ void CMSEmulator::portWriteIntern(int chip, int offset, int data) {
 	default:
 		// The CMS allows all registers to be written, so we just output some debug
 		// message here
-		debug(5, "CMS Unknown write to reg %x with %x",reg, data);
+		debug(5, "CMS Unknown write to reg %x with %x", reg, data);
 	}
 }
 
@@ -364,7 +359,7 @@ MusicDevices CMSMusicPlugin::getDevices() const {
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(CMS)
-	//REGISTER_PLUGIN_DYNAMIC(CMS, PLUGIN_TYPE_MUSIC, CMSMusicPlugin);
+//REGISTER_PLUGIN_DYNAMIC(CMS, PLUGIN_TYPE_MUSIC, CMSMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(CMS, PLUGIN_TYPE_MUSIC, CMSMusicPlugin);
+REGISTER_PLUGIN_STATIC(CMS, PLUGIN_TYPE_MUSIC, CMSMusicPlugin);
 //#endif

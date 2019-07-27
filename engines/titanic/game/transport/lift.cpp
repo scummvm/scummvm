@@ -29,12 +29,12 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CLift, CTransport)
-	ON_MESSAGE(StatusChangeMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(EnterRoomMsg)
-	ON_MESSAGE(LeaveRoomMsg)
-	ON_MESSAGE(ActMsg)
+ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(LeaveRoomMsg)
+ON_MESSAGE(ActMsg)
 END_MESSAGE_MAP()
 
 bool CLift::_hasHead;
@@ -72,8 +72,7 @@ void CLift::load(SimpleFile *file) {
 
 bool CLift::StatusChangeMsg(CStatusChangeMsg *msg) {
 	CPetControl *pet = getPetControl();
-	if ((!_hasHead && pet->getRoomsElevatorNum() == 4) ||
-			(!_hasCorrectHead && pet->getRoomsElevatorNum() == 4))
+	if ((!_hasHead && pet->getRoomsElevatorNum() == 4) || (!_hasCorrectHead && pet->getRoomsElevatorNum() == 4))
 		return true;
 
 	int oldFloorNum = msg->_oldStatus;

@@ -29,19 +29,19 @@
 
 // sound.c - sound effects and music support
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "common/config-manager.h"
 
-#include "audio/decoders/raw.h"
 #include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
 #include "audio/midiparser.h"
 #include "audio/softsynth/pcspk.h"
 
-#include "hugo/hugo.h"
-#include "hugo/game.h"
 #include "hugo/file.h"
+#include "hugo/game.h"
+#include "hugo/hugo.h"
 #include "hugo/sound.h"
 #include "hugo/text.h"
 
@@ -52,7 +52,6 @@ MidiPlayer::MidiPlayer() {
 	_driver = MidiDriver::createMidi(dev);
 	assert(_driver);
 	_paused = false;
-
 
 	int ret = _driver->open();
 	if (ret == 0) {
@@ -75,7 +74,7 @@ void MidiPlayer::play(uint8 *stream, uint16 size) {
 	if (_midiData) {
 		memcpy(_midiData, stream, size);
 
-		syncVolume();	// FIXME: syncVolume calls setVolume which in turn also locks the mutex! ugh
+		syncVolume(); // FIXME: syncVolume calls setVolume which in turn also locks the mutex! ugh
 
 		_parser = MidiParser::createParser_SMF();
 		_parser->loadMusic(_midiData, size);
@@ -118,12 +117,12 @@ void MidiPlayer::sendToChannel(byte channel, uint32 b) {
 		_channelsTable[channel]->send(b);
 }
 
-
-SoundHandler::SoundHandler(HugoEngine *vm) : _vm(vm) {
+SoundHandler::SoundHandler(HugoEngine *vm)
+  : _vm(vm) {
 	_midiPlayer = new MidiPlayer();
 	_speakerStream = new Audio::PCSpeaker(_vm->_mixer->getOutputRate());
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
-						_speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	                        _speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 	_DOSSongPtr = nullptr;
 	_curPriority = 0;
 	_pcspkrTimer = 0;
@@ -184,8 +183,8 @@ void SoundHandler::playMIDI(SoundPtr seqPtr, uint16 size) {
  * Read a tune sequence from the sound database and start playing it
  */
 void SoundHandler::playMusic(int16 tune) {
-	SoundPtr seqPtr;                                // Sequence data from file
-	uint16 size;                                    // Size of sequence data
+	SoundPtr seqPtr; // Sequence data from file
+	uint16 size; // Size of sequence data
 
 	if (_vm->_config._musicFl) {
 		_vm->getGameStatus()._song = tune;
@@ -201,8 +200,8 @@ void SoundHandler::playMusic(int16 tune) {
  */
 void SoundHandler::playSound(int16 sound, const byte priority) {
 	// uint32 dwVolume;                               // Left, right volume of sound
-	SoundPtr soundPtr;                                // Sound data
-	uint16 size;                                      // Size of data
+	SoundPtr soundPtr; // Sound data
+	uint16 size; // Size of data
 
 	// Sound disabled
 	if (!_vm->_config._soundFl || !_vm->_mixer->isReady())
@@ -267,9 +266,9 @@ void SoundHandler::loopPlayer(void *refCon) {
  * Timer: >0 - song still going, 0 - Stop note, -1 - Set next note
  */
 void SoundHandler::pcspkr_player() {
-	static const uint16 pcspkrNotes[8] =  {1352, 1205, 2274, 2026, 1805, 1704, 1518}; // The 3rd octave note counts A..G
-	static const uint16 pcspkrSharps[8] = {1279, 1171, 2150, 1916, 1755, 1611, 1435}; // The sharps, A# to B#
-	static const uint16 pcspkrFlats[8] =  {1435, 1279, 2342, 2150, 1916, 1755, 1611}; // The flats, Ab to Bb
+	static const uint16 pcspkrNotes[8] = { 1352, 1205, 2274, 2026, 1805, 1704, 1518 }; // The 3rd octave note counts A..G
+	static const uint16 pcspkrSharps[8] = { 1279, 1171, 2150, 1916, 1755, 1611, 1435 }; // The sharps, A# to B#
+	static const uint16 pcspkrFlats[8] = { 1435, 1279, 2342, 2150, 1916, 1755, 1611 }; // The flats, Ab to Bb
 
 	// Does the user not want any sound?
 	if (!_vm->_config._soundFl || !_vm->_mixer->isReady())

@@ -20,12 +20,11 @@
  *
  */
 
+#include "backends/platform/symbian/src/SymbianOS.h"
 #include "backends/platform/symbian/src/portdefs.h"
 #include "base/main.h"
-#include "backends/platform/symbian/src/SymbianOS.h"
 
-extern "C"
-{
+extern "C" {
 // Include the snprintf and vsnprintf implementations as 'C' code
 #include "vsnprintf.h"
 }
@@ -51,7 +50,7 @@ int main(int argc, char *argv[]) {
 
 	/* Redirect standard input and standard output */
 	FILE *newfp = freopen(STDOUT_FILE, "w", stdout);
-	if (newfp == NULL) {	/* This happens on NT */
+	if (newfp == NULL) { /* This happens on NT */
 #if !defined(stdout)
 		stdout = fopen(STDOUT_FILE, "w");
 #else
@@ -62,7 +61,7 @@ int main(int argc, char *argv[]) {
 #endif
 	}
 	newfp = freopen(STDERR_FILE, "w", stderr);
-	if (newfp == NULL) {	/* This happens on NT */
+	if (newfp == NULL) { /* This happens on NT */
 #if !defined(stderr)
 		stderr = fopen(STDERR_FILE, "w");
 #else
@@ -72,7 +71,7 @@ int main(int argc, char *argv[]) {
 		}
 #endif
 	}
-	setbuf(stderr, NULL);			/* No buffering */
+	setbuf(stderr, NULL); /* No buffering */
 
 	// Create our OSystem instance
 	g_system = new OSystem_SDL_Symbian();

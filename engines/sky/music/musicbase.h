@@ -23,9 +23,8 @@
 #ifndef SKY_MUSIC_MUSICBASE_H
 #define SKY_MUSIC_MUSICBASE_H
 
-
-#include "common/scummsys.h"
 #include "common/mutex.h"
+#include "common/scummsys.h"
 
 #include "audio/mixer.h"
 
@@ -45,6 +44,7 @@ public:
 	virtual uint8 process(uint16 aktTime) = 0;
 	virtual void updateVolume(uint16 pVolume) = 0;
 	virtual bool isActive() = 0;
+
 private:
 };
 
@@ -61,7 +61,6 @@ public:
 	virtual void setVolume(uint16 param) = 0;
 
 protected:
-
 	Audio::Mixer *_mixer;
 	Disk *_skyDisk;
 	uint8 *_musicData;
@@ -73,7 +72,7 @@ protected:
 	uint8 _currentMusic, _currentSection;
 	uint8 _musicTempo0; // can be changed by music stream
 	uint8 _musicTempo1; // given once per music
-	uint32 _tempo;      // calculated from musicTempo0 and musicTempo1
+	uint32 _tempo; // calculated from musicTempo0 and musicTempo1
 	uint32 _aktTime;
 	Actions _onNextPoll;
 	ChannelBase *_channels[10];

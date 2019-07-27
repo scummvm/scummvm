@@ -27,13 +27,13 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CSeasonalAdjustment, CBackground)
-	ON_MESSAGE(StatusChangeMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(MouseButtonUpMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(TurnOff)
-	ON_MESSAGE(ActMsg)
+ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseButtonUpMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(TurnOff)
+ON_MESSAGE(ActMsg)
 END_MESSAGE_MAP()
 
 void CSeasonalAdjustment::save(SimpleFile *file, int indent) {

@@ -20,14 +20,14 @@
  *
  */
 
-#include "kyra/script/script_tim.h"
-#include "kyra/graphics/wsamovie.h"
 #include "kyra/graphics/screen_lol.h"
+#include "kyra/graphics/wsamovie.h"
+#include "kyra/script/script_tim.h"
 
 #ifdef ENABLE_LOL
-#include "kyra/engine/lol.h"
+#	include "kyra/engine/lol.h"
 #else
-#include "kyra/graphics/screen_v2.h"
+#	include "kyra/graphics/screen_v2.h"
 #endif
 
 #include "common/system.h"
@@ -35,9 +35,17 @@
 namespace Kyra {
 
 #ifdef ENABLE_LOL
-TimAnimator::TimAnimator(LoLEngine *engine, Screen_v2 *screen_v2, OSystem *system, bool useParts) : _vm(engine), _screen(screen_v2), _system(system), _useParts(useParts) {
+TimAnimator::TimAnimator(LoLEngine *engine, Screen_v2 *screen_v2, OSystem *system, bool useParts)
+  : _vm(engine)
+  , _screen(screen_v2)
+  , _system(system)
+  , _useParts(useParts) {
 #else
-TimAnimator::TimAnimator(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSystem *system, bool useParts) : _vm(engine), _screen(screen_v2), _system(system), _useParts(useParts) {
+TimAnimator::TimAnimator(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSystem *system, bool useParts)
+  : _vm(engine)
+  , _screen(screen_v2)
+  , _system(system)
+  , _useParts(useParts) {
 #endif
 	_animations = new Animation[TIM::kWSASlots];
 	memset(_animations, 0, TIM::kWSASlots * sizeof(Animation));
@@ -218,7 +226,7 @@ void TimAnimator::playPart(int animIndex, int firstFrame, int lastFrame, int del
 			anim->wsa->displayFrame(i - 1, 0, anim->x, anim->y, 0, 0, 0);
 			_screen->updateScreen();
 		}
-		int32 del  = (int32)(next - _system->getMillis());
+		int32 del = (int32)(next - _system->getMillis());
 		if (del > 0)
 			_vm->delay(del, true);
 	}

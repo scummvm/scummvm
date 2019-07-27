@@ -30,8 +30,7 @@ void DrasculaEngine::playTalkSequence(int sequence) {
 	bool seen = false;
 
 	for (int i = 0; i < _talkSequencesSize; i++) {
-		if (_talkSequences[i].chapter == currentChapter &&
-			_talkSequences[i].sequence == sequence) {
+		if (_talkSequences[i].chapter == currentChapter && _talkSequences[i].sequence == sequence) {
 			seen = true;
 
 			doTalkSequenceCommand(_talkSequences[i]);
@@ -139,8 +138,8 @@ void DrasculaEngine::converse(int index) {
 		error("missing data file %s", fileName);
 
 	int game1 = kDialogOptionUnselected,
-		game2 = kDialogOptionUnselected,
-		game3 = kDialogOptionUnselected;
+	    game2 = kDialogOptionUnselected,
+	    game3 = kDialogOptionUnselected;
 	char phrase1[128], phrase2[128], phrase3[128], phrase4[128];
 	char sound1[13], sound2[13], sound3[13], sound4[13];
 	int phrase1_bottom, phrase2_bottom, phrase3_bottom, phrase4_bottom;
@@ -202,7 +201,7 @@ void DrasculaEngine::converse(int index) {
 		if (musicStatus() == 0 && roomMusic != 0) {
 			if (currentChapter == 3 || currentChapter == 5) {
 				playMusic(roomMusic);
-			} else {	// chapters 1, 2, 4, 6
+			} else { // chapters 1, 2, 4, 6
 				if (flags[11] == 0)
 					playMusic(roomMusic);
 			}

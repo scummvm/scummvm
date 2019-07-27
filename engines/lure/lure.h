@@ -23,21 +23,21 @@
 #ifndef LURE_LURE_H
 #define LURE_LURE_H
 
-#include "engines/engine.h"
-#include "common/rect.h"
 #include "common/file.h"
+#include "common/random.h"
+#include "common/rect.h"
 #include "common/savefile.h"
 #include "common/util.h"
-#include "common/random.h"
+#include "engines/engine.h"
 
 #include "lure/disk.h"
-#include "lure/res.h"
-#include "lure/screen.h"
 #include "lure/events.h"
-#include "lure/menu.h"
-#include "lure/strings.h"
-#include "lure/room.h"
 #include "lure/fights.h"
+#include "lure/menu.h"
+#include "lure/res.h"
+#include "lure/room.h"
+#include "lure/screen.h"
+#include "lure/strings.h"
 
 /**
  * This is the namespace of the Lure engine.
@@ -57,7 +57,7 @@ enum LureLanguage {
 	LANG_DE_DEU = 7,
 	LANG_ES_ESP = 17,
 	LANG_EN_ANY = 3,
-	LANG_RU_RUS = 3,	// English data has been overridden
+	LANG_RU_RUS = 3, // English data has been overridden
 	LANG_UNKNOWN = -1
 };
 
@@ -133,7 +133,7 @@ public:
 		return _saveLoadAllowed && !Fights.isFighting();
 	}
 };
-	Common::String getSaveName(Common::InSaveFile *in);
+Common::String getSaveName(Common::InSaveFile *in);
 } // End of namespace Lure
 
 #endif

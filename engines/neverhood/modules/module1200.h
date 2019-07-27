@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE1200_H
 #define NEVERHOOD_MODULES_MODULE1200_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -33,6 +33,7 @@ class Module1200 : public Module {
 public:
 	Module1200(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module1200();
+
 protected:
 	int _sceneNum;
 	void createScene(int sceneNum, int which);
@@ -45,6 +46,7 @@ class Scene1201 : public Scene {
 public:
 	Scene1201(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Scene1201();
+
 protected:
 	Sprite *_asMatch;
 	AsScene1201TntMan *_asTntMan;
@@ -63,6 +65,7 @@ class Scene1202 : public Scene {
 public:
 	Scene1202(NeverhoodEngine *vm, Module *parentModule);
 	virtual ~Scene1202();
+
 protected:
 	PaletteResource _paletteResource;
 	Sprite *_asTntItems[18];

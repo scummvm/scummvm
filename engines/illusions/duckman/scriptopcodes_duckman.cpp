@@ -20,13 +20,13 @@
  *
  */
 
-#include "illusions/duckman/illusions_duckman.h"
 #include "illusions/duckman/scriptopcodes_duckman.h"
-#include "illusions/duckman/duckman_dialog.h"
-#include "illusions/duckman/menusystem_duckman.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
 #include "illusions/dictionary.h"
+#include "illusions/duckman/duckman_dialog.h"
+#include "illusions/duckman/illusions_duckman.h"
+#include "illusions/duckman/menusystem_duckman.h"
 #include "illusions/input.h"
 #include "illusions/menusystem.h"
 #include "illusions/resources/scriptresource.h"
@@ -42,7 +42,8 @@ namespace Illusions {
 // ScriptOpcodes_Duckman
 
 ScriptOpcodes_Duckman::ScriptOpcodes_Duckman(IllusionsEngine_Duckman *vm)
-	: ScriptOpcodes(vm), _vm(vm) {
+  : ScriptOpcodes(vm)
+  , _vm(vm) {
 	initOpcodes();
 }
 
@@ -50,8 +51,8 @@ ScriptOpcodes_Duckman::~ScriptOpcodes_Duckman() {
 	freeOpcodes();
 }
 
-typedef Common::Functor2Mem<ScriptThread*, OpCall&, void, ScriptOpcodes_Duckman> ScriptOpcodeI;
-#define OPCODE(op, func) \
+typedef Common::Functor2Mem<ScriptThread *, OpCall &, void, ScriptOpcodes_Duckman> ScriptOpcodeI;
+#define OPCODE(op, func)                                                \
 	_opcodes[op] = new ScriptOpcodeI(this, &ScriptOpcodes_Duckman::func); \
 	_opcodeNames[op] = #func;
 
@@ -666,12 +667,11 @@ void ScriptOpcodes_Duckman::opDisplayMenu(ScriptThread *scriptThread, OpCall &op
 	} while (_vm->_stack->pop() == 0);
 
 	_vm->_menuSystem->runMenu(menuChoiceOffsets, &_vm->_menuChoiceOfs,
-		menuId, timeOutDuration, timeOutMenuChoiceIndex,
-		opCall._callerThreadId);
+	                          menuId, timeOutDuration, timeOutMenuChoiceIndex,
+	                          opCall._callerThreadId);
 
 	//DEBUG Resume calling thread, later done by the video player
 	//_vm->notifyThreadId(opCall._callerThreadId);
-
 }
 
 void ScriptOpcodes_Duckman::opSwitchMenuChoice(ScriptThread *scriptThread, OpCall &opCall) {
@@ -852,12 +852,12 @@ void ScriptOpcodes_Duckman::opSetBlockCounter118(ScriptThread *scriptThread, OpC
 
 void ScriptOpcodes_Duckman::opDebug126(ScriptThread *scriptThread, OpCall &opCall) {
 	// NOTE Prints some debug text
-	debug(1, "[DBG126] %s", (char*)opCall._code);
+	debug(1, "[DBG126] %s", (char *)opCall._code);
 }
 
 void ScriptOpcodes_Duckman::opDebug127(ScriptThread *scriptThread, OpCall &opCall) {
 	// NOTE Prints some debug text
-	debug(1, "[DBG127] %s", (char*)opCall._code);
+	debug(1, "[DBG127] %s", (char *)opCall._code);
 }
 
 } // End of namespace Illusions

@@ -20,23 +20,22 @@
  *
  */
 
+#include <resource.h>
+#include <sciresource.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sciresource.h>
-#include <resource.h>
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #ifdef HAVE_UNISTD_H
-#  include <unistd.h>
+#	include <unistd.h>
 #endif
 
 #define COPY_BLOCK_SIZE 512
 
 unsigned short *resource_ids = NULL;
 
-void
-help() {
+void help() {
 	printf("Usage:\n\tscipack <file_0> ... <file_n>\n"
 	       "\nBuilds an uncompressed SCI0 resource.000 and a resource.map\n");
 }
@@ -56,7 +55,9 @@ test_file(char *filename) {
 	*dot = 0;
 
 	for (res_type = 0; res_type < sci_invalid_resource
-	        && scumm_stricmp(filename, sci_resource_types[res_type]); res_type++);
+	     && scumm_stricmp(filename, sci_resource_types[res_type]);
+	     res_type++)
+		;
 
 	*dot = '.';
 
@@ -93,39 +94,37 @@ test_file(char *filename) {
 	return (res_type << 11) | res_index;
 }
 
-int
-build_file_ids(int count, char **names) {
+int build_file_ids(int count, char **names) {
 	int i;
 	int error = 0;
 
-	resource_ids = (unsigned short*) malloc(sizeof(unsigned short) * count);
+	resource_ids = (unsigned short *)malloc(sizeof(unsigned short) * count);
 
 	for (i = 0; i < count; i++) {
 		int id = test_file(names[i]);
 		if (id < 0) {
 			error = -1;
 			fprintf(stderr, ": %s\n", names[i]);
-		} else resource_ids[i] = id;
+		} else
+			resource_ids[i] = id;
 	}
 
 	return error;
 }
 
-
 static inline void
 write_uint16(int fd, unsigned int uint) {
 	unsigned char upper = (uint >> 8) & 0xff;
-	unsigned char lower = (uint) & 0xff;
+	unsigned char lower = (uint)&0xff;
 
 	if ((write(fd, &upper, 1) < 1)
-	        || (write(fd, &lower, 1) < 1)) {
+	    || (write(fd, &lower, 1) < 1)) {
 		perror("While writing");
 		exit(1);
 	}
 }
 
-int
-write_files(int count, char **names) {
+int write_files(int count, char **names) {
 	int resource_000, resource_map;
 	int i;
 
@@ -185,9 +184,7 @@ write_files(int count, char **names) {
 	close(resource_map);
 }
 
-
-int
-main(int argc, char **argv) {
+int main(int argc, char **argv) {
 	printf("scipack.c Copyright (C) 2002 Christoph Reichenbach\n"
 	       "This program is FREE SOFTWARE. You may copy it and/or re-distribute it\n"
 	       "according to the terms of the GNU General Public License. See LICENSING\n"

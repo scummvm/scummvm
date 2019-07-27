@@ -103,7 +103,7 @@ private:
 
 	// mix buffer to keep a partially consumed decoded tick.
 	int *_mixBuffer;
-	int _mixBufferSamples;	// number of samples kept in _mixBuffer
+	int _mixBufferSamples; // number of samples kept in _mixBuffer
 
 	static const int FP_SHIFT;
 	static const int FP_ONE;
@@ -172,9 +172,9 @@ const int ModXmS3mStream::FP_SHIFT = 0xF;
 const int ModXmS3mStream::FP_ONE = 0x8000;
 const int ModXmS3mStream::FP_MASK = 0x7FFF;
 const short ModXmS3mStream::sinetable[] = {
-		  0,  24,  49,  74,  97, 120, 141, 161, 180, 197, 212, 224, 235, 244, 250, 253,
-		255, 253, 250, 244, 235, 224, 212, 197, 180, 161, 141, 120,  97,  74,  49,  24
-	};
+	0, 24, 49, 74, 97, 120, 141, 161, 180, 197, 212, 224, 235, 244, 250, 253,
+	255, 253, 250, 244, 235, 224, 212, 197, 180, 161, 141, 120, 97, 74, 49, 24
+};
 
 ModXmS3mStream::ModXmS3mStream(Common::SeekableReadStream *stream, int rate, int interpolation) {
 	_rampBuf = nullptr;
@@ -215,7 +215,7 @@ ModXmS3mStream::~ModXmS3mStream() {
 	}
 
 	if (_mixBuffer) {
-		delete []_mixBuffer;
+		delete[] _mixBuffer;
 		_mixBuffer = nullptr;
 	}
 }
@@ -247,134 +247,134 @@ void ModXmS3mStream::tickChannel(Channel &channel) {
 	channel.retrigCount++;
 	if (!(channel.note.effect == 0x7D && channel.fxCount <= channel.note.param)) {
 		switch (channel.note.volume & 0xF0) {
-			case 0x60: /* Vol Slide Down.*/
-				channel.volume -= channel.note.volume & 0xF;
-				if (channel.volume < 0) {
-					channel.volume = 0;
-				}
-				break;
-			case 0x70: /* Vol Slide Up.*/
-				channel.volume += channel.note.volume & 0xF;
-				if (channel.volume > 64) {
-					channel.volume = 64;
-				}
-				break;
-			case 0xB0: /* Vibrato.*/
-				channel.vibratoPhase += channel.vibratoSpeed;
-				vibrato(channel, 0);
-				break;
-			case 0xD0: /* Pan Slide Left.*/
-				channel.panning -= channel.note.volume & 0xF;
-				if (channel.panning < 0) {
-					channel.panning = 0;
-				}
-				break;
-			case 0xE0: /* Pan Slide Right.*/
-				channel.panning += channel.note.volume & 0xF;
-				if (channel.panning > 255) {
-					channel.panning = 255;
-				}
-				break;
-			case 0xF0: /* Tone Porta.*/
-				tonePorta(channel);
-				break;
-		}
-	}
-	switch (channel.note.effect) {
-		case 0x01:
-		case 0x86: /* Porta Up. */
-			portaUp(channel, channel.portaUpParam);
+		case 0x60: /* Vol Slide Down.*/
+			channel.volume -= channel.note.volume & 0xF;
+			if (channel.volume < 0) {
+				channel.volume = 0;
+			}
 			break;
-		case 0x02:
-		case 0x85: /* Porta Down. */
-			portaDown(channel, channel.portaDownParam);
+		case 0x70: /* Vol Slide Up.*/
+			channel.volume += channel.note.volume & 0xF;
+			if (channel.volume > 64) {
+				channel.volume = 64;
+			}
 			break;
-		case 0x03:
-		case 0x87: /* Tone Porta. */
-			tonePorta(channel);
-			break;
-		case 0x04:
-		case 0x88: /* Vibrato. */
+		case 0xB0: /* Vibrato.*/
 			channel.vibratoPhase += channel.vibratoSpeed;
 			vibrato(channel, 0);
 			break;
-		case 0x05:
-		case 0x8C: /* Tone Porta + Vol Slide. */
-			tonePorta(channel);
-			volumeSlide(channel);
-			break;
-		case 0x06:
-		case 0x8B: /* Vibrato + Vol Slide. */
-			channel.vibratoPhase += channel.vibratoSpeed;
-			vibrato(channel, 0);
-			volumeSlide(channel);
-			break;
-		case 0x07:
-		case 0x92: /* Tremolo. */
-			channel.tremoloPhase += channel.tremoloSpeed;
-			tremolo(channel);
-			break;
-		case 0x0A:
-		case 0x84: /* Vol Slide. */
-			volumeSlide(channel);
-			break;
-		case 0x11: /* Global Volume Slide. */
-			_globalVol = _globalVol + (channel.gvolSlideParam >> 4) - (channel.gvolSlideParam & 0xF);
-			if (_globalVol < 0) {
-				_globalVol = 0;
-			}
-			if (_globalVol > 64) {
-				_globalVol = 64;
-			}
-			break;
-		case 0x19: /* Panning Slide. */
-			channel.panning = channel.panning + (channel.panSlideParam >> 4) - (channel.panSlideParam & 0xF);
+		case 0xD0: /* Pan Slide Left.*/
+			channel.panning -= channel.note.volume & 0xF;
 			if (channel.panning < 0) {
 				channel.panning = 0;
 			}
+			break;
+		case 0xE0: /* Pan Slide Right.*/
+			channel.panning += channel.note.volume & 0xF;
 			if (channel.panning > 255) {
 				channel.panning = 255;
 			}
 			break;
-		case 0x1B:
-		case 0x91: /* Retrig + Vol Slide. */
-			retrigVolSlide(channel);
+		case 0xF0: /* Tone Porta.*/
+			tonePorta(channel);
 			break;
-		case 0x1D:
-		case 0x89: /* Tremor. */
-			tremor(channel);
-			break;
-		case 0x79: /* Retrig. */
-			if (channel.fxCount >= channel.note.param) {
-				channel.fxCount = 0;
-				channel.sampleIdx = channel.sampleFra = 0;
-			}
-			break;
-		case 0x7C:
-		case 0xFC: /* Note Cut. */
-			if (channel.note.param == channel.fxCount) {
-				channel.volume = 0;
-			}
-			break;
-		case 0x7D:
-		case 0xFD: /* Note Delay. */
-			if (channel.note.param == channel.fxCount) {
-				trigger(channel);
-			}
-			break;
-		case 0x8A: /* Arpeggio. */
-			if (channel.fxCount == 1) {
-				channel.arpeggioAdd = channel.arpeggioParam >> 4;
-			} else if (channel.fxCount == 2) {
-				channel.arpeggioAdd = channel.arpeggioParam & 0xF;
-			} else {
-				channel.arpeggioAdd = channel.fxCount = 0;
-			}
-			break;
-		case 0x95: /* Fine Vibrato. */
-			channel.vibratoPhase += channel.vibratoSpeed;
-			vibrato(channel, 1);
-			break;
+		}
+	}
+	switch (channel.note.effect) {
+	case 0x01:
+	case 0x86: /* Porta Up. */
+		portaUp(channel, channel.portaUpParam);
+		break;
+	case 0x02:
+	case 0x85: /* Porta Down. */
+		portaDown(channel, channel.portaDownParam);
+		break;
+	case 0x03:
+	case 0x87: /* Tone Porta. */
+		tonePorta(channel);
+		break;
+	case 0x04:
+	case 0x88: /* Vibrato. */
+		channel.vibratoPhase += channel.vibratoSpeed;
+		vibrato(channel, 0);
+		break;
+	case 0x05:
+	case 0x8C: /* Tone Porta + Vol Slide. */
+		tonePorta(channel);
+		volumeSlide(channel);
+		break;
+	case 0x06:
+	case 0x8B: /* Vibrato + Vol Slide. */
+		channel.vibratoPhase += channel.vibratoSpeed;
+		vibrato(channel, 0);
+		volumeSlide(channel);
+		break;
+	case 0x07:
+	case 0x92: /* Tremolo. */
+		channel.tremoloPhase += channel.tremoloSpeed;
+		tremolo(channel);
+		break;
+	case 0x0A:
+	case 0x84: /* Vol Slide. */
+		volumeSlide(channel);
+		break;
+	case 0x11: /* Global Volume Slide. */
+		_globalVol = _globalVol + (channel.gvolSlideParam >> 4) - (channel.gvolSlideParam & 0xF);
+		if (_globalVol < 0) {
+			_globalVol = 0;
+		}
+		if (_globalVol > 64) {
+			_globalVol = 64;
+		}
+		break;
+	case 0x19: /* Panning Slide. */
+		channel.panning = channel.panning + (channel.panSlideParam >> 4) - (channel.panSlideParam & 0xF);
+		if (channel.panning < 0) {
+			channel.panning = 0;
+		}
+		if (channel.panning > 255) {
+			channel.panning = 255;
+		}
+		break;
+	case 0x1B:
+	case 0x91: /* Retrig + Vol Slide. */
+		retrigVolSlide(channel);
+		break;
+	case 0x1D:
+	case 0x89: /* Tremor. */
+		tremor(channel);
+		break;
+	case 0x79: /* Retrig. */
+		if (channel.fxCount >= channel.note.param) {
+			channel.fxCount = 0;
+			channel.sampleIdx = channel.sampleFra = 0;
+		}
+		break;
+	case 0x7C:
+	case 0xFC: /* Note Cut. */
+		if (channel.note.param == channel.fxCount) {
+			channel.volume = 0;
+		}
+		break;
+	case 0x7D:
+	case 0xFD: /* Note Delay. */
+		if (channel.note.param == channel.fxCount) {
+			trigger(channel);
+		}
+		break;
+	case 0x8A: /* Arpeggio. */
+		if (channel.fxCount == 1) {
+			channel.arpeggioAdd = channel.arpeggioParam >> 4;
+		} else if (channel.fxCount == 2) {
+			channel.arpeggioAdd = channel.arpeggioParam & 0xF;
+		} else {
+			channel.arpeggioAdd = channel.fxCount = 0;
+		}
+		break;
+	case 0x95: /* Fine Vibrato. */
+		channel.vibratoPhase += channel.vibratoSpeed;
+		vibrato(channel, 1);
+		break;
 	}
 	autoVibrato(channel);
 	calculateFreq(channel);
@@ -409,21 +409,21 @@ void ModXmS3mStream::volumeSlide(Channel &channel) {
 
 void ModXmS3mStream::portaUp(Channel &channel, int param) {
 	switch (param & 0xF0) {
-		case 0xE0: /* Extra-fine porta.*/
-			if (channel.fxCount == 0) {
-				channel.period -= param & 0xF;
-			}
-			break;
-		case 0xF0: /* Fine porta.*/
-			if (channel.fxCount == 0) {
-				channel.period -= (param & 0xF) << 2;
-			}
-			break;
-		default:/* Normal porta.*/
-			if (channel.fxCount > 0) {
-				channel.period -= param << 2;
-			}
-			break;
+	case 0xE0: /* Extra-fine porta.*/
+		if (channel.fxCount == 0) {
+			channel.period -= param & 0xF;
+		}
+		break;
+	case 0xF0: /* Fine porta.*/
+		if (channel.fxCount == 0) {
+			channel.period -= (param & 0xF) << 2;
+		}
+		break;
+	default: /* Normal porta.*/
+		if (channel.fxCount > 0) {
+			channel.period -= param << 2;
+		}
+		break;
 	}
 	if (channel.period < 0) {
 		channel.period = 0;
@@ -433,21 +433,21 @@ void ModXmS3mStream::portaUp(Channel &channel, int param) {
 void ModXmS3mStream::portaDown(Channel &channel, int param) {
 	if (channel.period > 0) {
 		switch (param & 0xF0) {
-			case 0xE0: /* Extra-fine porta.*/
-				if (channel.fxCount == 0) {
-					channel.period += param & 0xF;
-				}
-				break;
-			case 0xF0: /* Fine porta.*/
-				if (channel.fxCount == 0) {
-					channel.period += (param & 0xF) << 2;
-				}
-				break;
-			default:/* Normal porta.*/
-				if (channel.fxCount > 0) {
-					channel.period += param << 2;
-				}
-				break;
+		case 0xE0: /* Extra-fine porta.*/
+			if (channel.fxCount == 0) {
+				channel.period += param & 0xF;
+			}
+			break;
+		case 0xF0: /* Fine porta.*/
+			if (channel.fxCount == 0) {
+				channel.period += (param & 0xF) << 2;
+			}
+			break;
+		default: /* Normal porta.*/
+			if (channel.fxCount > 0) {
+				channel.period += param << 2;
+			}
+			break;
 		}
 		if (channel.period > 65535) {
 			channel.period = 65535;
@@ -474,28 +474,28 @@ void ModXmS3mStream::tonePorta(Channel &channel) {
 int ModXmS3mStream::waveform(Channel &channel, int phase, int type) {
 	int amplitude = 0;
 	switch (type) {
-		default: /* Sine. */
-			amplitude = sinetable[phase & 0x1F];
-			if ((phase & 0x20) > 0) {
-				amplitude = -amplitude;
-			}
-			break;
-		case 6: /* Saw Up.*/
-			amplitude = (((phase + 0x20) & 0x3F) << 3) - 255;
-			break;
-		case 1:
-		case 7: /* Saw Down. */
-			amplitude = 255 - (((phase + 0x20) & 0x3F) << 3);
-			break;
-		case 2:
-		case 5: /* Square. */
-			amplitude = (phase & 0x20) > 0 ? 255 : -255;
-			break;
-		case 3:
-		case 8: /* Random. */
-			amplitude = (channel.randomSeed >> 20) - 255;
-			channel.randomSeed = (channel.randomSeed * 65 + 17) & 0x1FFFFFFF;
-			break;
+	default: /* Sine. */
+		amplitude = sinetable[phase & 0x1F];
+		if ((phase & 0x20) > 0) {
+			amplitude = -amplitude;
+		}
+		break;
+	case 6: /* Saw Up.*/
+		amplitude = (((phase + 0x20) & 0x3F) << 3) - 255;
+		break;
+	case 1:
+	case 7: /* Saw Down. */
+		amplitude = 255 - (((phase + 0x20) & 0x3F) << 3);
+		break;
+	case 2:
+	case 5: /* Square. */
+		amplitude = (phase & 0x20) > 0 ? 255 : -255;
+		break;
+	case 3:
+	case 8: /* Random. */
+		amplitude = (channel.randomSeed >> 20) - 255;
+		channel.randomSeed = (channel.randomSeed * 65 + 17) & 0x1FFFFFFF;
+		break;
 	}
 	return amplitude;
 }
@@ -523,50 +523,50 @@ void ModXmS3mStream::retrigVolSlide(Channel &channel) {
 	if (channel.retrigCount >= channel.retrigTicks) {
 		channel.retrigCount = channel.sampleIdx = channel.sampleFra = 0;
 		switch (channel.retrigVolume) {
-			case 0x1:
-				channel.volume = channel.volume - 1;
-				break;
-			case 0x2:
-				channel.volume = channel.volume - 2;
-				break;
-			case 0x3:
-				channel.volume = channel.volume - 4;
-				break;
-			case 0x4:
-				channel.volume = channel.volume - 8;
-				break;
-			case 0x5:
-				channel.volume = channel.volume - 16;
-				break;
-			case 0x6:
-				channel.volume = channel.volume * 2 / 3;
-				break;
-			case 0x7:
-				channel.volume = channel.volume >> 1;
-				break;
-			case 0x8: /* ? */
-				break;
-			case 0x9:
-				channel.volume = channel.volume + 1;
-				break;
-			case 0xA:
-				channel.volume = channel.volume + 2;
-				break;
-			case 0xB:
-				channel.volume = channel.volume + 4;
-				break;
-			case 0xC:
-				channel.volume = channel.volume + 8;
-				break;
-			case 0xD:
-				channel.volume = channel.volume + 16;
-				break;
-			case 0xE:
-				channel.volume = channel.volume * 3 / 2;
-				break;
-			case 0xF:
-				channel.volume = channel.volume << 1;
-				break;
+		case 0x1:
+			channel.volume = channel.volume - 1;
+			break;
+		case 0x2:
+			channel.volume = channel.volume - 2;
+			break;
+		case 0x3:
+			channel.volume = channel.volume - 4;
+			break;
+		case 0x4:
+			channel.volume = channel.volume - 8;
+			break;
+		case 0x5:
+			channel.volume = channel.volume - 16;
+			break;
+		case 0x6:
+			channel.volume = channel.volume * 2 / 3;
+			break;
+		case 0x7:
+			channel.volume = channel.volume >> 1;
+			break;
+		case 0x8: /* ? */
+			break;
+		case 0x9:
+			channel.volume = channel.volume + 1;
+			break;
+		case 0xA:
+			channel.volume = channel.volume + 2;
+			break;
+		case 0xB:
+			channel.volume = channel.volume + 4;
+			break;
+		case 0xC:
+			channel.volume = channel.volume + 8;
+			break;
+		case 0xD:
+			channel.volume = channel.volume + 16;
+			break;
+		case 0xE:
+			channel.volume = channel.volume * 3 / 2;
+			break;
+		case 0xF:
+			channel.volume = channel.volume << 1;
+			break;
 		}
 		if (channel.volume < 0) {
 			channel.volume = 0;
@@ -608,37 +608,37 @@ void ModXmS3mStream::trigger(Channel &channel) {
 		channel.volume = channel.note.volume < 0x50 ? channel.note.volume - 0x10 : 64;
 	}
 	switch (channel.note.volume & 0xF0) {
-		case 0x80: /* Fine Vol Down.*/
-			channel.volume -= channel.note.volume & 0xF;
-			if (channel.volume < 0) {
-				channel.volume = 0;
-			}
-			break;
-		case 0x90: /* Fine Vol Up.*/
-			channel.volume += channel.note.volume & 0xF;
-			if (channel.volume > 64) {
-				channel.volume = 64;
-			}
-			break;
-		case 0xA0: /* Set Vibrato Speed.*/
-			if ((channel.note.volume & 0xF) > 0) {
-				channel.vibratoSpeed = channel.note.volume & 0xF;
-			}
-			break;
-		case 0xB0: /* Vibrato.*/
-			if ((channel.note.volume & 0xF) > 0) {
-				channel.vibratoDepth = channel.note.volume & 0xF;
-			}
-			vibrato(channel, 0);
-			break;
-		case 0xC0: /* Set Panning.*/
-			channel.panning = (channel.note.volume & 0xF) * 17;
-			break;
-		case 0xF0: /* Tone Porta.*/
-			if ((channel.note.volume & 0xF) > 0) {
-				channel.tonePortaParam = channel.note.volume & 0xF;
-			}
-			break;
+	case 0x80: /* Fine Vol Down.*/
+		channel.volume -= channel.note.volume & 0xF;
+		if (channel.volume < 0) {
+			channel.volume = 0;
+		}
+		break;
+	case 0x90: /* Fine Vol Up.*/
+		channel.volume += channel.note.volume & 0xF;
+		if (channel.volume > 64) {
+			channel.volume = 64;
+		}
+		break;
+	case 0xA0: /* Set Vibrato Speed.*/
+		if ((channel.note.volume & 0xF) > 0) {
+			channel.vibratoSpeed = channel.note.volume & 0xF;
+		}
+		break;
+	case 0xB0: /* Vibrato.*/
+		if ((channel.note.volume & 0xF) > 0) {
+			channel.vibratoDepth = channel.note.volume & 0xF;
+		}
+		vibrato(channel, 0);
+		break;
+	case 0xC0: /* Set Panning.*/
+		channel.panning = (channel.note.volume & 0xF) * 17;
+		break;
+	case 0xF0: /* Tone Porta.*/
+		if ((channel.note.volume & 0xF) > 0) {
+			channel.tonePortaParam = channel.note.volume & 0xF;
+		}
+		break;
 	}
 	if (channel.note.key > 0) {
 		if (channel.note.key > 96) {
@@ -764,192 +764,192 @@ void ModXmS3mStream::updateChannelRow(Channel &channel, Note note) {
 		trigger(channel);
 	}
 	switch (channel.note.effect) {
-		case 0x01:
-		case 0x86: /* Porta Up. */
-			if (channel.note.param > 0) {
-				channel.portaUpParam = channel.note.param;
-			}
-			portaUp(channel, channel.portaUpParam);
-			break;
-		case 0x02:
-		case 0x85: /* Porta Down. */
-			if (channel.note.param > 0) {
-				channel.portaDownParam = channel.note.param;
-			}
-			portaDown(channel, channel.portaDownParam);
-			break;
-		case 0x03:
-		case 0x87: /* Tone Porta. */
-			if (channel.note.param > 0) {
-				channel.tonePortaParam = channel.note.param;
-			}
-			break;
-		case 0x04:
-		case 0x88: /* Vibrato. */
-			if ((channel.note.param >> 4) > 0) {
-				channel.vibratoSpeed = channel.note.param >> 4;
-			}
-			if ((channel.note.param & 0xF) > 0) {
-				channel.vibratoDepth = channel.note.param & 0xF;
-			}
-			vibrato(channel, 0);
-			break;
-		case 0x05:
-		case 0x8C: /* Tone Porta + Vol Slide. */
-			if (channel.note.param > 0) {
-				channel.volSlideParam = channel.note.param;
-			}
-			volumeSlide(channel);
-			break;
-		case 0x06:
-		case 0x8B: /* Vibrato + Vol Slide. */
-			if (channel.note.param > 0) {
-				channel.volSlideParam = channel.note.param;
-			}
-			vibrato(channel, 0);
-			volumeSlide(channel);
-			break;
-		case 0x07:
-		case 0x92: /* Tremolo. */
-			if ((channel.note.param >> 4) > 0) {
-				channel.tremoloSpeed = channel.note.param >> 4;
-			}
-			if ((channel.note.param & 0xF) > 0) {
-				channel.tremoloDepth = channel.note.param & 0xF;
-			}
-			tremolo(channel);
-			break;
-		case 0x08: /* Set Panning.*/
-			channel.panning = (channel.note.param < 128) ? (channel.note.param << 1) : 255;
-			break;
-		case 0x0A:
-		case 0x84: /* Vol Slide. */
-			if (channel.note.param > 0) {
-				channel.volSlideParam = channel.note.param;
-			}
-			volumeSlide(channel);
-			break;
-		case 0x0C: /* Set Volume. */
-			channel.volume = channel.note.param >= 64 ? 64 : channel.note.param & 0x3F;
-			break;
+	case 0x01:
+	case 0x86: /* Porta Up. */
+		if (channel.note.param > 0) {
+			channel.portaUpParam = channel.note.param;
+		}
+		portaUp(channel, channel.portaUpParam);
+		break;
+	case 0x02:
+	case 0x85: /* Porta Down. */
+		if (channel.note.param > 0) {
+			channel.portaDownParam = channel.note.param;
+		}
+		portaDown(channel, channel.portaDownParam);
+		break;
+	case 0x03:
+	case 0x87: /* Tone Porta. */
+		if (channel.note.param > 0) {
+			channel.tonePortaParam = channel.note.param;
+		}
+		break;
+	case 0x04:
+	case 0x88: /* Vibrato. */
+		if ((channel.note.param >> 4) > 0) {
+			channel.vibratoSpeed = channel.note.param >> 4;
+		}
+		if ((channel.note.param & 0xF) > 0) {
+			channel.vibratoDepth = channel.note.param & 0xF;
+		}
+		vibrato(channel, 0);
+		break;
+	case 0x05:
+	case 0x8C: /* Tone Porta + Vol Slide. */
+		if (channel.note.param > 0) {
+			channel.volSlideParam = channel.note.param;
+		}
+		volumeSlide(channel);
+		break;
+	case 0x06:
+	case 0x8B: /* Vibrato + Vol Slide. */
+		if (channel.note.param > 0) {
+			channel.volSlideParam = channel.note.param;
+		}
+		vibrato(channel, 0);
+		volumeSlide(channel);
+		break;
+	case 0x07:
+	case 0x92: /* Tremolo. */
+		if ((channel.note.param >> 4) > 0) {
+			channel.tremoloSpeed = channel.note.param >> 4;
+		}
+		if ((channel.note.param & 0xF) > 0) {
+			channel.tremoloDepth = channel.note.param & 0xF;
+		}
+		tremolo(channel);
+		break;
+	case 0x08: /* Set Panning.*/
+		channel.panning = (channel.note.param < 128) ? (channel.note.param << 1) : 255;
+		break;
+	case 0x0A:
+	case 0x84: /* Vol Slide. */
+		if (channel.note.param > 0) {
+			channel.volSlideParam = channel.note.param;
+		}
+		volumeSlide(channel);
+		break;
+	case 0x0C: /* Set Volume. */
+		channel.volume = channel.note.param >= 64 ? 64 : channel.note.param & 0x3F;
+		break;
+	case 0x10:
+	case 0x96: /* Set Global Volume. */
+		_globalVol = channel.note.param >= 64 ? 64 : channel.note.param & 0x3F;
+		break;
+	case 0x11: /* Global Volume Slide. */
+		if (channel.note.param > 0) {
+			channel.gvolSlideParam = channel.note.param;
+		}
+		break;
+	case 0x14: /* Key Off. */
+		channel.keyOn = 0;
+		break;
+	case 0x15: /* Set Envelope Tick. */
+		channel.volEnvTick = channel.panEnvTick = channel.note.param & 0xFF;
+		break;
+	case 0x19: /* Panning Slide. */
+		if (channel.note.param > 0) {
+			channel.panSlideParam = channel.note.param;
+		}
+		break;
+	case 0x1B:
+	case 0x91: /* Retrig + Vol Slide. */
+		if ((channel.note.param >> 4) > 0) {
+			channel.retrigVolume = channel.note.param >> 4;
+		}
+		if ((channel.note.param & 0xF) > 0) {
+			channel.retrigTicks = channel.note.param & 0xF;
+		}
+		retrigVolSlide(channel);
+		break;
+	case 0x1D:
+	case 0x89: /* Tremor. */
+		if ((channel.note.param >> 4) > 0) {
+			channel.tremorOnTicks = channel.note.param >> 4;
+		}
+		if ((channel.note.param & 0xF) > 0) {
+			channel.tremorOffTicks = channel.note.param & 0xF;
+		}
+		tremor(channel);
+		break;
+	case 0x21: /* Extra Fine Porta. */
+		if (channel.note.param > 0) {
+			channel.xfinePortaParam = channel.note.param;
+		}
+		switch (channel.xfinePortaParam & 0xF0) {
 		case 0x10:
-		case 0x96: /* Set Global Volume. */
-			_globalVol = channel.note.param >= 64 ? 64 : channel.note.param & 0x3F;
+			portaUp(channel, 0xE0 | (channel.xfinePortaParam & 0xF));
 			break;
-		case 0x11: /* Global Volume Slide. */
-			if (channel.note.param > 0) {
-				channel.gvolSlideParam = channel.note.param;
-			}
+		case 0x20:
+			portaDown(channel, 0xE0 | (channel.xfinePortaParam & 0xF));
 			break;
-		case 0x14: /* Key Off. */
-			channel.keyOn = 0;
-			break;
-		case 0x15: /* Set Envelope Tick. */
-			channel.volEnvTick = channel.panEnvTick = channel.note.param & 0xFF;
-			break;
-		case 0x19: /* Panning Slide. */
-			if (channel.note.param > 0) {
-				channel.panSlideParam = channel.note.param;
-			}
-			break;
-		case 0x1B:
-		case 0x91: /* Retrig + Vol Slide. */
-			if ((channel.note.param >> 4) > 0) {
-				channel.retrigVolume = channel.note.param >> 4;
-			}
-			if ((channel.note.param & 0xF) > 0) {
-				channel.retrigTicks = channel.note.param & 0xF;
-			}
-			retrigVolSlide(channel);
-			break;
-		case 0x1D:
-		case 0x89: /* Tremor. */
-			if ((channel.note.param >> 4) > 0) {
-				channel.tremorOnTicks = channel.note.param >> 4;
-			}
-			if ((channel.note.param & 0xF) > 0) {
-				channel.tremorOffTicks = channel.note.param & 0xF;
-			}
-			tremor(channel);
-			break;
-		case 0x21: /* Extra Fine Porta. */
-			if (channel.note.param > 0) {
-				channel.xfinePortaParam = channel.note.param;
-			}
-			switch (channel.xfinePortaParam & 0xF0) {
-				case 0x10:
-					portaUp(channel, 0xE0 | (channel.xfinePortaParam & 0xF));
-					break;
-				case 0x20:
-					portaDown(channel, 0xE0 | (channel.xfinePortaParam & 0xF));
-					break;
-			}
-			break;
-		case 0x71: /* Fine Porta Up. */
-			if (channel.note.param > 0) {
-				channel.finePortaUpParam = channel.note.param;
-			}
-			portaUp(channel, 0xF0 | (channel.finePortaUpParam & 0xF));
-			break;
-		case 0x72: /* Fine Porta Down. */
-			if (channel.note.param > 0) {
-				channel.finePortaDownParam = channel.note.param;
-			}
-			portaDown(channel, 0xF0 | (channel.finePortaDownParam & 0xF));
-			break;
-		case 0x74:
-		case 0xF3: /* Set Vibrato Waveform. */
-			if (channel.note.param < 8) {
-				channel.vibratoType = channel.note.param;
-			}
-			break;
-		case 0x77:
-		case 0xF4: /* Set Tremolo Waveform. */
-			if (channel.note.param < 8) {
-				channel.tremoloType = channel.note.param;
-			}
-			break;
-		case 0x7A: /* Fine Vol Slide Up. */
-			if (channel.note.param > 0) {
-				channel.fineVslideUpParam = channel.note.param;
-			}
-			channel.volume += channel.fineVslideUpParam;
-			if (channel.volume > 64) {
-				channel.volume = 64;
-			}
-			break;
-		case 0x7B: /* Fine Vol Slide Down. */
-			if (channel.note.param > 0) {
-				channel.fineVslideDownParam = channel.note.param;
-			}
-			channel.volume -= channel.fineVslideDownParam;
-			if (channel.volume < 0) {
-				channel.volume = 0;
-			}
-			break;
-		case 0x7C:
-		case 0xFC: /* Note Cut. */
-			if (channel.note.param <= 0) {
-				channel.volume = 0;
-			}
-			break;
-		case 0x8A: /* Arpeggio. */
-			if (channel.note.param > 0) {
-				channel.arpeggioParam = channel.note.param;
-			}
-			break;
-		case 0x95: /* Fine Vibrato.*/
-			if ((channel.note.param >> 4) > 0) {
-				channel.vibratoSpeed = channel.note.param >> 4;
-			}
-			if ((channel.note.param & 0xF) > 0) {
-				channel.vibratoDepth = channel.note.param & 0xF;
-			}
-			vibrato(channel, 1);
-			break;
-		case 0xF8: /* Set Panning. */
-			channel.panning = channel.note.param * 17;
-			break;
+		}
+		break;
+	case 0x71: /* Fine Porta Up. */
+		if (channel.note.param > 0) {
+			channel.finePortaUpParam = channel.note.param;
+		}
+		portaUp(channel, 0xF0 | (channel.finePortaUpParam & 0xF));
+		break;
+	case 0x72: /* Fine Porta Down. */
+		if (channel.note.param > 0) {
+			channel.finePortaDownParam = channel.note.param;
+		}
+		portaDown(channel, 0xF0 | (channel.finePortaDownParam & 0xF));
+		break;
+	case 0x74:
+	case 0xF3: /* Set Vibrato Waveform. */
+		if (channel.note.param < 8) {
+			channel.vibratoType = channel.note.param;
+		}
+		break;
+	case 0x77:
+	case 0xF4: /* Set Tremolo Waveform. */
+		if (channel.note.param < 8) {
+			channel.tremoloType = channel.note.param;
+		}
+		break;
+	case 0x7A: /* Fine Vol Slide Up. */
+		if (channel.note.param > 0) {
+			channel.fineVslideUpParam = channel.note.param;
+		}
+		channel.volume += channel.fineVslideUpParam;
+		if (channel.volume > 64) {
+			channel.volume = 64;
+		}
+		break;
+	case 0x7B: /* Fine Vol Slide Down. */
+		if (channel.note.param > 0) {
+			channel.fineVslideDownParam = channel.note.param;
+		}
+		channel.volume -= channel.fineVslideDownParam;
+		if (channel.volume < 0) {
+			channel.volume = 0;
+		}
+		break;
+	case 0x7C:
+	case 0xFC: /* Note Cut. */
+		if (channel.note.param <= 0) {
+			channel.volume = 0;
+		}
+		break;
+	case 0x8A: /* Arpeggio. */
+		if (channel.note.param > 0) {
+			channel.arpeggioParam = channel.note.param;
+		}
+		break;
+	case 0x95: /* Fine Vibrato.*/
+		if ((channel.note.param >> 4) > 0) {
+			channel.vibratoSpeed = channel.note.param >> 4;
+		}
+		if ((channel.note.param & 0xF) > 0) {
+			channel.vibratoDepth = channel.note.param & 0xF;
+		}
+		vibrato(channel, 1);
+		break;
+	case 0xF8: /* Set Panning. */
+		channel.panning = channel.note.param * 17;
+		break;
 	}
 	autoVibrato(channel);
 	calculateFreq(channel);
@@ -1026,71 +1026,71 @@ void ModXmS3mStream::updateRow() {
 		Channel &channel = _channels[idx];
 		updateChannelRow(channel, note);
 		switch (note.effect) {
-			case 0x81: /* Set Speed. */
-				if (note.param > 0) {
+		case 0x81: /* Set Speed. */
+			if (note.param > 0) {
+				_tick = _speed = note.param;
+			}
+			break;
+		case 0xB:
+		case 0x82: /* Pattern Jump.*/
+			if (_plCount < 0) {
+				_breakPos = note.param;
+				_nextRow = 0;
+			}
+			break;
+		case 0xD:
+		case 0x83: /* Pattern Break.*/
+			if (_plCount < 0) {
+				if (_breakPos < 0) {
+					_breakPos = _seqPos + 1;
+				}
+				_nextRow = (note.param >> 4) * 10 + (note.param & 0xF);
+			}
+			break;
+		case 0xF: /* Set Speed/Tempo.*/
+			if (note.param > 0) {
+				if (note.param < 32) {
 					_tick = _speed = note.param;
-				}
-				break;
-			case 0xB:
-			case 0x82: /* Pattern Jump.*/
-				if (_plCount < 0) {
-					_breakPos = note.param;
-					_nextRow = 0;
-				}
-				break;
-			case 0xD:
-			case 0x83: /* Pattern Break.*/
-				if (_plCount < 0) {
-					if (_breakPos < 0) {
-						_breakPos = _seqPos + 1;
-					}
-					_nextRow = (note.param >> 4) * 10 + (note.param & 0xF);
-				}
-				break;
-			case 0xF: /* Set Speed/Tempo.*/
-				if (note.param > 0) {
-					if (note.param < 32) {
-						_tick = _speed = note.param;
-					} else {
-						_tempo = note.param;
-					}
-				}
-				break;
-			case 0x94: /* Set Tempo.*/
-				if (note.param > 32) {
+				} else {
 					_tempo = note.param;
 				}
-				break;
-			case 0x76:
-			case 0xFB: /* Pattern Loop.*/
-				if (note.param == 0) {
-					/* Set loop marker on this channel. */
-					channel.plRow = _row;
+			}
+			break;
+		case 0x94: /* Set Tempo.*/
+			if (note.param > 32) {
+				_tempo = note.param;
+			}
+			break;
+		case 0x76:
+		case 0xFB: /* Pattern Loop.*/
+			if (note.param == 0) {
+				/* Set loop marker on this channel. */
+				channel.plRow = _row;
+			}
+			if (channel.plRow < _row && _breakPos < 0) {
+				/* Marker valid. */
+				if (_plCount < 0) {
+					/* Not already looping, begin. */
+					_plCount = note.param;
+					_plChan = idx;
 				}
-				if (channel.plRow < _row && _breakPos < 0) {
-					/* Marker valid. */
-					if (_plCount < 0) {
-						/* Not already looping, begin. */
-						_plCount = note.param;
-						_plChan = idx;
+				if (_plChan == idx) {
+					/* Next Loop.*/
+					if (_plCount == 0) {
+						/* Loop finished. Invalidate current marker. */
+						channel.plRow = _row + 1;
+					} else {
+						/* Loop. */
+						_nextRow = channel.plRow;
 					}
-					if (_plChan == idx) {
-						/* Next Loop.*/
-						if (_plCount == 0) {
-							/* Loop finished. Invalidate current marker. */
-							channel.plRow = _row + 1;
-						} else {
-							/* Loop. */
-							_nextRow = channel.plRow;
-						}
-						_plCount--;
-					}
+					_plCount--;
 				}
-				break;
-			case 0x7E:
-			case 0xFE: /* Pattern Delay.*/
-				_tick = _speed + _speed * note.param;
-				break;
+			}
+			break;
+		case 0x7E:
+		case 0xFE: /* Pattern Delay.*/
+			_tick = _speed + _speed * note.param;
+			break;
 		}
 	}
 }
@@ -1249,7 +1249,7 @@ void ModXmS3mStream::downsample(int *buf, int count) {
 int ModXmS3mStream::getAudio(int *mixBuf) {
 	if (_mixBuffer) {
 		memcpy(mixBuf, _mixBuffer, _mixBufferSamples * sizeof(int));
-		delete []_mixBuffer;
+		delete[] _mixBuffer;
 		_mixBuffer = nullptr;
 		return _mixBufferSamples;
 	}
@@ -1266,7 +1266,7 @@ int ModXmS3mStream::getAudio(int *mixBuf) {
 	downsample(mixBuf, tickLen + 64);
 	volumeRamp(mixBuf, tickLen);
 	tick();
-	return tickLen * 2;  // stereo samples
+	return tickLen * 2; // stereo samples
 }
 
 int ModXmS3mStream::readBuffer(int16 *buffer, const int numSamples) {
@@ -1291,7 +1291,7 @@ int ModXmS3mStream::readBuffer(int16 *buffer, const int numSamples) {
 			*buffer++ = ampl;
 		}
 		samplesRead += samples;
-		delete []mixBuf; // free
+		delete[] mixBuf; // free
 	}
 	_dataLeft -= samplesRead * 2;
 

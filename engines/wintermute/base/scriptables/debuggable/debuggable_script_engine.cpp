@@ -26,7 +26,9 @@
 
 namespace Wintermute {
 
-DebuggableScEngine::DebuggableScEngine(BaseGame *inGame) : ScEngine(inGame), _monitor(nullptr) {}
+DebuggableScEngine::DebuggableScEngine(BaseGame *inGame)
+  : ScEngine(inGame)
+  , _monitor(nullptr) {}
 
 void DebuggableScEngine::attachMonitor(ScriptMonitor *monitor) {
 	_monitor = monitor;

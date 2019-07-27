@@ -65,8 +65,8 @@ class SeekableAudioStream;
  * @return	a new SeekableAudioStream, or NULL, if an error occurred
  */
 SeekableAudioStream *makeMP3Stream(
-	Common::SeekableReadStream *stream,
-	DisposeAfterUse::Flag disposeAfterUse);
+  Common::SeekableReadStream *stream,
+  DisposeAfterUse::Flag disposeAfterUse);
 
 /**
  * Create a new PacketizedAudioStream from the first packet in the given
@@ -76,7 +76,7 @@ SeekableAudioStream *makeMP3Stream(
  * @return	a new PacketizedAudioStream
  */
 PacketizedAudioStream *makePacketizedMP3Stream(
-	Common::SeekableReadStream &firstPacket);
+  Common::SeekableReadStream &firstPacket);
 
 /**
  * Create a new PacketizedAudioStream for a given number of channels
@@ -86,7 +86,7 @@ PacketizedAudioStream *makePacketizedMP3Stream(
  * @return	a new PacketizedAudioStream
  */
 PacketizedAudioStream *makePacketizedMP3Stream(
-	uint channels, uint rate);
+  uint channels, uint rate);
 
 } // End of namespace Audio
 

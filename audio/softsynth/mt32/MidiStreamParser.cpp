@@ -25,8 +25,10 @@
 
 using namespace MT32Emu;
 
-DefaultMidiStreamParser::DefaultMidiStreamParser(Synth &useSynth, Bit32u initialStreamBufferCapacity) :
-	MidiStreamParser(initialStreamBufferCapacity), synth(useSynth), timestampSet(false) {}
+DefaultMidiStreamParser::DefaultMidiStreamParser(Synth &useSynth, Bit32u initialStreamBufferCapacity)
+  : MidiStreamParser(initialStreamBufferCapacity)
+  , synth(useSynth)
+  , timestampSet(false) {}
 
 void DefaultMidiStreamParser::setTimestamp(const Bit32u useTimestamp) {
 	timestampSet = true;
@@ -40,10 +42,11 @@ void DefaultMidiStreamParser::resetTimestamp() {
 void DefaultMidiStreamParser::handleShortMessage(const Bit32u message) {
 	do {
 		if (timestampSet) {
-			if (synth.playMsg(message, timestamp)) return;
-		}
-		else {
-			if (synth.playMsg(message)) return;
+			if (synth.playMsg(message, timestamp))
+				return;
+		} else {
+			if (synth.playMsg(message))
+				return;
 		}
 	} while (synth.reportHandler->onMIDIQueueOverflow());
 }
@@ -51,10 +54,11 @@ void DefaultMidiStreamParser::handleShortMessage(const Bit32u message) {
 void DefaultMidiStreamParser::handleSysex(const Bit8u *stream, const Bit32u length) {
 	do {
 		if (timestampSet) {
-			if (synth.playSysex(stream, length, timestamp)) return;
-		}
-		else {
-			if (synth.playSysex(stream, length)) return;
+			if (synth.playSysex(stream, length, timestamp))
+				return;
+		} else {
+			if (synth.playSysex(stream, length))
+				return;
 		}
 	} while (synth.reportHandler->onMIDIQueueOverflow());
 }
@@ -67,14 +71,16 @@ void DefaultMidiStreamParser::printDebug(const char *debugMessage) {
 	synth.printDebug("%s", debugMessage);
 }
 
-MidiStreamParser::MidiStreamParser(Bit32u initialStreamBufferCapacity) :
-	MidiStreamParserImpl(*this, *this, initialStreamBufferCapacity) {}
+MidiStreamParser::MidiStreamParser(Bit32u initialStreamBufferCapacity)
+  : MidiStreamParserImpl(*this, *this, initialStreamBufferCapacity) {}
 
-MidiStreamParserImpl::MidiStreamParserImpl(MidiReceiver &useReceiver, MidiReporter &useReporter, Bit32u initialStreamBufferCapacity) :
-	midiReceiver(useReceiver), midiReporter(useReporter)
-{
-	if (initialStreamBufferCapacity < SYSEX_BUFFER_SIZE) initialStreamBufferCapacity = SYSEX_BUFFER_SIZE;
-	if (MAX_STREAM_BUFFER_SIZE < initialStreamBufferCapacity) initialStreamBufferCapacity = MAX_STREAM_BUFFER_SIZE;
+MidiStreamParserImpl::MidiStreamParserImpl(MidiReceiver &useReceiver, MidiReporter &useReporter, Bit32u initialStreamBufferCapacity)
+  : midiReceiver(useReceiver)
+  , midiReporter(useReporter) {
+	if (initialStreamBufferCapacity < SYSEX_BUFFER_SIZE)
+		initialStreamBufferCapacity = SYSEX_BUFFER_SIZE;
+	if (MAX_STREAM_BUFFER_SIZE < initialStreamBufferCapacity)
+		initialStreamBufferCapacity = MAX_STREAM_BUFFER_SIZE;
 	streamBufferCapacity = initialStreamBufferCapacity;
 	streamBuffer = new Bit8u[streamBufferCapacity];
 	streamBufferSize = 0;
@@ -132,12 +138,14 @@ void MidiStreamParserImpl::processShortMessage(const Bit32u message) {
 // We deal with SysEx messages below 512 bytes long in most cases. Nevertheless, it seems reasonable to support a possibility
 // to load bulk dumps using a single message. However, this is known to fail with a real device due to limited input buffer size.
 bool MidiStreamParserImpl::checkStreamBufferCapacity(const bool preserveContent) {
-	if (streamBufferSize < streamBufferCapacity) return true;
+	if (streamBufferSize < streamBufferCapacity)
+		return true;
 	if (streamBufferCapacity < MAX_STREAM_BUFFER_SIZE) {
 		Bit8u *oldStreamBuffer = streamBuffer;
 		streamBufferCapacity = MAX_STREAM_BUFFER_SIZE;
 		streamBuffer = new Bit8u[streamBufferCapacity];
-		if (preserveContent) memcpy(streamBuffer, oldStreamBuffer, streamBufferSize);
+		if (preserveContent)
+			memcpy(streamBuffer, oldStreamBuffer, streamBufferSize);
 		delete[] oldStreamBuffer;
 		return true;
 	}
@@ -201,7 +209,8 @@ Bit32u MidiStreamParserImpl::parseShortMessageDataBytes(const Bit8u stream[], Bi
 		}
 		++parsedLength;
 	}
-	if (streamBufferSize < shortMessageLength) return parsedLength; // Still lacks data bytes
+	if (streamBufferSize < shortMessageLength)
+		return parsedLength; // Still lacks data bytes
 
 	// Assemble short message
 	Bit32u shortMessage = streamBuffer[0];
@@ -257,7 +266,8 @@ Bit32u MidiStreamParserImpl::parseSysexFragment(const Bit8u stream[], const Bit3
 		Bit8u nextByte = stream[parsedLength++];
 		if (nextByte < 0x80) {
 			// Add SysEx data byte to streamBuffer
-			if (checkStreamBufferCapacity(true)) streamBuffer[streamBufferSize++] = nextByte;
+			if (checkStreamBufferCapacity(true))
+				streamBuffer[streamBufferSize++] = nextByte;
 			continue;
 		}
 		if (0xF8 <= nextByte) {

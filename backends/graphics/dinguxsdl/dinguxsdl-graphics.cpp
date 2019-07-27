@@ -24,23 +24,23 @@
 
 #if defined(DINGUX)
 
-#include "backends/graphics/dinguxsdl/dinguxsdl-graphics.h"
-#include "backends/events/dinguxsdl/dinguxsdl-events.h"
-#include "graphics/scaler/aspect.h"
-#include "common/mutex.h"
-#include "common/textconsole.h"
+#	include "backends/events/dinguxsdl/dinguxsdl-events.h"
+#	include "backends/graphics/dinguxsdl/dinguxsdl-graphics.h"
+#	include "common/mutex.h"
+#	include "common/textconsole.h"
+#	include "graphics/scaler/aspect.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
-	{"1x", "Standard", GFX_NORMAL},
-	{0, 0, 0}
+	{ "1x", "Standard", GFX_NORMAL },
+	{ 0, 0, 0 }
 };
 
-#ifndef USE_SCALERS
-#define DownscaleAllByHalf 0
-#endif
+#	ifndef USE_SCALERS
+#		define DownscaleAllByHalf 0
+#	endif
 
 DINGUXSdlGraphicsManager::DINGUXSdlGraphicsManager(SdlEventSource *boss, SdlWindow *window)
-	: SurfaceSdlGraphicsManager(boss, window) {
+  : SurfaceSdlGraphicsManager(boss, window) {
 }
 
 const OSystem::GraphicsMode *DINGUXSdlGraphicsManager::getSupportedGraphicsModes() const {
@@ -55,9 +55,9 @@ int DINGUXSdlGraphicsManager::getGraphicsModeScale(int mode) const {
 	int scale;
 	switch (mode) {
 	case GFX_NORMAL:
-#ifdef USE_SCALERS
+#	ifdef USE_SCALERS
 	case GFX_HALF:
-#endif
+#	endif
 		scale = 1;
 		break;
 	default:
@@ -75,11 +75,11 @@ void DINGUXSdlGraphicsManager::setGraphicsModeIntern() {
 	case GFX_NORMAL:
 		newScalerProc = Normal1x;
 		break;
-#ifdef USE_SCALERS
+#	ifdef USE_SCALERS
 	case GFX_HALF:
 		newScalerProc = DownscaleAllByHalf;
 		break;
-#endif
+#	endif
 
 	default:
 		error("Unknown gfx mode %d", _videoMode.mode);
@@ -101,7 +101,7 @@ void DINGUXSdlGraphicsManager::setGraphicsModeIntern() {
 void DINGUXSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	assert(_transactionMode == kTransactionActive);
 
-#ifdef USE_RGB_COLOR
+#	ifdef USE_RGB_COLOR
 	// Avoid redundant format changes
 	Graphics::PixelFormat newFormat;
 	if (!format)
@@ -116,8 +116,7 @@ void DINGUXSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFor
 		_transactionDetails.formatChanged = true;
 		_screenFormat = newFormat;
 	}
-#endif
-
+#	endif
 
 	// Avoid redundant res changes
 	if ((int)w == _videoMode.screenWidth && (int)h == _videoMode.screenHeight)
@@ -143,7 +142,7 @@ void DINGUXSdlGraphicsManager::drawMouse() {
 	SDL_Rect dst;
 	int scale;
 	int hotX, hotY;
-	
+
 	const Common::Point virtualCursor = convertWindowToVirtual(_cursorX, _cursorY);
 
 	if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
@@ -212,7 +211,7 @@ void DINGUXSdlGraphicsManager::undrawMouse() {
 
 	if (_mouseBackup.w != 0 && _mouseBackup.h != 0) {
 		if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
-			addDirtyRect(x*2, y*2, _mouseBackup.w*2, _mouseBackup.h*2);
+			addDirtyRect(x * 2, y * 2, _mouseBackup.w * 2, _mouseBackup.h * 2);
 		} else {
 			addDirtyRect(x, y, _mouseBackup.w, _mouseBackup.h);
 		}
@@ -225,15 +224,14 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 	ScalerProc *scalerProc;
 	int scale1;
 
-#if defined(DEBUG)
+#	if defined(DEBUG)
 	assert(_hwScreen != NULL);
 	assert(_hwScreen->map->sw_data != NULL);
-#endif
+#	endif
 
 	// If the shake position changed, fill the dirty area with blackness
-	if (_currentShakePos != _newShakePos ||
-		(_cursorNeedsRedraw && _mouseBackup.y <= _currentShakePos)) {
-		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_newShakePos * _videoMode.scaleFactor)};
+	if (_currentShakePos != _newShakePos || (_cursorNeedsRedraw && _mouseBackup.y <= _currentShakePos)) {
+		SDL_Rect blackrect = { 0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_newShakePos * _videoMode.scaleFactor) };
 
 		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
@@ -278,9 +276,9 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 	if (_cursorNeedsRedraw)
 		undrawMouse();
 
-#ifdef USE_OSD
+#	ifdef USE_OSD
 	updateOSD();
-#endif
+#	endif
 
 	// Force a full redraw if requested
 	if (_forceRedraw) {
@@ -300,8 +298,8 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 
 		for (r = _dirtyRectList; r != lastRect; ++r) {
 			dst = *r;
-			dst.x++;	// Shift rect by one since 2xSai needs to access the data around
-			dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
+			dst.x++; // Shift rect by one since 2xSai needs to access the data around
+			dst.y++; // any pixel to scale it, and we want to avoid mem access crashes.
 
 			if (SDL_BlitSurface(origSurf, r, srcSurf, &dst) != 0)
 				error("SDL_BlitSurface failed: %s", SDL_GetError());
@@ -370,11 +368,10 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 			r->x = dst_x;
 			r->y = dst_y;
 
-
-#ifdef USE_SCALERS
+#	ifdef USE_SCALERS
 			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible)
-				r->h = stretch200To240((uint8 *) _hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1, _videoMode.filtering);
-#endif
+				r->h = stretch200To240((uint8 *)_hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1, _videoMode.filtering);
+#	endif
 		}
 		SDL_UnlockSurface(srcSurf);
 		SDL_UnlockSurface(_hwScreen);
@@ -388,9 +385,9 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 
 		drawMouse();
 
-#ifdef USE_OSD
+#	ifdef USE_OSD
 		drawOSD();
-#endif
+#	endif
 		// Finally, blit all our changes to the screen
 		SDL_UpdateRects(_hwScreen, _numDirtyRects, _dirtyRectList);
 	}
@@ -459,9 +456,7 @@ bool DINGUXSdlGraphicsManager::loadGFXMode() {
 }
 
 bool DINGUXSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
-	return
-	    (f == OSystem::kFeatureAspectRatioCorrection) ||
-	    (f == OSystem::kFeatureCursorPalette);
+	return (f == OSystem::kFeatureAspectRatioCorrection) || (f == OSystem::kFeatureCursorPalette);
 }
 
 void DINGUXSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
@@ -483,7 +478,7 @@ bool DINGUXSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 
 	switch (f) {
 	case OSystem::kFeatureAspectRatioCorrection:
-			return _videoMode.aspectRatioCorrection;
+		return _videoMode.aspectRatioCorrection;
 	case OSystem::kFeatureCursorPalette:
 		return !_cursorPaletteDisabled;
 	default:

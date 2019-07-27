@@ -20,21 +20,23 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "titanic/true_talk/tt_room_script.h"
+#include "common/textconsole.h"
 
 namespace Titanic {
 
 TTroomScriptBase::TTroomScriptBase(int scriptId,
-		const char *charClass, const char *charName,
-		int v3, int v4, int v5, int v6, int v2, int v7) : _scriptId(scriptId),
-		TTscriptBase(3, charClass, v2, charName, v3, v4, v5, v6, v7) {
+                                   const char *charClass, const char *charName,
+                                   int v3, int v4, int v5, int v6, int v2, int v7)
+  : _scriptId(scriptId)
+  , TTscriptBase(3, charClass, v2, charName, v3, v4, v5, v6, v7) {
 }
 
 /*------------------------------------------------------------------------*/
 
-TTroomScript::TTroomScript(int scriptId) :
-	TTroomScriptBase(scriptId, "", "", 0, -1, -1, -1, 0, 0), _field54(0) {
+TTroomScript::TTroomScript(int scriptId)
+  : TTroomScriptBase(scriptId, "", "", 0, -1, -1, -1, 0, 0)
+  , _field54(0) {
 }
 
 bool TTroomScript::proc8() const {

@@ -34,6 +34,7 @@ namespace Glk {
 struct Picture : Graphics::ManagedSurface {
 private:
 	int _transColor;
+
 public:
 	int _refCount;
 	uint _id;
@@ -42,7 +43,12 @@ public:
 	/**
 	 * Constructor
 	 */
-	Picture() : Graphics::ManagedSurface(), _refCount(0), _id(0), _scaled(false), _transColor(0x7777) {}
+	Picture()
+	  : Graphics::ManagedSurface()
+	  , _refCount(0)
+	  , _id(0)
+	  , _scaled(false)
+	  , _transColor(0x7777) {}
 
 	/**
 	 * Constructor
@@ -80,7 +86,9 @@ public:
 struct PictureEntry {
 	Picture *_picture;
 	Picture *_scaled;
-	PictureEntry() : _picture(nullptr), _scaled(nullptr) {}
+	PictureEntry()
+	  : _picture(nullptr)
+	  , _scaled(nullptr) {}
 };
 
 /**
@@ -90,6 +98,7 @@ class Pictures {
 private:
 	int _refCount;
 	Common::Array<PictureEntry> _store;
+
 private:
 	/**
 	 * Stores an original picture in the store
@@ -100,11 +109,13 @@ private:
 	 * Stores a scaled picture in the store
 	 */
 	void storeScaled(Picture *pic);
+
 public:
 	/**
 	 * Constructor
 	 */
-	Pictures() : _refCount(0) {}
+	Pictures()
+	  : _refCount(0) {}
 
 	/**
 	 * Destructor

@@ -22,16 +22,16 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
@@ -74,7 +74,7 @@ void scene03_initScene(Scene *sc) {
 	g_fp->lift_init(sc, QU_SC3_ENTERLIFT, QU_SC3_EXITLIFT);
 
 	debugC(2, kDebugSceneLogic, "scene03: egg1: %d egg2: %d egg3: %d", g_vars->swallowedEgg1->_value.intValue,
-		g_vars->swallowedEgg2->_value.intValue, g_vars->swallowedEgg3->_value.intValue);
+	       g_vars->swallowedEgg2->_value.intValue, g_vars->swallowedEgg3->_value.intValue);
 }
 
 void scene03_setEaterState() {
@@ -126,9 +126,7 @@ void sceneHandler03_swallowEgg(int item) {
 void sceneHandler03_giveItem(ExCommand *ex) {
 	debugC(2, kDebugSceneLogic, "scene03: giveItem");
 
-	if (ex->_parentId == ANI_INV_EGGAPL || ex->_parentId == ANI_INV_EGGDOM ||
-		ex->_parentId == ANI_INV_EGGCOIN || ex->_parentId == ANI_INV_EGGBOOT ||
-		ex->_parentId == ANI_INV_EGGGLS)
+	if (ex->_parentId == ANI_INV_EGGAPL || ex->_parentId == ANI_INV_EGGDOM || ex->_parentId == ANI_INV_EGGCOIN || ex->_parentId == ANI_INV_EGGBOOT || ex->_parentId == ANI_INV_EGGGLS)
 		sceneHandler03_swallowEgg(ex->_parentId);
 }
 
@@ -174,10 +172,10 @@ void sceneHandler03_pushEggStack() {
 	g_vars->swallowedEgg3->_value.intValue = 0;
 
 	if (g_vars->swallowedEgg2->_value.intValue == ANI_INV_EGGBOOT
-		 && g_vars->swallowedEgg1->_value.intValue == ANI_INV_EGGAPL) {
+	    && g_vars->swallowedEgg1->_value.intValue == ANI_INV_EGGAPL) {
 		g_vars->swallowedEgg1->_value.intValue = ANI_INV_EGGBOOT;
 		g_vars->swallowedEgg2->_value.intValue = ANI_INV_EGGAPL;
-  }
+	}
 }
 
 void sceneHandler03_releaseEgg() {
@@ -204,10 +202,10 @@ void sceneHandler03_takeEgg(ExCommand *ex) {
 			sceneHandler03_pushEggStack();
 		}
 
-		if ( g_vars->swallowedEgg1->_value.intValue == ANI_INV_EGGAPL
-			 && !g_vars->swallowedEgg2->_value.intValue
-			 && !g_vars->swallowedEgg3->_value.intValue
-			 && ex1) {
+		if (g_vars->swallowedEgg1->_value.intValue == ANI_INV_EGGAPL
+		    && !g_vars->swallowedEgg2->_value.intValue
+		    && !g_vars->swallowedEgg3->_value.intValue
+		    && ex1) {
 
 			if (ex1->_objtype == kObjTypeObjstateCommand) {
 				ObjstateCommand *com = static_cast<ObjstateCommand *>(ex1);
@@ -277,51 +275,49 @@ int sceneHandler03(ExCommand *ex) {
 		g_fp->lift_hoverButton(ex);
 		break;
 
-	case 29:
-		{
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
-			if (ani && ani->_id == ANI_LIFTBUTTON) {
-				g_fp->lift_animateButton(ani);
-				ex->_messageKind = 0;
+	case 29: {
+		StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
+		if (ani && ani->_id == ANI_LIFTBUTTON) {
+			g_fp->lift_animateButton(ani);
+			ex->_messageKind = 0;
 
-				return 0;
-			}
-
-			if (g_fp->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY) == PIC_SC3_DOMIN) {
-				if (g_vars->scene03_domino)
-					if (g_vars->scene03_domino->_flags & 4)
-						if (g_fp->_aniMan->isIdle())
-							if (!(g_fp->_aniMan->_flags & 0x100) && g_fp->_msgObjectId2 != g_vars->scene03_domino->_id) {
-								handleObjectInteraction(g_fp->_aniMan, g_vars->scene03_domino, ex->_param);
-								ex->_messageKind = 0;
-
-								return 0;
-							}
-			}
-
-			break;
+			return 0;
 		}
 
-	case 33:
-		{
-			int res = 0;
+		if (g_fp->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY) == PIC_SC3_DOMIN) {
+			if (g_vars->scene03_domino)
+				if (g_vars->scene03_domino->_flags & 4)
+					if (g_fp->_aniMan->isIdle())
+						if (!(g_fp->_aniMan->_flags & 0x100) && g_fp->_msgObjectId2 != g_vars->scene03_domino->_id) {
+							handleObjectInteraction(g_fp->_aniMan, g_vars->scene03_domino, ex->_param);
+							ex->_messageKind = 0;
 
-			if (g_fp->_aniMan2) {
-				if (g_fp->_aniMan2->_ox < g_fp->_sceneRect.left + 200)
-					g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.left - 300;
-
-				if (g_fp->_aniMan2->_ox > g_fp->_sceneRect.right - 200)
-					g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.right + 300;
-
-				res = 1;
-			}
-
-			g_fp->_behaviorManager->updateBehaviors();
-
-			g_fp->startSceneTrack();
-
-			return res;
+							return 0;
+						}
 		}
+
+		break;
+	}
+
+	case 33: {
+		int res = 0;
+
+		if (g_fp->_aniMan2) {
+			if (g_fp->_aniMan2->_ox < g_fp->_sceneRect.left + 200)
+				g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.left - 300;
+
+			if (g_fp->_aniMan2->_ox > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.right + 300;
+
+			res = 1;
+		}
+
+		g_fp->_behaviorManager->updateBehaviors();
+
+		g_fp->startSceneTrack();
+
+		return res;
+	}
 	}
 
 	return 0;

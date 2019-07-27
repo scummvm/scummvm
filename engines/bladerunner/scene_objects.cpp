@@ -47,18 +47,18 @@ SceneObjects::~SceneObjects() {
 
 void SceneObjects::clear() {
 	for (int i = 0; i < kSceneObjectCount; ++i) {
-		_sceneObjects[i].id               = -1;
-		_sceneObjects[i].type             = kSceneObjectTypeUnknown;
+		_sceneObjects[i].id = -1;
+		_sceneObjects[i].type = kSceneObjectTypeUnknown;
 		_sceneObjects[i].distanceToCamera = 0.0f;
-		_sceneObjects[i].isPresent        = false;
-		_sceneObjects[i].isClickable      = false;
-		_sceneObjects[i].isObstacle       = false;
-		_sceneObjects[i].unknown1         = 0;
-		_sceneObjects[i].isTarget         = false;
-		_sceneObjects[i].isMoving         = false;
-		_sceneObjects[i].isRetired        = false;
+		_sceneObjects[i].isPresent = false;
+		_sceneObjects[i].isClickable = false;
+		_sceneObjects[i].isObstacle = false;
+		_sceneObjects[i].unknown1 = 0;
+		_sceneObjects[i].isTarget = false;
+		_sceneObjects[i].isMoving = false;
+		_sceneObjects[i].isRetired = false;
 
-		_sceneObjectsSortedByDistance[i]  = -1;
+		_sceneObjectsSortedByDistance[i] = -1;
 	}
 	_count = 0;
 }
@@ -98,17 +98,15 @@ bool SceneObjects::remove(int sceneObjectId) {
 
 int SceneObjects::findByXYZ(bool *isClickable, bool *isObstacle, bool *isTarget, Vector3 &position, bool findClickables, bool findObstacles, bool findTargets) const {
 	*isClickable = false;
-	*isObstacle  = false;
-	*isTarget    = false;
+	*isObstacle = false;
+	*isTarget = false;
 
 	for (int i = 0; i < _count; ++i) {
 		assert(_sceneObjectsSortedByDistance[i] < kSceneObjectCount);
 
 		const SceneObject *sceneObject = &_sceneObjects[_sceneObjectsSortedByDistance[i]];
 
-		if ((findClickables && sceneObject->isClickable) ||
-			(findObstacles  && sceneObject->isObstacle) ||
-			(findTargets    && sceneObject->isTarget)) {
+		if ((findClickables && sceneObject->isClickable) || (findObstacles && sceneObject->isObstacle) || (findTargets && sceneObject->isTarget)) {
 			BoundingBox boundingBox = sceneObject->boundingBox;
 
 			if (sceneObject->type == kSceneObjectTypeActor) {
@@ -117,8 +115,8 @@ int SceneObjects::findByXYZ(bool *isClickable, bool *isObstacle, bool *isTarget,
 
 			if (boundingBox.inside(position)) {
 				*isClickable = sceneObject->isClickable;
-				*isObstacle  = sceneObject->isObstacle;
-				*isTarget    = sceneObject->isTarget;
+				*isObstacle = sceneObject->isObstacle;
+				*isTarget = sceneObject->isTarget;
 
 				return sceneObject->id;
 			}
@@ -156,21 +154,21 @@ bool SceneObjects::existsOnXZ(int exceptSceneObjectId, float x, float z, bool mo
 				float x1, y1, z1, x2, y2, z2;
 				sceneObject->boundingBox.getXYZ(&x1, &y1, &z1, &x2, &y2, &z2);
 				if (z1 <= zMax && z2 >= zMin && x1 <= xMax && x2 >= xMin) {
-//					if (sceneObject->type == kSceneObjectTypeObject) {
-//						Vector3 a(x1,y1,z1);
-//						Vector3 b(x2,y2,z2);
-//						Vector3 pos = _vm->_view->calculateScreenPosition(0.5 * (a + b));
-//						debug("%d: %s (Clk: %s, Trg: %s, Prs: %s, Obs: %s, Mvg: %s), Pos(%02.2f,%02.2f,%02.2f)\n     Bbox(%02.2f,%02.2f,%02.2f) ~ (%02.2f,%02.2f,%02.2f)\n",
-//								 sceneObject->id - kSceneObjectOffsetObjects,
-//								 _vm->_scene->objectGetName(sceneObject->id - kSceneObjectOffsetObjects).c_str(),
-//								 sceneObject->isClickable? "T" : "F",
-//								 sceneObject->isTarget?    "T" : "F",
-//								 sceneObject->isPresent?   "T" : "F",
-//								 sceneObject->isObstacle?  "T" : "F",
-//								 sceneObject->isMoving?    "T" : "F",
-//								 pos.x, pos.y, pos.z,
-//								 a.x, a.y, a.z, b.x, b.y, b.z);
-//					}
+					//					if (sceneObject->type == kSceneObjectTypeObject) {
+					//						Vector3 a(x1,y1,z1);
+					//						Vector3 b(x2,y2,z2);
+					//						Vector3 pos = _vm->_view->calculateScreenPosition(0.5 * (a + b));
+					//						debug("%d: %s (Clk: %s, Trg: %s, Prs: %s, Obs: %s, Mvg: %s), Pos(%02.2f,%02.2f,%02.2f)\n     Bbox(%02.2f,%02.2f,%02.2f) ~ (%02.2f,%02.2f,%02.2f)\n",
+					//								 sceneObject->id - kSceneObjectOffsetObjects,
+					//								 _vm->_scene->objectGetName(sceneObject->id - kSceneObjectOffsetObjects).c_str(),
+					//								 sceneObject->isClickable? "T" : "F",
+					//								 sceneObject->isTarget?    "T" : "F",
+					//								 sceneObject->isPresent?   "T" : "F",
+					//								 sceneObject->isObstacle?  "T" : "F",
+					//								 sceneObject->isMoving?    "T" : "F",
+					//								 pos.x, pos.y, pos.z,
+					//								 a.x, a.y, a.z, b.x, b.y, b.z);
+					//					}
 					return true;
 				}
 			}
@@ -196,17 +194,17 @@ bool SceneObjects::addSceneObject(int sceneObjectId, SceneObjectType sceneObject
 		return false;
 	}
 
-	_sceneObjects[index].id              = sceneObjectId;
-	_sceneObjects[index].type            = sceneObjectType;
-	_sceneObjects[index].isPresent       = true;
-	_sceneObjects[index].boundingBox     = boundingBox;
+	_sceneObjects[index].id = sceneObjectId;
+	_sceneObjects[index].type = sceneObjectType;
+	_sceneObjects[index].isPresent = true;
+	_sceneObjects[index].boundingBox = boundingBox;
 	_sceneObjects[index].screenRectangle = screenRectangle;
-	_sceneObjects[index].isClickable     = isClickable;
-	_sceneObjects[index].isObstacle      = isObstacle;
-	_sceneObjects[index].unknown1        = unknown1;
-	_sceneObjects[index].isTarget        = isTarget;
-	_sceneObjects[index].isMoving        = isMoving;
-	_sceneObjects[index].isRetired       = isRetired;
+	_sceneObjects[index].isClickable = isClickable;
+	_sceneObjects[index].isObstacle = isObstacle;
+	_sceneObjects[index].unknown1 = unknown1;
+	_sceneObjects[index].isTarget = isTarget;
+	_sceneObjects[index].isMoving = isMoving;
+	_sceneObjects[index].isRetired = isRetired;
 
 	float centerZ = (_sceneObjects[index].boundingBox.getZ0() + _sceneObjects[index].boundingBox.getZ1()) / 2.0f;
 
@@ -264,9 +262,9 @@ bool SceneObjects::isBetween(float sourceX, float sourceZ, float targetX, float 
 
 	Vector2 intersection;
 	return lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX1, objectZ1), Vector2(objectX2, objectZ1), &intersection)
-	    || lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX2, objectZ1), Vector2(objectX2, objectZ2), &intersection)
-	    || lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX2, objectZ2), Vector2(objectX1, objectZ2), &intersection)
-	    || lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX1, objectZ2), Vector2(objectX1, objectZ1), &intersection);
+	  || lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX2, objectZ1), Vector2(objectX2, objectZ2), &intersection)
+	  || lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX2, objectZ2), Vector2(objectX1, objectZ2), &intersection)
+	  || lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX1, objectZ2), Vector2(objectX1, objectZ1), &intersection);
 }
 
 bool SceneObjects::isObstacleBetween(const Vector3 &source, const Vector3 &target, int exceptSceneObjectId) const {
@@ -294,9 +292,9 @@ bool SceneObjects::isObstacleBetween(const Vector3 &source, const Vector3 &targe
 
 		Vector2 intersection;
 		if (lineIntersection(Vector2(source.x, source.z), Vector2(target.x, target.z), Vector2(objectX1, objectZ1), Vector2(objectX2, objectZ1), &intersection)
-		 || lineIntersection(Vector2(source.x, source.z), Vector2(target.x, target.z), Vector2(objectX2, objectZ1), Vector2(objectX2, objectZ2), &intersection)
-		 || lineIntersection(Vector2(source.x, source.z), Vector2(target.x, target.z), Vector2(objectX2, objectZ2), Vector2(objectX1, objectZ2), &intersection)
-		 || lineIntersection(Vector2(source.x, source.z), Vector2(target.x, target.z), Vector2(objectX1, objectZ2), Vector2(objectX1, objectZ1), &intersection)) {
+		    || lineIntersection(Vector2(source.x, source.z), Vector2(target.x, target.z), Vector2(objectX2, objectZ1), Vector2(objectX2, objectZ2), &intersection)
+		    || lineIntersection(Vector2(source.x, source.z), Vector2(target.x, target.z), Vector2(objectX2, objectZ2), Vector2(objectX1, objectZ2), &intersection)
+		    || lineIntersection(Vector2(source.x, source.z), Vector2(target.x, target.z), Vector2(objectX1, objectZ2), Vector2(objectX1, objectZ1), &intersection)) {
 			return true;
 		}
 	}

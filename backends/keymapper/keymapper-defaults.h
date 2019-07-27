@@ -22,13 +22,13 @@
 
 #ifdef ENABLE_KEYMAPPER
 
-#ifndef KEYMAPPER_DEFAULTS_H
-#define KEYMAPPER_DEFAULTS_H
+#	ifndef KEYMAPPER_DEFAULTS_H
+#		define KEYMAPPER_DEFAULTS_H
 
-#include "common/scummsys.h"
-#include "common/hashmap.h"
-#include "common/str.h"
-#include "common/hash-str.h"
+#		include "common/hash-str.h"
+#		include "common/hashmap.h"
+#		include "common/scummsys.h"
+#		include "common/str.h"
 
 namespace Common {
 
@@ -52,5 +52,5 @@ public:
 
 } //namespace Common
 
-#endif // #ifndef KEYMAPPER_DEFAULTS_H
+#	endif // #ifndef KEYMAPPER_DEFAULTS_H
 #endif // #ifdef ENABLE_KEYMAPPER

@@ -24,9 +24,9 @@
 
 #if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(ARM_TARGET)
 
-#include "backends/plugins/elf/arm-loader.h"
+#	include "backends/plugins/elf/arm-loader.h"
 
-#include "common/debug.h"
+#	include "common/debug.h"
 
 bool ARMDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment) {
 	Elf32_Rel *rel = 0; //relocation entry
@@ -60,14 +60,14 @@ bool ARMDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment) 
 		// Get the target instruction in the code. TODO: repect _segmentVMA
 		uint32 *target = (uint32 *)((byte *)relSegment + rel[i].r_offset);
 
-		uint32 origTarget = *target;	//Save for debugging
+		uint32 origTarget = *target; //Save for debugging
 
 		// Act differently based on the type of relocation
 		switch (REL_TYPE(rel[i].r_info)) {
 		case R_ARM_ABS32:
-			if (sym->st_shndx < SHN_LOPROC) {			// Only shift for plugin section.
-				a = *target;							// Get full 32 bits of addend
-				relocation = a + Elf32_Addr(_segment);	// Shift by main offset
+			if (sym->st_shndx < SHN_LOPROC) { // Only shift for plugin section.
+				a = *target; // Get full 32 bits of addend
+				relocation = a + Elf32_Addr(_segment); // Shift by main offset
 
 				*target = relocation;
 
@@ -107,11 +107,11 @@ bool ARMDLObject::relocateRels(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 	for (uint32 i = 0; i < ehdr->e_shnum; i++) {
 		Elf32_Shdr *curShdr = &(shdr[i]);
 
-		if ((curShdr->sh_type == SHT_REL || curShdr->sh_type == SHT_RELA) &&		// Check for a relocation section
-				curShdr->sh_entsize == sizeof(Elf32_Rel) &&			// Check for proper relocation size
-				int32(curShdr->sh_link) == _symtab_sect &&			// Check that the sh_link connects to our symbol table
-				curShdr->sh_info < ehdr->e_shnum &&					// Check that the relocated section exists
-				(shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) {	// Check if relocated section resides in memory
+		if ((curShdr->sh_type == SHT_REL || curShdr->sh_type == SHT_RELA) && // Check for a relocation section
+		    curShdr->sh_entsize == sizeof(Elf32_Rel) && // Check for proper relocation size
+		    int32(curShdr->sh_link) == _symtab_sect && // Check that the sh_link connects to our symbol table
+		    curShdr->sh_info < ehdr->e_shnum && // Check that the relocated section exists
+		    (shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) { // Check if relocated section resides in memory
 
 			if (curShdr->sh_type == SHT_RELA) {
 				warning("elfloader: RELA entries not supported yet!");

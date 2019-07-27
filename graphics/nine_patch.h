@@ -47,8 +47,8 @@
 #define GRAPHICS_NINE_PATCH_H
 
 #include "common/array.h"
-#include "common/rect.h"
 #include "common/hashmap.h"
+#include "common/rect.h"
 
 namespace Graphics {
 
@@ -68,7 +68,8 @@ public:
 	Common::Array<NinePatchMark *> _m;
 	int _fix;
 
-	NinePatchSide() : _fix(0) {}
+	NinePatchSide()
+	  : _fix(0) {}
 	~NinePatchSide();
 
 	bool init(Graphics::TransparentSurface *bmp, bool vertical);
@@ -99,14 +100,13 @@ public:
 	Common::Rect &getPadding() { return _padding; }
 
 private:
-
 	void drawRegions(Graphics::Surface &target, int dx, int dy, int dw, int dh);
 
 	// Assumes color is in the palette
 	byte getColorIndex(uint32 target, byte *palette);
 	uint32 grayscale(uint32 color);
 	uint32 grayscale(byte r, byte g, byte b);
-	byte closestGrayscale(uint32 color, byte* palette, byte paletteLength);
+	byte closestGrayscale(uint32 color, byte *palette, byte paletteLength);
 };
 
 } // end of namespace Graphics

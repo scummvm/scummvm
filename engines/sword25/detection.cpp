@@ -24,17 +24,17 @@
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
 
-#include "sword25/sword25.h"
 #include "sword25/detection_tables.h"
 #include "sword25/kernel/persistenceservice.h"
+#include "sword25/sword25.h"
 
 namespace Sword25 {
 uint32 Sword25Engine::getGameFlags() const { return _gameDescription->flags; }
 }
 
 static const PlainGameDescriptor sword25Game[] = {
-	{"sword25", "Broken Sword 2.5"},
-	{0, 0}
+	{ "sword25", "Broken Sword 2.5" },
+	{ 0, 0 }
 };
 
 static const char *directoryGlobs[] = {
@@ -51,7 +51,8 @@ static const ExtraGuiOption sword25ExtraGuiOption = {
 
 class Sword25MetaEngine : public AdvancedMetaEngine {
 public:
-	Sword25MetaEngine() : AdvancedMetaEngine(Sword25::gameDescriptions, sizeof(ADGameDescription), sword25Game) {
+	Sword25MetaEngine()
+	  : AdvancedMetaEngine(Sword25::gameDescriptions, sizeof(ADGameDescription), sword25Game) {
 		_guiOptions = GUIO1(GUIO_NOMIDI);
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
@@ -79,8 +80,7 @@ bool Sword25MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADG
 }
 
 bool Sword25MetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves);
+	return (f == kSupportsListSaves);
 }
 
 const ExtraGuiOptions Sword25MetaEngine::getExtraGuiOptions(const Common::String &target) const {
@@ -110,7 +110,7 @@ SaveStateList Sword25MetaEngine::listSaves(const char *target) const {
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SWORD25)
-	REGISTER_PLUGIN_DYNAMIC(SWORD25, PLUGIN_TYPE_ENGINE, Sword25MetaEngine);
+REGISTER_PLUGIN_DYNAMIC(SWORD25, PLUGIN_TYPE_ENGINE, Sword25MetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(SWORD25, PLUGIN_TYPE_ENGINE, Sword25MetaEngine);
+REGISTER_PLUGIN_STATIC(SWORD25, PLUGIN_TYPE_ENGINE, Sword25MetaEngine);
 #endif

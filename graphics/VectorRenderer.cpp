@@ -45,7 +45,7 @@ void VectorRenderer::drawStep(const Common::Rect &area, const DrawStep &step, ui
 
 	if (step.gradColor1.set && step.gradColor2.set)
 		setGradientColors(step.gradColor1.r, step.gradColor1.g, step.gradColor1.b,
-						  step.gradColor2.r, step.gradColor2.g, step.gradColor2.b);
+		                  step.gradColor2.r, step.gradColor2.g, step.gradColor2.b);
 
 	setShadowOffset(_disableShadows ? 0 : step.shadow);
 	setBevel(step.bevel);
@@ -72,7 +72,7 @@ void VectorRenderer::drawStepClip(const Common::Rect &area, const Common::Rect &
 
 	if (step.gradColor1.set && step.gradColor2.set)
 		setGradientColors(step.gradColor1.r, step.gradColor1.g, step.gradColor1.b,
-			step.gradColor2.r, step.gradColor2.g, step.gradColor2.b);
+		                  step.gradColor2.r, step.gradColor2.g, step.gradColor2.b);
 
 	setShadowOffset(_disableShadows ? 0 : step.shadow);
 	setBevel(step.bevel);
@@ -112,11 +112,11 @@ void VectorRenderer::stepGetPositions(const DrawStep &step, const Common::Rect &
 			break;
 
 		case Graphics::DrawStep::kVectorAlignCenter:
-			in_x = area.left + (area.width() / 2) - (in_w / 2) + ((step.padding.left + step.padding.right ) / 2);
+			in_x = area.left + (area.width() / 2) - (in_w / 2) + ((step.padding.left + step.padding.right) / 2);
 			break;
 
 		case Graphics::DrawStep::kVectorAlignLeft:
-			in_x = area.left  + step.padding.left;
+			in_x = area.left + step.padding.left;
 			break;
 
 		case Graphics::DrawStep::kVectorAlignRight:
@@ -143,7 +143,7 @@ void VectorRenderer::stepGetPositions(const DrawStep &step, const Common::Rect &
 			break;
 
 		case Graphics::DrawStep::kVectorAlignCenter:
-			in_y = area.top + (area.height() / 2) - (in_h / 2) + ((step.padding.top + step.padding.bottom ) / 2);
+			in_y = area.top + (area.height() / 2) - (in_h / 2) + ((step.padding.top + step.padding.bottom) / 2);
 			break;
 
 		case Graphics::DrawStep::kVectorAlignTop:

@@ -40,114 +40,114 @@ class ESPERScript;
 // CD-changing logic has been removed
 
 enum EsperMainStates {
-	kEsperMainStateOpening      = 0,
-	kEsperMainStateList         = 1,
+	kEsperMainStateOpening = 0,
+	kEsperMainStateList = 1,
 	kEsperMainStatePhotoOpening = 2,
-	kEsperMainStateClear        = 3,
-	kEsperMainStatePhoto        = 5
+	kEsperMainStateClear = 3,
+	kEsperMainStatePhoto = 5
 };
 
 enum EsperPhotoStates {
-	kEsperPhotoStateShow              = 0,
-	kEsperPhotoStateOpening           = 1,
-	kEsperPhotoStateScrolling         = 2,
-	kEsperPhotoStateSelectionZooming  = 3,
+	kEsperPhotoStateShow = 0,
+	kEsperPhotoStateOpening = 1,
+	kEsperPhotoStateScrolling = 2,
+	kEsperPhotoStateSelectionZooming = 3,
 	kEsperPhotoStateSelectionBlinking = 4,
-	kEsperPhotoStatePhotoZooming      = 5,
-	kEsperPhotoStatePhotoSharpening   = 6,
-	kEsperPhotoStatePhotoZoomOut      = 7,
-	kEsperPhotoStateVideoZooming      = 8,
-	kEsperPhotoStateVideoShow         = 9,
-	kEsperPhotoStateVideoZoomOut      = 10
+	kEsperPhotoStatePhotoZooming = 5,
+	kEsperPhotoStatePhotoSharpening = 6,
+	kEsperPhotoStatePhotoZoomOut = 7,
+	kEsperPhotoStateVideoZooming = 8,
+	kEsperPhotoStateVideoShow = 9,
+	kEsperPhotoStateVideoZoomOut = 10
 };
 
 class ESPER {
-	static const int kPhotoCount         = 12;
-	static const int kRegionCount        = 6;
-	static const int kPhotoWidth         = 1280;
-	static const int kPhotoHeight        = 960;
+	static const int kPhotoCount = 12;
+	static const int kRegionCount = 6;
+	static const int kPhotoWidth = 1280;
+	static const int kPhotoHeight = 960;
 	static const int kSelectionZoomSteps = 6;
 
 	static const Common::Rect kScreen;
 
 	struct Photo {
-		bool           isPresent;
-		int            photoId;
-		int            shapeId;
+		bool isPresent;
+		int photoId;
+		int shapeId;
 		Common::String name;
 	};
 
 	struct Region {
-		bool           isPresent;
-		int            regionId;
-		Common::Rect   rectInner;
-		Common::Rect   rectOuter;
-		Common::Rect   rectSelection;
+		bool isPresent;
+		int regionId;
+		Common::Rect rectInner;
+		Common::Rect rectOuter;
+		Common::Rect rectSelection;
 		Common::String name;
 	};
 
-	BladeRunnerEngine     *_vm;
-	ESPERScript           *_script;
+	BladeRunnerEngine *_vm;
+	ESPERScript *_script;
 
 	bool _isWaiting;
 	bool _isOpen;
 
-	UIImagePicker     *_buttons;
+	UIImagePicker *_buttons;
 
 	Graphics::Surface _surfacePhoto;
 	Graphics::Surface _surfaceViewport;
 
 	VQAPlayer *_vqaPlayerMain;
 	VQAPlayer *_vqaPlayerPhoto;
-	int        _vqaLastFrame;
+	int _vqaLastFrame;
 
-	Shape                 *_shapeButton;
+	Shape *_shapeButton;
 	Common::Array<Shape *> _shapesPhotos;
-	Shape                 *_shapeThumbnail;
+	Shape *_shapeThumbnail;
 
 	Photo _photos[kPhotoCount];
-	int   _photoIdSelected;
+	int _photoIdSelected;
 
 	Region _regions[kRegionCount];
-	int    _regionSelected;
-	bool   _regionSelectedAck;
+	int _regionSelected;
+	bool _regionSelectedAck;
 
-	EsperMainStates  _stateMain;
+	EsperMainStates _stateMain;
 	EsperPhotoStates _statePhoto;
 
 	bool _isDrawingSelection;
 	bool _isMouseDown;
-	int  _mouseOverScroll;
+	int _mouseOverScroll;
 
-	float  _zoomHorizontal;
-	float  _zoomVertical;
-	float  _zoom;
-	float  _zoomMin;
-	float  _zoomTarget;
-	float  _zoomDelta;
-	float  _blur;
-	int    _zoomSteps;
-	int    _zoomStep;
+	float _zoomHorizontal;
+	float _zoomVertical;
+	float _zoom;
+	float _zoomMin;
+	float _zoomTarget;
+	float _zoomDelta;
+	float _blur;
+	int _zoomSteps;
+	int _zoomStep;
 	uint32 _timeZoomNextDiff;
 	uint32 _timeZoomNextStart;
 
-	bool   _isZoomingOut;
+	bool _isZoomingOut;
 	uint32 _timeZoomOutNextStart;
 
 	Common::Rect _screen;
 
 	Common::Rect _viewport;
 	Common::Rect _viewportNext;
-	int          _viewportPositionX;
-	int          _viewportPositionY;
-	float        _viewportPositionXCurrent;
-	float        _viewportPositionYCurrent;
-	int          _viewportPositionXTarget;
-	int          _viewportPositionYTarget;
-	float        _viewportPositionXDelta;
-	float        _viewportPositionYDelta;
-	int          _viewportWidth;
-	int          _viewportHeight;
+	int _viewportPositionX;
+	int _viewportPositionY;
+	float _viewportPositionXCurrent;
+	float _viewportPositionYCurrent;
+	int _viewportPositionXTarget;
+	int _viewportPositionYTarget;
+	float _viewportPositionXDelta;
+	float _viewportPositionYDelta;
+	int _viewportWidth;
+	int _viewportHeight;
 
 	int _screenHalfWidth;
 	int _screenHalfHeight;
@@ -157,23 +157,23 @@ class ESPER {
 	Common::Rect _selection;
 	Common::Rect _selectionTarget;
 	Common::Rect _selectionDelta;
-	int          _selectionCrosshairX;
-	int          _selectionCrosshairY;
+	int _selectionCrosshairX;
+	int _selectionCrosshairY;
 
-	int    _selectionBlinkingCounter;
-	int    _selectionBlinkingStyle;
+	int _selectionBlinkingCounter;
+	int _selectionBlinkingStyle;
 	uint32 _timeSelectionBlinkingNextStart;
 
-	int    _selectionZoomStep;
+	int _selectionZoomStep;
 	uint32 _timeSelectionZoomNextStart;
 
-	int    _photoOpeningWidth;
-	int    _photoOpeningHeight;
+	int _photoOpeningWidth;
+	int _photoOpeningHeight;
 	uint32 _timePhotoOpeningNextDiff;
 	uint32 _timePhotoOpeningNextStart;
 
-	bool   _isScrolling;
-	int    _scrollingDirection;
+	bool _isScrolling;
+	int _scrollingDirection;
 	uint32 _timeScrollNextStart;
 
 	int _soundId1;

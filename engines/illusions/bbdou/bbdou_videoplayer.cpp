@@ -20,20 +20,23 @@
  *
  */
 
-#include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/bbdou/bbdou_videoplayer.h"
+#include "engines/util.h"
 #include "illusions/actor.h"
+#include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/dictionary.h"
 #include "illusions/input.h"
 #include "illusions/screen.h"
-#include "engines/util.h"
 
 namespace Illusions {
 
 // BBDOUVideoPlayer
 
 BBDOUVideoPlayer::BBDOUVideoPlayer(IllusionsEngine_BBDOU *vm)
-	: _vm(vm), _videoDecoder(0), _callingThreadId(0), _objectId(0) {
+  : _vm(vm)
+  , _videoDecoder(0)
+  , _callingThreadId(0)
+  , _objectId(0) {
 }
 
 BBDOUVideoPlayer::~BBDOUVideoPlayer() {
@@ -78,8 +81,8 @@ void BBDOUVideoPlayer::update() {
 		if (frame->format.bytesPerPixel == g_system->getScreenFormat().bytesPerPixel) {
 			const int width = MIN(frame->w, backSurface->w) * frame->format.bytesPerPixel;
 			const int height = MIN(frame->h, backSurface->h);
-			const byte *src = (const byte*)frame->getPixels();
-			byte *dest = (byte*)backSurface->getPixels();
+			const byte *src = (const byte *)frame->getPixels();
+			byte *dest = (byte *)backSurface->getPixels();
 			for (int yc = 0; yc < height; ++yc) {
 				memcpy(dest, src, width);
 				src += frame->pitch;

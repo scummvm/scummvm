@@ -20,16 +20,16 @@
  *
  */
 
-#include "common/system.h"
 #include "common/debug.h"
 #include "common/error.h"
 #include "common/file.h"
 #include "common/stream.h"
+#include "common/system.h"
 
 #include "adl/adl_v2.h"
+#include "adl/disk.h"
 #include "adl/display_a2.h"
 #include "adl/graphics.h"
-#include "adl/disk.h"
 
 namespace Adl {
 
@@ -45,11 +45,11 @@ private:
 	const byte _numRooms, _numMsgs, _numItemPics;
 };
 
-HiResBaseEngine::HiResBaseEngine(OSystem *syst, const AdlGameDescription *gd, const byte numRooms, const byte numMsgs, const byte numItemPics) :
-		AdlEngine_v2(syst, gd),
-		_numRooms(numRooms),
-		_numMsgs(numMsgs),
-		_numItemPics(numItemPics) {
+HiResBaseEngine::HiResBaseEngine(OSystem *syst, const AdlGameDescription *gd, const byte numRooms, const byte numMsgs, const byte numItemPics)
+  : AdlEngine_v2(syst, gd)
+  , _numRooms(numRooms)
+  , _numMsgs(numMsgs)
+  , _numItemPics(numItemPics) {
 
 	_messageIds.cantGoThere = 110;
 	_messageIds.dontUnderstand = 112;
@@ -140,8 +140,8 @@ private:
 	void runIntro();
 };
 
-HiRes2Engine::HiRes2Engine(OSystem *syst, const AdlGameDescription *gd) :
-		HiResBaseEngine(syst, gd, 135, 255, 38) {
+HiRes2Engine::HiRes2Engine(OSystem *syst, const AdlGameDescription *gd)
+  : HiResBaseEngine(syst, gd, 135, 255, 38) {
 
 	_messageIds.cantGoThere = 123;
 	_messageIds.dontUnderstand = 19;
@@ -175,8 +175,8 @@ public:
 	HiRes3Engine(OSystem *syst, const AdlGameDescription *gd);
 };
 
-HiRes3Engine::HiRes3Engine(OSystem *syst, const AdlGameDescription *gd) :
-		HiResBaseEngine(syst, gd, 138, 255, 36) {
+HiRes3Engine::HiRes3Engine(OSystem *syst, const AdlGameDescription *gd)
+  : HiResBaseEngine(syst, gd, 138, 255, 36) {
 
 	const byte brokenRooms[] = { 18, 24, 54, 98, 102, 108 };
 

@@ -27,10 +27,10 @@
 #include "titanic/game_state.h"
 #include "titanic/input_handler.h"
 #include "titanic/input_translator.h"
-#include "titanic/support/time_event_info.h" // class CTimeEventInfo
-#include "titanic/true_talk/true_talk_manager.h" // class CTrueTalkManager
 #include "titanic/sound/music_room.h"
 #include "titanic/sound/sound.h"
+#include "titanic/support/time_event_info.h" // class CTimeEventInfo
+#include "titanic/true_talk/true_talk_manager.h" // class CTrueTalkManager
 
 namespace Titanic {
 
@@ -58,6 +58,7 @@ private:
 	CVideoSurface *_movieSurface;
 	uint _lastDiskTicksCount;
 	uint _tickCount2;
+
 private:
 	/**
 	 * Generates a message for the next game frame
@@ -73,6 +74,7 @@ private:
 	 * Handles a room transition
 	 */
 	void roomTransition(CRoomItem *oldRoom, CRoomItem *newRoom);
+
 public:
 	CProjectItem *_project;
 	CGameView *_gameView;
@@ -83,6 +85,7 @@ public:
 	CTreeItem *_dragItem;
 	CSound _sound;
 	CMusicRoom _musicRoom;
+
 public:
 	CGameManager(CProjectItem *project, CGameView *gameView, Audio::Mixer *mixer);
 	~CGameManager();

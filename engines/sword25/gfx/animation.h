@@ -33,8 +33,8 @@
 #define SWORD25_ANIMATION_H
 
 // Includes
-#include "sword25/kernel/common.h"
 #include "sword25/gfx/timedrenderobject.h"
+#include "sword25/kernel/common.h"
 
 namespace Sword25 {
 
@@ -132,16 +132,16 @@ public:
 
 	virtual void frameNotification(int timeElapsed);
 
-	ANIMATION_TYPES     getAnimationType() const;
-	int                 getFPS() const;
-	int                 getFrameCount() const;
-	bool                isScalingAllowed() const;
-	bool                isAlphaAllowed() const;
-	bool                isColorModulationAllowed() const;
+	ANIMATION_TYPES getAnimationType() const;
+	int getFPS() const;
+	int getFrameCount() const;
+	bool isScalingAllowed() const;
+	bool isAlphaAllowed() const;
+	bool isColorModulationAllowed() const;
 	uint getCurrentFrame() const {
 		return _currentFrame;
 	}
-	const Common::String   &getCurrentAction() const;
+	const Common::String &getCurrentAction() const;
 	bool isRunning() const {
 		return _running;
 	}
@@ -165,7 +165,7 @@ private:
 	float _scaleFactorY;
 	uint32 _modulationColor;
 	uint32 _currentFrame;
-	int32  _currentFrameTime;
+	int32 _currentFrameTime;
 	bool _running;
 	bool _finished;
 	Direction _direction;

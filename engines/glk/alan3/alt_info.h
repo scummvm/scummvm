@@ -25,16 +25,16 @@
 
 /* An info node about the Verb Alternatives found and possibly executed */
 
-#include "glk/alan3/types.h"
 #include "glk/alan3/acode.h"
 #include "glk/alan3/jumps.h"
-#include "glk/alan3/params.h"
 #include "glk/alan3/parameter_position.h"
+#include "glk/alan3/params.h"
+#include "glk/alan3/types.h"
 
 namespace Glk {
 namespace Alan3 {
 
-/* Constants */
+	/* Constants */
 
 #define GLOBAL_LEVEL (0)
 #define LOCATION_LEVEL (1)
@@ -48,40 +48,36 @@ namespace Alan3 {
 #define EXECUTE_CHECK_BODY_ON_FAIL TRUE
 #define DONT_EXECUTE_CHECK_BODY_ON_FAIL FALSE
 
+	/* Types */
 
-/* Types */
-
-struct AltInfo {
-	bool end;       /* Indicator of end in AltInfoArray, first empty has TRUE here */
-	AltEntry *alt;
-	bool done;
-	Aint level;     /* 0 - Global, 1 - location, 2 - parameter */
-	Aid _class;     /* In which class, only used for tracing */
-	Aid instance;   /* In which instance the Alternative was found,
+	struct AltInfo {
+		bool end; /* Indicator of end in AltInfoArray, first empty has TRUE here */
+		AltEntry *alt;
+		bool done;
+		Aint level; /* 0 - Global, 1 - location, 2 - parameter */
+		Aid _class; /* In which class, only used for tracing */
+		Aid instance; /* In which instance the Alternative was found,
                        used to set current.instance and tracing */
-	Aid parameter;     /* In which parameter, only used for tracing */
-};
+		Aid parameter; /* In which parameter, only used for tracing */
+	};
 
-typedef AltEntry *(*AltEntryFinder)(int verb, int parameterNumber, int theInstance, int theClass);
+	typedef AltEntry *(*AltEntryFinder)(int verb, int parameterNumber, int theInstance, int theClass);
 
-typedef AltInfo AltInfoArray[];
+	typedef AltInfo AltInfoArray[];
 
+	/* Data */
 
-
-/* Data */
-
-
-/* Functions */
-extern void primeAltInfo(AltInfo *altInfo, int level, int parameter, int instance, int cls);
-extern bool executedOk(CONTEXT, AltInfo *altInfo);
-extern bool checkFailed(CONTEXT, AltInfo *altInfo, bool execute);
-extern bool canBeExecuted(AltInfo *altInfo);
-extern AltInfo *duplicateAltInfoArray(AltInfoArray altInfos);
-extern int lastAltInfoIndex(AltInfoArray altInfos);
-extern bool anyCheckFailed(CONTEXT, AltInfoArray altInfos, bool execute);
-extern bool anythingToExecute(AltInfoArray altInfos);
-extern bool possible(CONTEXT, int verb, Parameter parameters[], ParameterPosition parameterPositions[]);
-extern AltInfo *findAllAlternatives(int verb, Parameter parameters[]);
+	/* Functions */
+	extern void primeAltInfo(AltInfo *altInfo, int level, int parameter, int instance, int cls);
+	extern bool executedOk(CONTEXT, AltInfo *altInfo);
+	extern bool checkFailed(CONTEXT, AltInfo *altInfo, bool execute);
+	extern bool canBeExecuted(AltInfo *altInfo);
+	extern AltInfo *duplicateAltInfoArray(AltInfoArray altInfos);
+	extern int lastAltInfoIndex(AltInfoArray altInfos);
+	extern bool anyCheckFailed(CONTEXT, AltInfoArray altInfos, bool execute);
+	extern bool anythingToExecute(AltInfoArray altInfos);
+	extern bool possible(CONTEXT, int verb, Parameter parameters[], ParameterPosition parameterPositions[]);
+	extern AltInfo *findAllAlternatives(int verb, Parameter parameters[]);
 
 } // End of namespace Alan3
 } // End of namespace Glk

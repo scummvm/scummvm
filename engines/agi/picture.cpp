@@ -92,8 +92,7 @@ byte PictureMgr::getNextNibble() {
 void PictureMgr::draw_xCorner(bool skipOtherCoords) {
 	int x1, x2, y1, y2;
 
-	if ((x1 = getNextByte()) >= _minCommand ||
-	        (y1 = getNextByte()) >= _minCommand) {
+	if ((x1 = getNextByte()) >= _minCommand || (y1 = getNextByte()) >= _minCommand) {
 		_dataOffset--;
 		return;
 	}
@@ -136,8 +135,7 @@ void PictureMgr::draw_xCorner(bool skipOtherCoords) {
 void PictureMgr::yCorner(bool skipOtherCoords) {
 	int x1, x2, y1, y2;
 
-	if ((x1 = getNextByte()) >= _minCommand ||
-	        (y1 = getNextByte()) >= _minCommand) {
+	if ((x1 = getNextByte()) >= _minCommand || (y1 = getNextByte()) >= _minCommand) {
 		_dataOffset--;
 		return;
 	}
@@ -227,34 +225,36 @@ void PictureMgr::plotPattern(int x, int y) {
 	// = pen_x - pen.size/2
 
 	pen_x = (pen_x * 2) - pen_size;
-	if (pen_x < 0) pen_x = 0;
+	if (pen_x < 0)
+		pen_x = 0;
 
 	temp16 = (_width * 2) - (2 * pen_size);
 	if (pen_x >= temp16)
 		pen_x = temp16;
 
 	pen_x /= 2;
-	pen_final_x = pen_x;    // original starting point?? -> used in plotrelated
+	pen_final_x = pen_x; // original starting point?? -> used in plotrelated
 
 	// Setup the Y Position
 	// = pen_y - pen.size
 	pen_y = pen_y - pen_size;
-	if (pen_y < 0) pen_y = 0;
+	if (pen_y < 0)
+		pen_y = 0;
 
 	temp16 = 167 - (2 * pen_size);
 	if (pen_y >= temp16)
 		pen_y = temp16;
 
-	pen_final_y = pen_y;    // used in plotrelated
+	pen_final_y = pen_y; // used in plotrelated
 
-	t = (uint8)(texture_num | 0x01);        // even
+	t = (uint8)(texture_num | 0x01); // even
 
 	// new purpose for temp16
 
-	temp16 = (pen_size << 1) + 1;   // pen size
-	pen_final_y += temp16;                  // the last row of this shape
+	temp16 = (pen_size << 1) + 1; // pen size
+	pen_final_y += temp16; // the last row of this shape
 	temp16 = temp16 << 1;
-	pen_width = temp16;                 // width of shape?
+	pen_width = temp16; // width of shape?
 
 	bool circleCond;
 	int counterStep;
@@ -373,26 +373,26 @@ void PictureMgr::drawPictureC64() {
 		}
 
 		switch (curByte) {
-		case 0xe0:  // x-corner
+		case 0xe0: // x-corner
 			draw_xCorner();
 			break;
-		case 0xe1:  // y-corner
+		case 0xe1: // y-corner
 			yCorner();
 			break;
-		case 0xe2:  // dynamic draw lines
+		case 0xe2: // dynamic draw lines
 			draw_LineShort();
 			break;
-		case 0xe3:  // absolute draw lines
+		case 0xe3: // absolute draw lines
 			draw_LineAbsolute();
 			break;
-		case 0xe4:  // fill
+		case 0xe4: // fill
 			draw_SetColor();
 			draw_Fill();
 			break;
-		case 0xe5:  // enable screen drawing
+		case 0xe5: // enable screen drawing
 			_scrOn = true;
 			break;
-		case 0xe6:  // plot brush
+		case 0xe6: // plot brush
 			_patCode = getNextByte();
 			plotBrush();
 			break;
@@ -497,7 +497,7 @@ void PictureMgr::drawPictureV2() {
 	byte curByte;
 	bool nibbleMode = false;
 	bool mickeyCrystalAnimation = false;
-	int  mickeyIteration = 0;
+	int mickeyIteration = 0;
 
 	debugC(8, kDebugLevelMain, "Drawing V2/V3 picture");
 
@@ -583,11 +583,11 @@ void PictureMgr::drawPictureV2() {
 				_xOffset = storedXOffset;
 				_yOffset = storedYOffset;
 				_currentStep++;
-				if (_currentStep > 14)  // crystal animation is 15 frames
+				if (_currentStep > 14) // crystal animation is 15 frames
 					_currentStep = 0;
 				// reset the picture step flag - it will be set when the next frame of the crystal animation is drawn
 				_flags &= ~kPicFStep;
-				return;     // return back to the game loop
+				return; // return back to the game loop
 			}
 			mickeyIteration++;
 		}
@@ -767,8 +767,7 @@ void PictureMgr::draw_Line(int16 x1, int16 y1, int16 x2, int16 y2) {
 void PictureMgr::draw_LineShort() {
 	int x1, y1, disp, dx, dy;
 
-	if ((x1 = getNextByte()) >= _minCommand ||
-	        (y1 = getNextByte()) >= _minCommand) {
+	if ((x1 = getNextByte()) >= _minCommand || (y1 = getNextByte()) >= _minCommand) {
 		_dataOffset--;
 		return;
 	}
@@ -802,8 +801,7 @@ void PictureMgr::draw_LineShort() {
 void PictureMgr::draw_LineAbsolute() {
 	int16 x1, y1, x2, y2;
 
-	if ((x1 = getNextByte()) >= _minCommand ||
-	        (y1 = getNextByte()) >= _minCommand) {
+	if ((x1 = getNextByte()) >= _minCommand || (y1 = getNextByte()) >= _minCommand) {
 		_dataOffset--;
 		return;
 	}

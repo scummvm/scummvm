@@ -27,9 +27,9 @@
 #include "gui/dialog.h"
 #include "gui/gui-manager.h"
 #include "gui/widgets/list.h"
+#include "gui/widgets/popup.h"
 #include "gui/widgets/tab.h"
 #include "osystem.h"
-#include "gui/widgets/popup.h"
 
 #include "common/translation.h"
 
@@ -37,7 +37,8 @@ namespace _3DS {
 
 bool optionMenuOpened = false;
 
-OptionsDialog::OptionsDialog() : GUI::Dialog(20, 20, 280, 200) {
+OptionsDialog::OptionsDialog()
+  : GUI::Dialog(20, 20, 280, 200) {
 
 	optionMenuOpened = true;
 
@@ -83,7 +84,7 @@ void OptionsDialog::updateConfigManager() {
 }
 
 void OptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
-	switch(cmd) {
+	switch (cmd) {
 	case GUI::kOKCmd:
 		updateConfigManager();
 		// Fall through

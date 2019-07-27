@@ -73,9 +73,9 @@ void Room::demon4FinishedAnimation2() {
 
 void Room::demon4FinishedAnimation3() {
 	showText(TX_SPEAKER_NAUIAN, 34, true);
-	showText(TX_SPEAKER_KIRK,   10, true);
+	showText(TX_SPEAKER_KIRK, 10, true);
 	showText(TX_SPEAKER_NAUIAN, 35, true);
-	showText(TX_SPEAKER_SPOCK,  30, true);
+	showText(TX_SPEAKER_SPOCK, 30, true);
 
 	_awayMission->disableInput = true;
 	_awayMission->demon.missionScore += 5;
@@ -272,9 +272,9 @@ void Room::demon4TalkToNauian() {
 
 			// BUGFIX: Originally all of these used no audio, despite the files existing
 			// (being used elsewhere).
-			showText(TX_SPEAKER_KIRK,   10, true);
+			showText(TX_SPEAKER_KIRK, 10, true);
 			showText(TX_SPEAKER_NAUIAN, 35, true);
-			showText(TX_SPEAKER_SPOCK,  30, true);
+			showText(TX_SPEAKER_SPOCK, 30, true);
 
 			_awayMission->disableInput = true;
 			_awayMission->demon.missionScore += 5;
@@ -475,7 +475,7 @@ bool Room::demon4ShowSunPuzzle() {
 
 		switch (event.type) {
 		case TREKEVENT_LBUTTONDOWN: {
-lclick:
+		lclick:
 			Common::Point mousePos = _vm->_gfx->getMousePos();
 			if (_vm->_gfx->getSpriteAt(mousePos) == &doneButtonSprite)
 				goto done;
@@ -494,7 +494,7 @@ lclick:
 		}
 
 		case TREKEVENT_RBUTTONDOWN:
-done:
+		done:
 			if (abs(sliderY) <= 2 && abs(sliderR) <= 2 && abs(sliderB) <= 2)
 				solved = true;
 			else

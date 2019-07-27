@@ -22,14 +22,14 @@
 
 #ifdef ENABLE_EOB
 
-#include "kyra/engine/eob.h"
-#include "kyra/resource/resource.h"
-#include "kyra/sound/sound.h"
+#	include "kyra/engine/eob.h"
+#	include "kyra/resource/resource.h"
+#	include "kyra/sound/sound.h"
 
 namespace Kyra {
 
 EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags)
-	: EoBCoreEngine(system, flags) {
+  : EoBCoreEngine(system, flags) {
 	_numSpells = 53;
 	_menuChoiceInit = 4;
 
@@ -154,10 +154,10 @@ void EoBEngine::encodeDrawNpcSeqShape(int npcIndex, int drawX, int drawY) {
 	delete[] shp;
 }
 
-#define DLG2(txt, buttonstr) (runDialogue(txt, 2, _npcStrings[buttonstr][0], _npcStrings[buttonstr][1]) - 1)
-#define DLG3(txt, buttonstr) (runDialogue(txt, 3, _npcStrings[buttonstr][0], _npcStrings[buttonstr][1], _npcStrings[buttonstr][2]) - 1)
-#define DLG2A3(cond, txt, buttonstr1, buttonstr2) ((cond) ? (DLG2(txt, buttonstr1) ? 2 : 0) : DLG3(txt, buttonstr2))
-#define TXT(txt) _txt->printDialogueText(txt, _moreStrings[0])
+#	define DLG2(txt, buttonstr) (runDialogue(txt, 2, _npcStrings[buttonstr][0], _npcStrings[buttonstr][1]) - 1)
+#	define DLG3(txt, buttonstr) (runDialogue(txt, 3, _npcStrings[buttonstr][0], _npcStrings[buttonstr][1], _npcStrings[buttonstr][2]) - 1)
+#	define DLG2A3(cond, txt, buttonstr1, buttonstr2) ((cond) ? (DLG2(txt, buttonstr1) ? 2 : 0) : DLG3(txt, buttonstr2))
+#	define TXT(txt) _txt->printDialogueText(txt, _moreStrings[0])
 
 void EoBEngine::runNpcDialogue(int npcIndex) {
 	int r = 0;
@@ -299,7 +299,7 @@ void EoBEngine::runNpcDialogue(int npcIndex) {
 
 	case 7:
 		r = DLG3(22, 10);
-		if (r  < 2) {
+		if (r < 2) {
 			if (r == 0)
 				npcJoinDialogue(8, 27, 44, 45);
 			else
@@ -313,10 +313,10 @@ void EoBEngine::runNpcDialogue(int npcIndex) {
 	}
 }
 
-#undef TXT
-#undef DLG2
-#undef DLG3
-#undef DLG2A3
+#	undef TXT
+#	undef DLG2
+#	undef DLG3
+#	undef DLG2A3
 
 void EoBEngine::updateUsedCharacterHandItem(int charIndex, int slot) {
 	EoBItem *itm = &_items[_characters[charIndex].inventory[slot]];

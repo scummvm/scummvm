@@ -32,10 +32,12 @@ class IllusionsEngine;
 
 class FontResourceLoader : public BaseResourceLoader {
 public:
-	FontResourceLoader(IllusionsEngine *vm) : _vm(vm) {}
+	FontResourceLoader(IllusionsEngine *vm)
+	  : _vm(vm) {}
 	virtual ~FontResourceLoader() {}
 	virtual void load(Resource *resource);
 	virtual bool isFlag(int flag);
+
 protected:
 	IllusionsEngine *_vm;
 };
@@ -66,6 +68,7 @@ public:
 	int16 getCharHeight() const { return _charHeight; }
 	int16 getLineIncr() const { return _lineIncr; }
 	const Common::Rect calculateRectForText(uint16 *text, uint textLength);
+
 public:
 	uint32 _totalSize;
 	int16 _charHeight;
@@ -83,6 +86,7 @@ public:
 	FontInstance(IllusionsEngine *vm);
 	virtual void load(Resource *resource);
 	virtual void unload();
+
 public:
 	IllusionsEngine *_vm;
 	FontResource *_fontResource;

@@ -28,8 +28,12 @@
 
 namespace Prince {
 
-Animation::Animation() : _loopCount(0), _phaseCount(0), _frameCount(0), _baseX(0), _baseY(0)
-{
+Animation::Animation()
+  : _loopCount(0)
+  , _phaseCount(0)
+  , _frameCount(0)
+  , _baseX(0)
+  , _baseY(0) {
 }
 
 Animation::~Animation() {

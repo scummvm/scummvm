@@ -20,12 +20,14 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "titanic/true_talk/tt_node.h"
+#include "common/textconsole.h"
 
 namespace Titanic {
 
-TTnode::TTnode() : _priorP(nullptr), _nextP(nullptr) {
+TTnode::TTnode()
+  : _priorP(nullptr)
+  , _nextP(nullptr) {
 }
 
 TTnode::~TTnode() {

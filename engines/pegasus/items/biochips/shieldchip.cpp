@@ -23,16 +23,16 @@
  *
  */
 
-#include "pegasus/gamestate.h"
 #include "pegasus/items/biochips/shieldchip.h"
+#include "pegasus/gamestate.h"
 #include "pegasus/neighborhood/neighborhood.h"
 
 namespace Pegasus {
 
 ShieldChip *g_shield = 0;
 
-ShieldChip::ShieldChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
-		BiochipItem(id, neighborhood, room, direction) {
+ShieldChip::ShieldChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction)
+  : BiochipItem(id, neighborhood, room, direction) {
 	g_shield = this;
 }
 

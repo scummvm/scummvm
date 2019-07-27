@@ -23,11 +23,10 @@
 #ifndef LURE_EVENTS_H
 #define LURE_EVENTS_H
 
-
 #include "common/events.h"
 #include "common/str.h"
-#include "lure/luredefs.h"
 #include "lure/disk.h"
+#include "lure/luredefs.h"
 
 namespace Lure {
 
@@ -36,6 +35,7 @@ private:
 	CursorType _cursorNum;
 	int16 _x, _y;
 	bool _lButton, _rButton, _mButton;
+
 public:
 	Mouse();
 	~Mouse();
@@ -62,6 +62,7 @@ public:
 class Events {
 private:
 	Common::Event _event;
+
 public:
 	Events();
 	static Events &getReference();

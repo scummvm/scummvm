@@ -44,7 +44,10 @@ protected:
 	/**
 	 * Plain constructor, for internal use only (hence protected).
 	 */
-	RISCOSFilesystemNode() : _isDirectory(false), _isValid(false) {}
+	RISCOSFilesystemNode()
+	  : _isDirectory(false)
+	  , _isValid(false) {}
+
 public:
 	/**
 	 * Creates a RISCOSFilesystemNode for a given path.

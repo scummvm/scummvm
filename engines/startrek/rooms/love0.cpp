@@ -226,7 +226,7 @@ void Room::love0MccoyAccessedConsole() {
 		showText(TX_SPEAKER_MCCOY, TX_LOV0_024);
 		showText(TX_SPEAKER_SPOCK, TX_LOV0_035);
 		showText(TX_SPEAKER_MCCOY, TX_LOV0_023);
-		showText(TX_SPEAKER_KIRK,  TX_LOV0_004);
+		showText(TX_SPEAKER_KIRK, TX_LOV0_004);
 		showText(TX_SPEAKER_MCCOY, TX_LOV0_009);
 		_awayMission->love.knowAboutVirus = true;
 	}

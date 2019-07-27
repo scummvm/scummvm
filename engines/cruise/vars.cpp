@@ -52,7 +52,7 @@ char nextOverlay[38];
 
 int16 currentActiveMenu;
 int16 autoMsg;
-menuElementSubStruct* linkedRelation;
+menuElementSubStruct *linkedRelation;
 bool userWait;
 int16 autoTrack;
 
@@ -130,32 +130,32 @@ int16 var47;
 int16 var48;
 int16 flagCt;
 
-uint8 newPal[NBCOLORS*3];
-uint8 workpal[NBCOLORS*3];
-uint8 palScreen[NBSCREENS][NBCOLORS*3];
+uint8 newPal[NBCOLORS * 3];
+uint8 workpal[NBCOLORS * 3];
+uint8 palScreen[NBSCREENS][NBCOLORS * 3];
 
 //systemStringsStruct systemStrings;
 
 char currentCtpName[40];
 
 int16 saveVar1;
-uint8 saveVar2[97];		// recheck size
+uint8 saveVar2[97]; // recheck size
 
-int16 numberOfWalkboxes;	// saveVar3
-int16 walkboxColor[15];		// saveVar4
-int16 walkboxState[15];	// saveVar5
+int16 numberOfWalkboxes; // saveVar3
+int16 walkboxColor[15]; // saveVar4
+int16 walkboxState[15]; // saveVar5
 
 uint8 lastAni[16];
 
 int32 loadFileVar1;
 
 int16 loadCtFromSave = 0;
-int16 ctp_routeCoordCount;	// ctpVar2
-int16 ctp_routeCoords[20][2];	// ctpVar3
+int16 ctp_routeCoordCount; // ctpVar2
+int16 ctp_routeCoords[20][2]; // ctpVar3
 int16 ctp_routes[20][10];
-int16 ctp_walkboxTable[15][40];	// ctpVar5
+int16 ctp_walkboxTable[15][40]; // ctpVar5
 int16 walkboxColorIndex[16];
-int16 walkboxZoom[15];		//  ctpVar7
+int16 walkboxZoom[15]; //  ctpVar7
 int16 distanceTable[20][10];
 
 int16 flagSpeed;

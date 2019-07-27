@@ -23,13 +23,13 @@
 #include "base/plugins.h"
 
 #include "common/memstream.h"
-#include "engines/advancedDetector.h"
 #include "common/system.h"
+#include "engines/advancedDetector.h"
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
 
-#include "tony/tony.h"
 #include "tony/game.h"
+#include "tony/tony.h"
 
 namespace Tony {
 
@@ -60,15 +60,16 @@ bool TonyEngine::isCompressed() const {
 } // End of namespace Tony
 
 static const PlainGameDescriptor tonyGames[] = {
-	{"tony", "Tony Tough and the Night of Roasted Moths"},
-	{0, 0}
+	{ "tony", "Tony Tough and the Night of Roasted Moths" },
+	{ 0, 0 }
 };
 
 #include "tony/detection_tables.h"
 
 class TonyMetaEngine : public AdvancedMetaEngine {
 public:
-	TonyMetaEngine() : AdvancedMetaEngine(Tony::gameDescriptions, sizeof(Tony::TonyGameDescription), tonyGames) {
+	TonyMetaEngine()
+	  : AdvancedMetaEngine(Tony::gameDescriptions, sizeof(Tony::TonyGameDescription), tonyGames) {
 	}
 
 	virtual const char *getName() const {
@@ -88,19 +89,11 @@ public:
 };
 
 bool TonyMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail);
+	return (f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup) || (f == kSupportsDeleteSave) || (f == kSavesSupportMetaInfo) || (f == kSavesSupportThumbnail);
 }
 
 bool Tony::TonyEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
 bool TonyMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -178,7 +171,7 @@ SaveStateDescriptor TonyMetaEngine::querySaveMetaInfos(const char *target, int s
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(TONY)
-	REGISTER_PLUGIN_DYNAMIC(TONY, PLUGIN_TYPE_ENGINE, TonyMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(TONY, PLUGIN_TYPE_ENGINE, TonyMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(TONY, PLUGIN_TYPE_ENGINE, TonyMetaEngine);
+REGISTER_PLUGIN_STATIC(TONY, PLUGIN_TYPE_ENGINE, TonyMetaEngine);
 #endif

@@ -22,16 +22,21 @@
 
 #include "scummhelp.h"
 
-#define ADD_BIND(k,d) do { key[i] = k; dsc[i] = d; i++; } while (0)
-#define ADD_TEXT(d) ADD_BIND("",d)
-#define ADD_LINE ADD_BIND("","")
+#define ADD_BIND(k, d) \
+	do {                 \
+		key[i] = k;        \
+		dsc[i] = d;        \
+		i++;               \
+	} while (0)
+#define ADD_TEXT(d) ADD_BIND("", d)
+#define ADD_LINE ADD_BIND("", "")
 
 #define HELP_NUM_LINES 15
 
 namespace DS {
 
 void updateStrings(byte gameId, byte version, Common::Platform platform,
-			int page, Common::String &title, Common::String *&key, Common::String *&dsc) {
+                   int page, Common::String &title, Common::String *&key, Common::String *&dsc) {
 	key = new Common::String[HELP_NUM_LINES];
 	dsc = new Common::String[HELP_NUM_LINES];
 	int i = 0;
@@ -84,16 +89,12 @@ void updateStrings(byte gameId, byte version, Common::Platform platform,
 	}
 	}
 
-
 	while (i < HELP_NUM_LINES) {
 		ADD_LINE;
 	}
-
 }
 
 } // End of namespace DS
-
-
 
 #undef ADD_BIND
 #undef ADD_TEXT

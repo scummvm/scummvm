@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 #include "audio/decoders/3do.h"
@@ -52,8 +52,9 @@ RewindableAudioStream *make3DO_ADP4AudioStream(Common::SeekableReadStream *strea
 }
 
 Audio3DO_ADP4_Stream::Audio3DO_ADP4_Stream(Common::SeekableReadStream *stream, uint16 sampleRate, bool stereo, DisposeAfterUse::Flag disposeAfterUse, audio_3DO_ADP4_PersistentSpace *persistentSpace)
-	: _sampleRate(sampleRate), _stereo(stereo),
-	  _stream(stream, disposeAfterUse) {
+  : _sampleRate(sampleRate)
+  , _stereo(stereo)
+  , _stream(stream, disposeAfterUse) {
 
 	_callerDecoderData = persistentSpace;
 	memset(&_initialDecoderData, 0, sizeof(_initialDecoderData));
@@ -98,18 +99,18 @@ int16 Audio3DO_ADP4_Stream::decodeSample(byte compressedNibble) {
 	_curDecoderData.stepIndex += audio_3DO_ADP4_stepSizeIndex[compressedNibble & 0x07];
 	_curDecoderData.stepIndex = CLIP<int16>(_curDecoderData.stepIndex, 0, ARRAYSIZE(audio_3DO_ADP4_stepSizeTable) - 1);
 
-   return _curDecoderData.lastSample;
+	return _curDecoderData.lastSample;
 }
 
 // Writes the requested amount (or less) of samples into buffer and returns the amount of samples, that got written
 int Audio3DO_ADP4_Stream::readBuffer(int16 *buffer, const int numSamples) {
-	int8  byteCache[AUDIO_3DO_CACHE_SIZE];
+	int8 byteCache[AUDIO_3DO_CACHE_SIZE];
 	int8 *byteCachePtr = NULL;
-	int   byteCacheSize = 0;
-	int   requestedBytesLeft = 0;
-	int   decodedSamplesCount = 0;
+	int byteCacheSize = 0;
+	int requestedBytesLeft = 0;
+	int decodedSamplesCount = 0;
 
-	int8  compressedByte = 0;
+	int8 compressedByte = 0;
 
 	if (endOfData())
 		return 0; // no more bytes left
@@ -138,7 +139,7 @@ int Audio3DO_ADP4_Stream::readBuffer(int16 *buffer, const int numSamples) {
 		}
 
 		requestedBytesLeft -= byteCacheSize;
-		_streamBytesLeft   -= byteCacheSize;
+		_streamBytesLeft -= byteCacheSize;
 
 		// Fill our byte cache
 		_stream->read(byteCache, byteCacheSize);
@@ -167,37 +168,38 @@ int Audio3DO_ADP4_Stream::readBuffer(int16 *buffer, const int numSamples) {
 
 // ============================================================================
 static int16 audio_3DO_SDX2_SquareTable[256] = {
-	-32768,-32258,-31752,-31250,-30752,-30258,-29768,-29282,-28800,-28322,
-	-27848,-27378,-26912,-26450,-25992,-25538,-25088,-24642,-24200,-23762,
-	-23328,-22898,-22472,-22050,-21632,-21218,-20808,-20402,-20000,-19602,
-	-19208,-18818,-18432,-18050,-17672,-17298,-16928,-16562,-16200,-15842,
-	-15488,-15138,-14792,-14450,-14112,-13778,-13448,-13122,-12800,-12482,
-	-12168,-11858,-11552,-11250,-10952,-10658,-10368,-10082, -9800, -9522,
-	 -9248, -8978, -8712, -8450, -8192, -7938, -7688, -7442, -7200, -6962,
-	 -6728, -6498, -6272, -6050, -5832, -5618, -5408, -5202, -5000, -4802,
-	 -4608, -4418, -4232, -4050, -3872, -3698, -3528, -3362, -3200, -3042,
-	 -2888, -2738, -2592, -2450, -2312, -2178, -2048, -1922, -1800, -1682,
-	 -1568, -1458, -1352, -1250, -1152, -1058,  -968,  -882,  -800,  -722,
-	  -648,  -578,  -512,  -450,  -392,  -338,  -288,  -242,  -200,  -162,
-	  -128,   -98,   -72,   -50,   -32,   -18,    -8,    -2,     0,     2,
-	     8,    18,    32,    50,    72,    98,   128,   162,   200,   242,
-	   288,   338,   392,   450,   512,   578,   648,   722,   800,   882,
-	   968,  1058,  1152,  1250,  1352,  1458,  1568,  1682,  1800,  1922,
-	  2048,  2178,  2312,  2450,  2592,  2738,  2888,  3042,  3200,  3362,
-	  3528,  3698,  3872,  4050,  4232,  4418,  4608,  4802,  5000,  5202,
-	  5408,  5618,  5832,  6050,  6272,  6498,  6728,  6962,  7200,  7442,
-	  7688,  7938,  8192,  8450,  8712,  8978,  9248,  9522,  9800, 10082,
-	 10368, 10658, 10952, 11250, 11552, 11858, 12168, 12482, 12800, 13122,
-	 13448, 13778, 14112, 14450, 14792, 15138, 15488, 15842, 16200, 16562,
-	 16928, 17298, 17672, 18050, 18432, 18818, 19208, 19602, 20000, 20402,
-	 20808, 21218, 21632, 22050, 22472, 22898, 23328, 23762, 24200, 24642,
-	 25088, 25538, 25992, 26450, 26912, 27378, 27848, 28322, 28800, 29282,
-	 29768, 30258, 30752, 31250, 31752, 32258
+	-32768, -32258, -31752, -31250, -30752, -30258, -29768, -29282, -28800, -28322,
+	-27848, -27378, -26912, -26450, -25992, -25538, -25088, -24642, -24200, -23762,
+	-23328, -22898, -22472, -22050, -21632, -21218, -20808, -20402, -20000, -19602,
+	-19208, -18818, -18432, -18050, -17672, -17298, -16928, -16562, -16200, -15842,
+	-15488, -15138, -14792, -14450, -14112, -13778, -13448, -13122, -12800, -12482,
+	-12168, -11858, -11552, -11250, -10952, -10658, -10368, -10082, -9800, -9522,
+	-9248, -8978, -8712, -8450, -8192, -7938, -7688, -7442, -7200, -6962,
+	-6728, -6498, -6272, -6050, -5832, -5618, -5408, -5202, -5000, -4802,
+	-4608, -4418, -4232, -4050, -3872, -3698, -3528, -3362, -3200, -3042,
+	-2888, -2738, -2592, -2450, -2312, -2178, -2048, -1922, -1800, -1682,
+	-1568, -1458, -1352, -1250, -1152, -1058, -968, -882, -800, -722,
+	-648, -578, -512, -450, -392, -338, -288, -242, -200, -162,
+	-128, -98, -72, -50, -32, -18, -8, -2, 0, 2,
+	8, 18, 32, 50, 72, 98, 128, 162, 200, 242,
+	288, 338, 392, 450, 512, 578, 648, 722, 800, 882,
+	968, 1058, 1152, 1250, 1352, 1458, 1568, 1682, 1800, 1922,
+	2048, 2178, 2312, 2450, 2592, 2738, 2888, 3042, 3200, 3362,
+	3528, 3698, 3872, 4050, 4232, 4418, 4608, 4802, 5000, 5202,
+	5408, 5618, 5832, 6050, 6272, 6498, 6728, 6962, 7200, 7442,
+	7688, 7938, 8192, 8450, 8712, 8978, 9248, 9522, 9800, 10082,
+	10368, 10658, 10952, 11250, 11552, 11858, 12168, 12482, 12800, 13122,
+	13448, 13778, 14112, 14450, 14792, 15138, 15488, 15842, 16200, 16562,
+	16928, 17298, 17672, 18050, 18432, 18818, 19208, 19602, 20000, 20402,
+	20808, 21218, 21632, 22050, 22472, 22898, 23328, 23762, 24200, 24642,
+	25088, 25538, 25992, 26450, 26912, 27378, 27848, 28322, 28800, 29282,
+	29768, 30258, 30752, 31250, 31752, 32258
 };
 
 Audio3DO_SDX2_Stream::Audio3DO_SDX2_Stream(Common::SeekableReadStream *stream, uint16 sampleRate, bool stereo, DisposeAfterUse::Flag disposeAfterUse, audio_3DO_SDX2_PersistentSpace *persistentSpace)
-	: _sampleRate(sampleRate), _stereo(stereo),
-	  _stream(stream, disposeAfterUse) {
+  : _sampleRate(sampleRate)
+  , _stereo(stereo)
+  , _stream(stream, disposeAfterUse) {
 
 	_callerDecoderData = persistentSpace;
 	memset(&_initialDecoderData, 0, sizeof(_initialDecoderData));
@@ -219,13 +221,13 @@ bool Audio3DO_SDX2_Stream::rewind() {
 
 // Writes the requested amount (or less) of samples into buffer and returns the amount of samples, that got written
 int Audio3DO_SDX2_Stream::readBuffer(int16 *buffer, const int numSamples) {
-	int8  byteCache[AUDIO_3DO_CACHE_SIZE];
+	int8 byteCache[AUDIO_3DO_CACHE_SIZE];
 	int8 *byteCachePtr = NULL;
-	int   byteCacheSize = 0;
-	int   requestedBytesLeft = numSamples; // 1 byte per 16-bit sample
-	int   decodedSamplesCount = 0;
+	int byteCacheSize = 0;
+	int requestedBytesLeft = numSamples; // 1 byte per 16-bit sample
+	int decodedSamplesCount = 0;
 
-	int8  compressedByte = 0;
+	int8 compressedByte = 0;
 	uint8 squareTableOffset = 0;
 	int16 decodedSample = 0;
 
@@ -259,7 +261,7 @@ int Audio3DO_SDX2_Stream::readBuffer(int16 *buffer, const int numSamples) {
 		}
 
 		requestedBytesLeft -= byteCacheSize;
-		_streamBytesLeft   -= byteCacheSize;
+		_streamBytesLeft -= byteCacheSize;
 
 		// Fill our byte cache
 		_stream->read(byteCache, byteCacheSize);

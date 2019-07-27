@@ -23,9 +23,9 @@
 #ifndef SCI_ENGINE_MESSAGE_H
 #define SCI_ENGINE_MESSAGE_H
 
-#include "sci/resource.h"
-#include "sci/engine/vm_types.h"
 #include "common/stack.h"
+#include "sci/engine/vm_types.h"
+#include "sci/resource.h"
 
 namespace Sci {
 
@@ -39,11 +39,14 @@ struct MessageTuple {
 	byte seq;
 
 	MessageTuple(byte noun_ = 0, byte verb_ = 0, byte cond_ = 0, byte seq_ = 1)
-		: noun(noun_), verb(verb_), cond(cond_), seq(seq_) { }
+	  : noun(noun_)
+	  , verb(verb_)
+	  , cond(cond_)
+	  , seq(seq_) {}
 
 	Common::String toString() const {
 		return Common::String::format("noun %d, verb %d, cond %d, seq %d",
-									  noun, verb, cond, seq);
+		                              noun, verb, cond, seq);
 	}
 };
 
@@ -66,7 +69,9 @@ typedef Common::Stack<CursorStack> CursorStackStack;
 
 class MessageState {
 public:
-	MessageState(SegManager *segMan) : _segMan(segMan), _lastReturnedModule(0) { }
+	MessageState(SegManager *segMan)
+	  : _segMan(segMan)
+	  , _lastReturnedModule(0) {}
 	int getMessage(int module, MessageTuple &t, reg_t buf);
 	int nextMessage(reg_t buf);
 	int messageSize(int module, MessageTuple &t);

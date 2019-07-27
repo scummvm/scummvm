@@ -43,8 +43,10 @@ class CBellBot : public CTrueTalkNPC {
 	bool TimerMsg(CTimerMsg *msg);
 	bool TrueTalkGetStateValueMsg(CTrueTalkGetStateValueMsg *msg);
 	bool TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg);
+
 private:
 	int _field108;
+
 public:
 	CLASSDEF;
 	CBellBot();

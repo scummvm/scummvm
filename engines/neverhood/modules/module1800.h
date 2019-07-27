@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE1800_H
 #define NEVERHOOD_MODULES_MODULE1800_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -35,6 +35,7 @@ class Module1800 : public Module {
 public:
 	Module1800(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module1800();
+
 protected:
 	int _sceneNum;
 	void createScene(int sceneNum, int which);

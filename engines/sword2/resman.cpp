@@ -22,21 +22,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
 #include "common/file.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 
-#include "sword2/sword2.h"
+#include "sword2/console.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"
-#include "sword2/console.h"
 #include "sword2/logic.h"
 #include "sword2/memory.h"
 #include "sword2/resman.h"
 #include "sword2/router.h"
 #include "sword2/screen.h"
 #include "sword2/sound.h"
+#include "sword2/sword2.h"
 
 #define Debug_Printf _vm->_debugger->debugPrintf
 
@@ -52,16 +51,16 @@ namespace Sword2 {
 //	is located in and the number within the cluster
 
 enum {
-	BOTH		= 0x0,		// Cluster is on both CDs
-	CD1		= 0x1,		// Cluster is on CD1 only
-	CD2		= 0x2,		// Cluster is on CD2 only
-	LOCAL_CACHE	= 0x4,		// Cluster is cached on HDD
-	LOCAL_PERM	= 0x8		// Cluster is on HDD.
+	BOTH = 0x0, // Cluster is on both CDs
+	CD1 = 0x1, // Cluster is on CD1 only
+	CD2 = 0x2, // Cluster is on CD2 only
+	LOCAL_CACHE = 0x4, // Cluster is cached on HDD
+	LOCAL_PERM = 0x8 // Cluster is on HDD.
 };
 
 struct CdInf {
-	uint8 clusterName[20];	// Null terminated cluster name.
-	uint8 cd;		// Cd cluster is on and whether it is on the local drive or not.
+	uint8 clusterName[20]; // Null terminated cluster name.
+	uint8 cd; // Cd cluster is on and whether it is on the local drive or not.
 };
 
 ResourceManager::ResourceManager(Sword2Engine *vm) {
@@ -86,7 +85,6 @@ ResourceManager::~ResourceManager() {
 	free(_resList);
 	free(_resConvTable);
 }
-
 
 bool ResourceManager::init() {
 	uint32 i, j;
@@ -182,7 +180,6 @@ bool ResourceManager::init() {
 				GUIErrorMessage("Broken Sword II: Cannot read cd.inf");
 				return false;
 			}
-
 		}
 
 		// It has been reported that there are two different versions
@@ -259,11 +256,11 @@ bool ResourceManager::init() {
 byte *ResourceManager::openResource(uint32 res, bool dump) {
 	assert(res < _totalResFiles);
 
-
 	// FIXME: In PSX edition, not all top menu icons are present (TOP menu is not used).
 	// Though, at present state, the engine still ask for the resources.
 	if (Sword2Engine::isPsx()) { // We need to "rewire" missing icons
-		if (res == 342) res = 364; // Rewire RESTORE ICON to SAVE ICON
+		if (res == 342)
+			res = 364; // Rewire RESTORE ICON to SAVE ICON
 	}
 
 	// Is the resource in memory already? If not, load it.
@@ -339,7 +336,7 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 				tag = "globals";
 				break;
 			case PARALLAX_FILE_null:
-				tag = "parallax";	// Not used!
+				tag = "parallax"; // Not used!
 				break;
 			case RUN_LIST:
 				tag = "runlist";
@@ -520,11 +517,10 @@ uint8 ResourceManager::fetchType(byte *ptr) {
 			return ptr[0];
 		} else if (ptr[8]) {
 			return ptr[8];
-		} else  {            // In PSX version there is no resource header for audio files,
+		} else { // In PSX version there is no resource header for audio files,
 			return WAV_FILE; // but hopefully all audio files got first 16 bytes zeroed,
-		}                    // Allowing us to check for this condition.
-							 // Alas, this doesn't work with PSX DEMO audio files.
-
+		} // Allowing us to check for this condition.
+		// Alas, this doesn't work with PSX DEMO audio files.
 	}
 }
 

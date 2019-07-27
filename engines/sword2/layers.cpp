@@ -30,11 +30,9 @@
 //	3 normal sorted layers
 //	up to 2 foreground parallax layers
 
-
 #include "common/rect.h"
 #include "common/textconsole.h"
 
-#include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"
 #include "sword2/logic.h"
@@ -42,6 +40,7 @@
 #include "sword2/resman.h"
 #include "sword2/screen.h"
 #include "sword2/sound.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
@@ -290,7 +289,6 @@ void Screen::initPsxBackground(int32 res, int32 new_palette) {
 	initializePsxParallaxLayer(NULL);
 
 	_vm->_resman->closeResource(_thisScreen.background_layer_id);
-
 }
 
 } // End of namespace Sword2

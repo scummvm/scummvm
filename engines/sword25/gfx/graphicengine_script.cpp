@@ -31,19 +31,19 @@
 
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/kernel.h"
-#include "sword25/script/script.h"
+#include "sword25/math/vertex.h"
 #include "sword25/script/luabindhelper.h"
 #include "sword25/script/luacallback.h"
-#include "sword25/math/vertex.h"
+#include "sword25/script/script.h"
 
-#include "sword25/gfx/graphicengine.h"
-#include "sword25/gfx/renderobject.h"
-#include "sword25/gfx/bitmap.h"
 #include "sword25/gfx/animation.h"
-#include "sword25/gfx/panel.h"
-#include "sword25/gfx/text.h"
 #include "sword25/gfx/animationtemplate.h"
 #include "sword25/gfx/animationtemplateregistry.h"
+#include "sword25/gfx/bitmap.h"
+#include "sword25/gfx/graphicengine.h"
+#include "sword25/gfx/panel.h"
+#include "sword25/gfx/renderobject.h"
+#include "sword25/gfx/text.h"
 
 namespace Sword25 {
 
@@ -52,21 +52,22 @@ static bool animationActionCallback(uint Data);
 static bool animationLoopPointCallback(uint Data);
 
 namespace {
-class ActionCallback : public LuaCallback {
-public:
-	ActionCallback(lua_State *L) : LuaCallback(L) {}
+	class ActionCallback : public LuaCallback {
+	public:
+		ActionCallback(lua_State *L)
+		  : LuaCallback(L) {}
 
-	Common::String Action;
+		Common::String Action;
 
-protected:
-	virtual int PreFunctionInvokation(lua_State *L) {
-		lua_pushstring(L, Action.c_str());
-		return 1;
-	}
-};
+	protected:
+		virtual int PreFunctionInvokation(lua_State *L) {
+			lua_pushstring(L, Action.c_str());
+			return 1;
+		}
+	};
 
-static LuaCallback *loopPointCallbackPtr = 0;	// FIXME: should be turned into GraphicEngine member var
-static ActionCallback *actionCallbackPtr = 0;	// FIXME: should be turned into GraphicEngine member var
+	static LuaCallback *loopPointCallbackPtr = 0; // FIXME: should be turned into GraphicEngine member var
+	static ActionCallback *actionCallbackPtr = 0; // FIXME: should be turned into GraphicEngine member var
 }
 
 // Die Strings werden als #defines definiert um Stringkomposition zur Compilezeit zu ermöglichen.
@@ -96,7 +97,6 @@ static AnimationTemplate *checkAnimationTemplate(lua_State *L, int idx = 1) {
 		return 0;
 	}
 }
-
 
 static int newAnimationTemplate(lua_State *L) {
 	uint animationTemplateHandle = AnimationTemplate::create(luaL_checkstring(L, 1));
@@ -165,12 +165,12 @@ static int at_finalize(lua_State *L) {
 }
 
 static const luaL_reg ANIMATION_TEMPLATE_METHODS[] = {
-	{"AddFrame", at_addFrame},
-	{"SetFrame", at_setFrame},
-	{"SetAnimationType", at_setAnimationType},
-	{"SetFPS", at_setFPS},
-	{"__gc", at_finalize},
-	{0, 0}
+	{ "AddFrame", at_addFrame },
+	{ "SetFrame", at_setFrame },
+	{ "SetAnimationType", at_setAnimationType },
+	{ "SetFPS", at_setFPS },
+	{ "__gc", at_finalize },
+	{ 0, 0 }
 };
 
 static GraphicEngine *getGE() {
@@ -195,16 +195,13 @@ static int init(lua_State *L) {
 		lua_pushbooleancpp(L, pGE->init(static_cast<int>(luaL_checknumber(L, 1)), static_cast<int>(luaL_checknumber(L, 2))));
 		break;
 	case 3:
-		lua_pushbooleancpp(L, pGE->init(static_cast<int>(luaL_checknumber(L, 1)), static_cast<int>(luaL_checknumber(L, 2)),
-		                                static_cast<int>(luaL_checknumber(L, 3))));
+		lua_pushbooleancpp(L, pGE->init(static_cast<int>(luaL_checknumber(L, 1)), static_cast<int>(luaL_checknumber(L, 2)), static_cast<int>(luaL_checknumber(L, 3))));
 		break;
 	case 4:
 	default:
-		lua_pushbooleancpp(L, pGE->init(static_cast<int>(luaL_checknumber(L, 1)), static_cast<int>(luaL_checknumber(L, 2)),
-		                                static_cast<int>(luaL_checknumber(L, 3)), static_cast<int>(luaL_checknumber(L, 4))));
+		lua_pushbooleancpp(L, pGE->init(static_cast<int>(luaL_checknumber(L, 1)), static_cast<int>(luaL_checknumber(L, 2)), static_cast<int>(luaL_checknumber(L, 3)), static_cast<int>(luaL_checknumber(L, 4))));
 		break;
 	}
-
 
 #ifdef DEBUG
 	int __startStackDepth = lua_gettop(L);
@@ -322,35 +319,32 @@ static int dummyFuncError(lua_State *L) {
 }
 
 static const luaL_reg GFX_FUNCTIONS[] = {
-	{"Init", init},
-	{"StartFrame", startFrame},
-	{"EndFrame", endFrame},
-	{"DrawDebugLine", dummyFuncError},
-	{"SetVsync", setVsync},
-	{"GetDisplayWidth", dummyFuncError},
-	{"GetDisplayHeight", dummyFuncError},
-	{"GetBitDepth", getBitDepth},
-	{"IsVsync", isVsync},
-	{"IsWindowed", dummyFuncError},
-	{"GetFPSCount", dummyFuncError},
-	{"GetLastFrameDuration", getLastFrameDuration},
-	{"StopMainTimer", stopMainTimer},
-	{"ResumeMainTimer", resumeMainTimer},
-	{"GetSecondaryFrameDuration", getSecondaryFrameDuration},
-	{"SaveScreenshot", dummyFuncError},
-	{"NewAnimationTemplate", newAnimationTemplate},
-	{"GetRepaintedPixels", dummyFuncError},
-	{"SaveThumbnailScreenshot", saveThumbnailScreenshot},
-	{0, 0}
+	{ "Init", init },
+	{ "StartFrame", startFrame },
+	{ "EndFrame", endFrame },
+	{ "DrawDebugLine", dummyFuncError },
+	{ "SetVsync", setVsync },
+	{ "GetDisplayWidth", dummyFuncError },
+	{ "GetDisplayHeight", dummyFuncError },
+	{ "GetBitDepth", getBitDepth },
+	{ "IsVsync", isVsync },
+	{ "IsWindowed", dummyFuncError },
+	{ "GetFPSCount", dummyFuncError },
+	{ "GetLastFrameDuration", getLastFrameDuration },
+	{ "StopMainTimer", stopMainTimer },
+	{ "ResumeMainTimer", resumeMainTimer },
+	{ "GetSecondaryFrameDuration", getSecondaryFrameDuration },
+	{ "SaveScreenshot", dummyFuncError },
+	{ "NewAnimationTemplate", newAnimationTemplate },
+	{ "GetRepaintedPixels", dummyFuncError },
+	{ "SaveThumbnailScreenshot", saveThumbnailScreenshot },
+	{ 0, 0 }
 };
 
 static RenderObjectPtr<RenderObject> checkRenderObject(lua_State *L, bool errorIfRemoved = true) {
 	// Der erste Parameter muss vom Typ userdata sein und die Metatable einer Klasse haben, die von Gfx.RenderObject "erbt".
 	uint *userDataPtr;
-	if ((userDataPtr = (uint *)LuaBindhelper::my_checkudata(L, 1, BITMAP_CLASS_NAME)) != 0 ||
-	        (userDataPtr = (uint *)LuaBindhelper::my_checkudata(L, 1, ANIMATION_CLASS_NAME)) != 0 ||
-	        (userDataPtr = (uint *)LuaBindhelper::my_checkudata(L, 1, PANEL_CLASS_NAME)) != 0 ||
-	        (userDataPtr = (uint *)LuaBindhelper::my_checkudata(L, 1, TEXT_CLASS_NAME)) != 0) {
+	if ((userDataPtr = (uint *)LuaBindhelper::my_checkudata(L, 1, BITMAP_CLASS_NAME)) != 0 || (userDataPtr = (uint *)LuaBindhelper::my_checkudata(L, 1, ANIMATION_CLASS_NAME)) != 0 || (userDataPtr = (uint *)LuaBindhelper::my_checkudata(L, 1, PANEL_CLASS_NAME)) != 0 || (userDataPtr = (uint *)LuaBindhelper::my_checkudata(L, 1, TEXT_CLASS_NAME)) != 0) {
 		RenderObjectPtr<RenderObject> roPtr(*userDataPtr);
 		if (roPtr.isValid())
 			return roPtr;
@@ -470,8 +464,8 @@ static int ro_addPanel(lua_State *L) {
 	RenderObjectPtr<RenderObject> roPtr = checkRenderObject(L);
 	assert(roPtr.isValid());
 	RenderObjectPtr<Panel> panelPtr = roPtr->addPanel(static_cast<int>(luaL_checknumber(L, 2)),
-	                                        static_cast<int>(luaL_checknumber(L, 3)),
-	                                        GraphicEngine::luaColorToARGBColor(L, 4));
+	                                                  static_cast<int>(luaL_checknumber(L, 3)),
+	                                                  GraphicEngine::luaColorToARGBColor(L, 4));
 	if (panelPtr.isValid()) {
 		newUintUserData(L, panelPtr->getHandle());
 		// luaL_getmetatable(L, PANEL_CLASS_NAME);
@@ -554,24 +548,24 @@ void Animation::setCallbacks() {
 }
 
 static const luaL_reg RENDEROBJECT_METHODS[] = {
-	{"AddAnimation", ro_addAnimation},
-	{"AddText", ro_addText},
-	{"AddBitmap", ro_addBitmap},
-	{"AddPanel", ro_addPanel},
-	{"SetPos", ro_setPos},
-	{"SetX", ro_setX},
-	{"SetY", ro_setY},
-	{"SetZ", ro_setZ},
-	{"SetVisible", ro_setVisible},
-	{"GetX", ro_getX},
-	{"GetY", ro_getY},
-	{"GetZ", ro_getZ},
-	{"GetAbsoluteX", ro_getAbsoluteX},
-	{"GetAbsoluteY", ro_getAbsoluteY},
-	{"GetWidth", ro_getWidth},
-	{"GetHeight", ro_getHeight},
-	{"IsVisible", ro_isVisible},
-	{0, 0}
+	{ "AddAnimation", ro_addAnimation },
+	{ "AddText", ro_addText },
+	{ "AddBitmap", ro_addBitmap },
+	{ "AddPanel", ro_addPanel },
+	{ "SetPos", ro_setPos },
+	{ "SetX", ro_setX },
+	{ "SetY", ro_setY },
+	{ "SetZ", ro_setZ },
+	{ "SetVisible", ro_setVisible },
+	{ "GetX", ro_getX },
+	{ "GetY", ro_getY },
+	{ "GetZ", ro_getZ },
+	{ "GetAbsoluteX", ro_getAbsoluteX },
+	{ "GetAbsoluteY", ro_getAbsoluteY },
+	{ "GetWidth", ro_getWidth },
+	{ "GetHeight", ro_getHeight },
+	{ "IsVisible", ro_isVisible },
+	{ 0, 0 }
 };
 
 static RenderObjectPtr<Panel> checkPanel(lua_State *L) {
@@ -613,10 +607,10 @@ static int p_remove(lua_State *L) {
 }
 
 static const luaL_reg PANEL_METHODS[] = {
-	{"GetColor", p_getColor},
-	{"SetColor", p_setColor},
-	{"Remove", p_remove},
-	{0, 0}
+	{ "GetColor", p_getColor },
+	{ "SetColor", p_setColor },
+	{ "Remove", p_remove },
+	{ 0, 0 }
 };
 
 static RenderObjectPtr<Bitmap> checkBitmap(lua_State *L) {
@@ -743,25 +737,25 @@ static int b_remove(lua_State *L) {
 }
 
 static const luaL_reg BITMAP_METHODS[] = {
-	{"SetAlpha", b_setAlpha},
-	{"SetTintColor", b_setTintColor},
-	{"SetScaleFactor", b_setScaleFactor},
-	{"SetScaleFactorX", b_setScaleFactorX},
-	{"SetScaleFactorY", b_setScaleFactorY},
-	{"SetFlipH", b_setFlipH},
-	{"SetFlipV", b_setFlipV},
-	{"GetAlpha", b_getAlpha},
-	{"GetTintColor", b_getTintColor},
-	{"GetScaleFactorX", b_getScaleFactorX},
-	{"GetScaleFactorY", b_getScaleFactorY},
-	{"IsFlipH", b_isFlipH},
-	{"IsFlipV", b_isFlipV},
-	{"GetPixel", b_getPixel},
-	{"IsScalingAllowed", dummyFuncError},
-	{"IsAlphaAllowed", dummyFuncError},
-	{"IsTintingAllowed", dummyFuncError},
-	{"Remove", b_remove},
-	{0, 0}
+	{ "SetAlpha", b_setAlpha },
+	{ "SetTintColor", b_setTintColor },
+	{ "SetScaleFactor", b_setScaleFactor },
+	{ "SetScaleFactorX", b_setScaleFactorX },
+	{ "SetScaleFactorY", b_setScaleFactorY },
+	{ "SetFlipH", b_setFlipH },
+	{ "SetFlipV", b_setFlipV },
+	{ "GetAlpha", b_getAlpha },
+	{ "GetTintColor", b_getTintColor },
+	{ "GetScaleFactorX", b_getScaleFactorX },
+	{ "GetScaleFactorY", b_getScaleFactorY },
+	{ "IsFlipH", b_isFlipH },
+	{ "IsFlipV", b_isFlipV },
+	{ "GetPixel", b_getPixel },
+	{ "IsScalingAllowed", dummyFuncError },
+	{ "IsAlphaAllowed", dummyFuncError },
+	{ "IsTintingAllowed", dummyFuncError },
+	{ "Remove", b_remove },
+	{ 0, 0 }
 };
 
 static RenderObjectPtr<Animation> checkAnimation(lua_State *L) {
@@ -1009,32 +1003,32 @@ static int a_remove(lua_State *L) {
 }
 
 static const luaL_reg ANIMATION_METHODS[] = {
-	{"Play", a_play},
-	{"Pause", a_pause},
-	{"Stop", a_stop},
-	{"SetFrame", a_setFrame},
-	{"SetAlpha", a_setAlpha},
-	{"SetTintColor", a_setTintColor},
-	{"SetScaleFactor", a_setScaleFactor},
-	{"SetScaleFactorX", a_setScaleFactorX},
-	{"SetScaleFactorY", a_setScaleFactorY},
-	{"GetScaleFactorX", a_getScaleFactorX},
-	{"GetScaleFactorY", a_getScaleFactorY},
-	{"GetAnimationType", a_getAnimationType},
-	{"GetFPS", a_getFPS},
-	{"GetFrameCount", a_getFrameCount},
-	{"IsScalingAllowed", a_isScalingAllowed},
-	{"IsAlphaAllowed", a_isAlphaAllowed},
-	{"IsTintingAllowed", a_isTintingAllowed},
-	{"GetCurrentFrame", a_getCurrentFrame},
-	{"GetCurrentAction", a_getCurrentAction},
-	{"IsPlaying", a_isPlaying},
-	{"RegisterLoopPointCallback", a_registerLoopPointCallback},
-	{"UnregisterLoopPointCallback", a_unregisterLoopPointCallback},
-	{"RegisterActionCallback", a_registerActionCallback},
-	{"UnregisterActionCallback", a_unregisterActionCallback},
-	{"Remove", a_remove},
-	{0, 0}
+	{ "Play", a_play },
+	{ "Pause", a_pause },
+	{ "Stop", a_stop },
+	{ "SetFrame", a_setFrame },
+	{ "SetAlpha", a_setAlpha },
+	{ "SetTintColor", a_setTintColor },
+	{ "SetScaleFactor", a_setScaleFactor },
+	{ "SetScaleFactorX", a_setScaleFactorX },
+	{ "SetScaleFactorY", a_setScaleFactorY },
+	{ "GetScaleFactorX", a_getScaleFactorX },
+	{ "GetScaleFactorY", a_getScaleFactorY },
+	{ "GetAnimationType", a_getAnimationType },
+	{ "GetFPS", a_getFPS },
+	{ "GetFrameCount", a_getFrameCount },
+	{ "IsScalingAllowed", a_isScalingAllowed },
+	{ "IsAlphaAllowed", a_isAlphaAllowed },
+	{ "IsTintingAllowed", a_isTintingAllowed },
+	{ "GetCurrentFrame", a_getCurrentFrame },
+	{ "GetCurrentAction", a_getCurrentAction },
+	{ "IsPlaying", a_isPlaying },
+	{ "RegisterLoopPointCallback", a_registerLoopPointCallback },
+	{ "UnregisterLoopPointCallback", a_unregisterLoopPointCallback },
+	{ "RegisterActionCallback", a_registerActionCallback },
+	{ "UnregisterActionCallback", a_unregisterActionCallback },
+	{ "Remove", a_remove },
+	{ 0, 0 }
 };
 
 static RenderObjectPtr<Text> checkText(lua_State *L) {
@@ -1145,20 +1139,20 @@ static int t_remove(lua_State *L) {
 }
 
 static const luaL_reg TEXT_METHODS[] = {
-	{"SetFont", t_setFont},
-	{"SetText", t_setText},
-	{"SetAlpha", t_setAlpha},
-	{"SetColor", t_setColor},
-	{"SetAutoWrap", t_setAutoWrap},
-	{"SetAutoWrapThreshold", t_setAutoWrapThreshold},
-	{"GetText", t_getText},
-	{"GetFont", t_getFont},
-	{"GetAlpha", t_getAlpha},
-	{"GetColor", t_getColor},
-	{"IsAutoWrap", t_isAutoWrap},
-	{"GetAutoWrapThreshold", t_getAutoWrapThreshold},
-	{"Remove", t_remove},
-	{0, 0}
+	{ "SetFont", t_setFont },
+	{ "SetText", t_setText },
+	{ "SetAlpha", t_setAlpha },
+	{ "SetColor", t_setColor },
+	{ "SetAutoWrap", t_setAutoWrap },
+	{ "SetAutoWrapThreshold", t_setAutoWrapThreshold },
+	{ "GetText", t_getText },
+	{ "GetFont", t_getFont },
+	{ "GetAlpha", t_getAlpha },
+	{ "GetColor", t_getColor },
+	{ "IsAutoWrap", t_isAutoWrap },
+	{ "GetAutoWrapThreshold", t_getAutoWrapThreshold },
+	{ "Remove", t_remove },
+	{ 0, 0 }
 };
 
 bool GraphicEngine::registerScriptBindings() {
@@ -1169,19 +1163,29 @@ bool GraphicEngine::registerScriptBindings() {
 	lua_State *L = static_cast<lua_State *>(pScript->getScriptObject());
 	assert(L);
 
-	if (!LuaBindhelper::addMethodsToClass(L, BITMAP_CLASS_NAME, RENDEROBJECT_METHODS)) return false;
-	if (!LuaBindhelper::addMethodsToClass(L, ANIMATION_CLASS_NAME, RENDEROBJECT_METHODS)) return false;
-	if (!LuaBindhelper::addMethodsToClass(L, PANEL_CLASS_NAME, RENDEROBJECT_METHODS)) return false;
-	if (!LuaBindhelper::addMethodsToClass(L, TEXT_CLASS_NAME, RENDEROBJECT_METHODS)) return false;
+	if (!LuaBindhelper::addMethodsToClass(L, BITMAP_CLASS_NAME, RENDEROBJECT_METHODS))
+		return false;
+	if (!LuaBindhelper::addMethodsToClass(L, ANIMATION_CLASS_NAME, RENDEROBJECT_METHODS))
+		return false;
+	if (!LuaBindhelper::addMethodsToClass(L, PANEL_CLASS_NAME, RENDEROBJECT_METHODS))
+		return false;
+	if (!LuaBindhelper::addMethodsToClass(L, TEXT_CLASS_NAME, RENDEROBJECT_METHODS))
+		return false;
 
-	if (!LuaBindhelper::addMethodsToClass(L, PANEL_CLASS_NAME, PANEL_METHODS)) return false;
-	if (!LuaBindhelper::addMethodsToClass(L, BITMAP_CLASS_NAME, BITMAP_METHODS)) return false;
-	if (!LuaBindhelper::addMethodsToClass(L, TEXT_CLASS_NAME, TEXT_METHODS)) return false;
-	if (!LuaBindhelper::addMethodsToClass(L, ANIMATION_CLASS_NAME, ANIMATION_METHODS)) return false;
+	if (!LuaBindhelper::addMethodsToClass(L, PANEL_CLASS_NAME, PANEL_METHODS))
+		return false;
+	if (!LuaBindhelper::addMethodsToClass(L, BITMAP_CLASS_NAME, BITMAP_METHODS))
+		return false;
+	if (!LuaBindhelper::addMethodsToClass(L, TEXT_CLASS_NAME, TEXT_METHODS))
+		return false;
+	if (!LuaBindhelper::addMethodsToClass(L, ANIMATION_CLASS_NAME, ANIMATION_METHODS))
+		return false;
 
-	if (!LuaBindhelper::addMethodsToClass(L, ANIMATION_TEMPLATE_CLASS_NAME, ANIMATION_TEMPLATE_METHODS)) return false;
+	if (!LuaBindhelper::addMethodsToClass(L, ANIMATION_TEMPLATE_CLASS_NAME, ANIMATION_TEMPLATE_METHODS))
+		return false;
 
-	if (!LuaBindhelper::addFunctionsToLib(L, GFX_LIBRARY_NAME, GFX_FUNCTIONS)) return false;
+	if (!LuaBindhelper::addFunctionsToLib(L, GFX_LIBRARY_NAME, GFX_FUNCTIONS))
+		return false;
 
 	assert(loopPointCallbackPtr == 0);
 	loopPointCallbackPtr = new LuaCallback(L);

@@ -49,8 +49,8 @@ public:
 	virtual void startSound(int sound);
 	virtual void stopSound(int sound);
 	virtual void stopAllSounds();
-	virtual int  getMusicTimer();
-	virtual int  getSoundStatus(int sound) const;
+	virtual int getMusicTimer();
+	virtual int getSoundStatus(int sound) const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 

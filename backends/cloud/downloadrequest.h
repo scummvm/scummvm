@@ -23,16 +23,16 @@
 #ifndef BACKENDS_CLOUD_DOWNLOADREQUEST_H
 #define BACKENDS_CLOUD_DOWNLOADREQUEST_H
 
-#include "backends/networking/curl/request.h"
-#include "backends/networking/curl/networkreadstream.h"
 #include "backends/cloud/storage.h"
+#include "backends/networking/curl/networkreadstream.h"
+#include "backends/networking/curl/request.h"
 #include "common/file.h"
 
 namespace Cloud {
 
 #define DOWNLOAD_REQUEST_BUFFER_SIZE 1 * 1024 * 1024
 
-class DownloadRequest: public Networking::Request {
+class DownloadRequest : public Networking::Request {
 	Storage::BoolCallback _boolCallback;
 	Common::DumpFile *_localFile;
 	Common::String _remoteFileId;

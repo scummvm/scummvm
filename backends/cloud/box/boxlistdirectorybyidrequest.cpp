@@ -36,77 +36,82 @@ namespace Box {
 #define BOX_LIST_DIRECTORY_LIMIT 1000
 #define BOX_FOLDERS_API_LINK "https://api.box.com/2.0/folders/%s/items?offset=%u&limit=%u&fields=%s"
 
-BoxListDirectoryByIdRequest::BoxListDirectoryByIdRequest(BoxStorage *storage, Common::String id, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb):
-	Networking::Request(nullptr, ecb), _requestedId(id), _storage(storage), _listDirectoryCallback(cb),
-	_workingRequest(nullptr), _ignoreCallback(false) {
-	start();
-}
-
-BoxListDirectoryByIdRequest::~BoxListDirectoryByIdRequest() {
-	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
-	delete _listDirectoryCallback;
-}
-
-void BoxListDirectoryByIdRequest::start() {
-	_ignoreCallback = true;
-	if (_workingRequest) _workingRequest->finish();
-	_files.clear();
-	_ignoreCallback = false;
-
-	makeRequest(0);
-}
-
-void BoxListDirectoryByIdRequest::makeRequest(uint32 offset) {
-	Common::String url = Common::String::format(
-		BOX_FOLDERS_API_LINK,
-		_requestedId.c_str(),
-		offset,
-		BOX_LIST_DIRECTORY_LIMIT,
-		"id,type,name,size,modified_at"
-	);
-
-	Networking::JsonCallback callback = new Common::Callback<BoxListDirectoryByIdRequest, Networking::JsonResponse>(this, &BoxListDirectoryByIdRequest::responseCallback);
-	Networking::ErrorCallback failureCallback = new Common::Callback<BoxListDirectoryByIdRequest, Networking::ErrorResponse>(this, &BoxListDirectoryByIdRequest::errorCallback);
-	Networking::CurlJsonRequest *request = new BoxTokenRefresher(_storage, callback, failureCallback, url.c_str());
-	request->addHeader("Authorization: Bearer " + _storage->accessToken());
-	_workingRequest = ConnMan.addRequest(request);
-}
-
-void BoxListDirectoryByIdRequest::responseCallback(Networking::JsonResponse response) {
-	_workingRequest = nullptr;
-	if (_ignoreCallback) {
-		delete response.value;
-		return;
+	BoxListDirectoryByIdRequest::BoxListDirectoryByIdRequest(BoxStorage *storage, Common::String id, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb)
+	  : Networking::Request(nullptr, ecb)
+	  , _requestedId(id)
+	  , _storage(storage)
+	  , _listDirectoryCallback(cb)
+	  , _workingRequest(nullptr)
+	  , _ignoreCallback(false) {
+		start();
 	}
 
-	if (response.request)
-		_date = response.request->date();
-
-	Networking::ErrorResponse error(this);
-	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
-	if (rq && rq->getNetworkReadStream())
-		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
-
-	Common::JSONValue *json = response.value;
-	if (json == nullptr) {
-		error.response = "Failed to parse JSON, null passed!";
-		finishError(error);
-		return;
+	BoxListDirectoryByIdRequest::~BoxListDirectoryByIdRequest() {
+		_ignoreCallback = true;
+		if (_workingRequest)
+			_workingRequest->finish();
+		delete _listDirectoryCallback;
 	}
 
-	if (!json->isObject()) {
-		error.response = "Passed JSON is not an object!";
-		finishError(error);
-		delete json;
-		return;
+	void BoxListDirectoryByIdRequest::start() {
+		_ignoreCallback = true;
+		if (_workingRequest)
+			_workingRequest->finish();
+		_files.clear();
+		_ignoreCallback = false;
+
+		makeRequest(0);
 	}
 
-	Common::JSONObject responseObject = json->asObject();
-	//debug(9, "%s", json->stringify(true).c_str());
+	void BoxListDirectoryByIdRequest::makeRequest(uint32 offset) {
+		Common::String url = Common::String::format(
+		  BOX_FOLDERS_API_LINK,
+		  _requestedId.c_str(),
+		  offset,
+		  BOX_LIST_DIRECTORY_LIMIT,
+		  "id,type,name,size,modified_at");
 
-	//TODO: handle error messages passed as JSON
-	/*
+		Networking::JsonCallback callback = new Common::Callback<BoxListDirectoryByIdRequest, Networking::JsonResponse>(this, &BoxListDirectoryByIdRequest::responseCallback);
+		Networking::ErrorCallback failureCallback = new Common::Callback<BoxListDirectoryByIdRequest, Networking::ErrorResponse>(this, &BoxListDirectoryByIdRequest::errorCallback);
+		Networking::CurlJsonRequest *request = new BoxTokenRefresher(_storage, callback, failureCallback, url.c_str());
+		request->addHeader("Authorization: Bearer " + _storage->accessToken());
+		_workingRequest = ConnMan.addRequest(request);
+	}
+
+	void BoxListDirectoryByIdRequest::responseCallback(Networking::JsonResponse response) {
+		_workingRequest = nullptr;
+		if (_ignoreCallback) {
+			delete response.value;
+			return;
+		}
+
+		if (response.request)
+			_date = response.request->date();
+
+		Networking::ErrorResponse error(this);
+		Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
+		if (rq && rq->getNetworkReadStream())
+			error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
+
+		Common::JSONValue *json = response.value;
+		if (json == nullptr) {
+			error.response = "Failed to parse JSON, null passed!";
+			finishError(error);
+			return;
+		}
+
+		if (!json->isObject()) {
+			error.response = "Passed JSON is not an object!";
+			finishError(error);
+			delete json;
+			return;
+		}
+
+		Common::JSONObject responseObject = json->asObject();
+		//debug(9, "%s", json->stringify(true).c_str());
+
+		//TODO: handle error messages passed as JSON
+		/*
 	if (responseObject.contains("error") || responseObject.contains("error_summary")) {
 		warning("Box returned error: %s", responseObject.getVal("error_summary")->asString().c_str());
 		error.failed = true;
@@ -117,79 +122,89 @@ void BoxListDirectoryByIdRequest::responseCallback(Networking::JsonResponse resp
 	}
 	*/
 
-	//check that ALL keys exist AND HAVE RIGHT TYPE to avoid segfaults
-	if (responseObject.contains("entries")) {
-		if (!responseObject.getVal("entries")->isArray()) {
-			error.response = Common::String::format(
-				"\"entries\" found, but that's not an array!\n%s",
-				responseObject.getVal("entries")->stringify(true).c_str()
-			);
-			finishError(error);
-			delete json;
-			return;
-		}
-
-		Common::JSONArray items = responseObject.getVal("entries")->asArray();
-		for (uint32 i = 0; i < items.size(); ++i) {
-			if (!Networking::CurlJsonRequest::jsonIsObject(items[i], "BoxListDirectoryByIdRequest")) continue;
-
-			Common::JSONObject item = items[i]->asObject();
-
-			if (!Networking::CurlJsonRequest::jsonContainsString(item, "id", "BoxListDirectoryByIdRequest")) continue;
-			if (!Networking::CurlJsonRequest::jsonContainsString(item, "name", "BoxListDirectoryByIdRequest")) continue;
-			if (!Networking::CurlJsonRequest::jsonContainsString(item, "type", "BoxListDirectoryByIdRequest")) continue;
-			if (!Networking::CurlJsonRequest::jsonContainsString(item, "modified_at", "BoxListDirectoryByIdRequest")) continue;
-			if (!Networking::CurlJsonRequest::jsonContainsStringOrIntegerNumber(item, "size", "BoxListDirectoryByIdRequest")) continue;
-
-			Common::String id = item.getVal("id")->asString();
-			Common::String name = item.getVal("name")->asString();
-			bool isDirectory = (item.getVal("type")->asString() == "folder");
-			uint32 size;
-			if (item.getVal("size")->isString()) {
-				size = item.getVal("size")->asString().asUint64();
-			} else {
-				size = item.getVal("size")->asIntegerNumber();
+		//check that ALL keys exist AND HAVE RIGHT TYPE to avoid segfaults
+		if (responseObject.contains("entries")) {
+			if (!responseObject.getVal("entries")->isArray()) {
+				error.response = Common::String::format(
+				  "\"entries\" found, but that's not an array!\n%s",
+				  responseObject.getVal("entries")->stringify(true).c_str());
+				finishError(error);
+				delete json;
+				return;
 			}
-			uint32 timestamp = ISO8601::convertToTimestamp(item.getVal("modified_at")->asString());
 
-			//as we list directory by id, we can't determine full path for the file, so we leave it empty
-			_files.push_back(StorageFile(id, "", name, size, timestamp, isDirectory));
+			Common::JSONArray items = responseObject.getVal("entries")->asArray();
+			for (uint32 i = 0; i < items.size(); ++i) {
+				if (!Networking::CurlJsonRequest::jsonIsObject(items[i], "BoxListDirectoryByIdRequest"))
+					continue;
+
+				Common::JSONObject item = items[i]->asObject();
+
+				if (!Networking::CurlJsonRequest::jsonContainsString(item, "id", "BoxListDirectoryByIdRequest"))
+					continue;
+				if (!Networking::CurlJsonRequest::jsonContainsString(item, "name", "BoxListDirectoryByIdRequest"))
+					continue;
+				if (!Networking::CurlJsonRequest::jsonContainsString(item, "type", "BoxListDirectoryByIdRequest"))
+					continue;
+				if (!Networking::CurlJsonRequest::jsonContainsString(item, "modified_at", "BoxListDirectoryByIdRequest"))
+					continue;
+				if (!Networking::CurlJsonRequest::jsonContainsStringOrIntegerNumber(item, "size", "BoxListDirectoryByIdRequest"))
+					continue;
+
+				Common::String id = item.getVal("id")->asString();
+				Common::String name = item.getVal("name")->asString();
+				bool isDirectory = (item.getVal("type")->asString() == "folder");
+				uint32 size;
+				if (item.getVal("size")->isString()) {
+					size = item.getVal("size")->asString().asUint64();
+				} else {
+					size = item.getVal("size")->asIntegerNumber();
+				}
+				uint32 timestamp = ISO8601::convertToTimestamp(item.getVal("modified_at")->asString());
+
+				//as we list directory by id, we can't determine full path for the file, so we leave it empty
+				_files.push_back(StorageFile(id, "", name, size, timestamp, isDirectory));
+			}
 		}
+
+		uint32 received = 0;
+		uint32 totalCount = 0;
+		if (responseObject.contains("total_count") && responseObject.getVal("total_count")->isIntegerNumber())
+			totalCount = responseObject.getVal("total_count")->asIntegerNumber();
+		if (responseObject.contains("offset") && responseObject.getVal("offset")->isIntegerNumber())
+			received = responseObject.getVal("offset")->asIntegerNumber();
+		if (responseObject.contains("limit") && responseObject.getVal("limit")->isIntegerNumber())
+			received += responseObject.getVal("limit")->asIntegerNumber();
+		bool hasMore = (received < totalCount);
+
+		if (hasMore)
+			makeRequest(received);
+		else
+			finishListing(_files);
+
+		delete json;
 	}
 
-	uint32 received = 0;
-	uint32 totalCount = 0;
-	if (responseObject.contains("total_count") && responseObject.getVal("total_count")->isIntegerNumber())
-		totalCount = responseObject.getVal("total_count")->asIntegerNumber();
-	if (responseObject.contains("offset") && responseObject.getVal("offset")->isIntegerNumber())
-		received = responseObject.getVal("offset")->asIntegerNumber();
-	if (responseObject.contains("limit") && responseObject.getVal("limit")->isIntegerNumber())
-		received += responseObject.getVal("limit")->asIntegerNumber();
-	bool hasMore = (received < totalCount);
+	void BoxListDirectoryByIdRequest::errorCallback(Networking::ErrorResponse error) {
+		_workingRequest = nullptr;
+		if (_ignoreCallback)
+			return;
+		if (error.request)
+			_date = error.request->date();
+		finishError(error);
+	}
 
-	if (hasMore) makeRequest(received);
-	else finishListing(_files);
+	void BoxListDirectoryByIdRequest::handle() {}
 
-	delete json;
-}
+	void BoxListDirectoryByIdRequest::restart() { start(); }
 
-void BoxListDirectoryByIdRequest::errorCallback(Networking::ErrorResponse error) {
-	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
-	if (error.request) _date = error.request->date();
-	finishError(error);
-}
+	Common::String BoxListDirectoryByIdRequest::date() const { return _date; }
 
-void BoxListDirectoryByIdRequest::handle() {}
-
-void BoxListDirectoryByIdRequest::restart() { start(); }
-
-Common::String BoxListDirectoryByIdRequest::date() const { return _date; }
-
-void BoxListDirectoryByIdRequest::finishListing(Common::Array<StorageFile> &files) {
-	Request::finishSuccess();
-	if (_listDirectoryCallback) (*_listDirectoryCallback)(Storage::ListDirectoryResponse(this, files));
-}
+	void BoxListDirectoryByIdRequest::finishListing(Common::Array<StorageFile> &files) {
+		Request::finishSuccess();
+		if (_listDirectoryCallback)
+			(*_listDirectoryCallback)(Storage::ListDirectoryResponse(this, files));
+	}
 
 } // End of namespace Box
 } // End of namespace Cloud

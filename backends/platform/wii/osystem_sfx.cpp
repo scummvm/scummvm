@@ -42,12 +42,12 @@ static u8 *sound_buffer[SFX_BUFFERS];
 
 static void audio_switch_buffers() {
 	sb_hw = (sb_hw + 1) % SFX_BUFFERS;
-	AUDIO_InitDMA((u32) sound_buffer[sb_hw], SFX_THREAD_FRAG_SIZE);
+	AUDIO_InitDMA((u32)sound_buffer[sb_hw], SFX_THREAD_FRAG_SIZE);
 	LWP_ThreadSignal(sfx_queue);
 }
 
-static void * sfx_thread_func(void *arg) {
-	Audio::MixerImpl *mixer = (Audio::MixerImpl *) arg;
+static void *sfx_thread_func(void *arg) {
+	Audio::MixerImpl *mixer = (Audio::MixerImpl *)arg;
 	u8 sb_sw;
 
 	while (true) {
@@ -76,7 +76,7 @@ void OSystem_Wii::initSfx() {
 	sfx_thread_running = false;
 	sfx_thread_quit = false;
 
-	sfx_stack = (u8 *) memalign(32, SFX_THREAD_STACKSIZE);
+	sfx_stack = (u8 *)memalign(32, SFX_THREAD_STACKSIZE);
 
 	if (sfx_stack) {
 		memset(sfx_stack, 0, SFX_THREAD_STACKSIZE);
@@ -84,7 +84,7 @@ void OSystem_Wii::initSfx() {
 		LWP_InitQueue(&sfx_queue);
 
 		s32 res = LWP_CreateThread(&sfx_thread, sfx_thread_func, _mixer, sfx_stack,
-									SFX_THREAD_STACKSIZE, SFX_THREAD_PRIO);
+		                           SFX_THREAD_STACKSIZE, SFX_THREAD_PRIO);
 
 		if (res) {
 			printf("ERROR creating sfx thread: %ld\n", res);
@@ -96,7 +96,7 @@ void OSystem_Wii::initSfx() {
 	}
 
 	for (u32 i = 0; i < SFX_BUFFERS; ++i) {
-		sound_buffer[i] = (u8 *) memalign(32, SFX_THREAD_FRAG_SIZE);
+		sound_buffer[i] = (u8 *)memalign(32, SFX_THREAD_FRAG_SIZE);
 		memset(sound_buffer[i], 0, SFX_THREAD_FRAG_SIZE);
 		DCFlushRange(sound_buffer[i], SFX_THREAD_FRAG_SIZE);
 	}
@@ -107,7 +107,7 @@ void OSystem_Wii::initSfx() {
 
 	AUDIO_SetDSPSampleRate(AI_SAMPLERATE_48KHZ);
 	AUDIO_RegisterDMACallback(audio_switch_buffers);
-	AUDIO_InitDMA((u32) sound_buffer[sb_hw], SFX_THREAD_FRAG_SIZE);
+	AUDIO_InitDMA((u32)sound_buffer[sb_hw], SFX_THREAD_FRAG_SIZE);
 	AUDIO_StartDMA();
 }
 

@@ -22,9 +22,9 @@
 
 #include "scumm/he/intern_he.h"
 
-#include "scumm/he/moonbase/moonbase.h"
-#include "scumm/he/moonbase/ai_tree.h"
 #include "scumm/he/moonbase/ai_main.h"
+#include "scumm/he/moonbase/ai_tree.h"
+#include "scumm/he/moonbase/moonbase.h"
 
 namespace Scumm {
 
@@ -37,7 +37,8 @@ static int compareTreeNodes(const void *a, const void *b) {
 		return 0;
 }
 
-Tree::Tree(AI *ai) : _ai(ai) {
+Tree::Tree(AI *ai)
+  : _ai(ai) {
 	pBaseNode = new Node;
 	_maxDepth = MAX_DEPTH;
 	_maxNodes = MAX_NODES;
@@ -47,7 +48,8 @@ Tree::Tree(AI *ai) : _ai(ai) {
 	_currentMap = new Common::SortedArray<TreeNode *>(compareTreeNodes);
 }
 
-Tree::Tree(IContainedObject *contents, AI *ai) : _ai(ai) {
+Tree::Tree(IContainedObject *contents, AI *ai)
+  : _ai(ai) {
 	pBaseNode = new Node;
 	pBaseNode->setContainedObject(contents);
 	_maxDepth = MAX_DEPTH;
@@ -58,7 +60,8 @@ Tree::Tree(IContainedObject *contents, AI *ai) : _ai(ai) {
 	_currentMap = new Common::SortedArray<TreeNode *>(compareTreeNodes);
 }
 
-Tree::Tree(IContainedObject *contents, int maxDepth, AI *ai) : _ai(ai) {
+Tree::Tree(IContainedObject *contents, int maxDepth, AI *ai)
+  : _ai(ai) {
 	pBaseNode = new Node;
 	pBaseNode->setContainedObject(contents);
 	_maxDepth = maxDepth;
@@ -69,7 +72,8 @@ Tree::Tree(IContainedObject *contents, int maxDepth, AI *ai) : _ai(ai) {
 	_currentMap = new Common::SortedArray<TreeNode *>(compareTreeNodes);
 }
 
-Tree::Tree(IContainedObject *contents, int maxDepth, int maxNodes, AI *ai) : _ai(ai) {
+Tree::Tree(IContainedObject *contents, int maxDepth, int maxNodes, AI *ai)
+  : _ai(ai) {
 	pBaseNode = new Node;
 	pBaseNode->setContainedObject(contents);
 	_maxDepth = maxDepth;
@@ -92,7 +96,8 @@ void Tree::duplicateTree(Node *sourceNode, Node *destNode) {
 	}
 }
 
-Tree::Tree(const Tree *sourceTree, AI *ai) : _ai(ai) {
+Tree::Tree(const Tree *sourceTree, AI *ai)
+  : _ai(ai) {
 	pBaseNode = new Node(sourceTree->getBaseNode());
 	_maxDepth = sourceTree->getMaxDepth();
 	_maxNodes = sourceTree->getMaxNodes();
@@ -164,7 +169,6 @@ Node *Tree::aStarSearch() {
 
 	return retNode;
 }
-
 
 Node *Tree::aStarSearch_singlePassInit() {
 	Node *retNode = NULL;

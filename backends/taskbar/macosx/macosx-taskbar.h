@@ -25,8 +25,8 @@
 
 #if defined(MACOSX) && defined(USE_TASKBAR)
 
-#include "common/str.h"
-#include "common/taskbar.h"
+#	include "common/str.h"
+#	include "common/taskbar.h"
 
 class MacOSXTaskbarManager : public Common::TaskbarManager {
 public:
@@ -42,7 +42,7 @@ public:
 	virtual void clearError();
 
 private:
-	Common::String getIconPath(const Common::String&);
+	Common::String getIconPath(const Common::String &);
 
 	void initApplicationIconView();
 	void clearApplicationIconView();

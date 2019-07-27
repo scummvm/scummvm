@@ -25,15 +25,17 @@
 #include "parallaction/parallaction.h"
 #include "parallaction/parser.h"
 
-
 namespace Parallaction {
 
-#define MAX_TOKENS	50
+#define MAX_TOKENS 50
 
-int				_numTokens;
-char			_tokens[MAX_TOKENS][MAX_TOKEN_LEN];
+int _numTokens;
+char _tokens[MAX_TOKENS][MAX_TOKEN_LEN];
 
-Script::Script(Common::ReadStream *input, bool disposeSource) : _input(input), _disposeSource(disposeSource), _line(0) {}
+Script::Script(Common::ReadStream *input, bool disposeSource)
+  : _input(input)
+  , _disposeSource(disposeSource)
+  , _line(0) {}
 
 Script::~Script() {
 	if (_disposeSource)
@@ -51,7 +53,7 @@ Script::~Script() {
  */
 char *Script::readLineIntern(char *buf, size_t bufSize) {
 	uint i = 0;
-	for ( ; i < bufSize; ) {
+	for (; i < bufSize;) {
 		char c = _input->readSByte();
 		if (_input->eos())
 			break;
@@ -109,12 +111,10 @@ char *Script::readLine(char *buf, size_t bufSize) {
 		if (isCommentLine(line)) {
 			// ignore this line
 			ignoreLine = true;
-		} else
-		if (isStartOfCommentBlock(line)) {
+		} else if (isStartOfCommentBlock(line)) {
 			// mark this and the following lines as comment
 			inBlockComment = true;
-		} else
-		if (isEndOfCommentBlock(line)) {
+		} else if (isEndOfCommentBlock(line)) {
 			// comment is finished, so stop ignoring
 			inBlockComment = false;
 			// the current line must be skipped, though,
@@ -127,19 +127,16 @@ char *Script::readLine(char *buf, size_t bufSize) {
 	return line;
 }
 
-
-
 void Script::clearTokens() {
 	memset(_tokens, 0, sizeof(_tokens));
 	_numTokens = 0;
 }
 
-void Script::skip(const char* endToken) {
+void Script::skip(const char *endToken) {
 
 	while (scumm_stricmp(_tokens[0], endToken)) {
 		readLineToken(true);
 	}
-
 }
 
 //
@@ -152,7 +149,8 @@ void Script::skip(const char* endToken) {
 //
 char *Script::parseNextToken(char *s, char *tok, uint16 count, const char *brk) {
 
-	enum STATES { NORMAL, QUOTED };
+	enum STATES { NORMAL,
+		            QUOTED };
 
 	STATES state = NORMAL;
 
@@ -163,12 +161,10 @@ char *Script::parseNextToken(char *s, char *tok, uint16 count, const char *brk) 
 			if (*s == '\0') {
 				*tok = '\0';
 				return s;
-			} else
-			if (strchr(brk, *s)) {
+			} else if (strchr(brk, *s)) {
 				*tok = '\0';
 				return ++s;
-			} else
-			if (*s == '"') {
+			} else if (*s == '"') {
 				state = QUOTED;
 				s++;
 			} else {
@@ -181,8 +177,7 @@ char *Script::parseNextToken(char *s, char *tok, uint16 count, const char *brk) 
 			if (*s == '\0') {
 				*tok = '\0';
 				return s;
-			} else
-			if (*s == '"') {
+			} else if (*s == '"') {
 				*tok = '\0';
 				return ++s;
 			} else {
@@ -191,7 +186,6 @@ char *Script::parseNextToken(char *s, char *tok, uint16 count, const char *brk) 
 			}
 			break;
 		}
-
 	}
 
 	*tok = '\0';
@@ -200,7 +194,6 @@ char *Script::parseNextToken(char *s, char *tok, uint16 count, const char *brk) 
 	// allocated time to properly check.
 
 	return tok;
-
 }
 
 uint16 Script::readLineToken(bool errorOnEOF) {
@@ -221,7 +214,6 @@ uint16 Script::readLineToken(bool errorOnEOF) {
 	}
 	return _numTokens;
 }
-
 
 void Parser::reset() {
 	_currentOpcodes = 0;

@@ -21,9 +21,9 @@
  */
 
 #include "mutationofjb/commands/renamecommand.h"
+#include "common/algorithm.h"
 #include "mutationofjb/game.h"
 #include "mutationofjb/gamedata.h"
-#include "common/algorithm.h"
 
 /** @file
  * "REN " <oldName> " " <newName>
@@ -50,7 +50,6 @@ bool RenameCommandParser::parse(const Common::String &line, ScriptParseContext &
 
 	return true;
 }
-
 
 Command::ExecuteResult RenameCommand::execute(ScriptExecutionContext &scriptExecCtx) {
 	Scene *const scene = scriptExecCtx.getGameData().getCurrentScene();

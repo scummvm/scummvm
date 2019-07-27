@@ -20,12 +20,13 @@
  *
  */
 
-#include "mortevielle/mortevielle.h"
 #include "mortevielle/debugger.h"
+#include "mortevielle/mortevielle.h"
 
 namespace Mortevielle {
 
-Debugger::Debugger(MortevielleEngine *vm) : GUI::Debugger() {
+Debugger::Debugger(MortevielleEngine *vm)
+  : GUI::Debugger() {
 	_vm = vm;
 	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("show_questions", WRAP_METHOD(Debugger, Cmd_showAllQuestions));

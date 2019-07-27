@@ -21,22 +21,26 @@
  */
 
 #include "titanic/support/direct_draw.h"
-#include "titanic/debugger.h"
-#include "titanic/titanic.h"
 #include "common/debug.h"
 #include "engines/util.h"
 #include "graphics/pixelformat.h"
 #include "graphics/screen.h"
+#include "titanic/debugger.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
-DirectDraw::DirectDraw() : _windowed(false), _width(0), _height(0),
-		_bpp(0), _numBackSurfaces(0) {
+DirectDraw::DirectDraw()
+  : _windowed(false)
+  , _width(0)
+  , _height(0)
+  , _bpp(0)
+  , _numBackSurfaces(0) {
 }
 
 void DirectDraw::setDisplayMode(int width, int height, int bpp, int refreshRate) {
 	debugC(DEBUG_BASIC, kDebugGraphics, "DirectDraw::SetDisplayMode (%d x %d), %d bpp",
-		width, height, bpp);
+	       width, height, bpp);
 	assert(bpp == 16);
 
 	Graphics::PixelFormat pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
@@ -81,7 +85,7 @@ void DirectDrawManager::initVideo(int width, int height, int bpp, int numBackSur
 void DirectDrawManager::initFullScreen() {
 	debugC(DEBUG_BASIC, kDebugGraphics, "Creating surfaces");
 	_directDraw.setDisplayMode(_directDraw._width, _directDraw._height,
-		_directDraw._bpp, 0);
+	                           _directDraw._bpp, 0);
 
 	// Set up the main surface to point to the screen
 	_mainSurface = new DirectDrawSurface();

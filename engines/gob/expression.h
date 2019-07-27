@@ -30,70 +30,69 @@ namespace Gob {
 class GobEngine;
 
 enum {
-	OP_NEG        =  1,
-	OP_ADD        =  2,
-	OP_SUB        =  3,
-	OP_BITOR      =  4,
-	OP_MUL        =  5,
-	OP_DIV        =  6,
-	OP_MOD        =  7,
-	OP_BITAND     =  8,
-	OP_BEGIN_EXPR =  9,
-	OP_END_EXPR   = 10,
-	OP_NOT        = 11,
+	OP_NEG = 1,
+	OP_ADD = 2,
+	OP_SUB = 3,
+	OP_BITOR = 4,
+	OP_MUL = 5,
+	OP_DIV = 6,
+	OP_MOD = 7,
+	OP_BITAND = 8,
+	OP_BEGIN_EXPR = 9,
+	OP_END_EXPR = 10,
+	OP_NOT = 11,
 
 	OP_END_MARKER = 12, // Marks end of an array or string
 
-
-	OP_ARRAY_INT8              = 16,
-	OP_LOAD_VAR_INT16          = 17,
-	OP_LOAD_VAR_INT8           = 18,
-	OP_LOAD_IMM_INT32          = 19,
-	OP_LOAD_IMM_INT16          = 20,
-	OP_LOAD_IMM_INT8           = 21,
-	OP_LOAD_IMM_STR            = 22,
-	OP_LOAD_VAR_INT32          = 23,
+	OP_ARRAY_INT8 = 16,
+	OP_LOAD_VAR_INT16 = 17,
+	OP_LOAD_VAR_INT8 = 18,
+	OP_LOAD_IMM_INT32 = 19,
+	OP_LOAD_IMM_INT16 = 20,
+	OP_LOAD_IMM_INT8 = 21,
+	OP_LOAD_IMM_STR = 22,
+	OP_LOAD_VAR_INT32 = 23,
 	OP_LOAD_VAR_INT32_AS_INT16 = 24,
-	OP_LOAD_VAR_STR            = 25,
-	OP_ARRAY_INT32             = 26,
-	OP_ARRAY_INT16             = 27,
-	OP_ARRAY_STR               = 28,
+	OP_LOAD_VAR_STR = 25,
+	OP_ARRAY_INT32 = 26,
+	OP_ARRAY_INT16 = 27,
+	OP_ARRAY_STR = 28,
 
 	OP_FUNC = 29,
 
-	OP_OR      = 30, // Logical OR
-	OP_AND     = 31, // Logical AND
-	OP_LESS    = 32,
-	OP_LEQ     = 33,
+	OP_OR = 30, // Logical OR
+	OP_AND = 31, // Logical AND
+	OP_LESS = 32,
+	OP_LEQ = 33,
 	OP_GREATER = 34,
-	OP_GEQ     = 35,
-	OP_EQ      = 36,
-	OP_NEQ     = 37
+	OP_GEQ = 35,
+	OP_EQ = 36,
+	OP_NEQ = 37
 };
 
 enum {
-	FUNC_SQRT1 =  0,
-	FUNC_SQRT2 =  1,
-	FUNC_SQRT3 =  6,
+	FUNC_SQRT1 = 0,
+	FUNC_SQRT2 = 1,
+	FUNC_SQRT3 = 6,
 
-	FUNC_SQR   =  5,
-	FUNC_ABS   =  7,
-	FUNC_RAND  = 10
+	FUNC_SQR = 5,
+	FUNC_ABS = 7,
+	FUNC_RAND = 10
 };
 
 enum {
-	TYPE_IMM_INT8           = OP_LOAD_IMM_INT8,          // 21
-	TYPE_IMM_INT32          = OP_LOAD_IMM_INT32,         // 19
-	TYPE_IMM_INT16          = OP_LOAD_IMM_INT16,         // 20
-	TYPE_IMM_STR            = OP_LOAD_IMM_STR,           // 22
-	TYPE_VAR_INT8           = OP_LOAD_VAR_INT8,          // 18
-	TYPE_VAR_INT16          = OP_LOAD_VAR_INT16,         // 17
-	TYPE_VAR_INT32          = OP_LOAD_VAR_INT32,         // 23
-	TYPE_VAR_STR            = OP_LOAD_VAR_STR,           // 25
-	TYPE_ARRAY_INT8         = OP_ARRAY_INT8,             // 16
-	TYPE_ARRAY_INT16        = OP_ARRAY_INT16,            // 27
-	TYPE_ARRAY_INT32        = OP_ARRAY_INT32,            // 26
-	TYPE_ARRAY_STR          = OP_ARRAY_STR,              // 28
+	TYPE_IMM_INT8 = OP_LOAD_IMM_INT8, // 21
+	TYPE_IMM_INT32 = OP_LOAD_IMM_INT32, // 19
+	TYPE_IMM_INT16 = OP_LOAD_IMM_INT16, // 20
+	TYPE_IMM_STR = OP_LOAD_IMM_STR, // 22
+	TYPE_VAR_INT8 = OP_LOAD_VAR_INT8, // 18
+	TYPE_VAR_INT16 = OP_LOAD_VAR_INT16, // 17
+	TYPE_VAR_INT32 = OP_LOAD_VAR_INT32, // 23
+	TYPE_VAR_STR = OP_LOAD_VAR_STR, // 25
+	TYPE_ARRAY_INT8 = OP_ARRAY_INT8, // 16
+	TYPE_ARRAY_INT16 = OP_ARRAY_INT16, // 27
+	TYPE_ARRAY_INT32 = OP_ARRAY_INT32, // 26
+	TYPE_ARRAY_STR = OP_ARRAY_STR, // 28
 	TYPE_VAR_INT32_AS_INT16 = OP_LOAD_VAR_INT32_AS_INT16 // 24
 };
 
@@ -102,7 +101,7 @@ enum {
 	// of "operators". So they somehow coincide with OP_LOAD_VAR_INT32
 	// and OP_LOAD_VAR_INT32_AS_INT16. I haven't yet quite understood
 	// how, resp. what that means. You have been warned.
-	GOB_TRUE  = 24,
+	GOB_TRUE = 24,
 	GOB_FALSE = 23
 };
 
@@ -144,9 +143,9 @@ private:
 	};
 
 	enum PointerType {
-		kExecPtr  = 0,
+		kExecPtr = 0,
 		kInterVar = 1,
-		kResStr   = 2
+		kResStr = 2
 	};
 
 	GobEngine *_vm;
@@ -160,7 +159,7 @@ private:
 	void printExpr_internal(char stopToken);
 
 	bool getVarBase(uint32 &varBase, bool mindStop = false,
-			uint16 *size = 0, uint16 *type = 0);
+	                uint16 *size = 0, uint16 *type = 0);
 	int cmpHelper(const StackFrame &stackFrame);
 	void loadValue(byte operation, uint32 varBase, const StackFrame &stackFrame);
 

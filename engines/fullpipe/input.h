@@ -57,7 +57,7 @@ class InputController {
 	Common::Rect _cursorBounds;
 	Picture *_cursorItemPicture;
 
- public:
+public:
 	InputController();
 	~InputController();
 

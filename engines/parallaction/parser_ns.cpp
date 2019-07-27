@@ -28,43 +28,42 @@
 
 namespace Parallaction {
 
-#define CMD_SET				1
-#define CMD_CLEAR			2
-#define CMD_START			3
-#define CMD_SPEAK			4
-#define CMD_GET				5
-#define CMD_LOCATION		6
-#define CMD_OPEN			7
-#define CMD_CLOSE			8
-#define CMD_ON				9
-#define CMD_OFF				10
-#define CMD_CALL			11
-#define CMD_TOGGLE			12
-#define CMD_DROP			13
-#define CMD_QUIT			14
-#define CMD_MOVE			15
-#define CMD_STOP			16
+#define CMD_SET 1
+#define CMD_CLEAR 2
+#define CMD_START 3
+#define CMD_SPEAK 4
+#define CMD_GET 5
+#define CMD_LOCATION 6
+#define CMD_OPEN 7
+#define CMD_CLOSE 8
+#define CMD_ON 9
+#define CMD_OFF 10
+#define CMD_CALL 11
+#define CMD_TOGGLE 12
+#define CMD_DROP 13
+#define CMD_QUIT 14
+#define CMD_MOVE 15
+#define CMD_STOP 16
 
-#define INST_ON				1
-#define INST_OFF			2
-#define INST_X				3
-#define INST_Y				4
-#define INST_Z				5
-#define INST_F				6
-#define INST_LOOP			7
-#define INST_ENDLOOP		8
-#define INST_SHOW			9
-#define INST_INC			10
-#define INST_DEC			11
-#define INST_SET			12
-#define INST_PUT			13
-#define INST_CALL			14
-#define INST_WAIT			15
-#define INST_START			16
-#define INST_SOUND			17
-#define INST_MOVE			18
-#define INST_END			19
-
+#define INST_ON 1
+#define INST_OFF 2
+#define INST_X 3
+#define INST_Y 4
+#define INST_Z 5
+#define INST_F 6
+#define INST_LOOP 7
+#define INST_ENDLOOP 8
+#define INST_SHOW 9
+#define INST_INC 10
+#define INST_DEC 11
+#define INST_SET 12
+#define INST_PUT 13
+#define INST_CALL 14
+#define INST_WAIT 15
+#define INST_START 16
+#define INST_SOUND 17
+#define INST_MOVE 18
+#define INST_END 19
 
 const char *_zoneFlagNamesRes_ns[] = {
 	"closed",
@@ -178,7 +177,6 @@ const char *_instructionNamesRes_ns[] = {
 	"endscript"
 };
 
-
 #define DECLARE_ZONE_PARSER(sig) void LocationParser_ns::locZoneParse_##sig()
 #define DECLARE_ANIM_PARSER(sig) void LocationParser_ns::locAnimParse_##sig()
 #define DECLARE_COMMAND_PARSER(sig) void LocationParser_ns::cmdParse_##sig()
@@ -186,27 +184,23 @@ const char *_instructionNamesRes_ns[] = {
 
 #define DECLARE_INSTRUCTION_PARSER(sig) void ProgramParser_ns::instParse_##sig()
 
-
 void LocationParser_ns::warning_unexpected() {
 	debugC(1, kDebugParser, "unexpected keyword '%s' in line %i", _tokens[0], _script->getLine());
 }
 
-
-DECLARE_ANIM_PARSER(script)  {
+DECLARE_ANIM_PARSER(script) {
 	debugC(7, kDebugParser, "ANIM_PARSER(script) ");
 
 	ctxt.a->_scriptName = _tokens[1];
 }
 
-
-DECLARE_ANIM_PARSER(commands)  {
+DECLARE_ANIM_PARSER(commands) {
 	debugC(7, kDebugParser, "ANIM_PARSER(commands) ");
 
-	 parseCommands(ctxt.a->_commands);
+	parseCommands(ctxt.a->_commands);
 }
 
-
-DECLARE_ANIM_PARSER(type)  {
+DECLARE_ANIM_PARSER(type) {
 	debugC(7, kDebugParser, "ANIM_PARSER(type) ");
 
 	ctxt.a->_type = buildZoneType(_tokens[1], _tokens[2]);
@@ -219,16 +213,14 @@ DECLARE_ANIM_PARSER(type)  {
 	_parser->popTables();
 }
 
-
-DECLARE_ANIM_PARSER(label)  {
+DECLARE_ANIM_PARSER(label) {
 	debugC(7, kDebugParser, "ANIM_PARSER(label) ");
 
 	ctxt.a->_label = _vm->_gfx->renderFloatingLabel(_vm->_labelFont, _tokens[1]);
 	ctxt.a->_flags &= ~kFlagsNoName;
 }
 
-
-DECLARE_ANIM_PARSER(flags)  {
+DECLARE_ANIM_PARSER(flags) {
 	debugC(7, kDebugParser, "ANIM_PARSER(flags) ");
 
 	uint16 _si = 1;
@@ -240,8 +232,7 @@ DECLARE_ANIM_PARSER(flags)  {
 	} while (!scumm_stricmp(_tokens[_si++], "|"));
 }
 
-
-DECLARE_ANIM_PARSER(file)  {
+DECLARE_ANIM_PARSER(file) {
 	debugC(7, kDebugParser, "ANIM_PARSER(file) ");
 
 	char vC8[200];
@@ -254,8 +245,7 @@ DECLARE_ANIM_PARSER(file)  {
 	ctxt.a->gfxobj = _vm->_gfx->loadAnim(vC8);
 }
 
-
-DECLARE_ANIM_PARSER(position)  {
+DECLARE_ANIM_PARSER(position) {
 	debugC(7, kDebugParser, "ANIM_PARSER(position) ");
 
 	ctxt.a->setX(atoi(_tokens[1]));
@@ -263,16 +253,14 @@ DECLARE_ANIM_PARSER(position)  {
 	ctxt.a->setZ(atoi(_tokens[3]));
 }
 
-
-DECLARE_ANIM_PARSER(moveto)  {
+DECLARE_ANIM_PARSER(moveto) {
 	debugC(7, kDebugParser, "ANIM_PARSER(moveto) ");
 
 	ctxt.a->_moveTo.x = atoi(_tokens[1]);
 	ctxt.a->_moveTo.y = atoi(_tokens[2]);
 }
 
-
-DECLARE_ANIM_PARSER(endanimation)  {
+DECLARE_ANIM_PARSER(endanimation) {
 	debugC(7, kDebugParser, "ANIM_PARSER(endanimation) ");
 
 	ctxt.a->_flags |= 0x1000000;
@@ -308,8 +296,7 @@ void ProgramParser_ns::parseInstruction() {
 	if (_tokens[0][1] == '.') {
 		_tokens[0][1] = '\0';
 		ctxt.a = _vm->_location.findAnimation(&_tokens[0][2]);
-	} else
-	if (_tokens[1][1] == '.') {
+	} else if (_tokens[1][1] == '.') {
 		_tokens[1][1] = '\0';
 		ctxt.a = _vm->_location.findAnimation(&_tokens[1][2]);
 	} else
@@ -365,7 +352,7 @@ void Parallaction_ns::loadProgram(AnimationPtr a, const char *filename) {
 	return;
 }
 
-DECLARE_INSTRUCTION_PARSER(animation)  {
+DECLARE_INSTRUCTION_PARSER(animation) {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(animation) ");
 
 	if (!scumm_stricmp(_tokens[1], ctxt.a->_name)) {
@@ -377,16 +364,14 @@ DECLARE_INSTRUCTION_PARSER(animation)  {
 	ctxt.inst->_index = _parser->_lookup;
 }
 
-
-DECLARE_INSTRUCTION_PARSER(loop)  {
+DECLARE_INSTRUCTION_PARSER(loop) {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(loop) ");
 
 	parseRValue(ctxt.inst->_opB, _tokens[1]);
 	ctxt.inst->_index = _parser->_lookup;
 }
 
-
-DECLARE_INSTRUCTION_PARSER(x)  {
+DECLARE_INSTRUCTION_PARSER(x) {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(x) ");
 
 	parseLValue(ctxt.inst->_opA, "X");
@@ -394,8 +379,7 @@ DECLARE_INSTRUCTION_PARSER(x)  {
 	ctxt.inst->_index = _parser->_lookup;
 }
 
-
-DECLARE_INSTRUCTION_PARSER(y)  {
+DECLARE_INSTRUCTION_PARSER(y) {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(y) ");
 
 	parseLValue(ctxt.inst->_opA, "Y");
@@ -403,8 +387,7 @@ DECLARE_INSTRUCTION_PARSER(y)  {
 	ctxt.inst->_index = _parser->_lookup;
 }
 
-
-DECLARE_INSTRUCTION_PARSER(z)  {
+DECLARE_INSTRUCTION_PARSER(z) {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(z) ");
 
 	parseLValue(ctxt.inst->_opA, "Z");
@@ -412,8 +395,7 @@ DECLARE_INSTRUCTION_PARSER(z)  {
 	ctxt.inst->_index = _parser->_lookup;
 }
 
-
-DECLARE_INSTRUCTION_PARSER(f)  {
+DECLARE_INSTRUCTION_PARSER(f) {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(f) ");
 
 	parseLValue(ctxt.inst->_opA, "F");
@@ -421,8 +403,7 @@ DECLARE_INSTRUCTION_PARSER(f)  {
 	ctxt.inst->_index = _parser->_lookup;
 }
 
-
-DECLARE_INSTRUCTION_PARSER(inc)  {
+DECLARE_INSTRUCTION_PARSER(inc) {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(inc) ");
 
 	parseLValue(ctxt.inst->_opA, _tokens[1]);
@@ -434,8 +415,7 @@ DECLARE_INSTRUCTION_PARSER(inc)  {
 	ctxt.inst->_index = _parser->_lookup;
 }
 
-
-DECLARE_INSTRUCTION_PARSER(set)  {
+DECLARE_INSTRUCTION_PARSER(set) {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(set) ");
 
 	// WORKAROUND: At least one script (balzo.script) in Amiga versions didn't declare
@@ -452,8 +432,7 @@ DECLARE_INSTRUCTION_PARSER(set)  {
 	ctxt.inst->_index = _parser->_lookup;
 }
 
-
-DECLARE_INSTRUCTION_PARSER(move)  {
+DECLARE_INSTRUCTION_PARSER(move) {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(move) ");
 
 	parseRValue(ctxt.inst->_opA, _tokens[1]);
@@ -461,8 +440,7 @@ DECLARE_INSTRUCTION_PARSER(move)  {
 	ctxt.inst->_index = _parser->_lookup;
 }
 
-
-DECLARE_INSTRUCTION_PARSER(put)  {
+DECLARE_INSTRUCTION_PARSER(put) {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(put) ");
 
 	if (!scumm_stricmp(_tokens[1], ctxt.a->_name)) {
@@ -479,8 +457,7 @@ DECLARE_INSTRUCTION_PARSER(put)  {
 	ctxt.inst->_index = _parser->_lookup;
 }
 
-
-DECLARE_INSTRUCTION_PARSER(call)  {
+DECLARE_INSTRUCTION_PARSER(call) {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(call) ");
 
 	int index = _vm->_callableNames->lookup(_tokens[1]);
@@ -490,22 +467,19 @@ DECLARE_INSTRUCTION_PARSER(call)  {
 	ctxt.inst->_index = _parser->_lookup;
 }
 
-
-DECLARE_INSTRUCTION_PARSER(sound)  {
+DECLARE_INSTRUCTION_PARSER(sound) {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(sound) ");
 
 	ctxt.inst->_z = _vm->_location.findZone(_tokens[1]);
 	ctxt.inst->_index = _parser->_lookup;
 }
 
-
-DECLARE_INSTRUCTION_PARSER(null)  {
+DECLARE_INSTRUCTION_PARSER(null) {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(null) ");
 	ctxt.inst->_index = _parser->_lookup;
 }
 
-
-DECLARE_INSTRUCTION_PARSER(defLocal)  {
+DECLARE_INSTRUCTION_PARSER(defLocal) {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(defLocal) ");
 
 	int16 val = atoi(_tokens[2]);
@@ -523,14 +497,12 @@ DECLARE_INSTRUCTION_PARSER(defLocal)  {
 	ctxt.inst->_index = INST_SET;
 }
 
-DECLARE_INSTRUCTION_PARSER(endscript)  {
+DECLARE_INSTRUCTION_PARSER(endscript) {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(endscript) ");
 
 	ctxt.end = true;
 	ctxt.inst->_index = _parser->_lookup;
 }
-
-
 
 void ProgramParser_ns::parseRValue(ScriptVar &v, const char *str) {
 
@@ -554,17 +526,13 @@ void ProgramParser_ns::parseRValue(ScriptVar &v, const char *str) {
 
 	if (str[0] == 'X') {
 		v.setField(a.get(), &Animation::getX);
-	} else
-	if (str[0] == 'Y') {
+	} else if (str[0] == 'Y') {
 		v.setField(a.get(), &Animation::getY);
-	} else
-	if (str[0] == 'Z') {
+	} else if (str[0] == 'Z') {
 		v.setField(a.get(), &Animation::getZ);
-	} else
-	if (str[0] == 'F') {
+	} else if (str[0] == 'F') {
 		v.setField(a.get(), &Animation::getF);
 	}
-
 }
 
 void ProgramParser_ns::parseLValue(ScriptVar &v, const char *str) {
@@ -584,21 +552,16 @@ void ProgramParser_ns::parseLValue(ScriptVar &v, const char *str) {
 
 	if (str[0] == 'X') {
 		v.setField(a.get(), &Animation::getX, &Animation::setX);
-	} else
-	if (str[0] == 'Y') {
+	} else if (str[0] == 'Y') {
 		v.setField(a.get(), &Animation::getY, &Animation::setY);
-	} else
-	if (str[0] == 'Z') {
+	} else if (str[0] == 'Z') {
 		v.setField(a.get(), &Animation::getZ, &Animation::setZ);
-	} else
-	if (str[0] == 'F') {
+	} else if (str[0] == 'F') {
 		v.setField(a.get(), &Animation::getF, &Animation::setF);
 	}
-
 }
 
-
-DECLARE_COMMAND_PARSER(flags)  {
+DECLARE_COMMAND_PARSER(flags) {
 	debugC(7, kDebugParser, "COMMAND_PARSER(flags) ");
 
 	createCommand(_parser->_lookup);
@@ -624,8 +587,7 @@ DECLARE_COMMAND_PARSER(flags)  {
 	addCommand();
 }
 
-
-DECLARE_COMMAND_PARSER(zone)  {
+DECLARE_COMMAND_PARSER(zone) {
 	debugC(7, kDebugParser, "COMMAND_PARSER(zone) ");
 
 	createCommand(_parser->_lookup);
@@ -637,8 +599,7 @@ DECLARE_COMMAND_PARSER(zone)  {
 	addCommand();
 }
 
-
-DECLARE_COMMAND_PARSER(location)  {
+DECLARE_COMMAND_PARSER(location) {
 	debugC(7, kDebugParser, "COMMAND_PARSER(location) ");
 
 	createCommand(_parser->_lookup);
@@ -650,8 +611,7 @@ DECLARE_COMMAND_PARSER(location)  {
 	addCommand();
 }
 
-
-DECLARE_COMMAND_PARSER(invObject)  {
+DECLARE_COMMAND_PARSER(invObject) {
 	debugC(7, kDebugParser, "COMMAND_PARSER(drop) ");
 
 	createCommand(_parser->_lookup);
@@ -663,8 +623,7 @@ DECLARE_COMMAND_PARSER(invObject)  {
 	addCommand();
 }
 
-
-DECLARE_COMMAND_PARSER(call)  {
+DECLARE_COMMAND_PARSER(call) {
 	debugC(7, kDebugParser, "COMMAND_PARSER(call) ");
 
 	createCommand(_parser->_lookup);
@@ -676,8 +635,7 @@ DECLARE_COMMAND_PARSER(call)  {
 	addCommand();
 }
 
-
-DECLARE_COMMAND_PARSER(simple)  {
+DECLARE_COMMAND_PARSER(simple) {
 	debugC(7, kDebugParser, "COMMAND_PARSER(simple) ");
 
 	createCommand(_parser->_lookup);
@@ -685,8 +643,7 @@ DECLARE_COMMAND_PARSER(simple)  {
 	addCommand();
 }
 
-
-DECLARE_COMMAND_PARSER(move)  {
+DECLARE_COMMAND_PARSER(move) {
 	debugC(7, kDebugParser, "COMMAND_PARSER(move) ");
 
 	createCommand(_parser->_lookup);
@@ -700,7 +657,7 @@ DECLARE_COMMAND_PARSER(move)  {
 	addCommand();
 }
 
-DECLARE_COMMAND_PARSER(endcommands)  {
+DECLARE_COMMAND_PARSER(endcommands) {
 	debugC(7, kDebugParser, "COMMAND_PARSER(endcommands) ");
 
 	_parser->popTables();
@@ -713,18 +670,14 @@ void LocationParser_ns::parseCommandFlag(CommandPtr cmd, const char *flag, Table
 
 	if (!scumm_stricmp(flag, "exit")) {
 		cmd->_flagsOn |= kFlagsExit;
-	} else
-	if (!scumm_stricmp(flag, "exittrap")) {
+	} else if (!scumm_stricmp(flag, "exittrap")) {
 		cmd->_flagsOn |= kFlagsExit;
-	} else
-	if (!scumm_stricmp(flag, "enter")) {
+	} else if (!scumm_stricmp(flag, "enter")) {
 		cmd->_flagsOn |= kFlagsEnter;
-	} else
-	if (!scumm_stricmp(flag, "entertrap")) {
+	} else if (!scumm_stricmp(flag, "entertrap")) {
 		cmd->_flagsOn |= kFlagsEnter;
-	} else
-	if (!scumm_strnicmp(flag, "no", 2)) {
-		byte _al = table->lookup(flag+2);
+	} else if (!scumm_strnicmp(flag, "no", 2)) {
+		byte _al = table->lookup(flag + 2);
 		if (_al != Table::notFound) {
 			cmd->_flagsOff |= 1 << (_al - 1);
 		} else {
@@ -764,7 +717,7 @@ void LocationParser_ns::parseCommandFlags() {
 }
 
 void LocationParser_ns::addCommand() {
-	ctxt.list->push_front(ctxt.cmd);	// NOTE: command lists are written backwards in scripts
+	ctxt.list->push_front(ctxt.cmd); // NOTE: command lists are written backwards in scripts
 }
 
 void LocationParser_ns::createCommand(uint id) {
@@ -773,10 +726,9 @@ void LocationParser_ns::createCommand(uint id) {
 	ctxt.cmd = CommandPtr(new Command);
 	ctxt.cmd->_id = id;
 	ctxt.cmd->_valid = true;
-
 }
 
-void LocationParser_ns::parseCommands(CommandList& list) {
+void LocationParser_ns::parseCommands(CommandList &list) {
 	debugC(5, kDebugParser, "parseCommands()");
 
 	ctxt.list = &list;
@@ -817,7 +769,7 @@ void LocationParser_ns::parseQuestion(Question *q) {
 	uint16 numAnswers = 0;
 
 	_script->readLineToken(true);
-	while (scumm_stricmp(_tokens[0], "endquestion")) {	// parse answers
+	while (scumm_stricmp(_tokens[0], "endquestion")) { // parse answers
 		q->_answers[numAnswers] = parseAnswer();
 		numAnswers++;
 	}
@@ -849,7 +801,7 @@ void LocationParser_ns::parseAnswerFlags(Answer *answer) {
 		return;
 	}
 
-	Table* flagNames;
+	Table *flagNames;
 	uint16 token;
 
 	if (!scumm_stricmp(_tokens[1], "global")) {
@@ -864,7 +816,7 @@ void LocationParser_ns::parseAnswerFlags(Answer *answer) {
 	do {
 
 		if (!scumm_strnicmp(_tokens[token], "no", 2)) {
-			byte _al = flagNames->lookup(_tokens[token]+2);
+			byte _al = flagNames->lookup(_tokens[token] + 2);
 			answer->_noFlags |= 1 << (_al - 1);
 		} else {
 			byte _al = flagNames->lookup(_tokens[token]);
@@ -884,7 +836,6 @@ Answer *LocationParser_ns::parseAnswer() {
 	return answer;
 }
 
-
 Common::String LocationParser_ns::parseDialogueString() {
 	char buf[400];
 	char *line = _script->readLine(buf, 400);
@@ -894,15 +845,13 @@ Common::String LocationParser_ns::parseDialogueString() {
 	return Common::String(line);
 }
 
-
-DECLARE_LOCATION_PARSER(endlocation)  {
+DECLARE_LOCATION_PARSER(endlocation) {
 	debugC(7, kDebugParser, "LOCATION_PARSER(endlocation) ");
 
 	ctxt.end = true;
 }
 
-
-DECLARE_LOCATION_PARSER(location)  {
+DECLARE_LOCATION_PARSER(location) {
 	debugC(7, kDebugParser, "LOCATION_PARSER(location) ");
 
 	// The parameter for location is 'location.mask'.
@@ -929,36 +878,31 @@ DECLARE_LOCATION_PARSER(location)  {
 	}
 }
 
-
-DECLARE_LOCATION_PARSER(disk)  {
+DECLARE_LOCATION_PARSER(disk) {
 	debugC(7, kDebugParser, "LOCATION_PARSER(disk) ");
 
 	_vm->_disk->selectArchive(_tokens[1]);
 }
 
-
-DECLARE_LOCATION_PARSER(nodes)  {
+DECLARE_LOCATION_PARSER(nodes) {
 	debugC(7, kDebugParser, "LOCATION_PARSER(nodes) ");
 
 	parsePointList(_vm->_location._walkPoints);
 }
 
-
-DECLARE_LOCATION_PARSER(zone)  {
+DECLARE_LOCATION_PARSER(zone) {
 	debugC(7, kDebugParser, "LOCATION_PARSER(zone) ");
 
 	parseZone(_vm->_location._zones, _tokens[1]);
 }
 
-
-DECLARE_LOCATION_PARSER(animation)  {
+DECLARE_LOCATION_PARSER(animation) {
 	debugC(7, kDebugParser, "LOCATION_PARSER(animation) ");
 
 	parseAnimation(_vm->_location._animations, _tokens[1]);
 }
 
-
-DECLARE_LOCATION_PARSER(localflags)  {
+DECLARE_LOCATION_PARSER(localflags) {
 	debugC(7, kDebugParser, "LOCATION_PARSER(localflags) ");
 
 	int _si = 1;
@@ -968,22 +912,19 @@ DECLARE_LOCATION_PARSER(localflags)  {
 	}
 }
 
-
-DECLARE_LOCATION_PARSER(commands)  {
+DECLARE_LOCATION_PARSER(commands) {
 	debugC(7, kDebugParser, "LOCATION_PARSER(commands) ");
 
 	parseCommands(_vm->_location._commands);
 }
 
-
-DECLARE_LOCATION_PARSER(acommands)  {
+DECLARE_LOCATION_PARSER(acommands) {
 	debugC(7, kDebugParser, "LOCATION_PARSER(acommands) ");
 
 	parseCommands(_vm->_location._aCommands);
 }
 
-
-DECLARE_LOCATION_PARSER(flags)  {
+DECLARE_LOCATION_PARSER(flags) {
 	debugC(7, kDebugParser, "LOCATION_PARSER(flags) ");
 
 	if ((_vm->getLocationFlags() & kFlagsVisited) == 0) {
@@ -996,28 +937,26 @@ DECLARE_LOCATION_PARSER(flags)  {
 			_vm->setLocationFlags(1 << (_al - 1));
 
 			_si++;
-			if (scumm_stricmp(_tokens[_si], "|")) break;
+			if (scumm_stricmp(_tokens[_si], "|"))
+				break;
 			_si++;
 		} while (true);
 	}
 }
 
-
-DECLARE_LOCATION_PARSER(comment)  {
+DECLARE_LOCATION_PARSER(comment) {
 	debugC(7, kDebugParser, "LOCATION_PARSER(comment) ");
 
 	_vm->_location._comment = parseComment();
 }
 
-
-DECLARE_LOCATION_PARSER(endcomment)  {
+DECLARE_LOCATION_PARSER(endcomment) {
 	debugC(7, kDebugParser, "LOCATION_PARSER(endcomment) ");
 
 	_vm->_location._endComment = parseComment();
 }
 
-
-DECLARE_LOCATION_PARSER(sound)  {
+DECLARE_LOCATION_PARSER(sound) {
 	debugC(7, kDebugParser, "LOCATION_PARSER(sound) ");
 
 	if (_vm->getPlatform() == Common::kPlatformAmiga) {
@@ -1026,8 +965,7 @@ DECLARE_LOCATION_PARSER(sound)  {
 	}
 }
 
-
-DECLARE_LOCATION_PARSER(music)  {
+DECLARE_LOCATION_PARSER(music) {
 	debugC(7, kDebugParser, "LOCATION_PARSER(music) ");
 
 	if (_vm->getPlatform() == Common::kPlatformAmiga)
@@ -1039,7 +977,7 @@ void LocationParser_ns::parse(Script *script) {
 
 	ctxt.end = false;
 	_script = script;
-	ctxt.filename = 0;//filename;
+	ctxt.filename = 0; //filename;
 
 	_parser->reset();
 	_parser->pushTables(&_locationParsers, _locationStmt);
@@ -1082,19 +1020,17 @@ typedef OpcodeImpl<LocationParser_ns> OpcodeV2;
 
 #define SetOpcodeTable(x) table = &x;
 
-
 typedef Common::Functor0Mem<void, ProgramParser_ns> OpcodeV1;
 #define SetOpcodeTable(x) table = &x;
 #define INSTRUCTION_PARSER(sig) table->push_back(new OpcodeV1(this, &ProgramParser_ns::instParse_##sig))
 
 typedef Common::Functor0Mem<void, LocationParser_ns> OpcodeV2;
-#define ZONE_PARSER(sig)		table->push_back(new OpcodeV2(this, &LocationParser_ns::locZoneParse_##sig))
-#define ANIM_PARSER(sig)		table->push_back(new OpcodeV2(this, &LocationParser_ns::locAnimParse_##sig))
-#define LOCATION_PARSER(sig)	table->push_back(new OpcodeV2(this, &LocationParser_ns::locParse_##sig))
-#define COMMAND_PARSER(sig)		table->push_back(new OpcodeV2(this, &LocationParser_ns::cmdParse_##sig))
+#define ZONE_PARSER(sig) table->push_back(new OpcodeV2(this, &LocationParser_ns::locZoneParse_##sig))
+#define ANIM_PARSER(sig) table->push_back(new OpcodeV2(this, &LocationParser_ns::locAnimParse_##sig))
+#define LOCATION_PARSER(sig) table->push_back(new OpcodeV2(this, &LocationParser_ns::locParse_##sig))
+#define COMMAND_PARSER(sig) table->push_back(new OpcodeV2(this, &LocationParser_ns::cmdParse_##sig))
 
-#define WARNING_PARSER(sig)		table->push_back(new OpcodeV2(this, &LocationParser_br::warning_##sig))
-
+#define WARNING_PARSER(sig) table->push_back(new OpcodeV2(this, &LocationParser_br::warning_##sig))
 
 void LocationParser_ns::init() {
 
@@ -1111,24 +1047,24 @@ void LocationParser_ns::init() {
 
 	SetOpcodeTable(_commandParsers);
 	WARNING_PARSER(unexpected);
-	COMMAND_PARSER(flags);			// set
-	COMMAND_PARSER(flags);			// clear
-	COMMAND_PARSER(zone);		// start
-	COMMAND_PARSER(zone);			// speak
-	COMMAND_PARSER(zone);			// get
-	COMMAND_PARSER(location);		// location
-	COMMAND_PARSER(zone);			// open
-	COMMAND_PARSER(zone);			// close
-	COMMAND_PARSER(zone);			// on
-	COMMAND_PARSER(zone);			// off
-	COMMAND_PARSER(call);			// call
-	COMMAND_PARSER(flags);			// toggle
-	COMMAND_PARSER(invObject);			// drop
-	COMMAND_PARSER(simple);			// quit
-	COMMAND_PARSER(move);			// move
-	COMMAND_PARSER(zone);		// stop
-	COMMAND_PARSER(endcommands);	// endcommands
-	COMMAND_PARSER(endcommands);		// endzone
+	COMMAND_PARSER(flags); // set
+	COMMAND_PARSER(flags); // clear
+	COMMAND_PARSER(zone); // start
+	COMMAND_PARSER(zone); // speak
+	COMMAND_PARSER(zone); // get
+	COMMAND_PARSER(location); // location
+	COMMAND_PARSER(zone); // open
+	COMMAND_PARSER(zone); // close
+	COMMAND_PARSER(zone); // on
+	COMMAND_PARSER(zone); // off
+	COMMAND_PARSER(call); // call
+	COMMAND_PARSER(flags); // toggle
+	COMMAND_PARSER(invObject); // drop
+	COMMAND_PARSER(simple); // quit
+	COMMAND_PARSER(move); // move
+	COMMAND_PARSER(zone); // stop
+	COMMAND_PARSER(endcommands); // endcommands
+	COMMAND_PARSER(endcommands); // endzone
 
 	SetOpcodeTable(_locationParsers);
 	WARNING_PARSER(unexpected);
@@ -1168,7 +1104,6 @@ void LocationParser_ns::init() {
 	ANIM_PARSER(position);
 	ANIM_PARSER(moveto);
 	ANIM_PARSER(endanimation);
-
 }
 
 void ProgramParser_ns::init() {
@@ -1179,23 +1114,23 @@ void ProgramParser_ns::init() {
 
 	Common::Array<const Opcode *> *table = 0;
 	SetOpcodeTable(_instructionParsers);
-	INSTRUCTION_PARSER(defLocal);	// invalid opcode -> local definition
-	INSTRUCTION_PARSER(animation);	// on
-	INSTRUCTION_PARSER(animation);	// off
+	INSTRUCTION_PARSER(defLocal); // invalid opcode -> local definition
+	INSTRUCTION_PARSER(animation); // on
+	INSTRUCTION_PARSER(animation); // off
 	INSTRUCTION_PARSER(x);
 	INSTRUCTION_PARSER(y);
 	INSTRUCTION_PARSER(z);
 	INSTRUCTION_PARSER(f);
 	INSTRUCTION_PARSER(loop);
-	INSTRUCTION_PARSER(null);		// endloop
-	INSTRUCTION_PARSER(null);		// show
+	INSTRUCTION_PARSER(null); // endloop
+	INSTRUCTION_PARSER(null); // show
 	INSTRUCTION_PARSER(inc);
-	INSTRUCTION_PARSER(inc);		// dec
+	INSTRUCTION_PARSER(inc); // dec
 	INSTRUCTION_PARSER(set);
 	INSTRUCTION_PARSER(put);
 	INSTRUCTION_PARSER(call);
-	INSTRUCTION_PARSER(null);		// wait
-	INSTRUCTION_PARSER(animation);	// start
+	INSTRUCTION_PARSER(null); // wait
+	INSTRUCTION_PARSER(animation); // start
 	INSTRUCTION_PARSER(sound);
 	INSTRUCTION_PARSER(move);
 	INSTRUCTION_PARSER(endscript);
@@ -1230,27 +1165,25 @@ DECLARE_ZONE_PARSER(null) {
 	debugC(7, kDebugParser, "ZONE_PARSER(null) ");
 }
 
-
-DECLARE_ZONE_PARSER(endzone)  {
+DECLARE_ZONE_PARSER(endzone) {
 	debugC(7, kDebugParser, "ZONE_PARSER(endzone) ");
 
 	_parser->popTables();
 }
 
-DECLARE_ZONE_PARSER(limits)  {
+DECLARE_ZONE_PARSER(limits) {
 	debugC(7, kDebugParser, "ZONE_PARSER(limits) ");
 	ctxt.z->setRect(atoi(_tokens[1]), atoi(_tokens[2]), atoi(_tokens[3]), atoi(_tokens[4]));
 }
 
-
-DECLARE_ZONE_PARSER(moveto)  {
+DECLARE_ZONE_PARSER(moveto) {
 	debugC(7, kDebugParser, "ZONE_PARSER(moveto) ");
 
 	ctxt.z->_moveTo.x = atoi(_tokens[1]);
 	ctxt.z->_moveTo.y = atoi(_tokens[2]);
 }
 
-uint32 LocationParser_ns::buildZoneType(const char *t0, const char* t1) {
+uint32 LocationParser_ns::buildZoneType(const char *t0, const char *t1) {
 	uint16 it = 0;
 	if (t1[0] != '\0') {
 		it = 4 + _vm->_objectsNames->lookup(t1);
@@ -1259,8 +1192,7 @@ uint32 LocationParser_ns::buildZoneType(const char *t0, const char* t1) {
 	return PACK_ZONETYPE(zt, it);
 }
 
-
-DECLARE_ZONE_PARSER(type)  {
+DECLARE_ZONE_PARSER(type) {
 	debugC(7, kDebugParser, "ZONE_PARSER(type) ");
 
 	ctxt.z->_type = buildZoneType(_tokens[1], _tokens[2]);
@@ -1271,24 +1203,21 @@ DECLARE_ZONE_PARSER(type)  {
 	_parser->popTables();
 }
 
-
-DECLARE_ZONE_PARSER(commands)  {
+DECLARE_ZONE_PARSER(commands) {
 	debugC(7, kDebugParser, "ZONE_PARSER(commands) ");
 
-	 parseCommands(ctxt.z->_commands);
+	parseCommands(ctxt.z->_commands);
 }
 
-
-DECLARE_ZONE_PARSER(label)  {
+DECLARE_ZONE_PARSER(label) {
 	debugC(7, kDebugParser, "ZONE_PARSER(label) ");
 
-//			debug("label: %s", _tokens[1]);
+	//			debug("label: %s", _tokens[1]);
 	ctxt.z->_label = _vm->_gfx->renderFloatingLabel(_vm->_labelFont, _tokens[1]);
 	ctxt.z->_flags &= ~kFlagsNoName;
 }
 
-
-DECLARE_ZONE_PARSER(flags)  {
+DECLARE_ZONE_PARSER(flags) {
 	debugC(7, kDebugParser, "ZONE_PARSER(flags) ");
 
 	uint16 _si = 1;
@@ -1323,9 +1252,6 @@ void LocationParser_ns::parseZone(ZoneList &list, char *name) {
 	return;
 }
 
-
-
-
 void LocationParser_ns::parseGetData(ZonePtr z) {
 	TypeData *data = &z->u;
 	if (!scumm_stricmp(_tokens[0], "file")) {
@@ -1352,8 +1278,7 @@ void LocationParser_ns::parseGetData(ZonePtr z) {
 		bool visible = (z->_flags & kFlagsRemove) == 0;
 		_vm->_gfx->showGfxObj(obj, visible);
 		data->_gfxobj = obj;
-	} else
-	if (!scumm_stricmp(_tokens[0], "icon")) {
+	} else if (!scumm_stricmp(_tokens[0], "icon")) {
 		data->_getIcon = 4 + _vm->_objectsNames->lookup(_tokens[1]);
 	}
 }
@@ -1362,8 +1287,7 @@ void LocationParser_ns::parseExamineData(ZonePtr z) {
 	TypeData *data = &z->u;
 	if (!scumm_stricmp(_tokens[0], "file")) {
 		data->_filename = _tokens[1];
-	} else
-	if (!scumm_stricmp(_tokens[0], "desc")) {
+	} else if (!scumm_stricmp(_tokens[0], "desc")) {
 		data->_examineText = parseComment();
 	}
 }
@@ -1373,19 +1297,16 @@ void LocationParser_ns::parseDoorData(ZonePtr z) {
 	if (!scumm_stricmp(_tokens[0], "slidetext")) {
 		_vm->_location._slideText[0] = _tokens[1];
 		_vm->_location._slideText[1] = _tokens[2];
-	} else
-	if (!scumm_stricmp(_tokens[0], "location")) {
+	} else if (!scumm_stricmp(_tokens[0], "location")) {
 		data->_doorLocation = _tokens[1];
-	} else
-	if (!scumm_stricmp(_tokens[0], "file")) {
+	} else if (!scumm_stricmp(_tokens[0], "file")) {
 		GfxObj *obj = _vm->_gfx->loadDoor(_tokens[1]);
 		obj->frame = z->_flags & kFlagsClosed ? 0 : 1;
 		obj->x = z->getX();
 		obj->y = z->getY();
 		_vm->_gfx->showGfxObj(obj, true);
 		data->_gfxobj = obj;
-	} else
-	if (!scumm_stricmp(_tokens[0],	"startpos")) {
+	} else if (!scumm_stricmp(_tokens[0], "startpos")) {
 		data->_doorStartPos.x = atoi(_tokens[1]);
 		data->_doorStartPos.y = atoi(_tokens[2]);
 		data->_doorStartFrame = atoi(_tokens[3]);
@@ -1396,11 +1317,9 @@ void LocationParser_ns::parseMergeData(ZonePtr z) {
 	TypeData *data = &z->u;
 	if (!scumm_stricmp(_tokens[0], "obj1")) {
 		data->_mergeObj1 = 4 + _vm->_objectsNames->lookup(_tokens[1]);
-	} else
-	if (!scumm_stricmp(_tokens[0], "obj2")) {
+	} else if (!scumm_stricmp(_tokens[0], "obj2")) {
 		data->_mergeObj2 = 4 + _vm->_objectsNames->lookup(_tokens[1]);
-	} else
-	if (!scumm_stricmp(_tokens[0], "newobj")) {
+	} else if (!scumm_stricmp(_tokens[0], "newobj")) {
 		data->_mergeObj3 = 4 + _vm->_objectsNames->lookup(_tokens[1]);
 	}
 }
@@ -1410,8 +1329,7 @@ void LocationParser_ns::parseHearData(ZonePtr z) {
 	if (!scumm_stricmp(_tokens[0], "sound")) {
 		data->_filename = _tokens[1];
 		data->_hearChannel = atoi(_tokens[2]);
-	} else
-	if (!scumm_stricmp(_tokens[0], "freq")) {
+	} else if (!scumm_stricmp(_tokens[0], "freq")) {
 		data->_hearFreq = atoi(_tokens[1]);
 	}
 }
@@ -1420,8 +1338,7 @@ void LocationParser_ns::parseSpeakData(ZonePtr z) {
 	TypeData *data = &z->u;
 	if (!scumm_stricmp(_tokens[0], "file")) {
 		data->_filename = _tokens[1];
-	} else
-	if (!scumm_stricmp(_tokens[0], "Dialogue")) {
+	} else if (!scumm_stricmp(_tokens[0], "Dialogue")) {
 		data->_speakDialogue = parseDialogue();
 	}
 }
@@ -1446,19 +1363,19 @@ void LocationParser_ns::parseNoneData(ZonePtr z) {
 
 typedef void (LocationParser_ns::*ZoneTypeParser)(ZonePtr);
 static ZoneTypeParser parsers[] = {
-	0,	// no type
+	0, // no type
 	&LocationParser_ns::parseExamineData,
 	&LocationParser_ns::parseDoorData,
 	&LocationParser_ns::parseGetData,
 	&LocationParser_ns::parseMergeData,
-	0,	// taste
+	0, // taste
 	&LocationParser_ns::parseHearData,
-	0,	// feel
+	0, // feel
 	&LocationParser_ns::parseSpeakData,
 	&LocationParser_ns::parseNoneData,
-	0,	// trap
-	0,	// you
-	0	// command
+	0, // trap
+	0, // you
+	0 // command
 };
 
 void LocationParser_ns::parseZoneTypeBlock(ZonePtr z) {
@@ -1473,6 +1390,5 @@ void LocationParser_ns::parseZoneTypeBlock(ZonePtr z) {
 	} while (scumm_stricmp(_tokens[0], "endzone") && scumm_stricmp(_tokens[0], "endanimation"));
 	debugC(7, kDebugParser, "parseZoneTypeBlock() done");
 }
-
 
 } // namespace Parallaction

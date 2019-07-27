@@ -20,20 +20,20 @@
  *
  */
 
-#include "gnap/gnap.h"
 #include "gnap/gamesys.h"
+#include "gnap/gnap.h"
 #include "gnap/resource.h"
 
 #include "gnap/scenes/scenecore.h"
 
 #include "gnap/scenes/arcade.h"
-#include "gnap/scenes/groupcs.h"
 #include "gnap/scenes/group0.h"
 #include "gnap/scenes/group1.h"
 #include "gnap/scenes/group2.h"
 #include "gnap/scenes/group3.h"
 #include "gnap/scenes/group4.h"
 #include "gnap/scenes/group5.h"
+#include "gnap/scenes/groupcs.h"
 #include "gnap/scenes/intro.h"
 
 namespace Gnap {
@@ -530,7 +530,7 @@ void GnapEngine::runSceneLogic() {
 			_scene = new Scene472(this);
 			_scene->init();
 			_newSceneNum = 11;
-		} else if (!isFlag(kGFPlatypusDisguised) && _prevSceneNum == 2) {//CHECKME
+		} else if (!isFlag(kGFPlatypusDisguised) && _prevSceneNum == 2) { //CHECKME
 			if (isFlag(kGFUnk25)) {
 				_scene = new Scene473(this);
 				_scene->init();
@@ -651,7 +651,8 @@ bool Scene::clearKeyStatus() {
 
 /****************************************************************************/
 
-CutScene::CutScene(GnapEngine *vm) : Scene(vm) {
+CutScene::CutScene(GnapEngine *vm)
+  : Scene(vm) {
 	_itemsCount = -1;
 
 	for (int i = 0; i < 16; i++) {
@@ -665,7 +666,7 @@ CutScene::CutScene(GnapEngine *vm) : Scene(vm) {
 }
 
 void CutScene::run() {
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	int itemIndex = 0;
 	int soundId = -1;

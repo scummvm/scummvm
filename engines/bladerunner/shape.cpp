@@ -33,9 +33,9 @@
 namespace BladeRunner {
 
 Shape::Shape(BladeRunnerEngine *vm) {
-	_vm     = vm;
-	_data   = nullptr;
-	_width  = 0;
+	_vm = vm;
+	_data = nullptr;
+	_width = 0;
 	_height = 0;
 }
 
@@ -58,9 +58,9 @@ bool Shape::open(const Common::String &container, int index) {
 
 	uint32 size = 0, width = 0, height = 0;
 	for (int i = 0; i <= index; ++i) {
-		width  = stream->readUint32LE();
+		width = stream->readUint32LE();
 		height = stream->readUint32LE();
-		size   = stream->readUint32LE();
+		size = stream->readUint32LE();
 
 		if (size != width * height * 2) {
 			warning("Shape::open size mismatch (w %d, h %d, sz %d)", width, height, size);
@@ -77,9 +77,9 @@ bool Shape::open(const Common::String &container, int index) {
 		warning("Shape::open shape too big (%d, %d)", width, height);
 	}
 
-	_width  = width;
+	_width = width;
 	_height = height;
-	_data   = new byte[size];
+	_data = new byte[size];
 
 	if (stream->read(_data, size) != size) {
 		warning("Shape::open error reading shape %d (w %d, h %d, sz %d)", index, width, height, size);

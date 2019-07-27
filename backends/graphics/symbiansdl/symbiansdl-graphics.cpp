@@ -24,11 +24,11 @@
 
 #ifdef __SYMBIAN32__
 
-#include "backends/graphics/symbiansdl/symbiansdl-graphics.h"
-#include "backends/platform/symbian/src/SymbianActions.h"
+#	include "backends/graphics/symbiansdl/symbiansdl-graphics.h"
+#	include "backends/platform/symbian/src/SymbianActions.h"
 
 SymbianSdlGraphicsManager::SymbianSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
-	: SurfaceSdlGraphicsManager(sdlEventSource, window) {
+  : SurfaceSdlGraphicsManager(sdlEventSource, window) {
 }
 
 bool SymbianSdlGraphicsManager::hasFeature(OSystem::Feature f) const {

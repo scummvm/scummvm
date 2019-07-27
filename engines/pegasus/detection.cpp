@@ -22,10 +22,10 @@
 
 #include "base/plugins.h"
 
-#include "engines/advancedDetector.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/savefile.h"
+#include "engines/advancedDetector.h"
 
 #include "pegasus/pegasus.h"
 
@@ -40,11 +40,10 @@ enum {
 };
 
 bool PegasusEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL)
-		|| (f == kSupportsLoadingDuringRuntime)
-		|| (f == kSupportsSavingDuringRuntime)
-		|| (f == kSupportsJoystick);
+	return (f == kSupportsRTL)
+	  || (f == kSupportsLoadingDuringRuntime)
+	  || (f == kSupportsSavingDuringRuntime)
+	  || (f == kSupportsJoystick);
 }
 
 bool PegasusEngine::isDemo() const {
@@ -70,60 +69,51 @@ bool PegasusEngine::isWindows() const {
 } // End of namespace Pegasus
 
 static const PlainGameDescriptor pegasusGames[] = {
-	{"pegasus", "The Journeyman Project: Pegasus Prime"},
-	{0, 0}
+	{ "pegasus", "The Journeyman Project: Pegasus Prime" },
+	{ 0, 0 }
 };
-
 
 namespace Pegasus {
 
 static const PegasusGameDescription gameDescriptions[] = {
 	{
-		{
-			"pegasus",
-			"",
-			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 2009943),
-			Common::EN_ANY,
-			Common::kPlatformMacintosh,
-			ADGF_MACRESFORK,
-			GUIO0()
-		},
+	  { "pegasus",
+	    "",
+	    AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 2009943),
+	    Common::EN_ANY,
+	    Common::kPlatformMacintosh,
+	    ADGF_MACRESFORK,
+	    GUIO0() },
 	},
 
 	{
-		{
-			"pegasus",
-			"Demo",
-			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 360129),
-			Common::EN_ANY,
-			Common::kPlatformMacintosh,
-			ADGF_MACRESFORK | ADGF_DEMO,
-			GUIO1(GUIO_NOLAUNCHLOAD)
-		},
+	  { "pegasus",
+	    "Demo",
+	    AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 360129),
+	    Common::EN_ANY,
+	    Common::kPlatformMacintosh,
+	    ADGF_MACRESFORK | ADGF_DEMO,
+	    GUIO1(GUIO_NOLAUNCHLOAD) },
 	},
 
 	{
-		{
-			"pegasus",
-			"DVD Demo",
-			AD_ENTRY1s("JMP PP Resources", "d0fcda50dc75c7a81ae314e6a813f4d2", 93495),
-			Common::EN_ANY,
-			Common::kPlatformMacintosh,
-			ADGF_MACRESFORK | ADGF_DEMO | GF_DVD,
-			GUIO1(GUIO_NOLAUNCHLOAD)
-		},
+	  { "pegasus",
+	    "DVD Demo",
+	    AD_ENTRY1s("JMP PP Resources", "d0fcda50dc75c7a81ae314e6a813f4d2", 93495),
+	    Common::EN_ANY,
+	    Common::kPlatformMacintosh,
+	    ADGF_MACRESFORK | ADGF_DEMO | GF_DVD,
+	    GUIO1(GUIO_NOLAUNCHLOAD) },
 	},
 
-		{
-		{
-			"pegasus",
-			"DVD Demo",
-			AD_ENTRY1s("JMP PP Resources", "d0fcda50dc75c7a81ae314e6a813f4d2", 93495),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_MACRESFORK | ADGF_DEMO | GF_DVD,
-			GUIO1(GUIO_NOLAUNCHLOAD)
-		},
+	{
+	  { "pegasus",
+	    "DVD Demo",
+	    AD_ENTRY1s("JMP PP Resources", "d0fcda50dc75c7a81ae314e6a813f4d2", 93495),
+	    Common::EN_ANY,
+	    Common::kPlatformWindows,
+	    ADGF_MACRESFORK | ADGF_DEMO | GF_DVD,
+	    GUIO1(GUIO_NOLAUNCHLOAD) },
 	},
 
 	{ AD_TABLE_END_MARKER }
@@ -131,10 +121,10 @@ static const PegasusGameDescription gameDescriptions[] = {
 
 } // End of namespace Pegasus
 
-
 class PegasusMetaEngine : public AdvancedMetaEngine {
 public:
-	PegasusMetaEngine() : AdvancedMetaEngine(Pegasus::gameDescriptions, sizeof(Pegasus::PegasusGameDescription), pegasusGames) {
+	PegasusMetaEngine()
+	  : AdvancedMetaEngine(Pegasus::gameDescriptions, sizeof(Pegasus::PegasusGameDescription), pegasusGames) {
 		_singleId = "pegasus";
 	}
 
@@ -154,10 +144,9 @@ public:
 };
 
 bool PegasusMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves)
-		|| (f == kSupportsLoadingDuringStartup)
-		|| (f == kSupportsDeleteSave);
+	return (f == kSupportsListSaves)
+	  || (f == kSupportsLoadingDuringStartup)
+	  || (f == kSupportsDeleteSave);
 }
 
 SaveStateList PegasusMetaEngine::listSaves(const char *target) const {
@@ -195,7 +184,7 @@ bool PegasusMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADG
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(PEGASUS)
-	REGISTER_PLUGIN_DYNAMIC(PEGASUS, PLUGIN_TYPE_ENGINE, PegasusMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(PEGASUS, PLUGIN_TYPE_ENGINE, PegasusMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(PEGASUS, PLUGIN_TYPE_ENGINE, PegasusMetaEngine);
+REGISTER_PLUGIN_STATIC(PEGASUS, PLUGIN_TYPE_ENGINE, PegasusMetaEngine);
 #endif

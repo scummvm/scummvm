@@ -26,11 +26,11 @@
 #include "common/scummsys.h"
 #include "common/serializer.h"
 #include "sci/engine/script.h"
+#include "sci/engine/segment.h"
 #include "sci/engine/vm.h"
 #include "sci/engine/vm_types.h"
-#include "sci/engine/segment.h"
 #ifdef ENABLE_SCI32
-#include "sci/graphics/celobj32.h" // kLowResX, kLowResY
+#	include "sci/graphics/celobj32.h" // kLowResX, kLowResY
 #endif
 
 namespace Sci {
@@ -48,6 +48,7 @@ class Script;
 
 class SegManager : public Common::Serializable {
 	friend class Console;
+
 public:
 	/**
 	 * Initialize the segment manager.
@@ -141,7 +142,6 @@ public:
 	 */
 	Script *getScript(SegmentId seg);
 
-
 	/**
 	 * Return a pointer to the specified script.
 	 * If the id is invalid, does not refer to a script, or
@@ -175,14 +175,12 @@ public:
 	 */
 	DataStack *allocateStack(int size, SegmentId *segid);
 
-
 	// 5. System Strings
 
 	/**
 	 * Initializes the system string table.
 	 */
 	void initSysStrings();
-
 
 	// 6, 7. Lists and Nodes
 
@@ -221,7 +219,6 @@ public:
 	 * @return The list node referenced, or NULL on error
 	 */
 	Node *lookupNode(reg_t addr, bool stopOnDiscarded = true);
-
 
 	// 8. Hunk Memory
 
@@ -263,7 +260,6 @@ public:
 	 * @param[in] addr	Offset of the dynmem chunk to free
 	 */
 	bool freeDynmem(reg_t addr);
-
 
 	// Generic Operations on Segments and Addresses
 
@@ -311,7 +307,6 @@ public:
 	 */
 	Common::String getString(reg_t pointer);
 
-
 	/**
 	 * Copies a string from src to dest.
 	 * src and dest can point to raw and non-raw segments.
@@ -354,7 +349,7 @@ public:
 	 * dest can point to a raw or non-raw segment.
 	 * Conversion is performed as required.
 	 */
-	void memcpy(reg_t dest, const byte* src, size_t n);
+	void memcpy(reg_t dest, const byte *src, size_t n);
 
 	/**
 	 * Copies n bytes of data from src to dest.
@@ -432,7 +427,7 @@ public:
 
 	uint32 classTableSize() const { return _classTable.size(); }
 	Class getClass(int index) const { return _classTable[index]; }
-	void setClassOffset(int index, reg_t offset) { _classTable[index].reg = offset;	}
+	void setClassOffset(int index, reg_t offset) { _classTable[index].reg = offset; }
 	void resizeClassTable(uint32 size) { _classTable.resize(size); }
 
 	reg_t getSaveDirPtr() const { return _saveDirPtr; }
@@ -441,9 +436,7 @@ public:
 #ifdef ENABLE_SCI32
 	bool isValidAddr(reg_t reg, SegmentType expected) const {
 		SegmentObj *mobj = getSegmentObj(reg.getSegment());
-		return (mobj &&
-				mobj->getType() == expected &&
-				mobj->isValidOffset(reg.getOffset()));
+		return (mobj && mobj->getType() == expected && mobj->isValidOffset(reg.getOffset()));
 	}
 
 	SciArray *allocateArray(SciArrayType type, uint16 size, reg_t *addr);

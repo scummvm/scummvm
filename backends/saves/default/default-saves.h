@@ -21,14 +21,14 @@
  */
 
 #if !defined(BACKEND_SAVES_DEFAULT_H) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
-#define BACKEND_SAVES_DEFAULT_H
+#	define BACKEND_SAVES_DEFAULT_H
 
-#include "common/scummsys.h"
-#include "common/savefile.h"
-#include "common/str.h"
-#include "common/fs.h"
-#include "common/hash-str.h"
-#include <limits.h>
+#	include "common/fs.h"
+#	include "common/hash-str.h"
+#	include "common/savefile.h"
+#	include "common/scummsys.h"
+#	include "common/str.h"
+#	include <limits.h>
 
 /**
  * Provides a default savefile manager implementation for common platforms.
@@ -45,14 +45,14 @@ public:
 	virtual Common::OutSaveFile *openForSaving(const Common::String &filename, bool compress = true);
 	virtual bool removeSavefile(const Common::String &filename);
 
-#ifdef USE_LIBCURL
+#	ifdef USE_LIBCURL
 
 	static const uint32 INVALID_TIMESTAMP = UINT_MAX;
 	static const char *TIMESTAMPS_FILENAME;
 
 	static Common::HashMap<Common::String, uint32> loadTimestamps();
 	static void saveTimestamps(Common::HashMap<Common::String, uint32> &timestamps);
-#endif
+#	endif
 
 	static Common::String concatWithSavesPath(Common::String name);
 

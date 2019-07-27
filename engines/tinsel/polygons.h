@@ -21,29 +21,37 @@
  * Definition of POLYGON structure and functions in POLYGONS.C
  */
 
-#ifndef TINSEL_POLYGONS_H     // prevent multiple includes
+#ifndef TINSEL_POLYGONS_H // prevent multiple includes
 #define TINSEL_POLYGONS_H
 
-#include "tinsel/dw.h"	// for SCNHANDLE
-#include "tinsel/scene.h"	// for PPOLY and REEL
+#include "tinsel/dw.h" // for SCNHANDLE
+#include "tinsel/scene.h" // for PPOLY and REEL
 
 namespace Tinsel {
-
 
 // Polygon Types
 enum PTYPE {
 	// Tinsel 2 Polygon type list
 	TEST,
-	BLOCK, EFFECT, PATH, REFER, TAG,
-	EX_BLOCK, EX_EFFECT, EX_PATH, EX_REFER, EX_TAG,
+	BLOCK,
+	EFFECT,
+	PATH,
+	REFER,
+	TAG,
+	EX_BLOCK,
+	EX_EFFECT,
+	EX_PATH,
+	EX_REFER,
+	EX_TAG,
 	// Extra polygon types from Tinsel v1
-	EXIT, EX_EXIT
+	EXIT,
+	EX_EXIT
 };
 
 // subtype
 enum {
 	NORMAL = 0,
-	NODE   = 1       // For paths
+	NODE = 1 // For paths
 };
 
 // tagFlags
@@ -55,14 +63,16 @@ enum {
 
 // tagState
 enum TSTATE {
-	TAG_OFF, TAG_ON
+	TAG_OFF,
+	TAG_ON
 };
 
 // pointState
 enum PSTATE {
-	PS_NO_POINT, PS_NOT_POINTING, PS_POINTING
+	PS_NO_POINT,
+	PS_NOT_POINTING,
+	PS_POINTING
 };
-
 
 enum {
 	NOPOLY = -1
@@ -70,7 +80,7 @@ enum {
 
 struct POLY_VOLATILE {
 	bool bDead;
-	short xoff, yoff;	// Polygon offset
+	short xoff, yoff; // Polygon offset
 };
 
 /*-------------------------------------------------------------------------*/
@@ -114,7 +124,6 @@ HPOLYGON GetPolyHandle(int i);
 void InitPolygons(SCNHANDLE ph, int numPoly, bool bRestart);
 void DropPolygons();
 
-
 void SaveDeadPolys(bool *sdp);
 void RestoreDeadPolys(bool *sdp);
 void SavePolygonStuff(POLY_VOLATILE *sps);
@@ -122,18 +131,18 @@ void RestorePolygonStuff(POLY_VOLATILE *sps);
 
 /*-------------------------------------------------------------------------*/
 
-PTYPE PolyType(HPOLYGON hp);		// ->type
-int PolySubtype(HPOLYGON hp);		// ->subtype
-int PolyCenterX(HPOLYGON hp);		// ->pcenterx
-int PolyCenterY(HPOLYGON hp);		// ->pcentery
-int PolyCornerX(HPOLYGON hp, int n);	// ->cx[n]
-int PolyCornerY(HPOLYGON hp, int n);	// ->cy[n]
-PSTATE PolyPointState(HPOLYGON hp);	// ->pointState
-TSTATE PolyTagState(HPOLYGON hp);	// ->tagState
+PTYPE PolyType(HPOLYGON hp); // ->type
+int PolySubtype(HPOLYGON hp); // ->subtype
+int PolyCenterX(HPOLYGON hp); // ->pcenterx
+int PolyCenterY(HPOLYGON hp); // ->pcentery
+int PolyCornerX(HPOLYGON hp, int n); // ->cx[n]
+int PolyCornerY(HPOLYGON hp, int n); // ->cy[n]
+PSTATE PolyPointState(HPOLYGON hp); // ->pointState
+TSTATE PolyTagState(HPOLYGON hp); // ->tagState
 
-void SetPolyPointState(HPOLYGON hp, PSTATE ps);	// ->pointState
-void SetPolyTagState(HPOLYGON hp, TSTATE ts);	// ->tagState
-void SetPolyTagHandle(HPOLYGON hp, SCNHANDLE th);// ->oTagHandle
+void SetPolyPointState(HPOLYGON hp, PSTATE ps); // ->pointState
+void SetPolyTagState(HPOLYGON hp, TSTATE ts); // ->tagState
+void SetPolyTagHandle(HPOLYGON hp, SCNHANDLE th); // ->oTagHandle
 
 void MaxPolygons(int maxPolys);
 
@@ -155,4 +164,4 @@ void MovePolygonTo(PTYPE ptype, int id, int x, int y);
 
 } // End of namespace Tinsel
 
-#endif		/* TINSEL_POLYGONS_H */
+#endif /* TINSEL_POLYGONS_H */

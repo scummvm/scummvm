@@ -20,18 +20,18 @@
  *
  */
 
-#include "osystem_ds.h"
 #include "wordcompletion.h"
-#include "engines/agi/agi.h"	// Caution for #define for NUM_CHANNELS, causes problems in mixer_intern.h
+#include "engines/agi/agi.h" // Caution for #define for NUM_CHANNELS, causes problems in mixer_intern.h
+#include "osystem_ds.h"
 
 #ifdef ENABLE_AGI
 
 namespace DS {
 // Default dictionary is about 64Kb, so 96Kb should be enough for future expansion
-#define WORD_BUFFER_SIZE (96 * 1024)
+#	define WORD_BUFFER_SIZE (96 * 1024)
 
 // Default dictionary has ~8000 words
-#define MAX_WORD_COUNT 12000
+#	define MAX_WORD_COUNT 12000
 
 char wordBuffer[WORD_BUFFER_SIZE];
 int wordBufferPos = 0;
@@ -54,8 +54,8 @@ void addAutoCompleteLine(const char *line) {
 		do {
 			length = 0;
 
-			if (*line == ' ') line++;
-
+			if (*line == ' ')
+				line++;
 
 			// Copy the new word
 			do {
@@ -63,7 +63,6 @@ void addAutoCompleteLine(const char *line) {
 			} while ((*line != '\0') && (*line != ' ') && (*line != '\n'));
 
 			word[length] = '\0';
-
 
 			// Store a pointer to the start of the word
 			wordBufferPtr[wordBufferPtrPos++] = &wordBuffer[wordBufferPos];
@@ -76,8 +75,8 @@ void addAutoCompleteLine(const char *line) {
 }
 
 int stringCompare(const void *a, const void *b) {
-	const char** as = (const char **) a;
-	const char** bs = (const char **) b;
+	const char **as = (const char **)a;
+	const char **bs = (const char **)b;
 
 	return scumm_stricmp(*as, *bs);
 }
@@ -104,11 +103,11 @@ bool findWordCompletions(const char *input) {
 	if (wordBufferPtrPos == 0)
 		return false;
 
-	OSystem_DS *system = (OSystem_DS *) g_system;
+	OSystem_DS *system = (OSystem_DS *)g_system;
 	system->clearAutoComplete();
 
 	int start = 0;
-	for (int r = strlen(input) - 1; r>0; r--) {
+	for (int r = strlen(input) - 1; r > 0; r--) {
 		if (input[r] == ' ') {
 			start = r + 1;
 			break;
@@ -140,7 +139,7 @@ bool findWordCompletions(const char *input) {
 			max = position - 1;
 		}
 
-//		consolePrintf("Word: %s, (%d, %d) result: %d\n", word, min, max, result);
+		//		consolePrintf("Word: %s, (%d, %d) result: %d\n", word, min, max, result);
 
 	} while (max - min > 0);
 
@@ -148,13 +147,9 @@ bool findWordCompletions(const char *input) {
 	word = wordBufferPtr[position];
 	//consolePrintf("Final word: %s\n", word);
 
-
-
 	system->setCharactersEntered(strlen(partialWord));
 
-
 	bool match = true;
-
 
 	for (int r = 0; partialWord[r] != 0; r++) {
 		if (word[r] != partialWord[r]) {
@@ -168,9 +163,8 @@ bool findWordCompletions(const char *input) {
 		if (position == wordBufferPtrPos)
 			return false;
 		word = wordBufferPtr[position];
-//		consolePrintf("Final word: %s\n", word);
+		//		consolePrintf("Final word: %s\n", word);
 	}
-
 
 	match = true;
 
@@ -195,7 +189,6 @@ bool findWordCompletions(const char *input) {
 	} while ((match) && (position < wordBufferPtrPos));
 
 	return true;
-
 }
 
 } // End of namespace DS

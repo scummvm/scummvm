@@ -27,7 +27,9 @@
 
 namespace Titanic {
 
-enum DispenseMode { DISPENSE_NONE = 0, DISPENSE_HOT = 1, DISPENSE_COLD = 2 };
+enum DispenseMode { DISPENSE_NONE = 0,
+	                  DISPENSE_HOT = 1,
+	                  DISPENSE_COLD = 2 };
 
 class CChickenDispensor : public CBackground {
 	DECLARE_MESSAGE_MAP;
@@ -38,10 +40,12 @@ class CChickenDispensor : public CBackground {
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 	bool TurnOff(CTurnOff *msg);
+
 public:
 	bool _disabled;
 	DispenseMode _dispenseMode;
 	bool _dispensed;
+
 public:
 	CLASSDEF;
 	CChickenDispensor();

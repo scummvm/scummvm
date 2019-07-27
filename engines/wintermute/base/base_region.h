@@ -29,8 +29,8 @@
 #ifndef WINTERMUTE_BASE_REGION_H
 #define WINTERMUTE_BASE_REGION_H
 
-#include "engines/wintermute/base/base_point.h"
 #include "engines/wintermute/base/base_object.h"
+#include "engines/wintermute/base/base_point.h"
 
 namespace Wintermute {
 

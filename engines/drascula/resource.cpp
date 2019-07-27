@@ -20,8 +20,8 @@
  *
  */
 
-#include "drascula/drascula.h"
 #include "common/unarj.h"
+#include "drascula/drascula.h"
 
 namespace Drascula {
 
@@ -41,8 +41,8 @@ Common::SeekableReadStream *ArchiveMan::open(const Common::String &filename) {
 	return createReadStreamForMember(filename);
 }
 
-TextResourceParser::TextResourceParser(Common::SeekableReadStream *stream, DisposeAfterUse::Flag dispose) :
-	_stream(stream, dispose) {
+TextResourceParser::TextResourceParser(Common::SeekableReadStream *stream, DisposeAfterUse::Flag dispose)
+  : _stream(stream, dispose) {
 
 	// NOTE: strangely enough, the code before this refactoring used the size of
 	// the stream as a fixed maximum length for the parser. Using an updated
@@ -58,7 +58,8 @@ void TextResourceParser::getLine(char *buf) {
 		b = buf;
 		while (true) {
 			c = ~_stream->readByte();
-			if (_stream->eos()) break;
+			if (_stream->eos())
+				break;
 
 			if (c == '\r')
 				continue;
@@ -83,7 +84,7 @@ void TextResourceParser::parseInt(int &result) {
 	}
 }
 
-void TextResourceParser::parseString(char* result) {
+void TextResourceParser::parseString(char *result) {
 	char buf[256];
 	getLine(buf);
 
@@ -91,7 +92,5 @@ void TextResourceParser::parseString(char* result) {
 		*result = 0;
 	}
 }
-
-
 
 } // End of namespace Drascula

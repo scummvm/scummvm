@@ -26,192 +26,194 @@
 #include "common/scummsys.h"
 #include "common/serializer.h"
 #include "mads/game.h"
-#include "mads/scene.h"
 #include "mads/phantom/phantom_scenes.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
 namespace Phantom {
 
-class Scene5xx : public PhantomScene {
-protected:
-	/**
+	class Scene5xx : public PhantomScene {
+	protected:
+		/**
 	 * Plays an appropriate sound when entering a scene
 	 */
-	void sceneEntrySound();
+		void sceneEntrySound();
 
-	/**
+		/**
 	 *Sets the AA file to use for the scene
 	 */
-	void setAAName();
+		void setAAName();
 
-	/**
+		/**
 	 * Updates the prefix used for getting player sprites for the scene
 	 */
-	void setPlayerSpritesPrefix();
-public:
-	Scene5xx(MADSEngine *vm) : PhantomScene(vm) {}
-};
+		void setPlayerSpritesPrefix();
 
-class Scene501 : public Scene5xx {
-private:
-	bool _anim0ActvFl;
-	bool _skipFl;
+	public:
+		Scene5xx(MADSEngine *vm)
+		  : PhantomScene(vm) {}
+	};
 
-public:
-	Scene501(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	class Scene501 : public Scene5xx {
+	private:
+		bool _anim0ActvFl;
+		bool _skipFl;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene501(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene502 : public Scene5xx {
-private:
-	bool _fire1ActiveFl;
-	bool _fire2ActiveFl;
-	bool _fire3ActiveFl;
-	bool _fire4ActiveFl;
-	bool _panelTurningFl;
-	bool _trapDoorHotspotEnabled;
-	bool _acceleratedFireActivationFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	int _panelPushedNum;
-	int _puzzlePictures[16];
-	int _puzzleSprites[16];
-	int _puzzleSequences[16];
-	int _messageLevel;
-	int _cycleStage;
+	class Scene502 : public Scene5xx {
+	private:
+		bool _fire1ActiveFl;
+		bool _fire2ActiveFl;
+		bool _fire3ActiveFl;
+		bool _fire4ActiveFl;
+		bool _panelTurningFl;
+		bool _trapDoorHotspotEnabled;
+		bool _acceleratedFireActivationFl;
 
-	Common::Point _nextPos;
+		int _panelPushedNum;
+		int _puzzlePictures[16];
+		int _puzzleSprites[16];
+		int _puzzleSequences[16];
+		int _messageLevel;
+		int _cycleStage;
 
-	uint32 _lastFrameTime;
-	uint32 _timer;
-	uint32 _deathTimer;
+		Common::Point _nextPos;
 
-	byte *_cyclePointer;
+		uint32 _lastFrameTime;
+		uint32 _timer;
+		uint32 _deathTimer;
 
-	void room_502_initialize_panels();
-	void loadCyclingInfo();
-	void animateFireBursts();
-	void setPaletteCycle();
-	void handlePanelAnimation();
-	void getPanelInfo(Common::Point *walkToPos, int *panel, Common::Point mousePos, Common::Point *interimPos);
+		byte *_cyclePointer;
 
-public:
-	Scene502(MADSEngine *vm);
-	~Scene502();
+		void room_502_initialize_panels();
+		void loadCyclingInfo();
+		void animateFireBursts();
+		void setPaletteCycle();
+		void handlePanelAnimation();
+		void getPanelInfo(Common::Point *walkToPos, int *panel, Common::Point mousePos, Common::Point *interimPos);
 
-	virtual void synchronize(Common::Serializer &s);
+	public:
+		Scene502(MADSEngine *vm);
+		~Scene502();
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene504 : public Scene5xx {
-private:
-	bool _anim0ActvFl;
-	bool _anim1ActvFl;
-	bool _anim2ActvFl;
-	bool _anim3ActvFl;
-	bool _anim4ActvFl;
-	bool _anim5ActvFl;
-	bool _playingMusicFl;
-	bool _chairDialogDoneFl;
-	bool _fireBreathFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	int _songNum;
-	int _input3Count;
-	int _playCount;
-	int _listenStatus;
-	int _listenFrame;
-	int _chairStatus;
-	int _chairFrame;
-	int _playStatus;
-	int _playFrame;
-	int _phantomStatus;
-	int _phantomFrame;
-	int _christineTalkCount;
-	int _deathCounter;
+	class Scene504 : public Scene5xx {
+	private:
+		bool _anim0ActvFl;
+		bool _anim1ActvFl;
+		bool _anim2ActvFl;
+		bool _anim3ActvFl;
+		bool _anim4ActvFl;
+		bool _anim5ActvFl;
+		bool _playingMusicFl;
+		bool _chairDialogDoneFl;
+		bool _fireBreathFl;
 
-	void handleListenAnimation();
-	void handleOrganAnimation();
-	void handleChairAnimation();
-	void handlePhantomAnimation1();
-	void handlePhantomAnimation2();
-	void handlePhantomAnimation3();
-	void handleListenConversation();
-	void handlePlayConversation();
-	void handleFightConversation();
+		int _songNum;
+		int _input3Count;
+		int _playCount;
+		int _listenStatus;
+		int _listenFrame;
+		int _chairStatus;
+		int _chairFrame;
+		int _playStatus;
+		int _playFrame;
+		int _phantomStatus;
+		int _phantomFrame;
+		int _christineTalkCount;
+		int _deathCounter;
 
-public:
-	Scene504(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		void handleListenAnimation();
+		void handleOrganAnimation();
+		void handleChairAnimation();
+		void handlePhantomAnimation1();
+		void handlePhantomAnimation2();
+		void handlePhantomAnimation3();
+		void handleListenConversation();
+		void handlePlayConversation();
+		void handleFightConversation();
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene504(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene505 : public Scene5xx {
-private:
-	bool _anim0ActvFl;
-	bool _anim1ActvFl;
-	bool _anim2ActvFl;
-	bool _checkFrame106;
-	bool _leaveRoomFl;
-	bool _partedFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	int _raoulStatus;
-	int _raoulFrame;
-	int _raoulCount;
-	int _bothStatus;
-	int _bothFrame;
-	int _bothCount;
-	int _partStatus;
-	int _partFrame;
-	int _partCount;
+	class Scene505 : public Scene5xx {
+	private:
+		bool _anim0ActvFl;
+		bool _anim1ActvFl;
+		bool _anim2ActvFl;
+		bool _checkFrame106;
+		bool _leaveRoomFl;
+		bool _partedFl;
 
-	void handleRaoulAnimation();
-	void handleBothanimation();
-	void handlePartedAnimation();
-	void handleCoffinDialog();
+		int _raoulStatus;
+		int _raoulFrame;
+		int _raoulCount;
+		int _bothStatus;
+		int _bothFrame;
+		int _bothCount;
+		int _partStatus;
+		int _partFrame;
+		int _partCount;
 
-public:
-	Scene505(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		void handleRaoulAnimation();
+		void handleBothanimation();
+		void handlePartedAnimation();
+		void handleCoffinDialog();
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene505(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene506 : public Scene5xx {
-private:
-	bool _anim0ActvFl;
-	bool _skipFl;
-	bool _ascendingFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-public:
-	Scene506(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	class Scene506 : public Scene5xx {
+	private:
+		bool _anim0ActvFl;
+		bool _skipFl;
+		bool _ascendingFl;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene506(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
+
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
 } // End of namespace Phantom
 } // End of namespace MADS

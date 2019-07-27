@@ -28,32 +28,31 @@
 namespace Mohawk {
 namespace RivenStacks {
 
-/**
+	/**
  * 233rd Age / Gehn's Office
  */
-class OSpit : public RivenStack {
-public:
-	OSpit(MohawkEngine_Riven *vm);
+	class OSpit : public RivenStack {
+	public:
+		OSpit(MohawkEngine_Riven *vm);
 
-	// External commands - Death!
-	void xorollcredittime(const ArgumentArray &args);
+		// External commands - Death!
+		void xorollcredittime(const ArgumentArray &args);
 
-	// External commands - Trap Book Puzzle
-	void xbookclick(const ArgumentArray &args); // Four params -- movie_sref, start_time, end_time, u0
+		// External commands - Trap Book Puzzle
+		void xbookclick(const ArgumentArray &args); // Four params -- movie_sref, start_time, end_time, u0
 
-	// External commands - Blank Linking Book
-	void xooffice30_closebook(const ArgumentArray &args);
+		// External commands - Blank Linking Book
+		void xooffice30_closebook(const ArgumentArray &args);
 
-	// External commands - Gehn's Journal
-	void xobedroom5_closedrawer(const ArgumentArray &args);
-	void xogehnopenbook(const ArgumentArray &args);
-	void xogehnbookprevpage(const ArgumentArray &args);
-	void xogehnbooknextpage(const ArgumentArray &args);
+		// External commands - Gehn's Journal
+		void xobedroom5_closedrawer(const ArgumentArray &args);
+		void xogehnopenbook(const ArgumentArray &args);
+		void xogehnbookprevpage(const ArgumentArray &args);
+		void xogehnbooknextpage(const ArgumentArray &args);
 
-	// External commands - Elevator Combination
-	void xgwatch(const ArgumentArray &args);
-
-};
+		// External commands - Elevator Combination
+		void xgwatch(const ArgumentArray &args);
+	};
 
 } // End of namespace RivenStacks
 } // End of namespace Mohawk

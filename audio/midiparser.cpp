@@ -31,21 +31,22 @@
 //
 //////////////////////////////////////////////////
 
-MidiParser::MidiParser() :
-_hangingNotesCount(0),
-_driver(0),
-_timerRate(0x4A0000),
-_ppqn(96),
-_tempo(500000),
-_psecPerTick(5208), // 500000 / 96
-_autoLoop(false),
-_smartJump(false),
-_centerPitchWheelOnUnload(false),
-_sendSustainOffOnNotesOff(false),
-_numTracks(0),
-_activeTrack(255),
-_abortParse(false),
-_jumpingToTick(false) {
+MidiParser::MidiParser()
+  : _hangingNotesCount(0)
+  , _driver(0)
+  , _timerRate(0x4A0000)
+  , _ppqn(96)
+  , _tempo(500000)
+  , _psecPerTick(5208)
+  , // 500000 / 96
+  _autoLoop(false)
+  , _smartJump(false)
+  , _centerPitchWheelOnUnload(false)
+  , _sendSustainOffOnNotesOff(false)
+  , _numTracks(0)
+  , _activeTrack(255)
+  , _abortParse(false)
+  , _jumpingToTick(false) {
 	memset(_activeNotes, 0, sizeof(_activeNotes));
 	memset(_tracks, 0, sizeof(_tracks));
 	_nextEvent.start = NULL;
@@ -82,7 +83,7 @@ void MidiParser::setTempo(uint32 tempo) {
 }
 
 // This is the conventional (i.e. SMF) variable length quantity
-uint32 MidiParser::readVLQ(byte * &data) {
+uint32 MidiParser::readVLQ(byte *&data) {
 	byte str;
 	uint32 value = 0;
 	int i;
@@ -237,8 +238,8 @@ bool MidiParser::processEvent(const EventInfo &info, bool fireEvents) {
 		// SysEx event
 		// Check for trailing 0xF7 -- if present, remove it.
 		if (fireEvents) {
-			if (info.ext.data[info.length-1] == 0xF7)
-				_driver->sysEx(info.ext.data, (uint16)info.length-1);
+			if (info.ext.data[info.length - 1] == 0xF7)
+				_driver->sysEx(info.ext.data, (uint16)info.length - 1);
 			else
 				_driver->sysEx(info.ext.data, (uint16)info.length);
 		}
@@ -270,7 +271,6 @@ bool MidiParser::processEvent(const EventInfo &info, bool fireEvents) {
 
 	return true;
 }
-
 
 void MidiParser::allNotesOff() {
 	if (!_driver)
@@ -351,7 +351,7 @@ void MidiParser::hangAllActiveNotes() {
 	// Search for note off events until we have
 	// accounted for every active note.
 	uint16 tempActive[128];
-	memcpy(tempActive, _activeNotes, sizeof (tempActive));
+	memcpy(tempActive, _activeNotes, sizeof(tempActive));
 
 	uint32 advanceTick = _position._lastEventTick;
 	while (true) {

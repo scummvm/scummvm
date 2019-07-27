@@ -23,11 +23,11 @@
 #ifndef TSAGE_CORE_H
 #define TSAGE_CORE_H
 
-#include "common/scummsys.h"
 #include "common/endian.h"
 #include "common/error.h"
 #include "common/list.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "graphics/surface.h"
 #include "tsage/events.h"
 #include "tsage/graphics.h"
@@ -59,6 +59,7 @@ public:
 	int _visage;
 	int _strip;
 	int _frame;
+
 public:
 	InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType cursorId, const Common::String description);
 	InvObject(int visage, int strip, int frame);
@@ -95,6 +96,7 @@ public:
 class RefCounter : public Serialisable {
 private:
 	int _ctr;
+
 public:
 	RefCounter() { clear(); }
 	virtual ~RefCounter() {}
@@ -104,7 +106,8 @@ public:
 	void clear() { _ctr = 0; }
 	void setCtr(int v) { _ctr = v; }
 	int decCtr() {
-		if (_ctr > 0) --_ctr;
+		if (_ctr > 0)
+			--_ctr;
 		return _ctr;
 	}
 	int incCtr() { return ++_ctr; }
@@ -117,7 +120,8 @@ class EventHandler : public SavedObject {
 public:
 	Action *_action;
 
-	EventHandler() : SavedObject() { _action = NULL; }
+	EventHandler()
+	  : SavedObject() { _action = NULL; }
 	virtual ~EventHandler() { destroy(); }
 
 	virtual void synchronize(Serializer &s) { SYNC_POINTER(_action); }
@@ -166,17 +170,37 @@ public:
 	int _state;
 };
 
-#define ADD_PLAYER_MOVER(X, Y) { Common::Point pt(X, Y); PlayerMover *mover = new PlayerMover(); \
-	g_globals->_player.addMover(mover, &pt, this); }
-#define ADD_PLAYER_MOVER_NULL(OBJ, X, Y) { Common::Point pt(X, Y); PlayerMover *mover = new PlayerMover(); \
-	OBJ.addMover(mover, &pt, NULL); }
-#define ADD_PLAYER_MOVER_THIS(OBJ, X, Y) { Common::Point pt(X, Y); PlayerMover *mover = new PlayerMover(); \
-	OBJ.addMover(mover, &pt, this); }
+#define ADD_PLAYER_MOVER(X, Y)                     \
+	{                                                \
+		Common::Point pt(X, Y);                        \
+		PlayerMover *mover = new PlayerMover();        \
+		g_globals->_player.addMover(mover, &pt, this); \
+	}
+#define ADD_PLAYER_MOVER_NULL(OBJ, X, Y)    \
+	{                                         \
+		Common::Point pt(X, Y);                 \
+		PlayerMover *mover = new PlayerMover(); \
+		OBJ.addMover(mover, &pt, NULL);         \
+	}
+#define ADD_PLAYER_MOVER_THIS(OBJ, X, Y)    \
+	{                                         \
+		Common::Point pt(X, Y);                 \
+		PlayerMover *mover = new PlayerMover(); \
+		OBJ.addMover(mover, &pt, this);         \
+	}
 
-#define ADD_MOVER(OBJ, X, Y) { Common::Point pt(X, Y); NpcMover *mover = new NpcMover(); \
-	OBJ.addMover(mover, &pt, this); }
-#define ADD_MOVER_NULL(OBJ, X, Y) { Common::Point pt(X, Y); NpcMover *mover = new NpcMover(); \
-	OBJ.addMover(mover, &pt, NULL); }
+#define ADD_MOVER(OBJ, X, Y)          \
+	{                                   \
+		Common::Point pt(X, Y);           \
+		NpcMover *mover = new NpcMover(); \
+		OBJ.addMover(mover, &pt, this);   \
+	}
+#define ADD_MOVER_NULL(OBJ, X, Y)     \
+	{                                   \
+		Common::Point pt(X, Y);           \
+		NpcMover *mover = new NpcMover(); \
+		OBJ.addMover(mover, &pt, NULL);   \
+	}
 
 class ObjectMover : public EventHandler {
 public:
@@ -188,8 +212,15 @@ public:
 	int _changeCtr;
 	Action *_action;
 	SceneObject *_sceneObject;
+
 public:
-	ObjectMover() { _action = NULL; _sceneObject = NULL; _minorDiff = 0; _majorDiff = 0; _changeCtr = 0;}
+	ObjectMover() {
+		_action = NULL;
+		_sceneObject = NULL;
+		_minorDiff = 0;
+		_majorDiff = 0;
+		_changeCtr = 0;
+	}
 	virtual ~ObjectMover();
 
 	virtual void synchronize(Serializer &s);
@@ -207,6 +238,7 @@ public:
 	SceneObject *_destObject;
 	int _minArea;
 	int _maxArea;
+
 public:
 	ObjectMover2();
 	virtual ~ObjectMover2() {}
@@ -255,7 +287,8 @@ protected:
 	static Common::Point *findLinePoint(RouteEnds *routeEnds, Common::Point *objPos, int length, Common::Point *outPos);
 	static int findDistance(const Common::Point &pt1, const Common::Point &pt2);
 	static bool sub_F8E5_calculatePoint(const Common::Point &pt1, const Common::Point &pt2, const Common::Point &pt3,
-		const Common::Point &pt4, Common::Point *ptOut = NULL);
+	                                    const Common::Point &pt4, Common::Point *ptOut = NULL);
+
 public:
 	Common::Point _finalDest;
 	Common::Point _routeList[MAX_ROUTE_SIZE];
@@ -272,7 +305,11 @@ public:
 	SceneObject *_destObject;
 	int _maxArea;
 	int _minArea;
-	PlayerMover2() : PlayerMover() { _destObject = NULL; _minArea = _maxArea = 0;}
+	PlayerMover2()
+	  : PlayerMover() {
+		_destObject = NULL;
+		_minArea = _maxArea = 0;
+	}
 
 	virtual void synchronize(Serializer &s);
 	virtual Common::String getClassName() { return "PlayerMover2"; }
@@ -289,6 +326,7 @@ class PaletteModifier : public SavedObject {
 public:
 	ScenePalette *_scenePalette;
 	Action *_action;
+
 public:
 	PaletteModifier();
 
@@ -300,7 +338,7 @@ public:
 	virtual void remove() = 0;
 };
 
-class PaletteModifierCached: public PaletteModifier {
+class PaletteModifierCached : public PaletteModifier {
 public:
 	byte _palette[256 * 3];
 	int _step;
@@ -313,7 +351,7 @@ public:
 	virtual void synchronize(Serializer &s);
 };
 
-class PaletteRotation: public PaletteModifierCached {
+class PaletteRotation : public PaletteModifierCached {
 public:
 	int _delayCtr;
 	uint32 _frameNumber;
@@ -324,6 +362,7 @@ public:
 	int _duration;
 	int _idxChange;
 	int _countdown;
+
 public:
 	PaletteRotation();
 
@@ -338,9 +377,10 @@ public:
 	void setDelay(int amount);
 };
 
-class PaletteFader: public PaletteModifierCached {
+class PaletteFader : public PaletteModifierCached {
 public:
 	byte _palette[256 * 3];
+
 public:
 	virtual Common::String getClassName() { return "PaletteFader"; }
 	virtual void synchronize(Serializer &s);
@@ -351,7 +391,9 @@ public:
 
 /*--------------------------------------------------------------------------*/
 
-enum FadeMode {FADEMODE_NONE = 0, FADEMODE_GRADUAL = 1, FADEMODE_IMMEDIATE = 2};
+enum FadeMode { FADEMODE_NONE = 0,
+	              FADEMODE_GRADUAL = 1,
+	              FADEMODE_IMMEDIATE = 2 };
 
 class ScenePalette : public SavedObject {
 public:
@@ -365,6 +407,7 @@ public:
 	uint8 _aquaColor;
 	uint8 _purpleColor;
 	uint8 _limeColor;
+
 public:
 	ScenePalette();
 	ScenePalette(int paletteNum);
@@ -412,8 +455,15 @@ public:
 	Common::Point _position;
 	int _yDiff;
 	int _sceneRegionId;
+
 public:
-	SceneItem() : EventHandler() { _msg = "Feature"; _action = NULL; _sceneRegionId = 0; _yDiff = 0;}
+	SceneItem()
+	  : EventHandler() {
+		_msg = "Feature";
+		_action = NULL;
+		_sceneRegionId = 0;
+		_yDiff = 0;
+	}
 
 	virtual void synchronize(Serializer &s);
 	virtual Common::String getClassName() { return "SceneItem"; }
@@ -444,6 +494,7 @@ public:
 class SceneHotspot : public SceneItem {
 public:
 	int _resNum, _lookLineNum, _useLineNum, _talkLineNum;
+
 public:
 	SceneHotspot();
 	virtual void synchronize(Serializer &s);
@@ -458,15 +509,25 @@ public:
 	void setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 };
 
-enum AnimateMode {ANIM_MODE_NONE = 0, ANIM_MODE_1 = 1, ANIM_MODE_2 = 2, ANIM_MODE_3 = 3,
-		ANIM_MODE_4 = 4, ANIM_MODE_5 = 5, ANIM_MODE_6 = 6, ANIM_MODE_7 = 7, ANIM_MODE_8 = 8,
-		// Introduced in Blue Force
-		ANIM_MODE_9 = 9
+enum AnimateMode { ANIM_MODE_NONE = 0,
+	                 ANIM_MODE_1 = 1,
+	                 ANIM_MODE_2 = 2,
+	                 ANIM_MODE_3 = 3,
+	                 ANIM_MODE_4 = 4,
+	                 ANIM_MODE_5 = 5,
+	                 ANIM_MODE_6 = 6,
+	                 ANIM_MODE_7 = 7,
+	                 ANIM_MODE_8 = 8,
+	                 // Introduced in Blue Force
+	                 ANIM_MODE_9 = 9
 };
 
 // Actor effect enumeration used in Return to Ringworld 2
-enum Effect { EFFECT_NONE = 0, EFFECT_SHADED = 1, EFFECT_SMOKE = 3,
-	EFFECT_SHADOW_MAP = 5, EFFECT_SHADED2 = 6 };
+enum Effect { EFFECT_NONE = 0,
+	            EFFECT_SHADED = 1,
+	            EFFECT_SMOKE = 3,
+	            EFFECT_SHADOW_MAP = 5,
+	            EFFECT_SHADED2 = 6 };
 
 class SceneObject;
 
@@ -476,11 +537,13 @@ private:
 
 	void flipHorizontal(GfxSurface &s);
 	void flipVertical(GfxSurface &s);
+
 public:
 	int _resNum;
 	int _rlbNum;
 	bool _flipHoriz;
 	bool _flipVert;
+
 public:
 	Visage();
 	Visage(const Visage &v);
@@ -495,8 +558,10 @@ public:
 class SceneObjectWrapper : public EventHandler {
 private:
 	Visage _visageImages;
+
 public:
 	SceneObject *_sceneObject;
+
 public:
 	SceneObjectWrapper() { _sceneObject = NULL; }
 	virtual ~SceneObjectWrapper() {}
@@ -510,11 +575,20 @@ public:
 	virtual void dispatch();
 };
 
-enum ObjectFlags {OBJFLAG_FIXED_PRIORITY = 1, OBJFLAG_NO_UPDATES = 2, OBJFLAG_ZOOMED = 4,
-	OBJFLAG_SUPPRESS_DISPATCH = 8, OBJFLAG_HIDE = 0x100, OBJFLAG_HIDING = 0x200, OBJFLAG_REMOVE = 0x400,
-	OBJFLAG_CLONED = 0x800, OBJFLAG_CHECK_REGION = 0x1000, OBJFLAG_PANE_0 = 0x4000, OBJFLAG_PANE_1 = 0x8000,
-	OBJFLAG_PANES = OBJFLAG_PANE_0 | OBJFLAG_PANE_1,
-	OBJFLAG_FLIP_CENTROID_X = 0x10000, OBJFLAG_FLIP_CENTROID_Y = 0x20000
+enum ObjectFlags { OBJFLAG_FIXED_PRIORITY = 1,
+	                 OBJFLAG_NO_UPDATES = 2,
+	                 OBJFLAG_ZOOMED = 4,
+	                 OBJFLAG_SUPPRESS_DISPATCH = 8,
+	                 OBJFLAG_HIDE = 0x100,
+	                 OBJFLAG_HIDING = 0x200,
+	                 OBJFLAG_REMOVE = 0x400,
+	                 OBJFLAG_CLONED = 0x800,
+	                 OBJFLAG_CHECK_REGION = 0x1000,
+	                 OBJFLAG_PANE_0 = 0x4000,
+	                 OBJFLAG_PANE_1 = 0x8000,
+	                 OBJFLAG_PANES = OBJFLAG_PANE_0 | OBJFLAG_PANE_1,
+	                 OBJFLAG_FLIP_CENTROID_X = 0x10000,
+	                 OBJFLAG_FLIP_CENTROID_Y = 0x20000
 };
 
 class SceneObject : public SceneHotspot {
@@ -523,6 +597,7 @@ private:
 
 	int getNewFrame();
 	void animEnded();
+
 public:
 	int changeFrame();
 	uint32 _updateStartFrame;
@@ -537,7 +612,7 @@ public:
 	int _visage;
 	SceneObjectWrapper *_objectWrapper;
 	int _strip;
-	AnimateMode  _animateMode;
+	AnimateMode _animateMode;
 	int _frame;
 	int _endFrame;
 	int _loopCount;
@@ -556,6 +631,7 @@ public:
 	int _shade, _oldShade;
 	int _effect;
 	SceneObject *_linkedActor;
+
 public:
 	SceneObject();
 	SceneObject(const SceneObject &so);
@@ -610,7 +686,7 @@ public:
 	void setup(int visage, int stripFrameNum, int frameNum);
 };
 
-class BackgroundSceneObject: public SceneObject {
+class BackgroundSceneObject : public SceneObject {
 public:
 	virtual Common::String getClassName() { return "BackgroundSceneObject"; }
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -630,6 +706,7 @@ public:
 	int _color2;
 	int _color3;
 	GfxSurface _textSurface;
+
 public:
 	SceneText();
 	~SceneText();
@@ -643,7 +720,10 @@ public:
 };
 
 #define MAX_CHARACTERS 4
-enum R2RCharacter { R2_NONE = 0, R2_QUINN = 1, R2_SEEKER = 2, R2_MIRANDA = 3 };
+enum R2RCharacter { R2_NONE = 0,
+	                  R2_QUINN = 1,
+	                  R2_SEEKER = 2,
+	                  R2_MIRANDA = 3 };
 
 class Player : public SceneObject {
 public:
@@ -658,6 +738,7 @@ public:
 	Common::Point _characterPos[MAX_CHARACTERS];
 	int _characterStrip[MAX_CHARACTERS];
 	int _characterFrame[MAX_CHARACTERS];
+
 public:
 	Player();
 
@@ -705,8 +786,12 @@ public:
 	int _regionId;
 	Rect _bounds;
 	Common::Array<LineSliceSet> _ySlices;
+
 public:
-	Region() { _regionSize = 0; _regionId = 0; }
+	Region() {
+		_regionSize = 0;
+		_regionId = 0;
+	}
 	Region(int resNum, int rlbNum, ResourceType ctlType = RES_CONTROL);
 	Region(int regionId, const byte *regionData);
 
@@ -738,6 +823,7 @@ private:
 
 	SynchronizedList<SceneObject *> _objList;
 	bool _listAltered;
+
 public:
 	SceneObjectList() { _listAltered = false; }
 	void sortList(Common::Array<SceneObject *> &ObjList);
@@ -753,7 +839,7 @@ public:
 	void recurse(EventHandlerFn Fn) {
 		// Loop through each object
 		_listAltered = false;
-		for (SynchronizedList<SceneObject *>::iterator i = _objList.begin(); i != _objList.end() && !_listAltered; ) {
+		for (SynchronizedList<SceneObject *>::iterator i = _objList.begin(); i != _objList.end() && !_listAltered;) {
 			SceneObject *o = *i;
 			++i;
 			Fn(o);
@@ -776,6 +862,7 @@ class ScenePriorities : public Common::List<Region> {
 public:
 	int _resNum;
 	Region _defaultPriorityRegion;
+
 public:
 	void load(int resNum);
 
@@ -817,10 +904,12 @@ private:
 	void process5(int idx1, int idx2);
 	void loadRecords(int yp, int size, int processIndex);
 	void process6(RegionSupportRec &rec);
+
 public:
 	Common::Point _pt;
 	int _idxListIndex;
 	int _idxList2Index;
+
 public:
 	void loadRegion(byte *dataP, int size);
 };
@@ -829,6 +918,7 @@ class WRField18 {
 public:
 	Common::Point _pt1, _pt2;
 	int _v;
+
 public:
 	void load(byte *data);
 };
@@ -837,6 +927,7 @@ class WalkRegions {
 private:
 	void loadOriginal();
 	void loadRevised();
+
 public:
 	int _resNum;
 	RouteEnds _routeEnds;
@@ -845,6 +936,7 @@ public:
 	Common::Array<int> _idxList;
 	Common::Array<int> _idxList2;
 	Common::List<int> _disabledRegions;
+
 public:
 	WalkRegions() { _resNum = -1; }
 	virtual ~WalkRegions() {}
@@ -880,6 +972,7 @@ public:
 	RefCounter _lockCtr;
 	RefCounter _waitCtr;
 	int _nextWaitCtr;
+
 public:
 	GameHandler();
 	virtual ~GameHandler();
@@ -898,10 +991,12 @@ public:
 	int _delayTicks;
 	Common::String _saveName;
 	uint32 _prevFrameNumber;
+
 protected:
 	virtual void playerAction(Event &event) {}
 	virtual void processEnd(Event &event) {}
 	virtual void postLoad(int priorSceneBeforeLoad, int currentSceneBeforeLoad) {}
+
 public:
 	SceneHandler();
 	void registerHandler();

@@ -32,11 +32,15 @@ class CHammerClip : public CGameObject {
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+
 public:
 	int _value;
+
 public:
 	CLASSDEF;
-	CHammerClip() : CGameObject(), _value(0) {}
+	CHammerClip()
+	  : CGameObject()
+	  , _value(0) {}
 
 	/**
 	 * Save the data for the class to file

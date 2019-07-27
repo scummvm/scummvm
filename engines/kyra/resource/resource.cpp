@@ -30,8 +30,14 @@ namespace Kyra {
 
 class EndianAwareStreamWrapper : public Common::SeekableReadStreamEndian {
 public:
-	EndianAwareStreamWrapper(Common::SeekableReadStream *stream, bool bigEndian, bool disposeAfterUse = true) : Common::SeekableReadStreamEndian(bigEndian), _stream(stream), _dispose(disposeAfterUse) {}
-	~EndianAwareStreamWrapper() { if (_dispose) delete _stream; }
+	EndianAwareStreamWrapper(Common::SeekableReadStream *stream, bool bigEndian, bool disposeAfterUse = true)
+	  : Common::SeekableReadStreamEndian(bigEndian)
+	  , _stream(stream)
+	  , _dispose(disposeAfterUse) {}
+	~EndianAwareStreamWrapper() {
+		if (_dispose)
+			delete _stream;
+	}
 
 	// Common::Stream interface
 	bool err() const { return _stream->err(); }
@@ -44,13 +50,19 @@ public:
 	int32 pos() const { return _stream->pos(); }
 	int32 size() const { return _stream->size(); }
 	bool seek(int32 offset, int whence = SEEK_SET) { return _stream->seek(offset, whence); }
-	
+
 private:
 	Common::SeekableReadStream *_stream;
 	bool _dispose;
 };
 
-Resource::Resource(KyraEngine_v1 *vm) : _archiveCache(), _files(), _archiveFiles(), _protectedFiles(), _loaders(), _vm(vm) {
+Resource::Resource(KyraEngine_v1 *vm)
+  : _archiveCache()
+  , _files()
+  , _archiveFiles()
+  , _protectedFiles()
+  , _loaders()
+  , _vm(vm) {
 	initializeLoaders();
 
 	// Initialize directories for playing from CD or with original
@@ -156,7 +168,7 @@ bool Resource::reset() {
 		}
 	} else if (_vm->game() != GI_EOB2) {
 		error("Unknown game id: %d", _vm->game());
-		return false;   // for compilers that don't support NORETURN
+		return false; // for compilers that don't support NORETURN
 	}
 
 	return true;
@@ -215,7 +227,7 @@ bool Resource::loadFileList(const Common::String &filedata) {
 			} else if (!loadPakFile(filename)) {
 				delete f;
 				error("couldn't load file '%s'", filename.c_str());
-				return false;   // for compilers that don't support NORETURN
+				return false; // for compilers that don't support NORETURN
 			}
 		}
 	}
@@ -231,7 +243,7 @@ bool Resource::loadFileList(const char *const *filelist, uint32 numFiles) {
 	while (numFiles--) {
 		if (!loadPakFile(filelist[numFiles])) {
 			error("couldn't load file '%s'", filelist[numFiles]);
-			return false;   // for compilers that don't support NORETURN
+			return false; // for compilers that don't support NORETURN
 		}
 	}
 

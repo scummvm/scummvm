@@ -131,6 +131,7 @@ public:
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	bool validMouse();
 	Common::String debuggerToString() const override;
+
 private:
 	virtual bool externalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name) override;
 

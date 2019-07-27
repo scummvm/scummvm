@@ -30,7 +30,7 @@ namespace Prince {
 
 class PrinceEngine;
 
-class MusicPlayer: public Audio::MidiPlayer {
+class MusicPlayer : public Audio::MidiPlayer {
 private:
 	PrinceEngine *_vm;
 	byte *_data;
@@ -42,6 +42,7 @@ private:
 
 	// Stop MIDI File
 	void sndMidiStop();
+
 public:
 	MusicPlayer(PrinceEngine *vm);
 	~MusicPlayer();

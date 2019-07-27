@@ -55,17 +55,17 @@ class VK {
 
 	VQAPlayer *_vqaPlayerMain;
 	VQAPlayer *_vqaPlayerEye;
-	int  _vqaFrameMain;
+	int _vqaFrameMain;
 	bool _vqaLoopEnded;
 
 	Graphics::Surface _surfaceEye;
 
 	bool _isOpen;
-	int  _actorId;
+	int _actorId;
 	bool _calibrationStarted;
 	bool _testStarted;
 
-	Common::Array<Common::Array<Question> > _questions;
+	Common::Array<Common::Array<Question>> _questions;
 
 	int _volumeAmbient;
 	int _volumeMusic;
@@ -77,50 +77,50 @@ class VK {
 	int _calibrationRatio;
 	int _calibrationCounter;
 
-	int    _humanProbability;
-	int    _humanGauge;
-	int    _humanGaugeTarget;
-	int    _humanGaugeDelta;
+	int _humanProbability;
+	int _humanGauge;
+	int _humanGaugeTarget;
+	int _humanGaugeDelta;
 	uint32 _timeNextHumanGaugeStepDiff;
 	uint32 _timeNextHumanGaugeStepStart;
 
-	int    _replicantProbability;
-	int    _replicantGauge;
-	int    _replicantGaugeTarget;
-	int    _replicantGaugeDelta;
+	int _replicantProbability;
+	int _replicantGauge;
+	int _replicantGaugeTarget;
+	int _replicantGaugeDelta;
 	uint32 _timeNextReplicantGaugeStepDiff;
 	uint32 _timeNextReplicantGaugeStepStart;
 
-	int    _anxiety;
+	int _anxiety;
 
-	int    _needleValue;
-	int    _needleValueMax;
-	int    _needleValueTarget;
-	int    _needleValueDelta;
+	int _needleValue;
+	int _needleValueMax;
+	int _needleValueTarget;
+	int _needleValueDelta;
 	uint32 _timeNextNeedleStepStart;
 	uint32 _timeNextNeedleOscillateStart;
 	uint32 _timeNeedleReturnStart;
 
-	bool   _isClosing;
+	bool _isClosing;
 	uint32 _timeCloseStart;
 
-	int    _blinkState;
+	int _blinkState;
 	uint32 _timeNextBlinkStart;
 	uint32 _timeNextGaugesBlinkStart;
 
-	bool   _isAdjusting;
-	int    _adjustment;
-	int    _adjustmentTarget;
-	int    _adjustmentDelta;
+	bool _isAdjusting;
+	int _adjustment;
+	int _adjustmentTarget;
+	int _adjustmentDelta;
 	uint32 _timeNextAdjustementStepStart;
 
-	int    _eyeLineSelected;
-	int    _eyeLineX;
-	int    _eyeLineXLast;
-	int    _eyeLineY;
-	int    _eyeLineYLast;
-	int    _eyeLineXDelta;
-	int    _eyeLineYDelta;
+	int _eyeLineSelected;
+	int _eyeLineX;
+	int _eyeLineXLast;
+	int _eyeLineY;
+	int _eyeLineYLast;
+	int _eyeLineXDelta;
+	int _eyeLineYDelta;
 	uint32 _timeNextEyeLineStepStart;
 	uint32 _timeNextEyeLineStart;
 

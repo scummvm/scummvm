@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "agi/agi.h"
 #include "agi/graphics.h"
 #include "agi/opcodes.h"
@@ -164,8 +163,7 @@ void condSaid2(AgiGame *state, AgiEngine *vm, uint8 *p) {
 	int id0 = READ_LE_UINT16(p);
 	int id1 = READ_LE_UINT16(p + 2);
 
-	if ((id0 == 1 || id0 == vm->_words->getEgoWordId(0)) &&
-	        (id1 == 1 || id1 == vm->_words->getEgoWordId(1)))
+	if ((id0 == 1 || id0 == vm->_words->getEgoWordId(0)) && (id1 == 1 || id1 == vm->_words->getEgoWordId(1)))
 		state->testResult = true;
 }
 
@@ -179,9 +177,7 @@ void condSaid3(AgiGame *state, AgiEngine *vm, uint8 *p) {
 	int id1 = READ_LE_UINT16(p + 2);
 	int id2 = READ_LE_UINT16(p + 4);
 
-	if ((id0 == 1 || id0 == vm->_words->getEgoWordId(0)) &&
-	        (id1 == 1 || id1 == vm->_words->getEgoWordId(1)) &&
-	        (id2 == 1 || id2 == vm->_words->getEgoWordId(2)))
+	if ((id0 == 1 || id0 == vm->_words->getEgoWordId(0)) && (id1 == 1 || id1 == vm->_words->getEgoWordId(1)) && (id2 == 1 || id2 == vm->_words->getEgoWordId(2)))
 		state->testResult = true;
 }
 
@@ -297,24 +293,21 @@ uint8 AgiEngine::testPosn(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
 uint8 AgiEngine::testObjInBox(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
 	ScreenObjEntry *v = &_game.screenObjTable[n];
 
-	return v->xPos >= x1 &&
-	       v->yPos >= y1 && v->xPos + v->xSize - 1 <= x2 && v->yPos <= y2;
+	return v->xPos >= x1 && v->yPos >= y1 && v->xPos + v->xSize - 1 <= x2 && v->yPos <= y2;
 }
 
 // if n is in center of box
 uint8 AgiEngine::testObjCenter(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
 	ScreenObjEntry *v = &_game.screenObjTable[n];
 
-	return v->xPos + v->xSize / 2 >= x1 &&
-	       v->xPos + v->xSize / 2 <= x2 && v->yPos >= y1 && v->yPos <= y2;
+	return v->xPos + v->xSize / 2 >= x1 && v->xPos + v->xSize / 2 <= x2 && v->yPos >= y1 && v->yPos <= y2;
 }
 
 // if nect N is in right corner
 uint8 AgiEngine::testObjRight(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
 	ScreenObjEntry *v = &_game.screenObjTable[n];
 
-	return v->xPos + v->xSize - 1 >= x1 &&
-	       v->xPos + v->xSize - 1 <= x2 && v->yPos >= y1 && v->yPos <= y2;
+	return v->xPos + v->xSize - 1 >= x1 && v->xPos + v->xSize - 1 <= x2 && v->yPos >= y1 && v->yPos <= y2;
 }
 
 // When player has entered something, it is parsed elsewhere
@@ -350,7 +343,7 @@ uint8 AgiEngine::testSaid(uint8 nwords, uint8 *cc) {
 		cc += 2;
 
 		switch (z) {
-		case 9999:  // rest of line (empty string counts to...)
+		case 9999: // rest of line (empty string counts to...)
 			nwords = 1;
 			break;
 		case 1: // any word
@@ -424,7 +417,7 @@ bool AgiEngine::testIfCode(int16 logicNr) {
 				// which when triggered waits a bit and processes ScummVM events and user may therefore restore a saved game
 				// fixes bug #9707
 				// TODO: maybe delay restoring the game instead, when GMM is used?
- 				return true;
+				return true;
 			}
 			skipInstruction(op);
 

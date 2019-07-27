@@ -26,14 +26,16 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CShipSetting, CBackground)
-	ON_MESSAGE(AddHeadPieceMsg)
-	ON_MESSAGE(SetFrameMsg)
-	ON_MESSAGE(EnterRoomMsg)
-	ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(AddHeadPieceMsg)
+ON_MESSAGE(SetFrameMsg)
+ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(MouseDragStartMsg)
 END_MESSAGE_MAP()
 
-CShipSetting::CShipSetting() : CBackground(),
-	_itemName("NULL"), _frameTarget("NULL") {
+CShipSetting::CShipSetting()
+  : CBackground()
+  , _itemName("NULL")
+  , _frameTarget("NULL") {
 }
 
 void CShipSetting::save(SimpleFile *file, int indent) {

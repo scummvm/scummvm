@@ -20,10 +20,10 @@
  *
  */
 
-#include "pink/archive.h"
-#include "pink/pink.h"
 #include "pink/objects/actions/action_hide.h"
+#include "pink/archive.h"
 #include "pink/objects/actors/actor.h"
+#include "pink/pink.h"
 
 namespace Pink {
 

@@ -20,7 +20,7 @@
  *
  */
 
- /*
+/*
  * This code is based on Labyrinth of Time code with assistance of
  *
  * Copyright (c) 1993 Terra Nova Development
@@ -51,7 +51,9 @@
 
 namespace Lab {
 LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
- : Engine(syst), _gameDescription(gameDesc), _extraGameFeatures(0) {
+  : Engine(syst)
+  , _gameDescription(gameDesc)
+  , _extraGameFeatures(0) {
 	_lastWaitTOFTicks = 0;
 
 	_isHiRes = false;
@@ -202,7 +204,7 @@ void LabEngine::waitTOF() {
 
 	uint32 now;
 
-	for (now = _system->getMillis(); now - _lastWaitTOFTicks <= 0xF; now = _system->getMillis() )
+	for (now = _system->getMillis(); now - _lastWaitTOFTicks <= 0xF; now = _system->getMillis())
 		_system->delayMillis(_lastWaitTOFTicks - now + 17);
 
 	_lastWaitTOFTicks = now;

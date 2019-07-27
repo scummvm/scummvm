@@ -22,18 +22,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
-#include "common/util.h"
 #include "common/stack.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
-#include "sword2/sword2.h"
-#include "sword2/header.h"
 #include "sword2/defs.h"
+#include "sword2/header.h"
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
 #include "sword2/memory.h"
 #include "sword2/resman.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
@@ -42,9 +41,11 @@ namespace Sword2 {
 // The machine code table
 
 #ifndef REDUCE_MEMORY_USAGE
-#	define OPCODE(x)	{ &Logic::x, #x }
+#	define OPCODE(x) \
+		{ &Logic::x, #x }
 #else
-#	define OPCODE(x)	{ &Logic::x, "" }
+#	define OPCODE(x) \
+		{ &Logic::x, "" }
 #endif
 
 void Logic::setupOpcodes() {
@@ -177,7 +178,7 @@ void Logic::setupOpcodes() {
 		/* 64 */
 		OPCODE(fnPrepareMusic),
 		OPCODE(fnSoundFetch),
-		OPCODE(fnPrepareMusic),	// Again, apparently
+		OPCODE(fnPrepareMusic), // Again, apparently
 		OPCODE(fnSmackerLeadIn),
 		/* 68 */
 		OPCODE(fnSmackerLeadOut),
@@ -266,7 +267,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 
 	// Initialize some stuff
 
-	uint32 ip = 0;			 // Code pointer
+	uint32 ip = 0; // Code pointer
 	int scriptNumber;
 
 	// Get the start of variables and start of code
@@ -342,8 +343,8 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 
 	bool runningScript = true;
 
-	int parameterReturnedFromMcodeFunction = 0;	// Allow scripts to return things
-	int savedStartOfMcode = 0;	// For saving start of mcode commands
+	int parameterReturnedFromMcodeFunction = 0; // Allow scripts to return things
+	int savedStartOfMcode = 0; // For saving start of mcode commands
 
 	while (runningScript) {
 		int32 a, b;
@@ -357,7 +358,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 
 		switch (curCommand) {
 
-		// Script-related opcodes
+			// Script-related opcodes
 
 		case CP_END_SCRIPT:
 			// End the script
@@ -417,7 +418,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 			debug(9, "CP_RESTART_SCRIPT");
 			break;
 
-		// Stack-related opcodes
+			// Stack-related opcodes
 
 		case CP_PUSH_INT32:
 			// Push a long word value on to the stack
@@ -542,7 +543,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 			debug(9, "CP_SUBNPOP_GLOBAL_VAR32: scriptVars[%d] => %d", parameter, value);
 			break;
 
-		// Jump opcodes
+			// Jump opcodes
 
 		case CP_SKIPONTRUE:
 			// Skip if the value on the stack is true
@@ -668,12 +669,12 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 			// Get the maximum value
 			Read8ip(parameter);
 			debug(9, "CP_JUMP_ON_RETURNED: %d => %d",
-				parameterReturnedFromMcodeFunction,
-				READ_LE_UINT32(code + ip + parameterReturnedFromMcodeFunction * 4));
+			      parameterReturnedFromMcodeFunction,
+			      READ_LE_UINT32(code + ip + parameterReturnedFromMcodeFunction * 4));
 			ip += READ_LE_UINT32(code + ip + parameterReturnedFromMcodeFunction * 4);
 			break;
 
-		// Operators
+			// Operators
 
 		case OP_ISEQUAL:
 			b = stack.pop();
@@ -748,7 +749,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 			debug(9, "OP_OROR: RESULT = %d", a || b);
 			break;
 
-		// Debugging opcodes, I think
+			// Debugging opcodes, I think
 
 		case CP_DEBUGON:
 			debug(9, "CP_DEBUGON");
@@ -762,7 +763,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 			break;
 		default:
 			error("Invalid script command %d", curCommand);
-			return 3;	// for compilers that don't support NORETURN
+			return 3; // for compilers that don't support NORETURN
 		}
 	}
 

@@ -26,8 +26,8 @@
 #ifndef PEGASUS_TIMERS_H
 #define PEGASUS_TIMERS_H
 
-#include "common/rational.h"
 #include "common/func.h"
+#include "common/rational.h"
 
 #include "pegasus/constants.h"
 #include "pegasus/notification.h"
@@ -36,7 +36,7 @@
 namespace Pegasus {
 
 class Idler {
-friend class PegasusEngine;
+	friend class PegasusEngine;
 
 public:
 	Idler();
@@ -54,15 +54,16 @@ protected:
 };
 
 enum {
-	kLoopTimeBase           = 1,
+	kLoopTimeBase = 1,
 	kPalindromeLoopTimeBase = 2,
-	kMaintainTimeBaseZero   = 4
+	kMaintainTimeBaseZero = 4
 };
 
 class TimeBaseCallBack;
 
 class TimeBase {
-friend class TimeBaseCallBack;
+	friend class TimeBaseCallBack;
+
 public:
 	TimeBase(const TimeScale = kDefaultTimeScale);
 	virtual ~TimeBase();
@@ -94,7 +95,7 @@ public:
 	virtual TimeValue getStop(const TimeScale = 0) const;
 
 	virtual void setSegment(const TimeValue, const TimeValue, const TimeScale = 0);
-	virtual void getSegment(TimeValue&, TimeValue&, const TimeScale = 0) const;
+	virtual void getSegment(TimeValue &, TimeValue &, const TimeScale = 0) const;
 
 	virtual TimeValue getDuration(const TimeScale = 0) const;
 
@@ -143,7 +144,7 @@ enum CallBackTrigger {
 };
 
 class TimeBaseCallBack {
-friend class TimeBase;
+	friend class TimeBase;
 
 public:
 	TimeBaseCallBack();
@@ -186,7 +187,6 @@ protected:
 	virtual void timeChanged(const TimeValue) {}
 
 	TimeValue _lastTime;
-
 };
 
 class NotificationCallBack : public TimeBaseCallBack {
@@ -239,12 +239,20 @@ protected:
 
 class FuseFunction : public Fuse {
 public:
-	FuseFunction() : _functor(0) {}
+	FuseFunction()
+	  : _functor(0) {}
 	virtual ~FuseFunction() { delete _functor; }
 
-	void setFunctor(Common::Functor0<void> *functor) { delete _functor; _functor = functor; }
+	void setFunctor(Common::Functor0<void> *functor) {
+		delete _functor;
+		_functor = functor;
+	}
+
 protected:
-	virtual void invokeAction() { if (_functor && _functor->isValid()) (*_functor)(); }
+	virtual void invokeAction() {
+		if (_functor && _functor->isValid())
+			(*_functor)();
+	}
 
 	Common::Functor0<void> *_functor;
 };

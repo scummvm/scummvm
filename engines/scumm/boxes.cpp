@@ -20,10 +20,10 @@
  *
  */
 
-#include "scumm/scumm.h"
-#include "scumm/actor.h"
 #include "scumm/boxes.h"
+#include "scumm/actor.h"
 #include "scumm/resource.h"
+#include "scumm/scumm.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v6.h"
 #include "scumm/util.h"
@@ -32,9 +32,9 @@
 
 namespace Scumm {
 
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
-struct Box {				/* Internal walkbox file format */
+struct Box { /* Internal walkbox file format */
 	union {
 		struct {
 			byte x1;
@@ -80,11 +80,10 @@ struct Box {				/* Internal walkbox file format */
 	};
 } PACKED_STRUCT;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h" // END STRUCT PACKING
 
 #define BOX_MATRIX_SIZE 2000
 #define BOX_DEBUG 0
-
 
 static void getGates(const BoxCoords &box1, const BoxCoords &box2, Common::Point gateA[2], Common::Point gateB[2]);
 
@@ -106,10 +105,10 @@ static Common::Point closestPtOnLine(const Common::Point &lineStart, const Commo
 	const int lxdiff = lineEnd.x - lineStart.x;
 	const int lydiff = lineEnd.y - lineStart.y;
 
-	if (lineEnd.x == lineStart.x) {	// Vertical line?
+	if (lineEnd.x == lineStart.x) { // Vertical line?
 		result.x = lineStart.x;
 		result.y = p.y;
-	} else if (lineEnd.y == lineStart.y) {	// Horizontal line?
+	} else if (lineEnd.y == lineStart.y) { // Horizontal line?
 		result.x = p.x;
 		result.y = lineStart.y;
 	} else {
@@ -179,7 +178,7 @@ byte ScummEngine::getMaskFromBox(int box) {
 		return 0;
 
 	if (_game.version == 8)
-		return (byte) FROM_LE_32(ptr->v8.mask);
+		return (byte)FROM_LE_32(ptr->v8.mask);
 	else if (_game.version == 0)
 		return ptr->v0.mask;
 	else if (_game.version <= 2)
@@ -213,7 +212,7 @@ byte ScummEngine::getBoxFlags(int box) {
 	if (!ptr)
 		return 0;
 	if (_game.version == 8)
-		return (byte) FROM_LE_32(ptr->v8.flags);
+		return (byte)FROM_LE_32(ptr->v8.flags);
 	else if (_game.version == 0)
 		return 0;
 	else if (_game.version <= 2)
@@ -268,12 +267,11 @@ int ScummEngine::getScale(int box, int x, int y) {
 	return scale;
 }
 
-
 int ScummEngine::getScaleFromSlot(int slot, int x, int y) {
 	assert(1 <= slot && slot <= ARRAYSIZE(_scaleSlots));
-  int scale;
+	int scale;
 	int scaleX = 0, scaleY = 0;
-	ScaleSlot &s = _scaleSlots[slot-1];
+	ScaleSlot &s = _scaleSlots[slot - 1];
 
 	if (s.y1 == s.y2 && s.x1 == s.x2)
 		error("Invalid scale slot %d", slot);
@@ -371,7 +369,7 @@ void ScummEngine::convertScaleTableToScaleSlot(int slot) {
 	m = (resptr[199] - resptr[0]) / 199.0f;
 	for (lowerIdx = 0; lowerIdx < 199 && (resptr[lowerIdx] == 1 || resptr[lowerIdx] == 255); lowerIdx++) {
 		oldM = m;
-		m = (resptr[199] - resptr[lowerIdx+1]) / (float)(199 - (lowerIdx+1));
+		m = (resptr[199] - resptr[lowerIdx + 1]) / (float)(199 - (lowerIdx + 1));
 		if (m > 0) {
 			if (m <= oldM)
 				break;
@@ -385,7 +383,7 @@ void ScummEngine::convertScaleTableToScaleSlot(int slot) {
 	m = (resptr[199] - resptr[0]) / 199.0f;
 	for (upperIdx = 199; upperIdx > 1 && (resptr[upperIdx] == 1 || resptr[upperIdx] == 255); upperIdx--) {
 		oldM = m;
-		m = (resptr[upperIdx-1] - resptr[0]) / (float)(upperIdx-1);
+		m = (resptr[upperIdx - 1] - resptr[0]) / (float)(upperIdx - 1);
 		if (m > 0) {
 			if (m <= oldM)
 				break;
@@ -429,7 +427,7 @@ void ScummEngine::convertScaleTableToScaleSlot(int slot) {
 
 void ScummEngine::setScaleSlot(int slot, int x1, int y1, int scale1, int x2, int y2, int scale2) {
 	assert(1 <= slot && slot <= ARRAYSIZE(_scaleSlots));
-	ScaleSlot &s = _scaleSlots[slot-1];
+	ScaleSlot &s = _scaleSlots[slot - 1];
 	s.x2 = x2;
 	s.y2 = y2;
 	s.scale2 = scale2;
@@ -542,8 +540,7 @@ bool ScummEngine::checkXYInBoxBounds(int boxnum, int x, int y) {
 	// Corner case: If the box is a simple line segment, we consider the
 	// point to be contained "in" (or rather, lying on) the line if it
 	// is very close to its projection to the line segment.
-	if ((box.ul == box.ur && box.lr == box.ll) ||
-		(box.ul == box.ll && box.ur == box.lr)) {
+	if ((box.ul == box.ur && box.lr == box.ll) || (box.ul == box.ll && box.ur == box.lr)) {
 
 		Common::Point tmp;
 		tmp = closestPtOnLine(box.ul, box.lr, p);
@@ -643,7 +640,7 @@ BoxCoords ScummEngine::getBoxCoordinates(int boxnum) {
 	return *box;
 }
 
-int getClosestPtOnBox(const BoxCoords &box, int x, int y, int16& outX, int16& outY) {
+int getClosestPtOnBox(const BoxCoords &box, int x, int y, int16 &outX, int16 &outY) {
 	const Common::Point p(x, y);
 	Common::Point tmp;
 	uint dist;
@@ -745,8 +742,7 @@ int ScummEngine::getNextBox(byte from, byte to) {
 
 		return *boxm;
 
-	}
-	else if (_game.version <= 2) {
+	} else if (_game.version <= 2) {
 		// The v2 box matrix is a real matrix with numOfBoxes rows and columns.
 		// The first numOfBoxes bytes contain indices to the start of the corresponding
 		// row (although that seems unnecessary to me - the value is easily computable.
@@ -820,9 +816,7 @@ bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, Common::Point
 					flag |= 2;
 				}
 
-				if (box1.ul.y > box2.ur.y || box2.ul.y > box1.ur.y ||
-						((box1.ur.y == box2.ul.y || box2.ur.y == box1.ul.y) &&
-						box1.ul.y != box1.ur.y && box2.ul.y != box2.ur.y)) {
+				if (box1.ul.y > box2.ur.y || box2.ul.y > box1.ur.y || ((box1.ur.y == box2.ul.y || box2.ur.y == box1.ul.y) && box1.ul.y != box1.ur.y && box2.ul.y != box2.ur.y)) {
 					if (flag & 1)
 						SWAP(box1.ul.y, box1.ur.y);
 					if (flag & 2)
@@ -840,7 +834,7 @@ bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, Common::Point
 							diffY *= boxDiffX;
 							t = diffY / diffX;
 							if (t == 0 && (diffY <= 0 || diffX <= 0)
-									&& (diffY >= 0 || diffX >= 0))
+							    && (diffY >= 0 || diffX >= 0))
 								t = -1;
 							pos = _pos.y + t;
 						}
@@ -875,9 +869,7 @@ bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, Common::Point
 					flag |= 2;
 				}
 
-				if (box1.ul.x > box2.ur.x || box2.ul.x > box1.ur.x ||
-						((box1.ur.x == box2.ul.x || box2.ur.x == box1.ul.x) &&
-						box1.ul.x != box1.ur.x && box2.ul.x != box2.ur.x)) {
+				if (box1.ul.x > box2.ur.x || box2.ul.x > box1.ur.x || ((box1.ur.x == box2.ul.x || box2.ur.x == box1.ul.x) && box1.ul.x != box1.ur.x && box2.ul.x != box2.ur.x)) {
 					if (flag & 1)
 						SWAP(box1.ul.x, box1.ur.x);
 					if (flag & 2)
@@ -1013,7 +1005,6 @@ void ScummEngine::calcItineraryMatrix(byte *itineraryMatrix, int num) {
 				}
 			}
 		}
-
 	}
 
 	free(adjacentMatrix);
@@ -1046,7 +1037,11 @@ void ScummEngine::createBoxMatrix() {
 	byte *matrixStart = _res->createResource(rtMatrix, 1, BOX_MATRIX_SIZE);
 	const byte *matrixEnd = matrixStart + BOX_MATRIX_SIZE;
 
-	#define addToMatrix(b)	do { *matrixStart++ = (b); assert(matrixStart < matrixEnd); } while (0)
+#define addToMatrix(b)               \
+	do {                               \
+		*matrixStart++ = (b);            \
+		assert(matrixStart < matrixEnd); \
+	} while (0)
 
 	for (i = 0; i < num; i++) {
 		addToMatrix(0xFF);
@@ -1062,7 +1057,6 @@ void ScummEngine::createBoxMatrix() {
 		}
 	}
 	addToMatrix(0xFF);
-
 
 #if BOX_DEBUG
 	debug("Itinerary matrix:\n");
@@ -1106,10 +1100,7 @@ bool ScummEngine::areBoxesNeighbors(int box1nr, int box2nr) {
 					swappedBox1 = true;
 					SWAP(box.ur.y, box.ul.y);
 				}
-				if (box.ur.y < box2.ul.y ||
-						box.ul.y > box2.ur.y ||
-						((box.ul.y == box2.ur.y ||
-						 box.ur.y == box2.ul.y) && box2.ur.y != box2.ul.y && box.ul.y != box.ur.y)) {
+				if (box.ur.y < box2.ul.y || box.ul.y > box2.ur.y || ((box.ul.y == box2.ur.y || box.ur.y == box2.ul.y) && box2.ur.y != box2.ul.y && box.ul.y != box.ur.y)) {
 				} else {
 					return true;
 				}
@@ -1135,10 +1126,7 @@ bool ScummEngine::areBoxesNeighbors(int box1nr, int box2nr) {
 					swappedBox1 = true;
 					SWAP(box.ur.x, box.ul.x);
 				}
-				if (box.ur.x < box2.ul.x ||
-						box.ul.x > box2.ur.x ||
-						((box.ul.x == box2.ur.x ||
-						 box.ur.x == box2.ul.x) && box2.ur.x != box2.ul.x && box.ul.x != box.ur.x)) {
+				if (box.ur.x < box2.ul.x || box.ul.x > box2.ur.x || ((box.ul.x == box2.ur.x || box.ur.x == box2.ul.x) && box2.ur.x != box2.ul.x && box.ul.x != box.ur.x)) {
 
 				} else {
 					return true;
@@ -1257,10 +1245,7 @@ void Actor_v3::findPathTowardsOld(byte box1, byte box2, byte finalBox, Common::P
 		// 'maze' in the zeppelin (see bug #1032964).
 		if (_vm->_game.id != GID_INDY3 || _vm->getMaskFromBox(box1) == _vm->getMaskFromBox(box2)) {
 			// Is the actor (x,y) between both gates?
-			if (compareSlope(_pos, _walkdata.dest, gateA[0]) !=
-					compareSlope(_pos, _walkdata.dest, gateB[0]) &&
-					compareSlope(_pos, _walkdata.dest, gateA[1]) !=
-					compareSlope(_pos, _walkdata.dest, gateB[1])) {
+			if (compareSlope(_pos, _walkdata.dest, gateA[0]) != compareSlope(_pos, _walkdata.dest, gateB[0]) && compareSlope(_pos, _walkdata.dest, gateA[1]) != compareSlope(_pos, _walkdata.dest, gateB[1])) {
 				return;
 			}
 		}
@@ -1321,9 +1306,8 @@ void getGates(const BoxCoords &box1, const BoxCoords &box2, Common::Point gateA[
 		}
 		dist[closest[j]] = 0xFFFF;
 		minDist[j] = (int)sqrt((double)minDist[j]);
-		box[j] = (closest[j] > 3);	// Is the point on the first or on the second box?
+		box[j] = (closest[j] > 3); // Is the point on the first or on the second box?
 	}
-
 
 	// Finally, compute the actual "gate".
 
@@ -1331,13 +1315,13 @@ void getGates(const BoxCoords &box1, const BoxCoords &box2, Common::Point gateA[
 		line1 = closest[0];
 		line2 = closest[1];
 
-	} else if (box[0] == box[1] && minDist[0] == minDist[1]) {	// parallel
+	} else if (box[0] == box[1] && minDist[0] == minDist[1]) { // parallel
 		line1 = closest[0];
 		line2 = closest[1];
-	} else if (box[0] == box[2] && minDist[0] == minDist[2]) {	// parallel
+	} else if (box[0] == box[2] && minDist[0] == minDist[2]) { // parallel
 		line1 = closest[0];
 		line2 = closest[2];
-	} else if (box[1] == box[2] && minDist[1] == minDist[2]) {	// parallel
+	} else if (box[1] == box[2] && minDist[1] == minDist[2]) { // parallel
 		line1 = closest[1];
 		line2 = closest[2];
 

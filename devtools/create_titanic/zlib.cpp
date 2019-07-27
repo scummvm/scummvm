@@ -26,21 +26,20 @@
 
 #include "zlib.h"
 #include "common/ptr.h"
-#include "common/util.h"
 #include "common/stream.h"
+#include "common/util.h"
 
 #if defined(USE_ZLIB)
-  #ifdef __SYMBIAN32__
-    #include <zlib\zlib.h>
-  #else
-    #include <zlib.h>
-  #endif
+#	ifdef __SYMBIAN32__
+#		include <zlib\zlib.h>
+#	else
+#		include <zlib.h>
+#	endif
 
-  #if ZLIB_VERNUM < 0x1204
-  #error Version 1.2.0.4 or newer of zlib is required for this code
-  #endif
+#	if ZLIB_VERNUM < 0x1204
+#		error Version 1.2.0.4 or newer of zlib is required for this code
+#	endif
 #endif
-
 
 namespace Common {
 
@@ -153,9 +152,9 @@ bool inflateZlibInstallShield(byte *dst, uint dstLen, const byte *src, uint srcL
 	return true;
 }
 
-#ifndef RELEASE_BUILD
+#	ifndef RELEASE_BUILD
 static bool _shownBackwardSeekingWarning = false;
-#endif
+#	endif
 
 /**
  * A simple wrapper class which can be used to wrap around an arbitrary
@@ -165,10 +164,10 @@ static bool _shownBackwardSeekingWarning = false;
 class GZipReadStream : public SeekableReadStream {
 protected:
 	enum {
-		BUFSIZE = 16384		// 1 << MAX_WBITS
+		BUFSIZE = 16384 // 1 << MAX_WBITS
 	};
 
-	byte	_buf[BUFSIZE];
+	byte _buf[BUFSIZE];
 
 	ScopedPtr<SeekableReadStream> _wrapped;
 	z_stream _stream;
@@ -178,15 +177,15 @@ protected:
 	bool _eos;
 
 public:
-
-	GZipReadStream(SeekableReadStream *w, uint32 knownSize = 0) : _wrapped(w), _stream() {
+	GZipReadStream(SeekableReadStream *w, uint32 knownSize = 0)
+	  : _wrapped(w)
+	  , _stream() {
 		assert(w != 0);
 
 		// Verify file header is correct
 		w->seek(0, SEEK_SET);
 		uint16 header = w->readUint16BE();
-		assert(header == 0x1F8B ||
-		       ((header & 0x0F00) == 0x0800 && header % 31 == 0));
+		assert(header == 0x1F8B || ((header & 0x0F00) == 0x0800 && header % 31 == 0));
 
 		if (header == 0x1F8B) {
 			// Retrieve the original file size
@@ -279,7 +278,7 @@ public:
 			// from the start of the file. A rather wasteful operation, best
 			// to avoid it. :/
 
-#ifndef RELEASE_BUILD
+#	ifndef RELEASE_BUILD
 			if (!_shownBackwardSeekingWarning) {
 				// We only throw this warning once per stream, to avoid
 				// getting the console swarmed with warnings when consecutive
@@ -287,13 +286,13 @@ public:
 				debug(1, "Backward seeking in GZipReadStream detected");
 				_shownBackwardSeekingWarning = true;
 			}
-#endif
+#	endif
 
 			_pos = 0;
 			_wrapped->seek(0, SEEK_SET);
 			_zlibErr = inflateReset(&_stream);
 			if (_zlibErr != Z_OK)
-				return false;	// FIXME: STREAM REWRITE
+				return false; // FIXME: STREAM REWRITE
 			_stream.next_in = _buf;
 			_stream.avail_in = 0;
 		}
@@ -309,7 +308,7 @@ public:
 		}
 
 		_eos = false;
-		return true;	// FIXME: STREAM REWRITE
+		return true; // FIXME: STREAM REWRITE
 	}
 };
 
@@ -321,10 +320,10 @@ public:
 class GZipWriteStream : public WriteStream {
 protected:
 	enum {
-		BUFSIZE = 16384		// 1 << MAX_WBITS
+		BUFSIZE = 16384 // 1 << MAX_WBITS
 	};
 
-	byte	_buf[BUFSIZE];
+	byte _buf[BUFSIZE];
 	ScopedPtr<WriteStream> _wrapped;
 	z_stream _stream;
 	int _zlibErr;
@@ -346,7 +345,10 @@ protected:
 	}
 
 public:
-	GZipWriteStream(WriteStream *w) : _wrapped(w), _stream(), _pos(0) {
+	GZipWriteStream(WriteStream *w)
+	  : _wrapped(w)
+	  , _stream()
+	  , _pos(0) {
 		assert(w != 0);
 
 		// Adding 16 to windowBits indicates to zlib that it is supposed to
@@ -354,11 +356,11 @@ public:
 		// released 10 August 2003.
 		// Note: This is *crucial* for savegame compatibility, do *not* remove!
 		_zlibErr = deflateInit2(&_stream,
-		                 Z_DEFAULT_COMPRESSION,
-		                 Z_DEFLATED,
-		                 MAX_WBITS + 16,
-		                 8,
-				 Z_DEFAULT_STRATEGY);
+		                        Z_DEFAULT_COMPRESSION,
+		                        Z_DEFLATED,
+		                        MAX_WBITS + 16,
+		                        8,
+		                        Z_DEFAULT_STRATEGY);
 		assert(_zlibErr == Z_OK);
 
 		_stream.next_out = _buf;
@@ -423,14 +425,12 @@ public:
 	virtual int32 pos() const { return _pos; }
 };
 
-#endif	// USE_ZLIB
+#endif // USE_ZLIB
 
 SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped, uint32 knownSize) {
 	if (toBeWrapped) {
 		uint16 header = toBeWrapped->readUint16BE();
-		bool isCompressed = (header == 0x1F8B ||
-				     ((header & 0x0F00) == 0x0800 &&
-				      header % 31 == 0));
+		bool isCompressed = (header == 0x1F8B || ((header & 0x0F00) == 0x0800 && header % 31 == 0));
 		toBeWrapped->seek(-2, SEEK_CUR);
 		if (isCompressed) {
 #if defined(USE_ZLIB)
@@ -451,6 +451,5 @@ WriteStream *wrapCompressedWriteStream(WriteStream *toBeWrapped) {
 #endif
 	return toBeWrapped;
 }
-
 
 } // End of namespace Common

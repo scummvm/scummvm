@@ -28,39 +28,39 @@ void SceneScriptBB03::InitializeScene() {
 	Setup_Scene_Information(20.0f, 60.16f, 0.0f, 0);
 	Game_Flag_Reset(kFlagBB02toBB03);
 	if (Game_Flag_Query(kFlagBB04toBB03)) {
-		Setup_Scene_Information(176.0f, 60.16f,    0.0f, 900);
+		Setup_Scene_Information(176.0f, 60.16f, 0.0f, 900);
 	}
 	if (Game_Flag_Query(kFlagBB05toBB03)) {
 		Setup_Scene_Information(204.0f, 60.16f, -164.0f, 740);
 	}
 
-	Scene_Exit_Add_2D_Exit(0, 589,   0, 639, 479, 1);
+	Scene_Exit_Add_2D_Exit(0, 589, 0, 639, 479, 1);
 	Scene_Exit_Add_2D_Exit(1, 167, 372, 439, 479, 2);
 	Scene_Exit_Add_2D_Exit(2, 451, 115, 547, 320, 1);
 
-	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1,  20,   0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 40,   0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 20, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 40, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRUNOFF, 34, 100, 1);
-	Ambient_Sounds_Add_Sound(kSfxSCARY4,  2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY5,  2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY6,  2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY7,  2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN1,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN2,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN3,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBMOVE1, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBMOVE2, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBMOVE3, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHAUNT1,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHAUNT2,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxPSDOOR1, 5,  50, 17, 17, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxPSDOOR2, 5,  50, 17, 17, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY4, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY5, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY6, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY7, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN3, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE1, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE2, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE3, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHAUNT1, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHAUNT2, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPSDOOR1, 5, 50, 17, 17, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPSDOOR2, 5, 50, 17, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 5, 180, 25, 25, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 5, 180, 25, 25, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 5, 180, 25, 25, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSWEEP2,  5,  80, 20, 20, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSWEEP3,  5,  80, 20, 20, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSWEEP4,  5,  80, 20, 20, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP2, 5, 80, 20, 20, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP3, 5, 80, 20, 20, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP4, 5, 80, 20, 20, -100, 100, -101, -101, 0, 0);
 }
 
 void SceneScriptBB03::SceneLoaded() {

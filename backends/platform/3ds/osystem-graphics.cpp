@@ -24,15 +24,12 @@
 #include "backends/platform/3ds/osystem.h"
 #include "backends/platform/3ds/shader_shbin.h"
 #include "common/rect.h"
-#include "options-dialog.h"
 #include "config.h"
+#include "options-dialog.h"
 
 // Used to transfer the final rendered display to the framebuffer
-#define DISPLAY_TRANSFER_FLAGS                                                 \
-	(GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) |                     \
-	 GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) |  \
-	 GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) |                            \
-	 GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
+#define DISPLAY_TRANSFER_FLAGS \
+	(GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) | GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) | GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
 
 namespace _3DS {
 
@@ -43,20 +40,18 @@ void OSystem_3DS::initGraphics() {
 	C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
 
 	// Initialize the render targets
-	_renderTargetTop =
-	    C3D_RenderTargetCreate(240, 400, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+	_renderTargetTop = C3D_RenderTargetCreate(240, 400, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
 	C3D_RenderTargetClear(_renderTargetTop, C3D_CLEAR_ALL, 0x0000000, 0);
 	C3D_RenderTargetSetOutput(_renderTargetTop, GFX_TOP, GFX_LEFT,
 	                          DISPLAY_TRANSFER_FLAGS);
 
-	_renderTargetBottom =
-	    C3D_RenderTargetCreate(240, 320, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+	_renderTargetBottom = C3D_RenderTargetCreate(240, 320, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
 	C3D_RenderTargetClear(_renderTargetBottom, C3D_CLEAR_ALL, 0x00000000, 0);
 	C3D_RenderTargetSetOutput(_renderTargetBottom, GFX_BOTTOM, GFX_LEFT,
 	                          DISPLAY_TRANSFER_FLAGS);
 
 	// Load and bind simple default shader (shader.v.pica)
-	_dvlb = DVLB_ParseFile((u32*)shader_shbin, shader_shbin_size);
+	_dvlb = DVLB_ParseFile((u32 *)shader_shbin, shader_shbin_size);
 	shaderProgramInit(&_program);
 	shaderProgramSetVsh(&_program, &_dvlb->DVLE[0]);
 	C3D_BindProgram(&_program);
@@ -97,8 +92,7 @@ void OSystem_3DS::destroyGraphics() {
 }
 
 bool OSystem_3DS::hasFeature(OSystem::Feature f) {
-	return (f == OSystem::kFeatureCursorPalette ||
-	        f == OSystem::kFeatureOverlaySupportsAlpha);
+	return (f == OSystem::kFeatureCursorPalette || f == OSystem::kFeatureOverlaySupportsAlpha);
 }
 
 void OSystem_3DS::setFeatureState(OSystem::Feature f, bool enable) {
@@ -142,7 +136,7 @@ int OSystem_3DS::getGraphicsMode() const {
 	return GFX_LINEAR;
 }
 void OSystem_3DS::initSize(uint width, uint height,
-                                   const Graphics::PixelFormat *format) {
+                           const Graphics::PixelFormat *format) {
 	debug("3ds initsize w:%d h:%d", width, height);
 	_gameWidth = width;
 	_gameHeight = height;
@@ -207,7 +201,7 @@ Common::List<Graphics::PixelFormat> OSystem_3DS::getSupportedFormats() const {
 	Common::List<Graphics::PixelFormat> list;
 	list.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)); // GPU_RGBA8
 	list.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)); // GPU_RGB565
-// 		list.push_back(Graphics::PixelFormat(3, 0, 0, 0, 8, 0, 8, 16, 0)); // GPU_RGB8
+	// 		list.push_back(Graphics::PixelFormat(3, 0, 0, 0, 8, 0, 8, 16, 0)); // GPU_RGB8
 	list.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)); // RGB555 (needed for FMTOWNS?)
 	list.push_back(Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0)); // GPU_RGBA5551
 	list.push_back(Graphics::PixelFormat::createFormatCLUT8());
@@ -236,8 +230,8 @@ void OSystem_3DS::grabPalette(byte *colors, uint start, uint num) const {
 }
 
 void OSystem_3DS::copyRectToScreen(const void *buf, int pitch, int x,
-                                           int y, int w, int h) {
-	Common::Rect rect(x, y, x+w, y+h);
+                                   int y, int w, int h) {
+	Common::Rect rect(x, y, x + w, y + h);
 	_gameScreen.copyRectToSurface(buf, pitch, x, y, w, h);
 	Graphics::Surface subSurface = _gameScreen.getSubArea(rect);
 
@@ -269,44 +263,44 @@ void OSystem_3DS::updateScreen() {
 	if (sleeping || exiting)
 		return;
 
-// 	updateFocus();
+	// 	updateFocus();
 
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-		// Render top screen
-		C3D_RenderTargetClear(_renderTargetTop, C3D_CLEAR_ALL, 0x00000000, 0);
-		C3D_FrameDrawOn(_renderTargetTop);
-		if (config.screen == kScreenTop || config.screen == kScreenBoth) {
-			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _projectionLocation, &_projectionTop);
-			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _gameTopTexture.getMatrix());
-			_gameTopTexture.render();
-			_gameTopTexture.render();
-			if (_overlayVisible && config.screen == kScreenTop) {
-				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _overlay.getMatrix());
-				_overlay.render();
-			}
-			if (_cursorVisible && config.showCursor && config.screen == kScreenTop) {
-				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _cursorTexture.getMatrix());
-				_cursorTexture.render();
-			}
+	// Render top screen
+	C3D_RenderTargetClear(_renderTargetTop, C3D_CLEAR_ALL, 0x00000000, 0);
+	C3D_FrameDrawOn(_renderTargetTop);
+	if (config.screen == kScreenTop || config.screen == kScreenBoth) {
+		C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _projectionLocation, &_projectionTop);
+		C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _gameTopTexture.getMatrix());
+		_gameTopTexture.render();
+		_gameTopTexture.render();
+		if (_overlayVisible && config.screen == kScreenTop) {
+			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _overlay.getMatrix());
+			_overlay.render();
 		}
+		if (_cursorVisible && config.showCursor && config.screen == kScreenTop) {
+			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _cursorTexture.getMatrix());
+			_cursorTexture.render();
+		}
+	}
 
-		// Render bottom screen
-		C3D_RenderTargetClear(_renderTargetBottom, C3D_CLEAR_ALL, 0x00000000, 0);
-		C3D_FrameDrawOn(_renderTargetBottom);
-		if (config.screen == kScreenBottom || config.screen == kScreenBoth) {
-			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _projectionLocation, &_projectionBottom);
-			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _gameBottomTexture.getMatrix());
-			_gameTopTexture.render();
-			_gameTopTexture.render();
-			if (_overlayVisible) {
-				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _overlay.getMatrix());
-				_overlay.render();
-			}
-			if (_cursorVisible && config.showCursor) {
-				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _cursorTexture.getMatrix());
-				_cursorTexture.render();
-			}
+	// Render bottom screen
+	C3D_RenderTargetClear(_renderTargetBottom, C3D_CLEAR_ALL, 0x00000000, 0);
+	C3D_FrameDrawOn(_renderTargetBottom);
+	if (config.screen == kScreenBottom || config.screen == kScreenBoth) {
+		C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _projectionLocation, &_projectionBottom);
+		C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _gameBottomTexture.getMatrix());
+		_gameTopTexture.render();
+		_gameTopTexture.render();
+		if (_overlayVisible) {
+			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _overlay.getMatrix());
+			_overlay.render();
 		}
+		if (_cursorVisible && config.showCursor) {
+			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _cursorTexture.getMatrix());
+			_cursorTexture.render();
+		}
+	}
 	C3D_FrameEnd(0);
 }
 
@@ -341,18 +335,18 @@ void OSystem_3DS::updateFocus() {
 		float w = 400.f;
 		float h = 240.f;
 		float ratio = _focusRect.width() / _focusRect.height();
-		if (ratio > w/h) {
+		if (ratio > w / h) {
 			_focusTargetScaleX = w / _focusRect.width();
-			float newHeight = (float)_focusRect.width() / w/h;
+			float newHeight = (float)_focusRect.width() / w / h;
 			_focusTargetScaleY = h / newHeight;
 			_focusTargetPosX = _focusTargetScaleX * _focusRect.left;
-			_focusTargetPosY = _focusTargetScaleY * ((float)_focusRect.top - (newHeight - _focusRect.height())/2.f);
+			_focusTargetPosY = _focusTargetScaleY * ((float)_focusRect.top - (newHeight - _focusRect.height()) / 2.f);
 		} else {
 			_focusTargetScaleY = h / _focusRect.height();
-			float newWidth = (float)_focusRect.height() * w/h;
+			float newWidth = (float)_focusRect.height() * w / h;
 			_focusTargetScaleX = w / newWidth;
 			_focusTargetPosY = _focusTargetScaleY * _focusRect.top;
-			_focusTargetPosX = _focusTargetScaleX * ((float)_focusRect.left - (newWidth - _focusRect.width())/2.f);
+			_focusTargetPosX = _focusTargetScaleX * ((float)_focusRect.left - (newWidth - _focusRect.width()) / 2.f);
 		}
 		if (_focusTargetPosX < 0 && _focusTargetScaleY != 240.f / _gameHeight)
 			_focusTargetPosX = 0;
@@ -364,8 +358,7 @@ void OSystem_3DS::updateFocus() {
 		_focusStepScaleY = duration * (_focusTargetScaleY - _focusScaleY);
 	}
 
-	if (_focusDirty || _focusPosX != _focusTargetPosX || _focusPosY != _focusTargetPosY ||
-			_focusScaleX != _focusTargetScaleX || _focusScaleY != _focusTargetScaleY) {
+	if (_focusDirty || _focusPosX != _focusTargetPosX || _focusPosY != _focusTargetPosY || _focusScaleX != _focusTargetScaleX || _focusScaleY != _focusTargetScaleY) {
 		_focusDirty = false;
 
 		if ((_focusStepPosX > 0 && _focusPosX > _focusTargetPosX) || (_focusStepPosX < 0 && _focusPosX < _focusTargetPosX))
@@ -421,7 +414,7 @@ void OSystem_3DS::grabOverlay(void *buf, int pitch) {
 }
 
 void OSystem_3DS::copyRectToOverlay(const void *buf, int pitch, int x,
-                                            int y, int w, int h) {
+                                    int y, int w, int h) {
 	_overlay.copyRectToSurface(buf, pitch, x, y, w, h);
 	_overlay.markDirty();
 }
@@ -456,7 +449,7 @@ void OSystem_3DS::warpMouse(int x, int y) {
 	float scalex = config.screen == kScreenTop ? (float)_gameTopTexture.actualWidth / _gameWidth : 1.f;
 	float scaley = config.screen == kScreenTop ? (float)_gameTopTexture.actualHeight / _gameHeight : 1.f;
 	_cursorTexture.setPosition(scalex * x + offsetx,
-							   scaley * y + offsety);
+	                           scaley * y + offsety);
 }
 
 void OSystem_3DS::setCursorDelta(float deltaX, float deltaY) {
@@ -465,9 +458,9 @@ void OSystem_3DS::setCursorDelta(float deltaX, float deltaY) {
 }
 
 void OSystem_3DS::setMouseCursor(const void *buf, uint w, uint h,
-                                         int hotspotX, int hotspotY,
-                                         uint32 keycolor, bool dontScale,
-                                         const Graphics::PixelFormat *format) {
+                                 int hotspotX, int hotspotY,
+                                 uint32 keycolor, bool dontScale,
+                                 const Graphics::PixelFormat *format) {
 	_cursorScalable = !dontScale;
 	_cursorHotspotX = hotspotX;
 	_cursorHotspotY = hotspotY;
@@ -479,7 +472,7 @@ void OSystem_3DS::setMouseCursor(const void *buf, uint w, uint h,
 		_cursorTexture.create(w, h, _pfGameTexture);
 	}
 
-	if ( w != 0 && h != 0 ) {
+	if (w != 0 && h != 0) {
 		_cursor.copyRectToSurface(buf, w, 0, 0, w, h);
 	}
 
@@ -504,8 +497,8 @@ void OSystem_3DS::flushCursor() {
 		delete converted;
 
 		if (_pfCursor.bytesPerPixel == 1) {
-			uint* dest = (uint*) _cursorTexture.getPixels();
-			byte* src = (byte*) _cursor.getPixels();
+			uint *dest = (uint *)_cursorTexture.getPixels();
+			byte *src = (byte *)_cursor.getPixels();
 			for (int y = 0; y < _cursor.h; ++y) {
 				for (int x = 0; x < _cursor.w; ++x) {
 					if (*src++ == _cursorKeyColor)

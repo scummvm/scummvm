@@ -47,9 +47,10 @@ public:
 	int sync(int fd);
 	bool poll(int fd);
 	bool fioAvail(void);
+
 private:
 	void checkSync(void);
 	int _ioSema;
-	volatile int * volatile _runningOp;
+	volatile int *volatile _runningOp;
 	volatile int _ioSlots[MAX_HANDLES];
 };

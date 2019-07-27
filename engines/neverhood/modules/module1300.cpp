@@ -20,16 +20,16 @@
  *
  */
 
+#include "neverhood/modules/module1300.h"
 #include "neverhood/diskplayerscene.h"
 #include "neverhood/gamemodule.h"
 #include "neverhood/menumodule.h"
-#include "neverhood/smackerplayer.h"
 #include "neverhood/modules/module1000_sprites.h"
 #include "neverhood/modules/module1200_sprites.h"
-#include "neverhood/modules/module1300.h"
 #include "neverhood/modules/module1300_sprites.h"
 #include "neverhood/modules/module1400_sprites.h"
 #include "neverhood/modules/module2200_sprites.h"
+#include "neverhood/smackerplayer.h"
 
 namespace Neverhood {
 
@@ -44,7 +44,7 @@ static const uint32 kModule1300SoundList[] = {
 };
 
 Module1300::Module1300(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule) {
+  : Module(vm, parentModule) {
 
 	_vm->_soundMan->addMusic(0x61C090, 0x00203197);
 	_vm->_soundMan->addSoundList(0x61C090, kModule1300SoundList);
@@ -101,7 +101,6 @@ Module1300::Module1300(NeverhoodEngine *vm, Module *parentModule, int which)
 			break;
 		}
 	}
-
 }
 
 Module1300::~Module1300() {
@@ -312,7 +311,7 @@ void Module1300::updateScene() {
 }
 
 Scene1302::Scene1302(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule) {
+  : Scene(vm, parentModule) {
 
 	SetMessageHandler(&Scene1302::handleMessage);
 
@@ -352,7 +351,6 @@ Scene1302::Scene1302(NeverhoodEngine *vm, Module *parentModule, int which)
 	addCollisionSprite(_asVenusFlyTrap);
 
 	sendEntityMessage(_klaymen, NM_CAR_MOVE_TO_PREV_POINT, _asVenusFlyTrap);
-
 }
 
 uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -475,7 +473,8 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene1303::Scene1303(NeverhoodEngine *vm, Module *parentModule)
-	: Scene(vm, parentModule), _asBalloon(NULL) {
+  : Scene(vm, parentModule)
+  , _asBalloon(NULL) {
 
 	SetMessageHandler(&Scene1303::handleMessage);
 
@@ -495,7 +494,6 @@ Scene1303::Scene1303(NeverhoodEngine *vm, Module *parentModule)
 	setMessageList(0x004AF9A0);
 
 	_klaymen->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
-
 }
 
 uint32 Scene1303::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -514,7 +512,8 @@ uint32 Scene1303::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene1304::Scene1304(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _asNeedle(NULL) {
+  : Scene(vm, parentModule)
+  , _asNeedle(NULL) {
 
 	SetMessageHandler(&Scene1304::handleMessage);
 
@@ -550,7 +549,6 @@ Scene1304::Scene1304(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	_klaymen->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
-
 }
 
 uint32 Scene1304::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -578,7 +576,7 @@ uint32 Scene1304::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene1305::Scene1305(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule) {
+  : Scene(vm, parentModule) {
 
 	SetMessageHandler(&Scene1305::handleMessage);
 
@@ -596,7 +594,6 @@ Scene1305::Scene1305(NeverhoodEngine *vm, Module *parentModule, int which)
 		insertKlaymen<KmScene1305>(212, 441);
 		setMessageList(0x004B6E48);
 	}
-
 }
 
 uint32 Scene1305::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -604,7 +601,8 @@ uint32 Scene1305::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _asKey(nullptr) {
+  : Scene(vm, parentModule)
+  , _asKey(nullptr) {
 
 	if (getGlobalVar(V_HAS_FINAL_KEY) && getGlobalVar(V_KEY3_LOCATION) == 0)
 		setGlobalVar(V_KEY3_LOCATION, 4);
@@ -776,8 +774,12 @@ uint32 Scene1306::handleMessage416EB0(int messageNum, const MessageParam &param,
 }
 
 Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule)
-	: Scene(vm, parentModule), _countdown(0), _asCurrKey(NULL),
-	_isInsertingKey(false), _doLeaveScene(false), _isPuzzleSolved(false) {
+  : Scene(vm, parentModule)
+  , _countdown(0)
+  , _asCurrKey(NULL)
+  , _isInsertingKey(false)
+  , _doLeaveScene(false)
+  , _isPuzzleSolved(false) {
 
 	Sprite *tempSprite;
 
@@ -821,7 +823,6 @@ Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule)
 	}
 
 	loadSound(0, 0x68E25540);
-
 }
 
 void Scene1307::update() {
@@ -848,8 +849,7 @@ uint32 Scene1307::handleMessage(int messageNum, const MessageParam &param, Entit
 					int16 mouseY = param.asPoint().y;
 					uint clickedKeyHoleIndex;
 					for (clickedKeyHoleIndex = 0; clickedKeyHoleIndex < 16; clickedKeyHoleIndex++) {
-						if (mouseX >= _keyHoleRects[clickedKeyHoleIndex].x1 && mouseX <= _keyHoleRects[clickedKeyHoleIndex].x2 &&
-							mouseY >= _keyHoleRects[clickedKeyHoleIndex].y1 && mouseY <= _keyHoleRects[clickedKeyHoleIndex].y2)
+						if (mouseX >= _keyHoleRects[clickedKeyHoleIndex].x1 && mouseX <= _keyHoleRects[clickedKeyHoleIndex].x2 && mouseY >= _keyHoleRects[clickedKeyHoleIndex].y1 && mouseY <= _keyHoleRects[clickedKeyHoleIndex].y2)
 							break;
 					}
 					if (clickedKeyHoleIndex < 16) {
@@ -875,9 +875,7 @@ uint32 Scene1307::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case NM_POSITION_CHANGE:
 		// Check if all keys are in the correct keyholes
-		if (getSubVar(VA_IS_KEY_INSERTED, 0) && getSubVar(VA_CURR_KEY_SLOT_NUMBERS, 0) == getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, 0) &&
-			getSubVar(VA_IS_KEY_INSERTED, 1) && getSubVar(VA_CURR_KEY_SLOT_NUMBERS, 1) == getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, 1) &&
-			getSubVar(VA_IS_KEY_INSERTED, 2) && getSubVar(VA_CURR_KEY_SLOT_NUMBERS, 2) == getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, 2)) {
+		if (getSubVar(VA_IS_KEY_INSERTED, 0) && getSubVar(VA_CURR_KEY_SLOT_NUMBERS, 0) == getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, 0) && getSubVar(VA_IS_KEY_INSERTED, 1) && getSubVar(VA_CURR_KEY_SLOT_NUMBERS, 1) == getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, 1) && getSubVar(VA_IS_KEY_INSERTED, 2) && getSubVar(VA_CURR_KEY_SLOT_NUMBERS, 2) == getSubVar(VA_GOOD_KEY_SLOT_NUMBERS, 2)) {
 			// Play unlock animations for all keys
 			for (uint keyIndex = 0; keyIndex < 3; keyIndex++) {
 				if (_asKeys[keyIndex])
@@ -896,7 +894,7 @@ uint32 Scene1307::handleMessage(int messageNum, const MessageParam &param, Entit
 		_isInsertingKey = false;
 		break;
 	case 0x4826:
-		_asCurrKey = (Sprite*)sender;
+		_asCurrKey = (Sprite *)sender;
 		for (uint keyIndex = 0; keyIndex < 3; keyIndex++)
 			if (getSubVar(VA_IS_KEY_INSERTED, keyIndex) && _asKeys[keyIndex])
 				sendMessage(_asKeys[keyIndex], 0x2000, 0);
@@ -915,7 +913,9 @@ static const uint32 kScene1308NumberFileHashes[] = {
 };
 
 Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _isProjecting(false), _asProjector(NULL) {
+  : Scene(vm, parentModule)
+  , _isProjecting(false)
+  , _asProjector(NULL) {
 
 	_vm->gameModule()->initKeySlotsPuzzle();
 
@@ -999,12 +999,11 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 		_klaymen->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
 
 	if (getGlobalVar(V_PROJECTOR_LOCATION) == 4) {
-		_asProjector = insertSprite<AsCommonProjector>(this, _klaymen, (Sprite*)NULL);
+		_asProjector = insertSprite<AsCommonProjector>(this, _klaymen, (Sprite *)NULL);
 		addCollisionSprite(_asProjector);
 		_asProjector->setClipRect(0, 0, 640, _sprite2->getDrawRect().y2());
 		_asProjector->setRepl(64, 0);
 	}
-
 }
 
 uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1094,7 +1093,7 @@ uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene1317::Scene1317(NeverhoodEngine *vm, Module *parentModule)
-	: Scene(vm, parentModule) {
+  : Scene(vm, parentModule) {
 
 	SetMessageHandler(&Scene1317::handleMessage);
 	_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, 0x08982841, true, false));
@@ -1136,7 +1135,6 @@ void Scene1317::upChooseKing() {
 	}
 
 	Scene::update();
-
 }
 
 uint32 Scene1317::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1153,14 +1151,11 @@ uint32 Scene1317::hmChooseKing(int messageNum, const MessageParam &param, Entity
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case NM_MOUSE_CLICK:
-		if (param.asPoint().x >= 21 && param.asPoint().y >= 24 &&
-			param.asPoint().x <= 261 && param.asPoint().y <= 280) {
+		if (param.asPoint().x >= 21 && param.asPoint().y >= 24 && param.asPoint().x <= 261 && param.asPoint().y <= 280) {
 			stHoborgAsKing();
-		} else if (param.asPoint().x >= 313 && param.asPoint().y >= 184 &&
-			param.asPoint().x <= 399 && param.asPoint().y <= 379) {
+		} else if (param.asPoint().x >= 313 && param.asPoint().y >= 184 && param.asPoint().x <= 399 && param.asPoint().y <= 379) {
 			stKlaymenAsKing();
-		} else if (param.asPoint().x >= 347 && param.asPoint().y >= 380 &&
-			param.asPoint().x <= 418 && param.asPoint().y <= 474) {
+		} else if (param.asPoint().x >= 347 && param.asPoint().y >= 380 && param.asPoint().x <= 418 && param.asPoint().y <= 474) {
 			stKlaymenAsKing();
 		}
 		break;

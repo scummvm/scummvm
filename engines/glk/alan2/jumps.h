@@ -30,39 +30,148 @@
 namespace Glk {
 namespace Alan2 {
 
-/**
+	/**
  * Context used for flagging when a break to the outer game loop
  */
-struct Context {
-	bool _break;
-	Context() : _break(false) {}
-};
+	struct Context {
+		bool _break;
+		Context()
+		  : _break(false) {}
+	};
 
-#define CALL0(METHOD) { METHOD(context); if (context._break) return; }
-#define CALL1(METHOD, P1) { METHOD(context, P1); if (context._break) return; }
-#define CALL2(METHOD, P1, P2) { METHOD(context, P1, P2); if (context._break) return; }
-#define CALL3(METHOD, P1, P2, P3) { METHOD(context, P1, P2, P3); if (context._break) return; }
-#define CALL4(METHOD, P1, P2, P3, P4) { METHOD(context, P1, P2, P3, P4); if (context._break) return; }
-#define FUNC0(METHOD, RET) { RET = METHOD(context); if (context._break) return; }
-#define FUNC1(METHOD, RET, P1) { RET = METHOD(context, P1); if (context._break) return; }
-#define FUNC2(METHOD, RET, P1, P2) { RET = METHOD(context, P1, P2); if (context._break) return; }
-#define FUNC3(METHOD, RET, P1, P2, P3) { RET = METHOD(context, P1, P2, P3); if (context._break) return; }
-#define FUNC4(METHOD, RET, P1, P2, P3, P4) { RET = METHOD(context, P1, P2, P3, P4); if (context._break) return; }
+#define CALL0(METHOD)   \
+	{                     \
+		METHOD(context);    \
+		if (context._break) \
+			return;           \
+	}
+#define CALL1(METHOD, P1) \
+	{                       \
+		METHOD(context, P1);  \
+		if (context._break)   \
+			return;             \
+	}
+#define CALL2(METHOD, P1, P2) \
+	{                           \
+		METHOD(context, P1, P2);  \
+		if (context._break)       \
+			return;                 \
+	}
+#define CALL3(METHOD, P1, P2, P3) \
+	{                               \
+		METHOD(context, P1, P2, P3);  \
+		if (context._break)           \
+			return;                     \
+	}
+#define CALL4(METHOD, P1, P2, P3, P4) \
+	{                                   \
+		METHOD(context, P1, P2, P3, P4);  \
+		if (context._break)               \
+			return;                         \
+	}
+#define FUNC0(METHOD, RET) \
+	{                        \
+		RET = METHOD(context); \
+		if (context._break)    \
+			return;              \
+	}
+#define FUNC1(METHOD, RET, P1) \
+	{                            \
+		RET = METHOD(context, P1); \
+		if (context._break)        \
+			return;                  \
+	}
+#define FUNC2(METHOD, RET, P1, P2) \
+	{                                \
+		RET = METHOD(context, P1, P2); \
+		if (context._break)            \
+			return;                      \
+	}
+#define FUNC3(METHOD, RET, P1, P2, P3) \
+	{                                    \
+		RET = METHOD(context, P1, P2, P3); \
+		if (context._break)                \
+			return;                          \
+	}
+#define FUNC4(METHOD, RET, P1, P2, P3, P4) \
+	{                                        \
+		RET = METHOD(context, P1, P2, P3, P4); \
+		if (context._break)                    \
+			return;                              \
+	}
 
-#define R0CALL0(METHOD) { METHOD(context); if (context._break) return 0; }
-#define R0CALL1(METHOD, P1) { METHOD(context, P1); if (context._break) return 0; }
-#define R0CALL2(METHOD, P1, P2) { METHOD(context, P1, P2); if (context._break) return 0; }
-#define R0CALL3(METHOD, P1, P2, P3) { METHOD(context, P1, P2, P3); if (context._break) return 0; }
-#define R0CALL4(METHOD, P1, P2, P3, P4) { METHOD(context, P1, P2, P3, P4); if (context._break) return 0; }
-#define R0FUNC0(METHOD, RET) { RET = METHOD(context); if (context._break) return 0; }
-#define R0FUNC1(METHOD, RET, P1) { RET = METHOD(context, P1); if (context._break) return 0; }
-#define R0FUNC2(METHOD, RET, P1, P2) { RET = METHOD(context, P1, P2); if (context._break) return 0; }
-#define R0FUNC3(METHOD, RET, P1, P2, P3) { RET = METHOD(context, P1, P2, P3); if (context._break) return 0; }
-#define R0FUNC4(METHOD, RET, P1, P2, P3, P4) { RET = METHOD(context, P1, P2, P3, P4); if (context._break) return 0; }
+#define R0CALL0(METHOD) \
+	{                     \
+		METHOD(context);    \
+		if (context._break) \
+			return 0;         \
+	}
+#define R0CALL1(METHOD, P1) \
+	{                         \
+		METHOD(context, P1);    \
+		if (context._break)     \
+			return 0;             \
+	}
+#define R0CALL2(METHOD, P1, P2) \
+	{                             \
+		METHOD(context, P1, P2);    \
+		if (context._break)         \
+			return 0;                 \
+	}
+#define R0CALL3(METHOD, P1, P2, P3) \
+	{                                 \
+		METHOD(context, P1, P2, P3);    \
+		if (context._break)             \
+			return 0;                     \
+	}
+#define R0CALL4(METHOD, P1, P2, P3, P4) \
+	{                                     \
+		METHOD(context, P1, P2, P3, P4);    \
+		if (context._break)                 \
+			return 0;                         \
+	}
+#define R0FUNC0(METHOD, RET) \
+	{                          \
+		RET = METHOD(context);   \
+		if (context._break)      \
+			return 0;              \
+	}
+#define R0FUNC1(METHOD, RET, P1) \
+	{                              \
+		RET = METHOD(context, P1);   \
+		if (context._break)          \
+			return 0;                  \
+	}
+#define R0FUNC2(METHOD, RET, P1, P2) \
+	{                                  \
+		RET = METHOD(context, P1, P2);   \
+		if (context._break)              \
+			return 0;                      \
+	}
+#define R0FUNC3(METHOD, RET, P1, P2, P3) \
+	{                                      \
+		RET = METHOD(context, P1, P2, P3);   \
+		if (context._break)                  \
+			return 0;                          \
+	}
+#define R0FUNC4(METHOD, RET, P1, P2, P3, P4) \
+	{                                          \
+		RET = METHOD(context, P1, P2, P3, P4);   \
+		if (context._break)                      \
+			return 0;                              \
+	}
 
 #define CONTEXT Context &context
-#define LONG_JUMP { context._break = true; return; }
-#define LONG_JUMP0 { context._break = true; return 0; }
+#define LONG_JUMP          \
+	{                        \
+		context._break = true; \
+		return;                \
+	}
+#define LONG_JUMP0         \
+	{                        \
+		context._break = true; \
+		return 0;              \
+	}
 
 } // End of namespace Alan2
 } // End of namespace Glk

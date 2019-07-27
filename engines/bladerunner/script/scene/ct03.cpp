@@ -36,19 +36,19 @@ void SceneScriptCT03::InitializeScene() {
 	} else {
 		Setup_Scene_Information(-708.58f, -619.19f, 277.6f, 239);
 	}
-	Scene_Exit_Add_2D_Exit(0,   0, 460, 639, 479, 2);
-	Scene_Exit_Add_2D_Exit(1,  40,  40, 134, 302, 3);
-	Scene_Exit_Add_2D_Exit(2, 390,   0, 539, 230, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1,  50,    1, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBR1,  22, -100, 1);
+	Scene_Exit_Add_2D_Exit(0, 0, 460, 639, 479, 2);
+	Scene_Exit_Add_2D_Exit(1, 40, 40, 134, 302, 3);
+	Scene_Exit_Add_2D_Exit(2, 390, 0, 539, 230, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBR1, 22, -100, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRUNOFF, 34, -100, 1);
-	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  10, 40, 33, 50,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSPIN3A,  10, 40, 33, 50,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxDISH1,    3, 30,  8, 10, -100,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxDISH2,    3, 30,  8, 10, -100,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxDISH3,    3, 30,  8, 10, -100,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxDISH4,    3, 30,  8, 10, -100,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B, 10, 40, 33, 50, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN3A, 10, 40, 33, 50, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxDISH1, 3, 30, 8, 10, -100, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxDISH2, 3, 30, 8, 10, -100, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxDISH3, 3, 30, 8, 10, -100, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxDISH4, 3, 30, 8, 10, -100, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 0, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);

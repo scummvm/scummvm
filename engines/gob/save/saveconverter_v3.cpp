@@ -30,8 +30,8 @@
 
 namespace Gob {
 
-SaveConverter_v3::SaveConverter_v3(GobEngine *vm, const Common::String &fileName) :
-	SaveConverter(vm, fileName) {
+SaveConverter_v3::SaveConverter_v3(GobEngine *vm, const Common::String &fileName)
+  : SaveConverter(vm, fileName) {
 }
 
 SaveConverter_v3::~SaveConverter_v3() {
@@ -80,7 +80,7 @@ char *SaveConverter_v3::getDescription(Common::SeekableReadStream &save) const {
 }
 
 bool SaveConverter_v3::loadFail(SavePartInfo *info, SavePartVars *vars,
-		SavePartSprite *sprite, Common::InSaveFile *save) {
+                                SavePartSprite *sprite, Common::InSaveFile *save) {
 
 	delete info;
 	delete vars;
@@ -93,24 +93,24 @@ bool SaveConverter_v3::loadFail(SavePartInfo *info, SavePartVars *vars,
 }
 
 void SaveConverter_v3::getScreenShotProps(int type,
-		bool &used, uint32 &width, uint32 &height) {
+                                          bool &used, uint32 &width, uint32 &height) {
 
 	switch (type) {
 	case 2:
-		used   = true;
-		width  = 120;
+		used = true;
+		width = 120;
 		height = 160;
 		break;
 
 	case 3:
-		used   = true;
-		width  = 80;
+		used = true;
+		width = 80;
 		height = 50;
 		break;
 
 	default:
-		used   = false;
-		width  = 0;
+		used = false;
+		width = 0;
 		height = 0;
 		break;
 	}

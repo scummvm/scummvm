@@ -32,7 +32,7 @@
 #include "pegasus/constants.h"
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Pegasus {

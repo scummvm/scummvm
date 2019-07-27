@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "titanic/support/font.h"
+#include "common/textconsole.h"
 #include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
 
@@ -42,7 +42,7 @@ STFont::~STFont() {
 void STFont::load(int fontNumber) {
 	assert(!_dataPtr);
 	Common::SeekableReadStream *stream = g_vm->_filesManager->getResource(
-		CString::format("STFONT/%d", fontNumber));
+	  CString::format("STFONT/%d", fontNumber));
 	if (!stream)
 		error("Could not locate the specified font");
 
@@ -128,7 +128,7 @@ int STFont::stringWidth(const CString &text) const {
 }
 
 int STFont::writeString(CVideoSurface *surface, const Rect &rect1, const Rect &destRect,
-		int yOffset, const CString &str, CTextCursor *textCursor) {
+                        int yOffset, const CString &str, CTextCursor *textCursor) {
 	if (!_fontHeight || !_dataPtr)
 		return -1;
 
@@ -180,7 +180,7 @@ int STFont::writeString(CVideoSurface *surface, const Rect &rect1, const Rect &d
 }
 
 void STFont::writeString(CVideoSurface *surface, const Point &destPos, Rect &clipRect,
-		const CString &str, int lineWidth) {
+                         const CString &str, int lineWidth) {
 	if (!_fontHeight || !_dataPtr || str.empty())
 		return;
 	if (!lineWidth)
@@ -213,7 +213,7 @@ void STFont::writeString(CVideoSurface *surface, const Point &destPos, Rect &cli
 
 		// Form a rect of the area of the next character to draw
 		Rect charRect(_chars[c]._offset, textRect.top,
-			_chars[c]._offset + _chars[c]._width, textRect.bottom);
+		              _chars[c]._offset + _chars[c]._width, textRect.bottom);
 		int textX = textPt.x;
 
 		if (textPt.x < clipRect.left) {
@@ -243,12 +243,12 @@ void STFont::writeString(CVideoSurface *surface, const Point &destPos, Rect &cli
 }
 
 WriteCharacterResult STFont::writeChar(CVideoSurface *surface, unsigned char c, const Point &pt,
-	const Rect &destRect, const Rect *srcRect) {
+                                       const Rect &destRect, const Rect *srcRect) {
 	if (c == 233)
 		c = '$';
 
 	Rect charRect(_chars[c]._offset, 0,
-		_chars[c]._offset + _chars[c]._width, _fontHeight);
+	              _chars[c]._offset + _chars[c]._width, _fontHeight);
 	Point destPos(pt.x + destRect.left, pt.y + destRect.top);
 
 	if (srcRect->isEmpty())
@@ -297,7 +297,7 @@ void STFont::copyRect(CVideoSurface *surface, const Point &pt, Rect &rect) {
 			for (int xp = rect.left; xp < rect.right; ++xp, ++destP) {
 				const byte *transP = _dataPtr + yp * _dataWidth + xp;
 				surface->copyPixel(destP, &color, *transP >> 3,
-					surface->getRawSurface()->format, true);
+				                   surface->getRawSurface()->format, true);
 			}
 		}
 

@@ -26,35 +26,34 @@ namespace BladeRunner {
 
 void SceneScriptKP01::InitializeScene() {
 	if (Game_Flag_Query(kFlagKP04toKP01)) {
-		Setup_Scene_Information(-125.0f, -12.2f,  -61.0f, 400);
+		Setup_Scene_Information(-125.0f, -12.2f, -61.0f, 400);
 	} else if (Game_Flag_Query(kFlagKP03toKP01)) {
 		Setup_Scene_Information(-284.0f, -12.2f, -789.0f, 445);
 	} else {
-		Setup_Scene_Information( 239.0f, -12.2f, -146.0f, 820);
+		Setup_Scene_Information(239.0f, -12.2f, -146.0f, 820);
 		Game_Flag_Reset(kFlagKP02toKP01);
 		if (!Game_Flag_Query(kFlagKP01Entered)
-		 && !Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
-		) {
+		    && !Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 			Game_Flag_Set(kFlagKP01Entered);
 			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleKP01Wait);
 		}
 	}
 
-	Scene_Exit_Add_2D_Exit(0,   0, 0,  30, 479, 3);
+	Scene_Exit_Add_2D_Exit(0, 0, 0, 30, 479, 3);
 	Scene_Exit_Add_2D_Exit(1, 150, 0, 200, 276, 0);
 	Scene_Exit_Add_2D_Exit(2, 589, 0, 639, 479, 1);
 
-	Ambient_Sounds_Add_Looping_Sound(kSfxKPAMB1,   34, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxKPAMB1, 34, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxSKINBED1, 27, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxRUMLOOP1, 90, 1, 1);
-	Ambient_Sounds_Add_Sound(kSfxSCARY1,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY2,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY3,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY1, 2, 100, 25, 33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY2, 2, 100, 25, 33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY3, 2, 100, 25, 33, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY4,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY5,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY6,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY4, 2, 100, 25, 33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY5, 2, 100, 25, 33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY6, 2, 100, 25, 33, -100, 100, -101, -101, 0, 0);
 }
 
 void SceneScriptKP01::SceneLoaded() {
@@ -114,7 +113,6 @@ bool SceneScriptKP01::ClickedOnExit(int exitId) {
 	return false;
 }
 
-
 bool SceneScriptKP01::ClickedOn2DRegion(int region) {
 	return false;
 }
@@ -164,10 +162,9 @@ void SceneScriptKP01::PlayerWalkedIn() {
 
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 211.0f, -12.2f, -146.0f, 0, false, false, false);
 	if (!Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
-	 && !Game_Flag_Query(kFlagMcCoyAttackedReplicants)
-	 &&  Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleKP01Wait
-	 &&  Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleGone
-	) {
+	    && !Game_Flag_Query(kFlagMcCoyAttackedReplicants)
+	    && Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleKP01Wait
+	    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleGone) {
 		Player_Loses_Control();
 		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleKP01TalkToMcCoy);
 	}

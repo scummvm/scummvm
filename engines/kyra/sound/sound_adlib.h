@@ -69,12 +69,13 @@ public:
 
 	virtual int checkTrigger();
 	virtual void resetTrigger();
+
 private:
 	void internalLoadFile(Common::String file);
 
 	void play(uint8 track, uint8 volume);
 
-	const SoundResourceInfo_PC *res() const {return _resInfo[_currentResourceSet]; }
+	const SoundResourceInfo_PC *res() const { return _resInfo[_currentResourceSet]; }
 	SoundResourceInfo_PC *_resInfo[3];
 	int _currentResourceSet;
 

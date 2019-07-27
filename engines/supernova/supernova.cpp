@@ -21,8 +21,8 @@
  */
 
 #include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/debug.h"
 #include "common/endian.h"
 #include "common/error.h"
 #include "common/events.h"
@@ -35,17 +35,17 @@
 #include "common/translation.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
-#include "graphics/surface.h"
-#include "graphics/screen.h"
 #include "graphics/palette.h"
+#include "graphics/screen.h"
+#include "graphics/surface.h"
 #include "graphics/thumbnail.h"
 #include "gui/saveload.h"
 
 #include "supernova/resman.h"
 #include "supernova/screen.h"
 #include "supernova/sound.h"
-#include "supernova/supernova.h"
 #include "supernova/state.h"
+#include "supernova/supernova.h"
 
 namespace Supernova {
 
@@ -74,18 +74,18 @@ ObjectType &operator^=(ObjectType &a, ObjectType b) {
 }
 
 SupernovaEngine::SupernovaEngine(OSystem *syst)
-	: Engine(syst)
-	, _console(nullptr)
-	, _gm(nullptr)
-	, _sound(nullptr)
-	, _resMan(nullptr)
-	, _screen(nullptr)
-	, _allowLoadGame(true)
-	, _allowSaveGame(true)
-	, _sleepAutoSave(nullptr)
-	, _sleepAuoSaveVersion(-1)
-	, _delay(33)
-	, _textSpeed(kTextSpeed[2]) {
+  : Engine(syst)
+  , _console(nullptr)
+  , _gm(nullptr)
+  , _sound(nullptr)
+  , _resMan(nullptr)
+  , _screen(nullptr)
+  , _allowLoadGame(true)
+  , _allowSaveGame(true)
+  , _sleepAutoSave(nullptr)
+  , _sleepAuoSaveVersion(-1)
+  , _delay(33)
+  , _textSpeed(kTextSpeed[2]) {
 	if (ConfMan.hasKey("textspeed"))
 		_textSpeed = ConfMan.getInt("textspeed");
 
@@ -191,8 +191,8 @@ Common::Error SupernovaEngine::loadGameStrings() {
 	int version = f.readByte();
 	if (version != SUPERNOVA_DAT_VERSION) {
 		GUIErrorMessageFormat(
-			_("Incorrect version of the '%s' engine data file found. Expected %d but got %d."),
-			SUPERNOVA_DAT, SUPERNOVA_DAT_VERSION, version);
+		  _("Incorrect version of the '%s' engine data file found. Expected %d but got %d."),
+		  SUPERNOVA_DAT, SUPERNOVA_DAT_VERSION, version);
 		return Common::kReadingFailed;
 	}
 
@@ -377,7 +377,7 @@ void SupernovaEngine::setTextSpeed() {
 	// Find the closest index in kTextSpeed for the current _textSpeed.
 	// Important note: values in kTextSpeed decrease with the index.
 	int speedIndex = 0;
-	while (speedIndex < 4 && _textSpeed < (kTextSpeed[speedIndex] + kTextSpeed[speedIndex+1]) / 2)
+	while (speedIndex < 4 && _textSpeed < (kTextSpeed[speedIndex] + kTextSpeed[speedIndex + 1]) / 2)
 		++speedIndex;
 
 	char nbString[2];
@@ -571,7 +571,6 @@ bool SupernovaEngine::quitGameDialog() {
 	return quit;
 }
 
-
 bool SupernovaEngine::canLoadGameStateCurrently() {
 	return _allowLoadGame;
 }
@@ -727,10 +726,9 @@ bool SupernovaEngine::saveGame(int slot, const Common::String &description) {
 
 void SupernovaEngine::errorTempSave(bool saving) {
 	GUIErrorMessage(saving
-		? "Failed to save temporary game state. Make sure your save game directory is set in ScummVM and that you can write to it."
-		: "Failed to load temporary game state.");
+	                  ? "Failed to save temporary game state. Make sure your save game directory is set in ScummVM and that you can write to it."
+	                  : "Failed to load temporary game state.");
 	error("Unrecoverable error");
 }
-
 
 }

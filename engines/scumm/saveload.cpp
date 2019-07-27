@@ -29,16 +29,16 @@
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
-#include "scumm/imuse_digi/dimuse.h"
-#include "scumm/imuse/imuse.h"
-#include "scumm/players/player_towns.h"
 #include "scumm/he/intern_he.h"
+#include "scumm/he/sprite_he.h"
+#include "scumm/imuse/imuse.h"
+#include "scumm/imuse_digi/dimuse.h"
 #include "scumm/object.h"
+#include "scumm/players/player_towns.h"
 #include "scumm/resource.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v7.h"
 #include "scumm/sound.h"
-#include "scumm/he/sprite_he.h"
 #include "scumm/verbs.h"
 
 #include "backends/audiocd/audiocd.h"
@@ -59,14 +59,14 @@ struct SaveInfoSection {
 	uint32 version;
 	uint32 size;
 
-	uint32 timeTValue;  // Obsolete since version 2, but kept for compatibility
+	uint32 timeTValue; // Obsolete since version 2, but kept for compatibility
 	uint32 playtime;
 
 	uint32 date;
 	uint16 time;
 };
 
-#define SaveInfoSectionSize (4+4+4 + 4+4 + 4+2)
+#define SaveInfoSectionSize (4 + 4 + 4 + 4 + 4 + 4 + 2)
 
 #define CURRENT_VER 99
 #define INFOSECTION_VERSION 2
@@ -138,18 +138,17 @@ bool ScummEngine::canSaveGameStateCurrently() {
 	return (VAR_MAINMENU_KEY == 0xFF || (VAR(VAR_MAINMENU_KEY) != 0 && _currentRoom != 0));
 }
 
-
 void ScummEngine::requestSave(int slot, const Common::String &name) {
 	_saveLoadSlot = slot;
 	_saveTemporaryState = false;
-	_saveLoadFlag = 1;		// 1 for save
+	_saveLoadFlag = 1; // 1 for save
 	_saveLoadDescription = name;
 }
 
 void ScummEngine::requestLoad(int slot) {
 	_saveLoadSlot = slot;
 	_saveTemporaryState = (slot == 100);
-	_saveLoadFlag = 2;		// 2 for load
+	_saveLoadFlag = 2; // 2 for load
 }
 
 Common::SeekableReadStream *ScummEngine::openSaveFileForReading(int slot, bool compat, Common::String &fileName) {
@@ -163,7 +162,7 @@ Common::WriteStream *ScummEngine::openSaveFileForWriting(int slot, bool compat, 
 }
 
 static bool saveSaveGameHeader(Common::WriteStream *out, SaveGameHeader &hdr) {
-	hdr.type = MKTAG('S','C','V','M');
+	hdr.type = MKTAG('S', 'C', 'V', 'M');
 	hdr.size = 0;
 	hdr.ver = CURRENT_VER;
 
@@ -220,7 +219,6 @@ bool ScummEngine::saveState(int slot, bool compat, Common::String &filename) {
 	return !saveFailed;
 }
 
-
 void ScummEngine_v4::prepareSavegame() {
 	Common::MemoryWriteStreamDynamic *memStream;
 	Common::WriteStream *writeStream;
@@ -239,7 +237,7 @@ void ScummEngine_v4::prepareSavegame() {
 		if (!writeStream->err()) {
 			// wrap uncompressing MemoryReadStream around the savegame data
 			_savePreparedSavegame = Common::wrapCompressedReadStream(
-				new Common::MemoryReadStream(memStream->getData(), memStream->size(), DisposeAfterUse::YES));
+			  new Common::MemoryReadStream(memStream->getData(), memStream->size(), DisposeAfterUse::YES));
 		}
 	}
 	// free the CompressedWriteStream and MemoryWriteStreamDynamic
@@ -272,7 +270,7 @@ bool ScummEngine_v4::savePreparedSavegame(int slot, char *desc) {
 	// write header to file
 	if (success) {
 		memset(hdr.name, 0, sizeof(hdr.name));
-		strncpy(hdr.name, desc, sizeof(hdr.name)-1);
+		strncpy(hdr.name, desc, sizeof(hdr.name) - 1);
 		success = saveSaveGameHeader(out, hdr);
 	}
 
@@ -310,7 +308,7 @@ static bool loadSaveGameHeader(Common::SeekableReadStream *in, SaveGameHeader &h
 	hdr.size = in->readUint32LE();
 	hdr.ver = in->readUint32LE();
 	in->read(hdr.name, sizeof(hdr.name));
-	return !in->err() && hdr.type == MKTAG('S','C','V','M');
+	return !in->err() && hdr.type == MKTAG('S', 'C', 'V', 'M');
 }
 
 bool ScummEngine::loadState(int slot, bool compat) {
@@ -391,7 +389,7 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	if (hdr.ver == VER(7))
 		hdr.ver = VER(8);
 
-	hdr.name[sizeof(hdr.name)-1] = 0;
+	hdr.name[sizeof(hdr.name) - 1] = 0;
 	_saveLoadDescription = hdr.name;
 
 	// Unless specifically requested with _saveSound, we do not save the iMUSE
@@ -608,20 +606,20 @@ void ScummEngine::listSavegames(bool *marks, int num) {
 	Common::StringArray files;
 
 	Common::String prefix = makeSavegameName(99, false);
-	prefix.setChar('*', prefix.size()-2);
-	prefix.setChar(0, prefix.size()-1);
-	memset(marks, false, num * sizeof(bool));	//assume no savegames for this title
+	prefix.setChar('*', prefix.size() - 2);
+	prefix.setChar(0, prefix.size() - 1);
+	memset(marks, false, num * sizeof(bool)); //assume no savegames for this title
 	files = _saveFileMan->listSavefiles(prefix);
 
 	for (Common::StringArray::const_iterator file = files.begin(); file != files.end(); ++file) {
 		//Obtain the last 2 digits of the filename, since they correspond to the save slot
-		slot[0] = file->c_str()[file->size()-2];
-		slot[1] = file->c_str()[file->size()-1];
+		slot[0] = file->c_str()[file->size() - 2];
+		slot[1] = file->c_str()[file->size() - 1];
 		slot[2] = 0;
 
 		slotNum = atoi(slot);
 		if (slotNum >= 0 && slotNum < num)
-			marks[slotNum] = true;	//mark this slot as valid
+			marks[slotNum] = true; //mark this slot as valid
 	}
 }
 
@@ -642,36 +640,36 @@ bool ScummEngine::getSavegameName(int slot, Common::String &desc) {
 }
 
 namespace {
-bool loadAndCheckSaveGameHeader(Common::InSaveFile *in, int heversion, SaveGameHeader &hdr, Common::String *error = nullptr) {
-	if (!loadSaveGameHeader(in, hdr)) {
-		if (error) {
-			*error = "Invalid savegame";
+	bool loadAndCheckSaveGameHeader(Common::InSaveFile *in, int heversion, SaveGameHeader &hdr, Common::String *error = nullptr) {
+		if (!loadSaveGameHeader(in, hdr)) {
+			if (error) {
+				*error = "Invalid savegame";
+			}
+			return false;
 		}
-		return false;
-	}
 
-	if (hdr.ver > CURRENT_VER) {
-		hdr.ver = TO_LE_32(hdr.ver);
-	}
-
-	if (hdr.ver < VER(7) || hdr.ver > CURRENT_VER) {
-		if (error) {
-			*error = "Invalid version";
+		if (hdr.ver > CURRENT_VER) {
+			hdr.ver = TO_LE_32(hdr.ver);
 		}
-		return false;
-	}
 
-	// We (deliberately) broke HE savegame compatibility at some point.
-	if (hdr.ver < VER(57) && heversion >= 60) {
-		if (error) {
-			*error = "Unsupported version";
+		if (hdr.ver < VER(7) || hdr.ver > CURRENT_VER) {
+			if (error) {
+				*error = "Invalid version";
+			}
+			return false;
 		}
-		return false;
-	}
 
-	hdr.name[sizeof(hdr.name) - 1] = 0;
-	return true;
-}
+		// We (deliberately) broke HE savegame compatibility at some point.
+		if (hdr.ver < VER(57) && heversion >= 60) {
+			if (error) {
+				*error = "Unsupported version";
+			}
+			return false;
+		}
+
+		hdr.name[sizeof(hdr.name) - 1] = 0;
+		return true;
+	}
 } // End of anonymous namespace
 
 bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion) {
@@ -728,7 +726,7 @@ bool ScummEngine::loadInfos(Common::SeekableReadStream *file, SaveStateMetaInfos
 
 	SaveInfoSection section;
 	section.type = file->readUint32BE();
-	if (section.type != MKTAG('I','N','F','O')) {
+	if (section.type != MKTAG('I', 'N', 'F', 'O')) {
 		return false;
 	}
 
@@ -775,7 +773,7 @@ bool ScummEngine::loadInfos(Common::SeekableReadStream *file, SaveStateMetaInfos
 
 void ScummEngine::saveInfos(Common::WriteStream *file) {
 	SaveInfoSection section;
-	section.type = MKTAG('I','N','F','O');
+	section.type = MKTAG('I', 'N', 'F', 'O');
 	section.version = INFOSECTION_VERSION;
 	section.size = SaveInfoSectionSize;
 
@@ -950,7 +948,6 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	if (s.isLoading())
 		memcpy(md5Backup, _gameMD5, 16);
 
-
 	//
 	// Save/load main state (many members of class ScummEngine get saved here)
 	//
@@ -1121,10 +1118,10 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 
 	// MD5 Operations: Backup on load, compare, and reset.
 	if (s.isLoading()) {
-		char md5str1[32+1], md5str2[32+1];
+		char md5str1[32 + 1], md5str2[32 + 1];
 		for (i = 0; i < 16; i++) {
-			sprintf(md5str1 + i*2, "%02x", (int)_gameMD5[i]);
-			sprintf(md5str2 + i*2, "%02x", (int)md5Backup[i]);
+			sprintf(md5str1 + i * 2, "%02x", (int)_gameMD5[i]);
+			sprintf(md5str2 + i * 2, "%02x", (int)md5Backup[i]);
 		}
 
 		debug(2, "Save version: %d", s.getVersion());
@@ -1136,7 +1133,6 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 			memcpy(_gameMD5, md5Backup, 16);
 		}
 	}
-
 
 	// Starting V14, we extended the usage bits, to be able to cope with games
 	// that have more than 30 actors (up to 94 are supported now, in theory).
@@ -1172,12 +1168,10 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	for (i = 0; i < _numActors; i++)
 		_actors[i]->saveLoadWithSerializer(s);
 
-
 	//
 	// Save/load sound data
 	//
 	_sound->saveLoadWithSerializer(s);
-
 
 	//
 	// Save/load script data
@@ -1195,7 +1189,6 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 			vm.slot[i].cycle = 1;
 		}
 	}
-
 
 	//
 	// Save/load local objects
@@ -1216,7 +1209,6 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 		}
 	}
 
-
 	//
 	// Save/load misc stuff
 	//
@@ -1226,7 +1218,6 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncArray(_string, 6, syncWithSerializer);
 	s.syncArray(_colorCycle, 16, syncWithSerializer);
 	s.syncArray(_scaleSlots, 20, syncWithSerializer, VER(13));
-
 
 	//
 	// Save/load resources
@@ -1241,11 +1232,11 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 			uint16 endMarker = 0xFFFF;
 			for (type = rtFirst; type <= rtLast; type = ResType(type + 1)) {
 				if (_res->_types[type]._mode != kStaticResTypeMode && type != rtTemp && type != rtBuffer) {
-					s.syncAsUint16LE(type);	// Save the res type...
+					s.syncAsUint16LE(type); // Save the res type...
 					for (idx = 0; idx < _res->_types[type].size(); idx++) {
 						// Only save resources which actually exist...
 						if (_res->_types[type][idx]._address) {
-							s.syncAsUint16LE(idx);	// Save the index of the resource
+							s.syncAsUint16LE(idx); // Save the index of the resource
 							saveResource(s, type, idx);
 						}
 					}
@@ -1279,7 +1270,6 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 			}
 	}
 
-
 	//
 	// Save/load global object state
 	//
@@ -1288,14 +1278,12 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	if (_objectRoomTable)
 		s.syncBytes(_objectRoomTable, _numGlobalObjects);
 
-
 	//
 	// Save/load palette data
 	// Don't save 16 bit palette in FM-Towns and PCE games, since it gets regenerated afterwards anyway.
 	if (_16BitPalette && !(_game.platform == Common::kPlatformFMTowns && s.getVersion() < VER(82)) && !((_game.platform == Common::kPlatformFMTowns || _game.platform == Common::kPlatformPCEngine) && s.getVersion() > VER(87))) {
 		s.syncArray(_16BitPalette, 512, Common::Serializer::Uint16LE);
 	}
-
 
 	// FM-Towns specific (extra palette data, color cycle data, etc.)
 	// In earlier save game versions (below 87) the FM-Towns specific data would get saved (and loaded) even in non FM-Towns games.
@@ -1395,7 +1383,6 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	//
 	s.syncArray(_classData, _numGlobalObjects, Common::Serializer::Uint32LE);
 
-
 	//
 	// Save/load script variables
 	//
@@ -1410,13 +1397,12 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	else
 		s.syncArray(_scummVars, _numVariables, Common::Serializer::Sint32LE);
 
-	if (_game.id == GID_TENTACLE)	// Maybe misplaced, but that's the main idea
+	if (_game.id == GID_TENTACLE) // Maybe misplaced, but that's the main idea
 		_scummVars[120] = var120Backup;
 	if (_game.id == GID_INDY4)
 		_scummVars[98] = var98Backup;
 
 	s.syncBytes(_bitVars, _numBitVariables / 8);
-
 
 	//
 	// Save/load a list of the locked objects
@@ -1440,7 +1426,6 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 		}
 	}
 
-
 	//
 	// Save/load the Audio CD status
 	//
@@ -1456,7 +1441,6 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 			_sound->playCDTrackInternal(info.track, info.numLoops, info.start, info.duration);
 	}
 
-
 	//
 	// Save/load the iMuse status
 	//
@@ -1464,14 +1448,12 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 		_imuse->saveLoadIMuse(s, this);
 	}
 
-
 	//
 	// Save/load music engine status
 	//
 	if (_musicEngine) {
 		_musicEngine->saveLoadWithSerializer(s);
 	}
-
 
 	//
 	// Save/load the charset renderer state
@@ -1506,7 +1488,6 @@ void ScummEngine_v0::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsUint16LE(_walkToObject, VER(92));
 	s.syncAsByte(_walkToObjectState, VER(92));
 }
-
 
 void ScummEngine_v2::saveLoadWithSerializer(Common::Serializer &s) {
 	ScummEngine::saveLoadWithSerializer(s);
@@ -1714,8 +1695,7 @@ void ScummEngine::saveResource(Common::Serializer &ser, ResType type, ResId idx)
 }
 
 void ScummEngine::loadResource(Common::Serializer &ser, ResType type, ResId idx) {
-	if (_game.heversion >= 60 && ser.getVersion() <= VER(65) &&
-		((type == rtSound && idx == 1) || (type == rtSpoolBuffer))) {
+	if (_game.heversion >= 60 && ser.getVersion() <= VER(65) && ((type == rtSound && idx == 1) || (type == rtSpoolBuffer))) {
 		uint32 size;
 		ser.syncAsUint32LE(size);
 		assert(size);

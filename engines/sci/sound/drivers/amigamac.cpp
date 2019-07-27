@@ -21,8 +21,8 @@
  */
 
 #include "audio/softsynth/emumidi.h"
-#include "sci/sound/drivers/mididriver.h"
 #include "sci/resource.h"
+#include "sci/sound/drivers/mididriver.h"
 
 #include "common/debug-channels.h"
 #include "common/file.h"
@@ -45,8 +45,12 @@ public:
 		kVoices = 4
 	};
 
-	MidiDriver_AmigaMac(Audio::Mixer *mixer, Common::Platform platform) : MidiDriver_Emulated(mixer), _platform(platform), _playSwitch(true), _masterVolume(15) { }
-	virtual ~MidiDriver_AmigaMac() { }
+	MidiDriver_AmigaMac(Audio::Mixer *mixer, Common::Platform platform)
+	  : MidiDriver_Emulated(mixer)
+	  , _platform(platform)
+	  , _playSwitch(true)
+	  , _masterVolume(15) {}
+	virtual ~MidiDriver_AmigaMac() {}
 
 	// MidiDriver
 	int open();
@@ -487,12 +491,12 @@ MidiDriver_AmigaMac::InstrumentSample *MidiDriver_AmigaMac::readInstrumentSCI0(C
 
 	*id = READ_BE_UINT16(header);
 
-	strncpy(instrument->name, (char *) header + 2, 29);
+	strncpy(instrument->name, (char *)header + 2, 29);
 	instrument->name[29] = 0;
 
 	if (DebugMan.isDebugChannelEnabled(kDebugLevelSound)) {
 		debug("Amiga/Mac driver: Reading instrument %i: \"%s\" (%i bytes)",
-		       *id, instrument->name, size);
+		      *id, instrument->name, size);
 		debugN("    Mode: %02x (", header[33]);
 		debugN("looping: %s, ", header[33] & kModeLoop ? "on" : "off");
 		debug("pitch changes: %s)", header[33] & kModePitch ? "on" : "off");
@@ -503,7 +507,7 @@ MidiDriver_AmigaMac::InstrumentSample *MidiDriver_AmigaMac::readInstrumentSCI0(C
 			debug("    Envelope %i: period %i / delta %i / target %i", i, header[49 + i], (int8)header[53 + i], header[57 + i]);
 	}
 
-	instrument->samples = (int8 *) malloc(size + 1);
+	instrument->samples = (int8 *)malloc(size + 1);
 	if (file.read(instrument->samples, size) < (uint32)size) {
 		warning("Amiga/Mac driver: failed to read instrument samples");
 		free(instrument->samples);
@@ -547,7 +551,7 @@ MidiDriver_AmigaMac::InstrumentSample *MidiDriver_AmigaMac::readInstrumentSCI0(C
 }
 
 uint32 MidiDriver_AmigaMac::property(int prop, uint32 param) {
-	switch(prop) {
+	switch (prop) {
 	case MIDI_PROP_MASTER_VOLUME:
 		if (param != 0xffff)
 			_masterVolume = param;
@@ -684,17 +688,17 @@ void MidiDriver_AmigaMac::send(uint32 b) {
 		case 0x07:
 			_channels[channel].volume = op2;
 			break;
-		case 0x0a:	// pan
+		case 0x0a: // pan
 			// TODO
 			debugC(1, kDebugLevelSound, "Amiga/Mac driver: ignoring pan 0x%02x event for channel %i", op2, channel);
 			break;
-		case 0x40:	// hold
+		case 0x40: // hold
 			// TODO
 			debugC(1, kDebugLevelSound, "Amiga/Mac driver: ignoring hold 0x%02x event for channel %i", op2, channel);
 			break;
-		case 0x4b:	// voice mapping
+		case 0x4b: // voice mapping
 			break;
-		case 0x4e:	// velocity
+		case 0x4e: // velocity
 			break;
 		case 0x7b:
 			stopChannel(channel);
@@ -773,7 +777,7 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI0(Common::File &file) {
 	}
 
 	_bank.size = READ_BE_UINT16(header + 38);
-	strncpy(_bank.name, (char *) header + 8, 29);
+	strncpy(_bank.name, (char *)header + 8, 29);
 	_bank.name[29] = 0;
 	debugC(kDebugLevelSound, "Amiga/Mac driver: Reading %i instruments from bank \"%s\"", _bank.size, _bank.name);
 
@@ -811,7 +815,7 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI0Mac(Common::SeekableReadStream &fil
 	}
 
 	_bank.size = 128;
-	strncpy(_bank.name, (char *) header + 8, 29);
+	strncpy(_bank.name, (char *)header + 8, 29);
 	_bank.name[29] = 0;
 	debugC(kDebugLevelSound, "Amiga/Mac driver: Reading %i instruments from bank \"%s\"", _bank.size, _bank.name);
 
@@ -927,7 +931,7 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI1(Common::SeekableReadStream &file) 
 		// Read in the instrument name
 		file.read(_bank.instruments[i].name, 10); // last two bytes are always 0
 
-		for (uint32 j = 0; ; j++) {
+		for (uint32 j = 0;; j++) {
 			InstrumentSample *sample = new InstrumentSample;
 			memset(sample, 0, sizeof(InstrumentSample));
 
@@ -1015,7 +1019,8 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI1(Common::SeekableReadStream &file) 
 
 class MidiPlayer_AmigaMac : public MidiPlayer {
 public:
-	MidiPlayer_AmigaMac(SciVersion version, Common::Platform platform) : MidiPlayer(version) {
+	MidiPlayer_AmigaMac(SciVersion version, Common::Platform platform)
+	  : MidiPlayer(version) {
 		_driver = new MidiDriver_AmigaMac(g_system->getMixer(), platform);
 	}
 	byte getPlayId() const;

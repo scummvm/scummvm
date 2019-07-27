@@ -20,16 +20,16 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "titanic/true_talk/maitred_script.h"
-#include "titanic/true_talk/true_talk_manager.h"
+#include "common/textconsole.h"
 #include "titanic/translation.h"
+#include "titanic/true_talk/true_talk_manager.h"
 
 namespace Titanic {
 
 MaitreDScript::MaitreDScript(int val1, const char *charClass, int v2,
-		const char *charName, int v3, int val2) :
-		TTnpcScript(val1, charClass, v2, charName, v3, val2, -1, -1, -1, 0) {
+                             const char *charName, int v3, int val2)
+  : TTnpcScript(val1, charClass, v2, charName, v3, val2, -1, -1, -1, 0) {
 	_answerCtr = 0;
 
 	CTrueTalkManager::setFlags(9, 1);
@@ -58,8 +58,7 @@ void MaitreDScript::setupSentences() {
 }
 
 int MaitreDScript::chooseResponse(const TTroomScript *roomScript, const TTsentence *sentence, uint tag) {
-	if (tag == MKTAG('F', 'O', 'O', 'D') || tag == MKTAG('F', 'I', 'S', 'H') ||
-			tag == MKTAG('C', 'H', 'S', 'E')) {
+	if (tag == MKTAG('F', 'O', 'O', 'D') || tag == MKTAG('F', 'I', 'S', 'H') || tag == MKTAG('C', 'H', 'S', 'E')) {
 		addResponse(getDialogueId(260388));
 		addResponse(getDialogueId(260659));
 		applyResponse();
@@ -83,9 +82,9 @@ int MaitreDScript::process(const TTroomScript *roomScript, const TTsentence *sen
 		_answerCtr = 0;
 
 		if (sentence->contains(TRANSLATE("restaurant at the end of the universe",
-				"restaurant am ende des universums"))
-				|| sentence->contains("milliway")
-				|| sentence->contains(TRANSLATE("big bang burger bar", "frittenbude"))) {
+		                                 "restaurant am ende des universums"))
+		    || sentence->contains("milliway")
+		    || sentence->contains(TRANSLATE("big bang burger bar", "frittenbude"))) {
 			addResponse(getDialogueId(260975));
 			applyResponse();
 		} else if (processEntries(&_entries, _entryCount, roomScript, sentence) == 2) {
@@ -97,13 +96,13 @@ int MaitreDScript::process(const TTroomScript *roomScript, const TTsentence *sen
 			addResponse(getDialogueId(260091));
 			applyResponse();
 		} else if ((sentence->localWord("not") && sentence->localWord("busy"))
-				|| (sentence->localWord("no") && sentence->localWord("people"))
-				|| sentence->localWord("empty")) {
+		           || (sentence->localWord("no") && sentence->localWord("people"))
+		           || sentence->localWord("empty")) {
 			addResponse(getDialogueId(260087));
 			applyResponse();
 		} else if (!defaultProcess(roomScript, sentence)
-				&& processEntries(&_sentences1, 0, roomScript, sentence) != 2
-				&& processEntries(_defaultEntries, 0, roomScript, sentence) != 2) {
+		           && processEntries(&_sentences1, 0, roomScript, sentence) != 2
+		           && processEntries(_defaultEntries, 0, roomScript, sentence) != 2) {
 			addResponse(getDialogueId(260975));
 			applyResponse();
 		}
@@ -112,27 +111,25 @@ int MaitreDScript::process(const TTroomScript *roomScript, const TTsentence *sen
 	}
 
 	if (++_answerCtr > 50 || sentence->localWord("stop") || sentence->localWord("enough")
-			|| sentence->contains("i give up") || sentence->contains("i give in")
-			|| sentence->contains("i surrender") || sentence->contains("i submit")
-			|| sentence->contains("ich gebe auf")
-			|| sentence->contains("ich ergebe mich")
-			|| sentence->contains("ich kapituliere")
-			|| sentence->contains("ich unterwerfe mich")
-			|| sentence->contains("hoer auf")
-			|| sentence->contains("lass")
-			|| sentence->contains("schluss")
-			|| sentence->contains("hoer sofort")
-			|| sentence->contains("genug")
-			|| sentence->contains("basta")
-			|| sentence->contains("halt")
-			|| sentence->contains("voll")
-			|| sentence->contains("was soll")) {
+	    || sentence->contains("i give up") || sentence->contains("i give in")
+	    || sentence->contains("i surrender") || sentence->contains("i submit")
+	    || sentence->contains("ich gebe auf")
+	    || sentence->contains("ich ergebe mich")
+	    || sentence->contains("ich kapituliere")
+	    || sentence->contains("ich unterwerfe mich")
+	    || sentence->contains("hoer auf")
+	    || sentence->contains("lass")
+	    || sentence->contains("schluss")
+	    || sentence->contains("hoer sofort")
+	    || sentence->contains("genug")
+	    || sentence->contains("basta")
+	    || sentence->contains("halt")
+	    || sentence->contains("voll")
+	    || sentence->contains("was soll")) {
 		_answerCtr = 0;
 		stopFighting(false);
 		addResponse(getDialogueId(260063));
-	} else if (sentence->localWord("not") && sentence->localWord("fight") &&
-			(sentence->localWord("feel") || sentence->localWord("want")
-			|| sentence->localWord("do") || sentence->localWord("will"))) {
+	} else if (sentence->localWord("not") && sentence->localWord("fight") && (sentence->localWord("feel") || sentence->localWord("want") || sentence->localWord("do") || sentence->localWord("will"))) {
 		_answerCtr = 0;
 		stopFighting(false);
 		addResponse(getDialogueId(260678));
@@ -141,16 +138,16 @@ int MaitreDScript::process(const TTroomScript *roomScript, const TTsentence *sen
 	} else if (sentence->contains("have at you") || sentence->contains("ausfall")) {
 		addResponse(getDialogueId(260047));
 	} else if (sentence->contains("en garde") || sentence->contains("on guard")
-			|| sentence->contains("attacke")) {
+	           || sentence->contains("attacke")) {
 		addResponse(getDialogueId(260008));
 	} else if (g_language == Common::DE_DEU && !sentence->contains("ich")
-			&& (sentence->contains("surrender") || sentence->contains("gebe auf")
-				|| sentence->contains("ergebe mich"))) {
+	           && (sentence->contains("surrender") || sentence->contains("gebe auf")
+	               || sentence->contains("ergebe mich"))) {
 		addResponse(getDialogueId(260086));
 	} else if ((sentence->localWord("surrender") && !sentence->contains("i surrender"))
-			|| (sentence->contains("give up") && !sentence->contains("i give up"))
-			|| (sentence->contains("give in") && !sentence->contains("i give in"))
-			|| (sentence->contains("submit") && !sentence->contains("i submit"))) {
+	           || (sentence->contains("give up") && !sentence->contains("i give up"))
+	           || (sentence->contains("give in") && !sentence->contains("i give in"))
+	           || (sentence->contains("submit") && !sentence->contains("i submit"))) {
 		addResponse(getDialogueId(260086));
 	} else {
 		addResponse(getDialogueId(260131));
@@ -381,7 +378,7 @@ ScriptChangedResult MaitreDScript::scriptChanged(const TTroomScript *roomScript,
 }
 
 int MaitreDScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
-		uint tag1, uint tag2, uint remainder) {
+                               uint tag1, uint tag2, uint remainder) {
 	switch (tag2) {
 	case MKTAG('A', 'D', 'V', 'T'):
 	case MKTAG('A', 'R', 'T', 'I'):
@@ -502,51 +499,69 @@ int MaitreDScript::updateState(uint oldId, uint newId, int index) {
 	if (newId == 260023) {
 		switch (getValue(13)) {
 		case 1:
-			newId = 260023; break;
+			newId = 260023;
+			break;
 		case 2:
-			newId = 260024; break;
+			newId = 260024;
+			break;
 		case 3:
-			newId = 260025; break;
+			newId = 260025;
+			break;
 		case 4:
-			newId = 260026; break;
+			newId = 260026;
+			break;
 		case 5:
-			newId = 260027; break;
+			newId = 260027;
+			break;
 		default:
-			newId = 260016; break;
+			newId = 260016;
+			break;
 		}
 	}
 
 	if (newId == 260034) {
 		switch (getValue(13)) {
 		case 1:
-			newId = 260034; break;
+			newId = 260034;
+			break;
 		case 2:
-			newId = 260035; break;
+			newId = 260035;
+			break;
 		case 3:
-			newId = 260036; break;
+			newId = 260036;
+			break;
 		case 4:
-			newId = 260037; break;
+			newId = 260037;
+			break;
 		case 5:
-			newId = 260038; break;
+			newId = 260038;
+			break;
 		default:
-			newId = 260045; break;
+			newId = 260045;
+			break;
 		}
 	}
 
 	if (newId == 260070) {
 		switch (getValue(13)) {
 		case 1:
-			newId = 260070; break;
+			newId = 260070;
+			break;
 		case 2:
-			newId = 260071; break;
+			newId = 260071;
+			break;
 		case 3:
-			newId = 260072; break;
+			newId = 260072;
+			break;
 		case 4:
-			newId = 260073; break;
+			newId = 260073;
+			break;
 		case 5:
-			newId = 260074; break;
+			newId = 260074;
+			break;
 		default:
-			newId = 260110; break;
+			newId = 260110;
+			break;
 		}
 	}
 
@@ -713,8 +728,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		break;
 
 	case 3:
-		if (sentence->localWord("chance") && (sentence->localWord("another")
-				|| sentence->localWord("other") || sentence->localWord("more"))) {
+		if (sentence->localWord("chance") && (sentence->localWord("another") || sentence->localWord("other") || sentence->localWord("more"))) {
 			addResponse(getDialogueId(260106));
 		} else {
 			addResponse(getDialogueId(260107));
@@ -773,8 +787,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		break;
 
 	case 11:
-		if ((sentence->localWord("say") || sentence->localWord("talk")) ||
-				sentence->localWord("you")) {
+		if ((sentence->localWord("say") || sentence->localWord("talk")) || sentence->localWord("you")) {
 			addResponse(getDialogueId(260216));
 			applyFlag = true;
 		}
@@ -786,7 +799,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 			applyFlag = true;
 			stateFlag = false;
 		} else if (sentence->localWord("what") && sentence->localWord("his")
-				&& sentence->localWord("name")) {
+		           && sentence->localWord("name")) {
 			addResponse(getDialogueId(260197));
 			applyFlag = true;
 			stateFlag = false;
@@ -803,8 +816,8 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 13:
 		if (sentence->localWord("why") || sentence->localWord("please")
-				|| sentence->contains("go on") || sentence->localWord("need")
-				|| sentence->contains("got to") || sentence->localWord("must")) {
+		    || sentence->contains("go on") || sentence->localWord("need")
+		    || sentence->contains("got to") || sentence->localWord("must")) {
 			addResponse(getDialogueId(260199));
 			applyFlag = true;
 			stateFlag = false;
@@ -813,7 +826,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 14:
 		if (sentence->localWord("what") || sentence->localWord("why")
-				|| sentence->localWord("kill")) {
+		    || sentence->localWord("kill")) {
 			addResponse(getDialogueId(260200));
 			applyFlag = true;
 			stateFlag = false;
@@ -830,7 +843,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 15:
 		if ((sentence->localWord("what") && sentence->localWord("way"))
-				|| sentence->localWord("how")) {
+		    || sentence->localWord("how")) {
 			addResponse(getDialogueId(260201));
 			applyFlag = true;
 			stateFlag = false;
@@ -849,7 +862,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 			applyFlag = true;
 			stateFlag = false;
 		} else if (sentence->localWord("laugh") && sentence->localWord("with")
-				&& sentence->localWord("you")) {
+		           && sentence->localWord("you")) {
 			addResponse(getDialogueId(260221));
 			applyFlag = true;
 			stateFlag = false;
@@ -892,8 +905,8 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 19:
 		if ((sentence->localWord("what") && sentence->localWord("scral"))
-				|| (sentence->localWord("what") && sentence->localWord("happen"))
-				|| sentence->contains("go on") || sentence->contains("and then")) {
+		    || (sentence->localWord("what") && sentence->localWord("happen"))
+		    || sentence->contains("go on") || sentence->contains("and then")) {
 			addResponse(getDialogueId(260234));
 			applyFlag = true;
 			stateFlag = false;
@@ -913,7 +926,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 20:
 		if ((sentence->localWord("what") && sentence->localWord("leovinus"))
-				|| (sentence->localWord("what") && sentence->localWord("happen"))) {
+		    || (sentence->localWord("what") && sentence->localWord("happen"))) {
 			addResponse(getDialogueId(260235));
 			applyFlag = true;
 			stateFlag = false;
@@ -936,7 +949,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 	case 21:
 	case 22:
 		if (sentence->contains(TRANSLATE("cooking", "kochen"))
-				|| (sentence->localWord("what") && sentence->localWord("mean"))) {
+		    || (sentence->localWord("what") && sentence->localWord("mean"))) {
 			addResponse(getDialogueId(260238));
 			applyFlag = true;
 			stateFlag = false;
@@ -965,11 +978,10 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 24:
 		if ((sentence->localWord("can") && sentence->localWord("i")
-				&& sentence->localWord("have"))
-				|| (sentence->localWord("give") && sentence->localWord("me"))
-				|| (sentence->localWord("i") && sentence->localWord("want"))
-				|| (sentence->localWord("i") && sentence->localWord("need"))
-			) {
+		     && sentence->localWord("have"))
+		    || (sentence->localWord("give") && sentence->localWord("me"))
+		    || (sentence->localWord("i") && sentence->localWord("want"))
+		    || (sentence->localWord("i") && sentence->localWord("need"))) {
 			addResponse(getDialogueId(260251));
 			applyFlag = true;
 		}
@@ -977,15 +989,13 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 25:
 		if ((sentence->localWord("open") && sentence->localWord("it"))
-				|| (sentence->localWord("how") && sentence->localWord("open"))
-				|| (sentence->localWord("how") && sentence->localWord("get") && sentence->localWord("in"))
-				|| (sentence->localWord("how") && sentence->localWord("change") && sentence->localWord("music"))
-			) {
+		    || (sentence->localWord("how") && sentence->localWord("open"))
+		    || (sentence->localWord("how") && sentence->localWord("get") && sentence->localWord("in"))
+		    || (sentence->localWord("how") && sentence->localWord("change") && sentence->localWord("music"))) {
 			addResponse(getDialogueId(260253));
 			applyFlag = true;
 			stateFlag = false;
-		} else if (sentence->localWord("where") && (sentence->localWord("it")
-				|| sentence->localWord("that"))) {
+		} else if (sentence->localWord("where") && (sentence->localWord("it") || sentence->localWord("that"))) {
 			addResponse(getDialogueId(260252));
 			applyFlag = true;
 			stateFlag = false;
@@ -994,7 +1004,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 			applyFlag = true;
 			stateFlag = false;
 		} else if ((sentence->localWord("how") && sentence->localWord("work"))
-				|| (sentence->localWord("what") && sentence->localWord("i") && sentence->localWord("do"))) {
+		           || (sentence->localWord("what") && sentence->localWord("i") && sentence->localWord("do"))) {
 			addResponse(getDialogueId(260259));
 			applyFlag = true;
 			stateFlag = false;
@@ -1002,13 +1012,11 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		break;
 
 	case 26:
-		if (sentence->localWord("where") && (sentence->localWord("key")
-				|| sentence->localWord("it"))) {
+		if (sentence->localWord("where") && (sentence->localWord("key") || sentence->localWord("it"))) {
 			addResponse(getDialogueId(260254));
 			applyFlag = true;
 			stateFlag = false;
-		} else if (sentence->localWord("where") && (sentence->localWord("hand")
-			|| sentence->localWord("that"))) {
+		} else if (sentence->localWord("where") && (sentence->localWord("hand") || sentence->localWord("that"))) {
 			addResponse(getDialogueId(260256));
 			applyFlag = true;
 			stateFlag = false;
@@ -1024,8 +1032,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		break;
 
 	case 27:
-		if (sentence->localWord("where") && (sentence->localWord("that")
-				|| sentence->localWord("it"))) {
+		if (sentence->localWord("where") && (sentence->localWord("that") || sentence->localWord("it"))) {
 			addResponse(getDialogueId(260262));
 			applyFlag = true;
 		}

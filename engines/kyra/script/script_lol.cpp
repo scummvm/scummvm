@@ -22,13 +22,13 @@
 
 #ifdef ENABLE_LOL
 
-#include "kyra/engine/lol.h"
-#include "kyra/graphics/screen_lol.h"
-#include "kyra/engine/timer.h"
-#include "kyra/resource/resource.h"
-#include "kyra/sound/sound.h"
+#	include "kyra/engine/lol.h"
+#	include "kyra/engine/timer.h"
+#	include "kyra/graphics/screen_lol.h"
+#	include "kyra/resource/resource.h"
+#	include "kyra/sound/sound.h"
 
-#include "common/system.h"
+#	include "common/system.h"
 
 namespace Kyra {
 
@@ -179,7 +179,6 @@ int LoLEngine::olol_moveParty(EMCState *script) {
 
 	return 1;
 }
-
 
 int LoLEngine::olol_delay(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_delay(%p) (%d)", (const void *)script, stackPos(0));
@@ -742,7 +741,7 @@ int LoLEngine::olol_setGlobalVar(EMCState *script) {
 
 int LoLEngine::olol_triggerDoorSwitch(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_triggerDoorSwitch(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	processDoorSwitch(stackPos(0)/*, (_wllWallFlags[_levelBlockProperties[stackPos(0)].walls[0]] & 8) ? 0 : 1*/, stackPos(1));
+	processDoorSwitch(stackPos(0) /*, (_wllWallFlags[_levelBlockProperties[stackPos(0)].walls[0]] & 8) ? 0 : 1*/, stackPos(1));
 	return 1;
 }
 
@@ -939,14 +938,14 @@ int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 
 	l->maxWidth = shpWidthMax;
 
-	l->fightingStats[0] = (stackPos(2) << 8) / 100;     // hit chance
-	l->fightingStats[1] = 256;                          //
-	l->fightingStats[2] = (stackPos(3) << 8) / 100;     // protection
-	l->fightingStats[3] = stackPos(4);                  // evade chance
-	l->fightingStats[4] = (stackPos(5) << 8) / 100;     // speed
-	l->fightingStats[5] = (stackPos(6) << 8) / 100;     //
-	l->fightingStats[6] = (stackPos(7) << 8) / 100;     //
-	l->fightingStats[7] = (stackPos(8) << 8) / 100;     //
+	l->fightingStats[0] = (stackPos(2) << 8) / 100; // hit chance
+	l->fightingStats[1] = 256; //
+	l->fightingStats[2] = (stackPos(3) << 8) / 100; // protection
+	l->fightingStats[3] = stackPos(4); // evade chance
+	l->fightingStats[4] = (stackPos(5) << 8) / 100; // speed
+	l->fightingStats[5] = (stackPos(6) << 8) / 100; //
+	l->fightingStats[6] = (stackPos(7) << 8) / 100; //
+	l->fightingStats[7] = (stackPos(8) << 8) / 100; //
 	l->fightingStats[8] = 0;
 
 	for (int i = 0; i < 8; i++) {
@@ -2344,7 +2343,7 @@ int LoLEngine::olol_getLanguage(EMCState *script) {
 	return _lang;
 }
 
-#pragma mark -
+#	pragma mark -
 
 int LoLEngine::tlol_setupPaletteFade(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_setupPaletteFade(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
@@ -2666,17 +2665,17 @@ int LoLEngine::tlol_delayForChat(const TIM *tim, const uint16 *param) {
 	return 1;
 }
 
-#pragma mark -
+#	pragma mark -
 
 typedef Common::Functor1Mem<EMCState *, int, LoLEngine> OpcodeV2;
-#define SetOpcodeTable(x) table = &x;
-#define Opcode(x) table->push_back(new OpcodeV2(this, &LoLEngine::x))
-#define OpcodeUnImpl() table->push_back(new OpcodeV2(this, 0))
+#	define SetOpcodeTable(x) table = &x;
+#	define Opcode(x) table->push_back(new OpcodeV2(this, &LoLEngine::x))
+#	define OpcodeUnImpl() table->push_back(new OpcodeV2(this, 0))
 
 typedef Common::Functor2Mem<const TIM *, const uint16 *, int, LoLEngine> TIMOpcodeLoL;
-#define SetTimOpcodeTable(x) timTable = &x;
-#define OpcodeTim(x) timTable->push_back(new TIMOpcodeLoL(this, &LoLEngine::x))
-#define OpcodeTimUnImpl() timTable->push_back(new TIMOpcodeLoL(this, 0))
+#	define SetTimOpcodeTable(x) timTable = &x;
+#	define OpcodeTim(x) timTable->push_back(new TIMOpcodeLoL(this, &LoLEngine::x))
+#	define OpcodeTimUnImpl() timTable->push_back(new TIMOpcodeLoL(this, 0))
 
 void LoLEngine::setupOpcodeTable() {
 	Common::Array<const Opcode *> *table = 0;

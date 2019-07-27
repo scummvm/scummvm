@@ -24,25 +24,23 @@
 
 #if defined(SDL_BACKEND)
 
-#include "backends/mixer/sdl/sdl-mixer.h"
-#include "common/debug.h"
-#include "common/system.h"
-#include "common/config-manager.h"
-#include "common/textconsole.h"
+#	include "backends/mixer/sdl/sdl-mixer.h"
+#	include "common/config-manager.h"
+#	include "common/debug.h"
+#	include "common/system.h"
+#	include "common/textconsole.h"
 
-#if defined(GP2X)
-#define SAMPLES_PER_SEC 11025
-#elif defined(PLAYSTATION3) || defined(PSP2) || defined(NINTENDO_SWITCH)
-#define SAMPLES_PER_SEC 48000
-#else
-#define SAMPLES_PER_SEC 44100
-#endif
+#	if defined(GP2X)
+#		define SAMPLES_PER_SEC 11025
+#	elif defined(PLAYSTATION3) || defined(PSP2) || defined(NINTENDO_SWITCH)
+#		define SAMPLES_PER_SEC 48000
+#	else
+#		define SAMPLES_PER_SEC 44100
+#	endif
 
 SdlMixerManager::SdlMixerManager()
-	:
-	_mixer(0),
-	_audioSuspended(false) {
-
+  : _mixer(0)
+  , _audioSuspended(false) {
 }
 
 SdlMixerManager::~SdlMixerManager() {
@@ -59,14 +57,14 @@ void SdlMixerManager::init() {
 		error("Could not initialize SDL: %s", SDL_GetError());
 	}
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+#	if SDL_VERSION_ATLEAST(2, 0, 0)
 	const char *sdlDriverName = SDL_GetCurrentAudioDriver();
-#else
+#	else
 	const int maxNameLen = 20;
 	char sdlDriverName[maxNameLen];
 	sdlDriverName[0] = '\0';
 	SDL_AudioDriverName(sdlDriverName, maxNameLen);
-#endif
+#	endif
 	debug(1, "Using SDL Audio Driver \"%s\"", sdlDriverName);
 
 	// Get the desired audio specs
@@ -111,12 +109,12 @@ void SdlMixerManager::init() {
 	if (_obtained.samples != desired.samples)
 		warning("SDL mixer output buffer size: %d differs from desired: %d", _obtained.samples, desired.samples);
 
-#ifndef __SYMBIAN32__
+#	ifndef __SYMBIAN32__
 	// The SymbianSdlMixerManager does stereo->mono downmixing,
 	// but otherwise we require stereo output.
 	if (_obtained.channels != 2)
 		error("SDL mixer output requires stereo output device");
-#endif
+#	endif
 
 	_mixer = new Audio::MixerImpl(g_system, _obtained.freq);
 	assert(_mixer);

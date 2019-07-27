@@ -21,36 +21,37 @@
  */
 
 #include "glk/tads/tads.h"
-#include "glk/tads/os_glk.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
+#include "glk/tads/os_glk.h"
 
 namespace Glk {
 namespace TADS {
 
-TADS *g_vm;
+	TADS *g_vm;
 
-TADS::TADS(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc) {
-	g_vm = this;
-}
+	TADS::TADS(OSystem *syst, const GlkGameDescription &gameDesc)
+	  : GlkAPI(syst, gameDesc) {
+		g_vm = this;
+	}
 
-bool TADS::hasFeature(EngineFeature f) const {
-	// The TADS codebases rely on a lot of static globals, so RTL can't be supported
-	if (f == kSupportsRTL)
-		return false;
+	bool TADS::hasFeature(EngineFeature f) const {
+		// The TADS codebases rely on a lot of static globals, so RTL can't be supported
+		if (f == kSupportsRTL)
+			return false;
 
-	return GlkAPI::hasFeature(f);
-}
+		return GlkAPI::hasFeature(f);
+	}
 
-Common::Error TADS::readSaveData(Common::SeekableReadStream *rs) {
-	// TODO
-	return Common::kReadingFailed;
-}
+	Common::Error TADS::readSaveData(Common::SeekableReadStream *rs) {
+		// TODO
+		return Common::kReadingFailed;
+	}
 
-Common::Error TADS::writeGameData(Common::WriteStream *ws) {
-	// TODO
-	return Common::kWritingFailed;
-}
+	Common::Error TADS::writeGameData(Common::WriteStream *ws) {
+		// TODO
+		return Common::kWritingFailed;
+	}
 
 } // End of namespace TADS
 } // End of namespace Glk

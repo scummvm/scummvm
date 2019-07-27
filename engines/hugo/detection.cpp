@@ -20,12 +20,12 @@
  *
  */
 
-#include "engines/advancedDetector.h"
-#include "common/system.h"
 #include "common/savefile.h"
+#include "common/system.h"
 #include "common/textconsole.h"
-#include "graphics/thumbnail.h"
+#include "engines/advancedDetector.h"
 #include "graphics/surface.h"
+#include "graphics/thumbnail.h"
 
 #include "hugo/hugo.h"
 
@@ -44,96 +44,78 @@ const char *HugoEngine::getGameId() const {
 	return _gameDescription->desc.gameId;
 }
 
-
 static const PlainGameDescriptor hugoGames[] = {
 	// Games
-	{"hugo1", "Hugo 1: Hugo's House of Horrors"},
-	{"hugo2", "Hugo 2: Whodunit?"},
-	{"hugo3", "Hugo 3: Jungle of Doom"},
-	{0, 0}
+	{ "hugo1", "Hugo 1: Hugo's House of Horrors" },
+	{ "hugo2", "Hugo 2: Whodunit?" },
+	{ "hugo3", "Hugo 3: Jungle of Doom" },
+	{ 0, 0 }
 };
 
 static const HugoGameDescription gameDescriptions[] = {
 
 	// Hugo1 DOS
 	{
-		{
-			"hugo1", 0,
-			AD_ENTRY1s("house.art", "c9403b2fe539185c9fd569b6cc4ff5ca", 14811),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		kGameTypeHugo1
-	},
+	  { "hugo1", 0,
+	    AD_ENTRY1s("house.art", "c9403b2fe539185c9fd569b6cc4ff5ca", 14811),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  kGameTypeHugo1 },
 	// Hugo1 Windows
 	{
-		{
-			"hugo1", 0,
-			AD_ENTRY1s("objects.dat", "3ba0f108f7690a05a34c56a02fbe644a", 126488),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			GF_PACKED,
-			GUIO0()
-		},
-		kGameTypeHugo1
-	},
+	  { "hugo1", 0,
+	    AD_ENTRY1s("objects.dat", "3ba0f108f7690a05a34c56a02fbe644a", 126488),
+	    Common::EN_ANY,
+	    Common::kPlatformWindows,
+	    GF_PACKED,
+	    GUIO0() },
+	  kGameTypeHugo1 },
 	// Hugo2 DOS
 	{
-		{
-			"hugo2", 0,
-			AD_ENTRY1s("objects.dat", "88a718cc0ff2b3b25d49aaaa69d6d52c", 155240),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			GF_PACKED,
-			GUIO0()
-		},
-		kGameTypeHugo2
-	},
+	  { "hugo2", 0,
+	    AD_ENTRY1s("objects.dat", "88a718cc0ff2b3b25d49aaaa69d6d52c", 155240),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    GF_PACKED,
+	    GUIO0() },
+	  kGameTypeHugo2 },
 	// Hugo2 Windows
 	{
-		{
-			"hugo2", 0,
-			AD_ENTRY1s("objects.dat", "5df4ffc851e66a544c0e95e4e084a806", 158480),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			GF_PACKED,
-			GUIO0()
-		},
-		kGameTypeHugo2
-	},
+	  { "hugo2", 0,
+	    AD_ENTRY1s("objects.dat", "5df4ffc851e66a544c0e95e4e084a806", 158480),
+	    Common::EN_ANY,
+	    Common::kPlatformWindows,
+	    GF_PACKED,
+	    GUIO0() },
+	  kGameTypeHugo2 },
 	// Hugo3 DOS
 	{
-		{
-			"hugo3", 0,
-			AD_ENTRY1s("objects.dat", "bb1b061538a445f2eb99b682c0f506cc", 136419),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			GF_PACKED,
-			GUIO0()
-		},
-		kGameTypeHugo3
-	},
+	  { "hugo3", 0,
+	    AD_ENTRY1s("objects.dat", "bb1b061538a445f2eb99b682c0f506cc", 136419),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    GF_PACKED,
+	    GUIO0() },
+	  kGameTypeHugo3 },
 	// Hugo3 Windows
 	{
-		{
-			"hugo3", 0,
-			AD_ENTRY1s("objects.dat", "c9a8af7aa14cc907434eecee3ddd06d3", 136638),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			GF_PACKED,
-			GUIO0()
-		},
-		kGameTypeHugo3
-	},
+	  { "hugo3", 0,
+	    AD_ENTRY1s("objects.dat", "c9a8af7aa14cc907434eecee3ddd06d3", 136638),
+	    Common::EN_ANY,
+	    Common::kPlatformWindows,
+	    GF_PACKED,
+	    GUIO0() },
+	  kGameTypeHugo3 },
 
-	{AD_TABLE_END_MARKER, kGameTypeNone}
+	{ AD_TABLE_END_MARKER, kGameTypeNone }
 };
 
 class HugoMetaEngine : public AdvancedMetaEngine {
 public:
-	HugoMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(HugoGameDescription), hugoGames) {
+	HugoMetaEngine()
+	  : AdvancedMetaEngine(gameDescriptions, sizeof(HugoGameDescription), hugoGames) {
 	}
 
 	const char *getName() const {
@@ -162,13 +144,7 @@ bool HugoMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 }
 
 bool HugoMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-	    (f == kSupportsListSaves) ||
-	    (f == kSupportsLoadingDuringStartup) ||
-	    (f == kSupportsDeleteSave) ||
-	    (f == kSavesSupportMetaInfo) ||
-	    (f == kSavesSupportThumbnail) ||
-	    (f == kSavesSupportCreationDate);
+	return (f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup) || (f == kSupportsDeleteSave) || (f == kSavesSupportMetaInfo) || (f == kSavesSupportThumbnail) || (f == kSavesSupportCreationDate);
 }
 
 int HugoMetaEngine::getMaximumSaveSlot() const { return 99; }
@@ -281,9 +257,9 @@ void HugoMetaEngine::removeSaveState(const char *target, int slot) const {
 } // End of namespace Hugo
 
 #if PLUGIN_ENABLED_DYNAMIC(HUGO)
-	REGISTER_PLUGIN_DYNAMIC(HUGO, PLUGIN_TYPE_ENGINE, Hugo::HugoMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(HUGO, PLUGIN_TYPE_ENGINE, Hugo::HugoMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(HUGO, PLUGIN_TYPE_ENGINE, Hugo::HugoMetaEngine);
+REGISTER_PLUGIN_STATIC(HUGO, PLUGIN_TYPE_ENGINE, Hugo::HugoMetaEngine);
 #endif
 
 namespace Hugo {

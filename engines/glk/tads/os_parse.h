@@ -33,9 +33,9 @@
 namespace Glk {
 namespace TADS {
 
-extern uint os_parse_chars(const unsigned char *buf, uint buflen, uint32 *out, uint outlen);
+	extern uint os_parse_chars(const unsigned char *buf, uint buflen, uint32 *out, uint outlen);
 
-extern uint os_prepare_chars(const uint32 *buf, uint buflen, unsigned char *out, uint outlen);
+	extern uint os_prepare_chars(const uint32 *buf, uint buflen, unsigned char *out, uint outlen);
 
 } // End of namespace TADS
 } // End of namespace Glk

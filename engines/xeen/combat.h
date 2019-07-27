@@ -23,8 +23,8 @@
 #ifndef XEEN_COMBAT_H
 #define XEEN_COMBAT_H
 
-#include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "xeen/files.h"
 #include "xeen/sprites.h"
 
@@ -36,42 +36,89 @@ namespace Xeen {
 #define ATTACK_MONSTERS_COUNT 26
 
 enum DamageType {
-	DT_PHYSICAL = 0, DT_MAGICAL = 1, DT_FIRE = 2, DT_ELECTRICAL = 3,
-	DT_COLD = 4, DT_POISON = 5, DT_ENERGY = 6, DT_SLEEP = 7,
-	DT_FINGEROFDEATH = 8, DT_HOLYWORD = 9, DT_MASS_DISTORTION = 10,
-	DT_UNDEAD = 11, DT_BEASTMASTER = 12, DT_DRAGONSLEEP = 13,
-	DT_GOLEMSTOPPER = 14, DT_HYPNOTIZE = 15, DT_INSECT_SPRAY = 16,
-	DT_POISON_VOLLEY = 17, DT_MAGIC_ARROW = 18
+	DT_PHYSICAL = 0,
+	DT_MAGICAL = 1,
+	DT_FIRE = 2,
+	DT_ELECTRICAL = 3,
+	DT_COLD = 4,
+	DT_POISON = 5,
+	DT_ENERGY = 6,
+	DT_SLEEP = 7,
+	DT_FINGEROFDEATH = 8,
+	DT_HOLYWORD = 9,
+	DT_MASS_DISTORTION = 10,
+	DT_UNDEAD = 11,
+	DT_BEASTMASTER = 12,
+	DT_DRAGONSLEEP = 13,
+	DT_GOLEMSTOPPER = 14,
+	DT_HYPNOTIZE = 15,
+	DT_INSECT_SPRAY = 16,
+	DT_POISON_VOLLEY = 17,
+	DT_MAGIC_ARROW = 18
 };
 
 enum SpecialAttack {
-	SA_NONE = 0, SA_MAGIC = 1, SA_FIRE = 2, SA_ELEC = 3, SA_COLD = 4,
-	SA_POISON = 5, SA_ENERGY = 6, SA_DISEASE = 7, SA_INSANE = 8,
-	SA_SLEEP = 9, SA_CURSEITEM = 10, SA_INLOVE = 11, SA_DRAINSP = 12,
-	SA_CURSE = 13, SA_PARALYZE = 14, SA_UNCONSCIOUS = 15,
-	SA_CONFUSE = 16, SA_BREAKWEAPON = 17, SA_WEAKEN = 18,
-	SA_ERADICATE = 19, SA_AGING = 20, SA_DEATH = 21, SA_STONE = 22
+	SA_NONE = 0,
+	SA_MAGIC = 1,
+	SA_FIRE = 2,
+	SA_ELEC = 3,
+	SA_COLD = 4,
+	SA_POISON = 5,
+	SA_ENERGY = 6,
+	SA_DISEASE = 7,
+	SA_INSANE = 8,
+	SA_SLEEP = 9,
+	SA_CURSEITEM = 10,
+	SA_INLOVE = 11,
+	SA_DRAINSP = 12,
+	SA_CURSE = 13,
+	SA_PARALYZE = 14,
+	SA_UNCONSCIOUS = 15,
+	SA_CONFUSE = 16,
+	SA_BREAKWEAPON = 17,
+	SA_WEAKEN = 18,
+	SA_ERADICATE = 19,
+	SA_AGING = 20,
+	SA_DEATH = 21,
+	SA_STONE = 22
 };
 
 enum ShootType {
-	ST_0 = 0, ST_1 = 1
+	ST_0 = 0,
+	ST_1 = 1
 };
 
 enum CombatMode {
-	COMBATMODE_STARTUP = 0, COMBATMODE_INTERACTIVE = 1, COMBATMODE_2 = 2
+	COMBATMODE_STARTUP = 0,
+	COMBATMODE_INTERACTIVE = 1,
+	COMBATMODE_2 = 2
 };
 
 enum PowType {
-	POW_INVALID = -1, POW_FIREBALL = 0, POW_INCINERATE = 1,
-	POW_FIERY_FLAIL = 2, POW_LIGHTNING = 3, POW_MEGAVOLTS = 4,
-	POW_SPARKS = 5, POW_STOPPER = 6, POW_MAGIC_ORB = 7,
-	POW_COLD_RAY = 8, POW_FROST_WAVE = 9, POW_SPRAY = 10,
-	POW_ARROW = 11, POW_MAGIC_ARROW = 12, POW_ENERGY_BLAST = 13,
-	POW_SPARKLES = 14, POW_DEADLY_SWARM = 15
+	POW_INVALID = -1,
+	POW_FIREBALL = 0,
+	POW_INCINERATE = 1,
+	POW_FIERY_FLAIL = 2,
+	POW_LIGHTNING = 3,
+	POW_MEGAVOLTS = 4,
+	POW_SPARKS = 5,
+	POW_STOPPER = 6,
+	POW_MAGIC_ORB = 7,
+	POW_COLD_RAY = 8,
+	POW_FROST_WAVE = 9,
+	POW_SPRAY = 10,
+	POW_ARROW = 11,
+	POW_MAGIC_ARROW = 12,
+	POW_ENERGY_BLAST = 13,
+	POW_SPARKLES = 14,
+	POW_DEADLY_SWARM = 15
 };
 
 enum RangeType {
-	RT_SINGLE = 0, RT_GROUP = 1, RT_ALL = 2, RT_HIT = 3
+	RT_SINGLE = 0,
+	RT_GROUP = 1,
+	RT_ALL = 2,
+	RT_HIT = 3
 };
 
 class XeenEngine;
@@ -86,13 +133,18 @@ struct PowSlot {
 	int _elemFrame;
 	int _elemScale;
 
-	PowSlot() : _active(false), _duration(0), _scale(0),
-		_elemFrame(0), _elemScale(0) {}
+	PowSlot()
+	  : _active(false)
+	  , _duration(0)
+	  , _scale(0)
+	  , _elemFrame(0)
+	  , _elemScale(0) {}
 };
 
 class PowSlots {
 private:
 	PowSlot _data[POW_COUNT];
+
 public:
 	/**
 	 * Gets a slot entry
@@ -149,6 +201,7 @@ private:
 	 * Distribute experience between active party members
 	 */
 	void giveExperience(int experience);
+
 public:
 	Common::Array<Character *> _combatParty;
 	bool _charsBlocked[PARTY_AND_MONSTERS];
@@ -187,6 +240,7 @@ public:
 	RangeType _rangeType;
 	ShootType _shootType;
 	int _combatTarget;
+
 public:
 	Combat(XeenEngine *vm);
 
@@ -332,4 +386,4 @@ public:
 
 } // End of namespace Xeen
 
-#endif	/* XEEN_COMBAT_H */
+#endif /* XEEN_COMBAT_H */

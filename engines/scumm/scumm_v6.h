@@ -38,7 +38,7 @@ protected:
 		kDwordArray = 6
 	};
 
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 	struct ArrayHeader {
 		int16 dim1;
@@ -47,7 +47,7 @@ protected:
 		byte data[1];
 	} PACKED_STRUCT;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h" // END STRUCT PACKING
 
 	struct TextObject {
 		int16 xpos, ypos;
@@ -119,6 +119,7 @@ protected:
 	ArrayHeader *getArray(int array);
 	byte *defineArray(int array, int type, int dim2, int dim1);
 	int findFreeArrayId();
+
 public: // FIXME. TODO
 	void nukeArray(int array);
 
@@ -152,6 +153,7 @@ protected:
 public:
 	bool akos_increaseAnims(const byte *akos, Actor *a);
 	bool akos_increaseAnim(Actor *a, int i, const byte *aksq, const uint16 *akfo, int numakfo);
+
 protected:
 	void akos_queCommand(byte cmd, Actor *a, int param_1, int param_2);
 	virtual void akos_processQueue();
@@ -333,7 +335,6 @@ protected:
 	byte VAR_TIMEDATE_MINUTE;
 	byte VAR_TIMEDATE_SECOND;
 };
-
 
 } // End of namespace Scumm
 

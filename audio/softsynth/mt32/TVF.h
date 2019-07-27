@@ -18,9 +18,9 @@
 #ifndef MT32EMU_TVF_H
 #define MT32EMU_TVF_H
 
-#include "globals.h"
-#include "Types.h"
 #include "Structures.h"
+#include "Types.h"
+#include "globals.h"
 
 namespace MT32Emu {
 
@@ -29,7 +29,7 @@ class Partial;
 
 class TVF {
 private:
-	const Partial * const partial;
+	const Partial *const partial;
 	LA32Ramp *cutoffModifierRamp;
 	const TimbreParam::PartialParam *partialParam;
 

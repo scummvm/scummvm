@@ -32,6 +32,7 @@ class IllusionsEngine_Duckman;
 class Duckman_GameState : public GameState {
 public:
 	Duckman_GameState(IllusionsEngine_Duckman *vm);
+
 protected:
 	IllusionsEngine_Duckman *_vm;
 	uint32 calcWriteBufferSizeInternal();

@@ -31,8 +31,15 @@ enum AreaType {
 };
 
 NavigationScene::NavigationScene(NeverhoodEngine *vm, Module *parentModule, uint32 navigationListId, int navigationIndex, const byte *itemsTypes)
-	: Scene(vm, parentModule), _itemsTypes(itemsTypes), _navigationIndex(navigationIndex), _smackerDone(false),
-	_isWalkingForward(false), _isTurning(false), _smackerFileHash(0), _interactive(true), _leaveSceneAfter(false) {
+  : Scene(vm, parentModule)
+  , _itemsTypes(itemsTypes)
+  , _navigationIndex(navigationIndex)
+  , _smackerDone(false)
+  , _isWalkingForward(false)
+  , _isTurning(false)
+  , _smackerFileHash(0)
+  , _interactive(true)
+  , _leaveSceneAfter(false) {
 
 	_navigationList = _vm->_staticData->getNavigationList(navigationListId);
 	_navigationListId = navigationListId;
@@ -131,7 +138,7 @@ void NavigationScene::createMouseCursor() {
 	int areaType;
 
 	if (_mouseCursor)
-		deleteSprite((Sprite**)&_mouseCursor);
+		deleteSprite((Sprite **)&_mouseCursor);
 
 	mouseCursorFileHash = navigationItem.mouseCursorFileHash;
 	if (mouseCursorFileHash == 0)

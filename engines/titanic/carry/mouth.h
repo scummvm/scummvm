@@ -32,6 +32,7 @@ class CMouth : public CHeadPiece {
 	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool PETGainedObjectMsg(CPETGainedObjectMsg *msg);
+
 public:
 	CLASSDEF;
 	CMouth();

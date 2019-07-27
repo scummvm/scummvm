@@ -22,11 +22,11 @@
 
 #include "common/memstream.h"
 
-#include "draci/draci.h"
 #include "draci/animation.h"
+#include "draci/draci.h"
 #include "draci/game.h"
-#include "draci/walking.h"
 #include "draci/sprite.h"
+#include "draci/walking.h"
 
 namespace Draci {
 
@@ -156,7 +156,7 @@ Common::Point WalkingMap::findNearestWalkable(int startX, int startY) const {
 }
 
 // We don't use Common::Point due to using static initialization.
-const int WalkingMap::kDirections[][2] = { {0, -1}, {0, +1}, {-1, 0}, {+1, 0} };
+const int WalkingMap::kDirections[][2] = { { 0, -1 }, { 0, +1 }, { -1, 0 }, { +1, 0 } };
 
 bool WalkingMap::findShortestPath(Common::Point p1, Common::Point p2, WalkingPath *path) const {
 	// Round the positions to map squares.
@@ -173,7 +173,7 @@ bool WalkingMap::findShortestPath(Common::Point p1, Common::Point p2, WalkingPat
 
 	// Insert the starting point as a single seed.
 	int toRead = 0, toWrite = 0;
-	memset(cameFrom, -1, _mapWidth * _mapHeight);	// -1 = not found yet
+	memset(cameFrom, -1, _mapWidth * _mapHeight); // -1 = not found yet
 	cameFrom[p1.y * _mapWidth + p1.x] = 0;
 	toSearch[toWrite++] = p1;
 
@@ -244,7 +244,7 @@ bool WalkingMap::findShortestPath(Common::Point p1, Common::Point p2, WalkingPat
 	return true;
 }
 
-void WalkingMap::obliquePath(const WalkingPath& path, WalkingPath *obliquedPath) {
+void WalkingMap::obliquePath(const WalkingPath &path, WalkingPath *obliquedPath) {
 	// Prune the path to only contain vertices where the direction is changing.
 	obliquedPath->clear();
 	if (path.empty()) {
@@ -279,7 +279,8 @@ void WalkingMap::obliquePath(const WalkingPath& path, WalkingPath *obliquedPath)
 	// Repeatedly oblique the path until it cannot be improved.  This
 	// process is finite, because after each success the number of vertices
 	// goes down.
-	while (managedToOblique(obliquedPath)) {}
+	while (managedToOblique(obliquedPath)) {
+	}
 }
 
 Sprite *WalkingMap::newOverlayFromPath(const WalkingPath &path, byte color) const {
@@ -288,7 +289,7 @@ Sprite *WalkingMap::newOverlayFromPath(const WalkingPath &path, byte color) cons
 	memset(wlk, 255, _realWidth * _realHeight);
 
 	for (uint segment = 1; segment < path.size(); ++segment) {
-		const Common::Point &v1 = path[segment-1];
+		const Common::Point &v1 = path[segment - 1];
 		const Common::Point &v2 = path[segment];
 		const int steps = pointsBetween(v1, v2);
 		// Draw only points in the interval [v1, v2).  These half-open
@@ -300,7 +301,7 @@ Sprite *WalkingMap::newOverlayFromPath(const WalkingPath &path, byte color) cons
 	// Draw the last point.  This works also when the path has no segment,
 	// but just one point.
 	if (path.size() > 0) {
-		const Common::Point &vLast = path[path.size()-1];
+		const Common::Point &vLast = path[path.size() - 1];
 		drawOverlayRectangle(vLast, color, wlk);
 	}
 
@@ -323,8 +324,8 @@ int WalkingMap::pointsBetween(const Common::Point &p1, const Common::Point &p2) 
 }
 
 Common::Point WalkingMap::interpolate(const Common::Point &p1, const Common::Point &p2, int i, int n) {
-	const int x = (p1.x * (n-i) + p2.x * i + n/2) / n;
-	const int y = (p1.y * (n-i) + p2.y * i + n/2) / n;
+	const int x = (p1.x * (n - i) + p2.x * i + n / 2) / n;
+	const int y = (p1.y * (n - i) + p2.y * i + n / 2) / n;
 	return Common::Point(x, y);
 }
 
@@ -351,8 +352,8 @@ bool WalkingMap::managedToOblique(WalkingPath *path) const {
 	// either of those attempts succeeds, we have shortned the path.  We
 	// update the path vertices and continue with the next segment.
 	for (uint head = 2; head < path->size(); ++head) {
-		const Common::Point &v1 = (*path)[head-2];
-		const Common::Point &v2 = (*path)[head-1];
+		const Common::Point &v1 = (*path)[head - 2];
+		const Common::Point &v2 = (*path)[head - 1];
 		const Common::Point &v3 = (*path)[head];
 		const int points12 = pointsBetween(v1, v2);
 		const int points32 = pointsBetween(v3, v2);
@@ -384,10 +385,10 @@ bool WalkingMap::managedToOblique(WalkingPath *path) const {
 			// There is such a point on the first edge and the
 			// second edge has either not succeeded or we gain more
 			// by cutting this edge than the other one.
-			(*path)[head-1] = interpolate(v1, v2, first12, points12);
+			(*path)[head - 1] = interpolate(v1, v2, first12, points12);
 			// After replacing the 2nd vertex, let head move on.
 		} else if (first32 < points32) {
-			(*path)[head-1] = interpolate(v3, v2, first32, points32);
+			(*path)[head - 1] = interpolate(v3, v2, first32, points32);
 		}
 	}
 	return improved;
@@ -399,8 +400,8 @@ void WalkingState::stopWalking() {
 }
 
 void WalkingState::startWalking(const Common::Point &p1, const Common::Point &p2,
-	const Common::Point &mouse, SightDirection dir,
-	const Common::Point &delta, const WalkingPath& path) {
+                                const Common::Point &mouse, SightDirection dir,
+                                const Common::Point &delta, const WalkingPath &path) {
 	_path = path;
 	_mouse = mouse;
 	_dir = dir;
@@ -415,7 +416,7 @@ void WalkingState::startWalking(const Common::Point &p1, const Common::Point &p2
 		_path.push_back(p2);
 	}
 	debugC(2, kDraciWalkingDebugLevel, "Starting walking [%d,%d] -> [%d,%d] with %d vertices",
-		p1.x, p1.y, p2.x, p2.y, _path.size());
+	       p1.x, p1.y, p2.x, p2.y, _path.size());
 
 	// The first and last point are available with pixel accurracy.
 	_path[0] = p1;
@@ -429,7 +430,7 @@ void WalkingState::startWalking(const Common::Point &p1, const Common::Point &p2
 
 	// Remember the initial dragon's direction.
 	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
-	_startingDirection = static_cast<Movement> (dragon->playingAnim());
+	_startingDirection = static_cast<Movement>(dragon->playingAnim());
 
 	// Going to start with the first segment.
 	_segment = 0;
@@ -470,7 +471,7 @@ bool WalkingState::continueWalkingOrClearPath() {
 
 bool WalkingState::continueWalking() {
 	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
-	const Movement movement = static_cast<Movement> (dragon->playingAnim());
+	const Movement movement = static_cast<Movement>(dragon->playingAnim());
 
 	if (_turningFinished) {
 		// When a turning animation has finished, heroAnimationFinished() callback
@@ -517,7 +518,7 @@ bool WalkingState::continueWalking() {
 	_vm->_game->positionHeroAsAnim(anim);
 	const Common::Point curHero = _vm->_game->getHeroPosition();
 	Common::Point adjustedHero = curHero;
-	const bool reachedEnd = alignHeroToEdge(_path[_segment-1], _path[_segment], prevHero, &adjustedHero);
+	const bool reachedEnd = alignHeroToEdge(_path[_segment - 1], _path[_segment], prevHero, &adjustedHero);
 	if (reachedEnd && _segment >= _path.size() - 1) {
 		// We don't want the dragon to jump around if we repeatedly
 		// click on the same pixel.  Let him always end where desired.
@@ -526,7 +527,7 @@ bool WalkingState::continueWalking() {
 	}
 
 	debugC(3, kDraciWalkingDebugLevel, "Continuing walking on edge %d: phase %d and position+=[%d,%d]->[%d,%d] adjusted to [%d,%d]",
-		_segment-1, animPhase, curHero.x - prevHero.x, curHero.y - prevHero.y, curHero.x, curHero.y, adjustedHero.x, adjustedHero.y);
+	       _segment - 1, animPhase, curHero.x - prevHero.x, curHero.y - prevHero.y, curHero.x, curHero.y, adjustedHero.x, adjustedHero.y);
 
 	// Update the hero position to the adjusted one.  The animation number
 	// is not changing, so this will just move the sprite and return the
@@ -543,7 +544,7 @@ bool WalkingState::continueWalking() {
 	if (reachedEnd) {
 		if (adjustedHero != _path[_segment]) {
 			debugC(2, kDraciWalkingDebugLevel, "Adjusting node %d of the path [%d,%d]->[%d,%d]",
-				_segment, _path[_segment].x, _path[_segment].y, adjustedHero.x, adjustedHero.y);
+			       _segment, _path[_segment].x, _path[_segment].y, adjustedHero.x, adjustedHero.y);
 			_path[_segment] = adjustedHero;
 		}
 		return turnForTheNextSegment();
@@ -579,7 +580,7 @@ bool WalkingState::alignHeroToEdge(const Common::Point &p1, const Common::Point 
 
 bool WalkingState::turnForTheNextSegment() {
 	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
-	const Movement currentAnim = static_cast<Movement> (dragon->playingAnim());
+	const Movement currentAnim = static_cast<Movement>(dragon->playingAnim());
 	const Movement wantAnim = directionForNextPhase();
 	Movement transition = transitionBetweenAnimations(currentAnim, wantAnim);
 
@@ -630,8 +631,8 @@ bool WalkingState::walkOnNextEdge() {
 
 	if (++_segment < _path.size()) {
 		// We are on an edge: track where the hero is on this edge.
-		int length = WalkingMap::pointsBetween(_path[_segment-1], _path[_segment]);
-		debugC(2, kDraciWalkingDebugLevel, "Next edge %d has length %d", _segment-1, length);
+		int length = WalkingMap::pointsBetween(_path[_segment - 1], _path[_segment]);
+		debugC(2, kDraciWalkingDebugLevel, "Next edge %d has length %d", _segment - 1, length);
 		return true;
 	} else {
 		// Otherwise we are done.  continueWalking() will return false next time.
@@ -652,9 +653,9 @@ Movement WalkingState::animationForDirection(const Common::Point &here, const Co
 
 Movement WalkingState::directionForNextPhase() const {
 	if (_segment >= _path.size() - 1) {
-		return animationForSightDirection(_dir, _path[_path.size()-1], _mouse, _path, _startingDirection);
+		return animationForSightDirection(_dir, _path[_path.size() - 1], _mouse, _path, _startingDirection);
 	} else {
-		return animationForDirection(_path[_segment], _path[_segment+1]);
+		return animationForDirection(_path[_segment], _path[_segment + 1]);
 	}
 }
 
@@ -764,7 +765,8 @@ Movement WalkingState::animationForSightDirection(SightDirection dir, const Comm
 			// Avoid changing the direction when no walking has
 			// been done.  Preserve the original direction.
 			return (startingDirection == kMoveLeft || startingDirection == kStopLeft || startingDirection == kSpeakLeft)
-				? kStopLeft : kStopRight;
+			  ? kStopLeft
+			  : kStopRight;
 		}
 	}
 	}

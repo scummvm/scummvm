@@ -39,9 +39,8 @@ static size_t adjustChunkSize(size_t chunkSize) {
 	return chunkSize;
 }
 
-
 MemoryPool::MemoryPool(size_t chunkSize)
-	: _chunkSize(adjustChunkSize(chunkSize)) {
+  : _chunkSize(adjustChunkSize(chunkSize)) {
 
 	_next = nullptr;
 
@@ -64,12 +63,11 @@ void MemoryPool::allocPage() {
 
 	// Allocate a new page
 	page.numChunks = _chunksPerPage;
-	assert(page.numChunks * _chunkSize < 16*1024*1024); // Refuse to allocate pages bigger than 16 MB
+	assert(page.numChunks * _chunkSize < 16 * 1024 * 1024); // Refuse to allocate pages bigger than 16 MB
 
 	page.start = ::malloc(page.numChunks * _chunkSize);
 	assert(page.start);
 	_pages.push_back(page);
-
 
 	// Next time, we'll allocate a page twice as big as this one.
 	_chunksPerPage *= 2;
@@ -141,7 +139,7 @@ void MemoryPool::freeUnusedPages() {
 
 	// Free all pages which are not in use.
 	size_t freedPagesCount = 0;
-	for (size_t i = 0; i < _pages.size(); ++i)  {
+	for (size_t i = 0; i < _pages.size(); ++i) {
 		if (numberOfFreeChunksPerPage[i] == _pages[i].numChunks) {
 			// Remove all chunks of this page from the list of free chunks
 			void **iter2 = &_next;
@@ -158,7 +156,7 @@ void MemoryPool::freeUnusedPages() {
 		}
 	}
 
-//	debug("freed %d pages out of %d", (int)freedPagesCount, (int)_pages.size());
+	//	debug("freed %d pages out of %d", (int)freedPagesCount, (int)_pages.size());
 
 	// Remove all now unused pages
 	size_t newSize = 0;

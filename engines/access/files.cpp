@@ -20,11 +20,11 @@
  *
  */
 
-#include "common/substream.h"
 #include "access/files.h"
+#include "access/access.h"
 #include "access/amazon/amazon_resources.h"
 #include "access/martian/martian_resources.h"
-#include "access/access.h"
+#include "common/substream.h"
 
 namespace Access {
 
@@ -40,7 +40,7 @@ void FileIdent::load(Common::SeekableReadStream &s) {
 
 /*------------------------------------------------------------------------*/
 
-CellIdent::	CellIdent() {
+CellIdent::CellIdent() {
 	_cell = 0;
 }
 
@@ -83,7 +83,8 @@ byte *Resource::data() {
 
 /*------------------------------------------------------------------------*/
 
-FileManager::FileManager(AccessEngine *vm) : _vm(vm) {
+FileManager::FileManager(AccessEngine *vm)
+  : _vm(vm) {
 	_fileNumber = -1;
 	_setPaletteFlag = true;
 }
@@ -148,7 +149,7 @@ void FileManager::handleScreen(Graphics::ManagedSurface *dest, Resource *res) {
 	handleFile(res);
 
 	Graphics::Surface destSurface = dest->getSubArea(Common::Rect(0, 0,
-		_vm->_screen->w, _vm->_screen->h));
+	                                                              _vm->_screen->w, _vm->_screen->h));
 
 	if (destSurface.w == destSurface.pitch) {
 		res->_stream->read((byte *)destSurface.getPixels(), destSurface.w * destSurface.h);
@@ -216,8 +217,7 @@ void FileManager::setAppended(Resource *res, int fileNum) {
 
 void FileManager::gotoAppended(Resource *res, int subfile) {
 	uint32 offset = _fileIndex[subfile];
-	uint32 size = (subfile == (int)_fileIndex.size() - 1) ? res->_file.size() - offset :
-		_fileIndex[subfile + 1] - offset;
+	uint32 size = (subfile == (int)_fileIndex.size() - 1) ? res->_file.size() - offset : _fileIndex[subfile + 1] - offset;
 
 	res->_size = size;
 	res->_stream = new Common::SeekableSubReadStream(&res->_file, offset, offset + size);

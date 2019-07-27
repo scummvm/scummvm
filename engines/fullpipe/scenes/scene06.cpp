@@ -22,18 +22,18 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objects.h"
-#include "fullpipe/objectnames.h"
+#include "fullpipe/behavior.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/gameloader.h"
 #include "fullpipe/gfx.h"
+#include "fullpipe/interaction.h"
+#include "fullpipe/messages.h"
 #include "fullpipe/motion.h"
+#include "fullpipe/objectnames.h"
+#include "fullpipe/objects.h"
+#include "fullpipe/scene.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
-#include "fullpipe/scene.h"
-#include "fullpipe/messages.h"
-#include "fullpipe/gameloader.h"
-#include "fullpipe/behavior.h"
-#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
@@ -60,7 +60,7 @@ int scene06_updateCursor() {
 				return PIC_CSR_ITN;
 			}
 		} else if (g_fp->_objectAtCursor && g_fp->_objectAtCursor == g_vars->scene06_currentBall
-					&& g_fp->_cursorId == PIC_CSR_DEFAULT) {
+		           && g_fp->_cursorId == PIC_CSR_DEFAULT) {
 			g_fp->_cursorId = PIC_CSR_ITN;
 		}
 	}
@@ -309,9 +309,9 @@ void sceneHandler06_startAiming() {
 void sceneHandler06_takeBall() {
 	if (g_vars->scene06_currentBall && !g_vars->scene06_currentBall->_movement && g_vars->scene06_currentBall->_statics->_staticsId == ST_NBL_NORM) {
 		if (abs(1158 - g_fp->_aniMan->_ox) > 1
-			|| abs(452 - g_fp->_aniMan->_oy) > 1
-			|| g_fp->_aniMan->_movement
-			|| g_fp->_aniMan->_statics->_staticsId != (0x4000 | ST_MAN_RIGHT)) {
+		    || abs(452 - g_fp->_aniMan->_oy) > 1
+		    || g_fp->_aniMan->_movement
+		    || g_fp->_aniMan->_statics->_staticsId != (0x4000 | ST_MAN_RIGHT)) {
 			MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, 1158, 452, 1, (0x4000 | ST_MAN_RIGHT));
 
 			if (mq) {
@@ -359,9 +359,9 @@ void sceneHandler06_ballStartFly() {
 void sceneHandler06_throwCallback(int *arg) {
 	if (g_vars->scene06_aimingBall) {
 		int dist = (g_fp->_mouseVirtY - g_vars->scene06_sceneClickY)
-			* (g_fp->_mouseVirtY - g_vars->scene06_sceneClickY)
-			+ (g_fp->_mouseVirtX - g_vars->scene06_sceneClickX)
-			* (g_fp->_mouseVirtX - g_vars->scene06_sceneClickX);
+		    * (g_fp->_mouseVirtY - g_vars->scene06_sceneClickY)
+		  + (g_fp->_mouseVirtX - g_vars->scene06_sceneClickX)
+		    * (g_fp->_mouseVirtX - g_vars->scene06_sceneClickX);
 
 		*arg = (int)(sqrt((double)dist) * 0.1);
 
@@ -461,7 +461,7 @@ void sceneHandler06_catchBall() {
 
 			g_vars->scene06_mumsy->changeStatics2(ST_MOM_STANDS);
 			g_vars->scene06_mumsy->setOXY(point.x + g_vars->scene06_mumsy->_ox,
-										  point.y + g_vars->scene06_mumsy->_oy);
+			                              point.y + g_vars->scene06_mumsy->_oy);
 		} else {
 			g_vars->scene06_mumsy->changeStatics2(ST_MOM_STANDS);
 		}
@@ -538,7 +538,7 @@ int sceneHandler06(ExCommand *ex) {
 	if (ex->_messageKind != 17)
 		return 0;
 
-	switch(ex->_messageNum) {
+	switch (ex->_messageNum) {
 	case MSG_LIFT_CLOSEDOOR:
 		g_fp->lift_closedoorSeq();
 		break;
@@ -636,129 +636,127 @@ int sceneHandler06(ExCommand *ex) {
 		}
 		break;
 
-	case 29:
-		{
-			StaticANIObject *st = g_fp->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
+	case 29: {
+		StaticANIObject *st = g_fp->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
 
-			if (st) {
-				if (!g_vars->scene06_arcadeEnabled && st->_id == ANI_LIFTBUTTON) {
-					g_fp->lift_animateButton(st);
-					ex->_messageKind = 0;
+		if (st) {
+			if (!g_vars->scene06_arcadeEnabled && st->_id == ANI_LIFTBUTTON) {
+				g_fp->lift_animateButton(st);
+				ex->_messageKind = 0;
+				return 0;
+			}
+
+			if (g_vars->scene06_currentBall == st) {
+				if (g_vars->scene06_numBallsGiven == 1)
+					sceneHandler06_takeBall();
+
+				ex->_messageKind = 0;
+			} else if (g_vars->scene06_ballInHands && g_fp->_aniMan == st && !g_fp->_aniMan->_movement && g_fp->_aniMan->_statics->_staticsId == ST_MAN6_BALL) {
+				g_vars->scene06_sceneClickX = ex->_sceneClickX;
+				g_vars->scene06_sceneClickY = ex->_sceneClickY;
+
+				sceneHandler06_throwBall();
+			}
+		}
+
+		if (!st || !canInteractAny(g_fp->_aniMan, st, ex->_param)) {
+			int picId = g_fp->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY);
+			PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
+
+			if (!pic || !canInteractAny(g_fp->_aniMan, pic, ex->_param)) {
+				if ((g_fp->_sceneRect.right - ex->_sceneClickX < 47
+				     && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
+				    || (ex->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
+					g_fp->processArcade(ex);
 					return 0;
 				}
-
-				if (g_vars->scene06_currentBall == st) {
-					if (g_vars->scene06_numBallsGiven == 1)
-						sceneHandler06_takeBall();
-
-					ex->_messageKind = 0;
-				} else if (g_vars->scene06_ballInHands && g_fp->_aniMan == st && !g_fp->_aniMan->_movement && g_fp->_aniMan->_statics->_staticsId == ST_MAN6_BALL) {
-					g_vars->scene06_sceneClickX = ex->_sceneClickX;
-					g_vars->scene06_sceneClickY = ex->_sceneClickY;
-
-					sceneHandler06_throwBall();
-				}
-			}
-
-			if (!st || !canInteractAny(g_fp->_aniMan, st, ex->_param)) {
-				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY);
-				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
-
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic, ex->_param)) {
-					if ((g_fp->_sceneRect.right - ex->_sceneClickX < 47
-						 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
-						|| (ex->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
-						g_fp->processArcade(ex);
-						return 0;
-					}
-				}
 			}
 		}
+	}
 
-		break;
+	break;
 
-	case 33:
-		{
-			int res = 0;
+	case 33: {
+		int res = 0;
 
-			if (g_fp->_aniMan2) {
-				int ox = g_fp->_aniMan2->_ox;
-				int oy = g_fp->_aniMan2->_oy;
+		if (g_fp->_aniMan2) {
+			int ox = g_fp->_aniMan2->_ox;
+			int oy = g_fp->_aniMan2->_oy;
 
-				g_vars->scene06_manX = ox;
-				g_vars->scene06_manY = oy;
+			g_vars->scene06_manX = ox;
+			g_vars->scene06_manY = oy;
 
-				if (g_vars->scene06_arcadeEnabled && oy <= 470 && ox >= 1088) {
-					if (ox < g_fp->_sceneRect.left + 600) {
-						g_fp->_currentScene->_x = ox - g_fp->_sceneRect.left - 700;
-						ox = g_vars->scene06_manX;
-					}
-
-					if (ox > g_fp->_sceneRect.right - 50)
-						g_fp->_currentScene->_x = ox - g_fp->_sceneRect.right + 70;
-				} else {
-					if (ox < g_fp->_sceneRect.left + 200) {
-						g_fp->_currentScene->_x = ox - g_fp->_sceneRect.left - 300;
-						ox = g_vars->scene06_manX;
-					}
-
-					if (ox > g_fp->_sceneRect.right - 200)
-						g_fp->_currentScene->_x = ox - g_fp->_sceneRect.right + 300;
+			if (g_vars->scene06_arcadeEnabled && oy <= 470 && ox >= 1088) {
+				if (ox < g_fp->_sceneRect.left + 600) {
+					g_fp->_currentScene->_x = ox - g_fp->_sceneRect.left - 700;
+					ox = g_vars->scene06_manX;
 				}
 
-				res = 1;
-
-				g_fp->sceneAutoScrolling();
-			}
-			if (g_vars->scene06_arcadeEnabled) {
-				if (g_vars->scene06_mumsyPos > -3)
-					g_vars->scene06_mumsyJumpBk->_percent = g_vars->scene06_mumsyJumpBkPercent;
-				else
-					g_vars->scene06_mumsyJumpBk->_percent = 0;
-
-				if (g_vars->scene06_mumsyPos < 4)
-					g_vars->scene06_mumsyJumpFw->_percent = g_vars->scene06_mumsyJumpFwPercent;
-				else
-					g_vars->scene06_mumsyJumpFw->_percent = 0;
-
-				if (g_vars->scene06_aimingBall) {
-					g_vars->scene06_eggieTimeout++;
-
-					if (g_vars->scene06_eggieTimeout >= 600)
-						sceneHandler06_eggieWalk();
-				}
+				if (ox > g_fp->_sceneRect.right - 50)
+					g_fp->_currentScene->_x = ox - g_fp->_sceneRect.right + 70;
 			} else {
-				g_vars->scene06_mumsyJumpFw->_percent = 0;
-				g_vars->scene06_mumsyJumpBk->_percent = 0;
+				if (ox < g_fp->_sceneRect.left + 200) {
+					g_fp->_currentScene->_x = ox - g_fp->_sceneRect.left - 300;
+					ox = g_vars->scene06_manX;
+				}
+
+				if (ox > g_fp->_sceneRect.right - 200)
+					g_fp->_currentScene->_x = ox - g_fp->_sceneRect.right + 300;
 			}
 
-			if (g_vars->scene06_flyingBall) {
-				g_vars->scene06_ballX = g_vars->scene06_flyingBall->_ox - g_vars->scene06_ballDeltaX;
-				g_vars->scene06_ballY = g_vars->scene06_flyingBall->_oy - g_vars->scene06_ballDeltaY;
+			res = 1;
 
-				g_vars->scene06_flyingBall->setOXY(g_vars->scene06_ballX, g_vars->scene06_ballY);
-
-				if (g_vars->scene06_ballDeltaX >= 2)
-					g_vars->scene06_ballDeltaX -= 2;
-
-				g_vars->scene06_ballDeltaY -= 5;
-
-				sceneHandler06_checkBallTarget(g_vars->scene06_ballDeltaX);
-			}
-			if (g_vars->scene06_arcadeEnabled
-				&& !g_vars->scene06_currentBall
-				&& !g_vars->scene06_ballInHands
-				&& !g_vars->scene06_flyingBall
-				&& g_vars->scene06_numBallsGiven >= 15
-				&& !g_vars->scene06_ballDrop->_movement
-				&& !g_vars->scene06_mumsy->_movement
-				&& !g_vars->scene06_mumsyGotBall)
-				sceneHandler06_mumsyBallTake();
-			g_fp->_behaviorManager->updateBehaviors();
-			g_fp->startSceneTrack();
-
-			return res;
+			g_fp->sceneAutoScrolling();
 		}
+		if (g_vars->scene06_arcadeEnabled) {
+			if (g_vars->scene06_mumsyPos > -3)
+				g_vars->scene06_mumsyJumpBk->_percent = g_vars->scene06_mumsyJumpBkPercent;
+			else
+				g_vars->scene06_mumsyJumpBk->_percent = 0;
+
+			if (g_vars->scene06_mumsyPos < 4)
+				g_vars->scene06_mumsyJumpFw->_percent = g_vars->scene06_mumsyJumpFwPercent;
+			else
+				g_vars->scene06_mumsyJumpFw->_percent = 0;
+
+			if (g_vars->scene06_aimingBall) {
+				g_vars->scene06_eggieTimeout++;
+
+				if (g_vars->scene06_eggieTimeout >= 600)
+					sceneHandler06_eggieWalk();
+			}
+		} else {
+			g_vars->scene06_mumsyJumpFw->_percent = 0;
+			g_vars->scene06_mumsyJumpBk->_percent = 0;
+		}
+
+		if (g_vars->scene06_flyingBall) {
+			g_vars->scene06_ballX = g_vars->scene06_flyingBall->_ox - g_vars->scene06_ballDeltaX;
+			g_vars->scene06_ballY = g_vars->scene06_flyingBall->_oy - g_vars->scene06_ballDeltaY;
+
+			g_vars->scene06_flyingBall->setOXY(g_vars->scene06_ballX, g_vars->scene06_ballY);
+
+			if (g_vars->scene06_ballDeltaX >= 2)
+				g_vars->scene06_ballDeltaX -= 2;
+
+			g_vars->scene06_ballDeltaY -= 5;
+
+			sceneHandler06_checkBallTarget(g_vars->scene06_ballDeltaX);
+		}
+		if (g_vars->scene06_arcadeEnabled
+		    && !g_vars->scene06_currentBall
+		    && !g_vars->scene06_ballInHands
+		    && !g_vars->scene06_flyingBall
+		    && g_vars->scene06_numBallsGiven >= 15
+		    && !g_vars->scene06_ballDrop->_movement
+		    && !g_vars->scene06_mumsy->_movement
+		    && !g_vars->scene06_mumsyGotBall)
+			sceneHandler06_mumsyBallTake();
+		g_fp->_behaviorManager->updateBehaviors();
+		g_fp->startSceneTrack();
+
+		return res;
+	}
 	}
 
 	return 0;

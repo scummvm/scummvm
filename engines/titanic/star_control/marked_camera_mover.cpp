@@ -28,12 +28,12 @@
 
 namespace Titanic {
 
-CMarkedCameraMover::CMarkedCameraMover(const CNavigationInfo *src) :
-		CCameraMover(src) {
+CMarkedCameraMover::CMarkedCameraMover(const CNavigationInfo *src)
+  : CCameraMover(src) {
 }
 
 void CMarkedCameraMover::transitionBetweenPosOrients(const FVector &oldPos, const FVector &newPos,
-		const FMatrix &oldOrientation, const FMatrix &newOrientation) {
+                                                     const FMatrix &oldOrientation, const FMatrix &newOrientation) {
 	if (isLocked())
 		decLockCount();
 

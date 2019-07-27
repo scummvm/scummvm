@@ -20,16 +20,17 @@
  *
  */
 
+#include "scumm/he/moonbase/ai_defenseunit.h"
 #include "common/rect.h"
 #include "common/util.h"
 #include "scumm/he/intern_he.h"
-#include "scumm/he/moonbase/moonbase.h"
-#include "scumm/he/moonbase/ai_defenseunit.h"
 #include "scumm/he/moonbase/ai_main.h"
+#include "scumm/he/moonbase/moonbase.h"
 
 namespace Scumm {
 
-DefenseUnit::DefenseUnit(AI *ai) : _ai(ai) {
+DefenseUnit::DefenseUnit(AI *ai)
+  : _ai(ai) {
 	_state = DUS_ON;
 
 	_id = -1;
@@ -40,7 +41,8 @@ DefenseUnit::DefenseUnit(AI *ai) : _ai(ai) {
 	_cost = 0;
 }
 
-DefenseUnit::DefenseUnit(DefenseUnit *inUnit, AI *ai) : _ai(ai) {
+DefenseUnit::DefenseUnit(DefenseUnit *inUnit, AI *ai)
+  : _ai(ai) {
 	_id = inUnit->getID();
 	_pos.x = inUnit->getPosX();
 	_pos.y = inUnit->getPosY();
@@ -59,7 +61,8 @@ Common::Point *AntiAirUnit::createTargetPos(int index, int distance, int weaponT
 	int radius;
 	Common::Point *targetPos = new Common::Point;
 
-	if (!distance) distance = 1;
+	if (!distance)
+		distance = 1;
 
 	switch (weaponType) {
 	case ITEM_BOMB:
@@ -239,7 +242,7 @@ int ShieldUnit::selectWeapon(int index) {
 
 	switch (index) {
 	case 0:
-		if (getState() == DUS_OFF)  {
+		if (getState() == DUS_OFF) {
 			if (_ai->getPlayerEnergy() < 3) {
 				return ITEM_BOMB;
 			} else {
@@ -309,11 +312,11 @@ int MineUnit::selectWeapon(int index) {
 	}
 }
 
-
 Common::Point *HubUnit::createTargetPos(int index, int distance, int weaponType, int sourceX, int sourceY) {
 	Common::Point *targetPos = new Common::Point;
 
-	if (!distance) distance = 1;
+	if (!distance)
+		distance = 1;
 
 	switch (weaponType) {
 	case ITEM_BOMB:
@@ -378,11 +381,11 @@ int HubUnit::selectWeapon(int index) {
 	return ITEM_BOMB;
 }
 
-
 Common::Point *TowerUnit::createTargetPos(int index, int distance, int weaponType, int sourceX, int sourceY) {
 	Common::Point *targetPos = new Common::Point;
 
-	if (!distance) distance = 1;
+	if (!distance)
+		distance = 1;
 
 	switch (weaponType) {
 	case ITEM_BOMB:
@@ -416,11 +419,11 @@ int TowerUnit::selectWeapon(int index) {
 	}
 }
 
-
 Common::Point *BridgeUnit::createTargetPos(int index, int distance, int weaponType, int sourceX, int sourceY) {
 	Common::Point *targetPos = new Common::Point;
 
-	if (!distance) distance = 1;
+	if (!distance)
+		distance = 1;
 
 	switch (weaponType) {
 	case ITEM_BOMB:
@@ -461,7 +464,8 @@ int BridgeUnit::selectWeapon(int index) {
 Common::Point *EnergyUnit::createTargetPos(int index, int distance, int weaponType, int sourceX, int sourceY) {
 	Common::Point *targetPos = new Common::Point;
 
-	if (!distance) distance = 1;
+	if (!distance)
+		distance = 1;
 
 	switch (weaponType) {
 	case ITEM_BOMB:
@@ -517,7 +521,8 @@ int EnergyUnit::selectWeapon(int index) {
 Common::Point *OffenseUnit::createTargetPos(int index, int distance, int weaponType, int sourceX, int sourceY) {
 	Common::Point *targetPos = new Common::Point;
 
-	if (!distance) distance = 1;
+	if (!distance)
+		distance = 1;
 
 	switch (weaponType) {
 	case ITEM_BOMB:
@@ -628,71 +633,71 @@ int CrawlerUnit::selectWeapon(int index) {
 	return SKIP_TURN;
 }
 
-AntiAirUnit::AntiAirUnit(AI *ai) : DefenseUnit(ai) {
+AntiAirUnit::AntiAirUnit(AI *ai)
+  : DefenseUnit(ai) {
 	setRadius(190);
 	setArmor(3);
 	setCost(1);
 }
 
-ShieldUnit::ShieldUnit(AI *ai) : DefenseUnit(ai) {
+ShieldUnit::ShieldUnit(AI *ai)
+  : DefenseUnit(ai) {
 	setRadius(170);
 	setArmor(3);
 	setCost(7);
 }
 
-MineUnit::MineUnit(AI *ai) : DefenseUnit(ai) {
+MineUnit::MineUnit(AI *ai)
+  : DefenseUnit(ai) {
 	setRadius(80);
 	setArmor(1);
 	setCost(3);
 }
 
-HubUnit::HubUnit(AI *ai) : DefenseUnit(ai) {
+HubUnit::HubUnit(AI *ai)
+  : DefenseUnit(ai) {
 	setRadius(1);
 	setArmor(5);
 	setCost(7);
 }
 
-TowerUnit::TowerUnit(AI *ai) : DefenseUnit(ai) {
+TowerUnit::TowerUnit(AI *ai)
+  : DefenseUnit(ai) {
 	setRadius(1);
 	setArmor(3);
 	setCost(1);
 }
 
-BridgeUnit::BridgeUnit(AI *ai) : DefenseUnit(ai) {
+BridgeUnit::BridgeUnit(AI *ai)
+  : DefenseUnit(ai) {
 	setRadius(1);
 	setArmor(3);
 	setCost(1);
 }
 
-EnergyUnit::EnergyUnit(AI *ai) : DefenseUnit(ai) {
+EnergyUnit::EnergyUnit(AI *ai)
+  : DefenseUnit(ai) {
 	setRadius(1);
 	setArmor(5);
 	setCost(7);
 }
 
-OffenseUnit::OffenseUnit(AI *ai) : DefenseUnit(ai) {
+OffenseUnit::OffenseUnit(AI *ai)
+  : DefenseUnit(ai) {
 	setRadius(1);
 	setArmor(3);
 	setCost(7);
 }
 
-CrawlerUnit::CrawlerUnit(AI *ai) : DefenseUnit(ai) {
+CrawlerUnit::CrawlerUnit(AI *ai)
+  : DefenseUnit(ai) {
 	setRadius(1);
 	setArmor(3);
 	setCost(7);
 }
 
-AntiAirUnit::AntiAirUnit(DefenseUnit *inUnit, AI *ai) : DefenseUnit(inUnit, ai) {
-	setID(inUnit->getID());
-	setPos(inUnit->getPosX(), inUnit->getPosY());
-	setDistanceTo(inUnit->getDistanceTo());
-	setState(inUnit->getState());
-	setRadius(inUnit->getRadius());
-	setArmor(inUnit->getArmor());
-
-}
-
-ShieldUnit::ShieldUnit(DefenseUnit *inUnit, AI *ai) : DefenseUnit(inUnit, ai) {
+AntiAirUnit::AntiAirUnit(DefenseUnit *inUnit, AI *ai)
+  : DefenseUnit(inUnit, ai) {
 	setID(inUnit->getID());
 	setPos(inUnit->getPosX(), inUnit->getPosY());
 	setDistanceTo(inUnit->getDistanceTo());
@@ -701,7 +706,8 @@ ShieldUnit::ShieldUnit(DefenseUnit *inUnit, AI *ai) : DefenseUnit(inUnit, ai) {
 	setArmor(inUnit->getArmor());
 }
 
-MineUnit::MineUnit(DefenseUnit *inUnit, AI *ai) : DefenseUnit(inUnit, ai) {
+ShieldUnit::ShieldUnit(DefenseUnit *inUnit, AI *ai)
+  : DefenseUnit(inUnit, ai) {
 	setID(inUnit->getID());
 	setPos(inUnit->getPosX(), inUnit->getPosY());
 	setDistanceTo(inUnit->getDistanceTo());
@@ -710,7 +716,8 @@ MineUnit::MineUnit(DefenseUnit *inUnit, AI *ai) : DefenseUnit(inUnit, ai) {
 	setArmor(inUnit->getArmor());
 }
 
-HubUnit::HubUnit(DefenseUnit *inUnit, AI *ai) : DefenseUnit(inUnit, ai) {
+MineUnit::MineUnit(DefenseUnit *inUnit, AI *ai)
+  : DefenseUnit(inUnit, ai) {
 	setID(inUnit->getID());
 	setPos(inUnit->getPosX(), inUnit->getPosY());
 	setDistanceTo(inUnit->getDistanceTo());
@@ -719,7 +726,8 @@ HubUnit::HubUnit(DefenseUnit *inUnit, AI *ai) : DefenseUnit(inUnit, ai) {
 	setArmor(inUnit->getArmor());
 }
 
-TowerUnit::TowerUnit(DefenseUnit *inUnit, AI *ai) : DefenseUnit(inUnit, ai) {
+HubUnit::HubUnit(DefenseUnit *inUnit, AI *ai)
+  : DefenseUnit(inUnit, ai) {
 	setID(inUnit->getID());
 	setPos(inUnit->getPosX(), inUnit->getPosY());
 	setDistanceTo(inUnit->getDistanceTo());
@@ -728,7 +736,8 @@ TowerUnit::TowerUnit(DefenseUnit *inUnit, AI *ai) : DefenseUnit(inUnit, ai) {
 	setArmor(inUnit->getArmor());
 }
 
-BridgeUnit::BridgeUnit(DefenseUnit *inUnit, AI *ai) : DefenseUnit(inUnit, ai) {
+TowerUnit::TowerUnit(DefenseUnit *inUnit, AI *ai)
+  : DefenseUnit(inUnit, ai) {
 	setID(inUnit->getID());
 	setPos(inUnit->getPosX(), inUnit->getPosY());
 	setDistanceTo(inUnit->getDistanceTo());
@@ -737,7 +746,8 @@ BridgeUnit::BridgeUnit(DefenseUnit *inUnit, AI *ai) : DefenseUnit(inUnit, ai) {
 	setArmor(inUnit->getArmor());
 }
 
-EnergyUnit::EnergyUnit(DefenseUnit *inUnit, AI *ai) : DefenseUnit(inUnit, ai) {
+BridgeUnit::BridgeUnit(DefenseUnit *inUnit, AI *ai)
+  : DefenseUnit(inUnit, ai) {
 	setID(inUnit->getID());
 	setPos(inUnit->getPosX(), inUnit->getPosY());
 	setDistanceTo(inUnit->getDistanceTo());
@@ -746,7 +756,8 @@ EnergyUnit::EnergyUnit(DefenseUnit *inUnit, AI *ai) : DefenseUnit(inUnit, ai) {
 	setArmor(inUnit->getArmor());
 }
 
-OffenseUnit::OffenseUnit(DefenseUnit *inUnit, AI *ai) : DefenseUnit(inUnit, ai) {
+EnergyUnit::EnergyUnit(DefenseUnit *inUnit, AI *ai)
+  : DefenseUnit(inUnit, ai) {
 	setID(inUnit->getID());
 	setPos(inUnit->getPosX(), inUnit->getPosY());
 	setDistanceTo(inUnit->getDistanceTo());
@@ -755,7 +766,18 @@ OffenseUnit::OffenseUnit(DefenseUnit *inUnit, AI *ai) : DefenseUnit(inUnit, ai) 
 	setArmor(inUnit->getArmor());
 }
 
-CrawlerUnit::CrawlerUnit(DefenseUnit *inUnit, AI *ai) : DefenseUnit(inUnit, ai) {
+OffenseUnit::OffenseUnit(DefenseUnit *inUnit, AI *ai)
+  : DefenseUnit(inUnit, ai) {
+	setID(inUnit->getID());
+	setPos(inUnit->getPosX(), inUnit->getPosY());
+	setDistanceTo(inUnit->getDistanceTo());
+	setState(inUnit->getState());
+	setRadius(inUnit->getRadius());
+	setArmor(inUnit->getArmor());
+}
+
+CrawlerUnit::CrawlerUnit(DefenseUnit *inUnit, AI *ai)
+  : DefenseUnit(inUnit, ai) {
 	setID(inUnit->getID());
 	setPos(inUnit->getPosX(), inUnit->getPosY());
 	setDistanceTo(inUnit->getDistanceTo());

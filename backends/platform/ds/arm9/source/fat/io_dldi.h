@@ -18,8 +18,8 @@
 
 #include "disc_io.h"
 #ifdef NDS
-#include <nds/memory.h>
-#include <nds.h>
+#	include <nds.h>
+#	include <nds/memory.h>
 #endif
 
 extern IO_INTERFACE _io_dldi;
@@ -35,4 +35,4 @@ static inline LPIO_INTERFACE DLDI_GetInterface(void) {
 	return &_io_dldi;
 }
 
-#endif	// define IO_DLDI_H
+#endif // define IO_DLDI_H

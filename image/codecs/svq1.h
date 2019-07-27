@@ -68,11 +68,11 @@ private:
 	bool svq1DecodeMotionVector(Common::BitStream32BEMSB *s, Common::Point *mv, Common::Point **pmv);
 	void svq1SkipBlock(byte *current, byte *previous, int pitch, int x, int y);
 	bool svq1MotionInterBlock(Common::BitStream32BEMSB *ss, byte *current, byte *previous, int pitch,
-			Common::Point *motion, int x, int y);
+	                          Common::Point *motion, int x, int y);
 	bool svq1MotionInter4vBlock(Common::BitStream32BEMSB *ss, byte *current, byte *previous, int pitch,
-			Common::Point *motion, int x, int y);
+	                            Common::Point *motion, int x, int y);
 	bool svq1DecodeDeltaBlock(Common::BitStream32BEMSB *ss, byte *current, byte *previous, int pitch,
-			Common::Point *motion, int x, int y);
+	                          Common::Point *motion, int x, int y);
 
 	void putPixels8C(byte *block, const byte *pixels, int lineSize, int h);
 	void putPixels8L2(byte *dst, const byte *src1, const byte *src2, int dstStride, int srcStride1, int srcStride2, int h);

@@ -25,11 +25,11 @@
 #include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/font.h"
+#include "bladerunner/game_constants.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/savefile.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/time.h"
-#include "bladerunner/game_constants.h"
 #include "bladerunner/ui/kia.h"
 #include "bladerunner/ui/kia_shapes.h"
 #include "bladerunner/ui/ui_container.h"
@@ -43,7 +43,8 @@
 
 namespace BladeRunner {
 
-KIASectionSave::KIASectionSave(BladeRunnerEngine *vm) : KIASectionBase(vm) {
+KIASectionSave::KIASectionSave(BladeRunnerEngine *vm)
+  : KIASectionBase(vm) {
 	_uiContainer = new UIContainer(_vm);
 
 	_scrollBox = new UIScrollBox(_vm, scrollBoxCallback, this, 1024, 0, true, Common::Rect(155, 158, 461, 346), Common::Rect(506, 160, 506, 350));
@@ -84,12 +85,12 @@ void KIASectionSave::open() {
 
 	_buttons->resetImages();
 	_buttons->defineImage(
-		0,
-		Common::Rect(460, 366, 497, 402),
-		_vm->_kia->_shapes->get(82),
-		_vm->_kia->_shapes->get(83),
-		_vm->_kia->_shapes->get(84),
-		_vm->_textOptions->getText(22) // Save
+	  0,
+	  Common::Rect(460, 366, 497, 402),
+	  _vm->_kia->_shapes->get(82),
+	  _vm->_kia->_shapes->get(83),
+	  _vm->_kia->_shapes->get(84),
+	  _vm->_textOptions->getText(22) // Save
 	);
 
 	_scrollBox->show();
@@ -284,7 +285,6 @@ void KIASectionSave::handleMouseScroll(int direction) {
 	}
 }
 
-
 void KIASectionSave::scrollBoxCallback(void *callbackData, void *source, int lineData, int mouseButton) {
 	KIASectionSave *self = (KIASectionSave *)callbackData;
 
@@ -304,7 +304,7 @@ void KIASectionSave::scrollBoxCallback(void *callbackData, void *source, int lin
 	}
 }
 
-void  KIASectionSave::inputBoxCallback(void *callbackData, void *source) {
+void KIASectionSave::inputBoxCallback(void *callbackData, void *source) {
 	KIASectionSave *self = (KIASectionSave *)callbackData;
 	if (source == self->_inputBox) {
 		if (self->_selectedLineId == self->_newSaveLineId) {
@@ -319,24 +319,18 @@ void KIASectionSave::onButtonPressed(int buttonId, void *callbackData) {
 	KIASectionSave *self = (KIASectionSave *)callbackData;
 
 	if (buttonId == 0) {
-		if (self->_selectedLineId == self->_newSaveLineId)
-		{
+		if (self->_selectedLineId == self->_newSaveLineId) {
 			self->save();
-		}
-		else
-		{
+		} else {
 			self->changeState(kStateOverwrite);
 		}
 	} else if (buttonId == 1) {
 		self->changeState(kStateNormal);
 		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxSPNBEEP6), 90, -50, -50, 50, 0);
 	} else if (buttonId == 2) {
-		if (self->_state == kStateOverwrite)
-		{
+		if (self->_state == kStateOverwrite) {
 			self->save();
-		}
-		else if (self->_state == kStateDelete)
-		{
+		} else if (self->_state == kStateDelete) {
 			self->deleteSave();
 		}
 	}
@@ -347,30 +341,30 @@ void KIASectionSave::changeState(State state) {
 	if (state == kStateNormal) {
 		_buttons->resetImages();
 		_buttons->defineImage(
-			0,
-			Common::Rect(460, 366, 497, 402),
-			_vm->_kia->_shapes->get(82),
-			_vm->_kia->_shapes->get(83),
-			_vm->_kia->_shapes->get(84),
-			_vm->_textOptions->getText(22) // Save
+		  0,
+		  Common::Rect(460, 366, 497, 402),
+		  _vm->_kia->_shapes->get(82),
+		  _vm->_kia->_shapes->get(83),
+		  _vm->_kia->_shapes->get(84),
+		  _vm->_textOptions->getText(22) // Save
 		);
 	} else {
 		_buttons->resetImages();
 		_buttons->defineImage(
-			1,
-			Common::Rect(318, 260, 357, 299),
-			_vm->_kia->_shapes->get(126),
-			_vm->_kia->_shapes->get(127),
-			_vm->_kia->_shapes->get(128),
-			_vm->_textOptions->getText(38) // No
+		  1,
+		  Common::Rect(318, 260, 357, 299),
+		  _vm->_kia->_shapes->get(126),
+		  _vm->_kia->_shapes->get(127),
+		  _vm->_kia->_shapes->get(128),
+		  _vm->_textOptions->getText(38) // No
 		);
 		_buttons->defineImage(
-			2,
-			Common::Rect(258, 260, 297, 299),
-			_vm->_kia->_shapes->get(129),
-			_vm->_kia->_shapes->get(130),
-			_vm->_kia->_shapes->get(131),
-			_vm->_textOptions->getText(39) // Yes
+		  2,
+		  Common::Rect(258, 260, 297, 299),
+		  _vm->_kia->_shapes->get(129),
+		  _vm->_kia->_shapes->get(130),
+		  _vm->_kia->_shapes->get(131),
+		  _vm->_textOptions->getText(39) // Yes
 		);
 		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxSPNBEEP7), 90, 0, 0, 50, 0);
 	}

@@ -20,10 +20,10 @@
  *
  */
 
-#include "common/memstream.h"
-#include "access/access.h"
 #include "access/char.h"
+#include "access/access.h"
 #include "access/amazon/amazon_resources.h"
+#include "common/memstream.h"
 
 namespace Access {
 
@@ -77,7 +77,8 @@ CharEntry::CharEntry() {
 
 /*------------------------------------------------------------------------*/
 
-CharManager::CharManager(AccessEngine *vm) : Manager(vm) {
+CharManager::CharManager(AccessEngine *vm)
+  : Manager(vm) {
 	// Setup character list
 	for (uint idx = 0; idx < _vm->_res->CHARTBL.size(); ++idx) {
 		if (_vm->_res->CHARTBL[idx].size() == 0)

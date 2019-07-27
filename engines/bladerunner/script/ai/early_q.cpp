@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptEarlyQ::AIScriptEarlyQ(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptEarlyQ::AIScriptEarlyQ(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 	_var1 = 0;
 	_var2 = 0;
 	_var3 = 1;
@@ -44,9 +45,8 @@ void AIScriptEarlyQ::Initialize() {
 }
 
 bool AIScriptEarlyQ::Update() {
-	if ( Global_Variable_Query(kVariableChapter) == 1
-	 && !Game_Flag_Query(kFlagEarlyQStartedChapter1)
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 1
+	    && !Game_Flag_Query(kFlagEarlyQStartedChapter1)) {
 		Game_Flag_Set(kFlagEarlyQStartedChapter1);
 		Actor_Put_In_Set(kActorEarlyQ, kSetFreeSlotH);
 		Actor_Set_At_Waypoint(kActorEarlyQ, 40, 0);
@@ -54,9 +54,8 @@ bool AIScriptEarlyQ::Update() {
 		return true;
 	}
 
-	if ( Global_Variable_Query(kVariableChapter) == 2
-	 && !Game_Flag_Query(kFlagEarlyQStartedChapter2)
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 2
+	    && !Game_Flag_Query(kFlagEarlyQStartedChapter2)) {
 		Game_Flag_Set(kFlagEarlyQStartedChapter2);
 		Actor_Put_In_Set(kActorEarlyQ, kSetFreeSlotH);
 		Actor_Set_At_Waypoint(kActorEarlyQ, 40, 0);
@@ -64,9 +63,8 @@ bool AIScriptEarlyQ::Update() {
 		return true;
 	}
 
-	if ( Global_Variable_Query(kVariableChapter) == 3
-	 && !Game_Flag_Query(kFlagEarlyQStartedChapter3)
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 3
+	    && !Game_Flag_Query(kFlagEarlyQStartedChapter3)) {
 		Game_Flag_Set(kFlagEarlyQStartedChapter3);
 		Actor_Put_In_Set(kActorEarlyQ, kSetFreeSlotH);
 		Actor_Set_At_Waypoint(kActorEarlyQ, 40, 0);
@@ -79,8 +77,7 @@ bool AIScriptEarlyQ::Update() {
 
 void AIScriptEarlyQ::TimerExpired(int timer) {
 	if (timer == kActorTimerAIScriptCustomTask0
-	 && Actor_Query_Goal_Number(kActorEarlyQ) == kGoalEarlyQNR05WillLeave
-	) {
+	    && Actor_Query_Goal_Number(kActorEarlyQ) == kGoalEarlyQNR05WillLeave) {
 		if (Player_Query_Current_Scene() == kSceneNR05) {
 			AI_Countdown_Timer_Reset(kActorEarlyQ, kActorTimerAIScriptCustomTask0);
 			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR05Leave);
@@ -91,8 +88,7 @@ void AIScriptEarlyQ::TimerExpired(int timer) {
 	}
 
 	if (timer == kActorTimerAIScriptCustomTask0
-	 && Actor_Query_Goal_Number(kActorEarlyQ) == kGoalEarlyQNR04GoToMcCoy
-	) {
+	    && Actor_Query_Goal_Number(kActorEarlyQ) == kGoalEarlyQNR04GoToMcCoy) {
 		Player_Loses_Control();
 		AI_Countdown_Timer_Reset(kActorEarlyQ, kActorTimerAIScriptCustomTask0);
 		Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR04HandDrink);
@@ -100,8 +96,7 @@ void AIScriptEarlyQ::TimerExpired(int timer) {
 	}
 
 	if (timer == kActorTimerAIScriptCustomTask1
-	 && Actor_Query_Goal_Number(kActorEarlyQ) == kGoalEarlyQNR04WaitForPulledGun
-	) {
+	    && Actor_Query_Goal_Number(kActorEarlyQ) == kGoalEarlyQNR04WaitForPulledGun) {
 		AI_Countdown_Timer_Reset(kActorEarlyQ, kActorTimerAIScriptCustomTask1);
 		Player_Loses_Control();
 		Actor_Change_Animation_Mode(kActorEarlyQ, 29);
@@ -198,11 +193,10 @@ void AIScriptEarlyQ::OtherAgentExitedThisScene(int otherActorId) {
 }
 
 void AIScriptEarlyQ::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
-	if ( Game_Flag_Query(kFlagNR04EarlyQWalkedIn)
-	 &&  otherActorId == kActorMcCoy
-	 &&  combatMode
-	 && !Game_Flag_Query(kFlagNR04McCoyAimedAtEarlyQ)
-	) {
+	if (Game_Flag_Query(kFlagNR04EarlyQWalkedIn)
+	    && otherActorId == kActorMcCoy
+	    && combatMode
+	    && !Game_Flag_Query(kFlagNR04McCoyAimedAtEarlyQ)) {
 		if (!Game_Flag_Query(kFlagNotUsed565)) {
 			Game_Flag_Set(kFlagNotUsed565);
 		}
@@ -212,10 +206,9 @@ void AIScriptEarlyQ::OtherAgentEnteredCombatMode(int otherActorId, int combatMod
 		return; // true;
 	}
 
-	if ( Actor_Query_Goal_Number(kActorEarlyQ) == kGoalEarlyQNR04WaitForPulledGun
-	 &&  otherActorId == kActorMcCoy
-	 && !combatMode
-	) {
+	if (Actor_Query_Goal_Number(kActorEarlyQ) == kGoalEarlyQNR04WaitForPulledGun
+	    && otherActorId == kActorMcCoy
+	    && !combatMode) {
 		if (Game_Flag_Query(kFlagNotUsed565)) {
 			Game_Flag_Reset(kFlagNotUsed565);
 		}
@@ -237,8 +230,7 @@ void AIScriptEarlyQ::ShotAtAndMissed() {
 
 bool AIScriptEarlyQ::ShotAtAndHit() {
 	if (Actor_Query_Goal_Number(kActorEarlyQ) >= 201
-	 && Actor_Query_Goal_Number(kActorEarlyQ) <= 217
-	) {
+	    && Actor_Query_Goal_Number(kActorEarlyQ) <= 217) {
 		Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR04GetShot);
 		return true;
 	}
@@ -307,9 +299,8 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Put_In_Set(kActorEarlyQ, kSetFreeSlotH);
 		Actor_Set_At_Waypoint(kActorEarlyQ, 40, 0);
 		if (Game_Flag_Query(kFlagDektoraIsReplicant)
-		 && Game_Flag_Query(kFlagGordoRanAway)
-		 && Game_Flag_Query(kFlagLucyRanAway)
-		) {
+		    && Game_Flag_Query(kFlagGordoRanAway)
+		    && Game_Flag_Query(kFlagLucyRanAway)) {
 			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR05Wait);
 		} else if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
 			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR04Wait);
@@ -644,7 +635,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 			Ambient_Sounds_Play_Sound(kSfxMALEHURT, 59, 0, 0, 20);
 		}
 		if (_animationFrame == 8) {
-			Ambient_Sounds_Play_Sound(kSfxBARSFX3,  47, 0, 0, 20);
+			Ambient_Sounds_Play_Sound(kSfxBARSFX3, 47, 0, 0, 20);
 		}
 		if (_animationFrame == 11) {
 			Ambient_Sounds_Play_Sound(kSfxDROPGLAS, 27, 0, 0, 20);
@@ -902,11 +893,9 @@ bool AIScriptEarlyQ::ChangeAnimationMode(int mode) {
 
 	case kAnimationModeCombatIdle:
 		if ((unsigned int)(_animationState - 12) > 3
-		 || (_animationState != 12
-		  && _animationState != 13
-		  && _animationState != 15
-		 )
-		) {
+		    || (_animationState != 12
+		        && _animationState != 13
+		        && _animationState != 15)) {
 			_animationState = 13;
 			_animationFrame = 0;
 		}
@@ -972,11 +961,9 @@ bool AIScriptEarlyQ::ChangeAnimationMode(int mode) {
 
 	case kAnimationModeHit:
 		if ((unsigned int)(_animationState - 12) > 3
-		 || (_animationState != 12
-		  && _animationState != 13
-		  && _animationState != 15
-		 )
-		) {
+		    || (_animationState != 12
+		        && _animationState != 13
+		        && _animationState != 15)) {
 			if (Random_Query(0, 1)) {
 				_animationState = 16;
 			} else {
@@ -1051,17 +1038,17 @@ bool AIScriptEarlyQ::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptEarlyQ::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptEarlyQ::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptEarlyQ::ReachedMovementTrackWaypoint(int waypointId) {

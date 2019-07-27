@@ -23,17 +23,17 @@
 #ifndef CGE_CGE_H
 #define CGE_CGE_H
 
+#include "cge/bitmap.h"
+#include "cge/console.h"
+#include "cge/sound.h"
 #include "common/random.h"
+#include "common/rect.h"
 #include "common/savefile.h"
 #include "common/serializer.h"
 #include "common/str.h"
-#include "common/rect.h"
 #include "engines/engine.h"
-#include "gui/debugger.h"
 #include "graphics/surface.h"
-#include "cge/console.h"
-#include "cge/bitmap.h"
-#include "cge/sound.h"
+#include "gui/debugger.h"
 
 struct ADGameDescription;
 
@@ -58,27 +58,27 @@ class Talk;
 
 #define kSavegameVersion 3
 #define kSavegameStrSize 11
-#define kPocketX    174
-#define kPocketY    176
-#define kPocketDX   18
-#define kPocketDY   22
-#define kPocketNX   8
-#define kPocketNY   1
-#define kPocketSX   8
-#define kPocketSY   3
-#define kSceneDx    9
-#define kSceneDy    10
-#define kSceneNx    8
-#define kSceneNy    3
-#define kSceneMax   kSceneNx * kSceneNy
-#define kPathMax    128
-#define kCryptSeed  0xA5
-#define kMaxFile    128
-#define kMapXCnt    40
-#define kMapZCnt    20
-#define kMapTop     80
+#define kPocketX 174
+#define kPocketY 176
+#define kPocketDX 18
+#define kPocketDY 22
+#define kPocketNX 8
+#define kPocketNY 1
+#define kPocketSX 8
+#define kPocketSY 3
+#define kSceneDx 9
+#define kSceneDy 10
+#define kSceneNx 8
+#define kSceneNy 3
+#define kSceneMax kSceneNx *kSceneNy
+#define kPathMax 128
+#define kCryptSeed 0xA5
+#define kMaxFile 128
+#define kMapXCnt 40
+#define kMapZCnt 20
+#define kMapTop 80
 
-#define kSayTheEnd  41
+#define kSayTheEnd 41
 
 // our engine debug channels
 enum {
@@ -88,11 +88,16 @@ enum {
 };
 
 enum SnList {
-	kNear, kTake
+	kNear,
+	kTake
 };
 
 enum CallbackType {
-	kNullCB = 0, kQGame, kMiniStep, kXScene, kSoundSetVolume
+	kNullCB = 0,
+	kQGame,
+	kMiniStep,
+	kXScene,
+	kSoundSetVolume
 };
 
 struct SavegameHeader {
@@ -115,10 +120,11 @@ class Font {
 	char _path[kPathMax];
 	void load();
 	CGEEngine *_vm;
+
 public:
-	uint8  *_widthArr;
+	uint8 *_widthArr;
 	uint16 *_pos;
-	uint8  *_map;
+	uint8 *_map;
 	Font(CGEEngine *vm, const char *name);
 	~Font();
 	uint16 width(const char *text);
@@ -134,6 +140,7 @@ private:
 	void syncGame(Common::SeekableReadStream *readStream, Common::WriteStream *writeStream, bool tiny);
 	bool savegameExists(int slotNumber);
 	Common::String generateSaveName(int slot);
+
 public:
 	CGEEngine(OSystem *syst, const ADGameDescription *gameDescription);
 	~CGEEngine();
@@ -147,24 +154,24 @@ public:
 	bool _quitFlag;
 	bool _showBoundariesFl;
 
-	const   ADGameDescription *_gameDescription;
-	int    _startupMode;
-	int    _oldLev;
-	int    _pocPtr;
-	bool   _music;
-	int    _pocref[kPocketNX];
-	uint8  _volume[2];
-	int    _maxScene;
-	bool   _flag[4];
-	bool   _dark;
-	bool   _game;
-	bool   _endGame;
-	int    _now;
-	int    _lev;
-	int    _mode;
-	int    _gameCase2Cpt;
-	int    _offUseCount;
-	Dac   *_bitmapPalette;
+	const ADGameDescription *_gameDescription;
+	int _startupMode;
+	int _oldLev;
+	int _pocPtr;
+	bool _music;
+	int _pocref[kPocketNX];
+	uint8 _volume[2];
+	int _maxScene;
+	bool _flag[4];
+	bool _dark;
+	bool _game;
+	bool _endGame;
+	int _now;
+	int _lev;
+	int _mode;
+	int _gameCase2Cpt;
+	int _offUseCount;
+	Dac *_bitmapPalette;
 	uint8 _clusterMap[kMapZCnt][kMapXCnt];
 
 	Sprite *_sprTv;
@@ -198,12 +205,11 @@ public:
 	Text *_text;
 	Talk *_talk;
 
-
 	Common::RandomSource _randomSource;
 	MusicPlayer *_midiPlayer;
 	BitmapPtr *_miniShp;
 	BitmapPtr *_miniShpList;
-	int        _startGameSlot;
+	int _startGameSlot;
 
 	virtual Common::Error run();
 	GUI::Debugger *getDebugger() {
@@ -252,7 +258,7 @@ public:
 	void selectPocket(int n);
 	void expandSprite(Sprite *spr);
 	void contractSprite(Sprite *spr);
-	int  findPocket(Sprite *spr);
+	int findPocket(Sprite *spr);
 	void feedSnail(Sprite *spr, SnList snq);
 	void pocFul();
 	void hide1(Sprite *spr);
@@ -271,8 +277,8 @@ public:
 	void showBak(int ref);
 	void initSceneValues();
 	char *mergeExt(char *buf, const char *name, const char *ext);
-	int  takeEnum(const char **tab, const char *text);
-	int  newRandom(int range);
+	int takeEnum(const char **tab, const char *text);
+	int newRandom(int range);
 	void sndSetVolume();
 	Sprite *locate(int ref);
 	Sprite *spriteAt(int x, int y);
@@ -322,6 +328,7 @@ public:
 	void snUncover(Sprite *spr, Sprite *xspr);
 	void snWalk(Sprite *spr, int x, int y);
 	void snZTrim(Sprite *spr);
+
 protected:
 	int _recentStep;
 

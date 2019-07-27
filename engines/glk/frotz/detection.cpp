@@ -21,128 +21,127 @@
  */
 
 #include "glk/frotz/detection.h"
-#include "glk/frotz/detection_tables.h"
-#include "glk/frotz/quetzal.h"
-#include "glk/blorb.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
 #include "common/translation.h"
+#include "glk/blorb.h"
+#include "glk/frotz/detection_tables.h"
+#include "glk/frotz/quetzal.h"
 
 namespace Glk {
 namespace Frotz {
 
-void FrotzMetaEngine::getSupportedGames(PlainGameList &games) {
-	for (const PlainGameDescriptor *pd = INFOCOM_GAME_LIST; pd->gameId; ++pd)
-		games.push_back(*pd);
-	for (const PlainGameDescriptor *pd = ZCODE_GAME_LIST; pd->gameId; ++pd)
-		games.push_back(*pd);
-}
-
-GameDescriptor FrotzMetaEngine::findGame(const char *gameId) {
-	for (const PlainGameDescriptor *pd = INFOCOM_GAME_LIST; pd->gameId; ++pd) {
-		if (!strcmp(gameId, pd->gameId)) {
-			GameDescriptor gd(*pd);
-			gd._options |= OPTION_INFOCOM;
-			return gd;
-		}
-	}
-	for (const PlainGameDescriptor *pd = ZCODE_GAME_LIST; pd->gameId; ++pd) {
-		if (!strcmp(gameId, pd->gameId))
-			return *pd;
+	void FrotzMetaEngine::getSupportedGames(PlainGameList &games) {
+		for (const PlainGameDescriptor *pd = INFOCOM_GAME_LIST; pd->gameId; ++pd)
+			games.push_back(*pd);
+		for (const PlainGameDescriptor *pd = ZCODE_GAME_LIST; pd->gameId; ++pd)
+			games.push_back(*pd);
 	}
 
-	return GameDescriptor::empty();
-}
-
-bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
-	const char *const EXTENSIONS[] = { ".z1", ".z2", ".z3", ".z4", ".z5", ".z6", ".z7", ".z8",
-		".dat", ".zip", nullptr };
-
-	// Loop through the files of the folder
-	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		// Check for a recognised filename
-		if (file->isDirectory())
-			continue;
-		Common::String filename = file->getName();
-		bool hasExt = Blorb::hasBlorbExt(filename), isBlorb = false;
-		for (const char *const *ext = &EXTENSIONS[0]; *ext && !hasExt; ++ext)
-			hasExt = filename.hasSuffixIgnoreCase(*ext);
-		if (!hasExt)
-			continue;
-
-		// Open up the file and calculate the md5, and get the serial
-		Common::File gameFile;
-		if (!gameFile.open(*file))
-			continue;
-		Common::String md5 = Common::computeStreamMD5AsString(gameFile, 5000);
-		size_t filesize = gameFile.size();
-		char serial[9] = "";
-		bool emptyBlorb = false;
-		gameFile.seek(0);
-		isBlorb = Blorb::isBlorb(gameFile, ID_ZCOD);
-
-		if (!isBlorb) {
-			if (Blorb::hasBlorbExt(filename)) {
-				gameFile.close();
-				continue;
+	GameDescriptor FrotzMetaEngine::findGame(const char *gameId) {
+		for (const PlainGameDescriptor *pd = INFOCOM_GAME_LIST; pd->gameId; ++pd) {
+			if (!strcmp(gameId, pd->gameId)) {
+				GameDescriptor gd(*pd);
+				gd._options |= OPTION_INFOCOM;
+				return gd;
 			}
-			gameFile.seek(18);
-			strcpy(&serial[0], "\"");
-			gameFile.read(&serial[1], 6);
-			strcpy(&serial[7], "\"");
-		} else {
-			Blorb b(*file, INTERPRETER_FROTZ);
-			Common::SeekableReadStream *f = b.createReadStreamForMember("game");
-			emptyBlorb = f == nullptr;
+		}
+		for (const PlainGameDescriptor *pd = ZCODE_GAME_LIST; pd->gameId; ++pd) {
+			if (!strcmp(gameId, pd->gameId))
+				return *pd;
+		}
 
-			if (!emptyBlorb) {
-				f->seek(18);
+		return GameDescriptor::empty();
+	}
+
+	bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
+		const char *const EXTENSIONS[] = { ".z1", ".z2", ".z3", ".z4", ".z5", ".z6", ".z7", ".z8",
+			                                 ".dat", ".zip", nullptr };
+
+		// Loop through the files of the folder
+		for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+			// Check for a recognised filename
+			if (file->isDirectory())
+				continue;
+			Common::String filename = file->getName();
+			bool hasExt = Blorb::hasBlorbExt(filename), isBlorb = false;
+			for (const char *const *ext = &EXTENSIONS[0]; *ext && !hasExt; ++ext)
+				hasExt = filename.hasSuffixIgnoreCase(*ext);
+			if (!hasExt)
+				continue;
+
+			// Open up the file and calculate the md5, and get the serial
+			Common::File gameFile;
+			if (!gameFile.open(*file))
+				continue;
+			Common::String md5 = Common::computeStreamMD5AsString(gameFile, 5000);
+			size_t filesize = gameFile.size();
+			char serial[9] = "";
+			bool emptyBlorb = false;
+			gameFile.seek(0);
+			isBlorb = Blorb::isBlorb(gameFile, ID_ZCOD);
+
+			if (!isBlorb) {
+				if (Blorb::hasBlorbExt(filename)) {
+					gameFile.close();
+					continue;
+				}
+				gameFile.seek(18);
 				strcpy(&serial[0], "\"");
-				f->read(&serial[1], 6);
+				gameFile.read(&serial[1], 6);
 				strcpy(&serial[7], "\"");
-				delete f;
+			} else {
+				Blorb b(*file, INTERPRETER_FROTZ);
+				Common::SeekableReadStream *f = b.createReadStreamForMember("game");
+				emptyBlorb = f == nullptr;
+
+				if (!emptyBlorb) {
+					f->seek(18);
+					strcpy(&serial[0], "\"");
+					f->read(&serial[1], 6);
+					strcpy(&serial[7], "\"");
+					delete f;
+				}
+			}
+			gameFile.close();
+
+			// Check for known games. Note that there has been some variation in exact filesizes
+			// for Infocom games due to padding at the end of files. So we match on md5s for the
+			// first 5Kb, and only worry about filesize for more recent Blorb based Zcode games
+			const FrotzGameDescription *p = FROTZ_GAMES;
+			while (p->_gameId && p->_md5 && (md5 != p->_md5 || (filesize != p->_filesize && isBlorb)))
+				++p;
+
+			if (!p->_gameId) {
+				// Generic .dat/.zip files don't get reported as matches unless they have a known md5
+				if (filename.hasSuffixIgnoreCase(".dat") || filename.hasSuffixIgnoreCase(".zip") || emptyBlorb)
+					continue;
+
+				const PlainGameDescriptor &desc = ZCODE_GAME_LIST[0];
+				gameList.push_back(GlkDetectedGame(desc.gameId, desc.description, filename, md5, filesize));
+			} else {
+				GameDescriptor gameDesc = findGame(p->_gameId);
+				DetectedGame gd = DetectedGame(p->_gameId, gameDesc._description, p->_language, Common::kPlatformUnknown, p->_extra);
+				gd.setGUIOptions(p->_guiOptions);
+
+				gd.addExtraEntry("filename", filename);
+				gameList.push_back(gd);
 			}
 		}
-		gameFile.close();
 
-		// Check for known games. Note that there has been some variation in exact filesizes
-		// for Infocom games due to padding at the end of files. So we match on md5s for the
-		// first 5Kb, and only worry about filesize for more recent Blorb based Zcode games
-		const FrotzGameDescription *p = FROTZ_GAMES;
-		while (p->_gameId && p->_md5 && (md5 != p->_md5 ||
-				(filesize != p->_filesize && isBlorb)))
-			++p;
-
-		if (!p->_gameId) {
-			// Generic .dat/.zip files don't get reported as matches unless they have a known md5
-			if (filename.hasSuffixIgnoreCase(".dat") || filename.hasSuffixIgnoreCase(".zip") || emptyBlorb)
-				continue;
-
-			const PlainGameDescriptor &desc = ZCODE_GAME_LIST[0];
-			gameList.push_back(GlkDetectedGame(desc.gameId, desc.description, filename, md5, filesize));
-		} else {
-			GameDescriptor gameDesc = findGame(p->_gameId);
-			DetectedGame gd = DetectedGame(p->_gameId, gameDesc._description, p->_language, Common::kPlatformUnknown, p->_extra);
-			gd.setGUIOptions(p->_guiOptions);
-
-			gd.addExtraEntry("filename", filename);
-			gameList.push_back(gd);
-		}
+		return !gameList.empty();
 	}
 
-	return !gameList.empty();
-}
-
-void FrotzMetaEngine::detectClashes(Common::StringMap &map) {
-	for (int idx = 0; idx < 2; ++idx) {
-		for (const PlainGameDescriptor *pd = (idx == 0) ? INFOCOM_GAME_LIST : ZCODE_GAME_LIST; pd->gameId; ++pd) {
-			if (map.contains(pd->gameId))
-				error("Duplicate game Id found - %s", pd->gameId);
-			map[pd->gameId] = "";
+	void FrotzMetaEngine::detectClashes(Common::StringMap &map) {
+		for (int idx = 0; idx < 2; ++idx) {
+			for (const PlainGameDescriptor *pd = (idx == 0) ? INFOCOM_GAME_LIST : ZCODE_GAME_LIST; pd->gameId; ++pd) {
+				if (map.contains(pd->gameId))
+					error("Duplicate game Id found - %s", pd->gameId);
+				map[pd->gameId] = "";
+			}
 		}
 	}
-}
 
 } // End of namespace Frotz
 } // End of namespace Glk

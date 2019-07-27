@@ -23,15 +23,14 @@
 #ifndef TESTBED_CONFIG_H
 #define TESTBED_CONFIG_H
 
-
 #include "common/array.h"
 #include "common/ini-file.h"
 #include "common/str-array.h"
 #include "common/tokenizer.h"
 
-#include "gui/widgets/list.h"
-#include "gui/dialog.h"
 #include "gui/ThemeEngine.h"
+#include "gui/dialog.h"
+#include "gui/widgets/list.h"
 
 #include "testbed/testsuite.h"
 
@@ -43,11 +42,11 @@ enum {
 	kTestbedDeselectAll = 'dAll'
 };
 
-
-
 class TestbedConfigManager {
 public:
-	TestbedConfigManager(Common::Array<Testsuite *> &tList, const Common::String fName) : _testsuiteList(tList), _configFileName(fName) {}
+	TestbedConfigManager(Common::Array<Testsuite *> &tList, const Common::String fName)
+	  : _testsuiteList(tList)
+	  , _configFileName(fName) {}
 	~TestbedConfigManager() {}
 	void selectTestsuites();
 	void setConfigFile(const Common::String fName) { _configFileName = fName; }
@@ -62,14 +61,16 @@ public:
 
 private:
 	Common::Array<Testsuite *> &_testsuiteList;
-	Common::String	_configFileName;
-	Common::INIFile	_configFileInterface;
+	Common::String _configFileName;
+	Common::INIFile _configFileInterface;
 	void parseConfigFile();
 };
 
 class TestbedListWidget : public GUI::ListWidget {
 public:
-	TestbedListWidget(GUI::Dialog *boss, const Common::String &name, Common::Array<Testsuite *> tsArray) : GUI::ListWidget(boss, name), _testSuiteArray(tsArray) {}
+	TestbedListWidget(GUI::Dialog *boss, const Common::String &name, Common::Array<Testsuite *> tsArray)
+	  : GUI::ListWidget(boss, name)
+	  , _testSuiteArray(tsArray) {}
 
 	void markAsSelected(int i) {
 		if (!_list[i].contains("selected")) {
@@ -94,7 +95,7 @@ public:
 	}
 
 private:
-	Common::Array<Testsuite *>	_testSuiteArray;
+	Common::Array<Testsuite *> _testSuiteArray;
 };
 
 class TestbedOptionsDialog : public GUI::Dialog {
@@ -105,7 +106,7 @@ public:
 
 private:
 	GUI::ListWidget::ColorList _colors;
-	GUI::ButtonWidget	*_selectButton;
+	GUI::ButtonWidget *_selectButton;
 	Common::Array<Testsuite *> _testSuiteArray;
 	Common::StringArray _testSuiteDescArray;
 	TestbedListWidget *_testListDisplay;
@@ -114,18 +115,21 @@ private:
 
 class TestbedInteractionDialog : public GUI::Dialog {
 public:
-	TestbedInteractionDialog(uint x, uint y, uint w, uint h) : GUI::Dialog(x, y, w, h), _xOffset(0), _yOffset(0) {}
+	TestbedInteractionDialog(uint x, uint y, uint w, uint h)
+	  : GUI::Dialog(x, y, w, h)
+	  , _xOffset(0)
+	  , _yOffset(0) {}
 	~TestbedInteractionDialog() {}
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 	void addButton(uint w, uint h, const Common::String name, uint32 cmd, uint xOffset = 0, uint yPadding = 8);
 	void addButtonXY(uint x, uint y, uint w, uint h, const Common::String name, uint32 cmd);
 	void addText(uint w, uint h, const Common::String text, Graphics::TextAlign textAlign, uint xOffset, uint yPadding = 8);
 	void addList(uint x, uint y, uint w, uint h, const Common::Array<Common::String> &strArray, GUI::ListWidget::ColorList *colors = 0, uint yPadding = 8);
+
 protected:
 	Common::Array<GUI::ButtonWidget *> _buttonArray;
 	uint _xOffset;
 	uint _yOffset;
-
 };
 
 } // End of namespace Testbed

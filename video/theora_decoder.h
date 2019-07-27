@@ -20,25 +20,25 @@
  *
  */
 
-#include "common/scummsys.h"	// for USE_THEORADEC
+#include "common/scummsys.h" // for USE_THEORADEC
 
 #ifdef USE_THEORADEC
 
-#ifndef VIDEO_THEORA_DECODER_H
-#define VIDEO_THEORA_DECODER_H
+#	ifndef VIDEO_THEORA_DECODER_H
+#		define VIDEO_THEORA_DECODER_H
 
-#include "common/rational.h"
-#include "video/video_decoder.h"
-#include "audio/mixer.h"
-#include "graphics/surface.h"
+#		include "audio/mixer.h"
+#		include "common/rational.h"
+#		include "graphics/surface.h"
+#		include "video/video_decoder.h"
 
-#include <theora/theoradec.h>
+#		include <theora/theoradec.h>
 
-#ifdef USE_TREMOR
-#include <tremor/ivorbiscodec.h>
-#else
-#include <vorbis/codec.h>
-#endif
+#		ifdef USE_TREMOR
+#			include <tremor/ivorbiscodec.h>
+#		else
+#			include <vorbis/codec.h>
+#		endif
 
 namespace Common {
 class SeekableReadStream;
@@ -154,6 +154,6 @@ private:
 
 } // End of namespace Video
 
-#endif
+#	endif
 
 #endif

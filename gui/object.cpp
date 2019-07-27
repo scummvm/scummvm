@@ -22,15 +22,20 @@
 
 #include "common/textconsole.h"
 
+#include "gui/ThemeEval.h"
+#include "gui/gui-manager.h"
 #include "gui/object.h"
 #include "gui/widget.h"
-#include "gui/gui-manager.h"
-#include "gui/ThemeEval.h"
 
 namespace GUI {
 
 GuiObject::GuiObject(const Common::String &name)
-	: _x(-1000), _y(-1000), _w(0), _h(0), _name(name), _firstWidget(nullptr) {
+  : _x(-1000)
+  , _y(-1000)
+  , _w(0)
+  , _h(0)
+  , _name(name)
+  , _firstWidget(nullptr) {
 	reflowLayout();
 }
 

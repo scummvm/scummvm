@@ -20,14 +20,14 @@
  *
  */
 
-#include "common/system.h"
 #include "common/events.h"
+#include "common/system.h"
 
 #include "director/director.h"
 #include "director/frame.h"
+#include "director/lingo/lingo.h"
 #include "director/score.h"
 #include "director/sprite.h"
-#include "director/lingo/lingo.h"
 
 namespace Director {
 

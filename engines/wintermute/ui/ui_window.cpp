@@ -26,35 +26,36 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/base_engine.h"
-#include "engines/wintermute/base/base_parser.h"
+#include "engines/wintermute/ui/ui_window.h"
 #include "engines/wintermute/base/base_active_rect.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
+#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_keyboard_state.h"
+#include "engines/wintermute/base/base_parser.h"
+#include "engines/wintermute/base/base_sprite.h"
+#include "engines/wintermute/base/base_string_table.h"
+#include "engines/wintermute/base/base_viewport.h"
+#include "engines/wintermute/base/font/base_font.h"
+#include "engines/wintermute/base/font/base_font_storage.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/base/scriptables/script.h"
+#include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/ui/ui_button.h"
 #include "engines/wintermute/ui/ui_edit.h"
 #include "engines/wintermute/ui/ui_text.h"
 #include "engines/wintermute/ui/ui_tiled_image.h"
-#include "engines/wintermute/ui/ui_window.h"
-#include "engines/wintermute/base/base_viewport.h"
-#include "engines/wintermute/base/font/base_font_storage.h"
-#include "engines/wintermute/base/font/base_font.h"
-#include "engines/wintermute/base/base_string_table.h"
-#include "engines/wintermute/base/gfx/base_renderer.h"
-#include "engines/wintermute/base/scriptables/script.h"
-#include "engines/wintermute/base/scriptables/script_stack.h"
-#include "engines/wintermute/base/base_sprite.h"
-#include "engines/wintermute/base/base_file_manager.h"
-#include "engines/wintermute/platform_osystem.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(UIWindow, false)
 
 //////////////////////////////////////////////////////////////////////////
-UIWindow::UIWindow(BaseGame *inGame) : UIObject(inGame) {
+UIWindow::UIWindow(BaseGame *inGame)
+  : UIObject(inGame) {
 	_titleRect.setEmpty();
 	_dragRect.setEmpty();
 	_titleAlign = TAL_LEFT;
@@ -87,13 +88,11 @@ UIWindow::UIWindow(BaseGame *inGame) : UIObject(inGame) {
 	_pauseMusic = true;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 UIWindow::~UIWindow() {
 	close();
 	cleanup();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void UIWindow::cleanup() {
@@ -117,7 +116,6 @@ void UIWindow::cleanup() {
 	}
 	_widgets.clear();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::display(int offsetX, int offsetY) {
@@ -186,7 +184,6 @@ bool UIWindow::display(int offsetX, int offsetY) {
 		}
 	}
 
-
 	UITiledImage *back = _back;
 	BaseSprite *image = _image;
 	BaseFont *font = _font;
@@ -218,7 +215,7 @@ bool UIWindow::display(int offsetX, int offsetY) {
 	}
 
 	if (!_transparent && !image) {
-		_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  this, nullptr, _posX + offsetX, _posY + offsetY, _width, _height, 100, 100, false));
+		_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef, this, nullptr, _posX + offsetX, _posY + offsetY, _width, _height, 100, 100, false));
 	}
 
 	for (uint32 i = 0; i < _widgets.size(); i++) {
@@ -235,7 +232,6 @@ bool UIWindow::display(int offsetX, int offsetY) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::loadFile(const char *filename) {
@@ -257,7 +253,6 @@ bool UIWindow::loadFile(const char *filename) {
 
 	return ret;
 }
-
 
 TOKEN_DEF_START
 TOKEN_DEF(WINDOW)
@@ -488,8 +483,7 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 				btn->_parent = this;
 				_widgets.add(btn);
 			}
-		}
-		break;
+		} break;
 
 		case TOKEN_STATIC: {
 			UIText *text = new UIText(_gameRef);
@@ -501,8 +495,7 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 				text->_parent = this;
 				_widgets.add(text);
 			}
-		}
-		break;
+		} break;
 
 		case TOKEN_EDIT: {
 			UIEdit *edit = new UIEdit(_gameRef);
@@ -514,8 +507,7 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 				edit->_parent = this;
 				_widgets.add(edit);
 			}
-		}
-		break;
+		} break;
 
 		case TOKEN_WINDOW: {
 			UIWindow *win = new UIWindow(_gameRef);
@@ -527,9 +519,7 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 				win->_parent = this;
 				_widgets.add(win);
 			}
-		}
-		break;
-
+		} break;
 
 		case TOKEN_TRANSPARENT:
 			parser.scanStr(params, "%b", &_transparent);
@@ -589,7 +579,6 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 			parser.scanStr(params, "%d", &alpha);
 			break;
 
-
 		default:
 			if (DID_FAIL(_gameRef->windowLoadHook(this, &buffer, &params))) {
 				cmd = PARSERR_GENERIC;
@@ -609,7 +598,7 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 	// For some reason getFontHeight() is off-by-one comparing to height set in TITLE_RECT,
 	// Which made text being bigger then title rect and drawing was skipped.
 	if (BaseEngine::instance().getGameId() == "5ld" && !_titleRect.isRectEmpty() && _text) {
-		_titleRect.bottom ++;
+		_titleRect.bottom++;
 	}
 
 	correctSize();
@@ -735,7 +724,6 @@ bool UIWindow::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		_widgets[i]->saveAsText(buffer, indent + 2);
 	}
 
-
 	buffer->putTextIndent(indent, "}\n");
 	return STATUS_OK;
 }
@@ -750,7 +738,6 @@ bool UIWindow::enableWidget(const char *name, bool enable) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::showWidget(const char *name, bool visible) {
 	for (uint32 i = 0; i < _widgets.size(); i++) {
@@ -760,7 +747,6 @@ bool UIWindow::showWidget(const char *name, bool visible) {
 	}
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
@@ -854,7 +840,6 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		return STATUS_OK;
 	}
-
 
 	//////////////////////////////////////////////////////////////////////////
 	// Close
@@ -1010,15 +995,15 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		}
 		stack->pushNULL();
 		return STATUS_OK;
-	} else if DID_SUCCEED(_gameRef->windowScriptMethodHook(this, script, stack, name)) {
-		return STATUS_OK;
-	}
+	} else if
+		DID_SUCCEED(_gameRef->windowScriptMethodHook(this, script, stack, name)) {
+			return STATUS_OK;
+		}
 
 	else {
 		return UIObject::scCallMethod(script, stack, thisStack, name);
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 ScValue *UIWindow::scGetProperty(const Common::String &name) {
@@ -1106,7 +1091,6 @@ ScValue *UIWindow::scGetProperty(const Common::String &name) {
 		return UIObject::scGetProperty(name);
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::scSetProperty(const char *name, ScValue *value) {
@@ -1196,16 +1180,14 @@ bool UIWindow::scSetProperty(const char *name, ScValue *value) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 const char *UIWindow::scToString() {
 	return "[window]";
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::handleKeypress(Common::Event *event, bool printable) {
-//TODO
+	//TODO
 	if (event->type == Common::EVENT_KEYDOWN && event->kbd.keycode == Common::KEYCODE_TAB) {
 		return DID_SUCCEED(moveFocus(!BaseKeyboardState::isShiftDown()));
 	} else {
@@ -1218,7 +1200,6 @@ bool UIWindow::handleKeypress(Common::Event *event, bool printable) {
 	return false;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::handleMouseWheel(int Delta) {
 	if (_focusedWidget) {
@@ -1227,7 +1208,6 @@ bool UIWindow::handleMouseWheel(int Delta) {
 		return false;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
@@ -1256,8 +1236,6 @@ bool UIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
 
 	return res;
 }
-
-
 
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::persist(BasePersistenceManager *persistMgr) {
@@ -1288,7 +1266,6 @@ bool UIWindow::persist(BasePersistenceManager *persistMgr) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::moveFocus(bool forward) {
@@ -1339,7 +1316,6 @@ bool UIWindow::moveFocus(bool forward) {
 	return done ? STATUS_OK : STATUS_FAILED;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::goExclusive() {
 	if (_mode == WINDOW_EXCLUSIVE) {
@@ -1357,7 +1333,6 @@ bool UIWindow::goExclusive() {
 		return STATUS_FAILED;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::goSystemExclusive() {
@@ -1377,7 +1352,6 @@ bool UIWindow::goSystemExclusive() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::close() {
 	if (_mode == WINDOW_SYSTEM_EXCLUSIVE) {
@@ -1390,7 +1364,6 @@ bool UIWindow::close() {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::listen(BaseScriptHolder *param1, uint32 param2) {
@@ -1411,7 +1384,6 @@ bool UIWindow::listen(BaseScriptHolder *param1, uint32 param2) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void UIWindow::makeFreezable(bool freezable) {
 	for (uint32 i = 0; i < _widgets.size(); i++) {
@@ -1420,7 +1392,6 @@ void UIWindow::makeFreezable(bool freezable) {
 
 	BaseObject::makeFreezable(freezable);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::getWindowObjects(BaseArray<UIObject *> &objects, bool interactiveOnly) {
@@ -1456,7 +1427,5 @@ bool UIWindow::getInGame() const {
 TWindowMode UIWindow::getMode() const {
 	return _mode;
 }
-
-
 
 } // End of namespace Wintermute

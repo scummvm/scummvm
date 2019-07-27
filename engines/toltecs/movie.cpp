@@ -21,15 +21,15 @@
  */
 
 #include "audio/audiostream.h"
-#include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "audio/mixer.h"
 
-#include "toltecs/toltecs.h"
 #include "toltecs/movie.h"
 #include "toltecs/palette.h"
 #include "toltecs/resource.h"
 #include "toltecs/screen.h"
 #include "toltecs/script.h"
+#include "toltecs/toltecs.h"
 
 namespace Toltecs {
 
@@ -45,7 +45,13 @@ enum ChunkTypes {
 	kChunkStopSubtitles = 8
 };
 
-MoviePlayer::MoviePlayer(ToltecsEngine *vm) : _vm(vm), _isPlaying(false), _lastPrefetchOfs(0), _framesPerSoundChunk(0), _endPos(0), _audioStream(0) {
+MoviePlayer::MoviePlayer(ToltecsEngine *vm)
+  : _vm(vm)
+  , _isPlaying(false)
+  , _lastPrefetchOfs(0)
+  , _framesPerSoundChunk(0)
+  , _endPos(0)
+  , _audioStream(0) {
 }
 
 MoviePlayer::~MoviePlayer() {
@@ -71,7 +77,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 	_vm->_arc->openResource(resIndex);
 	_endPos = _vm->_arc->pos() + _vm->_arc->getResourceSize(resIndex);
 
-	/*_frameCount = */_vm->_arc->readUint32LE();
+	/*_frameCount = */ _vm->_arc->readUint32LE();
 	uint32 chunkCount = _vm->_arc->readUint32LE();
 
 	// TODO: Figure out rest of the header
@@ -172,7 +178,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 			_vm->_screen->_talkTextX = READ_LE_UINT16(chunkBuffer + 2);
 			_vm->_screen->_talkTextFontColor = ((chunkBuffer[4] << 4) & 0xF0) | ((chunkBuffer[4] >> 4) & 0x0F);
 			debug(0, "_talkTextX = %d; _talkTextY = %d; _talkTextFontColor = %d",
-				_vm->_screen->_talkTextX, _vm->_screen->_talkTextY, _vm->_screen->_talkTextFontColor);
+			      _vm->_screen->_talkTextX, _vm->_screen->_talkTextY, _vm->_screen->_talkTextFontColor);
 			break;
 		case kChunkStopSubtitles:
 			_vm->_script->getSlotData(subtitleSlot)[0] = 0xFF;
@@ -249,7 +255,7 @@ void MoviePlayer::unpackPalette(byte *source, byte *dest, int elemCount, int ele
 }
 
 void MoviePlayer::unpackRle(byte *source, byte *dest) {
-	int size = 256000;	// 640x400
+	int size = 256000; // 640x400
 	//int packedSize = 0;
 	while (size > 0) {
 		byte a = *source++;

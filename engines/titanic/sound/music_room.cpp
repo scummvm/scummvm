@@ -20,17 +20,17 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "titanic/sound/music_room.h"
-#include "titanic/sound/sound.h"
+#include "common/textconsole.h"
 #include "titanic/game_manager.h"
+#include "titanic/sound/sound.h"
 
 namespace Titanic {
 
 CMusicRoomHandler *CMusicRoom::_musicHandler;
 
-CMusicRoom::CMusicRoom(CGameManager *gameManager) :
-		_gameManager(gameManager) {
+CMusicRoom::CMusicRoom(CGameManager *gameManager)
+  : _gameManager(gameManager) {
 	_sound = &_gameManager->_sound;
 }
 
@@ -76,7 +76,7 @@ void CMusicRoom::setupMusic(int volume) {
 
 		// Set up the current control values
 		for (MusicInstrument idx = BELLS; idx <= BASS;
-				idx = (MusicInstrument)((int)idx + 1)) {
+		     idx = (MusicInstrument)((int)idx + 1)) {
 			MusicRoomInstrument &instr = _instruments[idx];
 			_musicHandler->setSpeedControl(idx, instr._speedControl);
 			_musicHandler->setPitchControl(idx, instr._pitchControl);

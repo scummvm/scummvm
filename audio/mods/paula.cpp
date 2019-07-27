@@ -40,16 +40,19 @@
 
 namespace Audio {
 
-Paula::Paula(bool stereo, int rate, uint interruptFreq, FilterMode filterMode) :
-		_stereo(stereo), _rate(rate), _periodScale((double)kPalPaulaClock / rate), _intFreq(interruptFreq) {
+Paula::Paula(bool stereo, int rate, uint interruptFreq, FilterMode filterMode)
+  : _stereo(stereo)
+  , _rate(rate)
+  , _periodScale((double)kPalPaulaClock / rate)
+  , _intFreq(interruptFreq) {
 
-	_filterState.mode      = filterMode;
+	_filterState.mode = filterMode;
 	_filterState.ledFilter = false;
 	filterResetState();
 
-	_filterState.a0[0] = filterCalculateA0(rate,  6200);
+	_filterState.a0[0] = filterCalculateA0(rate, 6200);
 	_filterState.a0[1] = filterCalculateA0(rate, 20000);
-	_filterState.a0[2] = filterCalculateA0(rate,  7000);
+	_filterState.a0[2] = filterCalculateA0(rate, 7000);
 
 	clearVoices();
 	_voice[0].panning = 191;
@@ -126,12 +129,12 @@ inline int32 filter(int32 input, Paula::FilterState &state, int voice) {
 	switch (state.mode) {
 	case Paula::kFilterModeA500:
 		state.rc[voice][0] = state.a0[0] * input + (1 - state.a0[0]) * state.rc[voice][0] + DENORMAL_OFFSET;
-		state.rc[voice][1] = state.a0[1] * state.rc[voice][0] + (1-state.a0[1]) * state.rc[voice][1];
+		state.rc[voice][1] = state.a0[1] * state.rc[voice][0] + (1 - state.a0[1]) * state.rc[voice][1];
 		normalOutput = state.rc[voice][1];
 
-		state.rc[voice][2] = state.a0[2] * normalOutput        + (1 - state.a0[2]) * state.rc[voice][2];
-		state.rc[voice][3] = state.a0[2] * state.rc[voice][2]  + (1 - state.a0[2]) * state.rc[voice][3];
-		state.rc[voice][4] = state.a0[2] * state.rc[voice][3]  + (1 - state.a0[2]) * state.rc[voice][4];
+		state.rc[voice][2] = state.a0[2] * normalOutput + (1 - state.a0[2]) * state.rc[voice][2];
+		state.rc[voice][3] = state.a0[2] * state.rc[voice][2] + (1 - state.a0[2]) * state.rc[voice][3];
+		state.rc[voice][4] = state.a0[2] * state.rc[voice][3] + (1 - state.a0[2]) * state.rc[voice][4];
 
 		ledOutput = state.rc[voice][4];
 		break;
@@ -139,9 +142,9 @@ inline int32 filter(int32 input, Paula::FilterState &state, int voice) {
 	case Paula::kFilterModeA1200:
 		normalOutput = input;
 
-		state.rc[voice][1] = state.a0[2] * normalOutput        + (1 - state.a0[2]) * state.rc[voice][1] + DENORMAL_OFFSET;
-		state.rc[voice][2] = state.a0[2] * state.rc[voice][1]  + (1 - state.a0[2]) * state.rc[voice][2];
-		state.rc[voice][3] = state.a0[2] * state.rc[voice][2]  + (1 - state.a0[2]) * state.rc[voice][3];
+		state.rc[voice][1] = state.a0[2] * normalOutput + (1 - state.a0[2]) * state.rc[voice][1] + DENORMAL_OFFSET;
+		state.rc[voice][2] = state.a0[2] * state.rc[voice][1] + (1 - state.a0[2]) * state.rc[voice][2];
+		state.rc[voice][3] = state.a0[2] * state.rc[voice][2] + (1 - state.a0[2]) * state.rc[voice][3];
 
 		ledOutput = state.rc[voice][3];
 		break;
@@ -149,17 +152,16 @@ inline int32 filter(int32 input, Paula::FilterState &state, int voice) {
 	case Paula::kFilterModeNone:
 	default:
 		return input;
-
 	}
 
 	return CLIP<int32>(state.ledFilter ? ledOutput : normalOutput, -32768, 32767);
 }
 
-template<bool stereo>
+template <bool stereo>
 inline int mixBuffer(int16 *&buf, const int8 *data, Paula::Offset &offset, frac_t rate, int neededSamples, uint bufSize, byte volume, byte panning, Paula::FilterState &filterState, int voice) {
 	int samples;
 	for (samples = 0; samples < neededSamples && offset.int_off < bufSize; ++samples) {
-		const int32 tmp = filter(((int32) data[offset.int_off]) * volume, filterState, voice);
+		const int32 tmp = filter(((int32)data[offset.int_off]) * volume, filterState, voice);
 		if (stereo) {
 			*buf++ += (tmp * (255 - panning)) >> 7;
 			*buf++ += (tmp * (panning)) >> 7;
@@ -177,7 +179,7 @@ inline int mixBuffer(int16 *&buf, const int8 *data, Paula::Offset &offset, frac_
 	return samples;
 }
 
-template<bool stereo>
+template <bool stereo>
 int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 	int samples = _stereo ? numSamples / 2 : numSamples;
 	while (samples > 0) {
@@ -207,8 +209,7 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 			// processing, to obtain the correct output 'rate'.
 			frac_t rate = doubleToFrac(_periodScale / _voice[voice].period);
 			// Cap the volume
-			_voice[voice].volume = MIN((byte) 0x40, _voice[voice].volume);
-
+			_voice[voice].volume = MIN((byte)0x40, _voice[voice].volume);
 
 			Channel &ch = _voice[voice];
 			int16 *p = buffer;
@@ -254,7 +255,6 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 					}
 				}
 			}
-
 		}
 		buffer += _stereo ? nSamples * 2 : nSamples;
 		_curInt -= nSamples;
@@ -291,7 +291,6 @@ float Paula::filterCalculateA0(int rate, int cutoff) {
 
 } // End of namespace Audio
 
-
 //	Plugin interface
 //	(This can only create a null driver since apple II gs support seeems not to be implemented
 //  and also is not part of the midi driver architecture. But we need the plugin for the options
@@ -317,7 +316,7 @@ MusicDevices AmigaMusicPlugin::getDevices() const {
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(AMIGA)
-	//REGISTER_PLUGIN_DYNAMIC(AMIGA, PLUGIN_TYPE_MUSIC, AmigaMusicPlugin);
+//REGISTER_PLUGIN_DYNAMIC(AMIGA, PLUGIN_TYPE_MUSIC, AmigaMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(AMIGA, PLUGIN_TYPE_MUSIC, AmigaMusicPlugin);
+REGISTER_PLUGIN_STATIC(AMIGA, PLUGIN_TYPE_MUSIC, AmigaMusicPlugin);
 //#endif

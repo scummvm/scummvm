@@ -20,19 +20,19 @@
  *
  */
 
-#include "sci/sci.h"
 #include "sci/engine/seg_manager.h"
-#include "sci/engine/state.h"
 #include "sci/engine/script.h"
+#include "sci/engine/state.h"
+#include "sci/sci.h"
 #ifdef ENABLE_SCI32
-#include "sci/engine/guest_additions.h"
+#	include "sci/engine/guest_additions.h"
 #endif
 
 namespace Sci {
 
-
 SegManager::SegManager(ResourceManager *resMan, ScriptPatcher *scriptPatcher)
-	: _resMan(resMan), _scriptPatcher(scriptPatcher) {
+  : _resMan(resMan)
+  , _scriptPatcher(scriptPatcher) {
 	_heap.push_back(0);
 
 	_clonesSegId = 0;
@@ -92,7 +92,7 @@ void SegManager::initSysStrings() {
 		SciArray *saveDirString = allocateArray(kArrayTypeString, 256, &_saveDirPtr);
 		saveDirString->byteAt(0) = '\0';
 
-		_parserPtr = NULL_REG;	// no SCI2 game had a parser
+		_parserPtr = NULL_REG; // no SCI2 game had a parser
 #endif
 	}
 }
@@ -257,7 +257,7 @@ Object *SegManager::getObject(reg_t pos) const {
 		} else if (mobj->getType() == SEG_TYPE_SCRIPT) {
 			Script *scr = (Script *)mobj;
 			if (pos.getOffset() <= scr->getBufSize() && pos.getOffset() >= (uint)-SCRIPT_OBJECT_MAGIC_OFFSET
-			        && scr->offsetIsObject(pos.getOffset())) {
+			    && scr->offsetIsObject(pos.getOffset())) {
 				obj = scr->getObject(pos.getOffset());
 			}
 		}
@@ -542,9 +542,9 @@ static void *derefPtr(SegManager *segMan, reg_t pointer, int entries, bool wantR
 
 	if (ret.isRaw != wantRaw) {
 		warning("Dereferencing pointer %04x:%04x (type %d) which is %s, but expected %s", PRINT_REG(pointer),
-			segMan->getSegmentType(pointer.getSegment()),
-			ret.isRaw ? "raw" : "not raw",
-			wantRaw ? "raw" : "not raw");
+		        segMan->getSegmentType(pointer.getSegment()),
+		        ret.isRaw ? "raw" : "not raw",
+		        wantRaw ? "raw" : "not raw");
 	}
 
 	if (!wantRaw && ret.skipByte) {
@@ -568,7 +568,7 @@ byte *SegManager::derefBulkPtr(reg_t pointer, int entries) {
 }
 
 reg_t *SegManager::derefRegPtr(reg_t pointer, int entries) {
-	return (reg_t *)derefPtr(this, pointer, 2*entries, false);
+	return (reg_t *)derefPtr(this, pointer, 2 * entries, false);
 }
 
 char *SegManager::derefString(reg_t pointer, int entries) {
@@ -633,13 +633,12 @@ static void forwardCopy(byte *dest, const byte *src, size_t n) {
 	}
 }
 
-void SegManager::strncpy(reg_t dest, const char* src, size_t n) {
+void SegManager::strncpy(reg_t dest, const char *src, size_t n) {
 	SegmentRef dest_r = dereference(dest);
 	if (!dest_r.isValid()) {
 		warning("Attempt to strncpy to invalid pointer %04x:%04x", PRINT_REG(dest));
 		return;
 	}
-
 
 	if (dest_r.isRaw) {
 		forwardCopy<true>(dest_r.raw, (const byte *)src, n);
@@ -662,7 +661,7 @@ void SegManager::strncpy(reg_t dest, reg_t src, size_t n) {
 		if (n > 0)
 			strcpy(dest, "");
 
-		return;	// empty text
+		return; // empty text
 	}
 
 	SegmentRef dest_r = dereference(dest);
@@ -681,10 +680,9 @@ void SegManager::strncpy(reg_t dest, reg_t src, size_t n) {
 		return;
 	}
 
-
 	if (src_r.isRaw) {
 		// raw -> *
-		strncpy(dest, (const char*)src_r.raw, n);
+		strncpy(dest, (const char *)src_r.raw, n);
 	} else if (dest_r.isRaw && !src_r.isRaw) {
 		// non-raw -> raw
 		for (uint i = 0; i < n; i++) {
@@ -704,7 +702,7 @@ void SegManager::strncpy(reg_t dest, reg_t src, size_t n) {
 	}
 }
 
-void SegManager::strcpy(reg_t dest, const char* src) {
+void SegManager::strcpy(reg_t dest, const char *src) {
 	strncpy(dest, src, 0xFFFFFFFFU);
 }
 
@@ -712,7 +710,7 @@ void SegManager::strcpy(reg_t dest, reg_t src) {
 	strncpy(dest, src, 0xFFFFFFFFU);
 }
 
-void SegManager::memcpy(reg_t dest, const byte* src, size_t n) {
+void SegManager::memcpy(reg_t dest, const byte *src, size_t n) {
 	SegmentRef dest_r = dereference(dest);
 	if (!dest_r.isValid()) {
 		warning("Attempt to memcpy to invalid pointer %04x:%04x", PRINT_REG(dest));
@@ -793,7 +791,7 @@ void SegManager::memcpy(byte *dest, reg_t src, size_t n) {
 
 size_t SegManager::strlen(reg_t str) {
 	if (str.isNull())
-		return 0;	// empty text
+		return 0; // empty text
 
 	SegmentRef str_r = dereference(str);
 	if (!str_r.isValid()) {
@@ -814,11 +812,10 @@ size_t SegManager::strlen(reg_t str) {
 	}
 }
 
-
 Common::String SegManager::getString(reg_t pointer) {
 	Common::String ret;
 	if (pointer.isNull())
-		return ret;	// empty text
+		return ret; // empty text
 
 	SegmentRef src_r = dereference(pointer);
 	if (!src_r.isValid()) {
@@ -870,8 +867,7 @@ byte *SegManager::allocDynmem(int size, const char *descr, reg_t *addr) {
 }
 
 bool SegManager::freeDynmem(reg_t addr) {
-	if (addr.getSegment() < 1 || addr.getSegment() >= _heap.size() ||
-		!_heap[addr.getSegment()] || _heap[addr.getSegment()]->getType() != SEG_TYPE_DYNMEM)
+	if (addr.getSegment() < 1 || addr.getSegment() >= _heap.size() || !_heap[addr.getSegment()] || _heap[addr.getSegment()]->getType() != SEG_TYPE_DYNMEM)
 		return false; // error
 
 	deallocate(addr.getSegment());
@@ -880,8 +876,8 @@ bool SegManager::freeDynmem(reg_t addr) {
 }
 
 #ifdef ENABLE_SCI32
-#pragma mark -
-#pragma mark Arrays
+#	pragma mark -
+#	pragma mark Arrays
 
 SciArray *SegManager::allocateArray(SciArrayType type, uint16 size, reg_t *addr) {
 	ArrayTable *table;
@@ -935,8 +931,8 @@ bool SegManager::isArray(reg_t addr) const {
 	return addr.getSegment() == _arraysSegId;
 }
 
-#pragma mark -
-#pragma mark Bitmaps
+#	pragma mark -
+#	pragma mark Bitmaps
 
 SciBitmap *SegManager::allocateBitmap(reg_t *addr, const int16 width, const int16 height, const uint8 skipColor, const int16 originX, const int16 originY, const int16 xResolution, const int16 yResolution, const uint32 paletteSize, const bool remap, const bool gc) {
 	BitmapTable *table;
@@ -982,7 +978,7 @@ void SegManager::freeBitmap(const reg_t addr) {
 	bitmapTable.freeEntry(addr.getOffset());
 }
 
-#pragma mark -
+#	pragma mark -
 
 #endif
 
@@ -1020,9 +1016,8 @@ reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, uint16 calle
 
 				error("[VM] Trying to instantiate class %x by instantiating script 0x%x (%03d) failed", classnr, the_class->script, the_class->script);
 			}
-		} else
-			if (callerSegment != the_class->reg.getSegment())
-				getScript(the_class->reg.getSegment())->incrementLockers();
+		} else if (callerSegment != the_class->reg.getSegment())
+			getScript(the_class->reg.getSegment())->incrementLockers();
 
 		return the_class->reg;
 	}
@@ -1057,13 +1052,13 @@ void SegManager::uninstantiateScript(int script_nr) {
 	SegmentId segmentId = getScriptSegment(script_nr);
 	Script *scr = getScriptIfLoaded(segmentId);
 
-	if (!scr || scr->isMarkedAsDeleted()) {   // Is it already unloaded?
+	if (!scr || scr->isMarkedAsDeleted()) { // Is it already unloaded?
 		//warning("unloading script 0x%x requested although not loaded", script_nr);
 		// This is perfectly valid SCI behavior
 		return;
 	}
 
-	scr->decrementLockers();   // One less locker
+	scr->decrementLockers(); // One less locker
 
 	if (scr->getLockers() > 0)
 		return;
@@ -1104,7 +1099,7 @@ void SegManager::uninstantiateScriptSci0(int script_nr) {
 		reg.incOffset(4); // Step over header
 
 		if ((objType == SCI_OBJ_OBJECT) || (objType == SCI_OBJ_CLASS)) { // object or class?
-			reg.incOffset(8);	// magic offset (SCRIPT_OBJECT_MAGIC_OFFSET)
+			reg.incOffset(8); // magic offset (SCRIPT_OBJECT_MAGIC_OFFSET)
 			int16 superclass = READ_SCI11ENDIAN_UINT16(scr->getBuf(reg.getOffset() + 2));
 
 			if (superclass >= 0) {
@@ -1112,7 +1107,7 @@ void SegManager::uninstantiateScriptSci0(int script_nr) {
 
 				if (superclass_script == script_nr) {
 					if (scr->getLockers())
-						scr->decrementLockers();  // Decrease lockers if this is us ourselves
+						scr->decrementLockers(); // Decrease lockers if this is us ourselves
 				} else {
 					uninstantiateScript(superclass_script);
 				}

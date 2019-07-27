@@ -25,7 +25,7 @@
 
 #include <windows.h>
 #ifdef _WIN32_WCE
-#undef GetCurrentDirectory
+#	undef GetCurrentDirectory
 #endif
 
 #include "backends/fs/abstract-fs.h"
@@ -97,7 +97,7 @@ private:
 	 * @param hidden       true if hidden files should be added, false otherwise
 	 * @param find_data    Describes a file that the FindFirstFile, FindFirstFileEx, or FindNextFile functions find.
 	 */
-	static void addFile(AbstractFSList &list, ListMode mode, const char *base, bool hidden, WIN32_FIND_DATA* find_data);
+	static void addFile(AbstractFSList &list, ListMode mode, const char *base, bool hidden, WIN32_FIND_DATA *find_data);
 
 	/**
 	 * Converts a Unicode string to Ascii format.
@@ -113,7 +113,7 @@ private:
 	 * @param str Common::String to convert from Ascii to Unicode.
 	 * @return str in Unicode format.
 	 */
-	static const TCHAR* toUnicode(const char *str);
+	static const TCHAR *toUnicode(const char *str);
 };
 
 #endif

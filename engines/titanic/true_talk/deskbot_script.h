@@ -74,11 +74,13 @@ private:
 	 * Adds a dialogue description for the player's assigned room
 	 */
 	void addAssignedRoom();
+
 protected:
 	static int _oldId;
 	TTupdateStateArray _states;
 	TTsentenceEntries _entries2;
 	TTsentenceEntries _entries3;
+
 protected:
 	/**
 	 * Does preprocessing for the sentence
@@ -89,9 +91,10 @@ protected:
 	 * Adds dialogue for the player's assigned room
 	 */
 	uint addAssignedRoomDialogue();
+
 public:
 	DeskbotScript(int val1, const char *charClass, int v2,
-		const char *charName, int v3, int val2);
+	              const char *charName, int v3, int val2);
 
 	/**
 	 * Does NPC specific processing of the parsed sentence
@@ -104,7 +107,7 @@ public:
 	virtual ScriptChangedResult scriptChanged(const TTroomScript *roomScript, uint id);
 
 	virtual int handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
-		uint tag1, uint tag2, uint remainder);
+	                        uint tag1, uint tag2, uint remainder);
 
 	/**
 	 * Handles updating NPC state based on specified dialogue Ids and dial positions

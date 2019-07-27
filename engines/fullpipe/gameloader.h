@@ -26,9 +26,9 @@
 #include "common/ptr.h"
 #include "engines/savestate.h"
 
-#include "fullpipe/objects.h"
 #include "fullpipe/inventory.h"
 #include "fullpipe/messages.h"
+#include "fullpipe/objects.h"
 
 namespace Fullpipe {
 
@@ -42,7 +42,7 @@ class MotionController;
 class MovGraph;
 
 class Sc2 : public CObject {
- public:
+public:
 	int16 _sceneId;
 	int16 _field_2;
 	Scene *_scene;
@@ -54,7 +54,7 @@ class Sc2 : public CObject {
 	bool _isLoaded;
 	Common::Array<EntranceInfo> _entranceData;
 
- public:
+public:
 	Sc2();
 	virtual ~Sc2();
 	virtual bool load(MfcArchive &file);
@@ -72,7 +72,7 @@ struct PreloadItem {
 bool preloadCallback(PreloadItem &pre, int flag);
 
 class PreloadItems : public Common::Array<PreloadItem>, public CObject {
- public:
+public:
 	virtual bool load(MfcArchive &file);
 };
 
@@ -96,7 +96,7 @@ struct SaveHeader {
 };
 
 class GameLoader : public CObject {
- public:
+public:
 	GameLoader();
 	virtual ~GameLoader();
 

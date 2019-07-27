@@ -40,22 +40,22 @@ typedef void UIImagePickerCallback(int, void *);
 
 class UIImagePicker {
 	struct Image {
-		int             active;
-		Common::Rect    rect;
-		const Shape    *shapeUp;
-		const Shape    *shapeHovered;
-		const Shape    *shapeDown;
-		Common::String  tooltip;
+		int active;
+		Common::Rect rect;
+		const Shape *shapeUp;
+		const Shape *shapeHovered;
+		const Shape *shapeDown;
+		Common::String tooltip;
 	};
 
 	BladeRunnerEngine *_vm;
 
-	int    _isVisible;
-	int    _imageCount;
-	int    _hoveredImageIndex;
-	int    _pressedImageIndex;
+	int _isVisible;
+	int _imageCount;
+	int _hoveredImageIndex;
+	int _pressedImageIndex;
 	uint32 _hoverStartTimestamp;
-	int    _isButtonDown;
+	int _isButtonDown;
 	Common::Array<Image> _images;
 
 	UIImagePickerCallback *_mouseInCallback;

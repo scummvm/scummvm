@@ -23,16 +23,16 @@
 #ifndef SWORD25_MICROTILES_H
 #define SWORD25_MICROTILES_H
 
-#include "common/scummsys.h"
 #include "common/list.h"
-#include "common/util.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
+#include "common/util.h"
 
 namespace Sword25 {
 
 typedef uint32 BoundingBox;
 
-const BoundingBox FullBoundingBox  = 0x00001F1F;
+const BoundingBox FullBoundingBox = 0x00001F1F;
 const BoundingBox EmptyBoundingBox = 0x00000000;
 const int TileSize = 32;
 
@@ -46,6 +46,7 @@ public:
 	void addRect(Common::Rect r);
 	void clear();
 	RectangleList *getRectangles();
+
 protected:
 	BoundingBox *_tiles;
 	int16 _tilesW, _tilesH;

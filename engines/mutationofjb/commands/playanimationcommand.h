@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_PLAYANIMATIONCOMMAND_H
 #define MUTATIONOFJB_PLAYANIMATIONCOMMAND_H
 
-#include "mutationofjb/commands/seqcommand.h"
 #include "common/str.h"
+#include "mutationofjb/commands/seqcommand.h"
 
 namespace MutationOfJB {
 
@@ -37,11 +37,14 @@ public:
 
 class PlayAnimationCommand : public SeqCommand {
 public:
-	PlayAnimationCommand(int fromFrame, int toFrame) : _fromFrame(fromFrame), _toFrame(toFrame) {}
+	PlayAnimationCommand(int fromFrame, int toFrame)
+	  : _fromFrame(fromFrame)
+	  , _toFrame(toFrame) {}
 	const Common::String &getName() const;
 
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const override;
+
 private:
 	int _fromFrame;
 	int _toFrame;

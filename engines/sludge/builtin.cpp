@@ -43,13 +43,13 @@
 #include "sludge/people.h"
 #include "sludge/region.h"
 #include "sludge/savedata.h"
+#include "sludge/sludge.h"
 #include "sludge/sludger.h"
 #include "sludge/sound.h"
 #include "sludge/speech.h"
 #include "sludge/sprbanks.h"
 #include "sludge/sprites.h"
 #include "sludge/statusba.h"
-#include "sludge/sludge.h"
 #include "sludge/utf8.h"
 #include "sludge/zbuffer.h"
 
@@ -59,7 +59,7 @@ Variable *launchResult = NULL;
 
 extern bool allowAnyFilename;
 extern VariableStack *noStack;
-extern StatusStuff  *nowStatus;
+extern StatusStuff *nowStatus;
 extern int numBIFNames, numUserFunc;
 
 extern Common::String *allUserFunc;
@@ -71,17 +71,17 @@ bool failSecurityCheck(const Common::String &fn) {
 
 	for (uint i = 0; i < fn.size(); ++i) {
 		switch (fn[i]) {
-			case ':':
-			case '\\':
-			case '/':
-			case '*':
-			case '?':
-			case '"':
-			case '<':
-			case '>':
-			case '|':
-				fatal("Filenames may not contain the following characters: \n\n\\  /  :  \"  <  >  |  ?  *\n\nConsequently, the following filename is not allowed:", fn);
-				return true;
+		case ':':
+		case '\\':
+		case '/':
+		case '*':
+		case '?':
+		case '"':
+		case '<':
+		case '>':
+		case '|':
+			fatal("Filenames may not contain the following characters: \n\n\\  /  :  \"  <  >  |  ?  *\n\nConsequently, the following filename is not allowed:", fn);
+			return true;
 		}
 	}
 	return false;
@@ -95,9 +95,8 @@ struct builtInFunctionData {
 	int paramNum;
 };
 
-#define builtIn(a)          static BuiltReturn builtIn_ ## a (int numParams, LoadedFunction *fun)
-#define UNUSEDALL           (void) (0 && sizeof(numParams) && sizeof (fun));
-
+#define builtIn(a) static BuiltReturn builtIn_##a(int numParams, LoadedFunction *fun)
+#define UNUSEDALL (void)(0 && sizeof(numParams) && sizeof(fun));
 
 static BuiltReturn sayCore(int numParams, LoadedFunction *fun, bool sayIt) {
 	int fileNum = -1;
@@ -106,23 +105,23 @@ static BuiltReturn sayCore(int numParams, LoadedFunction *fun, bool sayIt) {
 	killSpeechTimers();
 
 	switch (numParams) {
-		case 3:
-			if (!fun->stack->thisVar.getValueType(fileNum, SVT_FILE))
-				return BR_ERROR;
-			trimStack(fun->stack);
-			// fall through
+	case 3:
+		if (!fun->stack->thisVar.getValueType(fileNum, SVT_FILE))
+			return BR_ERROR;
+		trimStack(fun->stack);
+		// fall through
 
-		case 2:
-			newText = fun->stack->thisVar.getTextFromAnyVar();
-			trimStack(fun->stack);
-			if (!fun->stack->thisVar.getValueType(objT, SVT_OBJTYPE))
-				return BR_ERROR;
-			trimStack(fun->stack);
-			p = g_sludge->_speechMan->wrapSpeech(newText, objT, fileNum, sayIt);
-			fun->timeLeft = p;
-			//debugOut ("BUILTIN: sayCore: %s (%i)\n", newText, p);
-			fun->isSpeech = true;
-			return BR_KEEP_AND_PAUSE;
+	case 2:
+		newText = fun->stack->thisVar.getTextFromAnyVar();
+		trimStack(fun->stack);
+		if (!fun->stack->thisVar.getValueType(objT, SVT_OBJTYPE))
+			return BR_ERROR;
+		trimStack(fun->stack);
+		p = g_sludge->_speechMan->wrapSpeech(newText, objT, fileNum, sayIt);
+		fun->timeLeft = p;
+		//debugOut ("BUILTIN: sayCore: %s (%i)\n", newText, p);
+		fun->isSpeech = true;
+		return BR_KEEP_AND_PAUSE;
 	}
 
 	fatal("Function should have either 2 or 3 parameters");
@@ -233,7 +232,7 @@ builtIn(saveGame) {
 	Common::String aaaaa = encodeFilename(g_sludge->loadNow);
 	g_sludge->loadNow.clear();
 	if (failSecurityCheck(aaaaa))
-		return BR_ERROR;      // Won't fail if encoded, how cool is that? OK, not very.
+		return BR_ERROR; // Won't fail if encoded, how cool is that? OK, not very.
 
 	g_sludge->loadNow = ":" + aaaaa;
 
@@ -525,20 +524,20 @@ builtIn(newStack) {
 builtIn(stackSize) {
 	UNUSEDALL
 	switch (fun->stack->thisVar.varType) {
-		case SVT_STACK:
-			// Return value
-			fun->reg.setVariable(SVT_INT, fun->stack->thisVar.varData.theStack->getStackSize());
-			trimStack(fun->stack);
-			return BR_CONTINUE;
+	case SVT_STACK:
+		// Return value
+		fun->reg.setVariable(SVT_INT, fun->stack->thisVar.varData.theStack->getStackSize());
+		trimStack(fun->stack);
+		return BR_CONTINUE;
 
-		case SVT_FASTARRAY:
-			// Return value
-			fun->reg.setVariable(SVT_INT, fun->stack->thisVar.varData.fastArray->size);
-			trimStack(fun->stack);
-			return BR_CONTINUE;
+	case SVT_FASTARRAY:
+		// Return value
+		fun->reg.setVariable(SVT_INT, fun->stack->thisVar.varData.fastArray->size);
+		trimStack(fun->stack);
+		return BR_CONTINUE;
 
-		default:
-			break;
+	default:
+		break;
 	}
 	fatal("Parameter isn't a stack or a fast array.");
 	return BR_ERROR;
@@ -838,7 +837,7 @@ builtIn(anim) {
 	// Load the required sprite bank
 	LoadedSpriteBank *sprBanky = g_sludge->_gfxMan->loadBankForAnim(fileNumber);
 	if (!sprBanky)
-		return BR_ERROR;    // File not found, fatal done already
+		return BR_ERROR; // File not found, fatal done already
 	ba->theSprites = sprBanky;
 
 	// Return value
@@ -858,7 +857,7 @@ builtIn(costume) {
 		return BR_ERROR;
 	}
 	int iii;
-	newPersona->animation = new PersonaAnimation  *[numParams];
+	newPersona->animation = new PersonaAnimation *[numParams];
 	if (!checkNew(newPersona->animation))
 		return BR_ERROR;
 	for (iii = numParams - 1; iii >= 0; iii--) {
@@ -1022,7 +1021,7 @@ builtIn(startMusic) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 	if (!g_sludge->_soundMan->playMOD(fileNumber, musChan, fromTrack))
-		return BR_CONTINUE;  //BR_ERROR;
+		return BR_CONTINUE; //BR_ERROR;
 	return BR_CONTINUE;
 }
 
@@ -1066,7 +1065,7 @@ builtIn(playSound) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 	if (!g_sludge->_soundMan->startSound(fileNumber, false))
-		return BR_CONTINUE;    // Was BR_ERROR
+		return BR_CONTINUE; // Was BR_ERROR
 	return BR_CONTINUE;
 }
 builtIn(loopSound) {
@@ -1082,14 +1081,14 @@ builtIn(loopSound) {
 			return BR_ERROR;
 		trimStack(fun->stack);
 		if (!g_sludge->_soundMan->startSound(fileNumber, true))
-			return BR_CONTINUE;     // Was BR_ERROR
+			return BR_CONTINUE; // Was BR_ERROR
 		return BR_CONTINUE;
 	} else {
 		// We have more than one sound to play!
 
 		int doLoop = 2;
-		SoundList*s = NULL;
-		SoundList*old = NULL;
+		SoundList *s = NULL;
+		SoundList *old = NULL;
 
 		// Should we loop?
 		if (fun->stack->thisVar.varType != SVT_FILE) {
@@ -1219,31 +1218,31 @@ builtIn(setZBuffer) {
 builtIn(setLightMap) {
 	UNUSEDALL
 	switch (numParams) {
-		case 2:
-			if (!fun->stack->thisVar.getValueType(g_sludge->_gfxMan->_lightMapMode, SVT_INT))
-				return BR_ERROR;
-			trimStack(fun->stack);
-			g_sludge->_gfxMan->_lightMapMode %= LIGHTMAPMODE_NUM;
-			// fall through
-
-		case 1:
-			if (fun->stack->thisVar.varType == SVT_FILE) {
-				int v;
-				fun->stack->thisVar.getValueType(v, SVT_FILE);
-				trimStack(fun->stack);
-				if (!g_sludge->_gfxMan->loadLightMap(v))
-					return BR_ERROR;
-				fun->reg.setVariable(SVT_INT, 1);
-			} else {
-				trimStack(fun->stack);
-				g_sludge->_gfxMan->killLightMap();
-				fun->reg.setVariable(SVT_INT, 0);
-			}
-			break;
-
-		default:
-			fatal("Function should have either 2 or 3 parameters");
+	case 2:
+		if (!fun->stack->thisVar.getValueType(g_sludge->_gfxMan->_lightMapMode, SVT_INT))
 			return BR_ERROR;
+		trimStack(fun->stack);
+		g_sludge->_gfxMan->_lightMapMode %= LIGHTMAPMODE_NUM;
+		// fall through
+
+	case 1:
+		if (fun->stack->thisVar.varType == SVT_FILE) {
+			int v;
+			fun->stack->thisVar.getValueType(v, SVT_FILE);
+			trimStack(fun->stack);
+			if (!g_sludge->_gfxMan->loadLightMap(v))
+				return BR_ERROR;
+			fun->reg.setVariable(SVT_INT, 1);
+		} else {
+			trimStack(fun->stack);
+			g_sludge->_gfxMan->killLightMap();
+			fun->reg.setVariable(SVT_INT, 0);
+		}
+		break;
+
+	default:
+		fatal("Function should have either 2 or 3 parameters");
+		return BR_ERROR;
 	}
 	return BR_CONTINUE;
 }
@@ -1379,7 +1378,6 @@ builtIn(addScreenRegion) {
 	if (g_sludge->_regionMan->addScreenRegion(x1, y1, x2, y2, sX, sY, di, objectNumber))
 		return BR_CONTINUE;
 	return BR_ERROR;
-
 }
 
 builtIn(removeScreenRegion) {
@@ -1535,7 +1533,7 @@ builtIn(pasteCharacter) {
 
 	OnScreenPerson *thisPerson = g_sludge->_peopleMan->findPerson(obj);
 	if (thisPerson) {
-		PersonaAnimation  *myAnim;
+		PersonaAnimation *myAnim;
 		myAnim = thisPerson->myAnim;
 		if (myAnim != thisPerson->lastUsedAnim) {
 			thisPerson->lastUsedAnim = myAnim;
@@ -1645,60 +1643,60 @@ builtIn(removeCharacter) {
 
 static BuiltReturn moveChr(int numParams, LoadedFunction *fun, bool force, bool immediate) {
 	switch (numParams) {
-		case 3: {
-			int x, y, objectNumber;
+	case 3: {
+		int x, y, objectNumber;
 
-			if (!fun->stack->thisVar.getValueType(y, SVT_INT))
-				return BR_ERROR;
-			trimStack(fun->stack);
-			if (!fun->stack->thisVar.getValueType(x, SVT_INT))
-				return BR_ERROR;
-			trimStack(fun->stack);
-			if (!fun->stack->thisVar.getValueType(objectNumber, SVT_OBJTYPE))
-				return BR_ERROR;
-			trimStack(fun->stack);
-
-			if (force) {
-				if (g_sludge->_peopleMan->forceWalkingPerson(x, y, objectNumber, fun, -1))
-					return BR_PAUSE;
-			} else if (immediate) {
-				g_sludge->_peopleMan->jumpPerson(x, y, objectNumber);
-			} else {
-				if (g_sludge->_peopleMan->makeWalkingPerson(x, y, objectNumber, fun, -1))
-					return BR_PAUSE;
-			}
-			return BR_CONTINUE;
-		}
-
-		case 2: {
-			int toObj, objectNumber;
-			ScreenRegion*reggie;
-
-			if (!fun->stack->thisVar.getValueType(toObj, SVT_OBJTYPE))
-				return BR_ERROR;
-			trimStack(fun->stack);
-			if (!fun->stack->thisVar.getValueType(objectNumber, SVT_OBJTYPE))
-				return BR_ERROR;
-			trimStack(fun->stack);
-			reggie = g_sludge->_regionMan->getRegionForObject(toObj);
-			if (reggie == NULL)
-				return BR_CONTINUE;
-
-			if (force) {
-				if (g_sludge->_peopleMan->forceWalkingPerson(reggie->sX, reggie->sY, objectNumber, fun, reggie->di))
-					return BR_PAUSE;
-			} else if (immediate) {
-				g_sludge->_peopleMan->jumpPerson(reggie->sX, reggie->sY, objectNumber);
-			} else {
-				if (g_sludge->_peopleMan->makeWalkingPerson(reggie->sX, reggie->sY, objectNumber, fun, reggie->di))
-					return BR_PAUSE;
-			}
-			return BR_CONTINUE;
-		}
-
-		default:
-			fatal("Built-in function must have either 2 or 3 parameters.");
+		if (!fun->stack->thisVar.getValueType(y, SVT_INT))
 			return BR_ERROR;
+		trimStack(fun->stack);
+		if (!fun->stack->thisVar.getValueType(x, SVT_INT))
+			return BR_ERROR;
+		trimStack(fun->stack);
+		if (!fun->stack->thisVar.getValueType(objectNumber, SVT_OBJTYPE))
+			return BR_ERROR;
+		trimStack(fun->stack);
+
+		if (force) {
+			if (g_sludge->_peopleMan->forceWalkingPerson(x, y, objectNumber, fun, -1))
+				return BR_PAUSE;
+		} else if (immediate) {
+			g_sludge->_peopleMan->jumpPerson(x, y, objectNumber);
+		} else {
+			if (g_sludge->_peopleMan->makeWalkingPerson(x, y, objectNumber, fun, -1))
+				return BR_PAUSE;
+		}
+		return BR_CONTINUE;
+	}
+
+	case 2: {
+		int toObj, objectNumber;
+		ScreenRegion *reggie;
+
+		if (!fun->stack->thisVar.getValueType(toObj, SVT_OBJTYPE))
+			return BR_ERROR;
+		trimStack(fun->stack);
+		if (!fun->stack->thisVar.getValueType(objectNumber, SVT_OBJTYPE))
+			return BR_ERROR;
+		trimStack(fun->stack);
+		reggie = g_sludge->_regionMan->getRegionForObject(toObj);
+		if (reggie == NULL)
+			return BR_CONTINUE;
+
+		if (force) {
+			if (g_sludge->_peopleMan->forceWalkingPerson(reggie->sX, reggie->sY, objectNumber, fun, reggie->di))
+				return BR_PAUSE;
+		} else if (immediate) {
+			g_sludge->_peopleMan->jumpPerson(reggie->sX, reggie->sY, objectNumber);
+		} else {
+			if (g_sludge->_peopleMan->makeWalkingPerson(reggie->sX, reggie->sY, objectNumber, fun, reggie->di))
+				return BR_PAUSE;
+		}
+		return BR_CONTINUE;
+	}
+
+	default:
+		fatal("Built-in function must have either 2 or 3 parameters.");
+		return BR_ERROR;
 	}
 }
 
@@ -1778,19 +1776,19 @@ builtIn(alignStatus) {
 
 static bool getFuncNumForCallback(int numParams, LoadedFunction *fun, int &functionNum) {
 	switch (numParams) {
-		case 0:
-			functionNum = 0;
-			break;
+	case 0:
+		functionNum = 0;
+		break;
 
-		case 1:
-			if (!fun->stack->thisVar.getValueType(functionNum, SVT_FUNC))
-				return false;
-			trimStack(fun->stack);
-			break;
-
-		default:
-			fatal("Too many parameters.");
+	case 1:
+		if (!fun->stack->thisVar.getValueType(functionNum, SVT_FUNC))
 			return false;
+		trimStack(fun->stack);
+		break;
+
+	default:
+		fatal("Too many parameters.");
+		return false;
 	}
 	return true;
 }
@@ -2330,22 +2328,20 @@ builtIn(getPixelColour) {
 builtIn(makeFastArray) {
 	UNUSEDALL
 	switch (fun->stack->thisVar.varType) {
-		case SVT_STACK: {
-			bool success = fun->reg.makeFastArrayFromStack(fun->stack->thisVar.varData.theStack);
-			trimStack(fun->stack);
-			return success ? BR_CONTINUE : BR_ERROR;
-		}
-			break;
+	case SVT_STACK: {
+		bool success = fun->reg.makeFastArrayFromStack(fun->stack->thisVar.varData.theStack);
+		trimStack(fun->stack);
+		return success ? BR_CONTINUE : BR_ERROR;
+	} break;
 
-		case SVT_INT: {
-			int i = fun->stack->thisVar.varData.intValue;
-			trimStack(fun->stack);
-			return fun->reg.makeFastArraySize(i) ? BR_CONTINUE : BR_ERROR;
-		}
-			break;
+	case SVT_INT: {
+		int i = fun->stack->thisVar.varData.intValue;
+		trimStack(fun->stack);
+		return fun->reg.makeFastArraySize(i) ? BR_CONTINUE : BR_ERROR;
+	} break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 	fatal("Parameter must be a number or a stack.");
 	return BR_ERROR;
@@ -2517,7 +2513,6 @@ builtIn(_rem_setMaximumAA) {
 	trimStack(fun->stack);
 
 	return BR_CONTINUE;
-
 }
 
 builtIn(setBackgroundEffect) {
@@ -2548,7 +2543,7 @@ namespace Sludge {
 BuiltReturn callBuiltIn(int whichFunc, int numParams, LoadedFunction *fun) {
 	if (numBIFNames) {
 		setFatalInfo((fun->originalNumber < numUserFunc) ? allUserFunc[fun->originalNumber] : "Unknown user function",
-				(whichFunc < numBIFNames) ? allBIFNames[whichFunc] : "Unknown built-in function");
+		             (whichFunc < numBIFNames) ? allBIFNames[whichFunc] : "Unknown built-in function");
 	}
 
 	if (whichFunc < NUM_FUNCS) {
@@ -2563,8 +2558,8 @@ BuiltReturn callBuiltIn(int whichFunc, int numParams, LoadedFunction *fun) {
 
 		if (builtInFunctionArray[whichFunc].func) {
 			debugC(3, kSludgeDebugBuiltin,
-					"Run built-in function %i : %s",
-					whichFunc, (whichFunc < numBIFNames) ? allBIFNames[whichFunc].c_str() : "Unknown");
+			       "Run built-in function %i : %s",
+			       whichFunc, (whichFunc < numBIFNames) ? allBIFNames[whichFunc].c_str() : "Unknown");
 			return builtInFunctionArray[whichFunc].func(numParams, fun);
 		}
 	}

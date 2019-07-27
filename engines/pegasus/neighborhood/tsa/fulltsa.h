@@ -32,7 +32,8 @@ namespace Pegasus {
 
 class RipTimer : public IdlerAnimation {
 public:
-	RipTimer(const DisplayElementID id) : IdlerAnimation(id) {}
+	RipTimer(const DisplayElementID id)
+	  : IdlerAnimation(id) {}
 	virtual ~RipTimer() {}
 
 	void initImage();

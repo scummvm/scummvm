@@ -28,13 +28,13 @@
 #include "common/system.h"
 #include "common/translation.h"
 
+#include "gui/ThemeEngine.h"
+#include "gui/ThemeEval.h"
 #include "gui/about.h"
 #include "gui/gui-manager.h"
 #include "gui/message.h"
 #include "gui/options.h"
 #include "gui/saveload.h"
-#include "gui/ThemeEngine.h"
-#include "gui/ThemeEval.h"
 #include "gui/widget.h"
 
 #include "graphics/font.h"
@@ -44,13 +44,13 @@
 #include "engines/metaengine.h"
 
 #ifdef GUI_ENABLE_KEYSDIALOG
-#include "gui/KeysDialog.h"
+#	include "gui/KeysDialog.h"
 #endif
 
 class ConfigDialog : public GUI::OptionsDialog {
 protected:
 #ifdef GUI_ENABLE_KEYSDIALOG
-	GUI::Dialog		*_keysDialog;
+	GUI::Dialog *_keysDialog;
 #endif
 
 public:
@@ -61,7 +61,8 @@ public:
 };
 
 MainMenuDialog::MainMenuDialog(Engine *engine)
-	: GUI::Dialog("GlobalMenu"), _engine(engine) {
+  : GUI::Dialog("GlobalMenu")
+  , _engine(engine) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
 
 #ifndef DISABLE_FANCY_THEMES
@@ -107,7 +108,6 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 		_rtlButton = new GUI::ButtonWidget(this, "GlobalMenu.RTL", _c("~R~eturn to Launcher", "lowres"), 0, kRTLCmd);
 	_rtlButton->setEnabled(_engine->hasFeature(Engine::kSupportsRTL));
 
-
 	new GUI::ButtonWidget(this, "GlobalMenu.Quit", _("~Q~uit"), 0, kQuitCmd);
 
 	_aboutDialog = new GUI::AboutDialog();
@@ -142,26 +142,23 @@ void MainMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 		break;
 	case kHelpCmd: {
 		GUI::MessageDialog dialog(
-					_("Sorry, this engine does not currently provide in-game help. "
-					"Please consult the README for basic information, and for "
-					"instructions on how to obtain further assistance."));
+		  _("Sorry, this engine does not currently provide in-game help. "
+		    "Please consult the README for basic information, and for "
+		    "instructions on how to obtain further assistance."));
 		dialog.runModal();
-		}
-		break;
+	} break;
 	case kRTLCmd: {
 		Common::Event eventRTL;
 		eventRTL.type = Common::EVENT_RTL;
 		g_system->getEventManager()->pushEvent(eventRTL);
 		close();
-		}
-		break;
+	} break;
 	case kQuitCmd: {
 		Common::Event eventQ;
 		eventQ.type = Common::EVENT_QUIT;
 		g_system->getEventManager()->pushEvent(eventQ);
 		close();
-		}
-		break;
+	} break;
 	default:
 		GUI::Dialog::handleCommand(sender, cmd, data);
 	}
@@ -217,10 +214,10 @@ void MainMenuDialog::reflowLayout() {
 void MainMenuDialog::save() {
 	int slot = _saveDialog->runModalWithCurrentTarget();
 
-	#if defined(__PLAYSTATION2__) && defined(DYNAMIC_MODULES)
+#if defined(__PLAYSTATION2__) && defined(DYNAMIC_MODULES)
 	char pokeme[32];
-	snprintf(pokeme,32,"hack");
-	#endif
+	snprintf(pokeme, 32, "hack");
+#endif
 
 	if (slot >= 0) {
 		Common::String result(_saveDialog->getResultString());
@@ -232,8 +229,9 @@ void MainMenuDialog::save() {
 		Common::Error status = _engine->saveGameState(slot, result);
 		if (status.getCode() != Common::kNoError) {
 			Common::String failMessage = Common::String::format(_("Failed to save game (%s)! "
-				  "Please consult the README for basic information, and for "
-				  "instructions on how to obtain further assistance."), status.getDesc().c_str());
+			                                                      "Please consult the README for basic information, and for "
+			                                                      "instructions on how to obtain further assistance."),
+			                                                    status.getDesc().c_str());
 			GUI::MessageDialog dialog(failMessage);
 			dialog.runModal();
 		}
@@ -281,7 +279,7 @@ enum {
 //  "" as value for the domain, and in fact provide a somewhat better user
 // experience at the same time.
 ConfigDialog::ConfigDialog(bool subtitleControls)
-	: GUI::OptionsDialog("", "GlobalConfig") {
+  : GUI::OptionsDialog("", "GlobalConfig") {
 
 	//
 	// Sound controllers
@@ -324,16 +322,16 @@ void ConfigDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 
 	case kKeysCmd:
 
 #ifdef GUI_ENABLE_KEYSDIALOG
-	//
-	// Create the sub dialog(s)
-	//
-	_keysDialog = new GUI::KeysDialog();
-	_keysDialog->runModal();
-	delete _keysDialog;
-	_keysDialog = NULL;
+		//
+		// Create the sub dialog(s)
+		//
+		_keysDialog = new GUI::KeysDialog();
+		_keysDialog->runModal();
+		delete _keysDialog;
+		_keysDialog = NULL;
 #endif
 		break;
 	default:
-		GUI::OptionsDialog::handleCommand (sender, cmd, data);
+		GUI::OptionsDialog::handleCommand(sender, cmd, data);
 	}
 }

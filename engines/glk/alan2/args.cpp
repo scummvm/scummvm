@@ -20,8 +20,8 @@
  *
  */
 
-#include "glk/alan2/alan2.h"
 #include "glk/alan2/args.h"
+#include "glk/alan2/alan2.h"
 #include "glk/alan2/glkio.h"
 #include "glk/alan2/main.h"
 #include "glk/alan2/sysdep.h"
@@ -29,30 +29,30 @@
 namespace Glk {
 namespace Alan2 {
 
-static void switches(unsigned argc, char *argv[]) {
-}
+	static void switches(unsigned argc, char *argv[]) {
+	}
 
-void args(int argc, char *argv[]) {
-	char *prgnam;
+	void args(int argc, char *argv[]) {
+		char *prgnam;
 
-	if ((prgnam = strrchr(argv[0], '\\')) == NULL
-	        && (prgnam = strrchr(argv[0], '/')) == NULL
-	        && (prgnam = strrchr(argv[0], ':')) == NULL)
-		prgnam = argv[0];
-	else
-		prgnam++;
-	if (strlen(prgnam) > 4
-	        && (strcmp(&prgnam[strlen(prgnam) - 4], ".EXE") == 0
-	            || strcmp(&prgnam[strlen(prgnam) - 4], ".exe") == 0))
-		prgnam[strlen(prgnam) - 4] = '\0';
-	/* Now look at the switches and arguments */
-	switches(argc, argv);
-	if (advnam[0] == '\0')
-		/* No game given, try program name */
-		if (stricmp(prgnam, PROGNAME) != 0
-		        && strstr(prgnam, PROGNAME) == 0)
-			advnam = strdup(argv[0]);
-}
+		if ((prgnam = strrchr(argv[0], '\\')) == NULL
+		    && (prgnam = strrchr(argv[0], '/')) == NULL
+		    && (prgnam = strrchr(argv[0], ':')) == NULL)
+			prgnam = argv[0];
+		else
+			prgnam++;
+		if (strlen(prgnam) > 4
+		    && (strcmp(&prgnam[strlen(prgnam) - 4], ".EXE") == 0
+		        || strcmp(&prgnam[strlen(prgnam) - 4], ".exe") == 0))
+			prgnam[strlen(prgnam) - 4] = '\0';
+		/* Now look at the switches and arguments */
+		switches(argc, argv);
+		if (advnam[0] == '\0')
+			/* No game given, try program name */
+			if (stricmp(prgnam, PROGNAME) != 0
+			    && strstr(prgnam, PROGNAME) == 0)
+				advnam = strdup(argv[0]);
+	}
 
 } // End of namespace Alan2
 } // End of namespace Glk

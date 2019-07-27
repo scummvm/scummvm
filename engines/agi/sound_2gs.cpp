@@ -20,21 +20,22 @@
  *
  */
 
+#include "audio/mixer.h"
+#include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/fs.h"
-#include "common/archive.h"
 #include "common/md5.h"
 #include "common/memstream.h"
 #include "common/str-array.h"
 #include "common/textconsole.h"
-#include "audio/mixer.h"
 
 #include "agi/agi.h"
 #include "agi/sound_2gs.h"
 
 namespace Agi {
 
-SoundGen2GS::SoundGen2GS(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixer) {
+SoundGen2GS::SoundGen2GS(AgiBase *vm, Audio::Mixer *pMixer)
+  : SoundGen(vm, pMixer) {
 	// Allocate memory for the wavetable
 	_wavetable = new int8[SIERRASTANDARD_SIZE];
 
@@ -109,7 +110,7 @@ void SoundGen2GS::play(int resnum) {
 
 	switch (type) {
 	case AGI_SOUND_SAMPLE: {
-		IIgsSample *sampleRes = (IIgsSample *) _vm->_game.sounds[resnum];
+		IIgsSample *sampleRes = (IIgsSample *)_vm->_game.sounds[resnum];
 		const IIgsSampleHeader &header = sampleRes->getHeader();
 		_channels[kSfxMidiChannel].setInstrument(&header.instrument);
 		_channels[kSfxMidiChannel].setVolume(header.volume);
@@ -117,7 +118,7 @@ void SoundGen2GS::play(int resnum) {
 		break;
 	}
 	case AGI_SOUND_MIDI:
-		((IIgsMidi *) _vm->_game.sounds[resnum])->rewind();
+		((IIgsMidi *)_vm->_game.sounds[resnum])->rewind();
 		_ticks = 0;
 		break;
 	default:
@@ -268,7 +269,7 @@ void SoundGen2GS::advanceMidiPlayer() {
 		return;
 	}
 
-	IIgsMidi *midiObj = (IIgsMidi *) _vm->_game.sounds[_playingSound];
+	IIgsMidi *midiObj = (IIgsMidi *)_vm->_game.sounds[_playingSound];
 
 	_ticks++;
 	_playing = true;
@@ -401,26 +402,26 @@ void SoundGen2GS::midiNoteOn(int channel, int note, int velocity) {
 		wb++;
 
 	// Prepare the generator.
-	generator->osc[0].base  = curInstrument->wavetableBase + curInstrument->wave[0][wa].offset;
-	generator->osc[0].size  = curInstrument->wave[0][wa].size;
-	generator->osc[0].pd    = doubleToFrac(midiKeyToFreq(note, (double)curInstrument->wave[0][wa].tune / 256.0) / (double)_sampleRate);
-	generator->osc[0].p     = 0;
-	generator->osc[0].halt  = curInstrument->wave[0][wa].halt;
-	generator->osc[0].loop  = curInstrument->wave[0][wa].loop;
-	generator->osc[0].swap  = curInstrument->wave[0][wa].swap;
+	generator->osc[0].base = curInstrument->wavetableBase + curInstrument->wave[0][wa].offset;
+	generator->osc[0].size = curInstrument->wave[0][wa].size;
+	generator->osc[0].pd = doubleToFrac(midiKeyToFreq(note, (double)curInstrument->wave[0][wa].tune / 256.0) / (double)_sampleRate);
+	generator->osc[0].p = 0;
+	generator->osc[0].halt = curInstrument->wave[0][wa].halt;
+	generator->osc[0].loop = curInstrument->wave[0][wa].loop;
+	generator->osc[0].swap = curInstrument->wave[0][wa].swap;
 	generator->osc[0].rightChannel = curInstrument->wave[0][wa].rightChannel;
 
-	generator->osc[1].base  = curInstrument->wavetableBase + curInstrument->wave[1][wb].offset;
-	generator->osc[1].size  = curInstrument->wave[1][wb].size;
-	generator->osc[1].pd    = doubleToFrac(midiKeyToFreq(note, (double)curInstrument->wave[1][wb].tune / 256.0) / (double)_sampleRate);
-	generator->osc[1].p     = 0;
-	generator->osc[1].halt  = curInstrument->wave[1][wb].halt;
-	generator->osc[1].loop  = curInstrument->wave[1][wb].loop;
-	generator->osc[1].swap  = curInstrument->wave[1][wb].swap;
+	generator->osc[1].base = curInstrument->wavetableBase + curInstrument->wave[1][wb].offset;
+	generator->osc[1].size = curInstrument->wave[1][wb].size;
+	generator->osc[1].pd = doubleToFrac(midiKeyToFreq(note, (double)curInstrument->wave[1][wb].tune / 256.0) / (double)_sampleRate);
+	generator->osc[1].p = 0;
+	generator->osc[1].halt = curInstrument->wave[1][wb].halt;
+	generator->osc[1].loop = curInstrument->wave[1][wb].loop;
+	generator->osc[1].swap = curInstrument->wave[1][wb].swap;
 	generator->osc[1].rightChannel = curInstrument->wave[1][wb].rightChannel;
 
-	generator->seg  = 0;
-	generator->a    = 0;
+	generator->seg = 0;
+	generator->a = 0;
 
 	// Print debug messages for instruments with swap mode or vibrato enabled
 	if (generator->osc[0].swap || generator->osc[1].swap)
@@ -455,10 +456,11 @@ void SoundGen2GS::setProgramChangeMapping(const IIgsMidiProgramMapping *mapping)
 	_progToInst = mapping;
 }
 
-IIgsMidi::IIgsMidi(uint8 *data, uint32 len, int resnum) : AgiSound() {
+IIgsMidi::IIgsMidi(uint8 *data, uint32 len, int resnum)
+  : AgiSound() {
 	_data = data; // Save the resource pointer
 	_ptr = _data + 2; // Set current position to just after the header
-	_len = len;  // Save the resource's length
+	_len = len; // Save the resource's length
 	_type = READ_LE_UINT16(data); // Read sound resource's type
 	_ticks = 0;
 	_isValid = (_type == AGI_SOUND_MIDI) && (_data != NULL) && (_len >= 2);
@@ -480,7 +482,8 @@ static bool convertWave(Common::SeekableReadStream &source, int8 *dest, uint len
 	return !(source.eos() || source.err());
 }
 
-IIgsSample::IIgsSample(uint8 *data, uint32 len, int16 resourceNr) : AgiSound() {
+IIgsSample::IIgsSample(uint8 *data, uint32 len, int16 resourceNr)
+  : AgiSound() {
 	Common::MemoryReadStream stream(data, len, DisposeAfterUse::YES);
 
 	_sample = nullptr;
@@ -496,7 +499,7 @@ IIgsSample::IIgsSample(uint8 *data, uint32 len, int16 resourceNr) : AgiSound() {
 			warning("Apple IIGS sample (%d) expected %d bytes, got %d bytes only",
 			        resourceNr, _header.sampleSize, tailLen);
 
-			_header.sampleSize = (uint16) tailLen; // Use the part that's left
+			_header.sampleSize = (uint16)tailLen; // Use the part that's left
 		}
 
 		if (_header.pitch > 0x7F) { // Check if the pitch is invalid
@@ -523,17 +526,16 @@ IIgsSample::IIgsSample(uint8 *data, uint32 len, int16 resourceNr) : AgiSound() {
 		warning("Error creating Apple IIGS sample from resource %d (Type %d, length %d)", resourceNr, _header.type, len);
 }
 
-
 bool IIgsInstrumentHeader::read(Common::SeekableReadStream &stream, bool ignoreAddr) {
 	for (int i = 0; i < ENVELOPE_SEGMENT_COUNT; i++) {
 		env[i].bp = intToFrac(stream.readByte());
 		env[i].inc = intToFrac(stream.readUint16LE()) >> 8;
 	}
-	seg         = stream.readByte();
-	/*priority  =*/ stream.readByte(); // Not needed. 32 in all tested data.
-	bend        = stream.readByte();
-	vibDepth    = stream.readByte();
-	vibSpeed    = stream.readByte();
+	seg = stream.readByte();
+	/*priority  =*/stream.readByte(); // Not needed. 32 in all tested data.
+	bend = stream.readByte();
+	vibDepth = stream.readByte();
+	vibSpeed = stream.readByte();
 	stream.readByte(); // Not needed? 0 in all tested data.
 
 	waveCount[0] = stream.readByte();
@@ -551,8 +553,8 @@ bool IIgsInstrumentHeader::read(Common::SeekableReadStream &stream, bool ignoreA
 				wave[i][k].offset = 0;
 
 			// Parse the generator mode byte to separate fields.
-			wave[i][k].halt = b & 0x1;          // Bit 0     = HALT
-			wave[i][k].loop = !(b & 0x2);       // Bit 1     =!LOOP
+			wave[i][k].halt = b & 0x1; // Bit 0     = HALT
+			wave[i][k].loop = !(b & 0x2); // Bit 1     =!LOOP
 			wave[i][k].swap = (b & 0x6) == 0x6; // Bit 1&2   = SWAP
 			// channels seem to be reversed, verified with emulator + captured apple IIgs music
 			if (b & 0x10) {
@@ -573,7 +575,7 @@ bool IIgsInstrumentHeader::finalize(int8 *wavetable, uint32 wavetableSize) {
 	for (int i = 0; i < 2; i++) {
 		for (int k = 0; k < waveCount[i]; k++) {
 			uint32 waveOffset = wave[i][k].offset;
-			uint32 waveSize   = wave[i][k].size;
+			uint32 waveSize = wave[i][k].size;
 
 			if (waveOffset >= wavetableSize) {
 				error("Apple IIgs sound: sample data points outside of wavetable");
@@ -600,13 +602,13 @@ bool IIgsInstrumentHeader::finalize(int8 *wavetable, uint32 wavetableSize) {
 }
 
 bool IIgsSampleHeader::read(Common::SeekableReadStream &stream) {
-	type                = stream.readUint16LE();
-	pitch               = stream.readByte();
-	unknownByte_Ofs3    = stream.readByte();
-	volume              = stream.readByte();
-	unknownByte_Ofs5    = stream.readByte();
-	instrumentSize      = stream.readUint16LE();
-	sampleSize          = stream.readUint16LE();
+	type = stream.readUint16LE();
+	pitch = stream.readByte();
+	unknownByte_Ofs3 = stream.readByte();
+	volume = stream.readByte();
+	unknownByte_Ofs5 = stream.readByte();
+	instrumentSize = stream.readUint16LE();
+	sampleSize = stream.readUint16LE();
 	// Read the instrument header *ignoring* its wave address info
 	return instrument.read(stream, true);
 }
@@ -643,7 +645,7 @@ bool SoundGen2GS::loadInstruments() {
 		return false;
 	}
 
-	Common::String exeName  = exeNames.front()->getName();
+	Common::String exeName = exeNames.front()->getName();
 	Common::String waveName = waveNames.front()->getName();
 
 	// Set the MIDI program change to instrument number mapping and
@@ -654,26 +656,22 @@ bool SoundGen2GS::loadInstruments() {
 
 /** Older Apple IIGS AGI MIDI program change to instrument number mapping. */
 static const IIgsMidiProgramMapping progToInstMappingV1 = {
-	{
-		19, 20, 22, 23, 21, 24, 5, 5, 5, 5,
-		6, 7, 10, 9, 11, 9, 15, 8, 5, 5,
-		17, 16, 18, 12, 14, 5, 5, 5, 5, 5,
-		0, 1, 2, 9, 3, 4, 15, 2, 2, 2,
-		25, 13, 13, 25
-	},
+	{ 19, 20, 22, 23, 21, 24, 5, 5, 5, 5,
+	  6, 7, 10, 9, 11, 9, 15, 8, 5, 5,
+	  17, 16, 18, 12, 14, 5, 5, 5, 5, 5,
+	  0, 1, 2, 9, 3, 4, 15, 2, 2, 2,
+	  25, 13, 13, 25 },
 	5
 };
 
 /** Newer Apple IIGS AGI MIDI program change to instrument number mapping.
     FIXME: Some instrument choices sound wrong. */
 static const IIgsMidiProgramMapping progToInstMappingV2 = {
-	{
-		21, 22, 24, 25, 23, 26, 6, 6, 6, 6,
-		7, 9, 12, 8, 13, 11, 17, 10, 6, 6,
-		19, 18, 20, 14, 16, 6, 6, 6, 6, 6,
-		0, 1, 2, 4, 3, 5, 17, 2, 2, 2,
-		27, 15, 15, 27
-	},
+	{ 21, 22, 24, 25, 23, 26, 6, 6, 6, 6,
+	  7, 9, 12, 8, 13, 11, 17, 10, 6, 6,
+	  19, 18, 20, 14, 16, 6, 6, 6, 6, 6,
+	  0, 1, 2, 4, 3, 5, 17, 2, 2, 2,
+	  27, 15, 15, 27 },
 	6
 };
 
@@ -715,19 +713,19 @@ static const IIgsInstrumentSetInfo instSetV2 = {
 
 /** Information about different Apple IIGS AGI executables. */
 static const IIgsExeInfo IIgsExeInfos[] = {
-	{GID_SQ1,      "SQ",   0x1002, 138496, 0x80AD, &instSetV1},
-	{GID_LSL1,     "LL",   0x1003, 141003, 0x844E, &instSetV2},
-	{GID_AGIDEMO,  "DEMO", 0x1005, 141884, 0x8469, &instSetV2},
-	{GID_KQ1,      "KQ",   0x1006, 141894, 0x8469, &instSetV2},
-	{GID_PQ1,      "PQ",   0x1007, 141882, 0x8469, &instSetV2},
-	{GID_MIXEDUP,  "MG",   0x1013, 142552, 0x84B7, &instSetV2},
-	{GID_KQ2,      "KQ2",  0x1013, 143775, 0x84B7, &instSetV2},
-	{GID_KQ3,      "KQ3",  0x1014, 144312, 0x84B7, &instSetV2},
-	{GID_SQ2,      "SQ2",  0x1014, 107882, 0x6563, &instSetV2},
-	{GID_MH1,      "MH",   0x2004, 147678, 0x8979, &instSetV2},
-	{GID_KQ4,      "KQ4",  0x2006, 147652, 0x8979, &instSetV2},
-	{GID_BC,       "BC",   0x3001, 148192, 0x8979, &instSetV2},
-	{GID_GOLDRUSH, "GR",   0x3003, 148268, 0x8979, &instSetV2}
+	{ GID_SQ1, "SQ", 0x1002, 138496, 0x80AD, &instSetV1 },
+	{ GID_LSL1, "LL", 0x1003, 141003, 0x844E, &instSetV2 },
+	{ GID_AGIDEMO, "DEMO", 0x1005, 141884, 0x8469, &instSetV2 },
+	{ GID_KQ1, "KQ", 0x1006, 141894, 0x8469, &instSetV2 },
+	{ GID_PQ1, "PQ", 0x1007, 141882, 0x8469, &instSetV2 },
+	{ GID_MIXEDUP, "MG", 0x1013, 142552, 0x84B7, &instSetV2 },
+	{ GID_KQ2, "KQ2", 0x1013, 143775, 0x84B7, &instSetV2 },
+	{ GID_KQ3, "KQ3", 0x1014, 144312, 0x84B7, &instSetV2 },
+	{ GID_SQ2, "SQ2", 0x1014, 107882, 0x6563, &instSetV2 },
+	{ GID_MH1, "MH", 0x2004, 147678, 0x8979, &instSetV2 },
+	{ GID_KQ4, "KQ4", 0x2006, 147652, 0x8979, &instSetV2 },
+	{ GID_BC, "BC", 0x3001, 148192, 0x8979, &instSetV2 },
+	{ GID_GOLDRUSH, "GR", 0x3003, 148268, 0x8979, &instSetV2 }
 };
 
 /**
@@ -821,9 +819,10 @@ bool SoundGen2GS::loadWaveFile(Common::String &wavePath, const IIgsExeInfo &exeI
 	// Check wave file's md5sum
 	Common::String md5str = Common::computeStreamMD5AsString(*uint8Wave, SIERRASTANDARD_SIZE);
 	if (md5str != exeInfo.instSet->waveFileMd5) {
-		warning("Unknown Apple IIGS wave file (md5: %s, game: %s).\n" \
-		        "Please report the information on the previous line to the ScummVM team.\n" \
-		        "Using the wave file as it is - music may sound weird", md5str.c_str(), exeInfo.exePrefix);
+		warning("Unknown Apple IIGS wave file (md5: %s, game: %s).\n"
+		        "Please report the information on the previous line to the ScummVM team.\n"
+		        "Using the wave file as it is - music may sound weird",
+		        md5str.c_str(), exeInfo.exePrefix);
 	}
 
 	// Convert the wave file to 8-bit signed and save the result

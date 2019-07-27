@@ -35,7 +35,7 @@
 
 namespace Wintermute {
 
-class BaseFont: public BaseObject {
+class BaseFont : public BaseObject {
 public:
 	DECLARE_PERSISTENT(BaseFont, BaseObject)
 	virtual int getTextWidth(const byte *text, int maxLength = -1);

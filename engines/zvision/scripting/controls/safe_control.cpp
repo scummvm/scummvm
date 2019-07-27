@@ -24,22 +24,22 @@
 
 #include "zvision/scripting/controls/safe_control.h"
 
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
-#include "zvision/graphics/render_manager.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/zvision.h"
 
-#include "common/stream.h"
 #include "common/file.h"
-#include "common/tokenizer.h"
+#include "common/stream.h"
 #include "common/system.h"
+#include "common/tokenizer.h"
 #include "graphics/surface.h"
 #include "video/video_decoder.h"
 
 namespace ZVision {
 
 SafeControl::SafeControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)
-	: Control(engine, key, CONTROL_SAFE) {
+  : Control(engine, key, CONTROL_SAFE) {
 	_statesCount = 0;
 	_curState = 0;
 	_animation = NULL;
@@ -110,7 +110,6 @@ SafeControl::SafeControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 SafeControl::~SafeControl() {
 	if (_animation)
 		delete _animation;
-
 }
 
 bool SafeControl::process(uint32 deltaTimeInMillis) {

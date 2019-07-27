@@ -22,25 +22,25 @@
 
 #ifdef ENABLE_HE
 
-#include "common/config-manager.h"
-#include "common/savefile.h"
-#include "common/system.h"
+#	include "common/config-manager.h"
+#	include "common/savefile.h"
+#	include "common/system.h"
 
-#include "scumm/actor.h"
-#include "scumm/charset.h"
-#include "scumm/dialogs.h"
-#include "scumm/file.h"
-#include "scumm/he/intern_he.h"
-#include "scumm/object.h"
-#include "scumm/resource.h"
-#include "scumm/scumm.h"
-#include "scumm/he/sound_he.h"
-#include "scumm/util.h"
-#include "scumm/verbs.h"
+#	include "scumm/actor.h"
+#	include "scumm/charset.h"
+#	include "scumm/dialogs.h"
+#	include "scumm/file.h"
+#	include "scumm/he/intern_he.h"
+#	include "scumm/he/sound_he.h"
+#	include "scumm/object.h"
+#	include "scumm/resource.h"
+#	include "scumm/scumm.h"
+#	include "scumm/util.h"
+#	include "scumm/verbs.h"
 
 namespace Scumm {
 
-#define OPCODE(i, x)	_opcodes[i]._OPCODE(ScummEngine_v72he, x)
+#	define OPCODE(i, x) _opcodes[i]._OPCODE(ScummEngine_v72he, x)
 
 void ScummEngine_v72he::setupOpcodes() {
 	ScummEngine_v71he::setupOpcodes();
@@ -67,7 +67,7 @@ void ScummEngine_v72he::setupOpcodes() {
 	OPCODE(0x62, o72_printWizImage);
 	OPCODE(0x63, o72_getArrayDimSize);
 	OPCODE(0x64, o72_getNumFreeArrays);
-	_opcodes[0x97].setProc(0, 0);	// was: o6_setObjectName
+	_opcodes[0x97].setProc(0, 0); // was: o6_setObjectName
 	OPCODE(0x9c, o72_roomOps);
 	OPCODE(0x9d, o72_actorOps);
 	OPCODE(0x9e, o72_verbOps);
@@ -102,7 +102,7 @@ void ScummEngine_v72he::setupOpcodes() {
 static const int arrayDataSizes[] = { 0, 1, 4, 8, 8, 16, 32 };
 
 byte *ScummEngine_v72he::defineArray(int array, int type, int dim2start, int dim2end,
-											int dim1start, int dim1end) {
+                                     int dim1start, int dim1end) {
 	int id;
 	int size;
 	ArrayHeader *ah;
@@ -110,7 +110,6 @@ byte *ScummEngine_v72he::defineArray(int array, int type, int dim2start, int dim
 	assert(dim2start >= 0 && dim2start <= dim2end);
 	assert(dim1start >= 0 && dim1start <= dim1end);
 	assert(0 <= type && type <= 6);
-
 
 	if (type == kBitArray || type == kNibbleArray)
 		type = kByteArray;
@@ -161,15 +160,13 @@ int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
 	if (!ah)
 		error("readArray: invalid array %d (%d)", array, readVar(array));
 
-	if (idx2 < (int)FROM_LE_32(ah->dim2start) || idx2 > (int)FROM_LE_32(ah->dim2end) ||
-		idx1 < (int)FROM_LE_32(ah->dim1start) || idx1 > (int)FROM_LE_32(ah->dim1end)) {
+	if (idx2 < (int)FROM_LE_32(ah->dim2start) || idx2 > (int)FROM_LE_32(ah->dim2end) || idx1 < (int)FROM_LE_32(ah->dim1start) || idx1 > (int)FROM_LE_32(ah->dim1end)) {
 		error("readArray: array %d out of bounds: [%d, %d] exceeds [%d..%d, %d..%d]",
-			  array, idx1, idx2, FROM_LE_32(ah->dim1start), FROM_LE_32(ah->dim1end),
-			  FROM_LE_32(ah->dim2start), FROM_LE_32(ah->dim2end));
+		      array, idx1, idx2, FROM_LE_32(ah->dim1start), FROM_LE_32(ah->dim1end),
+		      FROM_LE_32(ah->dim2start), FROM_LE_32(ah->dim2end));
 	}
 
-	const int offset = (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) *
-		(idx2 - FROM_LE_32(ah->dim2start)) + (idx1 - FROM_LE_32(ah->dim1start));
+	const int offset = (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) * (idx2 - FROM_LE_32(ah->dim2start)) + (idx1 - FROM_LE_32(ah->dim1start));
 
 	switch (FROM_LE_32(ah->type)) {
 	case kByteArray:
@@ -197,15 +194,13 @@ void ScummEngine_v72he::writeArray(int array, int idx2, int idx1, int value) {
 	if (!ah)
 		error("writeArray: Invalid array (%d) reference", readVar(array));
 
-	if (idx2 < (int)FROM_LE_32(ah->dim2start) || idx2 > (int)FROM_LE_32(ah->dim2end) ||
-		idx1 < (int)FROM_LE_32(ah->dim1start) || idx1 > (int)FROM_LE_32(ah->dim1end)) {
+	if (idx2 < (int)FROM_LE_32(ah->dim2start) || idx2 > (int)FROM_LE_32(ah->dim2end) || idx1 < (int)FROM_LE_32(ah->dim1start) || idx1 > (int)FROM_LE_32(ah->dim1end)) {
 		error("writeArray: array %d out of bounds: [%d, %d] exceeds [%d..%d, %d..%d]",
-			  array, idx1, idx2, FROM_LE_32(ah->dim1start), FROM_LE_32(ah->dim1end),
-			  FROM_LE_32(ah->dim2start), FROM_LE_32(ah->dim2end));
+		      array, idx1, idx2, FROM_LE_32(ah->dim1start), FROM_LE_32(ah->dim1end),
+		      FROM_LE_32(ah->dim2start), FROM_LE_32(ah->dim2end));
 	}
 
-	const int offset = (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) *
-		(idx2 - FROM_LE_32(ah->dim2start)) - FROM_LE_32(ah->dim1start) + idx1;
+	const int offset = (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) * (idx2 - FROM_LE_32(ah->dim2start)) - FROM_LE_32(ah->dim1start) + idx1;
 
 	switch (FROM_LE_32(ah->type)) {
 	case kByteArray:
@@ -242,7 +237,7 @@ int ScummEngine_v72he::setupStringArrayFromString(const char *cStr) {
 	int len = strlen(cStr) + 1;
 	byte *ptr = defineArray(0, kStringArray, 0, 0, 0, len);
 	if (ptr != nullptr)
-		Common::strlcpy((char*)ptr, cStr, len);
+		Common::strlcpy((char *)ptr, cStr, len);
 
 	return readVar(0);
 }
@@ -274,7 +269,7 @@ void ScummEngine_v72he::copyScriptString(byte *dst, int dstSize) {
 			error("String stack underflow");
 
 		_stringLength -= 2;
-		 while ((chr = _stringBuffer[_stringLength]) != 0) {
+		while ((chr = _stringBuffer[_stringLength]) != 0) {
 			string[pos] = chr;
 			pos++;
 
@@ -381,9 +376,8 @@ int ScummEngine_v72he::findObject(int x, int y, int num, int *args) {
 
 		if (!result) {
 			// Check object bounds
-			if (_objs[i].x_pos <= x && _objs[i].width + _objs[i].x_pos > x &&
-			    _objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos > y)
-					result = _objs[i].obj_nr;
+			if (_objs[i].x_pos <= x && _objs[i].width + _objs[i].x_pos > x && _objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos > y)
+				result = _objs[i].obj_nr;
 		}
 
 		if (result) {
@@ -529,9 +523,8 @@ void ScummEngine_v72he::o72_startScript() {
 
 	// HACK: The credits script in Russian HE99 version of Freddi Fish 3
 	// uses null strings, causing various errors, so skip it.
-	if (_game.id == GID_FREDDI3 && _game.heversion == 99 && _language == Common::RU_RUS &&
-		_currentRoom == 40 && script == 2057) {
-			return;
+	if (_game.id == GID_FREDDI3 && _game.heversion == 99 && _language == Common::RU_RUS && _currentRoom == 40 && script == 2057) {
+		return;
 	}
 
 	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
@@ -655,7 +648,7 @@ void ScummEngine_v72he::o72_roomOps() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 172:		// SO_ROOM_SCROLL
+	case 172: // SO_ROOM_SCROLL
 		b = pop();
 		a = pop();
 		if (a < (_screenWidth / 2))
@@ -670,13 +663,13 @@ void ScummEngine_v72he::o72_roomOps() {
 		VAR(VAR_CAMERA_MAX_X) = b;
 		break;
 
-	case 174:		// SO_ROOM_SCREEN
+	case 174: // SO_ROOM_SCREEN
 		b = pop();
 		a = pop();
 		initScreens(a, _screenHeight);
 		break;
 
-	case 175:		// SO_ROOM_PALETTE
+	case 175: // SO_ROOM_PALETTE
 		d = pop();
 		c = pop();
 		b = pop();
@@ -684,25 +677,25 @@ void ScummEngine_v72he::o72_roomOps() {
 		setPalColor(d, a, b, c);
 		break;
 
-	case 179:		// SO_ROOM_INTENSITY
+	case 179: // SO_ROOM_INTENSITY
 		c = pop();
 		b = pop();
 		a = pop();
 		darkenPalette(a, a, a, b, c);
 		break;
 
-	case 180:		// SO_ROOM_SAVEGAME
+	case 180: // SO_ROOM_SAVEGAME
 		_saveTemporaryState = true;
 		_saveLoadSlot = pop();
 		_saveLoadFlag = pop();
 		break;
 
-	case 181:		// SO_ROOM_FADE
+	case 181: // SO_ROOM_FADE
 		// Defaults to 1 but doesn't use fade effects
 		a = pop();
 		break;
 
-	case 182:		// SO_RGB_ROOM_INTENSITY
+	case 182: // SO_RGB_ROOM_INTENSITY
 		e = pop();
 		d = pop();
 		c = pop();
@@ -711,18 +704,18 @@ void ScummEngine_v72he::o72_roomOps() {
 		darkenPalette(a, b, c, d, e);
 		break;
 
-	case 213:		// SO_ROOM_NEW_PALETTE
+	case 213: // SO_ROOM_NEW_PALETTE
 		a = pop();
 		setCurrentPalette(a);
 		break;
 
-	case 220:		// SO_ROOM_COPY_PALETTE
+	case 220: // SO_ROOM_COPY_PALETTE
 		a = pop();
 		b = pop();
 		copyPalColor(a, b);
 		break;
 
-	case 221:		// SO_ROOM_SAVEGAME_BY_NAME
+	case 221: // SO_ROOM_SAVEGAME_BY_NAME
 		byte buffer[256];
 
 		copyScriptString((byte *)buffer, sizeof(buffer));
@@ -735,13 +728,13 @@ void ScummEngine_v72he::o72_roomOps() {
 		_saveTemporaryState = true;
 		break;
 
-	case 234:		// SO_OBJECT_ORDER
+	case 234: // SO_OBJECT_ORDER
 		b = pop();
 		a = pop();
 		swapObjects(a, b);
 		break;
 
-	case 236:		// SO_ROOM_PALETTE_IN_ROOM
+	case 236: // SO_ROOM_PALETTE_IN_ROOM
 		b = pop();
 		a = pop();
 		setRoomPalette(a, b);
@@ -769,36 +762,36 @@ void ScummEngine_v72he::o72_actorOps() {
 		return;
 
 	switch (subOp) {
-	case 21: 		// SO_CONDITION (HE 80+)
+	case 21: // SO_CONDITION (HE 80+)
 		k = getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < k; ++i) {
 			a->setUserCondition(args[i] & 0x7F, args[i] & 0x80);
 		}
 		break;
-	case 24: 		// SO_TALK_CONDITION (HE 80+)
+	case 24: // SO_TALK_CONDITION (HE 80+)
 		k = pop();
 		if (k == 0)
 			k = _rnd.getRandomNumberRng(1, 10);
 		a->_heNoTalkAnimation = 1;
 		a->setTalkCondition(k);
 		break;
-	case 43: 		// SO_PRIORITY (HE 90+)
+	case 43: // SO_PRIORITY (HE 90+)
 		a->_layer = pop();
 		a->_needRedraw = true;
 		break;
-	case 64:		// SO_ACTOR_DEFAULT_CLIPPED
+	case 64: // SO_ACTOR_DEFAULT_CLIPPED
 		_actorClipOverride.bottom = pop();
 		_actorClipOverride.right = pop();
 		_actorClipOverride.top = pop();
 		_actorClipOverride.left = pop();
 		adjustRect(_actorClipOverride);
 		break;
-	case 65: 		// SO_AT (HE 98+)
+	case 65: // SO_AT (HE 98+)
 		j = pop();
 		i = pop();
 		a->putActor(i, j);
 		break;
-	case 67:		// SO_CLIPPED (HE 99+)
+	case 67: // SO_CLIPPED (HE 99+)
 		a->_clipOverride.bottom = pop();
 		a->_clipOverride.right = pop();
 		a->_clipOverride.top = pop();
@@ -809,131 +802,131 @@ void ScummEngine_v72he::o72_actorOps() {
 		k = pop();
 		a->setHEFlag(1, k);
 		break;
-	case 76:		// SO_COSTUME
+	case 76: // SO_COSTUME
 		a->setActorCostume(pop());
 		break;
-	case 77:		// SO_STEP_DIST
+	case 77: // SO_STEP_DIST
 		j = pop();
 		i = pop();
 		a->setActorWalkSpeed(i, j);
 		break;
-	case 78:		// SO_SOUND
+	case 78: // SO_SOUND
 		k = getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < k; i++)
 			a->_sound[i] = args[i];
 		break;
-	case 79:		// SO_WALK_ANIMATION
+	case 79: // SO_WALK_ANIMATION
 		a->_walkFrame = pop();
 		break;
-	case 80:		// SO_TALK_ANIMATION
+	case 80: // SO_TALK_ANIMATION
 		a->_talkStopFrame = pop();
 		a->_talkStartFrame = pop();
 		break;
-	case 81:		// SO_STAND_ANIMATION
+	case 81: // SO_STAND_ANIMATION
 		a->_standFrame = pop();
 		break;
-	case 82:		// SO_ANIMATION
+	case 82: // SO_ANIMATION
 		// dummy case in scumm6
 		pop();
 		pop();
 		pop();
 		break;
-	case 83:		// SO_DEFAULT
+	case 83: // SO_DEFAULT
 		a->initActor(0);
 		break;
-	case 84:		// SO_ELEVATION
+	case 84: // SO_ELEVATION
 		a->setElevation(pop());
 		break;
-	case 85:		// SO_ANIMATION_DEFAULT
+	case 85: // SO_ANIMATION_DEFAULT
 		a->_initFrame = 1;
 		a->_walkFrame = 2;
 		a->_standFrame = 3;
 		a->_talkStartFrame = 4;
 		a->_talkStopFrame = 5;
 		break;
-	case 86:		// SO_PALETTE
+	case 86: // SO_PALETTE
 		j = pop();
 		i = pop();
 		assertRange(0, i, 255, "palette slot");
 		a->remapActorPaletteColor(i, j);
 		a->_needRedraw = true;
 		break;
-	case 87:		// SO_TALK_COLOR
+	case 87: // SO_TALK_COLOR
 		a->_talkColor = pop();
 		break;
-	case 88:		// SO_ACTOR_NAME
+	case 88: // SO_ACTOR_NAME
 		copyScriptString(string, sizeof(string));
 		loadPtrToResource(rtActorName, a->_number, string);
 		break;
-	case 89:		// SO_INIT_ANIMATION
+	case 89: // SO_INIT_ANIMATION
 		a->_initFrame = pop();
 		break;
-	case 91:		// SO_ACTOR_WIDTH
+	case 91: // SO_ACTOR_WIDTH
 		a->_width = pop();
 		break;
-	case 92:		// SO_SCALE
+	case 92: // SO_SCALE
 		i = pop();
 		a->setScale(i, i);
 		break;
-	case 93:		// SO_NEVER_ZCLIP
+	case 93: // SO_NEVER_ZCLIP
 		a->_forceClip = 0;
 		break;
-	case 94:		// SO_ALWAYS_ZCLIP
+	case 94: // SO_ALWAYS_ZCLIP
 		a->_forceClip = pop();
 		break;
-	case 95:		// SO_IGNORE_BOXES
+	case 95: // SO_IGNORE_BOXES
 		a->_ignoreBoxes = 1;
 		a->_forceClip = 0;
 		if (a->isInCurrentRoom())
 			a->putActor();
 		break;
-	case 96:		// SO_FOLLOW_BOXES
+	case 96: // SO_FOLLOW_BOXES
 		a->_ignoreBoxes = 0;
 		a->_forceClip = 0;
 		if (a->isInCurrentRoom())
 			a->putActor();
 		break;
-	case 97:		// SO_ANIMATION_SPEED
+	case 97: // SO_ANIMATION_SPEED
 		a->setAnimSpeed(pop());
 		break;
-	case 98:		// SO_SHADOW
+	case 98: // SO_SHADOW
 		a->_heXmapNum = pop();
 		a->_needRedraw = true;
 		break;
-	case 99:		// SO_TEXT_OFFSET
+	case 99: // SO_TEXT_OFFSET
 		a->_talkPosY = pop();
 		a->_talkPosX = pop();
 		break;
-	case 156:		// SO_CHARSET (HE 72+)
+	case 156: // SO_CHARSET (HE 72+)
 		a->_charset = pop();
 		break;
-	case 175:		// SO_ROOM_PALETTE (HE 99+)
+	case 175: // SO_ROOM_PALETTE (HE 99+)
 		a->_hePaletteNum = pop();
 		a->_needRedraw = true;
 		break;
-	case 198:		// SO_ACTOR_VARIABLE
+	case 198: // SO_ACTOR_VARIABLE
 		i = pop();
 		a->setAnimVar(pop(), i);
 		break;
-	case 215:		// SO_ACTOR_IGNORE_TURNS_ON
+	case 215: // SO_ACTOR_IGNORE_TURNS_ON
 		a->_ignoreTurns = true;
 		break;
-	case 216:		// SO_ACTOR_IGNORE_TURNS_OFF
+	case 216: // SO_ACTOR_IGNORE_TURNS_OFF
 		a->_ignoreTurns = false;
 		break;
-	case 217:		// SO_ACTOR_NEW
+	case 217: // SO_ACTOR_NEW
 		a->initActor(2);
 		break;
-	case 218:		// SO_BACKGROUND_ON
+	case 218: // SO_BACKGROUND_ON
 		a->drawActorToBackBuf(a->getPos().x, a->getPos().y);
 		break;
-	case 219:		// SO_BACKGROUND_OFF
+	case 219: // SO_BACKGROUND_OFF
 		a->_drawToBackBuf = false;
 		a->_needRedraw = true;
 		a->_needBgReset = true;
 		break;
-	case 225:		// SO_TALKIE
-		{
+	case 225: // SO_TALKIE
+	{
 		copyScriptString(string, sizeof(string));
 		int slot = pop();
 
@@ -944,7 +937,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		a->_heTalkQueue[slot].posY = a->_talkPosY;
 		a->_heTalkQueue[slot].color = a->_talkColor;
 		break;
-		}
+	}
 	default:
 		error("o72_actorOps: default case %d", subOp);
 	}
@@ -965,7 +958,7 @@ void ScummEngine_v72he::o72_verbOps() {
 	vs = &_verbs[_curVerbSlot];
 	slot = _curVerbSlot;
 	switch (subOp) {
-	case 124:		// SO_VERB_IMAGE
+	case 124: // SO_VERB_IMAGE
 		a = pop();
 		if (_curVerbSlot) {
 			setVerbObject(_roomResource, a, slot);
@@ -973,33 +966,33 @@ void ScummEngine_v72he::o72_verbOps() {
 			vs->imgindex = a;
 		}
 		break;
-	case 125:		// SO_VERB_NAME
+	case 125: // SO_VERB_NAME
 		copyScriptString(name, sizeof(name));
 		loadPtrToResource(rtVerb, slot, name);
 		vs->type = kTextVerbType;
 		vs->imgindex = 0;
 		break;
-	case 126:		// SO_VERB_COLOR
+	case 126: // SO_VERB_COLOR
 		vs->color = pop();
 		break;
-	case 127:		// SO_VERB_HICOLOR
+	case 127: // SO_VERB_HICOLOR
 		vs->hicolor = pop();
 		break;
-	case 128:		// SO_VERB_AT
+	case 128: // SO_VERB_AT
 		vs->curRect.top = pop();
 		vs->curRect.left = pop();
 		break;
-	case 129:		// SO_VERB_ON
+	case 129: // SO_VERB_ON
 		vs->curmode = 1;
 		break;
-	case 130:		// SO_VERB_OFF
+	case 130: // SO_VERB_OFF
 		vs->curmode = 0;
 		break;
-	case 131:		// SO_VERB_DELETE
+	case 131: // SO_VERB_DELETE
 		slot = getVerbSlot(pop(), 0);
 		killVerb(slot);
 		break;
-	case 132:		// SO_VERB_NEW
+	case 132: // SO_VERB_NEW
 		slot = getVerbSlot(_curVerb, 0);
 		if (slot == 0) {
 			for (slot = 1; slot < _numVerbs; slot++) {
@@ -1023,19 +1016,19 @@ void ScummEngine_v72he::o72_verbOps() {
 		vs->center = 0;
 		vs->imgindex = 0;
 		break;
-	case 133:		// SO_VERB_DIMCOLOR
+	case 133: // SO_VERB_DIMCOLOR
 		vs->dimcolor = pop();
 		break;
-	case 134:		// SO_VERB_DIM
+	case 134: // SO_VERB_DIM
 		vs->curmode = 2;
 		break;
-	case 135:		// SO_VERB_KEY
+	case 135: // SO_VERB_KEY
 		vs->key = pop();
 		break;
-	case 136:		// SO_VERB_CENTER
+	case 136: // SO_VERB_CENTER
 		vs->center = 1;
 		break;
-	case 137:		// SO_VERB_NAME_STR
+	case 137: // SO_VERB_NAME_STR
 		a = pop();
 		if (a == 0) {
 			loadPtrToResource(rtVerb, slot, (const byte *)"");
@@ -1045,7 +1038,7 @@ void ScummEngine_v72he::o72_verbOps() {
 		vs->type = kTextVerbType;
 		vs->imgindex = 0;
 		break;
-	case 139:		// SO_VERB_IMAGE_IN_ROOM
+	case 139: // SO_VERB_IMAGE_IN_ROOM
 		b = pop();
 		a = pop();
 
@@ -1055,7 +1048,7 @@ void ScummEngine_v72he::o72_verbOps() {
 			vs->imgindex = a;
 		}
 		break;
-	case 140:		// SO_VERB_BAKCOLOR
+	case 140: // SO_VERB_BAKCOLOR
 		vs->bkcolor = pop();
 		break;
 	case 255:
@@ -1084,17 +1077,17 @@ void ScummEngine_v72he::o72_arrayOps() {
 
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord();
-	debug(9,"o72_arrayOps: array %d case %d", array, subOp);
+	debug(9, "o72_arrayOps: array %d case %d", array, subOp);
 
 	switch (subOp) {
-	case 7:			// SO_ASSIGN_STRING
+	case 7: // SO_ASSIGN_STRING
 		copyScriptString(string, sizeof(string));
 		len = resStrLen(string);
 		data = defineArray(array, kStringArray, 0, 0, 0, len);
 		memcpy(data, string, len);
 		break;
 
-	case 126:		// SO_COMPLEX_ARRAY_ASSIGNMENT
+	case 126: // SO_COMPLEX_ARRAY_ASSIGNMENT
 		len = getStackList(list, ARRAYSIZE(list));
 		dim1end = pop();
 		dim1start = pop();
@@ -1118,24 +1111,23 @@ void ScummEngine_v72he::o72_arrayOps() {
 			dim2start++;
 		}
 		break;
-	case 127:		// SO_COMPLEX_ARRAY_COPY_OPERATION
-		{
-			int a2_dim1end = pop();
-			int a2_dim1start = pop();
-			int a2_dim2end = pop();
-			int a2_dim2start = pop();
-			int array2 = fetchScriptWord();
-			int a1_dim1end = pop();
-			int a1_dim1start = pop();
-			int a1_dim2end = pop();
-			int a1_dim2start = pop();
-			if (a1_dim1end - a1_dim1start != a2_dim1end - a2_dim1start || a2_dim2end - a2_dim2start != a1_dim2end - a1_dim2start) {
-				error("Source and dest ranges size are mismatched");
-			}
-			copyArray(array, a1_dim2start, a1_dim2end, a1_dim1start, a1_dim1end, array2, a2_dim2start, a2_dim2end, a2_dim1start, a2_dim1end);
+	case 127: // SO_COMPLEX_ARRAY_COPY_OPERATION
+	{
+		int a2_dim1end = pop();
+		int a2_dim1start = pop();
+		int a2_dim2end = pop();
+		int a2_dim2start = pop();
+		int array2 = fetchScriptWord();
+		int a1_dim1end = pop();
+		int a1_dim1start = pop();
+		int a1_dim2end = pop();
+		int a1_dim2start = pop();
+		if (a1_dim1end - a1_dim1start != a2_dim1end - a2_dim1start || a2_dim2end - a2_dim2start != a1_dim2end - a1_dim2start) {
+			error("Source and dest ranges size are mismatched");
 		}
-		break;
-	case 128:		// SO_RANGE_ARRAY_ASSIGNMENT
+		copyArray(array, a1_dim2start, a1_dim2end, a1_dim1start, a1_dim1end, array2, a2_dim2start, a2_dim2end, a2_dim1start, a2_dim1end);
+	} break;
+	case 128: // SO_RANGE_ARRAY_ASSIGNMENT
 		b = pop();
 		c = pop();
 		dim1end = pop();
@@ -1166,13 +1158,13 @@ void ScummEngine_v72he::o72_arrayOps() {
 			dim2start++;
 		}
 		break;
-	case 194:		// SO_FORMATTED_STRING
+	case 194: // SO_FORMATTED_STRING
 		decodeScriptString(string);
 		len = resStrLen(string);
 		data = defineArray(array, kStringArray, 0, 0, 0, len);
 		memcpy(data, string, len);
 		break;
-	case 208:		// SO_ASSIGN_INT_LIST
+	case 208: // SO_ASSIGN_INT_LIST
 		b = pop();
 		c = pop();
 		id = readVar(array);
@@ -1183,7 +1175,7 @@ void ScummEngine_v72he::o72_arrayOps() {
 			writeArray(array, 0, b + c, pop());
 		}
 		break;
-	case 212:		// SO_ASSIGN_2DIM_LIST
+	case 212: // SO_ASSIGN_2DIM_LIST
 		len = getStackList(list, ARRAYSIZE(list));
 		id = readVar(array);
 		if (id == 0)
@@ -1270,25 +1262,25 @@ void ScummEngine_v72he::o72_dimArray() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 2:		// SO_BIT_ARRAY
+	case 2: // SO_BIT_ARRAY
 		data = kBitArray;
 		break;
-	case 3:		// SO_NIBBLE_ARRAY
+	case 3: // SO_NIBBLE_ARRAY
 		data = kNibbleArray;
 		break;
-	case 4:		// SO_BYTE_ARRAY
+	case 4: // SO_BYTE_ARRAY
 		data = kByteArray;
 		break;
-	case 5:		// SO_INT_ARRAY
+	case 5: // SO_INT_ARRAY
 		data = kIntArray;
 		break;
 	case 6:
 		data = kDwordArray;
 		break;
-	case 7:		// SO_STRING_ARRAY
+	case 7: // SO_STRING_ARRAY
 		data = kStringArray;
 		break;
-	case 204:		// SO_UNDIM_ARRAY
+	case 204: // SO_UNDIM_ARRAY
 		nukeArray(fetchScriptWord());
 		return;
 	default:
@@ -1298,29 +1290,28 @@ void ScummEngine_v72he::o72_dimArray() {
 	defineArray(fetchScriptWord(), data, 0, 0, 0, pop());
 }
 
-
 void ScummEngine_v72he::o72_dim2dimArray() {
 	int data, dim1end, dim2end;
 
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 2:		// SO_BIT_ARRAY
+	case 2: // SO_BIT_ARRAY
 		data = kBitArray;
 		break;
-	case 3:		// SO_NIBBLE_ARRAY
+	case 3: // SO_NIBBLE_ARRAY
 		data = kNibbleArray;
 		break;
-	case 4:		// SO_BYTE_ARRAY
+	case 4: // SO_BYTE_ARRAY
 		data = kByteArray;
 		break;
-	case 5:		// SO_INT_ARRAY
+	case 5: // SO_INT_ARRAY
 		data = kIntArray;
 		break;
 	case 6:
 		data = kDwordArray;
 		break;
-	case 7:		// SO_STRING_ARRAY
+	case 7: // SO_STRING_ARRAY
 		data = kStringArray;
 		break;
 	default:
@@ -1366,7 +1357,7 @@ void ScummEngine_v72he::o72_drawWizImage() {
 	_wiz->displayWizImage(&wi);
 }
 
-void ScummEngine_v72he::debugInput(byte* string) {
+void ScummEngine_v72he::debugInput(byte *string) {
 	byte *debugInputString;
 
 	DebugInputDialog dialog(this, (char *)string);
@@ -1419,10 +1410,10 @@ void ScummEngine_v72he::o72_openFile() {
 
 	if (slot != -1) {
 		switch (mode) {
-		case 1:   // Read mode
+		case 1: // Read mode
 			_hInFileTable[slot] = openFileForReading(buffer);
 			break;
-		case 2:   // Write mode
+		case 2: // Write mode
 			if (!strchr((char *)buffer, '/')) {
 				_hOutFileTable[slot] = openSaveFileForWriting(buffer);
 			}
@@ -1437,7 +1428,6 @@ void ScummEngine_v72he::o72_openFile() {
 
 		if (_hInFileTable[slot] == 0 && _hOutFileTable[slot] == 0)
 			slot = -1;
-
 	}
 	debug(1, "o72_openFile: slot %d, mode %d", slot, mode);
 	push(slot);
@@ -1493,8 +1483,7 @@ void ScummEngine_v72he::o72_readFile() {
 
 void ScummEngine_v72he::writeFileFromArray(int slot, int32 resID) {
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, resID);
-	int32 size = (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) *
-		(FROM_LE_32(ah->dim2end) - FROM_LE_32(ah->dim2start) + 1);
+	int32 size = (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) * (FROM_LE_32(ah->dim2end) - FROM_LE_32(ah->dim2start) + 1);
 
 	if (slot != -1) {
 		_hOutFileTable[slot]->write(ah->data, size);
@@ -1575,7 +1564,7 @@ void ScummEngine_v72he::o72_deleteFile() {
 }
 
 void ScummEngine_v72he::o72_rename() {
-	byte buffer1[100],buffer2[100];
+	byte buffer1[100], buffer2[100];
 
 	copyScriptString(buffer1, sizeof(buffer1));
 	copyScriptString(buffer2, sizeof(buffer2));
@@ -1684,7 +1673,7 @@ void ScummEngine_v72he::o72_redimArray() {
 }
 
 void ScummEngine_v72he::redimArray(int arrayId, int newDim2start, int newDim2end,
-								   int newDim1start, int newDim1end, int type) {
+                                   int newDim1start, int newDim1end, int type) {
 	int newSize, oldSize;
 
 	if (readVar(arrayId) == 0)
@@ -1699,8 +1688,7 @@ void ScummEngine_v72he::redimArray(int arrayId, int newDim2start, int newDim2end
 	oldSize = arrayDataSizes[FROM_LE_32(ah->type)];
 
 	newSize *= (newDim1end - newDim1start + 1) * (newDim2end - newDim2start + 1);
-	oldSize *= (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) *
-		(FROM_LE_32(ah->dim2end) - FROM_LE_32(ah->dim2start) + 1);
+	oldSize *= (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) * (FROM_LE_32(ah->dim2end) - FROM_LE_32(ah->dim2start) + 1);
 
 	newSize >>= 3;
 	oldSize >>= 3;
@@ -1730,8 +1718,7 @@ void ScummEngine_v72he::checkArrayLimits(int array, int dim2start, int dim2end, 
 }
 
 void ScummEngine_v72he::copyArray(int array1, int a1_dim2start, int a1_dim2end, int a1_dim1start, int a1_dim1end,
-				int array2, int a2_dim2start, int a2_dim2end, int a2_dim1start, int a2_dim1end)
-{
+                                  int array2, int a2_dim2start, int a2_dim2end, int a2_dim1start, int a2_dim1end) {
 	byte *dst, *src;
 	int dstPitch, srcPitch;
 	int rowSize;
@@ -1961,7 +1948,7 @@ void ScummEngine_v72he::o72_createDirectory() {
 	byte directoryName[255];
 
 	copyScriptString(directoryName, sizeof(directoryName));
-	debug(1,"o72_createDirectory: %s", directoryName);
+	debug(1, "o72_createDirectory: %s", directoryName);
 }
 
 void ScummEngine_v72he::o72_setSystemMessage() {
@@ -1972,13 +1959,13 @@ void ScummEngine_v72he::o72_setSystemMessage() {
 
 	switch (subOp) {
 	case 240:
-		debug(1,"o72_setSystemMessage: (%d) %s", subOp, name);
+		debug(1, "o72_setSystemMessage: (%d) %s", subOp, name);
 		break;
 	case 241: // Set Version
-		debug(1,"o72_setSystemMessage: (%d) %s", subOp, name);
+		debug(1, "o72_setSystemMessage: (%d) %s", subOp, name);
 		break;
 	case 242:
-		debug(1,"o72_setSystemMessage: (%d) %s", subOp, name);
+		debug(1, "o72_setSystemMessage: (%d) %s", subOp, name);
 		break;
 	case 243: // Set Window Caption
 		// TODO: The 'name' string can contain non-ASCII data. This can lead to
@@ -2009,33 +1996,33 @@ void ScummEngine_v72he::decodeParseString(int m, int n) {
 	byte b = fetchScriptByte();
 
 	switch (b) {
-	case 65:		// SO_AT
+	case 65: // SO_AT
 		_string[m].ypos = pop();
 		_string[m].xpos = pop();
 		_string[m].overhead = false;
 		break;
-	case 66:		// SO_COLOR
+	case 66: // SO_COLOR
 		_string[m].color = pop();
 		break;
-	case 67:		// SO_CLIPPED
+	case 67: // SO_CLIPPED
 		_string[m].right = pop();
 		break;
-	case 69:		// SO_CENTER
+	case 69: // SO_CENTER
 		_string[m].center = true;
 		_string[m].overhead = false;
 		break;
-	case 71:		// SO_LEFT
+	case 71: // SO_LEFT
 		_string[m].center = false;
 		_string[m].overhead = false;
 		break;
-	case 72:		// SO_OVERHEAD
+	case 72: // SO_OVERHEAD
 		_string[m].overhead = true;
 		_string[m].no_talk_anim = false;
 		break;
-	case 74:		// SO_MUMBLE
+	case 74: // SO_MUMBLE
 		_string[m].no_talk_anim = true;
 		break;
-	case 75:		// SO_TEXTSTRING
+	case 75: // SO_TEXTSTRING
 		printString(m, _scriptPointer);
 		_scriptPointer += resStrLen(_scriptPointer) + 1;
 		break;
@@ -2043,15 +2030,13 @@ void ScummEngine_v72he::decodeParseString(int m, int n) {
 		decodeScriptString(name, true);
 		printString(m, name);
 		break;
-	case 0xE1:
-		{
+	case 0xE1: {
 		byte *dataPtr = getResourceAddress(rtTalkie, pop());
-		byte *text = findWrappedBlock(MKTAG('T','E','X','T'), dataPtr, 0, 0);
+		byte *text = findWrappedBlock(MKTAG('T', 'E', 'X', 'T'), dataPtr, 0, 0);
 		size = getResourceDataSize(text);
 		memcpy(name, text, size);
 		printString(m, name);
-		}
-		break;
+	} break;
 	case 0xF9:
 		colors = pop();
 		if (colors == 1) {

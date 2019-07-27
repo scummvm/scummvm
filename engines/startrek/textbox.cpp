@@ -27,7 +27,6 @@
 #include "startrek/graphics.h"
 #include "startrek/room.h"
 
-
 namespace StarTrek {
 
 const char *StarTrekEngine::getNextTextLine(const char *text, char *lineOutput, int lineWidth) {
@@ -108,7 +107,6 @@ void StarTrekEngine::drawTextLineToBitmap(const char *text, int textLen, int x, 
 			drawRect.bottom = bitmapRect.bottom - destRect.top;
 			if (drawRect.bottom > destRect.bottom - destRect.top)
 				drawRect.bottom = destRect.bottom - destRect.top;
-
 
 			int16 destX = destRect.left - bitmapRect.left;
 			if (destX < bitmapRect.right - bitmapRect.right)
@@ -287,13 +285,13 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 	int choiceIndex = 0;
 	int scrollOffset = 0;
 	if (tmpTextDisplayMode != TEXTDISPLAY_WAIT && tmpTextDisplayMode != TEXTDISPLAY_SUBTITLES
-	        && numChoices == 1 && _sfxEnabled && !_sfxWorking)
+	    && numChoices == 1 && _sfxEnabled && !_sfxWorking)
 		_textboxHasMultipleChoices = false;
 	else
 		_textboxHasMultipleChoices = true;
 
 	if (tmpTextDisplayMode >= TEXTDISPLAY_WAIT && tmpTextDisplayMode <= TEXTDISPLAY_NONE
-	        && _sfxEnabled && !_sfxWorking)
+	    && _sfxEnabled && !_sfxWorking)
 		_textboxVar6 = true;
 	else
 		_textboxVar6 = false;
@@ -391,14 +389,14 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 				disableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
 				goto readjustScroll;
 
-readjustScroll:
+			readjustScroll:
 				textboxSprite.bitmapChanged = true;
 				drawMainText(
-				    textBitmap,
-				    numTextLines - scrollOffset,
-				    numTextboxLines,
-				    lineFormattedText.c_str() + scrollOffset * (TEXTBOX_WIDTH - 2),
-				    numChoicesWithNames != 0);
+				  textBitmap,
+				  numTextLines - scrollOffset,
+				  numTextboxLines,
+				  lineFormattedText.c_str() + scrollOffset * (TEXTBOX_WIDTH - 2),
+				  numChoicesWithNames != 0);
 				break;
 
 			case TEXTBUTTON_PREVCHOICE:
@@ -407,8 +405,7 @@ readjustScroll:
 					choiceIndex--;
 					if (!loopChoices && choiceIndex == 0) {
 						disableMenuButtons(1 << TEXTBUTTON_PREVCHOICE);
-					}
-					else {
+					} else {
 						if (choiceIndex < 0)
 							choiceIndex = numChoices - 1;
 					}
@@ -418,8 +415,7 @@ readjustScroll:
 					choiceIndex++;
 					if (!loopChoices && choiceIndex == numChoices - 1) {
 						disableMenuButtons(1 << TEXTBUTTON_NEXTCHOICE);
-					}
-					else {
+					} else {
 						choiceIndex %= numChoices;
 					}
 				}
@@ -850,7 +846,7 @@ void StarTrekEngine::initTextInputSprite(int16 textboxX, int16 textboxY, const C
 	int16 height = row * 8 + 8;
 
 	_textInputBitmapSkeleton = SharedPtr<Bitmap>(new Bitmap(width, height));
-	_textInputBitmap         = SharedPtr<Bitmap>(new Bitmap(width, height));
+	_textInputBitmap = SharedPtr<Bitmap>(new Bitmap(width, height));
 
 	_textInputBitmapSkeleton->xoffset = width / 2;
 	if (textboxX + width / 2 >= SCREEN_WIDTH)

@@ -29,14 +29,13 @@
 #ifndef WINTERMUTE_ADACTOR_H
 #define WINTERMUTE_ADACTOR_H
 
-
-#include "engines/wintermute/dctypes.h"    // Added by ClassView
-#include "engines/wintermute/ad/ad_types.h"    // Added by ClassView
-#include "engines/wintermute/ad/ad_talk_holder.h"
-#include "engines/wintermute/coll_templ.h"
-#include "engines/wintermute/base/base_point.h" // Added by ClassView
-#include "engines/wintermute/persistent.h"
 #include "common/str.h"
+#include "engines/wintermute/ad/ad_talk_holder.h"
+#include "engines/wintermute/ad/ad_types.h" // Added by ClassView
+#include "engines/wintermute/base/base_point.h" // Added by ClassView
+#include "engines/wintermute/coll_templ.h"
+#include "engines/wintermute/dctypes.h" // Added by ClassView
+#include "engines/wintermute/persistent.h"
 
 namespace Wintermute {
 
@@ -54,11 +53,10 @@ public:
 	virtual bool update();
 	virtual bool display();
 	virtual void turnTo(TDirection dir);
-	AdActor(BaseGame *inGame/*=nullptr*/);
+	AdActor(BaseGame *inGame /*=nullptr*/);
 	virtual ~AdActor();
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
-
 
 private:
 	TDirection _targetDir;

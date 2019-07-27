@@ -38,12 +38,12 @@ class Regions {
 
 	struct Region {
 		Common::Rect rectangle;
-		int          type;     // Arrow Icon on mouse-over (has meaning only for Exits) 0: Upward , 1: Right, 2: Downward, 3: Left
-		int          present;
+		int type; // Arrow Icon on mouse-over (has meaning only for Exits) 0: Upward , 1: Right, 2: Downward, 3: Left
+		int present;
 	};
 
 	Common::Array<Region> _regions;
-	bool                  _enabled;
+	bool _enabled;
 
 public:
 	Regions();

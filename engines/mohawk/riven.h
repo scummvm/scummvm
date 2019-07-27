@@ -26,8 +26,8 @@
 #include "mohawk/installer_archive.h"
 #include "mohawk/mohawk.h"
 
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/random.h"
 #include "common/rect.h"
 
@@ -52,14 +52,14 @@ class RivenVideoManager;
 // Riven Stack Types
 enum {
 	kStackUnknown = 0, // Default value for ReturnStackID
-	kStackOspit = 1,   // 233rd Age (Gehn's Office)
-	kStackPspit = 2,   // Prison Island
-	kStackRspit = 3,   // Temple Island
-	kStackTspit = 4,   // Rebel Age (Tay)
-	kStackBspit = 5,   // Book-Making Island
-	kStackGspit = 6,   // Garden Island
-	kStackJspit = 7,   // Jungle Island
-	kStackAspit = 8,   // Main Menu, Books, Setup
+	kStackOspit = 1, // 233rd Age (Gehn's Office)
+	kStackPspit = 2, // Prison Island
+	kStackRspit = 3, // Temple Island
+	kStackTspit = 4, // Rebel Age (Tay)
+	kStackBspit = 5, // Book-Making Island
+	kStackGspit = 6, // Garden Island
+	kStackJspit = 7, // Jungle Island
+	kStackAspit = 8, // Main Menu, Books, Setup
 
 	kStackFirst = kStackOspit,
 	kStackLast = kStackAspit
@@ -67,14 +67,14 @@ enum {
 
 // Engine Debug Flags
 enum {
-	kRivenDebugScript   = (1 << 0),
-	kRivenDebugPatches  = (1 << 1)
+	kRivenDebugScript = (1 << 0),
+	kRivenDebugPatches = (1 << 1)
 };
 
 struct ZipMode {
 	Common::String name;
 	uint16 id;
-	bool operator== (const ZipMode& z) const;
+	bool operator==(const ZipMode &z) const;
 };
 
 typedef Common::HashMap<Common::String, uint32, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> RivenVariableMap;
@@ -135,6 +135,7 @@ private:
 	void initVars();
 
 	void pauseEngineIntern(bool) override;
+
 public:
 	// Stack/card/script funtions
 	RivenStack *constructStackById(uint16 id);

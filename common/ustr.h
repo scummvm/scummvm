@@ -47,6 +47,7 @@ public:
 
 	typedef uint32 value_type;
 	typedef uint32 unsigned_type;
+
 private:
 	/**
 	 * The size of the internal storage. Increasing this means less heap
@@ -64,8 +65,7 @@ private:
 	 * Pointer to the actual string storage. Either points to _storage,
 	 * or to a block allocated on the heap via malloc.
 	 */
-	value_type  *_str;
-
+	value_type *_str;
 
 	union {
 		/**
@@ -78,7 +78,7 @@ private:
 		 */
 		struct {
 			mutable int *_refCount;
-			uint32       _capacity;
+			uint32 _capacity;
 		} _extern;
 	};
 
@@ -88,7 +88,9 @@ private:
 
 public:
 	/** Construct a new empty string. */
-	U32String() : _size(0), _str(_storage) { _storage[0] = 0; }
+	U32String()
+	  : _size(0)
+	  , _str(_storage) { _storage[0] = 0; }
 
 	/** Construct a new string from the given NULL-terminated C string. */
 	explicit U32String(const value_type *str);
@@ -146,7 +148,7 @@ public:
 	bool contains(value_type x) const;
 
 	inline const value_type *c_str() const { return _str; }
-	inline uint32 size() const             { return _size; }
+	inline uint32 size() const { return _size; }
 
 	inline bool empty() const { return (_size == 0); }
 
@@ -183,8 +185,8 @@ public:
 
 	uint32 find(const U32String &str, uint32 pos = 0) const;
 
-	typedef value_type *        iterator;
-	typedef const value_type *  const_iterator;
+	typedef value_type *iterator;
+	typedef const value_type *const_iterator;
 
 	iterator begin() {
 		// Since the user could potentially

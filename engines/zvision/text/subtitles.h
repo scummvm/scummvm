@@ -35,6 +35,7 @@ public:
 	~Subtitle();
 
 	void process(int32 time);
+
 private:
 	ZVision *_engine;
 	int32 _areaId;

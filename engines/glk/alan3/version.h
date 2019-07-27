@@ -28,29 +28,29 @@
 namespace Glk {
 namespace Alan3 {
 
-typedef int64 Time;
+	typedef int64 Time;
 
-struct Version {
-	const char *string;
-	int version;
-	int revision;
-	int correction;
-	Time time;
-	const char *state;
-};
+	struct Version {
+		const char *string;
+		int version;
+		int revision;
+		int correction;
+		Time time;
+		const char *state;
+	};
 
-struct Product {
-	const char *name;
-	const char *slogan;
-	const char *shortHeader;
-	const char *longHeader;
-	const char *date;
-	const char *time;
-	const char *user;
-	const char *host;
-	const char *ostype;
-	Version version;
-};
+	struct Product {
+		const char *name;
+		const char *slogan;
+		const char *shortHeader;
+		const char *longHeader;
+		const char *date;
+		const char *time;
+		const char *user;
+		const char *host;
+		const char *ostype;
+		Version version;
+	};
 
 } // End of namespace Alan3
 } // End of namespace Glk

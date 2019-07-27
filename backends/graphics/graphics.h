@@ -23,9 +23,9 @@
 #ifndef BACKENDS_GRAPHICS_ABSTRACT_H
 #define BACKENDS_GRAPHICS_ABSTRACT_H
 
-#include "common/system.h"
-#include "common/noncopyable.h"
 #include "common/keyboard.h"
+#include "common/noncopyable.h"
+#include "common/system.h"
 
 #include "graphics/mode.h"
 #include "graphics/palette.h"
@@ -48,13 +48,13 @@ public:
 	virtual void resetGraphicsScale() = 0;
 	virtual int getGraphicsMode() const = 0;
 	virtual const OSystem::GraphicsMode *getSupportedShaders() const {
-		static const OSystem::GraphicsMode no_shader[2] = {{"NONE", "Normal (no shader)", 0}, {0, 0, 0}};
+		static const OSystem::GraphicsMode no_shader[2] = { { "NONE", "Normal (no shader)", 0 }, { 0, 0, 0 } };
 		return no_shader;
 	};
 	virtual bool setShader(int id) { return false; }
 	virtual int getShader() const { return 0; }
 	virtual const OSystem::GraphicsMode *getSupportedStretchModes() const {
-		static const OSystem::GraphicsMode noStretchModes[] = {{"NONE", "Normal", 0}, {nullptr, nullptr, 0 }};
+		static const OSystem::GraphicsMode noStretchModes[] = { { "NONE", "Normal", 0 }, { nullptr, nullptr, 0 } };
 		return noStretchModes;
 	}
 	virtual int getDefaultStretchMode() const { return 0; }
@@ -82,7 +82,7 @@ public:
 	virtual void fillScreen(uint32 col) = 0;
 	virtual void updateScreen() = 0;
 	virtual void setShakePos(int shakeOffset) = 0;
-	virtual void setFocusRectangle(const Common::Rect& rect) = 0;
+	virtual void setFocusRectangle(const Common::Rect &rect) = 0;
 	virtual void clearFocusRectangle() = 0;
 
 	virtual void showOverlay() = 0;
@@ -101,7 +101,6 @@ public:
 
 	virtual void displayMessageOnOSD(const char *msg) {}
 	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) {}
-
 
 	// Graphics::PaletteManager interface
 	//virtual void setPalette(const byte *colors, uint start, uint num) = 0;

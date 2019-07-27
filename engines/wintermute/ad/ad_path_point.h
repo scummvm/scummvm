@@ -29,8 +29,8 @@
 #ifndef WINTERMUTE_ADPATHPOINT_H
 #define WINTERMUTE_ADPATHPOINT_H
 
-#include "engines/wintermute/persistent.h"
 #include "engines/wintermute/base/base_point.h"
+#include "engines/wintermute/persistent.h"
 
 namespace Wintermute {
 

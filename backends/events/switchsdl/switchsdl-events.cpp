@@ -24,17 +24,17 @@
 
 #if defined(NINTENDO_SWITCH)
 
-#include <math.h>
+#	include <math.h>
 
-#include "backends/platform/sdl/switch/switch.h"
-#include "backends/events/switchsdl/switchsdl-events.h"
-#include "backends/timer/sdl/sdl-timer.h"
-#include "backends/platform/sdl/sdl.h"
-#include "engines/engine.h"
+#	include "backends/events/switchsdl/switchsdl-events.h"
+#	include "backends/platform/sdl/sdl.h"
+#	include "backends/platform/sdl/switch/switch.h"
+#	include "backends/timer/sdl/sdl-timer.h"
+#	include "engines/engine.h"
 
-#include "common/util.h"
-#include "common/events.h"
-#include "common/config-manager.h"
+#	include "common/config-manager.h"
+#	include "common/events.h"
+#	include "common/util.h"
 
 SwitchEventSource::SwitchEventSource() {
 	for (int port = 0; port < SCE_TOUCH_PORT_MAX_NUM; port++) {
@@ -52,7 +52,7 @@ SwitchEventSource::SwitchEventSource() {
 }
 
 bool SwitchEventSource::pollEvent(Common::Event &event) {
-	((DefaultTimerManager *) g_system->getTimerManager())->handler();
+	((DefaultTimerManager *)g_system->getTimerManager())->handler();
 	finishSimulatedMouseClicks();
 	return SdlEventSource::pollEvent(event);
 }
@@ -151,9 +151,9 @@ void SwitchEventSource::preprocessFingerUp(SDL_Event *event) {
 				if ((event->tfinger.timestamp - _finger[port][i].timeLastDown) <= MAX_TAP_TIME) {
 					// short (<MAX_TAP_TIME ms) tap is interpreted as right/left mouse click depending on # fingers already down
 					// but only if the finger hasn't moved since it was pressed down by more than MAX_TAP_MOTION_DISTANCE pixels
-					float xrel = ((event->tfinger.x * (float) TOUCHSCREEN_WIDTH) - (_finger[port][i].lastDownX * (float) TOUCHSCREEN_WIDTH));
-					float yrel = ((event->tfinger.y * (float) TOUCHSCREEN_HEIGHT) - (_finger[port][i].lastDownY * (float) TOUCHSCREEN_HEIGHT));
-					float maxRSquared = (float) (MAX_TAP_MOTION_DISTANCE * MAX_TAP_MOTION_DISTANCE);
+					float xrel = ((event->tfinger.x * (float)TOUCHSCREEN_WIDTH) - (_finger[port][i].lastDownX * (float)TOUCHSCREEN_WIDTH));
+					float yrel = ((event->tfinger.y * (float)TOUCHSCREEN_HEIGHT) - (_finger[port][i].lastDownY * (float)TOUCHSCREEN_HEIGHT));
+					float maxRSquared = (float)(MAX_TAP_MOTION_DISTANCE * MAX_TAP_MOTION_DISTANCE);
 					if ((xrel * xrel + yrel * yrel) < maxRSquared) {
 						if (numFingersDown == 2 || numFingersDown == 1) {
 							uint8 simulatedButton = 0;
@@ -283,7 +283,7 @@ void SwitchEventSource::preprocessFingerMotion(SDL_Event *event) {
 					}
 				}
 				if (numFingersDownLong >= 2) {
-					// starting drag, so push mouse down at current location (back) 
+					// starting drag, so push mouse down at current location (back)
 					// or location of "oldest" finger (front)
 					int mouseDownX = _km.x / MULTIPLIER;
 					int mouseDownY = _km.y / MULTIPLIER;
@@ -292,7 +292,7 @@ void SwitchEventSource::preprocessFingerMotion(SDL_Event *event) {
 							if (_finger[port][i].id == id) {
 								uint32 earliestTime = _finger[port][i].timeLastDown;
 								for (int j = 0; j < MAX_NUM_FINGERS; j++) {
-									if (_finger[port][j].id >= 0 && (i != j) ) {
+									if (_finger[port][j].id >= 0 && (i != j)) {
 										if (_finger[port][j].timeLastDown < earliestTime) {
 											mouseDownX = _finger[port][j].lastX;
 											mouseDownY = _finger[port][j].lastY;
@@ -328,7 +328,7 @@ void SwitchEventSource::preprocessFingerMotion(SDL_Event *event) {
 			for (int i = 0; i < MAX_NUM_FINGERS; i++) {
 				if (_finger[port][i].id == id) {
 					for (int j = 0; j < MAX_NUM_FINGERS; j++) {
-						if (_finger[port][j].id >= 0 && (i != j) ) {
+						if (_finger[port][j].id >= 0 && (i != j)) {
 							if (_finger[port][j].timeLastDown < _finger[port][i].timeLastDown) {
 								updatePointer = false;
 							}

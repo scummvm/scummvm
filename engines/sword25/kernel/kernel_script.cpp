@@ -30,12 +30,12 @@
  */
 
 #include "sword25/kernel/common.h"
-#include "sword25/kernel/kernel.h"
 #include "sword25/kernel/filesystemutil.h"
-#include "sword25/kernel/resmanager.h"
+#include "sword25/kernel/kernel.h"
 #include "sword25/kernel/persistenceservice.h"
-#include "sword25/script/script.h"
+#include "sword25/kernel/resmanager.h"
 #include "sword25/script/luabindhelper.h"
+#include "sword25/script/script.h"
 
 namespace Sword25 {
 
@@ -138,26 +138,26 @@ static int getUsedMemory(lua_State *L) {
 static const char *KERNEL_LIBRARY_NAME = "Kernel";
 
 static const luaL_reg KERNEL_FUNCTIONS[] = {
-	{"DisconnectService", dummyFuncError},
-	{"GetActiveServiceIdentifier", dummyFuncError},
-	{"GetSuperclassCount", dummyFuncError},
-	{"GetSuperclassIdentifier", dummyFuncError},
-	{"GetServiceCount", dummyFuncError},
-	{"GetServiceIdentifier", dummyFuncError},
-	{"GetMilliTicks", getMilliTicks},
-	{"GetTimer", getTimer},
-	{"StartService", startService},
-	{"Sleep", sleep},
-	{"Crash", crash},
-	{"ExecuteFile", executeFile},
-	{"GetUserdataDirectory", getUserdataDirectory},
-	{"GetPathSeparator", getPathSeparator},
-	{"FileExists", fileExists},
-	{"CreateDirectory", createDirectory},
-	{"GetWinCode", getWinCode},
-	{"GetSubversionRevision", getSubversionRevision},
-	{"GetUsedMemory", getUsedMemory},
-	{0, 0}
+	{ "DisconnectService", dummyFuncError },
+	{ "GetActiveServiceIdentifier", dummyFuncError },
+	{ "GetSuperclassCount", dummyFuncError },
+	{ "GetSuperclassIdentifier", dummyFuncError },
+	{ "GetServiceCount", dummyFuncError },
+	{ "GetServiceIdentifier", dummyFuncError },
+	{ "GetMilliTicks", getMilliTicks },
+	{ "GetTimer", getTimer },
+	{ "StartService", startService },
+	{ "Sleep", sleep },
+	{ "Crash", crash },
+	{ "ExecuteFile", executeFile },
+	{ "GetUserdataDirectory", getUserdataDirectory },
+	{ "GetPathSeparator", getPathSeparator },
+	{ "FileExists", fileExists },
+	{ "CreateDirectory", createDirectory },
+	{ "GetWinCode", getWinCode },
+	{ "GetSubversionRevision", getSubversionRevision },
+	{ "GetUsedMemory", getUsedMemory },
+	{ 0, 0 }
 };
 
 static int isVisible(lua_State *L) {
@@ -169,7 +169,7 @@ static int isVisible(lua_State *L) {
 
 static int setVisible(lua_State *L) {
 	// This function apparently is not used by the game scripts
-//	pWindow->setVisible(lua_tobooleancpp(L, 1));
+	//	pWindow->setVisible(lua_tobooleancpp(L, 1));
 
 	return 0;
 }
@@ -190,14 +190,14 @@ static int getY(lua_State *L) {
 
 static int setX(lua_State *L) {
 	// This is called by system/boot.lua with -1 as value.
-//	pWindow->setX(static_cast<int>(luaL_checknumber(L, 1)));
+	//	pWindow->setX(static_cast<int>(luaL_checknumber(L, 1)));
 
 	return 0;
 }
 
 static int setY(lua_State *L) {
 	// This is called by system/boot.lua with -1 as value.
-//	pWindow->setY(static_cast<int>(luaL_checknumber(L, 1)));
+	//	pWindow->setY(static_cast<int>(luaL_checknumber(L, 1)));
 
 	return 0;
 }
@@ -218,14 +218,14 @@ static int getHeight(lua_State *L) {
 
 static int setWidth(lua_State *L) {
 	// This is called by system/boot.lua with 800 as value.
-//	pWindow->setWidth(static_cast<int>(luaL_checknumber(L, 1)));
+	//	pWindow->setWidth(static_cast<int>(luaL_checknumber(L, 1)));
 
 	return 0;
 }
 
 static int setHeight(lua_State *L) {
 	// This is called by system/boot.lua with 600 as value.
-//	pWindow->setHeight(static_cast<int>(luaL_checknumber(L, 1)));
+	//	pWindow->setHeight(static_cast<int>(luaL_checknumber(L, 1)));
 
 	return 0;
 }
@@ -241,7 +241,7 @@ static int setTitle(lua_State *L) {
 	// This is called by system/boot.lua and system/menu.lua, to
 	// set the window title to the (localized) game name.
 	// FIXME: Should we call OSystem::setWindowCaption() here?
-//	pWindow->setTitle(luaL_checkstring(L, 1));
+	//	pWindow->setTitle(luaL_checkstring(L, 1));
 
 	return 0;
 }
@@ -283,25 +283,25 @@ static int closeWanted(lua_State *L) {
 static const char *WINDOW_LIBRARY_NAME = "Window";
 
 static const luaL_reg WINDOW_FUNCTIONS[] = {
-	{"IsVisible", isVisible},
-	{"SetVisible", setVisible},
-	{"GetX", getX},
-	{"SetX", setX},
-	{"GetY", getY},
-	{"SetY", setY},
-	{"GetClientX", dummyFuncError},
-	{"GetClientY", dummyFuncError},
-	{"GetWidth", getWidth},
-	{"GetHeight", getHeight},
-	{"SetWidth", setWidth},
-	{"SetHeight", setHeight},
-	{"GetTitle", getTitle},
-	{"SetTitle", setTitle},
-	{"ProcessMessages", processMessages},
-	{"CloseWanted", closeWanted},
-	{"WaitForFocus", dummyFuncError},
-	{"HasFocus", dummyFuncError},
-	{0, 0}
+	{ "IsVisible", isVisible },
+	{ "SetVisible", setVisible },
+	{ "GetX", getX },
+	{ "SetX", setX },
+	{ "GetY", getY },
+	{ "SetY", setY },
+	{ "GetClientX", dummyFuncError },
+	{ "GetClientY", dummyFuncError },
+	{ "GetWidth", getWidth },
+	{ "GetHeight", getHeight },
+	{ "SetWidth", setWidth },
+	{ "SetHeight", setHeight },
+	{ "GetTitle", getTitle },
+	{ "SetTitle", setTitle },
+	{ "ProcessMessages", processMessages },
+	{ "CloseWanted", closeWanted },
+	{ "WaitForFocus", dummyFuncError },
+	{ "HasFocus", dummyFuncError },
+	{ 0, 0 }
 };
 
 static int precacheResource(lua_State *L) {
@@ -384,15 +384,15 @@ static int dumpLockedResources(lua_State *L) {
 static const char *RESOURCE_LIBRARY_NAME = "Resource";
 
 static const luaL_reg RESOURCE_FUNCTIONS[] = {
-	{"PrecacheResource", precacheResource},
-	{"ForcePrecacheResource", forcePrecacheResource},
-	{"GetMaxMemoryUsage", getMaxMemoryUsage},
-	{"SetMaxMemoryUsage", setMaxMemoryUsage},
-	{"EmptyCache", emptyCache},
-	{"IsLogCacheMiss", dummyFuncError},
-	{"SetLogCacheMiss", dummyFuncError},
-	{"DumpLockedResources", dumpLockedResources},
-	{0, 0}
+	{ "PrecacheResource", precacheResource },
+	{ "ForcePrecacheResource", forcePrecacheResource },
+	{ "GetMaxMemoryUsage", getMaxMemoryUsage },
+	{ "SetMaxMemoryUsage", setMaxMemoryUsage },
+	{ "EmptyCache", emptyCache },
+	{ "IsLogCacheMiss", dummyFuncError },
+	{ "SetLogCacheMiss", dummyFuncError },
+	{ "DumpLockedResources", dumpLockedResources },
+	{ 0, 0 }
 };
 
 static int reloadSlots(lua_State *L) {
@@ -417,14 +417,12 @@ static int getSavegameDirectory(lua_State *L) {
 }
 
 static int isSavegameCompatible(lua_State *L) {
-	lua_pushbooleancpp(L, PersistenceService::getInstance().isSavegameCompatible(
-	                       static_cast<uint>(luaL_checknumber(L, 1)) - 1));
+	lua_pushbooleancpp(L, PersistenceService::getInstance().isSavegameCompatible(static_cast<uint>(luaL_checknumber(L, 1)) - 1));
 	return 1;
 }
 
 static int getSavegameDescription(lua_State *L) {
-	lua_pushstring(L, PersistenceService::getInstance().getSavegameDescription(
-	                   static_cast<uint>(luaL_checknumber(L, 1)) - 1).c_str());
+	lua_pushstring(L, PersistenceService::getInstance().getSavegameDescription(static_cast<uint>(luaL_checknumber(L, 1)) - 1).c_str());
 	return 1;
 }
 
@@ -446,16 +444,16 @@ static int saveGame(lua_State *L) {
 static const char *PERSISTENCE_LIBRARY_NAME = "Persistence";
 
 static const luaL_reg PERSISTENCE_FUNCTIONS[] = {
-	{"ReloadSlots", reloadSlots},
-	{"GetSlotCount", getSlotCount},
-	{"IsSlotOccupied", isSlotOccupied},
-	{"GetSavegameDirectory", getSavegameDirectory},
-	{"IsSavegameCompatible", isSavegameCompatible},
-	{"GetSavegameDescription", getSavegameDescription},
-	{"GetSavegameFilename", getSavegameFilename},
-	{"LoadGame", loadGame},
-	{"SaveGame", saveGame},
-	{0, 0}
+	{ "ReloadSlots", reloadSlots },
+	{ "GetSlotCount", getSlotCount },
+	{ "IsSlotOccupied", isSlotOccupied },
+	{ "GetSavegameDirectory", getSavegameDirectory },
+	{ "IsSavegameCompatible", isSavegameCompatible },
+	{ "GetSavegameDescription", getSavegameDescription },
+	{ "GetSavegameFilename", getSavegameFilename },
+	{ "LoadGame", loadGame },
+	{ "SaveGame", saveGame },
+	{ 0, 0 }
 };
 
 bool Kernel::registerScriptBindings() {
@@ -464,10 +462,14 @@ bool Kernel::registerScriptBindings() {
 	lua_State *L = static_cast<lua_State *>(pScript->getScriptObject());
 	assert(L);
 
-	if (!LuaBindhelper::addFunctionsToLib(L, KERNEL_LIBRARY_NAME, KERNEL_FUNCTIONS)) return false;
-	if (!LuaBindhelper::addFunctionsToLib(L, WINDOW_LIBRARY_NAME, WINDOW_FUNCTIONS)) return false;
-	if (!LuaBindhelper::addFunctionsToLib(L, RESOURCE_LIBRARY_NAME, RESOURCE_FUNCTIONS)) return false;
-	if (!LuaBindhelper::addFunctionsToLib(L, PERSISTENCE_LIBRARY_NAME, PERSISTENCE_FUNCTIONS)) return false;
+	if (!LuaBindhelper::addFunctionsToLib(L, KERNEL_LIBRARY_NAME, KERNEL_FUNCTIONS))
+		return false;
+	if (!LuaBindhelper::addFunctionsToLib(L, WINDOW_LIBRARY_NAME, WINDOW_FUNCTIONS))
+		return false;
+	if (!LuaBindhelper::addFunctionsToLib(L, RESOURCE_LIBRARY_NAME, RESOURCE_FUNCTIONS))
+		return false;
+	if (!LuaBindhelper::addFunctionsToLib(L, PERSISTENCE_LIBRARY_NAME, PERSISTENCE_FUNCTIONS))
+		return false;
 
 	return true;
 }

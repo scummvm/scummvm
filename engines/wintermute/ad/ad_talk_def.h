@@ -29,8 +29,8 @@
 #ifndef WINTERMUTE_ADTALKDEF_H
 #define WINTERMUTE_ADTALKDEF_H
 
-#include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/base/base_object.h"
+#include "engines/wintermute/coll_templ.h"
 
 namespace Wintermute {
 class AdTalkNode;

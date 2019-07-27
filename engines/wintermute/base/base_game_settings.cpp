@@ -29,8 +29,8 @@
 #include "engines/wintermute/base/base_game_settings.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_file_manager.h"
-#include "engines/wintermute/base/base_string_table.h"
 #include "engines/wintermute/base/base_parser.h"
+#include "engines/wintermute/base/base_string_table.h"
 #include "engines/wintermute/wintypes.h"
 
 namespace Wintermute {
@@ -102,7 +102,6 @@ bool BaseGameSettings::loadSettings(const char *filename) {
 	TOKEN_TABLE(GUID)
 	TOKEN_TABLE_END
 
-
 	char *origBuffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (origBuffer == nullptr) {
 		BaseEngine::LOG(0, "BaseGame::LoadSettings failed for file '%s'", filename);
@@ -123,70 +122,70 @@ bool BaseGameSettings::loadSettings(const char *filename) {
 	buffer = params;
 	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
-			case TOKEN_GAME:
-				delete[] _gameFile;
-				_gameFile = new char[strlen(params) + 1];
-				if (_gameFile) {
-					strcpy(_gameFile, params);
-				}
-				break;
+		case TOKEN_GAME:
+			delete[] _gameFile;
+			_gameFile = new char[strlen(params) + 1];
+			if (_gameFile) {
+				strcpy(_gameFile, params);
+			}
+			break;
 
-			case TOKEN_STRING_TABLE:
-				if (DID_FAIL(_stringTable->loadFile(params))) {
-					cmd = PARSERR_GENERIC;
-				}
-				break;
+		case TOKEN_STRING_TABLE:
+			if (DID_FAIL(_stringTable->loadFile(params))) {
+				cmd = PARSERR_GENERIC;
+			}
+			break;
 
-			case TOKEN_RESOLUTION:
-				parser.scanStr(params, "%d,%d", &_resWidth, &_resHeight);
-				break;
+		case TOKEN_RESOLUTION:
+			parser.scanStr(params, "%d,%d", &_resWidth, &_resHeight);
+			break;
 
-			case TOKEN_REQUIRE_3D_ACCELERATION:
-				parser.scanStr(params, "%b", &_requireAcceleration);
-				break;
+		case TOKEN_REQUIRE_3D_ACCELERATION:
+			parser.scanStr(params, "%b", &_requireAcceleration);
+			break;
 
-			case TOKEN_REQUIRE_SOUND:
-				parser.scanStr(params, "%b", &_requireSound);
-				break;
+		case TOKEN_REQUIRE_SOUND:
+			parser.scanStr(params, "%b", &_requireSound);
+			break;
 
-			case TOKEN_HWTL_MODE:
-				parser.scanStr(params, "%d", &_TLMode);
-				break;
+		case TOKEN_HWTL_MODE:
+			parser.scanStr(params, "%d", &_TLMode);
+			break;
 
-			case TOKEN_ALLOW_WINDOWED_MODE:
-				parser.scanStr(params, "%b", &_allowWindowed);
-				break;
+		case TOKEN_ALLOW_WINDOWED_MODE:
+			parser.scanStr(params, "%b", &_allowWindowed);
+			break;
 
-			case TOKEN_ALLOW_DESKTOP_RES:
-				parser.scanStr(params, "%b", &_allowDesktopRes);
-				break;
+		case TOKEN_ALLOW_DESKTOP_RES:
+			parser.scanStr(params, "%b", &_allowDesktopRes);
+			break;
 
-			case TOKEN_ALLOW_ADVANCED:
-				parser.scanStr(params, "%b", &_allowAdvanced);
-				break;
+		case TOKEN_ALLOW_ADVANCED:
+			parser.scanStr(params, "%b", &_allowAdvanced);
+			break;
 
-			case TOKEN_ALLOW_ACCESSIBILITY_TAB:
-				parser.scanStr(params, "%b", &_allowAccessTab);
-				break;
+		case TOKEN_ALLOW_ACCESSIBILITY_TAB:
+			parser.scanStr(params, "%b", &_allowAccessTab);
+			break;
 
-			case TOKEN_ALLOW_ABOUT_TAB:
-				parser.scanStr(params, "%b", &_allowAboutTab);
-				break;
+		case TOKEN_ALLOW_ABOUT_TAB:
+			parser.scanStr(params, "%b", &_allowAboutTab);
+			break;
 
-			case TOKEN_REGISTRY_PATH:
-				//BaseEngine::instance().getRegistry()->setBasePath(params);
-				break;
+		case TOKEN_REGISTRY_PATH:
+			//BaseEngine::instance().getRegistry()->setBasePath(params);
+			break;
 
-			case TOKEN_RICH_SAVED_GAMES:
-				parser.scanStr(params, "%b", &_richSavedGames);
-				break;
+		case TOKEN_RICH_SAVED_GAMES:
+			parser.scanStr(params, "%b", &_richSavedGames);
+			break;
 
-			case TOKEN_SAVED_GAME_EXT:
-				_savedGameExt = params;
-				break;
+		case TOKEN_SAVED_GAME_EXT:
+			_savedGameExt = params;
+			break;
 
-			case TOKEN_GUID:
-				break;
+		case TOKEN_GUID:
+			break;
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {

@@ -34,17 +34,17 @@ class UISlider : public UIComponent {
 	static const Color256 kColors[];
 
 	UIComponentCallback *_valueChangedCallback;
-	void                *_callbackData;
-	bool                 _isEnabled;
-	int                  _maxValue;
-	Common::Rect         _rect;
-	int                  _currentFrameColor;
-	bool                 _hasFocus;
-	int                  _pressedStatus;
-	int                  _mouseX;
+	void *_callbackData;
+	bool _isEnabled;
+	int _maxValue;
+	Common::Rect _rect;
+	int _currentFrameColor;
+	bool _hasFocus;
+	int _pressedStatus;
+	int _mouseX;
 
 public:
-	int                  _value;
+	int _value;
 
 	UISlider(BladeRunnerEngine *vm, UIComponentCallback *valueChangedCallback, void *callbackData, Common::Rect rect, int maxValue, int value);
 

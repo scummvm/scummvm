@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE2600_SPRITES_H
 #define NEVERHOOD_MODULES_MODULE2600_SPRITES_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -34,6 +34,7 @@ namespace Neverhood {
 class SsScene2609Button : public StaticSprite {
 public:
 	SsScene2609Button(NeverhoodEngine *vm, Scene *parentScene);
+
 protected:
 	Scene *_parentScene;
 	int _countdown;
@@ -45,6 +46,7 @@ class AsScene2609Water : public AnimatedSprite {
 public:
 	AsScene2609Water(NeverhoodEngine *vm);
 	virtual ~AsScene2609Water();
+
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };

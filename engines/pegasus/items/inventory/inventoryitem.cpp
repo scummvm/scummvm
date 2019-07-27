@@ -25,14 +25,14 @@
 
 #include "common/stream.h"
 
-#include "pegasus/pegasus.h"
 #include "pegasus/ai/ai_area.h"
 #include "pegasus/items/inventory/inventoryitem.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
-InventoryItem::InventoryItem(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
-		Item(id, neighborhood, room, direction) {
+InventoryItem::InventoryItem(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction)
+  : Item(id, neighborhood, room, direction) {
 
 	PegasusEngine *vm = (PegasusEngine *)g_engine;
 

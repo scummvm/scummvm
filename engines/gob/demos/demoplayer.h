@@ -23,9 +23,9 @@
 #ifndef GOB_DEMOPLAYER_H
 #define GOB_DEMOPLAYER_H
 
+#include "common/hashmap.h"
 #include "common/str.h"
 #include "common/stream.h"
-#include "common/hashmap.h"
 
 namespace Gob {
 

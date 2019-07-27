@@ -29,22 +29,23 @@
 namespace Cloud {
 namespace GoogleDrive {
 
-class GoogleDriveStorage;
+	class GoogleDriveStorage;
 
-class GoogleDriveTokenRefresher: public Networking::CurlJsonRequest {
-	GoogleDriveStorage *_parentStorage;
-	Common::Array<Common::String> _headers;
+	class GoogleDriveTokenRefresher : public Networking::CurlJsonRequest {
+		GoogleDriveStorage *_parentStorage;
+		Common::Array<Common::String> _headers;
 
-	void tokenRefreshed(Storage::BoolResponse response);
+		void tokenRefreshed(Storage::BoolResponse response);
 
-	virtual void finishJson(Common::JSONValue *json);
-public:
-	GoogleDriveTokenRefresher(GoogleDriveStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url);
-	virtual ~GoogleDriveTokenRefresher();
+		virtual void finishJson(Common::JSONValue *json);
 
-	virtual void setHeaders(Common::Array<Common::String> &headers);
-	virtual void addHeader(Common::String header);
-};
+	public:
+		GoogleDriveTokenRefresher(GoogleDriveStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url);
+		virtual ~GoogleDriveTokenRefresher();
+
+		virtual void setHeaders(Common::Array<Common::String> &headers);
+		virtual void addHeader(Common::String header);
+	};
 
 } // End of namespace GoogleDrive
 } // End of namespace Cloud

@@ -23,11 +23,11 @@
 #ifndef TSAGE_DIALOGS_H
 #define TSAGE_DIALOGS_H
 
-#include "tsage/events.h"
-#include "tsage/graphics.h"
 #include "common/list.h"
 #include "common/rect.h"
 #include "common/system.h"
+#include "tsage/events.h"
+#include "tsage/graphics.h"
 
 namespace TsAGE {
 
@@ -36,6 +36,7 @@ public:
 	GfxButton _btn1, _btn2;
 	GfxDialog _dialog;
 	GfxMessage _msg;
+
 public:
 	MessageDialog(const Common::String &message, const Common::String &btn1Message, const Common::String &btn2Message = Common::String());
 
@@ -48,6 +49,7 @@ public:
 class ModalDialog : public GfxDialog {
 protected:
 	void drawFrame();
+
 public:
 	virtual void draw();
 };

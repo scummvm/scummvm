@@ -46,7 +46,7 @@ CosineTable::CosineTable(int nPoints) {
 		_tableEOS[i] = cos(i * _radResolution);
 
 	for (int i = 1; i < _nPoints / 4; i++)
-		_tableEOS[_nPoints / 2 - i] = _tableEOS[i];	
+		_tableEOS[_nPoints / 2 - i] = _tableEOS[i];
 }
 
 float CosineTable::at(int index) const {

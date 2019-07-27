@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/textconsole.h"
@@ -42,7 +41,7 @@ namespace Sky {
 #define SFXF_START_DELAY 0x80
 #define SFXF_SAVE 0x20
 
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 struct RoomList {
 	uint8 room;
@@ -56,37 +55,34 @@ struct Sfx {
 	RoomList roomList[10];
 } PACKED_STRUCT;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h" // END STRUCT PACKING
 
 uint16 Sound::_speechConvertTable[8] = {
-	0,									//;Text numbers to file numbers
-	600,								//; 553 lines in section 0
-	600+500,							//; 488 lines in section 1
-	600+500+1330,						//;1303 lines in section 2
-	600+500+1330+950,					//; 922 lines in section 3
-	600+500+1330+950+1150,				//;1140 lines in section 4
-	600+500+1330+950+1150+550,			//; 531 lines in section 5
-	600+500+1330+950+1150+550+150,		//; 150 lines in section 6
+	0, //;Text numbers to file numbers
+	600, //; 553 lines in section 0
+	600 + 500, //; 488 lines in section 1
+	600 + 500 + 1330, //;1303 lines in section 2
+	600 + 500 + 1330 + 950, //; 922 lines in section 3
+	600 + 500 + 1330 + 950 + 1150, //;1140 lines in section 4
+	600 + 500 + 1330 + 950 + 1150 + 550, //; 531 lines in section 5
+	600 + 500 + 1330 + 950 + 1150 + 550 + 150, //; 150 lines in section 6
 };
-
 
 static const Sfx fx_null = {
 	0,
 	0,
-	{
-		{ 200,127,127 },
-		{ 255,0,0 }
-	}
+	{ { 200, 127, 127 },
+	  { 255, 0, 0 } }
 };
 
 static const Sfx fx_level_3_ping = {
 	1,
 	0,
 	{
-		{ 28,63,63 },
-		{ 29,63,63 },
-		{ 31,63,63 },
-		{ 255,0,0 },
+	  { 28, 63, 63 },
+	  { 29, 63, 63 },
+	  { 31, 63, 63 },
+	  { 255, 0, 0 },
 	}
 };
 
@@ -94,7 +90,7 @@ static const Sfx fx_factory_sound = {
 	1,
 	SFXF_SAVE,
 	{
-		{ 255,30,30 },
+	  { 255, 30, 30 },
 	}
 };
 
@@ -102,7 +98,7 @@ static const Sfx fx_crowbar_plaster = {
 	1,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -110,7 +106,7 @@ static const Sfx fx_masonry_fall = {
 	1,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -118,7 +114,7 @@ static const Sfx fx_prise_brick = {
 	2,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -126,7 +122,7 @@ static const Sfx fx_rope_creak = {
 	2,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -134,7 +130,7 @@ static const Sfx fx_ping = {
 	3,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -142,23 +138,23 @@ static const Sfx fx_force_fire_door = {
 	3,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
 static const Sfx fx_brick_hit_foster = {
 	3,
-	10+SFXF_START_DELAY,
+	10 + SFXF_START_DELAY,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
 static const Sfx fx_brick_hit_plank = {
 	3,
-	8+SFXF_START_DELAY,
+	8 + SFXF_START_DELAY,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -166,9 +162,9 @@ static const Sfx fx_rm3_lift_moving = {
 	4,
 	SFXF_SAVE,
 	{
-		{ 3,127,127 },
-		{ 2,127,127 },
-		{ 255,0,0 },
+	  { 3, 127, 127 },
+	  { 2, 127, 127 },
+	  { 255, 0, 0 },
 	}
 };
 
@@ -176,12 +172,12 @@ static const Sfx fx_weld = {
 	4,
 	0,
 	{
-		{ 15,127,127 },
-		{ 7,127,127 },
-		{ 6,60,60 },
-		{ 12,60,60 },
-		{ 13,60,60 },
-		{ 255,0,0 },
+	  { 15, 127, 127 },
+	  { 7, 127, 127 },
+	  { 6, 60, 60 },
+	  { 12, 60, 60 },
+	  { 13, 60, 60 },
+	  { 255, 0, 0 },
 	}
 };
 
@@ -189,8 +185,8 @@ static const Sfx fx_weld12 = {
 	4,
 	0,
 	{
-		{ 12,127,127 },
-		{ 255,0,0 },
+	  { 12, 127, 127 },
+	  { 255, 0, 0 },
 	}
 };
 
@@ -198,15 +194,15 @@ static const Sfx fx_spray_on_skin = {
 	4,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
 static const Sfx fx_plank_vibrating = {
 	4,
-	6+SFXF_START_DELAY,
+	6 + SFXF_START_DELAY,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -214,8 +210,8 @@ static const Sfx fx_press_bang = {
 	5,
 	0,
 	{
-		{ 0,50,100 },
-		{ 255,0,0 },
+	  { 0, 50, 100 },
+	  { 255, 0, 0 },
 	}
 };
 
@@ -223,7 +219,7 @@ static const Sfx fx_spanner_clunk = {
 	5,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -231,8 +227,8 @@ static const Sfx fx_break_crystals = {
 	5,
 	0,
 	{
-		{ 96,127,127 },
-		{ 255,0,0 },
+	  { 96, 127, 127 },
+	  { 255, 0, 0 },
 	}
 };
 
@@ -240,8 +236,8 @@ static const Sfx fx_press_hiss = {
 	6,
 	0,
 	{
-		{ 0,40,40 },
-		{ 255,0,0 },
+	  { 0, 40, 40 },
+	  { 255, 0, 0 },
 	}
 };
 
@@ -249,7 +245,7 @@ static const Sfx fx_open_door = {
 	6,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -257,17 +253,17 @@ static const Sfx fx_open_lamb_door = {
 	6,
 	0,
 	{
-		{ 20,127,127 },
-		{ 21,127,127 },
-		{ 255,0,0 },
+	  { 20, 127, 127 },
+	  { 21, 127, 127 },
+	  { 255, 0, 0 },
 	}
 };
 
 static const Sfx fx_splash = {
 	6,
-	22+SFXF_START_DELAY,
+	22 + SFXF_START_DELAY,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -275,15 +271,15 @@ static const Sfx fx_disintegrate = {
 	7,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
 static const Sfx fx_buzzer = {
 	7,
-	4+SFXF_START_DELAY,
+	4 + SFXF_START_DELAY,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -291,17 +287,17 @@ static const Sfx fx_lathe = {
 	7,
 	SFXF_SAVE,
 	{
-		{ 4,60,60 },
-		{ 2,20,20 },
-		{ 255,0,0 },
+	  { 4, 60, 60 },
+	  { 2, 20, 20 },
+	  { 255, 0, 0 },
 	}
 };
 
 static const Sfx fx_hit_crowbar_brick = {
 	7,
-	9+SFXF_START_DELAY,
+	9 + SFXF_START_DELAY,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -309,7 +305,7 @@ static const Sfx fx_hello_helga = {
 	8,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -317,7 +313,7 @@ static const Sfx fx_statue_on_armor = {
 	8,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -325,24 +321,24 @@ static const Sfx fx_lift_alarm = {
 	8,
 	SFXF_SAVE,
 	{
-		{ 2,63,63 },
-		{ 255,0,0 },
+	  { 2, 63, 63 },
+	  { 255, 0, 0 },
 	}
 };
 
 static const Sfx fx_drop_crowbar = {
 	8,
-	5+SFXF_START_DELAY,
+	5 + SFXF_START_DELAY,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
 static const Sfx fx_byee_helga = {
 	9,
-	3+SFXF_START_DELAY,
+	3 + SFXF_START_DELAY,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -350,7 +346,7 @@ static const Sfx fx_shed_door_creak = {
 	10,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -358,31 +354,31 @@ static const Sfx fx_explosion = {
 	10,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
 static const Sfx fx_fire_crackle_in_pit = {
-	 9,
+	9,
 	SFXF_SAVE,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
 static const Sfx fx_remove_bar_grill = {
 	10,
-	7+SFXF_START_DELAY,
+	7 + SFXF_START_DELAY,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
 static const Sfx fx_grill_creak = {
 	10,
-	43+SFXF_START_DELAY,
+	43 + SFXF_START_DELAY,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -390,8 +386,8 @@ static const Sfx fx_steam1 = {
 	11,
 	SFXF_SAVE,
 	{
-		{ 18,20,20 },
-		{ 255,0,0 },
+	  { 18, 20, 20 },
+	  { 255, 0, 0 },
 	}
 };
 
@@ -399,8 +395,8 @@ static const Sfx fx_steam2 = {
 	11,
 	SFXF_SAVE,
 	{
-		{ 18,63,63 },
-		{ 255,0,0 },
+	  { 18, 63, 63 },
+	  { 255, 0, 0 },
 	}
 };
 
@@ -408,8 +404,8 @@ static const Sfx fx_steam3 = {
 	11,
 	SFXF_SAVE,
 	{
-		{ 18,127,127 },
-		{ 255,0,0 },
+	  { 18, 127, 127 },
+	  { 255, 0, 0 },
 	}
 };
 
@@ -417,7 +413,7 @@ static const Sfx fx_crowbar_wooden = {
 	11,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -425,7 +421,7 @@ static const Sfx fx_helmet_down_3 = {
 	11,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -433,7 +429,7 @@ static const Sfx fx_guard_fall = {
 	11,
 	4,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -452,7 +448,7 @@ static const Sfx fx_fall_thru_box = {
 	12,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -460,7 +456,7 @@ static const Sfx fx_lazer = {
 	12,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -468,7 +464,7 @@ static const Sfx fx_scanner = {
 	12,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -476,7 +472,7 @@ static const Sfx fx_helmet_up_3 = {
 	12,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -484,25 +480,25 @@ static const Sfx fx_liquid_bubble = {
 	12,
 	SFXF_SAVE,
 	{
-		{ 80,127,127 },
-		{ 72,127,127 },
-		{ 255,0,0 },
+	  { 80, 127, 127 },
+	  { 72, 127, 127 },
+	  { 255, 0, 0 },
 	}
 };
 
 static const Sfx fx_liquid_drip = {
 	13,
-	6+SFXF_START_DELAY,
+	6 + SFXF_START_DELAY,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
 static const Sfx fx_goo_drip = {
 	13,
-	5+SFXF_START_DELAY,
+	5 + SFXF_START_DELAY,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -510,15 +506,15 @@ static const Sfx fx_comp_bleeps = {
 	13,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
 static const Sfx fx_use_crowbar_grill = {
 	13,
-	34+SFXF_START_DELAY,
+	34 + SFXF_START_DELAY,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -526,7 +522,7 @@ static const Sfx fx_helmet_grind = {
 	14,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -534,33 +530,33 @@ static const Sfx fx_lift_moving = {
 	14,
 	SFXF_SAVE,
 	{
-		{ 7,127,127 },
-		{ 29,127,127 },
-		{ 255,0,0 },
+	  { 7, 127, 127 },
+	  { 29, 127, 127 },
+	  { 255, 0, 0 },
 	}
 };
 
 static const Sfx fx_use_secateurs = {
 	14,
-	18+SFXF_START_DELAY,
+	18 + SFXF_START_DELAY,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
 static const Sfx fx_hit_joey1 = {
 	14,
-	7+SFXF_START_DELAY,
+	7 + SFXF_START_DELAY,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
 static const Sfx fx_hit_joey2 = {
 	14,
-	13+SFXF_START_DELAY,
+	13 + SFXF_START_DELAY,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -568,7 +564,7 @@ static const Sfx fx_dani_phone_ring = {
 	15,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -576,7 +572,7 @@ static const Sfx fx_sc74_pod_down = {
 	15,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -584,7 +580,7 @@ static const Sfx fx_phone = {
 	15,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -592,7 +588,7 @@ static const Sfx fx_25_weld = {
 	15,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -600,8 +596,8 @@ static const Sfx fx_lift_open_7 = {
 	15,
 	0,
 	{
-		{ 7,127,127 },
-		{ 255,0,0 },
+	  { 7, 127, 127 },
+	  { 255, 0, 0 },
 	}
 };
 
@@ -609,8 +605,8 @@ static const Sfx fx_lift_close_7 = {
 	16,
 	0,
 	{
-		{ 7,127,127 },
-		{ 255,0,0 },
+	  { 7, 127, 127 },
+	  { 255, 0, 0 },
 	}
 };
 
@@ -618,7 +614,7 @@ static const Sfx fx_s2_helmet = {
 	16,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -626,7 +622,7 @@ static const Sfx fx_hiss_in_nitrogen = {
 	16,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -634,8 +630,8 @@ static const Sfx fx_dog_yap_indoors = {
 	16,
 	0,
 	{
-		{ 38,127,127 },
-		{ 255,0,0 },
+	  { 38, 127, 127 },
+	  { 255, 0, 0 },
 	}
 };
 
@@ -643,11 +639,11 @@ static const Sfx fx_dog_yap_outdoors = {
 	16,
 	0,
 	{
-		{ 31,127,127 },
-		{ 30,40,40 },
-		{ 32,40,40 },
-		{ 33,40,40 },
-		{ 255,0,0 },
+	  { 31, 127, 127 },
+	  { 30, 40, 40 },
+	  { 32, 40, 40 },
+	  { 33, 40, 40 },
+	  { 255, 0, 0 },
 	}
 };
 
@@ -655,7 +651,7 @@ static const Sfx fx_locker_creak_open = {
 	17,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -663,7 +659,7 @@ static const Sfx fx_big_tent_gurgle = {
 	17,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -671,8 +667,8 @@ static const Sfx fx_wind_howl = {
 	17,
 	SFXF_SAVE,
 	{
-		{ 1,127,127 },
-		{ 255,0,0 },
+	  { 1, 127, 127 },
+	  { 255, 0, 0 },
 	}
 };
 
@@ -680,8 +676,8 @@ static const Sfx fx_lift_open_29 = {
 	17,
 	0,
 	{
-		{ 29,127,127 },
-		{ 255,0,0 },
+	  { 29, 127, 127 },
+	  { 255, 0, 0 },
 	}
 };
 
@@ -689,8 +685,8 @@ static const Sfx fx_lift_arrive_7 = {
 	17,
 	0,
 	{
-		{ 7,63,63 },
-		{ 255,0,0 },
+	  { 7, 63, 63 },
+	  { 255, 0, 0 },
 	}
 };
 
@@ -698,9 +694,9 @@ static const Sfx fx_lift_close_29 = {
 	18,
 	0,
 	{
-		{ 29,127,127 },
-		{ 28,127,127 },
-		{ 255,0,0 },
+	  { 29, 127, 127 },
+	  { 28, 127, 127 },
+	  { 255, 0, 0 },
 	}
 };
 
@@ -708,15 +704,15 @@ static const Sfx fx_shaft_industrial_noise = {
 	18,
 	SFXF_SAVE,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
 static const Sfx fx_gall_drop = {
 	18,
-	29+SFXF_START_DELAY,
+	29 + SFXF_START_DELAY,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -724,7 +720,7 @@ static const Sfx fx_door_slam_under = {
 	19,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -732,31 +728,31 @@ static const Sfx fx_reichs_fish = {
 	19,
 	SFXF_SAVE,
 	{
-		{ 255,60,60 },
+	  { 255, 60, 60 },
 	}
 };
 
 static const Sfx fx_judges_gavel1 = {
 	19,
-	13+SFXF_START_DELAY,
+	13 + SFXF_START_DELAY,
 	{
-		{ 255,60,60 },
+	  { 255, 60, 60 },
 	}
 };
 
 static const Sfx fx_judges_gavel2 = {
 	19,
-	16+SFXF_START_DELAY,
+	16 + SFXF_START_DELAY,
 	{
-		{ 255,90,90 },
+	  { 255, 90, 90 },
 	}
 };
 
 static const Sfx fx_judges_gavel3 = {
 	19,
-	19+SFXF_START_DELAY,
+	19 + SFXF_START_DELAY,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -764,7 +760,7 @@ static const Sfx fx_wind_3 = {
 	20,
 	SFXF_SAVE,
 	{
-		{ 255,60,60 },
+	  { 255, 60, 60 },
 	}
 };
 
@@ -772,15 +768,15 @@ static const Sfx fx_fact_sensor = {
 	20,
 	SFXF_SAVE,
 	{
-		{ 255,60,60 },
+	  { 255, 60, 60 },
 	}
 };
 
 static const Sfx fx_medi_stab_gall = {
 	20,
-	17+SFXF_START_DELAY,
+	17 + SFXF_START_DELAY,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -788,7 +784,7 @@ static const Sfx fx_computer_3 = {
 	21,
 	SFXF_SAVE,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -796,7 +792,7 @@ static const Sfx fx_timber_cracking = {
 	21,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -804,7 +800,7 @@ static const Sfx fx_anchor_fall = {
 	22,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -812,7 +808,7 @@ static const Sfx fx_elevator_4 = {
 	22,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -820,7 +816,7 @@ static const Sfx fx_star_trek_2 = {
 	22,
 	SFXF_SAVE,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -828,39 +824,39 @@ static const Sfx fx_lift_closing = {
 	23,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
 static const Sfx fx_heartbeat = {
 	23,
-	11+SFXF_START_DELAY,
+	11 + SFXF_START_DELAY,
 	{
-		{ 67,60,60 },
-		{ 68,60,60 },
-		{ 69,60,60 },
-		{ 77,20,20 },
-		{ 78,50,50 },
-		{ 79,70,70 },
-		{ 80,127,127 },
-		{ 81,60,60 },
-		{ 255,0,0 },
+	  { 67, 60, 60 },
+	  { 68, 60, 60 },
+	  { 69, 60, 60 },
+	  { 77, 20, 20 },
+	  { 78, 50, 50 },
+	  { 79, 70, 70 },
+	  { 80, 127, 127 },
+	  { 81, 60, 60 },
+	  { 255, 0, 0 },
 	}
 };
 
 static const Sfx fx_pos_key = {
 	25,
-	2+SFXF_START_DELAY,
+	2 + SFXF_START_DELAY,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
 static const Sfx fx_neg_key = {
 	26,
-	2+SFXF_START_DELAY,
+	2 + SFXF_START_DELAY,
 	{
-		{ 255,100,100 },
+	  { 255, 100, 100 },
 	}
 };
 
@@ -868,7 +864,7 @@ static const Sfx fx_orifice_swallow_drip = {
 	28,
 	0,
 	{
-		{ 255,127,127 },
+	  { 255, 127, 127 },
 	}
 };
 
@@ -1015,10 +1011,10 @@ static const Sfx *const musicList[] = {
 };
 
 SfxQueue Sound::_sfxQueue[MAX_QUEUED_FX] = {
-	{ 0, 0, 0, 0},
-	{ 0, 0, 0, 0},
-	{ 0, 0, 0, 0},
-	{ 0, 0, 0, 0}
+	{ 0, 0, 0, 0 },
+	{ 0, 0, 0, 0 },
+	{ 0, 0, 0, 0 },
+	{ 0, 0, 0, 0 }
 };
 
 Sound::Sound(Audio::Mixer *mixer, Disk *pDisk, uint8 pVolume) {
@@ -1040,7 +1036,7 @@ void Sound::playSound(uint32 id, byte *sound, uint32 size, Audio::SoundHandle *h
 	flags |= Audio::FLAG_UNSIGNED;
 	size -= sizeof(DataFileHeader);
 	byte *buffer = (byte *)malloc(size);
-	memcpy(buffer, sound+sizeof(DataFileHeader), size);
+	memcpy(buffer, sound + sizeof(DataFileHeader), size);
 
 	_mixer->stopID(id);
 
@@ -1063,10 +1059,8 @@ void Sound::loadSection(uint8 pSection) {
 	} else
 		asmOfs = 0x7E;
 
-	if ((_soundData[asmOfs] != 0x3C) || (_soundData[asmOfs + 0x27] != 0x8D) ||
-		(_soundData[asmOfs + 0x28] != 0x1E) || (_soundData[asmOfs + 0x2F] != 0x8D) ||
-		(_soundData[asmOfs + 0x30] != 0x36))
-			error("Unknown sounddriver version");
+	if ((_soundData[asmOfs] != 0x3C) || (_soundData[asmOfs + 0x27] != 0x8D) || (_soundData[asmOfs + 0x28] != 0x1E) || (_soundData[asmOfs + 0x2F] != 0x8D) || (_soundData[asmOfs + 0x30] != 0x36))
+		error("Unknown sounddriver version");
 
 	_soundsTotal = _soundData[asmOfs + 1];
 	uint16 sRateTabOfs = READ_LE_UINT16(_soundData + asmOfs + 0x29);
@@ -1105,13 +1099,13 @@ void Sound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 	uint16 sampleRate = READ_BE_UINT16(_sampleRates + (sound << 2));
 	if (sampleRate > 11025)
 		sampleRate = 11025;
-	uint32 dataOfs  = READ_BE_UINT16(_sfxInfo + (sound << 3) + 0) << 4;
+	uint32 dataOfs = READ_BE_UINT16(_sfxInfo + (sound << 3) + 0) << 4;
 	uint32 dataSize = READ_BE_UINT16(_sfxInfo + (sound << 3) + 2);
 	uint32 dataLoop = READ_BE_UINT16(_sfxInfo + (sound << 3) + 6);
 	dataOfs += _sfxBaseOfs;
 
 	Audio::SeekableAudioStream *stream = Audio::makeRawStream(_soundData + dataOfs, dataSize, sampleRate,
-	                                                                Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
+	                                                          Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
 
 	Audio::AudioStream *output = 0;
 	if (dataLoop) {
@@ -1137,7 +1131,7 @@ void Sound::fnStartFx(uint32 sound, uint8 channel) {
 
 	uint8 screen = (uint8)(Logic::_scriptVariables[SCREEN] & 0xff);
 	if (sound == 278 && screen == 25) // is this weld in room 25
-		sound= 394;
+		sound = 394;
 
 	sound &= ~(1 << 8);
 
@@ -1228,7 +1222,7 @@ bool Sound::startSpeech(uint16 textNum) {
 
 	uint8 *speechData = _skyDisk->loadFile(speechFileNum + 50000);
 	if (!speechData) {
-		debug(9,"File %d (speechFile %d from section %d) wasn't found", speechFileNum + 50000, textNum & 0xFFF, textNum >> 12);
+		debug(9, "File %d (speechFile %d from section %d) wasn't found", speechFileNum + 50000, textNum & 0xFFF, textNum >> 12);
 		return false;
 	}
 

@@ -30,28 +30,29 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CSuccUBus, CTrueTalkNPC)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(SubAcceptCCarryMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(PETDeliverMsg)
-	ON_MESSAGE(PETReceiveMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(TrueTalkGetStateValueMsg)
-	ON_MESSAGE(SignalObject)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(TurnOff)
-	ON_MESSAGE(SUBTransition)
-	ON_MESSAGE(SetChevRoomBits)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(SubAcceptCCarryMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(PETDeliverMsg)
+ON_MESSAGE(PETReceiveMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(TrueTalkGetStateValueMsg)
+ON_MESSAGE(SignalObject)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(TurnOff)
+ON_MESSAGE(SUBTransition)
+ON_MESSAGE(SetChevRoomBits)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(MouseDragStartMsg)
 END_MESSAGE_MAP()
 
-bool CSuccUBus::_isOn;				// SuccUBus turned on
-bool CSuccUBus::_motherBlocked;		// Bilge SuccUBus is blocked
-bool CSuccUBus::_fuseboxOn;			// SuccUBus dial in fusebox is on
+bool CSuccUBus::_isOn; // SuccUBus turned on
+bool CSuccUBus::_motherBlocked; // Bilge SuccUBus is blocked
+bool CSuccUBus::_fuseboxOn; // SuccUBus dial in fusebox is on
 
-CSuccUBus::CSuccUBus() : CTrueTalkNPC() {
+CSuccUBus::CSuccUBus()
+  : CTrueTalkNPC() {
 	_initialStartFrame = -1;
 	_initialEndFrame = -1;
 	_endingStartFrame = -1;
@@ -500,7 +501,7 @@ bool CSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 		// any mail can be received by the SuccUBus in the bomb room.
 		// Otherwise, only get mail sent to this specific SuccUBus
 		CGameObject *mailObject = findMailByFlags(
-			_fuseboxOn && compareRoomNameTo("Titania") ? RFC_TITANIA : _flagsComparison, petRoomFlags);
+		  _fuseboxOn && compareRoomNameTo("Titania") ? RFC_TITANIA : _flagsComparison, petRoomFlags);
 
 		if (!mailObject) {
 			// No mail for this SuccUBus
@@ -551,9 +552,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 		bool flag = false;
 
 		if (pet && !mailExists(petRoomFlags)) {
-			CGameObject *mailObject = _fuseboxOn && compareRoomNameTo("Titania") ?
-				findMailByFlags(RFC_TITANIA, petRoomFlags) :
-				findMailByFlags(_flagsComparison, petRoomFlags);
+			CGameObject *mailObject = _fuseboxOn && compareRoomNameTo("Titania") ? findMailByFlags(RFC_TITANIA, petRoomFlags) : findMailByFlags(_flagsComparison, petRoomFlags);
 
 			if (mailObject) {
 				switch (getRandomNumber(4)) {
@@ -777,7 +776,7 @@ bool CSuccUBus::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	tempRect.translate(_bounds.left, _bounds.top);
 
 	if (_inProgress || !_isOn || !_mailPresent || !tempRect.contains(msg->_mousePos)
-			|| !pet)
+	    || !pet)
 		return true;
 
 	uint petRoomFlags = pet->getRoomFlags();
@@ -792,7 +791,7 @@ bool CSuccUBus::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 
 	mailObject->moveUnder(view);
 	mailObject->setPosition(Point(msg->_mousePos.x + mailObject->_bounds.width() / 2,
-		msg->_mousePos.y + mailObject->_bounds.height() / 2));
+	                              msg->_mousePos.y + mailObject->_bounds.height() / 2));
 
 	CVisibleMsg visibleMsg(true);
 	visibleMsg.execute(mailObject);

@@ -37,69 +37,68 @@
 namespace StarTrek {
 
 extern const RoomAction veng4ActionList[] = {
-	{ {ACTION_TICK, 1, 0, 0}, &Room::veng4Tick1 },
+	{ { ACTION_TICK, 1, 0, 0 }, &Room::veng4Tick1 },
 
-	{ {ACTION_TALK, OBJECT_KIRK,     0, 0}, &Room::veng4TalkToKirk },
-	{ {ACTION_TALK, OBJECT_MCCOY,    0, 0}, &Room::veng4TalkToMccoy },
-	{ {ACTION_TALK, OBJECT_SPOCK,    0, 0}, &Room::veng4TalkToSpock },
-	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::veng4TalkToRedshirt },
+	{ { ACTION_TALK, OBJECT_KIRK, 0, 0 }, &Room::veng4TalkToKirk },
+	{ { ACTION_TALK, OBJECT_MCCOY, 0, 0 }, &Room::veng4TalkToMccoy },
+	{ { ACTION_TALK, OBJECT_SPOCK, 0, 0 }, &Room::veng4TalkToSpock },
+	{ { ACTION_TALK, OBJECT_REDSHIRT, 0, 0 }, &Room::veng4TalkToRedshirt },
 
-	{ {ACTION_USE, OBJECT_IMEDKIT,  HOTSPOT_RIGHT_BED, 0}, &Room::veng4UseMccoyOnDeadGuy },
-	{ {ACTION_USE, OBJECT_IMTRICOR, HOTSPOT_RIGHT_BED, 0}, &Room::veng4UseMccoyOnDeadGuy },
-	{ {ACTION_USE, OBJECT_MCCOY,    HOTSPOT_RIGHT_BED, 0}, &Room::veng4UseMccoyOnDeadGuy },
+	{ { ACTION_USE, OBJECT_IMEDKIT, HOTSPOT_RIGHT_BED, 0 }, &Room::veng4UseMccoyOnDeadGuy },
+	{ { ACTION_USE, OBJECT_IMTRICOR, HOTSPOT_RIGHT_BED, 0 }, &Room::veng4UseMccoyOnDeadGuy },
+	{ { ACTION_USE, OBJECT_MCCOY, HOTSPOT_RIGHT_BED, 0 }, &Room::veng4UseMccoyOnDeadGuy },
 
-	{ {ACTION_USE, OBJECT_IHYPO,    OBJECT_BRITTANY,   0}, &Room::veng4UseHypoOnBrittany },
-	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_BRITTANY,   0}, &Room::veng4UseMedkitOnBrittany },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_BRITTANY,   0}, &Room::veng4UseMTricorderOnBrittany },
-	{ {ACTION_USE, OBJECT_MCCOY,    OBJECT_BRITTANY,   0}, &Room::veng4UseMTricorderOnBrittany },
-	{ {ACTION_DONE_WALK, 5,                         0, 0}, &Room::veng4MccoyReachedBrittany },
-	{ {ACTION_DONE_ANIM, 6,                         0, 0}, &Room::veng4UsedMedkitOnBrittany },
-	{ {ACTION_DONE_ANIM, 7,                         0, 0}, &Room::veng4MccoyScannedBrittany },
+	{ { ACTION_USE, OBJECT_IHYPO, OBJECT_BRITTANY, 0 }, &Room::veng4UseHypoOnBrittany },
+	{ { ACTION_USE, OBJECT_IMEDKIT, OBJECT_BRITTANY, 0 }, &Room::veng4UseMedkitOnBrittany },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_BRITTANY, 0 }, &Room::veng4UseMTricorderOnBrittany },
+	{ { ACTION_USE, OBJECT_MCCOY, OBJECT_BRITTANY, 0 }, &Room::veng4UseMTricorderOnBrittany },
+	{ { ACTION_DONE_WALK, 5, 0, 0 }, &Room::veng4MccoyReachedBrittany },
+	{ { ACTION_DONE_ANIM, 6, 0, 0 }, &Room::veng4UsedMedkitOnBrittany },
+	{ { ACTION_DONE_ANIM, 7, 0, 0 }, &Room::veng4MccoyScannedBrittany },
 
-	{ {ACTION_TALK, OBJECT_BRITTANY,                0, 0}, &Room::veng4TalkToBrittany },
-	{ {ACTION_LOOK, HOTSPOT_RIGHT_BED,              0, 0}, &Room::veng4LookAtDeadGuy },
-	{ {ACTION_LOOK, HOTSPOT_RIGHT_READINGS,         0, 0}, &Room::veng4LookAtRightBedReadings },
-	{ {ACTION_LOOK, HOTSPOT_DOOR,                   0, 0}, &Room::veng4LookAtDoorHotspot },
-	{ {ACTION_LOOK, OBJECT_KIRK,                    0, 0}, &Room::veng4LookAtKirk },
-	{ {ACTION_LOOK, OBJECT_SPOCK,                   0, 0}, &Room::veng4LookAtSpock },
-	{ {ACTION_LOOK, OBJECT_MCCOY,                   0, 0}, &Room::veng4LookAtMccoy },
-	{ {ACTION_LOOK, OBJECT_REDSHIRT,                0, 0}, &Room::veng4LookAtRedshirt },
-	{ {ACTION_LOOK, HOTSPOT_LEFT_BED,               0, 0}, &Room::veng4LookAtLeftBed },
-	{ {ACTION_LOOK, HOTSPOT_LEFT_READINGS,          0, 0}, &Room::veng4LookAtLeftBedReadings },
-	{ {ACTION_LOOK, OBJECT_BRITTANY,                0, 0}, &Room::veng4LookAtBrittany },
+	{ { ACTION_TALK, OBJECT_BRITTANY, 0, 0 }, &Room::veng4TalkToBrittany },
+	{ { ACTION_LOOK, HOTSPOT_RIGHT_BED, 0, 0 }, &Room::veng4LookAtDeadGuy },
+	{ { ACTION_LOOK, HOTSPOT_RIGHT_READINGS, 0, 0 }, &Room::veng4LookAtRightBedReadings },
+	{ { ACTION_LOOK, HOTSPOT_DOOR, 0, 0 }, &Room::veng4LookAtDoorHotspot },
+	{ { ACTION_LOOK, OBJECT_KIRK, 0, 0 }, &Room::veng4LookAtKirk },
+	{ { ACTION_LOOK, OBJECT_SPOCK, 0, 0 }, &Room::veng4LookAtSpock },
+	{ { ACTION_LOOK, OBJECT_MCCOY, 0, 0 }, &Room::veng4LookAtMccoy },
+	{ { ACTION_LOOK, OBJECT_REDSHIRT, 0, 0 }, &Room::veng4LookAtRedshirt },
+	{ { ACTION_LOOK, HOTSPOT_LEFT_BED, 0, 0 }, &Room::veng4LookAtLeftBed },
+	{ { ACTION_LOOK, HOTSPOT_LEFT_READINGS, 0, 0 }, &Room::veng4LookAtLeftBedReadings },
+	{ { ACTION_LOOK, OBJECT_BRITTANY, 0, 0 }, &Room::veng4LookAtBrittany },
 
-	{ {ACTION_USE,  OBJECT_ISTRICOR, OBJECT_DRILL, 0}, &Room::veng4LookAtDrill },
-	{ {ACTION_LOOK, OBJECT_DRILL,               0, 0}, &Room::veng4LookAtDrill },
-	{ {ACTION_USE,  OBJECT_ISTRICOR, OBJECT_HYPO,  0}, &Room::veng4LookAtHypoOnTable },
-	{ {ACTION_LOOK, OBJECT_HYPO,                0, 0}, &Room::veng4LookAtHypoOnTable },
-	{ {ACTION_LOOK, OBJECT_DOOR,                0, 0}, &Room::veng4LookAtDoorObject },
-	{ {ACTION_LOOK, 0xff,                       0, 0}, &Room::veng4LookAnywhere },
+	{ { ACTION_USE, OBJECT_ISTRICOR, OBJECT_DRILL, 0 }, &Room::veng4LookAtDrill },
+	{ { ACTION_LOOK, OBJECT_DRILL, 0, 0 }, &Room::veng4LookAtDrill },
+	{ { ACTION_USE, OBJECT_ISTRICOR, OBJECT_HYPO, 0 }, &Room::veng4LookAtHypoOnTable },
+	{ { ACTION_LOOK, OBJECT_HYPO, 0, 0 }, &Room::veng4LookAtHypoOnTable },
+	{ { ACTION_LOOK, OBJECT_DOOR, 0, 0 }, &Room::veng4LookAtDoorObject },
+	{ { ACTION_LOOK, 0xff, 0, 0 }, &Room::veng4LookAnywhere },
 
-	{ {ACTION_GET, OBJECT_HYPO,                 0, 0}, &Room::veng4GetHypo },
-	{ {ACTION_DONE_WALK, 1,                     0, 0}, &Room::veng4ReachedHypo },
-	{ {ACTION_DONE_ANIM, 2,                     0, 0}, &Room::veng4PickedUpHypo },
+	{ { ACTION_GET, OBJECT_HYPO, 0, 0 }, &Room::veng4GetHypo },
+	{ { ACTION_DONE_WALK, 1, 0, 0 }, &Room::veng4ReachedHypo },
+	{ { ACTION_DONE_ANIM, 2, 0, 0 }, &Room::veng4PickedUpHypo },
 
-	{ {ACTION_GET, OBJECT_DRILL,                0, 0}, &Room::veng4GetDrill },
-	{ {ACTION_DONE_WALK, 3,                     0, 0}, &Room::veng4ReachedDrill },
-	{ {ACTION_DONE_ANIM, 4,                     0, 0}, &Room::veng4PickedUpDrill },
+	{ { ACTION_GET, OBJECT_DRILL, 0, 0 }, &Room::veng4GetDrill },
+	{ { ACTION_DONE_WALK, 3, 0, 0 }, &Room::veng4ReachedDrill },
+	{ { ACTION_DONE_ANIM, 4, 0, 0 }, &Room::veng4PickedUpDrill },
 
-	{ {ACTION_TOUCHED_HOTSPOT, 0, 0, 0}, &Room::veng4TouchedHotspot0 },
-	{ {ACTION_WALK, OBJECT_DOOR,  0, 0}, &Room::veng4WalkToDoor },
-	{ {ACTION_WALK, HOTSPOT_DOOR, 0, 0}, &Room::veng4WalkToDoor },
+	{ { ACTION_TOUCHED_HOTSPOT, 0, 0, 0 }, &Room::veng4TouchedHotspot0 },
+	{ { ACTION_WALK, OBJECT_DOOR, 0, 0 }, &Room::veng4WalkToDoor },
+	{ { ACTION_WALK, HOTSPOT_DOOR, 0, 0 }, &Room::veng4WalkToDoor },
 
 	// Common code
-	{ {ACTION_TICK, 0xff, 0xff, 0xff}, &Room::vengaTick },
-	{ {ACTION_USE, OBJECT_IPHASERS, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
-	{ {ACTION_USE, OBJECT_IPHASERK, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
-	{ {ACTION_LOOK, OBJECT_IHYPO,          0, 0}, &Room::vengaLookAtHypo },
-	{ {ACTION_USE, OBJECT_ICOMM, OBJECT_KIRK, 0}, &Room::vengaUseCommunicator },
+	{ { ACTION_TICK, 0xff, 0xff, 0xff }, &Room::vengaTick },
+	{ { ACTION_USE, OBJECT_IPHASERS, 0xff, 0 }, &Room::vengaUsePhaserAnywhere },
+	{ { ACTION_USE, OBJECT_IPHASERK, 0xff, 0 }, &Room::vengaUsePhaserAnywhere },
+	{ { ACTION_LOOK, OBJECT_IHYPO, 0, 0 }, &Room::vengaLookAtHypo },
+	{ { ACTION_USE, OBJECT_ICOMM, OBJECT_KIRK, 0 }, &Room::vengaUseCommunicator },
 
 	// ENHANCEMENT (let object count for the "look" action, not just the hotspot)
-	{ {ACTION_LOOK, OBJECT_LEFT_READINGS, 0, 0}, &Room::veng4LookAtLeftBedReadings },
+	{ { ACTION_LOOK, OBJECT_LEFT_READINGS, 0, 0 }, &Room::veng4LookAtLeftBedReadings },
 };
 
 extern const int veng4NumActions = ARRAYSIZE(veng4ActionList);
-
 
 #define DOOR_X 0x13f
 #define DOOR_Y 0xab
@@ -113,7 +112,7 @@ extern const int veng4NumActions = ARRAYSIZE(veng4ActionList);
 void Room::veng4Tick1() {
 	playMidiMusicTracks(MIDITRACK_31);
 
-	loadActorAnim2(OBJECT_DOOR,  "s9r1dc", DOOR_X, DOOR_Y);
+	loadActorAnim2(OBJECT_DOOR, "s9r1dc", DOOR_X, DOOR_Y);
 	loadActorAnim2(OBJECT_LEFT_READINGS, "s7r4m2", LEFT_READINGS_X, LEFT_READINGS_Y);
 
 	if (!_awayMission->veng.usedMedkitOnBrittany) {
@@ -131,7 +130,7 @@ void Room::veng4Tick1() {
 
 	if (_awayMission->veng.brittanyDead) {
 		loadActorAnim2(OBJECT_BRITTANY, "s7r4bd", BRITTANY_X, BRITTANY_Y);
-		loadActorAnim2(OBJECT_LEFT_READINGS, "s7r4m1d",  LEFT_READINGS_X, LEFT_READINGS_Y);
+		loadActorAnim2(OBJECT_LEFT_READINGS, "s7r4m1d", LEFT_READINGS_X, LEFT_READINGS_Y);
 	}
 }
 
@@ -203,7 +202,7 @@ void Room::veng4UsedMedkitOnBrittany() {
 
 void Room::veng4MccoyScannedBrittany() {
 	showText(TX_SPEAKER_MCCOY, TX_VEN4_011);
-	showText(TX_SPEAKER_KIRK,  TX_VEN4_001);
+	showText(TX_SPEAKER_KIRK, TX_VEN4_001);
 
 	_roomVar.veng.usingMedkitOnBrittany = true;
 	veng4UseMccoyOnBrittany();
@@ -217,11 +216,11 @@ void Room::veng4TalkToBrittany() {
 	else {
 		_awayMission->veng.talkedToBrittany = true;
 		showText(TX_SPEAKER_BRITTANY_MARATA, TX_VEN4_019);
-		showText(TX_SPEAKER_KIRK,            TX_VEN4_004);
+		showText(TX_SPEAKER_KIRK, TX_VEN4_004);
 		showText(TX_SPEAKER_BRITTANY_MARATA, TX_VEN4_020);
-		showText(TX_SPEAKER_KIRK,            TX_VEN4_006);
+		showText(TX_SPEAKER_KIRK, TX_VEN4_006);
 		showText(TX_SPEAKER_BRITTANY_MARATA, TX_VEN4_021);
-		showText(TX_SPEAKER_KIRK,            TX_VEN4_003);
+		showText(TX_SPEAKER_KIRK, TX_VEN4_003);
 
 		loadActorAnim2(OBJECT_BRITTANY, "s9r1bm", BRITTANY_X, BRITTANY_Y);
 		showText(TX_SPEAKER_MCCOY, TX_VEN4_016);
@@ -283,7 +282,7 @@ void Room::veng4LookAtBrittany() {
 		showDescription(TX_VEN4N017);
 	else if (!_awayMission->veng.lookedAtBrittany) {
 		_awayMission->veng.lookedAtBrittany = true;
-		showText(TX_SPEAKER_KIRK,  TX_VEN4_005);
+		showText(TX_SPEAKER_KIRK, TX_VEN4_005);
 		showText(TX_SPEAKER_MCCOY, TX_VEN4_014);
 	} else if (_awayMission->veng.talkedToBrittany)
 		showDescription(TX_VEN4N017);

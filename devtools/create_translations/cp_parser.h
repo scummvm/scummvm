@@ -41,6 +41,7 @@ public:
 	const std::string &getName() const { return _name; }
 
 	uint32 getMapping(unsigned char src) const { return _mapping[src]; }
+
 private:
 	std::string _name;
 	uint32 _mapping[256];

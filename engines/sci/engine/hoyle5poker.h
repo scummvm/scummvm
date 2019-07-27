@@ -27,7 +27,7 @@
 #include "common/str.h"
 #include "sci/engine/object.h"
 #include "sci/engine/vm.h"
-#include "sci/engine/vm_types.h"	// for reg_t
+#include "sci/engine/vm_types.h" // for reg_t
 #include "sci/util.h"
 
 namespace Sci {

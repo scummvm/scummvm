@@ -25,7 +25,7 @@
 #include "sci/graphics/ports.h"
 
 #ifdef ENABLE_SCI32
-#include "sci/graphics/controls32.h"
+#	include "sci/graphics/controls32.h"
 #endif
 
 namespace Sci {
@@ -34,19 +34,19 @@ namespace Sci {
 
 #ifdef GC_DEBUG_CODE
 const char *segmentTypeNames[] = {
-	"invalid",   // 0
-	"script",    // 1
-	"clones",    // 2
-	"locals",    // 3
-	"stack",     // 4
-	"obsolete",  // 5: obsolete system strings
-	"lists",     // 6
-	"nodes",     // 7
-	"hunk",      // 8
-	"dynmem",    // 9
-	"obsolete",  // 10: obsolete string fragments
-	"array",     // 11: SCI32 arrays
-	"obsolete"   // 12: obsolete SCI32 strings
+	"invalid", // 0
+	"script", // 1
+	"clones", // 2
+	"locals", // 3
+	"stack", // 4
+	"obsolete", // 5: obsolete system strings
+	"lists", // 6
+	"nodes", // 7
+	"hunk", // 8
+	"dynmem", // 9
+	"obsolete", // 10: obsolete string fragments
+	"array", // 11: SCI32 arrays
+	"obsolete" // 12: obsolete SCI32 strings
 };
 #endif
 
@@ -220,7 +220,6 @@ void run_gc(EngineState *s) {
 #endif
 				}
 			}
-
 		}
 	}
 

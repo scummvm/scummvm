@@ -30,7 +30,8 @@
 
 namespace CGE2 {
 
-Text::Text(CGE2Engine *vm, const char *fname) : _vm(vm) {
+Text::Text(CGE2Engine *vm, const char *fname)
+  : _vm(vm) {
 	_vm->mergeExt(_fileName, fname, kSayExt);
 	if (!_vm->_resman->exist(_fileName))
 		error("No talk (%s)", _fileName);

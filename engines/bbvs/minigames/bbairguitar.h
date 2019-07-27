@@ -29,10 +29,11 @@ namespace Bbvs {
 
 class MinigameBbAirGuitar : public Minigame {
 public:
-	MinigameBbAirGuitar(BbvsEngine *vm) : Minigame(vm) {};
+	MinigameBbAirGuitar(BbvsEngine *vm)
+	  : Minigame(vm) {};
 	bool run(bool fromMainGame);
-public:
 
+public:
 	struct Obj {
 		int kind;
 		int x, y;
@@ -149,7 +150,6 @@ public:
 	bool saveTracks();
 	bool loadFromStream(Common::ReadStream *stream);
 	void saveToStream(Common::WriteStream *stream);
-
 };
 
 } // End of namespace Bbvs

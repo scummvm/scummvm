@@ -24,15 +24,15 @@
 
 #include "zvision/scripting/controls/paint_control.h"
 
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/zvision.h"
 
 namespace ZVision {
 
 PaintControl::PaintControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)
-	: Control(engine, key, CONTROL_PAINT) {
+  : Control(engine, key, CONTROL_PAINT) {
 
 	_cursor = CursorIndex_Active;
 	_paint = NULL;
@@ -203,7 +203,7 @@ Common::Rect PaintControl::paint(const Common::Point &point) {
 		for (int yy = 0; yy < brushRect.height(); yy++) {
 			uint16 *mask = (uint16 *)_brush->getBasePtr(brushRect.left, brushRect.top + yy);
 			uint16 *from = (uint16 *)_paint->getBasePtr(bkgRect.left, bkgRect.top + yy);
-			uint16 *to   = (uint16 *)_bkg->getBasePtr(bkgRect.left, bkgRect.top + yy);
+			uint16 *to = (uint16 *)_bkg->getBasePtr(bkgRect.left, bkgRect.top + yy);
 			for (int xx = 0; xx < brushRect.width(); xx++) {
 				if (*mask != 0)
 					*(to + xx) = *(from + xx);
@@ -211,7 +211,6 @@ Common::Rect PaintControl::paint(const Common::Point &point) {
 				mask++;
 			}
 		}
-
 	}
 	return paintRect;
 }

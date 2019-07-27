@@ -34,7 +34,9 @@ namespace Graphics {
 
 struct WinFontDirEntry {
 	WinFontDirEntry() {}
-	WinFontDirEntry(const Common::String &name, uint16 p) : faceName(name), points(p) {}
+	WinFontDirEntry(const Common::String &name, uint16 p)
+	  : faceName(name)
+	  , points(p) {}
 
 	// This is really just a simple identifier to match a directory entry with
 	// If need-be, we can add other things to check such as italics and strikethrough, etc.
@@ -89,7 +91,7 @@ private:
 		uint16 charWidth;
 		uint32 offset;
 		byte *bitmap;
-	} *_glyphs;
+	} * _glyphs;
 };
 
 } // End of namespace Graphics

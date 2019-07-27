@@ -30,11 +30,15 @@ namespace Titanic {
 class CSearchPoint : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+
 public:
 	int _value;
+
 public:
 	CLASSDEF;
-	CSearchPoint() : CGameObject(), _value(2) {}
+	CSearchPoint()
+	  : CGameObject()
+	  , _value(2) {}
 
 	/**
 	 * Save the data for the class to file

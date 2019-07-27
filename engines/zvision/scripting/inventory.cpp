@@ -94,7 +94,7 @@ void ScriptManager::inventoryDrop(int16 item) {
 		// if item in the inventory
 		if (itemCount != index) {
 			// shift all items left with rewrite founded item
-			for (int8 v = index; v < itemCount - 1 ; v++)
+			for (int8 v = index; v < itemCount - 1; v++)
 				inventorySetItem(v, inventoryGetItem(v + 1));
 
 			// del last item
@@ -115,7 +115,6 @@ void ScriptManager::inventoryCycle() {
 		inventorySetItem(itemCount - 1, curItem);
 
 		setStateValue(StateKey_InventoryItem, inventoryGetItem(0));
-
 	}
 }
 

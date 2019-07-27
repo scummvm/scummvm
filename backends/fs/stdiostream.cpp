@@ -23,14 +23,15 @@
 #if !defined(DISABLE_STDIO_FILESTREAM)
 
 // Disable symbol overrides so that we can use FILE, fopen etc.
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#	define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "backends/fs/stdiostream.h"
-#ifdef _WIN32_WCE
-#include "backends/platform/wince/missing/fopen.h"
-#endif
+#	include "backends/fs/stdiostream.h"
+#	ifdef _WIN32_WCE
+#		include "backends/platform/wince/missing/fopen.h"
+#	endif
 
-StdioStream::StdioStream(void *handle) : _handle(handle) {
+StdioStream::StdioStream(void *handle)
+  : _handle(handle) {
 	assert(handle);
 }
 
@@ -82,7 +83,7 @@ bool StdioStream::flush() {
 StdioStream *StdioStream::makeFromPath(const Common::String &path, bool writeMode) {
 	FILE *handle = fopen(path.c_str(), writeMode ? "wb" : "rb");
 
-#ifdef __amigaos4__
+#	ifdef __amigaos4__
 	//
 	// Work around for possibility that someone uses AmigaOS "newlib" build
 	// with SmartFileSystem (blocksize 512 bytes), leading to buffer size
@@ -93,13 +94,13 @@ StdioStream *StdioStream::makeFromPath(const Common::String &path, bool writeMod
 	if (handle && !writeMode) {
 		setvbuf(handle, NULL, _IOFBF, 8192);
 	}
-#endif
+#	endif
 
-#if defined(__WII__)
+#	if defined(__WII__)
 	// disable newlib's buffering, the device libraries handle caching
 	if (handle)
 		setvbuf(handle, NULL, _IONBF, 0);
-#endif
+#	endif
 
 	if (handle)
 		return new StdioStream(handle);

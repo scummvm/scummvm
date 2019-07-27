@@ -37,7 +37,6 @@ struct FxTable {
 
 class SndRes {
 public:
-
 	SndRes(SagaEngine *vm);
 	~SndRes();
 
@@ -51,7 +50,7 @@ public:
 
 	Common::Array<int16> _fxTableIDs;
 
- private:
+private:
 	bool load(ResourceContext *context, uint32 resourceId, SoundBuffer &buffer, bool onlyHeader);
 
 	ResourceContext *_sfxContext;

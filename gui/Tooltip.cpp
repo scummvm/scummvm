@@ -21,18 +21,21 @@
  */
 
 #include "common/util.h"
-#include "gui/widget.h"
 #include "gui/dialog.h"
 #include "gui/gui-manager.h"
+#include "gui/widget.h"
 
-#include "gui/Tooltip.h"
 #include "gui/ThemeEval.h"
+#include "gui/Tooltip.h"
 
 namespace GUI {
 
-
-Tooltip::Tooltip() :
-	Dialog(-1, -1, -1, -1), _maxWidth(-1), _parent(NULL), _xdelta(0), _ydelta(0) {
+Tooltip::Tooltip()
+  : Dialog(-1, -1, -1, -1)
+  , _maxWidth(-1)
+  , _parent(NULL)
+  , _xdelta(0)
+  , _ydelta(0) {
 
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundTooltip;
 }
@@ -64,17 +67,16 @@ void Tooltip::drawDialog(DrawLayer layerToDraw) {
 
 	for (Common::StringArray::const_iterator i = _wrappedLines.begin(); i != _wrappedLines.end(); ++i, ++num) {
 		g_gui.theme()->drawText(
-			Common::Rect(_x + 1, _y + 1 + num * h, _x + 1 + _w, _y + 1 + (num + 1) * h),
-			*i,
-			ThemeEngine::kStateEnabled,
-			Graphics::kTextAlignLeft,
-			ThemeEngine::kTextInversionNone,
-			0,
-			false,
-			ThemeEngine::kFontStyleTooltip,
-			ThemeEngine::kFontColorNormal,
-			false
-		);
+		  Common::Rect(_x + 1, _y + 1 + num * h, _x + 1 + _w, _y + 1 + (num + 1) * h),
+		  *i,
+		  ThemeEngine::kStateEnabled,
+		  Graphics::kTextAlignLeft,
+		  ThemeEngine::kTextInversionNone,
+		  0,
+		  false,
+		  ThemeEngine::kFontStyleTooltip,
+		  ThemeEngine::kFontColorNormal,
+		  false);
 	}
 }
 

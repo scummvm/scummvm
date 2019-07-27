@@ -35,11 +35,11 @@ struct Sprite {
 	uint16 givenOrderNr;
 	uint16 sortOrder;
 	ScreenObjEntry *screenObjPtr; /**< pointer to view table entry */
-	int16 xPos;                   /**< x coordinate of the sprite */
-	int16 yPos;                   /**< y coordinate of the sprite */
-	int16 xSize;                  /**< width of the sprite */
-	int16 ySize;                  /**< height of the sprite */
-	byte *backgroundBuffer;       /**< buffer to store background data */
+	int16 xPos; /**< x coordinate of the sprite */
+	int16 yPos; /**< y coordinate of the sprite */
+	int16 xSize; /**< width of the sprite */
+	int16 ySize; /**< height of the sprite */
+	byte *backgroundBuffer; /**< buffer to store background data */
 };
 
 typedef Common::List<Sprite> SpriteList;

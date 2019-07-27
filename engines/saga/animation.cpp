@@ -22,8 +22,8 @@
 
 // Background animation management module
 
-#include "saga/saga.h"
 #include "saga/gfx.h"
+#include "saga/saga.h"
 
 #include "saga/console.h"
 #include "saga/events.h"
@@ -36,7 +36,8 @@
 
 namespace Saga {
 
-Anim::Anim(SagaEngine *vm) : _vm(vm) {
+Anim::Anim(SagaEngine *vm)
+  : _vm(vm) {
 	uint16 i;
 
 	_cutawayActive = false;
@@ -170,7 +171,6 @@ int Anim::playCutaway(int cut, bool fade) {
 		_vm->_resource->loadResource(context, _cutawayList[cut].animResourceId, resourceData);
 		load(MAX_ANIMATIONS + cutawaySlot, resourceData);
 
-
 		setCycles(MAX_ANIMATIONS + cutawaySlot, _cutawayList[cut].cycles);
 		setFrameTime(MAX_ANIMATIONS + cutawaySlot, 1000 / _cutawayList[cut].frameRate);
 	}
@@ -244,7 +244,7 @@ void Anim::returnFromCutaway() {
 		event.duration = 0;
 
 		if (_cutAwayFade)
-			eventColumns = _vm->_events->chain(eventColumns, event);		// chain with the other events
+			eventColumns = _vm->_events->chain(eventColumns, event); // chain with the other events
 		else
 			eventColumns = _vm->_events->queue(event);
 
@@ -256,7 +256,7 @@ void Anim::returnFromCutaway() {
 		// prisoner drops the jar on the ground
 		for (int i = 0; i < MAX_ANIMATIONS; i++) {
 			if (_animations[i] && _animations[i]->state == ANIM_PLAYING) {
-				_animations[i]->currentFrame = -1;	// start from -1 (check Anim::load())
+				_animations[i]->currentFrame = -1; // start from -1 (check Anim::load())
 			}
 		}
 
@@ -266,7 +266,7 @@ void Anim::returnFromCutaway() {
 		event.op = kEventResumeAll;
 		event.time = 0;
 		event.duration = 0;
-		_vm->_events->chain(eventColumns, event);		// chain with the other events
+		_vm->_events->chain(eventColumns, event); // chain with the other events
 
 		// Draw the scene
 		event.type = kEvTImmediate;
@@ -274,7 +274,7 @@ void Anim::returnFromCutaway() {
 		event.op = kEventDraw;
 		event.time = 0;
 		event.duration = 0;
-		_vm->_events->chain(eventColumns, event);		// chain with the other events
+		_vm->_events->chain(eventColumns, event); // chain with the other events
 
 		// Handle fade up, if we previously faded down
 		if (_cutAwayFade) {
@@ -553,7 +553,7 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 			}
 		}
 	} else {
-		_vm->_frameCount += 100;	// make sure the waiting thread stops waiting
+		_vm->_frameCount += 100; // make sure the waiting thread stops waiting
 		// Animation done playing
 		anim->state = ANIM_PAUSE;
 
@@ -682,14 +682,13 @@ void Anim::decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_
 // FIXME: This is thrown when the first video of the IHNM end sequence is shown (the "turn off screen"
 // video), however the video is played correctly and the rest of the end sequence continues normally
 #if 1
-#define VALIDATE_WRITE_POINTER \
-	if ((writePointer < buf) || (writePointer >= (buf + screenWidth * screenHeight))) { \
-		warning("VALIDATE_WRITE_POINTER: writePointer=%p buf=%p", (void *)writePointer, (void *)buf); \
-	}
+#	define VALIDATE_WRITE_POINTER                                                                    \
+		if ((writePointer < buf) || (writePointer >= (buf + screenWidth * screenHeight))) {             \
+			warning("VALIDATE_WRITE_POINTER: writePointer=%p buf=%p", (void *)writePointer, (void *)buf); \
+		}
 #else
-#define VALIDATE_WRITE_POINTER
+#	define VALIDATE_WRITE_POINTER
 #endif
-
 
 	// Begin RLE decompression to output buffer
 	do {
@@ -701,11 +700,11 @@ void Anim::decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_
 				yStart = readS.readUint16BE();
 			else
 				yStart = readS.readByte();
-			readS.readByte();		// Skip pad byte
-			/*xPos = */readS.readUint16BE();
-			/*yPos = */readS.readUint16BE();
-			/*width = */readS.readUint16BE();
-			/*height = */readS.readUint16BE();
+			readS.readByte(); // Skip pad byte
+			/*xPos = */ readS.readUint16BE();
+			/*yPos = */ readS.readUint16BE();
+			/*width = */ readS.readUint16BE();
+			/*height = */ readS.readUint16BE();
 
 			// Setup write pointer to the draw origin
 			writePointer = (buf + (yStart * screenWidth) + xStart);
@@ -830,7 +829,7 @@ int Anim::fillFrameOffsets(AnimationData *anim, bool reallyFill) {
 		// including the frame header, is in big endian format
 		do {
 			markByte = readS.readByte();
-//			debug(7, "_pos=%X currentFrame=%i markByte=%X", readS.pos(), currentFrame, markByte);
+			//			debug(7, "_pos=%X currentFrame=%i markByte=%X", readS.pos(), currentFrame, markByte);
 
 			switch (markByte) {
 			case SAGA_FRAME_START: // Start of frame
@@ -933,8 +932,8 @@ void Anim::cutawayInfo() {
 
 	for (i = 0; i < _cutawayList.size(); i++) {
 		_vm->_console->debugPrintf("%02d: Bg res: %u Anim res: %u Cycles: %u Framerate: %u\n", i,
-			_cutawayList[i].backgroundResourceId, _cutawayList[i].animResourceId,
-			_cutawayList[i].cycles, _cutawayList[i].frameRate);
+		                           _cutawayList[i].backgroundResourceId, _cutawayList[i].animResourceId,
+		                           _cutawayList[i].cycles, _cutawayList[i].frameRate);
 	}
 }
 #endif

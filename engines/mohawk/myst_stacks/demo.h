@@ -35,29 +35,29 @@ namespace MystStacks {
 
 #define DECLARE_OPCODE(x) void x(uint16 var, const ArgumentsArray &args)
 
-class Demo : public Intro {
-public:
-	explicit Demo(MohawkEngine_Myst *vm);
-	~Demo() override;
+	class Demo : public Intro {
+	public:
+		explicit Demo(MohawkEngine_Myst *vm);
+		~Demo() override;
 
-	void disablePersistentScripts() override;
-	void runPersistentScripts() override;
+		void disablePersistentScripts() override;
+		void runPersistentScripts() override;
 
-private:
-	void setupOpcodes();
+	private:
+		void setupOpcodes();
 
-	DECLARE_OPCODE(o_stopIntro);
-	DECLARE_OPCODE(o_fadeFromBlack);
-	DECLARE_OPCODE(o_fadeToBlack);
+		DECLARE_OPCODE(o_stopIntro);
+		DECLARE_OPCODE(o_fadeFromBlack);
+		DECLARE_OPCODE(o_fadeToBlack);
 
-	DECLARE_OPCODE(o_returnToMenu_init);
+		DECLARE_OPCODE(o_returnToMenu_init);
 
-	bool _returnToMenuRunning;
-	uint16 _returnToMenuStep; // 42
-	uint32 _returnToMenuNextTime; // 6
+		bool _returnToMenuRunning;
+		uint16 _returnToMenuStep; // 42
+		uint32 _returnToMenuNextTime; // 6
 
-	void returnToMenu_run();
-};
+		void returnToMenu_run();
+	};
 
 } // End of namespace MystStacks
 } // End of namespace Mohawk

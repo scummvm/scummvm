@@ -21,19 +21,21 @@
  */
 
 #include "titanic/star_control/star_crosshairs.h"
-#include "titanic/star_control/star_markers.h"
 #include "titanic/star_control/star_camera.h"
 #include "titanic/star_control/star_field.h"
+#include "titanic/star_control/star_markers.h"
 #include "titanic/star_control/star_ref.h"
 #include "titanic/support/simple_file.h"
 
 namespace Titanic {
 
-CStarCrosshairs::CStarCrosshairs() : _matchIndex(-1), _entryIndex(-1) {
+CStarCrosshairs::CStarCrosshairs()
+  : _matchIndex(-1)
+  , _entryIndex(-1) {
 }
 
 void CStarCrosshairs::selectStar(int index, CVideoSurface *surface,
-		CStarField *starField, CStarMarkers *markers) {
+                                 CStarField *starField, CStarMarkers *markers) {
 	if (_entryIndex >= 0) {
 		// There are existing selected stars already
 		if (_entryIndex == _matchIndex) {
@@ -170,8 +172,7 @@ void CStarCrosshairs::incMatches() {
 }
 
 FPoint CStarCrosshairs::getPosition() const {
-	return (_entryIndex >= 0 && _entryIndex <= 2) ? 
-		FPoint(_entries[_entryIndex]) : FPoint();
+	return (_entryIndex >= 0 && _entryIndex <= 2) ? FPoint(_entries[_entryIndex]) : FPoint();
 }
 
 void CStarCrosshairs::draw(CSurfaceArea *surfaceArea) {
@@ -252,7 +253,6 @@ void CStarCrosshairs::drawAt(const FPoint &pt, CSurfaceArea *surfaceArea) {
 	surfaceArea->_pixel = 255;
 	surfaceArea->setColorFromPixel();
 	SurfaceAreaMode savedMode = surfaceArea->setMode(SA_XOR);
-
 
 	surfaceArea->drawLine(FRect(pt._x - 8.0, pt._y, pt._x - 4.0, pt._y));
 	surfaceArea->drawLine(FRect(pt._x + 4.0, pt._y, pt._x + 8.0, pt._y));

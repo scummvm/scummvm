@@ -25,8 +25,8 @@
 * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
 */
 
-#include "avalanche/avalanche.h"
 #include "avalanche/shootemup.h"
+#include "avalanche/avalanche.h"
 
 #include "common/random.h"
 #include "common/system.h"
@@ -485,8 +485,7 @@ void ShootEmUp::animate() {
 
 void ShootEmUp::collisionCheck() {
 	for (int i = 0; i < 99; i++) {
-		if ((_sprites[i]._x != kFlag) && (_sprites[i]._missile) &&
-			(_sprites[i]._y < 60) && (_sprites[i]._timeout == 1)) {
+		if ((_sprites[i]._x != kFlag) && (_sprites[i]._missile) && (_sprites[i]._y < 60) && (_sprites[i]._timeout == 1)) {
 			int distFromSide = (_sprites[i]._x - 20) % 90;
 			int thisStock = (_sprites[i]._x - 20) / 90;
 			if ((!_hasEscaped[thisStock]) && (distFromSide > 17) && (distFromSide < 34)) {
@@ -539,7 +538,7 @@ void ShootEmUp::bumpFolk() {
 		if (_running[i]._x != kFlag) {
 			for (int j = i + 1; j < 4; j++) {
 				bool overlaps = overlap(_running[i]._x, _running[i]._y, _running[i]._x + 17, _running[i]._y + 24,
-										_running[j]._x, _running[j]._y, _running[j]._x + 17, _running[j]._y + 24);
+				                        _running[j]._x, _running[j]._y, _running[j]._x + 17, _running[j]._y + 24);
 				if ((_running[i]._x != kFlag) && overlaps) {
 					turnAround(i, false); // Opp. directions.
 					turnAround(j, false);
@@ -615,7 +614,7 @@ void ShootEmUp::hitPeople() {
 			for (int j = 0; j < 4; j++) {
 
 				bool overlaps = overlap(_sprites[i]._x, _sprites[i]._y, _sprites[i]._x + 7, _sprites[i]._y + 10,
-					_running[j]._x, _running[j]._y, _running[j]._x + 17, _running[j]._y + 24);
+				                        _running[j]._x, _running[j]._y, _running[j]._x + 17, _running[j]._y + 24);
 
 				if ((_running[j]._x != kFlag) && (overlaps)) {
 					_vm->_sound->playNote(7177, 1);

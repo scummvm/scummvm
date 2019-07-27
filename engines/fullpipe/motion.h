@@ -43,7 +43,9 @@ public:
 	bool _isEnabled;
 
 public:
-	MotionController() : _isEnabled(true), _field_4(0) {}
+	MotionController()
+	  : _isEnabled(true)
+	  , _field_4(0) {}
 	virtual ~MotionController() {}
 	virtual bool load(MfcArchive &file);
 	virtual void methodC() {}
@@ -88,7 +90,10 @@ public:
 	int _field_28;
 
 public:
-	MctlItem() : _field_20(0), _field_24(0), _field_28(0) {}
+	MctlItem()
+	  : _field_20(0)
+	  , _field_24(0)
+	  , _field_28(0) {}
 	~MctlItem();
 };
 
@@ -171,7 +176,12 @@ public:
 	int _field_14;
 
 public:
-	MovGraphNode() : _x(0), _y(0), _z(0), _field_10(0), _field_14(0) { _objtype = kObjTypeMovGraphNode; }
+	MovGraphNode()
+	  : _x(0)
+	  , _y(0)
+	  , _z(0)
+	  , _field_10(0)
+	  , _field_14(0) { _objtype = kObjTypeMovGraphNode; }
 	virtual bool load(MfcArchive &file);
 };
 
@@ -209,7 +219,7 @@ public:
 };
 
 class MovGraphLink : public CObject {
- public:
+public:
 	MovGraphNode *_graphSrc;
 	MovGraphNode *_graphDst;
 	DWordArray _dwordArray1;
@@ -222,7 +232,7 @@ class MovGraphLink : public CObject {
 	MovGraphReact *_movGraphReact;
 	Common::String _name;
 
-  public:
+public:
 	MovGraphLink();
 	virtual ~MovGraphLink();
 
@@ -269,9 +279,10 @@ struct MovGraphItem {
 };
 
 class MovGraph : public MotionController {
-friend class MctlCompound;
-friend class MctlGraph;
-friend class MotionController;
+	friend class MctlCompound;
+	friend class MctlGraph;
+	friend class MotionController;
+
 private:
 	typedef ObList<MovGraphNode> NodeList;
 	typedef ObList<MovGraphLink> LinkList;
@@ -364,7 +375,7 @@ struct MctlMQ {
 struct MctlAni { // 744
 	int _objectId;
 	StaticANIObject *_obj;
-	MctlAniSub _subItems[4];  // 184
+	MctlAniSub _subItems[4]; // 184
 };
 
 class MctlGraph : public MovGraph {

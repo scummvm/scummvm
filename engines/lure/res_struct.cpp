@@ -20,56 +20,55 @@
  *
  */
 
+#include "lure/res_struct.h"
+#include "common/endian.h"
 #include "lure/disk.h"
 #include "lure/lure.h"
 #include "lure/res.h"
-#include "lure/res_struct.h"
 #include "lure/scripts.h"
-#include "common/endian.h"
 
 namespace Lure {
 
-const int actionNumParams[NPC_JUMP_ADDRESS+1] = {0,
-	1, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 0, 1,
-	0, 1, 1, 1, 1, 0, 0, 2, 1, 1, 0, 0, 1, 1, 2, 2, 5, 2, 2, 1};
+const int actionNumParams[NPC_JUMP_ADDRESS + 1] = { 0,
+	                                                  1, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 0, 1,
+	                                                  0, 1, 1, 1, 1, 0, 0, 2, 1, 1, 0, 0, 1, 1, 2, 2, 5, 2, 2, 1 };
 
 // Barman related frame lists
 
-static const uint16 basicPolish[] = {8+13,8+14,8+15,8+16,8+17,8+18,8+17,8+16,8+15,8+14,
-	8+15,8+16,8+17,8+18,8+17,8+16,8+15,8+14,8+13,0};
+static const uint16 basicPolish[] = { 8 + 13, 8 + 14, 8 + 15, 8 + 16, 8 + 17, 8 + 18, 8 + 17, 8 + 16, 8 + 15, 8 + 14,
+	                                    8 + 15, 8 + 16, 8 + 17, 8 + 18, 8 + 17, 8 + 16, 8 + 15, 8 + 14, 8 + 13, 0 };
 
-static const uint16 sidsFetch[] = {12+1,12+2,12+3,12+4,12+5,12+6,12+5,12+6,12+5,12+4,12+3,12+7,12+8,0};
+static const uint16 sidsFetch[] = { 12 + 1, 12 + 2, 12 + 3, 12 + 4, 12 + 5, 12 + 6, 12 + 5, 12 + 6, 12 + 5, 12 + 4, 12 + 3, 12 + 7, 12 + 8, 0 };
 
-static const uint16 nelliesScratch[] = {11+1,11+2,11+3,11+4,11+5,11+4,11+5,11+4,11+5,11+4,11+3,11+2,11+1,0};
+static const uint16 nelliesScratch[] = { 11 + 1, 11 + 2, 11 + 3, 11 + 4, 11 + 5, 11 + 4, 11 + 5, 11 + 4, 11 + 5, 11 + 4, 11 + 3, 11 + 2, 11 + 1, 0 };
 
-static const uint16 nelliesFetch[] = {1,2,3,4,5,4,5,4,3,2,6,7,0};
+static const uint16 nelliesFetch[] = { 1, 2, 3, 4, 5, 4, 5, 4, 3, 2, 6, 7, 0 };
 
-static const uint16 ewansFetch[] = {13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,0};
+static const uint16 ewansFetch[] = { 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 0 };
 
-static const uint16 ewanExtraGraphic1[]= {
-	28,29,30,31,32,33,34,35,36,37,
-	38,39,40,41,42,43,44,45,46,47,
+static const uint16 ewanExtraGraphic1[] = {
+	28, 29, 30, 31, 32, 33, 34, 35, 36, 37,
+	38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
 	48,
-	40,39,38,37,36,35,34,33,32,31,30,29,28,
-	0};
+	40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28,
+	0
+};
 
 static const uint16 ewanExtraGraphic2[] = {
-	1,2,3,4,5,6,7,8,9,
-	10,11,12,13,14,15,16,17,18,19,
-	20,21,22,23,24,0};
+	1, 2, 3, 4, 5, 6, 7, 8, 9,
+	10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+	20, 21, 22, 23, 24, 0
+};
 
 static const BarEntry default_barList[3] = {
-	{29, SID_ID, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}, {&basicPolish[0], &sidsFetch[0], NULL, NULL}, 13, NULL},
-	{32, NELLIE_ID, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}, {&nelliesScratch[0], &nelliesFetch[0], NULL, NULL}, 14, NULL},
-	{35, EWAN_ID, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}, {&ewansFetch[0], &ewansFetch[0],
-		&ewanExtraGraphic1[0], &ewanExtraGraphic2[0]}, 16, NULL}
+	{ 29, SID_ID, { { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 } }, { &basicPolish[0], &sidsFetch[0], NULL, NULL }, 13, NULL },
+	{ 32, NELLIE_ID, { { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 } }, { &nelliesScratch[0], &nelliesFetch[0], NULL, NULL }, 14, NULL },
+	{ 35, EWAN_ID, { { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 } }, { &ewansFetch[0], &ewansFetch[0], &ewanExtraGraphic1[0], &ewanExtraGraphic2[0] }, 16, NULL }
 };
 
 const RoomTranslationRecord roomTranslations[] = {
-	{0x1E, 0x13}, {0x07, 0x08}, {0x1C, 0x12}, {0x26, 0x0F},
-	{0x27, 0x0F}, {0x28, 0x0F}, {0x29, 0x0F}, {0x22, 0x0A},
-	{0x23, 0x13}, {0x24, 0x14}, {0x31, 0x2C}, {0x2F, 0x2C},
-	{0, 0}};
+	{ 0x1E, 0x13 }, { 0x07, 0x08 }, { 0x1C, 0x12 }, { 0x26, 0x0F }, { 0x27, 0x0F }, { 0x28, 0x0F }, { 0x29, 0x0F }, { 0x22, 0x0A }, { 0x23, 0x13 }, { 0x24, 0x14 }, { 0x31, 0x2C }, { 0x2F, 0x2C }, { 0, 0 }
+};
 
 // Room data holding class
 
@@ -337,17 +336,17 @@ void RoomExitJoinList::loadFromStream(Common::ReadStream *stream) {
 		RoomExitJoinData &rec = **i;
 
 		uint16 hotspot1Id = stream->readUint16LE();
-		if (hotspot1Id == 0xffff) error("Invalid room exit join list");
+		if (hotspot1Id == 0xffff)
+			error("Invalid room exit join list");
 		uint16 hotspot2Id = stream->readUint16LE();
 
-		if ((rec.hotspots[0].hotspotId != hotspot1Id) ||
-			(rec.hotspots[1].hotspotId != hotspot2Id))
+		if ((rec.hotspots[0].hotspotId != hotspot1Id) || (rec.hotspots[1].hotspotId != hotspot2Id))
 			break;
 
 		rec.hotspots[0].currentFrame = stream->readByte();
-		rec.hotspots[0].destFrame    = stream->readByte();
+		rec.hotspots[0].destFrame = stream->readByte();
 		rec.hotspots[1].currentFrame = stream->readByte();
-		rec.hotspots[1].destFrame    = stream->readByte();
+		rec.hotspots[1].destFrame = stream->readByte();
 		rec.blocked = stream->readByte();
 	}
 
@@ -358,7 +357,7 @@ void RoomExitJoinList::loadFromStream(Common::ReadStream *stream) {
 // Hotspot action record
 
 HotspotActionData::HotspotActionData(HotspotActionResource *rec) {
-	action = (Action) rec->action;
+	action = (Action)rec->action;
 	// FIXME: some compilers may add padding to properly align the second member
 	sequenceOffset = READ_LE_UINT16(((byte *)rec) + 1);
 }
@@ -367,12 +366,12 @@ uint16 HotspotActionList::getActionOffset(Action action) {
 	iterator i;
 	for (i = begin(); i != end(); ++i) {
 		HotspotActionData const &rec = **i;
-		if (rec.action == action) return rec.sequenceOffset;
+		if (rec.action == action)
+			return rec.sequenceOffset;
 	}
 
 	return 0;
 }
-
 
 // Hotspot data
 
@@ -383,7 +382,7 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	descId2 = READ_LE_UINT16(&rec->descId2);
 	actions = READ_LE_UINT32(&rec->actions);
 	actionsOffset = READ_LE_UINT16(&rec->actionsOffset);
-	flags = (byte) (actions >> 24) & 0xf0;
+	flags = (byte)(actions >> 24) & 0xf0;
 	actions &= 0xfffffff;
 
 	roomNumber = READ_LE_UINT16(&rec->roomNumber);
@@ -408,7 +407,7 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	tickProcId = READ_LE_UINT16(&rec->tickProcId);
 	tickTimeout = READ_LE_UINT16(&rec->tickTimeout);
 	tickScriptOffset = READ_LE_UINT16(&rec->tickScriptOffset);
-	characterMode = (CharacterMode) READ_LE_UINT16(&rec->characterMode);
+	characterMode = (CharacterMode)READ_LE_UINT16(&rec->characterMode);
 	delayCtr = READ_LE_UINT16(&rec->delayCtr);
 	flags2 = READ_LE_UINT16(&rec->flags2);
 	headerFlags = READ_LE_UINT16(&rec->hdrFlags);
@@ -509,7 +508,7 @@ void HotspotData::loadFromStream(Common::ReadStream *stream) {
 	tickProcId = stream->readUint16LE();
 	tickTimeout = stream->readUint16LE();
 	tickScriptOffset = stream->readUint16LE();
-	characterMode = (CharacterMode) stream->readUint16LE();
+	characterMode = (CharacterMode)stream->readUint16LE();
 	delayCtr = stream->readUint16LE();
 	animRecordId = stream->readUint16LE();
 
@@ -573,8 +572,9 @@ MovementData::MovementData(MovementResource *rec) {
 // List of movement frames
 
 bool MovementDataList::getFrame(uint16 currentFrame, int16 &xChange,
-							   int16 &yChange, uint16 &nextFrame) {
-	if (empty()) return false;
+                                int16 &yChange, uint16 &nextFrame) {
+	if (empty())
+		return false;
 	bool foundFlag = false;
 	iterator i;
 
@@ -584,9 +584,11 @@ bool MovementDataList::getFrame(uint16 currentFrame, int16 &xChange,
 			xChange = rec.xChange;
 			yChange = rec.yChange;
 			nextFrame = rec.frameNumber;
-			if (foundFlag) return true;
+			if (foundFlag)
+				return true;
 		}
-		if (rec.frameNumber == currentFrame) foundFlag = true;
+		if (rec.frameNumber == currentFrame)
+			foundFlag = true;
 	}
 
 	return true;
@@ -609,13 +611,13 @@ HotspotAnimData::HotspotAnimData(HotspotAnimResource *rec) {
 
 HotspotActionList::HotspotActionList(uint16 id, byte *data) {
 	recordId = id;
-	uint16  numItems = READ_LE_UINT16(data);
+	uint16 numItems = READ_LE_UINT16(data);
 	data += 2;
 
-	HotspotActionResource *actionRec = (HotspotActionResource *) data;
+	HotspotActionResource *actionRec = (HotspotActionResource *)data;
 
 	for (int actionCtr = 0; actionCtr < numItems; ++actionCtr,
-		GET_NEXT(actionRec, HotspotActionResource)) {
+	         GET_NEXT(actionRec, HotspotActionResource)) {
 
 		HotspotActionData *actionEntry = new HotspotActionData(actionRec);
 		push_back(HotspotActionList::value_type(actionEntry));
@@ -626,7 +628,8 @@ HotspotActionList *HotspotActionSet::getActions(uint16 recordId) {
 	HotspotActionSet::iterator i;
 	for (i = begin(); i != end(); ++i) {
 		HotspotActionList *list = (*i).get();
-		if (list->recordId == recordId) return list;
+		if (list->recordId == recordId)
+			return list;
 	}
 
 	return NULL;
@@ -641,11 +644,15 @@ TalkHeaderData::TalkHeaderData(uint16 charId, uint16 *entries) {
 	// Get number of entries
 	_numEntries = 0;
 	src = entries;
-	while (READ_LE_UINT16(src) != 0xffff) { ++src; ++_numEntries; }
+	while (READ_LE_UINT16(src) != 0xffff) {
+		++src;
+		++_numEntries;
+	}
 
 	// Duplicate the list
-	_data = (uint16 *) Memory::alloc(_numEntries * sizeof(uint16));
-	src = entries; dest = _data;
+	_data = (uint16 *)Memory::alloc(_numEntries * sizeof(uint16));
+	src = entries;
+	dest = _data;
 
 	for (int ctr = 0; ctr < _numEntries; ++ctr, ++src, ++dest)
 		*dest = READ_LE_UINT16(src);
@@ -658,7 +665,7 @@ TalkHeaderData::~TalkHeaderData() {
 uint16 TalkHeaderData::getEntry(int index) {
 	if (index >= _numEntries)
 		error("Invalid talk index %d specified for hotspot %xh",
-			_numEntries, characterId);
+		      _numEntries, characterId);
 	return _data[index];
 }
 
@@ -765,7 +772,7 @@ SequenceDelayData *SequenceDelayData::load(uint32 delay, uint16 seqOffset, bool 
 
 void SequenceDelayList::add(uint16 delay, uint16 seqOffset, bool canClear) {
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Delay List add sequence=%xh delay=%d canClear=%d",
-		seqOffset, delay, (int)canClear);
+	       seqOffset, delay, (int)canClear);
 	SequenceDelayData *entry = new SequenceDelayData(delay, seqOffset, canClear);
 	push_front(SequenceDelayList::value_type(entry));
 }
@@ -774,7 +781,7 @@ void SequenceDelayList::tick() {
 	SequenceDelayList::iterator i;
 
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Delay List check start at time %d",
-		g_system->getMillis());
+	       g_system->getMillis());
 
 	for (i = begin(); i != end(); ++i) {
 		SequenceDelayData &entry = **i;
@@ -839,26 +846,25 @@ CharacterScheduleEntry::CharacterScheduleEntry(int theAction, ...) {
 	va_start(u_Arg, theAction);
 
 	for (int paramCtr = 0; paramCtr < actionNumParams[_action]; ++paramCtr)
-		_params[paramCtr] = (uint16) va_arg(u_Arg, int);
+		_params[paramCtr] = (uint16)va_arg(u_Arg, int);
 
 	va_end(u_Arg);
 	_numParams = actionNumParams[_action];
 }
 
 CharacterScheduleEntry::CharacterScheduleEntry(CharacterScheduleSet *parentSet,
-		CharacterScheduleResource *&rec) {
+                                               CharacterScheduleResource *&rec) {
 	_parent = parentSet;
 
 	if ((rec->action == 0) || (READ_LE_UINT16(&rec->action) > NPC_JUMP_ADDRESS))
 		error("Invalid action encountered reading NPC schedule");
 
-	_action = (Action) READ_LE_UINT16(&rec->action);
+	_action = (Action)READ_LE_UINT16(&rec->action);
 	_numParams = actionNumParams[_action];
 	for (int index = 0; index < _numParams; ++index)
 		_params[index] = READ_LE_UINT16(&rec->params[index]);
 
-	rec = (CharacterScheduleResource *) ((byte *) rec +
-		(_numParams + 1) * sizeof(uint16));
+	rec = (CharacterScheduleResource *)((byte *)rec + (_numParams + 1) * sizeof(uint16));
 }
 
 CharacterScheduleEntry::CharacterScheduleEntry(CharacterScheduleEntry *src) {
@@ -884,7 +890,7 @@ void CharacterScheduleEntry::setDetails(int theAction, ...) {
 	va_start(list, theAction);
 
 	for (int paramCtr = 0; paramCtr < actionNumParams[_action]; ++paramCtr)
-		_params[paramCtr] = (uint16) va_arg(list, int);
+		_params[paramCtr] = (uint16)va_arg(list, int);
 
 	va_end(list);
 }
@@ -932,7 +938,8 @@ CharacterScheduleSet::CharacterScheduleSet(CharacterScheduleResource *rec, uint1
 
 CharacterScheduleEntry *CharacterScheduleList::getEntry(uint16 id, CharacterScheduleSet *currentSet) {
 	// Respond to the special no entry with no record
-	if (id == 0xffff) return NULL;
+	if (id == 0xffff)
+		return NULL;
 
 	// Handle jumps within a current set versus external jumps
 	if ((id >> 10) == 0) {
@@ -974,7 +981,8 @@ uint16 CharacterScheduleSet::getId(CharacterScheduleEntry *rec) {
 
 	iterator i;
 	for (i = begin(); i != end(); ++i, ++result)
-		if ((*i).get() == rec) break;
+		if ((*i).get() == rec)
+			break;
 	if (i == end())
 		error("Parent child relationship missing in character schedule set");
 	return result;
@@ -1023,7 +1031,6 @@ void RandomActionSet::loadFromStream(Common::ReadStream *stream) {
 	for (int actionIndex = 0; actionIndex < _numActions; ++actionIndex)
 		_types[actionIndex] = (RandomActionType)stream->readByte();
 }
-
 
 void RandomActionList::saveToStream(Common::WriteStream *stream) const {
 	for (const_iterator i = begin(); i != end(); ++i)
@@ -1125,8 +1132,7 @@ int PausedCharacterList::check(uint16 charId, int numImpinging, uint16 *impingin
 
 	for (int index = 0; index < numImpinging; ++index) {
 		Hotspot *hotspot = res.getActiveHotspot(impingingList[index]);
-		if ((!hotspot) || (!hotspot->currentActions().isEmpty() &&
-			(hotspot->currentActions().top().action() == EXEC_HOTSPOT_SCRIPT)))
+		if ((!hotspot) || (!hotspot->currentActions().isEmpty() && (hotspot->currentActions().top().action() == EXEC_HOTSPOT_SCRIPT)))
 			// Entry is skipped if hotspot not present or is executing hotspot script
 			continue;
 
@@ -1135,8 +1141,7 @@ int PausedCharacterList::check(uint16 charId, int numImpinging, uint16 *impingin
 		bool foundEntry = false;
 		for (i = res.pausedList().begin(); !foundEntry && (i != res.pausedList().end()); ++i) {
 			PausedCharacter const &rec = **i;
-			foundEntry = (rec.srcCharId == charId) &&
-				(rec.destCharId == hotspot->hotspotId());
+			foundEntry = (rec.srcCharId == charId) && (rec.destCharId == hotspot->hotspotId());
 		}
 
 		if (foundEntry)
@@ -1154,9 +1159,7 @@ int PausedCharacterList::check(uint16 charId, int numImpinging, uint16 *impingin
 		charHotspot->setBlockedState(BS_INITIAL);
 
 		if (hotspot->hotspotId() < START_EXIT_ID) {
-			if ((charHotspot->characterMode() == CHARMODE_PAUSED) ||
-				((charHotspot->pauseCtr() == 0) &&
-				(charHotspot->characterMode() == CHARMODE_NONE))) {
+			if ((charHotspot->characterMode() == CHARMODE_PAUSED) || ((charHotspot->pauseCtr() == 0) && (charHotspot->characterMode() == CHARMODE_NONE))) {
 				if (hotspot->characterMode() != CHARMODE_WAIT_FOR_INTERACT)
 					hotspot->resource()->scriptHotspotId = charId;
 			}
@@ -1193,8 +1196,7 @@ BarEntry &BarmanLists::getDetails(uint16 roomNumber) {
 
 void BarmanLists::saveToStream(Common::WriteStream *stream) const {
 	for (int index = 0; index < 3; ++index) {
-		uint16 value = (_barList[index].currentCustomer == NULL) ? 0 :
-			(_barList[index].currentCustomer - &_barList[index].customers[0]) / sizeof(BarEntry) + 1;
+		uint16 value = (_barList[index].currentCustomer == NULL) ? 0 : (_barList[index].currentCustomer - &_barList[index].customers[0]) / sizeof(BarEntry) + 1;
 		stream->writeUint16LE(value);
 		for (int ctr = 0; ctr < NUM_SERVE_CUSTOMERS; ++ctr) {
 			stream->writeUint16LE(_barList[index].customers[ctr].hotspotId);
@@ -1210,8 +1212,7 @@ void BarmanLists::loadFromStream(Common::ReadStream *stream) {
 	reset();
 	for (int index = 0; index < numEntries; ++index) {
 		int16 value = stream->readUint16LE();
-		_barList[index].currentCustomer = ((value < 1) || (value > NUM_SERVE_CUSTOMERS)) ? NULL :
-			&_barList[index].customers[value - 1];
+		_barList[index].currentCustomer = ((value < 1) || (value > NUM_SERVE_CUSTOMERS)) ? NULL : &_barList[index].customers[value - 1];
 
 		for (int ctr = 0; ctr < NUM_SERVE_CUSTOMERS; ++ctr) {
 			_barList[index].customers[ctr].hotspotId = stream->readUint16LE();
@@ -1256,32 +1257,31 @@ void ValueTableData::reset() {
 }
 
 bool ValueTableData::isKnownField(uint16 fieldIndex) {
-	return ((fieldIndex <= 10) && (fieldIndex != 6)) ||
-		(fieldIndex == 15) || ((fieldIndex >= 18) && (fieldIndex <= 20));
+	return ((fieldIndex <= 10) && (fieldIndex != 6)) || (fieldIndex == 15) || ((fieldIndex >= 18) && (fieldIndex <= 20));
 }
 
 uint16 ValueTableData::getField(uint16 fieldIndex) {
 	if (fieldIndex >= NUM_VALUE_FIELDS)
 		error("Invalid field index specified %d", fieldIndex);
-//	if (!isKnownField(fieldIndex))
-//		warning("Unknown field index %d in GET_FIELD opcode", fieldIndex);
+	//	if (!isKnownField(fieldIndex))
+	//		warning("Unknown field index %d in GET_FIELD opcode", fieldIndex);
 	return _fieldList[fieldIndex];
 }
 
 uint16 ValueTableData::getField(FieldName fieldName) {
-	return getField((uint16) fieldName);
+	return getField((uint16)fieldName);
 }
 
 void ValueTableData::setField(uint16 fieldIndex, uint16 value) {
 	if (fieldIndex >= NUM_VALUE_FIELDS)
 		error("Invalid field index specified %d", fieldIndex);
 	_fieldList[fieldIndex] = value;
-//	if (!isKnownField(fieldIndex))
-//		warning("Unknown field index %d in SET_FIELD opcode", fieldIndex);
+	//	if (!isKnownField(fieldIndex))
+	//		warning("Unknown field index %d in SET_FIELD opcode", fieldIndex);
 }
 
 void ValueTableData::setField(FieldName fieldName, uint16 value) {
-	setField((uint16) fieldName, value);
+	setField((uint16)fieldName, value);
 }
 
 void ValueTableData::saveToStream(Common::WriteStream *stream) const {
@@ -1333,7 +1333,7 @@ CurrentActionEntry::CurrentActionEntry(Action newAction, uint16 roomNum, uint16 
 	_action = DISPATCH_ACTION;
 	_dynamicSupportData = true;
 	_supportData = new CharacterScheduleEntry();
-	uint16 params[2] = {param1, param2};
+	uint16 params[2] = { param1, param2 };
 	_supportData->setDetails2(newAction, 2, params);
 	_roomNumber = roomNum;
 }
@@ -1354,15 +1354,14 @@ CurrentActionEntry::CurrentActionEntry(CurrentActionEntry *src) {
 void CurrentActionEntry::setSupportData(uint16 entryId) {
 	CharacterScheduleEntry &entry = supportData();
 
-	CharacterScheduleEntry *newEntry = Resources::getReference().
-		charSchedules().getEntry(entryId, entry.parent());
+	CharacterScheduleEntry *newEntry = Resources::getReference().charSchedules().getEntry(entryId, entry.parent());
 	setSupportData(newEntry);
 }
 
 void CurrentActionEntry::saveToStream(Common::WriteStream *stream) const {
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Saving hotspot action entry dyn=%d id=%d",
-		hasSupportData(), hasSupportData() ? supportData().id() : 0);
-	stream->writeByte((uint8) _action);
+	       hasSupportData(), hasSupportData() ? supportData().id() : 0);
+	stream->writeByte((uint8)_action);
 	stream->writeUint16LE(_roomNumber);
 	stream->writeByte(hasSupportData());
 	if (hasSupportData()) {
@@ -1385,7 +1384,8 @@ void CurrentActionEntry::saveToStream(Common::WriteStream *stream) const {
 CurrentActionEntry *CurrentActionEntry::loadFromStream(Common::ReadStream *stream) {
 	Resources &res = Resources::getReference();
 	uint8 actionNum = stream->readByte();
-	if (actionNum == 0xff) return NULL;
+	if (actionNum == 0xff)
+		return NULL;
 	CurrentActionEntry *result;
 
 	uint16 roomNumber = stream->readUint16LE();
@@ -1394,16 +1394,16 @@ CurrentActionEntry *CurrentActionEntry::loadFromStream(Common::ReadStream *strea
 	if (!hasSupportData) {
 		// An entry that doesn't have support data
 		result = new CurrentActionEntry(
-			(CurrentAction) actionNum, roomNumber);
+		  (CurrentAction)actionNum, roomNumber);
 	} else {
 		// Handle support data for the entry
 		bool dynamicData = stream->readByte() != 0;
 		if (dynamicData) {
 			// Load action entry that has dynamic data
 			result = new CurrentActionEntry(
-				(CurrentAction) actionNum, roomNumber);
+			  (CurrentAction)actionNum, roomNumber);
 			result->_supportData = new CharacterScheduleEntry();
-			Action action = (Action) stream->readByte();
+			Action action = (Action)stream->readByte();
 			int numParams = stream->readSint16LE();
 			uint16 *paramList = new uint16[numParams];
 			for (int index = 0; index < numParams; ++index)
@@ -1416,7 +1416,7 @@ CurrentActionEntry *CurrentActionEntry::loadFromStream(Common::ReadStream *strea
 			// Load action entry with an NPC schedule entry
 			uint16 entryId = stream->readUint16LE();
 			CharacterScheduleEntry *entry = res.charSchedules().getEntry(entryId);
-			result = new CurrentActionEntry((CurrentAction) actionNum, roomNumber);
+			result = new CurrentActionEntry((CurrentAction)actionNum, roomNumber);
 			result->setSupportData(entry);
 		}
 	}
@@ -1462,7 +1462,7 @@ void CurrentActionStack::saveToStream(Common::WriteStream *stream) const {
 	for (ActionsList::const_iterator i = _actions.begin(); i != _actions.end(); ++i) {
 		(*i)->saveToStream(stream);
 	}
-	stream->writeByte(0xff);      // End of list marker
+	stream->writeByte(0xff); // End of list marker
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Finished saving hotspot action stack");
 }
 

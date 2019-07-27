@@ -27,15 +27,19 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CServiceElevatorWindow, CBackground)
-	ON_MESSAGE(ServiceElevatorFloorChangeMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(ServiceElevatorFloorChangeMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(EnterViewMsg)
 END_MESSAGE_MAP()
 
 static const int FACTORS[4] = { 0, 20, 100, 0 };
 
-CServiceElevatorWindow::CServiceElevatorWindow() : CBackground(),
-	_destFloor(0), _notifyFlag(false), _isIndicator(false), _intoSpace(false) {
+CServiceElevatorWindow::CServiceElevatorWindow()
+  : CBackground()
+  , _destFloor(0)
+  , _notifyFlag(false)
+  , _isIndicator(false)
+  , _intoSpace(false) {
 }
 
 void CServiceElevatorWindow::save(SimpleFile *file, int indent) {
@@ -105,8 +109,7 @@ bool CServiceElevatorWindow::EnterViewMsg(CEnterViewMsg *msg) {
 		CMovieClip *clip = _movieClips.findByName("Going Up");
 
 		if (clip) {
-			int frameNum = clip->_startFrame + (clip->_endFrame - clip->_startFrame)
-				* FACTORS[_destFloor] / 100;
+			int frameNum = clip->_startFrame + (clip->_endFrame - clip->_startFrame) * FACTORS[_destFloor] / 100;
 			loadFrame(frameNum);
 		} else {
 			loadFrame(0);

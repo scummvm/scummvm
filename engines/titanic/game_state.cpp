@@ -21,16 +21,16 @@
  */
 
 #include "titanic/game_state.h"
-#include "titanic/game_view.h"
 #include "titanic/events.h"
 #include "titanic/game_manager.h"
+#include "titanic/game_view.h"
 #include "titanic/support/screen_manager.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
 
 bool CGameStateMovieList::empty() {
-	for (CGameStateMovieList::iterator i = begin(); i != end(); ) {
+	for (CGameStateMovieList::iterator i = begin(); i != end();) {
 		CMovie *movie = *i;
 
 		if (movie->isActive()) {
@@ -45,11 +45,20 @@ bool CGameStateMovieList::empty() {
 
 /*------------------------------------------------------------------------*/
 
-CGameState::CGameState(CGameManager *gameManager) :
-		_gameManager(gameManager), _gameLocation(this), _passengerClass(NO_CLASS),
-		_priorClass(NO_CLASS), _mode(GSMODE_NONE), _seasonNum(SEASON_SUMMER),
-		_petActive(false), _soundMakerAllowed(false), _quitGame(false), _parrotMet(false),
-		_nodeChangeCtr(0), _nodeEnterTicks(0), _parrotResponseIndex(0) {
+CGameState::CGameState(CGameManager *gameManager)
+  : _gameManager(gameManager)
+  , _gameLocation(this)
+  , _passengerClass(NO_CLASS)
+  , _priorClass(NO_CLASS)
+  , _mode(GSMODE_NONE)
+  , _seasonNum(SEASON_SUMMER)
+  , _petActive(false)
+  , _soundMakerAllowed(false)
+  , _quitGame(false)
+  , _parrotMet(false)
+  , _nodeChangeCtr(0)
+  , _nodeEnterTicks(0)
+  , _parrotResponseIndex(0) {
 }
 
 void CGameState::save(SimpleFile *file) const {

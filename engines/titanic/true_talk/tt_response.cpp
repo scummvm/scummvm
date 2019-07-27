@@ -24,17 +24,28 @@
 
 namespace Titanic {
 
-TTresponse::TTresponse(const TTstring &src) : _field0(0), _text(src),
-	_dialogueId(0), _nextP(nullptr), _linkP(nullptr) {
+TTresponse::TTresponse(const TTstring &src)
+  : _field0(0)
+  , _text(src)
+  , _dialogueId(0)
+  , _nextP(nullptr)
+  , _linkP(nullptr) {
 }
 
-TTresponse::TTresponse(int dialogueId, int val2) : _field0(val2), _text(" "),
-		_dialogueId(dialogueId), _nextP(nullptr), _linkP(nullptr) {
+TTresponse::TTresponse(int dialogueId, int val2)
+  : _field0(val2)
+  , _text(" ")
+  , _dialogueId(dialogueId)
+  , _nextP(nullptr)
+  , _linkP(nullptr) {
 }
 
-TTresponse::TTresponse(const TTresponse *src) : _field0(src->_field0),
-		_text(src->_text), _dialogueId(src->_dialogueId), _nextP(src->_nextP),
-		_linkP(src->_linkP) {
+TTresponse::TTresponse(const TTresponse *src)
+  : _field0(src->_field0)
+  , _text(src->_text)
+  , _dialogueId(src->_dialogueId)
+  , _nextP(src->_nextP)
+  , _linkP(src->_linkP) {
 }
 
 TTresponse::~TTresponse() {
@@ -59,7 +70,7 @@ TTresponse *TTresponse::copyChain() const {
 	TTresponse *returnResponseP = new TTresponse(this);
 
 	for (TTresponse *srcP = _nextP, *destP = returnResponseP;
-			srcP; srcP = srcP->_nextP, destP = destP->_nextP) {
+	     srcP; srcP = srcP->_nextP, destP = destP->_nextP) {
 		destP->_nextP = new TTresponse(*srcP);
 	}
 

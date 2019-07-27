@@ -39,7 +39,7 @@ class RewindableAudioStream;
 
 namespace Mohawk {
 
-#define MAX_CHANNELS 2         // Can there be more than 2?
+#define MAX_CHANNELS 2 // Can there be more than 2?
 
 enum SndHandleType {
 	kFreeHandle,
@@ -64,7 +64,7 @@ struct ADPCMStatus { // Holds ADPCM status data, but is irrelevant for us.
 			int16 last;
 			uint16 stepIndex;
 		} channelStatus[MAX_CHANNELS];
-	} *statusItems;
+	} * statusItems;
 };
 
 struct CueListPoint {

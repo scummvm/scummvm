@@ -24,9 +24,9 @@
 #include "common/file.h"
 #include "common/str-array.h"
 
-#include "director/lingo/lingo.h"
-#include "director/lingo/lingo-gr.h"
 #include "director/frame.h"
+#include "director/lingo/lingo-gr.h"
+#include "director/lingo/lingo.h"
 #include "director/sprite.h"
 
 namespace Director {
@@ -42,7 +42,8 @@ Symbol::Symbol() {
 	global = false;
 }
 
-Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
+Lingo::Lingo(DirectorEngine *vm)
+  : _vm(vm) {
 	g_lingo = this;
 
 	_currentScript = 0;
@@ -377,7 +378,7 @@ void Lingo::runTests() {
 	Common::sort(fileList.begin(), fileList.end());
 
 	for (uint i = 0; i < fileList.size(); i++) {
-		Common::SeekableReadStream *const  stream = SearchMan.createReadStreamForMember(fileList[i]);
+		Common::SeekableReadStream *const stream = SearchMan.createReadStreamForMember(fileList[i]);
 		if (stream) {
 			uint size = stream->size();
 

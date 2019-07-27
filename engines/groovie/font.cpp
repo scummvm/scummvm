@@ -28,7 +28,10 @@
 
 namespace Groovie {
 
-T7GFont::T7GFont() : _maxHeight(0), _maxWidth(0), _glyphs(0) {
+T7GFont::T7GFont()
+  : _maxHeight(0)
+  , _maxWidth(0)
+  , _glyphs(0) {
 }
 
 T7GFont::~T7GFont() {
@@ -75,7 +78,8 @@ bool T7GFont::load(Common::SeekableReadStream &stream) {
 			uint16 offset = glyphOffsets[i];
 			delete[] glyphOffsets;
 			error("Groovie::T7GFont: Glyph %d starts at %d but the current "
-				"offset is %d", i, offset, stream.pos());
+			      "offset is %d",
+			      i, offset, stream.pos());
 			return false;
 		}
 
@@ -94,7 +98,7 @@ bool T7GFont::load(Common::SeekableReadStream &stream) {
 		}
 
 		// Verify the pixel data size
-		assert (data.size() % g->width == 0);
+		assert(data.size() % g->width == 0);
 		g->height = data.size() / g->width;
 
 		// Copy the pixel data into the definitive static array
@@ -126,7 +130,7 @@ void T7GFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 
 }
 
 const T7GFont::Glyph *T7GFont::getGlyph(uint32 chr) const {
-	assert (chr < 128);
+	assert(chr < 128);
 
 	byte numGlyph = _mapChar2Glyph[chr];
 	return &_glyphs[numGlyph];

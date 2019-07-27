@@ -23,41 +23,41 @@
 #ifndef SHERLOCK_UI_H
 #define SHERLOCK_UI_H
 
-#include "common/scummsys.h"
 #include "common/events.h"
-#include "sherlock/surface.h"
+#include "common/scummsys.h"
+#include "sherlock/fixed_text.h"
 #include "sherlock/objects.h"
 #include "sherlock/resources.h"
-#include "sherlock/fixed_text.h"
+#include "sherlock/surface.h"
 
 namespace Sherlock {
 
-#define CONTROLS_Y  138
+#define CONTROLS_Y 138
 #define CONTROLS_Y1 151
 
 enum MenuMode {
-	STD_MODE		=  0,
-	LOOK_MODE		=  1,
-	MOVE_MODE		=  2,
-	TALK_MODE		=  3,
-	PICKUP_MODE		=  4,
-	OPEN_MODE		=  5,
-	CLOSE_MODE		=  6,
-	INV_MODE		=  7,
-	USE_MODE		=  8,
-	GIVE_MODE		=  9,
-	JOURNAL_MODE	= 10,
-	FILES_MODE		= 11,
-	SETUP_MODE		= 12,
+	STD_MODE = 0,
+	LOOK_MODE = 1,
+	MOVE_MODE = 2,
+	TALK_MODE = 3,
+	PICKUP_MODE = 4,
+	OPEN_MODE = 5,
+	CLOSE_MODE = 6,
+	INV_MODE = 7,
+	USE_MODE = 8,
+	GIVE_MODE = 9,
+	JOURNAL_MODE = 10,
+	FILES_MODE = 11,
+	SETUP_MODE = 12,
 
 	// Rose Tattoo specific
-	LAB_MODE		= 20,
-	MESSAGE_MODE	= 21,
-	VERB_MODE		= 22,
-	OPTION_MODE		= 23,
-	QUIT_MODE		= 24,
-	FOOLSCAP_MODE	= 25,
-	PASSWORD_MODE	= 26
+	LAB_MODE = 20,
+	MESSAGE_MODE = 21,
+	VERB_MODE = 22,
+	OPTION_MODE = 23,
+	QUIT_MODE = 24,
+	FOOLSCAP_MODE = 25,
+	PASSWORD_MODE = 26
 };
 
 class UserInterface {
@@ -65,6 +65,7 @@ protected:
 	SherlockEngine *_vm;
 
 	UserInterface(SherlockEngine *vm);
+
 public:
 	MenuMode _menuMode;
 	int _menuCounter;
@@ -86,6 +87,7 @@ public:
 	int _temp, _oldTemp;
 	int _temp1;
 	int _lookHelp;
+
 public:
 	static UserInterface *init(SherlockEngine *vm);
 	virtual ~UserInterface() {}
@@ -94,6 +96,7 @@ public:
 	 * Called for OPEN, CLOSE, and MOVE actions are being done
 	 */
 	void checkAction(ActionType &action, int objNum, FixedTextActionId fixedTextActionId = kFixedTextAction_Invalid);
+
 public:
 	/**
 	 * Resets the user interface

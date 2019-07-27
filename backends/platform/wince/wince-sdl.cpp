@@ -20,7 +20,6 @@
  *
  */
 
-
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
@@ -32,18 +31,18 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/events.h"
-#include "common/util.h"
 #include "common/textconsole.h"
 #include "common/timer.h"
 #include "common/translation.h"
+#include "common/util.h"
 
 #include "engines/engine.h"
 
 #include "base/main.h"
 #include "base/plugins.h"
 
-#include "audio/mixer_intern.h"
 #include "audio/fmopl.h"
+#include "audio/mixer_intern.h"
 
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
@@ -56,23 +55,23 @@
 #include "backends/platform/wince/CEActionsSmartphone.h"
 #include "backends/platform/wince/CEgui/ItemAction.h"
 
-#include "graphics/scaler/downscaler.h"
 #include "graphics/scaler/aspect.h"
+#include "graphics/scaler/downscaler.h"
 
 #include "backends/platform/wince/CEException.h"
 #include "backends/platform/wince/CEScaler.h"
 
-#include "backends/graphics/wincesdl/wincesdl-graphics.h"
 #include "backends/events/wincesdl/wincesdl-events.h"
+#include "backends/graphics/wincesdl/wincesdl-graphics.h"
 #include "backends/mixer/wincesdl/wincesdl-mixer.h"
 
 #ifdef DYNAMIC_MODULES
-#include <malloc.h>
-#include "backends/plugins/win32/win32-provider.h"
+#	include "backends/plugins/win32/win32-provider.h"
+#	include <malloc.h>
 #endif
 
 #ifdef __GNUC__
-extern "C" _CRTIMP FILE *__cdecl   _wfreopen(const wchar_t *, const wchar_t *, FILE *);
+extern "C" _CRTIMP FILE *__cdecl _wfreopen(const wchar_t *, const wchar_t *, FILE *);
 #endif
 
 #ifdef WRAP_MALLOC
@@ -81,38 +80,38 @@ extern "C" void *__real_malloc(size_t size);
 extern "C" void __real_free(void *ptr);
 
 extern "C" void *__wrap_malloc(size_t size) {
-/*
+	/*
 	void *ptr = __real_malloc(size);
 	printf("malloc(%d) = %p\n", size, ptr);
 	return ptr;
 */
 	if (size < 64 * 1024) {
-		void *ptr = __real_malloc(size+4);
-//		printf("malloc(%d) = %p\n", size, ptr);
+		void *ptr = __real_malloc(size + 4);
+		//		printf("malloc(%d) = %p\n", size, ptr);
 		if (ptr != NULL) {
 			*((HANDLE *)ptr) = 0;
-			return 4+(char *)ptr;
+			return 4 + (char *)ptr;
 		}
 		return NULL;
 	}
-	HANDLE H = CreateFileMapping((HANDLE)INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, size+4, 0);
+	HANDLE H = CreateFileMapping((HANDLE)INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, size + 4, 0);
 	void *ptr = MapViewOfFile(H, FILE_MAP_ALL_ACCESS, 0, 0, 0);
 	*((HANDLE *)ptr) = H;
-	return 4+(char *)ptr;
+	return 4 + (char *)ptr;
 }
 
 extern "C" void __wrap_free(void *ptr) {
-/*
+	/*
 	__real_free(ptr);
 	printf("free(%p)\n", ptr);
 */
 	if (ptr != NULL) {
-		HANDLE H = *(HANDLE *)((char *)ptr-4);
+		HANDLE H = *(HANDLE *)((char *)ptr - 4);
 		if (H == 0) {
-			__real_free((char *)ptr-4);
+			__real_free((char *)ptr - 4);
 			return;
 		}
-		UnmapViewOfFile((char *)ptr-4);
+		UnmapViewOfFile((char *)ptr - 4);
 		CloseHandle(H);
 	}
 }
@@ -146,7 +145,7 @@ bool isSmartphone() {
 }
 
 const TCHAR *ASCIItoUnicode(const char *str) {
-	static TCHAR ustr[MAX_PATH];    // size good enough
+	static TCHAR ustr[MAX_PATH]; // size good enough
 
 	MultiByteToWideChar(CP_ACP, 0, str, strlen(str) + 1, ustr, sizeof(ustr) / sizeof(TCHAR));
 	return ustr;
@@ -174,7 +173,7 @@ int SDL_main(int argc, char **argv) {
 	// thanks to joostp and DJWillis
 	extern void (*__CTOR_LIST__)();
 	void (**constructor)() = &__CTOR_LIST__;
-	constructor++;  // First item in list of constructors has special meaning (platform dependent), ignore it.
+	constructor++; // First item in list of constructors has special meaning (platform dependent), ignore it.
 	while (*constructor) {
 		(*constructor)();
 		constructor++;
@@ -194,36 +193,35 @@ int SDL_main(int argc, char **argv) {
 #else
 	stdout_file = newfp = _wfreopen(ASCIItoUnicode(stdout_fname), TEXT("w"), stdout);
 	if (newfp == NULL) {
-#if !defined(stdout)
+#	if !defined(stdout)
 		stdout = fopen(stdout_fname, "w");
 		stdout_file = stdout;
-#else
+#	else
 		newfp = fopen(stdout_fname, "w");
 		if (newfp) {
 			//*stdout = *newfp;
 			stdout_file = stdout;
 		}
-#endif
+#	endif
 	}
 	stderr_file = newfp = _wfreopen(ASCIItoUnicode(stderr_fname), TEXT("w"), stderr);
 	if (newfp == NULL) {
-#if !defined(stderr)
+#	if !defined(stderr)
 		stderr = fopen(stderr_fname, "w");
 		stderr_file = stderr;
-#else
+#	else
 		newfp = fopen(stderr_fname, "w");
 		if (newfp) {
 			//*stderr = *newfp;
 			stderr_file = stderr;
 		}
-#endif
+#	endif
 	}
 #endif
 
 #ifdef DYNAMIC_MODULES
 	PluginManager::instance().addPluginProvider(new Win32PluginProvider());
 #endif
-
 
 	int res = 0;
 #if !defined(DEBUG) && !defined(__GNUC__)
@@ -241,8 +239,7 @@ int SDL_main(int argc, char **argv) {
 		// Free OSystem
 		g_system->destroy();
 #if !defined(DEBUG) && !defined(__GNUC__)
-	}
-	__except(handleException(GetExceptionInformation())) {
+	} __except (handleException(GetExceptionInformation())) {
 	}
 #endif
 
@@ -275,14 +272,14 @@ int console_main(int argc, char *argv[]) {
 	else
 		n = (bufp - appname);
 
-	bufp = (char *) alloca(n + 1);
+	bufp = (char *)alloca(n + 1);
 	strncpy(bufp, appname, n);
 	bufp[n] = '\0';
 	appname = bufp;
 
 	if (SDL_Init(SDL_INIT_NOPARACHUTE) < 0) {
 		error("WinMain() error: %s", SDL_GetError());
-		return(FALSE);
+		return (FALSE);
 	}
 
 	SDL_SetModuleHandle(GetModuleHandle(NULL));
@@ -290,7 +287,7 @@ int console_main(int argc, char *argv[]) {
 	// Run the application main() code
 	SDL_main(argc, argv);
 
-	return(0);
+	return (0);
 }
 
 static int ParseCommandLine(char *cmdline, char **argv) {
@@ -321,7 +318,7 @@ static int ParseCommandLine(char *cmdline, char **argv) {
 				++argc;
 			}
 			// Skip over word
-			while (*bufp && ! isspace(*bufp))
+			while (*bufp && !isspace(*bufp))
 				++bufp;
 		}
 		if (*bufp) {
@@ -333,7 +330,7 @@ static int ParseCommandLine(char *cmdline, char **argv) {
 	if (argv)
 		argv[argc] = NULL;
 
-	return(argc);
+	return (argc);
 }
 
 int dynamic_modules_main(HINSTANCE hInst, HINSTANCE hPrev, LPWSTR szCmdLine, int sw) {
@@ -346,7 +343,7 @@ int dynamic_modules_main(HINSTANCE hInst, HINSTANCE hPrev, LPWSTR szCmdLine, int
 
 	if (wcsncmp(szCmdLine, TEXT("\\"), 1)) {
 		nLen = wcslen(szCmdLine) + 128 + 1;
-		bufp = (wchar_t *) alloca(nLen * 2);
+		bufp = (wchar_t *)alloca(nLen * 2);
 		wcscpy(bufp, TEXT("\""));
 		GetModuleFileName(NULL, bufp + 1, 128 - 3);
 		wcscpy(bufp + wcslen(bufp), TEXT("\" "));
@@ -355,12 +352,12 @@ int dynamic_modules_main(HINSTANCE hInst, HINSTANCE hPrev, LPWSTR szCmdLine, int
 		bufp = szCmdLine;
 
 	nLen = wcslen(bufp) + 1;
-	cmdline = (char *) alloca(nLen);
+	cmdline = (char *)alloca(nLen);
 	WideCharToMultiByte(CP_ACP, 0, bufp, -1, cmdline, nLen, NULL, NULL);
 
 	// Parse command line into argv and argc
 	argc = ParseCommandLine(cmdline, NULL);
-	argv = (char **) alloca((argc + 1) * (sizeof * argv));
+	argv = (char **)alloca((argc + 1) * (sizeof *argv));
 	ParseCommandLine(cmdline, argv);
 
 	// fix gdb-emulator combo
@@ -374,8 +371,7 @@ int dynamic_modules_main(HINSTANCE hInst, HINSTANCE hPrev, LPWSTR szCmdLine, int
 	}
 
 	// Run the main program (after a little SDL initialization)
-	return(console_main(argc, argv));
-
+	return (console_main(argc, argv));
 }
 #endif
 
@@ -432,7 +428,7 @@ void OSystem_WINCE3::initBackend() {
 	// Initialize global key mapping
 	GUI::Actions::init();
 	GUI_Actions::Instance()->initInstanceMain(this);
-	if (!GUI_Actions::Instance()->loadMapping()) {  // error during loading means not present/wrong version
+	if (!GUI_Actions::Instance()->loadMapping()) { // error during loading means not present/wrong version
 		warning("Setting default action mappings");
 		GUI_Actions::Instance()->saveMapping(); // write defaults
 	}
@@ -471,9 +467,9 @@ Common::String OSystem_WINCE3::getDefaultConfigFileName() {
 
 // ********************************************************************************************
 
-
-OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
-	_forcePanelInvisible(false) {
+OSystem_WINCE3::OSystem_WINCE3()
+  : OSystem_SDL()
+  , _forcePanelInvisible(false) {
 	// Initialze File System Factory
 	_fsFactory = new WindowsFilesystemFactory();
 	_mixer = 0;
@@ -492,7 +488,6 @@ void OSystem_WINCE3::swap_sound_master() {
 	if (graphicsManager->_toolbarHandler.activeName() == NAME_MAIN_PANEL)
 		graphicsManager->_toolbarHandler.forceRedraw(); // redraw sound icon
 }
-
 
 void OSystem_WINCE3::engineInit() {
 	check_mappings(); // called here to initialize virtual keys handling
@@ -550,12 +545,10 @@ void OSystem_WINCE3::check_mappings() {
 	}
 
 	// Extra warning for Zak Mc Kracken
-	if (strncmp(gameid.c_str(), "zak", 3) == 0 &&
-	        !GUI_Actions::Instance()->getMapping(POCKET_ACTION_HIDE)) {
+	if (strncmp(gameid.c_str(), "zak", 3) == 0 && !GUI_Actions::Instance()->getMapping(POCKET_ACTION_HIDE)) {
 		GUI::MessageDialog alert(_("Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"));
 		alert.runModal();
 	}
-
 }
 
 void OSystem_WINCE3::setGraphicsModeIntern() {
@@ -616,30 +609,30 @@ void OSystem_WINCE3::getTimeAndDate(TimeDate &t) const {
 	SYSTEMTIME systime;
 
 	GetLocalTime(&systime);
-	t.tm_year   = systime.wYear - 1900;
-	t.tm_mon    = systime.wMonth - 1;
-	t.tm_mday   = systime.wDay;
-	t.tm_hour   = systime.wHour;
-	t.tm_min    = systime.wMinute;
-	t.tm_sec    = systime.wSecond;
-	t.tm_wday   = systime.wDayOfWeek;
+	t.tm_year = systime.wYear - 1900;
+	t.tm_mon = systime.wMonth - 1;
+	t.tm_mday = systime.wDay;
+	t.tm_hour = systime.wHour;
+	t.tm_min = systime.wMinute;
+	t.tm_sec = systime.wSecond;
+	t.tm_wday = systime.wDayOfWeek;
 }
 
 void OSystem_WINCE3::logMessage(LogMessageType::Type type, const char *message) {
 	OSystem_SDL::logMessage(type, message);
 
-#if defined( USE_WINDBG )
+#if defined(USE_WINDBG)
 	TCHAR buf_unicode[1024];
 	MultiByteToWideChar(CP_ACP, 0, message, strlen(message) + 1, buf_unicode, sizeof(buf_unicode));
 	OutputDebugString(buf_unicode);
 
 	if (type == LogMessageType::kError) {
-#ifndef DEBUG
+#	ifndef DEBUG
 		drawError(message);
-#else
-		int cmon_break_into_the_debugger_if_you_please = *(int *)(message + 1);	// bus error
-		printf("%d", cmon_break_into_the_debugger_if_you_please);			// don't optimize the int out
-#endif
+#	else
+		int cmon_break_into_the_debugger_if_you_please = *(int *)(message + 1); // bus error
+		printf("%d", cmon_break_into_the_debugger_if_you_please); // don't optimize the int out
+#	endif
 	}
 #endif
 }
@@ -664,40 +657,39 @@ Common::String OSystem_WINCE3::getSystemLanguage() const {
 	// See http://msdn.microsoft.com/en-us/goglobal/bb896001.aspx for a translation table
 	// This table has to be updated manually when new translations are added
 	const char *posixMappingTable[][3] = {
-		{"CAT", "ESP", "ca_ES"},
-		{"CSY", "CZE", "cs_CZ"},
-		{"DAN", "DNK", "da_DK"},
-		{"DEU", "DEU", "de_DE"},
-		{"ESN", "ESP", "es_ES"},
-		{"ESP", "ESP", "es_ES"},
-		{"FRA", "FRA", "fr_FR"},
-		{"HUN", "HUN", "hu_HU"},
-		{"ITA", "ITA", "it_IT"},
-		{"NOR", "NOR", "nb_NO"},
-		{"NON", "NOR", "nn_NO"},
-		{"PLK", "POL", "pl_PL"},
-		{"PTB", "BRA", "pt_BR"},
-		{"RUS", "RUS", "ru_RU"},
-		{"SVE", "SWE", "sv_SE"},
-		{"UKR", "UKR", "uk_UA"},
-		{NULL, NULL, NULL}
+		{ "CAT", "ESP", "ca_ES" },
+		{ "CSY", "CZE", "cs_CZ" },
+		{ "DAN", "DNK", "da_DK" },
+		{ "DEU", "DEU", "de_DE" },
+		{ "ESN", "ESP", "es_ES" },
+		{ "ESP", "ESP", "es_ES" },
+		{ "FRA", "FRA", "fr_FR" },
+		{ "HUN", "HUN", "hu_HU" },
+		{ "ITA", "ITA", "it_IT" },
+		{ "NOR", "NOR", "nb_NO" },
+		{ "NON", "NOR", "nn_NO" },
+		{ "PLK", "POL", "pl_PL" },
+		{ "PTB", "BRA", "pt_BR" },
+		{ "RUS", "RUS", "ru_RU" },
+		{ "SVE", "SWE", "sv_SE" },
+		{ "UKR", "UKR", "uk_UA" },
+		{ NULL, NULL, NULL }
 	};
 
-	if (GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SABBREVLANGNAME, langNameW, sizeof(langNameW)) != 0 &&
-		GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SABBREVCTRYNAME, ctryNameW, sizeof(ctryNameW)) != 0) {
+	if (GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SABBREVLANGNAME, langNameW, sizeof(langNameW)) != 0 && GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SABBREVCTRYNAME, ctryNameW, sizeof(ctryNameW)) != 0) {
 		WideCharToMultiByte(CP_ACP, 0, langNameW, -1, langName, (wcslen(langNameW) + 1), NULL, NULL);
 		WideCharToMultiByte(CP_ACP, 0, ctryNameW, -1, ctryName, (wcslen(ctryNameW) + 1), NULL, NULL);
 
 		debug(1, "Trying to find posix locale name for %s_%s", langName, ctryName);
 		while (posixMappingTable[i][0] && !localeFound) {
-			if ( (!strcmp(posixMappingTable[i][0], langName) || !strcmp(posixMappingTable[i][0], "*")) &&
-				 (!strcmp(posixMappingTable[i][1], ctryName) || !strcmp(posixMappingTable[i][0], "*")) ) {
+			if ((!strcmp(posixMappingTable[i][0], langName) || !strcmp(posixMappingTable[i][0], "*")) && (!strcmp(posixMappingTable[i][1], ctryName) || !strcmp(posixMappingTable[i][0], "*"))) {
 				localeFound = true;
 				localeName = posixMappingTable[i][2];
 			}
 			i++;
 		}
-		if (!localeFound) warning("No posix locale name found for %s_%s", langName, ctryName);
+		if (!localeFound)
+			warning("No posix locale name found for %s_%s", langName, ctryName);
 	}
 
 	if (localeFound) {

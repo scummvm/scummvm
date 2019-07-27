@@ -20,18 +20,18 @@
  *
  */
 
+#include "graphics/surface.h"
 #include "common/algorithm.h"
 #include "common/endian.h"
-#include "common/util.h"
 #include "common/rect.h"
 #include "common/textconsole.h"
-#include "graphics/primitives.h"
-#include "graphics/surface.h"
+#include "common/util.h"
 #include "graphics/conversion.h"
+#include "graphics/primitives.h"
 
 namespace Graphics {
 
-template<typename T>
+template <typename T>
 static void plotPoint(int x, int y, int color, void *data) {
 	Surface *s = (Surface *)data;
 	if (x >= 0 && x < s->w && y >= 0 && y < s->h) {
@@ -330,7 +330,7 @@ void Surface::move(int dx, int dy, int height) {
 			src += pitch + (pitch - dx * format.bytesPerPixel);
 			dst += pitch + (pitch - dx * format.bytesPerPixel);
 		}
-	} else if (dx < 0)  {
+	} else if (dx < 0) {
 		// move left - copy from left to right
 		dst = (byte *)pixels;
 		src = dst - (dx * format.bytesPerPixel);
@@ -521,7 +521,7 @@ FloodFill::FloodFill(Graphics::Surface *surface, uint32 oldColor, uint32 fillCol
 }
 
 FloodFill::~FloodFill() {
-	while(!_queue.empty()) {
+	while (!_queue.empty()) {
 		Common::Point *p = _queue.front();
 
 		delete p;
@@ -587,10 +587,10 @@ void FloodFill::fill() {
 	while (!_queue.empty()) {
 		Common::Point *p = _queue.front();
 		_queue.pop_front();
-		addSeed(p->x    , p->y - 1);
-		addSeed(p->x - 1, p->y    );
-		addSeed(p->x    , p->y + 1);
-		addSeed(p->x + 1, p->y    );
+		addSeed(p->x, p->y - 1);
+		addSeed(p->x - 1, p->y);
+		addSeed(p->x, p->y + 1);
+		addSeed(p->x + 1, p->y);
 
 		delete p;
 	}

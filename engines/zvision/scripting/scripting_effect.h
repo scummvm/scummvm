@@ -45,9 +45,8 @@ class ZVision;
   */
 class ScriptingEffect {
 public:
-
 	enum ScriptingEffectType {
-		SCRIPTING_EFFECT_ANIM  = 1,
+		SCRIPTING_EFFECT_ANIM = 1,
 		SCRIPTING_EFFECT_AUDIO = 2,
 		SCRIPTING_EFFECT_DISTORT = 4,
 		SCRIPTING_EFFECT_PANTRACK = 8,
@@ -58,8 +57,14 @@ public:
 		SCRIPTING_EFFECT_ALL = 255
 	};
 
-	ScriptingEffect() : _engine(0), _key(0), _type(SCRIPTING_EFFECT_UNKNOWN) {}
-	ScriptingEffect(ZVision *engine, uint32 key, ScriptingEffectType type) : _engine(engine), _key(key), _type(type) {}
+	ScriptingEffect()
+	  : _engine(0)
+	  , _key(0)
+	  , _type(SCRIPTING_EFFECT_UNKNOWN) {}
+	ScriptingEffect(ZVision *engine, uint32 key, ScriptingEffectType type)
+	  : _engine(engine)
+	  , _key(key)
+	  , _type(type) {}
 	virtual ~ScriptingEffect() {}
 
 	uint32 getKey() {
@@ -115,9 +120,8 @@ protected:
 	uint32 _key;
 	ScriptingEffectType _type;
 
-// Static member functions
+	// Static member functions
 public:
-
 };
 } // End of namespace ZVision
 

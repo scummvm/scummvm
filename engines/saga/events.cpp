@@ -22,25 +22,26 @@
 
 // Event management module
 
-#include "saga/saga.h"
 #include "saga/gfx.h"
+#include "saga/saga.h"
 
+#include "saga/actor.h"
 #include "saga/animation.h"
 #include "saga/console.h"
-#include "saga/scene.h"
 #include "saga/interface.h"
+#include "saga/music.h"
 #include "saga/palanim.h"
 #include "saga/render.h"
-#include "saga/sndres.h"
 #include "saga/resource.h"
-#include "saga/music.h"
-#include "saga/actor.h"
+#include "saga/scene.h"
+#include "saga/sndres.h"
 
 #include "saga/events.h"
 
 namespace Saga {
 
-Events::Events(SagaEngine *vm) : _vm(vm) {
+Events::Events(SagaEngine *vm)
+  : _vm(vm) {
 	debug(8, "Initializing event subsystem...");
 }
 
@@ -185,7 +186,6 @@ int Events::handleContinuous(Event *event) {
 		break;
 	default:
 		break;
-
 	}
 
 	if (event_done) {
@@ -253,7 +253,6 @@ int Events::handleImmediate(Event *event) {
 	default:
 		warning("Unhandled Immediate event type (%d)", event->code & EVENT_MASK);
 		break;
-
 	}
 
 	if (event_done) {
@@ -265,7 +264,6 @@ int Events::handleImmediate(Event *event) {
 
 int Events::handleOneShot(Event *event) {
 	Rect rect;
-
 
 	if (event->time > 0) {
 		return kEvStContinue;
@@ -282,7 +280,7 @@ int Events::handleOneShot(Event *event) {
 		case kEventRemove: {
 			TextListEntry entry = *((TextListEntry *)event->data);
 			_vm->_scene->_textList.remove(entry);
-			} break;
+		} break;
 		default:
 			break;
 		}
@@ -300,66 +298,63 @@ int Events::handleOneShot(Event *event) {
 		if (event->op == kEventPlay)
 			_vm->_music->play(event->param, (MusicFlags)event->param2);
 		break;
-	case kBgEvent:
-		{
-			Surface *backGroundSurface = _vm->_render->getBackGroundSurface();
-			BGInfo bgInfo;
+	case kBgEvent: {
+		Surface *backGroundSurface = _vm->_render->getBackGroundSurface();
+		BGInfo bgInfo;
 
-			if (!(_vm->_scene->getFlags() & kSceneFlagISO)) {
-				_vm->_scene->getBGInfo(bgInfo);
+		if (!(_vm->_scene->getFlags() & kSceneFlagISO)) {
+			_vm->_scene->getBGInfo(bgInfo);
 
-				backGroundSurface->blit(bgInfo.bounds, bgInfo.buffer);
+			backGroundSurface->blit(bgInfo.bounds, bgInfo.buffer);
 
-				// If it is inset scene then draw black border
-				if (bgInfo.bounds.width() < _vm->getDisplayInfo().width || bgInfo.bounds.height() < _vm->_scene->getHeight()) {
-					Common::Rect rect1(2, bgInfo.bounds.height() + 4);
-					Common::Rect rect2(bgInfo.bounds.width() + 4, 2);
-					Common::Rect rect3(2, bgInfo.bounds.height() + 4);
-					Common::Rect rect4(bgInfo.bounds.width() + 4, 2);
-					rect1.moveTo(bgInfo.bounds.left - 2, bgInfo.bounds.top - 2);
-					rect2.moveTo(bgInfo.bounds.left - 2, bgInfo.bounds.top - 2);
-					rect3.moveTo(bgInfo.bounds.right, bgInfo.bounds.top - 2);
-					rect4.moveTo(bgInfo.bounds.left - 2, bgInfo.bounds.bottom);
+			// If it is inset scene then draw black border
+			if (bgInfo.bounds.width() < _vm->getDisplayInfo().width || bgInfo.bounds.height() < _vm->_scene->getHeight()) {
+				Common::Rect rect1(2, bgInfo.bounds.height() + 4);
+				Common::Rect rect2(bgInfo.bounds.width() + 4, 2);
+				Common::Rect rect3(2, bgInfo.bounds.height() + 4);
+				Common::Rect rect4(bgInfo.bounds.width() + 4, 2);
+				rect1.moveTo(bgInfo.bounds.left - 2, bgInfo.bounds.top - 2);
+				rect2.moveTo(bgInfo.bounds.left - 2, bgInfo.bounds.top - 2);
+				rect3.moveTo(bgInfo.bounds.right, bgInfo.bounds.top - 2);
+				rect4.moveTo(bgInfo.bounds.left - 2, bgInfo.bounds.bottom);
 
-					backGroundSurface->drawRect(rect1, kITEColorBlack);
-					backGroundSurface->drawRect(rect2, kITEColorBlack);
-					backGroundSurface->drawRect(rect3, kITEColorBlack);
-					backGroundSurface->drawRect(rect4, kITEColorBlack);
-				}
+				backGroundSurface->drawRect(rect1, kITEColorBlack);
+				backGroundSurface->drawRect(rect2, kITEColorBlack);
+				backGroundSurface->drawRect(rect3, kITEColorBlack);
+				backGroundSurface->drawRect(rect4, kITEColorBlack);
+			}
 
-				if (event->param == kEvPSetPalette) {
-					PalEntry *palPointer;
+			if (event->param == kEvPSetPalette) {
+				PalEntry *palPointer;
 
 #ifdef ENABLE_IHNM
-					if (_vm->getGameId() == GID_IHNM) {
-						PalEntry portraitBgColor = _vm->_interface->_portraitBgColor;
-						byte portraitColor = (_vm->getLanguage() == Common::ES_ESP) ? 253 : 254;
+				if (_vm->getGameId() == GID_IHNM) {
+					PalEntry portraitBgColor = _vm->_interface->_portraitBgColor;
+					byte portraitColor = (_vm->getLanguage() == Common::ES_ESP) ? 253 : 254;
 
-						// Set the portrait bg color, in case a saved state is restored from the
-						// launcher. In this case, sfSetPortraitBgColor is not called, thus the
-						// portrait color will always be 0 (black).
-						if (portraitBgColor.red == 0 && portraitBgColor.green == 0 && portraitBgColor.blue == 0)
-							portraitBgColor.green = 255;
+					// Set the portrait bg color, in case a saved state is restored from the
+					// launcher. In this case, sfSetPortraitBgColor is not called, thus the
+					// portrait color will always be 0 (black).
+					if (portraitBgColor.red == 0 && portraitBgColor.green == 0 && portraitBgColor.blue == 0)
+						portraitBgColor.green = 255;
 
-						if (_vm->_spiritualBarometer > 255)
-							_vm->_gfx->setPaletteColor(portraitColor, 0xff, 0xff, 0xff);
-						else
-							_vm->_gfx->setPaletteColor(portraitColor,
-								_vm->_spiritualBarometer * portraitBgColor.red / 256,
-								_vm->_spiritualBarometer * portraitBgColor.green / 256,
-								_vm->_spiritualBarometer * portraitBgColor.blue / 256);
-					}
+					if (_vm->_spiritualBarometer > 255)
+						_vm->_gfx->setPaletteColor(portraitColor, 0xff, 0xff, 0xff);
+					else
+						_vm->_gfx->setPaletteColor(portraitColor,
+						                           _vm->_spiritualBarometer * portraitBgColor.red / 256,
+						                           _vm->_spiritualBarometer * portraitBgColor.green / 256,
+						                           _vm->_spiritualBarometer * portraitBgColor.blue / 256);
+				}
 #endif
 
-					_vm->_scene->getBGPal(palPointer);
-					_vm->_gfx->setPalette(palPointer);
-				}
+				_vm->_scene->getBGPal(palPointer);
+				_vm->_gfx->setPalette(palPointer);
 			}
-			_vm->_render->clearFlag(RF_DISABLE_ACTORS);
 		}
-		break;
-	case kPsychicProfileBgEvent:
-		{
+		_vm->_render->clearFlag(RF_DISABLE_ACTORS);
+	} break;
+	case kPsychicProfileBgEvent: {
 		ResourceContext *context = _vm->_resource->getContext(GAME_RESOURCEFILE);
 
 		ByteArray resourceData;
@@ -384,8 +379,7 @@ int Events::handleOneShot(Event *event) {
 
 		// Draw the scene. It won't be drawn by Render::drawScene(), as a placard is up
 		_vm->_scene->draw();
-		}
-		break;
+	} break;
 	case kAnimEvent:
 		switch (event->op) {
 		case kEventPlay:
@@ -412,15 +406,13 @@ int Events::handleOneShot(Event *event) {
 		break;
 	case kSceneEvent:
 		switch (event->op) {
-		case kEventDraw:
-			{
-				BGInfo bgInfo;
-				_vm->_scene->getBGInfo(bgInfo);
-				_vm->_render->getBackGroundSurface()->blit(bgInfo.bounds, bgInfo.buffer);
-				_vm->_render->addDirtyRect(bgInfo.bounds);
-				_vm->_scene->draw();
-			}
-			break;
+		case kEventDraw: {
+			BGInfo bgInfo;
+			_vm->_scene->getBGInfo(bgInfo);
+			_vm->_render->getBackGroundSurface()->blit(bgInfo.bounds, bgInfo.buffer);
+			_vm->_render->addDirtyRect(bgInfo.bounds);
+			_vm->_scene->draw();
+		} break;
 		case kEventEnd:
 			_vm->_scene->nextScene();
 			return kEvStBreak;
@@ -449,7 +441,7 @@ int Events::handleOneShot(Event *event) {
 			_vm->_interface->deactivate();
 			break;
 		case kEventSetStatus:
-			_vm->_interface->setStatusText((const char*)event->data);
+			_vm->_interface->setStatusText((const char *)event->data);
 			_vm->_interface->drawStatusBar();
 			break;
 		case kEventClearStatus:
@@ -485,7 +477,7 @@ int Events::handleOneShot(Event *event) {
 				_vm->_script->completeThread();
 
 			break;
-			}
+		}
 		case kEventThreadWake:
 			_vm->_script->wakeUpThreads(event->param);
 			break;

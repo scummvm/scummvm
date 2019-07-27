@@ -25,19 +25,20 @@
 
 #include "graphics/conversion.h"
 
-#include "gob/gob.h"
-#include "gob/video.h"
-#include "gob/util.h"
 #include "gob/draw.h"
 #include "gob/global.h"
+#include "gob/gob.h"
+#include "gob/util.h"
+#include "gob/video.h"
 
 namespace Gob {
 
-Video_v6::Video_v6(GobEngine *vm) : Video_v2(vm) {
+Video_v6::Video_v6(GobEngine *vm)
+  : Video_v2(vm) {
 }
 
 char Video_v6::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
-	    int16 x, int16 y, int16 transp, Surface &destDesc) {
+                                  int16 x, int16 y, int16 transp, Surface &destDesc) {
 
 	if ((sprBuf[0] == 1) && (sprBuf[1] == 3)) {
 		drawPacked(sprBuf, x, y, destDesc);
@@ -58,7 +59,7 @@ char Video_v6::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 	}
 
 	warning("Urban Stub: spriteUncompressor(), sprBuf[0,1,2] = %d,%d,%d",
-			sprBuf[0], sprBuf[1], sprBuf[2]);
+	        sprBuf[0], sprBuf[1], sprBuf[2]);
 	return 1;
 }
 
@@ -89,7 +90,7 @@ void Video_v6::drawPacked(const byte *sprBuf, int16 x, int16 y, Surface &surfDes
 }
 
 void Video_v6::drawYUVData(const byte *srcData, Surface &destDesc,
-		int16 width, int16 height, int16 x, int16 y) {
+                           int16 width, int16 height, int16 x, int16 y) {
 
 	int16 dataWidth = width;
 	int16 dataHeight = height;
@@ -100,16 +101,15 @@ void Video_v6::drawYUVData(const byte *srcData, Surface &destDesc,
 		dataHeight = (dataHeight & 0xFFF0) + 16;
 
 	const byte *dataY = srcData;
-	const byte *dataU = dataY +  (dataWidth * dataHeight);
+	const byte *dataU = dataY + (dataWidth * dataHeight);
 	const byte *dataV = dataU + ((dataWidth * dataHeight) >> 4);
 
 	drawYUV(destDesc, x, y, dataWidth, dataHeight, width, height, dataY, dataU, dataV);
-
 }
 
 void Video_v6::drawYUV(Surface &destDesc, int16 x, int16 y,
-		int16 dataWidth, int16 dataHeight, int16 width, int16 height,
-		const byte *dataY, const byte *dataU, const byte *dataV) {
+                       int16 dataWidth, int16 dataHeight, int16 width, int16 height,
+                       const byte *dataY, const byte *dataU, const byte *dataV) {
 
 	const Graphics::PixelFormat &pixelFormat = _vm->getPixelFormat();
 
@@ -123,7 +123,7 @@ void Video_v6::drawYUV(Surface &destDesc, int16 x, int16 y,
 	for (int i = 0; i < height; i++) {
 		Pixel dstRow = dst;
 
-		int nextChromaLine = (i < ((height - 1) & ~3) ) ? dataWidth : 0;
+		int nextChromaLine = (i < ((height - 1) & ~3)) ? dataWidth : 0;
 
 		for (int j = 0; j < width; j++, dstRow++) {
 
@@ -171,10 +171,9 @@ void Video_v6::drawYUV(Surface &destDesc, int16 x, int16 y,
 			} else
 				// Transparent pixel, we'll use pixel value 0
 				dstRow.set(0);
-
 		}
 
-		dst   += destDesc.getWidth();
+		dst += destDesc.getWidth();
 		dataY += dataWidth;
 
 		if ((i & 3) == 3) {
@@ -183,7 +182,6 @@ void Video_v6::drawYUV(Surface &destDesc, int16 x, int16 y,
 			dataV += dataWidth >> 2;
 		}
 	}
-
 }
 
 } // End of namespace Gob

@@ -22,40 +22,35 @@
  */
 
 #include "tinsel/heapmem.h"
-#include "tinsel/timers.h"	// For DwGetCurrentTime
+#include "tinsel/timers.h" // For DwGetCurrentTime
 #include "tinsel/tinsel.h"
 
 namespace Tinsel {
 
-
-#define	NUM_MNODES	192	// the number of memory management nodes (was 128, then 192)
-
+#define NUM_MNODES 192 // the number of memory management nodes (was 128, then 192)
 
 // internal allocation flags
-#define	DWM_USED		0x0001	///< the objects memory block is in use
-#define	DWM_DISCARDED	0x0002	///< the objects memory block has been discarded
-#define	DWM_LOCKED		0x0004	///< the objects memory block is locked
-#define	DWM_SENTINEL	0x0008	///< the objects memory block is a sentinel
-
+#define DWM_USED 0x0001 ///< the objects memory block is in use
+#define DWM_DISCARDED 0x0002 ///< the objects memory block has been discarded
+#define DWM_LOCKED 0x0004 ///< the objects memory block is locked
+#define DWM_SENTINEL 0x0008 ///< the objects memory block is a sentinel
 
 struct MEM_NODE {
-	MEM_NODE *pNext;	// link to the next node in the list
-	MEM_NODE *pPrev;	// link to the previous node in the list
-	uint8 *pBaseAddr;	// base address of the memory object
-	long size;		// size of the memory object
-	uint32 lruTime;		// time when memory object was last accessed
-	int flags;		// allocation attributes
+	MEM_NODE *pNext; // link to the next node in the list
+	MEM_NODE *pPrev; // link to the previous node in the list
+	uint8 *pBaseAddr; // base address of the memory object
+	long size; // size of the memory object
+	uint32 lruTime; // time when memory object was last accessed
+	int flags; // allocation attributes
 };
-
 
 // Specifies the total amount of memory required for DW1 demo, DW1, or DW2 respectively.
 // Currently this is set at 5MB for the DW1 demo and DW1 and 10MB for DW2
 // This could probably be reduced somewhat
 // If the memory is not enough, the engine throws an "Out of memory" error in handle.cpp inside LockMem()
-static const uint32 MemoryPoolSize[3] = {5 * 1024 * 1024, 5 * 1024 * 1024, 10 * 1024 * 1024};
+static const uint32 MemoryPoolSize[3] = { 5 * 1024 * 1024, 5 * 1024 * 1024, 10 * 1024 * 1024 };
 
 // FIXME: Avoid non-const global vars
-
 
 // list of all memory nodes
 MEM_NODE g_mnodeList[NUM_MNODES];
@@ -95,7 +90,7 @@ static void MemoryStats() {
 	}
 
 	debug("%d nodes used, %d alloced, %d locked; %d bytes locked, %d used",
-			usedNodes, allocedNodes, lockedNodes, lockedSize, totalSize);
+	      usedNodes, allocedNodes, lockedNodes, lockedSize, totalSize);
 }
 #endif
 
@@ -127,8 +122,10 @@ void MemoryInit() {
 
 	// store the current heap size in the sentinel
 	uint32 size = MemoryPoolSize[0];
-	if (TinselVersion == TINSEL_V1) size = MemoryPoolSize[1];
-	else if (TinselVersion == TINSEL_V2) size = MemoryPoolSize[2];
+	if (TinselVersion == TINSEL_V1)
+		size = MemoryPoolSize[1];
+	else if (TinselVersion == TINSEL_V2)
+		size = MemoryPoolSize[2];
 	g_heapSentinel.size = size;
 }
 
@@ -150,7 +147,6 @@ void MemoryDeinit() {
 		pCur->pBaseAddr = 0;
 	}
 }
-
 
 /**
  * Allocate a mnode from the free list.
@@ -187,7 +183,6 @@ void FreeMemNode(MEM_NODE *pMemNode) {
 	g_pFreeMemNodes = pMemNode;
 }
 
-
 /**
  * Tries to make space for the specified number of bytes on the specified heap.
  * @param size			Number of bytes to free up
@@ -196,7 +191,7 @@ void FreeMemNode(MEM_NODE *pMemNode) {
 static bool HeapCompact(long size) {
 	const MEM_NODE *pHeap = &g_heapSentinel;
 	MEM_NODE *pCur, *pOldest;
-	uint32 oldest;		// time of the oldest discardable block
+	uint32 oldest; // time of the oldest discardable block
 
 	while (g_heapSentinel.size < size) {
 
@@ -235,7 +230,7 @@ static MEM_NODE *MemoryAlloc(long size) {
 
 #ifdef SCUMM_NEED_ALIGNMENT
 	const int alignPadding = sizeof(void *) - 1;
-	size = (size + alignPadding) & ~alignPadding;	//round up to nearest multiple of sizeof(void *), this ensures the addresses that are returned are alignment-safe.
+	size = (size + alignPadding) & ~alignPadding; //round up to nearest multiple of sizeof(void *), this ensures the addresses that are returned are alignment-safe.
 #endif
 
 	// compact the heap to make up room for 'size' bytes, if necessary
@@ -311,7 +306,7 @@ MEM_NODE *MemoryAllocFixed(long size) {
 
 #ifdef SCUMM_NEED_ALIGNMENT
 	const int alignPadding = sizeof(void *) - 1;
-	size = (size + alignPadding) & ~alignPadding;	//round up to nearest multiple of sizeof(void *), this ensures the addresses that are returned are alignment-safe.
+	size = (size + alignPadding) & ~alignPadding; //round up to nearest multiple of sizeof(void *), this ensures the addresses that are returned are alignment-safe.
 #endif
 
 	// Search for a free entry in s_fixedMnodesList
@@ -334,7 +329,6 @@ MEM_NODE *MemoryAllocFixed(long size) {
 
 	return 0;
 }
-
 
 /**
  * Discards the specified memory object.
@@ -465,6 +459,5 @@ void MemoryTouch(MEM_NODE *pMemNode) {
 uint8 *MemoryDeref(MEM_NODE *pMemNode) {
 	return pMemNode->pBaseAddr;
 }
-
 
 } // End of namespace Tinsel

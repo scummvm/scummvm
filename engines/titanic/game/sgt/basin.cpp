@@ -26,9 +26,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CBasin, CSGTStateRoom)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(TurnOff)
-	ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(TurnOff)
+ON_MESSAGE(MovieEndMsg)
 END_MESSAGE_MAP()
 
 void CBasin::save(SimpleFile *file, int indent) {
@@ -43,7 +43,7 @@ void CBasin::load(SimpleFile *file) {
 
 bool CBasin::TurnOn(CTurnOn *msg) {
 	if (_statics->_washstand == "Open" && _statics->_basin == "Closed"
-			&& _statics->_bedfoot == "Closed") {
+	    && _statics->_bedfoot == "Closed") {
 		setVisible(true);
 		_statics->_basin = "Open";
 		_isClosed = false;

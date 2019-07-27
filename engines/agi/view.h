@@ -29,7 +29,7 @@ struct AgiViewCel {
 	uint8 height;
 	uint8 width;
 	uint8 clearKey;
-	bool  mirrored;
+	bool mirrored;
 	byte *rawBitmap;
 };
 
@@ -42,8 +42,8 @@ struct AgiViewLoop {
  * AGI view resource structure.
  */
 struct AgiView {
-	byte  headerStepSize;
-	byte  headerCycleTime;
+	byte headerStepSize;
+	byte headerCycleTime;
 	byte *description;
 	int16 loopCount;
 	AgiViewLoop *loop;
@@ -65,22 +65,22 @@ enum CycleType {
 };
 
 enum ViewFlags {
-	fDrawn          = (1 << 0),     // 0x0001
-	fIgnoreBlocks   = (1 << 1),     // 0x0002
-	fFixedPriority  = (1 << 2),     // 0x0004
-	fIgnoreHorizon  = (1 << 3),     // 0x0008
-	fUpdate         = (1 << 4),     // 0x0010
-	fCycling        = (1 << 5),     // 0x0020
-	fAnimated       = (1 << 6),     // 0x0040
-	fMotion         = (1 << 7),     // 0x0080
-	fOnWater        = (1 << 8),     // 0x0100
-	fIgnoreObjects  = (1 << 9),     // 0x0200
-	fUpdatePos      = (1 << 10),    // 0x0400
-	fOnLand         = (1 << 11),    // 0x0800
-	fDontupdate     = (1 << 12),    // 0x1000
-	fFixLoop        = (1 << 13),    // 0x2000
-	fDidntMove      = (1 << 14),    // 0x4000
-	fAdjEgoXY       = (1 << 15)     // 0x8000
+	fDrawn = (1 << 0), // 0x0001
+	fIgnoreBlocks = (1 << 1), // 0x0002
+	fFixedPriority = (1 << 2), // 0x0004
+	fIgnoreHorizon = (1 << 3), // 0x0008
+	fUpdate = (1 << 4), // 0x0010
+	fCycling = (1 << 5), // 0x0020
+	fAnimated = (1 << 6), // 0x0040
+	fMotion = (1 << 7), // 0x0080
+	fOnWater = (1 << 8), // 0x0100
+	fIgnoreObjects = (1 << 9), // 0x0200
+	fUpdatePos = (1 << 10), // 0x0400
+	fOnLand = (1 << 11), // 0x0800
+	fDontupdate = (1 << 12), // 0x1000
+	fFixLoop = (1 << 13), // 0x2000
+	fDidntMove = (1 << 14), // 0x4000
+	fAdjEgoXY = (1 << 15) // 0x8000
 };
 
 /**

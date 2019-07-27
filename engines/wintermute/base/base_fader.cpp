@@ -27,10 +27,10 @@
  */
 
 #include "engines/wintermute/base/base_fader.h"
-#include "engines/wintermute/base/base_engine.h"
-#include "engines/wintermute/base/timer.h"
-#include "engines/wintermute/base/gfx/base_renderer.h"
 #include "common/util.h"
+#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/base/timer.h"
 
 namespace Wintermute {
 
@@ -41,7 +41,8 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(BaseFader, false)
 
 //////////////////////////////////////////////////////////////////////////
-BaseFader::BaseFader(BaseGame *inGame) : BaseObject(inGame) {
+BaseFader::BaseFader(BaseGame *inGame)
+  : BaseObject(inGame) {
 	_active = false;
 	_red = _green = _blue = 0;
 	_currentAlpha = 0x00;
@@ -52,12 +53,9 @@ BaseFader::BaseFader(BaseGame *inGame) : BaseObject(inGame) {
 	_system = false;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 BaseFader::~BaseFader() {
-
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFader::update() {
@@ -80,7 +78,7 @@ bool BaseFader::update() {
 	} else {
 		_currentAlpha = (byte)(_sourceAlpha + (float)time / (float)_duration * alphaDelta);
 	}
-	_currentAlpha = MIN((unsigned char)255, MAX(_currentAlpha, (byte)0));  // TODO: clean
+	_currentAlpha = MIN((unsigned char)255, MAX(_currentAlpha, (byte)0)); // TODO: clean
 
 	_ready = time >= _duration;
 	if (_ready && _currentAlpha == 0x00) {
@@ -89,7 +87,6 @@ bool BaseFader::update() {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFader::display() {
@@ -103,7 +100,6 @@ bool BaseFader::display() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseFader::deactivate() {
 	_active = false;
@@ -111,15 +107,14 @@ bool BaseFader::deactivate() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseFader::fadeIn(uint32 sourceColor, uint32 duration, bool system) {
 	_ready = false;
 	_active = true;
 
-	_red   = RGBCOLGetR(sourceColor);
+	_red = RGBCOLGetR(sourceColor);
 	_green = RGBCOLGetG(sourceColor);
-	_blue  = RGBCOLGetB(sourceColor);
+	_blue = RGBCOLGetB(sourceColor);
 
 	_sourceAlpha = RGBCOLGetA(sourceColor);
 	_targetAlpha = 0;
@@ -136,15 +131,14 @@ bool BaseFader::fadeIn(uint32 sourceColor, uint32 duration, bool system) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
 	_ready = false;
 	_active = true;
 
-	_red   = RGBCOLGetR(targetColor);
+	_red = RGBCOLGetR(targetColor);
 	_green = RGBCOLGetG(targetColor);
-	_blue  = RGBCOLGetB(targetColor);
+	_blue = RGBCOLGetB(targetColor);
 
 	//_sourceAlpha = 0;
 	_sourceAlpha = _currentAlpha;
@@ -159,17 +153,13 @@ bool BaseFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
 		_startTime = BaseEngine::getTimer()->getTime();
 	}
 
-
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 uint32 BaseFader::getCurrentColor() const {
 	return BYTETORGBA(_red, _green, _blue, _currentAlpha);
 }
-
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFader::persist(BasePersistenceManager *persistMgr) {

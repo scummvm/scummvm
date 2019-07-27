@@ -41,8 +41,10 @@ enum {
 	kDownloadDialogButtonCmd = 'Dldb'
 };
 
-DownloadDialog::DownloadDialog(uint32 storageId, LauncherDialog *launcher) :
-	Dialog("GlobalOptions_Cloud_DownloadDialog"), _launcher(launcher), _close(false) {
+DownloadDialog::DownloadDialog(uint32 storageId, LauncherDialog *launcher)
+  : Dialog("GlobalOptions_Cloud_DownloadDialog")
+  , _launcher(launcher)
+  , _close(false) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	_browser = new BrowserDialog(_("Select directory where to download game data"), true);
@@ -91,13 +93,12 @@ void DownloadDialog::close() {
 
 void DownloadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
-	case kDownloadDialogButtonCmd:
-		{
-			CloudMan.setDownloadTarget(nullptr);
-			CloudMan.cancelDownload();
-			close();
-			break;
-		}
+	case kDownloadDialogButtonCmd: {
+		CloudMan.setDownloadTarget(nullptr);
+		CloudMan.cancelDownload();
+		close();
+		break;
+	}
 	case kDownloadProgressCmd:
 		if (!_close) {
 			refreshWidgets();
@@ -115,7 +116,8 @@ void DownloadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 bool DownloadDialog::selectDirectories() {
 	if (g_system->isConnectionLimited()) {
 		MessageDialog alert(_("It looks like your connection is limited. "
-			"Do you really want to download files with it?"), _("Yes"), _("No"));
+		                      "Do you really want to download files with it?"),
+		                    _("Yes"), _("No"));
 		if (alert.runModal() != GUI::kMessageOK)
 			return false;
 	}
@@ -148,10 +150,9 @@ bool DownloadDialog::selectDirectories() {
 				return false;
 			}
 			GUI::MessageDialog alert(
-				Common::String::format(_("The \"%s\" already exists in the specified directory.\nDo you really want to download files into that directory?"), remoteDirectory.name().c_str()),
-				_("Yes"),
-				_("No")
-				);
+			  Common::String::format(_("The \"%s\" already exists in the specified directory.\nDo you really want to download files into that directory?"), remoteDirectory.name().c_str()),
+			  _("Yes"),
+			  _("No"));
 			if (alert.runModal() != GUI::kMessageOK)
 				return false;
 			break;
@@ -208,40 +209,40 @@ void DownloadDialog::reflowLayout() {
 }
 
 namespace {
-Common::String getHumanReadableBytes(uint64 bytes, Common::String &unitsOut) {
-	Common::String result = Common::String::format("%lu", bytes);
-	unitsOut = "B";
+	Common::String getHumanReadableBytes(uint64 bytes, Common::String &unitsOut) {
+		Common::String result = Common::String::format("%lu", bytes);
+		unitsOut = "B";
 
-	if (bytes >= 1024) {
-		bytes /= 1024;
-		result = Common::String::format("%lu", bytes);
-		unitsOut = "KB";
+		if (bytes >= 1024) {
+			bytes /= 1024;
+			result = Common::String::format("%lu", bytes);
+			unitsOut = "KB";
+		}
+
+		double floating = bytes;
+
+		if (bytes >= 1024) {
+			bytes /= 1024;
+			floating /= 1024.0;
+			unitsOut = "MB";
+		}
+
+		if (bytes >= 1024) {
+			bytes /= 1024;
+			floating /= 1024.0;
+			unitsOut = "GB";
+		}
+
+		if (bytes >= 1024) { // woah
+			bytes /= 1024;
+			floating /= 1024.0;
+			unitsOut = "TB";
+		}
+
+		// print one digit after floating point
+		result = Common::String::format("%.1f", floating);
+		return result;
 	}
-
-	double floating = bytes;
-
-	if (bytes >= 1024) {
-		bytes /= 1024;
-		floating /= 1024.0;
-		unitsOut = "MB";
-	}
-
-	if (bytes >= 1024) {
-		bytes /= 1024;
-		floating /= 1024.0;
-		unitsOut = "GB";
-	}
-
-	if (bytes >= 1024) { // woah
-		bytes /= 1024;
-		floating /= 1024.0;
-		unitsOut = "TB";
-	}
-
-	// print one digit after floating point
-	result = Common::String::format("%.1f", floating);
-	return result;
-}
 }
 
 Common::String DownloadDialog::getSizeLabelText() {

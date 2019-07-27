@@ -26,9 +26,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CDesk, CSGTStateRoom)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(TurnOff)
-	ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(TurnOff)
+ON_MESSAGE(MovieEndMsg)
 END_MESSAGE_MAP()
 
 void CDesk::save(SimpleFile *file, int indent) {
@@ -43,7 +43,7 @@ void CDesk::load(SimpleFile *file) {
 
 bool CDesk::TurnOn(CTurnOn *msg) {
 	if (_statics->_desk == "Closed" && _statics->_bedhead != "RestingG"
-			&& _statics->_bedhead != "OpenWrong") {
+	    && _statics->_bedhead != "OpenWrong") {
 		_statics->_desk = "Open";
 		_isClosed = false;
 		_startFrame = 1;
@@ -57,7 +57,7 @@ bool CDesk::TurnOn(CTurnOn *msg) {
 
 bool CDesk::TurnOff(CTurnOff *msg) {
 	if (_statics->_desk == "Open" && _statics->_chestOfDrawers == "Closed"
-			&& _statics->_bedhead != "Open") {
+	    && _statics->_bedhead != "Open") {
 		CVisibleMsg visibleMsg(false);
 		visibleMsg.execute("ChestOfDrawers");
 

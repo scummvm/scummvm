@@ -39,6 +39,7 @@ class CGondolierSlider : public CGondolierBase {
 	bool FrameMsg(CFrameMsg *msg);
 	bool SignalObject(CSignalObject *msg);
 	bool ActMsg(CActMsg *msg);
+
 private:
 	Rect _rectUnused;
 	Rect _thumbRect;
@@ -49,6 +50,7 @@ private:
 	CString _armName;
 	CString _signalTarget;
 	bool _dragging;
+
 public:
 	CLASSDEF;
 	CGondolierSlider();

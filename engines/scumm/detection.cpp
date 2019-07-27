@@ -35,15 +35,14 @@
 
 #include "scumm/detection.h"
 #include "scumm/detection_tables.h"
-#include "scumm/he/intern_he.h"
-#include "scumm/scumm_v0.h"
-#include "scumm/scumm_v8.h"
 #include "scumm/file.h"
 #include "scumm/file_nes.h"
+#include "scumm/he/intern_he.h"
 #include "scumm/resource.h"
+#include "scumm/scumm_v0.h"
+#include "scumm/scumm_v8.h"
 
 #include "engines/metaengine.h"
-
 
 namespace Scumm {
 
@@ -53,7 +52,7 @@ enum {
 };
 
 #pragma mark -
-#pragma mark --- Miscellaneous ---
+#pragma mark--- Miscellaneous ---
 #pragma mark -
 
 static int compareMD5Table(const void *a, const void *b) {
@@ -220,17 +219,17 @@ Common::String ScummEngine_v70he::generateFilename(const int room) const {
 // The following table includes all the index files, which are embedded in the
 // main game executables in Steam versions.
 static const SteamIndexFile steamIndexFiles[] = {
-	{ GID_INDY3, Common::kPlatformWindows,   "%02d.LFL",      "00.LFL",        "Indiana Jones and the Last Crusade.exe",     162056,  6295 },
-	{ GID_INDY3, Common::kPlatformMacintosh, "%02d.LFL",      "00.LFL",        "The Last Crusade",                           150368,  6295 },
-	{ GID_INDY4, Common::kPlatformWindows,   "atlantis.%03d", "ATLANTIS.000",  "Indiana Jones and the Fate of Atlantis.exe", 224336, 12035 },
-	{ GID_INDY4, Common::kPlatformMacintosh, "atlantis.%03d", "ATLANTIS.000",  "The Fate of Atlantis",                       260224, 12035 },
-	{ GID_LOOM,  Common::kPlatformWindows,   "%03d.LFL",      "000.LFL",       "Loom.exe",                                   187248,  8307 },
-	{ GID_LOOM,  Common::kPlatformMacintosh, "%03d.LFL",      "000.LFL",       "Loom",                                       170464,  8307 },
+	{ GID_INDY3, Common::kPlatformWindows, "%02d.LFL", "00.LFL", "Indiana Jones and the Last Crusade.exe", 162056, 6295 },
+	{ GID_INDY3, Common::kPlatformMacintosh, "%02d.LFL", "00.LFL", "The Last Crusade", 150368, 6295 },
+	{ GID_INDY4, Common::kPlatformWindows, "atlantis.%03d", "ATLANTIS.000", "Indiana Jones and the Fate of Atlantis.exe", 224336, 12035 },
+	{ GID_INDY4, Common::kPlatformMacintosh, "atlantis.%03d", "ATLANTIS.000", "The Fate of Atlantis", 260224, 12035 },
+	{ GID_LOOM, Common::kPlatformWindows, "%03d.LFL", "000.LFL", "Loom.exe", 187248, 8307 },
+	{ GID_LOOM, Common::kPlatformMacintosh, "%03d.LFL", "000.LFL", "Loom", 170464, 8307 },
 #ifdef ENABLE_SCUMM_7_8
-	{ GID_DIG,   Common::kPlatformWindows,   "dig.la%d",      "DIG.LA0",       "The Dig.exe",                                340632, 16304 },
-	{ GID_DIG,   Common::kPlatformMacintosh, "dig.la%d",      "DIG.LA0",       "The Dig",                                    339744, 16304 },
+	{ GID_DIG, Common::kPlatformWindows, "dig.la%d", "DIG.LA0", "The Dig.exe", 340632, 16304 },
+	{ GID_DIG, Common::kPlatformMacintosh, "dig.la%d", "DIG.LA0", "The Dig", 339744, 16304 },
 #endif
-	{ 0,         Common::kPlatformUnknown,   nullptr,         nullptr,         nullptr,                                           0,     0 }
+	{ 0, Common::kPlatformUnknown, nullptr, nullptr, nullptr, 0, 0 }
 };
 
 const SteamIndexFile *lookUpSteamIndexFile(Common::String pattern, Common::Platform platform) {
@@ -259,7 +258,7 @@ static Common::String generateFilenameForDetection(const char *pattern, Filename
 		} else {
 			result = indexFile->executableName;
 		}
-		} break;
+	} break;
 
 	case kGenHEPC:
 	case kGenHEIOS:
@@ -292,13 +291,12 @@ bool ScummEngine::isMacM68kIMuse() const {
 struct DetectorDesc {
 	Common::FSNode node;
 	Common::String md5;
-	const MD5Table *md5Entry;	// Entry of the md5 table corresponding to this file, if any.
+	const MD5Table *md5Entry; // Entry of the md5 table corresponding to this file, if any.
 };
 
 typedef Common::HashMap<Common::String, DetectorDesc, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> DescMap;
 
 static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Common::String &file);
-
 
 // Search for a node with the given "name", inside fslist. Ignores case
 // when performing the matching. The first match is returned, so if you
@@ -373,15 +371,15 @@ static bool detectSpeech(const Common::FSList &fslist, const GameSettings *gs) {
 		const char *const basenames[] = { gs->gameid, "monster", 0 };
 		static const char *const extensions[] = { "sou",
 #ifdef USE_FLAC
-		 "sof",
+			                                        "sof",
 #endif
 #ifdef USE_VORBIS
-		 "sog",
+			                                        "sog",
 #endif
 #ifdef USE_MAD
-		 "so3",
+			                                        "so3",
 #endif
-		 0 };
+			                                        0 };
 
 		for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 			if (file->isDirectory())
@@ -429,9 +427,9 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
 		Common::FSNode resDir;
 		Common::FSList tmpList;
 		if (searchFSNode(fslist, "RESOURCE", resDir)
-			&& resDir.isDirectory()
-			&& resDir.getChildren(tmpList, Common::FSNode::kListFilesOnly)
-			&& searchFSNode(tmpList, filename, langFile)) {
+		    && resDir.isDirectory()
+		    && resDir.getChildren(tmpList, Common::FSNode::kListFilesOnly)
+		    && searchFSNode(tmpList, filename, langFile)) {
 			tmp.open(langFile);
 		}
 	}
@@ -439,41 +437,41 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
 		uint size = tmp.size();
 		if (id == GID_CMI) {
 			switch (size) {
-			case 439080:	// 2daf3db71d23d99d19fc9a544fcf6431
+			case 439080: // 2daf3db71d23d99d19fc9a544fcf6431
 				return Common::EN_ANY;
-			case 322602:	// caba99f4f5a0b69963e5a4d69e6f90af
+			case 322602: // caba99f4f5a0b69963e5a4d69e6f90af
 				return Common::ZH_TWN;
-			case 493252:	// 5d59594b24f3f1332e7d7e17455ed533
+			case 493252: // 5d59594b24f3f1332e7d7e17455ed533
 				return Common::DE_DEU;
-			case 461746:	// 35bbe0e4d573b318b7b2092c331fd1fa
+			case 461746: // 35bbe0e4d573b318b7b2092c331fd1fa
 				return Common::FR_FRA;
-			case 443439:	// 4689d013f67aabd7c35f4fd7c4b4ad69
+			case 443439: // 4689d013f67aabd7c35f4fd7c4b4ad69
 				return Common::IT_ITA;
-			case 398613:	// d1f5750d142d34c4c8f1f330a1278709
+			case 398613: // d1f5750d142d34c4c8f1f330a1278709
 				return Common::KO_KOR;
-			case 440586:	// 5a1d0f4fa00917bdbfe035a72a6bba9d
+			case 440586: // 5a1d0f4fa00917bdbfe035a72a6bba9d
 				return Common::PT_BRA;
-			case 454457:	// 0e5f450ec474a30254c0e36291fb4ebd
-			case 394083:	// ad684ca14c2b4bf4c21a81c1dbed49bc
+			case 454457: // 0e5f450ec474a30254c0e36291fb4ebd
+			case 394083: // ad684ca14c2b4bf4c21a81c1dbed49bc
 				return Common::RU_RUS;
-			case 449787:	// 64f3fe479d45b52902cf88145c41d172
+			case 449787: // 64f3fe479d45b52902cf88145c41d172
 				return Common::ES_ESP;
 			}
 		} else { // The DIG
 			switch (size) {
-			case 248627:	// 1fd585ac849d57305878c77b2f6c74ff
+			case 248627: // 1fd585ac849d57305878c77b2f6c74ff
 				return Common::DE_DEU;
-			case 257460:	// 04cf6a6ba6f57e517bc40eb81862cfb0
+			case 257460: // 04cf6a6ba6f57e517bc40eb81862cfb0
 				return Common::FR_FRA;
-			case 231402:	// 93d13fcede954c78e65435592182a4db
+			case 231402: // 93d13fcede954c78e65435592182a4db
 				return Common::IT_ITA;
-			case 228772:	// 5d9ad90d3a88ea012d25d61791895ebe
+			case 228772: // 5d9ad90d3a88ea012d25d61791895ebe
 				return Common::PT_BRA;
-			case 229884:	// d890074bc15c6135868403e73c5f4f36
+			case 229884: // d890074bc15c6135868403e73c5f4f36
 				return Common::ES_ESP;
-			case 223107:	// 64f3fe479d45b52902cf88145c41d172
+			case 223107: // 64f3fe479d45b52902cf88145c41d172
 				return Common::JA_JPN;
-			case 180730:	// 424fdd60822722cdc75356d921dad9bf
+			case 180730: // 424fdd60822722cdc75356d921dad9bf
 				return Common::ZH_TWN;
 			}
 		}
@@ -481,7 +479,6 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
 
 	return Common::UNK_LANG;
 }
-
 
 static void computeGameSettingsFromMD5(const Common::FSList &fslist, const GameFilenamePattern *gfp, const MD5Table *md5Entry, DetectorResult &dr) {
 	dr.language = md5Entry->language;
@@ -639,7 +636,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 					// Print some debug info
 					int filesize = tmp->size();
 					debug(1, "SCUMM detector found matching file '%s' with MD5 %s, size %d\n",
-						file.c_str(), md5str.c_str(), filesize);
+					      file.c_str(), md5str.c_str(), filesize);
 
 					// Sanity check: We *should* have found a matching gameid / variant at this point.
 					// If not, we may have #ifdef'ed the entry out in our detection_tables.h because we
@@ -676,7 +673,6 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 		// PART 2: Fuzzy matching for files with unknown MD5.
 		//
 
-
 		// We loop over the game variants matching the gameid associated to
 		// the gfp record. We then try to decide for each whether it could be
 		// appropriate or not.
@@ -691,7 +687,6 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 
 			if (gfp->platform != Common::kPlatformUnknown)
 				dr.game.platform = gfp->platform;
-
 
 			// If a variant has been specified, use that!
 			if (gfp->variant) {
@@ -758,7 +753,7 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 				return true;
 			}
 		} else if ((buf[0] == 0xCE && buf[1] == 0xF5) || // PC
-			(buf[0] == 0xCD && buf[1] == 0xFE)) {    // Commodore 64
+		           (buf[0] == 0xCD && buf[1] == 0xFE)) { // Commodore 64
 			// Could be V0 or V1.
 			// Candidates: maniac classic, zak classic
 
@@ -776,7 +771,7 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 			// Note that GF_OLD_BUNDLE is true if and only if GF_OLD256 is false.
 			// Candidates: maniac enhanced, zak enhanced, indy3ega, loom
 
-			if ((g->version != 2 && g->version != 3)  || (g->features & GF_OLD256))
+			if ((g->version != 2 && g->version != 3) || (g->features & GF_OLD256))
 				return false;
 
 			/* We distinguish the games by the presence/absence of
@@ -799,10 +794,10 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 			const bool has86LFL = fileMD5Map.contains("86.LFL");
 			const bool has98LFL = fileMD5Map.contains("98.LFL");
 
-			if (g->id == GID_INDY3         && has98LFL && has84LFL) {
-			} else if (g->id == GID_ZAK    && !has98LFL && !has86LFL && !has84LFL && has58LFL) {
+			if (g->id == GID_INDY3 && has98LFL && has84LFL) {
+			} else if (g->id == GID_ZAK && !has98LFL && !has86LFL && !has84LFL && has58LFL) {
 			} else if (g->id == GID_MANIAC && !has98LFL && !has86LFL && !has84LFL && !has58LFL) {
-			} else if (g->id == GID_LOOM   && !has98LFL && (has86LFL != has84LFL)) {
+			} else if (g->id == GID_LOOM && !has98LFL && (has86LFL != has84LFL)) {
 			} else
 				return false;
 		} else if (buf[4] == '0' && buf[5] == 'R') {
@@ -873,7 +868,6 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 			if (g->id == GID_LOOM && g->platform != Common::kPlatformPCEngine && fileMD5Map.contains("98.LFL"))
 				return false;
 
-
 		} else {
 			// TODO: Unknown file header, deal with it. Maybe an unencrypted
 			// variant...
@@ -915,8 +909,8 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 		// There is not much we can do based on the presence / absence
 		// of files. Only that if 903.LFL is present, it can't be PASS;
 		// and if DISK02.LEC is present, it can't be LoomCD
-		if (g->id == GID_PASS              && !has903LFL && !hasDisk02) {
-		} else if (g->id == GID_LOOM       &&  has903LFL && !hasDisk02) {
+		if (g->id == GID_PASS && !has903LFL && !hasDisk02) {
+		} else if (g->id == GID_LOOM && has903LFL && !hasDisk02) {
 		} else if (g->id == GID_MONKEY_VGA) {
 		} else if (g->id == GID_MONKEY_EGA) {
 		} else
@@ -943,13 +937,11 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 	return true;
 }
 
-
 } // End of namespace Scumm
 
 #pragma mark -
-#pragma mark --- Plugin code ---
+#pragma mark--- Plugin code ---
 #pragma mark -
-
 
 using namespace Scumm;
 
@@ -973,23 +965,11 @@ public:
 };
 
 bool ScummMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup) || (f == kSupportsDeleteSave) || (f == kSavesSupportMetaInfo) || (f == kSavesSupportThumbnail) || (f == kSavesSupportCreationDate) || (f == kSavesSupportPlayTime) || (f == kSimpleSavesNames);
 }
 
 bool ScummEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime) ||
-		(f == kSupportsSubtitleOptions);
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime) || (f == kSupportsSubtitleOptions);
 }
 
 PlainGameList ScummMetaEngine::getSupportedGames() const {
@@ -1032,7 +1012,9 @@ DetectedGames ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
 	::detectGames(fslist, results, 0);
 
 	for (Common::List<DetectorResult>::iterator
-	          x = results.begin(); x != results.end(); ++x) {
+	       x
+	     = results.begin();
+	     x != results.end(); ++x) {
 		const PlainGameDescriptor *g = findPlainGameDescriptor(x->game.gameid, gameDescriptions);
 		assert(g);
 
@@ -1090,7 +1072,9 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 
 		// Copy only those candidates which match the platform setting
 		for (Common::List<DetectorResult>::iterator
-		          x = results.begin(); x != results.end(); ++x) {
+		       x
+		     = results.begin();
+		     x != results.end(); ++x) {
 			if (x->game.platform == platform) {
 				tmp.push_back(*x);
 			}
@@ -1126,9 +1110,9 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 		               "to add and its version, language, etc.:\n");
 
 		md5Warning += Common::String::format("  SCUMM gameid '%s', file '%s', MD5 '%s'\n\n",
-				res.game.gameid,
-				generateFilenameForDetection(res.fp.pattern, res.fp.genMethod, res.game.platform).c_str(),
-				res.md5.c_str());
+		                                     res.game.gameid,
+		                                     generateFilenameForDetection(res.fp.pattern, res.fp.genMethod, res.game.platform).c_str(),
+		                                     res.md5.c_str());
 
 		g_system->logMessage(LogMessageType::kWarning, md5Warning.c_str());
 	} else {
@@ -1247,20 +1231,20 @@ const char *ScummMetaEngine::getName() const {
 	return "SCUMM ["
 
 #if defined(ENABLE_SCUMM_7_8) && defined(ENABLE_HE)
-		"all games"
+	       "all games"
 #else
 
-		"v0-v6 games"
+	       "v0-v6 games"
 
-#if defined(ENABLE_SCUMM_7_8)
-		", v7 & v8 games"
-#endif
-#if defined(ENABLE_HE)
-		", HE71+ games"
-#endif
+#	if defined(ENABLE_SCUMM_7_8)
+	       ", v7 & v8 games"
+#	endif
+#	if defined(ENABLE_HE)
+	       ", HE71+ games"
+#	endif
 
 #endif
-		"]";
+	       "]";
 }
 
 const char *ScummMetaEngine::getOriginalCopyright() const {
@@ -1291,7 +1275,7 @@ SaveStateList ScummMetaEngine::listSaves(const char *target) const {
 		if (slotNum >= 0 && slotNum <= 99) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
-				Scumm::getSavegameName(in, saveDesc, 0);	// FIXME: heversion?!?
+				Scumm::getSavegameName(in, saveDesc, 0); // FIXME: heversion?!?
 				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
 				delete in;
 			}
@@ -1364,7 +1348,7 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SCUMM)
-	REGISTER_PLUGIN_DYNAMIC(SCUMM, PLUGIN_TYPE_ENGINE, ScummMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(SCUMM, PLUGIN_TYPE_ENGINE, ScummMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(SCUMM, PLUGIN_TYPE_ENGINE, ScummMetaEngine);
+REGISTER_PLUGIN_STATIC(SCUMM, PLUGIN_TYPE_ENGINE, ScummMetaEngine);
 #endif

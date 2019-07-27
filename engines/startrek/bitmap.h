@@ -23,9 +23,9 @@
 #ifndef STARTREK_BITMAP_H
 #define STARTREK_BITMAP_H
 
+#include "common/memstream.h"
 #include "common/ptr.h"
 #include "common/stream.h"
-#include "common/memstream.h"
 
 namespace StarTrek {
 
@@ -47,9 +47,14 @@ struct Bitmap {
 
 protected:
 	int32 pixelsArraySize;
-	Bitmap() : xoffset(0), yoffset(0), width(0), height(0), pixels(nullptr), pixelsArraySize(0) {}
+	Bitmap()
+	  : xoffset(0)
+	  , yoffset(0)
+	  , width(0)
+	  , height(0)
+	  , pixels(nullptr)
+	  , pixelsArraySize(0) {}
 };
-
 
 /**
  * TextBitmap is the same as Bitmap, except it stores character indices in its "pixels"
@@ -60,7 +65,6 @@ protected:
 struct TextBitmap : Bitmap {
 	TextBitmap(int w, int h);
 };
-
 
 /**
  * StubBitmap is a bitmap without any actual pixel data. Used as a stub for the

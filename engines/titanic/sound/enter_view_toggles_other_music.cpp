@@ -25,11 +25,12 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CEnterViewTogglesOtherMusic, CTriggerAutoMusicPlayer)
-	ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(EnterViewMsg)
 END_MESSAGE_MAP()
 
-CEnterViewTogglesOtherMusic::CEnterViewTogglesOtherMusic() :
-		CTriggerAutoMusicPlayer(), _value(2) {
+CEnterViewTogglesOtherMusic::CEnterViewTogglesOtherMusic()
+  : CTriggerAutoMusicPlayer()
+  , _value(2) {
 }
 
 void CEnterViewTogglesOtherMusic::save(SimpleFile *file, int indent) {

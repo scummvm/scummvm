@@ -23,45 +23,47 @@
 #ifndef GLK_FROTZ_QUETZAL
 #define GLK_FROTZ_QUETZAL
 
+#include "glk/frotz/frotz_types.h"
 #include "glk/glk_types.h"
 #include "glk/quetzal.h"
-#include "glk/frotz/frotz_types.h"
 
 namespace Glk {
 namespace Frotz {
 
-class Processor;
+	class Processor;
 
-class Quetzal {
-private:
-	Common::SeekableReadStream *_storyFile;
-	QuetzalReader _reader;
-	QuetzalWriter _writer;
-	zword frames[STACK_SIZE / 4 + 1];
-public:
-	/**
+	class Quetzal {
+	private:
+		Common::SeekableReadStream *_storyFile;
+		QuetzalReader _reader;
+		QuetzalWriter _writer;
+		zword frames[STACK_SIZE / 4 + 1];
+
+	public:
+		/**
 	 * Constructor
 	 */
-	Quetzal(Common::SeekableReadStream *storyFile) : _storyFile(storyFile) {}
+		Quetzal(Common::SeekableReadStream *storyFile)
+		  : _storyFile(storyFile) {}
 
-	/*
+		/*
 	 * Save a game using Quetzal format.
 	 * @param svf	Savegame file
 	 * @param proc	Pointer to the Frotz processor
 	 * @param desc	Savegame description
 	 * @returns		Returns true if OK, false if failed
 	 */
-	bool save(Common::WriteStream *svf, Processor *proc, const Common::String &desc);
+		bool save(Common::WriteStream *svf, Processor *proc, const Common::String &desc);
 
-	/**
+		/**
 	 * Restore a saved game using Quetzal format
 	 * @param svf	Savegame file
 	 * @param proc	Pointer to the Frotz processor
 	 * @returns		Return 2 if OK, 0 if an error occurred before any damage was done,
 	 *				-1 on a fatal error
 	 */
-	int restore(Common::SeekableReadStream *svf, Processor *proc);
-};
+		int restore(Common::SeekableReadStream *svf, Processor *proc);
+	};
 
 } // End of namespace Frotz
 } // End of namespace Glk

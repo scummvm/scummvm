@@ -20,8 +20,8 @@
  *
  */
 
-#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
+#include "dreamweb/sound.h"
 
 namespace DreamWeb {
 
@@ -128,7 +128,6 @@ void DreamWebEngine::fadeUpMonFirst() {
 	hangOn(64);
 }
 
-
 void DreamWebEngine::fadeDownMon() {
 	palToStartPal();
 	palToEndPal();
@@ -217,15 +216,14 @@ void DreamWebEngine::fadeScreenDownHalf() {
 		endPal++;
 	}
 
-	memcpy(endPal + (56*3), startPal + (56*3), 3*5);
-	memcpy(endPal + (77*3), startPal + (77*3), 3*2);
+	memcpy(endPal + (56 * 3), startPal + (56 * 3), 3 * 5);
+	memcpy(endPal + (77 * 3), startPal + (77 * 3), 3 * 2);
 
 	_fadeDirection = 1;
 	_fadeCount = 31;
 	_colorPos = 0;
 	_numToFade = 32;
 }
-
 
 void DreamWebEngine::clearPalette() {
 	_fadeDirection = 0;
@@ -248,7 +246,7 @@ void DreamWebEngine::greyscaleSum() {
 
 		tmp = grey;
 		//if (tmp != 0)	// FIXME: The assembler code has this check commented out. Bug or feature?
-			tmp += _addToRed;
+		tmp += _addToRed;
 		*dst++ = tmp;
 
 		tmp = grey;

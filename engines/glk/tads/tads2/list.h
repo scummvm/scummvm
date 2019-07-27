@@ -35,12 +35,12 @@
 
 namespace Glk {
 namespace TADS {
-namespace TADS2 {
+	namespace TADS2 {
 
-/* advance a list pointer/size pair to the next element of a list */
-void lstadv(uchar **lstp, uint *sizp);
+		/* advance a list pointer/size pair to the next element of a list */
+		void lstadv(uchar **lstp, uint *sizp);
 
-} // End of namespace TADS2
+	} // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk
 

@@ -26,7 +26,8 @@
 namespace Bbvs {
 
 Minigame::Minigame(BbvsEngine *vm)
-	: _vm(vm), _spriteModule(nullptr) {
+  : _vm(vm)
+  , _spriteModule(nullptr) {
 
 	memset(_hiScoreTable, 0, sizeof(_hiScoreTable));
 	_gameState = 0;

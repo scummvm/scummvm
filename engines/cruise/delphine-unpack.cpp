@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "common/endian.h"
 
 namespace Cruise {

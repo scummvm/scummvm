@@ -25,8 +25,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CAutoSoundPlayerADSR, CAutoSoundPlayer)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(TurnOff)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(TurnOff)
 END_MESSAGE_MAP()
 
 void CAutoSoundPlayerADSR::save(SimpleFile *file, int indent) {

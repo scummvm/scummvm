@@ -26,36 +26,36 @@
 namespace Wintermute {
 
 Error::Error(ErrorLevel errorLevel,
-		ErrorCode errorCode,
-		Common::String errorExtraString,
-		int errorExtraInt) :
-			_errorLevel(errorLevel),
-			_errorCode(errorCode),
-			_errorExtraInt(errorExtraInt),
-			_errorExtraString(errorExtraString){}
+             ErrorCode errorCode,
+             Common::String errorExtraString,
+             int errorExtraInt)
+  : _errorLevel(errorLevel)
+  , _errorCode(errorCode)
+  , _errorExtraInt(errorExtraInt)
+  , _errorExtraString(errorExtraString) {}
 
 Error::Error(ErrorLevel errorLevel,
-		ErrorCode errorCode,
-		int errorExtraInt) :
-			_errorLevel(errorLevel),
-			_errorCode(errorCode),
-			_errorExtraInt(errorExtraInt),
-			_errorExtraString(""){}
+             ErrorCode errorCode,
+             int errorExtraInt)
+  : _errorLevel(errorLevel)
+  , _errorCode(errorCode)
+  , _errorExtraInt(errorExtraInt)
+  , _errorExtraString("") {}
 
 Error::Error(ErrorLevel errorLevel,
-		ErrorCode errorCode) :
-			_errorLevel(errorLevel),
-			_errorCode(errorCode),
-			_errorExtraInt(0),
-			_errorExtraString(""){}
+             ErrorCode errorCode)
+  : _errorLevel(errorLevel)
+  , _errorCode(errorCode)
+  , _errorExtraInt(0)
+  , _errorExtraString("") {}
 
 Error::Error(ErrorLevel errorLevel,
-		ErrorCode errorCode,
-		Common::String errorExtraString) :
-			_errorLevel(errorLevel),
-			_errorCode(errorCode),
-			_errorExtraInt(0),
-			_errorExtraString(errorExtraString){}
+             ErrorCode errorCode,
+             Common::String errorExtraString)
+  : _errorLevel(errorLevel)
+  , _errorCode(errorCode)
+  , _errorExtraInt(0)
+  , _errorExtraString(errorExtraString) {}
 
 ErrorLevel Error::getErrorLevel() const {
 	return _errorLevel;

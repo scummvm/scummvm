@@ -51,8 +51,8 @@ char const *const ConfigManager::kCloudDomain = "cloud";
 
 #pragma mark -
 
-
-ConfigManager::ConfigManager() : _activeDomain(nullptr) {
+ConfigManager::ConfigManager()
+  : _activeDomain(nullptr) {
 }
 
 void ConfigManager::defragment() {
@@ -79,7 +79,6 @@ void ConfigManager::copyFrom(ConfigManager &source) {
 	_activeDomain = &_gameDomains[_activeDomainName];
 	_filename = source._filename;
 }
-
 
 void ConfigManager::loadDefaultConfigFile() {
 	// Open the default config file
@@ -154,7 +153,6 @@ void ConfigManager::addDomain(const String &domainName, const ConfigManager::Dom
 		_miscDomains[domainName] = domain;
 	}
 }
-
 
 void ConfigManager::loadFromStream(SeekableReadStream &stream) {
 	String domainName;
@@ -264,7 +262,7 @@ void ConfigManager::flushToDisk() {
 		// Write to the default config file
 		assert(g_system);
 		stream = g_system->createConfigWriteStream();
-		if (!stream)    // If writing to the config file is not possible, do nothing
+		if (!stream) // If writing to the config file is not possible, do nothing
 			return;
 	} else {
 		DumpFile *dump = new DumpFile();
@@ -282,14 +280,14 @@ void ConfigManager::flushToDisk() {
 	// Write the application domain
 	writeDomain(*stream, kApplicationDomain, _appDomain);
 
-#ifdef ENABLE_KEYMAPPER
+#	ifdef ENABLE_KEYMAPPER
 	// Write the keymapper domain
 	writeDomain(*stream, kKeymapperDomain, _keymapperDomain);
-#endif
-#ifdef USE_CLOUD
+#	endif
+#	ifdef USE_CLOUD
 	// Write the cloud domain
 	writeDomain(*stream, kCloudDomain, _cloudDomain);
-#endif
+#	endif
 
 	DomainMap::const_iterator d;
 
@@ -361,9 +359,7 @@ void ConfigManager::writeDomain(WriteStream &stream, const String &name, const D
 	stream.writeByte('\n');
 }
 
-
 #pragma mark -
-
 
 const ConfigManager::Domain *ConfigManager::getDomain(const String &domName) const {
 	assert(!domName.empty());
@@ -413,9 +409,7 @@ ConfigManager::Domain *ConfigManager::getDomain(const String &domName) {
 	return nullptr;
 }
 
-
 #pragma mark -
-
 
 bool ConfigManager::hasKey(const String &key) const {
 	// Search the domains in the following order:
@@ -460,9 +454,7 @@ void ConfigManager::removeKey(const String &key, const String &domName) {
 	domain->erase(key);
 }
 
-
 #pragma mark -
-
 
 const String &ConfigManager::get(const String &key) const {
 	if (_transientDomain.contains(key))
@@ -525,9 +517,7 @@ bool ConfigManager::getBool(const String &key, const String &domName) const {
 	      key.c_str(), domName.c_str(), value.c_str());
 }
 
-
 #pragma mark -
-
 
 void ConfigManager::set(const String &key, const String &value) {
 	// Remove the transient domain value, if any.
@@ -594,9 +584,7 @@ void ConfigManager::setBool(const String &key, bool value, const String &domName
 	set(key, String(value ? "true" : "false"), domName);
 }
 
-
 #pragma mark -
-
 
 void ConfigManager::registerDefault(const String &key, const String &value) {
 	_defaultsDomain[key] = value;
@@ -614,9 +602,7 @@ void ConfigManager::registerDefault(const String &key, bool value) {
 	registerDefault(key, value ? "true" : "false");
 }
 
-
 #pragma mark -
-
 
 void ConfigManager::setActiveDomain(const String &domName) {
 	if (domName.empty()) {
@@ -665,7 +651,6 @@ void ConfigManager::removeMiscDomain(const String &domName) {
 	_miscDomains.erase(domName);
 }
 
-
 void ConfigManager::renameGameDomain(const String &oldName, const String &newName) {
 	renameDomain(oldName, newName, _gameDomains);
 	if (_activeDomainName == oldName) {
@@ -690,7 +675,7 @@ void ConfigManager::renameDomain(const String &oldName, const String &newName, D
 	assert(isValidDomainName(oldName));
 	assert(isValidDomainName(newName));
 
-//	_gameDomains[newName].merge(_gameDomains[oldName]);
+	//	_gameDomains[newName].merge(_gameDomains[oldName]);
 	Domain &oldDom = map[oldName];
 	Domain &newDom = map[newName];
 	Domain::const_iterator iter;

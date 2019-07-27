@@ -22,9 +22,9 @@
 
 #include "access/inventory.h"
 #include "access/access.h"
-#include "access/resources.h"
 #include "access/amazon/amazon_resources.h"
 #include "access/martian/martian_resources.h"
+#include "access/resources.h"
 
 namespace Access {
 
@@ -55,7 +55,8 @@ int InventoryEntry::checkItem(int itemId) {
 
 /*------------------------------------------------------------------------*/
 
-InventoryManager::InventoryManager(AccessEngine *vm) : Manager(vm) {
+InventoryManager::InventoryManager(AccessEngine *vm)
+  : Manager(vm) {
 	_startInvItem = 0;
 	_startInvBox = 0;
 	_invChangeFlag = true;
@@ -200,7 +201,7 @@ int InventoryManager::newDisplayInv() {
 }
 
 int InventoryManager::displayInv() {
-	int *inv = (int *) malloc(_vm->_res->INVENTORY.size() * sizeof(int));
+	int *inv = (int *)malloc(_vm->_res->INVENTORY.size() * sizeof(int));
 	const char **names = (const char **)malloc(_vm->_res->INVENTORY.size() * sizeof(const char *));
 
 	for (uint i = 0; i < _vm->_res->INVENTORY.size(); i++) {
@@ -380,7 +381,6 @@ void InventoryManager::saveScreens() {
 	_vm->_buffer1.copyTo(&_savedBuffer1);
 	_vm->_screen->copyTo(&_savedScreen);
 	_vm->_newRects.push_back(Common::Rect(0, 0, _savedScreen.w, _savedScreen.h));
-
 }
 
 void InventoryManager::restoreScreens() {
@@ -450,7 +450,7 @@ void InventoryManager::combineItems() {
 
 	int destBox = events.checkMouseBox1(_invCoords);
 	if (destBox >= 0 && destBox != _boxNum && destBox < (int)_items.size()
-			&& _items[destBox] != -1) {
+	    && _items[destBox] != -1) {
 		int itemA = invItem;
 		int itemB = _items[destBox];
 
@@ -470,7 +470,7 @@ void InventoryManager::combineItems() {
 
 			// Shrink down the second item
 			Common::Rect destRect(_invCoords[destBox].left, _invCoords[destBox].top,
-				_invCoords[destBox].left + 46, _invCoords[destBox].top + 35);
+			                      _invCoords[destBox].left + 46, _invCoords[destBox].top + 35);
 			_vm->_buffer2.copyBlock(&_vm->_buffer1, destRect);
 			screen._screenYOff = 0;
 			zoomIcon(itemB, -1, destBox, true);
@@ -497,7 +497,7 @@ void InventoryManager::zoomIcon(int zoomItem, int backItem, int zoomBox, bool sh
 	int zoomScale = shrink ? 255 : 1;
 	int zoomInc = shrink ? -1 : 1;
 	Common::Rect boxRect(_invCoords[zoomBox].left, _invCoords[zoomBox].top,
-		_invCoords[zoomBox].left + 46, _invCoords[zoomBox].top + 35);
+	                     _invCoords[zoomBox].left + 46, _invCoords[zoomBox].top + 35);
 
 	while (!_vm->shouldQuit() && zoomScale != 0 && zoomScale != 256) {
 		_vm->_events->pollEventsAndWait();
@@ -518,7 +518,7 @@ void InventoryManager::zoomIcon(int zoomItem, int backItem, int zoomBox, bool sh
 				// The zoomed size is positive in both directions, so show zoomed item
 				Common::Rect scaledBox(xv, yv);
 				scaledBox.moveTo(boxRect.left + (boxRect.width() - xv + 1) / 2,
-					boxRect.top + (boxRect.height() - yv + 1) / 2);
+				                 boxRect.top + (boxRect.height() - yv + 1) / 2);
 
 				_vm->_buffer2.sPlotF(sprites->getFrame(zoomItem), scaledBox);
 			}
@@ -533,7 +533,7 @@ void InventoryManager::zoomIcon(int zoomItem, int backItem, int zoomBox, bool sh
 		// Handle the final full-size version
 		_vm->_buffer2.copyBlock(&_vm->_buffer1, boxRect);
 		_vm->_buffer2.plotImage(sprites, zoomItem,
-			Common::Point(boxRect.left, boxRect.top));
+		                        Common::Point(boxRect.left, boxRect.top));
 		screen.copyBlock(&_vm->_buffer2, boxRect);
 	}
 

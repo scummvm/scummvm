@@ -27,11 +27,11 @@
  */
 
 #include "engines/wintermute/base/base_parser.h"
+#include "common/str.h"
+#include "common/util.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/platform_osystem.h"
-#include "common/str.h"
-#include "common/util.h"
 
 #define WHITESPACE " \t\n\r"
 
@@ -41,13 +41,11 @@ namespace Wintermute {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-
 //////////////////////////////////////////////////////////////////////
 BaseParser::BaseParser() {
-	_whiteSpace = new char [strlen(WHITESPACE) + 1];
+	_whiteSpace = new char[strlen(WHITESPACE) + 1];
 	strcpy(_whiteSpace, WHITESPACE);
 }
-
 
 //////////////////////////////////////////////////////////////////////
 BaseParser::~BaseParser() {
@@ -56,12 +54,10 @@ BaseParser::~BaseParser() {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////
 char *BaseParser::getLastOffender() {
 	return _lastOffender;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 int32 BaseParser::getObject(char **buf, const TokenDesc *tokens, char **name, char **data) {
@@ -74,7 +70,7 @@ int32 BaseParser::getObject(char **buf, const TokenDesc *tokens, char **name, ch
 		skipCharacters(buf, _whiteSpace);
 	}
 
-	if (! **buf) {                // at end of file
+	if (!**buf) { // at end of file
 		return PARSERR_EOF;
 	}
 
@@ -104,7 +100,7 @@ int32 BaseParser::getObject(char **buf, const TokenDesc *tokens, char **name, ch
 	skipCharacters(buf, _whiteSpace);
 
 	// get optional name
-	*name = getSubText(buf, '\'', '\'');  // single quotes
+	*name = getSubText(buf, '\'', '\''); // single quotes
 	skipCharacters(buf, _whiteSpace);
 
 	// get optional data
@@ -117,7 +113,6 @@ int32 BaseParser::getObject(char **buf, const TokenDesc *tokens, char **name, ch
 	return tokens->id;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 int32 BaseParser::getCommand(char **buf, const TokenDesc *tokens, char **params) {
 	if (!*buf) {
@@ -127,7 +122,6 @@ int32 BaseParser::getCommand(char **buf, const TokenDesc *tokens, char **params)
 	char *name;
 	return getObject(buf, tokens, &name, params);
 }
-
 
 //////////////////////////////////////////////////////////////////////
 void BaseParser::skipCharacters(char **buf, const char *toSkip) {
@@ -139,25 +133,24 @@ void BaseParser::skipCharacters(char **buf, const char *toSkip) {
 		if (strchr(toSkip, ch) == nullptr) {
 			return;
 		}
-		++*buf;                     // skip this character
+		++*buf; // skip this character
 	}
 	// we must be at the end of the buffer if we get here
 }
-
 
 //////////////////////////////////////////////////////////////////////
 char *BaseParser::getSubText(char **buf, char open, char close) {
 	if (**buf == 0 || **buf != open) {
 		return 0;
 	}
-	++*buf;                       // skip opening delimiter
+	++*buf; // skip opening delimiter
 	char *result = *buf;
 
 	// now find the closing delimiter
 	char theChar;
 	long skip = 1;
 
-	if (open == close) {          // we cant nest identical delimiters
+	if (open == close) { // we cant nest identical delimiters
 		open = 0;
 	}
 	while ((theChar = **buf) != 0) {
@@ -166,23 +159,21 @@ char *BaseParser::getSubText(char **buf, char open, char close) {
 		}
 		if (theChar == close) {
 			if (--skip == 0) {
-				**buf = 0;              // null terminate the result string
-				++*buf;                 // move past the closing delimiter
+				**buf = 0; // null terminate the result string
+				++*buf; // move past the closing delimiter
 				break;
 			}
 		}
-		++*buf;                     // try next character
+		++*buf; // try next character
 	}
 	return result;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 char *BaseParser::getAssignmentText(char **buf) {
-	++*buf;                       // skip the '='
+	++*buf; // skip the '='
 	skipCharacters(buf, _whiteSpace);
 	char *result = *buf;
-
 
 	if (*result == '"') {
 		result = getSubText(buf, '"', '"');
@@ -191,13 +182,13 @@ char *BaseParser::getAssignmentText(char **buf) {
 		char theChar;
 
 		while ((theChar = **buf) != 0) {
-			if (theChar <= 0x20) {      // space and control chars
+			if (theChar <= 0x20) { // space and control chars
 				break;
 			}
 			++*buf;
 		}
-		**buf = 0;              // null terminate it
-		if (theChar) {                // skip the terminator
+		**buf = 0; // null terminate it
+		if (theChar) { // skip the terminator
 			++*buf;
 		}
 	}
@@ -231,8 +222,7 @@ Common::String BaseParser::getToken(char **buf) {
 		if (*b == '\'') {
 			b++;
 		}
-	} else if (*b == '(' || *b == ')' || *b == '=' || *b == ',' || *b == '[' || *b == ']' ||
-	           *b == '%' || *b == ':' || *b == '{' || *b == '}') {
+	} else if (*b == '(' || *b == ')' || *b == '=' || *b == ',' || *b == '[' || *b == ']' || *b == '%' || *b == ':' || *b == '{' || *b == '}') {
 		*t++ = *b++;
 		*t++ = 0;
 	} else if (*b == '.' && (*(b + 1) < '0' || *(b + 1) > '9')) {
@@ -260,7 +250,6 @@ Common::String BaseParser::getToken(char **buf) {
 	return token;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 float BaseParser::getTokenFloat(char **buf) {
 	Common::String token = getToken(buf);
@@ -272,7 +261,6 @@ float BaseParser::getTokenFloat(char **buf) {
 	float rc = (float)atof(t);
 	return rc;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 int32 BaseParser::getTokenInt(char **buf) {
@@ -286,16 +274,14 @@ int32 BaseParser::getTokenInt(char **buf) {
 	return rc;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 void BaseParser::skipToken(char **buf, char *tok, char * /*msg*/) {
 	Common::String token = getToken(buf);
 	const char *t = token.c_str();
 	if (strcmp(t, tok)) {
-		return;    // Error
+		return; // Error
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////
 int32 BaseParser::scanStr(const char *in, const char *format, ...) {
@@ -343,9 +329,7 @@ int32 BaseParser::scanStr(const char *in, const char *format, ...) {
 				const char *in2 = in + strspn(in, "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
 				int l = (int)(in2 - in);
 
-				*a = (bool)(!scumm_strnicmp(in, "yes", l) || !scumm_strnicmp(in, "true", l) || !scumm_strnicmp(in, "on", l) ||
-				            !scumm_strnicmp(in, "1", l));
-
+				*a = (bool)(!scumm_strnicmp(in, "yes", l) || !scumm_strnicmp(in, "true", l) || !scumm_strnicmp(in, "on", l) || !scumm_strnicmp(in, "1", l));
 
 				in = in2 + strspn(in2, " \t\n\f");
 				num++;

@@ -20,32 +20,33 @@
  *
  */
 
+#include "sci/graphics/controls32.h"
 #include "common/system.h"
 #include "common/translation.h"
 #include "gui/message.h"
-#include "sci/sci.h"
 #include "sci/console.h"
-#include "sci/event.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/state.h"
+#include "sci/event.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
-#include "sci/graphics/controls32.h"
 #include "sci/graphics/font.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/text32.h"
+#include "sci/sci.h"
 
 namespace Sci {
-GfxControls32::GfxControls32(SegManager *segMan, GfxCache *cache, GfxText32 *text) :
-	_segMan(segMan),
-	_gfxCache(cache),
-	_gfxText32(text),
-	_overwriteMode(false),
-	_nextCursorFlashTick(0),
-	// SSCI used a memory handle for a ScrollWindow object as ID. We use a
-	// simple numeric handle instead.
-	_nextScrollWindowId(10000) {}
+GfxControls32::GfxControls32(SegManager *segMan, GfxCache *cache, GfxText32 *text)
+  : _segMan(segMan)
+  , _gfxCache(cache)
+  , _gfxText32(text)
+  , _overwriteMode(false)
+  , _nextCursorFlashTick(0)
+  ,
+  // SSCI used a memory handle for a ScrollWindow object as ID. We use a
+  // simple numeric handle instead.
+  _nextScrollWindowId(10000) {}
 
 GfxControls32::~GfxControls32() {
 	ScrollWindowMap::iterator it;
@@ -256,9 +257,7 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 					}
 
 					if (
-						(_overwriteMode && editor.cursorCharPosition < editor.maxLength) ||
-						(editor.text.size() < editor.maxLength && _gfxText32->getCharWidth(event.character, true) + _gfxText32->getStringWidth(editor.text) < editor.textRect.width())
-					) {
+					  (_overwriteMode && editor.cursorCharPosition < editor.maxLength) || (editor.text.size() < editor.maxLength && _gfxText32->getCharWidth(event.character, true) + _gfxText32->getStringWidth(editor.text) < editor.textRect.width())) {
 						if (_overwriteMode && editor.cursorCharPosition < editor.text.size()) {
 							editor.text.setChar(event.character, editor.cursorCharPosition);
 						} else {
@@ -365,26 +364,26 @@ void GfxControls32::flashCursor(TextEditor &editor) {
 #pragma mark -
 #pragma mark Scrollable window control
 
-ScrollWindow::ScrollWindow(SegManager *segMan, const Common::Rect &gameRect, const Common::Point &position, const reg_t plane, const uint8 defaultForeColor, const uint8 defaultBackColor, const GuiResourceId defaultFontId, const TextAlign defaultAlignment, const int16 defaultBorderColor, const uint16 maxNumEntries) :
-	_segMan(segMan),
-	_gfxText32(segMan, g_sci->_gfxCache),
-	_maxNumEntries(maxNumEntries),
-	_firstVisibleChar(0),
-	_topVisibleLine(0),
-	_lastVisibleChar(0),
-	_bottomVisibleLine(0),
-	_numLines(0),
-	_numVisibleLines(0),
-	_plane(plane),
-	_foreColor(defaultForeColor),
-	_backColor(defaultBackColor),
-	_borderColor(defaultBorderColor),
-	_fontId(defaultFontId),
-	_alignment(defaultAlignment),
-	_visible(false),
-	_position(position),
-	_screenItem(nullptr),
-	_nextEntryId(1) {
+ScrollWindow::ScrollWindow(SegManager *segMan, const Common::Rect &gameRect, const Common::Point &position, const reg_t plane, const uint8 defaultForeColor, const uint8 defaultBackColor, const GuiResourceId defaultFontId, const TextAlign defaultAlignment, const int16 defaultBorderColor, const uint16 maxNumEntries)
+  : _segMan(segMan)
+  , _gfxText32(segMan, g_sci->_gfxCache)
+  , _maxNumEntries(maxNumEntries)
+  , _firstVisibleChar(0)
+  , _topVisibleLine(0)
+  , _lastVisibleChar(0)
+  , _bottomVisibleLine(0)
+  , _numLines(0)
+  , _numVisibleLines(0)
+  , _plane(plane)
+  , _foreColor(defaultForeColor)
+  , _backColor(defaultBackColor)
+  , _borderColor(defaultBorderColor)
+  , _fontId(defaultFontId)
+  , _alignment(defaultAlignment)
+  , _visible(false)
+  , _position(position)
+  , _screenItem(nullptr)
+  , _nextEntryId(1) {
 
 	_entries.reserve(maxNumEntries);
 
@@ -532,7 +531,7 @@ reg_t ScrollWindow::modify(const reg_t id, const Common::String &text, const Gui
 
 	EntriesList::iterator it = _entries.begin();
 	uint firstCharLocation = 0;
-	for ( ; it != _entries.end(); ++it) {
+	for (; it != _entries.end(); ++it) {
 		if (it->id == id) {
 			break;
 		}
@@ -616,7 +615,6 @@ void ScrollWindow::downArrow() {
 	}
 
 	debugC(3, kDebugLevelGraphics, "ScrollWindow::downArrow: top: %d, bottom: %d, num: %d, numvis: %d, lineText: %s", _topVisibleLine, _bottomVisibleLine, _numLines, _numVisibleLines, lineText.c_str());
-
 
 	_gfxText32.scrollLine(lineText, _numVisibleLines, _foreColor, _alignment, _fontId, kScrollDown);
 
@@ -713,7 +711,7 @@ void ScrollWindow::computeLineIndices() {
 
 	// SSCI had a 1000-line limit; we do not enforce any limit since we use
 	// dynamic containers
-	for (uint charIndex = 0; charIndex < _text.size(); ) {
+	for (uint charIndex = 0; charIndex < _text.size();) {
 		_startsOfLines.push_back(charIndex);
 		charIndex += _gfxText32.getTextCount(_text, charIndex, lineRect, false);
 	}
@@ -726,9 +724,7 @@ void ScrollWindow::computeLineIndices() {
 
 	_bottomVisibleLine = 0;
 	while (
-		_bottomVisibleLine < _numLines - 1 &&
-		_startsOfLines[_bottomVisibleLine + 1] < _lastVisibleChar
-	) {
+	  _bottomVisibleLine < _numLines - 1 && _startsOfLines[_bottomVisibleLine + 1] < _lastVisibleChar) {
 		++_bottomVisibleLine;
 	}
 
@@ -738,9 +734,7 @@ void ScrollWindow::computeLineIndices() {
 void ScrollWindow::update(const bool doFrameOut) {
 	_topVisibleLine = 0;
 	while (
-		_topVisibleLine < _numLines - 1 &&
-		_firstVisibleChar >= _startsOfLines[_topVisibleLine + 1]
-	) {
+	  _topVisibleLine < _numLines - 1 && _firstVisibleChar >= _startsOfLines[_topVisibleLine + 1]) {
 		++_topVisibleLine;
 	}
 
@@ -815,10 +809,10 @@ reg_t GfxControls32::kernelMessageBox(const Common::String &message, const Commo
 	switch (style & 0xF) {
 	case kMessageBoxOK:
 		result = showMessageBox(message, _("OK"), NULL, 1, 1);
-	break;
+		break;
 	case kMessageBoxYesNo:
 		result = showMessageBox(message, _("Yes"), _("No"), 6, 7);
-	break;
+		break;
 	default:
 		error("Unsupported MessageBox style 0x%x", style & 0xF);
 	}

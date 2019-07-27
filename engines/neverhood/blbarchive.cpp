@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/dcl.h"
 #include "neverhood/blbarchive.h"
+#include "common/dcl.h"
 
 namespace Neverhood {
 
@@ -35,10 +35,12 @@ namespace Neverhood {
 class SafeMutexedSeekableSubReadStream : public Common::SafeSeekableSubReadStream {
 public:
 	SafeMutexedSeekableSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end, DisposeAfterUse::Flag disposeParentStream,
-		Common::Mutex &mutex)
-		: SafeSeekableSubReadStream(parentStream, begin, end, disposeParentStream), _mutex(mutex) {
+	                                 Common::Mutex &mutex)
+	  : SafeSeekableSubReadStream(parentStream, begin, end, disposeParentStream)
+	  , _mutex(mutex) {
 	}
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
+
 protected:
 	Common::Mutex &_mutex;
 };
@@ -48,7 +50,8 @@ uint32 SafeMutexedSeekableSubReadStream::read(void *dataPtr, uint32 dataSize) {
 	return Common::SafeSeekableSubReadStream::read(dataPtr, dataSize);
 }
 
-BlbArchive::BlbArchive() : _extData(NULL) {
+BlbArchive::BlbArchive()
+  : _extData(NULL) {
 }
 
 BlbArchive::~BlbArchive() {
@@ -98,8 +101,8 @@ void BlbArchive::open(const Common::String &filename) {
 		entry.diskSize = _fd.readUint32LE();
 		entry.size = _fd.readUint32LE();
 		debug(4, "%08X: %03d, %02X, %04X, %08X, %08X, %08X, %08X",
-			entry.fileHash, entry.type, entry.comprType, extDataOffsets[i], entry.timeStamp,
-			entry.offset, entry.diskSize, entry.size);
+		      entry.fileHash, entry.type, entry.comprType, extDataOffsets[i], entry.timeStamp,
+		      entry.offset, entry.diskSize, entry.size);
 	}
 
 	// Load ext data
@@ -111,7 +114,6 @@ void BlbArchive::open(const Common::String &filename) {
 	}
 
 	delete[] extDataOffsets;
-
 }
 
 void BlbArchive::load(uint index, byte *buffer, uint32 size) {
@@ -132,12 +134,11 @@ void BlbArchive::load(BlbArchiveEntry *entry, byte *buffer, uint32 size) {
 	case 3: // DCL-compressed
 		if (!Common::decompressDCL(&_fd, buffer, entry->diskSize, entry->size))
 			error("BlbArchive::load() Error during decompression of %08X (offset: %d, disk size: %d, size: %d)",
-					entry->fileHash, entry->offset, entry->diskSize, entry->size);
+			      entry->fileHash, entry->offset, entry->diskSize, entry->size);
 		break;
 	default:
 		error("BlbArchive::load() Unknown compression type %d", entry->comprType);
 	}
-
 }
 
 byte *BlbArchive::getEntryExtData(uint index) {
@@ -154,7 +155,7 @@ Common::SeekableReadStream *BlbArchive::createStream(uint index) {
 
 Common::SeekableReadStream *BlbArchive::createStream(BlbArchiveEntry *entry) {
 	return new SafeMutexedSeekableSubReadStream(&_fd, entry->offset, entry->offset + entry->diskSize,
-		DisposeAfterUse::NO, _mutex);
+	                                            DisposeAfterUse::NO, _mutex);
 }
 
 } // End of namespace Neverhood

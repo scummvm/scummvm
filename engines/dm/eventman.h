@@ -28,13 +28,13 @@
 #ifndef DM_EVENTMAN_H
 #define DM_EVENTMAN_H
 
+#include "common/array.h"
 #include "common/events.h"
 #include "common/queue.h"
-#include "common/array.h"
 
+#include "dm/champion.h"
 #include "dm/dm.h"
 #include "dm/gfx.h"
-#include "dm/champion.h"
 
 namespace DM {
 
@@ -161,9 +161,10 @@ public:
 	Common::Point _pos;
 	CommandType _type;
 
-	Command(Common::Point position, CommandType commandType) : _pos(position), _type(commandType) {}
+	Command(Common::Point position, CommandType commandType)
+	  : _pos(position)
+	  , _type(commandType) {}
 }; // @ COMMAND
-
 
 class MouseInput {
 public:
@@ -172,9 +173,13 @@ public:
 	MouseButton _button;
 
 	MouseInput(CommandType type, uint16 x1, uint16 x2, uint16 y1, uint16 y2, MouseButton mouseButton)
-		: _commandTypeToIssue(type), _hitbox(x1, x2 + 1, y1, y2 + 1), _button(mouseButton) {}
+	  : _commandTypeToIssue(type)
+	  , _hitbox(x1, x2 + 1, y1, y2 + 1)
+	  , _button(mouseButton) {}
 	MouseInput()
-		: _commandTypeToIssue(kDMCommandNone), _hitbox(0, 1, 0, 1), _button(kDMMouseButtonNone) {}
+	  : _commandTypeToIssue(kDMCommandNone)
+	  , _hitbox(0, 1, 0, 1)
+	  , _button(kDMMouseButtonNone) {}
 }; // @ MOUSE_INPUT
 
 class KeyboardInput {
@@ -183,8 +188,14 @@ public:
 	Common::KeyCode _key;
 	byte _modifiers;
 
-	KeyboardInput(CommandType command, Common::KeyCode keycode, byte modifierFlags) : _commandToIssue(command), _key(keycode), _modifiers(modifierFlags) {}
-	KeyboardInput() : _commandToIssue(kDMCommandNone), _key(Common::KEYCODE_ESCAPE), _modifiers(0) {}
+	KeyboardInput(CommandType command, Common::KeyCode keycode, byte modifierFlags)
+	  : _commandToIssue(command)
+	  , _key(keycode)
+	  , _modifiers(modifierFlags) {}
+	KeyboardInput()
+	  : _commandToIssue(kDMCommandNone)
+	  , _key(Common::KEYCODE_ESCAPE)
+	  , _modifiers(0) {}
 }; // @ KEYBOARD_INPUT
 
 class DMEngine;
@@ -215,9 +226,9 @@ class EventManager {
 	byte *_mousePointerTempBuffer; // @ K0190_puc_Bitmap_MousePointerTemporaryBuffer
 	int16 _mousePointerType; // @ K0104_i_MousePointerType
 	int16 _previousMousePointerType; // @ K0105_i_PreviousMousePointerType
-	uint16 _mouseButtonStatus;// @ G0588_i_MouseButtonsStatus
+	uint16 _mouseButtonStatus; // @ G0588_i_MouseButtonsStatus
 
-// this doesn't seem to be used anywhere at all
+	// this doesn't seem to be used anywhere at all
 	bool _isCommandQueueLocked; // @ G0435_B_CommandQueueLocked
 	Common::Queue<Command> _commandQueue;
 
@@ -231,15 +242,15 @@ public:
 	explicit EventManager(DMEngine *vm);
 	~EventManager();
 
-	MouseInput *_primaryMouseInput;// @ G0441_ps_PrimaryMouseInput
-	MouseInput *_secondaryMouseInput;// @ G0442_ps_SecondaryMouseInput
+	MouseInput *_primaryMouseInput; // @ G0441_ps_PrimaryMouseInput
+	MouseInput *_secondaryMouseInput; // @ G0442_ps_SecondaryMouseInput
 	bool _mousePointerBitmapUpdated; // @ G0598_B_MousePointerBitmapUpdated
 	bool _refreshMousePointerInMainLoop; // @ G0326_B_RefreshMousePointerInMainLoop
 	bool _highlightBoxEnabled; // @ G0341_B_HighlightBoxEnabled
 	uint16 _useChampionIconOrdinalAsMousePointerBitmap; // @ G0599_ui_UseChampionIconOrdinalAsMousePointerBitmap
 	KeyboardInput *_primaryKeyboardInput; // @ G0443_ps_PrimaryKeyboardInput
 	KeyboardInput *_secondaryKeyboardInput; // @ G0444_ps_SecondaryKeyboardInput
-	bool _ignoreMouseMovements;// @ G0597_B_IgnoreMouseMovements
+	bool _ignoreMouseMovements; // @ G0597_B_IgnoreMouseMovements
 	int16 _hideMousePointerRequestCount; // @ G0587_i_HideMousePointerRequestCount
 
 	void initMouse();
@@ -277,9 +288,9 @@ public:
 	bool hasPendingClick(Common::Point &point, MouseButton button); // @ F0360_COMMAND_ProcessPendingClick
 	void drawSleepScreen(); // @ F0379_COMMAND_DrawSleepScreen
 	void discardAllInput(); // @ F0357_COMMAND_DiscardAllInput
-	void commandTakeStairs(bool stairsGoDown);// @ F0364_COMMAND_TakeStairs
+	void commandTakeStairs(bool stairsGoDown); // @ F0364_COMMAND_TakeStairs
 	void commandProcessTypes12to27_clickInChampionStatusBox(uint16 champIndex, int16 posX,
-																 int16 posY); // @ F0367_COMMAND_ProcessTypes12To27_ClickInChampionStatusBox
+	                                                        int16 posY); // @ F0367_COMMAND_ProcessTypes12To27_ClickInChampionStatusBox
 	void mouseProcessCommands125To128_clickOnChampionIcon(uint16 champIconIndex); // @ F0070_MOUSE_ProcessCommands125To128_ClickOnChampionIcon
 	void commandProcessType100_clickInSpellArea(uint16 posX, uint16 posY); // @ F0370_COMMAND_ProcessType100_ClickInSpellArea
 	void commandProcessTypes101To108_clickInSpellSymbolsArea(CommandType cmdType); // @ F0369_COMMAND_ProcessTypes101To108_ClickInSpellSymbolsArea_CPSE

@@ -43,11 +43,11 @@ struct NDimensions {
 struct NRect {
 	int16 x1, y1, x2, y2;
 
-    static NRect make(int16 x01, int16 y01, int16 x02, int16 y02) {
-        NRect r;
-        r.set(x01, y01, x02, y02);
+	static NRect make(int16 x01, int16 y01, int16 x02, int16 y02) {
+		NRect r;
+		r.set(x01, y01, x02, y02);
 		return r;
-    }
+	}
 
 	void set(int16 x01, int16 y01, int16 x02, int16 y02) {
 		x1 = x01;
@@ -59,7 +59,6 @@ struct NRect {
 	bool contains(int16 x, int16 y) const {
 		return x >= x1 && x <= x2 && y >= y1 && y <= y2;
 	}
-
 };
 
 typedef Common::Array<NRect> NRectArray;
@@ -67,8 +66,16 @@ typedef Common::Array<NRect> NRectArray;
 // TODO: Use Common::Rect
 struct NDrawRect {
 	int16 x, y, width, height;
-	NDrawRect() : x(0), y(0), width(0), height(0) {}
-	NDrawRect(int16 x0, int16 y0, int16 width0, int16 height0) : x(x0), y(y0), width(width0), height(height0) {}
+	NDrawRect()
+	  : x(0)
+	  , y(0)
+	  , width(0)
+	  , height(0) {}
+	NDrawRect(int16 x0, int16 y0, int16 width0, int16 height0)
+	  : x(x0)
+	  , y(y0)
+	  , width(width0)
+	  , height(height0) {}
 	int16 x2() { return x + width; }
 	int16 y2() { return y + height; }
 	void set(int16 x0, int16 y0, int16 width0, int16 height0) {
@@ -96,17 +103,24 @@ public:
 	void copyFrom(Graphics::Surface *sourceSurface, int16 x, int16 y, NDrawRect &sourceRect);
 	int getPriority() const { return _priority; }
 	void setPriority(int priority) { _priority = priority; }
-	NDrawRect& getDrawRect() { return _drawRect; }
-	NDrawRect& getSysRect() { return _sysRect; }
-	NRect& getClipRect() { return _clipRect; }
+	NDrawRect &getDrawRect() { return _drawRect; }
+	NDrawRect &getSysRect() { return _sysRect; }
+	NRect &getClipRect() { return _clipRect; }
 	void setClipRect(NRect clipRect) { _clipRect = clipRect; }
-	void setClipRects(NRect *clipRects, uint clipRectsCount) { _clipRects = clipRects; _clipRectsCount = clipRectsCount; }
-	void clearClipRects() { _clipRects = NULL; _clipRectsCount = 0; }
+	void setClipRects(NRect *clipRects, uint clipRectsCount) {
+		_clipRects = clipRects;
+		_clipRectsCount = clipRectsCount;
+	}
+	void clearClipRects() {
+		_clipRects = NULL;
+		_clipRectsCount = 0;
+	}
 	bool getVisible() const { return _visible; }
 	void setVisible(bool value) { _visible = value; }
 	void setTransparent(bool value) { _transparent = value; }
 	Graphics::Surface *getSurface() { return _surface; }
 	const Common::String getName() const { return _name; }
+
 protected:
 	NeverhoodEngine *_vm;
 	int _priority;
@@ -127,6 +141,7 @@ class ShadowSurface : public BaseSurface {
 public:
 	ShadowSurface(NeverhoodEngine *vm, int priority, int16 width, int16 height, BaseSurface *shadowSurface);
 	virtual void draw();
+
 protected:
 	BaseSurface *_shadowSurface;
 };
@@ -142,6 +157,7 @@ public:
 	uint16 getCharWidth() const { return _charWidth; }
 	uint16 getCharHeight() const { return _charHeight; }
 	static FontSurface *createFontSurface(NeverhoodEngine *vm, uint32 fileHash);
+
 protected:
 	uint _charsPerRow;
 	uint16 _numRows;

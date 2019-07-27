@@ -27,14 +27,15 @@
  */
 
 #include "engines/wintermute/base/base_transition_manager.h"
-#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-BaseTransitionMgr::BaseTransitionMgr(BaseGame *inGame) : BaseClass(inGame) {
+BaseTransitionMgr::BaseTransitionMgr(BaseGame *inGame)
+  : BaseClass(inGame) {
 	_state = TRANS_MGR_READY;
 	_type = TRANSITION_NONE;
 	_origInteractive = false;
@@ -43,19 +44,14 @@ BaseTransitionMgr::BaseTransitionMgr(BaseGame *inGame) : BaseClass(inGame) {
 	_started = false;
 }
 
-
-
 //////////////////////////////////////////////////////////////////////////
 BaseTransitionMgr::~BaseTransitionMgr() {
-
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseTransitionMgr::isReady() const {
 	return (_state == TRANS_MGR_READY);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseTransitionMgr::start(TTransitionType type, bool nonInteractive) {
@@ -73,7 +69,6 @@ bool BaseTransitionMgr::start(TTransitionType type, bool nonInteractive) {
 		_origInteractive = _gameRef->_interactive;
 		_gameRef->_interactive = false;
 	} /*else _preserveInteractive */;
-
 
 	_type = type;
 	_state = TRANS_MGR_RUNNING;
@@ -109,8 +104,7 @@ bool BaseTransitionMgr::update() {
 		if (time > FADE_DURATION) {
 			_state = TRANS_MGR_READY;
 		}
-	}
-	break;
+	} break;
 
 	case TRANSITION_FADE_IN: {
 		uint32 time = g_system->getMillis() - _lastTime;
@@ -121,8 +115,7 @@ bool BaseTransitionMgr::update() {
 		if (time > FADE_DURATION) {
 			_state = TRANS_MGR_READY;
 		}
-	}
-	break;
+	} break;
 	default:
 		error("BaseTransitionMgr::Update - unhandled enum NUM_TRANSITION_TYPES");
 	}

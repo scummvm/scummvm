@@ -43,96 +43,95 @@
 namespace StarTrek {
 
 extern const RoomAction veng6ActionList[] = {
-	{ {ACTION_TICK, 1, 0, 0}, &Room::veng6Tick1 },
+	{ { ACTION_TICK, 1, 0, 0 }, &Room::veng6Tick1 },
 
-	{ {ACTION_WALK, OBJECT_DOOR,  0, 0}, &Room::veng6WalkToDoor },
-	{ {ACTION_WALK, HOTSPOT_DOOR, 0, 0}, &Room::veng6WalkToDoor },
-	{ {ACTION_DONE_WALK, 2,       0, 0}, &Room::veng6ReachedDoor },
-	{ {ACTION_DONE_ANIM, 1,       0, 0}, &Room::veng6DoorOpened },
+	{ { ACTION_WALK, OBJECT_DOOR, 0, 0 }, &Room::veng6WalkToDoor },
+	{ { ACTION_WALK, HOTSPOT_DOOR, 0, 0 }, &Room::veng6WalkToDoor },
+	{ { ACTION_DONE_WALK, 2, 0, 0 }, &Room::veng6ReachedDoor },
+	{ { ACTION_DONE_ANIM, 1, 0, 0 }, &Room::veng6DoorOpened },
 
-	{ {ACTION_LOOK, HOTSPOT_LEFT_PORT,       0, 0}, &Room::veng6LookAtLeftPort },
-	{ {ACTION_LOOK, HOTSPOT_RIGHT_PORT,      0, 0}, &Room::veng6LookAtRightPort },
-	{ {ACTION_LOOK, OBJECT_DOOR,             0, 0}, &Room::veng6LookAtDoor },
-	{ {ACTION_LOOK, HOTSPOT_DOOR,            0, 0}, &Room::veng6LookAtDoor },
-	{ {ACTION_LOOK, HOTSPOT_OIL_CANISTER,    0, 0}, &Room::veng6LookAtOilCanister },
-	{ {ACTION_LOOK, OBJECT_CABINET,          0, 0}, &Room::veng6LookAtCabinet },
-	{ {ACTION_LOOK, HOTSPOT_CABINET,         0, 0}, &Room::veng6LookAtCabinet },
-	{ {ACTION_LOOK, OBJECT_CABLE_2,          0, 0}, &Room::veng6LookAtCable },
-	{ {ACTION_LOOK, OBJECT_CABLE_1,          0, 0}, &Room::veng6LookAtCable },
-	{ {ACTION_LOOK, HOTSPOT_RIGHT_CONSOLE,   0, 0}, &Room::veng6LookAtRightConsole },
-	{ {ACTION_LOOK, OBJECT_IMPULSE_ENGINES,  0, 0}, &Room::veng6LookAtImpulseEngines },
-	{ {ACTION_LOOK, HOTSPOT_IMPULSE_ENGINES, 0, 0}, &Room::veng6LookAtImpulseEngines },
-	{ {ACTION_LOOK, HOTSPOT_LEFT_CONSOLE,    0, 0}, &Room::veng6LookAtLeftConsole },
-	{ {ACTION_LOOK, OBJECT_JUNCTION_BOX,     0, 0}, &Room::veng6LookAtJunctionBox },
-	{ {ACTION_LOOK, OBJECT_JOURNAL,          0, 0}, &Room::veng6LookAtJournal },
-	{ {ACTION_LOOK, OBJECT_KIRK,             0, 0}, &Room::veng6LookAtKirk },
-	{ {ACTION_LOOK, OBJECT_SPOCK,            0, 0}, &Room::veng6LookAtSpock },
-	{ {ACTION_LOOK, OBJECT_MCCOY,            0, 0}, &Room::veng6LookAtMccoy },
-	{ {ACTION_LOOK, OBJECT_REDSHIRT,         0, 0}, &Room::veng6LookAtRedshirt },
-	{ {ACTION_LOOK, OBJECT_DEAD_GUY,         0, 0}, &Room::veng6LookAtDeadGuy },
-	{ {ACTION_LOOK, 0xff,                    0, 0}, &Room::veng6LookAnywhere },
-	{ {ACTION_TALK, OBJECT_KIRK,             0, 0}, &Room::veng6TalkToKirk },
-	{ {ACTION_TALK, OBJECT_SPOCK,            0, 0}, &Room::veng6TalkToSpock },
-	{ {ACTION_TALK, OBJECT_MCCOY,            0, 0}, &Room::veng6TalkToMccoy },
-	{ {ACTION_TALK, OBJECT_REDSHIRT,         0, 0}, &Room::veng6TalkToRedshirt },
+	{ { ACTION_LOOK, HOTSPOT_LEFT_PORT, 0, 0 }, &Room::veng6LookAtLeftPort },
+	{ { ACTION_LOOK, HOTSPOT_RIGHT_PORT, 0, 0 }, &Room::veng6LookAtRightPort },
+	{ { ACTION_LOOK, OBJECT_DOOR, 0, 0 }, &Room::veng6LookAtDoor },
+	{ { ACTION_LOOK, HOTSPOT_DOOR, 0, 0 }, &Room::veng6LookAtDoor },
+	{ { ACTION_LOOK, HOTSPOT_OIL_CANISTER, 0, 0 }, &Room::veng6LookAtOilCanister },
+	{ { ACTION_LOOK, OBJECT_CABINET, 0, 0 }, &Room::veng6LookAtCabinet },
+	{ { ACTION_LOOK, HOTSPOT_CABINET, 0, 0 }, &Room::veng6LookAtCabinet },
+	{ { ACTION_LOOK, OBJECT_CABLE_2, 0, 0 }, &Room::veng6LookAtCable },
+	{ { ACTION_LOOK, OBJECT_CABLE_1, 0, 0 }, &Room::veng6LookAtCable },
+	{ { ACTION_LOOK, HOTSPOT_RIGHT_CONSOLE, 0, 0 }, &Room::veng6LookAtRightConsole },
+	{ { ACTION_LOOK, OBJECT_IMPULSE_ENGINES, 0, 0 }, &Room::veng6LookAtImpulseEngines },
+	{ { ACTION_LOOK, HOTSPOT_IMPULSE_ENGINES, 0, 0 }, &Room::veng6LookAtImpulseEngines },
+	{ { ACTION_LOOK, HOTSPOT_LEFT_CONSOLE, 0, 0 }, &Room::veng6LookAtLeftConsole },
+	{ { ACTION_LOOK, OBJECT_JUNCTION_BOX, 0, 0 }, &Room::veng6LookAtJunctionBox },
+	{ { ACTION_LOOK, OBJECT_JOURNAL, 0, 0 }, &Room::veng6LookAtJournal },
+	{ { ACTION_LOOK, OBJECT_KIRK, 0, 0 }, &Room::veng6LookAtKirk },
+	{ { ACTION_LOOK, OBJECT_SPOCK, 0, 0 }, &Room::veng6LookAtSpock },
+	{ { ACTION_LOOK, OBJECT_MCCOY, 0, 0 }, &Room::veng6LookAtMccoy },
+	{ { ACTION_LOOK, OBJECT_REDSHIRT, 0, 0 }, &Room::veng6LookAtRedshirt },
+	{ { ACTION_LOOK, OBJECT_DEAD_GUY, 0, 0 }, &Room::veng6LookAtDeadGuy },
+	{ { ACTION_LOOK, 0xff, 0, 0 }, &Room::veng6LookAnywhere },
+	{ { ACTION_TALK, OBJECT_KIRK, 0, 0 }, &Room::veng6TalkToKirk },
+	{ { ACTION_TALK, OBJECT_SPOCK, 0, 0 }, &Room::veng6TalkToSpock },
+	{ { ACTION_TALK, OBJECT_MCCOY, 0, 0 }, &Room::veng6TalkToMccoy },
+	{ { ACTION_TALK, OBJECT_REDSHIRT, 0, 0 }, &Room::veng6TalkToRedshirt },
 
-	{ {ACTION_USE, OBJECT_ICABLE1, HOTSPOT_LEFT_PORT,    0}, &Room::veng6UseCable1OnLeftPort },
-	{ {ACTION_USE, OBJECT_ICABLE1, HOTSPOT_LEFT_CONSOLE, 0}, &Room::veng6UseCable1OnLeftPort },
-	{ {ACTION_USE, OBJECT_ICABLE2, HOTSPOT_LEFT_PORT,    0}, &Room::veng6UseCable2OnLeftPort },
-	{ {ACTION_USE, OBJECT_ICABLE2, HOTSPOT_LEFT_CONSOLE, 0}, &Room::veng6UseCable2OnLeftPort },
-	{ {ACTION_DONE_WALK, 3,                           0, 0}, &Room::veng6KirkOrSpockReachedLeftPort },
-	{ {ACTION_DONE_WALK, 4,                           0, 0}, &Room::veng6KirkOrSpockReachedLeftPort },
-	{ {ACTION_DONE_ANIM, 5,                           0, 0}, &Room::veng6AttachedLeftCable },
+	{ { ACTION_USE, OBJECT_ICABLE1, HOTSPOT_LEFT_PORT, 0 }, &Room::veng6UseCable1OnLeftPort },
+	{ { ACTION_USE, OBJECT_ICABLE1, HOTSPOT_LEFT_CONSOLE, 0 }, &Room::veng6UseCable1OnLeftPort },
+	{ { ACTION_USE, OBJECT_ICABLE2, HOTSPOT_LEFT_PORT, 0 }, &Room::veng6UseCable2OnLeftPort },
+	{ { ACTION_USE, OBJECT_ICABLE2, HOTSPOT_LEFT_CONSOLE, 0 }, &Room::veng6UseCable2OnLeftPort },
+	{ { ACTION_DONE_WALK, 3, 0, 0 }, &Room::veng6KirkOrSpockReachedLeftPort },
+	{ { ACTION_DONE_WALK, 4, 0, 0 }, &Room::veng6KirkOrSpockReachedLeftPort },
+	{ { ACTION_DONE_ANIM, 5, 0, 0 }, &Room::veng6AttachedLeftCable },
 
-	{ {ACTION_USE, OBJECT_ICABLE1, HOTSPOT_RIGHT_PORT,    0}, &Room::veng6UseCable1OnRightPort },
-	{ {ACTION_USE, OBJECT_ICABLE1, HOTSPOT_RIGHT_CONSOLE, 0}, &Room::veng6UseCable1OnRightPort },
-	{ {ACTION_USE, OBJECT_ICABLE2, HOTSPOT_RIGHT_PORT,    0}, &Room::veng6UseCable2OnRightPort },
-	{ {ACTION_USE, OBJECT_ICABLE2, HOTSPOT_RIGHT_CONSOLE, 0}, &Room::veng6UseCable2OnRightPort },
-	{ {ACTION_DONE_WALK, 6,                           0, 0}, &Room::veng6KirkOrSpockReachedRightPort },
-	{ {ACTION_DONE_WALK, 7,                           0, 0}, &Room::veng6KirkOrSpockReachedRightPort },
-	{ {ACTION_DONE_ANIM, 8,                           0, 0}, &Room::veng6AttachedRightCable },
+	{ { ACTION_USE, OBJECT_ICABLE1, HOTSPOT_RIGHT_PORT, 0 }, &Room::veng6UseCable1OnRightPort },
+	{ { ACTION_USE, OBJECT_ICABLE1, HOTSPOT_RIGHT_CONSOLE, 0 }, &Room::veng6UseCable1OnRightPort },
+	{ { ACTION_USE, OBJECT_ICABLE2, HOTSPOT_RIGHT_PORT, 0 }, &Room::veng6UseCable2OnRightPort },
+	{ { ACTION_USE, OBJECT_ICABLE2, HOTSPOT_RIGHT_CONSOLE, 0 }, &Room::veng6UseCable2OnRightPort },
+	{ { ACTION_DONE_WALK, 6, 0, 0 }, &Room::veng6KirkOrSpockReachedRightPort },
+	{ { ACTION_DONE_WALK, 7, 0, 0 }, &Room::veng6KirkOrSpockReachedRightPort },
+	{ { ACTION_DONE_ANIM, 8, 0, 0 }, &Room::veng6AttachedRightCable },
 
-	{ {ACTION_USE, OBJECT_SPOCK,    OBJECT_JUNCTION_BOX, 0}, &Room::veng6UseCrewmanOnJunctionBox },
-	{ {ACTION_USE, OBJECT_MCCOY,    OBJECT_JUNCTION_BOX, 0}, &Room::veng6UseCrewmanOnJunctionBox },
-	{ {ACTION_USE, OBJECT_REDSHIRT, OBJECT_JUNCTION_BOX, 0}, &Room::veng6UseCrewmanOnJunctionBox },
-	{ {ACTION_USE, OBJECT_KIRK,     OBJECT_JUNCTION_BOX, 0}, &Room::veng6UseCrewmanOnJunctionBox },
-	{ {ACTION_DONE_WALK, 9,                           0, 0}, &Room::veng6SpockReachedJunctionBox },
-	{ {ACTION_DONE_ANIM, 10,                          0, 0}, &Room::veng6SpockAdjustedJunctionBox },
+	{ { ACTION_USE, OBJECT_SPOCK, OBJECT_JUNCTION_BOX, 0 }, &Room::veng6UseCrewmanOnJunctionBox },
+	{ { ACTION_USE, OBJECT_MCCOY, OBJECT_JUNCTION_BOX, 0 }, &Room::veng6UseCrewmanOnJunctionBox },
+	{ { ACTION_USE, OBJECT_REDSHIRT, OBJECT_JUNCTION_BOX, 0 }, &Room::veng6UseCrewmanOnJunctionBox },
+	{ { ACTION_USE, OBJECT_KIRK, OBJECT_JUNCTION_BOX, 0 }, &Room::veng6UseCrewmanOnJunctionBox },
+	{ { ACTION_DONE_WALK, 9, 0, 0 }, &Room::veng6SpockReachedJunctionBox },
+	{ { ACTION_DONE_ANIM, 10, 0, 0 }, &Room::veng6SpockAdjustedJunctionBox },
 
-	{ {ACTION_USE, OBJECT_IHYPO, HOTSPOT_OIL_CANISTER, 0}, &Room::veng6UseHypoOnOilCanister },
-	{ {ACTION_DONE_WALK, 13,                        0, 0}, &Room::veng6ReachedOilCanister },
-	{ {ACTION_DONE_ANIM, 14,                        0, 0}, &Room::veng6FilledHypoWithOil },
+	{ { ACTION_USE, OBJECT_IHYPO, HOTSPOT_OIL_CANISTER, 0 }, &Room::veng6UseHypoOnOilCanister },
+	{ { ACTION_DONE_WALK, 13, 0, 0 }, &Room::veng6ReachedOilCanister },
+	{ { ACTION_DONE_ANIM, 14, 0, 0 }, &Room::veng6FilledHypoWithOil },
 
-	{ {ACTION_USE, OBJECT_KIRK, OBJECT_CABINET, 0}, &Room::veng6UseCabinet },
-	{ {ACTION_DONE_WALK, 15,                 0, 0}, &Room::veng6ReachedCabinet },
-	{ {ACTION_DONE_ANIM, 16,                 0, 0}, &Room::veng6OpenedOrClosedCabinet },
+	{ { ACTION_USE, OBJECT_KIRK, OBJECT_CABINET, 0 }, &Room::veng6UseCabinet },
+	{ { ACTION_DONE_WALK, 15, 0, 0 }, &Room::veng6ReachedCabinet },
+	{ { ACTION_DONE_ANIM, 16, 0, 0 }, &Room::veng6OpenedOrClosedCabinet },
 
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_IMPULSE_ENGINES, 0}, &Room::veng6UseSTricorderOnImpulseEngines },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_RIGHT_CONSOLE,   0}, &Room::veng6UseSTricorderOnRightConsole },
-	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_JUNCTION_BOX,     0}, &Room::veng6UseSTricorderOnJunctionBox },
-	{ {ACTION_USE, OBJECT_IFUSION,  HOTSPOT_LEFT_CONSOLE,    0}, &Room::veng6UsePowerPackOnLeftConsole },
-	{ {ACTION_GET, OBJECT_JUNCTION_BOX,                   0, 0}, &Room::veng6GetJunctionBox },
-	{ {ACTION_GET, HOTSPOT_OIL_CANISTER,                  0, 0}, &Room::veng6GetOilCanister },
-	{ {ACTION_GET, OBJECT_JOURNAL,                        0, 0}, &Room::veng6GetEngineeringJournal },
-	{ {ACTION_DONE_WALK, 11,                              0, 0}, &Room::veng6ReachedEngineeringJournal },
-	{ {ACTION_DONE_ANIM, 12,                              0, 0}, &Room::veng6TookEngineeringJournal },
+	{ { ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_IMPULSE_ENGINES, 0 }, &Room::veng6UseSTricorderOnImpulseEngines },
+	{ { ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_RIGHT_CONSOLE, 0 }, &Room::veng6UseSTricorderOnRightConsole },
+	{ { ACTION_USE, OBJECT_ISTRICOR, OBJECT_JUNCTION_BOX, 0 }, &Room::veng6UseSTricorderOnJunctionBox },
+	{ { ACTION_USE, OBJECT_IFUSION, HOTSPOT_LEFT_CONSOLE, 0 }, &Room::veng6UsePowerPackOnLeftConsole },
+	{ { ACTION_GET, OBJECT_JUNCTION_BOX, 0, 0 }, &Room::veng6GetJunctionBox },
+	{ { ACTION_GET, HOTSPOT_OIL_CANISTER, 0, 0 }, &Room::veng6GetOilCanister },
+	{ { ACTION_GET, OBJECT_JOURNAL, 0, 0 }, &Room::veng6GetEngineeringJournal },
+	{ { ACTION_DONE_WALK, 11, 0, 0 }, &Room::veng6ReachedEngineeringJournal },
+	{ { ACTION_DONE_ANIM, 12, 0, 0 }, &Room::veng6TookEngineeringJournal },
 
 	// Common code
-	{ {ACTION_TICK, 0xff, 0xff, 0xff}, &Room::vengaTick },
-	{ {ACTION_USE, OBJECT_IPHASERS, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
-	{ {ACTION_USE, OBJECT_IPHASERK, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
-	{ {ACTION_LOOK, OBJECT_IHYPO,          0, 0}, &Room::vengaLookAtHypo },
-	{ {ACTION_USE, OBJECT_ICOMM, OBJECT_KIRK, 0}, &Room::vengaUseCommunicator },
-	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
-	{ {ACTION_USE, OBJECT_MCCOY,    OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
+	{ { ACTION_TICK, 0xff, 0xff, 0xff }, &Room::vengaTick },
+	{ { ACTION_USE, OBJECT_IPHASERS, 0xff, 0 }, &Room::vengaUsePhaserAnywhere },
+	{ { ACTION_USE, OBJECT_IPHASERK, 0xff, 0 }, &Room::vengaUsePhaserAnywhere },
+	{ { ACTION_LOOK, OBJECT_IHYPO, 0, 0 }, &Room::vengaLookAtHypo },
+	{ { ACTION_USE, OBJECT_ICOMM, OBJECT_KIRK, 0 }, &Room::vengaUseCommunicator },
+	{ { ACTION_USE, OBJECT_IMEDKIT, OBJECT_DEAD_GUY, 0 }, &Room::vengaUseMccoyOnDeadGuy },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_DEAD_GUY, 0 }, &Room::vengaUseMccoyOnDeadGuy },
+	{ { ACTION_USE, OBJECT_MCCOY, OBJECT_DEAD_GUY, 0 }, &Room::vengaUseMccoyOnDeadGuy },
 
 	// ENHANCEMENT
-	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_IMPULSE_ENGINES, 0}, &Room::veng6UseSTricorderOnImpulseEngines },
+	{ { ACTION_USE, OBJECT_ISTRICOR, OBJECT_IMPULSE_ENGINES, 0 }, &Room::veng6UseSTricorderOnImpulseEngines },
 };
 
 extern const int veng6NumActions = ARRAYSIZE(veng6ActionList);
-
 
 #define DOOR_X 0x13e
 #define DOOR_Y 0xa8
@@ -258,7 +257,7 @@ void Room::veng6LookAnywhere() {
 }
 
 void Room::veng6TalkToKirk() {
-	showText(TX_SPEAKER_KIRK,  TX_VEN6_005);
+	showText(TX_SPEAKER_KIRK, TX_VEN6_005);
 	showText(TX_SPEAKER_MCCOY, TX_VEN6_009);
 }
 
@@ -289,7 +288,7 @@ void Room::veng6UseCableOnLeftPort(byte cable) {
 	if (!(_awayMission->veng.junctionCablesConnected & 1)) {
 		_awayMission->disableInput = true;
 		walkCrewmanC(OBJECT_SPOCK, 0x91, 0xb4, &Room::veng6KirkOrSpockReachedLeftPort);
-		walkCrewmanC(OBJECT_KIRK,  0x5c, 0xa0, &Room::veng6KirkOrSpockReachedLeftPort);
+		walkCrewmanC(OBJECT_KIRK, 0x5c, 0xa0, &Room::veng6KirkOrSpockReachedLeftPort);
 	}
 }
 
@@ -353,7 +352,7 @@ void Room::veng6UseCrewmanOnJunctionBox() {
 			showText(TX_SPEAKER_SPOCK, TX_VEN6_017);
 		else {
 			showText(TX_SPEAKER_SPOCK, TX_VEN6_016);
-			showText(TX_SPEAKER_KIRK,  TX_VEN6_002);
+			showText(TX_SPEAKER_KIRK, TX_VEN6_002);
 			walkCrewmanC(OBJECT_SPOCK, 0x99, 0xb4, &Room::veng6SpockReachedJunctionBox);
 		}
 	} else
@@ -421,7 +420,7 @@ void Room::veng6UseSTricorderOnImpulseEngines() {
 		spockScan(DIR_S, TX_VEN6_010);
 	else {
 		spockScan(DIR_S, TX_VEN6_020);
-		showText(TX_SPEAKER_KIRK,  TX_VEN6_001);
+		showText(TX_SPEAKER_KIRK, TX_VEN6_001);
 		showText(TX_SPEAKER_SPOCK, TX_VEN6_022);
 	}
 }

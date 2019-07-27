@@ -32,7 +32,7 @@ class CryoEngine;
 class HnmPlayer {
 public:
 	Common::File *_file;
-	HNMHeader     _header;
+	HNMHeader _header;
 
 private:
 	CryoEngine *_vm;
@@ -66,15 +66,15 @@ private:
 	bool _preserveColor0;
 	int16 decompTable[256];
 	bool _safePalette;
-	int     _frameNum;
-	byte   *_tmpBuffer[2];
-	byte   *_finalBuffer;
-	byte   *_newFrameBuffer;
-	byte   *_oldFrameBuffer;
-	byte   *_readBuffer;
-	byte   *_dataPtr;
+	int _frameNum;
+	byte *_tmpBuffer[2];
+	byte *_finalBuffer;
+	byte *_newFrameBuffer;
+	byte *_oldFrameBuffer;
+	byte *_readBuffer;
+	byte *_dataPtr;
 	color_t _palette[256];
-	int     _totalRead;
+	int _totalRead;
 
 	void (*_customChunkHandler)(byte *buffer, int size, int16 id, char h6, char h7);
 

@@ -33,11 +33,13 @@ class CFruit : public CCarry {
 	bool LemonFallsFromTreeMsg(CLemonFallsFromTreeMsg *msg);
 	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
 	bool FrameMsg(CFrameMsg *msg);
+
 private:
 	int _field12C;
 	int _field130;
 	int _field134;
 	int _field138;
+
 public:
 	CLASSDEF;
 	CFruit();

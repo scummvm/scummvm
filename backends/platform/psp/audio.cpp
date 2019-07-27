@@ -20,11 +20,11 @@
  *
  */
 
-#include <pspthreadman.h>
 #include <pspaudio.h>
+#include <pspthreadman.h>
 
-#include "common/scummsys.h"
 #include "backends/platform/psp/audio.h"
+#include "common/scummsys.h"
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging function calls */
 //#define __PSP_DEBUG_PRINT__	/* For debug printouts */
@@ -39,7 +39,7 @@ bool PspAudio::open(uint32 freq, uint32 numOfChannels, uint32 numOfSamples, call
 	}
 
 	PSP_DEBUG_PRINT("freq[%d], numOfChannels[%d], numOfSamples[%d], callback[%p], userData[%x]\n",
-			freq, numOfChannels, numOfSamples, callback, (uint32)userData);
+	                freq, numOfChannels, numOfSamples, callback, (uint32)userData);
 
 	numOfSamples = PSP_AUDIO_SAMPLE_ALIGN(numOfSamples);
 	uint32 bufLen = numOfSamples * numOfChannels * NUM_BUFFERS * sizeof(uint16);
@@ -51,7 +51,7 @@ bool PspAudio::open(uint32 freq, uint32 numOfChannels, uint32 numOfSamples, call
 		PSP_ERROR("failed to allocate memory for audio buffers\n");
 		return false;
 	}
-	memset(_buffers[0], 0, bufLen);	// clean the buffer
+	memset(_buffers[0], 0, bufLen); // clean the buffer
 
 	// Fill in the rest of the buffer pointers
 	byte *pBuffer = _buffers[0];
@@ -72,16 +72,16 @@ bool PspAudio::open(uint32 freq, uint32 numOfChannels, uint32 numOfSamples, call
 	// Save our data
 	_numOfChannels = numOfChannels;
 	_numOfSamples = numOfSamples;
-	_bufferSize = numOfSamples * numOfChannels * sizeof(uint16);	// should be the right size to send the app
+	_bufferSize = numOfSamples * numOfChannels * sizeof(uint16); // should be the right size to send the app
 	_callback = callback;
 	_userData = userData;
 	_bufferToFill = 0;
 	_bufferToPlay = 0;
 
 	_init = true;
-	_paused = true;	// start in paused mode
+	_paused = true; // start in paused mode
 
-	threadCreateAndStart("audioThread", PRIORITY_AUDIO_THREAD, STACK_AUDIO_THREAD);	// start the consumer thread
+	threadCreateAndStart("audioThread", PRIORITY_AUDIO_THREAD, STACK_AUDIO_THREAD); // start the consumer thread
 
 	return true;
 }
@@ -91,11 +91,11 @@ void PspAudio::threadFunction() {
 	assert(_callback);
 	PSP_DEBUG_PRINT_FUNC("audio thread started\n");
 
-	while (_init) {		// Keep looping so long as we haven't been told to stop
+	while (_init) { // Keep looping so long as we haven't been told to stop
 		if (_paused)
 			PSP_DEBUG_PRINT("audio thread paused\n");
-		while (_paused) {	// delay until we stop pausing
-			PspThread::delayMicros(100000);	// 100ms
+		while (_paused) { // delay until we stop pausing
+			PspThread::delayMicros(100000); // 100ms
 			if (!_paused)
 				PSP_DEBUG_PRINT("audio thread unpaused\n");
 		}

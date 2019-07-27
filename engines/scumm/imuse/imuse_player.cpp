@@ -20,8 +20,6 @@
  *
  */
 
-
-
 #include "common/util.h"
 #include "engines/engine.h"
 
@@ -47,42 +45,40 @@ extern MidiParser *MidiParser_createRO();
 
 uint16 Player::_active_notes[128];
 
-
-
 //////////////////////////////////////////////////
 //
 // IMuse Player implementation
 //
 //////////////////////////////////////////////////
 
-Player::Player() :
-	_midi(NULL),
-	_parser(NULL),
-	_parts(NULL),
-	_active(false),
-	_scanning(false),
-	_id(0),
-	_priority(0),
-	_volume(0),
-	_pan(0),
-	_transpose(0),
-	_detune(0),
-	_note_offset(0),
-	_vol_eff(0),
-	_track_index(0),
-	_loop_to_beat(0),
-	_loop_from_beat(0),
-	_loop_counter(0),
-	_loop_to_tick(0),
-	_loop_from_tick(0),
-	_speed(128),
-	_isMT32(false),
-	_isMIDI(false),
-	_supportsPercussion(false),
-	_se(0),
-	_vol_chan(0),
-	_abort(false),
-	_music_tick(0) {
+Player::Player()
+  : _midi(NULL)
+  , _parser(NULL)
+  , _parts(NULL)
+  , _active(false)
+  , _scanning(false)
+  , _id(0)
+  , _priority(0)
+  , _volume(0)
+  , _pan(0)
+  , _transpose(0)
+  , _detune(0)
+  , _note_offset(0)
+  , _vol_eff(0)
+  , _track_index(0)
+  , _loop_to_beat(0)
+  , _loop_from_beat(0)
+  , _loop_counter(0)
+  , _loop_to_tick(0)
+  , _loop_from_tick(0)
+  , _speed(128)
+  , _isMT32(false)
+  , _isMIDI(false)
+  , _supportsPercussion(false)
+  , _se(0)
+  , _vol_chan(0)
+  , _abort(false)
+  , _music_tick(0) {
 }
 
 Player::~Player() {
@@ -136,8 +132,7 @@ int Player::getMusicTimer() const {
 bool Player::isFadingOut() const {
 	int i;
 	for (i = 0; i < ARRAYSIZE(_parameterFaders); ++i) {
-		if (_parameterFaders[i].param == ParameterFader::pfVolume &&
-		        _parameterFaders[i].end == 0) {
+		if (_parameterFaders[i].param == ParameterFader::pfVolume && _parameterFaders[i].end == 0) {
 			return true;
 		}
 	}
@@ -651,7 +646,6 @@ Part *Player::getPart(uint8 chan) {
 		_parts->_prev = part;
 	_parts = part;
 
-
 	part->_chan = chan;
 	part->setup(this);
 
@@ -823,12 +817,12 @@ int Player::query_part_param(int param, byte chan) {
 			case 15:
 				return part->_vol;
 			case 16:
-// FIXME: Need to know where this occurs...
+				// FIXME: Need to know where this occurs...
 				error("Trying to cast instrument (%d, %d) -- please tell Fingolfin", param, chan);
-// In old versions of the code, this used to return part->_program.
-// This was changed in revision 2.29 of imuse.cpp (where this code used
-// to reside).
-//				return (int)part->_instrument;
+				// In old versions of the code, this used to return part->_program.
+				// This was changed in revision 2.29 of imuse.cpp (where this code used
+				// to reside).
+				//				return (int)part->_instrument;
 			case 17:
 				return part->_transpose;
 			default:
@@ -855,8 +849,7 @@ void Player::onTimer() {
 	uint beat_index = target_tick / TICKS_PER_BEAT + 1;
 	uint tick_index = target_tick % TICKS_PER_BEAT;
 
-	if (_loop_counter && (beat_index > _loop_from_beat ||
-	    (beat_index == _loop_from_beat && tick_index >= _loop_from_tick))) {
+	if (_loop_counter && (beat_index > _loop_from_beat || (beat_index == _loop_from_beat && tick_index >= _loop_from_tick))) {
 		_loop_counter--;
 		jump(_track_index, _loop_to_beat, _loop_to_tick);
 	}
@@ -888,16 +881,16 @@ int Player::addParameterFader(int param, int target, int time) {
 	case ParameterFader::pfTranspose:
 		// FIXME: Is this transpose? And what's the scale?
 		// It's set to fade to -2400 in the tunnel of love.
-//		debug(0, "parameterTransition(3) outside Tunnel of Love?");
+		//		debug(0, "parameterTransition(3) outside Tunnel of Love?");
 		start = _transpose;
-//		target /= 200;
+		//		target /= 200;
 		break;
 
 	case ParameterFader::pfSpeed: // impSpeed
 		// FIXME: Is the speed from 0-100?
 		// Right now I convert it to 0-128.
 		start = _speed;
-//		target = target * 128 / 100;
+		//		target = target * 128 / 100;
 		break;
 
 	case 127: {
@@ -907,8 +900,7 @@ int Player::addParameterFader(int param, int target, int time) {
 		for (i = ARRAYSIZE(_parameterFaders); i; --i, ++ptr)
 			ptr->param = 0;
 		return 0;
-	}
-	break;
+	} break;
 
 	default:
 		debug(0, "Player::addParameterFader(%d, %d, %d): Unknown parameter", param, target, time);
@@ -1024,8 +1016,6 @@ void Player::metaEvent(byte type, byte *msg, uint16 len) {
 	if (type == 0x2F)
 		clear();
 }
-
-
 
 ////////////////////////////////////////
 //

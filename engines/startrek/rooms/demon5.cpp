@@ -236,14 +236,14 @@ void Room::demon5TalkToSpock() {
 
 void Room::demon5TalkToRedshirt() {
 	showText(TX_SPEAKER_EVERTS, 45, true);
-	showText(TX_SPEAKER_MCCOY,  21, true);
-	showText(TX_SPEAKER_KIRK,   3, true);
+	showText(TX_SPEAKER_MCCOY, 21, true);
+	showText(TX_SPEAKER_KIRK, 3, true);
 }
 
 void Room::demon5TalkToMccoy() {
 	if (_awayMission->demon.curedChub) {
 		showText(TX_SPEAKER_MCCOY, 23, true);
-		showText(TX_SPEAKER_KIRK,  4, true);
+		showText(TX_SPEAKER_KIRK, 4, true);
 		if (!_awayMission->redshirtDead) {
 			showText(TX_SPEAKER_EVERTS, 44, true);
 			showText(TX_SPEAKER_MCCOY, 20, true);
@@ -289,7 +289,6 @@ void Room::demon5UseMTricorderOnChub() {
 		}
 	}
 }
-
 
 void Room::demon5UseMTricorderOnGrisnash() {
 	if (_roomVar.demon.scannedGrisnash)

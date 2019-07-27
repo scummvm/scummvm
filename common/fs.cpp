@@ -20,10 +20,10 @@
  *
  */
 
-#include "common/system.h"
-#include "common/textconsole.h"
 #include "backends/fs/abstract-fs.h"
 #include "backends/fs/fs-factory.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 
 namespace Common {
 
@@ -31,7 +31,7 @@ FSNode::FSNode() {
 }
 
 FSNode::FSNode(AbstractFSNode *realNode)
-	: _realNode(realNode) {
+  : _realNode(realNode) {
 }
 
 FSNode::FSNode(const String &p) {
@@ -46,7 +46,7 @@ FSNode::FSNode(const String &p) {
 	_realNode = SharedPtr<AbstractFSNode>(tmp);
 }
 
-bool FSNode::operator<(const FSNode& node) const {
+bool FSNode::operator<(const FSNode &node) const {
 	// Directories come before files, i.e., are "lower".
 	if (isDirectory() != node.isDirectory())
 		return isDirectory();
@@ -153,21 +153,33 @@ WriteStream *FSNode::createWriteStream() const {
 }
 
 FSDirectory::FSDirectory(const FSNode &node, int depth, bool flat)
-  : _node(node), _cached(false), _depth(depth), _flat(flat) {
+  : _node(node)
+  , _cached(false)
+  , _depth(depth)
+  , _flat(flat) {
 }
 
 FSDirectory::FSDirectory(const String &prefix, const FSNode &node, int depth, bool flat)
-  : _node(node), _cached(false), _depth(depth), _flat(flat) {
+  : _node(node)
+  , _cached(false)
+  , _depth(depth)
+  , _flat(flat) {
 
 	setPrefix(prefix);
 }
 
 FSDirectory::FSDirectory(const String &name, int depth, bool flat)
-  : _node(name), _cached(false), _depth(depth), _flat(flat) {
+  : _node(name)
+  , _cached(false)
+  , _depth(depth)
+  , _flat(flat) {
 }
 
 FSDirectory::FSDirectory(const String &prefix, const String &name, int depth, bool flat)
-  : _node(name), _cached(false), _depth(depth), _flat(flat) {
+  : _node(name)
+  , _cached(false)
+  , _depth(depth)
+  , _flat(flat) {
 
 	setPrefix(prefix);
 }
@@ -252,7 +264,7 @@ FSDirectory *FSDirectory::getSubDirectory(const String &prefix, const String &na
 	return new FSDirectory(prefix, *node, depth, flat);
 }
 
-void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& prefix) const {
+void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String &prefix) const {
 	if (depth <= 0)
 		return;
 
@@ -260,7 +272,7 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& 
 	node.getChildren(list, FSNode::kListAll);
 
 	FSList::iterator it = list.begin();
-	for ( ; it != list.end(); ++it) {
+	for (; it != list.end(); ++it) {
 		String name = prefix + it->getName();
 
 		// don't touch name as it might be used for warning messages
@@ -286,10 +298,9 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& 
 			}
 		}
 	}
-
 }
 
-void FSDirectory::ensureCached() const  {
+void FSDirectory::ensureCached() const {
 	if (_cached)
 		return;
 	cacheDirectoryRecursive(_node, _depth, _prefix);
@@ -310,7 +321,7 @@ int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const String &patt
 
 	int matches = 0;
 	NodeCache::const_iterator it = _fileCache.begin();
-	for ( ; it != _fileCache.end(); ++it) {
+	for (; it != _fileCache.end(); ++it) {
 		if (it->_key.matchString(lowercasePattern, false, true)) {
 			list.push_back(ArchiveMemberPtr(new FSNode(it->_value)));
 			matches++;
@@ -334,6 +345,5 @@ int FSDirectory::listMembers(ArchiveMemberList &list) const {
 
 	return files;
 }
-
 
 } // End of namespace Common

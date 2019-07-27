@@ -47,12 +47,24 @@
 #include "common/json.h"
 
 #ifdef __MINGW32__
-#define wcsncasecmp wcsnicmp
+#	define wcsncasecmp wcsnicmp
 #endif
 
 // Macros to free an array/object
-#define FREE_ARRAY(x) { JSONArray::iterator iter; for (iter = x.begin(); iter != x.end(); iter++) { delete *iter; } }
-#define FREE_OBJECT(x) { JSONObject::iterator iter; for (iter = x.begin(); iter != x.end(); iter++) { delete (*iter)._value; } }
+#define FREE_ARRAY(x)                                 \
+	{                                                   \
+		JSONArray::iterator iter;                         \
+		for (iter = x.begin(); iter != x.end(); iter++) { \
+			delete *iter;                                   \
+		}                                                 \
+	}
+#define FREE_OBJECT(x)                                \
+	{                                                   \
+		JSONObject::iterator iter;                        \
+		for (iter = x.begin(); iter != x.end(); iter++) { \
+			delete (*iter)._value;                          \
+		}                                                 \
+	}
 
 namespace Common {
 
@@ -150,21 +162,29 @@ bool JSON::extractString(const char **data, String &str) {
 
 			// Deal with the escaped char
 			switch (**data) {
-			case '"': next_char = '"';
+			case '"':
+				next_char = '"';
 				break;
-			case '\\': next_char = '\\';
+			case '\\':
+				next_char = '\\';
 				break;
-			case '/': next_char = '/';
+			case '/':
+				next_char = '/';
 				break;
-			case 'b': next_char = '\b';
+			case 'b':
+				next_char = '\b';
 				break;
-			case 'f': next_char = '\f';
+			case 'f':
+				next_char = '\f';
 				break;
-			case 'n': next_char = '\n';
+			case 'n':
+				next_char = '\n';
 				break;
-			case 'r': next_char = '\r';
+			case 'r':
+				next_char = '\r';
 				break;
-			case 't': next_char = '\t';
+			case 't':
+				next_char = '\t';
 				break;
 			case 'u': {
 				// We need 5 chars (4 hex + the 'u') or its not valid
@@ -298,7 +318,8 @@ JSONValue *JSONValue::parse(const char **data) {
 	else if (**data == '-' || (**data >= '0' && **data <= '9')) {
 		// Negative?
 		bool neg = **data == '-';
-		if (neg) (*data)++;
+		if (neg)
+			(*data)++;
 
 		long long int integer = 0;
 		double number = 0.0;
@@ -353,7 +374,8 @@ JSONValue *JSONValue::parse(const char **data) {
 		}
 
 		// Was it neg?
-		if (neg) number *= -1;
+		if (neg)
+			number *= -1;
 
 		if (onlyInteger)
 			return new JSONValue(neg ? -integer : integer);
@@ -946,7 +968,6 @@ String JSONValue::stringify(bool const prettyprint) const {
 	return stringifyImpl(indentDepth);
 }
 
-
 /**
 * Creates a JSON encoded string for the value with all necessary characters escaped
 *
@@ -1088,7 +1109,8 @@ String JSONValue::indent(size_t depth) {
 	const size_t indent_step = 2;
 	depth ? --depth : 0;
 	String indentStr;
-	for (size_t i = 0; i < depth * indent_step; ++i) indentStr += ' ';
+	for (size_t i = 0; i < depth * indent_step; ++i)
+		indentStr += ' ';
 	return indentStr;
 }
 

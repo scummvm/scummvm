@@ -20,15 +20,14 @@
  *
  */
 
-
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/detection_tables.h"
 #include "bladerunner/savefile.h"
 
 #include "common/config-manager.h"
-#include "common/system.h"
 #include "common/savefile.h"
 #include "common/serializer.h"
+#include "common/system.h"
 #include "common/translation.h"
 
 #include "engines/advancedDetector.h"
@@ -36,30 +35,22 @@
 namespace BladeRunner {
 
 static const PlainGameDescriptor bladeRunnerGames[] = {
-	{"bladerunner", "Blade Runner"},
-	{"bladerunner-final", "Blade Runner with restored content"},
-	{0, 0}
+	{ "bladerunner", "Blade Runner" },
+	{ "bladerunner-final", "Blade Runner with restored content" },
+	{ 0, 0 }
 };
 
 static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_SITCOM,
-		{
-			_s("Sitcom mode"),
-			_s("Game will add laughter after actor's line or narration"),
-			"sitcom",
-			false
-		}
-	},
-	{
-		GAMEOPTION_SHORTY,
-		{
-			_s("Shorty mode"),
-			_s("Game will shrink the actors and make their voices high pitched"),
-			"shorty",
-			false
-		}
-	},
+	{ GAMEOPTION_SITCOM,
+	  { _s("Sitcom mode"),
+	    _s("Game will add laughter after actor's line or narration"),
+	    "sitcom",
+	    false } },
+	{ GAMEOPTION_SHORTY,
+	  { _s("Shorty mode"),
+	    _s("Game will shrink the actors and make their voices high pitched"),
+	    "shorty",
+	    false } },
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
@@ -80,12 +71,11 @@ public:
 };
 
 BladeRunnerMetaEngine::BladeRunnerMetaEngine()
-	: AdvancedMetaEngine(
-		BladeRunner::gameDescriptions,
-		sizeof(BladeRunner::gameDescriptions[0]),
-		BladeRunner::bladeRunnerGames,
-		BladeRunner::optionsList) {}
-
+  : AdvancedMetaEngine(
+    BladeRunner::gameDescriptions,
+    sizeof(BladeRunner::gameDescriptions[0]),
+    BladeRunner::bladeRunnerGames,
+    BladeRunner::optionsList) {}
 
 const char *BladeRunnerMetaEngine::getName() const {
 	return "Blade Runner";
@@ -102,15 +92,7 @@ bool BladeRunnerMetaEngine::createInstance(OSystem *syst, Engine **engine, const
 }
 
 bool BladeRunnerMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		f == kSupportsListSaves ||
-		f == kSupportsLoadingDuringStartup ||
-		f == kSupportsDeleteSave ||
-		f == kSavesSupportMetaInfo ||
-		f == kSavesSupportThumbnail ||
-		f == kSavesSupportCreationDate ||
-		f == kSavesSupportPlayTime ||
-		f == kSimpleSavesNames;
+	return f == kSupportsListSaves || f == kSupportsLoadingDuringStartup || f == kSupportsDeleteSave || f == kSavesSupportMetaInfo || f == kSavesSupportThumbnail || f == kSavesSupportCreationDate || f == kSavesSupportPlayTime || f == kSimpleSavesNames;
 }
 
 SaveStateList BladeRunnerMetaEngine::listSaves(const char *target) const {
@@ -130,7 +112,7 @@ SaveStateDescriptor BladeRunnerMetaEngine::querySaveMetaInfos(const char *target
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(BLADERUNNER)
-	REGISTER_PLUGIN_DYNAMIC(BLADERUNNER, PLUGIN_TYPE_ENGINE, BladeRunnerMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(BLADERUNNER, PLUGIN_TYPE_ENGINE, BladeRunnerMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(BLADERUNNER, PLUGIN_TYPE_ENGINE, BladeRunnerMetaEngine);
+REGISTER_PLUGIN_STATIC(BLADERUNNER, PLUGIN_TYPE_ENGINE, BladeRunnerMetaEngine);
 #endif

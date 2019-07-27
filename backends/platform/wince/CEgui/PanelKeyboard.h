@@ -26,11 +26,11 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 
-#include "Toolbar.h"
 #include "EventsBuffer.h"
+#include "Toolbar.h"
 
-using GUI::Key;
 using CEKEYS::EventsBuffer;
+using GUI::Key;
 
 namespace CEGUI {
 
@@ -39,6 +39,7 @@ public:
 	PanelKeyboard(WORD reference);
 	virtual ~PanelKeyboard();
 	virtual bool action(int x, int y, bool pushed);
+
 private:
 	bool _state;
 	Key _lastKey;

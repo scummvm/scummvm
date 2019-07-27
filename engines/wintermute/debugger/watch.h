@@ -37,14 +37,15 @@ class Watch {
 	const Common::String _symbol;
 	int _enabled;
 	ScriptMonitor *_monitor;
+
 public:
-	Watch(const Common::String &filename, const Common::String &symbol, ScriptMonitor*);
+	Watch(const Common::String &filename, const Common::String &symbol, ScriptMonitor *);
 	Common::String getFilename() const;
 	Common::String getSymbol() const;
 	bool isEnabled() const;
 	void enable();
 	void disable();
-	void trigger(WatchInstance*);
+	void trigger(WatchInstance *);
 	virtual ~Watch();
 };
 }

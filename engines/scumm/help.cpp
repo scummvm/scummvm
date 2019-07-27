@@ -20,14 +20,12 @@
  *
  */
 
-
-
 #include "common/str.h"
 #include "common/util.h"
 
+#include "common/translation.h"
 #include "scumm/help.h"
 #include "scumm/scumm.h"
-#include "common/translation.h"
 
 namespace Scumm {
 
@@ -51,7 +49,7 @@ int ScummHelp::numPages(byte gameId) {
 	case GID_FT:
 	case GID_CMI:
 		return 3;
-/*	TODO - I don't know the controls for these games
+		/*	TODO - I don't know the controls for these games
 	case GID_PUTTDEMO:
 	case GID_PUTTPUTT:
 */
@@ -60,12 +58,17 @@ int ScummHelp::numPages(byte gameId) {
 	}
 }
 
-#define ADD_BIND(k,d) do { key[i] = k; dsc[i] = d; i++; } while (0)
-#define ADD_TEXT(d) ADD_BIND("",d)
-#define ADD_LINE ADD_BIND("","")
+#define ADD_BIND(k, d) \
+	do {                 \
+		key[i] = k;        \
+		dsc[i] = d;        \
+		i++;               \
+	} while (0)
+#define ADD_TEXT(d) ADD_BIND("", d)
+#define ADD_LINE ADD_BIND("", "")
 
 void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platform,
-				int page, String &title, String *&key, String *&dsc) {
+                              int page, String &title, String *&key, String *&dsc) {
 	key = new String[HELP_NUM_LINES];
 	dsc = new String[HELP_NUM_LINES];
 	int i = 0;

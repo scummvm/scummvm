@@ -96,10 +96,10 @@ protected:
 	virtual ~Resource() {}
 
 private:
-	Common::String _fileName;          ///< The absolute filename
-	uint _refCount;          ///< The number of locks
-	uint _type;              ///< The type of the resource
-	Common::List<Resource *>::iterator _iterator;        ///< Points to the resource position in the LRU list
+	Common::String _fileName; ///< The absolute filename
+	uint _refCount; ///< The number of locks
+	uint _type; ///< The type of the resource
+	Common::List<Resource *>::iterator _iterator; ///< Points to the resource position in the LRU list
 };
 
 } // End of namespace Sword25

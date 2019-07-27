@@ -59,7 +59,8 @@ class TeenAgentEngine;
 
 class Dialog {
 public:
-	Dialog(TeenAgentEngine *vm) : _vm(vm) { }
+	Dialog(TeenAgentEngine *vm)
+	  : _vm(vm) {}
 
 	uint16 pop(Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2);
 

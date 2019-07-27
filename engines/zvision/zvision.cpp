@@ -22,32 +22,32 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/zvision.h"
 #include "zvision/core/console.h"
-#include "zvision/scripting/script_manager.h"
-#include "zvision/graphics/render_manager.h"
-#include "zvision/graphics/cursors/cursor_manager.h"
 #include "zvision/file/save_manager.h"
-#include "zvision/text/string_manager.h"
-#include "zvision/scripting/menu.h"
 #include "zvision/file/search_manager.h"
+#include "zvision/graphics/cursors/cursor_manager.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/menu.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/sound/midi.h"
+#include "zvision/text/string_manager.h"
 #include "zvision/text/text.h"
 #include "zvision/text/truetype_font.h"
-#include "zvision/sound/midi.h"
+#include "zvision/zvision.h"
 
 #include "common/config-manager.h"
-#include "common/str.h"
-#include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/debug.h"
+#include "common/error.h"
+#include "common/file.h"
+#include "common/str.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "common/timer.h"
-#include "common/error.h"
-#include "common/system.h"
-#include "common/file.h"
 
-#include "gui/message.h"
-#include "engines/util.h"
 #include "audio/mixer.h"
+#include "engines/util.h"
+#include "gui/message.h"
 
 namespace ZVision {
 
@@ -56,52 +56,55 @@ namespace ZVision {
 struct zvisionIniSettings {
 	const char *name;
 	int16 slot;
-	int16 defaultValue;	// -1: use the bool value
+	int16 defaultValue; // -1: use the bool value
 	bool defaultBoolValue;
 	bool allowEditing;
 } settingsKeys[ZVISION_SETTINGS_KEYS_COUNT] = {
 	// Hardcoded settings
-	{"countrycode", StateKey_CountryCode, 0, false, false},	// always 0 = US, subtitles are shown for codes 0 - 4, unused
-	{"lineskipvideo", StateKey_VideoLineSkip, 0, false, false},	// video line skip, 0 = default, 1 = always, 2 = pixel double when possible, unused
-	{"installlevel", StateKey_InstallLevel, 0, false, false},	// 0 = full, checked by universe.scr
-	{"highquality", StateKey_HighQuality, -1, true, false},	// high panorama quality, unused
-	{"qsoundenabled", StateKey_Qsound, -1, true, false},	// 1 = enable QSound - TODO: not supported yet
-	{"debugcheats", StateKey_DebugCheats, -1, true, false},	// always start with the GOxxxx cheat enabled
+	{ "countrycode", StateKey_CountryCode, 0, false, false }, // always 0 = US, subtitles are shown for codes 0 - 4, unused
+	{ "lineskipvideo", StateKey_VideoLineSkip, 0, false, false }, // video line skip, 0 = default, 1 = always, 2 = pixel double when possible, unused
+	{ "installlevel", StateKey_InstallLevel, 0, false, false }, // 0 = full, checked by universe.scr
+	{ "highquality", StateKey_HighQuality, -1, true, false }, // high panorama quality, unused
+	{ "qsoundenabled", StateKey_Qsound, -1, true, false }, // 1 = enable QSound - TODO: not supported yet
+	{ "debugcheats", StateKey_DebugCheats, -1, true, false }, // always start with the GOxxxx cheat enabled
 	// Editable settings
-	{"keyboardturnspeed", StateKey_KbdRotateSpeed, 5, false, true},
-	{"panarotatespeed", StateKey_RotateSpeed, 540, false, true},	// checked by universe.scr
-	{"noanimwhileturning", StateKey_NoTurnAnim, -1, false, true},	// toggle playing animations during pana rotation
-	{"venusenabled", StateKey_VenusEnable, -1, true, true},
-	{"subtitles", StateKey_Subtitles, -1, true, true},
-	{"mpegmovies", StateKey_MPEGMovies, -1, true, true}		// Zork: Grand Inquisitor DVD hi-res MPEG movies (0 = normal, 1 = hires, 2 = disable option)
+	{ "keyboardturnspeed", StateKey_KbdRotateSpeed, 5, false, true },
+	{ "panarotatespeed", StateKey_RotateSpeed, 540, false, true }, // checked by universe.scr
+	{ "noanimwhileturning", StateKey_NoTurnAnim, -1, false, true }, // toggle playing animations during pana rotation
+	{ "venusenabled", StateKey_VenusEnable, -1, true, true },
+	{ "subtitles", StateKey_Subtitles, -1, true, true },
+	{ "mpegmovies", StateKey_MPEGMovies, -1, true, true } // Zork: Grand Inquisitor DVD hi-res MPEG movies (0 = normal, 1 = hires, 2 = disable option)
 };
 
 ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
-	: Engine(syst),
-	  _gameDescription(gameDesc),
-	  _resourcePixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0), /* RGB 555 */
-	  _screenPixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), /* RGB 565 */
-	  _desiredFrameTime(33), /* ~30 fps */
-	  _clock(_system),
-	  _scriptManager(nullptr),
-	  _renderManager(nullptr),
-	  _saveManager(nullptr),
-	  _stringManager(nullptr),
-	  _cursorManager(nullptr),
-	  _midiManager(nullptr),
-	  _rnd(nullptr),
-	  _console(nullptr),
-	  _menu(nullptr),
-	  _searchManager(nullptr),
-	  _textRenderer(nullptr),
-	  _doubleFPS(false),
-	  _audioId(0),
-	  _frameRenderDelay(2),
-	  _keyboardVelocity(0),
-	  _mouseVelocity(0),
-	  _videoIsPlaying(false),
-	  _renderedFrameCount(0),
-	  _fps(0) {
+  : Engine(syst)
+  , _gameDescription(gameDesc)
+  , _resourcePixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)
+  , /* RGB 555 */
+  _screenPixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)
+  , /* RGB 565 */
+  _desiredFrameTime(33)
+  , /* ~30 fps */
+  _clock(_system)
+  , _scriptManager(nullptr)
+  , _renderManager(nullptr)
+  , _saveManager(nullptr)
+  , _stringManager(nullptr)
+  , _cursorManager(nullptr)
+  , _midiManager(nullptr)
+  , _rnd(nullptr)
+  , _console(nullptr)
+  , _menu(nullptr)
+  , _searchManager(nullptr)
+  , _textRenderer(nullptr)
+  , _doubleFPS(false)
+  , _audioId(0)
+  , _frameRenderDelay(2)
+  , _keyboardVelocity(0)
+  , _mouseVelocity(0)
+  , _videoIsPlaying(false)
+  , _renderedFrameCount(0)
+  , _fps(0) {
 
 	debug(1, "ZVision::ZVision");
 
@@ -117,7 +120,7 @@ ZVision::~ZVision() {
 	delete _stringManager;
 	delete _saveManager;
 	delete _scriptManager;
-	delete _renderManager;	// should be deleted after the script manager
+	delete _renderManager; // should be deleted after the script manager
 	delete _rnd;
 	delete _midiManager;
 
@@ -283,10 +286,7 @@ Common::Error ZVision::run() {
 			liberationFontName += liberationFontSuffixes[j];
 			liberationFontName += ".ttf";
 
-			if (!Common::File::exists(fontName) && !_searchManager->hasFile(fontName) &&
-				!Common::File::exists(liberationFontName) && !_searchManager->hasFile(liberationFontName) &&
-				!Common::File::exists(freeFontName) && !_searchManager->hasFile(freeFontName) &&
-				!Common::File::exists("fonts.dat") && !_searchManager->hasFile("fonts.dat")) {
+			if (!Common::File::exists(fontName) && !_searchManager->hasFile(fontName) && !Common::File::exists(liberationFontName) && !_searchManager->hasFile(liberationFontName) && !Common::File::exists(freeFontName) && !_searchManager->hasFile(freeFontName) && !Common::File::exists("fonts.dat") && !_searchManager->hasFile("fonts.dat")) {
 				foundAllFonts = false;
 				break;
 			}
@@ -298,16 +298,15 @@ Common::Error ZVision::run() {
 
 	if (!foundAllFonts) {
 		GUI::MessageDialog dialog(
-				"Before playing this game, you'll need to copy the required "
-				"fonts into ScummVM's extras directory, or into the game directory. "
-				"On Windows, you'll need the following font files from the Windows "
-				"font directory: Times New Roman, Century Schoolbook, Garamond, "
-				"Courier New and Arial. Alternatively, you can download the "
-				"Liberation Fonts or the GNU FreeFont package. You'll need all the "
-				"fonts from the font package you choose, i.e., LiberationMono, "
-				"LiberationSans and LiberationSerif, or FreeMono, FreeSans and "
-				"FreeSerif respectively."
-		);
+		  "Before playing this game, you'll need to copy the required "
+		  "fonts into ScummVM's extras directory, or into the game directory. "
+		  "On Windows, you'll need the following font files from the Windows "
+		  "font directory: Times New Roman, Century Schoolbook, Garamond, "
+		  "Courier New and Arial. Alternatively, you can download the "
+		  "Liberation Fonts or the GNU FreeFont package. You'll need all the "
+		  "fonts from the font package you choose, i.e., LiberationMono, "
+		  "LiberationSans and LiberationSerif, or FreeMono, FreeSans and "
+		  "FreeSerif respectively.");
 		dialog.runModal();
 		quitGame();
 		return Common::kUnknownError;
@@ -405,11 +404,10 @@ void ZVision::initScreen() {
 	uint16 workingWindowWidth = (getGameId() == GID_NEMESIS) ? ZNM_WORKING_WINDOW_WIDTH : ZGI_WORKING_WINDOW_WIDTH;
 	uint16 workingWindowHeight = (getGameId() == GID_NEMESIS) ? ZNM_WORKING_WINDOW_HEIGHT : ZGI_WORKING_WINDOW_HEIGHT;
 	_workingWindow = Common::Rect(
-						 (WINDOW_WIDTH  -  workingWindowWidth) / 2,
-						 (WINDOW_HEIGHT - workingWindowHeight) / 2,
-						((WINDOW_WIDTH  -  workingWindowWidth) / 2) + workingWindowWidth,
-						((WINDOW_HEIGHT - workingWindowHeight) / 2) + workingWindowHeight
-					 );
+	  (WINDOW_WIDTH - workingWindowWidth) / 2,
+	  (WINDOW_HEIGHT - workingWindowHeight) / 2,
+	  ((WINDOW_WIDTH - workingWindowWidth) / 2) + workingWindowWidth,
+	  ((WINDOW_HEIGHT - workingWindowHeight) / 2) + workingWindowHeight);
 
 	initGraphics(WINDOW_WIDTH, WINDOW_HEIGHT, &_screenPixelFormat);
 }

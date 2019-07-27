@@ -20,19 +20,20 @@
  *
  */
 
-#include "illusions/illusions.h"
-#include "illusions/actor.h"
-#include "illusions/sound.h"
-#include "illusions/duckman/illusions_duckman.h"
 #include "illusions/duckman/menusystem_duckman.h"
+#include "illusions/actor.h"
+#include "illusions/duckman/illusions_duckman.h"
+#include "illusions/illusions.h"
 #include "illusions/resources/scriptresource.h"
+#include "illusions/sound.h"
 
 namespace Illusions {
 
 // DuckmanMenuSystem
 
 DuckmanMenuSystem::DuckmanMenuSystem(IllusionsEngine_Duckman *vm)
-	: BaseMenuSystem(vm), _vm(vm) {
+  : BaseMenuSystem(vm)
+  , _vm(vm) {
 	clearMenus();
 }
 
@@ -41,7 +42,7 @@ DuckmanMenuSystem::~DuckmanMenuSystem() {
 }
 
 void DuckmanMenuSystem::runMenu(MenuChoiceOffsets menuChoiceOffsets, int16 *menuChoiceOffset,
-	uint32 menuId, uint32 duration, uint timeOutMenuChoiceIndex, uint32 menuCallerThreadId) {
+                                uint32 menuId, uint32 duration, uint timeOutMenuChoiceIndex, uint32 menuCallerThreadId) {
 
 	debug(0, "DuckmanMenuSystem::runMenu(%08X)", menuId);
 
@@ -52,7 +53,6 @@ void DuckmanMenuSystem::runMenu(MenuChoiceOffsets menuChoiceOffsets, int16 *menu
 	int rootMenuId = convertRootMenuId(menuId | 0x180000);
 	BaseMenu *rootMenu = getMenuById(rootMenuId);
 	openMenu(rootMenu);
-
 }
 
 void DuckmanMenuSystem::clearMenus() {
@@ -119,16 +119,24 @@ BaseMenu *DuckmanMenuSystem::createLoadGameFailedMenu() {
 	return menu;
 }
 
-
 MenuItem *DuckmanMenuSystem::createOptionsSliderMenuItem(MenuActionUpdateSlider **action, const Common::String &text, SliderActionType type, BaseMenu *baseMenu) {
 	int sliderValue = 0;
 	char sliderText[] = "{~~~~~~~~~~~~~~~~}";
 	switch (type) {
-		case SFX : sliderValue = _vm->_soundMan->getSfxVolume()/(256/15); break;
-		case MUSIC : sliderValue = _vm->_soundMan->getMusicVolume()/(256/15); break;
-		case VOICE : sliderValue = _vm->_soundMan->getSpeechVolume()/(256/15); break;
-		case TEXT_DURATION : sliderValue = _vm->getSubtitleDuration()/(256/15); break;
-		default: break;
+	case SFX:
+		sliderValue = _vm->_soundMan->getSfxVolume() / (256 / 15);
+		break;
+	case MUSIC:
+		sliderValue = _vm->_soundMan->getMusicVolume() / (256 / 15);
+		break;
+	case VOICE:
+		sliderValue = _vm->_soundMan->getSpeechVolume() / (256 / 15);
+		break;
+	case TEXT_DURATION:
+		sliderValue = _vm->getSubtitleDuration() / (256 / 15);
+		break;
+	default:
+		break;
 	}
 
 	sliderText[sliderValue + 1] = '|';
@@ -320,7 +328,9 @@ void DuckmanMenuSystem::playSoundEffect(int sfxId) {
 }
 
 MenuActionInventoryAddRemove::MenuActionInventoryAddRemove(BaseMenuSystem *menuSystem, IllusionsEngine_Duckman *vm, uint choiceIndex)
-	: BaseMenuAction(menuSystem), _choiceIndex(choiceIndex), _vm(vm) {
+  : BaseMenuAction(menuSystem)
+  , _choiceIndex(choiceIndex)
+  , _vm(vm) {
 }
 
 void MenuActionInventoryAddRemove::execute() {
@@ -331,14 +341,17 @@ void MenuActionInventoryAddRemove::execute() {
 		_vm->_scriptResource->_properties.set(kDebugInventoryItems[_choiceIndex].propertyId, false);
 	} else {
 		_vm->startCursorHoldingObject(kDebugInventoryItems[_choiceIndex].objectId,
-									  kDebugInventoryItems[_choiceIndex].sequenceId);
+		                              kDebugInventoryItems[_choiceIndex].sequenceId);
 		_vm->_scriptResource->_properties.set(kDebugInventoryItems[_choiceIndex].propertyId, true);
 	}
 	_menuSystem->leaveMenu();
 }
 
 MenuActionUpdateSlider::MenuActionUpdateSlider(BaseMenuSystem *menuSystem, BaseMenu *baseMenu, SliderActionType type, IllusionsEngine_Duckman *vm)
-			: BaseMenuAction(menuSystem), menu(baseMenu), _type(type), _vm(vm) {
+  : BaseMenuAction(menuSystem)
+  , menu(baseMenu)
+  , _type(type)
+  , _vm(vm) {
 	_menuItem = NULL;
 }
 
@@ -363,10 +376,17 @@ int MenuActionUpdateSlider::calcNewSliderValue(int newOffset) {
 	int currentPosition = 0;
 	for (uint i = 0; i < text.size(); i++) {
 		switch (text[i]) {
-			case '{' : start = i; break;
-			case '}' : end = i; break;
-			case '|' : currentPosition = i; break;
-			default: break;
+		case '{':
+			start = i;
+			break;
+		case '}':
+			end = i;
+			break;
+		case '|':
+			currentPosition = i;
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -388,9 +408,14 @@ void MenuActionUpdateSlider::setSliderValue(uint8 newValue) {
 	Common::String text = _menuItem->getText();
 	for (uint i = 0; i < text.size(); i++) {
 		switch (text[i]) {
-			case '{' : start = i; break;
-			case '|' : text.setChar('~', i); break;
-			default: break;
+		case '{':
+			start = i;
+			break;
+		case '|':
+			text.setChar('~', i);
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -400,22 +425,33 @@ void MenuActionUpdateSlider::setSliderValue(uint8 newValue) {
 	_menuSystem->redrawMenuText(menu);
 
 	switch (_type) {
-		case SFX : _vm->_soundMan->setSfxVolume(newValue * (256/15)); break;
-		case MUSIC : _vm->_soundMan->setMusicVolume(newValue * (256/15)); break;
-		case VOICE : _vm->_soundMan->setSpeechVolume(newValue * (256/15)); break;
-		case TEXT_DURATION : _vm->setSubtitleDuration(newValue * (256/15)); break;
-		default: break;
+	case SFX:
+		_vm->_soundMan->setSfxVolume(newValue * (256 / 15));
+		break;
+	case MUSIC:
+		_vm->_soundMan->setMusicVolume(newValue * (256 / 15));
+		break;
+	case VOICE:
+		_vm->_soundMan->setSpeechVolume(newValue * (256 / 15));
+		break;
+	case TEXT_DURATION:
+		_vm->setSubtitleDuration(newValue * (256 / 15));
+		break;
+	default:
+		break;
 	}
 }
 
 MenuActionResetOptionSliders::MenuActionResetOptionSliders(BaseMenuSystem *menuSystem,
-														   MenuActionUpdateSlider *sfxSlider,
-														   MenuActionUpdateSlider *musiclider,
-														   MenuActionUpdateSlider *speechSlider,
-														   MenuActionUpdateSlider *textDurationSlider)
-: BaseMenuAction(menuSystem), _sfxSlider(sfxSlider), _musiclider(musiclider),
-  _speechSlider(speechSlider), _textDurationSlider(textDurationSlider) {
-
+                                                           MenuActionUpdateSlider *sfxSlider,
+                                                           MenuActionUpdateSlider *musiclider,
+                                                           MenuActionUpdateSlider *speechSlider,
+                                                           MenuActionUpdateSlider *textDurationSlider)
+  : BaseMenuAction(menuSystem)
+  , _sfxSlider(sfxSlider)
+  , _musiclider(musiclider)
+  , _speechSlider(speechSlider)
+  , _textDurationSlider(textDurationSlider) {
 }
 
 void MenuActionResetOptionSliders::execute() {

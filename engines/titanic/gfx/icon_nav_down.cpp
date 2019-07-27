@@ -26,7 +26,8 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CIconNavDown, CToggleSwitch);
 
-CIconNavDown::CIconNavDown() : CToggleSwitch() {
+CIconNavDown::CIconNavDown()
+  : CToggleSwitch() {
 }
 
 void CIconNavDown::save(SimpleFile *file, int indent) {

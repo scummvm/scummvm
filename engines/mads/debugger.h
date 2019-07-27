@@ -33,6 +33,7 @@ class MADSEngine;
 class Debugger : public GUI::Debugger {
 private:
 	MADSEngine *_vm;
+
 protected:
 	bool Cmd_Mouse(int argc, const char **argv);
 	bool Cmd_LoadScene(int argc, const char **argv);
@@ -52,8 +53,10 @@ protected:
 	bool Cmd_PlayAnim(int argc, const char **argv);
 	bool Cmd_PlayText(int argc, const char **argv);
 	bool Cmd_SetCamera(int argc, const char **argv);
+
 public:
 	bool _showMousePos;
+
 public:
 	Debugger(MADSEngine *vm);
 	virtual ~Debugger() {}
@@ -61,4 +64,4 @@ public:
 
 } // End of namespace MADS
 
-#endif	/* MADS_DEBUGGER_H */
+#endif /* MADS_DEBUGGER_H */

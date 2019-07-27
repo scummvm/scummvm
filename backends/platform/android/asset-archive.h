@@ -25,14 +25,14 @@
 
 #if defined(__ANDROID__)
 
-#include <jni.h>
+#	include <jni.h>
 
-#include "common/str.h"
-#include "common/stream.h"
-#include "common/util.h"
-#include "common/archive.h"
+#	include "common/archive.h"
+#	include "common/str.h"
+#	include "common/stream.h"
+#	include "common/util.h"
 
-#include <android/asset_manager.h>
+#	include <android/asset_manager.h>
 
 class AndroidAssetArchive : public Common::Archive {
 public:

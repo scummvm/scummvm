@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptRajif::AIScriptRajif(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptRajif::AIScriptRajif(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 }
 
 void AIScriptRajif::Initialize() {
@@ -38,8 +39,7 @@ void AIScriptRajif::Initialize() {
 
 bool AIScriptRajif::Update() {
 	if (Global_Variable_Query(kVariableChapter) == 5
-	 && Actor_Query_Goal_Number(kActorRajif) < 400
-	)
+	    && Actor_Query_Goal_Number(kActorRajif) < 400)
 		Actor_Set_Goal_Number(kActorRajif, 599);
 
 	return false;
@@ -141,17 +141,17 @@ bool AIScriptRajif::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptRajif::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptRajif::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptRajif::ReachedMovementTrackWaypoint(int waypointId) {

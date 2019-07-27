@@ -36,7 +36,7 @@ Databases::~Databases() {
 void Databases::setLanguage(Common::Language language) {
 	Common::String lang;
 
-	if      (language == Common::UNK_LANG)
+	if (language == Common::UNK_LANG)
 		lang = "";
 	else if (language == Common::EN_ANY)
 		lang = "E";
@@ -50,11 +50,11 @@ void Databases::setLanguage(Common::Language language) {
 		lang = "F";
 	else
 		warning("Databases::setLanguage(): Language \"%s\" not supported",
-				Common::getLanguageDescription(language));
+		        Common::getLanguageDescription(language));
 
 	if (!_databases.empty() && (lang != _language))
 		warning("Databases::setLanguage(): \"%s\" != \"%s\" and there's still databases open!",
-				_language.c_str(), lang.c_str());
+		        _language.c_str(), lang.c_str());
 
 	_language = lang;
 }
@@ -102,7 +102,7 @@ bool Databases::close(const Common::String &id) {
 }
 
 bool Databases::getString(const Common::String &id, Common::String group,
-		Common::String section, Common::String keyword, Common::String &result) const {
+                          Common::String section, Common::String keyword, Common::String &result) const {
 
 	DBMap::iterator db = _databases.find(id);
 	if (db == _databases.end()) {
@@ -126,7 +126,7 @@ bool Databases::getString(const Common::String &id, Common::String group,
 }
 
 int Databases::findField(const dBase &db, const Common::String &field,
-		dBase::Type type) const {
+                         dBase::Type type) const {
 
 	const Common::Array<dBase::Field> &fields = db.getFields();
 
@@ -145,10 +145,10 @@ int Databases::findField(const dBase &db, const Common::String &field,
 
 bool Databases::buildMap(const dBase &db, Common::StringMap &map) const {
 	int fLanguage = findField(db, "Langage", dBase::kTypeString);
-	int fGroup    = findField(db, "Nom"    , dBase::kTypeString);
-	int fSection  = findField(db, "Section", dBase::kTypeString);
-	int fKeyword  = findField(db, "Motcle" , dBase::kTypeString);
-	int fText     = findField(db, "Texte"  , dBase::kTypeString);
+	int fGroup = findField(db, "Nom", dBase::kTypeString);
+	int fSection = findField(db, "Section", dBase::kTypeString);
+	int fKeyword = findField(db, "Motcle", dBase::kTypeString);
+	int fText = findField(db, "Texte", dBase::kTypeString);
 
 	if ((fLanguage < 0) || (fGroup < 0) || (fSection < 0) || (fKeyword < 0) || (fText < 0))
 		return false;
@@ -160,9 +160,9 @@ bool Databases::buildMap(const dBase &db, Common::StringMap &map) const {
 		Common::String key;
 
 		key += db.getString(*record, fLanguage) + ":";
-		key += db.getString(*record, fGroup   ) + ":";
-		key += db.getString(*record, fSection ) + ":";
-		key += db.getString(*record, fKeyword );
+		key += db.getString(*record, fGroup) + ":";
+		key += db.getString(*record, fSection) + ":";
+		key += db.getString(*record, fKeyword);
 
 		map.setVal(key, db.getString(*record, fText));
 	}

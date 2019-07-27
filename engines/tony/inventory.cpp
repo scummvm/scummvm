@@ -26,10 +26,10 @@
  * Copyright (c) 1997-2003 Nayma Software
  */
 
-#include "common/textconsole.h"
-#include "tony/mpal/mpalutils.h"
 #include "tony/inventory.h"
+#include "common/textconsole.h"
 #include "tony/game.h"
+#include "tony/mpal/mpalutils.h"
 #include "tony/tony.h"
 
 namespace Tony {
@@ -81,7 +81,7 @@ void RMInventory::init() {
 	_bCombining = false;
 
 	// New items
-	_nItems = 78;  // @@@ Number of takeable items
+	_nItems = 78; // @@@ Number of takeable items
 	_items = new RMInventoryItem[_nItems + 1];
 
 	int curres = 10500;
@@ -562,7 +562,7 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 		if ((_state == CLOSED) && (mpos._y < 10 || GLOBALS._bCfgInvLocked) && bCanOpen) {
 			if (!GLOBALS._bCfgInvNoScroll) {
 				_state = OPENING;
-				_curPutY = - 68;
+				_curPutY = -68;
 				_curPutTime = g_vm->getTime();
 			} else {
 				_state = OPENED;
@@ -632,7 +632,7 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 				_miniInterface.setPattern(1);
 				_miniAction = 0;
 			}
-		} else  {
+		} else {
 			_miniInterface.setPattern(1);
 			_miniAction = 0;
 		}
@@ -667,7 +667,7 @@ RMItem *RMInventory::whichItemIsIn(const RMPoint &mpt) {
 
 int RMInventory::getSaveStateSize() {
 	//     m_inv   pattern   m_nInv
-	return 256 * 4 + 256 * 4   +  4;
+	return 256 * 4 + 256 * 4 + 4;
 }
 
 void RMInventory::saveState(byte *state) {
@@ -744,7 +744,8 @@ RMInventory &RMInventory::operator+=(int code) {
 *           RMInterface methods
 \****************************************************************************/
 
-RMInterface::RMInterface() : RMGfxSourceBuffer8RLEByte() {
+RMInterface::RMInterface()
+  : RMGfxSourceBuffer8RLEByte() {
 	_bActive = _bPerorate = false;
 	_lastHotZone = -1;
 }

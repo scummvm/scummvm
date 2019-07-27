@@ -26,8 +26,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CEnterExitSecClassMiniLift, CGameObject)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(StatusChangeMsg)
 END_MESSAGE_MAP()
 
 CEnterExitSecClassMiniLiftStatics *CEnterExitSecClassMiniLift::_statics;

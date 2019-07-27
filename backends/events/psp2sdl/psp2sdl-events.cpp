@@ -24,18 +24,18 @@
 
 #if defined(PSP2)
 
-#include <psp2/kernel/processmgr.h>
-#include <psp2/touch.h>
-#include "backends/platform/sdl/psp2/psp2.h"
-#include "backends/events/psp2sdl/psp2sdl-events.h"
-#include "backends/platform/sdl/sdl.h"
-#include "engines/engine.h"
+#	include "backends/events/psp2sdl/psp2sdl-events.h"
+#	include "backends/platform/sdl/psp2/psp2.h"
+#	include "backends/platform/sdl/sdl.h"
+#	include "engines/engine.h"
+#	include <psp2/kernel/processmgr.h>
+#	include <psp2/touch.h>
 
-#include "common/util.h"
-#include "common/events.h"
-#include "common/config-manager.h"
+#	include "common/config-manager.h"
+#	include "common/events.h"
+#	include "common/util.h"
 
-#include "math.h"
+#	include "math.h"
 
 PSP2EventSource::PSP2EventSource() {
 	for (int port = 0; port < SCE_TOUCH_PORT_MAX_NUM; port++) {
@@ -156,7 +156,7 @@ void PSP2EventSource::preprocessFingerUp(SDL_Event *event) {
 					// but only if the finger hasn't moved since it was pressed down by more than MAX_TAP_MOTION_DISTANCE pixels
 					float xrel = ((event->tfinger.x * 960.0) - (_finger[port][i].lastDownX * 960.0));
 					float yrel = ((event->tfinger.y * 544.0) - (_finger[port][i].lastDownY * 544.0));
-					float maxRSquared = (float) (MAX_TAP_MOTION_DISTANCE * MAX_TAP_MOTION_DISTANCE);
+					float maxRSquared = (float)(MAX_TAP_MOTION_DISTANCE * MAX_TAP_MOTION_DISTANCE);
 					if ((xrel * xrel + yrel * yrel) < maxRSquared) {
 						if (numFingersDown == 2 || numFingersDown == 1) {
 							Uint8 simulatedButton = 0;
@@ -221,7 +221,7 @@ void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
 
 		if (port == 0 && !ConfMan.getBool("frontpanel_touchpad_mode")) {
 			convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
-		}	else {
+		} else {
 			// for relative mode, use the pointer speed setting
 			float speedFactor = 1.0;
 
@@ -306,7 +306,7 @@ void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
 					}
 				}
 				if (numFingersDownLong >= 2) {
-					// starting drag, so push mouse down at current location (back) 
+					// starting drag, so push mouse down at current location (back)
 					// or location of "oldest" finger (front)
 					int mouseDownX = _km.x / MULTIPLIER;
 					int mouseDownY = _km.y / MULTIPLIER;
@@ -315,7 +315,7 @@ void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
 							if (_finger[port][i].id == id) {
 								Uint32 earliestTime = _finger[port][i].timeLastDown;
 								for (int j = 0; j < MAX_NUM_FINGERS; j++) {
-									if (_finger[port][j].id >= 0 && (i != j) ) {
+									if (_finger[port][j].id >= 0 && (i != j)) {
 										if (_finger[port][j].timeLastDown < earliestTime) {
 											mouseDownX = _finger[port][j].lastX;
 											mouseDownY = _finger[port][j].lastY;
@@ -351,7 +351,7 @@ void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
 			for (int i = 0; i < MAX_NUM_FINGERS; i++) {
 				if (_finger[port][i].id == id) {
 					for (int j = 0; j < MAX_NUM_FINGERS; j++) {
-						if (_finger[port][j].id >= 0 && (i != j) ) {
+						if (_finger[port][j].id >= 0 && (i != j)) {
 							if (_finger[port][j].timeLastDown < _finger[port][i].timeLastDown) {
 								updatePointer = false;
 							}

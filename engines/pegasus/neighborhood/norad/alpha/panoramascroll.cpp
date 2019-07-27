@@ -27,7 +27,8 @@
 
 namespace Pegasus {
 
-PanoramaScroll::PanoramaScroll(const DisplayElementID id) : IdlerAnimation(id) {
+PanoramaScroll::PanoramaScroll(const DisplayElementID id)
+  : IdlerAnimation(id) {
 	_boundsWidth = 0;
 	_totalWidth = 0;
 }

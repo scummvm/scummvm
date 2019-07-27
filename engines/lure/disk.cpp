@@ -20,11 +20,10 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "common/file.h"
-#include "common/util.h"
 #include "common/scummsys.h"
+#include "common/util.h"
 
 #include "lure/disk.h"
 #include "lure/lure.h"
@@ -54,21 +53,24 @@ uint8 Disk::indexOf(uint16 id, bool suppressError) {
 	// Make sure the correct file is open - the upper two bits of the Id give the file number. Note
 	// that an extra check is done for the upper byte of the Id being 0x3f, which is the Id range
 	// I use for lure.dat resources, which are resources extracted from the lure.exe executable
-	uint8 entryFileNum = ((id>>8) == 0x3f) ? 0 : ((id >> 14) & 3) + 1;
+	uint8 entryFileNum = ((id >> 8) == 0x3f) ? 0 : ((id >> 14) & 3) + 1;
 	openFile(entryFileNum);
 
 	// Find the correct entry in the list based on the Id
-	for (int entryIndex=0; entryIndex<NUM_ENTRIES_IN_HEADER; ++entryIndex) {
-		if (_entries[entryIndex].id == HEADER_ENTRY_UNUSED_ID) break;
-		else if (_entries[entryIndex].id == id) return entryIndex;
+	for (int entryIndex = 0; entryIndex < NUM_ENTRIES_IN_HEADER; ++entryIndex) {
+		if (_entries[entryIndex].id == HEADER_ENTRY_UNUSED_ID)
+			break;
+		else if (_entries[entryIndex].id == id)
+			return entryIndex;
 	}
 
-	if (suppressError) return 0xff;
+	if (suppressError)
+		return 0xff;
 	if (_fileNum == 0)
 		error("Could not find entry Id #%d in file %s", id, SUPPORT_FILENAME);
 	else
 		error("Could not find entry Id #%d in file disk%d.%s", id, _fileNum,
-			LureEngine::getReference().isEGA() ? "ega" : "vga");
+		      LureEngine::getReference().isEGA() ? "ega" : "vga");
 }
 
 void Disk::openFile(uint8 fileNum) {
@@ -78,10 +80,12 @@ void Disk::openFile(uint8 fileNum) {
 		error("Invalid file number specified - %d", fileNum);
 
 	// Only load up the new file if the current file number has changed
-	if (fileNum == _fileNum) return;
+	if (fileNum == _fileNum)
+		return;
 
 	// Delete any existing open file handle
-	if (_fileNum != 0xff) delete _fileHandle;
+	if (_fileNum != 0xff)
+		delete _fileHandle;
 	_fileNum = fileNum;
 
 	// Open up the the new file
@@ -166,8 +170,9 @@ uint32 Disk::getEntrySize(uint16 id) {
 	uint8 index = indexOf(id);
 
 	// Calculate the offset and size of the entry
-	uint32 size = (uint32) _entries[index].size;
-	if (_entries[index].sizeExtension) size += 0x10000;
+	uint32 size = (uint32)_entries[index].size;
+	if (_entries[index].sizeExtension)
+		size += 0x10000;
 
 	return size;
 }
@@ -185,9 +190,10 @@ MemoryBlock *Disk::getEntry(uint16 id) {
 	uint8 index = indexOf(id);
 
 	// Calculate the offset and size of the entry
-	uint32 size = (uint32) _entries[index].size;
-	if (_entries[index].sizeExtension) size += 0x10000;
-	uint32 offset = (uint32) _entries[index].offset * 0x20 + _dataOffset;
+	uint32 size = (uint32)_entries[index].size;
+	if (_entries[index].sizeExtension)
+		size += 0x10000;
+	uint32 offset = (uint32)_entries[index].offset * 0x20 + _dataOffset;
 
 	MemoryBlock *result = Memory::allocate(size);
 	_fileHandle->seek(offset, SEEK_SET);
@@ -207,7 +213,8 @@ uint8 Disk::numEntries() {
 
 	// Figure out how many entries there are by count until an unused entry is found
 	for (byte entryIndex = 0; entryIndex < NUM_ENTRIES_IN_HEADER; ++entryIndex)
-		if (_entries[entryIndex].id == HEADER_ENTRY_UNUSED_ID) return entryIndex;
+		if (_entries[entryIndex].id == HEADER_ENTRY_UNUSED_ID)
+			return entryIndex;
 
 	return NUM_ENTRIES_IN_HEADER;
 }

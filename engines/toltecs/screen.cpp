@@ -22,16 +22,17 @@
 
 #include "graphics/cursorman.h"
 
-#include "toltecs/toltecs.h"
 #include "toltecs/palette.h"
 #include "toltecs/render.h"
 #include "toltecs/resource.h"
 #include "toltecs/screen.h"
 #include "toltecs/script.h"
+#include "toltecs/toltecs.h"
 
 namespace Toltecs {
 
-Screen::Screen(ToltecsEngine *vm) : _vm(vm) {
+Screen::Screen(ToltecsEngine *vm)
+  : _vm(vm) {
 	_frontScreen = new byte[268800];
 	_backScreen = new byte[870400];
 
@@ -226,7 +227,7 @@ void Screen::addAnimatedSprite(int16 x, int16 y, int16 fragmentId, byte *data, i
 		drawRequest.flags = READ_LE_UINT16(spriteItem + 10 + loopNum * 2);
 
 		debug(0, "Screen::addAnimatedSprite(%d of %d) loopNum = %d; loopCount = %d; frameNum = %d; frameCount = %d; resIndex = %d; flags = %04X, mode = %d",
-			index, count, loopNum, loopCount, frameNum, frameCount, drawRequest.resIndex, drawRequest.flags, mode);
+		      index, count, loopNum, loopCount, frameNum, frameCount, drawRequest.resIndex, drawRequest.flags, mode);
 
 		addDrawRequest(drawRequest);
 
@@ -270,7 +271,7 @@ void Screen::blastSprite(int16 x, int16 y, int16 fragmentId, int16 resIndex, uin
 
 void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 	debug(0, "Screen::updateVerbLine() _verbLineNum = %d; _verbLineX = %d; _verbLineY = %d; _verbLineWidth = %d; _verbLineCount = %d",
-		_verbLineNum, _verbLineX, _verbLineY, _verbLineWidth, _verbLineCount);
+	      _verbLineNum, _verbLineX, _verbLineY, _verbLineWidth, _verbLineCount);
 
 	Font font(_vm->_res->load(_fontResIndexArray[0])->data);
 
@@ -470,7 +471,7 @@ void Screen::addTalkTextItemsToRenderQueue() {
 
 		for (byte j = 0; j < item->lineCount; j++) {
 			_renderQueue->addText(item->lines[j].x, item->lines[j].y, item->color,
-					_fontResIndexArray[item->fontNum], text, item->lines[j].length);
+			                      _fontResIndexArray[item->fontNum], text, item->lines[j].length);
 			text += item->lines[j].length;
 		}
 	}
@@ -592,7 +593,7 @@ int16 Screen::drawString(int16 x, int16 y, byte color, uint fontResIndex, const 
 	Font font(_vm->_res->load(fontResIndex)->data);
 
 	if (len == -1)
-		len = strlen((const char*)text);
+		len = strlen((const char *)text);
 
 	int16 yadd = 0;
 	if (ywobble)

@@ -29,28 +29,27 @@
 #ifndef WINTERMUTE_BASE_PARSER_H
 #define WINTERMUTE_BASE_PARSER_H
 
-
-#define TOKEN_DEF_START         \
-	enum                  \
-	{                 \
+#define TOKEN_DEF_START \
+	enum {                \
 		TOKEN_NONE = 0,
-#define TOKEN_DEF(name)         \
-	TOKEN_ ## name,
-#define TOKEN_DEF_END           \
-	TOKEN_TOTAL_COUNT           \
-	};
-#define TOKEN_TABLE_START(name)     \
-	static const BaseParser::TokenDesc name [] =      \
-	        {
-#define TOKEN_TABLE(name)       \
-	{ TOKEN_ ## name, #name },
-#define TOKEN_TABLE_END         \
-	{ 0, 0 }                \
-	};
+#define TOKEN_DEF(name) \
+	TOKEN_##name,
+#define TOKEN_DEF_END \
+	TOKEN_TOTAL_COUNT   \
+	}                   \
+	;
+#define TOKEN_TABLE_START(name) \
+	static const BaseParser::TokenDesc name[] = {
+#define TOKEN_TABLE(name) \
+	{ TOKEN_##name, #name },
+#define TOKEN_TABLE_END \
+	{ 0, 0 }              \
+	}                     \
+	;
 
-#define PARSERR_GENERIC         -3
-#define PARSERR_EOF             -2
-#define PARSERR_TOKENNOTFOUND   -1
+#define PARSERR_GENERIC -3
+#define PARSERR_EOF -2
+#define PARSERR_TOKENNOTFOUND -1
 
 #include "engines/wintermute/coll_templ.h"
 
@@ -68,6 +67,7 @@ public:
 	int32 getCommand(char **buf, const TokenDesc *tokens, char **params);
 	BaseParser();
 	virtual ~BaseParser();
+
 private:
 	char *getLastOffender();
 	void skipToken(char **buf, char *tok, char *msg = nullptr);

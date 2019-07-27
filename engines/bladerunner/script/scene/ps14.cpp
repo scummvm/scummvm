@@ -29,19 +29,19 @@ void SceneScriptPS14::InitializeScene() {
 		Setup_Scene_Information(-1119.61f, 508.14f, -1208.22f, 315);
 		Game_Flag_Reset(kFlagPS03toPS14);
 	} else {
-		Setup_Scene_Information( -785.45f, 508.14f,  -1652.0f, 315);
+		Setup_Scene_Information(-785.45f, 508.14f, -1652.0f, 315);
 	}
 
-	Scene_Exit_Add_2D_Exit(0, 610,  0, 639, 479, 1);
-	Scene_Exit_Add_2D_Exit(1,  46, 51, 125, 192, 0);
+	Scene_Exit_Add_2D_Exit(0, 610, 0, 639, 479, 1);
+	Scene_Exit_Add_2D_Exit(1, 46, 51, 125, 192, 0);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxRAIN10, 100, 1, 1);
-	Ambient_Sounds_Add_Sound(kSfxCOLONY,  100, 300, 16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSPIN2B,   60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSPIN3A,   60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDER2,  60, 180, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDER3,  50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDER4,  50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxCOLONY, 100, 300, 16, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B, 60, 180, 16, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN3A, 60, 180, 16, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 60, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 }
 
 void SceneScriptPS14::SceneLoaded() {
@@ -74,8 +74,7 @@ bool SceneScriptPS14::ClickedOnExit(int exitId) {
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 3, true, kAnimationModeIdle);
 
 			if (Global_Variable_Query(kVariableChapter) == 4
-			 && Game_Flag_Query(kFlagUG18GuzzaScene)
-			) {
+			    && Game_Flag_Query(kFlagUG18GuzzaScene)) {
 				if (Actor_Clue_Query(kActorMcCoy, kClueBriefcase)) {
 					Game_Flag_Set(kFlagMcCoyFreedOfAccusations);
 					Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyStartChapter5);

@@ -25,27 +25,27 @@
 
 namespace Glk {
 namespace TADS {
-namespace TADS2 {
+	namespace TADS2 {
 
-/* global to keep track of all allocations */
-IF_DEBUG(ulong mchtotmem;)
+		/* global to keep track of all allocations */
+		IF_DEBUG(ulong mchtotmem;)
 
-uchar *mchalo(errcxdef *ctx, size_t siz, const char *comment) {
-    uchar *ret;
+		uchar *mchalo(errcxdef *ctx, size_t siz, const char *comment) {
+			uchar *ret;
 
-    VARUSED(comment);
-    IF_DEBUG(mchtotmem += siz;)
+			VARUSED(comment);
+			IF_DEBUG(mchtotmem += siz;)
 
-    ret = (uchar *)osmalloc(siz);
-    if (ret)
-        return(ret);
-    else {
-        errsig(ctx, ERR_NOMEM);
-        NOTREACHEDV(uchar *);
-        return 0;
-    }
-}
+			ret = (uchar *)osmalloc(siz);
+			if (ret)
+				return (ret);
+			else {
+				errsig(ctx, ERR_NOMEM);
+				NOTREACHEDV(uchar *);
+				return 0;
+			}
+		}
 
-} // End of namespace TADS2
+	} // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk

@@ -31,35 +31,35 @@ class SherlockEngine;
 
 namespace Scalpel {
 
-class ScalpelScreen : public Screen {
-public:
-	ScalpelScreen(SherlockEngine *vm);
-	virtual ~ScalpelScreen() {}
+	class ScalpelScreen : public Screen {
+	public:
+		ScalpelScreen(SherlockEngine *vm);
+		virtual ~ScalpelScreen() {}
 
-	/**
+		/**
 	 * Draws a button for use in the inventory, talk, and examine dialogs.
 	 * ButtonText is supposed to have its hotkey as a prefix. The hotkey will get highlighted.
 	 */
-	void makeButton(const Common::Rect &bounds, int textX, const Common::String &buttonText, bool textContainsHotkey = true);
+		void makeButton(const Common::Rect &bounds, int textX, const Common::String &buttonText, bool textContainsHotkey = true);
 
-	/**
+		/**
 	 * Prints an interface command with the first letter highlighted to indicate
 	 * what keyboard shortcut is associated with it
 	 * ButtonText is supposed to have its hotkey as a prefix. The hotkey will get highlighted.
 	 */
-	void buttonPrint(const Common::Point &pt, uint color, bool slamIt, const Common::String &buttonText, bool textContainsHotkey = true);
+		void buttonPrint(const Common::Point &pt, uint color, bool slamIt, const Common::String &buttonText, bool textContainsHotkey = true);
 
-	/**
+		/**
 	 * Draw a panel in the back buffer with a raised area effect around the edges
 	 */
-	void makePanel(const Common::Rect &r);
+		void makePanel(const Common::Rect &r);
 
-	/**
+		/**
 	 * Draw a field in the back buffer with a raised area effect around the edges,
 	 * suitable for text input.
 	 */
-	void makeField(const Common::Rect &r);
-};
+		void makeField(const Common::Rect &r);
+	};
 
 } // End of namespace Scalpel
 

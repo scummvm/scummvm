@@ -29,13 +29,14 @@
  *
  */
 
-#include "sword25/package/packagemanager.h"
-#include "sword25/gfx/image/imgloader.h"
 #include "sword25/gfx/image/swimage.h"
+#include "sword25/gfx/image/imgloader.h"
+#include "sword25/package/packagemanager.h"
 
 namespace Sword25 {
 
-SWImage::SWImage(const Common::String &filename, bool &result) : _image() {
+SWImage::SWImage(const Common::String &filename, bool &result)
+  : _image() {
 	result = false;
 
 	PackageManager *pPackage = Kernel::getInstance()->getPackage();
@@ -67,13 +68,12 @@ SWImage::~SWImage() {
 	_image.free();
 }
 
-
 bool SWImage::blit(int posX, int posY,
-                      int flipping,
-                      Common::Rect *pPartRect,
-                      uint color,
-                      int width, int height,
-					  RectangleList *updateRects) {
+                   int flipping,
+                   Common::Rect *pPartRect,
+                   uint color,
+                   int width, int height,
+                   RectangleList *updateRects) {
 	error("Blit() is not supported.");
 	return false;
 }

@@ -20,8 +20,8 @@
 
 #include <cstddef>
 
-#include "globals.h"
 #include "File.h"
+#include "globals.h"
 
 namespace MT32Emu {
 
@@ -31,14 +31,20 @@ struct ROMInfo {
 public:
 	size_t fileSize;
 	const File::SHA1Digest &sha1Digest;
-	enum Type {PCM, Control, Reverb} type;
+	enum Type { PCM,
+		          Control,
+		          Reverb } type;
 	const char *shortName;
 	const char *description;
-	enum PairType {Full, FirstHalf, SecondHalf, Mux0, Mux1} pairType;
+	enum PairType { Full,
+		              FirstHalf,
+		              SecondHalf,
+		              Mux0,
+		              Mux1 } pairType;
 	ROMInfo *pairROMInfo;
 
 	// Returns a ROMInfo struct by inspecting the size and the SHA1 hash
-	MT32EMU_EXPORT static const ROMInfo* getROMInfo(File *file);
+	MT32EMU_EXPORT static const ROMInfo *getROMInfo(File *file);
 
 	// Currently no-op
 	MT32EMU_EXPORT static void freeROMInfo(const ROMInfo *romInfo);
@@ -46,7 +52,7 @@ public:
 	// Allows retrieving a NULL-terminated list of ROMInfos for a range of types and pairTypes
 	// (specified by bitmasks)
 	// Useful for GUI/console app to output information on what ROMs it supports
-	MT32EMU_EXPORT static const ROMInfo** getROMInfoList(Bit32u types, Bit32u pairTypes);
+	MT32EMU_EXPORT static const ROMInfo **getROMInfoList(Bit32u types, Bit32u pairTypes);
 
 	// Frees the list of ROMInfos given
 	MT32EMU_EXPORT static void freeROMInfoList(const ROMInfo **romInfos);
@@ -56,8 +62,8 @@ public:
 
 class ROMImage {
 private:
-	File * const file;
-	const ROMInfo * const romInfo;
+	File *const file;
+	const ROMInfo *const romInfo;
 
 	ROMImage(File *file);
 	~ROMImage();
@@ -66,7 +72,7 @@ public:
 	// Creates a ROMImage object given a ROMInfo and a File. Keeps a reference
 	// to the File and ROMInfo given, which must be freed separately by the user
 	// after the ROMImage is freed
-	MT32EMU_EXPORT static const ROMImage* makeROMImage(File *file);
+	MT32EMU_EXPORT static const ROMImage *makeROMImage(File *file);
 
 	// Must only be done after all Synths using the ROMImage are deleted
 	MT32EMU_EXPORT static void freeROMImage(const ROMImage *romImage);

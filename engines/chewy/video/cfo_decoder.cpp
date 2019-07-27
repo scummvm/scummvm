@@ -32,27 +32,27 @@
 namespace Chewy {
 
 enum CustomSubChunk {
-	kChunkFadeIn = 0,				// unused
+	kChunkFadeIn = 0, // unused
 	kChunkFadeOut = 1,
 	kChunkLoadMusic = 2,
-	kChunkLoadRaw = 3,				// unused
+	kChunkLoadRaw = 3, // unused
 	kChunkLoadVoc = 4,
 	kChunkPlayMusic = 5,
-	kChunkPlaySeq = 6,				// unused
-	kChunkPlayPattern = 7,			// unused
+	kChunkPlaySeq = 6, // unused
+	kChunkPlayPattern = 7, // unused
 	kChunkStopMusic = 8,
 	kChunkWaitMusicEnd = 9,
 	kChunkSetMusicVolume = 10,
-	kChunkSetLoopMode = 11,			// unused
-	kChunkPlayRaw = 12,				// unused
+	kChunkSetLoopMode = 11, // unused
+	kChunkPlayRaw = 12, // unused
 	kChunkPlayVoc = 13,
 	kChunkSetSoundVolume = 14,
 	kChunkSetChannelVolume = 15,
 	kChunkFreeSoundEffect = 16,
-	kChunkMusicFadeIn = 17,			// unused
+	kChunkMusicFadeIn = 17, // unused
 	kChunkMusicFadeOut = 18,
 	kChunkSetBalance = 19,
-	kChunkSetSpeed = 20,			// unused
+	kChunkSetSpeed = 20, // unused
 	kChunkClearScreen = 21
 };
 
@@ -62,7 +62,7 @@ bool CfoDecoder::loadStream(Common::SeekableReadStream *stream) {
 	if (stream->readUint32BE() != MKTAG('C', 'F', 'O', '\0'))
 		error("Corrupt video resource");
 
-	stream->readUint32LE();	// always 0
+	stream->readUint32LE(); // always 0
 
 	uint16 frameCount = stream->readUint16LE();
 	uint16 width = stream->readUint16LE();
@@ -72,8 +72,9 @@ bool CfoDecoder::loadStream(Common::SeekableReadStream *stream) {
 	return true;
 }
 
-CfoDecoder::CfoVideoTrack::CfoVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, Sound *sound) :
-	Video::FlicDecoder::FlicVideoTrack(stream, frameCount, width, height, true), _sound(sound) {
+CfoDecoder::CfoVideoTrack::CfoVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, Sound *sound)
+  : Video::FlicDecoder::FlicVideoTrack(stream, frameCount, width, height, true)
+  , _sound(sound) {
 	readHeader();
 
 	for (int i = 0; i < MAX_SOUND_EFFECTS; i++) {
@@ -98,7 +99,7 @@ CfoDecoder::CfoVideoTrack::~CfoVideoTrack() {
 void CfoDecoder::CfoVideoTrack::readHeader() {
 	_frameDelay = _startFrameDelay = _fileStream->readUint32LE();
 	_offsetFrame1 = _fileStream->readUint32LE();
-	_offsetFrame2 = 0;	// doesn't exist, as CFO videos aren't rewindable
+	_offsetFrame2 = 0; // doesn't exist, as CFO videos aren't rewindable
 
 	_fileStream->seek(_offsetFrame1);
 }
@@ -110,7 +111,7 @@ const ::Graphics::Surface *CfoDecoder::CfoVideoTrack::decodeNextFrame() {
 	uint16 frameType;
 
 	// Read chunk
-	/*uint32 frameSize =*/ _fileStream->readUint32LE();
+	/*uint32 frameSize =*/_fileStream->readUint32LE();
 	frameType = _fileStream->readUint16LE();
 
 	switch (frameType) {
@@ -132,10 +133,10 @@ const ::Graphics::Surface *CfoDecoder::CfoVideoTrack::decodeNextFrame() {
 }
 
 #define FLI_SETPAL 4
-#define FLI_SS2    7
-#define FLI_BRUN   15
-#define FLI_COPY   16
-#define PSTAMP     18
+#define FLI_SS2 7
+#define FLI_BRUN 15
+#define FLI_COPY 16
+#define PSTAMP 18
 
 void CfoDecoder::CfoVideoTrack::handleFrame() {
 	uint16 chunkCount = _fileStream->readUint16LE();
@@ -189,7 +190,7 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			break;
 		case kChunkFadeOut:
 			// Used in video 0
-			_fileStream->skip(2);	// delay, unused
+			_fileStream->skip(2); // delay, unused
 			fadeOut();
 			break;
 		case kChunkLoadMusic:
@@ -230,7 +231,8 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 		case kChunkWaitMusicEnd:
 			do {
 				Common::Event event;
-				while (g_system->getEventManager()->pollEvent(event)) {}	// ignore events
+				while (g_system->getEventManager()->pollEvent(event)) {
+				} // ignore events
 				g_system->updateScreen();
 				g_system->delayMillis(10);
 			} while (_sound->isMusicActive());

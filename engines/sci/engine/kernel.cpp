@@ -20,23 +20,23 @@
  *
  */
 
-#include "sci/sci.h"
 #include "sci/engine/kernel.h"
-#include "sci/event.h"
-#include "sci/resource.h"
 #include "sci/engine/features.h"
 #include "sci/engine/kernel_tables.h"
 #include "sci/engine/state.h"
 #include "sci/engine/workarounds.h"
+#include "sci/event.h"
+#include "sci/resource.h"
+#include "sci/sci.h"
 
 #include "common/system.h"
 
 namespace Sci {
 
-Kernel::Kernel(ResourceManager *resMan, SegManager *segMan)	:
-	_resMan(resMan),
-	_segMan(segMan),
-	_invalid("<invalid>") {
+Kernel::Kernel(ResourceManager *resMan, SegManager *segMan)
+  : _resMan(resMan)
+  , _segMan(segMan)
+  , _invalid("<invalid>") {
 	loadSelectorNames();
 	mapSelectors();
 }
@@ -92,7 +92,6 @@ Common::String Kernel::getKernelName(uint number, uint subFunction) const {
 	return kernelCall.subFunctions[subFunction].name;
 }
 
-
 int Kernel::findKernelFuncPos(Common::String kernelFuncName) {
 	for (uint32 i = 0; i < _kernelNames.size(); i++)
 		if (_kernelNames[i] == kernelFuncName)
@@ -120,7 +119,7 @@ void Kernel::loadSelectorNames() {
 	// Starting with KQ7, Mac versions have a BE name table. GK1 Mac and earlier (and all
 	// other platforms) always use LE.
 	const bool isBE = (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2_1_EARLY
-			&& g_sci->getGameId() != GID_GK1);
+	                   && g_sci->getGameId() != GID_GK1);
 #else
 	const bool isBE = false;
 #endif
@@ -389,9 +388,7 @@ uint16 Kernel::findRegType(reg_t reg) {
 
 	switch (mobj->getType()) {
 	case SEG_TYPE_SCRIPT:
-		if (reg.getOffset() <= (*(Script *)mobj).getBufSize() &&
-			reg.getOffset() >= (uint)-SCRIPT_OBJECT_MAGIC_OFFSET &&
-			(*(Script *)mobj).offsetIsObject(reg.getOffset())) {
+		if (reg.getOffset() <= (*(Script *)mobj).getBufSize() && reg.getOffset() >= (uint)-SCRIPT_OBJECT_MAGIC_OFFSET && (*(Script *)mobj).offsetIsObject(reg.getOffset())) {
 			result |= ((Script *)mobj)->getObject(reg.getOffset()) ? SIG_TYPE_OBJECT : SIG_TYPE_REFERENCE;
 		} else
 			result |= SIG_TYPE_REFERENCE;
@@ -427,16 +424,16 @@ struct SignatureDebugType {
 };
 
 static const SignatureDebugType signatureDebugTypeList[] = {
-	{ SIG_TYPE_NULL,          "null" },
-	{ SIG_TYPE_INTEGER,       "integer" },
+	{ SIG_TYPE_NULL, "null" },
+	{ SIG_TYPE_INTEGER, "integer" },
 	{ SIG_TYPE_UNINITIALIZED, "uninitialized" },
-	{ SIG_TYPE_OBJECT,        "object" },
-	{ SIG_TYPE_REFERENCE,     "reference" },
-	{ SIG_TYPE_LIST,          "list" },
-	{ SIG_TYPE_NODE,          "node" },
-	{ SIG_TYPE_ERROR,         "error" },
-	{ SIG_IS_INVALID,         "invalid" },
-	{ 0,                      NULL }
+	{ SIG_TYPE_OBJECT, "object" },
+	{ SIG_TYPE_REFERENCE, "reference" },
+	{ SIG_TYPE_LIST, "list" },
+	{ SIG_TYPE_NODE, "node" },
+	{ SIG_TYPE_ERROR, "error" },
+	{ SIG_IS_INVALID, "invalid" },
+	{ 0, NULL }
 };
 
 static void kernelSignatureDebugType(Common::String &signatureDetailsStr, const uint16 type) {
@@ -446,10 +443,10 @@ static void kernelSignatureDebugType(Common::String &signatureDetailsStr, const 
 	while (list->typeCheck) {
 		if (type & list->typeCheck) {
 			if (!firstPrint)
-//				debugN(", ");
+				//				debugN(", ");
 				signatureDetailsStr += ", ";
-//			debugN("%s", list->text);
-//			signatureDetailsStr += signatureDetailsStr.format("%s", list->text);
+			//			debugN("%s", list->text);
+			//			signatureDetailsStr += signatureDetailsStr.format("%s", list->text);
 			signatureDetailsStr += list->text;
 			firstPrint = false;
 		}
@@ -707,7 +704,7 @@ void Kernel::mapFunctions() {
 	} // for all functions requesting to be mapped
 
 	debugC(kDebugLevelVM, "Handled %d/%d kernel functions, mapping %d and ignoring %d.",
-				mapped + ignored, _kernelNames.size(), mapped, ignored);
+	       mapped + ignored, _kernelNames.size(), mapped, ignored);
 
 	return;
 }
@@ -827,15 +824,15 @@ void Kernel::loadKernelNames(GameFeatures *features) {
 		_kernelNames = Common::StringArray(sci21_default_knames, kKernelEntriesSci3);
 
 		// In SCI3, some kernel functions have been removed, and others have been added
-		_kernelNames[0x18] = "Dummy";	// AddMagnify in SCI2.1
-		_kernelNames[0x19] = "Dummy";	// DeleteMagnify in SCI2.1
-		_kernelNames[0x30] = "Dummy";	// SetScroll in SCI2.1
-		_kernelNames[0x39] = "Dummy";	// ShowMovie in SCI2.1
-		_kernelNames[0x4c] = "Dummy";	// ScrollWindow in SCI2.1
-		_kernelNames[0x56] = "Dummy";	// VibrateMouse in SCI2.1 (only used in QFG4 floppy)
-		_kernelNames[0x66] = "Dummy";	// MergePoly in SCI2.1
-		_kernelNames[0x8d] = "MessageBox";	// Dummy in SCI2.1
-		_kernelNames[0x9b] = "Minimize";	// Dummy in SCI2.1
+		_kernelNames[0x18] = "Dummy"; // AddMagnify in SCI2.1
+		_kernelNames[0x19] = "Dummy"; // DeleteMagnify in SCI2.1
+		_kernelNames[0x30] = "Dummy"; // SetScroll in SCI2.1
+		_kernelNames[0x39] = "Dummy"; // ShowMovie in SCI2.1
+		_kernelNames[0x4c] = "Dummy"; // ScrollWindow in SCI2.1
+		_kernelNames[0x56] = "Dummy"; // VibrateMouse in SCI2.1 (only used in QFG4 floppy)
+		_kernelNames[0x66] = "Dummy"; // MergePoly in SCI2.1
+		_kernelNames[0x8d] = "MessageBox"; // Dummy in SCI2.1
+		_kernelNames[0x9b] = "Minimize"; // Dummy in SCI2.1
 
 		break;
 #endif
@@ -932,7 +929,7 @@ Common::String Kernel::lookupText(reg_t address, int index) {
 void script_adjust_opcode_formats() {
 
 	g_sci->_opcode_formats = new opcode_format[128][4];
-	memcpy(g_sci->_opcode_formats, g_base_opcode_formats, 128*4*sizeof(opcode_format));
+	memcpy(g_sci->_opcode_formats, g_base_opcode_formats, 128 * 4 * sizeof(opcode_format));
 
 	if (g_sci->_features->detectLofsType() != SCI_VERSION_0_EARLY) {
 		g_sci->_opcode_formats[op_lofsa][0] = Script_Offset;

@@ -20,9 +20,9 @@
  *
  */
 
+#include "mads/player.h"
 #include "common/scummsys.h"
 #include "mads/mads.h"
-#include "mads/player.h"
 
 namespace MADS {
 
@@ -61,7 +61,7 @@ void StopWalkers::synchronize(Common::Serializer &s) {
 /*------------------------------------------------------------------------*/
 
 Player::Player(MADSEngine *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 	_action = nullptr;
 	_facing = FACING_NORTH;
 	_turnToFacing = FACING_NORTH;
@@ -149,7 +149,7 @@ bool Player::loadSprites(const Common::String &prefix) {
 	if (!_spritesPrefix.empty()) {
 		for (int fileIndex = 0; fileIndex < PLAYER_SPRITES_FILE_COUNT; ++fileIndex) {
 			Common::String setName = Common::String::format("*%s_%c.SS",
-				newPrefix.c_str(), suffixList[fileIndex]);
+			                                                newPrefix.c_str(), suffixList[fileIndex]);
 			if (fileIndex >= 5)
 				_highSprites = true;
 
@@ -159,7 +159,7 @@ bool Player::loadSprites(const Common::String &prefix) {
 			if (Common::File::exists(setName)) {
 				setIndex = _vm->_game->_scene._sprites.addSprites(setName, 4);
 				++_numSprites;
-			}  else if (fileIndex < 5) {
+			} else if (fileIndex < 5) {
 				_highSprites = false;
 				return true;
 			} else {
@@ -200,7 +200,6 @@ void Player::changeFacing() {
 		} while (tempDir != _turnToFacing);
 	}
 
-
 	if (_facing != _turnToFacing) {
 		// Find the index for the given direction in the player direction list
 		int tempDir = _facing;
@@ -215,8 +214,7 @@ void Player::changeFacing() {
 	if (diff == 0)
 		diff = newDir - newDir2;
 
-	_facing = (diff >= 0) ? (Facing)_directionListIndexes[_facing + 20] :
-		(Facing)_directionListIndexes[_facing + 10];
+	_facing = (diff >= 0) ? (Facing)_directionListIndexes[_facing + 20] : (Facing)_directionListIndexes[_facing + 10];
 	selectSeries();
 
 	if ((_facing == _turnToFacing) && !_moving) {
@@ -300,8 +298,7 @@ void Player::updateFrame() {
 
 		// Set the player frame number
 		int listIndex = ABS(_frameListIndex);
-		_frameNumber = (_frameListIndex >= 0) ? spriteSet._charInfo->_startFrames[listIndex] :
-			spriteSet._charInfo->_stopFrames[listIndex];
+		_frameNumber = (_frameListIndex >= 0) ? spriteSet._charInfo->_startFrames[listIndex] : spriteSet._charInfo->_stopFrames[listIndex];
 
 		// Set next waiting period in ticks
 		if (listIndex == 0) {
@@ -370,11 +367,11 @@ void Player::update() {
 				// Check if the existing player slot has the same details, and can be re-used
 				SpriteSlot &s2 = scene._spriteSlots[slotIndex];
 				bool equal = (s2._seqIndex == slot._seqIndex)
-					&& (s2._spritesIndex == slot._spritesIndex)
-					&& (s2._frameNumber == slot._frameNumber)
-					&& (s2._position == slot._position)
-					&& (s2._depth == slot._depth)
-					&& (s2._scale == slot._scale);
+				  && (s2._spritesIndex == slot._spritesIndex)
+				  && (s2._frameNumber == slot._frameNumber)
+				  && (s2._position == slot._position)
+				  && (s2._depth == slot._depth)
+				  && (s2._scale == slot._scale);
 
 				if (equal)
 					// Undo the prior expiry of the player sprite
@@ -399,14 +396,12 @@ void Player::update() {
 				int playerX = slot._position.x;
 				int playerY = slot._position.y;
 
-				if ((playerX + xScale) < 0 || (playerX + xScale) >= MADS_SCREEN_WIDTH ||
-						playerY < 0 || (playerY + yScale) >= MADS_SCENE_HEIGHT) {
+				if ((playerX + xScale) < 0 || (playerX + xScale) >= MADS_SCREEN_WIDTH || playerY < 0 || (playerY + yScale) >= MADS_SCENE_HEIGHT) {
 					scene._nextSceneId = _walkOffScreen;
 					_walkOffScreen = 0;
 					_walkAnywhere = false;
 				}
 			}
-
 		}
 	}
 
@@ -585,7 +580,7 @@ void Player::idle() {
 	if (frameIndex >= spriteSet._charInfo->_numEntries) {
 		// Reset back to the start of the list
 		_frameListIndex = 0;
-	}  else {
+	} else {
 		_frameNumber += direction;
 		_forceRefresh = true;
 
@@ -615,20 +610,17 @@ int Player::getSpriteSlot() {
 	SpriteSlots &spriteSlots = _vm->_game->_scene._spriteSlots;
 
 	for (uint idx = 0; idx < spriteSlots.size(); ++idx) {
-		if (spriteSlots[idx]._seqIndex == PLAYER_SEQ_INDEX &&
-				spriteSlots[idx]._flags >= IMG_STATIC)
+		if (spriteSlots[idx]._seqIndex == PLAYER_SEQ_INDEX && spriteSlots[idx]._flags >= IMG_STATIC)
 			return idx;
 	}
 
-	return - 1;
+	return -1;
 }
 
 int Player::getScale(int yp) {
 	Scene &scene = _vm->_game->_scene;
 
-	int scale = (scene._bandsRange == 0) ? scene._sceneInfo->_maxScale :
-		(yp - scene._sceneInfo->_yBandsStart) * scene._scaleRange / scene._bandsRange +
-		scene._sceneInfo->_minScale;
+	int scale = (scene._bandsRange == 0) ? scene._sceneInfo->_maxScale : (yp - scene._sceneInfo->_yBandsStart) * scene._scaleRange / scene._bandsRange + scene._sceneInfo->_minScale;
 
 	return MIN(scale, 100);
 }

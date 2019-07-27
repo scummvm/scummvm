@@ -30,7 +30,8 @@
 namespace Kyra {
 
 class TextDisplayer_MR : public TextDisplayer {
-friend class KyraEngine_MR;
+	friend class KyraEngine_MR;
+
 public:
 	TextDisplayer_MR(KyraEngine_MR *vm, Screen_MR *screen);
 
@@ -42,6 +43,7 @@ public:
 	void restoreScreen();
 
 	void calcWidestLineBounds(int &x1, int &x2, int w, int x);
+
 protected:
 	KyraEngine_MR *_vm;
 	Screen_MR *_screen;

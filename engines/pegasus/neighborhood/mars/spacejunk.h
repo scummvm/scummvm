@@ -34,8 +34,7 @@ namespace Pegasus {
 
 static const CoordType kJunkMaxScreenSize = 250;
 
-static const float kJunkSize = convertScreenVToSpaceY(kShuttleWindowMidV - kJunkMaxScreenSize / 2, kJunkMinDistance) -
-		convertScreenVToSpaceY(kShuttleWindowMidV + kJunkMaxScreenSize / 2, kJunkMinDistance);
+static const float kJunkSize = convertScreenVToSpaceY(kShuttleWindowMidV - kJunkMaxScreenSize / 2, kJunkMinDistance) - convertScreenVToSpaceY(kShuttleWindowMidV + kJunkMaxScreenSize / 2, kJunkMinDistance);
 
 class SpaceJunk : public ScalingMovie, public Idler {
 public:

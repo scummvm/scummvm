@@ -28,29 +28,29 @@
 namespace Glk {
 namespace Alan3 {
 
-/* TYPES */
-enum LiteralType {
-	NO_LITERAL, NUMERIC_LITERAL, STRING_LITERAL
-};
+	/* TYPES */
+	enum LiteralType {
+		NO_LITERAL,
+		NUMERIC_LITERAL,
+		STRING_LITERAL
+	};
 
-struct LiteralEntry {   /* LITERAL */
-	Aint _class;          /* Class id of the literal type */
-	LiteralType type;
-	Aptr value;
-};
+	struct LiteralEntry { /* LITERAL */
+		Aint _class; /* Class id of the literal type */
+		LiteralType type;
+		Aptr value;
+	};
 
+	/* DATA */
+	extern int litCount;
+	extern LiteralEntry *literals;
 
-/* DATA */
-extern int litCount;
-extern LiteralEntry *literals;
-
-
-/* FUNCTIONS */
-extern void createIntegerLiteral(int integerValue);
-extern void createStringLiteral(char *unquotedString);
-extern void freeLiterals(void);
-extern int literalFromInstance(int instance);
-extern int instanceFromLiteral(int literal);
+	/* FUNCTIONS */
+	extern void createIntegerLiteral(int integerValue);
+	extern void createStringLiteral(char *unquotedString);
+	extern void freeLiterals(void);
+	extern int literalFromInstance(int instance);
+	extern int instanceFromLiteral(int literal);
 
 } // End of namespace Alan3
 } // End of namespace Glk

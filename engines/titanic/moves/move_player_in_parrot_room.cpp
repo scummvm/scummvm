@@ -25,12 +25,13 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMovePlayerInParrotRoom, CMovePlayerTo)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(MovementMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MovementMsg)
 END_MESSAGE_MAP()
 
-CMovePlayerInParrotRoom::CMovePlayerInParrotRoom() : CMovePlayerTo() {
+CMovePlayerInParrotRoom::CMovePlayerInParrotRoom()
+  : CMovePlayerTo() {
 }
 
 void CMovePlayerInParrotRoom::save(SimpleFile *file, int indent) {

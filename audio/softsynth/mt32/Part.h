@@ -18,10 +18,10 @@
 #ifndef MT32EMU_PART_H
 #define MT32EMU_PART_H
 
+#include "Structures.h"
+#include "Types.h"
 #include "globals.h"
 #include "internals.h"
-#include "Types.h"
-#include "Structures.h"
 
 namespace MT32Emu {
 
@@ -41,7 +41,7 @@ public:
 	void prepend(Poly *poly);
 	void append(Poly *poly);
 	Poly *takeFirst();
-	void remove(Poly * const poly);
+	void remove(Poly *const poly);
 };
 
 class Part {
@@ -130,12 +130,13 @@ public:
 	bool abortFirstPoly();
 }; // class Part
 
-class RhythmPart: public Part {
+class RhythmPart : public Part {
 	// Pointer to the area of the MT-32's memory dedicated to rhythm
 	const MemParams::RhythmTemp *rhythmTemp;
 
 	// This caches the timbres/settings in use by the rhythm part
 	PatchCache drumCache[85][4];
+
 public:
 	RhythmPart(Synth *synth, unsigned int usePartNum);
 	void refresh();

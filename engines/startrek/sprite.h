@@ -37,7 +37,6 @@ using Common::SharedPtr;
 
 namespace StarTrek {
 
-
 // Note: Rects in Star Trek are considered to have their bottom-right pixel contained in
 // the rectangle, but ScummVM rects are not. Functions from Trek have been adapted to use
 // ScummVM's rect format. Be wary of off-by-1 errors...
@@ -55,7 +54,7 @@ struct Sprite : Common::Serializable {
 	bool isOnScreen;
 	bool field16; // When set, sprite isn't drawn next refresh? (Gets reset to 0 after)
 	Common::Rect lastDrawRect; // Rect encompassing the sprite last time it was drawn
-	Common::Rect drawRect;     // Rect encompassing the sprite currently
+	Common::Rect drawRect; // Rect encompassing the sprite currently
 	Common::Rect rectangle2;
 	int16 drawX, drawY;
 

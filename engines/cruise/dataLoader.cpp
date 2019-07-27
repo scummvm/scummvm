@@ -20,10 +20,10 @@
  *
  */
 
-#include "cruise/cruise_main.h"
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
+#include "cruise/cruise_main.h"
 
 namespace Cruise {
 
@@ -116,11 +116,11 @@ void decodeGfxUnified(dataFileEntry *pCurrentFileEntry, int16 format) {
 				int bit = 7 - (x % 8);
 				int col = x / 8;
 
-				p0 = (dataPtr[line*pCurrentFileEntry->width + col + range * 0] >> bit) & 1;
-				p1 = (dataPtr[line*pCurrentFileEntry->width + col + range * 1] >> bit) & 1;
-				p2 = (dataPtr[line*pCurrentFileEntry->width + col + range * 2] >> bit) & 1;
-				p3 = (dataPtr[line*pCurrentFileEntry->width + col + range * 3] >> bit) & 1;
-				p4 = (dataPtr[line*pCurrentFileEntry->width + col + range * 4] >> bit) & 1;
+				p0 = (dataPtr[line * pCurrentFileEntry->width + col + range * 0] >> bit) & 1;
+				p1 = (dataPtr[line * pCurrentFileEntry->width + col + range * 1] >> bit) & 1;
+				p2 = (dataPtr[line * pCurrentFileEntry->width + col + range * 2] >> bit) & 1;
+				p3 = (dataPtr[line * pCurrentFileEntry->width + col + range * 3] >> bit) & 1;
+				p4 = (dataPtr[line * pCurrentFileEntry->width + col + range * 4] >> bit) & 1;
 
 				*destP++ = p0 | (p1 << 1) | (p2 << 2) | (p3 << 3) | (p4 << 4);
 			}
@@ -156,7 +156,7 @@ int updateResFileEntry(int height, int width, int size, int entryNumber, int res
 		return (-2);
 
 	filesDatabase[entryNumber].widthInColumn = width;
-	filesDatabase[entryNumber].subData.ptrMask = (uint8 *) mallocAndZero(maskSize);
+	filesDatabase[entryNumber].subData.ptrMask = (uint8 *)mallocAndZero(maskSize);
 	filesDatabase[entryNumber].width = width / 8;
 	filesDatabase[entryNumber].resType = resType;
 	filesDatabase[entryNumber].height = height;
@@ -167,7 +167,7 @@ int updateResFileEntry(int height, int width, int size, int entryNumber, int res
 
 int createResFileEntry(int width, int height, int size, int resType) {
 	error("Executing untested createResFileEntry");
-	return 0;	// for compilers that don't support NORETURN
+	return 0; // for compilers that don't support NORETURN
 
 #if 0
 	int entryNumber;
@@ -235,7 +235,7 @@ int getNumMaxEntiresInSet(uint8 *ptr) {
 	return numEntries;
 }
 
-int loadFile(const char* name, int idx, int destIdx) {
+int loadFile(const char *name, int idx, int destIdx) {
 	uint8 *ptr = NULL;
 	fileTypeEnum fileType;
 
@@ -250,7 +250,7 @@ int loadFile(const char* name, int idx, int destIdx) {
 
 		if (destIdx > numMaxEntriesInSet) {
 			MemFree(ptr);
-			return 0;	// exit if limit is reached
+			return 0; // exit if limit is reached
 		}
 		int res = loadSetEntry(name, ptr, destIdx, idx);
 		MemFree(ptr);
@@ -292,7 +292,7 @@ int loadFileRange(const char *name, int startIdx, int currentEntryIdx, int numId
 		for (int i = 0; i < numIdx; i++) {
 			if ((startIdx + i) > numMaxEntriesInSet) {
 				MemFree(ptr);
-				return 0;	// exit if limit is reached
+				return 0; // exit if limit is reached
 			}
 			loadSetEntry(name, ptr, startIdx + i, currentEntryIdx + i);
 		}
@@ -331,7 +331,7 @@ int loadFullBundle(const char *name, int startIdx) {
 	switch (fileType) {
 	case type_SET: {
 		// Sprite set
-		int numMaxEntriesInSet = getNumMaxEntiresInSet(ptr);	// get maximum number of sprites/animations in SET file
+		int numMaxEntriesInSet = getNumMaxEntiresInSet(ptr); // get maximum number of sprites/animations in SET file
 
 		for (int i = 0; i < numMaxEntriesInSet; i++) {
 			loadSetEntry(name, ptr, i, startIdx + i);
@@ -378,14 +378,14 @@ int loadFNTSub(uint8 *ptr, int destIdx) {
 
 		destPtr = filesDatabase[fileIndex].subData.ptr;
 
-		bigEndianLongToNative((int32 *) destPtr);
+		bigEndianLongToNative((int32 *)destPtr);
 		bigEndianLongToNative((int32 *)(destPtr + 4));
 		flipGen(destPtr + 8, 6);
 
 		uint8 *currentPtr = destPtr + 14;
 
 		for (int i = 0; i < (int16)READ_UINT16(destPtr + 8); i++) {
-			bigEndianLongToNative((int32 *) currentPtr);
+			bigEndianLongToNative((int32 *)currentPtr);
 			currentPtr += 4;
 
 			flipGen(currentPtr, 8);
@@ -407,12 +407,11 @@ int loadSPLSub(uint8 *ptr, int destIdx) {
 	if (fileIndex < 0)
 		error("Unable to load SPL resource");
 
-	uint8* destPtr = filesDatabase[fileIndex].subData.ptr;
+	uint8 *destPtr = filesDatabase[fileIndex].subData.ptr;
 	memcpy(destPtr, ptr, loadFileVar1);
 
 	return 1;
 }
-
 
 int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentDestEntry) {
 	uint8 *ptr3;
@@ -457,7 +456,7 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 		fileIndex = updateResFileEntry(localBuffer.height, localBuffer.width, resourceSize, currentDestEntry, localBuffer.type);
 
 	if (fileIndex < 0)
-		return -1;	// TODO: buffer is not freed
+		return -1; // TODO: buffer is not freed
 
 	if (!sec && (localBuffer.type == 5)) {
 		// There are sometimes sprites with a reduced width than what their pixels provide.
@@ -470,45 +469,45 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 	memcpy(filesDatabase[fileIndex].subData.ptr, ptr5, resourceSize);
 
 	switch (localBuffer.type) {
-		case 0:   // polygon
-			filesDatabase[fileIndex].subData.resourceType = OBJ_TYPE_POLY;
-			filesDatabase[fileIndex].subData.index = currentEntryIdx;
-			break;
+	case 0: // polygon
+		filesDatabase[fileIndex].subData.resourceType = OBJ_TYPE_POLY;
+		filesDatabase[fileIndex].subData.index = currentEntryIdx;
+		break;
 
-		case 1:
-			filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn * 8;
-			filesDatabase[fileIndex].subData.resourceType = OBJ_TYPE_BGMASK;
-			decodeGfxUnified(&filesDatabase[fileIndex], localBuffer.type);
-			filesDatabase[fileIndex].subData.index = currentEntryIdx;
-			filesDatabase[fileIndex].subData.transparency = 0;
-			break;
+	case 1:
+		filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn * 8;
+		filesDatabase[fileIndex].subData.resourceType = OBJ_TYPE_BGMASK;
+		decodeGfxUnified(&filesDatabase[fileIndex], localBuffer.type);
+		filesDatabase[fileIndex].subData.index = currentEntryIdx;
+		filesDatabase[fileIndex].subData.transparency = 0;
+		break;
 
-		case 4:
-			filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn * 2;
-			filesDatabase[fileIndex].subData.resourceType = OBJ_TYPE_SPRITE;
-			decodeGfxUnified(&filesDatabase[fileIndex], localBuffer.type);
-			filesDatabase[fileIndex].subData.index = currentEntryIdx;
-			filesDatabase[fileIndex].subData.transparency = localBuffer.transparency % 0x10;
-			break;
+	case 4:
+		filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn * 2;
+		filesDatabase[fileIndex].subData.resourceType = OBJ_TYPE_SPRITE;
+		decodeGfxUnified(&filesDatabase[fileIndex], localBuffer.type);
+		filesDatabase[fileIndex].subData.index = currentEntryIdx;
+		filesDatabase[fileIndex].subData.transparency = localBuffer.transparency % 0x10;
+		break;
 
-		case 5:
-			filesDatabase[fileIndex].subData.resourceType = OBJ_TYPE_SPRITE;
-			decodeGfxUnified(&filesDatabase[fileIndex], localBuffer.type);
-			filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn;
-			filesDatabase[fileIndex].subData.index = currentEntryIdx;
-			filesDatabase[fileIndex].subData.transparency = localBuffer.transparency;
-			break;
+	case 5:
+		filesDatabase[fileIndex].subData.resourceType = OBJ_TYPE_SPRITE;
+		decodeGfxUnified(&filesDatabase[fileIndex], localBuffer.type);
+		filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn;
+		filesDatabase[fileIndex].subData.index = currentEntryIdx;
+		filesDatabase[fileIndex].subData.transparency = localBuffer.transparency;
+		break;
 
-		case 8:
-			filesDatabase[fileIndex].subData.resourceType = OBJ_TYPE_SPRITE;
-			filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn;
-			filesDatabase[fileIndex].subData.index = currentEntryIdx;
-			filesDatabase[fileIndex].subData.transparency = localBuffer.transparency;
-			break;
+	case 8:
+		filesDatabase[fileIndex].subData.resourceType = OBJ_TYPE_SPRITE;
+		filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn;
+		filesDatabase[fileIndex].subData.index = currentEntryIdx;
+		filesDatabase[fileIndex].subData.transparency = localBuffer.transparency;
+		break;
 
-		default:
-			warning("Unsupported gfx loading type: %d", localBuffer.type);
-			break;
+	default:
+		warning("Unsupported gfx loading type: %d", localBuffer.type);
+		break;
 	}
 
 	if (name != filesDatabase[fileIndex].subData.name)
@@ -516,23 +515,23 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 
 	// create the mask
 	switch (localBuffer.type) {
-		case 1:
-		case 4:
-		case 5:
-		case 8:
-			memset(filesDatabase[fileIndex].subData.ptrMask, 0, filesDatabase[fileIndex].width / 8 * filesDatabase[fileIndex].height);
+	case 1:
+	case 4:
+	case 5:
+	case 8:
+		memset(filesDatabase[fileIndex].subData.ptrMask, 0, filesDatabase[fileIndex].width / 8 * filesDatabase[fileIndex].height);
 
-			for (int maskY = 0; maskY < filesDatabase[fileIndex].height; maskY++) {
-				for (int maskX = 0; maskX < filesDatabase[fileIndex].width; maskX++) {
-					if (*(filesDatabase[fileIndex].subData.ptr + filesDatabase[fileIndex].width * maskY + maskX) != filesDatabase[fileIndex].subData.transparency) {
-						*(filesDatabase[fileIndex].subData.ptrMask + filesDatabase[fileIndex].width / 8 * maskY + maskX / 8) |= 0x80 >> (maskX & 7);
-					}
+		for (int maskY = 0; maskY < filesDatabase[fileIndex].height; maskY++) {
+			for (int maskX = 0; maskX < filesDatabase[fileIndex].width; maskX++) {
+				if (*(filesDatabase[fileIndex].subData.ptr + filesDatabase[fileIndex].width * maskY + maskX) != filesDatabase[fileIndex].subData.transparency) {
+					*(filesDatabase[fileIndex].subData.ptrMask + filesDatabase[fileIndex].width / 8 * maskY + maskX / 8) |= 0x80 >> (maskX & 7);
 				}
 			}
-			break;
+		}
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	// TODO: free

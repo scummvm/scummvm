@@ -37,7 +37,8 @@
 
 namespace Lab {
 
-LargeSet::LargeSet(uint16 last, LabEngine *vm) : _vm(vm) {
+LargeSet::LargeSet(uint16 last, LabEngine *vm)
+  : _vm(vm) {
 	last = (((last + 15) >> 4) << 4);
 
 	_array = new uint16[last >> 3];
@@ -72,6 +73,5 @@ bool LargeSet::readInitialConditions(const Common::String fileName) {
 	delete file;
 	return true;
 }
-
 
 } // End of namespace Lab

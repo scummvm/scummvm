@@ -412,8 +412,8 @@ Common::QuickTimeParser::SampleDesc *MidiParser_QT::readSampleDesc(Track *track,
 	return 0;
 }
 
-MidiParser_QT::MIDISampleDesc::MIDISampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag) :
-		Common::QuickTimeParser::SampleDesc(parentTrack, codecTag) {
+MidiParser_QT::MIDISampleDesc::MIDISampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag)
+  : Common::QuickTimeParser::SampleDesc(parentTrack, codecTag) {
 }
 
 void MidiParser_QT::initFromContainerTracks() {

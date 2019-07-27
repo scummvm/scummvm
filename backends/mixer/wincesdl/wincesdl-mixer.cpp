@@ -23,36 +23,34 @@
 #ifdef _WIN32_WCE
 
 // Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#	define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "common/config-manager.h"
-#include "backends/platform/wince/wince-sdl.h"
-#include "backends/platform/wince/missing/fopen.h"
-#include "backends/mixer/wincesdl/wincesdl-mixer.h"
-#include "common/system.h"
-#include "common/textconsole.h"
+#	include "backends/mixer/wincesdl/wincesdl-mixer.h"
+#	include "backends/platform/wince/missing/fopen.h"
+#	include "backends/platform/wince/wince-sdl.h"
+#	include "common/config-manager.h"
+#	include "common/system.h"
+#	include "common/textconsole.h"
 
-#ifdef USE_VORBIS
-#ifndef USE_TREMOR
-#include <vorbis/vorbisfile.h>
-#else
-#ifdef USE_TREMOLO
-#include <tremolo/ivorbisfile.h>
-#else
-#include <tremor/ivorbisfile.h>
-#endif
-#endif
-#endif
+#	ifdef USE_VORBIS
+#		ifndef USE_TREMOR
+#			include <vorbis/vorbisfile.h>
+#		else
+#			ifdef USE_TREMOLO
+#				include <tremolo/ivorbisfile.h>
+#			else
+#				include <tremor/ivorbisfile.h>
+#			endif
+#		endif
+#	endif
 
-#define SAMPLES_PER_SEC_OLD 11025
-#define SAMPLES_PER_SEC_NEW 22050
+#	define SAMPLES_PER_SEC_OLD 11025
+#	define SAMPLES_PER_SEC_NEW 22050
 
 WINCESdlMixerManager::WINCESdlMixerManager() {
-
 }
 
 WINCESdlMixerManager::~WINCESdlMixerManager() {
-
 }
 
 void WINCESdlMixerManager::init() {
@@ -127,8 +125,7 @@ uint32 WINCESdlMixerManager::compute_sample_rate() {
 	// Force at least medium quality FM synthesis for FOTAQ
 	Common::String gameid(ConfMan.get("gameid"));
 	if (gameid == "queen") {
-		if (!((ConfMan.hasKey("FM_high_quality") && ConfMan.getBool("FM_high_quality")) ||
-			(ConfMan.hasKey("FM_medium_quality") && ConfMan.getBool("FM_medium_quality")))) {
+		if (!((ConfMan.hasKey("FM_high_quality") && ConfMan.getBool("FM_high_quality")) || (ConfMan.hasKey("FM_medium_quality") && ConfMan.getBool("FM_medium_quality")))) {
 			ConfMan.setBool("FM_medium_quality", true);
 			ConfMan.flushToDisk();
 		}
@@ -140,7 +137,7 @@ uint32 WINCESdlMixerManager::compute_sample_rate() {
 	}
 	// See if the output frequency is forced by the game
 	if (gameid == "ft" || gameid == "dig" || gameid == "comi" || gameid == "queen" || gameid == "sword" || gameid == "agi")
-			sampleRate = SAMPLES_PER_SEC_NEW;
+		sampleRate = SAMPLES_PER_SEC_NEW;
 	else {
 		if (ConfMan.hasKey("high_sample_rate") && !ConfMan.getBool("high_sample_rate"))
 			sampleRate = SAMPLES_PER_SEC_OLD;
@@ -148,17 +145,17 @@ uint32 WINCESdlMixerManager::compute_sample_rate() {
 			sampleRate = SAMPLES_PER_SEC_NEW;
 	}
 
-#ifdef USE_VORBIS
+#	ifdef USE_VORBIS
 	// Modify the sample rate on the fly if OGG is involved
 	if (sampleRate == SAMPLES_PER_SEC_OLD)
 		if (checkOggHighSampleRate())
-			 sampleRate = SAMPLES_PER_SEC_NEW;
-#endif
+			sampleRate = SAMPLES_PER_SEC_NEW;
+#	endif
 
 	return sampleRate;
 }
 
-#ifdef USE_VORBIS
+#	ifdef USE_VORBIS
 bool WINCESdlMixerManager::checkOggHighSampleRate() {
 	char trackFile[255];
 	FILE *testFile;
@@ -185,6 +182,6 @@ bool WINCESdlMixerManager::checkOggHighSampleRate() {
 	delete test_ov_file;
 	return false;
 }
-#endif
+#	endif
 
 #endif

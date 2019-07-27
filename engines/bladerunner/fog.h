@@ -27,7 +27,7 @@
 #include "bladerunner/matrix.h"
 
 namespace Common {
-	class ReadStream;
+class ReadStream;
 }
 
 namespace BladeRunner {
@@ -41,27 +41,27 @@ class Fog {
 protected:
 	Common::String _name;
 
-	int        _frameCount;
-	int        _animatedParameters;
-	Matrix4x3  _matrix;
-	Matrix4x3  _inverted;
-	Color      _fogColor;
-	float      _fogDensity;
-	float     *_animationData;
-	float     *_m11ptr;
-	float     *_m12ptr;
-	float     *_m13ptr;
-	float     *_m14ptr;
-	float     *_m21ptr;
-	float     *_m22ptr;
-	float     *_m23ptr;
-	float     *_m24ptr;
-	float     *_m31ptr;
-	float     *_m32ptr;
-	float     *_m33ptr;
-	float     *_m34ptr;
+	int _frameCount;
+	int _animatedParameters;
+	Matrix4x3 _matrix;
+	Matrix4x3 _inverted;
+	Color _fogColor;
+	float _fogDensity;
+	float *_animationData;
+	float *_m11ptr;
+	float *_m12ptr;
+	float *_m13ptr;
+	float *_m14ptr;
+	float *_m21ptr;
+	float *_m22ptr;
+	float *_m23ptr;
+	float *_m24ptr;
+	float *_m31ptr;
+	float *_m32ptr;
+	float *_m33ptr;
+	float *_m34ptr;
 
-	Fog       *_next;
+	Fog *_next;
 
 public:
 	Fog();
@@ -76,7 +76,6 @@ public:
 protected:
 	int readCommon(Common::ReadStream *stream);
 	void readAnimationData(Common::ReadStream *stream, int count);
-
 };
 
 class FogSphere : public Fog {
@@ -84,7 +83,8 @@ private:
 	float _radius;
 
 public:
-	FogSphere():_radius(0.0f) {};
+	FogSphere()
+	  : _radius(0.0f) {};
 
 	void read(Common::ReadStream *stream, int frameCount);
 	void calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient);
@@ -95,7 +95,8 @@ private:
 	float _coneAngle;
 
 public:
-	FogCone():_coneAngle(0.0f) {};
+	FogCone()
+	  : _coneAngle(0.0f) {};
 
 	void read(Common::ReadStream *stream, int frameCount);
 	void calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient);
@@ -106,7 +107,8 @@ private:
 	Vector3 _size;
 
 public:
-	FogBox():_size() {};
+	FogBox()
+	  : _size() {};
 
 	void read(Common::ReadStream *stream, int frameCount);
 	void calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient);

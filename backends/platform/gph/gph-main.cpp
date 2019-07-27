@@ -35,9 +35,9 @@ int main(int argc, char *argv[]) {
 	// Pre initialize the backend
 	((OSystem_GPH *)g_system)->init();
 
-#ifdef DYNAMIC_MODULES
+#	ifdef DYNAMIC_MODULES
 	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
-#endif
+#	endif
 
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);

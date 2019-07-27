@@ -83,8 +83,8 @@
 // BASIS, AND BROWN UNIVERSITY HAS NO OBLIGATION TO PROVIDE MAINTENANCE,
 // SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
-#include "graphics/surface.h"
 #include "graphics/yuv_to_rgb.h"
+#include "graphics/surface.h"
 
 namespace Common {
 DECLARE_SINGLETON(Graphics::YUVToRGBManager);
@@ -172,10 +172,10 @@ YUVToRGBManager::YUVToRGBManager() {
 		// would be done here. See the Berkeley mpeg_play sources.
 
 		int16 CR = (i - 128), CB = CR;
-		Cr_r_tab[i] = (int16) ( (0.419 / 0.299) * CR) + 0 * 768 + 256;
-		Cr_g_tab[i] = (int16) (-(0.299 / 0.419) * CR) + 1 * 768 + 256;
-		Cb_g_tab[i] = (int16) (-(0.114 / 0.331) * CB);
-		Cb_b_tab[i] = (int16) ( (0.587 / 0.331) * CB) + 2 * 768 + 256;
+		Cr_r_tab[i] = (int16)((0.419 / 0.299) * CR) + 0 * 768 + 256;
+		Cr_g_tab[i] = (int16)(-(0.299 / 0.419) * CR) + 1 * 768 + 256;
+		Cb_g_tab[i] = (int16)(-(0.114 / 0.331) * CB);
+		Cb_b_tab[i] = (int16)((0.587 / 0.331) * CB) + 2 * 768 + 256;
 	}
 }
 
@@ -193,10 +193,10 @@ const YUVToRGBLookup *YUVToRGBManager::getLookup(Graphics::PixelFormat format, Y
 }
 
 #define PUT_PIXEL(s, d) \
-	L = &rgbToPix[(s)]; \
+	L = &rgbToPix[(s)];   \
 	*((PixelInt *)(d)) = (L[cr_r] | L[crb_g] | L[cb_b])
 
-template<typename PixelInt>
+template <typename PixelInt>
 void convertYUV444ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup, int16 *colorTab, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
 	// Keep the tables in pointers here to avoid a dereference on each pixel
 	const int16 *Cr_r_tab = colorTab;
@@ -209,9 +209,9 @@ void convertYUV444ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup
 		for (int w = 0; w < yWidth; w++) {
 			const uint32 *L;
 
-			int16 cr_r  = Cr_r_tab[*vSrc];
+			int16 cr_r = Cr_r_tab[*vSrc];
 			int16 crb_g = Cr_g_tab[*vSrc] + Cb_g_tab[*uSrc];
-			int16 cb_b  = Cb_b_tab[*uSrc];
+			int16 cb_b = Cb_b_tab[*uSrc];
 			++uSrc;
 			++vSrc;
 
@@ -242,7 +242,7 @@ void YUVToRGBManager::convert444(Graphics::Surface *dst, YUVToRGBManager::Lumina
 		convertYUV444ToRGB<uint32>((byte *)dst->getPixels(), dst->pitch, lookup, _colorTab, ySrc, uSrc, vSrc, yWidth, yHeight, yPitch, uvPitch);
 }
 
-template<typename PixelInt>
+template <typename PixelInt>
 void convertYUV420ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup, int16 *colorTab, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
 	int halfHeight = yHeight >> 1;
 	int halfWidth = yWidth >> 1;
@@ -258,9 +258,9 @@ void convertYUV420ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup
 		for (int w = 0; w < halfWidth; w++) {
 			const uint32 *L;
 
-			int16 cr_r  = Cr_r_tab[*vSrc];
+			int16 cr_r = Cr_r_tab[*vSrc];
 			int16 crb_g = Cr_g_tab[*vSrc] + Cb_g_tab[*uSrc];
-			int16 cb_b  = Cb_b_tab[*uSrc];
+			int16 cb_b = Cb_b_tab[*uSrc];
 			++uSrc;
 			++vSrc;
 
@@ -298,31 +298,30 @@ void YUVToRGBManager::convert420(Graphics::Surface *dst, YUVToRGBManager::Lumina
 		convertYUV420ToRGB<uint32>((byte *)dst->getPixels(), dst->pitch, lookup, _colorTab, ySrc, uSrc, vSrc, yWidth, yHeight, yPitch, uvPitch);
 }
 
-#define READ_QUAD(ptr, prefix) \
-	byte prefix##A = ptr[index]; \
-	byte prefix##B = ptr[index + 1]; \
+#define READ_QUAD(ptr, prefix)           \
+	byte prefix##A = ptr[index];           \
+	byte prefix##B = ptr[index + 1];       \
 	byte prefix##C = ptr[index + uvPitch]; \
 	byte prefix##D = ptr[index + uvPitch + 1]
 
 #define DO_INTERPOLATION(out) \
-	out = (out##A * (4 - xDiff) * (4 - yDiff) + out##B * xDiff * (4 - yDiff) + \
-			out##C * yDiff * (4 - xDiff) + out##D * xDiff * yDiff) >> 4
+	out = (out##A * (4 - xDiff) * (4 - yDiff) + out##B * xDiff * (4 - yDiff) + out##C * yDiff * (4 - xDiff) + out##D * xDiff * yDiff) >> 4
 
-#define DO_YUV410_PIXEL() \
-	DO_INTERPOLATION(u); \
-	DO_INTERPOLATION(v); \
-	\
-	cr_r  = Cr_r_tab[v]; \
+#define DO_YUV410_PIXEL()            \
+	DO_INTERPOLATION(u);               \
+	DO_INTERPOLATION(v);               \
+                                     \
+	cr_r = Cr_r_tab[v];                \
 	crb_g = Cr_g_tab[v] + Cb_g_tab[u]; \
-	cb_b  = Cb_b_tab[u]; \
-	\
-	PUT_PIXEL(*ySrc, dstPtr); \
-	dstPtr += sizeof(PixelInt); \
-	\
-	ySrc++; \
+	cb_b = Cb_b_tab[u];                \
+                                     \
+	PUT_PIXEL(*ySrc, dstPtr);          \
+	dstPtr += sizeof(PixelInt);        \
+                                     \
+	ySrc++;                            \
 	xDiff++
 
-template<typename PixelInt>
+template <typename PixelInt>
 void convertYUV410ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup, int16 *colorTab, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
 	// Keep the tables in pointers here to avoid a dereference on each pixel
 	const int16 *Cr_r_tab = colorTab;

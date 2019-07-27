@@ -22,11 +22,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
 #include "common/file.h"
 #include "common/textconsole.h"
 
-#include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"
 #include "sword2/logic.h"
@@ -35,6 +33,7 @@
 #include "sword2/resman.h"
 #include "sword2/router.h"
 #include "sword2/sound.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
@@ -134,7 +133,7 @@ bool Sword2Engine::initStartMenu() {
 void Sword2Engine::registerStartPoint(int32 key, char *name) {
 	assert(_totalStartups < MAX_starts);
 
-	_startList[_totalStartups].start_res_id	= _startRes;
+	_startList[_totalStartups].start_res_id = _startRes;
 	_startList[_totalStartups].key = key;
 
 	strncpy(_startList[_totalStartups].description, name, MAX_description);

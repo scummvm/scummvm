@@ -22,13 +22,13 @@
 
 #include "gui/unknown-game-dialog.h"
 
-#include "common/translation.h"
 #include "common/str-array.h"
 #include "common/system.h"
+#include "common/translation.h"
 
+#include "gui/ThemeEval.h"
 #include "gui/gui-manager.h"
 #include "gui/message.h"
-#include "gui/ThemeEval.h"
 #include "gui/widgets/popup.h"
 #include "gui/widgets/scrollcontainer.h"
 
@@ -42,9 +42,9 @@ enum {
 	kScrollContainerReflow = 'SCRf'
 };
 
-UnknownGameDialog::UnknownGameDialog(const DetectedGame &detectedGame) :
-		Dialog(30, 20, 260, 124),
-		_detectedGame(detectedGame) {
+UnknownGameDialog::UnknownGameDialog(const DetectedGame &detectedGame)
+  : Dialog(30, 20, 260, 124)
+  , _detectedGame(detectedGame) {
 	// For now place the buttons with a default place and size. They will be resized and moved when rebuild() is called.
 	_closeButton = new ButtonWidget(this, 0, 0, 0, 0, detectedGame.canBeAdded ? _("Cancel") : _("Close"), 0, kClose);
 
@@ -86,7 +86,7 @@ void UnknownGameDialog::rebuild() {
 	// TODO: Use a theme layout dialog definition
 
 	// First remove the old text widgets
-	for (uint i = 0; i < _textWidgets.size() ; i++) {
+	for (uint i = 0; i < _textWidgets.size(); i++) {
 		_textContainer->removeWidget(_textWidgets[i]);
 		delete _textWidgets[i];
 	}
@@ -169,7 +169,7 @@ void UnknownGameDialog::rebuild() {
 
 	// And create text widgets
 	uint y = 8;
-	for (uint i = 0; i < lines.size() ; i++) {
+	for (uint i = 0; i < lines.size(); i++) {
 		StaticTextWidget *widget = new StaticTextWidget(_textContainer, 10, y, _w - 36 - scrollbarWidth, kLineHeight, lines[i], Graphics::kTextAlignLeft);
 		_textWidgets.push_back(widget);
 		y += kLineHeight;
@@ -178,10 +178,9 @@ void UnknownGameDialog::rebuild() {
 
 Common::String UnknownGameDialog::encodeUrlString(const Common::String &string) {
 	Common::String encoded;
-	for (uint i = 0 ; i < string.size() ; ++i) {
+	for (uint i = 0; i < string.size(); ++i) {
 		char c = string[i];
-		if ((c >= 'a' && c <= 'z') || (c >= 'A'  && c <= 'Z') || (c >= '0' && c <= '9') ||
-			c == '~' || c == '-' || c == '.' || c == '_')
+		if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '~' || c == '-' || c == '.' || c == '_')
 			encoded += c;
 		else
 			encoded += Common::String::format("%%%02X", c);
@@ -196,21 +195,21 @@ Common::String UnknownGameDialog::generateBugtrackerURL() {
 	Common::String engineName = encodeUrlString(_detectedGame.engineName);
 
 	return Common::String::format(
-		"https://www.scummvm.org/unknowngame?"
-		"engine=%s"
-		"&description=%s",
-		engineName.c_str(),
-		report.c_str());
+	  "https://www.scummvm.org/unknowngame?"
+	  "engine=%s"
+	  "&description=%s",
+	  engineName.c_str(),
+	  report.c_str());
 }
 
 void UnknownGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	switch(cmd) {
+	switch (cmd) {
 	case kCopyToClipboard: {
 		Common::String report = generateUnknownGameReport(_detectedGame, false, false);
 
 		if (g_system->setTextInClipboard(report)) {
 			g_system->displayMessageOnOSD(
-					_("All necessary information about your game has been copied into the clipboard"));
+			  _("All necessary information about your game has been copied into the clipboard"));
 		} else {
 			g_system->displayMessageOnOSD(_("Copying the game information to the clipboard has failed!"));
 		}
@@ -229,7 +228,7 @@ void UnknownGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 		g_system->openUrl(generateBugtrackerURL());
 		break;
 	case kScrollContainerReflow:
-		for (uint i = 0; i < _textWidgets.size() ; i++)
+		for (uint i = 0; i < _textWidgets.size(); i++)
 			_textWidgets[i]->setVisible(true);
 		break;
 	}

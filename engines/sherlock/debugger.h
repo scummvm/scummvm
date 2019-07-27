@@ -30,7 +30,9 @@ namespace Sherlock {
 
 class SherlockEngine;
 
-enum AllLocations { LOC_REFRESH = -1, LOC_DISABLED = 0, LOC_ALL = 1 };
+enum AllLocations { LOC_REFRESH = -1,
+	                  LOC_DISABLED = 0,
+	                  LOC_ALL = 1 };
 
 class Debugger : public GUI::Debugger {
 private:
@@ -73,11 +75,14 @@ private:
 	 * Get or set the value of a flag
 	 */
 	bool cmdFlag(int argc, const char **argv);
+
 protected:
 	SherlockEngine *_vm;
 	Common::String _3doPlayMovieFile;
+
 public:
 	AllLocations _showAllLocations;
+
 public:
 	Debugger(SherlockEngine *vm);
 	virtual ~Debugger() {}
@@ -88,4 +93,4 @@ public:
 
 } // End of namespace Sherlock
 
-#endif	/* SHERLOCK_DEBUGGER_H */
+#endif /* SHERLOCK_DEBUGGER_H */

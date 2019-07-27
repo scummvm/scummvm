@@ -30,8 +30,10 @@ namespace Titanic {
 class CCloseBrokenPel : public CBackground {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+
 public:
 	CString _target;
+
 public:
 	CLASSDEF;
 

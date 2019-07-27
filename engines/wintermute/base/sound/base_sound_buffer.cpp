@@ -26,20 +26,20 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/sound/base_sound_manager.h"
 #include "engines/wintermute/base/sound/base_sound_buffer.h"
-#include "engines/wintermute/base/base_file_manager.h"
-#include "engines/wintermute/wintermute.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/sound/base_sound_manager.h"
+#include "engines/wintermute/wintermute.h"
 #ifdef USE_VORBIS
-#include "audio/decoders/vorbis.h"
+#	include "audio/decoders/vorbis.h"
 #endif
-#include "audio/decoders/wave.h"
 #include "audio/decoders/raw.h"
-#include "common/system.h"
+#include "audio/decoders/wave.h"
 #include "common/substream.h"
+#include "common/system.h"
 
 namespace Wintermute {
 
@@ -47,13 +47,14 @@ namespace Wintermute {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-#define MAX_NONSTREAMED_FILE_SIZE 1024*1024
+#define MAX_NONSTREAMED_FILE_SIZE 1024 * 1024
 
 //////////////////////////////////////////////////////////////////////////
-BaseSoundBuffer::BaseSoundBuffer(BaseGame *inGame) : BaseClass(inGame) {
+BaseSoundBuffer::BaseSoundBuffer(BaseGame *inGame)
+  : BaseClass(inGame) {
 	_stream = nullptr;
 	_handle = nullptr;
-//	_sync = nullptr;
+	//	_sync = nullptr;
 
 	_streamed = false;
 	_filename = "";
@@ -71,7 +72,6 @@ BaseSoundBuffer::BaseSoundBuffer(BaseGame *inGame) : BaseClass(inGame) {
 	_freezePaused = false;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 BaseSoundBuffer::~BaseSoundBuffer() {
 	stop();
@@ -85,12 +85,10 @@ BaseSoundBuffer::~BaseSoundBuffer() {
 	_stream = nullptr;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void BaseSoundBuffer::setStreaming(bool streamed, uint32 numBlocks, uint32 blockSize) {
 	_streamed = streamed;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundBuffer::loadFromFile(const Common::String &filename, bool forceReload) {
@@ -134,7 +132,6 @@ bool BaseSoundBuffer::loadFromFile(const Common::String &filename, bool forceRel
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundBuffer::play(bool looping, uint32 startSample) {
@@ -186,7 +183,6 @@ bool BaseSoundBuffer::resume() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundBuffer::stop() {
 	if (_stream && _handle) {
@@ -195,14 +191,12 @@ bool BaseSoundBuffer::stop() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundBuffer::pause() {
 	if (_stream && _handle) {
 		g_system->getMixer()->pauseHandle(*_handle, true);
 	}
 	return STATUS_OK;
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -213,7 +207,6 @@ uint32 BaseSoundBuffer::getLength() {
 	}
 	return 0;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseSoundBuffer::setType(Audio::Mixer::SoundType type) {
@@ -235,13 +228,11 @@ bool BaseSoundBuffer::setVolume(int volume) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundBuffer::setPrivateVolume(int volume) {
 	_privateVolume = volume;
 	return setVolume(_privateVolume);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundBuffer::isPlaying() {
@@ -252,7 +243,6 @@ bool BaseSoundBuffer::isPlaying() {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 uint32 BaseSoundBuffer::getPosition() {
 	if (_stream && _handle) {
@@ -261,7 +251,6 @@ uint32 BaseSoundBuffer::getPosition() {
 	}
 	return 0;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundBuffer::setPosition(uint32 pos) {

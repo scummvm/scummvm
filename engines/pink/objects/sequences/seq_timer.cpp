@@ -23,17 +23,19 @@
 #include "common/debug.h"
 
 #include "pink/archive.h"
-#include "pink/pink.h"
 #include "pink/objects/actors/supporting_actor.h"
 #include "pink/objects/pages/game_page.h"
 #include "pink/objects/sequences/seq_timer.h"
 #include "pink/objects/sequences/sequencer.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
 SeqTimer::SeqTimer()
-	: _sequencer(nullptr), _updatesToMessage(0), _period(0),
-	_range(0) {}
+  : _sequencer(nullptr)
+  , _updatesToMessage(0)
+  , _period(0)
+  , _range(0) {}
 
 void SeqTimer::deserialize(Archive &archive) {
 	_actor = archive.readString();

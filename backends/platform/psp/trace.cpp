@@ -34,8 +34,8 @@
 // for the PSP port
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#include <pspkernel.h>
 #include <pspdebug.h>
+#include <pspkernel.h>
 #include <stdarg.h>
 #include <stdio.h>
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
@@ -45,17 +45,17 @@ int psp_debug_indent = 0;
 bool firstWriteToFile = true;
 
 void PspDebugTrace(bool alsoToScreen, const char *format, ...) {
-	va_list	opt;
-	char		buffer[2048];
-	int			bufsz;
+	va_list opt;
+	char buffer[2048];
+	int bufsz;
 	FILE *fd = 0;
 
 	va_start(opt, format);
-	bufsz = vsnprintf(buffer, (size_t) sizeof(buffer), format, opt);
+	bufsz = vsnprintf(buffer, (size_t)sizeof(buffer), format, opt);
 	va_end(opt);
 
 	if (firstWriteToFile) {
-		fd = fopen("SCUMMTRACE.TXT", "wb");		// erase the file the first time we write
+		fd = fopen("SCUMMTRACE.TXT", "wb"); // erase the file the first time we write
 		firstWriteToFile = false;
 	} else {
 		fd = fopen("SCUMMTRACE.TXT", "ab");
@@ -72,13 +72,15 @@ void PspDebugTrace(bool alsoToScreen, const char *format, ...) {
 }
 
 // Assembly functions to get the Return Address register and the Stack pointer register
-#define GET_RET(retAddr) \
-	asm volatile ("move %0,$ra\n\t"	\
-		 : "=&r" (retAddr) : )
+#define GET_RET(retAddr)         \
+	asm volatile("move %0,$ra\n\t" \
+	             : "=&r"(retAddr)  \
+	             :)
 
-#define GET_SP(stackPtr) \
-	asm volatile ("move %0,$sp\n\t"	\
-		 : "=&r" (stackPtr) : )
+#define GET_SP(stackPtr)         \
+	asm volatile("move %0,$sp\n\t" \
+	             : "=&r"(stackPtr) \
+	             :)
 
 // Function to retrieve a backtrace for the MIPS processor
 // This is not trivial since the MIPS doesn't use a frame pointer.
@@ -99,15 +101,15 @@ void mipsBacktrace(uint32 levels, void **addresses) {
 
 	uint32 curLevel = 0;
 
-	const uint32 SP_SUBTRACT = 0x27bd8000;		// The instruction to subtract from the SP looks like this
-	const uint32 SP_SUB_HIGH_MASK = 0xffff8000;	// The mask to check for the subtract SP instruction
-	const uint32 SP_SUB_LOW_MASK = 0x0000ffff;	// The mask that gives us how much was subtracted
+	const uint32 SP_SUBTRACT = 0x27bd8000; // The instruction to subtract from the SP looks like this
+	const uint32 SP_SUB_HIGH_MASK = 0xffff8000; // The mask to check for the subtract SP instruction
+	const uint32 SP_SUB_LOW_MASK = 0x0000ffff; // The mask that gives us how much was subtracted
 
 	// make sure we go out of the stack of this current level
 	// we already have the return address for this level from the register
 	if (curLevel < levels) {
 		void *thisFunc = (void *)mipsBacktrace;
-		for (uint32 *seekPtr = (uint32 *)thisFunc; ; seekPtr++) {
+		for (uint32 *seekPtr = (uint32 *)thisFunc;; seekPtr++) {
 			if ((*seekPtr & SP_SUB_HIGH_MASK) == SP_SUBTRACT) {
 				// we found the $sp subtraction at the beginning of the function
 				int16 subAmount = (int16)((*seekPtr) & SP_SUB_LOW_MASK);
@@ -127,7 +129,7 @@ void mipsBacktrace(uint32 levels, void **addresses) {
 	// keep scanning while more levels are requested
 	while (curLevel < levels) {
 		// now scan backwards from the return address to find the size of the stack
-		for(uint32 *seekPtr = (uint32 *)retAddr; ; seekPtr--) {
+		for (uint32 *seekPtr = (uint32 *)retAddr;; seekPtr--) {
 			if (((*seekPtr) & SP_SUB_HIGH_MASK) == SP_SUBTRACT) {
 				// we found the $sp subtraction at the beginning of the function
 				int16 subAmount = (int16)((*seekPtr) & SP_SUB_LOW_MASK);

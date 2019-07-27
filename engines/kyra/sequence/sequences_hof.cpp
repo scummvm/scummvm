@@ -20,13 +20,13 @@
  *
  */
 
+#include "kyra/sequence/sequences_hof.h"
 #include "kyra/engine/kyra_hof.h"
+#include "kyra/engine/timer.h"
 #include "kyra/graphics/screen_hof.h"
 #include "kyra/graphics/screen_lol.h"
 #include "kyra/resource/resource.h"
 #include "kyra/sound/sound.h"
-#include "kyra/sequence/sequences_hof.h"
-#include "kyra/engine/timer.h"
 
 #include "common/system.h"
 
@@ -61,7 +61,7 @@ enum SequenceID {
 	kSequenceHoFDemoDinob,
 	kSequenceHoFDemoFisher,
 
-// The following enums remain active even if LoL is disabled
+	// The following enums remain active even if LoL is disabled
 	kSequenceLoLDemoScene1,
 	kSequenceLoLDemoText1,
 	kSequenceLoLDemoScene2,
@@ -107,7 +107,13 @@ enum NestedSequenceID {
 typedef int (SeqPlayer_HOF::*SeqProc)(WSAMovie_v2 *, int, int, int);
 
 struct SeqPlayerConfig {
-	SeqPlayerConfig(const HoFSeqData *data, const SeqProc *callbacks, const SeqProc *nestedCallbacks) : seq(data->seq), seqProc(callbacks), numSeq(data->numSeq), nestedSeq(data->nestedSeq), nestedSeqProc(nestedCallbacks), numNestedSeq(data->numNestedSeq) {}
+	SeqPlayerConfig(const HoFSeqData *data, const SeqProc *callbacks, const SeqProc *nestedCallbacks)
+	  : seq(data->seq)
+	  , seqProc(callbacks)
+	  , numSeq(data->numSeq)
+	  , nestedSeq(data->nestedSeq)
+	  , nestedSeqProc(nestedCallbacks)
+	  , numNestedSeq(data->numNestedSeq) {}
 	const HoFSequence *seq;
 	const SeqProc *seqProc;
 	int numSeq;
@@ -336,7 +342,11 @@ private:
 
 SeqPlayer_HOF *SeqPlayer_HOF::_instance = 0;
 
-SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *system, bool startupSaveLoadable) : _vm(vm), _screen(screen), _system(system), _startupSaveLoadable(startupSaveLoadable) {
+SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *system, bool startupSaveLoadable)
+  : _vm(vm)
+  , _screen(screen)
+  , _system(system)
+  , _startupSaveLoadable(startupSaveLoadable) {
 	// We use a static pointer for pauseEngine functionality. Since we don't
 	// ever need more than one SeqPlayer_HOF object at the same time we keep
 	// this simple and just add an assert to detect typos, regressions, etc.
@@ -346,7 +356,7 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 	memset(_textSlots, 0, sizeof(_textSlots));
 	memset(_hofDemoActiveItemAnim, 0, sizeof(_hofDemoActiveItemAnim));
 
-	_screenHoF = _vm->game() == GI_KYRA2 ? (Screen_HoF*)screen : 0;
+	_screenHoF = _vm->game() == GI_KYRA2 ? (Screen_HoF *)screen : 0;
 	_config = 0;
 	_result = 0;
 	_sequenceSoundList = 0;
@@ -446,7 +456,8 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 			{ _sequenceStrings[97], _sequenceStrings[96], _sequenceStrings[95], _sequenceStrings[98], 0 },
 			{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0xD7, 0xD6 },
 			{ 0xD8, 0xDA, 0xD9, 0xD8 },
-			(_vm->gameFlags().lang == Common::JA_JPN) ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT, 240
+			(_vm->gameFlags().lang == Common::JA_JPN) ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT,
+			240
 		};
 
 		_menu = new MainMenu(_vm);
@@ -560,20 +571,20 @@ void SeqPlayer_HOF::setupCallbacks() {
 	static const SeqProc nestedSeqCallbacksHoF[] = { SCB(figgle), SCB(over1), SCB(over2), SCB(forest), SCB(dragon), SCB(darm), SCB(library2), SCB(library2), SCB(marco), SCB(hand1a), SCB(hand1b), SCB(hand1c), SCB(hand2), SCB(hand3), 0 };
 #undef SCB
 #define SCB(x) &SeqPlayer_HOF::cbHOFDEMO_##x
-	static const SeqProc seqCallbacksHoFDemo[] = {	SCB(virgin), SCB(westwood), SCB(title), SCB(hill), SCB(outhome), SCB(wharf), SCB(dinob), SCB(fisher) };
+	static const SeqProc seqCallbacksHoFDemo[] = { SCB(virgin), SCB(westwood), SCB(title), SCB(hill), SCB(outhome), SCB(wharf), SCB(dinob), SCB(fisher) };
 	static const SeqProc nestedSeqCallbacksHoFDemo[] = { SCB(wharf2), SCB(dinob2), SCB(water), SCB(bail), SCB(dig), 0 };
 #undef SCB
 #ifdef ENABLE_LOL
-#define SCB(x) &SeqPlayer_HOF::cbLOLDEMO_##x
+#	define SCB(x) &SeqPlayer_HOF::cbLOLDEMO_##x
 	static const SeqProc seqCallbacksLoLDemo[] = { SCB(scene1), 0, SCB(scene2), 0, SCB(scene3), 0, SCB(scene4), 0, SCB(scene5), SCB(text5), SCB(scene6), 0 };
-#undef SCB
+#	undef SCB
 #else
 	static const SeqProc seqCallbacksLoLDemo[] = { 0 };
 #endif
 	static const SeqProc nestedSeqCallbacksLoLDemo[] = { 0 };
 
-	static const SeqProc *const seqCallbacks[] = { seqCallbacksHoF, seqCallbacksHoFDemo, seqCallbacksLoLDemo};
-	static const SeqProc *const nestedSeqCallbacks[] = { nestedSeqCallbacksHoF, nestedSeqCallbacksHoFDemo, nestedSeqCallbacksLoLDemo};
+	static const SeqProc *const seqCallbacks[] = { seqCallbacksHoF, seqCallbacksHoFDemo, seqCallbacksLoLDemo };
+	static const SeqProc *const nestedSeqCallbacks[] = { nestedSeqCallbacksHoF, nestedSeqCallbacksHoFDemo, nestedSeqCallbacksLoLDemo };
 
 	int tmpSize = 0;
 	delete _config;
@@ -668,7 +679,7 @@ void SeqPlayer_HOF::playScenes() {
 
 		if (sq.flags & 4) {
 			int cp = _screen->setCurPage(2);
-			Screen::FontId cf =	_screen->setFont(_vm->gameFlags().lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_GOLDFONT_FNT);
+			Screen::FontId cf = _screen->setFont(_vm->gameFlags().lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_GOLDFONT_FNT);
 
 			if (sq.stringIndex1 != -1)
 				_screen->printText(_sequenceStrings[sq.stringIndex1], (320 - _screen->getTextWidth(_sequenceStrings[sq.stringIndex1])) / 2, 100 - _screen->getFontHeight(), 1, 0);
@@ -860,7 +871,7 @@ void SeqPlayer_HOF::doTransition(int type) {
 
 		_screen->fadePalette(pal, 64);
 		_screen->copyPalette(1, 0);
-		} break;
+	} break;
 
 	default:
 		break;
@@ -1102,7 +1113,7 @@ void SeqPlayer_HOF::startNestedAnimation(int animSlot, int sequenceID) {
 		return;
 
 	if (_target == kLoLDemo) {
-		 return;
+		return;
 	} else if (_target == kHoFDemo) {
 		assert(sequenceID >= kNestedSequenceHoFDemoWharf2);
 		sequenceID -= kNestedSequenceHoFDemoWharf2;
@@ -1175,7 +1186,7 @@ void SeqPlayer_HOF::doNestedFrameTransition(int transitionType, int animSlot) {
 		ya = -_animSlots[animSlot].movie->yAdd();
 		_animSlots[animSlot].movie->displayFrame(0, 8, xa, ya, 0, 0, 0);
 		nestedFrameAnimTransition(8, 2, 7, 8, _animSlots[animSlot].movie->xAdd(), _animSlots[animSlot].movie->yAdd(),
-							_animSlots[animSlot].movie->width(), _animSlots[animSlot].movie->height(), 1, 2);
+		                          _animSlots[animSlot].movie->width(), _animSlots[animSlot].movie->height(), 1, 2);
 		break;
 
 	case 1:
@@ -1183,7 +1194,7 @@ void SeqPlayer_HOF::doNestedFrameTransition(int transitionType, int animSlot) {
 		ya = -_animSlots[animSlot].movie->yAdd();
 		_animSlots[animSlot].movie->displayFrame(0, 8, xa, ya, 0, 0, 0);
 		nestedFrameAnimTransition(8, 2, 7, 8, _animSlots[animSlot].movie->xAdd(), _animSlots[animSlot].movie->yAdd(),
-							_animSlots[animSlot].movie->width(), _animSlots[animSlot].movie->height(), 1, 1);
+		                          _animSlots[animSlot].movie->width(), _animSlots[animSlot].movie->height(), 1, 1);
 		break;
 
 	case 2:
@@ -1192,7 +1203,7 @@ void SeqPlayer_HOF::doNestedFrameTransition(int transitionType, int animSlot) {
 		ya = -_animSlots[animSlot].movie->yAdd();
 		_animSlots[animSlot].movie->displayFrame(21, 8, xa, ya, 0, 0, 0);
 		nestedFrameAnimTransition(8, 2, 7, 8, _animSlots[animSlot].movie->xAdd(), _animSlots[animSlot].movie->yAdd(),
-							_animSlots[animSlot].movie->width(), _animSlots[animSlot].movie->height(), 0, 2);
+		                          _animSlots[animSlot].movie->width(), _animSlots[animSlot].movie->height(), 0, 2);
 		break;
 
 	case 3:
@@ -1467,7 +1478,7 @@ void SeqPlayer_HOF::fadeOutMusic() {
 }
 
 void SeqPlayer_HOF::playHoFTalkieCredits() {
-	static const uint8 colormap[] = {0, 0, 102, 102, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	static const uint8 colormap[] = { 0, 0, 102, 102, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	static const ScreenDim d = { 0x00, 0x0C, 0x28, 0xB4, 0xFF, 0x00, 0x00, 0x00 };
 
 	_screen->loadBitmap("finale.cps", 3, 3, &_screen->getPalette(0));
@@ -1501,7 +1512,7 @@ void SeqPlayer_HOF::playHoFTalkieCredits() {
 }
 
 void SeqPlayer_HOF::displayHoFTalkieScrollText(uint8 *data, const ScreenDim *d, int tempPage1, int tempPage2, int speed,
-	int step, Screen::FontId fid1, Screen::FontId fid2, const uint8 *shapeData, const char *const *specialData) {
+                                               int step, Screen::FontId fid1, Screen::FontId fid2, const uint8 *shapeData, const char *const *specialData) {
 	if (!data)
 		return;
 
@@ -1512,18 +1523,18 @@ void SeqPlayer_HOF::displayHoFTalkieScrollText(uint8 *data, const ScreenDim *d, 
 	_screen->copyRegion(d->sx << 3, d->sy, d->sx << 3, d->sy, d->w << 3, d->h, 0, tempPage1);
 
 	struct ScrollTextData {
-		int16	x;
-		int16	y;
-		uint8	*text;
-		byte	unk1;
-		byte	height;
-		byte	adjust;
+		int16 x;
+		int16 y;
+		uint8 *text;
+		byte unk1;
+		byte height;
+		byte adjust;
 
 		ScrollTextData() {
-			x = 0;      // 0  11
-			y = 0;		// 2  13
-			text = 0;	// 4  15
-			unk1 = 0;   // 8  19
+			x = 0; // 0  11
+			y = 0; // 2  13
+			text = 0; // 4  15
+			unk1 = 0; // 8  19
 			height = 0; // 9  20
 			adjust = 0; // 10 21
 		}
@@ -1725,7 +1736,7 @@ void SeqPlayer_HOF::delayTicks(uint32 ticks) {
 }
 
 void SeqPlayer_HOF::delayUntil(uint32 dest) {
-	for (uint32 ct = _system->getMillis(); ct < dest && !_vm->shouldQuit() && !checkAbortPlayback(); ) {
+	for (uint32 ct = _system->getMillis(); ct < dest && !_vm->shouldQuit() && !checkAbortPlayback();) {
 		uint32 step = (dest - ct >= 10) ? 10 : (dest - ct);
 		_system->delayMillis(step);
 		ct = _system->getMillis();
@@ -1747,10 +1758,10 @@ bool SeqPlayer_HOF::countDownRunning() {
 	return _countDownRemainder;
 }
 
-#define CASE_ALT(dosCase, towns98Case)\
-	case dosCase:\
-	case towns98Case:\
-		if (!((_callbackCurrentFrame == towns98Case && (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)) || (_callbackCurrentFrame == dosCase && _vm->gameFlags().platform == Common::kPlatformDOS)))\
+#define CASE_ALT(dosCase, towns98Case)                                                                                                                                                                                                                         \
+	case dosCase:                                                                                                                                                                                                                                                \
+	case towns98Case:                                                                                                                                                                                                                                            \
+		if (!((_callbackCurrentFrame == towns98Case && (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)) || (_callbackCurrentFrame == dosCase && _vm->gameFlags().platform == Common::kPlatformDOS))) \
 			break;
 
 int SeqPlayer_HOF::cbHOF_westwood(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
@@ -1865,13 +1876,13 @@ int SeqPlayer_HOF::cbHOF_overview(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		break;
 
 	case 434:
-	//CASE_ALT(434, 354)
+		//CASE_ALT(434, 354)
 		closeNestedAnimation(0);
 		startNestedAnimation(0, kNestedSequenceDragon);
 		break;
 
 	case 540:
-	//CASE_ALT(540, 400)
+		//CASE_ALT(540, 400)
 		waitForSubTitlesTimeout();
 		closeNestedAnimation(0);
 		setCountDown(0);
@@ -1941,7 +1952,7 @@ int SeqPlayer_HOF::cbHOF_library(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		break;
 
 	case 660:
-	//CASE_ALT(660, 480)
+		//CASE_ALT(660, 480)
 		_screen->copyPage(2, 12);
 		waitForSubTitlesTimeout();
 		closeNestedAnimation(0);
@@ -1992,24 +2003,24 @@ int SeqPlayer_HOF::cbHOF_hand(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		playSoundAndDisplaySubTitle(8);
 		break;
 
-	CASE_ALT(395, 260)
+		CASE_ALT(395, 260)
 		waitForSubTitlesTimeout();
 		closeNestedAnimation(0);
 		startNestedAnimation(1, kNestedSequenceHand3);
 		playSoundAndDisplaySubTitle(9);
 		break;
 
-	CASE_ALT(500, 365)
+		CASE_ALT(500, 365)
 		waitForSubTitlesTimeout();
 		closeNestedAnimation(1);
 		startNestedAnimation(0, kNestedSequenceHand4);
 		break;
 
-	CASE_ALT(540, 405)
+		CASE_ALT(540, 405)
 		playSoundAndDisplaySubTitle(10);
 		break;
 
-	CASE_ALT(630, 484)
+		CASE_ALT(630, 484)
 		waitForSubTitlesTimeout();
 		closeNestedAnimation(0);
 		setCountDown(0);
@@ -2093,8 +2104,7 @@ int SeqPlayer_HOF::cbHOF_zanfaun(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 	case 9:
 		if (_vm->gameFlags().isTalkie)
-			playDialogueAnimation(13, 14, -1, 140, (_vm->gameFlags().lang == Common::FR_FRA
-				|| _vm->gameFlags().lang == Common::DE_DEU) ? 50 : 70, 160, wsaObj, 9, 15, x, y);
+			playDialogueAnimation(13, 14, -1, 140, (_vm->gameFlags().lang == Common::FR_FRA || _vm->gameFlags().lang == Common::DE_DEU) ? 50 : 70, 160, wsaObj, 9, 15, x, y);
 		break;
 
 	case 10:
@@ -2107,8 +2117,7 @@ int SeqPlayer_HOF::cbHOF_zanfaun(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 	case 16:
 		if (_vm->gameFlags().isTalkie)
-			playDialogueAnimation(18, 15, -1, 140, (_vm->gameFlags().lang == Common::FR_FRA) ? 50 :
-				(_vm->gameFlags().lang == Common::DE_DEU ? 40 : 70), 160, wsaObj, 10, 16, x, y);
+			playDialogueAnimation(18, 15, -1, 140, (_vm->gameFlags().lang == Common::FR_FRA) ? 50 : (_vm->gameFlags().lang == Common::DE_DEU ? 40 : 70), 160, wsaObj, 10, 16, x, y);
 		break;
 
 	case 17:
@@ -2670,7 +2679,7 @@ int SeqPlayer_HOF::cbHOF_fuards(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 			subTitleFirstFrame = 9;
 			subTitleLastFrame = 13;
 		}
-		subTitleY = (_vm->gameFlags().lang == Common::FR_FRA || _vm->gameFlags().lang == Common::DE_DEU) ? 88 :100;
+		subTitleY = (_vm->gameFlags().lang == Common::FR_FRA || _vm->gameFlags().lang == Common::DE_DEU) ? 88 : 100;
 		subTitleW = 80;
 
 		playDialogueAnimation(30, voiceIndex, 137, subTitleX, subTitleY, subTitleW, wsaObj, subTitleFirstFrame, subTitleLastFrame, x, y);
@@ -2761,7 +2770,7 @@ int SeqPlayer_HOF::cbHOF_firates(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 			subTitleW = 140;
 		} else {
 			subTitleX = 74;
-			subTitleY = (_vm->gameFlags().lang == Common::FR_FRA) ? 96: 108;
+			subTitleY = (_vm->gameFlags().lang == Common::FR_FRA) ? 96 : 108;
 			subTitleW = 80;
 		}
 
@@ -2818,7 +2827,7 @@ int SeqPlayer_HOF::cbHOF_frash(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 	case -1:
 		if (_vm->gameFlags().isTalkie)
-			 playHoFTalkieCredits();
+			playHoFTalkieCredits();
 		_talkieFinaleExtraFlag = _vm->gameFlags().isTalkie;
 		break;
 
@@ -3033,7 +3042,7 @@ int SeqPlayer_HOF::cbHOFDEMO_wharf(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 int SeqPlayer_HOF::cbHOFDEMO_dinob(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	if (frm == 0) {
-		if (!(_callbackCurrentFrame/8)) {
+		if (!(_callbackCurrentFrame / 8)) {
 			startNestedAnimation(0, kNestedSequenceHoFDemoDinob2);
 			_animCurrentFrame = 0;
 		}
@@ -3429,15 +3438,15 @@ void KyraEngine_HoF::seq_makeBookOrCauldronAppear(int type) {
 	_screen->loadBitmap("_PLAYALL.CPS", 3, 3, 0);
 
 	static const uint8 bookCauldronRects[] = {
-		0x46, 0x90, 0x7F, 0x2B,	// unknown rect (maybe unused?)
-		0xCE, 0x90, 0x2C, 0x2C,	// book rect
-		0xFA, 0x90, 0x46, 0x2C	// cauldron rect
+		0x46, 0x90, 0x7F, 0x2B, // unknown rect (maybe unused?)
+		0xCE, 0x90, 0x2C, 0x2C, // book rect
+		0xFA, 0x90, 0x46, 0x2C // cauldron rect
 	};
 
-	int x = bookCauldronRects[type*4+0];
-	int y = bookCauldronRects[type*4+1];
-	int w = bookCauldronRects[type*4+2];
-	int h = bookCauldronRects[type*4+3];
+	int x = bookCauldronRects[type * 4 + 0];
+	int y = bookCauldronRects[type * 4 + 1];
+	int w = bookCauldronRects[type * 4 + 2];
+	int h = bookCauldronRects[type * 4 + 3];
 	_screen->copyRegion(x, y, x, y, w, h, 2, 0, Screen::CR_NO_P_CHECK);
 
 	_screen->copyBlockToPage(2, 0, 0, 320, 200, _screenBuffer);

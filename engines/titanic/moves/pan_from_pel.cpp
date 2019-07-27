@@ -25,10 +25,12 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPanFromPel, CMovePlayerTo)
-	ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseButtonDownMsg)
 END_MESSAGE_MAP()
 
-CPanFromPel::CPanFromPel() : CMovePlayerTo(), _closeLeft(false) {
+CPanFromPel::CPanFromPel()
+  : CMovePlayerTo()
+  , _closeLeft(false) {
 }
 
 void CPanFromPel::save(SimpleFile *file, int indent) {

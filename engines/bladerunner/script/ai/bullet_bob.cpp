@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptBulletBob::AIScriptBulletBob(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptBulletBob::AIScriptBulletBob(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 	_var1 = 0;
 	_var2 = 6;
 	_var3 = 1;
@@ -48,34 +49,30 @@ void AIScriptBulletBob::Initialize() {
 
 bool AIScriptBulletBob::Update() {
 	if (Game_Flag_Query(kFlagRC04McCoyShotBob)
-	 && Actor_Query_Goal_Number(kActorBulletBob) != kGoalBulletBobDead
-	) {
+	    && Actor_Query_Goal_Number(kActorBulletBob) != kGoalBulletBobDead) {
 		Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobDead);
 	}
 
-	if ( Player_Query_Combat_Mode()
-	 &&  Player_Query_Current_Scene() == kSceneRC04
-	 && !Game_Flag_Query(kFlagRC04McCoyCombatMode)
-	 &&  Global_Variable_Query(kVariableChapter) < 4
-	) {
+	if (Player_Query_Combat_Mode()
+	    && Player_Query_Current_Scene() == kSceneRC04
+	    && !Game_Flag_Query(kFlagRC04McCoyCombatMode)
+	    && Global_Variable_Query(kVariableChapter) < 4) {
 		AI_Countdown_Timer_Reset(kActorBulletBob, kActorTimerAIScriptCustomTask2);
 		AI_Countdown_Timer_Start(kActorBulletBob, kActorTimerAIScriptCustomTask2, 10);
 		Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobWarningMcCoy);
 		Actor_Modify_Friendliness_To_Other(kActorBulletBob, kActorMcCoy, -15);
 		Game_Flag_Set(kFlagRC04McCoyCombatMode);
-	} else if ( Actor_Query_Goal_Number(kActorBulletBob) == kGoalBulletBobWarningMcCoy
-	        && !Player_Query_Combat_Mode()
-	) {
+	} else if (Actor_Query_Goal_Number(kActorBulletBob) == kGoalBulletBobWarningMcCoy
+	           && !Player_Query_Combat_Mode()) {
 		AI_Countdown_Timer_Reset(kActorBulletBob, kActorTimerAIScriptCustomTask2);
 		Game_Flag_Reset(kFlagRC04McCoyCombatMode);
 		Game_Flag_Set(kFlagRC04McCoyWarned);
 		Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobDefault);
 	}
 
-	if ( Actor_Query_Goal_Number(kActorBulletBob) == kGoalBulletBobShootMcCoy
-	 && !Game_Flag_Query(kFlagRC04BobShootMcCoy)
-	 &&  _animationState == 0
-	) {
+	if (Actor_Query_Goal_Number(kActorBulletBob) == kGoalBulletBobShootMcCoy
+	    && !Game_Flag_Query(kFlagRC04BobShootMcCoy)
+	    && _animationState == 0) {
 		Actor_Face_Heading(kActorBulletBob, 208, false);
 		_animationFrame = 0;
 		_animationState = 2;
@@ -85,9 +82,8 @@ bool AIScriptBulletBob::Update() {
 	}
 
 	if (Game_Flag_Query(kFlagRC04McCoyWarned)
-	 && Player_Query_Combat_Mode()
-	 && Actor_Query_Goal_Number(kActorBulletBob) != kGoalBulletBobDead
-	) {
+	    && Player_Query_Combat_Mode()
+	    && Actor_Query_Goal_Number(kActorBulletBob) != kGoalBulletBobDead) {
 		Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobShootMcCoy);
 		return true;
 	}
@@ -97,8 +93,7 @@ bool AIScriptBulletBob::Update() {
 
 void AIScriptBulletBob::TimerExpired(int timer) {
 	if (timer == kActorTimerAIScriptCustomTask2
-	 && Actor_Query_Goal_Number(kActorBulletBob) == kGoalBulletBobWarningMcCoy
-	) {
+	    && Actor_Query_Goal_Number(kActorBulletBob) == kGoalBulletBobWarningMcCoy) {
 		Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobShootMcCoy);
 		AI_Countdown_Timer_Reset(kActorBulletBob, kActorTimerAIScriptCustomTask2);
 		return; //true;
@@ -144,7 +139,7 @@ bool AIScriptBulletBob::ShotAtAndHit() {
 		Actor_Set_Targetable(kActorBulletBob, false);
 		Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobGone);
 		_animationFrame = 0;
- 		_animationState = 3;
+		_animationState = 3;
 		Ambient_Sounds_Play_Speech_Sound(kActorGordo, 9000, 100, 0, 0, 0); // not a typo, it's really from Gordo
 		Actor_Face_Heading(kActorBulletBob, 281, false);
 	}
@@ -162,25 +157,22 @@ int AIScriptBulletBob::GetFriendlinessModifierIfGetsClue(int otherActorId, int c
 
 bool AIScriptBulletBob::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	if (newGoalNumber == kGoalBulletBobDefault
-	 && Game_Flag_Query(kFlagRC04McCoyWarned)
-	 && Player_Query_Current_Scene() == kSceneRC04
-	) {
+	    && Game_Flag_Query(kFlagRC04McCoyWarned)
+	    && Player_Query_Current_Scene() == kSceneRC04) {
 		Actor_Says(kActorBulletBob, 140, 16);
 		return true;
 	}
 
-	if ( newGoalNumber == kGoalBulletBobWarningMcCoy
-	 && !Game_Flag_Query(kFlagRC04McCoyWarned)
-	 &&  Player_Query_Current_Scene() == kSceneRC04
-	) {
+	if (newGoalNumber == kGoalBulletBobWarningMcCoy
+	    && !Game_Flag_Query(kFlagRC04McCoyWarned)
+	    && Player_Query_Current_Scene() == kSceneRC04) {
 		Actor_Says(kActorBulletBob, 120, 37);
 		Actor_Says(kActorMcCoy, 4915, 13);
 		return true;
 	}
 
-	if ( newGoalNumber == kGoalBulletBobDead
-	 && !Actor_Clue_Query(kActorMcCoy, kClueVKBobGorskyReplicant)
-	) {
+	if (newGoalNumber == kGoalBulletBobDead
+	    && !Actor_Clue_Query(kActorMcCoy, kClueVKBobGorskyReplicant)) {
 		Delay(2000);
 		Actor_Voice_Over(2100, kActorVoiceOver);
 		Actor_Voice_Over(2110, kActorVoiceOver);
@@ -550,17 +542,17 @@ bool AIScriptBulletBob::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptBulletBob::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptBulletBob::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptBulletBob::ReachedMovementTrackWaypoint(int waypointId) {

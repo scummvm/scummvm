@@ -23,47 +23,48 @@
 #ifndef XEEN_WORLDOFXEEN_WORLDOFXEEN_H
 #define XEEN_WORLDOFXEEN_WORLDOFXEEN_H
 
-#include "xeen/xeen.h"
 #include "xeen/worldofxeen/worldofxeen_cutscenes.h"
+#include "xeen/xeen.h"
 
 namespace Xeen {
 namespace WorldOfXeen {
 
-/**
+	/**
  * Implements a descendant of the base Xeen engine to handle
  * Clouds of Xeen, Dark Side of Xeen, and Worlds of Xeen specific
  * game code
  */
-class WorldOfXeenEngine: public XeenEngine, public WorldOfXeenCutscenes {
-protected:
-	/**
+	class WorldOfXeenEngine : public XeenEngine, public WorldOfXeenCutscenes {
+	protected:
+		/**
 	 * Show the starting sequence/intro
 	 */
-	virtual void showStartup();
+		virtual void showStartup();
 
-	/**
+		/**
 	 * Show the startup menu
 	 */
-	virtual void showMainMenu();
+		virtual void showMainMenu();
 
-	/**
+		/**
 	 * Death cutscene
 	 */
-	virtual void death();
-public:
-	WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
-	virtual ~WorldOfXeenEngine() {}
+		virtual void death();
 
-	/**
+	public:
+		WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
+		virtual ~WorldOfXeenEngine() {}
+
+		/**
 	 * Show a cutscene
 	 */
-	virtual void showCutscene(const Common::String &name, int status, uint score);
+		virtual void showCutscene(const Common::String &name, int status, uint score);
 
-	/**
+		/**
 	 * Dream sequence
 	 */
-	virtual void dream();
-};
+		virtual void dream();
+	};
 
 #define WOX_VM (*(::Xeen::WorldOfXeen::WorldOfXeenEngine *)g_vm)
 

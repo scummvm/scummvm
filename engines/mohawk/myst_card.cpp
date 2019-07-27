@@ -29,12 +29,12 @@
 
 namespace Mohawk {
 
-MystCard::MystCard(MohawkEngine_Myst *vm, uint16 id) :
-		_vm(vm),
-		_id(id),
-		_hoverResource(nullptr),
-		_activeResource(nullptr),
-		_clickedResource(nullptr) {
+MystCard::MystCard(MohawkEngine_Myst *vm, uint16 id)
+  : _vm(vm)
+  , _id(id)
+  , _hoverResource(nullptr)
+  , _activeResource(nullptr)
+  , _clickedResource(nullptr) {
 
 	loadView();
 	loadResources();
@@ -118,29 +118,29 @@ void MystCard::loadView() {
 		ScriptResource scriptResource;
 
 		debugC(kDebugView, "\tResource %d:", i);
-		scriptResource.type = (ScriptResourceType) viewStream->readUint16LE();
+		scriptResource.type = (ScriptResourceType)viewStream->readUint16LE();
 		debugC(kDebugView, "\t\t Type: %d", scriptResource.type);
 
 		switch (scriptResource.type) {
-			case kResourceImage:
-				debugC(kDebugView, "\t\t\t\t= Image");
-				break;
-			case kResourceSound:
-				debugC(kDebugView, "\t\t\t\t= Sound");
-				break;
-			case kResourceSwitch:
-				debugC(kDebugView, "\t\t\t\t= Resource Switch");
-				break;
-			case kResourceImageNoCache:
-				debugC(kDebugView, "\t\t\t\t= Image - Caching disabled");
-				break;
-			case kResourceSoundNoCache:
-				debugC(kDebugView, "\t\t\t\t= Sound - Caching disabled");
-				break;
-			default:
-				debugC(kDebugView, "\t\t\t\t= Unknown");
-				warning("Unknown script resource type '%d' in card '%d'", scriptResource.type, _id);
-				break;
+		case kResourceImage:
+			debugC(kDebugView, "\t\t\t\t= Image");
+			break;
+		case kResourceSound:
+			debugC(kDebugView, "\t\t\t\t= Sound");
+			break;
+		case kResourceSwitch:
+			debugC(kDebugView, "\t\t\t\t= Resource Switch");
+			break;
+		case kResourceImageNoCache:
+			debugC(kDebugView, "\t\t\t\t= Image - Caching disabled");
+			break;
+		case kResourceSoundNoCache:
+			debugC(kDebugView, "\t\t\t\t= Sound - Caching disabled");
+			break;
+		default:
+			debugC(kDebugView, "\t\t\t\t= Unknown");
+			warning("Unknown script resource type '%d' in card '%d'", scriptResource.type, _id);
+			break;
 		}
 
 		if (scriptResource.type == kResourceSwitch) {
@@ -148,7 +148,7 @@ void MystCard::loadView() {
 			debugC(kDebugView, "\t\t Var: %d", scriptResource.switchVar);
 			uint16 count = viewStream->readUint16LE();
 			debugC(kDebugView, "\t\t Resource List Count: %d", count);
-			scriptResource.switchResourceType = (ScriptResourceType) viewStream->readUint16LE();
+			scriptResource.switchResourceType = (ScriptResourceType)viewStream->readUint16LE();
 			debugC(kDebugView, "\t\t u0: %d", scriptResource.switchResourceType);
 
 			for (uint16 j = 0; j < count; j++) {
@@ -214,18 +214,19 @@ void MystCard::loadView() {
 			id = _scriptResources[i].id;
 		}
 
-		if (id < 0) continue;
+		if (id < 0)
+			continue;
 
 		switch (type) {
-			case kResourceImage:
-				_vm->cachePreload(cacheImageType, id);
-				break;
-			case kResourceSound:
-				_vm->cachePreload(ID_MSND, id);
-				break;
-			default:
-				// The other resource types should not be cached
-				break;
+		case kResourceImage:
+			_vm->cachePreload(cacheImageType, id);
+			break;
+		case kResourceSound:
+			_vm->cachePreload(ID_MSND, id);
+			break;
+		default:
+			// The other resource types should not be cached
+			break;
 		}
 	}
 }

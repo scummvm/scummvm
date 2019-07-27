@@ -23,15 +23,15 @@
 #ifndef COMPOSER_COMPOSER_H
 #define COMPOSER_COMPOSER_H
 
+#include "common/debug-channels.h"
+#include "common/debug.h"
+#include "common/error.h"
 #include "common/ini-file.h"
 #include "common/random.h"
-#include "common/system.h"
-#include "common/debug.h"
-#include "common/debug-channels.h"
-#include "common/error.h"
-#include "common/serializer.h"
-#include "common/textconsole.h"
 #include "common/rect.h"
+#include "common/serializer.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 
 #include "engines/engine.h"
 #include "engines/util.h"
@@ -42,11 +42,11 @@
 
 #include "audio/mixer.h"
 
-#include "composer/resource.h"
 #include "composer/console.h"
+#include "composer/resource.h"
 
 namespace Audio {
-	class QueuingAudioStream;
+class QueuingAudioStream;
 }
 
 namespace Composer {
@@ -72,7 +72,7 @@ enum {
 
 class Button {
 public:
-	Button() { }
+	Button() {}
 	Button(Common::SeekableReadStream *stream, uint16 id, uint gameType);
 	Button(Common::SeekableReadStream *stream);
 
@@ -128,8 +128,10 @@ struct QueuedScript {
 };
 
 struct PendingPageChange {
-	PendingPageChange() { }
-	PendingPageChange(uint16 id, bool remove) : _pageId(id), _remove(remove) { }
+	PendingPageChange() {}
+	PendingPageChange(uint16 id, bool remove)
+	  : _pageId(id)
+	  , _remove(remove) {}
 
 	uint16 _pageId;
 	bool _remove;
@@ -210,7 +212,7 @@ private:
 	Common::List<Pipe *> _pipes;
 	Common::Array<Common::SeekableReadStream *> _pipeStreams;
 
-	Common::HashMap<uint16, Common::Array<RandomEvent> > _randomEvents;
+	Common::HashMap<uint16, Common::Array<RandomEvent>> _randomEvents;
 
 	void onMouseDown(const Common::Point &pos);
 	void onMouseMove(const Common::Point &pos);

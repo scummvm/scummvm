@@ -22,14 +22,14 @@
 
 #ifdef ENABLE_EOB
 
-#include "kyra/engine/eob.h"
-#include "kyra/graphics/screen_eob.h"
-#include "kyra/resource/resource.h"
-#include "kyra/sound/sound.h"
+#	include "kyra/engine/eob.h"
+#	include "kyra/graphics/screen_eob.h"
+#	include "kyra/resource/resource.h"
+#	include "kyra/sound/sound.h"
 
-#include "common/system.h"
+#	include "common/system.h"
 
-#include "base/version.h"
+#	include "base/version.h"
 
 namespace Kyra {
 
@@ -77,7 +77,7 @@ private:
 	const uint8 *_tvlY2;
 	const uint8 *_tvlW;
 	const uint8 *_tvlH;
-	
+
 	const uint8 _fillColor1;
 	const uint8 _fillColor2;
 };
@@ -103,10 +103,10 @@ private:
 	uint8 **_textShapes;
 	uint8 *_councilAnimData1;
 	uint8 *_councilAnimData2;
-	
+
 	const uint8 *_councilAnimData3;
 	const uint8 *_councilAnimData4;
-	const uint8 *_eyesAnimData;	
+	const uint8 *_eyesAnimData;
 	const int16 *_handsAnimData;
 	const uint8 *_textFrameDuration;
 
@@ -116,8 +116,11 @@ private:
 	Screen_EoB *_screen;
 };
 
-EoBIntroPlayer::EoBIntroPlayer(EoBEngine *vm, Screen_EoB *screen) : _vm(vm), _screen(screen), 
-	_fillColor1(vm->gameFlags().platform == Common::kPlatformAmiga ? 19 : 12), _fillColor2(vm->gameFlags().platform == Common::kPlatformAmiga ? 10 : 157) {
+EoBIntroPlayer::EoBIntroPlayer(EoBEngine *vm, Screen_EoB *screen)
+  : _vm(vm)
+  , _screen(screen)
+  , _fillColor1(vm->gameFlags().platform == Common::kPlatformAmiga ? 19 : 12)
+  , _fillColor2(vm->gameFlags().platform == Common::kPlatformAmiga ? 10 : 157) {
 	int temp = 0;
 	_filesOpening = _vm->staticres()->loadStrings(kEoB1IntroFilesOpening, temp);
 	_filesTower = _vm->staticres()->loadStrings(kEoB1IntroFilesTower, temp);
@@ -208,8 +211,8 @@ void EoBIntroPlayer::openingCredits() {
 
 void EoBIntroPlayer::tower() {
 	if (_vm->shouldQuit() || _vm->skipFlag())
-		return; 
- 
+		return;
+
 	_screen->loadBitmap(_filesTower[1], 5, 3, 0);
 
 	_screen->setCurPage(2);
@@ -332,10 +335,10 @@ void EoBIntroPlayer::orb() {
 		_vm->delay(80 * _vm->_tickLength);
 		_screen->fadePalette(_screen->getPalette(2), 48);
 		_screen->clearCurPage();
-	} else {		
+	} else {
 		_vm->delay(40 * _vm->_tickLength);
 		_vm->snd_playSoundEffect(6);
-	}	
+	}
 
 	startFrame = (_vm->gameFlags().platform == Common::kPlatformAmiga) ? -1 : 3;
 	for (int i = startFrame; i > -2 && !_vm->shouldQuit() && !_vm->skipFlag(); i--) {
@@ -483,7 +486,7 @@ void EoBIntroPlayer::king() {
 		uint32 end = _vm->_system->getMillis() + _vm->_tickLength;
 		_screen->copyRegion(x << 3, y << 3, x << 3, y << 3, w << 3, h << 3, 4, 0, Screen::CR_NO_P_CHECK);
 		if (x > 6)
-			x --;
+			x--;
 		if (y > 0)
 			y -= 2;
 		w += 3;
@@ -758,7 +761,7 @@ void EoBIntroPlayer::waterdeepExit() {
 	_screen->fillRect(0, 168, 319, 199, _fillColor1, 0);
 	_screen->copyRegion(0, 136, 0, 0, 48, 36, 0, 4, Screen::CR_NO_P_CHECK);
 
-	int dstPage = (_vm->gameFlags().platform == Common::kPlatformAmiga) ? 4 : 5; 
+	int dstPage = (_vm->gameFlags().platform == Common::kPlatformAmiga) ? 4 : 5;
 	_screen->loadBitmap(_filesWdExit[2], 3, dstPage, 0);
 	_screen->convertPage(dstPage, 2, _vm->_cgaMappingAlt);
 	whirlTransition();
@@ -1008,11 +1011,13 @@ void EoBIntroPlayer::whirlTransition() {
 	}
 }
 
-EoBAmigaFinalePlayer::EoBAmigaFinalePlayer(EoBEngine *vm, Screen_EoB *screen) : _vm(vm), _screen(screen) {
+EoBAmigaFinalePlayer::EoBAmigaFinalePlayer(EoBEngine *vm, Screen_EoB *screen)
+  : _vm(vm)
+  , _screen(screen) {
 	_animCurFrame = 0;
 	int size = 0;
-	_textShapes = new uint8*[10];
-	memset(_textShapes, 0, sizeof(uint8*) * 10);
+	_textShapes = new uint8 *[10];
+	memset(_textShapes, 0, sizeof(uint8 *) * 10);
 	_councilAnimData1 = new uint8[78];
 	memcpy(_councilAnimData1, _vm->staticres()->loadRawData(kEoB1FinaleCouncilAnim1, size), 78);
 	_councilAnimData2 = new uint8[78];
@@ -1020,8 +1025,9 @@ EoBAmigaFinalePlayer::EoBAmigaFinalePlayer(EoBEngine *vm, Screen_EoB *screen) : 
 	_councilAnimData3 = _vm->staticres()->loadRawData(kEoB1FinaleCouncilAnim3, size);
 	_councilAnimData4 = _vm->staticres()->loadRawData(kEoB1FinaleCouncilAnim4, size);
 	_eyesAnimData = _vm->staticres()->loadRawData(kEoB1FinaleEyesAnim, size);
-	_handsAnimData = (const int16*)_vm->staticres()->loadRawDataBe16(kEoB1FinaleHandsAnim, size);
-	_textFrameDuration = _vm->staticres()->loadRawData(kEoB1FinaleTextDuration, size);;
+	_handsAnimData = (const int16 *)_vm->staticres()->loadRawDataBe16(kEoB1FinaleHandsAnim, size);
+	_textFrameDuration = _vm->staticres()->loadRawData(kEoB1FinaleTextDuration, size);
+	;
 }
 
 EoBAmigaFinalePlayer::~EoBAmigaFinalePlayer() {
@@ -1108,7 +1114,7 @@ void EoBAmigaFinalePlayer::delivery() {
 	uint8 *shp = _screen->encodeShape(0, 72, 3, 32, true);
 
 	for (int i = 0; i < 5 && !_vm->skipFlag() && !_vm->shouldQuit(); ++i) {
-		static const uint8 y[5] = { 152,  139,  131,  129,  127 };
+		static const uint8 y[5] = { 152, 139, 131, 129, 127 };
 		_screen->copyRegion(120, 30, 120, 110, 56, 42, 2, 2, Screen::CR_NO_P_CHECK);
 		_screen->drawShape(2, shp, 153, y[i], 0);
 		_screen->copyRegion(120, 110, 120, 78, 56, 42, 2, 0, Screen::CR_NO_P_CHECK);
@@ -1142,7 +1148,7 @@ void EoBAmigaFinalePlayer::inspection() {
 
 	uint8 *shp[5];
 	memset(shp, 0, sizeof(shp));
-	
+
 	_screen->fillRect(0, 170, 319, 186, 31, 0);
 	_screen->clearPage(2);
 
@@ -1181,7 +1187,7 @@ void EoBAmigaFinalePlayer::inspection() {
 		_screen->copyRegion(112, 32, 112, 32, 96, 24, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 
-		_vm->delay(_vm->_tickLength);	
+		_vm->delay(_vm->_tickLength);
 	}
 
 	for (int i = 0; i < 5; ++i)
@@ -1230,7 +1236,7 @@ void EoBAmigaFinalePlayer::congratulation() {
 	shp[0] = _screen->encodeShape(12, 24, 12, 64, true);
 	shp[1] = _screen->encodeShape(12, 88, 12, 72, true);
 	shp[2] = _screen->encodeShape(24, 136, 15, 64, true);
-	
+
 	_screen->clearPage(2);
 	_screen->fadeFromBlack(1);
 
@@ -1314,7 +1320,7 @@ void EoBAmigaFinalePlayer::animateCouncil1(int numFrames, int skipFrame) {
 	int frame = 5;
 	int subFrame = 0;
 	int subFrameAlt = 2;
-	
+
 	if (numFrames == 99) {
 		subFrame = _animCurFrame ? 6 : 0;
 		_animCurFrame ^= 1;
@@ -1339,7 +1345,7 @@ void EoBAmigaFinalePlayer::animateCouncil1(int numFrames, int skipFrame) {
 				_councilAnimData1[frame * 13 + 12]++;
 				subFrame = 0;
 			}
-	
+
 			const uint8 *crds = &_councilAnimData1[frame * 13 + subFrame];
 			_screen->copyRegion(crds[0] << 3, crds[1], crds[4] << 3, crds[5], crds[2] << 3, crds[3], 4, 0, Screen::CR_NO_P_CHECK);
 		}
@@ -1358,11 +1364,11 @@ void EoBAmigaFinalePlayer::animateCouncil2(int numFrames, int skipFrame, bool wi
 		for (int i = 0; i < 6 && !_vm->skipFlag() && !_vm->shouldQuit(); ++i) {
 			if (frames[i] == skipFrame)
 				continue;
-			
+
 			uint8 *crds = &_councilAnimData2[frames[i] * 13];
 			crds[12] = 0;
 			_screen->copyRegion(crds[0] << 3, crds[1], crds[4] << 3, crds[5], crds[2] << 3, crds[3], 4, 0, Screen::CR_NO_P_CHECK);
-			
+
 			if (withSpeechAnim)
 				animateCouncil1(2, -1);
 
@@ -1406,7 +1412,7 @@ void EoBAmigaFinalePlayer::playDialogue(int line, bool withAnim) {
 
 	} else {
 		_screen->drawShape(0, _textShapes[line], 0, line == 9 ? 92 : 170);
-	}	
+	}
 }
 
 int EoBEngine::mainMenu() {
@@ -1451,9 +1457,9 @@ int EoBEngine::mainMenu() {
 			_allowImport = true;
 			menuChoice = mainMenuLoop();
 			_allowImport = false;
-			}
+		}
 
-			break;
+		break;
 
 		case 1:
 			// load game in progress

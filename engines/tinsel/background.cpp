@@ -22,11 +22,11 @@
  */
 
 #include "tinsel/background.h"
-#include "tinsel/cliprect.h"	// object clip rect defs
+#include "tinsel/cliprect.h" // object clip rect defs
 #include "tinsel/graphics.h"
-#include "tinsel/sched.h"	// process sheduler defs
 #include "tinsel/object.h"
-#include "tinsel/pid.h"	// process identifiers
+#include "tinsel/pid.h" // process identifiers
+#include "tinsel/sched.h" // process sheduler defs
 #include "tinsel/tinsel.h"
 
 namespace Tinsel {
@@ -42,8 +42,8 @@ const BACKGND *g_pCurBgnd = NULL;
  */
 
 void InitBackground(const BACKGND *pBgnd) {
-	int i;			// playfield counter
-	PLAYFIELD *pPlayfield;	// pointer to current playfield
+	int i; // playfield counter
+	PLAYFIELD *pPlayfield; // pointer to current playfield
 
 	// set current background
 	g_pCurBgnd = pBgnd;
@@ -80,7 +80,7 @@ void InitBackground(const BACKGND *pBgnd) {
  */
 
 void PlayfieldSetPos(int which, int newXpos, int newYpos) {
-	PLAYFIELD *pPlayfield;	// pointer to relavent playfield
+	PLAYFIELD *pPlayfield; // pointer to relavent playfield
 
 	// make sure there is a background
 	assert(g_pCurBgnd != NULL);
@@ -107,7 +107,7 @@ void PlayfieldSetPos(int which, int newXpos, int newYpos) {
  */
 
 void PlayfieldGetPos(int which, int *pXpos, int *pYpos) {
-	PLAYFIELD *pPlayfield;	// pointer to relavent playfield
+	PLAYFIELD *pPlayfield; // pointer to relavent playfield
 
 	// make sure there is a background
 	assert(g_pCurBgnd != NULL);
@@ -141,7 +141,7 @@ int PlayfieldGetCenterX(int which) {
 	pPlayfield = g_pCurBgnd->fieldArray + which;
 
 	// get current integer position
-	return fracToInt(pPlayfield->fieldX) + SCREEN_WIDTH/2;
+	return fracToInt(pPlayfield->fieldX) + SCREEN_WIDTH / 2;
 }
 
 /**
@@ -150,7 +150,7 @@ int PlayfieldGetCenterX(int which) {
  */
 
 OBJECT **GetPlayfieldList(int which) {
-	PLAYFIELD *pPlayfield;	// pointer to relavent playfield
+	PLAYFIELD *pPlayfield; // pointer to relavent playfield
 
 	// make sure there is a background
 	assert(g_pCurBgnd != NULL);
@@ -172,13 +172,13 @@ OBJECT **GetPlayfieldList(int which) {
  */
 
 void DrawBackgnd() {
-	int i;			// playfield counter
-	PLAYFIELD *pPlay;	// playfield pointer
-	int prevX, prevY;	// save interger part of position
-	Common::Point ptWin;	// window top left
+	int i; // playfield counter
+	PLAYFIELD *pPlay; // playfield pointer
+	int prevX, prevY; // save interger part of position
+	Common::Point ptWin; // window top left
 
 	if (g_pCurBgnd == NULL)
-		return;		// no current background
+		return; // no current background
 
 	// scroll each background playfield
 	for (i = 0; i < g_pCurBgnd->numPlayfields; i++) {
@@ -206,7 +206,7 @@ void DrawBackgnd() {
 
 		// generate clipping rects for all objects that have moved etc.
 		FindMovingObjects(&pPlay->pDispList, &ptWin,
-			&pPlay->rcClip,	false, pPlay->bMoved);
+		                  &pPlay->rcClip, false, pPlay->bMoved);
 
 		// clear playfield moved flag
 		pPlay->bMoved = false;
@@ -221,7 +221,7 @@ void DrawBackgnd() {
 		// clear the clip rectangle on the virtual screen
 		// for each background playfield
 		for (i = 0; i < g_pCurBgnd->numPlayfields; i++) {
-			Common::Rect rcPlayClip;	// clip rect for this playfield
+			Common::Rect rcPlayClip; // clip rect for this playfield
 
 			// get pointer to correct playfield
 			pPlay = g_pCurBgnd->fieldArray + i;
@@ -232,7 +232,7 @@ void DrawBackgnd() {
 
 			if (IntersectRectangle(rcPlayClip, pPlay->rcClip, *r))
 				// redraw all objects within this clipping rect
-				UpdateClipRect(&pPlay->pDispList, &ptWin,	&rcPlayClip);
+				UpdateClipRect(&pPlay->pDispList, &ptWin, &rcPlayClip);
 		}
 	}
 

@@ -26,8 +26,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CBedfoot, CSGTStateRoom)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(TurnOff)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(TurnOff)
 END_MESSAGE_MAP()
 
 void CBedfoot::save(SimpleFile *file, int indent) {

@@ -23,9 +23,9 @@
 #ifndef TITANIC_GAME_OBJECT_DESK_ITEM_H
 #define TITANIC_GAME_OBJECT_DESK_ITEM_H
 
-#include "titanic/support/movie_clip.h"
-#include "titanic/core/tree_item.h"
 #include "titanic/core/list.h"
+#include "titanic/core/tree_item.h"
+#include "titanic/support/movie_clip.h"
 
 namespace Titanic {
 
@@ -36,6 +36,7 @@ protected:
 	List<ListItem> _list1;
 	List<ListItem> _list2;
 	CMovieClipList _clipList;
+
 public:
 	CLASSDEF;
 	CGameObjectDescItem();

@@ -20,24 +20,24 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "mads/game.h"
 #include "common/config-manager.h"
 #include "common/memstream.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
 #include "graphics/palette.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
-#include "mads/mads.h"
 #include "mads/compression.h"
-#include "mads/game.h"
-#include "mads/game_data.h"
-#include "mads/events.h"
-#include "mads/screen.h"
-#include "mads/msurface.h"
-#include "mads/resources.h"
 #include "mads/dragonsphere/game_dragonsphere.h"
+#include "mads/events.h"
+#include "mads/game_data.h"
+#include "mads/mads.h"
+#include "mads/msurface.h"
 #include "mads/nebular/game_nebular.h"
 #include "mads/phantom/game_phantom.h"
+#include "mads/resources.h"
+#include "mads/screen.h"
 
 namespace MADS {
 
@@ -57,7 +57,14 @@ Game *Game::init(MADSEngine *vm) {
 }
 
 Game::Game(MADSEngine *vm)
-	: _vm(vm), _surface(nullptr), _objects(vm), _scene(vm), _screenObjects(vm), _player(vm), _camX(vm), _camY(vm) {
+  : _vm(vm)
+  , _surface(nullptr)
+  , _objects(vm)
+  , _scene(vm)
+  , _screenObjects(vm)
+  , _player(vm)
+  , _camX(vm)
+  , _camY(vm) {
 	_sectionNumber = 1;
 	_priorSectionNumber = 0;
 	_loadGameSlot = -1;
@@ -131,12 +138,14 @@ void Game::run() {
 void Game::splitQuote(const Common::String &source, Common::String &line1, Common::String &line2) {
 	// Make the first line up the end of the word at the half-way point
 	const char *strP = source.c_str() + source.size() / 2;
-	while (*strP != ' ') ++strP;
+	while (*strP != ' ')
+		++strP;
 
 	line1 = Common::String(source.c_str(), strP);
 
 	// The rest of the string goes in the second line
-	while (*strP == ' ') ++strP;
+	while (*strP == ' ')
+		++strP;
 	line2 = Common::String(strP);
 }
 
@@ -169,8 +178,7 @@ void Game::gameLoop() {
 }
 
 void Game::sectionLoop() {
-	while (!_vm->shouldQuit() && _statusFlag && !_winStatus &&
-			(_sectionNumber == _currentSectionNumber)) {
+	while (!_vm->shouldQuit() && _statusFlag && !_winStatus && (_sectionNumber == _currentSectionNumber)) {
 		_kernelMode = KERNEL_ROOM_PRELOAD;
 		_player._spritesChanged = true;
 		_quoteEmergency = false;
@@ -220,7 +228,6 @@ void Game::sectionLoop() {
 		_scene.loadScene(_scene._nextSceneId, _aaName, 0);
 		camInitDefault();
 		camSetSpeed();
-
 
 		_vm->_sound->pauseNewCommands();
 
@@ -282,7 +289,7 @@ void Game::sectionLoop() {
 
 		if (_scene._userInterface._selectedInvIndex >= 0) {
 			_scene._userInterface.loadInventoryAnim(
-				_objects._inventoryList[_scene._userInterface._selectedInvIndex]);
+			  _objects._inventoryList[_scene._userInterface._selectedInvIndex]);
 		} else {
 			_scene._userInterface.noInventoryAnim();
 		}
@@ -338,8 +345,7 @@ void Game::initSection(int sectionNumber) {
 	_vm->_events->loadCursors("*CURSOR.SS");
 
 	assert(_vm->_events->_cursorSprites);
-	_vm->_events->setCursor2((_vm->_events->_cursorSprites->getCount() <= 1) ?
-		CURSOR_ARROW : CURSOR_WAIT);
+	_vm->_events->setCursor2((_vm->_events->_cursorSprites->getCount() <= 1) ? CURSOR_ARROW : CURSOR_WAIT);
 }
 
 void Game::loadQuotes() {
@@ -356,7 +362,8 @@ void Game::loadQuotes() {
 			msg = "";
 		}
 
-		if (f.eos()) break;
+		if (f.eos())
+			break;
 	}
 
 	f.close();
@@ -416,11 +423,10 @@ void Game::handleKeypress(const Common::KeyState &kbd) {
 		if (_widepipeCtr == 8) {
 			// Implement original game cheating keys here someday
 		} else {
-			if (kbd.keycode == (Common::KEYCODE_a +
-					(DEBUG_STRING[_widepipeCtr] - 'a'))) {
+			if (kbd.keycode == (Common::KEYCODE_a + (DEBUG_STRING[_widepipeCtr] - 'a'))) {
 				if (++_widepipeCtr == 8) {
 					MessageDialog *dlg = new MessageDialog(_vm, 2,
-						"CHEATING ENABLED", "(for your convenience).");
+					                                       "CHEATING ENABLED", "(for your convenience).");
 					dlg->show();
 					delete dlg;
 				}
@@ -447,7 +453,6 @@ void Game::handleKeypress(const Common::KeyState &kbd) {
 		scene._userInterface._scrollbarStrokeType = SCROLLBAR_DOWN;
 		scene._userInterface.changeScrollBar();
 		break;
-
 
 	default:
 		break;
@@ -476,7 +481,7 @@ void Game::synchronize(Common::Serializer &s, bool phase1) {
 
 void Game::loadGame(int slotNumber) {
 	_saveFile = g_system->getSavefileManager()->openForLoading(
-		_vm->generateSaveName(slotNumber));
+	  _vm->generateSaveName(slotNumber));
 
 	Common::Serializer s(_saveFile, nullptr);
 
@@ -505,7 +510,7 @@ void Game::loadGame(int slotNumber) {
 
 void Game::saveGame(int slotNumber, const Common::String &saveName) {
 	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(
-		_vm->generateSaveName(slotNumber));
+	  _vm->generateSaveName(slotNumber));
 
 	MADSSavegameHeader header;
 	header._saveName = saveName;
@@ -537,7 +542,8 @@ WARN_UNUSED_RESULT bool Game::readSavegameHeader(Common::InSaveFile *in, MADSSav
 	// Read in the string
 	header._saveName.clear();
 	char ch;
-	while ((ch = (char)in->readByte()) != '\0') header._saveName += ch;
+	while ((ch = (char)in->readByte()) != '\0')
+		header._saveName += ch;
 
 	// Get the thumbnail
 	if (!Graphics::loadThumbnail(*in, header._thumbnail, skipThumbnail)) {
@@ -595,7 +601,7 @@ void Game::createThumbnail() {
 	_vm->_palette->grabPalette(thumbPalette, 0, PALETTE_COUNT);
 	_saveThumb = new Graphics::Surface();
 	::createThumbnail(_saveThumb, (const byte *)_vm->_screen->getPixels(),
-		MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT, thumbPalette);
+	                  MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT, thumbPalette);
 }
 
 void Game::syncTimers(SyncType slaveType, int slaveId, SyncType masterType, int masterId) {
@@ -618,7 +624,6 @@ void Game::syncTimers(SyncType slaveType, int slaveId, SyncType masterType, int 
 		syncTime = _player._priorTimer;
 		break;
 	}
-
 
 	switch (slaveType) {
 	case SYNC_SEQ:

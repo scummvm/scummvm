@@ -33,13 +33,15 @@ private:
 	SpriteResource _iconSprites;
 	Common::StringArray _questNotes;
 
-	Quests(XeenEngine *vm) : ButtonContainer(vm) {}
+	Quests(XeenEngine *vm)
+	  : ButtonContainer(vm) {}
 
 	void execute();
 
 	void addButtons();
 
 	void loadQuestNotes();
+
 public:
 	static void show(XeenEngine *vm);
 };

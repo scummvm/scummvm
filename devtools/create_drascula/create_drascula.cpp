@@ -22,10 +22,10 @@
  * data file, used by the game engine
  */
 
- // HACK to allow building with the SDL backend on MinGW
+// HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
 #ifdef main
-#undef main
+#	undef main
 #endif // main
 
 #include <stdio.h>
@@ -35,7 +35,7 @@
 #include "create_drascula.h"
 #include "staticdata.h"
 
-#define DRASCULA_DAT_VER 6	// 1 byte
+#define DRASCULA_DAT_VER 6 // 1 byte
 
 static void writeByte(FILE *fp, uint8 b) {
 	fwrite(&b, 1, 1, fp);
@@ -51,7 +51,7 @@ void writeSint16BE(FILE *fp, int16 value) {
 }
 
 int main(int argc, char *argv[]) {
-	FILE* outFile;
+	FILE *outFile;
 	int i, lang;
 	int len, len1, pad;
 	uint8 padBuf[DATAALIGNMENT];

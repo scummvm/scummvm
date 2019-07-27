@@ -81,7 +81,6 @@ Platform parsePlatform(const String &str) {
 	return kPlatformUnknown;
 }
 
-
 const char *getPlatformCode(Platform id) {
 	const PlatformDescription *l = g_platforms;
 	for (; l->code; ++l) {

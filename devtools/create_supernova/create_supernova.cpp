@@ -1,12 +1,12 @@
 #include "create_supernova.h"
-#include "gametext.h"
 #include "file.h"
+#include "gametext.h"
 #include "po_parser.h"
 
 // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
 #ifdef main
-#undef main
+#	undef main
 #endif // main
 
 // List of languages to look for. To add new languages you only need to change the array below
@@ -20,7 +20,7 @@ const char *lang[] = {
 	NULL
 };
 
-void writeImage(File& outputFile, const char *name, const char* language) {
+void writeImage(File &outputFile, const char *name, const char *language) {
 	File imgFile;
 	char fileName[16];
 	sprintf(fileName, "%s-%s.pbm", name, language);
@@ -48,7 +48,9 @@ void writeImage(File& outputFile, const char *name, const char* language) {
 	// sufficient to delimit the raster.
 
 	int w = 0, h = 0;
-	enum PbmState { PbmMagic, PbmWidth, PbmHeight};
+	enum PbmState { PbmMagic,
+		              PbmWidth,
+		              PbmHeight };
 	PbmState state = PbmMagic;
 	int i = 0;
 	do {
@@ -106,7 +108,7 @@ void writeImage(File& outputFile, const char *name, const char* language) {
 
 	// Write block header in output file (4 bytes).
 	// We convert the image name to upper case.
-	for (i = 0 ; i < 4 ; ++i) {
+	for (i = 0; i < 4; ++i) {
 		if (name[i] >= 97 && name[i] <= 122)
 			outputFile.writeByte(name[i] - 32);
 		else
@@ -114,7 +116,7 @@ void writeImage(File& outputFile, const char *name, const char* language) {
 	}
 	// And write the language code on 4 bytes as well (padded with 0 if needed).
 	int languageLength = strlen(language);
-	for (i = 0 ; i < 4 ; ++i) {
+	for (i = 0; i < 4; ++i) {
 		if (i < languageLength)
 			outputFile.writeByte(language[i]);
 		else
@@ -127,7 +129,7 @@ void writeImage(File& outputFile, const char *name, const char* language) {
 	// Write all the bytes. We should have 38400 bytes (640 * 480 / 8)
 	// However we need to invert the bits has the engine expects 1 for the background and 0 for the text (black)
 	// but pbm uses 0 for white and 1 for black.
-	for (i = 0 ; i < 38400 ; ++i) {
+	for (i = 0; i < 38400; ++i) {
 		byte b = imgFile.readByte();
 		outputFile.writeByte(~b);
 	}
@@ -135,7 +137,7 @@ void writeImage(File& outputFile, const char *name, const char* language) {
 	imgFile.close();
 }
 
-void writeGermanStrings(File& outputFile) {
+void writeGermanStrings(File &outputFile) {
 	// Write header and language
 	outputFile.write("TEXT", 4);
 	outputFile.write("de\0\0", 4);
@@ -159,10 +161,10 @@ void writeGermanStrings(File& outputFile) {
 	outputFile.seek(0, SEEK_END);
 }
 
-void writeStrings(File& outputFile, const char* language) {
+void writeStrings(File &outputFile, const char *language) {
 	char fileName[16];
 	sprintf(fileName, "strings-%s.po", language);
-	PoMessageList* poList = parsePoFile(fileName);
+	PoMessageList *poList = parsePoFile(fileName);
 	if (!poList) {
 		printf("Cannot find strings file for language '%s'.\n", language);
 		return;
@@ -173,7 +175,7 @@ void writeStrings(File& outputFile, const char* language) {
 
 	// And write the language code on 4 bytes as well (padded with 0 if needed).
 	int languageLength = strlen(language);
-	for (int i = 0 ; i < 4 ; ++i) {
+	for (int i = 0; i < 4; ++i) {
 		if (i < languageLength)
 			outputFile.writeByte(language[i]);
 		else
@@ -189,7 +191,7 @@ void writeStrings(File& outputFile, const char* language) {
 	// If a string is not translated we use the German one.
 	const char **s = &gameText[0];
 	while (*s) {
-		const char* translation = poList->findTranslation(*s);
+		const char *translation = poList->findTranslation(*s);
 		if (translation) {
 			outputFile.writeString(translation);
 			blockSize += strlen(translation) + 1;
@@ -206,7 +208,6 @@ void writeStrings(File& outputFile, const char* language) {
 	outputFile.writeLong(blockSize);
 	outputFile.seek(0, SEEK_END);
 }
-
 
 /**
  * Main method
@@ -238,7 +239,7 @@ int main(int argc, char *argv[]) {
 
 	// Other languages
 	const char **l = &lang[0];
-	while(*l) {
+	while (*l) {
 		writeImage(outputFile, "img1", *l);
 		writeImage(outputFile, "img2", *l);
 		writeStrings(outputFile, *l);

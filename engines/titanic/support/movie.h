@@ -24,11 +24,11 @@
 #define TITANIC_MOVIE_H
 
 #include "common/list.h"
-#include "video/video_decoder.h"
 #include "titanic/core/list.h"
 #include "titanic/core/resource_key.h"
 #include "titanic/support/avi_surface.h"
 #include "titanic/support/movie_range_info.h"
+#include "video/video_decoder.h"
 
 namespace Titanic {
 
@@ -47,9 +47,11 @@ protected:
 	 * Adds the movie to the list of currently playing movies
 	 */
 	void addToPlayingMovies();
+
 public:
 	bool _handled;
 	bool _hasVideoFrame;
+
 public:
 	static CMovieList *_playingMovies;
 	static CVideoSurface *_movieSurface;
@@ -63,6 +65,7 @@ public:
 	 * Deinitializes statics
 	 */
 	static void deinit();
+
 public:
 	CMovie();
 	virtual ~CMovie();
@@ -171,11 +174,13 @@ private:
 	int _field24;
 	int _field28;
 	int _field2C;
+
 private:
 	/**
 	 * Called when a movie is started playing
 	 */
 	void movieStarted();
+
 public:
 	OSMovie(const CResourceKey &name, CVideoSurface *surface);
 	virtual ~OSMovie();

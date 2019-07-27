@@ -20,11 +20,11 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "backends/platform/sdl/riscos/riscos-utils.h"
+#include "common/scummsys.h"
 
-#include <unixlib/local.h>
 #include <limits.h>
+#include <unixlib/local.h>
 
 namespace RISCOS_Utils {
 

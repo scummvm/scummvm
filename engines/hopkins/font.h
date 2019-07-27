@@ -23,8 +23,8 @@
 #ifndef HOPKINS_FONT_H
 #define HOPKINS_FONT_H
 
-#include "common/scummsys.h"
 #include "common/events.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 
 namespace Hopkins {
@@ -71,6 +71,7 @@ private:
 	int _boxWidth;
 
 	void loadZoneText();
+
 public:
 	byte *_font;
 	int _fontFixedWidth;

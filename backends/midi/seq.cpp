@@ -33,15 +33,15 @@
 
 #if defined(USE_SEQ_MIDI)
 
-#include "common/error.h"
-#include "common/textconsole.h"
-#include "common/util.h"
-#include "audio/musicplugin.h"
-#include "audio/mpu401.h"
+#	include "audio/mpu401.h"
+#	include "audio/musicplugin.h"
+#	include "common/error.h"
+#	include "common/textconsole.h"
+#	include "common/util.h"
 
-#include <fcntl.h>
-#include <unistd.h>
-#include <errno.h>
+#	include <errno.h>
+#	include <fcntl.h>
+#	include <unistd.h>
 
 ////////////////////////////////////////
 //
@@ -49,7 +49,7 @@
 //
 ////////////////////////////////////////
 
-#define SEQ_MIDIPUTC 5
+#	define SEQ_MIDIPUTC 5
 
 class MidiDriver_SEQ : public MidiDriver_MPU401 {
 public:
@@ -91,7 +91,7 @@ int MidiDriver_SEQ::open() {
 
 	if (device < 0) {
 		warning("Cannot open rawmidi device %s - using /dev/null (no music will be heard)",
-					device_name);
+		        device_name);
 		device = (::open(("/dev/null"), O_RDWR, 0));
 		if (device < 0)
 			error("Cannot open /dev/null to dump midi output");
@@ -151,7 +151,7 @@ void MidiDriver_SEQ::send(uint32 b) {
 }
 
 void MidiDriver_SEQ::sysEx(const byte *msg, uint16 length) {
-	unsigned char buf [266*4];
+	unsigned char buf[266 * 4];
 	int position = 0;
 	const byte *chr = msg;
 
@@ -163,7 +163,7 @@ void MidiDriver_SEQ::sysEx(const byte *msg, uint16 length) {
 	buf[position++] = 0;
 	for (; length; --length, ++chr) {
 		buf[position++] = SEQ_MIDIPUTC;
-		buf[position++] = (unsigned char) *chr & 0x7F;
+		buf[position++] = (unsigned char)*chr & 0x7F;
 		buf[position++] = _device_num;
 		buf[position++] = 0;
 	}
@@ -175,7 +175,6 @@ void MidiDriver_SEQ::sysEx(const byte *msg, uint16 length) {
 	if (write(device, buf, position) == -1)
 		warning("MidiDriver_SEQ::send: write failed (%s)", strerror(errno));
 }
-
 
 // Plugin interface
 
@@ -208,9 +207,9 @@ Common::Error SeqMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(SEQ)
-	//REGISTER_PLUGIN_DYNAMIC(SEQ, PLUGIN_TYPE_MUSIC, SeqMusicPlugin);
+//REGISTER_PLUGIN_DYNAMIC(SEQ, PLUGIN_TYPE_MUSIC, SeqMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(SEQ, PLUGIN_TYPE_MUSIC, SeqMusicPlugin);
+REGISTER_PLUGIN_STATIC(SEQ, PLUGIN_TYPE_MUSIC, SeqMusicPlugin);
 //#endif
 
 #endif

@@ -20,9 +20,9 @@
  *
  */
 
+#include "mads/sound.h"
 #include "audio/fmopl.h"
 #include "common/memstream.h"
-#include "mads/sound.h"
 #include "mads/mads.h"
 #include "mads/nebular/sound_nebular.h"
 

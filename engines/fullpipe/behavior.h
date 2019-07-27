@@ -65,7 +65,7 @@ class BehaviorManager : public CObject {
 	Scene *_scene;
 	bool _isActive;
 
-  public:
+public:
 	BehaviorManager();
 	~BehaviorManager();
 

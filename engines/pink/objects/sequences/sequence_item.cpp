@@ -23,14 +23,14 @@
 #include "common/debug.h"
 
 #include "pink/archive.h"
-#include "pink/pink.h"
 #include "pink/objects/actions/action.h"
 #include "pink/objects/actors/actor.h"
 #include "pink/objects/pages/game_page.h"
-#include "pink/objects/sequences/sequence_item.h"
 #include "pink/objects/sequences/sequence.h"
-#include "pink/objects/sequences/sequencer.h"
 #include "pink/objects/sequences/sequence_context.h"
+#include "pink/objects/sequences/sequence_item.h"
+#include "pink/objects/sequences/sequencer.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
@@ -71,7 +71,6 @@ bool SequenceItemLeader::isLeader() {
 void SequenceItemLeader::toConsole() {
 	debugC(6, kPinkDebugLoadingObjects, "\t\t\t\tSequenceItemLeader: _actor=%s, _action=%s", _actor.c_str(), _action.c_str());
 }
-
 
 void SequenceItemLeaderAudio::deserialize(Archive &archive) {
 	SequenceItem::deserialize(archive);

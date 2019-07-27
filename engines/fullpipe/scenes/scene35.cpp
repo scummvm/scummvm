@@ -22,16 +22,16 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
+#include "fullpipe/interaction.h"
 
 #include "fullpipe/floaters.h"
 
@@ -137,7 +137,7 @@ void sceneHandler35_genFlies() {
 		int numFlies = g_fp->_rnd.getRandomNumber(3) + 1;
 
 		while (numFlies--) {
-			g_fp->_floaters->genFlies(g_fp->_currentScene, g_fp->_rnd.getRandomNumber(55) + 1057,  g_fp->_rnd.getRandomNumber(60) + x + xoff, 4, 1);
+			g_fp->_floaters->genFlies(g_fp->_currentScene, g_fp->_rnd.getRandomNumber(55) + 1057, g_fp->_rnd.getRandomNumber(60) + x + xoff, 4, 1);
 
 			xoff += 40;
 
@@ -202,30 +202,29 @@ int sceneHandler35(ExCommand *cmd) {
 		g_fp->lift_hoverButton(cmd);
 		break;
 
-	case 29:
-		{
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y);
+	case 29: {
+		StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y);
 
-			if (ani)
-				if (ani->_id == ANI_LIFTBUTTON) {
-					g_fp->lift_animateButton(ani);
-					cmd->_messageKind = 0;
+		if (ani)
+			if (ani->_id == ANI_LIFTBUTTON) {
+				g_fp->lift_animateButton(ani);
+				cmd->_messageKind = 0;
+				break;
+			}
+
+		if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
+			int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
+
+			if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
+				if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1) || (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
+					g_fp->processArcade(cmd);
 					break;
 				}
-
-			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
-				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
-
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
-					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1) || (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
-						g_fp->processArcade(cmd);
-						break;
-					}
-				}
 			}
-			break;
 		}
+		break;
+	}
 
 	case 33:
 		if (g_fp->_aniMan2) {

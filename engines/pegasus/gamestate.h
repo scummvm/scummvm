@@ -29,14 +29,14 @@
 #include "common/singleton.h"
 #include "common/util.h"
 
+#include "pegasus/items/item.h"
 #include "pegasus/types.h"
 #include "pegasus/util.h"
-#include "pegasus/items/item.h"
 
 namespace Common {
-	class Error;
-	class ReadStream;
-	class WriteStream;
+class Error;
+class ReadStream;
+class WriteStream;
 }
 
 namespace Pegasus {

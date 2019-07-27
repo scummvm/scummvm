@@ -29,21 +29,21 @@
 namespace Image {
 
 #define GET_BLOCK_COUNT() \
-  (opcode & 0x10) ? (1 + stream.readByte()) : 1 + (opcode & 0x0F);
+	(opcode & 0x10) ? (1 + stream.readByte()) : 1 + (opcode & 0x0F);
 
-#define ADVANCE_BLOCK() \
-{ \
-	pixelPtr += 4; \
-	if (pixelPtr >= _surface->w) { \
-		pixelPtr = 0; \
-		rowPtr += _surface->w * 4; \
-	} \
-	totalBlocks--; \
-	if (totalBlocks < 0) { \
-		warning("block counter just went negative (this should not happen)"); \
-		return _surface; \
-	} \
-}
+#define ADVANCE_BLOCK()                                                     \
+	{                                                                         \
+		pixelPtr += 4;                                                          \
+		if (pixelPtr >= _surface->w) {                                          \
+			pixelPtr = 0;                                                         \
+			rowPtr += _surface->w * 4;                                            \
+		}                                                                       \
+		totalBlocks--;                                                          \
+		if (totalBlocks < 0) {                                                  \
+			warning("block counter just went negative (this should not happen)"); \
+			return _surface;                                                      \
+		}                                                                       \
+	}
 
 SMCDecoder::SMCDecoder(uint16 width, uint16 height) {
 	_surface = new Graphics::Surface();
@@ -75,7 +75,7 @@ const Graphics::Surface *SMCDecoder::decodeFrame(Common::SeekableReadStream &str
 	uint32 colorPairIndex = 0;
 	uint32 colorQuadIndex = 0;
 	uint32 colorOctetIndex = 0;
-	uint32 colorTableIndex = 0;  // indices to color pair, quad, or octet tables
+	uint32 colorTableIndex = 0; // indices to color pair, quad, or octet tables
 
 	int32 chunkSize = stream.readUint32BE() & 0x00FFFFFF;
 	if (chunkSize != stream.size())
@@ -334,8 +334,7 @@ const Graphics::Surface *SMCDecoder::decodeFrame(Common::SeekableReadStream &str
 				stream.read(flagData, 6);
 
 				colorFlagsA = ((READ_BE_UINT16(flagData) & 0xFFF0) << 8) | (READ_BE_UINT16(flagData + 2) >> 4);
-				colorFlagsB = ((READ_BE_UINT16(flagData + 4) & 0xFFF0) << 8) | ((flagData[1] & 0xF) << 8) |
-								((flagData[3] & 0xF) << 4) | (flagData[5] & 0xf);
+				colorFlagsB = ((READ_BE_UINT16(flagData + 4) & 0xFFF0) << 8) | ((flagData[1] & 0xF) << 8) | ((flagData[3] & 0xF) << 4) | (flagData[5] & 0xf);
 
 				colorFlags = colorFlagsA;
 

@@ -21,5 +21,5 @@
  */
 
 #if defined(SCUMMVM_USE_PRAGMA_PACK)
-  #pragma pack()
+#	pragma pack()
 #endif

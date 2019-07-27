@@ -114,10 +114,10 @@ bool DialogueMenu::addToList(int answer, bool done, int priorityPolite, int prio
 	}
 
 #if BLADERUNNER_ORIGINAL_BUGS
-// Original uses incorrect spelling for entry id 1020: DRAGONFLY JEWERLY
+	// Original uses incorrect spelling for entry id 1020: DRAGONFLY JEWERLY
 	const Common::String &text = _textResource->getText(answer);
 #else
-// fix spelling or entry id 1020 to DRAGONFLY JEWELRY in English version
+	// fix spelling or entry id 1020 to DRAGONFLY JEWELRY in English version
 	const char *answerTextCP = _textResource->getText(answer);
 	if (_vm->_language == Common::EN_ANY && answer == 1020 && strcmp(answerTextCP, "DRAGONFLY JEWERLY") == 0) {
 		answerTextCP = "DRAGONFLY JEWELRY";
@@ -135,7 +135,7 @@ bool DialogueMenu::addToList(int answer, bool done, int priorityPolite, int prio
 	_items[index].isDone = done;
 	_items[index].priorityPolite = priorityPolite;
 	_items[index].priorityNormal = priorityNormal;
-	_items[index].prioritySurly  = prioritySurly;
+	_items[index].prioritySurly = prioritySurly;
 
 	// CHECK(madmoose): BLADE.EXE calls this needlessly
 	// calculatePosition();
@@ -531,7 +531,7 @@ void DialogueMenu::clear() {
 	}
 	_neverRepeatListSize = 0;
 	for (int i = 0; i != kMaxRepeatHistory; ++i) {
-		_neverRepeatValues[i]      = -1;
+		_neverRepeatValues[i] = -1;
 		_neverRepeatWasSelected[i] = false;
 	}
 	_centerX = 0;

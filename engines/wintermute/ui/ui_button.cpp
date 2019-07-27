@@ -26,28 +26,29 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/base_dynamic_buffer.h"
-#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/ui/ui_button.h"
-#include "engines/wintermute/ui/ui_tiled_image.h"
-#include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_active_rect.h"
-#include "engines/wintermute/base/font/base_font_storage.h"
-#include "engines/wintermute/base/font/base_font.h"
-#include "engines/wintermute/base/base_string_table.h"
-#include "engines/wintermute/base/base_sprite.h"
+#include "engines/wintermute/base/base_dynamic_buffer.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_parser.h"
+#include "engines/wintermute/base/base_sprite.h"
+#include "engines/wintermute/base/base_string_table.h"
+#include "engines/wintermute/base/font/base_font.h"
+#include "engines/wintermute/base/font/base_font_storage.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/ui/ui_tiled_image.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(UIButton, false)
 
 //////////////////////////////////////////////////////////////////////////
-UIButton::UIButton(BaseGame *inGame) : UIObject(inGame) {
+UIButton::UIButton(BaseGame *inGame)
+  : UIObject(inGame) {
 	_backPress = _backHover = _backDisable = _backFocus = nullptr;
 
 	_fontHover = _fontPress = _fontDisable = _fontFocus = nullptr;
@@ -68,7 +69,6 @@ UIButton::UIButton(BaseGame *inGame) : UIObject(inGame) {
 
 	_pixelPerfect = false;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 UIButton::~UIButton() {
@@ -100,7 +100,6 @@ UIButton::~UIButton() {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool UIButton::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
@@ -121,7 +120,6 @@ bool UIButton::loadFile(const char *filename) {
 
 	return ret;
 }
-
 
 TOKEN_DEF_START
 TOKEN_DEF(BUTTON)
@@ -534,7 +532,6 @@ bool UIButton::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->getFilename());
 	}
 
-
 	buffer->putTextIndent(indent + 2, "\n");
 
 	if (_text) {
@@ -562,7 +559,6 @@ bool UIButton::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "Y=%d\n", _posY);
 	buffer->putTextIndent(indent + 2, "WIDTH=%d\n", _width);
 	buffer->putTextIndent(indent + 2, "HEIGHT=%d\n", _height);
-
 
 	buffer->putTextIndent(indent + 2, "DISABLED=%s\n", _disable ? "TRUE" : "FALSE");
 	buffer->putTextIndent(indent + 2, "VISIBLE=%s\n", _visible ? "TRUE" : "FALSE");
@@ -643,7 +639,6 @@ void UIButton::correctSize() {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool UIButton::display(int offsetX, int offsetY) {
 	if (!_visible) {
@@ -659,11 +654,9 @@ bool UIButton::display(int offsetX, int offsetY) {
 	//_hover = (!_disable && BasePlatform::ptInRect(&rect, _gameRef->_mousePos)!=FALSE);
 	_hover = (!_disable && _gameRef->_activeObject == this && (_gameRef->_interactive || _gameRef->_state == GAME_SEMI_FROZEN));
 
-	if ((_press && _hover && !_gameRef->_mouseLeftDown) ||
-			(_oneTimePress && g_system->getMillis() - _oneTimePressTime >= 100)) {
+	if ((_press && _hover && !_gameRef->_mouseLeftDown) || (_oneTimePress && g_system->getMillis() - _oneTimePressTime >= 100)) {
 		press();
 	}
-
 
 	if (_disable) {
 		if (_backDisable) {
@@ -770,7 +763,6 @@ bool UIButton::display(int offsetX, int offsetY) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void UIButton::press() {
 	applyEvent("Press");
@@ -783,7 +775,6 @@ void UIButton::press() {
 
 	_oneTimePress = false;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
@@ -916,7 +907,6 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		return STATUS_OK;
 	}
-
 
 	//////////////////////////////////////////////////////////////////////////
 	// SetHoverImage
@@ -1080,7 +1070,6 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *UIButton::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
@@ -1126,7 +1115,6 @@ ScValue *UIButton::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool UIButton::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
@@ -1166,12 +1154,10 @@ bool UIButton::scSetProperty(const char *name, ScValue *value) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 const char *UIButton::scToString() {
 	return "[button]";
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool UIButton::persist(BasePersistenceManager *persistMgr) {

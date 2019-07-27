@@ -29,24 +29,24 @@ void SceneScriptHC02::InitializeScene() {
 	if (Game_Flag_Query(kFlagHC04toHC02)) {
 		Setup_Scene_Information(-88.0f, 0.14f, -463.0f, 540);
 	} else {
-		Setup_Scene_Information(-57.0f, 0.14f,   83.0f, 746);
+		Setup_Scene_Information(-57.0f, 0.14f, 83.0f, 746);
 	}
 
 	Scene_Exit_Add_2D_Exit(0, 589, 255, 639, 479, 1);
-	Scene_Exit_Add_2D_Exit(1, 505,   0, 639, 170, 0);
+	Scene_Exit_Add_2D_Exit(1, 505, 0, 639, 170, 0);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 50, 50, 0);
-	Ambient_Sounds_Add_Looping_Sound(kSfxBARAMB1,  50, 50, 0);
-	Ambient_Sounds_Add_Sound(kSfxBARSFX1,  3, 60, 33, 33,  -60,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBARSFX3,  3, 60, 33, 33,  -60,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBARSFX4,  3, 60, 33, 33,  -60,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBARSFX5,  3, 60, 33, 33,  -60,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBARSFX6,  3, 60, 33, 33,  -60,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBARSFX7,  3, 60, 33, 33,  -60,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxCLINK1,   3, 60, 33, 33, -100,  20, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxCLINK2,   3, 60, 33, 33, -100,  20, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxCLINK3,   3, 60, 33, 33, -100,  20, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxCLINK4,   3, 60, 33, 33, -100,  20, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBARAMB1, 50, 50, 0);
+	Ambient_Sounds_Add_Sound(kSfxBARSFX1, 3, 60, 33, 33, -60, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBARSFX3, 3, 60, 33, 33, -60, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBARSFX4, 3, 60, 33, 33, -60, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBARSFX5, 3, 60, 33, 33, -60, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBARSFX6, 3, 60, 33, 33, -60, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBARSFX7, 3, 60, 33, 33, -60, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxCLINK1, 3, 60, 33, 33, -100, 20, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxCLINK2, 3, 60, 33, 33, -100, 20, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxCLINK3, 3, 60, 33, 33, -100, 20, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxCLINK4, 3, 60, 33, 33, -100, 20, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfx67_0480R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfx67_0540R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfx67_0560R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
@@ -56,15 +56,15 @@ void SceneScriptHC02::InitializeScene() {
 	Ambient_Sounds_Add_Sound(kSfx67_1070R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfx67_1080R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfx67_1160R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM8,   3, 30, 14, 14,   30, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM2,   3, 30, 14, 14,   30, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM3,   3, 30, 14, 14,   30, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM4,   3, 30, 14, 14,   30, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM5,   3, 30, 14, 14,   30, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM6,   3, 30, 14, 14,   30, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM7,   3, 30, 14, 14,   30, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM1,   3, 30, 14, 14,   30, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCBELL1,  3, 50, 20, 20, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM8, 3, 30, 14, 14, 30, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM2, 3, 30, 14, 14, 30, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM3, 3, 30, 14, 14, 30, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM4, 3, 30, 14, 14, 30, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM5, 3, 30, 14, 14, 30, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM6, 3, 30, 14, 14, 30, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM7, 3, 30, 14, 14, 30, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM1, 3, 30, 14, 14, 30, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCBELL1, 3, 50, 20, 20, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxINDFLUT1, 3, 50, 25, 25, -100, 100, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagHC01toHC02)) {
@@ -103,9 +103,8 @@ bool SceneScriptHC02::ClickedOnActor(int actorId) {
 				Delay(1500);
 				Global_Variable_Increment(kVariableMcCoyDrinks, 1);
 				Game_Flag_Set(kFlagHC02HawkersBarkeepIntroduction);
-			} else if ( Actor_Clue_Query(kActorMcCoy, kClueChinaBarSecurityCamera)
-			        && !Actor_Clue_Query(kActorMcCoy, kClueChinaBarSecurityDisc)
-			) {
+			} else if (Actor_Clue_Query(kActorMcCoy, kClueChinaBarSecurityCamera)
+			           && !Actor_Clue_Query(kActorMcCoy, kClueChinaBarSecurityDisc)) {
 				Actor_Says(kActorMcCoy, 4545, 11);
 				Actor_Says(kActorHawkersBarkeep, 120, 12);
 				Actor_Says(kActorHawkersBarkeep, 180, 13);
@@ -118,8 +117,7 @@ bool SceneScriptHC02::ClickedOnActor(int actorId) {
 			           && !Actor_Clue_Query(kActorTransient, kClueFlaskOfAbsinthe)
 #endif // !BLADERUNNER_ORIGINAL_BUGS
 			           && (Global_Variable_Query(kVariableChinyen) > 20
-			               || Query_Difficulty_Level() == kGameDifficultyEasy)
-			) {
+			               || Query_Difficulty_Level() == kGameDifficultyEasy)) {
 				Actor_Clue_Acquire(kActorMcCoy, kClueFlaskOfAbsinthe, true, kActorHawkersBarkeep);
 				Actor_Says(kActorMcCoy, 1230, 13);
 				Actor_Says(kActorHawkersBarkeep, 20, 12);
@@ -137,17 +135,15 @@ bool SceneScriptHC02::ClickedOnActor(int actorId) {
 				}
 				Actor_Says(kActorMcCoy, 1245, 13);
 			} else {
-				if ( Actor_Clue_Query(kActorMcCoy, kClueMaggieBracelet)
-				 && !Game_Flag_Query(kFlagHC02HawkersBarkeepBraceletTalk)
-				) {
+				if (Actor_Clue_Query(kActorMcCoy, kClueMaggieBracelet)
+				    && !Game_Flag_Query(kFlagHC02HawkersBarkeepBraceletTalk)) {
 					Actor_Says(kActorHawkersBarkeep, 80, 16);
 					Actor_Says(kActorMcCoy, 1265, 13);
 					Actor_Says(kActorHawkersBarkeep, 90, 13);
 					Game_Flag_Set(kFlagHC02HawkersBarkeepBraceletTalk);
 				}
 				if (Global_Variable_Query(kVariableChinyen) > 5
-				 || Query_Difficulty_Level() == kGameDifficultyEasy
-				) {
+				    || Query_Difficulty_Level() == kGameDifficultyEasy) {
 					if (Query_Difficulty_Level() != kGameDifficultyEasy) {
 						Global_Variable_Decrement(kVariableChinyen, 5);
 					}
@@ -213,13 +209,12 @@ void SceneScriptHC02::SceneFrameAdvanced(int frame) {
 	}
 
 	if (frame == 69
-	 || frame == 77
-	 || frame == 86
-	 || frame == 95
-	 || frame == 104
-	 || frame == 113
-	 || frame == 119
-	) {
+	    || frame == 77
+	    || frame == 86
+	    || frame == 95
+	    || frame == 104
+	    || frame == 113
+	    || frame == 119) {
 		Sound_Play(kSfxNEON6, Random_Query(6, 7), -20, 20, 50);
 	}
 }

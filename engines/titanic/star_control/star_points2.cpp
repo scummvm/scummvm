@@ -90,17 +90,17 @@ void CStarPoints2::draw(CSurfaceArea *surface, CStarCamera *camera) {
 		for (uint idx = 0; idx < re.size(); ++idx) {
 			const CStarPointEntry &se = re[idx];
 			vector1._z = pose._row2._z * se._v1._y + pose._row3._z * se._v1._z
-				+ pose._row1._z * se._v1._x + pose._vector._z;
+			  + pose._row1._z * se._v1._x + pose._vector._z;
 			vector1._x = pose._row2._x * se._v1._y + pose._row3._x * se._v1._z
-				+ pose._row1._x * se._v1._x + pose._vector._x;
+			  + pose._row1._x * se._v1._x + pose._vector._x;
 			vector1._y = pose._row2._y * se._v1._y + pose._row3._y * se._v1._z
-				+ pose._row1._y * se._v1._x + pose._vector._y;
+			  + pose._row1._y * se._v1._x + pose._vector._y;
 			vector3._z = pose._row2._z * se._v2._y + pose._row2._x * se._v2._z
-				+ pose._row1._z * se._v2._x + pose._vector._y;
+			  + pose._row1._z * se._v2._x + pose._vector._y;
 			vector3._x = pose._row3._z * se._v2._y + pose._row3._x * se._v2._z
-				+ pose._row1._x * se._v2._x + pose._vector._y;
+			  + pose._row1._x * se._v2._x + pose._vector._y;
 			vector3._y = pose._row2._y * se._v2._y + pose._row3._y * se._v2._z
-				+ pose._row1._y * se._v2._x + pose._vector._y;
+			  + pose._row1._y * se._v2._x + pose._vector._y;
 
 			if (vector1._z > threshold && vector3._z > threshold) {
 				vector2 = camera->getRelativePos(2, vector1);

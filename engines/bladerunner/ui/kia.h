@@ -52,17 +52,17 @@ class UIImagePicker;
 class VQAPlayer;
 
 enum KIASections {
-	kKIASectionNone       = 0,
-	kKIASectionCrimes     = 1,
-	kKIASectionSuspects   = 2,
-	kKIASectionClues      = 3,
-	kKIASectionSettings   = 4,
-	kKIASectionHelp       = 5,
-	kKIASectionSave       = 6,
-	kKIASectionLoad       = 7,
-	kKIASectionQuit       = 8,
+	kKIASectionNone = 0,
+	kKIASectionCrimes = 1,
+	kKIASectionSuspects = 2,
+	kKIASectionClues = 3,
+	kKIASectionSettings = 4,
+	kKIASectionHelp = 5,
+	kKIASectionSave = 6,
+	kKIASectionLoad = 7,
+	kKIASectionQuit = 8,
 	kKIASectionDiagnostic = 9,
-	kKIASectionPogo       = 10
+	kKIASectionPogo = 10
 };
 
 class KIA {
@@ -78,50 +78,49 @@ class KIA {
 
 	int _transitionId;
 
-	uint32             _playerVqaTimeLast;
-	VQAPlayer         *_playerVqaPlayer;
-	uint32             _playerVqaFrame;
-	uint32             _playerVisualizerState;
-	int                _playerPhotographId;
-	Shape             *_playerPhotograph;
-	int                _playerSliceModelId;
-	float              _playerSliceModelAngle;
-	Graphics::Surface  _playerImage;
-	uint32             _timeLast;
+	uint32 _playerVqaTimeLast;
+	VQAPlayer *_playerVqaPlayer;
+	uint32 _playerVqaFrame;
+	uint32 _playerVisualizerState;
+	int _playerPhotographId;
+	Shape *_playerPhotograph;
+	int _playerSliceModelId;
+	float _playerSliceModelAngle;
+	Graphics::Surface _playerImage;
+	uint32 _timeLast;
 
 	ActorDialogueQueueEntry _playerActorDialogueQueue[kPlayerActorDialogueQueueCapacity];
-	int                     _playerActorDialogueQueuePosition;
-	int                     _playerActorDialogueQueueSize;
-	int                     _playerActorDialogueState;
+	int _playerActorDialogueQueuePosition;
+	int _playerActorDialogueQueueSize;
+	int _playerActorDialogueState;
 
-	KIASections           _currentSectionId;
-	KIASections           _lastSectionIdKIA;
-	KIASections           _lastSectionIdOptions;
-	KIASectionBase       *_currentSection;
+	KIASections _currentSectionId;
+	KIASections _lastSectionIdKIA;
+	KIASections _lastSectionIdOptions;
+	KIASectionBase *_currentSection;
 
-	KIASectionClues      *_cluesSection;
-	KIASectionCrimes     *_crimesSection;
+	KIASectionClues *_cluesSection;
+	KIASectionCrimes *_crimesSection;
 	KIASectionDiagnostic *_diagnosticSection;
-	KIASectionHelp       *_helpSection;
-	KIASectionLoad       *_loadSection;
-	KIASectionSettings   *_settingsSection;
-	KIASectionPogo       *_pogoSection;
-	KIASectionSave       *_saveSection;
-	KIASectionSuspects   *_suspectsSection;
+	KIASectionHelp *_helpSection;
+	KIASectionLoad *_loadSection;
+	KIASectionSettings *_settingsSection;
+	KIASectionPogo *_pogoSection;
+	KIASectionSave *_saveSection;
+	KIASectionSuspects *_suspectsSection;
 
-	UIImagePicker        *_buttons;
+	UIImagePicker *_buttons;
 
-	VQAPlayer            *_mainVqaPlayer;
+	VQAPlayer *_mainVqaPlayer;
 
-	int                   _pogoPos;
-
+	int _pogoPos;
 
 public:
-	bool              _forceOpen;
+	bool _forceOpen;
 
-	KIALog           *_log;
-	KIAScript        *_script;
-	KIAShapes        *_shapes;
+	KIALog *_log;
+	KIAScript *_script;
+	KIAShapes *_shapes;
 
 	Graphics::Surface _thumbnail;
 

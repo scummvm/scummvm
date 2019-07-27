@@ -23,11 +23,11 @@
 #ifndef ZVISION_MENU_H
 #define ZVISION_MENU_H
 
-#include "graphics/surface.h"
 #include "common/rect.h"
+#include "graphics/surface.h"
 
-#include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
+#include "zvision/zvision.h"
 
 namespace ZVision {
 
@@ -55,18 +55,20 @@ public:
 	uint16 getEnable() {
 		return menuBarFlag;
 	}
+
 protected:
 	uint16 menuBarFlag;
 	ZVision *_engine;
 };
 
-class MenuZGI: public MenuHandler {
+class MenuZGI : public MenuHandler {
 public:
 	MenuZGI(ZVision *engine);
 	~MenuZGI();
 	void onMouseMove(const Common::Point &Pos);
 	void onMouseUp(const Common::Point &Pos);
 	void process(uint32 deltaTimeInMillis);
+
 private:
 	Graphics::Surface menuBack[3][2];
 	Graphics::Surface menuBar[4][2];
@@ -86,16 +88,16 @@ private:
 
 	bool clean;
 	bool redraw;
-
 };
 
-class MenuNemesis: public MenuHandler {
+class MenuNemesis : public MenuHandler {
 public:
 	MenuNemesis(ZVision *engine);
 	~MenuNemesis();
 	void onMouseMove(const Common::Point &Pos);
 	void onMouseUp(const Common::Point &Pos);
 	void process(uint32 deltaTimeInMillis);
+
 private:
 	Graphics::Surface but[4][6];
 	Graphics::Surface menuBar;
@@ -111,7 +113,6 @@ private:
 
 	int frm;
 	int16 delay;
-
 };
 
 } // End of namespace ZVision

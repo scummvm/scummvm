@@ -87,7 +87,6 @@ protected:
 	virtual void processSoundQueues();
 };
 
-
 } // End of namespace Scumm
 
 #endif

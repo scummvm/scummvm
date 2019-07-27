@@ -23,14 +23,14 @@
 #ifndef TIZEN_APPLICATION_H
 #define TIZEN_APPLICATION_H
 
-#include <FBase.h>
 #include <FApp.h>
+#include <FBase.h>
 #include <FGraphics.h>
-#include <FUi.h>
 #include <FSystem.h>
+#include <FUi.h>
 
-#include "backends/platform/tizen/system.h"
 #include "backends/platform/tizen/form.h"
+#include "backends/platform/tizen/system.h"
 
 using namespace Tizen::App;
 using namespace Tizen::System;
@@ -38,9 +38,8 @@ using namespace Tizen::Ui;
 using namespace Tizen::Ui::Controls;
 using namespace Tizen::Base::Collection;
 
-class TizenScummVM :
-	public UiApp,
-	public IScreenEventListener {
+class TizenScummVM : public UiApp,
+                     public IScreenEventListener {
 
 public:
 	TizenScummVM();

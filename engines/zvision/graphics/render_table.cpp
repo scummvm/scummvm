@@ -30,9 +30,9 @@
 namespace ZVision {
 
 RenderTable::RenderTable(uint numColumns, uint numRows)
-	: _numRows(numRows),
-	  _numColumns(numColumns),
-	  _renderState(FLAT) {
+  : _numRows(numRows)
+  , _numColumns(numColumns)
+  , _renderState(FLAT) {
 	assert(numRows != 0 && numColumns != 0);
 
 	_internalBuffer = new Common::Point[numRows * numColumns];

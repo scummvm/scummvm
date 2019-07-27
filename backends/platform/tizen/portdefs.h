@@ -24,23 +24,23 @@
 #define PORT_DEFS_H
 
 #include <assert.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
 #include <math.h>
 #include <new>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #define M_PI 3.14159265358979323846
 
 #ifdef __cplusplus
- #include <ctype.h> // causes a link error when building c programs
- #define C_LINKAGE_BEGIN extern "C" {
- #define C_LINKAGE_END }
+#	include <ctype.h> // causes a link error when building c programs
+#	define C_LINKAGE_BEGIN extern "C" {
+#	define C_LINKAGE_END }
 #else
- #define C_LINKAGE_BEGIN
- #define C_LINKAGE_END
+#	define C_LINKAGE_BEGIN
+#	define C_LINKAGE_END
 #endif
 
 // value missing from osp gl headers
@@ -70,7 +70,7 @@ void stderr_vfprintf(void *, const char *format, va_list ap);
 
 #define stderr (void *)0
 #define stdout (void *)1
-#define stdin	 (void *)2
+#define stdin (void *)2
 #define fputs(str, file)
 #define fflush(file)
 #define sscanf simple_sscanf

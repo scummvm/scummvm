@@ -31,9 +31,7 @@ int castNumToNum(const char *str) {
 	if (strlen(str) != 3)
 		return -1;
 
-	if (tolower(str[0]) >= 'a' && tolower(str[0]) <= 'h' &&
-		str[1] >= '1' && str[1] <= '8' &&
-		str[2] >= '1' && str[2] <= '8') {
+	if (tolower(str[0]) >= 'a' && tolower(str[0]) <= 'h' && str[1] >= '1' && str[1] <= '8' && str[2] >= '1' && str[2] <= '8') {
 
 		return (tolower(str[0]) - 'a') * 64 + (str[1] - '1') * 8 + (str[2] - '1') + 1;
 	}
@@ -53,7 +51,7 @@ char *numToCastNum(int num) {
 		res[0] = 'A' + c;
 		num -= 64 * c;
 
-		c =  num / 8;
+		c = num / 8;
 		res[1] = '1' + c;
 		num -= 8 * c;
 
@@ -69,18 +67,17 @@ char *numToCastNum(int num) {
 // The table starts from 0x80
 //
 // TODO: Check it for correctness.
-static char lowerCaseConvert[] =
-"aacenoua" // 80
-"aaaaacee" // 88
-"eeiiiino" // 90
-"oooouuuu" // 98
-"........" // a0
-".......o" // a8
-"........" // b0
-".......o" // b8
-"........" // c0
-".. aao.." // c8
-"--.....y";// d0-d8
+static char lowerCaseConvert[] = "aacenoua" // 80
+                                 "aaaaacee" // 88
+                                 "eeiiiino" // 90
+                                 "oooouuuu" // 98
+                                 "........" // a0
+                                 ".......o" // a8
+                                 "........" // b0
+                                 ".......o" // b8
+                                 "........" // c0
+                                 ".. aao.." // c8
+                                 "--.....y"; // d0-d8
 
 Common::String *toLowercaseMac(Common::String *s) {
 	Common::String *res = new Common::String;

@@ -57,7 +57,6 @@ struct ObsoleteGameID {
  */
 void upgradeTargetIfNecessary(const ObsoleteGameID *obsoleteList);
 
-
 /**
  * Scan through the given list of plain game descriptors specified and search
  * for 'gameid' in there. If a match is found, returns a GameDescriptor
@@ -67,11 +66,9 @@ void upgradeTargetIfNecessary(const ObsoleteGameID *obsoleteList);
  * to support obsolete gameids.
  */
 PlainGameDescriptor findGameID(
-	const char *gameid,
-	const PlainGameDescriptor *gameids,
-	const ObsoleteGameID *obsoleteList = 0
-	);
-
+  const char *gameid,
+  const PlainGameDescriptor *gameids,
+  const ObsoleteGameID *obsoleteList = 0);
 
 } // End of namespace Engines
 

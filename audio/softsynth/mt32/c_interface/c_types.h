@@ -27,17 +27,18 @@
 #include "../Enumerations.h"
 #undef MT32EMU_C_ENUMERATIONS
 
-typedef unsigned int       mt32emu_bit32u;
-typedef   signed int       mt32emu_bit32s;
+typedef unsigned int mt32emu_bit32u;
+typedef signed int mt32emu_bit32s;
 typedef unsigned short int mt32emu_bit16u;
-typedef   signed short int mt32emu_bit16s;
-typedef unsigned char      mt32emu_bit8u;
-typedef   signed char      mt32emu_bit8s;
+typedef signed short int mt32emu_bit16s;
+typedef unsigned char mt32emu_bit8u;
+typedef signed char mt32emu_bit8s;
 
 typedef char mt32emu_sha1_digest[41];
 
 typedef enum {
-	MT32EMU_BOOL_FALSE, MT32EMU_BOOL_TRUE
+	MT32EMU_BOOL_FALSE,
+	MT32EMU_BOOL_TRUE
 } mt32emu_boolean;
 
 typedef enum {
@@ -213,93 +214,93 @@ typedef union mt32emu_service_i mt32emu_service_i;
  * to bind to mt32emu_get_service_i() function instead of binding to each function it needs to use.
  * See c_interface.h for parameter description.
  */
-#define MT32EMU_SERVICE_I_V0 \
-	/** Returns the actual interface version ID */ \
-	mt32emu_service_version (*getVersionID)(mt32emu_service_i i); \
-	mt32emu_report_handler_version (*getSupportedReportHandlerVersionID)(void); \
-	mt32emu_midi_receiver_version (*getSupportedMIDIReceiverVersionID)(void); \
-\
-	mt32emu_bit32u (*getLibraryVersionInt)(void); \
-	const char *(*getLibraryVersionString)(void); \
-\
-	mt32emu_bit32u (*getStereoOutputSamplerate)(const mt32emu_analog_output_mode analog_output_mode); \
-\
-	mt32emu_context (*createContext)(mt32emu_report_handler_i report_handler, void *instance_data); \
-	void (*freeContext)(mt32emu_context context); \
+#define MT32EMU_SERVICE_I_V0                                                                                                                       \
+	/** Returns the actual interface version ID */                                                                                                   \
+	mt32emu_service_version (*getVersionID)(mt32emu_service_i i);                                                                                    \
+	mt32emu_report_handler_version (*getSupportedReportHandlerVersionID)(void);                                                                      \
+	mt32emu_midi_receiver_version (*getSupportedMIDIReceiverVersionID)(void);                                                                        \
+                                                                                                                                                   \
+	mt32emu_bit32u (*getLibraryVersionInt)(void);                                                                                                    \
+	const char *(*getLibraryVersionString)(void);                                                                                                    \
+                                                                                                                                                   \
+	mt32emu_bit32u (*getStereoOutputSamplerate)(const mt32emu_analog_output_mode analog_output_mode);                                                \
+                                                                                                                                                   \
+	mt32emu_context (*createContext)(mt32emu_report_handler_i report_handler, void *instance_data);                                                  \
+	void (*freeContext)(mt32emu_context context);                                                                                                    \
 	mt32emu_return_code (*addROMData)(mt32emu_context context, const mt32emu_bit8u *data, size_t data_size, const mt32emu_sha1_digest *sha1_digest); \
-	mt32emu_return_code (*addROMFile)(mt32emu_context context, const char *filename); \
-	void (*getROMInfo)(mt32emu_const_context context, mt32emu_rom_info *rom_info); \
-	void (*setPartialCount)(mt32emu_context context, const mt32emu_bit32u partial_count); \
-	void (*setAnalogOutputMode)(mt32emu_context context, const mt32emu_analog_output_mode analog_output_mode); \
-	mt32emu_return_code (*openSynth)(mt32emu_const_context context); \
-	void (*closeSynth)(mt32emu_const_context context); \
-	mt32emu_boolean (*isOpen)(mt32emu_const_context context); \
-	mt32emu_bit32u (*getActualStereoOutputSamplerate)(mt32emu_const_context context); \
-	void (*flushMIDIQueue)(mt32emu_const_context context); \
-	mt32emu_bit32u (*setMIDIEventQueueSize)(mt32emu_const_context context, const mt32emu_bit32u queue_size); \
-	void (*setMIDIReceiver)(mt32emu_context context, mt32emu_midi_receiver_i midi_receiver, void *instance_data); \
-\
-	void (*parseStream)(mt32emu_const_context context, const mt32emu_bit8u *stream, mt32emu_bit32u length); \
-	void (*parseStream_At)(mt32emu_const_context context, const mt32emu_bit8u *stream, mt32emu_bit32u length, mt32emu_bit32u timestamp); \
-	void (*playShortMessage)(mt32emu_const_context context, mt32emu_bit32u message); \
-	void (*playShortMessageAt)(mt32emu_const_context context, mt32emu_bit32u message, mt32emu_bit32u timestamp); \
-	mt32emu_return_code (*playMsg)(mt32emu_const_context context, mt32emu_bit32u msg); \
-	mt32emu_return_code (*playSysex)(mt32emu_const_context context, const mt32emu_bit8u *sysex, mt32emu_bit32u len); \
-	mt32emu_return_code (*playMsgAt)(mt32emu_const_context context, mt32emu_bit32u msg, mt32emu_bit32u timestamp); \
-	mt32emu_return_code (*playSysexAt)(mt32emu_const_context context, const mt32emu_bit8u *sysex, mt32emu_bit32u len, mt32emu_bit32u timestamp); \
-\
-	void (*playMsgNow)(mt32emu_const_context context, mt32emu_bit32u msg); \
-	void (*playMsgOnPart)(mt32emu_const_context context, mt32emu_bit8u part, mt32emu_bit8u code, mt32emu_bit8u note, mt32emu_bit8u velocity); \
-	void (*playSysexNow)(mt32emu_const_context context, const mt32emu_bit8u *sysex, mt32emu_bit32u len); \
-	void (*writeSysex)(mt32emu_const_context context, mt32emu_bit8u channel, const mt32emu_bit8u *sysex, mt32emu_bit32u len); \
-\
-	void (*setReverbEnabled)(mt32emu_const_context context, const mt32emu_boolean reverb_enabled); \
-	mt32emu_boolean (*isReverbEnabled)(mt32emu_const_context context); \
-	void (*setReverbOverridden)(mt32emu_const_context context, const mt32emu_boolean reverb_overridden); \
-	mt32emu_boolean (*isReverbOverridden)(mt32emu_const_context context); \
-	void (*setReverbCompatibilityMode)(mt32emu_const_context context, const mt32emu_boolean mt32_compatible_mode); \
-	mt32emu_boolean (*isMT32ReverbCompatibilityMode)(mt32emu_const_context context); \
-	mt32emu_boolean (*isDefaultReverbMT32Compatible)(mt32emu_const_context context); \
-\
-	void (*setDACInputMode)(mt32emu_const_context context, const mt32emu_dac_input_mode mode); \
-	mt32emu_dac_input_mode (*getDACInputMode)(mt32emu_const_context context); \
-\
-	void (*setMIDIDelayMode)(mt32emu_const_context context, const mt32emu_midi_delay_mode mode); \
-	mt32emu_midi_delay_mode (*getMIDIDelayMode)(mt32emu_const_context context); \
-\
-	void (*setOutputGain)(mt32emu_const_context context, float gain); \
-	float (*getOutputGain)(mt32emu_const_context context); \
-	void (*setReverbOutputGain)(mt32emu_const_context context, float gain); \
-	float (*getReverbOutputGain)(mt32emu_const_context context); \
-\
-	void (*setReversedStereoEnabled)(mt32emu_const_context context, const mt32emu_boolean enabled); \
-	mt32emu_boolean (*isReversedStereoEnabled)(mt32emu_const_context context); \
-\
-	void (*renderBit16s)(mt32emu_const_context context, mt32emu_bit16s *stream, mt32emu_bit32u len); \
-	void (*renderFloat)(mt32emu_const_context context, float *stream, mt32emu_bit32u len); \
-	void (*renderBit16sStreams)(mt32emu_const_context context, const mt32emu_dac_output_bit16s_streams *streams, mt32emu_bit32u len); \
-	void (*renderFloatStreams)(mt32emu_const_context context, const mt32emu_dac_output_float_streams *streams, mt32emu_bit32u len); \
-\
-	mt32emu_boolean (*hasActivePartials)(mt32emu_const_context context); \
-	mt32emu_boolean (*isActive)(mt32emu_const_context context); \
-	mt32emu_bit32u (*getPartialCount)(mt32emu_const_context context); \
-	mt32emu_bit32u (*getPartStates)(mt32emu_const_context context); \
-	void (*getPartialStates)(mt32emu_const_context context, mt32emu_bit8u *partial_states); \
-	mt32emu_bit32u (*getPlayingNotes)(mt32emu_const_context context, mt32emu_bit8u part_number, mt32emu_bit8u *keys, mt32emu_bit8u *velocities); \
-	const char *(*getPatchName)(mt32emu_const_context context, mt32emu_bit8u part_number); \
-	void (*readMemory)(mt32emu_const_context context, mt32emu_bit32u addr, mt32emu_bit32u len, mt32emu_bit8u *data);
+	mt32emu_return_code (*addROMFile)(mt32emu_context context, const char *filename);                                                                \
+	void (*getROMInfo)(mt32emu_const_context context, mt32emu_rom_info * rom_info);                                                                  \
+	void (*setPartialCount)(mt32emu_context context, const mt32emu_bit32u partial_count);                                                            \
+	void (*setAnalogOutputMode)(mt32emu_context context, const mt32emu_analog_output_mode analog_output_mode);                                       \
+	mt32emu_return_code (*openSynth)(mt32emu_const_context context);                                                                                 \
+	void (*closeSynth)(mt32emu_const_context context);                                                                                               \
+	mt32emu_boolean (*isOpen)(mt32emu_const_context context);                                                                                        \
+	mt32emu_bit32u (*getActualStereoOutputSamplerate)(mt32emu_const_context context);                                                                \
+	void (*flushMIDIQueue)(mt32emu_const_context context);                                                                                           \
+	mt32emu_bit32u (*setMIDIEventQueueSize)(mt32emu_const_context context, const mt32emu_bit32u queue_size);                                         \
+	void (*setMIDIReceiver)(mt32emu_context context, mt32emu_midi_receiver_i midi_receiver, void *instance_data);                                    \
+                                                                                                                                                   \
+	void (*parseStream)(mt32emu_const_context context, const mt32emu_bit8u *stream, mt32emu_bit32u length);                                          \
+	void (*parseStream_At)(mt32emu_const_context context, const mt32emu_bit8u *stream, mt32emu_bit32u length, mt32emu_bit32u timestamp);             \
+	void (*playShortMessage)(mt32emu_const_context context, mt32emu_bit32u message);                                                                 \
+	void (*playShortMessageAt)(mt32emu_const_context context, mt32emu_bit32u message, mt32emu_bit32u timestamp);                                     \
+	mt32emu_return_code (*playMsg)(mt32emu_const_context context, mt32emu_bit32u msg);                                                               \
+	mt32emu_return_code (*playSysex)(mt32emu_const_context context, const mt32emu_bit8u *sysex, mt32emu_bit32u len);                                 \
+	mt32emu_return_code (*playMsgAt)(mt32emu_const_context context, mt32emu_bit32u msg, mt32emu_bit32u timestamp);                                   \
+	mt32emu_return_code (*playSysexAt)(mt32emu_const_context context, const mt32emu_bit8u *sysex, mt32emu_bit32u len, mt32emu_bit32u timestamp);     \
+                                                                                                                                                   \
+	void (*playMsgNow)(mt32emu_const_context context, mt32emu_bit32u msg);                                                                           \
+	void (*playMsgOnPart)(mt32emu_const_context context, mt32emu_bit8u part, mt32emu_bit8u code, mt32emu_bit8u note, mt32emu_bit8u velocity);        \
+	void (*playSysexNow)(mt32emu_const_context context, const mt32emu_bit8u *sysex, mt32emu_bit32u len);                                             \
+	void (*writeSysex)(mt32emu_const_context context, mt32emu_bit8u channel, const mt32emu_bit8u *sysex, mt32emu_bit32u len);                        \
+                                                                                                                                                   \
+	void (*setReverbEnabled)(mt32emu_const_context context, const mt32emu_boolean reverb_enabled);                                                   \
+	mt32emu_boolean (*isReverbEnabled)(mt32emu_const_context context);                                                                               \
+	void (*setReverbOverridden)(mt32emu_const_context context, const mt32emu_boolean reverb_overridden);                                             \
+	mt32emu_boolean (*isReverbOverridden)(mt32emu_const_context context);                                                                            \
+	void (*setReverbCompatibilityMode)(mt32emu_const_context context, const mt32emu_boolean mt32_compatible_mode);                                   \
+	mt32emu_boolean (*isMT32ReverbCompatibilityMode)(mt32emu_const_context context);                                                                 \
+	mt32emu_boolean (*isDefaultReverbMT32Compatible)(mt32emu_const_context context);                                                                 \
+                                                                                                                                                   \
+	void (*setDACInputMode)(mt32emu_const_context context, const mt32emu_dac_input_mode mode);                                                       \
+	mt32emu_dac_input_mode (*getDACInputMode)(mt32emu_const_context context);                                                                        \
+                                                                                                                                                   \
+	void (*setMIDIDelayMode)(mt32emu_const_context context, const mt32emu_midi_delay_mode mode);                                                     \
+	mt32emu_midi_delay_mode (*getMIDIDelayMode)(mt32emu_const_context context);                                                                      \
+                                                                                                                                                   \
+	void (*setOutputGain)(mt32emu_const_context context, float gain);                                                                                \
+	float (*getOutputGain)(mt32emu_const_context context);                                                                                           \
+	void (*setReverbOutputGain)(mt32emu_const_context context, float gain);                                                                          \
+	float (*getReverbOutputGain)(mt32emu_const_context context);                                                                                     \
+                                                                                                                                                   \
+	void (*setReversedStereoEnabled)(mt32emu_const_context context, const mt32emu_boolean enabled);                                                  \
+	mt32emu_boolean (*isReversedStereoEnabled)(mt32emu_const_context context);                                                                       \
+                                                                                                                                                   \
+	void (*renderBit16s)(mt32emu_const_context context, mt32emu_bit16s * stream, mt32emu_bit32u len);                                                \
+	void (*renderFloat)(mt32emu_const_context context, float *stream, mt32emu_bit32u len);                                                           \
+	void (*renderBit16sStreams)(mt32emu_const_context context, const mt32emu_dac_output_bit16s_streams *streams, mt32emu_bit32u len);                \
+	void (*renderFloatStreams)(mt32emu_const_context context, const mt32emu_dac_output_float_streams *streams, mt32emu_bit32u len);                  \
+                                                                                                                                                   \
+	mt32emu_boolean (*hasActivePartials)(mt32emu_const_context context);                                                                             \
+	mt32emu_boolean (*isActive)(mt32emu_const_context context);                                                                                      \
+	mt32emu_bit32u (*getPartialCount)(mt32emu_const_context context);                                                                                \
+	mt32emu_bit32u (*getPartStates)(mt32emu_const_context context);                                                                                  \
+	void (*getPartialStates)(mt32emu_const_context context, mt32emu_bit8u * partial_states);                                                         \
+	mt32emu_bit32u (*getPlayingNotes)(mt32emu_const_context context, mt32emu_bit8u part_number, mt32emu_bit8u * keys, mt32emu_bit8u * velocities);   \
+	const char *(*getPatchName)(mt32emu_const_context context, mt32emu_bit8u part_number);                                                           \
+	void (*readMemory)(mt32emu_const_context context, mt32emu_bit32u addr, mt32emu_bit32u len, mt32emu_bit8u * data);
 
-#define MT32EMU_SERVICE_I_V1 \
-	mt32emu_analog_output_mode (*getBestAnalogOutputMode)(const double target_samplerate); \
-	void (*setStereoOutputSampleRate)(mt32emu_context context, const double samplerate); \
+#define MT32EMU_SERVICE_I_V1                                                                                            \
+	mt32emu_analog_output_mode (*getBestAnalogOutputMode)(const double target_samplerate);                                \
+	void (*setStereoOutputSampleRate)(mt32emu_context context, const double samplerate);                                  \
 	void (*setSamplerateConversionQuality)(mt32emu_context context, const mt32emu_samplerate_conversion_quality quality); \
-	void (*selectRendererType)(mt32emu_context context, mt32emu_renderer_type renderer_type); \
-	mt32emu_renderer_type (*getSelectedRendererType)(mt32emu_context context); \
-	mt32emu_bit32u (*convertOutputToSynthTimestamp)(mt32emu_const_context context, mt32emu_bit32u output_timestamp); \
+	void (*selectRendererType)(mt32emu_context context, mt32emu_renderer_type renderer_type);                             \
+	mt32emu_renderer_type (*getSelectedRendererType)(mt32emu_context context);                                            \
+	mt32emu_bit32u (*convertOutputToSynthTimestamp)(mt32emu_const_context context, mt32emu_bit32u output_timestamp);      \
 	mt32emu_bit32u (*convertSynthToOutputTimestamp)(mt32emu_const_context context, mt32emu_bit32u synth_timestamp);
 
-#define MT32EMU_SERVICE_I_V2 \
-	mt32emu_bit32u (*getInternalRenderedSampleCount)(mt32emu_const_context context); \
+#define MT32EMU_SERVICE_I_V2                                                                   \
+	mt32emu_bit32u (*getInternalRenderedSampleCount)(mt32emu_const_context context);             \
 	void (*setNiceAmpRampEnabled)(mt32emu_const_context context, const mt32emu_boolean enabled); \
 	mt32emu_boolean (*isNiceAmpRampEnabled)(mt32emu_const_context context);
 

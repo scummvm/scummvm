@@ -32,6 +32,7 @@ class CSGTTV : public CSGTStateRoom {
 	bool TurnOff(CTurnOff *msg);
 	bool TurnOn(CTurnOn *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
+
 public:
 	CLASSDEF;
 

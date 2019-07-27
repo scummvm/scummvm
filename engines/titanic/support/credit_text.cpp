@@ -31,10 +31,20 @@ namespace Titanic {
 
 #define FRAMES_PER_CYCLE 16
 
-CCreditText::CCreditText() : _screenManagerP(nullptr), _ticks(0),
-		_fontHeight(1), _objectP(nullptr), _yOffset(0),
-		_priorInc(0), _textR(0), _textG(0), _textB(0), _deltaR(0),
-		_deltaG(0), _deltaB(0), _counter(0) {
+CCreditText::CCreditText()
+  : _screenManagerP(nullptr)
+  , _ticks(0)
+  , _fontHeight(1)
+  , _objectP(nullptr)
+  , _yOffset(0)
+  , _priorInc(0)
+  , _textR(0)
+  , _textG(0)
+  , _textB(0)
+  , _deltaR(0)
+  , _deltaG(0)
+  , _deltaB(0)
+  , _counter(0) {
 }
 
 void CCreditText::clear() {
@@ -43,7 +53,7 @@ void CCreditText::clear() {
 }
 
 void CCreditText::load(CGameObject *obj, CScreenManager *screenManager,
-		const Rect &rect) {
+                       const Rect &rect) {
 	_objectP = obj;
 	_screenManagerP = screenManager;
 	_rect = rect;
@@ -63,7 +73,7 @@ void CCreditText::load(CGameObject *obj, CScreenManager *screenManager,
 
 void CCreditText::setup() {
 	Common::SeekableReadStream *stream = g_vm->_filesManager->getResource(
-		CString::format("TEXT/155"));
+	  CString::format("TEXT/155"));
 	int oldFontNumber = _screenManagerP->setFontNumber(3);
 	_fontHeight = _screenManagerP->getFontHeight();
 
@@ -74,7 +84,7 @@ void CCreditText::setup() {
 		// Create a new group and line within it
 		CCreditLineGroup *group = new CCreditLineGroup();
 		CCreditLine *line = new CCreditLine(srcLine,
-			_screenManagerP->stringWidth(srcLine));
+		                                    _screenManagerP->stringWidth(srcLine));
 		group->_lines.push_back(line);
 
 		// Loop to add more lines to the group
@@ -85,7 +95,7 @@ void CCreditText::setup() {
 				break;
 
 			line = new CCreditLine(srcLine,
-				_screenManagerP->stringWidth(srcLine));
+			                       _screenManagerP->stringWidth(srcLine));
 			group->_lines.push_back(line);
 
 			if (srcLine.contains("...."))
@@ -149,7 +159,7 @@ void CCreditText::handleDots(CCreditLineGroup *group) {
 			CString rightStr = line->_line.right(dotIndex);
 
 			line->_line = CString::format("%s%s%s", leftStr.c_str(),
-				dotsStr.c_str(), rightStr.c_str());
+			                              dotsStr.c_str(), rightStr.c_str());
 			line->_lineWidth = maxWidth;
 		}
 	}
@@ -210,7 +220,7 @@ bool CCreditText::draw() {
 
 	Point textPos;
 	for (textPos.y = _rect.top + _yOffset - yDiff; textPos.y <= _rect.bottom;
-			textPos.y += _fontHeight) {
+	     textPos.y += _fontHeight) {
 		int textR = _textR + _deltaR * _counter / FRAMES_PER_CYCLE;
 		int textG = _textG + _deltaG * _counter / FRAMES_PER_CYCLE;
 		int textB = _textB + _deltaB * _counter / FRAMES_PER_CYCLE;
@@ -228,7 +238,7 @@ bool CCreditText::draw() {
 					break;
 
 				percent = (_rect.bottom - textPos.y) * 100
-					/ (_fontHeight * 2);
+				  / (_fontHeight * 2);
 			}
 
 			// Adjust the RGB to the specified percentage intensity
@@ -241,7 +251,7 @@ bool CCreditText::draw() {
 		_screenManagerP->setFontColor(textR, textG, textB);
 		textPos.x = _rect.left + (_rect.width() - (*lineIt)->_lineWidth) / 2;
 		_screenManagerP->writeString(SURFACE_BACKBUFFER, textPos,
-			_rect, (*lineIt)->_line, (*lineIt)->_lineWidth);
+		                             _rect, (*lineIt)->_line, (*lineIt)->_lineWidth);
 
 		// Move to next line
 		++lineIt;

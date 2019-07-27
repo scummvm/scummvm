@@ -5,9 +5,8 @@
 void myFunction1(int &dst, const int src) { dst = src; }
 void myFunction2(const int src, int &dst) { dst = src; }
 
-class FuncTestSuite : public CxxTest::TestSuite
-{
-	public:
+class FuncTestSuite : public CxxTest::TestSuite {
+public:
 	void test_bind1st() {
 		int dst = 0;
 		Common::bind1st(Common::ptr_fun(myFunction1), dst)(1);
@@ -34,10 +33,10 @@ class FuncTestSuite : public CxxTest::TestSuite
 		Foo myFoos[4];
 		int counter = 0;
 
-		Common::for_each(myFoos, myFoos+4, Common::bind2nd(Common::mem_fun_ref(&Foo::fooAdd), counter));
+		Common::for_each(myFoos, myFoos + 4, Common::bind2nd(Common::mem_fun_ref(&Foo::fooAdd), counter));
 		TS_ASSERT_EQUALS(counter, 4);
 
-		Common::for_each(myFoos, myFoos+4, Common::bind2nd(Common::mem_fun_ref(&Foo::fooSub), counter));
+		Common::for_each(myFoos, myFoos + 4, Common::bind2nd(Common::mem_fun_ref(&Foo::fooSub), counter));
 		TS_ASSERT_EQUALS(counter, 0);
 	}
 
@@ -48,10 +47,10 @@ class FuncTestSuite : public CxxTest::TestSuite
 
 		int counter = 0;
 
-		Common::for_each(myFoos, myFoos+4, Common::bind2nd(Common::mem_fun(&Foo::fooAdd), counter));
+		Common::for_each(myFoos, myFoos + 4, Common::bind2nd(Common::mem_fun(&Foo::fooAdd), counter));
 		TS_ASSERT_EQUALS(counter, 4);
 
-		Common::for_each(myFoos, myFoos+4, Common::bind2nd(Common::mem_fun(&Foo::fooSub), counter));
+		Common::for_each(myFoos, myFoos + 4, Common::bind2nd(Common::mem_fun(&Foo::fooSub), counter));
 		TS_ASSERT_EQUALS(counter, 0);
 
 		for (int i = 0; i < 4; ++i)

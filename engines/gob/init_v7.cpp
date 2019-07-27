@@ -20,14 +20,15 @@
  *
  */
 
-#include "common/fs.h"
 #include "common/config-manager.h"
+#include "common/fs.h"
 
 #include "gob/init.h"
 
 namespace Gob {
 
-Init_v7::Init_v7(GobEngine *vm) : Init_v2(vm) {
+Init_v7::Init_v7(GobEngine *vm)
+  : Init_v2(vm) {
 }
 
 Init_v7::~Init_v7() {

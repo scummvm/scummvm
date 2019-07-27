@@ -23,8 +23,8 @@
 #ifndef SHERLOCK_EVENTS_H
 #define SHERLOCK_EVENTS_H
 
-#include "common/scummsys.h"
 #include "common/events.h"
+#include "common/scummsys.h"
 #include "common/stack.h"
 #include "sherlock/image_file.h"
 
@@ -33,7 +33,11 @@ namespace Sherlock {
 #define GAME_FRAME_RATE 30
 #define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE)
 
-enum CursorId { ARROW = 0, MAGNIFY = 1, WAIT = 2, EXIT_ZONES_START = 5, INVALID_CURSOR = -1 };
+enum CursorId { ARROW = 0,
+	              MAGNIFY = 1,
+	              WAIT = 2,
+	              EXIT_ZONES_START = 5,
+	              INVALID_CURSOR = -1 };
 
 class SherlockEngine;
 
@@ -52,6 +56,7 @@ private:
 	 * Check whether it's time to display the next screen frame
 	 */
 	bool checkForNextFrameCounter();
+
 public:
 	CursorId _cursorId;
 	bool _pressed;
@@ -63,6 +68,7 @@ public:
 	bool _firstPress;
 	Common::Stack<Common::KeyState> _pendingKeys;
 	Common::Point _hotspotPos;
+
 public:
 	Events(SherlockEngine *vm);
 	~Events();

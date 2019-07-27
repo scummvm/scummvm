@@ -78,11 +78,16 @@ Common::Rect *readRect(Common::SeekableReadStream *in) {
 
 const char *getIndefiniteArticle(const Common::String &word) {
 	switch (word[0]) {
-	case 'a': case 'A':
-	case 'e': case 'E':
-	case 'i': case 'I':
-	case 'o': case 'O':
-	case 'u': case 'U':
+	case 'a':
+	case 'A':
+	case 'e':
+	case 'E':
+	case 'i':
+	case 'I':
+	case 'o':
+	case 'O':
+	case 'u':
+	case 'U':
 		return "an ";
 	}
 	return "a ";

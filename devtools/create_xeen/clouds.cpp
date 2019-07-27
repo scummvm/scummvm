@@ -20,17 +20,17 @@
  *
  */
 
- // Disable symbol overrides so that we can use system headers.
+// Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
 #ifdef main
-#undef main
+#	undef main
 #endif // main
 
-#include "file.h"
 #include "clouds.h"
+#include "file.h"
 
 static const char *const MAP_NAMES[86] = {
 	"", "Area A1", "Area A2", "Area A3", "Area A4", "Area B1", "Area B2",

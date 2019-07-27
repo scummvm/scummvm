@@ -27,7 +27,9 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CNodeItem, CNamedItem);
 
-CNodeItem::CNodeItem() : CNamedItem(), _nodeNumber(0) {
+CNodeItem::CNodeItem()
+  : CNamedItem()
+  , _nodeNumber(0) {
 }
 
 void CNodeItem::save(SimpleFile *file, int indent) {

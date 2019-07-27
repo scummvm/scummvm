@@ -57,9 +57,9 @@ public:
 	virtual GameInteraction *makeInteraction(const InteractionID);
 
 	virtual void getClawInfo(HotSpotID &outSpotID, HotSpotID &prepSpotID, HotSpotID &clawControlSpotID,
-			HotSpotID &pinchClawSpotID, HotSpotID &moveClawDownSpotID, HotSpotID &moveClawRightSpotID,
-			HotSpotID &moveClawLeftSpotID, HotSpotID &moveClawUpSpotID, HotSpotID &clawCCWSpotID,
-			HotSpotID &clawCWSpotID, uint32 &, const uint32 *&);
+	                         HotSpotID &pinchClawSpotID, HotSpotID &moveClawDownSpotID, HotSpotID &moveClawRightSpotID,
+	                         HotSpotID &moveClawLeftSpotID, HotSpotID &moveClawUpSpotID, HotSpotID &clawCCWSpotID,
+	                         HotSpotID &clawCWSpotID, uint32 &, const uint32 *&);
 
 	void loadAmbientLoops();
 

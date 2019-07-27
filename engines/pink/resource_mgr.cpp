@@ -24,15 +24,17 @@
 
 #include "pink/cel_decoder.h"
 #include "pink/file.h"
+#include "pink/objects/pages/game_page.h"
 #include "pink/pink.h"
 #include "pink/resource_mgr.h"
 #include "pink/sound.h"
-#include "pink/objects/pages/game_page.h"
 
 namespace Pink {
 
 ResourceMgr::ResourceMgr()
-		: _game(nullptr), _resDescTable(nullptr), _resCount(0) {}
+  : _game(nullptr)
+  , _resDescTable(nullptr)
+  , _resCount(0) {}
 
 ResourceMgr::~ResourceMgr() {
 	clear();
@@ -73,7 +75,7 @@ Common::SafeSeekableSubReadStream *ResourceMgr::getResourceStream(const Common::
 
 	debugC(kPinkDebugLoadingResources, "Got stream of %s resource", name.c_str());
 	return new Common::SafeSeekableSubReadStream(stream, desc->offset,
-												 desc->offset + desc->size);
+	                                             desc->offset + desc->size);
 }
 
 } // End of namespace Pink

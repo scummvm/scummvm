@@ -22,15 +22,15 @@
 
 #include "hopkins/computer.h"
 
-#include "hopkins/font.h"
 #include "hopkins/files.h"
+#include "hopkins/font.h"
 #include "hopkins/globals.h"
 #include "hopkins/graphics.h"
 #include "hopkins/hopkins.h"
 #include "hopkins/objects.h"
 
-#include "common/system.h"
 #include "common/file.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 
 namespace Hopkins {
@@ -181,7 +181,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 				outText2(Common::String(_menuText[11]._line));
 			} else if (mode == COMPUTER_SAMANTHA) {
 				setTextPosition(10, 25);
-//				outText2(Common::String(_menuText[0x95A])); <=== CHECKME: Unexpected value! replaced by the following line, for consistancy
+				//				outText2(Common::String(_menuText[0x95A])); <=== CHECKME: Unexpected value! replaced by the following line, for consistancy
 				outText2(Common::String(_menuText[12]._line));
 				setTextPosition(12, 25);
 				outText2(Common::String(_menuText[13]._line));
@@ -282,64 +282,65 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 	_vm->_graphicsMan->resetDirtyRects();
 }
 
-static const char _englishText[] =
-"% ****** FBI COMPUTER NUMBER 4985 ****** J.HOPKINS COMPUTER ******\n"
-"% ****** FBI COMPUTER NUMBER 4998 ****** S.COLLINS COMPUTER ******\n"
-"% ****** FBI COMPUTER NUMBER 4997 ****** ACCES FREE COMPUTER ******\n"
-"% PASSWORD IS: ALLFREE\n% ENTER CURRENT PASSWORD\n"
-"% ****** ACCES DENIED ******\n"
-"% 1) *** GAME ***\n"
-"% 0) QUIT COMPUTER\n"
-"% 2) STRANGE CADAVER\n"
-"% 3) STRANGE CADAVER\n"
-"% 4) SENATOR FERGUSSON\n"
-"% 5) DOG KILLER\n"
-"% 2) SCIENTIST KIDNAPPED.\n"
-"% 3) SCIENTIST KIDNAPPED (next).\n"
-"% 4) SCIENTIST KIDNAPPED (next).\n"
-"% 5) SCIENTIST KIDNAPPED (next).\n"
-"% 6) SCIENTIST KIDNAPPED (next).\n"
-"%% fin\n";
+static const char _englishText[] = "% ****** FBI COMPUTER NUMBER 4985 ****** J.HOPKINS COMPUTER ******\n"
+                                   "% ****** FBI COMPUTER NUMBER 4998 ****** S.COLLINS COMPUTER ******\n"
+                                   "% ****** FBI COMPUTER NUMBER 4997 ****** ACCES FREE COMPUTER ******\n"
+                                   "% PASSWORD IS: ALLFREE\n% ENTER CURRENT PASSWORD\n"
+                                   "% ****** ACCES DENIED ******\n"
+                                   "% 1) *** GAME ***\n"
+                                   "% 0) QUIT COMPUTER\n"
+                                   "% 2) STRANGE CADAVER\n"
+                                   "% 3) STRANGE CADAVER\n"
+                                   "% 4) SENATOR FERGUSSON\n"
+                                   "% 5) DOG KILLER\n"
+                                   "% 2) SCIENTIST KIDNAPPED.\n"
+                                   "% 3) SCIENTIST KIDNAPPED (next).\n"
+                                   "% 4) SCIENTIST KIDNAPPED (next).\n"
+                                   "% 5) SCIENTIST KIDNAPPED (next).\n"
+                                   "% 6) SCIENTIST KIDNAPPED (next).\n"
+                                   "%% fin\n";
 
-static const char _frenchText[] =
-"% ****** FBI COMPUTER NUMBER 4985 ****** J.HOPKINS COMPUTER ******\n"
-"% ****** FBI COMPUTER NUMBER 4998 ****** S.COLLINS COMPUTER ******\n"
-"% ****** FBI COMPUTER NUMBER 4997 ****** ACCES FREE COMPUTER ******\n"
-"% PASSWORD IS: ALLFREE\n"
-"% ENTER CURRENT PASSWORD\n"
-"% ****** ACCES DENIED ******\n"
-"% 1) *** CASSE BRIQUE ***\n"
-"% 0) QUITTER L'ORDINATEUR\n"
-"% 2) CADAVRE SANS TETE\n"
-"% 3) CADAVRE SANS TETE\n"
-"% 4) AGRESSION DU SENATEUR\n"
-"% 5) LES CHIENS TUEURS\n"
-"% 2) DISPARITIONS DE CHERCHEURS.\n"
-"% 3) DISPARITIONS (suite).\n"
-"% 4) DISPARITIONS (suite).\n"
-"% 5) DISPARITIONS (suite).\n"
-"% 6) DISPARITIONS (suite).\n"
-"%% fin\n";
+static const char _frenchText[] = "% ****** FBI COMPUTER NUMBER 4985 ****** J.HOPKINS COMPUTER ******\n"
+                                  "% ****** FBI COMPUTER NUMBER 4998 ****** S.COLLINS COMPUTER ******\n"
+                                  "% ****** FBI COMPUTER NUMBER 4997 ****** ACCES FREE COMPUTER ******\n"
+                                  "% PASSWORD IS: ALLFREE\n"
+                                  "% ENTER CURRENT PASSWORD\n"
+                                  "% ****** ACCES DENIED ******\n"
+                                  "% 1) *** CASSE BRIQUE ***\n"
+                                  "% 0) QUITTER L'ORDINATEUR\n"
+                                  "% 2) CADAVRE SANS TETE\n"
+                                  "% 3) CADAVRE SANS TETE\n"
+                                  "% 4) AGRESSION DU SENATEUR\n"
+                                  "% 5) LES CHIENS TUEURS\n"
+                                  "% 2) DISPARITIONS DE CHERCHEURS.\n"
+                                  "% 3) DISPARITIONS (suite).\n"
+                                  "% 4) DISPARITIONS (suite).\n"
+                                  "% 5) DISPARITIONS (suite).\n"
+                                  "% 6) DISPARITIONS (suite).\n"
+                                  "%% fin\n";
 
-static const char _spanishText[] =
-"% **** ORDENADOR DEL FBI NUMERO 4985 **** ORDENADOR J.HOPKINS *****\n"
-"% **** ORDENADOR DEL FBI NUMERO 4998 **** ORDENADOR S.COLLINS *****\n"
-"% *** ORDENADOR DEL FBI NUMERO 4997 *** ORDENADOR DE ACCESO LIBRE ***\n"
-"% LA CONTRASE\xA5" "A ES: ALLFREE\n"
-"% ESCRIBE CONTRASE\xA5" "A ACTUAL\n"
-"% **** ACCESO DENEGADO ****\n"
-"% 1) *** JUEGO ***\n"
-"% 0) SALIR DEL ORDENADOR\n"
-"% 2) CADAVER EXTRA\xA5" "O\n"
-"% 3) CADAVER EXTRA\xA5" "O\n"
-"% 4) SENADOR FERGUSSON\n"
-"% 5) MATAPERROS\n"
-"% 2) CIENTIFICO SECUESTRADO.\n"
-"% 3) CIENTIFICO SECUESTRADO (siguiente).\n"
-"% 4) CIENTIFICO SECUESTRADO (siguiente).\n"
-"% 5) CIENTIFICO SECUESTRADO (siguiente).\n"
-"% 6) CIENTIFICO SECUESTRADO (siguiente).\n"
-"%% fin\n";
+static const char _spanishText[] = "% **** ORDENADOR DEL FBI NUMERO 4985 **** ORDENADOR J.HOPKINS *****\n"
+                                   "% **** ORDENADOR DEL FBI NUMERO 4998 **** ORDENADOR S.COLLINS *****\n"
+                                   "% *** ORDENADOR DEL FBI NUMERO 4997 *** ORDENADOR DE ACCESO LIBRE ***\n"
+                                   "% LA CONTRASE\xA5"
+                                   "A ES: ALLFREE\n"
+                                   "% ESCRIBE CONTRASE\xA5"
+                                   "A ACTUAL\n"
+                                   "% **** ACCESO DENEGADO ****\n"
+                                   "% 1) *** JUEGO ***\n"
+                                   "% 0) SALIR DEL ORDENADOR\n"
+                                   "% 2) CADAVER EXTRA\xA5"
+                                   "O\n"
+                                   "% 3) CADAVER EXTRA\xA5"
+                                   "O\n"
+                                   "% 4) SENADOR FERGUSSON\n"
+                                   "% 5) MATAPERROS\n"
+                                   "% 2) CIENTIFICO SECUESTRADO.\n"
+                                   "% 3) CIENTIFICO SECUESTRADO (siguiente).\n"
+                                   "% 4) CIENTIFICO SECUESTRADO (siguiente).\n"
+                                   "% 5) CIENTIFICO SECUESTRADO (siguiente).\n"
+                                   "% 6) CIENTIFICO SECUESTRADO (siguiente).\n"
+                                   "%% fin\n";
 
 /**
  * Load Menu data
@@ -681,7 +682,7 @@ void ComputerManager::displayBricks() {
 	_breakoutSpeed = 1;
 	int16 *level = _breakoutLevel;
 
-	for (int levelIdx = 0; ; levelIdx += 6) {
+	for (int levelIdx = 0;; levelIdx += 6) {
 		int cellLeft = (int16)FROM_LE_16(level[levelIdx]);
 		if (cellLeft == -1)
 			break;
@@ -992,10 +993,10 @@ void ComputerManager::saveScore() {
 	int scorePlace[6];
 	// order high scores
 	for (int scorePlaceIdx = 0; scorePlaceIdx <= 5; scorePlaceIdx++) {
-		for(int i = 0;;i++) {
+		for (int i = 0;; i++) {
 			int curScore = scores[i];
 			if (curScore && scores[0] <= curScore && scores[1] <= curScore && scores[2] <= curScore && scores[3] <= curScore
-				&& scores[4] <= curScore && scores[5] <= curScore) {
+			    && scores[4] <= curScore && scores[5] <= curScore) {
 				scorePlace[scorePlaceIdx] = i;
 				scores[i] = 0;
 				break;

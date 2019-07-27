@@ -24,30 +24,29 @@
 #define SYMBIAN_PORTDEFS_H
 
 #include <assert.h>
-#include <stdarg.h>
-#include <string.h>
 #include <ctype.h>
-#include <stdlib.h>
+#include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #if (__GNUC__ && __cplusplus)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wreturn-local-addr"
+#	pragma GCC diagnostic push
+#	pragma GCC diagnostic ignored "-Wreturn-local-addr"
 #endif
 #include <e32def.h>
 #include <e32std.h>
 #if (__GNUC__ && __cplusplus)
-#pragma GCC diagnostic pop
+#	pragma GCC diagnostic pop
 #endif
 
 #include <libc\math.h>
 
 /* define pi */
 #ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif  /*  M_PI  */
-
+#	define M_PI 3.14159265358979323846
+#endif /*  M_PI  */
 
 // Enable Symbians own datatypes
 // This is done for two reasons
@@ -65,12 +64,11 @@ typedef signed long long int64;
 typedef unsigned long long uint64;
 
 #ifdef __cplusplus
-namespace std
-	{
+namespace std {
 
-	using ::size_t;
+using ::size_t;
 
-	} // namespace std
+} // namespace std
 #endif
 
 // Define SCUMMVM_DONT_DEFINE_TYPES to prevent scummsys.h from trying to
@@ -81,7 +79,7 @@ namespace std
 // we explicitly require it. This lets us use the name "remove" in engines.
 // Must be after including unistd.h .
 #ifndef SYMBIAN_USE_SYSTEM_REMOVE
-#undef remove
+#	undef remove
 #endif
 
 #define GUI_ONLY_FULLSCREEN
@@ -93,56 +91,55 @@ namespace std
 // hack in some tricks to work around not having these fcns for Symbian
 // and we _really_ don't wanna link with any other windows LIBC library!
 #if defined(__GCC32__)
-	// taken from public domain http://www.opensource.apple.com/darwinsource/WWDC2004/gcc_legacy-939/gcc/floatlib.c
-	#define SIGNBIT		0x80000000
-	#define HIDDEN		(1 << 23)
-	#define EXCESSD		1022
-	#define EXPD(fp)	(((fp.l.upper) >> 20) & 0x7FF)
-	#define SIGND(fp)	((fp.l.upper) & SIGNBIT)
-	#define HIDDEND_LL	((long long)1 << 52)
-	#define MANTD_LL(fp)	((fp.ll & (HIDDEND_LL-1)) | HIDDEND_LL)
+// taken from public domain http://www.opensource.apple.com/darwinsource/WWDC2004/gcc_legacy-939/gcc/floatlib.c
+#	define SIGNBIT 0x80000000
+#	define HIDDEN (1 << 23)
+#	define EXCESSD 1022
+#	define EXPD(fp) (((fp.l.upper) >> 20) & 0x7FF)
+#	define SIGND(fp) ((fp.l.upper) & SIGNBIT)
+#	define HIDDEND_LL ((long long)1 << 52)
+#	define MANTD_LL(fp) ((fp.ll & (HIDDEND_LL - 1)) | HIDDEND_LL)
 
-	union double_long {
-	    double d;
-	    struct {
-	      long upper;
-	      unsigned long lower;
-	    } l;
-	    long long ll;
-	};
+union double_long {
+	double d;
+	struct {
+		long upper;
+		unsigned long lower;
+	} l;
+	long long ll;
+};
 
-	/* convert double float to double int (dfdi) */
-	long long inline
-	scumm_fixdfdi (double a1) { // __fixdfdi (double a1)
-	    union double_long dl1;
-	    int exp;
-	    long long l;
+/* convert double float to double int (dfdi) */
+long long inline scumm_fixdfdi(double a1) { // __fixdfdi (double a1)
+	union double_long dl1;
+	int exp;
+	long long l;
 
-	    dl1.d = a1;
+	dl1.d = a1;
 
-	    if (!dl1.l.upper && !dl1.l.lower)
-			return (0);
+	if (!dl1.l.upper && !dl1.l.lower)
+		return (0);
 
-	    exp = EXPD (dl1) - EXCESSD - 64;
-	    l = MANTD_LL(dl1);
+	exp = EXPD(dl1) - EXCESSD - 64;
+	l = MANTD_LL(dl1);
 
-	    if (exp > 0) {
-		l = (long long)1<<63;
+	if (exp > 0) {
+		l = (long long)1 << 63;
 		if (!SIGND(dl1))
-		    l--;
+			l--;
 		return l;
-	    }
-
-	    /* shift down until exp = 0 or l = 0 */
-	    if (exp < 0 && exp > -64 && l)
-			l >>= -exp;
-	    else
-			return (0);
-
-	    return (SIGND (dl1) ? -l : l);
 	}
 
-	/*	okay, okay: I admit it: I absolutely have _NO_ idea why __fixdfdi does not get linked in by gcc from libgcc.a
+	/* shift down until exp = 0 or l = 0 */
+	if (exp < 0 && exp > -64 && l)
+		l >>= -exp;
+	else
+		return (0);
+
+	return (SIGND(dl1) ? -l : l);
+}
+
+/*	okay, okay: I admit it: I absolutely have _NO_ idea why __fixdfdi does not get linked in by gcc from libgcc.a
 		because I know it's in there: I checked with `ar x _fixdfdi.o libgcc.a` and the symbol is in there, so I'm lost
 		and had to fix it this way. I tried all gcc and ld options I could find: no hope :( If someone can enlighten me:
 		feel free to let me know at sumthinwicked@users.sf.net! Much obliged.
@@ -151,26 +148,26 @@ namespace std
 	*/
 
 #elif defined(__WINS__) // WINS
-	extern "C" int symbian_snprintf(char *text, size_t maxlen, const char *fmt, ...);
-	extern "C" int symbian_vsnprintf(char *text, size_t maxlen, const char *fmt, va_list ap);
-	#define snprintf(buf,len,args...) symbian_snprintf(buf,len,args)
-	#define vsnprintf(buf,len,format,valist) symbian_vsnprintf(buf,len,format,valist)
+extern "C" int symbian_snprintf(char *text, size_t maxlen, const char *fmt, ...);
+extern "C" int symbian_vsnprintf(char *text, size_t maxlen, const char *fmt, va_list ap);
+#	define snprintf(buf, len, args...) symbian_snprintf(buf, len, args)
+#	define vsnprintf(buf, len, format, valist) symbian_vsnprintf(buf, len, format, valist)
 
-	void*	symbian_malloc	(size_t _size);
+void *symbian_malloc(size_t _size);
 
-	#define malloc symbian_malloc
+#	define malloc symbian_malloc
 #else // GCCE and the rest
-	extern "C" int symbian_snprintf(char *text, size_t maxlen, const char *fmt, ...);
-	extern "C" int symbian_vsnprintf(char *text, size_t maxlen, const char *fmt, va_list ap);
-	#define snprintf(buf,len,args...) symbian_snprintf(buf,len,args)
-	#define vsnprintf(buf,len,format,valist) symbian_vsnprintf(buf,len,format,valist)
+extern "C" int symbian_snprintf(char *text, size_t maxlen, const char *fmt, ...);
+extern "C" int symbian_vsnprintf(char *text, size_t maxlen, const char *fmt, va_list ap);
+#	define snprintf(buf, len, args...) symbian_snprintf(buf, len, args)
+#	define vsnprintf(buf, len, format, valist) symbian_vsnprintf(buf, len, format, valist)
 #endif
 
 #ifndef __WINS__
-#define USE_ARM_GFX_ASM
-#define USE_ARM_SMUSH_ASM
-#define USE_ARM_COSTUME_ASM
-#define USE_ARM_SOUND_ASM
+#	define USE_ARM_GFX_ASM
+#	define USE_ARM_SMUSH_ASM
+#	define USE_ARM_COSTUME_ASM
+#	define USE_ARM_SOUND_ASM
 #endif
 // This is not really functioning yet.
 // Default SDL keys should map to standard keys I think!
@@ -178,7 +175,7 @@ namespace std
 
 // Symbian bsearch implementation is flawed
 void *scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *));
-#define bsearch	scumm_bsearch
+#define bsearch scumm_bsearch
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 #define FORBIDDEN_SYMBOL_EXCEPTION_fclose
 #define FORBIDDEN_SYMBOL_EXCEPTION_fopen
@@ -189,6 +186,6 @@ void *scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size
 
 // we cannot include SymbianOS.h everywhere, but this works too (functions code is in SymbianOS.cpp)
 namespace Symbian {
-extern char* GetExecutablePath();
+extern char *GetExecutablePath();
 }
 #endif

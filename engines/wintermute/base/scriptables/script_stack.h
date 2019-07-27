@@ -29,7 +29,6 @@
 #ifndef WINTERMUTE_SCSTACK_H
 #define WINTERMUTE_SCSTACK_H
 
-
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/persistent.h"
@@ -58,7 +57,6 @@ public:
 	virtual ~ScStack();
 	BaseArray<ScValue *> _values;
 	int32 _sP;
-
 };
 
 } // End of namespace Wintermute

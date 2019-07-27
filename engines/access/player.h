@@ -23,11 +23,11 @@
 #ifndef ACCESS_PLAYER_H
 #define ACCESS_PLAYER_H
 
-#include "common/scummsys.h"
-#include "common/rect.h"
-#include "common/serializer.h"
 #include "access/asurface.h"
 #include "access/data.h"
+#include "common/rect.h"
+#include "common/scummsys.h"
+#include "common/serializer.h"
 
 namespace Access {
 
@@ -74,6 +74,7 @@ protected:
 	void walkUpRight();
 	void walkDownRight();
 	void checkScrollUp();
+
 public:
 	Direction _playerDirection;
 	SpriteResource *_playerSprites;
@@ -113,6 +114,7 @@ public:
 	int _roomNumber;
 	Common::Point _rawPlayerLow;
 	Common::Point _rawPlayer;
+
 public:
 	Player(AccessEngine *vm);
 	virtual ~Player();

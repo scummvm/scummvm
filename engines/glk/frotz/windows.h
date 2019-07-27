@@ -23,234 +23,257 @@
 #ifndef GLK_FROTZ_WINDOWS
 #define GLK_FROTZ_WINDOWS
 
-#include "glk/windows.h"
 #include "glk/frotz/frotz_types.h"
+#include "glk/windows.h"
 
 namespace Glk {
 namespace Frotz {
 
-#include "glk/windows.h"
 #include "glk/utils.h"
+#include "glk/windows.h"
 
-enum WindowProperty {
-	Y_POS = 0, X_POS = 1, Y_SIZE = 2, X_SIZE = 3, Y_CURSOR = 4, X_CURSOR = 5,
-	LEFT_MARGIN = 6, RIGHT_MARGIN = 7, NEWLINE_INTERRUPT = 8, INTERRUPT_COUNTDOWN = 9,
-	TEXT_STYLE = 10, COLOUR_DATA = 11, FONT_NUMBER = 12, FONT_SIZE = 13, ATTRIBUTES = 14,
-	LINE_COUNT = 15, TRUE_FG_COLOR = 16, TRUE_BG_COLOR = 17
-};
+	enum WindowProperty {
+		Y_POS = 0,
+		X_POS = 1,
+		Y_SIZE = 2,
+		X_SIZE = 3,
+		Y_CURSOR = 4,
+		X_CURSOR = 5,
+		LEFT_MARGIN = 6,
+		RIGHT_MARGIN = 7,
+		NEWLINE_INTERRUPT = 8,
+		INTERRUPT_COUNTDOWN = 9,
+		TEXT_STYLE = 10,
+		COLOUR_DATA = 11,
+		FONT_NUMBER = 12,
+		FONT_SIZE = 13,
+		ATTRIBUTES = 14,
+		LINE_COUNT = 15,
+		TRUE_FG_COLOR = 16,
+		TRUE_BG_COLOR = 17
+	};
 
-class Windows;
+	class Windows;
 
-/**
+	/**
  * Represents one of the virtual windows
  */
-class Window {
-	friend class Windows;
+	class Window {
+		friend class Windows;
 
-	/**
+		/**
 	 * Stub class for accessing window properties via the square brackets operator
 	 */
-	class PropertyAccessor {
-	private:
-		Window *_owner;
-		WindowProperty _prop;
-	public:
-		/**
+		class PropertyAccessor {
+		private:
+			Window *_owner;
+			WindowProperty _prop;
+
+		public:
+			/**
 		 * Constructor
 		 */
-		PropertyAccessor(Window *owner, WindowProperty prop) : _owner(owner), _prop(prop) {}
+			PropertyAccessor(Window *owner, WindowProperty prop)
+			  : _owner(owner)
+			  , _prop(prop) {}
 
-		/**
+			/**
 		 * Get
 		 */
-		operator uint() const {
-			return _owner->getProperty(_prop);
+			operator uint() const {
+				return _owner->getProperty(_prop);
+			}
+
+			/**
+		 * Set
+		 */
+			PropertyAccessor &operator=(uint val) {
+				_owner->setProperty(_prop, val);
+				return *this;
+			}
+		};
+
+	private:
+		Windows *_windows;
+		int _index;
+		winid_t _win;
+		uint _properties[TRUE_BG_COLOR + 1];
+
+	private:
+		/**
+	 * Get a property value
+	 */
+		const uint &getProperty(WindowProperty propType);
+
+		/**
+	 * Set a property value
+	 */
+		void setProperty(WindowProperty propType, uint value);
+
+		/**
+	 * Called when trying to reposition or resize windows. Does special handling for the lower window
+	 */
+		void checkRepositionLower();
+
+		/**
+	 * Updates the local window properties based on an attached Glk window
+	 */
+		void update();
+
+		/**
+	 * Creates a new Glk window to attach to the window
+	 */
+		void createGlkWindow();
+
+		/**
+	 * Updates the current font/style
+	 */
+		void updateStyle();
+
+	public:
+		int _currFont;
+		int _prevFont;
+		int _tempFont;
+		int _currStyle;
+		int _oldStyle;
+		int _quotes;
+		int _dashes;
+		int _spaces;
+
+	public:
+		/**
+	 * Constructor
+	 */
+		Window();
+
+		/**
+	 * Assignment operator
+	 */
+		Window &operator=(winid_t win);
+
+		/**
+	 * Cast operator for getting a Glk window
+	 */
+		operator winid_t() const {
+			assert(_win);
+			return _win;
 		}
 
 		/**
-		 * Set
-		 */
-		PropertyAccessor &operator=(uint val) {
-			_owner->setProperty(_prop, val);
-			return *this;
-		}
-	};
-private:
-	Windows *_windows;
-	int _index;
-	winid_t _win;
-	uint _properties[TRUE_BG_COLOR + 1];
-private:
-	/**
-	 * Get a property value
-	 */
-	const uint &getProperty(WindowProperty propType);
-
-	/**
-	 * Set a property value
-	 */
-	void setProperty(WindowProperty propType, uint value);
-
-	/**
-	 * Called when trying to reposition or resize windows. Does special handling for the lower window
-	 */
-	void checkRepositionLower();
-
-	/**
-	 * Updates the local window properties based on an attached Glk window
-	 */
-	void update();
-
-	/**
-	 * Creates a new Glk window to attach to the window
-	 */
-	void createGlkWindow();
-
-	/**
-	 * Updates the current font/style
-	 */
-	void updateStyle();
-public:
-	int _currFont;
-	int _prevFont;
-	int _tempFont;
-	int _currStyle;
-	int _oldStyle;
-	int _quotes;
-	int _dashes;
-	int _spaces;
-public:
-	/**
-	 * Constructor
-	 */
-	Window();
-
-	/**
-	 * Assignment operator
-	 */
-	Window &operator=(winid_t win);
-
-	/**
-	 * Cast operator for getting a Glk window
-	 */
-	operator winid_t() const {
-		assert(_win);
-		return _win;
-	}
-
-	/**
 	 * Equality operator
 	 */
-	inline bool operator==(const Window &rhs) { return this == &rhs; }
+		inline bool operator==(const Window &rhs) { return this == &rhs; }
 
-	/**
+		/**
 	 * Cast operator for testing if the window has a proper Glk window attached to it
 	 */
-	operator bool() const { return _win != nullptr; }
+		operator bool() const { return _win != nullptr; }
 
-	/**
+		/**
 	 * Property accessor
 	 */
-	PropertyAccessor operator[](WindowProperty propType) { return PropertyAccessor(this, propType); }
+		PropertyAccessor operator[](WindowProperty propType) { return PropertyAccessor(this, propType); }
 
-	/**
+		/**
 	 * Set the window size
 	 */
-	void setSize(const Point &newSize);
+		void setSize(const Point &newSize);
 
-	/**
+		/**
 	 * Set the position of a window
 	 */
-	void setPosition(const Point &newPos);
+		void setPosition(const Point &newPos);
 
-	/**
+		/**
 	 * Set the cursor position
 	 */
-	void setCursor(const Point &newPos);
+		void setCursor(const Point &newPos);
 
-	/**
+		/**
 	 * Clear the window
 	 */
-	void clear();
+		void clear();
 
-	/**
+		/**
 	 * Update colors for the window
 	 */
-	void updateColors();
+		void updateColors();
 
-	/**
+		/**
 	 * Update colors for the window
 	 */
-	void updateColors(uint fore, uint back);
+		void updateColors(uint fore, uint back);
 
-	/**
+		/**
 	 * Set the font
 	 */
-	uint setFont(uint font);
+		uint setFont(uint font);
 
-	/**
+		/**
 	 * Set the textstyle
 	 */
-	void setStyle(int style = -1);
+		void setStyle(int style = -1);
 
-	/**
+		/**
 	 * Set reverse video
 	 */
-	void setReverseVideo(bool reverse);
-};
+		void setReverseVideo(bool reverse);
+	};
 
-/**
+	/**
  * Windows manager
  */
-class Windows {
-private:
-	Window _windows[8];
-public:
-	winid_t _background;
-	Window &_lower;
-	Window &_upper;
-	int _cwin;
-public:
-	/**
+	class Windows {
+	private:
+		Window _windows[8];
+
+	public:
+		winid_t _background;
+		Window &_lower;
+		Window &_upper;
+		int _cwin;
+
+	public:
+		/**
 	 * Constructor
 	 */
-	Windows();
+		Windows();
 
-	/**
+		/**
 	 * Returns the number of allowable windows
 	 */
-	size_t size() const;
+		size_t size() const;
 
-	/**
+		/**
 	 * Array access
 	 */
-	Window &operator[](uint idx);
+		Window &operator[](uint idx);
 
-	/**
+		/**
 	 * Setup the screen
 	 */
-	void setup(bool isVersion6);
+		void setup(bool isVersion6);
 
-	/**
+		/**
 	 * Set current window
 	 */
-	void setWindow(int win);
+		void setWindow(int win);
 
-	/**
+		/**
 	 * Get the current window
 	 */
-	Window &currWin() {
-		return _windows[_cwin];
-	}
+		Window &currWin() {
+			return _windows[_cwin];
+		}
 
-	/**
+		/**
 	 * Get the current window pointer
 	 */
-	winid_t glkWin() const {
-		assert(_windows[_cwin]._win);
-		return _windows[_cwin]._win;
-	}
-};
+		winid_t glkWin() const {
+			assert(_windows[_cwin]._win);
+			return _windows[_cwin]._win;
+		}
+	};
 
 } // End of namespace Frotz
 } // End of namespace Glk

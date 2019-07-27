@@ -23,12 +23,12 @@
 #ifndef PARALLACTION_MUSIC_H
 #define PARALLACTION_MUSIC_H
 
-#include "common/util.h"
 #include "common/mutex.h"
+#include "common/util.h"
 
-#include "audio/mixer.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/iff_sound.h"
+#include "audio/mixer.h"
 
 #define PATH_LEN 200
 
@@ -47,13 +47,15 @@ MidiDriver *createAdLibDriver();
 class SoundManImpl {
 public:
 	virtual void execute(int command, const char *parm = 0) = 0;
-	virtual ~SoundManImpl() { }
+	virtual ~SoundManImpl() {}
 };
 
 class SoundMan {
 	SoundManImpl *_impl;
+
 public:
-	SoundMan(SoundManImpl *impl) : _impl(impl) { }
+	SoundMan(SoundManImpl *impl)
+	  : _impl(impl) {}
 	virtual ~SoundMan() { delete _impl; }
 	void execute(int command, int32 parm) {
 		char n[12];
@@ -84,11 +86,9 @@ enum {
 
 struct Channel {
 	Audio::AudioStream *stream;
-	Audio::SoundHandle	handle;
-	uint32				volume;
+	Audio::SoundHandle handle;
+	uint32 volume;
 };
-
-
 
 class SoundMan_ns : public SoundManImpl {
 public:
@@ -99,30 +99,30 @@ public:
 	};
 
 protected:
-	Parallaction_ns	*_vm;
-	Audio::Mixer	*_mixer;
-	char			_musicFile[PATH_LEN];
+	Parallaction_ns *_vm;
+	Audio::Mixer *_mixer;
+	char _musicFile[PATH_LEN];
 
-	bool	_sfxLooping;
-	int		_sfxVolume;
-	int		_sfxRate;
-	uint	_sfxChannel;
+	bool _sfxLooping;
+	int _sfxVolume;
+	int _sfxRate;
+	uint _sfxChannel;
 
-	int		_musicType;
+	int _musicType;
 
 public:
 	SoundMan_ns(Parallaction_ns *vm);
 	virtual ~SoundMan_ns() {}
 
-	virtual void playSfx(const char *filename, uint channel, bool looping, int volume = -1) { }
-	virtual void stopSfx(uint channel) { }
+	virtual void playSfx(const char *filename, uint channel, bool looping, int volume = -1) {}
+	virtual void stopSfx(uint channel) {}
 
 	void setMusicFile(const char *filename);
 	virtual void playMusic() = 0;
 	virtual void stopMusic() = 0;
 	virtual void playCharacterMusic(const char *character) = 0;
 	virtual void playLocationMusic(const char *location) = 0;
-	virtual void pause(bool p) { }
+	virtual void pause(bool p) {}
 	virtual void execute(int command, const char *parm);
 
 	void setMusicVolume(int value);
@@ -130,12 +130,11 @@ public:
 
 class DosSoundMan_ns : public SoundMan_ns {
 
-	MidiPlayer	*_midiPlayer;
-	bool		_playing;
+	MidiPlayer *_midiPlayer;
+	bool _playing;
 
 	bool isLocationSilent(const char *locationName);
 	bool locationHasOwnSoftMusic(const char *locationName);
-
 
 public:
 	DosSoundMan_ns(Parallaction_ns *vm);
@@ -154,10 +153,10 @@ public:
 class AmigaSoundMan_ns : public SoundMan_ns {
 
 	Audio::AudioStream *_musicStream;
-	Audio::SoundHandle	_musicHandle;
+	Audio::SoundHandle _musicHandle;
 
-	uint32	beepSoundBufferSize;
-	int8	*beepSoundBuffer;
+	uint32 beepSoundBufferSize;
+	int8 *beepSoundBuffer;
 
 	Channel _channels[NUM_SFX_CHANNELS];
 
@@ -178,23 +177,23 @@ public:
 
 class DummySoundMan : public SoundManImpl {
 public:
-	void execute(int command, const char *parm) { }
+	void execute(int command, const char *parm) {}
 };
 
 class SoundMan_br : public SoundManImpl {
 protected:
-	Parallaction_br	*_vm;
-	Audio::Mixer	*_mixer;
+	Parallaction_br *_vm;
+	Audio::Mixer *_mixer;
 
 	Common::String _musicFile;
 
-	bool	_sfxLooping;
-	int		_sfxVolume;
-	int		_sfxRate;
-	uint	_sfxChannel;
+	bool _sfxLooping;
+	int _sfxVolume;
+	int _sfxRate;
+	uint _sfxChannel;
 
-	bool	_musicEnabled;
-	bool	_sfxEnabled;
+	bool _musicEnabled;
+	bool _sfxEnabled;
 
 	Channel _channels[NUM_SFX_CHANNELS];
 
@@ -206,7 +205,7 @@ public:
 	SoundMan_br(Parallaction_br *vm);
 	~SoundMan_br();
 
-	virtual void playSfx(const char *filename, uint channel, bool looping, int volume = -1) { }
+	virtual void playSfx(const char *filename, uint channel, bool looping, int volume = -1) {}
 	void stopSfx(uint channel);
 	void stopAllSfx();
 
@@ -221,7 +220,7 @@ public:
 
 class DosSoundMan_br : public SoundMan_br {
 
-	MidiPlayer_MSC	*_midiPlayer;
+	MidiPlayer_MSC *_midiPlayer;
 
 	Audio::AudioStream *loadChannelData(const char *filename, Channel *ch, bool looping);
 
@@ -239,7 +238,7 @@ public:
 class AmigaSoundMan_br : public SoundMan_br {
 
 	Audio::AudioStream *_musicStream;
-	Audio::SoundHandle	_musicHandle;
+	Audio::SoundHandle _musicHandle;
 
 	Audio::AudioStream *loadChannelData(const char *filename, Channel *ch, bool looping);
 

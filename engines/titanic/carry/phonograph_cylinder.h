@@ -34,6 +34,7 @@ class CPhonographCylinder : public CCarry {
 	bool RecordOntoCylinderMsg(CRecordOntoCylinderMsg *msg);
 	bool SetMusicControlsMsg(CSetMusicControlsMsg *msg);
 	bool ErasePhonographCylinderMsg(CErasePhonographCylinderMsg *msg);
+
 private:
 	CString _itemName;
 	int _bellsPitchControl;
@@ -56,6 +57,7 @@ private:
 	bool _bassMuteControl;
 	bool _bassInversionControl;
 	bool _bassDirectionControl;
+
 public:
 	CLASSDEF;
 	CPhonographCylinder();

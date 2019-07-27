@@ -34,15 +34,27 @@ public:
 
 	void init(double hfov);
 
-	void setSourceSurface(const Graphics::Surface *surface) { _sourceSurface = surface; _dirty = true; }
+	void setSourceSurface(const Graphics::Surface *surface) {
+		_sourceSurface = surface;
+		_dirty = true;
+	}
 
 	void clearConstraints();
-	void setAlphaConstraints(double alphaMin, double alphaMax) { _alphaMin = alphaMin; _alphaMax = alphaMax; }
+	void setAlphaConstraints(double alphaMin, double alphaMax) {
+		_alphaMin = alphaMin;
+		_alphaMax = alphaMax;
+	}
 	void setBetaMinConstraint(double betaMin) { _betaMin = betaMin; }
 	void setBetaMaxConstraint(double betaMax) { _betaMax = betaMax; }
 
-	void setAlpha(double alpha) { _alpha = alpha; _dirtyCoords = true; }
-	void setBeta(double beta) { _beta = beta; _dirtyCoords = true; }
+	void setAlpha(double alpha) {
+		_alpha = alpha;
+		_dirtyCoords = true;
+	}
+	void setBeta(double beta) {
+		_beta = beta;
+		_dirtyCoords = true;
+	}
 	void updateCoords(int xDelta, int yDelta, bool useOldSpeed);
 
 	double getAlpha() const { return _alpha; }

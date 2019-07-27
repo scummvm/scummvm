@@ -26,7 +26,9 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CMobile, CCharacter);
 
-CMobile::CMobile() : CCharacter(), _fieldDC(0) {
+CMobile::CMobile()
+  : CCharacter()
+  , _fieldDC(0) {
 }
 
 void CMobile::save(SimpleFile *file, int indent) {

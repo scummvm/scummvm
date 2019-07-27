@@ -21,33 +21,34 @@
  */
 
 #include "kyra/gui/debugger.h"
-#include "kyra/engine/kyra_lok.h"
+#include "kyra/engine/eobcommon.h"
 #include "kyra/engine/kyra_hof.h"
+#include "kyra/engine/kyra_lok.h"
+#include "kyra/engine/lol.h"
 #include "kyra/engine/timer.h"
 #include "kyra/resource/resource.h"
-#include "kyra/engine/lol.h"
-#include "kyra/engine/eobcommon.h"
 
-#include "common/system.h"
 #include "common/config-manager.h"
+#include "common/system.h"
 
 namespace Kyra {
 
 Debugger::Debugger(KyraEngine_v1 *vm)
-	: ::GUI::Debugger(), _vm(vm) {
+  : ::GUI::Debugger()
+  , _vm(vm) {
 }
 
 void Debugger::initialize() {
-	registerCmd("continue",           WRAP_METHOD(Debugger, cmdExit));
-	registerCmd("screen_debug_mode",  WRAP_METHOD(Debugger, cmdSetScreenDebug));
-	registerCmd("load_palette",       WRAP_METHOD(Debugger, cmdLoadPalette));
-	registerCmd("facings",            WRAP_METHOD(Debugger, cmdShowFacings));
-	registerCmd("gamespeed",          WRAP_METHOD(Debugger, cmdGameSpeed));
-	registerCmd("flags",              WRAP_METHOD(Debugger, cmdListFlags));
-	registerCmd("toggleflag",         WRAP_METHOD(Debugger, cmdToggleFlag));
-	registerCmd("queryflag",          WRAP_METHOD(Debugger, cmdQueryFlag));
-	registerCmd("timers",             WRAP_METHOD(Debugger, cmdListTimers));
-	registerCmd("settimercountdown",  WRAP_METHOD(Debugger, cmdSetTimerCountdown));
+	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("screen_debug_mode", WRAP_METHOD(Debugger, cmdSetScreenDebug));
+	registerCmd("load_palette", WRAP_METHOD(Debugger, cmdLoadPalette));
+	registerCmd("facings", WRAP_METHOD(Debugger, cmdShowFacings));
+	registerCmd("gamespeed", WRAP_METHOD(Debugger, cmdGameSpeed));
+	registerCmd("flags", WRAP_METHOD(Debugger, cmdListFlags));
+	registerCmd("toggleflag", WRAP_METHOD(Debugger, cmdToggleFlag));
+	registerCmd("queryflag", WRAP_METHOD(Debugger, cmdQueryFlag));
+	registerCmd("timers", WRAP_METHOD(Debugger, cmdListTimers));
+	registerCmd("settimercountdown", WRAP_METHOD(Debugger, cmdSetTimerCountdown));
 }
 
 bool Debugger::cmdSetScreenDebug(int argc, const char **argv) {
@@ -198,14 +199,15 @@ bool Debugger::cmdSetTimerCountdown(int argc, const char **argv) {
 #pragma mark -
 
 Debugger_LoK::Debugger_LoK(KyraEngine_LoK *vm)
-	: Debugger(vm), _vm(vm) {
+  : Debugger(vm)
+  , _vm(vm) {
 }
 
 void Debugger_LoK::initialize() {
-	registerCmd("enter",              WRAP_METHOD(Debugger_LoK, cmdEnterRoom));
-	registerCmd("scenes",             WRAP_METHOD(Debugger_LoK, cmdListScenes));
-	registerCmd("give",               WRAP_METHOD(Debugger_LoK, cmdGiveItem));
-	registerCmd("birthstones",        WRAP_METHOD(Debugger_LoK, cmdListBirthstones));
+	registerCmd("enter", WRAP_METHOD(Debugger_LoK, cmdEnterRoom));
+	registerCmd("scenes", WRAP_METHOD(Debugger_LoK, cmdListScenes));
+	registerCmd("give", WRAP_METHOD(Debugger_LoK, cmdGiveItem));
+	registerCmd("birthstones", WRAP_METHOD(Debugger_LoK, cmdListBirthstones));
 	Debugger::initialize();
 }
 
@@ -287,16 +289,18 @@ bool Debugger_LoK::cmdListBirthstones(int argc, const char **argv) {
 
 #pragma mark -
 
-Debugger_v2::Debugger_v2(KyraEngine_v2 *vm) : Debugger(vm), _vm(vm) {
+Debugger_v2::Debugger_v2(KyraEngine_v2 *vm)
+  : Debugger(vm)
+  , _vm(vm) {
 }
 
 void Debugger_v2::initialize() {
-	registerCmd("character_info",     WRAP_METHOD(Debugger_v2, cmdCharacterInfo));
-	registerCmd("enter",              WRAP_METHOD(Debugger_v2, cmdEnterScene));
-	registerCmd("scenes",             WRAP_METHOD(Debugger_v2, cmdListScenes));
-	registerCmd("scene_info",         WRAP_METHOD(Debugger_v2, cmdSceneInfo));
-	registerCmd("scene_to_facing",    WRAP_METHOD(Debugger_v2, cmdSceneToFacing));
-	registerCmd("give",               WRAP_METHOD(Debugger_v2, cmdGiveItem));
+	registerCmd("character_info", WRAP_METHOD(Debugger_v2, cmdCharacterInfo));
+	registerCmd("enter", WRAP_METHOD(Debugger_v2, cmdEnterScene));
+	registerCmd("scenes", WRAP_METHOD(Debugger_v2, cmdListScenes));
+	registerCmd("scene_info", WRAP_METHOD(Debugger_v2, cmdSceneInfo));
+	registerCmd("scene_to_facing", WRAP_METHOD(Debugger_v2, cmdSceneToFacing));
+	registerCmd("give", WRAP_METHOD(Debugger_v2, cmdGiveItem));
 	Debugger::initialize();
 }
 
@@ -396,7 +400,9 @@ bool Debugger_v2::cmdSceneToFacing(int argc, const char **argv) {
 		int16 exit = -1;
 
 		switch (facing) {
-		case 0: case 1: case 7:
+		case 0:
+		case 1:
+		case 7:
 			exit = _vm->_sceneList[_vm->_currentScene].exit1;
 			break;
 
@@ -404,7 +410,9 @@ bool Debugger_v2::cmdSceneToFacing(int argc, const char **argv) {
 			exit = _vm->_sceneList[_vm->_currentScene].exit2;
 			break;
 
-		case 3: case 4: case 5:
+		case 3:
+		case 4:
+		case 5:
 			exit = _vm->_sceneList[_vm->_currentScene].exit3;
 			break;
 
@@ -443,11 +451,13 @@ bool Debugger_v2::cmdGiveItem(int argc, const char **argv) {
 
 #pragma mark -
 
-Debugger_HoF::Debugger_HoF(KyraEngine_HoF *vm) : Debugger_v2(vm), _vm(vm) {
+Debugger_HoF::Debugger_HoF(KyraEngine_HoF *vm)
+  : Debugger_v2(vm)
+  , _vm(vm) {
 }
 
 void Debugger_HoF::initialize() {
-	registerCmd("pass_codes",         WRAP_METHOD(Debugger_HoF, cmdPasscodes));
+	registerCmd("pass_codes", WRAP_METHOD(Debugger_HoF, cmdPasscodes));
 	Debugger_v2::initialize();
 }
 
@@ -471,12 +481,16 @@ bool Debugger_HoF::cmdPasscodes(int argc, const char **argv) {
 #pragma mark -
 
 #ifdef ENABLE_LOL
-Debugger_LoL::Debugger_LoL(LoLEngine *vm) : Debugger(vm), _vm(vm) {
+Debugger_LoL::Debugger_LoL(LoLEngine *vm)
+  : Debugger(vm)
+  , _vm(vm) {
 }
 #endif // ENABLE_LOL
 
 #ifdef ENABLE_EOB
-Debugger_EoB::Debugger_EoB(EoBCoreEngine *vm) : Debugger(vm), _vm(vm) {
+Debugger_EoB::Debugger_EoB(EoBCoreEngine *vm)
+  : Debugger(vm)
+  , _vm(vm) {
 }
 
 void Debugger_EoB::initialize() {
@@ -649,7 +663,7 @@ bool Debugger_EoB::cmdPrintMap(int, const char **) {
 			c = 2;
 
 		if (_vm->_currentBlock == i) {
-			c = 'X';			
+			c = 'X';
 		} else {
 			for (int ii = 0; ii < ARRAYSIZE(types); ++ii) {
 				if (bl->walls[0] == types[ii] || bl->walls[1] == types[ii] || bl->walls[2] == types[ii] || bl->walls[3] == types[ii]) {
@@ -658,7 +672,7 @@ bool Debugger_EoB::cmdPrintMap(int, const char **) {
 				}
 			}
 		}
-		
+
 		debugPrintf("%c", c);
 	}
 	debugPrintf("\n\nParty Position:   %c  Door:             %c  Stairs Up/Down: %c/%c  Plate:      %c   Hole: %c\nSwitch:           %c  Clickable Object: %c  Illusion Wall:  %c    Teleporter: %c\n\n", 'X', 216, 'U', 'D', 'O', 164, '/', 176, 15, 1);

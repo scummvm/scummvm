@@ -20,10 +20,10 @@
  *
  */
 
-#include "kyra/engine/kyra_lok.h"
-#include "kyra/graphics/screen.h"
 #include "kyra/graphics/animator_lok.h"
+#include "kyra/engine/kyra_lok.h"
 #include "kyra/engine/sprites.h"
+#include "kyra/graphics/screen.h"
 
 namespace Kyra {
 
@@ -549,7 +549,7 @@ int16 Animator_LoK::fetchAnimWidth(const uint8 *shape, int16 mult) {
 int16 Animator_LoK::fetchAnimHeight(const uint8 *shape, int16 mult) {
 	if (_vm->gameFlags().useAltShapeHeader)
 		shape += 2;
-	return (int16)(((int8)*(shape + 2)) * mult) >> 8;
+	return (int16)(((int8) * (shape + 2)) * mult) >> 8;
 }
 
 void Animator_LoK::setBrandonAnimSeqSize(int width, int height) {

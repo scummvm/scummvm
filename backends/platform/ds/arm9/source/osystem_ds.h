@@ -20,7 +20,6 @@
  *
  */
 
-
 #ifndef _OSYSTEM_DS_H_
 #define _OSYSTEM_DS_H_
 
@@ -28,19 +27,18 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
-#include "backends/base-backend.h"
-#include "common/events.h"
-#include "nds.h"
-#include "gbampsave.h"
-#include "backends/saves/default/default-saves.h"
 #include "audio/mixer_intern.h"
-#include "graphics/surface.h"
+#include "backends/base-backend.h"
+#include "backends/saves/default/default-saves.h"
+#include "common/events.h"
+#include "gbampsave.h"
 #include "graphics/colormasks.h"
 #include "graphics/palette.h"
+#include "graphics/surface.h"
+#include "nds.h"
 
 class OSystem_DS : public EventsBaseBackend, public PaletteManager {
 protected:
-
 	int eventNum;
 	int lastPenFrame;
 
@@ -66,7 +64,6 @@ protected:
 	byte _cursorKey;
 	int _cursorScale;
 
-
 	Graphics::Surface *createTempFrameBuffer();
 	bool _disableCursorPalette;
 
@@ -74,7 +71,7 @@ protected:
 
 public:
 	typedef void (*SoundProc)(byte *buf, int len);
-	typedef int  (*TimerProc)(int interval);
+	typedef int (*TimerProc)(int interval);
 
 	OSystem_DS();
 	virtual ~OSystem_DS();
@@ -94,6 +91,7 @@ public:
 	virtual int16 getWidth();
 
 	virtual PaletteManager *getPaletteManager() { return this; }
+
 protected:
 	// PaletteManager API
 	virtual void setPalette(const byte *colors, uint start, uint num);
@@ -130,7 +128,6 @@ public:
 	virtual void unlockMutex(MutexRef mutex);
 	virtual void deleteMutex(MutexRef mutex);
 
-
 	// FIXME/TODO: The CD API as follows is *obsolete*
 	// and should be replaced by an AudioCDManager subclass,
 	// see backends/audiocd/ and common/system.h
@@ -143,10 +140,10 @@ public:
 
 	virtual void quit();
 
-	void addEvent(const Common::Event& e);
+	void addEvent(const Common::Event &e);
 	bool isEventQueueEmpty() const { return queuePos == 0; }
 
-	virtual void setFocusRectangle(const Common::Rect& rect);
+	virtual void setFocusRectangle(const Common::Rect &rect);
 
 	virtual void clearFocusRectangle();
 
@@ -160,13 +157,12 @@ public:
 
 	static int timerHandler(int t);
 
-
 	virtual void addAutoComplete(const char *word);
 	virtual void clearAutoComplete();
 	virtual void setCharactersEntered(int count);
 
 	u16 getDSPaletteEntry(u32 entry) const { return _palette[entry]; }
-	u16 getDSCursorPaletteEntry(u32 entry) const { return !_disableCursorPalette? _cursorPalette[entry]: _palette[entry]; }
+	u16 getDSCursorPaletteEntry(u32 entry) const { return !_disableCursorPalette ? _cursorPalette[entry] : _palette[entry]; }
 
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
@@ -185,7 +181,7 @@ public:
 };
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
-	{0, 0, 0},
+	{ 0, 0, 0 },
 };
 
 #endif

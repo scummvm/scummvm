@@ -25,7 +25,8 @@
 
 namespace BladeRunner {
 
-AIScriptFreeSlotA::AIScriptFreeSlotA(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptFreeSlotA::AIScriptFreeSlotA(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 	_var1 = 0;
 	_var2 = 1;
 	_fallSpeed = 0.0f;
@@ -43,7 +44,7 @@ void AIScriptFreeSlotA::Initialize() {
 	_var2 = 1;
 	_fallSpeed = 0.0f;
 	_fallHeightCurrent = 0.0f; // not initialized in original
-	_fallHeightTarget  = 0.0f; // not initialized in original
+	_fallHeightTarget = 0.0f; // not initialized in original
 
 	World_Waypoint_Set(525, kSetKP02, -780.0f, -615.49f, 2611.0f);
 	// TODO: A bug? world waypoint 526 is unused
@@ -55,13 +56,11 @@ bool AIScriptFreeSlotA::Update() {
 	case 4:
 		// Act 4
 		if (Actor_Query_Which_Set_In(kActorMcCoy) == kSetUG15
-		 && Actor_Query_Which_Set_In(kActorFreeSlotA) == kSetUG15
-		) {
+		    && Actor_Query_Which_Set_In(kActorFreeSlotA) == kSetUG15) {
 			int goal = Actor_Query_Goal_Number(kActorFreeSlotA);
 			if ((goal == kGoalFreeSlotAUG15RunToOtherSide
 			     || goal == kGoalFreeSlotAUG15RunBack)
-			    && Actor_Query_Inch_Distance_From_Actor(kActorFreeSlotA, kActorMcCoy) <= 48
-			) {
+			    && Actor_Query_Inch_Distance_From_Actor(kActorFreeSlotA, kActorMcCoy) <= 48) {
 				Actor_Set_Goal_Number(kActorFreeSlotA, kGoalFreeSlotAUG15Attack);
 			} else if (goal == kGoalFreeSlotAUG15Fall) {
 				float x, y, z;
@@ -83,14 +82,12 @@ bool AIScriptFreeSlotA::Update() {
 		case kGoalFreeSlotAWalkAround:
 #if BLADERUNNER_ORIGINAL_BUGS
 			if (Actor_Query_Which_Set_In(kActorFreeSlotA) == Player_Query_Current_Set()
-				&& Actor_Query_Inch_Distance_From_Actor(kActorFreeSlotA, kActorMcCoy) <= 48
-			) {
+			    && Actor_Query_Inch_Distance_From_Actor(kActorFreeSlotA, kActorMcCoy) <= 48) {
 				Actor_Set_Goal_Number(kActorFreeSlotA, kGoalFreeSlotAAttackMcCoy);
 			}
 #else
 			if (Actor_Query_Which_Set_In(kActorFreeSlotA) == Player_Query_Current_Set()
-				&& Actor_Query_Inch_Distance_From_Actor(kActorFreeSlotA, kActorMcCoy) <= 54
-			) {
+			    && Actor_Query_Inch_Distance_From_Actor(kActorFreeSlotA, kActorMcCoy) <= 54) {
 				Actor_Set_Goal_Number(kActorFreeSlotA, kGoalFreeSlotAAttackMcCoy);
 			}
 #endif // BLADERUNNER_ORIGINAL_BUGS
@@ -128,8 +125,7 @@ bool AIScriptFreeSlotA::Update() {
 		} else {
 #if BLADERUNNER_ORIGINAL_BUGS
 			if (Actor_Query_Goal_Number(kActorFreeSlotA) == kGoalFreeSlotAAct5Prepare
-		        && Actor_Query_Which_Set_In(kActorMcCoy) == kSetKP02
-			) {
+			    && Actor_Query_Which_Set_In(kActorMcCoy) == kSetKP02) {
 				Actor_Set_Targetable(kActorFreeSlotA, true);
 				Actor_Set_Goal_Number(kActorFreeSlotA, kGoalFreeSlotAAct5KP02Attack);
 			}
@@ -138,8 +134,7 @@ bool AIScriptFreeSlotA::Update() {
 			// Fixes the bug where the Rat A is killed in KP02 but when McCoy re-enters it is there alive
 			// in idle mode and non-target-able
 			if (Actor_Query_Goal_Number(kActorFreeSlotA) != kGoalFreeSlotAAct5Prepare
-		        || Actor_Query_Which_Set_In(kActorMcCoy) != kSetKP02
-			) {
+			    || Actor_Query_Which_Set_In(kActorMcCoy) != kSetKP02) {
 				if (Actor_Query_Goal_Number(kActorFreeSlotA) == kGoalFreeSlotAGone) {
 					if (Actor_Query_Which_Set_In(kActorFreeSlotA) != Player_Query_Current_Set()) {
 						Non_Player_Actor_Combat_Mode_Off(kActorFreeSlotA);
@@ -166,7 +161,7 @@ void AIScriptFreeSlotA::TimerExpired(int timer) {
 }
 
 void AIScriptFreeSlotA::CompletedMovementTrack() {
-//	debug("Rat A completed move with Goal: %d", Actor_Query_Goal_Number(kActorFreeSlotA));
+	//	debug("Rat A completed move with Goal: %d", Actor_Query_Goal_Number(kActorFreeSlotA));
 	switch (Actor_Query_Goal_Number(kActorFreeSlotA)) {
 	case kGoalFreeSlotAUG15WalkOut:
 		Actor_Set_Goal_Number(kActorFreeSlotA, kGoalFreeSlotAUG15RunToOtherSide);
@@ -212,7 +207,7 @@ void AIScriptFreeSlotA::ClickedByPlayer() {
 		Actor_Face_Actor(kActorMcCoy, kActorFreeSlotA, true);
 		if (_vm->_cutContent && !Game_Flag_Query(kFlagMcCoyCommentsOnHoodooRats)) {
 			Game_Flag_Set(kFlagMcCoyCommentsOnHoodooRats);
-			Actor_Voice_Over(1060, kActorVoiceOver);  // Hoodoo rats
+			Actor_Voice_Over(1060, kActorVoiceOver); // Hoodoo rats
 			Actor_Voice_Over(1080, kActorVoiceOver);
 			Actor_Voice_Over(1090, kActorVoiceOver);
 		} else {
@@ -278,7 +273,7 @@ int AIScriptFreeSlotA::GetFriendlinessModifierIfGetsClue(int otherActorId, int c
 }
 
 bool AIScriptFreeSlotA::GoalChanged(int currentGoalNumber, int newGoalNumber) {
-//	debug("Rat A goal changed from %d to: %d", currentGoalNumber, newGoalNumber);
+	//	debug("Rat A goal changed from %d to: %d", currentGoalNumber, newGoalNumber);
 	switch (newGoalNumber) {
 	case kGoalFreeSlotAUG15Wait:
 		AI_Movement_Track_Flush(kActorFreeSlotA);
@@ -354,8 +349,7 @@ bool AIScriptFreeSlotA::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		_fallSpeed = -4.0f;
 		_fallHeightTarget = -10.0f;
 		if (_animationState != 7
-		 && _animationState != 8
-		) {
+		    && _animationState != 8) {
 			_animationState = 7;
 			_animationFrame = 0;
 		}
@@ -571,17 +565,17 @@ bool AIScriptFreeSlotA::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptFreeSlotA::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptFreeSlotA::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptFreeSlotA::ReachedMovementTrackWaypoint(int waypointId) {
@@ -636,8 +630,8 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 		// kSetUG01
 #if BLADERUNNER_ORIGINAL_BUGS
 		World_Waypoint_Set(463, kSetUG01, 144.98f, -50.13f, -175.75f);
-		World_Waypoint_Set(464, kSetUG01, 105.6f,  -50.13f, -578.46f);
-		World_Waypoint_Set(465, kSetUG01,  62.0f,  -50.13f, -574.0f);
+		World_Waypoint_Set(464, kSetUG01, 105.6f, -50.13f, -578.46f);
+		World_Waypoint_Set(465, kSetUG01, 62.0f, -50.13f, -574.0f);
 		AI_Movement_Track_Append(kActorFreeSlotA, 463, 1);
 		AI_Movement_Track_Append(kActorFreeSlotA, 464, 1);
 		AI_Movement_Track_Append(kActorFreeSlotA, 465, 5);
@@ -647,8 +641,8 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 		// Don't put rats in UG01 when Lucy is also here
 		if (!Actor_Query_In_Set(kActorLucy, kSetUG01)) {
 			World_Waypoint_Set(463, kSetUG01, 144.98f, -50.13f, -175.75f);
-			World_Waypoint_Set(464, kSetUG01, 105.6f,  -50.13f, -578.46f);
-			World_Waypoint_Set(465, kSetUG01,  62.0f,  -50.13f, -574.0f);
+			World_Waypoint_Set(464, kSetUG01, 105.6f, -50.13f, -578.46f);
+			World_Waypoint_Set(465, kSetUG01, 62.0f, -50.13f, -574.0f);
 			AI_Movement_Track_Append(kActorFreeSlotA, 463, 1);
 			AI_Movement_Track_Append(kActorFreeSlotA, 464, 1);
 			AI_Movement_Track_Append(kActorFreeSlotA, 465, 5);
@@ -660,17 +654,17 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 	case 3:
 		// kSetUG04
 		AI_Movement_Track_Append(kActorFreeSlotA, 446, 15);
-		AI_Movement_Track_Append(kActorFreeSlotA, 447,  1);
-		AI_Movement_Track_Append(kActorFreeSlotA, 449,  1);
-		AI_Movement_Track_Append(kActorFreeSlotA, 448,  2);
-		AI_Movement_Track_Append(kActorFreeSlotA, 449,  0);
+		AI_Movement_Track_Append(kActorFreeSlotA, 447, 1);
+		AI_Movement_Track_Append(kActorFreeSlotA, 449, 1);
+		AI_Movement_Track_Append(kActorFreeSlotA, 448, 2);
+		AI_Movement_Track_Append(kActorFreeSlotA, 449, 0);
 		break;
 
 	case 4:
 		// kSetUG04
-		World_Waypoint_Set(463, kSetUG04, -22.7f,   6.39f,    33.12f);
-		World_Waypoint_Set(464, kSetUG04,  -6.70f, -1.74f,  -362.88f);
-		World_Waypoint_Set(465, kSetUG04, 164.0f,  11.87f, -1013.0f);
+		World_Waypoint_Set(463, kSetUG04, -22.7f, 6.39f, 33.12f);
+		World_Waypoint_Set(464, kSetUG04, -6.70f, -1.74f, -362.88f);
+		World_Waypoint_Set(465, kSetUG04, 164.0f, 11.87f, -1013.0f);
 		AI_Movement_Track_Append(kActorFreeSlotA, 463, 2);
 		AI_Movement_Track_Append(kActorFreeSlotA, 464, 0);
 		AI_Movement_Track_Append(kActorFreeSlotA, 465, 0);
@@ -679,14 +673,14 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 	case 5:
 		// kSetUG05
 		AI_Movement_Track_Append(kActorFreeSlotA, 457, 15);
-		AI_Movement_Track_Append(kActorFreeSlotA, 458,  0);
+		AI_Movement_Track_Append(kActorFreeSlotA, 458, 0);
 		AI_Movement_Track_Append(kActorFreeSlotA, 459, 15);
 		break;
 
 	case 6:
 		// kSetUG06
 		AI_Movement_Track_Append(kActorFreeSlotA, 460, 15);
-		AI_Movement_Track_Append(kActorFreeSlotA, 461,  5);
+		AI_Movement_Track_Append(kActorFreeSlotA, 461, 5);
 		AI_Movement_Track_Append(kActorFreeSlotA, 460, 15);
 		break;
 
@@ -700,8 +694,8 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 			// make them collide with Clovis' path
 			AI_Movement_Track_Append(kActorFreeSlotA, 39, 10); // kSetFreeSlotG
 		} else {
-			World_Waypoint_Set(463, kSetUG07,  -88.78f, -12.21f, -184.08f);
-			World_Waypoint_Set(464, kSetUG07,  250.0f,  -12.21f, -342.0f);
+			World_Waypoint_Set(463, kSetUG07, -88.78f, -12.21f, -184.08f);
+			World_Waypoint_Set(464, kSetUG07, 250.0f, -12.21f, -342.0f);
 			World_Waypoint_Set(465, kSetUG07, -164.78f, -12.21f, -832.08f);
 			AI_Movement_Track_Append(kActorFreeSlotA, 463, 5);
 			AI_Movement_Track_Append(kActorFreeSlotA, 464, 1);
@@ -712,8 +706,8 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 		// Don't put rats in UG07 after the UG18 Guzza scene
 		// since Clovis may be there too and that does not work well
 		if (!Game_Flag_Query(kFlagUG18GuzzaScene)) {
-			World_Waypoint_Set(463, kSetUG07,  -88.78f, -12.21f, -184.08f);
-			World_Waypoint_Set(464, kSetUG07,  250.0f,  -12.21f, -342.0f);
+			World_Waypoint_Set(463, kSetUG07, -88.78f, -12.21f, -184.08f);
+			World_Waypoint_Set(464, kSetUG07, 250.0f, -12.21f, -342.0f);
 			World_Waypoint_Set(465, kSetUG07, -164.78f, -12.21f, -832.08f);
 			AI_Movement_Track_Append(kActorFreeSlotA, 463, 5);
 			AI_Movement_Track_Append(kActorFreeSlotA, 464, 1);
@@ -725,8 +719,8 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 	case 8:
 		// kSetUG07
 #if BLADERUNNER_ORIGINAL_BUGS
-		World_Waypoint_Set(463, kSetUG07,  -88.78f, -12.21f, -184.08f);
-		World_Waypoint_Set(464, kSetUG07,  250.0f,  -12.21f, -342.0f);
+		World_Waypoint_Set(463, kSetUG07, -88.78f, -12.21f, -184.08f);
+		World_Waypoint_Set(464, kSetUG07, 250.0f, -12.21f, -342.0f);
 		World_Waypoint_Set(465, kSetUG07, -164.78f, -12.21f, -832.08f);
 		AI_Movement_Track_Append(kActorFreeSlotA, 464, 5);
 		AI_Movement_Track_Append(kActorFreeSlotA, 463, 1);
@@ -736,8 +730,8 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 		// Don't put rats in UG07 after the UG18 Guzza scene
 		// since Clovis may be there too and that does not work well
 		if (!Game_Flag_Query(kFlagUG18GuzzaScene)) {
-			World_Waypoint_Set(463, kSetUG07,  -88.78f, -12.21f, -184.08f);
-			World_Waypoint_Set(464, kSetUG07,  250.0f,  -12.21f, -342.0f);
+			World_Waypoint_Set(463, kSetUG07, -88.78f, -12.21f, -184.08f);
+			World_Waypoint_Set(464, kSetUG07, 250.0f, -12.21f, -342.0f);
 			World_Waypoint_Set(465, kSetUG07, -164.78f, -12.21f, -832.08f);
 			AI_Movement_Track_Append(kActorFreeSlotA, 464, 5);
 			AI_Movement_Track_Append(kActorFreeSlotA, 463, 1);
@@ -749,8 +743,8 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 	case 9:
 		// kSetUG07
 #if BLADERUNNER_ORIGINAL_BUGS
-		World_Waypoint_Set(463, kSetUG07,  -88.78f, -12.21f, -184.08f);
-		World_Waypoint_Set(464, kSetUG07,  250.0f,  -12.21f, -342.0f);
+		World_Waypoint_Set(463, kSetUG07, -88.78f, -12.21f, -184.08f);
+		World_Waypoint_Set(464, kSetUG07, 250.0f, -12.21f, -342.0f);
 		World_Waypoint_Set(465, kSetUG07, -164.78f, -12.21f, -832.08f);
 		AI_Movement_Track_Append(kActorFreeSlotA, 464, 5);
 		AI_Movement_Track_Append(kActorFreeSlotA, 465, 1);
@@ -760,8 +754,8 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 		// Don't put rats in UG07 after the UG18 Guzza scene
 		// since Clovis may be there too and that does not work well
 		if (!Game_Flag_Query(kFlagUG18GuzzaScene)) {
-			World_Waypoint_Set(463, kSetUG07,  -88.78f, -12.21f, -184.08f);
-			World_Waypoint_Set(464, kSetUG07,  250.0f,  -12.21f, -342.0f);
+			World_Waypoint_Set(463, kSetUG07, -88.78f, -12.21f, -184.08f);
+			World_Waypoint_Set(464, kSetUG07, 250.0f, -12.21f, -342.0f);
 			World_Waypoint_Set(465, kSetUG07, -164.78f, -12.21f, -832.08f);
 			AI_Movement_Track_Append(kActorFreeSlotA, 464, 5);
 			AI_Movement_Track_Append(kActorFreeSlotA, 465, 1);
@@ -773,8 +767,8 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 	case 10:
 		// kSetUG07
 #if BLADERUNNER_ORIGINAL_BUGS
-		World_Waypoint_Set(463, kSetUG07,  -88.78f, -12.21f, -184.08f);
-		World_Waypoint_Set(464, kSetUG07,  250.0f,  -12.21f, -342.0f);
+		World_Waypoint_Set(463, kSetUG07, -88.78f, -12.21f, -184.08f);
+		World_Waypoint_Set(464, kSetUG07, 250.0f, -12.21f, -342.0f);
 		World_Waypoint_Set(465, kSetUG07, -164.78f, -12.21f, -832.08f);
 		AI_Movement_Track_Append(kActorFreeSlotA, 465, 5);
 		AI_Movement_Track_Append(kActorFreeSlotA, 464, 1);
@@ -784,8 +778,8 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 		// Don't put rats in UG07 after the UG18 Guzza scene
 		// since Clovis may be there too and that does not work well
 		if (!Game_Flag_Query(kFlagUG18GuzzaScene)) {
-			World_Waypoint_Set(463, kSetUG07,  -88.78f, -12.21f, -184.08f);
-			World_Waypoint_Set(464, kSetUG07,  250.0f,  -12.21f, -342.0f);
+			World_Waypoint_Set(463, kSetUG07, -88.78f, -12.21f, -184.08f);
+			World_Waypoint_Set(464, kSetUG07, 250.0f, -12.21f, -342.0f);
 			World_Waypoint_Set(465, kSetUG07, -164.78f, -12.21f, -832.08f);
 			AI_Movement_Track_Append(kActorFreeSlotA, 465, 5);
 			AI_Movement_Track_Append(kActorFreeSlotA, 464, 1);
@@ -796,7 +790,7 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 		// fall through
 	case 11:
 		// kSetUG09
-		World_Waypoint_Set(463, kSetUG09,   91.0f, 156.94f, -498.0f);
+		World_Waypoint_Set(463, kSetUG09, 91.0f, 156.94f, -498.0f);
 		World_Waypoint_Set(464, kSetUG09, -149.0f, 156.94f, -498.0f);
 		AI_Movement_Track_Append(kActorFreeSlotA, 463, 5);
 		AI_Movement_Track_Append(kActorFreeSlotA, 464, 1);
@@ -804,7 +798,7 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 
 	case 12:
 		// kSetUG09
-		World_Waypoint_Set(463, kSetUG09,   91.0f, 156.94f, -498.0f);
+		World_Waypoint_Set(463, kSetUG09, 91.0f, 156.94f, -498.0f);
 		World_Waypoint_Set(464, kSetUG09, -149.0f, 156.94f, -498.0f);
 		AI_Movement_Track_Append(kActorFreeSlotA, 464, 5);
 		AI_Movement_Track_Append(kActorFreeSlotA, 463, 1);
@@ -822,7 +816,7 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 		AI_Movement_Track_Append(kActorFreeSlotA, 463, 1);
 #else
 		// replacing with something more normal
-		World_Waypoint_Set(463, kSetUG09,  91.0f,  156.94f, -498.0f);
+		World_Waypoint_Set(463, kSetUG09, 91.0f, 156.94f, -498.0f);
 		World_Waypoint_Set(464, kSetUG09, -29.60f, 156.94f, -498.0f);
 		AI_Movement_Track_Append(kActorFreeSlotA, 463, 1);
 		AI_Movement_Track_Append(kActorFreeSlotA, 464, 1);
@@ -832,8 +826,8 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 
 	case 14:
 		// kSetUG12
-		World_Waypoint_Set(463, kSetUG12, -360.67f, 21.39f,   517.55f);
-		World_Waypoint_Set(464, kSetUG12, -250.67f, 21.39f,   477.55f);
+		World_Waypoint_Set(463, kSetUG12, -360.67f, 21.39f, 517.55f);
+		World_Waypoint_Set(464, kSetUG12, -250.67f, 21.39f, 477.55f);
 		World_Waypoint_Set(465, kSetUG12, -248.67f, 21.39f, -1454.45f);
 		AI_Movement_Track_Append(kActorFreeSlotA, 463, 1);
 		AI_Movement_Track_Append(kActorFreeSlotA, 464, 8);

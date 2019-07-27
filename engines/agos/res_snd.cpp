@@ -25,8 +25,8 @@
 #include "common/memstream.h"
 #include "common/textconsole.h"
 
-#include "agos/intern.h"
 #include "agos/agos.h"
+#include "agos/intern.h"
 #include "agos/midi.h"
 #include "agos/sound.h"
 #include "agos/vga.h"
@@ -85,7 +85,7 @@ void AGOSEngine_Simon2::playSpeech(uint16 speech_id, uint16 vgaSpriteId) {
 		if (_subtitles && _scriptVar2) {
 			animate(4, 2, 5, 0, 0, 0);
 			waitForSync(205);
-			stopAnimateSimon2(2,5);
+			stopAnimateSimon2(2, 5);
 		}
 
 		stopAnimateSimon2(2, vgaSpriteId + 2);
@@ -144,32 +144,36 @@ struct ModuleOffs {
 
 static const ModuleOffs amigaWaxworksOffs[20] = {
 	// Pyramid
-	{2,   2, 0,   },
-	{3,   2, 50980},
-	{4,   2, 56160},
-	{5,   2, 62364},
-	{6,   2, 73688},
+	{
+	  2,
+	  2,
+	  0,
+	},
+	{ 3, 2, 50980 },
+	{ 4, 2, 56160 },
+	{ 5, 2, 62364 },
+	{ 6, 2, 73688 },
 
 	// Zombie
-	{8,   8, 0},
-	{11,  8, 51156},
-	{12,  8, 56336},
-	{13,  8, 65612},
-	{14,  8, 68744},
+	{ 8, 8, 0 },
+	{ 11, 8, 51156 },
+	{ 12, 8, 56336 },
+	{ 13, 8, 65612 },
+	{ 14, 8, 68744 },
 
 	// Mine
-	{9,   9, 0},
-	{15,  9, 47244},
-	{16,  9, 52424},
-	{17,  9, 59652},
-	{18,  9, 62784},
+	{ 9, 9, 0 },
+	{ 15, 9, 47244 },
+	{ 16, 9, 52424 },
+	{ 17, 9, 59652 },
+	{ 18, 9, 62784 },
 
 	// Jack
-	{10, 10, 0},
-	{19, 10, 42054},
-	{20, 10, 47234},
-	{21, 10, 49342},
-	{22, 10, 51450},
+	{ 10, 10, 0 },
+	{ 19, 10, 42054 },
+	{ 20, 10, 47234 },
+	{ 21, 10, 49342 },
+	{ 22, 10, 51450 },
 };
 
 void AGOSEngine::playModule(uint16 music) {
@@ -200,8 +204,7 @@ void AGOSEngine::playModule(uint16 music) {
 	}
 
 	Audio::AudioStream *audioStream;
-	if (!(getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) &&
-		getFeatures() & GF_CRUNCHED) {
+	if (!(getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) && getFeatures() & GF_CRUNCHED) {
 
 		uint32 srcSize = f.size();
 		byte *srcBuf = (byte *)malloc(srcSize);
@@ -337,15 +340,96 @@ void AGOSEngine::playSting(uint16 soundId) {
 }
 
 static const byte elvira1_soundTable[100] = {
-	0, 2, 0, 1, 0, 0, 0, 0, 0, 3,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 6, 4, 0, 0, 9, 0,
-	0, 2, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 8, 0, 0, 0, 0, 0, 0, 0, 0,
-	1, 1, 0, 0, 5, 0, 6, 6, 0, 0,
-	0, 5, 0, 0, 6, 0, 0, 0, 0, 8,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0,
+	2,
+	0,
+	1,
+	0,
+	0,
+	0,
+	0,
+	0,
+	3,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	6,
+	4,
+	0,
+	0,
+	9,
+	0,
+	0,
+	2,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	8,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	1,
+	1,
+	0,
+	0,
+	5,
+	0,
+	6,
+	6,
+	0,
+	0,
+	0,
+	5,
+	0,
+	0,
+	6,
+	0,
+	0,
+	0,
+	0,
+	8,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
 };
 
 bool AGOSEngine::loadVGASoundFile(uint16 id, uint8 type) {
@@ -355,8 +439,7 @@ bool AGOSEngine::loadVGASoundFile(uint16 id, uint8 type) {
 	uint32 srcSize, dstSize;
 
 	if (getPlatform() == Common::kPlatformAmiga || getPlatform() == Common::kPlatformAtariST) {
-		if (getGameType() == GType_ELVIRA1 && (getFeatures() & GF_DEMO) &&
-			getPlatform() == Common::kPlatformAmiga) {
+		if (getGameType() == GType_ELVIRA1 && (getFeatures() & GF_DEMO) && getPlatform() == Common::kPlatformAmiga) {
 			sprintf(filename, "%c%d.out", 48 + id, type);
 		} else if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2) {
 			sprintf(filename, "%.2d%d.out", id, type);
@@ -395,7 +478,7 @@ bool AGOSEngine::loadVGASoundFile(uint16 id, uint8 type) {
 			data.push(in.readUint32BE());
 
 		decompressPN(data, dataOut, dataOutSize);
-		dst = allocBlock (dataOutSize);
+		dst = allocBlock(dataOutSize);
 		memcpy(dst, dataOut, dataOutSize);
 		delete[] dataOut;
 	} else if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) {
@@ -404,7 +487,7 @@ bool AGOSEngine::loadVGASoundFile(uint16 id, uint8 type) {
 			error("loadVGASoundFile: Read failed");
 
 		dstSize = READ_BE_UINT32(srcBuffer + srcSize - 4);
-		dst = allocBlock (dstSize);
+		dst = allocBlock(dstSize);
 		decrunchFile(srcBuffer, dst, srcSize);
 		free(srcBuffer);
 	} else {
@@ -452,8 +535,7 @@ static const char *const dimpSoundList[32] = {
 	"And17",
 };
 
-
-void AGOSEngine::loadSoundFile(const char* filename) {
+void AGOSEngine::loadSoundFile(const char *filename) {
 	Common::File in;
 	if (!in.open(filename))
 		error("loadSound: Can't load %s", filename);
@@ -488,9 +570,9 @@ void AGOSEngine::loadSound(uint16 sound, int16 pan, int16 vol, uint16 type) {
 
 		uint32 file, offset, srcSize, dstSize;
 		if (getPlatform() == Common::kPlatformAmiga) {
-			loadOffsets((const char*)"sfxindex.dat", _zoneNumber * 22 + sound, file, offset, srcSize, dstSize);
+			loadOffsets((const char *)"sfxindex.dat", _zoneNumber * 22 + sound, file, offset, srcSize, dstSize);
 		} else {
-			loadOffsets((const char*)"effects.wav", _zoneNumber * 22 + sound, file, offset, srcSize, dstSize);
+			loadOffsets((const char *)"effects.wav", _zoneNumber * 22 + sound, file, offset, srcSize, dstSize);
 		}
 
 		if (getPlatform() == Common::kPlatformAmiga)
@@ -555,7 +637,6 @@ void AGOSEngine::loadSound(uint16 sound, uint16 freq, uint16 flags) {
 
 			if (size > _curSfxFileSize)
 				error("loadSound: Reading beyond EOF (%d, %d)", size, _curSfxFileSize);
-
 		}
 
 		size = READ_BE_UINT16(dst + 2);
@@ -593,9 +674,9 @@ void AGOSEngine::loadVoice(uint speechId) {
 
 		uint32 file, offset, srcSize, dstSize;
 		if (getPlatform() == Common::kPlatformAmiga) {
-			loadOffsets((const char*)"spindex.dat", speechId, file, offset, srcSize, dstSize);
+			loadOffsets((const char *)"spindex.dat", speechId, file, offset, srcSize, dstSize);
 		} else {
-			loadOffsets((const char*)"speech.wav", speechId, file, offset, srcSize, dstSize);
+			loadOffsets((const char *)"speech.wav", speechId, file, offset, srcSize, dstSize);
 		}
 
 		// Voice segment doesn't exist

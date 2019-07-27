@@ -28,19 +28,23 @@ namespace Wintermute {
 struct FloatPoint {
 	float x;
 	float y;
-	FloatPoint() : x(0), y(0) {}
-	FloatPoint(float x1, float y1) : x(x1), y(y1) {}
+	FloatPoint()
+	  : x(0)
+	  , y(0) {}
+	FloatPoint(float x1, float y1)
+	  : x(x1)
+	  , y(y1) {}
 	bool operator==(const FloatPoint &p) const { return x == p.x && y == p.y; }
-	bool operator!=(const FloatPoint  &p) const { return x != p.x || y != p.y; }
-	FloatPoint operator+(const FloatPoint &delta) const { return FloatPoint (x + delta.x, y + delta.y);	}
-	FloatPoint operator-(const FloatPoint &delta) const { return FloatPoint (x - delta.x, y - delta.y);	}
+	bool operator!=(const FloatPoint &p) const { return x != p.x || y != p.y; }
+	FloatPoint operator+(const FloatPoint &delta) const { return FloatPoint(x + delta.x, y + delta.y); }
+	FloatPoint operator-(const FloatPoint &delta) const { return FloatPoint(x - delta.x, y - delta.y); }
 
-	FloatPoint& operator+=(const FloatPoint &delta) {
+	FloatPoint &operator+=(const FloatPoint &delta) {
 		x += delta.x;
 		y += delta.y;
 		return *this;
 	}
-	FloatPoint& operator-=(const FloatPoint &delta) {
+	FloatPoint &operator-=(const FloatPoint &delta) {
 		x -= delta.x;
 		y -= delta.y;
 		return *this;

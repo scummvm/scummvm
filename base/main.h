@@ -28,6 +28,6 @@
 //
 // The scummvm main entry point, to be invoked by ports
 //
-extern "C" int scummvm_main(int argc, const char * const argv[]);
+extern "C" int scummvm_main(int argc, const char *const argv[]);
 
 #endif

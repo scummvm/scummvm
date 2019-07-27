@@ -34,19 +34,19 @@ class ToonEngine;
 
 struct SpecialCharacterAnimation {
 	char _filename[9]; // 0
-	byte _flag1;       // 9
-	short _offsetX;    // 10
-	short _offsetY;    // 12
-	short _unused;     // 14
-	short _unused2;    // 16
-	byte _flags2;      // 18
-	byte _flags3;      // 19
-	byte _flags4;      // 20
-	byte _flags5;      // 21
-	byte _flags6;      // 22
-	byte _flags7;      // 23
-	byte _flags8;      // 24
-	byte _flags9;      // 25
+	byte _flag1; // 9
+	short _offsetX; // 10
+	short _offsetY; // 12
+	short _unused; // 14
+	short _unused2; // 16
+	byte _flags2; // 18
+	byte _flags3; // 19
+	byte _flags4; // 20
+	byte _flags5; // 21
+	byte _flags6; // 22
+	byte _flags7; // 23
+	byte _flags8; // 24
+	byte _flags9; // 25
 };
 
 class Character {
@@ -100,7 +100,7 @@ public:
 	virtual void setTalking(bool talking) { _isTalking = talking; }
 	virtual bool isTalking() { return _isTalking; }
 	virtual void resetScale() {}
-	virtual void plotPath(Graphics::Surface& surface);
+	virtual void plotPath(Graphics::Surface &surface);
 
 	int32 getFacingFromDirection(int16 dx, int16 dy);
 	static const SpecialCharacterAnimation *getSpecialAnimation(int32 characterId, int32 animationId);

@@ -32,9 +32,11 @@ public:
 
 class DefineStructCommand : public SeqCommand {
 public:
-	DefineStructCommand(const ConversationInfo& convInfo) : _conversationInfo(convInfo) {}
+	DefineStructCommand(const ConversationInfo &convInfo)
+	  : _conversationInfo(convInfo) {}
 	virtual Command::ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const override;
+
 private:
 	ConversationInfo _conversationInfo;
 };

@@ -20,17 +20,17 @@
  *
  */
 
-#include "sludge/allfiles.h"
 #include "sludge/cursors.h"
+#include "sludge/allfiles.h"
 #include "sludge/event.h"
 #include "sludge/freeze.h"
 #include "sludge/graphics.h"
 #include "sludge/newfatal.h"
 #include "sludge/people.h"
-#include "sludge/sprites.h"
-#include "sludge/sprbanks.h"
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
+#include "sludge/sprbanks.h"
+#include "sludge/sprites.h"
 
 namespace Sludge {
 
@@ -57,7 +57,7 @@ void CursorManager::kill() {
 	_mouseCursorAnim = nullptr;
 }
 
-void CursorManager::pickAnimCursor(PersonaAnimation  *pp) {
+void CursorManager::pickAnimCursor(PersonaAnimation *pp) {
 	if (_mouseCursorAnim) {
 		delete _mouseCursorAnim;
 		_mouseCursorAnim = nullptr;
@@ -86,14 +86,14 @@ void CursorManager::displayCursor() {
 		if (flipMe != 2) {
 			if (flipMe) {
 				_vm->_gfxMan->flipFontSprite(
-						_vm->_evtMan->mouseX(), _vm->_evtMan->mouseY(),
-						_mouseCursorAnim->theSprites->bank.sprites[spriteNum],
-						_mouseCursorAnim->theSprites->bank.myPalette /* ( spritePalette&) NULL*/);
+				  _vm->_evtMan->mouseX(), _vm->_evtMan->mouseY(),
+				  _mouseCursorAnim->theSprites->bank.sprites[spriteNum],
+				  _mouseCursorAnim->theSprites->bank.myPalette /* ( spritePalette&) NULL*/);
 			} else {
 				_vm->_gfxMan->fontSprite(
-						_vm->_evtMan->mouseX(), _vm->_evtMan->mouseY(),
-						_mouseCursorAnim->theSprites->bank.sprites[spriteNum],
-						_mouseCursorAnim->theSprites->bank.myPalette /* ( spritePalette&) NULL*/);
+				  _vm->_evtMan->mouseX(), _vm->_evtMan->mouseY(),
+				  _mouseCursorAnim->theSprites->bank.sprites[spriteNum],
+				  _mouseCursorAnim->theSprites->bank.myPalette /* ( spritePalette&) NULL*/);
 			}
 		}
 
@@ -105,7 +105,7 @@ void CursorManager::displayCursor() {
 	}
 }
 
-void CursorManager::pasteCursor(int x, int y, PersonaAnimation  *c) {
+void CursorManager::pasteCursor(int x, int y, PersonaAnimation *c) {
 	if (c->numFrames)
 		_vm->_gfxMan->pasteSpriteToBackDrop(x, y, c->theSprites->bank.sprites[c->frames[0].frameNum], c->theSprites->bank.myPalette);
 }

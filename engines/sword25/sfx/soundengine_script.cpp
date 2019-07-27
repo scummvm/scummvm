@@ -35,8 +35,8 @@
 
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/kernel.h"
-#include "sword25/script/script.h"
 #include "sword25/script/luabindhelper.h"
+#include "sword25/script/script.h"
 
 #include "sword25/sfx/soundengine.h"
 
@@ -316,33 +316,33 @@ static int getSoundPanning(lua_State *L) {
 static const char *SFX_LIBRARY_NAME = "Sfx";
 
 static const luaL_reg SFX_FUNCTIONS[] = {
-	{"Init", init},
-	{"Update", update},
-	{"__SetVolume", setVolume},
-	{"__GetVolume", getVolume},
-	{"PauseAll", pauseAll},
-	{"ResumeAll", resumeAll},
-	{"PauseLayer", pauseLayer},
-	{"ResumeLayer", resumeLayer},
-	{"__PlaySound", playSound},
-	{"__PlaySoundEx", playSoundEx},
-	{"__SetSoundVolume", setSoundVolume},
-	{"__SetSoundPanning", setSoundPanning},
-	{"__PauseSound", pauseSound},
-	{"__ResumeSound", resumeSound},
-	{"__StopSound", stopSound},
-	{"__IsSoundPaused", isSoundPaused},
-	{"__IsSoundPlaying", isSoundPlaying},
-	{"__GetSoundVolume", getSoundVolume},
-	{"__GetSoundPanning", getSoundPanning},
-	{0, 0}
+	{ "Init", init },
+	{ "Update", update },
+	{ "__SetVolume", setVolume },
+	{ "__GetVolume", getVolume },
+	{ "PauseAll", pauseAll },
+	{ "ResumeAll", resumeAll },
+	{ "PauseLayer", pauseLayer },
+	{ "ResumeLayer", resumeLayer },
+	{ "__PlaySound", playSound },
+	{ "__PlaySoundEx", playSoundEx },
+	{ "__SetSoundVolume", setSoundVolume },
+	{ "__SetSoundPanning", setSoundPanning },
+	{ "__PauseSound", pauseSound },
+	{ "__ResumeSound", resumeSound },
+	{ "__StopSound", stopSound },
+	{ "__IsSoundPaused", isSoundPaused },
+	{ "__IsSoundPlaying", isSoundPlaying },
+	{ "__GetSoundVolume", getSoundVolume },
+	{ "__GetSoundPanning", getSoundPanning },
+	{ 0, 0 }
 };
 
 static const lua_constant_reg SFX_CONSTANTS[] = {
-	{"MUSIC", SoundEngine::MUSIC},
-	{"SPEECH", SoundEngine::SPEECH},
-	{"SFX", SoundEngine::SFX},
-	{0, 0}
+	{ "MUSIC", SoundEngine::MUSIC },
+	{ "SPEECH", SoundEngine::SPEECH },
+	{ "SFX", SoundEngine::SFX },
+	{ 0, 0 }
 };
 
 bool SoundEngine::registerScriptBindings() {
@@ -353,8 +353,10 @@ bool SoundEngine::registerScriptBindings() {
 	lua_State *L = static_cast<lua_State *>(pScript->getScriptObject());
 	assert(L);
 
-	if (!LuaBindhelper::addFunctionsToLib(L, SFX_LIBRARY_NAME, SFX_FUNCTIONS)) return false;
-	if (!LuaBindhelper::addConstantsToLib(L, SFX_LIBRARY_NAME, SFX_CONSTANTS)) return false;
+	if (!LuaBindhelper::addFunctionsToLib(L, SFX_LIBRARY_NAME, SFX_FUNCTIONS))
+		return false;
+	if (!LuaBindhelper::addConstantsToLib(L, SFX_LIBRARY_NAME, SFX_CONSTANTS))
+		return false;
 
 	return true;
 }

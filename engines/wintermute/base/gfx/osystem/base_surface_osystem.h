@@ -29,10 +29,10 @@
 #ifndef WINTERMUTE_BASE_SURFACESDL_H
 #define WINTERMUTE_BASE_SURFACESDL_H
 
+#include "common/list.h"
+#include "engines/wintermute/base/gfx/base_surface.h"
 #include "graphics/surface.h"
 #include "graphics/transparent_surface.h"
-#include "engines/wintermute/base/gfx/base_surface.h"
-#include "common/list.h"
 
 namespace Wintermute {
 struct TransparentSurface;
@@ -50,7 +50,6 @@ public:
 
 	bool startPixelOp() override;
 	bool endPixelOp() override;
-
 
 	bool displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha = Graphics::kDefaultRgbaMod, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
 	bool displayTrans(int x, int y, Rect32 rect, uint32 alpha = Graphics::kDefaultRgbaMod, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
@@ -83,6 +82,7 @@ public:
 	}
 
 	Graphics::AlphaType getAlphaType() const { return _alphaType; }
+
 private:
 	Graphics::Surface *_surface;
 	bool _loaded;

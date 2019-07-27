@@ -31,14 +31,15 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 
-#include "hugo/hugo.h"
-#include "hugo/file.h"
 #include "hugo/display.h"
+#include "hugo/file.h"
+#include "hugo/hugo.h"
 #include "hugo/text.h"
 #include "hugo/util.h"
 
 namespace Hugo {
-FileManager_v3d::FileManager_v3d(HugoEngine *vm) : FileManager_v2d(vm) {
+FileManager_v3d::FileManager_v3d(HugoEngine *vm)
+  : FileManager_v2d(vm) {
 }
 
 FileManager_v3d::~FileManager_v3d() {
@@ -50,9 +51,9 @@ FileManager_v3d::~FileManager_v3d() {
 void FileManager_v3d::readBackground(const int screenIndex) {
 	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
 
-	_sceneryArchive1.seek((uint32) screenIndex * sizeof(SceneBlock), SEEK_SET);
+	_sceneryArchive1.seek((uint32)screenIndex * sizeof(SceneBlock), SEEK_SET);
 
-	SceneBlock sceneBlock;                          // Read a database header entry
+	SceneBlock sceneBlock; // Read a database header entry
 	sceneBlock._sceneOffset = _sceneryArchive1.readUint32LE();
 	sceneBlock._sceneLength = _sceneryArchive1.readUint32LE();
 	sceneBlock._boundaryOffset = _sceneryArchive1.readUint32LE();
@@ -62,7 +63,7 @@ void FileManager_v3d::readBackground(const int screenIndex) {
 	sceneBlock._baseOffset = _sceneryArchive1.readUint32LE();
 	sceneBlock._baseLength = _sceneryArchive1.readUint32LE();
 
-	Seq *dummySeq;                                  // Image sequence structure for Read_pcx
+	Seq *dummySeq; // Image sequence structure for Read_pcx
 	if (screenIndex < 20) {
 		_sceneryArchive1.seek(sceneBlock._sceneOffset, SEEK_SET);
 		// Read the image into dummy seq and static dib_a
@@ -109,10 +110,10 @@ void FileManager_v3d::closeDatabaseFiles() {
 void FileManager_v3d::readOverlay(const int screenNum, ImagePtr image, OvlType overlayType) {
 	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
 
-	ImagePtr     tmpImage = image;                  // temp ptr to overlay file
+	ImagePtr tmpImage = image; // temp ptr to overlay file
 	_sceneryArchive1.seek((uint32)screenNum * sizeof(SceneBlock), SEEK_SET);
 
-	SceneBlock sceneBlock;                          // Database header entry
+	SceneBlock sceneBlock; // Database header entry
 	sceneBlock._sceneOffset = _sceneryArchive1.readUint32LE();
 	sceneBlock._sceneLength = _sceneryArchive1.readUint32LE();
 	sceneBlock._boundaryOffset = _sceneryArchive1.readUint32LE();
@@ -148,15 +149,15 @@ void FileManager_v3d::readOverlay(const int screenNum, ImagePtr image, OvlType o
 		}
 
 		// Read in the overlay file using MAC Packbits.  (We're not proud!)
-		int16 k = 0;                                // byte count
+		int16 k = 0; // byte count
 		do {
-			int8 data = _sceneryArchive1.readByte();// Read a code byte
-			if ((byte)data == 0x80)                 // Noop
+			int8 data = _sceneryArchive1.readByte(); // Read a code byte
+			if ((byte)data == 0x80) // Noop
 				;
-			else if (data >= 0) {                   // Copy next data+1 literally
+			else if (data >= 0) { // Copy next data+1 literally
 				for (i = 0; i <= (byte)data; i++, k++)
 					*tmpImage++ = _sceneryArchive1.readByte();
-			} else {                                // Repeat next byte -data+1 times
+			} else { // Repeat next byte -data+1 times
 				int16 j = _sceneryArchive1.readByte();
 
 				for (i = 0; i < (byte)(-data + 1); i++, k++)
@@ -187,15 +188,15 @@ void FileManager_v3d::readOverlay(const int screenNum, ImagePtr image, OvlType o
 		}
 
 		// Read in the overlay file using MAC Packbits.  (We're not proud!)
-		int16 k = 0;                                // byte count
+		int16 k = 0; // byte count
 		do {
-			int8 data = _sceneryArchive2.readByte();// Read a code byte
-			if ((byte)data == 0x80)                 // Noop
+			int8 data = _sceneryArchive2.readByte(); // Read a code byte
+			if ((byte)data == 0x80) // Noop
 				;
-			else if (data >= 0) {                   // Copy next data+1 literally
+			else if (data >= 0) { // Copy next data+1 literally
 				for (i = 0; i <= (byte)data; i++, k++)
 					*tmpImage++ = _sceneryArchive2.readByte();
-			} else {                                // Repeat next byte -data+1 times
+			} else { // Repeat next byte -data+1 times
 				int16 j = _sceneryArchive2.readByte();
 
 				for (i = 0; i < (byte)(-data + 1); i++, k++)

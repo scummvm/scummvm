@@ -33,12 +33,14 @@ class CSeasonNoises : public CViewAutoSoundPlayer {
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool ActMsg(CActMsg *msg);
 	bool LoadSuccessMsg(CLoadSuccessMsg *msg);
+
 private:
 	Season _seasonNumber;
 	CString _springName;
 	CString _summerName;
 	CString _autumnName;
 	CString _winterName;
+
 public:
 	CLASSDEF;
 	CSeasonNoises();

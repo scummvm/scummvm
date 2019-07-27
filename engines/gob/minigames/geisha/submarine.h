@@ -29,76 +29,76 @@ namespace Gob {
 
 namespace Geisha {
 
-/** The submarine Geisha's "Penetration" minigame. */
-class Submarine : public ANIObject {
-public:
-	enum Direction {
-		kDirectionNone,
-		kDirectionN,
-		kDirectionNE,
-		kDirectionE,
-		kDirectionSE,
-		kDirectionS,
-		kDirectionSW,
-		kDirectionW,
-		kDirectionNW
+	/** The submarine Geisha's "Penetration" minigame. */
+	class Submarine : public ANIObject {
+	public:
+		enum Direction {
+			kDirectionNone,
+			kDirectionN,
+			kDirectionNE,
+			kDirectionE,
+			kDirectionSE,
+			kDirectionS,
+			kDirectionSW,
+			kDirectionW,
+			kDirectionNW
+		};
+
+		Submarine(const ANIFile &ani);
+		~Submarine();
+
+		Direction getDirection() const;
+
+		/** Turn to the specified direction. */
+		void turn(Direction to);
+
+		/** Play the shoot animation. */
+		void shoot();
+
+		/** Play the exploding animation. */
+		void die();
+
+		/** Play the exiting animation. */
+		void leave();
+
+		/** Advance the animation to the next frame. */
+		void advance();
+
+		/** Can the submarine move at the moment? */
+		bool canMove() const;
+
+		/** Is the submarine dead? */
+		bool isDead() const;
+
+		/** Is the submarine shooting? */
+		bool isShooting() const;
+
+		/** Has the submarine finished exiting the level? */
+		bool hasExited() const;
+
+	private:
+		enum State {
+			kStateNone = 0,
+			kStateMove,
+			kStateShoot,
+			kStateExit,
+			kStateExited,
+			kStateDie,
+			kStateDead
+		};
+
+		State _state;
+		Direction _direction;
+
+		/** Map the directions to move animation indices. */
+		uint16 directionToMove(Direction direction) const;
+		/** Map the directions to shoot animation indices. */
+		uint16 directionToShoot(Direction direction) const;
+		/** Map the directions to explode animation indices. */
+		uint16 directionToExplode(Direction direction) const;
+
+		void move();
 	};
-
-	Submarine(const ANIFile &ani);
-	~Submarine();
-
-	Direction getDirection() const;
-
-	/** Turn to the specified direction. */
-	void turn(Direction to);
-
-	/** Play the shoot animation. */
-	void shoot();
-
-	/** Play the exploding animation. */
-	void die();
-
-	/** Play the exiting animation. */
-	void leave();
-
-	/** Advance the animation to the next frame. */
-	void advance();
-
-	/** Can the submarine move at the moment? */
-	bool canMove() const;
-
-	/** Is the submarine dead? */
-	bool isDead() const;
-
-	/** Is the submarine shooting? */
-	bool isShooting() const;
-
-	/** Has the submarine finished exiting the level? */
-	bool hasExited() const;
-
-private:
-	enum State {
-		kStateNone = 0,
-		kStateMove,
-		kStateShoot,
-		kStateExit,
-		kStateExited,
-		kStateDie,
-		kStateDead
-	};
-
-	State _state;
-	Direction _direction;
-
-	/** Map the directions to move animation indices. */
-	uint16 directionToMove(Direction direction) const;
-	/** Map the directions to shoot animation indices. */
-	uint16 directionToShoot(Direction direction) const;
-	/** Map the directions to explode animation indices. */
-	uint16 directionToExplode(Direction direction) const;
-
-	void move();
-};
 
 } // End of namespace Geisha
 

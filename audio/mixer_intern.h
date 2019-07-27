@@ -23,9 +23,9 @@
 #ifndef AUDIO_MIXER_INTERN_H
 #define AUDIO_MIXER_INTERN_H
 
-#include "common/scummsys.h"
-#include "common/mutex.h"
 #include "audio/mixer.h"
+#include "common/mutex.h"
+#include "common/scummsys.h"
 
 namespace Audio {
 
@@ -61,7 +61,9 @@ private:
 	uint32 _handleSeed;
 
 	struct SoundTypeSettings {
-		SoundTypeSettings() : mute(false), volume(kMaxMixerVolume) {}
+		SoundTypeSettings()
+		  : mute(false)
+		  , volume(kMaxMixerVolume) {}
 
 		bool mute;
 		int volume;
@@ -70,22 +72,20 @@ private:
 	SoundTypeSettings _soundTypeSettings[4];
 	Channel *_channels[NUM_CHANNELS];
 
-
 public:
-
 	MixerImpl(OSystem *system, uint sampleRate);
 	~MixerImpl();
 
 	virtual bool isReady() const { return _mixerReady; }
 
 	virtual void playStream(
-		SoundType type,
-		SoundHandle *handle,
-		AudioStream *input,
-		int id, byte volume, int8 balance,
-		DisposeAfterUse::Flag autofreeStream,
-		bool permanent,
-		bool reverseStereo);
+	  SoundType type,
+	  SoundHandle *handle,
+	  AudioStream *input,
+	  int id, byte volume, int8 balance,
+	  DisposeAfterUse::Flag autofreeStream,
+	  bool permanent,
+	  bool reverseStereo);
 
 	virtual void stopAll();
 	virtual void stopID(int id);
@@ -140,7 +140,6 @@ public:
 	 */
 	void setReady(bool ready);
 };
-
 
 } // End of namespace Audio
 

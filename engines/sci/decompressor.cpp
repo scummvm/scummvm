@@ -23,14 +23,14 @@
 // Resource library
 
 #include "common/dcl.h"
-#include "common/util.h"
 #include "common/endian.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
 #include "sci/decompressor.h"
-#include "sci/sci.h"
 #include "sci/resource.h"
+#include "sci/sci.h"
 
 namespace Sci {
 int Decompressor::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
@@ -106,7 +106,7 @@ void Decompressor::putByte(byte b) {
 //  Huffman decompressor
 //-------------------------------
 int DecompressorHuffman::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked,
-								uint32 nUnpacked) {
+                                uint32 nUnpacked) {
 	init(src, dest, nPacked, nUnpacked);
 	byte numnodes;
 	int16 c;
@@ -114,7 +114,7 @@ int DecompressorHuffman::unpack(Common::ReadStream *src, byte *dest, uint32 nPac
 
 	numnodes = _src->readByte();
 	terminator = _src->readByte() | 0x100;
-	_nodes = new byte [numnodes << 1];
+	_nodes = new byte[numnodes << 1];
 	_src->read(_nodes, numnodes << 1);
 
 	while ((c = getc2()) != terminator && (c >= 0) && !isFinished())
@@ -151,11 +151,11 @@ void DecompressorLZW::init(Common::ReadStream *src, byte *dest, uint32 nPacked, 
 }
 
 int DecompressorLZW::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked,
-								uint32 nUnpacked) {
+                            uint32 nUnpacked) {
 	byte *buffer = NULL;
 
 	switch (_compression) {
-	case kCompLZW:	// SCI0 LZW compression
+	case kCompLZW: // SCI0 LZW compression
 		return unpackLZW(src, dest, nPacked, nUnpacked);
 		break;
 	case kCompLZW1: // SCI01/1 LZW compression
@@ -177,14 +177,14 @@ int DecompressorLZW::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked,
 }
 
 int DecompressorLZW::unpackLZW(Common::ReadStream *src, byte *dest, uint32 nPacked,
-                                uint32 nUnpacked) {
+                               uint32 nUnpacked) {
 	init(src, dest, nPacked, nUnpacked);
 
 	uint16 token; // The last received value
 	uint16 tokenlastlength = 0;
 
 	uint16 *tokenlist = (uint16 *)malloc(4096 * sizeof(uint16)); // pointers to dest[]
-	uint16* tokenlengthlist = (uint16 *)malloc(4096 * sizeof(uint16)); // char length of each token
+	uint16 *tokenlengthlist = (uint16 *)malloc(4096 * sizeof(uint16)); // char length of each token
 	if (!tokenlist || !tokenlengthlist) {
 		free(tokenlist);
 		free(tokenlengthlist);
@@ -242,7 +242,6 @@ int DecompressorLZW::unpackLZW(Common::ReadStream *src, byte *dest, uint32 nPack
 				tokenlengthlist[_curtoken] = tokenlastlength;
 				_curtoken++;
 			}
-
 		}
 	}
 
@@ -280,7 +279,7 @@ int DecompressorLZW::unpackLZW1(Common::ReadStream *src, byte *dest, uint32 nPac
 		switch (decryptstart) {
 		case 0:
 			bitstring = getBitsMSB(_numbits);
-			if (bitstring == 0x101) {// found end-of-data signal
+			if (bitstring == 0x101) { // found end-of-data signal
 				bExit = true;
 				continue;
 			}
@@ -437,12 +436,12 @@ void DecompressorLZW::reorderPic(byte *src, byte *dest, int dsize) {
 	memcpy(viewdata, seeker, sizeof(viewdata));
 	seeker += sizeof(viewdata);
 
-	memcpy(writer, seeker, 4*256); /* Palette */
-	seeker += 4*256;
-	writer += 4*256;
+	memcpy(writer, seeker, 4 * 256); /* Palette */
+	seeker += 4 * 256;
+	writer += 4 * 256;
 
 	if (view_start != PAL_SIZE + 2) { /* +2 for the opcode */
-		memcpy(writer, seeker, view_start-PAL_SIZE-2);
+		memcpy(writer, seeker, view_start - PAL_SIZE - 2);
 		seeker += view_start - PAL_SIZE - 2;
 		writer += view_start - PAL_SIZE - 2;
 	}
@@ -523,8 +522,8 @@ void DecompressorLZW::reorderView(byte *src, byte *dest) {
 	cel_total = READ_LE_UINT16(seeker);
 	seeker += 2;
 
-	cc_pos = (byte **) malloc(sizeof(byte *) * cel_total);
-	cc_lengths = (int *) malloc(sizeof(int) * cel_total);
+	cc_pos = (byte **)malloc(sizeof(byte *) * cel_total);
+	cc_lengths = (int *)malloc(sizeof(int) * cel_total);
 
 	for (c = 0; c < cel_total; c++)
 		cc_lengths[c] = READ_LE_UINT16(cellengths + 2 * c);
@@ -575,7 +574,7 @@ void DecompressorLZW::reorderView(byte *src, byte *dest) {
 			for (c = 0; c < celcounts[w]; c++) {
 				WRITE_LE_UINT16(writer, chptr);
 				writer += 2;
-				cc_pos[celindex+c] = dest + chptr;
+				cc_pos[celindex + c] = dest + chptr;
 				chptr += 8 + READ_LE_UINT16(cellengths + 2 * (celindex + c));
 			}
 
@@ -612,7 +611,7 @@ void DecompressorLZW::reorderView(byte *src, byte *dest) {
 			*writer++ = c;
 
 		seeker -= 4; /* The missing four. Don't ask why. */
-		memcpy(writer, seeker, 4*256 + 4);
+		memcpy(writer, seeker, 4 * 256 + 4);
 	}
 
 	free(cc_pos);
@@ -688,7 +687,7 @@ uint32 DecompressorLZS::getCompLen() {
 		case 2:
 			return 7;
 		default:
-		// Ok, no shortcuts anymore - just get nibbles and add up
+			// Ok, no shortcuts anymore - just get nibbles and add up
 			clen = 8;
 			do {
 				nibble = getBitsMSB(4);
@@ -706,6 +705,6 @@ void DecompressorLZS::copyComp(int offs, uint32 clen) {
 		putByte(_dest[hpos++]);
 }
 
-#endif	// #ifdef ENABLE_SCI32
+#endif // #ifdef ENABLE_SCI32
 
 } // End of namespace Sci

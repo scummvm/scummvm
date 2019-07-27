@@ -20,10 +20,10 @@
  *
  */
 
+#include "mohawk/riven_graphics.h"
 #include "mohawk/resource.h"
 #include "mohawk/riven.h"
 #include "mohawk/riven_card.h"
-#include "mohawk/riven_graphics.h"
 #include "mohawk/riven_sound.h"
 #include "mohawk/riven_stack.h"
 #include "mohawk/riven_video.h"
@@ -32,24 +32,24 @@
 
 #include "engines/util.h"
 
-#include "graphics/fontman.h"
-#include "graphics/font.h"
-#include "graphics/fonts/ttf.h"
 #include "graphics/colormasks.h"
+#include "graphics/font.h"
+#include "graphics/fontman.h"
+#include "graphics/fonts/ttf.h"
 
 namespace Mohawk {
 
 class TransitionEffect {
 public:
 	TransitionEffect(OSystem *system, Graphics::Surface *mainScreen, Graphics::Surface *effectScreen,
-		                 RivenTransition type, uint duration, const Common::Rect &rect) :
-			_system(system),
-			_mainScreen(mainScreen),
-			_effectScreen(effectScreen),
-			_type(type),
-			_duration(duration),
-			_timeBased(false),
-			_rect(rect) {
+	                 RivenTransition type, uint duration, const Common::Rect &rect)
+	  : _system(system)
+	  , _mainScreen(mainScreen)
+	  , _effectScreen(effectScreen)
+	  , _type(type)
+	  , _duration(duration)
+	  , _timeBased(false)
+	  , _rect(rect) {
 	}
 
 	virtual ~TransitionEffect() {}
@@ -62,24 +62,24 @@ protected:
 	Common::Rect makeDirectionalInitalArea() const {
 		Common::Rect initialArea = _rect;
 		switch (_type) {
-			case kRivenTransitionWipeLeft:
-			case kRivenTransitionPanLeft:
-				initialArea.left = _rect.right;
-				break;
-			case kRivenTransitionWipeRight:
-			case kRivenTransitionPanRight:
-				initialArea.right = _rect.left;
-				break;
-			case kRivenTransitionWipeUp:
-			case kRivenTransitionPanUp:
-				initialArea.top = _rect.bottom;
-				break;
-			case kRivenTransitionWipeDown:
-			case kRivenTransitionPanDown:
-				initialArea.bottom = _rect.top;
-				break;
-			default:
-				error("Unhandled transition type: %d", _type);
+		case kRivenTransitionWipeLeft:
+		case kRivenTransitionPanLeft:
+			initialArea.left = _rect.right;
+			break;
+		case kRivenTransitionWipeRight:
+		case kRivenTransitionPanRight:
+			initialArea.right = _rect.left;
+			break;
+		case kRivenTransitionWipeUp:
+		case kRivenTransitionPanUp:
+			initialArea.top = _rect.bottom;
+			break;
+		case kRivenTransitionWipeDown:
+		case kRivenTransitionPanDown:
+			initialArea.bottom = _rect.top;
+			break;
+		default:
+			error("Unhandled transition type: %d", _type);
 		}
 
 		return initialArea;
@@ -99,8 +99,8 @@ protected:
 class TransitionEffectWipe : public TransitionEffect {
 public:
 	TransitionEffectWipe(OSystem *system, Graphics::Surface *mainScreen, Graphics::Surface *effectScreen,
-		                     RivenTransition type, uint duration, const Common::Rect &rect) :
-			TransitionEffect(system, mainScreen, effectScreen, type, duration, rect) {
+	                     RivenTransition type, uint duration, const Common::Rect &rect)
+	  : TransitionEffect(system, mainScreen, effectScreen, type, duration, rect) {
 
 		_timeBased = true;
 		_lastCopyArea = makeDirectionalInitalArea();
@@ -109,32 +109,32 @@ public:
 	bool drawFrame(uint32 elapsed) override {
 		Common::Rect copyArea;
 		switch (_type) {
-			case kRivenTransitionWipeLeft:
-				copyArea.top = _lastCopyArea.top;
-				copyArea.bottom = _lastCopyArea.bottom;
-				copyArea.right = _lastCopyArea.left;
-				copyArea.left = _rect.width() - elapsed * _rect.width() / _duration;
-				break;
-			case kRivenTransitionWipeRight:
-				copyArea.top = _lastCopyArea.top;
-				copyArea.bottom = _lastCopyArea.bottom;
-				copyArea.left = _lastCopyArea.right;
-				copyArea.right = elapsed * _rect.width() / _duration;
-				break;
-			case kRivenTransitionWipeUp:
-				copyArea.left = _lastCopyArea.left;
-				copyArea.right = _lastCopyArea.right;
-				copyArea.bottom = _lastCopyArea.top;
-				copyArea.top = _rect.height() - elapsed * _rect.height() / _duration;
-				break;
-			case kRivenTransitionWipeDown:
-				copyArea.left = _lastCopyArea.left;
-				copyArea.right = _lastCopyArea.right;
-				copyArea.top = _lastCopyArea.bottom;
-				copyArea.bottom = elapsed * _rect.height() / _duration;
-				break;
-			default:
-				error("Unhandled transition type: %d", _type);
+		case kRivenTransitionWipeLeft:
+			copyArea.top = _lastCopyArea.top;
+			copyArea.bottom = _lastCopyArea.bottom;
+			copyArea.right = _lastCopyArea.left;
+			copyArea.left = _rect.width() - elapsed * _rect.width() / _duration;
+			break;
+		case kRivenTransitionWipeRight:
+			copyArea.top = _lastCopyArea.top;
+			copyArea.bottom = _lastCopyArea.bottom;
+			copyArea.left = _lastCopyArea.right;
+			copyArea.right = elapsed * _rect.width() / _duration;
+			break;
+		case kRivenTransitionWipeUp:
+			copyArea.left = _lastCopyArea.left;
+			copyArea.right = _lastCopyArea.right;
+			copyArea.bottom = _lastCopyArea.top;
+			copyArea.top = _rect.height() - elapsed * _rect.height() / _duration;
+			break;
+		case kRivenTransitionWipeDown:
+			copyArea.left = _lastCopyArea.left;
+			copyArea.right = _lastCopyArea.right;
+			copyArea.top = _lastCopyArea.bottom;
+			copyArea.bottom = elapsed * _rect.height() / _duration;
+			break;
+		default:
+			error("Unhandled transition type: %d", _type);
 		}
 
 		_lastCopyArea = copyArea;
@@ -158,44 +158,44 @@ private:
 class TransitionEffectPan : public TransitionEffect {
 public:
 	TransitionEffectPan(OSystem *system, Graphics::Surface *mainScreen, Graphics::Surface *effectScreen,
-	                    RivenTransition type, uint duration, const Common::Rect &rect, int16 offset) :
-			TransitionEffect(system, mainScreen, effectScreen, type, duration, rect) {
+	                    RivenTransition type, uint duration, const Common::Rect &rect, int16 offset)
+	  : TransitionEffect(system, mainScreen, effectScreen, type, duration, rect) {
 
 		_timeBased = true;
 		_offset = offset;
 		_initialArea = makeDirectionalInitalArea();
-		 complete = false;
+		complete = false;
 	}
 
 	bool drawFrame(uint32 elapsed) override {
 		Common::Rect newArea;
 		switch (_type) {
-			case kRivenTransitionPanLeft:
-				newArea.top = _initialArea.top;
-				newArea.bottom = _initialArea.bottom;
-				newArea.right = _initialArea.right;
-				newArea.left = _rect.width() - elapsed * _rect.width() / _duration;
-				break;
-			case kRivenTransitionPanRight:
-				newArea.top = _initialArea.top;
-				newArea.bottom = _initialArea.bottom;
-				newArea.left = _initialArea.left;
-				newArea.right = elapsed * _rect.width() / _duration;
-				break;
-			case kRivenTransitionPanUp:
-				newArea.left = _initialArea.left;
-				newArea.right = _initialArea.right;
-				newArea.bottom = _initialArea.bottom;
-				newArea.top = _rect.height() - elapsed * _rect.height() / _duration;
-				break;
-			case kRivenTransitionPanDown:
-				newArea.left = _initialArea.left;
-				newArea.right = _initialArea.right;
-				newArea.top = _initialArea.top;
-				newArea.bottom = elapsed * _rect.height() / _duration;
-				break;
-			default:
-				error("Unhandled transition type: %d", _type);
+		case kRivenTransitionPanLeft:
+			newArea.top = _initialArea.top;
+			newArea.bottom = _initialArea.bottom;
+			newArea.right = _initialArea.right;
+			newArea.left = _rect.width() - elapsed * _rect.width() / _duration;
+			break;
+		case kRivenTransitionPanRight:
+			newArea.top = _initialArea.top;
+			newArea.bottom = _initialArea.bottom;
+			newArea.left = _initialArea.left;
+			newArea.right = elapsed * _rect.width() / _duration;
+			break;
+		case kRivenTransitionPanUp:
+			newArea.left = _initialArea.left;
+			newArea.right = _initialArea.right;
+			newArea.bottom = _initialArea.bottom;
+			newArea.top = _rect.height() - elapsed * _rect.height() / _duration;
+			break;
+		case kRivenTransitionPanDown:
+			newArea.left = _initialArea.left;
+			newArea.right = _initialArea.right;
+			newArea.top = _initialArea.top;
+			newArea.bottom = elapsed * _rect.height() / _duration;
+			break;
+		default:
+			error("Unhandled transition type: %d", _type);
 		}
 
 		if (newArea.isEmpty()) {
@@ -206,11 +206,10 @@ public:
 		Common::Rect oldArea;
 		if (newArea != _rect) {
 			oldArea = Common::Rect(
-					newArea.right != _rect.right ? _rect.left + newArea.width() : _rect.left,
-					newArea.bottom != _rect.bottom ? _rect.top + newArea.height() : _rect.top,
-					newArea.left != _rect.left ? _rect.right - newArea.width() : _rect.right,
-					newArea.top != _rect.top ? _rect.bottom - newArea.height() : _rect.bottom
-			);
+			  newArea.right != _rect.right ? _rect.left + newArea.width() : _rect.left,
+			  newArea.bottom != _rect.bottom ? _rect.top + newArea.height() : _rect.top,
+			  newArea.left != _rect.left ? _rect.right - newArea.width() : _rect.right,
+			  newArea.top != _rect.top ? _rect.bottom - newArea.height() : _rect.bottom);
 		}
 
 		int oldX = newArea.left != _rect.left ? _rect.left + newArea.width() : _rect.left;
@@ -263,8 +262,8 @@ private:
 class TransitionEffectBlend : public TransitionEffect {
 public:
 	TransitionEffectBlend(OSystem *system, Graphics::Surface *mainScreen, Graphics::Surface *effectScreen,
-	                    RivenTransition type, uint duration, const Common::Rect &rect) :
-			TransitionEffect(system, mainScreen, effectScreen, type, duration, rect) {
+	                      RivenTransition type, uint duration, const Common::Rect &rect)
+	  : TransitionEffect(system, mainScreen, effectScreen, type, duration, rect) {
 
 		_timeBased = false;
 	}
@@ -282,13 +281,13 @@ public:
 
 			uint alpha = elapsed * 255 / _duration;
 			for (uint y = 0; y < _mainScreen->h; y++) {
-				uint16 *src1 = (uint16 *) _mainScreen->getBasePtr(0, y);
-				uint16 *src2 = (uint16 *) _effectScreen->getBasePtr(0, y);
-				uint16 *dst = (uint16 *) screen->getBasePtr(0, y);
+				uint16 *src1 = (uint16 *)_mainScreen->getBasePtr(0, y);
+				uint16 *src2 = (uint16 *)_effectScreen->getBasePtr(0, y);
+				uint16 *dst = (uint16 *)screen->getBasePtr(0, y);
 				for (uint x = 0; x < _mainScreen->w; x++) {
 					uint8 r1, g1, b1, r2, g2, b2;
-					Graphics::colorToRGB< Graphics::ColorMasks<565> >(*src1++, r1, g1, b1);
-					Graphics::colorToRGB< Graphics::ColorMasks<565> >(*src2++, r2, g2, b2);
+					Graphics::colorToRGB<Graphics::ColorMasks<565>>(*src1++, r1, g1, b1);
+					Graphics::colorToRGB<Graphics::ColorMasks<565>>(*src2++, r2, g2, b2);
 
 					uint r = r1 * alpha + r2 * (255 - alpha);
 					uint g = g1 * alpha + g2 * (255 - alpha);
@@ -298,7 +297,7 @@ public:
 					g /= 255;
 					b /= 255;
 
-					*dst++ = (uint16) Graphics::RGBToColor< Graphics::ColorMasks<565> >(r, g, b);
+					*dst++ = (uint16)Graphics::RGBToColor<Graphics::ColorMasks<565>>(r, g, b);
 				}
 			}
 
@@ -308,23 +307,23 @@ public:
 	}
 };
 
-RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) :
-		GraphicsManager(),
-		_vm(vm),
-		_screenUpdateNesting(0),
-		_screenUpdateRunning(false),
-		_enableCardUpdateScript(true),
-		_scheduledTransition(kRivenTransitionNone),
-		_dirtyScreen(false),
-		_creditsImage(kRivenCreditsZeroImage),
-		_creditsPos(0),
-		_transitionMode(kRivenTransitionModeFastest),
-		_transitionOffset(-1),
-		_waterEffect(nullptr),
-		_fliesEffect(nullptr),
-		_menuFont(nullptr),
-		_transitionFrames(0),
-		_transitionDuration(0) {
+RivenGraphics::RivenGraphics(MohawkEngine_Riven *vm)
+  : GraphicsManager()
+  , _vm(vm)
+  , _screenUpdateNesting(0)
+  , _screenUpdateRunning(false)
+  , _enableCardUpdateScript(true)
+  , _scheduledTransition(kRivenTransitionNone)
+  , _dirtyScreen(false)
+  , _creditsImage(kRivenCreditsZeroImage)
+  , _creditsPos(0)
+  , _transitionMode(kRivenTransitionModeFastest)
+  , _transitionOffset(-1)
+  , _waterEffect(nullptr)
+  , _fliesEffect(nullptr)
+  , _menuFont(nullptr)
+  , _transitionFrames(0)
+  , _transitionDuration(0) {
 	_bitmapDecoder = new MohawkBitmap();
 
 	// Restrict ourselves to a single pixel format to simplify the effects implementation
@@ -406,12 +405,12 @@ void RivenGraphics::clearWaterEffect() {
 	_waterEffect = nullptr;
 }
 
-WaterEffect::WaterEffect(MohawkEngine_Riven *vm, uint16 sfxeID) :
-		_vm(vm) {
+WaterEffect::WaterEffect(MohawkEngine_Riven *vm, uint16 sfxeID)
+  : _vm(vm) {
 	Common::SeekableReadStream *sfxeStream = _vm->getResource(ID_SFXE, sfxeID);
 
 	if (sfxeStream->readUint16BE() != 'SL')
-		error ("Unknown sfxe tag");
+		error("Unknown sfxe tag");
 
 	// Read in header info
 	uint16 frameCount = sfxeStream->readUint16BE();
@@ -460,7 +459,7 @@ void WaterEffect::update() {
 	// Run script
 	uint16 curRow = 0;
 	for (uint16 op = script->readUint16BE(); op != 4; op = script->readUint16BE()) {
-		if (op == 1) {        // Increment Row
+		if (op == 1) { // Increment Row
 			curRow++;
 		} else if (op == 3) { // Copy Pixels
 			uint16 dstLeft = script->readUint16BE();
@@ -473,7 +472,7 @@ void WaterEffect::update() {
 
 			memcpy(dst, src, rowWidth * screen->format.bytesPerPixel);
 		} else if (op != 4) { // End of Script
-			error ("Unknown SFXE opcode %d", op);
+			error("Unknown SFXE opcode %d", op);
 		}
 	}
 
@@ -497,24 +496,24 @@ WaterEffect::~WaterEffect() {
 void RivenGraphics::setTransitionMode(RivenTransitionMode mode) {
 	_transitionMode = mode;
 	switch (_transitionMode) {
-		case kRivenTransitionModeFastest:
-			_transitionFrames   = 8;
-			_transitionDuration = 300;
-			break;
-		case kRivenTransitionModeNormal:
-			_transitionFrames   = 16;
-			_transitionDuration = 500;
-			break;
-		case kRivenTransitionModeBest:
-			_transitionFrames   = 32;
-			_transitionDuration = 700;
-			break;
-		case kRivenTransitionModeDisabled:
-			_transitionFrames   = 0;
-			_transitionDuration = 0;
-			break;
-		default:
-			error("Unknown transition mode %d", _transitionMode);
+	case kRivenTransitionModeFastest:
+		_transitionFrames = 8;
+		_transitionDuration = 300;
+		break;
+	case kRivenTransitionModeNormal:
+		_transitionFrames = 16;
+		_transitionDuration = 500;
+		break;
+	case kRivenTransitionModeBest:
+		_transitionFrames = 32;
+		_transitionDuration = 700;
+		break;
+	case kRivenTransitionModeDisabled:
+		_transitionFrames = 0;
+		_transitionDuration = 0;
+		break;
+	default:
+		error("Unknown transition mode %d", _transitionMode);
 	}
 }
 
@@ -540,29 +539,29 @@ void RivenGraphics::runScheduledTransition() {
 
 	TransitionEffect *effect = nullptr;
 	switch (_scheduledTransition) {
-		case kRivenTransitionWipeLeft:
-		case kRivenTransitionWipeRight:
-		case kRivenTransitionWipeUp:
-		case kRivenTransitionWipeDown: {
-			effect = new TransitionEffectWipe(_vm->_system, _mainScreen, _effectScreen,
-			                                  _scheduledTransition, _transitionDuration, _transitionRect);
-			break;
-		}
-		case kRivenTransitionPanLeft:
-		case kRivenTransitionPanRight:
-		case kRivenTransitionPanUp:
-		case kRivenTransitionPanDown: {
-			effect = new TransitionEffectPan(_vm->_system, _mainScreen, _effectScreen,
-			                                 _scheduledTransition, _transitionDuration, _transitionRect, _transitionOffset);
-			break;
-		}
-		case kRivenTransitionBlend:
-		case kRivenTransitionBlend2: // (tspit CARD 155)
-			effect = new TransitionEffectBlend(_vm->_system, _mainScreen, _effectScreen,
-			                                   _scheduledTransition, _transitionFrames, _transitionRect);
-			break;
-		default:
-			error("Unhandled transition type: %d", _scheduledTransition);
+	case kRivenTransitionWipeLeft:
+	case kRivenTransitionWipeRight:
+	case kRivenTransitionWipeUp:
+	case kRivenTransitionWipeDown: {
+		effect = new TransitionEffectWipe(_vm->_system, _mainScreen, _effectScreen,
+		                                  _scheduledTransition, _transitionDuration, _transitionRect);
+		break;
+	}
+	case kRivenTransitionPanLeft:
+	case kRivenTransitionPanRight:
+	case kRivenTransitionPanUp:
+	case kRivenTransitionPanDown: {
+		effect = new TransitionEffectPan(_vm->_system, _mainScreen, _effectScreen,
+		                                 _scheduledTransition, _transitionDuration, _transitionRect, _transitionOffset);
+		break;
+	}
+	case kRivenTransitionBlend:
+	case kRivenTransitionBlend2: // (tspit CARD 155)
+		effect = new TransitionEffectBlend(_vm->_system, _mainScreen, _effectScreen,
+		                                   _scheduledTransition, _transitionFrames, _transitionRect);
+		break;
+	default:
+		error("Unhandled transition type: %d", _scheduledTransition);
 	}
 
 	if (effect->isTimeBased()) {
@@ -686,8 +685,8 @@ void RivenGraphics::updateCredits() {
 		runScheduledTransition();
 	} else {
 		// Otherwise, we're scrolling
-		// This is done by 1) moving the screen up one row and 
-		// 2) adding a new row at the bottom that is the current row of the current image or 
+		// This is done by 1) moving the screen up one row and
+		// 2) adding a new row at the bottom that is the current row of the current image or
 		// not and it defaults to being empty (a black row).
 
 		// Move the screen up one row
@@ -828,37 +827,37 @@ const Graphics::Font *RivenGraphics::getMenuFont() const {
 }
 
 const FliesEffect::FliesEffectData FliesEffect::_firefliesParameters = {
-		true,
-		true,
-		true,
-		true,
-		3.0F,
-		0.7F,
-		40,
-		2.0F,
-		1.0F,
-		8447718,
-		30,
-		10
+	true,
+	true,
+	true,
+	true,
+	3.0F,
+	0.7F,
+	40,
+	2.0F,
+	1.0F,
+	8447718,
+	30,
+	10
 };
 
 const FliesEffect::FliesEffectData FliesEffect::_fliesParameters = {
-		false,
-		false,
-		false,
-		true,
-		8.0F,
-		3.0F,
-		80,
-		3.0F,
-		1.0F,
-		661528,
-		30,
-		10
+	false,
+	false,
+	false,
+	true,
+	8.0F,
+	3.0F,
+	80,
+	3.0F,
+	1.0F,
+	661528,
+	30,
+	10
 };
 
-FliesEffect::FliesEffect(MohawkEngine_Riven *vm, uint16 count, bool fireflies) :
-		_vm(vm) {
+FliesEffect::FliesEffect(MohawkEngine_Riven *vm, uint16 count, bool fireflies)
+  : _vm(vm) {
 
 	_effectSurface = _vm->_gfx->getEffectScreen();
 	_backSurface = _vm->_gfx->getBackScreen();
@@ -877,7 +876,6 @@ FliesEffect::FliesEffect(MohawkEngine_Riven *vm, uint16 count, bool fireflies) :
 }
 
 FliesEffect::~FliesEffect() {
-
 }
 
 void FliesEffect::initFlies(uint16 count) {
@@ -970,11 +968,11 @@ void FliesEffect::updateFlyPosition(uint index) {
 	fly.posX = fly.posXFloat;
 	fly.posY = fly.posYFloat;
 	selectAlphaMap(
-			fly.posXFloat - fly.posX >= 0.5,
-			fly.posYFloat - fly.posY >= 0.5,
-			&fly.alphaMap,
-			&fly.width,
-			&fly.height);
+	  fly.posXFloat - fly.posX >= 0.5,
+	  fly.posYFloat - fly.posY >= 0.5,
+	  &fly.alphaMap,
+	  &fly.width,
+	  &fly.height);
 	fly.posZFloat += cos(fly.directionAngleRadZ) * (fly.speed / 2.0F);
 	fly.posZ = fly.posZFloat;
 	if (_parameters->canBlur && fly.speed > _parameters->blurSpeedTreshold) {
@@ -985,11 +983,11 @@ void FliesEffect::updateFlyPosition(uint index) {
 		fly.blurPosX = blurPosXFloat;
 		fly.blurPosY = blurPosYFloat;
 		selectAlphaMap(
-				blurPosXFloat - fly.blurPosX >= 0.5,
-				blurPosYFloat - fly.blurPosY >= 0.5,
-				&fly.blurAlphaMap,
-				&fly.blurWidth,
-				&fly.blurHeight);
+		  blurPosXFloat - fly.blurPosX >= 0.5,
+		  blurPosYFloat - fly.blurPosY >= 0.5,
+		  &fly.blurAlphaMap,
+		  &fly.blurWidth,
+		  &fly.blurHeight);
 	}
 	if (fly.posY >= 100) {
 		int maxAngularSpeed = _parameters->maxAcceleration;
@@ -1048,57 +1046,57 @@ void FliesEffect::updateFlyPosition(uint index) {
 
 void FliesEffect::selectAlphaMap(bool horGridOffset, bool vertGridoffset, const uint16 **alphaMap, uint *width, uint *height) {
 	static const uint16 alpha1[12] = {
-			 8, 16,  8,
-			16, 32, 16,
-			 8, 16,  8,
-			 0,  0,  0
+		8, 16, 8,
+		16, 32, 16,
+		8, 16, 8,
+		0, 0, 0
 	};
 
 	static const uint16 alpha2[12] = {
-			4, 12, 12, 4,
-			8, 24, 24, 8,
-			4, 12, 12, 4
+		4, 12, 12, 4,
+		8, 24, 24, 8,
+		4, 12, 12, 4
 	};
 
 	static const uint16 alpha3[12] = {
-			 4,  8,  4,
-			12, 24, 12,
-			12, 24, 12,
-			 4,  8,  4
+		4, 8, 4,
+		12, 24, 12,
+		12, 24, 12,
+		4, 8, 4
 	};
 
 	static const uint16 alpha4[16] = {
-			2,  6,  6, 2,
-			6, 18, 18, 6,
-			6, 18, 18, 6,
-			2,  6,  6, 2
+		2, 6, 6, 2,
+		6, 18, 18, 6,
+		6, 18, 18, 6,
+		2, 6, 6, 2
 	};
 
 	static const uint16 alpha5[12] = {
-			4,  8, 4,
-			8, 32, 8,
-			4,  8, 4,
-			0,  0, 0
+		4, 8, 4,
+		8, 32, 8,
+		4, 8, 4,
+		0, 0, 0
 	};
 
 	static const uint16 alpha6[12] = {
-			2,  6,  6, 2,
-			4, 24, 24, 4,
-			2,  6,  6, 2
+		2, 6, 6, 2,
+		4, 24, 24, 4,
+		2, 6, 6, 2
 	};
 
 	static const uint16 alpha7[12] = {
-			2,  4, 2,
-			6, 24, 6,
-			6, 24, 6,
-			2,  4, 2
+		2, 4, 2,
+		6, 24, 6,
+		6, 24, 6,
+		2, 4, 2
 	};
 
 	static const uint16 alpha8[16] = {
-			1,  3,  3, 1,
-			3, 18, 18, 3,
-			3, 18, 18, 3,
-			1,  3,  3, 1
+		1, 3, 3, 1,
+		3, 18, 18, 3,
+		3, 18, 18, 3,
+		1, 3, 3, 1
 	};
 
 	struct AlphaMap {
@@ -1111,14 +1109,14 @@ void FliesEffect::selectAlphaMap(bool horGridOffset, bool vertGridoffset, const 
 	};
 
 	static const AlphaMap alphaSelector[] = {
-			{ true,  true,  true,  4, 4, alpha4 },
-			{ true,  true,  false, 4, 4, alpha8 },
-			{ true,  false, true,  4, 3, alpha2 },
-			{ true,  false, false, 4, 3, alpha6 },
-			{ false, true,  true,  3, 4, alpha3 },
-			{ false, true,  false, 3, 4, alpha7 },
-			{ false, false, true,  3, 3, alpha1 },
-			{ false, false, false, 3, 3, alpha5 }
+		{ true, true, true, 4, 4, alpha4 },
+		{ true, true, false, 4, 4, alpha8 },
+		{ true, false, true, 4, 3, alpha2 },
+		{ true, false, false, 4, 3, alpha6 },
+		{ false, true, true, 3, 4, alpha3 },
+		{ false, true, false, 3, 4, alpha7 },
+		{ false, false, true, 3, 3, alpha1 },
+		{ false, false, false, 3, 3, alpha5 }
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(alphaSelector); i++) {
@@ -1147,7 +1145,7 @@ void FliesEffect::draw() {
 
 		bool hoveringBrightBackground = false;
 		for (uint y = 0; y < fly.height; y++) {
-			uint16 *pixel = (uint16 *) _effectSurface->getBasePtr(fly.posX, fly.posY + y);
+			uint16 *pixel = (uint16 *)_effectSurface->getBasePtr(fly.posX, fly.posY + y);
 
 			for (uint x = 0; x < fly.width; x++) {
 				byte r, g, b;
@@ -1172,7 +1170,7 @@ void FliesEffect::draw() {
 
 		if (fly.hasBlur) {
 			for (uint y = 0; y < fly.blurHeight; y++) {
-				uint16 *pixel = (uint16 *) _effectSurface->getBasePtr(fly.blurPosX, fly.blurPosY + y);
+				uint16 *pixel = (uint16 *)_effectSurface->getBasePtr(fly.blurPosX, fly.blurPosY + y);
 				for (uint x = 0; x < fly.blurWidth; x++) {
 					byte r, g, b;
 					format.colorToRGB(*pixel, r, g, b);
@@ -1224,8 +1222,7 @@ void FliesEffect::updateScreen() {
 		const Common::Rect &rect = _screenSurfaceDirtyRects[i];
 		_vm->_system->copyRectToScreen(_effectSurface->getBasePtr(rect.left, rect.top),
 		                               _effectSurface->pitch, rect.left, rect.top,
-		                               rect.width(), rect.height()
-		);
+		                               rect.width(), rect.height());
 	}
 	_screenSurfaceDirtyRects.clear();
 

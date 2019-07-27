@@ -25,8 +25,8 @@
 #include "audio/audiostream.h"
 #include "audio/mixer.h" // for kMaxChannelVolume
 
-#include "common/rational.h"
 #include "common/file.h"
+#include "common/rational.h"
 #include "common/system.h"
 
 #include "graphics/palette.h"
@@ -101,11 +101,11 @@ void VideoDecoder::pauseVideo(bool pause) {
 	if (pause) {
 		_pauseLevel++;
 
-	// We can't go negative
+		// We can't go negative
 	} else if (_pauseLevel) {
 		_pauseLevel--;
 
-	// Do nothing
+		// Do nothing
 	} else {
 		return;
 	}
@@ -592,11 +592,11 @@ Audio::Timestamp VideoDecoder::FixedRateVideoTrack::getDuration() const {
 	return getFrameTime(getFrameCount());
 }
 
-VideoDecoder::AudioTrack::AudioTrack(Audio::Mixer::SoundType soundType) :
-		_volume(Audio::Mixer::kMaxChannelVolume),
-		_soundType(soundType),
-		_balance(0),
-		_muted(false) {
+VideoDecoder::AudioTrack::AudioTrack(Audio::Mixer::SoundType soundType)
+  : _volume(Audio::Mixer::kMaxChannelVolume)
+  , _soundType(soundType)
+  , _balance(0)
+  , _muted(false) {
 }
 
 bool VideoDecoder::AudioTrack::endOfTrack() const {
@@ -698,8 +698,8 @@ bool VideoDecoder::SeekableAudioTrack::seek(const Audio::Timestamp &time) {
 	return stream->seek(time);
 }
 
-VideoDecoder::StreamFileAudioTrack::StreamFileAudioTrack(Audio::Mixer::SoundType soundType) :
-		SeekableAudioTrack(soundType) {
+VideoDecoder::StreamFileAudioTrack::StreamFileAudioTrack(Audio::Mixer::SoundType soundType)
+  : SeekableAudioTrack(soundType) {
 	_stream = 0;
 }
 

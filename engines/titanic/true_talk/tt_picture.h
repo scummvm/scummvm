@@ -30,11 +30,13 @@ namespace Titanic {
 class TTpicture : public TTmajorWord {
 private:
 	static bool _staticFlag;
+
 protected:
 	int _field30;
 	uint _tag;
 	int _field38;
 	int _field3C;
+
 public:
 	TTpicture(const TTstring &str, WordClass wordClass, int val2, int val3, int val4, int val5, int val6);
 	TTpicture(const TTpicture *src);
@@ -66,7 +68,6 @@ public:
 
 	virtual bool proc9(int val) const;
 	virtual int proc10() const;
-
 };
 
 } // End of namespace Titanic

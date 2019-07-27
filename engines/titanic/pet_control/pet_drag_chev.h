@@ -29,10 +29,12 @@ namespace Titanic {
 
 class CPetDragChev : public CPetGraphic2 {
 	DECLARE_MESSAGE_MAP;
+
 protected:
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 	bool MouseDragMoveMsg(CMouseDragMoveMsg *msg);
 	bool MouseDragEndMsg(CMouseDragEndMsg *msg);
+
 public:
 	CLASSDEF;
 

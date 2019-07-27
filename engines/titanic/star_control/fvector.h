@@ -27,7 +27,9 @@
 
 namespace Titanic {
 
-enum Axis { X_AXIS, Y_AXIS, Z_AXIS };
+enum Axis { X_AXIS,
+	          Y_AXIS,
+	          Z_AXIS };
 
 class FPose;
 
@@ -37,9 +39,16 @@ class FPose;
 class FVector {
 public:
 	float _x, _y, _z;
+
 public:
-	FVector() : _x(0), _y(0), _z(0) {}
-	FVector(float x, float y, float z) : _x(x), _y(y), _z(z) {}
+	FVector()
+	  : _x(0)
+	  , _y(0)
+	  , _z(0) {}
+	FVector(float x, float y, float z)
+	  : _x(x)
+	  , _y(y)
+	  , _z(z) {}
 
 	/**
 	 * Clears the vector
@@ -141,7 +150,7 @@ public:
 
 	const FVector operator*(const FVector &right) const {
 		return FVector(_x * right._x, _y * right._y, _z * right._z);
-	}	
+	}
 
 	void operator+=(const FVector &delta) {
 		_x += delta._x;

@@ -30,11 +30,11 @@
 namespace Glk {
 namespace Alan3 {
 
-/* Functions: */
-extern void syserr(const char *msg);
-extern void apperr(const char *msg);
-extern void playererr(CONTEXT, const char *msg);
-extern void setSyserrHandler(void (*handler)(const char *));
+	/* Functions: */
+	extern void syserr(const char *msg);
+	extern void apperr(const char *msg);
+	extern void playererr(CONTEXT, const char *msg);
+	extern void setSyserrHandler(void (*handler)(const char *));
 
 } // End of namespace Alan3
 } // End of namespace Glk

@@ -33,7 +33,7 @@
 namespace BladeRunner {
 
 UIInputBox::UIInputBox(BladeRunnerEngine *vm, UIComponentCallback *valueChangedCallback, void *callbackData, Common::Rect rect, int maxLength, const Common::String &text)
-	: UIComponent(vm) {
+  : UIComponent(vm) {
 	_valueChangedCallback = valueChangedCallback;
 	_callbackData = callbackData;
 
@@ -99,16 +99,16 @@ void UIInputBox::handleKeyDown(const Common::KeyState &kbd) {
 
 bool UIInputBox::charIsValid(const Common::KeyState &kbd) {
 	return kbd.ascii >= ' '
-		&& kbd.ascii != '<'
-		&& kbd.ascii != '>'
-		&& kbd.ascii != ':'
-		&& kbd.ascii != '"'
-		&& kbd.ascii != '/'
-		&& kbd.ascii != '\\'
-		&& kbd.ascii != '|'
-		&& kbd.ascii != '?'
-		&& kbd.ascii != '*'
-		&& kbd.ascii <= '~';// || kbd.ascii == '¡' || kbd.ascii == 'ß');
+	  && kbd.ascii != '<'
+	  && kbd.ascii != '>'
+	  && kbd.ascii != ':'
+	  && kbd.ascii != '"'
+	  && kbd.ascii != '/'
+	  && kbd.ascii != '\\'
+	  && kbd.ascii != '|'
+	  && kbd.ascii != '?'
+	  && kbd.ascii != '*'
+	  && kbd.ascii <= '~'; // || kbd.ascii == '¡' || kbd.ascii == 'ß');
 }
 
 } // End of namespace BladeRunner

@@ -27,19 +27,15 @@
 namespace Illusions {
 
 Duckman_GameState::Duckman_GameState(IllusionsEngine_Duckman *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 }
 
 uint32 Duckman_GameState::calcWriteBufferSizeInternal() {
-	return
-		_vm->_scriptResource->_properties.getSize() +
-		_vm->_scriptResource->_blockCounters.getSize();
+	return _vm->_scriptResource->_properties.getSize() + _vm->_scriptResource->_blockCounters.getSize();
 }
 
 bool Duckman_GameState::readStateInternal(Common::ReadStream *in) {
-	return
-		_vm->_scriptResource->_properties.readFromStream(in) &&
-		_vm->_scriptResource->_blockCounters.readFromStream(in);
+	return _vm->_scriptResource->_properties.readFromStream(in) && _vm->_scriptResource->_blockCounters.readFromStream(in);
 }
 
 void Duckman_GameState::writeStateInternal(Common::WriteStream *out) {

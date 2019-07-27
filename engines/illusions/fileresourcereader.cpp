@@ -20,11 +20,11 @@
  *
  */
 
-#include "illusions/resourcesystem.h"
 #include "illusions/fileresourcereader.h"
-#include "illusions/illusions.h"
 #include "common/file.h"
 #include "common/str.h"
+#include "illusions/illusions.h"
+#include "illusions/resourcesystem.h"
 
 namespace Illusions {
 
@@ -36,7 +36,7 @@ byte *ResourceReaderFileReader::readResource(uint32 sceneId, uint32 resId, uint3
 	if (!fd.open(filename))
 		error("Resource::loadData() Could not open %s for reading", filename.c_str());
 	dataSize = fd.size();
-	byte *data = (byte*)malloc(dataSize);
+	byte *data = (byte *)malloc(dataSize);
 	fd.read(data, dataSize);
 	return data;
 }

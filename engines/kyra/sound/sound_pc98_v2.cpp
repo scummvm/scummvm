@@ -20,8 +20,8 @@
  *
  */
 
-#include "kyra/sound/sound_intern.h"
 #include "kyra/resource/resource.h"
+#include "kyra/sound/sound_intern.h"
 
 #include "audio/softsynth/fmtowns_pc98/towns_pc98_driver.h"
 
@@ -34,8 +34,15 @@
 
 namespace Kyra {
 
-SoundTownsPC98_v2::SoundTownsPC98_v2(KyraEngine_v1 *vm, Audio::Mixer *mixer) :
-	Sound(vm, mixer), _currentSFX(0), _musicTrackData(0), _sfxTrackData(0), _lastTrack(-1), _driver(0), _useFmSfx(false), _currentResourceSet(0) {
+SoundTownsPC98_v2::SoundTownsPC98_v2(KyraEngine_v1 *vm, Audio::Mixer *mixer)
+  : Sound(vm, mixer)
+  , _currentSFX(0)
+  , _musicTrackData(0)
+  , _sfxTrackData(0)
+  , _lastTrack(-1)
+  , _driver(0)
+  , _useFmSfx(false)
+  , _currentResourceSet(0) {
 	memset(&_resInfo, 0, sizeof(_resInfo));
 }
 
@@ -48,8 +55,7 @@ SoundTownsPC98_v2::~SoundTownsPC98_v2() {
 }
 
 bool SoundTownsPC98_v2::init() {
-	_driver = new TownsPC98_AudioDriver(_mixer, _vm->gameFlags().platform == Common::kPlatformPC98 ?
-		TownsPC98_AudioDriver::kType86 : TownsPC98_AudioDriver::kTypeTowns);
+	_driver = new TownsPC98_AudioDriver(_mixer, _vm->gameFlags().platform == Common::kPlatformPC98 ? TownsPC98_AudioDriver::kType86 : TownsPC98_AudioDriver::kTypeTowns);
 
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
 		if (_resInfo[_currentResourceSet])
@@ -67,10 +73,8 @@ bool SoundTownsPC98_v2::init() {
 		// right off CD. So we should find another way to
 		// check if we have access to CD audio.
 		Resource *r = _vm->resource();
-		if (_musicEnabled &&
-		    (hasRealCD || r->exists("track1.mp3") || r->exists("track1.ogg") || r->exists("track1.flac") || r->exists("track1.fla")
-		     || r->exists("track01.mp3") || r->exists("track01.ogg") || r->exists("track01.flac") || r->exists("track01.fla")))
-				_musicEnabled = 2;
+		if (_musicEnabled && (hasRealCD || r->exists("track1.mp3") || r->exists("track1.ogg") || r->exists("track1.flac") || r->exists("track1.fla") || r->exists("track01.mp3") || r->exists("track01.ogg") || r->exists("track01.flac") || r->exists("track01.fla")))
+			_musicEnabled = 2;
 		else
 			_musicEnabled = 1;
 		_useFmSfx = false;
@@ -87,7 +91,7 @@ bool SoundTownsPC98_v2::init() {
 void SoundTownsPC98_v2::initAudioResourceInfo(int set, void *info) {
 	if (set >= kMusicIntro && set <= kMusicFinale) {
 		delete _resInfo[set];
-		_resInfo[set] = info ? new SoundResourceInfo_TownsPC98V2(*(SoundResourceInfo_TownsPC98V2*)info) : 0;
+		_resInfo[set] = info ? new SoundResourceInfo_TownsPC98V2(*(SoundResourceInfo_TownsPC98V2 *)info) : 0;
 	}
 }
 
@@ -139,7 +143,7 @@ void SoundTownsPC98_v2::playTrack(uint8 track) {
 	_driver->loadMusicData(_musicTrackData, true);
 
 	if (_musicEnabled == 2 && trackNum != -1) {
-		g_system->getAudioCDManager()->play(trackNum+1, _driver->looping() ? -1 : 1, 0, 0);
+		g_system->getAudioCDManager()->play(trackNum + 1, _driver->looping() ? -1 : 1, 0, 0);
 		g_system->getAudioCDManager()->update();
 	} else if (_musicEnabled) {
 		_driver->cont();
@@ -189,7 +193,7 @@ int32 SoundTownsPC98_v2::voicePlay(const char *file, Audio::SoundHandle *handle,
 			return 0;
 	}
 
-	Common::String fileName = Common::String::format( _vm->game() == GI_LOL ? patternLOL : patternHOF, file);
+	Common::String fileName = Common::String::format(_vm->game() == GI_LOL ? patternLOL : patternHOF, file);
 
 	uint8 *data = _vm->resource()->fileData(fileName.c_str(), 0);
 	uint8 *src = data;
@@ -266,4 +270,3 @@ void SoundTownsPC98_v2::updateVolumeSettings() {
 }
 
 } // End of namespace Kyra
-

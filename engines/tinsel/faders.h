@@ -21,10 +21,10 @@
  * Data structures used by the fader and flasher processes
  */
 
-#ifndef TINSEL_FADERS_H		// prevent multiple includes
+#ifndef TINSEL_FADERS_H // prevent multiple includes
 #define TINSEL_FADERS_H
 
-#include "tinsel/dw.h"	// for SCNHANDLE
+#include "tinsel/dw.h" // for SCNHANDLE
 #include "tinsel/tinsel.h"
 
 namespace Tinsel {
@@ -47,4 +47,4 @@ void PokeInTagColor();
 
 } // End of namespace Tinsel
 
-#endif		// TINSEL_FADERS_H
+#endif // TINSEL_FADERS_H

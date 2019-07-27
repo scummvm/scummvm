@@ -28,9 +28,9 @@
 
 namespace MutationOfJB {
 
-LabelWidget::LabelWidget(GuiScreen &gui, const Common::Rect &area) :
-	Widget(gui, area),
-	_backgroundColor(0x00) {}
+LabelWidget::LabelWidget(GuiScreen &gui, const Common::Rect &area)
+  : Widget(gui, area)
+  , _backgroundColor(0x00) {}
 
 uint8 LabelWidget::getBackgroundColor() const {
 	return _backgroundColor;

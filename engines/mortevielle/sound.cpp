@@ -25,8 +25,8 @@
  * Copyright (c) 1987-1989 Lankhor
  */
 
-#include "mortevielle/mortevielle.h"
 #include "mortevielle/sound.h"
+#include "mortevielle/mortevielle.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
@@ -34,27 +34,27 @@
 
 namespace Mortevielle {
 
-	const byte _tnocon[364] = {
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	};
+const byte _tnocon[364] = {
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+};
 
-	const byte _intcon[26] = {1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0};
-	const byte _typcon[26] = {0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3};
-	const byte _tabdph[16] = {0, 10, 2, 0, 2, 10, 3, 0, 3, 7, 5, 0, 6, 7, 7, 10};
-	const byte _tabdbc[18] = {7, 23, 7, 14, 13, 9, 14, 9, 5, 12, 6, 12, 13, 4, 0, 4, 5, 9};
+const byte _intcon[26] = { 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 };
+const byte _typcon[26] = { 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3 };
+const byte _tabdph[16] = { 0, 10, 2, 0, 2, 10, 3, 0, 3, 7, 5, 0, 6, 7, 7, 10 };
+const byte _tabdbc[18] = { 7, 23, 7, 14, 13, 9, 14, 9, 5, 12, 6, 12, 13, 4, 0, 4, 5, 9 };
 
 SoundManager::SoundManager(MortevielleEngine *vm, Audio::Mixer *mixer) {
 	_vm = vm;
@@ -203,7 +203,7 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 	while (i < _ptr_oct) {
 		int idx = _troctBuf[i];
 		i++;
-		switch(idx) {
+		switch (idx) {
 		case 0: {
 			int val = _troctBuf[i];
 			i++;
@@ -211,12 +211,12 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 				warning("TODO: vclas");
 			else if (_soundType == 1) {
 				debugC(5, kMortevielleSounds, "litph - duson");
-				const static int noiseAdr[] = {0,     17224,
-											   17224, 33676,
-											   33676, 51014,
-											   51014, 59396,
-											   59396, 61286,
-											   61286, 69875};
+				const static int noiseAdr[] = { 0, 17224,
+					                              17224, 33676,
+					                              33676, 51014,
+					                              51014, 59396,
+					                              59396, 61286,
+					                              61286, 69875 };
 				if (val > 5) {
 					warning("unhandled index %d", val);
 				} else {
@@ -226,15 +226,15 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 				}
 			} else { // 2
 				debugC(5, kMortevielleSounds, "litph - vadson");
-				const static int ambiantNoiseAdr[] = {0,     14020,
-													  14020, 18994,
-													  18994, 19630,
-													  19630, 22258,
-													  22258, 37322,
-													  37322, 44472,
-													  44472, 52324,
-													  52324, 59598,
-													  59598, 69748};
+				const static int ambiantNoiseAdr[] = { 0, 14020,
+					                                     14020, 18994,
+					                                     18994, 19630,
+					                                     19630, 22258,
+					                                     22258, 37322,
+					                                     37322, 44472,
+					                                     44472, 52324,
+					                                     52324, 59598,
+					                                     59598, 69748 };
 				if (val > 8) {
 					warning("unhandled index %d", val);
 				} else {
@@ -245,7 +245,7 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 			}
 			i++;
 			break;
-			}
+		}
 		case 2: {
 			int val = _troctBuf[i];
 			i++;
@@ -253,8 +253,7 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 			val = _troctBuf[i];
 			i++;
 			warning("TODO: reech %d %d", tmpidx, val);
-			}
-			break;
+		} break;
 		case 4:
 			if (_soundType) {
 				i += 2;
@@ -269,7 +268,7 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 			i += 2;
 			break;
 		default:
-			static byte emptyBuf[19] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+			static byte emptyBuf[19] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 			if (idx == 62)
 				warning("TODO: blab");
 			else if (idx == 32) {
@@ -293,7 +292,7 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 	}
 }
 
-void SoundManager::playSong(const byte* buf, uint size, uint loops) {
+void SoundManager::playSong(const byte *buf, uint size, uint loops) {
 	int freq = kTempoMusic * 252; // 25.2 * 10
 	Audio::SeekableAudioStream *raw = Audio::makeRawStream(buf, size, freq, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(raw, loops);
@@ -309,8 +308,7 @@ void SoundManager::playSong(const byte* buf, uint size, uint loops) {
 void SoundManager::spfrac(int wor) {
 	_queue[2]._rep = (uint)wor >> 12;
 	if ((_soundType == 0) && (_queue[2]._code != 9)) {
-		if (((_queue[2]._code > 4) && (_queue[2]._val != 20) && (_queue[2]._rep != 3) && (_queue[2]._rep != 6) && (_queue[2]._rep != 9)) ||
-				((_queue[2]._code < 5) && ((_queue[2]._val != 19) && (_queue[2]._val != 22) && (_queue[2]._rep != 4) && (_queue[2]._rep != 9)))) {
+		if (((_queue[2]._code > 4) && (_queue[2]._val != 20) && (_queue[2]._rep != 3) && (_queue[2]._rep != 6) && (_queue[2]._rep != 9)) || ((_queue[2]._code < 5) && ((_queue[2]._val != 19) && (_queue[2]._val != 22) && (_queue[2]._rep != 4) && (_queue[2]._rep != 9)))) {
 			++_queue[2]._rep;
 		}
 	}
@@ -340,15 +338,15 @@ void SoundManager::charg_car(int &currWordNumb) {
 	} else {
 		switch (int_) {
 		case 60:
-			_queue[2]._val = 32;  /*  " "  */
+			_queue[2]._val = 32; /*  " "  */
 			_queue[2]._code = 9;
 			break;
 		case 61:
-			_queue[2]._val = 46;  /*  "."  */
+			_queue[2]._val = 46; /*  "."  */
 			_queue[2]._code = 9;
 			break;
 		case 62:
-			_queue[2]._val = 35;  /*  "#"  */
+			_queue[2]._val = 35; /*  "#"  */
 			_queue[2]._code = 9;
 		default:
 			break;
@@ -358,7 +356,6 @@ void SoundManager::charg_car(int &currWordNumb) {
 	spfrac(wor);
 	currWordNumb += 2;
 }
-
 
 void SoundManager::entroct(byte o) {
 	assert(_ptr_oct < 10576);
@@ -510,7 +507,7 @@ void SoundManager::trait_car() {
 			break;
 		default:
 			break;
-		}     //  switch  c2.rep
+		} //  switch  c2.rep
 		break;
 
 	case 2:
@@ -564,7 +561,7 @@ void SoundManager::trait_car() {
 		default:
 			d2 = 10;
 			break;
-		}       //  switch  c3._code
+		} //  switch  c3._code
 		d2 = (d2 * 26) + _queue[1]._val;
 		if (_tnocon[d2] == 0)
 			d3 = 2;
@@ -572,7 +569,7 @@ void SoundManager::trait_car() {
 			d3 = 6;
 		if (_queue[1]._rep >= 5) {
 			_queue[1]._rep -= 5;
-			d3 = 8 - d3;       // Swap 2 and 6
+			d3 = 8 - d3; // Swap 2 and 6
 		}
 		if (_queue[1]._code == 0) {
 			i = _queue[1]._rep;
@@ -619,7 +616,7 @@ void SoundManager::trait_car() {
 			default:
 				d2 = 7;
 				break;
-			}     //  switch c3._code
+			} //  switch c3._code
 			if (d2 == 4)
 				d2 = 3;
 
@@ -666,7 +663,7 @@ void SoundManager::trait_car() {
 			default:
 				d2 = 7;
 				break;
-			}     //  switch c3._code
+			} //  switch c3._code
 
 			if (d2 == 4)
 				d2 = 3;
@@ -682,7 +679,7 @@ void SoundManager::trait_car() {
 		break;
 	default:
 		break;
-	}     // switch c2.code
+	} // switch c2.code
 }
 
 /**
@@ -713,7 +710,7 @@ void SoundManager::initQueue() {
  * @remarks	Originally called 'trait_ph'
  */
 void SoundManager::handlePhoneme() {
-	const uint16 deca[3] = {300, 30, 40};
+	const uint16 deca[3] = { 300, 30, 40 };
 
 	uint16 startPos = _cfiphBuffer[_phonemeNumb - 1] + deca[_soundType];
 	uint16 endPos = _cfiphBuffer[_phonemeNumb] + deca[_soundType];
@@ -741,7 +738,7 @@ void SoundManager::handlePhoneme() {
 
 #ifdef DEBUG
 	warning("---");
-	for (int i = 0; i < _ptr_oct; ) {
+	for (int i = 0; i < _ptr_oct;) {
 		if ((_troctBuf[i] == 32) || (_troctBuf[i] == 35) || (_troctBuf[i] == 46)) {
 			warning("%d", _troctBuf[i]);
 			i++;

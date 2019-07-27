@@ -29,17 +29,17 @@ namespace Sherlock {
 
 namespace Tattoo {
 
-class TattooInventory : public Inventory {
-public:
-	TattooInventory(SherlockEngine *vm);
-	~TattooInventory();
+	class TattooInventory : public Inventory {
+	public:
+		TattooInventory(SherlockEngine *vm);
+		~TattooInventory();
 
-	/**
+		/**
 	 * Load the list of names the inventory items correspond to, if not already loaded,
 	 * and then calls loadGraphics to load the associated graphics
 	 */
-	virtual void loadInv();
-};
+		virtual void loadInv();
+	};
 
 } // End of namespace Tattoo
 

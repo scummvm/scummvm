@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/util.h"
 #include "gui/widgets/scrollcontainer.h"
+#include "common/util.h"
 #include "gui/gui-manager.h"
 
 #include "gui/ThemeEval.h"
@@ -29,12 +29,16 @@
 namespace GUI {
 
 ScrollContainerWidget::ScrollContainerWidget(GuiObject *boss, int x, int y, int w, int h, uint32 reflowCmd)
-	: Widget(boss, x, y, w, h), CommandSender(nullptr), _reflowCmd(reflowCmd) {
+  : Widget(boss, x, y, w, h)
+  , CommandSender(nullptr)
+  , _reflowCmd(reflowCmd) {
 	init();
 }
 
 ScrollContainerWidget::ScrollContainerWidget(GuiObject *boss, const Common::String &name, uint32 reflowCmd)
-	: Widget(boss, name), CommandSender(nullptr), _reflowCmd(reflowCmd) {
+  : Widget(boss, name)
+  , CommandSender(nullptr)
+  , _reflowCmd(reflowCmd) {
 	init();
 }
 
@@ -42,7 +46,7 @@ void ScrollContainerWidget::init() {
 	setFlags(WIDGET_ENABLED);
 	_type = kScrollContainerWidget;
 	_backgroundType = ThemeEngine::kDialogBackgroundDefault;
-	_verticalScroll = new ScrollBarWidget(this, _w-16, 0, 16, _h);
+	_verticalScroll = new ScrollBarWidget(this, _w - 16, 0, 16, _h);
 	_verticalScroll->setTarget(this);
 	_scrolledX = 0;
 	_scrolledY = 0;
@@ -73,16 +77,16 @@ void ScrollContainerWidget::recalc() {
 	}
 	h = max - min;
 
-	if (h <= _limitH) _scrolledY = 0;
+	if (h <= _limitH)
+		_scrolledY = 0;
 
 	_verticalScroll->_numEntries = h;
 	_verticalScroll->_currentPos = _scrolledY;
 	_verticalScroll->_entriesPerPage = _limitH;
 	_verticalScroll->_singleStep = kLineHeight;
-	_verticalScroll->setPos(_w - scrollbarWidth, _scrolledY+1);
-	_verticalScroll->setSize(scrollbarWidth, _limitH -2);
+	_verticalScroll->setPos(_w - scrollbarWidth, _scrolledY + 1);
+	_verticalScroll->setSize(scrollbarWidth, _limitH - 2);
 }
-
 
 ScrollContainerWidget::~ScrollContainerWidget() {}
 
@@ -135,8 +139,10 @@ void ScrollContainerWidget::reflowLayout() {
 		int y = ptr->getAbsY() - getChildY();
 		int h = ptr->getHeight();
 		bool visible = ptr->isVisible();
-		if (y + h - _scrolledY < 0) visible = false;
-		if (y - _scrolledY > _limitH) visible = false;
+		if (y + h - _scrolledY < 0)
+			visible = false;
+		if (y - _scrolledY > _limitH)
+			visible = false;
 		ptr->setVisible(visible);
 		ptr = ptr->next();
 	}

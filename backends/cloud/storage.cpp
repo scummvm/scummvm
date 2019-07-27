@@ -27,14 +27,16 @@
 #include "backends/networking/curl/connectionmanager.h"
 #include "common/debug.h"
 #include "common/file.h"
-#include <common/translation.h>
 #include "common/osd_message_queue.h"
+#include <common/translation.h>
 
 namespace Cloud {
 
-Storage::Storage():
-	_runningRequestsCount(0), _savesSyncRequest(nullptr), _syncRestartRequestsed(false),
-	_downloadFolderRequest(nullptr) {}
+Storage::Storage()
+  : _runningRequestsCount(0)
+  , _savesSyncRequest(nullptr)
+  , _syncRestartRequestsed(false)
+  , _downloadFolderRequest(nullptr) {}
 
 Storage::~Storage() {}
 
@@ -74,7 +76,8 @@ void Storage::requestFinishedCallback(Networking::Request *invalidRequestPointer
 }
 
 Networking::Request *Storage::upload(Common::String remotePath, Common::String localPath, UploadCallback callback, Networking::ErrorCallback errorCallback) {
-	if (!errorCallback) errorCallback = getErrorPrintingCallback();
+	if (!errorCallback)
+		errorCallback = getErrorPrintingCallback();
 
 	Common::File *f = new Common::File();
 	if (!f->open(localPath)) {
@@ -105,12 +108,14 @@ Networking::Request *Storage::download(Common::String remotePath, Common::String
 }
 
 Networking::Request *Storage::downloadById(Common::String remoteId, Common::String localPath, BoolCallback callback, Networking::ErrorCallback errorCallback) {
-	if (!errorCallback) errorCallback = getErrorPrintingCallback();
+	if (!errorCallback)
+		errorCallback = getErrorPrintingCallback();
 
 	Common::DumpFile *f = new Common::DumpFile();
 	if (!f->open(localPath, true)) {
 		warning("Storage: unable to open file to download into");
-		if (errorCallback) (*errorCallback)(Networking::ErrorResponse(nullptr, false, true, "", -1));
+		if (errorCallback)
+			(*errorCallback)(Networking::ErrorResponse(nullptr, false, true, "", -1));
 		delete errorCallback;
 		delete callback;
 		delete f;
@@ -234,11 +239,10 @@ bool Storage::startDownload(Common::String remotePath, Common::String localPath)
 		return false;
 	}
 	_downloadFolderRequest = (FolderDownloadRequest *)downloadFolder(
-		remotePath, localPath,
-		new Common::Callback<Storage, FileArrayResponse>(this, &Storage::directoryDownloadedCallback),
-		new Common::Callback<Storage, Networking::ErrorResponse>(this, &Storage::directoryDownloadedErrorCallback),
-		true
-	);
+	  remotePath, localPath,
+	  new Common::Callback<Storage, FileArrayResponse>(this, &Storage::directoryDownloadedCallback),
+	  new Common::Callback<Storage, Networking::ErrorResponse>(this, &Storage::directoryDownloadedErrorCallback),
+	  true);
 	_runningRequestsMutex.unlock();
 	return true;
 }

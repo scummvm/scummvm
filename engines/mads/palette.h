@@ -43,13 +43,13 @@ class MADSEngine;
  * Palette mapping options
  */
 enum {
-	PALFLAG_BACKGROUND		= 0x8000,  // Loading initial background
-	PALFLAG_RESERVED		= 0x4000,  // Enable mapping reserved colors
-	PALFLAG_ANY_TO_CLOSEST	= 0x2000,  // Any color can map to closest
-	PALFLAG_ALL_TO_CLOSEST	= 0x1000,  // Any colors that can map must map
-	PALFLAG_TOP_COLORS		= 0x0800,  // Allow mapping to high four colors
-	PALFLAG_DEFINE_RESERVED	= 0x0400,  // Define initial reserved color
-	PALFLAG_MASK			= 0xfc00   // Mask for all the palette flags
+	PALFLAG_BACKGROUND = 0x8000, // Loading initial background
+	PALFLAG_RESERVED = 0x4000, // Enable mapping reserved colors
+	PALFLAG_ANY_TO_CLOSEST = 0x2000, // Any color can map to closest
+	PALFLAG_ALL_TO_CLOSEST = 0x1000, // Any colors that can map must map
+	PALFLAG_TOP_COLORS = 0x0800, // Allow mapping to high four colors
+	PALFLAG_DEFINE_RESERVED = 0x0400, // Define initial reserved color
+	PALFLAG_MASK = 0xfc00 // Mask for all the palette flags
 };
 
 struct PaletteCycle {
@@ -81,14 +81,24 @@ public:
 		uint16 _palIndex;
 		int _sortValue;
 
-		UsageEntry(int palIndex) { _palIndex = palIndex; _sortValue = -1; }
-		UsageEntry() { _palIndex = 0; _sortValue = 0; }
+		UsageEntry(int palIndex) {
+			_palIndex = palIndex;
+			_sortValue = -1;
+		}
+		UsageEntry() {
+			_palIndex = 0;
+			_sortValue = 0;
+		}
 	};
 	struct UsageRange {
 		byte _v1, _v2;
 
-		UsageRange(byte v1, byte v2) { _v1 = v1; _v2 = v2; }
+		UsageRange(byte v1, byte v2) {
+			_v1 = v1;
+			_v2 = v2;
+		}
 	};
+
 private:
 	MADSEngine *_vm;
 	Common::Array<UsageEntry> *_data;
@@ -98,6 +108,7 @@ private:
 	int rgbFactor(byte *palEntry, RGB6 &pal6);
 
 	Common::Array<UsageEntry> _nullUsage;
+
 public:
 	/**
 	 * Constructor
@@ -144,6 +155,7 @@ public:
 class RGBList {
 private:
 	bool _data[32];
+
 public:
 	RGBList() { clear(); }
 
@@ -171,12 +183,13 @@ public:
 		byte _mapColor;
 		uint16 _accum[3];
 	};
+
 private:
 	void mapToGreyRamp(byte palette[PALETTE_SIZE], int baseColor, int numColors,
-		int baseGrey, int numGreys, GreyEntry *map);
+	                   int baseGrey, int numGreys, GreyEntry *map);
 
 	void getGreyValues(const byte palette[PALETTE_SIZE], byte greyList[PALETTE_COUNT],
-		int baseColor, int numColors);
+	                   int baseColor, int numColors);
 
 	/**
 	 * Given a grey value list containing grey shades (0-63), creates a 64 byte
@@ -188,12 +201,15 @@ private:
 	 * Does an insertion sort of a given id/value array pair
 	 */
 	void insertionSort(int size, byte *id, byte *value);
+
 protected:
 	MADSEngine *_vm;
 	byte _rgb64Map[PALETTE_COUNT];
+
 public:
 	bool _colorFlags[4];
 	int _colorValues[4];
+
 public:
 	/**
 	 * Constructor
@@ -234,15 +250,15 @@ public:
 	* Fades the given palette out to black or grey
 	*/
 	void fadeOut(byte palette[PALETTE_SIZE], byte *paletteMap,
-		int baseColor, int numColors, int baseGrey, int numGreys,
-		int tickDelay, int steps);
+	             int baseColor, int numColors, int baseGrey, int numGreys,
+	             int tickDelay, int steps);
 
 	/**
 	 * Fade into the given palette
 	 */
 	void fadeIn(byte palette[PALETTE_SIZE], byte destPalette[PALETTE_SIZE],
-		int baseColor, int numColors, int baseGrey, int numGreys,
-		int tickDelay, int steps);
+	            int baseColor, int numColors, int baseGrey, int numGreys,
+	            int tickDelay, int steps);
 };
 
 class Palette : public Fader {
@@ -252,6 +268,7 @@ private:
 	 * standard VGA palette
 	 */
 	void initVGAPalette(byte *palette);
+
 public:
 	byte _mainPalette[PALETTE_SIZE];
 	byte _cyclingPalette[PALETTE_SIZE];
@@ -261,6 +278,7 @@ public:
 	bool _lockFl;
 	int _lowRange;
 	int _highRange;
+
 public:
 	/**
 	 * Constructor
@@ -317,7 +335,7 @@ public:
 	void refreshSceneColors();
 
 	static int closestColor(const byte *matchColor, const byte *refPalette,
-		int paletteInc, int count);
+	                        int paletteInc, int count);
 };
 
 } // End of namespace MADS

@@ -23,22 +23,22 @@
 #ifndef MOHAWK_LIVINGBOOKS_H
 #define MOHAWK_LIVINGBOOKS_H
 
-#include "mohawk/mohawk.h"
 #include "mohawk/console.h"
 #include "mohawk/livingbooks_graphics.h"
+#include "mohawk/mohawk.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
 
 #include "common/ini-file.h"
-#include "common/rect.h"
 #include "common/queue.h"
 #include "common/random.h"
+#include "common/rect.h"
 
 #include "livingbooks_code.h"
 
 namespace Common {
-	class SeekableSubReadStreamEndian;
-	class MemoryReadStreamEndian;
+class SeekableSubReadStreamEndian;
+class MemoryReadStreamEndian;
 }
 
 namespace Mohawk {
@@ -168,23 +168,23 @@ enum {
 	kLBMsgListScript = 0x66,
 	kLBNotifyScript = 0x67,
 	kLBSetPlayInfo = 0x68,
-	kLBSetRandomLoc = 0x69,  // unused?
-	kLBSetDrag = 0x6a,       // unused?
+	kLBSetRandomLoc = 0x69, // unused?
+	kLBSetDrag = 0x6a, // unused?
 	kLBSetDrawMode = 0x6b,
-	kLBSetFont = 0x6c,       // unused?
-	kLBSetOneShot = 0x6d,    // unused?
+	kLBSetFont = 0x6c, // unused?
+	kLBSetOneShot = 0x6d, // unused?
 	kLBSetPlayPhase = 0x6e,
 	// from here, 2.x+
 	kLBSetKeyNotify = 0x6f,
 	kLBCommand = 0x70,
-	kLBPaletteAData = 0x71,  // unused?
+	kLBPaletteAData = 0x71, // unused?
 	kLBPaletteXData = 0x72,
-	kLBDisable = 0x73,       // unused?
-	kLBEnable = 0x74,        // unused?
+	kLBDisable = 0x73, // unused?
+	kLBEnable = 0x74, // unused?
 	kLBSetNotVisible = 0x75,
-	kLBSetVisible = 0x76,    // unused?
+	kLBSetVisible = 0x76, // unused?
 	kLBGlobalDisable = 0x77,
-	kLBGlobalEnable = 0x78,  // unused?
+	kLBGlobalEnable = 0x78, // unused?
 	kLBGlobalSetNotVisible = 0x79,
 	kLBGlobalSetVisible = 0x7a, // unused?
 	kLBSetAmbient = 0x7b,
@@ -395,17 +395,17 @@ public:
 	virtual void setGlobalEnabled(bool enabled);
 	virtual bool contains(Common::Point point); // 0x7
 	virtual void update(); // 0x8
-	virtual void draw() { } // 0x9
-	virtual void handleKeyChar(Common::Point pos) { } // 0xA
+	virtual void draw() {} // 0x9
+	virtual void handleKeyChar(Common::Point pos) {} // 0xA
 	virtual void handleMouseDown(Common::Point pos); // 0xB
 	virtual void handleMouseMove(Common::Point pos); // 0xC
 	virtual void handleMouseUp(Common::Point pos); // 0xD
 	virtual bool togglePlaying(bool playing, bool restart = false); // 0xF
 	virtual void done(bool onlyNotify); // 0x10
 	virtual void init(); // 0x11
-	virtual void seek(uint16 pos) { } // 0x13
-	virtual void seekToTime(uint32 time) { }
-	virtual void setFocused(bool focused) { } // 0x14
+	virtual void seek(uint16 pos) {} // 0x13
+	virtual void seekToTime(uint32 time) {}
+	virtual void setFocused(bool focused) {} // 0x14
 	virtual void setVisible(bool visible); // 0x17
 	virtual void setGlobalVisible(bool enabled);
 	virtual void startPhase(uint phase); // 0x18
@@ -656,7 +656,13 @@ protected:
 };
 
 struct NotifyEvent {
-	NotifyEvent(uint t, uint p) : type(t), param(p), newUnknown(0), newMode(0), newPage(0), newSubpage(0) { }
+	NotifyEvent(uint t, uint p)
+	  : type(t)
+	  , param(p)
+	  , newUnknown(0)
+	  , newMode(0)
+	  , newPage(0)
+	  , newSubpage(0) {}
 	uint type;
 	uint param;
 
@@ -675,7 +681,9 @@ enum DelayedEventType {
 };
 
 struct DelayedEvent {
-	DelayedEvent(LBItem *i, DelayedEventType t) : item(i), type(t) { }
+	DelayedEvent(LBItem *i, DelayedEventType t)
+	  : item(i)
+	  , type(t) {}
 	LBItem *item;
 	DelayedEventType type;
 };

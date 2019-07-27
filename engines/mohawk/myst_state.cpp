@@ -20,9 +20,9 @@
  *
  */
 
+#include "mohawk/myst_state.h"
 #include "mohawk/cursors.h"
 #include "mohawk/myst.h"
-#include "mohawk/myst_state.h"
 
 #include "common/debug.h"
 #include "common/serializer.h"
@@ -65,9 +65,9 @@ bool MystSaveMetadata::sync(Common::Serializer &s) {
 
 const int MystGameState::kAutoSaveSlot = 0;
 
-MystGameState::MystGameState(MohawkEngine_Myst *vm, Common::SaveFileManager *saveFileMan) :
-		_vm(vm),
-		_saveFileMan(saveFileMan) {
+MystGameState::MystGameState(MohawkEngine_Myst *vm, Common::SaveFileManager *saveFileMan)
+  : _vm(vm)
+  , _saveFileMan(saveFileMan) {
 
 	reset();
 }

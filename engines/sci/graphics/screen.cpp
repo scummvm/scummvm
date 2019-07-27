@@ -20,20 +20,21 @@
  *
  */
 
-#include "common/util.h"
 #include "common/system.h"
 #include "common/timer.h"
-#include "graphics/surface.h"
+#include "common/util.h"
 #include "engines/util.h"
+#include "graphics/surface.h"
 
-#include "sci/sci.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/view.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
-GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
+GfxScreen::GfxScreen(ResourceManager *resMan)
+  : _resMan(resMan) {
 
 	// Scale the screen, if needed
 	_upscaledHires = GFX_SCREEN_UPSCALED_DISABLED;
@@ -134,8 +135,8 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 			_displayWidth = _width;
 		if (!_displayHeight)
 			_displayHeight = _height;
-		memset(&_upscaledHeightMapping, 0, sizeof(_upscaledHeightMapping) );
-		memset(&_upscaledWidthMapping, 0, sizeof(_upscaledWidthMapping) );
+		memset(&_upscaledHeightMapping, 0, sizeof(_upscaledHeightMapping));
+		memset(&_upscaledWidthMapping, 0, sizeof(_upscaledWidthMapping));
 		break;
 	}
 
@@ -223,7 +224,7 @@ void GfxScreen::copyFromScreen(byte *buffer) {
 		while (height--) {
 			memcpy(buffer, src, _displayWidth);
 			buffer += _displayWidth;
-			src    += screen->pitch;
+			src += screen->pitch;
 		}
 	}
 
@@ -235,11 +236,11 @@ void GfxScreen::kernelSyncWithFramebuffer() {
 }
 
 void GfxScreen::copyRectToScreen(const Common::Rect &rect) {
-	if (!_upscaledHires)  {
+	if (!_upscaledHires) {
 		g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, rect.left, rect.top, rect.width(), rect.height());
 	} else {
 		int rectHeight = _upscaledHeightMapping[rect.bottom] - _upscaledHeightMapping[rect.top];
-		int rectWidth  = _upscaledWidthMapping[rect.right] - _upscaledWidthMapping[rect.left];
+		int rectWidth = _upscaledWidthMapping[rect.right] - _upscaledWidthMapping[rect.left];
 		g_system->copyRectToScreen(_activeScreen + _upscaledHeightMapping[rect.top] * _displayWidth + _upscaledWidthMapping[rect.left], _displayWidth, _upscaledWidthMapping[rect.left], _upscaledHeightMapping[rect.top], rectWidth, rectHeight);
 	}
 }
@@ -255,11 +256,11 @@ void GfxScreen::copyDisplayRectToScreen(const Common::Rect &rect) {
 }
 
 void GfxScreen::copyRectToScreen(const Common::Rect &rect, int16 x, int16 y) {
-	if (!_upscaledHires)  {
+	if (!_upscaledHires) {
 		g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, x, y, rect.width(), rect.height());
 	} else {
 		int rectHeight = _upscaledHeightMapping[rect.bottom] - _upscaledHeightMapping[rect.top];
-		int rectWidth  = _upscaledWidthMapping[rect.right] - _upscaledWidthMapping[rect.left];
+		int rectWidth = _upscaledWidthMapping[rect.right] - _upscaledWidthMapping[rect.left];
 
 		g_system->copyRectToScreen(_activeScreen + _upscaledHeightMapping[rect.top] * _displayWidth + _upscaledWidthMapping[rect.left], _displayWidth, _upscaledWidthMapping[x], _upscaledHeightMapping[y], rectWidth, rectHeight);
 	}
@@ -373,10 +374,10 @@ byte GfxScreen::vectorIsFillMatch(int16 x, int16 y, byte screenMask, byte checkF
  * with flood fill, due to small difference in the Bresenham logic.
  */
 void GfxScreen::drawLine(Common::Point startPoint, Common::Point endPoint, byte color, byte priority, byte control) {
-    int16 maxWidth = _width - 1;
-    int16 maxHeight = _height - 1;
-    // we need to clip values here, lsl3 room 620 background picture draws a line from 0, 199 t 320, 199
-    //  otherwise we would get heap corruption.
+	int16 maxWidth = _width - 1;
+	int16 maxHeight = _height - 1;
+	// we need to clip values here, lsl3 room 620 background picture draws a line from 0, 199 t 320, 199
+	//  otherwise we would get heap corruption.
 	int16 left = CLIP<int16>(startPoint.x, 0, maxWidth);
 	int16 top = CLIP<int16>(startPoint.y, 0, maxHeight);
 	int16 right = CLIP<int16>(endPoint.x, 0, maxWidth);
@@ -476,8 +477,10 @@ int GfxScreen::bitsGetDataSize(Common::Rect rect, byte mask) {
 }
 
 void GfxScreen::bitsSave(Common::Rect rect, byte mask, byte *memoryPtr) {
-	memcpy(memoryPtr, (void *)&rect, sizeof(rect)); memoryPtr += sizeof(rect);
-	memcpy(memoryPtr, (void *)&mask, sizeof(mask)); memoryPtr += sizeof(mask);
+	memcpy(memoryPtr, (void *)&rect, sizeof(rect));
+	memoryPtr += sizeof(rect);
+	memcpy(memoryPtr, (void *)&mask, sizeof(mask));
+	memoryPtr += sizeof(mask);
 
 	if (mask & GFX_SCREEN_MASK_VISUAL) {
 		bitsSaveScreen(rect, _visualScreen, _width, memoryPtr);
@@ -503,7 +506,8 @@ void GfxScreen::bitsSaveScreen(Common::Rect rect, byte *screen, uint16 screenWid
 	screen += (rect.top * screenWidth) + rect.left;
 
 	for (y = rect.top; y < rect.bottom; y++) {
-		memcpy(memoryPtr, (void *)screen, width); memoryPtr += width;
+		memcpy(memoryPtr, (void *)screen, width);
+		memoryPtr += width;
 		screen += screenWidth;
 	}
 }
@@ -524,7 +528,8 @@ void GfxScreen::bitsSaveDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
 	}
 
 	for (y = rect.top; y < rect.bottom; y++) {
-		memcpy(memoryPtr, (void *)screen, width); memoryPtr += width;
+		memcpy(memoryPtr, (void *)screen, width);
+		memoryPtr += width;
 		screen += _displayWidth;
 	}
 }
@@ -537,8 +542,10 @@ void GfxScreen::bitsRestore(byte *memoryPtr) {
 	Common::Rect rect;
 	byte mask;
 
-	memcpy((void *)&rect, memoryPtr, sizeof(rect)); memoryPtr += sizeof(rect);
-	memcpy((void *)&mask, memoryPtr, sizeof(mask)); memoryPtr += sizeof(mask);
+	memcpy((void *)&rect, memoryPtr, sizeof(rect));
+	memoryPtr += sizeof(rect);
+	memcpy((void *)&mask, memoryPtr, sizeof(mask));
+	memoryPtr += sizeof(mask);
 
 	if (mask & GFX_SCREEN_MASK_VISUAL) {
 		bitsRestoreScreen(rect, memoryPtr, _visualScreen, _width);
@@ -569,7 +576,8 @@ void GfxScreen::bitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *scr
 	screen += (rect.top * screenWidth) + rect.left;
 
 	for (y = rect.top; y < rect.bottom; y++) {
-		memcpy((void *) screen, memoryPtr, width); memoryPtr += width;
+		memcpy((void *)screen, memoryPtr, width);
+		memoryPtr += width;
 		screen += screenWidth;
 	}
 }
@@ -590,7 +598,8 @@ void GfxScreen::bitsRestoreDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
 	}
 
 	for (y = rect.top; y < rect.bottom; y++) {
-		memcpy((void *) screen, memoryPtr, width); memoryPtr += width;
+		memcpy((void *)screen, memoryPtr, width);
+		memoryPtr += width;
 		screen += _displayWidth;
 	}
 }
@@ -631,7 +640,7 @@ void GfxScreen::dither(bool addToFlag) {
 				color = *visualPtr;
 				if (color & 0xF0) {
 					color ^= color << 4;
-					color = ((x^y) & 1) ? color >> 4 : color & 0x0F;
+					color = ((x ^ y) & 1) ? color >> 4 : color & 0x0F;
 					switch (_upscaledHires) {
 					case GFX_SCREEN_UPSCALED_DISABLED:
 					case GFX_SCREEN_UPSCALED_480x300:
@@ -643,7 +652,8 @@ void GfxScreen::dither(bool addToFlag) {
 					}
 					*visualPtr = color;
 				}
-				visualPtr++; displayPtr++;
+				visualPtr++;
+				displayPtr++;
 			}
 		}
 	} else {
@@ -661,7 +671,7 @@ void GfxScreen::dither(bool addToFlag) {
 					//  otherwise the normal ega color would get used for display
 					if (color & 0xF0) {
 						ditheredColor = color;
-					}	else {
+					} else {
 						ditheredColor = color << 4;
 					}
 					switch (_upscaledHires) {
@@ -673,10 +683,11 @@ void GfxScreen::dither(bool addToFlag) {
 						putScaledPixelOnDisplay(x, y, ditheredColor);
 						break;
 					}
-					color = ((x^y) & 1) ? color >> 4 : color & 0x0F;
+					color = ((x ^ y) & 1) ? color >> 4 : color & 0x0F;
 					*visualPtr = color;
 				}
-				visualPtr++; displayPtr++;
+				visualPtr++;
+				displayPtr++;
 			}
 		}
 	}

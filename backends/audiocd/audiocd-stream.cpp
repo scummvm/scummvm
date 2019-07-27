@@ -45,7 +45,12 @@
 #include "backends/audiocd/audiocd-stream.h"
 #include "common/textconsole.h"
 
-AudioCDStream::AudioCDStream() : _buffer(), _frame(0), _bufferPos(0), _bufferFrame(0), _forceStop(false) {
+AudioCDStream::AudioCDStream()
+  : _buffer()
+  , _frame(0)
+  , _bufferPos(0)
+  , _bufferFrame(0)
+  , _forceStop(false) {
 }
 
 AudioCDStream::~AudioCDStream() {

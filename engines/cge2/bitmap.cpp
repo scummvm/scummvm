@@ -27,22 +27,34 @@
 
 #include "cge2/bitmap.h"
 #include "cge2/cge2.h"
-#include "cge2/vga13h.h"
 #include "cge2/talk.h"
-#include "common/system.h"
-#include "common/debug.h"
+#include "cge2/vga13h.h"
 #include "common/debug-channels.h"
+#include "common/debug.h"
+#include "common/system.h"
 
 namespace CGE2 {
 
-Bitmap::Bitmap() : _w(0), _h(0), _v(nullptr), _b(nullptr), _map(0), _vm(nullptr) {
+Bitmap::Bitmap()
+  : _w(0)
+  , _h(0)
+  , _v(nullptr)
+  , _b(nullptr)
+  , _map(0)
+  , _vm(nullptr) {
 }
 
 void Bitmap::setVM(CGE2Engine *vm) {
 	_vm = vm;
 }
 
-Bitmap::Bitmap(CGE2Engine *vm, const char *fname) : _w(0), _h(0), _v(nullptr), _b(nullptr), _map(0), _vm(vm) {
+Bitmap::Bitmap(CGE2Engine *vm, const char *fname)
+  : _w(0)
+  , _h(0)
+  , _v(nullptr)
+  , _b(nullptr)
+  , _map(0)
+  , _vm(vm) {
 	Common::String path;
 
 	if (!strcmp(fname, "04tal201")) {
@@ -67,7 +79,13 @@ Bitmap::Bitmap(CGE2Engine *vm, const char *fname) : _w(0), _h(0), _v(nullptr), _
 	}
 }
 
-Bitmap::Bitmap(CGE2Engine *vm, uint16 w, uint16 h, uint8 *map) : _w(w), _h(h), _v(nullptr), _map(0), _b(nullptr), _vm(vm) {
+Bitmap::Bitmap(CGE2Engine *vm, uint16 w, uint16 h, uint8 *map)
+  : _w(w)
+  , _h(h)
+  , _v(nullptr)
+  , _map(0)
+  , _b(nullptr)
+  , _vm(vm) {
 	if (map)
 		code(map);
 }
@@ -76,25 +94,29 @@ Bitmap::Bitmap(CGE2Engine *vm, uint16 w, uint16 h, uint8 *map) : _w(w), _h(h), _
 // immediately as VGA video chunks, in near memory as fast as possible,
 // especially for text line real time display
 Bitmap::Bitmap(CGE2Engine *vm, uint16 w, uint16 h, uint8 fill)
-	: _w((w + 3) & ~3),                              // only full uint32 allowed!
-	  _h(h), _map(0), _b(nullptr), _vm(vm) {
+  : _w((w + 3) & ~3)
+  , // only full uint32 allowed!
+  _h(h)
+  , _map(0)
+  , _b(nullptr)
+  , _vm(vm) {
 
-	uint16 dsiz = _w >> 2;                           // data size (1 plane line size)
-	uint16 lsiz = 2 + dsiz + 2;                     // uint16 for line header, uint16 for gap
-	uint16 psiz = _h * lsiz;                         // - last gape, but + plane trailer
-	uint8 *v = new uint8[4 * psiz + _h * sizeof(*_b)];// the same for 4 planes
-	                                                // + room for wash table
+	uint16 dsiz = _w >> 2; // data size (1 plane line size)
+	uint16 lsiz = 2 + dsiz + 2; // uint16 for line header, uint16 for gap
+	uint16 psiz = _h * lsiz; // - last gape, but + plane trailer
+	uint8 *v = new uint8[4 * psiz + _h * sizeof(*_b)]; // the same for 4 planes
+	  // + room for wash table
 
-	WRITE_LE_UINT16(v, (kBmpCPY | dsiz));                 // data chunk hader
-	memset(v + 2, fill, dsiz);                      // data bytes
-	WRITE_LE_UINT16(v + lsiz - 2, (kBmpSKP | ((kScrWidth / 4) - dsiz)));  // gap
+	WRITE_LE_UINT16(v, (kBmpCPY | dsiz)); // data chunk hader
+	memset(v + 2, fill, dsiz); // data bytes
+	WRITE_LE_UINT16(v + lsiz - 2, (kBmpSKP | ((kScrWidth / 4) - dsiz))); // gap
 
 	// Replicate lines
 	byte *destP;
 	for (destP = v + lsiz; destP < (v + psiz); destP += lsiz)
 		Common::copy(v, v + lsiz, destP);
 
-	WRITE_LE_UINT16(v + psiz - 2, kBmpEOI);            // plane trailer uint16
+	WRITE_LE_UINT16(v + psiz - 2, kBmpEOI); // plane trailer uint16
 
 	// Replicate planes
 	for (destP = v + psiz; destP < (v + 4 * psiz); destP += psiz)
@@ -108,12 +130,18 @@ Bitmap::Bitmap(CGE2Engine *vm, uint16 w, uint16 h, uint8 fill)
 	for (HideDesc *hdP = b + 1; hdP < (b + _h); hdP++)
 		*hdP = *b;
 
-	b->_skip = 0;                                    // fix the first entry
+	b->_skip = 0; // fix the first entry
 	_v = v;
 	_b = b;
 }
 
-Bitmap::Bitmap(CGE2Engine *vm, const Bitmap &bmp) : _w(bmp._w), _h(bmp._h), _v(nullptr), _map(0), _b(nullptr), _vm(vm) {
+Bitmap::Bitmap(CGE2Engine *vm, const Bitmap &bmp)
+  : _w(bmp._w)
+  , _h(bmp._h)
+  , _v(nullptr)
+  , _map(0)
+  , _b(nullptr)
+  , _vm(vm) {
 	uint8 *v0 = bmp._v;
 	if (!v0)
 		return;
@@ -175,28 +203,28 @@ BitmapPtr Bitmap::code(uint8 *map) {
 
 	uint16 cnt;
 
-	if (_v) {                                        // old X-map exists, so remove it
+	if (_v) { // old X-map exists, so remove it
 		delete[] _v;
 		_v = nullptr;
 	}
 
-	while (true) {                                  // at most 2 times: for (V == NULL) & for allocated block;
+	while (true) { // at most 2 times: for (V == NULL) & for allocated block;
 		uint8 *im = _v + 2;
-		uint16 *cp = (uint16 *) _v;
+		uint16 *cp = (uint16 *)_v;
 
-		if (_v) {                                      // 2nd pass - fill the hide table
+		if (_v) { // 2nd pass - fill the hide table
 			for (uint i = 0; i < _h; i++) {
 				_b[i]._skip = 0xFFFF;
 				_b[i]._hide = 0x0000;
 			}
 		}
-		for (int bpl = 0; bpl < 4; bpl++) {              // once per each bitplane
+		for (int bpl = 0; bpl < 4; bpl++) { // once per each bitplane
 			uint8 *bm = map;
 			bool skip = (bm[bpl] == kPixelTransp);
 			uint16 j;
 
 			cnt = 0;
-			for (uint i = 0; i < _h; i++) {                  // once per each line
+			for (uint i = 0; i < _h; i++) { // once per each line
 				uint8 pix;
 				for (j = bpl; j < _w; j += 4) {
 					pix = bm[j];
@@ -212,7 +240,7 @@ BitmapPtr Bitmap::code(uint8 *map) {
 						if (_v)
 							WRITE_LE_UINT16(cp, cnt); // store block description uint16
 
-						cp = (uint16 *) im;
+						cp = (uint16 *)im;
 						im += 2;
 						skip = (pix == kPixelTransp);
 						cnt = 0;
@@ -234,24 +262,24 @@ BitmapPtr Bitmap::code(uint8 *map) {
 						if (_v)
 							WRITE_LE_UINT16(cp, cnt);
 
-						cp = (uint16 *) im;
+						cp = (uint16 *)im;
 						im += 2;
 						skip = true;
 						cnt = (kScrWidth - j + 3) / 4;
 					}
 				}
 			}
-			if (cnt && ! skip) {
+			if (cnt && !skip) {
 				cnt |= kBmpCPY;
 				if (_v)
 					WRITE_LE_UINT16(cp, cnt);
 
-				cp = (uint16 *) im;
+				cp = (uint16 *)im;
 				im += 2;
 			}
 			if (_v)
 				WRITE_LE_UINT16(cp, kBmpEOI);
-			cp = (uint16 *) im;
+			cp = (uint16 *)im;
 			im += 2;
 		}
 		if (_v)
@@ -263,7 +291,7 @@ BitmapPtr Bitmap::code(uint8 *map) {
 	}
 	cnt = 0;
 	for (uint i = 0; i < _h; i++) {
-		if (_b[i]._skip == 0xFFFF) {                    // whole line is skipped
+		if (_b[i]._skip == 0xFFFF) { // whole line is skipped
 			_b[i]._skip = (cnt + kScrWidth) >> 2;
 			cnt = 0;
 		} else {
@@ -384,54 +412,54 @@ bool Bitmap::loadVBM(EncryptedStream *f) {
 	return (!f->err());
 }
 
-void Bitmap::xLatPos(V2D& p) {
+void Bitmap::xLatPos(V2D &p) {
 	p.x -= (_w >> 1);
 	p.y = kWorldHeight - p.y - _h;
 }
 
-#define	_    kPixelTransp,
-#define L               1,
-#define G               2,
-#define D               3,
-#define kDesignSize   240
+#define _ kPixelTransp,
+#define L 1,
+#define G 2,
+#define D 3,
+#define kDesignSize 240
 
 uint8 *Bitmap::makeSpeechBubbleTail(int which, uint8 colorSet[][4]) {
 	static const uint8 kSLDesign[kDesignSize] = {
 		G G G G G G G G G _ _ _ _ _ _
-		L G G G G G G G G D _ _ _ _ _
-		_ L G G G G G G G D _ _ _ _ _
-		_ _ L G G G G G G G D _ _ _ _
-		_ _ _ L G G G G G G D _ _ _ _
-		_ _ _ _ L G G G G G D _ _ _ _
-		_ _ _ _ _ L G G G G G D _ _ _
-		_ _ _ _ _ _ L G G G G D _ _ _
-		_ _ _ _ _ _ _ L G G G D _ _ _
-		_ _ _ _ _ _ _ _ L G G G D _ _
-		_ _ _ _ _ _ _ _ _ L G G D _ _
-		_ _ _ _ _ _ _ _ _ _ L G D _ _
-		_ _ _ _ _ _ _ _ _ _ _ L G D _
-		_ _ _ _ _ _ _ _ _ _ _ _ L D _
-		_ _ _ _ _ _ _ _ _ _ _ _ _ L D
-		_ _ _ _ _ _ _ _ _ _ _ _ _ _ D
+		  L G G G G G G G G D _ _ _ _ _
+		    _ L G G G G G G G D _ _ _ _ _
+		      _ _ L G G G G G G G D _ _ _ _
+		        _ _ _ L G G G G G G D _ _ _ _
+		          _ _ _ _ L G G G G G D _ _ _ _
+		            _ _ _ _ _ L G G G G G D _ _ _
+		              _ _ _ _ _ _ L G G G G D _ _ _
+		                _ _ _ _ _ _ _ L G G G D _ _ _
+		                  _ _ _ _ _ _ _ _ L G G G D _ _
+		                    _ _ _ _ _ _ _ _ _ L G G D _ _
+		                      _ _ _ _ _ _ _ _ _ _ L G D _ _
+		                        _ _ _ _ _ _ _ _ _ _ _ L G D _
+		                          _ _ _ _ _ _ _ _ _ _ _ _ L D _
+		                            _ _ _ _ _ _ _ _ _ _ _ _ _ L D
+		                              _ _ _ _ _ _ _ _ _ _ _ _ _ _ D
 	};
 
 	static const uint8 kSRDesign[kDesignSize] = {
 		_ _ _ _ _ _ G G G G G G G G G
-		_ _ _ _ _ L G G G G G G G G D
-		_ _ _ _ _ L G G G G G G G D _
-		_ _ _ _ L G G G G G G G D _ _
-		_ _ _ _ L G G G G G G D _ _ _
-		_ _ _ _ L G G G G G D _ _ _ _
-		_ _ _ L G G G G G D _ _ _ _ _
-		_ _ _ L G G G G D _ _ _ _ _ _
-		_ _ _ L G G G D _ _ _ _ _ _ _
-		_ _ L G G G D _ _ _ _ _ _ _ _
-		_ _ L G G D _ _ _ _ _ _ _ _ _
-		_ _ L G D _ _ _ _ _ _ _ _ _ _
-		_ L G D _ _ _ _ _ _ _ _ _ _ _
-		_ L D _ _ _ _ _ _ _ _ _ _ _ _
-		L D _ _ _ _ _ _ _ _ _ _ _ _ _
-		D _ _ _ _ _ _ _ _ _ _ _ _ _ _
+		  _ _ _ _ _ L G G G G G G G G D
+		    _ _ _ _ _ L G G G G G G G D _
+		      _ _ _ _ L G G G G G G G D _ _
+		        _ _ _ _ L G G G G G G D _ _ _
+		          _ _ _ _ L G G G G G D _ _ _ _
+		            _ _ _ L G G G G G D _ _ _ _ _
+		              _ _ _ L G G G G D _ _ _ _ _ _
+		                _ _ _ L G G G D _ _ _ _ _ _ _
+		                  _ _ L G G G D _ _ _ _ _ _ _ _
+		                    _ _ L G G D _ _ _ _ _ _ _ _ _
+		                      _ _ L G D _ _ _ _ _ _ _ _ _ _
+		                        _ L G D _ _ _ _ _ _ _ _ _ _ _
+		                          _ L D _ _ _ _ _ _ _ _ _ _ _ _
+		                            L D _ _ _ _ _ _ _ _ _ _ _ _ _
+		                              D _ _ _ _ _ _ _ _ _ _ _ _ _ _
 	};
 
 	uint8 *des = new uint8[kDesignSize];

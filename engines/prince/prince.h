@@ -23,16 +23,16 @@
 #ifndef PRINCE_PRINCE_H
 #define PRINCE_PRINCE_H
 
-#include "common/random.h"
-#include "common/system.h"
-#include "common/debug.h"
 #include "common/debug-channels.h"
-#include "common/textconsole.h"
-#include "common/rect.h"
-#include "common/events.h"
+#include "common/debug.h"
 #include "common/endian.h"
+#include "common/events.h"
+#include "common/random.h"
+#include "common/rect.h"
 #include "common/savefile.h"
 #include "common/serializer.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 
 #include "image/bmp.h"
 
@@ -78,8 +78,8 @@ class Pscr;
 
 enum {
 	GF_TRANSLATED = 1 << 0,
-	GF_EXTRACTED  = 1 << 1,
-	GF_NOVOICES   = 1 << 2
+	GF_EXTRACTED = 1 << 1,
+	GF_NOVOICES = 1 << 2
 };
 
 struct SavegameHeader {
@@ -100,7 +100,12 @@ struct Text {
 	uint16 _time;
 	uint32 _color;
 
-	Text() : _str(nullptr), _x(0), _y(0), _time(0), _color(255){
+	Text()
+	  : _str(nullptr)
+	  , _x(0)
+	  , _y(0)
+	  , _time(0)
+	  , _color(255) {
 	}
 };
 
@@ -131,9 +136,9 @@ struct BAS {
 const int kStructSizeBAS = 28;
 
 struct BASA {
-	int16 _num;	// animation number
-	int16 _start;	// initial frame
-	int16 _end;	// final frame
+	int16 _num; // animation number
+	int16 _start; // initial frame
+	int16 _end; // final frame
 	//int16 _pad;	// fulfilment to 8 bytes
 };
 
@@ -150,7 +155,7 @@ struct Anim {
 	int16 _lastFrame; // last phase
 	int16 _loopFrame; // first frame of loop
 	int16 _showFrame; // actual visible frame of animation
-	int16 _loopType;	 // type of loop (0 - last frame; 1 - normal loop (begin from _loopFrame); 2 - no loop; 3 - load new animation)
+	int16 _loopType; // type of loop (0 - last frame; 1 - normal loop (begin from _loopFrame); 2 - no loop; 3 - load new animation)
 	int16 _nextAnim; // number of next animation to load after actual
 	int16 _x;
 	int16 _y;
@@ -264,11 +269,10 @@ struct DrawNode {
 
 struct DebugChannel {
 
-enum Type {
-	kScript,
-	kEngine
-};
-
+	enum Type {
+		kScript,
+		kEngine
+	};
 };
 
 class PrinceEngine : public Engine {
@@ -465,7 +469,7 @@ public:
 	bool _inventoryBackgroundRemember;
 	int _invLineX;
 	int _invLineY;
-	int _invLine;  // number of items in one line
+	int _invLine; // number of items in one line
 	int _invLines; // number of lines with inventory items
 	int _invLineW;
 	int _invLineH;
@@ -694,7 +698,6 @@ private:
 	bool _flicLooped;
 
 	void mainLoop();
-
 };
 
 } // End of namespace Prince

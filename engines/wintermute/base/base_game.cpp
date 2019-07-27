@@ -26,54 +26,54 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
-#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/base_game_music.h"
-#include "engines/wintermute/base/base_game_settings.h"
+#include "base/version.h"
+#include "common/config-manager.h"
+#include "common/file.h"
+#include "common/keyboard.h"
+#include "common/savefile.h"
+#include "common/system.h"
+#include "common/textconsole.h"
+#include "common/util.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_fader.h"
 #include "engines/wintermute/base/base_file_manager.h"
-#include "engines/wintermute/base/font/base_font.h"
-#include "engines/wintermute/base/font/base_font_storage.h"
-#include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/base/base_game_music.h"
+#include "engines/wintermute/base/base_game_settings.h"
 #include "engines/wintermute/base/base_keyboard_state.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_quick_msg.h"
-#include "engines/wintermute/base/sound/base_sound_manager.h"
+#include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_sub_frame.h"
+#include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/base_transition_manager.h"
 #include "engines/wintermute/base/base_viewport.h"
-#include "engines/wintermute/base/base_region.h"
-#include "engines/wintermute/base/base_surface_storage.h"
-#include "engines/wintermute/base/saveload.h"
+#include "engines/wintermute/base/font/base_font.h"
+#include "engines/wintermute/base/font/base_font_storage.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/save_thumb_helper.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/base/saveload.h"
+#include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
-#include "engines/wintermute/base/scriptables/script.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/sound/base_sound.h"
-#include "engines/wintermute/video/video_player.h"
-#include "engines/wintermute/video/video_theora_player.h"
-#include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/base/sound/base_sound_manager.h"
+#include "engines/wintermute/dcgf.h"
+#include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/ui/ui_window.h"
 #include "engines/wintermute/utils/crc.h"
 #include "engines/wintermute/utils/path_util.h"
 #include "engines/wintermute/utils/string_util.h"
-#include "engines/wintermute/ui/ui_window.h"
+#include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/video/video_player.h"
+#include "engines/wintermute/video/video_theora_player.h"
 #include "engines/wintermute/wintermute.h"
-#include "engines/wintermute/platform_osystem.h"
-#include "base/version.h"
-#include "common/config-manager.h"
-#include "common/savefile.h"
-#include "common/textconsole.h"
-#include "common/util.h"
-#include "common/keyboard.h"
-#include "common/system.h"
-#include "common/file.h"
 #include "graphics/scaler.h"
 
 #if EXTENDED_DEBUGGER_ENABLED
-#include "engines/wintermute/base/scriptables/debuggable/debuggable_script_engine.h"
+#	include "engines/wintermute/base/scriptables/debuggable/debuggable_script_engine.h"
 #endif
 
 namespace Wintermute {
@@ -84,9 +84,12 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseGame, true)
 
-
 //////////////////////////////////////////////////////////////////////
-BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _targetName(targetName), _timerNormal(), _timerLive() {
+BaseGame::BaseGame(const Common::String &targetName)
+  : BaseObject(this)
+  , _targetName(targetName)
+  , _timerNormal()
+  , _timerLive() {
 	_shuttingDown = false;
 
 	_state = GAME_RUNNING;
@@ -211,7 +214,6 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 
 	_usedMem = 0;
 
-
 	_autoSaveOnExit = true;
 	_autoSaveSlot = 999;
 	_cursorHidden = false;
@@ -225,10 +227,8 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 	_constrainedMemory = false;
 
 	_settings = new BaseGameSettings(this);
-//#endif
-
+	//#endif
 }
-
 
 //////////////////////////////////////////////////////////////////////
 BaseGame::~BaseGame() {
@@ -280,7 +280,6 @@ BaseGame::~BaseGame() {
 	DEBUG_DebugDisable();
 	debugC(kWintermuteDebugLog, "--- shutting down normally ---\n");
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::cleanup() {
@@ -471,7 +470,6 @@ bool BaseGame::initialize1() {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////
 bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 	_renderer = makeOSystemRenderer(this);
@@ -482,7 +480,6 @@ bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 bool BaseGame::initialize3() { // renderer is initialized
 	_posX = _renderer->getWidth() / 2;
@@ -490,7 +487,6 @@ bool BaseGame::initialize3() { // renderer is initialized
 	_renderer->initIndicator();
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 void BaseGame::DEBUG_DebugEnable(const char *filename) {
@@ -515,7 +511,6 @@ void BaseGame::DEBUG_DebugEnable(const char *filename) {
 	LOG(0, "");
 }
 
-
 //////////////////////////////////////////////////////////////////////
 void BaseGame::DEBUG_DebugDisable() {
 	if (_debugLogFile != nullptr) {
@@ -525,7 +520,6 @@ void BaseGame::DEBUG_DebugDisable() {
 	}
 	_debugDebugMode = false;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 void BaseGame::LOG(bool res, const char *fmt, ...) {
@@ -555,13 +549,11 @@ void BaseGame::LOG(bool res, const char *fmt, ...) {
 	//QuickMessage(buff);
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::setEngineLogCallback(ENGINE_LOG_CALLBACK callback, void *data) {
 	_engineLogCallback = callback;
 	_engineLogCallbackData = data;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 bool BaseGame::initLoop() {
@@ -575,12 +567,11 @@ bool BaseGame::initLoop() {
 	_surfaceStorage->initLoop();
 	_fontStorage->initLoop();
 
-
 	//_activeObject = nullptr;
 
 	// count FPS
 	_deltaTime = _currentTime - _lastTime;
-	_lastTime  = _currentTime;
+	_lastTime = _currentTime;
 	_fpsTime += _deltaTime;
 
 	_timerLive.updateTime(_deltaTime, 1000);
@@ -594,7 +585,7 @@ bool BaseGame::initLoop() {
 	_framesRendered++;
 	if (_fpsTime > 1000) {
 		_fps = _framesRendered;
-		_framesRendered  = 0;
+		_framesRendered = 0;
 		_fpsTime = 0;
 	}
 	//_gameRef->LOG(0, "%d", _fps);
@@ -618,18 +609,15 @@ bool BaseGame::initLoop() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 bool BaseGame::initInput() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 int BaseGame::getSequence() {
 	return ++_sequence;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::setOffset(int32 offsetX, int32 offsetY) {
@@ -646,7 +634,6 @@ void BaseGame::getOffset(int *offsetX, int *offsetY) const {
 		*offsetY = _offsetY;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::loadFile(const char *filename) {
@@ -668,7 +655,6 @@ bool BaseGame::loadFile(const char *filename) {
 
 	return ret;
 }
-
 
 TOKEN_DEF_START
 TOKEN_DEF(GAME)
@@ -816,7 +802,6 @@ bool BaseGame::loadBuffer(char *buffer, bool complete) {
 			_videoFont = _gameRef->_fontStorage->addFont(params);
 			break;
 
-
 		case TOKEN_CURSOR:
 			delete _cursor;
 			_cursor = new BaseSprite(_gameRef);
@@ -896,8 +881,7 @@ bool BaseGame::loadBuffer(char *buffer, bool complete) {
 			int r, g, b, a;
 			parser.scanStr(params, "%d,%d,%d,%d", &r, &g, &b, &a);
 			indicatorColor = BYTETORGBA(r, g, b, a);
-		}
-		break;
+		} break;
 
 		case TOKEN_INDICATOR_WIDTH:
 			parser.scanStr(params, "%d", &indicatorWidth);
@@ -950,7 +934,6 @@ bool BaseGame::loadBuffer(char *buffer, bool complete) {
 		_systemFont = _gameRef->_fontStorage->addFont("system_font.fnt");
 	}
 
-
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		_gameRef->LOG(0, "Syntax error in GAME definition");
 		return STATUS_FAILED;
@@ -962,7 +945,6 @@ bool BaseGame::loadBuffer(char *buffer, bool complete) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
@@ -1042,7 +1024,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "ValidObject") == 0) {
 		stack->correctParams(1);
 		BaseScriptable *obj = stack->pop()->getNative();
-		if (validObject((BaseObject *) obj)) {
+		if (validObject((BaseObject *)obj)) {
 			stack->pushBool(true);
 		} else {
 			stack->pushBool(false);
@@ -1061,7 +1043,6 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		return STATUS_OK;
 	}
-
 
 	//////////////////////////////////////////////////////////////////////////
 	// UnloadObject
@@ -1837,7 +1818,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AccOutputText") == 0) {
 		stack->correctParams(2);
-		/* const char *str = */	stack->pop()->getString();
+		/* const char *str = */ stack->pop()->getString();
 		/* int type = */ stack->pop()->getInt();
 		// do nothing
 		stack->pushNULL();
@@ -1968,7 +1949,6 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return BaseObject::scCallMethod(script, stack, thisStack, name);
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 ScValue *BaseGame::scGetProperty(const Common::String &name) {
@@ -2220,7 +2200,6 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 		return _scValue;
 	}
 
-
 	//////////////////////////////////////////////////////////////////////////
 	// Frozen
 	//////////////////////////////////////////////////////////////////////////
@@ -2366,7 +2345,6 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 		return BaseObject::scGetProperty(name);
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::scSetProperty(const char *name, ScValue *value) {
@@ -2568,13 +2546,10 @@ bool BaseGame::scSetProperty(const char *name, ScValue *value) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 const char *BaseGame::scToString() {
 	return "[game object]";
 }
-
-
 
 #define QUICK_MSG_DURATION 3000
 //////////////////////////////////////////////////////////////////////////
@@ -2602,7 +2577,6 @@ bool BaseGame::displayQuickMsg() {
 	return STATUS_OK;
 }
 
-
 #define MAX_QUICK_MSG 5
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::quickMessage(const char *text) {
@@ -2610,9 +2584,8 @@ void BaseGame::quickMessage(const char *text) {
 		delete _quickMessages[0];
 		_quickMessages.remove_at(0);
 	}
-	_quickMessages.add(new BaseQuickMsg(_currentTime,  text));
+	_quickMessages.add(new BaseQuickMsg(_currentTime, text));
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::quickMessageForm(char *fmt, ...) {
@@ -2626,13 +2599,11 @@ void BaseGame::quickMessageForm(char *fmt, ...) {
 	quickMessage(buff);
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::registerObject(BaseObject *object) {
 	_regObjects.add(object);
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::unregisterObject(BaseObject *object) {
@@ -2679,7 +2650,6 @@ bool BaseGame::unregisterObject(BaseObject *object) {
 	return STATUS_FAILED;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::invalidateValues(void *value, void *data) {
 	ScValue *val = (ScValue *)value;
@@ -2691,8 +2661,6 @@ void BaseGame::invalidateValues(void *value, void *data) {
 		val->setNULL();
 	}
 }
-
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::validObject(BaseObject *object) {
@@ -2710,7 +2678,6 @@ bool BaseGame::validObject(BaseObject *object) {
 	}
 	return false;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name) {
@@ -2731,7 +2698,7 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "String") == 0) {
 		thisObj = thisStack->getTop();
 
-		thisObj->setNative(makeSXString(_gameRef,  stack));
+		thisObj->setNative(makeSXString(_gameRef, stack));
 		stack->pushNULL();
 	}
 
@@ -2741,7 +2708,7 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "MemBuffer") == 0) {
 		thisObj = thisStack->getTop();
 
-		thisObj->setNative(makeSXMemBuffer(_gameRef,  stack));
+		thisObj->setNative(makeSXMemBuffer(_gameRef, stack));
 		stack->pushNULL();
 	}
 
@@ -2751,7 +2718,7 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "File") == 0) {
 		thisObj = thisStack->getTop();
 
-		thisObj->setNative(makeSXFile(_gameRef,  stack));
+		thisObj->setNative(makeSXFile(_gameRef, stack));
 		stack->pushNULL();
 	}
 
@@ -2771,7 +2738,7 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "Date") == 0) {
 		thisObj = thisStack->getTop();
 
-		thisObj->setNative(makeSXDate(_gameRef,  stack));
+		thisObj->setNative(makeSXDate(_gameRef, stack));
 		stack->pushNULL();
 	}
 
@@ -2781,7 +2748,7 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "Array") == 0) {
 		thisObj = thisStack->getTop();
 
-		thisObj->setNative(makeSXArray(_gameRef,  stack));
+		thisObj->setNative(makeSXArray(_gameRef, stack));
 		stack->pushNULL();
 	}
 
@@ -2791,7 +2758,7 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "Object") == 0) {
 		thisObj = thisStack->getTop();
 
-		thisObj->setNative(makeSXObject(_gameRef,  stack));
+		thisObj->setNative(makeSXObject(_gameRef, stack));
 		stack->pushNULL();
 	}
 
@@ -2825,7 +2792,7 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(2);
 
 		int from = stack->pop()->getInt();
-		int to   = stack->pop()->getInt();
+		int to = stack->pop()->getInt();
 
 		stack->pushInt(BaseUtils::randomInt(from, to));
 	}
@@ -3005,7 +2972,6 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::showCursor() {
 	if (_cursorHidden) {
@@ -3030,12 +2996,10 @@ bool BaseGame::showCursor() {
 	return STATUS_FAILED;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::saveGame(int32 slot, const char *desc, bool quickSave) {
 	return SaveLoad::saveGame(slot, desc, quickSave, _gameRef);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::loadGame(uint32 slot) {
@@ -3048,7 +3012,6 @@ bool BaseGame::loadGame(uint32 slot) {
 
 	return loadGame(filename.c_str());
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::loadGame(const char *filename) {
@@ -3162,7 +3125,6 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::focusWindow(UIWindow *window) {
 	UIWindow *prev = _focusedWindow;
@@ -3186,7 +3148,6 @@ bool BaseGame::focusWindow(UIWindow *window) {
 	return STATUS_FAILED;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::freeze(bool includingMusic) {
 	if (_freezeLevel == 0) {
@@ -3201,7 +3162,6 @@ bool BaseGame::freeze(bool includingMusic) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::unfreeze() {
@@ -3220,7 +3180,6 @@ bool BaseGame::unfreeze() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::handleKeypress(Common::Event *event, bool printable) {
 	if (isVideoPlaying()) {
@@ -3237,7 +3196,7 @@ bool BaseGame::handleKeypress(Common::Event *event, bool printable) {
 
 	_keyboardState->handleKeyPress(event);
 	_keyboardState->readKey(event);
-// TODO
+	// TODO
 
 	if (_focusedWindow) {
 		if (!_gameRef->_focusedWindow->handleKeypress(event, _keyboardState->isCurrentPrintable())) {
@@ -3262,7 +3221,6 @@ void BaseGame::handleKeyRelease(Common::Event *event) {
 	_keyboardState->handleKeyRelease(event);
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::handleMouseWheel(int32 delta) {
 	bool handled = false;
@@ -3277,7 +3235,6 @@ bool BaseGame::handleMouseWheel(int32 delta) {
 				_gameRef->_focusedWindow->applyEvent("MouseWheelUp");
 				handled = true;
 			}
-
 		}
 	}
 
@@ -3291,7 +3248,6 @@ bool BaseGame::handleMouseWheel(int32 delta) {
 
 	return true;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) const {
@@ -3312,7 +3268,6 @@ bool BaseGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::setWindowTitle() {
 	if (_renderer) {
@@ -3322,7 +3277,6 @@ void BaseGame::setWindowTitle() {
 			Common::strlcat(title, " - ", 512);
 		}
 		Common::strlcat(title, "WME Lite", 512);
-
 
 		Utf8String utf8Title;
 		if (_textEncoding == TEXT_UTF8) {
@@ -3336,7 +3290,6 @@ void BaseGame::setWindowTitle() {
 		warning("BaseGame::SetWindowTitle: Ignoring value: %s", utf8Title.c_str());
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::setActiveObject(BaseObject *obj) {
@@ -3361,7 +3314,6 @@ bool BaseGame::setActiveObject(BaseObject *obj) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::pushViewport(BaseViewport *viewport) {
 	_viewportSP++;
@@ -3376,7 +3328,6 @@ bool BaseGame::pushViewport(BaseViewport *viewport) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::popViewport() {
 	_viewportSP--;
@@ -3386,14 +3337,14 @@ bool BaseGame::popViewport() {
 
 	if (_viewportSP >= 0 && _viewportSP < (int32)_viewportStack.size()) {
 		_renderer->setViewport(_viewportStack[_viewportSP]->getRect());
-	} else _renderer->setViewport(_renderer->_drawOffsetX,
-		                              _renderer->_drawOffsetY,
-		                              _renderer->getWidth() + _renderer->_drawOffsetX,
-		                              _renderer->getHeight() + _renderer->_drawOffsetY);
+	} else
+		_renderer->setViewport(_renderer->_drawOffsetX,
+		                       _renderer->_drawOffsetY,
+		                       _renderer->getWidth() + _renderer->_drawOffsetX,
+		                       _renderer->getHeight() + _renderer->_drawOffsetY);
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::getCurrentViewportRect(Rect32 *rect, bool *custom) const {
@@ -3407,9 +3358,9 @@ bool BaseGame::getCurrentViewportRect(Rect32 *rect, bool *custom) const {
 			}
 		} else {
 			rect->setRect(_renderer->_drawOffsetX,
-						  _renderer->_drawOffsetY,
-						  _renderer->getWidth() + _renderer->_drawOffsetX,
-						  _renderer->getHeight() + _renderer->_drawOffsetY);
+			              _renderer->_drawOffsetY,
+			              _renderer->getWidth() + _renderer->_drawOffsetX,
+			              _renderer->getHeight() + _renderer->_drawOffsetY);
 			if (custom) {
 				*custom = false;
 			}
@@ -3418,7 +3369,6 @@ bool BaseGame::getCurrentViewportRect(Rect32 *rect, bool *custom) const {
 		return STATUS_OK;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::getCurrentViewportOffset(int *offsetX, int *offsetY) const {
@@ -3441,18 +3391,15 @@ bool BaseGame::getCurrentViewportOffset(int *offsetX, int *offsetY) const {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::windowLoadHook(UIWindow *win, char **buf, char **params) {
 	return STATUS_FAILED;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::windowScriptMethodHook(UIWindow *win, ScScript *script, ScStack *stack, const char *name) {
 	return STATUS_FAILED;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::setInteractive(bool state) {
@@ -3461,7 +3408,6 @@ void BaseGame::setInteractive(bool state) {
 		_transMgr->_origInteractive = state;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::resetMousePos() {
@@ -3472,12 +3418,10 @@ void BaseGame::resetMousePos() {
 	BasePlatform::setCursorPos(p.x, p.y);
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::displayContent(bool doUpdate, bool displayAll) {
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::displayContentSimple() {
@@ -3510,7 +3454,6 @@ void BaseGame::DEBUG_DumpClassRegistry() {
 	_gameRef->quickMessage("Classes dump completed.");
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::invalidateDeviceObjects() {
 	for (uint32 i = 0; i < _regObjects.size(); i++) {
@@ -3518,7 +3461,6 @@ bool BaseGame::invalidateDeviceObjects() {
 	}
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::restoreDeviceObjects() {
@@ -3567,7 +3509,6 @@ bool BaseGame::stopVideo() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::drawCursor(BaseSprite *cursor) {
 	if (!cursor) {
@@ -3579,7 +3520,6 @@ bool BaseGame::drawCursor(BaseSprite *cursor) {
 	}
 	return cursor->draw(_mousePos.x, _mousePos.y);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -3798,7 +3738,6 @@ bool BaseGame::displayDebugInfo() {
 		sprintf(str, "Running scripts: %d (r:%d w:%d p:%d)", scrTotal, scrRunning, scrWaiting, scrPersistent);
 		_systemFont->drawText((byte *)str, 0, 70, _renderer->getWidth(), TAL_RIGHT);
 
-
 		sprintf(str, "Timer: %d", getTimer()->getTime());
 		_gameRef->_systemFont->drawText((byte *)str, 0, 130, _renderer->getWidth(), TAL_RIGHT);
 
@@ -3808,7 +3747,6 @@ bool BaseGame::displayDebugInfo() {
 
 		sprintf(str, "GfxMem: %dMB", _usedMem / (1024 * 1024));
 		_systemFont->drawText((byte *)str, 0, 170, _renderer->getWidth(), TAL_RIGHT);
-
 	}
 
 	return STATUS_OK;
@@ -3889,7 +3827,6 @@ bool BaseGame::isDoubleClick(int32 buttonIndex) {
 
 	int moveX = abs(pos.x - _lastClick[buttonIndex].posX);
 	int moveY = abs(pos.y - _lastClick[buttonIndex].posY);
-
 
 	if (_lastClick[buttonIndex].time == 0 || g_system->getMillis() - _lastClick[buttonIndex].time > maxDoubleCLickTime || moveX > maxMoveX || moveY > maxMoveY) {
 		_lastClick[buttonIndex].time = g_system->getMillis();

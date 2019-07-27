@@ -37,6 +37,7 @@ public:
 	int readBuffer(int16 *buffer, const int numSamples);
 
 	bool rewind();
+
 private:
 	Common::SeekableReadStream *_stream;
 	DisposeAfterUse::Flag _disposeAfterUse;
@@ -53,7 +54,8 @@ private:
 };
 
 XAStream::XAStream(Common::SeekableReadStream *stream, int rate, DisposeAfterUse::Flag disposeAfterUse)
-		: _stream(stream), _disposeAfterUse(disposeAfterUse) {
+  : _stream(stream)
+  , _disposeAfterUse(disposeAfterUse) {
 	_samplesRemaining = 0;
 	_predictor = 0;
 	_s1 = _s2 = 0.0;
@@ -62,18 +64,17 @@ XAStream::XAStream(Common::SeekableReadStream *stream, int rate, DisposeAfterUse
 	_endOfData = false;
 }
 
-
 XAStream::~XAStream() {
 	if (_disposeAfterUse == DisposeAfterUse::YES)
 		delete _stream;
 }
 
 static const double s_xaDataTable[5][2] = {
-	{  0.0, 0.0 },
-	{  60.0 / 64.0,  0.0 },
-	{  115.0 / 64.0, -52.0 / 64.0 },
-	{  98.0 / 64.0, -55.0 / 64.0 },
-	{  122.0 / 64.0, -60.0 / 64.0 }
+	{ 0.0, 0.0 },
+	{ 60.0 / 64.0, 0.0 },
+	{ 115.0 / 64.0, -52.0 / 64.0 },
+	{ 98.0 / 64.0, -55.0 / 64.0 },
+	{ 122.0 / 64.0, -60.0 / 64.0 }
 };
 
 int XAStream::readBuffer(int16 *buffer, const int numSamples) {

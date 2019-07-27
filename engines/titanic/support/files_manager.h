@@ -43,11 +43,17 @@ class CFilesManager {
 		uint _size;
 		uint _flags;
 
-		ResourceEntry() : _offset(0), _size(0), _flags(0) {}
-		ResourceEntry(uint offset, uint size, uint flags) :
-			_offset(offset), _size(size), _flags(flags) {}
+		ResourceEntry()
+		  : _offset(0)
+		  , _size(0)
+		  , _flags(0) {}
+		ResourceEntry(uint offset, uint size, uint flags)
+		  : _offset(offset)
+		  , _size(size)
+		  , _flags(flags) {}
 	};
 	typedef Common::HashMap<Common::String, ResourceEntry> ResourceHash;
+
 private:
 	TitanicEngine *_vm;
 	CGameManager *_gameManager;
@@ -57,6 +63,7 @@ private:
 	int _drive;
 	const CString _assetsPath;
 	int _version;
+
 public:
 	CFilesManager(TitanicEngine *vm);
 	~CFilesManager();

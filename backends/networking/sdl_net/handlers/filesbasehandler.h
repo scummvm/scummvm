@@ -27,7 +27,7 @@
 
 namespace Networking {
 
-class FilesBaseHandler: public BaseHandler {
+class FilesBaseHandler : public BaseHandler {
 protected:
 	Common::String parentPath(Common::String path);
 
@@ -40,6 +40,7 @@ protected:
 	* Returns true on success.
 	*/
 	bool transformPath(Common::String &path, Common::String &prefixToRemove, Common::String &prefixToAdd, bool isDirectory = true);
+
 public:
 	FilesBaseHandler();
 	virtual ~FilesBaseHandler();

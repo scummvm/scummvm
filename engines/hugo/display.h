@@ -36,18 +36,19 @@ class WriteStream;
 }
 
 namespace Hugo {
-enum OverlayState {kOvlUndef, kOvlForeground, kOvlBackground}; // Overlay state
+enum OverlayState { kOvlUndef,
+	                  kOvlForeground,
+	                  kOvlBackground }; // Overlay state
 
-static const int kCenter = -1;                      // Used to center text in x
-
+static const int kCenter = -1; // Used to center text in x
 
 class Screen {
 public:
-	struct Rect {                                 // Rectangle used in Display list
-		int16 _x;                                    // Position in dib
-		int16 _y;                                    // Position in dib
-		int16 _dx;                                   // width
-		int16 _dy;                                   // height
+	struct Rect { // Rectangle used in Display list
+		int16 _x; // Position in dib
+		int16 _y; // Position in dib
+		int16 _dx; // width
+		int16 _dy; // height
 	};
 
 	Screen(HugoEngine *vm);
@@ -56,34 +57,34 @@ public:
 	virtual void loadFont(int16 fontId) = 0;
 	virtual void loadFontArr(Common::ReadStream &in) = 0;
 
-	int16    fontHeight() const;
-	int16    stringLength(const char *s) const;
+	int16 fontHeight() const;
+	int16 stringLength(const char *s) const;
 
-	void     displayBackground();
-	void     displayFrame(const int sx, const int sy, Seq *seq, const bool foreFl);
-	void     displayList(int update, ...);
-	void     displayRect(const int16 x, const int16 y, const int16 dx, const int16 dy);
-	void     drawBoundaries();
-	void     drawRectangle(const bool filledFl, const int16 x1, const int16 y1, const int16 x2, const int16 y2, const int color);
-	void     drawShape(const int x, const int y, const int color1, const int color2);
-	void     drawStatusText();
-	void     freeScreen();
-	void     hideCursor();
-	void     initDisplay();
-	void     initNewScreenDisplay();
-	void     loadPalette(Common::ReadStream &in);
-	void     moveImage(ImagePtr srcImage, const int16 x1, const int16 y1, const int16 dx, int16 dy, const int16 width1, ImagePtr dstImage, const int16 x2, const int16 y2, const int16 width2);
-	void     remapPal(uint16 oldIndex, uint16 newIndex);
-	void     resetInventoryObjId();
-	void     restorePal(Common::ReadStream *f);
-	void     savePal(Common::WriteStream *f) const;
-	void     setBackgroundColor(const uint16 color);
-	void     setCursorPal();
-	void     selectInventoryObjId(const int16 objId);
-	void     shadowStr(int16 sx, const int16 sy, const char *s, const byte color);
-	void     showCursor();
-	void     userHelp() const;
-	void     writeStr(int16 sx, const int16 sy, const char *s, const byte color);
+	void displayBackground();
+	void displayFrame(const int sx, const int sy, Seq *seq, const bool foreFl);
+	void displayList(int update, ...);
+	void displayRect(const int16 x, const int16 y, const int16 dx, const int16 dy);
+	void drawBoundaries();
+	void drawRectangle(const bool filledFl, const int16 x1, const int16 y1, const int16 x2, const int16 y2, const int color);
+	void drawShape(const int x, const int y, const int color1, const int color2);
+	void drawStatusText();
+	void freeScreen();
+	void hideCursor();
+	void initDisplay();
+	void initNewScreenDisplay();
+	void loadPalette(Common::ReadStream &in);
+	void moveImage(ImagePtr srcImage, const int16 x1, const int16 y1, const int16 dx, int16 dy, const int16 width1, ImagePtr dstImage, const int16 x2, const int16 y2, const int16 width2);
+	void remapPal(uint16 oldIndex, uint16 newIndex);
+	void resetInventoryObjId();
+	void restorePal(Common::ReadStream *f);
+	void savePal(Common::WriteStream *f) const;
+	void setBackgroundColor(const uint16 color);
+	void setCursorPal();
+	void selectInventoryObjId(const int16 objId);
+	void shadowStr(int16 sx, const int16 sy, const char *s, const byte color);
+	void showCursor();
+	void userHelp() const;
+	void writeStr(int16 sx, const int16 sy, const char *s, const byte color);
 
 	Icondib &getIconBuffer();
 	Viewdib &getBackBuffer();
@@ -94,12 +95,12 @@ public:
 protected:
 	HugoEngine *_vm;
 
-	static const int kRectListSize = 16;            // Size of add/restore rect lists
+	static const int kRectListSize = 16; // Size of add/restore rect lists
 	static const int kBlitListSize = kRectListSize * 2; // Size of dirty rect blit list
 	static const int kShapeSize = 24;
-	static const int kFontLength = 128;             // Number of chars in font
-	static const int kFontSize = 1200;              // Max size of font data
-	static const int kNumFonts = 3;                 // Number of dib fonts
+	static const int kFontLength = 128; // Number of chars in font
+	static const int kFontSize = 1200; // Max size of font data
+	static const int kNumFonts = 3; // Number of dib fonts
 	static const byte stdMouseCursorHeight = 20;
 	static const byte stdMouseCursorWidth = 12;
 
@@ -107,9 +108,9 @@ protected:
 
 	// Fonts used in dib (non-GDI)
 	byte *_arrayFont[kNumFonts];
-	byte  _fnt;                                     // Current font number
-	byte  _fontdata[kNumFonts][kFontSize];          // Font data
-	byte *_font[kNumFonts][kFontLength];            // Ptrs to each char
+	byte _fnt; // Current font number
+	byte _fontdata[kNumFonts][kFontSize]; // Font data
+	byte *_font[kNumFonts][kFontLength]; // Ptrs to each char
 	byte *_mainPalette;
 	int16 _arrayFontSize[kNumFonts];
 
@@ -122,24 +123,24 @@ protected:
 	virtual OverlayState findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y) = 0;
 
 private:
-	byte     *_curPalette;
-	byte      _iconImage[kInvDx * kInvDy];
-	byte      _paletteSize;
+	byte *_curPalette;
+	byte _iconImage[kInvDx * kInvDy];
+	byte _paletteSize;
 
-	Icondib _iconBuffer;                          // Inventory icon DIB
+	Icondib _iconBuffer; // Inventory icon DIB
 
 	int16 mergeLists(Rect *list, Rect *blist, const int16 len, int16 blen);
 	int16 center(const char *s) const;
 
 	Viewdib _backBuffer;
-	Viewdib _GUIBuffer;                              // User interface images
-	Viewdib _backBufferBackup;                       // Backup _backBuffer during inventory
+	Viewdib _GUIBuffer; // User interface images
+	Viewdib _backBufferBackup; // Backup _backBuffer during inventory
 
 	// Formerly static variables used by displayList()
-	int16  _dlAddIndex, _dlRestoreIndex;               // Index into add/restore lists
-	Rect _dlRestoreList[kRectListSize];              // The restore list
-	Rect _dlAddList[kRectListSize];                  // The add list
-	Rect _dlBlistList[kBlitListSize];                // The blit list
+	int16 _dlAddIndex, _dlRestoreIndex; // Index into add/restore lists
+	Rect _dlRestoreList[kRectListSize]; // The restore list
+	Rect _dlAddList[kRectListSize]; // The add list
+	Rect _dlBlistList[kBlitListSize]; // The blit list
 	//
 
 	void createPal();
@@ -154,6 +155,7 @@ public:
 
 	void loadFont(int16 fontId);
 	void loadFontArr(Common::ReadStream &in);
+
 protected:
 	OverlayState findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y);
 };
@@ -165,6 +167,7 @@ public:
 
 	void loadFont(int16 fontId);
 	void loadFontArr(Common::ReadStream &in);
+
 protected:
 	OverlayState findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y);
 };

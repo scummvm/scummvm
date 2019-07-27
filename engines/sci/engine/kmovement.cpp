@@ -20,14 +20,14 @@
  *
  */
 
-#include "sci/sci.h"
-#include "sci/resource.h"
 #include "sci/engine/features.h"
-#include "sci/engine/state.h"
-#include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
+#include "sci/engine/selector.h"
+#include "sci/engine/state.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/screen.h"
+#include "sci/resource.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
@@ -79,8 +79,8 @@ reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 	// Derived data
 	int c;
 	int tmp;
-	int vx = 0;  // x velocity
-	int vy = 0;  // y velocity
+	int vx = 0; // x velocity
+	int vy = 0; // y velocity
 
 	int dxWasNegative = (dx < 0);
 	dx = ABS(dx);
@@ -299,9 +299,9 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 
 		// Store backups of all client selector variables. We will restore them
 		// in case of a collision.
-		Object* clientObject = segMan->getObject(client);
+		Object *clientObject = segMan->getObject(client);
 		uint clientVarNum = clientObject->getVarCount();
-		reg_t* clientBackup = new reg_t[clientVarNum];
+		reg_t *clientBackup = new reg_t[clientVarNum];
 		for (uint i = 0; i < clientVarNum; ++i)
 			clientBackup[i] = clientObject->getVariable(i);
 

@@ -20,12 +20,12 @@
  *
  */
 
-#include "illusions/resourcesystem.h"
 #include "illusions/gamresourcereader.h"
-#include "illusions/gamarchive.h"
-#include "illusions/illusions.h"
 #include "common/file.h"
 #include "common/str.h"
+#include "illusions/gamarchive.h"
+#include "illusions/illusions.h"
+#include "illusions/resourcesystem.h"
 
 namespace Illusions {
 

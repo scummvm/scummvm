@@ -20,8 +20,8 @@
  *
  */
 
-#include "kyra/sound/sound_intern.h"
 #include "kyra/resource/resource.h"
+#include "kyra/sound/sound_intern.h"
 
 #include "audio/mixer.h"
 #include "audio/mods/maxtrax.h"
@@ -29,14 +29,14 @@
 namespace Kyra {
 
 SoundAmiga_LoK::SoundAmiga_LoK(KyraEngine_v1 *vm, Audio::Mixer *mixer)
-	: Sound(vm, mixer),
-	  _driver(0),
-	  _musicHandle(),
-	  _fileLoaded(kFileNone),
-	  _tableSfxIntro(0),
-	  _tableSfxGame(0),
-	  _tableSfxIntro_Size(0),
-	  _tableSfxGame_Size(0) {
+  : Sound(vm, mixer)
+  , _driver(0)
+  , _musicHandle()
+  , _fileLoaded(kFileNone)
+  , _tableSfxIntro(0)
+  , _tableSfxGame(0)
+  , _tableSfxIntro_Size(0)
+  , _tableSfxGame_Size(0) {
 }
 
 SoundAmiga_LoK::~SoundAmiga_LoK() {
@@ -73,7 +73,7 @@ void SoundAmiga_LoK::loadSoundFile(uint file) {
 	debugC(5, kDebugLevelSound, "SoundAmiga_LoK::loadSoundFile(%d)", file);
 
 	static const char *const tableFilenames[3][2] = {
-		{ "introscr.mx",  "introinst.mx" },
+		{ "introscr.mx", "introinst.mx" },
 		{ "kyramusic.mx", 0 },
 		{ "finalescr.mx", "introinst.mx" }
 	};
@@ -127,7 +127,6 @@ void SoundAmiga_LoK::playTrack(uint8 track) {
 	bool loop = false;
 	byte volume = 0x40;
 	byte tempo = 0;
-
 
 	switch (_fileLoaded) {
 	case kFileIntro:

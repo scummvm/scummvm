@@ -217,11 +217,14 @@ uint16 frequencyLookUpTable[SHERLOCK_ADLIB_NOTES_COUNT] = {
 class MidiDriver_SH_AdLib : public MidiDriver {
 public:
 	MidiDriver_SH_AdLib(Audio::Mixer *mixer)
-		: _masterVolume(15), _opl(0),
-		  _adlibTimerProc(0), _adlibTimerParam(0), _isOpen(false) {
+	  : _masterVolume(15)
+	  , _opl(0)
+	  , _adlibTimerProc(0)
+	  , _adlibTimerParam(0)
+	  , _isOpen(false) {
 		memset(_voiceChannelMapping, 0, sizeof(_voiceChannelMapping));
 	}
-	virtual ~MidiDriver_SH_AdLib() { }
+	virtual ~MidiDriver_SH_AdLib() {}
 
 	// MidiDriver
 	int open();
@@ -244,15 +247,20 @@ public:
 
 private:
 	struct adlib_ChannelEntry {
-		bool   inUse;
+		bool inUse;
 		uint16 inUseTimer;
-		const  InstrumentEntry *currentInstrumentPtr;
-		byte   currentNote;
-		byte   currentA0hReg;
-		byte   currentB0hReg;
+		const InstrumentEntry *currentInstrumentPtr;
+		byte currentNote;
+		byte currentA0hReg;
+		byte currentB0hReg;
 
-		adlib_ChannelEntry() : inUse(false), inUseTimer(0), currentInstrumentPtr(NULL), currentNote(0),
-								currentA0hReg(0), currentB0hReg(0) { }
+		adlib_ChannelEntry()
+		  : inUse(false)
+		  , inUseTimer(0)
+		  , currentInstrumentPtr(NULL)
+		  , currentNote(0)
+		  , currentA0hReg(0)
+		  , currentB0hReg(0) {}
 	};
 
 	OPL::OPL *_opl;
@@ -423,8 +431,8 @@ void MidiDriver_SH_AdLib::send(uint32 b) {
 }
 
 void MidiDriver_SH_AdLib::noteOn(byte MIDIchannel, byte note, byte velocity) {
-	int16  oldestInUseChannel = -1;
-	uint16 oldestInUseTimer   = 0;
+	int16 oldestInUseChannel = -1;
+	uint16 oldestInUseTimer = 0;
 
 	if (velocity == 0)
 		return noteOff(MIDIchannel, note);
@@ -447,7 +455,7 @@ void MidiDriver_SH_AdLib::noteOn(byte MIDIchannel, byte note, byte velocity) {
 		for (byte FMvoiceChannel = 0; FMvoiceChannel < SHERLOCK_ADLIB_VOICES_COUNT; FMvoiceChannel++) {
 			if (_voiceChannelMapping[FMvoiceChannel] == MIDIchannel) {
 				if (_channels[FMvoiceChannel].inUseTimer > oldestInUseTimer) {
-					oldestInUseTimer   = _channels[FMvoiceChannel].inUseTimer;
+					oldestInUseTimer = _channels[FMvoiceChannel].inUseTimer;
 					oldestInUseChannel = FMvoiceChannel;
 				}
 			}
@@ -459,8 +467,8 @@ void MidiDriver_SH_AdLib::noteOn(byte MIDIchannel, byte note, byte velocity) {
 			// because using note 0 could create a bad note (out of index) and we check that. Original driver didn't.
 			voiceOnOff(oldestInUseChannel, false, _channels[oldestInUseChannel].currentNote, 0);
 
-			_channels[oldestInUseChannel].inUse       = true;
-			_channels[oldestInUseChannel].inUseTimer  = 0; // safety, original driver also did this
+			_channels[oldestInUseChannel].inUse = true;
+			_channels[oldestInUseChannel].inUseTimer = 0; // safety, original driver also did this
 			_channels[oldestInUseChannel].currentNote = note;
 			voiceOnOff(oldestInUseChannel, true, note, velocity);
 			return;
@@ -489,7 +497,7 @@ void MidiDriver_SH_AdLib::noteOff(byte MIDIchannel, byte note) {
 		if (_voiceChannelMapping[FMvoiceChannel] == MIDIchannel) {
 			if (_channels[FMvoiceChannel].currentNote == note) {
 				_channels[FMvoiceChannel].inUse = false;
-				_channels[FMvoiceChannel].inUseTimer  = 0;
+				_channels[FMvoiceChannel].inUseTimer = 0;
 				_channels[FMvoiceChannel].currentNote = 0;
 
 				if (MIDIchannel != 9) {
@@ -547,11 +555,11 @@ void MidiDriver_SH_AdLib::voiceOnOff(byte FMvoiceChannel, bool keyOn, byte note,
 }
 
 void MidiDriver_SH_AdLib::pitchBendChange(byte MIDIchannel, byte parameter1, byte parameter2) {
-	uint16 channelFrequency              = 0;
-	byte   channelRegB0hWithoutFrequency = 0;
-	uint16 parameter                     = 0;
-	byte   regValueA0h = 0;
-	byte   regValueB0h = 0;
+	uint16 channelFrequency = 0;
+	byte channelRegB0hWithoutFrequency = 0;
+	uint16 parameter = 0;
+	byte regValueA0h = 0;
+	byte regValueB0h = 0;
 
 	for (byte FMvoiceChannel = 0; FMvoiceChannel < SHERLOCK_ADLIB_VOICES_COUNT; FMvoiceChannel++) {
 		if (_voiceChannelMapping[FMvoiceChannel] == MIDIchannel) {
@@ -559,7 +567,7 @@ void MidiDriver_SH_AdLib::pitchBendChange(byte MIDIchannel, byte parameter1, byt
 				// FM voice channel found and it's currently in use -> apply pitch bend change
 
 				// Remove frequency bits from current channel B0h-register
-				channelFrequency              = ((_channels[FMvoiceChannel].currentB0hReg << 8) | (_channels[FMvoiceChannel].currentA0hReg)) & 0x3FF;
+				channelFrequency = ((_channels[FMvoiceChannel].currentB0hReg << 8) | (_channels[FMvoiceChannel].currentA0hReg)) & 0x3FF;
 				channelRegB0hWithoutFrequency = _channels[FMvoiceChannel].currentB0hReg & 0xFC;
 
 				if (parameter2 < 0x40) {

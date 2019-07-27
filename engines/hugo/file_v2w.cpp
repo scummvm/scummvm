@@ -29,12 +29,13 @@
 
 #include "common/system.h"
 
-#include "hugo/hugo.h"
 #include "hugo/file.h"
+#include "hugo/hugo.h"
 #include "hugo/util.h"
 
 namespace Hugo {
-FileManager_v2w::FileManager_v2w(HugoEngine *vm) : FileManager_v2d(vm) {
+FileManager_v2w::FileManager_v2w(HugoEngine *vm)
+  : FileManager_v2d(vm) {
 }
 
 FileManager_v2w::~FileManager_v2w() {

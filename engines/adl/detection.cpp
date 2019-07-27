@@ -20,12 +20,12 @@
  *
  */
 
-#include "common/system.h"
-#include "common/savefile.h"
-#include "common/translation.h"
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
-#include "common/debug.h"
+#include "common/savefile.h"
+#include "common/system.h"
+#include "common/translation.h"
 
 #include "graphics/thumbnail.h"
 
@@ -39,39 +39,27 @@ namespace Adl {
 // Mystery House was designed for monochrome display, so we default to
 // monochrome mode there. All the other games default to color mode.
 #define GAMEOPTION_COLOR_DEFAULT_OFF GUIO_GAMEOPTIONS1
-#define GAMEOPTION_SCANLINES         GUIO_GAMEOPTIONS2
-#define GAMEOPTION_COLOR_DEFAULT_ON  GUIO_GAMEOPTIONS3
+#define GAMEOPTION_SCANLINES GUIO_GAMEOPTIONS2
+#define GAMEOPTION_COLOR_DEFAULT_ON GUIO_GAMEOPTIONS3
 
 static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_COLOR_DEFAULT_OFF,
-		{
-			_s("Color mode"),
-			_s("Use color graphics"),
-			"color",
-			false
-		}
-	},
+	{ GAMEOPTION_COLOR_DEFAULT_OFF,
+	  { _s("Color mode"),
+	    _s("Use color graphics"),
+	    "color",
+	    false } },
 
-	{
-		GAMEOPTION_COLOR_DEFAULT_ON,
-		{
-			_s("Color mode"),
-			_s("Use color graphics"),
-			"color",
-			true
-		}
-	},
+	{ GAMEOPTION_COLOR_DEFAULT_ON,
+	  { _s("Color mode"),
+	    _s("Use color graphics"),
+	    "color",
+	    true } },
 
-	{
-		GAMEOPTION_SCANLINES,
-		{
-			_s("Scanlines"),
-			_s("Show scanlines"),
-			"scanlines",
-			false
-		}
-	},
+	{ GAMEOPTION_SCANLINES,
+	  { _s("Scanlines"),
+	    _s("Show scanlines"),
+	    "scanlines",
+	    false } },
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
@@ -95,229 +83,81 @@ struct AdlGameDescription {
 
 static const AdlGameDescription gameFileDescriptions[] = {
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - Contains Simi Valley address
-		{
-			"hires1", 0,
-			{
-				{ "ADVENTURE", 0, "22d9e63a11d69fa033ba1738715ad09a", 29952 },
-				{ "AUTO LOAD OBJ", 0, "a2ab7be25842e1fa9f1343b0894a8b6f", 4095 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformApple2,
-			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES)
-		},
-		GAME_TYPE_HIRES1,
-		GAME_VER_HR1_SIMI
-	},
+	  {
+	    "hires1", 0, { { "ADVENTURE", 0, "22d9e63a11d69fa033ba1738715ad09a", 29952 }, { "AUTO LOAD OBJ", 0, "a2ab7be25842e1fa9f1343b0894a8b6f", 4095 }, AD_LISTEND }, Common::EN_ANY, Common::kPlatformApple2, ADGF_NO_FLAGS, GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES) },
+	  GAME_TYPE_HIRES1,
+	  GAME_VER_HR1_SIMI },
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - Contains Coarsegold address
-		{
-			"hires1", 0,
-			{
-				{ "ADVENTURE", 0, "22d9e63a11d69fa033ba1738715ad09a", 29952 },
-				{ "AUTO LOAD OBJ", 0, "f6a6ac60c04c6ba6dff68b92cc279ba2", 12291 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformApple2,
-			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES)
-		},
-		GAME_TYPE_HIRES1,
-		GAME_VER_HR1_COARSE
-	},
+	  {
+	    "hires1", 0, { { "ADVENTURE", 0, "22d9e63a11d69fa033ba1738715ad09a", 29952 }, { "AUTO LOAD OBJ", 0, "f6a6ac60c04c6ba6dff68b92cc279ba2", 12291 }, AD_LISTEND }, Common::EN_ANY, Common::kPlatformApple2, ADGF_NO_FLAGS, GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES) },
+	  GAME_TYPE_HIRES1,
+	  GAME_VER_HR1_COARSE },
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - Roberta Williams Anthology
-		{
-			"hires1", 0,
-			{
-				{ "ADVENTURE", 0, "22d9e63a11d69fa033ba1738715ad09a", 29952 },
-				{ "AUTO LOAD OBJ", 0, "23bfccfe9fcff9b22cf6c41bde9078ac", 12291 },
-				{ "MYSTERY.HELLO", 0, "2289b7fea300b506e902a4c597968369", 836 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformApple2,
-			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES)
-		},
-		GAME_TYPE_HIRES1,
-		GAME_VER_HR1_PD
-	},
+	  {
+	    "hires1", 0, { { "ADVENTURE", 0, "22d9e63a11d69fa033ba1738715ad09a", 29952 }, { "AUTO LOAD OBJ", 0, "23bfccfe9fcff9b22cf6c41bde9078ac", 12291 }, { "MYSTERY.HELLO", 0, "2289b7fea300b506e902a4c597968369", 836 }, AD_LISTEND }, Common::EN_ANY, Common::kPlatformApple2, ADGF_NO_FLAGS, GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES) },
+	  GAME_TYPE_HIRES1,
+	  GAME_VER_HR1_PD },
 	{ AD_TABLE_END_MARKER, GAME_TYPE_NONE, GAME_VER_NONE }
 };
 
 static const AdlGameDescription gameDiskDescriptions[] = {
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - Contains Coarsegold address
-		{
-			"hires1", "",
-			{
-				{ "mysthous", 0, "8df0b3b3e609a2e40237e2419c1cb767", 116480 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformApple2,
-			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES)
-		},
-		GAME_TYPE_HIRES1,
-		GAME_VER_HR1_COARSE
-	},
+	  {
+	    "hires1", "", { { "mysthous", 0, "8df0b3b3e609a2e40237e2419c1cb767", 116480 }, AD_LISTEND }, Common::EN_ANY, Common::kPlatformApple2, ADGF_NO_FLAGS, GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES) },
+	  GAME_TYPE_HIRES1,
+	  GAME_VER_HR1_COARSE },
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - Roberta Williams Anthology
-		{
-			"hires1", "",
-			{
-				{ "mysthous", 0, "54d20eb1ef0084ac3c2d16c31c5b7eb7", 143360 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformApple2,
-			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES)
-		},
-		GAME_TYPE_HIRES1,
-		GAME_VER_HR1_PD
-	},
+	  {
+	    "hires1", "", { { "mysthous", 0, "54d20eb1ef0084ac3c2d16c31c5b7eb7", 143360 }, AD_LISTEND }, Common::EN_ANY, Common::kPlatformApple2, ADGF_NO_FLAGS, GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES) },
+	  GAME_TYPE_HIRES1,
+	  GAME_VER_HR1_PD },
 	{ // Hi-Res Adventure #2: Wizard and the Princess - Apple II - Roberta Williams Anthology
-		{
-			"hires2", "",
-			{
-				{ "wizard", 0, "72b114bf8f94fafe5672daac2a70c765", 143360 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformApple2,
-			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
-		},
-		GAME_TYPE_HIRES2,
-		GAME_VER_NONE
-	},
+	  {
+	    "hires2", "", { { "wizard", 0, "72b114bf8f94fafe5672daac2a70c765", 143360 }, AD_LISTEND }, Common::EN_ANY, Common::kPlatformApple2, ADGF_NO_FLAGS, GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES) },
+	  GAME_TYPE_HIRES2,
+	  GAME_VER_NONE },
 	{ // Hi-Res Adventure #0: Mission Asteroid - Apple II - Roberta Williams Anthology
-		{
-			"hires0", "",
-			{
-				{ "mission", 0, "6bc53f51a3c8ee65c020af55fb8bd875", 116480 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformApple2,
-			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
-		},
-		GAME_TYPE_HIRES0,
-		GAME_VER_NONE
-	},
+	  {
+	    "hires0", "", { { "mission", 0, "6bc53f51a3c8ee65c020af55fb8bd875", 116480 }, AD_LISTEND }, Common::EN_ANY, Common::kPlatformApple2, ADGF_NO_FLAGS, GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES) },
+	  GAME_TYPE_HIRES0,
+	  GAME_VER_NONE },
 	{ // Hi-Res Adventure #3: Cranston Manor - Apple II
-		{
-			"hires3", "",
-			{
-				{ "cranston", 0, "e4d35440791a36e55299c7be1ccd2b04", 116480 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformApple2,
-			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
-		},
-		GAME_TYPE_HIRES3,
-		GAME_VER_NONE
-	},
+	  {
+	    "hires3", "", { { "cranston", 0, "e4d35440791a36e55299c7be1ccd2b04", 116480 }, AD_LISTEND }, Common::EN_ANY, Common::kPlatformApple2, ADGF_NO_FLAGS, GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES) },
+	  GAME_TYPE_HIRES3,
+	  GAME_VER_NONE },
 	{ // Hi-Res Adventure #4: Ulysses and the Golden Fleece - Apple II - Load 'N' Go
-		{
-			"hires4", "",
-			{
-				{ "ulyssesa", 0, "1eaeb2f1a773ce2d1cb9f16b2ef09049", 143360 },
-				{ "ulyssesb", 1, "9fa8552255ae651b252844168b8b6617", 143360 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformApple2,
-			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
-		},
-		GAME_TYPE_HIRES4,
-		GAME_VER_NONE
-	},
+	  {
+	    "hires4", "", { { "ulyssesa", 0, "1eaeb2f1a773ce2d1cb9f16b2ef09049", 143360 }, { "ulyssesb", 1, "9fa8552255ae651b252844168b8b6617", 143360 }, AD_LISTEND }, Common::EN_ANY, Common::kPlatformApple2, ADGF_NO_FLAGS, GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES) },
+	  GAME_TYPE_HIRES4,
+	  GAME_VER_NONE },
 	{ // Hi-Res Adventure #4: Ulysses and the Golden Fleece - Atari 8-bit - Re-release
-		{
-			"hires4", "",
-			{
-				{ "ulys1b", 0, "bb6aab9a35b41d160b6eefa088165f56", 92160 },
-				{ "ulys1a", 0, "c227eeee34d0bacd62b2d6231c409204", 92160 },
-				// Load 'N' Go Software release XAG-0646 appears to be missing the second disk
-				{ "ulys2c", 0, "8c6a76d1767e4ffa2f0118c9c56c0e90", 92160 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformAtari8Bit,
-			ADGF_UNSTABLE,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
-		},
-		GAME_TYPE_HIRES4,
-		GAME_VER_NONE
-	},
+	  {
+	    "hires4", "", { { "ulys1b", 0, "bb6aab9a35b41d160b6eefa088165f56", 92160 }, { "ulys1a", 0, "c227eeee34d0bacd62b2d6231c409204", 92160 },
+	                    // Load 'N' Go Software release XAG-0646 appears to be missing the second disk
+	                    { "ulys2c", 0, "8c6a76d1767e4ffa2f0118c9c56c0e90", 92160 },
+	                    AD_LISTEND },
+	    Common::EN_ANY,
+	    Common::kPlatformAtari8Bit,
+	    ADGF_UNSTABLE,
+	    GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES) },
+	  GAME_TYPE_HIRES4,
+	  GAME_VER_NONE },
 	{ // Hi-Res Adventure #5: Time Zone - Apple II - Version 1.1 - Roberta Williams Anthology
-		{
-			"hires5", "",
-			{
-				{ "tzone1a", 2, "731844b1d19c2801e3a5bc61d109af54", 143360 },
-				{ "tzone1b", 3, "4eaf8d790e3f93097cca9ddbe863df50", 143360 },
-				{ "tzone2c", 4, "e3aa4f56e727339b1ec00978ce9d435b", 143360 },
-				{ "tzone2d", 5, "77b8219a380410015c986fa192d4c3bf", 143360 },
-				{ "tzone3e", 6, "f7acc03edd8d8aecb90711cd5f9e5593", 143360 },
-				{ "tzone3f", 7, "ed74c056976ecea2eab07448c8a72eb8", 143360 },
-				{ "tzone4g", 8, "de7bda8a641169fc2dedd8a7b0b7e7de", 143360 },
-				{ "tzone4h", 9, "21cf76d97505ff09fff5d5e4711bc47c", 143360 },
-				{ "tzone5i", 10, "d665df374e594cd0978b73c3490e5de2", 143360 },
-				{ "tzone5j", 11, "5095be23d13201d0897b9169c4e473df", 143360 },
-				{ "tzone6k", 12, "bef044503f21af5f0a4088e99aa778b1", 143360 },
-				{ "tzone6l", 13, "84801b7c2ab6c09e62a2a0809b94d16a", 143360 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformApple2,
-			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
-		},
-		GAME_TYPE_HIRES5,
-		GAME_VER_NONE
-	},
+	  {
+	    "hires5", "", { { "tzone1a", 2, "731844b1d19c2801e3a5bc61d109af54", 143360 }, { "tzone1b", 3, "4eaf8d790e3f93097cca9ddbe863df50", 143360 }, { "tzone2c", 4, "e3aa4f56e727339b1ec00978ce9d435b", 143360 }, { "tzone2d", 5, "77b8219a380410015c986fa192d4c3bf", 143360 }, { "tzone3e", 6, "f7acc03edd8d8aecb90711cd5f9e5593", 143360 }, { "tzone3f", 7, "ed74c056976ecea2eab07448c8a72eb8", 143360 }, { "tzone4g", 8, "de7bda8a641169fc2dedd8a7b0b7e7de", 143360 }, { "tzone4h", 9, "21cf76d97505ff09fff5d5e4711bc47c", 143360 }, { "tzone5i", 10, "d665df374e594cd0978b73c3490e5de2", 143360 }, { "tzone5j", 11, "5095be23d13201d0897b9169c4e473df", 143360 }, { "tzone6k", 12, "bef044503f21af5f0a4088e99aa778b1", 143360 }, { "tzone6l", 13, "84801b7c2ab6c09e62a2a0809b94d16a", 143360 }, AD_LISTEND }, Common::EN_ANY, Common::kPlatformApple2, ADGF_NO_FLAGS, GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES) },
+	  GAME_TYPE_HIRES5,
+	  GAME_VER_NONE },
 	{ // Hi-Res Adventure #6: The Dark Crystal - Apple II - Roberta Williams Anthology / SierraVenture
-		{
-			"hires6", "SierraVenture [version A]",
-			{
-				{ "dark1a", 0, "9a5968a8f378c84454d88f4cd4e143a9", 143360 },
-				{ "dark1b", 3, "1271ff9c3e1bdb4942301dd37dd0ef87", 143360 },
-				{ "dark2a", 4, "090e77563add7b4c9ab25f444d727316", 143360 },
-				{ "dark2b", 5, "f2db96af0955324900b800505af4d91f", 143360 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformApple2,
-			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
-		},
-		GAME_TYPE_HIRES6,
-		GAME_VER_NONE
-	},
+	  {
+	    "hires6", "SierraVenture [version A]", { { "dark1a", 0, "9a5968a8f378c84454d88f4cd4e143a9", 143360 }, { "dark1b", 3, "1271ff9c3e1bdb4942301dd37dd0ef87", 143360 }, { "dark2a", 4, "090e77563add7b4c9ab25f444d727316", 143360 }, { "dark2b", 5, "f2db96af0955324900b800505af4d91f", 143360 }, AD_LISTEND }, Common::EN_ANY, Common::kPlatformApple2, ADGF_NO_FLAGS, GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES) },
+	  GAME_TYPE_HIRES6,
+	  GAME_VER_NONE },
 	{ // Hi-Res Adventure #6: The Dark Crystal - Apple II - SierraVenture
-		{
-			"hires6", "SierraVenture [version B]",
-			{
-				{ "dark1a", 0, "d0b8e808b02564b6ce58b5ea5cc61ead", 143360 },
-				{ "dark1b", 3, "1271ff9c3e1bdb4942301dd37dd0ef87", 143360 },
-				{ "dark2a", 4, "090e77563add7b4c9ab25f444d727316", 143360 },
-				{ "dark2b", 5, "f2db96af0955324900b800505af4d91f", 143360 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformApple2,
-			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
-		},
-		GAME_TYPE_HIRES6,
-		GAME_VER_NONE
-	},
+	  {
+	    "hires6", "SierraVenture [version B]", { { "dark1a", 0, "d0b8e808b02564b6ce58b5ea5cc61ead", 143360 }, { "dark1b", 3, "1271ff9c3e1bdb4942301dd37dd0ef87", 143360 }, { "dark2a", 4, "090e77563add7b4c9ab25f444d727316", 143360 }, { "dark2b", 5, "f2db96af0955324900b800505af4d91f", 143360 }, AD_LISTEND }, Common::EN_ANY, Common::kPlatformApple2, ADGF_NO_FLAGS, GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES) },
+	  GAME_TYPE_HIRES6,
+	  GAME_VER_NONE },
 	{ AD_TABLE_END_MARKER, GAME_TYPE_NONE, GAME_VER_NONE }
 };
 
@@ -337,7 +177,8 @@ const DiskImageExt diskImageExts[] = {
 
 class AdlMetaEngine : public AdvancedMetaEngine {
 public:
-	AdlMetaEngine() : AdvancedMetaEngine(gameFileDescriptions, sizeof(AdlGameDescription), adlGames, optionsList) { }
+	AdlMetaEngine()
+	  : AdvancedMetaEngine(gameFileDescriptions, sizeof(AdlGameDescription), adlGames, optionsList) {}
 
 	const char *getName() const override {
 		return "ADL";
@@ -360,7 +201,7 @@ public:
 };
 
 bool AdlMetaEngine::hasFeature(MetaEngineFeature f) const {
-	switch(f) {
+	switch (f) {
 	case kSupportsListSaves:
 	case kSupportsLoadingDuringStartup:
 	case kSupportsDeleteSave:
@@ -393,7 +234,7 @@ SaveStateDescriptor AdlMetaEngine::querySaveMetaInfos(const char *target, int sl
 		return SaveStateDescriptor();
 	}
 
-	char name[SAVEGAME_NAME_LEN] = { };
+	char name[SAVEGAME_NAME_LEN] = {};
 	inFile->read(name, sizeof(name) - 1);
 	inFile->readByte();
 
@@ -459,7 +300,7 @@ SaveStateList AdlMetaEngine::listSaves(const char *target) const {
 			continue;
 		}
 
-		char name[SAVEGAME_NAME_LEN] = { };
+		char name[SAVEGAME_NAME_LEN] = {};
 		inFile->read(name, sizeof(name) - 1);
 		delete inFile;
 
@@ -672,7 +513,7 @@ bool AdlMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 } // End of namespace Adl
 
 #if PLUGIN_ENABLED_DYNAMIC(ADL)
-	REGISTER_PLUGIN_DYNAMIC(ADL, PLUGIN_TYPE_ENGINE, Adl::AdlMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(ADL, PLUGIN_TYPE_ENGINE, Adl::AdlMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(ADL, PLUGIN_TYPE_ENGINE, Adl::AdlMetaEngine);
+REGISTER_PLUGIN_STATIC(ADL, PLUGIN_TYPE_ENGINE, Adl::AdlMetaEngine);
 #endif

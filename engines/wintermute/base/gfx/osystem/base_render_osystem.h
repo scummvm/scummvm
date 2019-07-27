@@ -29,10 +29,10 @@
 #ifndef WINTERMUTE_BASE_RENDERER_SDL_H
 #define WINTERMUTE_BASE_RENDERER_SDL_H
 
-#include "engines/wintermute/base/gfx/base_renderer.h"
-#include "common/rect.h"
-#include "graphics/surface.h"
 #include "common/list.h"
+#include "common/rect.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
+#include "graphics/surface.h"
 #include "graphics/transform_struct.h"
 
 namespace Wintermute {
@@ -112,6 +112,7 @@ public:
 	void endSaveLoad();
 	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Graphics::TransformStruct &transform);
 	BaseSurface *createSurface() override;
+
 private:
 	/**
 	 * Mark a specified rect of the screen as dirty.

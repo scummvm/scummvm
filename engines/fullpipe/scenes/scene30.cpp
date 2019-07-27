@@ -22,17 +22,16 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
-
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
@@ -89,7 +88,7 @@ int sceneHandler30(ExCommand *cmd) {
 	if (cmd->_messageKind != 17)
 		return 0;
 
-	switch(cmd->_messageNum) {
+	switch (cmd->_messageNum) {
 	case MSG_LIFT_CLOSEDOOR:
 		g_fp->lift_closedoorSeq();
 		break;
@@ -118,17 +117,16 @@ int sceneHandler30(ExCommand *cmd) {
 		g_fp->lift_goAnimation();
 		break;
 
-	case 29:
-		{
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y);
+	case 29: {
+		StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y);
 
-			if (ani && ani->_id == ANI_LIFTBUTTON) {
-				g_fp->lift_animateButton(ani);
+		if (ani && ani->_id == ANI_LIFTBUTTON) {
+			g_fp->lift_animateButton(ani);
 
-				cmd->_messageKind = 0;
-			}
-			break;
+			cmd->_messageKind = 0;
 		}
+		break;
+	}
 
 	case 33:
 		if (g_fp->_aniMan2) {

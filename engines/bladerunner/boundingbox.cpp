@@ -48,8 +48,8 @@ void BoundingBox::expand(float x0, float y0, float z0, float x1, float y1, float
 
 bool BoundingBox::inside(float x, float y, float z) const {
 	return x >= _vertices[0].x && x <= _vertices[1].x
-	    && y >= _vertices[0].y && y <= _vertices[1].y
-	    && z >= _vertices[0].z && z <= _vertices[1].z;
+	  && y >= _vertices[0].y && y <= _vertices[1].y
+	  && z >= _vertices[0].z && z <= _vertices[1].z;
 }
 
 bool BoundingBox::inside(Vector3 &position) const {

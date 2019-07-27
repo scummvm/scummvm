@@ -29,11 +29,11 @@
 namespace ZVision {
 
 Clock::Clock(OSystem *system)
-	: _system(system),
-	  _lastTime(0),
-	  _deltaTime(0),
-	  _pausedTime(0),
-	  _paused(false) {
+  : _system(system)
+  , _lastTime(0)
+  , _deltaTime(0)
+  , _pausedTime(0)
+  , _paused(false) {
 }
 
 void Clock::update() {

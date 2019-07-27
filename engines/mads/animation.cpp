@@ -88,7 +88,7 @@ void AnimMessage::load(Common::SeekableReadStream *f) {
 	_rgb2[0] = f->readByte() << 2;
 	_rgb2[1] = f->readByte() << 2;
 	_rgb2[2] = f->readByte() << 2;
-	f->skip(2);	// Space for kernelMsgIndex
+	f->skip(2); // Space for kernelMsgIndex
 	_kernelMsgIndex = -1;
 	f->skip(6);
 	_startFrame = f->readUint16LE();
@@ -99,7 +99,7 @@ void AnimMessage::load(Common::SeekableReadStream *f) {
 void AnimFrameEntry::load(Common::SeekableReadStream *f, bool uiFlag) {
 	if (uiFlag) {
 		f->skip(2);
-		_frameNumber = -1;		// Unused
+		_frameNumber = -1; // Unused
 		_seqIndex = f->readByte();
 		_spriteSlot._spritesIndex = f->readByte();
 		_spriteSlot._frameNumber = (int8)f->readByte();
@@ -158,7 +158,9 @@ Animation *Animation::init(MADSEngine *vm, Scene *scene) {
 	return new Animation(vm, scene);
 }
 
-Animation::Animation(MADSEngine *vm, Scene *scene) : _vm(vm), _scene(scene) {
+Animation::Animation(MADSEngine *vm, Scene *scene)
+  : _vm(vm)
+  , _scene(scene) {
 	_flags = 0;
 	_font = nullptr;
 	_resetFlag = false;
@@ -194,8 +196,8 @@ Animation::~Animation() {
 }
 
 void Animation::load(MSurface &backSurface, DepthSurface &depthSurface,
-		const Common::String &resName, int flags, Common::Array<PaletteCycle> *palCycles,
-		SceneInfo *sceneInfo) {
+                     const Common::String &resName, int flags, Common::Array<PaletteCycle> *palCycles,
+                     SceneInfo *sceneInfo) {
 	Common::String resourceName = resName;
 	if (!resourceName.contains("."))
 		resourceName += ".AA";
@@ -389,7 +391,7 @@ bool Animation::drawFrame(SpriteAsset &spriteSet, const Common::Point &pt, int f
 }
 
 void Animation::loadBackground(MSurface &backSurface, DepthSurface &depthSurface,
-		AAHeader &header, int flags, Common::Array<PaletteCycle> *palCycles, SceneInfo *sceneInfo) {
+                               AAHeader &header, int flags, Common::Array<PaletteCycle> *palCycles, SceneInfo *sceneInfo) {
 	_scene->_depthStyle = 0;
 	if (header._bgType <= ANIMBG_FULL_SIZE) {
 		_vm->_palette->_paletteUsage.setEmpty();
@@ -516,8 +518,7 @@ void Animation::update() {
 					slot.copy(_frameEntries[_oldFrameEntry]._spriteSlot);
 					slot._seqIndex = _frameEntries[_oldFrameEntry]._seqIndex + 0x80;
 
-					SpriteAsset &spriteSet = *scene._sprites[
-						scene._spriteSlots[slotIndex]._spritesIndex];
+					SpriteAsset &spriteSet = *scene._sprites[scene._spriteSlots[slotIndex]._spritesIndex];
 					slot._flags = spriteSet.isBackground() ? IMG_DELTA : IMG_UPDATE;
 				}
 				break;
@@ -569,8 +570,8 @@ void Animation::update() {
 
 			// Add a kernel message to display the given text
 			me._kernelMsgIndex = scene._kernelMessages.add(me._pos,
-				_palIndex1 | (_palIndex2 << 8),
-				0, 0, INDEFINITE_TIMEOUT, me._msg);
+			                                               _palIndex1 | (_palIndex2 << 8),
+			                                               0, 0, INDEFINITE_TIMEOUT, me._msg);
 			assert(me._kernelMsgIndex >= 0);
 			++_messageCtr;
 

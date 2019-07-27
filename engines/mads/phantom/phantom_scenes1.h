@@ -26,395 +26,399 @@
 #include "common/scummsys.h"
 #include "common/serializer.h"
 #include "mads/game.h"
-#include "mads/scene.h"
 #include "mads/phantom/phantom_scenes.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
 namespace Phantom {
 
-class Scene1xx : public PhantomScene {
-protected:
-	/**
+	class Scene1xx : public PhantomScene {
+	protected:
+		/**
 	 * Plays an appropriate sound when entering a scene
 	 */
-	void sceneEntrySound();
+		void sceneEntrySound();
 
-	/**
+		/**
 	 *Sets the AA file to use for the scene
 	 */
-	void setAAName();
+		void setAAName();
 
-	/**
+		/**
 	 * Updates the prefix used for getting player sprites for the scene
 	 */
-	void setPlayerSpritesPrefix();
-public:
-	Scene1xx(MADSEngine *vm) : PhantomScene(vm) {}
-};
+		void setPlayerSpritesPrefix();
 
-class Scene101 : public Scene1xx {
-private:
-	int _chanStatus;
-	int _wipeStatus;
-	int _callingStatus;
-	int _chandelierStatus;
-	int _callingFrame;
-	int _chandelierFrame;
-	int _talkCounter;
-	int _convCounter;
-	int _brieAnimId;
-	bool _startWalkingFl;
-	bool _startWalking0Fl;
-	bool _anim0Running;
-	bool _anim1Running;
-	bool _startSittingFl;
-public:
-	Scene101(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	public:
+		Scene1xx(MADSEngine *vm)
+		  : PhantomScene(vm) {}
+	};
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
+	class Scene101 : public Scene1xx {
+	private:
+		int _chanStatus;
+		int _wipeStatus;
+		int _callingStatus;
+		int _chandelierStatus;
+		int _callingFrame;
+		int _chandelierFrame;
+		int _talkCounter;
+		int _convCounter;
+		int _brieAnimId;
+		bool _startWalkingFl;
+		bool _startWalking0Fl;
+		bool _anim0Running;
+		bool _anim1Running;
+		bool _startSittingFl;
 
-	void handleConversation0();
-	void handleConversation1();
-	void handleAnimation0();
-	void handleAnimation1();
-};
+	public:
+		Scene101(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene102 : public Scene1xx {
-private:
-	bool _anim0Running;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
 
-public:
-	Scene102(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		void handleConversation0();
+		void handleConversation1();
+		void handleAnimation0();
+		void handleAnimation1();
+	};
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	class Scene102 : public Scene1xx {
+	private:
+		bool _anim0Running;
 
-class Scene103 : public Scene1xx {
-private:
-	int _jacquesAction;
-	int _lastRandom;
-	int _standPosition;
-	int _hotspotPrompt1;
-	int _hotspotPrompt2;
-	int _hotspotPrompt3;
-	int _hotspotPrompt4;
-	int _hotspotPrompt5;
-	int _hotspotRightFloor1;
-	int _hotspotRightFloor2;
-	int _hotspotLeftFloor1;
-	int _hotspotLeftFloor2;
-	int _hotspotGentleman;
-	int _convCount;
-	int _lastStairFrame;
-	int _lastJacquesFrame;
-	int _talkCount;
+	public:
+		Scene102(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-	bool _anim0ActvFl;
-	bool _anim1ActvFl;
-	bool _anim2ActvFl;
-	bool _anim3ActvFl;
-	bool _anim4ActvFl;
-	bool _anim5ActvFl;
-	bool _anim6ActvFl;
-	bool _climbThroughTrapFl;
-	bool _guardFrameFl;
-	bool _sitFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	void adjustRails(int variant);
-	void handleJacquesAnim();
-	void climbRightStairs();
-	void climbLeftStairs();
-	void descendRightStairs();
-	void descendLeftStairs();
-	void process_conv_jacques();
+	class Scene103 : public Scene1xx {
+	private:
+		int _jacquesAction;
+		int _lastRandom;
+		int _standPosition;
+		int _hotspotPrompt1;
+		int _hotspotPrompt2;
+		int _hotspotPrompt3;
+		int _hotspotPrompt4;
+		int _hotspotPrompt5;
+		int _hotspotRightFloor1;
+		int _hotspotRightFloor2;
+		int _hotspotLeftFloor1;
+		int _hotspotLeftFloor2;
+		int _hotspotGentleman;
+		int _convCount;
+		int _lastStairFrame;
+		int _lastJacquesFrame;
+		int _talkCount;
 
-public:
-	Scene103(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		bool _anim0ActvFl;
+		bool _anim1ActvFl;
+		bool _anim2ActvFl;
+		bool _anim3ActvFl;
+		bool _anim4ActvFl;
+		bool _anim5ActvFl;
+		bool _anim6ActvFl;
+		bool _climbThroughTrapFl;
+		bool _guardFrameFl;
+		bool _sitFl;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+		void adjustRails(int variant);
+		void handleJacquesAnim();
+		void climbRightStairs();
+		void climbLeftStairs();
+		void descendRightStairs();
+		void descendLeftStairs();
+		void process_conv_jacques();
 
-class Scene104 : public Scene1xx {
-private:
-	bool _anim0ActvFl;
-	bool _anim1ActvFl;
-	bool _anim2ActvFl;
-	bool _needToGetUp;
-	bool _needToStandUp;
-	bool _needToTalk;
-	bool _sittingUp;
-	bool _beforeSheLeaves;
-	bool _beforeHeLeaves;
+	public:
+		Scene103(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-	int _walkStatus;
-	int _walkFrame;
-	int _coupleStatus;
-	int _coupleFrame;
-	int _richStatus;
-	int _richFrame;
-	int _manTalkCount;
-	int _womanTalkCount;
-	int _lookCount;
-	int _richTalkCount;
-	int _lastPlayerFrame;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	void cleanInventory();
-	void processConversations();
-	void handleWalkAnimation();
-	void handleCoupleAnimations();
-	void handleRichAnimations();
-	void handlePlayerWalk();
+	class Scene104 : public Scene1xx {
+	private:
+		bool _anim0ActvFl;
+		bool _anim1ActvFl;
+		bool _anim2ActvFl;
+		bool _needToGetUp;
+		bool _needToStandUp;
+		bool _needToTalk;
+		bool _sittingUp;
+		bool _beforeSheLeaves;
+		bool _beforeHeLeaves;
 
-public:
-	Scene104(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		int _walkStatus;
+		int _walkFrame;
+		int _coupleStatus;
+		int _coupleFrame;
+		int _richStatus;
+		int _richFrame;
+		int _manTalkCount;
+		int _womanTalkCount;
+		int _lookCount;
+		int _richTalkCount;
+		int _lastPlayerFrame;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+		void cleanInventory();
+		void processConversations();
+		void handleWalkAnimation();
+		void handleCoupleAnimations();
+		void handleRichAnimations();
+		void handlePlayerWalk();
 
-class Scene105 : public Scene1xx {
-public:
-	Scene105(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	public:
+		Scene104(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-class Scene106 : public Scene1xx {
-private:
-	int _sandbagHostpotId;
-public:
-	Scene106(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	class Scene105 : public Scene1xx {
+	public:
+		Scene105(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-class Scene107 : public Scene1xx {
-public:
-	Scene107(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	class Scene106 : public Scene1xx {
+	private:
+		int _sandbagHostpotId;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene106(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene108 : public Scene1xx {
-private:
-	bool _anim0ActvFl;
-	bool _handRaisedFl;
-	int _shutUpCount;
-	int _maxTalkCount;
-	int _charAction;
-	int _charFrame;
-	int _charTalkCount;
-	int _charHotspotId;
-	int _conversationCount;
-	int _prevShutUpFrame;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	void handleCharAnimation();
-	void handleCharlesConversation();
+	class Scene107 : public Scene1xx {
+	public:
+		Scene107(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-public:
-	Scene108(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	class Scene108 : public Scene1xx {
+	private:
+		bool _anim0ActvFl;
+		bool _handRaisedFl;
+		int _shutUpCount;
+		int _maxTalkCount;
+		int _charAction;
+		int _charFrame;
+		int _charTalkCount;
+		int _charHotspotId;
+		int _conversationCount;
+		int _prevShutUpFrame;
 
-class Scene109 : public Scene1xx {
-private:
-	bool _anim0ActvFl;
-	bool _anim1ActvFl;
-	bool _anim2ActvFl;
-	bool _anim3ActvFl;
-	int _currentFloor;
+		void handleCharAnimation();
+		void handleCharlesConversation();
 
-public:
-	Scene109(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	public:
+		Scene108(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-class Scene110 : public Scene1xx {
-public:
-	Scene110(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	class Scene109 : public Scene1xx {
+	private:
+		bool _anim0ActvFl;
+		bool _anim1ActvFl;
+		bool _anim2ActvFl;
+		bool _anim3ActvFl;
+		int _currentFloor;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene109(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene111 : public Scene1xx {
-private:
-	bool _removeAxe;
-	bool _anim0ActvFl;
-	bool _anim1ActvFl;
-	bool _closedFl;
-	int _listenFrame;
-	int _listenStatus;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	void handleListenAnimation();
-	void handleListenConversation();
+	class Scene110 : public Scene1xx {
+	public:
+		Scene110(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-public:
-	Scene111(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	class Scene111 : public Scene1xx {
+	private:
+		bool _removeAxe;
+		bool _anim0ActvFl;
+		bool _anim1ActvFl;
+		bool _closedFl;
+		int _listenFrame;
+		int _listenStatus;
 
-class Scene112 : public Scene1xx {
-private:
-	bool _anim0ActvFl;
-	bool _anim1ActvFl;
+		void handleListenAnimation();
+		void handleListenConversation();
 
-	int _raoulAction;
-	int _raoulFrame;
-	int _didOptionFl;
-	int _julieFrame;
-	int _julieAction;
-	int _julieCounter;
-	int _julieHotspotId;
+	public:
+		Scene111(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-	void handleConversation();
-	void handleJulieAnimation();
-	void handleRaoulChair();
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-public:
-	Scene112(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	class Scene112 : public Scene1xx {
+	private:
+		bool _anim0ActvFl;
+		bool _anim1ActvFl;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+		int _raoulAction;
+		int _raoulFrame;
+		int _didOptionFl;
+		int _julieFrame;
+		int _julieAction;
+		int _julieCounter;
+		int _julieHotspotId;
 
-class Scene113 : public Scene1xx {
-private:
-	bool _standingAndTalking;
-	bool _dayWantsToTalk;
-	bool _musicPlaying;
-	bool _afterKissFl;
-	bool _anim0ActvFl;
-	bool _anim1ActvFl;
-	bool _anim2ActvFl;
-	bool _anim3ActvFl;
-	bool _anim4ActvFl;
-	bool _prevent1;
-	bool _prevent2;
-	bool _raoulStandingFl;
-	bool _armsOutFl;
+		void handleConversation();
+		void handleJulieAnimation();
+		void handleRaoulChair();
 
-	int _christineHotspotId1;
-	int _christineHotspotId2;
-	int _dayStatus;
-	int _dayFrame;
-	int _dayCount;
-	int _florentStatus;
-	int _florentFrame;
-	int _florentCount;
-	int _julieStatus;
-	int _julieFrame;
-	int _julieCount;
-	int _raoulAction;
-	int _raoulFrame;
-	int _raoulCount;
-	int _lastDayResetFrame;
-	int _standCount;
+	public:
+		Scene112(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-	void handleFlorentAnimation();
-	void handleDayAnimation();
-	void handleRaoulAnimation();
-	void handleRaoulAnimation2();
-	void handleJulieAnimation();
-	void handleDeadConversation();
-	void handleFlorentConversation();
-	void handleLoveConversation();
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-public:
-	Scene113(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	class Scene113 : public Scene1xx {
+	private:
+		bool _standingAndTalking;
+		bool _dayWantsToTalk;
+		bool _musicPlaying;
+		bool _afterKissFl;
+		bool _anim0ActvFl;
+		bool _anim1ActvFl;
+		bool _anim2ActvFl;
+		bool _anim3ActvFl;
+		bool _anim4ActvFl;
+		bool _prevent1;
+		bool _prevent2;
+		bool _raoulStandingFl;
+		bool _armsOutFl;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+		int _christineHotspotId1;
+		int _christineHotspotId2;
+		int _dayStatus;
+		int _dayFrame;
+		int _dayCount;
+		int _florentStatus;
+		int _florentFrame;
+		int _florentCount;
+		int _julieStatus;
+		int _julieFrame;
+		int _julieCount;
+		int _raoulAction;
+		int _raoulFrame;
+		int _raoulCount;
+		int _lastDayResetFrame;
+		int _standCount;
 
-class Scene114 : public Scene1xx {
-public:
-	Scene114(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		void handleFlorentAnimation();
+		void handleDayAnimation();
+		void handleRaoulAnimation();
+		void handleRaoulAnimation2();
+		void handleJulieAnimation();
+		void handleDeadConversation();
+		void handleFlorentConversation();
+		void handleLoveConversation();
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene113(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene150 : public Scene1xx {
-public:
-	Scene150(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	class Scene114 : public Scene1xx {
+	public:
+		Scene114(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
+
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
+
+	class Scene150 : public Scene1xx {
+	public:
+		Scene150(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
+
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 } // End of namespace Phantom
 } // End of namespace MADS
 

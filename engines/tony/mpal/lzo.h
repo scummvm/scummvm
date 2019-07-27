@@ -74,14 +74,14 @@ namespace MPAL {
  * values are errors, positive values will be used for special but
  * normal events.
  */
-#define LZO_E_OK                    0
-#define LZO_E_INPUT_OVERRUN         (-4)
-#define LZO_E_INPUT_NOT_CONSUMED    (-8)
+#define LZO_E_OK 0
+#define LZO_E_INPUT_OVERRUN (-4)
+#define LZO_E_INPUT_NOT_CONSUMED (-8)
 
-/**
+	/**
  * Decompresses an LZO compressed resource
  */
-int lzo1x_decompress(const byte *src, uint32 src_len, byte *dst, uint32 *dst_len);
+	int lzo1x_decompress(const byte *src, uint32 src_len, byte *dst, uint32 *dst_len);
 
 } // end of namespace MPAL
 } // end of namespace Tony

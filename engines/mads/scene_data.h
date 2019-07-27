@@ -23,12 +23,12 @@
 #ifndef MADS_SCENE_DATA_H
 #define MADS_SCENE_DATA_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
-#include "common/serializer.h"
-#include "common/str.h"
-#include "common/str-array.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
+#include "common/serializer.h"
+#include "common/str-array.h"
+#include "common/str.h"
 #include "mads/action.h"
 #include "mads/assets.h"
 #include "mads/events.h"
@@ -54,9 +54,9 @@ class SpriteSlot;
 #define DIRTY_AREAS_SIZE (SPRITE_SLOTS_MAX_SIZE + TEXT_DISPLAY_MAX_SIZE)
 
 enum {
-	SCENEFLAG_DITHER		= 0x01,     // Dither to 16 colors
-	SCENEFLAG_LOAD_SHADOW	= 0x10,		// Load hard shadows
-	SCENEFLAG_TRANSLATE		= 0x10000	// Translate palette of loaded background
+	SCENEFLAG_DITHER = 0x01, // Dither to 16 colors
+	SCENEFLAG_LOAD_SHADOW = 0x10, // Load hard shadows
+	SCENEFLAG_TRANSLATE = 0x10000 // Translate palette of loaded background
 };
 
 class VerbInit {
@@ -67,7 +67,9 @@ public:
 
 	VerbInit() {}
 	VerbInit(int id, VerbType verbType, PrepType prepType)
-		: _id(id), _verbType(verbType), _prepType(prepType) {
+	  : _id(id)
+	  , _verbType(verbType)
+	  , _prepType(prepType) {
 	}
 };
 
@@ -75,6 +77,7 @@ class SceneLogic {
 protected:
 	MADSEngine *_vm;
 	Scene *_scene;
+
 public:
 	/**
 	 * Constructor
@@ -150,6 +153,7 @@ class SceneInfo {
 
 		void load(Common::SeekableReadStream *f);
 	};
+
 protected:
 	MADSEngine *_vm;
 
@@ -157,6 +161,7 @@ protected:
 	 * Constructor
 	 */
 	SceneInfo(MADSEngine *vm);
+
 public:
 	int _sceneId;
 	int _artFileNum;
@@ -174,6 +179,7 @@ public:
 	int _usageIndex;
 	Common::Array<PaletteCycle> _paletteCycles;
 	WalkNodeList _nodes;
+
 public:
 	/**
 	 * Destructor
@@ -189,7 +195,7 @@ public:
 	 * loads the data
 	 */
 	void load(int sceneId, int variant, const Common::String &resName, int flags,
-		DepthSurface &depthSurface, BaseSurface &bgSurface);
+	          DepthSurface &depthSurface, BaseSurface &bgSurface);
 
 	/**
 	 * Loads the palette for a scene

@@ -27,8 +27,8 @@
 
 #include "avalanche/avalanche.h"
 
-#include "common/system.h"
 #include "common/savefile.h"
+#include "common/system.h"
 
 #include "engines/advancedDetector.h"
 #include "graphics/thumbnail.h"
@@ -52,30 +52,20 @@ Common::Platform AvalancheEngine::getPlatform() const {
 }
 
 static const PlainGameDescriptor avalancheGames[] = {
-	{"avalanche", "Lord Avalot d'Argent"},
-	{0, 0}
+	{ "avalanche", "Lord Avalot d'Argent" },
+	{ 0, 0 }
 };
 
 static const ADGameDescription gameDescriptions[] = {
-	{
-		"avalanche", 0,
-		{
-			{"avalot.sez", 0, "de10eb353228013da3d3297784f81ff9", 48763},
-			{"mainmenu.avd", 0, "89f31211af579a872045b175cc264298", 18880},
-			AD_LISTEND
-		},
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO0()
-	},
+	{ "avalanche", 0, { { "avalot.sez", 0, "de10eb353228013da3d3297784f81ff9", 48763 }, { "mainmenu.avd", 0, "89f31211af579a872045b175cc264298", 18880 }, AD_LISTEND }, Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO0() },
 
 	AD_TABLE_END_MARKER
 };
 
 class AvalancheMetaEngine : public AdvancedMetaEngine {
 public:
-	AvalancheMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(AvalancheGameDescription), avalancheGames) {
+	AvalancheMetaEngine()
+	  : AdvancedMetaEngine(gameDescriptions, sizeof(AvalancheGameDescription), avalancheGames) {
 	}
 
 	const char *getName() const {
@@ -102,13 +92,7 @@ bool AvalancheMetaEngine::createInstance(OSystem *syst, Engine **engine, const A
 }
 
 bool AvalancheMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) || (f == kSupportsDeleteSave) || (f == kSupportsLoadingDuringStartup) || (f == kSavesSupportMetaInfo) || (f == kSavesSupportThumbnail) || (f == kSimpleSavesNames);
 }
 
 SaveStateList AvalancheMetaEngine::listSaves(const char *target) const {
@@ -218,7 +202,7 @@ SaveStateDescriptor AvalancheMetaEngine::querySaveMetaInfos(const char *target, 
 } // End of namespace Avalanche
 
 #if PLUGIN_ENABLED_DYNAMIC(AVALANCHE)
-	REGISTER_PLUGIN_DYNAMIC(AVALANCHE, PLUGIN_TYPE_ENGINE, Avalanche::AvalancheMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(AVALANCHE, PLUGIN_TYPE_ENGINE, Avalanche::AvalancheMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(AVALANCHE, PLUGIN_TYPE_ENGINE, Avalanche::AvalancheMetaEngine);
+REGISTER_PLUGIN_STATIC(AVALANCHE, PLUGIN_TYPE_ENGINE, Avalanche::AvalancheMetaEngine);
 #endif

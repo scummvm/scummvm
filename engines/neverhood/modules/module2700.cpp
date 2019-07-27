@@ -20,9 +20,9 @@
  *
  */
 
+#include "neverhood/modules/module2700.h"
 #include "neverhood/gamemodule.h"
 #include "neverhood/modules/module1600_sprites.h"
-#include "neverhood/modules/module2700.h"
 #include "neverhood/modules/module2700_sprites.h"
 
 namespace Neverhood {
@@ -84,7 +84,10 @@ static const uint32 kScene2725StaticSprites[] = {
 };
 
 Module2700::Module2700(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule), _soundIndex(0), _radioMusicInitialized(false), _musicFileHash(0) {
+  : Module(vm, parentModule)
+  , _soundIndex(0)
+  , _radioMusicInitialized(false)
+  , _musicFileHash(0) {
 
 	_vm->_soundMan->addMusic(0x42212411, 0x04020210);
 	_vm->_soundMan->startMusic(0x04020210, 24, 2);
@@ -104,7 +107,6 @@ Module2700::Module2700(NeverhoodEngine *vm, Module *parentModule, int which)
 	loadSound(1, 0x00880CC0);
 	loadSound(2, 0x00880CCC);
 	loadSound(3, 0x00880CC0);
-
 }
 
 Module2700::~Module2700() {
@@ -328,7 +330,10 @@ void Module2700::createScene(int sceneNum, int which) {
 }
 
 #define SceneLinkIf(moduleResult, sceneNum, which) \
-	if (_moduleResult == moduleResult) { createScene(sceneNum, which); break; }
+	if (_moduleResult == moduleResult) {             \
+		createScene(sceneNum, which);                  \
+		break;                                         \
+	}
 
 void Module2700::updateScene() {
 	if (!updateChild()) {
@@ -339,19 +344,19 @@ void Module2700::updateScene() {
 			break;
 		case 1:
 			SceneLinkIf(1, 14, 1);
-			SceneLinkIf(2,  2, 2);
+			SceneLinkIf(2, 2, 2);
 			SceneLinkIf(3, 14, 3);
-			SceneLinkIf(4,  2, 6);
-			SceneLinkIf(5,  2, 4);
+			SceneLinkIf(4, 2, 6);
+			SceneLinkIf(5, 2, 4);
 			createScene(0, 1);
 			break;
 		case 2:
-			SceneLinkIf(1,  5, 0);
-			SceneLinkIf(2,  1, 2);
-			SceneLinkIf(3,  5, 2);
-			SceneLinkIf(4,  1, 5);
-			SceneLinkIf(5,  5, 4);
-			SceneLinkIf(6,  1, 4);
+			SceneLinkIf(1, 5, 0);
+			SceneLinkIf(2, 1, 2);
+			SceneLinkIf(3, 5, 2);
+			SceneLinkIf(4, 1, 5);
+			SceneLinkIf(5, 5, 4);
+			SceneLinkIf(6, 1, 4);
 			SceneLinkIf(7, 11, 0);
 			createScene(3, 0);
 			break;
@@ -383,8 +388,8 @@ void Module2700::updateScene() {
 			break;
 		case 8:
 			SceneLinkIf(1, 10, 0);
-			SceneLinkIf(2,  5, 3);
-			SceneLinkIf(3,  7, 1);
+			SceneLinkIf(2, 5, 3);
+			SceneLinkIf(3, 7, 1);
 			createScene(6, 1);
 			break;
 		case 9:
@@ -539,7 +544,7 @@ void Module2700::createScene2704(int which, uint32 trackInfoId, int16 value, con
 }
 
 Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule) {
+  : Scene(vm, parentModule) {
 
 	Sprite *tempSprite;
 
@@ -596,7 +601,6 @@ Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
 		sendMessage(_asCar, NM_CAR_ENTER, 0);
 		SetMessageHandler(&Scene2701::hmCarAtHome);
 	}
-
 }
 
 uint32 Scene2701::hmRidingCar(int messageNum, const MessageParam &param, Entity *sender) {
@@ -639,7 +643,9 @@ uint32 Scene2701::hmCarAtHome(int messageNum, const MessageParam &param, Entity 
 }
 
 Scene2702::Scene2702(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _isInLight(true), _newTrackIndex(-1) {
+  : Scene(vm, parentModule)
+  , _isInLight(true)
+  , _newTrackIndex(-1) {
 
 	SetMessageHandler(&Scene2702::handleMessage);
 	SetUpdateHandler(&Scene2702::update);
@@ -711,7 +717,6 @@ Scene2702::Scene2702(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	_palette->copyBasePalette(0, 256, 0);
-
 }
 
 void Scene2702::update() {
@@ -795,7 +800,7 @@ void Scene2702::changeTrack() {
 }
 
 Scene2703::Scene2703(NeverhoodEngine *vm, Module *parentModule, int which, uint32 trackInfoId)
-	: Scene(vm, parentModule) {
+  : Scene(vm, parentModule) {
 
 	TrackInfo *tracks = _vm->_staticData->getTrackInfo(trackInfoId);
 
@@ -858,7 +863,6 @@ Scene2703::Scene2703(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 	}
 
 	_palette->copyBasePalette(0, 256, 0);
-
 }
 
 void Scene2703::update() {
@@ -908,8 +912,8 @@ uint32 Scene2703::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint32 trackInfoId, int16 value,
-	const uint32 *staticSprites, const NRect *clipRect)
-	: Scene(vm, parentModule) {
+                     const uint32 *staticSprites, const NRect *clipRect)
+  : Scene(vm, parentModule) {
 
 	TrackInfo *tracks = _vm->_staticData->getTrackInfo(trackInfoId);
 
@@ -977,7 +981,6 @@ Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 		if (_asCarConnector)
 			_asCarConnector->getClipRect() = *clipRect;
 	}
-
 }
 
 void Scene2704::update() {
@@ -1007,7 +1010,8 @@ uint32 Scene2704::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene2706::Scene2706(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _newTrackIndex(-1) {
+  : Scene(vm, parentModule)
+  , _newTrackIndex(-1) {
 
 	SetMessageHandler(&Scene2706::handleMessage);
 
@@ -1057,7 +1061,6 @@ Scene2706::Scene2706(NeverhoodEngine *vm, Module *parentModule, int which)
 		else
 			sendMessage(_asCar, NM_CAR_MOVE_TO_NEXT_POINT, 150);
 	}
-
 }
 
 uint32 Scene2706::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1116,7 +1119,7 @@ void Scene2706::changeTrack() {
 }
 
 Scene2732::Scene2732(NeverhoodEngine *vm, Module *parentModule)
-	: Scene(vm, parentModule) {
+  : Scene(vm, parentModule) {
 
 	Sprite *tempSprite;
 
@@ -1130,7 +1133,6 @@ Scene2732::Scene2732(NeverhoodEngine *vm, Module *parentModule)
 
 	tempSprite = insertStaticSprite(0x50C22C48, 1100);
 	_klaymen->setClipRect(tempSprite->getDrawRect().x, 0, 640, 480);
-
 }
 
 } // End of namespace Neverhood

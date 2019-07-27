@@ -26,7 +26,7 @@
 namespace Neverhood {
 
 Module1200::Module1200(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule) {
+  : Module(vm, parentModule) {
 
 	SetMessageHandler(&Module1200::handleMessage);
 
@@ -98,8 +98,15 @@ static const uint32 kScene1201InitArray[] = {
 };
 
 Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _creatureExploded(false), _asMatch(NULL), _asTntMan(NULL),
-	_asCreature(NULL), _asTntManRope(NULL), _asLeftDoor(NULL), _asRightDoor(NULL), _asTape(NULL) {
+  : Scene(vm, parentModule)
+  , _creatureExploded(false)
+  , _asMatch(NULL)
+  , _asTntMan(NULL)
+  , _asCreature(NULL)
+  , _asTntManRope(NULL)
+  , _asLeftDoor(NULL)
+  , _asRightDoor(NULL)
+  , _asTape(NULL) {
 
 	int16 topY1, topY2, topY3, topY4;
 	int16 x1, x2;
@@ -256,7 +263,6 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 			setRectList(0x004AEE18);
 		else
 			setRectList(0x004AED88);
-
 	}
 
 	tempSprite = insertStaticSprite(0x63D400BC, 900);
@@ -278,7 +284,6 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 		_asCreature = insertSprite<AsScene1201Creature>(this, _klaymen);
 		_asCreature->setClipRect(x1, 0, x2, 480);
 	}
-
 }
 
 Scene1201::~Scene1201() {
@@ -358,8 +363,12 @@ static const uint32 kScene1202Table[] = {
 };
 
 Scene1202::Scene1202(NeverhoodEngine *vm, Module *parentModule)
-	: Scene(vm, parentModule), _paletteResource(vm),
-	_soundToggle(true), _isPuzzleSolved(false), _counter(0), _clickedIndex(-1) {
+  : Scene(vm, parentModule)
+  , _paletteResource(vm)
+  , _soundToggle(true)
+  , _isPuzzleSolved(false)
+  , _counter(0)
+  , _clickedIndex(-1) {
 
 	SetMessageHandler(&Scene1202::handleMessage);
 	SetUpdateHandler(&Scene1202::update);
@@ -387,7 +396,6 @@ Scene1202::Scene1202(NeverhoodEngine *vm, Module *parentModule)
 	loadSound(1, 0x40005446);
 	loadSound(2, 0x40005446); // Same sound as slot 1
 	loadSound(3, 0x68E25540);
-
 }
 
 Scene1202::~Scene1202() {
@@ -453,10 +461,7 @@ uint32 Scene1202::hmSolved(int messageNum, const MessageParam &param, Entity *se
 }
 
 bool Scene1202::isSolved() {
-	return
-		getSubVar(VA_TNT_POSITIONS,  0) ==  0 && getSubVar(VA_TNT_POSITIONS,  3) ==  3 &&
-		getSubVar(VA_TNT_POSITIONS,  6) ==  6 && getSubVar(VA_TNT_POSITIONS,  9) ==  9 &&
-		getSubVar(VA_TNT_POSITIONS, 12) == 12 && getSubVar(VA_TNT_POSITIONS, 15) == 15;
+	return getSubVar(VA_TNT_POSITIONS, 0) == 0 && getSubVar(VA_TNT_POSITIONS, 3) == 3 && getSubVar(VA_TNT_POSITIONS, 6) == 6 && getSubVar(VA_TNT_POSITIONS, 9) == 9 && getSubVar(VA_TNT_POSITIONS, 12) == 12 && getSubVar(VA_TNT_POSITIONS, 15) == 15;
 }
 
 } // End of namespace Neverhood

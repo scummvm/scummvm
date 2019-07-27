@@ -23,14 +23,14 @@
 #ifndef KYRA_SCREEN_H
 #define KYRA_SCREEN_H
 
-#include "common/util.h"
+#include "common/array.h"
 #include "common/func.h"
 #include "common/list.h"
-#include "common/array.h"
+#include "common/ptr.h"
 #include "common/rect.h"
 #include "common/rendermode.h"
 #include "common/stream.h"
-#include "common/ptr.h"
+#include "common/util.h"
 
 class OSystem;
 
@@ -194,7 +194,7 @@ public:
 	int getHeight() const { return _height; }
 	int getWidth() const { return _width; }
 	int getCharWidth(uint16 c) const;
-	void setColorMap(const uint8 *src) { _colorMap = src;  }
+	void setColorMap(const uint8 *src) { _colorMap = src; }
 	void drawChar(uint16 c, byte *dst, int pitch, int) const;
 
 	static void errorDialog(int index);
@@ -203,7 +203,18 @@ private:
 	void unload();
 
 	struct TextFont {
-		TextFont() : data(0), bitmap(0), location(0), spacing(0), kerning(0), height(0), width(0), baseLine(0), firstChar(0), lastChar(0), modulo(0) {}
+		TextFont()
+		  : data(0)
+		  , bitmap(0)
+		  , location(0)
+		  , spacing(0)
+		  , kerning(0)
+		  , height(0)
+		  , width(0)
+		  , baseLine(0)
+		  , firstChar(0)
+		  , lastChar(0)
+		  , modulo(0) {}
 		~TextFont() {
 			delete[] data;
 		}
@@ -212,7 +223,7 @@ private:
 		uint16 width;
 		uint16 baseLine;
 		uint8 firstChar;
-		uint8 lastChar;		
+		uint8 lastChar;
 		uint16 modulo;
 		const uint8 *data;
 		const uint8 *bitmap;
@@ -225,7 +236,10 @@ private:
 	void selectMode(int mode);
 
 	struct FontContent {
-		FontContent() : height(0), style(0), flags(0) {}
+		FontContent()
+		  : height(0)
+		  , style(0)
+		  , flags(0) {}
 		~FontContent() {
 			data.reset();
 		}
@@ -306,7 +320,7 @@ protected:
 	void unload();
 
 	const uint8 *_colorMap;
-	Graphics::FontSJIS *_font;	
+	Graphics::FontSJIS *_font;
 	int _sjisWidth, _asciiWidth;
 	int _fontHeight;
 	const bool _drawOutline;
@@ -463,16 +477,16 @@ public:
 	};
 
 	enum DrawShapeFlags {
-		DSF_X_FLIPPED  = 0x01,
-		DSF_Y_FLIPPED  = 0x02,
-		DSF_SCALE      = 0x04,
+		DSF_X_FLIPPED = 0x01,
+		DSF_Y_FLIPPED = 0x02,
+		DSF_SCALE = 0x04,
 		DSF_WND_COORDS = 0x10,
-		DSF_CENTER     = 0x20,
+		DSF_CENTER = 0x20,
 
-		DSF_SHAPE_FADING		= 0x100,
-		DSF_TRANSPARENCY		= 0x1000,
-		DSF_BACKGROUND_FADING	= 0x2000,
-		DSF_CUSTOM_PALETTE		= 0x8000
+		DSF_SHAPE_FADING = 0x100,
+		DSF_TRANSPARENCY = 0x1000,
+		DSF_BACKGROUND_FADING = 0x2000,
+		DSF_CUSTOM_PALETTE = 0x8000
 	};
 
 	enum FontId {
@@ -516,7 +530,7 @@ public:
 	void shakeScreen(int times);
 
 	// page functions
-	void copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage, int flags=0);
+	void copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage, int flags = 0);
 	void copyPage(uint8 srcPage, uint8 dstPage);
 
 	void copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *dest);
@@ -534,8 +548,8 @@ public:
 	uint8 *getPageRect(int pageNum, int x, int y, int w, int h);
 
 	// palette handling
-	void fadeFromBlack(int delay=0x54, const UpdateFunctor *upFunc = 0);
-	void fadeToBlack(int delay=0x54, const UpdateFunctor *upFunc = 0);
+	void fadeFromBlack(int delay = 0x54, const UpdateFunctor *upFunc = 0);
+	void fadeToBlack(int delay = 0x54, const UpdateFunctor *upFunc = 0);
 
 	virtual void fadePalette(const Palette &pal, int delay, const UpdateFunctor *upFunc = 0);
 	virtual void getFadeParams(const Palette &pal, int delay, int &delayInc, int &diff);
@@ -604,7 +618,7 @@ public:
 	void rectClip(int &x, int &y, int w, int h);
 
 	// misc
-	virtual void loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip=false);
+	virtual void loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip = false);
 
 	virtual bool loadPalette(const char *filename, Palette &pal);
 	bool loadPaletteTable(const char *filename, int firstPalette);
@@ -674,8 +688,10 @@ protected:
 
 	int16 encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size);
 
-	template<bool noXor> static void wrapped_decodeFrameDelta(uint8 *dst, const uint8 *src);
-	template<bool noXor> static void wrapped_decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch);
+	template <bool noXor>
+	static void wrapped_decodeFrameDelta(uint8 *dst, const uint8 *src);
+	template <bool noXor>
+	static void wrapped_decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch);
 
 	uint8 *_pagePtrs[16];
 	uint8 *_sjisOverlayPtrs[SCREEN_OVLS_NUM];

@@ -36,9 +36,9 @@ class View;
 
 enum SceneObjectType {
 	kSceneObjectTypeUnknown = -1,
-	kSceneObjectTypeActor   = 0,
-	kSceneObjectTypeObject  = 1,
-	kSceneObjectTypeItem    = 2
+	kSceneObjectTypeActor = 0,
+	kSceneObjectTypeObject = 1,
+	kSceneObjectTypeItem = 2
 };
 
 class SceneObjects {
@@ -47,26 +47,26 @@ class SceneObjects {
 	static const int kSceneObjectCount = 115;
 
 	struct SceneObject {
-		int             id;
+		int id;
 		SceneObjectType type;
-		BoundingBox     boundingBox;
-		Common::Rect    screenRectangle;
-		float           distanceToCamera;
-		bool            isPresent;
-		bool            isClickable;
-		bool            isObstacle;
-		int             unknown1;
-		bool            isTarget;
-		bool            isMoving;
-		bool            isRetired;
+		BoundingBox boundingBox;
+		Common::Rect screenRectangle;
+		float distanceToCamera;
+		bool isPresent;
+		bool isClickable;
+		bool isObstacle;
+		int unknown1;
+		bool isTarget;
+		bool isMoving;
+		bool isRetired;
 	};
 
 	BladeRunnerEngine *_vm;
 
-	View        *_view;
-	int          _count;
-	SceneObject  _sceneObjects[kSceneObjectCount];
-	int          _sceneObjectsSortedByDistance[kSceneObjectCount];
+	View *_view;
+	int _count;
+	SceneObject _sceneObjects[kSceneObjectCount];
+	int _sceneObjectsSortedByDistance[kSceneObjectCount];
 
 public:
 	SceneObjects(BladeRunnerEngine *vm, View *view);

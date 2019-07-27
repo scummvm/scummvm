@@ -43,9 +43,9 @@
 // ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 // THIS SOFTWARE.
 
-#include "director/lingo/lingo.h"
-#include "common/file.h"
 #include "audio/decoders/wave.h"
+#include "common/file.h"
+#include "director/lingo/lingo.h"
 
 #include "director/lingo/lingo-gr.h"
 #include "director/util.h"
@@ -53,7 +53,7 @@
 namespace Director {
 
 void Lingo::execute(uint pc) {
-	for(_pc = pc; (*_currentScript)[_pc] != STOP && !_returning;) {
+	for (_pc = pc; (*_currentScript)[_pc] != STOP && !_returning;) {
 		Common::String instr = decodeInstruction(_pc);
 
 		if (debugChannelSet(5, kDebugLingoExec))
@@ -92,39 +92,35 @@ Common::String Lingo::decodeInstruction(uint pc, uint *newPc) {
 
 		while (*pars) {
 			switch (*pars++) {
-			case 'i':
-				{
-					i = (*_currentScript)[pc++];
-					int v = READ_UINT32(&i);
+			case 'i': {
+				i = (*_currentScript)[pc++];
+				int v = READ_UINT32(&i);
 
-					res += Common::String::format(" %d", v);
-					break;
-				}
-			case 'f':
-				{
-					Datum d;
-					i = (*_currentScript)[pc++];
-					d.u.f = *(double *)(&i);
+				res += Common::String::format(" %d", v);
+				break;
+			}
+			case 'f': {
+				Datum d;
+				i = (*_currentScript)[pc++];
+				d.u.f = *(double *)(&i);
 
-					res += Common::String::format(" %f", d.u.f);
-					break;
-				}
-			case 'o':
-				{
-					i = (*_currentScript)[pc++];
-					int v = READ_UINT32(&i);
+				res += Common::String::format(" %f", d.u.f);
+				break;
+			}
+			case 'o': {
+				i = (*_currentScript)[pc++];
+				int v = READ_UINT32(&i);
 
-					res += Common::String::format(" [%5d]", v);
-					break;
-				}
-			case 's':
-				{
-					char *s = (char *)&(*_currentScript)[pc];
-					pc += calcStringAlignment(s);
+				res += Common::String::format(" [%5d]", v);
+				break;
+			}
+			case 's': {
+				char *s = (char *)&(*_currentScript)[pc];
+				pc += calcStringAlignment(s);
 
-					res += Common::String::format(" \"%s\"", s);
-					break;
-				}
+				res += Common::String::format(" \"%s\"", s);
+				break;
+			}
 			default:
 				warning("decodeInstruction: Unknown parameter type: %c", pars[-1]);
 			}
@@ -359,7 +355,7 @@ void Lingo::codeLabel(int label) {
 
 void Lingo::processIf(int elselabel, int endlabel) {
 	inst ielse1, iend;
-	int  else1 = elselabel;
+	int else1 = elselabel;
 
 	WRITE_UINT32(&iend, endlabel);
 
@@ -380,8 +376,8 @@ void Lingo::processIf(int elselabel, int endlabel) {
 			else1 = else1 - label;
 
 		WRITE_UINT32(&ielse1, else1);
-		(*_currentScript)[label + 2] = ielse1;    /* elsepart */
-		(*_currentScript)[label + 3] = iend;      /* end, if cond fails */
+		(*_currentScript)[label + 2] = ielse1; /* elsepart */
+		(*_currentScript)[label + 3] = iend; /* end, if cond fails */
 
 		else1 = label;
 	}

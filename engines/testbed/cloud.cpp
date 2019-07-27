@@ -20,12 +20,12 @@
  *
  */
 
+#include "testbed/cloud.h"
+#include "backends/cloud/cloudmanager.h"
 #include "common/config-manager.h"
 #include "common/stream.h"
 #include "common/util.h"
 #include "testbed/fs.h"
-#include "testbed/cloud.h"
-#include "backends/cloud/cloudmanager.h"
 
 namespace Testbed {
 
@@ -58,13 +58,16 @@ bool CloudTests::waitForCallback() {
 	const int TIMEOUT = 30;
 
 	Common::Point pt;
-	pt.x = 10; pt.y = 10;
+	pt.x = 10;
+	pt.y = 10;
 	Testsuite::writeOnScreen("Waiting for callback...", pt);
 
 	int left = TIMEOUT;
 	while (--left) {
-		if (ConfParams.isCloudTestCallbackCalled()) return true;
-		if (ConfParams.isCloudTestErrorCallbackCalled()) return true;
+		if (ConfParams.isCloudTestCallbackCalled())
+			return true;
+		if (ConfParams.isCloudTestErrorCallbackCalled())
+			return true;
 		g_system->delayMillis(1000);
 	}
 	return false;
@@ -106,9 +109,11 @@ void CloudTests::directoryListedCallback(Cloud::Storage::FileArrayResponse respo
 	uint32 directories = 0, files = 0;
 	for (uint32 i = 0; i < response.value.size(); ++i) {
 		if (response.value[i].isDirectory()) {
-			if (++directories == 1) directory = response.value[i].path();
+			if (++directories == 1)
+				directory = response.value[i].path();
 		} else {
-			if (++files == 1) file = response.value[i].name();
+			if (++files == 1)
+				file = response.value[i].name();
 		}
 	}
 
@@ -182,12 +187,11 @@ TestExitStatus CloudTests::testInfo() {
 	}
 
 	Common::String info = Common::String::format(
-		"Welcome to the Cloud test suite!\n"
-		"We're going to use the %s cloud storage which is connected right now.\n\n"
-		"Testing Cloud Storage API info() method.\n"
-		"In this test we'll try to list user infomation.",
-		CloudMan.getCurrentStorage()->name().c_str()
-	);
+	  "Welcome to the Cloud test suite!\n"
+	  "We're going to use the %s cloud storage which is connected right now.\n\n"
+	  "Testing Cloud Storage API info() method.\n"
+	  "In this test we'll try to list user infomation.",
+	  CloudMan.getCurrentStorage()->name().c_str());
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : info()\n");
@@ -195,13 +199,14 @@ TestExitStatus CloudTests::testInfo() {
 	}
 
 	if (CloudMan.info(
-			new Common::GlobalFunctionCallback<Cloud::Storage::StorageInfoResponse>(&infoCallback),
-			new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
-		) == nullptr) {
+	      new Common::GlobalFunctionCallback<Cloud::Storage::StorageInfoResponse>(&infoCallback),
+	      new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback))
+	    == nullptr) {
 		Testsuite::logPrintf("Warning! No Request is returned!\n");
 	}
 
-	if (!waitForCallbackMore()) return kTestSkipped;
+	if (!waitForCallbackMore())
+		return kTestSkipped;
 	Testsuite::clearScreen();
 
 	if (ConfParams.isCloudTestErrorCallbackCalled()) {
@@ -223,7 +228,7 @@ TestExitStatus CloudTests::testDirectoryListing() {
 	}
 
 	Common::String info = "Testing Cloud Storage API listDirectory() method.\n"
-		"In this test we'll try to list root directory.";
+	                      "In this test we'll try to list root directory.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : listDirectory()\n");
@@ -231,14 +236,15 @@ TestExitStatus CloudTests::testDirectoryListing() {
 	}
 
 	if (CloudMan.listDirectory(
-			"",
-			new Common::GlobalFunctionCallback<Cloud::Storage::FileArrayResponse>(&directoryListedCallback),
-			new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
-		) == nullptr) {
+	      "",
+	      new Common::GlobalFunctionCallback<Cloud::Storage::FileArrayResponse>(&directoryListedCallback),
+	      new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback))
+	    == nullptr) {
 		Testsuite::logPrintf("Warning! No Request is returned!\n");
 	}
 
-	if (!waitForCallbackMore()) return kTestSkipped;
+	if (!waitForCallbackMore())
+		return kTestSkipped;
 	Testsuite::clearScreen();
 
 	if (ConfParams.isCloudTestErrorCallbackCalled()) {
@@ -260,7 +266,7 @@ TestExitStatus CloudTests::testDirectoryCreating() {
 	}
 
 	Common::String info = "Testing Cloud Storage API createDirectory() method.\n"
-		"In this test we'll try to create a 'testbed' directory.";
+	                      "In this test we'll try to create a 'testbed' directory.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : createDirectory()\n");
@@ -268,19 +274,20 @@ TestExitStatus CloudTests::testDirectoryCreating() {
 	}
 
 	Common::String info2 = "We'd list the root directory, create the directory and the list it again.\n"
-		"If all goes smoothly, you'd notice that there are more directories now.";
+	                       "If all goes smoothly, you'd notice that there are more directories now.";
 	Testsuite::displayMessage(info2);
 
 	// list root directory
 	if (CloudMan.listDirectory(
-			"",
-			new Common::GlobalFunctionCallback<Cloud::Storage::FileArrayResponse>(&directoryListedCallback),
-			new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
-		) == nullptr) {
+	      "",
+	      new Common::GlobalFunctionCallback<Cloud::Storage::FileArrayResponse>(&directoryListedCallback),
+	      new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback))
+	    == nullptr) {
 		Testsuite::logPrintf("Warning! No Request is returned!\n");
 	}
 
-	if (!waitForCallbackMore()) return kTestSkipped;
+	if (!waitForCallbackMore())
+		return kTestSkipped;
 	Testsuite::clearScreen();
 
 	if (ConfParams.isCloudTestErrorCallbackCalled()) {
@@ -292,14 +299,15 @@ TestExitStatus CloudTests::testDirectoryCreating() {
 
 	// create 'testbed'
 	if (CloudMan.getCurrentStorage()->createDirectory(
-			getRemoteTestPath(),
-			new Common::GlobalFunctionCallback<Cloud::Storage::BoolResponse>(&directoryCreatedCallback),
-			new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
-		) == nullptr) {
+	      getRemoteTestPath(),
+	      new Common::GlobalFunctionCallback<Cloud::Storage::BoolResponse>(&directoryCreatedCallback),
+	      new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback))
+	    == nullptr) {
 		Testsuite::logPrintf("Warning! No Request is returned!\n");
 	}
 
-	if (!waitForCallbackMore()) return kTestSkipped;
+	if (!waitForCallbackMore())
+		return kTestSkipped;
 	Testsuite::clearScreen();
 
 	if (ConfParams.isCloudTestErrorCallbackCalled()) {
@@ -311,14 +319,15 @@ TestExitStatus CloudTests::testDirectoryCreating() {
 
 	// list it again
 	if (CloudMan.listDirectory(
-			"",
-			new Common::GlobalFunctionCallback<Cloud::Storage::FileArrayResponse>(&directoryListedCallback),
-			new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
-		) == nullptr) {
+	      "",
+	      new Common::GlobalFunctionCallback<Cloud::Storage::FileArrayResponse>(&directoryListedCallback),
+	      new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback))
+	    == nullptr) {
 		Testsuite::logPrintf("Warning! No Request is returned!\n");
 	}
 
-	if (!waitForCallbackMore()) return kTestSkipped;
+	if (!waitForCallbackMore())
+		return kTestSkipped;
 	Testsuite::clearScreen();
 
 	if (ConfParams.isCloudTestErrorCallbackCalled()) {
@@ -345,7 +354,7 @@ TestExitStatus CloudTests::testUploading() {
 	}
 
 	Common::String info = "Testing Cloud Storage API upload() method.\n"
-		"In this test we'll try to upload a 'test1/file.txt' file.";
+	                      "In this test we'll try to upload a 'test1/file.txt' file.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : upload()\n");
@@ -365,26 +374,27 @@ TestExitStatus CloudTests::testUploading() {
 
 	if (CloudMan.getCurrentStorage()->uploadStreamSupported()) {
 		if (CloudMan.getCurrentStorage()->upload(
-				Common::String(getRemoteTestPath()) + "/testfile.txt",
-				node.createReadStream(),
-				new Common::GlobalFunctionCallback<Cloud::Storage::UploadResponse>(&fileUploadedCallback),
-				new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
-			) == nullptr) {
+		      Common::String(getRemoteTestPath()) + "/testfile.txt",
+		      node.createReadStream(),
+		      new Common::GlobalFunctionCallback<Cloud::Storage::UploadResponse>(&fileUploadedCallback),
+		      new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback))
+		    == nullptr) {
 			Testsuite::logPrintf("Warning! No Request is returned!\n");
 		}
 	} else {
 		Common::String filepath = node.getPath();
 		if (CloudMan.getCurrentStorage()->upload(
-				Common::String(getRemoteTestPath()) + "/testfile.txt",
-				filepath.c_str(),
-				new Common::GlobalFunctionCallback<Cloud::Storage::UploadResponse>(&fileUploadedCallback),
-				new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
-			) == nullptr) {
+		      Common::String(getRemoteTestPath()) + "/testfile.txt",
+		      filepath.c_str(),
+		      new Common::GlobalFunctionCallback<Cloud::Storage::UploadResponse>(&fileUploadedCallback),
+		      new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback))
+		    == nullptr) {
 			Testsuite::logPrintf("Warning! No Request is returned!\n");
 		}
 	}
 
-	if (!waitForCallbackMore()) return kTestSkipped;
+	if (!waitForCallbackMore())
+		return kTestSkipped;
 	Testsuite::clearScreen();
 
 	if (ConfParams.isCloudTestErrorCallbackCalled()) {
@@ -398,14 +408,15 @@ TestExitStatus CloudTests::testUploading() {
 		ConfParams.setCloudTestCallbackCalled(false);
 
 		if (CloudMan.listDirectory(
-				getRemoteTestPath(),
-				new Common::GlobalFunctionCallback<Cloud::Storage::FileArrayResponse>(&directoryListedCallback),
-				new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
-			) == nullptr) {
+		      getRemoteTestPath(),
+		      new Common::GlobalFunctionCallback<Cloud::Storage::FileArrayResponse>(&directoryListedCallback),
+		      new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback))
+		    == nullptr) {
 			Testsuite::logPrintf("Warning! No Request is returned!\n");
 		}
 
-		if (!waitForCallbackMore()) return kTestSkipped;
+		if (!waitForCallbackMore())
+			return kTestSkipped;
 		Testsuite::clearScreen();
 
 		if (ConfParams.isCloudTestErrorCallbackCalled()) {
@@ -433,7 +444,7 @@ TestExitStatus CloudTests::testDownloading() {
 	}
 
 	Common::String info = "Testing Cloud Storage API download() method.\n"
-		"In this test we'll try to download that 'testbed/testfile.txt' file.";
+	                      "In this test we'll try to download that 'testbed/testfile.txt' file.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : download()\n");
@@ -445,15 +456,16 @@ TestExitStatus CloudTests::testDownloading() {
 	Common::FSNode node = gameRoot.getFSNode().getChild("downloaded_file.txt");
 	Common::String filepath = node.getPath();
 	if (CloudMan.getCurrentStorage()->download(
-			Common::String(getRemoteTestPath()) + "/testfile.txt",
-			filepath.c_str(),
-			new Common::GlobalFunctionCallback<Cloud::Storage::BoolResponse>(&fileDownloadedCallback),
-			new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
-		) == nullptr) {
+	      Common::String(getRemoteTestPath()) + "/testfile.txt",
+	      filepath.c_str(),
+	      new Common::GlobalFunctionCallback<Cloud::Storage::BoolResponse>(&fileDownloadedCallback),
+	      new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback))
+	    == nullptr) {
 		Testsuite::logPrintf("Warning! No Request is returned!\n");
 	}
 
-	if (!waitForCallbackMore()) return kTestSkipped;
+	if (!waitForCallbackMore())
+		return kTestSkipped;
 	Testsuite::clearScreen();
 
 	if (ConfParams.isCloudTestErrorCallbackCalled()) {
@@ -480,7 +492,7 @@ TestExitStatus CloudTests::testFolderDownloading() {
 	}
 
 	Common::String info = "Testing Cloud Storage API downloadFolder() method.\n"
-		"In this test we'll try to download remote 'testbed/' directory.";
+	                      "In this test we'll try to download remote 'testbed/' directory.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : downloadFolder()\n");
@@ -492,15 +504,16 @@ TestExitStatus CloudTests::testFolderDownloading() {
 	Common::FSNode node = gameRoot.getFSNode().getChild("downloaded_directory");
 	Common::String filepath = node.getPath();
 	if (CloudMan.downloadFolder(
-			getRemoteTestPath(),
-			filepath.c_str(),
-			new Common::GlobalFunctionCallback<Cloud::Storage::FileArrayResponse>(&directoryDownloadedCallback),
-			new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
-		) == nullptr) {
+	      getRemoteTestPath(),
+	      filepath.c_str(),
+	      new Common::GlobalFunctionCallback<Cloud::Storage::FileArrayResponse>(&directoryDownloadedCallback),
+	      new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback))
+	    == nullptr) {
 		Testsuite::logPrintf("Warning! No Request is returned!\n");
 	}
 
-	if (!waitForCallbackMore()) return kTestSkipped;
+	if (!waitForCallbackMore())
+		return kTestSkipped;
 	Testsuite::clearScreen();
 
 	if (ConfParams.isCloudTestErrorCallbackCalled()) {
@@ -527,7 +540,7 @@ TestExitStatus CloudTests::testSavesSync() {
 	}
 
 	Common::String info = "Testing Cloud Storage API syncSaves() method.\n"
-		"In this test we'll try to sync your saves.";
+	                      "In this test we'll try to sync your saves.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : syncSaves()\n");
@@ -539,13 +552,14 @@ TestExitStatus CloudTests::testSavesSync() {
 	Common::FSNode node = gameRoot.getFSNode().getChild("downloaded_directory");
 	Common::String filepath = node.getPath();
 	if (CloudMan.syncSaves(
-			new Common::GlobalFunctionCallback<Cloud::Storage::BoolResponse>(&savesSyncedCallback),
-			new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback)
-		) == nullptr) {
+	      new Common::GlobalFunctionCallback<Cloud::Storage::BoolResponse>(&savesSyncedCallback),
+	      new Common::GlobalFunctionCallback<Networking::ErrorResponse>(&errorCallback))
+	    == nullptr) {
 		Testsuite::logPrintf("Warning! No Request is returned!\n");
 	}
 
-	if (!waitForCallbackMore()) return kTestSkipped;
+	if (!waitForCallbackMore())
+		return kTestSkipped;
 	Testsuite::clearScreen();
 
 	if (ConfParams.isCloudTestErrorCallbackCalled()) {

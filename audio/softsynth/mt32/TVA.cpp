@@ -22,20 +22,23 @@
 
 #include "internals.h"
 
-#include "TVA.h"
 #include "Part.h"
 #include "Partial.h"
 #include "Poly.h"
 #include "Synth.h"
+#include "TVA.h"
 #include "Tables.h"
 
 namespace MT32Emu {
 
 // CONFIRMED: Matches a table in ROM - haven't got around to coming up with a formula for it yet.
-static Bit8u biasLevelToAmpSubtractionCoeff[13] = {255, 187, 137, 100, 74, 54, 40, 29, 21, 15, 10, 5, 0};
+static Bit8u biasLevelToAmpSubtractionCoeff[13] = { 255, 187, 137, 100, 74, 54, 40, 29, 21, 15, 10, 5, 0 };
 
-TVA::TVA(const Partial *usePartial, LA32Ramp *useAmpRamp) :
-	partial(usePartial), ampRamp(useAmpRamp), system(&usePartial->getSynth()->mt32ram.system), phase(TVA_PHASE_DEAD) {
+TVA::TVA(const Partial *usePartial, LA32Ramp *useAmpRamp)
+  : partial(usePartial)
+  , ampRamp(useAmpRamp)
+  , system(&usePartial->getSynth()->mt32ram.system)
+  , phase(TVA_PHASE_DEAD) {
 }
 
 void TVA::startRamp(Bit8u newTarget, Bit8u newIncrement, int newPhase) {
@@ -181,7 +184,7 @@ void TVA::reset(const Part *newPart, const TimbreParam::PartialParam *newPartial
 		newPhase = TVA_PHASE_BASIC; // The first target used in nextPhase() will be TVA_PHASE_ATTACK
 	}
 
-	ampRamp->reset();//currentAmp = 0;
+	ampRamp->reset(); //currentAmp = 0;
 
 	// "Go downward as quickly as possible".
 	// Since the current value is 0, the LA32Ramp will notice that we're already at or below the target and trying to go downward,
@@ -281,7 +284,7 @@ void TVA::nextPhase() {
 				if (newPhase == TVA_PHASE_2) {
 					allLevelsZeroFromNowOn = true;
 				} else if (partialParam->tva.envLevel[0] == 0) {
-					if (newPhase == TVA_PHASE_ATTACK)  { // this line added, missing in ROM - FIXME: Add description of repercussions
+					if (newPhase == TVA_PHASE_ATTACK) { // this line added, missing in ROM - FIXME: Add description of repercussions
 						allLevelsZeroFromNowOn = true;
 					}
 				}

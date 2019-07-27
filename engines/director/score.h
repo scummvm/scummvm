@@ -23,16 +23,16 @@
 #ifndef DIRECTOR_SCORE_H
 #define DIRECTOR_SCORE_H
 
-#include "common/substream.h"
 #include "common/rect.h"
+#include "common/substream.h"
 #include "director/archive.h"
 #include "director/cast.h"
 #include "director/images.h"
 #include "director/stxt.h"
 
 namespace Graphics {
-	class ManagedSurface;
-	class Font;
+class ManagedSurface;
+class Font;
 }
 
 namespace Director {

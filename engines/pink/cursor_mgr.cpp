@@ -21,16 +21,20 @@
  */
 
 #include "pink/cursor_mgr.h"
-#include "pink/pink.h"
-#include "pink/objects/pages/page.h"
 #include "pink/objects/actors/cursor_actor.h"
+#include "pink/objects/pages/page.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
 CursorMgr::CursorMgr(PinkEngine *game, Page *page)
-	: _actor(nullptr), _page(page), _game(game),
-	_time(0), _isPlayingAnimation(false),
-	_isSecondFrame(false), _firstFrameIndex(0)  {}
+  : _actor(nullptr)
+  , _page(page)
+  , _game(game)
+  , _time(0)
+  , _isPlayingAnimation(false)
+  , _isSecondFrame(false)
+  , _firstFrameIndex(0) {}
 
 void CursorMgr::setCursor(uint index, const Common::Point point, const Common::String &itemName) {
 	switch (index) {

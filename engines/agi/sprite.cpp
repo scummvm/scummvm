@@ -20,8 +20,8 @@
  *
  */
 
-#include "agi/agi.h"
 #include "agi/sprite.h"
+#include "agi/agi.h"
 #include "agi/graphics.h"
 #include "agi/text.h"
 
@@ -60,7 +60,7 @@ void SpritesMgr::buildRegularSpriteList() {
 
 	// Now sort this list
 	Common::sort(_spriteRegularList.begin(), _spriteRegularList.end(), sortSpriteHelper);
-//	warning("buildRegular: %d", _spriteRegularList.size());
+	//	warning("buildRegular: %d", _spriteRegularList.size());
 }
 
 void SpritesMgr::buildStaticSpriteList() {
@@ -92,13 +92,13 @@ void SpritesMgr::buildSpriteListAdd(uint16 givenOrderNr, ScreenObjEntry *screenO
 		return;
 
 	spriteEntry.givenOrderNr = givenOrderNr;
-//	warning("sprite add objNr %d", screenObjPtr->objectNr);
+	//	warning("sprite add objNr %d", screenObjPtr->objectNr);
 	if (screenObj->flags & fFixedPriority) {
 		spriteEntry.sortOrder = _gfx->priorityToY(screenObj->priority);
-//		warning(" - priorityToY (fixed) %d -> %d", screenObj->priority, spriteEntry.sortOrder);
+		//		warning(" - priorityToY (fixed) %d -> %d", screenObj->priority, spriteEntry.sortOrder);
 	} else {
 		spriteEntry.sortOrder = screenObj->yPos;
-//		warning(" - Ypos %d -> %d", screenObjPtr->yPos, spriteEntry.sortOrder);
+		//		warning(" - Ypos %d -> %d", screenObjPtr->yPos, spriteEntry.sortOrder);
 	}
 
 	spriteEntry.screenObjPtr = screenObj;
@@ -128,7 +128,7 @@ void SpritesMgr::buildSpriteListAdd(uint16 givenOrderNr, ScreenObjEntry *screenO
 		return;
 	}
 
-//	warning("list-add: %d, %d, original yPos: %d, ySize: %d", spriteEntry.xPos, spriteEntry.yPos, screenObj->yPos, screenObj->ySize);
+	//	warning("list-add: %d, %d, original yPos: %d, ySize: %d", spriteEntry.xPos, spriteEntry.yPos, screenObj->yPos, screenObj->ySize);
 	spriteEntry.backgroundBuffer = (uint8 *)malloc(spriteEntry.xSize * spriteEntry.ySize * 2); // for visual + priority data
 	assert(spriteEntry.backgroundBuffer);
 	spriteList.push_back(spriteEntry);
@@ -159,7 +159,7 @@ void SpritesMgr::freeAllSprites() {
 
 void SpritesMgr::eraseSprites(SpriteList &spriteList) {
 	SpriteList::iterator iter;
-//	warning("eraseSprites - count %d", spriteList.size());
+	//	warning("eraseSprites - count %d", spriteList.size());
 	for (iter = spriteList.reverse_begin(); iter != spriteList.end(); iter--) {
 		Sprite &sprite = *iter;
 		_gfx->block_restore(sprite.xPos, sprite.yPos, sprite.xSize, sprite.ySize, sprite.backgroundBuffer);
@@ -195,7 +195,7 @@ void SpritesMgr::eraseSprites() {
  */
 void SpritesMgr::drawSprites(SpriteList &spriteList) {
 	SpriteList::iterator iter;
-//	warning("drawSprites");
+	//	warning("drawSprites");
 
 	for (iter = spriteList.begin(); iter != spriteList.end(); ++iter) {
 		Sprite &sprite = *iter;
@@ -203,7 +203,7 @@ void SpritesMgr::drawSprites(SpriteList &spriteList) {
 
 		_gfx->block_save(sprite.xPos, sprite.yPos, sprite.xSize, sprite.ySize, sprite.backgroundBuffer);
 		//debugC(8, kDebugLevelSprites, "drawSprites(): s->v->entry = %d (prio %d)", s->viewPtr->entry, s->viewPtr->priority);
-//		warning("sprite %d (view %d), priority %d, sort %d, givenOrder %d", screenObj->objectNr, screenObj->currentView, screenObj->priority, sprite.sortOrder, sprite.givenOrderNr);
+		//		warning("sprite %d (view %d), priority %d, sort %d, givenOrder %d", screenObj->objectNr, screenObj->currentView, screenObj->priority, sprite.sortOrder, sprite.givenOrderNr);
 		drawCel(screenObj);
 	}
 }
@@ -264,7 +264,6 @@ void SpritesMgr::drawCel(ScreenObjEntry *screenObj) {
 					_gfx->putPixel(curX, curY, GFX_SCREEN_MASK_ALL, curColor, viewPriority);
 					isViewHidden = false;
 				}
-
 			}
 			curX++;
 		}
@@ -279,7 +278,6 @@ void SpritesMgr::drawCel(ScreenObjEntry *screenObj) {
 		_vm->setFlag(VM_FLAG_EGO_INVISIBLE, isViewHidden);
 	}
 }
-
 
 void SpritesMgr::showSprite(ScreenObjEntry *screenObj) {
 	int16 x = 0;
@@ -302,7 +300,7 @@ void SpritesMgr::showSprite(ScreenObjEntry *screenObj) {
 		return;
 
 	view_height_prev = screenObj->ySize_prev;
-	view_width_prev  = screenObj->xSize_prev;
+	view_width_prev = screenObj->xSize_prev;
 
 	screenObj->ySize_prev = screenObj->ySize;
 	screenObj->xSize_prev = screenObj->xSize;

@@ -24,29 +24,29 @@
 
 #if defined(LINUXMOTO)
 
-#include "backends/graphics/linuxmotosdl/linuxmotosdl-graphics.h"
-#include "backends/events/linuxmotosdl/linuxmotosdl-events.h"
-#include "common/mutex.h"
-#include "common/textconsole.h"
-#include "graphics/font.h"
-#include "graphics/fontman.h"
-#include "graphics/scaler.h"
-#include "graphics/scaler/aspect.h"
-#include "graphics/scaler/downscaler.h"
-#include "graphics/surface.h"
+#	include "backends/events/linuxmotosdl/linuxmotosdl-events.h"
+#	include "backends/graphics/linuxmotosdl/linuxmotosdl-graphics.h"
+#	include "common/mutex.h"
+#	include "common/textconsole.h"
+#	include "graphics/font.h"
+#	include "graphics/fontman.h"
+#	include "graphics/scaler.h"
+#	include "graphics/scaler/aspect.h"
+#	include "graphics/scaler/downscaler.h"
+#	include "graphics/surface.h"
 
 enum {
 	GFX_HALF = 12
 };
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
-	{"1x", "Fullscreen", GFX_NORMAL},
-	{"½x", "Downscale", GFX_HALF},
-	{0, 0, 0}
+	{ "1x", "Fullscreen", GFX_NORMAL },
+	{ "½x", "Downscale", GFX_HALF },
+	{ 0, 0, 0 }
 };
 
 LinuxmotoSdlGraphicsManager::LinuxmotoSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
- : SurfaceSdlGraphicsManager(sdlEventSource, window) {
+  : SurfaceSdlGraphicsManager(sdlEventSource, window) {
 }
 
 const OSystem::GraphicsMode *LinuxmotoSdlGraphicsManager::getSupportedGraphicsModes() const {
@@ -103,7 +103,7 @@ void LinuxmotoSdlGraphicsManager::setGraphicsModeIntern() {
 void LinuxmotoSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	assert(_transactionMode == kTransactionActive);
 
-#ifdef USE_RGB_COLOR
+#	ifdef USE_RGB_COLOR
 	// Avoid redundant format changes
 	Graphics::PixelFormat newFormat;
 	if (!format)
@@ -118,8 +118,7 @@ void LinuxmotoSdlGraphicsManager::initSize(uint w, uint h, const Graphics::Pixel
 		_transactionDetails.formatChanged = true;
 		_screenFormat = newFormat;
 	}
-#endif
-
+#	endif
 
 	// Avoid redundant res changes
 	if ((int)w == _videoMode.screenWidth && (int)h == _videoMode.screenHeight)
@@ -128,7 +127,7 @@ void LinuxmotoSdlGraphicsManager::initSize(uint w, uint h, const Graphics::Pixel
 	_videoMode.screenWidth = w;
 	_videoMode.screenHeight = h;
 
-	if	(w > 320 || h > 240) {
+	if (w > 320 || h > 240) {
 		setGraphicsMode(GFX_HALF);
 		setGraphicsModeIntern();
 		_window->toggleMouseGrab();
@@ -138,7 +137,7 @@ void LinuxmotoSdlGraphicsManager::initSize(uint w, uint h, const Graphics::Pixel
 }
 
 bool LinuxmotoSdlGraphicsManager::loadGFXMode() {
-	debug("Game ScreenMode = %d*%d",_videoMode.screenWidth, _videoMode.screenHeight);
+	debug("Game ScreenMode = %d*%d", _videoMode.screenWidth, _videoMode.screenHeight);
 	if (_videoMode.screenWidth > 320 || _videoMode.screenHeight > 240) {
 		_videoMode.aspectRatioCorrection = false;
 		setGraphicsMode(GFX_HALF);
@@ -177,8 +176,8 @@ void LinuxmotoSdlGraphicsManager::drawMouse() {
 	int hotX, hotY;
 
 	if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
-		dst.x = _mouseCurState.x/2;
-		dst.y = _mouseCurState.y/2;
+		dst.x = _mouseCurState.x / 2;
+		dst.y = _mouseCurState.y / 2;
 	} else {
 		dst.x = _mouseCurState.x;
 		dst.y = _mouseCurState.y;
@@ -243,7 +242,7 @@ void LinuxmotoSdlGraphicsManager::undrawMouse() {
 
 	if (_mouseBackup.w != 0 && _mouseBackup.h != 0) {
 		if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
-			addDirtyRect(x*2, y*2, _mouseBackup.w*2, _mouseBackup.h*2);
+			addDirtyRect(x * 2, y * 2, _mouseBackup.w * 2, _mouseBackup.h * 2);
 		} else {
 			addDirtyRect(x, y, _mouseBackup.w, _mouseBackup.h);
 		}
@@ -256,14 +255,14 @@ void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 	ScalerProc *scalerProc;
 	int scale1;
 
-#if defined(DEBUG) // definitions not available for non-DEBUG here. (needed this to compile in SYMBIAN32 & linux?)
+#	if defined(DEBUG) // definitions not available for non-DEBUG here. (needed this to compile in SYMBIAN32 & linux?)
 	assert(_hwscreen != NULL);
 	assert(_hwscreen->map->sw_data != NULL);
-#endif
+#	endif
 
 	// If the shake position changed, fill the dirty area with blackness
 	if (_currentShakePos != _newShakePos) {
-		SDL_Rect blackrect = {0, 0, _videoMode.screenWidth * _videoMode.scaleFactor, _newShakePos * _videoMode.scaleFactor};
+		SDL_Rect blackrect = { 0, 0, _videoMode.screenWidth * _videoMode.scaleFactor, _newShakePos * _videoMode.scaleFactor };
 
 		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
@@ -279,8 +278,8 @@ void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 	// screen surface accordingly.
 	if (_screen && _paletteDirtyEnd != 0) {
 		SDL_SetColors(_screen, _currentPalette + _paletteDirtyStart,
-			_paletteDirtyStart,
-			_paletteDirtyEnd - _paletteDirtyStart);
+		              _paletteDirtyStart,
+		              _paletteDirtyEnd - _paletteDirtyStart);
 
 		_paletteDirtyEnd = 0;
 
@@ -308,9 +307,9 @@ void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 	if (_mouseNeedsRedraw)
 		undrawMouse();
 
-#ifdef USE_OSD
+#	ifdef USE_OSD
 	updateOSD();
-#endif
+#	endif
 
 	// Force a full redraw if requested
 	if (_forceFull) {
@@ -330,8 +329,8 @@ void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 
 		for (r = _dirtyRectList; r != lastRect; ++r) {
 			dst = *r;
-			dst.x++;	// Shift rect by one since 2xSai needs to access the data around
-			dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
+			dst.x++; // Shift rect by one since 2xSai needs to access the data around
+			dst.y++; // any pixel to scale it, and we want to avoid mem access crashes.
 
 			if (SDL_BlitSurface(origSurf, r, srcSurf, &dst) != 0)
 				error("SDL_BlitSurface failed: %s", SDL_GetError());
@@ -368,18 +367,18 @@ void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 
 				if (_videoMode.mode == GFX_HALF && scalerProc == DownscaleAllByHalf) {
 
-					if (dst_x%2==1) {
+					if (dst_x % 2 == 1) {
 						dst_x--;
 						dst_w++;
 					}
-					if (dst_y%2==1) {
+					if (dst_y % 2 == 1) {
 						dst_y--;
 						dst_h++;
 					}
 
-					if (dst_w&1)
+					if (dst_w & 1)
 						dst_w++;
-					if (dst_h&1)
+					if (dst_h & 1)
 						dst_h++;
 
 					src_x = dst_x;
@@ -388,7 +387,7 @@ void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 					dst_y = dst_y / 2;
 				}
 				scalerProc((byte *)srcSurf->pixels + (src_x * 2 + 2) + (src_y + 1) * srcPitch, srcPitch,
-						   (byte *)_hwscreen->pixels + dst_x * 2 + dst_y * dstPitch, dstPitch, dst_w, dst_h);
+				           (byte *)_hwscreen->pixels + dst_x * 2 + dst_y * dstPitch, dstPitch, dst_w, dst_h);
 			}
 
 			if (_videoMode.mode == GFX_HALF && scalerProc == DownscaleAllByHalf) {
@@ -402,10 +401,10 @@ void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 			r->x = dst_x;
 			r->y = dst_y;
 
-#ifdef USE_SCALERS
+#	ifdef USE_SCALERS
 			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible)
-				r->h = stretch200To240((uint8 *) _hwscreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1, _videoMode.filtering);
-#endif
+				r->h = stretch200To240((uint8 *)_hwscreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1, _videoMode.filtering);
+#	endif
 		}
 		SDL_UnlockSurface(srcSurf);
 		SDL_UnlockSurface(_hwscreen);
@@ -414,14 +413,14 @@ void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 		// This is necessary if shaking is active.
 		if (_forceFull) {
 			_dirtyRectList[0].y = 0;
-			_dirtyRectList[0].h = (_videoMode.mode == GFX_HALF) ? effectiveScreenHeight()/2 : effectiveScreenHeight();
+			_dirtyRectList[0].h = (_videoMode.mode == GFX_HALF) ? effectiveScreenHeight() / 2 : effectiveScreenHeight();
 		}
 
 		drawMouse();
 
-#ifdef USE_OSD
+#	ifdef USE_OSD
 		drawOSD();
-#endif
+#	endif
 
 		// Finally, blit all our changes to the screen
 		SDL_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);

@@ -48,7 +48,7 @@ void makeRectStretchable(int &x, int &y, int &w, int &h, bool interpolate);
 /**
  * TODO: explain
  */
-                    
+
 int stretch200To240(uint8 *buf,
                     uint32 pitch,
                     int width,
@@ -57,7 +57,6 @@ int stretch200To240(uint8 *buf,
                     int srcY,
                     int origSrcY,
                     bool interpolate);
-
 
 /**
  * This filter (up)scales the source image vertically by a factor of 6/5.

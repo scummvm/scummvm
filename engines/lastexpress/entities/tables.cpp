@@ -34,7 +34,8 @@
 
 namespace LastExpress {
 
-Tables::Tables(LastExpressEngine *engine, EntityIndex id) : Entity(engine, id) {
+Tables::Tables(LastExpressEngine *engine, EntityIndex id)
+  : Entity(engine, id) {
 	_id = id;
 
 	ADD_CALLBACK_FUNCTION(Tables, chapter1);
@@ -47,172 +48,171 @@ Tables::Tables(LastExpressEngine *engine, EntityIndex id) : Entity(engine, id) {
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Tables, chapter1)
-	if (savepoint.action == kActionDefault) {
-		if (_id == kEntityTables2)
-			getSound()->playSoundWithSubtitles("LOOP8A.SND", kSoundTypeWalla | kSoundFlagLooped | kVolume8, kEntityTables2);
+if (savepoint.action == kActionDefault) {
+	if (_id == kEntityTables2)
+		getSound()->playSoundWithSubtitles("LOOP8A.SND", kSoundTypeWalla | kSoundFlagLooped | kVolume8, kEntityTables2);
 
-		setup_draw();
-	}
+	setup_draw();
+}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(2, Tables, chapter2)
-	if (savepoint.action == kActionDefault) {
-		if (_id == kEntityTables2)
-			getSound()->playSoundWithSubtitles("LOOP8A.SND", kSoundTypeWalla | kSoundFlagLooped | kVolume8, kEntityTables2);
+if (savepoint.action == kActionDefault) {
+	if (_id == kEntityTables2)
+		getSound()->playSoundWithSubtitles("LOOP8A.SND", kSoundTypeWalla | kSoundFlagLooped | kVolume8, kEntityTables2);
 
-		setup_draw();
-	}
+	setup_draw();
+}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(3, Tables, chapter3)
-	if (savepoint.action == kActionDefault) {
-		if (_id == kEntityTables2)
-			getSound()->playSoundWithSubtitles("LOOP8A.SND", kSoundTypeWalla | kSoundFlagLooped | kVolume8, kEntityTables2);
+if (savepoint.action == kActionDefault) {
+	if (_id == kEntityTables2)
+		getSound()->playSoundWithSubtitles("LOOP8A.SND", kSoundTypeWalla | kSoundFlagLooped | kVolume8, kEntityTables2);
 
-		setup_draw();
-	}
+	setup_draw();
+}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(4, Tables, chapter4)
-	if (savepoint.action == kActionDefault) {
-		if (_id == kEntityTables2)
-			getSound()->playSoundWithSubtitles("LOOP8A.SND", kSoundTypeWalla | kSoundFlagLooped | kVolume8, kEntityTables2);
+if (savepoint.action == kActionDefault) {
+	if (_id == kEntityTables2)
+		getSound()->playSoundWithSubtitles("LOOP8A.SND", kSoundTypeWalla | kSoundFlagLooped | kVolume8, kEntityTables2);
 
-		setup_draw();
-	}
+	setup_draw();
+}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(5, Tables, chapter5)
-	if (savepoint.action == kActionDefault) {
-		if (_id == kEntityTables2 && getSoundQueue()->isBuffered(kEntityTables2))
-			getSoundQueue()->fade(kEntityTables2);
+if (savepoint.action == kActionDefault) {
+	if (_id == kEntityTables2 && getSoundQueue()->isBuffered(kEntityTables2))
+		getSoundQueue()->fade(kEntityTables2);
 
-		setup_draw();
-	}
+	setup_draw();
+}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(6, Tables, draw)
-	switch (savepoint.action) {
+switch (savepoint.action) {
+default:
+	break;
+
+case kActionNone:
+	// Only applicable to Tables2 entity
+	if (_id != kEntityTables2)
+		break;
+
+	switch (getProgress().chapter) {
 	default:
 		break;
 
-	case kActionNone:
-		// Only applicable to Tables2 entity
-		if (_id != kEntityTables2)
-			break;
-
-		switch (getProgress().chapter) {
-		default:
-			break;
-
-		case kChapter1:
-			if (getState()->time > kTime1165500 && !params->param1) {
-				params->param1 = 1;
-				getSoundQueue()->fade(kEntityTables2);
-			}
-			break;
-
-		case kChapter3:
-			if (getState()->time > kTime2052000 && !params->param2) {
-				params->param2 = 1;
-				getSoundQueue()->fade(kEntityTables2);
-			}
-			break;
-
-		case kChapter4:
-			if (getState()->time > kTime2488500 && !params->param3) {
-				params->param3 = 1;
-				getSoundQueue()->fade(kEntityTables2);
-			}
-			break;
-
+	case kChapter1:
+		if (getState()->time > kTime1165500 && !params->param1) {
+			params->param1 = 1;
+			getSoundQueue()->fade(kEntityTables2);
 		}
 		break;
 
-	case kActionDefault:
-		getData()->location = kLocationInsideCompartment;
-		getData()->car = kCarRestaurant;
-		switch(_id) {
+	case kChapter3:
+		if (getState()->time > kTime2052000 && !params->param2) {
+			params->param2 = 1;
+			getSoundQueue()->fade(kEntityTables2);
+		}
+		break;
+
+	case kChapter4:
+		if (getState()->time > kTime2488500 && !params->param3) {
+			params->param3 = 1;
+			getSoundQueue()->fade(kEntityTables2);
+		}
+		break;
+	}
+	break;
+
+case kActionDefault:
+	getData()->location = kLocationInsideCompartment;
+	getData()->car = kCarRestaurant;
+	switch (_id) {
+	default:
+		break;
+
+	case kEntityTables0:
+		getData()->entityPosition = kPosition_3970;
+		getEntities()->drawSequenceLeft(_id, "001P");
+		break;
+
+	case kEntityTables1:
+		getData()->entityPosition = kPosition_3970;
+		getEntities()->drawSequenceLeft(_id, "005J");
+		break;
+
+	case kEntityTables2:
+		getData()->entityPosition = kPosition_4690;
+		getEntities()->drawSequenceLeft(_id, "009G");
+		break;
+
+	case kEntityTables3:
+		getData()->entityPosition = kPosition_4690;
+		getEntities()->drawSequenceLeft(_id, "010M");
+		break;
+
+	case kEntityTables4:
+		getData()->entityPosition = kPosition_5420;
+		getEntities()->drawSequenceLeft(_id, "014F");
+		break;
+
+	case kEntityTables5:
+		getData()->entityPosition = kPosition_5420;
+		getEntities()->drawSequenceLeft(_id, "024D");
+		break;
+	}
+
+	break;
+
+case kActionDrawTablesWithChairs:
+	if (!strcmp(savepoint.param.charValue, "")) {
+		getEntities()->drawSequenceLeft(_id, savepoint.param.charValue);
+	} else {
+		switch (_id) {
 		default:
 			break;
 
 		case kEntityTables0:
-			getData()->entityPosition = kPosition_3970;
 			getEntities()->drawSequenceLeft(_id, "001P");
 			break;
 
 		case kEntityTables1:
-			getData()->entityPosition = kPosition_3970;
 			getEntities()->drawSequenceLeft(_id, "005J");
 			break;
 
 		case kEntityTables2:
-			getData()->entityPosition = kPosition_4690;
 			getEntities()->drawSequenceLeft(_id, "009G");
 			break;
 
 		case kEntityTables3:
-			getData()->entityPosition = kPosition_4690;
 			getEntities()->drawSequenceLeft(_id, "010M");
 			break;
 
 		case kEntityTables4:
-			getData()->entityPosition = kPosition_5420;
 			getEntities()->drawSequenceLeft(_id, "014F");
 			break;
 
 		case kEntityTables5:
-			getData()->entityPosition = kPosition_5420;
 			getEntities()->drawSequenceLeft(_id, "024D");
 			break;
 		}
-
-		break;
-
-	case kActionDrawTablesWithChairs:
-		if (!strcmp(savepoint.param.charValue, "")) {
-			getEntities()->drawSequenceLeft(_id, savepoint.param.charValue);
-		} else {
-			switch(_id) {
-			default:
-				break;
-
-			case kEntityTables0:
-				getEntities()->drawSequenceLeft(_id, "001P");
-				break;
-
-			case kEntityTables1:
-				getEntities()->drawSequenceLeft(_id, "005J");
-				break;
-
-			case kEntityTables2:
-				getEntities()->drawSequenceLeft(_id, "009G");
-				break;
-
-			case kEntityTables3:
-				getEntities()->drawSequenceLeft(_id, "010M");
-				break;
-
-			case kEntityTables4:
-				getEntities()->drawSequenceLeft(_id, "014F");
-				break;
-
-			case kEntityTables5:
-				getEntities()->drawSequenceLeft(_id, "024D");
-				break;
-			}
-		}
-		break;
-
-	case kAction136455232:
-		getEntities()->drawSequenceLeft(_id, "BLANK");
-		break;
 	}
+	break;
+
+case kAction136455232:
+	getEntities()->drawSequenceLeft(_id, "BLANK");
+	break;
+}
 IMPLEMENT_FUNCTION_END
 
 } // End of namespace LastExpress

@@ -20,9 +20,9 @@
  *
  */
 
+#include "gui/ThemeParser.h"
 #include "gui/ThemeEngine.h"
 #include "gui/ThemeEval.h"
-#include "gui/ThemeParser.h"
 
 #include "graphics/VectorRenderer.h"
 
@@ -37,13 +37,12 @@ struct TextDataInfo {
 };
 
 static const TextDataInfo kTextDataDefaults[] = {
-	{ kTextDataDefault,			"text_default" },
-	{ kTextDataButton,			"text_button" },
-	{ kTextDataNormalFont,		"text_normal" },
-	{ kTextDataTooltip,			"tooltip_normal" },
-	{ kTextDataConsole,			"console" }
+	{ kTextDataDefault, "text_default" },
+	{ kTextDataButton, "text_button" },
+	{ kTextDataNormalFont, "text_normal" },
+	{ kTextDataTooltip, "tooltip_normal" },
+	{ kTextDataConsole, "console" }
 };
-
 
 static TextData parseTextDataId(const Common::String &name) {
 	for (int i = 0; i < kTextDataMAX; ++i)
@@ -59,17 +58,17 @@ struct TextColorDataInfo {
 };
 
 static const TextColorDataInfo kTextColorDefaults[] = {
-	{ kTextColorNormal,					"color_normal" },
-	{ kTextColorNormalInverted,			"color_normal_inverted" },
-	{ kTextColorNormalHover,			"color_normal_hover" },
-	{ kTextColorNormalDisabled,			"color_normal_disabled" },
-	{ kTextColorAlternative,			"color_alternative" },
-	{ kTextColorAlternativeInverted,	"color_alternative_inverted" },
-	{ kTextColorAlternativeHover,		"color_alternative_hover" },
-	{ kTextColorAlternativeDisabled,	"color_alternative_disabled" },
-	{ kTextColorButton,					"color_button" },
-	{ kTextColorButtonHover,			"color_button_hover" },
-	{ kTextColorButtonDisabled,			"color_button_disabled" }
+	{ kTextColorNormal, "color_normal" },
+	{ kTextColorNormalInverted, "color_normal_inverted" },
+	{ kTextColorNormalHover, "color_normal_hover" },
+	{ kTextColorNormalDisabled, "color_normal_disabled" },
+	{ kTextColorAlternative, "color_alternative" },
+	{ kTextColorAlternativeInverted, "color_alternative_inverted" },
+	{ kTextColorAlternativeHover, "color_alternative_hover" },
+	{ kTextColorAlternativeDisabled, "color_alternative_disabled" },
+	{ kTextColorButton, "color_button" },
+	{ kTextColorButtonHover, "color_button_hover" },
+	{ kTextColorButtonDisabled, "color_button_disabled" }
 };
 
 static TextColor parseTextColorId(const Common::String &name) {
@@ -102,8 +101,8 @@ static GUI::ThemeEngine::TextAlignVertical parseTextVAlign(const Common::String 
 		return GUI::ThemeEngine::kTextAlignVInvalid;
 }
 
-
-ThemeParser::ThemeParser(ThemeEngine *parent) : XMLParser() {
+ThemeParser::ThemeParser(ThemeEngine *parent)
+  : XMLParser() {
 	_defaultStepGlobal = defaultDrawStep();
 	_defaultStepLocal = 0;
 	_theme = parent;
@@ -300,8 +299,7 @@ bool ThemeParser::parserCallback_color(ParserNode *node) {
 
 	int red, green, blue;
 
-	if (parseIntegerKey(node->values["rgb"], 3, &red, &green, &blue) == false ||
-		red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255)
+	if (parseIntegerKey(node->values["rgb"], 3, &red, &green, &blue) == false || red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255)
 		return parserError("Error parsing RGB values for palette color '" + name + "'");
 
 	_palette[name].r = red;
@@ -310,7 +308,6 @@ bool ThemeParser::parserCallback_color(ParserNode *node) {
 
 	return true;
 }
-
 
 static Graphics::DrawingFunctionCallback getDrawingFunctionCallback(const Common::String &name) {
 
@@ -341,7 +338,6 @@ static Graphics::DrawingFunctionCallback getDrawingFunctionCallback(const Common
 
 	return 0;
 }
-
 
 bool ThemeParser::parserCallback_drawstep(ParserNode *node) {
 	Graphics::DrawStep *drawstep = newDrawStep();
@@ -402,14 +398,14 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
  *                 theme description format.
  * @param force Sets if the key is optional or necessary.
  */
-#define PARSER_ASSIGN_INT(struct_name, key_name, force) \
-	if (stepNode->values.contains(key_name)) { \
-		if (!parseIntegerKey(stepNode->values[key_name], 1, &x)) \
+#define PARSER_ASSIGN_INT(struct_name, key_name, force)                                      \
+	if (stepNode->values.contains(key_name)) {                                                 \
+		if (!parseIntegerKey(stepNode->values[key_name], 1, &x))                                 \
 			return parserError("Error parsing key value for '" + Common::String(key_name) + "'."); \
-		\
-		drawstep->struct_name = x; \
-	} else if (force) { \
-		return parserError("Missing necessary key '" + Common::String(key_name) + "'."); \
+                                                                                             \
+		drawstep->struct_name = x;                                                               \
+	} else if (force) {                                                                        \
+		return parserError("Missing necessary key '" + Common::String(key_name) + "'.");         \
 	}
 
 /**
@@ -421,21 +417,20 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
  * @param key_name Name as STRING of the key identifier as it appears in the
  *                 theme description format.
  */
-#define PARSER_ASSIGN_RGB(struct_name, key_name) \
-	if (stepNode->values.contains(key_name)) { \
-		val = stepNode->values[key_name]; \
-		if (_palette.contains(val)) { \
-			red = _palette[val].r; \
-			green = _palette[val].g; \
-			blue = _palette[val].b; \
-		} else if (parseIntegerKey(val, 3, &red, &green, &blue) == false || \
-			red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255) \
-			return parserError("Error parsing color struct '" + val + "'");\
-		\
-		drawstep->struct_name.r = red; \
-		drawstep->struct_name.g = green; \
-		drawstep->struct_name.b = blue; \
-		drawstep->struct_name.set = true; \
+#define PARSER_ASSIGN_RGB(struct_name, key_name)                                                                                                    \
+	if (stepNode->values.contains(key_name)) {                                                                                                        \
+		val = stepNode->values[key_name];                                                                                                               \
+		if (_palette.contains(val)) {                                                                                                                   \
+			red = _palette[val].r;                                                                                                                        \
+			green = _palette[val].g;                                                                                                                      \
+			blue = _palette[val].b;                                                                                                                       \
+		} else if (parseIntegerKey(val, 3, &red, &green, &blue) == false || red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255) \
+			return parserError("Error parsing color struct '" + val + "'");                                                                               \
+                                                                                                                                                    \
+		drawstep->struct_name.r = red;                                                                                                                  \
+		drawstep->struct_name.g = green;                                                                                                                \
+		drawstep->struct_name.b = blue;                                                                                                                 \
+		drawstep->struct_name.set = true;                                                                                                               \
 	}
 
 	PARSER_ASSIGN_INT(stroke, "stroke", false);
@@ -554,7 +549,8 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 				drawstep->w = x;
 			else if (val == "height")
 				drawstep->w = -1;
-			else return parserError("Invalid value for vector width.");
+			else
+				return parserError("Invalid value for vector width.");
 
 			if (stepNode->values.contains("xpos")) {
 				val = stepNode->values["xpos"];
@@ -582,7 +578,8 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 				drawstep->h = x;
 			else if (val == "width")
 				drawstep->h = -1;
-			else return parserError("Invalid value for vector height.");
+			else
+				return parserError("Invalid value for vector height.");
 
 			if (stepNode->values.contains("ypos")) {
 				val = stepNode->values["ypos"];
@@ -739,7 +736,8 @@ bool ThemeParser::parserCallback_dialog(ParserNode *node) {
 			shading = 1;
 		else if (node->values["shading"] == "luminance")
 			shading = 2;
-		else return parserError("Invalid value for Dialog background shading.");
+		else
+			return parserError("Invalid value for Dialog background shading.");
 
 		_theme->getEvaluator()->setVar(var + ".Shading", shading);
 	}
@@ -771,7 +769,6 @@ bool ThemeParser::parserCallback_layout(ParserNode *node) {
 		_theme->getEvaluator()->addLayout(GUI::ThemeLayout::kLayoutHorizontal, spacing, center);
 	else
 		return parserError("Invalid layout type. Only 'horizontal' and 'vertical' layouts allowed.");
-
 
 	if (node->values.contains("padding")) {
 		int paddingL, paddingR, paddingT, paddingB;
@@ -850,7 +847,6 @@ bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String 
 				return false;
 		}
 
-
 		_theme->getEvaluator()->setVar(var + "Width", width);
 		_theme->getEvaluator()->setVar(var + "Height", height);
 	}
@@ -922,7 +918,6 @@ bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String 
 		_theme->getEvaluator()->setVar(var + "Padding.Top", paddingT);
 		_theme->getEvaluator()->setVar(var + "Padding.Bottom", paddingB);
 	}
-
 
 	if (node->values.contains("textalign")) {
 		Graphics::TextAlign alignH = Graphics::kTextAlignLeft;

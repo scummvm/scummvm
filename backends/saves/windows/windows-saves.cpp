@@ -22,22 +22,21 @@
 
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
- // required for SHGFP_TYPE_CURRENT in shlobj.h
-#define _WIN32_IE 0x500
-#endif
-#include <shlobj.h>
+#	define WIN32_LEAN_AND_MEAN
+#	include <windows.h>
+#	if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
+// required for SHGFP_TYPE_CURRENT in shlobj.h
+#		define _WIN32_IE 0x500
+#	endif
+#	include <shlobj.h>
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "backends/saves/windows/windows-saves.h"
-#include "backends/platform/sdl/win32/win32_wrapper.h"
+#	include "backends/platform/sdl/win32/win32_wrapper.h"
+#	include "backends/saves/windows/windows-saves.h"
+#	include "common/config-manager.h"
+#	include "common/scummsys.h"
 
 WindowsSaveFileManager::WindowsSaveFileManager() {
 	char defaultSavepath[MAXPATHLEN];
-
 
 	// Use the Application Data directory of the user profile.
 	if (SHGetFolderPathFunc(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, defaultSavepath) == S_OK) {

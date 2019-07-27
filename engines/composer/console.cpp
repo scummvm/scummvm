@@ -24,7 +24,8 @@
 
 namespace Composer {
 
-Console::Console(ComposerEngine *vm) : GUI::Debugger() {
+Console::Console(ComposerEngine *vm)
+  : GUI::Debugger() {
 	_vm = vm;
 }
 

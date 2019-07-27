@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "base/version.h"
+#include "common/scummsys.h"
 
 #define INCLUDED_FROM_BASE_VERSION_CPP
 #include "base/internal_version.h"
@@ -70,113 +70,113 @@ const char *gScummVMFullVersion = "ScummVM " SCUMMVM_VERSION SCUMMVM_REVISION " 
 #endif
 const char *gScummVMFeatures = ""
 #ifdef TAINTED_BUILD
-	// TAINTED means the build contains engines/subengines not enabled by default
-	"TAINTED "
+                               // TAINTED means the build contains engines/subengines not enabled by default
+                               "TAINTED "
 #endif
 
 #ifdef USE_TREMOR
-#ifdef USE_TREMOLO
-	// libTremolo is used on WinCE for better ogg performance
-	"Tremolo "
+#	ifdef USE_TREMOLO
+                               // libTremolo is used on WinCE for better ogg performance
+                               "Tremolo "
+#	else
+                               "Tremor "
+#	endif
 #else
-	"Tremor "
-#endif
-#else
-#ifdef USE_VORBIS
-	"Vorbis "
-#endif
+#	ifdef USE_VORBIS
+                               "Vorbis "
+#	endif
 #endif
 
 #ifdef USE_FLAC
-	"FLAC "
+                               "FLAC "
 #endif
 
 #ifdef USE_MAD
-	"MP3 "
+                               "MP3 "
 #endif
 
 #ifdef USE_ALSA
-	"ALSA "
+                               "ALSA "
 #endif
 
 #ifdef USE_SEQ_MIDI
-	"SEQ "
+                               "SEQ "
 #endif
 
 #ifdef USE_SNDIO
-	"sndio "
+                               "sndio "
 #endif
 
 #ifdef USE_TIMIDITY
-	"TiMidity "
+                               "TiMidity "
 #endif
 
 #ifdef USE_RGB_COLOR
-	"RGB "
+                               "RGB "
 #endif
 
 #ifdef USE_ZLIB
-	"zLib "
+                               "zLib "
 #endif
 
 #ifdef USE_MPEG2
-	"MPEG2 "
+                               "MPEG2 "
 #endif
 
 #ifdef USE_FLUIDSYNTH
-	"FluidSynth "
+                               "FluidSynth "
 #endif
 
 #ifdef USE_THEORADEC
-	"Theora "
+                               "Theora "
 #endif
 
 #ifdef USE_FAAD
-	"AAC "
+                               "AAC "
 #endif
 
 #ifdef USE_A52
-	"A/52 "
+                               "A/52 "
 #endif
 
 #ifdef USE_FREETYPE2
-	"FreeType2 "
+                               "FreeType2 "
 #endif
 
 #ifdef USE_JPEG
-	"JPEG "
+                               "JPEG "
 #endif
 
 #ifdef USE_PNG
-	"PNG "
+                               "PNG "
 #endif
 
 #ifdef ENABLE_KEYMAPPER
-	"keymapper "
+                               "keymapper "
 #endif
 
 #ifdef ENABLE_VKEYBD
-	"virtual keyboard "
+                               "virtual keyboard "
 #endif
 
 #ifdef USE_CLOUD
-	"cloud ("
-#ifdef USE_LIBCURL
-	"servers"
-#ifdef USE_SDL_NET
-	", "
-#endif
-#endif
-#ifdef USE_SDL_NET
-	"local"
-#endif
-	") "
+                               "cloud ("
+#	ifdef USE_LIBCURL
+                               "servers"
+#		ifdef USE_SDL_NET
+                               ", "
+#		endif
+#	endif
+#	ifdef USE_SDL_NET
+                               "local"
+#	endif
+                               ") "
 #else
-#ifdef USE_LIBCURL
-	"libcurl "
+#	ifdef USE_LIBCURL
+                               "libcurl "
+#	endif
+#	ifdef USE_SDL_NET
+                               "SDL_net "
+#	endif
 #endif
-#ifdef USE_SDL_NET
-	"SDL_net "
-#endif
-#endif
-	;
+  ;

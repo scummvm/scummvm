@@ -33,10 +33,12 @@ class CHeadPiece : public CCarry {
 	bool SenseWorkingMsg(CSenseWorkingMsg *msg);
 	bool PETGainedObjectMsg(CPETGainedObjectMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+
 protected:
 	bool _flag;
 	CString _string6;
 	bool _field13C;
+
 public:
 	CLASSDEF;
 	CHeadPiece();

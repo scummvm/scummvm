@@ -22,16 +22,16 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
+#include "fullpipe/interaction.h"
 
 #define DBG 0
 
@@ -201,7 +201,7 @@ void sceneHandler27_clickBat(ExCommand *cmd) {
 #endif
 
 	if (ABS(bx - g_fp->_aniMan->_ox) > 1 || ABS(by - g_fp->_aniMan->_oy) > 1
-		|| g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
+	    || g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
 		MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, bx, by, 1, ST_MAN_RIGHT);
 
 		if (mq) {
@@ -336,13 +336,13 @@ void sceneHandler27_knockBats(int bat1n, int bat2n) {
 
 	if (bat1->power != 0.0) {
 		double rndF = (double)g_fp->_rnd.getRandomNumber(32767) * 0.03 / 32767.0 - 0.015
-			+ atan2(bat2->currY - bat1->currY, bat2->currX - bat1->currX);
+		  + atan2(bat2->currY - bat1->currY, bat2->currX - bat1->currX);
 
 		double pow1x = cos(bat1->angle - rndF) * ((bat2->currX - bat1->currX) >= 0 ? bat1->power : -bat1->power);
 		double pow1y = sin(bat1->angle - rndF) * ((bat2->currY - bat1->currY) >= 0 ? bat1->power : -bat1->power);
 
 		debugC(3, kDebugSceneLogic, "scene27: knockBats: bat1 from: powerCos: %f powerSin: %f, power: %f, angle: %f",
-				bat1->powerCos, bat1->powerSin, bat1->power, bat1->angle);
+		       bat1->powerCos, bat1->powerSin, bat1->power, bat1->angle);
 
 		bat1->powerCos -= pow1x * 1.1;
 		bat1->powerSin -= pow1y * 1.1;
@@ -350,12 +350,12 @@ void sceneHandler27_knockBats(int bat1n, int bat2n) {
 		debugC(3, kDebugSceneLogic, "scene27: knockBats: bat1 to: powerCos: %f powerSin: %f", bat1->powerCos, bat1->powerSin);
 
 		double rndF2 = (double)g_fp->_rnd.getRandomNumber(32767) * 0.03 / 32767.0 - 0.015
-								+ atan2(bat1->currY - bat2->currY, bat1->currX - bat2->currX);
+		  + atan2(bat1->currY - bat2->currY, bat1->currX - bat2->currX);
 		double pow2x = cos(bat2->angle - rndF2) * ((bat1->currX - bat2->currX) >= 0 ? bat2->power : -bat2->power);
 		double pow2y = sin(bat2->angle - rndF2) * ((bat1->currY - bat2->currY) >= 0 ? bat2->power : -bat2->power);
 
 		debugC(3, kDebugSceneLogic, "scene27: knockBats: bat2 from: powerCos: %f powerSin: %f, power: %f, angle: %f",
-				bat2->powerCos, bat2->powerSin, bat2->power, bat2->angle);
+		       bat2->powerCos, bat2->powerSin, bat2->power, bat2->angle);
 
 		bat2->powerCos -= pow2x * 1.1;
 		bat2->powerSin -= pow2y * 1.1;
@@ -384,7 +384,7 @@ void sceneHandler27_knockBats(int bat1n, int bat2n) {
 		bat1->power = sqrt(bat1->powerCos * bat1->powerCos + bat1->powerSin * bat1->powerSin);
 
 		debugC(3, kDebugSceneLogic, "scene27: knockBats: bat1 corrected: powerCos: %f powerSin: %f, power: %f, angle: %f",
-				bat1->powerCos, bat1->powerSin, bat1->power, bat1->angle);
+		       bat1->powerCos, bat1->powerSin, bat1->power, bat1->angle);
 
 		bat2->powerCos += pow1x * 0.64;
 
@@ -397,7 +397,7 @@ void sceneHandler27_knockBats(int bat1n, int bat2n) {
 		bat2->power = sqrt(bat2->powerCos * bat2->powerCos + bat2->powerSin * bat2->powerSin);
 
 		debugC(3, kDebugSceneLogic, "scene27: knockBats: bat2 corrected: powerCos: %f powerSin: %f, power: %f, angle: %f",
-				bat2->powerCos, bat2->powerSin, bat2->power, bat2->angle);
+		       bat2->powerCos, bat2->powerSin, bat2->power, bat2->angle);
 
 		g_fp->playSound(SND_27_026, 0);
 	}
@@ -406,7 +406,7 @@ void sceneHandler27_knockBats(int bat1n, int bat2n) {
 void sceneHandler27_batSetColors(int batn) {
 	Bat *bat = g_vars->scene27_bats[batn];
 
-	if (g_vars->scene27_hitZone->isPixelHitAtPos((int)bat->currX, (int)bat->currY) ) {
+	if (g_vars->scene27_hitZone->isPixelHitAtPos((int)bat->currX, (int)bat->currY)) {
 		if (bat->ani->_statics->_staticsId == ST_BTA_NORM) {
 			if (!bat->ani->_movement)
 				bat->ani->_statics = bat->ani->getStaticsById(ST_BTA_HILITE);
@@ -429,7 +429,6 @@ void sceneHandler27_driverPushButton() {
 		g_vars->scene27_driverPushedButton = true;
 	} else {
 		g_vars->scene27_driver->changeStatics2(ST_DRV_SITNOVENT);
-
 
 		chainQueue(QU_DRV_PUSHBUTTON_NOVENT, 1);
 
@@ -665,7 +664,7 @@ int sceneHandler27(ExCommand *cmd) {
 
 	case 29:
 		if (g_fp->_aniMan == g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y)
-			&& g_vars->scene27_maxPhaseReached)
+		    && g_vars->scene27_maxPhaseReached)
 			sceneHandler27_initAiming(cmd);
 
 		break;

@@ -45,6 +45,7 @@ public:
 	static bool initAfterLoad();
 	static void afterLoadScene(void *scene, void *data);
 	static void afterLoadRegion(void *region, void *data);
+
 private:
 	static void afterLoadSubFrame(void *subframe, void *data);
 	static void afterLoadSound(void *sound, void *data);

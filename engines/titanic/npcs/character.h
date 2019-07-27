@@ -32,11 +32,13 @@ class CCharacter : public CGameObject {
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
 	bool TurnOn(CTurnOn *msg);
 	bool TurnOff(CTurnOff *msg);
+
 protected:
 	int _startFrame;
 	int _endFrame;
 	int _fieldC4;
 	CString _charName;
+
 public:
 	CLASSDEF;
 	CCharacter();

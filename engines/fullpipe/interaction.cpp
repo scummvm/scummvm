@@ -22,10 +22,10 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/gameloader.h"
-#include "fullpipe/statics.h"
+#include "fullpipe/interaction.h"
 #include "fullpipe/motion.h"
+#include "fullpipe/statics.h"
 
 namespace Fullpipe {
 
@@ -313,7 +313,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 		obj->setPicAniInfo(aniInfo);
 
 		if (abs(xpos - subj->_ox) > 1 || abs(ypos - subj->_oy) > 1
-				|| (inter->_staticsId2 != 0 && (subj->_statics == 0 || subj->_statics->_staticsId != inter->_staticsId2))) {
+		    || (inter->_staticsId2 != 0 && (subj->_statics == 0 || subj->_statics->_staticsId != inter->_staticsId2))) {
 			mq = getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->startMove(subj, xpos, ypos, 1, inter->_staticsId2);
 
 			if (!mq)
@@ -522,7 +522,7 @@ bool Interaction::canInteract(GameObject *obj1, GameObject *obj2, int invId) {
 
 bool Interaction::isOverlapping(StaticANIObject *subj, GameObject *obj) {
 	if (abs(_xOffs + obj->_ox - subj->_ox) <= 1
-		&& abs(obj->_oy + _yOffs - subj->_oy) <= 1) {
+	    && abs(obj->_oy + _yOffs - subj->_oy) <= 1) {
 		if (!_staticsId2 || (subj->_statics != 0 && subj->_statics->_staticsId == _staticsId2)) {
 			if (!_staticsId1 || !(_flags & 1))
 				return true;

@@ -169,7 +169,6 @@ bool writeBMP(Common::WriteStream &out, const Graphics::Surface &input, const bo
 	out.writeUint32LE(0);
 	out.writeUint32LE(0);
 
-
 	if (bottomUp) {
 		for (uint y = 0; y < surface->h; ++y) {
 			out.write((const void *)surface->getBasePtr(0, y), dstPitch);

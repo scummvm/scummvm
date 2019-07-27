@@ -31,8 +31,10 @@ class CMovePlayerTo : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool ActMsg(CActMsg *msg);
+
 protected:
 	CString _destination;
+
 public:
 	CLASSDEF;
 	CMovePlayerTo();

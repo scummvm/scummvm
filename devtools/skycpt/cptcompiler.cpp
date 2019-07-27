@@ -20,9 +20,9 @@
  *
  */
 
-#include "stdafx.h"
-#include "cpthelp.h"
 #include "TextFile.h"
+#include "cpthelp.h"
+#include "stdafx.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -75,7 +75,7 @@ void processMainLists(FILE *inf, CptObj *destArr, uint16 *idList) {
 					uint16 destId = (uint16)strtoul(line + 2, &stopCh, 16);
 					assert(stopCh == (line + 6));
 					assert((stopCh[0] == ':') && (stopCh[1] == ':'));
-                    resBuf[resPos] = destId;
+					resBuf[resPos] = destId;
 					resPos++;
 				} else
 					break;
@@ -121,7 +121,7 @@ void processCpts(FILE *inf, CptObj *destArr) {
 						assert(destId == 0);
 						resBuf[resPos] = resBuf[resPos + 1] = 0;
 						resPos += 2;
-					} else if (resPos == 48) {	// turnProg. shouldn't it be 49?
+					} else if (resPos == 48) { // turnProg. shouldn't it be 49?
 						assert(destId == 0);
 						resBuf[resPos] = resBuf[resPos + 1] = 0;
 						resPos += 2;
@@ -169,7 +169,7 @@ void processTurntabs(FILE *inf, CptObj *destArr) {
 					uint16 destId = (uint16)strtoul(line + 2, &stopCh, 16);
 					assert(stopCh == (line + 6));
 					assert((stopCh[0] == '-') && (stopCh[1] == '>'));
-                    resBuf[resPos] = destId;
+					resBuf[resPos] = destId;
 					resPos++;
 				} else
 					break;
@@ -211,7 +211,7 @@ void processBins(FILE *inf, CptObj *destArr, const char *typeName, const char *o
 					uint16 destId = (uint16)strtoul(line + 2, &stopCh, 16);
 					assert(stopCh == (line + 6));
 					assert(*stopCh == '\0');
-                    resBuf[resPos] = destId;
+					resBuf[resPos] = destId;
 					resPos++;
 				} else
 					break;
@@ -229,7 +229,7 @@ void processBins(FILE *inf, CptObj *destArr, const char *typeName, const char *o
 
 uint16 dlinkCount = 0;
 static uint16 dlinks[1024];
-static char* dlinkNames[512];
+static char *dlinkNames[512];
 
 void processSymlinks(FILE *inf, CptObj *destArr, uint16 *baseLists) {
 	char line[1024];
@@ -425,7 +425,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 			assert(id);
 			diff[diffDest++] = id;
 			diff[diffDest++] = 0;
-            pos++;
+			pos++;
 			uint16 len = (uint16)strtoul(pos, &pos, 10);
 			diff[diffDest++] = len;
 			assert(len);
@@ -517,7 +517,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 			fseek(resDiff, 0, SEEK_END);
 			assert(ftell(resDiff) == (resSize * 2));
 			fseek(resDiff, 0, SEEK_SET);
-			uint16 *bufDif = (uint16 *)malloc(resSize *2);
+			uint16 *bufDif = (uint16 *)malloc(resSize * 2);
 			fread(bufDif, 2, resSize, resDiff);
 			fclose(resDiff);
 			for (uint16 eCnt = 0; eCnt < resSize; eCnt++)

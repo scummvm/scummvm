@@ -43,11 +43,11 @@ void SceneScriptPS03::InitializeScene() {
 	}
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
 	Ambient_Sounds_Add_Looping_Sound(kSfxPSAMB6, 35, 0, 1);
-	Ambient_Sounds_Add_Sound(kSfxPSDOOR1, 5, 50,  7,  7, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxPSDOOR2, 5, 50,  7,  7, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxPSPA6,   5, 60, 33, 33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxPSPA7,   5, 60, 33, 33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxPSPA8,   5, 60, 33, 33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPSDOOR1, 5, 50, 7, 7, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPSDOOR2, 5, 50, 7, 7, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPSPA6, 5, 60, 33, 33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPSPA7, 5, 60, 33, 33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPSPA8, 5, 60, 33, 33, -100, 100, -101, -101, 0, 0);
 	Scene_Loop_Set_Default(1);
 }
 

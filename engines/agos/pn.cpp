@@ -22,13 +22,13 @@
 
 #include "common/config-manager.h"
 
-#include "agos/intern.h"
 #include "agos/agos.h"
+#include "agos/intern.h"
 
 namespace AGOS {
 
 AGOSEngine_PN::AGOSEngine_PN(OSystem *system, const AGOSGameDescription *gd)
-	: AGOSEngine(system, gd) {
+  : AGOSEngine(system, gd) {
 
 	_stackbase = 0;
 	_tagOfActiveDoline = 0;
@@ -88,25 +88,24 @@ AGOSEngine_PN::AGOSEngine_PN(OSystem *system, const AGOSGameDescription *gd)
 AGOSEngine_PN::~AGOSEngine_PN() {
 	free(_dataBase);
 	free(_textBase);
-
 }
 
 const byte egaPalette[48] = {
-	  0,   0,   0,
-	  0,   0, 170,
-	  0, 170,   0,
-	  0, 170, 170,
-	170,   0,   0,
-	170,   0, 170,
-	170,  85,   0,
+	0, 0, 0,
+	0, 0, 170,
+	0, 170, 0,
+	0, 170, 170,
+	170, 0, 0,
+	170, 0, 170,
+	170, 85, 0,
 	170, 170, 170,
-	 85,  85,  85,
-	 85,  85, 255,
-	 85, 255,  85,
-	 85, 255, 255,
-	255,  85,  85,
-	255,  85, 255,
-	255, 255,  85,
+	85, 85, 85,
+	85, 85, 255,
+	85, 255, 85,
+	85, 255, 255,
+	255, 85, 85,
+	255, 85, 255,
+	255, 255, 85,
 	255, 255, 255
 };
 
@@ -187,15 +186,15 @@ void AGOSEngine_PN::introSeq() {
 void AGOSEngine_PN::setupBoxes() {
 	_hitAreaList = _invHitAreas;
 	// Inventory box
-	defineBox( 0,  11,  68, 16,  26, 25, 0, kOBFDraggable | kOBFUseEmptyLine | kOBFInventoryBox | kOBFNoShowName);
+	defineBox(0, 11, 68, 16, 26, 25, 0, kOBFDraggable | kOBFUseEmptyLine | kOBFInventoryBox | kOBFNoShowName);
 	// Room Box
-	defineBox( 1,  11, 103, 16,  26, 26, 0, kOBFDraggable | kOBFUseEmptyLine | kOBFRoomBox | kOBFNoShowName);
+	defineBox(1, 11, 103, 16, 26, 26, 0, kOBFDraggable | kOBFUseEmptyLine | kOBFRoomBox | kOBFNoShowName);
 	// Exit box
-	defineBox( 2,  48,   2,  8,  28, 27, 0, kOBFUseEmptyLine | kOBFNoShowName);
+	defineBox(2, 48, 2, 8, 28, 27, 0, kOBFUseEmptyLine | kOBFNoShowName);
 	// More box
-	defineBox( 3,  80,   2,  8,  26, 28, 0, kOBFUseEmptyLine | kOBFMoreBox | kOBFNoShowName);
+	defineBox(3, 80, 2, 8, 26, 28, 0, kOBFUseEmptyLine | kOBFMoreBox | kOBFNoShowName);
 	// Close box
-	defineBox( 4, 110,   2,  8,  28, 29, 0, kOBFUseEmptyLine | kOBFNoShowName);
+	defineBox(4, 110, 2, 8, 28, 29, 0, kOBFUseEmptyLine | kOBFNoShowName);
 
 	// Icon boxes
 	uint8 num = 5;
@@ -211,33 +210,33 @@ void AGOSEngine_PN::setupBoxes() {
 	ha->id = 0xFFFF;
 
 	_hitAreaList = _hitAreas;
-	defineBox( 0,  0,    0, 200, 320, 0, 0, kOBFBoxDisabled | kOBFNoShowName);
-	defineBox( 1, 273,   4,   5,  45, 1, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
-	defineBox( 2, 273,  12,   5,  45, 2, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
-	defineBox( 3, 273,  20,   5,  45, 3, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
-	defineBox( 4, 273,  28,   5,  45, 4, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
-	defineBox( 5, 273,  36,   5,  45, 5, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
-	defineBox( 6, 273,  44,   5,  45, 6, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
-	defineBox( 7, 273,  52,   5,  45, 7, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
-	defineBox( 8, 273,  60,   5,  45, 8, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
-	defineBox( 9, 273,  68,   5,  45, 9, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
-	defineBox(10, 273,  76,   5,  45, 10, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
-	defineBox(11, 273,  84,   5,  45, 11, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
-	defineBox(12, 273,  92,   5,  45, 12, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
-	defineBox(13, 273, 100,   5,  45, 13, 0, kOBFUseEmptyLine | kOBFBoxDisabled | kOBFNoShowName);
-	defineBox(14, 273, 107,   5,  45, 14, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
-	defineBox(15, 273, 115,   5,  45, 15, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
-	defineBox(16, 273, 123,   5,  45, 16, 0, kOBFUseEmptyLine | kOBFBoxDisabled | kOBFNoShowName);
-	defineBox(17,  20,   5,   7,   7, 17, 0, kOBFUseEmptyLine | kOBFNoShowName);
-	defineBox(18,  28,  11,   7,  13, 18, 0, kOBFUseEmptyLine | kOBFNoShowName);
-	defineBox(19,  36,  21,   7,   7, 19, 0, kOBFUseEmptyLine | kOBFNoShowName);
-	defineBox(20,  27,  31,   7,  13, 20, 0, kOBFUseEmptyLine | kOBFNoShowName);
-	defineBox(21,  20,  37,   7,   7, 21, 0, kOBFUseEmptyLine | kOBFNoShowName);
-	defineBox(22,   5,  31,   7,  13, 22, 0, kOBFUseEmptyLine | kOBFNoShowName);
-	defineBox(23,   4,  21,   7,   7, 23, 0, kOBFUseEmptyLine | kOBFNoShowName);
-	defineBox(24,   5,  11,   7,  13, 24, 0, kOBFUseEmptyLine | kOBFNoShowName);
-	defineBox(25,  11,  68,  16,  26, 25, 0, kOBFDraggable | kOBFUseEmptyLine | kOBFInventoryBox | kOBFNoShowName);
-	defineBox(26,  11, 103,  16,  26, 26, 0, kOBFDraggable | kOBFUseEmptyLine | kOBFRoomBox | kOBFNoShowName);
+	defineBox(0, 0, 0, 200, 320, 0, 0, kOBFBoxDisabled | kOBFNoShowName);
+	defineBox(1, 273, 4, 5, 45, 1, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
+	defineBox(2, 273, 12, 5, 45, 2, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
+	defineBox(3, 273, 20, 5, 45, 3, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
+	defineBox(4, 273, 28, 5, 45, 4, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
+	defineBox(5, 273, 36, 5, 45, 5, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
+	defineBox(6, 273, 44, 5, 45, 6, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
+	defineBox(7, 273, 52, 5, 45, 7, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
+	defineBox(8, 273, 60, 5, 45, 8, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
+	defineBox(9, 273, 68, 5, 45, 9, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
+	defineBox(10, 273, 76, 5, 45, 10, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
+	defineBox(11, 273, 84, 5, 45, 11, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
+	defineBox(12, 273, 92, 5, 45, 12, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
+	defineBox(13, 273, 100, 5, 45, 13, 0, kOBFUseEmptyLine | kOBFBoxDisabled | kOBFNoShowName);
+	defineBox(14, 273, 107, 5, 45, 14, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
+	defineBox(15, 273, 115, 5, 45, 15, 0, kOBFUseEmptyLine | kOBFNoShowName | kOBFInvertTouch);
+	defineBox(16, 273, 123, 5, 45, 16, 0, kOBFUseEmptyLine | kOBFBoxDisabled | kOBFNoShowName);
+	defineBox(17, 20, 5, 7, 7, 17, 0, kOBFUseEmptyLine | kOBFNoShowName);
+	defineBox(18, 28, 11, 7, 13, 18, 0, kOBFUseEmptyLine | kOBFNoShowName);
+	defineBox(19, 36, 21, 7, 7, 19, 0, kOBFUseEmptyLine | kOBFNoShowName);
+	defineBox(20, 27, 31, 7, 13, 20, 0, kOBFUseEmptyLine | kOBFNoShowName);
+	defineBox(21, 20, 37, 7, 7, 21, 0, kOBFUseEmptyLine | kOBFNoShowName);
+	defineBox(22, 5, 31, 7, 13, 22, 0, kOBFUseEmptyLine | kOBFNoShowName);
+	defineBox(23, 4, 21, 7, 7, 23, 0, kOBFUseEmptyLine | kOBFNoShowName);
+	defineBox(24, 5, 11, 7, 13, 24, 0, kOBFUseEmptyLine | kOBFNoShowName);
+	defineBox(25, 11, 68, 16, 26, 25, 0, kOBFDraggable | kOBFUseEmptyLine | kOBFInventoryBox | kOBFNoShowName);
+	defineBox(26, 11, 103, 16, 26, 26, 0, kOBFDraggable | kOBFUseEmptyLine | kOBFRoomBox | kOBFNoShowName);
 }
 
 void AGOSEngine_PN::processor() {

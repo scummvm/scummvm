@@ -23,8 +23,8 @@
 #ifndef MOHAWK_VIEW_H
 #define MOHAWK_VIEW_H
 
-#include "mohawk/mohawk.h"
 #include "common/rect.h"
+#include "mohawk/mohawk.h"
 
 namespace Mohawk {
 
@@ -251,7 +251,7 @@ protected:
 	Feature *sortOneList(Feature *root);
 	Feature *mergeLists(Feature *root, Feature *mergeRoot);
 
-	virtual void finishDraw() { }
+	virtual void finishDraw() {}
 };
 
 } // End of namespace Mohawk

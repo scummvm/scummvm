@@ -31,13 +31,15 @@
 
 #include "audio/midiparser.h"
 
-
 namespace Queen {
 
 MidiMusic::MidiMusic(QueenEngine *vm)
-	: _isPlaying(false), _isLooping(false),
-	_randomLoop(false), _masterVolume(192),
-	_buf(0), _rnd("queenMusic") {
+  : _isPlaying(false)
+  , _isLooping(false)
+  , _randomLoop(false)
+  , _masterVolume(192)
+  , _buf(0)
+  , _rnd("queenMusic") {
 
 	memset(_channelsTable, 0, sizeof(_channelsTable));
 	_queuePos = _lastSong = _currentSong = 0;
@@ -64,10 +66,10 @@ MidiMusic::MidiMusic(QueenEngine *vm)
 	_tune = vm->resource()->isDemo() ? Sound::_tuneDemo : Sound::_tune;
 
 	if (_adlib) {
-//		int infoOffset = _numSongs * 4 + 2;
-//		if (READ_LE_UINT16(_musicData + 2) != infoOffset) {
-//			defaultAdLibVolume = _musicData[infoOffset];
-//		}
+		//		int infoOffset = _numSongs * 4 + 2;
+		//		if (READ_LE_UINT16(_musicData + 2) != infoOffset) {
+		//			defaultAdLibVolume = _musicData[infoOffset];
+		//		}
 		_driver = new AdLibMidiDriver();
 	} else {
 		_driver = MidiDriver::createMidi(dev);
@@ -115,7 +117,7 @@ void MidiMusic::setVolume(int volume) {
 	}
 
 	if (_adlib)
-		static_cast<AdLibMidiDriver*>(_driver)->setVolume(volume);
+		static_cast<AdLibMidiDriver *>(_driver)->setVolume(volume);
 }
 
 void MidiMusic::playSong(uint16 songNum) {
@@ -207,7 +209,7 @@ void MidiMusic::metaEvent(byte type, byte *data, uint16 length) {
 		}
 		break;
 	default:
-//		warning("Unhandled meta event: %02x", type);
+		//		warning("Unhandled meta event: %02x", type);
 		break;
 	}
 }
@@ -298,7 +300,7 @@ void MidiMusic::playMusic() {
 		_buf = new uint16[packedSize];
 
 		uint16 *data = (uint16 *)(musicPtr + 1);
-		byte *idx  = ((byte *)data) + 0x200;
+		byte *idx = ((byte *)data) + 0x200;
 
 		for (uint i = 0; i < packedSize; i++)
 #if defined(SCUMM_NEED_ALIGNMENT)

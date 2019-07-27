@@ -149,7 +149,11 @@ public:
 	virtual ~MainMenu() {}
 
 	struct Animation {
-		Animation() : anim(0), startFrame(0), endFrame(0), delay(0) {}
+		Animation()
+		  : anim(0)
+		  , startFrame(0)
+		  , endFrame(0)
+		  , delay(0) {}
 
 		Movie *anim;
 		int startFrame;
@@ -169,6 +173,7 @@ public:
 
 	void init(StaticData data, Animation anim);
 	int handle(int dim);
+
 private:
 	KyraEngine_v1 *_vm;
 	Screen *_screen;

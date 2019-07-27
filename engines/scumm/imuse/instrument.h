@@ -23,7 +23,6 @@
 #ifndef SCUMM_IMUSE_INSTRUMENT_H
 #define SCUMM_IMUSE_INSTRUMENT_H
 
-
 #include "common/scummsys.h"
 #include "common/serializer.h"
 
@@ -56,7 +55,9 @@ public:
 		itMacSfx = 5
 	};
 
-	Instrument() : _type(0), _instrument(0) { }
+	Instrument()
+	  : _type(0)
+	  , _instrument(0) {}
 	~Instrument() { delete _instrument; }
 	static void nativeMT32(bool native);
 	static const byte _gmRhythmMap[35];

@@ -29,27 +29,27 @@
 namespace Glk {
 namespace Alan3 {
 
-/* DATA */
-extern int col, lin; // TODO Move to current.column & current.line?
-extern int pageLength, pageWidth;
+	/* DATA */
+	extern int col, lin; // TODO Move to current.column & current.line?
+	extern int pageLength, pageWidth;
 
-extern bool anyOutput;
-extern bool needSpace;
-extern bool capitalize;
-extern bool skipSpace;
+	extern bool anyOutput;
+	extern bool needSpace;
+	extern bool capitalize;
+	extern bool skipSpace;
 
-/* Log file */
-extern strid_t logFile;
+	/* Log file */
+	extern strid_t logFile;
 
-/* FUNCTIONS */
-extern void getPageSize();
-extern void setSubHeaderStyle(void);
-extern void setNormalStyle(void);
-extern void newline(void);
-extern void para(void);
-extern void clear(void);
-extern void printAndLog(const char *string);
-extern void output(const char *string);
+	/* FUNCTIONS */
+	extern void getPageSize();
+	extern void setSubHeaderStyle(void);
+	extern void setNormalStyle(void);
+	extern void newline(void);
+	extern void para(void);
+	extern void clear(void);
+	extern void printAndLog(const char *string);
+	extern void output(const char *string);
 
 } // End of namespace Alan3
 } // End of namespace Glk

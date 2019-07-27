@@ -114,16 +114,13 @@ void CreateDirectoryHandler::handle(Client &client) {
 
 	// set redirect on success
 	HandlerUtils::setMessageHandler(
-		client,
-		Common::String::format(
-			"%s<br/><a href=\"files?path=%s\">%s</a>",
-			_("Directory created successfully!"),
-			client.queryParameter("path").c_str(),
-			_("Back to parent directory")
-		),
-		(client.queryParameter("ajax") == "true" ? "/filesAJAX?path=" : "/files?path=") +
-		LocalWebserver::urlEncodeQueryParameterValue(client.queryParameter("path"))
-	);
+	  client,
+	  Common::String::format(
+	    "%s<br/><a href=\"files?path=%s\">%s</a>",
+	    _("Directory created successfully!"),
+	    client.queryParameter("path").c_str(),
+	    _("Back to parent directory")),
+	  (client.queryParameter("ajax") == "true" ? "/filesAJAX?path=" : "/files?path=") + LocalWebserver::urlEncodeQueryParameterValue(client.queryParameter("path")));
 }
 
 } // End of namespace Networking

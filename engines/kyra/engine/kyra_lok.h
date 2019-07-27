@@ -23,11 +23,11 @@
 #ifndef KYRA_KYRA_LOK_H
 #define KYRA_KYRA_LOK_H
 
-#include "kyra/kyra_v1.h"
-#include "kyra/script/script.h"
+#include "kyra/engine/item.h"
 #include "kyra/graphics/screen_lok.h"
 #include "kyra/gui/gui_lok.h"
-#include "kyra/engine/item.h"
+#include "kyra/kyra_v1.h"
+#include "kyra/script/script.h"
 
 namespace Kyra {
 
@@ -73,13 +73,13 @@ struct SeqLoop {
 
 struct SceneExits {
 	uint16 northXPos;
-	uint8  northYPos;
+	uint8 northYPos;
 	uint16 eastXPos;
-	uint8  eastYPos;
+	uint8 eastYPos;
 	uint16 southXPos;
-	uint8  southYPos;
+	uint8 southYPos;
 	uint16 westXPos;
-	uint8  westYPos;
+	uint8 westYPos;
 };
 
 struct BeadState {
@@ -100,6 +100,7 @@ class KyraEngine_LoK : public KyraEngine_v1 {
 	friend class Debugger_LoK;
 	friend class Animator_LoK;
 	friend class GUI_LoK;
+
 public:
 	KyraEngine_LoK(OSystem *system, const GameFlags &flags);
 	~KyraEngine_LoK();
@@ -142,6 +143,7 @@ public:
 	// sequences
 	// -> misc
 	bool seq_skipSequence() const;
+
 protected:
 	// -> demo
 	void seq_demo();
@@ -200,7 +202,7 @@ public:
 	void readSettings();
 	void writeSettings();
 
-	void snd_playSoundEffect(int track, int volume=0xFF);
+	void snd_playSoundEffect(int track, int volume = 0xFF);
 	void snd_playWanderScoreViaMap(int command, int restart);
 	virtual void snd_playVoiceFile(int id);
 	void snd_voiceWaitForFinish(bool ingame = true);
@@ -211,6 +213,7 @@ protected:
 
 	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail);
 	Common::Error loadGameState(int slot);
+
 protected:
 	// input
 	void processInput(int xpos, int ypos);
@@ -329,6 +332,7 @@ protected:
 	// -> interface
 	void loadMainScreen(int page = 3);
 	void redrawInventory(int page);
+
 public:
 	void drawSentenceCommand(const char *sentence, int unk1);
 	void updateSentenceCommand(const char *str1, const char *str2, int unk1);
@@ -605,9 +609,9 @@ protected:
 	int _defaultShapeTableSize;
 
 	const Shape *_healingShapeTable;
-	int  _healingShapeTableSize;
+	int _healingShapeTableSize;
 	const Shape *_healingShape2Table;
-	int  _healingShape2TableSize;
+	int _healingShape2TableSize;
 
 	const Shape *_posionDeathShapeTable;
 	int _posionDeathShapeTableSize;
@@ -663,6 +667,7 @@ protected:
 
 	// special palette handling for AMIGA
 	void setupZanthiaPalette(int pal);
+
 protected:
 	void setupOpcodeTable();
 

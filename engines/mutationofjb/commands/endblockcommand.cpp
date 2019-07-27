@@ -21,10 +21,10 @@
  */
 
 #include "mutationofjb/commands/endblockcommand.h"
-#include "mutationofjb/script.h"
-#include "mutationofjb/commands/conditionalcommand.h"
-#include "common/str.h"
 #include "common/debug.h"
+#include "common/str.h"
+#include "mutationofjb/commands/conditionalcommand.h"
+#include "mutationofjb/script.h"
 
 /** @file
  * <look> | <walk> | <talk> | <pickup> | <use> | <else> | <macro> | <extra> | <endRandom>
@@ -71,19 +71,19 @@ bool EndBlockCommandParser::parse(const Common::String &line, ScriptParseContext
 	command = new EndBlockCommand();
 
 	if (line.size() >= 4 && (line.hasPrefix("#L ") || line.hasPrefix("-L "))) {
-		ActionInfo ai = {ActionInfo::Look, line.c_str() + 3, "", firstChar == '#', nullptr};
+		ActionInfo ai = { ActionInfo::Look, line.c_str() + 3, "", firstChar == '#', nullptr };
 		parseCtx._actionInfos.push_back(ai);
 		_pendingActionInfos.push_back(parseCtx._actionInfos.size() - 1);
 	} else if (line.size() >= 4 && (line.hasPrefix("#W ") || line.hasPrefix("-W "))) {
-		ActionInfo ai = {ActionInfo::Walk, line.c_str() + 3, "", firstChar == '#', nullptr};
+		ActionInfo ai = { ActionInfo::Walk, line.c_str() + 3, "", firstChar == '#', nullptr };
 		parseCtx._actionInfos.push_back(ai);
 		_pendingActionInfos.push_back(parseCtx._actionInfos.size() - 1);
 	} else if (line.size() >= 4 && (line.hasPrefix("#T ") || line.hasPrefix("-T "))) {
-		ActionInfo ai = {ActionInfo::Talk, line.c_str() + 3, "", firstChar == '#', nullptr};
+		ActionInfo ai = { ActionInfo::Talk, line.c_str() + 3, "", firstChar == '#', nullptr };
 		parseCtx._actionInfos.push_back(ai);
 		_pendingActionInfos.push_back(parseCtx._actionInfos.size() - 1);
 	} else if (line.size() >= 4 && (line.hasPrefix("#P ") || line.hasPrefix("-P "))) {
-		ActionInfo ai = {ActionInfo::PickUp, line.c_str() + 3, "", firstChar == '#', nullptr};
+		ActionInfo ai = { ActionInfo::PickUp, line.c_str() + 3, "", firstChar == '#', nullptr };
 		parseCtx._actionInfos.push_back(ai);
 		_pendingActionInfos.push_back(parseCtx._actionInfos.size() - 1);
 	} else if (line.size() >= 4 && (line.hasPrefix("#U ") || line.hasPrefix("-U "))) {
@@ -120,21 +120,20 @@ bool EndBlockCommandParser::parse(const Common::String &line, ScriptParseContext
 			_ifTag = line[5];
 		}
 	} else if (line.size() >= 8 && line.hasPrefix("#MACRO")) {
-		NameAndCommand nc = {line.c_str() + 7, command};
+		NameAndCommand nc = { line.c_str() + 7, command };
 		_foundMacros.push_back(nc);
 	} else if (line.size() >= 10 && line.hasPrefix("#STARTUP")) {
 		const uint8 startupId = atoi(line.c_str() + 9);
-		IdAndCommand ic = {startupId, command};
+		IdAndCommand ic = { startupId, command };
 		_foundStartups.push_back(ic);
 	} else if (line.size() >= 7 && line.hasPrefix("#EXTRA")) {
-		NameAndCommand nc = {line.c_str() + 6, command};
+		NameAndCommand nc = { line.c_str() + 6, command };
 		_foundExtras.push_back(nc);
 	}
 
 	if (firstChar == '#') {
 		_hashFound = true;
 	}
-
 
 	return true;
 }
@@ -187,7 +186,7 @@ void EndBlockCommandParser::transition(ScriptParseContext &parseCtx, Command *ol
 				if (!parseCtx._startups.contains(it->_id)) {
 					parseCtx._startups[it->_id] = newCommand;
 				} else {
-					warning("Startup %u already exists", (unsigned int) it->_id);
+					warning("Startup %u already exists", (unsigned int)it->_id);
 				}
 				it = _foundStartups.erase(it);
 			}

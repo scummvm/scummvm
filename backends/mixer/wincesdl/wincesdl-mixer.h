@@ -36,14 +36,12 @@ public:
 	virtual void init();
 
 private:
-
 #ifdef USE_VORBIS
 	bool checkOggHighSampleRate();
 #endif
 
 	static void private_sound_proc(void *param, byte *buf, int len);
 	uint32 compute_sample_rate();
-
 };
 
 #endif

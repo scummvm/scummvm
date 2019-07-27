@@ -23,11 +23,11 @@
 #ifndef MADS_CONVERSATIONS_H
 #define MADS_CONVERSATIONS_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 #include "common/str-array.h"
-#include "mads/screen.h"
 #include "mads/dialogs.h"
+#include "mads/screen.h"
 
 namespace MADS {
 
@@ -88,7 +88,6 @@ enum ConditionalOperation {
 	CONDOP_ABORT = 0xff
 };
 
-
 struct ConversationVar {
 	bool _isPtr;
 	int _val;
@@ -97,7 +96,10 @@ struct ConversationVar {
 	/**
 	 * Constructor
 	 */
-	ConversationVar() : _isPtr(false), _val(0), _valPtr(nullptr) {}
+	ConversationVar()
+	  : _isPtr(false)
+	  , _val(0)
+	  , _valPtr(nullptr) {}
 
 	/**
 	 * Sets a numeric value
@@ -134,7 +136,9 @@ struct ScriptEntry {
 			/**
 			 * Constructor
 			 */
-			CondtionalParamEntry() : _isVariable(false), _val(0) {}
+			CondtionalParamEntry()
+			  : _isVariable(false)
+			  , _val(0) {}
 		};
 
 		static Common::Array<ConversationVar> *_vars;
@@ -145,7 +149,8 @@ struct ScriptEntry {
 		/**
 		 * Constructor
 		 */
-		Conditional() : _operation(CONDOP_NONE) {}
+		Conditional()
+		  : _operation(CONDOP_NONE) {}
 
 		/**
 		 * Loads data from a passed stream into the parameters structure
@@ -167,7 +172,9 @@ struct ScriptEntry {
 		int _size;
 		int _v2;
 
-		MessageEntry() : _size(0), _v2(0) {}
+		MessageEntry()
+		  : _size(0)
+		  , _v2(0) {}
 	};
 
 	DialogCommand _command;
@@ -181,7 +188,9 @@ struct ScriptEntry {
 	/**
 	 * Constructor
 	 */
-	ScriptEntry() : _command(CMD_END), _index(0) {}
+	ScriptEntry()
+	  : _command(CMD_END)
+	  , _index(0) {}
 
 	/**
 	 * Loads data from a passed stream into the parameters structure
@@ -208,10 +217,10 @@ struct ConvDialog {
 		DialogCommand _command;
 	};
 
-	int16 _textLineIndex;	// 0-based
-	int16 _speechIndex;		// 1-based
-	uint16 _scriptOffset;	// offset of script entry
-	uint16 _scriptSize;		// size of script entry
+	int16 _textLineIndex; // 0-based
+	int16 _speechIndex; // 1-based
+	uint16 _scriptOffset; // offset of script entry
+	uint16 _scriptSize; // size of script entry
 
 	DialogScript _script;
 };
@@ -236,16 +245,18 @@ struct ConvMessage {
 	uint _stringIndex;
 	uint _count;
 
-	ConvMessage() : _stringIndex(0), _count(0) {}
+	ConvMessage()
+	  : _stringIndex(0)
+	  , _count(0) {}
 };
 
 /**
  * Represents the static, non-changing data for a conversation
  */
 struct ConversationData {
-	uint16 _nodeCount;		// conversation nodes, each one containing several dialog options and messages
-	uint16 _dialogCount;		// messages (non-selectable) + texts (selectable)
-	uint16 _messageCount;	// messages (non-selectable)
+	uint16 _nodeCount; // conversation nodes, each one containing several dialog options and messages
+	uint16 _dialogCount; // messages (non-selectable) + texts (selectable)
+	uint16 _messageCount; // messages (non-selectable)
 	uint16 _textLineCount;
 	uint16 _unk2;
 	uint16 _maxImports;
@@ -393,6 +404,7 @@ private:
 	 * Handle node changes
 	 */
 	bool scriptNode(ScriptEntry &scrEntry);
+
 public:
 	/**
 	 * Constructor

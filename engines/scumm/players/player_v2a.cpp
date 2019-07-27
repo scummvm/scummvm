@@ -20,8 +20,8 @@
  *
  */
 
-#include "engines/engine.h"
 #include "scumm/players/player_v2a.h"
+#include "engines/engine.h"
 #include "scumm/scumm.h"
 
 namespace Scumm {
@@ -29,7 +29,6 @@ namespace Scumm {
 #define BASE_FREQUENCY 3579545
 
 static uint32 CRCtable[256];
-
 
 static void InitCRC() {
 	const uint32 poly = 0xEDB88320;
@@ -54,11 +53,14 @@ static uint32 GetCRC(byte *data, int len) {
 
 class V2A_Sound {
 public:
-	V2A_Sound() : _id(0), _mod(NULL) { }
+	V2A_Sound()
+	  : _id(0)
+	  , _mod(NULL) {}
 	virtual ~V2A_Sound() {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) = 0;
 	virtual bool update() = 0;
 	virtual void stop() = 0;
+
 protected:
 	int _id;
 	Player_MOD *_mod;
@@ -67,20 +69,26 @@ protected:
 // unsupported sound effect, print warning message to console
 class V2A_Sound_Unsupported : public V2A_Sound {
 public:
-	V2A_Sound_Unsupported() { }
+	V2A_Sound_Unsupported() {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		warning("player_v2a - sound %i not supported", id);
 	}
 	virtual bool update() { return false; }
-	virtual void stop() { }
+	virtual void stop() {}
 };
 
 // template, automatically stops all channels when a sound is silenced
-template<int numChan>
+template <int numChan>
 class V2A_Sound_Base : public V2A_Sound {
 public:
-	V2A_Sound_Base() : _offset(0), _size(0), _data(0) { }
-	V2A_Sound_Base(uint16 offset, uint16 size) : _offset(offset), _size(size), _data(0) { }
+	V2A_Sound_Base()
+	  : _offset(0)
+	  , _size(0)
+	  , _data(0) {}
+	V2A_Sound_Base(uint16 offset, uint16 size)
+	  : _offset(offset)
+	  , _size(size)
+	  , _data(0) {}
 	virtual void stop() {
 		assert(_id);
 		for (int i = 0; i < numChan; i++)
@@ -89,6 +97,7 @@ public:
 		free(_data);
 		_data = 0;
 	}
+
 protected:
 	const uint16 _offset;
 	const uint16 _size;
@@ -99,8 +108,15 @@ protected:
 // plays a music track
 class V2A_Sound_Music : public V2A_Sound {
 public:
-	V2A_Sound_Music(uint16 instoff, uint16 voloff, uint16 chan1off, uint16 chan2off, uint16 chan3off, uint16 chan4off, uint16 sampoff, bool looped) :
-		_instoff(instoff), _voloff(voloff), _chan1off(chan1off), _chan2off(chan2off), _chan3off(chan3off), _chan4off(chan4off), _sampoff(sampoff), _looped(looped) { }
+	V2A_Sound_Music(uint16 instoff, uint16 voloff, uint16 chan1off, uint16 chan2off, uint16 chan3off, uint16 chan4off, uint16 sampoff, bool looped)
+	  : _instoff(instoff)
+	  , _voloff(voloff)
+	  , _chan1off(chan1off)
+	  , _chan2off(chan2off)
+	  , _chan3off(chan3off)
+	  , _chan4off(chan4off)
+	  , _sampoff(sampoff)
+	  , _looped(looped) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -203,6 +219,7 @@ public:
 		free(_data);
 		_id = 0;
 	}
+
 private:
 	const uint16 _instoff;
 	const uint16 _voloff;
@@ -228,8 +245,10 @@ private:
 // plays a single waveform
 class V2A_Sound_Single : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Single(uint16 offset, uint16 size, uint16 freq, uint8 vol) :
-		V2A_Sound_Base<1>(offset, size), _freq(freq), _vol(vol) { }
+	V2A_Sound_Single(uint16 offset, uint16 size, uint16 freq, uint8 vol)
+	  : V2A_Sound_Base<1>(offset, size)
+	  , _freq(freq)
+	  , _vol(vol) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -247,6 +266,7 @@ public:
 		}
 		return true;
 	}
+
 private:
 	const uint16 _freq;
 	const uint8 _vol;
@@ -257,10 +277,18 @@ private:
 // plays a single looped waveform
 class V2A_Sound_SingleLooped : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_SingleLooped(uint16 offset, uint16 size, uint16 freq, uint8 vol, uint16 loopoffset, uint16 loopsize) :
-		V2A_Sound_Base<1>(offset, size), _loopoffset(loopoffset), _loopsize(loopsize), _freq(freq), _vol(vol) { }
-	V2A_Sound_SingleLooped(uint16 offset, uint16 size, uint16 freq, uint8 vol) :
-		V2A_Sound_Base<1>(offset, size), _loopoffset(0), _loopsize(size), _freq(freq), _vol(vol) { }
+	V2A_Sound_SingleLooped(uint16 offset, uint16 size, uint16 freq, uint8 vol, uint16 loopoffset, uint16 loopsize)
+	  : V2A_Sound_Base<1>(offset, size)
+	  , _loopoffset(loopoffset)
+	  , _loopsize(loopsize)
+	  , _freq(freq)
+	  , _vol(vol) {}
+	V2A_Sound_SingleLooped(uint16 offset, uint16 size, uint16 freq, uint8 vol)
+	  : V2A_Sound_Base<1>(offset, size)
+	  , _loopoffset(0)
+	  , _loopsize(size)
+	  , _freq(freq)
+	  , _vol(vol) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -273,6 +301,7 @@ public:
 		assert(_id);
 		return true;
 	}
+
 private:
 	const uint16 _loopoffset;
 	const uint16 _loopsize;
@@ -283,8 +312,12 @@ private:
 // plays two looped waveforms
 class V2A_Sound_MultiLooped : public V2A_Sound_Base<2> {
 public:
-	V2A_Sound_MultiLooped(uint16 offset, uint16 size, uint16 freq1, uint8 vol1, uint16 freq2, uint8 vol2) :
-		V2A_Sound_Base<2>(offset, size), _freq1(freq1), _vol1(vol1), _freq2(freq2), _vol2(vol2) { }
+	V2A_Sound_MultiLooped(uint16 offset, uint16 size, uint16 freq1, uint8 vol1, uint16 freq2, uint8 vol2)
+	  : V2A_Sound_Base<2>(offset, size)
+	  , _freq1(freq1)
+	  , _vol1(vol1)
+	  , _freq2(freq2)
+	  , _vol2(vol2) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -301,6 +334,7 @@ public:
 		assert(_id);
 		return true;
 	}
+
 private:
 	const uint16 _freq1;
 	const uint8 _vol1;
@@ -311,8 +345,9 @@ private:
 // plays two looped waveforms for a fixed number of frames
 class V2A_Sound_MultiLoopedDuration : public V2A_Sound_MultiLooped {
 public:
-	V2A_Sound_MultiLoopedDuration(uint16 offset, uint16 size, uint16 freq1, uint8 vol1, uint16 freq2, uint8 vol2, uint16 numframes) :
-		V2A_Sound_MultiLooped(offset, size, freq1, vol1, freq2, vol2), _duration(numframes) { }
+	V2A_Sound_MultiLoopedDuration(uint16 offset, uint16 size, uint16 freq1, uint8 vol1, uint16 freq2, uint8 vol2, uint16 numframes)
+	  : V2A_Sound_MultiLooped(offset, size, freq1, vol1, freq2, vol2)
+	  , _duration(numframes) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		V2A_Sound_MultiLooped::start(mod, id, data);
 		_ticks = 0;
@@ -324,6 +359,7 @@ public:
 			return false;
 		return true;
 	}
+
 private:
 	const uint16 _duration;
 
@@ -333,8 +369,12 @@ private:
 // plays a single looped waveform which starts at one frequency and bends to another frequency, where it remains until stopped
 class V2A_Sound_SingleLoopedPitchbend : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_SingleLoopedPitchbend(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint8 vol, uint8 step) :
-		V2A_Sound_Base<1>(offset, size), _freq1(freq1), _freq2(freq2), _vol(vol), _step(step) { }
+	V2A_Sound_SingleLoopedPitchbend(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint8 vol, uint8 step)
+	  : V2A_Sound_Base<1>(offset, size)
+	  , _freq1(freq1)
+	  , _freq2(freq2)
+	  , _vol(vol)
+	  , _step(step) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -361,6 +401,7 @@ public:
 		}
 		return true;
 	}
+
 private:
 	const uint16 _freq1;
 	const uint16 _freq2;
@@ -374,8 +415,10 @@ private:
 // used when Maniac Mansion explodes
 class V2A_Sound_Special_Maniac69 : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_Maniac69(uint16 offset, uint16 size, uint16 freq, uint8 vol) :
-		V2A_Sound_Base<1>(offset, size), _freq(freq), _vol(vol) { }
+	V2A_Sound_Special_Maniac69(uint16 offset, uint16 size, uint16 freq, uint8 vol)
+	  : V2A_Sound_Base<1>(offset, size)
+	  , _freq(freq)
+	  , _vol(vol) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -395,6 +438,7 @@ public:
 		_mod->setChannelVol(_id, _curvol >> 1);
 		return true;
 	}
+
 private:
 	const uint16 _freq;
 	const uint8 _vol;
@@ -407,8 +451,11 @@ private:
 // used when a microwave oven goes 'Ding'
 class V2A_Sound_Special_ManiacDing : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_ManiacDing(uint16 offset, uint16 size, uint16 freq, uint8 fadeinrate, uint8 fadeoutrate) :
-		V2A_Sound_Base<1>(offset, size), _freq(freq), _fade1(fadeinrate), _fade2(fadeoutrate) { }
+	V2A_Sound_Special_ManiacDing(uint16 offset, uint16 size, uint16 freq, uint8 fadeinrate, uint8 fadeoutrate)
+	  : V2A_Sound_Base<1>(offset, size)
+	  , _freq(freq)
+	  , _fade1(fadeinrate)
+	  , _fade2(fadeoutrate) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -434,6 +481,7 @@ public:
 		_mod->setChannelVol(_id, (_curvol << 2) | (_curvol >> 4));
 		return true;
 	}
+
 private:
 	const uint16 _freq;
 	const uint16 _fade1;
@@ -447,8 +495,12 @@ private:
 // used in Zak McKracken for several stereo 'Ding' sounds
 class V2A_Sound_Special_ZakStereoDing : public V2A_Sound_Base<2> {
 public:
-	V2A_Sound_Special_ZakStereoDing(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint8 fadeinrate, uint8 fadeoutrate) :
-		V2A_Sound_Base<2>(offset, size), _freq1(freq1), _freq2(freq2), _fade1(fadeinrate), _fade2(fadeoutrate) { }
+	V2A_Sound_Special_ZakStereoDing(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint8 fadeinrate, uint8 fadeoutrate)
+	  : V2A_Sound_Base<2>(offset, size)
+	  , _freq1(freq1)
+	  , _freq2(freq2)
+	  , _fade1(fadeinrate)
+	  , _fade2(fadeoutrate) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -478,6 +530,7 @@ public:
 		_mod->setChannelVol(_id | 0x100, (_curvol << 1) | (_curvol >> 5));
 		return true;
 	}
+
 private:
 	const uint16 _freq1;
 	const uint16 _freq2;
@@ -492,8 +545,11 @@ private:
 // used in Maniac Mansion for the tentacle sounds
 class V2A_Sound_Special_ManiacTentacle : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_ManiacTentacle(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 step) :
-		V2A_Sound_Base<1>(offset, size), _freq1(freq1), _freq2(freq2), _step(step) { }
+	V2A_Sound_Special_ManiacTentacle(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 step)
+	  : V2A_Sound_Base<1>(offset, size)
+	  , _freq1(freq1)
+	  , _freq2(freq2)
+	  , _step(step) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -514,6 +570,7 @@ public:
 		_mod->setChannelVol(_id, (_curvol << 2) | (_curvol >> 4));
 		return true;
 	}
+
 private:
 	const uint16 _freq1;
 	const uint16 _freq2;
@@ -527,8 +584,12 @@ private:
 // used for electronic noises
 class V2A_Sound_Special_Maniac59 : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_Maniac59(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 step, uint8 vol) :
-		V2A_Sound_Base<1>(offset, size), _freq1(freq1), _freq2(freq2), _step(step), _vol(vol) { }
+	V2A_Sound_Special_Maniac59(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 step, uint8 vol)
+	  : V2A_Sound_Base<1>(offset, size)
+	  , _freq1(freq1)
+	  , _freq2(freq2)
+	  , _step(step)
+	  , _vol(vol) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -558,6 +619,7 @@ public:
 		}
 		return true;
 	}
+
 private:
 	const uint16 _freq1;
 	const uint16 _freq2;
@@ -572,8 +634,10 @@ private:
 // don't remember where this one is used
 class V2A_Sound_Special_Maniac61 : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_Maniac61(uint16 offset, uint16 size, uint16 freq1, uint16 freq2) :
-		V2A_Sound_Base<1>(offset, size), _freq1(freq1), _freq2(freq2) { }
+	V2A_Sound_Special_Maniac61(uint16 offset, uint16 size, uint16 freq1, uint16 freq2)
+	  : V2A_Sound_Base<1>(offset, size)
+	  , _freq1(freq1)
+	  , _freq2(freq2) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -594,6 +658,7 @@ public:
 		_mod->setChannelVol(_id, (_curvol << 2) | (_curvol >> 4));
 		return true;
 	}
+
 private:
 	const uint16 _freq1;
 	const uint16 _freq2;
@@ -606,8 +671,15 @@ private:
 // used for ringing telephones
 class V2A_Sound_Special_ManiacPhone : public V2A_Sound_Base<2> {
 public:
-	V2A_Sound_Special_ManiacPhone(uint16 offset, uint16 size, uint16 freq1, uint8 vol1, uint16 freq2, uint8 vol2, uint16 numframes, uint8 playwidth, uint8 loopwidth) :
-		V2A_Sound_Base<2>(offset, size), _freq1(freq1), _vol1(vol1), _freq2(freq2), _vol2(vol2), _duration(numframes), _playwidth(playwidth), _loopwidth(loopwidth) { }
+	V2A_Sound_Special_ManiacPhone(uint16 offset, uint16 size, uint16 freq1, uint8 vol1, uint16 freq2, uint8 vol2, uint16 numframes, uint8 playwidth, uint8 loopwidth)
+	  : V2A_Sound_Base<2>(offset, size)
+	  , _freq1(freq1)
+	  , _vol1(vol1)
+	  , _freq2(freq2)
+	  , _vol2(vol2)
+	  , _duration(numframes)
+	  , _playwidth(playwidth)
+	  , _loopwidth(loopwidth) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -633,6 +705,7 @@ public:
 			return false;
 		return true;
 	}
+
 private:
 	const uint16 _freq1;
 	const uint8 _vol1;
@@ -661,8 +734,12 @@ private:
 // used when applying a wrench to a pipe
 class V2A_Sound_Special_Maniac46 : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_Maniac46(uint16 offset, uint16 size, uint16 freq, uint8 vol, uint8 loopwidth, uint8 numloops) :
-		V2A_Sound_Base<1>(offset, size), _freq(freq), _vol(vol), _loopwidth(loopwidth), _numloops(numloops) { }
+	V2A_Sound_Special_Maniac46(uint16 offset, uint16 size, uint16 freq, uint8 vol, uint8 loopwidth, uint8 numloops)
+	  : V2A_Sound_Base<1>(offset, size)
+	  , _freq(freq)
+	  , _vol(vol)
+	  , _loopwidth(loopwidth)
+	  , _numloops(numloops) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -685,6 +762,7 @@ public:
 		}
 		return true;
 	}
+
 private:
 	const uint16 _freq;
 	const uint8 _vol;
@@ -705,8 +783,13 @@ private:
 // used for typewriter noises, as well as tapping on the bus in Zak McKracken
 class V2A_Sound_Special_ManiacTypewriter : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_ManiacTypewriter(uint16 offset, uint16 size, uint16 freq, uint8 vol, uint8 numdurs, const uint8 *durations, bool looped) :
-		V2A_Sound_Base<1>(offset, size), _freq(freq), _vol(vol), _numdurs(numdurs), _durations(durations), _looped(looped) { }
+	V2A_Sound_Special_ManiacTypewriter(uint16 offset, uint16 size, uint16 freq, uint8 vol, uint8 numdurs, const uint8 *durations, bool looped)
+	  : V2A_Sound_Base<1>(offset, size)
+	  , _freq(freq)
+	  , _vol(vol)
+	  , _numdurs(numdurs)
+	  , _durations(durations)
+	  , _looped(looped) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -732,6 +815,7 @@ public:
 		}
 		return true;
 	}
+
 private:
 	const uint16 _freq;
 	const uint8 _vol;
@@ -753,8 +837,14 @@ private:
 // used for some sort of siren-like noise in Maniac Mansion
 class V2A_Sound_Special_Maniac44 : public V2A_Sound_Base<2> {
 public:
-	V2A_Sound_Special_Maniac44(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint16 freq1, uint16 freq2, uint8 vol) :
-		_offset1(offset1), _size1(size1), _offset2(offset2), _size2(size2), _freq1(freq1), _freq2(freq2), _vol(vol) { }
+	V2A_Sound_Special_Maniac44(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint16 freq1, uint16 freq2, uint8 vol)
+	  : _offset1(offset1)
+	  , _size1(size1)
+	  , _offset2(offset2)
+	  , _size2(size2)
+	  , _freq1(freq1)
+	  , _freq2(freq2)
+	  , _vol(vol) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -780,7 +870,7 @@ public:
 		}
 		if (_curfreq >= _freq2)
 			return true;
-		const char steps[8] = {0, 2, 2, 3, 4, 8, 15, 2};
+		const char steps[8] = { 0, 2, 2, 3, 4, 8, 15, 2 };
 		_curfreq = _freq1;
 		_step = steps[++_loopnum];
 		if (_loopnum == 7) {
@@ -790,6 +880,7 @@ public:
 		}
 		return true;
 	}
+
 private:
 	const uint16 _offset1;
 	const uint16 _size1;
@@ -818,8 +909,12 @@ private:
 // used for the siren noise in Maniac Mansion
 class V2A_Sound_Special_Maniac32 : public V2A_Sound_Base<4> {
 public:
-	V2A_Sound_Special_Maniac32(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint8 vol) :
-		_offset1(offset1), _size1(size1), _offset2(offset2), _size2(size2), _vol(vol) { }
+	V2A_Sound_Special_Maniac32(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint8 vol)
+	  : _offset1(offset1)
+	  , _size1(size1)
+	  , _offset2(offset2)
+	  , _size2(size2)
+	  , _vol(vol) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -858,6 +953,7 @@ public:
 		_mod->setChannelFreq(_id | 0x300, BASE_FREQUENCY / _freq4);
 		return true;
 	}
+
 private:
 	const uint16 _offset1;
 	const uint16 _size1;
@@ -891,8 +987,13 @@ private:
 // used in the white crystal chamber
 class V2A_Sound_Special_Zak70 : public V2A_Sound_Base<4> {
 public:
-	V2A_Sound_Special_Zak70(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 freq3, uint16 freq4, uint8 vol) :
-		V2A_Sound_Base<4>(offset, size), _freq1(freq1), _freq2(freq2), _freq3(freq3), _freq4(freq4), _vol(vol) { }
+	V2A_Sound_Special_Zak70(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 freq3, uint16 freq4, uint8 vol)
+	  : V2A_Sound_Base<4>(offset, size)
+	  , _freq1(freq1)
+	  , _freq2(freq2)
+	  , _freq3(freq3)
+	  , _freq4(freq4)
+	  , _vol(vol) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -914,6 +1015,7 @@ public:
 		assert(_id);
 		return true;
 	}
+
 protected:
 	const uint16 _freq1;
 	const uint16 _freq2;
@@ -926,8 +1028,9 @@ protected:
 // used when the Mindbender disappears
 class V2A_Sound_Special_Zak101 : public V2A_Sound_Special_Zak70 {
 public:
-	V2A_Sound_Special_Zak101(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 freq3, uint16 freq4, uint8 vol, uint16 dur) :
-		V2A_Sound_Special_Zak70(offset, size, freq1, freq2, freq3, freq4, vol), _dur(dur) { }
+	V2A_Sound_Special_Zak101(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 freq3, uint16 freq4, uint8 vol, uint16 dur)
+	  : V2A_Sound_Special_Zak70(offset, size, freq1, freq2, freq3, freq4, vol)
+	  , _dur(dur) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		V2A_Sound_Special_Zak70::start(mod, id, data);
 		_ticks = _dur;
@@ -944,6 +1047,7 @@ public:
 		}
 		return true;
 	}
+
 private:
 	const uint16 _dur;
 
@@ -954,8 +1058,10 @@ private:
 // used when refilling oxygen
 class V2A_Sound_Special_Zak37 : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_Zak37(uint16 offset, uint16 size, uint16 freq, uint8 vol) :
-		V2A_Sound_Base<1>(offset, size), _freq(freq), _vol(vol) { }
+	V2A_Sound_Special_Zak37(uint16 offset, uint16 size, uint16 freq, uint8 vol)
+	  : V2A_Sound_Base<1>(offset, size)
+	  , _freq(freq)
+	  , _vol(vol) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -971,6 +1077,7 @@ public:
 		_mod->setChannelVol(_id, _curvol);
 		return true;
 	}
+
 private:
 	const uint16 _freq;
 	const uint8 _vol;
@@ -982,8 +1089,10 @@ private:
 // used in Zak for airplane taking off and landing
 class V2A_Sound_Special_ZakAirplane : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_ZakAirplane(uint16 offset, uint16 size, uint16 freq1, uint16 freq2) :
-		V2A_Sound_Base<1>(offset, size), _freq1(freq1), _freq2(freq2) { }
+	V2A_Sound_Special_ZakAirplane(uint16 offset, uint16 size, uint16 freq1, uint16 freq2)
+	  : V2A_Sound_Base<1>(offset, size)
+	  , _freq1(freq1)
+	  , _freq2(freq2) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -1014,6 +1123,7 @@ public:
 		}
 		return true;
 	}
+
 private:
 	const uint16 _freq1;
 	const uint16 _freq2;
@@ -1027,8 +1137,9 @@ private:
 // used when the white crystal machine turns off
 class V2A_Sound_Special_Zak71 : public V2A_Sound_Base<4> {
 public:
-	V2A_Sound_Special_Zak71(uint16 offset, uint16 size) :
-		_offset(offset), _size(size) { }
+	V2A_Sound_Special_Zak71(uint16 offset, uint16 size)
+	  : _offset(offset)
+	  , _size(size) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -1071,6 +1182,7 @@ public:
 		_mod->setChannelVol(_id | 0x300, MIN((_vol >> 1) + 3, 0x32));
 		return true;
 	}
+
 private:
 	const uint16 _offset;
 	const uint16 _size;
@@ -1086,8 +1198,11 @@ private:
 // used when the Skolarian device activates
 class V2A_Sound_Special_Zak99 : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_Zak99(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint8 vol) :
-		V2A_Sound_Base<1>(offset, size), _freq1(freq1), _freq2(freq2), _vol(vol) { }
+	V2A_Sound_Special_Zak99(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint8 vol)
+	  : V2A_Sound_Base<1>(offset, size)
+	  , _freq1(freq1)
+	  , _freq2(freq2)
+	  , _vol(vol) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -1115,6 +1230,7 @@ public:
 		}
 		return true;
 	}
+
 private:
 	const uint16 _freq1;
 	const uint16 _freq2;
@@ -1130,8 +1246,12 @@ private:
 // used when depressurizing the hostel
 class V2A_Sound_Special_Zak54 : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_Zak54(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint16 freq) :
-		_offset1(offset1), _size1(size1), _offset2(offset2), _size2(size2), _freq(freq) { }
+	V2A_Sound_Special_Zak54(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint16 freq)
+	  : _offset1(offset1)
+	  , _size1(size1)
+	  , _offset2(offset2)
+	  , _size2(size2)
+	  , _freq(freq) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -1175,8 +1295,13 @@ private:
 // used when abducted at the Bermuda Triangle
 class V2A_Sound_Special_Zak110 : public V2A_Sound_Base<2> {
 public:
-	V2A_Sound_Special_Zak110(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint16 freq1, uint16 freq2) :
-		_offset1(offset1), _size1(size1), _offset2(offset2), _size2(size2), _freq1(freq1), _freq2(freq2) { }
+	V2A_Sound_Special_Zak110(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint16 freq1, uint16 freq2)
+	  : _offset1(offset1)
+	  , _size1(size1)
+	  , _offset2(offset2)
+	  , _size2(size2)
+	  , _freq1(freq1)
+	  , _freq2(freq2) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -1235,6 +1360,7 @@ public:
 		}
 		return true;
 	}
+
 private:
 	const uint16 _offset1;
 	const uint16 _size1;
@@ -1252,8 +1378,11 @@ private:
 // door orb sound in the Mars Face
 class V2A_Sound_Special_Zak32 : public V2A_Sound_Base<2> {
 public:
-	V2A_Sound_Special_Zak32(uint16 offset1, uint16 offset2, uint16 size1, uint16 size2) :
-		_offset1(offset1), _offset2(offset2), _size1(size1), _size2(size2) { }
+	V2A_Sound_Special_Zak32(uint16 offset1, uint16 offset2, uint16 size1, uint16 size2)
+	  : _offset1(offset1)
+	  , _offset2(offset2)
+	  , _size1(size1)
+	  , _size2(size2) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -1312,6 +1441,7 @@ public:
 				return false;
 		}
 	}
+
 private:
 	const uint16 _offset1;
 	const uint16 _offset2;
@@ -1327,8 +1457,9 @@ private:
 // probably used for some sort of vehicle sound
 class V2A_Sound_Special_Zak52 : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_Zak52(uint16 offset, uint16 size) :
-		_offset(offset), _size(size) { }
+	V2A_Sound_Special_Zak52(uint16 offset, uint16 size)
+	  : _offset(offset)
+	  , _size(size) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -1355,6 +1486,7 @@ public:
 		else
 			return false;
 	}
+
 private:
 	const uint16 _offset;
 	const uint16 _size;
@@ -1366,8 +1498,9 @@ private:
 // used when teleporting out with the yellow crystal
 class V2A_Sound_Special_Zak61 : public V2A_Sound_Base<2> {
 public:
-	V2A_Sound_Special_Zak61(uint16 offset, uint16 size) :
-		_offset(offset), _size(size) { }
+	V2A_Sound_Special_Zak61(uint16 offset, uint16 size)
+	  : _offset(offset)
+	  , _size(size) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -1410,6 +1543,7 @@ public:
 		}
 		return true;
 	}
+
 private:
 	const uint16 _offset;
 	const uint16 _size;
@@ -1422,8 +1556,9 @@ private:
 // used when teleporting in with the yellow crystal
 class V2A_Sound_Special_Zak62 : public V2A_Sound_Base<2> {
 public:
-	V2A_Sound_Special_Zak62(uint16 offset, uint16 size) :
-		_offset(offset), _size(size) { }
+	V2A_Sound_Special_Zak62(uint16 offset, uint16 size)
+	  : _offset(offset)
+	  , _size(size) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -1466,6 +1601,7 @@ public:
 		}
 		return true;
 	}
+
 private:
 	const uint16 _offset;
 	const uint16 _size;
@@ -1478,8 +1614,9 @@ private:
 // Guardian of the Sphinx, perhaps?
 class V2A_Sound_Special_Zak82 : public V2A_Sound_Base<4> {
 public:
-	V2A_Sound_Special_Zak82(uint16 offset, uint16 size) :
-		_offset(offset), _size(size) { }
+	V2A_Sound_Special_Zak82(uint16 offset, uint16 size)
+	  : _offset(offset)
+	  , _size(size) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -1528,7 +1665,7 @@ public:
 		case 1:
 			size = 6300;
 			offset += 0x07D0;
-			assert(offset + size <= _offset +  _size);
+			assert(offset + size <= _offset + _size);
 			tmp_data1 = (char *)malloc(size);
 			memcpy(tmp_data1, _data + offset, size);
 			_mod->startChannel(_id | 0x000, tmp_data1, size, BASE_FREQUENCY / 0x0479, 0x7F, 0, size, -127);
@@ -1563,6 +1700,7 @@ public:
 		}
 		return true;
 	}
+
 private:
 	const uint16 _offset;
 	const uint16 _size;
@@ -1579,8 +1717,9 @@ private:
 // Mars Tram about to depart
 class V2A_Sound_Special_Zak86 : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_Zak86(uint16 offset, uint16 size) :
-		_offset(offset), _size(size) { }
+	V2A_Sound_Special_Zak86(uint16 offset, uint16 size)
+	  : _offset(offset)
+	  , _size(size) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -1641,6 +1780,7 @@ public:
 		}
 		return true;
 	}
+
 private:
 	const uint16 _offset;
 	const uint16 _size;
@@ -1654,8 +1794,9 @@ private:
 // Skolarian device pedestal activated without any parts
 class V2A_Sound_Special_Zak98 : public V2A_Sound_Base<4> {
 public:
-	V2A_Sound_Special_Zak98(uint16 offset, uint16 size) :
-		_offset(offset), _size(size) { }
+	V2A_Sound_Special_Zak98(uint16 offset, uint16 size)
+	  : _offset(offset)
+	  , _size(size) {}
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
@@ -1689,7 +1830,7 @@ public:
 	}
 	virtual bool update() {
 		assert(_id);
-		const uint16 _minvol[2] = {0x2E, 0x32};
+		const uint16 _minvol[2] = { 0x2E, 0x32 };
 		int i;
 		for (i = 0; i < 4; i++) {
 			_mod->setChannelFreq(_id | (i << 8), BASE_FREQUENCY / _freq[i]);
@@ -1717,6 +1858,7 @@ public:
 		_freq[2] = _freq[0] + 0x20;
 		return true;
 	}
+
 private:
 	const uint16 _offset;
 	const uint16 _size;
@@ -1728,8 +1870,8 @@ private:
 };
 
 #define CRCToSound(CRC, SOUND) \
-	if (crc == CRC) \
-		return new SOUND
+	if (crc == CRC)              \
+	return new SOUND
 
 static V2A_Sound *findSound(unsigned long crc) {
 	CRCToSound(0x8FAB08C4, V2A_Sound_SingleLooped(0x006C, 0x2B58, 0x016E, 0x3F)); // Maniac 17

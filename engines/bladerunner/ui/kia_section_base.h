@@ -61,7 +61,6 @@ public:
 
 protected:
 	virtual void onButtonPressed(int buttonId) {}
-
 };
 
 } // End of namespace BladeRunner

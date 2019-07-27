@@ -32,7 +32,10 @@
 
 namespace Draci {
 
-MusicPlayer::MusicPlayer(const char *pathMask) : _pathMask(pathMask), _isGM(false), _track(-1) {
+MusicPlayer::MusicPlayer(const char *pathMask)
+  : _pathMask(pathMask)
+  , _isGM(false)
+  , _track(-1) {
 
 	MidiPlayer::createDriver();
 

@@ -20,9 +20,9 @@
  */
 
 #include "common/archive.h"
+#include "common/macresman.h"
 #include "common/stream.h"
 #include "common/unzip.h"
-#include "common/macresman.h"
 #include "graphics/fonts/bdf.h"
 #include "graphics/fonts/macfont.h"
 
@@ -33,8 +33,8 @@ namespace Graphics {
 // Source: Apple IIGS Technical Note #41, "Font Family Numbers"
 // http://apple2.boldt.ca/?page=til/tn.iigs.041
 static const char *const fontNames[] = {
-	"Chicago",	// system font
-	"Geneva",	// application font
+	"Chicago", // system font
+	"Geneva", // application font
 	"New York",
 	"Geneva",
 
@@ -196,7 +196,7 @@ void MacFontManager::loadFonts(const Common::String &fileName) {
 }
 
 void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
-	Common::MacResIDArray fonds = fontFile->getResIDArray(MKTAG('F','O','N','D'));
+	Common::MacResIDArray fonds = fontFile->getResIDArray(MKTAG('F', 'O', 'N', 'D'));
 	if (fonds.size() > 0) {
 		for (Common::Array<uint16>::iterator iterator = fonds.begin(); iterator != fonds.end(); ++iterator) {
 			Common::SeekableReadStream *fond = fontFile->getResource(MKTAG('F', 'O', 'N', 'D'), *iterator);
@@ -210,7 +210,7 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 
 			for (uint i = 0; i < assoc->size(); i++) {
 				debug(8, "size: %d style: %d id: %d", (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle,
-										(*assoc)[i]._fontID);
+				      (*assoc)[i]._fontID);
 
 				Common::SeekableReadStream *fontstream;
 				MacFont *macfont;

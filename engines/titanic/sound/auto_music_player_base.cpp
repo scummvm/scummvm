@@ -26,14 +26,18 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CAutoMusicPlayerBase, CGameObject)
-	ON_MESSAGE(StatusChangeMsg)
-	ON_MESSAGE(TimerMsg)
-	ON_MESSAGE(LoadSuccessMsg)
-	ON_MESSAGE(ChangeMusicMsg)
+ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(TimerMsg)
+ON_MESSAGE(LoadSuccessMsg)
+ON_MESSAGE(ChangeMusicMsg)
 END_MESSAGE_MAP()
 
-CAutoMusicPlayerBase::CAutoMusicPlayerBase() : CGameObject(),
-	_initialMute(true), _isEnabled(false), _volumeMode(VOL_NORMAL), _transition(1) {
+CAutoMusicPlayerBase::CAutoMusicPlayerBase()
+  : CGameObject()
+  , _initialMute(true)
+  , _isEnabled(false)
+  , _volumeMode(VOL_NORMAL)
+  , _transition(1) {
 }
 void CAutoMusicPlayerBase::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
@@ -81,7 +85,7 @@ bool CAutoMusicPlayerBase::LoadSuccessMsg(CLoadSuccessMsg *msg) {
 		}
 
 		playAmbientSound(_filename, _volumeMode, _initialMute, true, 0,
-			Audio::Mixer::kMusicSoundType);
+		                 Audio::Mixer::kMusicSoundType);
 	}
 
 	return true;
@@ -99,14 +103,14 @@ bool CAutoMusicPlayerBase::ChangeMusicMsg(CChangeMusicMsg *msg) {
 		if (_isEnabled) {
 			stopAmbientSound(_transition, -1);
 			playAmbientSound(_filename, _volumeMode, _initialMute, true, 0,
-				Audio::Mixer::kMusicSoundType);
+			                 Audio::Mixer::kMusicSoundType);
 		}
 	}
 
 	if (!_isEnabled && msg->_action == MUSIC_START) {
 		_isEnabled = true;
 		playAmbientSound(_filename, _volumeMode, _initialMute, true, 0,
-			Audio::Mixer::kMusicSoundType);
+		                 Audio::Mixer::kMusicSoundType);
 	}
 
 	return true;

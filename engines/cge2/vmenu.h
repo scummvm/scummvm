@@ -28,10 +28,10 @@
 #ifndef CGE2_VMENU_H
 #define CGE2_VMENU_H
 
-#define kMenuBarVerticalMargin   1
+#define kMenuBarVerticalMargin 1
 #define kMenuBarHorizontalMargin 3
-#define kLt                      3
-#define kRb                      1
+#define kLt 3
+#define kRb 1
 
 #include "cge2/cge2.h"
 #include "cge2/talk.h"
@@ -41,6 +41,7 @@ namespace CGE2 {
 class Choice {
 protected:
 	CGE2Engine *_vm;
+
 public:
 	char *_text;
 
@@ -72,6 +73,7 @@ class VMenu : public Talk {
 
 	uint16 _items;
 	Common::Array<Choice *> _menu;
+
 public:
 	char *_vmgt;
 	static VMenu *_addr;

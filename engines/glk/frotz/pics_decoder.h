@@ -23,37 +23,38 @@
 #ifndef GLK_FROTZ_PICS_DECODER_H
 #define GLK_FROTZ_PICS_DECODER_H
 
-#include "common/stream.h"
 #include "common/array.h"
+#include "common/stream.h"
 
 namespace Glk {
 namespace Frotz {
 
-/**
+	/**
  * Decodes an Infocom encoded picture into a raw pixel stream that the outer
  * Glk engine is capable of then loading into a picture object
  */
-class PictureDecoder {
-private:
-	byte *_tableVal;
-	uint16 *_tableRef;
-public:
-	/**
+	class PictureDecoder {
+	private:
+		byte *_tableVal;
+		uint16 *_tableRef;
+
+	public:
+		/**
 	 * Constructor
 	 */
-	PictureDecoder();
+		PictureDecoder();
 
-	/**
+		/**
 	 * Destructor
 	 */
-	~PictureDecoder();
+		~PictureDecoder();
 
-	/**
+		/**
 	 * Decode method
 	 */
-	Common::SeekableReadStream *decode(Common::ReadStream &src, uint flags,
-		const Common::Array<byte> &palette, uint display, size_t width, size_t height);
-};
+		Common::SeekableReadStream *decode(Common::ReadStream &src, uint flags,
+		                                   const Common::Array<byte> &palette, uint display, size_t width, size_t height);
+	};
 
 } // End of namespace Frotz
 } // End of namespace Glk

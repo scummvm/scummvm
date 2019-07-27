@@ -24,23 +24,23 @@
 
 #include "zvision/graphics/cursors/cursor.h"
 
-#include "common/str.h"
 #include "common/file.h"
+#include "common/str.h"
 
 namespace ZVision {
 
 ZorkCursor::ZorkCursor()
-	: _width(0),
-	  _height(0),
-	  _hotspotX(0),
-	  _hotspotY(0) {
+  : _width(0)
+  , _height(0)
+  , _hotspotX(0)
+  , _hotspotY(0) {
 }
 
 ZorkCursor::ZorkCursor(ZVision *engine, const Common::String &fileName)
-	: _width(0),
-	  _height(0),
-	  _hotspotX(0),
-	  _hotspotY(0) {
+  : _width(0)
+  , _height(0)
+  , _hotspotX(0)
+  , _hotspotY(0) {
 	Common::File file;
 	if (!engine->getSearchManager()->openFile(file, fileName))
 		error("Cursor file %s does not exist", fileName.c_str());

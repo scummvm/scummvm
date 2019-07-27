@@ -26,8 +26,8 @@
 #include "common/scummsys.h"
 
 namespace DisposeAfterUse {
-	enum Flag { NO, YES };
+enum Flag { NO,
+	          YES };
 }
-
 
 #endif

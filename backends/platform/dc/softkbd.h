@@ -29,22 +29,20 @@
 
 class OSystem_Dreamcast;
 
-class SoftKeyboard : public Interactive
-{
- private:
+class SoftKeyboard : public Interactive {
+private:
+	const OSystem_Dreamcast *os;
+	Label labels[2][SK_NUM_KEYS];
+	byte shiftState;
+	int8 keySel;
 
-  const OSystem_Dreamcast *os;
-  Label labels[2][SK_NUM_KEYS];
-  byte shiftState;
-  int8 keySel;
+public:
+	SoftKeyboard(const OSystem_Dreamcast *os);
+	virtual ~SoftKeyboard() {}
 
- public:
-  SoftKeyboard(const OSystem_Dreamcast *os);
-  virtual ~SoftKeyboard() {}
-
-  void draw(float x, float y, int transp = 0);
-  int key(int k, byte &shiftFlags);
-  void mouse(int x, int y);
+	void draw(float x, float y, int transp = 0);
+	int key(int k, byte &shiftFlags);
+	void mouse(int x, int y);
 };
 
 #endif /* DC_SOFTKBD_H */

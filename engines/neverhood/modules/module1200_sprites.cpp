@@ -43,7 +43,7 @@ static const uint32 kScene1201TntFileHashList2[] = {
 };
 
 SsScene1201Tnt::SsScene1201Tnt(NeverhoodEngine *vm, uint32 elemIndex, uint32 pointIndex, int16 clipY2)
-	: StaticSprite(vm, 900) {
+  : StaticSprite(vm, 900) {
 
 	int16 x = kScene1201PointArray[pointIndex].x;
 	int16 y = kScene1201PointArray[pointIndex].y;
@@ -55,7 +55,9 @@ SsScene1201Tnt::SsScene1201Tnt(NeverhoodEngine *vm, uint32 elemIndex, uint32 poi
 }
 
 AsScene1201Tape::AsScene1201Tape(NeverhoodEngine *vm, Scene *parentScene, uint32 nameHash, int surfacePriority, int16 x, int16 y, uint32 fileHash)
-	: AnimatedSprite(vm, fileHash, surfacePriority, x, y), _parentScene(parentScene), _nameHash(nameHash) {
+  : AnimatedSprite(vm, fileHash, surfacePriority, x, y)
+  , _parentScene(parentScene)
+  , _nameHash(nameHash) {
 
 	if (!getSubVar(VA_HAS_TAPE, _nameHash) && !getSubVar(VA_IS_TAPE_INSERTED, _nameHash)) {
 		SetMessageHandler(&AsScene1201Tape::handleMessage);
@@ -82,7 +84,7 @@ uint32 AsScene1201Tape::handleMessage(int messageNum, const MessageParam &param,
 }
 
 AsScene1201TntManRope::AsScene1201TntManRope(NeverhoodEngine *vm, bool isDummyHanging)
-	: AnimatedSprite(vm, 1200) {
+  : AnimatedSprite(vm, 1200) {
 
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1201TntManRope::handleMessage);
@@ -114,7 +116,9 @@ uint32 AsScene1201TntManRope::handleMessage(int messageNum, const MessageParam &
 }
 
 AsScene1201RightDoor::AsScene1201RightDoor(NeverhoodEngine *vm, Sprite *klaymen, bool isOpen)
-	: AnimatedSprite(vm, 1100), _klaymen(klaymen), _countdown(0) {
+  : AnimatedSprite(vm, 1100)
+  , _klaymen(klaymen)
+  , _countdown(0) {
 
 	createSurface1(0xD088AC30, 100);
 	_x = 320;
@@ -172,7 +176,7 @@ void AsScene1201RightDoor::stCloseDoorDone() {
 }
 
 AsScene1201KlaymenHead::AsScene1201KlaymenHead(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1200) {
+  : AnimatedSprite(vm, 1200) {
 
 	createSurface(1200, 69, 98);
 	SetUpdateHandler(&AnimatedSprite::update);
@@ -200,8 +204,10 @@ uint32 AsScene1201KlaymenHead::handleMessage(int messageNum, const MessageParam 
 }
 
 AsScene1201TntMan::AsScene1201TntMan(NeverhoodEngine *vm, Scene *parentScene, Sprite *asTntManRope, bool isComingDown)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _asTntManRope(asTntManRope),
-	_isMoving(false) {
+  : AnimatedSprite(vm, 1100)
+  , _parentScene(parentScene)
+  , _asTntManRope(asTntManRope)
+  , _isMoving(false) {
 
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1201TntMan::handleMessage);
@@ -235,13 +241,12 @@ uint32 AsScene1201TntMan::handleMessage(int messageNum, const MessageParam &para
 		break;
 	case 0x480B:
 		if (!_isMoving) {
-			_sprite = (Sprite*)sender;
+			_sprite = (Sprite *)sender;
 			stMoving();
 		}
 		break;
 	}
 	return messageResult;
-
 }
 
 uint32 AsScene1201TntMan::hmComingDown(int messageNum, const MessageParam &param, Entity *sender) {
@@ -282,7 +287,8 @@ void AsScene1201TntMan::stMoving() {
 }
 
 AsScene1201TntManFlame::AsScene1201TntManFlame(NeverhoodEngine *vm, Sprite *asTntMan)
-	: AnimatedSprite(vm, 1200), _asTntMan(asTntMan) {
+  : AnimatedSprite(vm, 1200)
+  , _asTntMan(asTntMan) {
 
 	createSurface1(0x828C0411, 995);
 	SetUpdateHandler(&AsScene1201TntManFlame::update);
@@ -312,7 +318,9 @@ void AsScene1201TntManFlame::suUpdate() {
 }
 
 AsScene1201Match::AsScene1201Match(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _countdown(0) {
+  : AnimatedSprite(vm, 1100)
+  , _parentScene(parentScene)
+  , _countdown(0) {
 
 	createSurface(1100, 57, 60);
 	SetUpdateHandler(&AsScene1201Match::update);
@@ -432,7 +440,10 @@ void AsScene1201Match::stIdleOnFloor() {
 }
 
 AsScene1201Creature::AsScene1201Creature(NeverhoodEngine *vm, Scene *parentScene, Sprite *klaymen)
-	: AnimatedSprite(vm, 900), _parentScene(parentScene), _klaymen(klaymen), _klaymenTooClose(false) {
+  : AnimatedSprite(vm, 900)
+  , _parentScene(parentScene)
+  , _klaymen(klaymen)
+  , _klaymenTooClose(false) {
 
 	// NOTE: _countdown2 and _countdown3 were unused/without effect and thus removed
 
@@ -536,7 +547,8 @@ void AsScene1201Creature::stPincerSnapKlaymen() {
 }
 
 AsScene1201LeftDoor::AsScene1201LeftDoor(NeverhoodEngine *vm, Sprite *klaymen)
-	: AnimatedSprite(vm, 1100), _klaymen(klaymen) {
+  : AnimatedSprite(vm, 1100)
+  , _klaymen(klaymen) {
 
 	_x = 320;
 	_y = 240;
@@ -570,12 +582,7 @@ void AsScene1201LeftDoor::stCloseDoor() {
 }
 
 static const NPoint kScene1202Points[] = {
-	{203, 140}, {316, 212}, {277, 264},
-	{176, 196}, {275, 159}, {366, 212},
-	{230, 195}, {412, 212}, {368, 263},
-	{204, 192}, {365, 164}, {316, 262},
-	{191, 255}, {280, 213}, {406, 266},
-	{214, 254}, {316, 158}, {402, 161}
+	{ 203, 140 }, { 316, 212 }, { 277, 264 }, { 176, 196 }, { 275, 159 }, { 366, 212 }, { 230, 195 }, { 412, 212 }, { 368, 263 }, { 204, 192 }, { 365, 164 }, { 316, 262 }, { 191, 255 }, { 280, 213 }, { 406, 266 }, { 214, 254 }, { 316, 158 }, { 402, 161 }
 };
 
 static const uint32 kScene1202FileHashes[] = {
@@ -588,7 +595,9 @@ static const uint32 kScene1202FileHashes[] = {
 };
 
 AsScene1202TntItem::AsScene1202TntItem(NeverhoodEngine *vm, Scene *parentScene, int itemIndex)
-	: AnimatedSprite(vm, 900), _parentScene(parentScene), _itemIndex(itemIndex) {
+  : AnimatedSprite(vm, 900)
+  , _parentScene(parentScene)
+  , _itemIndex(itemIndex) {
 
 	int positionIndex;
 
@@ -653,13 +662,13 @@ void AsScene1202TntItem::stChangePositionDone() {
 }
 
 static const KlaymenIdleTableItem klaymenIdleTable1201[] = {
-	{1, kIdleSpinHead},
-	{1, kIdleChest},
-	{1, kIdleHeadOff},
+	{ 1, kIdleSpinHead },
+	{ 1, kIdleChest },
+	{ 1, kIdleHeadOff },
 };
 
 KmScene1201::KmScene1201(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+  : Klaymen(vm, parentScene, x, y) {
 
 	setKlaymenIdleTable(klaymenIdleTable1201, ARRAYSIZE(klaymenIdleTable1201));
 	_doYHitIncr = true;

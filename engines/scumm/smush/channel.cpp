@@ -20,23 +20,22 @@
  *
  */
 
-
 #include "common/textconsole.h"
 
 #include "scumm/smush/channel.h"
 
 namespace Scumm {
 
-SmushChannel::SmushChannel(int32 track) :
-	_track(track),
-	_tbuffer(0),
-	_tbufferSize(0),
-	_sbuffer(0),
-	_sbufferSize(0),
-	_dataSize(-1),
-	_inData(false),
-	_volume(0),
-	_pan(0) {
+SmushChannel::SmushChannel(int32 track)
+  : _track(track)
+  , _tbuffer(0)
+  , _tbufferSize(0)
+  , _sbuffer(0)
+  , _sbufferSize(0)
+  , _dataSize(-1)
+  , _inData(false)
+  , _volume(0)
+  , _pan(0) {
 }
 
 SmushChannel::~SmushChannel() {
@@ -112,6 +111,5 @@ void SmushChannel::processBuffer() {
 		}
 	}
 }
-
 
 } // End of namespace Scumm

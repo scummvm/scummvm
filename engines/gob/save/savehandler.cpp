@@ -22,19 +22,20 @@
 
 #include "common/endian.h"
 
-#include "gob/gob.h"
-#include "gob/save/savehandler.h"
-#include "gob/save/savefile.h"
-#include "gob/save/saveconverter.h"
-#include "gob/global.h"
-#include "gob/video.h"
 #include "gob/draw.h"
-#include "gob/variables.h"
+#include "gob/global.h"
+#include "gob/gob.h"
 #include "gob/inter.h"
+#include "gob/save/saveconverter.h"
+#include "gob/save/savefile.h"
+#include "gob/save/savehandler.h"
+#include "gob/variables.h"
+#include "gob/video.h"
 
 namespace Gob {
 
-SlotFile::SlotFile(GobEngine *vm, uint32 slotCount, const Common::String &base) : _vm(vm) {
+SlotFile::SlotFile(GobEngine *vm, uint32 slotCount, const Common::String &base)
+  : _vm(vm) {
 	_base = base;
 	_slotCount = slotCount;
 }
@@ -74,12 +75,12 @@ int32 SlotFileIndexed::tallyUpFiles(uint32 slotSize, uint32 indexSize) const {
 }
 
 void SlotFileIndexed::buildIndex(byte *buffer, SavePartInfo &info,
-		SaveConverter *converter, bool setLongest) const {
+                                 SaveConverter *converter, bool setLongest) const {
 
 	uint32 descLength = info.getDescMaxLength();
 
-	uint32 longest     = 0;
-	byte  *bufferStart = buffer;
+	uint32 longest = 0;
+	byte *bufferStart = buffer;
 
 	// Iterate over all files
 	for (uint32 i = 0; i < _slotCount; i++, buffer += descLength) {
@@ -100,7 +101,7 @@ void SlotFileIndexed::buildIndex(byte *buffer, SavePartInfo &info,
 
 			delete[] desc;
 
-			longest = MAX<uint32>(longest, strlen((const char *) buffer));
+			longest = MAX<uint32>(longest, strlen((const char *)buffer));
 
 		} else
 			// No valid slot, fill with 0
@@ -109,7 +110,7 @@ void SlotFileIndexed::buildIndex(byte *buffer, SavePartInfo &info,
 
 	if (setLongest) {
 		uint32 slot0Len;
-		for (slot0Len = strlen((const char *) bufferStart); slot0Len < longest; slot0Len++)
+		for (slot0Len = strlen((const char *)bufferStart); slot0Len < longest; slot0Len++)
 			bufferStart[slot0Len] = ' ';
 		bufferStart[slot0Len] = '\0';
 	}
@@ -140,9 +141,9 @@ Common::OutSaveFile *SlotFileIndexed::openWrite(int slot) const {
 	return result;
 }
 
-
 SlotFileIndexed::SlotFileIndexed(GobEngine *vm, uint32 slotCount,
-		const Common::String &base, const Common::String &extStub) : SlotFile(vm, slotCount, base) {
+                                 const Common::String &base, const Common::String &extStub)
+  : SlotFile(vm, slotCount, base) {
 
 	_ext = extStub;
 }
@@ -151,7 +152,7 @@ SlotFileIndexed::~SlotFileIndexed() {
 }
 
 Common::String SlotFileIndexed::build(int slot) const {
-	if ((slot < 0) || (((uint32) slot) >= _slotCount))
+	if ((slot < 0) || (((uint32)slot) >= _slotCount))
 		return Common::String();
 
 	Common::String buf = Common::String::format("%02d", slot);
@@ -160,7 +161,8 @@ Common::String SlotFileIndexed::build(int slot) const {
 }
 
 SlotFileStatic::SlotFileStatic(GobEngine *vm, const Common::String &base,
-		const Common::String &ext) : SlotFile(vm, 1, base) {
+                               const Common::String &ext)
+  : SlotFile(vm, 1, base) {
 
 	_ext = "." + ext;
 }
@@ -205,8 +207,8 @@ Common::OutSaveFile *SlotFileStatic::openWrite() const {
 	return result;
 }
 
-
-SaveHandler::SaveHandler(GobEngine *vm) : _vm(vm) {
+SaveHandler::SaveHandler(GobEngine *vm)
+  : _vm(vm) {
 }
 
 SaveHandler::~SaveHandler() {
@@ -224,8 +226,8 @@ bool SaveHandler::deleteFile() {
 	return true;
 }
 
-
-TempSpriteHandler::TempSpriteHandler(GobEngine *vm) : SaveHandler(vm) {
+TempSpriteHandler::TempSpriteHandler(GobEngine *vm)
+  : SaveHandler(vm) {
 	_sprite = 0;
 }
 
@@ -369,16 +371,15 @@ bool TempSpriteHandler::usesPalette(int32 size) {
 	return (size < -1000);
 }
 
-
-NotesHandler::File::File(GobEngine *vm, const Common::String &base) :
-	SlotFileStatic(vm, base, "blo") {
+NotesHandler::File::File(GobEngine *vm, const Common::String &base)
+  : SlotFileStatic(vm, base, "blo") {
 }
 
 NotesHandler::File::~File() {
 }
 
-NotesHandler::NotesHandler(uint32 notesSize, GobEngine *vm, const Common::String &target) :
-	SaveHandler(vm) {
+NotesHandler::NotesHandler(uint32 notesSize, GobEngine *vm, const Common::String &target)
+  : SaveHandler(vm) {
 
 	_notesSize = notesSize;
 
@@ -485,8 +486,8 @@ bool NotesHandler::save(int16 dataVar, int32 size, int32 offset) {
 	return writer.writePart(0, &vars);
 }
 
-
-FakeFileHandler::FakeFileHandler(GobEngine *vm) : SaveHandler(vm) {
+FakeFileHandler::FakeFileHandler(GobEngine *vm)
+  : SaveHandler(vm) {
 }
 
 FakeFileHandler::~FakeFileHandler() {

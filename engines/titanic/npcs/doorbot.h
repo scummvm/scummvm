@@ -45,14 +45,17 @@ class CDoorbot : public CTrueTalkNPC {
 	bool TextInputMsg(CTextInputMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool ActMsg(CActMsg *msg);
+
 private:
 	static int _v1;
 	static int _v2;
+
 private:
 	int _introMovieNum;
 	int _timerId;
 	int _field110;
 	int _field114;
+
 public:
 	CLASSDEF;
 	CDoorbot();

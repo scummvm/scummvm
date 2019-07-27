@@ -27,8 +27,8 @@
 #include "common/substream.h"
 #include "common/textconsole.h"
 
-#include "groovie/resource.h"
 #include "groovie/groovie.h"
+#include "groovie/resource.h"
 
 namespace Groovie {
 
@@ -72,12 +72,12 @@ Common::SeekableReadStream *ResMan::open(uint32 fileRef) {
 	return new Common::SeekableSubReadStream(gjdFile, resInfo.offset, resInfo.offset + resInfo.size, DisposeAfterUse::YES);
 }
 
-
 // ResMan_t7g
 
-static const char t7g_gjds[][0x15] = {"at", "b", "ch", "d", "dr", "fh", "ga", "hdisk", "htbd", "intro", "jhek", "k", "la", "li", "mb", "mc", "mu", "n", "p", "xmi", "gamwav"};
+static const char t7g_gjds[][0x15] = { "at", "b", "ch", "d", "dr", "fh", "ga", "hdisk", "htbd", "intro", "jhek", "k", "la", "li", "mb", "mc", "mu", "n", "p", "xmi", "gamwav" };
 
-ResMan_t7g::ResMan_t7g(Common::MacResManager *macResFork) : _macResFork(macResFork) {
+ResMan_t7g::ResMan_t7g(Common::MacResManager *macResFork)
+  : _macResFork(macResFork) {
 	for (int i = 0; i < 0x15; i++) {
 		// Prepare the filename
 		Common::String filename = t7g_gjds[i];
@@ -185,7 +185,6 @@ bool ResMan_t7g::getResInfo(uint32 fileRef, ResInfo &resInfo) {
 
 	return true;
 }
-
 
 // ResMan_v2
 

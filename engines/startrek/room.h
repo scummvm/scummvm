@@ -23,10 +23,10 @@
 #ifndef STARTREK_ROOM_H
 #define STARTREK_ROOM_H
 
-#include "common/rect.h"
-#include "common/ptr.h"
-#include "common/str.h"
 #include "common/hashmap.h"
+#include "common/ptr.h"
+#include "common/rect.h"
+#include "common/str.h"
 
 #include "startrek/action.h"
 #include "startrek/awaymission.h"
@@ -42,7 +42,7 @@ namespace StarTrek {
 class StarTrekEngine;
 class Room;
 
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 // Per-room action functions
 struct RoomAction {
@@ -50,12 +50,12 @@ struct RoomAction {
 	void (Room::*funcPtr)();
 };
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h" // END STRUCT PACKING
 
 // Offsets of data in RDF files
 
 const int RDF_BAN_DATA_START = 0x1e;
-const int RDF_BAN_DATA_END   = 0x20;
+const int RDF_BAN_DATA_END = 0x20;
 const int RDF_WARP_ROOM_INDICES = 0x22;
 const int RDF_ROOM_ENTRY_POSITIONS = 0x2a;
 const int RDF_BEAM_IN_POSITIONS = 0xaa;
@@ -113,7 +113,7 @@ public:
 	uint16 getFirstHotspot() {
 		return readRdfWord(0x12);
 	}
-	uint16 getHotspotEnd()   {
+	uint16 getHotspotEnd() {
 		return readRdfWord(0x14);
 	}
 
@@ -121,13 +121,13 @@ public:
 	uint16 getFirstWarpPolygonOffset() {
 		return readRdfWord(0x16);
 	}
-	uint16 getWarpPolygonEndOffset()   {
+	uint16 getWarpPolygonEndOffset() {
 		return readRdfWord(0x18);
 	}
 	uint16 getFirstDoorPolygonOffset() {
 		return readRdfWord(0x1a);
 	}
-	uint16 getDoorPolygonEndOffset()   {
+	uint16 getDoorPolygonEndOffset() {
 		return readRdfWord(0x1c);
 	}
 
@@ -164,7 +164,6 @@ private:
 	void loadRoomMessage(const char *text);
 
 	int findFunctionPointer(int action, void (Room::*funcPtr)());
-
 
 	// Interface for room-specific code
 	/**
@@ -211,7 +210,7 @@ private:
 	 * Cmd 0x08
 	 */
 	void walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 finishedAnimActionParam = 0);
-	void walkCrewmanC(int actorIndex, int16 destX, int16 destY, void (Room::*funcPtr)());      // Cmd 0x08
+	void walkCrewmanC(int actorIndex, int16 destX, int16 destY, void (Room::*funcPtr)()); // Cmd 0x08
 	/**
 	 * Cmd 0x09: Loads a pair of .map and .iw files to change the room's collisions and pathfinding.
 	 */
@@ -256,7 +255,7 @@ private:
 	 * Takes a list of codes (ending with nullptr) and returns the index of the matched
 	 * code (plus one), or 0 if no code was matched.
 	 */
-	int showCodeInputBox(const char * const *codes);
+	int showCodeInputBox(const char *const *codes);
 	/**
 	 * Cmd 0x14: Show a map of the republic for mission 7
 	 */
@@ -1271,7 +1270,6 @@ public:
 	void loveaUseAmmonia();
 	void loveaUseCommunicator();
 
-
 	// MUDD0
 	void mudd0Tick1();
 	void mudd0Tick50();
@@ -1860,7 +1858,6 @@ public:
 	void feather7KirkSatDown();
 	void feather7ReadyToBeamOut();
 
-
 	// TRIAL0
 	void trial0Tick1();
 	void trial0Tick40();
@@ -2175,7 +2172,6 @@ public:
 	void trial5UseBlueGem2OnHole3();
 	void trial5UseBlueGem3OnHole3();
 	void trial5UseMedkitAnywhere();
-
 
 	// SINS0
 	void sins0Tick1();

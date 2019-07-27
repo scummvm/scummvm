@@ -34,7 +34,7 @@
 class PSPSaveFileManager : public DefaultSaveFileManager {
 public:
 	PSPSaveFileManager();
-//	PSPSaveFileManager(const Common::String &defaultSavepath);
+	//	PSPSaveFileManager(const Common::String &defaultSavepath);
 
 protected:
 	/**

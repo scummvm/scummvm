@@ -23,10 +23,10 @@
 #ifndef NEVERHOOD_MOUSE_H
 #define NEVERHOOD_MOUSE_H
 
-#include "neverhood/neverhood.h"
-#include "neverhood/sprite.h"
 #include "neverhood/graphics.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/resource.h"
+#include "neverhood/sprite.h"
 
 namespace Neverhood {
 
@@ -44,6 +44,7 @@ public:
 	virtual ~Mouse();
 	void load(uint32 fileHash);
 	void updateCursor();
+
 protected:
 	MouseType _mouseType;
 	MouseCursorResource _mouseCursorResource;

@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE2000_SPRITES_H
 #define NEVERHOOD_MODULES_MODULE2000_SPRITES_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -32,6 +32,7 @@ namespace Neverhood {
 class KmScene2001 : public Klaymen {
 public:
 	KmScene2001(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };

@@ -23,17 +23,17 @@
 // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
 #ifdef main
-#undef main
+#	undef main
 #endif // main
 
 // AsciiCptCompile.cpp
 //
 
+#include "TextFile.h"
 #include "stdafx.h"
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
-#include "TextFile.h"
 
 typedef unsigned char byte;
 typedef unsigned char uint8;
@@ -46,8 +46,7 @@ typedef signed long int32;
 
 void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *sve);
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char *argv[]) {
 	uint8 testBuf[4] = { 0x11, 0x22, 0x33, 0x44 };
 	if (*(uint32 *)testBuf != 0x44332211) {
 		printf("Sorry, this program only works on little endian systems.\nGoodbye.\n");

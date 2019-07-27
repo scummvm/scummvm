@@ -20,18 +20,18 @@
  *
  */
 
+#include "base/plugins.h"
+#include "common/memstream.h"
+#include "common/savefile.h"
+#include "common/str-array.h"
+#include "common/system.h"
+#include "engines/advancedDetector.h"
+#include "graphics/colormasks.h"
+#include "graphics/surface.h"
 #include "titanic/core/project_item.h"
 #include "titanic/events.h"
 #include "titanic/support/simple_file.h"
 #include "titanic/titanic.h"
-#include "base/plugins.h"
-#include "common/savefile.h"
-#include "common/str-array.h"
-#include "common/memstream.h"
-#include "engines/advancedDetector.h"
-#include "common/system.h"
-#include "graphics/colormasks.h"
-#include "graphics/surface.h"
 
 namespace Titanic {
 
@@ -50,15 +50,16 @@ Common::Language TitanicEngine::getLanguage() const {
 } // End of namespace Titanic
 
 static const PlainGameDescriptor TitanicGames[] = {
-	{"titanic", "Starship Titanic"},
-	{0, 0}
+	{ "titanic", "Starship Titanic" },
+	{ 0, 0 }
 };
 
 #include "titanic/detection_tables.h"
 
 class TitanicMetaEngine : public AdvancedMetaEngine {
 public:
-	TitanicMetaEngine() : AdvancedMetaEngine(Titanic::gameDescriptions, sizeof(Titanic::TitanicGameDescription), TitanicGames) {
+	TitanicMetaEngine()
+	  : AdvancedMetaEngine(Titanic::gameDescriptions, sizeof(Titanic::TitanicGameDescription), TitanicGames) {
 		_maxScanDepth = 3;
 	}
 
@@ -79,22 +80,11 @@ public:
 };
 
 bool TitanicMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup) || (f == kSupportsDeleteSave) || (f == kSavesSupportMetaInfo) || (f == kSavesSupportCreationDate) || (f == kSavesSupportPlayTime) || (f == kSavesSupportThumbnail) || (f == kSimpleSavesNames);
 }
 
 bool Titanic::TitanicEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
 bool TitanicMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -179,9 +169,8 @@ SaveStateDescriptor TitanicMetaEngine::querySaveMetaInfos(const char *target, in
 	return SaveStateDescriptor();
 }
 
-
 #if PLUGIN_ENABLED_DYNAMIC(TITANIC)
-	REGISTER_PLUGIN_DYNAMIC(TITANIC, PLUGIN_TYPE_ENGINE, TitanicMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(TITANIC, PLUGIN_TYPE_ENGINE, TitanicMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(TITANIC, PLUGIN_TYPE_ENGINE, TitanicMetaEngine);
+REGISTER_PLUGIN_STATIC(TITANIC, PLUGIN_TYPE_ENGINE, TitanicMetaEngine);
 #endif

@@ -34,57 +34,53 @@ typedef bool (CMessageTarget::*PMSG)(CMessage *msg);
 
 struct MSGMAP_ENTRY {
 	PMSG _fn;
-	const ClassDef * const *_class;
+	const ClassDef *const *_class;
 };
 
 struct MSGMAP {
-	const MSGMAP *(* pFnGetBaseMap)();
+	const MSGMAP *(*pFnGetBaseMap)();
 	const MSGMAP_ENTRY *lpEntries;
 };
 
-#define DECLARE_MESSAGE_MAP \
-protected: \
+#define DECLARE_MESSAGE_MAP                 \
+protected:                                  \
 	static const MSGMAP *getThisMessageMap(); \
 	virtual const MSGMAP *getMessageMap() const
 
-#define BEGIN_MESSAGE_MAP(theClass, baseClass) \
-	const MSGMAP *theClass::getMessageMap() const \
-		{ return getThisMessageMap(); } \
-	const MSGMAP *theClass::getThisMessageMap() \
-	{ \
-		typedef theClass ThisClass;						   \
-		typedef baseClass TheBaseClass;					   \
-		typedef bool (theClass::*FNPTR)(CMessage *msg);    \
+#define BEGIN_MESSAGE_MAP(theClass, baseClass)                                  \
+	const MSGMAP *theClass::getMessageMap() const { return getThisMessageMap(); } \
+	const MSGMAP *theClass::getThisMessageMap() {                                 \
+		typedef theClass ThisClass;                                                 \
+		typedef baseClass TheBaseClass;                                             \
+		typedef bool (theClass::*FNPTR)(CMessage * msg);                            \
 		static const MSGMAP_ENTRY _messageEntries[] = {
 
 #define ON_MESSAGE(msgClass) \
 	{ static_cast<PMSG>((FNPTR)&ThisClass::msgClass), &C##msgClass::_type },
 
-#define END_MESSAGE_MAP() \
-		{ (PMSG)nullptr, nullptr } \
-	}; \
-		static const MSGMAP messageMap = \
-		{ &TheBaseClass::getThisMessageMap, &_messageEntries[0] }; \
-		return &messageMap; \
+#define END_MESSAGE_MAP()                                                                     \
+	{ (PMSG) nullptr, nullptr }                                                                 \
+	}                                                                                           \
+	;                                                                                           \
+	static const MSGMAP messageMap = { &TheBaseClass::getThisMessageMap, &_messageEntries[0] }; \
+	return &messageMap;                                                                         \
 	}
 
-#define EMPTY_MESSAGE_MAP(theClass, baseClass) \
-	const MSGMAP *theClass::getMessageMap() const \
-		{ return getThisMessageMap(); } \
-	const MSGMAP *theClass::getThisMessageMap() \
-	{ \
-		typedef baseClass TheBaseClass;					   \
-		static const MSGMAP_ENTRY _messageEntries[] = { \
-		{ (PMSG)nullptr, nullptr } \
-	}; \
-		static const MSGMAP messageMap = \
-		{ &TheBaseClass::getThisMessageMap, &_messageEntries[0] }; \
-		return &messageMap; \
-	} \
+#define EMPTY_MESSAGE_MAP(theClass, baseClass)                                                  \
+	const MSGMAP *theClass::getMessageMap() const { return getThisMessageMap(); }                 \
+	const MSGMAP *theClass::getThisMessageMap() {                                                 \
+		typedef baseClass TheBaseClass;                                                             \
+		static const MSGMAP_ENTRY _messageEntries[] = {                                             \
+			{ (PMSG) nullptr, nullptr }                                                               \
+		};                                                                                          \
+		static const MSGMAP messageMap = { &TheBaseClass::getThisMessageMap, &_messageEntries[0] }; \
+		return &messageMap;                                                                         \
+	}                                                                                             \
 	enum { DUMMY }
 
-class CMessageTarget: public CSaveableObject {
+class CMessageTarget : public CSaveableObject {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	CLASSDEF;
 

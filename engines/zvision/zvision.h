@@ -27,8 +27,8 @@
 #include "zvision/core/clock.h"
 #include "zvision/file/search_manager.h"
 
-#include "common/random.h"
 #include "common/events.h"
+#include "common/random.h"
 
 #include "engines/engine.h"
 

@@ -23,9 +23,9 @@
 #ifndef SCI_GRAPHICS_SCREEN_H
 #define SCI_GRAPHICS_SCREEN_H
 
-#include "sci/sci.h"
 #include "sci/graphics/helpers.h"
 #include "sci/graphics/view.h"
+#include "sci/sci.h"
 
 #include "graphics/sjis.h"
 
@@ -33,23 +33,23 @@ namespace Sci {
 
 enum {
 	SCI_SCREEN_UPSCALEDMAXHEIGHT = 200,
-	SCI_SCREEN_UPSCALEDMAXWIDTH  = 320
+	SCI_SCREEN_UPSCALEDMAXWIDTH = 320
 };
 
 enum GfxScreenUpscaledMode {
-	GFX_SCREEN_UPSCALED_DISABLED	= 0,
-	GFX_SCREEN_UPSCALED_480x300     = 1,
-	GFX_SCREEN_UPSCALED_640x400		= 2,
-	GFX_SCREEN_UPSCALED_640x440		= 3,
-	GFX_SCREEN_UPSCALED_640x480		= 4
+	GFX_SCREEN_UPSCALED_DISABLED = 0,
+	GFX_SCREEN_UPSCALED_480x300 = 1,
+	GFX_SCREEN_UPSCALED_640x400 = 2,
+	GFX_SCREEN_UPSCALED_640x440 = 3,
+	GFX_SCREEN_UPSCALED_640x480 = 4
 };
 
 enum GfxScreenMasks {
-	GFX_SCREEN_MASK_VISUAL		= 1,
-	GFX_SCREEN_MASK_PRIORITY	= 2,
-	GFX_SCREEN_MASK_CONTROL		= 4,
-	GFX_SCREEN_MASK_DISPLAY		= 8, // not official sierra sci, only used internally
-	GFX_SCREEN_MASK_ALL			= GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY|GFX_SCREEN_MASK_CONTROL
+	GFX_SCREEN_MASK_VISUAL = 1,
+	GFX_SCREEN_MASK_PRIORITY = 2,
+	GFX_SCREEN_MASK_CONTROL = 4,
+	GFX_SCREEN_MASK_DISPLAY = 8, // not official sierra sci, only used internally
+	GFX_SCREEN_MASK_ALL = GFX_SCREEN_MASK_VISUAL | GFX_SCREEN_MASK_PRIORITY | GFX_SCREEN_MASK_CONTROL
 };
 
 enum {
@@ -205,7 +205,6 @@ private:
 	 * to the screen size (and we therefore should not upscale it ourselves).
 	 */
 	bool _fontIsUpscaled;
-
 
 	// pixel related code, in header so that it can be inlined for performance
 public:

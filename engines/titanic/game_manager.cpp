@@ -33,12 +33,22 @@
 
 namespace Titanic {
 
-CGameManager::CGameManager(CProjectItem *project, CGameView *gameView, Audio::Mixer *mixer):
-		_project(project), _gameView(gameView), _trueTalkManager(this),
-		_inputHandler(this), _inputTranslator(&_inputHandler),
-		_gameState(this), _sound(this, mixer), _musicRoom(this),
-		_treeItem(nullptr), _soundMaker(nullptr), _movieRoom(nullptr),
-		_dragItem(nullptr), _transitionCtr(0), _lastDiskTicksCount(0), _tickCount2(0) {
+CGameManager::CGameManager(CProjectItem *project, CGameView *gameView, Audio::Mixer *mixer)
+  : _project(project)
+  , _gameView(gameView)
+  , _trueTalkManager(this)
+  , _inputHandler(this)
+  , _inputTranslator(&_inputHandler)
+  , _gameState(this)
+  , _sound(this, mixer)
+  , _musicRoom(this)
+  , _treeItem(nullptr)
+  , _soundMaker(nullptr)
+  , _movieRoom(nullptr)
+  , _dragItem(nullptr)
+  , _transitionCtr(0)
+  , _lastDiskTicksCount(0)
+  , _tickCount2(0) {
 
 	CTimeEventInfo::_nextId = 0;
 	_movie = nullptr;
@@ -214,7 +224,7 @@ void CGameManager::update() {
 void CGameManager::updateMovies() {
 	// Initial iteration to mark all the movies as not yet handled
 	for (CMovieList::iterator i = CMovie::_playingMovies->begin();
-			i != CMovie::_playingMovies->end(); ++i)
+	     i != CMovie::_playingMovies->end(); ++i)
 		(*i)->_handled = false;
 
 	bool repeatFlag;
@@ -223,7 +233,7 @@ void CGameManager::updateMovies() {
 
 		// Scan for a movie to process
 		for (CMovieList::iterator i = CMovie::_playingMovies->begin();
-				i != CMovie::_playingMovies->end(); ++i) {
+		     i != CMovie::_playingMovies->end(); ++i) {
 			CMovie *movie = *i;
 			if (movie->_handled)
 				continue;
@@ -292,7 +302,7 @@ void CGameManager::frameMessage(CRoomItem *room) {
 		if (_gameState._soundMakerAllowed && !_soundMaker) {
 			// Check for a sound maker in the room
 			_soundMaker = dynamic_cast<CBackgroundSoundMaker *>(
-				_project->findByName("zBackgroundSoundMaker"));
+			  _project->findByName("zBackgroundSoundMaker"));
 		}
 
 		// If there's a sound maker, dispatch the event to it as well
@@ -322,7 +332,7 @@ CString CGameManager::getFullViewName() {
 	CRoomItem *room = node->findRoom();
 
 	return CString::format("%s.%s.%s", room->getName().c_str(),
-		node->getName().c_str(), view->getName().c_str());
+	                       node->getName().c_str(), view->getName().c_str());
 }
 
 } // End of namespace Titanic

@@ -23,10 +23,10 @@
 #ifndef GOB_DATABASES_H
 #define GOB_DATABASES_H
 
-#include "common/str.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/language.h"
+#include "common/str.h"
 
 #include "gob/dbase.h"
 
@@ -43,7 +43,7 @@ public:
 	bool close(const Common::String &id);
 
 	bool getString(const Common::String &id, Common::String group,
-			Common::String section, Common::String keyword, Common::String &result) const;
+	               Common::String section, Common::String keyword, Common::String &result) const;
 
 private:
 	typedef Common::HashMap<Common::String, Common::StringMap, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> DBMap;

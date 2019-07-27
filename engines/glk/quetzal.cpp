@@ -21,12 +21,12 @@
  */
 
 #include "glk/quetzal.h"
-#include "glk/glk_api.h"
-#include "glk/events.h"
-#include "common/system.h"
 #include "common/language.h"
 #include "common/memstream.h"
+#include "common/system.h"
 #include "common/translation.h"
+#include "glk/events.h"
+#include "glk/glk_api.h"
 
 namespace Glk {
 
@@ -64,8 +64,7 @@ bool QuetzalReader::open(Common::SeekableReadStream *stream, uint32 formType) {
 	uint32 size = stream->readUint32BE();
 	uint32 fileFormType = stream->readUint32BE();
 
-	if ((formType != 0 && fileFormType != formType) ||
-		(formType == 0 && fileFormType != ID_IFZS && fileFormType != ID_IFSF))
+	if ((formType != 0 && fileFormType != formType) || (formType == 0 && fileFormType != ID_IFZS && fileFormType != ID_IFSF))
 		return false;
 
 	if ((int)size > stream->size() || (size & 1) || (size < 4))
@@ -173,7 +172,7 @@ Common::WriteStream &QuetzalWriter::add(uint32 chunkId) {
 void QuetzalWriter::save(Common::WriteStream *out, const Common::String &saveName, uint32 formType) {
 	// Add chunks common to all Glk savegames
 	addCommonChunks(saveName);
-	
+
 	// Calculate the size of the chunks
 	uint size = 4;
 	for (uint idx = 0; idx < _chunks.size(); ++idx)

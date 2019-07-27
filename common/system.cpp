@@ -23,14 +23,14 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit
 
 #include "common/system.h"
+#include "common/dialogs.h"
 #include "common/events.h"
 #include "common/fs.h"
 #include "common/savefile.h"
 #include "common/str.h"
 #include "common/taskbar.h"
-#include "common/updates.h"
-#include "common/dialogs.h"
 #include "common/textconsole.h"
+#include "common/updates.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/fs/fs-factory.h"
@@ -101,13 +101,13 @@ void OSystem::initBackend() {
 	// on the Nintendo DS, it is possible that none is set. That should
 	// probably be treated as "saving is not possible". Or else the NDS
 	// port needs to be changed to always set a _savefileManager
-// 	if (!_savefileManager)
-// 		error("Backend failed to instantiate savefile manager");
+	// 	if (!_savefileManager)
+	// 		error("Backend failed to instantiate savefile manager");
 
 	// TODO: We currently don't check _fsFactory because not all ports
 	// set it.
-// 	if (!_fsFactory)
-// 		error("Backend failed to instantiate fs factory");
+	// 	if (!_fsFactory)
+	// 		error("Backend failed to instantiate fs factory");
 
 	_backendInitialized = true;
 }

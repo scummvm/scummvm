@@ -29,7 +29,8 @@
 
 namespace Prince {
 
-Font::Font() : _fontData(nullptr) {
+Font::Font()
+  : _fontData(nullptr) {
 }
 
 Font::~Font() {
@@ -78,10 +79,14 @@ void Font::drawChar(Graphics::Surface *dst, uint32 chr, int posX, int posY, uint
 	for (int y = 0; y < chrData._height; y++) {
 		for (int x = 0; x < chrData._width; x++) {
 			byte d = chrData._pixels[x + (chrData._width * y)];
-			if (d == 0) d = 255;
-			else if (d == 1) d = 0;
-			else if (d == 2) d = color;
-			else if (d == 3) d = 0;
+			if (d == 0)
+				d = 255;
+			else if (d == 1)
+				d = 0;
+			else if (d == 2)
+				d = color;
+			else if (d == 3)
+				d = 0;
 			if (d != 255) {
 				if (screenRect.contains(posX + x, posY + y)) {
 					*(byte *)dst->getBasePtr(posX + x, posY + y) = d;

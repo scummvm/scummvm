@@ -34,7 +34,7 @@ class StepArray : public CObject {
 	PointList _points;
 	bool _isEos;
 
-  public:
+public:
 	StepArray();
 	void clear();
 
@@ -48,14 +48,14 @@ class StepArray : public CObject {
 };
 
 class StaticPhase : public Picture {
- public:
+public:
 	int16 _initialCountdown;
 	int16 _countdown;
 	int16 _field_68;
 	int16 _field_6A;
 	Common::ScopedPtr<ExCommand> _exCommand;
 
-  public:
+public:
 	StaticPhase();
 
 	virtual bool load(MfcArchive &file);
@@ -66,7 +66,7 @@ class StaticPhase : public Picture {
 };
 
 class DynamicPhase : public StaticPhase {
- public:
+public:
 	int _someX;
 	int _someY;
 	Common::Rect _rect;
@@ -74,7 +74,7 @@ class DynamicPhase : public StaticPhase {
 	int16 _field_7E;
 	int _dynFlags;
 
-  public:
+public:
 	DynamicPhase();
 	DynamicPhase(DynamicPhase *src, bool reverse);
 
@@ -86,12 +86,12 @@ class DynamicPhase : public StaticPhase {
 };
 
 class Statics : public DynamicPhase {
- public:
- 	int16 _staticsId;
+public:
+	int16 _staticsId;
 	Common::String _staticsName;
 	Picture _picture;
 
-  public:
+public:
 	Statics();
 	Statics(Statics *src, bool reverse);
 
@@ -106,7 +106,7 @@ class Statics : public DynamicPhase {
 class StaticANIObject;
 
 class Movement : public GameObject {
-  public:
+public:
 	Common::Point _somePoint;
 	int _lastFrameSpecialFlag;
 	int _flipFlag;
@@ -131,7 +131,7 @@ class Movement : public GameObject {
 	int _currDynamicPhaseIndex;
 	int _field_94;
 
-  public:
+public:
 	Movement();
 	virtual ~Movement();
 
@@ -171,7 +171,7 @@ class Movement : public GameObject {
 };
 
 class StaticANIObject : public GameObject {
- public:
+public:
 	Movement *_movement;
 	Statics *_statics;
 	int _shadowsOn;

@@ -54,7 +54,7 @@ namespace Alan2 {
 #undef rand
 #define rand() g_vm->getRandomNumber(0x7fffffff)
 #undef fprintf
-extern void fprintf(Common::WriteStream *ws, const char *fmt, ...);
+	extern void fprintf(Common::WriteStream *ws, const char *fmt, ...);
 
 /***********************/
 
@@ -62,34 +62,34 @@ extern void fprintf(Common::WriteStream *ws, const char *fmt, ...);
 #define ISO 1
 #define NATIVECHARSET 0
 
-/* Native character functions */
-extern int isSpace(int c);      /* IN - Native character to test */
-extern int isLower(int c);      /* IN - Native character to test */
-extern int isUpper(int c);      /* IN - Native character to test */
-extern int isLetter(int c);     /* IN - Native character to test */
-extern int toLower(int c);      /* IN - Native character to convert */
-extern int toUpper(int c);      /* IN - Native character to convert */
-extern char *strlow(char str[]); /* INOUT - Native string to convert */
-extern char *strupp(char str[]); /* INOUT - Native string to convert */
+	/* Native character functions */
+	extern int isSpace(int c); /* IN - Native character to test */
+	extern int isLower(int c); /* IN - Native character to test */
+	extern int isUpper(int c); /* IN - Native character to test */
+	extern int isLetter(int c); /* IN - Native character to test */
+	extern int toLower(int c); /* IN - Native character to convert */
+	extern int toUpper(int c); /* IN - Native character to convert */
+	extern char *strlow(char str[]); /* INOUT - Native string to convert */
+	extern char *strupp(char str[]); /* INOUT - Native string to convert */
 
-/* ISO character functions */
-extern int isISOLetter(int c);  /* IN - ISO character to test */
-extern char toLowerCase(int c); /* IN - ISO character to convert */
-extern char toUpperCase(int c); /* IN - ISO character to convert */
-extern char *stringLower(char str[]); /* INOUT - ISO string to convert */
-extern char *stringUpper(char str[]); /* INOUT - ISO string to convert */
+	/* ISO character functions */
+	extern int isISOLetter(int c); /* IN - ISO character to test */
+	extern char toLowerCase(int c); /* IN - ISO character to convert */
+	extern char toUpperCase(int c); /* IN - ISO character to convert */
+	extern char *stringLower(char str[]); /* INOUT - ISO string to convert */
+	extern char *stringUpper(char str[]); /* INOUT - ISO string to convert */
 
-/* ISO string conversion functions */
-extern void toIso(char copy[],  /* OUT - Mapped string */
-                  char original[], /* IN - string to convert */
-                  int charset); /* IN - The current character set */
+	/* ISO string conversion functions */
+	extern void toIso(char copy[], /* OUT - Mapped string */
+	                  char original[], /* IN - string to convert */
+	                  int charset); /* IN - The current character set */
 
-extern void fromIso(char copy[], /* OUT - Mapped string */
-                    char original[]); /* IN - string to convert */
+	extern void fromIso(char copy[], /* OUT - Mapped string */
+	                    char original[]); /* IN - string to convert */
 
-extern void toNative(char copy[], /* OUT - Mapped string */
-                     char original[], /* IN - string to convert */
-                     int charset); /* IN - current character set */
+	extern void toNative(char copy[], /* OUT - Mapped string */
+	                     char original[], /* IN - string to convert */
+	                     int charset); /* IN - current character set */
 
 } // End of namespace Alan2
 } // End of namespace Glk

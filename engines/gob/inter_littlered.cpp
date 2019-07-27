@@ -20,24 +20,25 @@
  *
  */
 
-#include "gob/gob.h"
-#include "gob/inter.h"
-#include "gob/global.h"
-#include "gob/util.h"
 #include "gob/draw.h"
 #include "gob/game.h"
-#include "gob/script.h"
+#include "gob/global.h"
+#include "gob/gob.h"
 #include "gob/hotspots.h"
+#include "gob/inter.h"
+#include "gob/script.h"
 #include "gob/sound/sound.h"
+#include "gob/util.h"
 
 namespace Gob {
 
 #define OPCODEVER Inter_LittleRed
-#define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
-#define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
-#define OPCODEGOB(i, x)   _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
+#define OPCODEDRAW(i, x) _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
+#define OPCODEFUNC(i, x) _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
+#define OPCODEGOB(i, x) _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 
-Inter_LittleRed::Inter_LittleRed(GobEngine *vm) : Inter_v2(vm) {
+Inter_LittleRed::Inter_LittleRed(GobEngine *vm)
+  : Inter_v2(vm) {
 }
 
 void Inter_LittleRed::setupOpcodesDraw() {
@@ -86,7 +87,7 @@ void Inter_LittleRed::oLittleRed_keyFunc(OpFuncParams &params) {
 	case 1:
 		_vm->_util->forceMouseUp(true);
 		key = _vm->_game->checkKeys(&_vm->_global->_inter_mouseX,
-				&_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons, 0);
+		                            &_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons, 0);
 		storeKey(key);
 		break;
 

@@ -24,64 +24,60 @@
 
 namespace Glk {
 namespace TADS {
-namespace TADS2 {
+	namespace TADS2 {
 
-/* get a toggle argument */
-int cmdtog(errcxdef *ec, int prv, char *argp, int ofs,
-           void (*usagefn)(errcxdef *))
-{
-    switch(argp[ofs + 1])
-    {
-    case '+':
-        return(TRUE);
-        
-    case '-':
-        return(FALSE);
-        
-    case '\0':
-        return(!prv);
-        
-    default:
-        /* invalid - display usage if we have a callback for it */
-        if (usagefn != 0)
-            (*usagefn)(ec);
-        NOTREACHEDV(int);
-        return 0;
-    }
-}
+		/* get a toggle argument */
+		int cmdtog(errcxdef *ec, int prv, char *argp, int ofs,
+		           void (*usagefn)(errcxdef *)) {
+			switch (argp[ofs + 1]) {
+			case '+':
+				return (TRUE);
 
-/* get an argument to a switch */
-char *cmdarg(errcxdef *ec, char ***argpp, int *ip, int argc, int ofs,
-             void (*usagefn)(errcxdef *))
-{
-    char *ret;
+			case '-':
+				return (FALSE);
 
-    /* 
+			case '\0':
+				return (!prv);
+
+			default:
+				/* invalid - display usage if we have a callback for it */
+				if (usagefn != 0)
+					(*usagefn)(ec);
+				NOTREACHEDV(int);
+				return 0;
+			}
+		}
+
+		/* get an argument to a switch */
+		char *cmdarg(errcxdef *ec, char ***argpp, int *ip, int argc, int ofs,
+		             void (*usagefn)(errcxdef *)) {
+			char *ret;
+
+			/* 
      *   check to see if the argument is appended directly to the option;
      *   if not, look at the next string 
      */
-    ret = (**argpp) + ofs + 1;
-    if (*ret == '\0')
-    {
-        /* 
+			ret = (**argpp) + ofs + 1;
+			if (*ret == '\0') {
+				/* 
          *   it's not part of this string - get the argument from the next
          *   string in the vector 
          */
-        ++(*ip);
-        ++(*argpp);
-        ret = (*ip >= argc ? 0 : **argpp);
-    }
+				++(*ip);
+				++(*argpp);
+				ret = (*ip >= argc ? 0 : **argpp);
+			}
 
-    /* 
+			/* 
      *   if we didn't find the argument, it's an error - display usage if
      *   we have a valid usage callback
      */
-    if ((ret == 0 || *ret == 0) && usagefn != 0)
-        (*usagefn)(ec);
+			if ((ret == 0 || *ret == 0) && usagefn != 0)
+				(*usagefn)(ec);
 
-    return ret;
-}
+			return ret;
+		}
 
-} // End of namespace TADS2
+	} // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk

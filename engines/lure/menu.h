@@ -23,13 +23,12 @@
 #ifndef LURE_MENU_H
 #define LURE_MENU_H
 
-
 #include "common/str.h"
-#include "lure/luredefs.h"
 #include "lure/disk.h"
+#include "lure/events.h"
+#include "lure/luredefs.h"
 #include "lure/screen.h"
 #include "lure/surface.h"
-#include "lure/events.h"
 
 #define NUM_MENUS 3
 
@@ -51,6 +50,7 @@ private:
 	uint16 _hsxstart, _hsxend;
 	const char **_entries;
 	uint8 _numEntries;
+
 public:
 	MenuRecord(const MenuRecordBounds *bounds, int numParams, ...);
 	~MenuRecord();
@@ -76,6 +76,7 @@ private:
 	uint8 getIndexAt(uint16 x, uint16 y);
 	void toggleHighlight(MenuRecord *menuRec);
 	void toggleHighlightItem(uint8 index);
+
 public:
 	Menu();
 	~Menu();

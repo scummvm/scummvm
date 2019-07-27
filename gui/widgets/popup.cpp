@@ -20,10 +20,10 @@
  *
  */
 
+#include "gui/widgets/popup.h"
 #include "common/system.h"
 #include "gui/dialog.h"
 #include "gui/gui-manager.h"
-#include "gui/widgets/popup.h"
 
 #include "gui/ThemeEval.h"
 
@@ -35,15 +35,15 @@ namespace GUI {
 
 class PopUpDialog : public Dialog {
 protected:
-	PopUpWidget	*_popUpBoss;
-	int			_clickX, _clickY;
-	int			_selection;
-	uint32		_openTime;
-	bool		_twoColumns;
-	int			_entriesPerColumn;
+	PopUpWidget *_popUpBoss;
+	int _clickX, _clickY;
+	int _selection;
+	uint32 _openTime;
+	bool _twoColumns;
+	int _entriesPerColumn;
 
-	int			_leftPadding;
-	int			_rightPadding;
+	int _leftPadding;
+	int _rightPadding;
 
 public:
 	PopUpDialog(PopUpWidget *boss, int clickX, int clickY);
@@ -51,9 +51,9 @@ public:
 	void drawDialog(DrawLayer layerToDraw) override;
 
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
-	void handleMouseWheel(int x, int y, int direction) override;	// Scroll through entries with scroll wheel
-	void handleMouseMoved(int x, int y, int button) override;	// Redraw selections depending on mouse position
-	void handleKeyDown(Common::KeyState state) override;	// Scroll through entries with arrow keys etc.
+	void handleMouseWheel(int x, int y, int direction) override; // Scroll through entries with scroll wheel
+	void handleMouseMoved(int x, int y, int button) override; // Redraw selections depending on mouse position
+	void handleKeyDown(Common::KeyState state) override; // Scroll through entries with arrow keys etc.
 
 protected:
 	void drawMenuEntry(int entry, bool hilite);
@@ -67,8 +67,8 @@ protected:
 };
 
 PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
-	: Dialog(0, 0, 16, 16),
-	_popUpBoss(boss) {
+  : Dialog(0, 0, 16, 16)
+  , _popUpBoss(boss) {
 	_backgroundType = ThemeEngine::kDialogBackgroundNone;
 
 	_openTime = 0;
@@ -228,16 +228,16 @@ void PopUpDialog::handleKeyDown(Common::KeyState state) {
 		close();
 		break;
 
-	// Keypad & special keys
-	//   - if num lock is set, we ignore the keypress
-	//   - if num lock is not set, we fall down to the special key case
+		// Keypad & special keys
+		//   - if num lock is set, we ignore the keypress
+		//   - if num lock is not set, we fall down to the special key case
 
 	case Common::KEYCODE_KP1:
 		if (state.flags & Common::KBD_NUM)
 			break;
 		// fall through
 	case Common::KEYCODE_END:
-		setSelection(_popUpBoss->_entries.size()-1);
+		setSelection(_popUpBoss->_entries.size() - 1);
 		break;
 
 	case Common::KEYCODE_KP2:
@@ -370,13 +370,11 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 		g_gui.theme()->drawLineSeparator(Common::Rect(x, y, x + w, y + kLineHeight));
 	} else {
 		g_gui.theme()->drawText(
-			Common::Rect(x + 1, y + 2, x + w, y + 2 + kLineHeight),
-			name, hilite ? ThemeEngine::kStateHighlight : ThemeEngine::kStateEnabled,
-			Graphics::kTextAlignLeft, ThemeEngine::kTextInversionNone, _leftPadding
-		);
+		  Common::Rect(x + 1, y + 2, x + w, y + 2 + kLineHeight),
+		  name, hilite ? ThemeEngine::kStateHighlight : ThemeEngine::kStateEnabled,
+		  Graphics::kTextAlignLeft, ThemeEngine::kTextInversionNone, _leftPadding);
 	}
 }
-
 
 #pragma mark -
 
@@ -385,7 +383,8 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 //
 
 PopUpWidget::PopUpWidget(GuiObject *boss, const String &name, const char *tooltip)
-	: Widget(boss, name, tooltip), CommandSender(boss) {
+  : Widget(boss, name, tooltip)
+  , CommandSender(boss) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_IGNORE_DRAG);
 	_type = kPopUpWidget;
 
@@ -394,7 +393,8 @@ PopUpWidget::PopUpWidget(GuiObject *boss, const String &name, const char *toolti
 }
 
 PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip)
-	: Widget(boss, x, y, w, h, tooltip), CommandSender(boss) {
+  : Widget(boss, x, y, w, h, tooltip)
+  , CommandSender(boss) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_IGNORE_DRAG);
 	_type = kPopUpWidget;
 
@@ -420,14 +420,12 @@ void PopUpWidget::handleMouseWheel(int x, int y, int direction) {
 		int newSelection = _selectedItem + direction;
 
 		// Skip separator entries
-		while ((newSelection >= 0) && (newSelection < (int)_entries.size()) &&
-			_entries[newSelection].name.equals("")) {
+		while ((newSelection >= 0) && (newSelection < (int)_entries.size()) && _entries[newSelection].name.equals("")) {
 			newSelection += direction;
 		}
 
 		// Just update the selected item when we're in range
-		if ((newSelection >= 0) && (newSelection < (int)_entries.size()) &&
-			(newSelection != _selectedItem)) {
+		if ((newSelection >= 0) && (newSelection < (int)_entries.size()) && (newSelection != _selectedItem)) {
 			_selectedItem = newSelection;
 			sendCommand(kPopUpItemSelectedCmd, _entries[_selectedItem].tag);
 			markAsDirty();

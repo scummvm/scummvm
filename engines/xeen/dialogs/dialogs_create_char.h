@@ -23,12 +23,12 @@
 #ifndef XEEN_DIALOGS_CREATE_CHAR_H
 #define XEEN_DIALOGS_CREATE_CHAR_H
 
-#include "xeen/dialogs/dialogs.h"
 #include "xeen/character.h"
+#include "xeen/dialogs/dialogs.h"
 
 namespace Xeen {
 
-class CreateCharacterDialog : public ButtonContainer  {
+class CreateCharacterDialog : public ButtonContainer {
 private:
 	SpriteResource _icons;
 	SpriteResource _dice;
@@ -38,6 +38,7 @@ private:
 	Common::Point _diceInc[3];
 	uint _attribs[TOTAL_ATTRIBUTES];
 	bool _allowedClasses[TOTAL_CLASSES];
+
 private:
 	/**
 	 * Constructor
@@ -112,6 +113,7 @@ private:
 	 * well as a list of classes that the attributes meet the requirements for
 	 */
 	void rollAttributes();
+
 public:
 	/**
 	 * Shows the Create Character dialog

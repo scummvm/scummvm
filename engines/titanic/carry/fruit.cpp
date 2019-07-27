@@ -26,14 +26,18 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CFruit, CCarry)
-	ON_MESSAGE(UseWithCharMsg)
-	ON_MESSAGE(LemonFallsFromTreeMsg)
-	ON_MESSAGE(UseWithOtherMsg)
-	ON_MESSAGE(FrameMsg)
+ON_MESSAGE(UseWithCharMsg)
+ON_MESSAGE(LemonFallsFromTreeMsg)
+ON_MESSAGE(UseWithOtherMsg)
+ON_MESSAGE(FrameMsg)
 END_MESSAGE_MAP()
 
-CFruit::CFruit() : CCarry(), _field12C(0),
-		_field130(0), _field134(0), _field138(0) {
+CFruit::CFruit()
+  : CCarry()
+  , _field12C(0)
+  , _field130(0)
+  , _field134(0)
+  , _field138(0) {
 }
 
 void CFruit::save(SimpleFile *file, int indent) {

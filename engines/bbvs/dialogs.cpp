@@ -22,8 +22,8 @@
 
 #include "bbvs/dialogs.h"
 #include "common/events.h"
-#include "gui/widget.h"
 #include "engines/advancedDetector.h"
+#include "gui/widget.h"
 
 namespace GUI {
 class CommandSender;
@@ -38,47 +38,49 @@ struct MenuButton {
 
 static const MenuButton kMenuButtons[] = {
 	// Main menu
-	{"New Game", kCmdNewGame},
-	{"Continue", kCmdContinue},
-	{"Options", kCmdOptions},
-	{"Mini Games", kCmdMiniGames},
-	{"Quit", kCmdQuit},
+	{ "New Game", kCmdNewGame },
+	{ "Continue", kCmdContinue },
+	{ "Options", kCmdOptions },
+	{ "Mini Games", kCmdMiniGames },
+	{ "Quit", kCmdQuit },
 	// Options
-	{"Uninstall", kCmdUninstall},
-	{"Credits", kCmdCredits},
-	{"Opening", kCmdOpening},
-	{"Chicks 'n' Stuff", kCmdChicksNStuff},
-	{"Back ..", kCmdBack},
+	{ "Uninstall", kCmdUninstall },
+	{ "Credits", kCmdCredits },
+	{ "Opening", kCmdOpening },
+	{ "Chicks 'n' Stuff", kCmdChicksNStuff },
+	{ "Back ..", kCmdBack },
 	// Minigames
-	{"Hock-A-Loogie", kCmdHockALoogie},
-	{"Bug Justice", kCmdBugJustice},
-	{"Court Chaos", kCmdCourtChaos},
-	{"Air Guitar", kCmdAirGuitar},
-	{"Back ..", kCmdBack}
+	{ "Hock-A-Loogie", kCmdHockALoogie },
+	{ "Bug Justice", kCmdBugJustice },
+	{ "Court Chaos", kCmdCourtChaos },
+	{ "Air Guitar", kCmdAirGuitar },
+	{ "Back ..", kCmdBack }
 };
 
 static const MenuButton kMenuButtonsRu[] = {
 	// Main menu
-	{"\xBD\xDE\xD2\xD0\xEF \xD8\xD3\xE0\xD0", kCmdNewGame},
-	{"\xBF\xE0\xDE\xD4\xDE\xDB\xD6\xD8\xE2\xEC", kCmdContinue},
-	{"\xB5\xE9\xD5 ..", kCmdOptions},
-	{"\xBC\xD8\xDD\xD8 \xB8\xD3\xE0\xEB", kCmdMiniGames},
-	{"\xB2\xEB\xE5\xDE\xD4", kCmdQuit},
+	{ "\xBD\xDE\xD2\xD0\xEF \xD8\xD3\xE0\xD0", kCmdNewGame },
+	{ "\xBF\xE0\xDE\xD4\xDE\xDB\xD6\xD8\xE2\xEC", kCmdContinue },
+	{ "\xB5\xE9\xD5 ..", kCmdOptions },
+	{ "\xBC\xD8\xDD\xD8 \xB8\xD3\xE0\xEB", kCmdMiniGames },
+	{ "\xB2\xEB\xE5\xDE\xD4", kCmdQuit },
 	// Options
-	{"\xB4\xD5\xD8\xDD\xE1\xE2\xD0\xDB\xDB\xEF\xE6\xD8\xEF", kCmdUninstall},
-	{"\xB0\xD2\xE2\xDE\xE0\xEB", kCmdCredits},
-	{"\xBF\xE0\xDE\xDB\xDE\xD3", kCmdOpening},
-	{"\xC0\xD5\xDA\xDB\xD0\xDC\xD0", kCmdChicksNStuff},
-	{"\xBD\xD0\xD7\xD0\xD4 ..", kCmdBack},
+	{ "\xB4\xD5\xD8\xDD\xE1\xE2\xD0\xDB\xDB\xEF\xE6\xD8\xEF", kCmdUninstall },
+	{ "\xB0\xD2\xE2\xDE\xE0\xEB", kCmdCredits },
+	{ "\xBF\xE0\xDE\xDB\xDE\xD3", kCmdOpening },
+	{ "\xC0\xD5\xDA\xDB\xD0\xDC\xD0", kCmdChicksNStuff },
+	{ "\xBD\xD0\xD7\xD0\xD4 ..", kCmdBack },
 	// Minigames
-	{"\xC1\xDD\xD0\xD9\xDF\xD5\xE0", kCmdHockALoogie},
-	{"\xB6\xE3\xDA\xDE\xD6\xD0\xE0\xDA\xD0", kCmdBugJustice},
-	{"\xBF\xE2\xD5\xDD\xD8\xE1", kCmdCourtChaos},
-	{"\xB6\xD8\xD0\xDE\xD9 \xB7\xD2\xE3\xDA", kCmdAirGuitar},
-	{"\xBD\xD0\xD7\xD0\xD4 ..", kCmdBack}
+	{ "\xC1\xDD\xD0\xD9\xDF\xD5\xE0", kCmdHockALoogie },
+	{ "\xB6\xE3\xDA\xDE\xD6\xD0\xE0\xDA\xD0", kCmdBugJustice },
+	{ "\xBF\xE2\xD5\xDD\xD8\xE1", kCmdCourtChaos },
+	{ "\xB6\xD8\xD0\xDE\xD9 \xB7\xD2\xE3\xDA", kCmdAirGuitar },
+	{ "\xBD\xD0\xD7\xD0\xD4 ..", kCmdBack }
 };
 
-MainMenu::MainMenu(BbvsEngine *vm) : Dialog(0, 0, 1, 1), _vm(vm) {
+MainMenu::MainMenu(BbvsEngine *vm)
+  : Dialog(0, 0, 1, 1)
+  , _vm(vm) {
 	init();
 }
 
@@ -102,7 +104,7 @@ void MainMenu::reflowLayout() {
 	const int buttonHeight = screenH * 14 / 240;
 	const int buttonPadding = screenW * 3 / 320;
 
-	_w = 2 * buttonWidth  + buttonPadding;
+	_w = 2 * buttonWidth + buttonPadding;
 	_h = 3 * buttonHeight + 3 * buttonPadding;
 	_x = (screenW - _w) / 2;
 	_y = screenH - _h - 2;
@@ -126,7 +128,6 @@ void MainMenu::reflowLayout() {
 	_buttons[4]->resize(x, y, buttonWidth, buttonHeight);
 
 	GUI::Dialog::reflowLayout();
-
 }
 
 void MainMenu::handleCommand(GUI::CommandSender *sender, uint32 command, uint32 data) {

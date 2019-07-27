@@ -36,15 +36,14 @@ static uint nextHigher2(uint v) {
 }
 
 Sprite::Sprite()
-	: dirtyPixels(true)
-	, dirtyMatrix(true)
-	, actualWidth(0)
-	, actualHeight(0)
-	, posX(0)
-	, posY(0)
-	, scaleX(1.f)
-	, scaleY(1.f)
-{
+  : dirtyPixels(true)
+  , dirtyMatrix(true)
+  , actualWidth(0)
+  , actualHeight(0)
+  , posX(0)
+  , posY(0)
+  , scaleX(1.f)
+  , scaleY(1.f) {
 	Mtx_Identity(&modelview);
 
 	vertices = (vertex *)linearAlloc(sizeof(vertex) * 4);
@@ -74,17 +73,16 @@ void Sprite::create(uint16 width, uint16 height, const Graphics::PixelFormat &f)
 	}
 
 	float x = 0.f, y = 0.f;
-	float u = (float)width/w;
-	float v = (float)height/h;
+	float u = (float)width / w;
+	float v = (float)height / h;
 	vertex tmp[4] = {
-		{{x,       y,        0.5f}, {0, 0}},
-		{{x+width, y,        0.5f}, {u, 0}},
-		{{x,       y+height, 0.5f}, {0, v}},
-		{{x+width, y+height, 0.5f}, {u, v}},
+		{ { x, y, 0.5f }, { 0, 0 } },
+		{ { x + width, y, 0.5f }, { u, 0 } },
+		{ { x, y + height, 0.5f }, { 0, v } },
+		{ { x + width, y + height, 0.5f }, { u, v } },
 	};
 	memcpy(vertices, tmp, sizeof(vertex) * 4);
 }
-
 
 void Sprite::free() {
 	linearFree(vertices);
@@ -104,8 +102,8 @@ void Sprite::render() {
 	if (dirtyPixels) {
 		dirtyPixels = false;
 		GSPGPU_FlushDataCache(pixels, w * h * format.bytesPerPixel);
-		C3D_SyncDisplayTransfer((u32*)pixels, GX_BUFFER_DIM(w, h), (u32*)texture.data, GX_BUFFER_DIM(w, h), TEXTURE_TRANSFER_FLAGS);
-// 		gspWaitForPPF();
+		C3D_SyncDisplayTransfer((u32 *)pixels, GX_BUFFER_DIM(w, h), (u32 *)texture.data, GX_BUFFER_DIM(w, h), TEXTURE_TRANSFER_FLAGS);
+		// 		gspWaitForPPF();
 	}
 	C3D_TexBind(0, &texture);
 
@@ -120,7 +118,7 @@ void Sprite::clear(uint32 color) {
 	memset(pixels, color, w * h * format.bytesPerPixel);
 }
 
-void Sprite::setScale (float x, float y) {
+void Sprite::setScale(float x, float y) {
 	scaleX = x;
 	scaleY = y;
 	dirtyMatrix = true;
@@ -132,7 +130,7 @@ void Sprite::setPosition(int x, int y) {
 	dirtyMatrix = true;
 }
 
-C3D_Mtx* Sprite::getMatrix() {
+C3D_Mtx *Sprite::getMatrix() {
 	if (dirtyMatrix) {
 		dirtyMatrix = false;
 		Mtx_Identity(&modelview);

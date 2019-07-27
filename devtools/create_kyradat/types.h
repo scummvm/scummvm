@@ -199,7 +199,7 @@ struct EoBCharacter {
 	uint16 inventory[27];
 };
 
-template<typename Type>
+template <typename Type>
 struct ArrayProvider {
 	uint numEntries;
 	const Type *data;

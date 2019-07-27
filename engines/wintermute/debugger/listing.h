@@ -25,7 +25,6 @@
 
 #include "common/array.h"
 
-
 namespace Common {
 
 class String;

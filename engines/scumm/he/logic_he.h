@@ -21,7 +21,7 @@
  */
 
 #if !defined(SCUMM_HE_LOGIC_HE_H) && defined(ENABLE_HE)
-#define SCUMM_HE_LOGIC_HE_H
+#	define SCUMM_HE_LOGIC_HE_H
 
 namespace Scumm {
 
@@ -53,8 +53,8 @@ protected:
 	void putInArray(int arg0, int idx2, int idx1, int val);
 	int32 scummRound(double arg) { return (int32)(arg + 0.5); }
 
-	#define RAD2DEG (180 / M_PI)
-	#define DEG2RAD (M_PI / 180)
+#	define RAD2DEG (180 / M_PI)
+#	define DEG2RAD (M_PI / 180)
 };
 
 // Logic declarations

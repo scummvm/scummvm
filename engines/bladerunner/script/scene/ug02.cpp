@@ -28,16 +28,16 @@ void SceneScriptUG02::InitializeScene() {
 	if (Game_Flag_Query(kFlagHC03toUG02)) {
 		Setup_Scene_Information(-313.0f, 155.73f, -128.0f, 556);
 	} else {
-		Setup_Scene_Information( -95.0f,  74.78f, -503.0f, 556);
+		Setup_Scene_Information(-95.0f, 74.78f, -503.0f, 556);
 	}
 
 	Scene_Exit_Add_2D_Exit(0, 529, 130, 607, 277, 0);
-	Scene_Exit_Add_2D_Exit(1, 305,  36, 335, 192, 0);
+	Scene_Exit_Add_2D_Exit(1, 305, 36, 335, 192, 0);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1, 43, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED2, 43, 0, 1);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN1,   5, 50, 17, 37, 100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN2,   5, 50, 17, 37, 100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1, 5, 50, 17, 37, 100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2, 5, 50, 17, 37, 100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxSPNBEEP9, 2, 50, 17, 37, -50, -20, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxSPNBEEP2, 2, 50, 17, 37, -50, -20, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxSPNBEEP3, 2, 50, 17, 37, -50, -20, -101, -101, 0, 0);
@@ -46,13 +46,13 @@ void SceneScriptUG02::InitializeScene() {
 	Ambient_Sounds_Add_Sound(kSfxSPNBEEP6, 2, 50, 17, 37, -50, -20, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxSPNBEEP7, 2, 50, 17, 37, -50, -20, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxSPNBEEP8, 2, 50, 17, 37, -50, -20, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCANNER1, 2, 50, 27, 27,  10,  30, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCANNER2, 2, 50, 27, 27,  10,  30, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCANNER3, 2, 50, 27, 27,  10,  30, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCANNER4, 2, 50, 27, 27,  10,  30, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCANNER5, 2, 50, 27, 27,  10,  30, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCANNER6, 2, 50, 27, 27,  10,  30, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCANNER7, 2, 50, 27, 27,  10,  30, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER1, 2, 50, 27, 27, 10, 30, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER2, 2, 50, 27, 27, 10, 30, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER3, 2, 50, 27, 27, 10, 30, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER4, 2, 50, 27, 27, 10, 30, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER5, 2, 50, 27, 27, 10, 30, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER6, 2, 50, 27, 27, 10, 30, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER7, 2, 50, 27, 27, 10, 30, -101, -101, 0, 0);
 }
 
 void SceneScriptUG02::SceneLoaded() {
@@ -71,8 +71,7 @@ void SceneScriptUG02::SceneLoaded() {
 	Footstep_Sounds_Set(8, 2);
 
 	if (!Game_Flag_Query(kFlagUG02RagiationGooglesTaken)
-	  && Game_Flag_Query(kFlagIzoIsReplicant)
-	) {
+	    && Game_Flag_Query(kFlagIzoIsReplicant)) {
 		Item_Add_To_World(kItemRadiationGoogles, kModelAnimationRadiationGoggles, kSetUG02, -300.37f, 120.16f, -81.31f, 0, 8, 8, false, true, false, true);
 	}
 }
@@ -83,14 +82,12 @@ bool SceneScriptUG02::MouseClick(int x, int y) {
 	}
 
 	if (Region_Check(0, 0, 245, 285)
-	 || Region_Check(0, 0, 350, 257)
-	) {
+	    || Region_Check(0, 0, 350, 257)) {
 		return true;
 	}
 
-	if ( Region_Check(81, 224, 639, 479)
-	 && !Game_Flag_Query(kFlagUG02FromUG01)
-	) {
+	if (Region_Check(81, 224, 639, 479)
+	    && !Game_Flag_Query(kFlagUG02FromUG01)) {
 		Game_Flag_Set(kFlagUG02Interactive);
 		walkToCenter();
 		Game_Flag_Reset(kFlagUG02Interactive);
@@ -102,13 +99,11 @@ bool SceneScriptUG02::MouseClick(int x, int y) {
 
 bool SceneScriptUG02::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("GUN_1", objectName)
-	 || Object_Query_Click("GUN_2", objectName)
-	 || Object_Query_Click("CRATE_3", objectName)
-	) {
+	    || Object_Query_Click("GUN_2", objectName)
+	    || Object_Query_Click("CRATE_3", objectName)) {
 		Actor_Face_Object(kActorMcCoy, "GUN_1", true);
 		if (!Game_Flag_Query(kFlagUG02WeaponsChecked)
-		 &&  Global_Variable_Query(kVariableChapter) < 4
-		) {
+		    && Global_Variable_Query(kVariableChapter) < 4) {
 			Actor_Voice_Over(2430, kActorVoiceOver);
 			Actor_Voice_Over(2440, kActorVoiceOver);
 			Actor_Voice_Over(2450, kActorVoiceOver);
@@ -119,9 +114,8 @@ bool SceneScriptUG02::ClickedOn3DObject(const char *objectName, bool a2) {
 		}
 
 		if (Global_Variable_Query(kVariableChapter) > 3) {
-			if ( Actor_Clue_Query(kActorMcCoy, kClueWeaponsCache)
-			 && !Actor_Clue_Query(kActorMcCoy, kClueIzosStashRaided)
-			) {
+			if (Actor_Clue_Query(kActorMcCoy, kClueWeaponsCache)
+			    && !Actor_Clue_Query(kActorMcCoy, kClueIzosStashRaided)) {
 				Actor_Voice_Over(2470, kActorVoiceOver);
 				Actor_Voice_Over(2480, kActorVoiceOver);
 				Actor_Voice_Over(2490, kActorVoiceOver);
@@ -172,9 +166,8 @@ bool SceneScriptUG02::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptUG02::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if ( Game_Flag_Query(kFlagUG02FromUG01)
-		 || !walkToCenter()
-		) {
+		if (Game_Flag_Query(kFlagUG02FromUG01)
+		    || !walkToCenter()) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -202.0f, 120.16f, -74.0f, 0, true, Player_Query_Combat_Mode(), false)) {
 				Actor_Face_Heading(kActorMcCoy, 270, false);
 				Footstep_Sound_Override_On(2);
@@ -194,7 +187,7 @@ bool SceneScriptUG02::ClickedOnExit(int exitId) {
 			if (walkToCenter()) {
 				return true;
 			}
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -368.75f, 155.75f,  -63.0f, 0, false, false, false);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -368.75f, 155.75f, -63.0f, 0, false, false, false);
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -340.75f, 155.75f, -119.0f, 0, false, false, false);
 		}
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -304.75f, 155.75f, -171.0f, 0, false, false, false);
@@ -260,8 +253,8 @@ bool SceneScriptUG02::walkToCenter() {
 	if (!Game_Flag_Query(kFlagUG02FromUG01)) {
 		int combatMode = Player_Query_Combat_Mode();
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -340.75f, 155.75f, -119.0f, 0, false, combatMode, false);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -368.75f, 155.75f,  -63.0f, 0, false, combatMode, false);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy,  -365.0f, 155.65f,  -19.0f, 0, false, combatMode, false);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -368.75f, 155.75f, -63.0f, 0, false, combatMode, false);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -365.0f, 155.65f, -19.0f, 0, false, combatMode, false);
 		Actor_Face_Heading(kActorMcCoy, 318, false);
 		Footstep_Sound_Override_On(2);
 		Loop_Actor_Travel_Stairs(kActorMcCoy, 4, false, kAnimationModeIdle);

@@ -33,9 +33,9 @@ class Toolbar : public GUIElement {
 public:
 	virtual ~Toolbar();
 	virtual bool action(int x, int y, bool pushed) = 0;
+
 protected:
 	Toolbar();
-
 };
 
 } // End of namespace CEGUI

@@ -22,17 +22,17 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
 #include "fullpipe/floaters.h"
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
@@ -124,7 +124,7 @@ void scene23_initScene(Scene *sc) {
 			g_vars->scene23_giraffee->hide();
 		} else {
 			if (g_fp->getObjectState(sO_UpperHatch_23) == g_fp->getObjectEnumState(sO_UpperHatch_23, sO_Opened)
-				&& (g_vars->scene23_giraffee->_flags & 4))
+			    && (g_vars->scene23_giraffee->_flags & 4))
 				g_vars->scene23_giraffeTop->setOXY(614, 362);
 			else
 				g_vars->scene23_giraffeTop->setOXY(618, 350);
@@ -168,8 +168,8 @@ int scene23_updateCursor() {
 	}
 
 	if (g_fp->_objectIdAtCursor == PIC_SC23_BTN1 || g_fp->_objectIdAtCursor == PIC_SC23_BTN2
-		|| g_fp->_objectIdAtCursor == PIC_SC23_BTN3 || g_fp->_objectIdAtCursor == PIC_SC23_BTN4
-		|| g_fp->_objectIdAtCursor == ANI_CALENDWHEEL)
+	    || g_fp->_objectIdAtCursor == PIC_SC23_BTN3 || g_fp->_objectIdAtCursor == PIC_SC23_BTN4
+	    || g_fp->_objectIdAtCursor == ANI_CALENDWHEEL)
 		g_fp->_cursorId = PIC_CSR_LIFT;
 
 	return g_fp->_cursorId;
@@ -292,8 +292,8 @@ void sceneHandler23_pushButton(ExCommand *cmd) {
 		if (!g_vars->scene23_topReached) {
 			if (g_fp->_aniMan->_ox != 405 || g_fp->_aniMan->_oy != 220) {
 				if (g_fp->_aniMan->_ox != 276 || g_fp->_aniMan->_oy != 438
-					|| g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
-					if (g_fp->_msgX == 276 && g_fp->_msgY == 438 )
+				    || g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
+					if (g_fp->_msgX == 276 && g_fp->_msgY == 438)
 						return;
 
 					MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, 276, 438, 1, ST_MAN_RIGHT);
@@ -344,7 +344,6 @@ void sceneHandler23_pushButton(ExCommand *cmd) {
 
 			if (mv)
 				g_fp->_aniMan->startAnim(mv, 0, -1);
-
 		}
 	}
 }
@@ -376,7 +375,7 @@ void sceneHandler23_sendClick(StaticANIObject *ani) {
 
 void sceneHandler23_checkReachingTop() {
 	if (g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_STANDLADDER
-		|| g_fp->_aniMan->_ox != 405 || g_fp->_aniMan->_oy != 220)
+	    || g_fp->_aniMan->_ox != 405 || g_fp->_aniMan->_oy != 220)
 		g_vars->scene23_topReached = false;
 	else
 		g_vars->scene23_topReached = true;
@@ -384,7 +383,7 @@ void sceneHandler23_checkReachingTop() {
 
 void sceneHandler23_exitCalendar() {
 	if (!g_fp->_aniMan->_movement && g_fp->_aniMan->_statics->_staticsId == ST_MAN_STANDLADDER
-		&& !g_fp->_aniMan->getMessageQueue() && !(g_fp->_aniMan->_flags & 0x100)) {
+	    && !g_fp->_aniMan->getMessageQueue() && !(g_fp->_aniMan->_flags & 0x100)) {
 		chainQueue(QU_SC23_FROMCALENDAREXIT, 1);
 		g_vars->scene23_someVar = 2;
 	}
@@ -392,7 +391,7 @@ void sceneHandler23_exitCalendar() {
 
 void sceneHandler23_fromCalendar(ExCommand *cmd) {
 	if (!g_fp->_aniMan->_movement && g_fp->_aniMan->_statics->_staticsId == ST_MAN_STANDLADDER
-		&& !g_fp->_aniMan->getMessageQueue() && !(g_fp->_aniMan->_flags & 0x100)) {
+	    && !g_fp->_aniMan->getMessageQueue() && !(g_fp->_aniMan->_flags & 0x100)) {
 		MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC23_FROMCALENDAR), 0, 0);
 
 		mq->addExCommandToEnd(cmd->createClone());
@@ -493,60 +492,59 @@ int sceneHandler23(ExCommand *cmd) {
 
 		break;
 
-	case 29:
-		{
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-			int picId;
+	case 29: {
+		StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+		int picId;
 
-			if (ani && ani->_id == ANI_CALENDWHEEL) {
-				sceneHandler23_sendClick(ani);
+		if (ani && ani->_id == ANI_CALENDWHEEL) {
+			sceneHandler23_sendClick(ani);
+			cmd->_messageKind = 0;
+		}
+
+		sceneHandler23_checkReachingTop();
+
+		if (g_vars->scene23_topReached) {
+			picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+
+			if (picId == PIC_SC23_LADDER) {
+				sceneHandler23_exitCalendar();
+
 				cmd->_messageKind = 0;
-			}
-
-			sceneHandler23_checkReachingTop();
-
-			if (g_vars->scene23_topReached) {
-				picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-
-				if (picId == PIC_SC23_LADDER) {
-					sceneHandler23_exitCalendar();
-
-					cmd->_messageKind = 0;
-					break;
-				}
-
-				if (cmd->_sceneClickY > 450) {
-					sceneHandler23_fromCalendar(cmd);
-
-					cmd->_messageKind = 0;
-					break;
-				}
 				break;
 			}
 
-			if (!g_vars->scene23_isOnStool) {
-				picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			if (cmd->_sceneClickY > 450) {
+				sceneHandler23_fromCalendar(cmd);
 
-				if (picId == PIC_SC23_LADDERU && !g_vars->scene23_topReached) {
-					sceneHandler23_pushButton(cmd);
-
-					cmd->_messageKind = 0;
-					break;
-				}
+				cmd->_messageKind = 0;
 				break;
 			}
-
-			if (ani && ani->_id == ANI_HANDLE23) {
-				handleObjectInteraction(g_fp->_aniMan, ani, cmd->_param);
-				cmd->_messageKind = 0;
-			} else {
-				sceneHandler23_fromStool(cmd);
-
-				cmd->_messageKind = 0;
-			}
-
 			break;
 		}
+
+		if (!g_vars->scene23_isOnStool) {
+			picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+
+			if (picId == PIC_SC23_LADDERU && !g_vars->scene23_topReached) {
+				sceneHandler23_pushButton(cmd);
+
+				cmd->_messageKind = 0;
+				break;
+			}
+			break;
+		}
+
+		if (ani && ani->_id == ANI_HANDLE23) {
+			handleObjectInteraction(g_fp->_aniMan, ani, cmd->_param);
+			cmd->_messageKind = 0;
+		} else {
+			sceneHandler23_fromStool(cmd);
+
+			cmd->_messageKind = 0;
+		}
+
+		break;
+	}
 	}
 
 	return 0;

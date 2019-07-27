@@ -45,11 +45,11 @@ private:
 	int16 _curSample;
 };
 
-Speaker::Speaker(int sampleRate) :
-		_rate(sampleRate),
-		_halfWaveLen(0),
-		_halfWaveRem(0),
-		_curSample(32767) { }
+Speaker::Speaker(int sampleRate)
+  : _rate(sampleRate)
+  , _halfWaveLen(0)
+  , _halfWaveRem(0)
+  , _curSample(32767) {}
 
 void Speaker::startTone(double freq) {
 	_halfWaveLen = _halfWaveRem = doubleToFrac(_rate / freq / 2);
@@ -95,10 +95,10 @@ void Speaker::generateSamples(int16 *buffer, int numSamples) {
 	}
 }
 
-Sound::Sound(const Tones &tones) :
-		_tones(tones),
-		_toneIndex(0),
-		_samplesRem(0) {
+Sound::Sound(const Tones &tones)
+  : _tones(tones)
+  , _toneIndex(0)
+  , _samplesRem(0) {
 
 	_rate = g_system->getMixer()->getOutputRate();
 	_speaker = new Speaker(_rate);

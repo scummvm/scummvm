@@ -20,94 +20,79 @@
  *
  */
 
+#include "base/plugins.h"
 #include "common/config-manager.h"
-#include "engines/advancedDetector.h"
+#include "common/fs.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "common/fs.h"
-#include "base/plugins.h"
+#include "engines/advancedDetector.h"
 #include "graphics/thumbnail.h"
 
 #include "tucker/tucker.h"
 
 static const PlainGameDescriptor tuckerGames[] = {
 	{ "tucker", "Bud Tucker in Double Trouble" },
-	{ nullptr,  nullptr }
+	{ nullptr, nullptr }
 };
 
 static const ADGameDescription tuckerGameDescriptions[] = {
-	{
-		"tucker",
-		"",
-		AD_ENTRY1s("infobar.txt", "f1e42a95972643462b9c3c2ea79d6683", 543),
-		Common::FR_FRA,
-		Common::kPlatformDOS,
-		Tucker::kGameFlagNoSubtitles,
-		GUIO0()
-	},
-	{
-		"tucker",
-		"",
-		AD_ENTRY1s("infobar.txt", "9c1ddeafc5283b90d1a284bd0924831c", 462),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		Tucker::kGameFlagEncodedData,
-		GUIO0()
-	},
-	{
-		"tucker",
-		"",
-		AD_ENTRY1s("infobar.txt", "1b3ea79d8528ea3c7df83dd0ed345e37", 525),
-		Common::ES_ESP,
-		Common::kPlatformDOS,
-		Tucker::kGameFlagEncodedData,
-		GUIO0()
-	},
-	{
-		"tucker",
-		"",
-		AD_ENTRY1s("infobrgr.txt", "4df9eb65722418d1a1723508115b146c", 552),
-		Common::DE_DEU,
-		Common::kPlatformDOS,
-		Tucker::kGameFlagEncodedData,
-		GUIO0()
-	},
-	{
-		"tucker",
-		"",
-		AD_ENTRY1s("infobar.txt", "5f85285bbc23ce57cbc164021ee1f23c", 525),
-		Common::PL_POL,
-		Common::kPlatformDOS,
-		0,
-		GUIO0()
-	},
-	{
-		"tucker",
-		"",
-		AD_ENTRY1s("infobar.txt", "e548994877ff31ca304f6352ce022a8e", 497),
-		Common::CZ_CZE,
-		Common::kPlatformDOS,
-		Tucker::kGameFlagEncodedData,
-		GUIO0()
-	},
+	{ "tucker",
+	  "",
+	  AD_ENTRY1s("infobar.txt", "f1e42a95972643462b9c3c2ea79d6683", 543),
+	  Common::FR_FRA,
+	  Common::kPlatformDOS,
+	  Tucker::kGameFlagNoSubtitles,
+	  GUIO0() },
+	{ "tucker",
+	  "",
+	  AD_ENTRY1s("infobar.txt", "9c1ddeafc5283b90d1a284bd0924831c", 462),
+	  Common::EN_ANY,
+	  Common::kPlatformDOS,
+	  Tucker::kGameFlagEncodedData,
+	  GUIO0() },
+	{ "tucker",
+	  "",
+	  AD_ENTRY1s("infobar.txt", "1b3ea79d8528ea3c7df83dd0ed345e37", 525),
+	  Common::ES_ESP,
+	  Common::kPlatformDOS,
+	  Tucker::kGameFlagEncodedData,
+	  GUIO0() },
+	{ "tucker",
+	  "",
+	  AD_ENTRY1s("infobrgr.txt", "4df9eb65722418d1a1723508115b146c", 552),
+	  Common::DE_DEU,
+	  Common::kPlatformDOS,
+	  Tucker::kGameFlagEncodedData,
+	  GUIO0() },
+	{ "tucker",
+	  "",
+	  AD_ENTRY1s("infobar.txt", "5f85285bbc23ce57cbc164021ee1f23c", 525),
+	  Common::PL_POL,
+	  Common::kPlatformDOS,
+	  0,
+	  GUIO0() },
+	{ "tucker",
+	  "",
+	  AD_ENTRY1s("infobar.txt", "e548994877ff31ca304f6352ce022a8e", 497),
+	  Common::CZ_CZE,
+	  Common::kPlatformDOS,
+	  Tucker::kGameFlagEncodedData,
+	  GUIO0() },
 	{ // Russian fan translation
-		"tucker",
-		"",
-		AD_ENTRY1s("infobrgr.txt", "4b5a315e449a7f9eaf2025ec87466cd8", 552),
-		Common::RU_RUS,
-		Common::kPlatformDOS,
-		Tucker::kGameFlagEncodedData,
-		GUIO0()
-	},
-	{
-		"tucker",
-		"Demo",
-		AD_ENTRY1s("infobar.txt", "010b055de42097b140d5bcb6e95a5c7c", 203),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_DEMO | Tucker::kGameFlagDemo,
-		GUIO0()
-	},
+	  "tucker",
+	  "",
+	  AD_ENTRY1s("infobrgr.txt", "4b5a315e449a7f9eaf2025ec87466cd8", 552),
+	  Common::RU_RUS,
+	  Common::kPlatformDOS,
+	  Tucker::kGameFlagEncodedData,
+	  GUIO0() },
+	{ "tucker",
+	  "Demo",
+	  AD_ENTRY1s("infobar.txt", "010b055de42097b140d5bcb6e95a5c7c", 203),
+	  Common::EN_ANY,
+	  Common::kPlatformDOS,
+	  ADGF_DEMO | Tucker::kGameFlagDemo,
+	  GUIO0() },
 	AD_TABLE_END_MARKER
 };
 
@@ -123,7 +108,8 @@ static const ADGameDescription tuckerDemoGameDescription = {
 
 class TuckerMetaEngine : public AdvancedMetaEngine {
 public:
-	TuckerMetaEngine() : AdvancedMetaEngine(tuckerGameDescriptions, sizeof(ADGameDescription), tuckerGames) {
+	TuckerMetaEngine()
+	  : AdvancedMetaEngine(tuckerGameDescriptions, sizeof(ADGameDescription), tuckerGames) {
 		_md5Bytes = 512;
 		_singleId = "tucker";
 	}
@@ -234,15 +220,15 @@ public:
 		if (header.version >= 2) {
 			// creation/play time
 			if (header.saveDate) {
-				int day   = (header.saveDate >> 24) & 0xFF;
+				int day = (header.saveDate >> 24) & 0xFF;
 				int month = (header.saveDate >> 16) & 0xFF;
-				int year  =  header.saveDate        & 0xFFFF;
+				int year = header.saveDate & 0xFFFF;
 				desc.setSaveDate(year, month, day);
 			}
 
 			if (header.saveTime) {
-				int hour    = (header.saveTime >> 16) & 0xFF;
-				int minutes = (header.saveTime >>  8) & 0xFF;
+				int hour = (header.saveTime >> 16) & 0xFF;
+				int minutes = (header.saveTime >> 8) & 0xFF;
 				desc.setSaveTime(hour, minutes);
 			}
 
@@ -259,11 +245,10 @@ public:
 		delete file;
 		return desc;
 	}
-
 };
 
 #if PLUGIN_ENABLED_DYNAMIC(TUCKER)
-	REGISTER_PLUGIN_DYNAMIC(TUCKER, PLUGIN_TYPE_ENGINE, TuckerMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(TUCKER, PLUGIN_TYPE_ENGINE, TuckerMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(TUCKER, PLUGIN_TYPE_ENGINE, TuckerMetaEngine);
+REGISTER_PLUGIN_STATIC(TUCKER, PLUGIN_TYPE_ENGINE, TuckerMetaEngine);
 #endif

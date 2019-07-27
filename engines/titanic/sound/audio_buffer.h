@@ -23,8 +23,8 @@
 #ifndef TITANIC_AUDIO_BUFFER_H
 #define TITANIC_AUDIO_BUFFER_H
 
-#include "titanic/support/fixed_queue.h"
 #include "common/mutex.h"
+#include "titanic/support/fixed_queue.h"
 
 namespace Titanic {
 
@@ -34,6 +34,7 @@ class CAudioBuffer {
 private:
 	Common::Mutex _mutex;
 	FixedQueue<int16, AUDIO_SAMPLING_RATE * 4> _data;
+
 private:
 	/**
 	 * Enters a critical section
@@ -44,8 +45,10 @@ private:
 	 * Leave a critical section
 	 */
 	void leaveCriticalSection();
+
 private:
 	bool _finished;
+
 public:
 	CAudioBuffer(int maxSize);
 

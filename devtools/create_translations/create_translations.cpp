@@ -24,22 +24,22 @@
 
 #include "create_translations.h"
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 #include <vector>
 
- // HACK to allow building with the SDL backend on MinGW
+// HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
 #ifdef main
-#undef main
+#	undef main
 #endif // main
 
-#include "po_parser.h"
 #include "cp_parser.h"
+#include "po_parser.h"
 
-#define TRANSLATIONS_DAT_VER 3	// 1 byte
+#define TRANSLATIONS_DAT_VER 3 // 1 byte
 
 // Portable implementation of stricmp / strcasecmp / strcmpi.
 int scumm_stricmp(const char *s1, const char *s2) {
@@ -73,7 +73,7 @@ void writeUint16BE(FILE *fp, uint16 value) {
 void writeUint32BE(FILE *fp, uint32 value) {
 	writeByte(fp, (uint8)(value >> 24));
 	writeByte(fp, (uint8)(value >> 16));
-	writeByte(fp, (uint8)(value >>  8));
+	writeByte(fp, (uint8)(value >> 8));
 	writeByte(fp, (uint8)(value & 0xFF));
 }
 

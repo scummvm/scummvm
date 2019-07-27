@@ -23,9 +23,9 @@
 #ifndef GUI_WIDGETS_EDITTEXT_H
 #define GUI_WIDGETS_EDITTEXT_H
 
-#include "gui/widgets/editable.h"
 #include "common/str.h"
 #include "gui/dialog.h"
+#include "gui/widgets/editable.h"
 
 namespace GUI {
 
@@ -34,10 +34,10 @@ class EditTextWidget : public EditableWidget {
 protected:
 	typedef Common::String String;
 
-	String		_backupString;
+	String _backupString;
 
-	int				_leftPadding;
-	int				_rightPadding;
+	int _leftPadding;
+	int _rightPadding;
 
 public:
 	EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, const char *tooltip = 0, uint32 cmd = 0, uint32 finishCmd = 0);

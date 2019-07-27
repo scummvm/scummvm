@@ -23,8 +23,8 @@
 #ifndef SCI_GRAPHICS_COORDADJUSTER_H
 #define SCI_GRAPHICS_COORDADJUSTER_H
 
-#include "common/list.h"
 #include "common/array.h"
+#include "common/list.h"
 
 namespace Sci {
 

@@ -32,7 +32,7 @@ class SaveFileWriteStream;
 
 class GameFlags {
 	uint32 *_flags;
-	int     _flagCount;
+	int _flagCount;
 
 public:
 	GameFlags();

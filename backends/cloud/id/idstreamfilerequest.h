@@ -30,28 +30,29 @@
 namespace Cloud {
 namespace Id {
 
-class IdStorage;
+	class IdStorage;
 
-class IdStreamFileRequest: public Networking::Request {
-	Common::String _requestedFile;
-	IdStorage *_storage;
-	Networking::NetworkReadStreamCallback _streamCallback;
-	Request *_workingRequest;
-	bool _ignoreCallback;
+	class IdStreamFileRequest : public Networking::Request {
+		Common::String _requestedFile;
+		IdStorage *_storage;
+		Networking::NetworkReadStreamCallback _streamCallback;
+		Request *_workingRequest;
+		bool _ignoreCallback;
 
-	void start();
-	void idResolvedCallback(Storage::UploadResponse response);
-	void idResolveFailedCallback(Networking::ErrorResponse error);
-	void streamFileCallback(Networking::NetworkReadStreamResponse response);
-	void streamFileErrorCallback(Networking::ErrorResponse error);
-	void finishStream(Networking::NetworkReadStream *stream);
-public:
-	IdStreamFileRequest(IdStorage *storage, Common::String path, Networking::NetworkReadStreamCallback cb, Networking::ErrorCallback ecb);
-	virtual ~IdStreamFileRequest();
+		void start();
+		void idResolvedCallback(Storage::UploadResponse response);
+		void idResolveFailedCallback(Networking::ErrorResponse error);
+		void streamFileCallback(Networking::NetworkReadStreamResponse response);
+		void streamFileErrorCallback(Networking::ErrorResponse error);
+		void finishStream(Networking::NetworkReadStream *stream);
 
-	virtual void handle();
-	virtual void restart();
-};
+	public:
+		IdStreamFileRequest(IdStorage *storage, Common::String path, Networking::NetworkReadStreamCallback cb, Networking::ErrorCallback ecb);
+		virtual ~IdStreamFileRequest();
+
+		virtual void handle();
+		virtual void restart();
+	};
 
 } // End of namespace Id
 } // End of namespace Cloud

@@ -31,11 +31,10 @@ namespace Tinsel {
 //----------------- LOCAL GLOBAL DATA --------------------
 
 struct Token {
-	Common::PROCESS		*proc;
+	Common::PROCESS *proc;
 };
 
-static Token g_tokens[NUMTOKENS];	// FIXME: Avoid non-const global vars
-
+static Token g_tokens[NUMTOKENS]; // FIXME: Avoid non-const global vars
 
 /**
  * Release all tokens held by this process, and kill the process.
@@ -72,7 +71,6 @@ void FreeControlToken() {
 	g_tokens[TOKEN_CONTROL].proc = NULL;
 }
 
-
 /**
  * Gain control of a token. If the requested token is out of range, or
  * is already held by the calling process, then the calling process
@@ -99,7 +97,7 @@ void GetToken(int which) {
 void FreeToken(int which) {
 	assert(TOKEN_LEAD <= which && which < NUMTOKENS);
 
-	assert(g_tokens[which].proc == CoroScheduler.getCurrentProcess());	// we'd have been killed if some other proc had taken this token
+	assert(g_tokens[which].proc == CoroScheduler.getCurrentProcess()); // we'd have been killed if some other proc had taken this token
 
 	g_tokens[which].proc = NULL;
 }

@@ -23,8 +23,8 @@
 #ifndef TITANIC_PHONOGRAPH_H
 #define TITANIC_PHONOGRAPH_H
 
-#include "titanic/sound/music_player.h"
 #include "titanic/messages/messages.h"
+#include "titanic/sound/music_player.h"
 
 namespace Titanic {
 
@@ -36,6 +36,7 @@ class CPhonograph : public CMusicPlayer {
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
 	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
 	bool MusicHasStartedMsg(CMusicHasStartedMsg *msg);
+
 protected:
 	CString _unused;
 	bool _isPlaying;
@@ -44,6 +45,7 @@ protected:
 	int _playUnpressedFrame;
 	int _playPressedFrame;
 	int _unused5;
+
 public:
 	CLASSDEF;
 	CPhonograph();

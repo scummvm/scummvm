@@ -25,33 +25,32 @@
 
 /* Header file for debug handler in Alan interpreter */
 
-#include "glk/alan3/types.h"
 #include "glk/alan3/jumps.h"
+#include "glk/alan3/types.h"
 
 namespace Glk {
 namespace Alan3 {
 
-/* Types: */
+	/* Types: */
 
-struct Breakpoint {
-	int line;
-	int file;
-};
+	struct Breakpoint {
+		int line;
+		int file;
+	};
 
+	/* Data: */
+	extern int breakpointCount;
+	extern Breakpoint breakpoint[];
 
-/* Data: */
-extern int breakpointCount;
-extern Breakpoint breakpoint[];
-
-/* Functions: */
-extern void saveInfo(void);
-extern void restoreInfo(void);
-extern int breakpointIndex(int file, int line);
-extern char *sourceFileName(int file);
-extern char *readSourceLine(int file, int line);
-extern void showSourceLine(int fileNumber, int line);
-extern void debug(CONTEXT, bool calledFromBreakpoint, int line, int fileNumber);
-extern void traceSay(CONTEXT, int item);
+	/* Functions: */
+	extern void saveInfo(void);
+	extern void restoreInfo(void);
+	extern int breakpointIndex(int file, int line);
+	extern char *sourceFileName(int file);
+	extern char *readSourceLine(int file, int line);
+	extern void showSourceLine(int fileNumber, int line);
+	extern void debug(CONTEXT, bool calledFromBreakpoint, int line, int fileNumber);
+	extern void traceSay(CONTEXT, int item);
 
 } // End of namespace Alan3
 } // End of namespace Glk

@@ -29,7 +29,9 @@ namespace Titanic {
 
 #define DIALS_ARRAY_COUNT 10
 
-enum ScriptArrayFlag { SF_NONE = 0, SF_RANDOM = 1, SF_SEQUENTIAL = 2 };
+enum ScriptArrayFlag { SF_NONE = 0,
+	                     SF_RANDOM = 1,
+	                     SF_SEQUENTIAL = 2 };
 
 struct RoomDialogueId {
 	uint _roomNum;
@@ -40,7 +42,8 @@ struct TTnpcScriptResponse {
 	uint _tag;
 	uint _values[4];
 
-	TTnpcScriptResponse() : _tag(0) {
+	TTnpcScriptResponse()
+	  : _tag(0) {
 		_values[0] = _values[1] = _values[2] = _values[3] = 0;
 	}
 
@@ -57,10 +60,13 @@ struct TTscriptRange {
 	uint _priorIndex;
 	ScriptArrayFlag _mode;
 
-	TTscriptRange() : _id(0), _nextP(nullptr),
-		_priorIndex(0), _mode(SF_NONE) {}
+	TTscriptRange()
+	  : _id(0)
+	  , _nextP(nullptr)
+	  , _priorIndex(0)
+	  , _mode(SF_NONE) {}
 	TTscriptRange(uint id, const Common::Array<uint> &values, bool isRandom,
-		bool isSequential);
+	              bool isSequential);
 };
 
 struct TTsentenceEntry {
@@ -78,8 +84,14 @@ struct TTsentenceEntry {
 	int _field2C;
 	int _field30;
 
-	TTsentenceEntry() : _field0(0), _category(0), _fieldC(0),
-		_field20(0), _field28(0), _field2C(0), _field30(0) {}
+	TTsentenceEntry()
+	  : _field0(0)
+	  , _category(0)
+	  , _fieldC(0)
+	  , _field20(0)
+	  , _field28(0)
+	  , _field2C(0)
+	  , _field30(0) {}
 
 	/**
 	* Load an entry from the passed stream, and returns true
@@ -112,8 +124,12 @@ public:
 
 struct TTtagMapping {
 	uint _src, _dest;
-	TTtagMapping() : _src(0), _dest(0) {}
-	TTtagMapping(uint src, uint dest) : _src(src), _dest(dest) {}
+	TTtagMapping()
+	  : _src(0)
+	  , _dest(0) {}
+	TTtagMapping(uint src, uint dest)
+	  : _src(src)
+	  , _dest(dest) {}
 };
 
 class TTtagMappings : public Common::Array<TTtagMapping> {
@@ -125,7 +141,8 @@ struct TTwordEntry {
 	uint _id;
 	CString _text;
 
-	TTwordEntry() : _id(0) {}
+	TTwordEntry()
+	  : _id(0) {}
 };
 
 class TTwordEntries : public Common::Array<TTwordEntry> {
@@ -138,15 +155,22 @@ struct TThandleQuoteEntry {
 	uint _tag2;
 	uint _index;
 
-	TThandleQuoteEntry() : _tag1(0), _tag2(0), _index(0) {}
+	TThandleQuoteEntry()
+	  : _tag1(0)
+	  , _tag2(0)
+	  , _index(0) {}
 };
 
 class TThandleQuoteEntries : public Common::Array<TThandleQuoteEntry> {
 public:
 	uint _rangeStart, _rangeEnd;
 	uint _incr;
+
 public:
-	TThandleQuoteEntries() : _rangeStart(0), _rangeEnd(0), _incr(0) {}
+	TThandleQuoteEntries()
+	  : _rangeStart(0)
+	  , _rangeEnd(0)
+	  , _incr(0) {}
 	void load(const char *name);
 };
 
@@ -154,7 +178,9 @@ struct TTmapEntry {
 	uint _src;
 	uint _dest;
 
-	TTmapEntry() : _src(0), _dest(0) {}
+	TTmapEntry()
+	  : _src(0)
+	  , _dest(0) {}
 };
 
 class TTmapEntryArray : public Common::Array<TTmapEntry> {
@@ -172,7 +198,10 @@ struct TTupdateState {
 	uint _newValue;
 	uint _dialBits;
 
-	TTupdateState() : _newId(0), _newValue(0), _dialBits(0) {}
+	TTupdateState()
+	  : _newId(0)
+	  , _newValue(0)
+	  , _dialBits(0) {}
 };
 
 class TTupdateStateArray : public Common::Array<TTupdateState> {

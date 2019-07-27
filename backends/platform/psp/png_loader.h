@@ -27,8 +27,8 @@
 
 class PngLoader {
 private:
-	bool basicImageLoad();		// common operation
-	bool findImageDimensions();	// find dimensions of a given PNG file
+	bool basicImageLoad(); // common operation
+	bool findImageDimensions(); // find dimensions of a given PNG file
 	bool loadImageIntoBuffer();
 
 	static void warningFn(png_structp png_ptr, png_const_charp warning_msg);
@@ -58,11 +58,19 @@ public:
 	};
 
 	PngLoader(Common::SeekableReadStream &file, Buffer &buffer, Palette &palette,
-		Buffer::HowToSize sizeBy = Buffer::kSizeByTextureSize) :
-			_file(file), _buffer(&buffer), _palette(&palette),
-			_width(0), _height(0), _paletteSize(0),
-			_bitDepth(0), _sizeBy(sizeBy), _pngPtr(0),
-			_infoPtr(0), _colorType(0), _channels(0) {}
+	          Buffer::HowToSize sizeBy = Buffer::kSizeByTextureSize)
+	  : _file(file)
+	  , _buffer(&buffer)
+	  , _palette(&palette)
+	  , _width(0)
+	  , _height(0)
+	  , _paletteSize(0)
+	  , _bitDepth(0)
+	  , _sizeBy(sizeBy)
+	  , _pngPtr(0)
+	  , _infoPtr(0)
+	  , _colorType(0)
+	  , _channels(0) {}
 
 	PngLoader::Status allocate();
 	bool load();

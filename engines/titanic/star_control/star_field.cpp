@@ -21,14 +21,19 @@
  */
 
 #include "titanic/star_control/star_field.h"
-#include "titanic/star_control/surface_area.h"
 #include "titanic/star_control/star_camera.h"
+#include "titanic/star_control/surface_area.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
 
-CStarField::CStarField() : _points1On(false), _points2On(false), _mode(MODE_STARFIELD),
-		_showBox(true), _closeToMarker(false), _isSolved(false) {
+CStarField::CStarField()
+  : _points1On(false)
+  , _points2On(false)
+  , _mode(MODE_STARFIELD)
+  , _showBox(true)
+  , _closeToMarker(false)
+  , _isSolved(false) {
 }
 
 void CStarField::load(SimpleFile *file) {
@@ -191,7 +196,7 @@ void CStarField::fn4(CSurfaceArea *surfaceArea, CStarCamera *camera) {
 }
 
 double CStarField::fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
-		FVector &v1, FVector &v2, FVector &v3) {
+                       FVector &v1, FVector &v2, FVector &v3) {
 	if (_crosshairs.isEmpty())
 		// No crosshairs selection yet
 		return -1.0;
@@ -209,7 +214,7 @@ double CStarField::fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
 	tv = camera->getRelativePos(2, tv);
 
 	v1 = FVector(tv._x + surfaceArea->_centroid._x,
-		tv._y + surfaceArea->_centroid._y, tv._z);
+	             tv._y + surfaceArea->_centroid._y, tv._z);
 	FPoint pt = _crosshairs.getPosition();
 	v3 = FVector(pt._x, pt._y, 1.0);
 
@@ -241,7 +246,7 @@ void CStarField::fn8(CVideoSurface *surface) {
 }
 
 bool CStarField::mouseButtonDown(CVideoSurface *surface, CStarCamera *camera,
-		int flags, const Common::Point &pt) {
+                                 int flags, const Common::Point &pt) {
 	if (_mode == MODE_STARFIELD) {
 		CSurfaceArea surfaceArea(surface);
 		return selectStar(&surfaceArea, camera, pt);

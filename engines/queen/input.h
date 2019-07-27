@@ -23,9 +23,9 @@
 #ifndef QUEEN_INPUT_H
 #define QUEEN_INPUT_H
 
+#include "common/events.h"
 #include "common/language.h"
 #include "common/rect.h"
-#include "common/events.h"
 #include "queen/defs.h"
 
 class OSystem;
@@ -34,10 +34,9 @@ namespace Queen {
 
 class Input {
 public:
-
 	//! Adjust here to change delays!
 	enum {
-		DELAY_SHORT  =  10,
+		DELAY_SHORT = 10,
 		DELAY_NORMAL = 100, // 5 * 20ms
 		DELAY_SCREEN_BLANKER = 5 * 60 * 1000
 	};
@@ -54,30 +53,30 @@ public:
 	void checkKeys();
 
 	//! use instead of KEYVERB=0
-	void clearKeyVerb()  { _keyVerb = VERB_NONE; }
+	void clearKeyVerb() { _keyVerb = VERB_NONE; }
 
-	void canQuit(bool cq)             { _canQuit = cq; }
+	void canQuit(bool cq) { _canQuit = cq; }
 
-	bool cutawayRunning() const       { return _cutawayRunning; }
+	bool cutawayRunning() const { return _cutawayRunning; }
 	void cutawayRunning(bool running) { _cutawayRunning = running; }
 
-	bool cutawayQuit() const  { return _cutawayQuit; }
-	void cutawayQuitReset()   { _cutawayQuit = false; }
+	bool cutawayQuit() const { return _cutawayQuit; }
+	void cutawayQuitReset() { _cutawayQuit = false; }
 
 	void dialogueRunning(bool running) { _dialogueRunning = running; }
 
 	bool talkQuit() const { return _talkQuit; }
-	void talkQuitReset()  { _talkQuit = false; }
+	void talkQuitReset() { _talkQuit = false; }
 
 	bool quickSave() const { return _quickSave; }
-	void quickSaveReset()  { _quickSave = false; }
+	void quickSaveReset() { _quickSave = false; }
 	bool quickLoad() const { return _quickLoad; }
-	void quickLoadReset()  { _quickLoad = false; }
+	void quickLoadReset() { _quickLoad = false; }
 	bool debugger() const { return _debugger; }
 	void debuggerReset() { _debugger = false; }
 
 	bool fastMode() const { return _fastMode; }
-	void fastMode(bool fm)	{ _fastMode = fm; }
+	void fastMode(bool fm) { _fastMode = fm; }
 
 	Verb keyVerb() const { return _keyVerb; }
 
@@ -90,7 +89,6 @@ public:
 	uint32 idleTime() const { return _idleTime; }
 
 private:
-
 	//! used to get keyboard and mouse events
 	OSystem *_system;
 

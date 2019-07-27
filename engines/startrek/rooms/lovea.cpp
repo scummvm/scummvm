@@ -125,7 +125,6 @@ void Room::loveaUseCureSampleOnSpock() {
 		showText(TX_SPEAKER_MCCOY, TX_LOVA_F55);
 }
 
-
 void Room::loveaUseCureOnSpock() {
 	if (_awayMission->love.spockCured)
 		showText(TX_SPEAKER_MCCOY, TX_LOV5_015);
@@ -148,7 +147,6 @@ void Room::loveaFinishedCuringSpock() {
 	showText(TX_SPEAKER_SPOCK, TX_LOV5C001);
 	_awayMission->love.spockCured = true;
 }
-
 
 // Timer 2 counts down the time until Spock and the Romulans succumb to the virus.
 // BUG(-ish): once Spock is cured, the romulans will never succumb to the virus.
@@ -239,9 +237,9 @@ void Room::loveaUseCommunicator() {
 	// exact same code.
 	// TODO: perhaps the floppy edition had different text for each case.
 
-	showText(TX_SPEAKER_KIRK,  TX_MUD4_018);
+	showText(TX_SPEAKER_KIRK, TX_MUD4_018);
 	showText(TX_SPEAKER_UHURA, TX_BRIDU146);
-	showText(TX_SPEAKER_KIRK,  TX_VENA_F41);
+	showText(TX_SPEAKER_KIRK, TX_VENA_F41);
 	_awayMission->love.contactedEnterpriseBeforeCure = true;
 }
 

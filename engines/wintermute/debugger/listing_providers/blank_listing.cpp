@@ -25,7 +25,8 @@
 
 namespace Wintermute {
 
-BlankListing::BlankListing(const Common::String filename) : _filename(filename) {}
+BlankListing::BlankListing(const Common::String filename)
+  : _filename(filename) {}
 
 uint BlankListing::getLength() const { return UINT_MAX; }
 
@@ -35,4 +36,3 @@ Common::String BlankListing::getLine(uint n) {
 BlankListing::~BlankListing() {}
 
 }
-

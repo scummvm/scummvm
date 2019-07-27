@@ -20,11 +20,11 @@
  *
  */
 
-#include "cryo/defs.h"
 #include "cryo/cryo.h"
-#include "cryo/platdefs.h"
 #include "cryo/cryolib.h"
+#include "cryo/defs.h"
 #include "cryo/eden.h"
+#include "cryo/platdefs.h"
 #include "cryo/sound.h"
 
 namespace Cryo {
@@ -64,17 +64,15 @@ void EdenGame::drawSprite(int16 index, int16 x, int16 y, bool withBlack, bool on
 						if (fill == 0 && !withBlack) {
 							scr += 128 + 1;
 							ww -= 128 + 1;
-						}
-						else {
+						} else {
 							byte runVal;
-							*scr++ = fill;  //TODO: wha?
+							*scr++ = fill; //TODO: wha?
 							*scr++ = fill;
 							ww -= 128 + 1;
 							for (runVal = 127; runVal--;)
 								*scr++ = fill;
 						}
-					}
-					else {
+					} else {
 						byte fill = *pix++;
 						byte runVal = 255 - c + 2;
 						ww -= runVal;
@@ -84,8 +82,7 @@ void EdenGame::drawSprite(int16 index, int16 x, int16 y, bool withBlack, bool on
 							for (; runVal--;)
 								*scr++ = fill;
 					}
-				}
-				else {
+				} else {
 					byte runVal = c + 1;
 					ww -= runVal;
 					for (; runVal--;) {
@@ -99,8 +96,7 @@ void EdenGame::drawSprite(int16 index, int16 x, int16 y, bool withBlack, bool on
 			}
 			scr += width - w;
 		}
-	}
-	else {
+	} else {
 		// uncompressed
 		for (; h--;) {
 			for (int16 ww = w; ww--;) {
@@ -132,7 +128,7 @@ void EdenGame::sundcurs(int16 x, int16 y) {
 void EdenGame::rundcurs() {
 	byte *keep = _cursKeepBuf;
 	byte *scr = _mainViewBuf + _cursKeepPos.x + _cursKeepPos.y * 640;
-	if (!_cursorSaved || (_cursKeepPos == Common::Point(-1, -1)))  //TODO ...
+	if (!_cursorSaved || (_cursKeepPos == Common::Point(-1, -1))) //TODO ...
 		return;
 
 	for (int16 h = 48; h--;) {
@@ -159,7 +155,7 @@ void EdenGame::getglow(int16 x, int16 y, int16 w, int16 h) {
 void EdenGame::unglow() {
 	byte *gl = _glowBuffer;
 	byte *scr = _mainViewBuf + _glowX + _glowY * 640;
-	if (_glowX < 0 || _glowY < 0)   //TODO: move it up
+	if (_glowX < 0 || _glowY < 0) //TODO: move it up
 		return;
 	for (; _glowH--;) {
 		for (int16 ww = _glowW; ww--;)
@@ -197,8 +193,7 @@ void EdenGame::glow(int16 index) {
 	if (x < 0) {
 		dx = -x;
 		x = 0;
-	}
-	else if (x + w > ex)
+	} else if (x + w > ex)
 		dx = x + w - ex;
 	else
 		dx = 0;
@@ -207,8 +202,7 @@ void EdenGame::glow(int16 index) {
 	if (y < 16) {
 		dy = 16 - y;
 		y = 16;
-	}
-	else if (y + h > 175)
+	} else if (y + h > 175)
 		dy = y + h - 175;
 
 	int16 pstride = dx;
@@ -265,7 +259,7 @@ void EdenGame::hideBars() {
 	_underBottomBarScreenRect.left = _underTopBarScreenRect.left;
 	_underBottomBarScreenRect.right = _underTopBarScreenRect.right;
 	CLBlitter_CopyViewRect(_mainView, _underBarsView, &_underBottomBarScreenRect, &_underBottomBarBackupRect);
-	int16 r19 = 14;   // TODO - init in decl?
+	int16 r19 = 14; // TODO - init in decl?
 	int16 r20 = 176;
 	int16 r25 = 14;
 	int16 r24 = 21;
@@ -398,7 +392,7 @@ void EdenGame::displayImage() {
 		int16 h = *pix++;
 		byte mode = *pix++;
 		if (mode != 0xFF && mode != 0xFE)
-			continue;   //TODO: enclosing block?
+			continue; //TODO: enclosing block?
 		if (h1 & 0x80) {
 			// compressed
 			for (; h-- > 0;) {
@@ -410,17 +404,15 @@ void EdenGame::displayImage() {
 							if (fill == 0) {
 								scr += 128 + 1;
 								ww -= 128 + 1;
-							}
-							else {
+							} else {
 								byte runVal;
-								*scr++ = fill;  //TODO: wha?
+								*scr++ = fill; //TODO: wha?
 								*scr++ = fill;
 								ww -= 128 + 1;
 								for (runVal = 127; runVal--;)
 									*scr++ = fill;
 							}
-						}
-						else {
+						} else {
 							byte fill = *pix++;
 							byte runVal = 255 - c + 2;
 							ww -= runVal;
@@ -431,8 +423,7 @@ void EdenGame::displayImage() {
 									*scr++ = fill;
 							}
 						}
-					}
-					else {
+					} else {
 						byte runVal = c + 1;
 						ww -= runVal;
 						for (; runVal--;) {
@@ -446,8 +437,7 @@ void EdenGame::displayImage() {
 				}
 				scr += 640 - w;
 			}
-		}
-		else {
+		} else {
 			// uncompressed
 			for (; h--;) {
 				for (int16 ww = w; ww--;) {
@@ -473,8 +463,7 @@ void EdenGame::displaySubtitles() {
 		if ((_globals->_drawFlags & DrawFlags::drDrawMenu) && _numTextLines == 1)
 			y = 167;
 		dst += 640 * (y - _numTextLines * FONT_HEIGHT) + _subtitlesXScrMargin;
-	}
-	else {
+	} else {
 		y = 174;
 		dst += 640 * (y - _numTextLines * FONT_HEIGHT) + _scrollPos + _subtitlesXScrMargin;
 	}
@@ -503,7 +492,7 @@ void EdenGame::displaySingleRoom(Room *room) {
 		if (index == -1)
 			break;
 		if (index > 0) {
-			int16 x = *ptr++ | (((b1 & 0x2) >> 1) << 8);      //TODO: check me
+			int16 x = *ptr++ | (((b1 & 0x2) >> 1) << 8); //TODO: check me
 			int16 y = *ptr++;
 			ptr++;
 			index &= 0x1FF;
@@ -521,19 +510,16 @@ void EdenGame::displaySingleRoom(Room *room) {
 				if (b0 < 4) {
 					if (_globals->_roomPtr->_exits[b0])
 						addIcon = true;
-				}
-				else if (b0 > 229) {
+				} else if (b0 > 229) {
 					if (_globals->_partyOutside & (1 << (b0 - 230)))
 						addIcon = true;
-				}
-				else if (b0 >= 100) {
+				} else if (b0 >= 100) {
 					debug("add object %d", b0 - 100);
 					if (isObjectHere(b0 - 100)) {
 						addIcon = true;
 						_globals->_varF7 = 1;
 					}
-				}
-				else
+				} else
 					addIcon = true;
 				if (addIcon) {
 					icon->_actionId = b0;
@@ -564,14 +550,11 @@ void EdenGame::displaySingleRoom(Room *room) {
 					icon->ey = ey;
 					_globals->_nextRoomIcon = ++icon;
 					icon->sx = -1;
-				}
-				else
+				} else
 					ptr += 8;
-			}
-			else
+			} else
 				ptr += 8;
-		}
-		else
+		} else
 			ptr += 8;
 	}
 }
@@ -597,11 +580,9 @@ void EdenGame::displayRoom() {
 			displaySingleRoom(room);
 			_globals->_roomBaseX = 320;
 			displaySingleRoom(room + 1);
-		}
-		else
+		} else
 			displaySingleRoom(room);
-	}
-	else {
+	} else {
 		//TODO: roomImgBank is garbage here!
 		debug("displayRoom: room 0x%X using bank %d", _globals->_roomNum, _globals->_roomImgBank);
 		useBank(_globals->_roomImgBank);
@@ -752,9 +733,9 @@ void EdenGame::displayEffect4() {
 		scr += (y + 16) * ww + x;
 		pix = _mainView->_bufferPtr + 16 * 640;
 		r17 = 320 / i;
-		r23 = 320 - 320 / i * i;  //TODO: 320 % i ?
+		r23 = 320 - 320 / i * i; //TODO: 320 % i ?
 		r16 = 160 / i;
-		r18 = 160 - 160 / i * i;  //TODO: 160 % i ?
+		r18 = 160 - 160 / i * i; //TODO: 160 % i ?
 		for (r19 = r16; r19 > 0; r19--) {
 			r24 = scr;
 			r25 = pix;
@@ -853,8 +834,7 @@ void EdenGame::colimacon(int16 pattern[16]) {
 		r25 = p % 4 + p / 4 * 640;
 		r27 = p % 4 + p / 4 * ww;
 		for (int16 j = 0; j < 320 * 160 / 16; j++)
-			scr[j / (320 / 4) * ww * 4 + j % (320 / 4) * 4 + r27] =
-			pix[j / (320 / 4) * 640 * 4 + j % (320 / 4) * 4 + r25];
+			scr[j / (320 / 4) * ww * 4 + j % (320 / 4) * 4 + r27] = pix[j / (320 / 4) * 640 * 4 + j % (320 / 4) * 4 + r25];
 		CLBlitter_UpdateScreen();
 		wait(1);
 	}
@@ -929,7 +909,7 @@ void EdenGame::setDestRect(int16 sx, int16 sy, int16 ex, int16 ey) {
 }
 
 void EdenGame::effetpix() {
-	uint16 r25, r18, r31, r30;  //TODO: change to xx/yy
+	uint16 r25, r18, r31, r30; //TODO: change to xx/yy
 
 	uint16 ww = _vm->_screenView->_pitch;
 	r25 = ww * 80;
@@ -939,7 +919,7 @@ void EdenGame::effetpix() {
 	int y = _mainView->_normal._dstTop;
 	byte *scr = _vm->_screenView->_bufferPtr;
 	scr += (y + 16) * ww + x;
-	int16 r20 = 0x4400;   //TODO
+	int16 r20 = 0x4400; //TODO
 	int16 r27 = 1;
 	int16 r26 = 0;
 	do {
@@ -1007,7 +987,7 @@ void EdenGame::showMovie(char arg1) {
 	_hnmViewBuf = _hnmView->_bufferPtr;
 	if (arg1) {
 		_hnmView->_normal._height = 160;
-		_hnmView->_zoom._height = 320;   //TODO: width??
+		_hnmView->_zoom._height = 320; //TODO: width??
 		_hnmView->_normal._dstTop = _mainView->_normal._dstTop + 16;
 		_hnmView->_zoom._dstTop = _mainView->_zoom._dstTop + 32;
 	}
@@ -1030,8 +1010,7 @@ void EdenGame::showMovie(char arg1) {
 					_mouseHeld = true;
 					_videoCanceledFlag = true;
 				}
-			}
-			else
+			} else
 				_mouseHeld = false;
 		}
 	} while (playing && !_videoCanceledFlag);
@@ -1205,4 +1184,4 @@ void EdenGame::handleHNMSubtitles() {
 		displayHNMSubtitle();
 }
 
-}   // namespace Cryo
+} // namespace Cryo

@@ -24,9 +24,9 @@
 #define LILLIPUT_SCRIPT_H
 
 #include "common/memstream.h"
-#include "common/stack.h"
 #include "common/random.h"
 #include "common/rect.h"
+#include "common/stack.h"
 
 #include "lilliput/stream.h"
 
@@ -54,7 +54,7 @@ enum kValueType {
 };
 
 struct OpCode {
-	const char* _opName;
+	const char *_opName;
 	int _numArgs;
 	kValueType _arg1;
 	kValueType _arg2;
@@ -101,9 +101,10 @@ public:
 
 	void disasmScript(ScriptStream script);
 	void listAllTexts();
-	static Common::String getArgumentString(kValueType type, ScriptStream& script);
+	static Common::String getArgumentString(kValueType type, ScriptStream &script);
 	void runScript(ScriptStream script);
 	void runMenuScript(ScriptStream script);
+
 private:
 	LilliputEngine *_vm;
 
@@ -313,4 +314,3 @@ private:
 } // End of namespace Lilliput
 
 #endif
-

@@ -25,9 +25,8 @@
 
 namespace Audio {
 
-const PCSpeaker::generatorFunc PCSpeaker::generateWave[] =
-	{&PCSpeaker::generateSquare, &PCSpeaker::generateSine,
-	 &PCSpeaker::generateSaw,    &PCSpeaker::generateTriangle};
+const PCSpeaker::generatorFunc PCSpeaker::generateWave[] = { &PCSpeaker::generateSquare, &PCSpeaker::generateSine,
+	                                                           &PCSpeaker::generateSaw, &PCSpeaker::generateTriangle };
 
 PCSpeaker::PCSpeaker(int rate) {
 	_rate = rate;
@@ -106,7 +105,7 @@ int8 PCSpeaker::generateSine(uint32 x, uint32 oscLength) {
 		return 0;
 
 	// TODO: Maybe using a look-up-table would be better?
-	return CLIP<int16>((int16) (128 * sin(2.0 * M_PI * x / oscLength)), -128, 127);
+	return CLIP<int16>((int16)(128 * sin(2.0 * M_PI * x / oscLength)), -128, 127);
 }
 
 int8 PCSpeaker::generateSaw(uint32 x, uint32 oscLength) {
@@ -126,7 +125,6 @@ int8 PCSpeaker::generateTriangle(uint32 x, uint32 oscLength) {
 }
 
 } // End of namespace Audio
-
 
 //	Plugin interface
 //	(This can only create a null driver since pc speaker support is not part of the
@@ -172,13 +170,13 @@ MusicDevices PCjrMusicPlugin::getDevices() const {
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(PCSPK)
-	//REGISTER_PLUGIN_DYNAMIC(PCSPK, PLUGIN_TYPE_MUSIC, PCSpeakerMusicPlugin);
+//REGISTER_PLUGIN_DYNAMIC(PCSPK, PLUGIN_TYPE_MUSIC, PCSpeakerMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(PCSPK, PLUGIN_TYPE_MUSIC, PCSpeakerMusicPlugin);
+REGISTER_PLUGIN_STATIC(PCSPK, PLUGIN_TYPE_MUSIC, PCSpeakerMusicPlugin);
 //#endif
 
 //#if PLUGIN_ENABLED_DYNAMIC(PCJR)
-	//REGISTER_PLUGIN_DYNAMIC(PCJR, PLUGIN_TYPE_MUSIC, PCjrMusicPlugin);
+//REGISTER_PLUGIN_DYNAMIC(PCJR, PLUGIN_TYPE_MUSIC, PCjrMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(PCJR, PLUGIN_TYPE_MUSIC, PCjrMusicPlugin);
+REGISTER_PLUGIN_STATIC(PCJR, PLUGIN_TYPE_MUSIC, PCjrMusicPlugin);
 //#endif

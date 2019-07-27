@@ -23,8 +23,8 @@
 #ifndef PINK_PAGE_H
 #define PINK_PAGE_H
 
-#include "pink/resource_mgr.h"
 #include "pink/objects/module.h"
+#include "pink/resource_mgr.h"
 
 namespace Pink {
 
@@ -55,13 +55,12 @@ public:
 
 	virtual Sequencer *getSequencer() { return nullptr; }
 	virtual WalkMgr *getWalkMgr() { return nullptr; }
-	virtual Module *getModule()  { return nullptr; }
+	virtual Module *getModule() { return nullptr; }
 
 	virtual bool checkValueOfVariable(const Common::String &variable, const Common::String &value) { return 0; }
 	virtual void setVariable(Common::String &variable, Common::String &value) {}
 
 protected:
-
 	Array<Actor *> _actors;
 	ResourceMgr _resMgr;
 	LeadActor *_leadActor;

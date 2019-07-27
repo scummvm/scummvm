@@ -25,7 +25,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CParrotLoser, CGameObject)
-	ON_MESSAGE(LeaveRoomMsg)
+ON_MESSAGE(LeaveRoomMsg)
 END_MESSAGE_MAP()
 
 void CParrotLoser::save(SimpleFile *file, int indent) {

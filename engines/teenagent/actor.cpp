@@ -30,7 +30,10 @@
 
 namespace TeenAgent {
 
-Actor::Actor(TeenAgentEngine *vm) : _vm(vm), headIndex(0), idleType(0) {}
+Actor::Actor(TeenAgentEngine *vm)
+  : _vm(vm)
+  , headIndex(0)
+  , idleType(0) {}
 
 Common::Rect Actor::renderIdle(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int deltaFrame, uint zoom, Common::RandomSource &rnd) {
 	if (index == 0) {
@@ -58,19 +61,49 @@ Common::Rect Actor::renderIdle(Graphics::Surface *surface, const Common::Point &
 }
 
 Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int deltaFrame, bool renderHead, uint zoom) {
-	const uint8 framesLeftRight[] = {0, 1, 2, 3, 4, 5, /* step */ 6, 7, 8, 9};
-	const uint8 framesUp[] = {18, 19, 20, 21, 22, 23, 24, 25, };
-	const uint8 framesDown[] = {10, 11, 12, 13, 14, 15, 16, 17, };
+	const uint8 framesLeftRight[] = { 0, 1, 2, 3, 4, 5, /* step */ 6, 7, 8, 9 };
+	const uint8 framesUp[] = {
+		18,
+		19,
+		20,
+		21,
+		22,
+		23,
+		24,
+		25,
+	};
+	const uint8 framesDown[] = {
+		10,
+		11,
+		12,
+		13,
+		14,
+		15,
+		16,
+		17,
+	};
 
 	const uint8 framesHeadLeftRight[] = {
-		0x27, 0x1a, 0x1b,
-		0x27, 0x1c, 0x1d,
-		0x27, 0x1a,
-		0x27, 0x1e, 0x1f,
-		0x27, 0x1a, 0x1b,
-		0x27, 0x1c,
-		0x27, 0x1e,
-		0x27, 0x1a,
+		0x27,
+		0x1a,
+		0x1b,
+		0x27,
+		0x1c,
+		0x1d,
+		0x27,
+		0x1a,
+		0x27,
+		0x1e,
+		0x1f,
+		0x27,
+		0x1a,
+		0x1b,
+		0x27,
+		0x1c,
+		0x27,
+		0x1e,
+		0x27,
+		0x1a,
 	};
 
 	const uint8 framesHeadUp[] = {

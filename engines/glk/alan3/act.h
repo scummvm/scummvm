@@ -31,7 +31,7 @@
 namespace Glk {
 namespace Alan3 {
 
-extern void action(CONTEXT, int verb, Parameter *parameters, Parameter *multipleMatches);
+	extern void action(CONTEXT, int verb, Parameter *parameters, Parameter *multipleMatches);
 
 } // End of namespace Alan3
 } // End of namespace Glk

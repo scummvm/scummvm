@@ -25,7 +25,6 @@
 
 #include "common/types.h"
 
-
 namespace Util {
 
 struct SerializedDouble {

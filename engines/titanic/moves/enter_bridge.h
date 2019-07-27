@@ -31,11 +31,15 @@ namespace Titanic {
 class CEnterBridge : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
+
 private:
 	bool _flag;
+
 public:
 	CLASSDEF;
-	CEnterBridge() : CGameObject(), _flag(true) {}
+	CEnterBridge()
+	  : CGameObject()
+	  , _flag(true) {}
 
 	/**
 	 * Save the data for the class to file

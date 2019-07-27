@@ -61,12 +61,12 @@
  *
  */
 
+#include "module_mod_xm_s3m.h"
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 #include "common/util.h"
-#include "module_mod_xm_s3m.h"
 
 namespace Modules {
 
@@ -75,23 +75,23 @@ const int ModuleModXmS3m::FP_ONE = 0x8000;
 const int ModuleModXmS3m::FP_MASK = 0x7FFF;
 
 const int ModuleModXmS3m::exp2table[] = {
-		32768, 32946, 33125, 33305, 33486, 33667, 33850, 34034,
-		34219, 34405, 34591, 34779, 34968, 35158, 35349, 35541,
-		35734, 35928, 36123, 36319, 36516, 36715, 36914, 37114,
-		37316, 37518, 37722, 37927, 38133, 38340, 38548, 38757,
-		38968, 39180, 39392, 39606, 39821, 40037, 40255, 40473,
-		40693, 40914, 41136, 41360, 41584, 41810, 42037, 42265,
-		42495, 42726, 42958, 43191, 43425, 43661, 43898, 44137,
-		44376, 44617, 44859, 45103, 45348, 45594, 45842, 46091,
-		46341, 46593, 46846, 47100, 47356, 47613, 47871, 48131,
-		48393, 48655, 48920, 49185, 49452, 49721, 49991, 50262,
-		50535, 50810, 51085, 51363, 51642, 51922, 52204, 52488,
-		52773, 53059, 53347, 53637, 53928, 54221, 54515, 54811,
-		55109, 55408, 55709, 56012, 56316, 56622, 56929, 57238,
-		57549, 57861, 58176, 58491, 58809, 59128, 59449, 59772,
-		60097, 60423, 60751, 61081, 61413, 61746, 62081, 62419,
-		62757, 63098, 63441, 63785, 64132, 64480, 64830, 65182,
-		65536
+	32768, 32946, 33125, 33305, 33486, 33667, 33850, 34034,
+	34219, 34405, 34591, 34779, 34968, 35158, 35349, 35541,
+	35734, 35928, 36123, 36319, 36516, 36715, 36914, 37114,
+	37316, 37518, 37722, 37927, 38133, 38340, 38548, 38757,
+	38968, 39180, 39392, 39606, 39821, 40037, 40255, 40473,
+	40693, 40914, 41136, 41360, 41584, 41810, 42037, 42265,
+	42495, 42726, 42958, 43191, 43425, 43661, 43898, 44137,
+	44376, 44617, 44859, 45103, 45348, 45594, 45842, 46091,
+	46341, 46593, 46846, 47100, 47356, 47613, 47871, 48131,
+	48393, 48655, 48920, 49185, 49452, 49721, 49991, 50262,
+	50535, 50810, 51085, 51363, 51642, 51922, 52204, 52488,
+	52773, 53059, 53347, 53637, 53928, 54221, 54515, 54811,
+	55109, 55408, 55709, 56012, 56316, 56622, 56929, 57238,
+	57549, 57861, 58176, 58491, 58809, 59128, 59449, 59772,
+	60097, 60423, 60751, 61081, 61413, 61746, 62081, 62419,
+	62757, 63098, 63441, 63785, 64132, 64480, 64830, 65182,
+	65536
 };
 
 int ModuleModXmS3m::moduleExp2(int x) {
@@ -190,7 +190,7 @@ ModuleModXmS3m::~ModuleModXmS3m() {
 	// free patterns
 	if (patterns) {
 		for (int i = 0; i < numPatterns; ++i) {
-			delete []patterns[i].notes;
+			delete[] patterns[i].notes;
 		}
 		delete[] patterns;
 		patterns = nullptr;
@@ -257,33 +257,32 @@ bool ModuleModXmS3m::loadMod(Common::SeekableReadStream &st) {
 	byte xx[2];
 	st.read(xx, 2); // first 2 bytes of the signature
 	switch (st.readUint16BE()) {
-		case MKTAG16('K', '.'): /* M.K. */
-			// Fall Through intended
-		case MKTAG16('K', '!'): /* M!K! */
-			// Fall Through intended
-		case MKTAG16('T', '4'): /* FLT4 */
-			// Fall Through intended
-			numChannels = 4;
-			c2Rate = 8287;
-			gain = 64;
-			break;
+	case MKTAG16('K', '.'): /* M.K. */
+		// Fall Through intended
+	case MKTAG16('K', '!'): /* M!K! */
+		// Fall Through intended
+	case MKTAG16('T', '4'): /* FLT4 */
+		// Fall Through intended
+		numChannels = 4;
+		c2Rate = 8287;
+		gain = 64;
+		break;
 
-		case MKTAG16('H', 'N'): /* xCHN */
-			numChannels = xx[0] - '0';
-			c2Rate = 8363;
-			gain = 32;
-			break;
+	case MKTAG16('H', 'N'): /* xCHN */
+		numChannels = xx[0] - '0';
+		c2Rate = 8363;
+		gain = 32;
+		break;
 
-		case MKTAG16('C', 'H'): /* xxCH */
-			numChannels = (xx[0] - '0') * 10 + xx[1] - '0';
-			c2Rate = 8363;
-			gain = 32;
-			break;
+	case MKTAG16('C', 'H'): /* xxCH */
+		numChannels = (xx[0] - '0') * 10 + xx[1] - '0';
+		c2Rate = 8363;
+		gain = 32;
+		break;
 
-		default:
-			warning("No known signature found in micromod module");
-			return false;
-
+	default:
+		warning("No known signature found in micromod module");
+		return false;
 	}
 
 	// default values
@@ -350,13 +349,13 @@ bool ModuleModXmS3m::loadMod(Common::SeekableReadStream &st) {
 			// effect, param
 			byte effect = third & 0x0F;
 			byte param = fourth & 0xff;
-			if(param == 0 && (effect < 3 || effect == 0xA)) {
+			if (param == 0 && (effect < 3 || effect == 0xA)) {
 				effect = 0;
 			}
-			if(param == 0 && (effect == 5 || effect == 6)) {
+			if (param == 0 && (effect == 5 || effect == 6)) {
 				effect -= 2;
 			}
-			if(effect == 8 && numChannels == 4) {
+			if (effect == 8 && numChannels == 4) {
 				effect = param = 0;
 			}
 			patterns[i].notes[idx].effect = effect;
@@ -463,7 +462,7 @@ bool ModuleModXmS3m::loadXm(Common::SeekableReadStream &st) {
 					note.effect = st.readByte();
 					note.param = st.readByte();
 				}
-				if( note.effect >= 0x40 ) {
+				if (note.effect >= 0x40) {
 					note.effect = note.param = 0;
 				}
 			}
@@ -831,7 +830,7 @@ void ModuleModXmS3m::SamplePingPong(Sample &sample) {
 		for (int idx = 0; idx < loopLength; idx++) {
 			newData[loopEnd + idx] = sampleData[loopEnd - idx - 1];
 		}
-		delete []sample.data;
+		delete[] sample.data;
 		sample.data = newData;
 		sample.loopLength *= 2;
 		sample.data[loopStart + sample.loopLength] = sample.data[loopStart];

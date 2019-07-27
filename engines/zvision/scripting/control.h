@@ -43,7 +43,6 @@ class ZVision;
  */
 class Control {
 public:
-
 	enum ControlType {
 		CONTROL_UNKNOW,
 		CONTROL_INPUT,
@@ -58,7 +57,11 @@ public:
 		CONTROL_PAINT
 	};
 
-	Control(ZVision *engine, uint32 key, ControlType type) : _engine(engine), _key(key), _type(type), _venusId(-1) {}
+	Control(ZVision *engine, uint32 key, ControlType type)
+	  : _engine(engine)
+	  , _key(key)
+	  , _type(type)
+	  , _venusId(-1) {}
 	virtual ~Control() {}
 
 	uint32 getKey() {
@@ -133,11 +136,12 @@ protected:
 	int32 _venusId;
 
 	void getParams(const Common::String &inputStr, Common::String &parameter, Common::String &values);
-// Static member functions
+	// Static member functions
 public:
 	static void parseFlatControl(ZVision *engine);
 	static void parsePanoramaControl(ZVision *engine, Common::SeekableReadStream &stream);
 	static void parseTiltControl(ZVision *engine, Common::SeekableReadStream &stream);
+
 private:
 	ControlType _type;
 };

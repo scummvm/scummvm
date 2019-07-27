@@ -30,10 +30,10 @@
 
 #include "common/system.h"
 
+#include "macventure/container.h"
 #include "macventure/macventure.h"
 #include "macventure/script.h"
 #include "macventure/world.h"
-#include "macventure/container.h"
 
 namespace MacVenture {
 
@@ -60,7 +60,7 @@ bool ScriptEngine::runControl(ControlAction action, ObjID source, ObjID destinat
 	frame.haltedInFamily = false;
 	_frames.push_back(frame);
 	debugC(3, kMVDebugScript, "Stored frame %d, action: %d src: %d dest: %d point: (%d, %d)",
-		_frames.size() - 1, frame.action, frame.src, frame.dest, frame.x, frame.y);
+	       _frames.size() - 1, frame.action, frame.src, frame.dest, frame.x, frame.y);
 
 	return resume(true);
 }
@@ -936,8 +936,7 @@ void ScriptEngine::opbaCRAN(EngineState *state, EngineFrame *frame) {
 	int16 hi = state->pop();
 	int16 lo = state->pop();
 	for (uint i = 0; i < frame->saves.size(); i++) {
-		if (frame->saves[i].rank >= lo &&
-			frame->saves[i].rank <= hi) {
+		if (frame->saves[i].rank >= lo && frame->saves[i].rank <= hi) {
 			frame->saves[i].rank = 0;
 		}
 	}
@@ -1221,8 +1220,6 @@ void ScriptEngine::ope7CFIB(EngineState *state, EngineFrame *frame) {
 void ScriptEngine::op00NOOP(byte op) {
 	warning("SCRIPT: Opcode not implemented => %x", op);
 }
-
-
 
 ScriptAsset::ScriptAsset(ObjID id, Container *container) {
 	_id = id;

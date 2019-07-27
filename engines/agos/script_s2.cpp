@@ -20,8 +20,6 @@
  *
  */
 
-
-
 #include "agos/agos.h"
 #include "agos/intern.h"
 #include "agos/midi.h"
@@ -30,7 +28,7 @@
 
 namespace AGOS {
 
-#define OPCODE(x)	_OPCODE(AGOSEngine_Simon2, x)
+#define OPCODE(x) _OPCODE(AGOSEngine_Simon2, x)
 
 void AGOSEngine_Simon2::setupOpcodes() {
 	static const OpcodeEntrySimon2 opcodes[] = {
@@ -281,7 +279,7 @@ void AGOSEngine_Simon2::setupOpcodes() {
 
 void AGOSEngine_Simon2::executeOpcode(int opcode) {
 	OpcodeProcSimon2 op = _opcodesSimon2[opcode].proc;
-	(this->*op) ();
+	(this->*op)();
 }
 
 // -----------------------------------------------------------------------
@@ -408,7 +406,6 @@ void AGOSEngine_Simon2::os2_screenTextPObj() {
 			if (_speech)
 				playSpeech(speechId, vgaSpriteId);
 		}
-
 	}
 
 	if (subObject != NULL && subObject->objectFlags & kOFText && _subtitles) {
@@ -423,11 +420,11 @@ void AGOSEngine_Simon2::os2_screenTextPObj() {
 				k = (j % 10) * 10;
 				k += j / 10;
 				if (!(j % 10))
-					sprintf(buf,"0%d%s", k, stringPtr);
+					sprintf(buf, "0%d%s", k, stringPtr);
 				else
-					sprintf(buf,"%d%s", k, stringPtr);
+					sprintf(buf, "%d%s", k, stringPtr);
 			} else {
-				sprintf(buf,"%d%s", subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)], stringPtr);
+				sprintf(buf, "%d%s", subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)], stringPtr);
 			}
 			stringPtr = buf;
 		}

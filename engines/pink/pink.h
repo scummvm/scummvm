@@ -35,8 +35,8 @@
 
 #include "pink/constants.h"
 #include "pink/file.h"
-#include "pink/utils.h"
 #include "pink/pda_mgr.h"
+#include "pink/utils.h"
 
 /*
  *  This is the namespace of the Pink engine.
@@ -119,13 +119,16 @@ public:
 	void executeMenuCommand(uint id);
 
 	Common::Language getLanguage() const;
-	OrbFile *getOrb()  { return &_orb; }
-	BroFile *getBro()  { return _bro; }
+	OrbFile *getOrb() { return &_orb; }
+	BroFile *getBro() { return _bro; }
 	Common::RandomSource &getRnd() { return _rnd; };
 	Director *getDirector() { return _director; }
 	PDAMgr &getPdaMgr() { return _pdaMgr; }
 
-	void setNextExecutors(const Common::String &nextModule, const Common::String &nextPage) { _nextModule = nextModule; _nextPage = nextPage; }
+	void setNextExecutors(const Common::String &nextModule, const Common::String &nextPage) {
+		_nextModule = nextModule;
+		_nextPage = nextPage;
+	}
 	void setLeadActor(LeadActor *actor) { _actor = actor; };
 	void setCursor(uint cursorIndex);
 
@@ -148,7 +151,7 @@ private:
 	Common::String _nextModule;
 	Common::String _nextPage;
 
-	OrbFile  _orb;
+	OrbFile _orb;
 	BroFile *_bro;
 
 	Graphics::MacMenu *_menu;

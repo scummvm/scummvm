@@ -61,6 +61,7 @@ public:
 	virtual void handleEvent(const Common::Event &);
 
 	void clearState();
+
 protected:
 	virtual void draw(Graphics::ManagedSurface &);
 

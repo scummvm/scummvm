@@ -27,22 +27,22 @@
 #include "image/codecs/svq1_cb.h"
 #include "image/codecs/svq1_vlc.h"
 
-#include "common/stream.h"
 #include "common/bitstream.h"
-#include "common/rect.h"
-#include "common/system.h"
 #include "common/debug.h"
-#include "common/textconsole.h"
 #include "common/huffman.h"
+#include "common/rect.h"
+#include "common/stream.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 
 #include "graphics/yuv_to_rgb.h"
 
 namespace Image {
 
-#define SVQ1_BLOCK_SKIP     0
-#define SVQ1_BLOCK_INTER    1
+#define SVQ1_BLOCK_SKIP 0
+#define SVQ1_BLOCK_INTER 1
 #define SVQ1_BLOCK_INTER_4V 2
-#define SVQ1_BLOCK_INTRA    3
+#define SVQ1_BLOCK_INTRA 3
 
 SVQ1Decoder::SVQ1Decoder(uint16 width, uint16 height) {
 	debug(1, "SVQ1Decoder::SVQ1Decoder(width:%d, height:%d)", width, height);
@@ -89,7 +89,7 @@ SVQ1Decoder::~SVQ1Decoder() {
 	}
 }
 
-#define ALIGN(x, a) (((x)+(a)-1)&~((a)-1))
+#define ALIGN(x, a) (((x) + (a)-1) & ~((a)-1))
 
 const Graphics::Surface *SVQ1Decoder::decodeFrame(Common::SeekableReadStream &stream) {
 	debug(1, "SVQ1Decoder::decodeImage()");
@@ -121,7 +121,7 @@ const Graphics::Surface *SVQ1Decoder::decodeFrame(Common::SeekableReadStream &st
 		if ((frameCode ^ 0x10) >= 0x50) {
 			// Skip embedded string
 			byte stringLen = frameData.getBits(8);
-			for (uint16 i = 0; i < stringLen-1; i++)
+			for (uint16 i = 0; i < stringLen - 1; i++)
 				frameData.skip(8);
 		}
 
@@ -129,12 +129,12 @@ const Graphics::Surface *SVQ1Decoder::decodeFrame(Common::SeekableReadStream &st
 
 		static const struct { uint w, h; } standardFrameSizes[7] = {
 			{ 160, 120 }, // 0
-			{ 128,  96 }, // 1
+			{ 128, 96 }, // 1
 			{ 176, 144 }, // 2
 			{ 352, 288 }, // 3
 			{ 704, 576 }, // 4
 			{ 240, 180 }, // 5
-			{ 320, 240 }  // 6
+			{ 320, 240 } // 6
 		};
 
 		byte frameSizeCode = frameData.getBits(3);
@@ -410,7 +410,7 @@ bool SVQ1Decoder::svq1DecodeBlockNonIntra(Common::BitStream32BEMSB *s, byte *pix
 		// destination address and vector size
 		uint32 *dst = (uint32 *)list[i];
 		int width = 1 << ((level + 4) / 2);
-		int height = 1 << ((level + 3) /  2);
+		int height = 1 << ((level + 3) / 2);
 
 		// get number of stages (-1 skips vector, 0 for mean only)
 		int stages = _interMultistage[level]->getSymbol(*s) - 1;
@@ -452,14 +452,14 @@ bool SVQ1Decoder::svq1DecodeBlockNonIntra(Common::BitStream32BEMSB *s, byte *pix
 
 				// clip to [0..255]
 				if (n1 & 0xFF00FF00) {
-					n3 = ((( n1 >> 15) & 0x00010001) | 0x01000100) - 0x00010001;
+					n3 = (((n1 >> 15) & 0x00010001) | 0x01000100) - 0x00010001;
 					n1 += 0x7F007F00;
 					n1 |= (((~n1 >> 15) & 0x00010001) | 0x01000100) - 0x00010001;
 					n1 &= n3 & 0x00FF00FF;
 				}
 
 				if (n2 & 0xFF00FF00) {
-					n3  = ((( n2 >> 15) & 0x00010001) | 0x01000100) - 0x00010001;
+					n3 = (((n2 >> 15) & 0x00010001) | 0x01000100) - 0x00010001;
 					n2 += 0x7F007F00;
 					n2 |= (((~n2 >> 15) & 0x00010001) | 0x01000100) - 0x00010001;
 					n2 &= n3 & 0x00FF00FF;
@@ -541,7 +541,7 @@ static inline uint32 rndAvg32(uint32 a, uint32 b) {
 }
 
 void SVQ1Decoder::putPixels8L2(byte *dst, const byte *src1, const byte *src2,
-		int dstStride, int srcStride1, int srcStride2, int h) {
+                               int dstStride, int srcStride1, int srcStride2, int h) {
 	for (int i = 0; i < h; i++) {
 		uint32 a = READ_UINT32(&src1[srcStride1 * i]);
 		uint32 b = READ_UINT32(&src2[srcStride2 * i]);
@@ -612,7 +612,7 @@ void SVQ1Decoder::putPixels16XY2C(byte *block, const byte *pixels, int lineSize,
 }
 
 bool SVQ1Decoder::svq1MotionInterBlock(Common::BitStream32BEMSB *ss, byte *current, byte *previous, int pitch,
-		Common::Point *motion, int x, int y) {
+                                       Common::Point *motion, int x, int y) {
 
 	// predict and decode motion vector
 	Common::Point *pmv[3];
@@ -644,7 +644,7 @@ bool SVQ1Decoder::svq1MotionInterBlock(Common::BitStream32BEMSB *ss, byte *curre
 	// Halfpel motion compensation with rounding (a + b + 1) >> 1.
 	// 4 motion compensation functions for the 4 halfpel positions
 	// for 16x16 blocks
-	switch(((mv.y & 1) << 1) + (mv.x & 1)) {
+	switch (((mv.y & 1) << 1) + (mv.x & 1)) {
 	case 0:
 		putPixels16C(dst, src, pitch, 16);
 		break;
@@ -663,7 +663,7 @@ bool SVQ1Decoder::svq1MotionInterBlock(Common::BitStream32BEMSB *ss, byte *curre
 }
 
 bool SVQ1Decoder::svq1MotionInter4vBlock(Common::BitStream32BEMSB *ss, byte *current, byte *previous, int pitch,
-		Common::Point *motion, int x, int y) {
+                                         Common::Point *motion, int x, int y) {
 	// predict and decode motion vector (0)
 	Common::Point *pmv[4];
 	pmv[0] = &motion[0];
@@ -724,7 +724,7 @@ bool SVQ1Decoder::svq1MotionInter4vBlock(Common::BitStream32BEMSB *ss, byte *cur
 		// Halfpel motion compensation with rounding (a + b + 1) >> 1.
 		// 4 motion compensation functions for the 4 halfpel positions
 		// for 8x8 blocks
-		switch(((mvy & 1) << 1) + (mvx & 1)) {
+		switch (((mvy & 1) << 1) + (mvx & 1)) {
 		case 0:
 			putPixels8C(dst, src, pitch, 8);
 			break;
@@ -750,18 +750,13 @@ bool SVQ1Decoder::svq1MotionInter4vBlock(Common::BitStream32BEMSB *ss, byte *cur
 }
 
 bool SVQ1Decoder::svq1DecodeDeltaBlock(Common::BitStream32BEMSB *ss, byte *current, byte *previous, int pitch,
-		Common::Point *motion, int x, int y) {
+                                       Common::Point *motion, int x, int y) {
 	// get block type
 	uint32 blockType = _blockType->getSymbol(*ss);
 
 	// reset motion vectors
 	if (blockType == SVQ1_BLOCK_SKIP || blockType == SVQ1_BLOCK_INTRA) {
-		motion[0].x =
-		motion[0].y =
-		motion[(x / 8) + 2].x =
-		motion[(x / 8) + 2].y =
-		motion[(x / 8) + 3].x =
-		motion[(x / 8) + 3].y = 0;
+		motion[0].x = motion[0].y = motion[(x / 8) + 2].x = motion[(x / 8) + 2].y = motion[(x / 8) + 3].x = motion[(x / 8) + 3].y = 0;
 	}
 
 	bool resultValid = true;

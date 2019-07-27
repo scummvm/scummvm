@@ -27,14 +27,15 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CComputerScreen, CGameObject)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(TimerMsg)
-	ON_MESSAGE(MovementMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(TimerMsg)
+ON_MESSAGE(MovementMsg)
 END_MESSAGE_MAP()
 
-CComputerScreen::CComputerScreen() : CGameObject() {
+CComputerScreen::CComputerScreen()
+  : CGameObject() {
 }
 
 void CComputerScreen::save(SimpleFile *file, int indent) {

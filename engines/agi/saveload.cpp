@@ -25,24 +25,24 @@
 // Multi-slots by Claudio Matsuoka <claudio@helllabs.org>
 //
 
-#include "common/file.h"
 #include "common/config-manager.h"
+#include "common/file.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 
 #include "gui/saveload.h"
 
-#include "graphics/thumbnail.h"
 #include "graphics/surface.h"
+#include "graphics/thumbnail.h"
 
 #include "agi/agi.h"
 #include "agi/graphics.h"
-#include "agi/text.h"
-#include "agi/sprite.h"
 #include "agi/keyboard.h"
 #include "agi/menu.h"
+#include "agi/sprite.h"
 #include "agi/systemui.h"
+#include "agi/text.h"
 #include "agi/words.h"
 
 #define SAVEGAME_CURRENT_VERSION 11
@@ -338,10 +338,10 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 }
 
 int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
-	char  description[SAVEDGAME_DESCRIPTION_LEN + 1];
-	byte  saveVersion = 0;
-	char  loadId[8];
-	int   i, vtEntries = SCREENOBJECTS_MAX;
+	char description[SAVEDGAME_DESCRIPTION_LEN + 1];
+	byte saveVersion = 0;
+	char loadId[8];
+	int i, vtEntries = SCREENOBJECTS_MAX;
 	uint8 t;
 	int16 parm[7];
 	Common::InSaveFile *in;
@@ -379,7 +379,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	debugC(6, kDebugLevelMain | kDebugLevelSavegame, "Description is: %s", description);
 
 	saveVersion = in->readByte();
-	if (saveVersion < 2)    // is the save game pre-ScummVM?
+	if (saveVersion < 2) // is the save game pre-ScummVM?
 		warning("Old save game version (%d, current version is %d). Will try and read anyway, but don't be surprised if bad things happen", saveVersion, SAVEGAME_CURRENT_VERSION);
 
 	if (saveVersion < 3)
@@ -420,7 +420,6 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 
 		for (i = 0; i < 32; i++) {
 			md5[i] = in->readByte();
-
 		}
 		md5[i] = 0; // terminate
 
@@ -465,8 +464,8 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 		// Direct access because otherwise we would trigger an update to these variables according to ScummVM total play time
 		byte playTimeSeconds = _game.vars[VM_VAR_SECONDS];
 		byte playTimeMinutes = _game.vars[VM_VAR_MINUTES];
-		byte playTimeHours   = _game.vars[VM_VAR_HOURS];
-		byte playTimeDays    = _game.vars[VM_VAR_DAYS];
+		byte playTimeHours = _game.vars[VM_VAR_HOURS];
+		byte playTimeDays = _game.vars[VM_VAR_DAYS];
 		uint32 playTime = (playTimeSeconds + (playTimeMinutes * 60) + (playTimeHours * 3600) + (playTimeDays * 86400)) * 1000;
 
 		inGameTimerReset(playTime);
@@ -701,8 +700,8 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 		if (!(_game.dirView[screenObj->currentViewNr].flags & RES_LOADED))
 			agiLoadResource(RESOURCETYPE_VIEW, screenObj->currentViewNr);
 
-		setView(screenObj, screenObj->currentViewNr);   // Fix v->view_data
-		setLoop(screenObj, screenObj->currentLoopNr);   // Fix v->loop_data
+		setView(screenObj, screenObj->currentViewNr); // Fix v->view_data
+		setLoop(screenObj, screenObj->currentLoopNr); // Fix v->loop_data
 		setCel(screenObj, screenObj->currentCelNr); // Fix v->cel_data
 	}
 
@@ -793,7 +792,7 @@ int AgiEngine::doSave(int slot, const Common::String &desc) {
 	// Make sure all graphics was blitted to screen. This fixes bug
 	// #2960567: "AGI: Ego partly erased in Load/Save thumbnails"
 	_gfx->updateScreen();
-//	_gfx->doUpdate();
+	//	_gfx->doUpdate();
 
 	return saveGame(fileName, desc);
 }
@@ -858,7 +857,7 @@ bool AgiEngine::getSavegameInformation(int16 slotId, Common::String &saveDescrip
 	Common::String fileName = getSavegameFilename(slotId);
 	char saveGameDescription[31];
 	int16 curPos = 0;
-	byte  saveVersion = 0;
+	byte saveVersion = 0;
 
 	saveDescription.clear();
 	saveDate = 0;
@@ -1011,7 +1010,6 @@ bool AgiEngine::saveGameDialog() {
 	return false;
 }
 
-
 void AgiEngine::recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
                                      int16 p4, int16 p5, int16 p6, int16 p7) {
 	ImageStackElement pnew;
@@ -1059,7 +1057,7 @@ void AgiEngine::checkQuickLoad() {
 		_sprites->eraseSprites();
 		_sound->stopSound();
 
-		if (loadGame(saveNameBuffer, false) == errOK) {  // Do not check game id
+		if (loadGame(saveNameBuffer, false) == errOK) { // Do not check game id
 			_game.exitAllLogics = true;
 			_menu->itemEnableAll();
 		}

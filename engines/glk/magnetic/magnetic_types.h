@@ -34,32 +34,40 @@ namespace Magnetic {
 #define MAX_POSITIONS 20
 #define MAX_ANIMS 200
 #define MAX_FRAMES 20
-#define MAX_STRING_SIZE  0xFF00
+#define MAX_STRING_SIZE 0xFF00
 #define MAX_PICTURE_SIZE 0xC800
-#define MAX_MUSIC_SIZE   0x4E20
+#define MAX_MUSIC_SIZE 0x4E20
 #define MAX_HITEMS 25
 
-struct lookup {
-	int16 flag;
-	int16 count;
+	struct lookup {
+		int16 flag;
+		int16 count;
 
-	lookup() : flag(0), count(0) {}
-};
+		lookup()
+		  : flag(0)
+		  , count(0) {}
+	};
 
-struct picture {
-	byte * data;
-	uint32 data_size;
-	uint16 width;
-	uint16 height;
-	uint16 wbytes;
-	uint16 plane_step;
-	byte *mask;
+	struct picture {
+		byte *data;
+		uint32 data_size;
+		uint16 width;
+		uint16 height;
+		uint16 wbytes;
+		uint16 plane_step;
+		byte *mask;
 
-	picture() : data(nullptr), data_size(0), width(0), height(0), wbytes(0), plane_step(0),
-		mask(nullptr) {}
-};
+		picture()
+		  : data(nullptr)
+		  , data_size(0)
+		  , width(0)
+		  , height(0)
+		  , wbytes(0)
+		  , plane_step(0)
+		  , mask(nullptr) {}
+	};
 
-/**
+	/**
  * Magnetic animated pictures support
  *
  * Note: Some of the pictures for Wonderland and the Collection Volume 1 games
@@ -96,14 +104,17 @@ struct picture {
  * from a single call to ms_animate() and display each one over the main picture.
  * If your port does not support animations, define NO_ANIMATION.
  */
-struct ms_position {
-	int16 x, y;
-	int16 number;
+	struct ms_position {
+		int16 x, y;
+		int16 number;
 
-	ms_position() : x(0), y(0), number(0) {}
-};
+		ms_position()
+		  : x(0)
+		  , y(0)
+		  , number(0) {}
+	};
 
-/**
+	/**
  * Magnetic Windows hint support
  *
  * The windowed Magnetic Scolls games included online hints. To add support
@@ -118,17 +129,21 @@ struct ms_position {
  * the array which is to be displayed on selection. One hint block has exactly
  * one type. The parent element determines the "back" target.
  */
-struct ms_hint {
-	uint16 elcount;
-	uint16 nodetype;
-	byte *content;
-	uint16 links[MAX_HITEMS];
-	uint16 parent;
+	struct ms_hint {
+		uint16 elcount;
+		uint16 nodetype;
+		byte *content;
+		uint16 links[MAX_HITEMS];
+		uint16 parent;
 
-	ms_hint() : elcount(0), nodetype(0), content(nullptr), parent(0) {
-		Common::fill(&links[0], &links[MAX_HITEMS], 0);
-	}
-};
+		ms_hint()
+		  : elcount(0)
+		  , nodetype(0)
+		  , content(nullptr)
+		  , parent(0) {
+			Common::fill(&links[0], &links[MAX_HITEMS], 0);
+		}
+	};
 
 } // End of namespace Magnetic
 } // End of namespace Glk

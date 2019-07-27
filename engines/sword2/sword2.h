@@ -22,8 +22,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef	SWORD2_SWORD2_H
-#define	SWORD2_SWORD2_H
+#ifndef SWORD2_SWORD2_H
+#define SWORD2_SWORD2_H
 
 #define FRAMES_PER_SECOND 12
 
@@ -37,11 +37,11 @@
 #include "engines/engine.h"
 
 #include "common/events.h"
-#include "common/util.h"
 #include "common/random.h"
+#include "common/util.h"
 
-#define	MAX_starts	100
-#define	MAX_description	100
+#define MAX_starts 100
+#define MAX_description 100
 
 class OSystem;
 
@@ -56,7 +56,7 @@ class OSystem;
 namespace Sword2 {
 
 enum {
-	GF_DEMO	= 1 << 0
+	GF_DEMO = 1 << 0
 };
 
 class MemoryManager;
@@ -70,13 +70,13 @@ class Gui;
 class Debugger;
 
 enum {
-	RD_LEFTBUTTONDOWN		= 0x01,
-	RD_LEFTBUTTONUP			= 0x02,
-	RD_RIGHTBUTTONDOWN		= 0x04,
-	RD_RIGHTBUTTONUP		= 0x08,
-	RD_WHEELUP			= 0x10,
-	RD_WHEELDOWN			= 0x20,
-	RD_KEYDOWN			= 0x40
+	RD_LEFTBUTTONDOWN = 0x01,
+	RD_LEFTBUTTONUP = 0x02,
+	RD_RIGHTBUTTONDOWN = 0x04,
+	RD_RIGHTBUTTONUP = 0x08,
+	RD_WHEELUP = 0x10,
+	RD_WHEELDOWN = 0x20,
+	RD_KEYDOWN = 0x40
 };
 
 struct MouseEvent {
@@ -172,7 +172,7 @@ public:
 	uint32 _features;
 
 	MemoryManager *_memory;
-	ResourceManager	*_resman;
+	ResourceManager *_resman;
 	Sound *_sound;
 	Screen *_screen;
 	Mouse *_mouse;

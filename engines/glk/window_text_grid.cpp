@@ -23,13 +23,14 @@
 #include "glk/window_text_grid.h"
 #include "glk/conf.h"
 #include "glk/glk.h"
-#include "glk/selection.h"
 #include "glk/screen.h"
+#include "glk/selection.h"
 
 namespace Glk {
 
-TextGridWindow::TextGridWindow(Windows *windows, uint rock) : Window(windows, rock),
-		_font(g_conf->_monoInfo) {
+TextGridWindow::TextGridWindow(Windows *windows, uint rock)
+  : Window(windows, rock)
+  , _font(g_conf->_monoInfo) {
 	_type = wintype_TextGrid;
 	_width = _height = 0;
 	_curX = _curY = 0;
@@ -145,7 +146,7 @@ bool TextGridWindow::unputCharUni(uint32 ch) {
 			return 1; // deleted a newline
 		_curX = oldx;
 		_curY = oldy;
-		return 0;    // it wasn't there
+		return 0; // it wasn't there
 	}
 
 	ln = &(_lines[_curY]);
@@ -194,7 +195,7 @@ void TextGridWindow::click(const Point &newPos) {
 	int y = newPos.y - _bbox.top;
 
 	if (_lineRequest || _charRequest || _lineRequestUni || _charRequestUni
-			|| _moreRequest || _scrollRequest)
+	    || _moreRequest || _scrollRequest)
 		_windows->setFocus(this);
 
 	if (_mouseRequest) {
@@ -355,7 +356,6 @@ void TextGridWindow::cancelLineEvent(Event *ev) {
 
 	if (!_lineRequest && !_lineRequestUni)
 		return;
-
 
 	inbuf = _inBuf;
 	inmax = _inMax;
@@ -624,11 +624,12 @@ void TextGridWindow::redraw() {
 
 					for (k = a, o = x; k < b; k++, o += _font._cellW) {
 						screen.drawStringUni(Point(o * GLI_SUBPIX, y + _font._baseLine), font,
-											 fgcolor, Common::U32String(&ln->_chars[k], 1), -1);
+						                     fgcolor, Common::U32String(&ln->_chars[k], 1), -1);
 					}
 					if (link) {
 						screen.fillRect(Rect::fromXYWH(x, y + _font._baseLine + 1, w,
-													   _font._linkStyle), _font._linkColor);
+						                               _font._linkStyle),
+						                _font._linkColor);
 						g_vm->_selection->putHyperlink(link, x, y, x + w, y + _font._leading);
 					}
 
@@ -645,15 +646,14 @@ void TextGridWindow::redraw() {
 			screen.fillRect(Rect::fromXYWH(x, y, w, _font._leading), bgcolor);
 
 			// Draw the caret if necessary
-			if (_windows->getFocusWindow() == this && i == _curY &&
-					(_lineRequest || _lineRequestUni || _charRequest || _charRequestUni)) {
+			if (_windows->getFocusWindow() == this && i == _curY && (_lineRequest || _lineRequestUni || _charRequest || _charRequestUni)) {
 				_font.drawCaret(Point((x0 + _curX * _font._cellW) * GLI_SUBPIX, y + _font._baseLine));
 			}
 
 			// Write out the text
 			for (k = a, o = x; k < b; k++, o += _font._cellW) {
 				screen.drawStringUni(Point(o * GLI_SUBPIX, y + _font._baseLine), font,
-									 fgcolor, Common::U32String(&ln->_chars[k], 1));
+				                     fgcolor, Common::U32String(&ln->_chars[k], 1));
 			}
 			if (link) {
 				screen.fillRect(Rect::fromXYWH(x, y + _font._baseLine + 1, w, _font._linkStyle), _font._linkColor);

@@ -23,15 +23,14 @@
 #ifndef GOB_MULT_H
 #define GOB_MULT_H
 
-#include "gob/video.h"
 #include "gob/variables.h"
+#include "gob/video.h"
 
 namespace Gob {
 
 class Mult {
 public:
-
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 	struct Mult_AnimData {
 		int8 animation;
@@ -65,13 +64,13 @@ public:
 
 	struct Mult_GobState {
 		int16 animation; // .
-		int16 layer;     // |- [0]
+		int16 layer; // |- [0]
 		int16 dataCount; // '
-		int8 sndItem;    // .
-		uint8 sndFrame;  // |
-		int16 freq;      // |- [1+]
-		int8 repCount;   // |
-		uint8 speaker;   // '
+		int8 sndItem; // .
+		uint8 sndFrame; // |
+		int16 freq; // |- [1+]
+		int8 repCount; // |
+		uint8 speaker; // '
 	} PACKED_STRUCT;
 
 	struct Mult_Object {
@@ -213,7 +212,7 @@ public:
 		byte *execPtr;
 	} PACKED_STRUCT;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h" // END STRUCT PACKING
 
 	// Globals
 
@@ -241,7 +240,7 @@ public:
 	void freeMult();
 	void zeroMultData();
 	void playMult(int16 startFrame, int16 endFrame, char checkEscape,
-			char handleMouse);
+	              char handleMouse);
 
 	void clearObjectVideos();
 

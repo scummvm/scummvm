@@ -23,13 +23,13 @@
 #ifndef TSAGE_SOUND_H
 #define TSAGE_SOUND_H
 
-#include "common/scummsys.h"
-#include "common/mutex.h"
-#include "common/queue.h"
 #include "audio/mixer.h"
 #include "common/list.h"
-#include "tsage/saveload.h"
+#include "common/mutex.h"
+#include "common/queue.h"
+#include "common/scummsys.h"
 #include "tsage/core.h"
+#include "tsage/saveload.h"
 
 namespace Audio {
 class QueuingAudioStream;
@@ -55,8 +55,11 @@ struct trackInfoStruct {
 	int _voiceTypes[SOUND_ARR_SIZE];
 };
 
-enum SoundDriverStatus {SNDSTATUS_FAILED = 0, SNDSTATUS_DETECTED = 1, SNDSTATUS_SKIPPED = 2};
-enum VoiceType {VOICETYPE_0 = 0, VOICETYPE_1 = 1};
+enum SoundDriverStatus { SNDSTATUS_FAILED = 0,
+	                       SNDSTATUS_DETECTED = 1,
+	                       SNDSTATUS_SKIPPED = 2 };
+enum VoiceType { VOICETYPE_0 = 0,
+	               VOICETYPE_1 = 1 };
 
 class SoundDriverEntry {
 public:
@@ -77,7 +80,8 @@ struct RegisterValue {
 	uint8 _value;
 
 	RegisterValue(int regNum, int value) {
-		_regNum = regNum; _value = value;
+		_regNum = regNum;
+		_value = value;
 	}
 };
 
@@ -89,6 +93,7 @@ public:
 	uint32 _groupMask;
 	const GroupData *_groupOffset;
 	int _driverResID;
+
 public:
 	SoundDriver();
 	virtual ~SoundDriver() {}
@@ -96,28 +101,28 @@ public:
 	const Common::String &getShortDriverDescription() { return _shortDescription; }
 	const Common::String &getLongDriverDescription() { return _longDescription; }
 
-	virtual bool open() { return true; }						// Method #0
-	virtual void close() {}										// Method #1
-	virtual bool reset() { return true; }						// Method #2
-	virtual const GroupData *getGroupData() { return NULL; }	// Method #3
-	virtual void installPatch(const byte *data, int size) {}	// Method #4
-	virtual void poll() {}										// Method #5
-	virtual void method6() {}									// Method #6
-	virtual int setMasterVolume(int volume) { return 0; }		// Method #7
-	virtual void proc16() {}									// Method #8
-	virtual void proc18(int al, VoiceType voiceType) {}			// Method #9
-	virtual void proc20(int al, VoiceType voiceType) {}			// Method #10
-	virtual void proc22(int al, VoiceType voiceType, int v3) {}	// Method #11
+	virtual bool open() { return true; } // Method #0
+	virtual void close() {} // Method #1
+	virtual bool reset() { return true; } // Method #2
+	virtual const GroupData *getGroupData() { return NULL; } // Method #3
+	virtual void installPatch(const byte *data, int size) {} // Method #4
+	virtual void poll() {} // Method #5
+	virtual void method6() {} // Method #6
+	virtual int setMasterVolume(int volume) { return 0; } // Method #7
+	virtual void proc16() {} // Method #8
+	virtual void proc18(int al, VoiceType voiceType) {} // Method #9
+	virtual void proc20(int al, VoiceType voiceType) {} // Method #10
+	virtual void proc22(int al, VoiceType voiceType, int v3) {} // Method #11
 	virtual void proc24(int channel, int voiceIndex, Sound *sound, int v1, int v2) {}
-	virtual void setProgram(int channel, int program) {}			// Method #13
+	virtual void setProgram(int channel, int program) {} // Method #13
 	virtual void setVolume1(int channel, int v2, int v3, int volume) {}
-	virtual void setPitchBlend(int channel, int pitchBlend) {}		// Method #15
-	virtual void playSound(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1) {}// Method #16
-	virtual void updateVoice(int channel) {}						// Method #17
-	virtual void proc36() {}										// Method #18
-	virtual void proc38(int channel, int cmd, int value) {}			// Method #19
-	virtual void setPitch(int channel, int pitchBlend) {}			// Method #20
-	virtual void proc42(int channel, int cmd, int value, int *v1, int *v2) {}	// Method #21
+	virtual void setPitchBlend(int channel, int pitchBlend) {} // Method #15
+	virtual void playSound(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1) {} // Method #16
+	virtual void updateVoice(int channel) {} // Method #17
+	virtual void proc36() {} // Method #18
+	virtual void proc38(int channel, int cmd, int value) {} // Method #19
+	virtual void setPitch(int channel, int pitchBlend) {} // Method #20
+	virtual void proc42(int channel, int cmd, int value, int *v1, int *v2) {} // Method #21
 };
 
 struct VoiceStructEntryType0 {
@@ -171,6 +176,7 @@ public:
 class SoundManager : public SaveListener {
 private:
 	SoundDriver *instantiateDriver(int driverNum);
+
 public:
 	bool _sndmgrReady;
 	int _ourSndResVersion, _ourDrvResVersion;
@@ -188,6 +194,7 @@ public:
 	bool _needToRethink;
 	// Misc flags
 	bool _soTimeIndexFlag;
+
 public:
 	SoundManager();
 	~SoundManager();
@@ -257,11 +264,12 @@ public:
 	static void sfUpdateVoiceStructs2();
 };
 
-class Sound: public EventHandler {
+class Sound : public EventHandler {
 private:
 	void _prime(int soundResID, bool dontQueue);
 	void _primeBuffer(const byte *soundData);
 	void _unPrime();
+
 public:
 	bool _stoppedAsynchronously;
 	int _soundResID;
@@ -309,6 +317,7 @@ public:
 	bool _primed;
 	bool _isEmpty;
 	byte *_remoteReceiver;
+
 public:
 	Sound();
 	~Sound();
@@ -364,7 +373,7 @@ public:
 	int soFindSound(VoiceTypeStruct *vtStruct, int channelNum);
 };
 
-class ASound: public EventHandler {
+class ASound : public EventHandler {
 public:
 	Sound _sound;
 	EventHandler *_endAction;
@@ -403,7 +412,7 @@ public:
 	void fadeSound(int soundNum);
 };
 
-class ASoundExt: public ASound {
+class ASoundExt : public ASound {
 public:
 	int _soundNum;
 
@@ -416,7 +425,7 @@ public:
 	virtual void signal();
 };
 
-class PlayStream: public EventHandler {
+class PlayStream : public EventHandler {
 	class ResFileData {
 	public:
 		int _fileChunkSize;
@@ -425,6 +434,7 @@ class PlayStream: public EventHandler {
 
 		void load(Common::SeekableReadStream &stream);
 	};
+
 private:
 	Common::File _file;
 	ResFileData _resData;
@@ -435,6 +445,7 @@ private:
 	int _voiceNum;
 
 	static uint32 getFileOffset(const uint16 *data, int count, int voiceNum);
+
 public:
 	PlayStream();
 	virtual ~PlayStream();
@@ -450,7 +461,7 @@ public:
 
 #define ADLIB_CHANNEL_COUNT 9
 
-class AdlibSoundDriver: public SoundDriver {
+class AdlibSoundDriver : public SoundDriver {
 private:
 	GroupData _groupData;
 	Audio::Mixer *_mixer;
@@ -471,7 +482,6 @@ private:
 	int _pitchBlend[ADLIB_CHANNEL_COUNT];
 	int _v4409E[ADLIB_CHANNEL_COUNT];
 
-
 	void write(byte reg, byte value);
 	void flush();
 	void updateChannelVolume(int channel);
@@ -479,6 +489,7 @@ private:
 	void clearVoice(int channel);
 	void updateChannel(int channel);
 	void setFrequency(int channel);
+
 public:
 	AdlibSoundDriver();
 	virtual ~AdlibSoundDriver();
@@ -498,7 +509,7 @@ private:
 	void onTimer();
 };
 
-class SoundBlasterDriver: public SoundDriver {
+class SoundBlasterDriver : public SoundDriver {
 private:
 	GroupData _groupData;
 	Audio::Mixer *_mixer;
@@ -509,6 +520,7 @@ private:
 	byte _masterVolume;
 	byte _channelVolume;
 	const byte *_channelData;
+
 public:
 	SoundBlasterDriver();
 	virtual ~SoundBlasterDriver();
@@ -523,7 +535,6 @@ public:
 	virtual void proc38(int channel, int cmd, int value);
 	virtual void proc42(int channel, int cmd, int value, int *v1, int *v2);
 };
-
 
 } // End of namespace TsAGE
 

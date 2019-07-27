@@ -26,13 +26,13 @@
 #include "common/list.h"
 #include "common/rect.h"
 #include "sherlock/image_file.h"
-#include "sherlock/surface.h"
 #include "sherlock/resources.h"
 #include "sherlock/saveload.h"
+#include "sherlock/surface.h"
 
 namespace Sherlock {
 
-#define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
+#define VGA_COLOR_TRANS(x) ((x)*255 / 63)
 #define BG_GREYSCALE_RANGE_END 229
 #define BLACK 0
 
@@ -45,6 +45,7 @@ private:
 	// Rose Tattoo fields
 	int _fadeBytesRead, _fadeBytesToRead;
 	int _oldFadePercent;
+
 protected:
 	SherlockEngine *_vm;
 	Surface _backBuffer;
@@ -57,6 +58,7 @@ public:
 	byte _tMap[PALETTE_SIZE];
 	bool _flushScreen;
 	Common::Point _currentScroll;
+
 public:
 	static Screen *init(SherlockEngine *vm);
 	Screen(SherlockEngine *vm);
@@ -133,14 +135,14 @@ public:
 	 * new area covered by the shape as well as the old area, which must be restored
 	 */
 	void flushImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, int16 *yp,
-		int16 *width, int16 *height);
+	                int16 *width, int16 *height);
 
 	/**
 	 * Similar to flushImage, this method takes in an extra parameter for the scale proporation,
 	 * which affects the calculated bounds accordingly
 	 */
 	void flushScaleImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, int16 *yp,
-		int16 *width, int16 *height, int scaleVal);
+	                     int16 *width, int16 *height, int scaleVal);
 
 	/**
 	 * Variation of flushImage/flushScaleImage that takes in and updates a rect
@@ -186,7 +188,6 @@ public:
 	 * Draws the given string into the back buffer using the images stored in _font
 	 */
 	virtual void writeString(const Common::String &str, const Common::Point &pt, uint overrideColor);
-
 
 	// Rose Tattoo specific methods
 	void initPaletteFade(int bytesToRead);

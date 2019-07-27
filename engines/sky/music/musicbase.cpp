@@ -21,11 +21,11 @@
  */
 
 #include "sky/music/musicbase.h"
-#include "sky/disk.h"
-#include "common/util.h"
+#include "audio/audiostream.h"
 #include "common/endian.h"
 #include "common/textconsole.h"
-#include "audio/audiostream.h"
+#include "common/util.h"
+#include "sky/disk.h"
 
 namespace Sky {
 
@@ -85,7 +85,7 @@ void MusicBase::stopMusicInternal() {
 
 void MusicBase::updateTempo() {
 	uint16 tempoMul = _musicTempo0 * _musicTempo1;
-	uint16 divisor = 0x4446390/ 23864;
+	uint16 divisor = 0x4446390 / 23864;
 	_tempo = (tempoMul / divisor) << 16;
 	_tempo |= (((tempoMul % divisor) << 16) | (tempoMul / divisor)) / divisor;
 }
@@ -125,12 +125,12 @@ void MusicBase::loadNewMusic() {
 		// not all tracks should loop
 		bool loops = true;
 		if ((section == 0 && song == 1)
-		 || (section == 1 && song == 1) || (section == 1 && song == 4)
-		 || (section == 2 && song == 1) || (section == 2 && song == 4)
-		 || (section == 4 && song == 2) || (section == 4 && song == 3)
-		 || (section == 4 && song == 5) || (section == 4 && song == 6)
-		 || (section == 4 && song == 11) || (section == 5 && song == 1)
-		 || (section == 5 && song == 3) || (section == 5 && song == 4))
+		    || (section == 1 && song == 1) || (section == 1 && song == 4)
+		    || (section == 2 && song == 1) || (section == 2 && song == 4)
+		    || (section == 4 && song == 2) || (section == 4 && song == 3)
+		    || (section == 4 && song == 5) || (section == 4 && song == 6)
+		    || (section == 4 && song == 11) || (section == 5 && song == 1)
+		    || (section == 5 && song == 3) || (section == 5 && song == 4))
 			loops = false;
 		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, Audio::makeLoopingAudioStream(stream, loops ? 0 : 1));
 		return;
@@ -142,7 +142,7 @@ void MusicBase::loadNewMusic() {
 	musicPos = READ_LE_UINT16(_musicData + musicPos) + _musicDataLoc;
 
 	_musicTempo0 = _musicData[musicPos];
-	_musicTempo1 = _musicData[musicPos+1];
+	_musicTempo1 = _musicData[musicPos + 1];
 
 	setupChannels(_musicData + musicPos + 2);
 

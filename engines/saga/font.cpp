@@ -22,16 +22,17 @@
 
 // Font management and font drawing module
 
-#include "saga/saga.h"
-#include "saga/gfx.h"
-#include "saga/resource.h"
-#include "saga/scene.h"
 #include "saga/font.h"
+#include "saga/gfx.h"
 #include "saga/render.h"
+#include "saga/resource.h"
+#include "saga/saga.h"
+#include "saga/scene.h"
 
 namespace Saga {
 
-Font::Font(SagaEngine *vm) : _vm(vm) {
+Font::Font(SagaEngine *vm)
+  : _vm(vm) {
 	int i;
 
 	// Load font module resource context
@@ -44,7 +45,7 @@ Font::Font(SagaEngine *vm) : _vm(vm) {
 		_fonts[i].outline.font = NULL;
 		_fonts[i].normal.font = NULL;
 #endif
-		loadFont(&_fonts[i],	_vm->getFontDescription(i)->fontResourceId);
+		loadFont(&_fonts[i], _vm->getFontDescription(i)->fontResourceId);
 	}
 
 	_fontMapping = 0;
@@ -65,7 +66,6 @@ Font::~Font() {
 	}
 #endif
 }
-
 
 void Font::loadFont(FontData *font, uint32 fontResourceId) {
 	ByteArray fontResourceData;
@@ -93,7 +93,6 @@ void Font::loadFont(FontData *font, uint32 fontResourceId) {
 	font->normal.header.charHeight = readS.readUint16();
 	font->normal.header.charWidth = readS.readUint16();
 	font->normal.header.rowLength = readS.readUint16();
-
 
 	debug(2, "Character width: %d", font->normal.header.charWidth);
 	debug(2, "Character height: %d", font->normal.header.charHeight);
@@ -128,7 +127,7 @@ void Font::loadFont(FontData *font, uint32 fontResourceId) {
 		free(font->normal.font);
 	}
 
-	font->normal.font = (byte *) malloc(fontResourceData.size() - FONT_DESCSIZE);
+	font->normal.font = (byte *)malloc(fontResourceData.size() - FONT_DESCSIZE);
 	memcpy(font->normal.font, fontResourceData.getBuffer() + FONT_DESCSIZE, fontResourceData.size() - FONT_DESCSIZE);
 #endif
 
@@ -179,11 +178,10 @@ void Font::createOutline(FontData *font) {
 		free(font->outline.font);
 	}
 
-	font->outline.font = (byte *) calloc(newRowLength * font->outline.header.charHeight, 1);
+	font->outline.font = (byte *)calloc(newRowLength * font->outline.header.charHeight, 1);
 #else
 	font->outline.font.resize(newRowLength * font->outline.header.charHeight);
 #endif
-
 
 	// Generate outline font representation
 	for (i = 0; i < FONT_CHARCOUNT; i++) {
@@ -233,9 +231,9 @@ void Font::createOutline(FontData *font) {
 
 int Font::translateChar(int charId) {
 	if (charId <= 127 || (_vm->getLanguage() == Common::RU_RUS && charId <= 254))
-		return charId;					// normal character
+		return charId; // normal character
 	else
-		return _charMap[charId - 128];	// extended character
+		return _charMap[charId - 128]; // extended character
 }
 
 // Returns the horizontal length in pixels of the graphical representation
@@ -249,10 +247,9 @@ int Font::getStringWidth(FontId fontId, const char *text, size_t count, FontEffe
 	int ch;
 	const byte *txt;
 
-
 	font = getFont(fontId);
 
-	txt = (const byte *) text;
+	txt = (const byte *)text;
 
 	for (ct = count; *txt && (!count || ct > 0); txt++, ct--) {
 		ch = *txt & 0xFFU;
@@ -269,9 +266,8 @@ int Font::getStringWidth(FontId fontId, const char *text, size_t count, FontEffe
 	return width;
 }
 
-
 void Font::draw(FontId fontId, const char *text, size_t count, const Common::Point &point,
-			   int color, int effectColor, FontEffectFlags flags) {
+                int color, int effectColor, FontEffectFlags flags) {
 	FontData *font;
 	Point offsetPoint(point);
 
@@ -325,7 +321,7 @@ void Font::outFont(const FontStyle &drawFont, const char *text, size_t count, co
 		c_code = *textPointer & 0xFFU;
 
 		// Translate character
-		if (_fontMapping == 0) {	// Check font mapping debug flag
+		if (_fontMapping == 0) { // Check font mapping debug flag
 			// Default game behavior
 
 			// It seems that this font mapping causes problems with non-english
@@ -338,8 +334,8 @@ void Font::outFont(const FontStyle &drawFont, const char *text, size_t count, co
 				} else {
 					// The in-game fonts of the Italian version should not be mapped.
 					// The ones in the intro are hardcoded and should be mapped normally.
-					 if (_vm->_scene->isInIntro())
-						 c_code = translateChar(c_code);
+					if (_vm->_scene->isInIntro())
+						c_code = translateChar(c_code);
 				}
 			}
 		} else if (_fontMapping == 1) {
@@ -409,7 +405,6 @@ void Font::outFont(const FontStyle &drawFont, const char *text, size_t count, co
 	rowLimit = (_vm->_gfx->getBackBufferHeight() < (textPoint.y + drawFont.header.charHeight)) ? _vm->_gfx->getBackBufferHeight() : textPoint.y + drawFont.header.charHeight;
 	_vm->_render->addDirtyRect(Common::Rect(point.x, point.y, textPoint.x, rowLimit));
 }
-
 
 void Font::textDraw(FontId fontId, const char *text, const Common::Point &point, int color, int effectColor, FontEffectFlags flags) {
 	int textWidth;
@@ -641,7 +636,7 @@ void Font::textDrawRect(FontId fontId, const char *text, const Common::Rect &rec
 				textPoint2.x = textPoint.x - (w_total / 2);
 				textPoint2.y = textPoint.y;
 				draw(fontId, startPointer, len_total, textPoint2, color,
-					effectColor, flags);
+				     effectColor, flags);
 				return;
 			}
 			searchPointer = measurePointer + 1;

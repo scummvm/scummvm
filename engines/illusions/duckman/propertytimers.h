@@ -23,9 +23,9 @@
 #ifndef ILLUSIONS_DUCKMAN_PROPERTYTIMERS_H
 #define ILLUSIONS_DUCKMAN_PROPERTYTIMERS_H
 
-#include "illusions/illusions.h"
 #include "common/algorithm.h"
 #include "common/stack.h"
+#include "illusions/illusions.h"
 
 namespace Illusions {
 
@@ -36,7 +36,8 @@ struct PropertyTimer {
 	uint32 _startTime;
 	uint32 _duration;
 	uint32 _endTime;
-	PropertyTimer() : _propertyId(0) {}
+	PropertyTimer()
+	  : _propertyId(0) {}
 };
 
 const uint kPropertyTimersCount = 6;
@@ -45,11 +46,13 @@ class PropertyTimers {
 public:
 	PropertyTimers(IllusionsEngine_Duckman *vm);
 	~PropertyTimers();
+
 private:
 	IllusionsEngine_Duckman *_vm;
 	PropertyTimer _propertyTimers[kPropertyTimersCount];
 	bool _propertyTimersActive;
 	bool _propertyTimersPaused;
+
 public:
 	void addPropertyTimer(uint32 propertyId);
 	void setPropertyTimer(uint32 propertyId, uint32 duration);

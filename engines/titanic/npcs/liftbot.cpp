@@ -26,23 +26,25 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CLiftBot, CTrueTalkNPC)
-	ON_MESSAGE(TextInputMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(EnterRoomMsg)
-	ON_MESSAGE(TrueTalkTriggerActionMsg)
-	ON_MESSAGE(LeaveRoomMsg)
-	ON_MESSAGE(TurnOff)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(TrueTalkGetStateValueMsg)
-	ON_MESSAGE(NPCPlayTalkingAnimationMsg)
-	ON_MESSAGE(ActMsg)
+ON_MESSAGE(TextInputMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(TrueTalkTriggerActionMsg)
+ON_MESSAGE(LeaveRoomMsg)
+ON_MESSAGE(TurnOff)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(TrueTalkGetStateValueMsg)
+ON_MESSAGE(NPCPlayTalkingAnimationMsg)
+ON_MESSAGE(ActMsg)
 END_MESSAGE_MAP()
 
 bool CLiftBot::_flag;
 bool CLiftBot::_enabled;
 
-CLiftBot::CLiftBot() : CTrueTalkNPC(), _field108(1) {
+CLiftBot::CLiftBot()
+  : CTrueTalkNPC()
+  , _field108(1) {
 }
 
 void CLiftBot::save(SimpleFile *file, int indent) {
@@ -159,7 +161,8 @@ bool CLiftBot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 		"Groaning", "Groaning 2", "Talking 1", "Talking 2", "Talking 3",
 		"Happy Talking", "Complaining", "Aggressive", "Explaining",
 		"Happy Talking 2", "Happy Talking 3", "Happy Talking 4"
-		"Confidential", nullptr
+		                                      "Confidential",
+		nullptr
 	};
 
 	if (msg->_value2 == 2)

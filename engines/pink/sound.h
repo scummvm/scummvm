@@ -31,7 +31,7 @@
 #include "pink/constants.h"
 
 namespace Common {
-	class SafeSeekableSubReadStream;
+class SafeSeekableSubReadStream;
 }
 
 namespace Pink {

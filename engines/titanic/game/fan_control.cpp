@@ -26,15 +26,20 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CFanControl, CGameObject)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(StatusChangeMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(TimerMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(TimerMsg)
 END_MESSAGE_MAP()
 
-CFanControl::CFanControl() : CGameObject(), _state(-1), _enabled(false),
-	_starlings(false), _fanOn(false), _starlingsDying(false) {
+CFanControl::CFanControl()
+  : CGameObject()
+  , _state(-1)
+  , _enabled(false)
+  , _starlings(false)
+  , _fanOn(false)
+  , _starlingsDying(false) {
 }
 
 void CFanControl::save(SimpleFile *file, int indent) {

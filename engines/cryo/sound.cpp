@@ -22,12 +22,15 @@
 
 #include "cryo/sound.h"
 #include "audio/audiostream.h"
-#include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "audio/mixer.h"
 
 namespace Cryo {
 
-CSoundChannel::CSoundChannel(Audio::Mixer *mixer, unsigned int sampleRate, bool stereo, bool is16bits) : _mixer(mixer), _sampleRate(sampleRate), _stereo(stereo) {
+CSoundChannel::CSoundChannel(Audio::Mixer *mixer, unsigned int sampleRate, bool stereo, bool is16bits)
+  : _mixer(mixer)
+  , _sampleRate(sampleRate)
+  , _stereo(stereo) {
 	_bufferFlags = is16bits ? (Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_16BITS) : Audio::FLAG_UNSIGNED;
 	if (stereo)
 		_bufferFlags |= Audio::FLAG_STEREO;
@@ -52,7 +55,7 @@ void CSoundChannel::queueBuffer(byte *buffer, unsigned int size, bool playNow, b
 		_audioStream = Audio::makeQueuingAudioStream(_sampleRate, _stereo);
 
 	if (buffering) {
-		byte *localBuffer = (byte*)malloc(size);
+		byte *localBuffer = (byte *)malloc(size);
 		memcpy(localBuffer, buffer, size);
 		_audioStream->queueBuffer(localBuffer, size, DisposeAfterUse::YES, _bufferFlags);
 	} else

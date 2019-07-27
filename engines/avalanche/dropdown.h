@@ -137,11 +137,11 @@ private:
 	static const byte kIndent = 5;
 	static const byte kSpacing = 10;
 
-//	Checkme: Useless constants?
-//	static const Color kMenuFontColor = kColorBlack;
-//	static const Color kHighlightBackgroundColor = kColorBlack;
-//	static const Color kHighlightFontColor = kColorWhite;
-//	static const Color kDisabledColor = kColorDarkgray;
+	//	Checkme: Useless constants?
+	//	static const Color kMenuFontColor = kColorBlack;
+	//	static const Color kHighlightBackgroundColor = kColorBlack;
+	//	static const Color kHighlightFontColor = kColorWhite;
+	//	static const Color kDisabledColor = kColorDarkgray;
 
 	Common::String people;
 	Common::String _verbStr; // what you can do with your object. :-)

@@ -29,8 +29,8 @@
 #include "bladerunner/font.h"
 #include "bladerunner/game_flags.h"
 #include "bladerunner/game_info.h"
-#include "bladerunner/shape.h"
 #include "bladerunner/script/kia_script.h"
+#include "bladerunner/shape.h"
 #include "bladerunner/suspects_database.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/ui/kia.h"
@@ -45,7 +45,8 @@
 
 namespace BladeRunner {
 
-KIASectionSuspects::KIASectionSuspects(BladeRunnerEngine *vm, ActorClues *clues) : KIASectionBase(vm) {
+KIASectionSuspects::KIASectionSuspects(BladeRunnerEngine *vm, ActorClues *clues)
+  : KIASectionBase(vm) {
 	_uiContainer = new UIContainer(_vm);
 	_isOpen = false;
 	_clues = clues;
@@ -53,21 +54,21 @@ KIASectionSuspects::KIASectionSuspects(BladeRunnerEngine *vm, ActorClues *clues)
 	_mouseX = 0;
 	_mouseY = 0;
 
-	_whereaboutsFilter  = true;
-	_MOFilter           = true;
-	_replicantFilter    = true;
+	_whereaboutsFilter = true;
+	_MOFilter = true;
+	_replicantFilter = true;
 	_nonReplicantFilter = true;
-	_othersFilter       = true;
+	_othersFilter = true;
 
 	_buttons = new UIImagePicker(_vm, 4);
 
-	_whereaboutsCheckBox  = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(142, 318, 275, 328), 1, _whereaboutsFilter);
-	_MOCheckBox           = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(142, 328, 275, 338), 1, _MOFilter);
-	_replicantCheckBox    = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(142, 338, 275, 348), 1, _replicantFilter);
+	_whereaboutsCheckBox = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(142, 318, 275, 328), 1, _whereaboutsFilter);
+	_MOCheckBox = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(142, 328, 275, 338), 1, _MOFilter);
+	_replicantCheckBox = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(142, 338, 275, 348), 1, _replicantFilter);
 	_nonReplicantCheckBox = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(142, 348, 275, 358), 1, _nonReplicantFilter);
-	_othersCheckBox       = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(142, 358, 275, 368), 1, _othersFilter);
-	_cluesScrollBox       = new UIScrollBox(_vm, scrollBoxCallback, this,_vm->_gameInfo->getClueCount(), 1, false, Common::Rect(312, 172, 500, 376), Common::Rect(506, 160, 506, 394));
-	_crimesScrollBox      = new UIScrollBox(_vm, scrollBoxCallback, this, 50, 1, false, Common::Rect(154, 258, 291, 298), Common::Rect(120, 249, 120, 297));
+	_othersCheckBox = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(142, 358, 275, 368), 1, _othersFilter);
+	_cluesScrollBox = new UIScrollBox(_vm, scrollBoxCallback, this, _vm->_gameInfo->getClueCount(), 1, false, Common::Rect(312, 172, 500, 376), Common::Rect(506, 160, 506, 394));
+	_crimesScrollBox = new UIScrollBox(_vm, scrollBoxCallback, this, 50, 1, false, Common::Rect(154, 258, 291, 298), Common::Rect(120, 249, 120, 297));
 	_uiContainer->add(_whereaboutsCheckBox);
 	_uiContainer->add(_MOCheckBox);
 	_uiContainer->add(_replicantCheckBox);
@@ -78,7 +79,7 @@ KIASectionSuspects::KIASectionSuspects(BladeRunnerEngine *vm, ActorClues *clues)
 
 	_acquiredClueCount = 0;
 	for (int i = 0; i < kClueCount; ++i) {
-		_acquiredClues[i].clueId  = -1;
+		_acquiredClues[i].clueId = -1;
 		_acquiredClues[i].actorId = -1;
 	}
 
@@ -118,7 +119,7 @@ void KIASectionSuspects::reset() {
 	_crimeSelected = -1;
 	_suspectPhotoShapeId = -1;
 	_suspectPhotoNotUsed = -1;
-	_whereaboutsFilter  = true;
+	_whereaboutsFilter = true;
 	_MOFilter = true;
 	_replicantFilter = true;
 	_nonReplicantFilter = true;
@@ -186,7 +187,7 @@ void KIASectionSuspects::draw(Graphics::Surface &surface) {
 
 	_uiContainer->draw(surface);
 
-	_vm->_mainFont->drawString(&surface, _vm->_textKIA->getText(0),  300, 162, surface.w, surface.format.RGBToColor(232, 240, 248));
+	_vm->_mainFont->drawString(&surface, _vm->_textKIA->getText(0), 300, 162, surface.w, surface.format.RGBToColor(232, 240, 248));
 	_vm->_mainFont->drawString(&surface, _vm->_textKIA->getText(46), 142, 248, surface.w, surface.format.RGBToColor(232, 240, 248));
 	_vm->_mainFont->drawString(&surface, _vm->_textKIA->getText(47), 142, 308, surface.w, surface.format.RGBToColor(232, 240, 248));
 	_vm->_mainFont->drawString(&surface, _vm->_textKIA->getText(14), 154, 319, surface.w, surface.format.RGBToColor(72, 104, 152));
@@ -194,7 +195,6 @@ void KIASectionSuspects::draw(Graphics::Surface &surface) {
 	_vm->_mainFont->drawString(&surface, _vm->_textKIA->getText(16), 154, 339, surface.w, surface.format.RGBToColor(112, 144, 216));
 	_vm->_mainFont->drawString(&surface, _vm->_textKIA->getText(17), 154, 349, surface.w, surface.format.RGBToColor(96, 120, 184));
 	_vm->_mainFont->drawString(&surface, _vm->_textKIA->getText(48), 154, 359, surface.w, surface.format.RGBToColor(72, 104, 152));
-
 
 	surface.fillRect(Common::Rect(120, 134, 250, 145), 0);
 	surface.hLine(120, 133, 250, surface.format.RGBToColor(48, 40, 40));
@@ -264,7 +264,7 @@ void KIASectionSuspects::saveToLog() {
 }
 
 void KIASectionSuspects::loadFromLog() {
-	const int *data = (const int*)_vm->_kia->_log->getCurrentData();
+	const int *data = (const int *)_vm->_kia->_log->getCurrentData();
 	_crimeSelected = data[0];
 	_suspectSelected = data[1];
 	_whereaboutsFilter = data[2];
@@ -289,10 +289,10 @@ const char *KIASectionSuspects::scrambleSuspectsName(const char *name) {
 	char *bufferPtr = buffer;
 	const char *namePtr = name;
 
-	for (int i = 0 ; i < 6; ++i) {
+	for (int i = 0; i < 6; ++i) {
 		if (Common::isAlpha(*namePtr)) {
 			char upper = toupper(*namePtr);
-			if ( upper < 'J' ) {
+			if (upper < 'J') {
 				*bufferPtr++ = upper - 16;
 			} else {
 				*bufferPtr++ = upper - 9;
@@ -407,8 +407,7 @@ void KIASectionSuspects::populateSuspects() {
 	for (int i = 0; i < suspectCount; ++i) {
 		for (int j = 0; j < _acquiredClueCount; ++j) {
 			if (_vm->_crimesDatabase->getCrime(_acquiredClues[j].clueId) != -1
-			 && _vm->_suspectsDatabase->get(i)->hasClue(_acquiredClues[j].clueId)
-			) {
+			    && _vm->_suspectsDatabase->get(i)->hasClue(_acquiredClues[j].clueId)) {
 				if (firstSuspect == -1) {
 					firstSuspect = i;
 				}
@@ -437,7 +436,7 @@ void KIASectionSuspects::populateCrimes() {
 		for (int i = 0; i < (int)_vm->_gameInfo->getCrimeCount(); ++i) {
 			for (int j = 0; j < _acquiredClueCount; ++j) {
 				if (_vm->_crimesDatabase->getCrime(_acquiredClues[j].clueId) == i
-				 && _vm->_suspectsDatabase->get(_suspectSelected)->hasClue(_acquiredClues[j].clueId)) {
+				    && _vm->_suspectsDatabase->get(_suspectSelected)->hasClue(_acquiredClues[j].clueId)) {
 					_crimesScrollBox->addLine(_vm->_textCrimes->getText(i), i + 5, 0);
 					break;
 				}
@@ -502,7 +501,7 @@ void KIASectionSuspects::updateSuspectPhoto() {
 	_suspectPhotoNotUsed = -1;
 	int photoCluesCount = suspect->getPhotoCount();
 	if (photoCluesCount > 0) {
-		for (int i = 0 ; i < photoCluesCount; i++) {
+		for (int i = 0; i < photoCluesCount; i++) {
 			//TODO: weird stuff going on here... original game is using internal clue index instead id
 			if (_clues->isAcquired(suspect->getPhotoClueId(i))) {
 				_suspectPhotoShapeId = suspect->getPhotoShapeId(i);

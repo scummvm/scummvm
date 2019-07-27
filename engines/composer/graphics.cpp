@@ -44,14 +44,17 @@ bool Sprite::contains(const Common::Point &pos) const {
 }
 
 enum {
-	kAnimOpEvent = 1, 
-	kAnimOpPlayWave = 2, 
-	kAnimOpPlayAnim = 3, 
+	kAnimOpEvent = 1,
+	kAnimOpPlayWave = 2,
+	kAnimOpPlayAnim = 3,
 	kAnimOpDrawSprite = 4
 };
 
 Animation::Animation(Common::SeekableReadStream *stream, uint16 id, Common::Point basePos, uint32 eventParam)
-	: _stream(stream), _id(id), _basePos(basePos), _eventParam(eventParam) {
+  : _stream(stream)
+  , _id(id)
+  , _basePos(basePos)
+  , _eventParam(eventParam) {
 	uint32 size = _stream->readUint32LE();
 	_state = _stream->readUint32LE() + 1;
 
@@ -613,8 +616,13 @@ static void decompressSLWM(byte *buffer, Common::SeekableReadStream *stream) {
 	uint16 lastBits = 0;
 	byte currBit;
 	while (true) {
-		if (bitsLeft == 0) { bitsLeft = 16; lastBits = stream->readUint16LE(); }
-		currBit = (lastBits & 1); lastBits >>= 1; bitsLeft--;
+		if (bitsLeft == 0) {
+			bitsLeft = 16;
+			lastBits = stream->readUint16LE();
+		}
+		currBit = (lastBits & 1);
+		lastBits >>= 1;
+		bitsLeft--;
 
 		if (currBit) {
 			// single byte
@@ -622,8 +630,13 @@ static void decompressSLWM(byte *buffer, Common::SeekableReadStream *stream) {
 			continue;
 		}
 
-		if (bitsLeft == 0) { bitsLeft = 16; lastBits = stream->readUint16LE(); }
-		currBit = (lastBits & 1); lastBits >>= 1; bitsLeft--;
+		if (bitsLeft == 0) {
+			bitsLeft = 16;
+			lastBits = stream->readUint16LE();
+		}
+		currBit = (lastBits & 1);
+		lastBits >>= 1;
+		bitsLeft--;
 
 		uint start;
 		uint count;
@@ -642,13 +655,23 @@ static void decompressSLWM(byte *buffer, Common::SeekableReadStream *stream) {
 			// count encoded in the next two bits
 			count = 0;
 
-			if (bitsLeft == 0) { bitsLeft = 16; lastBits = stream->readUint16LE(); }
-			currBit = (lastBits & 1); lastBits >>= 1; bitsLeft--;
+			if (bitsLeft == 0) {
+				bitsLeft = 16;
+				lastBits = stream->readUint16LE();
+			}
+			currBit = (lastBits & 1);
+			lastBits >>= 1;
+			bitsLeft--;
 
 			count = (count << 1) | currBit;
 
-			if (bitsLeft == 0) { bitsLeft = 16; lastBits = stream->readUint16LE(); }
-			currBit = (lastBits & 1); lastBits >>= 1; bitsLeft--;
+			if (bitsLeft == 0) {
+				bitsLeft = 16;
+				lastBits = stream->readUint16LE();
+			}
+			currBit = (lastBits & 1);
+			lastBits >>= 1;
+			bitsLeft--;
 
 			count = (count << 1) | currBit;
 
@@ -680,10 +703,10 @@ void ComposerEngine::decompressBitmap(uint16 type, Common::SeekableReadStream *s
 	case kBitmapUncompressed:
 		if (stream->size() - (uint)stream->pos() != size)
 			error("kBitmapUncompressed stream had %d bytes left, supposed to be %d",
-				stream->size() - (uint)stream->pos(), size);
+			      stream->size() - (uint)stream->pos(), size);
 		if (size != outSize)
 			error("kBitmapUncompressed size %d doesn't match required size %d",
-				size, outSize);
+			      size, outSize);
 		stream->read(buffer, size);
 		break;
 	case kBitmapSpp32:
@@ -699,7 +722,7 @@ void ComposerEngine::decompressBitmap(uint16 type, Common::SeekableReadStream *s
 				size--;
 				if (outSize < count)
 					error("kBitmapSpp32 only needed %d bytes, but got run of %d",
-						outSize, count);
+					      outSize, count);
 				outSize -= count;
 				memset(buffer, lookup[lowBits], count);
 				buffer += count;
@@ -738,13 +761,12 @@ void ComposerEngine::decompressBitmap(uint16 type, Common::SeekableReadStream *s
 			count += 4;
 			// this is often overlapping (for repeating patterns)
 			for (uint i = 0; i < count; i++) {
-				*buffer = *(buffer - step  - 1);
+				*buffer = *(buffer - step - 1);
 				buffer++;
 			}
 		}
 		break;
-	case kBitmapRLESLWM:
-		{
+	case kBitmapRLESLWM: {
 		uint32 bufSize = stream->readUint32LE();
 		byte *tempBuf = new byte[bufSize];
 		decompressSLWM(tempBuf, stream);
@@ -778,8 +800,7 @@ void ComposerEngine::decompressBitmap(uint16 type, Common::SeekableReadStream *s
 			}
 		}
 		delete[] tempBuf;
-		}
-		break;
+	} break;
 	case kBitmapSLWM:
 		decompressSLWM(buffer, stream);
 		break;

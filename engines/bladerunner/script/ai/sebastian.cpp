@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptSebastian::AIScriptSebastian(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptSebastian::AIScriptSebastian(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 	_flag = false;
 }
 
@@ -41,8 +42,7 @@ void AIScriptSebastian::Initialize() {
 
 bool AIScriptSebastian::Update() {
 	if (Actor_Query_Goal_Number(kActorSebastian) < 200
-	 && Global_Variable_Query(kVariableChapter) == 3
-	) {
+	    && Global_Variable_Query(kVariableChapter) == 3) {
 		Actor_Set_Goal_Number(kActorSebastian, 200);
 	}
 
@@ -93,8 +93,7 @@ void AIScriptSebastian::OtherAgentExitedThisScene(int otherActorId) {
 
 void AIScriptSebastian::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
 	if (otherActorId == kActorMcCoy
-	 && combatMode
-	) {
+	    && combatMode) {
 		Global_Variable_Increment(kVariableGunPulledInFrontOfSebastian, 1);
 		Actor_Modify_Friendliness_To_Other(kActorSebastian, kActorMcCoy, -5);
 		AI_Movement_Track_Pause(kActorSebastian);
@@ -351,17 +350,17 @@ bool AIScriptSebastian::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptSebastian::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptSebastian::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptSebastian::ReachedMovementTrackWaypoint(int waypointId) {
@@ -386,8 +385,7 @@ void AIScriptSebastian::dialogue() {
 	}
 
 	if (Actor_Clue_Query(kActorMcCoy, kClueAnsweringMachineMessage)
-	 && Actor_Clue_Query(kActorMcCoy, kClueEnvelope)
-	) {
+	    && Actor_Clue_Query(kActorMcCoy, kClueEnvelope)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(970, -1, 4, -1); // RUNCITER
 	}
 

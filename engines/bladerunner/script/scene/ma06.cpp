@@ -27,8 +27,8 @@ namespace BladeRunner {
 
 // Appears that names for "open" and "close" are switched
 enum kMA06Loops {
-	kMA06LoopDoorOpen  = 0,
-	kMA06LoopMainLoop  = 1,
+	kMA06LoopDoorOpen = 0,
+	kMA06LoopMainLoop = 1,
 	kMA06LoopDoorClose = 3
 };
 
@@ -41,7 +41,7 @@ void SceneScriptMA06::InitializeScene() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 
-	Ambient_Sounds_Add_Looping_Sound(kSfxELEAMB3,  50, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxELEAMB3, 50, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxAPRTFAN1, 33, 0, 1);
 
 	Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kMA06LoopDoorOpen, false);
@@ -64,7 +64,7 @@ void SceneScriptMA06::SceneLoaded() {
 			Actor_Set_At_XYZ(kActorRachael, 30.15f, 0.0f, 45.16f, 350);
 			Actor_Set_Goal_Number(kActorRachael, kGoalRachaelIsInsideMcCoysElevatorAct3);
 		} else if (Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelAtEndOfAct3IfMetWithMcCoy
-			&& Game_Flag_Query(kFlagMA02RajifTalk)) {
+		           && Game_Flag_Query(kFlagMA02RajifTalk)) {
 			// Put Rachael in set for her second cut scene (Act 4)
 			Actor_Put_In_Set(kActorRachael, kSetMA06);
 			Actor_Set_At_XYZ(kActorRachael, 30.15f, 0.0f, 50.16f, 170); // different rotation and slightly different placement
@@ -114,8 +114,7 @@ void SceneScriptMA06::PlayerWalkedIn() {
 		// McCoy + Rachael meetings
 		//
 		if ((Game_Flag_Query(kFlagMA07toMA06) || Game_Flag_Query(kFlagMA01toMA06))
-		     && Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsInsideMcCoysElevatorAct3
-		) {
+		    && Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsInsideMcCoysElevatorAct3) {
 			normalElevatorBusiness = false;
 			// Act 3 Deleted scene (can happen within the elevator or outside the building)
 			// Skip floor panel selection - force go to MCCOY 88F
@@ -125,36 +124,35 @@ void SceneScriptMA06::PlayerWalkedIn() {
 			Ambient_Sounds_Adjust_Looping_Sound(kSfxELEAMB3, 10, 0, 1);
 			Ambient_Sounds_Adjust_Looping_Sound(kSfxAPRTFAN1, 10, 0, 1);
 
-			Actor_Says(kActorAnsweringMachine, 80, 3);     // your floor number please
-			Actor_Says(kActorMcCoy, 2940, 18);             // McCoy: McCoy 88F
-			Game_Flag_Set(kFlagMA06ToMA02);                // to McCoy's Apartment
-			Actor_Says(kActorAnsweringMachine, 90, 3);     // 88 thank you
+			Actor_Says(kActorAnsweringMachine, 80, 3); // your floor number please
+			Actor_Says(kActorMcCoy, 2940, 18); // McCoy: McCoy 88F
+			Game_Flag_Set(kFlagMA06ToMA02); // to McCoy's Apartment
+			Actor_Says(kActorAnsweringMachine, 90, 3); // 88 thank you
 			Actor_Face_Actor(kActorMcCoy, kActorRachael, true);
-			Actor_Says(kActorMcCoy, 2710, 14);             // Excuse me
+			Actor_Says(kActorMcCoy, 2710, 14); // Excuse me
 
-			Actor_Says(kActorMcCoy, 2730, 12);             // RachaelRight
+			Actor_Says(kActorMcCoy, 2730, 12); // RachaelRight
 			AI_Movement_Track_Pause(kActorRachael);
 			Actor_Set_Goal_Number(kActorRachael, kGoalRachaelIsInsideElevatorStartTalkAct3);
 
 			Game_Flag_Reset(kFlagMA01toMA06);
 			Game_Flag_Reset(kFlagMA02toMA06);
 			Game_Flag_Reset(kFlagMA07toMA06);
-			Ambient_Sounds_Adjust_Looping_Sound(kSfxSPINUP1,  0, 0, 1);
+			Ambient_Sounds_Adjust_Looping_Sound(kSfxSPINUP1, 0, 0, 1);
 			Ambient_Sounds_Adjust_Looping_Sound(kSfxAPRTFAN1, 0, 0, 1);
-			Ambient_Sounds_Adjust_Looping_Sound(kSfxELEAMB3,  0, 0, 1);
-			Ambient_Sounds_Remove_Looping_Sound(kSfxSPINUP1,  1);         // stop elev moving sound
-			Ambient_Sounds_Remove_Looping_Sound(kSfxAPRTFAN1, 1);         // stop other ambient
-			Ambient_Sounds_Remove_Looping_Sound(kSfxELEAMB3,  1);         // stop other ambient
-			Actor_Says_With_Pause(kActorRachael, 300, 1.0, 14);  // GoodbyeMcCoy
-			Actor_Says(kActorRachael, 310, 14);                  // Isnt ThisYourFloor --
-			Actor_Says(kActorMcCoy, 2860, 14);                   // YouTakeCareOfYoursel
+			Ambient_Sounds_Adjust_Looping_Sound(kSfxELEAMB3, 0, 0, 1);
+			Ambient_Sounds_Remove_Looping_Sound(kSfxSPINUP1, 1); // stop elev moving sound
+			Ambient_Sounds_Remove_Looping_Sound(kSfxAPRTFAN1, 1); // stop other ambient
+			Ambient_Sounds_Remove_Looping_Sound(kSfxELEAMB3, 1); // stop other ambient
+			Actor_Says_With_Pause(kActorRachael, 300, 1.0, 14); // GoodbyeMcCoy
+			Actor_Says(kActorRachael, 310, 14); // Isnt ThisYourFloor --
+			Actor_Says(kActorMcCoy, 2860, 14); // YouTakeCareOfYoursel
 
 			Set_Enter(kSetMA02_MA04, kSceneMA02);
 			Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kMA06LoopDoorClose, true);
 			Sound_Play(kSfxELDOORO2, 100, 50, 50, 50);
 		} else if (Game_Flag_Query(kFlagMA02toMA06)
-			&& Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsInsideMcCoysElevatorAct4
-		) {
+		           && Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsInsideMcCoysElevatorAct4) {
 			normalElevatorBusiness = false;
 			// Act 4 deleted scene case with Rachael
 			//
@@ -167,21 +165,21 @@ void SceneScriptMA06::PlayerWalkedIn() {
 			Ambient_Sounds_Adjust_Looping_Sound(kSfxELEAMB3, 10, 0, 1);
 			Ambient_Sounds_Adjust_Looping_Sound(kSfxAPRTFAN1, 10, 0, 1);
 
-			Actor_Says(kActorAnsweringMachine, 80, 3);      // your floor number please
+			Actor_Says(kActorAnsweringMachine, 80, 3); // your floor number please
 			Actor_Set_Goal_Number(kActorRachael, kGoalRachaelIsInsideElevatorStartTalkAct4);
 			//
 			Delay(500);
 			Game_Flag_Reset(kFlagMA01toMA06);
 			Game_Flag_Reset(kFlagMA02toMA06);
 			Game_Flag_Reset(kFlagMA07toMA06);
-			Ambient_Sounds_Adjust_Looping_Sound(kSfxSPINUP1,  0, 0, 1);
+			Ambient_Sounds_Adjust_Looping_Sound(kSfxSPINUP1, 0, 0, 1);
 			Ambient_Sounds_Adjust_Looping_Sound(kSfxAPRTFAN1, 0, 0, 1);
-			Ambient_Sounds_Adjust_Looping_Sound(kSfxELEAMB3,  0, 0, 1);
-			Ambient_Sounds_Remove_Looping_Sound(kSfxSPINUP1,  1);         // stop elev moving sound
-			Ambient_Sounds_Remove_Looping_Sound(kSfxAPRTFAN1, 1);         // stop other ambient
-			Ambient_Sounds_Remove_Looping_Sound(kSfxELEAMB3,  1);         // stop other ambient
+			Ambient_Sounds_Adjust_Looping_Sound(kSfxELEAMB3, 0, 0, 1);
+			Ambient_Sounds_Remove_Looping_Sound(kSfxSPINUP1, 1); // stop elev moving sound
+			Ambient_Sounds_Remove_Looping_Sound(kSfxAPRTFAN1, 1); // stop other ambient
+			Ambient_Sounds_Remove_Looping_Sound(kSfxELEAMB3, 1); // stop other ambient
 
-//			Player_Gains_Control();
+			//			Player_Gains_Control();
 			Set_Enter(kSetMA07, kSceneMA07);
 			Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kMA06LoopDoorClose, true);
 			Sound_Play(kSfxELDOORO2, 100, 50, 50, 50);
@@ -223,8 +221,7 @@ void SceneScriptMA06::PlayerWalkedOut() {
 	if (_vm->_cutContent) {
 		if (Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsInsideElevatorStartTalkAct3) {
 			Actor_Set_Goal_Number(kActorRachael, kGoalRachaelAtEndOfAct3IfMetWithMcCoy);
-		}
-		else if (Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsInsideElevatorStartTalkAct4) {
+		} else if (Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsInsideElevatorStartTalkAct4) {
 			Actor_Set_Goal_Number(kActorRachael, kGoalRachaelIsOutsideMcCoysBuildingAct4);
 		}
 	}
@@ -235,15 +232,15 @@ void SceneScriptMA06::DialogueQueueFlushed(int a1) {
 
 bool SceneScriptMA06::isElevatorOnDifferentFloor() {
 	return (Game_Flag_Query(kFlagMA01toMA06) && !Game_Flag_Query(kFlagMA06toMA01))
-		|| (Game_Flag_Query(kFlagMA02toMA06) && !Game_Flag_Query(kFlagMA06ToMA02))
-		|| (Game_Flag_Query(kFlagMA07toMA06) && !Game_Flag_Query(kFlagMA06toMA07));
+	  || (Game_Flag_Query(kFlagMA02toMA06) && !Game_Flag_Query(kFlagMA06ToMA02))
+	  || (Game_Flag_Query(kFlagMA07toMA06) && !Game_Flag_Query(kFlagMA06toMA07));
 }
 
 void SceneScriptMA06::activateElevator() {
 	Game_Flag_Reset(kFlagMA06toMA01);
 	Game_Flag_Reset(kFlagMA06ToMA02);
 	Game_Flag_Reset(kFlagMA06toMA07);
-	
+
 	while (true) {
 		if (Game_Flag_Query(kFlagMA06ToMA02)) {
 			break;
@@ -283,8 +280,7 @@ void SceneScriptMA06::activateElevator() {
 		} else { // floorLevel == 0
 			Actor_Says(kActorMcCoy, 2940, 18);
 			if (Global_Variable_Query(kVariableChapter) == 4
-			 && Game_Flag_Query(kFlagMA02RajifTalk)
-			) {
+			    && Game_Flag_Query(kFlagMA02RajifTalk)) {
 				Sound_Play(kSfxELEBAD1, 100, 0, 0, 50);
 				Delay(500);
 				Actor_Says(kActorAnsweringMachine, 610, kAnimationModeTalk);

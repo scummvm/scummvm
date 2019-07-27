@@ -26,30 +26,30 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/ad/ad_layer.h"
+#include "common/str.h"
 #include "engines/wintermute/ad/ad_scene_node.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_parser.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/platform_osystem.h"
-#include "common/str.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdLayer, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdLayer::AdLayer(BaseGame *inGame) : BaseObject(inGame) {
+AdLayer::AdLayer(BaseGame *inGame)
+  : BaseObject(inGame) {
 	_main = false;
 	_width = _height = 0;
 	_active = true;
 	_closeUp = false;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 AdLayer::~AdLayer() {
@@ -58,7 +58,6 @@ AdLayer::~AdLayer() {
 	}
 	_nodes.clear();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdLayer::loadFile(const char *filename) {
@@ -80,7 +79,6 @@ bool AdLayer::loadFile(const char *filename) {
 
 	return ret;
 }
-
 
 TOKEN_DEF_START
 TOKEN_DEF(LAYER)
@@ -180,14 +178,13 @@ bool AdLayer::loadBuffer(char *buffer, bool complete) {
 				node->setRegion(region);
 				_nodes.add(node);
 			}
-		}
-		break;
+		} break;
 
 		case TOKEN_ENTITY: {
 			AdEntity *entity = new AdEntity(_gameRef);
 			AdSceneNode *node = new AdSceneNode(_gameRef);
 			if (entity) {
-				entity->_zoomable = false;    // scene entites default to NOT zoom
+				entity->_zoomable = false; // scene entites default to NOT zoom
 			}
 			if (!entity || !node || DID_FAIL(entity->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
@@ -199,8 +196,7 @@ bool AdLayer::loadBuffer(char *buffer, bool complete) {
 				node->setEntity(entity);
 				_nodes.add(node);
 			}
-		}
-		break;
+		} break;
 
 		case TOKEN_EDITOR_SELECTED:
 			parser.scanStr(params, "%b", &_editorSelected);
@@ -227,7 +223,6 @@ bool AdLayer::loadBuffer(char *buffer, bool complete) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
 //////////////////////////////////////////////////////////////////////////
@@ -244,8 +239,7 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			node = val->getInt();
 		} else { // get by name
 			for (uint32 i = 0; i < _nodes.size(); i++) {
-				if ((_nodes[i]->_type == OBJECT_ENTITY && scumm_stricmp(_nodes[i]->_entity->getName(), val->getString()) == 0) ||
-				        (_nodes[i]->_type == OBJECT_REGION && scumm_stricmp(_nodes[i]->_region->getName(), val->getString()) == 0)) {
+				if ((_nodes[i]->_type == OBJECT_ENTITY && scumm_stricmp(_nodes[i]->_entity->getName(), val->getString()) == 0) || (_nodes[i]->_type == OBJECT_REGION && scumm_stricmp(_nodes[i]->_region->getName(), val->getString()) == 0)) {
 					node = i;
 					break;
 				}
@@ -374,7 +368,6 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *AdLayer::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
@@ -438,7 +431,6 @@ ScValue *AdLayer::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdLayer::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
@@ -495,12 +487,10 @@ bool AdLayer::scSetProperty(const char *name, ScValue *value) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 const char *AdLayer::scToString() {
 	return "[layer]";
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdLayer::saveAsText(BaseDynamicBuffer *buffer, int indent) {
@@ -544,7 +534,6 @@ bool AdLayer::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdLayer::persist(BasePersistenceManager *persistMgr) {

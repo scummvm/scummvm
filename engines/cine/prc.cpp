@@ -20,15 +20,13 @@
  *
  */
 
-
+#include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/events.h"
-#include "common/config-manager.h"
-#include "common/system.h"	// for g_system->getEventManager()
+#include "common/system.h" // for g_system->getEventManager()
 
 #include "cine/cine.h"
 #include "cine/various.h"
-
 
 namespace Cine {
 
@@ -58,8 +56,7 @@ bool loadPrc(const char *pPrcName) {
 	}
 
 	checkDataDisk(-1);
-	if ((g_cine->getGameType() == Cine::GType_FW) &&
-		(!scumm_stricmp(pPrcName, BOOT_PRC_NAME) || !scumm_stricmp(pPrcName, "demo.prc"))) {
+	if ((g_cine->getGameType() == Cine::GType_FW) && (!scumm_stricmp(pPrcName, BOOT_PRC_NAME) || !scumm_stricmp(pPrcName, "demo.prc"))) {
 		scriptPtr = dataPtr = readFile(pPrcName, (g_cine->getFeatures() & GF_CRYPTED_BOOT_PRC) != 0);
 	} else {
 		scriptPtr = dataPtr = readBundleFile(findFileInBundle(pPrcName));

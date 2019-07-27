@@ -26,26 +26,27 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/base_parser.h"
-#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_frame.h"
-#include "engines/wintermute/base/base_object.h"
+#include "common/str.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
-#include "engines/wintermute/base/sound/base_sound_manager.h"
-#include "engines/wintermute/base/sound/base_sound.h"
+#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_object.h"
+#include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_sub_frame.h"
-#include "engines/wintermute/platform_osystem.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
-#include "common/str.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/base/sound/base_sound.h"
+#include "engines/wintermute/base/sound/base_sound_manager.h"
+#include "engines/wintermute/platform_osystem.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseFrame, false)
 
 //////////////////////////////////////////////////////////////////////
-BaseFrame::BaseFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
+BaseFrame::BaseFrame(BaseGame *inGame)
+  : BaseScriptable(inGame, true) {
 	_delay = 0;
 	_moveX = _moveY = 0;
 
@@ -55,7 +56,6 @@ BaseFrame::BaseFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
 	_editorExpanded = false;
 	_keyframe = false;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 BaseFrame::~BaseFrame() {
@@ -73,7 +73,6 @@ BaseFrame::~BaseFrame() {
 	}
 	_applyEvent.clear();
 }
-
 
 //////////////////////////////////////////////////////////////////////
 bool BaseFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, bool allFrames, float rotate, Graphics::TSpriteBlendMode blendMode) {
@@ -93,7 +92,6 @@ void BaseFrame::stopSound() {
 		_sound->stop();
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFrame::oneTimeDisplay(BaseObject *owner, bool muted) {
@@ -115,8 +113,6 @@ bool BaseFrame::oneTimeDisplay(BaseObject *owner, bool muted) {
 	}
 	return STATUS_OK;
 }
-
-
 
 TOKEN_DEF_START
 TOKEN_DEF(DELAY)
@@ -255,8 +251,7 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 			} else {
 				_subframes.add(subframe);
 			}
-		}
-		break;
+		} break;
 
 		case TOKEN_SOUND: {
 			if (_sound) {
@@ -271,15 +266,13 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 				delete _sound;
 				_sound = nullptr;
 			}
-		}
-		break;
+		} break;
 
 		case TOKEN_APPLY_EVENT: {
 			char *event = new char[strlen(params) + 1];
 			strcpy(event, params);
 			_applyEvent.add(event);
-		}
-		break;
+		} break;
 
 		case TOKEN_KEYFRAME:
 			parser.scanStr(params, "%b", &_keyframe);
@@ -303,7 +296,6 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 		BaseEngine::LOG(0, "Error loading FRAME definition");
 		return STATUS_FAILED;
 	}
-
 
 	BaseSubFrame *sub = new BaseSubFrame(_gameRef);
 	if (surface_file != nullptr) {
@@ -339,13 +331,11 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 	sub->_mirrorX = mirrorX;
 	sub->_mirrorY = mirrorY;
 
-
 	sub->_editorSelected = editorSelected;
 	_subframes.insert_at(0, sub);
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float scaleY) {
@@ -362,8 +352,6 @@ bool BaseFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float 
 	}
 	return true;
 }
-
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFrame::saveAsText(BaseDynamicBuffer *buffer, int indent) {
@@ -402,12 +390,10 @@ bool BaseFrame::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 	BaseClass::saveAsText(buffer, indent + 2);
 
-
 	buffer->putTextIndent(indent, "}\n\n");
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFrame::persist(BasePersistenceManager *persistMgr) {
@@ -425,7 +411,6 @@ bool BaseFrame::persist(BasePersistenceManager *persistMgr) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
@@ -623,7 +608,6 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *BaseFrame::scGetProperty(const Common::String &name) {
 	if (!_scValue) {
@@ -705,7 +689,6 @@ ScValue *BaseFrame::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseFrame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
@@ -757,7 +740,6 @@ bool BaseFrame::scSetProperty(const char *name, ScValue *value) {
 		}
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 const char *BaseFrame::scToString() {

@@ -26,17 +26,22 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CHammerDispensorButton, CStartAction)
-	ON_MESSAGE(PuzzleSolvedMsg)
-	ON_MESSAGE(MouseButtonUpMsg)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(FrameMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(PuzzleSolvedMsg)
+ON_MESSAGE(MouseButtonUpMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(FrameMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(EnterViewMsg)
 END_MESSAGE_MAP()
 
-CHammerDispensorButton::CHammerDispensorButton() : CStartAction(),
-	_active(false), _open(false), _hitCounter(0), _btnPos(Point(56, 6)),
-	_perch(nullptr), _hammerTaken(0) {
+CHammerDispensorButton::CHammerDispensorButton()
+  : CStartAction()
+  , _active(false)
+  , _open(false)
+  , _hitCounter(0)
+  , _btnPos(Point(56, 6))
+  , _perch(nullptr)
+  , _hammerTaken(0) {
 }
 
 void CHammerDispensorButton::save(SimpleFile *file, int indent) {

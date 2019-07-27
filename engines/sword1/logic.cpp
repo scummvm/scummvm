@@ -21,22 +21,22 @@
  */
 
 #include "common/endian.h"
-#include "common/util.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "common/util.h"
 
-#include "sword1/logic.h"
-#include "sword1/text.h"
-#include "sword1/sound.h"
+#include "sword1/animation.h"
 #include "sword1/eventman.h"
+#include "sword1/logic.h"
 #include "sword1/menu.h"
+#include "sword1/mouse.h"
+#include "sword1/music.h"
 #include "sword1/router.h"
 #include "sword1/screen.h"
-#include "sword1/mouse.h"
+#include "sword1/sound.h"
 #include "sword1/sword1.h"
-#include "sword1/music.h"
 #include "sword1/swordres.h"
-#include "sword1/animation.h"
+#include "sword1/text.h"
 
 #include "sword1/debug.h"
 
@@ -45,13 +45,13 @@
 namespace Sword1 {
 
 #define MAX_STACK_SIZE 10
-#define SCRIPT_VERSION  13
+#define SCRIPT_VERSION 13
 #define LAST_FRAME 999
 
 uint32 Logic::_scriptVars[NUM_SCRIPT_VARS];
 
 Logic::Logic(SwordEngine *vm, ObjectMan *pObjMan, ResMan *resMan, Screen *pScreen, Mouse *pMouse, Sound *pSound, Music *pMusic, Menu *pMenu, OSystem *system, Audio::Mixer *mixer)
-	: _rnd("sword1") {
+  : _rnd("sword1") {
 
 	_vm = vm;
 	_objMan = pObjMan;
@@ -170,7 +170,6 @@ void Logic::engine() {
 		}
 	}
 	//_collision->checkCollisions();
-
 }
 
 void Logic::processLogic(Object *compact, uint32 id) {
@@ -293,38 +292,35 @@ int Logic::logicArAnimate(Object *compact, uint32 id) {
 	compact->o_status |= STAT_SHRINK;
 	route = compact->o_route;
 
-	walkPc            = compact->o_walk_pc;
-	compact->o_frame  = route[walkPc].frame;
-	compact->o_dir    = route[walkPc].dir;
+	walkPc = compact->o_walk_pc;
+	compact->o_frame = route[walkPc].frame;
+	compact->o_dir = route[walkPc].dir;
 	compact->o_xcoord = route[walkPc].x;
 	compact->o_ycoord = route[walkPc].y;
 	compact->o_anim_x = compact->o_xcoord;
 	compact->o_anim_y = compact->o_ycoord;
 
-	if (((_scriptVars[GEORGE_WALKING] == 2) && (walkPc > 5) && (id == PLAYER) &&
-	        (route[walkPc - 1].step == 5) && (route[walkPc].step == 0)) ||
-	        ((_scriptVars[GEORGE_WALKING] == 3) && (id == PLAYER))) {
+	if (((_scriptVars[GEORGE_WALKING] == 2) && (walkPc > 5) && (id == PLAYER) && (route[walkPc - 1].step == 5) && (route[walkPc].step == 0)) || ((_scriptVars[GEORGE_WALKING] == 3) && (id == PLAYER))) {
 
-		compact->o_frame = 96 + compact->o_dir;                     //reset
-		if ((compact->o_dir != 2) && (compact->o_dir != 6)) {  // on verticals and diagonals stand where george is
+		compact->o_frame = 96 + compact->o_dir; //reset
+		if ((compact->o_dir != 2) && (compact->o_dir != 6)) { // on verticals and diagonals stand where george is
 			compact->o_xcoord = route[walkPc - 1].x;
 			compact->o_ycoord = route[walkPc - 1].y;
 			compact->o_anim_x = compact->o_xcoord;
 			compact->o_anim_y = compact->o_ycoord;
 		}
 		compact->o_logic = LOGIC_script;
-		compact->o_down_flag = 0;       //0 means error
+		compact->o_down_flag = 0; //0 means error
 		_scriptVars[GEORGE_WALKING] = 0;
-		route[compact->o_walk_pc + 1].frame = 512;                  //end of sequence
+		route[compact->o_walk_pc + 1].frame = 512; //end of sequence
 		if (_scriptVars[MEGA_ON_GRID] == 2)
 			_scriptVars[MEGA_ON_GRID] = 0;
 	}
 	compact->o_walk_pc++;
 
-	if (route[compact->o_walk_pc].frame == 512) {                   //end of sequence
+	if (route[compact->o_walk_pc].frame == 512) { //end of sequence
 		compact->o_logic = LOGIC_script;
-		if (((_scriptVars[GEORGE_WALKING] == 2) || (_scriptVars[GEORGE_WALKING] == 1)) &&
-		        (id == PLAYER)) {
+		if (((_scriptVars[GEORGE_WALKING] == 2) || (_scriptVars[GEORGE_WALKING] == 1)) && (id == PLAYER)) {
 			_scriptVars[GEORGE_WALKING] = 0;
 			if (_scriptVars[MEGA_ON_GRID] == 2)
 				_scriptVars[MEGA_ON_GRID] = 0;
@@ -365,8 +361,7 @@ int Logic::speechDriver(Object *compact) {
 		animData += 4;
 		compact->o_anim_pc++; // go to next frame of anim
 
-		if (_speechFinished || (compact->o_anim_pc >= numFrames) ||
-		        (_speechRunning && (_sound->amISpeaking() == 0)))
+		if (_speechFinished || (compact->o_anim_pc >= numFrames) || (_speechRunning && (_sound->amISpeaking() == 0)))
 			compact->o_anim_pc = 0; //set to frame 0, closed mouth
 
 		AnimUnit *animPtr = (AnimUnit *)(animData + sizeof(AnimUnit) * compact->o_anim_pc);
@@ -497,12 +492,18 @@ int Logic::interpretScript(Object *compact, int id, Header *scriptModule, int sc
 			mCodeNumber = scriptCode[pc++];
 			mCodeArguments = scriptCode[pc++];
 			switch (mCodeArguments) {
-			case 6: f = stack[--stackIdx]; // fall through
-			case 5: e = stack[--stackIdx]; // fall through
-			case 4: d = stack[--stackIdx]; // fall through
-			case 3: c = stack[--stackIdx]; // fall through
-			case 2: b = stack[--stackIdx]; // fall through
-			case 1: a = stack[--stackIdx]; // fall through
+			case 6:
+				f = stack[--stackIdx]; // fall through
+			case 5:
+				e = stack[--stackIdx]; // fall through
+			case 4:
+				d = stack[--stackIdx]; // fall through
+			case 3:
+				c = stack[--stackIdx]; // fall through
+			case 2:
+				b = stack[--stackIdx]; // fall through
+			case 1:
+				a = stack[--stackIdx]; // fall through
 			case 0:
 				Debug::callMCode(mCodeNumber, mCodeArguments, a, b, c, d, e, f);
 				mCodeReturn = (this->*_mcodeTable[mCodeNumber])(compact, id, a, b, c, d, e, f);
@@ -553,7 +554,7 @@ int Logic::interpretScript(Object *compact, int id, Header *scriptModule, int sc
 			debug(9, "IT_ANDAND: RESULT = %d", stack[stackIdx - 1] && stack[stackIdx]);
 			stack[stackIdx - 1] = (stack[stackIdx - 1] && stack[stackIdx]);
 			break;
-		case IT_OROR:           // ||
+		case IT_OROR: // ||
 			stackIdx--;
 			debug(9, "IT_OROR: RESULT = %d", stack[stackIdx - 1] || stack[stackIdx]);
 			stack[stackIdx - 1] = (stack[stackIdx - 1] || stack[stackIdx]);
@@ -608,7 +609,7 @@ int Logic::interpretScript(Object *compact, int id, Header *scriptModule, int sc
 		case IT_SCRIPTEND:
 			debug(9, "IT_SCRIPTEND");
 			return 0;
-		case IT_POPVAR:         // pop a variable
+		case IT_POPVAR: // pop a variable
 			debug(9, "IT_POPVAR: ScriptVars[%d] = %d", scriptCode[pc], stack[stackIdx - 1]);
 			varNum = scriptCode[pc++];
 			if (SwordEngine::_systemVars.isDemo && SwordEngine::isWindows()) {
@@ -640,7 +641,7 @@ int Logic::interpretScript(Object *compact, int id, Header *scriptModule, int sc
 			debug(9, "IT_SKIP: %d", scriptCode[pc]);
 			pc += scriptCode[pc];
 			break;
-		case IT_SWITCH:         // The mega switch statement
+		case IT_SWITCH: // The mega switch statement
 			debug(9, "IT_SWITCH: [SORRY, NO DEBUG INFO]");
 			{
 				int switchValue = stack[--stackIdx];
@@ -658,7 +659,7 @@ int Logic::interpretScript(Object *compact, int id, Header *scriptModule, int sc
 					pc += scriptCode[pc];
 			}
 			break;
-		case IT_SKIPONTRUE:     // skip if expression true
+		case IT_SKIPONTRUE: // skip if expression true
 			debug(9, "IT_SKIPONTRUE: %d (%s)", scriptCode[pc], (stack[stackIdx - 1] ? "IS TRUE (SKIPPED)" : "IS FALSE (NOT SKIPPED)"));
 			stackIdx--;
 			if (stack[stackIdx])
@@ -685,7 +686,7 @@ int Logic::interpretScript(Object *compact, int id, Header *scriptModule, int sc
 			break;
 		default:
 			error("Invalid operator %d", scriptCode[pc - 1]);
-			return 0;   // for compilers that don't support NORETURN
+			return 0; // for compilers that don't support NORETURN
 		}
 	}
 }
@@ -863,7 +864,7 @@ int Logic::fnAnim(Object *cpt, int32 id, int32 cdt, int32 spr, int32 e, int32 f,
 
 int Logic::fnSetFrame(Object *cpt, int32 id, int32 cdt, int32 spr, int32 frameNo, int32 f, int32 z, int32 x) {
 
-	AnimUnit   *animPtr;
+	AnimUnit *animPtr;
 
 	uint8 *data = (uint8 *)_resMan->openFetchRes(cdt);
 	data += sizeof(Header);
@@ -1109,7 +1110,7 @@ int Logic::fnISpeak(Object *cpt, int32 id, int32 cdt, int32 textNo, int32 spr, i
 	_speechClickDelay = 3;
 	if (((textNo & ~1) == 0x3f0012) && (!cdt) && (!spr)) {
 		cdt = GEOSTDLCDT; // workaround for missing animation when examining
-		spr = GEOSTDL;    // the conductor on the train roof
+		spr = GEOSTDL; // the conductor on the train roof
 	}
 	cpt->o_logic = LOGIC_speech;
 
@@ -1160,7 +1161,7 @@ int Logic::fnISpeak(Object *cpt, int32 id, int32 cdt, int32 textNo, int32 spr, i
 		textCpt->o_target = textCptId;
 
 		// the graphic is a property of Text, so we don't lock/unlock it.
-		uint16 textSpriteWidth  = _resMan->getUint16(_textMan->giveSpriteData(textCpt->o_target)->width);
+		uint16 textSpriteWidth = _resMan->getUint16(_textMan->giveSpriteData(textCpt->o_target)->width);
 		uint16 textSpriteHeight = _resMan->getUint16(_textMan->giveSpriteData(textCpt->o_target)->height);
 
 		cpt->o_text_id = textCptId;
@@ -1184,9 +1185,9 @@ int Logic::fnISpeak(Object *cpt, int32 id, int32 cdt, int32 textNo, int32 spr, i
 		}
 		// now ensure text is within visible screen
 		uint16 textLeftMargin, textRightMargin, textTopMargin, textBottomMargin;
-		textLeftMargin   = SCREEN_LEFT_EDGE   + TEXT_MARGIN + _scriptVars[SCROLL_OFFSET_X];
-		textRightMargin  = SCREEN_RIGHT_EDGE  - TEXT_MARGIN + _scriptVars[SCROLL_OFFSET_X] - textSpriteWidth;
-		textTopMargin    = SCREEN_TOP_EDGE    + TEXT_MARGIN + _scriptVars[SCROLL_OFFSET_Y];
+		textLeftMargin = SCREEN_LEFT_EDGE + TEXT_MARGIN + _scriptVars[SCROLL_OFFSET_X];
+		textRightMargin = SCREEN_RIGHT_EDGE - TEXT_MARGIN + _scriptVars[SCROLL_OFFSET_X] - textSpriteWidth;
+		textTopMargin = SCREEN_TOP_EDGE + TEXT_MARGIN + _scriptVars[SCROLL_OFFSET_Y];
 		textBottomMargin = SCREEN_BOTTOM_EDGE - TEXT_MARGIN + _scriptVars[SCROLL_OFFSET_Y] - textSpriteHeight;
 
 		textCpt->o_anim_x = textCpt->o_xcoord = CLIP<uint16>(textX, textLeftMargin, textRightMargin);
@@ -1413,9 +1414,7 @@ int Logic::fnWalk(Object *cpt, int32 id, int32 x, int32 y, int32 dir, int32 stan
 		if ((id == GEORGE) && (_mouse->testEvent() == MOUSE_BOTH_BUTTONS)) {
 			int32 target = _scriptVars[CLICK_ID];
 			// exceptions: compacts that use hand pointers but are not actually exits
-			if ((target != LEFT_SCROLL_POINTER) && (target != RIGHT_SCROLL_POINTER) &&
-			        (target != FLOOR_63) && (target != ROOF_63) && (target != GUARD_ROOF_63) &&
-			        (target != LEFT_TREE_POINTER_71) && (target != RIGHT_TREE_POINTER_71)) {
+			if ((target != LEFT_SCROLL_POINTER) && (target != RIGHT_SCROLL_POINTER) && (target != FLOOR_63) && (target != ROOF_63) && (target != GUARD_ROOF_63) && (target != LEFT_TREE_POINTER_71) && (target != RIGHT_TREE_POINTER_71)) {
 
 				target = _objMan->fetchObject(_scriptVars[CLICK_ID])->o_mouse_on;
 				if ((target >= SCR_exit0) && (target <= SCR_exit9)) {
@@ -1440,12 +1439,12 @@ int Logic::fnTurn(Object *cpt, int32 id, int32 dir, int32 stance, int32 c, int32
 	int route = _router->routeFinder(id, cpt, cpt->o_xcoord, cpt->o_ycoord, dir);
 
 	if (route)
-		cpt->o_down_flag = 1;       //1 means ok
+		cpt->o_down_flag = 1; //1 means ok
 	else
-		cpt->o_down_flag = 0;       //0 means error
+		cpt->o_down_flag = 0; //0 means error
 
 	cpt->o_logic = LOGIC_AR_animate;
-	cpt->o_walk_pc = 0;                     //reset
+	cpt->o_walk_pc = 0; //reset
 
 	return SCRIPT_STOP;
 }
@@ -1542,10 +1541,10 @@ int Logic::fnRandom(Object *compact, int32 id, int32 min, int32 max, int32 e, in
 int Logic::fnGetPos(Object *cpt, int32 id, int32 targetId, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	Object *target = _objMan->fetchObject(targetId);
 	if ((target->o_type == TYPE_MEGA) || (target->o_type == TYPE_PLAYER)) {
-		_scriptVars[RETURN_VALUE]   = target->o_xcoord;
+		_scriptVars[RETURN_VALUE] = target->o_xcoord;
 		_scriptVars[RETURN_VALUE_2] = target->o_ycoord;
 	} else {
-		_scriptVars[RETURN_VALUE]   = (target->o_mouse_x1 + target->o_mouse_x2) / 2;
+		_scriptVars[RETURN_VALUE] = (target->o_mouse_x1 + target->o_mouse_x2) / 2;
 		_scriptVars[RETURN_VALUE_2] = target->o_mouse_y2;
 	}
 	_scriptVars[RETURN_VALUE_3] = target->o_dir;
@@ -1748,9 +1747,9 @@ void Logic::runStartScript(const uint8 *data) {
 			data += 6;
 			break;
 		case opcGeorge:
-			_scriptVars[CHANGE_X]     = READ_LE_UINT16(data + 0);
-			_scriptVars[CHANGE_Y]     = READ_LE_UINT16(data + 2);
-			_scriptVars[CHANGE_DIR]   = data[4];
+			_scriptVars[CHANGE_X] = READ_LE_UINT16(data + 0);
+			_scriptVars[CHANGE_Y] = READ_LE_UINT16(data + 2);
+			_scriptVars[CHANGE_DIR] = data[4];
 			_scriptVars[CHANGE_PLACE] = READ_LE_UINT24(data + 5);
 			data += 8;
 			break;
@@ -1785,28 +1784,13 @@ void Logic::startPositions(uint32 pos) {
 	if (pos == 0)
 		pos = 1;
 	Object *compact = _objMan->fetchObject(PLAYER);
-	fnEnterSection(compact, PLAYER, pos, 0, 0, 0, 0, 0);    // (automatically opens the compact resource for that section)
+	fnEnterSection(compact, PLAYER, pos, 0, 0, 0, 0, 0); // (automatically opens the compact resource for that section)
 	SwordEngine::_systemVars.controlPanelMode = CP_NORMAL;
 	SwordEngine::_systemVars.wantFade = true;
 }
 
 const uint32 Logic::_scriptVarInit[NON_ZERO_SCRIPT_VARS][2] = {
-	{  42,  448}, {  43,  378}, {  51,    1}, {  92,    1}, { 147,   71}, { 201,   1},
-	{ 209,    1}, { 215,    1}, { 242,    2}, { 244,    1}, { 246,    3}, { 247,   1},
-	{ 253,    1}, { 297,    1}, { 398,    1}, { 508,    1}, { 605,    1}, { 606,   1},
-	{ 701,    1}, { 709,    1}, { 773,    1}, { 843,    1}, { 907,    1}, { 923,   1},
-	{ 966,    1}, { 988,    2}, {1058,    1}, {1059,    2}, {1060,    3}, {1061,   4},
-	{1062,    5}, {1063,    6}, {1064,    7}, {1065,    8}, {1066,    9}, {1067,  10},
-	{1068,   11}, {1069,   12}, {1070,   13}, {1071,   14}, {1072,   15}, {1073,  16},
-	{1074,   17}, {1075,   18}, {1076,   19}, {1077,   20}, {1078,   21}, {1079,  22},
-	{1080,   23}, {1081,   24}, {1082,   25}, {1083,   26}, {1084,   27}, {1085,  28},
-	{1086,   29}, {1087,   30}, {1088,   31}, {1089,   32}, {1090,   33}, {1091,  34},
-	{1092,   35}, {1093,   36}, {1094,   37}, {1095,   38}, {1096,   39}, {1097,  40},
-	{1098,   41}, {1099,   42}, {1100,   43}, {1101,   44}, {1102,   48}, {1103,  45},
-	{1104,   47}, {1105,   49}, {1106,   50}, {1107,   52}, {1108,   54}, {1109,  56},
-	{1110,   57}, {1111,   58}, {1112,   59}, {1113,   60}, {1114,   61}, {1115,  62},
-	{1116,   63}, {1117,   64}, {1118,   65}, {1119,   66}, {1120,   67}, {1121,  68},
-	{1122,   69}, {1123,   71}, {1124,   72}, {1125,   73}, {1126,   74}
+	{ 42, 448 }, { 43, 378 }, { 51, 1 }, { 92, 1 }, { 147, 71 }, { 201, 1 }, { 209, 1 }, { 215, 1 }, { 242, 2 }, { 244, 1 }, { 246, 3 }, { 247, 1 }, { 253, 1 }, { 297, 1 }, { 398, 1 }, { 508, 1 }, { 605, 1 }, { 606, 1 }, { 701, 1 }, { 709, 1 }, { 773, 1 }, { 843, 1 }, { 907, 1 }, { 923, 1 }, { 966, 1 }, { 988, 2 }, { 1058, 1 }, { 1059, 2 }, { 1060, 3 }, { 1061, 4 }, { 1062, 5 }, { 1063, 6 }, { 1064, 7 }, { 1065, 8 }, { 1066, 9 }, { 1067, 10 }, { 1068, 11 }, { 1069, 12 }, { 1070, 13 }, { 1071, 14 }, { 1072, 15 }, { 1073, 16 }, { 1074, 17 }, { 1075, 18 }, { 1076, 19 }, { 1077, 20 }, { 1078, 21 }, { 1079, 22 }, { 1080, 23 }, { 1081, 24 }, { 1082, 25 }, { 1083, 26 }, { 1084, 27 }, { 1085, 28 }, { 1086, 29 }, { 1087, 30 }, { 1088, 31 }, { 1089, 32 }, { 1090, 33 }, { 1091, 34 }, { 1092, 35 }, { 1093, 36 }, { 1094, 37 }, { 1095, 38 }, { 1096, 39 }, { 1097, 40 }, { 1098, 41 }, { 1099, 42 }, { 1100, 43 }, { 1101, 44 }, { 1102, 48 }, { 1103, 45 }, { 1104, 47 }, { 1105, 49 }, { 1106, 50 }, { 1107, 52 }, { 1108, 54 }, { 1109, 56 }, { 1110, 57 }, { 1111, 58 }, { 1112, 59 }, { 1113, 60 }, { 1114, 61 }, { 1115, 62 }, { 1116, 63 }, { 1117, 64 }, { 1118, 65 }, { 1119, 66 }, { 1120, 67 }, { 1121, 68 }, { 1122, 69 }, { 1123, 71 }, { 1124, 72 }, { 1125, 73 }, { 1126, 74 }
 };
 
 } // End of namespace Sword1

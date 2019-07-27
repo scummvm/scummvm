@@ -31,7 +31,8 @@
 
 namespace Common {
 
-template<class T> class Array;
+template <class T>
+class Array;
 class SeekableReadStream;
 
 /**
@@ -68,6 +69,7 @@ public:
 
 	/** Returns true if the resources is empty */
 	bool empty() const { return _sections.empty(); }
+
 private:
 	struct Section {
 		uint32 virtualAddress;
@@ -88,8 +90,8 @@ private:
 	};
 
 	typedef HashMap<WinResourceID, Resource, WinResourceID_Hash, WinResourceID_EqualTo> LangMap;
-	typedef HashMap<WinResourceID,  LangMap, WinResourceID_Hash, WinResourceID_EqualTo> NameMap;
-	typedef HashMap<WinResourceID,  NameMap, WinResourceID_Hash, WinResourceID_EqualTo> TypeMap;
+	typedef HashMap<WinResourceID, LangMap, WinResourceID_Hash, WinResourceID_EqualTo> NameMap;
+	typedef HashMap<WinResourceID, NameMap, WinResourceID_Hash, WinResourceID_EqualTo> TypeMap;
 
 	TypeMap _resources;
 };

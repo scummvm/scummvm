@@ -28,16 +28,23 @@
 namespace Titanic {
 
 enum Quadrant {
-	Q_CENTER = 0, Q_LEFT, Q_RIGHT, Q_TOP, Q_BOTTOM
+	Q_CENTER = 0,
+	Q_LEFT,
+	Q_RIGHT,
+	Q_TOP,
+	Q_BOTTOM
 };
 
 typedef Common::Point Point;
 
 class Rect : public Common::Rect {
 public:
-	Rect() : Common::Rect() {}
-	Rect(int16 w, int16 h) : Common::Rect(w, h) {}
-	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : Common::Rect(x1, y1, x2, y2) {}
+	Rect()
+	  : Common::Rect() {}
+	Rect(int16 w, int16 h)
+	  : Common::Rect(w, h) {}
+	Rect(int16 x1, int16 y1, int16 x2, int16 y2)
+	  : Common::Rect(x1, y1, x2, y2) {}
 
 	/**
 	 * Returns the top/left corner of the rect as a point

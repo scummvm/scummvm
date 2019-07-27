@@ -60,7 +60,8 @@ private:
 };
 
 class TownsMidiPart {
-friend class MidiDriver_FMTowns;
+	friend class MidiDriver_FMTowns;
+
 public:
 	TownsMidiPart(MidiDriver_FMTowns *driver, uint8 id);
 	~TownsMidiPart() {}
@@ -94,8 +95,9 @@ private:
 };
 
 class MidiDriver_FMTowns : public MidiDriver, public TownsAudioInterfacePluginDriver {
-friend class TownsChannel;
-friend class TownsMidiPart;
+	friend class TownsChannel;
+	friend class TownsMidiPart;
+
 public:
 	MidiDriver_FMTowns(Audio::Mixer *mixer, SciVersion version);
 	~MidiDriver_FMTowns();
@@ -160,7 +162,15 @@ private:
 	MidiDriver_FMTowns *_townsDriver;
 };
 
-TownsChannel::TownsChannel(MidiDriver_FMTowns *driver, uint8 id) : _drv(driver), _id(id), _assign(0xff), _note(0xff), _velo(0), _sustain(0), _duration(0), _program(0xff) {
+TownsChannel::TownsChannel(MidiDriver_FMTowns *driver, uint8 id)
+  : _drv(driver)
+  , _id(id)
+  , _assign(0xff)
+  , _note(0xff)
+  , _velo(0)
+  , _sustain(0)
+  , _duration(0)
+  , _program(0xff) {
 }
 
 void TownsChannel::noteOn(uint8 note, uint8 velo) {
@@ -202,7 +212,15 @@ void TownsChannel::updateDuration() {
 		_duration++;
 }
 
-TownsMidiPart::TownsMidiPart(MidiDriver_FMTowns *driver, uint8 id) : _drv(driver), _id(id), _program(0), _volume(0x3f), _sustain(0), _chanMissing(0), _pitchBend(0x2000), _outChan(0) {
+TownsMidiPart::TownsMidiPart(MidiDriver_FMTowns *driver, uint8 id)
+  : _drv(driver)
+  , _id(id)
+  , _program(0)
+  , _volume(0x3f)
+  , _sustain(0)
+  , _chanMissing(0)
+  , _pitchBend(0x2000)
+  , _outChan(0) {
 }
 
 void TownsMidiPart::noteOff(uint8 note) {
@@ -370,7 +388,7 @@ int TownsMidiPart::allocateChannel() {
 	int ld = 0;
 	bool found = false;
 
-	for (bool loop = true; loop; ) {
+	for (bool loop = true; loop;) {
 		if (++chan == 6)
 			chan = 0;
 
@@ -402,12 +420,20 @@ int TownsMidiPart::allocateChannel() {
 	return chan;
 }
 
-MidiDriver_FMTowns::MidiDriver_FMTowns(Audio::Mixer *mixer, SciVersion version) : _version(version), _timerProc(0), _timerProcPara(0), _baseTempo(10080), _ready(false), _isOpen(false), _masterVolume(0x0f), _soundOn(true) {
+MidiDriver_FMTowns::MidiDriver_FMTowns(Audio::Mixer *mixer, SciVersion version)
+  : _version(version)
+  , _timerProc(0)
+  , _timerProcPara(0)
+  , _baseTempo(10080)
+  , _ready(false)
+  , _isOpen(false)
+  , _masterVolume(0x0f)
+  , _soundOn(true) {
 	_intf = new TownsAudioInterface(mixer, this, true);
-	_out = new TownsChannel*[6];
+	_out = new TownsChannel *[6];
 	for (int i = 0; i < 6; i++)
 		_out[i] = new TownsChannel(this, i);
-	_parts = new TownsMidiPart*[16];
+	_parts = new TownsMidiPart *[16];
 	for (int i = 0; i < 16; i++)
 		_parts[i] = new TownsMidiPart(this, i);
 }
@@ -526,7 +552,7 @@ void MidiDriver_FMTowns::send(uint32 b) {
 }
 
 uint32 MidiDriver_FMTowns::property(int prop, uint32 param) {
-	switch(prop) {
+	switch (prop) {
 	case MIDI_PROP_MASTER_VOLUME:
 		if (param != 0xffff) {
 			_masterVolume = param;
@@ -611,7 +637,8 @@ void MidiDriver_FMTowns::updateChannels() {
 		_out[i]->updateDuration();
 }
 
-MidiPlayer_FMTowns::MidiPlayer_FMTowns(SciVersion version) : MidiPlayer(version) {
+MidiPlayer_FMTowns::MidiPlayer_FMTowns(SciVersion version)
+  : MidiPlayer(version) {
 	_driver = _townsDriver = new MidiDriver_FMTowns(g_system->getMixer(), version);
 }
 
@@ -656,4 +683,3 @@ MidiPlayer *MidiPlayer_FMTowns_create(SciVersion _soundVersion) {
 }
 
 } // End of namespace Sci
-

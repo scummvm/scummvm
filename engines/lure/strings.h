@@ -34,8 +34,10 @@ public:
 	uint32 _sequence;
 	char _ascii;
 
-	CharacterEntry(uint8 numBits, uint32 sequence, char ascii): _numBits(numBits),
-		_sequence(sequence), _ascii(ascii) {}
+	CharacterEntry(uint8 numBits, uint32 sequence, char ascii)
+	  : _numBits(numBits)
+	  , _sequence(sequence)
+	  , _ascii(ascii) {}
 };
 
 #define MAX_NUM_CHARS 218
@@ -54,13 +56,14 @@ private:
 	bool initPosition(uint16 stringId);
 	char readCharacter();
 	byte readBit();
+
 public:
 	StringData();
 	~StringData();
 	static StringData &getReference();
 
 	void getString(uint16 stringId, char *dest, const char *hotspotName, const char *characterName,
-		int hotspotArticle = 0, int characterArticle = 0);
+	               int hotspotArticle = 0, int characterArticle = 0);
 	void getString(uint16 stringId, char *dest) {
 		getString(stringId, dest, NULL, NULL);
 	}

@@ -31,9 +31,11 @@ namespace Titanic {
 class CDoorbotElevatorHandler : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool EnterNodeMsg(CEnterNodeMsg *msg);
+
 private:
 	bool _called;
 	int _value;
+
 public:
 	CLASSDEF;
 

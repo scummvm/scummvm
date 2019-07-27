@@ -44,12 +44,12 @@ class View;
 class ZBuffer;
 
 enum VQADecoderSkipFlags {
-	kVQAReadCodebook           = 1,
+	kVQAReadCodebook = 1,
 	kVQAReadVectorPointerTable = 2,
-	kVQAReadCustom             = 4,
-	kVQAReadVideo              = kVQAReadCodebook|kVQAReadVectorPointerTable|kVQAReadCustom,
-	kVQAReadAudio              = 8,
-	kVQAReadAll                = kVQAReadVideo|kVQAReadAudio
+	kVQAReadCustom = 4,
+	kVQAReadVideo = kVQAReadCodebook | kVQAReadVectorPointerTable | kVQAReadCustom,
+	kVQAReadAudio = 8,
+	kVQAReadAll = kVQAReadVideo | kVQAReadAudio
 };
 
 class VQADecoder {
@@ -63,75 +63,77 @@ public:
 
 	void readFrame(int frame, uint readFlags = kVQAReadAll);
 
-	void                        decodeVideoFrame(Graphics::Surface *surface, int frame, bool forceDraw = false);
-	void                        decodeZBuffer(ZBuffer *zbuffer);
+	void decodeVideoFrame(Graphics::Surface *surface, int frame, bool forceDraw = false);
+	void decodeZBuffer(ZBuffer *zbuffer);
 	Audio::SeekableAudioStream *decodeAudioFrame();
-	void                        decodeView(View *view);
-	void                        decodeScreenEffects(ScreenEffects *aesc);
-	void                        decodeLights(Lights *lights);
+	void decodeView(View *view);
+	void decodeScreenEffects(ScreenEffects *aesc);
+	void decodeLights(Lights *lights);
 
 	uint16 numFrames() const { return _header.numFrames; }
-	uint8  frameRate() const { return _header.frameRate; }
+	uint8 frameRate() const { return _header.frameRate; }
 
 	uint16 offsetX() const { return _header.offsetX; }
 	uint16 offsetY() const { return _header.offsetY; }
 
-	bool   hasAudio() const { return _header.channels != 0; }
+	bool hasAudio() const { return _header.channels != 0; }
 	uint16 frequency() const { return _header.freq; }
 
 	bool getLoopBeginAndEndFrame(int loop, int *begin, int *end);
 
 	struct Header {
-		uint16 version;     // 0x00
-		uint16 flags;       // 0x02
-		uint16 numFrames;   // 0x04
-		uint16 width;       // 0x06
-		uint16 height;      // 0x08
-		uint8  blockW;      // 0x0A
-		uint8  blockH;      // 0x0B
-		uint8  frameRate;   // 0x0C
-		uint8  cbParts;     // 0x0D
-		uint16 colors;      // 0x0E
-		uint16 maxBlocks;   // 0x10
-		uint16 offsetX;     // 0x12
-		uint16 offsetY;     // 0x14
+		uint16 version; // 0x00
+		uint16 flags; // 0x02
+		uint16 numFrames; // 0x04
+		uint16 width; // 0x06
+		uint16 height; // 0x08
+		uint8 blockW; // 0x0A
+		uint8 blockH; // 0x0B
+		uint8 frameRate; // 0x0C
+		uint8 cbParts; // 0x0D
+		uint16 colors; // 0x0E
+		uint16 maxBlocks; // 0x10
+		uint16 offsetX; // 0x12
+		uint16 offsetY; // 0x14
 		uint16 maxVPTRSize; // 0x16
-		uint16 freq;        // 0x18
-		uint8  channels;    // 0x1A
-		uint8  bits;        // 0x1B
-		uint32 unk3;        // 0x1C
-		uint16 unk4;        // 0x20
+		uint16 freq; // 0x18
+		uint8 channels; // 0x1A
+		uint8 bits; // 0x1B
+		uint32 unk3; // 0x1C
+		uint16 unk4; // 0x20
 		uint32 maxCBFZSize; // 0x22
-		uint32 unk5;        // 0x26
-		                    // 0x2A
+		uint32 unk5; // 0x26
+		  // 0x2A
 	};
 
 	struct Loop {
-		uint16         begin;
-		uint16         end;
+		uint16 begin;
+		uint16 end;
 		Common::String name;
 
-		Loop() :
-			begin(0),
-			end(0)
-		{}
+		Loop()
+		  : begin(0)
+		  , end(0) {}
 	};
 
 	struct LoopInfo {
-		uint16  loopCount;
-		uint32  flags;
-		Loop   *loops;
+		uint16 loopCount;
+		uint32 flags;
+		Loop *loops;
 
-		LoopInfo() : loopCount(0), loops(nullptr), flags(0) {}
+		LoopInfo()
+		  : loopCount(0)
+		  , loops(nullptr)
+		  , flags(0) {}
 		~LoopInfo() {
 			delete[] loops;
 		}
 	};
 
 	struct CodebookInfo {
-		uint16  frame;
-		uint32  size;
-		uint8  *data;
+		uint16 frame;
+		uint32 size;
+		uint8 *data;
 	};
 
 	class VQAVideoTrack;
@@ -139,18 +141,18 @@ public:
 
 	Common::SeekableReadStream *_s;
 
-	Header   _header;
-	int      _readingFrame;
-	int      _decodingFrame;
+	Header _header;
+	int _readingFrame;
+	int _decodingFrame;
 	LoopInfo _loopInfo;
 
 	Common::Array<CodebookInfo> _codebooks;
 
-	uint32  *_frameInfo;
+	uint32 *_frameInfo;
 
-	uint32   _maxVIEWChunkSize;
-	uint32   _maxZBUFChunkSize;
-	uint32   _maxAESCChunkSize;
+	uint32 _maxVIEWChunkSize;
+	uint32 _maxZBUFChunkSize;
+	uint32 _maxAESCChunkSize;
 
 	VQAVideoTrack *_videoTrack;
 	VQAAudioTrack *_audioTrack;
@@ -199,37 +201,37 @@ public:
 		bool useAudioSync() const { return false; }
 
 	private:
-		VQADecoder        *_vqaDecoder;
+		VQADecoder *_vqaDecoder;
 
 		bool _hasNewFrame;
 
 		uint16 _numFrames;
 		uint16 _width, _height;
-		uint8  _blockW, _blockH;
-		uint8  _frameRate;
+		uint8 _blockW, _blockH;
+		uint8 _frameRate;
 		uint16 _maxBlocks;
 		uint16 _offsetX, _offsetY;
 
-		uint16  _maxVPTRSize;
-		uint32  _maxCBFZSize;
-		uint32  _maxZBUFChunkSize;
+		uint16 _maxVPTRSize;
+		uint32 _maxCBFZSize;
+		uint32 _maxZBUFChunkSize;
 
-		uint8   *_codebook;
-		uint8   *_cbfz;
-		uint32   _zbufChunkSize;
-		uint8   *_zbufChunk;
+		uint8 *_codebook;
+		uint8 *_cbfz;
+		uint32 _zbufChunkSize;
+		uint8 *_zbufChunk;
 
-		uint32   _vpointerSize;
-		uint8   *_vpointer;
+		uint32 _vpointerSize;
+		uint8 *_vpointer;
 
-		int      _curFrame;
+		int _curFrame;
 
-		uint8   *_viewData;
-		uint32   _viewDataSize;
-		uint8   *_lightsData;
-		uint32   _lightsDataSize;
-		uint8   *_screenEffectsData;
-		uint32   _screenEffectsDataSize;
+		uint8 *_viewData;
+		uint32 _viewDataSize;
+		uint8 *_lightsData;
+		uint32 _lightsDataSize;
+		uint8 *_screenEffectsData;
+		uint32 _screenEffectsDataSize;
 
 		void VPTRWriteBlock(Graphics::Surface *surface, unsigned int dstBlock, unsigned int srcBlock, int count, bool alpha = false);
 		bool decodeFrame(Graphics::Surface *surface);
@@ -244,12 +246,12 @@ public:
 		bool readSN2J(Common::SeekableReadStream *s, uint32 size);
 
 		Audio::SeekableAudioStream *decodeAudioFrame();
-	protected:
 
+	protected:
 	private:
-		uint16               _frequency;
+		uint16 _frequency;
 		ADPCMWestwoodDecoder _adpcmDecoder;
-		uint8                _compressedAudioFrame[735];
+		uint8 _compressedAudioFrame[735];
 	};
 };
 

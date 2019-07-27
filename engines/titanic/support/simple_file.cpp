@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/util.h"
 #include "titanic/support/simple_file.h"
+#include "common/util.h"
 
 namespace Titanic {
 
@@ -44,7 +44,10 @@ bool File::open(const Common::String &filename) {
 
 /*------------------------------------------------------------------------*/
 
-SimpleFile::SimpleFile(): _inStream(nullptr), _outStream(nullptr), _lineCount(1) {
+SimpleFile::SimpleFile()
+  : _inStream(nullptr)
+  , _outStream(nullptr)
+  , _lineCount(1) {
 }
 
 SimpleFile::~SimpleFile() {
@@ -502,8 +505,7 @@ bool StdCWadFile::open(const Common::String &filename) {
 	// getting the offset of the following resource
 	f.seek(resIndex * 4);
 	uint resOffset = f.readUint32LE();
-	uint nextOffset = (resIndex == (indexSize - 1)) ? f.size() :
-		f.readUint32LE();
+	uint nextOffset = (resIndex == (indexSize - 1)) ? f.size() : f.readUint32LE();
 
 	// Read in the resource
 	f.seek(resOffset);

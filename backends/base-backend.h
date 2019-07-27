@@ -23,12 +23,13 @@
 #ifndef BACKENDS_BASE_BACKEND_H
 #define BACKENDS_BASE_BACKEND_H
 
-#include "common/system.h"
 #include "common/events.h"
+#include "common/system.h"
 
 class BaseBackend : public OSystem {
 protected:
 	virtual Common::EventSource *getDefaultEventSource() = 0;
+
 public:
 	virtual void initBackend();
 
@@ -40,8 +41,8 @@ public:
 class EventsBaseBackend : public BaseBackend, Common::EventSource {
 protected:
 	virtual Common::EventSource *getDefaultEventSource() { return this; }
+
 public:
 };
-
 
 #endif

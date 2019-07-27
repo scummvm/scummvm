@@ -24,13 +24,12 @@
 
 namespace CEGUI {
 
-ItemAction::ItemAction(WORD reference, GUI::ActionType action) :
-	PanelItem(reference) {
+ItemAction::ItemAction(WORD reference, GUI::ActionType action)
+  : PanelItem(reference) {
 	_action = action;
 	if (!GUI::Actions::Instance()->isEnabled(_action))
 		_visible = false;
 }
-
 
 ItemAction::~ItemAction() {
 }

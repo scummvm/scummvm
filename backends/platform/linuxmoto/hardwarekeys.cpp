@@ -20,8 +20,8 @@
  *
  */
 
-#include "backends/platform/linuxmoto/linuxmoto-sdl.h"
 #include "backends/keymapper/keymapper.h"
+#include "backends/platform/linuxmoto/linuxmoto-sdl.h"
 #include "common/keyboard.h"
 
 #ifdef ENABLE_KEYMAPPER
@@ -43,25 +43,25 @@ static const Key keys[] = {
 	{ "CALL", KEYCODE_SPACE, ASCII_SPACE, "Call", false },
 	{ "PLUS", KEYCODE_PLUS, '+', "+", false },
 	{ "MINUS", KEYCODE_MINUS, '-', "-", false },
-#ifdef MOTOMAGX
-	{"BACKSPACE", KEYCODE_BACKSPACE, ASCII_BACKSPACE, "Backspace", false},
-	{"TAB", KEYCODE_TAB, ASCII_TAB, "Tab", false},
-	{"HASH", KEYCODE_HASH, '#', "#", false},
-	{"ASTERISK", KEYCODE_ASTERISK, '*', "*", false},
-	{"LEFTSOFT", KEYCODE_F9, ASCII_F9, "LeftSoft", false},
-	{"RIGHTSOFT", KEYCODE_F11, ASCII_F11, "RightSoft", false},
-	{"0", KEYCODE_0, '0', "0", false},
-	{"1", KEYCODE_1, '1', "1", false},
-	{"2", KEYCODE_2, '2', "2", false},
-	{"3", KEYCODE_3, '3', "3", false},
-	{"4", KEYCODE_4, '4', "4", false},
-	{"5", KEYCODE_5, '5', "5", false},
-	{"6", KEYCODE_6, '6', "6", false},
-	{"7", KEYCODE_7, '7', "7", false},
-	{"8", KEYCODE_8, '8', "8", false},
-	{"9", KEYCODE_9, '9', "9", false},
-#endif
-#ifdef MOTOEZX
+#	ifdef MOTOMAGX
+	{ "BACKSPACE", KEYCODE_BACKSPACE, ASCII_BACKSPACE, "Backspace", false },
+	{ "TAB", KEYCODE_TAB, ASCII_TAB, "Tab", false },
+	{ "HASH", KEYCODE_HASH, '#', "#", false },
+	{ "ASTERISK", KEYCODE_ASTERISK, '*', "*", false },
+	{ "LEFTSOFT", KEYCODE_F9, ASCII_F9, "LeftSoft", false },
+	{ "RIGHTSOFT", KEYCODE_F11, ASCII_F11, "RightSoft", false },
+	{ "0", KEYCODE_0, '0', "0", false },
+	{ "1", KEYCODE_1, '1', "1", false },
+	{ "2", KEYCODE_2, '2', "2", false },
+	{ "3", KEYCODE_3, '3', "3", false },
+	{ "4", KEYCODE_4, '4', "4", false },
+	{ "5", KEYCODE_5, '5', "5", false },
+	{ "6", KEYCODE_6, '6', "6", false },
+	{ "7", KEYCODE_7, '7', "7", false },
+	{ "8", KEYCODE_8, '8', "8", false },
+	{ "9", KEYCODE_9, '9', "9", false },
+#	endif
+#	ifdef MOTOEZX
 	{ "a", KEYCODE_a, 'a', "a", true },
 	{ "b", KEYCODE_b, 'b', "b", true },
 	{ "c", KEYCODE_c, 'c', "c", true },
@@ -72,20 +72,20 @@ static const Key keys[] = {
 	{ "h", KEYCODE_h, 'h', "h", true },
 	{ "i", KEYCODE_i, 'i', "i", true },
 	{ "j", KEYCODE_j, 'j', "j", true },
-#endif
+#	endif
 	// Numeric keypad
 
 	// Arrows + Home/End pad
-	{"UP", KEYCODE_UP, 0, "Up", false},
-	{"DOWN", KEYCODE_DOWN, 0, "Down", false},
-	{"RIGHT", KEYCODE_RIGHT, 0, "Right", false},
-	{"LEFT", KEYCODE_LEFT, 0, "Left", false},
+	{ "UP", KEYCODE_UP, 0, "Up", false },
+	{ "DOWN", KEYCODE_DOWN, 0, "Down", false },
+	{ "RIGHT", KEYCODE_RIGHT, 0, "Right", false },
+	{ "LEFT", KEYCODE_LEFT, 0, "Left", false },
 
 	// Function keys
 
 	// Miscellaneous function keys
 
-	{0, KEYCODE_INVALID, 0, 0, false}
+	{ 0, KEYCODE_INVALID, 0, 0, false }
 };
 
 struct Mod {

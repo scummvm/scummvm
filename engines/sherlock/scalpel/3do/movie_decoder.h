@@ -23,9 +23,9 @@
 #ifndef SHERLOCK_SCALPEL_3DO_MOVIE_DECODER_H
 #define SHERLOCK_SCALPEL_3DO_MOVIE_DECODER_H
 
+#include "audio/decoders/3do.h"
 #include "common/rect.h"
 #include "video/video_decoder.h"
-#include "audio/decoders/3do.h"
 
 namespace Audio {
 class QueuingAudioStream;
@@ -57,7 +57,7 @@ private:
 	int32 _streamAudioOffset; /* current stream offset for audio decoding */
 
 private:
-	class StreamVideoTrack : public VideoTrack  {
+	class StreamVideoTrack : public VideoTrack {
 	public:
 		StreamVideoTrack(uint32 width, uint32 height, uint32 codecTag, uint32 frameCount);
 		~StreamVideoTrack();
@@ -108,7 +108,7 @@ private:
 
 		uint32 _codecTag;
 		uint16 _sampleRate;
-		bool   _stereo;
+		bool _stereo;
 
 		Audio::audio_3DO_ADP4_PersistentSpace _ADP4_PersistentSpace;
 		Audio::audio_3DO_SDX2_PersistentSpace _SDX2_PersistentSpace;

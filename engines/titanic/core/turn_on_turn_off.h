@@ -31,12 +31,14 @@ class CTurnOnTurnOff : public CBackground {
 	DECLARE_MESSAGE_MAP;
 	bool TurnOn(CTurnOn *msg);
 	bool TurnOff(CTurnOff *msg);
+
 private:
 	int _startFrameOn;
 	int _endFrameOn;
 	int _startFrameOff;
 	int _endFrameOff;
 	bool _isOn;
+
 public:
 	CLASSDEF;
 	CTurnOnTurnOff();

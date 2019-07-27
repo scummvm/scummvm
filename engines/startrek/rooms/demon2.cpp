@@ -91,7 +91,7 @@ void Room::demon2TalkToKirk() {
 
 void Room::demon2TalkToSpock() {
 	showText(TX_SPEAKER_SPOCK, 18, true);
-	showText(TX_SPEAKER_KIRK,  3, true);
+	showText(TX_SPEAKER_KIRK, 3, true);
 }
 
 void Room::demon2TalkToMcCoy() {
@@ -102,9 +102,9 @@ void Room::demon2TalkToMcCoy() {
 
 void Room::demon2TalkToRedshirt() {
 	showText(TX_SPEAKER_EVERTS, 19, true);
-	showText(TX_SPEAKER_KIRK,   2, true);
+	showText(TX_SPEAKER_KIRK, 2, true);
 	showText(TX_SPEAKER_EVERTS, 20, true);
-	showText(TX_SPEAKER_KIRK,   4, true);
+	showText(TX_SPEAKER_KIRK, 4, true);
 }
 
 void Room::demon2UsePhaserOnBerries() {

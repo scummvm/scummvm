@@ -26,10 +26,9 @@
 
 #if defined(__ANDROID__) || defined(IPHONE)
 
-#include "backends/mutex/pthread/pthread-mutex.h"
+#	include "backends/mutex/pthread/pthread-mutex.h"
 
-#include <pthread.h>
-
+#	include <pthread.h>
 
 OSystem::MutexRef PthreadMutexManager::createMutex() {
 	pthread_mutexattr_t attr;

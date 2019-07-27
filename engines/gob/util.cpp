@@ -24,25 +24,26 @@
 
 #include "graphics/palette.h"
 
-#include "gob/gob.h"
-#include "gob/util.h"
-#include "gob/global.h"
 #include "gob/dataio.h"
 #include "gob/draw.h"
 #include "gob/game.h"
+#include "gob/global.h"
+#include "gob/gob.h"
+#include "gob/sound/sound.h"
+#include "gob/util.h"
 #include "gob/video.h"
 #include "gob/videoplayer.h"
-#include "gob/sound/sound.h"
 
 namespace Gob {
 
-Util::Util(GobEngine *vm) : _vm(vm) {
-	_mouseButtons   = kMouseButtonsNone;
-	_keyBufferHead  = 0;
-	_keyBufferTail  = 0;
-	_fastMode       = 0;
-	_frameRate      = 12;
-	_frameWaitTime  = 0;
+Util::Util(GobEngine *vm)
+  : _vm(vm) {
+	_mouseButtons = kMouseButtonsNone;
+	_keyBufferHead = 0;
+	_keyBufferTail = 0;
+	_fastMode = 0;
+	_frameRate = 12;
+	_frameWaitTime = 0;
 	_startFrameTime = 0;
 
 	_keyState = 0;
@@ -80,12 +81,11 @@ void Util::longDelay(uint16 msecs) {
 		_vm->_video->waitRetrace();
 		processInput();
 		delay(15);
-	} while (!_vm->shouldQuit() &&
-	         ((g_system->getMillis() * _vm->_global->_speedFactor) < time));
+	} while (!_vm->shouldQuit() && ((g_system->getMillis() * _vm->_global->_speedFactor) < time));
 }
 
 void Util::initInput() {
-	_mouseButtons  = kMouseButtonsNone;
+	_mouseButtons = kMouseButtonsNone;
 	_keyBufferHead = _keyBufferTail = 0;
 }
 
@@ -105,16 +105,16 @@ void Util::processInput(bool scroll) {
 			y = event.mouse.y;
 			break;
 		case Common::EVENT_LBUTTONDOWN:
-			_mouseButtons = (MouseButtons) (((uint32) _mouseButtons) | ((uint32) kMouseButtonsLeft));
+			_mouseButtons = (MouseButtons)(((uint32)_mouseButtons) | ((uint32)kMouseButtonsLeft));
 			break;
 		case Common::EVENT_RBUTTONDOWN:
-			_mouseButtons = (MouseButtons) (((uint32) _mouseButtons) | ((uint32) kMouseButtonsRight));
+			_mouseButtons = (MouseButtons)(((uint32)_mouseButtons) | ((uint32)kMouseButtonsRight));
 			break;
 		case Common::EVENT_LBUTTONUP:
-			_mouseButtons = (MouseButtons) (((uint32) _mouseButtons) & ~((uint32) kMouseButtonsLeft));
+			_mouseButtons = (MouseButtons)(((uint32)_mouseButtons) & ~((uint32)kMouseButtonsLeft));
 			break;
 		case Common::EVENT_RBUTTONUP:
-			_mouseButtons = (MouseButtons) (((uint32) _mouseButtons) & ~((uint32) kMouseButtonsRight));
+			_mouseButtons = (MouseButtons)(((uint32)_mouseButtons) & ~((uint32)kMouseButtonsRight));
 			break;
 		case Common::EVENT_KEYDOWN:
 			keyDown(event);
@@ -181,7 +181,8 @@ void Util::addKeyToBuffer(const Common::KeyState &key) {
 }
 
 bool Util::getKeyFromBuffer(Common::KeyState &key) {
-	if (_keyBufferHead == _keyBufferTail) return false;
+	if (_keyBufferHead == _keyBufferTail)
+		return false;
 
 	key = _keyBuffer[_keyBufferTail];
 	_keyBufferTail = (_keyBufferTail + 1) % KEYBUFSIZE;
@@ -210,25 +211,25 @@ int16 Util::translateKey(const Common::KeyState &key) {
 		int16 from;
 		int16 to;
 	} keys[] = {
-		{Common::KEYCODE_BACKSPACE, kKeyBackspace},
-		{Common::KEYCODE_SPACE,     kKeySpace    },
-		{Common::KEYCODE_RETURN,    kKeyReturn   },
-		{Common::KEYCODE_ESCAPE,    kKeyEscape   },
-		{Common::KEYCODE_DELETE,    kKeyDelete   },
-		{Common::KEYCODE_UP,        kKeyUp       },
-		{Common::KEYCODE_DOWN,      kKeyDown     },
-		{Common::KEYCODE_RIGHT,     kKeyRight    },
-		{Common::KEYCODE_LEFT,      kKeyLeft     },
-		{Common::KEYCODE_F1,        kKeyF1       },
-		{Common::KEYCODE_F2,        kKeyF2       },
-		{Common::KEYCODE_F3,        kKeyF3       },
-		{Common::KEYCODE_F4,        kKeyF4       },
-		{Common::KEYCODE_F5,        kKeyEscape   },
-		{Common::KEYCODE_F6,        kKeyF6       },
-		{Common::KEYCODE_F7,        kKeyF7       },
-		{Common::KEYCODE_F8,        kKeyF8       },
-		{Common::KEYCODE_F9,        kKeyF9       },
-		{Common::KEYCODE_F10,       kKeyF10      }
+		{ Common::KEYCODE_BACKSPACE, kKeyBackspace },
+		{ Common::KEYCODE_SPACE, kKeySpace },
+		{ Common::KEYCODE_RETURN, kKeyReturn },
+		{ Common::KEYCODE_ESCAPE, kKeyEscape },
+		{ Common::KEYCODE_DELETE, kKeyDelete },
+		{ Common::KEYCODE_UP, kKeyUp },
+		{ Common::KEYCODE_DOWN, kKeyDown },
+		{ Common::KEYCODE_RIGHT, kKeyRight },
+		{ Common::KEYCODE_LEFT, kKeyLeft },
+		{ Common::KEYCODE_F1, kKeyF1 },
+		{ Common::KEYCODE_F2, kKeyF2 },
+		{ Common::KEYCODE_F3, kKeyF3 },
+		{ Common::KEYCODE_F4, kKeyF4 },
+		{ Common::KEYCODE_F5, kKeyEscape },
+		{ Common::KEYCODE_F6, kKeyF6 },
+		{ Common::KEYCODE_F7, kKeyF7 },
+		{ Common::KEYCODE_F8, kKeyF8 },
+		{ Common::KEYCODE_F9, kKeyF9 },
+		{ Common::KEYCODE_F10, kKeyF10 }
 	};
 
 	// Translate special keys
@@ -248,39 +249,39 @@ int16 Util::translateKey(const Common::KeyState &key) {
 }
 
 static const uint8 kLowerToUpper[][2] = {
-	{0x81, 0x9A},
-	{0x82, 0x90},
-	{0x83, 0xB6},
-	{0x84, 0x8E},
-	{0x85, 0xB7},
-	{0x86, 0x8F},
-	{0x87, 0x80},
-	{0x88, 0xD2},
-	{0x89, 0xD3},
-	{0x8A, 0xD4},
-	{0x8B, 0xD8},
-	{0x8C, 0xD7},
-	{0x8D, 0xDE},
-	{0x91, 0x92},
-	{0x93, 0xE2},
-	{0x94, 0x99},
-	{0x95, 0xE3},
-	{0x96, 0xEA},
-	{0x97, 0xEB},
-	{0x95, 0xE3},
-	{0x96, 0xEA},
-	{0x97, 0xEB},
-	{0x9B, 0x9D},
-	{0xA0, 0xB5},
-	{0xA1, 0xD6},
-	{0xA2, 0xE0},
-	{0xA3, 0xE9},
-	{0xA4, 0xA5},
-	{0xC6, 0xC7},
-	{0xD0, 0xD1},
-	{0xE4, 0xE5},
-	{0xE7, 0xE8},
-	{0xEC, 0xED}
+	{ 0x81, 0x9A },
+	{ 0x82, 0x90 },
+	{ 0x83, 0xB6 },
+	{ 0x84, 0x8E },
+	{ 0x85, 0xB7 },
+	{ 0x86, 0x8F },
+	{ 0x87, 0x80 },
+	{ 0x88, 0xD2 },
+	{ 0x89, 0xD3 },
+	{ 0x8A, 0xD4 },
+	{ 0x8B, 0xD8 },
+	{ 0x8C, 0xD7 },
+	{ 0x8D, 0xDE },
+	{ 0x91, 0x92 },
+	{ 0x93, 0xE2 },
+	{ 0x94, 0x99 },
+	{ 0x95, 0xE3 },
+	{ 0x96, 0xEA },
+	{ 0x97, 0xEB },
+	{ 0x95, 0xE3 },
+	{ 0x96, 0xEA },
+	{ 0x97, 0xEB },
+	{ 0x9B, 0x9D },
+	{ 0xA0, 0xB5 },
+	{ 0xA1, 0xD6 },
+	{ 0xA2, 0xE0 },
+	{ 0xA3, 0xE9 },
+	{ 0xA4, 0xA5 },
+	{ 0xC6, 0xC7 },
+	{ 0xD0, 0xD1 },
+	{ 0xE4, 0xE5 },
+	{ 0xE7, 0xE8 },
+	{ 0xEC, 0xED }
 };
 
 char Util::toCP850Lower(char cp850) {
@@ -411,7 +412,7 @@ void Util::forceMouseUp(bool onlyWhenSynced) {
 		return;
 
 	_vm->_game->_mouseButtons = kMouseButtonsNone;
-	_mouseButtons             = kMouseButtonsNone;
+	_mouseButtons = kMouseButtonsNone;
 }
 
 void Util::clearPalette() {
@@ -470,7 +471,7 @@ void Util::waitEndFrame(bool handleInput) {
 
 		_vm->_video->retrace();
 
-		time   = getTimeKey() - _startFrameTime;
+		time = getTimeKey() - _startFrameTime;
 		toWait = _frameWaitTime - time;
 	} while (toWait > 0);
 
@@ -526,12 +527,10 @@ void Util::replaceChar(char *str, char c1, char c2) {
 		*str = c2;
 }
 
-static const char trStr1[] =
-	"       '   + - :0123456789: <=>  abcdefghijklmnopqrstuvwxyz      "
-	"abcdefghijklmnopqrstuvwxyz     ";
-static const char trStr2[] =
-	" ueaaaaceeeiii     ooouu        aioun"
-	"                                                           ";
+static const char trStr1[] = "       '   + - :0123456789: <=>  abcdefghijklmnopqrstuvwxyz      "
+                             "abcdefghijklmnopqrstuvwxyz     ";
+static const char trStr2[] = " ueaaaaceeeiii     ooouu        aioun"
+                             "                                                           ";
 static const char trStr3[] = "                                ";
 
 void Util::cleanupStr(char *str) {
@@ -676,7 +675,7 @@ uint32 Util::getKeyState() const {
 }
 
 void Util::keyDown(const Common::Event &event) {
-	if      (event.kbd.keycode == Common::KEYCODE_UP)
+	if (event.kbd.keycode == Common::KEYCODE_UP)
 		_keyState |= 0x0001;
 	else if (event.kbd.keycode == Common::KEYCODE_DOWN)
 		_keyState |= 0x0002;
@@ -691,7 +690,7 @@ void Util::keyDown(const Common::Event &event) {
 }
 
 void Util::keyUp(const Common::Event &event) {
-	if      (event.kbd.keycode == Common::KEYCODE_UP)
+	if (event.kbd.keycode == Common::KEYCODE_UP)
 		_keyState &= ~0x0001;
 	else if (event.kbd.keycode == Common::KEYCODE_DOWN)
 		_keyState &= ~0x0002;

@@ -33,6 +33,7 @@ class CBowlEar : public CEar {
 	bool ReplaceBowlAndNutsMsg(CReplaceBowlAndNutsMsg *msg);
 	bool NutPuzzleMsg(CNutPuzzleMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+
 public:
 	CLASSDEF;
 

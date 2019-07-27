@@ -24,11 +24,11 @@
 
 #include "zvision/video/rlf_decoder.h"
 
-#include "common/str.h"
-#include "common/file.h"
-#include "common/textconsole.h"
 #include "common/debug.h"
 #include "common/endian.h"
+#include "common/file.h"
+#include "common/str.h"
+#include "common/textconsole.h"
 
 namespace ZVision {
 
@@ -49,15 +49,15 @@ bool RLFDecoder::loadStream(Common::SeekableReadStream *stream) {
 }
 
 RLFDecoder::RLFVideoTrack::RLFVideoTrack(Common::SeekableReadStream *stream)
-	: _readStream(stream),
-	  _lastFrameRead(0),
-	  _frameCount(0),
-	  _width(0),
-	  _height(0),
-	  _frameTime(0),
-	  _frames(0),
-	  _displayedFrame(-1),
-	  _frameBufferByteSize(0) {
+  : _readStream(stream)
+  , _lastFrameRead(0)
+  , _frameCount(0)
+  , _width(0)
+  , _height(0)
+  , _frameTime(0)
+  , _frames(0)
+  , _displayedFrame(-1)
+  , _frameBufferByteSize(0) {
 
 	if (!readHeader()) {
 		warning("Not a RLF animation file. Wrong magic number");
@@ -86,10 +86,10 @@ RLFDecoder::RLFVideoTrack::~RLFVideoTrack() {
 
 bool RLFDecoder::RLFVideoTrack::readHeader() {
 	// Read the header
-	_readStream->readUint32LE();                // Size1
-	_readStream->readUint32LE();                // Unknown1
-	_readStream->readUint32LE();                // Unknown2
-	_frameCount = _readStream->readUint32LE();  // Frame count
+	_readStream->readUint32LE(); // Size1
+	_readStream->readUint32LE(); // Unknown1
+	_readStream->readUint32LE(); // Unknown2
+	_frameCount = _readStream->readUint32LE(); // Frame count
 
 	// Since we don't need any of the data, we can just seek right to the
 	// entries we need rather than read in all the individual entries.
@@ -117,14 +117,14 @@ bool RLFDecoder::RLFVideoTrack::readHeader() {
 	//_readStream->readUint32LE();          // Unknown8
 	//_readStream->readUint32LE();          // Unknown9
 	//_readStream->readUint32LE();          // Unknown10
-	_width = _readStream->readUint32LE();   // Width
-	_height = _readStream->readUint32LE();  // Height
+	_width = _readStream->readUint32LE(); // Width
+	_height = _readStream->readUint32LE(); // Height
 
 	// Read time header
-	_readStream->readUint32BE();                    // Magic number EMIT
-	_readStream->readUint32LE();                    // Size4
-	_readStream->readUint32LE();                    // Unknown11
-	_frameTime = _readStream->readUint32LE() / 10;  // Frame time in microseconds
+	_readStream->readUint32BE(); // Magic number EMIT
+	_readStream->readUint32LE(); // Size4
+	_readStream->readUint32LE(); // Unknown11
+	_frameTime = _readStream->readUint32LE() / 10; // Frame time in microseconds
 
 	return true;
 }
@@ -132,13 +132,13 @@ bool RLFDecoder::RLFVideoTrack::readHeader() {
 RLFDecoder::RLFVideoTrack::Frame RLFDecoder::RLFVideoTrack::readNextFrame() {
 	RLFDecoder::RLFVideoTrack::Frame frame;
 
-	_readStream->readUint32BE();                        // Magic number MARF
-	uint32 size = _readStream->readUint32LE();          // Size
-	_readStream->readUint32LE();                        // Unknown1
-	_readStream->readUint32LE();                        // Unknown2
-	uint32 type = _readStream->readUint32BE();          // Either ELHD or ELRH
-	uint32 headerSize = _readStream->readUint32LE();    // Offset from the beginning of this frame to the frame data. Should always be 28
-	_readStream->readUint32LE();                        // Unknown3
+	_readStream->readUint32BE(); // Magic number MARF
+	uint32 size = _readStream->readUint32LE(); // Size
+	_readStream->readUint32LE(); // Unknown1
+	_readStream->readUint32LE(); // Unknown2
+	uint32 type = _readStream->readUint32BE(); // Either ELHD or ELRH
+	uint32 headerSize = _readStream->readUint32LE(); // Offset from the beginning of this frame to the frame data. Should always be 28
+	_readStream->readUint32LE(); // Unknown3
 
 	frame.encodedSize = size - headerSize;
 	frame.encodedData = new int8[frame.encodedSize];

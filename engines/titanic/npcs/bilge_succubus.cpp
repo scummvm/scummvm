@@ -29,22 +29,25 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CBilgeSuccUBus, CSuccUBus)
-	ON_MESSAGE(FrameMsg)
-	ON_MESSAGE(PETReceiveMsg)
-	ON_MESSAGE(PETDeliverMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(SubAcceptCCarryMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(TrueTalkGetStateValueMsg)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(TurnOff)
+ON_MESSAGE(FrameMsg)
+ON_MESSAGE(PETReceiveMsg)
+ON_MESSAGE(PETDeliverMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(SubAcceptCCarryMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(TrueTalkGetStateValueMsg)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(TurnOff)
 END_MESSAGE_MAP()
 
-CBilgeSuccUBus::CBilgeSuccUBus() : CSuccUBus(),
-		_sneezing2StartFrame(-1), _sneezing2EndFrame(-1),
-		_sneezing1StartFrame(-1), _sneezing1EndFrame(-1) {
+CBilgeSuccUBus::CBilgeSuccUBus()
+  : CSuccUBus()
+  , _sneezing2StartFrame(-1)
+  , _sneezing2EndFrame(-1)
+  , _sneezing1StartFrame(-1)
+  , _sneezing1EndFrame(-1) {
 }
 
 void CBilgeSuccUBus::save(SimpleFile *file, int indent) {
@@ -90,8 +93,8 @@ bool CBilgeSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 	} else {
 		uint roomFlags = pet->getRoomFlags();
 		CGameObject *mailObject = findMailByFlags(
-			_fuseboxOn && compareRoomNameTo("Titania") ? RFC_TITANIA : _flagsComparison,
-			roomFlags);
+		  _fuseboxOn && compareRoomNameTo("Titania") ? RFC_TITANIA : _flagsComparison,
+		  roomFlags);
 
 		if (mailObject) {
 			startTalking(this, 230004);

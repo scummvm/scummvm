@@ -20,9 +20,9 @@
  *
  */
 
+#include "mohawk/resource_cache.h"
 #include "common/debug.h"
 #include "mohawk/myst.h"
-#include "mohawk/resource_cache.h"
 
 namespace Mohawk {
 
@@ -71,7 +71,7 @@ Common::SeekableReadStream *ResourceCache::search(uint32 tag, uint16 id) {
 	for (uint32 i = 0; i < _store.size(); i++) {
 		if (tag == _store[i].tag && id == _store[i].id) {
 			debugC(kDebugCache, "Found cached tag 0x%04X id %u", tag, id);
-			uint32 dataCurPos  = _store[i].data->pos();
+			uint32 dataCurPos = _store[i].data->pos();
 			Common::SeekableReadStream *ret = _store[i].data->readStream(_store[i].data->size());
 			_store[i].data->seek(dataCurPos);
 			return ret;

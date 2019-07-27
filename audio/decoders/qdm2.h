@@ -23,10 +23,10 @@
 // Only compile if Mohawk is enabled or if we're building dynamic modules
 #if defined(ENABLE_MOHAWK) || defined(DYNAMIC_MODULES)
 
-#ifndef AUDIO_QDM2_H
-#define AUDIO_QDM2_H
+#	ifndef AUDIO_QDM2_H
+#		define AUDIO_QDM2_H
 
-#include "common/types.h"
+#		include "common/types.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -48,5 +48,5 @@ Codec *makeQDM2Decoder(Common::SeekableReadStream *extraData,
 
 } // End of namespace Audio
 
-#endif // AUDIO_QDM2_H
+#	endif // AUDIO_QDM2_H
 #endif // Mohawk/Plugins guard

@@ -24,12 +24,12 @@
 
 #if defined(PLAYSTATION3)
 
-#include "backends/events/ps3sdl/ps3sdl-events.h"
-#include "backends/platform/sdl/sdl.h"
-#include "engines/engine.h"
+#	include "backends/events/ps3sdl/ps3sdl-events.h"
+#	include "backends/platform/sdl/sdl.h"
+#	include "engines/engine.h"
 
-#include "common/util.h"
-#include "common/events.h"
+#	include "common/events.h"
+#	include "common/util.h"
 
 /**
  * The XMB (PS3 in game menu) needs the screen buffers to be constantly flip while open.
@@ -44,7 +44,7 @@ void PS3SdlEventSource::preprocessEvents(SDL_Event *event) {
 		for (;;) {
 			if (!SDL_PollEvent(event)) {
 				// Locking the screen forces a full redraw
-				Graphics::Surface* screen = g_system->lockScreen();
+				Graphics::Surface *screen = g_system->lockScreen();
 				if (screen) {
 					g_system->unlockScreen();
 					g_system->updateScreen();

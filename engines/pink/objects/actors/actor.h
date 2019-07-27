@@ -85,7 +85,7 @@ public:
 	void setAction(Action *newAction);
 	void setAction(Action *newAction, bool loadingSave);
 
-	void setPage(Page *page) { _page = page;}
+	void setPage(Page *page) { _page = page; }
 
 protected:
 	Page *_page;

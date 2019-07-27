@@ -26,21 +26,21 @@
 namespace Bbvs {
 
 static const int8 kTurnInfo[8][8] = {
-	{ 0,  1,  1,  1,  1, -1, -1, -1},
-	{-1,  0,  1,  1,  1,  1, -1, -1},
-	{-1, -1,  0,  1,  1,  1,  1, -1},
-	{-1, -1, -1,  0,  1,  1,  1,  1},
-	{ 1, -1, -1, -1,  0,  1,  1,  1},
-	{ 1,  1, -1, -1, -1,  0,  1,  1},
-	{ 1,  1,  1, -1, -1, -1,  0,  1},
-	{ 1,  1,  1,  1, -1, -1, -1,  0}
+	{ 0, 1, 1, 1, 1, -1, -1, -1 },
+	{ -1, 0, 1, 1, 1, 1, -1, -1 },
+	{ -1, -1, 0, 1, 1, 1, 1, -1 },
+	{ -1, -1, -1, 0, 1, 1, 1, 1 },
+	{ 1, -1, -1, -1, 0, 1, 1, 1 },
+	{ 1, 1, -1, -1, -1, 0, 1, 1 },
+	{ 1, 1, 1, -1, -1, -1, 0, 1 },
+	{ 1, 1, 1, 1, -1, -1, -1, 0 }
 };
 
 static const int8 kWalkAnimTbl[32] = {
-	 3,  0,  0,  0,  2,  1,  1,  1,
-	15, 12, 14, 13,  0,  0,  0,  0,
-	 7,  9,  4,  8,  6, 10,  5, 11,
-	 3,  0,  2,  1, 15, 12, 14, 13
+	3, 0, 0, 0, 2, 1, 1, 1,
+	15, 12, 14, 13, 0, 0, 0, 0,
+	7, 9, 4, 8, 6, 10, 5, 11,
+	3, 0, 2, 1, 15, 12, 14, 13
 };
 
 void BbvsEngine::startWalkObject(SceneObject *sceneObject) {
@@ -68,7 +68,6 @@ void BbvsEngine::startWalkObject(SceneObject *sceneObject) {
 	}
 
 	walkObject(sceneObject, _destWalkAreaPt, sceneObject->sceneObjectDef->walkSpeed);
-
 }
 
 void BbvsEngine::updateWalkObject(SceneObject *sceneObject) {
@@ -103,7 +102,6 @@ void BbvsEngine::updateWalkObject(SceneObject *sceneObject) {
 			sceneObject->frameIndex = 0;
 		}
 	}
-
 }
 
 void BbvsEngine::walkObject(SceneObject *sceneObject, const Common::Point &destPt, int walkSpeed) {
@@ -272,11 +270,8 @@ void BbvsEngine::initWalkAreas(SceneObject *sceneObject) {
 					walkArea2->links[walkArea2->linksCount++] = walkArea1;
 				}
 			}
-
 		}
-
 	}
-
 }
 
 WalkArea *BbvsEngine::getWalkAreaAtPos(const Common::Point &pt) {
@@ -322,7 +317,6 @@ void BbvsEngine::canWalkToDest(WalkArea *walkArea, int infoCount) {
 		}
 		walkArea->checked = false;
 	}
-
 }
 
 bool BbvsEngine::walkTestLineWalkable(const Common::Point &sourcePt, const Common::Point &destPt, WalkInfo *walkInfo) {
@@ -415,12 +409,8 @@ void BbvsEngine::walkFoundPath(int count) {
 			newDestPt.y = walkInfo->y;
 		}
 
-		if ((newDestPt.x - _destWalkAreaPt.x) * (newDestPt.x - _destWalkAreaPt.x) +
-			(newDestPt.y - _destWalkAreaPt.y) * (newDestPt.y - _destWalkAreaPt.y) <
-			(destPt.x - _destWalkAreaPt.x) * (destPt.x - _destWalkAreaPt.x) +
-			(destPt.y - _destWalkAreaPt.y) * (destPt.y - _destWalkAreaPt.y))
+		if ((newDestPt.x - _destWalkAreaPt.x) * (newDestPt.x - _destWalkAreaPt.x) + (newDestPt.y - _destWalkAreaPt.y) * (newDestPt.y - _destWalkAreaPt.y) < (destPt.x - _destWalkAreaPt.x) * (destPt.x - _destWalkAreaPt.x) + (destPt.y - _destWalkAreaPt.y) * (destPt.y - _destWalkAreaPt.y))
 			destPt = newDestPt;
-
 	}
 
 	debug(5, "BbvsEngine::walkFoundPath() destPt: (%d, %d)", destPt.x, destPt.y);
@@ -428,7 +418,6 @@ void BbvsEngine::walkFoundPath(int count) {
 	_finalWalkPt = destPt;
 
 	debug(5, "BbvsEngine::walkFoundPath() OK");
-
 }
 
 void BbvsEngine::updateWalkableRects() {

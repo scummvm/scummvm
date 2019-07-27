@@ -20,33 +20,25 @@
  *
  */
 
-#include "neverhood/modules/module1900.h"
 #include "neverhood/modules/module1900_sprites.h"
+#include "neverhood/modules/module1900.h"
 
 namespace Neverhood {
 
 static const NPoint kAsScene1907SymbolGroundPositions[] = {
-	{160, 310}, { 90, 340}, {210, 335},
-	{210, 380}, {310, 340}, {290, 400},
-	{400, 375}, {370, 435}, {475, 415}
+	{ 160, 310 }, { 90, 340 }, { 210, 335 }, { 210, 380 }, { 310, 340 }, { 290, 400 }, { 400, 375 }, { 370, 435 }, { 475, 415 }
 };
 
 static const NPoint kAsScene1907SymbolPluggedInPositions[] = {
-	{275, 125}, {244, 125}, {238, 131},
-	{221, 135}, {199, 136}, {168, 149},
-	{145, 152}, {123, 154}, {103, 157}
+	{ 275, 125 }, { 244, 125 }, { 238, 131 }, { 221, 135 }, { 199, 136 }, { 168, 149 }, { 145, 152 }, { 123, 154 }, { 103, 157 }
 };
 
 static const NPoint kAsScene1907SymbolGroundHitPositions[] = {
-	{275, 299}, {244, 299}, {238, 305},
-	{221, 309}, {199, 310}, {168, 323},
-	{145, 326}, {123, 328}, {103, 331}
+	{ 275, 299 }, { 244, 299 }, { 238, 305 }, { 221, 309 }, { 199, 310 }, { 168, 323 }, { 145, 326 }, { 123, 328 }, { 103, 331 }
 };
 
 static const NPoint kAsScene1907SymbolPluggedInDownPositions[] = {
-	{275, 136}, {244, 156}, {238, 183},
-	{221, 207}, {199, 228}, {168, 262},
-	{145, 285}, {123, 307}, {103, 331}
+	{ 275, 136 }, { 244, 156 }, { 238, 183 }, { 221, 207 }, { 199, 228 }, { 168, 262 }, { 145, 285 }, { 123, 307 }, { 103, 331 }
 };
 
 static const uint32 kAsScene1907SymbolFileHashes[] = {
@@ -59,7 +51,10 @@ bool AsScene1907Symbol::_plugInFailed = false;
 int AsScene1907Symbol::_plugInTryCount = 0;
 
 AsScene1907Symbol::AsScene1907Symbol(NeverhoodEngine *vm, Scene1907 *parentScene, int elementIndex, int positionIndex)
-	: AnimatedSprite(vm, 1000 - positionIndex), _parentScene(parentScene), _elementIndex(elementIndex), _isMoving(false) {
+  : AnimatedSprite(vm, 1000 - positionIndex)
+  , _parentScene(parentScene)
+  , _elementIndex(elementIndex)
+  , _isMoving(false) {
 
 	_plugInFailed = false;
 	_plugInTryCount = 0;
@@ -94,7 +89,6 @@ AsScene1907Symbol::AsScene1907Symbol(NeverhoodEngine *vm, Scene1907 *parentScene
 	Sprite::updateBounds();
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1907Symbol::handleMessage);
-
 }
 
 void AsScene1907Symbol::update() {
@@ -320,8 +314,10 @@ void AsScene1907Symbol::moveDown() {
 }
 
 SsScene1907UpDownButton::SsScene1907UpDownButton(NeverhoodEngine *vm, Scene1907 *parentScene, AsScene1907Symbol *asScene1907Symbol)
-	: StaticSprite(vm, 1400), _parentScene(parentScene), _asScene1907Symbol(asScene1907Symbol),
-	_countdown1(0) {
+  : StaticSprite(vm, 1400)
+  , _parentScene(parentScene)
+  , _asScene1907Symbol(asScene1907Symbol)
+  , _countdown1(0) {
 
 	loadSprite(0x64516424, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 1400);
 	setVisible(false);
@@ -372,7 +368,7 @@ void SsScene1907UpDownButton::setToDownPosition() {
 }
 
 AsScene1907WaterHint::AsScene1907WaterHint(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1400) {
+  : AnimatedSprite(vm, 1400) {
 
 	createSurface1(0x110A1061, 1500);
 	_x = 320;
@@ -415,7 +411,7 @@ void AsScene1907WaterHint::hide() {
 }
 
 KmScene1901::KmScene1901(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+  : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }

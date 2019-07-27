@@ -31,7 +31,8 @@ class KyraEngine_HoF;
 class Screen_HoF;
 
 class GUI_HoF : public GUI_v2 {
-friend class KyraEngine_HoF;
+	friend class KyraEngine_HoF;
+
 public:
 	GUI_HoF(KyraEngine_HoF *engine);
 
@@ -40,6 +41,7 @@ public:
 	int optionsButton(Button *button);
 
 	void createScreenThumbnail(Graphics::Surface &dst);
+
 private:
 	const char *getMenuTitle(const Menu &menu);
 	const char *getMenuItemTitle(const MenuItem &menuItem);

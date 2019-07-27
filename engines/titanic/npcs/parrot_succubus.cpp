@@ -21,22 +21,26 @@
  */
 
 #include "titanic/npcs/parrot_succubus.h"
-#include "titanic/pet_control/pet_control.h"
 #include "titanic/carry/hose.h"
+#include "titanic/pet_control/pet_control.h"
 #include "titanic/translation.h"
 
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CParrotSuccUBus, CSuccUBus)
-	ON_MESSAGE(HoseConnectedMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(LeaveNodeMsg)
+ON_MESSAGE(HoseConnectedMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(LeaveNodeMsg)
 END_MESSAGE_MAP()
 
-CParrotSuccUBus::CParrotSuccUBus() : CSuccUBus(), _hoseConnected(false),
-	_pumpingSound(0), _hoseRemovalStartFrame(376), _hoseRemovalEndFrame(393) {
+CParrotSuccUBus::CParrotSuccUBus()
+  : CSuccUBus()
+  , _hoseConnected(false)
+  , _pumpingSound(0)
+  , _hoseRemovalStartFrame(376)
+  , _hoseRemovalEndFrame(393) {
 }
 
 void CParrotSuccUBus::save(SimpleFile *file, int indent) {

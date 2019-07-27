@@ -28,8 +28,8 @@
 #ifndef AVALANCHE_CLOCK_H
 #define AVALANCHE_CLOCK_H
 
-#include "common/rect.h"
 #include "avalanche/enums.h"
+#include "common/rect.h"
 
 namespace Avalanche {
 class AvalancheEngine;

@@ -23,17 +23,17 @@
 #ifndef SCI_ENGINE_WORKAROUNDS_H
 #define SCI_ENGINE_WORKAROUNDS_H
 
-#include "sci/engine/vm_types.h"
 #include "sci/engine/state.h"
+#include "sci/engine/vm_types.h"
 #include "sci/sci.h"
 
 namespace Sci {
 
 enum SciWorkaroundType {
-	WORKAROUND_NONE,      // only used by terminator or when no workaround was found
-	WORKAROUND_IGNORE,    // ignore kernel call
+	WORKAROUND_NONE, // only used by terminator or when no workaround was found
+	WORKAROUND_IGNORE, // ignore kernel call
 	WORKAROUND_STILLCALL, // still do kernel call
-	WORKAROUND_FAKE       // fake kernel call / replace temp value / fake opcode
+	WORKAROUND_FAKE // fake kernel call / replace temp value / fake opcode
 };
 
 struct SciWorkaroundSolution {
@@ -114,10 +114,10 @@ extern const SciWorkaroundEntry kScrollWindowAdd_workarounds[];
 extern SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, SciCallOrigin *trackOrigin);
 
 enum SciMessageWorkaroundType {
-	MSG_WORKAROUND_NONE,        // only used by terminator or when no workaround was found
-	MSG_WORKAROUND_REMAP,       // use a different tuple instead
-	MSG_WORKAROUND_FAKE,        // use a hard-coded response
-	MSG_WORKAROUND_EXTRACT      // use text from a different record, optionally a substring
+	MSG_WORKAROUND_NONE, // only used by terminator or when no workaround was found
+	MSG_WORKAROUND_REMAP, // use a different tuple instead
+	MSG_WORKAROUND_FAKE, // use a hard-coded response
+	MSG_WORKAROUND_EXTRACT // use text from a different record, optionally a substring
 };
 
 enum SciMedia {

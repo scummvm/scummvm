@@ -7,7 +7,7 @@
 //
 
 #ifdef _MSC_VER
-#   pragma warning( push, 1 )
+#	pragma warning(push, 1)
 #endif // _MSC_VER
 
 #include <complex>
@@ -19,7 +19,7 @@
 #include <vector>
 
 #ifdef _MSC_VER
-#   pragma warning( pop )
+#	pragma warning(pop)
 #endif // _MSC_VER
 
 #endif // __cxxtest_StdHeaders_h__

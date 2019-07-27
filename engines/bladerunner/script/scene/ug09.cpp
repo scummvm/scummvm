@@ -26,38 +26,38 @@ namespace BladeRunner {
 
 void SceneScriptUG09::InitializeScene() {
 	if (Game_Flag_Query(kFlagCT12ToUG09)) {
-		Setup_Scene_Information(-67.0f, 156.94f, -425.0f,  500);
+		Setup_Scene_Information(-67.0f, 156.94f, -425.0f, 500);
 		Game_Flag_Reset(kFlagCT12ToUG09);
 	} else {
-		Setup_Scene_Information(-53.0f, 156.94f,  174.0f, 1000);
+		Setup_Scene_Information(-53.0f, 156.94f, 174.0f, 1000);
 		Game_Flag_Reset(kFlagUG07toUG09);
 	}
 
 	Scene_Exit_Add_2D_Exit(0, 204, 159, 392, 360, 0);
-	Scene_Exit_Add_2D_Exit(1,   0, 455, 639, 479, 2);
+	Scene_Exit_Add_2D_Exit(1, 0, 455, 639, 479, 2);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRUNOFF, 71, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxBOILPOT2, 45, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1,   76, 0, 1);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP1,  2,  20, 25, 33, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP2,  2,  20, 25, 33, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP4,  2,  20, 25, 33, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxYELL1M2,  2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxYELL1M3,  2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxGRUNT1M1, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxGRUNT2M2, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxGRUNT2M3, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP5,  2,  20, 25, 33, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN1,   5,  50, 47, 57, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN2,   5,  50, 47, 57, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN3,   5,  50, 47, 57, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSTEAM1,   5,  50, 47, 57, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSTEAM3,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSTEAM6A,  5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBMOVE2,  5,  50, 27, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBMOVE3,  5,  50, 27, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxZUBWLK3,  5,  50, 27, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxZUBWLK4,  5,  50, 27, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1, 76, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP1, 2, 20, 25, 33, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP2, 2, 20, 25, 33, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP4, 2, 20, 25, 33, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxYELL1M2, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxYELL1M3, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT1M1, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT2M2, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT2M3, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP5, 2, 20, 25, 33, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1, 5, 50, 47, 57, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2, 5, 50, 47, 57, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN3, 5, 50, 47, 57, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSTEAM1, 5, 50, 47, 57, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSTEAM3, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSTEAM6A, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE2, 5, 50, 27, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE3, 5, 50, 27, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxZUBWLK3, 5, 50, 27, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxZUBWLK4, 5, 50, 27, 37, -100, 100, -101, -101, 0, 0);
 }
 
 void SceneScriptUG09::SceneLoaded() {
@@ -140,8 +140,7 @@ void SceneScriptUG09::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptUG09::PlayerWalkedIn() {
 	if (Global_Variable_Query(kVariableChapter) == 4
-	 && Game_Flag_Query(kFlagUG07Empty)
-	) {
+	    && Game_Flag_Query(kFlagUG07Empty)) {
 		Game_Flag_Set(kFlagMutantsPaused);
 	}
 }

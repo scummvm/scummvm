@@ -28,10 +28,15 @@
  */
 class DefaultDisplayClient : public DisplayClient {
 public:
-	DefaultDisplayClient() : _visible(false), _dirty(true) {}
+	DefaultDisplayClient()
+	  : _visible(false)
+	  , _dirty(true) {}
 
 	bool isVisible() const { return _visible; }
-	void setVisible(bool v) { _visible = v; setDirty(); }
+	void setVisible(bool v) {
+		_visible = v;
+		setDirty();
+	}
 	Buffer &buffer() { return _buffer; }
 	Palette &palette() { return _palette; }
 	void init();
@@ -42,7 +47,10 @@ public:
 	void render() { _renderer.render(); }
 	uint32 getWidth() const { return _buffer.getSourceWidth(); }
 	uint32 getHeight() const { return _buffer.getSourceHeight(); }
-	void setPartialPalette(const byte *colors, uint start, uint num) { setDirty(); return _palette.setPartial(colors, start, num); }
+	void setPartialPalette(const byte *colors, uint start, uint num) {
+		setDirty();
+		return _palette.setPartial(colors, start, num);
+	}
 	void getPartialPalette(byte *colors, uint start, uint num) const {
 		return _palette.getPartial(colors, start, num);
 	}
@@ -78,7 +86,8 @@ public:
  */
 class Screen : public DefaultDisplayClient {
 public:
-	Screen() : _shakePos(0) {
+	Screen()
+	  : _shakePos(0) {
 		memset(&_pixelFormat, 0, sizeof(_pixelFormat));
 		memset(&_frameBuffer, 0, sizeof(_frameBuffer));
 	}

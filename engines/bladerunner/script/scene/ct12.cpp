@@ -39,32 +39,31 @@ void SceneScriptCT12::InitializeScene() {
 		Setup_Scene_Information(-386.13f, -6.5f, 1132.72f, 783);
 	}
 
-	Scene_Exit_Add_2D_Exit(0,   0,   0,  40, 479, 3);
-	Scene_Exit_Add_2D_Exit(1,  78, 224, 162, 330, 0);
+	Scene_Exit_Add_2D_Exit(0, 0, 0, 40, 479, 3);
+	Scene_Exit_Add_2D_Exit(1, 78, 224, 162, 330, 0);
 	Scene_Exit_Add_2D_Exit(2, 500, 180, 619, 346, 0);
 	if (Global_Variable_Query(kVariableChapter) > 2) {
-		Scene_Exit_Add_2D_Exit(3, 620,   0, 639, 479, 1);
+		Scene_Exit_Add_2D_Exit(3, 620, 0, 639, 479, 1);
 	}
 	if (Global_Variable_Query(kVariableChapter) > 3) {
 		Scene_Exit_Add_2D_Exit(4, 324, 150, 435, 340, 0);
 	}
 
-	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 33,    1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 33, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBL1, 20, -100, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBR1, 20, -100, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  60, 180, 20,  33, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSPIN3A,  60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B, 60, 180, 20, 33, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN3A, 60, 180, 16, 25, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 60, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 
 	if (Global_Variable_Query(kVariableChapter) < 2
-	 && Actor_Query_Goal_Number(kActorGaff) == kGoalGaffCT12WaitForMcCoy
-	) {
+	    && Actor_Query_Goal_Number(kActorGaff) == kGoalGaffCT12WaitForMcCoy) {
 		Actor_Put_In_Set(kActorGaff, kSetCT01_CT12);
 		Actor_Set_At_XYZ(kActorGaff, -534.0f, -6.5f, 952.0f, 367);
 		Game_Flag_Set(kFlagCT12GaffSpinner);
@@ -81,33 +80,27 @@ void SceneScriptCT12::InitializeScene() {
 #endif // BLADERUNNER_ORIGINAL_BUGS
 
 	if (Game_Flag_Query(kFlagCT01toCT12)
-	 && Game_Flag_Query(kFlagSpinnerAtCT01)
-	) {
+	    && Game_Flag_Query(kFlagSpinnerAtCT01)) {
 		if (Global_Variable_Query(kVariableChapter) != 2
-		 && Global_Variable_Query(kVariableChapter) != 3
-		) {
+		    && Global_Variable_Query(kVariableChapter) != 3) {
 			Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 1, false);
 		}
 		Scene_Loop_Set_Default(2);
 		Game_Flag_Reset(kFlagCT01toCT12);
-	} else if ( Game_Flag_Query(kFlagCT01toCT12)
-	        && !Game_Flag_Query(kFlagSpinnerAtCT01)
-	) {
+	} else if (Game_Flag_Query(kFlagCT01toCT12)
+	           && !Game_Flag_Query(kFlagSpinnerAtCT01)) {
 		if (Global_Variable_Query(kVariableChapter) != 2
-		 && Global_Variable_Query(kVariableChapter) != 3
-		) {
+		    && Global_Variable_Query(kVariableChapter) != 3) {
 			Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
 		}
 		Scene_Loop_Set_Default(2);
 		Game_Flag_Reset(kFlagCT01toCT12);
 	} else if (Game_Flag_Query(kFlagCT05toCT12)
-	        && Game_Flag_Query(kFlagCT12GaffSpinner)
-	) {
+	           && Game_Flag_Query(kFlagCT12GaffSpinner)) {
 		Game_Flag_Reset(kFlagCT05toCT12);
 		Scene_Loop_Set_Default(4);
-	} else if ( Game_Flag_Query(kFlagCT05toCT12)
-	        && !Game_Flag_Query(kFlagCT12GaffSpinner)
-	) {
+	} else if (Game_Flag_Query(kFlagCT05toCT12)
+	           && !Game_Flag_Query(kFlagCT12GaffSpinner)) {
 		Game_Flag_Reset(kFlagCT05toCT12);
 		Scene_Loop_Set_Default(2);
 	} else {
@@ -145,10 +138,9 @@ bool SceneScriptCT12::ClickedOnActor(int actorId) {
 	// cut off feature? grayford never visit CT12 as goal 308 is never triggered
 	// bug? Marking this as a bug to revisit at a later time
 	if (actorId == kActorOfficerGrayford
-	 && Global_Variable_Query(kVariableChapter) == 4
-	 && Game_Flag_Query(kFlagUG18GuzzaScene)
-	 && Game_Flag_Query(kFlagUG18BriefcaseTaken)
-	) {
+	    && Global_Variable_Query(kVariableChapter) == 4
+	    && Game_Flag_Query(kFlagUG18GuzzaScene)
+	    && Game_Flag_Query(kFlagUG18BriefcaseTaken)) {
 		Actor_Face_Actor(kActorOfficerGrayford, kActorMcCoy, true);
 		Actor_Face_Actor(kActorMcCoy, kActorOfficerGrayford, true);
 		Actor_Says(kActorMcCoy, 710, kAnimationModeTalk); // Hold it! I'm not a Replicant, I got proof!
@@ -253,7 +245,7 @@ void SceneScriptCT12::SceneFrameAdvanced(int frame) {
 	}
 
 	if (frame == 212) {
-		Sound_Play(kSfxCARUP3,    40, 0, 0, 50);
+		Sound_Play(kSfxCARUP3, 40, 0, 0, 50);
 	}
 
 	if (frame == 269) {
@@ -267,10 +259,9 @@ void SceneScriptCT12::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptCT12::PlayerWalkedIn() {
-	if ( Global_Variable_Query(kVariableChapter) < 2
-	 && !Game_Flag_Query(kFlagGaffApproachedMcCoyAboutZuben)
-	 &&  Actor_Query_Goal_Number(kActorGaff) == kGoalGaffCT12WaitForMcCoy
-	) {
+	if (Global_Variable_Query(kVariableChapter) < 2
+	    && !Game_Flag_Query(kFlagGaffApproachedMcCoyAboutZuben)
+	    && Actor_Query_Goal_Number(kActorGaff) == kGoalGaffCT12WaitForMcCoy) {
 #if !BLADERUNNER_ORIGINAL_BUGS
 		// Disable NPC walkers until Gaff goes to his spinner
 		Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerDefault);
@@ -297,8 +288,7 @@ void SceneScriptCT12::PlayerWalkedIn() {
 		CDB_Set_Crime(kClueZubenSquadPhoto, kCrimeMoonbusHijacking);
 
 		if (Game_Flag_Query(kFlagGaffApproachedMcCoyAboutZuben)
-		 && Game_Flag_Query(kFlagZubenRetired)
-		) {
+		    && Game_Flag_Query(kFlagZubenRetired)) {
 			Actor_Says(kActorGaff, 50, kAnimationModeTalk);
 			Actor_Says(kActorMcCoy, 695, kAnimationModeTalk);
 			Actor_Says(kActorGaff, 60, kAnimationModeTalk);
@@ -306,8 +296,7 @@ void SceneScriptCT12::PlayerWalkedIn() {
 			Actor_Says(kActorGaff, 70, kAnimationModeTalk);
 			Actor_Clue_Acquire(kActorGaff, kClueMcCoyRetiredZuben, true, -1);
 		} else if (Game_Flag_Query(kFlagGaffApproachedMcCoyAboutZuben)
-		        && Game_Flag_Query(kFlagZubenSpared)
-		) {
+		           && Game_Flag_Query(kFlagZubenSpared)) {
 			Actor_Says(kActorGaff, 80, kAnimationModeTalk);
 			Actor_Says(kActorGaff, 90, kAnimationModeTalk);
 			Actor_Says(kActorMcCoy, 705, kAnimationModeTalk);
@@ -322,8 +311,7 @@ void SceneScriptCT12::PlayerWalkedIn() {
 		// when he's reached his spinner, in order to keep this NPC code in one place
 		// and because the walkers won't have time to interfere with his path even if
 		// they're enabled early.
-		if (Global_Variable_Query(kVariableGenericWalkerConfig) < 0
-		) {
+		if (Global_Variable_Query(kVariableGenericWalkerConfig) < 0) {
 			Global_Variable_Set(kVariableGenericWalkerConfig, 2);
 		}
 #endif

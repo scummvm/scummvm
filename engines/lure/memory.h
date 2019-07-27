@@ -23,9 +23,8 @@
 #ifndef LURE_MEMORY_H
 #define LURE_MEMORY_H
 
-
-#include "common/system.h"
 #include "common/str.h"
+#include "common/system.h"
 
 namespace Lure {
 
@@ -33,6 +32,7 @@ class MemoryBlock {
 private:
 	byte *_data;
 	uint32 _size;
+
 public:
 	MemoryBlock(uint32 size);
 	MemoryBlock(MemoryBlock *src);

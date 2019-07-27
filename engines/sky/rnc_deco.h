@@ -23,9 +23,7 @@
 #ifndef SKY_RNC_DECO_H
 #define SKY_RNC_DECO_H
 
-
-
-#define RNC_SIGNATURE   0x524E4301 // "RNC\001"
+#define RNC_SIGNATURE 0x524E4301 // "RNC\001"
 
 namespace Sky {
 
@@ -55,7 +53,6 @@ protected:
 	uint16 inputBits(uint8 amount);
 	void makeHufftable(uint16 *table);
 	uint16 inputValue(uint16 *table);
-
 };
 
 } // End of namespace Sky

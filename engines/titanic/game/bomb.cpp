@@ -27,15 +27,15 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CBomb, CBackground)
-	ON_MESSAGE(StatusChangeMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(EnterRoomMsg)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(TimerMsg)
-	ON_MESSAGE(TrueTalkGetStateValueMsg)
-	ON_MESSAGE(SetFrameMsg)
+ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(TimerMsg)
+ON_MESSAGE(TrueTalkGetStateValueMsg)
+ON_MESSAGE(SetFrameMsg)
 END_MESSAGE_MAP()
 
 const int CORRECT_WHEELS = 23;
@@ -51,26 +51,106 @@ static const char *const HUNDREDS_AND_WAVS_EN[] = {
 };
 
 static const char *const COUNTDOWN_WAVS_EN[100] = {
-	"bombcountdown_c0.wav", "z#355.wav", "z#341.wav",  "z#327.wav", "z#313.wav",
-	"z#299.wav", "z#285.wav", "z#271.wav", "z#257.wav", "z#243.wav",
-	"z#354.wav", "z#350.wav", "z#349.wav", "z#348.wav", "z#347.wav",
-	"z#346.wav", "z#345.wav", "z#344.wav", "z#343.wav", "z#342.wav",
-	"z#340.wav", "z#336.wav", "z#335.wav", "z#334.wav", "z#333.wav",
-	"z#332.wav", "z#331.wav", "z#330.wav", "z#329.wav", "z#328.wav",
-	"z#326.wav", "z#322.wav", "z#321.wav", "z#320.wav", "z#319.wav",
-	"z#318.wav", "z#317.wav", "z#316.wav", "z#315.wav", "z#314.wav",
-	"z#312.wav", "z#308.wav", "z#307.wav", "z#306.wav", "z#305.wav",
-	"z#304.wav", "z#303.wav", "z#302.wav", "z#301.wav", "z#300.wav",
-	"z#298.wav", "z#294.wav", "z#293.wav", "z#292.wav", "z#291.wav",
-	"z#290.wav", "z#289.wav", "z#288.wav", "z#287.wav", "z#286.wav",
-	"z#284.wav", "z#280.wav", "z#279.wav", "z#278.wav", "z#277.wav",
-	"z#276.wav", "z#275.wav", "z#274.wav", "z#273.wav", "z#272.wav",
-	"z#270.wav", "z#266.wav", "z#265.wav", "z#264.wav", "z#263.wav",
-	"z#262.wav", "z#261.wav", "z#260.wav", "z#259.wav", "z#258.wav",
-	"z#256.wav", "z#252.wav", "z#251.wav", "z#250.wav", "z#249.wav",
-	"z#248.wav", "z#247.wav", "z#246.wav", "z#245.wav", "z#244.wav",
-	"z#242.wav", "z#238.wav", "z#237.wav", "z#236.wav", "z#235.wav",
-	"z#234.wav", "z#233.wav", "z#232.wav", "z#231.wav", "z#230.wav",
+	"bombcountdown_c0.wav",
+	"z#355.wav",
+	"z#341.wav",
+	"z#327.wav",
+	"z#313.wav",
+	"z#299.wav",
+	"z#285.wav",
+	"z#271.wav",
+	"z#257.wav",
+	"z#243.wav",
+	"z#354.wav",
+	"z#350.wav",
+	"z#349.wav",
+	"z#348.wav",
+	"z#347.wav",
+	"z#346.wav",
+	"z#345.wav",
+	"z#344.wav",
+	"z#343.wav",
+	"z#342.wav",
+	"z#340.wav",
+	"z#336.wav",
+	"z#335.wav",
+	"z#334.wav",
+	"z#333.wav",
+	"z#332.wav",
+	"z#331.wav",
+	"z#330.wav",
+	"z#329.wav",
+	"z#328.wav",
+	"z#326.wav",
+	"z#322.wav",
+	"z#321.wav",
+	"z#320.wav",
+	"z#319.wav",
+	"z#318.wav",
+	"z#317.wav",
+	"z#316.wav",
+	"z#315.wav",
+	"z#314.wav",
+	"z#312.wav",
+	"z#308.wav",
+	"z#307.wav",
+	"z#306.wav",
+	"z#305.wav",
+	"z#304.wav",
+	"z#303.wav",
+	"z#302.wav",
+	"z#301.wav",
+	"z#300.wav",
+	"z#298.wav",
+	"z#294.wav",
+	"z#293.wav",
+	"z#292.wav",
+	"z#291.wav",
+	"z#290.wav",
+	"z#289.wav",
+	"z#288.wav",
+	"z#287.wav",
+	"z#286.wav",
+	"z#284.wav",
+	"z#280.wav",
+	"z#279.wav",
+	"z#278.wav",
+	"z#277.wav",
+	"z#276.wav",
+	"z#275.wav",
+	"z#274.wav",
+	"z#273.wav",
+	"z#272.wav",
+	"z#270.wav",
+	"z#266.wav",
+	"z#265.wav",
+	"z#264.wav",
+	"z#263.wav",
+	"z#262.wav",
+	"z#261.wav",
+	"z#260.wav",
+	"z#259.wav",
+	"z#258.wav",
+	"z#256.wav",
+	"z#252.wav",
+	"z#251.wav",
+	"z#250.wav",
+	"z#249.wav",
+	"z#248.wav",
+	"z#247.wav",
+	"z#246.wav",
+	"z#245.wav",
+	"z#244.wav",
+	"z#242.wav",
+	"z#238.wav",
+	"z#237.wav",
+	"z#236.wav",
+	"z#235.wav",
+	"z#234.wav",
+	"z#233.wav",
+	"z#232.wav",
+	"z#231.wav",
+	"z#230.wav",
 };
 
 const char *const HUNDREDS_WAVS_DE[10] = {
@@ -104,7 +184,8 @@ const char *const WAVES_970_DE[30] = {
 	"z#21.wav", "z#20.wav", "z#19.wav", "z#18.wav", "z#17.wav"
 };
 
-CBomb::CBomb() : CBackground() {
+CBomb::CBomb()
+  : CBackground() {
 	_active = false;
 	_numCorrectWheels = 0;
 	_tappedCtr = 17;
@@ -407,7 +488,7 @@ bool CBomb::TimerMsg(CTimerMsg *msg) {
 						const char *tensStr = TENS_WAVS_DE[tens - 1];
 						if (_soundHandle) {
 							_soundHandle = queueSound(tensStr, _soundHandle,
-								_volume, 0, false, Audio::Mixer::kSpeechSoundType);
+							                          _volume, 0, false, Audio::Mixer::kSpeechSoundType);
 						} else {
 							CProximity prox(Audio::Mixer::kSpeechSoundType, _volume);
 							_soundHandle = playSound(tensStr, prox);
@@ -417,14 +498,14 @@ bool CBomb::TimerMsg(CTimerMsg *msg) {
 						if (digit != 0) {
 							const char *digitStr = DIGITS_WAVS_DE[digit - 1];
 							_soundHandle = queueSound(digitStr, _soundHandle,
-								_volume, 0, false, Audio::Mixer::kSpeechSoundType);
+							                          _volume, 0, false, Audio::Mixer::kSpeechSoundType);
 						}
 					} else if (remainder != 0) {
 						// One to nineteen
 						const char *name = ONE_TO_NINETEEN_WAVS_DE[remainder - 1];
 						if (_soundHandle) {
 							_soundHandle = queueSound(name, _soundHandle,
-								_volume, 0, false, Audio::Mixer::kSpeechSoundType);
+							                          _volume, 0, false, Audio::Mixer::kSpeechSoundType);
 						} else {
 							CProximity prox(Audio::Mixer::kSpeechSoundType, _volume);
 							_soundHandle = playSound(name, prox);

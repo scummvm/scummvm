@@ -21,8 +21,8 @@
  */
 
 #include "common/debug.h"
-#include "common/util.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
@@ -44,12 +44,15 @@ private:
 
 	uint32 readVLQ2(byte *&data);
 	void chainEvent(EventInfo &info);
+
 protected:
 	void parseNextEvent(EventInfo &info);
 	void resetTracking();
 
 public:
-	MidiParser_S1D() : _data(0), _noDelta(false) {}
+	MidiParser_S1D()
+	  : _data(0)
+	  , _noDelta(false) {}
 
 	bool loadMusic(byte *data, uint32 size);
 };
@@ -138,7 +141,7 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 			// We need to read the next midi event here. Since we can not
 			// safely pass this event to the MIDI event processing.
 			chainEvent(info);
-			} break;
+		} break;
 
 		case 0xB: // auto stop marker(?)
 			// In case the stop mode(?) is set to 0x80 this will stop the

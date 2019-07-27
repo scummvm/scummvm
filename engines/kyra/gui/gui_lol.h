@@ -22,74 +22,75 @@
 
 #ifdef ENABLE_LOL
 
-#ifndef KYRA_GUI_LOL_H
-#define KYRA_GUI_LOL_H
+#	ifndef KYRA_GUI_LOL_H
+#		define KYRA_GUI_LOL_H
 
-#include "kyra/gui/gui_v1.h"
+#		include "kyra/gui/gui_v1.h"
 
 namespace Kyra {
-#define GUI_LOL_MENU(menu, a, b, c, d, e, f, g, i) \
-	do { \
-		const ScreenDim *dim = _screen->getScreenDim(a); \
-		menu.x = (dim->sx << 3); \
-		menu.y = (dim->sy); \
-		menu.width = (dim->w << 3); \
-		menu.height = (dim->h); \
-		if (_vm->gameFlags().use16ColorMode) { \
-		menu.bkgdColor = 0xCC; \
-		menu.color1 = 0xFF; \
-		menu.color2 = 0xDD; \
-		} else { \
-		menu.bkgdColor = 225; \
-		menu.color1 = 223; \
-		menu.color2 = 227; \
-		} \
-		menu.menuNameId = b; \
-		menu.highlightedItem = c; \
-		menu.numberOfItems = d; \
-		menu.titleX = (dim->sx << 3) + (dim->w << 2); \
-		menu.titleY = 6; \
-		menu.textColor = _vm->gameFlags().use16ColorMode ? 0xE1 : 254; \
-		menu.scrollUpButtonX = e; \
-		menu.scrollUpButtonY = f; \
-		menu.scrollDownButtonX = g; \
-		menu.scrollDownButtonY = i; \
-	} while (0)
+#		define GUI_LOL_MENU(menu, a, b, c, d, e, f, g, i)                 \
+			do {                                                             \
+				const ScreenDim *dim = _screen->getScreenDim(a);               \
+				menu.x = (dim->sx << 3);                                       \
+				menu.y = (dim->sy);                                            \
+				menu.width = (dim->w << 3);                                    \
+				menu.height = (dim->h);                                        \
+				if (_vm->gameFlags().use16ColorMode) {                         \
+					menu.bkgdColor = 0xCC;                                       \
+					menu.color1 = 0xFF;                                          \
+					menu.color2 = 0xDD;                                          \
+				} else {                                                       \
+					menu.bkgdColor = 225;                                        \
+					menu.color1 = 223;                                           \
+					menu.color2 = 227;                                           \
+				}                                                              \
+				menu.menuNameId = b;                                           \
+				menu.highlightedItem = c;                                      \
+				menu.numberOfItems = d;                                        \
+				menu.titleX = (dim->sx << 3) + (dim->w << 2);                  \
+				menu.titleY = 6;                                               \
+				menu.textColor = _vm->gameFlags().use16ColorMode ? 0xE1 : 254; \
+				menu.scrollUpButtonX = e;                                      \
+				menu.scrollUpButtonY = f;                                      \
+				menu.scrollDownButtonX = g;                                    \
+				menu.scrollDownButtonY = i;                                    \
+			} while (0)
 
-	#define GUI_LOL_MENU_ITEM(item, a, b, c, d, e, f, g) \
-	do { \
-		item.enabled = 1; \
-		item.itemId = a; \
-		item.itemString = 0; \
-		item.x = b; \
-		item.y = c; \
-		item.width = d; \
-		item.height = e; \
-		item.textColor =  _vm->gameFlags().use16ColorMode ? 0xC1 : 204; \
-		item.highlightColor = _vm->gameFlags().use16ColorMode ? 0xE1 : 254; \
-		item.titleX = -1; \
-		if (_vm->gameFlags().use16ColorMode) { \
-		item.bkgdColor = 0xCC; \
-		item.color1 = 0xFF; \
-		item.color2 = 0xDD; \
-		} else { \
-		item.bkgdColor = 225; \
-		item.color1 = 223; \
-		item.color2 = 227; \
-		} \
-		item.saveSlot = 0; \
-		item.labelId = f; \
-		item.labelString = 0; \
-		item.labelX = 0; \
-		item.labelY = 0; \
-		item.keyCode = g; \
-	} while (0)
+#		define GUI_LOL_MENU_ITEM(item, a, b, c, d, e, f, g)                    \
+			do {                                                                  \
+				item.enabled = 1;                                                   \
+				item.itemId = a;                                                    \
+				item.itemString = 0;                                                \
+				item.x = b;                                                         \
+				item.y = c;                                                         \
+				item.width = d;                                                     \
+				item.height = e;                                                    \
+				item.textColor = _vm->gameFlags().use16ColorMode ? 0xC1 : 204;      \
+				item.highlightColor = _vm->gameFlags().use16ColorMode ? 0xE1 : 254; \
+				item.titleX = -1;                                                   \
+				if (_vm->gameFlags().use16ColorMode) {                              \
+					item.bkgdColor = 0xCC;                                            \
+					item.color1 = 0xFF;                                               \
+					item.color2 = 0xDD;                                               \
+				} else {                                                            \
+					item.bkgdColor = 225;                                             \
+					item.color1 = 223;                                                \
+					item.color2 = 227;                                                \
+				}                                                                   \
+				item.saveSlot = 0;                                                  \
+				item.labelId = f;                                                   \
+				item.labelString = 0;                                               \
+				item.labelX = 0;                                                    \
+				item.labelY = 0;                                                    \
+				item.keyCode = g;                                                   \
+			} while (0)
 
 class LoLEngine;
 class Screen_LoL;
 
 class GUI_LoL : public GUI_v1 {
 	friend class LoLEngine;
+
 public:
 	GUI_LoL(LoLEngine *vm);
 
@@ -135,7 +136,6 @@ private:
 	Button *getScrollUpButton() { return &_scrollUpButton; }
 	Button *getScrollDownButton() { return &_scrollDownButton; }
 
-
 	Button::Callback getScrollUpButtonHandler() const { return _scrollUpFunctor; }
 	Button::Callback getScrollDownButtonHandler() const { return _scrollDownFunctor; }
 
@@ -174,6 +174,6 @@ private:
 
 } // End of namespace Kyra
 
-#endif
+#	endif
 
 #endif // ENABLE_LOL

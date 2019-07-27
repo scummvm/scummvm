@@ -31,26 +31,26 @@ class SupernovaEngine;
 class ResourceManager;
 
 enum AudioId {
-	kAudioFoundLocation,        // 44|0
-	kAudioCrash,                // 45|0
-	kAudioVoiceHalt,            // 46|0
-	kAudioGunShot,              // 46|2510
-	kAudioSmash,                // 46|4020
-	kAudioVoiceSupernova,       // 47|0
-	kAudioVoiceYeah,            // 47|24010
-	kAudioRobotShock,           // 48|0
-	kAudioRobotBreaks,          // 48|2510
-	kAudioShock,                // 48|10520
-	kAudioTurntable,            // 48|13530
-	kAudioSiren,                // 50|0
-	kAudioSnoring,              // 50|12786
-	kAudioRocks,                // 51|0
-	kAudioDeath,                // 53|0
-	kAudioAlarm,                // 54|0
-	kAudioSuccess,              // 54|8010
-	kAudioSlideDoor,            // 54|24020
-	kAudioDoorOpen,             // 54|30030
-	kAudioDoorClose,            // 54|31040
+	kAudioFoundLocation, // 44|0
+	kAudioCrash, // 45|0
+	kAudioVoiceHalt, // 46|0
+	kAudioGunShot, // 46|2510
+	kAudioSmash, // 46|4020
+	kAudioVoiceSupernova, // 47|0
+	kAudioVoiceYeah, // 47|24010
+	kAudioRobotShock, // 48|0
+	kAudioRobotBreaks, // 48|2510
+	kAudioShock, // 48|10520
+	kAudioTurntable, // 48|13530
+	kAudioSiren, // 50|0
+	kAudioSnoring, // 50|12786
+	kAudioRocks, // 51|0
+	kAudioDeath, // 53|0
+	kAudioAlarm, // 54|0
+	kAudioSuccess, // 54|8010
+	kAudioSlideDoor, // 54|24020
+	kAudioDoorOpen, // 54|30030
+	kAudioDoorClose, // 54|31040
 	kAudioNumSamples
 };
 
@@ -61,7 +61,6 @@ enum MusicId {
 
 class Sound {
 public:
-
 public:
 	Sound(Audio::Mixer *mixer, ResourceManager *resMan);
 
@@ -69,6 +68,7 @@ public:
 	void play(MusicId index);
 	void stop();
 	bool isPlaying();
+
 private:
 	Audio::Mixer *_mixer;
 	ResourceManager *_resMan;

@@ -23,9 +23,9 @@
 #ifndef HOPKINS_SOUND_H
 #define HOPKINS_SOUND_H
 
+#include "audio/mixer.h"
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "audio/mixer.h"
 
 namespace Audio {
 class RewindableAudioStream;
@@ -39,7 +39,9 @@ namespace Hopkins {
 
 class VoiceItem {
 public:
-	VoiceItem() : _status(false), _wavIndex(0) {}
+	VoiceItem()
+	  : _status(false)
+	  , _wavIndex(0) {}
 
 	bool _status;
 	int _wavIndex;
@@ -47,7 +49,10 @@ public:
 
 class SwavItem {
 public:
-	SwavItem() : _active(false), _audioStream(NULL), _freeSampleFl(false) {}
+	SwavItem()
+	  : _active(false)
+	  , _audioStream(NULL)
+	  , _freeSampleFl(false) {}
 
 	bool _active;
 	Audio::RewindableAudioStream *_audioStream;
@@ -57,14 +62,16 @@ public:
 
 class MusicItem {
 public:
-	MusicItem() : _active(false) {}
+	MusicItem()
+	  : _active(false) {}
 
 	bool _active;
 };
 
 class SoundItem {
 public:
-	SoundItem() : _active(false) {}
+	SoundItem()
+	  : _active(false) {}
 
 	bool _active;
 };
@@ -117,6 +124,7 @@ public:
 	int _soundVolume;
 	int _voiceVolume;
 	int _specialSoundNum;
+
 public:
 	SoundManager(HopkinsEngine *vm);
 	~SoundManager();

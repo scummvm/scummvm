@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptHawkersBarkeep::AIScriptHawkersBarkeep(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptHawkersBarkeep::AIScriptHawkersBarkeep(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 	_var1 = 0;
 	_var2 = 0;
 	_var3 = 1;
@@ -99,7 +100,7 @@ int AIScriptHawkersBarkeep::GetFriendlinessModifierIfGetsClue(int otherActorId, 
 }
 
 bool AIScriptHawkersBarkeep::GoalChanged(int currentGoalNumber, int newGoalNumber) {
-	if (newGoalNumber == 1)  {
+	if (newGoalNumber == 1) {
 		_animationState = 8;
 		_animationFrame = -1;
 		Actor_Set_Goal_Number(kActorHawkersBarkeep, 0);
@@ -426,17 +427,17 @@ bool AIScriptHawkersBarkeep::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptHawkersBarkeep::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptHawkersBarkeep::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptHawkersBarkeep::ReachedMovementTrackWaypoint(int waypointId) {

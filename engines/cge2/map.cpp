@@ -29,7 +29,8 @@
 
 namespace CGE2 {
 
-Map::Map(CGE2Engine *vm) :_vm(vm) {}
+Map::Map(CGE2Engine *vm)
+  : _vm(vm) {}
 
 Map::~Map() {
 	_container.clear();

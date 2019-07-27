@@ -19,14 +19,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
- 
+
+#include "pink/objects/actions/action_talk.h"
 #include "pink/archive.h"
 #include "pink/cel_decoder.h"
-#include "pink/pink.h"
-#include "pink/sound.h"
-#include "pink/objects/actions/action_talk.h"
 #include "pink/objects/actors/actor.h"
 #include "pink/objects/pages/game_page.h"
+#include "pink/pink.h"
+#include "pink/sound.h"
 
 namespace Pink {
 
@@ -37,8 +37,8 @@ void ActionTalk::deserialize(Archive &archive) {
 
 void ActionTalk::toConsole() {
 	debugC(6, kPinkDebugLoadingObjects, "\tActionTalk: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
-				  " _endFrame = %d, _intro = %u, _style = %u, _vox = %s",
-		  _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame, _intro, _style, _vox.c_str());
+	                                    " _endFrame = %d, _intro = %u, _style = %u, _vox = %s",
+	       _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame, _intro, _style, _vox.c_str());
 }
 
 void ActionTalk::update() {

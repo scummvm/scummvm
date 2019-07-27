@@ -22,15 +22,15 @@
 
 #include "fullpipe/fullpipe.h"
 
+#include "fullpipe/constants.h"
+#include "fullpipe/floaters.h"
 #include "fullpipe/gameloader.h"
-#include "fullpipe/scene.h"
 #include "fullpipe/input.h"
-#include "fullpipe/statics.h"
 #include "fullpipe/interaction.h"
 #include "fullpipe/motion.h"
-#include "fullpipe/constants.h"
+#include "fullpipe/scene.h"
 #include "fullpipe/scenes.h"
-#include "fullpipe/floaters.h"
+#include "fullpipe/statics.h"
 
 namespace Fullpipe {
 
@@ -573,12 +573,12 @@ void GameLoader::updateSystems(int counterdiff) {
 	}
 }
 
-Sc2::Sc2() :
-	_sceneId(0),
-	_field_2(0),
-	_scene(nullptr),
-	_isLoaded(false),
-	_motionController(nullptr) {}
+Sc2::Sc2()
+  : _sceneId(0)
+  , _field_2(0)
+  , _scene(nullptr)
+  , _isLoaded(false)
+  , _motionController(nullptr) {}
 
 Sc2::~Sc2() {
 	delete _motionController;

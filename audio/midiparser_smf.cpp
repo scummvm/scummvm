@@ -37,13 +37,14 @@ protected:
 	void parseNextEvent(EventInfo &info);
 
 public:
-	MidiParser_SMF() : _buffer(0), _malformedPitchBends(false) {}
+	MidiParser_SMF()
+	  : _buffer(0)
+	  , _malformedPitchBends(false) {}
 	~MidiParser_SMF();
 
 	bool loadMusic(byte *data, uint32 size);
 	void property(int property, int value);
 };
-
 
 static const byte commandLengths[8] = { 3, 3, 3, 3, 2, 2, 3, 0 };
 static const byte specialLengths[16] = { 0, 2, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 };

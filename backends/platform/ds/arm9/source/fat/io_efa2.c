@@ -23,32 +23,32 @@ See gba_nds_fat.txt for help and license details.
 //
 
 // RTC registers
-#define REG_RTC_CLK        *(vu16*)0x080000c4
-#define REG_RTC_EN         *(vu16*)0x080000c8
+#	define REG_RTC_CLK *(vu16 *)0x080000c4
+#	define REG_RTC_EN *(vu16 *)0x080000c8
 
 // "Magic" registers used for unlock/lock sequences
-#define REG_EFA2_MAGIC_A   *(vu16*)0x09fe0000
-#define REG_EFA2_MAGIC_B   *(vu16*)0x08000000
-#define REG_EFA2_MAGIC_C   *(vu16*)0x08020000
-#define REG_EFA2_MAGIC_D   *(vu16*)0x08040000
-#define REG_EFA2_MAGIC_E   *(vu16*)0x09fc0000
+#	define REG_EFA2_MAGIC_A *(vu16 *)0x09fe0000
+#	define REG_EFA2_MAGIC_B *(vu16 *)0x08000000
+#	define REG_EFA2_MAGIC_C *(vu16 *)0x08020000
+#	define REG_EFA2_MAGIC_D *(vu16 *)0x08040000
+#	define REG_EFA2_MAGIC_E *(vu16 *)0x09fc0000
 
 // NAND flash lock/unlock register
-#define REG_EFA2_NAND_LOCK *(vu16*)0x09c40000
+#	define REG_EFA2_NAND_LOCK *(vu16 *)0x09c40000
 // NAND flash enable register
-#define REG_EFA2_NAND_EN   *(vu16*)0x09400000
+#	define REG_EFA2_NAND_EN *(vu16 *)0x09400000
 // NAND flash command write register
-#define REG_EFA2_NAND_CMD   *(vu8*)0x09ffffe2
+#	define REG_EFA2_NAND_CMD *(vu8 *)0x09ffffe2
 // NAND flash address/data write register
-#define REG_EFA2_NAND_WR    *(vu8*)0x09ffffe0
+#	define REG_EFA2_NAND_WR *(vu8 *)0x09ffffe0
 // NAND flash data read register
-#define REG_EFA2_NAND_RD    *(vu8*)0x09ffc000
+#	define REG_EFA2_NAND_RD *(vu8 *)0x09ffc000
 
 // ID of Samsung K9K1G NAND flash chip
-#define EFA2_NAND_ID 0xEC79A5C0
+#	define EFA2_NAND_ID 0xEC79A5C0
 
 // first sector of udisk
-#define EFA2_UDSK_START 0x40
+#	define EFA2_UDSK_START 0x40
 
 //
 // EFA2 access functions
@@ -75,7 +75,7 @@ inline void efa2_reg_lock(void) {
 // global reset/init/enable/unlock ?
 void efa2_global_unlock(void) {
 	efa2_reg_unlock();
-	*(vu16*)0x09880000 = 0x08000;
+	*(vu16 *)0x09880000 = 0x08000;
 	efa2_reg_lock();
 }
 
@@ -141,16 +141,16 @@ u32 efa2_nand_id(void) {
 	efa2_nand_unlock();
 	efa2_nand_enable(1);
 
-	REG_EFA2_NAND_CMD = 0x90;  // write id command
-	REG_EFA2_NAND_WR  = 0x00;  // (dummy) address cycle
-	byte = REG_EFA2_NAND_RD;   // read maker code
-	id   = byte;
-	byte = REG_EFA2_NAND_RD;   // read device code
-	id   = (id << 8) | byte;
-	byte = REG_EFA2_NAND_RD;   // read don't care
-	id   = (id << 8) | byte;
-	byte = REG_EFA2_NAND_RD;   // read multi plane code
-	id   = (id << 8) | byte;
+	REG_EFA2_NAND_CMD = 0x90; // write id command
+	REG_EFA2_NAND_WR = 0x00; // (dummy) address cycle
+	byte = REG_EFA2_NAND_RD; // read maker code
+	id = byte;
+	byte = REG_EFA2_NAND_RD; // read device code
+	id = (id << 8) | byte;
+	byte = REG_EFA2_NAND_RD; // read don't care
+	id = (id << 8) | byte;
+	byte = REG_EFA2_NAND_RD; // read multi plane code
+	id = (id << 8) | byte;
 
 	efa2_nand_enable(0);
 	efa2_nand_lock();
@@ -166,8 +166,7 @@ EFA2_ClearStatus
 Reads and checks NAND status information
 bool return OUT:  true if NAND is idle
 -----------------------------------------------------------------*/
-bool EFA2_ClearStatus (void)
-{
+bool EFA2_ClearStatus(void) {
 	// tbd: currently there is no write support, so always return
 	// true, there is no possibility for pending operations
 	return true;
@@ -178,8 +177,7 @@ EFA2_IsInserted
 Checks to see if the NAND chip used by the EFA2 is present
 bool return OUT:  true if the correct NAND chip is found
 -----------------------------------------------------------------*/
-bool EFA2_IsInserted (void)
-{
+bool EFA2_IsInserted(void) {
 	EFA2_ClearStatus();
 	return (efa2_nand_id() == EFA2_NAND_ID);
 }
@@ -194,15 +192,14 @@ u8 numSecs IN: number of 512 byte sectors to read,
 void* buffer OUT: pointer to 512 byte buffer to store data in
 bool return OUT: true if successful
 -----------------------------------------------------------------*/
-bool EFA2_ReadSectors (u32 sector, u8 numSecs, void* buffer)
-{
-	int  i;
-	int  j = (numSecs > 0 ? numSecs : 256);
+bool EFA2_ReadSectors(u32 sector, u8 numSecs, void *buffer) {
+	int i;
+	int j = (numSecs > 0 ? numSecs : 256);
 
-#ifndef _CF_ALLOW_UNALIGNED
-	u8  byte;
-	u16  word;
-#endif
+#	ifndef _CF_ALLOW_UNALIGNED
+	u8 byte;
+	u16 word;
+#	endif
 
 	// NAND page 0x40 (EFA2_UDSK_START) contains the MBR of the
 	// udisk and thus is sector 0. The original EFA2 firmware
@@ -216,49 +213,49 @@ bool EFA2_ReadSectors (u32 sector, u8 numSecs, void* buffer)
 
 	// future enhancement: wait for possible write operations to
 	// be finisched
-	if (!EFA2_ClearStatus()) return false;
+	if (!EFA2_ClearStatus())
+		return false;
 
 	efa2_nand_unlock();
 	efa2_nand_enable(1);
 	efa2_nand_reset();
 
 	// set NAND to READ1 operation mode and transfer page address
-	REG_EFA2_NAND_CMD = 0x00;                // write READ1 command
-	REG_EFA2_NAND_WR  = 0x00;                // write address  [7:0]
-	REG_EFA2_NAND_WR  = (page      ) & 0xff; // write address [15:8]
-	REG_EFA2_NAND_WR  = (page >> 8 ) & 0xff; // write address[23:16]
-	REG_EFA2_NAND_WR  = (page >> 16) & 0xff; // write address[26:24]
+	REG_EFA2_NAND_CMD = 0x00; // write READ1 command
+	REG_EFA2_NAND_WR = 0x00; // write address  [7:0]
+	REG_EFA2_NAND_WR = (page)&0xff; // write address [15:8]
+	REG_EFA2_NAND_WR = (page >> 8) & 0xff; // write address[23:16]
+	REG_EFA2_NAND_WR = (page >> 16) & 0xff; // write address[26:24]
 
 	// Due to a bug in EFA2 design there is need to waste some cycles
 	// "by hand" instead the possibility to check the R/~B port of
 	// the NAND flash via a register. The RTC deactivation is only
 	// there to make sure the loop won't be optimized by the compiler
-	for (i=0 ; i < 3 ; i++) efa2_rtc_deactivate();
+	for (i = 0; i < 3; i++)
+		efa2_rtc_deactivate();
 
-	while (j--)
-	{
+	while (j--) {
 		// read page data
-#ifdef _CF_ALLOW_UNALIGNED
+#	ifdef _CF_ALLOW_UNALIGNED
 		// slow byte access to RAM, but works in principle
-		for (i=0 ; i < 512 ; i++)
-			((u8*)buffer)[i] = REG_EFA2_NAND_RD;
-#else
+		for (i = 0; i < 512; i++)
+			((u8 *)buffer)[i] = REG_EFA2_NAND_RD;
+#	else
 		// a bit faster, but DMA is not possible
-		for (i=0 ; i < 256 ; i++) {
-			byte = REG_EFA2_NAND_RD;   // read lo-byte
+		for (i = 0; i < 256; i++) {
+			byte = REG_EFA2_NAND_RD; // read lo-byte
 			word = byte;
-			byte = REG_EFA2_NAND_RD;   // read hi-byte
+			byte = REG_EFA2_NAND_RD; // read hi-byte
 			word = word | (byte << 8);
-			((u16*)buffer)[i] = word;
+			((u16 *)buffer)[i] = word;
 		}
-#endif
+#	endif
 	}
 
 	efa2_nand_enable(0);
 	efa2_nand_lock();
 	return true;
 }
-
 
 /*-----------------------------------------------------------------
 EFA2_WriteSectors
@@ -269,8 +266,7 @@ u8 numSecs IN: number of 512 byte sectors to write
 void* buffer IN: pointer to 512 byte buffer to read data from
 bool return OUT: true if successful
 -----------------------------------------------------------------*/
-bool EFA2_WriteSectors (u32 sector, u8 numSecs, void* buffer)
-{
+bool EFA2_WriteSectors(u32 sector, u8 numSecs, void *buffer) {
 	// Upto now I focused on reading NAND, write operations
 	// will follow
 	return false;
@@ -280,8 +276,7 @@ bool EFA2_WriteSectors (u32 sector, u8 numSecs, void* buffer)
 EFA2_Shutdown
 unload the EFA2 interface
 -----------------------------------------------------------------*/
-bool EFA2_Shutdown(void)
-{
+bool EFA2_Shutdown(void) {
 	return EFA2_ClearStatus();
 }
 
@@ -290,8 +285,7 @@ EFA2_StartUp
 initializes the EFA2 card, returns true if successful,
 otherwise returns false
 -----------------------------------------------------------------*/
-bool EFA2_StartUp(void)
-{
+bool EFA2_StartUp(void) {
 	efa2_global_unlock();
 	return (efa2_nand_id() == EFA2_NAND_ID);
 }
@@ -344,32 +338,32 @@ See gba_nds_fat.txt for help and license details.
 //
 
 // RTC registers
-#define REG_RTC_CLK        *(vu16*)0x080000c4
-#define REG_RTC_EN         *(vu16*)0x080000c8
+#	define REG_RTC_CLK *(vu16 *)0x080000c4
+#	define REG_RTC_EN *(vu16 *)0x080000c8
 
 // "Magic" registers used for unlock/lock sequences
-#define REG_EFA2_MAGIC_A   *(vu16*)0x09fe0000
-#define REG_EFA2_MAGIC_B   *(vu16*)0x08000000
-#define REG_EFA2_MAGIC_C   *(vu16*)0x08020000
-#define REG_EFA2_MAGIC_D   *(vu16*)0x08040000
-#define REG_EFA2_MAGIC_E   *(vu16*)0x09fc0000
+#	define REG_EFA2_MAGIC_A *(vu16 *)0x09fe0000
+#	define REG_EFA2_MAGIC_B *(vu16 *)0x08000000
+#	define REG_EFA2_MAGIC_C *(vu16 *)0x08020000
+#	define REG_EFA2_MAGIC_D *(vu16 *)0x08040000
+#	define REG_EFA2_MAGIC_E *(vu16 *)0x09fc0000
 
 // NAND flash lock/unlock register
-#define REG_EFA2_NAND_LOCK *(vu16*)0x09c40000
+#	define REG_EFA2_NAND_LOCK *(vu16 *)0x09c40000
 // NAND flash enable register
-#define REG_EFA2_NAND_EN   *(vu16*)0x09400000
+#	define REG_EFA2_NAND_EN *(vu16 *)0x09400000
 // NAND flash command write register
-#define REG_EFA2_NAND_CMD   *(vu8*)0x09ffffe2
+#	define REG_EFA2_NAND_CMD *(vu8 *)0x09ffffe2
 // NAND flash address/data write register
-#define REG_EFA2_NAND_WR    *(vu8*)0x09ffffe0
+#	define REG_EFA2_NAND_WR *(vu8 *)0x09ffffe0
 // NAND flash data read register
-#define REG_EFA2_NAND_RD    *(vu8*)0x09ffc000
+#	define REG_EFA2_NAND_RD *(vu8 *)0x09ffc000
 
 // ID of Samsung K9K1G NAND flash chip
-#define EFA2_NAND_ID 0xEC79A5C0
+#	define EFA2_NAND_ID 0xEC79A5C0
 
 // first sector of udisk
-#define EFA2_UDSK_START 0x40
+#	define EFA2_UDSK_START 0x40
 
 //
 // EFA2 access functions
@@ -396,7 +390,7 @@ inline void efa2_reg_lock(void) {
 // global reset/init/enable/unlock ?
 void efa2_global_unlock(void) {
 	efa2_reg_unlock();
-	*(vu16*)0x09880000 = 0x08000;
+	*(vu16 *)0x09880000 = 0x08000;
 	efa2_reg_lock();
 }
 
@@ -462,16 +456,16 @@ u32 efa2_nand_id(void) {
 	efa2_nand_unlock();
 	efa2_nand_enable(1);
 
-	REG_EFA2_NAND_CMD = 0x90;  // write id command
-	REG_EFA2_NAND_WR  = 0x00;  // (dummy) address cycle
-	byte = REG_EFA2_NAND_RD;   // read maker code
-	id   = byte;
-	byte = REG_EFA2_NAND_RD;   // read device code
-	id   = (id << 8) | byte;
-	byte = REG_EFA2_NAND_RD;   // read don't care
-	id   = (id << 8) | byte;
-	byte = REG_EFA2_NAND_RD;   // read multi plane code
-	id   = (id << 8) | byte;
+	REG_EFA2_NAND_CMD = 0x90; // write id command
+	REG_EFA2_NAND_WR = 0x00; // (dummy) address cycle
+	byte = REG_EFA2_NAND_RD; // read maker code
+	id = byte;
+	byte = REG_EFA2_NAND_RD; // read device code
+	id = (id << 8) | byte;
+	byte = REG_EFA2_NAND_RD; // read don't care
+	id = (id << 8) | byte;
+	byte = REG_EFA2_NAND_RD; // read multi plane code
+	id = (id << 8) | byte;
 
 	efa2_nand_enable(0);
 	efa2_nand_lock();
@@ -487,8 +481,7 @@ EFA2_ClearStatus
 Reads and checks NAND status information
 bool return OUT:  true if NAND is idle
 -----------------------------------------------------------------*/
-bool EFA2_ClearStatus (void)
-{
+bool EFA2_ClearStatus(void) {
 	// tbd: currently there is no write support, so always return
 	// true, there is no possibility for pending operations
 	return true;
@@ -499,8 +492,7 @@ EFA2_IsInserted
 Checks to see if the NAND chip used by the EFA2 is present
 bool return OUT:  true if the correct NAND chip is found
 -----------------------------------------------------------------*/
-bool EFA2_IsInserted (void)
-{
+bool EFA2_IsInserted(void) {
 	EFA2_ClearStatus();
 	return (efa2_nand_id() == EFA2_NAND_ID);
 }
@@ -515,15 +507,14 @@ u8 numSecs IN: number of 512 byte sectors to read,
 void* buffer OUT: pointer to 512 byte buffer to store data in
 bool return OUT: true if successful
 -----------------------------------------------------------------*/
-bool EFA2_ReadSectors (u32 sector, u8 numSecs, void* buffer)
-{
-	int  i;
-	int  j = (numSecs > 0 ? numSecs : 256);
+bool EFA2_ReadSectors(u32 sector, u8 numSecs, void *buffer) {
+	int i;
+	int j = (numSecs > 0 ? numSecs : 256);
 
-#ifndef _CF_ALLOW_UNALIGNED
-	u8  byte;
-	u16  word;
-#endif
+#	ifndef _CF_ALLOW_UNALIGNED
+	u8 byte;
+	u16 word;
+#	endif
 
 	// NAND page 0x40 (EFA2_UDSK_START) contains the MBR of the
 	// udisk and thus is sector 0. The original EFA2 firmware
@@ -537,49 +528,49 @@ bool EFA2_ReadSectors (u32 sector, u8 numSecs, void* buffer)
 
 	// future enhancement: wait for possible write operations to
 	// be finisched
-	if (!EFA2_ClearStatus()) return false;
+	if (!EFA2_ClearStatus())
+		return false;
 
 	efa2_nand_unlock();
 	efa2_nand_enable(1);
 	efa2_nand_reset();
 
 	// set NAND to READ1 operation mode and transfer page address
-	REG_EFA2_NAND_CMD = 0x00;                // write READ1 command
-	REG_EFA2_NAND_WR  = 0x00;                // write address  [7:0]
-	REG_EFA2_NAND_WR  = (page      ) & 0xff; // write address [15:8]
-	REG_EFA2_NAND_WR  = (page >> 8 ) & 0xff; // write address[23:16]
-	REG_EFA2_NAND_WR  = (page >> 16) & 0xff; // write address[26:24]
+	REG_EFA2_NAND_CMD = 0x00; // write READ1 command
+	REG_EFA2_NAND_WR = 0x00; // write address  [7:0]
+	REG_EFA2_NAND_WR = (page)&0xff; // write address [15:8]
+	REG_EFA2_NAND_WR = (page >> 8) & 0xff; // write address[23:16]
+	REG_EFA2_NAND_WR = (page >> 16) & 0xff; // write address[26:24]
 
 	// Due to a bug in EFA2 design there is need to waste some cycles
 	// "by hand" instead the possibility to check the R/~B port of
 	// the NAND flash via a register. The RTC deactivation is only
 	// there to make sure the loop won't be optimized by the compiler
-	for (i=0 ; i < 3 ; i++) efa2_rtc_deactivate();
+	for (i = 0; i < 3; i++)
+		efa2_rtc_deactivate();
 
-	while (j--)
-	{
+	while (j--) {
 		// read page data
-#ifdef _CF_ALLOW_UNALIGNED
+#	ifdef _CF_ALLOW_UNALIGNED
 		// slow byte access to RAM, but works in principle
-		for (i=0 ; i < 512 ; i++)
-			((u8*)buffer)[i] = REG_EFA2_NAND_RD;
-#else
+		for (i = 0; i < 512; i++)
+			((u8 *)buffer)[i] = REG_EFA2_NAND_RD;
+#	else
 		// a bit faster, but DMA is not possible
-		for (i=0 ; i < 256 ; i++) {
-			byte = REG_EFA2_NAND_RD;   // read lo-byte
+		for (i = 0; i < 256; i++) {
+			byte = REG_EFA2_NAND_RD; // read lo-byte
 			word = byte;
-			byte = REG_EFA2_NAND_RD;   // read hi-byte
+			byte = REG_EFA2_NAND_RD; // read hi-byte
 			word = word | (byte << 8);
-			((u16*)buffer)[i] = word;
+			((u16 *)buffer)[i] = word;
 		}
-#endif
+#	endif
 	}
 
 	efa2_nand_enable(0);
 	efa2_nand_lock();
 	return true;
 }
-
 
 /*-----------------------------------------------------------------
 EFA2_WriteSectors
@@ -590,8 +581,7 @@ u8 numSecs IN: number of 512 byte sectors to write
 void* buffer IN: pointer to 512 byte buffer to read data from
 bool return OUT: true if successful
 -----------------------------------------------------------------*/
-bool EFA2_WriteSectors (u32 sector, u8 numSecs, void* buffer)
-{
+bool EFA2_WriteSectors(u32 sector, u8 numSecs, void *buffer) {
 	// Upto now I focused on reading NAND, write operations
 	// will follow
 	return false;
@@ -601,8 +591,7 @@ bool EFA2_WriteSectors (u32 sector, u8 numSecs, void* buffer)
 EFA2_Shutdown
 unload the EFA2 interface
 -----------------------------------------------------------------*/
-bool EFA2_Shutdown(void)
-{
+bool EFA2_Shutdown(void) {
 	return EFA2_ClearStatus();
 }
 
@@ -611,8 +600,7 @@ EFA2_StartUp
 initializes the EFA2 card, returns true if successful,
 otherwise returns false
 -----------------------------------------------------------------*/
-bool EFA2_StartUp(void)
-{
+bool EFA2_StartUp(void) {
 	efa2_global_unlock();
 	return (efa2_nand_id() == EFA2_NAND_ID);
 }

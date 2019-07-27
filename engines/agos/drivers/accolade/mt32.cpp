@@ -20,8 +20,8 @@
  *
  */
 
-#include "agos/drivers/accolade/mididriver.h"
 #include "agos/drivers/accolade/mt32.h"
+#include "agos/drivers/accolade/mididriver.h"
 
 #include "audio/mididrv.h"
 
@@ -52,7 +52,7 @@ MidiDriver_Accolade_MT32::~MidiDriver_Accolade_MT32() {
 int MidiDriver_Accolade_MT32::open() {
 	assert(!_driver);
 
-//	debugC(kDebugLevelMT32Driver, "MT32: starting driver");
+	//	debugC(kDebugLevelMT32Driver, "MT32: starting driver");
 
 	// Setup midi driver
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_PREFER_MT32);
@@ -153,20 +153,20 @@ bool MidiDriver_Accolade_MT32::setupInstruments(byte *driverData, uint16 driverD
 		//   1 byte   bytes per instrument
 		//   x bytes  no instruments used for MT32
 
-		channelMappingOffset    = 256 + 16;
-		channelMappingSize      = 16;
+		channelMappingOffset = 256 + 16;
+		channelMappingSize = 16;
 		instrumentMappingOffset = 0;
-		instrumentMappingSize   = 128;
+		instrumentMappingSize = 128;
 
 	} else {
 		// MUSIC.DRV: we expect at least 468 bytes
 		if (driverDataSize < 468)
 			return false;
 
-		channelMappingOffset    = 396;
-		channelMappingSize      = 16;
+		channelMappingOffset = 396;
+		channelMappingSize = 16;
 		instrumentMappingOffset = 140;
-		instrumentMappingSize   = 128;
+		instrumentMappingSize = 128;
 	}
 
 	// Channel mapping
@@ -198,9 +198,9 @@ bool MidiDriver_Accolade_MT32::setupInstruments(byte *driverData, uint16 driverD
 }
 
 MidiDriver *MidiDriver_Accolade_MT32_create(Common::String driverFilename) {
-	byte  *driverData = NULL;
+	byte *driverData = NULL;
 	uint16 driverDataSize = 0;
-	bool   isMusicDrvFile = false;
+	bool isMusicDrvFile = false;
 
 	MidiDriver_Accolade_readDriver(driverFilename, MT_MT32, driverData, driverDataSize, isMusicDrvFile);
 	if (!driverData)

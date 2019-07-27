@@ -26,12 +26,12 @@
 #include "hopkins/globals.h"
 #include "hopkins/hopkins.h"
 
-#include "common/system.h"
-#include "graphics/palette.h"
-#include "image/pcx.h"
 #include "common/file.h"
 #include "common/rect.h"
+#include "common/system.h"
 #include "engines/util.h"
+#include "graphics/palette.h"
+#include "image/pcx.h"
 
 namespace Hopkins {
 
@@ -171,7 +171,7 @@ void GraphicsManager::clearVesaScreen() {
  * Load Image
  */
 void GraphicsManager::loadImage(const Common::String &file) {
-	Common::String filename	= Common::String::format("%s.PCX", file.c_str());
+	Common::String filename = Common::String::format("%s.PCX", file.c_str());
 	loadScreen(filename);
 	initColorTable(165, 170, _palette);
 }
@@ -292,7 +292,7 @@ void GraphicsManager::fillSurface(byte *surface, byte *col, int size) {
 	byte dataVal;
 
 	byte *dataP = surface;
-	for (int count = size - 1; count; count--){
+	for (int count = size - 1; count; count--) {
 		dataVal = *dataP;
 		*dataP = col[dataVal];
 		dataP++;
@@ -314,7 +314,7 @@ void GraphicsManager::loadPCX640(byte *surface, const Common::String &file, byte
 	} else {
 		// Load stand alone PCX file
 		if (!f.open(file))
-		  error("Error opening PCX %s.", file.c_str());
+			error("Error opening PCX %s.", file.c_str());
 	}
 
 	// Decode the PCX
@@ -658,8 +658,8 @@ uint16 GraphicsManager::mapRGB(byte r, byte g, byte b) {
 	Graphics::PixelFormat format = g_system->getScreenFormat();
 
 	return (r >> format.rLoss) << format.rShift
-			| (g >> format.gLoss) << format.gShift
-			| (b >> format.bLoss) << format.bShift;
+	  | (g >> format.gLoss) << format.gShift
+	  | (b >> format.bLoss) << format.bShift;
 }
 
 void GraphicsManager::updateScreen() {
@@ -1180,8 +1180,8 @@ void GraphicsManager::displayZones() {
 		if (bobId) {
 			// Get the rectangle for the zone
 			Common::Rect r(_vm->_objectsMan->_bob[bobId]._oldX, _vm->_objectsMan->_bob[bobId]._oldY,
-				_vm->_objectsMan->_bob[bobId]._oldX + _vm->_objectsMan->_bob[bobId]._oldWidth,
-				_vm->_objectsMan->_bob[bobId]._oldY + _vm->_objectsMan->_bob[bobId]._oldHeight);
+			               _vm->_objectsMan->_bob[bobId]._oldX + _vm->_objectsMan->_bob[bobId]._oldWidth,
+			               _vm->_objectsMan->_bob[bobId]._oldY + _vm->_objectsMan->_bob[bobId]._oldHeight);
 
 			displayDebugRect(screenSurface, r, 0xff0000);
 		}
@@ -1190,7 +1190,7 @@ void GraphicsManager::displayZones() {
 	for (int squareZoneId = 0; squareZoneId <= 99; squareZoneId++) {
 		if (_vm->_linesMan->_zone[squareZoneId]._enabledFl && _vm->_linesMan->_squareZone[squareZoneId]._enabledFl) {
 			Common::Rect r(_vm->_linesMan->_squareZone[squareZoneId]._left, _vm->_linesMan->_squareZone[squareZoneId]._top,
-				_vm->_linesMan->_squareZone[squareZoneId]._right, _vm->_linesMan->_squareZone[squareZoneId]._bottom);
+			               _vm->_linesMan->_squareZone[squareZoneId]._right, _vm->_linesMan->_squareZone[squareZoneId]._bottom);
 
 			displayDebugRect(screenSurface, r, 0x00ff00);
 		}
@@ -1209,18 +1209,16 @@ void GraphicsManager::displayLines() {
 		int i = 0;
 		do {
 			int x = _vm->_linesMan->_lineItem[lineIndex]._lineData[i] - _scrollPosX;
-			int y = _vm->_linesMan->_lineItem[lineIndex]._lineData[i+1];
+			int y = _vm->_linesMan->_lineItem[lineIndex]._lineData[i + 1];
 			if (x >= 0 && x < SCREEN_WIDTH && y >= 0 && y < SCREEN_HEIGHT) {
 				WRITE_UINT16(screenSurface->getBasePtr(x, y), 0xffff);
 			}
 			i += 2;
-		}
-		while(_vm->_linesMan->_lineItem[lineIndex]._lineData[i] != -1);
+		} while (_vm->_linesMan->_lineItem[lineIndex]._lineData[i] != -1);
 	}
 
 	g_system->unlockScreen();
 }
-
 
 void GraphicsManager::displayDebugRect(Graphics::Surface *surface, const Common::Rect &srcRect, uint32 color) {
 	Common::Rect r = srcRect;
@@ -1446,7 +1444,7 @@ void GraphicsManager::drawCompressedSprite(byte *surface, const byte *srcData, i
 					clippedDestP = _lineNbr2 + oldDestP;
 					if (!_enlargedYFl)
 						_enlargedY += zoom2;
-					if (_enlargedY  >= 0 && _enlargedY < 100)
+					if (_enlargedY >= 0 && _enlargedY < 100)
 						break;
 					_enlargedY -= 100;
 					spritePixelsP = oldSpritePixelsP;
@@ -1788,9 +1786,9 @@ void GraphicsManager::initScreen(const Common::String &file, int mode, bool init
 				return;
 
 			if (dataVal1 == 2)
-				dataOffset =  _vm->_script->handleGoto((ptr + 20 * dataOffset));
+				dataOffset = _vm->_script->handleGoto((ptr + 20 * dataOffset));
 			if (dataVal1 == 3)
-				dataOffset =  _vm->_script->handleIf(ptr, dataOffset);
+				dataOffset = _vm->_script->handleIf(ptr, dataOffset);
 			if (dataOffset == -1)
 				error("Error, defective IFF");
 			if (dataVal1 == 1 || dataVal1 == 4)
@@ -1914,8 +1912,7 @@ void GraphicsManager::backupScreen() {
 		_vm->_graphicsMan->_backupScreen = _vm->_globals->allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 
 	// Backup the screen
-	Common::copy(_vm->_graphicsMan->_backBuffer, _vm->_graphicsMan->_backBuffer +
-		SCREEN_WIDTH * 2 * SCREEN_HEIGHT, _vm->_graphicsMan->_backupScreen);
+	Common::copy(_vm->_graphicsMan->_backBuffer, _vm->_graphicsMan->_backBuffer + SCREEN_WIDTH * 2 * SCREEN_HEIGHT, _vm->_graphicsMan->_backupScreen);
 }
 
 /**
@@ -1925,8 +1922,7 @@ void GraphicsManager::restoreScreen() {
 	assert(_vm->_graphicsMan->_backupScreen);
 
 	// Restore the screen and free the buffer
-	Common::copy(_vm->_graphicsMan->_backupScreen, _vm->_graphicsMan->_backupScreen +
-		SCREEN_WIDTH * 2 * SCREEN_HEIGHT, _vm->_graphicsMan->_backBuffer);
+	Common::copy(_vm->_graphicsMan->_backupScreen, _vm->_graphicsMan->_backupScreen + SCREEN_WIDTH * 2 * SCREEN_HEIGHT, _vm->_graphicsMan->_backBuffer);
 	_vm->_globals->freeMemory(_vm->_graphicsMan->_backupScreen);
 	_backupScreen = NULL;
 }

@@ -36,26 +36,26 @@ namespace Tinsel {
  * @param pInitTbl			Pointer to multi-object initialisation table
  */
 OBJECT *MultiInitObject(const MULTI_INIT *pInitTbl) {
-	OBJ_INIT obj_init;	// object init table
-	OBJECT *pFirst, *pObj;	// object pointers
-	FRAME *pFrame;		// list of images for the multi-part object
+	OBJ_INIT obj_init; // object init table
+	OBJECT *pFirst, *pObj; // object pointers
+	FRAME *pFrame; // list of images for the multi-part object
 
 	if (FROM_32(pInitTbl->hMulFrame)) {
 		// we have a frame handle
 		pFrame = (FRAME *)LockMem(FROM_32(pInitTbl->hMulFrame));
 
-		obj_init.hObjImg  = READ_32(pFrame);	// first objects shape
-	} else {	// this must be a animation list for a NULL object
+		obj_init.hObjImg = READ_32(pFrame); // first objects shape
+	} else { // this must be a animation list for a NULL object
 		pFrame = NULL;
-		obj_init.hObjImg = 0;	// first objects shape
+		obj_init.hObjImg = 0; // first objects shape
 	}
 
 	// init the object init table
-	obj_init.objFlags = (int)FROM_32(pInitTbl->mulFlags);	// all objects have same flags
-	obj_init.objID    = (int)FROM_32(pInitTbl->mulID);	// all objects have same ID
-	obj_init.objX     = (int)FROM_32(pInitTbl->mulX);	// all objects have same X ani pos
-	obj_init.objY     = (int)FROM_32(pInitTbl->mulY);	// all objects have same Y ani pos
-	obj_init.objZ     = (int)FROM_32(pInitTbl->mulZ);	// all objects have same Z pos
+	obj_init.objFlags = (int)FROM_32(pInitTbl->mulFlags); // all objects have same flags
+	obj_init.objID = (int)FROM_32(pInitTbl->mulID); // all objects have same ID
+	obj_init.objX = (int)FROM_32(pInitTbl->mulX); // all objects have same X ani pos
+	obj_init.objY = (int)FROM_32(pInitTbl->mulY); // all objects have same Y ani pos
+	obj_init.objZ = (int)FROM_32(pInitTbl->mulZ); // all objects have same Z pos
 
 	// create and init the first object
 	pObj = pFirst = InitObject(&obj_init);
@@ -155,7 +155,7 @@ void MultiHorizontalFlip(OBJECT *pFlipObj) {
 	do {
 		// horizontally flip the next part
 		AnimateObjectFlags(pFlipObj, pFlipObj->flags ^ DMA_FLIPH,
-			pFlipObj->hImg);
+		                   pFlipObj->hImg);
 
 		// next obj in list
 		pFlipObj = pFlipObj->pSlave;
@@ -175,7 +175,7 @@ void MultiVerticalFlip(OBJECT *pFlipObj) {
 	do {
 		// vertically flip the next part
 		AnimateObjectFlags(pFlipObj, pFlipObj->flags ^ DMA_FLIPV,
-			pFlipObj->hImg);
+		                   pFlipObj->hImg);
 
 		// next obj in list
 		pFlipObj = pFlipObj->pSlave;
@@ -195,7 +195,7 @@ void MultiAdjustXY(OBJECT *pMultiObj, int deltaX, int deltaY) {
 	assert(isValidObject(pMultiObj));
 
 	if (deltaX == 0 && deltaY == 0)
-		return;		// ignore no change
+		return; // ignore no change
 
 	if (!TinselV2) {
 		// *** This may be wrong!!!
@@ -240,7 +240,7 @@ void MultiMoveRelXY(OBJECT *pMultiObj, int deltaX, int deltaY) {
 	assert(isValidObject(pMultiObj));
 
 	if (deltaX == 0 && deltaY == 0)
-		return;		// ignore no change
+		return; // ignore no change
 
 	// for all the objects that make up this multi-part
 	do {
@@ -267,7 +267,7 @@ void MultiMoveRelXY(OBJECT *pMultiObj, int deltaX, int deltaY) {
  */
 
 void MultiSetAniXY(OBJECT *pMultiObj, int newAniX, int newAniY) {
-	int curAniX, curAniY;	// objects current animation position
+	int curAniX, curAniY; // objects current animation position
 
 	// validate object pointer
 	assert(isValidObject(pMultiObj));
@@ -290,7 +290,7 @@ void MultiSetAniXY(OBJECT *pMultiObj, int newAniX, int newAniY) {
  */
 
 void MultiSetAniX(OBJECT *pMultiObj, int newAniX) {
-	int curAniX, curAniY;	// objects current animation position
+	int curAniX, curAniY; // objects current animation position
 
 	// validate object pointer
 	assert(isValidObject(pMultiObj));
@@ -313,7 +313,7 @@ void MultiSetAniX(OBJECT *pMultiObj, int newAniX) {
  */
 
 void MultiSetAniY(OBJECT *pMultiObj, int newAniY) {
-	int curAniX, curAniY;	// objects current animation position
+	int curAniX, curAniY; // objects current animation position
 
 	// validate object pointer
 	assert(isValidObject(pMultiObj));

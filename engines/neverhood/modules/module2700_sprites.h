@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE2700_SPRITES_H
 #define NEVERHOOD_MODULES_MODULE2700_SPRITES_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -37,6 +37,7 @@ public:
 class AsCommonCarShadow : public AnimatedSprite {
 public:
 	AsCommonCarShadow(NeverhoodEngine *vm, AnimatedSprite *asCar, BaseSurface *shadowSurface, uint index);
+
 protected:
 	uint _index;
 	AnimatedSprite *_asCar;
@@ -48,6 +49,7 @@ protected:
 class AsCommonCarConnectorShadow : public AnimatedSprite {
 public:
 	AsCommonCarConnectorShadow(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, uint index);
+
 protected:
 	uint _index;
 	Sprite *_asCar;
@@ -57,6 +59,7 @@ protected:
 class AsCommonCarTrackShadow : public AnimatedSprite {
 public:
 	AsCommonCarTrackShadow(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, int16 frameIndex);
+
 protected:
 	Sprite *_asCar;
 	void update();
@@ -65,6 +68,7 @@ protected:
 class KmScene2732 : public Klaymen {
 public:
 	KmScene2732(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };

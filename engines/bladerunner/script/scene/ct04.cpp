@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 enum kCT04Loops {
-	kCT04LoopInshot   = 0,
+	kCT04LoopInshot = 0,
 	kCT04LoopMainLoop = 1
 };
 
@@ -39,18 +39,18 @@ void SceneScriptCT04::InitializeScene() {
 		Setup_Scene_Information(-82.86f, -621.3f, 769.03f, 1020);
 	}
 
-	Scene_Exit_Add_2D_Exit(0, 590,  0, 639, 479, 1);
+	Scene_Exit_Add_2D_Exit(0, 590, 0, 639, 479, 1);
 	Scene_Exit_Add_2D_Exit(1, 194, 84, 320, 274, 0);
 	if (_vm->_cutContent) {
 		Scene_Exit_Add_2D_Exit(2, 0, 440, 590, 479, 2);
 	}
 
-	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1,  50,    1, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBR1,  15, -100, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxCTRUNOFF, 34,  100, 1);
-	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  10, 40, 33, 50,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSPIN3A,  10, 40, 33, 50,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBR1, 15, -100, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRUNOFF, 34, 100, 1);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B, 10, 40, 33, 50, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN3A, 10, 40, 33, 50, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
@@ -79,19 +79,17 @@ bool SceneScriptCT04::MouseClick(int x, int y) {
 bool SceneScriptCT04::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (objectName) { // this can be only "DUMPSTER"
 		if (!Game_Flag_Query(kFlagCT04HomelessTalk)
-		 && !Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)
-		 &&  Actor_Query_Goal_Number(kActorTransient) == kGoalTransientDefault
-		) {
+		    && !Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)
+		    && Actor_Query_Goal_Number(kActorTransient) == kGoalTransientDefault) {
 			Game_Flag_Set(kFlagCT04HomelessTalk);
 			Actor_Set_Goal_Number(kActorTransient, kGoalTransientCT04Leave);
 		}
 
-		if ( Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)
-		 && !Game_Flag_Query(kFlagCT04HomelessBodyInDumpster)
-		 && !Game_Flag_Query(kFlagCT04HomelessBodyFound)
-		 && !Game_Flag_Query(kFlagCT04HomelessBodyThrownAway)
-		 &&  Global_Variable_Query(kVariableChapter) == 1
-		) {
+		if (Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)
+		    && !Game_Flag_Query(kFlagCT04HomelessBodyInDumpster)
+		    && !Game_Flag_Query(kFlagCT04HomelessBodyFound)
+		    && !Game_Flag_Query(kFlagCT04HomelessBodyThrownAway)
+		    && Global_Variable_Query(kVariableChapter) == 1) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -147.41f, -621.3f, 724.57f, 0, true, false, false)) {
 				Player_Loses_Control();
 				Actor_Face_Heading(kActorMcCoy, 792, false);
@@ -148,8 +146,7 @@ bool SceneScriptCT04::ClickedOn3DObject(const char *objectName, bool a2) {
 void SceneScriptCT04::dialogueWithHomeless() {
 	Dialogue_Menu_Clear_List();
 	if (Global_Variable_Query(kVariableChinyen) > 10
-	 || Query_Difficulty_Level() == kGameDifficultyEasy
-	) {
+	    || Query_Difficulty_Level() == kGameDifficultyEasy) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(410, 8, 4, -1); // YES
 	}
 	DM_Add_To_List_Never_Repeat_Once_Selected(420, 2, 6, 8); // NO

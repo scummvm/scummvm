@@ -24,10 +24,10 @@
 #define TITANIC_SIMPLE_FILE_H
 
 #include "common/file.h"
-#include "titanic/support/rect.h"
 #include "common/savefile.h"
 #include "common/stream.h"
 #include "common/zlib.h"
+#include "titanic/support/rect.h"
 #include "titanic/support/string.h"
 
 namespace Titanic {
@@ -53,10 +53,12 @@ private:
 	 * Skip over any pending spaces
 	 */
 	void skipSpaces();
+
 protected:
 	Common::SeekableReadStream *_inStream;
 	Common::OutSaveFile *_outStream;
 	int _lineCount;
+
 public:
 	SimpleFile();
 	virtual ~SimpleFile();
@@ -211,7 +213,7 @@ public:
 	/**
 	 * Write out a point line
 	 */
-	void writePoint(const Point &pt, int indent)const;
+	void writePoint(const Point &pt, int indent) const;
 
 	/**
 	 * Write out a rect line
@@ -264,7 +266,8 @@ public:
  */
 class CompressedFile : public SimpleFile {
 public:
-	CompressedFile() : SimpleFile() {}
+	CompressedFile()
+	  : SimpleFile() {}
 	virtual ~CompressedFile() {}
 
 	/**
@@ -287,7 +290,8 @@ public:
  */
 class StdCWadFile : public SimpleFile {
 public:
-	StdCWadFile() : SimpleFile() {}
+	StdCWadFile()
+	  : SimpleFile() {}
 	virtual ~StdCWadFile() {}
 
 	/**

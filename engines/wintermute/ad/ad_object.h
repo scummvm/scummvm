@@ -107,6 +107,7 @@ protected:
 	AdWaypointGroup *_wptGroup;
 	AdObject *_registerAlias;
 	bool getScale(float *scaleX, float *scaleY);
+
 private:
 	bool _partFollowParent;
 	int32 _partOffsetX;

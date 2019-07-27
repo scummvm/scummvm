@@ -27,8 +27,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CEarSweetBowl, CSweetBowl)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(ReplaceBowlAndNutsMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(ReplaceBowlAndNutsMsg)
 END_MESSAGE_MAP()
 
 void CEarSweetBowl::save(SimpleFile *file, int indent) {

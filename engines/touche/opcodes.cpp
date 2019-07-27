@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "common/system.h"
 
 #include "touche/touche.h"

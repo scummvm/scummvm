@@ -23,9 +23,9 @@
 #ifndef DREAMWEB_SOUND_H
 #define DREAMWEB_SOUND_H
 
+#include "audio/mixer.h"
 #include "common/array.h"
 #include "common/str.h"
-#include "audio/mixer.h"
 
 namespace DreamWeb {
 
@@ -55,7 +55,9 @@ private:
 	struct Sample {
 		uint offset;
 		uint size;
-		Sample(): offset(), size() {}
+		Sample()
+		  : offset()
+		  , size() {}
 	};
 
 	struct SoundData {

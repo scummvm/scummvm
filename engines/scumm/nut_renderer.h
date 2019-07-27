@@ -21,10 +21,10 @@
  */
 
 #if !defined(SCUMM_NUT_RENDERER_H) && defined(ENABLE_SCUMM_7_8)
-#define SCUMM_NUT_RENDERER_H
+#	define SCUMM_NUT_RENDERER_H
 
-#include "common/file.h"
-#include "graphics/surface.h"
+#	include "common/file.h"
+#	include "graphics/surface.h"
 
 namespace Scumm {
 
@@ -32,7 +32,6 @@ class ScummEngine;
 
 class NutRenderer {
 protected:
-
 	enum {
 		kDefaultTransparentColor = 0,
 		kSmush44TransparentColor = 2

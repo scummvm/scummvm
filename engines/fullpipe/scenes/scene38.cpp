@@ -22,17 +22,16 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
-
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
@@ -40,7 +39,7 @@ void scene38_setBottleState(Scene *sc) {
 	ExCommand *ex = sc->getMessageQueueById(QU_SC38_SHOWBOTTLE_ONTABLE)->getExCommandByIndex(0);
 
 	if (g_vars->scene38_bottle->_ox == ex->_x && g_vars->scene38_bottle->_oy == ex->_y) {
-		if (g_fp->lift_checkButton(sO_Level5) ) {
+		if (g_fp->lift_checkButton(sO_Level5)) {
 			ex = sc->getMessageQueueById(QU_SC38_SHOWBOTTLE)->getExCommandByIndex(0);
 
 			g_vars->scene38_bottle->setOXY(ex->_x, ex->_y);
@@ -101,7 +100,7 @@ void sceneHandler38_propose() {
 	if (!g_vars->scene38_tally->_movement) {
 		if (g_vars->scene38_tally->_flags & 4) {
 			if (!(g_vars->scene38_tally->_flags & 2) && g_vars->scene38_tallyCounter > 0
-				&& g_fp->_rnd.getRandomNumber(32767) < 32767) {
+			    && g_fp->_rnd.getRandomNumber(32767) < 32767) {
 				chainQueue(QU_DLD_DENY, 0);
 				g_vars->scene38_tallyCounter = 0;
 			}
@@ -111,8 +110,8 @@ void sceneHandler38_propose() {
 
 void sceneHandler38_point() {
 	if ((!g_vars->scene38_boss->_movement && ((g_vars->scene38_boss->_flags & 4) || !(g_vars->scene38_boss->_flags & 2)))
-		&& g_vars->scene38_bossCounter > 0
-		&& g_fp->_rnd.getRandomNumber(32767) < 32767) {
+	    && g_vars->scene38_bossCounter > 0
+	    && g_fp->_rnd.getRandomNumber(32767) < 32767) {
 		if (g_vars->scene38_boss->_statics->_staticsId == ST_GLV_HAMMER) {
 			chainQueue(QU_GLV_TOSMALL, 0);
 			g_vars->scene38_bossCounter = 0;
@@ -129,8 +128,8 @@ void sceneHandler38_hammerKick() {
 	if (!g_vars->scene38_shorty->_movement) {
 		if (g_vars->scene38_shorty->_flags & 4) {
 			if (!(g_vars->scene38_shorty->_flags & 2) && g_vars->scene38_shortyCounter > 1
-				&& g_vars->scene38_shorty->_statics->_staticsId == ST_MLS_LEFT2
-				&& g_fp->_rnd.getRandomNumber(32767) < 3276) {
+			    && g_vars->scene38_shorty->_statics->_staticsId == ST_MLS_LEFT2
+			    && g_fp->_rnd.getRandomNumber(32767) < 3276) {
 				chainQueue(QU_MLS_TURNR, 0);
 				g_vars->scene38_shortyCounter = 0;
 			}
@@ -149,8 +148,8 @@ void sceneHandler38_drink() {
 	if (!g_vars->scene38_shorty->_movement) {
 		if (g_vars->scene38_shorty->_flags & 4) {
 			if (!(g_vars->scene38_shorty->_flags & 2) && g_vars->scene38_shortyCounter > 0
-				&& g_vars->scene38_shorty->_statics->_staticsId == ST_MLS_LEFT2
-				&& g_fp->_rnd.getRandomNumber(32767) < 3276) {
+			    && g_vars->scene38_shorty->_statics->_staticsId == ST_MLS_LEFT2
+			    && g_fp->_rnd.getRandomNumber(32767) < 3276) {
 				chainQueue(QU_MLS_TURNR, 0);
 				g_vars->scene38_shortyCounter = 0;
 			}
@@ -371,17 +370,16 @@ int sceneHandler38(ExCommand *cmd) {
 		g_fp->lift_hoverButton(cmd);
 		break;
 
-	case 29:
-		{
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y);
+	case 29: {
+		StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y);
 
-			if (ani && ani->_id == ANI_LIFTBUTTON) {
-				g_fp->lift_animateButton(ani);
+		if (ani && ani->_id == ANI_LIFTBUTTON) {
+			g_fp->lift_animateButton(ani);
 
-				cmd->_messageKind = 0;
-			}
-			break;
+			cmd->_messageKind = 0;
 		}
+		break;
+	}
 
 	case 33:
 		if (g_fp->_aniMan2) {

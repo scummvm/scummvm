@@ -20,12 +20,12 @@
  *
  */
 
-#include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/bbdou/scriptopcodes_bbdou.h"
+#include "illusions/actor.h"
 #include "illusions/bbdou/bbdou_menukeys.h"
 #include "illusions/bbdou/gamestate_bbdou.h"
+#include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/bbdou/menusystem_bbdou.h"
-#include "illusions/actor.h"
 #include "illusions/camera.h"
 #include "illusions/dictionary.h"
 #include "illusions/input.h"
@@ -42,7 +42,8 @@ namespace Illusions {
 // ScriptOpcodes_BBDOU
 
 ScriptOpcodes_BBDOU::ScriptOpcodes_BBDOU(IllusionsEngine_BBDOU *vm)
-	: ScriptOpcodes(vm), _vm(vm) {
+  : ScriptOpcodes(vm)
+  , _vm(vm) {
 	initOpcodes();
 }
 
@@ -50,8 +51,8 @@ ScriptOpcodes_BBDOU::~ScriptOpcodes_BBDOU() {
 	freeOpcodes();
 }
 
-typedef Common::Functor2Mem<ScriptThread*, OpCall&, void, ScriptOpcodes_BBDOU> ScriptOpcodeI;
-#define OPCODE(op, func) \
+typedef Common::Functor2Mem<ScriptThread *, OpCall &, void, ScriptOpcodes_BBDOU> ScriptOpcodeI;
+#define OPCODE(op, func)                                              \
 	_opcodes[op] = new ScriptOpcodeI(this, &ScriptOpcodes_BBDOU::func); \
 	_opcodeNames[op] = #func;
 
@@ -213,13 +214,13 @@ void ScriptOpcodes_BBDOU::opStartScriptThread(ScriptThread *scriptThread, OpCall
 	ARG_SKIP(2);
 	ARG_UINT32(threadId);
 	_vm->startScriptThread(threadId, opCall._threadId,
-		scriptThread->_value8, scriptThread->_valueC, scriptThread->_value10);
+	                       scriptThread->_value8, scriptThread->_valueC, scriptThread->_value10);
 }
 
 void ScriptOpcodes_BBDOU::opStartTempScriptThread(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_INT16(codeOffs);
 	_vm->startTempScriptThread(opCall._code + codeOffs,
-		opCall._threadId, scriptThread->_value8, scriptThread->_valueC, scriptThread->_value10);
+	                           opCall._threadId, scriptThread->_value8, scriptThread->_valueC, scriptThread->_value10);
 }
 
 void ScriptOpcodes_BBDOU::opStartTimerThread(ScriptThread *scriptThread, OpCall &opCall) {
@@ -229,7 +230,7 @@ void ScriptOpcodes_BBDOU::opStartTimerThread(ScriptThread *scriptThread, OpCall 
 	if (maxDuration)
 		duration += _vm->getRandom(maxDuration);
 
-//duration = 1;//DEBUG Speeds up things
+	//duration = 1;//DEBUG Speeds up things
 
 	if (isAbortable)
 		_vm->startAbortableTimerThread(duration, opCall._threadId);
@@ -318,7 +319,7 @@ void ScriptOpcodes_BBDOU::opUnloadActiveScenes(ScriptThread *scriptThread, OpCal
 //uint32 dsceneId = 0x00010017, dthreadId = 0x0002001C;//Dorms int
 //uint32 dsceneId = 0x0001000D, dthreadId = 0x00020012;//Food minigame
 //uint32 dsceneId = 0x00010067, dthreadId = 0x0002022A;
-uint32 dsceneId = 0x0001000C, dthreadId = 0x00020011;//Cafeteria
+uint32 dsceneId = 0x0001000C, dthreadId = 0x00020011; //Cafeteria
 //uint32 dsceneId = 0x0001000B, dthreadId = 0x00020010;
 //uint32 dsceneId = 0x0001001A, dthreadId = 0x0002001F;
 //uint32 dsceneId = 0x00010047, dthreadId = 0x0002005F;
@@ -349,7 +350,7 @@ void ScriptOpcodes_BBDOU::opChangeScene(ScriptThread *scriptThread, OpCall &opCa
 	_vm->enterScene(sceneId, opCall._callerThreadId);
 	_vm->_gameState->writeState(sceneId, threadId);
 	_vm->startAnonScriptThread(threadId, 0,
-		scriptThread->_value8, scriptThread->_valueC, scriptThread->_value10);
+	                           scriptThread->_value8, scriptThread->_valueC, scriptThread->_value10);
 }
 
 void ScriptOpcodes_BBDOU::opStartModalScene(ScriptThread *scriptThread, OpCall &opCall) {
@@ -362,7 +363,7 @@ void ScriptOpcodes_BBDOU::opStartModalScene(ScriptThread *scriptThread, OpCall &
 	_vm->_talkItems->pauseBySceneId(_vm->getCurrentScene());
 	_vm->enterScene(sceneId, opCall._callerThreadId);
 	_vm->startScriptThread(threadId, 0,
-		scriptThread->_value8, scriptThread->_valueC, scriptThread->_value10);
+	                       scriptThread->_value8, scriptThread->_valueC, scriptThread->_value10);
 	opCall._result = kTSSuspend;
 }
 
@@ -504,7 +505,9 @@ void ScriptOpcodes_BBDOU::opStartMoveActor(ScriptThread *scriptThread, OpCall &o
 	ARG_UINT32(namedPointId);
 	// NOTE Skipped checking for stalled sequence, not sure if needed
 	Control *control = _vm->_dict->getObjectControl(objectId);
-	if (!control) { return; }// TODO CHECKME
+	if (!control) {
+		return;
+	} // TODO CHECKME
 	Common::Point pos = _vm->getNamedPointPosition(namedPointId);
 	control->startMoveActor(sequenceId, pos, opCall._callerThreadId, opCall._threadId);
 }
@@ -723,9 +726,8 @@ void ScriptOpcodes_BBDOU::opDisplayMenu(ScriptThread *scriptThread, OpCall &opCa
 	uint timeOutMenuChoiceIndex = menuChoiceOffsets.size() - 1;
 
 	_vm->_menuSystem->runMenu(menuChoiceOffsets, &_vm->_menuChoiceOfs,
-		menuId, timeOutDuration, timeOutMenuChoiceIndex,
-		opCall._callerThreadId);
-
+	                          menuId, timeOutDuration, timeOutMenuChoiceIndex,
+	                          opCall._callerThreadId);
 }
 
 void ScriptOpcodes_BBDOU::opSwitchMenuChoice(ScriptThread *scriptThread, OpCall &opCall) {
@@ -849,12 +851,12 @@ void ScriptOpcodes_BBDOU::opCompareBlockCounter(ScriptThread *scriptThread, OpCa
 
 void ScriptOpcodes_BBDOU::opDebug126(ScriptThread *scriptThread, OpCall &opCall) {
 	// NOTE Prints some debug text
-	debug(1, "[DBG126] %s", (char*)opCall._code);
+	debug(1, "[DBG126] %s", (char *)opCall._code);
 }
 
 void ScriptOpcodes_BBDOU::opDebug127(ScriptThread *scriptThread, OpCall &opCall) {
 	// NOTE Prints some debug text
-	debug(1, "[DBG127] %s", (char*)opCall._code);
+	debug(1, "[DBG127] %s", (char *)opCall._code);
 }
 
 void ScriptOpcodes_BBDOU::opPlayVideo(ScriptThread *scriptThread, OpCall &opCall) {
@@ -926,7 +928,7 @@ void ScriptOpcodes_BBDOU::opStartAbortableThread(ScriptThread *scriptThread, OpC
 	ARG_INT16(codeOffs);
 	ARG_INT16(skipOffs);
 	_vm->startAbortableThread(opCall._code + codeOffs,
-		opCall._code + skipOffs, opCall._threadId);
+	                          opCall._code + skipOffs, opCall._threadId);
 }
 
 void ScriptOpcodes_BBDOU::opKillThread(ScriptThread *scriptThread, OpCall &opCall) {
@@ -985,7 +987,7 @@ void ScriptOpcodes_BBDOU::opChangeSceneAll(ScriptThread *scriptThread, OpCall &o
 	_vm->enterScene(sceneId, opCall._callerThreadId);
 	_vm->_gameState->writeState(sceneId, threadId);
 	_vm->startAnonScriptThread(threadId, 0,
-		scriptThread->_value8, scriptThread->_valueC, scriptThread->_value10);
+	                           scriptThread->_value8, scriptThread->_valueC, scriptThread->_value10);
 }
 
 } // End of namespace Illusions

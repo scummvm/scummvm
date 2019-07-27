@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "common/file.h"
 #include "common/str.h"
 #include "scumm/scumm.h"
@@ -30,11 +29,11 @@
 
 namespace Scumm {
 
-SmushFont::SmushFont(ScummEngine *vm, const char *filename, bool use_original_colors, bool new_colors) :
-	NutRenderer(vm, filename),
-	_color(-1),
-	_new_colors(new_colors),
-	_original(use_original_colors) {
+SmushFont::SmushFont(ScummEngine *vm, const char *filename, bool use_original_colors, bool new_colors)
+  : NutRenderer(vm, filename)
+  , _color(-1)
+  , _new_colors(new_colors)
+  , _original(use_original_colors) {
 }
 
 int SmushFont::getStringWidth(const char *str) {
@@ -143,9 +142,9 @@ int SmushFont::draw2byte(byte *buffer, int dst_width, int x, int y, int idx) {
 			shadowMode = kKoreanV7ShadowMode;
 	}
 
-	int shadowOffsetXTable[4] = {-1, 0, 1, 0};
-	int shadowOffsetYTable[4] = {0, 1, 0, 0};
-	int shadowOffsetColorTable[4] = {0, 0, 0, color};
+	int shadowOffsetXTable[4] = { -1, 0, 1, 0 };
+	int shadowOffsetYTable[4] = { 0, 1, 0, 0 };
+	int shadowOffsetColorTable[4] = { 0, 0, 0, color };
 
 	int shadowIdx = 3;
 	if (shadowMode == kKoreanV8ShadowMode)
@@ -194,15 +193,14 @@ void SmushFont::drawSubstring(const char *str, byte *buffer, int dst_width, int 
 
 	for (int i = 0; str[i] != 0; i++) {
 		if ((byte)str[i] >= 0x80 && _vm->_useCJKMode) {
-			x += draw2byte(buffer, dst_width, x, y, (byte)str[i] + 256 * (byte)str[i+1]);
+			x += draw2byte(buffer, dst_width, x, y, (byte)str[i] + 256 * (byte)str[i + 1]);
 			i++;
 		} else
 			x += drawChar(buffer, dst_width, x, y, str[i]);
 	}
 }
 
-#define MAX_WORDS	60
-
+#define MAX_WORDS 60
 
 void SmushFont::drawString(const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, bool center) {
 	debugC(DEBUG_SMUSH, "SmushFont::drawString(%s, %d, %d, %d)", str, x, y, center);
@@ -257,7 +255,7 @@ void SmushFont::drawStringWrap(const char *str, byte *buffer, int dst_width, int
 			if ((substr_width + space_width + word_width) >= width)
 				break;
 			substr_width += word_width + space_width;
-			*(words[i]-1) = ' ';	// Convert 0 byte back to space
+			*(words[i] - 1) = ' '; // Convert 0 byte back to space
 			i++;
 		}
 

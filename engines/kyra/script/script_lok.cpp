@@ -22,11 +22,11 @@
 
 #include "kyra/engine/kyra_lok.h"
 #include "kyra/engine/sprites.h"
-#include "kyra/graphics/wsamovie.h"
-#include "kyra/graphics/animator_lok.h"
-#include "kyra/text/text.h"
 #include "kyra/engine/timer.h"
+#include "kyra/graphics/animator_lok.h"
+#include "kyra/graphics/wsamovie.h"
 #include "kyra/sound/sound.h"
+#include "kyra/text/text.h"
 
 #include "common/system.h"
 
@@ -507,7 +507,7 @@ int KyraEngine_LoK::o1_popBrandonIntoScene(EMCState *script) {
 		int animWidth = _animator->fetchAnimWidth(curAnim->sceneAnimPtr, _animator->_brandonScaleX) >> 1;
 		int animHeight = _animator->fetchAnimHeight(curAnim->sceneAnimPtr, _animator->_brandonScaleY);
 
-		animWidth = (xOffset * animWidth) /  width;
+		animWidth = (xOffset * animWidth) / width;
 		animHeight = (yOffset * animHeight) / height;
 
 		curAnim->x2 = curAnim->x1 += animWidth;
@@ -1126,8 +1126,7 @@ int KyraEngine_LoK::o1_findBrightestFireberry(EMCState *script) {
 	// of Kyrandia 1. In all other versions they are a usual dark cave, thus we do only
 	// return a glow value of "29" over here, when we are running a CD version.
 	if (_flags.isTalkie) {
-		if (_currentCharacter->sceneId == 133 || _currentCharacter->sceneId == 137 ||
-		        _currentCharacter->sceneId == 165 || _currentCharacter->sceneId == 173)
+		if (_currentCharacter->sceneId == 133 || _currentCharacter->sceneId == 137 || _currentCharacter->sceneId == 165 || _currentCharacter->sceneId == 173)
 			return 29;
 	}
 
@@ -1193,7 +1192,9 @@ int KyraEngine_LoK::o1_setFireberryGlowPalette(EMCState *script) {
 			palIndex = 9;
 			break;
 
-	case 28: case 29: default:
+		case 28:
+		case 29:
+		default:
 			palIndex = 6;
 		}
 
@@ -1229,9 +1230,7 @@ int KyraEngine_LoK::o1_setFireberryGlowPalette(EMCState *script) {
 		}
 
 		if (_brandonStatusBit & 2) {
-			if (_currentCharacter->sceneId != 133 && _currentCharacter->sceneId != 137 &&
-			        _currentCharacter->sceneId != 165 && _currentCharacter->sceneId != 173 &&
-			        (_currentCharacter->sceneId < 187 || _currentCharacter->sceneId > 198)) {
+			if (_currentCharacter->sceneId != 133 && _currentCharacter->sceneId != 137 && _currentCharacter->sceneId != 165 && _currentCharacter->sceneId != 173 && (_currentCharacter->sceneId < 187 || _currentCharacter->sceneId > 198)) {
 				palIndex = 14;
 			}
 		}

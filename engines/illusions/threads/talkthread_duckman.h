@@ -31,15 +31,15 @@ class IllusionsEngine_Duckman;
 struct TalkEntry;
 
 enum {
-	kMsgQueryTalkThreadActive    = 0,
-	kMsgClearSequenceId1         = 1,
-	kMsgClearSequenceId2         = 2
+	kMsgQueryTalkThreadActive = 0,
+	kMsgClearSequenceId1 = 1,
+	kMsgClearSequenceId2 = 2
 };
 
 class TalkThread_Duckman : public Thread {
 public:
 	TalkThread_Duckman(IllusionsEngine_Duckman *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
-		uint32 objectId, uint32 talkId, uint32 sequenceId1, uint32 sequenceId2);
+	                   uint32 objectId, uint32 talkId, uint32 sequenceId1, uint32 sequenceId2);
 	virtual int onUpdate();
 	virtual void onPause();
 	virtual void onUnpause();
@@ -47,6 +47,7 @@ public:
 	virtual void onTerminated();
 	virtual void onKill();
 	virtual uint32 sendMessage(int msgNum, uint32 msgValue);
+
 public:
 	IllusionsEngine_Duckman *_vm;
 	//field0 dw

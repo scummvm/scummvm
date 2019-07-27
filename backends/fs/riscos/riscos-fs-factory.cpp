@@ -23,12 +23,12 @@
 #if defined(RISCOS)
 
 // Re-enable some forbidden symbols to avoid clashes with stat.h and unistd.h.
-#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
+#	define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
-#include "backends/fs/riscos/riscos-fs-factory.h"
-#include "backends/fs/riscos/riscos-fs.h"
+#	include "backends/fs/riscos/riscos-fs-factory.h"
+#	include "backends/fs/riscos/riscos-fs.h"
 
-#include <unistd.h>
+#	include <unistd.h>
 
 AbstractFSNode *RISCOSFilesystemFactory::makeRootFileNode() const {
 	return new RISCOSFilesystemNode("/");

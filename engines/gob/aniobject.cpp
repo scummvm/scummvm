@@ -20,22 +20,34 @@
  *
  */
 
-#include "gob/surface.h"
+#include "gob/aniobject.h"
 #include "gob/anifile.h"
 #include "gob/cmpfile.h"
-#include "gob/aniobject.h"
+#include "gob/surface.h"
 
 namespace Gob {
 
-ANIObject::ANIObject(const ANIFile &ani) : _ani(&ani), _cmp(0),
-	_visible(false), _paused(false), _mode(kModeContinuous), _x(0), _y(0) {
+ANIObject::ANIObject(const ANIFile &ani)
+  : _ani(&ani)
+  , _cmp(0)
+  , _visible(false)
+  , _paused(false)
+  , _mode(kModeContinuous)
+  , _x(0)
+  , _y(0) {
 
 	setAnimation(0);
 	setPosition();
 }
 
-ANIObject::ANIObject(const CMPFile &cmp) : _ani(0), _cmp(&cmp),
-	_visible(false), _paused(false), _mode(kModeContinuous), _x(0), _y(0) {
+ANIObject::ANIObject(const CMPFile &cmp)
+  : _ani(0)
+  , _cmp(&cmp)
+  , _visible(false)
+  , _paused(false)
+  , _mode(kModeContinuous)
+  , _x(0)
+  , _y(0) {
 
 	setAnimation(0);
 	setPosition();
@@ -66,7 +78,7 @@ void ANIObject::setMode(Mode mode) {
 
 void ANIObject::setAnimation(uint16 animation) {
 	_animation = animation;
-	_frame     = 0;
+	_frame = 0;
 }
 
 void ANIObject::rewind() {
@@ -122,19 +134,19 @@ void ANIObject::getFramePosition(int16 &x, int16 &y, uint16 n) const {
 	// Number of cycles run through after n frames
 	uint16 cycles = (_frame + n) / animation.frameCount;
 	// Frame position after n frames
-	uint16 frame  = (_frame + n) % animation.frameCount;
+	uint16 frame = (_frame + n) % animation.frameCount;
 
 	// Only doing one cycle?
 	if (_mode == kModeOnce)
 		cycles = MAX<uint16>(cycles, 1);
 
 	x = _x + animation.frameAreas[frame].left + cycles * animation.deltaX;
-	y = _y + animation.frameAreas[frame].top  + cycles * animation.deltaY;
+	y = _y + animation.frameAreas[frame].top + cycles * animation.deltaY;
 }
 
 void ANIObject::getFrameSize(int16 &width, int16 &height, uint16 n) const {
 	if (_cmp) {
-		width  = _cmp->getWidth (_animation);
+		width = _cmp->getWidth(_animation);
 		height = _cmp->getHeight(_animation);
 
 		return;
@@ -154,8 +166,8 @@ void ANIObject::getFrameSize(int16 &width, int16 &height, uint16 n) const {
 	// Frame position after n frames
 	uint16 frame = (_frame + n) % animation.frameCount;
 
-	width  = animation.frameAreas[frame].right  - animation.frameAreas[frame].left + 1;
-	height = animation.frameAreas[frame].bottom - animation.frameAreas[frame].top  + 1;
+	width = animation.frameAreas[frame].right - animation.frameAreas[frame].left + 1;
+	height = animation.frameAreas[frame].bottom - animation.frameAreas[frame].top + 1;
 }
 
 bool ANIObject::isIn(int16 x, int16 y) const {
@@ -182,19 +194,16 @@ bool ANIObject::isIn(const ANIObject &obj) const {
 	getFramePosition(frameX, frameY);
 	getFrameSize(frameWidth, frameHeight);
 
-	return obj.isIn(frameX                 , frameY                  ) ||
-	       obj.isIn(frameX + frameWidth - 1, frameY                  ) ||
-	       obj.isIn(frameX                 , frameY + frameHeight - 1) ||
-	       obj.isIn(frameX + frameWidth - 1, frameY + frameHeight - 1);
+	return obj.isIn(frameX, frameY) || obj.isIn(frameX + frameWidth - 1, frameY) || obj.isIn(frameX, frameY + frameHeight - 1) || obj.isIn(frameX + frameWidth - 1, frameY + frameHeight - 1);
 }
 
 bool ANIObject::draw(Surface &dest, int16 &left, int16 &top,
-                                    int16 &right, int16 &bottom) {
+                     int16 &right, int16 &bottom) {
 
 	if (!_visible)
 		return false;
 
-	if      (_cmp)
+	if (_cmp)
 		return drawCMP(dest, left, top, right, bottom);
 	else if (_ani)
 		return drawANI(dest, left, top, right, bottom);
@@ -203,7 +212,7 @@ bool ANIObject::draw(Surface &dest, int16 &left, int16 &top,
 }
 
 bool ANIObject::drawCMP(Surface &dest, int16 &left, int16 &top,
-                                       int16 &right, int16 &bottom) {
+                        int16 &right, int16 &bottom) {
 
 	if (!hasBuffer()) {
 		uint16 width, height;
@@ -213,9 +222,9 @@ bool ANIObject::drawCMP(Surface &dest, int16 &left, int16 &top,
 		resizeBuffer(width, height);
 	}
 
-	left   = _x;
-	top    = _y;
-	right  = _x + _cmp->getWidth (_animation) - 1;
+	left = _x;
+	top = _y;
+	right = _x + _cmp->getWidth(_animation) - 1;
 	bottom = _y + _cmp->getHeight(_animation) - 1;
 
 	if (!saveScreen(dest, left, top, right, bottom))
@@ -227,7 +236,7 @@ bool ANIObject::drawCMP(Surface &dest, int16 &left, int16 &top,
 }
 
 bool ANIObject::drawANI(Surface &dest, int16 &left, int16 &top,
-                                       int16 &right, int16 &bottom) {
+                        int16 &right, int16 &bottom) {
 
 	if (!hasBuffer()) {
 		uint16 width, height;
@@ -243,9 +252,9 @@ bool ANIObject::drawANI(Surface &dest, int16 &left, int16 &top,
 
 	const ANIFile::FrameArea &area = animation.frameAreas[_frame];
 
-	left   = _x + area.left;
-	top    = _y + area.top;
-	right  = _x + area.right;
+	left = _x + area.left;
+	top = _y + area.top;
+	right = _x + area.right;
 	bottom = _y + area.bottom;
 
 	if (!saveScreen(dest, left, top, right, bottom))
@@ -257,7 +266,7 @@ bool ANIObject::drawANI(Surface &dest, int16 &left, int16 &top,
 }
 
 bool ANIObject::clear(Surface &dest, int16 &left, int16 &top,
-                                     int16 &right, int16 &bottom) {
+                      int16 &right, int16 &bottom) {
 
 	return restoreScreen(dest, left, top, right, bottom);
 }
@@ -282,7 +291,7 @@ void ANIObject::advance() {
 		_y += animation.deltaY;
 
 		if (_mode == kModeOnce) {
-			_paused  = true;
+			_paused = true;
 			_visible = false;
 		}
 	}

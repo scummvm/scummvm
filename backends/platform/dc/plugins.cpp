@@ -24,46 +24,44 @@
 
 #if defined(DYNAMIC_MODULES)
 
-#include "backends/plugins/dynamic-plugin.h"
-#include "common/fs.h"
+#	include "backends/plugins/dynamic-plugin.h"
+#	include "common/fs.h"
 
-#include "dcloader.h"
+#	include "dcloader.h"
 
 extern void draw_solid_quad(float x1, float y1, float x2, float y2,
-			    int c0, int c1, int c2, int c3);
+                            int c0, int c1, int c2, int c3);
 
-static void drawPluginProgress(const Common::String &filename)
-{
-  ta_sync();
-  void *mark = ta_txmark();
-  const char *fn = filename.c_str();
-  Label lab1, lab2, lab3;
-  char buf[32];
-  unsigned memleft = 0x8cf00000-((unsigned)sbrk(0));
-  float ffree = memleft*(1.0/(16<<20));
-  int fcol = (memleft < (1<<20)? 0xffff0000:
-	      (memleft < (4<<20)? 0xffffff00: 0xff00ff00));
-  snprintf(buf, sizeof(buf), "%dK free memory", memleft>>10);
-  if (fn[0] == '/') fn++;
-  lab1.create_texture("Loading plugins, please wait...");
-  lab2.create_texture(fn);
-  lab3.create_texture(buf);
-  ta_begin_frame();
-  draw_solid_quad(80.0, 270.0, 560.0, 300.0,
-		  0xff808080, 0xff808080, 0xff808080, 0xff808080);
-  draw_solid_quad(85.0, 275.0, 555.0, 295.0,
-		  0xff202020, 0xff202020, 0xff202020, 0xff202020);
-  draw_solid_quad(85.0, 275.0, 85.0+470.0*ffree, 295.0,
-		  fcol, fcol, fcol, fcol);
-  ta_commit_end();
-  lab1.draw(100.0, 150.0, 0xffffffff);
-  lab2.draw(100.0, 190.0, 0xffaaffaa);
-  lab3.draw(100.0, 230.0, 0xffffffff);
-  ta_commit_frame();
-  ta_sync();
-  ta_txrelease(mark);
+static void drawPluginProgress(const Common::String &filename) {
+	ta_sync();
+	void *mark = ta_txmark();
+	const char *fn = filename.c_str();
+	Label lab1, lab2, lab3;
+	char buf[32];
+	unsigned memleft = 0x8cf00000 - ((unsigned)sbrk(0));
+	float ffree = memleft * (1.0 / (16 << 20));
+	int fcol = (memleft < (1 << 20) ? 0xffff0000 : (memleft < (4 << 20) ? 0xffffff00 : 0xff00ff00));
+	snprintf(buf, sizeof(buf), "%dK free memory", memleft >> 10);
+	if (fn[0] == '/')
+		fn++;
+	lab1.create_texture("Loading plugins, please wait...");
+	lab2.create_texture(fn);
+	lab3.create_texture(buf);
+	ta_begin_frame();
+	draw_solid_quad(80.0, 270.0, 560.0, 300.0,
+	                0xff808080, 0xff808080, 0xff808080, 0xff808080);
+	draw_solid_quad(85.0, 275.0, 555.0, 295.0,
+	                0xff202020, 0xff202020, 0xff202020, 0xff202020);
+	draw_solid_quad(85.0, 275.0, 85.0 + 470.0 * ffree, 295.0,
+	                fcol, fcol, fcol, fcol);
+	ta_commit_end();
+	lab1.draw(100.0, 150.0, 0xffffffff);
+	lab2.draw(100.0, 190.0, 0xffaaffaa);
+	lab3.draw(100.0, 230.0, 0xffffffff);
+	ta_commit_frame();
+	ta_sync();
+	ta_txrelease(mark);
 }
-
 
 class OSystem_Dreamcast::DCPlugin : public DynamicPlugin {
 protected:
@@ -86,7 +84,8 @@ protected:
 
 public:
 	DCPlugin(const Common::String &filename)
-		: DynamicPlugin(filename), _dlHandle(0) {}
+	  : DynamicPlugin(filename)
+	  , _dlHandle(0) {}
 
 	bool loadPlugin() {
 		assert(!_dlHandle);
@@ -116,8 +115,7 @@ public:
 	}
 };
 
-
-Plugin* OSystem_Dreamcast::createPlugin(const Common::FSNode &node) const {
+Plugin *OSystem_Dreamcast::createPlugin(const Common::FSNode &node) const {
 	return new DCPlugin(node.getPath());
 }
 
@@ -130,27 +128,24 @@ bool OSystem_Dreamcast::isPluginFilename(const Common::FSNode &node) const {
 	return true;
 }
 
-void OSystem_Dreamcast::addCustomDirectories(Common::FSList &dirs) const
-{
-  FilePluginProvider::addCustomDirectories(dirs);
-  if (pluginCustomDirectory != NULL)
-    dirs.push_back(Common::FSNode(pluginCustomDirectory));
+void OSystem_Dreamcast::addCustomDirectories(Common::FSList &dirs) const {
+	FilePluginProvider::addCustomDirectories(dirs);
+	if (pluginCustomDirectory != NULL)
+		dirs.push_back(Common::FSNode(pluginCustomDirectory));
 }
 
-PluginList OSystem_Dreamcast::getPlugins()
-{
-  pluginCustomDirectory = NULL;
-  PluginList list = FilePluginProvider::getPlugins();
-  if (list.empty()) {
-    Common::String selection;
-    if (selectPluginDir(selection, Common::FSNode("plugins"))) {
-      pluginCustomDirectory = selection.c_str();
-      list = FilePluginProvider::getPlugins();
-      pluginCustomDirectory = NULL;
-    }
-  }
-  return list;
+PluginList OSystem_Dreamcast::getPlugins() {
+	pluginCustomDirectory = NULL;
+	PluginList list = FilePluginProvider::getPlugins();
+	if (list.empty()) {
+		Common::String selection;
+		if (selectPluginDir(selection, Common::FSNode("plugins"))) {
+			pluginCustomDirectory = selection.c_str();
+			list = FilePluginProvider::getPlugins();
+			pluginCustomDirectory = NULL;
+		}
+	}
+	return list;
 }
-
 
 #endif // defined(DYNAMIC_MODULES)

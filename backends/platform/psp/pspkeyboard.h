@@ -23,9 +23,9 @@
 #ifndef PSPKEYBOARD_H
 #define PSPKEYBOARD_H
 
+#include "backends/platform/psp/display_client.h"
 #include "common/events.h"
 #include "common/stream.h"
-#include "backends/platform/psp/display_client.h"
 //#include "backends/platform/psp/input.h"
 #include <pspctrl.h>
 
@@ -51,16 +51,16 @@ public:
 	PSPKeyboard();
 	~PSPKeyboard();
 
-	bool load();												// Load keyboard into memory
-	bool isInit() const { return _init; }								// Check for initialization
-	bool isDirty() const { return _dirty; }							// Check if needs redrawing
+	bool load(); // Load keyboard into memory
+	bool isInit() const { return _init; } // Check for initialization
+	bool isDirty() const { return _dirty; } // Check if needs redrawing
 	void setDirty() { _dirty = true; }
 	void setClean() { _dirty = false; }
-	bool isVisible() const { return _state != kInvisible; }			// Check if visible
+	bool isVisible() const { return _state != kInvisible; } // Check if visible
 	void setVisible(bool val);
-	bool processInput(Common::Event &event, PspEvent &pspEvent, SceCtrlData &pad);	// Process input
-	void moveTo(const int newX, const int newY);				// Move keyboard
-	void render();												// Draw the keyboard onscreen
+	bool processInput(Common::Event &event, PspEvent &pspEvent, SceCtrlData &pad); // Process input
+	void moveTo(const int newX, const int newY); // Move keyboard
+	void render(); // Draw the keyboard onscreen
 private:
 	enum CursorDirections {
 		kUp = 0,
@@ -74,7 +74,7 @@ private:
 	Palette _palettes[guiStringsSize];
 	GuRenderer _renderer;
 
-	void increaseKeyboardLocationX(int amount);		// Move keyboard onscreen
+	void increaseKeyboardLocationX(int amount); // Move keyboard onscreen
 	void increaseKeyboardLocationY(int amount);
 	void convertCursorToXY(CursorDirections cur, int &x, int &y);
 
@@ -89,20 +89,19 @@ private:
 	static short _modeChar[MODE_COUNT][5][6];
 	static const char *_guiStrings[];
 	bool _init;
-	uint32 _prevButtons;	// A bit pattern.
+	uint32 _prevButtons; // A bit pattern.
 	uint32 _buttonsChanged;
 
-	bool _dirty;        		// keyboard needs redrawing
-	int _mode;          		// charset selected. (0 - letters or 1 - numbers)
-	int _movedX;				// location we've moved the KB to onscreen
+	bool _dirty; // keyboard needs redrawing
+	int _mode; // charset selected. (0 - letters or 1 - numbers)
+	int _movedX; // location we've moved the KB to onscreen
 	int _movedY;
-	bool _moved;				// whether the keyboard was moved
+	bool _moved; // whether the keyboard was moved
 
-	State _state;				// State of keyboard Keyboard state machine
+	State _state; // State of keyboard Keyboard state machine
 	State _lastState;
 
-	CursorDirections _oldCursor;			// Point to place of last cursor
-
+	CursorDirections _oldCursor; // Point to place of last cursor
 };
 
 #endif /* PSPKEYBOARD_H */

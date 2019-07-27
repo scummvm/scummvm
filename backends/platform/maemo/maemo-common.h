@@ -22,8 +22,8 @@
 
 #if defined(MAEMO)
 
-#ifndef PLATFORM_SDL_MAEMO_COMMON_H
-#define PLATFORM_SDL_MAEMO_COMMON_H
+#	ifndef PLATFORM_SDL_MAEMO_COMMON_H
+#		define PLATFORM_SDL_MAEMO_COMMON_H
 
 namespace Maemo {
 
@@ -50,6 +50,6 @@ enum CustomEventType {
 
 } // namespace Maemo
 
-#endif // ifndef PLATFORM_SDL_MAEMO_COMMON_H
+#	endif // ifndef PLATFORM_SDL_MAEMO_COMMON_H
 
 #endif // if defined(MAEMO)

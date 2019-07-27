@@ -20,10 +20,9 @@
  *
  */
 
-
 #include "common/events.h"
-#include "common/system.h"
 #include "common/savefile.h"
+#include "common/system.h"
 
 #include "touche/graphics.h"
 #include "touche/midi.h"
@@ -33,13 +32,13 @@ namespace Touche {
 
 static void drawArrow(uint8 *dst, int dstPitch, int x, int y, int delta, uint8 color) {
 	static const int8 arrowCoordsTable[7][4] = {
-		{  5,  0,  9,  0 },
-		{  5,  0,  5,  4 },
-		{ -5,  4,  5,  4 },
-		{ -5,  0, -5,  4 },
-		{ -9,  0, -5,  0 },
-		{ -9,  0,  0, -9 },
-		{  0, -9,  9,  0 }
+		{ 5, 0, 9, 0 },
+		{ 5, 0, 5, 4 },
+		{ -5, 4, 5, 4 },
+		{ -5, 0, -5, 4 },
+		{ -9, 0, -5, 0 },
+		{ -9, 0, 0, -9 },
+		{ 0, -9, 9, 0 }
 	};
 	for (uint i = 0; i < 7; ++i) {
 		const int x1 = x + arrowCoordsTable[i][0];
@@ -80,7 +79,7 @@ void ToucheEngine::drawButton(Button *button) {
 		const int x = button->x + button->w / 2;
 		const int y = button->y + button->h / 2;
 		drawArrow(_offscreenBuffer, kScreenWidth, x, y + dy + 1, dx, 0xD2);
-		drawArrow(_offscreenBuffer, kScreenWidth, x, y + dy,     dx, 0xFF);
+		drawArrow(_offscreenBuffer, kScreenWidth, x, y + dy, dx, 0xFF);
 	}
 }
 
@@ -111,37 +110,37 @@ static void drawSaveGameStateDescriptions(uint8 *dst, int dstPitch, MenuData *me
 
 static void setupMenu(MenuMode mode, MenuData *menuData) {
 	static Button settingsButtonsTable[] = {
-		{ 452, 120,  94, 24, kActionLoadMenu,     -52, kButtonBorder | kButtonText },
-		{ 452, 152,  94, 24, kActionSaveMenu,     -53, kButtonBorder | kButtonText },
-		{ 452, 184,  94, 24, kActionRestartGame,  -90, kButtonBorder | kButtonText },
-		{ 452, 216,  94, 24, kActionPlayGame,     -54, kButtonBorder | kButtonText },
-		{ 452, 248,  94, 24, kActionQuitGame,     -55, kButtonBorder | kButtonText },
-		{ 396, 130,  24, 24, kActionTextOnly,       0, kButtonBorder | kButtonText },
-		{ 396, 160,  24, 24, kActionVoiceOnly,      0, kButtonBorder | kButtonText },
-		{ 396, 190,  24, 24, kActionTextAndVoice,   0, kButtonBorder | kButtonText },
-		{ 126, 130, 254, 24, kActionNone,         -92, kButtonBorder | kButtonText },
-		{ 126, 160, 254, 24, kActionNone,         -93, kButtonBorder | kButtonText },
-		{ 126, 190, 254, 24, kActionNone,         -94, kButtonBorder | kButtonText },
-		{ 126, 222, 294, 20, kActionNone,         -91, kButtonBorder | kButtonText },
-		{ 126, 250,  24, 24, kActionLowerVolume,  -87, kButtonBorder | kButtonText },
-		{ 396, 250,  24, 24, kActionUpperVolume,  -88, kButtonBorder | kButtonText },
-		{ 154, 256, 238, 12, kActionNone,           0, kButtonBorder }
+		{ 452, 120, 94, 24, kActionLoadMenu, -52, kButtonBorder | kButtonText },
+		{ 452, 152, 94, 24, kActionSaveMenu, -53, kButtonBorder | kButtonText },
+		{ 452, 184, 94, 24, kActionRestartGame, -90, kButtonBorder | kButtonText },
+		{ 452, 216, 94, 24, kActionPlayGame, -54, kButtonBorder | kButtonText },
+		{ 452, 248, 94, 24, kActionQuitGame, -55, kButtonBorder | kButtonText },
+		{ 396, 130, 24, 24, kActionTextOnly, 0, kButtonBorder | kButtonText },
+		{ 396, 160, 24, 24, kActionVoiceOnly, 0, kButtonBorder | kButtonText },
+		{ 396, 190, 24, 24, kActionTextAndVoice, 0, kButtonBorder | kButtonText },
+		{ 126, 130, 254, 24, kActionNone, -92, kButtonBorder | kButtonText },
+		{ 126, 160, 254, 24, kActionNone, -93, kButtonBorder | kButtonText },
+		{ 126, 190, 254, 24, kActionNone, -94, kButtonBorder | kButtonText },
+		{ 126, 222, 294, 20, kActionNone, -91, kButtonBorder | kButtonText },
+		{ 126, 250, 24, 24, kActionLowerVolume, -87, kButtonBorder | kButtonText },
+		{ 396, 250, 24, 24, kActionUpperVolume, -88, kButtonBorder | kButtonText },
+		{ 154, 256, 238, 12, kActionNone, 0, kButtonBorder }
 	};
 	static Button saveLoadButtonsTable[] = {
-		{ 108, 120, 336, 15, kActionGameState1,         0, 0 },
-		{ 108, 136, 336, 15, kActionGameState2,         0, 0 },
-		{ 108, 152, 336, 15, kActionGameState3,         0, 0 },
-		{ 108, 168, 336, 15, kActionGameState4,         0, 0 },
-		{ 108, 184, 336, 15, kActionGameState5,         0, 0 },
-		{ 108, 200, 336, 15, kActionGameState6,         0, 0 },
-		{ 108, 216, 336, 15, kActionGameState7,         0, 0 },
-		{ 108, 232, 336, 15, kActionGameState8,         0, 0 },
-		{ 108, 248, 336, 15, kActionGameState9,         0, 0 },
-		{ 108, 264, 336, 15, kActionGameState10,        0, 0 },
-		{ 452, 120,  94, 24, kActionScrollUpSaves,   2000, kButtonBorder | kButtonArrow },
-		{ 452, 152,  94, 24, kActionCancelSaveLoad,   -56, kButtonBorder | kButtonText  },
-		{ 452, 216,  94, 24, kActionPerformSaveLoad,    0, kButtonBorder | kButtonText  },
-		{ 452, 248,  94, 24, kActionScrollDownSaves, 2001, kButtonBorder | kButtonArrow }
+		{ 108, 120, 336, 15, kActionGameState1, 0, 0 },
+		{ 108, 136, 336, 15, kActionGameState2, 0, 0 },
+		{ 108, 152, 336, 15, kActionGameState3, 0, 0 },
+		{ 108, 168, 336, 15, kActionGameState4, 0, 0 },
+		{ 108, 184, 336, 15, kActionGameState5, 0, 0 },
+		{ 108, 200, 336, 15, kActionGameState6, 0, 0 },
+		{ 108, 216, 336, 15, kActionGameState7, 0, 0 },
+		{ 108, 232, 336, 15, kActionGameState8, 0, 0 },
+		{ 108, 248, 336, 15, kActionGameState9, 0, 0 },
+		{ 108, 264, 336, 15, kActionGameState10, 0, 0 },
+		{ 452, 120, 94, 24, kActionScrollUpSaves, 2000, kButtonBorder | kButtonArrow },
+		{ 452, 152, 94, 24, kActionCancelSaveLoad, -56, kButtonBorder | kButtonText },
+		{ 452, 216, 94, 24, kActionPerformSaveLoad, 0, kButtonBorder | kButtonText },
+		{ 452, 248, 94, 24, kActionScrollDownSaves, 2001, kButtonBorder | kButtonArrow }
 	};
 
 	switch (mode) {
@@ -351,33 +350,33 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 
 void ToucheEngine::drawActionsPanel(int dstX, int dstY, int deltaX, int deltaY) {
 	Graphics::copyRect(_offscreenBuffer, kScreenWidth, dstX, dstY,
-	  _menuKitData, 42, 0, 0,
-	  14, 24,
-	  Graphics::kTransparent);
+	                   _menuKitData, 42, 0, 0,
+	                   14, 24,
+	                   Graphics::kTransparent);
 	Graphics::copyRect(_offscreenBuffer, kScreenWidth, deltaX - 14 + dstX, dstY,
-	  _menuKitData, 42, 0, 40,
-	  14, 24,
-	  Graphics::kTransparent);
+	                   _menuKitData, 42, 0, 40,
+	                   14, 24,
+	                   Graphics::kTransparent);
 	Graphics::copyRect(_offscreenBuffer, kScreenWidth, dstX, deltaY - 16 + dstY,
-	  _menuKitData, 42, 0, 24,
-	  14, 16,
-	  Graphics::kTransparent);
+	                   _menuKitData, 42, 0, 24,
+	                   14, 16,
+	                   Graphics::kTransparent);
 	Graphics::copyRect(_offscreenBuffer, kScreenWidth, deltaX - 14 + dstX, deltaY - 16 + dstY,
-	  _menuKitData, 42, 0, 64,
-	  14, 16,
-	  Graphics::kTransparent);
+	                   _menuKitData, 42, 0, 64,
+	                   14, 16,
+	                   Graphics::kTransparent);
 	int x1 = deltaX - 28;
 	int x2 = dstX + 14;
 	while (x1 > 0) {
 		int w = (x1 > 14) ? 14 : x1;
 		Graphics::copyRect(_offscreenBuffer, kScreenWidth, x2, dstY,
-		  _menuKitData, 42, 0, 80,
-		  w, 24,
-		  Graphics::kTransparent);
+		                   _menuKitData, 42, 0, 80,
+		                   w, 24,
+		                   Graphics::kTransparent);
 		Graphics::copyRect(_offscreenBuffer, kScreenWidth, x2, deltaY - 16 + dstY,
-		  _menuKitData, 42, 0, 104,
-		  w, 16,
-		  Graphics::kTransparent);
+		                   _menuKitData, 42, 0, 104,
+		                   w, 16,
+		                   Graphics::kTransparent);
 		x1 -= 14;
 		x2 += 14;
 	}
@@ -386,13 +385,13 @@ void ToucheEngine::drawActionsPanel(int dstX, int dstY, int deltaX, int deltaY) 
 	while (x1 > 0) {
 		int w = (x1 > 120) ? 120 : x1;
 		Graphics::copyRect(_offscreenBuffer, kScreenWidth, dstX, x2,
-		  _menuKitData, 42, 14, 0,
-		  14, w,
-		  Graphics::kTransparent);
+		                   _menuKitData, 42, 14, 0,
+		                   14, w,
+		                   Graphics::kTransparent);
 		Graphics::copyRect(_offscreenBuffer, kScreenWidth, deltaX - 14 + dstX, x2,
-		  _menuKitData, 42, 28, 0,
-		  14, w,
-		  Graphics::kTransparent);
+		                   _menuKitData, 42, 28, 0,
+		                   14, w,
+		                   Graphics::kTransparent);
 		x1 -= 120;
 		x2 += 120;
 	}
@@ -451,8 +450,8 @@ void ToucheEngine::printStatusString(const char *str) {
 
 void ToucheEngine::clearStatusString() {
 	Graphics::copyRect(_offscreenBuffer, kScreenWidth, 0, 0,
-	  _backdropBuffer, _currentBitmapWidth, _flagsTable[614], _flagsTable[615],
-	  kScreenWidth, kTextHeight);
+	                   _backdropBuffer, _currentBitmapWidth, _flagsTable[614], _flagsTable[615],
+	                   kScreenWidth, kTextHeight);
 	updateScreenArea(0, 0, kScreenWidth, kTextHeight);
 }
 

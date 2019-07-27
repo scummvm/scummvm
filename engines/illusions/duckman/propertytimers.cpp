@@ -20,12 +20,12 @@
  *
  */
 
-#include "illusions/duckman/illusions_duckman.h"
 #include "illusions/duckman/propertytimers.h"
+#include "engines/util.h"
+#include "illusions/duckman/illusions_duckman.h"
 #include "illusions/resources/scriptresource.h"
 #include "illusions/time.h"
 #include "illusions/updatefunctions.h"
-#include "engines/util.h"
 
 namespace Illusions {
 
@@ -59,8 +59,7 @@ void PropertyTimers::setPropertyTimer(uint32 propertyId, uint32 duration) {
 	}
 	_vm->_scriptResource->_properties.set(propertyId, false);
 	if (!_propertyTimersActive) {
-		_vm->_updateFunctions->add(29, _vm->getCurrentScene(), new Common::Functor1Mem<uint, int, PropertyTimers>
-			(this, &PropertyTimers::updatePropertyTimers));
+		_vm->_updateFunctions->add(29, _vm->getCurrentScene(), new Common::Functor1Mem<uint, int, PropertyTimers>(this, &PropertyTimers::updatePropertyTimers));
 		_propertyTimersActive = true;
 	}
 }
@@ -104,8 +103,7 @@ int PropertyTimers::updatePropertyTimers(uint flags) {
 				PropertyTimer &propertyTimer = _propertyTimers[i];
 				if (propertyTimer._propertyId) {
 					timersActive = true;
-					if (!_vm->_scriptResource->_properties.get(propertyTimer._propertyId) &&
-						isTimerExpired(propertyTimer._startTime, propertyTimer._endTime))
+					if (!_vm->_scriptResource->_properties.get(propertyTimer._propertyId) && isTimerExpired(propertyTimer._startTime, propertyTimer._endTime))
 						_vm->_scriptResource->_properties.set(propertyTimer._propertyId, true);
 				}
 			}

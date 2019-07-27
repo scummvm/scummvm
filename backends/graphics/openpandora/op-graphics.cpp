@@ -24,16 +24,16 @@
 
 #if defined(OPENPANDORA)
 
-#include "backends/graphics/openpandora/op-graphics.h"
-#include "backends/events/openpandora/op-events.h"
-#include "graphics/scaler/aspect.h"
-#include "common/mutex.h"
-#include "common/textconsole.h"
+#	include "backends/events/openpandora/op-events.h"
+#	include "backends/graphics/openpandora/op-graphics.h"
+#	include "common/mutex.h"
+#	include "common/textconsole.h"
+#	include "graphics/scaler/aspect.h"
 
 static SDL_Cursor *hiddenCursor;
 
 OPGraphicsManager::OPGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
-	: SurfaceSdlGraphicsManager(sdlEventSource, window) {
+  : SurfaceSdlGraphicsManager(sdlEventSource, window) {
 }
 
 bool OPGraphicsManager::loadGFXMode() {

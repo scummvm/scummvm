@@ -22,31 +22,31 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/scripting/controls/input_control.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
+#include "zvision/scripting/controls/input_control.h"
 
-#include "zvision/zvision.h"
+#include "zvision/graphics/render_manager.h"
 #include "zvision/scripting/script_manager.h"
 #include "zvision/text/string_manager.h"
-#include "zvision/graphics/render_manager.h"
+#include "zvision/zvision.h"
 
+#include "common/rect.h"
 #include "common/str.h"
 #include "common/stream.h"
-#include "common/rect.h"
 #include "video/video_decoder.h"
 
 namespace ZVision {
 
 InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)
-	: Control(engine, key, CONTROL_INPUT),
-	  _background(0),
-	  _nextTabstop(0),
-	  _focused(false),
-	  _textChanged(false),
-	  _enterPressed(false),
-	  _readOnly(false),
-	  _txtWidth(0),
-	  _animation(NULL) {
+  : Control(engine, key, CONTROL_INPUT)
+  , _background(0)
+  , _nextTabstop(0)
+  , _focused(false)
+  , _textChanged(false)
+  , _enterPressed(false)
+  , _readOnly(false)
+  , _txtWidth(0)
+  , _animation(NULL) {
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	_engine->getScriptManager()->trimCommentsAndWhiteSpace(&line);

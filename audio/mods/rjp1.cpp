@@ -75,7 +75,6 @@ struct Rjp1Channel {
 
 class Rjp1 : public Paula {
 public:
-
 	struct Vars {
 		int8 *instData;
 		uint8 *songData[7];
@@ -95,7 +94,6 @@ public:
 	void startSong(int song);
 
 protected:
-
 	void startSequence(uint8 channelNum, uint8 seqNum);
 	void turnOffChannel(Rjp1Channel *channel);
 	void playChannel(Rjp1Channel *channel);
@@ -127,7 +125,7 @@ protected:
 };
 
 Rjp1::Rjp1(int rate, bool stereo)
-	: Paula(stereo, rate, rate / 50) {
+  : Paula(stereo, rate, rate / 50) {
 	memset(&_vars, 0, sizeof(_vars));
 	memset(_channelsTable, 0, sizeof(_channelsTable));
 }
@@ -137,7 +135,7 @@ Rjp1::~Rjp1() {
 }
 
 bool Rjp1::load(Common::SeekableReadStream *songData, Common::SeekableReadStream *instrumentsData) {
-	if (songData->readUint32BE() == MKTAG('R','J','P','1') && songData->readUint32BE() == MKTAG('S','M','O','D')) {
+	if (songData->readUint32BE() == MKTAG('R', 'J', 'P', '1') && songData->readUint32BE() == MKTAG('S', 'M', 'O', 'D')) {
 		for (int i = 0; i < 7; ++i) {
 			uint32 size = songData->readUint32BE();
 			_vars.songData[i] = (uint8 *)malloc(size);
@@ -166,14 +164,13 @@ bool Rjp1::load(Common::SeekableReadStream *songData, Common::SeekableReadStream
 			}
 		}
 
-		if (instrumentsData->readUint32BE() == MKTAG('R','J','P','1')) {
+		if (instrumentsData->readUint32BE() == MKTAG('R', 'J', 'P', '1')) {
 			uint32 size = instrumentsData->size() - 4;
 			_vars.instData = (int8 *)malloc(size);
 			if (!_vars.instData)
 				return false;
 
 			instrumentsData->read(_vars.instData, size);
-
 		}
 	}
 
@@ -339,7 +336,8 @@ bool Rjp1::executeSongSequenceOp(Rjp1Channel *channel, uint8 code, const uint8 *
 		break;
 	case 6:
 		channel->freqStep = *p++;
-		channel->freqInc = READ_BE_UINT32(p); p += 4;
+		channel->freqInc = READ_BE_UINT32(p);
+		p += 4;
 		channel->freqInit = 0;
 		break;
 	case 7:

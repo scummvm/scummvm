@@ -3,8 +3,7 @@
 #include "common/ptr.h"
 
 class PtrTestSuite : public CxxTest::TestSuite {
-	public:
-
+public:
 	struct A {
 		int a;
 	};
@@ -18,7 +17,7 @@ class PtrTestSuite : public CxxTest::TestSuite {
 	public:
 		static int count;
 		InstanceCountingClass() { count++; }
-		InstanceCountingClass(const InstanceCountingClass&) { count++; }
+		InstanceCountingClass(const InstanceCountingClass &) { count++; }
 		~InstanceCountingClass() { count--; }
 	};
 
@@ -119,10 +118,13 @@ class PtrTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT(p1.unique());
 	}
 
-	template<class T>
+	template <class T>
 	struct Deleter {
 		bool *test;
-		void operator()(T *ptr) { *test = true; delete ptr; }
+		void operator()(T *ptr) {
+			*test = true;
+			delete ptr;
+		}
 	};
 
 	void test_deleter() {

@@ -25,7 +25,8 @@
 
 namespace Gob {
 
-SoundBlaster::SoundBlaster(Audio::Mixer &mixer) : SoundMixer(mixer, Audio::Mixer::kSFXSoundType) {
+SoundBlaster::SoundBlaster(Audio::Mixer &mixer)
+  : SoundMixer(mixer, Audio::Mixer::kSFXSoundType) {
 	_curSoundDesc = 0;
 
 	_compositionSamples = 0;
@@ -39,7 +40,7 @@ SoundBlaster::~SoundBlaster() {
 }
 
 void SoundBlaster::playSample(SoundDesc &sndDesc, int16 repCount,
-		int16 frequency, int16 fadeLength) {
+                              int16 frequency, int16 fadeLength) {
 	SoundMixer::play(sndDesc, repCount, frequency, fadeLength);
 }
 
@@ -72,8 +73,7 @@ void SoundBlaster::endComposition() {
 void SoundBlaster::nextCompositionPos() {
 	int8 slot;
 
-	while ((++_compositionPos < 50) &&
-			((slot = _composition[_compositionPos]) != -1)) {
+	while ((++_compositionPos < 50) && ((slot = _composition[_compositionPos]) != -1)) {
 		if ((slot >= 0) && (slot < _compositionSampleCount)) {
 			SoundDesc &sample = _compositionSamples[slot];
 			if (!sample.empty() && (sample.getType() == SOUND_SND)) {
@@ -89,7 +89,7 @@ void SoundBlaster::nextCompositionPos() {
 }
 
 void SoundBlaster::playComposition(const int16 *composition, int16 freqVal,
-		SoundDesc *sndDescs, int8 sndCount) {
+                                   SoundDesc *sndDescs, int8 sndCount) {
 
 	_compositionSamples = sndDescs;
 	_compositionSampleCount = sndCount;
@@ -109,7 +109,7 @@ void SoundBlaster::repeatComposition(int32 repCount) {
 }
 
 void SoundBlaster::setSample(SoundDesc &sndDesc, int16 repCount, int16 frequency,
-		int16 fadeLength) {
+                             int16 fadeLength) {
 
 	_curSoundDesc = &sndDesc;
 	SoundMixer::setSample(sndDesc, repCount, frequency, fadeLength);

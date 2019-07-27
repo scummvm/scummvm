@@ -26,10 +26,10 @@
 #include "pink/archive.h"
 #include "pink/cel_decoder.h"
 #include "pink/director.h"
-#include "pink/pink.h"
 #include "pink/objects/actions/action_cel.h"
 #include "pink/objects/actors/actor.h"
 #include "pink/objects/pages/game_page.h"
+#include "pink/pink.h"
 
 namespace Pink {
 

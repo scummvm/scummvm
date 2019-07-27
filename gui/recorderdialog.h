@@ -22,8 +22,8 @@
 
 #ifndef GUI_RECORDER_DIALOG_H
 #define GUI_RECORDER_DIALOG_H
-#include "common/stream.h"
 #include "common/recorderfile.h"
+#include "common/stream.h"
 #include "gui/dialog.h"
 namespace GUI {
 
@@ -59,6 +59,7 @@ private:
 	void updateScreenShotsText();
 	void updateSelection(bool redraw);
 	void updateScreenshot();
+
 public:
 	Common::String _author;
 	Common::String _name;
@@ -75,10 +76,9 @@ public:
 	virtual void reflowLayout();
 
 	int runModal(Common::String &target);
-	const Common::String getFileName() {return _filename;}
+	const Common::String getFileName() { return _filename; }
 };
 
-}  // End of namespace GUI
-
+} // End of namespace GUI
 
 #endif

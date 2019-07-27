@@ -20,18 +20,18 @@
  *
  */
 
+#include "common/file.h"
+#include "backends/fs/fs-factory.h"
 #include "common/archive.h"
 #include "common/debug.h"
-#include "common/file.h"
 #include "common/fs.h"
-#include "common/textconsole.h"
 #include "common/system.h"
-#include "backends/fs/fs-factory.h"
+#include "common/textconsole.h"
 
 namespace Common {
 
 File::File()
-	: _handle(nullptr) {
+  : _handle(nullptr) {
 }
 
 File::~File() {
@@ -85,7 +85,6 @@ bool File::open(SeekableReadStream *stream, const String &name) {
 	}
 	return _handle != nullptr;
 }
-
 
 bool File::exists(const String &filename) {
 	if (SearchMan.hasFile(filename)) {
@@ -143,8 +142,8 @@ uint32 File::read(void *ptr, uint32 len) {
 	return _handle->read(ptr, len);
 }
 
-
-DumpFile::DumpFile() : _handle(nullptr) {
+DumpFile::DumpFile()
+  : _handle(nullptr) {
 }
 
 DumpFile::~DumpFile() {
@@ -160,13 +159,15 @@ bool DumpFile::open(const String &filename, bool createPath) {
 			if (filename[i] == '/' || filename[i] == '\\') {
 				Common::String subpath = filename;
 				subpath.erase(i);
-				if (subpath.empty()) continue;
+				if (subpath.empty())
+					continue;
 				AbstractFSNode *node = g_system->getFilesystemFactory()->makeFileNodePath(subpath);
 				if (node->exists()) {
 					delete node;
 					continue;
 				}
-				if (!node->create(true)) warning("DumpFile: unable to create directories from path prefix");
+				if (!node->create(true))
+					warning("DumpFile: unable to create directories from path prefix");
 				delete node;
 			}
 		}

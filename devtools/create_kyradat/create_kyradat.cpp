@@ -26,7 +26,7 @@
 // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
 #ifdef main
-#undef main
+#	undef main
 #endif // main
 
 #include "create_kyradat.h"
@@ -35,14 +35,13 @@
 
 #include "pak.h"
 
-#include "md5.h"
 #include "common/language.h"
 #include "common/platform.h"
+#include "md5.h"
 
-#include <vector>
-#include <string>
 #include <algorithm>
-
+#include <string>
+#include <vector>
 
 enum {
 	kKyraDatVersion = 94
@@ -203,7 +202,6 @@ const ExtractFilename extractFilenames[] = {
 	{ k2IngameShapeAnimData, k2ItemAnimDefinition, false },
 	{ k2IngameTlkDemoStrings, kStringList, true },
 
-
 	// MALCOLM'S REVENGE
 	{ k3MainMenuStrings, kStringList, false },
 	{ k3MusicFiles, kStringList, false },
@@ -218,7 +216,7 @@ const ExtractFilename extractFilenames[] = {
 	{ kEoBBaseChargenStrings1, kStringList, true },
 	{ kEoBBaseChargenStrings2, kStringList, true },
 	{ kEoBBaseChargenStartLevels, kRawData, false },
-	{ kEoBBaseChargenStatStrings, kStringList, true},
+	{ kEoBBaseChargenStatStrings, kStringList, true },
 	{ kEoBBaseChargenRaceSexStrings, kStringList, true },
 	{ kEoBBaseChargenClassStrings, kStringList, true },
 	{ kEoBBaseChargenAlignmentStrings, kStringList, true },
@@ -1049,11 +1047,7 @@ byte getSpecialID(int special) {
 
 uint32 getFilename(int game, int plat, int spec, int lang, const ExtractFilename *fDesc) {
 	// GAME, PLATFORM, SPECIAL, ID, LANG
-	return ((getGameID(game) & 0xF) << 24) |
-	       ((getPlatformID(plat) & 0xF) << 20) |
-	       ((getSpecialID(spec) & 0xF) << 16) |
-	       ((fDesc->id & 0xFFF) << 4) |
-	       ((getLanguageID(fDesc->langSpecific ? lang : UNK_LANG) & 0xF) << 0);
+	return ((getGameID(game) & 0xF) << 24) | ((getPlatformID(plat) & 0xF) << 20) | ((getSpecialID(spec) & 0xF) << 16) | ((fDesc->id & 0xFFF) << 4) | ((getLanguageID(fDesc->langSpecific ? lang : UNK_LANG) & 0xF) << 0);
 }
 
 uint32 getFilename(const Game *g, const int id) {
@@ -1079,10 +1073,7 @@ bool getFilename(char *dstFilename, const Game *g, const int id) {
 typedef uint16 GameDef;
 
 GameDef createGameDef(const Game *g) {
-	return ((getGameID(g->game) & 0xF) << 12) |
-	       ((getPlatformID(g->platform) & 0xF) << 8) |
-	       ((getSpecialID(g->special) & 0xF) << 4) |
-	       ((getLanguageID(g->lang) & 0xF) << 0);
+	return ((getGameID(g->game) & 0xF) << 12) | ((getPlatformID(g->platform) & 0xF) << 8) | ((getSpecialID(g->special) & 0xF) << 4) | ((getLanguageID(g->lang) & 0xF) << 0);
 	return 0;
 }
 
@@ -1114,10 +1105,13 @@ int main(int argc, char *argv[]) {
 	// Third step: Write index file
 	byte *const indexBuffer = new byte[8 + 2 * games.size()];
 	byte *dst = indexBuffer;
-	WRITE_BE_UINT32(dst, kKyraDatVersion); dst += 4;
-	WRITE_BE_UINT32(dst, games.size()); dst += 4;
+	WRITE_BE_UINT32(dst, kKyraDatVersion);
+	dst += 4;
+	WRITE_BE_UINT32(dst, games.size());
+	dst += 4;
 	for (std::vector<GameDef>::const_iterator i = games.begin(), end = games.end(); i != end; ++i) {
-		WRITE_BE_UINT16(dst, *i); dst += 2;
+		WRITE_BE_UINT16(dst, *i);
+		dst += 2;
 	}
 	if (!out.addFile("INDEX", indexBuffer, 8 + 2 * games.size())) {
 		error("couldn't write INDEX file");
@@ -1185,16 +1179,19 @@ bool createIDMap(PAKFile &out, const Game *g, const int *needList) {
 	uint8 *map = new uint8[mapSize];
 	uint8 *dst = map;
 
-	WRITE_BE_UINT16(dst, dataEntries); dst += 2;
+	WRITE_BE_UINT16(dst, dataEntries);
+	dst += 2;
 	for (const int *id = needList; *id != -1; ++id) {
-		WRITE_BE_UINT16(dst, *id); dst += 2;
+		WRITE_BE_UINT16(dst, *id);
+		dst += 2;
 		const ExtractFilename *fDesc = getFilenameDesc(*id);
 		if (!fDesc) {
 			delete[] map;
 			return false;
 		}
 		*dst++ = fDesc->type;
-		WRITE_BE_UINT32(dst, getFilename(g, *id)); dst += 4;
+		WRITE_BE_UINT32(dst, getFilename(g, *id));
+		dst += 4;
 	}
 
 	char filename[12];

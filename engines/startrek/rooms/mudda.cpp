@@ -47,17 +47,17 @@ void Room::muddaUseLenseOnDegrimer() {
 	showDescription(text[_roomIndex]);
 }
 
-
 void Room::muddaUseAlienDevice() {
 	assert(_roomIndex >= 0 && _roomIndex <= 5);
 
-	const int deviceObjectIndices[] = { // Each room's object index for the explosion is different
-		9,  // MUDD0
+	const int deviceObjectIndices[] = {
+		// Each room's object index for the explosion is different
+		9, // MUDD0
 		13, // MUDD1
 		11, // MUDD2
 		11, // MUDD3
-		9,  // MUDD4
-		11  // MUDD5
+		9, // MUDD4
+		11 // MUDD5
 	};
 
 	_awayMission->disableInput = true;
@@ -88,7 +88,6 @@ void Room::muddaFiredAlienDevice() {
 		showText(TX_SPEAKER_KIRK, text[_roomIndex]);
 	}
 }
-
 
 void Room::muddaUseDegrimer() {
 	assert(_roomIndex >= 0 && _roomIndex <= 5);
@@ -129,7 +128,7 @@ void Room::muddaTick() {
 	*/
 
 	const TextRef deathText[] = { // All of these audio files are identical, but there's one for each room.
-		TX_MUD0N006, TX_MUD1N007, TX_MUD2N005, TX_MUD3N008, TX_MUD4N005, TX_MUD5N105
+		                            TX_MUD0N006, TX_MUD1N007, TX_MUD2N005, TX_MUD3N008, TX_MUD4N005, TX_MUD5N105
 	};
 
 	// UNUSED: something similar to "deathText" which would also fit in this situation.

@@ -22,8 +22,8 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
@@ -55,8 +55,8 @@ void scene10_initScene(Scene *sc) {
 
 bool sceneHandler10_inflaterIsBlind() {
 	return g_vars->scene10_inflater->_movement
-		&& g_vars->scene10_inflater->_movement->_id == MV_NDV_BLOW2
-		&& g_vars->scene10_inflater->_movement->_currDynamicPhaseIndex < 42;
+	  && g_vars->scene10_inflater->_movement->_id == MV_NDV_BLOW2
+	  && g_vars->scene10_inflater->_movement->_currDynamicPhaseIndex < 42;
 }
 
 int scene10_updateCursor() {
@@ -121,12 +121,11 @@ void sceneHandler10_showGum() {
 	g_vars->scene10_packet2->show1(-1, -1, -1, 0);
 }
 
-
 int sceneHandler10(ExCommand *ex) {
 	if (ex->_messageKind != 17)
 		return 0;
 
-	switch(ex->_messageNum) {
+	switch (ex->_messageNum) {
 	case MSG_LIFT_CLOSEDOOR:
 		g_fp->lift_closedoorSeq();
 		break;
@@ -173,45 +172,42 @@ int sceneHandler10(ExCommand *ex) {
 		g_fp->lift_hoverButton(ex);
 		break;
 
-	case 29:
-		{
-			if (g_fp->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY) == PIC_SC10_LADDER) {
-				handleObjectInteraction(g_fp->_aniMan, g_fp->_currentScene->getPictureObjectById(PIC_SC10_DTRUBA, 0), ex->_param);
-				ex->_messageKind = 0;
+	case 29: {
+		if (g_fp->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY) == PIC_SC10_LADDER) {
+			handleObjectInteraction(g_fp->_aniMan, g_fp->_currentScene->getPictureObjectById(PIC_SC10_DTRUBA, 0), ex->_param);
+			ex->_messageKind = 0;
 
-				return 0;
-			}
-
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
-
-			if (ani && ani->_id == ANI_LIFTBUTTON) {
-				g_fp->lift_animateButton(ani);
-				ex->_messageKind = 0;
-
-				return 0;
-			}
+			return 0;
 		}
-		break;
 
-	case 33:
-		{
-			int res = 0;
+		StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
 
-			if (g_fp->_aniMan2) {
-				if (g_fp->_aniMan2->_ox < g_fp->_sceneRect.left + 200)
-					g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.left - 300;
+		if (ani && ani->_id == ANI_LIFTBUTTON) {
+			g_fp->lift_animateButton(ani);
+			ex->_messageKind = 0;
 
-				if (g_fp->_aniMan2->_ox > g_fp->_sceneRect.right - 200)
-					g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.right + 300;
-
-				res = 1;
-			}
-
-			g_fp->_behaviorManager->updateBehaviors();
-			g_fp->startSceneTrack();
-
-			return res;
+			return 0;
 		}
+	} break;
+
+	case 33: {
+		int res = 0;
+
+		if (g_fp->_aniMan2) {
+			if (g_fp->_aniMan2->_ox < g_fp->_sceneRect.left + 200)
+				g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.left - 300;
+
+			if (g_fp->_aniMan2->_ox > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.right + 300;
+
+			res = 1;
+		}
+
+		g_fp->_behaviorManager->updateBehaviors();
+		g_fp->startSceneTrack();
+
+		return res;
+	}
 	}
 
 	return 0;

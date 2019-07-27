@@ -25,8 +25,8 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "image/image_decoder.h"
 #include "image/codecs/bmp_raw.h"
+#include "image/image_decoder.h"
 
 namespace Common {
 class SeekableReadStream;

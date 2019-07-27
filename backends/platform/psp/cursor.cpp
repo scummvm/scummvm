@@ -20,11 +20,11 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "backends/platform/psp/psppixelformat.h"
-#include "backends/platform/psp/display_client.h"
-#include "backends/platform/psp/default_display_client.h"
 #include "backends/platform/psp/cursor.h"
+#include "backends/platform/psp/default_display_client.h"
+#include "backends/platform/psp/display_client.h"
+#include "backends/platform/psp/psppixelformat.h"
+#include "common/scummsys.h"
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging the stack */
 //#define __PSP_DEBUG_PRINT__
@@ -34,10 +34,10 @@
 void Cursor::init() {
 	DEBUG_ENTER_FUNC();
 
-	_renderer.setBuffer(&_buffer);			// We do this explicitly
-	_renderer.setPalette(&_screenPalette);	// because we want to choose screenpalette by default
+	_renderer.setBuffer(&_buffer); // We do this explicitly
+	_renderer.setPalette(&_screenPalette); // because we want to choose screenpalette by default
 	_renderer.setUseGlobalScaler(true);
-	setRendererModePalettized(true);		// Assume we start in 8bit mode
+	setRendererModePalettized(true); // Assume we start in 8bit mode
 
 	// Default modes
 	_palette.setPixelFormats(PSPPixelFormat::Type_5551, PSPPixelFormat::Type_Palette_8bit); // default
@@ -102,10 +102,10 @@ void Cursor::clearKeyColor() {
 	// We need 2 mechanisms: one for palettized and one for 16 bit
 	if (_buffer.hasPalette()) {
 		if (_screenPalette.isAllocated())
-			_screenPalette.setColorPositionAlpha(_keyColor, false);		// set keycolor to 0
+			_screenPalette.setColorPositionAlpha(_keyColor, false); // set keycolor to 0
 		if (_palette.isAllocated())
 			_palette.setColorPositionAlpha(_keyColor, false);
-	} else {	// 16bit
+	} else { // 16bit
 		_renderer.setKeyColor(_keyColor);
 	}
 	setDirty();
@@ -117,7 +117,7 @@ void Cursor::enableCursorPalette(bool enable) {
 
 	_useCursorPalette = enable;
 	if (enable)
-		_renderer.setPalette(&_palette);	// very important that we do this switch
+		_renderer.setPalette(&_palette); // very important that we do this switch
 	else
 		_renderer.setPalette(&_screenPalette);
 
@@ -128,18 +128,18 @@ inline void Cursor::setSize(uint32 width, uint32 height) {
 	DEBUG_ENTER_FUNC();
 	PSP_DEBUG_PRINT("width[%u], height[%u]\n", width, height);
 
-	_buffer.setSize(width, height, Buffer::kSizeByTextureSize);	// we'll use texture size for mouse
-	_renderer.setDrawWholeBuffer();		// We need to let the renderer know how much to draw
+	_buffer.setSize(width, height, Buffer::kSizeByTextureSize); // we'll use texture size for mouse
+	_renderer.setDrawWholeBuffer(); // We need to let the renderer know how much to draw
 }
 
 void Cursor::copyFromArray(const byte *array) {
 	DEBUG_ENTER_FUNC();
 
-	if (!_buffer.isAllocated())	{
+	if (!_buffer.isAllocated()) {
 		_buffer.allocate();
 	}
 
-	_buffer.copyFromArray(array, _buffer.getSourceWidthInBytes());	// pitch is source width
+	_buffer.copyFromArray(array, _buffer.getSourceWidthInBytes()); // pitch is source width
 	setDirty();
 
 	// debug
@@ -151,7 +151,7 @@ void Cursor::setHotspot(int32 x, int32 y) {
 
 	_hotspotX = x;
 	_hotspotY = y;
-	updateRendererOffset();	// Important
+	updateRendererOffset(); // Important
 
 	PSP_DEBUG_PRINT("hotspotX[%d], hotspotY[%d]\n", x, y);
 }
@@ -207,10 +207,10 @@ inline void Cursor::adjustXYForScreenSize(int32 &x, int32 &y) {
 	// resolutions
 	int32 newX = x, newY = y;
 
-	if (_mouseLimitWidth >= 600) {	// multiply by 2
+	if (_mouseLimitWidth >= 600) { // multiply by 2
 		newX *= 2;
 		newY *= 2;
-	} else if (_mouseLimitWidth >= 480) {	// multiply by 1.5
+	} else if (_mouseLimitWidth >= 480) { // multiply by 1.5
 		newX = newX + (newX / 2);
 		newY = newY + (newY / 2);
 	}
@@ -229,11 +229,11 @@ void Cursor::setScreenPaletteScummvmPixelFormat(const Graphics::PixelFormat *for
 
 	if (paletteType == PSPPixelFormat::Type_None) {
 		//_screenPalette.deallocate();		// leave palette for default CLUT8
-		setRendererModePalettized(false);	// use 16-bit mechanism
-	} else {	// We have a palette
+		setRendererModePalettized(false); // use 16-bit mechanism
+	} else { // We have a palette
 		_screenPalette.setPixelFormats(paletteType, bufferType);
 		_palette.setPixelFormats(paletteType, bufferType);
-		setRendererModePalettized(true);	// use palettized mechanism
+		setRendererModePalettized(true); // use palettized mechanism
 	}
 }
 
@@ -272,10 +272,10 @@ void Cursor::setSizeAndScummvmPixelFormat(uint32 width, uint32 height, const Gra
 	PSP_DEBUG_PRINT("palette pixel format[%u]\n", paletteType);
 
 	if (paletteType == PSPPixelFormat::Type_None) {
-		setRendererModePalettized(false);	// use palettized mechanism
-	} else {	// We have a palette
+		setRendererModePalettized(false); // use palettized mechanism
+	} else { // We have a palette
 		_palette.setPixelFormats(paletteType, bufferType);
-		setRendererModePalettized(true);	// use palettized mechanism
+		setRendererModePalettized(true); // use palettized mechanism
 	}
 
 	// debug
@@ -288,7 +288,7 @@ void Cursor::setXY(int x, int y) {
 
 	_x = x;
 	_y = y;
-	updateRendererOffset();	// Very important to let renderer know things changed
+	updateRendererOffset(); // Very important to let renderer know things changed
 	setDirty();
 }
 
@@ -298,11 +298,11 @@ inline void Cursor::updateRendererOffset() {
 }
 
 inline void Cursor::setRendererModePalettized(bool palettized) {
-	if (palettized) {	// We have a palette. Use blending
+	if (palettized) { // We have a palette. Use blending
 		_renderer.setAlphaBlending(true);
 		_renderer.setAlphaReverse(false);
 		_renderer.setColorTest(false);
-	} else {			// 16 bits, no palette
+	} else { // 16 bits, no palette
 		// Color test is an easy way for the hardware to make our keycolor
 		// transparent.
 		_renderer.setColorTest(true);

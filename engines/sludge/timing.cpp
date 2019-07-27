@@ -20,12 +20,12 @@
  *
  */
 
-#include "sludge/allfiles.h"
 #include "sludge/timing.h"
+#include "sludge/allfiles.h"
 
 namespace Sludge {
 
-Timer::Timer(){
+Timer::Timer() {
 	reset();
 }
 

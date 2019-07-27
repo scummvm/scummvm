@@ -72,6 +72,7 @@ private:
 	bool TFP(int v);
 	void TF1(byte *&pDest, int &v);
 	void TF2(const byte *&pSrc, byte *&pDest, const byte *&pLookup, int &v);
+
 public:
 	// Specifies offset when drawing the image
 	Common::Point _offset;
@@ -83,7 +84,7 @@ public:
 	void decode(const byte *pSrc);
 };
 
-class ScreenSurface: public Graphics::Surface {
+class ScreenSurface : public Graphics::Surface {
 private:
 	MortevielleEngine *_vm;
 
@@ -93,7 +94,7 @@ private:
 public:
 	ScreenSurface(MortevielleEngine *vm);
 
-	Common::Point _textPos;		// Original called xwhere/ywhere
+	Common::Point _textPos; // Original called xwhere/ywhere
 	void readFontData(Common::File &f, int dataSize);
 	Graphics::Surface lockArea(const Common::Rect &bounds);
 	void updateScreen();
@@ -105,7 +106,7 @@ public:
 	void clearScreen();
 	void putxy(int x, int y) { _textPos = Common::Point(x, y); }
 	void drawString(const Common::String &l, int command);
-	int  getStringWidth(const Common::String &s);
+	int getStringWidth(const Common::String &s);
 	void drawLine(int x, int y, int xx, int yy, int coul);
 	void drawRectangle(int x, int y, int dx, int dy);
 

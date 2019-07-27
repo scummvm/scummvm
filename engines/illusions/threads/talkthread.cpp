@@ -20,10 +20,10 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/threads/talkthread.h"
 #include "illusions/actor.h"
 #include "illusions/dictionary.h"
+#include "illusions/illusions.h"
 #include "illusions/input.h"
 #include "illusions/resources/talkresource.h"
 #include "illusions/screentext.h"
@@ -35,10 +35,13 @@ namespace Illusions {
 // TalkThread
 
 TalkThread::TalkThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
-	int16 duration, uint32 objectId, uint32 talkId, uint32 sequenceId1, uint32 sequenceId2,
-	uint32 namedPointId)
-	: Thread(vm, threadId, callingThreadId, notifyFlags), _objectId(objectId), _talkId(talkId),
-	_sequenceId1(0), _sequenceId2(0) {
+                       int16 duration, uint32 objectId, uint32 talkId, uint32 sequenceId1, uint32 sequenceId2,
+                       uint32 namedPointId)
+  : Thread(vm, threadId, callingThreadId, notifyFlags)
+  , _objectId(objectId)
+  , _talkId(talkId)
+  , _sequenceId1(0)
+  , _sequenceId2(0) {
 	_type = kTTTalkThread;
 
 	if (sequenceId1 && _vm->_dict->getObjectControl(objectId)) {
@@ -79,7 +82,6 @@ TalkThread::TalkThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThrea
 		if (callingThread)
 			_sceneId = callingThread->_sceneId;
 	}
-
 }
 
 int TalkThread::onUpdate() {
@@ -116,7 +118,7 @@ int TalkThread::onUpdate() {
 			_flags |= 1;
 		}
 		if (_vm->isSoundActive()) {
-			if (!_vm->_soundMan->cueVoice((char*)talkEntry->_voiceName) && !_durationMult)
+			if (!_vm->_soundMan->cueVoice((char *)talkEntry->_voiceName) && !_durationMult)
 				_durationMult = _defDurationMult;
 		} else {
 			_flags |= 4;
@@ -178,7 +180,7 @@ int TalkThread::onUpdate() {
 		}
 //#define DEBUG_SPEEDUP_TALK
 #ifdef DEBUG_SPEEDUP_TALK
-if (true) {
+		if (true) {
 #else
 		if (_objectId && _vm->_input->pollEvent(kEventSkip)) {
 #endif
@@ -235,7 +237,6 @@ if (true) {
 			_flags |= 4;
 		}
 		return kTSTerminate;
-
 	}
 
 	return kTSTerminate;
@@ -306,7 +307,7 @@ void TalkThread::onUnpause() {
 	case 4:
 		if (_vm->isSoundActive()) {
 			TalkEntry *talkEntry = getTalkResourceEntry(_talkId);
-			_vm->_soundMan->cueVoice((char*)talkEntry->_voiceName);
+			_vm->_soundMan->cueVoice((char *)talkEntry->_voiceName);
 		}
 		break;
 	case 6:
@@ -393,9 +394,9 @@ int TalkThread::insertText() {
 	WidthHeight dimensions;
 	_vm->getDefaultTextDimensions(dimensions);
 	uint16 *outTextPtr;
-	_vm->_screenText->insertText((uint16*)_currEntryText, 0x120001, dimensions,
-		Common::Point(0, 0), TEXT_FLAG_CENTER_ALIGN, 0, 0, 0, 0, 0, outTextPtr);
-	_entryText = (byte*)outTextPtr;
+	_vm->_screenText->insertText((uint16 *)_currEntryText, 0x120001, dimensions,
+	                             Common::Point(0, 0), TEXT_FLAG_CENTER_ALIGN, 0, 0, 0, 0, 0, outTextPtr);
+	_entryText = (byte *)outTextPtr;
 	Common::Point pt;
 	_vm->getDefaultTextPosition(pt);
 	_vm->_screenText->updateTextInfoPosition(pt);

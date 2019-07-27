@@ -26,14 +26,14 @@
 
 #include "engines/advancedDetector.h"
 
-#include "zvision/zvision.h"
 #include "zvision/file/save_manager.h"
 #include "zvision/scripting/script_manager.h"
+#include "zvision/zvision.h"
 
-#include "common/translation.h"
 #include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 namespace ZVision {
 
@@ -58,7 +58,8 @@ uint32 ZVision::getFeatures() const {
 
 class ZVisionMetaEngine : public AdvancedMetaEngine {
 public:
-	ZVisionMetaEngine() : AdvancedMetaEngine(ZVision::gameDescriptions, sizeof(ZVision::ZVisionGameDescription), ZVision::zVisionGames, ZVision::optionsList) {
+	ZVisionMetaEngine()
+	  : AdvancedMetaEngine(ZVision::gameDescriptions, sizeof(ZVision::ZVisionGameDescription), ZVision::zVisionGames, ZVision::optionsList) {
 		_maxScanDepth = 2;
 		_directoryGlobs = ZVision::directoryGlobs;
 		_singleId = "zvision";
@@ -81,22 +82,11 @@ public:
 };
 
 bool ZVisionMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup) || (f == kSupportsDeleteSave) || (f == kSavesSupportMetaInfo) || (f == kSavesSupportThumbnail) || (f == kSavesSupportCreationDate) || (f == kSavesSupportPlayTime) || (f == kSimpleSavesNames);
 }
 
 bool ZVision::ZVision::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
 Common::Error ZVision::ZVision::loadGameState(int slot) {
@@ -217,7 +207,7 @@ SaveStateDescriptor ZVisionMetaEngine::querySaveMetaInfos(const char *target, in
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(ZVISION)
-	REGISTER_PLUGIN_DYNAMIC(ZVISION, PLUGIN_TYPE_ENGINE, ZVisionMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(ZVISION, PLUGIN_TYPE_ENGINE, ZVisionMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(ZVISION, PLUGIN_TYPE_ENGINE, ZVisionMetaEngine);
+REGISTER_PLUGIN_STATIC(ZVISION, PLUGIN_TYPE_ENGINE, ZVisionMetaEngine);
 #endif

@@ -1,49 +1,103 @@
 static const char *const k1IntroStringsAmigaGerman[51] = {
 	"This is a text test - 1",
 	"This is a text test - 2",
-	"Sei gegr""\x81\xE1""t, Kallak...",
-	"...M""\x84""chtiger Anf""\x81""hrer der k""\x94""niglichen Mystiker!",
+	"Sei gegr"
+	"\x81\xE1"
+	"t, Kallak...",
+	"...M"
+	"\x84"
+	"chtiger Anf"
+	"\x81"
+	"hrer der k"
+	"\x94"
+	"niglichen Mystiker!",
 	"Habe ich dich erschreckt?",
 	"Malcolm!",
-	"Ich habe gestern von deiner Flucht geh""\x94""rt.",
-	"Ich habe dich fr""\x81""her erwartet.",
+	"Ich habe gestern von deiner Flucht geh"
+	"\x94"
+	"rt.",
+	"Ich habe dich fr"
+	"\x81"
+	"her erwartet.",
 	"Warum sollte ich mich beeilen?",
-	"Ich herrsche ""\x81""ber dieses Land!",
-	"Dein mickriger Fluch h""\x84""lt mich nicht zur""\x81""ck.",
+	"Ich herrsche "
+	"\x81"
+	"ber dieses Land!",
+	"Dein mickriger Fluch h"
+	"\x84"
+	"lt mich nicht zur"
+	"\x81"
+	"ck.",
 	"So, erschlag mich doch!",
-	"Ich habe nur noch wenig Magie ""\x81""brig.",
-	"Ich werde dir zu Leibe r""\x81""cken, zweifle blo""\xE1"" nicht daran...",
+	"Ich habe nur noch wenig Magie "
+	"\x81"
+	"brig.",
+	"Ich werde dir zu Leibe r"
+	"\x81"
+	"cken, zweifle blo"
+	"\xE1"
+	" nicht daran...",
 	"...du bist jetzt aus Stein...",
 	"...Ich lassen dir allein deine Augen.",
-	"F""\x81""r Kyrandia vergie""\xE1""e ich nicht eine Tr""\x84""ne...",
+	"F"
+	"\x81"
+	"r Kyrandia vergie"
+	"\xE1"
+	"e ich nicht eine Tr"
+	"\x84"
+	"ne...",
 	"...aber deine will ich dir nicht nehmen.",
 	"Malcolm der Hofnarr ist ausgebrochen!",
 	"Er beherrscht nun den Kyragem...",
 	"...die Quelle aller Magie in Kyrandia!",
 	"",
 	"Wie kannst du es wagen, MICH umzuwerfen!",
-	"Nicht doch, etwas Besonderes f""\x81""r dich...",
-	"Was f""\x81""r ein l""\x84""cherlicher Fluch!",
+	"Nicht doch, etwas Besonderes f"
+	"\x81"
+	"r dich...",
+	"Was f"
+	"\x81"
+	"r ein l"
+	"\x84"
+	"cherlicher Fluch!",
 	"Ich warne dich vorher.",
 	"Springe nicht auf DIESEN Baum!",
-	"Klettre nicht auf diesen Baum, kleines Eichh""\x94""rnchen!",
+	"Klettre nicht auf diesen Baum, kleines Eichh"
+	"\x94"
+	"rnchen!",
 	"Buuh!",
 	"So ist es viel lustiger...",
 	"...nicht wahr?",
 	"Ha ha ha...",
 	"Sind Finger nicht 'was Tolles?",
-	"Es ist gro""\xE1""artig, am Leben zu sein!",
+	"Es ist gro"
+	"\xE1"
+	"artig, am Leben zu sein!",
 	"Brandon!",
-	"Gro""\xE1""vater! Wir haben es geschafft!",
+	"Gro"
+	"\xE1"
+	"vater! Wir haben es geschafft!",
 	"Nein! DU hast es geschafft!",
-	"Lang lebe K""\x94""nig Brandon!",
-	"Lang leben die k""\x94""niglichen Mystiker!",
+	"Lang lebe K"
+	"\x94"
+	"nig Brandon!",
+	"Lang leben die k"
+	"\x94"
+	"niglichen Mystiker!",
 	"Bauen wir Kyrandia wieder auf!",
 	"Eine gute Idee!",
-	"Als meine erste k""\x94""nigliche Proklamation,...",
-	"...erkl""\x84""re ich Sandalen zur offiziellen Fu""\xE1""bekleidung Kyrandias!",
+	"Als meine erste k"
+	"\x94"
+	"nigliche Proklamation,...",
+	"...erkl"
+	"\x84"
+	"re ich Sandalen zur offiziellen Fu"
+	"\xE1"
+	"bekleidung Kyrandias!",
 	"Sehr weise, Brandon!",
-	"Das Land ist nicht l""\x84""nger in Trauer!",
+	"Das Land ist nicht l"
+	"\x84"
+	"nger in Trauer!",
 	"Und deine Freunde sind gerettet.",
 	"Liebe Brynn...",
 	"Malcolm ist ausgebrochen!",
@@ -76,17 +130,26 @@ static const char *const k1ItemNamesAmigaGerman[82] = {
 	"Orchidee",
 	"Silberne Rose",
 	"Silberne Statuette",
-	"Silberm""\x81""nze",
-	"Goldm""\x81""nze",
+	"Silberm"
+	"\x81"
+	"nze",
+	"Goldm"
+	"\x81"
+	"nze",
 	"Goldring",
-	"Der Kelch des K""\x94""nigs",
+	"Der Kelch des K"
+	"\x94"
+	"nigs",
 	"Kienapfel",
 	"Eichel",
-	"Walnu""\xE1",
+	"Walnu"
+	"\xE1",
 	"Immerleuchtende Feuerbeeren",
 	"Feuerbeeren",
 	"Fisch",
-	"Fischgr""\x84""te",
+	"Fischgr"
+	"\x84"
+	"te",
 	"Hammelkeule",
 	"Knochen",
 	"Apfel",
@@ -95,7 +158,9 @@ static const char *const k1ItemNamesAmigaGerman[82] = {
 	"Pilz",
 	"Notiz",
 	"Murmel",
-	"S""\x84""ge",
+	"S"
+	"\x84"
+	"ge",
 	"Henkelkreuz",
 	"Feder",
 	"Ei",
@@ -103,22 +168,38 @@ static const char *const k1ItemNamesAmigaGerman[82] = {
 	"Kleeblatt",
 	"Sternschnuppe",
 	"Kristallkugel",
-	"Tr""\x84""ne",
+	"Tr"
+	"\x84"
+	"ne",
 	"Spiegel",
-	"Eisst""\x81""ck",
-	"Fl""\x94""te",
+	"Eisst"
+	"\x81"
+	"ck",
+	"Fl"
+	"\x94"
+	"te",
 	"Sanduhr",
-	"Eisenschl""\x81""ssel",
-	"Jadeschl""\x81""ssel",
-	"Obsidianschl""\x81""ssel",
+	"Eisenschl"
+	"\x81"
+	"ssel",
+	"Jadeschl"
+	"\x81"
+	"ssel",
+	"Obsidianschl"
+	"\x81"
+	"ssel",
 	"Roter Trank",
 	"Blauer Trank",
 	"Gelber Trank",
-	"Gr""\x81""ner Trank",
+	"Gr"
+	"\x81"
+	"ner Trank",
 	"Oranger Trank",
 	"Violetter Trank",
 	"Regenbogentrank",
-	"S""\x81\xE1""wasser",
+	"S"
+	"\x81\xE1"
+	"wasser",
 	"Salzwasser",
 	"Mineralwasser",
 	"Magisches Wasser",
@@ -128,14 +209,24 @@ static const char *const k1ItemNamesAmigaGerman[82] = {
 	"Roter Weisenstein",
 	"Oranger Weisenstein",
 	"Gelber Weisenstein",
-	"Gr""\x81""ner Weisenstein",
-	"T""\x81""rkiser Weisenstein",
+	"Gr"
+	"\x81"
+	"ner Weisenstein",
+	"T"
+	"\x81"
+	"rkiser Weisenstein",
 	"Blauer Weisenstein",
 	"Violetter Weisenstein",
 	"Schwerer Stein",
-	"K""\x94""nigliche Krone",
-	"K""\x94""nigliches Zepter",
-	"Goldschl""\x81""ssel",
+	"K"
+	"\x94"
+	"nigliche Krone",
+	"K"
+	"\x94"
+	"nigliches Zepter",
+	"Goldschl"
+	"\x81"
+	"ssel",
 	"Unbekannter Gegenstand"
 };
 
@@ -173,7 +264,9 @@ static const char *const k1PutDownStringAmigaGerman[1] = {
 static const StringListProvider k1PutDownStringAmigaGermanProvider = { ARRAYSIZE(k1PutDownStringAmigaGerman), k1PutDownStringAmigaGerman };
 
 static const char *const k1WaitAmuletStringAmigaGerman[1] = {
-	"I nehme an, ich mu""\xE1"" warten, bis mein Amulett seine Kraft wiedererlangt."
+	"I nehme an, ich mu"
+	"\xE1"
+	" warten, bis mein Amulett seine Kraft wiedererlangt."
 };
 
 static const StringListProvider k1WaitAmuletStringAmigaGermanProvider = { ARRAYSIZE(k1WaitAmuletStringAmigaGerman), k1WaitAmuletStringAmigaGerman };
@@ -185,7 +278,9 @@ static const char *const k1BlackJewelStringAmigaGerman[1] = {
 static const StringListProvider k1BlackJewelStringAmigaGermanProvider = { ARRAYSIZE(k1BlackJewelStringAmigaGerman), k1BlackJewelStringAmigaGerman };
 
 static const char *const k1HealingTipStringAmigaGerman[1] = {
-	"Mann, das kann ganz n""\x81""tzlich sein, falls ich mich verletze!"
+	"Mann, das kann ganz n"
+	"\x81"
+	"tzlich sein, falls ich mich verletze!"
 };
 
 static const StringListProvider k1HealingTipStringAmigaGermanProvider = { ARRAYSIZE(k1HealingTipStringAmigaGerman), k1HealingTipStringAmigaGerman };
@@ -200,8 +295,12 @@ static const StringListProvider k1PoisonGoneStringAmigaGermanProvider = { ARRAYS
 static const char *const k1ThePoisonStringsAmigaGerman[4] = {
 	"Das Gift...",
 	"Ich kann nicht atmen...",
-	"Ich f""\x81""hle mich nicht besonders wohl...",
-	"Die Schlange mu""\xE1"" \rgiftig gewesen sein!"
+	"Ich f"
+	"\x81"
+	"hle mich nicht besonders wohl...",
+	"Die Schlange mu"
+	"\xE1"
+	" \rgiftig gewesen sein!"
 };
 
 static const StringListProvider k1ThePoisonStringsAmigaGermanProvider = { ARRAYSIZE(k1ThePoisonStringsAmigaGerman), k1ThePoisonStringsAmigaGerman };
@@ -214,8 +313,12 @@ static const char *const k1FluteStringsAmigaGerman[2] = {
 static const StringListProvider k1FluteStringsAmigaGermanProvider = { ARRAYSIZE(k1FluteStringsAmigaGerman), k1FluteStringsAmigaGerman };
 
 static const char *const k1WispJewelStringsAmigaGerman[3] = {
-	"Im Moment f""\x81""hle ich mich dazu nicht in der Lage.",
-	"Ich mu""\xE1"" wahrscheinlich erst mein(e)...",
+	"Im Moment f"
+	"\x81"
+	"hle ich mich dazu nicht in der Lage.",
+	"Ich mu"
+	"\xE1"
+	" wahrscheinlich erst mein(e)...",
 	"ablegen."
 };
 
@@ -234,9 +337,15 @@ static const char *const k1FlaskFullStringAmigaGerman[1] = {
 static const StringListProvider k1FlaskFullStringAmigaGermanProvider = { ARRAYSIZE(k1FlaskFullStringAmigaGerman), k1FlaskFullStringAmigaGerman };
 
 static const char *const k1FullFlaskStringAmigaGerman[4] = {
-	"Die Flasche ist jetzt mit \rfrischem, klarem Wasser gef""\x81""llt.",
-	"Die Flasche ist jetzt mit \rSalzwasser gef""\x81""llt.",
-	"Die Flasche ist jetzt mit \rMineralwasser gef""\x81""llt.",
+	"Die Flasche ist jetzt mit \rfrischem, klarem Wasser gef"
+	"\x81"
+	"llt.",
+	"Die Flasche ist jetzt mit \rSalzwasser gef"
+	"\x81"
+	"llt.",
+	"Die Flasche ist jetzt mit \rMineralwasser gef"
+	"\x81"
+	"llt.",
 	"Magisches Wasser."
 };
 
@@ -263,7 +372,9 @@ static const char *const k1GUIStringsAmigaGerman[49] = {
 	"Spiel wieder aufnehmen",
 	"Spielsteuerungen",
 	"Welches Spiel soll noch einmal geladen werden?",
-	"W""\x84""hlen Sie den Platz zum Sichern aus.",
+	"W"
+	"\x84"
+	"hlen Sie den Platz zum Sichern aus.",
 	"[ LEERER PLATZ ]",
 	"Abbrechen",
 	"Beschreibung des gesicherten Spiels eingeben.",
@@ -286,21 +397,41 @@ static const char *const k1GUIStringsAmigaGerman[49] = {
 	"",
 	"XXXXXXXXXXXXXXXXX",
 	"XXXXXXXXXXXXXXXXX",
-	"Hauptmen""\x81",
+	"Hauptmen"
+	"\x81",
 	"An",
 	"Aus",
 	"Ja",
 	"Nein",
 	"",
-	"\x01""[""\xA2",
-	"\x01""[""\xB2",
-	"\x01""[""\xBA",
-	"\x01""[""\xC2",
-	"\x01""[""\xCA",
-	"\x01""[""\xA2",
-	"\x01""[""\xBA",
-	"\x01""[""\xC2",
-	"\x01""[""\xDA""Schrittempo",
+	"\x01"
+	"["
+	"\xA2",
+	"\x01"
+	"["
+	"\xB2",
+	"\x01"
+	"["
+	"\xBA",
+	"\x01"
+	"["
+	"\xC2",
+	"\x01"
+	"["
+	"\xCA",
+	"\x01"
+	"["
+	"\xA2",
+	"\x01"
+	"["
+	"\xBA",
+	"\x01"
+	"["
+	"\xC2",
+	"\x01"
+	"["
+	"\xDA"
+	"Schrittempo",
 	"Textgeschwindigkeit",
 	"Die Musik ist",
 	"Die Soundeffekte sind"
@@ -489,4 +620,3 @@ static const byte k1CreditsStringsAmigaGerman[1275] = {
 };
 
 static const ByteProvider k1CreditsStringsAmigaGermanProvider = { ARRAYSIZE(k1CreditsStringsAmigaGerman), k1CreditsStringsAmigaGerman };
-

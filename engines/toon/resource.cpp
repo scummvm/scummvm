@@ -29,7 +29,9 @@
 
 namespace Toon {
 
-Resources::Resources(ToonEngine *vm) : _vm(vm), _cacheSize(0) {
+Resources::Resources(ToonEngine *vm)
+  : _vm(vm)
+  , _cacheSize(0) {
 	_resourceCache.clear();
 }
 
@@ -64,8 +66,8 @@ bool Resources::getFromCache(const Common::String &fileName, uint32 *fileSize, u
 			*fileSize = (*entry)->_size;
 			*fileData = (*entry)->_data;
 			return true;
-			}
 		}
+	}
 	return false;
 }
 
@@ -234,15 +236,15 @@ uint8 *PakFile::getFileData(const Common::String &fileName, uint32 *fileSize) {
 		if (fileName.compareToIgnoreCase(_files[i]._name) == 0) {
 			Common::File file;
 			if (file.open(_packName)) {
-					*fileSize = _files[i]._size;
-					file.seek(_files[i]._offset);
+				*fileSize = _files[i]._size;
+				file.seek(_files[i]._offset);
 
-					// Use malloc() because that's what MemoryReadStream
-					// uses to dispose of the memory when it's done.
-					uint8 *buffer = (uint8 *)malloc(*fileSize);
-					file.read(buffer, *fileSize);
-					file.close();
-					return buffer;
+				// Use malloc() because that's what MemoryReadStream
+				// uses to dispose of the memory when it's done.
+				uint8 *buffer = (uint8 *)malloc(*fileSize);
+				file.read(buffer, *fileSize);
+				file.close();
+				return buffer;
 			}
 		}
 	}

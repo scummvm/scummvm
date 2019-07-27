@@ -23,8 +23,8 @@
 #include "common/file.h"
 #include "common/textconsole.h"
 
-#include "agos/intern.h"
 #include "agos/agos.h"
+#include "agos/intern.h"
 #include "agos/vga.h"
 
 namespace AGOS {
@@ -146,7 +146,7 @@ int AGOSEngine::getUserFlag1(Item *item, int a) {
 	if (a < 0 || a > 7)
 		return 0;
 
-	return	subUserFlag->userFlags[a];
+	return subUserFlag->userFlags[a];
 }
 
 void AGOSEngine::setUserFlag(Item *item, int a, int b) {
@@ -173,7 +173,7 @@ int AGOSEngine::getUserItem(Item *item, int n) {
 	if (n < 0 || n > 0)
 		return 0;
 
-	return	subUserFlag->userItems[n];
+	return subUserFlag->userItems[n];
 }
 
 void AGOSEngine::setUserItem(Item *item, int n, int m) {
@@ -221,7 +221,7 @@ Item *AGOSEngine::actor() {
 	error("actor: is this code ever used?");
 	//if (_actorPlayer)
 	//	return _actorPlayer;
-	return _dummyItem1;	// for compilers that don't support NORETURN
+	return _dummyItem1; // for compilers that don't support NORETURN
 }
 
 Item *AGOSEngine::getNextItemPtr() {
@@ -457,7 +457,7 @@ uint AGOSEngine::itemPtrToID(Item *id) {
 		if (_itemArrayPtr[i] == id)
 			return i;
 	error("itemPtrToID: not found");
-	return 0;	// for compilers that don't support NORETURN
+	return 0; // for compilers that don't support NORETURN
 }
 
 } // End of namespace AGOS

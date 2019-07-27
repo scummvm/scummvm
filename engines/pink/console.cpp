@@ -21,15 +21,15 @@
  */
 
 #include "pink/console.h"
-#include "pink/pink.h"
+#include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/module.h"
 #include "pink/objects/pages/game_page.h"
-#include "pink/objects/actors/lead_actor.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
 Console::Console(PinkEngine *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 	registerCmd("listModules", WRAP_METHOD(Console, Cmd_ListModules));
 	registerCmd("goToModule", WRAP_METHOD(Console, Cmd_GoToModule));
 
@@ -75,7 +75,7 @@ bool Console::Cmd_GoToModule(int argc, const char **argv) {
 }
 
 bool Console::Cmd_ListPages(int argc, const char **argv) {
-	const Array<GamePage*> pages = _vm->_module->_pages;
+	const Array<GamePage *> pages = _vm->_module->_pages;
 	for (uint i = 0; i < pages.size(); ++i) {
 		debugPrintf("%d.%s\n", i, pages[i]->getName().c_str());
 	}
@@ -88,7 +88,7 @@ bool Console::Cmd_GoToPage(int argc, const char **argv) {
 		debugPrintf("Page may not work properly because of vars\n");
 		return true;
 	}
-	const Array<GamePage*> pages = _vm->_module->_pages;
+	const Array<GamePage *> pages = _vm->_module->_pages;
 	for (uint i = 0; i < pages.size(); ++i) {
 		if (pages[i]->getName() == argv[1]) {
 			_vm->setNextExecutors("", pages[i]->getName());
@@ -100,10 +100,9 @@ bool Console::Cmd_GoToPage(int argc, const char **argv) {
 	return true;
 }
 
-
 bool Console::Cmd_ListGameVars(int argc, const char **argv) {
 	const StringMap &vars = _vm->_variables;
-	for (StringMap::const_iterator it = vars.begin(); it != vars.end() ; ++it) {
+	for (StringMap::const_iterator it = vars.begin(); it != vars.end(); ++it) {
 		debugPrintf("%s %s \n", it->_key.c_str(), it->_value.c_str());
 	}
 	return true;
@@ -120,7 +119,7 @@ bool Console::Cmd_SetGameVar(int argc, const char **argv) {
 
 bool Console::Cmd_ListModuleVars(int argc, const char **argv) {
 	const StringMap &vars = _vm->_module->_variables;
-	for (StringMap::const_iterator it = vars.begin(); it != vars.end() ; ++it) {
+	for (StringMap::const_iterator it = vars.begin(); it != vars.end(); ++it) {
 		debugPrintf("%s %s \n", it->_key.c_str(), it->_value.c_str());
 	}
 	return true;
@@ -137,7 +136,7 @@ bool Console::Cmd_SetModuleVar(int argc, const char **argv) {
 
 bool Console::Cmd_ListPageVars(int argc, const char **argv) {
 	const StringMap &vars = _vm->_module->_page->_variables;
-	for (StringMap::const_iterator it = vars.begin(); it != vars.end() ; ++it) {
+	for (StringMap::const_iterator it = vars.begin(); it != vars.end(); ++it) {
 		debugPrintf("%s %s \n", it->_key.c_str(), it->_value.c_str());
 	}
 	return true;

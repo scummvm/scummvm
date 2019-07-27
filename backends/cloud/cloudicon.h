@@ -36,9 +36,9 @@ public:
 	 * The type of cloud icon to show
 	 */
 	enum Type {
-		kNone,     /** Hide the currently shown icon if any */
-		kSyncing,  /** Cloud syncing icon */
-		kDisabled  /** Cloud syncing not available icon */
+		kNone, /** Hide the currently shown icon if any */
+		kSyncing, /** Cloud syncing icon */
+		kDisabled /** Cloud syncing not available icon */
 	};
 
 	/**

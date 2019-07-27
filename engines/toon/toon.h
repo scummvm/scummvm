@@ -23,21 +23,21 @@
 #ifndef TOON_TOON_H
 #define TOON_TOON_H
 
+#include "common/error.h"
+#include "common/random.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
-#include "common/random.h"
-#include "common/error.h"
+#include "toon/anim.h"
+#include "toon/audio.h"
+#include "toon/console.h"
+#include "toon/font.h"
+#include "toon/movie.h"
+#include "toon/picture.h"
 #include "toon/resource.h"
 #include "toon/script.h"
 #include "toon/script_func.h"
 #include "toon/state.h"
-#include "toon/picture.h"
-#include "toon/anim.h"
-#include "toon/movie.h"
-#include "toon/font.h"
 #include "toon/text.h"
-#include "toon/audio.h"
-#include "toon/console.h"
 
 namespace Common {
 class MemoryWriteStreamDynamic;
@@ -45,8 +45,8 @@ class MemoryWriteStreamDynamic;
 
 struct ADGameDescription;
 
-#define TOON_DAT_VER_MAJ 0  // 1 byte
-#define TOON_DAT_VER_MIN 3  // 1 byte
+#define TOON_DAT_VER_MAJ 0 // 1 byte
+#define TOON_DAT_VER_MIN 3 // 1 byte
 #define TOON_SAVEGAME_VERSION 5
 #define DATAALIGNMENT 4
 #define MAX_SAVE_SLOT 99
@@ -71,18 +71,18 @@ enum ToonGameType {
 };
 
 enum ToonDebugChannels {
-	kDebugAnim      = 1 <<  0,
-	kDebugCharacter = 1 <<  1,
-	kDebugAudio     = 1 <<  2,
-	kDebugHotspot   = 1 <<  3,
-	kDebugFont      = 1 <<  4,
-	kDebugPath      = 1 <<  5,
-	kDebugMovie     = 1 <<  6,
-	kDebugPicture   = 1 <<  7,
-	kDebugResource  = 1 <<  8,
-	kDebugState     = 1 <<  9,
-	kDebugTools     = 1 << 10,
-	kDebugText      = 1 << 11
+	kDebugAnim = 1 << 0,
+	kDebugCharacter = 1 << 1,
+	kDebugAudio = 1 << 2,
+	kDebugHotspot = 1 << 3,
+	kDebugFont = 1 << 4,
+	kDebugPath = 1 << 5,
+	kDebugMovie = 1 << 6,
+	kDebugPicture = 1 << 7,
+	kDebugResource = 1 << 8,
+	kDebugState = 1 << 9,
+	kDebugTools = 1 << 10,
+	kDebugText = 1 << 11
 };
 
 class Picture;
@@ -103,8 +103,8 @@ public:
 
 	const ADGameDescription *_gameDescription;
 	Common::Language _language;
-	byte   _numVariant;
-	byte   _gameVariant;
+	byte _numVariant;
+	byte _gameVariant;
 	char **_locationDirNotVisited;
 	char **_locationDirVisited;
 	char **_specialInfoLine;
@@ -327,10 +327,7 @@ public:
 	}
 
 	bool hasFeature(EngineFeature f) const {
-		return
-			(f == kSupportsRTL) ||
-			(f == kSupportsLoadingDuringRuntime) ||
-			(f == kSupportsSavingDuringRuntime);
+		return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 	}
 
 	void dirtyAllScreen();
@@ -378,7 +375,6 @@ protected:
 	Common::Array<Common::Rect> _oldDirtyRects;
 
 	bool _dirtyAll;
-
 
 	AnimationInstance *_cursorAnimationInstance;
 	Animation *_cursorAnimation;
@@ -437,6 +433,7 @@ protected:
 	bool _showConversationText;
 	bool _useAlternativeFont;
 	bool _needPaletteFlush;
+
 private:
 	ToonConsole *_console;
 };

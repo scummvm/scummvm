@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE1900_H
 #define NEVERHOOD_MODULES_MODULE1900_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -33,6 +33,7 @@ class Module1900 : public Module {
 public:
 	Module1900(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module1900();
+
 protected:
 	int _sceneNum;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -55,6 +56,7 @@ public:
 	void plugInFailed();
 	void setPositionFree(int index, bool value) { _positionFree[index] = value; }
 	int getNextPosition() { return _pluggedInCount++; }
+
 protected:
 	AsScene1907Symbol *_asSymbols[9];
 	SsScene1907UpDownButton *_ssUpDownButton;

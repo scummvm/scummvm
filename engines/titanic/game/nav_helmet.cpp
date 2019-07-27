@@ -28,13 +28,13 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CNavHelmet, CGameObject)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(PETHelmetOnOffMsg)
-	ON_MESSAGE(PETPhotoOnOffMsg)
-	ON_MESSAGE(PETStarFieldLockMsg)
-	ON_MESSAGE(PETSetStarDestinationMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(PETHelmetOnOffMsg)
+ON_MESSAGE(PETPhotoOnOffMsg)
+ON_MESSAGE(PETStarFieldLockMsg)
+ON_MESSAGE(PETSetStarDestinationMsg)
 END_MESSAGE_MAP()
 
 void CNavHelmet::save(SimpleFile *file, int indent) {

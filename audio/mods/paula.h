@@ -38,12 +38,12 @@ class Paula : public AudioStream {
 public:
 	static const int NUM_VOICES = 4;
 	enum {
-		kPalSystemClock  = 7093790,
+		kPalSystemClock = 7093790,
 		kNtscSystemClock = 7159090,
-		kPalCiaClock     = kPalSystemClock / 10,
-		kNtscCiaClock    = kNtscSystemClock / 10,
-		kPalPaulaClock   = kPalSystemClock / 2,
-		kNtscPaulaClock  = kNtscSystemClock / 2
+		kPalCiaClock = kPalSystemClock / 10,
+		kNtscCiaClock = kNtscSystemClock / 10,
+		kPalPaulaClock = kPalSystemClock / 2,
+		kNtscPaulaClock = kNtscSystemClock / 2
 	};
 
 	enum FilterMode {
@@ -54,10 +54,12 @@ public:
 
 	/* TODO: Document this */
 	struct Offset {
-		uint	int_off;	// integral part of the offset
-		frac_t	rem_off;	// fractional part of the offset, at least 0 and less than 1
+		uint int_off; // integral part of the offset
+		frac_t rem_off; // fractional part of the offset, at least 0 and less than 1
 
-		explicit Offset(int off = 0) : int_off(off), rem_off(0) {}
+		explicit Offset(int off = 0)
+		  : int_off(off)
+		  , rem_off(0) {}
 	};
 
 	struct FilterState {
@@ -73,23 +75,35 @@ public:
 	~Paula();
 
 	bool playing() const { return _playing; }
-	void setTimerBaseValue( uint32 ticksPerSecond ) { _timerBase = ticksPerSecond; }
+	void setTimerBaseValue(uint32 ticksPerSecond) { _timerBase = ticksPerSecond; }
 	uint32 getTimerBaseValue() { return _timerBase; }
-	void setSingleInterrupt(uint sampleDelay) { assert(sampleDelay < _intFreq); _curInt = sampleDelay; }
+	void setSingleInterrupt(uint sampleDelay) {
+		assert(sampleDelay < _intFreq);
+		_curInt = sampleDelay;
+	}
 	void setSingleInterruptUnscaled(uint timerDelay) {
 		setSingleInterrupt((uint)(((double)timerDelay * getRate()) / _timerBase));
 	}
-	void setInterruptFreq(uint sampleDelay) { _intFreq = sampleDelay; _curInt = 0; }
+	void setInterruptFreq(uint sampleDelay) {
+		_intFreq = sampleDelay;
+		_curInt = 0;
+	}
 	void setInterruptFreqUnscaled(uint timerDelay) {
 		setInterruptFreq((uint)(((double)timerDelay * getRate()) / _timerBase));
 	}
 	void clearVoice(byte voice);
-	void clearVoices() { for (int i = 0; i < NUM_VOICES; ++i) clearVoice(i); }
-	void startPlay() { filterResetState(); _playing = true; }
+	void clearVoices() {
+		for (int i = 0; i < NUM_VOICES; ++i)
+			clearVoice(i);
+	}
+	void startPlay() {
+		filterResetState();
+		_playing = true;
+	}
 	void stopPlay() { _playing = false; }
 	void pausePlay(bool pause) { _playing = !pause; }
 
-// AudioStream API
+	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples);
 	bool isStereo() const { return _stereo; }
 	bool endOfData() const { return _end; }
@@ -160,7 +174,7 @@ protected:
 
 	void setChannelSampleLen(byte channel, uint32 length) {
 		assert(channel < NUM_VOICES);
-		assert(length < 32768/2);
+		assert(length < 32768 / 2);
 		_voice[channel].lengthRepeat = 2 * length;
 	}
 
@@ -215,7 +229,7 @@ private:
 
 	FilterState _filterState;
 
-	template<bool stereo>
+	template <bool stereo>
 	int readBufferIntern(int16 *buffer, const int numSamples);
 
 	void filterResetState();

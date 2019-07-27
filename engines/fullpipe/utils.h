@@ -23,10 +23,10 @@
 #ifndef FULLPIPE_UTILS_H
 #define FULLPIPE_UTILS_H
 
-#include "common/hash-ptr.h"
-#include "common/hash-str.h"
 #include "common/array.h"
 #include "common/file.h"
+#include "common/hash-ptr.h"
+#include "common/hash-str.h"
 
 namespace Fullpipe {
 
@@ -110,7 +110,9 @@ public:
 	ObjType _objtype;
 	uint _cnum;
 
-	CObject() : _objtype(kObjTypeDefault), _cnum(0) {}
+	CObject()
+	  : _objtype(kObjTypeDefault)
+	  , _cnum(0) {}
 	virtual bool load(MfcArchive &in) { return true; }
 	virtual void save(MfcArchive &out) { error("Not implemented for obj type: %d", _objtype); }
 	virtual ~CObject() {}
@@ -142,7 +144,7 @@ class MemoryObject : CObject {
 	friend class Picture;
 	friend class Scene;
 
- protected:
+protected:
 	Common::String _memfilename;
 	int _mfield_8;
 	int _mfield_C;
@@ -153,7 +155,7 @@ class MemoryObject : CObject {
 	int _mflags;
 	NGIArchive *_libHandle;
 
- public:
+public:
 	MemoryObject();
 	virtual ~MemoryObject();
 
@@ -172,10 +174,10 @@ class MemoryObject : CObject {
 class MemoryObject2 : public MemoryObject {
 	friend class Picture;
 
- protected:
+protected:
 	byte **_rows;
 
- public:
+public:
 	MemoryObject2();
 	virtual ~MemoryObject2();
 	virtual bool load(MfcArchive &file);
@@ -184,12 +186,12 @@ class MemoryObject2 : public MemoryObject {
 };
 
 class ObArray : public Common::Array<CObject>, public CObject {
- public:
+public:
 	virtual bool load(MfcArchive &file);
 };
 
 class DWordArray : public Common::Array<int32>, public CObject {
- public:
+public:
 	virtual bool load(MfcArchive &file);
 };
 

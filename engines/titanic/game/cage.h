@@ -34,9 +34,11 @@ class CCage : public CBackground {
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool PreEnterViewMsg(CPreEnterViewMsg *msg);
 	bool MouseMoveMsg(CMouseMoveMsg *msg);
+
 public:
 	static int _v1;
 	static bool _open;
+
 public:
 	CLASSDEF;
 

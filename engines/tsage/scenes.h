@@ -25,8 +25,8 @@
 
 #include "common/scummsys.h"
 #include "tsage/converse.h"
-#include "tsage/events.h"
 #include "tsage/core.h"
+#include "tsage/events.h"
 #include "tsage/saveload.h"
 
 namespace TsAGE {
@@ -34,6 +34,7 @@ namespace TsAGE {
 class Scene : public StripCallback {
 private:
 	void drawBackgroundObjects();
+
 public:
 	int _screenNumber;
 	int _activeScreenNumber;
@@ -48,6 +49,7 @@ public:
 	int _zoomPercents[256];
 	ScenePriorities _priorities;
 	SceneObjectList _bgSceneObjects;
+
 public:
 	Scene();
 	virtual ~Scene();
@@ -73,6 +75,7 @@ private:
 		// No need to do anything, since regions will be freed automatically when the scene is
 	}
 	Scene *getNewScene();
+
 public:
 	Scene *_scene;
 	bool _hasPalette;
@@ -85,6 +88,7 @@ public:
 	int _sceneLoadCount;
 	Rect _scrollerRect;
 	int _objectCount;
+
 public:
 	SceneManager();
 	virtual ~SceneManager();
@@ -113,6 +117,7 @@ protected:
 
 	static bool notLockedFn(GameHandler *g);
 	virtual void handleSaveLoad(bool saveFlag, int &saveSlot, Common::String &saveName);
+
 public:
 	virtual ~Game() {}
 

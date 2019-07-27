@@ -25,18 +25,19 @@
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
-#include "sci/sci.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
+#include "sci/graphics/screen.h"
 #include "sci/graphics/transitions.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
 //#define DISABLE_TRANSITIONS	// uncomment to disable room transitions (for development only! helps in testing games quickly)
 
 GfxTransitions::GfxTransitions(GfxScreen *screen, GfxPalette *palette)
-	: _screen(screen), _palette(palette) {
+  : _screen(screen)
+  , _palette(palette) {
 	init();
 }
 
@@ -46,57 +47,57 @@ GfxTransitions::~GfxTransitions() {
 
 // This table contains a mapping between oldIDs (prior SCI1LATE) and newIDs
 static const GfxTransitionTranslateEntry oldTransitionIDs[] = {
-	{   0, SCI_TRANSITIONS_VERTICALROLL_FROMCENTER,		false },
-	{   1, SCI_TRANSITIONS_HORIZONTALROLL_FROMCENTER,	false },
-	{   2, SCI_TRANSITIONS_STRAIGHT_FROM_RIGHT,			false },
-	{   3, SCI_TRANSITIONS_STRAIGHT_FROM_LEFT,			false },
-	{   4, SCI_TRANSITIONS_STRAIGHT_FROM_BOTTOM,		false },
-	{   5, SCI_TRANSITIONS_STRAIGHT_FROM_TOP,			false },
-	{   6, SCI_TRANSITIONS_DIAGONALROLL_TOCENTER,		false },
-	{   7, SCI_TRANSITIONS_DIAGONALROLL_FROMCENTER,		false },
-	{   8, SCI_TRANSITIONS_BLOCKS,						false },
-	{   9, SCI_TRANSITIONS_VERTICALROLL_TOCENTER,		false },
-	{  10, SCI_TRANSITIONS_HORIZONTALROLL_TOCENTER,		false },
-	{  11, SCI_TRANSITIONS_STRAIGHT_FROM_RIGHT,			true },
-	{  12, SCI_TRANSITIONS_STRAIGHT_FROM_LEFT,			true },
-	{  13, SCI_TRANSITIONS_STRAIGHT_FROM_BOTTOM,		true },
-	{  14, SCI_TRANSITIONS_STRAIGHT_FROM_TOP,			true },
-	{  15, SCI_TRANSITIONS_DIAGONALROLL_FROMCENTER,		true },
-	{  16, SCI_TRANSITIONS_DIAGONALROLL_TOCENTER,		true },
-	{  17, SCI_TRANSITIONS_BLOCKS,						true },
-	{  18, SCI_TRANSITIONS_PIXELATION,					false },
-	{  27, SCI_TRANSITIONS_PIXELATION	,				true },
-	{  30, SCI_TRANSITIONS_FADEPALETTE,					false },
-	{  40, SCI_TRANSITIONS_SCROLL_RIGHT,				false },
-	{  41, SCI_TRANSITIONS_SCROLL_LEFT,					false },
-	{  42, SCI_TRANSITIONS_SCROLL_UP,					false },
-	{  43, SCI_TRANSITIONS_SCROLL_DOWN,					false },
-	{ 100, SCI_TRANSITIONS_NONE,						false },
-	{ 255, 255,											false }
+	{ 0, SCI_TRANSITIONS_VERTICALROLL_FROMCENTER, false },
+	{ 1, SCI_TRANSITIONS_HORIZONTALROLL_FROMCENTER, false },
+	{ 2, SCI_TRANSITIONS_STRAIGHT_FROM_RIGHT, false },
+	{ 3, SCI_TRANSITIONS_STRAIGHT_FROM_LEFT, false },
+	{ 4, SCI_TRANSITIONS_STRAIGHT_FROM_BOTTOM, false },
+	{ 5, SCI_TRANSITIONS_STRAIGHT_FROM_TOP, false },
+	{ 6, SCI_TRANSITIONS_DIAGONALROLL_TOCENTER, false },
+	{ 7, SCI_TRANSITIONS_DIAGONALROLL_FROMCENTER, false },
+	{ 8, SCI_TRANSITIONS_BLOCKS, false },
+	{ 9, SCI_TRANSITIONS_VERTICALROLL_TOCENTER, false },
+	{ 10, SCI_TRANSITIONS_HORIZONTALROLL_TOCENTER, false },
+	{ 11, SCI_TRANSITIONS_STRAIGHT_FROM_RIGHT, true },
+	{ 12, SCI_TRANSITIONS_STRAIGHT_FROM_LEFT, true },
+	{ 13, SCI_TRANSITIONS_STRAIGHT_FROM_BOTTOM, true },
+	{ 14, SCI_TRANSITIONS_STRAIGHT_FROM_TOP, true },
+	{ 15, SCI_TRANSITIONS_DIAGONALROLL_FROMCENTER, true },
+	{ 16, SCI_TRANSITIONS_DIAGONALROLL_TOCENTER, true },
+	{ 17, SCI_TRANSITIONS_BLOCKS, true },
+	{ 18, SCI_TRANSITIONS_PIXELATION, false },
+	{ 27, SCI_TRANSITIONS_PIXELATION, true },
+	{ 30, SCI_TRANSITIONS_FADEPALETTE, false },
+	{ 40, SCI_TRANSITIONS_SCROLL_RIGHT, false },
+	{ 41, SCI_TRANSITIONS_SCROLL_LEFT, false },
+	{ 42, SCI_TRANSITIONS_SCROLL_UP, false },
+	{ 43, SCI_TRANSITIONS_SCROLL_DOWN, false },
+	{ 100, SCI_TRANSITIONS_NONE, false },
+	{ 255, 255, false }
 };
 
 // this table defines the blackout-transition that needs to be done prior doing the actual transition
 static const GfxTransitionTranslateEntry blackoutTransitionIDs[] = {
-	{ SCI_TRANSITIONS_VERTICALROLL_FROMCENTER,			SCI_TRANSITIONS_VERTICALROLL_TOCENTER,		true },
-	{ SCI_TRANSITIONS_HORIZONTALROLL_FROMCENTER,		SCI_TRANSITIONS_HORIZONTALROLL_TOCENTER,	true },
-	{ SCI_TRANSITIONS_STRAIGHT_FROM_RIGHT,				SCI_TRANSITIONS_STRAIGHT_FROM_LEFT,			true },
-	{ SCI_TRANSITIONS_STRAIGHT_FROM_LEFT,				SCI_TRANSITIONS_STRAIGHT_FROM_RIGHT,		true },
-	{ SCI_TRANSITIONS_STRAIGHT_FROM_BOTTOM,				SCI_TRANSITIONS_STRAIGHT_FROM_TOP,			true },
-	{ SCI_TRANSITIONS_STRAIGHT_FROM_TOP,				SCI_TRANSITIONS_STRAIGHT_FROM_BOTTOM,		true },
-	{ SCI_TRANSITIONS_DIAGONALROLL_FROMCENTER,			SCI_TRANSITIONS_DIAGONALROLL_TOCENTER,		true },
-	{ SCI_TRANSITIONS_DIAGONALROLL_TOCENTER,			SCI_TRANSITIONS_DIAGONALROLL_FROMCENTER,	true },
-	{ SCI_TRANSITIONS_BLOCKS,							SCI_TRANSITIONS_BLOCKS,						true },
-	{ SCI_TRANSITIONS_PIXELATION,						SCI_TRANSITIONS_PIXELATION,					true },
-	{ SCI_TRANSITIONS_FADEPALETTE,						SCI_TRANSITIONS_NONE,						true },
-	{ SCI_TRANSITIONS_SCROLL_RIGHT,						SCI_TRANSITIONS_NONE,						true },
-	{ SCI_TRANSITIONS_SCROLL_LEFT,						SCI_TRANSITIONS_NONE,						true },
-	{ SCI_TRANSITIONS_SCROLL_UP,						SCI_TRANSITIONS_NONE,						true },
-	{ SCI_TRANSITIONS_SCROLL_DOWN,						SCI_TRANSITIONS_NONE,						true },
-	{ SCI_TRANSITIONS_NONE_LONGBOW,						SCI_TRANSITIONS_NONE,						true },
-	{ SCI_TRANSITIONS_NONE,								SCI_TRANSITIONS_NONE,						true },
-	{ SCI_TRANSITIONS_VERTICALROLL_TOCENTER,			SCI_TRANSITIONS_NONE,						true },
-	{ SCI_TRANSITIONS_HORIZONTALROLL_TOCENTER,			SCI_TRANSITIONS_NONE,						true },
-	{ 255,												255,										true }
+	{ SCI_TRANSITIONS_VERTICALROLL_FROMCENTER, SCI_TRANSITIONS_VERTICALROLL_TOCENTER, true },
+	{ SCI_TRANSITIONS_HORIZONTALROLL_FROMCENTER, SCI_TRANSITIONS_HORIZONTALROLL_TOCENTER, true },
+	{ SCI_TRANSITIONS_STRAIGHT_FROM_RIGHT, SCI_TRANSITIONS_STRAIGHT_FROM_LEFT, true },
+	{ SCI_TRANSITIONS_STRAIGHT_FROM_LEFT, SCI_TRANSITIONS_STRAIGHT_FROM_RIGHT, true },
+	{ SCI_TRANSITIONS_STRAIGHT_FROM_BOTTOM, SCI_TRANSITIONS_STRAIGHT_FROM_TOP, true },
+	{ SCI_TRANSITIONS_STRAIGHT_FROM_TOP, SCI_TRANSITIONS_STRAIGHT_FROM_BOTTOM, true },
+	{ SCI_TRANSITIONS_DIAGONALROLL_FROMCENTER, SCI_TRANSITIONS_DIAGONALROLL_TOCENTER, true },
+	{ SCI_TRANSITIONS_DIAGONALROLL_TOCENTER, SCI_TRANSITIONS_DIAGONALROLL_FROMCENTER, true },
+	{ SCI_TRANSITIONS_BLOCKS, SCI_TRANSITIONS_BLOCKS, true },
+	{ SCI_TRANSITIONS_PIXELATION, SCI_TRANSITIONS_PIXELATION, true },
+	{ SCI_TRANSITIONS_FADEPALETTE, SCI_TRANSITIONS_NONE, true },
+	{ SCI_TRANSITIONS_SCROLL_RIGHT, SCI_TRANSITIONS_NONE, true },
+	{ SCI_TRANSITIONS_SCROLL_LEFT, SCI_TRANSITIONS_NONE, true },
+	{ SCI_TRANSITIONS_SCROLL_UP, SCI_TRANSITIONS_NONE, true },
+	{ SCI_TRANSITIONS_SCROLL_DOWN, SCI_TRANSITIONS_NONE, true },
+	{ SCI_TRANSITIONS_NONE_LONGBOW, SCI_TRANSITIONS_NONE, true },
+	{ SCI_TRANSITIONS_NONE, SCI_TRANSITIONS_NONE, true },
+	{ SCI_TRANSITIONS_VERTICALROLL_TOCENTER, SCI_TRANSITIONS_NONE, true },
+	{ SCI_TRANSITIONS_HORIZONTALROLL_TOCENTER, SCI_TRANSITIONS_NONE, true },
+	{ 255, 255, true }
 };
 
 void GfxTransitions::init() {
@@ -139,7 +140,8 @@ bool GfxTransitions::doCreateFrame(uint32 shouldBeAtMsec) {
 void GfxTransitions::updateScreen() {
 	Common::Event ev;
 
-	while (g_system->getEventManager()->pollEvent(ev)) {}	// discard all events
+	while (g_system->getEventManager()->pollEvent(ev)) {
+	} // discard all events
 
 	g_system->updateScreen();
 }
@@ -153,7 +155,7 @@ void GfxTransitions::updateScreenAndWait(uint32 shouldBeAtMsec) {
 }
 
 // will translate a number and return corresponding translationEntry
-const GfxTransitionTranslateEntry *GfxTransitions::translateNumber (int16 number, const GfxTransitionTranslateEntry *tablePtr) {
+const GfxTransitionTranslateEntry *GfxTransitions::translateNumber(int16 number, const GfxTransitionTranslateEntry *tablePtr) {
 	while (1) {
 		if (tablePtr->orgId == 255)
 			return NULL;
@@ -245,7 +247,9 @@ void GfxTransitions::doTransition(int16 number, bool blackoutFlag) {
 
 	case SCI_TRANSITIONS_FADEPALETTE:
 		if (!blackoutFlag) {
-			fadeOut(); setNewScreen(blackoutFlag); fadeIn();
+			fadeOut();
+			setNewScreen(blackoutFlag);
+			fadeIn();
 		}
 		break;
 
@@ -352,8 +356,10 @@ void GfxTransitions::pixelation(bool blackoutFlag) {
 		mask = (mask & 1) ? (mask >> 1) ^ 0xB400 : mask >> 1;
 		if (mask >= _screen->getScriptWidth() * _screen->getScriptHeight())
 			continue;
-		pixelRect.left = mask % _screen->getScriptWidth(); pixelRect.right = pixelRect.left + 1;
-		pixelRect.top = mask / _screen->getScriptWidth();	pixelRect.bottom = pixelRect.top + 1;
+		pixelRect.left = mask % _screen->getScriptWidth();
+		pixelRect.right = pixelRect.left + 1;
+		pixelRect.top = mask / _screen->getScriptWidth();
+		pixelRect.bottom = pixelRect.top + 1;
 		pixelRect.clip(_picRect);
 		if (!pixelRect.isEmpty())
 			copyRectToScreen(pixelRect, blackoutFlag);
@@ -378,8 +384,10 @@ void GfxTransitions::blocks(bool blackoutFlag) {
 		mask = (mask & 1) ? (mask >> 1) ^ 0x240 : mask >> 1;
 		if (mask >= 40 * 25)
 			continue;
-		blockRect.left = (mask % 40) << 3; blockRect.right = blockRect.left + 8;
-		blockRect.top = (mask / 40) << 3; blockRect.bottom = blockRect.top + 8;
+		blockRect.left = (mask % 40) << 3;
+		blockRect.right = blockRect.left + 8;
+		blockRect.top = (mask / 40) << 3;
+		blockRect.bottom = blockRect.top + 8;
 		blockRect.clip(_picRect);
 		if (!blockRect.isEmpty())
 			copyRectToScreen(blockRect, blackoutFlag);
@@ -488,8 +496,10 @@ void GfxTransitions::scroll(int16 number) {
 		newScreenRect.right = newScreenRect.left;
 		newMoveRect.left = newMoveRect.right;
 		while (oldMoveRect.left < oldMoveRect.right) {
-			oldMoveRect.right--; oldScreenRect.left++;
-			newScreenRect.right++; newMoveRect.left--;
+			oldMoveRect.right--;
+			oldScreenRect.left++;
+			newScreenRect.right++;
+			newMoveRect.left--;
 			if ((stepNr & 1) == 0) {
 				msecCount += 5;
 				if (doCreateFrame(msecCount)) {
@@ -506,7 +516,8 @@ void GfxTransitions::scroll(int16 number) {
 	case SCI_TRANSITIONS_SCROLL_RIGHT:
 		newScreenRect.left = newScreenRect.right;
 		while (oldMoveRect.left < oldMoveRect.right) {
-			oldMoveRect.left++; oldScreenRect.right--;
+			oldMoveRect.left++;
+			oldScreenRect.right--;
 			newScreenRect.left--;
 			if ((stepNr & 1) == 0) {
 				msecCount += 5;
@@ -525,8 +536,10 @@ void GfxTransitions::scroll(int16 number) {
 		newScreenRect.bottom = newScreenRect.top;
 		newMoveRect.top = newMoveRect.bottom;
 		while (oldMoveRect.top < oldMoveRect.bottom) {
-			oldMoveRect.top++; oldScreenRect.top++;
-			newScreenRect.bottom++;	newMoveRect.top--;
+			oldMoveRect.top++;
+			oldScreenRect.top++;
+			newScreenRect.bottom++;
+			newMoveRect.top--;
 
 			msecCount += 5;
 			if (doCreateFrame(msecCount)) {
@@ -541,7 +554,8 @@ void GfxTransitions::scroll(int16 number) {
 	case SCI_TRANSITIONS_SCROLL_DOWN:
 		newScreenRect.top = newScreenRect.bottom;
 		while (oldMoveRect.top < oldMoveRect.bottom) {
-			oldMoveRect.top++; oldScreenRect.bottom--;
+			oldMoveRect.top++;
+			oldScreenRect.bottom--;
 			newScreenRect.top--;
 
 			msecCount += 5;
@@ -562,7 +576,7 @@ void GfxTransitions::scroll(int16 number) {
 // Vertically displays new screen starting from center - works on _picRect area
 // only
 void GfxTransitions::verticalRollFromCenter(bool blackoutFlag) {
-	Common::Rect leftRect = Common::Rect(_picRect.left + (_picRect.width() / 2) -1, _picRect.top, _picRect.left + (_picRect.width() / 2), _picRect.bottom);
+	Common::Rect leftRect = Common::Rect(_picRect.left + (_picRect.width() / 2) - 1, _picRect.top, _picRect.left + (_picRect.width() / 2), _picRect.bottom);
 	Common::Rect rightRect = Common::Rect(leftRect.right, _picRect.top, leftRect.right + 1, _picRect.bottom);
 	uint32 msecCount = 0;
 
@@ -571,8 +585,10 @@ void GfxTransitions::verticalRollFromCenter(bool blackoutFlag) {
 			leftRect.translate(1, 0);
 		if (rightRect.right > _picRect.right)
 			rightRect.translate(-1, 0);
-		copyRectToScreen(leftRect, blackoutFlag); leftRect.translate(-1, 0);
-		copyRectToScreen(rightRect, blackoutFlag); rightRect.translate(1, 0);
+		copyRectToScreen(leftRect, blackoutFlag);
+		leftRect.translate(-1, 0);
+		copyRectToScreen(rightRect, blackoutFlag);
+		rightRect.translate(1, 0);
 		msecCount += 3;
 		if (doCreateFrame(msecCount)) {
 			updateScreenAndWait(msecCount);
@@ -588,8 +604,10 @@ void GfxTransitions::verticalRollToCenter(bool blackoutFlag) {
 	uint32 msecCount = 0;
 
 	while (leftRect.left < rightRect.right) {
-		copyRectToScreen(leftRect, blackoutFlag); leftRect.translate(1, 0);
-		copyRectToScreen(rightRect, blackoutFlag); rightRect.translate(-1, 0);
+		copyRectToScreen(leftRect, blackoutFlag);
+		leftRect.translate(1, 0);
+		copyRectToScreen(rightRect, blackoutFlag);
+		rightRect.translate(-1, 0);
 		msecCount += 3;
 		if (doCreateFrame(msecCount)) {
 			updateScreenAndWait(msecCount);
@@ -609,8 +627,10 @@ void GfxTransitions::horizontalRollFromCenter(bool blackoutFlag) {
 			upperRect.translate(0, 1);
 		if (lowerRect.bottom > _picRect.bottom)
 			lowerRect.translate(0, -1);
-		copyRectToScreen(upperRect, blackoutFlag); upperRect.translate(0, -1);
-		copyRectToScreen(lowerRect, blackoutFlag); lowerRect.translate(0, 1);
+		copyRectToScreen(upperRect, blackoutFlag);
+		upperRect.translate(0, -1);
+		copyRectToScreen(lowerRect, blackoutFlag);
+		lowerRect.translate(0, 1);
 		msecCount += 4;
 		if (doCreateFrame(msecCount)) {
 			updateScreenAndWait(msecCount);
@@ -626,8 +646,10 @@ void GfxTransitions::horizontalRollToCenter(bool blackoutFlag) {
 	uint32 msecCount = 0;
 
 	while (upperRect.top < lowerRect.bottom) {
-		copyRectToScreen(upperRect, blackoutFlag); upperRect.translate(0, 1);
-		copyRectToScreen(lowerRect, blackoutFlag); lowerRect.translate(0, -1);
+		copyRectToScreen(upperRect, blackoutFlag);
+		upperRect.translate(0, 1);
+		copyRectToScreen(lowerRect, blackoutFlag);
+		lowerRect.translate(0, -1);
 		msecCount += 4;
 		if (doCreateFrame(msecCount)) {
 			updateScreenAndWait(msecCount);
@@ -647,21 +669,41 @@ void GfxTransitions::diagonalRollFromCenter(bool blackoutFlag) {
 
 	while ((upperRect.top >= _picRect.top) || (lowerRect.bottom <= _picRect.bottom)) {
 		if (upperRect.top < _picRect.top) {
-			upperRect.translate(0, 1); leftRect.top++; rightRect.top++;
+			upperRect.translate(0, 1);
+			leftRect.top++;
+			rightRect.top++;
 		}
 		if (lowerRect.bottom > _picRect.bottom) {
-			lowerRect.translate(0, -1); leftRect.bottom--; rightRect.bottom--;
+			lowerRect.translate(0, -1);
+			leftRect.bottom--;
+			rightRect.bottom--;
 		}
 		if (leftRect.left < _picRect.left) {
-			leftRect.translate(1, 0); upperRect.left++; lowerRect.left++;
+			leftRect.translate(1, 0);
+			upperRect.left++;
+			lowerRect.left++;
 		}
 		if (rightRect.right > _picRect.right) {
-			rightRect.translate(-1, 0); upperRect.right--; lowerRect.right--;
+			rightRect.translate(-1, 0);
+			upperRect.right--;
+			lowerRect.right--;
 		}
-		copyRectToScreen(upperRect, blackoutFlag); upperRect.translate(0, -1); upperRect.left--; upperRect.right++;
-		copyRectToScreen(lowerRect, blackoutFlag); lowerRect.translate(0, 1); lowerRect.left--; lowerRect.right++;
-		copyRectToScreen(leftRect, blackoutFlag); leftRect.translate(-1, 0);	leftRect.top--; leftRect.bottom++;
-		copyRectToScreen(rightRect, blackoutFlag); rightRect.translate(1, 0); rightRect.top--; rightRect.bottom++;
+		copyRectToScreen(upperRect, blackoutFlag);
+		upperRect.translate(0, -1);
+		upperRect.left--;
+		upperRect.right++;
+		copyRectToScreen(lowerRect, blackoutFlag);
+		lowerRect.translate(0, 1);
+		lowerRect.left--;
+		lowerRect.right++;
+		copyRectToScreen(leftRect, blackoutFlag);
+		leftRect.translate(-1, 0);
+		leftRect.top--;
+		leftRect.bottom++;
+		copyRectToScreen(rightRect, blackoutFlag);
+		rightRect.translate(1, 0);
+		rightRect.top--;
+		rightRect.bottom++;
 		msecCount += 4;
 		if (doCreateFrame(msecCount)) {
 			updateScreenAndWait(msecCount);
@@ -679,10 +721,18 @@ void GfxTransitions::diagonalRollToCenter(bool blackoutFlag) {
 	uint32 msecCount = 0;
 
 	while (upperRect.top < lowerRect.bottom) {
-		copyRectToScreen(upperRect, blackoutFlag); upperRect.translate(0, 1); upperRect.left++; upperRect.right--;
-		copyRectToScreen(lowerRect, blackoutFlag); lowerRect.translate(0, -1); lowerRect.left++; lowerRect.right--;
-		copyRectToScreen(leftRect, blackoutFlag); leftRect.translate(1, 0);
-		copyRectToScreen(rightRect, blackoutFlag); rightRect.translate(-1, 0);
+		copyRectToScreen(upperRect, blackoutFlag);
+		upperRect.translate(0, 1);
+		upperRect.left++;
+		upperRect.right--;
+		copyRectToScreen(lowerRect, blackoutFlag);
+		lowerRect.translate(0, -1);
+		lowerRect.left++;
+		lowerRect.right--;
+		copyRectToScreen(leftRect, blackoutFlag);
+		leftRect.translate(1, 0);
+		copyRectToScreen(rightRect, blackoutFlag);
+		rightRect.translate(-1, 0);
 		msecCount += 4;
 		if (doCreateFrame(msecCount)) {
 			updateScreenAndWait(msecCount);

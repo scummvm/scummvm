@@ -112,9 +112,9 @@ int updateScriptImport(int ovlIdx) {
 	int param;
 	int var_32;
 	ovlData3Struct *pScript;
-//  char* arrayRelocGlob;
-//  char* namePtr;
-//  char* arrayMsgRelHeader;
+	//  char* arrayRelocGlob;
+	//  char* namePtr;
+	//  char* arrayMsgRelHeader;
 
 	if (!overlayTable[ovlIdx].ovlData)
 		return (-4);
@@ -147,8 +147,8 @@ int updateScriptImport(int ovlIdx) {
 				else
 					pScript = scriptFunc1Sub2(ovlIdx, i);
 
-				ptrImportData = (importScriptStruct *)(pScript->dataPtr + pScript->offsetToImportData);	// import data
-				ptrImportName = (const char*)(pScript->dataPtr + pScript->offsetToImportName);	// import name
+				ptrImportData = (importScriptStruct *)(pScript->dataPtr + pScript->offsetToImportData); // import data
+				ptrImportName = (const char *)(pScript->dataPtr + pScript->offsetToImportName); // import name
 				ptrData = pScript->dataPtr;
 
 				if (pScript->numRelocGlob > 0) {
@@ -158,7 +158,7 @@ int updateScriptImport(int ovlIdx) {
 						int param2 = ptrImportData->type;
 
 						if (param2 != 70) {
-							exportEntryStruct * ptrDest2;
+							exportEntryStruct *ptrDest2;
 							int out1;
 							int out2;
 
@@ -166,20 +166,18 @@ int updateScriptImport(int ovlIdx) {
 							ptrDest2 = parseExport(&out1, &out2, buffer);
 
 							if (ptrDest2 && out2) {
-								int temp =
-								    ptrImportData->
-								    offset;
-								if (out1) {	//is sub function... (ie  'invent.livre:s')
+								int temp = ptrImportData->offset;
+								if (out1) { //is sub function... (ie  'invent.livre:s')
 									uint8 *ptr = ptrData + temp;
 
 									*(ptr + 1) = out2;
 									WRITE_BE_UINT16(ptr + 2, ptrDest2->idx);
 								} else {
-									if (param2 == 20 || param2 == 30 || param2 == 40 || param2 == 50) {	// this patch a double push
+									if (param2 == 20 || param2 == 30 || param2 == 40 || param2 == 50) { // this patch a double push
 										uint8 *ptr = ptrData + temp;
 
 										*(ptr + 1) = 0;
-										*(ptr + 2) = out2;	// update the overlay number
+										*(ptr + 2) = out2; // update the overlay number
 
 										WRITE_BE_UINT16(ptr + 4, ptrDest2->idx);
 									} else {
@@ -211,7 +209,6 @@ int updateScriptImport(int ovlIdx) {
 				}
 
 			} while (++i < var_32);
-
 		}
 
 	} while (++param < 2);
@@ -234,17 +231,17 @@ int updateScriptImport(int ovlIdx) {
 
 			if (pFoundExport && foundExportIdx) {
 				switch (linkType) {
-				case 0: {	// verb
+				case 0: { // verb
 					ovlData->arrayMsgRelHeader[linkEntryIdx].verbOverlay = foundExportIdx;
 					ovlData->arrayMsgRelHeader[linkEntryIdx].verbNumber = pFoundExport->idx;
 					break;
 				}
-				case 1: {	// obj1
+				case 1: { // obj1
 					ovlData->arrayMsgRelHeader[linkEntryIdx].obj1Overlay = foundExportIdx;
 					ovlData->arrayMsgRelHeader[linkEntryIdx].obj1Number = pFoundExport->idx;
 					break;
 				}
-				case 2: {	// obj2
+				case 2: { // obj2
 					ovlData->arrayMsgRelHeader[linkEntryIdx].obj2Overlay = foundExportIdx;
 					ovlData->arrayMsgRelHeader[linkEntryIdx].obj2Number = pFoundExport->idx;
 					break;

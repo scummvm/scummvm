@@ -43,10 +43,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#include "common/installshield_cab.h"
 #include "common/archive.h"
 #include "common/debug.h"
 #include "common/hash-str.h"
-#include "common/installshield_cab.h"
 #include "common/memstream.h"
 #include "common/zlib.h"
 
@@ -84,7 +84,9 @@ InstallShieldCabinet::~InstallShieldCabinet() {
 		delete _stream;
 }
 
-InstallShieldCabinet::InstallShieldCabinet(SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) : _stream(stream), _disposeAfterUse(disposeAfterUse) {
+InstallShieldCabinet::InstallShieldCabinet(SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse)
+  : _stream(stream)
+  , _disposeAfterUse(disposeAfterUse) {
 	// Note that we only support a limited subset of cabinet files
 	// Only single cabinet files and ones without data shared between
 	// cabinets.

@@ -41,7 +41,8 @@ namespace LastExpress {
 //////////////////////////////////////////////////////////////////////////
 // SoundEntry
 //////////////////////////////////////////////////////////////////////////
-SoundEntry::SoundEntry(LastExpressEngine *engine) : _engine(engine) {
+SoundEntry::SoundEntry(LastExpressEngine *engine)
+  : _engine(engine) {
 	_status = 0;
 	_tag = kSoundTagNone;
 
@@ -159,8 +160,7 @@ void SoundEntry::setupTag(SoundFlag flag) {
 		}
 
 		_tag = kSoundTagAmbient;
-		}
-		break;
+	} break;
 
 	case kSoundTypeWalla: {
 		SoundEntry *previous = getSoundQueue()->getEntry(kSoundTagWalla);
@@ -170,8 +170,7 @@ void SoundEntry::setupTag(SoundFlag flag) {
 		}
 
 		_tag = kSoundTagWalla;
-		}
-		break;
+	} break;
 
 	case kSoundTypeLink: {
 		SoundEntry *previous = getSoundQueue()->getEntry(kSoundTagLink);
@@ -179,8 +178,7 @@ void SoundEntry::setupTag(SoundFlag flag) {
 			previous->_tag = kSoundTagOldLink;
 
 		_tag = kSoundTagLink;
-		}
-		break;
+	} break;
 
 	case kSoundTypeNIS: {
 		SoundEntry *previous = getSoundQueue()->getEntry(kSoundTagNIS);
@@ -188,8 +186,7 @@ void SoundEntry::setupTag(SoundFlag flag) {
 			previous->_tag = kSoundTagOldNIS;
 
 		_tag = kSoundTagNIS;
-		}
-		break;
+	} break;
 
 	case kSoundTypeIntro: {
 		SoundEntry *previous = getSoundQueue()->getEntry(kSoundTagIntro);
@@ -197,8 +194,7 @@ void SoundEntry::setupTag(SoundFlag flag) {
 			previous->_tag = kSoundTagOldMenu;
 
 		_tag = kSoundTagIntro;
-		}
-		break;
+	} break;
 
 	case kSoundTypeMenu: {
 		SoundEntry *previous = getSoundQueue()->getEntry(kSoundTagMenu);
@@ -206,8 +202,7 @@ void SoundEntry::setupTag(SoundFlag flag) {
 			previous->_tag = kSoundTagOldMenu;
 
 		_tag = kSoundTagMenu;
-		}
-		break;
+	} break;
 
 	default:
 		assert(false);
@@ -379,15 +374,15 @@ void SoundEntry::saveLoadWithSerializer(Common::Serializer &s) {
 		if (_status & (kSoundFlagCloseRequested | kSoundFlagFading))
 			_status |= kSoundFlagClosed;
 		_status &= kSoundVolumeMask
-		         | kSoundFlagPlaying
-		         | kSoundFlagClosed
-		         | kSoundFlagCloseOnDataEnd
-		         | kSoundFlagLooped
-		         | kSoundFlagDelayedActivate
-		         | kSoundFlagHasSubtitles
-		         | kSoundFlagFixedVolume
-		         | kSoundFlagHeaderProcessed
-		         | kSoundTypeMask;
+		  | kSoundFlagPlaying
+		  | kSoundFlagClosed
+		  | kSoundFlagCloseOnDataEnd
+		  | kSoundFlagLooped
+		  | kSoundFlagDelayedActivate
+		  | kSoundFlagHasSubtitles
+		  | kSoundFlagFixedVolume
+		  | kSoundFlagHeaderProcessed
+		  | kSoundTypeMask;
 
 		loadStream(name); // also sets _name
 		if (_status & kSoundFlagPlaying)
@@ -420,7 +415,7 @@ void SoundEntry::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsUint32LE(delta);
 		s.syncAsUint32LE(_priority);
 
-		char name[16] = {0};
+		char name[16] = { 0 };
 		s.syncBytes((byte *)name, 16);
 
 		strcpy((char *)name, _name.c_str());
@@ -431,7 +426,8 @@ void SoundEntry::saveLoadWithSerializer(Common::Serializer &s) {
 //////////////////////////////////////////////////////////////////////////
 // SubtitleEntry
 //////////////////////////////////////////////////////////////////////////
-SubtitleEntry::SubtitleEntry(LastExpressEngine *engine) : _engine(engine) {
+SubtitleEntry::SubtitleEntry(LastExpressEngine *engine)
+  : _engine(engine) {
 	_status = 0;
 	_sound = NULL;
 	_data = NULL;

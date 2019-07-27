@@ -20,20 +20,26 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "graphics/cursorman.h"
 #include "common/events.h"
 #include "common/endian.h"
+#include "common/scummsys.h"
 #include "engines/util.h"
-#include "xeen/xeen.h"
+#include "graphics/cursorman.h"
 #include "xeen/events.h"
 #include "xeen/screen.h"
+#include "xeen/xeen.h"
 
 namespace Xeen {
 
-EventsManager::EventsManager(XeenEngine *vm) : _vm(vm), _playTime(0), _gameCounter(0),
-		_frameCounter(0), _priorFrameCounterTime(0), _priorScreenRefreshTime(0),
-		_mousePressed(false), _sprites("mouse.icn") {
+EventsManager::EventsManager(XeenEngine *vm)
+  : _vm(vm)
+  , _playTime(0)
+  , _gameCounter(0)
+  , _frameCounter(0)
+  , _priorFrameCounterTime(0)
+  , _priorScreenRefreshTime(0)
+  , _mousePressed(false)
+  , _sprites("mouse.icn") {
 	Common::fill(&_gameCounters[0], &_gameCounters[6], 0);
 }
 
@@ -107,7 +113,7 @@ void EventsManager::pollEvents() {
 			_mousePressed = false;
 			return;
 		default:
- 			break;
+			break;
 		}
 	}
 }
@@ -137,7 +143,6 @@ void EventsManager::addEvent(bool leftButton, bool rightButton) {
 	if (_pendingEvents.size() < MAX_PENDING_EVENTS)
 		_pendingEvents.push(PendingEvent(leftButton, rightButton));
 }
-
 
 bool EventsManager::getEvent(PendingEvent &pe) {
 	if (_pendingEvents.empty()) {

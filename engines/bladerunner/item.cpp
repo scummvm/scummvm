@@ -172,10 +172,10 @@ void Item::spinInWorld() {
 
 bool Item::isUnderMouse(int mouseX, int mouseY) const {
 	return _isVisible
-	    && mouseX >= _screenRectangle.left   - 10
-	    && mouseX <= _screenRectangle.right  + 10
-	    && mouseY >= _screenRectangle.top    - 10
-	    && mouseY <= _screenRectangle.bottom + 10;
+	  && mouseX >= _screenRectangle.left - 10
+	  && mouseX <= _screenRectangle.right + 10
+	  && mouseY >= _screenRectangle.top - 10
+	  && mouseY <= _screenRectangle.bottom + 10;
 }
 
 void Item::save(SaveFileWriteStream &f) {
@@ -207,7 +207,7 @@ void Item::load(SaveFileReadStream &f) {
 	_screenRectangle = f.readRect();
 	_animationId = f.readInt();
 	_position = f.readVector3();
-	_facing  = f.readInt();
+	_facing = f.readInt();
 	_angle = f.readFloat();
 	_width = f.readInt();
 	_height = f.readInt();

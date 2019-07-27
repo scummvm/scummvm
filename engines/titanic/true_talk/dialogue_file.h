@@ -31,7 +31,9 @@ namespace Titanic {
 struct DialogueIndexEntry {
 	uint _v1, _offset;
 
-	DialogueIndexEntry() : _v1(0), _offset(0) {}
+	DialogueIndexEntry()
+	  : _v1(0)
+	  , _offset(0) {}
 	void load(Common::SeekableReadStream &s);
 };
 
@@ -40,8 +42,12 @@ struct DialogueResource {
 	uint _offset, _bytesRead, _size;
 	DialogueIndexEntry *_entryPtr;
 
-	DialogueResource() : _active(false), _offset(0),
-		_bytesRead(0), _size(0), _entryPtr(nullptr) {}
+	DialogueResource()
+	  : _active(false)
+	  , _offset(0)
+	  , _bytesRead(0)
+	  , _size(0)
+	  , _entryPtr(nullptr) {}
 
 	/**
 	 * Return the size of a cache entry
@@ -54,11 +60,13 @@ private:
 	File _file;
 	Common::Array<DialogueIndexEntry> _index;
 	Common::Array<DialogueResource> _cache;
+
 private:
 	/**
 	 * Add a dialogue file entry to the active cache
 	 */
 	DialogueResource *addToCache(int index);
+
 public:
 	CDialogueFile(const CString &filename, uint count);
 	~CDialogueFile();

@@ -127,7 +127,7 @@ void Room::mudd2MccoyPickedUpCapsules() {
 }
 
 void Room::mudd2UseCommunicator() {
-	showText(TX_SPEAKER_KIRK,  TX_MUD2_009);
+	showText(TX_SPEAKER_KIRK, TX_MUD2_009);
 	showText(TX_SPEAKER_UHURA, TX_STATICU1);
 }
 
@@ -137,7 +137,7 @@ void Room::mudd2LookAtCapsules() {
 
 void Room::mudd2UseMTricorderOnCapsules() {
 	mccoyScan(DIR_W, TX_MUD2_030, false);
-	showText(TX_SPEAKER_KIRK,  TX_MUD2_004);
+	showText(TX_SPEAKER_KIRK, TX_MUD2_004);
 	showText(TX_SPEAKER_MCCOY, TX_MUD2_019);
 }
 
@@ -184,7 +184,6 @@ void Room::mudd2KirkReachedBed() {
 	showText(TX_SPEAKER_MCCOY, TX_MUD2_022);
 }
 
-
 void Room::mudd2MuddNoticedKirk() {
 	showText(TX_SPEAKER_MUDD, TX_MUD2_044);
 	playVoc("BATTYGAS");
@@ -198,24 +197,22 @@ void Room::mudd2MuddDroppedCapsule() {
 	_awayMission->mudd.muddCurrentlyInsane = true;
 
 	showText(TX_SPEAKER_MCCOY, TX_MUD2_032);
-	showText(TX_SPEAKER_MUDD,  TX_MUD2_049);
+	showText(TX_SPEAKER_MUDD, TX_MUD2_049);
 	showText(TX_SPEAKER_MCCOY, TX_MUD2_026);
-	showText(TX_SPEAKER_MUDD,  TX_MUD2_051);
+	showText(TX_SPEAKER_MUDD, TX_MUD2_051);
 	showText(TX_SPEAKER_MCCOY, TX_MUD2_031);
-	showText(TX_SPEAKER_MUDD,  TX_MUD2_050);
+	showText(TX_SPEAKER_MUDD, TX_MUD2_050);
 
 	_awayMission->disableInput = false;
 }
 
-
 void Room::mudd2UsePhaserOnMudd() {
 	if (_awayMission->mudd.muddInhaledGas && !_awayMission->mudd.muddUnconscious) {
 		showText(TX_SPEAKER_BUCHERT, TX_MUD2_053);
-		showText(TX_SPEAKER_MUDD,    TX_MUD2_042);
-		showText(TX_SPEAKER_MUDD,    TX_MUD2_043);
+		showText(TX_SPEAKER_MUDD, TX_MUD2_042);
+		showText(TX_SPEAKER_MUDD, TX_MUD2_043);
 	}
 }
-
 
 // Spock neck-pinches Mudd
 void Room::mudd2UseSpockOnMudd() {
@@ -249,7 +246,6 @@ void Room::mudd2UseKirkOnMudd() {
 	}
 }
 
-
 void Room::mudd2UseRedshirtOnMudd() {
 	if (_awayMission->mudd.muddInhaledGas && !_awayMission->mudd.muddUnconscious) {
 		_awayMission->disableInput = true;
@@ -280,7 +276,6 @@ void Room::mudd2RedshirtPushedAway() {
 	walkCrewman(OBJECT_REDSHIRT, 0x117, 0xae);
 }
 
-
 // BUGFIX: This was originally "Action 0x45 on Mudd"; as far as I know, action 0x45
 // doesn't exist. It's far more likely that 0x45 is supposed to correspond to
 // OBJECT_IMTRICOR in a USE action.
@@ -289,7 +284,6 @@ void Room::mudd2UseMTricorderOnMudd() {
 	if (_awayMission->mudd.muddInhaledGas && !_awayMission->mudd.muddUnconscious)
 		mccoyScan(DIR_W, TX_MUD2_013, false);
 }
-
 
 void Room::mudd2UseMedkitOnMudd() {
 	if (!_awayMission->mudd.muddInhaledGas)
@@ -317,11 +311,10 @@ void Room::mudd2MccoyCuredMudd() {
 	_awayMission->mudd.muddInhaledGas = false;
 
 	showText(TX_SPEAKER_MCCOY, TX_MUD2_033);
-	showText(TX_SPEAKER_MUDD,  TX_MUD2_045);
+	showText(TX_SPEAKER_MUDD, TX_MUD2_045);
 
 	_awayMission->mudd.muddUnconscious = false;
 }
-
 
 void Room::mudd2LookAtKirk() {
 	showDescription(TX_MUD2N003);
@@ -357,8 +350,8 @@ void Room::mudd2TalkToKirk() {
 	if (!_awayMission->mudd.muddCurrentlyInsane || !_awayMission->mudd.muddInhaledGas || _awayMission->mudd.muddUnconscious)
 		showText(TX_SPEAKER_KIRK, TX_MUD2_010);
 	else {
-		showText(TX_SPEAKER_KIRK,  TX_MUD2_005);
-		showText(TX_SPEAKER_MUDD,  TX_MUD2_046);
+		showText(TX_SPEAKER_KIRK, TX_MUD2_005);
+		showText(TX_SPEAKER_MUDD, TX_MUD2_046);
 		showText(TX_SPEAKER_MCCOY, TX_MUD2_035);
 	}
 }
@@ -366,7 +359,7 @@ void Room::mudd2TalkToKirk() {
 void Room::mudd2TalkToSpock() {
 	if (!_awayMission->mudd.muddCurrentlyInsane || !_awayMission->mudd.muddInhaledGas || _awayMission->mudd.muddUnconscious) {
 		showText(TX_SPEAKER_SPOCK, TX_MUD2_040);
-		showText(TX_SPEAKER_KIRK,  TX_MUD2_011);
+		showText(TX_SPEAKER_KIRK, TX_MUD2_011);
 	} else {
 		showText(TX_SPEAKER_SPOCK, TX_MUD2_038);
 	}
@@ -375,7 +368,7 @@ void Room::mudd2TalkToSpock() {
 void Room::mudd2TalkToMccoy() {
 	if (!_awayMission->mudd.muddCurrentlyInsane || !_awayMission->mudd.muddInhaledGas || _awayMission->mudd.muddUnconscious) {
 		showText(TX_SPEAKER_MCCOY, TX_MUD2_025);
-		showText(TX_SPEAKER_KIRK,  TX_MUD2_007);
+		showText(TX_SPEAKER_KIRK, TX_MUD2_007);
 	} else {
 		showText(TX_SPEAKER_MCCOY, TX_MUD2_027);
 	}
@@ -384,11 +377,11 @@ void Room::mudd2TalkToMccoy() {
 void Room::mudd2TalkToRedshirt() {
 	if (!_awayMission->mudd.muddCurrentlyInsane || !_awayMission->mudd.muddInhaledGas || _awayMission->mudd.muddUnconscious) {
 		showText(TX_SPEAKER_BUCHERT, TX_MUD2_054);
-		showText(TX_SPEAKER_KIRK,    TX_MUD2_008);
+		showText(TX_SPEAKER_KIRK, TX_MUD2_008);
 	} else {
 		showText(TX_SPEAKER_BUCHERT, TX_MUD2_055);
-		showText(TX_SPEAKER_KIRK,    TX_MUD2_003);
-		showText(TX_SPEAKER_MCCOY,   TX_MUD2_036);
+		showText(TX_SPEAKER_KIRK, TX_MUD2_003);
+		showText(TX_SPEAKER_MCCOY, TX_MUD2_036);
 	}
 }
 

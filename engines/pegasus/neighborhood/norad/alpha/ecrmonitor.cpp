@@ -23,19 +23,17 @@
  *
  */
 
-#include "pegasus/pegasus.h"
+#include "pegasus/neighborhood/norad/alpha/ecrmonitor.h"
 #include "pegasus/neighborhood/norad/constants.h"
 #include "pegasus/neighborhood/norad/norad.h"
-#include "pegasus/neighborhood/norad/alpha/ecrmonitor.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
 static const NotificationFlags kECRSection1FinishedFlag = 1;
 static const NotificationFlags kECRPanFinishedFlag = kECRSection1FinishedFlag << 1;
 static const NotificationFlags kECRSection2FinishedFlag = kECRPanFinishedFlag << 1;
-static const NotificationFlags kECRNotificationFlags = kECRSection1FinishedFlag |
-													kECRPanFinishedFlag |
-													kECRSection2FinishedFlag;
+static const NotificationFlags kECRNotificationFlags = kECRSection1FinishedFlag | kECRPanFinishedFlag | kECRSection2FinishedFlag;
 
 static const TimeValue kSection1Start = 0;
 static const TimeValue kSection1Stop = 25;
@@ -60,9 +58,11 @@ static const int kBeforePanTime = 3;
 // Index into s_ECRInterestingTimes of interesting time after security pan.
 static const int kAfterPanTime = 5;
 
-NoradAlphaECRMonitor::NoradAlphaECRMonitor(Neighborhood *nextHandler) : GameInteraction(kNoradECRMonitorInteractionID, nextHandler),
-		_ecrSlideShowNotification(kNoradECRNotificationID, (PegasusEngine *)g_engine), _ecrMovie(kECRSlideShowMovieID),
-		_ecrPan(kECRPanID) {
+NoradAlphaECRMonitor::NoradAlphaECRMonitor(Neighborhood *nextHandler)
+  : GameInteraction(kNoradECRMonitorInteractionID, nextHandler)
+  , _ecrSlideShowNotification(kNoradECRNotificationID, (PegasusEngine *)g_engine)
+  , _ecrMovie(kECRSlideShowMovieID)
+  , _ecrPan(kECRPanID) {
 }
 
 void NoradAlphaECRMonitor::receiveNotification(Notification *, const NotificationFlags flags) {

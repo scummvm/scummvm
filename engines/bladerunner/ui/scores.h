@@ -42,17 +42,17 @@ class UIImagePicker;
 
 class Scores {
 	BladeRunnerEngine *_vm;
-	bool               _isOpen;
-	bool               _isLoaded;
-	VQAPlayer         *_vqaPlayer;
-	int                _scores[7];
-	int                _scorers[7];
+	bool _isOpen;
+	bool _isLoaded;
+	VQAPlayer *_vqaPlayer;
+	int _scores[7];
+	int _scorers[7];
 
-	int                _lastScoreId;
-	int                _lastScoreValue;
+	int _lastScoreId;
+	int _lastScoreValue;
 
-	Font              *_font;
-	TextResource      *_txtScorers;
+	Font *_font;
+	TextResource *_txtScorers;
 
 public:
 	Scores(BladeRunnerEngine *vm);

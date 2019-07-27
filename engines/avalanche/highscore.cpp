@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Mike: Mark and Thomas Thurman.
  */
 
-#include "avalanche/avalanche.h"
 #include "avalanche/highscore.h"
+#include "avalanche/avalanche.h"
 
 #include "common/savefile.h"
 #include "common/system.h"

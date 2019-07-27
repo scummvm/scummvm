@@ -23,14 +23,15 @@
 #ifndef TITANIC_ROOM_FLAGS_H
 #define TITANIC_ROOM_FLAGS_H
 
-#include "titanic/support/string.h"
 #include "titanic/game_location.h"
+#include "titanic/support/string.h"
 
 namespace Titanic {
 
 class CRoomFlags {
 private:
 	uint _data;
+
 private:
 	int getConditionally() const;
 
@@ -62,6 +63,7 @@ private:
 	static bool is2To19(uint v) { return v >= 2 && v <= 19; }
 	static bool is20To27(uint v) { return v >= 20 && v <= 27; }
 	static bool is28To38(uint v) { return v >= 28 && v <= 38; }
+
 public:
 	/**
 	 * Compares the current flags against the specified flags
@@ -78,9 +80,12 @@ public:
 	 * Returns true if the current flags is for Titania's room
 	 */
 	static bool isTitania(uint flags1, uint flags2);
+
 public:
-	CRoomFlags() : _data(0) {}
-	CRoomFlags(uint data) : _data(data) {}
+	CRoomFlags()
+	  : _data(0) {}
+	CRoomFlags(uint data)
+	  : _data(data) {}
 	operator uint() { return _data; }
 
 	/**

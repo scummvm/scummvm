@@ -25,22 +25,26 @@
 
 #include "common/memstream.h"
 
-#include "pegasus/cursor.h"
-#include "pegasus/pegasus.h"
 #include "pegasus/ai/ai_area.h"
+#include "pegasus/cursor.h"
 #include "pegasus/items/biochips/aichip.h"
 #include "pegasus/items/biochips/biochipitem.h"
 #include "pegasus/items/biochips/opticalchip.h"
 #include "pegasus/items/biochips/pegasuschip.h"
 #include "pegasus/items/inventory/airmask.h"
 #include "pegasus/items/inventory/inventoryitem.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
 AIArea *g_AIArea = 0;
 
-AIArea::AIArea(InputHandler *nextHandler) : InputHandler(nextHandler), _leftAreaMovie(kAILeftAreaID),
-		_middleAreaMovie(kAIMiddleAreaID), _rightAreaMovie(kAIRightAreaID), _AIMovie(kAIMovieID) {
+AIArea::AIArea(InputHandler *nextHandler)
+  : InputHandler(nextHandler)
+  , _leftAreaMovie(kAILeftAreaID)
+  , _middleAreaMovie(kAIMiddleAreaID)
+  , _rightAreaMovie(kAIRightAreaID)
+  , _AIMovie(kAIMovieID) {
 	g_AIArea = this;
 	_leftAreaOwner = kNoClientSignature;
 	_middleAreaOwner = kNoClientSignature;
@@ -174,7 +178,7 @@ void AIArea::setAIAreaToTime(const LowerClientSignature client, const LowerAreaS
 					_middleAreaMovie.hide();
 					_middleAreaOwner = kNoClientSignature;
 				}
-			} else {	// client == kBiochipSignature
+			} else { // client == kBiochipSignature
 				if (_middleInventoryTime != 0xffffffff) {
 					setMiddleMovieTime(kInventorySignature, _middleInventoryTime);
 				} else {

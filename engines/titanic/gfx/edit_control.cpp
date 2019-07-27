@@ -25,12 +25,20 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CEditControl, CGameObject)
-	ON_MESSAGE(EditControlMsg)
-	ON_MESSAGE(MouseWheelMsg)
+ON_MESSAGE(EditControlMsg)
+ON_MESSAGE(MouseWheelMsg)
 END_MESSAGE_MAP()
 
-CEditControl::CEditControl() : CGameObject(), _showCursor(false),  _fontNumber(0), _fieldD4(2),
-		_textR(0), _textG(0), _textB(0), _fieldF0(0), _isPassword(false) {
+CEditControl::CEditControl()
+  : CGameObject()
+  , _showCursor(false)
+  , _fontNumber(0)
+  , _fieldD4(2)
+  , _textR(0)
+  , _textG(0)
+  , _textB(0)
+  , _fieldF0(0)
+  , _isPassword(false) {
 }
 
 void CEditControl::save(SimpleFile *file, int indent) {
@@ -132,7 +140,7 @@ bool CEditControl::EditControlMsg(CEditControlMsg *msg) {
 		} else if (msg->_param == 13) {
 			msg->_param = 1000;
 		} else if (msg->_param >= 32 && msg->_param < 127
-				&& _text.size() < _maxTextChars) {
+		           && _text.size() < _maxTextChars) {
 			char c = (char)msg->_param;
 			_text += c;
 

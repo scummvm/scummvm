@@ -27,8 +27,8 @@
 #include "common/hash-str.h"
 
 #include "pink/archive.h"
-#include "pink/objects/object.h"
 #include "pink/objects/inventory.h"
+#include "pink/objects/object.h"
 
 namespace Pink {
 
@@ -72,7 +72,6 @@ private:
 	InventoryMgr _invMgr;
 	StringMap _variables;
 };
-
 
 } // End of namespace Pink
 

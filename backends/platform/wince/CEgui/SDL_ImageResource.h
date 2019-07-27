@@ -38,6 +38,7 @@ public:
 	int height();
 	int width();
 	virtual ~SDL_ImageResource();
+
 private:
 	SDL_Surface *_surface;
 };

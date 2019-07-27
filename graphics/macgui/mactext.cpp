@@ -19,10 +19,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/mactext.h"
-#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/font.h"
+#include "graphics/macgui/macfontmanager.h"
+#include "graphics/macgui/macwindowmanager.h"
 
 namespace Graphics {
 
@@ -39,12 +39,12 @@ const Font *MacFontRun::getFont() {
 
 const Common::String MacFontRun::toString() {
 	return Common::String::format("\001\015%c%c%c%c%c%c%c%c%c%c%c",
-			(fontId >> 8) & 0xff, fontId & 0xff,
-			textSlant & 0xff,
-			(fontSize >> 8) & 0xff, fontSize & 0xff,
-			(palinfo1 >> 8) & 0xff, palinfo1 & 0xff,
-			(palinfo2 >> 8) & 0xff, palinfo2 & 0xff,
-			(palinfo3 >> 8) & 0xff, palinfo3 & 0xff);
+	                              (fontId >> 8) & 0xff, fontId & 0xff,
+	                              textSlant & 0xff,
+	                              (fontSize >> 8) & 0xff, fontSize & 0xff,
+	                              (palinfo1 >> 8) & 0xff, palinfo1 & 0xff,
+	                              (palinfo2 >> 8) & 0xff, palinfo2 & 0xff,
+	                              (palinfo3 >> 8) & 0xff, palinfo3 & 0xff);
 }
 
 MacText::~MacText() {
@@ -133,15 +133,20 @@ void MacText::splitString(Common::String &str) {
 				if (*s++ != '\015')
 					error("MacText: formatting error");
 
-				uint16 fontId = *s++; fontId = (fontId << 8) | *s++;
+				uint16 fontId = *s++;
+				fontId = (fontId << 8) | *s++;
 				byte textSlant = *s++;
-				uint16 fontSize = *s++; fontSize = (fontSize << 8) | *s++;
-				uint16 palinfo1 = *s++; palinfo1 = (palinfo1 << 8) | *s++;
-				uint16 palinfo2 = *s++; palinfo2 = (palinfo2 << 8) | *s++;
-				uint16 palinfo3 = *s++; palinfo3 = (palinfo3 << 8) | *s++;
+				uint16 fontSize = *s++;
+				fontSize = (fontSize << 8) | *s++;
+				uint16 palinfo1 = *s++;
+				palinfo1 = (palinfo1 << 8) | *s++;
+				uint16 palinfo2 = *s++;
+				palinfo2 = (palinfo2 << 8) | *s++;
+				uint16 palinfo3 = *s++;
+				palinfo3 = (palinfo3 << 8) | *s++;
 
 				debug(8, "******** splitString: fontId: %d, textSlant: %d, fontSize: %d, p0: %x p1: %x p2: %x",
-						fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
+				      fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 
 				previousFormatting = _currentFormatting;
 				_currentFormatting.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
@@ -151,7 +156,7 @@ void MacText::splitString(Common::String &str) {
 
 				nextChunk = true;
 			}
-		} else if (*s == '\n' && prevCR) {	// trean \r\n as one
+		} else if (*s == '\n' && prevCR) { // trean \r\n as one
 			prevCR = false;
 
 			s++;
@@ -363,9 +368,8 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 		g->fillRect(Common::Rect(x, y, x + w, y + w), _bgcolor);
 	}
 
-	g->blitFrom(*_surface, Common::Rect(MIN<int>(_surface->w, x), MIN<int>(_surface->h, y),
-										MIN<int>(_surface->w, x + w), MIN<int>(_surface->h, y + h)),
-										Common::Point(xoff, yoff));
+	g->blitFrom(*_surface, Common::Rect(MIN<int>(_surface->w, x), MIN<int>(_surface->h, y), MIN<int>(_surface->w, x + w), MIN<int>(_surface->h, y + h)),
+	            Common::Point(xoff, yoff));
 }
 
 // Count newline characters in String

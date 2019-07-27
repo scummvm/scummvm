@@ -52,48 +52,48 @@ class MystCard;
 enum {
 	kDebugVariable = (1 << 0),
 	kDebugSaveLoad = (1 << 1),
-	kDebugView     = (1 << 2),
-	kDebugHint     = (1 << 3),
+	kDebugView = (1 << 2),
+	kDebugHint = (1 << 3),
 	kDebugResource = (1 << 4),
-	kDebugINIT     = (1 << 5),
-	kDebugEXIT     = (1 << 6),
-	kDebugScript   = (1 << 7),
-	kDebugHelp     = (1 << 8),
-	kDebugCache    = (1 << 9)
+	kDebugINIT = (1 << 5),
+	kDebugEXIT = (1 << 6),
+	kDebugScript = (1 << 7),
+	kDebugHelp = (1 << 8),
+	kDebugCache = (1 << 9)
 };
 
 // Myst Stacks
 enum MystStack {
-	kChannelwoodStack = 0,	// Channelwood Age
-	kCreditsStack,			// Credits
-	kDemoStack,				// Demo Main Menu
-	kDniStack,				// D'ni
-	kIntroStack,			// Intro
-	kMakingOfStack,			// Making Of Myst
-	kMechanicalStack,		// Mechanical Age
-	kMystStack,				// Myst Island
-	kSeleniticStack,		// Selenitic Age
-	kDemoSlidesStack,		// Demo Slideshow
-	kDemoPreviewStack,		// Demo Myst Library Preview
-	kStoneshipStack,		// Stoneship Age
-	kMenuStack				// Main menu
+	kChannelwoodStack = 0, // Channelwood Age
+	kCreditsStack, // Credits
+	kDemoStack, // Demo Main Menu
+	kDniStack, // D'ni
+	kIntroStack, // Intro
+	kMakingOfStack, // Making Of Myst
+	kMechanicalStack, // Mechanical Age
+	kMystStack, // Myst Island
+	kSeleniticStack, // Selenitic Age
+	kDemoSlidesStack, // Demo Slideshow
+	kDemoPreviewStack, // Demo Myst Library Preview
+	kStoneshipStack, // Stoneship Age
+	kMenuStack // Main menu
 };
 
 // Transitions
 enum TransitionType {
-	kTransitionLeftToRight	= 0,
-	kTransitionRightToLeft	= 1,
-	kTransitionSlideToLeft	= 2,
-	kTransitionSlideToRight	= 3,
-	kTransitionDissolve		= 4,
-	kTransitionTopToBottom	= 5,
-	kTransitionBottomToTop	= 6,
-	kTransitionSlideToTop	= 7,
-	kTransitionSlideToBottom= 8,
-	kTransitionPartToRight	= 9,
-	kTransitionPartToLeft	= 10,
-	kTransitionCopy			= 11,
-	kNoTransition			= 999
+	kTransitionLeftToRight = 0,
+	kTransitionRightToLeft = 1,
+	kTransitionSlideToLeft = 2,
+	kTransitionSlideToRight = 3,
+	kTransitionDissolve = 4,
+	kTransitionTopToBottom = 5,
+	kTransitionBottomToTop = 6,
+	kTransitionSlideToTop = 7,
+	kTransitionSlideToBottom = 8,
+	kTransitionPartToRight = 9,
+	kTransitionPartToLeft = 10,
+	kTransitionCopy = 11,
+	kNoTransition = 999
 };
 
 struct MystCondition {
@@ -115,10 +115,10 @@ struct MystSoundBlock {
 
 // View Sound Action Type
 enum {
-	kMystSoundActionConditional  = -4,
-	kMystSoundActionContinue     = -1,
+	kMystSoundActionConditional = -4,
+	kMystSoundActionContinue = -1,
 	kMystSoundActionChangeVolume = -2,
-	kMystSoundActionStop         = -3
+	kMystSoundActionStop = -3
 	// Other positive values are PlayNewSound of that id
 };
 

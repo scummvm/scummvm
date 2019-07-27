@@ -24,8 +24,8 @@
 
 #ifdef ENABLE_KEYMAPPER
 
-#include "common/config-manager.h"
-#include "common/system.h"
+#	include "common/config-manager.h"
+#	include "common/system.h"
 
 namespace Common {
 
@@ -49,7 +49,7 @@ void Keymapper::Domain::deleteAllKeyMaps() {
 	clear();
 }
 
-Keymap *Keymapper::Domain::getKeymap(const String& name) {
+Keymap *Keymapper::Domain::getKeymap(const String &name) {
 	iterator it = find(name);
 
 	if (it != end())
@@ -59,7 +59,11 @@ Keymap *Keymapper::Domain::getKeymap(const String& name) {
 }
 
 Keymapper::Keymapper(EventManager *evtMgr)
-	: _eventMan(evtMgr), _enabled(true), _remapping(false), _hardwareInputs(0), _actionToRemap(0) {
+  : _eventMan(evtMgr)
+  , _enabled(true)
+  , _remapping(false)
+  , _hardwareInputs(0)
+  , _actionToRemap(0) {
 	ConfigManager::Domain *confDom = ConfMan.getDomain(ConfigManager::kKeymapperDomain);
 
 	_globalDomain.setConfigDomain(confDom);
@@ -132,7 +136,7 @@ void Keymapper::cleanupGameKeymaps() {
 	_activeMaps = newStack;
 }
 
-Keymap *Keymapper::getKeymap(const String& name, bool *globalReturn) {
+Keymap *Keymapper::getKeymap(const String &name, bool *globalReturn) {
 	Keymap *keymap = _gameDomain.getKeymap(name);
 	bool global = false;
 
@@ -147,7 +151,7 @@ Keymap *Keymapper::getKeymap(const String& name, bool *globalReturn) {
 	return keymap;
 }
 
-bool Keymapper::pushKeymap(const String& name, bool transparent) {
+bool Keymapper::pushKeymap(const String &name, bool transparent) {
 	bool global;
 
 	assert(!name.empty());
@@ -164,7 +168,7 @@ bool Keymapper::pushKeymap(const String& name, bool transparent) {
 }
 
 void Keymapper::pushKeymap(Keymap *newMap, bool transparent, bool global) {
-	MapRecord mr = {newMap, transparent, global};
+	MapRecord mr = { newMap, transparent, global };
 
 	_activeMaps.push(mr);
 }
@@ -181,7 +185,6 @@ void Keymapper::popKeymap(const char *name) {
 			_activeMaps.pop();
 		}
 	}
-
 }
 
 List<Event> Keymapper::mapEvent(const Event &ev, EventSource *source) {
@@ -212,15 +215,15 @@ void Keymapper::startRemappingMode(Action *actionToRemap) {
 	_actionToRemap = actionToRemap;
 }
 
-List<Event> Keymapper::mapKeyDown(const KeyState& key) {
+List<Event> Keymapper::mapKeyDown(const KeyState &key) {
 	return mapKey(key, true);
 }
 
-List<Event> Keymapper::mapKeyUp(const KeyState& key) {
+List<Event> Keymapper::mapKeyUp(const KeyState &key) {
 	return mapKey(key, false);
 }
 
-List<Event> Keymapper::mapKey(const KeyState& key, bool keyDown) {
+List<Event> Keymapper::mapKey(const KeyState &key, bool keyDown) {
 	if (!_enabled || _activeMaps.empty())
 		return List<Event>();
 
@@ -254,7 +257,6 @@ List<Event> Keymapper::mapKey(const KeyState& key, bool keyDown) {
 	return executeAction(action, keyDown ? kIncomingKeyDown : kIncomingKeyUp);
 }
 
-
 List<Event> Keymapper::mapNonKey(const HardwareInputCode code) {
 	if (!_enabled || _activeMaps.empty())
 		return List<Event>();
@@ -277,7 +279,7 @@ List<Event> Keymapper::mapNonKey(const HardwareInputCode code) {
 	return executeAction(action);
 }
 
-Action *Keymapper::getAction(const KeyState& key) {
+Action *Keymapper::getAction(const KeyState &key) {
 	Action *action = 0;
 
 	return action;
@@ -342,7 +344,7 @@ EventType Keymapper::convertDownToUp(EventType type) {
 	return result;
 }
 
-const HardwareInput *Keymapper::findHardwareInput(const KeyState& key) {
+const HardwareInput *Keymapper::findHardwareInput(const KeyState &key) {
 	return (_hardwareInputs) ? _hardwareInputs->findHardwareInput(key) : 0;
 }
 

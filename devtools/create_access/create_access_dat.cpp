@@ -26,17 +26,17 @@
 // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
 #ifdef main
-#undef main
+#	undef main
 #endif // main
 
+#include "create_access_dat.h"
+#include "amazon_resources.h"
+#include "common/language.h"
+#include "common/rect.h"
+#include "martian_resources.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "common/language.h"
-#include "common/rect.h"
-#include "create_access_dat.h"
-#include "amazon_resources.h"
-#include "martian_resources.h"
 
 /**
  * Format of the access.dat file that will be created:
@@ -109,8 +109,8 @@ void writeHeader(int numExecutables) {
 void writeAmazonCommonData() {
 	// Write out the header entry
 	outputFile.seek(8);
-	outputFile.writeByte(1);    // Amazon
-	outputFile.writeByte(2);    // Common data
+	outputFile.writeByte(1); // Amazon
+	outputFile.writeByte(2); // Common data
 	outputFile.writeByte(0);
 	outputFile.writeByte(0);
 	outputFile.writeLong(outputFile.size());
@@ -140,12 +140,11 @@ void writeAmazonCommonData() {
 	outputFile.write(Amazon::FONT2_DATA, Amazon::FONT6x6_DATA_SIZE);
 }
 
-
 void writeMartianCommonData(int argc, char *argv[]) {
 	// Write out the header entry
 	outputFile.seek(16);
-	outputFile.writeByte(2);    // Martian
-	outputFile.writeByte(2);    // Common data
+	outputFile.writeByte(2); // Martian
+	outputFile.writeByte(2); // Common data
 	outputFile.writeByte(0);
 	outputFile.writeByte(0);
 	outputFile.writeLong(outputFile.size());
@@ -173,7 +172,7 @@ void writeMartianCommonData(int argc, char *argv[]) {
 		if (fileChecksum == 10454) {
 			// Write out font data
 			const int DATA_SEGMENT = 0x9600;
-			#define FONT_COUNT 119
+#define FONT_COUNT 119
 			const int FONT_WIDTHS[2] = { 0x47E6, 0x4C9C };
 			const int FONT_CHAR_OFFSETS[2] = { 0x46F8, 0x4BAE };
 			const uint FONT_DATA_SIZE[2] = { 849, 907 };

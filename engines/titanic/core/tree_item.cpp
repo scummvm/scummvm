@@ -30,18 +30,22 @@
 #include "titanic/core/named_item.h"
 #include "titanic/core/node_item.h"
 #include "titanic/core/project_item.h"
-#include "titanic/core/view_item.h"
 #include "titanic/core/room_item.h"
-#include "titanic/pet_control/pet_control.h"
-#include "titanic/game_manager.h"
+#include "titanic/core/view_item.h"
 #include "titanic/game/placeholder/place_holder.h"
+#include "titanic/game_manager.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CTreeItem, CMessageTarget);
 
-CTreeItem::CTreeItem() : _parent(nullptr), _firstChild(nullptr),
-	_nextSibling(nullptr), _priorSibling(nullptr), _field14(0) {
+CTreeItem::CTreeItem()
+  : _parent(nullptr)
+  , _firstChild(nullptr)
+  , _nextSibling(nullptr)
+  , _priorSibling(nullptr)
+  , _field14(0) {
 }
 
 void CTreeItem::dump(int indent) {

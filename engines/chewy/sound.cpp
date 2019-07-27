@@ -21,8 +21,8 @@
  */
 
 #include "audio/audiostream.h"
-#include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "audio/mixer.h"
 #include "common/system.h"
 
 #include "chewy/resource.h"
@@ -54,10 +54,10 @@ void Sound::playSound(int num, bool loop, uint channel) {
 
 void Sound::playSound(byte *data, uint32 size, bool loop, uint channel, DisposeAfterUse::Flag dispose) {
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
-		Audio::makeRawStream(data,
-		size, 22050, Audio::FLAG_UNSIGNED,
-		dispose),
-		loop ? 0 : 1);
+	  Audio::makeRawStream(data,
+	                       size, 22050, Audio::FLAG_UNSIGNED,
+	                       dispose),
+	  loop ? 0 : 1);
 
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle[channel], stream);
 }
@@ -120,10 +120,10 @@ void Sound::playMusic(byte *data, uint32 size, bool loop, DisposeAfterUse::Flag 
 	//convertTMFToMod(data, size, modData, modSize);
 
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
-		Audio::makeRawStream(modData,
-		modSize, 22050, Audio::FLAG_UNSIGNED,
-		dispose),
-		loop ? 0 : 1);
+	  Audio::makeRawStream(modData,
+	                       modSize, 22050, Audio::FLAG_UNSIGNED,
+	                       dispose),
+	  loop ? 0 : 1);
 
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, stream);
 }
@@ -154,10 +154,10 @@ void Sound::playSpeech(int num) {
 	memcpy(data, sound->data, sound->size);
 
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
-		Audio::makeRawStream(data,
-		sound->size, 22050, Audio::FLAG_UNSIGNED,
-		DisposeAfterUse::YES),
-		1);
+	  Audio::makeRawStream(data,
+	                       sound->size, 22050, Audio::FLAG_UNSIGNED,
+	                       DisposeAfterUse::YES),
+	  1);
 
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream);
 
@@ -225,30 +225,38 @@ void Sound::convertTMFToMod(byte *tmfData, uint32 tmfSize, byte *modData, uint32
 	for (int i = 0; i < maxInstruments; i++) {
 		fineTune = *tmfPtr++;
 		instVolume = *tmfPtr++;
-		repeatPoint = READ_BE_UINT16(tmfPtr);	tmfPtr += 2;
-		repeatLength = READ_BE_UINT16(tmfPtr);	tmfPtr += 2;
-		sampleLength = READ_BE_UINT16(tmfPtr);	tmfPtr += 2;
+		repeatPoint = READ_BE_UINT16(tmfPtr);
+		tmfPtr += 2;
+		repeatLength = READ_BE_UINT16(tmfPtr);
+		tmfPtr += 2;
+		sampleLength = READ_BE_UINT16(tmfPtr);
+		tmfPtr += 2;
 
 		// Instrument name
-		memcpy(modPtr, instrumentName, 18);	modPtr += 18;
+		memcpy(modPtr, instrumentName, 18);
+		modPtr += 18;
 		*modPtr++ = ' ';
 		*modPtr++ = i / 10;
 		*modPtr++ = i % 10;
 		*modPtr++ = '\0';
 
-		WRITE_BE_UINT16(modPtr, sampleLength / 2);	modPtr += 2;
+		WRITE_BE_UINT16(modPtr, sampleLength / 2);
+		modPtr += 2;
 		*modPtr++ = fineTune;
 		*modPtr++ = instVolume;
-		WRITE_BE_UINT16(modPtr, repeatPoint / 2);	modPtr += 2;
-		WRITE_BE_UINT16(modPtr, repeatLength / 2);	modPtr += 2;
+		WRITE_BE_UINT16(modPtr, repeatPoint / 2);
+		modPtr += 2;
+		WRITE_BE_UINT16(modPtr, repeatLength / 2);
+		modPtr += 2;
 	}
 
-	*modPtr++ = *tmfPtr++;	// song length
-	*modPtr++ = *tmfPtr++;	// undef
+	*modPtr++ = *tmfPtr++; // song length
+	*modPtr++ = *tmfPtr++; // undef
 	memcpy(modPtr, tmfPtr, 128);
 	modPtr += 128;
 	tmfPtr += 128;
-	WRITE_BE_UINT32(modPtr, MKTAG('M', '.', 'K', '.'));	modPtr += 4;
+	WRITE_BE_UINT32(modPtr, MKTAG('M', '.', 'K', '.'));
+	modPtr += 4;
 	// TODO: 31 bytes instrument positions
 
 	// TODO: notes

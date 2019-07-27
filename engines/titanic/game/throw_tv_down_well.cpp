@@ -26,11 +26,11 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CThrowTVDownWell, CGameObject)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(TimerMsg)
-	ON_MESSAGE(MovieFrameMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(TimerMsg)
+ON_MESSAGE(MovieFrameMsg)
 END_MESSAGE_MAP()
 
 void CThrowTVDownWell::save(SimpleFile *file, int indent) {

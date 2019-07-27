@@ -26,14 +26,16 @@
 // Copyright (c) 2002 Fabrice Bellard
 // Partly based on libdjbfft by D. J. Bernstein
 
-#include "common/cosinetables.h"
 #include "common/fft.h"
-#include "common/util.h"
+#include "common/cosinetables.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
 namespace Common {
 
-FFT::FFT(int bits, int inverse) : _bits(bits), _inverse(inverse) {
+FFT::FFT(int bits, int inverse)
+  : _bits(bits)
+  , _inverse(inverse) {
 	assert((_bits >= 2) && (_bits <= 16));
 
 	int n = 1 << bits;
@@ -52,8 +54,7 @@ FFT::FFT(int bits, int inverse) : _bits(bits), _inverse(inverse) {
 		if (i + 4 <= _bits) {
 			nPoints = 1 << (i + 4);
 			_cosTables[i] = new Common::CosineTable(nPoints);
-		}
-		else
+		} else
 			_cosTables[i] = nullptr;
 	}
 }
@@ -112,69 +113,74 @@ int FFT::splitRadixPermutation(int i, int n, int inverse) {
 
 #define sqrthalf (float)M_SQRT1_2
 
-#define BF(x, y, a, b) { \
-	x = a - b; \
-	y = a + b; \
-}
+#define BF(x, y, a, b) \
+	{                    \
+		x = a - b;         \
+		y = a + b;         \
+	}
 
-#define BUTTERFLIES(a0, a1, a2, a3) { \
-	BF(t3, t5, t5, t1); \
-	BF(a2.re, a0.re, a0.re, t5); \
-	BF(a3.im, a1.im, a1.im, t3); \
-	BF(t4, t6, t2, t6); \
-	BF(a3.re, a1.re, a1.re, t4); \
-	BF(a2.im, a0.im, a0.im, t6); \
-}
+#define BUTTERFLIES(a0, a1, a2, a3) \
+	{                                 \
+		BF(t3, t5, t5, t1);             \
+		BF(a2.re, a0.re, a0.re, t5);    \
+		BF(a3.im, a1.im, a1.im, t3);    \
+		BF(t4, t6, t2, t6);             \
+		BF(a3.re, a1.re, a1.re, t4);    \
+		BF(a2.im, a0.im, a0.im, t6);    \
+	}
 
 // force loading all the inputs before storing any.
 // this is slightly slower for small data, but avoids store->load aliasing
 // for addresses separated by large powers of 2.
-#define BUTTERFLIES_BIG(a0, a1, a2, a3) { \
-	float r0 = a0.re, i0 = a0.im, r1 = a1.re, i1 = a1.im; \
-	BF(t3, t5, t5, t1); \
-	BF(a2.re, a0.re, r0, t5); \
-	BF(a3.im, a1.im, i1, t3); \
-	BF(t4, t6, t2, t6); \
-	BF(a3.re, a1.re, r1, t4); \
-	BF(a2.im, a0.im, i0, t6); \
-}
+#define BUTTERFLIES_BIG(a0, a1, a2, a3)                   \
+	{                                                       \
+		float r0 = a0.re, i0 = a0.im, r1 = a1.re, i1 = a1.im; \
+		BF(t3, t5, t5, t1);                                   \
+		BF(a2.re, a0.re, r0, t5);                             \
+		BF(a3.im, a1.im, i1, t3);                             \
+		BF(t4, t6, t2, t6);                                   \
+		BF(a3.re, a1.re, r1, t4);                             \
+		BF(a2.im, a0.im, i0, t6);                             \
+	}
 
-#define TRANSFORM(a0, a1, a2, a3, wre, wim) { \
-	t1 = a2.re * wre + a2.im * wim; \
-	t2 = a2.im * wre - a2.re * wim; \
-	t5 = a3.re * wre - a3.im * wim; \
-	t6 = a3.im * wre + a3.re * wim; \
-	BUTTERFLIES(a0, a1, a2, a3) \
-}
+#define TRANSFORM(a0, a1, a2, a3, wre, wim) \
+	{                                         \
+		t1 = a2.re * wre + a2.im * wim;         \
+		t2 = a2.im * wre - a2.re * wim;         \
+		t5 = a3.re * wre - a3.im * wim;         \
+		t6 = a3.im * wre + a3.re * wim;         \
+		BUTTERFLIES(a0, a1, a2, a3)             \
+	}
 
-#define TRANSFORM_ZERO(a0, a1, a2, a3) { \
-	t1 = a2.re; \
-	t2 = a2.im; \
-	t5 = a3.re; \
-	t6 = a3.im; \
-	BUTTERFLIES(a0, a1, a2, a3) \
-}
+#define TRANSFORM_ZERO(a0, a1, a2, a3) \
+	{                                    \
+		t1 = a2.re;                        \
+		t2 = a2.im;                        \
+		t5 = a3.re;                        \
+		t6 = a3.im;                        \
+		BUTTERFLIES(a0, a1, a2, a3)        \
+	}
 
 /* z[0...8n-1], w[1...2n-1] */
-#define PASS(name) \
-static void name(Complex *z, const float *wre, unsigned int n) { \
-	float t1, t2, t3, t4, t5, t6; \
-	int o1 = 2 * n; \
-	int o2 = 4 * n; \
-	int o3 = 6 * n; \
-	const float *wim = wre + o1; \
-	n--; \
-	\
-	TRANSFORM_ZERO(z[0], z[o1], z[o2], z[o3]); \
-	TRANSFORM(z[1], z[o1 + 1], z[o2 + 1], z[o3 + 1], wre[1], wim[-1]); \
-	do { \
-		z += 2; \
-		wre += 2; \
-		wim -= 2; \
-		TRANSFORM(z[0], z[o1], z[o2], z[o3], wre[0], wim[0]);\
-		TRANSFORM(z[1], z[o1 + 1], z[o2 + 1], z[o3 + 1], wre[1], wim[-1]);\
-	} while(--n);\
-}
+#define PASS(name)                                                       \
+	static void name(Complex *z, const float *wre, unsigned int n) {       \
+		float t1, t2, t3, t4, t5, t6;                                        \
+		int o1 = 2 * n;                                                      \
+		int o2 = 4 * n;                                                      \
+		int o3 = 6 * n;                                                      \
+		const float *wim = wre + o1;                                         \
+		n--;                                                                 \
+                                                                         \
+		TRANSFORM_ZERO(z[0], z[o1], z[o2], z[o3]);                           \
+		TRANSFORM(z[1], z[o1 + 1], z[o2 + 1], z[o3 + 1], wre[1], wim[-1]);   \
+		do {                                                                 \
+			z += 2;                                                            \
+			wre += 2;                                                          \
+			wim -= 2;                                                          \
+			TRANSFORM(z[0], z[o1], z[o2], z[o3], wre[0], wim[0]);              \
+			TRANSFORM(z[1], z[o1 + 1], z[o2 + 1], z[o3 + 1], wre[1], wim[-1]); \
+		} while (--n);                                                       \
+	}
 
 PASS(pass)
 #undef BUTTERFLIES
@@ -221,11 +227,11 @@ void FFT::fft16(Complex *z) {
 	fft4(z + 12);
 
 	assert(_cosTables[0]);
-	const float * const cosTable = _cosTables[0]->getTable();
+	const float *const cosTable = _cosTables[0]->getTable();
 
 	TRANSFORM_ZERO(z[0], z[4], z[8], z[12]);
 	TRANSFORM(z[2], z[6], z[10], z[14], sqrthalf, sqrthalf);
-	TRANSFORM(z[1], z[5], z[9], z[13], cosTable[1],cosTable[3]);
+	TRANSFORM(z[1], z[5], z[9], z[13], cosTable[1], cosTable[3]);
 	TRANSFORM(z[3], z[7], z[11], z[15], cosTable[3], cosTable[1]);
 }
 

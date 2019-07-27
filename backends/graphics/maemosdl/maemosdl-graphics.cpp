@@ -21,13 +21,13 @@
  */
 #if defined(MAEMO)
 
-#include "common/scummsys.h"
+#	include "common/scummsys.h"
 
-#include "backends/platform/maemo/maemo.h"
-#include "backends/graphics/maemosdl/maemosdl-graphics.h"
+#	include "backends/graphics/maemosdl/maemosdl-graphics.h"
+#	include "backends/platform/maemo/maemo.h"
 
 MaemoSdlGraphicsManager::MaemoSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
-	: SurfaceSdlGraphicsManager(sdlEventSource, window) {
+  : SurfaceSdlGraphicsManager(sdlEventSource, window) {
 }
 
 bool MaemoSdlGraphicsManager::loadGFXMode() {
@@ -43,10 +43,10 @@ bool MaemoSdlGraphicsManager::loadGFXMode() {
 		info.info.x11.lock_func();
 		win = info.info.x11.fswindow;
 		if (win)
-			XChangeProperty(dpy, win, atom_zoom, XA_INTEGER, 32, PropModeReplace, (unsigned char *) &val, 1); // grab zoom keys
+			XChangeProperty(dpy, win, atom_zoom, XA_INTEGER, 32, PropModeReplace, (unsigned char *)&val, 1); // grab zoom keys
 		win = info.info.x11.wmwindow;
 		if (win)
-			XChangeProperty(dpy, win, atom_zoom, XA_INTEGER, 32, PropModeReplace, (unsigned char *) &val, 1); // grab zoom keys
+			XChangeProperty(dpy, win, atom_zoom, XA_INTEGER, 32, PropModeReplace, (unsigned char *)&val, 1); // grab zoom keys
 		info.info.x11.unlock_func();
 	}
 

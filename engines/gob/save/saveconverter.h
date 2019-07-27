@@ -84,13 +84,13 @@ protected:
 	virtual uint32 getActualSize(Common::InSaveFile **save = 0) const;
 
 	SavePartInfo *readInfo(Common::SeekableReadStream &stream,
-		uint32 descLength, bool hasSizes = true) const;
+	                       uint32 descLength, bool hasSizes = true) const;
 	SavePartVars *readVars(Common::SeekableReadStream &stream,
-			uint32 count, bool endian) const;
+	                       uint32 count, bool endian) const;
 	SavePartMem *readMem(Common::SeekableReadStream &stream,
-			uint32 count, bool endian) const;
+	                     uint32 count, bool endian) const;
 	SavePartSprite *readSprite(Common::SeekableReadStream &stream,
-			uint32 width, uint32 height, bool palette) const;
+	                           uint32 width, uint32 height, bool palette) const;
 
 	bool createStream(SaveWriter &writer);
 
@@ -99,7 +99,7 @@ protected:
 
 private:
 	byte *readData(Common::SeekableReadStream &stream,
-			uint32 count, bool endian) const;
+	               uint32 count, bool endian) const;
 };
 
 /** A wrapper for old notes saves. */
@@ -135,7 +135,7 @@ private:
 	static const uint32 kSlotNameLength = 40;
 
 	bool loadFail(SavePartInfo *info, SavePartVars *vars,
-			Common::InSaveFile *save);
+	              Common::InSaveFile *save);
 };
 
 /** A wrapper for old v3-style saves (Goblins 3 and Lost in Time). */
@@ -154,10 +154,10 @@ private:
 	static const uint32 kSlotNameLength = 40;
 
 	bool loadFail(SavePartInfo *info, SavePartVars *vars,
-			SavePartSprite *sprite, Common::InSaveFile *save);
+	              SavePartSprite *sprite, Common::InSaveFile *save);
 
 	void getScreenShotProps(int type,
-			bool &used, uint32 &width, uint32 &height);
+	                        bool &used, uint32 &width, uint32 &height);
 };
 
 /** A wrapper for old v4-style saves (Woodruff). */
@@ -176,7 +176,7 @@ private:
 	static const uint32 kSlotNameLength = 40;
 
 	bool loadFail(SavePartInfo *info, SavePartVars *vars,
-			SavePartMem *props, Common::InSaveFile *save);
+	              SavePartMem *props, Common::InSaveFile *save);
 };
 
 } // End of namespace Gob

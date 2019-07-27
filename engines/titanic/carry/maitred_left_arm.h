@@ -31,11 +31,15 @@ class CMaitreDLeftArm : public CArm {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+
 private:
 	bool _flag;
+
 public:
 	CLASSDEF;
-	CMaitreDLeftArm() : CArm(), _flag(false) {}
+	CMaitreDLeftArm()
+	  : CArm()
+	  , _flag(false) {}
 
 	/**
 	 * Save the data for the class to file

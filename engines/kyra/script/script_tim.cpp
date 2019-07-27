@@ -25,8 +25,8 @@
 #include "kyra/sound/sound.h"
 
 #ifdef ENABLE_LOL
-#include "kyra/engine/lol.h"
-#include "kyra/graphics/screen_lol.h"
+#	include "kyra/engine/lol.h"
+#	include "kyra/graphics/screen_lol.h"
 #endif // ENABLE_LOL
 
 #include "common/iff_container.h"
@@ -34,9 +34,15 @@
 
 namespace Kyra {
 
-TIMInterpreter::TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSystem *system) : _vm(engine), _screen(screen_v2), _system(system), _currentTim(0) {
-#define COMMAND(x) { &TIMInterpreter::x, #x }
-#define COMMAND_UNIMPL() { 0, 0 }
+TIMInterpreter::TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSystem *system)
+  : _vm(engine)
+  , _screen(screen_v2)
+  , _system(system)
+  , _currentTim(0) {
+#define COMMAND(x) \
+	{ &TIMInterpreter::x, #x }
+#define COMMAND_UNIMPL() \
+	{ 0, 0 }
 #define cmd_return(n) cmd_return_##n
 	static const CommandEntry commandProcs[] = {
 		// 0x00
@@ -88,7 +94,7 @@ TIMInterpreter::TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSys
 
 	_langData = 0;
 	_textDisplayed = false;
-	_textAreaBuffer = new uint8[320*40];
+	_textAreaBuffer = new uint8[320 * 40];
 	assert(_textAreaBuffer);
 	if ((_vm->gameFlags().platform == Common::kPlatformPC98 || _vm->gameFlags().isDemo) && _vm->game() == GI_LOL)
 		_drawPage2 = 0;
@@ -110,14 +116,14 @@ TIMInterpreter::~TIMInterpreter() {
 
 bool TIMInterpreter::callback(Common::IFFChunk &chunk) {
 	switch (chunk._type) {
-	case MKTAG('T','E','X','T'):
+	case MKTAG('T', 'E', 'X', 'T'):
 		_tim->text = new byte[chunk._size];
 		assert(_tim->text);
 		if (chunk._stream->read(_tim->text, chunk._size) != chunk._size)
 			error("Couldn't read TEXT chunk from file '%s'", _filename);
 		break;
 
-	case MKTAG('A','V','T','L'):
+	case MKTAG('A', 'V', 'T', 'L'):
 		_avtlChunkSize = chunk._size >> 1;
 		_tim->avtl = new uint16[_avtlChunkSize];
 		assert(_tim->avtl);
@@ -292,9 +298,9 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 	memset(filename, 0, sizeof(filename));
 
 	if (text[0] == '$') {
-		const char *end = strchr(text+1, '$');
+		const char *end = strchr(text + 1, '$');
 		if (end)
-			memcpy(filename, text+1, end-1-text);
+			memcpy(filename, text + 1, end - 1 - text);
 	}
 
 	const bool sjisMode = (_vm->gameFlags().lang == Common::JA_JPN && _vm->gameFlags().use16ColorMode);
@@ -431,20 +437,32 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags, uint8 color) {
 
 void TIMInterpreter::setupTextPalette(uint index, int fadePalette) {
 	static const uint16 palTable[] = {
-		0x00, 0x00, 0x00,
-		0x64, 0x64, 0x64,
-		0x61, 0x51, 0x30,
-		0x29, 0x48, 0x64,
-		0x00, 0x4B, 0x3B,
-		0x64, 0x1E, 0x1E,
+		0x00,
+		0x00,
+		0x00,
+		0x64,
+		0x64,
+		0x64,
+		0x61,
+		0x51,
+		0x30,
+		0x29,
+		0x48,
+		0x64,
+		0x00,
+		0x4B,
+		0x3B,
+		0x64,
+		0x1E,
+		0x1E,
 	};
 
 	for (int i = 0; i < 15; ++i) {
 		uint8 *palette = _screen->getPalette(0).getData() + (240 + i) * 3;
 
-		uint8 c1 = (((15 - i) << 2) * palTable[index*3+0]) / 100;
-		uint8 c2 = (((15 - i) << 2) * palTable[index*3+1]) / 100;
-		uint8 c3 = (((15 - i) << 2) * palTable[index*3+2]) / 100;
+		uint8 c1 = (((15 - i) << 2) * palTable[index * 3 + 0]) / 100;
+		uint8 c2 = (((15 - i) << 2) * palTable[index * 3 + 1]) / 100;
+		uint8 c3 = (((15 - i) << 2) * palTable[index * 3 + 2]) / 100;
 
 		palette[0] = c1;
 		palette[1] = c2;
@@ -577,14 +595,14 @@ char *TIMInterpreter::getTableEntry(uint idx) {
 	if (!_langData)
 		return 0;
 	else
-		return (char *)(_langData + READ_LE_UINT16(_langData + (idx<<1)));
+		return (char *)(_langData + READ_LE_UINT16(_langData + (idx << 1)));
 }
 
 const char *TIMInterpreter::getCTableEntry(uint idx) const {
 	if (!_langData)
 		return 0;
 	else
-		return (const char *)(_langData + READ_LE_UINT16(_langData + (idx<<1)));
+		return (const char *)(_langData + READ_LE_UINT16(_langData + (idx << 1)));
 }
 
 int TIMInterpreter::execCommand(int cmd, const uint16 *param) {
@@ -633,7 +651,7 @@ int TIMInterpreter::cmd_initWSA(const uint16 *param) {
 	slot.y = int16(param[3]);
 	slot.offscreen = param[4];
 	slot.wsaFlags = param[5];
-	const char *filename = (const char *)(_currentTim->text + READ_LE_UINT16(_currentTim->text + (param[1]<<1)));
+	const char *filename = (const char *)(_currentTim->text + READ_LE_UINT16(_currentTim->text + (param[1] << 1)));
 
 	slot.anim = initAnimStruct(index, filename, slot.x, slot.y, 10, slot.offscreen, slot.wsaFlags);
 	return 1;
@@ -746,7 +764,7 @@ int TIMInterpreter::cmd_playVocFile(const uint16 *param) {
 }
 
 int TIMInterpreter::cmd_loadSoundFile(const uint16 *param) {
-	const char *file = (const char *)(_currentTim->text + READ_LE_UINT16(_currentTim->text + (param[0]<<1)));
+	const char *file = (const char *)(_currentTim->text + READ_LE_UINT16(_currentTim->text + (param[0] << 1)));
 
 	_vm->sound()->loadSoundFile(file);
 	if (_vm->game() == GI_LOL)
@@ -838,11 +856,14 @@ int TIMInterpreter::cmd_stopFuncNow(const uint16 *param) {
 #ifdef ENABLE_LOL
 // LOL version of the TIM interpreter
 
-TIMInterpreter_LoL::TIMInterpreter_LoL(LoLEngine *engine, Screen_v2 *screen_v2, OSystem *system) :
-	TIMInterpreter(engine, screen_v2, system), _vm(engine)  {
-	#define COMMAND(x) { &TIMInterpreter_LoL::x, #x }
-	#define COMMAND_UNIMPL() { 0, 0 }
-	#define cmd_return(n) cmd_return_##n
+TIMInterpreter_LoL::TIMInterpreter_LoL(LoLEngine *engine, Screen_v2 *screen_v2, OSystem *system)
+  : TIMInterpreter(engine, screen_v2, system)
+  , _vm(engine) {
+#	define COMMAND(x) \
+		{ &TIMInterpreter_LoL::x, #x }
+#	define COMMAND_UNIMPL() \
+		{ 0, 0 }
+#	define cmd_return(n) cmd_return_##n
 	static const CommandEntry commandProcs[] = {
 		// 0x00
 		COMMAND(cmd_initFunc0),
@@ -884,9 +905,9 @@ TIMInterpreter_LoL::TIMInterpreter_LoL(LoLEngine *engine, Screen_v2 *screen_v2, 
 		COMMAND(cmd_dialogueBox),
 		COMMAND(cmd_return(n1))
 	};
-	#undef cmd_return
-	#undef COMMAND_UNIMPL
-	#undef COMMAND
+#	undef cmd_return
+#	undef COMMAND_UNIMPL
+#	undef COMMAND
 
 	_commands = commandProcs;
 	_commandsSize = ARRAYSIZE(commandProcs);
@@ -1084,10 +1105,10 @@ int TIMInterpreter_LoL::cmd_dialogueBox(const uint16 *param) {
 
 	for (int i = 1; i < 4; i++) {
 		if (param[i] != 0xFFFF) {
-			tmpStr[i-1] = getTableString(param[i]);
+			tmpStr[i - 1] = getTableString(param[i]);
 			cnt++;
 		} else {
-			tmpStr[i-1] = 0;
+			tmpStr[i - 1] = 0;
 		}
 	}
 

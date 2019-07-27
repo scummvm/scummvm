@@ -21,22 +21,24 @@
  */
 
 #include "voyeur/voyeur.h"
-#include "voyeur/animation.h"
-#include "voyeur/screen.h"
-#include "voyeur/staticres.h"
-#include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/scummsys.h"
 #include "graphics/palette.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
+#include "voyeur/animation.h"
+#include "voyeur/screen.h"
+#include "voyeur/staticres.h"
 
 namespace Voyeur {
 
-VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc) : Engine(syst),
-		_gameDescription(gameDesc), _randomSource("Voyeur"),
-		_defaultFontInfo(3, 0xff, 0xff, 0, 0, ALIGN_LEFT, 0, Common::Point(), 1, 1,
-			Common::Point(1, 1), 1, 0, 0) {
+VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
+  : Engine(syst)
+  , _gameDescription(gameDesc)
+  , _randomSource("Voyeur")
+  , _defaultFontInfo(3, 0xff, 0xff, 0, 0, ALIGN_LEFT, 0, Common::Point(), 1, 1,
+                     Common::Point(1, 1), 1, 0, 0) {
 	_debugger = nullptr;
 	_eventsManager = nullptr;
 	_filesManager = nullptr;
@@ -97,7 +99,6 @@ Common::Error VoyeurEngine::run() {
 		if (_iForceDeath >= 1 && _iForceDeath <= 4)
 			_voy->_eventFlags |= EVTFLAG_VICTIM_PRESET;
 
-
 		playStamp();
 		if (!shouldQuit())
 			doTailTitle();
@@ -105,7 +106,6 @@ Common::Error VoyeurEngine::run() {
 
 	return Common::kNoError;
 }
-
 
 int VoyeurEngine::getRandomNumber(int maxNumber) {
 	return _randomSource.getRandomNumber(maxNumber);
@@ -157,7 +157,7 @@ void VoyeurEngine::initInput() {
 }
 
 bool VoyeurEngine::doHeadTitle() {
-//	char dest[144];
+	//	char dest[144];
 
 	_eventsManager->startMainClockInt();
 
@@ -283,7 +283,7 @@ bool VoyeurEngine::doLock() {
 		_screen->_fontPtr->_fontFlags = DISPFLAG_NONE;
 
 		Common::String dateString = "ScummVM";
- 		Common::String displayString = Common::String::format("Last Play %s", dateString.c_str());
+		Common::String displayString = Common::String::format("Last Play %s", dateString.c_str());
 
 		bool firstLoop = true;
 		bool breakFlag = false;
@@ -440,7 +440,7 @@ void VoyeurEngine::doOpening() {
 
 	byte *frameTable = _bVoy->memberAddr(0x215);
 	byte *xyTable = _bVoy->memberAddr(0x216);
-//	byte *whTable = _bVoy->memberAddr(0x217);
+	//	byte *whTable = _bVoy->memberAddr(0x217);
 	int frameIndex = 0;
 	bool creditShow = true;
 	PictureResource *textPic = nullptr;
@@ -451,7 +451,7 @@ void VoyeurEngine::doOpening() {
 	_voy->_audioVisualStartTime = _voy->_RTVNum;
 	_voy->_eventFlags |= EVTFLAG_RECORDING;
 	_gameHour = 4;
-	_gameMinute  = 0;
+	_gameMinute = 0;
 	_audioVideoId = 1;
 	_eventsManager->_videoDead = -1;
 	_voy->addVideoEventStart();
@@ -484,7 +484,7 @@ void VoyeurEngine::doOpening() {
 					// Show a credit
 					textPic = _bVoy->boltEntry(frameIndex / 2 + 0x202)._picResource;
 					textPos = Common::Point(READ_LE_UINT16(xyTable + frameIndex * 2),
-						READ_LE_UINT16(xyTable + (frameIndex + 1) * 2));
+					                        READ_LE_UINT16(xyTable + (frameIndex + 1) * 2));
 
 					creditShow = false;
 				} else {
@@ -565,8 +565,7 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 	_eventsManager->getMouseInfo();
 	_eventsManager->startCursorBlink();
 
-	while (!shouldQuit() && !decoder.endOfVideo() && !_eventsManager->_mouseClicked &&
-			(decoder.getCurFrame() < endFrame)) {
+	while (!shouldQuit() && !decoder.endOfVideo() && !_eventsManager->_mouseClicked && (decoder.getCurFrame() < endFrame)) {
 		if (decoder.needsUpdate()) {
 			const Graphics::Surface *frame = decoder.decodeNextFrame();
 			_screen->blitFrom(*frame);
@@ -603,10 +602,8 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 
 void VoyeurEngine::playAudio(int audioId) {
 	_bVoy->getBoltGroup(0x7F00);
-	_screen->_backgroundPage = _bVoy->boltEntry(0x7F00 +
-		BLIND_TABLE[audioId] * 2)._picResource;
-	_screen->_backColors = _bVoy->boltEntry(0x7F01 +
-		BLIND_TABLE[audioId] * 2)._cMapResource;
+	_screen->_backgroundPage = _bVoy->boltEntry(0x7F00 + BLIND_TABLE[audioId] * 2)._picResource;
+	_screen->_backColors = _bVoy->boltEntry(0x7F01 + BLIND_TABLE[audioId] * 2)._cMapResource;
 
 	_screen->_vPort->setupViewPort();
 	_screen->_backColors->startFade();
@@ -615,13 +612,12 @@ void VoyeurEngine::playAudio(int audioId) {
 	_voy->_eventFlags &= ~EVTFLAG_TIME_DISABLED;
 	_soundManager->setVOCOffset(_voy->_vocSecondsOffset);
 	Common::String filename = _soundManager->getVOCFileName(
-		audioId + 159);
+	  audioId + 159);
 	_soundManager->startVOCPlay(filename);
 	_voy->_eventFlags |= EVTFLAG_RECORDING;
 	_eventsManager->startCursorBlink();
 
-	while (!shouldQuit() && !_eventsManager->_mouseClicked &&
-			_soundManager->getVOCStatus())
+	while (!shouldQuit() && !_eventsManager->_mouseClicked && _soundManager->getVOCStatus())
 		_eventsManager->delayClick(1);
 
 	_voy->_eventFlags |= EVTFLAG_TIME_DISABLED;
@@ -723,8 +719,7 @@ void VoyeurEngine::showEndingNews() {
 		_soundManager->startVOCPlay(fname);
 
 		_eventsManager->getMouseInfo();
-		while (!shouldQuit() && !_eventsManager->_mouseClicked &&
-				_soundManager->getVOCStatus()) {
+		while (!shouldQuit() && !_eventsManager->_mouseClicked && _soundManager->getVOCStatus()) {
 			_eventsManager->delay(1);
 			_eventsManager->getMouseInfo();
 		}
@@ -899,7 +894,7 @@ void VoyeurSavegameHeader::write(Common::OutSaveFile *f, VoyeurEngine *vm, const
 	// Create a thumbnail and save it
 	Graphics::Surface *thumb = new Graphics::Surface();
 	::createThumbnail(thumb, (const byte *)vm->_screen->getPixels(),
-		SCREEN_WIDTH, SCREEN_HEIGHT, vm->_screen->_VGAColors);
+	                  SCREEN_WIDTH, SCREEN_HEIGHT, vm->_screen->_VGAColors);
 	Graphics::saveThumbnail(*f, *thumb);
 	thumb->free();
 	delete thumb;

@@ -25,23 +25,23 @@
 
 #if defined(__ANDROID__)
 
-#include "common/fs.h"
-#include "common/archive.h"
-#include "audio/mixer_intern.h"
-#include "graphics/palette.h"
-#include "graphics/surface.h"
-#include "backends/base-backend.h"
-#include "backends/plugins/posix/posix-provider.h"
-#include "backends/fs/posix/posix-fs-factory.h"
+#	include "audio/mixer_intern.h"
+#	include "backends/base-backend.h"
+#	include "backends/fs/posix/posix-fs-factory.h"
+#	include "backends/plugins/posix/posix-provider.h"
+#	include "common/archive.h"
+#	include "common/fs.h"
+#	include "graphics/palette.h"
+#	include "graphics/surface.h"
 
-#include "backends/platform/android/texture.h"
+#	include "backends/platform/android/texture.h"
 
-#include <pthread.h>
+#	include <pthread.h>
 
-#include <android/log.h>
+#	include <android/log.h>
 
-#include <GLES/gl.h>
-#include <GLES/glext.h>
+#	include <GLES/gl.h>
+#	include <GLES/glext.h>
 
 // toggles start
 //#define ANDROID_DEBUG_ENTER
@@ -51,50 +51,59 @@
 
 extern const char *android_log_tag;
 
-#define _ANDROID_LOG(prio, fmt, args...) __android_log_print(prio, android_log_tag, fmt, ## args)
-#define LOGD(fmt, args...) _ANDROID_LOG(ANDROID_LOG_DEBUG, fmt, ##args)
-#define LOGI(fmt, args...) _ANDROID_LOG(ANDROID_LOG_INFO, fmt, ##args)
-#define LOGW(fmt, args...) _ANDROID_LOG(ANDROID_LOG_WARN, fmt, ##args)
-#define LOGE(fmt, args...) _ANDROID_LOG(ANDROID_LOG_ERROR, fmt, ##args)
+#	define _ANDROID_LOG(prio, fmt, args...) __android_log_print(prio, android_log_tag, fmt, ##args)
+#	define LOGD(fmt, args...) _ANDROID_LOG(ANDROID_LOG_DEBUG, fmt, ##args)
+#	define LOGI(fmt, args...) _ANDROID_LOG(ANDROID_LOG_INFO, fmt, ##args)
+#	define LOGW(fmt, args...) _ANDROID_LOG(ANDROID_LOG_WARN, fmt, ##args)
+#	define LOGE(fmt, args...) _ANDROID_LOG(ANDROID_LOG_ERROR, fmt, ##args)
 
-#ifdef ANDROID_DEBUG_ENTER
-#define ENTER(fmt, args...) LOGD("%s(" fmt ")", __FUNCTION__, ##args)
-#else
-#define ENTER(fmt, args...) do {  } while (false)
-#endif
+#	ifdef ANDROID_DEBUG_ENTER
+#		define ENTER(fmt, args...) LOGD("%s(" fmt ")", __FUNCTION__, ##args)
+#	else
+#		define ENTER(fmt, args...) \
+			do {                      \
+			} while (false)
+#	endif
 
-#ifdef ANDROID_DEBUG_GL
+#	ifdef ANDROID_DEBUG_GL
 extern void checkGlError(const char *expr, const char *file, int line);
 
-#ifdef ANDROID_DEBUG_GL_CALLS
-#define GLCALLLOG(x, before) \
-	do { \
-		if (before) \
-			LOGD("calling '%s' (%s:%d)", x, __FILE__, __LINE__); \
-		else \
-			LOGD("returned from '%s' (%s:%d)", x, __FILE__, __LINE__); \
-	} while (false)
-#else
-#define GLCALLLOG(x, before) do {  } while (false)
-#endif
+#		ifdef ANDROID_DEBUG_GL_CALLS
+#			define GLCALLLOG(x, before)                                     \
+				do {                                                           \
+					if (before)                                                  \
+						LOGD("calling '%s' (%s:%d)", x, __FILE__, __LINE__);       \
+					else                                                         \
+						LOGD("returned from '%s' (%s:%d)", x, __FILE__, __LINE__); \
+				} while (false)
+#		else
+#			define GLCALLLOG(x, before) \
+				do {                       \
+				} while (false)
+#		endif
 
-#define GLCALL(x) \
-	do { \
-		GLCALLLOG(#x, true); \
-		(x); \
-		GLCALLLOG(#x, false); \
-		checkGlError(#x, __FILE__, __LINE__); \
-	} while (false)
+#		define GLCALL(x)                         \
+			do {                                    \
+				GLCALLLOG(#x, true);                  \
+				(x);                                  \
+				GLCALLLOG(#x, false);                 \
+				checkGlError(#x, __FILE__, __LINE__); \
+			} while (false)
 
-#define GLTHREADCHECK \
-	do { \
-		assert(pthread_self() == _main_thread); \
-	} while (false)
+#		define GLTHREADCHECK                       \
+			do {                                      \
+				assert(pthread_self() == _main_thread); \
+			} while (false)
 
-#else
-#define GLCALL(x) do { (x); } while (false)
-#define GLTHREADCHECK do {  } while (false)
-#endif
+#	else
+#		define GLCALL(x) \
+			do {            \
+				(x);          \
+			} while (false)
+#		define GLTHREADCHECK \
+			do {                \
+			} while (false)
+#	endif
 
 class MutexManager;
 
@@ -159,10 +168,10 @@ private:
 
 	void initOverlay();
 
-#ifdef USE_RGB_COLOR
+#	ifdef USE_RGB_COLOR
 	void initTexture(GLESBaseTexture **texture, uint width, uint height,
-						const Graphics::PixelFormat *format);
-#endif
+	                 const Graphics::PixelFormat *format);
+#	endif
 
 	void setupKeymapper();
 	void setCursorPaletteInternal(const byte *colors, uint start, uint num);
@@ -183,18 +192,18 @@ public:
 	virtual bool setGraphicsMode(int mode);
 	virtual int getGraphicsMode() const;
 
-#ifdef USE_RGB_COLOR
+#	ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const;
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
-#endif
+#	endif
 
 	virtual void initSize(uint width, uint height,
-							const Graphics::PixelFormat *format);
+	                      const Graphics::PixelFormat *format);
 
 	enum FixupType {
-		kClear = 0,		// glClear
-		kClearSwap,		// glClear + swapBuffers
-		kClearUpdate	// glClear + updateScreen
+		kClear = 0, // glClear
+		kClearSwap, // glClear + swapBuffers
+		kClearUpdate // glClear + updateScreen
 	};
 
 	void clearScreen(FixupType type, byte count = 1);
@@ -240,13 +249,13 @@ protected:
 
 public:
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y,
-									int w, int h);
+	                              int w, int h);
 	virtual void updateScreen();
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
 	virtual void setShakePos(int shakeOffset);
 	virtual void fillScreen(uint32 col);
-	virtual void setFocusRectangle(const Common::Rect& rect);
+	virtual void setFocusRectangle(const Common::Rect &rect);
 	virtual void clearFocusRectangle();
 
 	virtual void showOverlay();
@@ -254,7 +263,7 @@ public:
 	virtual void clearOverlay();
 	virtual void grabOverlay(void *buf, int pitch);
 	virtual void copyRectToOverlay(const void *buf, int pitch,
-									int x, int y, int w, int h);
+	                               int x, int y, int w, int h);
 	virtual int16 getOverlayHeight();
 	virtual int16 getOverlayWidth();
 	virtual Graphics::PixelFormat getOverlayFormat() const;
@@ -263,9 +272,9 @@ public:
 
 	virtual void warpMouse(int x, int y);
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
-								int hotspotY, uint32 keycolor,
-								bool dontScale,
-								const Graphics::PixelFormat *format);
+	                            int hotspotY, uint32 keycolor,
+	                            bool dontScale,
+	                            const Graphics::PixelFormat *format);
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
 	virtual void pushEvent(const Common::Event &event);
@@ -288,7 +297,7 @@ public:
 	virtual void getTimeAndDate(TimeDate &t) const;
 	virtual void logMessage(LogMessageType::Type type, const char *message);
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s,
-											int priority = 0);
+	                                       int priority = 0);
 	virtual bool openUrl(const Common::String &url);
 	virtual bool hasTextInClipboard();
 	virtual Common::String getTextFromClipboard();

@@ -20,12 +20,12 @@
  *
  */
 
+#include "pink/objects/actors/pda_button_actor.h"
 #include "pink/constants.h"
 #include "pink/cursor_mgr.h"
-#include "pink/pink.h"
-#include "pink/objects/pages/page.h"
-#include "pink/objects/actors/pda_button_actor.h"
 #include "pink/objects/actions/action_cel.h"
+#include "pink/objects/pages/page.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
@@ -39,7 +39,7 @@ void PDAButtonActor::deserialize(Archive &archive) {
 	int type = archive.readDWORD();
 	assert(type != 0 && type != Command::kIncrementFrame && type != Command::kDecrementFrame);
 	if (_page->getGame()->isPeril()) {
-		_command.type = (Command::CommandType) type;
+		_command.type = (Command::CommandType)type;
 	} else {
 		switch (type) {
 		case 1:
@@ -58,7 +58,7 @@ void PDAButtonActor::deserialize(Archive &archive) {
 
 void PDAButtonActor::toConsole() {
 	debugC(6, kPinkDebugLoadingObjects, "PDAButtonActor: _name = %s, _x = %u _y = %u _hideOnStop = %u, _opaque = %u, _commandType = %u, _arg = %s",
-		  _name.c_str(), _x, _y, _hideOnStop, _opaque, (int)_command.type, _command.arg.c_str());
+	       _name.c_str(), _x, _y, _hideOnStop, _opaque, (int)_command.type, _command.arg.c_str());
 }
 
 void PDAButtonActor::onLeftClickMessage() {
@@ -81,7 +81,7 @@ bool PDAButtonActor::isActive() {
 void PDAButtonActor::init(bool paused) {
 	if (_x != -1 && _y != -1) {
 		for (uint i = 0; i < _actions.size(); ++i) {
-			ActionCEL *action = dynamic_cast<ActionCEL*>(_actions[i]);
+			ActionCEL *action = dynamic_cast<ActionCEL *>(_actions[i]);
 			assert(action);
 			action->loadDecoder();
 			Common::Point center;

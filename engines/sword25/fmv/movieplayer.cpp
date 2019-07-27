@@ -34,21 +34,23 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 
-#include "sword25/sword25.h"	// for kDebugScript
 #include "sword25/fmv/movieplayer.h"
 #include "sword25/gfx/graphicengine.h"
 #include "sword25/gfx/panel.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/package/packagemanager.h"
+#include "sword25/sword25.h" // for kDebugScript
 
 namespace Sword25 {
 
 #ifndef FLT_EPSILON
-#define FLT_EPSILON     1.192092896e-07F        /* smallest such that 1.0+FLT_EPSILON != 1.0 */
+#	define FLT_EPSILON 1.192092896e-07F /* smallest such that 1.0+FLT_EPSILON != 1.0 */
 #endif
 
 #ifdef USE_THEORADEC
-MoviePlayer::MoviePlayer(Kernel *pKernel) : Service(pKernel), _decoder() {
+MoviePlayer::MoviePlayer(Kernel *pKernel)
+  : Service(pKernel)
+  , _decoder() {
 	if (!registerScriptBindings())
 		error("Script bindings could not be registered.");
 	else
@@ -69,7 +71,7 @@ bool MoviePlayer::loadMovie(const Common::String &filename, uint z) {
 
 	GraphicEngine *pGfx = Kernel::getInstance()->getGfx();
 
-#ifdef THEORA_INDIRECT_RENDERING
+#	ifdef THEORA_INDIRECT_RENDERING
 	_outputBitmap = pGfx->getMainPanel()->addDynamicBitmap(_decoder.getWidth(), _decoder.getHeight());
 	if (!_outputBitmap.isValid()) {
 		error("Output bitmap for movie playback could not be created.");
@@ -90,7 +92,7 @@ bool MoviePlayer::loadMovie(const Common::String &filename, uint z) {
 	// Center bitmap on screen
 	_outputBitmap->setX((pGfx->getDisplayWidth() - _outputBitmap->getWidth()) / 2);
 	_outputBitmap->setY((pGfx->getDisplayHeight() - _outputBitmap->getHeight()) / 2);
-#else
+#	else
 	_backSurface = pGfx->getSurface();
 
 	_outX = (pGfx->getDisplayWidth() - _decoder.getWidth()) / 2;
@@ -100,7 +102,7 @@ bool MoviePlayer::loadMovie(const Common::String &filename, uint z) {
 		_outX = 0;
 	if (_outY < 0)
 		_outY = 0;
-#endif
+#	endif
 
 	return true;
 }
@@ -133,13 +135,13 @@ void MoviePlayer::update() {
 				// Transfer the next frame
 				assert(s->format.bytesPerPixel == 4);
 
-#ifdef THEORA_INDIRECT_RENDERING
+#	ifdef THEORA_INDIRECT_RENDERING
 				const byte *frameData = (const byte *)s->getPixels();
 				_outputBitmap->setContent(frameData, s->pitch * s->h, 0, s->pitch);
-#else
+#	else
 				g_system->copyRectToScreen(s->getPixels(), s->pitch, _outX, _outY, MIN(s->w, _backSurface->w), MIN(s->h, _backSurface->h));
 				g_system->updateScreen();
-#endif
+#	endif
 			}
 		}
 	}
@@ -177,7 +179,8 @@ double MoviePlayer::getTime() {
 
 #else // USE_THEORADEC
 
-MoviePlayer::MoviePlayer(Kernel *pKernel) : Service(pKernel) {
+MoviePlayer::MoviePlayer(Kernel *pKernel)
+  : Service(pKernel) {
 	if (!registerScriptBindings())
 		error("Script bindings could not be registered.");
 	else

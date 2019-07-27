@@ -35,9 +35,11 @@ class CMagazine : public CCarry {
 	bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
 	bool VisibleMsg(CVisibleMsg *msg);
 	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
+
 private:
 	int _field12C;
 	int _field130;
+
 public:
 	CLASSDEF;
 	CMagazine();

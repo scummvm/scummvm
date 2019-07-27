@@ -29,19 +29,20 @@
 
 namespace GUI {
 
-class RepeatAnimationWrapper: public Animation {
+class RepeatAnimationWrapper : public Animation {
 public:
 	/**
 	 * Animation - animation to repeat
 	 *
 	 * timesToRepeat - 0 means infinite
 	 */
-	RepeatAnimationWrapper(AnimationPtr animation, uint16 timesToRepeat) :
-			_animation(animation), _timesToRepeat(timesToRepeat) {}
+	RepeatAnimationWrapper(AnimationPtr animation, uint16 timesToRepeat)
+	  : _animation(animation)
+	  , _timesToRepeat(timesToRepeat) {}
 
 	virtual ~RepeatAnimationWrapper() {}
 
-	virtual void update(Drawable* drawable, long currentTime);
+	virtual void update(Drawable *drawable, long currentTime);
 
 	/**
 	 * Set start time in millis
@@ -53,7 +54,6 @@ private:
 	uint16 _repeatCount;
 
 	AnimationPtr _animation;
-
 };
 
 } // End of namespace GUI

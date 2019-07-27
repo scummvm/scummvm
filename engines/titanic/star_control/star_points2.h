@@ -23,8 +23,8 @@
 #ifndef TITANIC_STAR_POINTS2_H
 #define TITANIC_STAR_POINTS2_H
 
-#include "titanic/star_control/fvector.h"
 #include "common/array.h"
+#include "titanic/star_control/fvector.h"
 
 namespace Titanic {
 
@@ -38,10 +38,13 @@ class CStarPoints2 {
 	class RootEntry : public Common::Array<CStarPointEntry> {
 	public:
 		int _field0;
-		RootEntry() : _field0(0) {}
+		RootEntry()
+		  : _field0(0) {}
 	};
+
 private:
 	Common::Array<RootEntry> _data;
+
 public:
 	/**
 	 * Initializes the data

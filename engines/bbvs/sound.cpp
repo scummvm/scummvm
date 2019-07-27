@@ -29,7 +29,8 @@
 
 namespace Bbvs {
 
-Sound::Sound() : _stream(0) {
+Sound::Sound()
+  : _stream(0) {
 }
 
 Sound::~Sound() {
@@ -53,7 +54,7 @@ void Sound::play(bool loop) {
 	_stream->rewind();
 	Audio::AudioStream *audioStream = Audio::makeLoopingAudioStream(_stream, loop ? 0 : 1);
 	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_handle, audioStream,
-		-1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+	                                 -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 }
 
 void Sound::stop() {

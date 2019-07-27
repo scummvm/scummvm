@@ -25,7 +25,8 @@
 
 namespace Titanic {
 
-TThist::TThist(TTsentence *sentence) : _status(0) {
+TThist::TThist(TTsentence *sentence)
+  : _status(0) {
 	_sentence = new TTsentence(sentence);
 }
 

@@ -27,36 +27,36 @@
 #include "common/scummsys.h"
 #ifdef USE_FREETYPE2
 
-#include "graphics/fonts/ttf.h"
-#include "graphics/font.h"
-#include "graphics/surface.h"
+#	include "graphics/font.h"
+#	include "graphics/fonts/ttf.h"
+#	include "graphics/surface.h"
 
-#include "common/file.h"
-#include "common/config-manager.h"
-#include "common/singleton.h"
-#include "common/stream.h"
-#include "common/memstream.h"
-#include "common/hashmap.h"
-#include "common/ptr.h"
-#include "common/unzip.h"
+#	include "common/config-manager.h"
+#	include "common/file.h"
+#	include "common/hashmap.h"
+#	include "common/memstream.h"
+#	include "common/ptr.h"
+#	include "common/singleton.h"
+#	include "common/stream.h"
+#	include "common/unzip.h"
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
-#include FT_GLYPH_H
-#include FT_TRUETYPE_TABLES_H
-#include FT_TRUETYPE_TAGS_H
+#	include <ft2build.h>
+#	include FT_FREETYPE_H
+#	include FT_GLYPH_H
+#	include FT_TRUETYPE_TABLES_H
+#	include FT_TRUETYPE_TAGS_H
 
 namespace Graphics {
 
 namespace {
 
-inline int ftCeil26_6(FT_Pos x) {
-	return (x + 63) / 64;
-}
+	inline int ftCeil26_6(FT_Pos x) {
+		return (x + 63) / 64;
+	}
 
-inline int divRoundToNearest(int dividend, int divisor) {
-	return (dividend + (divisor / 2)) / divisor;
-}
+	inline int divRoundToNearest(int dividend, int divisor) {
+		return (dividend + (divisor / 2)) / divisor;
+	}
 
 } // End of anonymous namespace
 
@@ -72,6 +72,7 @@ public:
 
 	bool loadFont(const uint8 *file, const uint32 size, FT_Face &face);
 	void closeFont(FT_Face &face);
+
 private:
 	FT_Library _library;
 	bool _initialized;
@@ -81,9 +82,11 @@ void shutdownTTF() {
 	TTFLibrary::destroy();
 }
 
-#define g_ttf ::Graphics::TTFLibrary::instance()
+#	define g_ttf ::Graphics::TTFLibrary::instance()
 
-TTFLibrary::TTFLibrary() : _library(), _initialized(false) {
+TTFLibrary::TTFLibrary()
+  : _library()
+  , _initialized(false) {
 	if (!FT_Init_FreeType(&_library))
 		_initialized = true;
 }
@@ -125,6 +128,7 @@ public:
 	virtual Common::Rect getBoundingBox(uint32 chr) const;
 
 	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
+
 private:
 	bool _initialized;
 	FT_Face _face;
@@ -160,9 +164,19 @@ private:
 };
 
 TTFFont::TTFFont()
-    : _initialized(false), _face(), _ttfFile(0), _size(0), _width(0), _height(0), _ascent(0),
-      _descent(0), _glyphs(), _loadFlags(FT_LOAD_TARGET_NORMAL), _renderMode(FT_RENDER_MODE_NORMAL),
-      _hasKerning(false), _allowLateCaching(false) {
+  : _initialized(false)
+  , _face()
+  , _ttfFile(0)
+  , _size(0)
+  , _width(0)
+  , _height(0)
+  , _ascent(0)
+  , _descent(0)
+  , _glyphs()
+  , _loadFlags(FT_LOAD_TARGET_NORMAL)
+  , _renderMode(FT_RENDER_MODE_NORMAL)
+  , _hasKerning(false)
+  , _allowLateCaching(false) {
 }
 
 TTFFont::~TTFFont() {
@@ -463,39 +477,39 @@ Common::Rect TTFFont::getBoundingBox(uint32 chr) const {
 
 namespace {
 
-template<typename ColorType>
-void renderGlyph(uint8 *dstPos, const int dstPitch, const uint8 *srcPos, const int srcPitch, const int w, const int h, ColorType color, const PixelFormat &dstFormat) {
-	uint8 sR, sG, sB;
-	dstFormat.colorToRGB(color, sR, sG, sB);
+	template <typename ColorType>
+	void renderGlyph(uint8 *dstPos, const int dstPitch, const uint8 *srcPos, const int srcPitch, const int w, const int h, ColorType color, const PixelFormat &dstFormat) {
+		uint8 sR, sG, sB;
+		dstFormat.colorToRGB(color, sR, sG, sB);
 
-	for (int y = 0; y < h; ++y) {
-		ColorType *rDst = (ColorType *)dstPos;
-		const uint8 *src = srcPos;
+		for (int y = 0; y < h; ++y) {
+			ColorType *rDst = (ColorType *)dstPos;
+			const uint8 *src = srcPos;
 
-		for (int x = 0; x < w; ++x) {
-			if (*src == 255) {
-				*rDst = color;
-			} else if (*src) {
-				const uint8 a = *src;
+			for (int x = 0; x < w; ++x) {
+				if (*src == 255) {
+					*rDst = color;
+				} else if (*src) {
+					const uint8 a = *src;
 
-				uint8 dR, dG, dB;
-				dstFormat.colorToRGB(*rDst, dR, dG, dB);
+					uint8 dR, dG, dB;
+					dstFormat.colorToRGB(*rDst, dR, dG, dB);
 
-				dR = ((255 - a) * dR + a * sR) / 255;
-				dG = ((255 - a) * dG + a * sG) / 255;
-				dB = ((255 - a) * dB + a * sB) / 255;
+					dR = ((255 - a) * dR + a * sR) / 255;
+					dG = ((255 - a) * dG + a * sG) / 255;
+					dB = ((255 - a) * dB + a * sB) / 255;
 
-				*rDst = dstFormat.RGBToColor(dR, dG, dB);
+					*rDst = dstFormat.RGBToColor(dR, dG, dB);
+				}
+
+				++rDst;
+				++src;
 			}
 
-			++rDst;
-			++src;
+			dstPos += dstPitch;
+			srcPos += srcPitch;
 		}
-
-		dstPos += dstPitch;
-		srcPos += srcPitch;
 	}
-}
 
 } // End of anonymous namespace
 
@@ -703,4 +717,3 @@ DECLARE_SINGLETON(Graphics::TTFLibrary);
 } // End of namespace Common
 
 #endif
-

@@ -23,14 +23,16 @@
 // Main vocabulary support functions and word lookup
 
 #include "sci/parser/vocabulary.h"
-#include "sci/resource.h"
-#include "sci/engine/state.h"
-#include "sci/engine/kernel.h"
 #include "sci/console.h"
+#include "sci/engine/kernel.h"
+#include "sci/engine/state.h"
+#include "sci/resource.h"
 
 namespace Sci {
 
-Vocabulary::Vocabulary(ResourceManager *resMan, bool foreign) : _resMan(resMan), _foreign(foreign) {
+Vocabulary::Vocabulary(ResourceManager *resMan, bool foreign)
+  : _resMan(resMan)
+  , _foreign(foreign) {
 	_parserRules = NULL;
 
 	memset(_parserNodes, 0, sizeof(_parserNodes));
@@ -208,7 +210,7 @@ const char *Vocabulary::getAnyWordFromGroup(int group) {
 
 bool Vocabulary::loadSuffixes() {
 	// Determine if we can find a SCI1 suffix vocabulary first
-	Resource* resource = _resMan->findResource(ResourceId(kResourceTypeVocab, _resourceIdSuffixes), true);
+	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeVocab, _resourceIdSuffixes), true);
 	if (!resource)
 		return false; // No vocabulary found
 
@@ -249,7 +251,7 @@ bool Vocabulary::loadSuffixes() {
 }
 
 void Vocabulary::freeSuffixes() {
-	Resource* resource = _resMan->findResource(ResourceId(kResourceTypeVocab, _resourceIdSuffixes), false);
+	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeVocab, _resourceIdSuffixes), false);
 	if (resource)
 		_resMan->unlockResource(resource);
 
@@ -262,7 +264,7 @@ bool Vocabulary::loadBranches() {
 	_parserBranches.clear();
 
 	if (!resource)
-		return false;		// No parser tree data found
+		return false; // No parser tree data found
 
 	int branches_nr = resource->size() / 20;
 
@@ -369,7 +371,7 @@ bool Vocabulary::checkAltInput(Common::String &text, uint16 &cursorPos) {
 					continue;
 				if (i->_prefix && cursorPos > p && cursorPos <= p + i->_inputLength)
 					continue;
-				if (strncmp(i->_input, t+p, i->_inputLength) == 0) {
+				if (strncmp(i->_input, t + p, i->_inputLength) == 0) {
 					// replace
 					const uint32 maxSize = text.size() - cursorPos;
 					if (cursorPos > p + i->_inputLength) {
@@ -398,13 +400,13 @@ bool Vocabulary::checkAltInput(Common::String &text, uint16 &cursorPos) {
 }
 
 // we assume that *word points to an already lowercased word
-void Vocabulary::lookupWord(ResultWordList& retval, const char *word, int word_len) {
+void Vocabulary::lookupWord(ResultWordList &retval, const char *word, int word_len) {
 	retval.clear();
 
 	Common::String tempword(word, word_len);
 
 	// Remove all dashes from tempword
-	for (uint i = 0; i < tempword.size(); ) {
+	for (uint i = 0; i < tempword.size();) {
 		if (tempword[i] == '-')
 			tempword.deleteChar(i);
 		else
@@ -494,7 +496,8 @@ void Vocabulary::debugDecipherSaidBlock(const SciSpan<const byte> &data) {
 				debugN("%s{%03x}", getAnyWordFromGroup(nextItem), nextItem);
 
 				nextItem = 0; // Make sure that group 0xff doesn't abort
-			} else switch (nextItem) {
+			} else
+				switch (nextItem) {
 				case 0xf0:
 					debugN(",");
 					break;
@@ -525,7 +528,7 @@ void Vocabulary::debugDecipherSaidBlock(const SciSpan<const byte> &data) {
 				case 0xf9:
 					debugN(">");
 					break;
-			}
+				}
 		}
 	} while (nextItem != 0xff && addr != data.cend());
 }
@@ -535,8 +538,8 @@ static const byte lowerCaseMap[256] = {
 	0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, // 0x10
 	0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f, // 0x20
 	0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f, // 0x30
-	0x40,  'a',  'b',  'c',  'd',  'e',  'f',  'g',  'h',  'i',  'j',  'k',  'l',  'm',  'n',  'o', // 0x40
-	 'p',  'q',  'r',  's',  't',  'u',  'v',  'w',  'x',  'y',  'z', 0x5b, 0x5c, 0x5d, 0x5e, 0x5f, // 0x50
+	0x40, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', // 0x40
+	'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 0x5b, 0x5c, 0x5d, 0x5e, 0x5f, // 0x50
 	0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f, // 0x60
 	0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f, // 0x70
 	0x87, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x84, 0x86, // 0x80
@@ -549,7 +552,7 @@ static const byte lowerCaseMap[256] = {
 	0xc0, 0xc1, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xcb, 0xcc, 0xcd, 0xce, 0xcf, // 0xc0
 	0xd0, 0xd1, 0xd2, 0xd3, 0xd4, 0xd5, 0xd6, 0xd7, 0xd8, 0xd9, 0xda, 0xdb, 0xdc, 0xdd, 0xde, 0xdf, // 0xd0
 	0xe0, 0xe1, 0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9, 0xea, 0xeb, 0xec, 0xed, 0xee, 0xef, // 0xe0
-	0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff  // 0xf0
+	0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff // 0xf0
 };
 
 bool Vocabulary::tokenizeString(ResultWordListList &retval, const char *sentence, char **error) {
@@ -630,8 +633,8 @@ void Vocabulary::printParserWords() const {
 void _vocab_recursive_ptree_dump(ParseTreeNode *tree, int blanks) {
 	assert(tree);
 
-	ParseTreeNode* lbranch = tree->left;
-	ParseTreeNode* rbranch = tree->right;
+	ParseTreeNode *lbranch = tree->left;
+	ParseTreeNode *rbranch = tree->right;
 	int i;
 
 	if (tree->type == kParseTreeLeafNode) {
@@ -652,7 +655,7 @@ void _vocab_recursive_ptree_dump(ParseTreeNode *tree, int blanks) {
 		} else
 			debugN("%x", lbranch->value);
 		debugN(" ");
-	}/* else debugN ("nil");*/
+	} /* else debugN ("nil");*/
 
 	if (rbranch) {
 		if (rbranch->type == kParseTreeBranchNode)
@@ -664,7 +667,7 @@ void _vocab_recursive_ptree_dump(ParseTreeNode *tree, int blanks) {
 				debugN("/%x", rbranch->value);
 			}
 		}
-	}/* else debugN("nil");*/
+	} /* else debugN("nil");*/
 }
 
 void vocab_dump_parse_tree(const char *tree_name, ParseTreeNode *nodes) {
@@ -703,8 +706,8 @@ void Vocabulary::printParserNodes(int num) {
 			// Note that one or both may be zero pointers, so we can't just
 			// print their values.
 			con->debugPrintf("Branch: ->%p, ->%p\n",
-					(const void *)_parserNodes[i].left,
-					(const void *)_parserNodes[i].right);
+			                 (const void *)_parserNodes[i].left,
+			                 (const void *)_parserNodes[i].right);
 		}
 	}
 }
@@ -717,7 +720,7 @@ int Vocabulary::parseNodes(int *i, int *pos, int type, int nr, int argc, const c
 		return 0;
 
 	if (type == kParseNumber) {
-		_parserNodes[*pos += 1].type = kParseTreeLeafNode;
+		_parserNodes[ *pos += 1].type = kParseTreeLeafNode;
 		_parserNodes[*pos].value = nr;
 		_parserNodes[*pos].right = 0;
 		return *pos;
@@ -757,9 +760,9 @@ int Vocabulary::parseNodes(int *i, int *pos, int type, int nr, int argc, const c
 			return -1;
 
 		if (j == 0)
-			 _parserNodes[oldPos].left = &_parserNodes[newPos];
+			_parserNodes[oldPos].left = &_parserNodes[newPos];
 		else
-			 _parserNodes[oldPos].right = &_parserNodes[newPos];
+			_parserNodes[oldPos].right = &_parserNodes[newPos];
 	}
 
 	const char *token = argv[(*i)++];
@@ -769,23 +772,21 @@ int Vocabulary::parseNodes(int *i, int *pos, int type, int nr, int argc, const c
 	return oldPos;
 }
 
-
 // FIXME: Duplicated from said.cpp
-static int node_major(ParseTreeNode* node) {
+static int node_major(ParseTreeNode *node) {
 	assert(node->type == kParseTreeBranchNode);
 	assert(node->left->type == kParseTreeLeafNode);
 	return node->left->value;
 }
-static bool node_is_terminal(ParseTreeNode* node) {
-	return (node->right->right &&
-            node->right->right->type != kParseTreeBranchNode);
+static bool node_is_terminal(ParseTreeNode *node) {
+	return (node->right->right && node->right->right->type != kParseTreeBranchNode);
 }
-static int node_terminal_value(ParseTreeNode* node) {
+static int node_terminal_value(ParseTreeNode *node) {
 	assert(node_is_terminal(node));
 	return node->right->right->value;
 }
 
-static ParseTreeNode* scanForMajor(ParseTreeNode *tree, int major) {
+static ParseTreeNode *scanForMajor(ParseTreeNode *tree, int major) {
 	assert(tree);
 
 	if (node_is_terminal(tree)) {
@@ -795,7 +796,7 @@ static ParseTreeNode* scanForMajor(ParseTreeNode *tree, int major) {
 			return 0;
 	}
 
-	ParseTreeNode* ptr = tree->right;
+	ParseTreeNode *ptr = tree->right;
 
 	// Scan children
 	while (ptr->right) {

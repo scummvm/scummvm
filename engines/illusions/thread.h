@@ -30,19 +30,19 @@ namespace Illusions {
 class IllusionsEngine;
 
 enum ThreadType {
-	kTTScriptThread      = 1,
-	kTTTimerThread       = 2,
-	kTTTalkThread        = 3,
-	kTTAbortableThread   = 4,
-	kTTSpecialThread     = 5,
-	kTTCauseThread       = 6
+	kTTScriptThread = 1,
+	kTTTimerThread = 2,
+	kTTTalkThread = 3,
+	kTTAbortableThread = 4,
+	kTTSpecialThread = 5,
+	kTTCauseThread = 6
 };
 
 enum ThreadStatus {
-	kTSTerminate     = 1,
-	kTSYield         = 2,
-	kTSSuspend       = 3,
-	kTSRun           = 4
+	kTSTerminate = 1,
+	kTSYield = 2,
+	kTSSuspend = 3,
+	kTSRun = 4
 };
 
 class Thread {
@@ -65,6 +65,7 @@ public:
 	void notify();
 	int update();
 	void terminate();
+
 public:
 	IllusionsEngine *_vm;
 	//field_0 dw
@@ -105,8 +106,9 @@ public:
 	void setThreadSceneId(uint32 threadId, uint32 sceneId);
 	uint32 getThreadSceneId(uint32 threadId);
 	bool isActiveThread(int msgNum);
+
 protected:
-	typedef Common::List<Thread*> List;
+	typedef Common::List<Thread *> List;
 	typedef List::iterator Iterator;
 	IllusionsEngine *_vm;
 	List _threads;

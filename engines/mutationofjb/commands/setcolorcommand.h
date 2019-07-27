@@ -34,10 +34,10 @@ public:
 	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
-
 class SetColorCommand : public SeqCommand {
 public:
-	SetColorCommand(uint8 color) : _color(color) {}
+	SetColorCommand(uint8 color)
+	  : _color(color) {}
 
 	virtual Command::ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const override;

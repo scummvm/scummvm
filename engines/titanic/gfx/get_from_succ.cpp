@@ -26,7 +26,8 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CGetFromSucc, CToggleSwitch);
 
-CGetFromSucc::CGetFromSucc() : CToggleSwitch() {
+CGetFromSucc::CGetFromSucc()
+  : CToggleSwitch() {
 }
 
 void CGetFromSucc::save(SimpleFile *file, int indent) {

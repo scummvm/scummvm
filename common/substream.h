@@ -43,18 +43,22 @@ protected:
 	uint32 _pos;
 	uint32 _end;
 	bool _eos;
+
 public:
 	SubReadStream(ReadStream *parentStream, uint32 end, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO)
-		: _parentStream(parentStream, disposeParentStream),
-		  _pos(0),
-		  _end(end),
-		  _eos(false) {
+	  : _parentStream(parentStream, disposeParentStream)
+	  , _pos(0)
+	  , _end(end)
+	  , _eos(false) {
 		assert(parentStream);
 	}
 
 	virtual bool eos() const { return _eos | _parentStream->eos(); }
 	virtual bool err() const { return _parentStream->err(); }
-	virtual void clearErr() { _eos = false; _parentStream->clearErr(); }
+	virtual void clearErr() {
+		_eos = false;
+		_parentStream->clearErr();
+	}
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
 };
 
@@ -70,6 +74,7 @@ class SeekableSubReadStream : public SubReadStream, public SeekableReadStream {
 protected:
 	SeekableReadStream *_parentStream;
 	uint32 _begin;
+
 public:
 	SeekableSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO);
 
@@ -89,8 +94,8 @@ public:
 class SeekableSubReadStreamEndian : public SeekableSubReadStream, public ReadStreamEndian {
 public:
 	SeekableSubReadStreamEndian(SeekableReadStream *parentStream, uint32 begin, uint32 end, bool bigEndian, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO)
-		: SeekableSubReadStream(parentStream, begin, end, disposeParentStream),
-		  ReadStreamEndian(bigEndian) {
+	  : SeekableSubReadStream(parentStream, begin, end, disposeParentStream)
+	  , ReadStreamEndian(bigEndian) {
 	}
 };
 
@@ -110,12 +115,11 @@ public:
 class SafeSeekableSubReadStream : public SeekableSubReadStream {
 public:
 	SafeSeekableSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO)
-		: SeekableSubReadStream(parentStream, begin, end, disposeParentStream) {
+	  : SeekableSubReadStream(parentStream, begin, end, disposeParentStream) {
 	}
 
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
 };
-
 
 } // End of namespace Common
 

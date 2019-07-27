@@ -84,16 +84,16 @@ void EventManager::checkInput() {
 			setGraphicsWindow(false, true, true);
 			break;
 #endif
-			case Common::EVENT_MOUSEMOVE:
-				_input.justMoved = true;
-				_input.mouseX = event.mouse.x * cameraZoom;
-				_input.mouseY = event.mouse.y * cameraZoom;
-				break;
+		case Common::EVENT_MOUSEMOVE:
+			_input.justMoved = true;
+			_input.mouseX = event.mouse.x * cameraZoom;
+			_input.mouseY = event.mouse.y * cameraZoom;
+			break;
 
-			case Common::EVENT_LBUTTONDOWN:
-				_input.leftClick = true;
-				_input.mouseX = event.mouse.x * cameraZoom;
-				_input.mouseY = event.mouse.y * cameraZoom;
+		case Common::EVENT_LBUTTONDOWN:
+			_input.leftClick = true;
+			_input.mouseX = event.mouse.x * cameraZoom;
+			_input.mouseY = event.mouse.y * cameraZoom;
 #if 0
 				if (SDL_GetModState() & KMOD_CTRL) {
 					input.rightClick = true;
@@ -103,47 +103,47 @@ void EventManager::checkInput() {
 					fakeRightclick = false;
 				}
 #endif
+			break;
+
+		case Common::EVENT_RBUTTONDOWN:
+			_input.rightClick = true;
+			_input.mouseX = event.mouse.x * cameraZoom;
+			_input.mouseY = event.mouse.y * cameraZoom;
+			break;
+
+		case Common::EVENT_LBUTTONUP:
+			_input.leftRelease = true;
+			_input.mouseX = event.mouse.x * cameraZoom;
+			_input.mouseY = event.mouse.y * cameraZoom;
+			break;
+
+		case Common::EVENT_RBUTTONUP:
+			_input.rightRelease = true;
+			_input.mouseX = event.mouse.x * cameraZoom;
+			_input.mouseY = event.mouse.y * cameraZoom;
+			break;
+
+		case Common::EVENT_KEYDOWN:
+			switch (event.kbd.keycode) {
+
+			case Common::KEYCODE_BACKSPACE:
+				// fall through
+			case Common::KEYCODE_DELETE:
+				_input.keyPressed = Common::KEYCODE_DELETE;
 				break;
-
-			case Common::EVENT_RBUTTONDOWN:
-				_input.rightClick = true;
-				_input.mouseX = event.mouse.x * cameraZoom;
-				_input.mouseY = event.mouse.y * cameraZoom;
-				break;
-
-			case Common::EVENT_LBUTTONUP:
-				_input.leftRelease = true;
-				_input.mouseX = event.mouse.x * cameraZoom;
-				_input.mouseY = event.mouse.y * cameraZoom;
-				break;
-
-			case Common::EVENT_RBUTTONUP:
-				_input.rightRelease = true;
-				_input.mouseX = event.mouse.x * cameraZoom;
-				_input.mouseY = event.mouse.y * cameraZoom;
-				break;
-
-			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-
-					case Common::KEYCODE_BACKSPACE:
-						// fall through
-					case Common::KEYCODE_DELETE:
-						_input.keyPressed = Common::KEYCODE_DELETE;
-						break;
-					default:
-						_input.keyPressed = event.kbd.keycode;
-						break;
-				}
-				break;
-
-			case Common::EVENT_QUIT:
-				_weAreDoneSoQuit = 1;
-				// TODO: if _reallyWantToQuit, popup a message box to confirm
-				break;
-
 			default:
+				_input.keyPressed = event.kbd.keycode;
 				break;
+			}
+			break;
+
+		case Common::EVENT_QUIT:
+			_weAreDoneSoQuit = 1;
+			// TODO: if _reallyWantToQuit, popup a message box to confirm
+			break;
+
+		default:
+			break;
 		}
 	}
 }
@@ -157,7 +157,7 @@ bool EventManager::handleInput() {
 		} else {
 			l = 1;
 
-			launchResult->setVariable(SVT_INT, 0/*launch(launchMe) > 31*/); //TODO:false value
+			launchResult->setVariable(SVT_INT, 0 /*launch(launchMe) > 31*/); //TODO:false value
 			_vm->launchMe.clear();
 			launchResult = nullptr;
 		}
@@ -177,7 +177,7 @@ bool EventManager::handleInput() {
 	}
 	_input.justMoved = false;
 
-	if (_vm-> _regionMan->isRegionChanged()&& _currentEvents->func[kFocus]) {
+	if (_vm->_regionMan->isRegionChanged() && _currentEvents->func[kFocus]) {
 		VariableStack *tempStack = new VariableStack;
 		if (!checkNew(tempStack))
 			return false;
@@ -210,19 +210,19 @@ bool EventManager::handleInput() {
 	if (_input.keyPressed && _currentEvents->func[kSpace]) {
 		Common::String tempString = "";
 		switch (_input.keyPressed) {
-			case 127:
-				tempString = "BACKSPACE";
-				break;
-			case 9:
-				tempString = "TAB";
-				break;
-			case 13:
-				tempString = "ENTER";
-				break;
-			case 27:
-				tempString = "ESCAPE";
-				break;
-				/*
+		case 127:
+			tempString = "BACKSPACE";
+			break;
+		case 9:
+			tempString = "TAB";
+			break;
+		case 13:
+			tempString = "ENTER";
+			break;
+		case 27:
+			tempString = "ESCAPE";
+			break;
+			/*
 				 case 1112:  tempString = copyString ("ALT+F1");     break;
 				 case 1113:  tempString = copyString ("ALT+F2");     break;
 				 case 1114:  tempString = copyString ("ALT+F3");     break;
@@ -238,82 +238,82 @@ bool EventManager::handleInput() {
 
 				 case 2019:  tempString = copyString ("PAUSE");      break;
 				 */
-			case 63276:
-				tempString = "PAGE UP";
-				break;
-			case 63277:
-				tempString = "PAGE DOWN";
-				break;
-			case 63275:
-				tempString = "END";
-				break;
-			case 63273:
-				tempString = "HOME";
-				break;
-			case 63234:
-				tempString = "LEFT";
-				break;
-			case 63232:
-				tempString = "UP";
-				break;
-			case 63235:
-				tempString = "RIGHT";
-				break;
-			case 63233:
-				tempString = "DOWN";
-				break;
-				/*
+		case 63276:
+			tempString = "PAGE UP";
+			break;
+		case 63277:
+			tempString = "PAGE DOWN";
+			break;
+		case 63275:
+			tempString = "END";
+			break;
+		case 63273:
+			tempString = "HOME";
+			break;
+		case 63234:
+			tempString = "LEFT";
+			break;
+		case 63232:
+			tempString = "UP";
+			break;
+		case 63235:
+			tempString = "RIGHT";
+			break;
+		case 63233:
+			tempString = "DOWN";
+			break;
+			/*
 				 case 2045:   tempString = copyString ("INSERT");     break;
 				 case 2046:   tempString = copyString ("DELETE");     break;
 				 */
-			case 63236:
-				tempString = "F1";
-				break;
-			case 63237:
-				tempString = "F2";
-				break;
-			case 63238:
-				tempString = "F3";
-				break;
-			case 63239:
-				tempString = "F4";
-				break;
-			case 63240:
-				tempString = "F5";
-				break;
-			case 63241:
-				tempString = "F6";
-				break;
-			case 63242:
-				tempString = "F7";
-				break;
-			case 63243:
-				tempString = "F8";
-				break;
-			case 63244:
-				tempString = "F9";
-				break;
-			case 63245:
-				tempString = "F10";
-				break;
-			case 63246:
-				tempString = "F11";
-				break;
-			case 63247:
-				tempString = "F12";
-				break;
+		case 63236:
+			tempString = "F1";
+			break;
+		case 63237:
+			tempString = "F2";
+			break;
+		case 63238:
+			tempString = "F3";
+			break;
+		case 63239:
+			tempString = "F4";
+			break;
+		case 63240:
+			tempString = "F5";
+			break;
+		case 63241:
+			tempString = "F6";
+			break;
+		case 63242:
+			tempString = "F7";
+			break;
+		case 63243:
+			tempString = "F8";
+			break;
+		case 63244:
+			tempString = "F9";
+			break;
+		case 63245:
+			tempString = "F10";
+			break;
+		case 63246:
+			tempString = "F11";
+			break;
+		case 63247:
+			tempString = "F12";
+			break;
 
-			default:
-				if (_input.keyPressed >= 256) {
-					char tmp[7] = "ABCDEF";
-					sprintf(tmp, "%i", _input.keyPressed);
-					tempString = tmp;
-					//}
-				} else {
-					char tmp[2] = " ";
-					tmp[0] = _input.keyPressed;
-					tempString = tmp;
-				}
+		default:
+			if (_input.keyPressed >= 256) {
+				char tmp[7] = "ABCDEF";
+				sprintf(tmp, "%i", _input.keyPressed);
+				tempString = tmp;
+				//}
+			} else {
+				char tmp[2] = " ";
+				tmp[0] = _input.keyPressed;
+				tempString = tmp;
+			}
 		}
 
 		if (!tempString.empty()) {

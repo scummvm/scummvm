@@ -20,23 +20,23 @@
  *
  */
 
-#include "prince/prince.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
+#include "prince/prince.h"
 #include "video/avi_decoder.h"
 
 namespace Prince {
 
 void PrinceEngine::playVideo(Common::String videoFilename) {
-        // Set the correct video mode
-        initGraphics(640, 480, nullptr);
-        if (_system->getScreenFormat().bytesPerPixel == 1) {
-                warning("Couldn't switch to a RGB color video mode to play a video.");
-                return;
-        }
+	// Set the correct video mode
+	initGraphics(640, 480, nullptr);
+	if (_system->getScreenFormat().bytesPerPixel == 1) {
+		warning("Couldn't switch to a RGB color video mode to play a video.");
+		return;
+	}
 
-        debug(2, "Screen format: %s", _system->getScreenFormat().toString().c_str());
+	debug(2, "Screen format: %s", _system->getScreenFormat().toString().c_str());
 
 	Video::VideoDecoder *videoDecoder = new Video::AVIDecoder();
 	if (!videoDecoder->loadFile(videoFilename)) {
@@ -68,8 +68,7 @@ void PrinceEngine::playVideo(Common::String videoFilename) {
 
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
-			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) ||
-				event.type == Common::EVENT_LBUTTONUP)
+			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
 				skipVideo = true;
 		}
 

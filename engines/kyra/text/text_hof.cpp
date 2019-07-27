@@ -28,7 +28,8 @@
 namespace Kyra {
 
 TextDisplayer_HoF::TextDisplayer_HoF(KyraEngine_HoF *vm, Screen_v2 *screen)
-	: TextDisplayer(vm, screen), _vm(vm) {
+  : TextDisplayer(vm, screen)
+  , _vm(vm) {
 }
 
 void TextDisplayer_HoF::backupTalkTextMessageBkgd(int srcPage, int dstPage) {
@@ -57,7 +58,7 @@ void TextDisplayer_HoF::printCustomCharacterText(const char *text, int x, int y,
 	calcWidestLineBounds(x1, x2, w, x);
 
 	_talkCoords.x = x1;
-	_talkCoords.w = w+2;
+	_talkCoords.w = w + 2;
 	_talkCoords.y = y;
 	_talkMessageY = y;
 	_talkMessageH = h;
@@ -98,7 +99,7 @@ char *TextDisplayer_HoF::preprocessString(const char *str) {
 	int maxTextWidth = (_vm->language() == 0) ? 176 : 240;
 
 	if (textWidth > maxTextWidth) {
-		if (textWidth > (maxTextWidth*2)) {
+		if (textWidth > (maxTextWidth * 2)) {
 			int count = getCharLength(p, textWidth / 3);
 			int offs = dropCRIntoString(p, count);
 			p += count + offs;
@@ -233,7 +234,7 @@ void KyraEngine_HoF::objectChatInit(const char *str, int object, int vocHigh, in
 	yPos -= lineNum * 10;
 	yPos = MAX(yPos, 0);
 	_text->_talkMessageY = yPos;
-	_text->_talkMessageH = lineNum*10;
+	_text->_talkMessageH = lineNum * 10;
 
 	int width = _text->getWidestLineWidth(lineNum);
 	_text->calcWidestLineBounds(xPos, yPos, width, xPos);
@@ -269,7 +270,7 @@ void KyraEngine_HoF::objectChatPrintText(const char *str, int object) {
 	_text->calcWidestLineBounds(cX1, cX2, maxWidth, x);
 
 	for (int i = 0; i < lineNum; ++i) {
-		str = &_text->_talkSubstrings[i*_text->maxSubstringLen()];
+		str = &_text->_talkSubstrings[i * _text->maxSubstringLen()];
 
 		int y = _text->_talkMessageY + i * 10;
 		x = _text->getCenterStringX(str, cX1, cX2);
@@ -622,7 +623,7 @@ void KyraEngine_HoF::npcChatSequence(const char *str, int objectId, int vocHigh,
 
 	uint32 ct = chatCalcDuration(str);
 	uint32 time = _system->getMillis();
-	_chatEndTime =  time + (3 + ct) * _tickLength;
+	_chatEndTime = time + (3 + ct) * _tickLength;
 	uint32 chatAnimEndTime = time + (3 + (ct >> 1)) * _tickLength;
 
 	if (_chatVocHigh >= 0) {

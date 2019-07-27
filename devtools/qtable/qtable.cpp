@@ -1,13 +1,13 @@
 // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
 #ifdef main
-#undef main
+#	undef main
 #endif // main
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 /*
   Table file format for scummvm/queen
@@ -24,12 +24,12 @@
 	}
 */
 
-#define MAX_VERSIONS  20
-#define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))
+#define MAX_VERSIONS 20
+#define ARRAYSIZE(x) (sizeof(x) / sizeof(x[0]))
 
-typedef unsigned char   uint8;
+typedef unsigned char uint8;
 typedef unsigned short uint16;
-typedef unsigned int   uint32;
+typedef unsigned int uint32;
 
 typedef struct DataFileEntry {
 	uint8 bundle;
@@ -58,43 +58,42 @@ typedef struct GameVersion {
 	uint32 queenTblOffset;
 } GameVersion;
 
-#include "fat_eng_floppy.h"
-#include "fat_eng_cdrom.h"
-#include "fat_fre_floppy.h"
-#include "fat_fre_cdrom.h"
-#include "fat_ger_floppy.h"
-#include "fat_ger_cdrom.h"
-#include "fat_ita_floppy.h"
-#include "fat_ita_cdrom.h"
-#include "fat_spa_cdrom.h"
-#include "fat_heb_cdrom.h"
-#include "fat_pc_demo_pcgames.h"
-#include "fat_pc_demo.h"
-#include "fat_pc_interview.h"
-#include "fat_amiga_eng_floppy.h"
 #include "fat_amiga_demo.h"
+#include "fat_amiga_eng_floppy.h"
 #include "fat_amiga_interview.h"
+#include "fat_eng_cdrom.h"
+#include "fat_eng_floppy.h"
+#include "fat_fre_cdrom.h"
+#include "fat_fre_floppy.h"
+#include "fat_ger_cdrom.h"
+#include "fat_ger_floppy.h"
+#include "fat_heb_cdrom.h"
+#include "fat_ita_cdrom.h"
+#include "fat_ita_floppy.h"
+#include "fat_pc_demo.h"
+#include "fat_pc_demo_pcgames.h"
+#include "fat_pc_interview.h"
+#include "fat_spa_cdrom.h"
 
-
-#define FAT(x) x, (sizeof(x)/sizeof(x[0]))
+#define FAT(x) x, (sizeof(x) / sizeof(x[0]))
 
 static GameVersion gameVersionsTable[] = {
-	{ "PEM10",  22677657, FAT(fatEngFl),          1, 0 },
-	{ "CEM10", 190787021, FAT(fatEngCd),          1, 0 },
-	{ "PFM10",  22157304, FAT(fatFreFl),          1, 0 },
-	{ "CFM10", 186689095, FAT(fatFreCd),          1, 0 },
-	{ "PGM10",  22240013, FAT(fatGerFl),          1, 0 },
-	{ "CGM10", 217648975, FAT(fatGerCd),          1, 0 },
-	{ "PIM10",  22461366, FAT(fatItaFl),          1, 0 },
-	{ "CIM10", 190795582, FAT(fatItaCd),          1, 0 },
-	{ "CSM10", 190730602, FAT(fatSpaCd),          1, 0 },
-	{ "CHM10", 190705558, FAT(fatHebCd),          1, 0 },
-	{ "PE100",   3724538, FAT(fatPCDemoPcGames),  1, 0 },
-	{ "PE100",   3732177, FAT(fatPCDemo),         1, 0 },
-	{ "PEint",   1915913, FAT(fatPCInterview),    1, 0 },
-	{ "aEM10",    351775, FAT(fatAmigaEngFl),     2, 0 },
-	{ "CE101",    563335, FAT(fatAmigaDemo),      2, 0 },
-	{ "PE100",    597032, FAT(fatAmigaInterview), 2, 0 }
+	{ "PEM10", 22677657, FAT(fatEngFl), 1, 0 },
+	{ "CEM10", 190787021, FAT(fatEngCd), 1, 0 },
+	{ "PFM10", 22157304, FAT(fatFreFl), 1, 0 },
+	{ "CFM10", 186689095, FAT(fatFreCd), 1, 0 },
+	{ "PGM10", 22240013, FAT(fatGerFl), 1, 0 },
+	{ "CGM10", 217648975, FAT(fatGerCd), 1, 0 },
+	{ "PIM10", 22461366, FAT(fatItaFl), 1, 0 },
+	{ "CIM10", 190795582, FAT(fatItaCd), 1, 0 },
+	{ "CSM10", 190730602, FAT(fatSpaCd), 1, 0 },
+	{ "CHM10", 190705558, FAT(fatHebCd), 1, 0 },
+	{ "PE100", 3724538, FAT(fatPCDemoPcGames), 1, 0 },
+	{ "PE100", 3732177, FAT(fatPCDemo), 1, 0 },
+	{ "PEint", 1915913, FAT(fatPCInterview), 1, 0 },
+	{ "aEM10", 351775, FAT(fatAmigaEngFl), 2, 0 },
+	{ "CE101", 563335, FAT(fatAmigaDemo), 2, 0 },
+	{ "PE100", 597032, FAT(fatAmigaInterview), 2, 0 }
 };
 
 static const uint32 QTBL_TAG = 0x5154424C;

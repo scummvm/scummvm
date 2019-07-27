@@ -22,22 +22,22 @@
 
 #ifdef ENABLE_LOL
 
-#include "kyra/gui/gui_lol.h"
-#include "kyra/engine/lol.h"
-#include "kyra/graphics/screen_lol.h"
-#include "kyra/resource/resource.h"
-#include "kyra/engine/util.h"
-#include "kyra/sound/sound.h"
+#	include "kyra/gui/gui_lol.h"
+#	include "kyra/engine/lol.h"
+#	include "kyra/engine/util.h"
+#	include "kyra/graphics/screen_lol.h"
+#	include "kyra/resource/resource.h"
+#	include "kyra/sound/sound.h"
 
-#include "common/savefile.h"
-#include "common/system.h"
-#include "common/config-manager.h"
+#	include "common/config-manager.h"
+#	include "common/savefile.h"
+#	include "common/system.h"
 
-#include "graphics/scaler.h"
+#	include "graphics/scaler.h"
 
-#include "backends/keymapper/keymapper.h"
+#	include "backends/keymapper/keymapper.h"
 
-#include "base/version.h"
+#	include "base/version.h"
 
 namespace Kyra {
 
@@ -399,7 +399,7 @@ void LoLEngine::gui_drawCharPortraitWithStats(int charNum) {
 				handIndex = _itemsInPlay[_characters[charNum].items[0]].itemPropertyIndex;
 		}
 
-		handIndex =  _gameShapeMap[(_itemProperties[handIndex].shpIndex << 1) + 1];
+		handIndex = _gameShapeMap[(_itemProperties[handIndex].shpIndex << 1) + 1];
 		if (handIndex == _gameShapeMap[1]) { // draw raceClassSex specific hand shape
 			handIndex = _characters[charNum].raceClassSex - 1;
 			if (handIndex < 0)
@@ -525,10 +525,10 @@ void LoLEngine::calcCharPortraitXpos() {
 }
 
 void LoLEngine::gui_drawMoneyBox(int pageNum) {
-	static const uint16 moneyX256[] = { 0x128, 0x134, 0x12B, 0x131, 0x12E};
-	static const uint16 moneyY256[] = { 0x73, 0x73, 0x74, 0x74, 0x75};
-	static const uint16 moneyX16[] = { 0x127, 0x133, 0x12A, 0x130, 0x12D};
-	static const uint16 moneyY16[] = { 0x74, 0x74, 0x75, 0x75, 0x76};
+	static const uint16 moneyX256[] = { 0x128, 0x134, 0x12B, 0x131, 0x12E };
+	static const uint16 moneyY256[] = { 0x73, 0x73, 0x74, 0x74, 0x75 };
+	static const uint16 moneyX16[] = { 0x127, 0x133, 0x12A, 0x130, 0x12D };
+	static const uint16 moneyY16[] = { 0x74, 0x74, 0x75, 0x75, 0x76 };
 
 	int backupPage = _screen->_curPage;
 	_screen->_curPage = pageNum;
@@ -1335,8 +1335,7 @@ int LoLEngine::clickedInventorySlot(Button *button) {
 	uint16 slotItem = _inventory[slot];
 	int hItem = _itemInHand;
 
-	if ((_itemsInPlay[hItem].itemPropertyIndex == 281 || _itemsInPlay[slotItem].itemPropertyIndex == 281) &&
-	        (_itemsInPlay[hItem].itemPropertyIndex == 220 || _itemsInPlay[slotItem].itemPropertyIndex == 220)) {
+	if ((_itemsInPlay[hItem].itemPropertyIndex == 281 || _itemsInPlay[slotItem].itemPropertyIndex == 281) && (_itemsInPlay[hItem].itemPropertyIndex == 220 || _itemsInPlay[slotItem].itemPropertyIndex == 220)) {
 		// merge ruby of truth
 
 		WSAMovie_v2 *wsa = new WSAMovie_v2(this);
@@ -1840,7 +1839,10 @@ int LoLEngine::clickedStatusIcon(Button *button) {
 	return 1;
 }
 
-GUI_LoL::GUI_LoL(LoLEngine *vm) : GUI_v1(vm), _vm(vm), _screen(vm->_screen) {
+GUI_LoL::GUI_LoL(LoLEngine *vm)
+  : GUI_v1(vm)
+  , _vm(vm)
+  , _screen(vm->_screen) {
 	_scrollUpFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::scrollUp);
 	_scrollDownFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::scrollDown);
 
@@ -1967,7 +1969,7 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 
 	uint16 flags = 0;
 
-	if (1/*!_screen_cursorDisable*/) {
+	if (1 /*!_screen_cursorDisable*/) {
 		uint16 inFlags = inputFlag & 0xFF;
 		uint16 temp = 0;
 
@@ -2062,7 +2064,7 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 		bool progressSwitch = false;
 		if (!_specialProcessButton) {
 			progressSwitch = progress;
-		} else  {
+		} else {
 			if (_specialProcessButton->flags & 0x40)
 				progressSwitch = (_specialProcessButton == buttonList);
 			else
@@ -2346,7 +2348,7 @@ int GUI_LoL::runMenu(Menu &menu) {
 				printMenuText(getMenuItemLabel(_currentMenu->item[i]), _currentMenu->x + _currentMenu->item[i].labelX, _currentMenu->y + _currentMenu->item[i].labelY, _currentMenu->item[i].textColor, 0, 10);
 
 				int volume = _vm->getVolume((KyraEngine_v1::kVolumeEntry)(i - 1));
-				_screen->drawShape(_screen->_curPage, _vm->_gameShapes[85], tX , tY, 0, 0x10);
+				_screen->drawShape(_screen->_curPage, _vm->_gameShapes[85], tX, tY, 0, 0x10);
 				_screen->drawShape(_screen->_curPage, _vm->_gameShapes[87], tX + 2 + oX[1], tY, 0, 0x10);
 				_screen->drawShape(_screen->_curPage, _vm->_gameShapes[86], tX + oX[1] + volume, tY, 0, 0x10);
 			}
@@ -2500,7 +2502,7 @@ void GUI_LoL::setupSaveMenuSlots(Menu &menu, int num) {
 		slotOffs = 1;
 	}
 
-	int saveSlotMaxLen = ((_screen->getScreenDim(8))->w << 3)  - _screen->getCharWidth('W');
+	int saveSlotMaxLen = ((_screen->getScreenDim(8))->w << 3) - _screen->getCharWidth('W');
 
 	for (int i = startSlot; i < num && _savegameOffset + i - slotOffs < _savegameListSize; ++i) {
 		if (_savegameList[i + _savegameOffset - slotOffs]) {
@@ -2509,7 +2511,7 @@ void GUI_LoL::setupSaveMenuSlots(Menu &menu, int num) {
 			// Trim long GMM save descriptions to fit our save slots
 			int fC = _screen->getTextWidth(s);
 			while (s[0] && fC >= saveSlotMaxLen) {
-				s[strlen(s) - 1]  = 0;
+				s[strlen(s) - 1] = 0;
 				fC = _screen->getTextWidth(s);
 			}
 
@@ -2535,7 +2537,7 @@ void GUI_LoL::sortSaveSlots() {
 }
 
 void GUI_LoL::printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 flags) {
-	_screen->fprintString("%s", x, y, c0, c1, _vm->gameFlags().use16ColorMode ? (flags & 3) : flags , str);
+	_screen->fprintString("%s", x, y, c0, c1, _vm->gameFlags().use16ColorMode ? (flags & 3) : flags, str);
 }
 
 int GUI_LoL::getMenuCenterStringX(const char *str, int x1, int x2) {
@@ -2551,10 +2553,10 @@ int GUI_LoL::getInput() {
 	if (!_displayMenu)
 		return 0;
 
-#ifdef ENABLE_KEYMAPPER
+#	ifdef ENABLE_KEYMAPPER
 	Common::Keymapper *const keymapper = _vm->getEventManager()->getKeymapper();
 	keymapper->pushKeymap(Common::kGlobalKeymapName);
-#endif
+#	endif
 
 	Common::Point p = _vm->getMousePos();
 	_vm->_mouseX = p.x;
@@ -2593,9 +2595,9 @@ int GUI_LoL::getInput() {
 
 	_vm->delay(8);
 
-#ifdef ENABLE_KEYMAPPER
+#	ifdef ENABLE_KEYMAPPER
 	keymapper->popKeymap(Common::kGlobalKeymapName);
-#endif
+#	endif
 
 	return inputFlag & 0x8000 ? 1 : 0;
 }

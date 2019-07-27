@@ -60,7 +60,6 @@ private:
 	bool _fullUpdate;
 
 	Common::List<Common::Rect> _dirtyRects; ///< List of currently dirty rectangles
-
 };
 
 } // End of namespace Draci

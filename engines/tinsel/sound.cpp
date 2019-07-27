@@ -24,24 +24,23 @@
 #include "tinsel/sound.h"
 
 #include "tinsel/adpcm.h"
-#include "tinsel/dw.h"
-#include "tinsel/config.h"
-#include "tinsel/music.h"
-#include "tinsel/tinsel.h"
-#include "tinsel/sysvar.h"
 #include "tinsel/background.h"
+#include "tinsel/config.h"
+#include "tinsel/dw.h"
+#include "tinsel/music.h"
+#include "tinsel/sysvar.h"
+#include "tinsel/tinsel.h"
 
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "common/system.h"
 
-#include "audio/mixer.h"
 #include "audio/decoders/flac.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/vorbis.h"
 #include "audio/decoders/xa.h"
-
+#include "audio/mixer.h"
 
 #include "gui/message.h"
 
@@ -51,10 +50,11 @@ extern LANGUAGE g_sampleLanguage;
 
 //--------------------------- General data ----------------------------------
 
-SoundManager::SoundManager(TinselEngine *vm) :
-	//_vm(vm),	// TODO: Enable this once global _vm var is gone
-	_sampleIndex(0), _sampleIndexLen(0),
-	_soundMode(kVOCMode) {
+SoundManager::SoundManager(TinselEngine *vm)
+  : //_vm(vm),	// TODO: Enable this once global _vm var is gone
+  _sampleIndex(0)
+  , _sampleIndexLen(0)
+  , _soundMode(kVOCMode) {
 
 	for (int i = 0; i < kNumChannels; i++)
 		_channels[i].sampleNum = _channels[i].subSample = -1;
@@ -135,31 +135,28 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 		switch (_soundMode) {
 		case kMP3Mode:
 #ifdef USE_MAD
-			{
-			Common::MemoryReadStream *compressedStream =
-				new Common::MemoryReadStream(sampleBuf, sampleLen, DisposeAfterUse::YES);
+		{
+			Common::MemoryReadStream *compressedStream = new Common::MemoryReadStream(sampleBuf, sampleLen, DisposeAfterUse::YES);
 			sampleStream = Audio::makeMP3Stream(compressedStream, DisposeAfterUse::YES);
-			}
+		}
 #endif
-			break;
+		break;
 		case kVorbisMode:
 #ifdef USE_VORBIS
-			{
-			Common::MemoryReadStream *compressedStream =
-				new Common::MemoryReadStream(sampleBuf, sampleLen, DisposeAfterUse::YES);
+		{
+			Common::MemoryReadStream *compressedStream = new Common::MemoryReadStream(sampleBuf, sampleLen, DisposeAfterUse::YES);
 			sampleStream = Audio::makeVorbisStream(compressedStream, DisposeAfterUse::YES);
-			}
+		}
 #endif
-			break;
+		break;
 		case kFLACMode:
 #ifdef USE_FLAC
-			{
-			Common::MemoryReadStream *compressedStream =
-				new Common::MemoryReadStream(sampleBuf, sampleLen, DisposeAfterUse::YES);
+		{
+			Common::MemoryReadStream *compressedStream = new Common::MemoryReadStream(sampleBuf, sampleLen, DisposeAfterUse::YES);
 			sampleStream = Audio::makeFLACStream(compressedStream, DisposeAfterUse::YES);
-			}
+		}
 #endif
-			break;
+		break;
 		default:
 			sampleStream = Audio::makeRawStream(sampleBuf, sampleLen, 22050, Audio::FLAG_UNSIGNED);
 			break;
@@ -203,7 +200,7 @@ void SoundManager::playDW1MacMusic(Common::File &s, uint32 length) {
 
 // playSample for DiscWorld 2
 bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int priority,
-		Audio::Mixer::SoundType type, Audio::SoundHandle *handle) {
+                              Audio::Mixer::SoundType type, Audio::SoundHandle *handle) {
 
 	// no sample driver?
 	if (!_vm->_mixer->isReady())
@@ -224,15 +221,14 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 		curChan = &_channels[kChannelTalk];
 	} else if (type == Audio::Mixer::kSFXSoundType) {
 		uint32 oldestTime = g_system->getMillis();
-		int	oldestChan = kChannelSFX;
+		int oldestChan = kChannelSFX;
 
 		int chan;
 		for (chan = kChannelSFX; chan < kNumChannels; chan++) {
 			if (!_vm->_mixer->isSoundHandleActive(_channels[chan].handle))
 				break;
 
-			if ((_channels[chan].lastStart <  oldestTime) &&
-			    (_channels[chan].priority  <= priority)) {
+			if ((_channels[chan].lastStart < oldestTime) && (_channels[chan].priority <= priority)) {
 
 				oldestTime = _channels[chan].lastStart;
 				oldestChan = chan;
@@ -249,7 +245,7 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 		}
 
 		if (_vm->_pcmMusic->isDimmed() && SysVar(SYS_SceneFxDimFactor))
-			sndVol = 255 - 255/SysVar(SYS_SceneFxDimFactor);
+			sndVol = 255 - 255 / SysVar(SYS_SceneFxDimFactor);
 
 		curChan = &_channels[chan];
 	} else {
@@ -301,18 +297,17 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 	}
 
 	debugC(DEBUG_DETAILED, kTinselDebugSound, "Playing sound %d.%d, %d bytes at %d (pan %d)", id, sub, sampleLen,
-			_sampleStream.pos(), getPan(x));
+	       _sampleStream.pos(), getPan(x));
 
 	// allocate a buffer
-	byte *sampleBuf = (byte *) malloc(sampleLen);
+	byte *sampleBuf = (byte *)malloc(sampleLen);
 	assert(sampleBuf);
 
 	// read all of the sample
 	if (_sampleStream.read(sampleBuf, sampleLen) != sampleLen)
 		error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 
-	Common::MemoryReadStream *compressedStream =
-		new Common::MemoryReadStream(sampleBuf, sampleLen, DisposeAfterUse::YES);
+	Common::MemoryReadStream *compressedStream = new Common::MemoryReadStream(sampleBuf, sampleLen, DisposeAfterUse::YES);
 	Audio::AudioStream *sampleStream = 0;
 
 	switch (_soundMode) {
@@ -378,7 +373,7 @@ bool SoundManager::offscreenChecks(int x, int &y) {
 	if (x < -SCREEN_WIDTH || x > SCREEN_WIDTH) {
 		// A long way offscreen, ignore it
 		return false;
-	} else if (x < -SCREEN_WIDTH/2 || x > SCREEN_WIDTH/2) {
+	} else if (x < -SCREEN_WIDTH / 2 || x > SCREEN_WIDTH / 2) {
 		// Off-screen, attennuate it
 
 		y = (y > 0) ? (y / 2) : 50;
@@ -419,7 +414,7 @@ int8 SoundManager::getPan(int x) {
  * @param id			Identifier of sample to be checked
  */
 bool SoundManager::sampleExists(int id) {
-	if (_vm->_mixer->isReady())	{
+	if (_vm->_mixer->isReady()) {
 		// make sure id is in range
 		if (id > 0 && id < _sampleIndexLen) {
 			// check for a sample index
@@ -506,7 +501,7 @@ void SoundManager::openSampleFiles() {
 		return;
 
 	// Open sample index (*.idx) in binary mode
-	if (f.open(_vm->getSampleIndex(g_sampleLanguage)))	{
+	if (f.open(_vm->getSampleIndex(g_sampleLanguage))) {
 		uint32 fileSize = f.size();
 		_sampleIndex = (uint32 *)malloc(fileSize);
 		if (_sampleIndex == NULL) {
@@ -514,7 +509,7 @@ void SoundManager::openSampleFiles() {
 			return;
 		}
 
-		_sampleIndexLen = fileSize / 4;	// total sample of indices (DWORDs)
+		_sampleIndexLen = fileSize / 4; // total sample of indices (DWORDs)
 
 		// Load data
 		for (int i = 0; i < _sampleIndexLen; ++i) {
@@ -528,15 +523,15 @@ void SoundManager::openSampleFiles() {
 
 		// Detect format of soundfile by looking at 1st sample-index
 		switch (TO_BE_32(_sampleIndex[0])) {
-		case MKTAG('M','P','3',' '):
+		case MKTAG('M', 'P', '3', ' '):
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected MP3 sound-data");
 			_soundMode = kMP3Mode;
 			break;
-		case MKTAG('O','G','G',' '):
+		case MKTAG('O', 'G', 'G', ' '):
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected OGG sound-data");
 			_soundMode = kVorbisMode;
 			break;
-		case MKTAG('F','L','A','C'):
+		case MKTAG('F', 'L', 'A', 'C'):
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected FLAC sound-data");
 			_soundMode = kFLACMode;
 			break;

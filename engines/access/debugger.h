@@ -23,10 +23,10 @@
 #ifndef ACCESS_DEBUGGER_H
 #define ACCESS_DEBUGGER_H
 
-#include "common/scummsys.h"
-#include "gui/debugger.h"
 #include "access/amazon/amazon_resources.h"
 #include "access/martian/martian_resources.h"
+#include "common/scummsys.h"
+#include "gui/debugger.h"
 
 namespace Access {
 
@@ -40,9 +40,11 @@ protected:
 	bool Cmd_LoadScene(int argc, const char **argv);
 	bool Cmd_Cheat(int argc, const char **argv);
 	bool Cmd_PlayMovie(int argc, const char **argv);
+
 public:
 	static Debugger *init(AccessEngine *vm);
 	void postEnter();
+
 public:
 	Debugger(AccessEngine *vm);
 	virtual ~Debugger();
@@ -50,16 +52,17 @@ public:
 
 namespace Amazon {
 
-class AmazonDebugger : public Debugger {
-protected:
-	bool Cmd_StartChapter(int argc, const char **argv);
-public:
-	AmazonDebugger(AccessEngine *vm);
-	virtual ~AmazonDebugger() {}
-};
+	class AmazonDebugger : public Debugger {
+	protected:
+		bool Cmd_StartChapter(int argc, const char **argv);
+
+	public:
+		AmazonDebugger(AccessEngine *vm);
+		virtual ~AmazonDebugger() {}
+	};
 
 } // End of namespace Amazon
 
 } // End of namespace Access
 
-#endif	/* ACCESS_DEBUGGER_H */
+#endif /* ACCESS_DEBUGGER_H */

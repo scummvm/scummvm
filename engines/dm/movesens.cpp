@@ -27,18 +27,19 @@
 
 #include "dm/movesens.h"
 #include "dm/champion.h"
-#include "dm/inventory.h"
 #include "dm/dungeonman.h"
-#include "dm/objectman.h"
-#include "dm/timeline.h"
 #include "dm/group.h"
+#include "dm/inventory.h"
+#include "dm/objectman.h"
 #include "dm/projexpl.h"
-#include "dm/text.h"
 #include "dm/sounds.h"
+#include "dm/text.h"
+#include "dm/timeline.h"
 
 namespace DM {
 
-MovesensMan::MovesensMan(DMEngine *vm) : _vm(vm) {
+MovesensMan::MovesensMan(DMEngine *vm)
+  : _vm(vm) {
 	_moveResultMapX = 0;
 	_moveResultMapY = 0;
 	_moveResultMapIndex = 0;
@@ -166,8 +167,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 				dungeon.linkThingToList(_vm->thingWithNewCell(leaderHandObject, cellIdx), Thing(0), mapX, mapY);
 				_vm->_championMan->putObjectInLeaderHand(thingOnSquare, true);
 				doNotTriggerSensor = false;
-				}
-				break;
+			} break;
 			case kDMSensorWallChampionPortrait:
 				_vm->_championMan->addCandidateChampionToParty(sensorData);
 				continue;
@@ -192,7 +192,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 					_vm->_championMan->getObjectRemovedFromLeaderHand();
 					leaderHandObject = _vm->_thingNone;
 				} else if (_vm->_championMan->_leaderEmptyHanded
-					&& (processedSensorType == kDMSensorWallObjGeneratorRotateSensors)) {
+				           && (processedSensorType == kDMSensorWallObjGeneratorRotateSensors)) {
 					leaderHandObject = dungeon.getObjForProjectileLaucherOrObjGen(sensorData);
 					if (leaderHandObject != _vm->_thingNone)
 						_vm->_championMan->putObjectInLeaderHand(leaderHandObject, true);
@@ -261,7 +261,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 
 		int16 destinationSquareData = 0;
 		/* No more than 1000 chained moves at once (in a chain of teleporters and pits for example) */
-		for (int16 chainedMoveCount = 1000; --chainedMoveCount; ) {
+		for (int16 chainedMoveCount = 1000; --chainedMoveCount;) {
 			destinationSquareData = dungeon._currMapData[destMapX][destMapY];
 			ElementType destinationSquareType = Square(destinationSquareData).getType();
 			if (destinationSquareType == (int)kDMElementTypeTeleporter) {
@@ -316,8 +316,8 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 						}
 						traversedPitCount++;
 						display.drawDungeon(dungeon._partyDir, destMapX, destMapY); /* BUG0_28 When falling through multiple pits the dungeon view is updated to show each traversed map but the graphics used for creatures, wall and floor ornaments may not be correct. The dungeon view is drawn for each map by using the graphics loaded for the source map. Therefore the graphics for creatures, wall and floor ornaments may not look like what they should */
-																					/* BUG0_71 Some timings are too short on fast computers. When the party falls in a series of pits, the dungeon view is refreshed too quickly because the execution speed is not limited */
-																					/* BUG0_01 While drawing creatures the engine will read invalid ACTIVE_GROUP data in _vm->_groupMan->_g375_activeGroups because the data is for the creatures on the source map and not the map being drawn. The only consequence is that creatures may be drawn with incorrect bitmaps and/or directions */
+						/* BUG0_71 Some timings are too short on fast computers. When the party falls in a series of pits, the dungeon view is refreshed too quickly because the execution speed is not limited */
+						/* BUG0_01 While drawing creatures the engine will read invalid ACTIVE_GROUP data in _vm->_groupMan->_g375_activeGroups because the data is for the creatures on the source map and not the map being drawn. The only consequence is that creatures may be drawn with incorrect bitmaps and/or directions */
 					}
 					mapIndexDestination = dungeon.getLocationAfterLevelChange(mapIndexDestination, 1, &destMapX, &destMapY);
 					dungeon.setCurrentMap(mapIndexDestination);
@@ -495,7 +495,7 @@ bool MovesensMan::isLevitating(Thing thing) {
 	if (thingType == kDMThingTypeGroup)
 		retVal = getFlag(_vm->_dungeonMan->getCreatureAttributes(thing), kDMCreatureMaskLevitation);
 	else if ((thingType == kDMThingTypeProjectile) || (thingType == kDMThingTypeExplosion))
-	// Fix original bug involving explosions falling in pits
+		// Fix original bug involving explosions falling in pits
 		retVal = true;
 
 	return retVal;
@@ -567,8 +567,7 @@ bool MovesensMan::moveIsKilledByProjectileImpact(int16 srcMapX, int16 srcMapY, i
 T0266017_CheckProjectileImpacts:
 	Thing curThing = dungeon.getSquareFirstThing(projectileMapX, projectileMapY);
 	while (curThing != _vm->_thingEndOfList) {
-		if ((curThing.getType() == kDMThingTypeProjectile) &&
-			(_vm->_timeline->_events[(((Projectile *)dungeon._thingData[kDMThingTypeProjectile])[curThing.getIndex()])._eventIndex]._type != kDMEventTypeMoveProjectileIgnoreImpacts)) {
+		if ((curThing.getType() == kDMThingTypeProjectile) && (_vm->_timeline->_events[(((Projectile *)dungeon._thingData[kDMThingTypeProjectile])[curThing.getIndex()])._eventIndex]._type != kDMEventTypeMoveProjectileIgnoreImpacts)) {
 			int16 championOrCreatureOrdinal = championOrCreatureOrdinalInCell[curThing.getCell()];
 			if (championOrCreatureOrdinal && _vm->_projexpl->hasProjectileImpactOccurred(impactType, srcMapX, srcMapY, _vm->ordinalToIndex(championOrCreatureOrdinal), curThing)) {
 				_vm->_projexpl->projectileDeleteEvent(curThing);
@@ -906,13 +905,13 @@ bool MovesensMan::isObjectInPartyPossession(int16 objectType) {
 
 void MovesensMan::triggerEffect(Sensor *sensor, SensorEffect effect, int16 mapX, int16 mapY, uint16 cell) {
 	static const TimelineEventType squareTypeToEventTypeArray[7] = { // @ G0059_auc_Graphic562_SquareTypeToEventType
-		kDMEventTypeWall,
-		kDMEventTypeCorridor,
-		kDMEventTypePit,
-		kDMEventTypeNone,
-		kDMEventTypeDoor,
-		kDMEventTypeTeleporter,
-		kDMEventTypeFakeWall
+		                                                               kDMEventTypeWall,
+		                                                               kDMEventTypeCorridor,
+		                                                               kDMEventTypePit,
+		                                                               kDMEventTypeNone,
+		                                                               kDMEventTypeDoor,
+		                                                               kDMEventTypeTeleporter,
+		                                                               kDMEventTypeFakeWall
 	};
 
 	if (sensor->getAttrOnlyOnce())
@@ -971,14 +970,14 @@ void MovesensMan::processRotationEffect() {
 	case kDMSensorEffectToggle:
 		Thing firstSensorThing = dungeon.getSquareFirstThing(_sensorRotationEffMapX, _sensorRotationEffMapY);
 		while ((firstSensorThing.getType() != kDMThingTypeSensor)
-			|| ((_sensorRotationEffCell != kDMCellAny) && (firstSensorThing.getCell() != _sensorRotationEffCell))) {
+		       || ((_sensorRotationEffCell != kDMCellAny) && (firstSensorThing.getCell() != _sensorRotationEffCell))) {
 			firstSensorThing = dungeon.getNextThing(firstSensorThing);
 		}
 		Sensor *firstSensor = (Sensor *)dungeon.getThingData(firstSensorThing);
 		Thing lastSensorThing = firstSensor->getNextThing();
 		while ((lastSensorThing != _vm->_thingEndOfList)
-		    && ((lastSensorThing.getType() != kDMThingTypeSensor)
-				|| ((_sensorRotationEffCell != kDMCellAny) && (lastSensorThing.getCell() != _sensorRotationEffCell)))) {
+		       && ((lastSensorThing.getType() != kDMThingTypeSensor)
+		           || ((_sensorRotationEffCell != kDMCellAny) && (lastSensorThing.getCell() != _sensorRotationEffCell)))) {
 			lastSensorThing = dungeon.getNextThing(lastSensorThing);
 		}
 		if (lastSensorThing == _vm->_thingEndOfList)

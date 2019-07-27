@@ -28,17 +28,20 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CSauceDispensor, CBackground)
-	ON_MESSAGE(Use)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(Use)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(StatusChangeMsg)
 END_MESSAGE_MAP()
 
-CSauceDispensor::CSauceDispensor() : CBackground(),
-		_pouringCondiment(false), _starlingsDead(false),
-		_field104(0), _field108(0) {
+CSauceDispensor::CSauceDispensor()
+  : CBackground()
+  , _pouringCondiment(false)
+  , _starlingsDead(false)
+  , _field104(0)
+  , _field108(0) {
 }
 
 void CSauceDispensor::save(SimpleFile *file, int indent) {
@@ -111,8 +114,8 @@ bool CSauceDispensor::Use(CUse *msg) {
 			visibleMsg.execute("BeerGlass");
 		} else if (_pouringCondiment) {
 			glass->setPosition(Point(
-				_bounds.left + (_bounds.width() / 2) - (glass->_bounds.width() / 2),
-				300));
+			  _bounds.left + (_bounds.width() / 2) - (glass->_bounds.width() / 2),
+			  300));
 			setVisible(true);
 
 			CActMsg actMsg(_condimentName);

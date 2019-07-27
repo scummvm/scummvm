@@ -25,8 +25,8 @@
 #include "common/file.h"
 #include "common/textconsole.h"
 
-#include "agos/debug.h"
 #include "agos/agos.h"
+#include "agos/debug.h"
 #include "agos/intern.h"
 #include "agos/vga.h"
 
@@ -83,80 +83,78 @@ const byte *AGOSEngine::dumpOpcode(const byte *p) {
 		case '|':
 			debugN("\n");
 			return p;
-		case 'B':{
-				byte b = *p++;
-				if (b == 255)
-					debugN("[%d] ", *p++);
+		case 'B': {
+			byte b = *p++;
+			if (b == 255)
+				debugN("[%d] ", *p++);
+			else
+				debugN("%d ", b);
+			break;
+		}
+		case 'V': {
+			byte b = *p++;
+			if (b == 255)
+				debugN("[[%d]] ", *p++);
+			else
+				debugN("[%d] ", b);
+			break;
+		}
+
+		case 'W': {
+			uint16 n = READ_BE_UINT16(p);
+			p += 2;
+			if (getGameType() == GType_PP) {
+				if (n >= 60000 && n < 62048)
+					debugN("[%d] ", n - 60000);
 				else
-					debugN("%d ", b);
-				break;
-			}
-		case 'V':{
-				byte b = *p++;
-				if (b == 255)
-					debugN("[[%d]] ", *p++);
+					debugN("%d ", n);
+
+			} else {
+				if (n >= 30000 && n < 30512)
+					debugN("[%d] ", n - 30000);
 				else
-					debugN("[%d] ", b);
-				break;
-			}
-
-		case 'W':{
-				uint16 n = READ_BE_UINT16(p);
-				p += 2;
-				if (getGameType() == GType_PP) {
-					if (n >= 60000 && n < 62048)
-						debugN("[%d] ", n - 60000);
-					else
-						debugN("%d ", n);
-
-				} else {
-					if (n >= 30000 && n < 30512)
-						debugN("[%d] ", n - 30000);
-					else
-						debugN("%d ", n);
-				}
-				break;
-			}
-
-		case 'w':{
-				int n = (int16)READ_BE_UINT16(p);
-				p += 2;
-				debugN("%d ", n);
-				break;
-			}
-
-		case 'I':{
-				int n = (int16)READ_BE_UINT16(p);
-				p += 2;
-				if (n == -1)
-					debugN("SUBJECT_ITEM ");
-				else if (n == -3)
-					debugN("OBJECT_ITEM ");
-				else if (n == -5)
-					debugN("ME_ITEM ");
-				else if (n == -7)
-					debugN("ACTOR_ITEM ");
-				else if (n == -9)
-					debugN("ITEM_A_PARENT ");
-				else
-					debugN("<%d> ", n);
-				break;
-			}
-
-		case 'J':{
-				debugN("-> ");
+					debugN("%d ", n);
 			}
 			break;
+		}
 
-		case 'T':{
-				uint n = READ_BE_UINT16(p);
-				p += 2;
-				if (n != 0xFFFF)
-					debugN("\"%s\"(%d) ", getStringPtrByID(n), n);
-				else
-					debugN("NULL_STRING ");
-			}
+		case 'w': {
+			int n = (int16)READ_BE_UINT16(p);
+			p += 2;
+			debugN("%d ", n);
 			break;
+		}
+
+		case 'I': {
+			int n = (int16)READ_BE_UINT16(p);
+			p += 2;
+			if (n == -1)
+				debugN("SUBJECT_ITEM ");
+			else if (n == -3)
+				debugN("OBJECT_ITEM ");
+			else if (n == -5)
+				debugN("ME_ITEM ");
+			else if (n == -7)
+				debugN("ACTOR_ITEM ");
+			else if (n == -9)
+				debugN("ITEM_A_PARENT ");
+			else
+				debugN("<%d> ", n);
+			break;
+		}
+
+		case 'J': {
+			debugN("-> ");
+		} break;
+
+		case 'T': {
+			uint n = READ_BE_UINT16(p);
+			p += 2;
+			if (n != 0xFFFF)
+				debugN("\"%s\"(%d) ", getStringPtrByID(n), n);
+			else
+				debugN("NULL_STRING ");
+		} break;
 		}
 	}
 }
@@ -257,7 +255,7 @@ void AGOSEngine::dumpVideoScript(const byte *src, bool singeOpcode) {
 			case 'b': {
 				debugN("%d ", *src++);
 				break;
-				}
+			}
 			case 'w': {
 				int16 v = (int16)readUint16Wrapper(src);
 				src += 2;
@@ -266,35 +264,35 @@ void AGOSEngine::dumpVideoScript(const byte *src, bool singeOpcode) {
 				else
 					debugN("%d ", v);
 				break;
-				}
+			}
 			case 'd': {
 				debugN("%d ", (int16)readUint16Wrapper(src));
 				src += 2;
 				break;
-				}
+			}
 			case 'v': {
 				debugN("[%d] ", readUint16Wrapper(src));
 				src += 2;
 				break;
-				}
+			}
 			case 'i': {
 				debugN("%d ", (int16)readUint16Wrapper(src));
 				src += 2;
 				break;
-				}
+			}
 			case 'j': {
 				debugN("-> ");
 				break;
-				}
+			}
 			case 'q': {
 				while (readUint16Wrapper(src) != end) {
 					debugN("(%d,%d) ", readUint16Wrapper(src),
-									readUint16Wrapper(src + 2));
+					       readUint16Wrapper(src + 2));
 					src += 4;
 				}
 				src += 2;
 				break;
-				}
+			}
 			default:
 				error("dumpVideoScript: Invalid fmt string '%c' in decompile VGA", *str);
 			}
@@ -310,7 +308,7 @@ void AGOSEngine::dumpVgaScript(const byte *ptr, uint16 res, uint16 id) {
 
 void AGOSEngine::dumpVgaScriptAlways(const byte *ptr, uint16 res, uint16 id) {
 	debugN("; address=%x, vgafile=%d  vgasprite=%d\n",
-					(unsigned int)(ptr - _vgaBufferPointers[res].vgaFile1), res, id);
+	       (unsigned int)(ptr - _vgaBufferPointers[res].vgaFile1), res, id);
 	dumpVideoScript(ptr, false);
 	debugN("; end\n");
 }
@@ -347,25 +345,25 @@ void AGOSEngine_Feeble::dumpVgaFile(const byte *vga) {
 
 	pp = vga;
 	p = pp + READ_LE_UINT16(pp + 2);
-	count = READ_LE_UINT16(&((const VgaFile1Header_Feeble *) p)->animationCount);
-	p = pp + READ_LE_UINT16(&((const VgaFile1Header_Feeble *) p)->animationTable);
+	count = READ_LE_UINT16(&((const VgaFile1Header_Feeble *)p)->animationCount);
+	p = pp + READ_LE_UINT16(&((const VgaFile1Header_Feeble *)p)->animationTable);
 
 	while (--count >= 0) {
-		uint16 id = READ_LE_UINT16(&((const AnimationHeader_Feeble *) p)->id);
+		uint16 id = READ_LE_UINT16(&((const AnimationHeader_Feeble *)p)->id);
 
-		dumpVgaScriptAlways(vga + READ_LE_UINT16(&((const AnimationHeader_Feeble *) p)->scriptOffs), id / 100, id);
+		dumpVgaScriptAlways(vga + READ_LE_UINT16(&((const AnimationHeader_Feeble *)p)->scriptOffs), id / 100, id);
 		p += sizeof(AnimationHeader_Feeble);
 	}
 
 	pp = vga;
 	p = pp + READ_LE_UINT16(pp + 2);
-	count = READ_LE_UINT16(&((const VgaFile1Header_Feeble *) p)->imageCount);
-	p = pp + READ_LE_UINT16(&((const VgaFile1Header_Feeble *) p)->imageTable);
+	count = READ_LE_UINT16(&((const VgaFile1Header_Feeble *)p)->imageCount);
+	p = pp + READ_LE_UINT16(&((const VgaFile1Header_Feeble *)p)->imageTable);
 
 	while (--count >= 0) {
-		uint16 id = READ_LE_UINT16(&((const ImageHeader_Feeble *) p)->id);
+		uint16 id = READ_LE_UINT16(&((const ImageHeader_Feeble *)p)->id);
 
-		dumpVgaScriptAlways(vga + READ_LE_UINT16(&((const ImageHeader_Feeble *) p)->scriptOffs), id / 100, id);
+		dumpVgaScriptAlways(vga + READ_LE_UINT16(&((const ImageHeader_Feeble *)p)->scriptOffs), id / 100, id);
 		p += sizeof(ImageHeader_Feeble);
 	}
 }
@@ -378,25 +376,25 @@ void AGOSEngine_Simon1::dumpVgaFile(const byte *vga) {
 
 	pp = vga;
 	p = pp + READ_BE_UINT16(pp + 4);
-	count = READ_BE_UINT16(&((const VgaFile1Header_Common *) p)->animationCount);
-	p = pp + READ_BE_UINT16(&((const VgaFile1Header_Common *) p)->animationTable);
+	count = READ_BE_UINT16(&((const VgaFile1Header_Common *)p)->animationCount);
+	p = pp + READ_BE_UINT16(&((const VgaFile1Header_Common *)p)->animationTable);
 
 	while (--count >= 0) {
-		uint16 id = READ_BE_UINT16(&((const AnimationHeader_Simon *) p)->id);
+		uint16 id = READ_BE_UINT16(&((const AnimationHeader_Simon *)p)->id);
 
-		dumpVgaScriptAlways(vga + READ_BE_UINT16(&((const AnimationHeader_Simon *) p)->scriptOffs), id / 100, id);
+		dumpVgaScriptAlways(vga + READ_BE_UINT16(&((const AnimationHeader_Simon *)p)->scriptOffs), id / 100, id);
 		p += sizeof(AnimationHeader_Simon);
 	}
 
 	pp = vga;
 	p = pp + READ_BE_UINT16(pp + 4);
-	count = READ_BE_UINT16(&((const VgaFile1Header_Common *) p)->imageCount);
-	p = pp + READ_BE_UINT16(&((const VgaFile1Header_Common *) p)->imageTable);
+	count = READ_BE_UINT16(&((const VgaFile1Header_Common *)p)->imageCount);
+	p = pp + READ_BE_UINT16(&((const VgaFile1Header_Common *)p)->imageTable);
 
 	while (--count >= 0) {
-		uint16 id = READ_BE_UINT16(&((const ImageHeader_Simon *) p)->id);
+		uint16 id = READ_BE_UINT16(&((const ImageHeader_Simon *)p)->id);
 
-		dumpVgaScriptAlways(vga + READ_BE_UINT16(&((const ImageHeader_Simon *) p)->scriptOffs), id / 100, id);
+		dumpVgaScriptAlways(vga + READ_BE_UINT16(&((const ImageHeader_Simon *)p)->scriptOffs), id / 100, id);
 		p += sizeof(ImageHeader_Simon);
 	}
 }
@@ -408,46 +406,86 @@ void AGOSEngine::dumpVgaFile(const byte *vga) {
 
 	pp = vga;
 	p = pp + READ_BE_UINT16(pp + 10) + 20;
-	count = READ_BE_UINT16(&((const VgaFile1Header_Common *) p)->animationCount);
-	p = pp + READ_BE_UINT16(&((const VgaFile1Header_Common *) p)->animationTable);
+	count = READ_BE_UINT16(&((const VgaFile1Header_Common *)p)->animationCount);
+	p = pp + READ_BE_UINT16(&((const VgaFile1Header_Common *)p)->animationTable);
 
 	while (--count >= 0) {
-		uint16 id = READ_BE_UINT16(&((const AnimationHeader_WW *) p)->id);
+		uint16 id = READ_BE_UINT16(&((const AnimationHeader_WW *)p)->id);
 
-		dumpVgaScriptAlways(vga + READ_BE_UINT16(&((const AnimationHeader_WW *) p)->scriptOffs), id / 100, id);
+		dumpVgaScriptAlways(vga + READ_BE_UINT16(&((const AnimationHeader_WW *)p)->scriptOffs), id / 100, id);
 		p += sizeof(AnimationHeader_WW);
 	}
 
 	pp = vga;
 	p = pp + READ_BE_UINT16(pp + 10) + 20;
-	count = READ_BE_UINT16(&((const VgaFile1Header_Common *) p)->imageCount);
-	p = pp + READ_BE_UINT16(&((const VgaFile1Header_Common *) p)->imageTable);
+	count = READ_BE_UINT16(&((const VgaFile1Header_Common *)p)->imageCount);
+	p = pp + READ_BE_UINT16(&((const VgaFile1Header_Common *)p)->imageTable);
 
 	while (--count >= 0) {
-		uint16 id = READ_BE_UINT16(&((const ImageHeader_WW *) p)->id);
+		uint16 id = READ_BE_UINT16(&((const ImageHeader_WW *)p)->id);
 
-		dumpVgaScriptAlways(vga + READ_BE_UINT16(&((const ImageHeader_WW *) p)->scriptOffs), id / 100, id);
+		dumpVgaScriptAlways(vga + READ_BE_UINT16(&((const ImageHeader_WW *)p)->scriptOffs), id / 100, id);
 		p += sizeof(ImageHeader_WW);
 	}
 }
 
 static const byte bmp_hdr[] = {
-	0x42, 0x4D,
-	0x9E, 0x14, 0x00, 0x00,				/* offset 2, file size */
-	0x00, 0x00, 0x00, 0x00,
-	0x36, 0x04, 0x00, 0x00,
-	0x28, 0x00, 0x00, 0x00,
+	0x42,
+	0x4D,
+	0x9E,
+	0x14,
+	0x00,
+	0x00, /* offset 2, file size */
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x36,
+	0x04,
+	0x00,
+	0x00,
+	0x28,
+	0x00,
+	0x00,
+	0x00,
 
-	0x3C, 0x00, 0x00, 0x00,				/* image width */
-	0x46, 0x00, 0x00, 0x00,				/* image height */
-	0x01, 0x00, 0x08, 0x00,
-	0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00,
+	0x3C,
+	0x00,
+	0x00,
+	0x00, /* image width */
+	0x46,
+	0x00,
+	0x00,
+	0x00, /* image height */
+	0x01,
+	0x00,
+	0x08,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
 
-	0x00, 0x01, 0x00, 0x00,
-	0x00, 0x01, 0x00, 0x00,
+	0x00,
+	0x01,
+	0x00,
+	0x00,
+	0x00,
+	0x01,
+	0x00,
+	0x00,
 };
 
 void dumpBMP(const char *filename, int16 w, int16 h, const byte *bytes, const byte *palette) {
@@ -464,7 +502,6 @@ void dumpBMP(const char *filename, int16 w, int16 h, const byte *bytes, const by
 	*(uint32 *)(my_hdr + 2) = w * h + 1024 + sizeof(bmp_hdr);
 	*(uint32 *)(my_hdr + 18) = w;
 	*(uint32 *)(my_hdr + 22) = h;
-
 
 	out.write(my_hdr, sizeof(my_hdr));
 
@@ -483,7 +520,7 @@ void dumpBMP(const char *filename, int16 w, int16 h, const byte *bytes, const by
 }
 
 void AGOSEngine::dumpBitmap(const char *filename, const byte *offs, uint16 w, uint16 h, int flags, const byte *palette,
-								 byte base) {
+                            byte base) {
 
 	byte *imageBuffer = (byte *)malloc(w * h);
 	assert(imageBuffer);
@@ -551,7 +588,7 @@ void AGOSEngine::dumpBitmap(const char *filename, const byte *offs, uint16 w, ui
 				bits = (bits << 8) | src[4];
 
 				dstPtr[6] = (byte)((bits >> (40 - 35)) & 31);
-				dstPtr[7] = (byte)((bits) & 31);
+				dstPtr[7] = (byte)((bits)&31);
 
 				dstPtr += 8;
 				src += 5;
@@ -569,7 +606,7 @@ void AGOSEngine::dumpBitmap(const char *filename, const byte *offs, uint16 w, ui
 		}
 	} else {
 		for (j = 0; j != h; j++) {
-			for (i = 0; i != w / 2; i ++) {
+			for (i = 0; i != w / 2; i++) {
 				byte col = src[i];
 				dst[i * 2] = (col >> 4) | base;
 				dst[i * 2 + 1] = (col & 0xF) | base;
@@ -654,7 +691,7 @@ void AGOSEngine::dumpVgaBitmaps(uint16 zoneNum) {
 	palLoad(pal, vga1, 0, 0);
 
 	offsEnd = readUint32Wrapper(vga2 + 8);
-	for (uint i = 1; ; i++) {
+	for (uint i = 1;; i++) {
 		if ((i * 8) >= offsEnd)
 			break;
 

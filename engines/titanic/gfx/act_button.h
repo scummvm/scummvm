@@ -30,6 +30,7 @@ namespace Titanic {
 class CActButton : public CSTButton {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+
 public:
 	CLASSDEF;
 	CActButton();

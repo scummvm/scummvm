@@ -20,57 +20,55 @@
  *
  */
 
-#include <common/scummsys.h>
-#include "engines/engine.h"
 #include "audio/mixer_intern.h"
 #include "dc.h"
+#include "engines/engine.h"
+#include <common/scummsys.h>
 
 EXTERN_C void *memcpy4s(void *s1, const void *s2, unsigned int n);
 
-uint OSystem_Dreamcast::initSound()
-{
-  stop_sound();
-  do_sound_command(CMD_SET_FREQ_EXP(FREQ_22050_EXP));
-  do_sound_command(CMD_SET_STEREO(1));
-  do_sound_command(CMD_SET_BUFFER(SOUND_BUFFER_SHIFT));
-  return read_sound_int(&SOUNDSTATUS->freq);
+uint OSystem_Dreamcast::initSound() {
+	stop_sound();
+	do_sound_command(CMD_SET_FREQ_EXP(FREQ_22050_EXP));
+	do_sound_command(CMD_SET_STEREO(1));
+	do_sound_command(CMD_SET_BUFFER(SOUND_BUFFER_SHIFT));
+	return read_sound_int(&SOUNDSTATUS->freq);
 }
 
-void OSystem_Dreamcast::checkSound()
-{
-  int n;
-  int curr_ring_buffer_samples;
+void OSystem_Dreamcast::checkSound() {
+	int n;
+	int curr_ring_buffer_samples;
 
-  if (!_mixer)
-    return;
+	if (!_mixer)
+		return;
 
-  if (read_sound_int(&SOUNDSTATUS->mode) != MODE_PLAY)
-    start_sound();
+	if (read_sound_int(&SOUNDSTATUS->mode) != MODE_PLAY)
+		start_sound();
 
-  curr_ring_buffer_samples = read_sound_int(&SOUNDSTATUS->ring_length);
+	curr_ring_buffer_samples = read_sound_int(&SOUNDSTATUS->ring_length);
 
-  n = read_sound_int(&SOUNDSTATUS->samplepos);
+	n = read_sound_int(&SOUNDSTATUS->samplepos);
 
-  if ((n-=fillpos)<0)
-    n += curr_ring_buffer_samples;
+	if ((n -= fillpos) < 0)
+		n += curr_ring_buffer_samples;
 
-  n = ADJUST_BUFFER_SIZE(n-10);
+	n = ADJUST_BUFFER_SIZE(n - 10);
 
-  if (n<100)
-    return;
+	if (n < 100)
+		return;
 
-  _mixer->mixCallback((byte *)temp_sound_buffer,
-		      2*SAMPLES_TO_BYTES(n));
+	_mixer->mixCallback((byte *)temp_sound_buffer,
+	                    2 * SAMPLES_TO_BYTES(n));
 
-  if (fillpos+n > curr_ring_buffer_samples) {
-    int r = curr_ring_buffer_samples - fillpos;
-    memcpy4s(RING_BUF+fillpos, temp_sound_buffer, SAMPLES_TO_BYTES(r));
-    fillpos = 0;
-    n -= r;
-    memcpy4s(RING_BUF, temp_sound_buffer+r, SAMPLES_TO_BYTES(n));
-  } else {
-    memcpy4s(RING_BUF+fillpos, temp_sound_buffer, SAMPLES_TO_BYTES(n));
-  }
-  if ((fillpos += n) >= curr_ring_buffer_samples)
-    fillpos = 0;
+	if (fillpos + n > curr_ring_buffer_samples) {
+		int r = curr_ring_buffer_samples - fillpos;
+		memcpy4s(RING_BUF + fillpos, temp_sound_buffer, SAMPLES_TO_BYTES(r));
+		fillpos = 0;
+		n -= r;
+		memcpy4s(RING_BUF, temp_sound_buffer + r, SAMPLES_TO_BYTES(n));
+	} else {
+		memcpy4s(RING_BUF + fillpos, temp_sound_buffer, SAMPLES_TO_BYTES(n));
+	}
+	if ((fillpos += n) >= curr_ring_buffer_samples)
+		fillpos = 0;
 }

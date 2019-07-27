@@ -25,13 +25,12 @@
 namespace Neverhood {
 
 Module1500::Module1500(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule) {
+  : Module(vm, parentModule) {
 
 	if (which < 0)
 		createScene(_vm->gameState().sceneNum, -1);
 	else
 		createScene(3, -1);
-
 }
 
 void Module1500::createScene(int sceneNum, int which) {
@@ -82,7 +81,11 @@ void Module1500::updateScene() {
 // Scene1501
 
 Scene1501::Scene1501(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 soundFileHash, int countdown2, int countdown3)
-	: Scene(vm, parentModule), _countdown3(countdown3), _countdown2(countdown2), _countdown1(0), _skip(false) {
+  : Scene(vm, parentModule)
+  , _countdown3(countdown3)
+  , _countdown2(countdown2)
+  , _countdown1(0)
+  , _skip(false) {
 
 	SetUpdateHandler(&Scene1501::update);
 	SetMessageHandler(&Scene1501::handleMessage);
@@ -95,7 +98,6 @@ Scene1501::Scene1501(NeverhoodEngine *vm, Module *parentModule, uint32 backgroun
 
 	if (soundFileHash != 0)
 		playSound(0, soundFileHash);
-
 }
 
 void Scene1501::update() {
@@ -118,7 +120,6 @@ void Scene1501::update() {
 		_countdown1 = 12;
 		_palette->startFadeToBlack(11);
 	}
-
 }
 
 uint32 Scene1501::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {

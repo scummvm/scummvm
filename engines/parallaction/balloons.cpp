@@ -55,8 +55,11 @@ protected:
 	}
 
 public:
-	WrappedLineFormatter(Font *font) : _font(font), _lines(0), _lineWidth(0) { }
-	virtual ~WrappedLineFormatter() { }
+	WrappedLineFormatter(Font *font)
+	  : _font(font)
+	  , _lines(0)
+	  , _lineWidth(0) {}
+	virtual ~WrappedLineFormatter() {}
 
 	virtual void calc(const Common::String &text, uint16 maxwidth) {
 		setup();
@@ -65,7 +68,7 @@ public:
 		_line.clear();
 		_lines = 0;
 
-		Common::StringTokenizer	tokenizer(text, " ");
+		Common::StringTokenizer tokenizer(text, " ");
 		Common::String token;
 		Common::String blank(" ");
 
@@ -105,7 +108,7 @@ public:
 
 class StringExtent_NS : public WrappedLineFormatter {
 
-	uint	_width, _height;
+	uint _width, _height;
 
 protected:
 	virtual Common::String expand(const Common::String &token) {
@@ -136,31 +139,32 @@ protected:
 	}
 
 public:
-	StringExtent_NS(Font *font) : WrappedLineFormatter(font), _width(0), _height(0) { }
+	StringExtent_NS(Font *font)
+	  : WrappedLineFormatter(font)
+	  , _width(0)
+	  , _height(0) {}
 
 	uint width() const { return _width; }
 	uint height() const { return _height; }
 };
 
-
 class StringWriter_NS : public WrappedLineFormatter {
 	Parallaction_ns *_vm;
 
-	uint	_width, _height;
-	byte	_color;
+	uint _width, _height;
+	byte _color;
 
-	Graphics::Surface	*_surf;
+	Graphics::Surface *_surf;
 
 protected:
-	virtual Common::String expand(const Common::String& token) {
+	virtual Common::String expand(const Common::String &token) {
 		if (token.compareToIgnoreCase("%p") == 0) {
 			Common::String t(_vm->_password);
 			for (int i = t.size(); i < 7; i++) {
 				t += '.';
 			}
 			return Common::String("> ") + t;
-		} else
-		if (token.compareToIgnoreCase("%s") == 0) {
+		} else if (token.compareToIgnoreCase("%s") == 0) {
 			char buf[20];
 			sprintf(buf, "%i", _vm->_score);
 			return Common::String(buf);
@@ -177,7 +181,7 @@ protected:
 			return;
 		}
 		uint16 rx = 10;
-		uint16 ry = 4 + _lines * _font->height();	// y
+		uint16 ry = 4 + _lines * _font->height(); // y
 
 		byte *dst = (byte *)_surf->getBasePtr(rx, ry);
 		_font->setColor(_color);
@@ -189,11 +193,16 @@ protected:
 	}
 
 public:
-	StringWriter_NS(Parallaction_ns *vm, Font *font) : WrappedLineFormatter(font), _vm(vm),
-		_width(0), _height(0), _color(0), _surf(NULL) { }
+	StringWriter_NS(Parallaction_ns *vm, Font *font)
+	  : WrappedLineFormatter(font)
+	  , _vm(vm)
+	  , _width(0)
+	  , _height(0)
+	  , _color(0)
+	  , _surf(NULL) {}
 
 	void write(const Common::String &text, uint maxWidth, byte color, Graphics::Surface *surf) {
-		StringExtent_NS	se(_font);
+		StringExtent_NS se(_font);
 		se.calc(text, maxWidth);
 		_width = se.width() + 10;
 		_height = se.height() + 20;
@@ -202,33 +211,138 @@ public:
 
 		calc(text, maxWidth);
 	}
-
 };
 
-
-
-#define	BALLOON_TRANSPARENT_COLOR_NS 2
+#define BALLOON_TRANSPARENT_COLOR_NS 2
 #define BALLOON_TRANSPARENT_COLOR_BR 0
 
-#define BALLOON_TAIL_WIDTH	12
-#define BALLOON_TAIL_HEIGHT	10
+#define BALLOON_TAIL_WIDTH 12
+#define BALLOON_TAIL_HEIGHT 10
 
-
-byte _resBalloonTail[2][BALLOON_TAIL_WIDTH*BALLOON_TAIL_HEIGHT] = {
+byte _resBalloonTail[2][BALLOON_TAIL_WIDTH * BALLOON_TAIL_HEIGHT] = {
 	{
-	  0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02,
-	  0x02, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02,
-	  0x02, 0x02, 0x02, 0x00, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02,
-	  0x02, 0x02, 0x02, 0x00, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02,
-	  0x02, 0x02, 0x02, 0x02, 0x00, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02,
-	  0x02, 0x02, 0x02, 0x00, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02, 0x02,
-	  0x02, 0x02, 0x00, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02,
-	  0x02, 0x00, 0x01, 0x01, 0x00, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
-	  0x00, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
-	  0x00, 0x00, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
+	  0x00,
+	  0x01,
+	  0x01,
+	  0x01,
+	  0x01,
+	  0x01,
+	  0x01,
+	  0x01,
+	  0x01,
+	  0x00,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x00,
+	  0x00,
+	  0x01,
+	  0x01,
+	  0x01,
+	  0x01,
+	  0x01,
+	  0x01,
+	  0x00,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x00,
+	  0x01,
+	  0x01,
+	  0x01,
+	  0x01,
+	  0x00,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x00,
+	  0x01,
+	  0x01,
+	  0x01,
+	  0x01,
+	  0x00,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x00,
+	  0x01,
+	  0x01,
+	  0x01,
+	  0x00,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x00,
+	  0x01,
+	  0x01,
+	  0x01,
+	  0x00,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x00,
+	  0x01,
+	  0x01,
+	  0x01,
+	  0x00,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x00,
+	  0x01,
+	  0x01,
+	  0x00,
+	  0x00,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x00,
+	  0x01,
+	  0x01,
+	  0x00,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x00,
+	  0x00,
+	  0x00,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
+	  0x02,
 	},
-	{
-	  0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02,
+	{ 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02,
 	  0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x02, 0x02, 0x02,
 	  0x02, 0x00, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02,
 	  0x02, 0x00, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02,
@@ -237,8 +351,7 @@ byte _resBalloonTail[2][BALLOON_TAIL_WIDTH*BALLOON_TAIL_HEIGHT] = {
 	  0x02, 0x02, 0x02, 0x00, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02, 0x02,
 	  0x02, 0x02, 0x02, 0x02, 0x00, 0x00, 0x01, 0x01, 0x00, 0x02, 0x02, 0x02,
 	  0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x00, 0x01, 0x01, 0x00, 0x02, 0x02,
-	  0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x00, 0x00, 0x00, 0x02, 0x02
-	}
+	  0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x00, 0x00, 0x00, 0x02, 0x02 }
 };
 
 class BalloonManager_ns : public BalloonManager {
@@ -252,16 +365,16 @@ class BalloonManager_ns : public BalloonManager {
 		Common::Rect outerBox;
 		Common::Rect innerBox;
 		Graphics::Surface *surface;
-		GfxObj	*obj;
+		GfxObj *obj;
 	} _intBalloons[5];
 
-	uint	_numBalloons;
+	uint _numBalloons;
 
 	int createBalloon(int16 w, int16 h, int16 winding, uint16 borderThickness);
 	Balloon *getBalloon(uint id);
 
 	StringWriter_NS _sw;
-	StringExtent_NS	_se;
+	StringExtent_NS _se;
 
 public:
 	BalloonManager_ns(Parallaction_ns *vm, Font *font);
@@ -277,18 +390,20 @@ public:
 
 int16 BalloonManager_ns::_dialogueBalloonX[5] = { 80, 120, 150, 150, 150 };
 
-BalloonManager_ns::BalloonManager_ns(Parallaction_ns *vm, Font *font) : _vm(vm), _numBalloons(0), _sw(vm, font), _se(font) {
+BalloonManager_ns::BalloonManager_ns(Parallaction_ns *vm, Font *font)
+  : _vm(vm)
+  , _numBalloons(0)
+  , _sw(vm, font)
+  , _se(font) {
 	_textColors[kSelectedColor] = 0;
 	_textColors[kUnselectedColor] = 3;
 	_textColors[kNormalColor] = 0;
 }
 
 BalloonManager_ns::~BalloonManager_ns() {
-
 }
 
-
-BalloonManager_ns::Balloon* BalloonManager_ns::getBalloon(uint id) {
+BalloonManager_ns::Balloon *BalloonManager_ns::getBalloon(uint id) {
 	assert(id < _numBalloons);
 	return &_intBalloons[id];
 }
@@ -318,7 +433,7 @@ int BalloonManager_ns::createBalloon(int16 w, int16 h, int16 winding, uint16 bor
 		// TODO: this bitmap tail should only be used for Dos games. Amiga should use a polygon fill.
 		winding = (winding == 0 ? 1 : 0);
 		Common::Rect s(BALLOON_TAIL_WIDTH, BALLOON_TAIL_HEIGHT);
-		s.moveTo(r.width()/2 - 5, r.bottom - 1);
+		s.moveTo(r.width() / 2 - 5, r.bottom - 1);
 		_vm->_gfx->blt(s, _resBalloonTail[winding], balloon->surface, LAYER_FOREGROUND, 100, BALLOON_TRANSPARENT_COLOR_NS);
 	}
 
@@ -326,7 +441,6 @@ int BalloonManager_ns::createBalloon(int16 w, int16 h, int16 winding, uint16 bor
 
 	return id;
 }
-
 
 int BalloonManager_ns::setSingleBalloon(const Common::String &text, uint16 x, uint16 y, uint16 winding, TextColor textColor) {
 
@@ -336,7 +450,7 @@ int BalloonManager_ns::setSingleBalloon(const Common::String &text, uint16 x, ui
 	w = _se.width() + 14;
 	h = _se.height() + 20;
 
-	int id = createBalloon(w+5, h, winding, 1);
+	int id = createBalloon(w + 5, h, winding, 1);
 	Balloon *balloon = &_intBalloons[id];
 
 	_sw.write(text, MAX_BALLOON_WIDTH, _textColors[textColor], balloon->surface);
@@ -358,8 +472,7 @@ int BalloonManager_ns::setDialogueBalloon(const Common::String &text, uint16 win
 	w = _se.width() + 14;
 	h = _se.height() + 20;
 
-
-	int id = createBalloon(w+5, h, winding, 1);
+	int id = createBalloon(w + 5, h, winding, 1);
 	Balloon *balloon = &_intBalloons[id];
 
 	_sw.write(text, MAX_BALLOON_WIDTH, _textColors[textColor], balloon->surface);
@@ -374,7 +487,6 @@ int BalloonManager_ns::setDialogueBalloon(const Common::String &text, uint16 win
 		balloon->obj->y += _intBalloons[id - 1].obj->y + _intBalloons[id - 1].outerBox.height();
 	}
 
-
 	return id;
 }
 
@@ -385,7 +497,6 @@ void BalloonManager_ns::setBalloonText(uint id, const Common::String &text, Text
 	_sw.write(text, MAX_BALLOON_WIDTH, _textColors[textColor], balloon->surface);
 }
 
-
 int BalloonManager_ns::setLocationBalloon(const Common::String &text, bool endGame) {
 
 	int16 w, h;
@@ -394,7 +505,7 @@ int BalloonManager_ns::setLocationBalloon(const Common::String &text, bool endGa
 	w = _se.width() + 14;
 	h = _se.height() + 20;
 
-	int id = createBalloon(w+(endGame ? 5 : 10), h+5, -1, BALLOON_TRANSPARENT_COLOR_NS);
+	int id = createBalloon(w + (endGame ? 5 : 10), h + 5, -1, BALLOON_TRANSPARENT_COLOR_NS);
 	Balloon *balloon = &_intBalloons[id];
 	_sw.write(text, MAX_BALLOON_WIDTH, _textColors[kNormalColor], balloon->surface);
 
@@ -425,24 +536,14 @@ int BalloonManager_ns::hitTestDialogueBalloon(int x, int y) {
 void BalloonManager_ns::reset() {
 	for (uint i = 0; i < _numBalloons; i++) {
 		_intBalloons[i].obj = 0;
-		_intBalloons[i].surface = 0;	// no need to delete surface, since it is done by Gfx
+		_intBalloons[i].surface = 0; // no need to delete surface, since it is done by Gfx
 	}
 	_numBalloons = 0;
 }
 
-
-
-
-
-
-
-
-
-
-
 class StringExtent_BR : public WrappedLineFormatter {
 
-	uint	_width, _height;
+	uint _width, _height;
 
 protected:
 	virtual void setup() {
@@ -465,25 +566,32 @@ protected:
 	}
 
 public:
-	StringExtent_BR(Font *font) : WrappedLineFormatter(font), _width(0), _height(0) { }
+	StringExtent_BR(Font *font)
+	  : WrappedLineFormatter(font)
+	  , _width(0)
+	  , _height(0) {}
 
 	uint width() const { return _width; }
 	uint height() const { return _height; }
 };
 
-
 class StringWriter_BR : public WrappedLineFormatter {
 
-	uint	_width, _height;
-	byte	_color;
-	uint	_x, _y;
+	uint _width, _height;
+	byte _color;
+	uint _x, _y;
 
-	Graphics::Surface	*_surf;
+	Graphics::Surface *_surf;
 
 protected:
-	StringWriter_BR(Font *font, byte color) : WrappedLineFormatter(font), _width(0), _height(0),
-			_color(color), _x(0), _y(0), _surf(NULL) {
-
+	StringWriter_BR(Font *font, byte color)
+	  : WrappedLineFormatter(font)
+	  , _width(0)
+	  , _height(0)
+	  , _color(color)
+	  , _x(0)
+	  , _y(0)
+	  , _surf(NULL) {
 	}
 
 	virtual void setup() {
@@ -494,7 +602,7 @@ protected:
 			return;
 		}
 		uint16 rx = _x + (_surf->w - _lineWidth) / 2;
-		uint16 ry = _y + _lines * _font->height();	// y
+		uint16 ry = _y + _lines * _font->height(); // y
 
 		byte *dst = (byte *)_surf->getBasePtr(rx, ry);
 		_font->setColor(_color);
@@ -506,11 +614,17 @@ protected:
 	}
 
 public:
-	StringWriter_BR(Font *font) : WrappedLineFormatter(font), _width(0), _height(0),
-			_color(0), _x(0), _y(0), _surf(NULL) { }
+	StringWriter_BR(Font *font)
+	  : WrappedLineFormatter(font)
+	  , _width(0)
+	  , _height(0)
+	  , _color(0)
+	  , _x(0)
+	  , _y(0)
+	  , _surf(NULL) {}
 
 	void write(const Common::String &text, uint maxWidth, byte color, Graphics::Surface *surf) {
-		StringExtent_BR	se(_font);
+		StringExtent_BR se(_font);
 		se.calc(text, maxWidth);
 		_width = se.width() + 10;
 		_height = se.height() + 12;
@@ -521,11 +635,7 @@ public:
 		_y = (_surf->h - _height) / 2;
 		calc(text, maxWidth);
 	}
-
 };
-
-
-
 
 class BalloonManager_br : public BalloonManager {
 
@@ -535,10 +645,10 @@ class BalloonManager_br : public BalloonManager {
 	struct Balloon {
 		Common::Rect box;
 		Graphics::Surface *surface;
-		GfxObj	*obj;
+		GfxObj *obj;
 	} _intBalloons[3];
 
-	uint	_numBalloons;
+	uint _numBalloons;
 
 	Frames *_leftBalloon;
 	Frames *_rightBalloon;
@@ -548,7 +658,7 @@ class BalloonManager_br : public BalloonManager {
 	Balloon *getBalloon(uint id);
 	Graphics::Surface *expandBalloon(Frames *data, int frameNum);
 
-	StringWriter_BR	_sw;
+	StringWriter_BR _sw;
 	StringExtent_BR _se;
 
 public:
@@ -563,9 +673,7 @@ public:
 	int hitTestDialogueBalloon(int x, int y);
 };
 
-
-
-BalloonManager_br::Balloon* BalloonManager_br::getBalloon(uint id) {
+BalloonManager_br::Balloon *BalloonManager_br::getBalloon(uint id) {
 	assert(id < _numBalloons);
 	return &_intBalloons[id];
 }
@@ -597,8 +705,7 @@ int BalloonManager_br::setSingleBalloon(const Common::String &text, uint16 x, ui
 	if (winding == 0) {
 		src = _rightBalloon;
 		srcFrame = 0;
-	} else
-	if (winding == 1) {
+	} else if (winding == 1) {
 		src = _leftBalloon;
 		srcFrame = 0;
 	}
@@ -633,8 +740,7 @@ int BalloonManager_br::setDialogueBalloon(const Common::String &text, uint16 win
 	if (winding == 0) {
 		src = _rightBalloon;
 		srcFrame = 0;
-	} else
-	if (winding == 1) {
+	} else if (winding == 1) {
 		src = _leftBalloon;
 		srcFrame = id;
 	}
@@ -712,7 +818,7 @@ int BalloonManager_br::hitTestDialogueBalloon(int x, int y) {
 void BalloonManager_br::reset() {
 	for (uint i = 0; i < _numBalloons; i++) {
 		_intBalloons[i].obj = 0;
-		_intBalloons[i].surface = 0;	// no need to delete surface, since it is done by Gfx
+		_intBalloons[i].surface = 0; // no need to delete surface, since it is done by Gfx
 	}
 
 	_numBalloons = 0;
@@ -725,10 +831,13 @@ void BalloonManager_br::cacheAnims() {
 	}
 }
 
-
-
-BalloonManager_br::BalloonManager_br(Parallaction_br *vm, Font *font) : _vm(vm), _numBalloons(0),
-	_leftBalloon(0), _rightBalloon(0), _sw(font), _se(font) {
+BalloonManager_br::BalloonManager_br(Parallaction_br *vm, Font *font)
+  : _vm(vm)
+  , _numBalloons(0)
+  , _leftBalloon(0)
+  , _rightBalloon(0)
+  , _sw(font)
+  , _se(font) {
 
 	if (_vm->getPlatform() == Common::kPlatformDOS) {
 		_textColors[kSelectedColor] = 12;
@@ -753,7 +862,5 @@ void Parallaction_ns::setupBalloonManager() {
 void Parallaction_br::setupBalloonManager() {
 	_balloonMan = new BalloonManager_br(this, _dialogueFont);
 }
-
-
 
 } // namespace Parallaction

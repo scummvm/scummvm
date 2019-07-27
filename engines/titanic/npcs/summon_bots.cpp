@@ -25,12 +25,15 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CSummonBots, CRobotController)
-	ON_MESSAGE(SummonBotQueryMsg)
-	ON_MESSAGE(SummonBotMsg)
+ON_MESSAGE(SummonBotQueryMsg)
+ON_MESSAGE(SummonBotMsg)
 END_MESSAGE_MAP()
 
-CSummonBots::CSummonBots() : CRobotController(), _string2("NULL"),
-		_fieldC8(0), _fieldCC(0) {
+CSummonBots::CSummonBots()
+  : CRobotController()
+  , _string2("NULL")
+  , _fieldC8(0)
+  , _fieldCC(0) {
 }
 
 void CSummonBots::save(SimpleFile *file, int indent) {

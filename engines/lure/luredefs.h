@@ -23,9 +23,8 @@
 #ifndef LUREDEFS_H
 #define LUREDEFS_H
 
-
-#include "common/scummsys.h"
 #include "common/list.h"
+#include "common/scummsys.h"
 
 namespace Lure {
 
@@ -51,9 +50,9 @@ enum {
 #define ERROR_DETAILED 3
 
 enum {
-	GF_FLOPPY	= 1 <<  0,
-	GF_EGA		= 1 <<  1,
-	GF_LNGUNK	= 1 << 15
+	GF_FLOPPY = 1 << 0,
+	GF_EGA = 1 << 1,
+	GF_LNGUNK = 1 << 15
 };
 
 enum {
@@ -157,11 +156,21 @@ enum Action {
 #define CURSOR_SIZE 256
 #define CURSOR_RESOURCE_ID 1
 
-enum CursorType {CURSOR_ARROW = 0, CURSOR_DISK = 1, CURSOR_TIME_START = 2,
-	CURSOR_TIME_END = 9, CURSOR_CROSS = 10, CURSOR_UP_ARROW = 11, CURSOR_DOWN_ARROW = 12,
-	CURSOR_LEFT_ARROW = 13, CURSOR_RIGHT_ARROW = 14, CURSOR_CAMERA = 15, CURSOR_TALK = 16,
-	CURSOR_MENUBAR = 17, CURSOR_FIGHT_UPPER = 23, CURSOR_FIGHT_MIDDLE = 24,
-	CURSOR_FIGHT_LOWER = 25};
+enum CursorType { CURSOR_ARROW = 0,
+	                CURSOR_DISK = 1,
+	                CURSOR_TIME_START = 2,
+	                CURSOR_TIME_END = 9,
+	                CURSOR_CROSS = 10,
+	                CURSOR_UP_ARROW = 11,
+	                CURSOR_DOWN_ARROW = 12,
+	                CURSOR_LEFT_ARROW = 13,
+	                CURSOR_RIGHT_ARROW = 14,
+	                CURSOR_CAMERA = 15,
+	                CURSOR_TALK = 16,
+	                CURSOR_MENUBAR = 17,
+	                CURSOR_FIGHT_UPPER = 23,
+	                CURSOR_FIGHT_MIDDLE = 24,
+	                CURSOR_FIGHT_LOWER = 25 };
 
 // Font details
 #define FONT_RESOURCE_ID 4
@@ -185,7 +194,7 @@ enum CursorType {CURSOR_ARROW = 0, CURSOR_DISK = 1, CURSOR_TIME_START = 2,
 // Dialog related defines
 #define EGA_DIALOG_TEXT_COLOR 6
 #define EGA_DIALOG_WHITE_COLOR 2
-#define	VGA_DIALOG_TEXT_COLOR 0xe2
+#define VGA_DIALOG_TEXT_COLOR 0xe2
 #define VGA_DIALOG_WHITE_COLOR 0xe3
 #define EGA_DIALOG_BG_COLOR 13
 #define INFO_DIALOG_X 69
@@ -219,7 +228,7 @@ enum CursorType {CURSOR_ARROW = 0, CURSOR_DISK = 1, CURSOR_TIME_START = 2,
 #define SCRIPT_DATA_RESOURCE_ID 0x3f0c
 #define SCRIPT2_DATA_RESOURCE_ID 0x3f0d
 #define HOTSPOT_SCRIPT_LIST_RESOURCE_ID 0x3f0e
-#define	MESSAGES_LIST_RESOURCE_ID 0x3f0f
+#define MESSAGES_LIST_RESOURCE_ID 0x3f0f
 #define ACTION_LIST_RESOURCE_ID 0x3f10
 #define TALK_HEADER_RESOURCE_ID 0x3f11
 #define TALK_DATA_RESOURCE_ID 0x3f12

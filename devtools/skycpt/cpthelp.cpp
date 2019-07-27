@@ -20,8 +20,8 @@
  *
  */
 
-#include "stdafx.h"
 #include "cpthelp.h"
+#include "stdafx.h"
 
 void assertEmpty(CptObj *cpt) {
 	assert((cpt->len == 0) && (cpt->data == NULL) && (cpt->dbgName == NULL) && (cpt->type == 0));

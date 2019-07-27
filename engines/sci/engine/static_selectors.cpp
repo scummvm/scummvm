@@ -36,94 +36,94 @@ struct SelectorRemap {
 	uint32 slot;
 };
 
-static const char * const sci0Selectors[] = {
-	           "y",          "x",         "view",      "loop",        "cel", //  0 -  4
-	   "underBits",      "nsTop",       "nsLeft",  "nsBottom",    "nsRight", //  5 -  9
-	       "lsTop",     "lsLeft",     "lsBottom",   "lsRight",     "signal", // 10 - 14
-	 "illegalBits",      "brTop",       "brLeft",  "brBottom",    "brRight", // 15 - 19
-	        "name",        "key",         "time",      "text",   "elements", // 20 - 25
-	       "color",       "back",         "mode",     "style",      "state", // 25 - 29
-	        "font",       "type",       "window",    "cursor",        "max", // 30 - 34
-	        "mark",        "who",      "message",      "edit",       "play", // 35 - 39
-	      "number",     "handle",       "client",        "dx",         "dy", // 40 - 44
-	   "b-moveCnt",       "b-i1",         "b-i2",      "b-di",    "b-xAxis", // 45 - 49
-	      "b-incr",      "xStep",        "yStep", "moveSpeed",  "canBeHere", // 50 - 54
-	     "heading",      "mover",         "doit", "isBlocked",     "looper", // 55 - 59
-	    "priority",  "modifiers",       "replay",    "setPri",         "at", // 60 - 64
-	        "next",       "done",        "width",  "wordFail", "syntaxFail", // 65 - 69
-	"semanticFail", "pragmaFail",         "said",   "claimed",      "value", // 70 - 74
-	        "save",    "restore",        "title",    "button",       "icon", // 75 - 79
-	        "draw",     "delete",            "z"                             // 80 - 82
+static const char *const sci0Selectors[] = {
+	"y", "x", "view", "loop", "cel", //  0 -  4
+	"underBits", "nsTop", "nsLeft", "nsBottom", "nsRight", //  5 -  9
+	"lsTop", "lsLeft", "lsBottom", "lsRight", "signal", // 10 - 14
+	"illegalBits", "brTop", "brLeft", "brBottom", "brRight", // 15 - 19
+	"name", "key", "time", "text", "elements", // 20 - 25
+	"color", "back", "mode", "style", "state", // 25 - 29
+	"font", "type", "window", "cursor", "max", // 30 - 34
+	"mark", "who", "message", "edit", "play", // 35 - 39
+	"number", "handle", "client", "dx", "dy", // 40 - 44
+	"b-moveCnt", "b-i1", "b-i2", "b-di", "b-xAxis", // 45 - 49
+	"b-incr", "xStep", "yStep", "moveSpeed", "canBeHere", // 50 - 54
+	"heading", "mover", "doit", "isBlocked", "looper", // 55 - 59
+	"priority", "modifiers", "replay", "setPri", "at", // 60 - 64
+	"next", "done", "width", "wordFail", "syntaxFail", // 65 - 69
+	"semanticFail", "pragmaFail", "said", "claimed", "value", // 70 - 74
+	"save", "restore", "title", "button", "icon", // 75 - 79
+	"draw", "delete", "z" // 80 - 82
 };
 
-static const char * const sci1Selectors[] = {
-	  "parseLang",  "printLang", "subtitleLang",       "size",    "points", // 83 - 87
-	    "palette",    "dataInc",       "handle",        "min",       "sec", // 88 - 92
-	      "frame",        "vol",          "pri",    "perform",  "moveDone"  // 93 - 97
+static const char *const sci1Selectors[] = {
+	"parseLang", "printLang", "subtitleLang", "size", "points", // 83 - 87
+	"palette", "dataInc", "handle", "min", "sec", // 88 - 92
+	"frame", "vol", "pri", "perform", "moveDone" // 93 - 97
 };
 
-static const char * const sci11Selectors[] = {
-	  "topString",      "flags",    "quitGame",     "restart",      "hide", // 98 - 102
-	"scaleSignal",     "scaleX",      "scaleY",    "maxScale","vanishingX", // 103 - 107
-	 "vanishingY"                                                           // 108
+static const char *const sci11Selectors[] = {
+	"topString", "flags", "quitGame", "restart", "hide", // 98 - 102
+	"scaleSignal", "scaleX", "scaleY", "maxScale", "vanishingX", // 103 - 107
+	"vanishingY" // 108
 };
 
 #ifdef ENABLE_SCI32
-static const char * const sci2Selectors[] = {
-	    "plane",           "x",           "y",            "z",     "scaleX", //  0 -  4
-	   "scaleY",    "maxScale",    "priority",  "fixPriority",     "inLeft", //  5 -  9
-	    "inTop",     "inRight",    "inBottom", "useInsetRect",       "view", // 10 - 14
-	     "loop",         "cel",      "bitmap",       "nsLeft",      "nsTop", // 15 - 19
-	  "nsRight",    "nsBottom",      "lsLeft",        "lsTop",    "lsRight", // 20 - 25
-	 "lsBottom",      "signal", "illegalBits",       "brLeft",      "brTop", // 25 - 29
-	  "brRight",    "brBottom",        "name",          "key",       "time", // 30 - 34
-	     "text",    "elements",        "fore",         "back",       "mode", // 35 - 39
-	    "style",       "state",        "font",         "type",     "window", // 40 - 44
-	   "cursor",         "max",        "mark",          "who",    "message", // 45 - 49
-	     "edit",        "play",      "number",      "nodePtr",     "client", // 50 - 54
-	       "dx",          "dy",   "b-moveCnt",         "b-i1",       "b-i2", // 55 - 59
-	     "b-di",     "b-xAxis",      "b-incr",        "xStep",      "yStep", // 60 - 64
-	"moveSpeed",  "cantBeHere",     "heading",        "mover",       "doit", // 65 - 69
-	"isBlocked",      "looper",   "modifiers",       "replay",     "setPri", // 70 - 74
-	       "at",        "next",        "done",        "width", "pragmaFail", // 75 - 79
-	  "claimed",       "value",        "save",      "restore",      "title", // 80 - 84
-	   "button",        "icon",        "draw",       "delete",  "printLang", // 85 - 89
-	     "size",      "points",     "palette",      "dataInc",     "handle", // 90 - 94
-	      "min",         "sec",       "frame",          "vol",    "perform", // 95 - 99
-	 "moveDone",   "topString",       "flags",     "quitGame",    "restart", // 100 - 104
-	     "hide", "scaleSignal",  "vanishingX",   "vanishingY",    "picture", // 105 - 109
-	     "resX",        "resY",   "coordType",         "data",       "skip", // 110 - 104
-	   "center",         "all",        "show",     "textLeft",    "textTop", // 115 - 119
-	"textRight",  "textBottom", "borderColor",    "titleFore",  "titleBack", // 120 - 124
-	"titleFont",      "dimmed",    "frameOut",      "lastKey",  "magnifier", // 125 - 129
-	 "magPower",    "mirrored",       "pitch",         "roll",        "yaw", // 130 - 134
-	     "left",       "right",         "top",       "bottom",   "numLines"  // 135 - 139
+static const char *const sci2Selectors[] = {
+	"plane", "x", "y", "z", "scaleX", //  0 -  4
+	"scaleY", "maxScale", "priority", "fixPriority", "inLeft", //  5 -  9
+	"inTop", "inRight", "inBottom", "useInsetRect", "view", // 10 - 14
+	"loop", "cel", "bitmap", "nsLeft", "nsTop", // 15 - 19
+	"nsRight", "nsBottom", "lsLeft", "lsTop", "lsRight", // 20 - 25
+	"lsBottom", "signal", "illegalBits", "brLeft", "brTop", // 25 - 29
+	"brRight", "brBottom", "name", "key", "time", // 30 - 34
+	"text", "elements", "fore", "back", "mode", // 35 - 39
+	"style", "state", "font", "type", "window", // 40 - 44
+	"cursor", "max", "mark", "who", "message", // 45 - 49
+	"edit", "play", "number", "nodePtr", "client", // 50 - 54
+	"dx", "dy", "b-moveCnt", "b-i1", "b-i2", // 55 - 59
+	"b-di", "b-xAxis", "b-incr", "xStep", "yStep", // 60 - 64
+	"moveSpeed", "cantBeHere", "heading", "mover", "doit", // 65 - 69
+	"isBlocked", "looper", "modifiers", "replay", "setPri", // 70 - 74
+	"at", "next", "done", "width", "pragmaFail", // 75 - 79
+	"claimed", "value", "save", "restore", "title", // 80 - 84
+	"button", "icon", "draw", "delete", "printLang", // 85 - 89
+	"size", "points", "palette", "dataInc", "handle", // 90 - 94
+	"min", "sec", "frame", "vol", "perform", // 95 - 99
+	"moveDone", "topString", "flags", "quitGame", "restart", // 100 - 104
+	"hide", "scaleSignal", "vanishingX", "vanishingY", "picture", // 105 - 109
+	"resX", "resY", "coordType", "data", "skip", // 110 - 104
+	"center", "all", "show", "textLeft", "textTop", // 115 - 119
+	"textRight", "textBottom", "borderColor", "titleFore", "titleBack", // 120 - 124
+	"titleFont", "dimmed", "frameOut", "lastKey", "magnifier", // 125 - 129
+	"magPower", "mirrored", "pitch", "roll", "yaw", // 130 - 134
+	"left", "right", "top", "bottom", "numLines" // 135 - 139
 };
 #endif
 
 static const SelectorRemap sciSelectorRemap[] = {
-	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,   "moveDone",  170 },
-	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,     "points",  316 },
-	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,      "flags",  368 },
-	{    SCI_VERSION_1_EARLY,     SCI_VERSION_1_LATE,    "nodePtr",   44 },
-	{     SCI_VERSION_1_LATE,     SCI_VERSION_1_LATE, "cantBeHere",   57 },
-	{    SCI_VERSION_1_EARLY,     SCI_VERSION_1_LATE,  "topString",  101 },
-	{    SCI_VERSION_1_EARLY,     SCI_VERSION_1_LATE,      "flags",  102 },
+	{ SCI_VERSION_0_EARLY, SCI_VERSION_0_LATE, "moveDone", 170 },
+	{ SCI_VERSION_0_EARLY, SCI_VERSION_0_LATE, "points", 316 },
+	{ SCI_VERSION_0_EARLY, SCI_VERSION_0_LATE, "flags", 368 },
+	{ SCI_VERSION_1_EARLY, SCI_VERSION_1_LATE, "nodePtr", 44 },
+	{ SCI_VERSION_1_LATE, SCI_VERSION_1_LATE, "cantBeHere", 57 },
+	{ SCI_VERSION_1_EARLY, SCI_VERSION_1_LATE, "topString", 101 },
+	{ SCI_VERSION_1_EARLY, SCI_VERSION_1_LATE, "flags", 102 },
 	// SCI1.1
-	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,    "nodePtr",   41 },
-	{        SCI_VERSION_1_1,        SCI_VERSION_1_1, "cantBeHere",   54 },
+	{ SCI_VERSION_1_1, SCI_VERSION_1_1, "nodePtr", 41 },
+	{ SCI_VERSION_1_1, SCI_VERSION_1_1, "cantBeHere", 54 },
 	// The following are not really needed. They've only been defined to
 	// ease game debugging.
-	{        SCI_VERSION_1_1,        SCI_VERSION_2_1_LATE,    "-objID-", 4096 },
-	{        SCI_VERSION_1_1,        SCI_VERSION_2_1_LATE,     "-size-", 4097 },
-	{        SCI_VERSION_1_1,        SCI_VERSION_2_1_LATE, "-propDict-", 4098 },
-	{        SCI_VERSION_1_1,        SCI_VERSION_2_1_LATE, "-methDict-", 4099 },
-	{        SCI_VERSION_1_1,        SCI_VERSION_2_1_LATE, "-classScript-", 4100 },
-	{        SCI_VERSION_1_1,        SCI_VERSION_2_1_LATE,   "-script-", 4101 },
-	{        SCI_VERSION_1_1,        SCI_VERSION_2_1_LATE,    "-super-", 4102 },
+	{ SCI_VERSION_1_1, SCI_VERSION_2_1_LATE, "-objID-", 4096 },
+	{ SCI_VERSION_1_1, SCI_VERSION_2_1_LATE, "-size-", 4097 },
+	{ SCI_VERSION_1_1, SCI_VERSION_2_1_LATE, "-propDict-", 4098 },
+	{ SCI_VERSION_1_1, SCI_VERSION_2_1_LATE, "-methDict-", 4099 },
+	{ SCI_VERSION_1_1, SCI_VERSION_2_1_LATE, "-classScript-", 4100 },
+	{ SCI_VERSION_1_1, SCI_VERSION_2_1_LATE, "-script-", 4101 },
+	{ SCI_VERSION_1_1, SCI_VERSION_2_1_LATE, "-super-", 4102 },
 	//
-	{        SCI_VERSION_1_1,        SCI_VERSION_2_1_LATE,     "-info-", 4103 },
-	{        SCI_VERSION_NONE,           SCI_VERSION_NONE,            0,    0 }
+	{ SCI_VERSION_1_1, SCI_VERSION_2_1_LATE, "-info-", 4103 },
+	{ SCI_VERSION_NONE, SCI_VERSION_NONE, 0, 0 }
 };
 
 struct ClassReference {
@@ -142,21 +142,21 @@ struct ClassReference {
 // SCI1.1: -objID-, -size-, -propDict-, -methDict-, -classScript-, -script-,
 //         -super-, -info-
 static const ClassReference classReferences[] = {
-	{   0, "Character",         "say",   kSelectorMethod,  5 },	// Crazy Nick's Soft Picks
-	{ 928,  "Narrator",         "say",   kSelectorMethod,  4 },
-	{ 928,  "Narrator",   "startText",   kSelectorMethod,  5 },
-	{ 929,      "Sync",    "syncTime", kSelectorVariable,  1 },
-	{ 929,      "Sync",     "syncCue", kSelectorVariable,  2 },
-	{ 981, "SysWindow",        "open",   kSelectorMethod,  1 },
-	{ 999,    "Script",        "init",   kSelectorMethod,  0 },
-	{ 999,    "Script",     "dispose",   kSelectorMethod,  2 },
-	{ 999,    "Script", "changeState",   kSelectorMethod,  3 }
+	{ 0, "Character", "say", kSelectorMethod, 5 }, // Crazy Nick's Soft Picks
+	{ 928, "Narrator", "say", kSelectorMethod, 4 },
+	{ 928, "Narrator", "startText", kSelectorMethod, 5 },
+	{ 929, "Sync", "syncTime", kSelectorVariable, 1 },
+	{ 929, "Sync", "syncCue", kSelectorVariable, 2 },
+	{ 981, "SysWindow", "open", kSelectorMethod, 1 },
+	{ 999, "Script", "init", kSelectorMethod, 0 },
+	{ 999, "Script", "dispose", kSelectorMethod, 2 },
+	{ 999, "Script", "changeState", kSelectorMethod, 3 }
 #ifdef ENABLE_SCI32
 	,
-	{ 64929,    "Sync",    "syncTime", kSelectorVariable,  2 },
-	{ 64929,    "Sync",     "syncCue", kSelectorVariable,  3 },
-	{ 64999,     "Obj",        "init",   kSelectorMethod,  1 },
-	{ 64999,     "Obj",        "doit",   kSelectorMethod,  2 }
+	{ 64929, "Sync", "syncTime", kSelectorVariable, 2 },
+	{ 64929, "Sync", "syncCue", kSelectorVariable, 3 },
+	{ 64999, "Obj", "init", kSelectorMethod, 1 },
+	{ 64999, "Obj", "doit", kSelectorMethod, 2 }
 #endif
 };
 
@@ -259,12 +259,12 @@ void Kernel::findSpecificSelectors(Common::StringArray &selectorNames) {
 				}
 #endif
 				// xLast and yLast always come between illegalBits and xStep
-				int illegalBitsSelectorPos = actorClass->locateVarSelector(_segMan, 15 + offset);	// illegalBits
-				int xStepSelectorPos = actorClass->locateVarSelector(_segMan, 51 + offset);	// xStep
+				int illegalBitsSelectorPos = actorClass->locateVarSelector(_segMan, 15 + offset); // illegalBits
+				int xStepSelectorPos = actorClass->locateVarSelector(_segMan, 51 + offset); // xStep
 				if (xStepSelectorPos - illegalBitsSelectorPos != 3) {
 					error("illegalBits and xStep selectors aren't found in "
-							"known locations. illegalBits = %d, xStep = %d",
-							illegalBitsSelectorPos, xStepSelectorPos);
+					      "known locations. illegalBits = %d, xStep = %d",
+					      illegalBitsSelectorPos, xStepSelectorPos);
 				}
 
 				int xLastSelectorPos = actorClass->getVarSelector(illegalBitsSelectorPos + 1);
@@ -297,8 +297,8 @@ void Kernel::findSpecificSelectors(Common::StringArray &selectorNames) {
 			if (classReferences[i].selectorType == kSelectorMethod) {
 				if (targetClass->getMethodCount() < selectorOffset + 1)
 					error("The %s class has less than %d methods (%d)",
-							classReferences[i].className, selectorOffset + 1,
-							targetClass->getMethodCount());
+					      classReferences[i].className, selectorOffset + 1,
+					      targetClass->getMethodCount());
 
 				targetSelectorPos = targetClass->getFuncSelector(selectorOffset);
 			} else {
@@ -307,15 +307,14 @@ void Kernel::findSpecificSelectors(Common::StringArray &selectorNames) {
 
 				if (targetClass->getVarCount() < selectorOffset + 1)
 					error("The %s class has less than %d variables (%d)",
-							classReferences[i].className, selectorOffset + 1,
-							targetClass->getVarCount());
+					      classReferences[i].className, selectorOffset + 1,
+					      targetClass->getVarCount());
 
 				targetSelectorPos = targetClass->getVarSelector(selectorOffset);
 			}
 
 			if (selectorNames.size() < (uint32)targetSelectorPos + 1)
 				selectorNames.resize((uint32)targetSelectorPos + 1);
-
 
 			selectorNames[targetSelectorPos] = classReferences[i].selectorName;
 		}

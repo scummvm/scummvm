@@ -27,12 +27,12 @@
 
 /* this structure defines a channel */
 struct saa1099_channel {
-	int frequency;				/* frequency (0x00..0xff) */
-	int freq_enable;			/* frequency enable */
-	int noise_enable;			/* noise enable */
-	int octave;				/* octave (0x00..0x07) */
-	int amplitude[2];			/* amplitude (0x00..0x0f) */
-	int envelope[2];			/* envelope (0x00..0x0f or 0x10 == off) */
+	int frequency; /* frequency (0x00..0xff) */
+	int freq_enable; /* frequency enable */
+	int noise_enable; /* noise enable */
+	int octave; /* octave (0x00..0x07) */
+	int amplitude[2]; /* amplitude (0x00..0x0f) */
+	int envelope[2]; /* envelope (0x00..0x0f or 0x10 == off) */
 
 	/* vars to simulate the square wave */
 	double counter;
@@ -45,24 +45,24 @@ struct saa1099_noise {
 	/* vars to simulate the noise generator output */
 	double counter;
 	double freq;
-	int level;				/* noise polynomal shifter */
+	int level; /* noise polynomal shifter */
 };
 
 /* this structure defines a SAA1099 chip */
 struct SAA1099 {
-	int stream;				/* our stream */
-	int noise_params[2];			/* noise generators parameters */
-	int env_enable[2];			/* envelope generators enable */
-	int env_reverse_right[2];		/* envelope reversed for right channel */
-	int env_mode[2];			/* envelope generators mode */
-	int env_bits[2];			/* non zero = 3 bits resolution */
-	int env_clock[2];			/* envelope clock mode (non-zero external) */
-	int env_step[2];			/* current envelope step */
-	int all_ch_enable;			/* all channels enable */
-	int sync_state;				/* sync all channels */
-	int selected_reg;			/* selected register */
-	struct saa1099_channel channels[6];	/* channels */
-	struct saa1099_noise noise[2];		/* noise generators */
+	int stream; /* our stream */
+	int noise_params[2]; /* noise generators parameters */
+	int env_enable[2]; /* envelope generators enable */
+	int env_reverse_right[2]; /* envelope reversed for right channel */
+	int env_mode[2]; /* envelope generators mode */
+	int env_bits[2]; /* non zero = 3 bits resolution */
+	int env_clock[2]; /* envelope clock mode (non-zero external) */
+	int env_step[2]; /* current envelope step */
+	int all_ch_enable; /* all channels enable */
+	int sync_state; /* sync all channels */
+	int selected_reg; /* selected register */
+	struct saa1099_channel channels[6]; /* channels */
+	struct saa1099_noise noise[2]; /* noise generators */
 };
 
 class CMSEmulator {
@@ -71,13 +71,14 @@ public:
 		// In PCs the chips run at 7.15909 MHz instead of 8 MHz.
 		// Adjust sampling rate upwards to bring pitch down.
 		_sampleRate = (sampleRate * 352) / 315;
-		memset(_saa1099, 0, sizeof(SAA1099)*2);
+		memset(_saa1099, 0, sizeof(SAA1099) * 2);
 	}
 
-	~CMSEmulator() { }
+	~CMSEmulator() {}
 
 	void portWrite(int port, int val);
 	void readBuffer(int16 *buffer, const int numSamples);
+
 private:
 	uint32 _sampleRate;
 
@@ -87,6 +88,5 @@ private:
 	void update(int chip, int16 *buffer, int length);
 	void portWriteIntern(int chip, int offset, int data);
 };
-
 
 #endif

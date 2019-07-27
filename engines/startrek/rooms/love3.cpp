@@ -251,11 +251,9 @@ void Room::love3ScrewedOrUnscrewedGasTank() {
 	}
 }
 
-
 void Room::love3UseWrenchOnO2OrH2Gas() {
 	showText(TX_SPEAKER_SPOCK, TX_LOV3_016);
 }
-
 
 // Use wrench on N2 gas = putting it from the inventory back to the service panel
 void Room::love3UseWrenchOnN2Gas() {
@@ -273,7 +271,6 @@ void Room::love3PutN2TankBack() {
 	loseItem(OBJECT_IN2GAS);
 	loadActorAnim(OBJECT_GAS_TANK, "r4n2", 0, 0, 0);
 }
-
 
 // Use wrench on engineering panel, insulation comes out
 void Room::love3UseWrenchOnEngineeringPanel() {
@@ -294,11 +291,9 @@ void Room::love3OpenedEngineeringPanel() {
 	showDescription(TX_LOV3N021);
 }
 
-
 void Room::love3UseWrenchOnMonitor() {
 	showText(TX_SPEAKER_SPOCK, TX_LOV3_018);
 }
-
 
 void Room::love3UseWaterOnMonitor() {
 	walkCrewmanC(OBJECT_KIRK, 0xc8, 0xb2, &Room::love3ReachedMonitorToUseWater);
@@ -317,11 +312,9 @@ void Room::love3PouredWaterOnMonitor() {
 	loseItem(OBJECT_IH2O);
 }
 
-
 void Room::love3UseCrewmanOnEngineeringPanelOrGrate() {
 	showDescription(TX_LOV3N030);
 }
-
 
 void Room::love3UseWrenchOnGrate() {
 	walkCrewmanC(OBJECT_KIRK, 0xf6, 0xaa, &Room::love3ReachedGateWithWrench);
@@ -332,7 +325,7 @@ void Room::love3ReachedGateWithWrench() {
 	if (_awayMission->love.grateRemoved)
 		loadActorAnimC(OBJECT_KIRK, "s3r4g2a", -1, -1, &Room::love3OpenedOrClosedGrate);
 	else
-		loadActorAnimC(OBJECT_KIRK, "s3r4g2",  -1, -1, &Room::love3OpenedOrClosedGrate);
+		loadActorAnimC(OBJECT_KIRK, "s3r4g2", -1, -1, &Room::love3OpenedOrClosedGrate);
 	loadActorStandAnim(OBJECT_GRATE);
 	playVoc("MUR3E1S");
 }
@@ -356,11 +349,9 @@ void Room::love3OpenedOrClosedGrate() {
 	}
 }
 
-
 void Room::love3UseCrewmanOnShaft() {
 	showDescription(TX_LOV3N011);
 }
-
 
 void Room::love3UseWaterOnShaft() {
 	walkCrewmanC(OBJECT_KIRK, 0x100, 0xa6, &Room::love3ReachedShaftUsingWater);
@@ -378,7 +369,6 @@ void Room::love3PouredWaterDownShaft() {
 	loseItem(OBJECT_IH2O);
 }
 
-
 void Room::love3UseNitrousOxideOnShaft() {
 	walkCrewmanC(OBJECT_KIRK, 0x100, 0xa6, &Room::love3ReachedShaftUsingNitrousOxide);
 }
@@ -395,7 +385,6 @@ void Room::love3PouredNitrousOxideDownShaft() {
 	showText(TX_SPEAKER_SPOCK, TX_LOV3_012);
 	loseItem(OBJECT_IN2O);
 }
-
 
 void Room::love3UseAmmoniaOnShaft() {
 	walkCrewmanC(OBJECT_KIRK, 0x100, 0xa6, &Room::love3ReachedShaftUsingAmmonia);
@@ -417,7 +406,6 @@ void Room::love3PouredAmmoniaDownShaft() {
 
 	loseItem(OBJECT_INH3);
 }
-
 
 void Room::love3UseRomulanLaughingGasOnShaft() {
 	if (_awayMission->love.gotPointsForGassingRomulans) {
@@ -455,7 +443,6 @@ void Room::love3PouredRomulanLaughingGasDownShaft() {
 	}
 }
 
-
 // Get the wrench on the ground
 void Room::love3GetWrench() {
 	walkCrewmanC(OBJECT_KIRK, 0x104, 0xb6, &Room::love3ReachedWrenchToGet);
@@ -473,7 +460,6 @@ void Room::love3PickedUpWrench() {
 	showDescription(TX_LOV3N031);
 }
 
-
 // Get the N2 gas tank in the service panel (fails due to weight)
 void Room::love3GetGasTank() {
 	walkCrewmanC(OBJECT_KIRK, 0x121, 0xb7, &Room::love3ReachedGasTankToGet);
@@ -485,7 +471,6 @@ void Room::love3ReachedGasTankToGet() {
 	else
 		showDescription(TX_LOV3N014);
 }
-
 
 // Use antigrav unit N2 gas tank in the service panel (succeeds)
 void Room::love3UseAntigravOnGasTank() {

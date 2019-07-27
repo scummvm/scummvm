@@ -27,13 +27,13 @@
 #define PEGASUS_ITEMS_BIOCHIPS_MAPIMAGE_H
 
 #include "pegasus/elements.h"
+#include "pegasus/neighborhood/mars/constants.h"
 #include "pegasus/surface.h"
 #include "pegasus/util.h"
-#include "pegasus/neighborhood/mars/constants.h"
 
 namespace Common {
-	class ReadStream;
-	class WriteStream;
+class ReadStream;
+class WriteStream;
 }
 
 namespace Pegasus {
@@ -55,8 +55,7 @@ public:
 
 	bool anyFlagSet() { return _mappedRooms.anyFlagSet(); }
 
-	static const uint32 kNumMappingRooms = (kMars39 - kMars35 + 1) + (kMars60 - kMars60 + 1) +
-			(kMarsMaze200 - kMarsMaze004 + 1);
+	static const uint32 kNumMappingRooms = (kMars39 - kMars35 + 1) + (kMars60 - kMars60 + 1) + (kMarsMaze200 - kMarsMaze004 + 1);
 	static const uint32 kNumMappingFlags = kNumMappingRooms * 4;
 
 protected:

@@ -28,13 +28,13 @@
 
 #if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(MIPS_TARGET)
 
-#include "backends/plugins/elf/elf-loader.h"
-#include "backends/plugins/elf/shorts-segment-manager.h"
+#	include "backends/plugins/elf/elf-loader.h"
+#	include "backends/plugins/elf/shorts-segment-manager.h"
 
 class MIPSDLObject : public DLObject {
 protected:
-	ShortSegmentManager::Segment *_shortsSegment;	// For assigning shorts ranges
-	uint32 _gpVal;									// Value of Global Pointer
+	ShortSegmentManager::Segment *_shortsSegment; // For assigning shorts ranges
+	uint32 _gpVal; // Value of Global Pointer
 
 	virtual bool relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment);
 	virtual bool relocateRels(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
@@ -45,8 +45,8 @@ protected:
 	void freeShortsSegment();
 
 public:
-	MIPSDLObject() :
-		DLObject() {
+	MIPSDLObject()
+	  : DLObject() {
 		_shortsSegment = NULL;
 		_gpVal = 0;
 	}

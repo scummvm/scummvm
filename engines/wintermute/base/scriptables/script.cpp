@@ -26,21 +26,22 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
+#include "common/memstream.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
-#include "common/memstream.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 #if EXTENDED_DEBUGGER_ENABLED
-#include "engines/wintermute/base/scriptables/debuggable/debuggable_script.h"
+#	include "engines/wintermute/base/scriptables/debuggable/debuggable_script.h"
 #endif
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(ScScript, false)
 
 //////////////////////////////////////////////////////////////////////////
-ScScript::ScScript(BaseGame *inGame, ScEngine *engine) : BaseClass(inGame) {
+ScScript::ScScript(BaseGame *inGame, ScEngine *engine)
+  : BaseClass(inGame) {
 	_buffer = nullptr;
 	_bufferSize = _iP = 0;
 	_scriptStream = nullptr;
@@ -55,12 +56,12 @@ ScScript::ScScript(BaseGame *inGame, ScEngine *engine) : BaseClass(inGame) {
 	_globals = nullptr;
 
 	_scopeStack = nullptr;
-	_callStack  = nullptr;
-	_thisStack  = nullptr;
-	_stack      = nullptr;
+	_callStack = nullptr;
+	_thisStack = nullptr;
+	_stack = nullptr;
 
-	_operand    = nullptr;
-	_reg1       = nullptr;
+	_operand = nullptr;
+	_reg1 = nullptr;
 
 	_functions = nullptr;
 	_numFunctions = 0;
@@ -97,7 +98,6 @@ ScScript::ScScript(BaseGame *inGame, ScEngine *engine) : BaseClass(inGame) {
 	_tracingMode = false;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScScript::~ScScript() {
 	cleanup();
@@ -116,7 +116,6 @@ void ScScript::readHeader() {
 	_header.methodTable = _scriptStream->readUint32LE();
 	_scriptStream->seek(oldPos);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::initScript() {
@@ -141,13 +140,12 @@ bool ScScript::initScript() {
 
 	// init stacks
 	_scopeStack = new ScStack(_gameRef);
-	_callStack  = new ScStack(_gameRef);
-	_thisStack  = new ScStack(_gameRef);
-	_stack      = new ScStack(_gameRef);
+	_callStack = new ScStack(_gameRef);
+	_thisStack = new ScStack(_gameRef);
+	_stack = new ScStack(_gameRef);
 
-	_operand    = new ScValue(_gameRef);
-	_reg1       = new ScValue(_gameRef);
-
+	_operand = new ScValue(_gameRef);
+	_reg1 = new ScValue(_gameRef);
 
 	// skip to the beginning
 	_iP = _header.codeStart;
@@ -160,7 +158,6 @@ bool ScScript::initScript() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::initTables() {
 	uint32 origIP = _iP;
@@ -170,7 +167,7 @@ bool ScScript::initTables() {
 	_iP = _header.symbolTable;
 
 	_numSymbols = getDWORD();
-	_symbols = new char*[_numSymbols];
+	_symbols = new char *[_numSymbols];
 	for (uint32 i = 0; i < _numSymbols; i++) {
 		uint32 index = getDWORD();
 		_symbols[index] = getString();
@@ -186,7 +183,6 @@ bool ScScript::initTables() {
 		_functions[i].name = getString();
 	}
 
-
 	// load events table
 	_iP = _header.eventTable;
 
@@ -196,7 +192,6 @@ bool ScScript::initTables() {
 		_events[i].pos = getDWORD();
 		_events[i].name = getString();
 	}
-
 
 	// load externals
 	if (_header.version >= 0x0101) {
@@ -229,12 +224,10 @@ bool ScScript::initTables() {
 		_methods[i].name = getString();
 	}
 
-
 	_iP = origIP;
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::create(const char *filename, byte *buffer, uint32 size, BaseScriptHolder *owner) {
@@ -251,7 +244,7 @@ bool ScScript::create(const char *filename, byte *buffer, uint32 size, BaseScrip
 		strcpy(_filename, filename);
 	}
 
-	_buffer = new byte [size];
+	_buffer = new byte[size];
 	if (!_buffer) {
 		return STATUS_FAILED;
 	}
@@ -273,7 +266,6 @@ bool ScScript::create(const char *filename, byte *buffer, uint32 size, BaseScrip
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::createThread(ScScript *original, uint32 initIP, const Common::String &eventName) {
 	cleanup();
@@ -292,7 +284,7 @@ bool ScScript::createThread(ScScript *original, uint32 initIP, const Common::Str
 	}
 
 	// copy buffer
-	_buffer = new byte [original->_bufferSize];
+	_buffer = new byte[original->_bufferSize];
 	if (!_buffer) {
 		return STATUS_FAILED;
 	}
@@ -323,9 +315,6 @@ bool ScScript::createThread(ScScript *original, uint32 initIP, const Common::Str
 	return STATUS_OK;
 }
 
-
-
-
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::createMethodThread(ScScript *original, const Common::String &methodName) {
 	uint32 ip = original->getMethodPos(methodName);
@@ -349,7 +338,7 @@ bool ScScript::createMethodThread(ScScript *original, const Common::String &meth
 	}
 
 	// copy buffer
-	_buffer = new byte [original->_bufferSize];
+	_buffer = new byte[original->_bufferSize];
 	if (!_buffer) {
 		return STATUS_FAILED;
 	}
@@ -378,7 +367,6 @@ bool ScScript::createMethodThread(ScScript *original, const Common::String &meth
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void ScScript::cleanup() {
@@ -433,7 +421,6 @@ void ScScript::cleanup() {
 	_events = nullptr;
 	_numEvents = 0;
 
-
 	if (_externals) {
 		for (uint32 i = 0; i < _numExternals; i++) {
 			if (_externals[i].nu_params > 0) {
@@ -466,13 +453,12 @@ void ScScript::cleanup() {
 	_scriptStream = nullptr;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 uint32 ScScript::getDWORD() {
 	_scriptStream->seek((int32)_iP);
 	uint32 ret = _scriptStream->readUint32LE();
 	_iP += sizeof(uint32);
-//	assert(oldRet == ret);
+	//	assert(oldRet == ret);
 	return ret;
 }
 
@@ -496,7 +482,6 @@ double ScScript::getFloat() {
 	return ret;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 char *ScScript::getString() {
 	char *ret = (char *)(_buffer + _iP);
@@ -508,7 +493,6 @@ char *ScScript::getString() {
 
 	return ret;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::executeInstruction() {
@@ -573,7 +557,6 @@ bool ScScript::executeInstruction() {
 	case II_RET_EVENT:
 		_state = SCRIPT_FINISHED;
 		break;
-
 
 	case II_CALL:
 		dw = getDWORD();
@@ -662,8 +645,7 @@ bool ScScript::executeInstruction() {
 			}
 		}
 		delete[] methodName;
-	}
-	break;
+	} break;
 
 	case II_EXTERNAL_CALL: {
 		uint32 symbolIndex = getDWORD();
@@ -748,7 +730,6 @@ bool ScScript::executeInstruction() {
 	case II_PUSH_FLOAT:
 		_stack->pushFloat(getFloat());
 		break;
-
 
 	case II_PUSH_BOOL:
 		_stack->pushBool(getDWORD() != 0);
@@ -837,7 +818,7 @@ bool ScScript::executeInstruction() {
 		if (op1->isNULL() || op2->isNULL()) {
 			_operand->setNULL();
 		} else if (op1->getType() == VAL_STRING || op2->getType() == VAL_STRING) {
-			char *tempStr = new char [strlen(op1->getString()) + strlen(op2->getString()) + 1];
+			char *tempStr = new char[strlen(op1->getString()) + strlen(op2->getString()) + 1];
 			strcpy(tempStr, op1->getString());
 			strcat(tempStr, op2->getString());
 			_operand->setString(tempStr);
@@ -1089,7 +1070,6 @@ bool ScScript::executeInstruction() {
 			_currentLine = newLine;
 		}
 		break;
-
 	}
 	default:
 		_gameRef->LOG(0, "Fatal: Invalid instruction %d ('%s', line %d, IP:0x%x)\n", inst, _filename, _currentLine, _iP - sizeof(uint32));
@@ -1103,7 +1083,6 @@ bool ScScript::executeInstruction() {
 	return ret;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 uint32 ScScript::getFuncPos(const Common::String &name) {
 	for (uint32 i = 0; i < _numFunctions; i++) {
@@ -1114,7 +1093,6 @@ uint32 ScScript::getFuncPos(const Common::String &name) {
 	return 0;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 uint32 ScScript::getMethodPos(const Common::String &name) const {
 	for (uint32 i = 0; i < _numMethods; i++) {
@@ -1124,7 +1102,6 @@ uint32 ScScript::getMethodPos(const Common::String &name) const {
 	}
 	return 0;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 ScValue *ScScript::getVar(char *name) {
@@ -1169,7 +1146,6 @@ ScValue *ScScript::getVar(char *name) {
 	return ret;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::waitFor(BaseObject *object) {
 	if (_unbreakable) {
@@ -1182,13 +1158,11 @@ bool ScScript::waitFor(BaseObject *object) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::waitForExclusive(BaseObject *object) {
 	_engine->resetObject(object);
 	return waitFor(object);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::sleep(uint32 duration) {
@@ -1208,7 +1182,6 @@ bool ScScript::sleep(uint32 duration) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::finish(bool includingThreads) {
 	if (_state != SCRIPT_FINISHED && includingThreads) {
@@ -1218,17 +1191,14 @@ bool ScScript::finish(bool includingThreads) {
 		_state = SCRIPT_FINISHED;
 	}
 
-
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::run() {
 	_state = SCRIPT_RUNNING;
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 void ScScript::runtimeError(const char *fmt, ...) {
@@ -1246,7 +1216,6 @@ void ScScript::runtimeError(const char *fmt, ...) {
 		_gameRef->quickMessage("Script runtime error. View log for details.");
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::persist(BasePersistenceManager *persistMgr) {
@@ -1311,7 +1280,6 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScScript *ScScript::invokeEventHandler(const Common::String &eventName, bool unbreakable) {
 	//if (_state!=SCRIPT_PERSISTENT) return nullptr;
@@ -1322,12 +1290,12 @@ ScScript *ScScript::invokeEventHandler(const Common::String &eventName, bool unb
 	}
 #if EXTENDED_DEBUGGER_ENABLED
 	// TODO: Not pretty
-	DebuggableScEngine* debuggableEngine;
-	debuggableEngine = dynamic_cast<DebuggableScEngine*>(_engine);
+	DebuggableScEngine *debuggableEngine;
+	debuggableEngine = dynamic_cast<DebuggableScEngine *>(_engine);
 	assert(debuggableEngine);
-	ScScript *thread = new DebuggableScript(_gameRef,  debuggableEngine);
+	ScScript *thread = new DebuggableScript(_gameRef, debuggableEngine);
 #else
-	ScScript *thread = new ScScript(_gameRef,  _engine);
+	ScScript *thread = new ScScript(_gameRef, _engine);
 #endif
 	if (thread) {
 		bool ret = thread->createThread(this, pos, eventName);
@@ -1342,9 +1310,7 @@ ScScript *ScScript::invokeEventHandler(const Common::String &eventName, bool unb
 	} else {
 		return nullptr;
 	}
-
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 uint32 ScScript::getEventPos(const Common::String &name) const {
@@ -1356,18 +1322,15 @@ uint32 ScScript::getEventPos(const Common::String &name) const {
 	return 0;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::canHandleEvent(const Common::String &eventName) const {
 	return getEventPos(eventName) != 0;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::canHandleMethod(const Common::String &methodName) const {
 	return getMethodPos(methodName) != 0;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::pause() {
@@ -1386,7 +1349,6 @@ bool ScScript::pause() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::resume() {
 	if (_state != SCRIPT_PAUSED) {
@@ -1396,7 +1358,6 @@ bool ScScript::resume() {
 	_state = _origState;
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 ScScript::TExternalFunction *ScScript::getExternal(char *name) {
@@ -1408,7 +1369,6 @@ ScScript::TExternalFunction *ScScript::getExternal(char *name) {
 	return nullptr;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExternalFunction *function) {
 
@@ -1417,7 +1377,6 @@ bool ScScript::externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExter
 	stack->pushNULL();
 	return STATUS_FAILED;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::copyParameters(ScStack *stack) {
@@ -1434,7 +1393,6 @@ bool ScScript::copyParameters(ScStack *stack) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::finishThreads() {
@@ -1457,7 +1415,7 @@ void ScScript::afterLoad() {
 			return;
 		}
 
-		_buffer = new byte [_bufferSize];
+		_buffer = new byte[_bufferSize];
 		memcpy(_buffer, buffer, _bufferSize);
 
 		delete _scriptStream;

@@ -23,18 +23,23 @@
 #ifndef TITANIC_BARBOT_H
 #define TITANIC_BARBOT_H
 
-#include "titanic/npcs/true_talk_npc.h"
 #include "titanic/messages/messages.h"
+#include "titanic/npcs/true_talk_npc.h"
 
 namespace Titanic {
 
-enum GlassGiven { GG_DEFAULT = -1, GG_EMPTY = 0, GG_CONDIMENT = 1, GG_BIRD = 3 };
+enum GlassGiven { GG_DEFAULT = -1,
+	                GG_EMPTY = 0,
+	                GG_CONDIMENT = 1,
+	                GG_BIRD = 3 };
 
 class CBarbot : public CTrueTalkNPC {
 	struct FrameRange {
 		int _startFrame;
 		int _endFrame;
-		FrameRange() : _startFrame(0), _endFrame(0) {}
+		FrameRange()
+		  : _startFrame(0)
+		  , _endFrame(0) {}
 	};
 	class FrameRanges : public Common::Array<FrameRange> {
 	public:
@@ -57,8 +62,10 @@ class CBarbot : public CTrueTalkNPC {
 	bool MovieFrameMsg(CMovieFrameMsg *msg);
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
 	bool TimerMsg(CTimerMsg *msg);
+
 private:
 	static int _timesCalled;
+
 private:
 	FrameRanges _frames;
 	int _field108;
@@ -84,6 +91,7 @@ private:
 	GlassGiven _glassContent;
 	bool _drunkFlag;
 	int _field160;
+
 private:
 	/**
 	 * Plays a given range of movie frames
@@ -97,6 +105,7 @@ private:
 	bool areIngredientsMissing() const {
 		return !_addedPuret || !_addedLemon || !_addedVodka;
 	}
+
 public:
 	CLASSDEF;
 	CBarbot();

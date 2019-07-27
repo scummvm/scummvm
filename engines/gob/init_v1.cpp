@@ -22,14 +22,15 @@
 
 #include "common/endian.h"
 
+#include "gob/draw.h"
+#include "gob/global.h"
 #include "gob/gob.h"
 #include "gob/init.h"
-#include "gob/global.h"
-#include "gob/draw.h"
 
 namespace Gob {
 
-Init_v1::Init_v1(GobEngine *vm) : Init(vm) {
+Init_v1::Init_v1(GobEngine *vm)
+  : Init(vm) {
 }
 
 Init_v1::~Init_v1() {
@@ -51,9 +52,9 @@ void Init_v1::initVideo() {
 
 	_vm->_video->initSurfDesc(320, 200, PRIMARY_SURFACE);
 
-	_vm->_draw->_cursorWidth       = 16;
-	_vm->_draw->_cursorHeight      = 16;
-	_vm->_draw->_transparentCursor =  1;
+	_vm->_draw->_cursorWidth = 16;
+	_vm->_draw->_cursorHeight = 16;
+	_vm->_draw->_transparentCursor = 1;
 }
 
 } // End of namespace Gob

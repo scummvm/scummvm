@@ -29,7 +29,6 @@
 #ifndef WINTERMUTE_DCGF_H
 #define WINTERMUTE_DCGF_H
 
-
 //////////////////////////////////////////////////////////////////////////
 #define DCGF_VER_MAJOR 1
 #define DCGF_VER_MINOR 4

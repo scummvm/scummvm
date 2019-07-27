@@ -29,8 +29,8 @@ namespace Sci {
 
 enum SOLFlags {
 	kCompressed = 1,
-	k16Bit      = 4,
-	kStereo     = 16
+	k16Bit = 4,
+	kStereo = 16
 };
 
 template <bool STEREO, bool S16BIT, bool OLDDPCM8>
@@ -55,8 +55,14 @@ private:
 	 * The last sample from the previous DPCM decode.
 	 */
 	union {
-		struct { int16 l; int16 r; } _dpcmCarry16;
-		struct { uint8 l; uint8 r; } _dpcmCarry8;
+		struct {
+			int16 l;
+			int16 r;
+		} _dpcmCarry16;
+		struct {
+			uint8 l;
+			uint8 r;
+		} _dpcmCarry8;
 	};
 
 	/**

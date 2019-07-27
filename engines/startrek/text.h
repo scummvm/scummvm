@@ -23,7 +23,6 @@
 #ifndef STARTREK_TEXT_H
 #define STARTREK_TEXT_H
 
-
 namespace StarTrek {
 
 // The type to use for text references (values of "GameStringIDs" enum).
@@ -66,7 +65,7 @@ enum GroundTextIDs {
 enum GameStringIDs {
 	TX_BLANK = -1,
 	TX_NULL = 0,
-	TX_BLANK_OLD = 1,	// unused, kept as filler
+	TX_BLANK_OLD = 1, // unused, kept as filler
 	TX_DIALOG_ERROR,
 	TX_ANIMATION_ERROR,
 
@@ -156,15 +155,15 @@ enum GameStringIDs {
 	TX_COMPU192,
 	TX_COMPU193,
 
-	TX_DEM0N009,	// kept because it's also used as an enhancement in mudd1
-	TX_DEM0C001,	// "C" = "Custom" (no ID originally assigned)
+	TX_DEM0N009, // kept because it's also used as an enhancement in mudd1
+	TX_DEM0C001, // "C" = "Custom" (no ID originally assigned)
 
 	TX_DEM1_F23,
 
-	TX_DEM3_019,	// kept because it's also used as an enhancement in venga
+	TX_DEM3_019, // kept because it's also used as an enhancement in venga
 
 	TX_DEM3_A32,
-	TX_DEM3_B32,	// unused?
+	TX_DEM3_B32, // unused?
 	TX_DEM3_F21,
 
 	TX_TUG0_001,
@@ -234,7 +233,6 @@ enum GameStringIDs {
 	TX_TUG0N013,
 	TX_TUG0N014,
 
-
 	TX_TUG1_001,
 	TX_TUG1_002,
 	TX_TUG1_003,
@@ -268,7 +266,6 @@ enum GameStringIDs {
 	TX_TUG1N010,
 	TX_TUG1N011,
 	TX_TUG1N013,
-
 
 	TX_TUG2_001,
 	TX_TUG2_002,
@@ -341,7 +338,6 @@ enum GameStringIDs {
 	TX_TUG2N106,
 	TX_TUG2C001, // Custom
 
-
 	TX_TUG3_001,
 	TX_TUG3_002,
 	TX_TUG3_003,
@@ -372,7 +368,6 @@ enum GameStringIDs {
 	TX_TUG3N006,
 	TX_TUG3N007,
 	TX_TUG3N008,
-
 
 	TX_LOV0_001,
 	TX_LOV0_002,
@@ -439,7 +434,6 @@ enum GameStringIDs {
 	TX_LOV0N008,
 	TX_LOV0N009,
 
-
 	TX_LOV1_001,
 	TX_LOV1_002,
 	TX_LOV1_003,
@@ -493,7 +487,6 @@ enum GameStringIDs {
 	TX_LOV1N023,
 	TX_LOV1N034,
 	TX_LOV1N035,
-
 
 	TX_LOV2_001,
 	TX_LOV2_002,
@@ -584,7 +577,6 @@ enum GameStringIDs {
 	TX_LOV2N050,
 	TX_LOV2N051,
 
-
 	TX_LOV3_001,
 	TX_LOV3_002,
 	TX_LOV3_003,
@@ -652,7 +644,6 @@ enum GameStringIDs {
 	TX_LOV3NA23,
 	TX_LOV3NJ32,
 
-
 	TX_LOV4_001,
 	TX_LOV4_002,
 	TX_LOV4_003,
@@ -695,7 +686,6 @@ enum GameStringIDs {
 	TX_LOV4N011,
 	TX_LOV4N012,
 	TX_LOV4N013,
-
 
 	TX_LOV5_001,
 	TX_LOV5_002,
@@ -775,7 +765,6 @@ enum GameStringIDs {
 	TX_LOV5N018,
 	TX_LOV5C001, // Custom
 
-
 	TX_LOVA_100,
 	TX_LOVA_F01,
 	TX_LOVA_F02,
@@ -786,7 +775,6 @@ enum GameStringIDs {
 	TX_LOVA_F10,
 	TX_LOVA_F54,
 	TX_LOVA_F55,
-
 
 	TX_MUD0_001,
 	TX_MUD0_002,
@@ -850,7 +838,6 @@ enum GameStringIDs {
 	// UNUSED
 	TX_MUD0N019,
 
-
 	TX_MUD1_001,
 	TX_MUD1_002,
 	TX_MUD1_003,
@@ -896,7 +883,6 @@ enum GameStringIDs {
 	TX_MUD1N014,
 	TX_MUD1N015,
 	TX_MUD1N016,
-
 
 	TX_MUD2_001,
 	TX_MUD2_002,
@@ -965,7 +951,6 @@ enum GameStringIDs {
 	TX_MUD2N009,
 	TX_MUD2N010,
 	TX_MUD2N011,
-
 
 	// MISSING
 	TX_MUD3_002,
@@ -1061,7 +1046,6 @@ enum GameStringIDs {
 	TX_MUD3N020,
 	TX_MUD3C001,
 
-
 	TX_MUD4_001,
 	TX_MUD4_002,
 	TX_MUD4_003,
@@ -1156,7 +1140,6 @@ enum GameStringIDs {
 	TX_MUD4N012,
 	TX_MUD4N013,
 
-
 	TX_MUD5_001,
 	TX_MUD5_002,
 	TX_MUD5_003,
@@ -1212,7 +1195,6 @@ enum GameStringIDs {
 	TX_MUD5N012,
 	TX_MUD5N105,
 
-
 	// MISSING
 	TX_FEA0_002,
 	TX_FEA0_003,
@@ -1258,7 +1240,6 @@ enum GameStringIDs {
 	TX_FEA0N007,
 	TX_FEA0N008,
 	TX_FEA0N009,
-
 
 	TX_FEA1_001,
 	TX_FEA1_002,
@@ -1343,7 +1324,6 @@ enum GameStringIDs {
 	TX_FEA1N021,
 	TX_FEA1N022,
 
-
 	TX_FEA2_001,
 	TX_FEA2_002,
 	TX_FEA2_003,
@@ -1363,7 +1343,6 @@ enum GameStringIDs {
 	TX_FEA2N006,
 	TX_FEA2N007,
 	TX_FEA2N008,
-
 
 	TX_FEA3_001,
 	TX_FEA3_002,
@@ -1422,7 +1401,6 @@ enum GameStringIDs {
 	TX_FEA3N011,
 	TX_FEA3N012,
 
-
 	TX_FEA4_001,
 	TX_FEA4_002,
 	TX_FEA4_003,
@@ -1445,7 +1423,6 @@ enum GameStringIDs {
 	TX_FEA4N006,
 	TX_FEA4N007,
 	TX_FEA4N008,
-
 
 	TX_FEA5_001,
 	TX_FEA5_002,
@@ -1503,7 +1480,6 @@ enum GameStringIDs {
 	TX_FEA5N013,
 	TX_FEA5N014,
 	TX_FEA5N015,
-
 
 	TX_FEA6_001,
 	TX_FEA6_002,
@@ -1571,7 +1547,6 @@ enum GameStringIDs {
 	TX_FEA6N028, // UNUSED
 	TX_FEA6N029, // UNUSED
 
-
 	TX_FEA7_001,
 	TX_FEA7_002,
 	TX_FEA7_003,
@@ -1602,7 +1577,6 @@ enum GameStringIDs {
 	TX_FEA7_028,
 	TX_FEA7_029,
 	TX_FEA7_030,
-
 
 	TX_TRI0_001,
 	TX_TRI0_002,
@@ -1682,7 +1656,6 @@ enum GameStringIDs {
 	TX_TRI0N008,
 	TX_TRI0N009,
 	TX_TRI0U075,
-
 
 	// UNUSED (001)
 	TX_TRI1_002,
@@ -1778,7 +1751,6 @@ enum GameStringIDs {
 	TX_TRI1C001, // Custom
 	TX_TRI1C002,
 
-
 	TX_QUIET,
 	TX_TRI2_001,
 	TX_TRI2_002,
@@ -1831,7 +1803,6 @@ enum GameStringIDs {
 	TX_TRI2U091,
 	TX_TRI2U104,
 
-
 	TX_TRI3_001,
 	TX_TRI3_002,
 	TX_TRI3_003,
@@ -1881,7 +1852,6 @@ enum GameStringIDs {
 	TX_TRI3U089,
 	// UNUSED (U090)
 	TX_TRI3U099,
-
 
 	TX_TRI4_001,
 	TX_TRI4_002,
@@ -1960,7 +1930,6 @@ enum GameStringIDs {
 	TX_TRI4_075,
 	TX_TRI4_076,
 
-
 	TX_TRI5_001,
 	TX_TRI5_002,
 	TX_TRI5_003,
@@ -2035,7 +2004,6 @@ enum GameStringIDs {
 	TX_TRI5N020,
 	TX_TRI5N021,
 
-
 	TX_SIN0_001,
 	TX_SIN0_002,
 	TX_SIN0_003,
@@ -2083,7 +2051,6 @@ enum GameStringIDs {
 	TX_SIN0N011,
 	TX_SIN0U069,
 	TX_SIN0U082,
-
 
 	TX_SIN1_001,
 	TX_SIN1_002,
@@ -2135,7 +2102,6 @@ enum GameStringIDs {
 	TX_SIN1N010,
 	TX_SIN1N011,
 	TX_SIN1U070,
-
 
 	TX_SIN2_001,
 	TX_SIN2_002,
@@ -2206,7 +2172,6 @@ enum GameStringIDs {
 	TX_SIN2U097,
 	// UNUSED: sin2_b35.voc (same as 036)
 
-
 	TX_SIN3_001,
 	TX_SIN3_002,
 	TX_SIN3_003,
@@ -2255,7 +2220,6 @@ enum GameStringIDs {
 	TX_SIN3_LASERSETTING010,
 	TX_SIN3_LASERSETTING100,
 	TX_SIN3_LASERCANCEL,
-
 
 	TX_SIN4_001,
 	TX_SIN4_002,
@@ -2312,7 +2276,6 @@ enum GameStringIDs {
 	TX_SIN4U107,
 	// UNUSED (sin4u83a; alternate version of sin4u83b)
 	TX_SIN4U83B,
-
 
 	TX_SIN5_001,
 	TX_SIN5_002,
@@ -2375,7 +2338,6 @@ enum GameStringIDs {
 	TX_SIN5N011,
 	TX_SIN5N012,
 	TX_SIN5N013,
-
 
 	TX_VEN0_001,
 	TX_VEN0_002,
@@ -2443,7 +2405,6 @@ enum GameStringIDs {
 	TX_VEN0N019,
 	// UNUSED: VEN0_F15
 
-
 	TX_VEN1_001,
 	TX_VEN1_002,
 	// UNUSED
@@ -2486,7 +2447,6 @@ enum GameStringIDs {
 	TX_VEN1N022,
 	TX_VEN1N023,
 	// UNUSED: VEN1NA18 (variant of VEN1N018)
-
 
 	TX_VEN2_001,
 	TX_VEN2_002,
@@ -2662,7 +2622,6 @@ enum GameStringIDs {
 	TX_VEN2_HAIL_ENT,
 	TX_VEN2_CANCEL,
 
-
 	TX_VEN3_001,
 	TX_VEN3_002,
 	TX_VEN3_003,
@@ -2696,7 +2655,6 @@ enum GameStringIDs {
 	TX_VEN3N012,
 	TX_VEN3N013,
 	TX_VEN3N014,
-
 
 	TX_VEN4_001,
 	TX_VEN4_002,
@@ -2739,7 +2697,6 @@ enum GameStringIDs {
 	TX_VEN4N016,
 	TX_VEN4N017,
 
-
 	TX_VEN5_001,
 	TX_VEN5_002,
 	TX_VEN5_003,
@@ -2773,7 +2730,6 @@ enum GameStringIDs {
 	TX_VEN5N008,
 	TX_VEN5N009,
 	TX_VEN5N010,
-
 
 	TX_VEN6_001,
 	TX_VEN6_002,
@@ -2825,7 +2781,6 @@ enum GameStringIDs {
 	TX_VEN6N024,
 	TX_VEN6N025,
 
-
 	TX_VEN7_001,
 	// UNUSED
 	TX_VEN7_003,
@@ -2843,7 +2798,6 @@ enum GameStringIDs {
 	TX_VEN7N007,
 	TX_VEN7N008,
 	TX_VEN7N009,
-
 
 	TX_VEN8_001,
 	TX_VEN8_002,
@@ -2900,16 +2854,13 @@ enum GameStringIDs {
 	TX_VEN8N010,
 	// UNUSED (N011)
 
-
 	TX_VENA_F32,
 	TX_VENA_F34,
 	TX_VENA_F40,
 	TX_VENA_F41,
 
-
 	TX_SPOKCOFF,
 	TX_STATICU1,
-
 
 	TX_END
 };

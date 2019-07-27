@@ -125,4 +125,3 @@ static const char *const k2SeqplayTlkFilesDOSCDEnglish[14] = {
 };
 
 static const StringListProvider k2SeqplayTlkFilesDOSCDEnglishProvider = { ARRAYSIZE(k2SeqplayTlkFilesDOSCDEnglish), k2SeqplayTlkFilesDOSCDEnglish };
-

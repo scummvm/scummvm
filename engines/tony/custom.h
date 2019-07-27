@@ -27,10 +27,10 @@
  */
 
 #ifndef TONY_CUSTOM_H
-#define TONY_CUSTOM_H
+#	define TONY_CUSTOM_H
 
-#include "common/str.h"
-#include "tony/mpal/mpal.h"
+#	include "common/str.h"
+#	include "tony/mpal/mpal.h"
 
 namespace Tony {
 
@@ -41,23 +41,22 @@ struct MusicFileEntry {
 	int _sync;
 };
 
-#define INIT_CUSTOM_FUNCTION            MapCustomFunctions
+#	define INIT_CUSTOM_FUNCTION MapCustomFunctions
 
-#define BEGIN_CUSTOM_FUNCTION_MAP()                                            \
-	static void AssignError(int num) {                                           \
-		error("Custom function %u has been already assigned!", num);               \
-	}                                                                            \
-	void INIT_CUSTOM_FUNCTION(LPCUSTOMFUNCTION *lpMap, Common::String *lpStrMap) \
-	{
+#	define BEGIN_CUSTOM_FUNCTION_MAP()                              \
+		static void AssignError(int num) {                             \
+			error("Custom function %u has been already assigned!", num); \
+		}                                                              \
+		void INIT_CUSTOM_FUNCTION(LPCUSTOMFUNCTION *lpMap, Common::String *lpStrMap) {
 
-#define END_CUSTOM_FUNCTION_MAP()                                              \
-	}
+#	define END_CUSTOM_FUNCTION_MAP() \
+		}
 
-#define ASSIGN(num, func)                                                      \
-	if (lpMap[num] != NULL)                                                      \
-		AssignError(num);                                                          \
-	lpMap[num] = func;                                                           \
-	lpStrMap[num] = #func;
+#	define ASSIGN(num, func) \
+		if (lpMap[num] != NULL) \
+			AssignError(num);     \
+		lpMap[num] = func;      \
+		lpStrMap[num] = #func;
 
 class RMTony;
 class RMPointer;

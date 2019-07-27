@@ -20,14 +20,13 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
 
+#include "cine/bg.h"
 #include "cine/cine.h"
 #include "cine/various.h"
-#include "cine/bg.h"
 
 namespace Cine {
 
@@ -121,7 +120,8 @@ void addBackground(const char *bgName, uint16 bgIdx) {
 	byte fileIdx = findFileInBundle(bgName);
 	ptr = dataPtr = readBundleFile(fileIdx);
 
-	uint16 bpp = READ_BE_UINT16(ptr); ptr += 2;
+	uint16 bpp = READ_BE_UINT16(ptr);
+	ptr += 2;
 
 	if (bpp == 8) {
 		renderer->loadBg256(ptr, bgName, bgIdx);

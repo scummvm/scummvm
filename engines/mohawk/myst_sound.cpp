@@ -33,11 +33,11 @@
 
 namespace Mohawk {
 
-MystSound::MystSound(MohawkEngine_Myst *vm) :
-		_vm(vm),
-		_effectId(0),
-		_speechSamplesPerSecond(0),
-		_backgroundId(0) {
+MystSound::MystSound(MohawkEngine_Myst *vm)
+  : _vm(vm)
+  , _effectId(0)
+  , _speechSamplesPerSecond(0)
+  , _backgroundId(0) {
 }
 
 MystSound::~MystSound() {
@@ -53,21 +53,21 @@ Audio::RewindableAudioStream *MystSound::makeAudioStream(uint16 id, CueList *cue
 }
 
 void MystSound::playEffect(uint16 id, bool loop) {
-	debug (0, "Replacing sound %d", id);
+	debug(0, "Replacing sound %d", id);
 
 	// The original engine also forces looping for those sounds
 	switch (id) {
-		case 2205:
-		case 2207:
-		case 5378:
-		case 7220:
-		case 9119: 	// Elevator engine sound in mechanical age is looping.
-		case 9120:
-		case 9327:
-			loop = true;
-			break;
-		default:
-			break;
+	case 2205:
+	case 2207:
+	case 5378:
+	case 7220:
+	case 9119: // Elevator engine sound in mechanical age is looping.
+	case 9120:
+	case 9327:
+		loop = true;
+		break;
+	default:
+		break;
 	}
 
 	stopEffect();
@@ -137,7 +137,7 @@ void MystSound::playBackground(uint16 id, uint16 volume) {
 
 	// Check if sound is already playing
 	if (_vm->_mixer->isSoundHandleActive(_backgroundHandle)
-			&& _vm->getResourceName(ID_MSND, convertMystID(_backgroundId)).hasPrefix(prefix)) {
+	    && _vm->getResourceName(ID_MSND, convertMystID(_backgroundId)).hasPrefix(prefix)) {
 		// The sound is already playing, just change the volume
 		changeBackgroundVolume(volume);
 		return;
@@ -179,7 +179,7 @@ void MystSound::changeBackgroundVolume(uint16 volume) {
 }
 
 void MystSound::playSpeech(uint16 id, CueList *cueList) {
-	debug (0, "Playing speech %d", id);
+	debug(0, "Playing speech %d", id);
 
 	Audio::RewindableAudioStream *rewindStream = makeAudioStream(id, cueList);
 	if (!rewindStream) {

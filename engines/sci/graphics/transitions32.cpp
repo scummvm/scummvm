@@ -20,14 +20,14 @@
  *
  */
 
+#include "sci/graphics/transitions32.h"
 #include "sci/console.h"
-#include "sci/engine/segment.h"
 #include "sci/engine/seg_manager.h"
+#include "sci/engine/segment.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/text32.h"
-#include "sci/graphics/transitions32.h"
 #include "sci/sci.h"
 
 namespace Sci {
@@ -37,11 +37,11 @@ static int dissolveSequences[2][20] = {
 };
 static int16 divisionsDefaults[2][16] = {
 	/* SCI2.1early- */ { 1, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 40, 40, 101, 101 },
-	/* SCI2.1mid+ */   { 1, 20, 20, 20, 20, 10, 10, 10, 10, 20, 20,  6, 10, 101, 101, 2 }
+	/* SCI2.1mid+ */ { 1, 20, 20, 20, 20, 10, 10, 10, 10, 20, 20, 6, 10, 101, 101, 2 }
 };
 
-GfxTransitions32::GfxTransitions32(SegManager *segMan) :
-	_segMan(segMan) {
+GfxTransitions32::GfxTransitions32(SegManager *segMan)
+  : _segMan(segMan) {
 	for (int i = 0; i < 236; i += 2) {
 		_styleRanges[i] = 0;
 		_styleRanges[i + 1] = -1;
@@ -61,8 +61,9 @@ GfxTransitions32::GfxTransitions32(SegManager *segMan) :
 
 GfxTransitions32::~GfxTransitions32() {
 	for (ShowStyleList::iterator it = _showStyles.begin();
-		 it != _showStyles.end();
-		 it = deleteShowStyle(it));
+	     it != _showStyles.end();
+	     it = deleteShowStyle(it))
+		;
 	_scrolls.clear();
 }
 
@@ -130,46 +131,46 @@ void GfxTransitions32::processShowStyles() {
 }
 
 void GfxTransitions32::processEffects(PlaneShowStyle &showStyle) {
-	switch(showStyle.type) {
+	switch (showStyle.type) {
 	case kShowStyleHShutterOut:
 		processHShutterOut(showStyle);
-	break;
+		break;
 	case kShowStyleHShutterIn:
 		processHShutterIn(showStyle);
-	break;
+		break;
 	case kShowStyleVShutterOut:
 		processVShutterOut(showStyle);
-	break;
+		break;
 	case kShowStyleVShutterIn:
 		processVShutterIn(showStyle);
-	break;
+		break;
 	case kShowStyleWipeLeft:
 		processWipeLeft(showStyle);
-	break;
+		break;
 	case kShowStyleWipeRight:
 		processWipeRight(showStyle);
-	break;
+		break;
 	case kShowStyleWipeUp:
 		processWipeUp(showStyle);
-	break;
+		break;
 	case kShowStyleWipeDown:
 		processWipeDown(showStyle);
-	break;
+		break;
 	case kShowStyleIrisOut:
 		processIrisOut(showStyle);
-	break;
+		break;
 	case kShowStyleIrisIn:
 		processIrisIn(showStyle);
-	break;
+		break;
 	case kShowStyleDissolveNoMorph:
 	case kShowStyleDissolve:
 		processPixelDissolve(showStyle);
-	break;
+		break;
 	case kShowStyleNone:
 	case kShowStyleFadeOut:
 	case kShowStyleFadeIn:
 	case kShowStyleMorph:
-	break;
+		break;
 	}
 }
 
@@ -657,7 +658,7 @@ void GfxTransitions32::processHShutterIn(const PlaneShowStyle &showStyle) {
 		error("HShutterIn is not known to be used by any SCI2.1early- game. Please submit a bug report with details about the game you were playing and what you were doing that triggered this error. Thanks!");
 	}
 
-	Plane* plane = g_sci->_gfxFrameout->getVisiblePlanes().findByObject(showStyle.plane);
+	Plane *plane = g_sci->_gfxFrameout->getVisiblePlanes().findByObject(showStyle.plane);
 	const Common::Rect &screenRect = plane->_screenRect;
 	Common::Rect rect;
 
@@ -858,7 +859,7 @@ bool GfxTransitions32::processPixelDissolve21Early(PlaneShowStyle &showStyle) {
 bool GfxTransitions32::processPixelDissolve21Mid(const PlaneShowStyle &showStyle) {
 	// SQ6 room 530, LSL7 room 130
 
-	Plane* plane = g_sci->_gfxFrameout->getVisiblePlanes().findByObject(showStyle.plane);
+	Plane *plane = g_sci->_gfxFrameout->getVisiblePlanes().findByObject(showStyle.plane);
 	const Common::Rect &screenRect = plane->_screenRect;
 	Common::Rect rect;
 
@@ -1021,7 +1022,7 @@ bool GfxTransitions32::processWipe(const int8 direction, PlaneShowStyle &showSty
 #pragma mark Scrolls
 
 void GfxTransitions32::processScrolls() {
-	for (ScrollList::iterator it = _scrolls.begin(); it != _scrolls.end(); ) {
+	for (ScrollList::iterator it = _scrolls.begin(); it != _scrolls.end();) {
 		bool finished = processScroll(*it);
 		if (finished) {
 			it = _scrolls.erase(it);

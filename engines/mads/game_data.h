@@ -23,8 +23,8 @@
 #ifndef MADS_GAME_DATA_H
 #define MADS_GAME_DATA_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 #include "mads/resources.h"
 
 namespace MADS {
@@ -58,8 +58,10 @@ public:
 class SectionHandler {
 protected:
 	MADSEngine *_vm;
+
 public:
-	SectionHandler(MADSEngine *vm) : _vm(vm) {}
+	SectionHandler(MADSEngine *vm)
+	  : _vm(vm) {}
 	virtual ~SectionHandler() {}
 
 	virtual void preLoadSection() = 0;

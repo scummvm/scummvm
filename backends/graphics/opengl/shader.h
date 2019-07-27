@@ -27,9 +27,9 @@
 
 #if !USE_FORCED_GLES
 
-#include "common/singleton.h"
-#include "common/hash-str.h"
-#include "common/ptr.h"
+#	include "common/hash-str.h"
+#	include "common/ptr.h"
+#	include "common/singleton.h"
 
 namespace OpenGL {
 
@@ -53,7 +53,8 @@ public:
  */
 class ShaderUniformInteger : public ShaderUniformValue {
 public:
-	ShaderUniformInteger(GLint value) : _value(value) {}
+	ShaderUniformInteger(GLint value)
+	  : _value(value) {}
 
 	virtual void set(GLint location) const override;
 
@@ -66,7 +67,8 @@ private:
  */
 class ShaderUniformFloat : public ShaderUniformValue {
 public:
-	ShaderUniformFloat(GLfloat value) : _value(value) {}
+	ShaderUniformFloat(GLfloat value)
+	  : _value(value) {}
 
 	virtual void set(GLint location) const override;
 
@@ -86,7 +88,7 @@ public:
 	virtual void set(GLint location) const override;
 
 private:
-	GLfloat _matrix[4*4];
+	GLfloat _matrix[4 * 4];
 };
 
 class Shader {
@@ -163,6 +165,7 @@ public:
 	bool setUniform1I(const Common::String &name, GLint value) {
 		return setUniform(name, new ShaderUniformInteger(value));
 	}
+
 protected:
 	/**
 	 * Vertex shader sources.
@@ -192,9 +195,14 @@ protected:
 	 * value of the uniform.
 	 */
 	struct Uniform {
-		Uniform() : location(-1), altered(false), value() {}
+		Uniform()
+		  : location(-1)
+		  , altered(false)
+		  , value() {}
 		Uniform(GLint loc, ShaderUniformValue *val)
-		    : location(loc), altered(true), value(val) {}
+		  : location(loc)
+		  , altered(true)
+		  , value(val) {}
 
 		/**
 		 * Write uniform value into currently active shader.
@@ -281,7 +289,7 @@ private:
 } // End of namespace OpenGL
 
 /** Shortcut for accessing the font manager. */
-#define ShaderMan (OpenGL::ShaderManager::instance())
+#	define ShaderMan (OpenGL::ShaderManager::instance())
 
 #endif // !USE_FORCED_GLES
 

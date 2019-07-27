@@ -23,8 +23,8 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "gui/message.h"
 #include "common/translation.h"
+#include "gui/message.h"
 
 #include "backends/platform/ios7/ios7_osys_main.h"
 
@@ -102,7 +102,7 @@ bool OSystem_iOS7::pollEvent(Common::Event &event) {
 			break;
 
 		case kInputTap:
-			if (!handleEvent_tap(event, (UIViewTapDescription) internalEvent.value1, internalEvent.value2))
+			if (!handleEvent_tap(event, (UIViewTapDescription)internalEvent.value1, internalEvent.value2))
 				return false;
 			break;
 
@@ -331,7 +331,6 @@ bool OSystem_iOS7::handleEvent_mouseSecondDragged(Common::Event &event, int x, i
 			GUI::TimedMessageDialog dialog(dialogMsg, 1500);
 			dialog.runModal();
 			return false;
-
 		}
 
 		if (absY < kMaxDeviation && -vecX >= kNeededLength) {
@@ -343,7 +342,7 @@ bool OSystem_iOS7::handleEvent_mouseSecondDragged(Common::Event &event, int x, i
 	return false;
 }
 
-void  OSystem_iOS7::handleEvent_orientationChanged(int orientation) {
+void OSystem_iOS7::handleEvent_orientationChanged(int orientation) {
 	//printf("Orientation: %i\n", orientation);
 
 	ScreenOrientation newOrientation;
@@ -372,8 +371,8 @@ void OSystem_iOS7::rebuildSurface() {
 
 	dirtyFullScreen();
 	if (_videoContext->overlayVisible) {
-			dirtyFullOverlayScreen();
-		}
+		dirtyFullOverlayScreen();
+	}
 	updateScreen();
 }
 
@@ -385,7 +384,7 @@ void OSystem_iOS7::handleEvent_applicationResumed() {
 	rebuildSurface();
 }
 
-void  OSystem_iOS7::handleEvent_keyPressed(Common::Event &event, int keyPressed) {
+void OSystem_iOS7::handleEvent_keyPressed(Common::Event &event, int keyPressed) {
 	int ascii = keyPressed;
 	//printf("key: %i\n", keyPressed);
 
@@ -408,20 +407,20 @@ bool OSystem_iOS7::handleEvent_swipe(Common::Event &event, int direction, int to
 	if (touches == 3) {
 		Common::KeyCode keycode = Common::KEYCODE_INVALID;
 		switch ((UIViewSwipeDirection)direction) {
-			case kUIViewSwipeUp:
-				keycode = Common::KEYCODE_UP;
-				break;
-			case kUIViewSwipeDown:
-				keycode = Common::KEYCODE_DOWN;
-				break;
-			case kUIViewSwipeLeft:
-				keycode = Common::KEYCODE_LEFT;
-				break;
-			case kUIViewSwipeRight:
-				keycode = Common::KEYCODE_RIGHT;
-				break;
-			default:
-				return false;
+		case kUIViewSwipeUp:
+			keycode = Common::KEYCODE_UP;
+			break;
+		case kUIViewSwipeDown:
+			keycode = Common::KEYCODE_DOWN;
+			break;
+		case kUIViewSwipeLeft:
+			keycode = Common::KEYCODE_LEFT;
+			break;
+		case kUIViewSwipeRight:
+			keycode = Common::KEYCODE_RIGHT;
+			break;
+		default:
+			return false;
 		}
 
 		event.kbd.keycode = _queuedInputEvent.kbd.keycode = keycode;
@@ -432,8 +431,7 @@ bool OSystem_iOS7::handleEvent_swipe(Common::Event &event, int direction, int to
 		_queuedEventTime = getMillis() + kQueuedInputEventDelay;
 
 		return true;
-	}
-	else if (touches == 2) {
+	} else if (touches == 2) {
 		switch ((UIViewSwipeDirection)direction) {
 		case kUIViewSwipeUp: {
 			_mouseClickAndDragEnabled = !_mouseClickAndDragEnabled;
@@ -484,8 +482,7 @@ bool OSystem_iOS7::handleEvent_tap(Common::Event &event, UIViewTapDescription ty
 			_queuedEventTime = getMillis() + kQueuedInputEventDelay;
 			return true;
 		}
-	}
-	else if (touches == 2) {
+	} else if (touches == 2) {
 		if (type == kUIViewTapDouble) {
 			event.kbd.keycode = _queuedInputEvent.kbd.keycode = Common::KEYCODE_ESCAPE;
 			event.kbd.ascii = _queuedInputEvent.kbd.ascii = Common::ASCII_ESCAPE;

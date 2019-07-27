@@ -33,12 +33,14 @@ class CParrotNutEater : public CGameObject {
 	bool ReplaceBowlAndNutsMsg(CReplaceBowlAndNutsMsg *msg);
 	bool NutPuzzleMsg(CNutPuzzleMsg *msg);
 	bool MovieFrameMsg(CMovieFrameMsg *msg);
+
 public:
 	int _fieldBC;
 	int _fieldC0;
 	int _fieldC4;
 	int _fieldC8;
 	int _fieldCC;
+
 public:
 	CLASSDEF;
 	CParrotNutEater();

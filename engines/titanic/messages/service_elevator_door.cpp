@@ -25,10 +25,11 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CServiceElevatorDoor, CDoorAutoSoundEvent)
-	ON_MESSAGE(PreEnterNodeMsg)
+ON_MESSAGE(PreEnterNodeMsg)
 END_MESSAGE_MAP()
 
-CServiceElevatorDoor::CServiceElevatorDoor() : CDoorAutoSoundEvent() {
+CServiceElevatorDoor::CServiceElevatorDoor()
+  : CDoorAutoSoundEvent() {
 	_string1 = "z#31.wav";
 	_string2 = "z#32.wav";
 }

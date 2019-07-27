@@ -20,8 +20,8 @@
  *
  */
 
-#include "cruise/cruise_main.h"
 #include "common/util.h"
+#include "cruise/cruise_main.h"
 
 namespace Cruise {
 
@@ -29,7 +29,11 @@ typedef char ColorP;
 
 #define SCREENHEIGHT 200
 #define MAXPTS 10
-#define putdot(x,y) {if ((y >= 0) && (y < SCREENHEIGHT)) dots[y][counters[y]++] = x;}
+#define putdot(x, y)                    \
+	{                                     \
+		if ((y >= 0) && (y < SCREENHEIGHT)) \
+			dots[y][counters[y]++] = x;       \
+	}
 
 void hline(int x1, int x2, int y, char c) {
 	for (; x1 <= x2; x1++) {
@@ -65,7 +69,6 @@ void bsubline_1(int x1, int y1, int x2, int y2, char c) {
 			e -= ddy;
 		}
 	}
-
 }
 
 void bsubline_2(int x1, int y1, int x2, int y2, char c) {
@@ -91,7 +94,6 @@ void bsubline_2(int x1, int y1, int x2, int y2, char c) {
 			e -= ddx;
 		}
 	}
-
 }
 
 void bsubline_3(int x1, int y1, int x2, int y2, char c) {
@@ -118,7 +120,6 @@ void bsubline_3(int x1, int y1, int x2, int y2, char c) {
 			e -= ddx;
 		}
 	}
-
 }
 
 void bsubline_4(int x1, int y1, int x2, int y2, char c) {
@@ -198,15 +199,15 @@ void fillpoly(int16 *point_data, int lineCount, ColorP color) {
 	static byte num_intersect[SCREENHEIGHT];
 
 	switch (lineCount) {
-	case 0:		// do nothing
+	case 0: // do nothing
 		return;
-	case 1:		// draw pixel
+	case 1: // draw pixel
 		pixel(point_data[0], point_data[1], color);
 		return;
-	case 2:		// draw line
+	case 2: // draw line
 		line(point_data[0], point_data[1], point_data[2], point_data[3], color);
 		return;
-	default:		// go on and draw polygon
+	default: // go on and draw polygon
 		break;
 	}
 

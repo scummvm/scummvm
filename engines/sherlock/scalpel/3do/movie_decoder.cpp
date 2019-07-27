@@ -27,13 +27,13 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/3do.h"
 
-#include "sherlock/scalpel/3do/movie_decoder.h"
 #include "image/codecs/cinepak.h"
+#include "sherlock/scalpel/3do/movie_decoder.h"
 
 // for Test-Code
-#include "common/system.h"
 #include "common/events.h"
 #include "common/keyboard.h"
+#include "common/system.h"
 #include "engines/engine.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
@@ -43,7 +43,9 @@
 namespace Sherlock {
 
 Scalpel3DOMovieDecoder::Scalpel3DOMovieDecoder()
-	: _stream(0), _videoTrack(0), _audioTrack(0) {
+  : _stream(0)
+  , _videoTrack(0)
+  , _audioTrack(0) {
 	_streamVideoOffset = 0;
 	_streamAudioOffset = 0;
 }
@@ -53,14 +55,14 @@ Scalpel3DOMovieDecoder::~Scalpel3DOMovieDecoder() {
 }
 
 bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
-	uint32 videoSubType    = 0;
-	uint32 videoCodecTag   = 0;
-	uint32 videoHeight     = 0;
-	uint32 videoWidth      = 0;
+	uint32 videoSubType = 0;
+	uint32 videoCodecTag = 0;
+	uint32 videoHeight = 0;
+	uint32 videoWidth = 0;
 	uint32 videoFrameCount = 0;
-	uint32 audioSubType    = 0;
-	uint32 audioCodecTag   = 0;
-	uint32 audioChannels   = 0;
+	uint32 audioSubType = 0;
+	uint32 audioCodecTag = 0;
+	uint32 audioChannels = 0;
 	uint32 audioSampleRate = 0;
 
 	close();
@@ -82,7 +84,7 @@ bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 		uint32 dataStartOffset = _stream->pos();
 
 		switch (chunkTag) {
-		case MKTAG('F','I','L','M'): {
+		case MKTAG('F', 'I', 'L', 'M'): {
 			// See if this is a FILM header
 			_stream->skip(4); // time stamp (based on 240 per second)
 			_stream->skip(4); // Unknown 0x00000000
@@ -118,7 +120,7 @@ bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 			break;
 		}
 
-		case MKTAG('S','N','D','S'): {
+		case MKTAG('S', 'N', 'D', 'S'): {
 			_stream->skip(8);
 			audioSubType = _stream->readUint32BE();
 
@@ -161,14 +163,14 @@ bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 			break;
 		}
 
-		case MKTAG('C','T','R','L'):
-		case MKTAG('F','I','L','L'): // filler chunk, fills to certain boundary
-		case MKTAG('D','A','C','Q'):
-		case MKTAG('J','O','I','N'): // add cel data (not used in sherlock)
+		case MKTAG('C', 'T', 'R', 'L'):
+		case MKTAG('F', 'I', 'L', 'L'): // filler chunk, fills to certain boundary
+		case MKTAG('D', 'A', 'C', 'Q'):
+		case MKTAG('J', 'O', 'I', 'N'): // add cel data (not used in sherlock)
 			// Ignore these chunks
 			break;
 
-		case MKTAG('S','H','D','R'):
+		case MKTAG('S', 'H', 'D', 'R'):
 			// Happens for EA logo, seems to be garbage data right at the start of the file
 			break;
 
@@ -200,7 +202,8 @@ bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 void Scalpel3DOMovieDecoder::close() {
 	Video::VideoDecoder::close();
 
-	delete _stream; _stream = 0;
+	delete _stream;
+	_stream = 0;
 	_videoTrack = 0;
 }
 
@@ -208,22 +211,22 @@ void Scalpel3DOMovieDecoder::close() {
 // and also try to get at least 0.5 seconds of audio queued up
 void Scalpel3DOMovieDecoder::readNextPacket() {
 	uint32 currentMovieTime = getTime();
-	uint32 wantedAudioQueued  = currentMovieTime + 500; // always try to be 0.500 seconds in front of movie time
+	uint32 wantedAudioQueued = currentMovieTime + 500; // always try to be 0.500 seconds in front of movie time
 
-	int32 chunkOffset     = 0;
+	int32 chunkOffset = 0;
 	int32 dataStartOffset = 0;
 	int32 nextChunkOffset = 0;
-	uint32 chunkTag       = 0;
-	uint32 chunkSize      = 0;
+	uint32 chunkTag = 0;
+	uint32 chunkSize = 0;
 
-	uint32 videoSubType   = 0;
+	uint32 videoSubType = 0;
 	uint32 videoTimeStamp = 0;
 	uint32 videoFrameSize = 0;
-	uint32 audioSubType   = 0;
-	uint32 audioBytes     = 0;
+	uint32 audioSubType = 0;
+	uint32 audioBytes = 0;
 	bool videoGotFrame = false;
-	bool videoDone     = false;
-	bool audioDone     = false;
+	bool videoDone = false;
+	bool audioDone = false;
 
 	// Seek to smallest stream offset
 	if (_streamVideoOffset <= _streamAudioOffset) {
@@ -256,7 +259,7 @@ void Scalpel3DOMovieDecoder::readNextPacket() {
 			break;
 
 		switch (chunkTag) {
-		case MKTAG('F','I','L','M'):
+		case MKTAG('F', 'I', 'L', 'M'):
 			videoTimeStamp = _stream->readUint32BE();
 			_stream->skip(4); // Unknown
 			videoSubType = _stream->readUint32BE();
@@ -305,7 +308,7 @@ void Scalpel3DOMovieDecoder::readNextPacket() {
 			}
 			break;
 
-		case MKTAG('S','N','D','S'):
+		case MKTAG('S', 'N', 'D', 'S'):
 			_stream->skip(8);
 			audioSubType = _stream->readUint32BE();
 
@@ -337,14 +340,14 @@ void Scalpel3DOMovieDecoder::readNextPacket() {
 			}
 			break;
 
-		case MKTAG('C','T','R','L'):
-		case MKTAG('F','I','L','L'): // filler chunk, fills to certain boundary
-		case MKTAG('D','A','C','Q'):
-		case MKTAG('J','O','I','N'): // add cel data (not used in sherlock)
+		case MKTAG('C', 'T', 'R', 'L'):
+		case MKTAG('F', 'I', 'L', 'L'): // filler chunk, fills to certain boundary
+		case MKTAG('D', 'A', 'C', 'Q'):
+		case MKTAG('J', 'O', 'I', 'N'): // add cel data (not used in sherlock)
 			// Ignore these chunks
 			break;
 
-		case MKTAG('S','H','D','R'):
+		case MKTAG('S', 'H', 'D', 'R'):
 			// Happens for EA logo, seems to be garbage data right at the start of the file
 			break;
 
@@ -393,11 +396,11 @@ void Scalpel3DOMovieDecoder::StreamVideoTrack::decodeFrame(Common::SeekableReadS
 	_curFrame++;
 }
 
-Scalpel3DOMovieDecoder::StreamAudioTrack::StreamAudioTrack(uint32 codecTag, uint32 sampleRate, uint32 channels, Audio::Mixer::SoundType soundType) :
-		AudioTrack(soundType) {
+Scalpel3DOMovieDecoder::StreamAudioTrack::StreamAudioTrack(uint32 codecTag, uint32 sampleRate, uint32 channels, Audio::Mixer::SoundType soundType)
+  : AudioTrack(soundType) {
 	switch (codecTag) {
-	case MKTAG('A','D','P','4'):
-	case MKTAG('S','D','X','2'):
+	case MKTAG('A', 'D', 'P', '4'):
+	case MKTAG('S', 'D', 'X', '2'):
 		// ADP4 + SDX2 are both allowed
 		break;
 
@@ -407,8 +410,8 @@ Scalpel3DOMovieDecoder::StreamAudioTrack::StreamAudioTrack(uint32 codecTag, uint
 
 	_totalAudioQueued = 0; // currently 0 milliseconds queued
 
-	_codecTag    = codecTag;
-	_sampleRate  = sampleRate;
+	_codecTag = codecTag;
+	_sampleRate = sampleRate;
 	switch (channels) {
 	case 1:
 		_stereo = false;
@@ -429,8 +432,8 @@ Scalpel3DOMovieDecoder::StreamAudioTrack::StreamAudioTrack(uint32 codecTag, uint
 
 Scalpel3DOMovieDecoder::StreamAudioTrack::~StreamAudioTrack() {
 	delete _audioStream;
-//	free(_ADP4_PersistentSpace);
-//	free(_SDX2_PersistentSpace);
+	//	free(_ADP4_PersistentSpace);
+	//	free(_SDX2_PersistentSpace);
 }
 
 void Scalpel3DOMovieDecoder::StreamAudioTrack::queueAudio(Common::SeekableReadStream *stream, uint32 size) {
@@ -441,11 +444,11 @@ void Scalpel3DOMovieDecoder::StreamAudioTrack::queueAudio(Common::SeekableReadSt
 	// Read the specified chunk into memory
 	compressedAudioStream = stream->readStream(size);
 
-	switch(_codecTag) {
-	case MKTAG('A','D','P','4'):
+	switch (_codecTag) {
+	case MKTAG('A', 'D', 'P', '4'):
 		audioStream = Audio::make3DO_ADP4AudioStream(compressedAudioStream, _sampleRate, _stereo, &audioLengthMSecs, DisposeAfterUse::YES, &_ADP4_PersistentSpace);
 		break;
-	case MKTAG('S','D','X','2'):
+	case MKTAG('S', 'D', 'X', '2'):
 		audioStream = Audio::make3DO_SDX2AudioStream(compressedAudioStream, _sampleRate, _stereo, &audioLengthMSecs, DisposeAfterUse::YES, &_SDX2_PersistentSpace);
 		break;
 	default:

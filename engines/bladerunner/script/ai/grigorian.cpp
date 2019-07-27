@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptGrigorian::AIScriptGrigorian(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptGrigorian::AIScriptGrigorian(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 	var_45CA10 = 0;
 	var_45CA14 = 0;
 }
@@ -38,9 +39,8 @@ void AIScriptGrigorian::Initialize() {
 }
 
 bool AIScriptGrigorian::Update() {
-	if ( Actor_Query_Friendliness_To_Other(kActorGrigorian, kActorMcCoy) < 30
-	 && !Game_Flag_Query(kFlagGrigorianDislikeMcCoy)
-	) {
+	if (Actor_Query_Friendliness_To_Other(kActorGrigorian, kActorMcCoy) < 30
+	    && !Game_Flag_Query(kFlagGrigorianDislikeMcCoy)) {
 		Game_Flag_Set(kFlagGrigorianDislikeMcCoy);
 		return true;
 	}
@@ -249,17 +249,17 @@ bool AIScriptGrigorian::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptGrigorian::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptGrigorian::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptGrigorian::ReachedMovementTrackWaypoint(int waypointId) {

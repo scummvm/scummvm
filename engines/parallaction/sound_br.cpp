@@ -24,19 +24,17 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 
-#include "audio/mixer.h"
+#include "audio/decoders/raw.h"
 #include "audio/midiparser.h"
 #include "audio/midiplayer.h"
+#include "audio/mixer.h"
 #include "audio/mods/protracker.h"
-#include "audio/decoders/raw.h"
 
 #include "parallaction/disk.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/sound.h"
 
-
 namespace Parallaction {
-
 
 /*
  * List of calls to the original music driver.
@@ -73,7 +71,7 @@ protected:
 	virtual void parseNextEvent(EventInfo &info);
 	virtual bool loadMusic(byte *data, uint32 size);
 
-	uint8  read1(byte *&data) {
+	uint8 read1(byte *&data) {
 		return *data++;
 	}
 
@@ -86,7 +84,11 @@ protected:
 	byte *_trackEnd;
 
 public:
-	MidiParser_MSC() : byte_11C5A(false), _beats(0), _lastEvent(0), _trackEnd(NULL) {
+	MidiParser_MSC()
+	  : byte_11C5A(false)
+	  , _beats(0)
+	  , _lastEvent(0)
+	  , _trackEnd(NULL) {
 	}
 };
 
@@ -131,7 +133,6 @@ void MidiParser_MSC::parseMidiEvent(EventInfo &info) {
 	}
 
 	//if ((type == 0xB) && (info.basic.param1 == 64)) info.basic.param2 = 127;
-
 }
 
 void MidiParser_MSC::parseNextEvent(EventInfo &info) {
@@ -162,7 +163,6 @@ void MidiParser_MSC::parseNextEvent(EventInfo &info) {
 
 	parseMidiEvent(info);
 	_lastEvent = info.event;
-
 }
 
 bool MidiParser_MSC::loadMusic(byte *data, uint32 size) {
@@ -194,15 +194,12 @@ bool MidiParser_MSC::loadMusic(byte *data, uint32 size) {
 	return true;
 }
 
-
 MidiParser *createParser_MSC() {
 	return new MidiParser_MSC;
 }
 
-
 class MidiPlayer_MSC : public Audio::MidiPlayer {
 public:
-
 	MidiPlayer_MSC();
 
 	void play(Common::SeekableReadStream *stream);
@@ -214,16 +211,13 @@ public:
 	// MidiDriver_BASE interface
 	virtual void send(uint32 b);
 
-
 private:
 	void setVolumeInternal(int volume);
 	bool _paused;
 };
 
-
-
 MidiPlayer_MSC::MidiPlayer_MSC()
-	: _paused(false) {
+  : _paused(false) {
 
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	const MusicType musicType = MidiDriver::getMusicType(dev);
@@ -307,7 +301,8 @@ void MidiPlayer_MSC::send(uint32 b) {
 	sendToChannel(ch, b);
 }
 
-DosSoundMan_br::DosSoundMan_br(Parallaction_br *vm) : SoundMan_br(vm) {
+DosSoundMan_br::DosSoundMan_br(Parallaction_br *vm)
+  : SoundMan_br(vm) {
 	_midiPlayer = new MidiPlayer_MSC();
 	assert(_midiPlayer);
 }
@@ -330,8 +325,8 @@ Audio::AudioStream *DosSoundMan_br::loadChannelData(const char *filename, Channe
 	int rate = 11025;
 
 	ch->stream = Audio::makeLoopingAudioStream(
-			Audio::makeRawStream(data, dataSize, rate, Audio::FLAG_UNSIGNED),
-			looping ? 0 : 1);
+	  Audio::makeRawStream(data, dataSize, rate, Audio::FLAG_UNSIGNED),
+	  looping ? 0 : 1);
 	return ch->stream;
 }
 
@@ -371,7 +366,8 @@ void DosSoundMan_br::pause(bool p) {
 	_midiPlayer->pause(p);
 }
 
-AmigaSoundMan_br::AmigaSoundMan_br(Parallaction_br *vm) : SoundMan_br(vm)  {
+AmigaSoundMan_br::AmigaSoundMan_br(Parallaction_br *vm)
+  : SoundMan_br(vm) {
 	_musicStream = 0;
 }
 
@@ -462,7 +458,8 @@ void AmigaSoundMan_br::pause(bool p) {
 	_mixer->pauseHandle(_musicHandle, p);
 }
 
-SoundMan_br::SoundMan_br(Parallaction_br *vm) : _vm(vm) {
+SoundMan_br::SoundMan_br(Parallaction_br *vm)
+  : _vm(vm) {
 	_mixer = _vm->_mixer;
 
 	_musicEnabled = true;

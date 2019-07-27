@@ -23,7 +23,7 @@
 #if defined(__ANDROID__)
 
 // Allow use of stuff in <time.h>
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+#	define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
 // Disable printf override in common/forbidden.h to avoid
 // clashes with log.h from the Android SDK.
@@ -37,14 +37,14 @@
 // (which then wouldn't be portable, though).
 // Anyway, for now we just disable the printf override globally
 // for the Android port
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+#	define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#include "backends/platform/android/android.h"
-#include "backends/platform/android/events.h"
-#include "backends/platform/android/jni.h"
+#	include "backends/platform/android/events.h"
+#	include "backends/platform/android/android.h"
+#	include "backends/platform/android/jni.h"
 
 // floating point. use sparingly
-template<class T>
+template <class T>
 static inline T scalef(T in, float numerator, float denominator) {
 	return static_cast<float>(in) * numerator / denominator;
 }
@@ -52,7 +52,7 @@ static inline T scalef(T in, float numerator, float denominator) {
 static const int kQueuedInputEventDelay = 50;
 
 void OSystem_Android::setupKeymapper() {
-#ifdef ENABLE_KEYMAPPER
+#	ifdef ENABLE_KEYMAPPER
 	using namespace Common;
 
 	Keymapper *mapper = getEventManager()->getKeymapper();
@@ -60,7 +60,7 @@ void OSystem_Android::setupKeymapper() {
 	HardwareInputSet *inputSet = new HardwareInputSet();
 
 	keySet->addHardwareInput(
-		new HardwareInput("n", KeyState(KEYCODE_n), "n (vk)"));
+	  new HardwareInput("n", KeyState(KEYCODE_n), "n (vk)"));
 
 	mapper->registerHardwareInputSet(inputSet);
 
@@ -73,7 +73,7 @@ void OSystem_Android::setupKeymapper() {
 	mapper->addGlobalKeymap(globalMap);
 
 	mapper->pushKeymap(kGlobalKeymapName);
-#endif
+#	endif
 }
 
 void OSystem_Android::warpMouse(int x, int y) {
@@ -103,7 +103,7 @@ void OSystem_Android::clipMouse(Common::Point &p) {
 }
 
 void OSystem_Android::scaleMouse(Common::Point &p, int x, int y,
-									bool deductDrawRect, bool touchpadMode) {
+                                 bool deductDrawRect, bool touchpadMode) {
 	const GLESBaseTexture *tex;
 
 	if (_show_overlay)
@@ -140,7 +140,7 @@ void OSystem_Android::updateEventScale() {
 }
 
 void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
-								int arg4, int arg5, int arg6) {
+                                int arg4, int arg5, int arg6) {
 	Common::Event e;
 
 	switch (type) {
@@ -391,7 +391,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			}
 
 			scaleMouse(e.mouse, arg3 - _touch_pt_scroll.x,
-						arg4 - _touch_pt_scroll.y, false, true);
+			           arg4 - _touch_pt_scroll.y, false, true);
 			e.mouse += _touch_pt_down;
 			clipMouse(e.mouse);
 		} else {
@@ -487,7 +487,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 				if (_touchpad_mode) {
 					scaleMouse(e.mouse, arg1 - _touch_pt_dt.x,
-								arg2 - _touch_pt_dt.y, false, true);
+					           arg2 - _touch_pt_dt.y, false, true);
 					e.mouse += _touch_pt_down;
 
 					clipMouse(e.mouse);
@@ -658,14 +658,10 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		case JKEYCODE_BUTTON_B:
 			switch (arg1) {
 			case JACTION_DOWN:
-				e.type = (arg2 == JKEYCODE_BUTTON_A?
-					  Common::EVENT_LBUTTONDOWN :
-					  Common::EVENT_RBUTTONDOWN);
+				e.type = (arg2 == JKEYCODE_BUTTON_A ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN);
 				break;
 			case JACTION_UP:
-				e.type = (arg2 == JKEYCODE_BUTTON_A?
-					  Common::EVENT_LBUTTONUP :
-					  Common::EVENT_RBUTTONUP);
+				e.type = (arg2 == JKEYCODE_BUTTON_A ? Common::EVENT_LBUTTONUP : Common::EVENT_RBUTTONUP);
 				break;
 			}
 

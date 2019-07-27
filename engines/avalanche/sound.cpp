@@ -20,19 +20,20 @@
  *
  */
 
-#include "avalanche/avalanche.h"
 #include "avalanche/sound.h"
+#include "avalanche/avalanche.h"
 
 #include "audio/softsynth/pcspk.h"
 #include "common/config-manager.h"
 
 namespace Avalanche {
 
-SoundHandler::SoundHandler(AvalancheEngine *vm) : _vm(vm) {
+SoundHandler::SoundHandler(AvalancheEngine *vm)
+  : _vm(vm) {
 	_soundFl = true;
 	_speakerStream = new Audio::PCSpeaker(_vm->_mixer->getOutputRate());
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
-						_speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES, true);
+	                        _speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES, true);
 }
 
 SoundHandler::~SoundHandler() {

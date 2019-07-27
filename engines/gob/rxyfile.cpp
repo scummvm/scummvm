@@ -27,22 +27,29 @@
 
 namespace Gob {
 
-RXYFile::RXYFile(Common::SeekableReadStream &rxy) : _width(0), _height(0) {
+RXYFile::RXYFile(Common::SeekableReadStream &rxy)
+  : _width(0)
+  , _height(0) {
 	Common::SeekableSubReadStreamEndian sub(&rxy, 0, rxy.size(), false, DisposeAfterUse::NO);
 
 	load(sub);
 }
 
-RXYFile::RXYFile(Common::SeekableSubReadStreamEndian &rxy) : _width(0), _height(0) {
+RXYFile::RXYFile(Common::SeekableSubReadStreamEndian &rxy)
+  : _width(0)
+  , _height(0) {
 	load(rxy);
 }
 
-RXYFile::RXYFile(uint16 width, uint16 height) : _realCount(1), _width(width), _height(height) {
+RXYFile::RXYFile(uint16 width, uint16 height)
+  : _realCount(1)
+  , _width(width)
+  , _height(height) {
 	_coords.resize(1);
 
-	_coords[0].left   = 0;
-	_coords[0].top    = 0;
-	_coords[0].right  = _width  - 1;
+	_coords[0].left = 0;
+	_coords[0].top = 0;
+	_coords[0].right = _width - 1;
 	_coords[0].bottom = _height - 1;
 }
 
@@ -83,13 +90,13 @@ void RXYFile::load(Common::SeekableSubReadStreamEndian &rxy) {
 
 	_coords.resize(count);
 	for (CoordArray::iterator c = _coords.begin(); c != _coords.end(); ++c) {
-		c->left   = rxy.readUint16();
-		c->right  = rxy.readUint16();
-		c->top    = rxy.readUint16();
+		c->left = rxy.readUint16();
+		c->right = rxy.readUint16();
+		c->top = rxy.readUint16();
 		c->bottom = rxy.readUint16();
 
 		if (c->left != 0xFFFF) {
-			_width  = MAX<uint16>(_width , c->right  + 1);
+			_width = MAX<uint16>(_width, c->right + 1);
 			_height = MAX<uint16>(_height, c->bottom + 1);
 		}
 	}
@@ -98,9 +105,9 @@ void RXYFile::load(Common::SeekableSubReadStreamEndian &rxy) {
 uint16 RXYFile::add(uint16 left, uint16 top, uint16 right, uint16 bottom) {
 	_coords.resize(_coords.size() + 1);
 
-	_coords.back().left   = left;
-	_coords.back().top    = top;
-	_coords.back().right  = right;
+	_coords.back().left = left;
+	_coords.back().top = top;
+	_coords.back().right = right;
 	_coords.back().bottom = bottom;
 
 	return _coords.size() - 1;

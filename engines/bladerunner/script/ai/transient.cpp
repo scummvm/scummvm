@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptTransient::AIScriptTransient(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptTransient::AIScriptTransient(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 }
 
 void AIScriptTransient::Initialize() {
@@ -41,40 +42,34 @@ void AIScriptTransient::Initialize() {
 
 bool AIScriptTransient::Update() {
 	if (Global_Variable_Query(kVariableChapter) == 5
-	 && Actor_Query_Which_Set_In(kActorTransient) != kSetFreeSlotG
-	) {
+	    && Actor_Query_Which_Set_In(kActorTransient) != kSetFreeSlotG) {
 		Actor_Put_In_Set(kActorTransient, kSetFreeSlotG);
 		Actor_Set_At_Waypoint(kActorTransient, 39, false);
 	}
 
 	if (Global_Variable_Query(kVariableChapter) == 2
-	 && (Actor_Query_Goal_Number(kActorTransient) == kGoalTransientDefault
-	  || Actor_Query_Goal_Number(kActorTransient) == 10
-	 )
-	) {
+	    && (Actor_Query_Goal_Number(kActorTransient) == kGoalTransientDefault
+	        || Actor_Query_Goal_Number(kActorTransient) == 10)) {
 		Actor_Set_Goal_Number(kActorTransient, 200);
 	}
 
-	if ( Global_Variable_Query(kVariableChapter) == 3
-	 &&  Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)
-	 &&  Game_Flag_Query(kFlagCT04HomelessBodyInDumpster)
-	 && !Game_Flag_Query(kFlagCT04HomelessBodyFound)
-	 && !Game_Flag_Query(kFlagCT04HomelessBodyThrownAway)
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 3
+	    && Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)
+	    && Game_Flag_Query(kFlagCT04HomelessBodyInDumpster)
+	    && !Game_Flag_Query(kFlagCT04HomelessBodyFound)
+	    && !Game_Flag_Query(kFlagCT04HomelessBodyThrownAway)) {
 		Game_Flag_Set(kFlagCT04HomelessBodyThrownAway);
 	}
 
 	if (Global_Variable_Query(kVariableChapter) < 4
-	 && Game_Flag_Query(kFlagCT04HomelessBodyFound)
-	 && Actor_Query_Goal_Number(kActorTransient) != 6
-	 && Actor_Query_Goal_Number(kActorTransient) != 599
-	) {
+	    && Game_Flag_Query(kFlagCT04HomelessBodyFound)
+	    && Actor_Query_Goal_Number(kActorTransient) != 6
+	    && Actor_Query_Goal_Number(kActorTransient) != 599) {
 		Actor_Set_Goal_Number(kActorTransient, 6);
 	}
 
-	if ( Player_Query_Current_Scene() == kSceneCT04
-	 && !Game_Flag_Query(kFlagCT04HomelessTrashFinish)
-	) {
+	if (Player_Query_Current_Scene() == kSceneCT04
+	    && !Game_Flag_Query(kFlagCT04HomelessTrashFinish)) {
 		Game_Flag_Set(kFlagCT04HomelessTrashFinish);
 		AI_Countdown_Timer_Reset(kActorTransient, kActorTimerAIScriptCustomTask1);
 		AI_Countdown_Timer_Start(kActorTransient, kActorTimerAIScriptCustomTask1, 12);
@@ -497,17 +492,17 @@ bool AIScriptTransient::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptTransient::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptTransient::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptTransient::ReachedMovementTrackWaypoint(int waypointId) {

@@ -20,10 +20,10 @@
  *
  */
 
-#include "sci/sci.h"
+#include "sci/graphics/font.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/screen.h"
-#include "sci/graphics/font.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
@@ -185,8 +185,10 @@ static const byte sci32SystemFont[] = {
 };
 #endif
 
-	GfxFontFromResource::GfxFontFromResource(ResourceManager *resMan, GfxScreen *screen, GuiResourceId resourceId)
-	: _resourceId(resourceId), _screen(screen), _resMan(resMan) {
+GfxFontFromResource::GfxFontFromResource(ResourceManager *resMan, GfxScreen *screen, GuiResourceId resourceId)
+  : _resourceId(resourceId)
+  , _screen(screen)
+  , _resMan(resMan) {
 	if (getSciVersion() < SCI_VERSION_2) {
 		assert(resourceId != -1);
 	}
@@ -311,7 +313,7 @@ void GfxFontFromResource::drawToBuffer(uint16 chr, int16 top, int16 left, byte c
 		for (int done = 0; done < charWidth; done++) {
 			if ((done & 7) == 0) // fetching next data byte
 				b = *(charData++) & mask;
-			if (b & 0x80) {	// if MSB is set - paint it
+			if (b & 0x80) { // if MSB is set - paint it
 				int offset = (top + y) * bufWidth + (left + done);
 				buffer[offset] = color;
 			}

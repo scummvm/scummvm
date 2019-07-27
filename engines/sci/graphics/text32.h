@@ -32,9 +32,9 @@ namespace Sci {
 
 enum TextAlign {
 	kTextAlignDefault = -1,
-	kTextAlignLeft    = 0,
-	kTextAlignCenter  = 1,
-	kTextAlignRight   = 2
+	kTextAlignLeft = 0,
+	kTextAlignCenter = 1,
+	kTextAlignRight = 2
 };
 
 enum ScrollDirection {

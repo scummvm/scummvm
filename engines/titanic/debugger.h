@@ -23,8 +23,8 @@
 #ifndef TITANIC_DEBUGGER_H
 #define TITANIC_DEBUGGER_H
 
-#include "gui/debugger.h"
 #include "common/scummsys.h"
+#include "gui/debugger.h"
 
 namespace Titanic {
 
@@ -38,9 +38,9 @@ class CViewItem;
 class TitanicEngine;
 
 enum TitanicDebugChannels {
-	kDebugCore      = 1 << 0,
-	kDebugScripts	= 1 << 1,
-	kDebugGraphics	= 1 << 2,
+	kDebugCore = 1 << 0,
+	kDebugScripts = 1 << 1,
+	kDebugGraphics = 1 << 2,
 	kDebugStarfield = 1 << 3
 };
 
@@ -120,8 +120,10 @@ private:
 	 * Set the movie frame for a given object
 	 */
 	bool cmdFrame(int argc, const char **argv);
+
 protected:
 	TitanicEngine *_vm;
+
 public:
 	Debugger(TitanicEngine *vm);
 	virtual ~Debugger() {}
@@ -129,4 +131,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif	/* TITANIC_DEBUGGER_H */
+#endif /* TITANIC_DEBUGGER_H */

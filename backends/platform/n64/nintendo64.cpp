@@ -28,6 +28,6 @@ int main(void) {
 
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(0, NULL);
-	g_system->quit();       // TODO: Consider removing / replacing this!
+	g_system->quit(); // TODO: Consider removing / replacing this!
 	return res;
 }

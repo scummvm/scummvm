@@ -20,36 +20,29 @@
  *
  */
 
-#include "sword1/sword1.h"
 #include "sword1/control.h"
+#include "sword1/sword1.h"
 
 #include "base/plugins.h"
 #include "common/fs.h"
 #include "common/gui_options.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "graphics/thumbnail.h"
 #include "graphics/surface.h"
+#include "graphics/thumbnail.h"
 
 #include "engines/metaengine.h"
 
 /* Broken Sword */
-static const PlainGameDescriptor sword1FullSettings =
-	{"sword1", "Broken Sword: The Shadow of the Templars"};
-static const PlainGameDescriptor sword1DemoSettings =
-	{"sword1demo", "Broken Sword: The Shadow of the Templars (Demo)"};
-static const PlainGameDescriptor sword1MacFullSettings =
-	{"sword1mac", "Broken Sword: The Shadow of the Templars (Mac)"};
-static const PlainGameDescriptor sword1MacDemoSettings =
-	{"sword1macdemo", "Broken Sword: The Shadow of the Templars (Mac demo)"};
-static const PlainGameDescriptor sword1PSXSettings =
-	{"sword1psx", "Broken Sword: The Shadow of the Templars (PlayStation)"};
-static const PlainGameDescriptor sword1PSXDemoSettings =
-	{"sword1psxdemo", "Broken Sword: The Shadow of the Templars (PlayStation demo)"};
-
+static const PlainGameDescriptor sword1FullSettings = { "sword1", "Broken Sword: The Shadow of the Templars" };
+static const PlainGameDescriptor sword1DemoSettings = { "sword1demo", "Broken Sword: The Shadow of the Templars (Demo)" };
+static const PlainGameDescriptor sword1MacFullSettings = { "sword1mac", "Broken Sword: The Shadow of the Templars (Mac)" };
+static const PlainGameDescriptor sword1MacDemoSettings = { "sword1macdemo", "Broken Sword: The Shadow of the Templars (Mac demo)" };
+static const PlainGameDescriptor sword1PSXSettings = { "sword1psx", "Broken Sword: The Shadow of the Templars (PlayStation)" };
+static const PlainGameDescriptor sword1PSXDemoSettings = { "sword1psxdemo", "Broken Sword: The Shadow of the Templars (PlayStation demo)" };
 
 // check these subdirectories (if present)
-static const char *const g_dirNames[] = { "clusters", "speech", "english", "italian"};
+static const char *const g_dirNames[] = { "clusters", "speech", "english", "italian" };
 
 #define NUM_COMMON_FILES_TO_CHECK 1
 #define NUM_PC_FILES_TO_CHECK 3
@@ -60,7 +53,8 @@ static const char *const g_dirNames[] = { "clusters", "speech", "english", "ital
 #define NUM_MAC_DEMO_FILES_TO_CHECK 1
 
 #define NUM_FILES_TO_CHECK NUM_COMMON_FILES_TO_CHECK + NUM_PC_FILES_TO_CHECK + NUM_MAC_FILES_TO_CHECK + NUM_PSX_FILES_TO_CHECK + NUM_DEMO_FILES_TO_CHECK + NUM_MAC_DEMO_FILES_TO_CHECK + NUM_PSX_DEMO_FILES_TO_CHECK
-static const char *const g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files have to be found
+static const char *const g_filesToCheck[NUM_FILES_TO_CHECK] = {
+	// these files have to be found
 	"swordres.rif", // Mac, PC and PSX version
 	"general.clu", // PC and PSX version
 	"compacts.clu", // PC and PSX version
@@ -99,21 +93,11 @@ public:
 };
 
 bool SwordMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-	    (f == kSupportsListSaves) ||
-	    (f == kSupportsLoadingDuringStartup) ||
-	    (f == kSupportsDeleteSave) ||
-	    (f == kSavesSupportMetaInfo) ||
-	    (f == kSavesSupportThumbnail) ||
-	    (f == kSavesSupportCreationDate) ||
-	    (f == kSavesSupportPlayTime);
+	return (f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup) || (f == kSupportsDeleteSave) || (f == kSavesSupportMetaInfo) || (f == kSavesSupportThumbnail) || (f == kSavesSupportCreationDate) || (f == kSavesSupportPlayTime);
 }
 
 bool Sword1::SwordEngine::hasFeature(EngineFeature f) const {
-	return
-	    (f == kSupportsRTL) ||
-	    (f == kSupportsSavingDuringRuntime) ||
-	    (f == kSupportsLoadingDuringRuntime);
+	return (f == kSupportsRTL) || (f == kSupportsSavingDuringRuntime) || (f == kSupportsLoadingDuringRuntime);
 }
 
 PlainGameList SwordMetaEngine::getSupportedGames() const {
@@ -292,9 +276,9 @@ SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int 
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
 
 	if (in) {
-		in->skip(4);        // header
+		in->skip(4); // header
 		in->read(name, sizeof(name));
-		in->read(&versionSave, 1);      // version
+		in->read(&versionSave, 1); // version
 
 		SaveStateDescriptor desc(slot, name);
 
@@ -341,9 +325,9 @@ SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int 
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SWORD1)
-	REGISTER_PLUGIN_DYNAMIC(SWORD1, PLUGIN_TYPE_ENGINE, SwordMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(SWORD1, PLUGIN_TYPE_ENGINE, SwordMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(SWORD1, PLUGIN_TYPE_ENGINE, SwordMetaEngine);
+REGISTER_PLUGIN_STATIC(SWORD1, PLUGIN_TYPE_ENGINE, SwordMetaEngine);
 #endif
 
 namespace Sword1 {
@@ -355,7 +339,7 @@ Common::Error SwordEngine::loadGameState(int slot) {
 	reinitialize();
 	_control->doRestore();
 	reinitRes();
-	return Common::kNoError;    // TODO: return success/failure
+	return Common::kNoError; // TODO: return success/failure
 }
 
 bool SwordEngine::canLoadGameStateCurrently() {
@@ -365,7 +349,7 @@ bool SwordEngine::canLoadGameStateCurrently() {
 Common::Error SwordEngine::saveGameState(int slot, const Common::String &desc) {
 	_control->setSaveDescription(slot, desc.c_str());
 	_control->saveGameToFile(slot);
-	return Common::kNoError;    // TODO: return success/failure
+	return Common::kNoError; // TODO: return success/failure
 }
 
 bool SwordEngine::canSaveGameStateCurrently() {

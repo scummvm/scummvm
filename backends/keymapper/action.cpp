@@ -24,12 +24,14 @@
 
 #ifdef ENABLE_KEYMAPPER
 
-#include "backends/keymapper/keymap.h"
+#	include "backends/keymapper/keymap.h"
 
 namespace Common {
 
-Action::Action(Keymap *boss, const char *i,	String des)
-	: _boss(boss), description(des), _hwInput(0) {
+Action::Action(Keymap *boss, const char *i, String des)
+  : _boss(boss)
+  , description(des)
+  , _hwInput(0) {
 	assert(i);
 	assert(_boss);
 

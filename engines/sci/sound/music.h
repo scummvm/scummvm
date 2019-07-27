@@ -23,16 +23,16 @@
 #ifndef SCI_MUSIC_H
 #define SCI_MUSIC_H
 
-#include "common/serializer.h"
 #include "common/mutex.h"
+#include "common/serializer.h"
 
 #include "audio/mixer.h"
 
-#include "sci/sci.h"
 #include "sci/resource.h"
+#include "sci/sci.h"
 #include "sci/sound/drivers/mididriver.h"
 #ifdef ENABLE_SCI32
-#include "sci/sound/audio32.h"
+#	include "sci/sound/audio32.h"
 #endif
 
 namespace Audio {
@@ -59,7 +59,6 @@ class SegManager;
 
 typedef Common::Array<uint16> SignalQueue;
 
-
 struct MusicEntryChannel {
 	// Channel info
 	int8 _prio; // 0 = essential; lower is higher priority
@@ -68,7 +67,6 @@ struct MusicEntryChannel {
 	bool _dontMap;
 	bool _mute;
 };
-
 
 class MusicEntry : public Common::Serializable {
 public:
@@ -142,8 +140,8 @@ public:
 struct DeviceChannelUsage {
 	MusicEntry *_song;
 	int _channel;
-	bool operator==(const DeviceChannelUsage& other) const { return _song == other._song && _channel == other._channel; }
-	bool operator!=(const DeviceChannelUsage& other) const { return !(*this == other); }
+	bool operator==(const DeviceChannelUsage &other) const { return _song == other._song && _channel == other._channel; }
+	bool operator!=(const DeviceChannelUsage &other) const { return !(*this == other); }
 };
 
 struct ChannelRemapping {
@@ -156,7 +154,7 @@ struct ChannelRemapping {
 	void clear();
 	void swap(int i, int j);
 	void evict(int i);
-	ChannelRemapping& operator=(ChannelRemapping& other);
+	ChannelRemapping &operator=(ChannelRemapping &other);
 	int lowestPrio() const;
 };
 
@@ -174,6 +172,7 @@ public:
 	void onTimer();
 	void putMidiCommandInQueue(byte status, byte firstOp, byte secondOp);
 	void putMidiCommandInQueue(uint32 midi);
+
 private:
 	static void miditimerCallback(void *p);
 	void sendMidiCommandsFromQueue();
@@ -283,7 +282,7 @@ private:
 	MusicEntry *_currentlyPlayingSample;
 
 	int _timeCounter; // Used to keep track of the order in which MusicEntries
-	                  // are added, for priority purposes.
+	  // are added, for priority purposes.
 };
 
 } // End of namespace Sci

@@ -25,10 +25,10 @@
 
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 
-#include "kyra/kyra_v1.h"
-#include "kyra/graphics/screen_eob.h"
-#include "kyra/gui/gui_eob.h"
-#include "kyra/text/text_lol.h"
+#	include "kyra/graphics/screen_eob.h"
+#	include "kyra/gui/gui_eob.h"
+#	include "kyra/kyra_v1.h"
+#	include "kyra/text/text_lol.h"
 
 namespace Kyra {
 
@@ -125,7 +125,8 @@ struct KyraRpgGUISettings {
 };
 
 class KyraRpgEngine : public KyraEngine_v1 {
-friend class TextDisplayer_rpg;
+	friend class TextDisplayer_rpg;
+
 public:
 	KyraRpgEngine(OSystem *system, const GameFlags &flags);
 	virtual ~KyraRpgEngine();
@@ -220,7 +221,11 @@ protected:
 
 	typedef Common::Functor2Mem<uint8 *&, const uint8 *&, void, KyraRpgEngine> VcnDrawProc;
 	struct VcnLineDrawingMethods {
-		VcnLineDrawingMethods(VcnDrawProc *fw, VcnDrawProc *bw, VcnDrawProc *fw_t, VcnDrawProc *bw_t) : forward(fw), backwards(bw), forward_trans(fw_t), backwards_trans(bw_t) {}
+		VcnLineDrawingMethods(VcnDrawProc *fw, VcnDrawProc *bw, VcnDrawProc *fw_t, VcnDrawProc *bw_t)
+		  : forward(fw)
+		  , backwards(bw)
+		  , forward_trans(fw_t)
+		  , backwards_trans(bw_t) {}
 		~VcnLineDrawingMethods() {
 			delete forward;
 			delete backwards;

@@ -24,128 +24,132 @@
 #define TSAGE_RINGWORLD_SCENES2_H
 
 #include "common/scummsys.h"
+#include "tsage/core.h"
+#include "tsage/events.h"
+#include "tsage/globals.h"
 #include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/ringworld/ringworld_speakers.h"
-#include "tsage/events.h"
-#include "tsage/core.h"
 #include "tsage/scenes.h"
-#include "tsage/globals.h"
 
 namespace TsAGE {
 
 namespace Ringworld {
 
-using namespace TsAGE;
+	using namespace TsAGE;
 
-class Scene1000 : public Scene {
-	/* Actions */
-	class Action1 : public Action {
+	class Scene1000 : public Scene {
+		/* Actions */
+		class Action1 : public Action {
+		public:
+			virtual void signal();
+		};
+		class Action2 : public Action {
+		public:
+			virtual void signal();
+		};
+		class Action3 : public Action {
+		private:
+			void zoom(bool up);
+
+		public:
+			virtual void signal();
+		};
+
 	public:
-		virtual void signal();
+		SceneObject _object1, _object2, _object3, _object4;
+		Action1 _action1;
+		Action2 _action2;
+		Action3 _action3;
+
+		virtual void postInit(SceneObjectList *OwnerList = NULL);
 	};
-	class Action2 : public Action {
+
+	class Scene1001 : public Scene {
+		/* Actions */
+		class Action1 : public Action {
+		public:
+			virtual void signal();
+		};
+
 	public:
-		virtual void signal();
+		SpeakerQText _speakerQText;
+		SpeakerSL _speakerSL;
+		SpeakerCText _speakerCText;
+		SpeakerCR _speakerCR;
+		Action1 _action1;
+		SceneObject _object1, _object2, _object3, _object4;
+		SceneObject _object5, _object6, _object7;
+		ASound _soundHandler1, _soundHandler2;
+
+		virtual void postInit(SceneObjectList *OwnerList = NULL);
 	};
-	class Action3 : public Action {
-	private:
-		void zoom(bool up);
+
+	class Scene1250 : public Scene {
 	public:
-		virtual void signal();
-	};
+		/* Actions */
+		class Action1 : public Action {
+		public:
+			virtual void signal();
+		};
+		class Action2 : public Action {
+		public:
+			virtual void signal();
+		};
+		class Action3 : public Action {
+		public:
+			virtual void signal();
+		};
+		class Action4 : public Action {
+		public:
+			virtual void signal();
+		};
 
-public:
-	SceneObject _object1, _object2, _object3, _object4;
-	Action1 _action1;
-	Action2 _action2;
-	Action3 _action3;
-
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-};
-
-class Scene1001 : public Scene {
-	/* Actions */
-	class Action1 : public Action {
 	public:
-		virtual void signal();
+		SpeakerQText _speakerQText;
+		Action1 _action1;
+		Action2 _action2;
+		Action3 _action3;
+		Action4 _action4;
+		SceneObject _object1, _object2;
+
+		virtual void postInit(SceneObjectList *OwnerList = NULL);
 	};
-public:
-	SpeakerQText _speakerQText;
-	SpeakerSL _speakerSL;
-	SpeakerCText _speakerCText;
-	SpeakerCR _speakerCR;
-	Action1 _action1;
-	SceneObject _object1, _object2, _object3, _object4;
-	SceneObject _object5, _object6, _object7;
-	ASound _soundHandler1, _soundHandler2;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-};
-
-class Scene1250 : public Scene {
-public:
-	/* Actions */
-	class Action1 : public Action {
+	class Scene1400 : public Scene {
 	public:
-		virtual void signal();
-	};
-	class Action2 : public Action {
-	public:
-		virtual void signal();
-	};
-	class Action3 : public Action {
-	public:
-		virtual void signal();
-	};
-	class Action4 : public Action {
-	public:
-		virtual void signal();
-	};
-public:
-	SpeakerQText _speakerQText;
-	Action1 _action1;
-	Action2 _action2;
-	Action3 _action3;
-	Action4 _action4;
-	SceneObject _object1, _object2;
+		/* Actions */
+		class Action1 : public Action {
+		public:
+			virtual void signal();
+			virtual void dispatch();
+		};
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-};
-
-class Scene1400 : public Scene {
-public:
-	/* Actions */
-	class Action1 : public Action {
 	public:
-		virtual void signal();
-		virtual void dispatch();
+		Action1 _action1;
+
+		virtual void postInit(SceneObjectList *OwnerList = NULL);
 	};
-public:
-	Action1 _action1;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-
-};
-
-class Scene1500 : public Scene {
-public:
-	/* Actions */
-	class Action1 : public Action {
+	class Scene1500 : public Scene {
 	public:
-		virtual void signal();
-	};
-	class Action2 : public Action {
-	public:
-		virtual void signal();
-	};
-public:
-	ASound _soundHandler;
-	Action1 _action1;
-	Action2 _action2;
-	SceneObject _object1, _object2, _object3;
+		/* Actions */
+		class Action1 : public Action {
+		public:
+			virtual void signal();
+		};
+		class Action2 : public Action {
+		public:
+			virtual void signal();
+		};
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-};
+	public:
+		ASound _soundHandler;
+		Action1 _action1;
+		Action2 _action2;
+		SceneObject _object1, _object2, _object3;
+
+		virtual void postInit(SceneObjectList *OwnerList = NULL);
+	};
 
 } // End of namespace Ringworld
 

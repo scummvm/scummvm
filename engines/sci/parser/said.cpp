@@ -34,14 +34,12 @@ namespace Sci {
 // uncomment to debug parse tree augmentation
 //#define SCI_DEBUG_PARSE_TREE_AUGMENTATION
 
-
 #ifdef SCI_DEBUG_PARSE_TREE_AUGMENTATION
-#define scidprintf debugN
+#	define scidprintf debugN
 #else
-void print_nothing(...) { }
-#define scidprintf print_nothing
+void print_nothing(...) {}
+#	define scidprintf print_nothing
 #endif
-
 
 static int said_token;
 static int said_tokens_nr;
@@ -69,8 +67,6 @@ enum SaidWord {
 	WORD_ANY = 0x0fff
 };
 
-
-
 // TODO: maybe turn this into a proper n-ary tree instead of an
 //   n-ary tree implemented in terms of a binary tree.
 //   (Together with _parserNodes in Vocabulary)
@@ -80,15 +76,13 @@ static ParseTreeNode said_tree[VOCAB_TREE_NODES];
 typedef int wgroup_t;
 typedef int said_spec_t;
 
-
-
-static ParseTreeNode* said_next_node() {
+static ParseTreeNode *said_next_node() {
 	assert(said_tree_pos > 0 && said_tree_pos < VOCAB_TREE_NODES);
 
 	return &said_tree[said_tree_pos++];
 }
 
-static ParseTreeNode* said_leaf_node(ParseTreeNode* pos, int value) {
+static ParseTreeNode *said_leaf_node(ParseTreeNode *pos, int value) {
 	pos->type = kParseTreeLeafNode;
 	pos->value = value;
 	pos->right = 0;
@@ -96,7 +90,7 @@ static ParseTreeNode* said_leaf_node(ParseTreeNode* pos, int value) {
 	return pos;
 }
 
-static ParseTreeNode* said_word_node(ParseTreeNode* pos, int value) {
+static ParseTreeNode *said_word_node(ParseTreeNode *pos, int value) {
 	pos->type = kParseTreeWordNode;
 	pos->value = value;
 	pos->right = 0;
@@ -104,9 +98,9 @@ static ParseTreeNode* said_word_node(ParseTreeNode* pos, int value) {
 	return pos;
 }
 
-static ParseTreeNode* said_branch_node(ParseTreeNode* pos,
-                                       ParseTreeNode* left,
-                                       ParseTreeNode* right) {
+static ParseTreeNode *said_branch_node(ParseTreeNode *pos,
+                                       ParseTreeNode *left,
+                                       ParseTreeNode *right) {
 	pos->type = kParseTreeBranchNode;
 	pos->left = left;
 	pos->right = right;
@@ -114,23 +108,21 @@ static ParseTreeNode* said_branch_node(ParseTreeNode* pos,
 	return pos;
 }
 
-static ParseTreeNode* said_branch_attach_left(ParseTreeNode* pos,
-                                              ParseTreeNode* left) {
+static ParseTreeNode *said_branch_attach_left(ParseTreeNode *pos,
+                                              ParseTreeNode *left) {
 	pos->type = kParseTreeBranchNode;
 	pos->left = left;
 
 	return pos;
-
 }
 
-static ParseTreeNode* said_branch_attach_right(ParseTreeNode* pos,
-                                               ParseTreeNode* right) {
+static ParseTreeNode *said_branch_attach_right(ParseTreeNode *pos,
+                                               ParseTreeNode *right) {
 	pos->type = kParseTreeBranchNode;
 	pos->right = right;
 
 	return pos;
 }
-
 
 /*
         pos
@@ -153,60 +145,57 @@ static ParseTreeNode* said_branch_attach_right(ParseTreeNode* pos,
 
 */
 
-static bool said_attach_subtree(ParseTreeNode* pos, int major, int minor,
-                                ParseTreeNode* subtree) {
+static bool said_attach_subtree(ParseTreeNode *pos, int major, int minor,
+                                ParseTreeNode *subtree) {
 	bool retval = true;
 
 	said_branch_attach_right(pos,
-		said_branch_node(said_next_node(),
-			said_branch_node(said_next_node(),
-				said_leaf_node(said_next_node(), major),
-				said_branch_attach_left(subtree,
-					said_leaf_node(said_next_node(), minor))),
-			0));
+	                         said_branch_node(said_next_node(),
+	                                          said_branch_node(said_next_node(),
+	                                                           said_leaf_node(said_next_node(), major),
+	                                                           said_branch_attach_left(subtree,
+	                                                                                   said_leaf_node(said_next_node(), minor))),
+	                                          0));
 
 	return retval;
 }
-
-
-
 
 /*****************/
 /**** Parsing ****/
 /*****************/
 
-static bool parseSpec(ParseTreeNode* parentNode);
-static bool parsePart2(ParseTreeNode* parentNode, bool& nonempty);
-static bool parsePart3(ParseTreeNode* parentNode, bool& nonempty);
-static bool parseSlash(ParseTreeNode* parentNode);
-static bool parseExpr(ParseTreeNode* parentNode);
-static bool parseRef(ParseTreeNode* parentNode);
-static bool parseComma(ParseTreeNode* parentNode);
-static bool parseList(ParseTreeNode* parentNode);
-static bool parseListEntry(ParseTreeNode* parentNode);
-static bool parseWord(ParseTreeNode* parentNode);
+static bool parseSpec(ParseTreeNode *parentNode);
+static bool parsePart2(ParseTreeNode *parentNode, bool &nonempty);
+static bool parsePart3(ParseTreeNode *parentNode, bool &nonempty);
+static bool parseSlash(ParseTreeNode *parentNode);
+static bool parseExpr(ParseTreeNode *parentNode);
+static bool parseRef(ParseTreeNode *parentNode);
+static bool parseComma(ParseTreeNode *parentNode);
+static bool parseList(ParseTreeNode *parentNode);
+static bool parseListEntry(ParseTreeNode *parentNode);
+static bool parseWord(ParseTreeNode *parentNode);
 
-static bool parseWord(ParseTreeNode* parentNode) {
+static bool parseWord(ParseTreeNode *parentNode) {
 	int token = said_tokens[said_token];
 	if (token & 0x8000)
 		return false;
 
 	said_token++;
 
-	ParseTreeNode* newNode = said_word_node(said_next_node(), token);
+	ParseTreeNode *newNode = said_word_node(said_next_node(), token);
 
 	parentNode->right = newNode;
 
 	return true;
 }
 
-static bool parsePart2(ParseTreeNode* parentNode, bool& nonempty) {
+static bool parsePart2(ParseTreeNode *parentNode, bool &nonempty) {
 	// Store current state for rolling back if we fail
 	int curToken = said_token;
 	int curTreePos = said_tree_pos;
-	ParseTreeNode* curRightChild = parentNode->right;
+	ParseTreeNode *curRightChild = parentNode->right;
 
-	ParseTreeNode* newNode = said_branch_node(said_next_node(), 0, 0);
+	ParseTreeNode *newNode = said_branch_node(said_next_node(), 0, 0);
 
 	nonempty = true;
 
@@ -235,7 +224,6 @@ static bool parsePart2(ParseTreeNode* parentNode, bool& nonempty) {
 				return true;
 			}
 		}
-
 	}
 
 	// CHECKME: this doesn't look right if the [] section matched partially
@@ -247,7 +235,6 @@ static bool parsePart2(ParseTreeNode* parentNode, bool& nonempty) {
 		nonempty = false;
 
 		return true;
-
 	}
 
 	// Rollback
@@ -257,13 +244,13 @@ static bool parsePart2(ParseTreeNode* parentNode, bool& nonempty) {
 	return false;
 }
 
-static bool parsePart3(ParseTreeNode* parentNode, bool& nonempty) {
+static bool parsePart3(ParseTreeNode *parentNode, bool &nonempty) {
 	// Store current state for rolling back if we fail
 	int curToken = said_token;
 	int curTreePos = said_tree_pos;
-	ParseTreeNode* curRightChild = parentNode->right;
+	ParseTreeNode *curRightChild = parentNode->right;
 
-	ParseTreeNode* newNode = said_branch_node(said_next_node(), 0, 0);
+	ParseTreeNode *newNode = said_branch_node(said_next_node(), 0, 0);
 
 	bool found;
 
@@ -292,7 +279,6 @@ static bool parsePart3(ParseTreeNode* parentNode, bool& nonempty) {
 				return true;
 			}
 		}
-
 	}
 
 	// CHECKME: this doesn't look right if the [] section matched partially
@@ -304,7 +290,6 @@ static bool parsePart3(ParseTreeNode* parentNode, bool& nonempty) {
 		nonempty = false;
 
 		return true;
-
 	}
 
 	// Rollback
@@ -314,12 +299,11 @@ static bool parsePart3(ParseTreeNode* parentNode, bool& nonempty) {
 	return false;
 }
 
-
-static bool parseSlash(ParseTreeNode* parentNode) {
+static bool parseSlash(ParseTreeNode *parentNode) {
 	// Store current state for rolling back if we fail
 	int curToken = said_token;
 	int curTreePos = said_tree_pos;
-	ParseTreeNode* curRightChild = parentNode->right;
+	ParseTreeNode *curRightChild = parentNode->right;
 
 	if (said_tokens[said_token] == TOKEN_SLASH) {
 		said_token++;
@@ -328,7 +312,6 @@ static bool parseSlash(ParseTreeNode* parentNode) {
 
 		if (found)
 			return true;
-
 	}
 
 	// Rollback
@@ -338,16 +321,15 @@ static bool parseSlash(ParseTreeNode* parentNode) {
 	return false;
 }
 
-
-static bool parseRef(ParseTreeNode* parentNode) {
+static bool parseRef(ParseTreeNode *parentNode) {
 	// Store current state for rolling back if we fail
 	int curToken = said_token;
 	int curTreePos = said_tree_pos;
-	ParseTreeNode* curRightChild = parentNode->right;
+	ParseTreeNode *curRightChild = parentNode->right;
 
-	ParseTreeNode* newNode = said_branch_node(said_next_node(), 0, 0);
+	ParseTreeNode *newNode = said_branch_node(said_next_node(), 0, 0);
 
-	ParseTreeNode* newParent = parentNode;
+	ParseTreeNode *newParent = parentNode;
 
 	bool found;
 
@@ -369,13 +351,10 @@ static bool parseRef(ParseTreeNode* parentNode) {
 			if (found) {
 
 				said_attach_subtree(newParent, 0x141, 0x144, newNode);
-
 			}
 
 			return true;
-
 		}
-
 	}
 
 	// NB: This is not an "else if'.
@@ -396,7 +375,6 @@ static bool parseRef(ParseTreeNode* parentNode) {
 				return true;
 			}
 		}
-
 	}
 
 	// Rollback
@@ -406,11 +384,11 @@ static bool parseRef(ParseTreeNode* parentNode) {
 	return false;
 }
 
-static bool parseComma(ParseTreeNode* parentNode) {
+static bool parseComma(ParseTreeNode *parentNode) {
 	// Store current state for rolling back if we fail
 	int curToken = said_token;
 	int curTreePos = said_tree_pos;
-	ParseTreeNode* curRightChild = parentNode->right;
+	ParseTreeNode *curRightChild = parentNode->right;
 
 	if (said_tokens[said_token] == TOKEN_COMMA) {
 		said_token++;
@@ -419,7 +397,6 @@ static bool parseComma(ParseTreeNode* parentNode) {
 
 		if (found)
 			return true;
-
 	}
 
 	// Rollback
@@ -429,13 +406,13 @@ static bool parseComma(ParseTreeNode* parentNode) {
 	return false;
 }
 
-static bool parseListEntry(ParseTreeNode* parentNode) {
+static bool parseListEntry(ParseTreeNode *parentNode) {
 	// Store current state for rolling back if we fail
 	int curToken = said_token;
 	int curTreePos = said_tree_pos;
-	ParseTreeNode* curRightChild = parentNode->right;
+	ParseTreeNode *curRightChild = parentNode->right;
 
-	ParseTreeNode* newNode = said_branch_node(said_next_node(), 0, 0);
+	ParseTreeNode *newNode = said_branch_node(said_next_node(), 0, 0);
 
 	bool found;
 
@@ -476,9 +453,7 @@ static bool parseListEntry(ParseTreeNode* parentNode) {
 		said_attach_subtree(parentNode, 0x141, 0x153, newNode);
 
 		return true;
-
 	}
-
 
 	// Rollback
 	said_token = curToken;
@@ -487,15 +462,15 @@ static bool parseListEntry(ParseTreeNode* parentNode) {
 	return false;
 }
 
-static bool parseList(ParseTreeNode* parentNode) {
+static bool parseList(ParseTreeNode *parentNode) {
 	// Store current state for rolling back if we fail
 	int curToken = said_token;
 	int curTreePos = said_tree_pos;
-	ParseTreeNode* curRightChild = parentNode->right;
+	ParseTreeNode *curRightChild = parentNode->right;
 
 	bool found;
 
-	ParseTreeNode* newParent = parentNode;
+	ParseTreeNode *newParent = parentNode;
 
 	found = parseListEntry(newParent);
 
@@ -506,7 +481,6 @@ static bool parseList(ParseTreeNode* parentNode) {
 		found = parseComma(newParent);
 
 		return true;
-
 	}
 
 	// Rollback
@@ -516,18 +490,18 @@ static bool parseList(ParseTreeNode* parentNode) {
 	return false;
 }
 
-static bool parseExpr(ParseTreeNode* parentNode) {
+static bool parseExpr(ParseTreeNode *parentNode) {
 	// Store current state for rolling back if we fail
 	int curToken = said_token;
 	int curTreePos = said_tree_pos;
-	ParseTreeNode* curRightChild = parentNode->right;
+	ParseTreeNode *curRightChild = parentNode->right;
 
-	ParseTreeNode* newNode = said_branch_node(said_next_node(), 0, 0);
+	ParseTreeNode *newNode = said_branch_node(said_next_node(), 0, 0);
 
 	bool ret = false;
 	bool found;
 
-	ParseTreeNode* newParent = parentNode;
+	ParseTreeNode *newParent = parentNode;
 
 	found = parseList(newNode);
 
@@ -551,19 +525,19 @@ static bool parseExpr(ParseTreeNode* parentNode) {
 	return false;
 }
 
-static bool parseSpec(ParseTreeNode* parentNode) {
+static bool parseSpec(ParseTreeNode *parentNode) {
 	// Store current state for rolling back if we fail
 	int curToken = said_token;
 	int curTreePos = said_tree_pos;
-	ParseTreeNode* curRightChild = parentNode->right;
+	ParseTreeNode *curRightChild = parentNode->right;
 
-	ParseTreeNode* newNode = said_branch_node(said_next_node(), 0, 0);
+	ParseTreeNode *newNode = said_branch_node(said_next_node(), 0, 0);
 
 	bool ret = false;
 
 	bool found;
 
-	ParseTreeNode* newParent = parentNode;
+	ParseTreeNode *newParent = parentNode;
 
 	found = parseExpr(newNode);
 
@@ -587,7 +561,6 @@ static bool parseSpec(ParseTreeNode* parentNode) {
 		if (nonempty) // non-empty part found
 			newParent = newParent->right;
 
-
 		found = parsePart3(newParent, nonempty);
 
 		if (found) {
@@ -601,12 +574,10 @@ static bool parseSpec(ParseTreeNode* parentNode) {
 		said_token++;
 
 		newNode = said_branch_node(said_next_node(), 0,
-						said_leaf_node(said_next_node(), TOKEN_GT));
+		                           said_leaf_node(said_next_node(), TOKEN_GT));
 
 		said_attach_subtree(newParent, 0x14B, TOKEN_GT, newNode);
-
 	}
-
 
 	if (ret)
 		return true;
@@ -617,7 +588,6 @@ static bool parseSpec(ParseTreeNode* parentNode) {
 	parentNode->right = curRightChild;
 	return false;
 }
-
 
 static bool buildSaidTree() {
 	said_branch_node(said_tree, &said_tree[1], &said_tree[2]);
@@ -687,33 +657,31 @@ enum ScanSaidType {
 	SCAN_SAID_OR = 1
 };
 
-static int matchTrees(ParseTreeNode* parseT, ParseTreeNode* saidT);
-static int scanSaidChildren(ParseTreeNode* parseT, ParseTreeNode* saidT,
+static int matchTrees(ParseTreeNode *parseT, ParseTreeNode *saidT);
+static int scanSaidChildren(ParseTreeNode *parseT, ParseTreeNode *saidT,
                             ScanSaidType type);
-static int scanParseChildren(ParseTreeNode* parseT, ParseTreeNode* saidT);
+static int scanParseChildren(ParseTreeNode *parseT, ParseTreeNode *saidT);
 
-
-static int node_major(ParseTreeNode* node) {
+static int node_major(ParseTreeNode *node) {
 	assert(node->type == kParseTreeBranchNode);
 	assert(node->left->type == kParseTreeLeafNode);
 	return node->left->value;
 }
-static int node_minor(ParseTreeNode* node) {
+static int node_minor(ParseTreeNode *node) {
 	assert(node->type == kParseTreeBranchNode);
 	assert(node->right->type == kParseTreeBranchNode);
 	assert(node->right->left->type == kParseTreeLeafNode);
 	return node->right->left->value;
 }
-static bool node_is_terminal(ParseTreeNode* node) {
-	return (node->right->right &&
-            node->right->right->type != kParseTreeBranchNode);
+static bool node_is_terminal(ParseTreeNode *node) {
+	return (node->right->right && node->right->right->type != kParseTreeBranchNode);
 }
-static int node_terminal_value(ParseTreeNode* node) {
+static int node_terminal_value(ParseTreeNode *node) {
 	assert(node_is_terminal(node));
 	return node->right->right->value;
 }
 #ifdef SCI_DEBUG_PARSE_TREE_AUGMENTATION
-static void node_print_desc(ParseTreeNode* node) {
+static void node_print_desc(ParseTreeNode *node) {
 	assert(node);
 	assert(node->left);
 	if (node->left->type == kParseTreeBranchNode) {
@@ -723,21 +691,19 @@ static void node_print_desc(ParseTreeNode* node) {
 	} else {
 		if (node_is_terminal(node)) {
 			scidprintf("(%03x %03x %03x)", node_major(node),
-			                               node_minor(node),
-			                               node_terminal_value(node));
+			           node_minor(node),
+			           node_terminal_value(node));
 		} else {
 			scidprintf("(%03x %03x <...>)", node_major(node),
-			                                node_minor(node));
+			           node_minor(node));
 		}
 	}
 }
 #else
-static void node_print_desc(ParseTreeNode *) { }
+static void node_print_desc(ParseTreeNode *) {}
 #endif
 
-
-
-static int matchTrees(ParseTreeNode* parseT, ParseTreeNode* saidT) {
+static int matchTrees(ParseTreeNode *parseT, ParseTreeNode *saidT) {
 	outputDepth++;
 	scidprintf("%*smatchTrees on ", outputDepth, "");
 	node_print_desc(parseT);
@@ -750,10 +716,7 @@ static int matchTrees(ParseTreeNode* parseT, ParseTreeNode* saidT) {
 
 	int ret;
 
-	if (node_major(parseT) != 0x141 &&
-	    node_major(saidT) != 0x141 && node_major(saidT) != 0x152 &&
-	    node_major(saidT) != node_major(parseT))
-	{
+	if (node_major(parseT) != 0x141 && node_major(saidT) != 0x141 && node_major(saidT) != 0x152 && node_major(saidT) != node_major(parseT)) {
 		ret = -1;
 	}
 
@@ -761,7 +724,7 @@ static int matchTrees(ParseTreeNode* parseT, ParseTreeNode* saidT) {
 	// said major is 0x141/0x152 and/or
 	// said major is parse major
 
-	else if (node_is_terminal(saidT) && node_is_terminal(parseT) ) {
+	else if (node_is_terminal(saidT) && node_is_terminal(parseT)) {
 
 		// both saidT and parseT are terminals
 
@@ -769,7 +732,7 @@ static int matchTrees(ParseTreeNode* parseT, ParseTreeNode* saidT) {
 
 #ifdef SCI_DEBUG_PARSE_TREE_AUGMENTATION
 		scidprintf("%*smatchTrees matching terminals: %03x", outputDepth, "", node_terminal_value(parseT));
-		ParseTreeNode* t = parseT->right->right;
+		ParseTreeNode *t = parseT->right->right;
 		while (t) {
 			scidprintf(",%03x", t->value);
 			t = t->right;
@@ -804,8 +767,7 @@ static int matchTrees(ParseTreeNode* parseT, ParseTreeNode* saidT) {
 
 		// saidT is a terminal, but parseT isn't
 
-		if (node_major(parseT) == 0x141 ||
-		        node_major(parseT) == node_major(saidT))
+		if (node_major(parseT) == 0x141 || node_major(parseT) == node_major(saidT))
 			ret = scanParseChildren(parseT->right->right, saidT);
 		else
 			ret = 0;
@@ -814,15 +776,13 @@ static int matchTrees(ParseTreeNode* parseT, ParseTreeNode* saidT) {
 
 		// parseT is a terminal, but saidT isn't
 
-		if (node_major(saidT) == 0x141 || node_major(saidT) == 0x152 ||
-		        node_major(saidT) == node_major(parseT))
+		if (node_major(saidT) == 0x141 || node_major(saidT) == 0x152 || node_major(saidT) == node_major(parseT))
 			ret = scanSaidChildren(parseT, saidT->right->right,
-			                       inParen ? SCAN_SAID_OR : SCAN_SAID_AND );
+			                       inParen ? SCAN_SAID_OR : SCAN_SAID_AND);
 		else
 			ret = 0;
 
-	} else if (node_major(saidT) != 0x141 && node_major(saidT) != 0x152 &&
-	           node_major(saidT) != node_major(parseT)) {
+	} else if (node_major(saidT) != 0x141 && node_major(saidT) != 0x152 && node_major(saidT) != node_major(parseT)) {
 
 		// parseT and saidT both aren't terminals
 		// said major is not 0x141 or 0x152 or parse major
@@ -836,7 +796,6 @@ static int matchTrees(ParseTreeNode* parseT, ParseTreeNode* saidT) {
 
 		ret = scanSaidChildren(parseT->right->right, saidT->right->right,
 		                       inParen ? SCAN_SAID_OR : SCAN_SAID_AND);
-
 	}
 
 	if (inBracket && ret == 0) {
@@ -851,12 +810,11 @@ static int matchTrees(ParseTreeNode* parseT, ParseTreeNode* saidT) {
 	return ret;
 }
 
-
-static int scanSaidChildren(ParseTreeNode* parseT, ParseTreeNode* saidT,
+static int scanSaidChildren(ParseTreeNode *parseT, ParseTreeNode *saidT,
                             ScanSaidType type) {
 	outputDepth++;
 	scidprintf("%*sscanSaid(%s) on ", outputDepth, "",
-	                                  type == SCAN_SAID_OR ? "OR" : "AND");
+	           type == SCAN_SAID_OR ? "OR" : "AND");
 	node_print_desc(parseT);
 	scidprintf(" and ");
 	node_print_desc(saidT);
@@ -869,7 +827,7 @@ static int scanSaidChildren(ParseTreeNode* parseT, ParseTreeNode* saidT,
 	while (saidT) {
 		assert(saidT->type == kParseTreeBranchNode);
 
-		ParseTreeNode* saidChild = saidT->left;
+		ParseTreeNode *saidChild = saidT->left;
 		assert(saidChild);
 
 		if (node_major(saidChild) != 0x145) {
@@ -881,11 +839,9 @@ static int scanSaidChildren(ParseTreeNode* parseT, ParseTreeNode* saidT,
 
 			if (type == SCAN_SAID_OR && ret == 1)
 				break;
-
 		}
 
 		saidT = saidT->right;
-
 	}
 	scidprintf("%*sscanSaid returning %d\n", outputDepth, "", ret);
 
@@ -893,8 +849,7 @@ static int scanSaidChildren(ParseTreeNode* parseT, ParseTreeNode* saidT,
 	return ret;
 }
 
-
-static int scanParseChildren(ParseTreeNode* parseT, ParseTreeNode* saidT) {
+static int scanParseChildren(ParseTreeNode *parseT, ParseTreeNode *saidT) {
 
 	outputDepth++;
 	scidprintf("%*sscanParse on ", outputDepth, "");
@@ -916,11 +871,10 @@ static int scanParseChildren(ParseTreeNode* parseT, ParseTreeNode* saidT) {
 	int ret;
 
 	// descend further down saidT before actually scanning parseT
-	if ((node_major(saidT) == 0x141 || node_major(saidT) == 0x152) &&
-	    !node_is_terminal(saidT)) {
+	if ((node_major(saidT) == 0x141 || node_major(saidT) == 0x152) && !node_is_terminal(saidT)) {
 
 		ret = scanSaidChildren(parseT, saidT->right->right,
-		                       inParen ? SCAN_SAID_OR : SCAN_SAID_AND );
+		                       inParen ? SCAN_SAID_OR : SCAN_SAID_AND);
 
 	} else if (parseT && parseT->left->type == kParseTreeBranchNode) {
 
@@ -930,15 +884,14 @@ static int scanParseChildren(ParseTreeNode* parseT, ParseTreeNode* saidT) {
 		while (parseT) {
 			assert(parseT->type == kParseTreeBranchNode);
 
-			ParseTreeNode* parseChild = parseT->left;
+			ParseTreeNode *parseChild = parseT->left;
 			assert(parseChild);
 
 			scidprintf("%*sscanning next: ", outputDepth, "");
 			node_print_desc(parseChild);
 			scidprintf("\n");
 
-			if (node_major(parseChild) == node_major(saidT) ||
-			        node_major(parseChild) == 0x141)
+			if (node_major(parseChild) == node_major(saidT) || node_major(parseChild) == 0x141)
 				subresult = matchTrees(parseChild, saidT);
 
 			if (subresult != 0)
@@ -948,7 +901,6 @@ static int scanParseChildren(ParseTreeNode* parseT, ParseTreeNode* saidT) {
 				break;
 
 			parseT = parseT->right;
-
 		}
 
 		// ret is now:
@@ -959,7 +911,6 @@ static int scanParseChildren(ParseTreeNode* parseT, ParseTreeNode* saidT) {
 	} else {
 
 		ret = matchTrees(parseT, saidT);
-
 	}
 
 	if (inBracket && ret == 0) {
@@ -973,8 +924,6 @@ static int scanParseChildren(ParseTreeNode* parseT, ParseTreeNode* saidT) {
 
 	return ret;
 }
-
-
 
 static int augment_parse_nodes(ParseTreeNode *parseT, ParseTreeNode *saidT) {
 	outputDepth = 0;
@@ -998,7 +947,6 @@ static int augment_parse_nodes(ParseTreeNode *parseT, ParseTreeNode *saidT) {
 
 	return 1;
 }
-
 
 /*******************/
 /**** Main code ****/
@@ -1028,7 +976,6 @@ int said(const byte *spec, bool verbose) {
 
 	return SAID_NO_MATCH;
 }
-
 
 /*
 
@@ -1129,8 +1076,5 @@ True
 
 
 */
-
-
-
 
 } // End of namespace Sci

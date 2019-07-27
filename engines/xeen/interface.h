@@ -66,6 +66,7 @@ private:
 	SpriteResource _hpSprites;
 	SpriteResource _restoreSprites;
 	int _hiliteChar;
+
 public:
 	PartyDrawer(XeenEngine *vm);
 
@@ -91,8 +92,7 @@ public:
 /**
  * Implements the main in-game interface
  */
-class Interface: public ButtonContainer, public InterfaceScene,
-		public InterfaceMinimap, public PartyDrawer {
+class Interface : public ButtonContainer, public InterfaceScene, public InterfaceMinimap, public PartyDrawer {
 private:
 	XeenEngine *_vm;
 	SpriteResource _uiSprites;
@@ -162,6 +162,7 @@ private:
 	 * Select next character or monster to be attacking
 	 */
 	void nextChar();
+
 public:
 	Obscurity _obscurity;
 	FallState _falling;
@@ -175,6 +176,7 @@ public:
 	byte _tillMove;
 	int _charFX[6];
 	IconsMode _iconsMode;
+
 public:
 	Interface(XeenEngine *vm);
 

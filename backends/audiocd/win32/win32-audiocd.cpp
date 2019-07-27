@@ -44,35 +44,35 @@
 
 #ifdef WIN32
 
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#	define WIN32_LEAN_AND_MEAN
+#	include <windows.h>
 
-#include "backends/audiocd/win32/win32-audiocd.h"
+#	include "backends/audiocd/win32/win32-audiocd.h"
 
-#include "audio/audiostream.h"
-#include "backends/audiocd/audiocd-stream.h"
-#include "backends/audiocd/default/default-audiocd.h"
-#include "common/array.h"
-#include "common/config-manager.h"
-#include "common/debug.h"
-#include "common/mutex.h"
-#include "common/queue.h"
-#include "common/str.h"
-#include "common/timer.h"
+#	include "audio/audiostream.h"
+#	include "backends/audiocd/audiocd-stream.h"
+#	include "backends/audiocd/default/default-audiocd.h"
+#	include "common/array.h"
+#	include "common/config-manager.h"
+#	include "common/debug.h"
+#	include "common/mutex.h"
+#	include "common/queue.h"
+#	include "common/str.h"
+#	include "common/timer.h"
 
-#include <winioctl.h>
-#if _MSC_VER < 1900
+#	include <winioctl.h>
+#	if _MSC_VER < 1900
 // WORKAROUND: Older versions of MSVC might not supply DDK headers by default.
 // Visual Studio 2015 contains the required headers. We use a compatability
 // header from MinGW's w32api for all older versions.
 // TODO: Limit this to the Visual Studio versions which actually require this.
-#include "msvc/ntddcdrm.h"
-#elif defined(__MINGW32__) && !defined(__MINGW64__)
+#		include "msvc/ntddcdrm.h"
+#	elif defined(__MINGW32__) && !defined(__MINGW64__)
 // Classic MinGW uses non standard paths for DDK headers.
-#include <ddk/ntddcdrm.h>
-#else
-#include <ntddcdrm.h>
-#endif
+#		include <ddk/ntddcdrm.h>
+#	else
+#		include <ntddcdrm.h>
+#	endif
 
 class Win32AudioCDStream : public AudioCDStream {
 public:
@@ -103,8 +103,10 @@ private:
 	}
 };
 
-Win32AudioCDStream::Win32AudioCDStream(HANDLE handle, const TRACK_DATA &startEntry, const TRACK_DATA &endEntry) :
-	_driveHandle(handle), _startEntry(startEntry), _endEntry(endEntry) {
+Win32AudioCDStream::Win32AudioCDStream(HANDLE handle, const TRACK_DATA &startEntry, const TRACK_DATA &endEntry)
+  : _driveHandle(handle)
+  , _startEntry(startEntry)
+  , _endEntry(endEntry) {
 	// We fill the buffer here already to prevent any out of sync issues due
 	// to the CD not yet having spun up.
 	startTimer(true);
@@ -132,16 +134,15 @@ bool Win32AudioCDStream::readFrame(int frame, int16 *buffer) {
 
 	DWORD bytesReturned;
 	return DeviceIoControl(
-	           _driveHandle,
-	           IOCTL_CDROM_RAW_READ,
-	           &readAudio,
-	           sizeof(readAudio),
-	           buffer,
-	           kBytesPerFrame,
-	           &bytesReturned,
-	           NULL);
+	  _driveHandle,
+	  IOCTL_CDROM_RAW_READ,
+	  &readAudio,
+	  sizeof(readAudio),
+	  buffer,
+	  kBytesPerFrame,
+	  &bytesReturned,
+	  NULL);
 }
-
 
 class Win32AudioCDManager : public DefaultAudioCDManager {
 public:
@@ -151,7 +152,7 @@ public:
 	bool open() override;
 	void close() override;
 	bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
-			Audio::Mixer::SoundType soundType) override;
+	          Audio::Mixer::SoundType soundType) override;
 
 protected:
 	bool openCD(int drive) override;
@@ -255,7 +256,7 @@ void Win32AudioCDManager::close() {
 }
 
 bool Win32AudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
-		Audio::Mixer::SoundType soundType) {
+                               Audio::Mixer::SoundType soundType) {
 	// Prefer emulation
 	if (DefaultAudioCDManager::play(track, numLoops, startFrame, duration, onlyEmulate, soundType))
 		return true;
@@ -290,14 +291,14 @@ bool Win32AudioCDManager::play(int track, int numLoops, int startFrame, int dura
 	_emulating = true;
 
 	_mixer->playStream(
-	    soundType,
-	    &_handle,
-	    Audio::makeLoopingAudioStream(audioStream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops),
-	    -1,
-	    _cd.volume,
-	    _cd.balance,
-	    DisposeAfterUse::YES,
-	    true);
+	  soundType,
+	  &_handle,
+	  Audio::makeLoopingAudioStream(audioStream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops),
+	  -1,
+	  _cd.volume,
+	  _cd.balance,
+	  DisposeAfterUse::YES,
+	  true);
 	return true;
 }
 
@@ -311,14 +312,14 @@ bool Win32AudioCDManager::loadTOC() {
 	DWORD bytesReturned;
 	CDROM_TOC tocData;
 	bool result = DeviceIoControl(
-	                  _driveHandle,
-	                  IOCTL_CDROM_READ_TOC_EX,
-	                  &tocRequest,
-	                  sizeof(tocRequest),
-	                  &tocData,
-	                  sizeof(tocData),
-	                  &bytesReturned,
-	                  NULL);
+	  _driveHandle,
+	  IOCTL_CDROM_READ_TOC_EX,
+	  &tocRequest,
+	  sizeof(tocRequest),
+	  &tocData,
+	  sizeof(tocData),
+	  &bytesReturned,
+	  NULL);
 	if (!result) {
 		debug("Failed to query the CD TOC: %d", (int)GetLastError());
 		return false;
@@ -326,15 +327,15 @@ bool Win32AudioCDManager::loadTOC() {
 
 	_firstTrack = tocData.FirstTrack;
 	_lastTrack = tocData.LastTrack;
-#if 0
+#	if 0
 	debug("First Track: %d", tocData.FirstTrack);
 	debug("Last Track: %d", tocData.LastTrack);
-#endif
+#	endif
 
 	for (uint32 i = 0; i < (bytesReturned - 4) / sizeof(TRACK_DATA); i++)
 		_tocEntries.push_back(tocData.TrackData[i]);
 
-#if 0
+#	if 0
 	for (uint32 i = 0; i < _tocEntries.size(); i++) {
 		const TRACK_DATA &entry = _tocEntries[i];
 		debug("Entry:");
@@ -343,7 +344,7 @@ bool Win32AudioCDManager::loadTOC() {
 		debug("\tCtrl: %d", entry.Control);
 		debug("\tMSF: %d:%d:%d\n", entry.Address[1], entry.Address[2], entry.Address[3]);
 	}
-#endif
+#	endif
 
 	return true;
 }

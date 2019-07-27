@@ -23,12 +23,11 @@
 #ifndef OPTIONS_DIALOG_3DS_H
 #define OPTIONS_DIALOG_3DS_H
 
-
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "gui/dialog.h"
 #include "gui/object.h"
 #include "gui/widget.h"
-#include "gui/dialog.h"
 #include "gui/widgets/tab.h"
 #include "scumm/dialogs.h"
 

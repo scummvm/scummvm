@@ -33,11 +33,11 @@ class TownsPC98_MusicChannelPCM;
 #endif
 
 class TownsPC98_AudioDriver : public PC98AudioPluginDriver {
-friend class TownsPC98_MusicChannel;
-friend class TownsPC98_MusicChannelSSG;
-friend class TownsPC98_SfxChannel;
+	friend class TownsPC98_MusicChannel;
+	friend class TownsPC98_MusicChannelSSG;
+	friend class TownsPC98_SfxChannel;
 #ifndef DISABLE_PC98_RHYTHM_CHANNEL
-friend class TownsPC98_MusicChannelPCM;
+	friend class TownsPC98_MusicChannelPCM;
 #endif
 public:
 	TownsPC98_AudioDriver(Audio::Mixer *mixer, EmuType type);

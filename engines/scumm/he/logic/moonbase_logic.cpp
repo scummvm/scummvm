@@ -22,11 +22,11 @@
 
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"
-#include "scumm/he/moonbase/moonbase.h"
 #include "scumm/he/moonbase/ai_main.h"
+#include "scumm/he/moonbase/moonbase.h"
 #ifdef USE_SDL_NET
-#include "scumm/he/moonbase/net_main.h"
-#include "scumm/he/moonbase/net_defines.h"
+#	include "scumm/he/moonbase/net_defines.h"
+#	include "scumm/he/moonbase/net_main.h"
 #endif
 
 namespace Scumm {
@@ -37,7 +37,8 @@ namespace Scumm {
  */
 class LogicHEmoonbase : public LogicHE {
 public:
-	LogicHEmoonbase(ScummEngine_v100he *vm) : LogicHE(vm) { _vm1 = vm; }
+	LogicHEmoonbase(ScummEngine_v100he *vm)
+	  : LogicHE(vm) { _vm1 = vm; }
 
 	int versionID();
 
@@ -110,58 +111,57 @@ int LogicHEmoonbase::versionID() {
 		return 100;
 }
 
-#define OP_CREATE_MULTI_STATE_WIZ		100
-#define OP_LOAD_MULTI_CHANNEL_WIZ		101
-#define OP_WIZ_FROM_MULTI_CHANNEL_WIZ	102
-#define OP_DOS_COMMAND					103
-#define OP_SET_FOW_SENTINEL				104
-#define OP_SET_FOW_INFORMATION			105
-#define OP_SET_FOW_IMAGE				106
+#define OP_CREATE_MULTI_STATE_WIZ 100
+#define OP_LOAD_MULTI_CHANNEL_WIZ 101
+#define OP_WIZ_FROM_MULTI_CHANNEL_WIZ 102
+#define OP_DOS_COMMAND 103
+#define OP_SET_FOW_SENTINEL 104
+#define OP_SET_FOW_INFORMATION 105
+#define OP_SET_FOW_IMAGE 106
 
-#define OP_AI_TEST_KLUDGE				10000
-#define OP_AI_MASTER_CONTROL_PROGRAM	10001
-#define OP_AI_RESET						10002
-#define OP_AI_SET_TYPE					10003
-#define OP_AI_CLEAN_UP					10004
+#define OP_AI_TEST_KLUDGE 10000
+#define OP_AI_MASTER_CONTROL_PROGRAM 10001
+#define OP_AI_RESET 10002
+#define OP_AI_SET_TYPE 10003
+#define OP_AI_CLEAN_UP 10004
 
-#define OP_NET_REMOTE_START_SCRIPT			1492
-#define OP_NET_DO_INIT_ALL					1493
-#define OP_NET_DO_INIT_PROVIDER				1494
-#define OP_NET_DO_INIT_SESSION				1495
-#define OP_NET_DO_INIT_USER					1496
-#define OP_NET_QUERY_PROVIDERS				1497
-#define OP_NET_GET_PROVIDER_NAME			1498
-#define OP_NET_SET_PROVIDER					1499
-#define OP_NET_CLOSE_PROVIDER				1500
-#define OP_NET_QUERY_SESSIONS				1501
-#define OP_NET_GET_SESSION_NAME				1502
-#define OP_NET_CREATE_SESSION				1503
-#define OP_NET_JOIN_SESSION					1504
-#define OP_NET_END_SESSION					1505
-#define OP_NET_ADD_USER						1506
-#define OP_NET_REMOVE_USER					1507
-#define OP_NET_WHO_SENT_THIS				1508
-#define OP_NET_REMOTE_SEND_ARRAY			1509
-#define OP_NET_WHO_AM_I						1510
-#define OP_NET_REMOTE_START_FUNCTION		1511
-#define OP_NET_GET_PLAYER_LONG_NAME			1512
-#define OP_NET_GET_PLAYER_SHORT_NAME		1513
-#define OP_NET_SET_PROVIDER_BY_NAME			1516
-#define OP_NET_HOST_TCPIP_GAME				1517
-#define OP_NET_JOIN_TCPIP_GAME				1518
-#define OP_NET_SET_FAKE_LAG					1555
-#define OP_NET_SET_FAKE_LATENCY				1555 /* SET_FAKE_LAG is a valid alias for backwards compatibility */
-#define OP_NET_GET_HOST_NAME				1556
-#define OP_NET_GET_IP_FROM_NAME				1557
-#define OP_NET_GET_SESSION_PLAYER_COUNT		1558
-#define OP_NET_DISABLE_SESSION_PLAYER_JOIN	1559
-#define OP_NET_START_QUERY_SESSIONS			1560
-#define OP_NET_UPDATE_QUERY_SESSIONS		1561
-#define OP_NET_STOP_QUERY_SESSIONS			1562
-#define OP_NET_DESTROY_PLAYER				1563
-#define OP_NET_ENABLE_SESSION_PLAYER_JOIN	1564
-#define OP_NET_SET_AI_PLAYER_COUNT			1565
-
+#define OP_NET_REMOTE_START_SCRIPT 1492
+#define OP_NET_DO_INIT_ALL 1493
+#define OP_NET_DO_INIT_PROVIDER 1494
+#define OP_NET_DO_INIT_SESSION 1495
+#define OP_NET_DO_INIT_USER 1496
+#define OP_NET_QUERY_PROVIDERS 1497
+#define OP_NET_GET_PROVIDER_NAME 1498
+#define OP_NET_SET_PROVIDER 1499
+#define OP_NET_CLOSE_PROVIDER 1500
+#define OP_NET_QUERY_SESSIONS 1501
+#define OP_NET_GET_SESSION_NAME 1502
+#define OP_NET_CREATE_SESSION 1503
+#define OP_NET_JOIN_SESSION 1504
+#define OP_NET_END_SESSION 1505
+#define OP_NET_ADD_USER 1506
+#define OP_NET_REMOVE_USER 1507
+#define OP_NET_WHO_SENT_THIS 1508
+#define OP_NET_REMOTE_SEND_ARRAY 1509
+#define OP_NET_WHO_AM_I 1510
+#define OP_NET_REMOTE_START_FUNCTION 1511
+#define OP_NET_GET_PLAYER_LONG_NAME 1512
+#define OP_NET_GET_PLAYER_SHORT_NAME 1513
+#define OP_NET_SET_PROVIDER_BY_NAME 1516
+#define OP_NET_HOST_TCPIP_GAME 1517
+#define OP_NET_JOIN_TCPIP_GAME 1518
+#define OP_NET_SET_FAKE_LAG 1555
+#define OP_NET_SET_FAKE_LATENCY 1555 /* SET_FAKE_LAG is a valid alias for backwards compatibility */
+#define OP_NET_GET_HOST_NAME 1556
+#define OP_NET_GET_IP_FROM_NAME 1557
+#define OP_NET_GET_SESSION_PLAYER_COUNT 1558
+#define OP_NET_DISABLE_SESSION_PLAYER_JOIN 1559
+#define OP_NET_START_QUERY_SESSIONS 1560
+#define OP_NET_UPDATE_QUERY_SESSIONS 1561
+#define OP_NET_STOP_QUERY_SESSIONS 1562
+#define OP_NET_DESTROY_PLAYER 1563
+#define OP_NET_ENABLE_SESSION_PLAYER_JOIN 1564
+#define OP_NET_SET_AI_PLAYER_COUNT 1565
 
 int32 LogicHEmoonbase::dispatch(int op, int numArgs, int32 *args) {
 	switch (op) {
@@ -240,12 +240,12 @@ int32 LogicHEmoonbase::dispatch(int op, int numArgs, int32 *args) {
 		return op_net_get_session_player_count(op, numArgs, args);
 	case OP_NET_DESTROY_PLAYER:
 		return op_net_destroy_player(op, numArgs, args);
-#if 1 // 12/2/99 BPT
+#	if 1 // 12/2/99 BPT
 	case OP_NET_GET_PLAYER_LONG_NAME:
 		return op_net_get_player_long_name(op, numArgs, args);
 	case OP_NET_GET_PLAYER_SHORT_NAME:
 		return op_net_get_player_short_name(op, numArgs, args);
-#endif
+#	endif
 	case OP_NET_CREATE_SESSION:
 		return op_net_create_session(op, numArgs, args);
 	case OP_NET_JOIN_SESSION:
@@ -328,17 +328,17 @@ void LogicHEmoonbase::op_set_fow_information(int op, int numArgs, int32 *args) {
 	debug(2, "%s", str.c_str());
 
 	_vm1->_moonbase->setFOWInfo(
-		args[0],		// array
-		args[1],		// array down dimension
-		args[2],		// array across dimension
-		args[3],		// logical view X coordinate
-		args[4],		// logical view Y coordinate
-		args[5],		// screen draw clip rect x1
-		args[6],		// screen draw clip rect y1
-		args[7],		// screen draw clip rect x2
-		args[8],		// screen draw clip rect y2
-		args[9],		// techinque
-		args[10]		// frame
+	  args[0], // array
+	  args[1], // array down dimension
+	  args[2], // array across dimension
+	  args[3], // logical view X coordinate
+	  args[4], // logical view Y coordinate
+	  args[5], // screen draw clip rect x1
+	  args[6], // screen draw clip rect y1
+	  args[7], // screen draw clip rect x2
+	  args[8], // screen draw clip rect y2
+	  args[9], // techinque
+	  args[10] // frame
 	);
 }
 

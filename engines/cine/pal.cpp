@@ -20,9 +20,9 @@
  *
  */
 
+#include "cine/pal.h"
 #include "cine/cine.h"
 #include "cine/various.h"
-#include "cine/pal.h"
 #include "common/system.h" // For g_system->getPaletteManager()->setPalette
 #include "common/textconsole.h"
 
@@ -79,7 +79,6 @@ int16 findPaletteFromName(const char *fileName) {
 	}
 
 	return -1;
-
 }
 
 void loadRelatedPalette(const char *fileName) {
@@ -104,40 +103,40 @@ void loadRelatedPalette(const char *fileName) {
 }
 
 namespace {
-/** Is given endian type big endian? (Handles native endian type too, otherwise this would be trivial). */
-bool isBigEndian(const EndianType endian) {
-	assert(endian == CINE_NATIVE_ENDIAN || endian == CINE_LITTLE_ENDIAN || endian == CINE_BIG_ENDIAN);
+	/** Is given endian type big endian? (Handles native endian type too, otherwise this would be trivial). */
+	bool isBigEndian(const EndianType endian) {
+		assert(endian == CINE_NATIVE_ENDIAN || endian == CINE_LITTLE_ENDIAN || endian == CINE_BIG_ENDIAN);
 
-	// Handle explicit little and big endian types here
-	if (endian != CINE_NATIVE_ENDIAN) {
-		return (endian == CINE_BIG_ENDIAN);
+		// Handle explicit little and big endian types here
+		if (endian != CINE_NATIVE_ENDIAN) {
+			return (endian == CINE_BIG_ENDIAN);
+		}
+
+		// Handle native endian type here
+#if defined(SCUMM_BIG_ENDIAN)
+		return true;
+#elif defined(SCUMM_LITTLE_ENDIAN)
+		return false;
+#else
+#	error No endianness defined
+#endif
 	}
 
-	// Handle native endian type here
-#if defined(SCUMM_BIG_ENDIAN)
-	return true;
-#elif defined(SCUMM_LITTLE_ENDIAN)
-	return false;
-#else
-	#error No endianness defined
-#endif
-}
+	/** Calculate byte position of given bit position in a multibyte variable using defined endianness. */
+	int bytePos(const int bitPos, const int numBytes, const bool bigEndian) {
+		if (bigEndian)
+			return (numBytes - 1) - (bitPos / 8);
+		else // little endian
+			return bitPos / 8;
+	}
 
-/** Calculate byte position of given bit position in a multibyte variable using defined endianness. */
-int bytePos(const int bitPos, const int numBytes, const bool bigEndian) {
-	if (bigEndian)
-		return (numBytes - 1) - (bitPos / 8);
-	else // little endian
-		return bitPos / 8;
-}
-
-/** Calculate the value of "base" to the power of "power". */
-int power(int base, int power) {
-	int result = 1;
-	while (power--)
-		result *= base;
-	return result;
-}
+	/** Calculate the value of "base" to the power of "power". */
+	int power(int base, int power) {
+		int result = 1;
+		while (power--)
+			result *= base;
+		return result;
+	}
 } // end of anonymous namespace
 
 // a.k.a. palRotate
@@ -237,18 +236,18 @@ Palette &Palette::saturatedAddColor(Palette &output, byte firstIndex, byte lastI
 
 Palette &Palette::saturatedAddColor(Palette &output, byte firstIndex, byte lastIndex, signed rSource, signed gSource, signed bSource, const Graphics::PixelFormat &sourceFormat) const {
 	// Convert the source color to the internal color format ensuring that no divide by zero will happen
-	const signed r = ((signed) _format.rMax()) * rSource / MAX<int>(sourceFormat.rMax(), 1);
-	const signed g = ((signed) _format.gMax()) * gSource / MAX<int>(sourceFormat.gMax(), 1);
-	const signed b = ((signed) _format.bMax()) * bSource / MAX<int>(sourceFormat.bMax(), 1);
+	const signed r = ((signed)_format.rMax()) * rSource / MAX<int>(sourceFormat.rMax(), 1);
+	const signed g = ((signed)_format.gMax()) * gSource / MAX<int>(sourceFormat.gMax(), 1);
+	const signed b = ((signed)_format.bMax()) * bSource / MAX<int>(sourceFormat.bMax(), 1);
 
 	return saturatedAddColor(output, firstIndex, lastIndex, r, g, b);
 }
 
 Palette &Palette::saturatedAddNormalizedGray(Palette &output, byte firstIndex, byte lastIndex, int grayDividend, int grayDenominator) const {
 	assert(grayDenominator != 0);
-	const signed r = ((signed) _format.rMax()) * grayDividend / grayDenominator;
-	const signed g = ((signed) _format.gMax()) * grayDividend / grayDenominator;
-	const signed b = ((signed) _format.bMax()) * grayDividend / grayDenominator;
+	const signed r = ((signed)_format.rMax()) * grayDividend / grayDenominator;
+	const signed g = ((signed)_format.gMax()) * grayDividend / grayDenominator;
+	const signed b = ((signed)_format.bMax()) * grayDividend / grayDenominator;
 
 	return saturatedAddColor(output, firstIndex, lastIndex, r, g, b);
 }
@@ -260,7 +259,9 @@ void Palette::saturatedAddColor(Color &result, const Color &baseColor, signed r,
 	result.b = CLIP<int>(baseColor.b + b, 0, _format.bMax());
 }
 
-Palette::Palette(const Graphics::PixelFormat format, const uint numColors) : _format(format), _colors() {
+Palette::Palette(const Graphics::PixelFormat format, const uint numColors)
+  : _format(format)
+  , _colors() {
 	_colors.resize(numColors);
 	fillWithBlack();
 }

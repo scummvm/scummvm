@@ -40,8 +40,13 @@ namespace LastExpress {
 //////////////////////////////////////////////////////////////////////////
 class Subtitle {
 public:
-	Subtitle() : _timeStart(0), _timeStop(0), _topLength(0), _topText(NULL),
-		_bottomLength(0), _bottomText(NULL) {}
+	Subtitle()
+	  : _timeStart(0)
+	  , _timeStop(0)
+	  , _topLength(0)
+	  , _topText(NULL)
+	  , _bottomLength(0)
+	  , _bottomText(NULL) {}
 	~Subtitle() { reset(); }
 
 	bool load(Common::SeekableReadStream *in);
@@ -51,14 +56,14 @@ public:
 	uint16 getTimeStop() const { return _timeStop; }
 
 private:
-	uint16 _timeStart;    ///< display start time
-	uint16 _timeStop;     ///< display stop time
+	uint16 _timeStart; ///< display start time
+	uint16 _timeStop; ///< display stop time
 
-	uint16 _topLength;    ///< top line length
-	uint16 *_topText;     ///< bottom line length
+	uint16 _topLength; ///< top line length
+	uint16 *_topText; ///< bottom line length
 
 	uint16 _bottomLength; ///< top line (UTF-16 string)
-	uint16 *_bottomText;  ///< bottom line (UTF-16 string)
+	uint16 *_bottomText; ///< bottom line (UTF-16 string)
 
 	void reset();
 };
@@ -70,7 +75,7 @@ void Subtitle::reset() {
 	_bottomText = NULL;
 }
 
-template<typename T>
+template <typename T>
 T *newArray(size_t n) {
 	if (n <= (size_t)-1 / sizeof(T))
 		return new T[n];
@@ -136,11 +141,14 @@ Common::Rect Subtitle::draw(Graphics::Surface *surface, Font *font) {
 	return rectTop;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 // SubtitleManager
 //////////////////////////////////////////////////////////////////////////
-SubtitleManager::SubtitleManager(Font *font) : _font(font), _maxTime(0), _currentIndex(-1), _lastIndex(-1) {}
+SubtitleManager::SubtitleManager(Font *font)
+  : _font(font)
+  , _maxTime(0)
+  , _currentIndex(-1)
+  , _lastIndex(-1) {}
 
 SubtitleManager::~SubtitleManager() {
 	reset();
@@ -173,8 +181,8 @@ bool SubtitleManager::load(Common::SeekableReadStream *stream) {
 
 	// TODO: Check that stream contain enough data
 	//if (stream->size() < (signed)(numSubtitles * sizeof(SubtitleData))) {
-		//debugC(2, kLastExpressDebugSubtitle, "Subtitle file does not contain valid data");
-		//return false;
+	//debugC(2, kLastExpressDebugSubtitle, "Subtitle file does not contain valid data");
+	//return false;
 	//}
 
 	// Read the list of subtitles

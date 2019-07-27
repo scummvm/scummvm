@@ -21,21 +21,25 @@
  */
 
 #include "titanic/star_control/surface_fader.h"
+#include "common/system.h"
+#include "graphics/pixelformat.h"
 #include "titanic/star_control/surface_area.h"
 #include "titanic/support/screen_manager.h"
 #include "titanic/support/video_surface.h"
-#include "common/system.h"
-#include "graphics/pixelformat.h"
 
 namespace Titanic {
 
-
-CSurfaceFader::CSurfaceFader() : _index(-1), _count(32), _fadeIn(false), _videoSurface(nullptr) {
+CSurfaceFader::CSurfaceFader()
+  : _index(-1)
+  , _count(32)
+  , _fadeIn(false)
+  , _videoSurface(nullptr) {
 	_dataP = new byte[_count];
 
 	for (int idx = 0; idx < _count; ++idx)
 		_dataP[idx] = (byte)(pow((double)idx / (double)_count, 1.299999952316284)
-			* (double)_count + 0.5);
+		                       * (double)_count
+		                     + 0.5);
 }
 
 CSurfaceFader::~CSurfaceFader() {

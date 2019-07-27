@@ -35,6 +35,7 @@ private:
 	int _dialogueId;
 	TTresponse *_nextP;
 	TTresponse *_linkP;
+
 public:
 	TTresponse(const TTstring &src);
 	TTresponse(int val1, int val2);

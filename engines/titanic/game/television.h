@@ -44,12 +44,14 @@ class CTelevision : public CBackground {
 	bool TurnOff(CTurnOff *msg);
 	bool TurnOn(CTurnOn *msg);
 	bool LightsMsg(CLightsMsg *msg);
+
 private:
 	int _channelNum;
 	int _channelsCount;
 	bool _isOn;
 	int _unused;
 	int _soundHandle;
+
 public:
 	static int _seasonFrame;
 	static bool _turnOn;
@@ -57,6 +59,7 @@ public:
 	static int _eyeFloorNum;
 	static bool _channel4Glyph;
 	static bool _eyeFlag;
+
 public:
 	CLASSDEF;
 	CTelevision();

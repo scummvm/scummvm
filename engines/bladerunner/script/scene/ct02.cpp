@@ -25,8 +25,8 @@
 namespace BladeRunner {
 
 enum kCT02Loops {
-	kCT02LoopMainLoop      = 0,
-	kCT02LoopTippingPot    = 2,
+	kCT02LoopMainLoop = 0,
+	kCT02LoopTippingPot = 2,
 	kCT02LoopMainPotTipped = 3
 };
 
@@ -50,14 +50,14 @@ void SceneScriptCT02::InitializeScene() {
 	} else {
 		Overlay_Play("ct02over", 0, true, false, 0);
 	}
-	Ambient_Sounds_Add_Looping_Sound(kSfxKTCHRAIN, 25,   0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBR1,  38, 100, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxBOILPOT2, 32,   0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxKTCHRAIN, 25, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBR1, 38, 100, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBOILPOT2, 32, 0, 1);
 	Ambient_Sounds_Add_Sound(kSfxDISH1, 10, 30, 8, 8, 100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxDISH2, 10, 30, 7, 7, 100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxDISH3, 10, 30, 8, 8, 100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxDISH4, 10, 30, 7, 7, 100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 0, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
@@ -121,9 +121,8 @@ void SceneScriptCT02::dialogueWithZuben() {
 	if (Actor_Clue_Query(kActorMcCoy, kClueLucy)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(270, 8, 5, 3); // LUCY PHOTO
 	}
-	if ( Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA)
-	 && !Actor_Clue_Query(kActorMcCoy, kClueLucy)
-	) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA)
+	    && !Actor_Clue_Query(kActorMcCoy, kClueLucy)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(280, 8, 5, 3); // LUCY
 	}
 	int evidenceCount = 0;

@@ -31,6 +31,7 @@ class CUselessLever : public CToggleButton {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
+
 public:
 	CLASSDEF;
 

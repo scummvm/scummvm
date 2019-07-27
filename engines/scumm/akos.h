@@ -36,7 +36,8 @@ protected:
 	const byte *_akos;
 
 public:
-	AkosCostumeLoader(ScummEngine *vm) : BaseCostumeLoader(vm) {}
+	AkosCostumeLoader(ScummEngine *vm)
+	  : BaseCostumeLoader(vm) {}
 
 	void loadCostume(int id);
 	byte increaseAnims(Actor *a);
@@ -61,17 +62,17 @@ protected:
 	bool _useBompPalette;
 
 	// pointer to various parts of the costume resource
-	const AkosHeader *akhd;	// header
+	const AkosHeader *akhd; // header
 
-	const byte *akpl;		// palette data
-	const byte *akci;		// CostumeInfo table
-	const byte *aksq;		// command sequence
-	const AkosOffset *akof;	// offsets into ci and cd table
-	const byte *akcd;		// costume data (contains the data for the codecs)
+	const byte *akpl; // palette data
+	const byte *akci; // CostumeInfo table
+	const byte *aksq; // command sequence
+	const AkosOffset *akof; // offsets into ci and cd table
+	const byte *akcd; // costume data (contains the data for the codecs)
 
-	const byte *akct;		// HE specific: condition table
-	const byte *rgbs;		// HE specific: RGB table
-	const uint8 *xmap;		// HE specific: shadow color table
+	const byte *akct; // HE specific: condition table
+	const byte *rgbs; // HE specific: RGB table
+	const uint8 *xmap; // HE specific: shadow color table
 
 	struct {
 		bool repeatMode;
@@ -86,7 +87,8 @@ protected:
 	} _akos16;
 
 public:
-	AkosRenderer(ScummEngine *scumm) : BaseCostumeRenderer(scumm) {
+	AkosRenderer(ScummEngine *scumm)
+	  : BaseCostumeRenderer(scumm) {
 		_useBompPalette = false;
 		akhd = 0;
 		akpl = 0;

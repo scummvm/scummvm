@@ -20,8 +20,8 @@
  *
  */
 
-#include "prince/prince.h"
 #include "prince/hero.h"
+#include "prince/prince.h"
 #include "prince/script.h"
 
 namespace Prince {
@@ -836,8 +836,8 @@ int PrinceEngine::checkLeftDir() {
 		int tempMask = _checkMask;
 		if (tempMask != 128) {
 			tempMask <<= 1;
-			if ((*(_checkBitmap) & tempMask)) {
-				if (!(*(_checkBitmapTemp) & tempMask)) {
+			if ((*(_checkBitmap)&tempMask)) {
+				if (!(*(_checkBitmapTemp)&tempMask)) {
 					_checkMask = tempMask;
 				} else {
 					return 1;
@@ -908,8 +908,8 @@ int PrinceEngine::checkRightDir() {
 		int tempMask = _checkMask;
 		if (tempMask != 1) {
 			tempMask >>= 1;
-			if ((*(_checkBitmap) & tempMask)) {
-				if (!(*(_checkBitmapTemp) & tempMask)) {
+			if ((*(_checkBitmap)&tempMask)) {
+				if (!(*(_checkBitmapTemp)&tempMask)) {
 					_checkMask = tempMask;
 				} else {
 					return 1;
@@ -1376,7 +1376,7 @@ void PrinceEngine::moveShandria() {
 		shanCoords -= 4;
 		if (shanCoords != _mainHero->_currCoords) {
 			yDiff *= 1.5;
-			int shanDis =  xDiff * xDiff + yDiff * yDiff;
+			int shanDis = xDiff * xDiff + yDiff * yDiff;
 			if (shanDis >= kMinDistance) {
 				while (1) {
 					shanCoords -= 4;

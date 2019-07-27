@@ -22,8 +22,8 @@
 
 #include "common/debug.h"
 #include "common/stream.h"
-#include "image/png.h"
 #include "graphics/surface.h"
+#include "image/png.h"
 
 #include "sludge/allfiles.h"
 #include "sludge/hsi.h"

@@ -21,10 +21,10 @@
  */
 
 #include "mutationofjb/commands/newroomcommand.h"
-#include "mutationofjb/script.h"
+#include "common/str.h"
 #include "mutationofjb/game.h"
 #include "mutationofjb/gamedata.h"
-#include "common/str.h"
+#include "mutationofjb/script.h"
 
 /** @file
  * "NEWROOM " <sceneId> " " <x> " " <y> [ " "  <frame> ]
@@ -53,8 +53,12 @@ bool NewRoomCommandParser::parse(const Common::String &line, ScriptParseContext 
 	return true;
 }
 
-
-NewRoomCommand::NewRoomCommand(uint8 sceneId, uint16 x, uint16 y, uint8 frame) : _sceneId(sceneId), _x(x), _y(y), _frame(frame), _innerExecCtx(nullptr) {}
+NewRoomCommand::NewRoomCommand(uint8 sceneId, uint16 x, uint16 y, uint8 frame)
+  : _sceneId(sceneId)
+  , _x(x)
+  , _y(y)
+  , _frame(frame)
+  , _innerExecCtx(nullptr) {}
 
 Command::ExecuteResult NewRoomCommand::execute(ScriptExecutionContext &scriptExecCtx) {
 	Game &game = scriptExecCtx.getGame();
@@ -78,7 +82,7 @@ Command::ExecuteResult NewRoomCommand::execute(ScriptExecutionContext &scriptExe
 }
 
 Common::String NewRoomCommand::debugString() const {
-	return Common::String::format("NEWROOM %u %u %u %u", (unsigned int) _sceneId, (unsigned int) _x, (unsigned int) _y, (unsigned int) _frame);
+	return Common::String::format("NEWROOM %u %u %u %u", (unsigned int)_sceneId, (unsigned int)_x, (unsigned int)_y, (unsigned int)_frame);
 }
 
 }

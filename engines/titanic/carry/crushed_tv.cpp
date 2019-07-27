@@ -26,12 +26,13 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CCrushedTV, CCarry)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(UseWithCharMsg)
-	ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(UseWithCharMsg)
+ON_MESSAGE(MouseDragStartMsg)
 END_MESSAGE_MAP()
 
-CCrushedTV::CCrushedTV() : CCarry() {
+CCrushedTV::CCrushedTV()
+  : CCarry() {
 }
 
 void CCrushedTV::save(SimpleFile *file, int indent) {

@@ -27,9 +27,9 @@
 
 #include "backends/audiocd/audiocd.h"
 
+#include "gob/dataio.h"
 #include "gob/gob.h"
 #include "gob/sound/cdrom.h"
-#include "gob/dataio.h"
 
 namespace Gob {
 
@@ -103,7 +103,7 @@ void CDROM::startTrack(const char *trackName) {
 		;
 
 	uint32 start = READ_LE_UINT32(matchPtr + 12);
-	uint32 end   = READ_LE_UINT32(matchPtr + 16);
+	uint32 end = READ_LE_UINT32(matchPtr + 16);
 
 	play(start, end);
 

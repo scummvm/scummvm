@@ -27,17 +27,17 @@
  */
 
 #include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
-#include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
-#include "engines/wintermute/base/gfx/osystem/render_ticket.h"
-#include "engines/wintermute/base/base_surface_storage.h"
-#include "engines/wintermute/base/gfx/base_image.h"
-#include "engines/wintermute/math/math_util.h"
+#include "common/config-manager.h"
+#include "common/queue.h"
+#include "common/system.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_sprite.h"
-#include "common/system.h"
+#include "engines/wintermute/base/base_surface_storage.h"
+#include "engines/wintermute/base/gfx/base_image.h"
+#include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
+#include "engines/wintermute/base/gfx/osystem/render_ticket.h"
+#include "engines/wintermute/math/math_util.h"
 #include "graphics/transparent_surface.h"
-#include "common/queue.h"
-#include "common/config-manager.h"
 
 #define DIRTY_RECT_LIMIT 800
 
@@ -48,7 +48,8 @@ BaseRenderer *makeOSystemRenderer(BaseGame *inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
+BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame)
+  : BaseRenderer(inGame) {
 	_renderSurface = new Graphics::Surface();
 	_blankSurface = new Graphics::Surface();
 	_lastFrameIter = _renderQueue.end();
@@ -116,8 +117,6 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 	_borderTop = (int)((_realHeight - (_height * ratio)) / 2);
 	_borderBottom = (int)(_realHeight - (_height * ratio) - _borderTop);
 
-
-
 	_ratioX = (float)(_realWidth - _borderLeft - _borderRight) / (float)_width;
 	_ratioY = (float)(_realHeight - _borderTop - _borderBottom) / (float)_height;
 
@@ -125,7 +124,7 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 
 	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	g_system->beginGFXTransaction();
-		g_system->initSize(_width, _height, &format);
+	g_system->initSize(_width, _height, &format);
 	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
 	if (gfxError != OSystem::kTransactionSuccess) {
@@ -213,8 +212,8 @@ bool BaseRenderOSystem::fill(byte r, byte g, byte b, Common::Rect *rect) {
 		return STATUS_OK;
 	}
 	if (!rect) {
-// TODO: This should speed things up, but for some reason it misses the size by quite a bit.
-/*		if (r == 0 && g == 0 && b == 0) {
+		// TODO: This should speed things up, but for some reason it misses the size by quite a bit.
+		/*		if (r == 0 && g == 0 && b == 0) {
 			// Simply memcpy from the buffered black-surface, way faster than Surface::fillRect.
 			memcpy(_renderSurface->pixels, _blankSurface->pixels, _renderSurface->pitch * _renderSurface->h);
 			return STATUS_OK;
@@ -316,7 +315,7 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 void BaseRenderOSystem::invalidateTicket(RenderTicket *renderTicket) {
 	addDirtyRect(renderTicket->_dstRect);
 	renderTicket->_isValid = false;
-//	renderTicket->_canDelete = true; // TODO: Maybe readd this, to avoid even more duplicates.
+	//	renderTicket->_canDelete = true; // TODO: Maybe readd this, to avoid even more duplicates.
 }
 
 void BaseRenderOSystem::invalidateTicketsFromSurface(BaseSurfaceOSystem *surf) {
@@ -449,7 +448,6 @@ void BaseRenderOSystem::drawTickets() {
 			++it;
 		}
 	}
-
 }
 
 // Replacement for SDL2's SDL_RenderCopy
@@ -495,7 +493,7 @@ bool BaseRenderOSystem::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 
 //////////////////////////////////////////////////////////////////////////
 BaseImage *BaseRenderOSystem::takeScreenshot() {
-// TODO: Clip by viewport.
+	// TODO: Clip by viewport.
 	BaseImage *screenshot = new BaseImage();
 	screenshot->copyFrom(_renderSurface);
 	return screenshot;
@@ -544,7 +542,6 @@ void BaseRenderOSystem::pointFromScreen(Point32 *point) {
 	point->x = (int16)(point->x / _ratioX - _borderLeft / _ratioX + _renderRect.left);
 	point->y = (int16)(point->y / _ratioY - _borderTop / _ratioY + _renderRect.top);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderOSystem::pointToScreen(Point32 *point) {

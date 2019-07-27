@@ -20,19 +20,20 @@
  *
  */
 
-#include "common/config-manager.h"
-#include "illusions/illusions.h"
 #include "illusions/sound.h"
-#include "illusions/time.h"
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
+#include "common/config-manager.h"
+#include "illusions/illusions.h"
+#include "illusions/time.h"
 
 namespace Illusions {
 
 // MusicPlayer
 
 MusicPlayer::MusicPlayer()
-	: _musicId(0), _flags(0) {
+  : _musicId(0)
+  , _flags(0) {
 	_flags = 1; // TODO?
 }
 
@@ -79,9 +80,15 @@ bool MusicPlayer::isPlaying() {
 // MidiPlayer
 
 MidiPlayer::MidiPlayer()
-	: _isIdle(true), _isPlaying(false), _isCurrentlyPlaying(false), _isLooped(false),
-	_loopedMusicId(0), _queuedMusicId(0), _loadedMusicId(0),
-	_data(0), _dataSize(0) {
+  : _isIdle(true)
+  , _isPlaying(false)
+  , _isCurrentlyPlaying(false)
+  , _isLooped(false)
+  , _loopedMusicId(0)
+  , _queuedMusicId(0)
+  , _loadedMusicId(0)
+  , _data(0)
+  , _dataSize(0) {
 
 	_data = 0;
 	_dataSize = 0;
@@ -126,10 +133,10 @@ bool MidiPlayer::play(uint32 musicId) {
 
 	sysMidiStop();
 
-    _isLooped = isMusicLooping;
-    if (_isLooped) {
+	_isLooped = isMusicLooping;
+	if (_isLooped) {
 		_loopedMusicId = musicId;
-    } else {
+	} else {
 		_isPlaying = true;
 	}
 
@@ -230,7 +237,9 @@ void MidiPlayer::endOfTrack() {
 
 // VoicePlayer
 
-VoicePlayer::VoicePlayer() : _wasPlaying(false), _isPaused(false) {
+VoicePlayer::VoicePlayer()
+  : _wasPlaying(false)
+  , _isPaused(false) {
 }
 
 VoicePlayer::~VoicePlayer() {
@@ -300,7 +309,10 @@ bool VoicePlayer::isCued() {
 // Sound
 
 Sound::Sound(uint32 soundEffectId, uint32 soundGroupId, bool looping)
-	: _stream(0), _soundEffectId(soundEffectId), _soundGroupId(soundGroupId), _looping(looping) {
+  : _stream(0)
+  , _soundEffectId(soundEffectId)
+  , _soundGroupId(soundGroupId)
+  , _looping(looping) {
 	load();
 }
 
@@ -330,7 +342,7 @@ void Sound::play(int16 volume, int16 pan) {
 	_stream->rewind();
 	Audio::AudioStream *audioStream = new Audio::LoopingAudioStream(_stream, _looping ? 0 : 1, DisposeAfterUse::NO);
 	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, audioStream,
-		-1, volume, pan, DisposeAfterUse::YES);
+	                                 -1, volume, pan, DisposeAfterUse::YES);
 }
 
 void Sound::stop() {
@@ -345,7 +357,8 @@ bool Sound::isPlaying() {
 // SoundMan
 
 SoundMan::SoundMan(IllusionsEngine *vm)
-	: _vm(vm), _musicNotifyThreadId(0) {
+  : _vm(vm)
+  , _musicNotifyThreadId(0) {
 	_musicPlayer = new MusicPlayer();
 	_midiPlayer = new MidiPlayer();
 	_voicePlayer = new VoicePlayer();
@@ -516,7 +529,7 @@ void SoundMan::setSpeechVolume(uint16 volume) {
 
 uint16 SoundMan::calcAdjustedVolume(const Common::String &volumeConfigKey, uint16 volume) {
 	uint16 masterVolume = (uint16)ConfMan.getInt(volumeConfigKey);
-	return (uint16)(((float)masterVolume/256) * (float)volume);
+	return (uint16)(((float)masterVolume / 256) * (float)volume);
 }
 
 uint16 SoundMan::getMusicVolume() {

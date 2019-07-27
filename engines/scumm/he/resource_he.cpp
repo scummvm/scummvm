@@ -20,12 +20,12 @@
  *
  */
 
-#include "scumm/scumm.h"
+#include "scumm/he/resource_he.h"
 #include "scumm/file.h"
 #include "scumm/he/intern_he.h"
-#include "scumm/resource.h"
-#include "scumm/he/resource_he.h"
 #include "scumm/he/sound_he.h"
+#include "scumm/resource.h"
+#include "scumm/scumm.h"
 
 #include "audio/decoders/wave.h"
 #include "graphics/cursorman.h"
@@ -39,7 +39,7 @@
 namespace Scumm {
 
 ResExtractor::ResExtractor(ScummEngine_v70he *scumm)
-	: _vm(scumm) {
+  : _vm(scumm) {
 
 	memset(_cursorCache, 0, sizeof(_cursorCache));
 }
@@ -112,8 +112,8 @@ void ResExtractor::setCursor(int id) {
 	_vm->setCursorFromBuffer(cc->bitmap, cc->width, cc->height, cc->width);
 }
 
-
-Win32ResExtractor::Win32ResExtractor(ScummEngine_v70he *scumm) : ResExtractor(scumm) {
+Win32ResExtractor::Win32ResExtractor(ScummEngine_v70he *scumm)
+  : ResExtractor(scumm) {
 }
 
 bool Win32ResExtractor::extractResource(int id, CachedCursor *cc) {
@@ -143,9 +143,9 @@ bool Win32ResExtractor::extractResource(int id, CachedCursor *cc) {
 	for (int i = 0; i < cursor->getWidth() * cursor->getHeight(); i++) {
 		if (srcBitmap[i] == cursor->getKeyColor()) // Transparent
 			cc->bitmap[i] = 255;
-		else if (srcBitmap[i] == 0)                // Black
+		else if (srcBitmap[i] == 0) // Black
 			cc->bitmap[i] = 253;
-		else                                       // White
+		else // White
 			cc->bitmap[i] = 254;
 	}
 
@@ -153,7 +153,8 @@ bool Win32ResExtractor::extractResource(int id, CachedCursor *cc) {
 	return true;
 }
 
-MacResExtractor::MacResExtractor(ScummEngine_v70he *scumm) : ResExtractor(scumm) {
+MacResExtractor::MacResExtractor(ScummEngine_v70he *scumm)
+  : ResExtractor(scumm) {
 	_resMgr = NULL;
 }
 
@@ -194,9 +195,9 @@ bool MacResExtractor::extractResource(int id, CachedCursor *cc) {
 		for (int i = 0; i < macCursor->getWidth() * macCursor->getHeight(); i++) {
 			if (srcBitmap[i] == macCursor->getKeyColor()) // Transparent
 				cc->bitmap[i] = 255;
-			else if (srcBitmap[i] == 0)                // Black
+			else if (srcBitmap[i] == 0) // Black
 				cc->bitmap[i] = 253;
-			else                                       // White
+			else // White
 				cc->bitmap[i] = 254;
 		}
 	} else {
@@ -362,7 +363,7 @@ int ScummEngine_v72he::getSoundResourceSize(ResId id) {
 		if (!ptr)
 			return 0;
 
-		if (READ_BE_UINT32(ptr) == MKTAG('R','I','F','F')) {
+		if (READ_BE_UINT32(ptr) == MKTAG('R', 'I', 'F', 'F')) {
 			byte flags;
 			int rate;
 
@@ -374,11 +375,11 @@ int ScummEngine_v72he::getSoundResourceSize(ResId id) {
 			}
 		} else {
 			ptr += 8 + READ_BE_UINT32(ptr + 12);
-			if (READ_BE_UINT32(ptr) == MKTAG('S','B','N','G')) {
+			if (READ_BE_UINT32(ptr) == MKTAG('S', 'B', 'N', 'G')) {
 				ptr += READ_BE_UINT32(ptr + 4);
 			}
 
-			assert(READ_BE_UINT32(ptr) == MKTAG('S','D','A','T'));
+			assert(READ_BE_UINT32(ptr) == MKTAG('S', 'D', 'A', 'T'));
 			size = READ_BE_UINT32(ptr + 4) - 8;
 		}
 	}

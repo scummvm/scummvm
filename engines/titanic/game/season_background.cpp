@@ -26,14 +26,18 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CSeasonBackground, CBackground)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(ChangeSeasonMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(ActMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(ChangeSeasonMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(ActMsg)
 END_MESSAGE_MAP()
 
-CSeasonBackground::CSeasonBackground() : CBackground(),
-	_seasonNum(SEASON_SUMMER), _flag(false), _defaultFrame(46), _unused(0) {
+CSeasonBackground::CSeasonBackground()
+  : CBackground()
+  , _seasonNum(SEASON_SUMMER)
+  , _flag(false)
+  , _defaultFrame(46)
+  , _unused(0) {
 }
 
 void CSeasonBackground::save(SimpleFile *file, int indent) {
@@ -73,11 +77,11 @@ bool CSeasonBackground::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
 	case SEASON_AUTUMN:
 		if (_flag) {
 			playMovie(TRANSLATE(232, 49), TRANSLATE(278, 98),
-				MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+			          MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 			_defaultFrame = TRANSLATE(278, 98);
 		} else {
 			playMovie(TRANSLATE(45, 196), TRANSLATE(91, 245),
-				MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+			          MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 			_defaultFrame = TRANSLATE(91, 245);
 		}
 		break;
@@ -85,14 +89,14 @@ bool CSeasonBackground::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
 	case SEASON_WINTER:
 		if (_flag) {
 			playMovie(TRANSLATE(278, 98), TRANSLATE(326, 147),
-				MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+			          MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 			_defaultFrame = TRANSLATE(326, 147);
 		} else {
 			CStatusChangeMsg changeMsg;
 			changeMsg._newStatus = 0;
 			changeMsg.execute("PickUpSpeechCentre");
 			playMovie(TRANSLATE(91, 245), TRANSLATE(139, 294),
-				MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+			          MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 			_defaultFrame = TRANSLATE(139, 294);
 		}
 		break;
@@ -100,11 +104,11 @@ bool CSeasonBackground::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
 	case SEASON_SPRING:
 		if (_flag) {
 			playMovie(TRANSLATE(326, 147), TRANSLATE(417, 195),
-				MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+			          MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 			_defaultFrame = TRANSLATE(417, 195);
 		} else {
 			playMovie(TRANSLATE(139, 294), TRANSLATE(228, 342),
-				MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+			          MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 			_defaultFrame = TRANSLATE(228, 342);
 		}
 		break;

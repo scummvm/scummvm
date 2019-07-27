@@ -23,26 +23,25 @@
 #ifndef GLK_ALAN3_MEMORY
 #define GLK_ALAN3_MEMORY
 
-#include "glk/alan3/sysdep.h"
 #include "glk/alan3/acode.h"
+#include "glk/alan3/sysdep.h"
 
 namespace Glk {
 namespace Alan3 {
 
-/* DATA */
-extern Aword *memory;
-extern ACodeHeader *header;
-extern int memTop;
+	/* DATA */
+	extern Aword *memory;
+	extern ACodeHeader *header;
+	extern int memTop;
 
+	/* FUNCTIONS */
+	extern void *allocate(unsigned long lengthInBytes);
+	extern void *duplicate(void *original, unsigned long len);
+	extern void deallocate(void *ptr);
 
-/* FUNCTIONS */
-extern void *allocate(unsigned long lengthInBytes);
-extern void *duplicate(void *original, unsigned long len);
-extern void deallocate(void *ptr);
-
-extern void resetPointerMap();
-extern void *fromAptr(Aptr aptr);
-extern Aptr toAptr(void *ptr);
+	extern void resetPointerMap();
+	extern void *fromAptr(Aptr aptr);
+	extern Aptr toAptr(void *ptr);
 
 } // End of namespace Alan3
 } // End of namespace Glk

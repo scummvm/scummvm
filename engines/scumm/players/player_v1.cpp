@@ -20,21 +20,20 @@
  *
  */
 
-
-#include "engines/engine.h"
 #include "scumm/players/player_v1.h"
+#include "engines/engine.h"
 #include "scumm/scumm.h"
 
 namespace Scumm {
 
-#define FB_WNOISE 0x12000       /* feedback for white noise */
-#define FB_PNOISE 0x08000       /* feedback for periodic noise */
+#define FB_WNOISE 0x12000 /* feedback for white noise */
+#define FB_PNOISE 0x08000 /* feedback for periodic noise */
 
 #define TIMER_BASE_FREQ 1193000
-#define FIXP_SHIFT  16
+#define FIXP_SHIFT 16
 
 Player_V1::Player_V1(ScummEngine *scumm, Audio::Mixer *mixer, bool pcjr)
-	: Player_V2(scumm, mixer, pcjr) {
+  : Player_V2(scumm, mixer, pcjr) {
 	// Initialize channel code
 	for (int i = 0; i < 4; ++i)
 		clear_channel(i);
@@ -70,16 +69,16 @@ void Player_V1::startSound(int nr) {
 	byte *data = _vm->getResourceAddress(rtSound, nr);
 	assert(data);
 
-	int offset = _pcjr ? READ_LE_UINT16(data+4) : 6;
-	int cprio = _current_data ? *(_current_data) & 0x7f : 0;
-	int prio  = *(data + offset) & 0x7f;
+	int offset = _pcjr ? READ_LE_UINT16(data + 4) : 6;
+	int cprio = _current_data ? *(_current_data)&0x7f : 0;
+	int prio = *(data + offset) & 0x7f;
 	int restartable = *(data + offset) & 0x80;
 
 	debug(4, "startSound %d: prio %d%s, cprio %d",
-		  nr, prio, restartable ? " restartable" : "", cprio);
+	      nr, prio, restartable ? " restartable" : "", cprio);
 
 	if (!_current_nr || cprio <= prio) {
-		if (_current_data && (*(_current_data) & 0x80)) {
+		if (_current_data && (*(_current_data)&0x80)) {
 			_next_nr = _current_nr;
 			_next_data = _current_data;
 		}
@@ -117,7 +116,7 @@ void Player_V1::stopSound(int nr) {
 }
 
 void Player_V1::clear_channel(int i) {
-	_channels[i].freq   = 0;
+	_channels[i].freq = 0;
 	_channels[i].volume = 15;
 }
 
@@ -130,10 +129,10 @@ void Player_V1::parseSpeakerChunk() {
 	set_mplex(3000);
 	_forced_level = 0;
 
- parse_again:
+parse_again:
 	_chunk_type = READ_LE_UINT16(_next_chunk);
 	debug(6, "parseSpeakerChunk: sound %d, offset %lx, chunk %x",
-			_current_nr, (long)(_next_chunk - _current_data), _chunk_type);
+	      _current_nr, (long)(_next_chunk - _current_data), _chunk_type);
 
 	_next_chunk += 2;
 	switch (_chunk_type) {
@@ -164,33 +163,33 @@ void Player_V1::parseSpeakerChunk() {
 	case 1:
 		set_mplex(READ_LE_UINT16(_next_chunk));
 		_start = READ_LE_UINT16(_next_chunk + 2);
-		_end   = READ_LE_UINT16(_next_chunk + 4);
-		_delta = (int16) READ_LE_UINT16(_next_chunk + 6);
+		_end = READ_LE_UINT16(_next_chunk + 4);
+		_delta = (int16)READ_LE_UINT16(_next_chunk + 6);
 		_repeat_ctr = READ_LE_UINT16(_next_chunk + 8);
 		_channels[0].freq = _start;
 		_next_chunk += 10;
 		debug(6, "chunk 1: mplex %d, freq %d -> %d step %d  x %d",
-				_mplex, _start, _end, _delta, _repeat_ctr);
+		      _mplex, _start, _end, _delta, _repeat_ctr);
 		break;
 	case 2:
 		_start = READ_LE_UINT16(_next_chunk);
-		_end   = READ_LE_UINT16(_next_chunk + 2);
-		_delta = (int16) READ_LE_UINT16(_next_chunk + 4);
+		_end = READ_LE_UINT16(_next_chunk + 2);
+		_delta = (int16)READ_LE_UINT16(_next_chunk + 4);
 		_channels[0].freq = 0;
 		_next_chunk += 6;
 		_forced_level = -1;
 		debug(6, "chunk 2: %d -> %d step %d",
-				_start, _end, _delta);
+		      _start, _end, _delta);
 		break;
 	case 3:
 		_start = READ_LE_UINT16(_next_chunk);
-		_end   = READ_LE_UINT16(_next_chunk + 2);
-		_delta = (int16) READ_LE_UINT16(_next_chunk + 4);
+		_end = READ_LE_UINT16(_next_chunk + 2);
+		_delta = (int16)READ_LE_UINT16(_next_chunk + 4);
 		_channels[0].freq = 0;
 		_next_chunk += 6;
 		_forced_level = -1;
 		debug(6, "chunk 3: %d -> %d step %d",
-				_start, _end, _delta);
+		      _start, _end, _delta);
 		break;
 	}
 }
@@ -209,7 +208,7 @@ void Player_V1::nextSpeakerCmd() {
 			_next_chunk += 2;
 		}
 		debug(7, "nextSpeakerCmd: chunk %d, offset %4lx: notelen %d",
-				_chunk_type, (long)(_next_chunk - 2 - _current_data), _time_left);
+		      _chunk_type, (long)(_next_chunk - 2 - _current_data), _time_left);
 		if (_time_left == 0) {
 			parseSpeakerChunk();
 		} else {
@@ -265,7 +264,7 @@ parse_again:
 
 	_chunk_type = READ_LE_UINT16(_next_chunk);
 	debug(6, "parsePCjrChunk: sound %d, offset %4lx, chunk %x",
-		  _current_nr, (long)(_next_chunk - _current_data), _chunk_type);
+	      _current_nr, (long)(_next_chunk - _current_data), _chunk_type);
 
 	_next_chunk += 2;
 	switch (_chunk_type) {
@@ -300,14 +299,14 @@ parse_again:
 				_channels[i].cmd_ptr = 0;
 				continue;
 			}
-			_channels[i].attack    = READ_LE_UINT16(_current_data + tmp);
-			_channels[i].decay     = READ_LE_UINT16(_current_data + tmp + 2);
-			_channels[i].level     = READ_LE_UINT16(_current_data + tmp + 4);
+			_channels[i].attack = READ_LE_UINT16(_current_data + tmp);
+			_channels[i].decay = READ_LE_UINT16(_current_data + tmp + 2);
+			_channels[i].level = READ_LE_UINT16(_current_data + tmp + 4);
 			_channels[i].sustain_1 = READ_LE_UINT16(_current_data + tmp + 6);
 			_channels[i].sustain_2 = READ_LE_UINT16(_current_data + tmp + 8);
-			_channels[i].notelen   = 1;
-			_channels[i].volume    = 15;
-			_channels[i].cmd_ptr   = _current_data + tmp + 10;
+			_channels[i].notelen = 1;
+			_channels[i].volume = 15;
+			_channels[i].cmd_ptr = _current_data + tmp + 10;
 		}
 		break;
 
@@ -317,7 +316,7 @@ parse_again:
 		_channels[0].cmd_ptr = tmp != 0xffff ? _current_data + tmp : NULL;
 		tmp = READ_LE_UINT16(_next_chunk + 4);
 		_start = READ_LE_UINT16(_next_chunk + 6);
-		_delta = (int16) READ_LE_UINT16(_next_chunk + 8);
+		_delta = (int16)READ_LE_UINT16(_next_chunk + 8);
 		_time_left = READ_LE_UINT16(_next_chunk + 10);
 		_next_chunk += 12;
 		if (tmp >= 0xe0) {
@@ -333,7 +332,7 @@ parse_again:
 		if (_channels[0].cmd_ptr) {
 			tmp = READ_LE_UINT16(_channels[0].cmd_ptr);
 			_start_2 = READ_LE_UINT16(_channels[0].cmd_ptr + 2);
-			_delta_2 = (int16) READ_LE_UINT16(_channels[0].cmd_ptr + 4);
+			_delta_2 = (int16)READ_LE_UINT16(_channels[0].cmd_ptr + 4);
 			_time_left_2 = READ_LE_UINT16(_channels[0].cmd_ptr + 6);
 			_channels[0].cmd_ptr += 8;
 			if (_value_ptr == &_channels[3].volume) {
@@ -351,19 +350,19 @@ parse_again:
 			*_value_ptr_2 = _start_2;
 		}
 		debug(6, "chunk 1: %lu: %d step %d for %d, %lu: %d step %d for %d",
-			  (long)(_value_ptr - (uint *)_channels), _start, _delta, _time_left,
-			  (long)(_value_ptr_2 - (uint *)_channels), _start_2, _delta_2, _time_left_2);
+		      (long)(_value_ptr - (uint *)_channels), _start, _delta, _time_left,
+		      (long)(_value_ptr_2 - (uint *)_channels), _start_2, _delta_2, _time_left_2);
 		break;
 
 	case 2:
 		_start = READ_LE_UINT16(_next_chunk);
-		_end   = READ_LE_UINT16(_next_chunk + 2);
-		_delta = (int16) READ_LE_UINT16(_next_chunk + 4);
+		_end = READ_LE_UINT16(_next_chunk + 2);
+		_delta = (int16)READ_LE_UINT16(_next_chunk + 4);
 		_channels[0].freq = 0;
 		_next_chunk += 6;
 		_forced_level = -1;
 		debug(6, "chunk 2: %d -> %d step %d",
-			  _start, _end, _delta);
+		      _start, _end, _delta);
 		break;
 	case 3:
 		set_mplex(READ_LE_UINT16(_next_chunk));
@@ -376,7 +375,7 @@ parse_again:
 		}
 		_channels[3].volume = READ_LE_UINT16(_next_chunk + 4);
 		_repeat_ctr = READ_LE_UINT16(_next_chunk + 6);
-		_delta = (int16) READ_LE_UINT16(_next_chunk + 8);
+		_delta = (int16)READ_LE_UINT16(_next_chunk + 8);
 		_next_chunk += 10;
 		break;
 	}
@@ -408,10 +407,9 @@ void Player_V1::nextPCjrCmd() {
 					_channels[i].freq = dummy;
 				}
 				debug(7, "chunk 0: channel %d play %d for %d",
-					  i, dummy, _channels[i].notelen);
+				      i, dummy, _channels[i].notelen);
 				_channels[i].cmd_ptr += 4;
 			}
-
 
 			switch (_channels[i].hull_counter) {
 			case 1:
@@ -452,7 +450,7 @@ void Player_V1::nextPCjrCmd() {
 				parsePCjrChunk();
 				return;
 			}
-			_delta = (int16) READ_LE_UINT16(_next_chunk);
+			_delta = (int16)READ_LE_UINT16(_next_chunk);
 			_time_left = READ_LE_UINT16(_next_chunk + 2);
 			_next_chunk += 4;
 			*_value_ptr = _start;
@@ -468,7 +466,7 @@ void Player_V1::nextPCjrCmd() {
 					parsePCjrChunk();
 					return;
 				}
-				_delta_2 = (int16) READ_LE_UINT16(_channels[0].cmd_ptr + 2);
+				_delta_2 = (int16)READ_LE_UINT16(_channels[0].cmd_ptr + 2);
 				_time_left_2 = READ_LE_UINT16(_channels[0].cmd_ptr + 4);
 				_channels[0].cmd_ptr += 6;
 			}
@@ -530,7 +528,7 @@ void Player_V1::generateSpkSamples(int16 *data, uint len) {
 		if (_forced_level) {
 			int sample = _forced_level * _volumetable[0];
 			for (i = 0; i < len; i++)
-				data[2*i] = data[2*i+1] = sample;
+				data[2 * i] = data[2 * i + 1] = sample;
 			debug(9, "speaker: %8x: forced one", _tick_len);
 		} else if (!_level) {
 			return;
@@ -538,7 +536,7 @@ void Player_V1::generateSpkSamples(int16 *data, uint len) {
 	} else {
 		squareGenerator(0, _channels[0].freq, 0, 0, data, len);
 		debug(9, "speaker: %8x: freq %d %.1f", _tick_len,
-				_channels[0].freq, 1193000.0 / _channels[0].freq);
+		      _channels[0].freq, 1193000.0 / _channels[0].freq);
 	}
 	lowPassFilter(data, len);
 }
@@ -553,7 +551,7 @@ void Player_V1::generatePCjrSamples(int16 *data, uint len) {
 	if (_forced_level) {
 		int sample = _forced_level * _volumetable[0];
 		for (i = 0; i < len; i++)
-			data[2*i] = data[2*i+1] = sample;
+			data[2 * i] = data[2 * i + 1] = sample;
 		hasdata = true;
 		debug(9, "channel[4]: %8x: forced one", _tick_len);
 	}
@@ -569,8 +567,7 @@ void Player_V1::generatePCjrSamples(int16 *data, uint len) {
 					 * prevent interference.
 					 */
 					_timer_count[i] = _timer_count[j];
-					_timer_output ^= (1 << i) &
-						(_timer_output ^ _timer_output << (i - j));
+					_timer_output ^= (1 << i) & (_timer_output ^ _timer_output << (i - j));
 				}
 			}
 		}
@@ -578,7 +575,7 @@ void Player_V1::generatePCjrSamples(int16 *data, uint len) {
 
 	for (i = 0; i < 4; i++) {
 		freq = _channels[i].freq;
-		vol  = _channels[i].volume;
+		vol = _channels[i].volume;
 		if (!_volumetable[_channels[i].volume]) {
 			_timer_count[i] -= len << FIXP_SHIFT;
 			if (_timer_count[i] < 0)
@@ -587,7 +584,7 @@ void Player_V1::generatePCjrSamples(int16 *data, uint len) {
 			hasdata = true;
 			squareGenerator(i, freq, vol, 0, data, len);
 			debug(9, "channel[%d]: %8x: freq %d %.1f ; volume %d",
-				  i, _tick_len, freq, 111860.0 / freq,  vol);
+			      i, _tick_len, freq, 111860.0 / freq, vol);
 		} else {
 			int noiseFB = (freq & 4) ? FB_WNOISE : FB_PNOISE;
 			int n = (freq & 3);
@@ -596,7 +593,7 @@ void Player_V1::generatePCjrSamples(int16 *data, uint len) {
 			hasdata = true;
 			squareGenerator(i, freq, vol, noiseFB, data, len);
 			debug(9, "channel[%d]: %x: noise freq %d %.1f ; volume %d",
-				  i, _tick_len, freq, 111860.0 / freq,  vol);
+			      i, _tick_len, freq, 111860.0 / freq, vol);
 		}
 	}
 

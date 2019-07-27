@@ -24,12 +24,11 @@
 
 #if defined(DYNAMIC_MODULES) && defined(POSIX)
 
-#include "backends/plugins/posix/posix-provider.h"
-#include "backends/plugins/dynamic-plugin.h"
-#include "common/fs.h"
+#	include "backends/plugins/dynamic-plugin.h"
+#	include "backends/plugins/posix/posix-provider.h"
+#	include "common/fs.h"
 
-#include <dlfcn.h>
-
+#	include <dlfcn.h>
 
 class POSIXPlugin : public DynamicPlugin {
 protected:
@@ -52,7 +51,8 @@ protected:
 
 public:
 	POSIXPlugin(const Common::String &filename)
-		: DynamicPlugin(filename), _dlHandle(0) {}
+	  : DynamicPlugin(filename)
+	  , _dlHandle(0) {}
 
 	bool loadPlugin() {
 		assert(!_dlHandle);
@@ -76,10 +76,8 @@ public:
 	}
 };
 
-
 Plugin *POSIXPluginProvider::createPlugin(const Common::FSNode &node) const {
 	return new POSIXPlugin(node.getPath());
 }
-
 
 #endif // defined(DYNAMIC_MODULES) && defined(POSIX)

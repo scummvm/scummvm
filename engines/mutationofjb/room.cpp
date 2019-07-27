@@ -42,9 +42,11 @@ enum {
 
 class RoomAnimationDecoderCallback : public AnimationDecoderCallback {
 public:
-	RoomAnimationDecoderCallback(Room &room) : _room(room) {}
+	RoomAnimationDecoderCallback(Room &room)
+	  : _room(room) {}
 	virtual void onFrame(int frameNo, Graphics::Surface &surface) override;
 	virtual void onPaletteUpdated(byte palette[PALETTE_SIZE]) override;
+
 private:
 	Room &_room;
 };
@@ -88,7 +90,10 @@ void RoomAnimationDecoderCallback::onFrame(int frameNo, Graphics::Surface &surfa
 	}
 }
 
-Room::Room(Game *game, Graphics::Screen *screen) : _game(game), _screen(screen), _background(GAME_AREA_WIDTH, GAME_AREA_HEIGHT) {}
+Room::Room(Game *game, Graphics::Screen *screen)
+  : _game(game)
+  , _screen(screen)
+  , _background(GAME_AREA_WIDTH, GAME_AREA_HEIGHT) {}
 
 bool Room::load(uint8 roomNumber, bool roomB) {
 	_objectsStart.clear();

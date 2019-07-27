@@ -24,7 +24,8 @@
 
 namespace Wintermute {
 
-SourceListing::SourceListing(const Common::Array<Common::String> &strings) : _strings(strings) {}
+SourceListing::SourceListing(const Common::Array<Common::String> &strings)
+  : _strings(strings) {}
 
 SourceListing::~SourceListing() {}
 
@@ -53,5 +54,3 @@ Common::String SourceListing::getLine(uint n) {
 }
 
 } // End of namespace Wintermute
-
-

@@ -34,8 +34,10 @@ class XeenEngine;
 class Cutscenes {
 protected:
 	XeenEngine *_vm;
+
 protected:
-	Cutscenes(XeenEngine *vm) : _vm(vm) {}
+	Cutscenes(XeenEngine *vm)
+	  : _vm(vm) {}
 	virtual ~Cutscenes() {}
 
 	/**

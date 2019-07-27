@@ -64,28 +64,27 @@ Common::String DirectorEngine::getEXEName() const {
 }
 
 bool DirectorEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL);
+	return (f == kSupportsRTL);
 }
 
 } // End of Namespace Director
 
 static const PlainGameDescriptor directorGames[] = {
-	{ "director",	"Macromedia Director Game" },
-	{ "directortest",	"Macromedia Director Test Target" },
-	{ "theapartment",	"The Apartment, Interactive demo" },
-	{ "gundam0079",	"Gundam 0079: The War for Earth" },
-	{ "jewels",		"Jewels of the Oracle" },
-	{ "jman",		"The Journeyman Project" },
-	{ "majestic",	"Majestic Part I: Alien Encounter" },
-	{ "mediaband",	"Meet Mediaband" },
-	{ "melements",	"Masters of the Elements" },
-	{ "spyclub",	"Spy Club" },
-	{ "amber",		"AMBER: Journeys Beyond"},
-	{ "vvvampire",	"Victor Vector & Yondo: The Vampire's Coffin"},
-	{ "vvdinosaur",	"Victor Vector & Yondo: The Last Dinosaur Egg"},
-	{ "warlock", 	"Spaceship Warlock"},
-	{ "ernie",		"Ernie"},
+	{ "director", "Macromedia Director Game" },
+	{ "directortest", "Macromedia Director Test Target" },
+	{ "theapartment", "The Apartment, Interactive demo" },
+	{ "gundam0079", "Gundam 0079: The War for Earth" },
+	{ "jewels", "Jewels of the Oracle" },
+	{ "jman", "The Journeyman Project" },
+	{ "majestic", "Majestic Part I: Alien Encounter" },
+	{ "mediaband", "Meet Mediaband" },
+	{ "melements", "Masters of the Elements" },
+	{ "spyclub", "Spy Club" },
+	{ "amber", "AMBER: Journeys Beyond" },
+	{ "vvvampire", "Victor Vector & Yondo: The Vampire's Coffin" },
+	{ "vvdinosaur", "Victor Vector & Yondo: The Last Dinosaur Egg" },
+	{ "warlock", "Spaceship Warlock" },
+	{ "ernie", "Ernie" },
 	{ 0, 0 }
 };
 
@@ -98,7 +97,8 @@ static const char *directoryGlobs[] = {
 
 class DirectorMetaEngine : public AdvancedMetaEngine {
 public:
-	DirectorMetaEngine() : AdvancedMetaEngine(Director::gameDescriptions, sizeof(Director::DirectorGameDescription), directorGames) {
+	DirectorMetaEngine()
+	  : AdvancedMetaEngine(Director::gameDescriptions, sizeof(Director::DirectorGameDescription), directorGames) {
 		_singleId = "director";
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
@@ -126,15 +126,13 @@ bool DirectorMetaEngine::createInstance(OSystem *syst, Engine **engine, const AD
 }
 
 static Director::DirectorGameDescription s_fallbackDesc = {
-	{
-		"director",
-		"",
-		AD_ENTRY1(0, 0),
-		Common::UNK_LANG,
-		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
-		GUIO0()
-	},
+	{ "director",
+	  "",
+	  AD_ENTRY1(0, 0),
+	  Common::UNK_LANG,
+	  Common::kPlatformWindows,
+	  ADGF_NO_FLAGS,
+	  GUIO0() },
 	Director::GID_GENERIC,
 	0
 };
@@ -237,7 +235,7 @@ ADDetectedGame DirectorMetaEngine::fallbackDetect(const FileMap &allFiles, const
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(DIRECTOR)
-	REGISTER_PLUGIN_DYNAMIC(DIRECTOR, PLUGIN_TYPE_ENGINE, DirectorMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(DIRECTOR, PLUGIN_TYPE_ENGINE, DirectorMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(DIRECTOR, PLUGIN_TYPE_ENGINE, DirectorMetaEngine);
+REGISTER_PLUGIN_STATIC(DIRECTOR, PLUGIN_TYPE_ENGINE, DirectorMetaEngine);
 #endif

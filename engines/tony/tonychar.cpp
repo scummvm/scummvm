@@ -26,10 +26,10 @@
  * Copyright (c) 1997-2003 Nayma Software
  */
 
+#include "tony/tonychar.h"
+#include "tony/game.h"
 #include "tony/mpal/memory.h"
 #include "tony/mpal/mpalutils.h"
-#include "tony/game.h"
-#include "tony/tonychar.h"
 #include "tony/tony.h"
 
 namespace Tony {
@@ -116,7 +116,6 @@ void RMTony::init() {
 
 	_nTimeLastStep = g_vm->getTime();
 }
-
 
 void RMTony::close() {
 	// Deallocation of missing item
@@ -309,7 +308,7 @@ void RMTony::stop(CORO_PARAM) {
 		if (_ctx->pid == CORO_INVALID_PID_VALUE)
 			CORO_INVOKE_0(RMCharacter::stop);
 		else {
-			_bNeedToStop = false;    // If we make the OnWhichDirection, we don't need at least after the Stop().
+			_bNeedToStop = false; // If we make the OnWhichDirection, we don't need at least after the Stop().
 			_bMoving = false;
 			CORO_INVOKE_2(CoroScheduler.waitForSingleObject, _ctx->pid, CORO_INFINITE); // @@@ Put an assert after 10 seconds
 		}
@@ -394,7 +393,7 @@ void RMTony::take(int nWhere, int nPart) {
 	if (nPart == 0) {
 		switch (getCurPattern()) {
 		case PAT_STANDDOWN:
-			assert(0);  // Not while you're doing a StandDown
+			assert(0); // Not while you're doing a StandDown
 			break;
 
 		case PAT_STANDUP:
@@ -1386,7 +1385,6 @@ bool RMTony::endTalkCalculate(int &headStandPat, int &headEndPat, int &bodyEndPa
 			bodyEndPat = 0;
 			break;
 
-
 		default:
 			break;
 		}
@@ -1696,7 +1694,7 @@ void RMTony::startStatic(CORO_PARAM, CharacterTalkType nTalk) {
 	_ctx->bodyStartPat = _ctx->bodyLoopPat = 0;
 
 	startStaticCalculate(nTalk, _ctx->headPat, _ctx->headLoopPat,
-		_ctx->bodyStartPat, _ctx->bodyLoopPat);
+	                     _ctx->bodyStartPat, _ctx->bodyLoopPat);
 
 	// e vai con i pattern
 	_bIsStaticTalk = true;

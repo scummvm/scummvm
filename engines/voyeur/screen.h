@@ -23,9 +23,9 @@
 #ifndef VOYEUR_GRAPHICS_H
 #define VOYEUR_GRAPHICS_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
 #include "graphics/screen.h"
 
@@ -48,6 +48,7 @@ class DrawInfo {
 public:
 	int _penColor;
 	Common::Point _pos;
+
 public:
 	DrawInfo(int penColor, const Common::Point &pos);
 };
@@ -57,7 +58,7 @@ typedef void (Screen::*ViewPortSetupPtr)(ViewPortResource *);
 typedef void (Screen::*ViewPortAddPtr)(ViewPortResource *, int idx, const Common::Rect &bounds);
 typedef void (Screen::*ViewPortRestorePtr)(ViewPortResource *);
 
-class Screen: public Graphics::Screen {
+class Screen : public Graphics::Screen {
 public:
 	byte _VGAColors[PALETTE_SIZE];
 	PictureResource *_backgroundPage;
@@ -72,11 +73,13 @@ public:
 	PictureResource *_fontChar;
 	DrawInfo *_drawPtr;
 	DrawInfo _defaultDrawInfo;
+
 private:
 	VoyeurEngine *_vm;
 
 	void restoreBack(Common::Array<Common::Rect> &rectList, int rectListCount,
-		PictureResource *srcPic, PictureResource *destPic);
+	                 PictureResource *srcPic, PictureResource *destPic);
+
 public:
 	Screen(VoyeurEngine *vm);
 	virtual ~Screen();

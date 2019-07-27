@@ -24,19 +24,19 @@
 
 #if defined(ANDROIDSDL)
 
-#include "backends/graphics/androidsdl/androidsdl-graphics.h"
-#include "backends/events/androidsdl/androidsdl-events.h"
-#include "common/mutex.h"
-#include "common/textconsole.h"
-#include "graphics/font.h"
-#include "graphics/fontman.h"
-#include "graphics/scaler.h"
-#include "graphics/scaler/aspect.h"
-#include "graphics/scaler/downscaler.h"
-#include "graphics/surface.h"
+#	include "backends/events/androidsdl/androidsdl-events.h"
+#	include "backends/graphics/androidsdl/androidsdl-graphics.h"
+#	include "common/mutex.h"
+#	include "common/textconsole.h"
+#	include "graphics/font.h"
+#	include "graphics/fontman.h"
+#	include "graphics/scaler.h"
+#	include "graphics/scaler/aspect.h"
+#	include "graphics/scaler/downscaler.h"
+#	include "graphics/surface.h"
 
 AndroidSdlGraphicsManager::AndroidSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
- : SurfaceSdlGraphicsManager(sdlEventSource, window) {
+  : SurfaceSdlGraphicsManager(sdlEventSource, window) {
 }
 
 #endif

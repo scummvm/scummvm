@@ -44,9 +44,9 @@ class OPL;
 class Config {
 public:
 	enum OplFlags {
-		kFlagOpl2		= (1 << 0),
-		kFlagDualOpl2	= (1 << 1),
-		kFlagOpl3		= (1 << 2)
+		kFlagOpl2 = (1 << 0),
+		kFlagDualOpl2 = (1 << 1),
+		kFlagOpl3 = (1 << 2)
 	};
 
 	/**
@@ -63,8 +63,8 @@ public:
 		const char *name;
 		const char *description;
 
-		DriverId id;	// A unique ID for each driver
-		uint32 flags;	// Capabilities of this driver
+		DriverId id; // A unique ID for each driver
+		uint32 flags; // Capabilities of this driver
 	};
 
 	/**
@@ -117,6 +117,7 @@ typedef Common::Functor0<void> TimerCallback;
 class OPL {
 private:
 	static bool _hasInstance;
+
 public:
 	OPL();
 	virtual ~OPL() { _hasInstance = false; }

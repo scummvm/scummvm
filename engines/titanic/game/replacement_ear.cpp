@@ -26,7 +26,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CReplacementEar, CBackground)
-	ON_MESSAGE(VisibleMsg)
+ON_MESSAGE(VisibleMsg)
 END_MESSAGE_MAP()
 
 void CReplacementEar::save(SimpleFile *file, int indent) {

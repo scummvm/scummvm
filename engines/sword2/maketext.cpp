@@ -40,33 +40,32 @@
 //		  for new system by JEL on 9oct96 and updated again (for font
 //		  as a resource) on 5dec96.
 
-
 #include "common/system.h"
 #include "common/textconsole.h"
 
-#include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"
 #include "sword2/logic.h"
 #include "sword2/maketext.h"
 #include "sword2/resman.h"
 #include "sword2/screen.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
-#define MAX_LINES	30	// max character lines in output sprite
+#define MAX_LINES 30 // max character lines in output sprite
 
-#define BORDER_COL	200	// source color for character border (only
-						// needed for remapping colors)
+#define BORDER_COL 200 // source color for character border (only
+// needed for remapping colors)
 
-#define LETTER_COL	193	// source color for bulk of character ( " )
+#define LETTER_COL 193 // source color for bulk of character ( " )
 #define LETTER_COL_PSX1 33
 #define LETTER_COL_PSX2 34
-#define SPACE		' '
-#define FIRST_CHAR	SPACE	// first character in character set
-#define LAST_CHAR	255	// last character in character set
-#define DUD		64	// the first "chequered flag" (dud) symbol in
-				// our character set is in the '@' position
+#define SPACE ' '
+#define FIRST_CHAR SPACE // first character in character set
+#define LAST_CHAR 255 // last character in character set
+#define DUD 64 // the first "chequered flag" (dud) symbol in
+// our character set is in the '@' position
 
 /**
  * This function creates a new text sprite. The sprite data contains a
@@ -217,7 +216,6 @@ byte *FontRenderer::buildTextSprite(const byte *sentence, uint32 fontRes, uint8 
 	for (i = 0; i < noOfLines; i++)
 		if (line[i].width > spriteWidth)
 			spriteWidth = line[i].width;
-
 
 	// Check that text sprite has even horizontal resolution in PSX version
 	// (needed to work around a problem in some sprites, which reports an odd
@@ -630,11 +628,11 @@ void FontRenderer::killTextBloc(uint32 bloc_number) {
 // Resource 3258 contains text from location script for 152 (install, save &
 // restore text, etc)
 
-#define TEXT_RES	3258
+#define TEXT_RES 3258
 
 // Local line number of "save" (actor no. 1826)
 
-#define SAVE_LINE_NO	1
+#define SAVE_LINE_NO 1
 
 void Sword2Engine::initializeFontResourceFlags() {
 	byte *textFile = _resman->openResource(TEXT_RES);

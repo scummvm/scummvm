@@ -26,7 +26,8 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CSendToSucc, CToggleSwitch);
 
-CSendToSucc::CSendToSucc() : CToggleSwitch() {
+CSendToSucc::CSendToSucc()
+  : CToggleSwitch() {
 }
 
 void CSendToSucc::save(SimpleFile *file, int indent) {

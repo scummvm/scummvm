@@ -524,4 +524,3 @@ static const byte k1CreditsStringsFMTownsEnglish[1420] = {
 };
 
 static const ByteProvider k1CreditsStringsFMTownsEnglishProvider = { ARRAYSIZE(k1CreditsStringsFMTownsEnglish), k1CreditsStringsFMTownsEnglish };
-

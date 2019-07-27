@@ -27,26 +27,26 @@
 // NOTE: The "samplestamp" corresponds to the end of the last completed rendering run.
 //       This is important to bear in mind for debug output that occurs during a run.
 #ifndef MT32EMU_DEBUG_SAMPLESTAMPS
-#define MT32EMU_DEBUG_SAMPLESTAMPS 0
+#	define MT32EMU_DEBUG_SAMPLESTAMPS 0
 #endif
 
 // 0: No debug output for initialisation progress
 // 1: Debug output for initialisation progress
 #ifndef MT32EMU_MONITOR_INIT
-#define MT32EMU_MONITOR_INIT 0
+#	define MT32EMU_MONITOR_INIT 0
 #endif
 
 // 0: No debug output for MIDI events
 // 1: Debug output for weird MIDI events
 #ifndef MT32EMU_MONITOR_MIDI
-#define MT32EMU_MONITOR_MIDI 0
+#	define MT32EMU_MONITOR_MIDI 0
 #endif
 
 // 0: No debug output for note on/off
 // 1: Basic debug output for note on/off
 // 2: Comprehensive debug output for note on/off
 #ifndef MT32EMU_MONITOR_INSTRUMENTS
-#define MT32EMU_MONITOR_INSTRUMENTS 0
+#	define MT32EMU_MONITOR_INSTRUMENTS 0
 #endif
 
 // 0: No debug output for partial allocations
@@ -54,29 +54,29 @@
 // 2: Show partial stats with every new poly
 // 3: Show individual partial allocations/deactivations
 #ifndef MT32EMU_MONITOR_PARTIALS
-#define MT32EMU_MONITOR_PARTIALS 0
+#	define MT32EMU_MONITOR_PARTIALS 0
 #endif
 
 // 0: No debug output for sysex
 // 1: Basic debug output for sysex
 #ifndef MT32EMU_MONITOR_SYSEX
-#define MT32EMU_MONITOR_SYSEX 0
+#	define MT32EMU_MONITOR_SYSEX 0
 #endif
 
 // 0: No debug output for sysex writes to the timbre areas
 // 1: Debug output with the name and location of newly-written timbres
 // 2: Complete dump of timbre parameters for newly-written timbres
 #ifndef MT32EMU_MONITOR_TIMBRES
-#define MT32EMU_MONITOR_TIMBRES 0
+#	define MT32EMU_MONITOR_TIMBRES 0
 #endif
 
 // 0: No TVA/TVF-related debug output.
 // 1: Shows changes to TVA/TVF target, increment and phase.
 #ifndef MT32EMU_MONITOR_TVA
-#define MT32EMU_MONITOR_TVA 0
+#	define MT32EMU_MONITOR_TVA 0
 #endif
 #ifndef MT32EMU_MONITOR_TVF
-#define MT32EMU_MONITOR_TVF 0
+#	define MT32EMU_MONITOR_TVF 0
 #endif
 
 // Configuration
@@ -84,13 +84,13 @@
 // If non-zero, deletes reverb buffers that are not in use to save memory.
 // If zero, keeps reverb buffers for all modes around all the time to avoid allocating/freeing in the critical path.
 #ifndef MT32EMU_REDUCE_REVERB_MEMORY
-#define MT32EMU_REDUCE_REVERB_MEMORY 1
+#	define MT32EMU_REDUCE_REVERB_MEMORY 1
 #endif
 
 // 0: Maximum speed at the cost of a bit lower emulation accuracy.
 // 1: Maximum achievable emulation accuracy.
 #ifndef MT32EMU_BOSS_REVERB_PRECISE_MODE
-#define MT32EMU_BOSS_REVERB_PRECISE_MODE 0
+#	define MT32EMU_BOSS_REVERB_PRECISE_MODE 0
 #endif
 
 namespace MT32Emu {

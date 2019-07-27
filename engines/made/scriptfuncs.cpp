@@ -21,11 +21,11 @@
  */
 
 #include "made/scriptfuncs.h"
-#include "made/made.h"
-#include "made/screen.h"
-#include "made/music.h"
 #include "made/database.h"
+#include "made/made.h"
+#include "made/music.h"
 #include "made/pmvplayer.h"
+#include "made/screen.h"
 
 #include "audio/softsynth/pcspk.h"
 
@@ -36,7 +36,9 @@
 
 namespace Made {
 
-ScriptFunctions::ScriptFunctions(MadeEngine *vm) : _vm(vm), _soundStarted(false) {
+ScriptFunctions::ScriptFunctions(MadeEngine *vm)
+  : _vm(vm)
+  , _soundStarted(false) {
 	// Initialize the two tone generators
 	_pcSpeaker1 = new Audio::PCSpeaker();
 	_pcSpeaker2 = new Audio::PCSpeaker();
@@ -48,15 +50,15 @@ ScriptFunctions::ScriptFunctions(MadeEngine *vm) : _vm(vm), _soundStarted(false)
 
 ScriptFunctions::~ScriptFunctions() {
 	for (uint i = 0; i < _externalFuncs.size(); ++i)
-			delete _externalFuncs[i];
+		delete _externalFuncs[i];
 
 	_vm->_system->getMixer()->stopHandle(_pcSpeakerHandle1);
 	_vm->_system->getMixer()->stopHandle(_pcSpeakerHandle2);
 }
 
-typedef Common::Functor2Mem<int16, int16*, int16, ScriptFunctions> ExternalScriptFunc;
-#define External(x) \
-	_externalFuncs.push_back(new ExternalScriptFunc(this, &ScriptFunctions::x));  \
+typedef Common::Functor2Mem<int16, int16 *, int16, ScriptFunctions> ExternalScriptFunc;
+#define External(x)                                                            \
+	_externalFuncs.push_back(new ExternalScriptFunc(this, &ScriptFunctions::x)); \
 	_externalFuncNames.push_back(#x);
 void ScriptFunctions::setupExternalsTable() {
 
@@ -173,7 +175,6 @@ void ScriptFunctions::setupExternalsTable() {
 		External(sfGetSynthType);
 		External(sfIsSlowSystem);
 	}
-
 }
 #undef External
 
@@ -253,7 +254,7 @@ int16 ScriptFunctions::sfPlaySound(int16 argc, int16 *argv) {
 	if (soundNum > 0) {
 		SoundResource *soundRes = _vm->_res->getSound(soundNum);
 		_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle,
-			soundRes->getAudioStream(_vm->_soundRate, false));
+		                        soundRes->getAudioStream(_vm->_soundRate, false));
 		_vm->_soundEnergyArray = soundRes->getSoundEnergyArray();
 		_vm->_soundEnergyIndex = 0;
 		_soundStarted = true;
@@ -420,7 +421,8 @@ int16 ScriptFunctions::sfAddSprite(int16 argc, int16 *argv) {
 	if (_vm->getGameID() == GID_RTZ) {
 		// Unused in RTZ
 		return 0;
-	} if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_RODNEY) {
+	}
+	if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_RODNEY) {
 		return _vm->_screen->addToSpriteList(argv[2], argv[1], argv[0]);
 	} else {
 		return 0;
@@ -438,7 +440,8 @@ int16 ScriptFunctions::sfFreeAnim(int16 argc, int16 *argv) {
 int16 ScriptFunctions::sfDrawSprite(int16 argc, int16 *argv) {
 	if (_vm->getGameID() == GID_RTZ) {
 		return _vm->_screen->drawSprite(argv[2], argv[1], argv[0]);
-	} if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_RODNEY) {
+	}
+	if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_RODNEY) {
 		SpriteListItem item = _vm->_screen->getFromSpriteList(argv[2]);
 		int16 channelIndex = _vm->_screen->drawSprite(item.index, argv[1] - item.xofs, argv[0] - item.yofs);
 		_vm->_screen->setChannelUseMask(channelIndex);
@@ -497,7 +500,8 @@ int16 ScriptFunctions::sfDrawText(int16 argc, int16 *argv) {
 
 	if (_vm->getGameID() == GID_RTZ) {
 		text = _vm->_dat->getObjectString(argv[argc - 1]);
-	} if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_RODNEY) {
+	}
+	if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_RODNEY) {
 		text = _vm->_dat->getString(argv[argc - 1]);
 	}
 
@@ -626,9 +630,7 @@ void ScriptFunctions::stopSound() {
 		_vm->_res->freeResource(_soundResource);
 		_soundStarted = false;
 	}
-
 }
-
 
 int16 ScriptFunctions::sfStopSound(int16 argc, int16 *argv) {
 	stopSound();
@@ -642,7 +644,7 @@ int16 ScriptFunctions::sfPlayVoice(int16 argc, int16 *argv) {
 	if (soundNum > 0) {
 		_soundResource = _vm->_res->getSound(soundNum);
 		_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle,
-			_soundResource->getAudioStream(_vm->_soundRate, false));
+		                        _soundResource->getAudioStream(_vm->_soundRate, false));
 		_vm->_autoStopSound = true;
 		_soundStarted = true;
 	}
@@ -962,7 +964,6 @@ int16 ScriptFunctions::sfSaveGame(int16 argc, int16 *argv) {
 	const char *description = _vm->_dat->getObjectString(descObjectIndex);
 	Common::String filename = _vm->getSavegameFilename(saveNum);
 	return _vm->_dat->savegame(filename.c_str(), description, version);
-
 }
 
 int16 ScriptFunctions::sfLoadGame(int16 argc, int16 *argv) {
@@ -975,7 +976,6 @@ int16 ScriptFunctions::sfLoadGame(int16 argc, int16 *argv) {
 
 	Common::String filename = _vm->getSavegameFilename(saveNum);
 	return _vm->_dat->loadgame(filename.c_str(), version);
-
 }
 
 int16 ScriptFunctions::sfGetGameDescription(int16 argc, int16 *argv) {
@@ -997,7 +997,6 @@ int16 ScriptFunctions::sfGetGameDescription(int16 argc, int16 *argv) {
 		_vm->_dat->setObjectString(descObjectIndex, "");
 		return 1;
 	}
-
 }
 
 int16 ScriptFunctions::sfShakeScreen(int16 argc, int16 *argv) {

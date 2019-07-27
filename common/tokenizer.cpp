@@ -24,7 +24,9 @@
 
 namespace Common {
 
-StringTokenizer::StringTokenizer(const String &str, const String &delimiters) : _str(str), _delimiters(delimiters) {
+StringTokenizer::StringTokenizer(const String &str, const String &delimiters)
+  : _str(str)
+  , _delimiters(delimiters) {
 	reset();
 }
 

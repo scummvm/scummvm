@@ -26,64 +26,60 @@
 #include "glk/tads/tads2/tokenizer.h"
 #include "glk/tads/tads2/vocabulary.h"
 
-
 namespace Glk {
 namespace TADS {
-namespace TADS2 {
+	namespace TADS2 {
 
-static runcxdef *runctx;
-static voccxdef *vocctx;
-static tiocxdef *tioctx;
+		static runcxdef *runctx;
+		static voccxdef *vocctx;
+		static tiocxdef *tioctx;
 
-void runstat(void)
-{
-    objnum  locobj;
-    int     savemoremode;
+		void runstat(void) {
+			objnum locobj;
+			int savemoremode;
 
-    /* get the location of the Me object */
-    runppr(runctx, vocctx->voccxme, PRP_LOCATION, 0);
+			/* get the location of the Me object */
+			runppr(runctx, vocctx->voccxme, PRP_LOCATION, 0);
 
-    /* if that's no an object, there's nothing we can do */
-    if (runtostyp(runctx) != DAT_OBJECT)
-    {
-        rundisc(runctx);
-        return;
-    }
+			/* if that's no an object, there's nothing we can do */
+			if (runtostyp(runctx) != DAT_OBJECT) {
+				rundisc(runctx);
+				return;
+			}
 
-    /* get Me.location */
-    locobj = runpopobj(runctx);
+			/* get Me.location */
+			locobj = runpopobj(runctx);
 
-    /* flush any pending output */
-    outflushn(0);
+			/* flush any pending output */
+			outflushn(0);
 
-    /* switch to output display mode 1 (status line) */
-    os_status(1);
+			/* switch to output display mode 1 (status line) */
+			os_status(1);
 
-    /* turn off MORE mode */
-    savemoremode = setmore(0);
+			/* turn off MORE mode */
+			savemoremode = setmore(0);
 
-    /* call the statusLine method of the current room */
-    runppr(runctx, locobj, PRP_STATUSLINE, 0);
+			/* call the statusLine method of the current room */
+			runppr(runctx, locobj, PRP_STATUSLINE, 0);
 
-    /* if we're in the status line, make sure the line gets flushed */
-    if (os_get_status() != 0)
-        tioputs(tioctx, "\\n");
-    outflushn(0);
+			/* if we're in the status line, make sure the line gets flushed */
+			if (os_get_status() != 0)
+				tioputs(tioctx, "\\n");
+			outflushn(0);
 
-    /* restore the previous MORE mode */
-    setmore(savemoremode);
+			/* restore the previous MORE mode */
+			setmore(savemoremode);
 
-    /* switch to output display mode 0 (main text area) */
-    os_status(0);
-}
+			/* switch to output display mode 0 (main text area) */
+			os_status(0);
+		}
 
-void runistat(voccxdef *vctx, runcxdef *rctx, tiocxdef *tctx)
-{
-    runctx = rctx;
-    vocctx = vctx;
-    tioctx = tctx;
-}
+		void runistat(voccxdef *vctx, runcxdef *rctx, tiocxdef *tctx) {
+			runctx = rctx;
+			vocctx = vctx;
+			tioctx = tctx;
+		}
 
-} // End of namespace TADS2
+	} // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk

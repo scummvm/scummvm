@@ -38,7 +38,7 @@ class ANIObject : public BackBuffer {
 public:
 	enum Mode {
 		kModeContinuous, ///< Play the animation continuously.
-		kModeOnce        ///< Play the animation only once.
+		kModeOnce ///< Play the animation only once.
 	};
 
 	/** Create an animation object from an ANI file. */
@@ -110,16 +110,15 @@ private:
 	const CMPFile *_cmp; ///< The managed CMP file.
 
 	uint16 _animation; ///< The current animation number
-	uint16 _frame;     ///< The current frame.
+	uint16 _frame; ///< The current frame.
 
 	bool _visible; ///< Is the object currently visible?
-	bool _paused;  ///< Is the animation currently paused?
+	bool _paused; ///< Is the animation currently paused?
 
 	Mode _mode; ///< The animation mode.
 
 	int16 _x; ///< The current X position.
 	int16 _y; ///< The current Y position.
-
 
 	bool drawCMP(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
 	bool drawANI(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);

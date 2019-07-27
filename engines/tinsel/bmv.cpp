@@ -21,9 +21,8 @@
  * The movie player.
  */
 
-#include "tinsel/tinsel.h"
-#include "tinsel/background.h"
 #include "tinsel/bmv.h"
+#include "tinsel/background.h"
 #include "tinsel/cliprect.h"
 #include "tinsel/config.h"
 #include "tinsel/dw.h"
@@ -48,76 +47,70 @@ namespace Tinsel {
 
 //----------------- LOCAL DEFINES ----------------------------
 
-#define BMOVIE_EXTENSION	".bmv"
+#define BMOVIE_EXTENSION ".bmv"
 
-#define SZ_C_BLOB	65
-#define SZ_U_BLOB	128
+#define SZ_C_BLOB 65
+#define SZ_U_BLOB 128
 
-#define BLANK_SOUND	0x0	// for 16 bit silence
+#define BLANK_SOUND 0x0 // for 16 bit silence
 
-#define PT_A	20	// Number of times PT_B may be reached
-#define PT_B	6
+#define PT_A 20 // Number of times PT_B may be reached
+#define PT_B 6
 
-
-#define SLOT_SIZE	(25*1024)
+#define SLOT_SIZE (25 * 1024)
 //#define NUM_SLOTS	168
-#define NUM_SLOTS	122		// -> ~ 3MB
+#define NUM_SLOTS 122 // -> ~ 3MB
 
+#define PREFETCH (NUM_SLOTS / 2) // For initial test
 
-#define PREFETCH	(NUM_SLOTS/2)	// For initial test
-
-#define ADVANCE_SOUND		18	// 1 1/2 seconds
-#define SUBSEQUENT_SOUND	6	// 1/2 second
-
-
+#define ADVANCE_SOUND 18 // 1 1/2 seconds
+#define SUBSEQUENT_SOUND 6 // 1/2 second
 
 // PACKET TYPE IDs & FLAGS
 
-#define CD_SLOT_NOP	0x00	// Skip to next slot
-#define CD_LE_FIN	0x01	// End of movie
-#define CD_PDELTA	0x02	// Image compressed to previous one
-#define CD_SDELTA	0x03	// Image self-compressed
+#define CD_SLOT_NOP 0x00 // Skip to next slot
+#define CD_LE_FIN 0x01 // End of movie
+#define CD_PDELTA 0x02 // Image compressed to previous one
+#define CD_SDELTA 0x03 // Image self-compressed
 
-#define BIT0		0x01
+#define BIT0 0x01
 
-#define CD_XSCR		0x04	// Screen has a scroll offset
-#define CD_CMAP	0x08	// Color map is included
-#define CD_CMND	0x10	// Command is included
-#define CD_AUDIO	0x20	// Audio data is included
-#define CD_EXTEND	0x40	// Extended modes "A"-"z"
-#define CD_PRINT	0x80	// goes in conjunction with CD_CMD
+#define CD_XSCR 0x04 // Screen has a scroll offset
+#define CD_CMAP 0x08 // Color map is included
+#define CD_CMND 0x10 // Command is included
+#define CD_AUDIO 0x20 // Audio data is included
+#define CD_EXTEND 0x40 // Extended modes "A"-"z"
+#define CD_PRINT 0x80 // goes in conjunction with CD_CMD
 
 // Data field sizes
-#define sz_XSCR_pkt		2
-#define sz_CMAP_pkt		0x300
-#define sz_CMD_TALK_pkt		10
-#define sz_CMD_PRINT_pkt	8
-#define sz_AUDIO_pkt		3675
-
+#define sz_XSCR_pkt 2
+#define sz_CMAP_pkt 0x300
+#define sz_CMD_TALK_pkt 10
+#define sz_CMD_PRINT_pkt 8
+#define sz_AUDIO_pkt 3675
 
 struct TALK_CMD {
-	short	x;
-	short	y;
-	short	stringId;
-	unsigned char	duration;
-	char	r;			// may be b!
-	char	g;
-	char	b;			// may be r!
+	short x;
+	short y;
+	short stringId;
+	unsigned char duration;
+	char r; // may be b!
+	char g;
+	char b; // may be r!
 };
 
 struct PRINT_CMD {
-	int16	x;
-	int16	y;
-	int16	stringId;
-	unsigned char	duration;
-	unsigned char	fontId;
+	int16 x;
+	int16 y;
+	int16 stringId;
+	unsigned char duration;
+	unsigned char fontId;
 };
-
 
 //----------------- LOCAL GLOBAL DATA ------------------------
 
-static const uint16 Au_DecTable[16] = {16512, 8256, 4128, 2064, 1032, 516, 258, 192,
-		129, 88, 64, 56, 48, 40, 36, 32};
+static const uint16 Au_DecTable[16] = { 16512, 8256, 4128, 2064, 1032, 516, 258, 192,
+	                                      129, 88, 64, 56, 48, 40, 36, 32 };
 
 //---------------- DECOMPRESSOR FUNCTIONS --------------------
 
@@ -125,8 +118,8 @@ static const uint16 Au_DecTable[16] = {16512, 8256, 4128, 2064, 1032, 516, 258, 
 #define SCREEN_HIGH 429
 #define SAM_P_BLOB (32 * 2)
 
-#define ROR(x,v) x = ((x >> (v%32)) | (x << (32 - (v%32))))
-#define ROL(x,v) x = ((x << (v%32)) | (x >> (32 - (v%32))))
+#define ROR(x, v) x = ((x >> (v % 32)) | (x << (32 - (v % 32))))
+#define ROL(x, v) x = ((x << (v % 32)) | (x >> (32 - (v % 32))))
 #define NEXT_BYTE(v) v = (forwardDirection ? v + 1 : v - 1)
 
 static void PrepBMV(byte *ScreenBeg, const byte *sourceData, int length, short deltaFetchDisp) {
@@ -169,7 +162,7 @@ static void PrepBMV(byte *ScreenBeg, const byte *sourceData, int length, short d
 		// Is lo nibble '00xx'?
 		if ((eax & 0xC) == 0) {
 			for (;;) {
-//@_rDN_Lp_1:
+				//@_rDN_Lp_1:
 				// Only execute this bit first the first time into the loop
 				if (!firstLoop) {
 					ROR(eax, 2);
@@ -181,9 +174,9 @@ static void PrepBMV(byte *ScreenBeg, const byte *sourceData, int length, short d
 				}
 				firstLoop = false;
 
-//@_rD2nd_1:
-				ROR(eax, 2);		// Save bi-bit into hi 2 bits
-				bitshift += 2;			//   and increase bit-shifter
+				//@_rD2nd_1:
+				ROR(eax, 2); // Save bi-bit into hi 2 bits
+				bitshift += 2; //   and increase bit-shifter
 				// Shift another 2 bits to get hi nibble
 				eax = (eax & 0xffffff00) | ((eax & 0xff) >> 2);
 				NEXT_BYTE(src);
@@ -199,18 +192,18 @@ static void PrepBMV(byte *ScreenBeg, const byte *sourceData, int length, short d
 		}
 
 		if (flag) {
-//@_rdNum__1:
-			edx = 4;			// offset rDNum_Lo ; Next nibble is a 'lo'
+			//@_rdNum__1:
+			edx = 4; // offset rDNum_Lo ; Next nibble is a 'lo'
 		} else {
-// @_rDNum_1
+			// @_rDNum_1
 			NibbleHi = ((uint8)eax) >> 4;
-			edx = 0;			// offset rDNum_Hi ; Next nibble is a 'hi' (reserved)
+			edx = 0; // offset rDNum_Hi ; Next nibble is a 'hi' (reserved)
 			eax &= 0xffffff0f;
 			NEXT_BYTE(src);
 			ROL(eax, bitshift);
 		}
-//rDN_1:
-//@_rD_or_R:
+		//rDN_1:
+		//@_rD_or_R:
 		bool actionFlag = (eax & 1) != 0;
 		eax >>= 1;
 		int byteLen = eax - 1;
@@ -228,8 +221,8 @@ static void PrepBMV(byte *ScreenBeg, const byte *sourceData, int length, short d
 		switch (loopCtr) {
 		case 1: {
 			// @_rDelta:
-			const byte *saved_src = src;			// Save the source pointer
-			src = dst + ebx;			// Point it to existing data
+			const byte *saved_src = src; // Save the source pointer
+			src = dst + ebx; // Point it to existing data
 
 			while (byteLen > 0) {
 				*dst = *src;
@@ -240,7 +233,7 @@ static void PrepBMV(byte *ScreenBeg, const byte *sourceData, int length, short d
 
 			src = saved_src;
 			break;
-			}
+		}
 
 		case 2:
 			// @_rRaw
@@ -296,7 +289,7 @@ void BMVPlayer::PrepAudio(const byte *sourceData, int blobCount, byte *destPtr) 
 
 	// Blob Loop
 	while (blobCount-- > 0) {
-		uint32 ebx = (uint8) *srcP++;
+		uint32 ebx = (uint8)*srcP++;
 		uint32 ebp = ebx & 0x1E;
 
 		int blobSize = SAM_P_BLOB / 2;
@@ -308,8 +301,8 @@ void BMVPlayer::PrepAudio(const byte *sourceData, int blobCount, byte *destPtr) 
 
 		// Inner loop
 		while (blobSize-- > 0) {
-			uint32 s1 = (((int32) *srcP++) * ((int32) ebp)) >> 5;
-			uint32 s2 = (((int32) *srcP++) * ((int32) ebx)) >> 5;
+			uint32 s1 = (((int32)*srcP++) * ((int32)ebp)) >> 5;
+			uint32 s2 = (((int32)*srcP++) * ((int32)ebx)) >> 5;
 
 			dx1 += s1 & 0xFFFF;
 			dx2 += s2 & 0xFFFF;
@@ -370,12 +363,12 @@ BMVPlayer::BMVPlayer() {
  * Build a COLORREF array and queue it to the DAC.
  */
 void BMVPlayer::MoviePalette(int paletteOffset) {
-	int	i;
+	int i;
 	byte *r;
 
 	r = bigBuffer + paletteOffset;
 
-	for (i = 0; i < 256; i++, r += 3)	{
+	for (i = 0; i < 256; i++, r += 3) {
 		moviePal[i] = TINSEL_RGB(*r, *(r + 1), *(r + 2));
 	}
 
@@ -413,7 +406,7 @@ void BMVPlayer::MovieAudio(int audioOffset, int blobs) {
 	byte *data = (byte *)malloc(blobs * 128);
 
 	if (audioOffset != 0)
-		PrepAudio(bigBuffer+audioOffset, blobs, data);
+		PrepAudio(bigBuffer + audioOffset, blobs, data);
 	else
 		memset(data, 0, blobs * 128);
 
@@ -422,7 +415,7 @@ void BMVPlayer::MovieAudio(int audioOffset, int blobs) {
 	if (currentSoundFrame == ADVANCE_SOUND) {
 		if (!audioStarted) {
 			_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType,
-					&_audioHandle, _audioStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+			                        &_audioHandle, _audioStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 			audioStarted = true;
 		}
 	}
@@ -455,7 +448,7 @@ void BMVPlayer::FettleMovieText() {
 \*-----------------------------------------------------*/
 
 void BMVPlayer::BmvDrawText(bool bDraw) {
-	int	w, h, x, y;
+	int w, h, x, y;
 
 	for (int i = 0; i < 2; i++) {
 		if (texts[i].pText) {
@@ -478,9 +471,9 @@ void BMVPlayer::BmvDrawText(bool bDraw) {
 				ptWin.x = ptWin.y = 0;
 				rcPlayClip.left = x;
 				rcPlayClip.top = y;
-				rcPlayClip.right = x+w;
-				rcPlayClip.bottom = y+h;
-				UpdateClipRect(GetPlayfieldList(FIELD_STATUS), &ptWin,	&rcPlayClip);
+				rcPlayClip.right = x + w;
+				rcPlayClip.bottom = y + h;
+				UpdateClipRect(GetPlayfieldList(FIELD_STATUS), &ptWin, &rcPlayClip);
 			}
 		}
 	}
@@ -492,7 +485,7 @@ void BMVPlayer::BmvDrawText(bool bDraw) {
 
 void BMVPlayer::MovieText(CORO_PARAM, int stringId, int x, int y, int fontId, COLORREF *pTalkColor, int duration) {
 	SCNHANDLE hFont;
-	int	index;
+	int index;
 
 	if (fontId == 1) {
 		// It's a 'print'
@@ -515,11 +508,11 @@ void BMVPlayer::MovieText(CORO_PARAM, int stringId, int x, int y, int fontId, CO
 
 	texts[index].dieFrame = currentFrame + duration;
 	texts[index].pText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
-						TextBufferAddr(),
-						0,
-						x, y,
-						hFont,
-						TXT_CENTER, 0);
+	                                   TextBufferAddr(),
+	                                   0,
+	                                   x, y,
+	                                   hFont,
+	                                   TXT_CENTER, 0);
 	KeepOnScreen(texts[index].pText, &x, &y);
 }
 
@@ -531,11 +524,11 @@ int BMVPlayer::MovieCommand(char cmd, int commandOffset) {
 		PRINT_CMD *pCmd = (PRINT_CMD *)(bigBuffer + commandOffset);
 
 		MovieText(Common::nullContext, (int16)READ_16(&pCmd->stringId),
-				(int16)READ_16(&pCmd->x),
-				(int16)READ_16(&pCmd->y),
-				pCmd->fontId,
-				NULL,
-				pCmd->duration);
+		          (int16)READ_16(&pCmd->x),
+		          (int16)READ_16(&pCmd->y),
+		          pCmd->fontId,
+		          NULL,
+		          pCmd->duration);
 
 		return sz_CMD_PRINT_pkt;
 	} else {
@@ -544,11 +537,11 @@ int BMVPlayer::MovieCommand(char cmd, int commandOffset) {
 			talkColor = TINSEL_RGB(pCmd->r, pCmd->g, pCmd->b);
 
 			MovieText(Common::nullContext, (int16)READ_16(&pCmd->stringId),
-					(int16)READ_16(&pCmd->x),
-					(int16)READ_16(&pCmd->y),
-					0,
-					&talkColor,
-					pCmd->duration);
+			          (int16)READ_16(&pCmd->x),
+			          (int16)READ_16(&pCmd->y),
+			          0,
+			          &talkColor,
+			          pCmd->duration);
 		}
 		return sz_CMD_TALK_pkt;
 	}
@@ -590,15 +583,15 @@ void BMVPlayer::PlayBMV(CORO_PARAM, SCNHANDLE hFileStem, int myEscape) {
  */
 int BMVPlayer::FollowingPacket(int thisPacket, bool bReallyImportant) {
 	unsigned char *data;
-	int	nextSlot, length;
+	int nextSlot, length;
 
 	// Set pointer to thisPacket's data
 	data = bigBuffer + thisPacket;
 
 	switch (*data) {
 	case CD_SLOT_NOP:
-		nextSlot = thisPacket/SLOT_SIZE;
-		if (thisPacket%SLOT_SIZE)
+		nextSlot = thisPacket / SLOT_SIZE;
+		if (thisPacket % SLOT_SIZE)
 			nextSlot++;
 
 		return nextSlot * SLOT_SIZE;
@@ -610,17 +603,15 @@ int BMVPlayer::FollowingPacket(int thisPacket, bool bReallyImportant) {
 		// Following 3 bytes are the length
 		if (bReallyImportant) {
 			// wrapped round or at least 3 bytes
-			assert(((nextReadSlot * SLOT_SIZE) < thisPacket) ||
-				((thisPacket + 3) < (nextReadSlot * SLOT_SIZE)));
+			assert(((nextReadSlot * SLOT_SIZE) < thisPacket) || ((thisPacket + 3) < (nextReadSlot * SLOT_SIZE)));
 
-			if ((nextReadSlot * SLOT_SIZE >= thisPacket) &&
-				((thisPacket + 3) >= nextReadSlot*SLOT_SIZE)) {
+			if ((nextReadSlot * SLOT_SIZE >= thisPacket) && ((thisPacket + 3) >= nextReadSlot * SLOT_SIZE)) {
 				// MaintainBuffer calls this back, but with false
 				MaintainBuffer();
 			}
 		} else {
 			// not wrapped and not 3 bytes
-			if (nextReadSlot*SLOT_SIZE >= thisPacket && thisPacket+3 >= nextReadSlot*SLOT_SIZE)
+			if (nextReadSlot * SLOT_SIZE >= thisPacket && thisPacket + 3 >= nextReadSlot * SLOT_SIZE)
 				return thisPacket + 3;
 		}
 		length = (int32)READ_32(bigBuffer + thisPacket + 1);
@@ -637,8 +628,7 @@ void BMVPlayer::LoadSlots(int number) {
 
 	assert(number + nextReadSlot < NUM_SLOTS);
 
-	if (stream.read(bigBuffer + nextReadSlot*SLOT_SIZE, number * SLOT_SIZE) !=
-			(uint32)(number * SLOT_SIZE)) {
+	if (stream.read(bigBuffer + nextReadSlot * SLOT_SIZE, number * SLOT_SIZE) != (uint32)(number * SLOT_SIZE)) {
 		int possibleSlots;
 
 		// May be a short file
@@ -653,8 +643,8 @@ void BMVPlayer::LoadSlots(int number) {
 	nextReadSlot += number;
 
 	nextOffset = FollowingPacket(nextUseOffset, true);
-	while (nextOffset < nextReadSlot*SLOT_SIZE
-			&& nextOffset != -1) {
+	while (nextOffset < nextReadSlot * SLOT_SIZE
+	       && nextOffset != -1) {
 		numAdvancePackets++;
 		mostFutureOffset = nextOffset;
 		nextOffset = FollowingPacket(mostFutureOffset, false);
@@ -714,7 +704,7 @@ void BMVPlayer::InitializeBMV() {
  * Called from the foreground when ending playback of a movie.
  */
 void BMVPlayer::FinishBMV() {
-	int	i;
+	int i;
 
 	// Notify the sound channel
 	FinishMovieSound();
@@ -781,8 +771,8 @@ bool BMVPlayer::MaintainBuffer() {
 
 		// Copy the data we already have for unfinished packet
 		memcpy(bigBuffer + mostFutureOffset,
-			bigBuffer + wrapUseOffset,
-			SLOT_SIZE - mostFutureOffset);
+		       bigBuffer + wrapUseOffset,
+		       SLOT_SIZE - mostFutureOffset);
 
 		// Next read is into slot 1
 		nextReadSlot = 1;
@@ -796,7 +786,7 @@ bool BMVPlayer::MaintainBuffer() {
 		}
 
 		// nextOffset must be the buffer size
-		assert(nextOffset == NUM_SLOTS*SLOT_SIZE);
+		assert(nextOffset == NUM_SLOTS * SLOT_SIZE);
 
 		// wrapUseOffset must not be set
 		assert(wrapUseOffset == -1);
@@ -821,15 +811,15 @@ bool BMVPlayer::MaintainBuffer() {
 
 	// Find new mostFutureOffset
 	nextOffset = FollowingPacket(mostFutureOffset, false);
-	while (nextOffset < nextReadSlot*SLOT_SIZE
-			&& nextOffset != -1) {
+	while (nextOffset < nextReadSlot * SLOT_SIZE
+	       && nextOffset != -1) {
 		numAdvancePackets++;
 		mostFutureOffset = nextOffset;
 		nextOffset = FollowingPacket(mostFutureOffset, false);
 	}
 
 	// New test feature for e.g. short files
-	if (bFileEnd && *(bigBuffer+mostFutureOffset) != CD_LE_FIN)
+	if (bFileEnd && *(bigBuffer + mostFutureOffset) != CD_LE_FIN)
 		bAbort = true;
 
 	return true;
@@ -840,8 +830,8 @@ bool BMVPlayer::MaintainBuffer() {
  */
 bool BMVPlayer::DoBMVFrame() {
 	unsigned char *data;
-	int	graphOffset, length;
-	signed short	xscr;
+	int graphOffset, length;
+	signed short xscr;
 
 	if (nextUseOffset == wrapUseOffset) {
 		nextUseOffset %= SLOT_SIZE;
@@ -890,11 +880,11 @@ bool BMVPlayer::DoBMVFrame() {
 		length = (int32)READ_32(data + 1);
 		length &= 0x00ffffff;
 
-		graphOffset = nextUseOffset + 4;	// Skip command byte and length
+		graphOffset = nextUseOffset + 4; // Skip command byte and length
 
 		if (*data & CD_AUDIO) {
 			if (bOldAudio) {
-				graphOffset += sz_AUDIO_pkt;	// Skip audio data
+				graphOffset += sz_AUDIO_pkt; // Skip audio data
 				length -= sz_AUDIO_pkt;
 			} else {
 				int blobs;
@@ -918,13 +908,13 @@ bool BMVPlayer::DoBMVFrame() {
 
 		if (*data & CD_CMAP) {
 			MoviePalette(graphOffset);
-			graphOffset += sz_CMAP_pkt;	// Skip palette data
+			graphOffset += sz_CMAP_pkt; // Skip palette data
 			length -= sz_CMAP_pkt;
 		}
 
 		if (*data & CD_XSCR) {
 			xscr = (int16)READ_16(bigBuffer + graphOffset);
-			graphOffset += sz_XSCR_pkt;	// Skip scroll offset
+			graphOffset += sz_XSCR_pkt; // Skip scroll offset
 			length -= sz_XSCR_pkt;
 		} else if (*data & BIT0)
 			xscr = -640;
@@ -950,7 +940,7 @@ bool BMVPlayer::DoBMVFrame() {
  */
 bool BMVPlayer::DoSoundFrame() {
 	unsigned char *data;
-	int	graphOffset;
+	int graphOffset;
 
 	if (nextSoundOffset == wrapUseOffset) {
 		nextSoundOffset %= SLOT_SIZE;
@@ -999,11 +989,11 @@ bool BMVPlayer::DoSoundFrame() {
 
 	default:
 		if (*data & CD_AUDIO) {
-			graphOffset = nextSoundOffset + 4;	// Skip command byte and length
+			graphOffset = nextSoundOffset + 4; // Skip command byte and length
 
 			if (!bOldAudio) {
 				int blobs = *(bigBuffer + graphOffset);
-				MovieAudio(graphOffset+1, blobs);
+				MovieAudio(graphOffset + 1, blobs);
 			}
 		} else {
 			if (!bOldAudio)
@@ -1035,10 +1025,10 @@ void BMVPlayer::CopyMovieToScreen() {
 	memset(_vm->screen().getPixels(), 0, yStart * SCREEN_WIDTH);
 	memcpy(_vm->screen().getBasePtr(0, yStart), ScreenBeg, SCREEN_WIDTH * SCREEN_HIGH);
 	memset(_vm->screen().getBasePtr(0, yStart + SCREEN_HIGH), 0,
-		(SCREEN_HEIGHT - SCREEN_HIGH - yStart) * SCREEN_WIDTH);
+	       (SCREEN_HEIGHT - SCREEN_HIGH - yStart) * SCREEN_WIDTH);
 
 	BmvDrawText(true);
-	PalettesToVideoDAC();			// Keep palette up-to-date
+	PalettesToVideoDAC(); // Keep palette up-to-date
 	UpdateScreenRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 	g_system->updateScreen();
 	BmvDrawText(false);
@@ -1073,7 +1063,7 @@ void BMVPlayer::FettleBMV() {
 			if (DoSoundFrame())
 				i++;
 		}
-		startTick = -ONE_SECOND / 4;	// 1/4 second
+		startTick = -ONE_SECOND / 4; // 1/4 second
 		return;
 	}
 
@@ -1094,8 +1084,8 @@ void BMVPlayer::FettleBMV() {
 	if (bigProblemCount < PT_A) {
 		refFrame = currentSoundFrame;
 
-		while (currentSoundFrame < ((tick+1-startTick)/2 + ADVANCE_SOUND) && bMovieOn) {
-			if (currentSoundFrame == refFrame+PT_B)
+		while (currentSoundFrame < ((tick + 1 - startTick) / 2 + ADVANCE_SOUND) && bMovieOn) {
+			if (currentSoundFrame == refFrame + PT_B)
 				break;
 
 			DoSoundFrame();
@@ -1106,24 +1096,24 @@ void BMVPlayer::FettleBMV() {
 	if (bigProblemCount < PT_A) {
 		refFrame = currentFrame;
 
-		while ((currentFrame < (tick-startTick)/2) && bMovieOn) {
+		while ((currentFrame < (tick - startTick) / 2) && bMovieOn) {
 			DoBMVFrame();
 
-			if (currentFrame == refFrame+PT_B) {
+			if (currentFrame == refFrame + PT_B) {
 				bigProblemCount++;
 
 				if (bigProblemCount == PT_A) {
-					startTick = tick-(2*currentFrame);
+					startTick = tick - (2 * currentFrame);
 					bigProblemCount = 0;
 				}
 				break;
 			}
 		}
-		if (currentFrame == refFrame || currentFrame <= refFrame+3) {
+		if (currentFrame == refFrame || currentFrame <= refFrame + 3) {
 			bigProblemCount = 0;
 		}
 	} else {
-		while (currentFrame < (tick-startTick)/2 && bMovieOn) {
+		while (currentFrame < (tick - startTick) / 2 && bMovieOn) {
 			DoBMVFrame();
 		}
 	}
@@ -1149,8 +1139,8 @@ int32 BMVPlayer::MovieAudioLag() {
 		return 0;
 
 	// Calculate lag
-	int32 playLength = (movieTick - startTick - 1) * ((((uint32) 1000) << 10) / 24);
-	return (playLength - (((int32) _vm->_mixer->getSoundElapsedTime(_audioHandle)) << 10)) >> 10;
+	int32 playLength = (movieTick - startTick - 1) * ((((uint32)1000) << 10) / 24);
+	return (playLength - (((int32)_vm->_mixer->getSoundElapsedTime(_audioHandle)) << 10)) >> 10;
 }
 
 uint32 BMVPlayer::NextMovieTime() {

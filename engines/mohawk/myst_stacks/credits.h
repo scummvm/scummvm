@@ -35,23 +35,23 @@ namespace MystStacks {
 
 #define DECLARE_OPCODE(x) void x(uint16 var, const ArgumentsArray &args)
 
-class Credits : public MystScriptParser {
-public:
-	explicit Credits(MohawkEngine_Myst *vm);
-	~Credits() override;
+	class Credits : public MystScriptParser {
+	public:
+		explicit Credits(MohawkEngine_Myst *vm);
+		~Credits() override;
 
-	void disablePersistentScripts() override;
-	void runPersistentScripts() override;
+		void disablePersistentScripts() override;
+		void runPersistentScripts() override;
 
-private:
-	void setupOpcodes();
-	uint16 getVar(uint16 var) override;
+	private:
+		void setupOpcodes();
+		uint16 getVar(uint16 var) override;
 
-	DECLARE_OPCODE(o_runCredits);
+		DECLARE_OPCODE(o_runCredits);
 
-	bool _creditsRunning;
-	uint16 _curImage; // 56
-};
+		bool _creditsRunning;
+		uint16 _curImage; // 56
+	};
 
 } // End of namespace MystStacks
 } // End of namespace Mohawk

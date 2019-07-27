@@ -22,17 +22,18 @@
 
 #ifdef ENABLE_EOB
 
-#ifndef KYRA_EOB1_H
-#define KYRA_EOB1_H
+#	ifndef KYRA_EOB1_H
+#		define KYRA_EOB1_H
 
-#include "kyra/engine/eobcommon.h"
+#		include "kyra/engine/eobcommon.h"
 
 namespace Kyra {
 
 class EoBEngine : public EoBCoreEngine {
-friend class GUI_EoB;
-friend class EoBIntroPlayer;
-friend class EoBAmigaFinalePlayer;
+	friend class GUI_EoB;
+	friend class EoBIntroPlayer;
+	friend class EoBAmigaFinalePlayer;
+
 public:
 	EoBEngine(OSystem *system, const GameFlags &flags);
 	~EoBEngine();
@@ -130,6 +131,6 @@ private:
 
 } // End of namespace Kyra
 
-#endif
+#	endif
 
 #endif // ENABLE_EOB

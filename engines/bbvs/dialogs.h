@@ -54,9 +54,9 @@ enum {
 };
 
 enum {
-	kMainMenuScr        = 0,
-	kOptionsMenuScr     = 1,
-	kMiniGamesMenuScr   = 2
+	kMainMenuScr = 0,
+	kOptionsMenuScr = 1,
+	kMiniGamesMenuScr = 2
 };
 
 class MainMenu : public GUI::Dialog {
@@ -77,7 +77,6 @@ protected:
 	void gotoMenuScreen(int index);
 	bool canContinue();
 	void gotoScene(int sceneNum);
-
 };
 
 }

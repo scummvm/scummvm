@@ -24,8 +24,8 @@
 
 #include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
-#include "bladerunner/game_info.h"
 #include "bladerunner/game_constants.h"
+#include "bladerunner/game_info.h"
 
 namespace BladeRunner {
 
@@ -49,7 +49,7 @@ const Color256 UISlider::kColors[] = {
 };
 
 UISlider::UISlider(BladeRunnerEngine *vm, UIComponentCallback *valueChangedCallback, void *callbackData, Common::Rect rect, int maxValue, int value)
-	: UIComponent(vm) {
+  : UIComponent(vm) {
 
 	_valueChangedCallback = valueChangedCallback;
 	_callbackData = callbackData;
@@ -105,7 +105,7 @@ void UISlider::draw(Graphics::Surface &surface) {
 	if (_rect.left + 1 < _rect.right - 1) {
 		int striding = _rect.left + sliderX;
 		for (int x = _rect.left + 1; x < _rect.right - 1; x++) {
-			int colorIndex =  15 - (abs(sliderX - x) >> 2);
+			int colorIndex = 15 - (abs(sliderX - x) >> 2);
 
 			if (!_isEnabled) {
 				colorIndex /= 2;

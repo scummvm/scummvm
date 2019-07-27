@@ -26,10 +26,10 @@
  */
 
 #include "tinsel/timers.h"
-#include "tinsel/dw.h"
 #include "common/serializer.h"
-#include "common/textconsole.h"
 #include "common/system.h"
+#include "common/textconsole.h"
+#include "tinsel/dw.h"
 
 namespace Tinsel {
 
@@ -38,19 +38,16 @@ namespace Tinsel {
 #define MAX_TIMERS 16
 
 struct TIMER {
-	int	tno;		/**< Timer number */
-	int		ticks;		/**< Tick count */
-	int		secs;		/**< Second count */
-	int		delta;		/**< Increment/decrement value */
-	bool	frame;		/**< If set, in ticks, otherwise in seconds */
+	int tno; /**< Timer number */
+	int ticks; /**< Tick count */
+	int secs; /**< Second count */
+	int delta; /**< Increment/decrement value */
+	bool frame; /**< If set, in ticks, otherwise in seconds */
 };
-
-
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
-static TIMER g_timers[MAX_TIMERS];	// FIXME: Avoid non-const global vars
-
+static TIMER g_timers[MAX_TIMERS]; // FIXME: Avoid non-const global vars
 
 //--------------------------------------------------------
 
@@ -126,20 +123,20 @@ void FettleTimers() {
 		if (!g_timers[i].tno)
 			continue;
 
-		g_timers[i].ticks += g_timers[i].delta;	// Update tick value
+		g_timers[i].ticks += g_timers[i].delta; // Update tick value
 
 		if (g_timers[i].frame) {
 			if (g_timers[i].ticks < 0)
-				g_timers[i].ticks = 0;	// Have reached zero
+				g_timers[i].ticks = 0; // Have reached zero
 		} else {
 			if (g_timers[i].ticks < 0) {
 				g_timers[i].ticks = ONE_SECOND;
 				g_timers[i].secs--;
 				if (g_timers[i].secs < 0)
-					g_timers[i].secs = 0;	// Have reached zero
+					g_timers[i].secs = 0; // Have reached zero
 			} else if (g_timers[i].ticks == ONE_SECOND) {
 				g_timers[i].ticks = 0;
-				g_timers[i].secs++;		// Another second has passed
+				g_timers[i].secs++; // Another second has passed
 			}
 		}
 	}
@@ -157,7 +154,7 @@ void StartTimer(int num, int sval, bool up, bool frame) {
 	if (pt == NULL)
 		pt = allocateTimer(num);
 
-	pt->delta = up ? 1 : -1;	// Increment/decrement value
+	pt->delta = up ? 1 : -1; // Increment/decrement value
 	pt->frame = frame;
 
 	if (frame) {

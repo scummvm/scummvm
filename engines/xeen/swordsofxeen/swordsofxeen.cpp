@@ -26,101 +26,100 @@
 namespace Xeen {
 namespace SwordsOfXeen {
 
-SwordsOfXeenEngine::SwordsOfXeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
-		: XeenEngine(syst, gameDesc) {
-}
-
-void SwordsOfXeenEngine::showMainMenu() {
-	MainMenu::show(this);
-}
-
-void SwordsOfXeenEngine::death() {
-	Windows &windows = *g_vm->_windows;
-
-	_screen->loadBackground("blank.raw");
-	windows[28].setBounds(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
-	_screen->fadeIn(0x81);
-	_screen->loadPalette("scr.pal");
-	_screen->fadeIn(0x81);
-
-	SpriteResource lose("lose.int");
-	lose.draw(0, 0, Common::Point(0, 0));
-	lose.draw(0, 1, Common::Point(160, 0));
-	_sound->playSound("laff1.voc");
-
-	bool breakFlag = false;
-	for (int idx = 0, idx2 = 0; idx < (_files->_ccNum ? 10 : 23); ++idx) {
-		_events->updateGameCounter();
-
-		if (_files->_ccNum) {
-			breakFlag = _events->wait(2);
-		} else {
-			if (idx == 1 || idx == 11)
-				_sound->playFX(33);
-			breakFlag = _events->wait(2);
-
-			if (idx == 15)
-				_sound->playFX(34);
-		}
-
-		if ((_files->_ccNum ? 9 : 10) == idx) {
-			if ((_files->_ccNum ? 2 : 1) > idx2) {
-				// Restart loop
-				idx = -1;
-				++idx2;
-			}
-		}
+	SwordsOfXeenEngine::SwordsOfXeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
+	  : XeenEngine(syst, gameDesc) {
 	}
 
-	// Wait for press
-	if (!breakFlag)
+	void SwordsOfXeenEngine::showMainMenu() {
+		MainMenu::show(this);
+	}
+
+	void SwordsOfXeenEngine::death() {
+		Windows &windows = *g_vm->_windows;
+
+		_screen->loadBackground("blank.raw");
+		windows[28].setBounds(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+		_screen->fadeIn(0x81);
+		_screen->loadPalette("scr.pal");
+		_screen->fadeIn(0x81);
+
+		SpriteResource lose("lose.int");
+		lose.draw(0, 0, Common::Point(0, 0));
+		lose.draw(0, 1, Common::Point(160, 0));
+		_sound->playSound("laff1.voc");
+
+		bool breakFlag = false;
+		for (int idx = 0, idx2 = 0; idx < (_files->_ccNum ? 10 : 23); ++idx) {
+			_events->updateGameCounter();
+
+			if (_files->_ccNum) {
+				breakFlag = _events->wait(2);
+			} else {
+				if (idx == 1 || idx == 11)
+					_sound->playFX(33);
+				breakFlag = _events->wait(2);
+
+				if (idx == 15)
+					_sound->playFX(34);
+			}
+
+			if ((_files->_ccNum ? 9 : 10) == idx) {
+				if ((_files->_ccNum ? 2 : 1) > idx2) {
+					// Restart loop
+					idx = -1;
+					++idx2;
+				}
+			}
+		}
+
+		// Wait for press
+		if (!breakFlag)
+			_events->waitForPress();
+
+		_screen->fadeOut(4);
+		_screen->loadBackground("blank.raw");
+		_screen->loadPalette("dark.pal");
+		_sound->stopAllAudio();
+	}
+
+	bool SwordsOfXeenEngine::showEnding() {
+		Windows &windows = *_windows;
+		SpriteResource win("win.int");
+
+		_screen->loadBackground("blank.raw");
+		windows[28].setBounds(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+		_screen->fadeIn(0x81);
+		_screen->loadPalette("scr.pal");
+		_screen->fadeIn(0x81);
+
+		win.draw(0, 0, Common::Point(0, 0));
+		win.draw(0, 1, Common::Point(160, 0));
+		_sound->playSound("ch1.voc");
 		_events->waitForPress();
 
-	_screen->fadeOut(4);
-	_screen->loadBackground("blank.raw");
-	_screen->loadPalette("dark.pal");
-	_sound->stopAllAudio();
-}
+		_screen->fadeOut();
+		_screen->loadBackground("blank.raw");
+		return true;
+	}
 
-bool SwordsOfXeenEngine::showEnding() {
-	Windows &windows = *_windows;
-	SpriteResource win("win.int");
+	void SwordsOfXeenEngine::dream() {
+		// Swords of Xeen doesn't have any dreams
+	}
 
-	_screen->loadBackground("blank.raw");
-	windows[28].setBounds(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
-	_screen->fadeIn(0x81);
-	_screen->loadPalette("scr.pal");
-	_screen->fadeIn(0x81);
+	void SwordsOfXeenEngine::showCutscene(const Common::String &name, int status, uint score) {
+		_sound->stopAllAudio();
+		_events->clearEvents();
 
-	win.draw(0, 0, Common::Point(0, 0));
-	win.draw(0, 1, Common::Point(160, 0));
-	_sound->playSound("ch1.voc");
-	_events->waitForPress();
+		if (name != "ENDGAME")
+			error("Unknown cutscene specified");
 
-	_screen->fadeOut();
-	_screen->loadBackground("blank.raw");
-	return true;
-}
+		showEnding();
 
-void SwordsOfXeenEngine::dream() {
-	// Swords of Xeen doesn't have any dreams
-}
-
-void SwordsOfXeenEngine::showCutscene(const Common::String &name, int status, uint score) {
-	_sound->stopAllAudio();
-	_events->clearEvents();
-
-	if (name != "ENDGAME")
-		error("Unknown cutscene specified");
-
-	showEnding();
-
-	_screen->freePages();
-	_sound->stopAllAudio();
-	_events->clearEvents();
-	_gameMode = GMODE_MENU;
-
-}
+		_screen->freePages();
+		_sound->stopAllAudio();
+		_events->clearEvents();
+		_gameMode = GMODE_MENU;
+	}
 
 } // End of namespace SwordsOfXeen
 } // End of namespace Xeen

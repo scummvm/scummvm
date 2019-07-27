@@ -28,12 +28,12 @@
 #include "common/file.h"
 #include "common/memstream.h"
 
-#include "dm/dungeonman.h"
-#include "dm/timeline.h"
 #include "dm/champion.h"
+#include "dm/dungeonman.h"
 #include "dm/group.h"
 #include "dm/movesens.h"
 #include "dm/projexpl.h"
+#include "dm/timeline.h"
 
 namespace DM {
 
@@ -46,351 +46,355 @@ void DungeonMan::mapCoordsAfterRelMovement(Direction dir, int16 stepsForward, in
 }
 
 void DungeonMan::setupConstants() {
-	ObjectInfoIndex objectInfo[180] = { // @ G0237_as_Graphic559_ObjectInfo
+	ObjectInfoIndex objectInfo[180] = {
+		// @ G0237_as_Graphic559_ObjectInfo
 		/* { Type, ObjectAspectIndex, ActionSetIndex, AllowedSlots } */
-		ObjectInfoIndex(30,  1,  0, 0x0500),   /* COMPASS        Pouch/Chest */
-		ObjectInfoIndex(144,  0,  0, 0x0200),  /* COMPASS        Hands */
-		ObjectInfoIndex(148, 67,  0, 0x0500),  /* COMPASS        Pouch/Chest */
-		ObjectInfoIndex(149, 67,  0, 0x0500),  /* COMPASS        Pouch/Chest */
-		ObjectInfoIndex(150, 67,  0, 0x0500),  /* TORCH          Pouch/Chest */
-		ObjectInfoIndex(151, 67, 42, 0x0500),  /* TORCH          Pouch/Chest */
-		ObjectInfoIndex(152, 67,  0, 0x0500),  /* TORCH          Pouch/Chest */
-		ObjectInfoIndex(153, 67,  0, 0x0500),  /* TORCH          Pouch/Chest */
-		ObjectInfoIndex(154,  2,  0, 0x0501),  /* WATERSKIN      Mouth/Pouch/Chest */
-		ObjectInfoIndex(155,  2,  0, 0x0501),  /* WATER          Mouth/Pouch/Chest */
-		ObjectInfoIndex(156,  2,  0, 0x0501),  /* JEWEL SYMAL    Mouth/Pouch/Chest */
-		ObjectInfoIndex(157,  2,  0, 0x0501),  /* JEWEL SYMAL    Mouth/Pouch/Chest */
-		ObjectInfoIndex(158,  2,  0, 0x0501),  /* ILLUMULET      Mouth/Pouch/Chest */
-		ObjectInfoIndex(159,  2,  0, 0x0501),  /* ILLUMULET      Mouth/Pouch/Chest */
-		ObjectInfoIndex(160,  2,  0, 0x0501),  /* FLAMITT        Mouth/Pouch/Chest */
-		ObjectInfoIndex(161,  2,  0, 0x0501),  /* FLAMITT        Mouth/Pouch/Chest */
-		ObjectInfoIndex(162,  2,  0, 0x0501),  /* EYE OF TIME    Mouth/Pouch/Chest */
-		ObjectInfoIndex(163,  2,  0, 0x0501),  /* EYE OF TIME    Mouth/Pouch/Chest */
-		ObjectInfoIndex(164, 68,  0, 0x0500),  /* STORMRING      Pouch/Chest */
-		ObjectInfoIndex(165, 68,  0, 0x0500),  /* STORMRING      Pouch/Chest */
-		ObjectInfoIndex(166, 68,  0, 0x0500),  /* STAFF OF CLAWS Pouch/Chest */
-		ObjectInfoIndex(167, 68, 42, 0x0500),  /* STAFF OF CLAWS Pouch/Chest */
-		ObjectInfoIndex(195, 80,  0, 0x0500),  /* STAFF OF CLAWS Pouch/Chest */
-		ObjectInfoIndex(16, 38, 43, 0x0500),   /* BOLT BLADE     Pouch/Chest */
-		ObjectInfoIndex(18, 38,  7, 0x0500),   /* BOLT BLADE     Pouch/Chest */
-		ObjectInfoIndex(4, 35,  5, 0x0400),    /* FURY           Chest */
-		ObjectInfoIndex(14, 37,  6, 0x0400),   /* FURY           Chest */
-		ObjectInfoIndex(20, 11,  8, 0x0040),   /* THE FIRESTAFF  Quiver 1 */
-		ObjectInfoIndex(23, 12,  9, 0x0040),   /* THE FIRESTAFF  Quiver 1 */
-		ObjectInfoIndex(25, 12, 10, 0x0040),   /* THE FIRESTAFF  Quiver 1 */
-		ObjectInfoIndex(27, 39, 11, 0x0040),   /* OPEN SCROLL    Quiver 1 */
-		ObjectInfoIndex(32, 17, 12, 0x05C0),   /* SCROLL         Quiver 1/Quiver 2/Pouch/Chest */
-		ObjectInfoIndex(33, 12, 13, 0x0040),   /* DAGGER         Quiver 1 */
-		ObjectInfoIndex(34, 12, 13, 0x0040),   /* FALCHION       Quiver 1 */
-		ObjectInfoIndex(35, 12, 14, 0x0040),   /* SWORD          Quiver 1 */
-		ObjectInfoIndex(36, 12, 15, 0x0040),   /* RAPIER         Quiver 1 */
-		ObjectInfoIndex(37, 12, 15, 0x0040),   /* SABRE          Quiver 1 */
-		ObjectInfoIndex(38, 12, 16, 0x0040),   /* SAMURAI SWORD  Quiver 1 */
-		ObjectInfoIndex(39, 12, 17, 0x0040),   /* DELTA          Quiver 1 */
-		ObjectInfoIndex(40, 42, 18, 0x0040),   /* DIAMOND EDGE   Quiver 1 */
-		ObjectInfoIndex(41, 12, 19, 0x0040),   /* VORPAL BLADE   Quiver 1 */
-		ObjectInfoIndex(42, 13, 20, 0x0040),   /* THE INQUISITOR Quiver 1 */
-		ObjectInfoIndex(43, 13, 21, 0x0040),   /* AXE            Quiver 1 */
-		ObjectInfoIndex(44, 21, 22, 0x0040),   /* HARDCLEAVE     Quiver 1 */
-		ObjectInfoIndex(45, 21, 22, 0x0040),   /* MACE           Quiver 1 */
-		ObjectInfoIndex(46, 33, 23, 0x0440),   /* MACE OF ORDER  Quiver 1/Chest */
-		ObjectInfoIndex(47, 43, 24, 0x0040),   /* MORNINGSTAR    Quiver 1 */
-		ObjectInfoIndex(48, 44, 24, 0x0040),   /* CLUB           Quiver 1 */
-		ObjectInfoIndex(49, 14, 27, 0x0040),   /* STONE CLUB     Quiver 1 */
-		ObjectInfoIndex(50, 45, 27, 0x0040),   /* BOW            Quiver 1 */
-		ObjectInfoIndex(51, 16, 26, 0x05C0),   /* CROSSBOW       Quiver 1/Quiver 2/Pouch/Chest */
-		ObjectInfoIndex(52, 46, 26, 0x05C0),   /* ARROW          Quiver 1/Quiver 2/Pouch/Chest */
-		ObjectInfoIndex(53, 11, 27, 0x0440),   /* SLAYER         Quiver 1/Chest */
-		ObjectInfoIndex(54, 47, 42, 0x05C0),   /* SLING          Quiver 1/Quiver 2/Pouch/Chest */
-		ObjectInfoIndex(55, 48, 40, 0x05C0),   /* ROCK           Quiver 1/Quiver 2/Pouch/Chest */
-		ObjectInfoIndex(56, 49, 42, 0x05C0),   /* POISON DART    Quiver 1/Quiver 2/Pouch/Chest */
-		ObjectInfoIndex(57, 50,  5, 0x0040),   /* THROWING STAR  Quiver 1 */
-		ObjectInfoIndex(58, 11,  5, 0x0040),   /* STICK          Quiver 1 */
-		ObjectInfoIndex(59, 31, 28, 0x0540),   /* STAFF          Quiver 1/Pouch/Chest */
-		ObjectInfoIndex(60, 31, 29, 0x0540),   /* WAND           Quiver 1/Pouch/Chest */
-		ObjectInfoIndex(61, 11, 30, 0x0040),   /* TEOWAND        Quiver 1 */
-		ObjectInfoIndex(62, 11, 31, 0x0040),   /* YEW STAFF      Quiver 1 */
-		ObjectInfoIndex(63, 11, 32, 0x0040),   /* STAFF OF MANAR Quiver 1 Atari ST Version 1.0 1987-12-08: ObjectAspectIndex = 35 */
-		ObjectInfoIndex(64, 51, 33, 0x0040),   /* SNAKE STAFF    Quiver 1 */
-		ObjectInfoIndex(65, 32,  5, 0x0440),   /* THE CONDUIT    Quiver 1/Chest */
-		ObjectInfoIndex(66, 30, 35, 0x0040),   /* DRAGON SPIT    Quiver 1 */
-		ObjectInfoIndex(135, 65, 36, 0x0440),  /* SCEPTRE OF LYF Quiver 1/Chest */
-		ObjectInfoIndex(143, 45, 27, 0x0040),  /* ROBE           Quiver 1 */
-		ObjectInfoIndex(28, 82,  1, 0x0040),   /* FINE ROBE      Quiver 1 */
-		ObjectInfoIndex(80, 23,  0, 0x040C),   /* KIRTLE         Neck/Torso/Chest */
-		ObjectInfoIndex(81, 23,  0, 0x040C),   /* SILK SHIRT     Neck/Torso/Chest */
-		ObjectInfoIndex(82, 23,  0, 0x0410),   /* ELVEN DOUBLET  Legs/Chest */
-		ObjectInfoIndex(112, 55,  0, 0x0420),  /* LEATHER JERKIN Feet/Chest */
-		ObjectInfoIndex(114,  8,  0, 0x0420),  /* TUNIC          Feet/Chest */
-		ObjectInfoIndex(67, 24,  0, 0x0408),   /* GHI            Torso/Chest */
-		ObjectInfoIndex(83, 24,  0, 0x0410),   /* MAIL AKETON    Legs/Chest */
-		ObjectInfoIndex(68, 24,  0, 0x0408),   /* MITHRAL AKETON Torso/Chest */
-		ObjectInfoIndex(84, 24,  0, 0x0410),   /* TORSO PLATE    Legs/Chest */
-		ObjectInfoIndex(69, 69,  0, 0x0408),   /* PLATE OF LYTE  Torso/Chest */
-		ObjectInfoIndex(70, 24,  0, 0x0408),   /* PLATE OF DARC  Torso/Chest */
-		ObjectInfoIndex(85, 24,  0, 0x0410),   /* CAPE           Legs/Chest */
-		ObjectInfoIndex(86, 69,  0, 0x0410),   /* CLOAK OF NIGHT Legs/Chest */
-		ObjectInfoIndex(71,  7,  0, 0x0408),   /* BARBARIAN HIDE Torso/Chest */
-		ObjectInfoIndex(87,  7,  0, 0x0410),   /* ROBE           Legs/Chest */
-		ObjectInfoIndex(119, 57,  0, 0x0420),  /* FINE ROBE      Feet/Chest */
-		ObjectInfoIndex(72, 23,  0, 0x0408),   /* TABARD         Torso/Chest */
-		ObjectInfoIndex(88, 23,  0, 0x0410),   /* GUNNA          Legs/Chest */
-		ObjectInfoIndex(113, 29,  0, 0x0420),  /* ELVEN HUKE     Feet/Chest */
-		ObjectInfoIndex(89, 69,  0, 0x0410),   /* LEATHER PANTS  Legs/Chest */
-		ObjectInfoIndex(73, 69,  0, 0x0408),   /* BLUE PANTS     Torso/Chest */
-		ObjectInfoIndex(74, 24,  0, 0x0408),   /* GHI TROUSERS   Torso/Chest */
-		ObjectInfoIndex(90, 24,  0, 0x0410),   /* LEG MAIL       Legs/Chest */
-		ObjectInfoIndex(103, 53,  0, 0x0402),  /* MITHRAL MAIL   Head/Chest */
-		ObjectInfoIndex(104, 53,  0, 0x0402),  /* LEG PLATE      Head/Chest */
-		ObjectInfoIndex(96,  9,  0, 0x0402),   /* POLEYN OF LYTE Head/Chest */
-		ObjectInfoIndex(97,  9,  0, 0x0402),   /* POLEYN OF DARC Head/Chest */
-		ObjectInfoIndex(98,  9,  0, 0x0402),   /* BEZERKER HELM  Head/Chest */
-		ObjectInfoIndex(105, 54, 41, 0x0400),  /* HELMET         Chest */
-		ObjectInfoIndex(106, 54, 41, 0x0200),  /* BASINET        Hands */
-		ObjectInfoIndex(108, 10, 41, 0x0200),  /* CASQUE 'N COIF Hands */
-		ObjectInfoIndex(107, 54, 41, 0x0200),  /* ARMET          Hands */
-		ObjectInfoIndex(75, 19,  0, 0x0408),   /* HELM OF LYTE   Torso/Chest */
-		ObjectInfoIndex(91, 19,  0, 0x0410),   /* HELM OF DARC   Legs/Chest */
-		ObjectInfoIndex(76, 19,  0, 0x0408),   /* CALISTA        Torso/Chest */
-		ObjectInfoIndex(92, 19,  0, 0x0410),   /* CROWN OF NERRA Legs/Chest */
-		ObjectInfoIndex(99,  9,  0, 0x0402),   /* BUCKLER        Head/Chest */
-		ObjectInfoIndex(115, 19,  0, 0x0420),  /* HIDE SHIELD    Feet/Chest */
-		ObjectInfoIndex(100, 52,  0, 0x0402),  /* SMALL SHIELD   Head/Chest */
-		ObjectInfoIndex(77, 20,  0, 0x0008),   /* WOODEN SHIELD  Torso */
-		ObjectInfoIndex(93, 22,  0, 0x0010),   /* LARGE SHIELD   Legs */
-		ObjectInfoIndex(116, 56,  0, 0x0420),  /* SHIELD OF LYTE Feet/Chest */
-		ObjectInfoIndex(109, 10, 41, 0x0200),  /* SHIELD OF DARC Hands */
-		ObjectInfoIndex(101, 52,  0, 0x0402),  /* SANDALS        Head/Chest */
-		ObjectInfoIndex(78, 20,  0, 0x0008),   /* SUEDE BOOTS    Torso */
-		ObjectInfoIndex(94, 22,  0, 0x0010),   /* LEATHER BOOTS  Legs */
-		ObjectInfoIndex(117, 56,  0, 0x0420),  /* HOSEN          Feet/Chest */
-		ObjectInfoIndex(110, 10, 41, 0x0200),  /* FOOT PLATE     Hands */
-		ObjectInfoIndex(102, 52,  0, 0x0402),  /* GREAVE OF LYTE Head/Chest */
-		ObjectInfoIndex(79, 20,  0, 0x0008),   /* GREAVE OF DARC Torso */
-		ObjectInfoIndex(95, 22,  0, 0x0010),   /* ELVEN BOOTS    Legs */
-		ObjectInfoIndex(118, 56,  0, 0x0420),  /* GEM OF AGES    Feet/Chest */
-		ObjectInfoIndex(111, 10, 41, 0x0200),  /* EKKHARD CROSS  Hands */
-		ObjectInfoIndex(140, 52,  0, 0x0402),  /* MOONSTONE      Head/Chest */
-		ObjectInfoIndex(141, 19,  0, 0x0408),  /* THE HELLION    Torso/Chest */
-		ObjectInfoIndex(142, 22,  0, 0x0010),  /* PENDANT FERAL  Legs */
-		ObjectInfoIndex(194, 81,  0, 0x0420),  /* COPPER COIN    Feet/Chest */
-		ObjectInfoIndex(196, 84,  0, 0x0408),  /* SILVER COIN    Torso/Chest */
-		ObjectInfoIndex(0, 34,  0, 0x0500),    /* GOLD COIN      Pouch/Chest */
-		ObjectInfoIndex(8,  6,  0, 0x0501),    /* BOULDER        Mouth/Pouch/Chest */
-		ObjectInfoIndex(10, 15,  0, 0x0504),   /* BLUE GEM       Neck/Pouch/Chest */
-		ObjectInfoIndex(12, 15,  0, 0x0504),   /* ORANGE GEM     Neck/Pouch/Chest */
-		ObjectInfoIndex(146, 40,  0, 0x0500),  /* GREEN GEM      Pouch/Chest */
-		ObjectInfoIndex(147, 41,  0, 0x0400),  /* MAGICAL BOX    Chest */
-		ObjectInfoIndex(125,  4, 37, 0x0500),  /* MAGICAL BOX    Pouch/Chest */
-		ObjectInfoIndex(126, 83, 37, 0x0500),  /* MIRROR OF DAWN Pouch/Chest */
-		ObjectInfoIndex(127,  4, 37, 0x0500),  /* HORN OF FEAR   Pouch/Chest */
-		ObjectInfoIndex(176, 18,  0, 0x0500),  /* ROPE           Pouch/Chest */
-		ObjectInfoIndex(177, 18,  0, 0x0500),  /* RABBIT'S FOOT  Pouch/Chest */
-		ObjectInfoIndex(178, 18,  0, 0x0500),  /* CORBAMITE      Pouch/Chest */
-		ObjectInfoIndex(179, 18,  0, 0x0500),  /* CHOKER         Pouch/Chest */
-		ObjectInfoIndex(180, 18,  0, 0x0500),  /* DEXHELM        Pouch/Chest */
-		ObjectInfoIndex(181, 18,  0, 0x0500),  /* FLAMEBAIN      Pouch/Chest */
-		ObjectInfoIndex(182, 18,  0, 0x0500),  /* POWERTOWERS    Pouch/Chest */
-		ObjectInfoIndex(183, 18,  0, 0x0500),  /* SPEEDBOW       Pouch/Chest */
-		ObjectInfoIndex(184, 62,  0, 0x0500),  /* CHEST          Pouch/Chest */
-		ObjectInfoIndex(185, 62,  0, 0x0500),  /* OPEN CHEST     Pouch/Chest */
-		ObjectInfoIndex(186, 62,  0, 0x0500),  /* ASHES          Pouch/Chest */
-		ObjectInfoIndex(187, 62,  0, 0x0500),  /* BONES          Pouch/Chest */
-		ObjectInfoIndex(188, 62,  0, 0x0500),  /* MON POTION     Pouch/Chest */
-		ObjectInfoIndex(189, 62,  0, 0x0500),  /* UM POTION      Pouch/Chest */
-		ObjectInfoIndex(190, 62,  0, 0x0500),  /* DES POTION     Pouch/Chest */
-		ObjectInfoIndex(191, 62,  0, 0x0500),  /* VEN POTION     Pouch/Chest */
-		ObjectInfoIndex(128, 76,  0, 0x0200),  /* SAR POTION     Hands */
-		ObjectInfoIndex(129,  3,  0, 0x0500),  /* ZO POTION      Pouch/Chest */
-		ObjectInfoIndex(130, 60,  0, 0x0500),  /* ROS POTION     Pouch/Chest */
-		ObjectInfoIndex(131, 61,  0, 0x0500),  /* KU POTION      Pouch/Chest */
-		ObjectInfoIndex(168, 27,  0, 0x0501),  /* DANE POTION    Mouth/Pouch/Chest */
-		ObjectInfoIndex(169, 28,  0, 0x0501),  /* NETA POTION    Mouth/Pouch/Chest */
-		ObjectInfoIndex(170, 25,  0, 0x0501),  /* BRO POTION     Mouth/Pouch/Chest */
-		ObjectInfoIndex(171, 26,  0, 0x0501),  /* MA POTION      Mouth/Pouch/Chest */
-		ObjectInfoIndex(172, 71,  0, 0x0401),  /* YA POTION      Mouth/Chest */
-		ObjectInfoIndex(173, 70,  0, 0x0401),  /* EE POTION      Mouth/Chest */
-		ObjectInfoIndex(174,  5,  0, 0x0501),  /* VI POTION      Mouth/Pouch/Chest */
-		ObjectInfoIndex(175, 66,  0, 0x0501),  /* WATER FLASK    Mouth/Pouch/Chest */
-		ObjectInfoIndex(120, 15,  0, 0x0504),  /* KATH BOMB      Neck/Pouch/Chest */
-		ObjectInfoIndex(121, 15,  0, 0x0504),  /* PEW BOMB       Neck/Pouch/Chest */
-		ObjectInfoIndex(122, 58,  0, 0x0504),  /* RA BOMB        Neck/Pouch/Chest */
-		ObjectInfoIndex(123, 59,  0, 0x0504),  /* FUL BOMB       Neck/Pouch/Chest */
-		ObjectInfoIndex(124, 59,  0, 0x0504),  /* APPLE          Neck/Pouch/Chest */
-		ObjectInfoIndex(132, 79, 38, 0x0500),  /* CORN           Pouch/Chest */
-		ObjectInfoIndex(133, 63, 38, 0x0500),  /* BREAD          Pouch/Chest */
-		ObjectInfoIndex(134, 64,  0, 0x0500),  /* CHEESE         Pouch/Chest */
-		ObjectInfoIndex(136, 72, 39, 0x0400),  /* SCREAMER SLICE Chest */
-		ObjectInfoIndex(137, 73,  0, 0x0500),  /* WORM ROUND     Pouch/Chest */
-		ObjectInfoIndex(138, 74,  0, 0x0500),  /* DRUMSTICK      Pouch/Chest */
-		ObjectInfoIndex(139, 75,  0, 0x0504),  /* DRAGON STEAK   Neck/Pouch/Chest */
-		ObjectInfoIndex(192, 77,  0, 0x0500),  /* IRON KEY       Pouch/Chest */
-		ObjectInfoIndex(193, 78,  0, 0x0500),  /* KEY OF B       Pouch/Chest */
-		ObjectInfoIndex(197, 74,  0, 0x0000),  /* SOLID KEY */
-		ObjectInfoIndex(198, 41,  0, 0x0400)   /* SQUARE KEY     Chest */
+		ObjectInfoIndex(30, 1, 0, 0x0500), /* COMPASS        Pouch/Chest */
+		ObjectInfoIndex(144, 0, 0, 0x0200), /* COMPASS        Hands */
+		ObjectInfoIndex(148, 67, 0, 0x0500), /* COMPASS        Pouch/Chest */
+		ObjectInfoIndex(149, 67, 0, 0x0500), /* COMPASS        Pouch/Chest */
+		ObjectInfoIndex(150, 67, 0, 0x0500), /* TORCH          Pouch/Chest */
+		ObjectInfoIndex(151, 67, 42, 0x0500), /* TORCH          Pouch/Chest */
+		ObjectInfoIndex(152, 67, 0, 0x0500), /* TORCH          Pouch/Chest */
+		ObjectInfoIndex(153, 67, 0, 0x0500), /* TORCH          Pouch/Chest */
+		ObjectInfoIndex(154, 2, 0, 0x0501), /* WATERSKIN      Mouth/Pouch/Chest */
+		ObjectInfoIndex(155, 2, 0, 0x0501), /* WATER          Mouth/Pouch/Chest */
+		ObjectInfoIndex(156, 2, 0, 0x0501), /* JEWEL SYMAL    Mouth/Pouch/Chest */
+		ObjectInfoIndex(157, 2, 0, 0x0501), /* JEWEL SYMAL    Mouth/Pouch/Chest */
+		ObjectInfoIndex(158, 2, 0, 0x0501), /* ILLUMULET      Mouth/Pouch/Chest */
+		ObjectInfoIndex(159, 2, 0, 0x0501), /* ILLUMULET      Mouth/Pouch/Chest */
+		ObjectInfoIndex(160, 2, 0, 0x0501), /* FLAMITT        Mouth/Pouch/Chest */
+		ObjectInfoIndex(161, 2, 0, 0x0501), /* FLAMITT        Mouth/Pouch/Chest */
+		ObjectInfoIndex(162, 2, 0, 0x0501), /* EYE OF TIME    Mouth/Pouch/Chest */
+		ObjectInfoIndex(163, 2, 0, 0x0501), /* EYE OF TIME    Mouth/Pouch/Chest */
+		ObjectInfoIndex(164, 68, 0, 0x0500), /* STORMRING      Pouch/Chest */
+		ObjectInfoIndex(165, 68, 0, 0x0500), /* STORMRING      Pouch/Chest */
+		ObjectInfoIndex(166, 68, 0, 0x0500), /* STAFF OF CLAWS Pouch/Chest */
+		ObjectInfoIndex(167, 68, 42, 0x0500), /* STAFF OF CLAWS Pouch/Chest */
+		ObjectInfoIndex(195, 80, 0, 0x0500), /* STAFF OF CLAWS Pouch/Chest */
+		ObjectInfoIndex(16, 38, 43, 0x0500), /* BOLT BLADE     Pouch/Chest */
+		ObjectInfoIndex(18, 38, 7, 0x0500), /* BOLT BLADE     Pouch/Chest */
+		ObjectInfoIndex(4, 35, 5, 0x0400), /* FURY           Chest */
+		ObjectInfoIndex(14, 37, 6, 0x0400), /* FURY           Chest */
+		ObjectInfoIndex(20, 11, 8, 0x0040), /* THE FIRESTAFF  Quiver 1 */
+		ObjectInfoIndex(23, 12, 9, 0x0040), /* THE FIRESTAFF  Quiver 1 */
+		ObjectInfoIndex(25, 12, 10, 0x0040), /* THE FIRESTAFF  Quiver 1 */
+		ObjectInfoIndex(27, 39, 11, 0x0040), /* OPEN SCROLL    Quiver 1 */
+		ObjectInfoIndex(32, 17, 12, 0x05C0), /* SCROLL         Quiver 1/Quiver 2/Pouch/Chest */
+		ObjectInfoIndex(33, 12, 13, 0x0040), /* DAGGER         Quiver 1 */
+		ObjectInfoIndex(34, 12, 13, 0x0040), /* FALCHION       Quiver 1 */
+		ObjectInfoIndex(35, 12, 14, 0x0040), /* SWORD          Quiver 1 */
+		ObjectInfoIndex(36, 12, 15, 0x0040), /* RAPIER         Quiver 1 */
+		ObjectInfoIndex(37, 12, 15, 0x0040), /* SABRE          Quiver 1 */
+		ObjectInfoIndex(38, 12, 16, 0x0040), /* SAMURAI SWORD  Quiver 1 */
+		ObjectInfoIndex(39, 12, 17, 0x0040), /* DELTA          Quiver 1 */
+		ObjectInfoIndex(40, 42, 18, 0x0040), /* DIAMOND EDGE   Quiver 1 */
+		ObjectInfoIndex(41, 12, 19, 0x0040), /* VORPAL BLADE   Quiver 1 */
+		ObjectInfoIndex(42, 13, 20, 0x0040), /* THE INQUISITOR Quiver 1 */
+		ObjectInfoIndex(43, 13, 21, 0x0040), /* AXE            Quiver 1 */
+		ObjectInfoIndex(44, 21, 22, 0x0040), /* HARDCLEAVE     Quiver 1 */
+		ObjectInfoIndex(45, 21, 22, 0x0040), /* MACE           Quiver 1 */
+		ObjectInfoIndex(46, 33, 23, 0x0440), /* MACE OF ORDER  Quiver 1/Chest */
+		ObjectInfoIndex(47, 43, 24, 0x0040), /* MORNINGSTAR    Quiver 1 */
+		ObjectInfoIndex(48, 44, 24, 0x0040), /* CLUB           Quiver 1 */
+		ObjectInfoIndex(49, 14, 27, 0x0040), /* STONE CLUB     Quiver 1 */
+		ObjectInfoIndex(50, 45, 27, 0x0040), /* BOW            Quiver 1 */
+		ObjectInfoIndex(51, 16, 26, 0x05C0), /* CROSSBOW       Quiver 1/Quiver 2/Pouch/Chest */
+		ObjectInfoIndex(52, 46, 26, 0x05C0), /* ARROW          Quiver 1/Quiver 2/Pouch/Chest */
+		ObjectInfoIndex(53, 11, 27, 0x0440), /* SLAYER         Quiver 1/Chest */
+		ObjectInfoIndex(54, 47, 42, 0x05C0), /* SLING          Quiver 1/Quiver 2/Pouch/Chest */
+		ObjectInfoIndex(55, 48, 40, 0x05C0), /* ROCK           Quiver 1/Quiver 2/Pouch/Chest */
+		ObjectInfoIndex(56, 49, 42, 0x05C0), /* POISON DART    Quiver 1/Quiver 2/Pouch/Chest */
+		ObjectInfoIndex(57, 50, 5, 0x0040), /* THROWING STAR  Quiver 1 */
+		ObjectInfoIndex(58, 11, 5, 0x0040), /* STICK          Quiver 1 */
+		ObjectInfoIndex(59, 31, 28, 0x0540), /* STAFF          Quiver 1/Pouch/Chest */
+		ObjectInfoIndex(60, 31, 29, 0x0540), /* WAND           Quiver 1/Pouch/Chest */
+		ObjectInfoIndex(61, 11, 30, 0x0040), /* TEOWAND        Quiver 1 */
+		ObjectInfoIndex(62, 11, 31, 0x0040), /* YEW STAFF      Quiver 1 */
+		ObjectInfoIndex(63, 11, 32, 0x0040), /* STAFF OF MANAR Quiver 1 Atari ST Version 1.0 1987-12-08: ObjectAspectIndex = 35 */
+		ObjectInfoIndex(64, 51, 33, 0x0040), /* SNAKE STAFF    Quiver 1 */
+		ObjectInfoIndex(65, 32, 5, 0x0440), /* THE CONDUIT    Quiver 1/Chest */
+		ObjectInfoIndex(66, 30, 35, 0x0040), /* DRAGON SPIT    Quiver 1 */
+		ObjectInfoIndex(135, 65, 36, 0x0440), /* SCEPTRE OF LYF Quiver 1/Chest */
+		ObjectInfoIndex(143, 45, 27, 0x0040), /* ROBE           Quiver 1 */
+		ObjectInfoIndex(28, 82, 1, 0x0040), /* FINE ROBE      Quiver 1 */
+		ObjectInfoIndex(80, 23, 0, 0x040C), /* KIRTLE         Neck/Torso/Chest */
+		ObjectInfoIndex(81, 23, 0, 0x040C), /* SILK SHIRT     Neck/Torso/Chest */
+		ObjectInfoIndex(82, 23, 0, 0x0410), /* ELVEN DOUBLET  Legs/Chest */
+		ObjectInfoIndex(112, 55, 0, 0x0420), /* LEATHER JERKIN Feet/Chest */
+		ObjectInfoIndex(114, 8, 0, 0x0420), /* TUNIC          Feet/Chest */
+		ObjectInfoIndex(67, 24, 0, 0x0408), /* GHI            Torso/Chest */
+		ObjectInfoIndex(83, 24, 0, 0x0410), /* MAIL AKETON    Legs/Chest */
+		ObjectInfoIndex(68, 24, 0, 0x0408), /* MITHRAL AKETON Torso/Chest */
+		ObjectInfoIndex(84, 24, 0, 0x0410), /* TORSO PLATE    Legs/Chest */
+		ObjectInfoIndex(69, 69, 0, 0x0408), /* PLATE OF LYTE  Torso/Chest */
+		ObjectInfoIndex(70, 24, 0, 0x0408), /* PLATE OF DARC  Torso/Chest */
+		ObjectInfoIndex(85, 24, 0, 0x0410), /* CAPE           Legs/Chest */
+		ObjectInfoIndex(86, 69, 0, 0x0410), /* CLOAK OF NIGHT Legs/Chest */
+		ObjectInfoIndex(71, 7, 0, 0x0408), /* BARBARIAN HIDE Torso/Chest */
+		ObjectInfoIndex(87, 7, 0, 0x0410), /* ROBE           Legs/Chest */
+		ObjectInfoIndex(119, 57, 0, 0x0420), /* FINE ROBE      Feet/Chest */
+		ObjectInfoIndex(72, 23, 0, 0x0408), /* TABARD         Torso/Chest */
+		ObjectInfoIndex(88, 23, 0, 0x0410), /* GUNNA          Legs/Chest */
+		ObjectInfoIndex(113, 29, 0, 0x0420), /* ELVEN HUKE     Feet/Chest */
+		ObjectInfoIndex(89, 69, 0, 0x0410), /* LEATHER PANTS  Legs/Chest */
+		ObjectInfoIndex(73, 69, 0, 0x0408), /* BLUE PANTS     Torso/Chest */
+		ObjectInfoIndex(74, 24, 0, 0x0408), /* GHI TROUSERS   Torso/Chest */
+		ObjectInfoIndex(90, 24, 0, 0x0410), /* LEG MAIL       Legs/Chest */
+		ObjectInfoIndex(103, 53, 0, 0x0402), /* MITHRAL MAIL   Head/Chest */
+		ObjectInfoIndex(104, 53, 0, 0x0402), /* LEG PLATE      Head/Chest */
+		ObjectInfoIndex(96, 9, 0, 0x0402), /* POLEYN OF LYTE Head/Chest */
+		ObjectInfoIndex(97, 9, 0, 0x0402), /* POLEYN OF DARC Head/Chest */
+		ObjectInfoIndex(98, 9, 0, 0x0402), /* BEZERKER HELM  Head/Chest */
+		ObjectInfoIndex(105, 54, 41, 0x0400), /* HELMET         Chest */
+		ObjectInfoIndex(106, 54, 41, 0x0200), /* BASINET        Hands */
+		ObjectInfoIndex(108, 10, 41, 0x0200), /* CASQUE 'N COIF Hands */
+		ObjectInfoIndex(107, 54, 41, 0x0200), /* ARMET          Hands */
+		ObjectInfoIndex(75, 19, 0, 0x0408), /* HELM OF LYTE   Torso/Chest */
+		ObjectInfoIndex(91, 19, 0, 0x0410), /* HELM OF DARC   Legs/Chest */
+		ObjectInfoIndex(76, 19, 0, 0x0408), /* CALISTA        Torso/Chest */
+		ObjectInfoIndex(92, 19, 0, 0x0410), /* CROWN OF NERRA Legs/Chest */
+		ObjectInfoIndex(99, 9, 0, 0x0402), /* BUCKLER        Head/Chest */
+		ObjectInfoIndex(115, 19, 0, 0x0420), /* HIDE SHIELD    Feet/Chest */
+		ObjectInfoIndex(100, 52, 0, 0x0402), /* SMALL SHIELD   Head/Chest */
+		ObjectInfoIndex(77, 20, 0, 0x0008), /* WOODEN SHIELD  Torso */
+		ObjectInfoIndex(93, 22, 0, 0x0010), /* LARGE SHIELD   Legs */
+		ObjectInfoIndex(116, 56, 0, 0x0420), /* SHIELD OF LYTE Feet/Chest */
+		ObjectInfoIndex(109, 10, 41, 0x0200), /* SHIELD OF DARC Hands */
+		ObjectInfoIndex(101, 52, 0, 0x0402), /* SANDALS        Head/Chest */
+		ObjectInfoIndex(78, 20, 0, 0x0008), /* SUEDE BOOTS    Torso */
+		ObjectInfoIndex(94, 22, 0, 0x0010), /* LEATHER BOOTS  Legs */
+		ObjectInfoIndex(117, 56, 0, 0x0420), /* HOSEN          Feet/Chest */
+		ObjectInfoIndex(110, 10, 41, 0x0200), /* FOOT PLATE     Hands */
+		ObjectInfoIndex(102, 52, 0, 0x0402), /* GREAVE OF LYTE Head/Chest */
+		ObjectInfoIndex(79, 20, 0, 0x0008), /* GREAVE OF DARC Torso */
+		ObjectInfoIndex(95, 22, 0, 0x0010), /* ELVEN BOOTS    Legs */
+		ObjectInfoIndex(118, 56, 0, 0x0420), /* GEM OF AGES    Feet/Chest */
+		ObjectInfoIndex(111, 10, 41, 0x0200), /* EKKHARD CROSS  Hands */
+		ObjectInfoIndex(140, 52, 0, 0x0402), /* MOONSTONE      Head/Chest */
+		ObjectInfoIndex(141, 19, 0, 0x0408), /* THE HELLION    Torso/Chest */
+		ObjectInfoIndex(142, 22, 0, 0x0010), /* PENDANT FERAL  Legs */
+		ObjectInfoIndex(194, 81, 0, 0x0420), /* COPPER COIN    Feet/Chest */
+		ObjectInfoIndex(196, 84, 0, 0x0408), /* SILVER COIN    Torso/Chest */
+		ObjectInfoIndex(0, 34, 0, 0x0500), /* GOLD COIN      Pouch/Chest */
+		ObjectInfoIndex(8, 6, 0, 0x0501), /* BOULDER        Mouth/Pouch/Chest */
+		ObjectInfoIndex(10, 15, 0, 0x0504), /* BLUE GEM       Neck/Pouch/Chest */
+		ObjectInfoIndex(12, 15, 0, 0x0504), /* ORANGE GEM     Neck/Pouch/Chest */
+		ObjectInfoIndex(146, 40, 0, 0x0500), /* GREEN GEM      Pouch/Chest */
+		ObjectInfoIndex(147, 41, 0, 0x0400), /* MAGICAL BOX    Chest */
+		ObjectInfoIndex(125, 4, 37, 0x0500), /* MAGICAL BOX    Pouch/Chest */
+		ObjectInfoIndex(126, 83, 37, 0x0500), /* MIRROR OF DAWN Pouch/Chest */
+		ObjectInfoIndex(127, 4, 37, 0x0500), /* HORN OF FEAR   Pouch/Chest */
+		ObjectInfoIndex(176, 18, 0, 0x0500), /* ROPE           Pouch/Chest */
+		ObjectInfoIndex(177, 18, 0, 0x0500), /* RABBIT'S FOOT  Pouch/Chest */
+		ObjectInfoIndex(178, 18, 0, 0x0500), /* CORBAMITE      Pouch/Chest */
+		ObjectInfoIndex(179, 18, 0, 0x0500), /* CHOKER         Pouch/Chest */
+		ObjectInfoIndex(180, 18, 0, 0x0500), /* DEXHELM        Pouch/Chest */
+		ObjectInfoIndex(181, 18, 0, 0x0500), /* FLAMEBAIN      Pouch/Chest */
+		ObjectInfoIndex(182, 18, 0, 0x0500), /* POWERTOWERS    Pouch/Chest */
+		ObjectInfoIndex(183, 18, 0, 0x0500), /* SPEEDBOW       Pouch/Chest */
+		ObjectInfoIndex(184, 62, 0, 0x0500), /* CHEST          Pouch/Chest */
+		ObjectInfoIndex(185, 62, 0, 0x0500), /* OPEN CHEST     Pouch/Chest */
+		ObjectInfoIndex(186, 62, 0, 0x0500), /* ASHES          Pouch/Chest */
+		ObjectInfoIndex(187, 62, 0, 0x0500), /* BONES          Pouch/Chest */
+		ObjectInfoIndex(188, 62, 0, 0x0500), /* MON POTION     Pouch/Chest */
+		ObjectInfoIndex(189, 62, 0, 0x0500), /* UM POTION      Pouch/Chest */
+		ObjectInfoIndex(190, 62, 0, 0x0500), /* DES POTION     Pouch/Chest */
+		ObjectInfoIndex(191, 62, 0, 0x0500), /* VEN POTION     Pouch/Chest */
+		ObjectInfoIndex(128, 76, 0, 0x0200), /* SAR POTION     Hands */
+		ObjectInfoIndex(129, 3, 0, 0x0500), /* ZO POTION      Pouch/Chest */
+		ObjectInfoIndex(130, 60, 0, 0x0500), /* ROS POTION     Pouch/Chest */
+		ObjectInfoIndex(131, 61, 0, 0x0500), /* KU POTION      Pouch/Chest */
+		ObjectInfoIndex(168, 27, 0, 0x0501), /* DANE POTION    Mouth/Pouch/Chest */
+		ObjectInfoIndex(169, 28, 0, 0x0501), /* NETA POTION    Mouth/Pouch/Chest */
+		ObjectInfoIndex(170, 25, 0, 0x0501), /* BRO POTION     Mouth/Pouch/Chest */
+		ObjectInfoIndex(171, 26, 0, 0x0501), /* MA POTION      Mouth/Pouch/Chest */
+		ObjectInfoIndex(172, 71, 0, 0x0401), /* YA POTION      Mouth/Chest */
+		ObjectInfoIndex(173, 70, 0, 0x0401), /* EE POTION      Mouth/Chest */
+		ObjectInfoIndex(174, 5, 0, 0x0501), /* VI POTION      Mouth/Pouch/Chest */
+		ObjectInfoIndex(175, 66, 0, 0x0501), /* WATER FLASK    Mouth/Pouch/Chest */
+		ObjectInfoIndex(120, 15, 0, 0x0504), /* KATH BOMB      Neck/Pouch/Chest */
+		ObjectInfoIndex(121, 15, 0, 0x0504), /* PEW BOMB       Neck/Pouch/Chest */
+		ObjectInfoIndex(122, 58, 0, 0x0504), /* RA BOMB        Neck/Pouch/Chest */
+		ObjectInfoIndex(123, 59, 0, 0x0504), /* FUL BOMB       Neck/Pouch/Chest */
+		ObjectInfoIndex(124, 59, 0, 0x0504), /* APPLE          Neck/Pouch/Chest */
+		ObjectInfoIndex(132, 79, 38, 0x0500), /* CORN           Pouch/Chest */
+		ObjectInfoIndex(133, 63, 38, 0x0500), /* BREAD          Pouch/Chest */
+		ObjectInfoIndex(134, 64, 0, 0x0500), /* CHEESE         Pouch/Chest */
+		ObjectInfoIndex(136, 72, 39, 0x0400), /* SCREAMER SLICE Chest */
+		ObjectInfoIndex(137, 73, 0, 0x0500), /* WORM ROUND     Pouch/Chest */
+		ObjectInfoIndex(138, 74, 0, 0x0500), /* DRUMSTICK      Pouch/Chest */
+		ObjectInfoIndex(139, 75, 0, 0x0504), /* DRAGON STEAK   Neck/Pouch/Chest */
+		ObjectInfoIndex(192, 77, 0, 0x0500), /* IRON KEY       Pouch/Chest */
+		ObjectInfoIndex(193, 78, 0, 0x0500), /* KEY OF B       Pouch/Chest */
+		ObjectInfoIndex(197, 74, 0, 0x0000), /* SOLID KEY */
+		ObjectInfoIndex(198, 41, 0, 0x0400) /* SQUARE KEY     Chest */
 	};
-	ArmourInfo armourInfo[58] = { // G0239_as_Graphic559_ArmourInfo
+	ArmourInfo armourInfo[58] = {
+		// G0239_as_Graphic559_ArmourInfo
 		/* { Weight, Defense, Attributes, Unreferenced } */
-		ArmourInfo(3,   5, 0x01),   /* CAPE */
-		ArmourInfo(4,  10, 0x01),   /* CLOAK OF NIGHT */
-		ArmourInfo(3,   4, 0x01),   /* BARBARIAN HIDE */
-		ArmourInfo(6,   5, 0x02),   /* SANDALS */
-		ArmourInfo(16,  25, 0x04),  /* LEATHER BOOTS */
-		ArmourInfo(4,   5, 0x00),   /* ROBE */
-		ArmourInfo(4,   5, 0x00),   /* ROBE */
-		ArmourInfo(3,   7, 0x01),   /* FINE ROBE */
-		ArmourInfo(3,   7, 0x01),   /* FINE ROBE */
-		ArmourInfo(4,   6, 0x01),   /* KIRTLE */
-		ArmourInfo(2,   4, 0x00),   /* SILK SHIRT */
-		ArmourInfo(4,   5, 0x01),   /* TABARD */
-		ArmourInfo(5,   7, 0x01),   /* GUNNA */
-		ArmourInfo(3,  11, 0x02),   /* ELVEN DOUBLET */
-		ArmourInfo(3,  13, 0x02),   /* ELVEN HUKE */
-		ArmourInfo(4,  13, 0x02),   /* ELVEN BOOTS */
-		ArmourInfo(6,  17, 0x03),   /* LEATHER JERKIN */
-		ArmourInfo(8,  20, 0x03),   /* LEATHER PANTS */
-		ArmourInfo(14,  20, 0x03),  /* SUEDE BOOTS */
-		ArmourInfo(6,  12, 0x02),   /* BLUE PANTS */
-		ArmourInfo(5,   9, 0x01),   /* TUNIC */
-		ArmourInfo(5,   8, 0x01),   /* GHI */
-		ArmourInfo(5,   9, 0x01),   /* GHI TROUSERS */
-		ArmourInfo(4,   1, 0x04),   /* CALISTA */
-		ArmourInfo(6,   5, 0x04),   /* CROWN OF NERRA */
-		ArmourInfo(11,  12, 0x05),  /* BEZERKER HELM */
-		ArmourInfo(14,  17, 0x05),  /* HELMET */
-		ArmourInfo(15,  20, 0x05),  /* BASINET */
-		ArmourInfo(11,  22, 0x85),  /* BUCKLER */
-		ArmourInfo(10,  16, 0x82),  /* HIDE SHIELD */
-		ArmourInfo(14,  20, 0x83),  /* WOODEN SHIELD */
-		ArmourInfo(21,  35, 0x84),  /* SMALL SHIELD */
-		ArmourInfo(65,  35, 0x05),  /* MAIL AKETON */
-		ArmourInfo(53,  35, 0x05),  /* LEG MAIL */
-		ArmourInfo(52,  70, 0x07),  /* MITHRAL AKETON */
-		ArmourInfo(41,  55, 0x07),  /* MITHRAL MAIL */
-		ArmourInfo(16,  25, 0x06),  /* CASQUE 'N COIF */
-		ArmourInfo(16,  30, 0x06),  /* HOSEN */
-		ArmourInfo(19,  40, 0x07),  /* ARMET */
-		ArmourInfo(120,  65, 0x04), /* TORSO PLATE */
-		ArmourInfo(80,  56, 0x04),  /* LEG PLATE */
-		ArmourInfo(28,  37, 0x05),  /* FOOT PLATE */
-		ArmourInfo(34,  56, 0x84),  /* LARGE SHIELD */
-		ArmourInfo(17,  62, 0x05),  /* HELM OF LYTE */
+		ArmourInfo(3, 5, 0x01), /* CAPE */
+		ArmourInfo(4, 10, 0x01), /* CLOAK OF NIGHT */
+		ArmourInfo(3, 4, 0x01), /* BARBARIAN HIDE */
+		ArmourInfo(6, 5, 0x02), /* SANDALS */
+		ArmourInfo(16, 25, 0x04), /* LEATHER BOOTS */
+		ArmourInfo(4, 5, 0x00), /* ROBE */
+		ArmourInfo(4, 5, 0x00), /* ROBE */
+		ArmourInfo(3, 7, 0x01), /* FINE ROBE */
+		ArmourInfo(3, 7, 0x01), /* FINE ROBE */
+		ArmourInfo(4, 6, 0x01), /* KIRTLE */
+		ArmourInfo(2, 4, 0x00), /* SILK SHIRT */
+		ArmourInfo(4, 5, 0x01), /* TABARD */
+		ArmourInfo(5, 7, 0x01), /* GUNNA */
+		ArmourInfo(3, 11, 0x02), /* ELVEN DOUBLET */
+		ArmourInfo(3, 13, 0x02), /* ELVEN HUKE */
+		ArmourInfo(4, 13, 0x02), /* ELVEN BOOTS */
+		ArmourInfo(6, 17, 0x03), /* LEATHER JERKIN */
+		ArmourInfo(8, 20, 0x03), /* LEATHER PANTS */
+		ArmourInfo(14, 20, 0x03), /* SUEDE BOOTS */
+		ArmourInfo(6, 12, 0x02), /* BLUE PANTS */
+		ArmourInfo(5, 9, 0x01), /* TUNIC */
+		ArmourInfo(5, 8, 0x01), /* GHI */
+		ArmourInfo(5, 9, 0x01), /* GHI TROUSERS */
+		ArmourInfo(4, 1, 0x04), /* CALISTA */
+		ArmourInfo(6, 5, 0x04), /* CROWN OF NERRA */
+		ArmourInfo(11, 12, 0x05), /* BEZERKER HELM */
+		ArmourInfo(14, 17, 0x05), /* HELMET */
+		ArmourInfo(15, 20, 0x05), /* BASINET */
+		ArmourInfo(11, 22, 0x85), /* BUCKLER */
+		ArmourInfo(10, 16, 0x82), /* HIDE SHIELD */
+		ArmourInfo(14, 20, 0x83), /* WOODEN SHIELD */
+		ArmourInfo(21, 35, 0x84), /* SMALL SHIELD */
+		ArmourInfo(65, 35, 0x05), /* MAIL AKETON */
+		ArmourInfo(53, 35, 0x05), /* LEG MAIL */
+		ArmourInfo(52, 70, 0x07), /* MITHRAL AKETON */
+		ArmourInfo(41, 55, 0x07), /* MITHRAL MAIL */
+		ArmourInfo(16, 25, 0x06), /* CASQUE 'N COIF */
+		ArmourInfo(16, 30, 0x06), /* HOSEN */
+		ArmourInfo(19, 40, 0x07), /* ARMET */
+		ArmourInfo(120, 65, 0x04), /* TORSO PLATE */
+		ArmourInfo(80, 56, 0x04), /* LEG PLATE */
+		ArmourInfo(28, 37, 0x05), /* FOOT PLATE */
+		ArmourInfo(34, 56, 0x84), /* LARGE SHIELD */
+		ArmourInfo(17, 62, 0x05), /* HELM OF LYTE */
 		ArmourInfo(108, 125, 0x04), /* PLATE OF LYTE */
-		ArmourInfo(72,  90, 0x04),  /* POLEYN OF LYTE */
-		ArmourInfo(24,  50, 0x05),  /* GREAVE OF LYTE */
-		ArmourInfo(30,  85, 0x84),  /* SHIELD OF LYTE */
-		ArmourInfo(35,  76, 0x04),  /* HELM OF DARC */
+		ArmourInfo(72, 90, 0x04), /* POLEYN OF LYTE */
+		ArmourInfo(24, 50, 0x05), /* GREAVE OF LYTE */
+		ArmourInfo(30, 85, 0x84), /* SHIELD OF LYTE */
+		ArmourInfo(35, 76, 0x04), /* HELM OF DARC */
 		ArmourInfo(141, 160, 0x04), /* PLATE OF DARC */
-		ArmourInfo(90, 101, 0x04),  /* POLEYN OF DARC */
-		ArmourInfo(31,  60, 0x05),  /* GREAVE OF DARC */
-		ArmourInfo(40, 100, 0x84),  /* SHIELD OF DARC */
-		ArmourInfo(14,  54, 0x06),  /* DEXHELM */
-		ArmourInfo(57,  60, 0x07),  /* FLAMEBAIN */
-		ArmourInfo(81,  88, 0x04),  /* POWERTOWERS */
-		ArmourInfo(3,  16, 0x02),   /* BOOTS OF SPEED */
-		ArmourInfo(2,   3, 0x03)    /* HALTER */
+		ArmourInfo(90, 101, 0x04), /* POLEYN OF DARC */
+		ArmourInfo(31, 60, 0x05), /* GREAVE OF DARC */
+		ArmourInfo(40, 100, 0x84), /* SHIELD OF DARC */
+		ArmourInfo(14, 54, 0x06), /* DEXHELM */
+		ArmourInfo(57, 60, 0x07), /* FLAMEBAIN */
+		ArmourInfo(81, 88, 0x04), /* POWERTOWERS */
+		ArmourInfo(3, 16, 0x02), /* BOOTS OF SPEED */
+		ArmourInfo(2, 3, 0x03) /* HALTER */
 	};
 
-	WeaponInfo weaponInfo[46] = { // @ G0238_as_Graphic559_WeaponInfo
+	WeaponInfo weaponInfo[46] = {
+		// @ G0238_as_Graphic559_WeaponInfo
 		/* { Weight, Class, Strength, KineticEnergy, Attributes } */
-		WeaponInfo(1, 130,   2,   0, 0x2000),  /* EYE OF TIME */
-		WeaponInfo(1, 131,   2,   0, 0x2000),  /* STORMRING */
-		WeaponInfo(11, 0,   8,   2, 0x2000),   /* TORCH */
-		WeaponInfo(12, 112,  10,  80, 0x2028), /* FLAMITT */
-		WeaponInfo(9, 129,  16,   7, 0x2000),  /* STAFF OF CLAWS */
-		WeaponInfo(30, 113,  49, 110, 0x0942), /* BOLT BLADE */
-		WeaponInfo(47, 0,  55,  20, 0x0900),   /* FURY */
-		WeaponInfo(24, 255,  25,  10, 0x20FF), /* THE FIRESTAFF */
-		WeaponInfo(5, 2,  10,  19, 0x0200),    /* DAGGER */
-		WeaponInfo(33, 0,  30,   8, 0x0900),   /* FALCHION */
-		WeaponInfo(32, 0,  34,  10, 0x0900),   /* SWORD */
-		WeaponInfo(26, 0,  38,  10, 0x0900),   /* RAPIER */
-		WeaponInfo(35, 0,  42,  11, 0x0900),   /* SABRE */
-		WeaponInfo(36, 0,  46,  12, 0x0900),   /* SAMURAI SWORD */
-		WeaponInfo(33, 0,  50,  14, 0x0900),   /* DELTA */
-		WeaponInfo(37, 0,  62,  14, 0x0900),   /* DIAMOND EDGE */
-		WeaponInfo(30, 0,  48,  13, 0x0000),   /* VORPAL BLADE */
-		WeaponInfo(39, 0,  58,  15, 0x0900),   /* THE INQUISITOR */
-		WeaponInfo(43, 2,  49,  33, 0x0300),   /* AXE */
-		WeaponInfo(65, 2,  70,  44, 0x0300),   /* HARDCLEAVE */
-		WeaponInfo(31, 0,  32,  10, 0x2000),   /* MACE */
-		WeaponInfo(41, 0,  42,  13, 0x2000),   /* MACE OF ORDER */
-		WeaponInfo(50, 0,  60,  15, 0x2000),   /* MORNINGSTAR */
-		WeaponInfo(36, 0,  19,  10, 0x2700),   /* CLUB */
-		WeaponInfo(110, 0,  44,  22, 0x2600),  /* STONE CLUB */
-		WeaponInfo(10, 20,   1,  50, 0x2032),  /* BOW */
-		WeaponInfo(28, 30,   1, 180, 0x2078),  /* CROSSBOW */
-		WeaponInfo(2, 10,   2,  10, 0x0100),   /* ARROW */
-		WeaponInfo(2, 10,   2,  28, 0x0500),   /* SLAYER */
-		WeaponInfo(19, 39,   5,  20, 0x2032),  /* SLING */
-		WeaponInfo(10, 11,   6,  18, 0x2000),  /* ROCK */
-		WeaponInfo(3, 12,   7,  23, 0x0800),   /* POISON DART */
-		WeaponInfo(1, 1,   3,  19, 0x0A00),    /* THROWING STAR */
-		WeaponInfo(8, 0,   4,   4, 0x2000),    /* STICK */
-		WeaponInfo(26, 129,  12,   4, 0x2000), /* STAFF */
-		WeaponInfo(1, 130,   0,   0, 0x2000),  /* WAND */
-		WeaponInfo(2, 140,   1,  20, 0x2000),  /* TEOWAND */
-		WeaponInfo(35, 128,  18,   6, 0x2000), /* YEW STAFF */
-		WeaponInfo(29, 159,   0,   4, 0x2000), /* STAFF OF MANAR */
-		WeaponInfo(21, 131,   0,   3, 0x2000), /* SNAKE STAFF */
-		WeaponInfo(33, 136,   0,   7, 0x2000), /* THE CONDUIT */
-		WeaponInfo(8, 132,   3,   1, 0x2000),  /* DRAGON SPIT */
-		WeaponInfo(18, 131,   9,   4, 0x2000), /* SCEPTRE OF LYF */
-		WeaponInfo(8, 192,   1,   1, 0x2000),  /* HORN OF FEAR */
-		WeaponInfo(30, 26,   1, 220, 0x207D),  /* SPEEDBOW */
-		WeaponInfo(36, 255, 100,  50, 0x20FF)  /* THE FIRESTAFF */
+		WeaponInfo(1, 130, 2, 0, 0x2000), /* EYE OF TIME */
+		WeaponInfo(1, 131, 2, 0, 0x2000), /* STORMRING */
+		WeaponInfo(11, 0, 8, 2, 0x2000), /* TORCH */
+		WeaponInfo(12, 112, 10, 80, 0x2028), /* FLAMITT */
+		WeaponInfo(9, 129, 16, 7, 0x2000), /* STAFF OF CLAWS */
+		WeaponInfo(30, 113, 49, 110, 0x0942), /* BOLT BLADE */
+		WeaponInfo(47, 0, 55, 20, 0x0900), /* FURY */
+		WeaponInfo(24, 255, 25, 10, 0x20FF), /* THE FIRESTAFF */
+		WeaponInfo(5, 2, 10, 19, 0x0200), /* DAGGER */
+		WeaponInfo(33, 0, 30, 8, 0x0900), /* FALCHION */
+		WeaponInfo(32, 0, 34, 10, 0x0900), /* SWORD */
+		WeaponInfo(26, 0, 38, 10, 0x0900), /* RAPIER */
+		WeaponInfo(35, 0, 42, 11, 0x0900), /* SABRE */
+		WeaponInfo(36, 0, 46, 12, 0x0900), /* SAMURAI SWORD */
+		WeaponInfo(33, 0, 50, 14, 0x0900), /* DELTA */
+		WeaponInfo(37, 0, 62, 14, 0x0900), /* DIAMOND EDGE */
+		WeaponInfo(30, 0, 48, 13, 0x0000), /* VORPAL BLADE */
+		WeaponInfo(39, 0, 58, 15, 0x0900), /* THE INQUISITOR */
+		WeaponInfo(43, 2, 49, 33, 0x0300), /* AXE */
+		WeaponInfo(65, 2, 70, 44, 0x0300), /* HARDCLEAVE */
+		WeaponInfo(31, 0, 32, 10, 0x2000), /* MACE */
+		WeaponInfo(41, 0, 42, 13, 0x2000), /* MACE OF ORDER */
+		WeaponInfo(50, 0, 60, 15, 0x2000), /* MORNINGSTAR */
+		WeaponInfo(36, 0, 19, 10, 0x2700), /* CLUB */
+		WeaponInfo(110, 0, 44, 22, 0x2600), /* STONE CLUB */
+		WeaponInfo(10, 20, 1, 50, 0x2032), /* BOW */
+		WeaponInfo(28, 30, 1, 180, 0x2078), /* CROSSBOW */
+		WeaponInfo(2, 10, 2, 10, 0x0100), /* ARROW */
+		WeaponInfo(2, 10, 2, 28, 0x0500), /* SLAYER */
+		WeaponInfo(19, 39, 5, 20, 0x2032), /* SLING */
+		WeaponInfo(10, 11, 6, 18, 0x2000), /* ROCK */
+		WeaponInfo(3, 12, 7, 23, 0x0800), /* POISON DART */
+		WeaponInfo(1, 1, 3, 19, 0x0A00), /* THROWING STAR */
+		WeaponInfo(8, 0, 4, 4, 0x2000), /* STICK */
+		WeaponInfo(26, 129, 12, 4, 0x2000), /* STAFF */
+		WeaponInfo(1, 130, 0, 0, 0x2000), /* WAND */
+		WeaponInfo(2, 140, 1, 20, 0x2000), /* TEOWAND */
+		WeaponInfo(35, 128, 18, 6, 0x2000), /* YEW STAFF */
+		WeaponInfo(29, 159, 0, 4, 0x2000), /* STAFF OF MANAR */
+		WeaponInfo(21, 131, 0, 3, 0x2000), /* SNAKE STAFF */
+		WeaponInfo(33, 136, 0, 7, 0x2000), /* THE CONDUIT */
+		WeaponInfo(8, 132, 3, 1, 0x2000), /* DRAGON SPIT */
+		WeaponInfo(18, 131, 9, 4, 0x2000), /* SCEPTRE OF LYF */
+		WeaponInfo(8, 192, 1, 1, 0x2000), /* HORN OF FEAR */
+		WeaponInfo(30, 26, 1, 220, 0x207D), /* SPEEDBOW */
+		WeaponInfo(36, 255, 100, 50, 0x20FF) /* THE FIRESTAFF */
 	};
 
 	CreatureInfo creatureInfo[k27_CreatureTypeCount] = { // @ G0243_as_Graphic559_CreatureInfo
-	/* { CreatureAspectIndex, AttackSoundOrdinal, Attributes, GraphicInfo,
+		                                                   /* { CreatureAspectIndex, AttackSoundOrdinal, Attributes, GraphicInfo,
 		MovementTicks, AttackTicks, Defense, BaseHealth, Attack, PoisonAttack,
 		Dexterity, Ranges, Properties, Resistances, AnimationTicks, WoundProbabilities, AttackType } */
-		{0,  4, 0x0482, 0x623D,   8, 20,  55, 150, 150, 240,  55, 0x1153, 0x299B, 0x0876, 0x0254, 0xFD40, 4},
-		{1,  0, 0x0480, 0xA625,  15, 32,  20, 110,  80,  15,  20, 0x3132, 0x33A9, 0x0E42, 0x0384, 0xFC41, 3},
-		{2,  6, 0x0510, 0x6198,   3,  5,  50,  10,  10,   0, 110, 0x1376, 0x710A, 0x0235, 0x0222, 0xFD20, 0},
-		{3,  0, 0x04B4, 0xB225,  10, 21,  30,  40,  58,   0,  80, 0x320A, 0x96AA, 0x0B3C, 0x0113, 0xF910, 5},
-		{4,  1, 0x0701, 0xA3B8,   9,  8,  45, 101,  90,   0,  65, 0x1554, 0x58FF, 0x0A34, 0x0143, 0xFE93, 4},
-		{5,  0, 0x0581, 0x539D,  20, 18, 100,  60,  30,   0,  30, 0x1232, 0x4338, 0x0583, 0x0265, 0xFFD6, 3},
-		{6,  3, 0x070C, 0x0020, 120, 10,   5, 165,   5,   0,   5, 0x1111, 0x10F1, 0x0764, 0x02F2, 0xFC84, 6},
-		{7,  7, 0x0300, 0x0220, 185, 15, 170,  50,  40,   5,  10, 0x1463, 0x25C4, 0x06E3, 0x01F4, 0xFD93, 4}, /* Atari ST: AttackSoundOrdinal = 0 */
-		{8,  2, 0x1864, 0x5225,  11, 16,  15,  30,  55,   0,  80, 0x1423, 0x4664, 0x0FC8, 0x0116, 0xFB30, 6},
-		{9, 10, 0x0282, 0x71B8,  21, 14, 240, 120, 219,   0,  35, 0x1023, 0x3BFF, 0x0FF7, 0x04F3, 0xF920, 3}, /* Atari ST: AttackSoundOrdinal = 7 */
-		{10,  2, 0x1480, 0x11B8,  17, 12,  25,  33,  20,   0,  40, 0x1224, 0x5497, 0x0F15, 0x0483, 0xFB20, 3},
-		{11,  0, 0x18C6, 0x0225, 255,  8,  45,  80, 105,   0,  60, 0x1314, 0x55A5, 0x0FF9, 0x0114, 0xFD95, 1},
-		{12, 11, 0x1280, 0x6038,   7,  7,  22,  20,  22,   0,  80, 0x1013, 0x6596, 0x0F63, 0x0132, 0xFA30, 4}, /* Atari ST: AttackSoundOrdinal = 8 */
-		{13,  9, 0x14A2, 0xB23D,   5, 10,  42,  39,  90, 100,  88, 0x1343, 0x5734, 0x0638, 0x0112, 0xFA30, 4}, /* Atari ST: AttackSoundOrdinal = 0 */
-		{14,  0, 0x05B8, 0x1638,  10, 20,  47,  44,  75,   0,  90, 0x4335, 0xD952, 0x035B, 0x0664, 0xFD60, 5},
-		{15,  5, 0x0381, 0x523D,  18, 19,  72,  70,  45,  35,  35, 0x1AA1, 0x15AB, 0x0B93, 0x0253, 0xFFC5, 4},
-		{16, 10, 0x0680, 0xA038,  13,  8,  28,  20,  25,   0,  41, 0x1343, 0x2148, 0x0321, 0x0332, 0xFC30, 3}, /* Atari ST: AttackSoundOrdinal = 7 */
-		{17,  0, 0x04A0, 0xF23D,   1, 16, 180,   8,  28,  20, 150, 0x1432, 0x19FD, 0x0004, 0x0112, 0xF710, 4},
-		{18, 11, 0x0280, 0xA3BD,  14,  6, 140,  60, 105,   0,  70, 0x1005, 0x7AFF, 0x0FFA, 0x0143, 0xFA30, 4}, /* Atari ST: AttackSoundOrdinal = 8 */
-		{19,  0, 0x0060, 0xE23D,   5, 18,  15,  33,  61,   0,  65, 0x3258, 0xAC77, 0x0F56, 0x0117, 0xFC40, 5},
-		{20,  8, 0x10DE, 0x0225,  25, 25,  75, 144,  66,   0,  50, 0x1381, 0x7679, 0x0EA7, 0x0345, 0xFD93, 3}, /* Atari ST: AttackSoundOrdinal = 0 */
-		{21,  3, 0x0082, 0xA3BD,   7, 15,  33,  77, 130,   0,  60, 0x1592, 0x696A, 0x0859, 0x0224, 0xFC30, 4},
-		{22,  0, 0x1480, 0x53BD,  10, 14,  68, 100, 100,   0,  75, 0x4344, 0xBDF9, 0x0A5D, 0x0124, 0xF920, 3},
-		{23,  0, 0x38AA, 0x0038,  12, 22, 255, 180, 210,   0, 130, 0x6369, 0xFF37, 0x0FBF, 0x0564, 0xFB52, 5},
-		{24,  1, 0x068A, 0x97BD,  13, 28, 110, 255, 255,   0,  70, 0x3645, 0xBF7C, 0x06CD, 0x0445, 0xFC30, 4}, /* Atari ST Version 1.0 1987-12-08 1987-12-11: Ranges = 0x2645 */
-		{25,  0, 0x38AA, 0x0000,  12, 22, 255, 180, 210,   0, 130, 0x6369, 0xFF37, 0x0FBF, 0x0564, 0xFB52, 5},
-		{26,  0, 0x38AA, 0x0000,  12, 22, 255, 180, 210,   0, 130, 0x6369, 0xFF37, 0x0FBF, 0x0564, 0xFB52, 5}
+		                                                   { 0, 4, 0x0482, 0x623D, 8, 20, 55, 150, 150, 240, 55, 0x1153, 0x299B, 0x0876, 0x0254, 0xFD40, 4 },
+		                                                   { 1, 0, 0x0480, 0xA625, 15, 32, 20, 110, 80, 15, 20, 0x3132, 0x33A9, 0x0E42, 0x0384, 0xFC41, 3 },
+		                                                   { 2, 6, 0x0510, 0x6198, 3, 5, 50, 10, 10, 0, 110, 0x1376, 0x710A, 0x0235, 0x0222, 0xFD20, 0 },
+		                                                   { 3, 0, 0x04B4, 0xB225, 10, 21, 30, 40, 58, 0, 80, 0x320A, 0x96AA, 0x0B3C, 0x0113, 0xF910, 5 },
+		                                                   { 4, 1, 0x0701, 0xA3B8, 9, 8, 45, 101, 90, 0, 65, 0x1554, 0x58FF, 0x0A34, 0x0143, 0xFE93, 4 },
+		                                                   { 5, 0, 0x0581, 0x539D, 20, 18, 100, 60, 30, 0, 30, 0x1232, 0x4338, 0x0583, 0x0265, 0xFFD6, 3 },
+		                                                   { 6, 3, 0x070C, 0x0020, 120, 10, 5, 165, 5, 0, 5, 0x1111, 0x10F1, 0x0764, 0x02F2, 0xFC84, 6 },
+		                                                   { 7, 7, 0x0300, 0x0220, 185, 15, 170, 50, 40, 5, 10, 0x1463, 0x25C4, 0x06E3, 0x01F4, 0xFD93, 4 }, /* Atari ST: AttackSoundOrdinal = 0 */
+		                                                   { 8, 2, 0x1864, 0x5225, 11, 16, 15, 30, 55, 0, 80, 0x1423, 0x4664, 0x0FC8, 0x0116, 0xFB30, 6 },
+		                                                   { 9, 10, 0x0282, 0x71B8, 21, 14, 240, 120, 219, 0, 35, 0x1023, 0x3BFF, 0x0FF7, 0x04F3, 0xF920, 3 }, /* Atari ST: AttackSoundOrdinal = 7 */
+		                                                   { 10, 2, 0x1480, 0x11B8, 17, 12, 25, 33, 20, 0, 40, 0x1224, 0x5497, 0x0F15, 0x0483, 0xFB20, 3 },
+		                                                   { 11, 0, 0x18C6, 0x0225, 255, 8, 45, 80, 105, 0, 60, 0x1314, 0x55A5, 0x0FF9, 0x0114, 0xFD95, 1 },
+		                                                   { 12, 11, 0x1280, 0x6038, 7, 7, 22, 20, 22, 0, 80, 0x1013, 0x6596, 0x0F63, 0x0132, 0xFA30, 4 }, /* Atari ST: AttackSoundOrdinal = 8 */
+		                                                   { 13, 9, 0x14A2, 0xB23D, 5, 10, 42, 39, 90, 100, 88, 0x1343, 0x5734, 0x0638, 0x0112, 0xFA30, 4 }, /* Atari ST: AttackSoundOrdinal = 0 */
+		                                                   { 14, 0, 0x05B8, 0x1638, 10, 20, 47, 44, 75, 0, 90, 0x4335, 0xD952, 0x035B, 0x0664, 0xFD60, 5 },
+		                                                   { 15, 5, 0x0381, 0x523D, 18, 19, 72, 70, 45, 35, 35, 0x1AA1, 0x15AB, 0x0B93, 0x0253, 0xFFC5, 4 },
+		                                                   { 16, 10, 0x0680, 0xA038, 13, 8, 28, 20, 25, 0, 41, 0x1343, 0x2148, 0x0321, 0x0332, 0xFC30, 3 }, /* Atari ST: AttackSoundOrdinal = 7 */
+		                                                   { 17, 0, 0x04A0, 0xF23D, 1, 16, 180, 8, 28, 20, 150, 0x1432, 0x19FD, 0x0004, 0x0112, 0xF710, 4 },
+		                                                   { 18, 11, 0x0280, 0xA3BD, 14, 6, 140, 60, 105, 0, 70, 0x1005, 0x7AFF, 0x0FFA, 0x0143, 0xFA30, 4 }, /* Atari ST: AttackSoundOrdinal = 8 */
+		                                                   { 19, 0, 0x0060, 0xE23D, 5, 18, 15, 33, 61, 0, 65, 0x3258, 0xAC77, 0x0F56, 0x0117, 0xFC40, 5 },
+		                                                   { 20, 8, 0x10DE, 0x0225, 25, 25, 75, 144, 66, 0, 50, 0x1381, 0x7679, 0x0EA7, 0x0345, 0xFD93, 3 }, /* Atari ST: AttackSoundOrdinal = 0 */
+		                                                   { 21, 3, 0x0082, 0xA3BD, 7, 15, 33, 77, 130, 0, 60, 0x1592, 0x696A, 0x0859, 0x0224, 0xFC30, 4 },
+		                                                   { 22, 0, 0x1480, 0x53BD, 10, 14, 68, 100, 100, 0, 75, 0x4344, 0xBDF9, 0x0A5D, 0x0124, 0xF920, 3 },
+		                                                   { 23, 0, 0x38AA, 0x0038, 12, 22, 255, 180, 210, 0, 130, 0x6369, 0xFF37, 0x0FBF, 0x0564, 0xFB52, 5 },
+		                                                   { 24, 1, 0x068A, 0x97BD, 13, 28, 110, 255, 255, 0, 70, 0x3645, 0xBF7C, 0x06CD, 0x0445, 0xFC30, 4 }, /* Atari ST Version 1.0 1987-12-08 1987-12-11: Ranges = 0x2645 */
+		                                                   { 25, 0, 0x38AA, 0x0000, 12, 22, 255, 180, 210, 0, 130, 0x6369, 0xFF37, 0x0FBF, 0x0564, 0xFB52, 5 },
+		                                                   { 26, 0, 0x38AA, 0x0000, 12, 22, 255, 180, 210, 0, 130, 0x6369, 0xFF37, 0x0FBF, 0x0564, 0xFB52, 5 }
 	};
 	// this is the number of uint16s the data has to be stored, not the length of the data in dungeon.dat!
-	byte thingDataWordCount[16] = { // @ G0235_auc_Graphic559_ThingDataByteCount
-		2,   /* Door */
-		3,   /* Teleporter */
-		2,   /* Text String */
-		4,   /* Sensor */
-		9,   /* Group */
-		2,   /* Weapon */
-		2,   /* Armour */
-		2,   /* Scroll */
-		2,   /* Potion */
-		4,   /* Container */
-		2,   /* Junk */
-		0,   /* Unused */
-		0,   /* Unused */
-		0,   /* Unused */
-		5,   /* Projectile */
-		2    /* Explosion */
+	byte thingDataWordCount[16] = {
+		// @ G0235_auc_Graphic559_ThingDataByteCount
+		2, /* Door */
+		3, /* Teleporter */
+		2, /* Text String */
+		4, /* Sensor */
+		9, /* Group */
+		2, /* Weapon */
+		2, /* Armour */
+		2, /* Scroll */
+		2, /* Potion */
+		4, /* Container */
+		2, /* Junk */
+		0, /* Unused */
+		0, /* Unused */
+		0, /* Unused */
+		5, /* Projectile */
+		2 /* Explosion */
 	};
 
 	for (int i = 0; i < 180; i++)
@@ -407,10 +411,10 @@ void DungeonMan::setupConstants() {
 
 	for (int i = 0; i < 16; i++)
 		_thingDataWordCount[i] = thingDataWordCount[i];
-
 }
 
-DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine) {
+DungeonMan::DungeonMan(DMEngine *dmEngine)
+  : _vm(dmEngine) {
 	_rawDunFileDataSize = 0;
 	_rawDunFileData = nullptr;
 	_dungeonColumCount = 0;
@@ -544,23 +548,24 @@ void DungeonMan::decompressDungeonFile() {
 }
 
 void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
-	static const byte additionalThingCounts[16] = { // @ G0236_auc_Graphic559_AdditionalThingCounts{
-		0,    /* Door */
-		0,    /* Teleporter */
-		0,    /* Text String */
-		0,    /* Sensor */
-		75,   /* Group */
-		100,  /* Weapon */
-		120,  /* Armour */
-		0,    /* Scroll */
-		5,    /* Potion */
-		0,    /* Container */
-		140,  /* Junk */
-		0,    /* Unused */
-		0,    /* Unused */
-		0,    /* Unused */
-		60,   /* Projectile */
-		50    /* Explosion */
+	static const byte additionalThingCounts[16] = {
+		// @ G0236_auc_Graphic559_AdditionalThingCounts{
+		0, /* Door */
+		0, /* Teleporter */
+		0, /* Text String */
+		0, /* Sensor */
+		75, /* Group */
+		100, /* Weapon */
+		120, /* Armour */
+		0, /* Scroll */
+		5, /* Potion */
+		0, /* Container */
+		140, /* Junk */
+		0, /* Unused */
+		0, /* Unused */
+		0, /* Unused */
+		60, /* Projectile */
+		50 /* Explosion */
 	};
 
 	Timeline &timeline = *_vm->_timeline;
@@ -702,7 +707,7 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 
 		if ((thingType == kDMThingTypeGroup || thingType == kDMThingTypeProjectile) && !file) { // !file because save files have diff. structure than dungeon.dat
 			for (uint16 i = 0; i < thingCount; ++i) {
-				uint16 *nextSlot = _thingData[thingType] + i *thingStoreWordCount;
+				uint16 *nextSlot = _thingData[thingType] + i * thingStoreWordCount;
 				for (uint16 j = 0; j < thingStoreWordCount; ++j) {
 					if (j == 2 || j == 3)
 						nextSlot[j] = dunDataStream->readByte();
@@ -712,7 +717,7 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 			}
 		} else {
 			for (uint16 i = 0; i < thingCount; ++i) {
-				uint16 *nextSlot = _thingData[thingType] + i *thingStoreWordCount;
+				uint16 *nextSlot = _thingData[thingType] + i * thingStoreWordCount;
 				for (uint16 j = 0; j < thingStoreWordCount; ++j)
 					nextSlot[j] = dunDataStream->readUint16BE();
 			}
@@ -739,7 +744,7 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 	if (!_vm->_restartGameRequest) {
 		uint8 mapCount = _dungeonFileHeader._mapCount;
 		delete[] _dungeonMapData;
-		_dungeonMapData = new byte**[_dungeonColumCount + mapCount];
+		_dungeonMapData = new byte **[_dungeonColumCount + mapCount];
 		byte **colFirstSquares = (byte **)_dungeonMapData + mapCount;
 		for (uint8 i = 0; i < mapCount; ++i) {
 			_dungeonMapData[i] = colFirstSquares;
@@ -758,14 +763,14 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 }
 
 void DungeonMan::setCurrentMap(uint16 mapIndex) {
-	static const DoorInfo doorInfo[4] = { // @ G0254_as_Graphic559_DoorInfo
+	static const DoorInfo doorInfo[4] = {
+		// @ G0254_as_Graphic559_DoorInfo
 		/* { Attributes, Defense } */
-		DoorInfo(3, 110),   /* Door type 0 Portcullis */
-		DoorInfo(0,  42),   /* Door type 1 Wooden door */
-		DoorInfo(0, 230),   /* Door type 2 Iron door */
-		DoorInfo(5, 255)    /* Door type 3 Ra door */
+		DoorInfo(3, 110), /* Door type 0 Portcullis */
+		DoorInfo(0, 42), /* Door type 1 Wooden door */
+		DoorInfo(0, 230), /* Door type 2 Iron door */
+		DoorInfo(5, 255) /* Door type 3 Ra door */
 	};
-
 
 	_currMapIndex = mapIndex;
 	_currMapData = _dungeonMapData[mapIndex];
@@ -797,7 +802,6 @@ void DungeonMan::setCurrentMapAndPartyMap(uint16 mapIndex) {
 	_currMapInscriptionWallOrnIndex = _currMap->_wallOrnCount;
 	displMan._currMapWallOrnIndices[_currMapInscriptionWallOrnIndex] = k0_WallOrnInscription;
 }
-
 
 Square DungeonMan::getSquare(int16 mapX, int16 mapY) {
 	bool isMapYInBounds = (mapY >= 0) && (mapY < _currMapHeight);
@@ -854,9 +858,9 @@ Thing DungeonMan::getSquareFirstThing(int16 mapX, int16 mapY) {
 
 void DungeonMan::setSquareAspect(uint16 *aspectArray, Direction dir, int16 mapX, int16 mapY) {
 	unsigned char L0307_uc_Multiple;
-#define AL0307_uc_Square            L0307_uc_Multiple
+#define AL0307_uc_Square L0307_uc_Multiple
 #define AL0307_uc_FootprintsAllowed L0307_uc_Multiple
-#define AL0307_uc_ScentOrdinal      L0307_uc_Multiple
+#define AL0307_uc_ScentOrdinal L0307_uc_Multiple
 
 	DisplayMan &displMan = *_vm->_displayMan;
 	ChampionMan &championMan = *_vm->_championMan;
@@ -900,7 +904,7 @@ void DungeonMan::setSquareAspect(uint16 *aspectArray, Direction dir, int16 mapX,
 		}
 		displMan._championPortraitOrdinal = 0;
 		squareIsFakeWall = false;
-T0172010_ClosedFakeWall:
+	T0172010_ClosedFakeWall:
 		setSquareAspectOrnOrdinals(aspectArray, leftRandomWallOrnamentAllowed, frontRandomWallOrnamentAllowed, rightRandomWallOrnamentAllowed, dir, mapX, mapY, squareIsFakeWall);
 		while ((curThing != _vm->_thingEndOfList) && (curThing.getType() <= kDMThingTypeSensor)) {
 			ThingType curThingType = curThing.getType();
@@ -976,7 +980,7 @@ T0172010_ClosedFakeWall:
 			curThing = getNextThing(curThing);
 		break;
 	case kDMElementTypeDoor:
-		if (bool((getFlag(AL0307_uc_Square, (byte) kDMSquareMaskDoorNorthSouth) >> 3)) == _vm->isOrientedWestEast(dir)) {
+		if (bool((getFlag(AL0307_uc_Square, (byte)kDMSquareMaskDoorNorthSouth) >> 3)) == _vm->isOrientedWestEast(dir)) {
 			aspectArray[kDMSquareAspectElement] = kDMElementTypeDoorSide;
 		} else {
 			aspectArray[kDMSquareAspectElement] = kDMElementTypeDoorFront;
@@ -997,7 +1001,7 @@ T0172010_ClosedFakeWall:
 }
 
 void DungeonMan::setSquareAspectOrnOrdinals(uint16 *aspectArray, bool leftAllowed, bool frontAllowed, bool rightAllowed, int16 dir,
-												 int16 mapX, int16 mapY, bool isFakeWall) {
+                                            int16 mapX, int16 mapY, bool isFakeWall) {
 
 	int16 randomWallOrnamentCount = _currMap->_randWallOrnCount;
 	aspectArray[kDMSquareAspectRightWallOrnOrd] = getRandomOrnOrdinal(leftAllowed, randomWallOrnamentCount, mapX, ++mapY * (_vm->normalizeModulo4(++dir) + 1), 30);
@@ -1019,7 +1023,6 @@ int16 DungeonMan::getRandomOrnOrdinal(bool allowed, int16 count, int16 mapX, int
 
 	return 0;
 }
-
 
 bool DungeonMan::isWallOrnAnAlcove(int16 wallOrnIndex) {
 	if (wallOrnIndex >= 0) {
@@ -1047,84 +1050,108 @@ Thing DungeonMan::getNextThing(Thing thing) {
 
 void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
 	static char messageAndScrollEscReplacementStrings[32][8] = { // @ G0255_aac_Graphic559_MessageAndScrollEscapeReplacementStrings
-		{'x',   0,   0,   0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { '?',  0,  0,  0, 0, 0, 0, 0 }, */
-		{'y',   0,   0,   0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { '!',  0,  0,  0, 0, 0, 0, 0 }, */
-		{'T', 'H', 'E', ' ', 0, 0, 0, 0},
-		{'Y', 'O', 'U', ' ', 0, 0, 0, 0},
-		{'z',   0,   0,   0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-		{'{',   0,   0,   0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-		{'|',   0,   0,   0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-		{'}',   0,   0,   0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-		{'~',   0,   0,   0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-		{'',   0,   0,   0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-		{0,     0,   0,   0, 0, 0, 0, 0},
-		{0,     0,   0,   0, 0, 0, 0, 0},
-		{0,     0,   0,   0, 0, 0, 0, 0},
-		{0,     0,   0,   0, 0, 0, 0, 0},
-		{0,     0,   0,   0, 0, 0, 0, 0},
-		{0,     0,   0,   0, 0, 0, 0, 0},
-		{0,     0,   0,   0, 0, 0, 0, 0},
-		{0,     0,   0,   0, 0, 0, 0, 0},
-		{0,     0,   0,   0, 0, 0, 0, 0},
-		{0,     0,   0,   0, 0, 0, 0, 0},
-		{0,     0,   0,   0, 0, 0, 0, 0},
-		{0,     0,   0,   0, 0, 0, 0, 0},
-		{0,     0,   0,   0, 0, 0, 0, 0},
-		{0,     0,   0,   0, 0, 0, 0, 0},
-		{0,     0,   0,   0, 0, 0, 0, 0},
-		{0,     0,   0,   0, 0, 0, 0, 0},
-		{0,     0,   0,   0, 0, 0, 0, 0},
-		{0,     0,   0,   0, 0, 0, 0, 0},
-		{0,     0,   0,   0, 0, 0, 0, 0},
-		{0,     0,   0,   0, 0, 0, 0, 0},
-		{0,     0,   0,   0, 0, 0, 0, 0},
-		{0,     0,   0,   0, 0, 0, 0, 0}
+		                                                           { 'x', 0, 0, 0, 0, 0, 0, 0 }, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { '?',  0,  0,  0, 0, 0, 0, 0 }, */
+		                                                           { 'y', 0, 0, 0, 0, 0, 0, 0 }, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { '!',  0,  0,  0, 0, 0, 0, 0 }, */
+		                                                           { 'T', 'H', 'E', ' ', 0, 0, 0, 0 },
+		                                                           { 'Y', 'O', 'U', ' ', 0, 0, 0, 0 },
+		                                                           { 'z', 0, 0, 0, 0, 0, 0, 0 }, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		                                                           { '{', 0, 0, 0, 0, 0, 0, 0 }, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		                                                           { '|', 0, 0, 0, 0, 0, 0, 0 }, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		                                                           { '}', 0, 0, 0, 0, 0, 0, 0 }, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		                                                           { '~', 0, 0, 0, 0, 0, 0, 0 }, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		                                                           { '', 0, 0, 0, 0, 0, 0, 0 }, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		                                                           { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                           { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                           { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                           { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                           { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                           { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                           { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                           { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                           { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                           { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                           { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                           { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                           { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                           { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                           { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                           { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                           { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                           { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                           { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                           { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                           { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                           { 0, 0, 0, 0, 0, 0, 0, 0 }
 	};
 
 	static char escReplacementCharacters[32][2] = { // @ G0256_aac_Graphic559_EscapeReplacementCharacters
-		{'a', 0}, {'b', 0}, {'c', 0}, {'d', 0},
-		{'e', 0}, {'f', 0}, {'g', 0}, {'h', 0},
-		{'i', 0}, {'j', 0}, {'k', 0}, {'l', 0},
-		{'m', 0}, {'n', 0}, {'o', 0}, {'p', 0},
-		{'q', 0}, {'r', 0}, {'s', 0}, {'t', 0},
-		{'u', 0}, {'v', 0}, {'w', 0}, {'x', 0},
-		{'0', 0}, {'1', 0}, {'2', 0}, {'3', 0},
-		{'4', 0}, {'5', 0}, {'6', 0}, {'7', 0}
+		                                              { 'a', 0 },
+		                                              { 'b', 0 },
+		                                              { 'c', 0 },
+		                                              { 'd', 0 },
+		                                              { 'e', 0 },
+		                                              { 'f', 0 },
+		                                              { 'g', 0 },
+		                                              { 'h', 0 },
+		                                              { 'i', 0 },
+		                                              { 'j', 0 },
+		                                              { 'k', 0 },
+		                                              { 'l', 0 },
+		                                              { 'm', 0 },
+		                                              { 'n', 0 },
+		                                              { 'o', 0 },
+		                                              { 'p', 0 },
+		                                              { 'q', 0 },
+		                                              { 'r', 0 },
+		                                              { 's', 0 },
+		                                              { 't', 0 },
+		                                              { 'u', 0 },
+		                                              { 'v', 0 },
+		                                              { 'w', 0 },
+		                                              { 'x', 0 },
+		                                              { '0', 0 },
+		                                              { '1', 0 },
+		                                              { '2', 0 },
+		                                              { '3', 0 },
+		                                              { '4', 0 },
+		                                              { '5', 0 },
+		                                              { '6', 0 },
+		                                              { '7', 0 }
 	};
 
 	static char inscriptionEscReplacementStrings[32][8] = { // @ G0257_aac_Graphic559_InscriptionEscapeReplacementStrings
-		{28,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-		{29,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-		{19,  7,  4, 26, 0, 0, 0, 0},
-		{24, 14, 20, 26, 0, 0, 0, 0},
-		{30,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-		{31,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-		{32,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-		{33,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-		{34,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-		{35,  0,  0,  0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
-		{0,   0,  0,  0, 0, 0, 0, 0},
-		{0,   0,  0,  0, 0, 0, 0, 0},
-		{0,   0,  0,  0, 0, 0, 0, 0},
-		{0,   0,  0,  0, 0, 0, 0, 0},
-		{0,   0,  0,  0, 0, 0, 0, 0},
-		{0,   0,  0,  0, 0, 0, 0, 0},
-		{0,   0,  0,  0, 0, 0, 0, 0},
-		{0,   0,  0,  0, 0, 0, 0, 0},
-		{0,   0,  0,  0, 0, 0, 0, 0},
-		{0,   0,  0,  0, 0, 0, 0, 0},
-		{0,   0,  0,  0, 0, 0, 0, 0},
-		{0,   0,  0,  0, 0, 0, 0, 0},
-		{0,   0,  0,  0, 0, 0, 0, 0},
-		{0,   0,  0,  0, 0, 0, 0, 0},
-		{0,   0,  0,  0, 0, 0, 0, 0},
-		{0,   0,  0,  0, 0, 0, 0, 0},
-		{0,   0,  0,  0, 0, 0, 0, 0},
-		{0,   0,  0,  0, 0, 0, 0, 0},
-		{0,   0,  0,  0, 0, 0, 0, 0},
-		{0,   0,  0,  0, 0, 0, 0, 0},
-		{0,   0,  0,  0, 0, 0, 0, 0},
-		{0,   0,  0,  0, 0, 0, 0, 0}
+		                                                      { 28, 0, 0, 0, 0, 0, 0, 0 }, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		                                                      { 29, 0, 0, 0, 0, 0, 0, 0 }, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		                                                      { 19, 7, 4, 26, 0, 0, 0, 0 },
+		                                                      { 24, 14, 20, 26, 0, 0, 0, 0 },
+		                                                      { 30, 0, 0, 0, 0, 0, 0, 0 }, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		                                                      { 31, 0, 0, 0, 0, 0, 0, 0 }, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		                                                      { 32, 0, 0, 0, 0, 0, 0, 0 }, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		                                                      { 33, 0, 0, 0, 0, 0, 0, 0 }, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		                                                      { 34, 0, 0, 0, 0, 0, 0, 0 }, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		                                                      { 35, 0, 0, 0, 0, 0, 0, 0 }, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { 0,  0,  0,  0, 0, 0, 0, 0 }, */
+		                                                      { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                      { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                      { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                      { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                      { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                      { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                      { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                      { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                      { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                      { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                      { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                      { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                      { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                      { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                      { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                      { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                      { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                      { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                      { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                      { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                      { 0, 0, 0, 0, 0, 0, 0, 0 },
+		                                                      { 0, 0, 0, 0, 0, 0, 0, 0 }
 	};
 
 	TextString textString(_thingData[kDMstringTypeText] + thing.getIndex() * _thingDataWordCount[kDMstringTypeText]);
@@ -1226,28 +1253,28 @@ Thing DungeonMan::getUnusedThing(uint16 thingType) {
 
 uint16 DungeonMan::getObjectWeight(Thing thing) {
 	static const uint16 junkInfo[] = { // @ G0241_auc_Graphic559_JunkInfo
-		// COMPASS - WATERSKIN - JEWEL SYMAL - ILLUMULET - ASHES
-		1, 3, 2, 2, 4,
-		// BONES - COPPER COIN - SILVER COIN - GOLD COIN - IRON KEY
-		15, 1, 1, 1, 2,
-		// KEY OF B - SOLID KEY - SQUARE KEY - TOURQUOISE KEY - CROSS KEY
-		1, 1, 1, 1, 1,
-		// ONYX KEY - SKELETON KEY - GOLD KEY - WINGED KEY - TOPAZ KEY
-		1, 1, 1, 1, 1,
-		// SAPPHIRE KEY - EMERALD KEY - RUBY KEY - RA KEY - MASTER KEY
-		1, 1, 1, 1, 1,
-		// BOULDER - BLUE GEM - ORANGE GEM - GREEN GEM - APPLE
-		81, 2, 3, 2, 4,
-		// CORN - BREAD - CHEESE - SCREAMER SLICE - WORM ROUND
-		4, 3, 8, 5, 11,
-		// DRUMSTICK - DRAGON STEAK - GEM OF AGES - EKKHARD CROSS - MOONSTONE
-		4, 6, 2, 3, 2,
-		// THE HELLION - PENDANT FERAL - MAGICAL BOX - MAGICAL BOX - MIRROR OF DAWN
-		2, 2, 6, 9, 3,
-		// ROPE - RABBIT'S FOOT - CORBAMITE - CHOKER - LOCK PICKS
-		10, 1, 0, 1, 1,
-		// MAGNIFIER - ZOKATHRA SPELL - BONES
-		2, 0, 8
+		                                 // COMPASS - WATERSKIN - JEWEL SYMAL - ILLUMULET - ASHES
+		                                 1, 3, 2, 2, 4,
+		                                 // BONES - COPPER COIN - SILVER COIN - GOLD COIN - IRON KEY
+		                                 15, 1, 1, 1, 2,
+		                                 // KEY OF B - SOLID KEY - SQUARE KEY - TOURQUOISE KEY - CROSS KEY
+		                                 1, 1, 1, 1, 1,
+		                                 // ONYX KEY - SKELETON KEY - GOLD KEY - WINGED KEY - TOPAZ KEY
+		                                 1, 1, 1, 1, 1,
+		                                 // SAPPHIRE KEY - EMERALD KEY - RUBY KEY - RA KEY - MASTER KEY
+		                                 1, 1, 1, 1, 1,
+		                                 // BOULDER - BLUE GEM - ORANGE GEM - GREEN GEM - APPLE
+		                                 81, 2, 3, 2, 4,
+		                                 // CORN - BREAD - CHEESE - SCREAMER SLICE - WORM ROUND
+		                                 4, 3, 8, 5, 11,
+		                                 // DRUMSTICK - DRAGON STEAK - GEM OF AGES - EKKHARD CROSS - MOONSTONE
+		                                 4, 6, 2, 3, 2,
+		                                 // THE HELLION - PENDANT FERAL - MAGICAL BOX - MAGICAL BOX - MIRROR OF DAWN
+		                                 2, 2, 6, 9, 3,
+		                                 // ROPE - RABBIT'S FOOT - CORBAMITE - CHOKER - LOCK PICKS
+		                                 10, 1, 0, 1, 1,
+		                                 // MAGNIFIER - ZOKATHRA SPELL - BONES
+		                                 2, 0, 8
 	};
 
 	if (thing == _vm->_thingNone)
@@ -1397,8 +1424,8 @@ int16 DungeonMan::getLocationAfterLevelChange(int16 mapIndex, int16 levelDelta, 
 
 	for (int16 targetMapIndex = 0; targetMapIndex < _dungeonFileHeader._mapCount; targetMapIndex++) {
 		if ((map->_level == newLevel)
-		&& (newMapX >= map->_offsetMapX) && (newMapX <= map->_offsetMapX + map->_width)
-		&& (newMapY >= map->_offsetMapY) && (newMapY <= map->_offsetMapY + map->_height)) {
+		    && (newMapX >= map->_offsetMapX) && (newMapX <= map->_offsetMapX + map->_width)
+		    && (newMapY >= map->_offsetMapY) && (newMapY <= map->_offsetMapY + map->_height)) {
 			*mapY = newMapY - map->_offsetMapY;
 			*mapX = newMapX - map->_offsetMapX;
 			return targetMapIndex;
@@ -1426,7 +1453,7 @@ uint16 DungeonMan::getArmourDefense(ArmourInfo *armourInfo, bool useSharpDefense
 
 Thing DungeonMan::getDiscardThing(uint16 thingType) {
 	// CHECKME: Shouldn't it be saved in the savegames?
-	static unsigned char lastDiscardedThingMapIndex[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	static unsigned char lastDiscardedThingMapIndex[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 	if (thingType == kDMThingTypeExplosion)
 		return _vm->_thingNone;
@@ -1681,7 +1708,10 @@ Thing DungeonMan::getObjForProjectileLaucherOrObjGen(uint16 iconIndex) {
 int16 DungeonMan::getRandomOrnamentIndex(uint16 val1, uint16 val2, int16 modulo) {
 	// TODO: Use ScummVM random number generator
 	return ((((((val1 * 31417) & 0xFFFF) >> 1) + ((val2 * 11) & 0xFFFF)
-			  + _dungeonFileHeader._ornamentRandomSeed) & 0xFFFF) >> 2) % modulo; /* Pseudorandom number generator */
+	          + _dungeonFileHeader._ornamentRandomSeed)
+	         & 0xFFFF)
+	        >> 2)
+	  % modulo; /* Pseudorandom number generator */
 }
 
 }

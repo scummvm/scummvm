@@ -28,15 +28,14 @@
  * improvements over the original code were made.
  */
 
-#include "audio/audiostream.h"
 #include "audio/rate.h"
+#include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "common/frac.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 
 namespace Audio {
-
 
 /**
  * The size of the intermediate input cache. Bigger values may increase
@@ -54,7 +53,7 @@ namespace Audio {
 enum {
 	FRAC_BITS_LOW = 15,
 	FRAC_ONE_LOW = (1L << FRAC_BITS_LOW),
-	FRAC_HALF_LOW = (1L << (FRAC_BITS_LOW-1))
+	FRAC_HALF_LOW = (1L << (FRAC_BITS_LOW - 1))
 };
 
 /**
@@ -63,7 +62,7 @@ enum {
  *
  * Limited to sampling frequency <= 65535 Hz.
  */
-template<bool stereo, bool reverseStereo>
+template <bool stereo, bool reverseStereo>
 class SimpleRateConverter : public RateConverter {
 protected:
 	st_sample_t inBuf[INTERMEDIATE_BUFFER_SIZE];
@@ -85,11 +84,10 @@ public:
 	}
 };
 
-
 /*
  * Prepare processing.
  */
-template<bool stereo, bool reverseStereo>
+template <bool stereo, bool reverseStereo>
 SimpleRateConverter<stereo, reverseStereo>::SimpleRateConverter(st_rate_t inrate, st_rate_t outrate) {
 	if ((inrate % outrate) != 0) {
 		error("Input rate must be a multiple of output rate to use rate effect");
@@ -111,7 +109,7 @@ SimpleRateConverter<stereo, reverseStereo>::SimpleRateConverter(st_rate_t inrate
  * Processed signed long samples from ibuf to obuf.
  * Return number of sample pairs processed.
  */
-template<bool stereo, bool reverseStereo>
+template <bool stereo, bool reverseStereo>
 int SimpleRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) {
 	st_sample_t *ostart, *oend;
 
@@ -144,7 +142,7 @@ int SimpleRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 		opos += opos_inc;
 
 		// output left channel
-		clampedAdd(obuf[reverseStereo    ], (out0 * (int)vol_l) / Audio::Mixer::kMaxMixerVolume);
+		clampedAdd(obuf[reverseStereo], (out0 * (int)vol_l) / Audio::Mixer::kMaxMixerVolume);
 
 		// output right channel
 		clampedAdd(obuf[reverseStereo ^ 1], (out1 * (int)vol_r) / Audio::Mixer::kMaxMixerVolume);
@@ -165,7 +163,7 @@ int SimpleRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
  * Limited to sampling frequency <= 65535 Hz.
  */
 
-template<bool stereo, bool reverseStereo>
+template <bool stereo, bool reverseStereo>
 class LinearRateConverter : public RateConverter {
 protected:
 	st_sample_t inBuf[INTERMEDIATE_BUFFER_SIZE];
@@ -191,11 +189,10 @@ public:
 	}
 };
 
-
 /*
  * Prepare processing.
  */
-template<bool stereo, bool reverseStereo>
+template <bool stereo, bool reverseStereo>
 LinearRateConverter<stereo, reverseStereo>::LinearRateConverter(st_rate_t inrate, st_rate_t outrate) {
 	if (inrate >= 131072 || outrate >= 131072) {
 		error("rate effect can only handle rates < 131072");
@@ -220,7 +217,7 @@ LinearRateConverter<stereo, reverseStereo>::LinearRateConverter(st_rate_t inrate
  * Processed signed long samples from ibuf to obuf.
  * Return number of sample pairs processed.
  */
-template<bool stereo, bool reverseStereo>
+template <bool stereo, bool reverseStereo>
 int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) {
 	st_sample_t *ostart, *oend;
 
@@ -254,12 +251,10 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 			// interpolate
 			st_sample_t out0, out1;
 			out0 = (st_sample_t)(ilast0 + (((icur0 - ilast0) * opos + FRAC_HALF_LOW) >> FRAC_BITS_LOW));
-			out1 = (stereo ?
-						  (st_sample_t)(ilast1 + (((icur1 - ilast1) * opos + FRAC_HALF_LOW) >> FRAC_BITS_LOW)) :
-						  out0);
+			out1 = (stereo ? (st_sample_t)(ilast1 + (((icur1 - ilast1) * opos + FRAC_HALF_LOW) >> FRAC_BITS_LOW)) : out0);
 
 			// output left channel
-			clampedAdd(obuf[reverseStereo    ], (out0 * (int)vol_l) / Audio::Mixer::kMaxMixerVolume);
+			clampedAdd(obuf[reverseStereo], (out0 * (int)vol_l) / Audio::Mixer::kMaxMixerVolume);
 
 			// output right channel
 			clampedAdd(obuf[reverseStereo ^ 1], (out1 * (int)vol_r) / Audio::Mixer::kMaxMixerVolume);
@@ -273,19 +268,20 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 	return (obuf - ostart) / 2;
 }
 
-
 #pragma mark -
-
 
 /**
  * Simple audio rate converter for the case that the inrate equals the outrate.
  */
-template<bool stereo, bool reverseStereo>
+template <bool stereo, bool reverseStereo>
 class CopyRateConverter : public RateConverter {
 	st_sample_t *_buffer;
 	st_size_t _bufferSize;
+
 public:
-	CopyRateConverter() : _buffer(0), _bufferSize(0) {}
+	CopyRateConverter()
+	  : _buffer(0)
+	  , _bufferSize(0) {}
 	~CopyRateConverter() {
 		free(_buffer);
 	}
@@ -322,7 +318,7 @@ public:
 			out1 = (stereo ? *ptr++ : out0);
 
 			// output left channel
-			clampedAdd(obuf[reverseStereo    ], (out0 * (int)vol_l) / Audio::Mixer::kMaxMixerVolume);
+			clampedAdd(obuf[reverseStereo], (out0 * (int)vol_l) / Audio::Mixer::kMaxMixerVolume);
 
 			// output right channel
 			clampedAdd(obuf[reverseStereo ^ 1], (out1 * (int)vol_r) / Audio::Mixer::kMaxMixerVolume);
@@ -337,10 +333,9 @@ public:
 	}
 };
 
-
 #pragma mark -
 
-template<bool stereo, bool reverseStereo>
+template <bool stereo, bool reverseStereo>
 RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate) {
 	if (inrate != outrate) {
 		if ((inrate % outrate) == 0 && (inrate < 65536)) {

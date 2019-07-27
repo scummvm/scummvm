@@ -44,16 +44,17 @@ bool MortevielleEngine::useOriginalData() const { return _gameDescription->dataF
 }
 
 static const PlainGameDescriptor MortevielleGame[] = {
-	{"mortevielle", "Mortville Manor"},
-	{0, 0}
+	{ "mortevielle", "Mortville Manor" },
+	{ 0, 0 }
 };
 
 #include "mortevielle/detection_tables.h"
 
 class MortevielleMetaEngine : public AdvancedMetaEngine {
 public:
-	MortevielleMetaEngine() : AdvancedMetaEngine(Mortevielle::MortevielleGameDescriptions, sizeof(Mortevielle::MortevielleGameDescription),
-		MortevielleGame) {
+	MortevielleMetaEngine()
+	  : AdvancedMetaEngine(Mortevielle::MortevielleGameDescriptions, sizeof(Mortevielle::MortevielleGameDescription),
+	                       MortevielleGame) {
 		_md5Bytes = 512;
 		_singleId = "mortevielle";
 		// Use kADFlagUseExtraAsHint to distinguish between original and improved versions
@@ -108,9 +109,8 @@ SaveStateDescriptor MortevielleMetaEngine::querySaveMetaInfos(const char *target
 	return Mortevielle::SavegameManager::querySaveMetaInfos(filename);
 }
 
-
 #if PLUGIN_ENABLED_DYNAMIC(MORTEVIELLE)
-	REGISTER_PLUGIN_DYNAMIC(MORTEVIELLE, PLUGIN_TYPE_ENGINE, MortevielleMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(MORTEVIELLE, PLUGIN_TYPE_ENGINE, MortevielleMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(MORTEVIELLE, PLUGIN_TYPE_ENGINE, MortevielleMetaEngine);
+REGISTER_PLUGIN_STATIC(MORTEVIELLE, PLUGIN_TYPE_ENGINE, MortevielleMetaEngine);
 #endif

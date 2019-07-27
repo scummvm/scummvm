@@ -29,7 +29,8 @@
 
 namespace Xeen {
 
-Spells::Spells(XeenEngine *vm) : _vm(vm) {
+Spells::Spells(XeenEngine *vm)
+  : _vm(vm) {
 	_lastCaster = 0;
 
 	load();
@@ -44,8 +45,7 @@ void Spells::load() {
 
 int Spells::calcSpellCost(int spellId, int expenseFactor) const {
 	int amount = Res.SPELL_COSTS[spellId];
-	return (amount >= 0) ? (amount * 100) << expenseFactor :
-		(amount * -500) << expenseFactor;
+	return (amount >= 0) ? (amount * 100) << expenseFactor : (amount * -500) << expenseFactor;
 }
 
 int Spells::calcSpellPoints(int spellId, int expenseFactor) const {
@@ -53,7 +53,7 @@ int Spells::calcSpellPoints(int spellId, int expenseFactor) const {
 	return (amount >= 0) ? amount : amount * -1 * expenseFactor;
 }
 
-typedef void(Spells::*SpellMethodPtr)();
+typedef void (Spells::*SpellMethodPtr)();
 
 void Spells::executeSpell(MagicSpell spellId) {
 	static const SpellMethodPtr SPELL_LIST[76] = {
@@ -508,13 +508,9 @@ void Spells::etherialize() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
-	Common::Point pt = party._mazePosition + Common::Point(
-		Res.SCREEN_POSITIONING_X[party._mazeDirection][7],
-		Res.SCREEN_POSITIONING_Y[party._mazeDirection][7]
-	);
+	Common::Point pt = party._mazePosition + Common::Point(Res.SCREEN_POSITIONING_X[party._mazeDirection][7], Res.SCREEN_POSITIONING_Y[party._mazeDirection][7]);
 
-	if ((map.mazeData()._mazeFlags & RESTRICTION_ETHERIALIZE) ||
-			map.mazeLookup(pt, 0, 0xffff) == INVALID_CELL) {
+	if ((map.mazeData()._mazeFlags & RESTRICTION_ETHERIALIZE) || map.mazeLookup(pt, 0, 0xffff) == INVALID_CELL) {
 		spellFailed();
 	} else {
 		party._mazePosition = pt;
@@ -658,7 +654,7 @@ void Spells::identifyMonster() {
 	Combat &combat = *_vm->_combat;
 
 	if (combat._attackMonsters[0] == -1 && combat._attackMonsters[1] == -1
-		&& combat._attackMonsters[2] == -1) {
+	    && combat._attackMonsters[2] == -1) {
 		spellFailed();
 	} else {
 		IdentifyMonster::show(_vm);
@@ -735,24 +731,19 @@ void Spells::jump() {
 			map.getCell(14);
 			if (map._currentSurfaceId != 0 && map._currentWall != 1) {
 				party._mazePosition += Common::Point(
-					Res.SCREEN_POSITIONING_X[party._mazeDirection][14],
-					Res.SCREEN_POSITIONING_Y[party._mazeDirection][14]
-					);
+				  Res.SCREEN_POSITIONING_X[party._mazeDirection][14],
+				  Res.SCREEN_POSITIONING_Y[party._mazeDirection][14]);
 				sound.playFX(51);
 				party._stepped = true;
 				return;
 			}
 		}
 	} else {
-		Common::Point pt = party._mazePosition + Common::Point(
-			Res.SCREEN_POSITIONING_X[party._mazeDirection][7],
-			Res.SCREEN_POSITIONING_Y[party._mazeDirection][7]);
-		if (!map.mazeLookup(party._mazePosition, Res.MONSTER_GRID_BITMASK[party._mazeDirection]) &&
-			!map.mazeLookup(pt, Res.MONSTER_GRID_BITMASK[party._mazeDirection])) {
+		Common::Point pt = party._mazePosition + Common::Point(Res.SCREEN_POSITIONING_X[party._mazeDirection][7], Res.SCREEN_POSITIONING_Y[party._mazeDirection][7]);
+		if (!map.mazeLookup(party._mazePosition, Res.MONSTER_GRID_BITMASK[party._mazeDirection]) && !map.mazeLookup(pt, Res.MONSTER_GRID_BITMASK[party._mazeDirection])) {
 			party._mazePosition += Common::Point(
-				Res.SCREEN_POSITIONING_X[party._mazeDirection][14],
-				Res.SCREEN_POSITIONING_Y[party._mazeDirection][14]
-			);
+			  Res.SCREEN_POSITIONING_X[party._mazeDirection][14],
+			  Res.SCREEN_POSITIONING_Y[party._mazeDirection][14]);
 			sound.playFX(51);
 			party._stepped = true;
 			return;

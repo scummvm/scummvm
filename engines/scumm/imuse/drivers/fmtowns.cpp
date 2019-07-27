@@ -22,11 +22,12 @@
 
 #include "engines/scumm/imuse/drivers/fmtowns.h"
 #include "audio/softsynth/fmtowns_pc98/towns_pc98_fmsynth.h"
-#include "common/textconsole.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 class TownsMidiOutputChannel {
-friend class TownsMidiInputChannel;
+	friend class TownsMidiInputChannel;
+
 public:
 	TownsMidiOutputChannel(MidiDriver_TOWNS *driver, int chanId);
 	~TownsMidiOutputChannel();
@@ -68,7 +69,7 @@ private:
 		int8 dir;
 		uint32 incrPerStepRem;
 		uint32 incrCountRem;
-	} *_effectEnvelopes;
+	} * _effectEnvelopes;
 
 	struct EffectDef {
 		int32 phase;
@@ -76,7 +77,7 @@ private:
 		uint8 useModWheel;
 		uint8 loopRefresh;
 		EffectEnvelope *s;
-	} *_effectDefs;
+	} * _effectDefs;
 
 	void startEffect(EffectEnvelope *s, const uint8 *effectData);
 	void updateEffectGenerator(EffectEnvelope *s, EffectDef *d);
@@ -115,7 +116,8 @@ private:
 };
 
 class TownsMidiInputChannel : public MidiChannel {
-friend class TownsMidiOutputChannel;
+	friend class TownsMidiOutputChannel;
+
 public:
 	TownsMidiInputChannel(MidiDriver_TOWNS *driver, int chanIndex);
 	~TownsMidiInputChannel();
@@ -181,7 +183,7 @@ public:
 };
 
 TownsMidiChanState::TownsMidiChanState() {
-	unk1 = mulAmsFms = tl =	attDec = sus = fgAlg = unk2 = 0;
+	unk1 = mulAmsFms = tl = attDec = sus = fgAlg = unk2 = 0;
 }
 
 uint8 TownsMidiChanState::get(uint8 type) {
@@ -206,8 +208,20 @@ uint8 TownsMidiChanState::get(uint8 type) {
 	return 0;
 }
 
-TownsMidiOutputChannel::TownsMidiOutputChannel(MidiDriver_TOWNS *driver, int chanIndex) : _driver(driver), _chan(chanIndex),
-	_in(0), _prev(0), _next(0), _adjustModTl(0), _operator2Tl(0), _note(0), _operator1Tl(0), _sustainNoteOff(0), _duration(0), _freq(0), _freqAdjust(0) {
+TownsMidiOutputChannel::TownsMidiOutputChannel(MidiDriver_TOWNS *driver, int chanIndex)
+  : _driver(driver)
+  , _chan(chanIndex)
+  , _in(0)
+  , _prev(0)
+  , _next(0)
+  , _adjustModTl(0)
+  , _operator2Tl(0)
+  , _note(0)
+  , _operator1Tl(0)
+  , _sustainNoteOff(0)
+  , _duration(0)
+  , _freq(0)
+  , _freqAdjust(0) {
 	_effectEnvelopes = new EffectEnvelope[2];
 	_effectDefs = new EffectDef[2];
 
@@ -608,10 +622,10 @@ const uint8 TownsMidiOutputChannel::_effectDefaults[] = {
 };
 
 const uint16 TownsMidiOutputChannel::_effectEnvStepTable[] = {
-	0x0001, 0x0002, 0x0004, 0x0005, 0x0006, 0x0007,	0x0008, 0x0009,
-	0x000A, 0x000C, 0x000E, 0x0010,	0x0012, 0x0015, 0x0018, 0x001E,
-	0x0024, 0x0032,	0x0040, 0x0052, 0x0064, 0x0088, 0x00A0, 0x00C0,
-	0x00F0, 0x0114, 0x0154, 0x01CC, 0x0258, 0x035C,	0x04B0, 0x0640
+	0x0001, 0x0002, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008, 0x0009,
+	0x000A, 0x000C, 0x000E, 0x0010, 0x0012, 0x0015, 0x0018, 0x001E,
+	0x0024, 0x0032, 0x0040, 0x0052, 0x0064, 0x0088, 0x00A0, 0x00C0,
+	0x00F0, 0x0114, 0x0154, 0x01CC, 0x0258, 0x035C, 0x04B0, 0x0640
 };
 
 const uint8 TownsMidiOutputChannel::_freqMSB[] = {
@@ -652,8 +666,21 @@ const uint16 TownsMidiOutputChannel::_freqLSB[] = {
 	0x055B, 0x055B, 0x055B, 0x055B, 0x055B, 0x055B, 0x055B, 0x055B
 };
 
-TownsMidiInputChannel::TownsMidiInputChannel(MidiDriver_TOWNS *driver, int chanIndex) : MidiChannel(), _driver(driver), _out(0), _chanIndex(chanIndex),
-	_priority(0), _tl(0), _transpose(0), _pitchBendFactor(0), _pitchBend(0), _sustain(0), _freqLSB(0), _detune(0), _modWheel(0), _allocated(false) {
+TownsMidiInputChannel::TownsMidiInputChannel(MidiDriver_TOWNS *driver, int chanIndex)
+  : MidiChannel()
+  , _driver(driver)
+  , _out(0)
+  , _chanIndex(chanIndex)
+  , _priority(0)
+  , _tl(0)
+  , _transpose(0)
+  , _pitchBendFactor(0)
+  , _pitchBend(0)
+  , _sustain(0)
+  , _freqLSB(0)
+  , _detune(0)
+  , _modWheel(0)
+  , _allocated(false) {
 	_instrument = new uint8[30];
 	memset(_instrument, 0, 30);
 }
@@ -825,16 +852,26 @@ const uint8 TownsMidiInputChannel::_programAdjustLevel[] = {
 	0x3D, 0x3D, 0x3E, 0x3E, 0x3E, 0x3F, 0x3F, 0x3F
 };
 
-MidiDriver_TOWNS::MidiDriver_TOWNS(Audio::Mixer *mixer) : _timerProc(0), _timerProcPara(0), _channels(0), _out(0),
-	_baseTempo(10080), _chanState(0), _operatorLevelTable(0), _tickCounter(0), _rand(1), _allocCurPos(0), _isOpen(false) {
+MidiDriver_TOWNS::MidiDriver_TOWNS(Audio::Mixer *mixer)
+  : _timerProc(0)
+  , _timerProcPara(0)
+  , _channels(0)
+  , _out(0)
+  , _baseTempo(10080)
+  , _chanState(0)
+  , _operatorLevelTable(0)
+  , _tickCounter(0)
+  , _rand(1)
+  , _allocCurPos(0)
+  , _isOpen(false) {
 	// We set exteral mutex handling to true to avoid lockups in SCUMM which has its own mutex.
 	_intf = new TownsAudioInterface(mixer, this, true);
 
-	_channels = new TownsMidiInputChannel*[32];
+	_channels = new TownsMidiInputChannel *[32];
 	for (int i = 0; i < 32; i++)
 		_channels[i] = new TownsMidiInputChannel(this, i > 8 ? (i + 1) : i);
 
-	_out = new TownsMidiOutputChannel*[6];
+	_out = new TownsMidiOutputChannel *[6];
 	for (int i = 0; i < 6; i++)
 		_out[i] = new TownsMidiOutputChannel(this, i);
 

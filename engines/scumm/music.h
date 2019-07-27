@@ -23,8 +23,8 @@
 #ifndef SCUMM_MUSIC_H
 #define SCUMM_MUSIC_H
 
-#include "common/serializer.h"
 #include "common/scummsys.h"
+#include "common/serializer.h"
 
 namespace Scumm {
 
@@ -78,14 +78,14 @@ public:
 	 * @param sound		the sound to for which we want the status
 	 * @return the status of the specified sound
 	 */
-	virtual int  getSoundStatus(int sound) const = 0;
+	virtual int getSoundStatus(int sound) const = 0;
 
 	/**
 	 * Get the value of the music timer. Used for synchronising scripts with
 	 * the music/sound.
 	 * @return the music timer
 	 */
-	virtual int  getMusicTimer() { return 0; }
+	virtual int getMusicTimer() { return 0; }
 
 	/**
 	 * Save or load the music state.

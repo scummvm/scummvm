@@ -35,7 +35,7 @@
 #include "common/str.h"
 #include "image/image_decoder.h"
 
-namespace Common{
+namespace Common {
 class SeekableReadStream;
 }
 

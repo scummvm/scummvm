@@ -21,14 +21,14 @@
  */
 
 #include "common/debug.h"
-#include "common/textconsole.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 #include "audio/audiostream.h"
-#include "audio/decoders/wave.h"
 #include "audio/decoders/adpcm.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
+#include "audio/decoders/wave.h"
 
 namespace Audio {
 
@@ -42,7 +42,7 @@ enum {
 
 bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate, byte &flags, uint16 *wavType, int *blockAlign_) {
 	const int32 initialPos = stream.pos();
-	byte buf[4+1];
+	byte buf[4 + 1];
 
 	buf[4] = 0;
 
@@ -86,15 +86,14 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	// 17 -> IMA ADPCM compressed WAVE
 	// See <http://www.saettler.com/RIFFNEW/RIFFNEW.htm> for a more complete
 	// list of common WAVE compression formats...
-	uint16 type = stream.readUint16LE();	// == 1 for PCM data
-	uint16 numChannels = stream.readUint16LE();	// 1 for mono, 2 for stereo
-	uint32 samplesPerSec = stream.readUint32LE();	// in Hz
-	uint32 avgBytesPerSec = stream.readUint32LE();	// == SampleRate * NumChannels * BitsPerSample/8
+	uint16 type = stream.readUint16LE(); // == 1 for PCM data
+	uint16 numChannels = stream.readUint16LE(); // 1 for mono, 2 for stereo
+	uint32 samplesPerSec = stream.readUint32LE(); // in Hz
+	uint32 avgBytesPerSec = stream.readUint32LE(); // == SampleRate * NumChannels * BitsPerSample/8
 
-	uint16 blockAlign = stream.readUint16LE();	// == NumChannels * BitsPerSample/8
-	uint16 bitsPerSample = stream.readUint16LE();	// 8, 16 ...
+	uint16 blockAlign = stream.readUint16LE(); // == NumChannels * BitsPerSample/8
+	uint16 bitsPerSample = stream.readUint16LE(); // 8, 16 ...
 	// 8 bit data is unsigned, 16 bit data signed
-
 
 	if (wavType != 0)
 		*wavType = type;
@@ -113,17 +112,17 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	debug("  bitsPerSample: %d", bitsPerSample);
 #endif
 
-	#ifdef USE_MAD
+#ifdef USE_MAD
 	if (type == kWaveFormatMP3) {
 		bitsPerSample = 8;
 	} else {
-	#endif
+#endif
 		if (type != kWaveFormatPCM && type != kWaveFormatMSADPCM && type != kWaveFormatMSIMAADPCM) {
-			#ifdef USE_MAD
+#ifdef USE_MAD
 			warning("getWavInfo: only PCM, MS ADPCM, MP3, or IMA ADPCM data is supported (type %d)", type);
-			#else
-			warning("getWavInfo: only PCM, MS ADPCM, or IMA ADPCM data is supported (type %d)", type);
-			#endif
+#else
+		warning("getWavInfo: only PCM, MS ADPCM, or IMA ADPCM data is supported (type %d)", type);
+#endif
 
 			return false;
 		}
@@ -135,17 +134,17 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 		if (avgBytesPerSec != samplesPerSec * blockAlign && type != kWaveFormatMSADPCM) {
 			debug(0, "getWavInfo: avgBytesPerSec is invalid");
 		}
-	#ifdef USE_MAD
+#ifdef USE_MAD
 	}
-	#endif
+#endif
 
 	// Prepare the return values.
 	rate = samplesPerSec;
 
 	flags = 0;
-	if (bitsPerSample == 8)		// 8 bit data is unsigned
+	if (bitsPerSample == 8) // 8 bit data is unsigned
 		flags |= Audio::FLAG_UNSIGNED;
-	else if (bitsPerSample == 16)	// 16 bit data is signed little endian
+	else if (bitsPerSample == 16) // 16 bit data is signed little endian
 		flags |= (Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
 	else if (bitsPerSample == 4 && (type == kWaveFormatMSADPCM || type == kWaveFormatMSIMAADPCM))
 		flags |= Audio::FLAG_16BITS;
@@ -203,10 +202,10 @@ SeekableAudioStream *makeWAVStream(Common::SeekableReadStream *stream, DisposeAf
 		return makeADPCMStream(stream, disposeAfterUse, size, Audio::kADPCMMSIma, rate, (flags & Audio::FLAG_STEREO) ? 2 : 1, blockAlign);
 	else if (type == kWaveFormatMSADPCM) // MS ADPCM
 		return makeADPCMStream(stream, disposeAfterUse, size, Audio::kADPCMMS, rate, (flags & Audio::FLAG_STEREO) ? 2 : 1, blockAlign);
-	#ifdef USE_MAD
+#ifdef USE_MAD
 	else if (type == kWaveFormatMP3)
 		return makeMP3Stream(stream, disposeAfterUse);
-	#endif
+#endif
 
 	// Raw PCM, make sure the last packet is complete
 	uint sampleSize = (flags & Audio::FLAG_16BITS ? 2 : 1) * (flags & Audio::FLAG_STEREO ? 2 : 1);

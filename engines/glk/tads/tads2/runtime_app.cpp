@@ -22,14 +22,14 @@
 
 namespace Glk {
 namespace TADS {
-namespace TADS2 {
+	namespace TADS2 {
 
-char G_tads_oem_app_name[] = "GlkTADS";
-char G_tads_oem_display_mode[] = "text-only";
-char G_tads_oem_dbg_name[] = "tdb";
-char G_tads_oem_author[] = "Maintained by ScummVM\n";
-int G_tads_oem_copyright_prefix = true;
+		char G_tads_oem_app_name[] = "GlkTADS";
+		char G_tads_oem_display_mode[] = "text-only";
+		char G_tads_oem_dbg_name[] = "tdb";
+		char G_tads_oem_author[] = "Maintained by ScummVM\n";
+		int G_tads_oem_copyright_prefix = true;
 
-} // End of namespace TADS2
+	} // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk

@@ -20,13 +20,13 @@
  *
  */
 
-#include "common/savefile.h"
 #include "common/config-manager.h"
+#include "common/savefile.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 
-#include "gui/saveload.h"
 #include "gui/message.h"
+#include "gui/saveload.h"
 
 #include "parallaction/parallaction.h"
 #include "parallaction/saveload.h"
@@ -37,8 +37,8 @@
  * A special savefile named 'nippon.999' holds information on whether the user completed one or more parts of the game.
  */
 
-#define NUM_SAVESLOTS		100
-#define SPECIAL_SAVESLOT	999
+#define NUM_SAVESLOTS 100
+#define SPECIAL_SAVESLOT 999
 
 namespace Parallaction {
 
@@ -65,7 +65,8 @@ void SaveLoad_ns::doLoadGame(uint16 slot) {
 	_vm->cleanupGame();
 
 	Common::InSaveFile *f = getInSaveFile(slot);
-	if (!f) return;
+	if (!f)
+		return;
 
 	Common::String s, character, location;
 
@@ -120,11 +121,11 @@ void SaveLoad_ns::doLoadGame(uint16 slot) {
 	strcpy(_vm->_characterName1, "null");
 
 	char tmp[PATH_LEN];
-	sprintf(tmp, "%s.%s" , location.c_str(), character.c_str());
+	sprintf(tmp, "%s.%s", location.c_str(), character.c_str());
 	_vm->scheduleLocationSwitch(tmp);
 }
 
-void SaveLoad_ns::doSaveGame(uint16 slot, const char* name) {
+void SaveLoad_ns::doSaveGame(uint16 slot, const char *name) {
 	Common::OutSaveFile *f = getOutSaveFile(slot);
 	if (f == 0) {
 		Common::String buf = Common::String::format(_("Can't save game in slot %i\n\n"), slot);
@@ -266,9 +267,10 @@ void SaveLoad_ns::getGamePartProgress(bool *complete, int size) {
 
 static bool askRenameOldSavefiles() {
 	GUI::MessageDialog dialog0(
-		_("ScummVM found that you have old saved games for Nippon Safes that should be renamed.\n"
-		"The old names are no longer supported, so you will not be able to load your games if you don't convert them.\n\n"
-		"Press OK to convert them now, otherwise you will be asked next time.\n"), _("OK"), _("Cancel"));
+	  _("ScummVM found that you have old saved games for Nippon Safes that should be renamed.\n"
+	    "The old names are no longer supported, so you will not be able to load your games if you don't convert them.\n\n"
+	    "Press OK to convert them now, otherwise you will be asked next time.\n"),
+	  _("OK"), _("Cancel"));
 
 	return (dialog0.runModal() != 0);
 }
@@ -302,7 +304,7 @@ void SaveLoad_ns::renameOldSavefiles() {
 			success++;
 		} else {
 			warning("Error %i (%s) occurred while renaming %s to %s", _saveFileMan->getError().getCode(),
-				_saveFileMan->getErrorDesc().c_str(), oldName.c_str(), newName.c_str());
+			        _saveFileMan->getErrorDesc().c_str(), oldName.c_str(), newName.c_str());
 		}
 	}
 
@@ -316,7 +318,7 @@ void SaveLoad_ns::renameOldSavefiles() {
 		msg = _("ScummVM successfully converted all your saved games.");
 	} else {
 		msg = _("ScummVM printed some warnings in your console window and can't guarantee all your files have been converted.\n\n"
-			"Please report to the team.");
+		        "Please report to the team.");
 	}
 
 	GUI::MessageDialog dialog1(msg);
@@ -327,7 +329,7 @@ void SaveLoad_br::doLoadGame(uint16 slot) {
 	// TODO: implement loadgame
 }
 
-void SaveLoad_br::doSaveGame(uint16 slot, const char* name) {
+void SaveLoad_br::doSaveGame(uint16 slot, const char *name) {
 	// TODO: implement savegame
 }
 

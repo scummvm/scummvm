@@ -29,11 +29,10 @@
 #ifndef WINTERMUTE_BASE_KEYBOARD_STATE_H
 #define WINTERMUTE_BASE_KEYBOARD_STATE_H
 
-
+#include "common/events.h"
+#include "common/keyboard.h"
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/base/base_scriptable.h"
-#include "common/keyboard.h"
-#include "common/events.h"
 
 namespace Wintermute {
 

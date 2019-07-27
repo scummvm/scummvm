@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_LOADPLAYERCOMMAND_H
 #define MUTATIONOFJB_LOADPLAYERCOMMAND_H
 
-#include "mutationofjb/commands/seqcommand.h"
 #include "common/scummsys.h"
+#include "mutationofjb/commands/seqcommand.h"
 #include "mutationofjb/tasks/task.h"
 
 namespace MutationOfJB {
@@ -38,7 +38,12 @@ public:
 
 class LoadPlayerCommand : public SeqCommand {
 public:
-	LoadPlayerCommand(uint8 apkFrameFirst, uint8 apkFrameLast, uint8 playerFrameFirst, uint8 palIndexFirst, const Common::String &apkFileName) : _apkFrameFirst(apkFrameFirst), _apkFrameLast(apkFrameLast), _playerFrameFirst(playerFrameFirst), _palIndexFirst(palIndexFirst), _apkFileName(apkFileName) {}
+	LoadPlayerCommand(uint8 apkFrameFirst, uint8 apkFrameLast, uint8 playerFrameFirst, uint8 palIndexFirst, const Common::String &apkFileName)
+	  : _apkFrameFirst(apkFrameFirst)
+	  , _apkFrameLast(apkFrameLast)
+	  , _playerFrameFirst(playerFrameFirst)
+	  , _palIndexFirst(palIndexFirst)
+	  , _apkFileName(apkFileName) {}
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const override;
 

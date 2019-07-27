@@ -28,9 +28,8 @@
 namespace GUI {
 
 enum {
-	kSetPositionCmd		= 'SETP'
+	kSetPositionCmd = 'SETP'
 };
-
 
 class ScrollBarWidget : public Widget, public CommandSender {
 protected:
@@ -43,24 +42,24 @@ protected:
 		kPageDownPart
 	} Part;
 
-	Part	_part;
-	int		_sliderHeight;
-	int		_sliderPos;
+	Part _part;
+	int _sliderHeight;
+	int _sliderPos;
 
-	Part	_draggingPart;
-	int		_sliderDeltaMouseDownPos;
+	Part _draggingPart;
+	int _sliderDeltaMouseDownPos;
 
 	enum {
 		kRepeatInitialDelay = 500,
 		kRepeatDelay = 100
 	};
-	uint32	_repeatTimer;
+	uint32 _repeatTimer;
 
 public:
-	int		_numEntries;
-	int		_entriesPerPage;
-	int		_currentPos;
-	int		_singleStep;
+	int _numEntries;
+	int _entriesPerPage;
+	int _currentPos;
+	int _singleStep;
 
 public:
 	ScrollBarWidget(GuiObject *boss, int x, int y, int w, int h);
@@ -69,8 +68,12 @@ public:
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	void handleMouseWheel(int x, int y, int direction);
 	void handleMouseMoved(int x, int y, int button);
-	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); }
-	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); _part = kNoPart; markAsDirty(); }
+	void handleMouseEntered(int button) { setFlags(WIDGET_HILITED); }
+	void handleMouseLeft(int button) {
+		clearFlags(WIDGET_HILITED);
+		_part = kNoPart;
+		markAsDirty();
+	}
 	void handleTickle();
 	bool wantsFocus() { return true; }
 

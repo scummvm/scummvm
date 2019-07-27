@@ -38,8 +38,8 @@ extern "C" {
 MT32EMU_EXPORT mt32emu_service_i mt32emu_get_service_i(void);
 
 #if MT32EMU_EXPORTS_TYPE == 2
-#undef MT32EMU_EXPORT
-#define MT32EMU_EXPORT
+#	undef MT32EMU_EXPORT
+#	define MT32EMU_EXPORT
 #endif
 
 /**

@@ -36,13 +36,14 @@
 #include "pegasus/util.h"
 
 namespace Common {
-	class MacResManager;
+class MacResManager;
 }
 
 namespace Pegasus {
 
 class DisplayElement : public IDObject {
-friend class GraphicsManager;
+	friend class GraphicsManager;
+
 public:
 	DisplayElement(const DisplayElementID);
 	virtual ~DisplayElement();
@@ -52,7 +53,7 @@ public:
 
 	bool validToDraw(DisplayOrder, DisplayOrder);
 
-	virtual void draw(const Common::Rect&) {}
+	virtual void draw(const Common::Rect &) {}
 	bool isDisplaying() { return _elementIsDisplaying; }
 	virtual void startDisplaying();
 	virtual void stopDisplaying();
@@ -102,7 +103,7 @@ public:
 	void setHighlightCornerDiameter(const uint16 diameter) { _cornerDiameter = diameter; }
 	uint16 getHighlightCornerDiameter() const { return _cornerDiameter; }
 
-	virtual void draw(const Common::Rect&);
+	virtual void draw(const Common::Rect &);
 
 protected:
 	uint32 _highlightColor;
@@ -112,7 +113,8 @@ protected:
 
 class Animation : public DisplayElement, public DynamicElement {
 public:
-	Animation(const DisplayElementID id) : DisplayElement(id) {}
+	Animation(const DisplayElementID id)
+	  : DisplayElement(id) {}
 };
 
 class IdlerAnimation : public Animation, public Idler {
@@ -167,7 +169,8 @@ protected:
 class SpriteFrame;
 
 class Sprite : public DisplayElement {
-friend class SpriteFrame;
+	friend class SpriteFrame;
+
 public:
 	Sprite(const DisplayElementID);
 	virtual ~Sprite();
@@ -226,7 +229,8 @@ protected:
 
 class ScreenDimmer : public DisplayElement {
 public:
-	ScreenDimmer() : DisplayElement(kScreenDimmerID) {}
+	ScreenDimmer()
+	  : DisplayElement(kScreenDimmerID) {}
 	virtual ~ScreenDimmer() {}
 
 	virtual void draw(const Common::Rect &);

@@ -31,8 +31,8 @@ namespace Sci {
 
 #define VOLUME_SHIFT 3
 
-#define BASE_NOTE 129	// A10
-#define BASE_OCTAVE 10	// A10, as I said
+#define BASE_NOTE 129 // A10
+#define BASE_OCTAVE 10 // A10, as I said
 
 static const int freq_table[12] = { // A4 is 440Hz, halftone map is x |-> ** 2^(x/12)
 	28160, // A10
@@ -66,8 +66,9 @@ public:
 		kMaxChannels = 3
 	};
 
-	MidiDriver_PCJr(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer) { }
-	~MidiDriver_PCJr() { }
+	MidiDriver_PCJr(Audio::Mixer *mixer)
+	  : MidiDriver_Emulated(mixer) {}
+	~MidiDriver_PCJr() {}
 
 	// MidiDriver
 	int open() { return open(kMaxChannels); }
@@ -84,6 +85,7 @@ public:
 	void generateSamples(int16 *buf, int len);
 
 	int open(int channels);
+
 private:
 	int _channels_nr;
 	int _global_volume; // Base volume
@@ -175,7 +177,7 @@ void MidiDriver_PCJr::generateSamples(int16 *data, int len) {
 		for (chan = 0; chan < _channels_nr; chan++)
 			if (_notes[chan]) {
 				int volume = (_global_volume * _volumes[chan])
-				             >> VOLUME_SHIFT;
+				  >> VOLUME_SHIFT;
 
 				_freq_count[chan] += freq[chan];
 				while (_freq_count[chan] >= (frequency << 1))
@@ -232,7 +234,8 @@ void MidiDriver_PCJr::close() {
 
 class MidiPlayer_PCJr : public MidiPlayer {
 public:
-	MidiPlayer_PCJr(SciVersion version) : MidiPlayer(version) { _driver = new MidiDriver_PCJr(g_system->getMixer()); }
+	MidiPlayer_PCJr(SciVersion version)
+	  : MidiPlayer(version) { _driver = new MidiDriver_PCJr(g_system->getMixer()); }
 	int open(ResourceManager *resMan) { return static_cast<MidiDriver_PCJr *>(_driver)->open(getPolyphony()); }
 	byte getPlayId() const;
 	int getPolyphony() const { return 3; }
@@ -257,7 +260,8 @@ MidiPlayer *MidiPlayer_PCJr_create(SciVersion version) {
 
 class MidiPlayer_PCSpeaker : public MidiPlayer_PCJr {
 public:
-	MidiPlayer_PCSpeaker(SciVersion version) : MidiPlayer_PCJr(version) { }
+	MidiPlayer_PCSpeaker(SciVersion version)
+	  : MidiPlayer_PCJr(version) {}
 
 	byte getPlayId() const;
 	int getPolyphony() const { return 1; }

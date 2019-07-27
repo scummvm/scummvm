@@ -21,6 +21,8 @@
  */
 
 #include "titanic/main_game_window.h"
+#include "common/config-manager.h"
+#include "graphics/screen.h"
 #include "titanic/continue_save_dialog.h"
 #include "titanic/debugger.h"
 #include "titanic/game_manager.h"
@@ -29,13 +31,13 @@
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
-#include "common/config-manager.h"
-#include "graphics/screen.h"
 
 namespace Titanic {
 
-CMainGameWindow::CMainGameWindow(TitanicEngine *vm): _vm(vm),
-		_priorLeftDownTime(0), _priorMiddleDownTime(0) {
+CMainGameWindow::CMainGameWindow(TitanicEngine *vm)
+  : _vm(vm)
+  , _priorLeftDownTime(0)
+  , _priorMiddleDownTime(0) {
 	_gameView = nullptr;
 	_gameManager = nullptr;
 	_project = nullptr;
@@ -63,10 +65,7 @@ void CMainGameWindow::applicationStarting() {
 	if (!isLoadingFromLauncher()) {
 		Image image;
 		image.load("Bitmap/TITANIC");
-		_vm->_screen->blitFrom(image, Point(
-			SCREEN_WIDTH / 2 - image.w / 2,
-			SCREEN_HEIGHT / 2 - image.h / 2
-			));
+		_vm->_screen->blitFrom(image, Point(SCREEN_WIDTH / 2 - image.w / 2, SCREEN_HEIGHT / 2 - image.h / 2));
 
 		// Delay for 5 seconds
 		const int NUM_STEPS = 20;
@@ -269,11 +268,11 @@ void CMainGameWindow::onIdle() {
 	}
 }
 
-#define HANDLE_MESSAGE(METHOD) 	if (_inputAllowed) { \
-	_gameManager->_inputTranslator.METHOD(g_vm->_events->getSpecialButtons(), mousePos); \
-	mouseChanged(); \
+#define HANDLE_MESSAGE(METHOD)                                                           \
+	if (_inputAllowed) {                                                                   \
+		_gameManager->_inputTranslator.METHOD(g_vm->_events->getSpecialButtons(), mousePos); \
+		mouseChanged();                                                                      \
 	}
-
 
 void CMainGameWindow::mouseMove(const Point &mousePos) {
 	if (!isMouseControlEnabled())

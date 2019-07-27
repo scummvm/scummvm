@@ -40,25 +40,25 @@ class Item {
 
 	BladeRunnerEngine *_vm;
 
-	int          _itemId;
-	int          _setId;
+	int _itemId;
+	int _setId;
 
-	BoundingBox  _boundingBox;
+	BoundingBox _boundingBox;
 	Common::Rect _screenRectangle;
-	int          _animationId;
-	Vector3      _position;
-	int          _facing;
-	float        _angle;
-	int          _width;
-	int          _height;
-	int          _screenX;
-	int          _screenY;
-	float        _depth;
-	bool         _isTarget;
-	bool         _isSpinning;
-	int          _facingChange;
-	bool         _isVisible;
-	bool         _isPoliceMazeEnemy;
+	int _animationId;
+	Vector3 _position;
+	int _facing;
+	float _angle;
+	int _width;
+	int _height;
+	int _screenX;
+	int _screenY;
+	float _depth;
+	bool _isTarget;
+	bool _isSpinning;
+	int _facingChange;
+	bool _isVisible;
+	bool _isPoliceMazeEnemy;
 
 public:
 	Item(BladeRunnerEngine *vm);

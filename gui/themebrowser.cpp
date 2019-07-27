@@ -21,9 +21,9 @@
  */
 
 #include "gui/themebrowser.h"
-#include "gui/widgets/list.h"
-#include "gui/widget.h"
 #include "gui/gui-manager.h"
+#include "gui/widget.h"
+#include "gui/widgets/list.h"
 
 #include "common/translation.h"
 
@@ -39,7 +39,8 @@ enum {
 // but for now this simple browser works,
 // also it will get its own theme config values
 // and not use 'browser_' anymore
-ThemeBrowser::ThemeBrowser() : Dialog("Browser") {
+ThemeBrowser::ThemeBrowser()
+  : Dialog("Browser") {
 	_fileList = 0;
 
 	new StaticTextWidget(this, "Browser.Headline", _("Select a Theme"));

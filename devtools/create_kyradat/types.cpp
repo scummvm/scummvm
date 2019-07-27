@@ -134,10 +134,12 @@ static void writeStringList(PAKFile &out, const char *filename, const StringList
 	byte *const output = new byte[size];
 
 	byte *dst = output;
-	WRITE_BE_UINT32(dst, provider->numEntries); dst += 4;
+	WRITE_BE_UINT32(dst, provider->numEntries);
+	dst += 4;
 	for (uint i = 0; i < provider->numEntries; ++i) {
 		size_t num = strlen(provider->data[i]) + 1;
-		memcpy(dst, provider->data[i], num); dst += num;
+		memcpy(dst, provider->data[i], num);
+		dst += num;
 	}
 
 	// Step 3: Add data to output
@@ -164,15 +166,21 @@ static void writeRoomList(PAKFile &out, const char *filename, const RoomProvider
 	byte *const output = new byte[size];
 
 	byte *dst = output;
-	WRITE_BE_UINT32(dst, provider->numEntries); dst += 4;
+	WRITE_BE_UINT32(dst, provider->numEntries);
+	dst += 4;
 	for (uint i = 0; i < provider->numEntries; ++i) {
 		const Room &room = provider->data[i];
 
-		*dst = room.index; dst += 1;
-		WRITE_BE_UINT16(dst, room.north); dst += 2;
-		WRITE_BE_UINT16(dst, room.east); dst += 2;
-		WRITE_BE_UINT16(dst, room.south); dst += 2;
-		WRITE_BE_UINT16(dst, room.west); dst += 2;
+		*dst = room.index;
+		dst += 1;
+		WRITE_BE_UINT16(dst, room.north);
+		dst += 2;
+		WRITE_BE_UINT16(dst, room.east);
+		dst += 2;
+		WRITE_BE_UINT16(dst, room.south);
+		dst += 2;
+		WRITE_BE_UINT16(dst, room.west);
+		dst += 2;
 	}
 
 	// Step 3: Add data to output
@@ -187,17 +195,25 @@ static void writeShapeList(PAKFile &out, const char *filename, const ShapeProvid
 	byte *const output = new byte[size];
 
 	byte *dst = output;
-	WRITE_BE_UINT32(dst, provider->numEntries); dst += 4;
+	WRITE_BE_UINT32(dst, provider->numEntries);
+	dst += 4;
 	for (uint i = 0; i < provider->numEntries; ++i) {
 		const Shape &shape = provider->data[i];
 
-		*dst = shape.imageIndex; dst += 1;
-		*dst = shape.x; dst += 1;
-		*dst = shape.y; dst += 1;
-		*dst = shape.w; dst += 1;
-		*dst = shape.h; dst += 1;
-		*dst = shape.xOffset; dst += 1;
-		*dst = shape.yOffset; dst += 1;
+		*dst = shape.imageIndex;
+		dst += 1;
+		*dst = shape.x;
+		dst += 1;
+		*dst = shape.y;
+		dst += 1;
+		*dst = shape.w;
+		dst += 1;
+		*dst = shape.h;
+		dst += 1;
+		*dst = shape.xOffset;
+		dst += 1;
+		*dst = shape.yOffset;
+		dst += 1;
 	}
 
 	// Step 3: Add data to output
@@ -212,15 +228,21 @@ static void writeAmigaSfxTable(PAKFile &out, const char *filename, const AmigaSf
 	byte *const output = new byte[size];
 
 	byte *dst = output;
-	WRITE_BE_UINT32(dst, provider->numEntries); dst += 4;
+	WRITE_BE_UINT32(dst, provider->numEntries);
+	dst += 4;
 	for (uint i = 0; i < provider->numEntries; ++i) {
 		const AmigaSfxTable &entry = provider->data[i];
 
-		*dst = entry.note; dst += 1;
-		*dst = entry.patch; dst += 1;
-		WRITE_BE_UINT16(dst, entry.duration); dst += 2;
-		*dst = entry.volume; dst += 1;
-		*dst = entry.pan; dst += 1;
+		*dst = entry.note;
+		dst += 1;
+		*dst = entry.patch;
+		dst += 1;
+		WRITE_BE_UINT16(dst, entry.duration);
+		dst += 2;
+		*dst = entry.volume;
+		dst += 1;
+		*dst = entry.pan;
+		dst += 1;
 	}
 
 	// Step 3: Add data to output
@@ -231,9 +253,9 @@ static void writeK2SeqData(PAKFile &out, const char *filename, const HoFSequence
 	// Step 1: Calculate size
 	size_t size = 4 + (2 + 48) * provider->numSequences + (2 + 32) * provider->numNestedSequences;
 
-	const size_t startSequenceOffset  = 4 + 2 * provider->numSequences + 2 * provider->numNestedSequences;
+	const size_t startSequenceOffset = 4 + 2 * provider->numSequences + 2 * provider->numNestedSequences;
 	const size_t startNestedSequences = startSequenceOffset + 48 * provider->numSequences;
-	const size_t startControlOffset   = size;
+	const size_t startControlOffset = size;
 
 	for (uint i = 0; i < provider->numNestedSequences; ++i) {
 		if (provider->nestedSequences[i].numControls) {
@@ -246,66 +268,97 @@ static void writeK2SeqData(PAKFile &out, const char *filename, const HoFSequence
 
 	byte *offsetTable = output;
 	byte *sequenceDst = output + startSequenceOffset;
-	byte *nestedDst   = output + startNestedSequences;
-	byte *controlDst  = output + startControlOffset;
+	byte *nestedDst = output + startNestedSequences;
+	byte *controlDst = output + startControlOffset;
 
 	// First write all sequences
-	WRITE_BE_UINT16(offsetTable, provider->numSequences); offsetTable += 2;
+	WRITE_BE_UINT16(offsetTable, provider->numSequences);
+	offsetTable += 2;
 	for (uint i = 0; i < provider->numSequences; ++i) {
 		const HoFSequence &entry = provider->sequences[i];
 
 		// Write location to the offset table
-		WRITE_BE_UINT16(offsetTable, sequenceDst - output); offsetTable += 2;
+		WRITE_BE_UINT16(offsetTable, sequenceDst - output);
+		offsetTable += 2;
 
 		// Write actual sequence data
-		WRITE_BE_UINT16(sequenceDst, entry.flags); sequenceDst += 2;
-		memcpy(sequenceDst, entry.wsaFile, 14); sequenceDst += 14;
-		memcpy(sequenceDst, entry.cpsFile, 14); sequenceDst += 14;
-		*sequenceDst = entry.fadeInTransitionType; sequenceDst += 1;
-		*sequenceDst = entry.fadeOutTransitionType; sequenceDst += 1;
-		WRITE_BE_UINT16(sequenceDst, entry.stringIndex1); sequenceDst += 2;
-		WRITE_BE_UINT16(sequenceDst, entry.stringIndex2); sequenceDst += 2;
-		WRITE_BE_UINT16(sequenceDst, entry.startFrame); sequenceDst += 2;
-		WRITE_BE_UINT16(sequenceDst, entry.numFrames); sequenceDst += 2;
-		WRITE_BE_UINT16(sequenceDst, entry.duration); sequenceDst += 2;
-		WRITE_BE_UINT16(sequenceDst, entry.xPos); sequenceDst += 2;
-		WRITE_BE_UINT16(sequenceDst, entry.yPos); sequenceDst += 2;
-		WRITE_BE_UINT16(sequenceDst, entry.timeout); sequenceDst += 2;
+		WRITE_BE_UINT16(sequenceDst, entry.flags);
+		sequenceDst += 2;
+		memcpy(sequenceDst, entry.wsaFile, 14);
+		sequenceDst += 14;
+		memcpy(sequenceDst, entry.cpsFile, 14);
+		sequenceDst += 14;
+		*sequenceDst = entry.fadeInTransitionType;
+		sequenceDst += 1;
+		*sequenceDst = entry.fadeOutTransitionType;
+		sequenceDst += 1;
+		WRITE_BE_UINT16(sequenceDst, entry.stringIndex1);
+		sequenceDst += 2;
+		WRITE_BE_UINT16(sequenceDst, entry.stringIndex2);
+		sequenceDst += 2;
+		WRITE_BE_UINT16(sequenceDst, entry.startFrame);
+		sequenceDst += 2;
+		WRITE_BE_UINT16(sequenceDst, entry.numFrames);
+		sequenceDst += 2;
+		WRITE_BE_UINT16(sequenceDst, entry.duration);
+		sequenceDst += 2;
+		WRITE_BE_UINT16(sequenceDst, entry.xPos);
+		sequenceDst += 2;
+		WRITE_BE_UINT16(sequenceDst, entry.yPos);
+		sequenceDst += 2;
+		WRITE_BE_UINT16(sequenceDst, entry.timeout);
+		sequenceDst += 2;
 	}
 
 	assert(sequenceDst == nestedDst);
 
 	// Then write all nested sequences
-	WRITE_BE_UINT16(offsetTable, provider->numNestedSequences); offsetTable += 2;
+	WRITE_BE_UINT16(offsetTable, provider->numNestedSequences);
+	offsetTable += 2;
 	for (uint i = 0; i < provider->numNestedSequences; ++i) {
 		const HoFNestedSequence &entry = provider->nestedSequences[i];
 
 		// Write location to the offset table
-		WRITE_BE_UINT16(offsetTable, nestedDst - output); offsetTable += 2;
+		WRITE_BE_UINT16(offsetTable, nestedDst - output);
+		offsetTable += 2;
 
 		// Write the nested sequence data
-		WRITE_BE_UINT16(nestedDst, entry.flags); nestedDst += 2;
-		memcpy(nestedDst, entry.wsaFile, 14); nestedDst += 14;
-		WRITE_BE_UINT16(nestedDst, entry.startFrame); nestedDst += 2;
-		WRITE_BE_UINT16(nestedDst, entry.endFrame); nestedDst += 2;
-		WRITE_BE_UINT16(nestedDst, entry.frameDelay); nestedDst += 2;
-		WRITE_BE_UINT16(nestedDst, entry.x); nestedDst += 2;
-		WRITE_BE_UINT16(nestedDst, entry.y); nestedDst += 2;
+		WRITE_BE_UINT16(nestedDst, entry.flags);
+		nestedDst += 2;
+		memcpy(nestedDst, entry.wsaFile, 14);
+		nestedDst += 14;
+		WRITE_BE_UINT16(nestedDst, entry.startFrame);
+		nestedDst += 2;
+		WRITE_BE_UINT16(nestedDst, entry.endFrame);
+		nestedDst += 2;
+		WRITE_BE_UINT16(nestedDst, entry.frameDelay);
+		nestedDst += 2;
+		WRITE_BE_UINT16(nestedDst, entry.x);
+		nestedDst += 2;
+		WRITE_BE_UINT16(nestedDst, entry.y);
+		nestedDst += 2;
 
 		if (entry.numControls) {
-			WRITE_BE_UINT16(nestedDst, controlDst - output); nestedDst += 2;
+			WRITE_BE_UINT16(nestedDst, controlDst - output);
+			nestedDst += 2;
 
-			*controlDst = entry.numControls; controlDst += 1;
+			*controlDst = entry.numControls;
+			controlDst += 1;
 			for (uint j = 0; j < entry.numControls; ++j) {
-				WRITE_BE_UINT16(controlDst, entry.wsaControl[j].index); controlDst += 2;
-				WRITE_BE_UINT16(controlDst, entry.wsaControl[j].delay); controlDst += 2;
+				WRITE_BE_UINT16(controlDst, entry.wsaControl[j].index);
+				controlDst += 2;
+				WRITE_BE_UINT16(controlDst, entry.wsaControl[j].delay);
+				controlDst += 2;
 			}
 		} else {
-			WRITE_BE_UINT16(nestedDst, 0); nestedDst += 2;
+			WRITE_BE_UINT16(nestedDst, 0);
+			nestedDst += 2;
 		}
 
-		WRITE_BE_UINT16(nestedDst, entry.fadeInTransitionType); nestedDst += 2;
-		WRITE_BE_UINT16(nestedDst, entry.fadeOutTransitionType); nestedDst += 2;
+		WRITE_BE_UINT16(nestedDst, entry.fadeInTransitionType);
+		nestedDst += 2;
+		WRITE_BE_UINT16(nestedDst, entry.fadeOutTransitionType);
+		nestedDst += 2;
 	}
 
 	assert(offsetTable == output + startSequenceOffset);
@@ -324,15 +377,19 @@ static void writeK2SeqItemAnimData(PAKFile &out, const char *filename, const HoF
 	byte *const output = new byte[size];
 
 	byte *dst = output;
-	*dst = provider->numEntries; dst += 1;
+	*dst = provider->numEntries;
+	dst += 1;
 	for (uint i = 0; i < provider->numEntries; ++i) {
 		const HoFSeqItemAnimData &entry = provider->data[i];
 
-		WRITE_BE_UINT16(dst, entry.itemIndex); dst += 2;
-		WRITE_BE_UINT16(dst, entry.y); dst += 2;
+		WRITE_BE_UINT16(dst, entry.itemIndex);
+		dst += 2;
+		WRITE_BE_UINT16(dst, entry.y);
+		dst += 2;
 
 		for (uint j = 0; j < 20; ++j) {
-			WRITE_BE_UINT16(dst, entry.frames[j]); dst += 2;
+			WRITE_BE_UINT16(dst, entry.frames[j]);
+			dst += 2;
 		}
 	}
 
@@ -352,16 +409,21 @@ static void writeK2ItemAnimDefinition(PAKFile &out, const char *filename, const 
 	byte *const output = new byte[size];
 
 	byte *dst = output;
-	*dst = provider->numEntries; dst += 1;
+	*dst = provider->numEntries;
+	dst += 1;
 	for (uint i = 0; i < provider->numEntries; ++i) {
 		const ItemAnimDefinition &entry = provider->data[i];
 
-		WRITE_BE_UINT16(dst, entry.itemIndex); dst += 2;
-		*dst = entry.numFrames; dst += 1;
+		WRITE_BE_UINT16(dst, entry.itemIndex);
+		dst += 2;
+		*dst = entry.numFrames;
+		dst += 1;
 
 		for (uint j = 0; j < entry.numFrames; ++j) {
-			WRITE_BE_UINT16(dst, entry.frames[j].index); dst += 2;
-			WRITE_BE_UINT16(dst, entry.frames[j].delay); dst += 2;
+			WRITE_BE_UINT16(dst, entry.frames[j].index);
+			dst += 2;
+			WRITE_BE_UINT16(dst, entry.frames[j].delay);
+			dst += 2;
 		}
 	}
 
@@ -380,50 +442,79 @@ static void writeLoLCharData(PAKFile &out, const char *filename, const LoLCharac
 	for (uint i = 0; i < provider->numEntries; ++i) {
 		const LoLCharacter &entry = provider->data[i];
 
-		WRITE_LE_UINT16(dst, entry.flags); dst += 2;
-		memcpy(dst, entry.name, 11); dst += 11;
-		*dst = entry.raceClassSex; dst += 1;
-		WRITE_LE_UINT16(dst, entry.id); dst += 2;
-		*dst = entry.curFaceFrame; dst += 1;
-		*dst = entry.tempFaceFrame; dst += 1;
-		*dst = entry.screamSfx; dst += 1;
-		WRITE_BE_UINT32(dst, 0xDEADBEEF); dst += 4;
+		WRITE_LE_UINT16(dst, entry.flags);
+		dst += 2;
+		memcpy(dst, entry.name, 11);
+		dst += 11;
+		*dst = entry.raceClassSex;
+		dst += 1;
+		WRITE_LE_UINT16(dst, entry.id);
+		dst += 2;
+		*dst = entry.curFaceFrame;
+		dst += 1;
+		*dst = entry.tempFaceFrame;
+		dst += 1;
+		*dst = entry.screamSfx;
+		dst += 1;
+		WRITE_BE_UINT32(dst, 0xDEADBEEF);
+		dst += 4;
 		for (uint j = 0; j < 8; ++j) {
-			WRITE_LE_UINT16(dst, entry.itemsMight[j]); dst += 2;
+			WRITE_LE_UINT16(dst, entry.itemsMight[j]);
+			dst += 2;
 		}
 		for (uint j = 0; j < 8; ++j) {
-			WRITE_LE_UINT16(dst, entry.protectionAgainstItems[j]); dst += 2;
+			WRITE_LE_UINT16(dst, entry.protectionAgainstItems[j]);
+			dst += 2;
 		}
-		WRITE_LE_UINT16(dst, entry.itemProtection); dst += 2;
-		WRITE_LE_UINT16(dst, entry.hitPointsCur); dst += 2;
-		WRITE_LE_UINT16(dst, entry.hitPointsMax); dst += 2;
-		WRITE_LE_UINT16(dst, entry.magicPointsCur); dst += 2;
-		WRITE_LE_UINT16(dst, entry.magicPointsMax); dst += 2;
-		*dst = entry.field_41; dst += 1;
-		WRITE_LE_UINT16(dst, entry.damageSuffered); dst += 2;
-		WRITE_LE_UINT16(dst, entry.weaponHit); dst += 2;
-		WRITE_LE_UINT16(dst, entry.totalMightModifier); dst += 2;
-		WRITE_LE_UINT16(dst, entry.totalProtectionModifier); dst += 2;
-		WRITE_LE_UINT16(dst, entry.might); dst += 2;
-		WRITE_LE_UINT16(dst, entry.protection); dst += 2;
-		WRITE_LE_UINT16(dst, entry.nextAnimUpdateCountdown); dst += 2;
+		WRITE_LE_UINT16(dst, entry.itemProtection);
+		dst += 2;
+		WRITE_LE_UINT16(dst, entry.hitPointsCur);
+		dst += 2;
+		WRITE_LE_UINT16(dst, entry.hitPointsMax);
+		dst += 2;
+		WRITE_LE_UINT16(dst, entry.magicPointsCur);
+		dst += 2;
+		WRITE_LE_UINT16(dst, entry.magicPointsMax);
+		dst += 2;
+		*dst = entry.field_41;
+		dst += 1;
+		WRITE_LE_UINT16(dst, entry.damageSuffered);
+		dst += 2;
+		WRITE_LE_UINT16(dst, entry.weaponHit);
+		dst += 2;
+		WRITE_LE_UINT16(dst, entry.totalMightModifier);
+		dst += 2;
+		WRITE_LE_UINT16(dst, entry.totalProtectionModifier);
+		dst += 2;
+		WRITE_LE_UINT16(dst, entry.might);
+		dst += 2;
+		WRITE_LE_UINT16(dst, entry.protection);
+		dst += 2;
+		WRITE_LE_UINT16(dst, entry.nextAnimUpdateCountdown);
+		dst += 2;
 		for (uint j = 0; j < 11; ++j) {
-			WRITE_LE_UINT16(dst, entry.items[j]); dst += 2;
+			WRITE_LE_UINT16(dst, entry.items[j]);
+			dst += 2;
 		}
 		for (uint j = 0; j < 3; ++j) {
-			*dst = entry.skillLevels[j]; dst += 1;
+			*dst = entry.skillLevels[j];
+			dst += 1;
 		}
 		for (uint j = 0; j < 3; ++j) {
-			*dst = entry.skillModifiers[j]; dst += 1;
+			*dst = entry.skillModifiers[j];
+			dst += 1;
 		}
 		for (uint j = 0; j < 3; ++j) {
-			WRITE_LE_UINT32(dst, entry.experiencePts[j]); dst += 4;
+			WRITE_LE_UINT32(dst, entry.experiencePts[j]);
+			dst += 4;
 		}
 		for (uint j = 0; j < 5; ++j) {
-			*dst = entry.characterUpdateEvents[j]; dst += 1;
+			*dst = entry.characterUpdateEvents[j];
+			dst += 1;
 		}
 		for (uint j = 0; j < 5; ++j) {
-			*dst = entry.characterUpdateDelay[j]; dst += 1;
+			*dst = entry.characterUpdateDelay[j];
+			dst += 1;
 		}
 	}
 
@@ -442,18 +533,26 @@ static void writeLoLSpellData(PAKFile &out, const char *filename, const SpellPro
 	for (uint i = 0; i < provider->numEntries; ++i) {
 		const SpellProperty &entry = provider->data[i];
 
-		WRITE_LE_UINT16(dst, entry.spellNameCode); dst += 2;
+		WRITE_LE_UINT16(dst, entry.spellNameCode);
+		dst += 2;
 		for (uint j = 0; j < 4; ++j) {
-			WRITE_LE_UINT16(dst, entry.mpRequired[j]); dst += 2;
+			WRITE_LE_UINT16(dst, entry.mpRequired[j]);
+			dst += 2;
 		}
-		WRITE_LE_UINT16(dst, entry.field_a); dst += 2;
-		WRITE_LE_UINT16(dst, entry.field_c); dst += 2;
+		WRITE_LE_UINT16(dst, entry.field_a);
+		dst += 2;
+		WRITE_LE_UINT16(dst, entry.field_c);
+		dst += 2;
 		for (uint j = 0; j < 4; ++j) {
-			WRITE_LE_UINT16(dst, entry.hpRequired[j]); dst += 2;
+			WRITE_LE_UINT16(dst, entry.hpRequired[j]);
+			dst += 2;
 		}
-		WRITE_LE_UINT16(dst, entry.field_16); dst += 2;
-		WRITE_LE_UINT16(dst, entry.field_18); dst += 2;
-		WRITE_LE_UINT16(dst, entry.flags); dst += 2;
+		WRITE_LE_UINT16(dst, entry.field_16);
+		dst += 2;
+		WRITE_LE_UINT16(dst, entry.field_18);
+		dst += 2;
+		WRITE_LE_UINT16(dst, entry.flags);
+		dst += 2;
 	}
 
 	// Step 3: Add data to output
@@ -471,10 +570,14 @@ static void writeLoLCompassData(PAKFile &out, const char *filename, const Compas
 	for (uint i = 0; i < provider->numEntries; ++i) {
 		const CompassDef &entry = provider->data[i];
 
-		*dst = entry.shapeIndex; dst += 1;
-		*dst = entry.x; dst += 1;
-		*dst = entry.y; dst += 1;
-		*dst = entry.flags; dst += 1;
+		*dst = entry.shapeIndex;
+		dst += 1;
+		*dst = entry.x;
+		dst += 1;
+		*dst = entry.y;
+		dst += 1;
+		*dst = entry.flags;
+		dst += 1;
 	}
 
 	// Step 3: Add data to output
@@ -492,11 +595,16 @@ static void writeLoLFlightShpData(PAKFile &out, const char *filename, const Flyi
 	for (uint i = 0; i < provider->numEntries; ++i) {
 		const FlyingObjectShape &entry = provider->data[i];
 
-		*dst = entry.shapeFront; dst += 1;
-		*dst = entry.shapeBack; dst += 1;
-		*dst = entry.shapeLeft; dst += 1;
-		*dst = entry.drawFlags; dst += 1;
-		*dst = entry.flipFlags; dst += 1;
+		*dst = entry.shapeFront;
+		dst += 1;
+		*dst = entry.shapeBack;
+		dst += 1;
+		*dst = entry.shapeLeft;
+		dst += 1;
+		*dst = entry.drawFlags;
+		dst += 1;
+		*dst = entry.flipFlags;
+		dst += 1;
 	}
 
 	// Step 3: Add data to output
@@ -514,15 +622,24 @@ static void writeLoLButtonData(PAKFile &out, const char *filename, const LoLButt
 	for (uint i = 0; i < provider->numEntries; ++i) {
 		const LoLButtonDef &entry = provider->data[i];
 
-		WRITE_BE_UINT16(dst, entry.buttonFlags); dst += 2;
-		WRITE_BE_UINT16(dst, entry.keyCode); dst += 2;
-		WRITE_BE_UINT16(dst, entry.keyCode2); dst += 2;
-		WRITE_BE_UINT16(dst, entry.x); dst += 2;
-		WRITE_BE_UINT16(dst, entry.y); dst += 2;
-		WRITE_BE_UINT16(dst, entry.w); dst += 2;
-		WRITE_BE_UINT16(dst, entry.h); dst += 2;
-		WRITE_BE_UINT16(dst, entry.index); dst += 2;
-		WRITE_BE_UINT16(dst, entry.screenDim); dst += 2;
+		WRITE_BE_UINT16(dst, entry.buttonFlags);
+		dst += 2;
+		WRITE_BE_UINT16(dst, entry.keyCode);
+		dst += 2;
+		WRITE_BE_UINT16(dst, entry.keyCode2);
+		dst += 2;
+		WRITE_BE_UINT16(dst, entry.x);
+		dst += 2;
+		WRITE_BE_UINT16(dst, entry.y);
+		dst += 2;
+		WRITE_BE_UINT16(dst, entry.w);
+		dst += 2;
+		WRITE_BE_UINT16(dst, entry.h);
+		dst += 2;
+		WRITE_BE_UINT16(dst, entry.index);
+		dst += 2;
+		WRITE_BE_UINT16(dst, entry.screenDim);
+		dst += 2;
 	}
 
 	// Step 3: Add data to output
@@ -538,7 +655,8 @@ static void writeRawDataBe16(PAKFile &out, const char *filename, const Uint16Pro
 
 	byte *dst = output;
 	for (uint i = 0; i < provider->numEntries; ++i) {
-		WRITE_BE_UINT16(dst, provider->data[i]); dst += 2;
+		WRITE_BE_UINT16(dst, provider->data[i]);
+		dst += 2;
 	}
 
 	// Step 3: Add data to output
@@ -554,7 +672,8 @@ static void writeRawDataBe32(PAKFile &out, const char *filename, const Uint32Pro
 
 	byte *dst = output;
 	for (uint i = 0; i < provider->numEntries; ++i) {
-		WRITE_BE_UINT32(dst, provider->data[i]); dst += 4;
+		WRITE_BE_UINT32(dst, provider->data[i]);
+		dst += 4;
 	}
 
 	// Step 3: Add data to output
@@ -572,16 +691,26 @@ static void writeEoB2SequenceData(PAKFile &out, const char *filename, const Dark
 	for (uint i = 0; i < provider->numEntries; ++i) {
 		const DarkMoonAnimCommand &entry = provider->data[i];
 
-		*dst = entry.command; dst += 1;
-		*dst = entry.obj; dst += 1;
-		WRITE_BE_UINT16(dst, entry.x1); dst += 2;
-		*dst = entry.y1; dst += 1;
-		*dst = entry.delay; dst += 1;
-		*dst = entry.pal; dst += 1;
-		*dst = entry.x2; dst += 1;
-		*dst = entry.y2; dst += 1;
-		*dst = entry.w; dst += 1;
-		*dst = entry.h; dst += 1;
+		*dst = entry.command;
+		dst += 1;
+		*dst = entry.obj;
+		dst += 1;
+		WRITE_BE_UINT16(dst, entry.x1);
+		dst += 2;
+		*dst = entry.y1;
+		dst += 1;
+		*dst = entry.delay;
+		dst += 1;
+		*dst = entry.pal;
+		dst += 1;
+		*dst = entry.x2;
+		dst += 1;
+		*dst = entry.y2;
+		dst += 1;
+		*dst = entry.w;
+		dst += 1;
+		*dst = entry.h;
+		dst += 1;
 	}
 
 	// Step 3: Add data to output
@@ -599,11 +728,16 @@ static void writeEoB2ShapeData(PAKFile &out, const char *filename, const DarkMoo
 	for (uint i = 0; i < provider->numEntries; ++i) {
 		const DarkMoonShapeDef &entry = provider->data[i];
 
-		WRITE_BE_UINT16(dst, entry.index); dst += 2;
-		*dst = entry.x; dst += 1;
-		*dst = entry.y; dst += 1;
-		*dst = entry.w; dst += 1;
-		*dst = entry.h; dst += 1;
+		WRITE_BE_UINT16(dst, entry.index);
+		dst += 2;
+		*dst = entry.x;
+		dst += 1;
+		*dst = entry.y;
+		dst += 1;
+		*dst = entry.w;
+		dst += 1;
+		*dst = entry.h;
+		dst += 1;
 	}
 
 	// Step 3: Add data to output
@@ -618,43 +752,76 @@ static void writeEoBNpcData(PAKFile &out, const char *filename, const EoBCharact
 	byte *const output = new byte[size];
 
 	byte *dst = output;
-	WRITE_BE_UINT16(dst, provider->numEntries); dst += 2;
+	WRITE_BE_UINT16(dst, provider->numEntries);
+	dst += 2;
 	for (uint i = 0; i < provider->numEntries; ++i) {
 		const EoBCharacter &entry = provider->data[i];
 
-		*dst = entry.id; dst += 1;
-		*dst = entry.flags; dst += 1;
-		memcpy(dst, entry.name, 11); dst += 11;
-		*dst = entry.strengthCur; dst += 1;
-		*dst = entry.strengthMax; dst += 1;
-		*dst = entry.strengthExtCur; dst += 1;
-		*dst = entry.strengthExtMax; dst += 1;
-		*dst = entry.intelligenceCur; dst += 1;
-		*dst = entry.intelligenceMax; dst += 1;
-		*dst = entry.wisdomCur; dst += 1;
-		*dst = entry.wisdomMax; dst += 1;
-		*dst = entry.dexterityCur; dst += 1;
-		*dst = entry.dexterityMax; dst += 1;
-		*dst = entry.constitutionCur; dst += 1;
-		*dst = entry.constitutionMax; dst += 1;
-		*dst = entry.charismaCur; dst += 1;
-		*dst = entry.charismaMax; dst += 1;
-		WRITE_BE_UINT16(dst, entry.hitPointsCur); dst += 2;
-		WRITE_BE_UINT16(dst, entry.hitPointsMax); dst += 2;
-		*dst = entry.armorClass; dst += 1;
-		*dst = entry.disabledSlots; dst += 1;
-		*dst = entry.raceSex; dst += 1;
-		*dst = entry.cClass; dst += 1;
-		*dst = entry.alignment; dst += 1;
-		*dst = entry.portrait; dst += 1;
-		*dst = entry.food; dst += 1;
-		memcpy(dst, entry.level, 3); dst += 3;
-		WRITE_BE_UINT32(dst, entry.experience[0]); dst += 4;
-		WRITE_BE_UINT32(dst, entry.experience[1]); dst += 4;
-		WRITE_BE_UINT32(dst, entry.experience[2]); dst += 4;
-		WRITE_BE_UINT32(dst, entry.mageSpellsAvailableFlags); dst += 4;
+		*dst = entry.id;
+		dst += 1;
+		*dst = entry.flags;
+		dst += 1;
+		memcpy(dst, entry.name, 11);
+		dst += 11;
+		*dst = entry.strengthCur;
+		dst += 1;
+		*dst = entry.strengthMax;
+		dst += 1;
+		*dst = entry.strengthExtCur;
+		dst += 1;
+		*dst = entry.strengthExtMax;
+		dst += 1;
+		*dst = entry.intelligenceCur;
+		dst += 1;
+		*dst = entry.intelligenceMax;
+		dst += 1;
+		*dst = entry.wisdomCur;
+		dst += 1;
+		*dst = entry.wisdomMax;
+		dst += 1;
+		*dst = entry.dexterityCur;
+		dst += 1;
+		*dst = entry.dexterityMax;
+		dst += 1;
+		*dst = entry.constitutionCur;
+		dst += 1;
+		*dst = entry.constitutionMax;
+		dst += 1;
+		*dst = entry.charismaCur;
+		dst += 1;
+		*dst = entry.charismaMax;
+		dst += 1;
+		WRITE_BE_UINT16(dst, entry.hitPointsCur);
+		dst += 2;
+		WRITE_BE_UINT16(dst, entry.hitPointsMax);
+		dst += 2;
+		*dst = entry.armorClass;
+		dst += 1;
+		*dst = entry.disabledSlots;
+		dst += 1;
+		*dst = entry.raceSex;
+		dst += 1;
+		*dst = entry.cClass;
+		dst += 1;
+		*dst = entry.alignment;
+		dst += 1;
+		*dst = entry.portrait;
+		dst += 1;
+		*dst = entry.food;
+		dst += 1;
+		memcpy(dst, entry.level, 3);
+		dst += 3;
+		WRITE_BE_UINT32(dst, entry.experience[0]);
+		dst += 4;
+		WRITE_BE_UINT32(dst, entry.experience[1]);
+		dst += 4;
+		WRITE_BE_UINT32(dst, entry.experience[2]);
+		dst += 4;
+		WRITE_BE_UINT32(dst, entry.mageSpellsAvailableFlags);
+		dst += 4;
 		for (uint j = 0; j < 27; ++j) {
-			WRITE_BE_UINT16(dst, entry.inventory[j]); dst += 2;
+			WRITE_BE_UINT16(dst, entry.inventory[j]);
+			dst += 2;
 		}
 	}
 

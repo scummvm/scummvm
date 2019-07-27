@@ -20,26 +20,26 @@
  *
  */
 
-#include "common/system.h"
 #include "common/debug.h"
 #include "common/error.h"
 #include "common/file.h"
 #include "common/stream.h"
+#include "common/system.h"
 
 #include "adl/adl_v4.h"
 #include "adl/detection.h"
+#include "adl/disk.h"
 #include "adl/display_a2.h"
 #include "adl/graphics.h"
-#include "adl/disk.h"
 #include "adl/sound.h"
 
 namespace Adl {
 
 class HiRes5Engine : public AdlEngine_v4 {
 public:
-	HiRes5Engine(OSystem *syst, const AdlGameDescription *gd) :
-			AdlEngine_v4(syst, gd),
-			_doAnimation(false) { }
+	HiRes5Engine(OSystem *syst, const AdlGameDescription *gd)
+	  : AdlEngine_v4(syst, gd)
+	  , _doAnimation(false) {}
 
 private:
 	// AdlEngine
@@ -350,7 +350,7 @@ void HiRes5Engine::initGameState() {
 	loadRegion(1);
 	_state.room = 5;
 
-	_doAnimation  = false;
+	_doAnimation = false;
 }
 
 void HiRes5Engine::applyRegionWorkarounds() {

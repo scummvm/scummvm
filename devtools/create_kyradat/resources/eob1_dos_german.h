@@ -126,7 +126,10 @@ static const char *const kEoB1BonusStringsDOSGerman[3] = {
 static const StringListProvider kEoB1BonusStringsDOSGermanProvider = { ARRAYSIZE(kEoB1BonusStringsDOSGerman), kEoB1BonusStringsDOSGerman };
 
 static const char *const kEoB1TurnUndeadStringDOSGerman[1] = {
-	"\x06\x06""%s benutzt Magie, um Untote zu vertreiben!""\x06\x0F""\r"
+	"\x06\x06"
+	"%s benutzt Magie, um Untote zu vertreiben!"
+	"\x06\x0F"
+	"\r"
 };
 
 static const StringListProvider kEoB1TurnUndeadStringDOSGermanProvider = { ARRAYSIZE(kEoB1TurnUndeadStringDOSGerman), kEoB1TurnUndeadStringDOSGerman };
@@ -626,7 +629,10 @@ static const char *const kEoB1CharStatusStrings131DOSGerman[1] = {
 static const StringListProvider kEoB1CharStatusStrings131DOSGermanProvider = { ARRAYSIZE(kEoB1CharStatusStrings131DOSGerman), kEoB1CharStatusStrings131DOSGerman };
 
 static const char *const kEoB1LevelGainStringsDOSGerman[1] = {
-	"\x06\x01""%s steigt eine erfahrungsstufe auf.""\x06\x0F""\r"
+	"\x06\x01"
+	"%s steigt eine erfahrungsstufe auf."
+	"\x06\x0F"
+	"\r"
 };
 
 static const StringListProvider kEoB1LevelGainStringsDOSGermanProvider = { ARRAYSIZE(kEoB1LevelGainStringsDOSGerman), kEoB1LevelGainStringsDOSGerman };
@@ -896,4 +902,3 @@ static const char *const kEoB1MonsterDistAttStringsDOSGerman[5] = {
 };
 
 static const StringListProvider kEoB1MonsterDistAttStringsDOSGermanProvider = { ARRAYSIZE(kEoB1MonsterDistAttStringsDOSGerman), kEoB1MonsterDistAttStringsDOSGerman };
-

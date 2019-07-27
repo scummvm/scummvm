@@ -23,23 +23,25 @@
 #include "common/scummsys.h"
 
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
+#include "common/debug.h"
 #include "common/error.h"
-#include "graphics/cursorman.h"
-#include "graphics/surface.h"
-#include "graphics/screen.h"
-#include "graphics/palette.h"
-#include "graphics/font.h"
-#include "graphics/fontman.h"
 #include "common/system.h"
 #include "engines/util.h"
-#include "common/debug.h"
-#include "common/debug-channels.h"
+#include "graphics/cursorman.h"
+#include "graphics/font.h"
+#include "graphics/fontman.h"
+#include "graphics/palette.h"
+#include "graphics/screen.h"
+#include "graphics/surface.h"
 
 #include "plumbers/plumbers.h"
 
 namespace Plumbers {
 
-PlumbersGame::PlumbersGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+PlumbersGame::PlumbersGame(OSystem *syst, const ADGameDescription *gameDesc)
+  : Engine(syst)
+  , _gameDescription(gameDesc) {
 	_image = nullptr;
 	_console = nullptr;
 	_timerInstalled = false;
@@ -63,28 +65,28 @@ PlumbersGame::~PlumbersGame() {
 }
 
 static const byte MOUSECURSOR_SCI[] = {
-	1,1,0,0,0,0,0,0,0,0,0,
-	1,2,1,0,0,0,0,0,0,0,0,
-	1,2,2,1,0,0,0,0,0,0,0,
-	1,2,2,2,1,0,0,0,0,0,0,
-	1,2,2,2,2,1,0,0,0,0,0,
-	1,2,2,2,2,2,1,0,0,0,0,
-	1,2,2,2,2,2,2,1,0,0,0,
-	1,2,2,2,2,2,2,2,1,0,0,
-	1,2,2,2,2,2,2,2,2,1,0,
-	1,2,2,2,2,2,2,2,2,2,1,
-	1,2,2,2,2,2,1,0,0,0,0,
-	1,2,1,0,1,2,2,1,0,0,0,
-	1,1,0,0,1,2,2,1,0,0,0,
-	0,0,0,0,0,1,2,2,1,0,0,
-	0,0,0,0,0,1,2,2,1,0,0,
-	0,0,0,0,0,0,1,2,2,1,0
+	1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0,
+	1, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0,
+	1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0,
+	1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0,
+	1, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0,
+	1, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0,
+	1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0,
+	1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
+	1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0,
+	1, 2, 1, 0, 1, 2, 2, 1, 0, 0, 0,
+	1, 1, 0, 0, 1, 2, 2, 1, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
+	0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
+	0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0
 };
 
 static const byte cursorPalette[] = {
-	0, 0, 0,           // Black / Transparent
-	0x80, 0x80, 0x80,  // Gray
-	0xff, 0xff, 0xff   // White
+	0, 0, 0, // Black / Transparent
+	0x80, 0x80, 0x80, // Gray
+	0xff, 0xff, 0xff // White
 };
 
 Common::Error PlumbersGame::run() {
@@ -308,7 +310,7 @@ void PlumbersGame::processTimer() {
 
 void PlumbersGame::onTimer(void *arg) {
 	g_system->getTimerManager()->removeTimerProc(onTimer);
-	((PlumbersGame*)arg)->processTimer();
+	((PlumbersGame *)arg)->processTimer();
 }
 
 void PlumbersGame::initTables() {

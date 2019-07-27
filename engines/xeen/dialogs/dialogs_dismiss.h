@@ -32,11 +32,13 @@ class Dismiss : public ButtonContainer {
 private:
 	SpriteResource _iconSprites;
 
-	Dismiss(XeenEngine *vm) : ButtonContainer(vm) {}
+	Dismiss(XeenEngine *vm)
+	  : ButtonContainer(vm) {}
 
 	void execute();
 
 	void loadButtons();
+
 public:
 	static void show(XeenEngine *vm);
 };

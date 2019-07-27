@@ -50,9 +50,8 @@ void CBaseStarRef::process(CSurfaceArea *surface, CStarCamera *camera) {
 			vector2 = camera->getRelativePos(2, vector1);
 
 			const Common::Point pt((int)(vector2._x + vWidth2 - -0.5),
-				(int)(vector2._y + vHeight2 - -0.5));
-			if (pt.y >= 0 && pt.y < (surface->_height - 1) &&
-					pt.x >= 0 && pt.x < (surface->_width - 1)) {
+			                       (int)(vector2._y + vHeight2 - -0.5));
+			if (pt.y >= 0 && pt.y < (surface->_height - 1) && pt.x >= 0 && pt.x < (surface->_width - 1)) {
 				val1 = sqrt(hyp);
 				if (val1 >= 100000.0)
 					val1 = 1.0 - (val1 - 100000.0) / 1000000000.0;

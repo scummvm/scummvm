@@ -24,8 +24,8 @@
 #define MADS_DIALOGS_H
 
 #include "common/scummsys.h"
-#include "mads/game.h"
 #include "mads/font.h"
+#include "mads/game.h"
 #include "mads/msurface.h"
 
 namespace MADS {
@@ -36,6 +36,7 @@ namespace MADS {
 class Dialog {
 private:
 	void setDialogPalette();
+
 protected:
 	MADSEngine *_vm;
 	MSurface *_savedSurface;
@@ -52,6 +53,7 @@ protected:
 	int TEXTDIALOG_FD;
 	int TEXTDIALOG_FE;
 	int TEXTDIALOG_BLACK;
+
 protected:
 	/**
 	 * Draw the dialog
@@ -77,6 +79,7 @@ protected:
 	* Draws the content of a dialog with a gravelly alternating color.
 	*/
 	void drawContent(const Common::Rect &r, int seed, byte color1, byte color2);
+
 public:
 	/**
 	 * Constructor
@@ -93,7 +96,7 @@ public:
 	 */
 	Common::Rect getBounds() const {
 		return Common::Rect(_position.x, _position.y,
-			_position.x + _width, _position.y + _height);
+		                    _position.x + _width, _position.y + _height);
 	}
 };
 
@@ -115,6 +118,7 @@ private:
 	 * Used by the constructors to initialize the dialog fields
 	 */
 	void init(int maxTextChars);
+
 protected:
 	Font *_font;
 	int _innerWidth;
@@ -135,6 +139,7 @@ protected:
 	 * Calculate the bounds for the dialog
 	 */
 	virtual void calculateBounds();
+
 public:
 	/**
 	 * Constructor
@@ -144,7 +149,7 @@ public:
 	 * @param maxChars		Horizontal width of window in characters
 	 */
 	TextDialog(MADSEngine *vm, const Common::String &fontName, const Common::Point &pos,
-		int maxChars);
+	           int maxChars);
 
 	/**
 	 * Constructor
@@ -155,7 +160,7 @@ public:
 	 * @param maxTextChars	Horizontal width of text portion of window in characters
 	 */
 	TextDialog(MADSEngine *vm, const Common::String &fontName, const Common::Point &pos,
-		MSurface *icon, int maxTextChars);
+	           MSurface *icon, int maxTextChars);
 
 	/**
 	 * Destructor
@@ -228,9 +233,16 @@ public:
 };
 
 enum DialogId {
-	DIALOG_NONE = 0, DIALOG_GAME_MENU = 1, DIALOG_SAVE = 2, DIALOG_RESTORE = 3,
-	DIALOG_OPTIONS = 4, DIALOG_DIFFICULTY = 5, DIALOG_ERROR = 6,
-	DIALOG_MAIN_MENU = 7, DIALOG_TEXTVIEW = 8, DIALOG_ANIMVIEW = 9,
+	DIALOG_NONE = 0,
+	DIALOG_GAME_MENU = 1,
+	DIALOG_SAVE = 2,
+	DIALOG_RESTORE = 3,
+	DIALOG_OPTIONS = 4,
+	DIALOG_DIFFICULTY = 5,
+	DIALOG_ERROR = 6,
+	DIALOG_MAIN_MENU = 7,
+	DIALOG_TEXTVIEW = 8,
+	DIALOG_ANIMVIEW = 9,
 	DIALOG_ADVERT = 10
 };
 
@@ -239,8 +251,10 @@ protected:
 	MADSEngine *_vm;
 
 	Dialogs(MADSEngine *vm);
+
 public:
 	static Dialogs *init(MADSEngine *vm);
+
 public:
 	Common::Point _defaultPosition;
 	DialogId _pendingDialog;
@@ -259,7 +273,7 @@ public:
 	virtual void spinObject(int idx) { warning("TODO: spinObject"); }
 };
 
-class FullScreenDialog: public EventTarget {
+class FullScreenDialog : public EventTarget {
 protected:
 	/**
 	 * Engine reference
@@ -280,6 +294,7 @@ protected:
 	 * Handles displaying the screen background and dialog
 	 */
 	virtual void display();
+
 public:
 	/**
 	 * Constructor

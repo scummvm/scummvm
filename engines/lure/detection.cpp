@@ -22,9 +22,9 @@
 
 #include "base/plugins.h"
 
+#include "common/savefile.h"
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
-#include "common/savefile.h"
 
 #include "lure/lure.h"
 
@@ -42,13 +42,20 @@ Common::Platform LureEngine::getPlatform() const { return _gameDescription->desc
 
 LureLanguage LureEngine::getLureLanguage() const {
 	switch (_gameDescription->desc.language) {
-	case Common::IT_ITA: return LANG_IT_ITA;
-	case Common::FR_FRA: return LANG_FR_FRA;
-	case Common::DE_DEU: return LANG_DE_DEU;
-	case Common::ES_ESP: return LANG_ES_ESP;
-	case Common::RU_RUS: return LANG_RU_RUS;
-	case Common::EN_ANY: return LANG_EN_ANY;
-	case Common::UNK_LANG: return LANG_UNKNOWN;
+	case Common::IT_ITA:
+		return LANG_IT_ITA;
+	case Common::FR_FRA:
+		return LANG_FR_FRA;
+	case Common::DE_DEU:
+		return LANG_DE_DEU;
+	case Common::ES_ESP:
+		return LANG_ES_ESP;
+	case Common::RU_RUS:
+		return LANG_RU_RUS;
+	case Common::EN_ANY:
+		return LANG_EN_ANY;
+	case Common::UNK_LANG:
+		return LANG_UNKNOWN;
 	default:
 		error("Unknown game language");
 	}
@@ -57,146 +64,124 @@ LureLanguage LureEngine::getLureLanguage() const {
 } // End of namespace Lure
 
 static const PlainGameDescriptor lureGames[] = {
-	{"lure", "Lure of the Temptress"},
-	{0, 0}
+	{ "lure", "Lure of the Temptress" },
+	{ 0, 0 }
 };
-
 
 namespace Lure {
 
 static const LureGameDescription gameDescriptions[] = {
 	{
-		{
-			"lure",
-			"VGA",
-			AD_ENTRY1("disk1.vga", "b2a8aa6d7865813a17a3c636e063572e"),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		GF_FLOPPY,
+	  { "lure",
+	    "VGA",
+	    AD_ENTRY1("disk1.vga", "b2a8aa6d7865813a17a3c636e063572e"),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  GF_FLOPPY,
 	},
 
 	{
-		{
-			"lure",
-			"EGA",
-			AD_ENTRY1("disk1.ega", "e9c9fdd8a19f7910d68e53cb84651273"),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		GF_FLOPPY | GF_EGA,
+	  { "lure",
+	    "EGA",
+	    AD_ENTRY1("disk1.ega", "e9c9fdd8a19f7910d68e53cb84651273"),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  GF_FLOPPY | GF_EGA,
 	},
 
 	{
-		{
-			"lure",
-			"VGA",
-			AD_ENTRY1("disk1.vga", "cf69d5ada228dd74f89046691c16aafb"),
-			Common::IT_ITA,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		GF_FLOPPY,
+	  { "lure",
+	    "VGA",
+	    AD_ENTRY1("disk1.vga", "cf69d5ada228dd74f89046691c16aafb"),
+	    Common::IT_ITA,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  GF_FLOPPY,
 	},
 
 	{
-		{
-			"lure",
-			"EGA",
-			AD_ENTRY1("disk1.ega", "b80aced0321f64c58df2c7d3d74dfe79"),
-			Common::IT_ITA,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		GF_FLOPPY | GF_EGA,
+	  { "lure",
+	    "EGA",
+	    AD_ENTRY1("disk1.ega", "b80aced0321f64c58df2c7d3d74dfe79"),
+	    Common::IT_ITA,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  GF_FLOPPY | GF_EGA,
 	},
 
 	{
-		{
-			"lure",
-			"",
-			AD_ENTRY1("disk1.vga", "7aa19e444dab1ac7194d9f7a40ffe54a"),
-			Common::DE_DEU,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		GF_FLOPPY,
+	  { "lure",
+	    "",
+	    AD_ENTRY1("disk1.vga", "7aa19e444dab1ac7194d9f7a40ffe54a"),
+	    Common::DE_DEU,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  GF_FLOPPY,
 	},
 
 	{
-		{
-			"lure",
-			"",
-			AD_ENTRY1("disk1.vga", "894a2c2caeccbad2fc2f4a79a8ee47b0"),
-			Common::DE_DEU,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		GF_FLOPPY,
+	  { "lure",
+	    "",
+	    AD_ENTRY1("disk1.vga", "894a2c2caeccbad2fc2f4a79a8ee47b0"),
+	    Common::DE_DEU,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  GF_FLOPPY,
 	},
 
 	{
-		{
-			"lure",
-			"",
-			AD_ENTRY1("disk1.vga", "1c94475c1bb7e0e88c1757d3b5377e94"),
-			Common::FR_FRA,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		GF_FLOPPY,
+	  { "lure",
+	    "",
+	    AD_ENTRY1("disk1.vga", "1c94475c1bb7e0e88c1757d3b5377e94"),
+	    Common::FR_FRA,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  GF_FLOPPY,
 	},
 
 	{
-		{
-			"lure",
-			"",
-			AD_ENTRY1("disk1.vga", "1751145b653959f7a64fe1618d6b97ac"),
-			Common::ES_ESP,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		GF_FLOPPY,
+	  { "lure",
+	    "",
+	    AD_ENTRY1("disk1.vga", "1751145b653959f7a64fe1618d6b97ac"),
+	    Common::ES_ESP,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  GF_FLOPPY,
 	},
 
 	// Russian OG Edition v1.0
 	{
-		{
-			"lure",
-			"1.0",
-			AD_ENTRY1("disk1.vga", "04cdcaa9f0cadca492f7aff0c8adfe06"),
-			Common::RU_RUS,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		GF_FLOPPY,
+	  { "lure",
+	    "1.0",
+	    AD_ENTRY1("disk1.vga", "04cdcaa9f0cadca492f7aff0c8adfe06"),
+	    Common::RU_RUS,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  GF_FLOPPY,
 	},
 
 	// Russian OG Edition v1.1
 	{
-		{
-			"lure",
-			"1.1",
-			AD_ENTRY1("disk1.vga", "3f27adff8e8b279f12aaf3d808e84f02"),
-			Common::RU_RUS,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		GF_FLOPPY,
+	  { "lure",
+	    "1.1",
+	    AD_ENTRY1("disk1.vga", "3f27adff8e8b279f12aaf3d808e84f02"),
+	    Common::RU_RUS,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  GF_FLOPPY,
 	},
-
 
 	{ AD_TABLE_END_MARKER, 0 }
 };
@@ -205,7 +190,8 @@ static const LureGameDescription gameDescriptions[] = {
 
 class LureMetaEngine : public AdvancedMetaEngine {
 public:
-	LureMetaEngine() : AdvancedMetaEngine(Lure::gameDescriptions, sizeof(Lure::LureGameDescription), lureGames) {
+	LureMetaEngine()
+	  : AdvancedMetaEngine(Lure::gameDescriptions, sizeof(Lure::LureGameDescription), lureGames) {
 		_md5Bytes = 1024;
 		_singleId = "lure";
 
@@ -231,17 +217,11 @@ public:
 };
 
 bool LureMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave);
+	return (f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup) || (f == kSupportsDeleteSave);
 }
 
 bool Lure::LureEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
 bool LureMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -290,7 +270,7 @@ void LureMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(LURE)
-	REGISTER_PLUGIN_DYNAMIC(LURE, PLUGIN_TYPE_ENGINE, LureMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(LURE, PLUGIN_TYPE_ENGINE, LureMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(LURE, PLUGIN_TYPE_ENGINE, LureMetaEngine);
+REGISTER_PLUGIN_STATIC(LURE, PLUGIN_TYPE_ENGINE, LureMetaEngine);
 #endif

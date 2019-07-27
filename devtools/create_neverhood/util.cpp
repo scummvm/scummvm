@@ -27,7 +27,7 @@
 #include <stdarg.h>
 
 #ifdef _MSC_VER
-	#define	vsnprintf _vsnprintf
+#	define vsnprintf _vsnprintf
 #endif
 
 void error(const char *s, ...) {

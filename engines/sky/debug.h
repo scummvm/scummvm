@@ -23,7 +23,6 @@
 #ifndef SKY_DEBUG_H
 #define SKY_DEBUG_H
 
-
 #include "common/scummsys.h"
 #include "gui/debugger.h"
 
@@ -38,7 +37,7 @@ class Debugger : public GUI::Debugger {
 public:
 	Debugger(Logic *logic, Mouse *mouse, Screen *screen, SkyCompact *skyCompact);
 	virtual ~Debugger(); // we need this here for __SYMBIAN32__ archaic gcc/UIQ
-	bool showGrid()	{	return _showGrid; }
+	bool showGrid() { return _showGrid; }
 
 private:
 	virtual void preEnter();
@@ -63,7 +62,6 @@ private:
 
 	bool _showGrid;
 };
-
 
 class Debug {
 public:

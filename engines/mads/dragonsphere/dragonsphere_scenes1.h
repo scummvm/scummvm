@@ -25,162 +25,164 @@
 
 #include "common/scummsys.h"
 #include "common/serializer.h"
+#include "mads/dragonsphere/dragonsphere_scenes.h"
 #include "mads/game.h"
 #include "mads/scene.h"
-#include "mads/dragonsphere/dragonsphere_scenes.h"
 
 namespace MADS {
 
 namespace Dragonsphere {
 
-class Scene1xx : public DragonsphereScene {
-protected:
-	/**
+	class Scene1xx : public DragonsphereScene {
+	protected:
+		/**
 	 * Plays an appropriate sound when entering a scene
 	 */
-	void sceneEntrySound();
+		void sceneEntrySound();
 
-	/**
+		/**
 	 *Sets the AA file to use for the scene
 	 */
-	void setAAName();
+		void setAAName();
 
-	/**
+		/**
 	 * Updates the prefix used for getting player sprites for the scene
 	 */
-	void setPlayerSpritesPrefix();
-public:
-	Scene1xx(MADSEngine *vm) : DragonsphereScene(vm) {}
-};
+		void setPlayerSpritesPrefix();
 
-class Scene101 : public Scene1xx {
-public:
-	Scene101(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	public:
+		Scene1xx(MADSEngine *vm)
+		  : DragonsphereScene(vm) {}
+	};
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	class Scene101 : public Scene1xx {
+	public:
+		Scene101(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene102 : public Scene1xx {
-private:
-	int _diaryHotspotIdx1;
-	int _diaryHotspotIdx2;
-	int _diaryFrame;
-	int _animRunning;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-public:
-	Scene102(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	class Scene102 : public Scene1xx {
+	private:
+		int _diaryHotspotIdx1;
+		int _diaryHotspotIdx2;
+		int _diaryFrame;
+		int _animRunning;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene102(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene103 : public Scene1xx {
-public:
-	Scene103(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	class Scene103 : public Scene1xx {
+	public:
+		Scene103(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene104 : public Scene1xx {
-private:
-	bool _anim0ActvFl;
-	bool _anim1ActvFl;
-	bool _anim2ActvFl;
-	bool _anim3ActvFl;
-	bool _anim4ActvFl;
-	bool _anim5ActvFl;
-	bool _anim6ActvFl;
-	bool _activateTimerFl;
-	bool _wasBearFl;
-	bool _amuletWorksFl;
-	bool _pidDrawnSword;
-	int _animationRunning;
-	int _deathTimer;
-	int _deathFrame;
-	int _doorwayHotspotId;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	int _kingStatus;
-	int _kingFrame;
-	int _kingCount;
-	int _queenStatus;
-	int _queenFrame;
-	int _queenCount;
-	int _pidStatus;
-	int _pidFrame;
-	int _pidCount;
-	int _macStatus;
-	int _macFrame;
-	int _macCount;
-	int _twinklesStatus;
-	int _twinklesFrame;
-	int _twinklesCount;
-	int _tapestryFrame;
+	class Scene104 : public Scene1xx {
+	private:
+		bool _anim0ActvFl;
+		bool _anim1ActvFl;
+		bool _anim2ActvFl;
+		bool _anim3ActvFl;
+		bool _anim4ActvFl;
+		bool _anim5ActvFl;
+		bool _anim6ActvFl;
+		bool _activateTimerFl;
+		bool _wasBearFl;
+		bool _amuletWorksFl;
+		bool _pidDrawnSword;
+		int _animationRunning;
+		int _deathTimer;
+		int _deathFrame;
+		int _doorwayHotspotId;
 
-	int32 _clock;
+		int _kingStatus;
+		int _kingFrame;
+		int _kingCount;
+		int _queenStatus;
+		int _queenFrame;
+		int _queenCount;
+		int _pidStatus;
+		int _pidFrame;
+		int _pidCount;
+		int _macStatus;
+		int _macFrame;
+		int _macCount;
+		int _twinklesStatus;
+		int _twinklesFrame;
+		int _twinklesCount;
+		int _tapestryFrame;
 
-	void handleFinalConversation();
-	void handleKingAnimation();
-	void handleMacAnimation1();
-	void handleMacAnimation2();
-	void handleQueenAnimation();
-	void handleTwinklesAnimation();
-	void handleDeathAnimation();
-	void handlePidAnimation();
+		int32 _clock;
 
-public:
-	Scene104(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		void handleFinalConversation();
+		void handleKingAnimation();
+		void handleMacAnimation1();
+		void handleMacAnimation2();
+		void handleQueenAnimation();
+		void handleTwinklesAnimation();
+		void handleDeathAnimation();
+		void handlePidAnimation();
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene104(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene105 : public Scene1xx {
-private:
-	bool _maidTalkingFl;
-	bool _sitUpFl;
-	bool _goodNumberFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	int _maidFrame;
-	int _maidHotspotId1;
-	int _maidHotspotId2;
-	int _newStatus;
-	int _previousStatus;
-	int _bucketHotspotId;
-	int _boneHotspotId;
-	int _gobletHotspotId;
+	class Scene105 : public Scene1xx {
+	private:
+		bool _maidTalkingFl;
+		bool _sitUpFl;
+		bool _goodNumberFl;
 
-	void setRandomStatus();
-	void setRandomWipebrow();
-	void handleConversation();
+		int _maidFrame;
+		int _maidHotspotId1;
+		int _maidHotspotId2;
+		int _newStatus;
+		int _previousStatus;
+		int _bucketHotspotId;
+		int _boneHotspotId;
+		int _gobletHotspotId;
 
-public:
-	Scene105(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		void setRandomStatus();
+		void setRandomWipebrow();
+		void handleConversation();
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene105(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
+
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
 } // End of namespace Dragonsphere
 } // End of namespace MADS

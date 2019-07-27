@@ -54,6 +54,7 @@ public:
 	}
 
 	void setVolume(int32 volume);
+
 protected:
 	int readBuffer(int16 *buffer, const int numSamples);
 	bool isStereo() const {
@@ -106,6 +107,7 @@ public:
 	bool loadAudioPackage(const Common::String &indexFile, const Common::String &streamFile);
 	void getInfo(int32 id, int32 *offset, int32 *size);
 	Common::SeekableReadStream *getStream(int32 id, bool ownMemory = false);
+
 protected:
 	Common::SeekableReadStream *_file;
 	uint32 *_indexBuffer;
@@ -154,11 +156,11 @@ public:
 	void closeAudioPack(int32 id);
 	bool loadAudioPack(int32 id, const Common::String &indexFile, const Common::String &packFile);
 
-	AudioStreamInstance *_channels[16];  // 0-1 : music
+	AudioStreamInstance *_channels[16]; // 0-1 : music
 	// 2 : voice
 	// 3-16 : SFX
 
-	AudioStreamPackage *_audioPacks[4];  // 0 : generic streams
+	AudioStreamPackage *_audioPacks[4]; // 0 : generic streams
 	// 1 : local streams
 	// 2 : generic SFX
 	// 3 : local SFX

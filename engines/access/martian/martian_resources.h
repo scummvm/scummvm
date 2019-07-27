@@ -23,51 +23,56 @@
 #ifndef ACCESS_MARTIAN_RESOURCES_H
 #define ACCESS_MARTIAN_RESOURCES_H
 
-#include "common/scummsys.h"
-#include "access/resources.h"
 #include "access/font.h"
+#include "access/resources.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
 namespace Martian {
 
-extern const int SIDEOFFR[];
-extern const int SIDEOFFL[];
-extern const int SIDEOFFU[];
-extern const int SIDEOFFD[];
+	extern const int SIDEOFFR[];
+	extern const int SIDEOFFL[];
+	extern const int SIDEOFFU[];
+	extern const int SIDEOFFD[];
 
-extern const int SIDEOFFR[];
-extern const int SIDEOFFL[];
-extern const int SIDEOFFU[];
-extern const int SIDEOFFD[];
+	extern const int SIDEOFFR[];
+	extern const int SIDEOFFL[];
+	extern const int SIDEOFFU[];
+	extern const int SIDEOFFD[];
 
-extern const byte CREDIT_DATA[];
-extern const byte ICON_PALETTE[];
+	extern const byte CREDIT_DATA[];
+	extern const byte ICON_PALETTE[];
 
-extern const int RMOUSE[10][2];
+	extern const int RMOUSE[10][2];
 
-extern byte HELP[];
-extern const char *const ASK_TBL[];
-extern const char *const TRAVDATA[];
+	extern byte HELP[];
+	extern const char *const ASK_TBL[];
+	extern const char *const TRAVDATA[];
 
-extern const char *const SPEC7MESSAGE;
+	extern const char *const SPEC7MESSAGE;
 
-extern const byte _byte1EEB5[];
-extern const int PICTURERANGE[][2];
+	extern const byte _byte1EEB5[];
+	extern const int PICTURERANGE[][2];
 
-class MartianResources : public Resources {
-protected:
-	/**
+	class MartianResources : public Resources {
+	protected:
+		/**
 	 * Load data from the access.dat file
 	 */
-	virtual void load(Common::SeekableReadStream &s);
-public:
-	MartianFont *_font6x6;
-	MartianFont *_font3x5;
-public:
-	MartianResources(AccessEngine *vm) : Resources(vm), _font6x6(nullptr), _font3x5(nullptr) {}
-	virtual ~MartianResources();
-};
+		virtual void load(Common::SeekableReadStream &s);
+
+	public:
+		MartianFont *_font6x6;
+		MartianFont *_font3x5;
+
+	public:
+		MartianResources(AccessEngine *vm)
+		  : Resources(vm)
+		  , _font6x6(nullptr)
+		  , _font3x5(nullptr) {}
+		virtual ~MartianResources();
+	};
 
 #define MMRES (*((Martian::MartianResources *)_vm->_res))
 

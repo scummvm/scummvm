@@ -26,11 +26,11 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/persistent.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
-#include "engines/wintermute/base/scriptables/script_stack.h"
-#include "engines/wintermute/system/sys_instance.h"
 #include "engines/wintermute/base/scriptables/script_ext_array.h"
+#include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/persistent.h"
+#include "engines/wintermute/system/sys_instance.h"
 
 namespace Wintermute {
 
@@ -41,7 +41,8 @@ BaseScriptable *makeSXArray(BaseGame *inGame, ScStack *stack) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-SXArray::SXArray(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
+SXArray::SXArray(BaseGame *inGame, ScStack *stack)
+  : BaseScriptable(inGame) {
 	_length = 0;
 	_values = new ScValue(_gameRef);
 
@@ -60,18 +61,17 @@ SXArray::SXArray(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-SXArray::SXArray(BaseGame *inGame) : BaseScriptable(inGame) {
+SXArray::SXArray(BaseGame *inGame)
+  : BaseScriptable(inGame) {
 	_length = 0;
 	_values = new ScValue(_gameRef);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 SXArray::~SXArray() {
 	delete _values;
 	_values = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 const char *SXArray::scToString() {
@@ -94,7 +94,6 @@ const char *SXArray::scToString() {
 	_strRep = dummy;
 	return _strRep.c_str();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool SXArray::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
@@ -138,7 +137,6 @@ bool SXArray::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *SXArray::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
@@ -171,7 +169,6 @@ ScValue *SXArray::scGetProperty(const Common::String &name) {
 		}
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool SXArray::scSetProperty(const char *name, ScValue *value) {
@@ -209,7 +206,6 @@ bool SXArray::scSetProperty(const char *name, ScValue *value) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool SXArray::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptable::persist(persistMgr);
@@ -219,7 +215,6 @@ bool SXArray::persist(BasePersistenceManager *persistMgr) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool SXArray::validNumber(const char *origStr, char *outStr) {

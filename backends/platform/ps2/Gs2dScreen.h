@@ -23,9 +23,9 @@
 #ifndef __GS2DSCREEN_H__
 #define __GS2DSCREEN_H__
 
-#include "sysdefs.h"
 #include "backends/base-backend.h"
 #include "common/config-manager.h"
+#include "sysdefs.h"
 
 #include "backends/platform/ps2/DmaPipe.h"
 #include "graphics/surface.h"
@@ -35,7 +35,7 @@ enum TVMode {
 	TV_PAL,
 	TV_NTSC,
 	TV_HDTV, /* internal */
-	TV_VESA  /* internal */
+	TV_VESA /* internal */
 };
 
 enum GsInterlace {
@@ -95,10 +95,10 @@ private:
 	GsVertex _blitCoords[2];
 	TexVertex _texCoords[2];
 
-	uint8  _curDrawBuf;
+	uint8 _curDrawBuf;
 	uint32 _frameBufPtr[2]; //
-	uint32 _clutPtrs[3];    // vram pointers
-	uint32 _texPtrs[4];     //
+	uint32 _clutPtrs[3]; // vram pointers
+	uint32 _texPtrs[4]; //
 
 	Graphics::Surface _framebuffer;
 
@@ -119,9 +119,9 @@ private:
 	VideoState _videoMode;
 
 	uint16 _width, _height, _pitch;
-	int16  _mouseX, _mouseY, _hotSpotX, _hotSpotY;
+	int16 _mouseX, _mouseY, _hotSpotX, _hotSpotY;
 	uint32 _mouseScaleX, _mouseScaleY;
-	uint8  _mTraCol;
+	uint8 _mTraCol;
 
 	int _shakePos;
 
@@ -137,7 +137,7 @@ private:
 	volatile bool _systemQuit;
 
 	static const uint32 _binaryClut[16];
-	static const uint8  _binaryData[4 * 14 * 2];
+	static const uint8 _binaryData[4 * 14 * 2];
 	static const uint16 _binaryPattern[16];
 };
 

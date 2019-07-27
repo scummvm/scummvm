@@ -29,10 +29,10 @@ void SceneScriptUG16::InitializeScene() {
 		Setup_Scene_Information(-270.76f, -34.88f, -504.02f, 404);
 		Game_Flag_Reset(kFlagDR06toUG16);
 	} else if (Game_Flag_Query(kFlagUG15toUG16a)) {
-		Setup_Scene_Information(-322.0f,   -34.0f,  -404.0f, 345);
+		Setup_Scene_Information(-322.0f, -34.0f, -404.0f, 345);
 		Game_Flag_Reset(kFlagUG15toUG16a);
 	} else {
-		Setup_Scene_Information(-318.0f,   -34.0f,  -216.0f, 340);
+		Setup_Scene_Information(-318.0f, -34.0f, -216.0f, 340);
 		Game_Flag_Reset(kFlagUG15toUG16b);
 	}
 
@@ -41,8 +41,8 @@ void SceneScriptUG16::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(2, 461, 148, 523, 248, 0);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxELECLAB1, 33, 81, 0);
-	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1,   40,  0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED2,   40,  0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1, 40, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED2, 40, 0, 1);
 
 	if (Game_Flag_Query(kFlagUG16ComputerOff)) {
 		Scene_Loop_Set_Default(5);
@@ -82,8 +82,7 @@ bool SceneScriptUG16::ClickedOn3DObject(const char *objectName, bool a2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 194.0f, -35.0f, 160.8f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 870, false);
 			if (!Game_Flag_Query(kFlagUG16FolderFound)
-			 &&  Game_Flag_Query(kFlagLutherLanceAreDead)
-			) {
+			    && Game_Flag_Query(kFlagLutherLanceAreDead)) {
 				Game_Flag_Set(kFlagUG16FolderFound);
 				Delay(1000);
 				Actor_Voice_Over(3480, kActorVoiceOver);
@@ -109,12 +108,10 @@ bool SceneScriptUG16::ClickedOn3DObject(const char *objectName, bool a2) {
 
 			Actor_Face_Heading(kActorMcCoy, 870, false);
 
-			if (( Game_Flag_Query(kFlagLutherLanceAreDead)
-			  || !Actor_Query_Is_In_Current_Set(kActorLuther)
-			 )
-			 && !Actor_Clue_Query(kActorMcCoy, kClueDNALutherLance)
-			 && !Game_Flag_Query(kFlagUG16ComputerOff)
-			) {
+			if ((Game_Flag_Query(kFlagLutherLanceAreDead)
+			     || !Actor_Query_Is_In_Current_Set(kActorLuther))
+			    && !Actor_Clue_Query(kActorMcCoy, kClueDNALutherLance)
+			    && !Game_Flag_Query(kFlagUG16ComputerOff)) {
 				Delay(2000);
 				Actor_Face_Heading(kActorMcCoy, 1016, false);
 				Delay(2000);
@@ -200,8 +197,7 @@ void SceneScriptUG16::PlayerWalkedIn() {
 	}
 
 	if (!Game_Flag_Query(kFlagUG16LutherLanceTalk1)
-	 &&  Actor_Query_Is_In_Current_Set(kActorLuther)
-	) {
+	    && Actor_Query_Is_In_Current_Set(kActorLuther)) {
 		Player_Loses_Control();
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 120.29f, -35.67f, 214.8f, 310, false, false, false);
 		Actor_Face_Actor(kActorMcCoy, kActorLuther, true);
@@ -238,24 +234,21 @@ void SceneScriptUG16::dialogueWithLuther() {
 	DM_Add_To_List_Never_Repeat_Once_Selected(1400, 5, 6, 2); // REPLICANTS
 	DM_Add_To_List_Never_Repeat_Once_Selected(1410, 5, 4, 8); // WORK
 	if (Game_Flag_Query(kFlagUG16LutherLanceTalkReplicants1)
-	 || Game_Flag_Query(kFlagUG16LutherLanceTalkReplicants2)
-	) {
+	    || Game_Flag_Query(kFlagUG16LutherLanceTalkReplicants2)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1420, 6, 4, 5); // LIFESPAN
 		DM_Add_To_List_Never_Repeat_Once_Selected(1430, 6, 4, 5); // CLOVIS
 		DM_Add_To_List_Never_Repeat_Once_Selected(1440, 6, 4, 5); // VOIGT-KAMPFF
 	}
-	if ( Global_Variable_Query(kVariableCorruptedGuzzaEvidence) > 1
-	 && !Actor_Clue_Query(kActorMcCoy, kClueFolder)
-	 ) {
+	if (Global_Variable_Query(kVariableCorruptedGuzzaEvidence) > 1
+	    && !Actor_Clue_Query(kActorMcCoy, kClueFolder)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1450, 6, 4, 5); // GUZZA
 	}
 	if (Actor_Clue_Query(kActorMcCoy, kClueEnvelope)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1460, 6, 4, 5); // RUNCITER
 	}
-	if ( Actor_Clue_Query(kActorMcCoy, kClueDNATyrell)
-	 && !Actor_Clue_Query(kActorMcCoy, kClueFolder)
-	 &&  Game_Flag_Query(kFlagUG15LanceLuthorTrade)
-	) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueDNATyrell)
+	    && !Actor_Clue_Query(kActorMcCoy, kClueFolder)
+	    && Game_Flag_Query(kFlagUG15LanceLuthorTrade)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1470, 6, 4, 5); // TRADE
 	}
 	Dialogue_Menu_Add_DONE_To_List(1480); // DONE

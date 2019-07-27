@@ -23,10 +23,10 @@
 #ifndef GRAPHICS_MANAGED_SURFACE_H
 #define GRAPHICS_MANAGED_SURFACE_H
 
-#include "graphics/pixelformat.h"
-#include "graphics/surface.h"
 #include "common/rect.h"
 #include "common/types.h"
+#include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 
 namespace Graphics {
 
@@ -38,6 +38,7 @@ class Font;
  */
 class ManagedSurface {
 	friend class Font;
+
 private:
 	/**
 	 * The Graphics::Surface that the managed surface encapsulates
@@ -61,6 +62,7 @@ private:
 	 * the offset from the parent's top-left corner this sub-surface starts at
 	 */
 	Common::Point _offsetFromOwner;
+
 protected:
 	/**
 	 * Clips the given source bounds so the passed destBounds will be entirely on-screen
@@ -72,11 +74,13 @@ protected:
 	 * dirty areas of the surface
 	 */
 	virtual void addDirtyRect(const Common::Rect &r);
+
 public:
 	uint16 &w;
 	uint16 &h;
 	uint16 &pitch;
 	PixelFormat &format;
+
 public:
 	/**
 	 * Create the managed surface
@@ -226,7 +230,7 @@ public:
 	 * Copies another surface into this one at a given destination position
 	 */
 	void blitFrom(const Surface &src, const Common::Rect &srcRect,
-		const Common::Point &destPos);
+	              const Common::Point &destPos);
 
 	/**
 	 * Copies another surface into this one ignoring pixels of a designated transparent color
@@ -248,7 +252,7 @@ public:
 	 *						the source surface
 	 */
 	void transBlitFrom(const Surface &src, const Common::Point &destPos,
-		uint transColor = 0, bool flipped = false, uint overrideColor = 0);
+	                   uint transColor = 0, bool flipped = false, uint overrideColor = 0);
 
 	/**
 	 * Copies another surface into this one ignoring pixels of a designated transparent color
@@ -261,7 +265,7 @@ public:
 	 *						the source surface
 	 */
 	void transBlitFrom(const Surface &src, const Common::Rect &srcRect, const Common::Point &destPos,
-		uint transColor = 0, bool flipped = false, uint overrideColor = 0);
+	                   uint transColor = 0, bool flipped = false, uint overrideColor = 0);
 
 	/**
 	 * Copies another surface into this one ignoring pixels of a designated transparent color
@@ -275,7 +279,7 @@ public:
 	 *						the source surface
 	 */
 	void transBlitFrom(const Surface &src, const Common::Rect &srcRect, const Common::Rect &destRect,
-		uint transColor = 0, bool flipped = false, uint overrideColor = 0);
+	                   uint transColor = 0, bool flipped = false, uint overrideColor = 0);
 
 	/**
 	 * Clear the entire surface

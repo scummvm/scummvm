@@ -25,6 +25,7 @@
 
 #include "engines/engine.h"
 
+#include "audio/mixer.h"
 #include "common/array.h"
 #include "common/error.h"
 #include "common/keyboard.h"
@@ -32,7 +33,6 @@
 #include "common/rect.h"
 #include "common/stack.h"
 #include "common/util.h"
-#include "audio/mixer.h"
 
 #include "agos/vga.h"
 
@@ -187,9 +187,9 @@ enum SIMONGameType {
 };
 
 enum EventType {
-	ANIMATE_INT   = 1 << 1,
+	ANIMATE_INT = 1 << 1,
 	ANIMATE_EVENT = 1 << 2,
-	SCROLL_EVENT  = 1 << 3,
+	SCROLL_EVENT = 1 << 3,
 	PLAYER_DAMAGE_EVENT = 1 << 4,
 	MONSTER_DAMAGE_EVENT = 1 << 5
 };
@@ -204,9 +204,11 @@ class Debugger;
 // to save a bit of memory used by opcode names in the AGOS engine.
 
 #ifndef REDUCE_MEMORY_USAGE
-#	define _OPCODE(ver, x)	{ &ver::x, #x }
+#	define _OPCODE(ver, x) \
+		{ &ver::x, #x }
 #else
-#	define _OPCODE(ver, x)	{ &ver::x, "" }
+#	define _OPCODE(ver, x) \
+		{ &ver::x, "" }
 #endif
 
 class AGOSEngine : public Engine {
@@ -231,7 +233,7 @@ protected:
 	virtual void setupOpcodes();
 	uint16 _numOpcodes, _opcode;
 
-	typedef void (AGOSEngine::*VgaOpcodeProc) ();
+	typedef void (AGOSEngine::*VgaOpcodeProc)();
 
 	void setupVgaOpcodes();
 	VgaOpcodeProc _vga_opcode_table[100];
@@ -239,7 +241,7 @@ protected:
 
 	virtual void setupVideoOpcodes(VgaOpcodeProc *op);
 
-	const AGOSGameDescription * const _gameDescription;
+	const AGOSGameDescription *const _gameDescription;
 
 public:
 	virtual void setupGame();
@@ -255,9 +257,8 @@ public:
 protected:
 	void playSting(uint16 a);
 
-	const byte *_vcPtr;								/* video code ptr */
+	const byte *_vcPtr; /* video code ptr */
 	uint16 _vcGetOutOfCode;
-
 
 	uint32 *_gameOffsetsPtr;
 
@@ -392,7 +393,7 @@ protected:
 	HitArea *_lastHitArea3;
 	Item *_hitAreaSubjectItem;
 	HitArea *_currentBox, *_currentVerbBox, *_lastVerbOn;
-	uint16	_currentBoxNum;
+	uint16 _currentBoxNum;
 	uint16 _needHitAreaRecalc;
 	uint16 _verbHitArea;
 	uint16 _defaultVerb;
@@ -708,7 +709,7 @@ protected:
 	Item *derefItem(uint item);
 	Item *getNextItemPtr();
 	uint getNextItemID();
-	uint getItem1ID() {return 1;}
+	uint getItem1ID() { return 1; }
 	uint itemPtrToID(Item *id);
 	Item *me();
 	Item *actor();
@@ -755,8 +756,8 @@ protected:
 	HitArea *findEmptyHitArea();
 
 	virtual void resetVerbs();
-	virtual void setVerb(HitArea * ha);
-	virtual void hitarea_leave(HitArea * ha, bool state = false);
+	virtual void setVerb(HitArea *ha);
+	virtual void hitarea_leave(HitArea *ha, bool state = false);
 	void leaveHitAreaById(uint hitarea_id);
 
 	void sendSync(uint a);
@@ -847,10 +848,10 @@ protected:
 	virtual void boxController(uint x, uint y, uint mode);
 	void handleVerbClicked(uint verb);
 	virtual void clearName();
-	void displayName(HitArea * ha);
+	void displayName(HitArea *ha);
 	void resetNameWindow();
 	void displayBoxStars();
-	void invertBox(HitArea * ha, byte a, byte b, byte c, byte d);
+	void invertBox(HitArea *ha, byte a, byte b, byte c, byte d);
 
 	virtual void handleMouseWheelUp();
 	virtual void handleMouseWheelDown();
@@ -1193,13 +1194,13 @@ protected:
 	void haltAnimation();
 	void restartAnimation();
 	void addVgaEvent(uint16 num, uint8 type, const byte *codePtr, uint16 curSprite, uint16 curZoneNum);
-	void deleteVgaEvent(VgaTimerEntry * vte);
+	void deleteVgaEvent(VgaTimerEntry *vte);
 	void processVgaEvents();
 	void animateEvent(const byte *codePtr, uint16 curZoneNum, uint16 curSprite);
 	void scrollEvent();
 	void drawStuff(const byte *src, uint offs);
-	void playerDamageEvent(VgaTimerEntry * vte, uint dx);
-	void monsterDamageEvent(VgaTimerEntry * vte, uint dx);
+	void playerDamageEvent(VgaTimerEntry *vte, uint dx);
+	void monsterDamageEvent(VgaTimerEntry *vte, uint dx);
 
 	VgaSprite *findCurSprite();
 
@@ -1318,6 +1319,7 @@ class AGOSEngine_PN : public AGOSEngine {
 	void introSeq();
 	void setupBoxes();
 	int readfromline();
+
 public:
 	AGOSEngine_PN(OSystem *system, const AGOSGameDescription *gd);
 	~AGOSEngine_PN();
@@ -1402,14 +1404,13 @@ protected:
 		int16 ll;
 		int16 linenum;
 		int16 process;
-		int tagOfParentDoline;	///< tag of the doline "instance" to which this StackFrame belongs
+		int tagOfParentDoline; ///< tag of the doline "instance" to which this StackFrame belongs
 		StackFrame() { memset(this, 0, sizeof(*this)); }
 	};
 
-
 	StackFrame *_stackbase;
 
-	int _tagOfActiveDoline;	///< tag of the active doline "instance"
+	int _tagOfActiveDoline; ///< tag of the active doline "instance"
 	int _dolineReturnVal;
 
 	byte *_dataBase, *_textBase;
@@ -1549,8 +1550,9 @@ protected:
 	void interact(char *buffer, uint8 size);
 
 	virtual bool processSpecialKeys();
+
 protected:
-	typedef void (AGOSEngine_PN::*OpcodeProcPN) ();
+	typedef void (AGOSEngine_PN::*OpcodeProcPN)();
 	struct OpcodeEntryPN {
 		OpcodeProcPN proc;
 		const char *desc;
@@ -1627,7 +1629,7 @@ public:
 	void oe1_printMonsterHit();
 
 protected:
-	typedef void (AGOSEngine_Elvira1::*OpcodeProcElvira1) ();
+	typedef void (AGOSEngine_Elvira1::*OpcodeProcElvira1)();
 	struct OpcodeEntryElvira1 {
 		OpcodeProcElvira1 proc;
 		const char *desc;
@@ -1695,8 +1697,9 @@ public:
 	void oe2_b2NotZero();
 
 	virtual void printStats();
+
 protected:
-	typedef void (AGOSEngine_Elvira2::*OpcodeProcElvira2) ();
+	typedef void (AGOSEngine_Elvira2::*OpcodeProcElvira2)();
 	struct OpcodeEntryElvira2 {
 		OpcodeProcElvira2 proc;
 		const char *desc;
@@ -1772,7 +1775,7 @@ public:
 	void oww_unlockZones();
 
 protected:
-	typedef void (AGOSEngine_Waxworks::*OpcodeProcWaxworks) ();
+	typedef void (AGOSEngine_Waxworks::*OpcodeProcWaxworks)();
 	struct OpcodeEntryWaxworks {
 		OpcodeProcWaxworks proc;
 		const char *desc;
@@ -1837,7 +1840,7 @@ public:
 	void os1_specialFade();
 
 protected:
-	typedef void (AGOSEngine_Simon1::*OpcodeProcSimon1) ();
+	typedef void (AGOSEngine_Simon1::*OpcodeProcSimon1)();
 	struct OpcodeEntrySimon1 {
 		OpcodeProcSimon1 proc;
 		const char *desc;
@@ -1903,7 +1906,7 @@ public:
 	void os2_waitMark();
 
 protected:
-	typedef void (AGOSEngine_Simon2::*OpcodeProcSimon2) ();
+	typedef void (AGOSEngine_Simon2::*OpcodeProcSimon2)();
 	struct OpcodeEntrySimon2 {
 		OpcodeProcSimon2 proc;
 		const char *desc;
@@ -1980,7 +1983,7 @@ protected:
 	friend class MoviePlayerDXA;
 	friend class MoviePlayerSMK;
 
-	typedef void (AGOSEngine_Feeble::*OpcodeProcFeeble) ();
+	typedef void (AGOSEngine_Feeble::*OpcodeProcFeeble)();
 	struct OpcodeEntryFeeble {
 		OpcodeProcFeeble proc;
 		const char *desc;
@@ -2023,8 +2026,8 @@ protected:
 	virtual uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *itemPtr);
 
 	virtual void resetVerbs();
-	virtual void setVerb(HitArea * ha);
-	virtual void hitarea_leave(HitArea * ha, bool state = false);
+	virtual void setVerb(HitArea *ha);
+	virtual void hitarea_leave(HitArea *ha, bool state = false);
 	void invertBox(HitArea *ha, bool state);
 
 	virtual void windowNewLine(WindowBlock *window);
@@ -2124,7 +2127,7 @@ public:
 	void opp_pauseClock();
 
 protected:
-	typedef void (AGOSEngine_PuzzlePack::*OpcodeProcPuzzlePack) ();
+	typedef void (AGOSEngine_PuzzlePack::*OpcodeProcPuzzlePack)();
 	struct OpcodeEntryPuzzlePack {
 		OpcodeProcPuzzlePack proc;
 		const char *desc;
@@ -2151,7 +2154,6 @@ protected:
 	virtual Common::String genSaveName(int slot) const;
 };
 
-
 class AGOSEngine_DIMP : public AGOSEngine_PuzzlePack {
 public:
 	AGOSEngine_DIMP(OSystem *system, const AGOSGameDescription *gd);
@@ -2162,7 +2164,7 @@ public:
 	virtual void executeOpcode(int opcode);
 
 protected:
-	typedef void (AGOSEngine_DIMP::*OpcodeProcDIMP) ();
+	typedef void (AGOSEngine_DIMP::*OpcodeProcDIMP)();
 	struct OpcodeEntryDIMP {
 		OpcodeProcDIMP proc;
 		const char *desc;
@@ -2179,7 +2181,6 @@ protected:
 
 	void dimpIdle();
 	virtual void timerProc();
-
 };
 #endif
 

@@ -24,11 +24,11 @@
 #define SCUMM_BASE_COSTUME_H
 
 #include "common/scummsys.h"
-#include "scumm/actor.h"		// for CostumeData
+#include "scumm/actor.h" // for CostumeData
 
 namespace Scumm {
 
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 struct CostumeInfo {
 	uint16 width, height;
@@ -36,12 +36,10 @@ struct CostumeInfo {
 	int16 move_x, move_y;
 } PACKED_STRUCT;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
-
+#include "common/pack-end.h" // END STRUCT PACKING
 
 extern const byte smallCostumeScaleTable[256];
 extern const byte bigCostumeScaleTable[768];
-
 
 class Actor;
 class ScummEngine;
@@ -52,7 +50,8 @@ protected:
 	ScummEngine *_vm;
 
 public:
-	BaseCostumeLoader(ScummEngine *vm) : _vm(vm) {}
+	BaseCostumeLoader(ScummEngine *vm)
+	  : _vm(vm) {}
 	virtual ~BaseCostumeLoader() {}
 
 	virtual void loadCostume(int id) = 0;
@@ -61,7 +60,6 @@ public:
 
 	bool hasManyDirections(int id) { return false; }
 };
-
 
 /**
  * Base class for both ClassicCostumeRenderer and AkosRenderer.
@@ -82,7 +80,6 @@ public:
 	byte _paletteNum;
 	bool _skipLimbs;
 	bool _actorDrawVirScr;
-
 
 protected:
 	ScummEngine *_vm;
@@ -147,7 +144,6 @@ public:
 	virtual void setPalette(uint16 *palette) = 0;
 	virtual void setFacing(const Actor *a) = 0;
 	virtual void setCostume(int costume, int shadow) = 0;
-
 
 	byte drawCostume(const VirtScreen &vs, int numStrips, const Actor *a, bool drawToBackBuf);
 

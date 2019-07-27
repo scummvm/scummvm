@@ -34,22 +34,22 @@ class WriteStream;
 namespace Backends {
 namespace Log {
 
-/**
+	/**
  * Log file writer.
  *
  * This can be used by the backends to implement file logging functionality.
  */
-class Log {
-public:
-	/**
+	class Log {
+	public:
+		/**
 	 * Constructor for the logger object.
 	 *
 	 * @param system The OSystem instance to use. Must be non-null.
 	 */
-	Log(OSystem *system);
-	~Log() { close(); }
+		Log(OSystem *system);
+		~Log() { close(); }
 
-	/**
+		/**
 	 * Opens a new log file.
 	 *
 	 * The previous log, which was handled by this logger, will be closed
@@ -71,18 +71,18 @@ public:
 	 * @param stream Stream where to output the log contents.
 	 *               Note that the stream will be deleted by the logger.
 	 */
-	void open(Common::WriteStream *stream);
+		void open(Common::WriteStream *stream);
 
-	/**
+		/**
 	 * Closes the current log file.
 	 *
 	 * This function will output a line saying that the log was closed
 	 * successfully. This can be used to check whether a log is incomplete
 	 * because of whatever reasons.
 	 */
-	void close();
+		void close();
 
-	/**
+		/**
 	 * Prints a message to the log stream.
 	 *
 	 * This has optional support to output a timestamp on every new line.
@@ -99,28 +99,29 @@ public:
 	 * @param printTimeOnNewline Whether to print a timestamp on the start of
 	 *                           a new line.
 	 */
-	void print(const char *message, const bool printTimeOnNewline = true);
-private:
-	/**
+		void print(const char *message, const bool printTimeOnNewline = true);
+
+	private:
+		/**
 	 * Prints a time stamp in the form: "[YYYY-MM-DD HH:MM:SS] ".
 	 */
-	void printTimeStamp();
+		void printTimeStamp();
 
-	/**
+		/**
 	 * The OSystem instance used to query data like the time.
 	 */
-	OSystem *_system;
+		OSystem *_system;
 
-	/**
+		/**
 	 * Where to write the output too.
 	 */
-	Common::WriteStream *_stream;
+		Common::WriteStream *_stream;
 
-	/**
+		/**
 	 * Whether we are at the start of a line.
 	 */
-	bool _startOfLine;
-};
+		bool _startOfLine;
+	};
 
 } // End of namespace Log
 } // End of namespace Backends

@@ -26,20 +26,20 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/base_persistence_manager.h"
-#include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/base/saveload.h"
+#include "common/config-manager.h"
+#include "common/savefile.h"
 #include "engines/wintermute/ad/ad_scene.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_game.h" // Temporary
+#include "engines/wintermute/base/base_persistence_manager.h"
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/base/base_sub_frame.h"
 #include "engines/wintermute/base/font/base_font.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
-#include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/base/scriptables/script.h"
-#include "common/savefile.h"
-#include "common/config-manager.h"
+#include "engines/wintermute/base/sound/base_sound.h"
+#include "engines/wintermute/wintermute.h"
 
 namespace Wintermute {
 
@@ -55,8 +55,8 @@ bool SaveLoad::loadGame(const Common::String &filename, BaseGame *gameRef) {
 	BasePersistenceManager *pm = new BasePersistenceManager();
 	if (DID_SUCCEED(ret = pm->initLoad(filename))) {
 		//if (DID_SUCCEED(ret = cleanup())) {
-		if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->loadTable(gameRef,  pm))) {
-			if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->loadInstances(gameRef,  pm))) {
+		if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->loadTable(gameRef, pm))) {
+			if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->loadInstances(gameRef, pm))) {
 				// Restore random-seed:
 				BaseEngine::instance().getRandomSource()->setSeed(pm->getDWORD());
 
@@ -96,8 +96,8 @@ bool SaveLoad::saveGame(int slot, const char *desc, bool quickSave, BaseGame *ga
 	BasePersistenceManager *pm = new BasePersistenceManager();
 	if (DID_SUCCEED(ret = pm->initSave(desc))) {
 		gameRef->_renderer->initSaveLoad(true, quickSave); // TODO: The original code inited the indicator before the conditionals
-		if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->saveTable(gameRef,  pm, quickSave))) {
-			if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->saveInstances(gameRef,  pm, quickSave))) {
+		if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->saveTable(gameRef, pm, quickSave))) {
+			if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->saveInstances(gameRef, pm, quickSave))) {
 				pm->putDWORD(BaseEngine::instance().getRandomSource()->getSeed());
 				if (DID_SUCCEED(ret = pm->saveFile(filename))) {
 					ConfMan.setInt("most_recent_saveslot", slot);
@@ -116,13 +116,13 @@ bool SaveLoad::saveGame(int slot, const char *desc, bool quickSave, BaseGame *ga
 
 //////////////////////////////////////////////////////////////////////////
 bool SaveLoad::initAfterLoad() {
-	SystemClassRegistry::getInstance()->enumInstances(afterLoadRegion,   "BaseRegion",   nullptr);
+	SystemClassRegistry::getInstance()->enumInstances(afterLoadRegion, "BaseRegion", nullptr);
 	SystemClassRegistry::getInstance()->enumInstances(afterLoadSubFrame, "BaseSubFrame", nullptr);
-	SystemClassRegistry::getInstance()->enumInstances(afterLoadSound,    "BaseSound",    nullptr);
-	SystemClassRegistry::getInstance()->enumInstances(afterLoadFont,     "BaseFontTT",   nullptr);
-	SystemClassRegistry::getInstance()->enumInstances(afterLoadScript,   "ScScript",  nullptr);
+	SystemClassRegistry::getInstance()->enumInstances(afterLoadSound, "BaseSound", nullptr);
+	SystemClassRegistry::getInstance()->enumInstances(afterLoadFont, "BaseFontTT", nullptr);
+	SystemClassRegistry::getInstance()->enumInstances(afterLoadScript, "ScScript", nullptr);
 	// AdGame:
-	SystemClassRegistry::getInstance()->enumInstances(afterLoadScene,   "AdScene",   nullptr);
+	SystemClassRegistry::getInstance()->enumInstances(afterLoadScene, "AdScene", nullptr);
 	return STATUS_OK;
 }
 
@@ -136,12 +136,10 @@ void SaveLoad::afterLoadRegion(void *region, void *data) {
 	((BaseRegion *)region)->createRegion();
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void SaveLoad::afterLoadSubFrame(void *subframe, void *data) {
 	((BaseSubFrame *)subframe)->setSurfaceSimple();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void SaveLoad::afterLoadSound(void *sound, void *data) {
@@ -201,6 +199,5 @@ bool SaveLoad::emptySaveSlot(int slot) {
 	delete pm;
 	return true;
 }
-
 
 } // End of namespace Wintermute

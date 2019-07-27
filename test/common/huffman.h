@@ -1,7 +1,7 @@
-#include <cxxtest/TestSuite.h>
-#include "common/huffman.h"
 #include "common/bitstream.h"
+#include "common/huffman.h"
 #include "common/memstream.h"
+#include <cxxtest/TestSuite.h>
 
 /**
 * A test suite for the Huffman decoder in common/huffman.h
@@ -10,7 +10,7 @@
 * TODO: It could be improved by generating one at runtime.
 */
 class HuffmanTestSuite : public CxxTest::TestSuite {
-	public:
+public:
 	void test_get_with_full_symbols() {
 
 		/*
@@ -28,15 +28,15 @@ class HuffmanTestSuite : public CxxTest::TestSuite {
 
 		uint32 codeCount = 5;
 		uint8 maxLength = 3;
-		const uint8 lengths[] = {3,3,2,2,2};
-		const uint32 codes[]  = {0x2, 0x3, 0x3, 0x0, 0x2};
-		const uint32 symbols[]  = {0xA, 0xB, 0xC, 0xD, 0xE};
+		const uint8 lengths[] = { 3, 3, 2, 2, 2 };
+		const uint32 codes[] = { 0x2, 0x3, 0x3, 0x0, 0x2 };
+		const uint32 symbols[] = { 0xA, 0xB, 0xC, 0xD, 0xE };
 
 		Common::Huffman<Common::BitStream8MSB> h(maxLength, codeCount, codes, lengths, symbols);
 
-		byte input[] = {0x4F, 0x20};
+		byte input[] = { 0x4F, 0x20 };
 		// Provided input...
-		uint32 expected[] = {0xA, 0xB, 0xC, 0xD, 0xE, 0xD, 0xD};
+		uint32 expected[] = { 0xA, 0xB, 0xC, 0xD, 0xE, 0xD, 0xD };
 		// ..and expected output.
 
 		/*
@@ -75,13 +75,13 @@ class HuffmanTestSuite : public CxxTest::TestSuite {
 		 */
 
 		uint32 codeCount = 5;
-		const uint8 lengths[] = {3,3,2,2,2};
-		const uint32 codes[]  = {0x2, 0x3, 0x3, 0x0, 0x2};
+		const uint8 lengths[] = { 3, 3, 2, 2, 2 };
+		const uint32 codes[] = { 0x2, 0x3, 0x3, 0x0, 0x2 };
 
 		Common::Huffman<Common::BitStream8MSB> h(0, codeCount, codes, lengths, 0);
 
-		byte input[] = {0x4F, 0x20};
-		uint32 expected[] = {0, 1, 2, 3, 4, 3 ,3};
+		byte input[] = { 0x4F, 0x20 };
+		uint32 expected[] = { 0, 1, 2, 3, 4, 3, 3 };
 
 		Common::MemoryReadStream ms(input, sizeof(input));
 		Common::BitStream8MSB bs(ms);

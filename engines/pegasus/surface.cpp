@@ -23,11 +23,11 @@
  *
  */
 
+#include "graphics/surface.h"
 #include "common/file.h"
 #include "common/macresman.h"
 #include "common/stream.h"
 #include "common/system.h"
-#include "graphics/surface.h"
 #include "image/pict.h"
 #include "video/video_decoder.h"
 
@@ -263,14 +263,14 @@ void Surface::scaleTransparentCopy(const Common::Rect &srcRect, const Common::Re
 		for (int x = 0; x < dstW; x++) {
 			if (g_system->getScreenFormat().bytesPerPixel == 2) {
 				uint16 color = READ_UINT16((byte *)_surface->getBasePtr(
-						x * srcW / dstW + srcRect.left,
-						y * srcH / dstH + srcRect.top));
+				  x * srcW / dstW + srcRect.left,
+				  y * srcH / dstH + srcRect.top));
 				if (!isTransparent(color))
 					WRITE_UINT16((byte *)screen->getBasePtr(x + dstRect.left, y + dstRect.top), color);
 			} else if (g_system->getScreenFormat().bytesPerPixel == 4) {
 				uint32 color = READ_UINT32((byte *)_surface->getBasePtr(
-						x * srcW / dstW + srcRect.left,
-						y * srcH / dstH + srcRect.top));
+				  x * srcW / dstW + srcRect.left,
+				  y * srcH / dstH + srcRect.top));
 				if (!isTransparent(color))
 					WRITE_UINT32((byte *)screen->getBasePtr(x + dstRect.left, y + dstRect.top), color);
 			}
@@ -293,14 +293,14 @@ void Surface::scaleTransparentCopyGlow(const Common::Rect &srcRect, const Common
 		for (int x = 0; x < dstW; x++) {
 			if (g_system->getScreenFormat().bytesPerPixel == 2) {
 				uint16 color = READ_UINT16((byte *)_surface->getBasePtr(
-						x * srcW / dstW + srcRect.left,
-						y * srcH / dstH + srcRect.top));
+				  x * srcW / dstW + srcRect.left,
+				  y * srcH / dstH + srcRect.top));
 				if (!isTransparent(color))
 					WRITE_UINT16((byte *)screen->getBasePtr(x + dstRect.left, y + dstRect.top), getGlowColor(color));
 			} else if (g_system->getScreenFormat().bytesPerPixel == 4) {
 				uint32 color = READ_UINT32((byte *)_surface->getBasePtr(
-						x * srcW / dstW + srcRect.left,
-						y * srcH / dstH + srcRect.top));
+				  x * srcW / dstW + srcRect.left,
+				  y * srcH / dstH + srcRect.top));
 				if (!isTransparent(color))
 					WRITE_UINT32((byte *)screen->getBasePtr(x + dstRect.left, y + dstRect.top), getGlowColor(color));
 			}

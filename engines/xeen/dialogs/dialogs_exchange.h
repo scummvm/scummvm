@@ -32,11 +32,13 @@ class ExchangeDialog : public ButtonContainer {
 private:
 	SpriteResource _iconSprites;
 
-	ExchangeDialog(XeenEngine *vm) : ButtonContainer(vm) {}
+	ExchangeDialog(XeenEngine *vm)
+	  : ButtonContainer(vm) {}
 
 	void execute(Character *&c, int &charIndex);
 
 	void loadButtons();
+
 public:
 	static void show(XeenEngine *vm, Character *&c, int &charIndex);
 };

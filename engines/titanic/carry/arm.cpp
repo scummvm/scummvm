@@ -27,18 +27,23 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CArm, CCarry)
-	ON_MESSAGE(PuzzleSolvedMsg)
-	ON_MESSAGE(TranslateObjectMsg)
-	ON_MESSAGE(UseWithOtherMsg)
-	ON_MESSAGE(MouseDragStartMsg)
-	ON_MESSAGE(MaitreDHappyMsg)
-	ON_MESSAGE(PETGainedObjectMsg)
-	ON_MESSAGE(MouseDragMoveMsg)
+ON_MESSAGE(PuzzleSolvedMsg)
+ON_MESSAGE(TranslateObjectMsg)
+ON_MESSAGE(UseWithOtherMsg)
+ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(MaitreDHappyMsg)
+ON_MESSAGE(PETGainedObjectMsg)
+ON_MESSAGE(MouseDragMoveMsg)
 END_MESSAGE_MAP()
 
-CArm::CArm() : CCarry(), _heldItemName("Key"),
-	_puzzleUnused(0), _armUnlocked(false), _arboretumFrame(3), _unlockedFrame(0),
-	_armRect(220, 208, 409, 350) {
+CArm::CArm()
+  : CCarry()
+  , _heldItemName("Key")
+  , _puzzleUnused(0)
+  , _armUnlocked(false)
+  , _arboretumFrame(3)
+  , _unlockedFrame(0)
+  , _armRect(220, 208, 409, 350) {
 }
 
 void CArm::save(SimpleFile *file, int indent) {
@@ -193,8 +198,7 @@ bool CArm::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
 	setPosition(msg->_mousePos - _centroid);
 
 	if (_heldItemName == "None" && compareViewNameTo("FrozenArboretum.Node 5.S")) {
-		loadFrame(_armRect.contains(msg->_mousePos) ?
-			_arboretumFrame : _visibleFrame);
+		loadFrame(_armRect.contains(msg->_mousePos) ? _arboretumFrame : _visibleFrame);
 	}
 
 	return true;

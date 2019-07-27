@@ -21,14 +21,15 @@
  */
 
 #include "mads/conversations.h"
-#include "mads/mads.h"
-#include "mads/compression.h"
 #include "common/file.h"
-#include "common/util.h"	// for Common::hexdump
+#include "common/util.h" // for Common::hexdump
+#include "mads/compression.h"
+#include "mads/mads.h"
 
 namespace MADS {
 
-GameConversations::GameConversations(MADSEngine *vm) : _vm(vm) {
+GameConversations::GameConversations(MADSEngine *vm)
+  : _vm(vm) {
 	_runningConv = nullptr;
 	_restoreRunning = 0;
 	_playerEnabled = false;
@@ -212,8 +213,7 @@ void GameConversations::exportPointer(int *ptr) {
 		return;
 
 	// Get the variable to use for this next import and set it's value
-	int variableIndex = _runningConv->_cnd._importVariables[
-		_runningConv->_cnd._numImports++];
+	int variableIndex = _runningConv->_cnd._importVariables[_runningConv->_cnd._numImports++];
 	setVariable(variableIndex, ptr);
 }
 
@@ -227,8 +227,7 @@ void GameConversations::exportValue(int val) {
 		return;
 
 	// Get the variable to use for this next import and set it's value
-	int variableIndex = _runningConv->_cnd._importVariables[
-		_runningConv->_cnd._numImports++];
+	int variableIndex = _runningConv->_cnd._importVariables[_runningConv->_cnd._numImports++];
 	setVariable(variableIndex, val);
 }
 
@@ -243,7 +242,7 @@ void GameConversations::setInterlocutorTrigger(int val) {
 }
 
 int *GameConversations::getVariable(int idx) {
-	assert(idx >= 0);	// TODO: Some negative values are allowed? Investigate
+	assert(idx >= 0); // TODO: Some negative values are allowed? Investigate
 	return _vars[idx].getValue();
 }
 
@@ -438,8 +437,8 @@ void GameConversations::generateMessage(Common::Array<int> &messageList, Common:
 
 	// Create the new text dialog
 	_dialog = new TextDialog(_vm, FONT_INTERFACE,
-		Common::Point(_popupX[_personSpeaking], _popupY[_personSpeaking]),
-		portrait, _popupMaxLen[_personSpeaking]);
+	                         Common::Point(_popupX[_personSpeaking], _popupY[_personSpeaking]),
+	                         portrait, _popupMaxLen[_personSpeaking]);
 
 	// Add in the lines
 	for (uint msgNum = 0; msgNum < messageList.size(); ++msgNum) {
@@ -481,7 +480,7 @@ int GameConversations::executeEntry(int index) {
 	_nextStartNode->_val = var0._val;
 
 	bool flag = true;
-	for (uint scriptIdx = 0; scriptIdx < dlg._script.size() && flag; ) {
+	for (uint scriptIdx = 0; scriptIdx < dlg._script.size() && flag;) {
 		ScriptEntry &scrEntry = dlg._script[scriptIdx];
 		if (scrEntry._command == CMD_END)
 			break;
@@ -567,8 +566,7 @@ void GameConversations::scriptMessage(ScriptEntry &scrEntry) {
 		if (scrEntry._entries2.size() <= 1) {
 			for (uint idx = 0; idx < scrEntry._entries.size(); ++idx)
 				_runningConv->_cnd._messageList4.push_back(scrEntry._entries[idx]);
-		}
-		else if (scrEntry._entries.size() > 0 && randomIndex < (int)scrEntry._entries.size()) {
+		} else if (scrEntry._entries.size() > 0 && randomIndex < (int)scrEntry._entries.size()) {
 			_runningConv->_cnd._messageList4.push_back(entryVal);
 		}
 	} else {
@@ -650,9 +648,9 @@ void ConversationData::load(const Common::String &filename) {
 		ConvNode node;
 		node._index = convFile->readUint16LE();
 		node._dialogCount = convFile->readUint16LE();
-		node._unk1 = convFile->readSint16LE();	// TODO
+		node._unk1 = convFile->readSint16LE(); // TODO
 		node._active = convFile->readSint16LE() != 0;
-		node._unk3 = convFile->readSint16LE();	// TODO
+		node._unk3 = convFile->readSint16LE(); // TODO
 		_nodes.push_back(node);
 	}
 
@@ -688,7 +686,7 @@ void ConversationData::load(const Common::String &filename) {
 	convFile = convFileUnpacked.getItemStream(4);
 	assert(convFile->size() == _textLineCount * 2);
 
-	uint16 *textLineOffsets = new uint16[_textLineCount];	// deleted below in section 5
+	uint16 *textLineOffsets = new uint16[_textLineCount]; // deleted below in section 5
 	for (uint16 i = 0; i < _textLineCount; i++)
 		textLineOffsets[i] = convFile->readUint16LE();
 
@@ -732,7 +730,8 @@ void ConversationData::load(const Common::String &filename) {
 
 /*------------------------------------------------------------------------*/
 
-ConversationConditionals::ConversationConditionals() : _numImports(0) {
+ConversationConditionals::ConversationConditionals()
+  : _numImports(0) {
 	_currentNode = -1;
 }
 
@@ -813,10 +812,10 @@ void ConversationConditionals::load(const Common::String &filename) {
 
 	_vars.resize(varsCount);
 	for (int idx = 0; idx < varsCount; ++idx) {
-		convFile->skip(2);	// Loaded values are never pointers, so don't need this
+		convFile->skip(2); // Loaded values are never pointers, so don't need this
 		_vars[idx]._isPtr = false;
 		_vars[idx]._val = convFile->readSint16LE();
-		convFile->skip(2);	// Unused segment selector for pointer values
+		convFile->skip(2); // Unused segment selector for pointer values
 	}
 
 	delete convFile;
@@ -1013,6 +1012,5 @@ int ScriptEntry::Conditional::get(int paramNum) const {
 }
 
 /*------------------------------------------------------------------------*/
-
 
 } // End of namespace MADS

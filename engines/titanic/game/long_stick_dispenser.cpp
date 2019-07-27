@@ -28,14 +28,14 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CLongStickDispenser, CGameObject)
-	ON_MESSAGE(PuzzleSolvedMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(VisibleMsg)
-	ON_MESSAGE(EnterRoomMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(PuzzleSolvedMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(VisibleMsg)
+ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(MouseDragStartMsg)
 END_MESSAGE_MAP()
 
 void CLongStickDispenser::save(SimpleFile *file, int indent) {

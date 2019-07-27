@@ -32,7 +32,6 @@ class QueenEngine;
 
 class Cutaway {
 public:
-
 	//! Public interface to run a cutaway from a file
 	static void run(const char *filename, char *nextFilename, QueenEngine *vm);
 
@@ -59,29 +58,29 @@ public:
 
 	//! Different kinds of cutaway objects
 	enum ObjectType {
-		OBJECT_TYPE_ANIMATION               = 0,
-		OBJECT_TYPE_PERSON                  = 1,
-		OBJECT_TYPE_NO_ANIMATION            = 2,
-		OBJECT_TYPE_TEXT_SPEAK              = 3,
-		OBJECT_TYPE_TEXT_DISPLAY_AND_SPEAK  = 4,
-		OBJECT_TYPE_TEXT_DISPLAY            = 5
+		OBJECT_TYPE_ANIMATION = 0,
+		OBJECT_TYPE_PERSON = 1,
+		OBJECT_TYPE_NO_ANIMATION = 2,
+		OBJECT_TYPE_TEXT_SPEAK = 3,
+		OBJECT_TYPE_TEXT_DISPLAY_AND_SPEAK = 4,
+		OBJECT_TYPE_TEXT_DISPLAY = 5
 	};
 
 private:
 	//! Data for a cutaway object
 	struct CutawayObject {
-		int16 objectNumber;    // 0 = JOE, -1 = MESSAGE
+		int16 objectNumber; // 0 = JOE, -1 = MESSAGE
 		int16 moveToX;
 		int16 moveToY;
-		int16 bank;             // 0 = PBOB, 13 = Joe Bank, else BANK NAMEstr()
+		int16 bank; // 0 = PBOB, 13 = Joe Bank, else BANK NAMEstr()
 		int16 animList;
-		int16 execute;          // 1 Yes, 0 No
+		int16 execute; // 1 Yes, 0 No
 		int16 limitBobX1;
 		int16 limitBobY1;
 		int16 limitBobX2;
 		int16 limitBobY2;
 		int16 specialMove;
-		int16 animType;        // 0 - Packet, 1 - Amal, 2 - Unpack
+		int16 animType; // 0 - Packet, 1 - Amal, 2 - Unpack
 		int16 fromObject;
 		int16 bobStartX;
 		int16 bobStartY;
@@ -99,7 +98,7 @@ private:
 
 	struct CutawayAnim {
 		int16 object;
-		int16 unpackFrame;          // Frame to unpack
+		int16 unpackFrame; // Frame to unpack
 		int16 speed;
 		int16 bank;
 		int16 mx;
@@ -107,10 +106,10 @@ private:
 		int16 cx;
 		int16 cy;
 		int16 scale;
-		int16 currentFrame;  // Index to Current Frame
-		int16 originalFrame;  // Index to Original Object Frame
+		int16 currentFrame; // Index to Current Frame
+		int16 originalFrame; // Index to Original Object Frame
 		int16 song;
-		bool flip;		// set this if unpackFrame is negative
+		bool flip; // set this if unpackFrame is negative
 	};
 
 	struct ObjectDataBackup {
@@ -120,8 +119,8 @@ private:
 	};
 
 	struct PersonFace {
-	  int16 index;
-	  int16 image;
+		int16 index;
+		int16 image;
 	};
 
 	QueenEngine *_vm;

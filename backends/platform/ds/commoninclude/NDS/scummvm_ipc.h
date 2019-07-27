@@ -25,11 +25,10 @@
 
 //////////////////////////////////////////////////////////////////////
 
-#include <nds/ndstypes.h>
 #include <nds/ipc.h>
+#include <nds/ndstypes.h>
 
 //////////////////////////////////////////////////////////////////////
-
 
 typedef struct {
 	const void *data;
@@ -41,17 +40,12 @@ typedef struct {
 	u8 PADDING;
 } TransferSoundData;
 
-
-
-
 //---------------------------------------------------------------------------------
 typedef struct {
 	TransferSoundData data[16];
 	u8 count;
 	u8 PADDING[3];
 } TransferSound;
-
-
 
 typedef struct {
 	u8 *buffer[8];
@@ -64,71 +58,69 @@ typedef struct {
 //////////////////////////////////////////////////////////////////////
 
 typedef struct scummvmTransferRegion {
-  uint32 heartbeat;          // counts frames
+	uint32 heartbeat; // counts frames
 
-   int16 touchX,   touchY;   // TSC X, Y
-   int16 touchXpx, touchYpx; // TSC X, Y pixel values
-   int16 touchZ1,  touchZ2;  // TSC x-panel measurements
-  uint16 tdiode1,  tdiode2;  // TSC temperature diodes
-  uint32 temperature;        // TSC computed temperature
+	int16 touchX, touchY; // TSC X, Y
+	int16 touchXpx, touchYpx; // TSC X, Y pixel values
+	int16 touchZ1, touchZ2; // TSC x-panel measurements
+	uint16 tdiode1, tdiode2; // TSC temperature diodes
+	uint32 temperature; // TSC computed temperature
 
-  uint16 buttons;            // X, Y, /PENIRQ buttons
+	uint16 buttons; // X, Y, /PENIRQ buttons
 
-  union {
-    uint8 curtime[8];        // current time response from RTC
+	union {
+		uint8 curtime[8]; // current time response from RTC
 
-    struct {
-      u8 command;
-      u8 year;           //add 2000 to get 4 digit year
-      u8 month;          //1 to 12
-      u8 day;            //1 to (days in month)
+		struct {
+			u8 command;
+			u8 year; //add 2000 to get 4 digit year
+			u8 month; //1 to 12
+			u8 day; //1 to (days in month)
 
-      u8 incr;
-      u8 hours;          //0 to 11 for AM, 52 to 63 for PM
-      u8 minutes;        //0 to 59
-      u8 seconds;        //0 to 59
-    } rtc;
-  };
+			u8 incr;
+			u8 hours; //0 to 11 for AM, 52 to 63 for PM
+			u8 minutes; //0 to 59
+			u8 seconds; //0 to 59
+		} rtc;
+	};
 
-  uint16 battery;            // battery life ??  hopefully.  :)
-  uint16 aux;                // i have no idea...
+	uint16 battery; // battery life ??  hopefully.  :)
+	uint16 aux; // i have no idea...
 
-  TransferSound *soundData;
+	TransferSound *soundData;
 
-  adpcmBuffer adpcm;
+	adpcmBuffer adpcm;
 
+	// Don't rely on these below, will change or be removed in the future
+	vuint32 mailAddr;
+	vuint32 mailData;
+	vuint8 mailRead;
+	vuint8 mailBusy;
+	vuint32 mailSize;
 
-  // Don't rely on these below, will change or be removed in the future
-  vuint32 mailAddr;
-  vuint32 mailData;
-  vuint8 mailRead;
-  vuint8 mailBusy;
-  vuint32 mailSize;
+	bool performArm9SleepMode;
 
-  bool performArm9SleepMode;
+	u32 test;
+	int tweak;
+	bool tweakChanged;
 
-  u32 test;
-  int tweak;
-  bool tweakChanged;
+	//  bool fillSoundFirstHalf;
+	//  bool fillSoundSecondHalf;
 
-//  bool fillSoundFirstHalf;
-//  bool fillSoundSecondHalf;
+	// These are used for ScummVMs sound output
+	bool fillNeeded[4];
+	int playingSection;
 
-  // These are used for ScummVMs sound output
-  bool fillNeeded[4];
-  int playingSection;
+	bool reset;
 
-  bool reset;
-
-  // Streaming sound
-  bool streamFillNeeded[4];
-  int streamPlayingSection;
+	// Streaming sound
+	bool streamFillNeeded[4];
+	int streamPlayingSection;
 } scummTransferRegion;
 
 //////////////////////////////////////////////////////////////////////
 
 #undef IPC
 #define IPC ((scummTransferRegion volatile *)(0x027FF000))
-
 
 #endif

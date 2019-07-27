@@ -33,20 +33,19 @@
 #include "tinsel/actors.h"
 #include "tinsel/dw.h"
 #include "tinsel/events.h"
+#include "tinsel/pcode.h" // LEAD_ACTOR
 #include "tinsel/pid.h"
-#include "tinsel/pcode.h"		// LEAD_ACTOR
 #include "tinsel/polygons.h"
 #include "tinsel/rince.h"
 #include "tinsel/sched.h"
 #include "tinsel/tinsel.h"
 
-
 namespace Tinsel {
 
 struct EP_INIT {
-	HPOLYGON	hEpoly;
-	PMOVER		pMover;
-	int		index;
+	HPOLYGON hEpoly;
+	PMOVER pMover;
+	int index;
 };
 
 /**
@@ -59,16 +58,15 @@ static void EffectProcess(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
-	const EP_INIT *to = (const EP_INIT *)param;		// get the stuff copied to process when it was created
+	const EP_INIT *to = (const EP_INIT *)param; // get the stuff copied to process when it was created
 
 	CORO_BEGIN_CODE(_ctx);
 
-	int		x, y;		// Lead actor position
+	int x, y; // Lead actor position
 
 	// Run effect poly enter script
 	if (TinselV2)
-		CORO_INVOKE_ARGS(PolygonEvent, (CORO_SUBCTX, to->hEpoly, WALKIN,
-			GetMoverId(to->pMover), false, 0));
+		CORO_INVOKE_ARGS(PolygonEvent, (CORO_SUBCTX, to->hEpoly, WALKIN, GetMoverId(to->pMover), false, 0));
 	else
 		effRunPolyTinselCode(to->hEpoly, WALKIN, to->pMover->actorID);
 
@@ -79,8 +77,7 @@ static void EffectProcess(CORO_PARAM, const void *param) {
 
 	// Run effect poly leave script
 	if (TinselV2)
-		CORO_INVOKE_ARGS(PolygonEvent, (CORO_SUBCTX, to->hEpoly, WALKOUT,
-			GetMoverId(to->pMover), false, 0));
+		CORO_INVOKE_ARGS(PolygonEvent, (CORO_SUBCTX, to->hEpoly, WALKOUT, GetMoverId(to->pMover), false, 0));
 	else
 		effRunPolyTinselCode(to->hEpoly, WALKOUT, to->pMover->actorID);
 
@@ -95,8 +92,8 @@ static void EffectProcess(CORO_PARAM, const void *param) {
  * the polygon's Glitter code.
  */
 static void FettleEffectPolys(int x, int y, int index, PMOVER pActor) {
-	HPOLYGON	hPoly;
-	EP_INIT		epi;
+	HPOLYGON hPoly;
+	EP_INIT epi;
 
 	// If just entered an effect polygon, the effect should be triggered.
 	if (!IsMAinEffectPoly(index)) {
@@ -126,13 +123,13 @@ void EffectPolyProcess(CORO_PARAM, const void *param) {
 		for (int i = 0; i < MAX_MOVERS; i++) {
 			PMOVER pActor = GetLiveMover(i);
 			if (pActor != NULL) {
-				int	x, y;
+				int x, y;
 				GetMoverPosition(pActor, &x, &y);
 				FettleEffectPolys(x, y, i, pActor);
 			}
 		}
 
-		CORO_SLEEP(1);		// allow re-scheduling
+		CORO_SLEEP(1); // allow re-scheduling
 	}
 	CORO_END_CODE;
 }

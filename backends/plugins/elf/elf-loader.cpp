@@ -24,28 +24,28 @@
 
 #if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER)
 
-#include "backends/plugins/elf/elf-loader.h"
-#include "backends/plugins/elf/memory-manager.h"
+#	include "backends/plugins/elf/elf-loader.h"
+#	include "backends/plugins/elf/memory-manager.h"
 
-#include "common/debug.h"
-#include "common/file.h"
-#include "common/fs.h"
-#include "common/ptr.h"
+#	include "common/debug.h"
+#	include "common/file.h"
+#	include "common/fs.h"
+#	include "common/ptr.h"
 
-#include <malloc.h>	// for memalign()
+#	include <malloc.h> // for memalign()
 
-DLObject::DLObject() :
-	_file(0),
-	_segment(0),
-	_symtab(0),
-	_strtab(0),
-	_segmentSize(0),
-	_segmentOffset(0),
-	_segmentVMA(0),
-	_symbol_cnt(0),
-	_symtab_sect(-1),
-	_dtors_start(0),
-	_dtors_end(0) {
+DLObject::DLObject()
+  : _file(0)
+  , _segment(0)
+  , _symtab(0)
+  , _strtab(0)
+  , _segmentSize(0)
+  , _segmentOffset(0)
+  , _segmentVMA(0)
+  , _symbol_cnt(0)
+  , _symtab_sect(-1)
+  , _dtors_start(0)
+  , _dtors_end(0) {
 }
 
 DLObject::~DLObject() {
@@ -81,8 +81,7 @@ bool DLObject::readElfHeader(Elf32_Ehdr *ehdr) {
 	assert(_file);
 
 	// Start reading the elf header. Check for errors and magic
-	if (_file->read(ehdr, sizeof(*ehdr)) != sizeof(*ehdr) ||
-			memcmp(ehdr->e_ident, ELFMAG, SELFMAG)) {
+	if (_file->read(ehdr, sizeof(*ehdr)) != sizeof(*ehdr) || memcmp(ehdr->e_ident, ELFMAG, SELFMAG)) {
 		warning("elfloader: No ELF file.");
 		return false;
 	}
@@ -93,12 +92,12 @@ bool DLObject::readElfHeader(Elf32_Ehdr *ehdr) {
 	}
 
 	if (ehdr->e_ident[EI_DATA] !=
-#ifdef SCUMM_BIG_ENDIAN
-			ELFDATA2MSB
-#else
-			ELFDATA2LSB
-#endif
-			) {
+#	ifdef SCUMM_BIG_ENDIAN
+	    ELFDATA2MSB
+#	else
+	    ELFDATA2LSB
+#	endif
+	) {
 		warning("elfloader: Wrong ELF file endianess.");
 		return false;
 	}
@@ -114,28 +113,28 @@ bool DLObject::readElfHeader(Elf32_Ehdr *ehdr) {
 	}
 
 	if (ehdr->e_machine !=
-#ifdef ARM_TARGET
-			EM_ARM
-#endif
-#ifdef MIPS_TARGET
-			EM_MIPS
-#endif
-#ifdef PPC_TARGET
-			EM_PPC
-#endif
-			) {
+#	ifdef ARM_TARGET
+	    EM_ARM
+#	endif
+#	ifdef MIPS_TARGET
+	      EM_MIPS
+#	endif
+#	ifdef PPC_TARGET
+	        EM_PPC
+#	endif
+	) {
 		warning("elfloader: Wrong ELF file architecture.");
 		return false;
 	}
 
-	if (ehdr->e_phentsize < sizeof(Elf32_Phdr)	 ||			// Check for size of program header
-			ehdr->e_shentsize != sizeof(Elf32_Shdr)) {		// Check for size of section header
+	if (ehdr->e_phentsize < sizeof(Elf32_Phdr) || // Check for size of program header
+	    ehdr->e_shentsize != sizeof(Elf32_Shdr)) { // Check for size of section header
 		warning("elfloader: Invalid ELF structure sizes.");
 		return false;
 	}
 
 	debug(2, "elfloader: phoff = %d, phentsz = %d, phnum = %d",
-			ehdr->e_phoff, ehdr->e_phentsize, ehdr->e_phnum);
+	      ehdr->e_phoff, ehdr->e_phentsize, ehdr->e_phnum);
 
 	return true;
 }
@@ -144,20 +143,19 @@ bool DLObject::readProgramHeaders(Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, Elf32_Half
 	assert(_file);
 
 	// Read program header
-	if (!_file->seek(ehdr->e_phoff + sizeof(*phdr) * num, SEEK_SET) ||
-			_file->read(phdr, sizeof(*phdr)) != sizeof(*phdr)) {
+	if (!_file->seek(ehdr->e_phoff + sizeof(*phdr) * num, SEEK_SET) || _file->read(phdr, sizeof(*phdr)) != sizeof(*phdr)) {
 		warning("elfloader: Program header load failed.");
 		return false;
 	}
 
 	// Check program header values
-	if (phdr->p_type != PT_LOAD  || phdr->p_filesz > phdr->p_memsz) {
+	if (phdr->p_type != PT_LOAD || phdr->p_filesz > phdr->p_memsz) {
 		warning("elfloader: Invalid program header.");
 		return false;
 	}
 
 	debug(2, "elfloader: offs = %x, filesz = %x, memsz = %x, align = %x",
-			phdr->p_offset, phdr->p_filesz, phdr->p_memsz, phdr->p_align);
+	      phdr->p_offset, phdr->p_filesz, phdr->p_memsz, phdr->p_align);
 
 	return true;
 }
@@ -179,15 +177,14 @@ bool DLObject::loadSegment(Elf32_Phdr *phdr) {
 	// Set .bss segment to 0 if necessary
 	if (phdr->p_memsz > phdr->p_filesz) {
 		debug(2, "elfloader: Setting %p to %p to 0 for bss",
-				_segment + phdr->p_filesz, _segment + phdr->p_memsz);
+		      _segment + phdr->p_filesz, _segment + phdr->p_memsz);
 		memset(_segment + phdr->p_filesz, 0, phdr->p_memsz - phdr->p_filesz);
 	}
 
 	debug(2, "elfloader: Reading the segment into memory");
 
 	// Read the segment into memory
-	if (!_file->seek(phdr->p_offset, SEEK_SET) ||
-			_file->read(_segment, phdr->p_filesz) != phdr->p_filesz) {
+	if (!_file->seek(phdr->p_offset, SEEK_SET) || _file->read(_segment, phdr->p_filesz) != phdr->p_filesz) {
 		warning("elfloader: Segment load failed.");
 		return false;
 	}
@@ -197,7 +194,7 @@ bool DLObject::loadSegment(Elf32_Phdr *phdr) {
 	return true;
 }
 
-Elf32_Shdr * DLObject::loadSectionHeaders(Elf32_Ehdr *ehdr) {
+Elf32_Shdr *DLObject::loadSectionHeaders(Elf32_Ehdr *ehdr) {
 	assert(_file);
 
 	Elf32_Shdr *shdr = 0;
@@ -209,9 +206,7 @@ Elf32_Shdr * DLObject::loadSectionHeaders(Elf32_Ehdr *ehdr) {
 	}
 
 	// Read from file into section headers
-	if (!_file->seek(ehdr->e_shoff, SEEK_SET) ||
-			_file->read(shdr, ehdr->e_shnum * sizeof(*shdr)) !=
-			ehdr->e_shnum * sizeof(*shdr)) {
+	if (!_file->seek(ehdr->e_shoff, SEEK_SET) || _file->read(shdr, ehdr->e_shnum * sizeof(*shdr)) != ehdr->e_shnum * sizeof(*shdr)) {
 		warning("elfloader: Section headers load failed.");
 		free(shdr);
 		return 0;
@@ -225,10 +220,7 @@ int DLObject::findSymbolTableSection(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 
 	// Loop over sections, looking for symbol table linked to a string table
 	for (uint32 i = 0; i < ehdr->e_shnum; i++) {
-		if (shdr[i].sh_type == SHT_SYMTAB &&
-				shdr[i].sh_entsize == sizeof(Elf32_Sym) &&
-				shdr[i].sh_link < ehdr->e_shnum &&
-				shdr[shdr[i].sh_link].sh_type == SHT_STRTAB) {
+		if (shdr[i].sh_type == SHT_SYMTAB && shdr[i].sh_entsize == sizeof(Elf32_Sym) && shdr[i].sh_link < ehdr->e_shnum && shdr[shdr[i].sh_link].sh_type == SHT_STRTAB) {
 			SymbolTableSection = i;
 			break;
 		}
@@ -249,7 +241,7 @@ int DLObject::loadSymbolTable(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 	}
 
 	debug(2, "elfloader: Symbol section at section %d, size %x",
-			_symtab_sect, shdr[_symtab_sect].sh_size);
+	      _symtab_sect, shdr[_symtab_sect].sh_size);
 
 	// Allocate memory for symbol table
 	if (!(_symtab = (Elf32_Sym *)malloc(shdr[_symtab_sect].sh_size))) {
@@ -258,9 +250,7 @@ int DLObject::loadSymbolTable(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 	}
 
 	// Read symbol table into memory
-	if (!_file->seek(shdr[_symtab_sect].sh_offset, SEEK_SET) ||
-			_file->read(_symtab, shdr[_symtab_sect].sh_size) !=
-			shdr[_symtab_sect].sh_size) {
+	if (!_file->seek(shdr[_symtab_sect].sh_offset, SEEK_SET) || _file->read(_symtab, shdr[_symtab_sect].sh_size) != shdr[_symtab_sect].sh_size) {
 		warning("elfloader: Symbol table load failed.");
 		free(_symtab);
 		_symtab = 0;
@@ -286,9 +276,7 @@ bool DLObject::loadStringTable(Elf32_Shdr *shdr) {
 	}
 
 	// Read string table into memory
-	if (!_file->seek(shdr[string_sect].sh_offset, SEEK_SET) ||
-			_file->read(_strtab, shdr[string_sect].sh_size) !=
-			shdr[string_sect].sh_size) {
+	if (!_file->seek(shdr[string_sect].sh_offset, SEEK_SET) || _file->read(_strtab, shdr[string_sect].sh_size) != shdr[string_sect].sh_size) {
 		warning("elfloader: Symbol table strings load failed.");
 		free(_strtab);
 		_strtab = 0;
@@ -307,8 +295,7 @@ void DLObject::relocateSymbols(ptrdiff_t offset) {
 		if (s->st_shndx < SHN_LOPROC) {
 			s->st_value += offset;
 
-			if (s->st_value < Elf32_Addr(_segment) ||
-					s->st_value > Elf32_Addr(_segment) + _segmentSize)
+			if (s->st_value < Elf32_Addr(_segment) || s->st_value > Elf32_Addr(_segment) + _segmentSize)
 				warning("elfloader: Symbol out of bounds! st_value = %x", s->st_value);
 		}
 	}
@@ -335,7 +322,7 @@ void DLObject::trackSize(const char *path) {
 		return;
 	}
 
-	ELFMemMan.trackPlugin(true);	// begin tracking the plugin size
+	ELFMemMan.trackPlugin(true); // begin tracking the plugin size
 
 	// Load the segments
 	for (uint32 i = 0; i < ehdr.e_phnum; i++) {
@@ -347,12 +334,12 @@ void DLObject::trackSize(const char *path) {
 			return;
 		}
 
-		if (phdr.p_flags & PF_X) {	// check for executable, allocated segment
+		if (phdr.p_flags & PF_X) { // check for executable, allocated segment
 			ELFMemMan.trackAlloc(phdr.p_align, phdr.p_memsz);
 		}
 	}
 
-	ELFMemMan.trackPlugin(false);	// we're done tracking the plugin size
+	ELFMemMan.trackPlugin(false); // we're done tracking the plugin size
 
 	delete _file;
 	_file = 0;
@@ -475,9 +462,7 @@ void *DLObject::symbol(const char *name) {
 
 	for (uint32 c = _symbol_cnt; c--; s++)
 		// We can only import symbols that are global or weak in the plugin
-		if ((SYM_BIND(s->st_info) == STB_GLOBAL ||
-				SYM_BIND(s->st_info) == STB_WEAK) &&
-				!strcmp(name, _strtab + s->st_name)) {
+		if ((SYM_BIND(s->st_info) == STB_GLOBAL || SYM_BIND(s->st_info) == STB_WEAK) && !strcmp(name, _strtab + s->st_name)) {
 			// We found the symbol
 			debug(2, "elfloader: => 0x%08x", s->st_value);
 			return (void *)s->st_value;

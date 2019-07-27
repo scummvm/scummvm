@@ -24,22 +24,23 @@
 
 #ifdef ENABLE_VKEYBD
 
-#include "backends/vkeybd/virtual-keyboard-parser.h"
-#include "backends/vkeybd/polygon.h"
+#	include "backends/vkeybd/polygon.h"
+#	include "backends/vkeybd/virtual-keyboard-parser.h"
 
-#include "common/keyboard.h"
-#include "common/util.h"
-#include "common/system.h"
-#include "common/archive.h"
-#include "common/tokenizer.h"
-#include "common/stream.h"
+#	include "common/archive.h"
+#	include "common/keyboard.h"
+#	include "common/stream.h"
+#	include "common/system.h"
+#	include "common/tokenizer.h"
+#	include "common/util.h"
 
-#include "image/bmp.h"
+#	include "image/bmp.h"
 
 namespace Common {
 
 VirtualKeyboardParser::VirtualKeyboardParser(VirtualKeyboard *kbd)
-	: XMLParser(), _keyboard(kbd) {
+  : XMLParser()
+  , _keyboard(kbd) {
 }
 
 void VirtualKeyboardParser::cleanup() {

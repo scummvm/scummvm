@@ -16,14 +16,14 @@
  */
 
 #ifdef MT32EMU_SHARED
-#include <locale>
+#	include <locale>
 #endif
 
 #include "internals.h"
 
 // Disable MSVC STL exceptions
 #ifdef _MSC_VER
-#define _HAS_EXCEPTIONS 0
+#	define _HAS_EXCEPTIONS 0
 #endif
 #include "FileStream.h"
 
@@ -33,7 +33,8 @@ static inline void configureSystemLocale() {
 #ifdef MT32EMU_SHARED
 	static bool configured = false;
 
-	if (configured) return;
+	if (configured)
+		return;
 	configured = true;
 	std::locale::global(std::locale(""));
 #endif
@@ -41,8 +42,10 @@ static inline void configureSystemLocale() {
 
 using std::ios_base;
 
-FileStream::FileStream() : ifsp(*new std::ifstream), data(NULL), size(0)
-{}
+FileStream::FileStream()
+  : ifsp(*new std::ifstream)
+  , data(NULL)
+  , size(0) {}
 
 FileStream::~FileStream() {
 	// destructor closes ifsp

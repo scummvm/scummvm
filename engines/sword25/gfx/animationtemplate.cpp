@@ -29,10 +29,10 @@
  *
  */
 
-#include "sword25/kernel/kernel.h"
-#include "sword25/kernel/resource.h"
-#include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/kernel/outputpersistenceblock.h"
+#include "sword25/kernel/resource.h"
 
 #include "sword25/gfx/animationresource.h"
 #include "sword25/gfx/animationtemplate.h"
@@ -86,7 +86,8 @@ AnimationTemplate::AnimationTemplate(const Common::String &sourceAnimation) {
 	_valid = (_sourceAnimationPtr != 0);
 }
 
-AnimationTemplate::AnimationTemplate(const AnimationTemplate &other) : AnimationDescription() {
+AnimationTemplate::AnimationTemplate(const AnimationTemplate &other)
+  : AnimationDescription() {
 	// Objekt registrieren.
 	AnimationTemplateRegistry::instance().registerObject(this);
 
@@ -154,7 +155,7 @@ void AnimationTemplate::setFrame(int destIndex, int srcIndex) {
 bool AnimationTemplate::validateSourceIndex(uint index) const {
 	if (index > _sourceAnimationPtr->getFrameCount()) {
 		warning("Tried to insert a frame (\"%d\") that does not exist in the source animation (\"%s\"). Ignoring call.",
-		                 index, _sourceAnimationPtr->getFileName().c_str());
+		        index, _sourceAnimationPtr->getFileName().c_str());
 		return false;
 	} else
 		return true;
@@ -163,7 +164,7 @@ bool AnimationTemplate::validateSourceIndex(uint index) const {
 bool AnimationTemplate::validateDestIndex(uint index) const {
 	if (index > _frames.size()) {
 		warning("Tried to change a nonexistent frame (\"%d\") in a template animation. Ignoring call.",
-		                 index);
+		        index);
 		return false;
 	} else
 		return true;

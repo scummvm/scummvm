@@ -21,14 +21,17 @@
  */
 
 #include "titanic/pet_control/pet_starfield.h"
-#include "titanic/pet_control/pet_control.h"
 #include "titanic/messages/pet_messages.h"
+#include "titanic/pet_control/pet_control.h"
 #include "titanic/star_control/star_control.h"
 
 namespace Titanic {
 
-CPetStarfield::CPetStarfield() : _flickerCtr(0), _photoOn(true),
-		_hasReference(false), _rect1(22, 352, 598, 478) {
+CPetStarfield::CPetStarfield()
+  : _flickerCtr(0)
+  , _photoOn(true)
+  , _hasReference(false)
+  , _rect1(22, 352, 598, 478) {
 	_markerStates[0] = _markerStates[1] = _markerStates[2] = MS_BLANK;
 }
 

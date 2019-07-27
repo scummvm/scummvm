@@ -34,8 +34,8 @@
 #define IMAGE_JPEG_H
 
 #include "graphics/surface.h"
-#include "image/image_decoder.h"
 #include "image/codecs/codec.h"
+#include "image/image_decoder.h"
 
 namespace Common {
 class SeekableReadStream;

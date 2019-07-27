@@ -21,14 +21,17 @@
  */
 
 #include "titanic/pet_control/pet_inventory.h"
-#include "titanic/pet_control/pet_control.h"
 #include "titanic/carry/carry.h"
+#include "titanic/pet_control/pet_control.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
 
-CPetInventory::CPetInventory() : CPetSection(),
-		_movie(nullptr), _isLoading(false), _titaniaBitFlags(0) {
+CPetInventory::CPetInventory()
+  : CPetSection()
+  , _movie(nullptr)
+  , _isLoading(false)
+  , _titaniaBitFlags(0) {
 	for (int idx = 0; idx < TOTAL_ITEMS; ++idx) {
 		_itemBackgrounds[idx] = nullptr;
 	}
@@ -152,7 +155,7 @@ bool CPetInventory::setPetControl(CPetControl *petControl) {
 		return false;
 
 	_petControl = petControl;
-	_items.setup(7,  this);
+	_items.setup(7, this);
 	_items.setFlags(28);
 
 	Rect tempRect(0, 0, 52, 52);
@@ -207,7 +210,7 @@ void CPetInventory::highlightItem(CGameObject *item) {
 int CPetInventory::getItemIndex(CGameObject *item) const {
 	int index = 0;
 	for (CGameObject *obj = _petControl->getFirstObject(); obj && obj != item;
-			++index, obj = _petControl->getNextObject(obj)) {
+	     ++index, obj = _petControl->getNextObject(obj)) {
 	}
 
 	return index;

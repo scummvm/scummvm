@@ -21,11 +21,11 @@
  * Data structures used by the process scheduler
  */
 
-#ifndef TINSEL_SCHED_H     // prevent multiple includes
+#ifndef TINSEL_SCHED_H // prevent multiple includes
 #define TINSEL_SCHED_H
 
 #include "common/coroutines.h"
-#include "tinsel/dw.h"	// new data types
+#include "tinsel/dw.h" // new data types
 #include "tinsel/events.h"
 #include "tinsel/pcode.h"
 #include "tinsel/tinsel.h"
@@ -40,7 +40,7 @@ void SceneProcesses(uint32 numProcess, SCNHANDLE hProcess);
 void CallSceneProcess(uint32 procID);
 void KillSceneProcess(uint32 procID);
 void SceneProcessEvent(CORO_PARAM, uint32 procID, TINSEL_EVENT event, bool bWait,
-					   int myEscape, bool *result = NULL);
+                       int myEscape, bool *result = NULL);
 void RestoreSceneProcess(INT_CONTEXT *pic);
 
 void GlobalProcesses(uint32 numProcess, byte *pProcess);
@@ -53,4 +53,4 @@ void FreeGlobalProcesses();
 
 } // End of namespace Tinsel
 
-#endif		// TINSEL_SCHED_H
+#endif // TINSEL_SCHED_H

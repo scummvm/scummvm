@@ -32,34 +32,35 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-class WidgetPassword: public WidgetBase {
-private:
-	Common::Point _cursorPos;
-	Common::String _password;
-	int _index;
-	bool _blinkFlag;
-	int _blinkCounter;
-	byte _cursorColor;
-	bool _insert;
+	class WidgetPassword : public WidgetBase {
+	private:
+		Common::Point _cursorPos;
+		Common::String _password;
+		int _index;
+		bool _blinkFlag;
+		int _blinkCounter;
+		byte _cursorColor;
+		bool _insert;
 
-	/**
+		/**
 	 * Close the window and check if the entered password is correct
 	 */
-	void close();
-public:
-	WidgetPassword(SherlockEngine *vm);
-	virtual ~WidgetPassword() {}
+		void close();
 
-	/**
+	public:
+		WidgetPassword(SherlockEngine *vm);
+		virtual ~WidgetPassword() {}
+
+		/**
 	 * Show the password entry window
 	 */
-	void show();
+		void show();
 
-	/**
+		/**
 	 * Handle event processing
 	 */
-	virtual void handleEvents();
-};
+		virtual void handleEvents();
+	};
 
 } // End of namespace Tattoo
 

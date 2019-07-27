@@ -30,6 +30,7 @@ namespace Titanic {
 class CPET : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool ShowTextMsg(CShowTextMsg *msg);
+
 public:
 	int _fieldBC;
 	int _fieldC0;
@@ -38,6 +39,7 @@ public:
 	CString _string1;
 	int _fieldD8;
 	int _fieldDC;
+
 public:
 	CLASSDEF;
 	CPET();

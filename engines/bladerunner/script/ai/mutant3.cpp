@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptMutant3::AIScriptMutant3(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptMutant3::AIScriptMutant3(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 	_var1 = 1;
 	_flag = 0;
 }
@@ -48,10 +49,8 @@ bool AIScriptMutant3::Update() {
 		switch (Actor_Query_Goal_Number(kActorMutant3)) {
 		case 401:
 			if (Actor_Query_Which_Set_In(kActorMutant3) == Player_Query_Current_Set()
-			 && (Actor_Query_Friendliness_To_Other(kActorMutant3, kActorMcCoy) < 40
-			  || Actor_Query_Combat_Aggressiveness(kActorMutant3) >= 60
-			 )
-			) {
+			    && (Actor_Query_Friendliness_To_Other(kActorMutant3, kActorMcCoy) < 40
+			        || Actor_Query_Combat_Aggressiveness(kActorMutant3) >= 60)) {
 				Actor_Set_Goal_Number(kActorMutant3, 410);
 			}
 			break;
@@ -77,13 +76,11 @@ bool AIScriptMutant3::Update() {
 		}
 
 		if (Game_Flag_Query(kFlagMutantsPaused)
-		 && Actor_Query_Goal_Number(kActorMutant3) != 599
-		) {
+		    && Actor_Query_Goal_Number(kActorMutant3) != 599) {
 			Actor_Set_Goal_Number(kActorMutant3, 404);
 		}
 	} else if (Global_Variable_Query(kVariableChapter) == 5
-	        && Actor_Query_Goal_Number(kActorMutant3) != 590
-	) {
+	           && Actor_Query_Goal_Number(kActorMutant3) != 590) {
 		if (Actor_Query_Which_Set_In(kActorMutant3) != Player_Query_Current_Set()) {
 			Actor_Set_Goal_Number(kActorMutant3, 590);
 		}
@@ -129,8 +126,7 @@ void AIScriptMutant3::OtherAgentExitedThisScene(int otherActorId) {
 
 void AIScriptMutant3::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
 	if (Actor_Query_Which_Set_In(kActorMutant3) == Player_Query_Current_Set()
-	 && Actor_Query_Goal_Number(kActorMutant3) != 599
-	) {
+	    && Actor_Query_Goal_Number(kActorMutant3) != 599) {
 		if (otherActorId == kActorMcCoy) {
 			if (combatMode) {
 				Actor_Modify_Combat_Aggressiveness(kActorMutant3, 10);
@@ -138,9 +134,8 @@ void AIScriptMutant3::OtherAgentEnteredCombatMode(int otherActorId, int combatMo
 				Actor_Modify_Combat_Aggressiveness(kActorMutant3, -10);
 			}
 		} else if (otherActorId == kActorFreeSlotA
-		        || otherActorId == kActorMutant1
-		        || otherActorId == kActorMutant2
-		) {
+		           || otherActorId == kActorMutant1
+		           || otherActorId == kActorMutant2) {
 			Actor_Modify_Combat_Aggressiveness(kActorMutant3, 5);
 		} else {
 			Actor_Modify_Combat_Aggressiveness(kActorMutant3, -10);
@@ -579,7 +574,7 @@ bool AIScriptMutant3::ChangeAnimationMode(int mode) {
 		_animationFrame = Slice_Animation_Query_Number_Of_Frames(917) - 1;
 		break;
 
- 	case 43:
+	case 43:
 		if ((unsigned int)(_animationState - 8) > 1) {
 			_animationState = 9;
 			_animationFrame = 0;
@@ -596,17 +591,17 @@ bool AIScriptMutant3::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptMutant3::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptMutant3::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptMutant3::ReachedMovementTrackWaypoint(int waypointId) {

@@ -20,21 +20,19 @@
  *
  */
 
-
 #include "scumm/smush/smush_mixer.h"
-#include "scumm/smush/channel.h"
 #include "scumm/scumm.h"
+#include "scumm/smush/channel.h"
 
 #include "audio/audiostream.h"
-#include "audio/mixer.h"
 #include "audio/decoders/raw.h"
-
+#include "audio/mixer.h"
 
 namespace Scumm {
 
-SmushMixer::SmushMixer(Audio::Mixer *m) :
-	_mixer(m),
-	_soundFrequency(22050) {
+SmushMixer::SmushMixer(Audio::Mixer *m)
+  : _mixer(m)
+  , _soundFrequency(22050) {
 	for (int32 i = 0; i < NUM_CHANNELS; i++) {
 		_channels[i].id = -1;
 		_channels[i].chan = NULL;
@@ -78,8 +76,8 @@ void SmushMixer::addChannel(SmushChannel *c) {
 
 	for (i = 0; i < NUM_CHANNELS; i++) {
 		debugC(DEBUG_SMUSH, "channel %d : %p(%d, %d)", i, (void *)_channels[i].chan,
-			_channels[i].chan ? _channels[i].chan->getTrackIdentifier() : -1,
-			_channels[i].chan ? _channels[i].chan->isTerminated() : 1);
+		       _channels[i].chan ? _channels[i].chan->getTrackIdentifier() : -1,
+		       _channels[i].chan ? _channels[i].chan->isTerminated() : 1);
 	}
 
 	error("SmushMixer::addChannel(%d): no channel available", track);
@@ -122,7 +120,7 @@ bool SmushMixer::handleFrame() {
 					}
 					_mixer->setChannelVolume(_channels[i].handle, vol);
 					_mixer->setChannelBalance(_channels[i].handle, pan);
-					_channels[i].stream->queueBuffer(data, size, DisposeAfterUse::YES, flags);	// The stream will free the buffer for us
+					_channels[i].stream->queueBuffer(data, size, DisposeAfterUse::YES, flags); // The stream will free the buffer for us
 				} else
 					delete[] data;
 			}

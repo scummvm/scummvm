@@ -38,31 +38,31 @@ class FliesEffect;
 class WaterEffect;
 
 enum RivenTransition {
-	kRivenTransitionNone      = -1,
-	kRivenTransitionWipeLeft  = 0,
+	kRivenTransitionNone = -1,
+	kRivenTransitionWipeLeft = 0,
 	kRivenTransitionWipeRight = 1,
-	kRivenTransitionWipeUp    = 2,
-	kRivenTransitionWipeDown  = 3,
-	kRivenTransitionPanLeft   = 12,
-	kRivenTransitionPanRight  = 13,
-	kRivenTransitionPanUp     = 14,
-	kRivenTransitionPanDown   = 15,
-	kRivenTransitionBlend     = 16,
-	kRivenTransitionBlend2    = 17
+	kRivenTransitionWipeUp = 2,
+	kRivenTransitionWipeDown = 3,
+	kRivenTransitionPanLeft = 12,
+	kRivenTransitionPanRight = 13,
+	kRivenTransitionPanUp = 14,
+	kRivenTransitionPanDown = 15,
+	kRivenTransitionBlend = 16,
+	kRivenTransitionBlend2 = 17
 };
 
 enum RivenTransitionMode {
 	kRivenTransitionModeDisabled = 5000,
-	kRivenTransitionModeFastest  = 5001,
-	kRivenTransitionModeNormal   = 5002,
-	kRivenTransitionModeBest     = 5003
+	kRivenTransitionModeFastest = 5001,
+	kRivenTransitionModeNormal = 5002,
+	kRivenTransitionModeBest = 5003
 };
 
 enum RivenCreditsImageNumber {
-	kRivenCreditsZeroImage   = 302,
-	kRivenCreditsFirstImage  = 303,
+	kRivenCreditsZeroImage = 302,
+	kRivenCreditsFirstImage = 303,
 	kRivenCreditsSecondImage = 304,
-	kRivenCreditsLastImage   = 320
+	kRivenCreditsLastImage = 320
 };
 
 class RivenGraphics : public GraphicsManager {
@@ -191,7 +191,7 @@ public:
 	void update();
 
 private:
-	struct FliesEffectEntry	{
+	struct FliesEffectEntry {
 		bool light;
 		int posX;
 		int posY;

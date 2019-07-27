@@ -21,15 +21,15 @@
  */
 
 #include "common/archive.h"
-#include "common/scummsys.h"
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/hash-str.h"
 #include "common/hashmap.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 
 #ifndef MOHAWK_INSTALLER_ARCHIVE_H
-#define MOHAWK_INSTALLER_ARCHIVE_H
+#	define MOHAWK_INSTALLER_ARCHIVE_H
 
 namespace Mohawk {
 

@@ -35,6 +35,7 @@ namespace Scumm {
 
 class MacM68kDriver : public MidiDriver_Emulated {
 	friend class MidiChannel_MacM68k;
+
 public:
 	MacM68kDriver(Audio::Mixer *mixer);
 	~MacM68kDriver();
@@ -76,7 +77,7 @@ private:
 	enum {
 		kDefaultInstrument = 0x3E7,
 		kProgramChangeBase = 0x3E8,
-		kSysExBase         = 0x7D0
+		kSysExBase = 0x7D0
 	};
 
 	Instrument getInstrument(int idx) const;
@@ -129,6 +130,7 @@ private:
 
 	class MidiChannel_MacM68k : public MidiChannel {
 		friend class MacM68kDriver;
+
 	public:
 		virtual MidiDriver *device() { return _owner; }
 		virtual byte getNumber() { return _number; }
@@ -149,6 +151,7 @@ private:
 
 		void addVoice(VoiceChannel *voice);
 		void removeVoice(VoiceChannel *voice);
+
 	private:
 		MacM68kDriver *_owner;
 		bool _allocated;

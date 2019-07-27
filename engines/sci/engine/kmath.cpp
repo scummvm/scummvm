@@ -20,8 +20,8 @@
  *
  */
 
-#include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
+#include "sci/engine/state.h"
 
 namespace Sci {
 
@@ -89,7 +89,7 @@ reg_t kAbs(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kSqrt(EngineState *s, int argc, reg_t *argv) {
-	return make_reg(0, (int16) sqrt((float) ABS(argv[0].toSint16())));
+	return make_reg(0, (int16)sqrt((float)ABS(argv[0].toSint16())));
 }
 
 uint16 kGetAngle_SCI0(int16 x1, int16 y1, int16 x2, int16 y2) {
@@ -130,25 +130,26 @@ int kGetAngle_SCI1_atan2_base(int y, int x) {
 	// fixed point tan(a)
 	int tan_fp = 10000 * y / x;
 
-	if ( tan_fp >= 1000 ) {
+	if (tan_fp >= 1000) {
 		// For tan(a) >= 0.1, interpolate between multiples of 5 degrees
 
 		// 10000 * tan([5, 10, 15, 20, 25, 30, 35, 40, 45])
 		const int tan_table[] = { 875, 1763, 2679, 3640, 4663, 5774,
-		                          7002, 8391, 10000 };
+			                        7002, 8391, 10000 };
 
 		// Look up tan(a) in our table
 		int i = 1;
-		while (tan_fp > tan_table[i]) ++i;
+		while (tan_fp > tan_table[i])
+			++i;
 
 		// The angle a is between 5*i and 5*(i+1). We linearly interpolate.
-		int dist = tan_table[i] - tan_table[i-1];
-		int interp = (5 * (tan_fp - tan_table[i-1]) + dist/2) / dist;
-		return 5*i + interp;
+		int dist = tan_table[i] - tan_table[i - 1];
+		int interp = (5 * (tan_fp - tan_table[i - 1]) + dist / 2) / dist;
+		return 5 * i + interp;
 	} else {
 		// for tan(a) < 0.1, tan(a) is approximately linear in a.
 		// tan'(0) = 1, so in degrees the slope of atan is 180/pi = 57.29...
-		return (57 * y + x/2) / x;
+		return (57 * y + x / 2) / x;
 	}
 }
 
@@ -166,13 +167,11 @@ int kGetAngle_SCI1_atan2(int y, int x) {
 		return 90 - kGetAngle_SCI1_atan2_base(x, y);
 	else
 		return kGetAngle_SCI1_atan2_base(y, x);
-
 }
 
 uint16 kGetAngle_SCI1(int16 x1, int16 y1, int16 x2, int16 y2) {
 	// We flip things around to get into the standard atan2 coordinate system
 	return kGetAngle_SCI1_atan2(x2 - x1, y1 - y2);
-
 }
 
 /**
@@ -189,8 +188,6 @@ uint16 kGetAngleWorker(int16 x1, int16 y1, int16 x2, int16 y2) {
 		return kGetAngle_SCI0(x1, y1, x2, y2);
 }
 
-
-
 reg_t kGetAngle(EngineState *s, int argc, reg_t *argv) {
 	// Based on behavior observed with a test program created with
 	// SCI Studio.
@@ -206,9 +203,9 @@ reg_t kGetDistance(EngineState *s, int argc, reg_t *argv) {
 	int xdiff = (argc > 3) ? argv[3].toSint16() : 0;
 	int ydiff = (argc > 2) ? argv[2].toSint16() : 0;
 	int angle = (argc > 5) ? argv[5].toSint16() : 0;
-	int xrel = (int)(((float) argv[1].toSint16() - xdiff) / cos(angle * M_PI / 180.0)); // This works because cos(0)==1
+	int xrel = (int)(((float)argv[1].toSint16() - xdiff) / cos(angle * M_PI / 180.0)); // This works because cos(0)==1
 	int yrel = argv[0].toSint16() - ydiff;
-	return make_reg(0, (int16)sqrt((float) xrel*xrel + yrel*yrel));
+	return make_reg(0, (int16)sqrt((float)xrel * xrel + yrel * yrel));
 }
 
 reg_t kTimesSin(EngineState *s, int argc, reg_t *argv) {

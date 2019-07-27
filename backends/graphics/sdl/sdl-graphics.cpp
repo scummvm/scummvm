@@ -21,20 +21,25 @@
  */
 
 #include "backends/graphics/sdl/sdl-graphics.h"
+#include "backends/events/sdl/sdl-events.h"
 #include "backends/platform/sdl/sdl-sys.h"
 #include "backends/platform/sdl/sdl.h"
-#include "backends/events/sdl/sdl-events.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 #include "graphics/scaler/aspect.h"
 #ifdef USE_OSD
-#include "common/translation.h"
+#	include "common/translation.h"
 #endif
 
 SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *source, SdlWindow *window)
-	: _eventSource(source), _window(window), _hwScreen(nullptr)
+  : _eventSource(source)
+  , _window(window)
+  , _hwScreen(nullptr)
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	, _allowWindowSizeReset(false), _hintedWidth(0), _hintedHeight(0), _lastFlags(0)
+  , _allowWindowSizeReset(false)
+  , _hintedWidth(0)
+  , _hintedHeight(0)
+  , _lastFlags(0)
 #endif
 {
 	SDL_GetMouseState(&_cursorX, &_cursorY);
@@ -51,13 +56,13 @@ void SdlGraphicsManager::deactivateManager() {
 SdlGraphicsManager::State SdlGraphicsManager::getState() const {
 	State state;
 
-	state.screenWidth   = getWidth();
-	state.screenHeight  = getHeight();
-	state.aspectRatio   = getFeatureState(OSystem::kFeatureAspectRatioCorrection);
-	state.fullscreen    = getFeatureState(OSystem::kFeatureFullscreenMode);
+	state.screenWidth = getWidth();
+	state.screenHeight = getHeight();
+	state.aspectRatio = getFeatureState(OSystem::kFeatureAspectRatioCorrection);
+	state.fullscreen = getFeatureState(OSystem::kFeatureFullscreenMode);
 	state.cursorPalette = getFeatureState(OSystem::kFeatureCursorPalette);
 #ifdef USE_RGB_COLOR
-	state.pixelFormat   = getScreenFormat();
+	state.pixelFormat = getScreenFormat();
 #endif
 	return state;
 }
@@ -65,13 +70,13 @@ SdlGraphicsManager::State SdlGraphicsManager::getState() const {
 bool SdlGraphicsManager::setState(const State &state) {
 	beginGFXTransaction();
 #ifdef USE_RGB_COLOR
-		initSize(state.screenWidth, state.screenHeight, &state.pixelFormat);
+	initSize(state.screenWidth, state.screenHeight, &state.pixelFormat);
 #else
-		initSize(state.screenWidth, state.screenHeight, nullptr);
+	initSize(state.screenWidth, state.screenHeight, nullptr);
 #endif
-		setFeatureState(OSystem::kFeatureAspectRatioCorrection, state.aspectRatio);
-		setFeatureState(OSystem::kFeatureFullscreenMode, state.fullscreen);
-		setFeatureState(OSystem::kFeatureCursorPalette, state.cursorPalette);
+	setFeatureState(OSystem::kFeatureAspectRatioCorrection, state.aspectRatio);
+	setFeatureState(OSystem::kFeatureFullscreenMode, state.fullscreen);
+	setFeatureState(OSystem::kFeatureCursorPalette, state.cursorPalette);
 
 	if (endGFXTransaction() != OSystem::kTransactionSuccess) {
 		return false;
@@ -189,10 +194,10 @@ bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 		mouse.y = CLIP<int>(mouse.y, _activeArea.drawRect.top, _activeArea.drawRect.bottom - 1);
 
 		if (_window->mouseIsGrabbed() ||
-			// Keep the mouse inside the game area during dragging to prevent an
-			// event mismatch where the mouseup event gets lost because it is
-			// performed outside of the game area
-			(_cursorLastInActiveArea && SDL_GetMouseState(nullptr, nullptr) != 0)) {
+		    // Keep the mouse inside the game area during dragging to prevent an
+		    // event mismatch where the mouseup event gets lost because it is
+		    // performed outside of the game area
+		    (_cursorLastInActiveArea && SDL_GetMouseState(nullptr, nullptr) != 0)) {
 			setSystemMousePosition(mouse.x, mouse.y);
 		} else {
 			// Allow the in-game mouse to get a final movement event to the edge
@@ -274,7 +279,7 @@ void SdlGraphicsManager::saveScreenshot() {
 	Common::String filename;
 
 	Common::String screenshotsPath;
-	OSystem_SDL *sdl_g_system = dynamic_cast<OSystem_SDL*>(g_system);
+	OSystem_SDL *sdl_g_system = dynamic_cast<OSystem_SDL *>(g_system);
 	if (sdl_g_system)
 		screenshotsPath = sdl_g_system->getScreenshotsPath();
 
@@ -311,9 +316,7 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	switch ((int)event.type) {
 	case Common::EVENT_KEYDOWN:
 		// Alt-Return and Alt-Enter toggle full screen mode
-		if (event.kbd.hasFlags(Common::KBD_ALT) &&
-			(event.kbd.keycode == Common::KEYCODE_RETURN ||
-			 event.kbd.keycode == Common::KEYCODE_KP_ENTER)) {
+		if (event.kbd.hasFlags(Common::KBD_ALT) && (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_KP_ENTER)) {
 			toggleFullScreen();
 			return true;
 		}
@@ -328,9 +331,9 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 
 	case Common::EVENT_KEYUP:
 		if (event.kbd.hasFlags(Common::KBD_ALT)) {
-			return    event.kbd.keycode == Common::KEYCODE_RETURN
-			       || event.kbd.keycode == Common::KEYCODE_KP_ENTER
-			       || event.kbd.keycode == Common::KEYCODE_s;
+			return event.kbd.keycode == Common::KEYCODE_RETURN
+			  || event.kbd.keycode == Common::KEYCODE_KP_ENTER
+			  || event.kbd.keycode == Common::KEYCODE_s;
 		}
 
 		break;

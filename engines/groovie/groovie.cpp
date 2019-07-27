@@ -30,7 +30,7 @@
 #include "groovie/vdx.h"
 
 #ifdef ENABLE_GROOVIE2
-#include "groovie/roq.h"
+#	include "groovie/roq.h"
 #endif
 
 #include "common/config-manager.h"
@@ -40,18 +40,27 @@
 #include "common/macresman.h"
 #include "common/textconsole.h"
 
+#include "audio/mixer.h"
 #include "backends/audiocd/audiocd.h"
 #include "engines/util.h"
 #include "graphics/fontman.h"
-#include "audio/mixer.h"
 
 namespace Groovie {
 
-GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd) :
-	Engine(syst), _gameDescription(gd), _debugger(NULL), _script(NULL),
-	_resMan(NULL), _grvCursorMan(NULL), _videoPlayer(NULL), _musicPlayer(NULL),
-	_graphicsMan(NULL), _macResFork(NULL), _waitingForInput(false), _font(NULL),
-	_spookyMode(false) {
+GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd)
+  : Engine(syst)
+  , _gameDescription(gd)
+  , _debugger(NULL)
+  , _script(NULL)
+  , _resMan(NULL)
+  , _grvCursorMan(NULL)
+  , _videoPlayer(NULL)
+  , _musicPlayer(NULL)
+  , _graphicsMan(NULL)
+  , _macResFork(NULL)
+  , _waitingForInput(false)
+  , _font(NULL)
+  , _spookyMode(false) {
 
 	// Initialize the custom debug levels
 	DebugMan.addDebugChannel(kDebugVideo, "Video", "Debug video and audio playback");
@@ -348,10 +357,7 @@ Common::Platform GroovieEngine::getPlatform() const {
 }
 
 bool GroovieEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsSavingDuringRuntime) ||
-		(f == kSupportsLoadingDuringRuntime);
+	return (f == kSupportsRTL) || (f == kSupportsSavingDuringRuntime) || (f == kSupportsLoadingDuringRuntime);
 }
 
 void GroovieEngine::syncSoundSettings() {
@@ -368,7 +374,7 @@ void GroovieEngine::syncSoundSettings() {
 	// We use "speech" because most users will want to change the videos
 	// volume when they can't hear the speech because of the music.
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType,
-		mute ? 0 : ConfMan.getInt("speech_volume"));
+	                              mute ? 0 : ConfMan.getInt("speech_volume"));
 }
 
 bool GroovieEngine::canLoadGameStateCurrently() {
@@ -395,7 +401,7 @@ Common::Error GroovieEngine::loadGameState(int slot) {
 }
 
 Common::Error GroovieEngine::saveGameState(int slot, const Common::String &desc) {
-	_script->directGameSave(slot,desc);
+	_script->directGameSave(slot, desc);
 
 	// TODO: Use specific error codes
 	return Common::kNoError;

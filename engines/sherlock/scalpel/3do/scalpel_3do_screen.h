@@ -31,64 +31,65 @@ class SherlockEngine;
 
 namespace Scalpel {
 
-class Scalpel3DOScreen : public ScalpelScreen {
-protected:
-	/**
+	class Scalpel3DOScreen : public ScalpelScreen {
+	protected:
+		/**
 	 * Draws a surface at a given position within this surface with transparency
 	 */
-	virtual void transBlitFromUnscaled(const Graphics::Surface &src, const Common::Point &pt, bool flipped,
-		int overrideColor);
-public:
-	Scalpel3DOScreen(SherlockEngine *vm);
-	virtual ~Scalpel3DOScreen() {}
+		virtual void transBlitFromUnscaled(const Graphics::Surface &src, const Common::Point &pt, bool flipped,
+		                                   int overrideColor);
 
-	/**
+	public:
+		Scalpel3DOScreen(SherlockEngine *vm);
+		virtual ~Scalpel3DOScreen() {}
+
+		/**
 	 * Draws a sub-section of a surface at a given position within this surface
 	 */
-	void rawBlitFrom(const Graphics::Surface &src, const Common::Point &pt);
+		void rawBlitFrom(const Graphics::Surface &src, const Common::Point &pt);
 
-	/**
+		/**
 	 * Fade backbuffer 1 into screen (3DO RGB!)
 	 */
-	void fadeIntoScreen3DO(int speed);
+		void fadeIntoScreen3DO(int speed);
 
-	void blitFrom3DOcolorLimit(uint16 color);
+		void blitFrom3DOcolorLimit(uint16 color);
 
-	/**
+		/**
 	 * Draws a surface on this surface
 	 */
-	virtual void SHblitFrom(const Graphics::Surface &src);
+		virtual void SHblitFrom(const Graphics::Surface &src);
 
-	/**
+		/**
 	 * Draws a surface at a given position within this surface
 	 */
-	virtual void SHblitFrom(const Graphics::Surface &src, const Common::Point &destPos);
+		virtual void SHblitFrom(const Graphics::Surface &src, const Common::Point &destPos);
 
-	/**
+		/**
 	 * Draws a sub-section of a surface at a given position within this surface
 	 */
-	virtual void SHblitFrom(const Graphics::Surface &src, const Common::Point &destPos, const Common::Rect &srcBounds);
+		virtual void SHblitFrom(const Graphics::Surface &src, const Common::Point &destPos, const Common::Rect &srcBounds);
 
-	/**
+		/**
 	 * Draws an image frame at a given position within this surface with transparency
 	 */
-	virtual void SHtransBlitFrom(const ImageFrame &src, const Common::Point &pt,
-		bool flipped = false, int overrideColor = 0, int scaleVal = SCALE_THRESHOLD);
+		virtual void SHtransBlitFrom(const ImageFrame &src, const Common::Point &pt,
+		                             bool flipped = false, int overrideColor = 0, int scaleVal = SCALE_THRESHOLD);
 
-	/**
+		/**
 	 * Draws an image frame at a given position within this surface with transparency
 	 */
-	virtual void SHtransBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
-		bool flipped = false, int overrideColor = 0, int scaleVal = SCALE_THRESHOLD);
+		virtual void SHtransBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
+		                             bool flipped = false, int overrideColor = 0, int scaleVal = SCALE_THRESHOLD);
 
-	/**
+		/**
 	 * Fill a given area of the surface with a given color
 	 */
-	virtual void SHfillRect(const Common::Rect &r, uint color);
+		virtual void SHfillRect(const Common::Rect &r, uint color);
 
-	virtual uint16 width() const;
-	virtual uint16 height() const;
-};
+		virtual uint16 width() const;
+		virtual uint16 height() const;
+	};
 
 } // End of namespace Scalpel
 

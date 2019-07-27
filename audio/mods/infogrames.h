@@ -43,7 +43,8 @@ public:
 	class Instruments {
 	public:
 		Instruments();
-		template<typename T> Instruments(T ins) {
+		template <typename T>
+		Instruments(T ins) {
 			init();
 			bool result = load(ins);
 			assert(result);
@@ -73,12 +74,12 @@ public:
 	};
 
 	Infogrames(Instruments &ins, bool stereo = false, int rate = 44100,
-			int interruptFreq = 0);
+	           int interruptFreq = 0);
 	~Infogrames();
 
 	Instruments *getInstruments() const { return _instruments; }
 	bool getRepeating() const { return _repCount != 0; }
-	void setRepeating (int32 repCount) { _repCount = repCount; }
+	void setRepeating(int32 repCount) { _repCount = repCount; }
 
 	bool load(Common::SeekableReadStream &dum);
 	bool load(const char *dum);

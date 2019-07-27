@@ -51,13 +51,13 @@ void loadTextData(const char *filename) {
 	if (!fileHandle.open(filename))
 		error("loadTextData(): Cannot open file %s", filename);
 
-	static const uint headerSize = 2 + 2;              // The entry size (16-bit) and entry count (16-bit).
-	const uint entrySize = fileHandle.readUint16BE();  // Observed values: 8.
+	static const uint headerSize = 2 + 2; // The entry size (16-bit) and entry count (16-bit).
+	const uint entrySize = fileHandle.readUint16BE(); // Observed values: 8.
 	const uint entryCount = fileHandle.readUint16BE(); // Observed values: 624, 680, 720, 744.
-	const uint fontDataSize = entryCount * entrySize;  // Observed values: 4992, 5440, 5760, 5952.
-	const uint numChars = entryCount / entrySize;      // Observed values: 78, 85, 90, 93.
+	const uint fontDataSize = entryCount * entrySize; // Observed values: 4992, 5440, 5760, 5952.
+	const uint numChars = entryCount / entrySize; // Observed values: 78, 85, 90, 93.
 	const uint bytesPerChar = fontDataSize / numChars; // Observed values: 64.
-	static const uint bytesPerRow = FONT_WIDTH / 2;    // The input font data is 4-bit so it takes only half the space
+	static const uint bytesPerRow = FONT_WIDTH / 2; // The input font data is 4-bit so it takes only half the space
 
 	if (headerSize + fontDataSize != (uint)fileHandle.size()) {
 		warning("loadTextData: file '%s' (entrySize = %d, entryCount = %d) is of incorrect size %d", filename, entrySize, entryCount, fileHandle.size());
@@ -80,75 +80,201 @@ void loadTextData(const char *filename) {
 }
 
 static const CharacterEntry fontParamTable_standard[NUM_FONT_CHARS] = {
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, {63, 1}, {69, 5}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, {68, 3},
-	{64, 3}, {65, 3}, { 0, 0}, { 0, 0}, {62, 2}, {74, 6}, {66, 1}, {67, 6},
-	{52, 6}, {53, 6}, {54, 6}, {55, 6}, {56, 6}, {57, 6}, {58, 6}, {59, 6},
-	{60, 6}, {61, 6}, {76, 3}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, {75, 6},
-	{ 0, 0}, { 0, 6}, //a
-	                  { 1, 6}, { 2, 6}, { 3, 6}, { 4, 6}, { 5, 6}, { 6, 6},
-	{ 7, 6}, { 8, 3}, { 9, 6}, {10, 6}, {11, 6}, {12, 7}, {13, 6}, {14, 6},
-	{15, 6}, {16, 6}, {17, 6}, {18, 6}, {19, 6}, {20, 6}, {21, 6}, {22, 7},
-	{23, 6}, {24, 6}, {25, 6}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, {26, 6}, //a
-	                  {27, 6}, {28, 5}, {29, 6}, {30, 6}, {31, 5}, {32, 6},
-	{33, 6}, {34, 4}, {35, 4}, {36, 5}, {37, 3}, {38, 7}, {39, 6}, {40, 6},
-	{41, 6}, {42, 6}, {43, 6}, {44, 6}, {45, 6}, {46, 6}, {47, 6}, {48, 7},
-	{49, 6}, {50, 6}, {51, 6}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, {70, 6}, { 0, 0}, { 0, 0}, {72, 6}, { 0, 0}, {73, 5},
-	{77, 6}, { 0, 0}, {71, 6}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, {77, 6},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}
+	{ 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 63, 1 }, { 69, 5 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 68, 3 }, { 64, 3 }, { 65, 3 }, { 0, 0 }, { 0, 0 }, { 62, 2 }, { 74, 6 }, { 66, 1 }, { 67, 6 }, { 52, 6 }, { 53, 6 }, { 54, 6 }, { 55, 6 }, { 56, 6 }, { 57, 6 }, { 58, 6 }, { 59, 6 }, { 60, 6 }, { 61, 6 }, { 76, 3 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 75, 6 }, { 0, 0 }, { 0, 6 }, //a
+	{ 1, 6 },
+	{ 2, 6 },
+	{ 3, 6 },
+	{ 4, 6 },
+	{ 5, 6 },
+	{ 6, 6 },
+	{ 7, 6 },
+	{ 8, 3 },
+	{ 9, 6 },
+	{ 10, 6 },
+	{ 11, 6 },
+	{ 12, 7 },
+	{ 13, 6 },
+	{ 14, 6 },
+	{ 15, 6 },
+	{ 16, 6 },
+	{ 17, 6 },
+	{ 18, 6 },
+	{ 19, 6 },
+	{ 20, 6 },
+	{ 21, 6 },
+	{ 22, 7 },
+	{ 23, 6 },
+	{ 24, 6 },
+	{ 25, 6 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 26, 6 }, //a
+	{ 27, 6 },
+	{ 28, 5 },
+	{ 29, 6 },
+	{ 30, 6 },
+	{ 31, 5 },
+	{ 32, 6 },
+	{ 33, 6 },
+	{ 34, 4 },
+	{ 35, 4 },
+	{ 36, 5 },
+	{ 37, 3 },
+	{ 38, 7 },
+	{ 39, 6 },
+	{ 40, 6 },
+	{ 41, 6 },
+	{ 42, 6 },
+	{ 43, 6 },
+	{ 44, 6 },
+	{ 45, 6 },
+	{ 46, 6 },
+	{ 47, 6 },
+	{ 48, 7 },
+	{ 49, 6 },
+	{ 50, 6 },
+	{ 51, 6 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 70, 6 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 72, 6 },
+	{ 0, 0 },
+	{ 73, 5 },
+	{ 77, 6 },
+	{ 0, 0 },
+	{ 71, 6 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 77, 6 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 }
 };
 
 static const CharacterEntry fontParamTable_alt[NUM_FONT_CHARS] = {
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, {63, 1}, {69, 5}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, {68, 3},
-	{64, 3}, {65, 3}, { 0, 0}, { 0, 0}, {62, 2}, {74, 6}, {66, 1}, {67, 6},
-	{52, 6}, {53, 6}, {54, 6}, {55, 6}, {56, 6}, {57, 6}, {58, 6}, {59, 6},
-	{60, 6}, {61, 6}, {76, 3}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, {75, 6},
-	{ 0, 0}, { 0, 6}, { 1, 6}, { 2, 6}, { 3, 6}, { 4, 6}, { 5, 6}, { 6, 6},
-	{ 7, 6}, { 8, 3}, { 9, 6}, {10, 6}, {11, 6}, {12, 7}, {13, 6}, {14, 6},
-	{15, 6}, {16, 6}, {17, 6}, {18, 6}, {19, 6}, {20, 6}, {21, 6}, {22, 7},
-	{23, 6}, {24, 6}, {25, 6}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, {26, 6}, {27, 6}, {28, 5}, {29, 6}, {30, 6}, {31, 5}, {32, 6},
-	{33, 6}, {34, 4}, {35, 4}, {36, 5}, {37, 3}, {38, 7}, {39, 6}, {40, 6},
-	{41, 6}, {42, 6}, {43, 6}, {44, 6}, {45, 6}, {46, 6}, {47, 6}, {48, 7},
-	{49, 6}, {50, 6}, {51, 6}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, {82, 6}, {70, 6}, { 0, 0}, {78, 6}, {72, 6}, { 0, 0}, {73, 5},
-	{77, 6}, {79, 6}, {71, 6}, {80, 4}, { 0, 0}, { 0, 0}, {78, 6}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, {81, 6}, { 0, 0}, { 0, 0}, {77, 6},
-	{83, 6}, {81, 6}, {82, 6}, { 0, 0}, { 0, 0}, { 0, 0}, {84, 6}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, {84, 6}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
-	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}
+	{ 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 63, 1 }, { 69, 5 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 68, 3 }, { 64, 3 }, { 65, 3 }, { 0, 0 }, { 0, 0 }, { 62, 2 }, { 74, 6 }, { 66, 1 }, { 67, 6 }, { 52, 6 }, { 53, 6 }, { 54, 6 }, { 55, 6 }, { 56, 6 }, { 57, 6 }, { 58, 6 }, { 59, 6 }, { 60, 6 }, { 61, 6 }, { 76, 3 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 75, 6 }, { 0, 0 }, { 0, 6 }, { 1, 6 }, { 2, 6 }, { 3, 6 }, { 4, 6 }, { 5, 6 }, { 6, 6 }, { 7, 6 }, { 8, 3 }, { 9, 6 }, { 10, 6 }, { 11, 6 }, { 12, 7 }, { 13, 6 }, { 14, 6 }, { 15, 6 }, { 16, 6 }, { 17, 6 }, { 18, 6 }, { 19, 6 }, { 20, 6 }, { 21, 6 }, { 22, 7 }, { 23, 6 }, { 24, 6 }, { 25, 6 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 26, 6 }, { 27, 6 }, { 28, 5 }, { 29, 6 }, { 30, 6 }, { 31, 5 }, { 32, 6 }, { 33, 6 }, { 34, 4 }, { 35, 4 }, { 36, 5 }, { 37, 3 }, { 38, 7 }, { 39, 6 }, { 40, 6 }, { 41, 6 }, { 42, 6 }, { 43, 6 }, { 44, 6 }, { 45, 6 }, { 46, 6 }, { 47, 6 }, { 48, 7 }, { 49, 6 }, { 50, 6 }, { 51, 6 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 82, 6 }, { 70, 6 }, { 0, 0 }, { 78, 6 }, { 72, 6 }, { 0, 0 }, { 73, 5 }, { 77, 6 }, { 79, 6 }, { 71, 6 }, { 80, 4 }, { 0, 0 }, { 0, 0 }, { 78, 6 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 81, 6 }, { 0, 0 }, { 0, 0 }, { 77, 6 }, { 83, 6 }, { 81, 6 }, { 82, 6 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 84, 6 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 84, 6 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }
 };
 
 void initLanguage(Common::Language lang) {
@@ -196,13 +322,13 @@ void initLanguage(Common::Language lang) {
 	};
 
 	static const char *const commandPrepositionTable_EN[] = {
-		"",   // EXAMINE
-		"",   // TAKE
-		"",   // INVENTORY
+		"", // EXAMINE
+		"", // TAKE
+		"", // INVENTORY
 		"on", // USE
-		"",   // OPERATE
+		"", // OPERATE
 		"to", // SPEAK
-		""    // NOACTION
+		"" // NOACTION
 	};
 
 	static const CommandeType systemMenu_EN[] = {
@@ -244,7 +370,9 @@ void initLanguage(Common::Language lang) {
 		"C'est inutile",
 		"Vous avez mieux \x85 faire",
 		"Allons, ne perdons pas de temps",
-		"\x87""a ne me semble pas \x88tre une bonne id\x82""e",
+		"\x87"
+		"a ne me semble pas \x88tre une bonne id\x82"
+		"e",
 		// UTILISER
 		"Je ne vois pas pourquoi je ferais cela.",
 		"C'est absolument sans effets",
@@ -273,13 +401,13 @@ void initLanguage(Common::Language lang) {
 	};
 
 	static const char *const commandPrepositionTable_FR[] = {
-		"",    // EXAMINER
-		"",    // PRENDRE
-		"",    // INVENTAIRE
+		"", // EXAMINER
+		"", // PRENDRE
+		"", // INVENTAIRE
 		"sur", // UTILISER
-		"",    // ACTIONNER
-		"a",   // PARLER
-		""     // NOACTION
+		"", // ACTIONNER
+		"a", // PARLER
+		"" // NOACTION
 	};
 
 	static const CommandeType systemMenu_FR[] = {
@@ -301,7 +429,8 @@ void initLanguage(Common::Language lang) {
 		"Could not create save file ...", //
 		"PAUSE",
 		"Sauvegarde de | %s",
-		"Sauvegarde Annul\x82""e ...",
+		"Sauvegarde Annul\x82"
+		"e ...",
 		"Aucune sauvegarde dans le lecteur ...",
 		"Veuillez entrer le Nom de la Sauvegarde ."
 	};
@@ -350,13 +479,13 @@ void initLanguage(Common::Language lang) {
 	};
 
 	static const char *const commandPrepositionTable_ES[] = {
-		"",      // EXAMINAR
-		"",      // COGER
-		"",      // INVENTARIO
+		"", // EXAMINAR
+		"", // COGER
+		"", // INVENTARIO
 		"donde", // USAR
-		"",      // ACCIONAR
-		"a",     // HABLAR
-		""       // NOACTION
+		"", // ACCIONAR
+		"a", // HABLAR
+		"" // NOACTION
 	};
 
 	static const CommandeType systemMenu_ES[] = {
@@ -406,7 +535,8 @@ void initLanguage(Common::Language lang) {
 		"Versuchen Sie, etwas anderes zu finden",
 		// OPERATE
 		"Es geht nicht",
-		"Sagen wir, das war ein Versuch, und reden wir nicht mehr dr\x81""ber",
+		"Sagen wir, das war ein Versuch, und reden wir nicht mehr dr\x81"
+		"ber",
 		"Nichts passiert",
 		"Sie haben wirklich was Besseres zu tun",
 		// SPEAK
@@ -417,7 +547,8 @@ void initLanguage(Common::Language lang) {
 	};
 
 	static const CommandeType defaultActionCommand_DE[] = {
-		"Pr\x81""fe", // FIXME? The third letter should be Latin Small Letter U with diaeresis
+		"Pr\x81"
+		"fe", // FIXME? The third letter should be Latin Small Letter U with diaeresis
 		"Nimm",
 		"Bestand",
 		"Benutze",
@@ -427,13 +558,13 @@ void initLanguage(Common::Language lang) {
 	};
 
 	static const char *const commandPrepositionTable_DE[] = {
-		"",      // Prufe
-		"",      // Nimm
-		"",      // Bestand
+		"", // Prufe
+		"", // Nimm
+		"", // Bestand
 		"gegen", // Benutze
-		"",      // Betatige
-		"a",     // Sprich
-		""       // NOACTION
+		"", // Betatige
+		"a", // Sprich
+		"" // NOACTION
 	};
 
 	static const CommandeType systemMenu_DE[] = {
@@ -454,7 +585,8 @@ void initLanguage(Common::Language lang) {
 		"Diese Sicherungskopie gibt es nicht",
 		"Could not create save file ...", //
 		"PAUSE",
-		"Er L\x84""dt | %s",
+		"Er L\x84"
+		"dt | %s",
 		"Ladevorgang Abgebrochen...",
 		"Kein Backup im Laufwerk...",
 		"Geben Sie den Namen|der Sicherungsdiskette ein"
@@ -504,13 +636,13 @@ void initLanguage(Common::Language lang) {
 	};
 
 	static const char *const commandPrepositionTable_IT[] = {
-		"",   // ESAMINARE
-		"",   // PRENDERE
-		"",   // INVENTARIO
+		"", // ESAMINARE
+		"", // PRENDERE
+		"", // INVENTARIO
 		"su", // UTILIZZARE
-		"",   // AZIONARE
-		"a",  // PARLARE
-		""    // NOACTION
+		"", // AZIONARE
+		"a", // PARLARE
+		"" // NOACTION
 	};
 
 	static const CommandeType systemMenu_IT[] = {
@@ -632,7 +764,7 @@ void loadPoldatDat(const char *fname) {
 
 	if (in.isOpen()) {
 		for (int i = 0; i < NUM_FONT_CHARS; i++) {
-			g_cine->_textHandler.fontParamTable[i].characterIdx   = in.readByte();
+			g_cine->_textHandler.fontParamTable[i].characterIdx = in.readByte();
 			g_cine->_textHandler.fontParamTable[i].characterWidth = in.readByte();
 		}
 		in.close();

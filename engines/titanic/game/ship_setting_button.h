@@ -33,10 +33,12 @@ class CShipSettingButton : public CGameObject {
 	bool TurnOff(CTurnOff *msg);
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
+
 private:
 	CString _target;
 	bool _pressed;
 	bool _enabled;
+
 public:
 	CLASSDEF;
 	CShipSettingButton();

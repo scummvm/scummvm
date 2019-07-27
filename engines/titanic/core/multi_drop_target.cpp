@@ -21,13 +21,13 @@
  */
 
 #include "titanic/core/multi_drop_target.h"
-#include "titanic/support/string_parser.h"
 #include "titanic/carry/carry.h"
+#include "titanic/support/string_parser.h"
 
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMultiDropTarget, CDropTarget)
-	ON_MESSAGE(DropObjectMsg)
+ON_MESSAGE(DropObjectMsg)
 END_MESSAGE_MAP()
 
 void CMultiDropTarget::save(SimpleFile *file, int indent) {

@@ -40,11 +40,11 @@
 #include "hopkins/sound.h"
 #include "hopkins/talk.h"
 
+#include "common/error.h"
+#include "common/hash-str.h"
+#include "common/random.h"
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "common/error.h"
-#include "common/random.h"
-#include "common/hash-str.h"
 #include "common/util.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
@@ -63,7 +63,7 @@ namespace Hopkins {
 #define SCREEN_HEIGHT 480
 
 enum HopkinsDebugChannels {
-	kDebugPath     = 1 << 0,
+	kDebugPath = 1 << 0,
 	kDebugGraphics = 1 << 1
 };
 
@@ -71,7 +71,7 @@ enum HopkinsDebugChannels {
  * A wrapper macro used around three character constants, like 'END', to
  * ensure portability. Typical usage: MKTAG24('E','N','D').
  */
-#define MKTAG24(a0,a1,a2) ((uint32)((a2) | (a1) << 8 | ((a0) << 16)))
+#define MKTAG24(a0, a1, a2) ((uint32)((a2) | (a1) << 8 | ((a0) << 16)))
 
 struct HopkinsGameDescription;
 
@@ -97,7 +97,7 @@ private:
 	/**
 	 * Displays the map screen in the underground base.
 	 */
-	int  handleBaseMap();
+	int handleBaseMap();
 
 	/**
 	 * Loads the base map from the PBASE file
@@ -126,6 +126,7 @@ private:
 	 * Show warning screen about the game being adults only.
 	 */
 	bool displayAdultDisclaimer();
+
 protected:
 	// Engine APIs
 	virtual Common::Error run();

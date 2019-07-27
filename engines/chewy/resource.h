@@ -23,55 +23,54 @@
 #ifndef CHEWY_RESOURCE_H
 #define CHEWY_RESOURCE_H
 
-
-#include "common/scummsys.h"
 #include "common/file.h"
-#include "common/util.h"
-#include "common/str.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/random.h"
+#include "common/scummsys.h"
+#include "common/str.h"
 #include "common/stream.h"
+#include "common/util.h"
 #include "graphics/surface.h"
 
 namespace Chewy {
 
 enum ResourceType {
-	kResourcePCX = 0,		// unused
-	kResourceTBF = 1,		// background art, contained in TGPs
+	kResourcePCX = 0, // unused
+	kResourceTBF = 1, // background art, contained in TGPs
 	kResourceTAF = 2,
 	kResourceTFF = 3,
-	kResourceVOC = 4,		// speech and SFX, contained in TVPs
-	kResourceTPF = 5,		// unused
-	kResourceTMF = 6,		// music, similar to a MOD file, contained in details.tap
-	kResourceMOD = 7,		// unused
-	kResourceRAW = 8,		// unused
-	kResourceLBM = 9,		// unused
+	kResourceVOC = 4, // speech and SFX, contained in TVPs
+	kResourceTPF = 5, // unused
+	kResourceTMF = 6, // music, similar to a MOD file, contained in details.tap
+	kResourceMOD = 7, // unused
+	kResourceRAW = 8, // unused
+	kResourceLBM = 9, // unused
 	kResourceRDI = 10,
 	kResourceTXT = 11,
 	kResourceIIB = 12,
 	kResourceSIB = 13,
 	kResourceEIB = 14,
-	kResourceATS = 15,		// unused
-	kResourceSAA = 16,		// unused
-	kResourceFLC = 17,		// unused
-	kResourceAAD = 18,		// unused
-	kResourceADS = 19,		// unused
-	kResourceADH = 20,		// used in txt/diah.adh
-	kResourceTGP = 21,		// container for background art, used in back/comic.tgp, back/episode1.tgp and back/gbook.tgp
-	kResourceTVP = 22,		// container for speech, used in sound/speech.tvp
-	kResourceTTP = 23,		// unused
-	kResourceTAP = 24,		// container for sound effects, music and cutscenes, used in sound/details.tap and cut/cut.tap
-	kResourceCFO = 25,		// unused
-	kResourceTCF = 26		// error messages, used in err/err_e.tcf (English) and err/err_d.tcf (German)
+	kResourceATS = 15, // unused
+	kResourceSAA = 16, // unused
+	kResourceFLC = 17, // unused
+	kResourceAAD = 18, // unused
+	kResourceADS = 19, // unused
+	kResourceADH = 20, // used in txt/diah.adh
+	kResourceTGP = 21, // container for background art, used in back/comic.tgp, back/episode1.tgp and back/gbook.tgp
+	kResourceTVP = 22, // container for speech, used in sound/speech.tvp
+	kResourceTTP = 23, // unused
+	kResourceTAP = 24, // container for sound effects, music and cutscenes, used in sound/details.tap and cut/cut.tap
+	kResourceCFO = 25, // unused
+	kResourceTCF = 26 // error messages, used in err/err_e.tcf (English) and err/err_d.tcf (German)
 };
 
 // Generic chunk header
 struct Chunk {
 	uint32 size;
-	uint16 num;	// same as the type below, used in chunks where the type is substituted with count
+	uint16 num; // same as the type below, used in chunks where the type is substituted with count
 	ResourceType type;
-	uint32 pos;	// position of the actual data
+	uint32 pos; // position of the actual data
 };
 
 // TBF (background) chunk header
@@ -111,7 +110,7 @@ struct VideoChunk {
 	uint16 frameCount;
 	uint16 width;
 	uint16 height;
-	uint32 frameDelay;	// in ms
+	uint32 frameDelay; // in ms
 	uint32 firstFrameOffset;
 };
 
@@ -148,7 +147,8 @@ protected:
 
 class SpriteResource : public Resource {
 public:
-	SpriteResource(Common::String filename) : Resource(filename) {}
+	SpriteResource(Common::String filename)
+	  : Resource(filename) {}
 	virtual ~SpriteResource() {}
 
 	TAFChunk *getSprite(uint num);
@@ -156,7 +156,8 @@ public:
 
 class BackgroundResource : public Resource {
 public:
-	BackgroundResource(Common::String filename) : Resource(filename) {}
+	BackgroundResource(Common::String filename)
+	  : Resource(filename) {}
 	virtual ~BackgroundResource() {}
 
 	TBFChunk *getImage(uint num);
@@ -164,7 +165,8 @@ public:
 
 class SoundResource : public Resource {
 public:
-	SoundResource(Common::String filename) : Resource(filename) {}
+	SoundResource(Common::String filename)
+	  : Resource(filename) {}
 	virtual ~SoundResource() {}
 
 	SoundChunk *getSound(uint num);
@@ -172,7 +174,8 @@ public:
 
 class VideoResource : public Resource {
 public:
-	VideoResource(Common::String filename) : Resource(filename) {}
+	VideoResource(Common::String filename)
+	  : Resource(filename) {}
 	virtual ~VideoResource() {}
 
 	VideoChunk *getVideoHeader(uint num);

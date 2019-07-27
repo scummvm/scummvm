@@ -23,14 +23,15 @@
 #ifndef MADS_INVENTORY_H
 #define MADS_INVENTORY_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
 
 namespace MADS {
 
 enum {
-	PLAYER_INVENTORY = 2, NOWHERE = 1
+	PLAYER_INVENTORY = 2,
+	NOWHERE = 1
 };
 
 class MADSEngine;
@@ -87,7 +88,8 @@ public:
 	/**
 	 * Constructor
 	 */
-	InventoryObjects(MADSEngine *vm) : _vm(vm) {}
+	InventoryObjects(MADSEngine *vm)
+	  : _vm(vm) {}
 
 	/**
 	 * Loads the game's object list

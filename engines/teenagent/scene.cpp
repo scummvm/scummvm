@@ -20,29 +20,43 @@
  *
  */
 
+#include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/events.h"
-#include "common/algorithm.h"
 #include "common/ptr.h"
 #include "common/textconsole.h"
 
 #include "graphics/palette.h"
 
-#include "teenagent/scene.h"
 #include "teenagent/inventory.h"
-#include "teenagent/resources.h"
-#include "teenagent/surface.h"
-#include "teenagent/objects.h"
-#include "teenagent/teenagent.h"
 #include "teenagent/music.h"
+#include "teenagent/objects.h"
+#include "teenagent/resources.h"
+#include "teenagent/scene.h"
+#include "teenagent/surface.h"
+#include "teenagent/teenagent.h"
 
 namespace TeenAgent {
 
-Scene::Scene(TeenAgentEngine *vm) : _vm(vm), intro(false), _id(0), ons(0),
-	orientation(kActorRight), actorTalking(false), teenagent(vm), teenagentIdle(vm),
-	messageTimer(0), messageFirstFrame(0), messageLastFrame(0), messageAnimation(NULL),
-	currentEvent(SceneEvent::kNone), hideActor(false), callback(0), callbackTimer(0), _idleTimer(0) {
+Scene::Scene(TeenAgentEngine *vm)
+  : _vm(vm)
+  , intro(false)
+  , _id(0)
+  , ons(0)
+  , orientation(kActorRight)
+  , actorTalking(false)
+  , teenagent(vm)
+  , teenagentIdle(vm)
+  , messageTimer(0)
+  , messageFirstFrame(0)
+  , messageLastFrame(0)
+  , messageAnimation(NULL)
+  , currentEvent(SceneEvent::kNone)
+  , hideActor(false)
+  , callback(0)
+  , callbackTimer(0)
+  , _idleTimer(0) {
 
 	_fadeTimer = 0;
 	_fadeOld = 0;
@@ -556,8 +570,8 @@ struct ZOrderCmp {
 int Scene::lookupZoom(uint y) const {
 	debugC(2, kDebugScene, "lookupZoom(%d)", y);
 	for (byte *zoomTable = _vm->res->dseg.ptr(_vm->res->dseg.get_word(dsAddr_sceneZoomTablePtr + (_id - 1) * 2));
-	        zoomTable[0] != 0xff && zoomTable[1] != 0xff;
-	        zoomTable += 2) {
+	     zoomTable[0] != 0xff && zoomTable[1] != 0xff;
+	     zoomTable += 2) {
 		debugC(2, kDebugScene, "\t%d %d->%d", y, zoomTable[0], zoomTable[1]);
 		if (y <= zoomTable[0]) {
 			return 256u * (100 - zoomTable[1]) / 100;
@@ -619,10 +633,9 @@ bool Scene::render(bool tickGame, bool tickMark, uint32 messageDelta) {
 
 			if (currentEvent.dst.y < -(int)currentEvent.timer)
 				currentEvent.clear();
-			}
+		}
 			return true;
-		default:
-			;
+		default:;
 		}
 
 		if (!message.empty() && messageTimer != 0) {
@@ -768,9 +781,7 @@ bool Scene::render(bool tickGame, bool tickMark, uint32 messageDelta) {
 						speedY = 1;
 
 					position.y += (ABS(dp.y) < speedY ? dp.y : SIGN(dp.y) * speedY);
-					position.x += (o == kActorDown || o == kActorUp) ?
-					              (ABS(dp.x) < speedY ? dp.x : SIGN(dp.x) * speedY) :
-					              (ABS(dp.x) < speedX ? dp.x : SIGN(dp.x) * speedX);
+					position.x += (o == kActorDown || o == kActorUp) ? (ABS(dp.x) < speedY ? dp.x : SIGN(dp.x) * speedY) : (ABS(dp.x) < speedX ? dp.x : SIGN(dp.x) * speedX);
 				}
 
 				_idleTimer = 0;
@@ -845,7 +856,7 @@ bool Scene::render(bool tickGame, bool tickMark, uint32 messageDelta) {
 		//	current_event.dump();
 
 		if (!debugFeatures.feature[DebugFeatures::kHidePath]) {
-			const Common::Array<Walkbox> & sceneWalkboxes = walkboxes[_id - 1];
+			const Common::Array<Walkbox> &sceneWalkboxes = walkboxes[_id - 1];
 			for (uint i = 0; i < sceneWalkboxes.size(); ++i) {
 				sceneWalkboxes[i].rect.render(surface, 0xd0 + i);
 			}
@@ -872,7 +883,6 @@ bool Scene::render(bool tickGame, bool tickMark, uint32 messageDelta) {
 
 			if (currentEvent.timer <= messageDelta)
 				restart |= nextEvent();
-
 		}
 
 		if (!restart && currentEvent.type == SceneEvent::kWaitForAnimation && !gotAnyAnimation) {
@@ -922,8 +932,7 @@ bool Scene::processEventQueue() {
 			}
 			loadOns();
 			currentEvent.clear();
-		}
-		break;
+		} break;
 
 		case SceneEvent::kSetLan: {
 			if (currentEvent.lan != 0) {
@@ -933,8 +942,7 @@ bool Scene::processEventQueue() {
 			}
 			loadLans();
 			currentEvent.clear();
-		}
-		break;
+		} break;
 
 		case SceneEvent::kLoadScene: {
 			if (currentEvent.scene != 0) {
@@ -953,8 +961,7 @@ bool Scene::processEventQueue() {
 				}
 			}
 			currentEvent.clear();
-		}
-		break;
+		} break;
 
 		case SceneEvent::kWalk: {
 			Common::Point dst = currentEvent.dst;
@@ -967,8 +974,7 @@ bool Scene::processEventQueue() {
 				currentEvent.clear();
 			} else
 				moveTo(dst, currentEvent.orientation);
-		}
-		break;
+		} break;
 
 		case SceneEvent::kCreditsMessage:
 		case SceneEvent::kMessage: {
@@ -1015,8 +1021,7 @@ bool Scene::processEventQueue() {
 
 			if (messageFirstFrame)
 				currentEvent.clear(); // async message, clearing event
-			}
-			break;
+		} break;
 
 		case SceneEvent::kPlayAnimation: {
 			byte slot = currentEvent.slot & 7; // 0 - mark's
@@ -1038,8 +1043,7 @@ bool Scene::processEventQueue() {
 					actorTalking = true;
 			}
 			currentEvent.clear();
-			}
-			break;
+		} break;
 
 		case SceneEvent::kPauseAnimation: {
 			byte slot = currentEvent.slot & 7; // 0 - mark's
@@ -1051,8 +1055,7 @@ bool Scene::processEventQueue() {
 				actorTalking = false;
 			}
 			currentEvent.clear();
-			}
-			break;
+		} break;
 
 		case SceneEvent::kClearAnimations:
 			for (byte i = 0; i < 4; ++i)
@@ -1086,8 +1089,7 @@ bool Scene::processEventQueue() {
 			obj->enabled = currentEvent.color;
 			obj->save();
 			currentEvent.clear();
-			}
-			break;
+		} break;
 
 		case SceneEvent::kHideActor:
 			hideActor = currentEvent.color != 0;

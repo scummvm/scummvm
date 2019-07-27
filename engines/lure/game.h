@@ -23,23 +23,28 @@
 #ifndef LURE_GAME_H
 #define LURE_GAME_H
 
-
 #include "common/config-manager.h"
 #include "engines/engine.h"
+#include "lure/debugger.h"
+#include "lure/disk.h"
+#include "lure/events.h"
 #include "lure/luredefs.h"
+#include "lure/memory.h"
 #include "lure/menu.h"
 #include "lure/palette.h"
-#include "lure/disk.h"
-#include "lure/memory.h"
 #include "lure/screen.h"
-#include "lure/events.h"
-#include "lure/debugger.h"
 
 namespace Lure {
 
-enum GameState {GS_ERROR = 1, GS_TICK = 2, GS_TOCK = 4, GS_PROT = 8, GS_RESTART = 0x10,
-	GS_CAUGHT = 0x20, GS_RESTORE = 0x40, GS_FLOPPY = 0x80,
-	GS_RESTORE_RESTART = 0x50};
+enum GameState { GS_ERROR = 1,
+	               GS_TICK = 2,
+	               GS_TOCK = 4,
+	               GS_PROT = 8,
+	               GS_RESTART = 0x10,
+	               GS_CAUGHT = 0x20,
+	               GS_RESTORE = 0x40,
+	               GS_FLOPPY = 0x80,
+	               GS_RESTORE_RESTART = 0x50 };
 
 class Game {
 private:
@@ -64,6 +69,7 @@ private:
 	void handleBootParam(int value);
 	bool getYN();
 	bool isMenuAvailable();
+
 public:
 	Game();
 	virtual ~Game();

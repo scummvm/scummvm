@@ -25,7 +25,7 @@
 
 #include "backends/graphics/graphics.h"
 
-static const OSystem::GraphicsMode s_noGraphicsModes[] = { {0, 0, 0} };
+static const OSystem::GraphicsMode s_noGraphicsModes[] = { { 0, 0, 0 } };
 
 class NullGraphicsManager : public GraphicsManager {
 public:
@@ -64,7 +64,7 @@ public:
 	void fillScreen(uint32 col) override {}
 	void updateScreen() override {}
 	void setShakePos(int shakeOffset) override {}
-	void setFocusRectangle(const Common::Rect& rect) override {}
+	void setFocusRectangle(const Common::Rect &rect) override {}
 	void clearFocusRectangle() override {}
 
 	void showOverlay() override {}

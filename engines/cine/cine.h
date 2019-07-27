@@ -23,30 +23,29 @@
 #ifndef CINE_CINE_H
 #define CINE_CINE_H
 
-
-#include "common/scummsys.h"
 #include "common/file.h"
-#include "common/util.h"
-#include "common/str.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/random.h"
+#include "common/scummsys.h"
+#include "common/str.h"
+#include "common/util.h"
 
 #include "engines/engine.h"
 
-#include "cine/texte.h"
-#include "cine/rel.h"
-#include "cine/script.h"
+#include "cine/anim.h"
+#include "cine/bg.h"
+#include "cine/bg_list.h"
+#include "cine/console.h"
+#include "cine/gfx.h"
+#include "cine/msg.h"
+#include "cine/pal.h"
 #include "cine/part.h"
 #include "cine/prc.h"
-#include "cine/msg.h"
-#include "cine/bg.h"
-#include "cine/pal.h"
-#include "cine/gfx.h"
-#include "cine/anim.h"
-#include "cine/bg_list.h"
+#include "cine/rel.h"
+#include "cine/script.h"
+#include "cine/texte.h"
 #include "cine/various.h"
-#include "cine/console.h"
 
 //#define DUMP_SCRIPTS
 
@@ -86,7 +85,7 @@ enum CineGameType {
 };
 
 enum CineGameFeatures {
-	GF_CD =   1 << 0,
+	GF_CD = 1 << 0,
 	GF_DEMO = 1 << 1,
 	GF_ALT_FONT = 1 << 2,
 	GF_CRYPTED_BOOT_PRC = 1 << 3
@@ -218,9 +217,9 @@ enum {
 };
 
 enum {
-	kCineDebugScript    = 1 << 0,
-	kCineDebugPart      = 1 << 1,
-	kCineDebugSound     = 1 << 2,
+	kCineDebugScript = 1 << 0,
+	kCineDebugPart = 1 << 1,
+	kCineDebugSound = 1 << 2,
 	kCineDebugCollision = 1 << 3
 };
 
@@ -229,7 +228,6 @@ enum {
 	kCmpGT = (1 << 1),
 	kCmpLT = (1 << 2)
 };
-
 
 } // End of namespace Cine
 

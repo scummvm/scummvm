@@ -37,15 +37,18 @@ class StorageInfo {
 	uint64 _usedBytes, _allocatedBytes;
 
 public:
-	StorageInfo(Common::String uid_, Common::String name_, Common::String email_, uint64 used_, uint64 allocated):
-		_uid(uid_), _name(name_), _email(email_), _usedBytes(used_), _allocatedBytes(allocated) {}
+	StorageInfo(Common::String uid_, Common::String name_, Common::String email_, uint64 used_, uint64 allocated)
+	  : _uid(uid_)
+	  , _name(name_)
+	  , _email(email_)
+	  , _usedBytes(used_)
+	  , _allocatedBytes(allocated) {}
 
 	Common::String uid() const { return _uid; }
 	Common::String name() const { return _name; }
 	Common::String email() const { return _email; }
 	uint64 used() const { return _usedBytes; }
 	uint64 available() const { return _allocatedBytes; }
-
 };
 
 } // End of namespace Cloud

@@ -29,17 +29,19 @@
 
 #include "graphics/macgui/macwindowmanager.h"
 
-#include "director/director.h"
 #include "director/archive.h"
-#include "director/sound.h"
+#include "director/director.h"
 #include "director/lingo/lingo.h"
+#include "director/sound.h"
 
 namespace Director {
 
 DirectorEngine *g_director;
 
-DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc),
-		_rnd("director") {
+DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc)
+  : Engine(syst)
+  , _gameDescription(gameDesc)
+  , _rnd("director") {
 	DebugMan.addDebugChannel(kDebugLingoExec, "lingoexec", "Lingo Execution");
 	DebugMan.addDebugChannel(kDebugLingoCompile, "lingocompile", "Lingo Compilation");
 	DebugMan.addDebugChannel(kDebugLingoParse, "lingoparse", "Lingo code parsing");
@@ -82,9 +84,9 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "main");		// Meet Mediaband
+	SearchMan.addSubDirectoryMatching(gameDataDir, "main"); // Meet Mediaband
 
-	_colorDepth = 8;	// 256-color
+	_colorDepth = 8; // 256-color
 	_key = 0;
 	_keyCode = 0;
 	_machineType = 9; // Macintosh IIci
@@ -227,7 +229,6 @@ Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Commo
 		sharedMMMname = "SHARDCST.MMM";
 	else
 		sharedMMMname = "Shared Cast";
-
 
 	Common::HashMap<Common::String, Score *> *nameMap = new Common::HashMap<Common::String, Score *>();
 	if (!directory.getChildren(movies, Common::FSNode::kListFilesOnly))

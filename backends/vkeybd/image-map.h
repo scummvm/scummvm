@@ -27,8 +27,8 @@
 
 #ifdef ENABLE_VKEYBD
 
-#include "common/hashmap.h"
-#include "common/hash-str.h"
+#	include "common/hash-str.h"
+#	include "common/hashmap.h"
 
 namespace Common {
 
@@ -47,7 +47,6 @@ protected:
 	typedef HashMap<String, Polygon *> AreaMap;
 	AreaMap _areas;
 };
-
 
 } // End of namespace Common
 

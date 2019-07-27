@@ -27,19 +27,24 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CGondolierMixer, CGondolierBase)
-	ON_MESSAGE(EnterRoomMsg)
-	ON_MESSAGE(LeaveRoomMsg)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(TurnOff)
-	ON_MESSAGE(SetVolumeMsg)
-	ON_MESSAGE(SignalObject)
-	ON_MESSAGE(LoadSuccessMsg)
+ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(LeaveRoomMsg)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(TurnOff)
+ON_MESSAGE(SetVolumeMsg)
+ON_MESSAGE(SignalObject)
+ON_MESSAGE(LoadSuccessMsg)
 END_MESSAGE_MAP()
 
-CGondolierMixer::CGondolierMixer() : CGondolierBase(),
-	_soundName1("c#0.wav"), _soundName2("c#1.wav"),
-	_soundHandle1(-1), _soundHandle2(-1), _fieldC4(0), _fieldC8(0),
-	_soundActive(false) {
+CGondolierMixer::CGondolierMixer()
+  : CGondolierBase()
+  , _soundName1("c#0.wav")
+  , _soundName2("c#1.wav")
+  , _soundHandle1(-1)
+  , _soundHandle2(-1)
+  , _fieldC4(0)
+  , _fieldC8(0)
+  , _soundActive(false) {
 }
 
 void CGondolierMixer::save(SimpleFile *file, int indent) {

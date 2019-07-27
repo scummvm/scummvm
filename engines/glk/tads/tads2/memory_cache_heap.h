@@ -31,29 +31,29 @@
 #ifndef GLK_TADS_TADS2_MEMORY_CACHE_HEAP
 #define GLK_TADS_TADS2_MEMORY_CACHE_HEAP
 
-#include "glk/tads/tads2/lib.h"
 #include "glk/tads/tads2/error_handling.h"
+#include "glk/tads/tads2/lib.h"
 
 namespace Glk {
 namespace TADS {
-namespace TADS2 {
+	namespace TADS2 {
 
-/**
+		/**
  *   Allocate a block of memory; returns pointer to the block.
  *   An out-of-memory error is signalled if insufficient memory
  *   is available.  The comment is for debugging purposes only.
  */
-uchar *mchalo(errcxdef *ctx, size_t siz, const char *comment);
+		uchar *mchalo(errcxdef *ctx, size_t siz, const char *comment);
 
 /* allocate a structure */
 #define MCHNEW(errctx, typ, comment) \
- ((typ *)mchalo(errctx, sizeof(typ), comment))
+	((typ *)mchalo(errctx, sizeof(typ), comment))
 
 /* free a block of memory */
 /* void mchfre(uchar *ptr); */
 #define mchfre(ptr) (osfree(ptr))
 
-} // End of namespace TADS2
+	} // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk
 

@@ -34,21 +34,21 @@
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/scumm.h"
 #include "scumm/scumm_v7.h"
-#include "scumm/sound.h"
 #include "scumm/smush/channel.h"
 #include "scumm/smush/codec37.h"
 #include "scumm/smush/codec47.h"
 #include "scumm/smush/smush_font.h"
 #include "scumm/smush/smush_mixer.h"
 #include "scumm/smush/smush_player.h"
+#include "scumm/sound.h"
 
 #include "scumm/insane/insane.h"
 
 #include "audio/audiostream.h"
-#include "audio/mixer.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/vorbis.h"
+#include "audio/mixer.h"
 
 #include "common/zlib.h"
 
@@ -59,7 +59,6 @@ static const int ETRS_HEADER_LENGTH = 16;
 
 class StringResource {
 private:
-
 	struct {
 		int id;
 		char *string;
@@ -70,11 +69,10 @@ private:
 	const char *_lastString;
 
 public:
-
-	StringResource() :
-		_nbStrings(0),
-		_lastId(-1),
-		_lastString(NULL) {
+	StringResource()
+	  : _nbStrings(0)
+	  , _lastId(-1)
+	  , _lastString(NULL) {
 		for (int i = 0; i < MAX_STRINGS; i++) {
 			_strings[i].id = 0;
 			_strings[i].string = NULL;
@@ -93,7 +91,7 @@ public:
 			assert(def_end != NULL);
 
 			char *id_end = def_end;
-			while (id_end >= def_start && !Common::isDigit(*(id_end-1))) {
+			while (id_end >= def_start && !Common::isDigit(*(id_end - 1))) {
 				id_end--;
 			}
 
@@ -145,19 +143,19 @@ public:
 			char *line_end;
 
 			while ((line_end = strchr(line_start, '\n'))) {
-				line_start = line_end+1;
+				line_start = line_end + 1;
 				if (line_start[0] == '/' && line_start[1] == '/') {
 					line_start += 2;
-					if	(line_end[-1] == '\r')
+					if (line_end[-1] == '\r')
 						line_end[-1] = ' ';
 					else
 						*line_end++ = ' ';
-					memmove(line_end, line_start, strlen(line_start)+1);
+					memmove(line_end, line_start, strlen(line_start) + 1);
 				}
 			}
 			_strings[_nbStrings].id = id;
 			_strings[_nbStrings].string = value;
-			_nbStrings ++;
+			_nbStrings++;
 			def_start = strchr(data_end + 2, '#');
 		}
 		return true;
@@ -191,12 +189,12 @@ static StringResource *getStrings(ScummEngine *vm, const char *file, bool is_enc
 		return 0;
 	}
 	int32 length = theFile.size();
-	char *filebuffer = new char [length + 1];
+	char *filebuffer = new char[length + 1];
 	assert(filebuffer);
 	theFile.read(filebuffer, length);
 	filebuffer[length] = 0;
 
-	if (is_encoded && READ_BE_UINT32(filebuffer) == MKTAG('E','T','R','S')) {
+	if (is_encoded && READ_BE_UINT32(filebuffer) == MKTAG('E', 'T', 'R', 'S')) {
 		assert(length > ETRS_HEADER_LENGTH);
 		length -= ETRS_HEADER_LENGTH;
 		for (int i = 0; i < length; ++i) {
@@ -249,7 +247,6 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm) {
 	_paused = false;
 	_pauseStartTime = 0;
 	_pauseTime = 0;
-
 
 	_IACTchannel = new Audio::SoundHandle();
 	_compressedFileSoundHandle = new Audio::SoundHandle();
@@ -328,12 +325,12 @@ void SmushPlayer::release() {
 
 void SmushPlayer::handleSoundBuffer(int32 track_id, int32 index, int32 max_frames, int32 flags, int32 vol, int32 pan, Common::SeekableReadStream &b, int32 size) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleSoundBuffer(%d, %d)", track_id, index);
-//	if ((flags & 128) == 128) {
-//		return;
-//	}
-//	if ((flags & 64) == 64) {
-//		return;
-//	}
+	//	if ((flags & 128) == 128) {
+	//		return;
+	//	}
+	//	if ((flags & 64) == 64) {
+	//		return;
+	//	}
 	SmushChannel *c = _smixer->findChannel(track_id);
 	if (c == NULL) {
 		c = new SaudChannel(track_id);
@@ -514,12 +511,12 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 	int left = b.readSint16LE();
 	int top = b.readSint16LE();
 	int right = b.readSint16LE();
-	/*int32 height =*/ b.readSint16LE();
-	/*int32 unk2 =*/ b.readUint16LE();
+	/*int32 height =*/b.readSint16LE();
+	/*int32 unk2 =*/b.readUint16LE();
 
 	const char *str;
 	char *string = NULL, *string2 = NULL;
-	if (subType == MKTAG('T','E','X','T')) {
+	if (subType == MKTAG('T', 'E', 'X', 'T')) {
 		string = (char *)malloc(subSize - 16);
 		str = string;
 		b.read(string, subSize - 16);
@@ -560,19 +557,15 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 
 	while (str[0] == '^') {
 		switch (str[1]) {
-		case 'f':
-			{
-				int id = str[3] - '0';
-				str += 4;
-				sf = getFont(id);
-			}
-			break;
-		case 'c':
-			{
-				color = str[4] - '0' + 10 *(str[3] - '0');
-				str += 5;
-			}
-			break;
+		case 'f': {
+			int id = str[3] - '0';
+			str += 4;
+			sf = getFont(id);
+		} break;
+		case 'c': {
+			color = str[4] - '0' + 10 * (str[3] - '0');
+			str += 5;
+		} break;
 		default:
 			error("invalid escape code in text string");
 		}
@@ -806,11 +799,16 @@ void SmushPlayer::handleZlibFrameObject(int32 subSize, Common::SeekableReadStrea
 	free(chunkBuffer);
 
 	byte *ptr = fobjBuffer;
-	int codec = READ_LE_UINT16(ptr); ptr += 2;
-	int left = READ_LE_UINT16(ptr); ptr += 2;
-	int top = READ_LE_UINT16(ptr); ptr += 2;
-	int width = READ_LE_UINT16(ptr); ptr += 2;
-	int height = READ_LE_UINT16(ptr); ptr += 2;
+	int codec = READ_LE_UINT16(ptr);
+	ptr += 2;
+	int left = READ_LE_UINT16(ptr);
+	ptr += 2;
+	int top = READ_LE_UINT16(ptr);
+	ptr += 2;
+	int width = READ_LE_UINT16(ptr);
+	ptr += 2;
+	int height = READ_LE_UINT16(ptr);
+	ptr += 2;
 
 	decodeFrameObject(codec, fobjBuffer + 14, left, top, width, height);
 
@@ -857,40 +855,40 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 		const int32 subSize = b.readUint32BE();
 		const int32 subOffset = b.pos();
 		switch (subType) {
-		case MKTAG('N','P','A','L'):
+		case MKTAG('N', 'P', 'A', 'L'):
 			handleNewPalette(subSize, b);
 			break;
-		case MKTAG('F','O','B','J'):
+		case MKTAG('F', 'O', 'B', 'J'):
 			handleFrameObject(subSize, b);
 			break;
 #ifdef USE_ZLIB
-		case MKTAG('Z','F','O','B'):
+		case MKTAG('Z', 'F', 'O', 'B'):
 			handleZlibFrameObject(subSize, b);
 			break;
 #endif
-		case MKTAG('P','S','A','D'):
+		case MKTAG('P', 'S', 'A', 'D'):
 			if (!_compressedFileMode)
 				handleSoundFrame(subSize, b);
 			break;
-		case MKTAG('T','R','E','S'):
+		case MKTAG('T', 'R', 'E', 'S'):
 			handleTextResource(subType, subSize, b);
 			break;
-		case MKTAG('X','P','A','L'):
+		case MKTAG('X', 'P', 'A', 'L'):
 			handleDeltaPalette(subSize, b);
 			break;
-		case MKTAG('I','A','C','T'):
+		case MKTAG('I', 'A', 'C', 'T'):
 			handleIACT(subSize, b);
 			break;
-		case MKTAG('S','T','O','R'):
+		case MKTAG('S', 'T', 'O', 'R'):
 			handleStore(subSize, b);
 			break;
-		case MKTAG('F','T','C','H'):
+		case MKTAG('F', 'T', 'C', 'H'):
 			handleFetch(subSize, b);
 			break;
-		case MKTAG('S','K','I','P'):
+		case MKTAG('S', 'K', 'I', 'P'):
 			_vm->_insane->procSKIP(subSize, b);
 			break;
-		case MKTAG('T','E','X','T'):
+		case MKTAG('T', 'E', 'X', 'T'):
 			handleTextResource(subType, subSize, b);
 			break;
 		default:
@@ -906,7 +904,7 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 	}
 
 	if (_insanity) {
-		_vm->_insane->procPostRendering(_dst, 0, 0, 0, _frame, _nbframes-1);
+		_vm->_insane->procPostRendering(_dst, 0, 0, 0, _frame, _nbframes - 1);
 	}
 
 	if (_width != 0 && _height != 0) {
@@ -1002,7 +1000,7 @@ void SmushPlayer::parseNextFrame() {
 				const uint32 subType = _base->readUint32BE();
 				const int32 subSize = _base->readUint32BE();
 				const int32 subOffset = _base->pos();
-				assert(subType == MKTAG('A','H','D','R'));
+				assert(subType == MKTAG('A', 'H', 'D', 'R'));
 				handleAnimHeader(subSize, *_base);
 				_base->seek(subOffset + subSize, SEEK_SET);
 
@@ -1041,10 +1039,10 @@ void SmushPlayer::parseNextFrame() {
 	debug(3, "Chunk: %s at %x", tag2str(subType), subOffset);
 
 	switch (subType) {
-	case MKTAG('A','H','D','R'): // FT INSANE may seek file to the beginning
+	case MKTAG('A', 'H', 'D', 'R'): // FT INSANE may seek file to the beginning
 		handleAnimHeader(subSize, *_base);
 		break;
-	case MKTAG('F','R','M','E'):
+	case MKTAG('F', 'R', 'M', 'E'):
 		handleFrame(subSize, *_base);
 		break;
 	default:

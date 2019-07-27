@@ -23,10 +23,10 @@
 #ifndef MADS_MADS_H
 #define MADS_MADS_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
 #include "common/error.h"
 #include "common/random.h"
+#include "common/scummsys.h"
+#include "common/system.h"
 #include "common/util.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
@@ -36,9 +36,9 @@
 #include "mads/events.h"
 #include "mads/font.h"
 #include "mads/game.h"
-#include "mads/screen.h"
 #include "mads/msurface.h"
 #include "mads/resources.h"
+#include "mads/screen.h"
 #include "mads/sound.h"
 
 /**
@@ -56,9 +56,9 @@ namespace MADS {
 #define DEBUG_DETAILED 3
 
 enum MADSDebugChannels {
-	kDebugPath      = 1 << 0,
-	kDebugScripts	= 1 << 1,
-	kDebugGraphics	= 1 << 2
+	kDebugPath = 1 << 0,
+	kDebugScripts = 1 << 1,
+	kDebugGraphics = 1 << 2
 };
 
 enum {
@@ -75,7 +75,6 @@ enum ScreenFade {
 
 struct MADSGameDescription;
 
-
 class MADSEngine : public Engine {
 private:
 	const MADSGameDescription *_gameDescription;
@@ -87,17 +86,19 @@ private:
 	void initialize();
 
 	void loadOptions();
+
 protected:
 	// Engine APIs
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
+
 public:
 	Debugger *_debugger;
 	Dialogs *_dialogs;
 	EventsManager *_events;
 	Font *_font;
 	Game *_game;
-	GameConversations * _gameConv;
+	GameConversations *_gameConv;
 	Palette *_palette;
 	Resources *_resources;
 	Screen *_screen;
@@ -111,6 +112,7 @@ public:
 	bool _soundFlag;
 	bool _dithering;
 	bool _disableFastwalk;
+
 public:
 	MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc);
 	virtual ~MADSEngine();

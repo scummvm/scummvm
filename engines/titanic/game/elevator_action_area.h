@@ -30,11 +30,15 @@ namespace Titanic {
 class CElevatorActionArea : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+
 public:
 	int _value;
+
 public:
 	CLASSDEF;
-	CElevatorActionArea() : CGameObject(), _value(4) {}
+	CElevatorActionArea()
+	  : CGameObject()
+	  , _value(4) {}
 
 	/**
 	 * Save the data for the class to file

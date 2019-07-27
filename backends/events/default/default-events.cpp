@@ -24,24 +24,24 @@
 
 #if !defined(DISABLE_DEFAULT_EVENTMANAGER)
 
-#include "common/system.h"
-#include "common/config-manager.h"
-#include "common/translation.h"
-#include "backends/events/default/default-events.h"
-#include "backends/keymapper/keymapper.h"
-#include "backends/keymapper/remap-dialog.h"
-#include "backends/vkeybd/virtual-keyboard.h"
+#	include "backends/events/default/default-events.h"
+#	include "backends/keymapper/keymapper.h"
+#	include "backends/keymapper/remap-dialog.h"
+#	include "backends/vkeybd/virtual-keyboard.h"
+#	include "common/config-manager.h"
+#	include "common/system.h"
+#	include "common/translation.h"
 
-#include "engines/engine.h"
-#include "gui/message.h"
+#	include "engines/engine.h"
+#	include "gui/message.h"
 
-DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
-	_buttonState(0),
-	_modifierState(0),
-	_shouldQuit(false),
-	_shouldRTL(false),
-	_confirmExitDialogActive(false),
-	_shouldGenerateKeyRepeatEvents(true) {
+DefaultEventManager::DefaultEventManager(Common::EventSource *boss)
+  : _buttonState(0)
+  , _modifierState(0)
+  , _shouldQuit(false)
+  , _shouldRTL(false)
+  , _confirmExitDialogActive(false)
+  , _shouldGenerateKeyRepeatEvents(true) {
 
 	assert(boss);
 
@@ -53,27 +53,27 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 	// Reset key repeat
 	_keyRepeatTime = 0;
 
-#ifdef ENABLE_VKEYBD
+#	ifdef ENABLE_VKEYBD
 	_vk = nullptr;
-#endif
-#ifdef ENABLE_KEYMAPPER
+#	endif
+#	ifdef ENABLE_KEYMAPPER
 	_keymapper = new Common::Keymapper(this);
 	// EventDispatcher will automatically free the keymapper
 	_dispatcher.registerMapper(_keymapper);
 	_remap = false;
-#else
+#	else
 	_dispatcher.registerMapper(new Common::DefaultEventMapper());
-#endif
+#	endif
 }
 
 DefaultEventManager::~DefaultEventManager() {
-#ifdef ENABLE_VKEYBD
+#	ifdef ENABLE_VKEYBD
 	delete _vk;
-#endif
+#	endif
 }
 
 void DefaultEventManager::init() {
-#ifdef ENABLE_VKEYBD
+#	ifdef ENABLE_VKEYBD
 	_vk = new Common::VirtualKeyboard();
 
 	if (ConfMan.hasKey("vkeybd_pack_name")) {
@@ -81,7 +81,7 @@ void DefaultEventManager::init() {
 	} else {
 		_vk->loadKeyboardPack("vkeybd_default");
 	}
-#endif
+#	endif
 }
 
 bool DefaultEventManager::pollEvent(Common::Event &event) {
@@ -152,7 +152,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		else if (_shouldRTL)
 			event.type = Common::EVENT_RTL;
 		break;
-#ifdef ENABLE_VKEYBD
+#	ifdef ENABLE_VKEYBD
 	case Common::EVENT_VIRTUAL_KEYBOARD:
 		if (!_vk)
 			break;
@@ -168,8 +168,8 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			forwardEvent = false;
 		}
 		break;
-#endif
-#ifdef ENABLE_KEYMAPPER
+#	endif
+#	ifdef ENABLE_KEYMAPPER
 	case Common::EVENT_KEYMAPPER_REMAP:
 		if (!_remap) {
 			_remap = true;
@@ -182,7 +182,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			_remap = false;
 		}
 		break;
-#endif
+#	endif
 	case Common::EVENT_RTL:
 		if (ConfMan.getBool("confirm_exit")) {
 			if (g_engine)

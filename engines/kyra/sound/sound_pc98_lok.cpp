@@ -20,8 +20,8 @@
  *
  */
 
-#include "kyra/sound/sound_intern.h"
 #include "kyra/resource/resource.h"
+#include "kyra/sound/sound_intern.h"
 
 #include "audio/softsynth/fmtowns_pc98/towns_pc98_driver.h"
 
@@ -29,8 +29,13 @@
 
 namespace Kyra {
 
-SoundPC98_LoK::SoundPC98_LoK(KyraEngine_v1 *vm, Audio::Mixer *mixer) :
-	Sound(vm, mixer), _musicTrackData(0), _sfxTrackData(0), _lastTrack(-1), _driver(0), _currentResourceSet(0) {
+SoundPC98_LoK::SoundPC98_LoK(KyraEngine_v1 *vm, Audio::Mixer *mixer)
+  : Sound(vm, mixer)
+  , _musicTrackData(0)
+  , _sfxTrackData(0)
+  , _lastTrack(-1)
+  , _driver(0)
+  , _currentResourceSet(0) {
 	memset(&_resInfo, 0, sizeof(_resInfo));
 }
 
@@ -53,7 +58,7 @@ bool SoundPC98_LoK::init() {
 void SoundPC98_LoK::initAudioResourceInfo(int set, void *info) {
 	if (set >= kMusicIntro && set <= kMusicFinale) {
 		delete _resInfo[set];
-		_resInfo[set] = info ? new Common::String(((SoundResourceInfo_PC98*)info)->pattern) : 0;
+		_resInfo[set] = info ? new Common::String(((SoundResourceInfo_PC98 *)info)->pattern) : 0;
 	}
 }
 

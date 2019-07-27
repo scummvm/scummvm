@@ -58,9 +58,10 @@ namespace Agi {
 
 static uint32 convertSND2MIDI(byte *snddata, byte **data);
 
-MIDISound::MIDISound(uint8 *data, uint32 len, int resnum) : AgiSound() {
+MIDISound::MIDISound(uint8 *data, uint32 len, int resnum)
+  : AgiSound() {
 	_data = data; // Save the resource pointer
-	_len  = len;  // Save the resource's length
+	_len = len; // Save the resource's length
 	_type = READ_LE_UINT16(data); // Read sound resource's type
 	_isValid = (_type == AGI_SOUND_4CHN) && (_data != NULL) && (_len >= 2);
 
@@ -68,7 +69,9 @@ MIDISound::MIDISound(uint8 *data, uint32 len, int resnum) : AgiSound() {
 		warning("Error creating MIDI sound from resource %d (Type %d, length %d)", resnum, _type, len);
 }
 
-SoundGenMIDI::SoundGenMIDI(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixer), _isGM(false) {
+SoundGenMIDI::SoundGenMIDI(AgiBase *vm, Audio::Mixer *pMixer)
+  : SoundGen(vm, pMixer)
+  , _isGM(false) {
 	MidiPlayer::createDriver(MDT_MIDI | MDT_ADLIB);
 
 	int ret = _driver->open();
@@ -143,7 +146,7 @@ void SoundGenMIDI::play(int resnum) {
 /* channel / intrument setup: */
 
 /* most songs are good with this: */
-unsigned char instr[] = {0, 0, 0};
+unsigned char instr[] = { 0, 0, 0 };
 
 /* cool for sq2:
 unsigned char instr[] = {50, 51, 19};
@@ -176,26 +179,26 @@ static uint32 convertSND2MIDI(byte *snddata, byte **data) {
 	/* Header */
 	st.write("MThd", 4);
 	st.writeUint32BE(6);
-	st.writeUint16BE(1);    /* mode */
-	st.writeUint16BE(3);    /* number of tracks */
-	st.writeUint16BE(192);  /* ticks / quarter */
+	st.writeUint16BE(1); /* mode */
+	st.writeUint16BE(3); /* number of tracks */
+	st.writeUint16BE(192); /* ticks / quarter */
 
 	for (n = 0; n < 3; n++) {
 		uint16 start, end, pos;
 
 		st.write("MTrk", 4);
 		lp = st.pos();
-		st.writeUint32BE(0);        /* chunklength */
-		writeDelta(&st, 0);       /* set instrument */
+		st.writeUint32BE(0); /* chunklength */
+		writeDelta(&st, 0); /* set instrument */
 		st.writeByte(0xc0 + n);
 		st.writeByte(instr[n]);
 		start = snddata[n * 2 + 0] | (snddata[n * 2 + 1] << 8);
 		end = ((snddata[n * 2 + 2] | (snddata[n * 2 + 3] << 8))) - 5;
 
 		for (pos = start; pos < end; pos += 5) {
-			uint16 freq,  dur;
+			uint16 freq, dur;
 			dur = (snddata[pos + 0] | (snddata[pos + 1] << 8)) * SPEED_FACTOR;
-			freq = ((snddata[pos + 2] & 0x3F)  <<  4)  + (snddata[pos + 3] & 0x0F);
+			freq = ((snddata[pos + 2] & 0x3F) << 4) + (snddata[pos + 3] & 0x0F);
 			if (snddata[pos + 2] > 0) {
 				double fr;
 				int note;
@@ -203,8 +206,10 @@ static uint32 convertSND2MIDI(byte *snddata, byte **data) {
 				/* This moves the song 4 octaves down: */
 				fr = (log10(111860.0 / (double)freq) / ll) - 48;
 				note = (int)floor(fr + 0.5);
-				if (note < 0) note = 0;
-				if (note > 127) note = 127;
+				if (note < 0)
+					note = 0;
+				if (note > 127)
+					note = 127;
 				/* note on */
 				writeDelta(&st, 0);
 				st.writeByte(144 + n);

@@ -23,13 +23,13 @@
 #ifndef TITANIC_TITANIC_H
 #define TITANIC_TITANIC_H
 
+#include "common/language.h" // Language enum
 #include "common/random.h" // getRandomNumber and getRandomFloat
 #include "engines/engine.h" // class Engine
 #include "titanic/support/exe_resources.h" // class CExeResources
 #include "titanic/support/movie_manager.h" // class CMovieManager
 #include "titanic/support/string.h" // class StringArray;
 #include "titanic/support/strings.h" // class Strings;
-#include "common/language.h" // Language enum
 
 /**
  * This is the namespace of the Titanic engine.
@@ -101,6 +101,7 @@ private:
 	 * Sets up the list of room names
 	 */
 	void setRoomNames();
+
 protected:
 	const TitanicGameDescription *_gameDescription;
 
@@ -108,6 +109,7 @@ protected:
 	virtual void initializePath(const Common::FSNode &gamePath);
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
+
 public:
 	Debugger *_debugger;
 	Events *_events;
@@ -128,10 +130,10 @@ public:
 	Strings _strings;
 	CString _stateRoomExitView;
 	int _loadSaveSlot;
+
 public:
 	TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc);
 	virtual ~TitanicEngine();
-
 
 	/**
 	 * Returns true if a savegame can be loaded
@@ -181,7 +183,7 @@ public:
 	/**
 	 * Returns a uniform random floating point number in the interval [0.0, 65535.0]
 	 */
-	double getRandomFloat() { return getRandomNumber(0xfffffffe) * 0.00001525855623540901; } // fffffffe=4294967294 and 0.00001525855623540901 ~= 1/65537.0 
+	double getRandomFloat() { return getRandomNumber(0xfffffffe) * 0.00001525855623540901; } // fffffffe=4294967294 and 0.00001525855623540901 ~= 1/65537.0
 
 	/**
 	 * Support method that generates a savegame name

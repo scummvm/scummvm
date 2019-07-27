@@ -20,11 +20,11 @@
  *
  */
 
-#include "common/system.h"
 #include "common/events.h"
+#include "common/system.h"
 
-#include "director/lingo/lingo.h"
 #include "director/frame.h"
+#include "director/lingo/lingo.h"
 #include "director/sprite.h"
 
 namespace Director {
@@ -32,186 +32,186 @@ namespace Director {
 static struct BuiltinProto {
 	const char *name;
 	void (*func)(int);
-	int minArgs;	// -1 -- arglist
+	int minArgs; // -1 -- arglist
 	int maxArgs;
 	bool parens;
 } builtins[] = {
 	// Math
-	{ "abs",			Lingo::b_abs,			1, 1, true },	// D2 function
-	{ "atan",			Lingo::b_atan,			1, 1, true },	//			D4 f
-	{ "cos",			Lingo::b_cos,			1, 1, true },	//			D4 f
-	{ "exp",			Lingo::b_exp,			1, 1, true },	//			D4 f
-	{ "float",			Lingo::b_float,			1, 1, true },	//			D4 f
-	{ "integer",		Lingo::b_integer,		1, 1, true },	//		D3 f
-	{ "log",			Lingo::b_log,			1, 1, true },	//			D4 f
-	{ "pi",				Lingo::b_pi,			0, 0, true },	//			D4 f
-	{ "power",			Lingo::b_power,			2, 2, true },	//			D4 f
-	{ "random",			Lingo::b_random,		1, 1, true },	// D2 f
-	{ "sin",			Lingo::b_sin,			1, 1, true },	//			D4 f
-	{ "sqrt",			Lingo::b_sqrt,			1, 1, true },	// D2 f
-	{ "tan",			Lingo::b_tan,			1, 1, true },	//			D4 f
+	{ "abs", Lingo::b_abs, 1, 1, true }, // D2 function
+	{ "atan", Lingo::b_atan, 1, 1, true }, //			D4 f
+	{ "cos", Lingo::b_cos, 1, 1, true }, //			D4 f
+	{ "exp", Lingo::b_exp, 1, 1, true }, //			D4 f
+	{ "float", Lingo::b_float, 1, 1, true }, //			D4 f
+	{ "integer", Lingo::b_integer, 1, 1, true }, //		D3 f
+	{ "log", Lingo::b_log, 1, 1, true }, //			D4 f
+	{ "pi", Lingo::b_pi, 0, 0, true }, //			D4 f
+	{ "power", Lingo::b_power, 2, 2, true }, //			D4 f
+	{ "random", Lingo::b_random, 1, 1, true }, // D2 f
+	{ "sin", Lingo::b_sin, 1, 1, true }, //			D4 f
+	{ "sqrt", Lingo::b_sqrt, 1, 1, true }, // D2 f
+	{ "tan", Lingo::b_tan, 1, 1, true }, //			D4 f
 	// String
-	{ "chars",			Lingo::b_chars,			3, 3, true },	// D2 f
-	{ "charToNum",		Lingo::b_charToNum,		1, 1, true },	// D2 f
-	{ "delete",			Lingo::b_delete,		1, 1, true },	//		D3 c
-	{ "hilite",			Lingo::b_hilite,		1, 1, true },	//		D3 c
-	{ "length",			Lingo::b_length,		1, 1, true },	// D2 f
-	{ "numToChar",		Lingo::b_numToChar,		1, 1, true },	// D2 f
-	{ "offset",			Lingo::b_offset,		2, 3, true },	// D2 f
-	{ "string",			Lingo::b_string,		1, 1, true },	// D2 f
-	{ "value",		 	Lingo::b_value,			1, 1, true },	// D2 f
+	{ "chars", Lingo::b_chars, 3, 3, true }, // D2 f
+	{ "charToNum", Lingo::b_charToNum, 1, 1, true }, // D2 f
+	{ "delete", Lingo::b_delete, 1, 1, true }, //		D3 c
+	{ "hilite", Lingo::b_hilite, 1, 1, true }, //		D3 c
+	{ "length", Lingo::b_length, 1, 1, true }, // D2 f
+	{ "numToChar", Lingo::b_numToChar, 1, 1, true }, // D2 f
+	{ "offset", Lingo::b_offset, 2, 3, true }, // D2 f
+	{ "string", Lingo::b_string, 1, 1, true }, // D2 f
+	{ "value", Lingo::b_value, 1, 1, true }, // D2 f
 	// Lists
-	{ "add",			Lingo::b_add,			2, 2, false },	//			D4 command
-	{ "addAt",			Lingo::b_addAt,			3, 3, false },	//			D4 c
-	{ "addProp",		Lingo::b_addProp,		3, 3, false },	//			D4 c
-	{ "append",			Lingo::b_append,		2, 2, false },	//			D4 c
-	{ "count",			Lingo::b_count,			1, 1, true },	//			D4 f
-	{ "deleteAt",		Lingo::b_deleteAt,		2, 2, false },	//			D4 c
-	{ "deleteProp",		Lingo::b_deleteProp,	2, 2, false },	//			D4 c
-	{ "findPos",		Lingo::b_findPos,		2, 2, true },	//			D4 f
-	{ "findPosNear",	Lingo::b_findPosNear,	2, 2, true },	//			D4 f
-	{ "getaProp",		Lingo::b_getaProp,		2, 2, true },	//			D4 f
-	{ "getAt",			Lingo::b_getAt,			2, 2, true },	//			D4 f
-	{ "getLast",		Lingo::b_getLast,		1, 1, true },	//			D4 f
-	{ "getOne",			Lingo::b_getOne,		2, 2, true },	//			D4 f
-	{ "getPos",			Lingo::b_getPos,		2, 2, true },	//			D4 f
-	{ "getProp",		Lingo::b_getProp,		2, 2, true },	//			D4 f
-	{ "getPropAt",		Lingo::b_getPropAt,		2, 2, true },	//			D4 f
-	{ "list",			Lingo::b_list,			-1, 0, true },	//			D4 f
-	{ "listP",			Lingo::b_listP,			1, 1, true },	//			D4 f
-	{ "max",			Lingo::b_max,			1, 1, true },	//			D4 f
-	{ "min",			Lingo::b_min,			1, 1, true },	//			D4 f
-	{ "setaProp",		Lingo::b_setaProp,		3, 3, false },	//			D4 c
-	{ "setAt",			Lingo::b_setAt,			3, 3, false },	//			D4 c
-	{ "setProp",		Lingo::b_setProp,		3, 3, false },	//			D4 c
-	{ "sort",			Lingo::b_sort,			1, 1, false },	//			D4 c
+	{ "add", Lingo::b_add, 2, 2, false }, //			D4 command
+	{ "addAt", Lingo::b_addAt, 3, 3, false }, //			D4 c
+	{ "addProp", Lingo::b_addProp, 3, 3, false }, //			D4 c
+	{ "append", Lingo::b_append, 2, 2, false }, //			D4 c
+	{ "count", Lingo::b_count, 1, 1, true }, //			D4 f
+	{ "deleteAt", Lingo::b_deleteAt, 2, 2, false }, //			D4 c
+	{ "deleteProp", Lingo::b_deleteProp, 2, 2, false }, //			D4 c
+	{ "findPos", Lingo::b_findPos, 2, 2, true }, //			D4 f
+	{ "findPosNear", Lingo::b_findPosNear, 2, 2, true }, //			D4 f
+	{ "getaProp", Lingo::b_getaProp, 2, 2, true }, //			D4 f
+	{ "getAt", Lingo::b_getAt, 2, 2, true }, //			D4 f
+	{ "getLast", Lingo::b_getLast, 1, 1, true }, //			D4 f
+	{ "getOne", Lingo::b_getOne, 2, 2, true }, //			D4 f
+	{ "getPos", Lingo::b_getPos, 2, 2, true }, //			D4 f
+	{ "getProp", Lingo::b_getProp, 2, 2, true }, //			D4 f
+	{ "getPropAt", Lingo::b_getPropAt, 2, 2, true }, //			D4 f
+	{ "list", Lingo::b_list, -1, 0, true }, //			D4 f
+	{ "listP", Lingo::b_listP, 1, 1, true }, //			D4 f
+	{ "max", Lingo::b_max, 1, 1, true }, //			D4 f
+	{ "min", Lingo::b_min, 1, 1, true }, //			D4 f
+	{ "setaProp", Lingo::b_setaProp, 3, 3, false }, //			D4 c
+	{ "setAt", Lingo::b_setAt, 3, 3, false }, //			D4 c
+	{ "setProp", Lingo::b_setProp, 3, 3, false }, //			D4 c
+	{ "sort", Lingo::b_sort, 1, 1, false }, //			D4 c
 	// Files
-	{ "closeDA",	 	Lingo::b_closeDA, 		0, 0, false },	// D2 c
-	{ "closeResFile",	Lingo::b_closeResFile,	0, 1, false },	// D2 c
-	{ "closeXlib",		Lingo::b_closeXlib,		0, 1, false },	// D2 c
-	{ "getNthFileNameInFolder",Lingo::b_getNthFileNameInFolder,2,2,true },//D4 f
-		// open													// D2 c
-	{ "openDA",	 		Lingo::b_openDA, 		1, 1, false },	// D2 c
-	{ "openResFile",	Lingo::b_openResFile,	1, 1, false },	// D2 c
-	{ "openXlib",		Lingo::b_openXlib,		1, 1, false },	// D2 c
-	{ "saveMovie",		Lingo::b_saveMovie,		1, 1, false },	//			D4 c
-	{ "setCallBack",	Lingo::b_setCallBack,	2, 2, false },	//		D3 c
-	{ "showResFile",	Lingo::b_showResFile,	0, 1, false },	// D2 c
-	{ "showXlib",		Lingo::b_showXlib,		0, 1, false },	// D2 c
-	{ "xFactoryList",	Lingo::b_xFactoryList,	1, 1, true },	//		D3 f
+	{ "closeDA", Lingo::b_closeDA, 0, 0, false }, // D2 c
+	{ "closeResFile", Lingo::b_closeResFile, 0, 1, false }, // D2 c
+	{ "closeXlib", Lingo::b_closeXlib, 0, 1, false }, // D2 c
+	{ "getNthFileNameInFolder", Lingo::b_getNthFileNameInFolder, 2, 2, true }, //D4 f
+	// open													// D2 c
+	{ "openDA", Lingo::b_openDA, 1, 1, false }, // D2 c
+	{ "openResFile", Lingo::b_openResFile, 1, 1, false }, // D2 c
+	{ "openXlib", Lingo::b_openXlib, 1, 1, false }, // D2 c
+	{ "saveMovie", Lingo::b_saveMovie, 1, 1, false }, //			D4 c
+	{ "setCallBack", Lingo::b_setCallBack, 2, 2, false }, //		D3 c
+	{ "showResFile", Lingo::b_showResFile, 0, 1, false }, // D2 c
+	{ "showXlib", Lingo::b_showXlib, 0, 1, false }, // D2 c
+	{ "xFactoryList", Lingo::b_xFactoryList, 1, 1, true }, //		D3 f
 	// Control
-	{ "abort",			Lingo::b_abort,			0, 0, false },	//			D4 c
-	{ "continue",		Lingo::b_continue,		0, 0, false },	// D2 c
-	{ "dontPassEvent",	Lingo::b_dontPassEvent,	0, 0, false },	// D2 c
-	{ "delay",	 		Lingo::b_delay,			1, 1, false },	// D2 c
-	{ "do",		 		Lingo::b_do,			1, 1, false },	// D2 c
-	{ "halt",	 		Lingo::b_halt,			0, 0, false },	//			D4 c
-	{ "nothing",		Lingo::b_nothing,		0, 0, false },	// D2 c
-	{ "pass",			Lingo::b_pass,			0, 0, false },	//			D4 c
-	{ "pause",			Lingo::b_pause,			0, 0, false },	// D2 c
-		// play													// D2 c
-	{ "playAccel",		Lingo::b_playAccel,		-1,0, false },	// D2
-		// play done											// D2
-	{ "preLoad",		Lingo::b_preLoad,		-1,0, false },	//		D3 c
-	{ "preLoadCast",	Lingo::b_preLoadCast,	-1,0, false },	//		D3 c
-	{ "quit",			Lingo::b_quit,			0, 0, false },	// D2 c
-	{ "restart",		Lingo::b_restart,		0, 0, false },	// D2 c
-	{ "shutDown",		Lingo::b_shutDown,		0, 0, false },	// D2 c
-	{ "startTimer",		Lingo::b_startTimer,	0, 0, false },	// D2 c
-		// when keyDown											// D2
-		// when mouseDown										// D2
-		// when mouseUp											// D2
-		// when timeOut											// D2
+	{ "abort", Lingo::b_abort, 0, 0, false }, //			D4 c
+	{ "continue", Lingo::b_continue, 0, 0, false }, // D2 c
+	{ "dontPassEvent", Lingo::b_dontPassEvent, 0, 0, false }, // D2 c
+	{ "delay", Lingo::b_delay, 1, 1, false }, // D2 c
+	{ "do", Lingo::b_do, 1, 1, false }, // D2 c
+	{ "halt", Lingo::b_halt, 0, 0, false }, //			D4 c
+	{ "nothing", Lingo::b_nothing, 0, 0, false }, // D2 c
+	{ "pass", Lingo::b_pass, 0, 0, false }, //			D4 c
+	{ "pause", Lingo::b_pause, 0, 0, false }, // D2 c
+	// play													// D2 c
+	{ "playAccel", Lingo::b_playAccel, -1, 0, false }, // D2
+	// play done											// D2
+	{ "preLoad", Lingo::b_preLoad, -1, 0, false }, //		D3 c
+	{ "preLoadCast", Lingo::b_preLoadCast, -1, 0, false }, //		D3 c
+	{ "quit", Lingo::b_quit, 0, 0, false }, // D2 c
+	{ "restart", Lingo::b_restart, 0, 0, false }, // D2 c
+	{ "shutDown", Lingo::b_shutDown, 0, 0, false }, // D2 c
+	{ "startTimer", Lingo::b_startTimer, 0, 0, false }, // D2 c
+	// when keyDown											// D2
+	// when mouseDown										// D2
+	// when mouseUp											// D2
+	// when timeOut											// D2
 	// Types
-	{ "floatP",			Lingo::b_floatP,		1, 1, true },	//		D3
-	{ "ilk",	 		Lingo::b_ilk,			1, 2, false },	//			D4 f
-	{ "integerp",		Lingo::b_integerp,		1, 1, true },	// D2 f
-	{ "objectp",		Lingo::b_objectp,		1, 1, true },	// D2 f
-	{ "pictureP",		Lingo::b_pictureP,		1, 1, true },	//			D4 f
-	{ "stringp",		Lingo::b_stringp,		1, 1, true },	// D2 f
-	{ "symbolp",		Lingo::b_symbolp,		1, 1, true },	// D2 f
-	{ "voidP",			Lingo::b_voidP,			1, 1, true },	//			D4 f
+	{ "floatP", Lingo::b_floatP, 1, 1, true }, //		D3
+	{ "ilk", Lingo::b_ilk, 1, 2, false }, //			D4 f
+	{ "integerp", Lingo::b_integerp, 1, 1, true }, // D2 f
+	{ "objectp", Lingo::b_objectp, 1, 1, true }, // D2 f
+	{ "pictureP", Lingo::b_pictureP, 1, 1, true }, //			D4 f
+	{ "stringp", Lingo::b_stringp, 1, 1, true }, // D2 f
+	{ "symbolp", Lingo::b_symbolp, 1, 1, true }, // D2 f
+	{ "voidP", Lingo::b_voidP, 1, 1, true }, //			D4 f
 	// Misc
-	{ "alert",	 		Lingo::b_alert,			1, 1, false },	// D2 c
-	{ "birth",	 		Lingo::b_birth,			-1,0, false },	//			D4 f
-	{ "clearGlobals",	Lingo::b_clearGlobals,	0, 0, false },	//			D4 c
-	{ "cursor",	 		Lingo::b_cursor,		1, 1, false },	// D2 c
-	{ "framesToHMS",	Lingo::b_framesToHMS,	4, 4, false },	//		D3 f
-	{ "HMStoFrames",	Lingo::b_HMStoFrames,	4, 4, false },	//		D3 f
-	{ "param",	 		Lingo::b_param,			1, 1, true },	//			D4 f
-	{ "printFrom",	 	Lingo::b_printFrom,		-1,0, false },	// D2 c
-		// put													// D2
-		// set													// D2
-	{ "showGlobals",	Lingo::b_showGlobals,	0, 0, false },	// D2 c
-	{ "showLocals",		Lingo::b_showLocals,	0, 0, false },	// D2 c
+	{ "alert", Lingo::b_alert, 1, 1, false }, // D2 c
+	{ "birth", Lingo::b_birth, -1, 0, false }, //			D4 f
+	{ "clearGlobals", Lingo::b_clearGlobals, 0, 0, false }, //			D4 c
+	{ "cursor", Lingo::b_cursor, 1, 1, false }, // D2 c
+	{ "framesToHMS", Lingo::b_framesToHMS, 4, 4, false }, //		D3 f
+	{ "HMStoFrames", Lingo::b_HMStoFrames, 4, 4, false }, //		D3 f
+	{ "param", Lingo::b_param, 1, 1, true }, //			D4 f
+	{ "printFrom", Lingo::b_printFrom, -1, 0, false }, // D2 c
+	// put													// D2
+	// set													// D2
+	{ "showGlobals", Lingo::b_showGlobals, 0, 0, false }, // D2 c
+	{ "showLocals", Lingo::b_showLocals, 0, 0, false }, // D2 c
 	// Score
-	{ "constrainH",		Lingo::b_constrainH,	2, 2, true },	// D2 f
-	{ "constrainV",		Lingo::b_constrainV,	2, 2, true },	// D2 f
-	{ "copyToClipBoard",Lingo::b_copyToClipBoard,1,1, false },	//			D4 c
-	{ "duplicate",		Lingo::b_duplicate,		1, 2, false },	//			D4 c
-	{ "editableText",	Lingo::b_editableText,	0, 0, false },	// D2
-	{ "erase",			Lingo::b_erase,			1, 1, false },	//			D4 c
-	{ "findEmpty",		Lingo::b_findEmpty,		1, 1, true },	//			D4 f
-		// go													// D2
-	{ "importFileInto",	Lingo::b_importFileInto,2, 2, false },	//			D4 c
-	{ "installMenu",	Lingo::b_installMenu,	1, 1, false },	// D2 c
-	{ "label",			Lingo::b_label,			1, 1, true },	// D2 f
-	{ "marker",			Lingo::b_marker,		1, 1, true },	// D2 f
-	{ "move",			Lingo::b_move,			1, 2, false },	//			D4 c
-	{ "moveableSprite",	Lingo::b_moveableSprite,0, 0, false },	// D2
-	{ "pasteClipBoardInto",Lingo::b_pasteClipBoardInto,1, 1, false },	//	D4 c
-	{ "puppetPalette",	Lingo::b_puppetPalette, -1,0, false },	// D2 c
-	{ "puppetSound",	Lingo::b_puppetSound,	-1,0, false },	// D2 c
-	{ "puppetSprite",	Lingo::b_puppetSprite,	-1,0, false },	// D2 c
-	{ "puppetTempo",	Lingo::b_puppetTempo,	1, 1, false },	// D2 c
-	{ "puppetTransition",Lingo::b_puppetTransition,-1,0, false },// D2 c
-	{ "ramNeeded",		Lingo::b_ramNeeded,		2, 2, true },	//			D4 f
-	{ "rollOver",		Lingo::b_rollOver,		1, 1, true },	// D2 f
-	{ "spriteBox",		Lingo::b_spriteBox,		-1,0, false },	// D2 c
-	{ "unLoad",			Lingo::b_unLoad,		0, 2, false },	//			D4 c
-	{ "unLoadCast",		Lingo::b_unLoadCast,	0, 2, false },	//			D4 c
-	{ "updateStage",	Lingo::b_updateStage,	0, 0, false },	// D2 c
-	{ "zoomBox",		Lingo::b_zoomBox,		-1,0, false },	// D2 c
+	{ "constrainH", Lingo::b_constrainH, 2, 2, true }, // D2 f
+	{ "constrainV", Lingo::b_constrainV, 2, 2, true }, // D2 f
+	{ "copyToClipBoard", Lingo::b_copyToClipBoard, 1, 1, false }, //			D4 c
+	{ "duplicate", Lingo::b_duplicate, 1, 2, false }, //			D4 c
+	{ "editableText", Lingo::b_editableText, 0, 0, false }, // D2
+	{ "erase", Lingo::b_erase, 1, 1, false }, //			D4 c
+	{ "findEmpty", Lingo::b_findEmpty, 1, 1, true }, //			D4 f
+	// go													// D2
+	{ "importFileInto", Lingo::b_importFileInto, 2, 2, false }, //			D4 c
+	{ "installMenu", Lingo::b_installMenu, 1, 1, false }, // D2 c
+	{ "label", Lingo::b_label, 1, 1, true }, // D2 f
+	{ "marker", Lingo::b_marker, 1, 1, true }, // D2 f
+	{ "move", Lingo::b_move, 1, 2, false }, //			D4 c
+	{ "moveableSprite", Lingo::b_moveableSprite, 0, 0, false }, // D2
+	{ "pasteClipBoardInto", Lingo::b_pasteClipBoardInto, 1, 1, false }, //	D4 c
+	{ "puppetPalette", Lingo::b_puppetPalette, -1, 0, false }, // D2 c
+	{ "puppetSound", Lingo::b_puppetSound, -1, 0, false }, // D2 c
+	{ "puppetSprite", Lingo::b_puppetSprite, -1, 0, false }, // D2 c
+	{ "puppetTempo", Lingo::b_puppetTempo, 1, 1, false }, // D2 c
+	{ "puppetTransition", Lingo::b_puppetTransition, -1, 0, false }, // D2 c
+	{ "ramNeeded", Lingo::b_ramNeeded, 2, 2, true }, //			D4 f
+	{ "rollOver", Lingo::b_rollOver, 1, 1, true }, // D2 f
+	{ "spriteBox", Lingo::b_spriteBox, -1, 0, false }, // D2 c
+	{ "unLoad", Lingo::b_unLoad, 0, 2, false }, //			D4 c
+	{ "unLoadCast", Lingo::b_unLoadCast, 0, 2, false }, //			D4 c
+	{ "updateStage", Lingo::b_updateStage, 0, 0, false }, // D2 c
+	{ "zoomBox", Lingo::b_zoomBox, -1, 0, false }, // D2 c
 	// Point
-	{ "point",			Lingo::b_point,			2, 2, true },	//			D4 f
-	{ "inside",			Lingo::b_inside,		2, 2, true },	//			D4 f
-	{ "intersect",		Lingo::b_intersect,		2, 2, false },	//			D4 f
-	{ "map",			Lingo::b_map,			3, 3, true },	//			D4 f
-	{ "rect",			Lingo::b_rect,			4, 4, true },	//			D4 f
-	{ "union",			Lingo::b_union,			2, 2, true },	//			D4 f
+	{ "point", Lingo::b_point, 2, 2, true }, //			D4 f
+	{ "inside", Lingo::b_inside, 2, 2, true }, //			D4 f
+	{ "intersect", Lingo::b_intersect, 2, 2, false }, //			D4 f
+	{ "map", Lingo::b_map, 3, 3, true }, //			D4 f
+	{ "rect", Lingo::b_rect, 4, 4, true }, //			D4 f
+	{ "union", Lingo::b_union, 2, 2, true }, //			D4 f
 	// Sound
-	{ "beep",	 		Lingo::b_beep,			0, 1, false },	// D2
-	{ "mci",	 		Lingo::b_mci,			1, 1, false },	//			D4 c
-	{ "mciwait",		Lingo::b_mciwait,		1, 1, false },
-	{ "sound-close",	Lingo::b_soundClose, 	1, 1, false },	//			D4 c
-	{ "sound-fadeIn",	Lingo::b_soundFadeIn, 	1, 2, false },	//		D3 c
-	{ "sound-fadeOut",	Lingo::b_soundFadeOut, 	1, 2, false },	//		D3 c
-	{ "sound-playFile",	Lingo::b_soundPlayFile, 2, 2, false },	//		D3 c
-	{ "sound-stop",		Lingo::b_soundStop,	 	1, 1, false },	//		D3 c
-	{ "soundBusy",		Lingo::b_soundBusy,	 	1, 1, true },	//		D3 f
+	{ "beep", Lingo::b_beep, 0, 1, false }, // D2
+	{ "mci", Lingo::b_mci, 1, 1, false }, //			D4 c
+	{ "mciwait", Lingo::b_mciwait, 1, 1, false },
+	{ "sound-close", Lingo::b_soundClose, 1, 1, false }, //			D4 c
+	{ "sound-fadeIn", Lingo::b_soundFadeIn, 1, 2, false }, //		D3 c
+	{ "sound-fadeOut", Lingo::b_soundFadeOut, 1, 2, false }, //		D3 c
+	{ "sound-playFile", Lingo::b_soundPlayFile, 2, 2, false }, //		D3 c
+	{ "sound-stop", Lingo::b_soundStop, 1, 1, false }, //		D3 c
+	{ "soundBusy", Lingo::b_soundBusy, 1, 1, true }, //		D3 f
 	// Window
-	{ "close",			Lingo::b_close,			1, 1, false },	//			D4 c
-	{ "forget",			Lingo::b_forget,		1, 1, false },	//			D4 c
-	{ "inflate",		Lingo::b_inflate,		3, 3, true },	//			D4 f
-	{ "moveToBack",		Lingo::b_moveToBack,	1, 1, false },	//			D4 c
-	{ "moveToFront",	Lingo::b_moveToFront,	1, 1, false },	//			D4 c
+	{ "close", Lingo::b_close, 1, 1, false }, //			D4 c
+	{ "forget", Lingo::b_forget, 1, 1, false }, //			D4 c
+	{ "inflate", Lingo::b_inflate, 3, 3, true }, //			D4 f
+	{ "moveToBack", Lingo::b_moveToBack, 1, 1, false }, //			D4 c
+	{ "moveToFront", Lingo::b_moveToFront, 1, 1, false }, //			D4 c
 	// Constants
-	{ "ancestor",		Lingo::b_ancestor,		0, 0, false },	//			D4
-	{ "backspace",		Lingo::b_backspace,		0, 0, false },	// D2
-	{ "empty",			Lingo::b_empty,			0, 0, false },	// D2
-	{ "enter",			Lingo::b_enter,			0, 0, false },	// D2
-	{ "false",			Lingo::b_false,			0, 0, false },	// D2
-	{ "quote",			Lingo::b_quote,			0, 0, false },	// D2
-	{ "return",			Lingo::b_return,		0, 0, false },	// D2
-	{ "tab",			Lingo::b_tab,			0, 0, false },	// D2
-	{ "true",			Lingo::b_true,			0, 0, false },	// D2
-	{ "version",		Lingo::b_version,		0, 0, false },	//		D3
+	{ "ancestor", Lingo::b_ancestor, 0, 0, false }, //			D4
+	{ "backspace", Lingo::b_backspace, 0, 0, false }, // D2
+	{ "empty", Lingo::b_empty, 0, 0, false }, // D2
+	{ "enter", Lingo::b_enter, 0, 0, false }, // D2
+	{ "false", Lingo::b_false, 0, 0, false }, // D2
+	{ "quote", Lingo::b_quote, 0, 0, false }, // D2
+	{ "return", Lingo::b_return, 0, 0, false }, // D2
+	{ "tab", Lingo::b_tab, 0, 0, false }, // D2
+	{ "true", Lingo::b_true, 0, 0, false }, // D2
+	{ "version", Lingo::b_version, 0, 0, false }, //		D3
 	// References
-	{ "cast",			Lingo::b_cast,			1, 1, false },	//			D4 f
-	{ "field",			Lingo::b_field,			1, 1, false },	//		D3 f
-	{ "me",				Lingo::b_me,			-1,0, false },	//		D3
-	{ "script",			Lingo::b_script,		1, 1, false },	//			D4 f
-	{ "window",			Lingo::b_window,		1, 1, false },	//			D4 f
+	{ "cast", Lingo::b_cast, 1, 1, false }, //			D4 f
+	{ "field", Lingo::b_field, 1, 1, false }, //		D3 f
+	{ "me", Lingo::b_me, -1, 0, false }, //		D3
+	{ "script", Lingo::b_script, 1, 1, false }, //			D4 f
+	{ "window", Lingo::b_window, 1, 1, false }, //			D4 f
 
 	{ 0, 0, 0, 0, false }
 };
@@ -309,19 +309,18 @@ static const char *builtinReferences[] = {
 	0
 };
 
-
 static const char *predefinedMethods[] = {
-	"mAtFrame",				// D3
-	"mDescribe",			// D3
-	"mDispose",				// D3
-	"mGet",					// D3
-	"mInstanceRespondsTo",	// D3
-	"mMessageList",			// D3
-	"mName",				// D3
-	"mNew",					// D3
-	"mPerform",				// D3
-	"mPut",					// D3
-	"mRespondsTo",			// D3
+	"mAtFrame", // D3
+	"mDescribe", // D3
+	"mDispose", // D3
+	"mGet", // D3
+	"mInstanceRespondsTo", // D3
+	"mMessageList", // D3
+	"mName", // D3
+	"mNew", // D3
+	"mPerform", // D3
+	"mPut", // D3
+	"mRespondsTo", // D3
 	0
 };
 
@@ -407,7 +406,6 @@ void Lingo::drop(uint num) {
 	}
 	_stack.remove_at(_stack.size() - 1 - num);
 }
-
 
 ///////////////////
 // Math
@@ -748,7 +746,6 @@ void Lingo::b_sort(int nargs) {
 	g_lingo->dropStack(nargs);
 }
 
-
 ///////////////////
 // Files
 ///////////////////
@@ -1036,7 +1033,6 @@ void Lingo::b_voidP(int nargs) {
 	g_lingo->push(d);
 }
 
-
 ///////////////////
 // Misc
 ///////////////////
@@ -1233,7 +1229,7 @@ void Lingo::b_rollOver(int nargs) {
 
 	Frame *frame = g_director->getCurrentScore()->_frames[g_director->getCurrentScore()->getCurrentFrame()];
 
-	if (arg >= (int32) frame->_sprites.size()) {
+	if (arg >= (int32)frame->_sprites.size()) {
 		g_lingo->push(d);
 		return;
 	}
@@ -1274,7 +1270,6 @@ void Lingo::b_updateStage(int nargs) {
 	warning("STUB: b_updateStage");
 }
 
-
 ///////////////////
 // Window
 ///////////////////
@@ -1304,7 +1299,6 @@ void Lingo::b_moveToFront(int nargs) {
 	g_lingo->dropStack(nargs);
 }
 
-
 ///////////////////
 // Point
 ///////////////////
@@ -1332,7 +1326,6 @@ void Lingo::b_rect(int nargs) {
 
 	g_lingo->push(Datum(0));
 }
-
 
 void Lingo::b_intersect(int nargs) {
 	g_lingo->printSTUBWithArglist("b_intersect", nargs);
@@ -1373,7 +1366,6 @@ void Lingo::b_union(int nargs) {
 
 	g_lingo->push(Datum(0));
 }
-
 
 ///////////////////
 // Sound
@@ -1577,6 +1569,5 @@ void Lingo::b_window(int nargs) {
 
 	g_lingo->push(d);
 }
-
 
 } // End of namespace Director

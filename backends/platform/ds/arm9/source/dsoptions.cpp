@@ -20,16 +20,16 @@
  *
  */
 
-#include "dsmain.h"
 #include "dsoptions.h"
+#include "dsmain.h"
+#include "engines/scumm/scumm.h"
 #include "gui/dialog.h"
 #include "gui/gui-manager.h"
 #include "gui/widgets/list.h"
+#include "gui/widgets/popup.h"
 #include "gui/widgets/tab.h"
 #include "osystem_ds.h"
-#include "engines/scumm/scumm.h"
 #include "touchkeyboard.h"
-#include "gui/widgets/popup.h"
 
 #include "common/translation.h"
 
@@ -49,9 +49,8 @@ static int confGetInt(Common::String key, int defaultVal) {
 	return defaultVal;
 }
 
-
-
-DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
+DSOptionsDialog::DSOptionsDialog()
+  : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 
 	new GUI::ButtonWidget(this, 10, 170, 72, 16, _("~C~lose"), 0, GUI::kCloseCmd);
 	new GUI::ButtonWidget(this, 320 - 10 - 130, 170, 120, 16, _("ScummVM Main Menu"), 0, 0x40000000, 'M');
@@ -83,7 +82,6 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 	new GUI::StaticTextWidget(_tab, 130 + 130 - 10, 65, 20, 15, "8", Graphics::kTextAlignCenter);
 	new GUI::StaticTextWidget(_tab, 130 - 20, 65, 20, 15, "-8", Graphics::kTextAlignCenter);
 
-
 	_touchPadStyle = new GUI::CheckboxWidget(_tab, 5, 80, 270, 20, _("Use laptop trackpad-style cursor control"), 0, 0x20000001, 'T');
 	_screenTaps = new GUI::CheckboxWidget(_tab, 5, 95, 285, 20, _("Tap for left click, double tap right click"), 0, 0x20000002, 'T');
 
@@ -114,8 +112,6 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 	_gammaCorrection->setMaxValue(8);
 	_gammaCorrection->setValue(0);
 
-
-
 	_tab->addTab("General");
 
 	_highQualityAudioCheckbox = new GUI::CheckboxWidget(_tab, 5, 5, 250, 20, _("High quality audio (slower) (reboot)"), 0, 0, 'T');
@@ -125,13 +121,11 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 
 	_radioButtonMode = false;
 
-//	new GUI::StaticTextWidget(this, 90, 10, 130, 15, "ScummVM DS Options", Graphics::kTextAlignCenter);
+	//	new GUI::StaticTextWidget(this, 90, 10, 130, 15, "ScummVM DS Options", Graphics::kTextAlignCenter);
 
-
-//#ifdef ALLOW_CPU_SCALER
-//	_cpuScaler = new GUI::CheckboxWidget(this, 160, 115, 90, 20, "CPU scaler", 0, 0, 'T');
-//#endif
-
+	//#ifdef ALLOW_CPU_SCALER
+	//	_cpuScaler = new GUI::CheckboxWidget(this, 160, 115, 90, 20, "CPU scaler", 0, 0, 'T');
+	//#endif
 
 #ifdef DS_BUILD_D
 	_snapToBorderCheckbox->setState(confGetBool("snaptoborder", true));
@@ -143,7 +137,6 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 	_leftHandedCheckbox->setState(confGetBool("lefthanded", false));
 	_unscaledCheckbox->setState(confGetBool("unscaled", false));
 
-
 	if (ConfMan.hasKey("topscreenzoom", "ds")) {
 
 		_100PercentCheckbox->setState(false);
@@ -151,20 +144,20 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 		_200PercentCheckbox->setState(false);
 
 		switch (ConfMan.getInt("topscreenzoom", "ds")) {
-			case 100: {
-				_100PercentCheckbox->setState(true);
-				break;
-			}
+		case 100: {
+			_100PercentCheckbox->setState(true);
+			break;
+		}
 
-			case 150: {
-				_150PercentCheckbox->setState(true);
-				break;
-			}
+		case 150: {
+			_150PercentCheckbox->setState(true);
+			break;
+		}
 
-			case 200: {
-				_200PercentCheckbox->setState(true);
-				break;
-			}
+		case 200: {
+			_200PercentCheckbox->setState(true);
+			break;
+		}
 		}
 
 	} else if (ConfMan.hasKey("twohundredpercent", "ds")) {
@@ -183,9 +176,9 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 	_highQualityAudioCheckbox->setState(confGetBool("22khzaudio", false));
 	_disablePowerOff->setState(confGetBool("disablepoweroff", false));
 
-    #ifdef ALLOW_CPU_SCALER
+#ifdef ALLOW_CPU_SCALER
 	_cpuScaler->setState(confGetBool("cpu_scaler", false));
-    #endif
+#endif
 
 	_indyFightCheckbox->setState(DS::getIndyFightState());
 
@@ -216,7 +209,7 @@ DSOptionsDialog::~DSOptionsDialog() {
 void DSOptionsDialog::updateConfigManager() {
 	ConfMan.setBool("lefthanded", _leftHandedCheckbox->getState(), "ds");
 	ConfMan.setBool("unscaled", _unscaledCheckbox->getState(), "ds");
-//	ConfMan.setBool("twohundredpercent", _twoHundredPercentCheckbox->getState(), "ds");
+	//	ConfMan.setBool("twohundredpercent", _twoHundredPercentCheckbox->getState(), "ds");
 	ConfMan.setBool("22khzaudio", _highQualityAudioCheckbox->getState(), "ds");
 	ConfMan.setBool("disablepoweroff", _disablePowerOff->getState(), "ds");
 #ifdef ALLOW_CPU_SCALER
@@ -274,9 +267,7 @@ void DSOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
 		}
 
 		guard = false;
-
 	}
-
 
 	if ((!guard) && (_radioButtonMode)) {
 		guard = true;
@@ -337,15 +328,12 @@ void DSOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
 		}
 
 		guard = false;
-
 	}
-
 
 	if (cmd == GUI::kCloseCmd) {
 		updateConfigManager();
 		close();
 	}
-
 
 	if ((!guard) && (cmd == 0x40000000)) {
 		close();
@@ -353,19 +341,15 @@ void DSOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
 	}
 }
 
-
 void showOptionsDialog() {
 
-
 	DS::displayMode16Bit();
-
 
 	DSOptionsDialog *d = new DSOptionsDialog();
 	d->runModal();
 	delete d;
 
 	DS::displayMode8Bit();
-
 }
 
 void setOptions() {
@@ -408,7 +392,6 @@ void setOptions() {
 
 	DS::setGamma(confGetInt("gamma", 0));
 
-
 	if (ConfMan.hasKey("touchpad", "ds")) {
 		bool enable = ConfMan.getBool("touchpad", "ds");
 
@@ -427,7 +410,6 @@ void setOptions() {
 	} else {
 		DS::setTrackPadStyleEnable(false);
 	}
-
 
 	firstLoad = false;
 }

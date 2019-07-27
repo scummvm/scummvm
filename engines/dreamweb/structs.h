@@ -34,17 +34,17 @@ struct SetObject;
 struct Sprite {
 	bool _mainManCallback;
 	const GraphicsFile *_frameData;
-	uint8  x;
-	uint8  y;
-	uint8  frameNumber;
-	uint8  delay;
-	uint8  animFrame; // index into SetObject::frames
+	uint8 x;
+	uint8 y;
+	uint8 frameNumber;
+	uint8 delay;
+	uint8 animFrame; // index into SetObject::frames
 	SetObject *_objData;
-	uint8  speed;
-	uint8  priority;
-	uint8  walkFrame;
-	uint8  type;
-	uint8  hidden;
+	uint8 speed;
+	uint8 priority;
+	uint8 walkFrame;
+	uint8 type;
+	uint8 hidden;
 };
 
 struct RectWithCallback {
@@ -57,9 +57,7 @@ struct RectWithCallback {
 	}
 };
 
-
-
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 struct SetObject {
 	uint8 b0;
@@ -86,9 +84,9 @@ struct DynObject {
 	uint8 currentLocation;
 	uint8 index;
 	uint8 mapad[5];
-	uint8 slotSize;		// the size of an object's slots
-	uint8 slotCount;	// the number of slots of an object
-	uint8 objectSize;	// the size of an object
+	uint8 slotSize; // the size of an object's slots
+	uint8 slotCount; // the number of slots of an object
+	uint8 objectSize; // the size of an object
 	uint8 turnedOn;
 	uint8 initialLocation;
 	uint8 objId[4];
@@ -106,13 +104,13 @@ struct ObjPos {
 } PACKED_STRUCT;
 
 struct Frame {
-	uint8  width;
-	uint8  height;
+	uint8 width;
+	uint8 height;
 	uint16 _ptr;
 	uint16 ptr() const { return READ_LE_UINT16(&_ptr); }
 	void setPtr(uint16 v) { WRITE_LE_UINT16(&_ptr, v); }
-	uint8  x;
-	uint8  y;
+	uint8 x;
+	uint8 y;
 } PACKED_STRUCT;
 
 struct Reel {
@@ -125,9 +123,7 @@ struct Reel {
 	uint8 b4;
 } PACKED_STRUCT;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
-
-
+#include "common/pack-end.h" // END STRUCT PACKING
 
 struct ReelRoutine {
 	uint8 reallocation;
@@ -148,12 +144,10 @@ struct People {
 	uint8 b4;
 };
 
-
-
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 struct Room {
-	char  name[13];
+	char name[13];
 	uint8 roomsSample;
 	uint8 b14;
 	uint8 mapX;
@@ -209,7 +203,7 @@ struct PathSegment {
 } PACKED_STRUCT;
 
 struct RoomPaths {
-	PathNode    nodes[12];
+	PathNode nodes[12];
 	PathSegment segments[24];
 } PACKED_STRUCT;
 
@@ -236,9 +230,7 @@ struct Atmosphere {
 	uint8 _repeat;
 } PACKED_STRUCT;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
-
-
+#include "common/pack-end.h" // END STRUCT PACKING
 
 enum ObjectTypes {
 	kSetObjectType1 = 1,
@@ -259,9 +251,7 @@ struct ObjectRef {
 	}
 };
 
-
-
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 struct BackdropMapFlag {
 	uint8 _flag;
@@ -274,14 +264,12 @@ struct MapFlag {
 	uint8 _type;
 } PACKED_STRUCT;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
-
-
-
-
+#include "common/pack-end.h" // END STRUCT PACKING
 
 struct TextFile {
-	TextFile(unsigned int size = 66) : _size(size), _text(0) { _offsetsLE = new uint16[_size]; }
+	TextFile(unsigned int size = 66)
+	  : _size(size)
+	  , _text(0) { _offsetsLE = new uint16[_size]; }
 
 	~TextFile() {
 		delete[] _offsetsLE;
@@ -311,7 +299,9 @@ struct TextFile {
 };
 
 struct GraphicsFile {
-	GraphicsFile() : _data(0), _frames(0) { }
+	GraphicsFile()
+	  : _data(0)
+	  , _frames(0) {}
 
 	Frame *_frames;
 	uint8 *_data;
@@ -393,7 +383,9 @@ struct GameVars {
 };
 
 struct TimedTemp {
-	TimedTemp() : _timeCount(0), _string(0) { }
+	TimedTemp()
+	  : _timeCount(0)
+	  , _string(0) {}
 
 	uint8 _x;
 	uint8 _y;
@@ -407,4 +399,3 @@ struct TimedTemp {
 } // End of namespace DreamWeb
 
 #endif
-

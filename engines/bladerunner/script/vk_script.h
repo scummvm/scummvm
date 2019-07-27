@@ -54,7 +54,7 @@ private:
 	bool SCRIPT_VK_DLL_Begin_Test(int actorId);
 	void SCRIPT_VK_DLL_McCoy_Asks_Question(int actorId, int questionId);
 	void SCRIPT_VK_DLL_Question_Asked(int actorId, int questionId);
- 	void SCRIPT_VK_DLL_Shutdown(int actorId, int humanPercentage, int replicantPercentage, int anxiety);
+	void SCRIPT_VK_DLL_Shutdown(int actorId, int humanPercentage, int replicantPercentage, int anxiety);
 
 	void askLucy(int questionId);
 	void askGrigorian(int questionId);

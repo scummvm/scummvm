@@ -20,22 +20,24 @@
  *
  */
 
-#include "common/util.h"
 #include "common/stack.h"
+#include "common/util.h"
 #include "graphics/primitives.h"
 
-#include "sci/sci.h"
-#include "sci/engine/state.h"
 #include "sci/engine/selector.h"
+#include "sci/engine/state.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/font.h"
 #include "sci/graphics/fontsjis.h"
 #include "sci/graphics/view.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
 GfxCache::GfxCache(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette)
-	: _resMan(resMan), _screen(screen), _palette(palette) {
+  : _resMan(resMan)
+  , _screen(screen)
+  , _palette(palette) {
 }
 
 GfxCache::~GfxCache() {

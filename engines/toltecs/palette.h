@@ -60,7 +60,6 @@ public:
 	void loadState(Common::ReadStream *in);
 
 protected:
-
 	struct PaletteFragment {
 		int16 id;
 		byte index, count;
@@ -76,7 +75,6 @@ protected:
 
 	PaletteFragmentArray _fragments;
 	byte _fragmentIndex;
-
 };
 
 } // End of namespace Toltecs

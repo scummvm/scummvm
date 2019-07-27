@@ -28,7 +28,8 @@
 
 namespace Hopkins {
 
-Debugger::Debugger(HopkinsEngine *vm) : GUI::Debugger() {
+Debugger::Debugger(HopkinsEngine *vm)
+  : GUI::Debugger() {
 	_vm = vm;
 	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("rects", WRAP_METHOD(Debugger, cmd_DirtyRects));
@@ -67,7 +68,7 @@ bool Debugger::cmd_ShowCurrentRoom(int argc, const char **argv) {
 }
 
 bool Debugger::cmd_Zones(int argc, const char **argv) {
-if (argc != 2) {
+	if (argc != 2) {
 		debugPrintf("%s: [on | off]\n", argv[0]);
 		return true;
 	} else {
@@ -85,6 +86,5 @@ bool Debugger::cmd_Lines(int argc, const char **argv) {
 		return false;
 	}
 }
-
 
 } // End of namespace Hopkins

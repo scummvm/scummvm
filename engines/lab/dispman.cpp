@@ -36,15 +36,16 @@
 #include "lab/anim.h"
 #include "lab/dispman.h"
 #include "lab/eventman.h"
-#include "lab/music.h"
 #include "lab/image.h"
 #include "lab/interface.h"
+#include "lab/music.h"
 #include "lab/resource.h"
 #include "lab/utils.h"
 
 namespace Lab {
 
-DisplayMan::DisplayMan(LabEngine *vm) : _vm(vm) {
+DisplayMan::DisplayMan(LabEngine *vm)
+  : _vm(vm) {
 	_longWinInFront = false;
 	_lastMessageLong = false;
 	_actionMessageShown = false;
@@ -78,9 +79,7 @@ void DisplayMan::loadBackPict(const Common::String fileName, uint16 *highPal) {
 	readPict(fileName);
 
 	for (int i = 0; i < 16; i++) {
-		highPal[i] = ((_vm->_anim->_diffPalette[i * 3] >> 2) << 8) +
-			((_vm->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
-			((_vm->_anim->_diffPalette[i * 3 + 2] >> 2));
+		highPal[i] = ((_vm->_anim->_diffPalette[i * 3] >> 2) << 8) + ((_vm->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) + ((_vm->_anim->_diffPalette[i * 3 + 2] >> 2));
 	}
 
 	_vm->_anim->_noPalChange = false;
@@ -139,7 +138,7 @@ Common::String DisplayMan::getLine(TextFont *tf, const char **mainBuffer, uint16
 }
 
 int DisplayMan::flowText(TextFont *font, int16 spacing, byte penColor, byte backPen,
-			bool fillBack, bool centerh, bool centerv, bool output, Common::Rect textRect, const char *str, Image *targetImage) {
+                         bool fillBack, bool centerh, bool centerv, bool output, Common::Rect textRect, const char *str, Image *targetImage) {
 
 	byte *saveDisplayBuffer = _currentDisplayBuffer;
 
@@ -158,9 +157,9 @@ int DisplayMan::flowText(TextFont *font, int16 spacing, byte penColor, byte back
 
 	TextFont *msgFont = font;
 	uint16 fontHeight = textHeight(msgFont) + spacing;
-	uint16 numLines   = (textRect.height() + 1) / fontHeight;
-	uint16 width      = textRect.width() + 1;
-	uint16 y          = textRect.top;
+	uint16 numLines = (textRect.height() + 1) / fontHeight;
+	uint16 width = textRect.width() + 1;
+	uint16 y = textRect.top;
 
 	if (centerv && output) {
 		const char *temp = str;
@@ -324,16 +323,16 @@ void DisplayMan::setUpScreens() {
 	// It's very convenient to have those shortcut, so I added them
 	// for all versions. (Strangerke)
 	uint16 y = _vm->_utils->vgaScaleY(173) - _vm->_utils->svgaCord(2);
-	moveButtonList->push_back(i->createButton(  1, y, 0, Common::KEYCODE_t,     moveImages[0],  moveImages[1]));
-	moveButtonList->push_back(i->createButton( 33, y, 1, Common::KEYCODE_m,     moveImages[2],  moveImages[3]));
-	moveButtonList->push_back(i->createButton( 65, y, 2, Common::KEYCODE_o,     moveImages[4],  moveImages[5]));
-	moveButtonList->push_back(i->createButton( 97, y, 3, Common::KEYCODE_c,     moveImages[6],  moveImages[7]));
-	moveButtonList->push_back(i->createButton(129, y, 4, Common::KEYCODE_l,     moveImages[8],  moveImages[9]));
-	moveButtonList->push_back(i->createButton(161, y, 5, Common::KEYCODE_i,     moveImages[12], moveImages[13]));
-	moveButtonList->push_back(i->createButton(193, y, 6, Common::KEYCODE_LEFT,  moveImages[14], moveImages[15]));
-	moveButtonList->push_back(i->createButton(225, y, 7, Common::KEYCODE_UP,    moveImages[16], moveImages[17]));
+	moveButtonList->push_back(i->createButton(1, y, 0, Common::KEYCODE_t, moveImages[0], moveImages[1]));
+	moveButtonList->push_back(i->createButton(33, y, 1, Common::KEYCODE_m, moveImages[2], moveImages[3]));
+	moveButtonList->push_back(i->createButton(65, y, 2, Common::KEYCODE_o, moveImages[4], moveImages[5]));
+	moveButtonList->push_back(i->createButton(97, y, 3, Common::KEYCODE_c, moveImages[6], moveImages[7]));
+	moveButtonList->push_back(i->createButton(129, y, 4, Common::KEYCODE_l, moveImages[8], moveImages[9]));
+	moveButtonList->push_back(i->createButton(161, y, 5, Common::KEYCODE_i, moveImages[12], moveImages[13]));
+	moveButtonList->push_back(i->createButton(193, y, 6, Common::KEYCODE_LEFT, moveImages[14], moveImages[15]));
+	moveButtonList->push_back(i->createButton(225, y, 7, Common::KEYCODE_UP, moveImages[16], moveImages[17]));
 	moveButtonList->push_back(i->createButton(257, y, 8, Common::KEYCODE_RIGHT, moveImages[18], moveImages[19]));
-	moveButtonList->push_back(i->createButton(289, y, 9, Common::KEYCODE_p,     moveImages[10], moveImages[11]));
+	moveButtonList->push_back(i->createButton(289, y, 9, Common::KEYCODE_p, moveImages[10], moveImages[11]));
 
 	// TODO: The INV file is not present in the Amiga version
 	Common::File *invFile = _vm->_resource->openDataFile("P:Inv");
@@ -346,23 +345,23 @@ void DisplayMan::setUpScreens() {
 	}
 
 	if (_vm->getPlatform() == Common::kPlatformWindows) {
-		invButtonList->push_back(i->createButton( 24, y, 0, Common::KEYCODE_ESCAPE, invImages[0],   invImages[1]));
-		invButtonList->push_back(i->createButton( 56, y, 1, Common::KEYCODE_g,      invImages[2],   invImages[3]));
-		invButtonList->push_back(i->createButton( 94, y, 2, Common::KEYCODE_u,      invImages[4],   invImages[5]));
-		invButtonList->push_back(i->createButton(126, y, 3, Common::KEYCODE_l,      moveImages[8],  moveImages[9]));
-		invButtonList->push_back(i->createButton(164, y, 4, Common::KEYCODE_LEFT,   moveImages[14], moveImages[15]));
-		invButtonList->push_back(i->createButton(196, y, 5, Common::KEYCODE_RIGHT,  moveImages[18], moveImages[19]));
-	// The windows version has 2 extra buttons for breadcrumb trail
-	// CHECKME: the game is really hard to play without those, maybe we could add something to enable that.
+		invButtonList->push_back(i->createButton(24, y, 0, Common::KEYCODE_ESCAPE, invImages[0], invImages[1]));
+		invButtonList->push_back(i->createButton(56, y, 1, Common::KEYCODE_g, invImages[2], invImages[3]));
+		invButtonList->push_back(i->createButton(94, y, 2, Common::KEYCODE_u, invImages[4], invImages[5]));
+		invButtonList->push_back(i->createButton(126, y, 3, Common::KEYCODE_l, moveImages[8], moveImages[9]));
+		invButtonList->push_back(i->createButton(164, y, 4, Common::KEYCODE_LEFT, moveImages[14], moveImages[15]));
+		invButtonList->push_back(i->createButton(196, y, 5, Common::KEYCODE_RIGHT, moveImages[18], moveImages[19]));
+		// The windows version has 2 extra buttons for breadcrumb trail
+		// CHECKME: the game is really hard to play without those, maybe we could add something to enable that.
 		invButtonList->push_back(i->createButton(234, y, 6, Common::KEYCODE_b, invImages[6], invImages[7]));
 		invButtonList->push_back(i->createButton(266, y, 7, Common::KEYCODE_f, invImages[8], invImages[9]));
 	} else {
-		invButtonList->push_back(i->createButton( 58, y, 0, Common::KEYCODE_ESCAPE, invImages[0],   invImages[1]));
-		invButtonList->push_back(i->createButton( 90, y, 1, Common::KEYCODE_g,      invImages[2],   invImages[3]));
-		invButtonList->push_back(i->createButton(128, y, 2, Common::KEYCODE_u,      invImages[4],   invImages[5]));
-		invButtonList->push_back(i->createButton(160, y, 3, Common::KEYCODE_l,      moveImages[8],  moveImages[9]));
-		invButtonList->push_back(i->createButton(198, y, 4, Common::KEYCODE_LEFT,   moveImages[14], moveImages[15]));
-		invButtonList->push_back(i->createButton(230, y, 5, Common::KEYCODE_RIGHT,  moveImages[18], moveImages[19]));
+		invButtonList->push_back(i->createButton(58, y, 0, Common::KEYCODE_ESCAPE, invImages[0], invImages[1]));
+		invButtonList->push_back(i->createButton(90, y, 1, Common::KEYCODE_g, invImages[2], invImages[3]));
+		invButtonList->push_back(i->createButton(128, y, 2, Common::KEYCODE_u, invImages[4], invImages[5]));
+		invButtonList->push_back(i->createButton(160, y, 3, Common::KEYCODE_l, moveImages[8], moveImages[9]));
+		invButtonList->push_back(i->createButton(198, y, 4, Common::KEYCODE_LEFT, moveImages[14], moveImages[15]));
+		invButtonList->push_back(i->createButton(230, y, 5, Common::KEYCODE_RIGHT, moveImages[18], moveImages[19]));
 	}
 
 	delete invFile;
@@ -420,10 +419,10 @@ void DisplayMan::screenUpdate() {
 
 void DisplayMan::createScreen(bool hiRes) {
 	if (hiRes) {
-		_screenWidth  = 640;
+		_screenWidth = 640;
 		_screenHeight = 480;
 	} else {
-		_screenWidth  = 320;
+		_screenWidth = 320;
 		_screenHeight = 200;
 	}
 	_screenBytesPerPage = _screenWidth * _screenHeight;
@@ -452,7 +451,7 @@ void DisplayMan::writeColorRegs(byte *buf, uint16 first, uint16 numReg) {
 	byte tmp[256 * 3];
 
 	for (int i = 0; i < numReg * 3; i++)
-		tmp[i] = (buf[i] << 2) | (buf[i] >> 4);	// better results than buf[i] * 4
+		tmp[i] = (buf[i] << 2) | (buf[i] >> 4); // better results than buf[i] * 4
 
 	_vm->_system->getPaletteManager()->setPalette(tmp, first, numReg);
 	memcpy(&(_curVgaPal[first * 3]), buf, numReg * 3);
@@ -507,7 +506,7 @@ void DisplayMan::checkerBoardEffect(uint16 penColor, uint16 x1, uint16 y1, uint1
 void DisplayMan::freeFont(TextFont **font) {
 	if (*font) {
 		if ((*font)->_data)
-			delete[] (*font)->_data;
+			delete[](*font)->_data;
 
 		delete *font;
 		*font = nullptr;
@@ -537,7 +536,7 @@ void DisplayMan::drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, const 
 
 	for (int i = 0; i < numChars; i++) {
 		uint32 realOffset = (_screenWidth * y) + x;
-		uint16 curPage    = realOffset / _screenBytesPerPage;
+		uint16 curPage = realOffset / _screenBytesPerPage;
 		uint32 segmentOffset = realOffset - (curPage * _screenBytesPerPage);
 		int32 leftInSegment = _screenBytesPerPage - segmentOffset;
 		byte *vgaCur = vgaTop + segmentOffset;
@@ -764,9 +763,9 @@ void DisplayMan::doTransWipe(const Common::String filename) {
 					rectFill(0, curY, _screenWidth - 1, curY + 1, 0);
 				curY += 4;
 				linesDone++;
-			}	// while
-		}	// for i
-	}	// for j
+			} // while
+		} // for i
+	} // for j
 
 	if (filename.empty())
 		_vm->_curFileName = _vm->getPictName(true);
@@ -812,9 +811,9 @@ void DisplayMan::doTransWipe(const Common::String filename) {
 				}
 				curY += 4;
 				linesDone++;
-			}	// while
-		}	// for i
-	}	// for j
+			} // while
+		} // for i
+	} // for j
 
 	// bitMapBuffer will be deleted by the Image destructor
 }
@@ -825,19 +824,19 @@ void DisplayMan::doTransition(TransitionType transitionType, const Common::Strin
 	case kTransitionTransporter:
 		doTransWipe(filename);
 		break;
-	case kTransitionScrollWipe:		// only used in scene 7 (street, when teleporting to the surreal maze)
+	case kTransitionScrollWipe: // only used in scene 7 (street, when teleporting to the surreal maze)
 		doScrollWipe(filename);
 		break;
-	case kTransitionScrollBlack:	// only used in scene 7 (street, when teleporting to the surreal maze)
+	case kTransitionScrollBlack: // only used in scene 7 (street, when teleporting to the surreal maze)
 		doScrollBlack();
 		break;
-	case kTransitionScrollBounce:	// only used in scene 7 (street, when teleporting to the surreal maze)
+	case kTransitionScrollBounce: // only used in scene 7 (street, when teleporting to the surreal maze)
 		doScrollBounce();
 		break;
-	case kTransitionReadFirstFrame:	// only used in scene 7 (street, when teleporting to the surreal maze)
+	case kTransitionReadFirstFrame: // only used in scene 7 (street, when teleporting to the surreal maze)
 		readPict(filename, false);
 		break;
-	case kTransitionReadNextFrame:	// only used in scene 7 (street, when teleporting to the surreal maze)
+	case kTransitionReadNextFrame: // only used in scene 7 (street, when teleporting to the surreal maze)
 		_vm->_anim->diffNextFrame();
 		break;
 	case kTransitionNone:
@@ -931,7 +930,7 @@ uint16 DisplayMan::fadeNumIn(uint16 num, uint16 res, uint16 counter) {
 }
 
 uint16 DisplayMan::fadeNumOut(uint16 num, uint16 res, uint16 counter) {
-	return (num - ((((int32) counter) * ((int32)(num - res))) / 15));
+	return (num - ((((int32)counter) * ((int32)(num - res))) / 15));
 }
 
 void DisplayMan::fade(bool fadeIn) {
@@ -940,15 +939,9 @@ void DisplayMan::fade(bool fadeIn) {
 	for (int i = 0; i < 16; i++) {
 		for (int palIdx = 0; palIdx < 16; palIdx++) {
 			if (fadeIn)
-				newPal[palIdx] =
-					(0x00F & fadeNumIn(0x00F & _fadePalette[palIdx], 0, i)) +
-					(0x0F0 & fadeNumIn(0x0F0 & _fadePalette[palIdx], 0, i)) +
-					(0xF00 & fadeNumIn(0xF00 & _fadePalette[palIdx], 0, i));
+				newPal[palIdx] = (0x00F & fadeNumIn(0x00F & _fadePalette[palIdx], 0, i)) + (0x0F0 & fadeNumIn(0x0F0 & _fadePalette[palIdx], 0, i)) + (0xF00 & fadeNumIn(0xF00 & _fadePalette[palIdx], 0, i));
 			else
-				newPal[palIdx] =
-					(0x00F & fadeNumOut(0x00F & _fadePalette[palIdx], 0, i)) +
-					(0x0F0 & fadeNumOut(0x0F0 & _fadePalette[palIdx], 0, i)) +
-					(0xF00 & fadeNumOut(0xF00 & _fadePalette[palIdx], 0, i));
+				newPal[palIdx] = (0x00F & fadeNumOut(0x00F & _fadePalette[palIdx], 0, i)) + (0x0F0 & fadeNumOut(0x0F0 & _fadePalette[palIdx], 0, i)) + (0xF00 & fadeNumOut(0xF00 & _fadePalette[palIdx], 0, i));
 		}
 
 		setAmigaPal(newPal);

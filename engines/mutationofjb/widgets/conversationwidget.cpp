@@ -21,11 +21,11 @@
  */
 
 #include "mutationofjb/widgets/conversationwidget.h"
+#include "common/events.h"
+#include "mutationofjb/font.h"
 #include "mutationofjb/game.h"
 #include "mutationofjb/gamedata.h"
 #include "mutationofjb/guiscreen.h"
-#include "mutationofjb/font.h"
-#include "common/events.h"
 
 namespace MutationOfJB {
 
@@ -35,11 +35,10 @@ enum {
 	CONVERSATION_LINE_HEIGHT = 12
 };
 
-ConversationWidget::ConversationWidget(GuiScreen &gui, const Common::Rect &area, const Graphics::Surface &surface) :
-	Widget(gui, area),
-	_surface(surface),
-	_callback(nullptr) {}
-
+ConversationWidget::ConversationWidget(GuiScreen &gui, const Common::Rect &area, const Graphics::Surface &surface)
+  : Widget(gui, area)
+  , _surface(surface)
+  , _callback(nullptr) {}
 
 void ConversationWidget::setChoice(int choiceNo, const Common::String &str, uint32 data) {
 	if (choiceNo >= CONVERSATION_MAX_CHOICES) {

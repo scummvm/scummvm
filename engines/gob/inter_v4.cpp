@@ -22,23 +22,24 @@
 
 #include "common/str.h"
 
-#include "gob/gob.h"
-#include "gob/inter.h"
-#include "gob/global.h"
 #include "gob/draw.h"
 #include "gob/game.h"
+#include "gob/global.h"
+#include "gob/gob.h"
+#include "gob/inter.h"
 #include "gob/script.h"
-#include "gob/videoplayer.h"
 #include "gob/sound/sound.h"
+#include "gob/videoplayer.h"
 
 namespace Gob {
 
 #define OPCODEVER Inter_v4
-#define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
-#define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
-#define OPCODEGOB(i, x)   _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
+#define OPCODEDRAW(i, x) _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
+#define OPCODEFUNC(i, x) _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
+#define OPCODEGOB(i, x) _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 
-Inter_v4::Inter_v4(GobEngine *vm) : Inter_v3(vm) {
+Inter_v4::Inter_v4(GobEngine *vm)
+  : Inter_v3(vm) {
 }
 
 void Inter_v4::setupOpcodesDraw() {
@@ -121,7 +122,7 @@ void Inter_v4::o4_initScreen() {
 	_vm->_global->_setAllPalette = true;
 
 	_vm->_util->setMousePos(_vm->_global->_inter_mouseX,
-			_vm->_global->_inter_mouseY);
+	                        _vm->_global->_inter_mouseY);
 	_vm->_util->clearPalette();
 
 	_vm->_draw->initScreen();
@@ -145,20 +146,21 @@ void Inter_v4::o4_playVmdOrMusic() {
 
 	VideoPlayer::Properties props;
 
-	props.x          = _vm->_game->_script->readValExpr();
-	props.y          = _vm->_game->_script->readValExpr();
+	props.x = _vm->_game->_script->readValExpr();
+	props.y = _vm->_game->_script->readValExpr();
 	props.startFrame = _vm->_game->_script->readValExpr();
-	props.lastFrame  = _vm->_game->_script->readValExpr();
-	props.breakKey   = _vm->_game->_script->readValExpr();
-	props.flags      = _vm->_game->_script->readValExpr();
-	props.palStart   = _vm->_game->_script->readValExpr();
-	props.palEnd     = _vm->_game->_script->readValExpr();
-	props.palCmd     = 1 << (props.flags & 0x3F);
+	props.lastFrame = _vm->_game->_script->readValExpr();
+	props.breakKey = _vm->_game->_script->readValExpr();
+	props.flags = _vm->_game->_script->readValExpr();
+	props.palStart = _vm->_game->_script->readValExpr();
+	props.palEnd = _vm->_game->_script->readValExpr();
+	props.palCmd = 1 << (props.flags & 0x3F);
 
 	debugC(1, kDebugVideo, "Playing video \"%s\" @ %d+%d, frames %d - %d, "
-			"paletteCmd %d (%d - %d), flags %X", file.c_str(),
-			props.x, props.y, props.startFrame, props.lastFrame,
-			props.palCmd, props.palStart, props.palEnd, props.flags);
+	                       "paletteCmd %d (%d - %d), flags %X",
+	       file.c_str(),
+	       props.x, props.y, props.startFrame, props.lastFrame,
+	       props.palCmd, props.palStart, props.palEnd, props.flags);
 
 	bool close = false;
 	if (props.lastFrame == -1) {
@@ -166,7 +168,7 @@ void Inter_v4::o4_playVmdOrMusic() {
 	} else if (props.lastFrame == -2) {
 	} else if (props.lastFrame == -3) {
 
-		props.flags  = VideoPlayer::kFlagOtherSurface;
+		props.flags = VideoPlayer::kFlagOtherSurface;
 		props.sprite = -1;
 
 		_vm->_mult->_objects[props.startFrame].pAnimData->animation = -props.startFrame - 1;
@@ -223,7 +225,7 @@ void Inter_v4::o4_playVmdOrMusic() {
 
 	int slot = 0;
 	if (!file.empty() && ((slot = _vm->_vidPlayer->openVideo(true, file, props)) < 0)) {
-		WRITE_VAR(11, (uint32) -1);
+		WRITE_VAR(11, (uint32)-1);
 		return;
 	}
 

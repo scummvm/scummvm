@@ -23,9 +23,9 @@
 #ifndef ENGINES_METAENGINE_H
 #define ENGINES_METAENGINE_H
 
-#include "common/scummsys.h"
-#include "common/error.h"
 #include "common/array.h"
+#include "common/error.h"
+#include "common/scummsys.h"
 
 #include "engines/game.h"
 #include "engines/savestate.h"
@@ -45,10 +45,10 @@ class String;
  * Currently, this can only be used for options with checkboxes.
  */
 struct ExtraGuiOption {
-	const char *label;          // option label, e.g. "Fullscreen mode"
-	const char *tooltip;        // option tooltip (when the mouse hovers above it)
-	const char *configOption;   // confMan key, e.g. "fullscreen"
-	bool defaultState;          // the detault state of the checkbox (checked or not)
+	const char *label; // option label, e.g. "Fullscreen mode"
+	const char *tooltip; // option tooltip (when the mouse hovers above it)
+	const char *configOption; // confMan key, e.g. "fullscreen"
+	bool defaultState; // the detault state of the checkbox (checked or not)
 };
 
 typedef Common::Array<ExtraGuiOption> ExtraGuiOptions;

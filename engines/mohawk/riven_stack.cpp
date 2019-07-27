@@ -23,11 +23,11 @@
 #include "mohawk/riven_stack.h"
 
 #include "mohawk/cursors.h"
+#include "mohawk/resource.h"
 #include "mohawk/riven.h"
 #include "mohawk/riven_card.h"
 #include "mohawk/riven_graphics.h"
 #include "mohawk/riven_video.h"
-#include "mohawk/resource.h"
 
 #include "common/events.h"
 #include "common/translation.h"
@@ -36,12 +36,12 @@
 
 namespace Mohawk {
 
-RivenStack::RivenStack(MohawkEngine_Riven *vm, uint16 id) :
-		_vm(vm),
-		_id(id),
-		_mouseIsDown(false),
-		_shouldRefreshMouseCursor(false),
-		_keyAction(kKeyActionNone) {
+RivenStack::RivenStack(MohawkEngine_Riven *vm, uint16 id)
+  : _vm(vm)
+  , _id(id)
+  , _mouseIsDown(false)
+  , _shouldRefreshMouseCursor(false)
+  , _keyAction(kKeyActionNone) {
 	removeTimer();
 
 	loadResourceNames();
@@ -52,7 +52,6 @@ RivenStack::RivenStack(MohawkEngine_Riven *vm, uint16 id) :
 }
 
 RivenStack::~RivenStack() {
-
 }
 
 uint16 RivenStack::getId() const {
@@ -69,57 +68,57 @@ void RivenStack::loadResourceNames() {
 
 Common::String RivenStack::getName(RivenNameResource nameResource, uint16 nameId) const {
 	switch (nameResource) {
-		case kVariableNames:
-			return _varNames.getName(nameId);
-		case kExternalCommandNames:
-			return _externalCommandNames.getName(nameId);
-		case kStackNames:
-			return _stackNames.getName(nameId);
-		case kCardNames:
-			return _cardNames.getName(nameId);
-		case kHotspotNames:
-			return _hotspotNames.getName(nameId);
-		default:
-			error("Unknown name resource %d", nameResource);
+	case kVariableNames:
+		return _varNames.getName(nameId);
+	case kExternalCommandNames:
+		return _externalCommandNames.getName(nameId);
+	case kStackNames:
+		return _stackNames.getName(nameId);
+	case kCardNames:
+		return _cardNames.getName(nameId);
+	case kHotspotNames:
+		return _hotspotNames.getName(nameId);
+	default:
+		error("Unknown name resource %d", nameResource);
 	}
 }
 
 int16 RivenStack::getIdFromName(RivenNameResource nameResource, const Common::String &name) const {
 	switch (nameResource) {
-		case kVariableNames:
-			return _varNames.getNameId(name);
-		case kExternalCommandNames:
-			return _externalCommandNames.getNameId(name);
-		case kStackNames:
-			return _stackNames.getNameId(name);
-		case kCardNames:
-			return _cardNames.getNameId(name);
-		case kHotspotNames:
-			return _hotspotNames.getNameId(name);
-		default:
-			error("Unknown name resource %d", nameResource);
+	case kVariableNames:
+		return _varNames.getNameId(name);
+	case kExternalCommandNames:
+		return _externalCommandNames.getNameId(name);
+	case kStackNames:
+		return _stackNames.getNameId(name);
+	case kCardNames:
+		return _cardNames.getNameId(name);
+	case kHotspotNames:
+		return _hotspotNames.getNameId(name);
+	default:
+		error("Unknown name resource %d", nameResource);
 	}
 }
 
 void RivenStack::registerName(RivenNameResource nameResource, uint16 nameId, const Common::String &name) {
 	switch (nameResource) {
-		case kVariableNames:
-			_varNames.registerName(nameId, name);
-			break;
-		case kExternalCommandNames:
-			_externalCommandNames.registerName(nameId, name);
-			break;
-		case kStackNames:
-			_stackNames.registerName(nameId, name);
-			break;
-		case kCardNames:
-			_cardNames.registerName(nameId, name);
-			break;
-		case kHotspotNames:
-			_hotspotNames.registerName(nameId, name);
-			break;
-		default:
-			error("Unknown name resource %d", nameResource);
+	case kVariableNames:
+		_varNames.registerName(nameId, name);
+		break;
+	case kExternalCommandNames:
+		_externalCommandNames.registerName(nameId, name);
+		break;
+	case kStackNames:
+		_stackNames.registerName(nameId, name);
+		break;
+	case kCardNames:
+		_cardNames.registerName(nameId, name);
+		break;
+	case kHotspotNames:
+		_hotspotNames.registerName(nameId, name);
+		break;
+	default:
+		error("Unknown name resource %d", nameResource);
 	}
 }
 
@@ -145,7 +144,7 @@ uint16 RivenStack::getCardStackId(uint32 globalId) const {
 	}
 
 	if (index < 0)
-		error ("Could not match RMAP code %08x", globalId);
+		error("Could not match RMAP code %08x", globalId);
 
 	return index;
 }
@@ -169,7 +168,8 @@ void RivenStack::dump() const {
 	debugN("\n");
 
 	for (uint i = 0; i < _cardIdMap.size(); i++) {
-		if (!_vm->hasResource(ID_CARD, i)) continue;
+		if (!_vm->hasResource(ID_CARD, i))
+			continue;
 
 		RivenCard *card = new RivenCard(_vm, i);
 		card->dump();
@@ -202,7 +202,7 @@ uint16 RivenStack::getComboDigit(uint32 correctCombo, uint32 digit) {
 
 void RivenStack::runDemoBoundaryDialog() {
 	GUI::MessageDialog dialog(_("Exploration beyond this point available only within the full version of\n"
-			                          "the game."));
+	                            "the game."));
 	dialog.runModal();
 }
 
@@ -266,12 +266,11 @@ void RivenStack::runCredits(uint16 video, uint32 delay, uint32 videoFrameCountOv
 
 	// Go to the main menu
 	RivenScriptPtr goToMainMenu = _vm->_scriptMan->createScriptWithCommand(
-			new RivenStackChangeCommand(_vm, kStackAspit, 1, true, true));
+	  new RivenStackChangeCommand(_vm, kStackAspit, 1, true, true));
 	_vm->_scriptMan->runScript(goToMainMenu, true);
 }
 
 void RivenStack::installCardTimer() {
-
 }
 
 void RivenStack::onMouseDown(const Common::Point &mouse) {
@@ -373,52 +372,52 @@ void RivenStack::onKeyPressed(const Common::KeyState &keyState) {
 
 RivenKeyAction RivenStack::mapKeyStateToKeyAction(const Common::KeyState &keyState) {
 	switch (keyState.keycode) {
-		case Common::KEYCODE_ESCAPE:
-			return kKeyActionSkip;
-		case Common::KEYCODE_KP8:
-			if (keyState.flags & Common::KBD_NUM) {
-				break;
-			}
-			// Fallthrough
-		case Common::KEYCODE_UP:
-			return kKeyActionMoveForward;
-		case Common::KEYCODE_KP7:
-			if (keyState.flags & Common::KBD_NUM) {
-				break;
-			}
-			return kKeyActionMoveForwardLeft;
-		case Common::KEYCODE_KP9:
-			if (keyState.flags & Common::KBD_NUM) {
-				break;
-			}
-			return kKeyActionMoveForwardRight;
-		case Common::KEYCODE_KP4:
-			if (keyState.flags & Common::KBD_NUM) {
-				break;
-			}
-			// Fallthrough
-		case Common::KEYCODE_LEFT:
-			return kKeyActionMoveLeft;
-		case Common::KEYCODE_KP6:
-			if (keyState.flags & Common::KBD_NUM) {
-				break;
-			}
-			// Fallthrough
-		case Common::KEYCODE_RIGHT:
-			return kKeyActionMoveRight;
-		case Common::KEYCODE_KP2:
-			if (keyState.flags & Common::KBD_NUM) {
-				break;
-			}
-			// Fallthrough
-		case Common::KEYCODE_DOWN:
-			return kKeyActionMoveBack;
-		case Common::KEYCODE_PAGEUP:
-			return kKeyActionLookUp;
-		case Common::KEYCODE_PAGEDOWN:
-			return kKeyActionLookDown;
-		default:
+	case Common::KEYCODE_ESCAPE:
+		return kKeyActionSkip;
+	case Common::KEYCODE_KP8:
+		if (keyState.flags & Common::KBD_NUM) {
 			break;
+		}
+		// Fallthrough
+	case Common::KEYCODE_UP:
+		return kKeyActionMoveForward;
+	case Common::KEYCODE_KP7:
+		if (keyState.flags & Common::KBD_NUM) {
+			break;
+		}
+		return kKeyActionMoveForwardLeft;
+	case Common::KEYCODE_KP9:
+		if (keyState.flags & Common::KBD_NUM) {
+			break;
+		}
+		return kKeyActionMoveForwardRight;
+	case Common::KEYCODE_KP4:
+		if (keyState.flags & Common::KBD_NUM) {
+			break;
+		}
+		// Fallthrough
+	case Common::KEYCODE_LEFT:
+		return kKeyActionMoveLeft;
+	case Common::KEYCODE_KP6:
+		if (keyState.flags & Common::KBD_NUM) {
+			break;
+		}
+		// Fallthrough
+	case Common::KEYCODE_RIGHT:
+		return kKeyActionMoveRight;
+	case Common::KEYCODE_KP2:
+		if (keyState.flags & Common::KBD_NUM) {
+			break;
+		}
+		// Fallthrough
+	case Common::KEYCODE_DOWN:
+		return kKeyActionMoveBack;
+	case Common::KEYCODE_PAGEUP:
+		return kKeyActionLookUp;
+	case Common::KEYCODE_PAGEDOWN:
+		return kKeyActionLookDown;
+	default:
+		break;
 	}
 
 	return kKeyActionNone;
@@ -449,7 +448,7 @@ void RivenStack::checkTimer() {
 	// is called from an inner game loop.
 	if (_vm->getTotalPlayTime() >= _timerTime) {
 		RivenScriptPtr script = _vm->_scriptMan->createScriptWithCommand(
-				new RivenTimerCommand(_vm, _timerProc));
+		  new RivenTimerCommand(_vm, _timerProc));
 		_vm->_scriptMan->runScript(script, true);
 	}
 }
@@ -484,7 +483,6 @@ void RivenStack::waitForPageTurnSound() {
 }
 
 RivenNameList::RivenNameList() {
-
 }
 
 RivenNameList::RivenNameList(MohawkEngine_Riven *vm, uint16 id) {
@@ -492,7 +490,6 @@ RivenNameList::RivenNameList(MohawkEngine_Riven *vm, uint16 id) {
 }
 
 RivenNameList::~RivenNameList() {
-
 }
 
 void RivenNameList::loadResource(MohawkEngine_Riven *vm, uint16 id) {
@@ -537,7 +534,7 @@ int16 RivenNameList::getNameId(const Common::String &name) const {
 	int midpoint = 0;
 
 	// Binary search using the sorted _index array
-	while (low <= high)	{
+	while (low <= high) {
 		midpoint = low + (high - low) / 2;
 
 		const Common::String &midpointName = _names[_index[midpoint]];
@@ -566,7 +563,7 @@ void RivenNameList::registerName(uint16 nameId, const Common::String &name) {
 }
 
 namespace RivenStacks {
-static const char *names[] = {
+	static const char *names[] = {
 		"<unknown>",
 		"ospit",
 		"pspit",
@@ -576,24 +573,24 @@ static const char *names[] = {
 		"gspit",
 		"jspit",
 		"aspit"
-};
+	};
 
-const char *getName(uint16 stackId) {
-	// Sanity check.
-	assert(stackId < ARRAYSIZE(names));
+	const char *getName(uint16 stackId) {
+		// Sanity check.
+		assert(stackId < ARRAYSIZE(names));
 
-	return names[stackId];
-}
-
-uint16 getId(const char *stackName) {
-	for (byte i = 0; i < ARRAYSIZE(names); i++) {
-		if (scumm_stricmp(stackName, names[i]) == 0) {
-			return i;
-		}
+		return names[stackId];
 	}
 
-	return kStackUnknown;
-}
+	uint16 getId(const char *stackName) {
+		for (byte i = 0; i < ARRAYSIZE(names); i++) {
+			if (scumm_stricmp(stackName, names[i]) == 0) {
+				return i;
+			}
+		}
+
+		return kStackUnknown;
+	}
 } // End of namespace RivenStacks
 
 } // End of namespace Mohawk

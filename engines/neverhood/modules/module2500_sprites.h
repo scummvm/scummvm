@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE2500_SPRITES_H
 #define NEVERHOOD_MODULES_MODULE2500_SPRITES_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -32,6 +32,7 @@ namespace Neverhood {
 class SsScene2504Button : public StaticSprite {
 public:
 	SsScene2504Button(NeverhoodEngine *vm);
+
 protected:
 	int _countdown;
 	bool _isSoundPlaying;
@@ -42,6 +43,7 @@ protected:
 class KmScene2501 : public Klaymen {
 public:
 	KmScene2501(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };

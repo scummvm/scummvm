@@ -50,6 +50,7 @@ public:
 	int getCount() const { return _entriesCount; }
 	uint32 getEntryType(int index) { return _entries[index]._type; }
 	uint32 getEntrySize(int index) { return _entries[index]._outSize1; }
+
 protected:
 	Common::File *_fd;
 	int _entriesCount;
@@ -67,6 +68,7 @@ public:
 	byte *loadResource(int resourceId);
 	uint32 getResourceType(int resourceId);
 	uint32 getResourceSize(int resourceId);
+
 protected:
 	DatArchive *_datArchives[kMaxDatArchives];
 };

@@ -28,7 +28,9 @@
 
 namespace Prince {
 
-MhwanhDecoder::MhwanhDecoder() : _surface(nullptr), _palette(nullptr) {
+MhwanhDecoder::MhwanhDecoder()
+  : _surface(nullptr)
+  , _palette(nullptr) {
 }
 
 MhwanhDecoder::~MhwanhDecoder() {

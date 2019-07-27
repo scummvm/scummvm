@@ -26,7 +26,7 @@
 #ifndef GAMEDATA_H
 #define GAMEDATA_H
 
-const char *gameDataEn[] =  {
+const char *gameDataEn[] = {
 	"Calm within the storm$",
 	"Discussed in colours$",
 	"Your mauve!$",
@@ -42,7 +42,9 @@ const char *gameDataEn[] =  {
 	"Onions, cinnamon and spirits$",
 	"A place seldom visited$",
 	"Humidity and decay$",
-	"Sorry, no ""door to door""$",
+	"Sorry, no "
+	"door to door"
+	"$",
 	"Rotting corpse: deady cryptomania$",
 	"And what's more, there are disused traps$",
 	"It's already open$",
@@ -1203,7 +1205,7 @@ const char *gameDataFr[] = {
 	"  rorL$",
 };
 
-const char *gameDataDe[] =  {
+const char *gameDataDe[] = {
 	"Ruhe vor dem Sturm$",
 	"Geschmacklose Farben$",
 	"Lila, der letzte Versuch$",

@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "mads/globals.h"
+#include "common/scummsys.h"
 
 namespace MADS {
 

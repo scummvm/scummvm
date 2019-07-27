@@ -29,14 +29,14 @@
 #ifndef WINTERMUTE_BASE_ACTIVE_RECT_H
 #define WINTERMUTE_BASE_ACTIVE_RECT_H
 
-#include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/base/base.h"
+#include "engines/wintermute/math/rect32.h"
 
 namespace Wintermute {
 class BaseRegion;
 class BaseSubFrame;
 class BaseObject;
-class BaseActiveRect: BaseClass {
+class BaseActiveRect : BaseClass {
 public:
 	void clipRect();
 	bool _precise;
@@ -52,7 +52,6 @@ public:
 	BaseActiveRect(BaseGame *inGameOwner, BaseObject *owner, BaseSubFrame *frame, int x, int y, int width, int height, float zoomX = 100, float zoomY = 100, bool precise = true);
 	BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseRegion *region, int offsetX, int offsetY);
 	virtual ~BaseActiveRect();
-
 };
 
 } // End of namespace Wintermute

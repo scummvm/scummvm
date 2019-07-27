@@ -25,7 +25,9 @@
 namespace Illusions {
 
 GamArchive::GamArchive(const char *filename)
-	: _fd(0), _groupCount(0), _groups(0) {
+  : _fd(0)
+  , _groupCount(0)
+  , _groups(0) {
 	_fd = new Common::File();
 	if (!_fd->open(filename))
 		error("GamArchive::GamArchive() Could not open %s", filename);
@@ -40,7 +42,7 @@ byte *GamArchive::readResource(uint32 sceneId, uint32 resId, uint32 &dataSize) {
 	const GamFileEntry *fileEntry = getGroupFileEntry(sceneId, resId);
 	_fd->seek(fileEntry->_fileOffset);
 	dataSize = fileEntry->_fileSize;
-	byte *data = (byte*)malloc(dataSize);
+	byte *data = (byte *)malloc(dataSize);
 	_fd->read(data, dataSize);
 	return data;
 }

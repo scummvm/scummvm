@@ -31,75 +31,75 @@
 namespace Glk {
 namespace Frotz {
 
-/**
+	/**
  * Implements a font stored as a grid on a passed surface
  */
-class BitmapFont : public Graphics::Font {
-private:
-	Common::Array<Graphics::ManagedSurface> _chars;
-	size_t _startingChar;
-	Common::Point _size;
-protected:
-	/**
+	class BitmapFont : public Graphics::Font {
+	private:
+		Common::Array<Graphics::ManagedSurface> _chars;
+		size_t _startingChar;
+		Common::Point _size;
+
+	protected:
+		/**
 	 * Calculate a character width 
 	 */
-	int getSourceCharacterWidth(uint charIndex, const Graphics::Surface &src,
-		const Common::Rect &charBounds);
+		int getSourceCharacterWidth(uint charIndex, const Graphics::Surface &src,
+		                            const Common::Rect &charBounds);
 
-	/**
+		/**
 	 * Constructor
 	 */
-	BitmapFont(const Graphics::Surface &src, const Common::Point &size,
-		uint srcWidth, uint srcHeight, unsigned char startingChar, bool isFixedWidth);
+		BitmapFont(const Graphics::Surface &src, const Common::Point &size,
+		           uint srcWidth, uint srcHeight, unsigned char startingChar, bool isFixedWidth);
 
-public:
-	/**
+	public:
+		/**
 	 * Get the font height
 	 */
-	virtual int getFontHeight() const override { return _size.y; }
+		virtual int getFontHeight() const override { return _size.y; }
 
-	/**
+		/**
 	 * Get the maximum character width
 	 */
-	virtual int getMaxCharWidth() const override { return _size.x; }
+		virtual int getMaxCharWidth() const override { return _size.x; }
 
-	/**
+		/**
 	 * Get the width of the given character
 	 */
-	virtual int getCharWidth(uint32 chr) const override { return _chars[chr - _startingChar].w; }
+		virtual int getCharWidth(uint32 chr) const override { return _chars[chr - _startingChar].w; }
 
-	/**
+		/**
 	 * Draw a character
 	 */
-	virtual void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
-};
+		virtual void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
+	};
 
-/**
+	/**
  * Subclass for fixed width fonts
  */
-class FixedWidthBitmapFont : public BitmapFont {
-public:
-	/**
+	class FixedWidthBitmapFont : public BitmapFont {
+	public:
+		/**
 	 * Constructor
 	 */
-	FixedWidthBitmapFont(const Graphics::Surface &src, const Common::Point &size,
-		uint srcWidth = 8, uint srcHeight = 8, unsigned char startingChar = ' ') :
-		BitmapFont(src, size, srcWidth, srcHeight, startingChar, true) {}
-};
+		FixedWidthBitmapFont(const Graphics::Surface &src, const Common::Point &size,
+		                     uint srcWidth = 8, uint srcHeight = 8, unsigned char startingChar = ' ')
+		  : BitmapFont(src, size, srcWidth, srcHeight, startingChar, true) {}
+	};
 
-
-/**
+	/**
  * Subclass for fixed width fonts
  */
-class VariableWidthBitmapFont : public BitmapFont {
-public:
-	/**
+	class VariableWidthBitmapFont : public BitmapFont {
+	public:
+		/**
 	 * Constructor
 	 */
-	VariableWidthBitmapFont(const Graphics::Surface &src, const Common::Point &size,
-		uint srcWidth = 8, uint srcHeight = 8, unsigned char startingChar = ' ') :
-		BitmapFont(src, size, srcWidth, srcHeight, startingChar, false) {}
-};
+		VariableWidthBitmapFont(const Graphics::Surface &src, const Common::Point &size,
+		                        uint srcWidth = 8, uint srcHeight = 8, unsigned char startingChar = ' ')
+		  : BitmapFont(src, size, srcWidth, srcHeight, startingChar, false) {}
+	};
 
 } // End of namespace Frotz
 } // End of namespace Glk

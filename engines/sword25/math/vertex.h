@@ -52,9 +52,12 @@ namespace Sword25 {
  */
 class Vertex : public Common::Point {
 public:
-	Vertex() : Point() {}
-	Vertex(int x_, int y_) : Point(x_, y_) {}
-	Vertex(Point p) : Point(p) {}
+	Vertex()
+	  : Point() {}
+	Vertex(int x_, int y_)
+	  : Point(x_, y_) {}
+	Vertex(Point p)
+	  : Point(p) {}
 
 	/**
 	 * Calculates the square of the distance between two Vertecies.

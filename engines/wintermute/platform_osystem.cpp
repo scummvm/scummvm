@@ -26,13 +26,13 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/wintermute.h"
-#include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
-#include "common/textconsole.h"
 #include "common/system.h"
+#include "common/textconsole.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
+#include "engines/wintermute/wintermute.h"
 
 namespace Wintermute {
 
@@ -114,31 +114,29 @@ void BasePlatform::handleEvent(Common::Event *event) {
 			_gameRef->handleMouseWheel(event->mouse.y);
 		}
 		break;
-// Focus-events have been removed (_gameRef->onActivate originally)
+		// Focus-events have been removed (_gameRef->onActivate originally)
 	case Common::EVENT_RTL:
 		_gameRef->_quitting = true;
 		break;
 	case Common::EVENT_QUIT:
-// Block kept in case we want to support autoSaveOnExit.
-// Originally this was the behaviour for WME Lite on iOS:
-//		if (_gameRef) {
-//			_gameRef->AutoSaveOnExit();
-//			_gameRef->_quitting = true;
-//		}
+		// Block kept in case we want to support autoSaveOnExit.
+		// Originally this was the behaviour for WME Lite on iOS:
+		//		if (_gameRef) {
+		//			_gameRef->AutoSaveOnExit();
+		//			_gameRef->_quitting = true;
+		//		}
 
-// The engine CAN query for closing, but we disable it for now, as the EVENT_QUIT-event
-// can't be stopped.
-//		if (_gameRef) {
-//			_gameRef->onWindowClose();
-//		}
+		// The engine CAN query for closing, but we disable it for now, as the EVENT_QUIT-event
+		// can't be stopped.
+		//		if (_gameRef) {
+		//			_gameRef->onWindowClose();
+		//		}
 		break;
 	default:
 		// TODO: Do we care about any other events?
 		break;
-
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // Win32 API bindings
@@ -175,15 +173,13 @@ bool BasePlatform::ptInRect(Rect32 *lprc, Point32 p) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BasePlatform::intersectRect(Rect32 *lprcDst, const Rect32 *lprcSrc1, const Rect32 *lprcSrc2) {
-	if (lprcSrc1->isRectEmpty() || lprcSrc2->isRectEmpty() ||
-	        lprcSrc1->left >= lprcSrc2->right || lprcSrc2->left >= lprcSrc1->right ||
-	        lprcSrc1->top >= lprcSrc2->bottom || lprcSrc2->top >= lprcSrc1->bottom) {
+	if (lprcSrc1->isRectEmpty() || lprcSrc2->isRectEmpty() || lprcSrc1->left >= lprcSrc2->right || lprcSrc2->left >= lprcSrc1->right || lprcSrc1->top >= lprcSrc2->bottom || lprcSrc2->top >= lprcSrc1->bottom) {
 		lprcDst->setEmpty();
 		return false;
 	}
-	lprcDst->left   = MAX(lprcSrc1->left, lprcSrc2->left);
-	lprcDst->right  = MIN(lprcSrc1->right, lprcSrc2->right);
-	lprcDst->top    = MAX(lprcSrc1->top, lprcSrc2->top);
+	lprcDst->left = MAX(lprcSrc1->left, lprcSrc2->left);
+	lprcDst->right = MIN(lprcSrc1->right, lprcSrc2->right);
+	lprcDst->top = MAX(lprcSrc1->top, lprcSrc2->top);
 	lprcDst->bottom = MIN(lprcSrc1->bottom, lprcSrc2->bottom);
 
 	return true;
@@ -202,9 +198,9 @@ bool BasePlatform::unionRect(Rect32 *lprcDst, Rect32 *lprcSrc1, Rect32 *lprcSrc2
 		if (lprcSrc2->isRectEmpty()) {
 			*lprcDst = *lprcSrc1;
 		} else {
-			lprcDst->left   = MIN(lprcSrc1->left, lprcSrc2->left);
-			lprcDst->top    = MIN(lprcSrc1->top, lprcSrc2->top);
-			lprcDst->right  = MAX(lprcSrc1->right, lprcSrc2->right);
+			lprcDst->left = MIN(lprcSrc1->left, lprcSrc2->left);
+			lprcDst->top = MIN(lprcSrc1->top, lprcSrc2->top);
+			lprcDst->right = MAX(lprcSrc1->right, lprcSrc2->right);
 			lprcDst->bottom = MAX(lprcSrc1->bottom, lprcSrc2->bottom);
 		}
 	}

@@ -23,11 +23,11 @@
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/object.h"
+#include "scumm/players/player_towns.h"
 #include "scumm/resource.h"
 #include "scumm/scumm_v3.h"
 #include "scumm/scumm_v5.h"
 #include "scumm/sound.h"
-#include "scumm/players/player_towns.h"
 #include "scumm/util.h"
 #include "scumm/verbs.h"
 
@@ -35,7 +35,7 @@
 
 namespace Scumm {
 
-#define OPCODE(i, x)	_opcodes[i]._OPCODE(ScummEngine_v5, x)
+#define OPCODE(i, x) _opcodes[i]._OPCODE(ScummEngine_v5, x)
 
 void ScummEngine_v5::setupOpcodes() {
 	/* 00 */
@@ -97,7 +97,7 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0x2c, o5_cursorCommand);
 	OPCODE(0x2d, o5_putActorInRoom);
 	OPCODE(0x2e, o5_delay);
-//	OPCODE(0x2f, o5_ifNotState);
+	//	OPCODE(0x2f, o5_ifNotState);
 	/* 30 */
 	OPCODE(0x30, o5_matrixOps);
 	OPCODE(0x31, o5_getInventoryCount);
@@ -125,7 +125,7 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0x43, o5_getActorX);
 	/* 44 */
 	OPCODE(0x44, o5_isLess);
-//	OPCODE(0x45, o5_drawObject);
+	//	OPCODE(0x45, o5_drawObject);
 	OPCODE(0x46, o5_increment);
 	OPCODE(0x47, o5_setState);
 	/* 48 */
@@ -137,9 +137,9 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0x4c, o5_soundKludge);
 	OPCODE(0x4d, o5_walkActorToActor);
 	OPCODE(0x4e, o5_putActorAtObject);
-//	OPCODE(0x4f, o5_ifState);
+	//	OPCODE(0x4f, o5_ifState);
 	/* 50 */
-//	OPCODE(0x50, o5_pickupObjectOld);
+	//	OPCODE(0x50, o5_pickupObjectOld);
 	OPCODE(0x51, o5_animateActor);
 	OPCODE(0x52, o5_actorFollowCamera);
 	OPCODE(0x53, o5_actorOps);
@@ -154,7 +154,7 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0x5a, o5_add);
 	OPCODE(0x5b, o5_divide);
 	/* 5C */
-//	OPCODE(0x5c, o5_oldRoomEffect);
+	//	OPCODE(0x5c, o5_oldRoomEffect);
 	OPCODE(0x5d, o5_setClass);
 	OPCODE(0x5e, o5_walkActorTo);
 	OPCODE(0x5f, o5_isActorInBox);
@@ -177,7 +177,7 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0x6c, o5_getActorWidth);
 	OPCODE(0x6d, o5_putActorInRoom);
 	OPCODE(0x6e, o5_stopObjectScript);
-//	OPCODE(0x6f, o5_ifNotState);
+	//	OPCODE(0x6f, o5_ifNotState);
 	/* 70 */
 	OPCODE(0x70, o5_lights);
 	OPCODE(0x71, o5_getActorCostume);
@@ -257,7 +257,7 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0xac, o5_expression);
 	OPCODE(0xad, o5_putActorInRoom);
 	OPCODE(0xae, o5_wait);
-//	OPCODE(0xaf, o5_ifNotState);
+	//	OPCODE(0xaf, o5_ifNotState);
 	/* B0 */
 	OPCODE(0xb0, o5_matrixOps);
 	OPCODE(0xb1, o5_getInventoryCount);
@@ -285,7 +285,7 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0xc3, o5_getActorX);
 	/* C4 */
 	OPCODE(0xc4, o5_isLess);
-//	OPCODE(0xc5, o5_drawObject);
+	//	OPCODE(0xc5, o5_drawObject);
 	OPCODE(0xc6, o5_decrement);
 	OPCODE(0xc7, o5_setState);
 	/* C8 */
@@ -297,9 +297,9 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0xcc, o5_pseudoRoom);
 	OPCODE(0xcd, o5_walkActorToActor);
 	OPCODE(0xce, o5_putActorAtObject);
-//	OPCODE(0xcf, o5_ifState);
+	//	OPCODE(0xcf, o5_ifState);
 	/* D0 */
-//	OPCODE(0xd0, o5_pickupObjectOld);
+	//	OPCODE(0xd0, o5_pickupObjectOld);
 	OPCODE(0xd1, o5_animateActor);
 	OPCODE(0xd2, o5_actorFollowCamera);
 	OPCODE(0xd3, o5_actorOps);
@@ -314,7 +314,7 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0xda, o5_add);
 	OPCODE(0xdb, o5_divide);
 	/* DC */
-//	OPCODE(0xdc, o5_oldRoomEffect);
+	//	OPCODE(0xdc, o5_oldRoomEffect);
 	OPCODE(0xdd, o5_setClass);
 	OPCODE(0xde, o5_walkActorTo);
 	OPCODE(0xdf, o5_isActorInBox);
@@ -337,7 +337,7 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0xec, o5_getActorWidth);
 	OPCODE(0xed, o5_putActorInRoom);
 	OPCODE(0xee, o5_stopObjectScript);
-//	OPCODE(0xef, o5_ifNotState);
+	//	OPCODE(0xef, o5_ifNotState);
 	/* F0 */
 	OPCODE(0xf0, o5_lights);
 	OPCODE(0xf1, o5_getActorCostume);
@@ -418,14 +418,11 @@ void ScummEngine_v5::o5_actorFromPos() {
 }
 
 void ScummEngine_v5::o5_actorOps() {
-	static const byte convertTable[20] =
-		{ 1, 0, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 20 };
+	static const byte convertTable[20] = { 1, 0, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 20 };
 	// Fix for bug #2233 "MI2 FM-TOWNS: Elaine's mappiece directly flies to treehouse"
 	// There's extra code inserted in script 45 from room 45 that caused that behaviour,
 	// the code below just skips the extra script code.
-	if (_game.id == GID_MONKEY2 && _game.platform == Common::kPlatformFMTowns &&
-		vm.slot[_currentScript].number == 45 && _currentRoom == 45 &&
-		(_scriptPointer - _scriptOrgPointer == 0xA9)) {
+	if (_game.id == GID_MONKEY2 && _game.platform == Common::kPlatformFMTowns && vm.slot[_currentScript].number == 45 && _currentRoom == 45 && (_scriptPointer - _scriptOrgPointer == 0xA9)) {
 		_scriptPointer += 0xCF - 0xA1;
 		writeVar(32811, 0); // clear bit 43
 		return;
@@ -439,67 +436,67 @@ void ScummEngine_v5::o5_actorOps() {
 			_opcode = (_opcode & 0xE0) | convertTable[(_opcode & 0x1F) - 1];
 
 		switch (_opcode & 0x1F) {
-		case 0:										/* dummy case */
+		case 0: /* dummy case */
 			getVarOrDirectByte(PARAM_1);
 			break;
-		case 1:			// SO_COSTUME
+		case 1: // SO_COSTUME
 			a->setActorCostume(getVarOrDirectByte(PARAM_1));
 			break;
-		case 2:			// SO_STEP_DIST
+		case 2: // SO_STEP_DIST
 			i = getVarOrDirectByte(PARAM_1);
 			j = getVarOrDirectByte(PARAM_2);
 			a->setActorWalkSpeed(i, j);
 			break;
-		case 3:			// SO_SOUND
+		case 3: // SO_SOUND
 			a->_sound[0] = getVarOrDirectByte(PARAM_1);
 			break;
-		case 4:			// SO_WALK_ANIMATION
+		case 4: // SO_WALK_ANIMATION
 			a->_walkFrame = getVarOrDirectByte(PARAM_1);
 			break;
-		case 5:			// SO_TALK_ANIMATION
+		case 5: // SO_TALK_ANIMATION
 			a->_talkStartFrame = getVarOrDirectByte(PARAM_1);
 			a->_talkStopFrame = getVarOrDirectByte(PARAM_2);
 			break;
-		case 6:			// SO_STAND_ANIMATION
+		case 6: // SO_STAND_ANIMATION
 			a->_standFrame = getVarOrDirectByte(PARAM_1);
 			break;
-		case 7:			// SO_ANIMATION
+		case 7: // SO_ANIMATION
 			getVarOrDirectByte(PARAM_1);
 			getVarOrDirectByte(PARAM_2);
 			getVarOrDirectByte(PARAM_3);
 			break;
-		case 8:			// SO_DEFAULT
+		case 8: // SO_DEFAULT
 			a->initActor(0);
 			break;
-		case 9:			// SO_ELEVATION
+		case 9: // SO_ELEVATION
 			a->setElevation(getVarOrDirectWord(PARAM_1));
 			break;
-		case 10:		// SO_ANIMATION_DEFAULT
+		case 10: // SO_ANIMATION_DEFAULT
 			a->_initFrame = 1;
 			a->_walkFrame = 2;
 			a->_standFrame = 3;
 			a->_talkStartFrame = 4;
 			a->_talkStopFrame = 5;
 			break;
-		case 11:		// SO_PALETTE
+		case 11: // SO_PALETTE
 			i = getVarOrDirectByte(PARAM_1);
 			j = getVarOrDirectByte(PARAM_2);
 			assertRange(0, i, 31, "o5_actorOps: palette slot");
 			a->setPalette(i, j);
 			break;
-		case 12:		// SO_TALK_COLOR
+		case 12: // SO_TALK_COLOR
 			a->_talkColor = getVarOrDirectByte(PARAM_1);
 			break;
-		case 13:		// SO_ACTOR_NAME
+		case 13: // SO_ACTOR_NAME
 			loadPtrToResource(rtActorName, a->_number, NULL);
 			break;
-		case 14:		// SO_INIT_ANIMATION
+		case 14: // SO_INIT_ANIMATION
 			a->_initFrame = getVarOrDirectByte(PARAM_1);
 			break;
-		case 16:		// SO_ACTOR_WIDTH
+		case 16: // SO_ACTOR_WIDTH
 			a->_width = getVarOrDirectByte(PARAM_1);
 			break;
-		case 17:		// SO_ACTOR_SCALE
+		case 17: // SO_ACTOR_SCALE
 			if (_game.version == 4) {
 				i = j = getVarOrDirectByte(PARAM_1);
 			} else {
@@ -510,24 +507,24 @@ void ScummEngine_v5::o5_actorOps() {
 			a->_boxscale = i;
 			a->setScale(i, j);
 			break;
-		case 18:		// SO_NEVER_ZCLIP
+		case 18: // SO_NEVER_ZCLIP
 			a->_forceClip = 0;
 			break;
-		case 19:		// SO_ALWAYS_ZCLIP
+		case 19: // SO_ALWAYS_ZCLIP
 			a->_forceClip = getVarOrDirectByte(PARAM_1);
 			break;
-		case 20:		// SO_IGNORE_BOXES
-		case 21:		// SO_FOLLOW_BOXES
+		case 20: // SO_IGNORE_BOXES
+		case 21: // SO_FOLLOW_BOXES
 			a->_ignoreBoxes = !(_opcode & 1);
 			a->_forceClip = 0;
 			if (a->isInCurrentRoom())
 				a->putActor();
 			break;
 
-		case 22:		// SO_ANIMATION_SPEED
+		case 22: // SO_ANIMATION_SPEED
 			a->setAnimSpeed(getVarOrDirectByte(PARAM_1));
 			break;
-		case 23:		// SO_SHADOW
+		case 23: // SO_SHADOW
 			a->_shadowMode = getVarOrDirectByte(PARAM_1);
 			break;
 		default:
@@ -547,9 +544,7 @@ void ScummEngine_v5::o5_setClass() {
 		// used to test and set the state of various objects (e.g. the inside
 		// door (object 465) of the of the Hostel on Mars), when opening the
 		// Hostel door from the outside.
-		if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns &&
-		    vm.slot[_currentScript].number == 205 && _currentRoom == 185 &&
-		    (cls == 0 || cls == 1)) {
+		if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns && vm.slot[_currentScript].number == 205 && _currentRoom == 185 && (cls == 0 || cls == 1)) {
 			putState(obj, cls);
 		} else if (cls == 0) {
 			// Class '0' means: clean all class data
@@ -587,7 +582,7 @@ void ScummEngine_v5::o5_add() {
 			a = 170;
 			break;
 		case 342:
-			a = 342 - 130 + 15;	// Small extra adjustment for the "OUCH"
+			a = 342 - 130 + 15; // Small extra adjustment for the "OUCH"
 			break;
 		case 384:
 			a -= 342;
@@ -624,9 +619,7 @@ void ScummEngine_v5::o5_animateActor() {
 	// coupled with an animate command, making it very difficult to return to
 	// safety (from where you came). The following hack works around this by
 	// ignoring that particular turn command.
-	if (_game.id == GID_ZAK && _currentRoom == 182 && anim == 246 &&
-			((_game.version < 3 && vm.slot[_currentScript].number == 82)
-			|| (_game.version == 3 && vm.slot[_currentScript].number == 131))) {
+	if (_game.id == GID_ZAK && _currentRoom == 182 && anim == 246 && ((_game.version < 3 && vm.slot[_currentScript].number == 82) || (_game.version == 3 && vm.slot[_currentScript].number == 131))) {
 		return;
 	}
 
@@ -675,56 +668,56 @@ void ScummEngine_v5::o5_cursorCommand() {
 	int i, j, k;
 	int table[NUM_SCRIPT_LOCAL];
 	switch ((_opcode = fetchScriptByte()) & 0x1F) {
-	case 1:			// SO_CURSOR_ON
+	case 1: // SO_CURSOR_ON
 		_cursor.state = 1;
 		verbMouseOver(0);
 		break;
-	case 2:			// SO_CURSOR_OFF
+	case 2: // SO_CURSOR_OFF
 		_cursor.state = 0;
 		verbMouseOver(0);
 		break;
-	case 3:			// SO_USERPUT_ON
+	case 3: // SO_USERPUT_ON
 		_userPut = 1;
 		break;
-	case 4:			// SO_USERPUT_OFF
+	case 4: // SO_USERPUT_OFF
 		_userPut = 0;
 		break;
-	case 5:			// SO_CURSOR_SOFT_ON
+	case 5: // SO_CURSOR_SOFT_ON
 		_cursor.state++;
 		verbMouseOver(0);
 		break;
-	case 6:			// SO_CURSOR_SOFT_OFF
+	case 6: // SO_CURSOR_SOFT_OFF
 		_cursor.state--;
 		verbMouseOver(0);
 		break;
-	case 7:			// SO_USERPUT_SOFT_ON
+	case 7: // SO_USERPUT_SOFT_ON
 		_userPut++;
 		break;
-	case 8:			// SO_USERPUT_SOFT_OFF
+	case 8: // SO_USERPUT_SOFT_OFF
 		_userPut--;
 		break;
-	case 10:		// SO_CURSOR_IMAGE
-		i = getVarOrDirectByte(PARAM_1);	// Cursor number
-		j = getVarOrDirectByte(PARAM_2);	// Charset letter to use
+	case 10: // SO_CURSOR_IMAGE
+		i = getVarOrDirectByte(PARAM_1); // Cursor number
+		j = getVarOrDirectByte(PARAM_2); // Charset letter to use
 		redefineBuiltinCursorFromChar(i, j);
 		break;
-	case 11:		// SO_CURSOR_HOTSPOT
+	case 11: // SO_CURSOR_HOTSPOT
 		i = getVarOrDirectByte(PARAM_1);
 		j = getVarOrDirectByte(PARAM_2);
 		k = getVarOrDirectByte(PARAM_3);
 		redefineBuiltinCursorHotspot(i, j, k);
 		break;
-	case 12:		// SO_CURSOR_SET
+	case 12: // SO_CURSOR_SET
 		i = getVarOrDirectByte(PARAM_1);
 		if (i >= 0 && i <= 3)
 			_currentCursor = i;
 		else
 			error("SO_CURSOR_SET: unsupported cursor id %d", i);
 		break;
-	case 13:		// SO_CHARSET_SET
+	case 13: // SO_CHARSET_SET
 		initCharset(getVarOrDirectByte(PARAM_1));
 		break;
-	case 14:											/* unk */
+	case 14: /* unk */
 		if (_game.version == 3) {
 			/*int a = */ getVarOrDirectByte(PARAM_1);
 			/*int b = */ getVarOrDirectByte(PARAM_2);
@@ -837,14 +830,14 @@ void ScummEngine_v5::o5_drawObject() {
 	} else {
 		_opcode = fetchScriptByte();
 		switch (_opcode & 0x1F) {
-		case 1:										/* draw at */
+		case 1: /* draw at */
 			xpos = getVarOrDirectWord(PARAM_1);
 			ypos = getVarOrDirectWord(PARAM_2);
 			break;
-		case 2:										/* set state */
+		case 2: /* set state */
 			state = getVarOrDirectWord(PARAM_1);
 			break;
-		case 0x1F:									/* neither */
+		case 0x1F: /* neither */
 			break;
 		default:
 			error("o5_drawObject: unknown subopcode %d", _opcode & 0x1F);
@@ -908,28 +901,28 @@ void ScummEngine_v5::o5_expression() {
 
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		switch (_opcode & 0x1F) {
-		case 1:										/* varordirect */
+		case 1: /* varordirect */
 			push(getVarOrDirectWord(PARAM_1));
 			break;
-		case 2:										/* add */
+		case 2: /* add */
 			i = pop();
 			push(i + pop());
 			break;
-		case 3:										/* sub */
+		case 3: /* sub */
 			i = pop();
 			push(pop() - i);
 			break;
-		case 4:										/* mul */
+		case 4: /* mul */
 			i = pop();
 			push(i * pop());
 			break;
-		case 5:										/* div */
+		case 5: /* div */
 			i = pop();
 			if (i == 0)
 				error("Divide by zero");
 			push(pop() / i);
 			break;
-		case 6:										/* normal opcode */
+		case 6: /* normal opcode */
 			_opcode = fetchScriptByte();
 			executeOpcode(_opcode);
 			push(_scummVars[0]);
@@ -1175,9 +1168,7 @@ void ScummEngine_v5::o5_ifClassOfIs() {
 		// used to test and set the state of various objects (e.g. the inside
 		// door (object 465) of the of the Hostel on Mars), when opening the
 		// Hostel door from the outside.
-		if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns &&
-		    vm.slot[_currentScript].number == 205 && _currentRoom == 185 &&
-		    obj == 465 && cls == 0) {
+		if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns && vm.slot[_currentScript].number == 205 && _currentRoom == 185 && obj == 465 && cls == 0) {
 			cond = (getState(obj) == 0);
 		} else {
 			b = getClass(obj, cls);
@@ -1251,9 +1242,7 @@ void ScummEngine_v5::o5_isLessEqual() {
 	int16 b = getVarOrDirectWord(PARAM_1);
 
 	// WORKAROUND bug #820507 : Work around a bug in Indy3Town.
-	if (_game.id == GID_INDY3 && (_game.platform == Common::kPlatformFMTowns) &&
-	    (vm.slot[_currentScript].number == 200 || vm.slot[_currentScript].number == 203) &&
-	    _currentRoom == 70 && b == -256) {
+	if (_game.id == GID_INDY3 && (_game.platform == Common::kPlatformFMTowns) && (vm.slot[_currentScript].number == 200 || vm.slot[_currentScript].number == 203) && _currentRoom == 70 && b == -256) {
 		o5_jumpRelative();
 		return;
 	}
@@ -1491,13 +1480,13 @@ void ScummEngine_v5::o5_putActorInRoom() {
 void ScummEngine_v5::o5_systemOps() {
 	byte subOp = fetchScriptByte();
 	switch (subOp) {
-	case 1:		// SO_RESTART
+	case 1: // SO_RESTART
 		restart();
 		break;
-	case 2:		// SO_PAUSE
+	case 2: // SO_PAUSE
 		pauseGame();
 		break;
-	case 3:		// SO_QUIT
+	case 3: // SO_QUIT
 		quitGame();
 		break;
 	default:
@@ -1524,18 +1513,17 @@ void ScummEngine_v5::o5_resourceRoutines() {
 	int op = _opcode & 0x3F;
 
 	// FIXME: Sound resources are currently missing
-	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine &&
-		(op == 2 || op == 6)) {
-			return;
+	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && (op == 2 || op == 6)) {
+		return;
 	}
 
 	switch (op) {
-	case 1:			// SO_LOAD_SCRIPT
-	case 2:			// SO_LOAD_SOUND
-	case 3:			// SO_LOAD_COSTUME
+	case 1: // SO_LOAD_SCRIPT
+	case 2: // SO_LOAD_SOUND
+	case 3: // SO_LOAD_COSTUME
 		ensureResourceLoaded(resType[op - 1], resid);
 		break;
-	case 4:			// SO_LOAD_ROOM
+	case 4: // SO_LOAD_ROOM
 		ensureResourceLoaded(rtRoom, resid);
 		if (_game.version == 3) {
 			if (resid > 0x7F)
@@ -1547,66 +1535,66 @@ void ScummEngine_v5::o5_resourceRoutines() {
 		}
 		break;
 
-	case 5:			// SO_NUKE_SCRIPT
-	case 6:			// SO_NUKE_SOUND
-	case 7:			// SO_NUKE_COSTUME
-	case 8:			// SO_NUKE_ROOM
+	case 5: // SO_NUKE_SCRIPT
+	case 6: // SO_NUKE_SOUND
+	case 7: // SO_NUKE_COSTUME
+	case 8: // SO_NUKE_ROOM
 		if (_game.id == GID_ZAK && (_game.platform == Common::kPlatformFMTowns))
 			error("o5_resourceRoutines %d should not occur in Zak256", op);
 		else
-			_res->setResourceCounter(resType[op-5], resid, 0x7F);
+			_res->setResourceCounter(resType[op - 5], resid, 0x7F);
 		break;
-	case 9:			// SO_LOCK_SCRIPT
+	case 9: // SO_LOCK_SCRIPT
 		if (resid >= _numGlobalScripts)
 			break;
 		_res->lock(rtScript, resid);
 		break;
-	case 10:		// SO_LOCK_SOUND
+	case 10: // SO_LOCK_SOUND
 		// FIXME: Sound resources are currently missing
 		if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine)
 			break;
 		_res->lock(rtSound, resid);
 		break;
-	case 11:		// SO_LOCK_COSTUME
+	case 11: // SO_LOCK_COSTUME
 		_res->lock(rtCostume, resid);
 		break;
-	case 12:		// SO_LOCK_ROOM
+	case 12: // SO_LOCK_ROOM
 		if (resid > 0x7F)
 			resid = _resourceMapper[resid & 0x7F];
 		_res->lock(rtRoom, resid);
 		break;
 
-	case 13:		// SO_UNLOCK_SCRIPT
+	case 13: // SO_UNLOCK_SCRIPT
 		if (resid >= _numGlobalScripts)
 			break;
 		_res->unlock(rtScript, resid);
 		break;
-	case 14:		// SO_UNLOCK_SOUND
+	case 14: // SO_UNLOCK_SOUND
 		// FIXME: Sound resources are currently missing
 		if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine)
 			break;
 		_res->unlock(rtSound, resid);
 		break;
-	case 15:		// SO_UNLOCK_COSTUME
+	case 15: // SO_UNLOCK_COSTUME
 		_res->unlock(rtCostume, resid);
 		break;
-	case 16:		// SO_UNLOCK_ROOM
+	case 16: // SO_UNLOCK_ROOM
 		if (resid > 0x7F)
 			resid = _resourceMapper[resid & 0x7F];
 		_res->unlock(rtRoom, resid);
 		break;
 
-	case 17:		// SO_CLEAR_HEAP
+	case 17: // SO_CLEAR_HEAP
 		//heapClear(0);
 		//unkHeapProc2(0, 0);
 		break;
-	case 18:		// SO_LOAD_CHARSET
+	case 18: // SO_LOAD_CHARSET
 		loadCharset(resid);
 		break;
-	case 19:		// SO_NUKE_CHARSET
+	case 19: // SO_NUKE_CHARSET
 		nukeCharset(resid);
 		break;
-	case 20:		// SO_LOAD_OBJECT
+	case 20: // SO_LOAD_OBJECT
 		loadFlObject(getVarOrDirectWord(PARAM_2), resid);
 		break;
 
@@ -1650,7 +1638,7 @@ void ScummEngine_v5::o5_roomOps() {
 
 	_opcode = fetchScriptByte();
 	switch (_opcode & 0x1F) {
-	case 1:		// SO_ROOM_SCROLL
+	case 1: // SO_ROOM_SCROLL
 		if (!paramsBeforeOpcode) {
 			a = getVarOrDirectWord(PARAM_1);
 			b = getVarOrDirectWord(PARAM_2);
@@ -1666,7 +1654,7 @@ void ScummEngine_v5::o5_roomOps() {
 		VAR(VAR_CAMERA_MIN_X) = a;
 		VAR(VAR_CAMERA_MAX_X) = b;
 		break;
-	case 2:		// SO_ROOM_COLOR
+	case 2: // SO_ROOM_COLOR
 		if (_game.features & GF_SMALL_HEADER) {
 			if (!paramsBeforeOpcode) {
 				a = getVarOrDirectWord(PARAM_1);
@@ -1680,14 +1668,14 @@ void ScummEngine_v5::o5_roomOps() {
 		}
 		break;
 
-	case 3:		// SO_ROOM_SCREEN
+	case 3: // SO_ROOM_SCREEN
 		if (!paramsBeforeOpcode) {
 			a = getVarOrDirectWord(PARAM_1);
 			b = getVarOrDirectWord(PARAM_2);
 		}
 		initScreens(a, b);
 		break;
-	case 4:		// SO_ROOM_PALETTE
+	case 4: // SO_ROOM_PALETTE
 		if (_game.features & GF_SMALL_HEADER) {
 			if (!paramsBeforeOpcode) {
 				a = getVarOrDirectWord(PARAM_1);
@@ -1702,16 +1690,16 @@ void ScummEngine_v5::o5_roomOps() {
 			c = getVarOrDirectWord(PARAM_3);
 			_opcode = fetchScriptByte();
 			d = getVarOrDirectByte(PARAM_1);
-			setPalColor(d, a, b, c);	/* index, r, g, b */
+			setPalColor(d, a, b, c); /* index, r, g, b */
 		}
 		break;
-	case 5:		// SO_ROOM_SHAKE_ON
+	case 5: // SO_ROOM_SHAKE_ON
 		setShake(1);
 		break;
-	case 6:		// SO_ROOM_SHAKE_OFF
+	case 6: // SO_ROOM_SHAKE_OFF
 		setShake(0);
 		break;
-	case 7:		// SO_ROOM_SCALE
+	case 7: // SO_ROOM_SCALE
 		a = getVarOrDirectByte(PARAM_1);
 		b = getVarOrDirectByte(PARAM_2);
 		_opcode = fetchScriptByte();
@@ -1721,22 +1709,22 @@ void ScummEngine_v5::o5_roomOps() {
 		e = getVarOrDirectByte(PARAM_2);
 		setScaleSlot(e - 1, 0, b, a, 0, d, c);
 		break;
-	case 8:		// SO_ROOM_INTENSITY
+	case 8: // SO_ROOM_INTENSITY
 		a = getVarOrDirectByte(PARAM_1);
 		b = getVarOrDirectByte(PARAM_2);
 		c = getVarOrDirectByte(PARAM_3);
 		darkenPalette(a, a, a, b, c);
 		break;
-	case 9:		// SO_ROOM_SAVEGAME
+	case 9: // SO_ROOM_SAVEGAME
 		_saveLoadFlag = getVarOrDirectByte(PARAM_1);
 		_saveLoadSlot = getVarOrDirectByte(PARAM_2);
-		_saveLoadSlot = 99;					/* use this slot */
+		_saveLoadSlot = 99; /* use this slot */
 		_saveTemporaryState = true;
 		break;
-	case 10:	// SO_ROOM_FADE
+	case 10: // SO_ROOM_FADE
 		a = getVarOrDirectWord(PARAM_1);
 		if (a) {
-	#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 			if (_game.platform == Common::kPlatformFMTowns) {
 				switch (a) {
 				case 8:
@@ -1795,7 +1783,7 @@ void ScummEngine_v5::o5_roomOps() {
 			fadeIn(_newEffect);
 		}
 		break;
-	case 11:	// SO_RGB_ROOM_INTENSITY
+	case 11: // SO_RGB_ROOM_INTENSITY
 		a = getVarOrDirectWord(PARAM_1);
 		b = getVarOrDirectWord(PARAM_2);
 		c = getVarOrDirectWord(PARAM_3);
@@ -1804,7 +1792,7 @@ void ScummEngine_v5::o5_roomOps() {
 		e = getVarOrDirectByte(PARAM_2);
 		darkenPalette(a, b, c, d, e);
 		break;
-	case 12:	// SO_ROOM_SHADOW
+	case 12: // SO_ROOM_SHADOW
 		a = getVarOrDirectWord(PARAM_1);
 		b = getVarOrDirectWord(PARAM_2);
 		c = getVarOrDirectWord(PARAM_3);
@@ -1814,82 +1802,82 @@ void ScummEngine_v5::o5_roomOps() {
 		setShadowPalette(a, b, c, d, e, 0, 256);
 		break;
 
-	case 13:	// SO_SAVE_STRING
-		{
-			// This subopcode is used in Indy 4 to save the IQ points
-			// data. No other LucasArts game uses it. We use this fact
-			// to substitute a filename based on the targetname
-			// ("TARGET.iq").
-			//
-			// This way, the iq data of each Indy 4 variant stays
-			// separate. Moreover, the filename now clearly reflects to
-			// which target it belongs (as it should).
-			//
-			// In addition, the Monkey Island fan patch (which adds
-			// speech support and more things to MI 1 and 2) uses
-			// this opcode to generate a "monkey.cfg" file containing.
-			// some user controllable settings.
-			// Once more we use a custom filename ("TARGET.cfg").
-			Common::String filename;
-			char chr;
+	case 13: // SO_SAVE_STRING
+	{
+		// This subopcode is used in Indy 4 to save the IQ points
+		// data. No other LucasArts game uses it. We use this fact
+		// to substitute a filename based on the targetname
+		// ("TARGET.iq").
+		//
+		// This way, the iq data of each Indy 4 variant stays
+		// separate. Moreover, the filename now clearly reflects to
+		// which target it belongs (as it should).
+		//
+		// In addition, the Monkey Island fan patch (which adds
+		// speech support and more things to MI 1 and 2) uses
+		// this opcode to generate a "monkey.cfg" file containing.
+		// some user controllable settings.
+		// Once more we use a custom filename ("TARGET.cfg").
+		Common::String filename;
+		char chr;
 
-			a = getVarOrDirectByte(PARAM_1);
-			while ((chr = fetchScriptByte()))
-				filename += chr;
+		a = getVarOrDirectByte(PARAM_1);
+		while ((chr = fetchScriptByte()))
+			filename += chr;
 
-			if (_game.id == GID_INDY4) {
-				filename = _targetName + ".iq";
-			} else if (_game.id == GID_MONKEY || _game.id == GID_MONKEY2) {
-				filename = _targetName + ".cfg";
-			} else {
-				error("SO_SAVE_STRING: Unsupported filename %s", filename.c_str());
-			}
-
-			Common::OutSaveFile *file = _saveFileMan->openForSaving(filename);
-			if (file != NULL) {
-				byte *ptr;
-				ptr = getResourceAddress(rtString, a);
-				file->write(ptr, resStrLen(ptr) + 1);
-				delete file;
-				VAR(VAR_SOUNDRESULT) = 0;
-			}
-			break;
+		if (_game.id == GID_INDY4) {
+			filename = _targetName + ".iq";
+		} else if (_game.id == GID_MONKEY || _game.id == GID_MONKEY2) {
+			filename = _targetName + ".cfg";
+		} else {
+			error("SO_SAVE_STRING: Unsupported filename %s", filename.c_str());
 		}
-	case 14:	// SO_LOAD_STRING
-		{
-			// This subopcode is used in Indy 4 to load the IQ points data.
-			// See SO_SAVE_STRING for details
-			Common::String filename;
-			char chr;
 
-			a = getVarOrDirectByte(PARAM_1);
-			while ((chr = fetchScriptByte()))
-				filename += chr;
-
-			if (_game.id == GID_INDY4) {
-				filename = _targetName + ".iq";
-			} else if (_game.id == GID_MONKEY || _game.id == GID_MONKEY2) {
-				filename = _targetName + ".cfg";
-			} else {
-				error("SO_LOAD_STRING: Unsupported filename %s", filename.c_str());
-			}
-
-			Common::InSaveFile *file = _saveFileMan->openForLoading(filename);
-			if (file != NULL) {
-				byte *ptr;
-				const int len = file->size();
-				ptr = (byte *)malloc(len + 1);
-				assert(ptr);
-				int r = file->read(ptr, len);
-				assert(r == len);
-				ptr[len] = '\0';
-				loadPtrToResource(rtString, a, ptr);
-				free(ptr);
-				delete file;
-			}
-			break;
+		Common::OutSaveFile *file = _saveFileMan->openForSaving(filename);
+		if (file != NULL) {
+			byte *ptr;
+			ptr = getResourceAddress(rtString, a);
+			file->write(ptr, resStrLen(ptr) + 1);
+			delete file;
+			VAR(VAR_SOUNDRESULT) = 0;
 		}
-	case 15:	// SO_ROOM_TRANSFORM
+		break;
+	}
+	case 14: // SO_LOAD_STRING
+	{
+		// This subopcode is used in Indy 4 to load the IQ points data.
+		// See SO_SAVE_STRING for details
+		Common::String filename;
+		char chr;
+
+		a = getVarOrDirectByte(PARAM_1);
+		while ((chr = fetchScriptByte()))
+			filename += chr;
+
+		if (_game.id == GID_INDY4) {
+			filename = _targetName + ".iq";
+		} else if (_game.id == GID_MONKEY || _game.id == GID_MONKEY2) {
+			filename = _targetName + ".cfg";
+		} else {
+			error("SO_LOAD_STRING: Unsupported filename %s", filename.c_str());
+		}
+
+		Common::InSaveFile *file = _saveFileMan->openForLoading(filename);
+		if (file != NULL) {
+			byte *ptr;
+			const int len = file->size();
+			ptr = (byte *)malloc(len + 1);
+			assert(ptr);
+			int r = file->read(ptr, len);
+			assert(r == len);
+			ptr[len] = '\0';
+			loadPtrToResource(rtString, a, ptr);
+			free(ptr);
+			delete file;
+		}
+		break;
+	}
+	case 15: // SO_ROOM_TRANSFORM
 		a = getVarOrDirectByte(PARAM_1);
 		_opcode = fetchScriptByte();
 		b = getVarOrDirectByte(PARAM_1);
@@ -1899,7 +1887,7 @@ void ScummEngine_v5::o5_roomOps() {
 		palManipulateInit(a, b, c, d);
 		break;
 
-	case 16:	// SO_CYCLE_SPEED
+	case 16: // SO_CYCLE_SPEED
 		a = getVarOrDirectByte(PARAM_1);
 		b = getVarOrDirectByte(PARAM_2);
 		assertRange(1, a, 16, "o5_roomOps: 16: color cycle");
@@ -1920,7 +1908,7 @@ void ScummEngine_v5::o5_saveRestoreVerbs() {
 	c = getVarOrDirectByte(PARAM_3);
 
 	switch (_opcode) {
-	case 1:		// SO_SAVE_VERBS
+	case 1: // SO_SAVE_VERBS
 		while (a <= b) {
 			slot = getVerbSlot(a, 0);
 			if (slot && _verbs[slot].saveid == 0) {
@@ -1931,7 +1919,7 @@ void ScummEngine_v5::o5_saveRestoreVerbs() {
 			a++;
 		}
 		break;
-	case 2:		// SO_RESTORE_VERBS
+	case 2: // SO_RESTORE_VERBS
 		while (a <= b) {
 			slot = getVerbSlot(a, c);
 			if (slot) {
@@ -1946,7 +1934,7 @@ void ScummEngine_v5::o5_saveRestoreVerbs() {
 			a++;
 		}
 		break;
-	case 3:		// SO_DELETE_VERBS
+	case 3: // SO_DELETE_VERBS
 		while (a <= b) {
 			slot = getVerbSlot(a, c);
 			if (slot)
@@ -2050,7 +2038,7 @@ void ScummEngine_v5::o5_startMusic() {
 			// can look at the global script #9 (0x888A in 49.LFL).
 			break;
 		}
-		debugC(DEBUG_GENERAL,"o5_startMusic(%d)", b);
+		debugC(DEBUG_GENERAL, "o5_startMusic(%d)", b);
 		setResult(result);
 	} else {
 		_sound->addSoundToQueue(getVarOrDirectByte(PARAM_1));
@@ -2174,8 +2162,7 @@ void ScummEngine_v5::o5_stopScript() {
 
 	script = getVarOrDirectByte(PARAM_1);
 
-	if (_game.id == GID_INDY4 && script == 164 &&
-		_roomResource == 50 && vm.slot[_currentScript].number == 213 && VAR(VAR_HAVE_MSG)) {
+	if (_game.id == GID_INDY4 && script == 164 && _roomResource == 50 && vm.slot[_currentScript].number == 213 && VAR(VAR_HAVE_MSG)) {
 		// WORKAROUND bug #1308033: Due to a script bug, a line of text is skipped
 		// which Indy is supposed to speak when he finds Orichalcum in some old
 		// bones in the caves below Crete.
@@ -2196,10 +2183,10 @@ void ScummEngine_v5::o5_stringOps() {
 
 	_opcode = fetchScriptByte();
 	switch (_opcode & 0x1F) {
-	case 1:											/* loadstring */
+	case 1: /* loadstring */
 		loadPtrToResource(rtString, getVarOrDirectByte(PARAM_1), NULL);
 		break;
-	case 2:											/* copystring */
+	case 2: /* copystring */
 		a = getVarOrDirectByte(PARAM_1);
 		b = getVarOrDirectByte(PARAM_2);
 		assert(a != b);
@@ -2208,7 +2195,7 @@ void ScummEngine_v5::o5_stringOps() {
 		if (ptr)
 			loadPtrToResource(rtString, a, ptr);
 		break;
-	case 3:											/* set string char */
+	case 3: /* set string char */
 		a = getVarOrDirectByte(PARAM_1);
 		b = getVarOrDirectByte(PARAM_2);
 		c = getVarOrDirectByte(PARAM_3);
@@ -2218,7 +2205,7 @@ void ScummEngine_v5::o5_stringOps() {
 		ptr[b] = c;
 		break;
 
-	case 4:											/* get string char */
+	case 4: /* get string char */
 		getResultPos();
 		a = getVarOrDirectByte(PARAM_1);
 		b = getVarOrDirectByte(PARAM_2);
@@ -2228,7 +2215,7 @@ void ScummEngine_v5::o5_stringOps() {
 		setResult(ptr[b]);
 		break;
 
-	case 5:											/* create empty string */
+	case 5: /* create empty string */
 		a = getVarOrDirectByte(PARAM_1);
 		b = getVarOrDirectByte(PARAM_2);
 		_res->nukeResource(rtString, a);
@@ -2266,27 +2253,27 @@ void ScummEngine_v5::o5_verbOps() {
 
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		switch (_opcode & 0x1F) {
-		case 1:		// SO_VERB_IMAGE
+		case 1: // SO_VERB_IMAGE
 			a = getVarOrDirectWord(PARAM_1);
 			if (slot) {
 				setVerbObject(_roomResource, a, slot);
 				vs->type = kImageVerbType;
 			}
 			break;
-		case 2:		// SO_VERB_NAME
+		case 2: // SO_VERB_NAME
 			loadPtrToResource(rtVerb, slot, NULL);
 			if (slot == 0)
 				_res->nukeResource(rtVerb, slot);
 			vs->type = kTextVerbType;
 			vs->imgindex = 0;
 			break;
-		case 3:		// SO_VERB_COLOR
+		case 3: // SO_VERB_COLOR
 			vs->color = getVarOrDirectByte(PARAM_1);
 			break;
-		case 4:		// SO_VERB_HICOLOR
+		case 4: // SO_VERB_HICOLOR
 			vs->hicolor = getVarOrDirectByte(PARAM_1);
 			break;
-		case 5:		// SO_VERB_AT
+		case 5: // SO_VERB_AT
 			vs->curRect.left = getVarOrDirectWord(PARAM_1);
 			vs->curRect.top = getVarOrDirectWord(PARAM_2);
 			// Macintosh version of indy3ega used different interface, so adjust values.
@@ -2322,9 +2309,9 @@ void ScummEngine_v5::o5_verbOps() {
 					vs->curRect.top += 8;
 					break;
 				}
-			} else	if (_game.id == GID_LOOM && _game.version == 4) {
-			// FIXME: hack loom notes into right spot
-				if ((verb >= 90) && (verb <= 97)) {	// Notes
+			} else if (_game.id == GID_LOOM && _game.version == 4) {
+				// FIXME: hack loom notes into right spot
+				if ((verb >= 90) && (verb <= 97)) { // Notes
 					switch (verb) {
 					case 90:
 					case 91:
@@ -2348,16 +2335,16 @@ void ScummEngine_v5::o5_verbOps() {
 				}
 			}
 			break;
-		case 6:		// SO_VERB_ON
+		case 6: // SO_VERB_ON
 			vs->curmode = 1;
 			break;
-		case 7:		// SO_VERB_OFF
+		case 7: // SO_VERB_OFF
 			vs->curmode = 0;
 			break;
-		case 8:		// SO_VERB_DELETE
+		case 8: // SO_VERB_DELETE
 			killVerb(slot);
 			break;
-		case 9:		// SO_VERB_NEW
+		case 9: // SO_VERB_NEW
 			slot = getVerbSlot(verb, 0);
 
 			if (_game.platform == Common::kPlatformFMTowns && _game.version == 3 && slot)
@@ -2385,19 +2372,19 @@ void ScummEngine_v5::o5_verbOps() {
 			vs->imgindex = 0;
 			break;
 
-		case 16:	// SO_VERB_DIMCOLOR
+		case 16: // SO_VERB_DIMCOLOR
 			vs->dimcolor = getVarOrDirectByte(PARAM_1);
 			break;
-		case 17:	// SO_VERB_DIM
+		case 17: // SO_VERB_DIM
 			vs->curmode = 2;
 			break;
-		case 18:	// SO_VERB_KEY
+		case 18: // SO_VERB_KEY
 			vs->key = getVarOrDirectByte(PARAM_1);
 			break;
-		case 19:	// SO_VERB_CENTER
+		case 19: // SO_VERB_CENTER
 			vs->center = 1;
 			break;
-		case 20:	// SO_VERB_NAME_STR
+		case 20: // SO_VERB_NAME_STR
 			ptr = getResourceAddress(rtString, getVarOrDirectWord(PARAM_1));
 			if (!ptr)
 				_res->nukeResource(rtVerb, slot);
@@ -2409,7 +2396,7 @@ void ScummEngine_v5::o5_verbOps() {
 			vs->type = kTextVerbType;
 			vs->imgindex = 0;
 			break;
-		case 22:										/* assign object */
+		case 22: /* assign object */
 			a = getVarOrDirectWord(PARAM_1);
 			b = getVarOrDirectByte(PARAM_2);
 			if (slot && vs->imgindex != a) {
@@ -2418,7 +2405,7 @@ void ScummEngine_v5::o5_verbOps() {
 				vs->imgindex = a;
 			}
 			break;
-		case 23:										/* set back color */
+		case 23: /* set back color */
 			vs->bkcolor = getVarOrDirectByte(PARAM_1);
 			break;
 		default:
@@ -2440,22 +2427,22 @@ void ScummEngine_v5::o5_wait() {
 		_opcode = fetchScriptByte();
 
 	switch (_opcode & 0x1F) {
-	case 1:		// SO_WAIT_FOR_ACTOR
-		{
-			Actor *a = derefActorSafe(getVarOrDirectByte(PARAM_1), "o5_wait");
-			if (a && a->_moving)
-				break;
-			return;
-		}
-	case 2:		// SO_WAIT_FOR_MESSAGE
+	case 1: // SO_WAIT_FOR_ACTOR
+	{
+		Actor *a = derefActorSafe(getVarOrDirectByte(PARAM_1), "o5_wait");
+		if (a && a->_moving)
+			break;
+		return;
+	}
+	case 2: // SO_WAIT_FOR_MESSAGE
 		if (VAR(VAR_HAVE_MSG))
 			break;
 		return;
-	case 3:		// SO_WAIT_FOR_CAMERA
+	case 3: // SO_WAIT_FOR_CAMERA
 		if (camera._cur.x / 8 != camera._dest.x / 8)
 			break;
 		return;
-	case 4:		// SO_WAIT_FOR_SENTENCE
+	case 4: // SO_WAIT_FOR_SENTENCE
 		if (_sentenceNum) {
 			if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
 				return;
@@ -2516,8 +2503,7 @@ void ScummEngine_v5::o5_walkActorToActor() {
 	int nr2 = getVarOrDirectByte(PARAM_2);
 	int dist = fetchScriptByte();
 
-	if (_game.id == GID_LOOM && _game.version == 4 && nr == 1 && nr2 == 0 &&
-		dist == 255 && vm.slot[_currentScript].number == 98) {
+	if (_game.id == GID_LOOM && _game.version == 4 && nr == 1 && nr2 == 0 && dist == 255 && vm.slot[_currentScript].number == 98) {
 		// WORKAROUND bug #743615: LoomCD script 98 contains this:
 		//   walkActorToActor(1,0,255)
 		// Once again this is either a script bug, or there is some hidden
@@ -2525,8 +2511,7 @@ void ScummEngine_v5::o5_walkActorToActor() {
 		return;
 	}
 
-	if (_game.id == GID_INDY4 && nr == 1 && nr2 == 106 &&
-		dist == 255 && vm.slot[_currentScript].number == 210) {
+	if (_game.id == GID_INDY4 && nr == 1 && nr2 == 106 && dist == 255 && vm.slot[_currentScript].number == 210) {
 		// WORKAROUND bug: Work around an invalid actor bug when using the
 		// camel in Fate of Atlantis, the "wits" path. The room-65-210 script
 		// contains this:
@@ -2594,30 +2579,29 @@ void ScummEngine_v5::decodeParseString() {
 
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		switch (_opcode & 0xF) {
-		case 0:		// SO_AT
+		case 0: // SO_AT
 			_string[textSlot].xpos = getVarOrDirectWord(PARAM_1);
 			_string[textSlot].ypos = getVarOrDirectWord(PARAM_2);
 			_string[textSlot].overhead = false;
 			break;
-		case 1:		// SO_COLOR
+		case 1: // SO_COLOR
 			_string[textSlot].color = getVarOrDirectByte(PARAM_1);
 			break;
-		case 2:		// SO_CLIPPED
+		case 2: // SO_CLIPPED
 			_string[textSlot].right = getVarOrDirectWord(PARAM_1);
 			break;
-		case 3:		// SO_ERASE
-			{
+		case 3: // SO_ERASE
+		{
 			int w = getVarOrDirectWord(PARAM_1);
 			int h = getVarOrDirectWord(PARAM_2);
 			// restoreCharsetBg(xpos, xpos + w, ypos, ypos + h)
 			error("ScummEngine_v5::decodeParseString: Unhandled case 3: %d, %d", w, h);
-			}
-			break;
-		case 4:		// SO_CENTER
+		} break;
+		case 4: // SO_CENTER
 			_string[textSlot].center = true;
 			_string[textSlot].overhead = false;
 			break;
-		case 6:		// SO_LEFT
+		case 6: // SO_LEFT
 			if (_game.version == 3) {
 				_string[textSlot].height = getVarOrDirectWord(PARAM_1);
 			} else {
@@ -2625,70 +2609,66 @@ void ScummEngine_v5::decodeParseString() {
 				_string[textSlot].overhead = false;
 			}
 			break;
-		case 7:		// SO_OVERHEAD
+		case 7: // SO_OVERHEAD
 			_string[textSlot].overhead = true;
 			break;
-		case 8:{	// SO_SAY_VOICE
-				int offset = (uint16)getVarOrDirectWord(PARAM_1);
-				int delay = (uint16)getVarOrDirectWord(PARAM_2);
+		case 8: { // SO_SAY_VOICE
+			int offset = (uint16)getVarOrDirectWord(PARAM_1);
+			int delay = (uint16)getVarOrDirectWord(PARAM_2);
 
-				if (_game.id == GID_LOOM && _game.version == 4) {
-					if (offset == 0 && delay == 0) {
-						VAR(VAR_MUSIC_TIMER) = 0;
-						_sound->stopCD();
-					} else {
-						// Loom specified the offset from the start of the CD;
-						// thus we have to subtract the length of the first track
-						// (22500 frames) plus the 2 second = 150 frame leadin.
-						// I.e. in total 22650 frames.
-						offset = (int)(offset * 7.5 - 22500 - 2*75);
-
-						// Slightly increase the delay (5 frames = 1/25 of a second).
-						// This noticably improves the experience in Loom CD.
-						delay = (int)(delay * 7.5 + 5);
-
-						_sound->playCDTrack(1, 0, offset, delay);
-					}
+			if (_game.id == GID_LOOM && _game.version == 4) {
+				if (offset == 0 && delay == 0) {
+					VAR(VAR_MUSIC_TIMER) = 0;
+					_sound->stopCD();
 				} else {
-					error("ScummEngine_v5::decodeParseString: Unhandled case 8");
-				}
-			}
-			break;
-		case 15:{	// SO_TEXTSTRING
-				const int len = resStrLen(_scriptPointer);
+					// Loom specified the offset from the start of the CD;
+					// thus we have to subtract the length of the first track
+					// (22500 frames) plus the 2 second = 150 frame leadin.
+					// I.e. in total 22650 frames.
+					offset = (int)(offset * 7.5 - 22500 - 2 * 75);
 
-				if (_game.id == GID_LOOM && strcmp((const char *) _scriptPointer, "I am Choas.") == 0) {
-					// WORKAROUND: This happens when Chaos introduces
-					// herself to bishop Mandible. Of all the places to put
-					// a typo...
-					printString(textSlot, (const byte *) "I am Chaos.");
-				} else if (_game.id == GID_INDY4 && _roomResource == 23 && vm.slot[_currentScript].number == 167 &&
-						len == 24 && 0==memcmp(_scriptPointer+16, "pregod", 6)) {
-					// WORKAROUND for bug #1621210.
-					byte tmpBuf[25];
-					memcpy(tmpBuf, _scriptPointer, 25);
-					if (tmpBuf[22] == '8')
-						strcpy((char *)tmpBuf+16, "^18^");
-					else
-						strcpy((char *)tmpBuf+16, "^19^");
-					printString(textSlot, tmpBuf);
-				} else if (_game.id == GID_MONKEY_EGA && _roomResource == 30 && vm.slot[_currentScript].number == 411 &&
-							strstr((const char *)_scriptPointer, "NCREDIT-NOTE-AMOUNT")) {
-					// WORKAROUND for bug #3003643 (MI1EGA German: Credit text incorrect)
-					// The script contains buggy text.
-					const char *tmp = strstr((const char *)_scriptPointer, "NCREDIT-NOTE-AMOUNT");
-					char tmpBuf[256];
-					const int diff = tmp - (const char *)_scriptPointer;
-					memcpy(tmpBuf, _scriptPointer, diff);
-					strcpy(tmpBuf + diff, "5000");
-					strcpy(tmpBuf + diff + 4, tmp + sizeof("NCREDIT-NOTE-AMOUNT") - 1);
-					printString(textSlot, (byte *)tmpBuf);
-				} else {
-					printString(textSlot, _scriptPointer);
-				}
-				_scriptPointer += len + 1;
-			}
+					// Slightly increase the delay (5 frames = 1/25 of a second).
+					// This noticably improves the experience in Loom CD.
+					delay = (int)(delay * 7.5 + 5);
 
+					_sound->playCDTrack(1, 0, offset, delay);
+				}
+			} else {
+				error("ScummEngine_v5::decodeParseString: Unhandled case 8");
+			}
+		} break;
+		case 15: { // SO_TEXTSTRING
+			const int len = resStrLen(_scriptPointer);
+
+			if (_game.id == GID_LOOM && strcmp((const char *)_scriptPointer, "I am Choas.") == 0) {
+				// WORKAROUND: This happens when Chaos introduces
+				// herself to bishop Mandible. Of all the places to put
+				// a typo...
+				printString(textSlot, (const byte *)"I am Chaos.");
+			} else if (_game.id == GID_INDY4 && _roomResource == 23 && vm.slot[_currentScript].number == 167 && len == 24 && 0 == memcmp(_scriptPointer + 16, "pregod", 6)) {
+				// WORKAROUND for bug #1621210.
+				byte tmpBuf[25];
+				memcpy(tmpBuf, _scriptPointer, 25);
+				if (tmpBuf[22] == '8')
+					strcpy((char *)tmpBuf + 16, "^18^");
+				else
+					strcpy((char *)tmpBuf + 16, "^19^");
+				printString(textSlot, tmpBuf);
+			} else if (_game.id == GID_MONKEY_EGA && _roomResource == 30 && vm.slot[_currentScript].number == 411 && strstr((const char *)_scriptPointer, "NCREDIT-NOTE-AMOUNT")) {
+				// WORKAROUND for bug #3003643 (MI1EGA German: Credit text incorrect)
+				// The script contains buggy text.
+				const char *tmp = strstr((const char *)_scriptPointer, "NCREDIT-NOTE-AMOUNT");
+				char tmpBuf[256];
+				const int diff = tmp - (const char *)_scriptPointer;
+				memcpy(tmpBuf, _scriptPointer, diff);
+				strcpy(tmpBuf + diff, "5000");
+				strcpy(tmpBuf + diff + 4, tmp + sizeof("NCREDIT-NOTE-AMOUNT") - 1);
+				printString(textSlot, (byte *)tmpBuf);
+			} else {
+				printString(textSlot, _scriptPointer);
+			}
+			_scriptPointer += len + 1;
+		}
 
 			// In SCUMM V1-V3, there were no 'default' values for the text slot
 			// values. Hence to achieve correct behavior, we have to keep the

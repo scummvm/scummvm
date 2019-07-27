@@ -23,23 +23,23 @@
 // Scene management module
 #include "saga/saga.h"
 
-#include "saga/gfx.h"
 #include "saga/animation.h"
 #include "saga/console.h"
-#include "saga/interface.h"
 #include "saga/events.h"
+#include "saga/gfx.h"
+#include "saga/interface.h"
 #include "saga/isomap.h"
+#include "saga/music.h"
 #include "saga/objectmap.h"
 #include "saga/palanim.h"
 #include "saga/puzzle.h"
 #include "saga/render.h"
 #include "saga/script.h"
 #include "saga/sound.h"
-#include "saga/music.h"
 
-#include "saga/scene.h"
 #include "saga/actor.h"
 #include "saga/resource.h"
+#include "saga/scene.h"
 
 #include "common/util.h"
 
@@ -56,7 +56,7 @@ static SAGAResourceTypes ITESceneResourceTypes[26] = {
 	SAGA_OBJECT,
 	SAGA_BG_IMAGE,
 	SAGA_BG_MASK,
-SAGA_UNKNOWN,
+	SAGA_UNKNOWN,
 	SAGA_STRINGS,
 	SAGA_OBJECT_MAP,
 	SAGA_ACTION_MAP,
@@ -65,7 +65,7 @@ SAGA_UNKNOWN,
 	SAGA_ISO_PLATFORMS,
 	SAGA_ISO_METATILES,
 	SAGA_ENTRY,
-SAGA_UNKNOWN,
+	SAGA_UNKNOWN,
 	SAGA_ANIM,
 	SAGA_ANIM,
 	SAGA_ANIM,
@@ -83,10 +83,10 @@ SAGA_UNKNOWN,
 #ifdef ENABLE_IHNM
 static SAGAResourceTypes IHNMSceneResourceTypes[28] = {
 	SAGA_ACTOR,
-SAGA_UNKNOWN,
+	SAGA_UNKNOWN,
 	SAGA_BG_IMAGE,
 	SAGA_BG_MASK,
-SAGA_UNKNOWN,
+	SAGA_UNKNOWN,
 	SAGA_STRINGS,
 	SAGA_OBJECT_MAP,
 	SAGA_ACTION_MAP,
@@ -95,7 +95,7 @@ SAGA_UNKNOWN,
 	SAGA_ISO_PLATFORMS,
 	SAGA_ISO_METATILES,
 	SAGA_ENTRY,
-SAGA_UNKNOWN,
+	SAGA_UNKNOWN,
 	SAGA_ANIM,
 	SAGA_ANIM,
 	SAGA_ANIM,
@@ -134,7 +134,8 @@ const char *SAGAResourceTypesString[] = {
 	"SAGA_PALETTE"
 };
 
-Scene::Scene(SagaEngine *vm) : _vm(vm) {
+Scene::Scene(SagaEngine *vm)
+  : _vm(vm) {
 	ByteArray sceneLUTData;
 	uint32 resourceId;
 	uint i;
@@ -170,7 +171,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm) {
 
 #ifdef SAGA_DEBUG
 
-#define DUMP_SCENES_LEVEL 10
+#	define DUMP_SCENES_LEVEL 10
 
 	if (DUMP_SCENES_LEVEL <= gDebugLevel) {
 		int backUpDebugLevel = gDebugLevel;
@@ -389,7 +390,6 @@ void Scene::skipScene() {
 		}
 		++queueIterator;
 	}
-
 }
 
 static struct SceneSubstitutes {
@@ -398,52 +398,40 @@ static struct SceneSubstitutes {
 	const char *title;
 	const char *image;
 } sceneSubstitutes[] = {
-	{
-		7,
-		"Tycho says he knows much about the northern lands. Can Rif convince "
-		"the Dog to share this knowledge?",
-		"The Home of Tycho Northpaw",
-		"tycho.bbm"
-	},
+	{ 7,
+	  "Tycho says he knows much about the northern lands. Can Rif convince "
+	  "the Dog to share this knowledge?",
+	  "The Home of Tycho Northpaw",
+	  "tycho.bbm" },
 
-	{
-		27,
-		"The scene of the crime may hold many clues, but will the servants of "
-		"the Sanctuary trust Rif?",
-		"The Sanctuary of the Orb",
-		"sanctuar.bbm"
-	},
+	{ 27,
+	  "The scene of the crime may hold many clues, but will the servants of "
+	  "the Sanctuary trust Rif?",
+	  "The Sanctuary of the Orb",
+	  "sanctuar.bbm" },
 
-	{
-		5,
-		"The Rats hold many secrets that could guide Rif on his quest -- assuming "
-		"he can get past the doorkeeper.",
-		"The Rat Complex",
-		"ratdoor.bbm"
-	},
+	{ 5,
+	  "The Rats hold many secrets that could guide Rif on his quest -- assuming "
+	  "he can get past the doorkeeper.",
+	  "The Rat Complex",
+	  "ratdoor.bbm" },
 
-	{
-		2,
-		"The Ferrets enjoy making things and have the materials to do so. How can "
-		"that help Rif?",
-		"The Ferret Village",
-		"ferrets.bbm"
-	},
+	{ 2,
+	  "The Ferrets enjoy making things and have the materials to do so. How can "
+	  "that help Rif?",
+	  "The Ferret Village",
+	  "ferrets.bbm" },
 
-	{
-		67,
-		"What aid can the noble King of the Elks provide to Rif and his companions?",
-		"The Realm of the Forest King",
-		"elkenter.bbm"
-	},
+	{ 67,
+	  "What aid can the noble King of the Elks provide to Rif and his companions?",
+	  "The Realm of the Forest King",
+	  "elkenter.bbm" },
 
-	{
-		3,
-		"The King holds Rif's sweetheart hostage. Will the Boar provide any "
-		"assistance to Rif?",
-		"The Great Hall of the Boar King",
-		"boarhall.bbm"
-	}
+	{ 3,
+	  "The King holds Rif's sweetheart hostage. Will the Boar provide any "
+	  "assistance to Rif?",
+	  "The Great Hall of the Boar King",
+	  "boarhall.bbm" }
 };
 
 void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionType transitionType, int chapter) {
@@ -475,15 +463,15 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 						cPal[j].blue = *pal++;
 					}
 					_vm->_gfx->setPalette(cPal);
-
 				}
 
 				_vm->_interface->setStatusText("Click or Press Return to continue. Press Q to quit.", 96);
 				_vm->_font->textDrawRect(kKnownFontMedium, sceneSubstitutes[i].title,
-					 Common::Rect(0, 7, _vm->getDisplayInfo().width, 27), _vm->KnownColor2ColorId(kKnownColorBrightWhite), _vm->KnownColor2ColorId(kKnownColorBlack), kFontOutline);
+				                         Common::Rect(0, 7, _vm->getDisplayInfo().width, 27), _vm->KnownColor2ColorId(kKnownColorBrightWhite), _vm->KnownColor2ColorId(kKnownColorBlack), kFontOutline);
 				_vm->_font->textDrawRect(kKnownFontMedium, sceneSubstitutes[i].message,
-					 Common::Rect(24, getHeight() - 33, _vm->getDisplayInfo().width - 11,
-								  getHeight()), _vm->KnownColor2ColorId(kKnownColorBrightWhite), _vm->KnownColor2ColorId(kKnownColorBlack), kFontOutline);
+				                         Common::Rect(24, getHeight() - 33, _vm->getDisplayInfo().width - 11,
+				                                      getHeight()),
+				                         _vm->KnownColor2ColorId(kKnownColorBrightWhite), _vm->KnownColor2ColorId(kKnownColorBlack), kFontOutline);
 				return;
 			}
 		}
@@ -563,7 +551,6 @@ bool Scene::offscreenPath(Point &testPoint) {
 	return true;
 }
 
-
 void Scene::getBGMaskInfo(int &width, int &height, byte *&buffer) {
 	if (!_bgMask.loaded) {
 		error("Scene::getBGMaskInfo _bgMask not loaded");
@@ -575,7 +562,7 @@ void Scene::getBGMaskInfo(int &width, int &height, byte *&buffer) {
 }
 
 void Scene::initDoorsState() {
-	memcpy(_sceneDoors, initSceneDoors, sizeof (_sceneDoors) );
+	memcpy(_sceneDoors, initSceneDoors, sizeof(_sceneDoors));
 }
 
 void Scene::loadScene(LoadSceneParams &loadSceneParams) {
@@ -650,7 +637,7 @@ void Scene::loadScene(LoadSceneParams &loadSceneParams) {
 
 	switch (loadSceneParams.loadFlag) {
 	case kLoadByResourceId:
-		_sceneNumber = 0;		// original assign zero for loaded by resource id
+		_sceneNumber = 0; // original assign zero for loaded by resource id
 		_sceneResourceId = loadSceneParams.sceneDescriptor;
 		break;
 	case kLoadBySceneNumber:
@@ -731,7 +718,6 @@ void Scene::loadScene(LoadSceneParams &loadSceneParams) {
 		event.time = 0;
 		event.duration = 0;
 		_vm->_events->chain(eventColumns, event);
-
 	}
 
 	// Start the scene pre script, but stay with black palette
@@ -742,10 +728,10 @@ void Scene::loadScene(LoadSceneParams &loadSceneParams) {
 		event.time = 0;
 		event.param = _sceneDescription.scriptModuleNumber;
 		event.param2 = _sceneDescription.startScriptEntrypointNumber;
-		event.param3 = 0;		// Action
-		event.param4 = _sceneNumber;	// Object
-		event.param5 = loadSceneParams.actorsEntrance;	// With Object
-		event.param6 = 0;		// Actor
+		event.param3 = 0; // Action
+		event.param4 = _sceneNumber; // Object
+		event.param5 = loadSceneParams.actorsEntrance; // With Object
+		event.param6 = 0; // Actor
 		eventColumns = _vm->_events->chain(eventColumns, event);
 	}
 
@@ -822,10 +808,10 @@ void Scene::loadScene(LoadSceneParams &loadSceneParams) {
 			event.time = 0;
 			event.param = _sceneDescription.scriptModuleNumber;
 			event.param2 = _sceneDescription.sceneScriptEntrypointNumber;
-			event.param3 = _vm->_script->getVerbType(kVerbEnter);		// Action
-			event.param4 = _sceneNumber;	// Object
-			event.param5 = loadSceneParams.actorsEntrance;		// With Object
-			event.param6 = 0;		// Actor
+			event.param3 = _vm->_script->getVerbType(kVerbEnter); // Action
+			event.param4 = _sceneNumber; // Object
+			event.param5 = loadSceneParams.actorsEntrance; // With Object
+			event.param6 = 0; // Actor
 			_vm->_events->queue(event);
 		}
 
@@ -916,7 +902,6 @@ void Scene::loadSceneResourceList(uint32 resourceId, SceneResourceDataArray &res
 			// demo version may contain invalid resourceId
 			resource->invalid = !_sceneContext->validResourceId(resource->resourceId);
 		}
-
 	}
 }
 
@@ -935,7 +920,6 @@ void Scene::processSceneResources(SceneResourceDataArray &resourceList) {
 			continue;
 		}
 		_vm->_resource->loadResource(_sceneContext, resource->resourceId, resourceData);
-
 
 		if (resourceData.size() >= 6) {
 			if (!memcmp(resourceData.getBuffer(), "DUMMY!", 6)) {
@@ -975,9 +959,9 @@ void Scene::processSceneResources(SceneResourceDataArray &resourceList) {
 			debug(3, "Loading background resource.");
 
 			if (!_vm->decodeBGImage(resourceData,
-				_bg.buffer,
-				&_bg.w,
-				&_bg.h)) {
+			                        _bg.buffer,
+			                        &_bg.w,
+			                        &_bg.h)) {
 				error("Scene::processSceneResources() Error loading background resource %i", resource->resourceId);
 			}
 			_bg.loaded = true;
@@ -1041,13 +1025,11 @@ void Scene::processSceneResources(SceneResourceDataArray &resourceList) {
 			debug(3, "Loading isometric metatiles resource.");
 			_vm->_isoMap->loadMetaTiles(resourceData);
 			break;
-		case SAGA_ANIM:
-			{
-				uint16 animId = resource->resourceType - 14;
-				debug(3, "Loading animation resource animId=%i", animId);
-				_vm->_anim->load(animId, resourceData);
-			}
-			break;
+		case SAGA_ANIM: {
+			uint16 animId = resource->resourceType - 14;
+			debug(3, "Loading animation resource animId=%i", animId);
+			_vm->_anim->load(animId, resourceData);
+		} break;
 		case SAGA_ENTRY:
 			debug(3, "Loading entry list resource...");
 			loadSceneEntryList(resourceData);
@@ -1068,22 +1050,20 @@ void Scene::processSceneResources(SceneResourceDataArray &resourceList) {
 			if (_vm->getGameId() == GID_ITE)
 				_vm->_interface->loadScenePortraits(resource->resourceId);
 			break;
-		case SAGA_PALETTE:
-			{
-				PalEntry pal[PAL_ENTRIES];
-				byte *palPtr = resourceData.getBuffer();
+		case SAGA_PALETTE: {
+			PalEntry pal[PAL_ENTRIES];
+			byte *palPtr = resourceData.getBuffer();
 
-				if (resourceData.size() < 3 * PAL_ENTRIES)
-					error("Too small scene palette %i", (int)resourceData.size());
+			if (resourceData.size() < 3 * PAL_ENTRIES)
+				error("Too small scene palette %i", (int)resourceData.size());
 
-				for (uint16 c = 0; c < PAL_ENTRIES; c++) {
-					pal[c].red = *palPtr++;
-					pal[c].green = *palPtr++;
-					pal[c].blue = *palPtr++;
-				}
-				_vm->_gfx->setPalette(pal);
+			for (uint16 c = 0; c < PAL_ENTRIES; c++) {
+				pal[c].red = *palPtr++;
+				pal[c].green = *palPtr++;
+				pal[c].blue = *palPtr++;
 			}
-			break;
+			_vm->_gfx->setPalette(pal);
+		} break;
 		default:
 			error("Scene::ProcessSceneResources() Encountered unknown resource type %i", resource->resourceType);
 			break;

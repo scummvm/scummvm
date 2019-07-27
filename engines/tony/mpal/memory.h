@@ -23,52 +23,53 @@
 #ifndef TONY_MPAL_MEMORY
 #define TONY_MPAL_MEMORY
 
-#include "common/scummsys.h"
 #include "common/list.h"
+#include "common/scummsys.h"
 
 namespace Tony {
 
 namespace MPAL {
 
-typedef void *MpalHandle;
+	typedef void *MpalHandle;
 
-struct MemoryItem {
-	uint32 _id;
-	uint32 _size;
-	int _lockCount;
-	byte _data[1];
+	struct MemoryItem {
+		uint32 _id;
+		uint32 _size;
+		int _lockCount;
+		byte _data[1];
 
-	// Casting for access to data
-	operator void *() { return &_data[0]; }
-};
+		// Casting for access to data
+		operator void *() { return &_data[0]; }
+	};
 
-class MemoryManager {
-private:
-	static MemoryItem *getItem(MpalHandle handle);
-public:
-	static MpalHandle allocate(uint32 size, uint flags);
-	static void *alloc(uint32 size, uint flags);
-	static void freeBlock(MpalHandle handle);
-	static void destroyItem(MpalHandle handle);
-	static uint32 getSize(MpalHandle handle);
-	static byte *lockItem(MpalHandle handle);
-	static void unlockItem(MpalHandle handle);
-};
+	class MemoryManager {
+	private:
+		static MemoryItem *getItem(MpalHandle handle);
+
+	public:
+		static MpalHandle allocate(uint32 size, uint flags);
+		static void *alloc(uint32 size, uint flags);
+		static void freeBlock(MpalHandle handle);
+		static void destroyItem(MpalHandle handle);
+		static uint32 getSize(MpalHandle handle);
+		static byte *lockItem(MpalHandle handle);
+		static void unlockItem(MpalHandle handle);
+	};
 
 // defines
-#define globalAlloc(flags, size)    MemoryManager::alloc(size, flags)
+#define globalAlloc(flags, size) MemoryManager::alloc(size, flags)
 #define globalAllocate(flags, size) MemoryManager::allocate(size, flags)
-#define globalFree(handle)          MemoryManager::freeBlock(handle)
-#define globalDestroy(handle)       MemoryManager::destroyItem(handle)
-#define globalLock(handle)          MemoryManager::lockItem(handle)
-#define globalUnlock(handle)        MemoryManager::unlockItem(handle)
-#define globalSize(handle)          MemoryManager::getSize(handle)
+#define globalFree(handle) MemoryManager::freeBlock(handle)
+#define globalDestroy(handle) MemoryManager::destroyItem(handle)
+#define globalLock(handle) MemoryManager::lockItem(handle)
+#define globalUnlock(handle) MemoryManager::unlockItem(handle)
+#define globalSize(handle) MemoryManager::getSize(handle)
 
 #define GMEM_FIXED 1
 #define GMEM_MOVEABLE 2
 #define GMEM_ZEROINIT 4
 
-const uint32 BLOCK_ID = 0x12345678;
+	const uint32 BLOCK_ID = 0x12345678;
 
 } // end of namespace MPAL
 

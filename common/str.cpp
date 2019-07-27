@@ -20,12 +20,12 @@
  *
  */
 
+#include "common/str.h"
 #include "common/hash-str.h"
 #include "common/list.h"
 #include "common/memorypool.h"
-#include "common/str.h"
-#include "common/util.h"
 #include "common/mutex.h"
+#include "common/util.h"
 
 namespace Common {
 
@@ -50,7 +50,7 @@ void unlockMemoryPoolMutex() {
 }
 
 void String::releaseMemoryPoolMutex() {
-	if (g_refCountPoolMutex){
+	if (g_refCountPoolMutex) {
 		g_system->deleteMutex(g_refCountPoolMutex);
 		g_refCountPoolMutex = nullptr;
 	}
@@ -61,7 +61,9 @@ static uint32 computeCapacity(uint32 len) {
 	return ((len + 32 - 1) & ~0x1F);
 }
 
-String::String(const char *str) : _size(0), _str(_storage) {
+String::String(const char *str)
+  : _size(0)
+  , _str(_storage) {
 	if (str == nullptr) {
 		_storage[0] = 0;
 		_size = 0;
@@ -69,11 +71,15 @@ String::String(const char *str) : _size(0), _str(_storage) {
 		initWithCStr(str, strlen(str));
 }
 
-String::String(const char *str, uint32 len) : _size(0), _str(_storage) {
+String::String(const char *str, uint32 len)
+  : _size(0)
+  , _str(_storage) {
 	initWithCStr(str, len);
 }
 
-String::String(const char *beginP, const char *endP) : _size(0), _str(_storage) {
+String::String(const char *beginP, const char *endP)
+  : _size(0)
+  , _str(_storage) {
 	assert(endP >= beginP);
 	initWithCStr(beginP, endP - beginP);
 }
@@ -101,7 +107,7 @@ void String::initWithCStr(const char *str, uint32 len) {
 }
 
 String::String(const String &str)
-	: _size(str._size) {
+  : _size(str._size) {
 	if (str.isStorageIntern()) {
 		// String in internal storage: just copy it
 		memcpy(_storage, str._storage, _builtinCapacity);
@@ -117,7 +123,8 @@ String::String(const String &str)
 }
 
 String::String(char c)
-	: _size(0), _str(_storage) {
+  : _size(0)
+  , _str(_storage) {
 
 	_storage[0] = c;
 	_storage[1] = 0;
@@ -165,12 +172,11 @@ void String::ensureCapacity(uint32 new_size, bool keep_old) {
 	if (new_size < curCapacity)
 		newCapacity = curCapacity;
 	else
-		newCapacity = MAX(curCapacity * 2, computeCapacity(new_size+1));
+		newCapacity = MAX(curCapacity * 2, computeCapacity(new_size + 1));
 
 	// Allocate new storage
 	newStorage = new char[newCapacity];
 	assert(newStorage);
-
 
 	// Copy old data if needed, elsewise reset the new storage.
 	if (keep_old) {
@@ -405,7 +411,8 @@ bool String::contains(char x) const {
 uint64 String::asUint64() const {
 	uint64 result = 0;
 	for (uint32 i = 0; i < _size; ++i) {
-		if (_str[i] < '0' || _str[i] > '9') break;
+		if (_str[i] < '0' || _str[i] > '9')
+			break;
 		result = result * 10L + (_str[i] - '0');
 	}
 	return result;
@@ -446,7 +453,7 @@ void String::erase(uint32 p, uint32 len) {
 		return;
 	}
 
-	for ( ; p + len <= _size; p++) {
+	for (; p + len <= _size; p++) {
 		_str[p] = _str[p + len];
 	}
 	_size -= len;
@@ -570,12 +577,12 @@ void String::replace(iterator begin_, iterator end_, const char *str) {
 }
 
 void String::replace(uint32 posOri, uint32 countOri, const String &str,
-					 uint32 posDest, uint32 countDest) {
+                     uint32 posDest, uint32 countDest) {
 	replace(posOri, countOri, str._str, posDest, countDest);
 }
 
 void String::replace(uint32 posOri, uint32 countOri, const char *str,
-					 uint32 posDest, uint32 countDest) {
+                     uint32 posDest, uint32 countDest) {
 
 	ensureCapacity(_size + countDest - countOri, true);
 
@@ -589,7 +596,7 @@ void String::replace(uint32 posOri, uint32 countOri, const char *str,
 		for (uint32 i = _size; i >= posOri + countDest; i--)
 			_str[i] = _str[i - offset];
 
-	} else if (countOri > countDest){
+	} else if (countOri > countDest) {
 		uint32 offset = countOri - countDest; ///< Number of positions that we have to pull back
 
 		// Pull the remainder string back
@@ -602,7 +609,6 @@ void String::replace(uint32 posOri, uint32 countOri, const char *str,
 	// Copy the replaced part of the string
 	for (uint32 i = 0; i < countDest; i++)
 		_str[posOri + i] = str[posDest + i];
-
 }
 
 // static
@@ -669,7 +675,6 @@ String String::vformat(const char *fmt, va_list args) {
 	return output;
 }
 
-
 #pragma mark -
 
 bool String::operator==(const String &x) const {
@@ -685,7 +690,7 @@ bool String::operator!=(const String &x) const {
 	return !equals(x);
 }
 
-bool String::operator !=(const char *x) const {
+bool String::operator!=(const char *x) const {
 	assert(x != nullptr);
 	return !equals(x);
 }
@@ -708,11 +713,11 @@ bool String::operator>=(const String &x) const {
 
 #pragma mark -
 
-bool operator==(const char* y, const String &x) {
+bool operator==(const char *y, const String &x) {
 	return (x == y);
 }
 
-bool operator!=(const char* y, const String &x) {
+bool operator!=(const char *y, const String &x) {
 	return x != y;
 }
 
@@ -933,8 +938,7 @@ bool matchString(const char *str, const char *pat, bool ignoreCase, bool pathMod
 			// fallthrough
 
 		default:
-			if ((!ignoreCase && *pat != *str) ||
-				(ignoreCase && tolower(*pat) != tolower(*str))) {
+			if ((!ignoreCase && *pat != *str) || (ignoreCase && tolower(*pat) != tolower(*str))) {
 				if (p) {
 					// No match, oops -> try to backtrack
 					pat = p;
@@ -942,8 +946,7 @@ bool matchString(const char *str, const char *pat, bool ignoreCase, bool pathMod
 					if (!*str)
 						return !*pat;
 					break;
-				}
-				else
+				} else
 					return false;
 			}
 			// fallthrough
@@ -985,7 +988,7 @@ String tag2string(uint32 tag) {
 size_t strlcpy(char *dst, const char *src, size_t size) {
 	// Our backup of the source's start, we need this
 	// to calculate the source's length.
-	const char * const srcStart = src;
+	const char *const srcStart = src;
 
 	// In case a non-empty size was specified we
 	// copy over (size - 1) bytes at max.
@@ -1023,11 +1026,11 @@ size_t strlcat(char *dst, const char *src, size_t size) {
 
 	// Our backup of the source's start, we need this
 	// to calculate the source's length.
-	const char * const srcStart = src;
+	const char *const srcStart = src;
 
 	// Our backup of the destination's start, we need
 	// this to calculate the destination's length.
-	const char * const dstStart = dst;
+	const char *const dstStart = dst;
 
 	// Search the end of the destination, but do not
 	// move past the terminating zero.

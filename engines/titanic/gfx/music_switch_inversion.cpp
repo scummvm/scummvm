@@ -26,9 +26,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMusicSwitchInversion, CMusicSwitch)
-	ON_MESSAGE(MusicSettingChangedMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(QueryMusicControlSettingMsg)
+ON_MESSAGE(MusicSettingChangedMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(QueryMusicControlSettingMsg)
 END_MESSAGE_MAP()
 
 void CMusicSwitchInversion::save(SimpleFile *file, int indent) {

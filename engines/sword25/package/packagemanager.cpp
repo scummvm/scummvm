@@ -29,15 +29,15 @@
  *
  */
 
+#include "sword25/package/packagemanager.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/system.h"
 #include "common/unzip.h"
-#include "sword25/sword25.h"	// for kDebugScript
 #include "sword25/kernel/filesystemutil.h"
-#include "sword25/package/packagemanager.h"
+#include "sword25/sword25.h" // for kDebugScript
 
 namespace Sword25 {
 
@@ -54,10 +54,11 @@ static Common::String normalizePath(const Common::String &path, const Common::St
 	return Common::normalizePath(wholePath, PATH_SEPARATOR);
 }
 
-PackageManager::PackageManager(Kernel *pKernel) : Service(pKernel),
-	_currentDirectory(PATH_SEPARATOR),
-	_rootFolder(ConfMan.get("path")),
-	_useEnglishSpeech(ConfMan.getBool("english_speech")) {
+PackageManager::PackageManager(Kernel *pKernel)
+  : Service(pKernel)
+  , _currentDirectory(PATH_SEPARATOR)
+  , _rootFolder(ConfMan.get("path"))
+  , _useEnglishSpeech(ConfMan.getBool("english_speech")) {
 	if (!registerScriptBindings())
 		error("Script bindings could not be registered.");
 	else
@@ -69,7 +70,6 @@ PackageManager::~PackageManager() {
 	Common::List<ArchiveEntry *>::iterator i;
 	for (i = _archiveList.begin(); i != _archiveList.end(); ++i)
 		delete *i;
-
 }
 
 Common::String PackageManager::ensureSpeechLang(const Common::String &fileName) {
@@ -167,7 +167,7 @@ byte *PackageManager::getFile(const Common::String &fileName, uint *fileSizePtr)
 		// Savegame loading logic
 		Common::SaveFileManager *sfm = g_system->getSavefileManager();
 		Common::InSaveFile *file = sfm->openForLoading(
-			FileSystemUtil::getPathFilename(fileName));
+		  FileSystemUtil::getPathFilename(fileName));
 		if (!file) {
 			error("Could not load savegame \"%s\".", fileName.c_str());
 			return 0;
@@ -270,8 +270,7 @@ int PackageManager::doSearch(Common::ArchiveMemberList &list, const Common::Stri
 
 		// Create a list of the matching names
 		for (Common::ArchiveMemberList::iterator it = memberList.begin(); it != memberList.end(); ++it) {
-			if (((typeFilter & PackageManager::FT_DIRECTORY) && (*it)->getName().hasSuffix("/")) ||
-				((typeFilter & PackageManager::FT_FILE) && !(*it)->getName().hasSuffix("/"))) {
+			if (((typeFilter & PackageManager::FT_DIRECTORY) && (*it)->getName().hasSuffix("/")) || ((typeFilter & PackageManager::FT_FILE) && !(*it)->getName().hasSuffix("/"))) {
 
 				// Do not add duplicate files
 				bool found = false;

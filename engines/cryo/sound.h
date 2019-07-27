@@ -23,8 +23,8 @@
 #pragma once
 
 #include "audio/audiostream.h"
-#include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "audio/mixer.h"
 
 #include "cryo/cryolib.h"
 

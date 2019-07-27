@@ -20,17 +20,18 @@
  *
  */
 
+#include "xeen/screen.h"
 #include "common/system.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
-#include "xeen/screen.h"
 #include "xeen/resources.h"
 #include "xeen/window.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {
 
-Screen::Screen(XeenEngine *vm) : _vm(vm) {
+Screen::Screen(XeenEngine *vm)
+  : _vm(vm) {
 	_fadeIn = false;
 	create(SCREEN_WIDTH, SCREEN_HEIGHT);
 	Common::fill(&_tempPalette[0], &_tempPalette[PALETTE_SIZE], 0);
@@ -193,7 +194,8 @@ bool Screen::doScroll(bool rollUp, bool fadeInFlag) {
 
 	if (rollUp) {
 		for (int i = 22, ctr = 7; i > 0 && !events.isKeyMousePressed()
-				&& !_vm->shouldExit(); --i) {
+		     && !_vm->shouldExit();
+		     --i) {
 			events.updateGameCounter();
 			screen.restoreBackground();
 
@@ -217,7 +219,8 @@ bool Screen::doScroll(bool rollUp, bool fadeInFlag) {
 		}
 	} else {
 		for (int i = 0, ctr = 0; i < 22 && !events.isKeyMousePressed()
-				&& !_vm->shouldExit(); ++i) {
+		     && !_vm->shouldExit();
+		     ++i) {
 			events.updateGameCounter();
 			screen.restoreBackground();
 

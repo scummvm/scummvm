@@ -21,33 +21,33 @@
  */
 
 #include "titanic/npcs/parrot.h"
-#include "titanic/core/project_item.h"
 #include "titanic/carry/carry.h"
 #include "titanic/carry/chicken.h"
+#include "titanic/core/project_item.h"
 #include "titanic/game_manager.h"
 #include "titanic/translation.h"
 
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CParrot, CTrueTalkNPC)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(TrueTalkTriggerActionMsg)
-	ON_MESSAGE(MouseDragStartMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(ParrotSpeakMsg)
-	ON_MESSAGE(NPCPlayTalkingAnimationMsg)
-	ON_MESSAGE(NPCPlayIdleAnimationMsg)
-	ON_MESSAGE(FrameMsg)
-	ON_MESSAGE(MovieFrameMsg)
-	ON_MESSAGE(PutParrotBackMsg)
-	ON_MESSAGE(PreEnterViewMsg)
-	ON_MESSAGE(PanningAwayFromParrotMsg)
-	ON_MESSAGE(LeaveRoomMsg)
-	ON_MESSAGE(TrueTalkNotifySpeechStartedMsg)
-	ON_MESSAGE(TrueTalkNotifySpeechEndedMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(TrueTalkTriggerActionMsg)
+ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(ParrotSpeakMsg)
+ON_MESSAGE(NPCPlayTalkingAnimationMsg)
+ON_MESSAGE(NPCPlayIdleAnimationMsg)
+ON_MESSAGE(FrameMsg)
+ON_MESSAGE(MovieFrameMsg)
+ON_MESSAGE(PutParrotBackMsg)
+ON_MESSAGE(PreEnterViewMsg)
+ON_MESSAGE(PanningAwayFromParrotMsg)
+ON_MESSAGE(LeaveRoomMsg)
+ON_MESSAGE(TrueTalkNotifySpeechStartedMsg)
+ON_MESSAGE(TrueTalkNotifySpeechEndedMsg)
 END_MESSAGE_MAP()
 
 bool CParrot::_eatingChicken;
@@ -56,7 +56,8 @@ bool CParrot::_unused;
 ParrotState CParrot::_state;
 bool CParrot::_coreReplaced;
 
-CParrot::CParrot() : CTrueTalkNPC() {
+CParrot::CParrot()
+  : CTrueTalkNPC() {
 	_unused1 = 0;
 	_carryParrot = "CarryParrot";
 	_canDrag = true;
@@ -132,8 +133,7 @@ bool CParrot::ActMsg(CActMsg *msg) {
 			startTalking(this, 280275, findView());
 			_triedEatChicken = false;
 		}
-	} else if (msg->_action == "EnteringFromTOW" &&
-			(_state == PARROT_IN_CAGE || _state == PARROT_ESCAPED)) {
+	} else if (msg->_action == "EnteringFromTOW" && (_state == PARROT_IN_CAGE || _state == PARROT_ESCAPED)) {
 		if (_takeOff) {
 			_state = PARROT_ESCAPED;
 		} else {
@@ -285,7 +285,7 @@ bool CParrot::MovieEndMsg(CMovieEndMsg *msg) {
 		} else {
 			// Resetting back to standing
 			_npcFlags &= ~(NPCFLAG_MOVING | NPCFLAG_MOVE_START | NPCFLAG_MOVE_LOOP
-				| NPCFLAG_MOVE_FINISH | NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT);
+			               | NPCFLAG_MOVE_FINISH | NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT);
 			_npcFlags |= NPCFLAG_MOVE_END;
 			stopMovie();
 			loadFrame(0);
@@ -308,7 +308,7 @@ bool CParrot::EnterViewMsg(CEnterViewMsg *msg) {
 		setPosition(Point(_newXp, _bounds.top));
 		_canDrag = true;
 		_npcFlags &= ~(NPCFLAG_MOVING | NPCFLAG_MOVE_START | NPCFLAG_MOVE_LOOP
-			| NPCFLAG_MOVE_FINISH | NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT | NPCFLAG_MOVE_END);
+		               | NPCFLAG_MOVE_FINISH | NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT | NPCFLAG_MOVE_END);
 		loadFrame(0);
 		setTalking(this, true, findView());
 
@@ -441,9 +441,8 @@ bool CParrot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 		"Talking5", "Talking6", "Talking7", nullptr
 	};
 
-	if (!(_npcFlags & (NPCFLAG_MOVING | NPCFLAG_MOVE_START | NPCFLAG_MOVE_LOOP | NPCFLAG_MOVE_FINISH 
-			| NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT | NPCFLAG_MOVE_END))
-			&& _visible && _state == PARROT_IN_CAGE) {
+	if (!(_npcFlags & (NPCFLAG_MOVING | NPCFLAG_MOVE_START | NPCFLAG_MOVE_LOOP | NPCFLAG_MOVE_FINISH | NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT | NPCFLAG_MOVE_END))
+	    && _visible && _state == PARROT_IN_CAGE) {
 		if (compareViewNameTo("ParrotLobby.Node 1.N"))
 			msg->_names = NAMES;
 	}
@@ -454,12 +453,12 @@ bool CParrot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 bool CParrot::NPCPlayIdleAnimationMsg(CNPCPlayIdleAnimationMsg *msg) {
 	static const char *const NAMES[] = {
 		"Idle0", "Idle1", "Peck At Feet", "Peck At Feet Left"
-		"Peck At Feet Right", nullptr
+		                                  "Peck At Feet Right",
+		nullptr
 	};
 
-	if (!(_npcFlags & (NPCFLAG_MOVING | NPCFLAG_MOVE_START | NPCFLAG_MOVE_LOOP | NPCFLAG_MOVE_FINISH 
-			| NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT | NPCFLAG_MOVE_END))
-			&& _visible && _state == PARROT_IN_CAGE && compareViewNameTo("ParrotLobby.Node 1.N")) {
+	if (!(_npcFlags & (NPCFLAG_MOVING | NPCFLAG_MOVE_START | NPCFLAG_MOVE_LOOP | NPCFLAG_MOVE_FINISH | NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT | NPCFLAG_MOVE_END))
+	    && _visible && _state == PARROT_IN_CAGE && compareViewNameTo("ParrotLobby.Node 1.N")) {
 		CGameObject *dragItem = getDraggingObject();
 		if (!dragItem || dragItem->getName() == "Chicken") {
 			if (!_coreReplaced || getRandomNumber(3) != 0) {
@@ -535,7 +534,7 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 	bool chickenFlag = false;
 
 	if ((_npcFlags & NPCFLAG_MOVE_END) && !hasActiveMovie()) {
-		_newXc =  _newXp + _bounds.width() / 2;
+		_newXc = _newXp + _bounds.width() / 2;
 		int xDiff = ABS(xp - _newXc);
 
 		if (xDiff < 64) {
@@ -546,7 +545,7 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 			}
 
 			_npcFlags &= ~(NPCFLAG_MOVING | NPCFLAG_MOVE_START | NPCFLAG_MOVE_LOOP
-				| NPCFLAG_MOVE_FINISH | NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT | NPCFLAG_MOVE_END);
+			               | NPCFLAG_MOVE_FINISH | NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT | NPCFLAG_MOVE_END);
 			return true;
 		}
 

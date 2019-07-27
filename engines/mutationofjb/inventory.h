@@ -24,8 +24,8 @@
 #define MUTATIONOFJB_INVENTORY_H
 
 #include "common/array.h"
-#include "common/serializer.h"
 #include "common/scummsys.h"
+#include "common/serializer.h"
 #include "common/str.h"
 
 namespace MutationOfJB {
@@ -46,7 +46,8 @@ public:
 
 	typedef Common::Array<Common::String> Items;
 
-	Inventory() : _observer(nullptr) {}
+	Inventory()
+	  : _observer(nullptr) {}
 
 	const Items &getItems() const;
 	bool hasItem(const Common::String &item) const;

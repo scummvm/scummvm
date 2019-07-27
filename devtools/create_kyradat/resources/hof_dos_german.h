@@ -1,38 +1,82 @@
 static const char *const k2SeqplayStringsDOSGerman[103] = {
-	"Kyrandia l""\x94""st sich auf!",
-	"Stein f""\x81""r Stein,",
-	"Und Baum f""\x81""r Baum.",
-	"Kyrandia h""\x94""rt auf zu existieren!",
-	"Die k""\x94""niglichen Mystiker sind verzweifelt.",
+	"Kyrandia l"
+	"\x94"
+	"st sich auf!",
+	"Stein f"
+	"\x81"
+	"r Stein,",
+	"Und Baum f"
+	"\x81"
+	"r Baum.",
+	"Kyrandia h"
+	"\x94"
+	"rt auf zu existieren!",
+	"Die k"
+	"\x94"
+	"niglichen Mystiker sind verzweifelt.",
 	"Jede Informationsquelle wurde zu Rate gezogen.",
 	"Sogar Marko und sein neuer Kammerdiener durften den Konferenzen beiwohnen.",
-	"Gl""\x81""cklicherweise, hatte die Hand Erfahrungen in solchen Dingen.",
+	"Gl"
+	"\x81"
+	"cklicherweise, hatte die Hand Erfahrungen in solchen Dingen.",
 	"Und letztendlich konnte man sich auf einen Plan einigen,",
-	"Zu dessen Durchf""\x81""hrung es eines magischen Ankerstein bedarf,",
-	"Der aus der Mitte der Welt geholt werden mu""\xE1"".",
-	"Zanthia, j""\x81""ngste der kyrandianischen Mystiker, wurde ausgew""\x84""hlt, um diesen Stein zu holen.",
-	"Vielen Dank, da""\xE1"" Du die Hand des Schicksals spielst.",
-	"Dies sollten gen""\x81""gend Blaubeeren sein, um ein Portal zur Mitte der Erde zu ""\x94""ffnen.",
+	"Zu dessen Durchf"
+	"\x81"
+	"hrung es eines magischen Ankerstein bedarf,",
+	"Der aus der Mitte der Welt geholt werden mu"
+	"\xE1"
+	".",
+	"Zanthia, j"
+	"\x81"
+	"ngste der kyrandianischen Mystiker, wurde ausgew"
+	"\x84"
+	"hlt, um diesen Stein zu holen.",
+	"Vielen Dank, da"
+	"\xE1"
+	" Du die Hand des Schicksals spielst.",
+	"Dies sollten gen"
+	"\x81"
+	"gend Blaubeeren sein, um ein Portal zur Mitte der Erde zu "
+	"\x94"
+	"ffnen.",
 	" DUMMY STRING... ",
 	" DUMMY STRING... ",
-	"Hey! Meine gesamte Ausr""\x81""stung wurde gestohlen!",
+	"Hey! Meine gesamte Ausr"
+	"\x81"
+	"stung wurde gestohlen!",
 	" DUMMY STRING... ",
-	"Wenn die glauben, da""\xE1"" ich den ganzen Weg nach unten laufe, haben die sich aber in den Finger geschnitten!",
+	"Wenn die glauben, da"
+	"\xE1"
+	" ich den ganzen Weg nach unten laufe, haben die sich aber in den Finger geschnitten!",
 	" DUMMY STRING... ",
 	" DUMMY STRING... ",
 	"Beeile Dich, Faun!",
 	"Junge, Junge das war aber knapp!",
 	"Da hast Du recht, Kumpel. Ich werde nie wieder jagen gehen!",
 	"Quuaaak.",
-	"Wie oft mu""\xE1"" ich es Dir noch sagen? Du bist eine Kr""\x94""te.",
-	"Oh nein! Der K""\x84""se ist alle!",
+	"Wie oft mu"
+	"\xE1"
+	" ich es Dir noch sagen? Du bist eine Kr"
+	"\x94"
+	"te.",
+	"Oh nein! Der K"
+	"\x84"
+	"se ist alle!",
 	"Versuchen wir es mal mit dem Ohrenwachs. Es ist orange.",
 	"Mama, wann bekomme ich das Efeu?",
 	"Husch husch, komm hier raus!",
 	"Du schneidest, und ich suche aus.",
 	"Nein. Du schneidest und ich werde aussuchen.",
-	"Ich bin immernoch der\rMeinung, da""\xE1"" er es nur\rso dahingeplappert hat.",
-	"Argh, Du w""\x81""rdest ein jambisches Pentameter nicht erkennen, wenn es Dich in den Hintern bei""\xE1""en w""\x81""rde!",
+	"Ich bin immernoch der\rMeinung, da"
+	"\xE1"
+	" er es nur\rso dahingeplappert hat.",
+	"Argh, Du w"
+	"\x81"
+	"rdest ein jambisches Pentameter nicht erkennen, wenn es Dich in den Hintern bei"
+	"\xE1"
+	"en w"
+	"\x81"
+	"rde!",
 	"Executive Producer",
 	"Brett W. Sperry",
 	"Director & Designer",
@@ -80,8 +124,14 @@ static const char *const k2SeqplayStringsDOSGerman[103] = {
 	"Eydie Laramore",
 	"Lisa Marcinko",
 	"Lauren Rifkin",
-	"Unseren Gl""\x81""ckw""\x81""nsch!",
-	"Vielen Dank, da""\xE1"" Sie The Hand of Fate gespielt haben!",
+	"Unseren Gl"
+	"\x81"
+	"ckw"
+	"\x81"
+	"nsch!",
+	"Vielen Dank, da"
+	"\xE1"
+	" Sie The Hand of Fate gespielt haben!",
 	"Guest Coding",
 	"Producer Liaison",
 	"Scott Duckett",
@@ -105,4 +155,3 @@ static const char *const k2SeqplayStringsDOSGerman[103] = {
 };
 
 static const StringListProvider k2SeqplayStringsDOSGermanProvider = { ARRAYSIZE(k2SeqplayStringsDOSGerman), k2SeqplayStringsDOSGerman };
-

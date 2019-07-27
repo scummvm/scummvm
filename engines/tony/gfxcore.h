@@ -29,8 +29,8 @@
 #ifndef TONY_GFXCORE_H
 #define TONY_GFXCORE_H
 
-#include "common/system.h"
 #include "common/coroutines.h"
+#include "common/system.h"
 #include "tony/utils.h"
 
 namespace Tony {
@@ -40,17 +40,17 @@ namespace Tony {
 \****************************************************************************/
 
 //    Class Name                Family Treee            Abstract?
-class RMGfxTask;             //                             Yes
-class RMGfxTaskSetPrior;     //     Task                    Yes
-class RMGfxBuffer;           //
-class RMGfxSourceBuffer;     //     TaskP+[Buffer]          Yes
-class RMGfxTargetBuffer;     //     [Buffer]
-class RMGfxSourceBufferPal;  //     Source                  Yes
-class RMGfxSourceBuffer4;    //     SourcePal
-class RMGfxSourceBuffer8;    //     SourcePal
-class RMGfxSourceBuffer16;   //     Source
-class RMGfxWoodyBuffer;      //     Source16+Target
-class RMGfxClearTask;        //     Task
+class RMGfxTask; //                             Yes
+class RMGfxTaskSetPrior; //     Task                    Yes
+class RMGfxBuffer; //
+class RMGfxSourceBuffer; //     TaskP+[Buffer]          Yes
+class RMGfxTargetBuffer; //     [Buffer]
+class RMGfxSourceBufferPal; //     Source                  Yes
+class RMGfxSourceBuffer4; //     SourcePal
+class RMGfxSourceBuffer8; //     SourcePal
+class RMGfxSourceBuffer16; //     Source
+class RMGfxWoodyBuffer; //     Source16+Target
+class RMGfxClearTask; //     Task
 
 /**
  * Graphics buffer
@@ -136,7 +136,7 @@ protected:
 public:
 	// Standard constructor
 	RMGfxTask();
-	virtual ~RMGfxTask() { }
+	virtual ~RMGfxTask() {}
 
 	virtual int priority();
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) = 0;
@@ -152,7 +152,7 @@ public:
  */
 class RMGfxTaskSetPrior : public RMGfxTask {
 public:
-	virtual ~RMGfxTaskSetPrior() { }
+	virtual ~RMGfxTaskSetPrior() {}
 	void setPriority(int nPrior);
 };
 
@@ -161,7 +161,7 @@ public:
  */
 class RMGfxClearTask : public RMGfxTask {
 public:
-	virtual ~RMGfxClearTask() { }
+	virtual ~RMGfxClearTask() {}
 
 	int priority();
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
@@ -176,7 +176,7 @@ protected:
 	uint16 _wFillColor;
 
 public:
-	virtual ~RMGfxBox() { }
+	virtual ~RMGfxBox() {}
 
 	void setColor(byte r, byte g, byte b);
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
@@ -329,10 +329,10 @@ public:
 
 class RMGfxSourceBuffer8RLEByte : public RMGfxSourceBuffer8RLE {
 protected:
-	void rleWriteTrasp(byte *  &cur, int rep);
-	void rleWriteAlphaBlend(byte *  &cur, int rep);
-	void rleWriteData(byte *  &cur, int rep, byte *src);
-	void rleWriteEOL(byte *  &cur);
+	void rleWriteTrasp(byte *&cur, int rep);
+	void rleWriteAlphaBlend(byte *&cur, int rep);
+	void rleWriteData(byte *&cur, int rep, byte *src);
+	void rleWriteEOL(byte *&cur);
 	void rleDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength);
 	void rleDecompressLineFlipped(uint16 *dst, byte *src, int nStartSkip, int nLength);
 
@@ -342,10 +342,10 @@ public:
 
 class RMGfxSourceBuffer8RLEWord : public RMGfxSourceBuffer8RLE {
 protected:
-	void rleWriteTrasp(byte *  &cur, int rep);
-	void rleWriteAlphaBlend(byte *  &cur, int rep);
-	void rleWriteData(byte *  &cur, int rep, byte *src);
-	void rleWriteEOL(byte *  &cur);
+	void rleWriteTrasp(byte *&cur, int rep);
+	void rleWriteAlphaBlend(byte *&cur, int rep);
+	void rleWriteData(byte *&cur, int rep, byte *src);
+	void rleWriteEOL(byte *&cur);
 	virtual void rleDecompressLine(uint16 *dst, byte *src, int nStartSkip, int nLength);
 	virtual void rleDecompressLineFlipped(uint16 *dst, byte *src, int nStartSkip, int nLength);
 
@@ -489,7 +489,7 @@ public:
 /**
  * Ring buffer, which is both source and by destination
  */
-class RMGfxWoodyBuffer: public RMGfxSourceBuffer16, public RMGfxTargetBuffer {
+class RMGfxWoodyBuffer : public RMGfxSourceBuffer16, public RMGfxTargetBuffer {
 public:
 	RMGfxWoodyBuffer();
 	RMGfxWoodyBuffer(int dimx, int dimy);

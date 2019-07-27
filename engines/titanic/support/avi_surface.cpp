@@ -21,15 +21,15 @@
  */
 
 #include "titanic/support/avi_surface.h"
-#include "titanic/support/screen_manager.h"
-#include "titanic/support/video_surface.h"
-#include "titanic/events.h"
-#include "titanic/titanic.h"
 #include "common/system.h"
 #include "graphics/pixelformat.h"
 #include "graphics/screen.h"
-#include "video/avi_decoder.h"
+#include "titanic/events.h"
+#include "titanic/support/screen_manager.h"
+#include "titanic/support/video_surface.h"
+#include "titanic/titanic.h"
 #include "titanic/translation.h"
+#include "video/avi_decoder.h"
 
 namespace Titanic {
 
@@ -41,7 +41,8 @@ Video::AVIDecoder::AVIVideoTrack &AVIDecoder::getVideoTrack(uint idx) {
 	return *track;
 }
 
-AVISurface::AVISurface(const CResourceKey &key) : _movieName(key.getString()) {
+AVISurface::AVISurface(const CResourceKey &key)
+  : _movieName(key.getString()) {
 	_videoSurface = nullptr;
 	_streamCount = 0;
 	_movieFrameSurface[0] = _movieFrameSurface[1] = nullptr;
@@ -196,8 +197,7 @@ bool AVISurface::handleEvents(CMovieEventList &events) {
 	_currentFrame += isReversed() ? -1 : 1;
 
 	int newFrame = _currentFrame;
-	if ((info->_isReversed && newFrame < info->_endFrame) ||
-		(!info->_isReversed && newFrame > info->_endFrame)) {
+	if ((info->_isReversed && newFrame < info->_endFrame) || (!info->_isReversed && newFrame > info->_endFrame)) {
 		if (info->_isRepeat) {
 			newFrame = info->_startFrame;
 		} else {
@@ -263,9 +263,7 @@ void AVISurface::setupDecompressor() {
 		return;
 
 	for (int idx = 0; idx < _streamCount; ++idx) {
-		Graphics::PixelFormat format = (idx == 0) ?
-			_decoder->getVideoTrack(0).getPixelFormat() :
-			_decoder->getTransparencyTrack()->getPixelFormat();
+		Graphics::PixelFormat format = (idx == 0) ? _decoder->getVideoTrack(0).getPixelFormat() : _decoder->getTransparencyTrack()->getPixelFormat();
 		int decoderPitch = _decoder->getWidth() * format.bytesPerPixel;
 		bool flag = false;
 
@@ -392,14 +390,14 @@ bool AVISurface::renderFrame() {
 			frame = _decoder->decodeNextFrame();
 			if (!_movieFrameSurface[0])
 				_movieFrameSurface[0] = new Graphics::ManagedSurface(_decoder->getWidth(), _decoder->getHeight(),
-					g_system->getScreenFormat());
+				                                                     g_system->getScreenFormat());
 
 			copyMovieFrame(*frame, *_movieFrameSurface[0]);
 		} else {
 			frame = _decoder->decodeNextTransparency();
 			if (!_movieFrameSurface[1])
 				_movieFrameSurface[1] = new Graphics::ManagedSurface(_decoder->getWidth(), _decoder->getHeight(),
-					Graphics::PixelFormat::createFormatCLUT8());
+				                                                     Graphics::PixelFormat::createFormatCLUT8());
 
 			_movieFrameSurface[1]->blitFrom(*frame);
 		}
@@ -421,7 +419,7 @@ bool AVISurface::renderFrame() {
 			// For paletted 8-bit surfaces, we need to convert it to 16-bit,
 			// since the blitting method we're using doesn't support palettes
 			Graphics::Surface *s = frameSurface.convertTo(g_system->getScreenFormat(),
-				_decoder->getPalette());
+			                                              _decoder->getPalette());
 
 			_videoSurface->getRawSurface()->blitFrom(*s);
 			s->free();
@@ -480,7 +478,7 @@ Graphics::ManagedSurface *AVISurface::duplicateTransparency() const {
 		return nullptr;
 	} else {
 		Graphics::ManagedSurface *dest = new Graphics::ManagedSurface(_movieFrameSurface[1]->w,
-			_movieFrameSurface[1]->h, Graphics::PixelFormat::createFormatCLUT8());
+		                                                              _movieFrameSurface[1]->h, Graphics::PixelFormat::createFormatCLUT8());
 		dest->blitFrom(*_movieFrameSurface[1]);
 		return dest;
 	}
@@ -511,8 +509,7 @@ bool AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
 		_decoder->start();
 	}
 
-	bool isDifferent = _movieFrameSurface[0]->w != r.width() ||
-		_movieFrameSurface[0]->h != r.height();
+	bool isDifferent = _movieFrameSurface[0]->w != r.width() || _movieFrameSurface[0]->h != r.height();
 
 	bool isFinished = true;
 	while (_currentFrame < (int)endFrame && !g_vm->shouldQuit()) {
@@ -525,7 +522,7 @@ bool AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
 				// which supports arbitrary scaling, to reduce to the desired size
 				g_vm->_screen->fillRect(r, 0);
 				g_vm->_screen->transBlitFrom(*_movieFrameSurface[0],
-					Common::Rect(0, 0, _movieFrameSurface[0]->w, _movieFrameSurface[0]->h), r);
+				                             Common::Rect(0, 0, _movieFrameSurface[0]->w, _movieFrameSurface[0]->h), r);
 			} else {
 				g_vm->_screen->blitFrom(*_movieFrameSurface[0], Common::Point(r.left, r.top));
 			}

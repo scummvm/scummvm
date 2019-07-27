@@ -24,8 +24,8 @@
 #define SHERLOCK_TATTOO_WIDGET_FILES_H
 
 #include "common/scummsys.h"
-#include "sherlock/tattoo/widget_base.h"
 #include "sherlock/saveload.h"
+#include "sherlock/tattoo/widget_base.h"
 
 namespace Sherlock {
 
@@ -33,51 +33,54 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-enum FilesRenderMode { RENDER_ALL, RENDER_NAMES, RENDER_NAMES_AND_SCROLLBAR };
+	enum FilesRenderMode { RENDER_ALL,
+		                     RENDER_NAMES,
+		                     RENDER_NAMES_AND_SCROLLBAR };
 
-class WidgetFiles: public WidgetBase, public SaveManager {
-private:
-	SherlockEngine *_vm;
-	SaveMode _fileMode;
-	int _selector, _oldSelector;
+	class WidgetFiles : public WidgetBase, public SaveManager {
+	private:
+		SherlockEngine *_vm;
+		SaveMode _fileMode;
+		int _selector, _oldSelector;
 
-	/**
+		/**
 	 * Render the dialog
 	 */
-	void render(FilesRenderMode mode);
+		void render(FilesRenderMode mode);
 
-	/**
+		/**
 	 * Show the ScummVM Save Game dialog
 	 */
-	void showScummVMSaveDialog();
+		void showScummVMSaveDialog();
 
-	/**
+		/**
 	 * Show the ScummVM Load Game dialog
 	 */
-	void showScummVMRestoreDialog();
+		void showScummVMRestoreDialog();
 
-	/**
+		/**
 	 * Prompt the user for a savegame name in the currently selected slot
 	 */
-	bool getFilename();
+		bool getFilename();
 
-	/**
+		/**
 	 * Return the area of a widget that the scrollbar will be drawn in
 	 */
-	virtual Common::Rect getScrollBarBounds() const;
-public:
-	WidgetFiles(SherlockEngine *vm, const Common::String &target);
+		virtual Common::Rect getScrollBarBounds() const;
 
-	/**
+	public:
+		WidgetFiles(SherlockEngine *vm, const Common::String &target);
+
+		/**
 	 * Prompt the user whether to quit
 	 */
-	void show(SaveMode mode);
+		void show(SaveMode mode);
 
-	/**
+		/**
 	 * Handle event processing
 	 */
-	virtual void handleEvents();
-};
+		virtual void handleEvents();
+	};
 
 } // End of namespace Tattoo
 

@@ -26,7 +26,8 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CHomePhoto, CToggleSwitch);
 
-CHomePhoto::CHomePhoto() : CToggleSwitch() {
+CHomePhoto::CHomePhoto()
+  : CToggleSwitch() {
 }
 
 void CHomePhoto::save(SimpleFile *file, int indent) {

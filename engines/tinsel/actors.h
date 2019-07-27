@@ -21,13 +21,12 @@
  * Prototypes of actor functions
  */
 
-#ifndef TINSEL_ACTOR_H	// prevent multiple includes
+#ifndef TINSEL_ACTOR_H // prevent multiple includes
 #define TINSEL_ACTOR_H
 
-
-#include "tinsel/dw.h"		// for SCNHANDLE
-#include "tinsel/events.h"	// for TINSEL_EVENT
-#include "tinsel/palette.h"	// for COLORREF
+#include "tinsel/dw.h" // for SCNHANDLE
+#include "tinsel/events.h" // for TINSEL_EVENT
+#include "tinsel/palette.h" // for COLORREF
 
 namespace Tinsel {
 
@@ -38,9 +37,9 @@ struct OBJECT;
 
 #define ACTORTAG_KEY 0x1000000
 
-#define OTH_RELATEDACTOR	0x00000fff
-#define OTH_RELATIVE		0x00001000
-#define OTH_ABSOLUTE		0x00002000
+#define OTH_RELATEDACTOR 0x00000fff
+#define OTH_RELATIVE 0x00001000
+#define OTH_ABSOLUTE 0x00002000
 
 /*----------------------------------------------------------------------*/
 
@@ -50,7 +49,7 @@ void SetLeadId(int rid);
 int GetLeadId();
 bool ActorIsGhost(int actor);
 void StartTaggedActors(SCNHANDLE ah, int numActors, bool bRunScript);
-void DropActors();		// No actor reels running
+void DropActors(); // No actor reels running
 void DisableActor(int actor);
 void EnableActor(int actor);
 void Tag_Actor(int ano, SCNHANDLE tagtext, int tp);
@@ -138,22 +137,22 @@ bool ActorReelPlaying(int actor, int column);
 /*----------------------------------------------------------------------*/
 
 struct SAVED_ACTOR {
-	short		actorID;
-	short		zFactor;
-	bool		bAlive;
-	bool		bHidden;
-	SCNHANDLE	presFilm;	///< the film that reel belongs to
-	short		presRnum;	///< the present reel number
-	short		presPlayX, presPlayY;
+	short actorID;
+	short zFactor;
+	bool bAlive;
+	bool bHidden;
+	SCNHANDLE presFilm; ///< the film that reel belongs to
+	short presRnum; ///< the present reel number
+	short presPlayX, presPlayY;
 };
 typedef SAVED_ACTOR *PSAVED_ACTOR;
 
-#define NUM_ZPOSITIONS	200	// Reasonable-sounding number
+#define NUM_ZPOSITIONS 200 // Reasonable-sounding number
 
 struct Z_POSITIONS {
-	short	actor;
-	short	column;
-	int		z;
+	short actor;
+	short column;
+	int z;
 };
 
 void RestoreActorProcess(int id, INT_CONTEXT *pic, bool savegameFlag);

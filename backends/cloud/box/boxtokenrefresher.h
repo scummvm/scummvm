@@ -29,23 +29,24 @@
 namespace Cloud {
 namespace Box {
 
-class BoxStorage;
+	class BoxStorage;
 
-class BoxTokenRefresher: public Networking::CurlJsonRequest {
-	BoxStorage *_parentStorage;
-	Common::Array<Common::String> _headers;
+	class BoxTokenRefresher : public Networking::CurlJsonRequest {
+		BoxStorage *_parentStorage;
+		Common::Array<Common::String> _headers;
 
-	void tokenRefreshed(Storage::BoolResponse response);
+		void tokenRefreshed(Storage::BoolResponse response);
 
-	virtual void finishJson(Common::JSONValue *json);
-	virtual void finishError(Networking::ErrorResponse error);
-public:
-	BoxTokenRefresher(BoxStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url);
-	virtual ~BoxTokenRefresher();
+		virtual void finishJson(Common::JSONValue *json);
+		virtual void finishError(Networking::ErrorResponse error);
 
-	virtual void setHeaders(Common::Array<Common::String> &headers);
-	virtual void addHeader(Common::String header);
-};
+	public:
+		BoxTokenRefresher(BoxStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url);
+		virtual ~BoxTokenRefresher();
+
+		virtual void setHeaders(Common::Array<Common::String> &headers);
+		virtual void addHeader(Common::String header);
+	};
 
 } // End of namespace Box
 } // End of namespace Cloud

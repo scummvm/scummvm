@@ -29,7 +29,7 @@ namespace CreateProjectTool {
 
 class VisualStudioProvider : public MSVCProvider {
 public:
-	VisualStudioProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion& msvc);
+	VisualStudioProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion &msvc);
 
 protected:
 	void createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,

@@ -47,7 +47,11 @@ Entity *MessageParam::asEntity() const {
 }
 
 Entity::Entity(NeverhoodEngine *vm, int priority)
-	: _vm(vm), _updateHandlerCb(NULL), _messageHandlerCb(nullptr), _priority(priority), _soundResources(NULL) {
+  : _vm(vm)
+  , _updateHandlerCb(NULL)
+  , _messageHandlerCb(nullptr)
+  , _priority(priority)
+  , _soundResources(NULL) {
 }
 
 Entity::~Entity() {
@@ -82,7 +86,7 @@ uint32 Entity::sendPointMessage(Entity *receiver, int messageNum, const NPoint &
 }
 
 uint32 Entity::sendEntityMessage(Entity *receiver, int messageNum, Entity *param) {
-	return sendMessage(receiver, messageNum, MessageParam((Entity*)param));
+	return sendMessage(receiver, messageNum, MessageParam((Entity *)param));
 }
 
 uint32 Entity::getGlobalVar(uint32 nameHash) {
@@ -112,7 +116,7 @@ void Entity::incSubVar(uint32 nameHash, uint32 subNameHash, int incrValue) {
 SoundResource *Entity::getSoundResource(uint index) {
 	assert(index < kMaxSoundResources);
 	if (!_soundResources) {
-		_soundResources = new SoundResource*[kMaxSoundResources];
+		_soundResources = new SoundResource *[kMaxSoundResources];
 		for (uint i = 0; i < kMaxSoundResources; ++i)
 			_soundResources[i] = NULL;
 	}

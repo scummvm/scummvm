@@ -28,38 +28,36 @@
 #define COMMON_SAFE_BOOL_H
 
 namespace Common {
-	namespace impl {
-		template <typename T>
-		struct no_base {};
+namespace impl {
+	template <typename T>
+	struct no_base {};
 
-		template <typename T>
-		struct safe_bool_impl {
-			typedef T *TP; // workaround to make parsing easier
-			TP stub;
-			typedef TP safe_bool_impl::*type;
-		};
-	}
+	template <typename T>
+	struct safe_bool_impl {
+		typedef T *TP; // workaround to make parsing easier
+		TP stub;
+		typedef TP safe_bool_impl::*type;
+	};
+}
 
-	/**
+/**
 	 * Prevents `operator bool` from implicitly converting to other types.
 	 */
-	template <typename DerivedT, typename BaseT = impl::no_base<DerivedT> >
-	struct SafeBool : BaseT {
-	private:
-		typedef impl::safe_bool_impl<DerivedT> impl_t;
-		typedef typename impl_t::type bool_type;
+template <typename DerivedT, typename BaseT = impl::no_base<DerivedT>>
+struct SafeBool : BaseT {
+private:
+	typedef impl::safe_bool_impl<DerivedT> impl_t;
+	typedef typename impl_t::type bool_type;
 
-	public:
-		operator bool_type() const {
-			return static_cast<const DerivedT *>(this)->operator_bool() ?
-			&impl_t::stub : nullptr;
-		}
+public:
+	operator bool_type() const {
+		return static_cast<const DerivedT *>(this)->operator_bool() ? &impl_t::stub : nullptr;
+	}
 
-		operator bool_type() {
-			return static_cast<DerivedT *>(this)->operator_bool() ?
-			&impl_t::stub : 0;
-		}
-	};
+	operator bool_type() {
+		return static_cast<DerivedT *>(this)->operator_bool() ? &impl_t::stub : 0;
+	}
+};
 } // End of namespace Common
 
 #endif

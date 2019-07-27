@@ -68,7 +68,7 @@ public:
 		String comment;
 
 		bool hasKey(const String &key) const;
-		const KeyValue* getKey(const String &key) const;
+		const KeyValue *getKey(const String &key) const;
 		void setKey(const String &key, const String &value);
 		void removeKey(const String &key);
 		const SectionKeyList getKeys() const { return keys; }
@@ -91,24 +91,24 @@ public:
 	static bool isValidName(const String &name);
 
 	/** Reset everything stored in this ini file. */
-	void	clear();
+	void clear();
 
-	bool	loadFromFile(const String &filename);
-	bool	loadFromSaveFile(const String &filename);
-	bool	loadFromStream(SeekableReadStream &stream);
-	bool	saveToFile(const String &filename);
-	bool	saveToSaveFile(const String &filename);
-	bool	saveToStream(WriteStream &stream);
+	bool loadFromFile(const String &filename);
+	bool loadFromSaveFile(const String &filename);
+	bool loadFromStream(SeekableReadStream &stream);
+	bool saveToFile(const String &filename);
+	bool saveToSaveFile(const String &filename);
+	bool saveToStream(WriteStream &stream);
 
-	bool	hasSection(const String &section) const;
-	void	addSection(const String &section);
-	void	removeSection(const String &section);
-	void	renameSection(const String &oldName, const String &newName);
+	bool hasSection(const String &section) const;
+	void addSection(const String &section);
+	void removeSection(const String &section);
+	void renameSection(const String &oldName, const String &newName);
 
-	bool	hasKey(const String &key, const String &section) const;
-	bool	getKey(const String &key, const String &section, String &value) const;
-	void	setKey(const String &key, const String &section, const String &value);
-	void	removeKey(const String &key, const String &section);
+	bool hasKey(const String &key, const String &section) const;
+	bool getKey(const String &key, const String &section, String &value) const;
+	void setKey(const String &key, const String &section, const String &value);
+	void removeKey(const String &key, const String &section);
 
 	const SectionList getSections() const { return _sections; }
 	const SectionKeyList getKeys(const String &section) const;

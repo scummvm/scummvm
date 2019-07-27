@@ -23,11 +23,11 @@
 #ifndef CINE_GFX_H
 #define CINE_GFX_H
 
+#include "cine/bg_list.h"
+#include "cine/object.h"
 #include "common/noncopyable.h"
 #include "common/rect.h"
 #include "common/stack.h"
-#include "cine/object.h"
-#include "cine/bg_list.h"
 
 namespace Cine {
 
@@ -43,7 +43,10 @@ struct palBg {
 	char name[15]; ///< Background filename
 
 	/** @brief Default constructor. */
-	palBg() : bg(NULL), pal(), name() {
+	palBg()
+	  : bg(NULL)
+	  , pal()
+	  , name() {
 		// Make sure the name is empty (Maybe this is not needed?)
 		memset(this->name, 0, sizeof(this->name));
 	}
@@ -71,12 +74,14 @@ public:
 		kTextInputMenu
 	};
 
-	Menu(Type t) : _type(t) {}
+	Menu(Type t)
+	  : _type(t) {}
 	virtual ~Menu() {}
 
 	Type getType() const { return _type; }
 
 	virtual void drawMenu(FWRenderer &r, bool top) = 0;
+
 private:
 	const Type _type;
 };
@@ -90,6 +95,7 @@ public:
 	void setSelection(int selection);
 
 	void drawMenu(FWRenderer &r, bool top);
+
 private:
 	const Common::Point _pos;
 	const int _width;
@@ -105,6 +111,7 @@ public:
 	void setInput(const char *input, int cursor);
 
 	void drawMenu(FWRenderer &r, bool top);
+
 private:
 	const Common::Point _pos;
 	const int _width;
@@ -123,6 +130,7 @@ class FWRenderer : public Common::NonCopyable {
 	// TODO: Consider getting rid of this
 	friend class SelectionMenu;
 	friend class TextInputMenu;
+
 private:
 	byte *_background; ///< Current background
 	char _bgName[13]; ///< Background filename
@@ -223,7 +231,6 @@ private:
 	unsigned int _bgShift; ///< Background shift
 
 protected:
-
 	void drawSprite(const ObjectStruct &obj);
 	void drawSprite(overlay *overlayPtr, const byte *spritePtr, int16 width, int16 height, byte *page, int16 x, int16 y, byte transparentColor, byte bpp);
 	int drawChar(char character, int x, int y);
@@ -260,7 +267,6 @@ public:
 	void restorePalette(Common::SeekableReadStream &fHandle, int version);
 	void savePalette(Common::OutSaveFile &fHandle);
 	void transformPalette(int first, int last, int r, int g, int b);
-
 };
 
 void gfxDrawSprite(byte *src4, uint16 sw, uint16 sh, byte *dst4, int16 sx, int16 sy);

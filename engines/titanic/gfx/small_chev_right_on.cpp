@@ -26,7 +26,8 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CSmallChevRightOn, CToggleSwitch);
 
-CSmallChevRightOn::CSmallChevRightOn() : CToggleSwitch() {
+CSmallChevRightOn::CSmallChevRightOn()
+  : CToggleSwitch() {
 }
 
 void CSmallChevRightOn::save(SimpleFile *file, int indent) {

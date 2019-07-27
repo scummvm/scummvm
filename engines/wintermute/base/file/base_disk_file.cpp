@@ -26,18 +26,17 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/base/file/base_disk_file.h"
-#include "engines/wintermute/base/base_file_manager.h"
-#include "engines/wintermute/utils/path_util.h"
-#include "common/stream.h"
-#include "common/memstream.h"
-#include "common/file.h"
-#include "common/zlib.h"
 #include "common/archive.h"
-#include "common/tokenizer.h"
 #include "common/config-manager.h"
-
+#include "common/file.h"
+#include "common/memstream.h"
+#include "common/stream.h"
+#include "common/tokenizer.h"
+#include "common/zlib.h"
+#include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/dcgf.h"
+#include "engines/wintermute/utils/path_util.h"
 
 namespace Wintermute {
 
@@ -119,11 +118,12 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 	// The original interpreter on Windows usually simply ignores them when it can't find them.
 	// We try to turn the known ones into relative paths.
 	if (fixedFilename.contains(':')) {
-		const char* const knownPrefixes[] = { // Known absolute paths
-				"c:/windows/fonts/", // East Side Story refers to "c:\windows\fonts\framd.ttf"
-				"c:/carol6/svn/data/", // Carol Reed 6: Black Circle refers to "c:\carol6\svn\data\sprites\system\help.png"
-				"d:/engine/\0xD2\0xC32/tg_ie_080128_1005/data/", // Tanya Grotter and the Disappearing Floor refers to "d:\engine\<\0xD2><\0xC3>2\tg_ie_080128_1005\data\interface\pixel\pixel.png"
-				"f:/dokument/spel 5/demo/data/" // Carol Reed 5 (non-demo) refers to "f:\dokument\spel 5\demo\data\scenes\credits\op_cred_00\op_cred_00.jpg"
+		const char *const knownPrefixes[] = {
+			// Known absolute paths
+			"c:/windows/fonts/", // East Side Story refers to "c:\windows\fonts\framd.ttf"
+			"c:/carol6/svn/data/", // Carol Reed 6: Black Circle refers to "c:\carol6\svn\data\sprites\system\help.png"
+			"d:/engine/\0xD2\0xC32/tg_ie_080128_1005/data/", // Tanya Grotter and the Disappearing Floor refers to "d:\engine\<\0xD2><\0xC3>2\tg_ie_080128_1005\data\interface\pixel\pixel.png"
+			"f:/dokument/spel 5/demo/data/" // Carol Reed 5 (non-demo) refers to "f:\dokument\spel 5\demo\data\scenes\credits\op_cred_00\op_cred_00.jpg"
 		};
 
 		bool matched = false;
@@ -146,7 +146,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 	SearchMan.listMatchingMembers(files, fixedFilename);
 
 	for (Common::ArchiveMemberList::iterator it = files.begin(); it != files.end(); ++it) {
-		if ((*it)->getName().equalsIgnoreCase(lastPathComponent(fixedFilename,'/'))) {
+		if ((*it)->getName().equalsIgnoreCase(lastPathComponent(fixedFilename, '/'))) {
 			file = (*it)->createReadStream();
 			break;
 		}
@@ -208,7 +208,6 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 		}
 
 		return file;
-
 	}
 	return nullptr;
 }

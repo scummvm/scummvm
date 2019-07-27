@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE2300_H
 #define NEVERHOOD_MODULES_MODULE2300_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -35,6 +35,7 @@ class Module2300 : public Module {
 public:
 	Module2300(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module2300();
+
 protected:
 	int _sceneNum;
 	int _waterfallSoundVolume;

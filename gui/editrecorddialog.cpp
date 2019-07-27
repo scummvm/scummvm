@@ -21,9 +21,8 @@
  */
 
 #include "editrecorddialog.h"
-#include "gui/widgets/edittext.h"
 #include "common/translation.h"
-
+#include "gui/widgets/edittext.h"
 
 namespace GUI {
 
@@ -54,13 +53,14 @@ void EditRecordDialog::setName(const Common::String &name) {
 EditRecordDialog::~EditRecordDialog() {
 }
 
-EditRecordDialog::EditRecordDialog(const Common::String author, const Common::String name, const Common::String notes) : Dialog("EditRecordDialog") {
-	new StaticTextWidget(this,"EditRecordDialog.AuthorLabel",_("Author:"));
-	new StaticTextWidget(this,"EditRecordDialog.NameLabel",_("Name:"));
-	new StaticTextWidget(this,"EditRecordDialog.NotesLabel",_("Notes:"));
-	_authorEdit = new EditTextWidget(this, "EditRecordDialog.AuthorEdit","");
-	_notesEdit = new EditTextWidget(this, "EditRecordDialog.NotesEdit","");
-	_nameEdit = new EditTextWidget(this, "EditRecordDialog.NameEdit","");
+EditRecordDialog::EditRecordDialog(const Common::String author, const Common::String name, const Common::String notes)
+  : Dialog("EditRecordDialog") {
+	new StaticTextWidget(this, "EditRecordDialog.AuthorLabel", _("Author:"));
+	new StaticTextWidget(this, "EditRecordDialog.NameLabel", _("Name:"));
+	new StaticTextWidget(this, "EditRecordDialog.NotesLabel", _("Notes:"));
+	_authorEdit = new EditTextWidget(this, "EditRecordDialog.AuthorEdit", "");
+	_notesEdit = new EditTextWidget(this, "EditRecordDialog.NotesEdit", "");
+	_nameEdit = new EditTextWidget(this, "EditRecordDialog.NameEdit", "");
 	_authorEdit->setEditString(author);
 	_notesEdit->setEditString(notes);
 	_nameEdit->setEditString(name);
@@ -69,7 +69,7 @@ EditRecordDialog::EditRecordDialog(const Common::String author, const Common::St
 }
 
 void EditRecordDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
-	switch(cmd) {
+	switch (cmd) {
 	case kCloseCmd:
 		setResult(kCloseCmd);
 		close();

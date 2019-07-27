@@ -21,10 +21,10 @@
  */
 
 #include "sherlock/image_file.h"
-#include "sherlock/screen.h"
-#include "sherlock/sherlock.h"
 #include "common/debug.h"
 #include "common/memstream.h"
+#include "sherlock/screen.h"
+#include "sherlock/sherlock.h"
 
 namespace Sherlock {
 
@@ -105,12 +105,12 @@ void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool 
 
 void ImageFile::loadPalette(Common::SeekableReadStream &stream) {
 	// Check for palette
-	uint16 width        = stream.readUint16LE() + 1;
-	uint16 height       = stream.readUint16LE() + 1;
-	byte   paletteBase  = stream.readByte();
-	byte   rleEncoded   = stream.readByte();
-	byte   offsetX      = stream.readByte();
-	byte   offsetY      = stream.readByte();
+	uint16 width = stream.readUint16LE() + 1;
+	uint16 height = stream.readUint16LE() + 1;
+	byte paletteBase = stream.readByte();
+	byte rleEncoded = stream.readByte();
+	byte offsetX = stream.readByte();
+	byte offsetY = stream.readByte();
 	uint32 palSignature = 0;
 
 	if ((width == 390) && (height == 2) && (!paletteBase) && (!rleEncoded) && (!offsetX) && (!offsetY)) {
@@ -272,7 +272,7 @@ ImageFile3DO::ImageFile3DO(const Common::String &name, ImageFile3DOType imageFil
 #endif
 	Common::SeekableReadStream *dataStream = _vm->_res->load(name);
 
-	switch(imageFile3DOType) {
+	switch (imageFile3DOType) {
 	case kImageFile3DOType_Animation:
 		loadAnimationFile(*dataStream);
 		break;
@@ -334,9 +334,9 @@ void ImageFile3DO::load(Common::SeekableReadStream &stream, bool isRoomData) {
 
 // 3DO uses RGB555, we use RGB565 internally so that more platforms are able to run us
 inline uint16 ImageFile3DO::convertPixel(uint16 pixel3DO) {
-	byte red   = (pixel3DO >> 10) & 0x1F;
+	byte red = (pixel3DO >> 10) & 0x1F;
 	byte green = (pixel3DO >> 5) & 0x1F;
-	byte blue  = pixel3DO & 0x1F;
+	byte blue = pixel3DO & 0x1F;
 
 	return ((red << 11) | (green << 6) | (blue));
 }
@@ -395,33 +395,33 @@ static byte imagefile3DO_cel_bitsPerPixelLookupTable[8] = {
 
 // Reads a 3DO .cel/.anim file
 void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
-	int32  streamSize = stream.size();
-	int32  chunkStartPos = 0;
+	int32 streamSize = stream.size();
+	int32 chunkStartPos = 0;
 	uint32 chunkTag = 0;
 	uint32 chunkSize = 0;
-	byte  *chunkDataPtr = NULL;
+	byte *chunkDataPtr = NULL;
 
 	// ANIM chunk (animation header for animation files)
-	bool   animFound = false;
+	bool animFound = false;
 	uint32 animVersion = 0;
 	uint32 animType = 0;
 	uint32 animFrameCount = 1; // we expect 1 frame without an ANIM header
 	// CCB chunk (cel control block)
-	bool   ccbFound = false;
+	bool ccbFound = false;
 	uint32 ccbVersion = 0;
 	uint32 ccbFlags = 0;
-	bool   ccbFlags_compressed = false;
+	bool ccbFlags_compressed = false;
 	uint16 ccbPPMP0 = 0;
 	uint16 ccbPPMP1 = 0;
 	uint32 ccbPRE0 = 0;
 	uint16 ccbPRE0_height = 0;
-	byte   ccbPRE0_bitsPerPixel = 0;
+	byte ccbPRE0_bitsPerPixel = 0;
 	uint32 ccbPRE1 = 0;
 	uint16 ccbPRE1_width = 0;
 	uint32 ccbWidth = 0;
 	uint32 ccbHeight = 0;
 	// pixel lookup table
-	bool   plutFound = false;
+	bool plutFound = false;
 	uint32 plutCount = 0;
 	ImageFile3DOPixelLookupTable plutRGBlookupTable;
 
@@ -448,7 +448,7 @@ void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
 			if (animFound)
 				error("load3DOCelFile: multiple ANIM chunks not supported");
 
-			animFound   = true;
+			animFound = true;
 			animVersion = stream.readUint32BE();
 			animType = stream.readUint32BE();
 			animFrameCount = stream.readUint32BE();
@@ -469,17 +469,17 @@ void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
 			if (ccbFound)
 				error("load3DOCelFile: multiple CCB chunks not supported");
 
-			ccbFound   = true;
+			ccbFound = true;
 			ccbVersion = stream.readUint32BE();
-			ccbFlags   = stream.readUint32BE();
+			ccbFlags = stream.readUint32BE();
 			stream.skip(3 * 4); // skip over 3 pointer fields, which are used in memory only by 3DO hardware
 			stream.skip(8 * 4); // skip over 8 offset fields
-			ccbPPMP0   = stream.readUint16BE();
-			ccbPPMP1   = stream.readUint16BE();
-			ccbPRE0    = stream.readUint32BE();
-			ccbPRE1    = stream.readUint32BE();
-			ccbWidth   = stream.readUint32BE();
-			ccbHeight  = stream.readUint32BE();
+			ccbPPMP0 = stream.readUint16BE();
+			ccbPPMP1 = stream.readUint16BE();
+			ccbPRE0 = stream.readUint32BE();
+			ccbPRE1 = stream.readUint32BE();
+			ccbWidth = stream.readUint32BE();
+			ccbHeight = stream.readUint32BE();
 
 			if (ccbVersion != 0)
 				error("load3DOCelFile: Unsupported CCB version");
@@ -499,7 +499,7 @@ void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
 				error("load3DOCelFile: Invalid CCB PRE0 bits per pixel");
 
 			ccbPRE0_height = ((ccbPRE0 >> 6) & 0x03FF) + 1;
-			ccbPRE1_width  = (ccbPRE1 & 0x03FF) + 1;
+			ccbPRE1_width = (ccbPRE1 & 0x03FF) + 1;
 			assert(ccbPRE0_height == ccbHeight);
 			assert(ccbPRE1_width == ccbWidth);
 			break;
@@ -538,16 +538,16 @@ void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
 					plutColorRGB = plutRGBlookupTable.pixelColor[plutColorNr];
 
 					// Extract RGB values
-					byte plutColorRed   = (plutColorRGB >> 10) & 0x1F;
+					byte plutColorRed = (plutColorRGB >> 10) & 0x1F;
 					byte plutColorGreen = (plutColorRGB >> 5) & 0x1F;
-					byte plutColorBlue  = plutColorRGB & 0x1F;
+					byte plutColorBlue = plutColorRGB & 0x1F;
 
 					byte shadeMultiplier = 2;
 					for (uint32 plutShadeNr = 1; plutShadeNr < 8; plutShadeNr++) {
 						uint16 shadedColorRGB;
-						byte   shadedColorRed   = (plutColorRed * shadeMultiplier) >> 3;
-						byte   shadedColorGreen = (plutColorGreen * shadeMultiplier) >> 3;
-						byte   shadedColorBlue  = (plutColorBlue * shadeMultiplier) >> 3;
+						byte shadedColorRed = (plutColorRed * shadeMultiplier) >> 3;
+						byte shadedColorGreen = (plutColorGreen * shadeMultiplier) >> 3;
+						byte shadedColorBlue = (plutColorBlue * shadeMultiplier) >> 3;
 
 						shadedColorRed = CLIP<byte>(shadedColorRed, 0, 0x1F);
 						shadedColorGreen = CLIP<byte>(shadedColorGreen, 0, 0x1F);
@@ -627,17 +627,17 @@ void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
 void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
 	uint32 streamLeft = stream.size() - stream.pos();
 	uint16 roomDataHeader_size = 0;
-	byte   roomDataHeader_offsetX = 0;
-	byte   roomDataHeader_offsetY = 0;
+	byte roomDataHeader_offsetX = 0;
+	byte roomDataHeader_offsetY = 0;
 
 	// CCB chunk (cel control block)
 	uint32 ccbFlags = 0;
-	bool   ccbFlags_compressed = false;
+	bool ccbFlags_compressed = false;
 	uint16 ccbPPMP0 = 0;
 	uint16 ccbPPMP1 = 0;
 	uint32 ccbPRE0 = 0;
 	uint16 ccbPRE0_height = 0;
-	byte   ccbPRE0_bitsPerPixel = 0;
+	byte ccbPRE0_bitsPerPixel = 0;
 	uint32 ccbPRE1 = 0;
 	uint16 ccbPRE1_width = 0;
 	uint32 ccbWidth = 0;
@@ -665,15 +665,15 @@ void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
 			error("load3DOCelRoomData: expected raw cel control block, not enough bytes");
 
 		// 3DO raw cel control block
-		ccbFlags   = stream.readUint32BE();
+		ccbFlags = stream.readUint32BE();
 		stream.skip(3 * 4); // skip over 3 pointer fields, which are used in memory only by 3DO hardware
 		stream.skip(8 * 4); // skip over 8 offset fields
-		ccbPPMP0   = stream.readUint16BE();
-		ccbPPMP1   = stream.readUint16BE();
-		ccbPRE0    = stream.readUint32BE();
-		ccbPRE1    = stream.readUint32BE();
-		ccbWidth   = stream.readUint32BE();
-		ccbHeight  = stream.readUint32BE();
+		ccbPPMP0 = stream.readUint16BE();
+		ccbPPMP1 = stream.readUint16BE();
+		ccbPRE0 = stream.readUint32BE();
+		ccbPRE1 = stream.readUint32BE();
+		ccbWidth = stream.readUint32BE();
+		ccbHeight = stream.readUint32BE();
 
 		if (ccbFlags & 0x200) // bit 9
 			ccbFlags_compressed = true;
@@ -684,7 +684,7 @@ void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
 			error("load3DOCelRoomData: Invalid CCB PRE0 bits per pixel");
 
 		ccbPRE0_height = ((ccbPRE0 >> 6) & 0x03FF) + 1;
-		ccbPRE1_width  = (ccbPRE1 & 0x03FF) + 1;
+		ccbPRE1_width = (ccbPRE1 & 0x03FF) + 1;
 		assert(ccbPRE0_height == ccbHeight);
 		assert(ccbPRE1_width == ccbWidth);
 
@@ -741,9 +741,9 @@ static uint16 imagefile3DO_cel_bitsMask[17] = {
 
 // gets [bitCount] bits from dataPtr, going from MSB to LSB
 inline uint16 ImageFile3DO::celGetBits(const byte *&dataPtr, byte bitCount, byte &dataBitsLeft) {
-	byte   resultBitsLeft = bitCount;
+	byte resultBitsLeft = bitCount;
 	uint16 result = 0;
-	byte   currentByte = *dataPtr;
+	byte currentByte = *dataPtr;
 
 	// Get bits of current byte
 	while (resultBitsLeft) {
@@ -780,9 +780,9 @@ void ImageFile3DO::decompress3DOCelFrame(ImageFrame &frame, const byte *dataPtr,
 	uint16 pixelCount = 0;
 	uint16 pixel = 0;
 
-	const  byte *srcLineStart = dataPtr;
-	const  byte *srcLineData = dataPtr;
-	byte   srcLineDataBitsLeft = 0;
+	const byte *srcLineStart = dataPtr;
+	const byte *srcLineData = dataPtr;
+	byte srcLineDataBitsLeft = 0;
 	uint16 lineDWordSize = 0;
 	uint16 lineByteSize = 0;
 
@@ -793,8 +793,8 @@ void ImageFile3DO::decompress3DOCelFrame(ImageFrame &frame, const byte *dataPtr,
 
 	if (frame._rleEncoded) {
 		// compressed
-		byte   compressionType = 0;
-		byte   compressionPixels = 0;
+		byte compressionType = 0;
+		byte compressionPixels = 0;
 
 		while (frameHeightLeft > 0) {
 			frameWidthLeft = frame._width;
@@ -824,7 +824,7 @@ void ImageFile3DO::decompress3DOCelFrame(ImageFrame &frame, const byte *dataPtr,
 				if (!compressionType) // end of line
 					break;
 
-				switch(compressionType) {
+				switch (compressionType) {
 				case 1: // simple copy
 					for (pixelCount = 0; pixelCount < compressionPixels; pixelCount++) {
 						pixel = celGetBits(srcLineData, bitsPerPixel, srcLineDataBitsLeft);
@@ -907,9 +907,9 @@ void ImageFile3DO::loadFont(Common::SeekableReadStream &stream) {
 	uint32 header_maxChar = 0;
 	uint32 header_charCount = 0;
 
-	byte  *widthTablePtr = NULL;
+	byte *widthTablePtr = NULL;
 	uint32 bitsTableSize = 0;
-	byte  *bitsTablePtr = NULL;
+	byte *bitsTablePtr = NULL;
 
 	stream.skip(2); // Unknown bytes
 	stream.skip(2); // Unknown bytes (0x000E)
@@ -932,19 +932,19 @@ void ImageFile3DO::loadFont(Common::SeekableReadStream &stream) {
 	// Allocate memory for the bits
 	assert(header_offsetBitsTable < streamSize); // Security check
 	bitsTableSize = streamSize - header_offsetBitsTable;
-	bitsTablePtr  = new byte[bitsTableSize];
+	bitsTablePtr = new byte[bitsTableSize];
 	stream.read(bitsTablePtr, bitsTableSize);
 
 	// Now extract all characters
-	uint16      curChar = 0;
+	uint16 curChar = 0;
 	const byte *curBitsLinePtr = bitsTablePtr;
 	const byte *curBitsPtr = NULL;
-	byte        curBitsLeft = 0;
-	uint32      curCharHeightLeft = 0;
-	uint32      curCharWidthLeft = 0;
-	byte        curBits = 0;
-	byte        curBitsReversed = 0;
-	byte        curPosX = 0;
+	byte curBitsLeft = 0;
+	uint32 curCharHeightLeft = 0;
+	uint32 curCharWidthLeft = 0;
+	byte curBits = 0;
+	byte curBitsReversed = 0;
+	byte curPosX = 0;
 
 	assert(bitsTableSize >= (header_maxChar * header_fontHeight * header_bytesPerLine)); // Security
 
@@ -972,9 +972,9 @@ void ImageFile3DO::loadFont(Common::SeekableReadStream &stream) {
 		curCharHeightLeft = header_fontHeight;
 		while (curCharHeightLeft) {
 			curCharWidthLeft = widthTablePtr[curChar];
-			curBitsPtr  = curBitsLinePtr;
+			curBitsPtr = curBitsLinePtr;
 			curBitsLeft = 8;
-			curPosX     = 0;
+			curPosX = 0;
 
 			while (curCharWidthLeft) {
 				if (!(curPosX & 1)) {

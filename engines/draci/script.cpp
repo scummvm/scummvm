@@ -25,9 +25,9 @@
 #include "common/memstream.h"
 #include "common/stack.h"
 
-#include "draci/draci.h"
 #include "draci/animation.h"
 #include "draci/barchive.h"
+#include "draci/draci.h"
 #include "draci/game.h"
 #include "draci/mouse.h"
 #include "draci/music.h"
@@ -41,103 +41,103 @@ namespace Draci {
 void Script::setupCommandList() {
 	/** A table of all the commands the game player uses */
 	static const GPL2Command gplCommands[] = {
-		{ 0,  0, "gplend",            0, { },                                NULL },
-		{ 0,  1, "exit",              0, { },                                NULL },
-		{ 1,  1, "goto",              1, { kGPL2Ident },                     &Script::c_Goto },
-		{ 2,  1, "Let",               2, { kGPL2Ident, kGPL2Math },          &Script::c_Let },
-		{ 3,  1, "if",                2, { kGPL2Math, kGPL2Ident },          &Script::c_If },
-		{ 4,  1, "Start",             2, { kGPL2Ident, kGPL2Str },           &Script::start },
-		{ 5,  1, "Load",              2, { kGPL2Ident, kGPL2Str },           &Script::load },
-		{ 5,  2, "StartPlay",         2, { kGPL2Ident, kGPL2Str },           &Script::startPlay },
-		{ 5,  3, "JustTalk",          0, { },                                &Script::justTalk },
-		{ 5,  4, "JustStay",          0, { },                                &Script::justStay },
-		{ 6,  1, "Talk",              2, { kGPL2Ident, kGPL2Str },           &Script::talk },
-		{ 7,  1, "ObjStat",           2, { kGPL2Ident, kGPL2Ident },         &Script::objStat },
-		{ 7,  2, "ObjStat_On",        2, { kGPL2Ident, kGPL2Ident },         &Script::objStatOn },
-		{ 8,  1, "IcoStat",           2, { kGPL2Ident, kGPL2Ident },         &Script::icoStat },
-		{ 9,  1, "Dialogue",          1, { kGPL2Str },                       &Script::dialogue },
-		{ 9,  2, "ExitDialogue",      0, { },                                &Script::exitDialogue },
-		{ 9,  3, "ResetDialogue",     0, { },                                &Script::resetDialogue },
-		{ 9,  4, "ResetDialogueFrom", 0, { },                                &Script::resetDialogueFrom },
-		{ 9,  5, "ResetBlock",        1, { kGPL2Ident },                     &Script::resetBlock },
-		{ 10, 1, "WalkOn",            3, { kGPL2Num, kGPL2Num, kGPL2Ident }, &Script::walkOn },
-		{ 10, 2, "StayOn",            3, { kGPL2Num, kGPL2Num, kGPL2Ident }, &Script::stayOn },
-		{ 10, 3, "WalkOnPlay",        3, { kGPL2Num, kGPL2Num, kGPL2Ident }, &Script::walkOnPlay },
-		{ 11, 1, "LoadPalette",       1, { kGPL2Str },                       &Script::loadPalette },
-		{ 12, 1, "SetPalette",        0, { },                                &Script::setPalette },
-		{ 12, 2, "BlackPalette",      0, { },                                &Script::blackPalette },
-		{ 13, 1, "FadePalette",       3, { kGPL2Num, kGPL2Num, kGPL2Num },   &Script::fadePalette },
-		{ 13, 2, "FadePalettePlay",   3, { kGPL2Num, kGPL2Num, kGPL2Num },   &Script::fadePalettePlay },
-		{ 14, 1, "NewRoom",           2, { kGPL2Ident, kGPL2Num },           &Script::newRoom },
-		{ 15, 1, "ExecInit",          1, { kGPL2Ident },                     &Script::execInit },
-		{ 15, 2, "ExecLook",          1, { kGPL2Ident },                     &Script::execLook },
-		{ 15, 3, "ExecUse",           1, { kGPL2Ident },                     &Script::execUse },
-		{ 18, 1, "LoadMusic",         1, { kGPL2Str },                       &Script::loadMusic },
-		{ 18, 2, "StartMusic",        0, { },                                &Script::startMusic },
-		{ 18, 3, "StopMusic",         0, { },                                &Script::stopMusic },
-		{ 19, 1, "Mark",              0, { },                                &Script::mark },
-		{ 19, 2, "Release",           0, { },                                &Script::release },
-		{ 20, 1, "Play",              0, { },                                &Script::play },
-		{ 21, 1, "LoadMap",           1, { kGPL2Str },                       &Script::loadMap },
-		{ 21, 2, "RoomMap",           0, { },                                &Script::roomMap },
-		{ 22, 1, "DisableQuickHero",  0, { },                                &Script::disableQuickHero },
-		{ 22, 2, "EnableQuickHero",   0, { },                                &Script::enableQuickHero },
-		{ 23, 1, "DisableSpeedText",  0, { },                                &Script::disableSpeedText },
-		{ 23, 2, "EnableSpeedText",   0, { },                                &Script::enableSpeedText },
-		{ 24, 1, "QuitGame",          0, { },                                &Script::quitGame },
-		{ 25, 1, "PushNewRoom",       0, { },                                &Script::pushNewRoom },
-		{ 25, 2, "PopNewRoom",        0, { },                                &Script::popNewRoom },
+		{ 0, 0, "gplend", 0, {}, NULL },
+		{ 0, 1, "exit", 0, {}, NULL },
+		{ 1, 1, "goto", 1, { kGPL2Ident }, &Script::c_Goto },
+		{ 2, 1, "Let", 2, { kGPL2Ident, kGPL2Math }, &Script::c_Let },
+		{ 3, 1, "if", 2, { kGPL2Math, kGPL2Ident }, &Script::c_If },
+		{ 4, 1, "Start", 2, { kGPL2Ident, kGPL2Str }, &Script::start },
+		{ 5, 1, "Load", 2, { kGPL2Ident, kGPL2Str }, &Script::load },
+		{ 5, 2, "StartPlay", 2, { kGPL2Ident, kGPL2Str }, &Script::startPlay },
+		{ 5, 3, "JustTalk", 0, {}, &Script::justTalk },
+		{ 5, 4, "JustStay", 0, {}, &Script::justStay },
+		{ 6, 1, "Talk", 2, { kGPL2Ident, kGPL2Str }, &Script::talk },
+		{ 7, 1, "ObjStat", 2, { kGPL2Ident, kGPL2Ident }, &Script::objStat },
+		{ 7, 2, "ObjStat_On", 2, { kGPL2Ident, kGPL2Ident }, &Script::objStatOn },
+		{ 8, 1, "IcoStat", 2, { kGPL2Ident, kGPL2Ident }, &Script::icoStat },
+		{ 9, 1, "Dialogue", 1, { kGPL2Str }, &Script::dialogue },
+		{ 9, 2, "ExitDialogue", 0, {}, &Script::exitDialogue },
+		{ 9, 3, "ResetDialogue", 0, {}, &Script::resetDialogue },
+		{ 9, 4, "ResetDialogueFrom", 0, {}, &Script::resetDialogueFrom },
+		{ 9, 5, "ResetBlock", 1, { kGPL2Ident }, &Script::resetBlock },
+		{ 10, 1, "WalkOn", 3, { kGPL2Num, kGPL2Num, kGPL2Ident }, &Script::walkOn },
+		{ 10, 2, "StayOn", 3, { kGPL2Num, kGPL2Num, kGPL2Ident }, &Script::stayOn },
+		{ 10, 3, "WalkOnPlay", 3, { kGPL2Num, kGPL2Num, kGPL2Ident }, &Script::walkOnPlay },
+		{ 11, 1, "LoadPalette", 1, { kGPL2Str }, &Script::loadPalette },
+		{ 12, 1, "SetPalette", 0, {}, &Script::setPalette },
+		{ 12, 2, "BlackPalette", 0, {}, &Script::blackPalette },
+		{ 13, 1, "FadePalette", 3, { kGPL2Num, kGPL2Num, kGPL2Num }, &Script::fadePalette },
+		{ 13, 2, "FadePalettePlay", 3, { kGPL2Num, kGPL2Num, kGPL2Num }, &Script::fadePalettePlay },
+		{ 14, 1, "NewRoom", 2, { kGPL2Ident, kGPL2Num }, &Script::newRoom },
+		{ 15, 1, "ExecInit", 1, { kGPL2Ident }, &Script::execInit },
+		{ 15, 2, "ExecLook", 1, { kGPL2Ident }, &Script::execLook },
+		{ 15, 3, "ExecUse", 1, { kGPL2Ident }, &Script::execUse },
+		{ 18, 1, "LoadMusic", 1, { kGPL2Str }, &Script::loadMusic },
+		{ 18, 2, "StartMusic", 0, {}, &Script::startMusic },
+		{ 18, 3, "StopMusic", 0, {}, &Script::stopMusic },
+		{ 19, 1, "Mark", 0, {}, &Script::mark },
+		{ 19, 2, "Release", 0, {}, &Script::release },
+		{ 20, 1, "Play", 0, {}, &Script::play },
+		{ 21, 1, "LoadMap", 1, { kGPL2Str }, &Script::loadMap },
+		{ 21, 2, "RoomMap", 0, {}, &Script::roomMap },
+		{ 22, 1, "DisableQuickHero", 0, {}, &Script::disableQuickHero },
+		{ 22, 2, "EnableQuickHero", 0, {}, &Script::enableQuickHero },
+		{ 23, 1, "DisableSpeedText", 0, {}, &Script::disableSpeedText },
+		{ 23, 2, "EnableSpeedText", 0, {}, &Script::enableSpeedText },
+		{ 24, 1, "QuitGame", 0, {}, &Script::quitGame },
+		{ 25, 1, "PushNewRoom", 0, {}, &Script::pushNewRoom },
+		{ 25, 2, "PopNewRoom", 0, {}, &Script::popNewRoom },
 		// The following commands are not used in the original game files.
-		{ 16, 1, "RepaintInventory",  0, { },                                NULL },
-		{ 16, 2, "ExitInventory",     0, { },                                NULL },
-		{ 17, 1, "ExitMap",           0, { },                                NULL },
-		{ 18, 4, "FadeOutMusic",      1, { kGPL2Num },                       NULL },
-		{ 18, 5, "FadeInMusic",       1, { kGPL2Num },                       NULL },
+		{ 16, 1, "RepaintInventory", 0, {}, NULL },
+		{ 16, 2, "ExitInventory", 0, {}, NULL },
+		{ 17, 1, "ExitMap", 0, {}, NULL },
+		{ 18, 4, "FadeOutMusic", 1, { kGPL2Num }, NULL },
+		{ 18, 5, "FadeInMusic", 1, { kGPL2Num }, NULL },
 		// The following commands are not even defined in the game
 		// sources, but their numbers are allocated for internal
 		// purposes of the old player.
-		{ 26, 1, "ShowCheat",         0, { },                                NULL },
-		{ 26, 2, "HideCheat",         0, { },                                NULL },
-		{ 26, 3, "ClearCheat",        1, { kGPL2Num },                       NULL },
-		{ 27, 1, "FeedPassword",      3, { kGPL2Num, kGPL2Num, kGPL2Num },   NULL }
+		{ 26, 1, "ShowCheat", 0, {}, NULL },
+		{ 26, 2, "HideCheat", 0, {}, NULL },
+		{ 26, 3, "ClearCheat", 1, { kGPL2Num }, NULL },
+		{ 27, 1, "FeedPassword", 3, { kGPL2Num, kGPL2Num, kGPL2Num }, NULL }
 	};
 
 	/** Operators used by the mathematical evaluator */
 	static const GPL2Operator gplOperators[] = {
-		{ &Script::operAnd,            "&" },
-		{ &Script::operOr,             "|" },
-		{ &Script::operXor,            "^" },
-		{ &Script::operEqual,          "==" },
-		{ &Script::operNotEqual,       "!=" },
-		{ &Script::operLess,           "<" },
-		{ &Script::operGreater,        ">" },
-		{ &Script::operLessOrEqual,    "<=" },
+		{ &Script::operAnd, "&" },
+		{ &Script::operOr, "|" },
+		{ &Script::operXor, "^" },
+		{ &Script::operEqual, "==" },
+		{ &Script::operNotEqual, "!=" },
+		{ &Script::operLess, "<" },
+		{ &Script::operGreater, ">" },
+		{ &Script::operLessOrEqual, "<=" },
 		{ &Script::operGreaterOrEqual, ">=" },
-		{ &Script::operMul,            "*" },
-		{ &Script::operDiv,            "/" },
-		{ &Script::operMod,            "%" },
-		{ &Script::operAdd,            "+" },
-		{ &Script::operSub,            "-" }
+		{ &Script::operMul, "*" },
+		{ &Script::operDiv, "/" },
+		{ &Script::operMod, "%" },
+		{ &Script::operAdd, "+" },
+		{ &Script::operSub, "-" }
 	};
 
 	/** Functions used by the mathematical evaluator */
 	static const GPL2Function gplFunctions[] = {
-		{ &Script::funcNot,       "Not" },
-		{ &Script::funcRandom,    "Random" },
-		{ &Script::funcIsIcoOn,   "IsIcoOn" },
-		{ &Script::funcIsIcoAct,  "IsIcoAct" },
-		{ &Script::funcIcoStat,   "IcoStat" },
-		{ &Script::funcActIco,    "ActIco" },
-		{ &Script::funcIsObjOn,   "IsObjOn" },
-		{ &Script::funcIsObjOff,  "IsObjOff" },
+		{ &Script::funcNot, "Not" },
+		{ &Script::funcRandom, "Random" },
+		{ &Script::funcIsIcoOn, "IsIcoOn" },
+		{ &Script::funcIsIcoAct, "IsIcoAct" },
+		{ &Script::funcIcoStat, "IcoStat" },
+		{ &Script::funcActIco, "ActIco" },
+		{ &Script::funcIsObjOn, "IsObjOn" },
+		{ &Script::funcIsObjOff, "IsObjOff" },
 		{ &Script::funcIsObjAway, "IsObjAway" },
-		{ &Script::funcObjStat,   "ObjStat" },
+		{ &Script::funcObjStat, "ObjStat" },
 		{ &Script::funcLastBlock, "LastBlock" },
-		{ &Script::funcAtBegin,   "AtBegin" },
-		{ &Script::funcBlockVar,  "BlockVar" },
-		{ &Script::funcHasBeen,   "HasBeen" },
-		{ &Script::funcMaxLine,   "MaxLine" },
-		{ &Script::funcActPhase,  "ActPhase" },
+		{ &Script::funcAtBegin, "AtBegin" },
+		{ &Script::funcBlockVar, "BlockVar" },
+		{ &Script::funcHasBeen, "HasBeen" },
+		{ &Script::funcMaxLine, "MaxLine" },
+		{ &Script::funcActPhase, "ActPhase" },
 		// The following function is not even defined in the game
 		// sources, but its number is allocated for internal purposes
 		// of the old player.
@@ -219,8 +219,8 @@ int Script::operMod(int op1, int op2) const {
 /* GPL functions */
 
 int Script::funcRandom(int n) const {
-// The function needs to return numbers in the [0..n-1] range so we need to deduce 1
-// (RandomSource::getRandomNumber returns a number in the range [0..n])
+	// The function needs to return numbers in the [0..n-1] range so we need to deduce 1
+	// (RandomSource::getRandomNumber returns a number in the range [0..n])
 
 	n -= 1;
 	return _vm->_rnd.getRandomNumber(n);
@@ -312,12 +312,12 @@ int Script::funcObjStat(int objID) const {
 
 	if (obj->_location == _vm->_game->getRoomNum()) {
 		if (obj->_visible) {
-			return 1;   // object is ON (in the room and visible)
+			return 1; // object is ON (in the room and visible)
 		} else {
-			return 2;   // object is OFF (in the room, not visible)
+			return 2; // object is OFF (in the room, not visible)
 		}
 	} else {
-		return 3;       // object is AWAY (not in the room)
+		return 3; // object is AWAY (not in the room)
 	}
 }
 
@@ -421,7 +421,7 @@ void Script::start(const Common::Array<int> &params) {
 		// See objekty:5077 and parezy.txt:27.
 		index = obj->addAnim(_vm->_anims->load(animID));
 		debugC(1, kDraciBytecodeDebugLevel, "start(%d=%s) cannot find animation %d.  Loading.",
-			objID, obj->_title.c_str(), animID);
+		       objID, obj->_title.c_str(), animID);
 	}
 	Animation *anim = obj->_anim[index];
 	anim->registerCallback(&Animation::stop);
@@ -451,7 +451,7 @@ void Script::startPlay(const Common::Array<int> &params) {
 	if (index < 0) {
 		index = obj->addAnim(_vm->_anims->load(animID));
 		debugC(1, kDraciBytecodeDebugLevel, "startPlay(%d=%s) cannot find animation %d.  Loading.",
-			objID, obj->_title.c_str(), animID);
+		       objID, obj->_title.c_str(), animID);
 	}
 	Animation *anim = obj->_anim[index];
 	anim->registerCallback(&Animation::exitGameLoop);
@@ -474,14 +474,14 @@ void Script::startPlay(const Common::Array<int> &params) {
 
 void Script::justTalk(const Common::Array<int> &params) {
 	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
-	const int last_anim = static_cast<Movement> (dragon->playingAnim());
+	const int last_anim = static_cast<Movement>(dragon->playingAnim());
 	const int new_anim = (last_anim == kSpeakRight || last_anim == kStopRight) ? kSpeakRight : kSpeakLeft;
 	_vm->_game->playHeroAnimation(new_anim);
 }
 
 void Script::justStay(const Common::Array<int> &params) {
 	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
-	const int last_anim = static_cast<Movement> (dragon->playingAnim());
+	const int last_anim = static_cast<Movement>(dragon->playingAnim());
 	const int new_anim = (last_anim == kSpeakRight || last_anim == kStopRight) ? kStopRight : kStopLeft;
 	_vm->_game->playHeroAnimation(new_anim);
 }
@@ -559,7 +559,7 @@ void Script::icoStat(const Common::Array<int> &params) {
 	} else {
 		_vm->_game->loadItemAnimation(item);
 		_vm->_game->setCurrentItem(item);
-		_vm->_game->setPreviousItemPosition(0);		// next time, try to place the item from the beginning
+		_vm->_game->setPreviousItemPosition(0); // next time, try to place the item from the beginning
 		_vm->_mouse->loadItemCursor(item, false);
 	}
 }
@@ -636,26 +636,25 @@ void Script::stayOn(const Common::Array<int> &params) {
 
 	int x, y;
 	Common::Point afterLoadingPos = _vm->_game->getHeroLoadingPosition();
-	if(_vm->_game->isPositionLoaded() == true) {
+	if (_vm->_game->isPositionLoaded() == true) {
 		x = afterLoadingPos.x;
 		y = afterLoadingPos.y;
-	}
-	else {
+	} else {
 		x = params[0];
 		y = params[1];
 	}
-	SightDirection dir = static_cast<SightDirection> (params[2]);
+	SightDirection dir = static_cast<SightDirection>(params[2]);
 
 	// Jumps into the given position regardless of the walking map.
 	Common::Point heroPos(_vm->_game->findNearestWalkable(x, y));
 	Common::Point mousePos(_vm->_mouse->getPosX(), _vm->_mouse->getPosY());
 	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
-	Movement startingDirection = static_cast<Movement> (dragon->playingAnim());
+	Movement startingDirection = static_cast<Movement>(dragon->playingAnim());
 
 	_vm->_game->stopWalking();
 	_vm->_game->setHeroPosition(heroPos);
 	_vm->_game->playHeroAnimation(WalkingState::animationForSightDirection(
-		  dir, heroPos, mousePos, WalkingPath(), startingDirection));
+	  dir, heroPos, mousePos, WalkingPath(), startingDirection));
 }
 
 void Script::walkOn(const Common::Array<int> &params) {
@@ -665,7 +664,7 @@ void Script::walkOn(const Common::Array<int> &params) {
 
 	int x = params[0];
 	int y = params[1];
-	SightDirection dir = static_cast<SightDirection> (params[2]);
+	SightDirection dir = static_cast<SightDirection>(params[2]);
 
 	// Constructs an optimal path and starts walking there.  No callback
 	// will be called at the end nor will the loop-body exit.
@@ -678,14 +677,14 @@ void Script::walkOnPlay(const Common::Array<int> &params) {
 		return;
 	}
 
-	if(_vm->_game->isPositionLoaded() == true) {
+	if (_vm->_game->isPositionLoaded() == true) {
 		_vm->_game->setPositionLoaded(false);
 		return;
 	}
 
 	int x = params[0];
 	int y = params[1];
-	SightDirection dir = static_cast<SightDirection> (params[2]);
+	SightDirection dir = static_cast<SightDirection>(params[2]);
 
 	_vm->_game->stopWalking();
 	_vm->_game->walkHero(x, y, dir);
@@ -700,7 +699,7 @@ void Script::newRoom(const Common::Array<int> &params) {
 		return;
 	}
 
-	if(_vm->_game->isPositionLoaded() == true) {
+	if (_vm->_game->isPositionLoaded() == true) {
 		_vm->_game->setPositionLoaded(false);
 	}
 
@@ -728,12 +727,13 @@ void Script::talk(const Common::Array<int> &params) {
 
 	// Fetch the dubbing
 	SoundSample *sample = _vm->_sound->isMutedVoice()
-		? NULL : _vm->_dubbingArchive->getSample(sentenceID, 0);
+	  ? NULL
+	  : _vm->_dubbingArchive->getSample(sentenceID, 0);
 
 	// Set the string and text color
 	surface->markDirtyRect(speechFrame->getRect(kNoDisplacement));
 	if (_vm->_sound->showSubtitles() || !sample) {
-		speechFrame->setText(Common::String((const char *)f->_data+1, f->_length-1));
+		speechFrame->setText(Common::String((const char *)f->_data + 1, f->_length - 1));
 	} else {
 		speechFrame->setText("");
 	}
@@ -745,7 +745,7 @@ void Script::talk(const Common::Array<int> &params) {
 	if (sample) {
 		dubbingDuration = _vm->_sound->playVoice(sample);
 		debugC(3, kDraciSoundDebugLevel, "Playing sentence %d: %d+%d with duration %dms",
-			sentenceID, sample->_offset, sample->_length, dubbingDuration);
+		       sentenceID, sample->_offset, sample->_length, dubbingDuration);
 		dubbingDuration += 500;
 	}
 
@@ -953,7 +953,7 @@ int Script::handleMathExpression(Common::ReadStream *reader) const {
 			arg1 = stk.pop();
 
 			// Fetch operator
-			oper = _operatorList[value-1];
+			oper = _operatorList[value - 1];
 
 			// Calculate result
 			res = (this->*(oper._handler))(arg1, arg2);
@@ -962,7 +962,7 @@ int Script::handleMathExpression(Common::ReadStream *reader) const {
 			stk.push(res);
 
 			debugC(4, kDraciBytecodeDebugLevel, "\t\t%d %s %d (res: %d)",
-				arg1, oper._name, arg2, res);
+			       arg1, oper._name, arg2, res);
 			break;
 
 		case kMathVariable:
@@ -971,14 +971,14 @@ int Script::handleMathExpression(Common::ReadStream *reader) const {
 			stk.push(_vm->_game->getVariable(value));
 
 			debugC(4, kDraciBytecodeDebugLevel, "\t\tvariable: %d (%d)", value,
-				_vm->_game->getVariable(value));
+			       _vm->_game->getVariable(value));
 			break;
 
 		case kMathFunctionCall:
 			value = reader->readSint16LE();
 
 			// Fetch function
-			func = _functionList[value-1];
+			func = _functionList[value - 1];
 
 			// If not yet implemented
 			if (func._handler == 0) {
@@ -1005,7 +1005,7 @@ int Script::handleMathExpression(Common::ReadStream *reader) const {
 			break;
 		}
 
-		obj = (mathExpressionObject) reader->readSint16LE();
+		obj = (mathExpressionObject)reader->readSint16LE();
 	}
 
 	return stk.pop();
@@ -1059,8 +1059,7 @@ const GPL2Command *Script::findCommand(byte num, byte subnum) const {
 		}
 
 		// Return found command
-		if (_commandList[i]._number == num &&
-			_commandList[i]._subNumber == subnum) {
+		if (_commandList[i]._number == num && _commandList[i]._subNumber == subnum) {
 			return &_commandList[i];
 		}
 
@@ -1130,7 +1129,7 @@ void Script::run(const GPL2Program &program, uint16 offset) {
 	reader.seek(offset);
 
 	debugC(3, kDraciBytecodeDebugLevel,
-		"Starting GPL program at offset %d (program length: %d)", offset, program._length);
+	       "Starting GPL program at offset %d (program length: %d)", offset, program._length);
 
 	const GPL2Command *cmd;
 	do {
@@ -1138,8 +1137,8 @@ void Script::run(const GPL2Program &program, uint16 offset) {
 		// Account for GPL jump that some commands set
 		if (_jump != 0) {
 			debugC(3, kDraciBytecodeDebugLevel,
-				"Jumping from offset %d to %d (%d bytes)",
-				reader.pos(), reader.pos() + _jump, _jump);
+			       "Jumping from offset %d to %d (%d bytes)",
+			       reader.pos(), reader.pos() + _jump, _jump);
 			reader.seek(_jump, SEEK_CUR);
 		}
 
@@ -1168,7 +1167,7 @@ void Script::run(const GPL2Program &program, uint16 offset) {
 			for (int i = 0; i < cmd->_numParams; ++i) {
 				if (cmd->_paramTypes[i] == kGPL2Math) {
 					debugC(3, kDraciBytecodeDebugLevel,
-					    "Evaluating (in-script) GPL expression at offset %d: ", offset);
+					       "Evaluating (in-script) GPL expression at offset %d: ", offset);
 					params.push_back(handleMathExpression(&reader));
 				} else {
 					tmp = reader.readSint16LE();
@@ -1187,7 +1186,7 @@ void Script::run(const GPL2Program &program, uint16 offset) {
 			(this->*(cmd->_handler))(params);
 		}
 
-	} while (cmd->_number != 0 && !shouldEndProgram());    // 0 = gplend and exit
+	} while (cmd->_number != 0 && !shouldEndProgram()); // 0 = gplend and exit
 
 	_jump = oldJump;
 
@@ -1213,7 +1212,7 @@ void Script::runWrapper(const GPL2Program &program, uint16 offset, bool disableC
 	run(program, offset);
 
 	if (releaseAnims) {
-			_vm->_game->deleteAnimationsAfterIndex(lastAnimIndex);
+		_vm->_game->deleteAnimationsAfterIndex(lastAnimIndex);
 	}
 
 	if (disableCursor) {

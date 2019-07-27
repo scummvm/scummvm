@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptBryant::AIScriptBryant(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptBryant::AIScriptBryant(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 }
 
 void AIScriptBryant::Initialize() {
@@ -33,18 +34,18 @@ void AIScriptBryant::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	World_Waypoint_Set(324, kSetBB05,       267.0f,  -60.3f,    203.0f);
-	World_Waypoint_Set(325, kSetBB05,        84.0f,  -60.3f,    337.0f);
-	World_Waypoint_Set(326, kSetBB06_BB07,  -36.0f,    0.0f,    185.0f);
-	World_Waypoint_Set(327, kSetBB06_BB07, -166.0f,    0.0f,   -103.0f);
-	World_Waypoint_Set(328, kSetBB07,      -556.0f, 252.59f, -1018.11f);
-	World_Waypoint_Set(329, kSetBB07,      -655.0f,  252.6f,  -1012.0f);
-	World_Waypoint_Set(330, kSetBB07,      -657.0f,  253.0f,  -1127.0f);
-	World_Waypoint_Set(331, kSetBB12,       163.8f,    0.0f,     67.0f);
-	World_Waypoint_Set(332, kSetBB06_BB07,  -39.0f,    0.0f,     11.5f);
-	World_Waypoint_Set(333, kSetBB12,       -34.0f,    0.0f,     33.0f);
-	World_Waypoint_Set(334, kSetBB05,         3.0f, -60.30f,   -144.0f);
-	World_Waypoint_Set(335, kSetBB12,       -50.0f,    0.0f,    212.0f);
+	World_Waypoint_Set(324, kSetBB05, 267.0f, -60.3f, 203.0f);
+	World_Waypoint_Set(325, kSetBB05, 84.0f, -60.3f, 337.0f);
+	World_Waypoint_Set(326, kSetBB06_BB07, -36.0f, 0.0f, 185.0f);
+	World_Waypoint_Set(327, kSetBB06_BB07, -166.0f, 0.0f, -103.0f);
+	World_Waypoint_Set(328, kSetBB07, -556.0f, 252.59f, -1018.11f);
+	World_Waypoint_Set(329, kSetBB07, -655.0f, 252.6f, -1012.0f);
+	World_Waypoint_Set(330, kSetBB07, -657.0f, 253.0f, -1127.0f);
+	World_Waypoint_Set(331, kSetBB12, 163.8f, 0.0f, 67.0f);
+	World_Waypoint_Set(332, kSetBB06_BB07, -39.0f, 0.0f, 11.5f);
+	World_Waypoint_Set(333, kSetBB12, -34.0f, 0.0f, 33.0f);
+	World_Waypoint_Set(334, kSetBB05, 3.0f, -60.30f, -144.0f);
+	World_Waypoint_Set(335, kSetBB12, -50.0f, 0.0f, 212.0f);
 
 	Actor_Put_In_Set(kActorBryant, kSetBB05);
 
@@ -53,17 +54,15 @@ void AIScriptBryant::Initialize() {
 
 bool AIScriptBryant::Update() {
 	if (Global_Variable_Query(kVariableChapter) == 2
-	 && Actor_Query_Goal_Number(kActorBryant) <= 101
-	 && Player_Query_Current_Scene() == kSceneBB05
-	) {
+	    && Actor_Query_Goal_Number(kActorBryant) <= 101
+	    && Player_Query_Current_Scene() == kSceneBB05) {
 		Actor_Set_Goal_Number(kActorBryant, 101);
 		return true;
 	}
 
-	if ( Global_Variable_Query(kVariableChapter) == 3
-	 &&  Player_Query_Current_Scene() == kSceneBB05
-	 && !Game_Flag_Query(kFlagNotUsed686)
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 3
+	    && Player_Query_Current_Scene() == kSceneBB05
+	    && !Game_Flag_Query(kFlagNotUsed686)) {
 		Game_Flag_Set(kFlagNotUsed686);
 		return true;
 	}
@@ -117,7 +116,7 @@ void AIScriptBryant::ShotAtAndMissed() {
 
 bool AIScriptBryant::ShotAtAndHit() {
 	AI_Movement_Track_Flush(kActorBryant);
-	Sound_Play(kSfxFEMHURT1, 100, 0, 0, 50);  // a bug?
+	Sound_Play(kSfxFEMHURT1, 100, 0, 0, 50); // a bug?
 
 	return false;
 }
@@ -269,17 +268,17 @@ bool AIScriptBryant::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptBryant::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptBryant::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptBryant::ReachedMovementTrackWaypoint(int waypointId) {

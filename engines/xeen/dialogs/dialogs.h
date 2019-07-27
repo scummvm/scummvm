@@ -24,8 +24,8 @@
 #define XEEN_DIALOGS_H
 
 #include "common/array.h"
-#include "common/stack.h"
 #include "common/rect.h"
+#include "common/stack.h"
 #include "xeen/cutscenes.h"
 #include "xeen/sprites.h"
 #include "xeen/xsurface.h"
@@ -45,14 +45,23 @@ public:
 	/**
 	 * Constructor
 	 */
-	UIButton(const Common::Rect &bounds, int value, uint frameNum, SpriteResource *sprites, bool draw) :
-		_bounds(bounds), _value(value), _frameNum(frameNum), _selectedFrame(frameNum | 1),
-		_sprites(sprites), _draw(draw) {}
+	UIButton(const Common::Rect &bounds, int value, uint frameNum, SpriteResource *sprites, bool draw)
+	  : _bounds(bounds)
+	  , _value(value)
+	  , _frameNum(frameNum)
+	  , _selectedFrame(frameNum | 1)
+	  , _sprites(sprites)
+	  , _draw(draw) {}
 
 	/**
 	 * Constructor
 	 */
-	UIButton() : _value(0), _frameNum(0), _selectedFrame(0), _sprites(nullptr), _draw(false) {}
+	UIButton()
+	  : _value(0)
+	  , _frameNum(0)
+	  , _selectedFrame(0)
+	  , _sprites(nullptr)
+	  , _draw(false) {}
 
 	/**
 	 * Set the frame
@@ -73,7 +82,8 @@ public:
 
 class ButtonContainer : public Cutscenes {
 private:
-	Common::Stack< Common::Array<UIButton> > _savedButtons;
+	Common::Stack<Common::Array<UIButton>> _savedButtons;
+
 protected:
 	Common::Array<UIButton> _buttons;
 	Common::StringArray _textStrings;
@@ -108,8 +118,11 @@ protected:
 	 * the equivalent of a space bar press, to the main interface area
 	 */
 	void setWaitBounds();
+
 public:
-	ButtonContainer(XeenEngine *vm) : Cutscenes(vm), _buttonValue(0) {}
+	ButtonContainer(XeenEngine *vm)
+	  : Cutscenes(vm)
+	  , _buttonValue(0) {}
 
 	/**
 	 * Saves the current list of buttons
@@ -121,9 +134,9 @@ public:
 	void restoreButtons();
 
 	void addButton(const Common::Rect &bounds, int val,
-		SpriteResource *sprites = nullptr);
+	               SpriteResource *sprites = nullptr);
 	void addButton(const Common::Rect &bounds, int val,
-		int frameNum, SpriteResource *sprites = nullptr);
+	               int frameNum, SpriteResource *sprites = nullptr);
 
 	void addPartyButtons(XeenEngine *vm);
 
@@ -141,8 +154,10 @@ public:
 class SettingsBaseDialog : public ButtonContainer {
 protected:
 	virtual void showContents(SpriteResource &title1, bool mode);
+
 public:
-	SettingsBaseDialog(XeenEngine *vm) : ButtonContainer(vm) {}
+	SettingsBaseDialog(XeenEngine *vm)
+	  : ButtonContainer(vm) {}
 
 	virtual ~SettingsBaseDialog() {}
 };

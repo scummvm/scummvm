@@ -30,18 +30,18 @@
  */
 
 #include "sword25/gfx/bitmap.h"
-#include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
 
 namespace Sword25 {
 
-Bitmap::Bitmap(RenderObjectPtr<RenderObject> parentPtr, TYPES type, uint handle) :
-	RenderObject(parentPtr, type, handle),
-	_modulationColor(0xffffffff),
-	_scaleFactorX(1.0f),
-	_scaleFactorY(1.0f),
-	_flipH(false),
-	_flipV(false) {
+Bitmap::Bitmap(RenderObjectPtr<RenderObject> parentPtr, TYPES type, uint handle)
+  : RenderObject(parentPtr, type, handle)
+  , _modulationColor(0xffffffff)
+  , _scaleFactorX(1.0f)
+  , _scaleFactorY(1.0f)
+  , _flipH(false)
+  , _flipV(false) {
 }
 
 Bitmap::~Bitmap() {

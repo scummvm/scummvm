@@ -20,8 +20,8 @@
  *
  */
 
-#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
+#include "dreamweb/sound.h"
 
 namespace DreamWeb {
 
@@ -154,7 +154,7 @@ void DreamWebEngine::mainMan(Sprite *sprite) {
 			}
 		}
 	}
-	static const uint8 facelist[] = { 0,60,33,71,11,82,22,93 };
+	static const uint8 facelist[] = { 0, 60, 33, 71, 11, 82, 22, 93 };
 	sprite->frameNumber = sprite->walkFrame + facelist[_facing];
 	_ryanX = sprite->x;
 	_ryanY = sprite->y;
@@ -396,8 +396,7 @@ void DreamWebEngine::liftSprite(Sprite *sprite, SetObject *objData) {
 		}
 		sprite->animFrame = 0;
 		sprite->frameNumber = objData->index = objData->frames[sprite->animFrame];
-	}
-	else if (liftFlag == 1) {  //liftopen
+	} else if (liftFlag == 1) { //liftopen
 		turnPathOn(_vars._liftPath);
 
 		if (_vars._countToClose != 0) {
@@ -407,8 +406,7 @@ void DreamWebEngine::liftSprite(Sprite *sprite, SetObject *objData) {
 		}
 		sprite->animFrame = 12;
 		sprite->frameNumber = objData->index = objData->frames[sprite->animFrame];
-	}
-	else if (liftFlag == 3) { //openlift
+	} else if (liftFlag == 3) { //openlift
 		if (sprite->animFrame == 12) {
 			_vars._liftFlag = 1;
 			return;
@@ -540,43 +538,43 @@ void DreamWebEngine::monks2text() {
 	if (getLanguage() != Common::DE_DEU && getLanguage() != Common::ES_ESP) {
 		switch (_introCount) {
 		case 1:
-			monks2ShowText(8);	// Keepers. The web of dreams is slowly unwinding
+			monks2ShowText(8); // Keepers. The web of dreams is slowly unwinding
 			break;
 		case 4:
-			monks2ShowText(9);	// The seven evil powers on earth are joining forces
+			monks2ShowText(9); // The seven evil powers on earth are joining forces
 			break;
 		case 7:
-			monks2ShowText(10);	// If they become too strong the Dreamweb will be destroyed
+			monks2ShowText(10); // If they become too strong the Dreamweb will be destroyed
 			break;
 		case 10:
 			if (hasSpeech())
 				_introCount = 12;
-			monks2ShowText(11, 0, 105);	// Who will be the deliverer? (monk 1)
+			monks2ShowText(11, 0, 105); // Who will be the deliverer? (monk 1)
 			break;
 		case 13:
 			if (hasSpeech())
-				_introCount = 17;	// Skip the speech of the third monk in the CD version
-			monks2ShowText(12, 0, 120);	// When will it be? (monk 2)
+				_introCount = 17; // Skip the speech of the third monk in the CD version
+			monks2ShowText(12, 0, 120); // When will it be? (monk 2)
 			break;
 		case 16:
-			monks2ShowText(13, 0, 135);	// We must not let the web be broken (monk 3) (floppy version only)
+			monks2ShowText(13, 0, 135); // We must not let the web be broken (monk 3) (floppy version only)
 			break;
 		case 19:
-			monks2ShowText(14);	// SILENCE! The chosen ones are becoming aware
+			monks2ShowText(14); // SILENCE! The chosen ones are becoming aware
 			break;
 		case 22:
-			monks2ShowText(15);	// If they discover their powers they will become too strong
+			monks2ShowText(15); // If they discover their powers they will become too strong
 			break;
 		case 25:
-			monks2ShowText(16);	// Has the seed been planted?
+			monks2ShowText(16); // Has the seed been planted?
 			break;
-		case 27:	// CD
-		case 28:	// Floppy
+		case 27: // CD
+		case 28: // Floppy
 			if ((_introCount == 27 && hasSpeech()) || (_introCount == 28 && !hasSpeech()))
-				monks2ShowText(17);	// Yes, it has grown strong and he is stirring
+				monks2ShowText(17); // Yes, it has grown strong and he is stirring
 			break;
 		case 31:
-			monks2ShowText(18);	// The time has come and I shall awaken him
+			monks2ShowText(18); // The time has come and I shall awaken him
 			break;
 		default:
 			break;
@@ -584,25 +582,25 @@ void DreamWebEngine::monks2text() {
 	} else {
 		switch (_introCount) {
 		case 1:
-			monks2ShowText(8);	// WÅchter! Das Netz der TrÅume fÅngt an sich aufzulÖsen
+			monks2ShowText(8); // WÅchter! Das Netz der TrÅume fÅngt an sich aufzulÖsen
 			break;
-		case 4:	// Floppy
-		case 5:	// CD
+		case 4: // Floppy
+		case 5: // CD
 			if ((_introCount == 4 && !hasSpeech()) || (_introCount == 5 && hasSpeech()))
-				monks2ShowText(9);	// Die sieben bÖsen MÅchte der Erde fangen an sich zu sammeln
+				monks2ShowText(9); // Die sieben bÖsen MÅchte der Erde fangen an sich zu sammeln
 			break;
-		case 7:	// Floppy
-		case 9:	// CD
+		case 7: // Floppy
+		case 9: // CD
 			if ((_introCount == 7 && !hasSpeech()) || (_introCount == 9 && hasSpeech()))
-				monks2ShowText(10);	// Wenn sie zu mÅchtig werden, wird das Dreamweb zerstÖrt
+				monks2ShowText(10); // Wenn sie zu mÅchtig werden, wird das Dreamweb zerstÖrt
 			break;
-		case 10:	// Floppy
-		case 13:	// CD and floppy
+		case 10: // Floppy
+		case 13: // CD and floppy
 			if (_introCount == 10 && !hasSpeech()) {
-				monks2ShowText(11, 0, 105);	// Wer wird der Bote sein?
+				monks2ShowText(11, 0, 105); // Wer wird der Bote sein?
 			} else if (_introCount == 13 && hasSpeech()) {
 				_introCount = 14;
-				monks2ShowText(11, 0, 105);	// Wer wird der Bote sein?
+				monks2ShowText(11, 0, 105); // Wer wird der Bote sein?
 			} else if (_introCount == 13 && !hasSpeech()) {
 				monks2ShowText(12, 0, 120);
 			}
@@ -612,27 +610,27 @@ void DreamWebEngine::monks2text() {
 				monks2ShowText(13, 0, 135);
 			break;
 		case 19:
-			monks2ShowText(14);	// SCHWEIGT! Die AuserwÅhlten sammeln sich
+			monks2ShowText(14); // SCHWEIGT! Die AuserwÅhlten sammeln sich
 			break;
-		case 22:	// Floppy
-		case 23:	// CD
+		case 22: // Floppy
+		case 23: // CD
 			if ((_introCount == 22 && !hasSpeech()) || (_introCount == 23 && hasSpeech()))
-				monks2ShowText(15);	// Wenn sie ihre KrÅfte entdecken, werden sie zu mÅchtig sein
+				monks2ShowText(15); // Wenn sie ihre KrÅfte entdecken, werden sie zu mÅchtig sein
 			break;
-		case 25:	// Floppy
-		case 27:	// CD
+		case 25: // Floppy
+		case 27: // CD
 			if ((_introCount == 25 && !hasSpeech()) || (_introCount == 27 && hasSpeech()))
-				monks2ShowText(16);	// Ist die Saat gepflanzt?
+				monks2ShowText(16); // Ist die Saat gepflanzt?
 			break;
-		case 28:	// Floppy
-		case 30:	// CD
+		case 28: // Floppy
+		case 30: // CD
 			if ((_introCount == 28 && !hasSpeech()) || (_introCount == 30 && hasSpeech()))
-				monks2ShowText(17);	// Ja. Sie ist zu einem groÜen und stattlichen Man herangewachsen
+				monks2ShowText(17); // Ja. Sie ist zu einem groÜen und stattlichen Man herangewachsen
 			break;
-		case 31:	// Floppy
-		case 35:	// CD
+		case 31: // Floppy
+		case 35: // CD
 			if ((_introCount == 31 && !hasSpeech()) || (_introCount == 35 && hasSpeech()))
-				monks2ShowText(18);	// Sein Name ist Ryan. Die Zeit ist gekommen, ihn zu erwecken
+				monks2ShowText(18); // Sein Name ist Ryan. Die Zeit ist gekommen, ihn zu erwecken
 			break;
 		default:
 			break;
@@ -711,20 +709,18 @@ void DreamWebEngine::reconstruct() {
 	_haveDoneObs = 0;
 }
 
-
-
 struct ReelSound {
 	uint8 _sample;
 	uint16 _reelPointer;
 };
 
 static const ReelSound g_roomSound0[] = {
-	{ 255,0 }
+	{ 255, 0 }
 };
 
 static const ReelSound g_roomSound1[] = {
 	{ 15, 257 },
-	{ 255,0 }
+	{ 255, 0 }
 };
 
 static const ReelSound g_roomSound2[] = {
@@ -734,13 +730,13 @@ static const ReelSound g_roomSound2[] = {
 	{ 17, 50 },
 	{ 18, 103 },
 	{ 19, 108 },
-	{ 255,0 }
+	{ 255, 0 }
 };
 
 static const ReelSound g_roomSound6[] = {
 	{ 18, 19 },
 	{ 19, 23 },
-	{ 255,0 }
+	{ 255, 0 }
 };
 static const ReelSound g_roomSound8[] = {
 
@@ -749,28 +745,28 @@ static const ReelSound g_roomSound8[] = {
 	{ 14, 14 },
 	{ 15, 20 },
 	{ 0, 78 },
-	{ 255,0 }
+	{ 255, 0 }
 };
 static const ReelSound g_roomSound9[] = {
 
 	{ 12, 119 },
 	{ 12, 145 },
-	{ 255,0 }
+	{ 255, 0 }
 };
 
 static const ReelSound g_roomSound10[] = {
 	{ 13, 16 },
-	{ 255,0 }
+	{ 255, 0 }
 };
 
 static const ReelSound g_roomSound11[] = {
 	{ 13, 20 },
-	{ 255,0 }
+	{ 255, 0 }
 };
 
 static const ReelSound g_roomSound12[] = {
 	{ 14, 16 },
-	{ 255,0 }
+	{ 255, 0 }
 };
 
 static const ReelSound g_roomSound13[] = {
@@ -778,7 +774,7 @@ static const ReelSound g_roomSound13[] = {
 	{ 16, 8 },
 	{ 17, 134 },
 	{ 18, 153 },
-	{ 255,0 }
+	{ 255, 0 }
 };
 
 static const ReelSound g_roomSound14[] = {
@@ -791,9 +787,9 @@ static const ReelSound g_roomSound14[] = {
 	{ 15, 354 },
 	{ 18, 159 },
 	{ 18, 178 },
-	{ 19+128, 217 },
-	{ 20+64, 228 },
-	{ 255,0 }
+	{ 19 + 128, 217 },
+	{ 20 + 64, 228 },
+	{ 255, 0 }
 };
 
 static const ReelSound g_roomSound20[] = {
@@ -804,7 +800,7 @@ static const ReelSound g_roomSound20[] = {
 	{ 13, 55 },
 	{ 25, 57 },
 	{ 21, 73 },
-	{ 255,0 }
+	{ 255, 0 }
 };
 
 static const ReelSound g_roomSound22[] = {
@@ -818,7 +814,7 @@ static const ReelSound g_roomSound22[] = {
 	{ 15, 239 },
 	{ 17, 99 },
 	{ 12, 52 },
-	{ 255,0 }
+	{ 255, 0 }
 };
 
 static const ReelSound g_roomSound23[] = {
@@ -826,7 +822,7 @@ static const ReelSound g_roomSound23[] = {
 	{ 16, 64 },
 	{ 19, 22 },
 	{ 20, 33 },
-	{ 255,0 }
+	{ 255, 0 }
 };
 
 static const ReelSound g_roomSound25[] = {
@@ -835,9 +831,9 @@ static const ReelSound g_roomSound25[] = {
 	{ 15, 28 },
 	{ 13, 80 },
 	{ 21, 82 },
-	{ 19+128, 87 },
-	{ 23+64, 128 },
-	{ 255,0 }
+	{ 19 + 128, 87 },
+	{ 23 + 64, 128 },
+	{ 255, 0 }
 };
 
 static const ReelSound g_roomSound26[] = {
@@ -848,7 +844,7 @@ static const ReelSound g_roomSound26[] = {
 	{ 12, 83 },
 	{ 12, 91 },
 	{ 15, 102 }, // was 90, should be mine cart
-	{ 255,0 }
+	{ 255, 0 }
 };
 
 static const ReelSound g_roomSound27[] = {
@@ -858,9 +854,9 @@ static const ReelSound g_roomSound27[] = {
 	{ 15, 107 },
 	{ 14, 127 },
 	{ 14, 154 },
-	{ 19+128, 170 },
-	{ 23+64, 232 },
-	{ 255,0 }
+	{ 19 + 128, 170 },
+	{ 23 + 64, 232 },
+	{ 255, 0 }
 };
 
 static const ReelSound g_roomSound28[] = {
@@ -868,33 +864,32 @@ static const ReelSound g_roomSound28[] = {
 	{ 21, 72 },
 	{ 21, 205 },
 	{ 22, 63 }, // 65
-	{ 23+128, 99 },
-	{ 24+64, 158 },
-	{ 255,0 }
+	{ 23 + 128, 99 },
+	{ 24 + 64, 158 },
+	{ 255, 0 }
 };
 
 static const ReelSound g_roomSound29[] = {
 	{ 13, 21 },
 	{ 14, 24 },
-	{ 19+128, 50 },
-	{ 23+64, 75 },
+	{ 19 + 128, 50 },
+	{ 23 + 64, 75 },
 	{ 24, 128 },
-	{ 255,0 }
+	{ 255, 0 }
 };
 
 static const ReelSound g_roomSound29_German[] = {
 	{ 13, 21 },
 	{ 14, 24 },
-	{ 19+128, 50 },
-	{ 23+64, 75 },
-	{ 255,0 }
+	{ 19 + 128, 50 },
+	{ 23 + 64, 75 },
+	{ 255, 0 }
 };
 
-
 static const ReelSound g_roomSound45[] = {
-	{ 19+64, 46 },
+	{ 19 + 64, 46 },
 	{ 16, 167 },
-	{ 255,0 }
+	{ 255, 0 }
 };
 
 static const ReelSound g_roomSound46[] = {
@@ -910,7 +905,7 @@ static const ReelSound g_roomSound46[] = {
 	{ 14, 162 },
 	{ 16, 177 },
 	{ 14, 191 },
-	{ 255,0 }
+	{ 255, 0 }
 };
 
 static const ReelSound g_roomSound47[] = {
@@ -918,18 +913,18 @@ static const ReelSound g_roomSound47[] = {
 	{ 14, 41 },
 	{ 15, 78 },
 	{ 16, 92 },
-	{ 255,0 }
+	{ 255, 0 }
 };
 
 static const ReelSound g_roomSound52[] = {
 	{ 16, 115 },
-	{ 255,0 }
+	{ 255, 0 }
 };
 
 static const ReelSound g_roomSound53[] = {
 	{ 21, 103 },
 	{ 20, 199 },
-	{ 255,0 }
+	{ 255, 0 }
 };
 
 static const ReelSound g_roomSound55[] = {
@@ -944,24 +939,23 @@ static const ReelSound g_roomSound55[] = {
 	{ 17, 63 },
 	{ 17, 64 },
 	{ 17, 65 },
-	{ 255,0 }
+	{ 255, 0 }
 };
 
 static const ReelSound *g_roomByRoom[] = {
-	g_roomSound0,g_roomSound1,g_roomSound2,g_roomSound0,g_roomSound0,
-	g_roomSound0,g_roomSound6,g_roomSound0,g_roomSound8,g_roomSound9,
-	g_roomSound10,g_roomSound11,g_roomSound12,g_roomSound13,g_roomSound14,
-	g_roomSound0,g_roomSound0,g_roomSound0,g_roomSound0,g_roomSound0,
-	g_roomSound20,g_roomSound0,g_roomSound22,g_roomSound23,g_roomSound0,
-	g_roomSound25,g_roomSound26,g_roomSound27,g_roomSound28,g_roomSound29,
-	g_roomSound0,g_roomSound0,g_roomSound0,g_roomSound0,g_roomSound0,
-	g_roomSound0,g_roomSound0,g_roomSound0,g_roomSound0,g_roomSound0,
-	g_roomSound0,g_roomSound0,g_roomSound0,g_roomSound0,g_roomSound0,
-	g_roomSound45,g_roomSound46,g_roomSound47,g_roomSound0,g_roomSound0,
-	g_roomSound0,g_roomSound0,g_roomSound52,g_roomSound53,g_roomSound0,
+	g_roomSound0, g_roomSound1, g_roomSound2, g_roomSound0, g_roomSound0,
+	g_roomSound0, g_roomSound6, g_roomSound0, g_roomSound8, g_roomSound9,
+	g_roomSound10, g_roomSound11, g_roomSound12, g_roomSound13, g_roomSound14,
+	g_roomSound0, g_roomSound0, g_roomSound0, g_roomSound0, g_roomSound0,
+	g_roomSound20, g_roomSound0, g_roomSound22, g_roomSound23, g_roomSound0,
+	g_roomSound25, g_roomSound26, g_roomSound27, g_roomSound28, g_roomSound29,
+	g_roomSound0, g_roomSound0, g_roomSound0, g_roomSound0, g_roomSound0,
+	g_roomSound0, g_roomSound0, g_roomSound0, g_roomSound0, g_roomSound0,
+	g_roomSound0, g_roomSound0, g_roomSound0, g_roomSound0, g_roomSound0,
+	g_roomSound45, g_roomSound46, g_roomSound47, g_roomSound0, g_roomSound0,
+	g_roomSound0, g_roomSound0, g_roomSound52, g_roomSound53, g_roomSound0,
 	g_roomSound55
 };
-
 
 void DreamWebEngine::soundOnReels(uint16 reelPointer) {
 	const ReelSound *r = g_roomByRoom[_realLocation];
@@ -1026,7 +1020,7 @@ void DreamWebEngine::getRidOfReels() {
 
 void DreamWebEngine::liftNoise(uint8 index) {
 	if (_realLocation == 5 || _realLocation == 21)
-		_sound->playChannel1(13);	// hiss noise
+		_sound->playChannel1(13); // hiss noise
 	else
 		_sound->playChannel1(index);
 }
@@ -1072,8 +1066,10 @@ void DreamWebEngine::checkForExit(Sprite *sprite) {
 		// Can't leave Louis' until you found shoes
 
 		int shoeCount = 0;
-		if (isRyanHolding("WETA")) shoeCount++;
-		if (isRyanHolding("WETB")) shoeCount++;
+		if (isRyanHolding("WETA"))
+			shoeCount++;
+		if (isRyanHolding("WETB"))
+			shoeCount++;
 
 		if (shoeCount < 2) {
 			uint8 text = shoeCount ? 43 : 42;
@@ -1082,11 +1078,9 @@ void DreamWebEngine::checkForExit(Sprite *sprite) {
 			_turnToFace = (_facing + 4) & 7;
 			return;
 		}
-
 	}
 
 	_vars._needToTravel = 1;
 }
 
 } // End of namespace DreamWeb
-

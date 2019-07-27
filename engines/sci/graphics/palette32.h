@@ -44,9 +44,9 @@ public:
 	static uint32 calculateHunkPaletteSize(const uint16 numIndexes = 256, const bool sharedUsed = true) {
 		const int numPalettes = 1;
 		return kHunkPaletteHeaderSize +
-			/* slack bytes between hunk header & palette offset table */ 2 +
-			/* palette offset table */ 2 * numPalettes +
-			/* palette data */ (kEntryHeaderSize + numIndexes * (/* RGB */ 3 + !sharedUsed)) * numPalettes;
+		  /* slack bytes between hunk header & palette offset table */ 2 +
+		  /* palette offset table */ 2 * numPalettes +
+		  /* palette data */ (kEntryHeaderSize + numIndexes * (/* RGB */ 3 + !sharedUsed)) * numPalettes;
 	}
 
 	/**
@@ -182,7 +182,7 @@ private:
 
 enum PalCyclerDirection {
 	kPalCycleBackward = 0,
-	kPalCycleForward  = 1
+	kPalCycleForward = 1
 };
 
 /**

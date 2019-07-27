@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/translation.h"
 #include "gui/chooser.h"
+#include "common/translation.h"
 #include "gui/widget.h"
 #include "gui/widgets/list.h"
 
@@ -32,7 +32,7 @@ enum {
 };
 
 ChooserDialog::ChooserDialog(const String &title, String dialogId)
-	: Dialog(dialogId) {
+  : Dialog(dialogId) {
 
 	// Headline
 	new StaticTextWidget(this, dialogId + ".Headline", title);
@@ -48,7 +48,7 @@ ChooserDialog::ChooserDialog(const String &title, String dialogId)
 	_chooseButton->setEnabled(false);
 }
 
-void ChooserDialog::setList(const StringArray& list) {
+void ChooserDialog::setList(const StringArray &list) {
 	_list->setList(list);
 }
 

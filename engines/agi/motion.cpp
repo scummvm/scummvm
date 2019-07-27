@@ -128,7 +128,7 @@ void AgiEngine::motionWander(ScreenObjEntry *screenObj) {
 		}
 
 		while (screenObj->wander_count < 6) {
-			screenObj->wander_count = _rnd->getRandomNumber(50);    // huh?
+			screenObj->wander_count = _rnd->getRandomNumber(50); // huh?
 		}
 	}
 }
@@ -189,7 +189,7 @@ void AgiEngine::motionFollowEgo(ScreenObjEntry *screenObj) {
 		k -= screenObj->stepSize;
 		screenObj->follow_count = k;
 
-		if ((int8) screenObj->follow_count < 0)
+		if ((int8)screenObj->follow_count < 0)
 			screenObj->follow_count = 0;
 	} else {
 		screenObj->direction = dir;
@@ -239,7 +239,7 @@ void AgiEngine::checkAllMotions() {
 
 	for (screenObj = _game.screenObjTable; screenObj < &_game.screenObjTable[SCREENOBJECTS_MAX]; screenObj++) {
 		if ((screenObj->flags & (fAnimated | fUpdate | fDrawn)) == (fAnimated | fUpdate | fDrawn)
-		        && screenObj->stepTimeCount == 1) {
+		    && screenObj->stepTimeCount == 1) {
 			checkMotion(screenObj);
 		}
 	}

@@ -24,22 +24,22 @@
 
 #ifdef RISCOS
 
-#include "backends/platform/sdl/riscos/riscos.h"
-#include "backends/saves/default/default-saves.h"
-#include "backends/events/riscossdl/riscossdl-events.h"
-#include "backends/fs/riscos/riscos-fs-factory.h"
-#include "backends/fs/riscos/riscos-fs.h"
+#	include "backends/events/riscossdl/riscossdl-events.h"
+#	include "backends/fs/riscos/riscos-fs-factory.h"
+#	include "backends/fs/riscos/riscos-fs.h"
+#	include "backends/platform/sdl/riscos/riscos.h"
+#	include "backends/saves/default/default-saves.h"
 
-#include <kernel.h>
-#include <swis.h>
+#	include <kernel.h>
+#	include <swis.h>
 
-#ifndef URI_Dispatch
-#define URI_Dispatch 0x4e381
-#endif
+#	ifndef URI_Dispatch
+#		define URI_Dispatch 0x4e381
+#	endif
 
-#ifndef Report_Text0
-#define Report_Text0 0x54c80
-#endif
+#	ifndef Report_Text0
+#		define Report_Text0 0x54c80
+#	endif
 
 void OSystem_RISCOS::init() {
 	// Initialze File System Factory
@@ -76,7 +76,7 @@ bool OSystem_RISCOS::hasFeature(Feature f) {
 
 bool OSystem_RISCOS::openUrl(const Common::String &url) {
 	int flags;
-	if (_swix(URI_Dispatch, _INR(0,2)|_OUT(0), 0, url.c_str(), 0, &flags) != NULL) {
+	if (_swix(URI_Dispatch, _INR(0, 2) | _OUT(0), 0, url.c_str(), 0, &flags) != NULL) {
 		warning("openUrl() (RISCOS) failed to open URL");
 		return false;
 	}
@@ -140,4 +140,3 @@ Common::WriteStream *OSystem_RISCOS::createLogFile() {
 }
 
 #endif
-

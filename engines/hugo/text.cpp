@@ -19,15 +19,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "common/system.h"
 #include "common/stream.h"
+#include "common/system.h"
 
 #include "hugo/hugo.h"
 #include "hugo/text.h"
 
 namespace Hugo {
 
-TextHandler::TextHandler(HugoEngine *vm) : _vm(vm) {
+TextHandler::TextHandler(HugoEngine *vm)
+  : _vm(vm) {
 	_textData = nullptr;
 	_stringtData = nullptr;
 	_textEngine = nullptr;
@@ -92,7 +93,7 @@ char **TextHandler::getVerbArray(int idx1) const {
 }
 
 char **TextHandler::loadTextsVariante(Common::ReadStream &in, uint16 *arraySize) {
-	int  len;
+	int len;
 	char **res = nullptr;
 	char *pos = nullptr;
 	char *posBck = nullptr;

@@ -23,16 +23,16 @@
 #ifndef ZVISION_ANIMATION_NODE_H
 #define ZVISION_ANIMATION_NODE_H
 
-#include "zvision/scripting/scripting_effect.h"
-#include "common/rect.h"
 #include "common/list.h"
+#include "common/rect.h"
+#include "zvision/scripting/scripting_effect.h"
 
 namespace Graphics {
 struct Surface;
 }
 
 namespace Video {
-	class VideoDecoder;
+class VideoDecoder;
 }
 
 namespace ZVision {

@@ -1,5 +1,9 @@
 static const char *const kEoB2ChargenStrings1DOSGerman[9] = {
-	"Die Party ist\rkomplett. W""\x84""hle\rSPIEL oder\rdr""\x81""cke 'P' um\rzu starten.",
+	"Die Party ist\rkomplett. W"
+	"\x84"
+	"hle\rSPIEL oder\rdr"
+	"\x81"
+	"cke 'P' um\rzu starten.",
 	"          ",
 	"RK\rTP\rSTF",
 	"%s\r%d\r%d\r%d\r%d\r%d",
@@ -7,7 +11,9 @@ static const char *const kEoB2ChargenStrings1DOSGerman[9] = {
 	"%d",
 	"%d/%d",
 	"%d/%d/%d",
-	"W""\x84""hle die Box des\rCharakters, den du\rerschaffen oder\ransehen willst."
+	"W"
+	"\x84"
+	"hle die Box des\rCharakters, den du\rerschaffen oder\ransehen willst."
 };
 
 static const StringListProvider kEoB2ChargenStrings1DOSGermanProvider = { ARRAYSIZE(kEoB2ChargenStrings1DOSGerman), kEoB2ChargenStrings1DOSGerman };
@@ -21,22 +27,31 @@ static const char *const kEoB2ChargenStrings2DOSGerman[12] = {
 	"%d",
 	"%s",
 	"%d",
-	"W""\x8E""HLE RASSE:",
-	"W""\x8E""HLE KLASSE:",
-	"W""\x8E""HLE GESINNUNG:",
+	"W"
+	"\x8E"
+	"HLE RASSE:",
+	"W"
+	"\x8E"
+	"HLE KLASSE:",
+	"W"
+	"\x8E"
+	"HLE GESINNUNG:",
 	"Name:"
 };
 
 static const StringListProvider kEoB2ChargenStrings2DOSGermanProvider = { ARRAYSIZE(kEoB2ChargenStrings2DOSGerman), kEoB2ChargenStrings2DOSGerman };
 
 static const char *const kEoB2ChargenStatStringsDOSGerman[12] = {
-	"ST""\x8E",
+	"ST"
+	"\x8E",
 	"INT",
 	"WEI",
 	"GES",
 	"KON",
 	"CHA",
-	"ST""\x8E""RKE",
+	"ST"
+	"\x8E"
+	"RKE",
 	"INTELLIGENZ",
 	"WEISHEIT",
 	"GESCHICK",
@@ -64,22 +79,38 @@ static const char *const kEoB2ChargenRaceSexStringsDOSGerman[12] = {
 static const StringListProvider kEoB2ChargenRaceSexStringsDOSGermanProvider = { ARRAYSIZE(kEoB2ChargenRaceSexStringsDOSGerman), kEoB2ChargenRaceSexStringsDOSGerman };
 
 static const char *const kEoB2ChargenClassStringsDOSGerman[21] = {
-	"K""\x8E""MPFER",
-	"WALDL""\x8E""UFER",
+	"K"
+	"\x8E"
+	"MPFER",
+	"WALDL"
+	"\x8E"
+	"UFER",
 	"PALADIN",
 	"MAGIER",
 	"KLERIKER",
 	"DIEB",
-	"K""\x8E""MPFER/KLERIKER",
-	"K""\x8E""MPFER/DIEB",
-	"K""\x8E""MPFER/MAGIER",
-	"K""\x8E""MPFER/MAGIER/DIEB",
+	"K"
+	"\x8E"
+	"MPFER/KLERIKER",
+	"K"
+	"\x8E"
+	"MPFER/DIEB",
+	"K"
+	"\x8E"
+	"MPFER/MAGIER",
+	"K"
+	"\x8E"
+	"MPFER/MAGIER/DIEB",
 	"DIEB/MAGIER",
 	"KLERIKER/DIEB",
-	"K""\x8E""MPFER/KLER./MAG.",
+	"K"
+	"\x8E"
+	"MPFER/KLER./MAG.",
 	"WALDL./KLER.",
 	"KLER./MAGIER",
-	"K""\x8E""MPFER",
+	"K"
+	"\x8E"
+	"MPFER",
 	"MAGIER",
 	"KLERIKER",
 	"DIEB",
@@ -96,9 +127,15 @@ static const char *const kEoB2ChargenAlignmentStringsDOSGerman[9] = {
 	"RECHTSCH. NEUTRAL",
 	"NEUTRAL",
 	"CHAOTISCH NEUTRAL",
-	"RECHTSCH. B""\x99""SE",
-	"NEUTRAL B""\x99""SE",
-	"CHAOTISCH B""\x99""SE"
+	"RECHTSCH. B"
+	"\x99"
+	"SE",
+	"NEUTRAL B"
+	"\x99"
+	"SE",
+	"CHAOTISCH B"
+	"\x99"
+	"SE"
 };
 
 static const StringListProvider kEoB2ChargenAlignmentStringsDOSGermanProvider = { ARRAYSIZE(kEoB2ChargenAlignmentStringsDOSGerman), kEoB2ChargenAlignmentStringsDOSGerman };
@@ -111,12 +148,26 @@ static const StringListProvider kEoB2ChargenEnterGameStringsDOSGermanProvider = 
 
 static const char *const kEoB2PryDoorStringsDOSGerman[9] = {
 	"\r",
-	"Ihr k""\x94""nnt die T""\x81""r nicht aufbrechen.\r",
-	"\x06\x04""Ihr brecht die T""\x81""r auf.\r",
-	"\x06\x06""Ihr versucht vergeblich die T""\x81""r gewaltsam zu\r""\x94""ffnen.\r",
+	"Ihr k"
+	"\x94"
+	"nnt die T"
+	"\x81"
+	"r nicht aufbrechen.\r",
+	"\x06\x04"
+	"Ihr brecht die T"
+	"\x81"
+	"r auf.\r",
+	"\x06\x06"
+	"Ihr versucht vergeblich die T"
+	"\x81"
+	"r gewaltsam zu\r"
+	"\x94"
+	"ffnen.\r",
 	"Das kann man hier nicht ablegen.\r",
 	"Das passt hier nicht.\r",
-	"Niemand kann die T""\x81""r aufbrechen.\r",
+	"Niemand kann die T"
+	"\x81"
+	"r aufbrechen.\r",
 	"\r",
 	"\r"
 };
@@ -155,9 +206,13 @@ static const char *const kEoB2ItemSuffixStringsPotionsDOSGerman[8] = {
 static const StringListProvider kEoB2ItemSuffixStringsPotionsDOSGermanProvider = { ARRAYSIZE(kEoB2ItemSuffixStringsPotionsDOSGerman), kEoB2ItemSuffixStringsPotionsDOSGerman };
 
 static const char *const kEoB2ItemSuffixStringsWandsDOSGerman[8] = {
-	"r L""\x84""hmung",
+	"r L"
+	"\x84"
+	"hmung",
 	"s Gewitters",
-	"r K""\x84""lte",
+	"r K"
+	"\x84"
+	"lte",
 	"r Heilung",
 	"s Feurballs",
 	"Sternenfeuer",
@@ -217,7 +272,9 @@ static const char *const kEoB2PatternGrFix2DOSGerman[1] = {
 static const StringListProvider kEoB2PatternGrFix2DOSGermanProvider = { ARRAYSIZE(kEoB2PatternGrFix2DOSGerman), kEoB2PatternGrFix2DOSGerman };
 
 static const char *const kEoB2ValidateArmorStringDOSGerman[1] = {
-	"%s kann diese R""\x81""stungsart nicht tragen.\r"
+	"%s kann diese R"
+	"\x81"
+	"stungsart nicht tragen.\r"
 };
 
 static const StringListProvider kEoB2ValidateArmorStringDOSGermanProvider = { ARRAYSIZE(kEoB2ValidateArmorStringDOSGerman), kEoB2ValidateArmorStringDOSGerman };
@@ -236,7 +293,9 @@ static const StringListProvider kEoB2ValidateNoDropStringDOSGermanProvider = { A
 
 static const char *const kEoB2PotionStringsDOSGerman[2] = {
 	"vergiftet",
-	"%s f""\x81""hlt sich %s!\r"
+	"%s f"
+	"\x81"
+	"hlt sich %s!\r"
 };
 
 static const StringListProvider kEoB2PotionStringsDOSGermanProvider = { ARRAYSIZE(kEoB2PotionStringsDOSGerman), kEoB2PotionStringsDOSGerman };
@@ -262,7 +321,9 @@ static const char *const kEoB2TakenStringsDOSGerman[1] = {
 static const StringListProvider kEoB2TakenStringsDOSGermanProvider = { ARRAYSIZE(kEoB2TakenStringsDOSGerman), kEoB2TakenStringsDOSGerman };
 
 static const char *const kEoB2PotionEffectStringsDOSGerman[8] = {
-	"viel st""\x84""rker",
+	"viel st"
+	"\x84"
+	"rker",
 	"besser",
 	"viel besser",
 	"etwas krank",
@@ -318,10 +379,16 @@ static const char *const kEoB2AbortStringsDOSGerman[1] = {
 static const StringListProvider kEoB2AbortStringsDOSGermanProvider = { ARRAYSIZE(kEoB2AbortStringsDOSGerman), kEoB2AbortStringsDOSGerman };
 
 static const char *const kEoB2MenuStringsMainDOSGerman[8] = {
-	"W""\x84""hle Option:",
+	"W"
+	"\x84"
+	"hle Option:",
 	"Rasten",
-	"Spr""\x81""che merken",
-	"Um Spr""\x81""che beten",
+	"Spr"
+	"\x81"
+	"che merken",
+	"Um Spr"
+	"\x81"
+	"che beten",
 	"Rollen notieren",
 	"Voreinstellungen",
 	"Spieloptionen",
@@ -351,21 +418,47 @@ static const char *const kEoB2MenuStringsOnOffDOSGerman[2] = {
 static const StringListProvider kEoB2MenuStringsOnOffDOSGermanProvider = { ARRAYSIZE(kEoB2MenuStringsOnOffDOSGerman), kEoB2MenuStringsOnOffDOSGerman };
 
 static const char *const kEoB2MenuStringsSpellsDOSGerman[17] = {
-	"\r\r W""\x84""hlt einen Charak-\r ter aus der Party,\r der Spr""\x81""che lernen\r soll.",
+	"\r\r W"
+	"\x84"
+	"hlt einen Charak-\r ter aus der Party,\r der Spr"
+	"\x81"
+	"che lernen\r soll.",
 	"\r Der Paladin ist\r eine Stufe zu nied-\r rig zum zaubern.",
 	"\r\r Der Magier hat\r kein Spruchbuch!",
-	"\r\r\r W""\x84""hlt einen Charak-\r ter aus der Party,\r der f""\x81""r Spr""\x81""che\r beten will.",
-	"\r Niemand in der\r Party ist in der\r Lage, f""\x81""r Spr""\x81""che\r zu beten.",
-	"\r Niemand in der\r Party ist in der\r Lage, sich Spr""\x81""che\r zu merken.",
-	" Jemand der bewu""\xE1""t-\r los oder tot ist\r kann keine Spr""\x81""che\r merken.",
-	" Jemand der bewu""\xE1""t-\r los oder tot ist\r kann nicht um\r Spr""\x81""che beten.",
+	"\r\r\r W"
+	"\x84"
+	"hlt einen Charak-\r ter aus der Party,\r der f"
+	"\x81"
+	"r Spr"
+	"\x81"
+	"che\r beten will.",
+	"\r Niemand in der\r Party ist in der\r Lage, f"
+	"\x81"
+	"r Spr"
+	"\x81"
+	"che\r zu beten.",
+	"\r Niemand in der\r Party ist in der\r Lage, sich Spr"
+	"\x81"
+	"che\r zu merken.",
+	" Jemand der bewu"
+	"\xE1"
+	"t-\r los oder tot ist\r kann keine Spr"
+	"\x81"
+	"che\r merken.",
+	" Jemand der bewu"
+	"\xE1"
+	"t-\r los oder tot ist\r kann nicht um\r Spr"
+	"\x81"
+	"che beten.",
 	"1",
 	"2",
 	"3",
 	"4",
 	"5",
 	"Neu",
-	"Verf""\x81""gbare Zauber:",
+	"Verf"
+	"\x81"
+	"gbare Zauber:",
 	"Ja",
 	"Nein"
 };
@@ -377,7 +470,9 @@ static const char *const kEoB2MenuStringsRestDOSGerman[5] = {
 	" Jemand ist noch\r verletzt. Weiter-\r rasten ?",
 	"Die Party rastet.",
 	"\r Alle Spieler\r sind voll\r ausgeruht.",
-	" Eure Party braucht\r Rast, um Spr""\x81""che\r zu erhalten."
+	" Eure Party braucht\r Rast, um Spr"
+	"\x81"
+	"che\r zu erhalten."
 };
 
 static const StringListProvider kEoB2MenuStringsRestDOSGermanProvider = { ARRAYSIZE(kEoB2MenuStringsRestDOSGerman), kEoB2MenuStringsRestDOSGerman };
@@ -401,19 +496,41 @@ static const char *const kEoB2MenuStringsStarveDOSGerman[1] = {
 static const StringListProvider kEoB2MenuStringsStarveDOSGermanProvider = { ARRAYSIZE(kEoB2MenuStringsStarveDOSGerman), kEoB2MenuStringsStarveDOSGerman };
 
 static const char *const kEoB2MenuStringsScribeDOSGerman[5] = {
-	"W""\x84""hlt die Rolle(n)\rzum notieren.",
-	"\r\r\r W""\x84""hlt den Magier\r aus der Party,\r der Spr""\x81""che\r notieren m""\x94""chte.",
-	" Ihr habt keine\r ""\x81""bertragbaren\r Schriftrollen.",
+	"W"
+	"\x84"
+	"hlt die Rolle(n)\rzum notieren.",
+	"\r\r\r W"
+	"\x84"
+	"hlt den Magier\r aus der Party,\r der Spr"
+	"\x81"
+	"che\r notieren m"
+	"\x94"
+	"chte.",
+	" Ihr habt keine\r "
+	"\x81"
+	"bertragbaren\r Schriftrollen.",
 	" Ihr habt keine\r Rolle, die dieser\r Magier braucht.",
-	"\r Ihr habt keinen\r Magier, der Rollen\r ""\x81""bertragen kann."
+	"\r Ihr habt keinen\r Magier, der Rollen\r "
+	"\x81"
+	"bertragen kann."
 };
 
 static const StringListProvider kEoB2MenuStringsScribeDOSGermanProvider = { ARRAYSIZE(kEoB2MenuStringsScribeDOSGerman), kEoB2MenuStringsScribeDOSGerman };
 
 static const char *const kEoB2MenuStringsDrop2DOSGerman[3] = {
-	" W""\x84""hlt den Charak-\r ter, den Ihr\r entfernen m""\x94""chtet.",
-	" Spielst""\x84""nde m""\x81""ssen\r einen Namen haben!",
-	" Ganz sicher den\r alten Spielstand\r ""\x81""berschreiben?"
+	" W"
+	"\x84"
+	"hlt den Charak-\r ter, den Ihr\r entfernen m"
+	"\x94"
+	"chtet.",
+	" Spielst"
+	"\x84"
+	"nde m"
+	"\x81"
+	"ssen\r einen Namen haben!",
+	" Ganz sicher den\r alten Spielstand\r "
+	"\x81"
+	"berschreiben?"
 };
 
 static const StringListProvider kEoB2MenuStringsDrop2DOSGermanProvider = { ARRAYSIZE(kEoB2MenuStringsDrop2DOSGerman), kEoB2MenuStringsDrop2DOSGerman };
@@ -427,14 +544,18 @@ static const char *const kEoB2MenuStringsHeadDOSGerman[3] = {
 static const StringListProvider kEoB2MenuStringsHeadDOSGermanProvider = { ARRAYSIZE(kEoB2MenuStringsHeadDOSGerman), kEoB2MenuStringsHeadDOSGerman };
 
 static const char *const kEoB2MenuStringsPoisonDOSGerman[1] = {
-	"Vergiftete Spieler\rk""\x94""nnten sterben!\rTrotzdem rasten?"
+	"Vergiftete Spieler\rk"
+	"\x94"
+	"nnten sterben!\rTrotzdem rasten?"
 };
 
 static const StringListProvider kEoB2MenuStringsPoisonDOSGermanProvider = { ARRAYSIZE(kEoB2MenuStringsPoisonDOSGerman), kEoB2MenuStringsPoisonDOSGerman };
 
 static const char *const kEoB2MenuStringsMgcDOSGerman[2] = {
 	"%-18s %1d",
-	"%d von %d verf""\x81""gbar.  "
+	"%d von %d verf"
+	"\x81"
+	"gbar.  "
 };
 
 static const StringListProvider kEoB2MenuStringsMgcDOSGermanProvider = { ARRAYSIZE(kEoB2MenuStringsMgcDOSGerman), kEoB2MenuStringsMgcDOSGerman };
@@ -459,13 +580,21 @@ static const char *const kEoB2MenuStringsRest2DOSGerman[5] = {
 static const StringListProvider kEoB2MenuStringsRest2DOSGermanProvider = { ARRAYSIZE(kEoB2MenuStringsRest2DOSGerman), kEoB2MenuStringsRest2DOSGerman };
 
 static const char *const kEoB2MenuStringsRest3DOSGerman[1] = {
-	"\x06\x06""Es ist zu gef""\x84""hrlich hier zu rasten."
+	"\x06\x06"
+	"Es ist zu gef"
+	"\x84"
+	"hrlich hier zu rasten."
 };
 
 static const StringListProvider kEoB2MenuStringsRest3DOSGermanProvider = { ARRAYSIZE(kEoB2MenuStringsRest3DOSGerman), kEoB2MenuStringsRest3DOSGerman };
 
 static const char *const kEoB2MenuStringsRest4DOSGerman[1] = {
-	"\x06\x06""In der N""\x84""he von Monstern k""\x94""nnt Ihr nicht rasten."
+	"\x06\x06"
+	"In der N"
+	"\x84"
+	"he von Monstern k"
+	"\x94"
+	"nnt Ihr nicht rasten."
 };
 
 static const StringListProvider kEoB2MenuStringsRest4DOSGermanProvider = { ARRAYSIZE(kEoB2MenuStringsRest4DOSGerman), kEoB2MenuStringsRest4DOSGerman };
@@ -479,7 +608,9 @@ static const StringListProvider kEoB2MenuStringsDefeatDOSGermanProvider = { ARRA
 static const char *const kEoB2MenuStringsTransferDOSGerman[5] = {
 	"Mindestens vier\rSpieler vor Spiel-\rbeginn transferieren!",
 	"Nur vier Spieler\rtransferieren!",
-	"Bestimmte Habselig-\rkeiten werden\rgel""\x94""scht.",
+	"Bestimmte Habselig-\rkeiten werden\rgel"
+	"\x94"
+	"scht.",
 	" \r Kein Magier in\r der Party.",
 	" \r Kein Kleriker\r oder Paladin\r in der Party."
 };
@@ -488,7 +619,9 @@ static const StringListProvider kEoB2MenuStringsTransferDOSGermanProvider = { AR
 
 static const char *const kEoB2MenuStringsSpecDOSGerman[2] = {
 	"Beim Aufwachen bem-\rerkt Ihr die Ab-\rwesenheit von Insal!",
-	"Eine kurzer Blick\rzeigt, das Ausr""\x81""st-\rung gestohlen wurde!"
+	"Eine kurzer Blick\rzeigt, das Ausr"
+	"\x81"
+	"st-\rung gestohlen wurde!"
 };
 
 static const StringListProvider kEoB2MenuStringsSpecDOSGermanProvider = { ARRAYSIZE(kEoB2MenuStringsSpecDOSGerman), kEoB2MenuStringsSpecDOSGerman };
@@ -530,7 +663,9 @@ static const char *const kEoB2CharGuiStringsSt2DOSGerman[7] = {
 	"BEWUSSTLOS",
 	"GIFT (LANGSAM)",
 	"VERGIFTET",
-	"BET""\x8E""UBT",
+	"BET"
+	"\x8E"
+	"UBT",
 	"AUS STEIN"
 };
 
@@ -538,7 +673,9 @@ static const StringListProvider kEoB2CharGuiStringsSt2DOSGermanProvider = { ARRA
 
 static const char *const kEoB2CharGuiStringsInDOSGerman[4] = {
 	"CHARAKTER INFO",
-	"R""\x9A""STUNGSKL.",
+	"R"
+	"\x9A"
+	"STUNGSKL.",
 	"ERF",
 	"STF"
 };
@@ -546,19 +683,31 @@ static const char *const kEoB2CharGuiStringsInDOSGerman[4] = {
 static const StringListProvider kEoB2CharGuiStringsInDOSGermanProvider = { ARRAYSIZE(kEoB2CharGuiStringsInDOSGerman), kEoB2CharGuiStringsInDOSGerman };
 
 static const char *const kEoB2CharStatusStrings7DOSGerman[1] = {
-	"%s hat nicht l""\x84""nger riesenkr""\x84""fte.\r"
+	"%s hat nicht l"
+	"\x84"
+	"nger riesenkr"
+	"\x84"
+	"fte.\r"
 };
 
 static const StringListProvider kEoB2CharStatusStrings7DOSGermanProvider = { ARRAYSIZE(kEoB2CharStatusStrings7DOSGerman), kEoB2CharStatusStrings7DOSGerman };
 
 static const char *const kEoB2CharStatusStrings82DOSGerman[1] = {
-	"\x06\x06""%s f""\x81""hlt Gift in sich!\r"
+	"\x06\x06"
+	"%s f"
+	"\x81"
+	"hlt Gift in sich!\r"
 };
 
 static const StringListProvider kEoB2CharStatusStrings82DOSGermanProvider = { ARRAYSIZE(kEoB2CharStatusStrings82DOSGerman), kEoB2CharStatusStrings82DOSGerman };
 
 static const char *const kEoB2CharStatusStrings9DOSGerman[1] = {
-	"\x06\x04""%s ist nicht l""\x84""nger bet""\x84""ubt!\r"
+	"\x06\x04"
+	"%s ist nicht l"
+	"\x84"
+	"nger bet"
+	"\x84"
+	"ubt!\r"
 };
 
 static const StringListProvider kEoB2CharStatusStrings9DOSGermanProvider = { ARRAYSIZE(kEoB2CharStatusStrings9DOSGerman), kEoB2CharStatusStrings9DOSGerman };
@@ -570,13 +719,17 @@ static const char *const kEoB2CharStatusStrings12DOSGerman[1] = {
 static const StringListProvider kEoB2CharStatusStrings12DOSGermanProvider = { ARRAYSIZE(kEoB2CharStatusStrings12DOSGerman), kEoB2CharStatusStrings12DOSGerman };
 
 static const char *const kEoB2CharStatusStrings132DOSGerman[1] = {
-	"\x06\x06""%s %s!\r"
+	"\x06\x06"
+	"%s %s!\r"
 };
 
 static const StringListProvider kEoB2CharStatusStrings132DOSGermanProvider = { ARRAYSIZE(kEoB2CharStatusStrings132DOSGerman), kEoB2CharStatusStrings132DOSGerman };
 
 static const char *const kEoB2LevelGainStringsDOSGerman[1] = {
-	"\x06\x01""%s steigt eine Stufe auf.""\x06\x0F""\r"
+	"\x06\x01"
+	"%s steigt eine Stufe auf."
+	"\x06\x0F"
+	"\r"
 };
 
 static const StringListProvider kEoB2LevelGainStringsDOSGermanProvider = { ARRAYSIZE(kEoB2LevelGainStringsDOSGerman), kEoB2LevelGainStringsDOSGerman };
@@ -586,7 +739,9 @@ static const char *const kEoB2BookNumbersDOSGerman[5] = {
 	"Zweite",
 	"Dritte",
 	"Vierte",
-	"F""\x81""nfte"
+	"F"
+	"\x81"
+	"nfte"
 };
 
 static const StringListProvider kEoB2BookNumbersDOSGermanProvider = { ARRAYSIZE(kEoB2BookNumbersDOSGerman), kEoB2BookNumbersDOSGerman };
@@ -594,7 +749,9 @@ static const StringListProvider kEoB2BookNumbersDOSGermanProvider = { ARRAYSIZE(
 static const char *const kEoB2MageSpellsListDOSGerman[33] = {
 	"",
 	"Panzer",
-	"Brennende H""\x84""nde",
+	"Brennende H"
+	"\x84"
+	"nde",
 	"Magie entdecken",
 	"Magisch. Geschoss",
 	"Schild",
@@ -603,7 +760,9 @@ static const char *const kEoB2MageSpellsListDOSGerman[33] = {
 	"Unsichtb. entd.",
 	"Identifizieren+",
 	"Unsichtbarkeit",
-	"M's S""\x84""urepfeil",
+	"M's S"
+	"\x84"
+	"urepfeil",
 	"Magie bannen",
 	"Feuerball",
 	"Hast",
@@ -615,15 +774,21 @@ static const char *const kEoB2MageSpellsListDOSGerman[33] = {
 	"Eissturm",
 	"Unsichtbarkeit+",
 	"Fluch brechen",
-	"K""\x84""ltekegel",
+	"K"
+	"\x84"
+	"ltekegel",
 	"Monster halten",
 	"Kraftfeld",
-	"Aufl""\x94""sung",
+	"Aufl"
+	"\x94"
+	"sung",
 	"Fleisch zu Stein",
 	"Stein zu Fleisch",
 	"Wahrer Blick",
 	"Todesfinger",
-	"Wort:Bet""\x84""ubung",
+	"Wort:Bet"
+	"\x84"
+	"ubung",
 	"Bigbys Faust"
 };
 
@@ -635,8 +800,12 @@ static const char *const kEoB2ClericSpellsListDOSGerman[30] = {
 	"Leicht verwunden",
 	"L. Wunden heilen",
 	"Magie entdecken",
-	"Schutz v. B""\x94""sem",
-	"St""\x84""rkung",
+	"Schutz v. B"
+	"\x94"
+	"sem",
+	"St"
+	"\x84"
+	"rkung",
 	"Flammenklinge",
 	"Person halten",
 	"Gift verlangs.",
@@ -644,11 +813,15 @@ static const char *const kEoB2ClericSpellsListDOSGerman[30] = {
 	"Magie bannen",
 	"Schutzgewand",
 	"Gebet",
-	"L""\x84""hmung aufheben",
+	"L"
+	"\x84"
+	"hmung aufheben",
 	"Schwer verwunden",
 	"S. Wunden heilen",
 	"Gift neutr.",
-	"Schutz-B""\x94""ses 3m",
+	"Schutz-B"
+	"\x94"
+	"ses 3m",
 	"Kritisch verw.",
 	"K. Wunden heilen",
 	"Flammenschlag",
@@ -666,7 +839,9 @@ static const StringListProvider kEoB2ClericSpellsListDOSGermanProvider = { ARRAY
 
 static const char *const kEoB2SpellNamesDOSGerman[68] = {
 	"panzer",
-	"brennende H""\x84""nde",
+	"brennende H"
+	"\x84"
+	"nde",
 	"magie entdecken",
 	"magisches Geschoss",
 	"schild",
@@ -675,7 +850,9 @@ static const char *const kEoB2SpellNamesDOSGerman[68] = {
 	"unsichtbares entdecken",
 	"verbessertes identifizieren",
 	"unsichtbarkeit",
-	"melfs S""\x84""urepfeil",
+	"melfs S"
+	"\x84"
+	"urepfeil",
 	"magie bannen",
 	"feuerball",
 	"hast",
@@ -687,22 +864,32 @@ static const char *const kEoB2SpellNamesDOSGerman[68] = {
 	"eissturm",
 	"verbesserte Unsichtbarkeit",
 	"fluch brechen",
-	"k""\x84""ltekegel",
+	"k"
+	"\x84"
+	"ltekegel",
 	"monster halten",
 	"kraftfeld",
-	"aufl""\x94""sung",
+	"aufl"
+	"\x94"
+	"sung",
 	"fleisch zu stein",
 	"stein zu fleisch",
 	"wahrer Blick",
 	"Todesfinger",
-	"wort der Macht: Bet""\x84""ubung",
+	"wort der Macht: Bet"
+	"\x84"
+	"ubung",
 	"bigbys geballte Faust",
 	"segen",
 	"leichte Wunden verursachen",
 	"leichte Wunden heilen",
 	"magie entdecken",
-	"schutz vor B""\x94""sem",
-	"st""\x84""rkung",
+	"schutz vor B"
+	"\x94"
+	"sem",
+	"st"
+	"\x84"
+	"rkung",
 	"flammenklinge",
 	"person halten",
 	"gift verlangsamen",
@@ -710,11 +897,15 @@ static const char *const kEoB2SpellNamesDOSGerman[68] = {
 	"magie bannen",
 	"schutzgewand",
 	"gebet",
-	"l""\x84""hmung aufheben",
+	"l"
+	"\x84"
+	"hmung aufheben",
 	"schwere wunden verursachen",
 	"schwere wunden heilen",
 	"gift neutralisieren",
-	"schutz vor b""\x94""sem 3m",
+	"schutz vor b"
+	"\x94"
+	"sem 3m",
 	"kritische wunden verursachen",
 	"kritische wunden heilen",
 	"flammenschlag",
@@ -740,7 +931,9 @@ static const StringListProvider kEoB2SpellNamesDOSGermanProvider = { ARRAYSIZE(k
 static const char *const kEoB2MagicStrings1DOSGerman[6] = {
 	"ABBRECHEN",
 	"ABBRECHEN",
-	"Man braucht eine freie hand f""\x81""r diesen zauber.\r",
+	"Man braucht eine freie hand f"
+	"\x81"
+	"r diesen zauber.\r",
 	"Von diesen Zaubern kann man nur einen aktivieren.\r",
 	"%s zaubert %s.\r",
 	"\rok\r"
@@ -750,9 +943,13 @@ static const StringListProvider kEoB2MagicStrings1DOSGermanProvider = { ARRAYSIZ
 
 static const char *const kEoB2MagicStrings2DOSGerman[5] = {
 	"Der Zauber versagt!\r",
-	"%s wurde aufgel""\x94""st!\r",
-	"\x06\x06""Die Party wurde von einem Todeszauber getroffen!\r",
-	"\x06\x06""%s wurde von einem schwer verwunden Zauber getroffen.\r",
+	"%s wurde aufgel"
+	"\x94"
+	"st!\r",
+	"\x06\x06"
+	"Die Party wurde von einem Todeszauber getroffen!\r",
+	"\x06\x06"
+	"%s wurde von einem schwer verwunden Zauber getroffen.\r",
 	"AUS STEIN"
 };
 
@@ -761,7 +958,9 @@ static const StringListProvider kEoB2MagicStrings2DOSGermanProvider = { ARRAYSIZ
 static const char *const kEoB2MagicStrings3DOSGerman[5] = {
 	"Wen verzaubern? ",
 	"\rSpruch abgebrochen.\r",
-	"%s's %s Zauber l""\x84""sst nach.\r",
+	"%s's %s Zauber l"
+	"\x84"
+	"sst nach.\r",
 	"%s verfehlt das Monster.\r",
 	"%s muss vorn stehen um zu treffen!\r"
 };
@@ -775,7 +974,11 @@ static const char *const kEoB2MagicStrings4DOSGerman[1] = {
 static const StringListProvider kEoB2MagicStrings4DOSGermanProvider = { ARRAYSIZE(kEoB2MagicStrings4DOSGerman), kEoB2MagicStrings4DOSGerman };
 
 static const char *const kEoB2MagicStrings6DOSGerman[1] = {
-	"%s hat schon eine R""\x81""stunksklasse ""\x81""ber 6."
+	"%s hat schon eine R"
+	"\x81"
+	"stunksklasse "
+	"\x81"
+	"ber 6."
 };
 
 static const StringListProvider kEoB2MagicStrings6DOSGermanProvider = { ARRAYSIZE(kEoB2MagicStrings6DOSGerman), kEoB2MagicStrings6DOSGerman };
@@ -789,11 +992,15 @@ static const StringListProvider kEoB2MagicStrings7DOSGermanProvider = { ARRAYSIZ
 
 static const char *const kEoB2MagicStrings8DOSGerman[6] = {
 	"Der Zauber versagt!\r",
-	"ist gel""\x84""hmt",
+	"ist gel"
+	"\x84"
+	"hmt",
 	"Der Zauber versagt!\r",
 	"Der Zauber versagt\r",
 	"Kein Monster in Reichweite!\r",
-	"%s steht bereits unter einem St""\x84""rkungszauber.\r"
+	"%s steht bereits unter einem St"
+	"\x84"
+	"rkungszauber.\r"
 };
 
 static const StringListProvider kEoB2MagicStrings8DOSGermanProvider = { ARRAYSIZE(kEoB2MagicStrings8DOSGerman), kEoB2MagicStrings8DOSGerman };
@@ -885,7 +1092,9 @@ static const char *const kEoB2ManWordDOSGerman[51] = {
 static const StringListProvider kEoB2ManWordDOSGermanProvider = { ARRAYSIZE(kEoB2ManWordDOSGerman), kEoB2ManWordDOSGerman };
 
 static const char *const kEoB2ManPromptDOSGerman[1] = {
-	"\r\r\r\rAuf der Seite mit diesem Zeichen...\r\rSuche Zeile %d (ohne ""\x9A""berschrift)\rGib Wort %d ein\r"
+	"\r\r\r\rAuf der Seite mit diesem Zeichen...\r\rSuche Zeile %d (ohne "
+	"\x9A"
+	"berschrift)\rGib Wort %d ein\r"
 };
 
 static const StringListProvider kEoB2ManPromptDOSGermanProvider = { ARRAYSIZE(kEoB2ManPromptDOSGerman), kEoB2ManPromptDOSGerman };
@@ -895,7 +1104,9 @@ static const char *const kEoB2MainMenuStringsDOSGerman[5] = {
 	"NEUE PARTY ERSTELLEN\r",
 	"EOB I PARTY TRANSFER\r",
 	"INTRO ANSEHEN\r",
-	"ZUR""\x9A""CK ZUM DOS\r"
+	"ZUR"
+	"\x9A"
+	"CK ZUM DOS\r"
 };
 
 static const StringListProvider kEoB2MainMenuStringsDOSGermanProvider = { ARRAYSIZE(kEoB2MainMenuStringsDOSGerman), kEoB2MainMenuStringsDOSGerman };
@@ -908,8 +1119,12 @@ static const char *const kEoB2TransferStrings1DOSGerman[2] = {
 static const StringListProvider kEoB2TransferStrings1DOSGermanProvider = { ARRAYSIZE(kEoB2TransferStrings1DOSGerman), kEoB2TransferStrings1DOSGerman };
 
 static const char *const kEoB2TransferStrings2DOSGerman[2] = {
-	"Dieses Abenteuer ist nur f""\x81""r vier Charaktere.",
-	"OK w""\x84""hlen, wenn Partyerstellung beendet."
+	"Dieses Abenteuer ist nur f"
+	"\x81"
+	"r vier Charaktere.",
+	"OK w"
+	"\x84"
+	"hlen, wenn Partyerstellung beendet."
 };
 
 static const StringListProvider kEoB2TransferStrings2DOSGermanProvider = { ARRAYSIZE(kEoB2TransferStrings2DOSGerman), kEoB2TransferStrings2DOSGerman };
@@ -922,26 +1137,52 @@ static const char *const kEoB2TransferLabelsDOSGerman[2] = {
 static const StringListProvider kEoB2TransferLabelsDOSGermanProvider = { ARRAYSIZE(kEoB2TransferLabelsDOSGerman), kEoB2TransferLabelsDOSGerman };
 
 static const char *const kEoB2IntroStringsDOSGerman[20] = {
-	"Ihr hattet euch gerade gem""\x81""tlich am \rKamin niedergelassen.",
+	"Ihr hattet euch gerade gem"
+	"\x81"
+	"tlich am \rKamin niedergelassen.",
 	"Da wurde euch eine Botschaft\rzugespielt.",
 	"Sie war von eurem Freund Khelben \rBlackstaff, dem Erzmagier der Stadt.",
 	"Die Mitteilung war dringend.",
 	"Was konnte Khelben nur wollen?",
 	"Willkommen, bitte tretet ein.",
 	"Khelben erwartet euch im Studierzimmer.",
-	"Danke f""\x81""r euer schnelles Kommen.",
+	"Danke f"
+	"\x81"
+	"r euer schnelles Kommen.",
 	"Meine Freunde, ich bin besorgt.",
-	"Uralte, b""\x94""se M""\x84""chte rumoren im \rTempel Darkmoon.",
-	"Ich f""\x81""rchte um die Sicherheit \runserer Stadt.",
+	"Uralte, b"
+	"\x94"
+	"se M"
+	"\x84"
+	"chte rumoren im \rTempel Darkmoon.",
+	"Ich f"
+	"\x81"
+	"rchte um die Sicherheit \runserer Stadt.",
 	"Ich brauche eure Hilfe...",
-	"Vor drei N""\x84""chten \rentsandte ich einen Kundschafter.",
-	"Sie kam niemals zur""\x81""ck.",
-	"Ich f""\x81""rchte um ihr Leben.",
-	"Nehmt diese M""\x81""nze.",
+	"Vor drei N"
+	"\x84"
+	"chten \rentsandte ich einen Kundschafter.",
+	"Sie kam niemals zur"
+	"\x81"
+	"ck.",
+	"Ich f"
+	"\x81"
+	"rchte um ihr Leben.",
+	"Nehmt diese M"
+	"\x81"
+	"nze.",
 	"Mit ihrer Hilfe werde \rich euch erreichen.",
-	"Ihr m""\x81\xE1""t schnell handeln.",
-	"Ich teleportiere euch nun in \rdie N""\x84""he von Darkmoon.",
-	"M""\x94""ge das Gl""\x81""ck auf eurer Seite\rsein, Freunde."
+	"Ihr m"
+	"\x81\xE1"
+	"t schnell handeln.",
+	"Ich teleportiere euch nun in \rdie N"
+	"\x84"
+	"he von Darkmoon.",
+	"M"
+	"\x94"
+	"ge das Gl"
+	"\x81"
+	"ck auf eurer Seite\rsein, Freunde."
 };
 
 static const StringListProvider kEoB2IntroStringsDOSGermanProvider = { ARRAYSIZE(kEoB2IntroStringsDOSGerman), kEoB2IntroStringsDOSGerman };
@@ -966,24 +1207,58 @@ static const StringListProvider kEoB2IntroCPSFilesDOSGermanProvider = { ARRAYSIZ
 
 static const char *const kEoB2FinaleStringsDOSGerman[20] = {
 	"Nun endlich wurde Dran besiegt.",
-	"Pl""\x94""tzlich erscheint euer Freund \rKhelben.",
-	"Seid gegr""\x81\xE1""t, meine siegreichen \rFreunde.",
+	"Pl"
+	"\x94"
+	"tzlich erscheint euer Freund \rKhelben.",
+	"Seid gegr"
+	"\x81\xE1"
+	"t, meine siegreichen \rFreunde.",
 	"Ihr seid die Bezwinger von Dran!",
-	"Ich hatte keine Ahnung, da""\xE1"" \rDran ein Drache war.",
-	"Er mu""\xE1"" ""\x81""ber 300 Jahre alt \rgewesen sein!",
+	"Ich hatte keine Ahnung, da"
+	"\xE1"
+	" \rDran ein Drache war.",
+	"Er mu"
+	"\xE1"
+	" "
+	"\x81"
+	"ber 300 Jahre alt \rgewesen sein!",
 	"Seine Macht ist vergangen.",
-	"Aber noch immer ist Darkmoon\reine Quelle des B""\x94""sen.",
+	"Aber noch immer ist Darkmoon\reine Quelle des B"
+	"\x94"
+	"sen.",
 	"Und ein Teil seines Gefolges\rexistiert noch.",
-	"Daher m""\x81""ssen wir diesen Platz\rnun verlassen.",
-	"So da""\xE1"" meine Kr""\x84""fte ihn ein\r f""\x81""r allemal\rzerst""\x94""ren k""\x94""nnen.",
+	"Daher m"
+	"\x81"
+	"ssen wir diesen Platz\rnun verlassen.",
+	"So da"
+	"\xE1"
+	" meine Kr"
+	"\x84"
+	"fte ihn ein\r f"
+	"\x81"
+	"r allemal\rzerst"
+	"\x94"
+	"ren k"
+	"\x94"
+	"nnen.",
 	"Folgt mir.",
-	"M""\x84""chtige Magier sind bereit\rf""\x81""r den letzten Schlag\rgegen Darkmoon.",
-	"Das B""\x94""se im Tempel ist sehr stark.",
+	"M"
+	"\x84"
+	"chtige Magier sind bereit\rf"
+	"\x81"
+	"r den letzten Schlag\rgegen Darkmoon.",
+	"Das B"
+	"\x94"
+	"se im Tempel ist sehr stark.",
 	"Es darf keinesfalls weiter\rbestehen!",
-	"Der Tempel h""\x94""rt auf zu\rexistieren.",
+	"Der Tempel h"
+	"\x94"
+	"rt auf zu\rexistieren.",
 	"Unsere Arbeit ist nun getan,\rmeine Freunde.",
 	"Seid bedankt.",
-	"Ihr habt Euch meinen tiefen\rRespekt erk""\x84""mpft.",
+	"Ihr habt Euch meinen tiefen\rRespekt erk"
+	"\x84"
+	"mpft.",
 	"Wir werden Euch nie vergessen."
 };
 
@@ -1371,7 +1646,9 @@ static const char *const kEoB2MonsterDistAttStringsDOSGerman[5] = {
 	"Die Party wurde von einem psychischen Abgriff getroffen!\r",
 	"paralysiert",
 	"vergiftet",
-	"bet""\x84""ubt",
+	"bet"
+	"\x84"
+	"ubt",
 	"aus stein"
 };
 
@@ -1404,11 +1681,16 @@ static const char *const kEoB2KheldranStringsDOSGerman[1] = {
 static const StringListProvider kEoB2KheldranStringsDOSGermanProvider = { ARRAYSIZE(kEoB2KheldranStringsDOSGerman), kEoB2KheldranStringsDOSGerman };
 
 static const char *const kEoB2HornStringsDOSGerman[4] = {
-	"Ein br""\x81""llendes Ger""\x84""usch kommt aus dem Horn.\r",
+	"Ein br"
+	"\x81"
+	"llendes Ger"
+	"\x84"
+	"usch kommt aus dem Horn.\r",
 	"Ein hohler Ton dringt aus dem Horn.\r",
 	"Ein melodischer Ton klingt aus dem Horn.\r",
-	"Ein unheimliches Ger""\x84""usch kommt aus dem Horn.\r"
+	"Ein unheimliches Ger"
+	"\x84"
+	"usch kommt aus dem Horn.\r"
 };
 
 static const StringListProvider kEoB2HornStringsDOSGermanProvider = { ARRAYSIZE(kEoB2HornStringsDOSGerman), kEoB2HornStringsDOSGerman };
-

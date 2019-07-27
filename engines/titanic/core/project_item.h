@@ -27,11 +27,11 @@
 #include "common/str.h"
 #include "engines/savestate.h"
 #include "graphics/surface.h"
-#include "titanic/support/simple_file.h"
 #include "titanic/core/dont_save_file_item.h"
 #include "titanic/core/file_item.h"
 #include "titanic/core/list.h"
 #include "titanic/core/room_item.h"
+#include "titanic/support/simple_file.h"
 
 namespace Titanic {
 
@@ -51,7 +51,6 @@ struct TitanicSavegameHeader {
 	void clear();
 };
 
-
 class CGameManager;
 class CPetControl;
 class CViewItem;
@@ -62,6 +61,7 @@ class CViewItem;
 class CFileListItem : public ListItem {
 public:
 	CString _name;
+
 public:
 	CLASSDEF;
 
@@ -79,11 +79,12 @@ public:
 /**
  * Filename list
  */
-class CFileList: public List<CFileListItem> {
+class CFileList : public List<CFileListItem> {
 };
 
 class CProjectItem : public CFileItem {
 	DECLARE_MESSAGE_MAP;
+
 private:
 	CString _filename;
 	CFileList _files;
@@ -126,6 +127,7 @@ private:
 	 * Finds the next sibling occurance of a given class type
 	 */
 	CTreeItem *findSiblingChildInstanceOf(ClassDef *classDef, CTreeItem *startItem) const;
+
 private:
 	/**
 	 * Load project data from the passed file
@@ -141,6 +143,7 @@ private:
 	 * Creates a thumbnail for the current on-screen contents
 	 */
 	static Graphics::Surface *createThumbnail();
+
 public:
 	/**
 	 * Load a list of savegames
@@ -156,6 +159,7 @@ public:
 	 * Read in the header information for a savegame
 	 */
 	WARN_UNUSED_RESULT static bool readSavegameHeader(SimpleFile *file, TitanicSavegameHeader &header, bool skipThumbnail = true);
+
 public:
 	CLASSDEF;
 	CProjectItem();

@@ -23,8 +23,8 @@
 #ifndef DRACI_SPRITE_H
 #define DRACI_SPRITE_H
 
-#include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 
 namespace Draci {
 
@@ -75,11 +75,11 @@ public:
 	virtual DrawableType getType() const = 0;
 
 protected:
-	uint _width;        ///< Width of the sprite
-	uint _height;       ///< Height of the sprite
-	uint _scaledWidth;  ///< Scaled width of the sprite
+	uint _width; ///< Width of the sprite
+	uint _height; ///< Height of the sprite
+	uint _scaledWidth; ///< Scaled width of the sprite
 	uint _scaledHeight; ///< Scaled height of the sprite
-	int _x, _y;         ///< Sprite coordinates
+	int _x, _y; ///< Sprite coordinates
 
 	/** The time a drawable should stay on the screen
 	 *  before being replaced by another or deleted
@@ -129,7 +129,7 @@ public:
 
 private:
 	bool _ownsData;
-	const byte *_data;  ///< Pointer to a buffer containing raw sprite data (row-wise)
+	const byte *_data; ///< Pointer to a buffer containing raw sprite data (row-wise)
 	bool _mirror;
 };
 
@@ -137,7 +137,7 @@ class Text : public Drawable {
 
 public:
 	Text(const Common::String &str, const Font *font, byte fontColor,
-	    int x, int y, uint spacing);
+	     int x, int y, uint spacing);
 	~Text() {}
 
 	void setText(const Common::String &str);
@@ -157,6 +157,7 @@ public:
 	Common::Rect getRect(const Displacement &displacement) const;
 
 	DrawableType getType() const { return kDrawableText; }
+
 private:
 	void splitLinesLongerThan(uint maxWidth);
 

@@ -29,69 +29,69 @@ namespace Sherlock {
 
 namespace Scalpel {
 
-extern const int ENV_POINTS[6][3];
+	extern const int ENV_POINTS[6][3];
 
-class ScalpelSaveManager: public SaveManager {
-public:
-	SaveMode _envMode;
+	class ScalpelSaveManager : public SaveManager {
+	public:
+		SaveMode _envMode;
 
-	Common::String _fixedTextExit;
-	Common::String _fixedTextLoad;
-	Common::String _fixedTextSave;
-	Common::String _fixedTextUp;
-	Common::String _fixedTextDown;
-	Common::String _fixedTextQuit;
+		Common::String _fixedTextExit;
+		Common::String _fixedTextLoad;
+		Common::String _fixedTextSave;
+		Common::String _fixedTextUp;
+		Common::String _fixedTextDown;
+		Common::String _fixedTextQuit;
 
-	byte _hotkeyExit;
-	byte _hotkeyLoad;
-	byte _hotkeySave;
-	byte _hotkeyUp;
-	byte _hotkeyDown;
-	byte _hotkeyQuit;
+		byte _hotkeyExit;
+		byte _hotkeyLoad;
+		byte _hotkeySave;
+		byte _hotkeyUp;
+		byte _hotkeyDown;
+		byte _hotkeyQuit;
 
-	byte _hotkeysIndexed[6];
+		byte _hotkeysIndexed[6];
 
-	Common::String _fixedTextQuitGameQuestion;
-	Common::String _fixedTextQuitGameYes;
-	Common::String _fixedTextQuitGameNo;
+		Common::String _fixedTextQuitGameQuestion;
+		Common::String _fixedTextQuitGameYes;
+		Common::String _fixedTextQuitGameNo;
 
-	byte _hotkeyQuitGameYes;
-	byte _hotkeyQuitGameNo;
+		byte _hotkeyQuitGameYes;
+		byte _hotkeyQuitGameNo;
 
-public:
-	ScalpelSaveManager(SherlockEngine *vm, const Common::String &target);
-	virtual ~ScalpelSaveManager() {}
+	public:
+		ScalpelSaveManager(SherlockEngine *vm, const Common::String &target);
+		virtual ~ScalpelSaveManager() {}
 
-	/**
+		/**
 	 * Shows the in-game dialog interface for loading and saving games
 	 */
-	void drawInterface();
+		void drawInterface();
 
-	/**
+		/**
 	 * Return the index of the button the mouse is over, if any
 	 */
-	int getHighlightedButton() const;
+		int getHighlightedButton() const;
 
-	/**
+		/**
 	 * Handle highlighting buttons
 	 */
-	void highlightButtons(int btnIndex);
+		void highlightButtons(int btnIndex);
 
-	/**
+		/**
 	 * Make sure that the selected savegame is on-screen
 	 */
-	bool checkGameOnScreen(int slot);
+		bool checkGameOnScreen(int slot);
 
-	/**
+		/**
 	 * Prompts the user to enter a description in a given slot
 	 */
-	bool promptForDescription(int slot);
+		bool promptForDescription(int slot);
 
-	/**
+		/**
 	 * Identifies a button number according to the key, that the user pressed
 	 */
-	int identifyUserButton(int key);
-};
+		int identifyUserButton(int key);
+	};
 
 } // End of namespace Scalpel
 

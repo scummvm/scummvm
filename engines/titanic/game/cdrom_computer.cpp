@@ -26,11 +26,12 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CCDROMComputer, CGameObject)
-	ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseButtonDownMsg)
 END_MESSAGE_MAP()
 
-CCDROMComputer::CCDROMComputer() : CGameObject(),
-		_clickRect(0, 3, 55, 32) {
+CCDROMComputer::CCDROMComputer()
+  : CGameObject()
+  , _clickRect(0, 3, 55, 32) {
 }
 
 void CCDROMComputer::save(SimpleFile *file, int indent) {

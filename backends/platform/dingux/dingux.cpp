@@ -22,9 +22,9 @@
 
 #if defined(DINGUX)
 
-#include "backends/platform/dingux/dingux.h"
-#include "backends/events/dinguxsdl/dinguxsdl-events.h"
-#include "backends/graphics/dinguxsdl/dinguxsdl-graphics.h"
+#	include "backends/platform/dingux/dingux.h"
+#	include "backends/events/dinguxsdl/dinguxsdl-events.h"
+#	include "backends/graphics/dinguxsdl/dinguxsdl-graphics.h"
 
 void OSystem_SDL_Dingux::initBackend() {
 	// Create the events manager

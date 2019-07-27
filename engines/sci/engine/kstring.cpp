@@ -22,12 +22,12 @@
 
 /* String and parser handling */
 
-#include "sci/resource.h"
 #include "sci/engine/features.h"
-#include "sci/engine/state.h"
+#include "sci/engine/kernel.h"
 #include "sci/engine/message.h"
 #include "sci/engine/selector.h"
-#include "sci/engine/kernel.h"
+#include "sci/engine/state.h"
+#include "sci/resource.h"
 
 namespace Sci {
 
@@ -47,7 +47,7 @@ reg_t kStrCat(EngineState *s, int argc, reg_t *argv) {
 	//  Verified for Police Quest 2 + Quest For Glory 1
 	//  However Space Quest 4 PC-9801 doesn't
 	if ((g_sci->getLanguage() == Common::JA_JPN)
-		&& (getSciVersion() <= SCI_VERSION_01)) {
+	    && (getSciVersion() <= SCI_VERSION_01)) {
 		s1 = g_sci->strSplit(s1.c_str(), NULL);
 		s2 = g_sci->strSplit(s2.c_str(), NULL);
 	}
@@ -67,7 +67,6 @@ reg_t kStrCmp(EngineState *s, int argc, reg_t *argv) {
 		return make_reg(0, strcmp(s1.c_str(), s2.c_str()));
 }
 
-
 reg_t kStrCpy(EngineState *s, int argc, reg_t *argv) {
 	if (argc > 2) {
 		int length = argv[2].toSint16();
@@ -82,7 +81,6 @@ reg_t kStrCpy(EngineState *s, int argc, reg_t *argv) {
 
 	return argv[0];
 }
-
 
 reg_t kStrAt(EngineState *s, int argc, reg_t *argv) {
 	if (argv[0] == SIGNAL_REG) {
@@ -135,7 +133,7 @@ reg_t kStrAt(EngineState *s, int argc, reg_t *argv) {
 			}
 		} else {
 			value = tmp.getOffset() >> 8;
-			if (argc > 2)  { /* Request to modify this char */
+			if (argc > 2) { /* Request to modify this char */
 				uint16 tmpOffset = tmp.toUint16();
 				tmpOffset &= 0x00ff;
 				tmpOffset |= newvalue << 8;
@@ -147,7 +145,6 @@ reg_t kStrAt(EngineState *s, int argc, reg_t *argv) {
 
 	return make_reg(0, value);
 }
-
 
 reg_t kReadNumber(EngineState *s, int argc, reg_t *argv) {
 	Common::String source_str = s->_segMan->getString(argv[0]);
@@ -201,7 +198,6 @@ reg_t kReadNumber(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, result);
 }
 
-
 /*  Format(targ_address, textresnr, index_inside_res, ...)
 ** or
 **  Format(targ_address, heap_text_addr, ...)
@@ -210,9 +206,9 @@ reg_t kReadNumber(EngineState *s, int argc, reg_t *argv) {
 */
 reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 	enum {
-		ALIGN_NONE   = 0,
-		ALIGN_RIGHT  = 1,
-		ALIGN_LEFT   = -1,
+		ALIGN_NONE = 0,
+		ALIGN_RIGHT = 1,
+		ALIGN_LEFT = -1,
 		ALIGN_CENTER = 2
 	};
 
@@ -243,16 +239,15 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 
 	int index = (startarg == 3) ? argv[2].toUint16() : 0;
 	Common::String source_str = g_sci->getKernel()->lookupText(position, index);
-	const char* source = source_str.c_str();
+	const char *source = source_str.c_str();
 
 	debugC(kDebugLevelStrings, "Formatting \"%s\"", source);
-
 
 	arguments = (uint16 *)malloc(sizeof(uint16) * argc);
 	memset(arguments, 0, sizeof(uint16) * argc);
 
 	for (i = startarg; i < argc; i++)
-		arguments[i-startarg] = argv[i].toUint16(); /* Parameters are copied to prevent overwriting */
+		arguments[i - startarg] = argv[i].toUint16(); /* Parameters are copied to prevent overwriting */
 
 	while ((xfer = *source++)) {
 		if (xfer == '%') {
@@ -304,7 +299,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 				reg_t reg = argv[startarg + paramindex];
 
 				Common::String tempsource = g_sci->getKernel()->lookupText(reg,
-				                                  arguments[paramindex + 1]);
+				                                                           arguments[paramindex + 1]);
 				int slen = tempsource.size();
 				int extralen = strLength - slen;
 				assert((target - targetbuf) + extralen <= maxsize);
@@ -333,7 +328,6 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 
 				default:
 					break;
-
 				}
 
 				strcpy(target, tempsource.c_str());
@@ -352,12 +346,10 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 
 				default:
 					break;
-
 				}
 
 				mode = 0;
-			}
-			break;
+			} break;
 
 			case 'c': { /* insert character */
 				assert((target - targetbuf) + 2 <= maxsize);
@@ -368,8 +360,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 				if (argchar)
 					*target++ = argchar;
 				mode = 0;
-			}
-			break;
+			} break;
 
 			case 'x':
 			case 'u':
@@ -393,8 +384,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 				unsignedVar = false;
 
 				mode = 0;
-			}
-			break;
+			} break;
 			default:
 				*target = '%';
 				target++;
@@ -436,7 +426,6 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 reg_t kStrLen(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, s->_segMan->strlen(argv[0]));
 }
-
 
 reg_t kGetFarText(EngineState *s, int argc, reg_t *argv) {
 	const Common::String text = g_sci->getKernel()->lookupText(make_reg(0, argv[0].toUint16()), argv[1].toUint16());
@@ -487,12 +476,12 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 	}
 #endif
 
-//	TODO: Perhaps fix this check, currently doesn't work with PUSH and POP subfunctions
-//	Pepper uses them to to handle the glossary
-//	if ((func != K_MESSAGE_NEXT) && (argc < 2)) {
-//		warning("Message: not enough arguments passed to subfunction %d", func);
-//		return NULL_REG;
-//	}
+	//	TODO: Perhaps fix this check, currently doesn't work with PUSH and POP subfunctions
+	//	Pepper uses them to to handle the glossary
+	//	if ((func != K_MESSAGE_NEXT) && (argc < 2)) {
+	//		warning("Message: not enough arguments passed to subfunction %d", func);
+	//		return NULL_REG;
+	//	}
 
 	MessageTuple tuple;
 
@@ -519,9 +508,7 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 	// Fixes bug #3601090.
 	// NOTE: To fix a corrupted jar object, type "send Glass_Jar message 52"
 	// in the debugger.
-	if (g_sci->getGameId() == GID_PEPPER && func == 0 && argc >= 6 && module == 894 &&
-		tuple.noun == 26 && tuple.cond == 0 && tuple.seq == 1 &&
-		!s->_msgState->getMessage(module, tuple, NULL_REG))
+	if (g_sci->getGameId() == GID_PEPPER && func == 0 && argc >= 6 && module == 894 && tuple.noun == 26 && tuple.cond == 0 && tuple.seq == 1 && !s->_msgState->getMessage(module, tuple, NULL_REG))
 		tuple.verb = 0;
 
 	switch (func) {
@@ -619,7 +606,7 @@ reg_t kStrSplit(EngineState *s, int argc, reg_t *argv) {
 	SegmentRef buf_r = s->_segMan->dereference(argv[0]);
 	if (!buf_r.isValid() || buf_r.maxSize < (int)str.size() + 1) {
 		warning("StrSplit: buffer %04x:%04x invalid or too small to hold the following text of %i bytes: '%s'",
-						PRINT_REG(argv[0]), str.size() + 1, str.c_str());
+		        PRINT_REG(argv[0]), str.size() + 1, str.c_str());
 		return NULL_REG;
 	}
 	s->_segMan->strcpy(argv[0], str.c_str());

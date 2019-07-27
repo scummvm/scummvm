@@ -21,21 +21,26 @@
  */
 
 #include "common/archive.h"
-#include "common/file.h"	// for DumpFile
+#include "common/file.h" // for DumpFile
 #include "common/system.h"
 
-#include "sci/sci.h"
-#include "sci/event.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/screen.h"
+#include "sci/event.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/portrait.h"
+#include "sci/graphics/screen.h"
+#include "sci/sci.h"
 #include "sci/sound/audio.h"
 
 namespace Sci {
 
 Portrait::Portrait(ResourceManager *resMan, EventManager *event, GfxScreen *screen, GfxPalette *palette, AudioPlayer *audio, Common::String resourceName)
-	: _resMan(resMan), _event(event), _screen(screen), _palette(palette), _audio(audio), _resourceName(resourceName) {
+  : _resMan(resMan)
+  , _event(event)
+  , _screen(screen)
+  , _palette(palette)
+  , _audio(audio)
+  , _resourceName(resourceName) {
 	init();
 }
 
@@ -86,7 +91,7 @@ void Portrait::init() {
 	//   9E9E9E9E for vizier
 	Common::String fileName = "actors/" + _resourceName + ".bin";
 	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(fileName);
-		;
+	;
 	if (!file) {
 		fileName = _resourceName + ".bin";
 		file = SearchMan.createReadStreamForMember(fileName);
@@ -115,7 +120,8 @@ void Portrait::init() {
 		_portraitPalette.colors[palNr].r = *data++;
 		_portraitPalette.colors[palNr].used = 1;
 		_portraitPalette.intensity[palNr] = 100;
-		palNr++; palSize += 3;
+		palNr++;
+		palSize += 3;
 	}
 
 	// Read all bitmaps
@@ -159,7 +165,7 @@ void Portrait::init() {
 	// raw lip-sync frame table follows
 	uint32 lipSyncDataTableSize;
 	uint32 lipSyncDataTableLastOffset;
-	byte   lipSyncData;
+	byte lipSyncData;
 	uint16 lipSyncDataNr;
 	uint16 lipSyncCurOffset;
 
@@ -178,7 +184,8 @@ void Portrait::init() {
 		_lipSyncDataOffsetTable[lipSyncDataNr] = lipSyncCurOffset;
 
 		// Look for end of ID-frame data
-		lipSyncData = *data++; lipSyncCurOffset++;
+		lipSyncData = *data++;
+		lipSyncCurOffset++;
 		while (lipSyncData != 0xFF && lipSyncCurOffset < lipSyncDataTableLastOffset) {
 			// Either terminator (0xFF) or frame-data (1 byte tick count and 1 byte bitmap ID)
 			data++;
@@ -225,24 +232,24 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 	// TODO: maybe try to create the missing sync resources for low-res KQ6 out of the rave resources
 
 #ifdef DEBUG_PORTRAIT_USE_SYNC_RESOURCES
-		// Dump the sync resources to disk
-		Common::DumpFile *outFile = new Common::DumpFile();
-		Common::String outName = syncResourceId.toPatchNameBase36() + ".sync36";
-		outFile->open(outName);
-		syncResource->writeToStream(outFile);
-		outFile->finalize();
-		outFile->close();
+	// Dump the sync resources to disk
+	Common::DumpFile *outFile = new Common::DumpFile();
+	Common::String outName = syncResourceId.toPatchNameBase36() + ".sync36";
+	outFile->open(outName);
+	syncResource->writeToStream(outFile);
+	outFile->finalize();
+	outFile->close();
 
-		ResourceId raveResourceId = ResourceId(kResourceTypeRave, resourceId, noun, verb, cond, seq);
-		Resource *raveResource = _resMan->findResource(raveResourceId, true);
-		outName = raveResourceId.toPatchNameBase36() + ".rave";
-		outFile->open(outName);
-		raveResource->writeToStream(outFile);
-		outFile->finalize();
-		outFile->close();
-		_resMan->unlockResource(raveResource);
+	ResourceId raveResourceId = ResourceId(kResourceTypeRave, resourceId, noun, verb, cond, seq);
+	Resource *raveResource = _resMan->findResource(raveResourceId, true);
+	outName = raveResourceId.toPatchNameBase36() + ".rave";
+	outFile->open(outName);
+	raveResource->writeToStream(outFile);
+	outFile->finalize();
+	outFile->close();
+	_resMan->unlockResource(raveResource);
 
-		delete outFile;
+	delete outFile;
 #endif
 
 	// Set the portrait palette
@@ -288,13 +295,13 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 			raveLipSyncData = SciSpan<const byte>();
 		}
 
-#ifdef DEBUG_PORTRAIT
+#	ifdef DEBUG_PORTRAIT
 		if (raveID & 0x0ff) {
 			debug("kPortrait: rave '%c%c' after %d ticks", raveID >> 8, raveID & 0x0ff, raveTicks);
 		} else if (raveID) {
 			debug("kPortrait: rave '%c' after %d ticks", raveID >> 8, raveTicks);
 		}
-#endif
+#	endif
 
 		timerPosition += raveTicks;
 
@@ -303,10 +310,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 			do {
 				g_sci->getEngineState()->sleep(1);
 				curEvent = _event->getSciEvent(kSciEventAny);
-				if (curEvent.type == kSciEventMousePress ||
-					(curEvent.type == kSciEventKeyDown && curEvent.character == kSciKeyEsc) ||
-					g_sci->getEngineState()->abortScriptProcessing == kAbortQuitGame ||
-					g_sci->getEngineState()->_delayedRestoreGameId != -1)
+				if (curEvent.type == kSciEventMousePress || (curEvent.type == kSciEventKeyDown && curEvent.character == kSciKeyEsc) || g_sci->getEngineState()->abortScriptProcessing == kAbortQuitGame || g_sci->getEngineState()->_delayedRestoreGameId != -1)
 					userAbort = true;
 				curPosition = _audio->getAudioPosition();
 			} while ((curPosition != -1) && (curPosition < timerPosition) && (!userAbort));
@@ -326,21 +330,19 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 				do {
 					g_sci->getEngineState()->sleep(1);
 					curEvent = _event->getSciEvent(kSciEventAny);
-					if (curEvent.type == kSciEventMousePress ||
-						(curEvent.type == kSciEventKeyDown && curEvent.character == kSciKeyEsc) ||
-						g_sci->getEngineState()->abortScriptProcessing == kAbortQuitGame)
+					if (curEvent.type == kSciEventMousePress || (curEvent.type == kSciEventKeyDown && curEvent.character == kSciKeyEsc) || g_sci->getEngineState()->abortScriptProcessing == kAbortQuitGame)
 						userAbort = true;
 					curPosition = _audio->getAudioPosition();
 				} while ((curPosition != -1) && (curPosition < timerPositionWithin) && (!userAbort));
 
 				raveLipSyncBitmapNr = *raveLipSyncData++;
-#ifdef DEBUG_PORTRAIT
+#	ifdef DEBUG_PORTRAIT
 				if (!raveLipSyncTicks) {
 					debug("kPortrait: showing frame %d", raveLipSyncBitmapNr);
 				} else {
 					debug("kPortrait: showing frame %d after %d ticks", raveLipSyncBitmapNr, raveLipSyncTicks);
 				}
-#endif
+#	endif
 
 				// bitmap nr within sync data is base 1, we need base 0
 				raveLipSyncBitmapNr--;
@@ -385,9 +387,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 		do {
 			g_sci->getEngineState()->sleep(1);
 			curEvent = _event->getSciEvent(kSciEventAny);
-			if (curEvent.type == kSciEventMousePress ||
-				(curEvent.type == kSciEventKeyboard && curEvent.data == kSciKeyEsc) ||
-				g_sci->getEngineState()->abortScriptProcessing == kAbortQuitGame)
+			if (curEvent.type == kSciEventMousePress || (curEvent.type == kSciEventKeyboard && curEvent.data == kSciKeyEsc) || g_sci->getEngineState()->abortScriptProcessing == kAbortQuitGame)
 				userAbort = true;
 			curPosition = _audio->getAudioPosition();
 		} while ((curPosition != -1) && (curPosition < timerPosition) && (!userAbort));
@@ -431,11 +431,12 @@ int16 Portrait::raveGetTicks(Resource *resource, uint *offset) {
 		return -1;
 
 	while (curOffset < resource->size()) {
-		curByte = *curData++; curOffset++;
-		if ( curByte == ' ' )
+		curByte = *curData++;
+		curOffset++;
+		if (curByte == ' ')
 			break;
-		if ( (curByte >= '0') && (curByte <= '9') ) {
-			curValue = curValue * 10 + ( curByte - '0' );
+		if ((curByte >= '0') && (curByte <= '9')) {
+			curValue = curValue * 10 + (curByte - '0');
 		} else {
 			// no number -> assume there is an ID at current offset
 			return 0;
@@ -453,8 +454,9 @@ uint16 Portrait::raveGetID(Resource *resource, uint *offset) {
 	uint16 curValue = 0;
 
 	while (curOffset < resource->size()) {
-		curByte = *curData++; curOffset++;
-		if ( curByte == ' ' )
+		curByte = *curData++;
+		curOffset++;
+		if (curByte == ' ')
 			break;
 		if (!curValue) {
 			curValue = curByte << 8;

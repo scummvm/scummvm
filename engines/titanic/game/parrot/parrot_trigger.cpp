@@ -21,13 +21,13 @@
  */
 
 #include "titanic/game/parrot/parrot_trigger.h"
-#include "titanic/npcs/parrot.h"
 #include "titanic/core/project_item.h"
+#include "titanic/npcs/parrot.h"
 
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CParrotTrigger, CGameObject)
-	ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseButtonDownMsg)
 END_MESSAGE_MAP()
 
 void CParrotTrigger::save(SimpleFile *file, int indent) {
@@ -45,7 +45,7 @@ void CParrotTrigger::load(SimpleFile *file) {
 bool CParrotTrigger::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	CTrueTalkTriggerActionMsg triggerMsg(_value, 0, 0);
 	triggerMsg.execute(getRoot(), CParrot::_type,
-		MSGFLAG_CLASS_DEF | MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_SCAN);
+	                   MSGFLAG_CLASS_DEF | MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_SCAN);
 	return true;
 }
 

@@ -21,8 +21,8 @@
 */
 
 #include "larryScale.h"
-#include <cassert>
 #include "common/array.h"
+#include <cassert>
 #include <cstring>
 
 namespace Graphics {
@@ -33,7 +33,7 @@ const int kMargin = 2;
 
 // A bitmap that has a margin of `kMargin` pixels all around it.
 // Allows fast access without time-consuming bounds checking.
-template<typename T>
+template <typename T>
 class MarginedBitmap {
 	int _width;
 	int _height;
@@ -42,29 +42,27 @@ class MarginedBitmap {
 	T *_origin;
 
 public:
-	MarginedBitmap(int width, int height, T marginValue) :
-		_width(width),
-		_height(height),
-		_stride(width + 2 * kMargin),
-		_buffer(_stride * (height + 2 * kMargin)),
-		_origin(calculateOrigin())
-	{
+	MarginedBitmap(int width, int height, T marginValue)
+	  : _width(width)
+	  , _height(height)
+	  , _stride(width + 2 * kMargin)
+	  , _buffer(_stride * (height + 2 * kMargin))
+	  , _origin(calculateOrigin()) {
 		fillMargin(marginValue);
 	}
 
 	// We need a custom copy constructor.
 	// Otherwise, _origin would point to the original buffer.
-	MarginedBitmap(const MarginedBitmap &rhs) :
-		_width(rhs._width),
-		_height(rhs._height),
-		_stride(rhs._stride),
-		_buffer(rhs._buffer),
-		_origin(calculateOrigin())
-	{}
+	MarginedBitmap(const MarginedBitmap &rhs)
+	  : _width(rhs._width)
+	  , _height(rhs._height)
+	  , _stride(rhs._stride)
+	  , _buffer(rhs._buffer)
+	  , _origin(calculateOrigin()) {}
 
 	// We need a custom assignment operator.
 	// Otherwise, _origin would point to the original buffer.
-	MarginedBitmap &operator =(const MarginedBitmap &rhs) {
+	MarginedBitmap &operator=(const MarginedBitmap &rhs) {
 		_width = rhs._width;
 		_height = rhs._height;
 		_stride = rhs._stride;
@@ -101,9 +99,9 @@ private:
 	}
 };
 
-template<typename T>
+template <typename T>
 void MarginedBitmap<T>::fillMargin(T value) {
-	T * const data = getOrigin();
+	T *const data = getOrigin();
 	const int stride = getStride();
 
 	// Fill top margin
@@ -141,9 +139,10 @@ MarginedBitmap<Color> createMarginedBitmap(int width, int height, Color marginCo
 
 class MarginedBitmapWriter : public RowWriter {
 	MarginedBitmap<Color> &_target;
+
 public:
 	explicit MarginedBitmapWriter(MarginedBitmap<Color> &target)
-		: _target(target) {}
+	  : _target(target) {}
 
 	void writeRow(int y, const LarryScaleColor *row) {
 		memcpy(_target.getPointerTo(0, y), row, _target.getWidth() * sizeof(Color));
@@ -161,20 +160,32 @@ inline bool isLinePixel(const MarginedBitmap<Color> &src, int x, int y) {
 	}
 
 	// 2x2 blocks are fills
-	if (EQUALS(0, -1) && EQUALS(1, -1) && EQUALS(1, 0)) return false;
-	if (EQUALS(1, 0) && EQUALS(1, 1) && EQUALS(0, 1)) return false;
-	if (EQUALS(0, 1) && EQUALS(-1, 1) && EQUALS(-1, 0)) return false;
-	if (EQUALS(-1, 0) && EQUALS(-1, -1) && EQUALS(0, -1)) return false;
+	if (EQUALS(0, -1) && EQUALS(1, -1) && EQUALS(1, 0))
+		return false;
+	if (EQUALS(1, 0) && EQUALS(1, 1) && EQUALS(0, 1))
+		return false;
+	if (EQUALS(0, 1) && EQUALS(-1, 1) && EQUALS(-1, 0))
+		return false;
+	if (EQUALS(-1, 0) && EQUALS(-1, -1) && EQUALS(0, -1))
+		return false;
 
 	// A pixel adjacent to a 2x2 block is a fill.
-	if (EQUALS(-1, -1) && EQUALS(0, -1) && EQUALS(-1, -2) && EQUALS(0, -2)) return false;
-	if (EQUALS(0, -1) && EQUALS(1, -1) && EQUALS(0, -2) && EQUALS(1, -2)) return false;
-	if (EQUALS(1, -1) && EQUALS(1, 0) && EQUALS(2, -1) && EQUALS(2, 0)) return false;
-	if (EQUALS(1, 0) && EQUALS(1, 1) && EQUALS(2, 0) && EQUALS(2, 1)) return false;
-	if (EQUALS(1, 1) && EQUALS(0, 1) && EQUALS(1, 2) && EQUALS(0, 2)) return false;
-	if (EQUALS(0, 1) && EQUALS(-1, 1) && EQUALS(0, 2) && EQUALS(-1, 2)) return false;
-	if (EQUALS(-1, 1) && EQUALS(-1, 0) && EQUALS(-2, 1) && EQUALS(-2, 0)) return false;
-	if (EQUALS(-1, 0) && EQUALS(-1, -1) && EQUALS(-2, 0) && EQUALS(-2, -1)) return false;
+	if (EQUALS(-1, -1) && EQUALS(0, -1) && EQUALS(-1, -2) && EQUALS(0, -2))
+		return false;
+	if (EQUALS(0, -1) && EQUALS(1, -1) && EQUALS(0, -2) && EQUALS(1, -2))
+		return false;
+	if (EQUALS(1, -1) && EQUALS(1, 0) && EQUALS(2, -1) && EQUALS(2, 0))
+		return false;
+	if (EQUALS(1, 0) && EQUALS(1, 1) && EQUALS(2, 0) && EQUALS(2, 1))
+		return false;
+	if (EQUALS(1, 1) && EQUALS(0, 1) && EQUALS(1, 2) && EQUALS(0, 2))
+		return false;
+	if (EQUALS(0, 1) && EQUALS(-1, 1) && EQUALS(0, 2) && EQUALS(-1, 2))
+		return false;
+	if (EQUALS(-1, 1) && EQUALS(-1, 0) && EQUALS(-2, 1) && EQUALS(-2, 0))
+		return false;
+	if (EQUALS(-1, 0) && EQUALS(-1, -1) && EQUALS(-2, 0) && EQUALS(-2, -1))
+		return false;
 
 	// Everything else is part of a line
 	return true;
@@ -193,11 +204,10 @@ MarginedBitmap<bool> createMarginedLinePixelsBitmap(const MarginedBitmap<Color> 
 }
 
 void scaleDown(
-	const MarginedBitmap<Color> &src,
-	Color transparentColor,
-	int dstWidth, int dstHeight,
-	RowWriter &rowWriter
-) {
+  const MarginedBitmap<Color> &src,
+  Color transparentColor,
+  int dstWidth, int dstHeight,
+  RowWriter &rowWriter) {
 	assert(src.getWidth() > 0);
 	assert(src.getHeight() > 0);
 	assert(dstWidth > 0 && dstWidth <= src.getWidth());
@@ -228,8 +238,8 @@ void scaleDown(
 				}
 				const bool sufficientLinePixels = linePixelCount * 2 >= blockPixelCount;
 				const Color resultColor = sufficientLinePixels
-					? bestLineColor
-					: src.get(srcX1, srcY1);
+				  ? bestLineColor
+				  : src.get(srcX1, srcY1);
 				dstRow[dstX] = resultColor;
 			} else {
 				// Downscaling significantly. Prefer outline pixels.
@@ -237,12 +247,7 @@ void scaleDown(
 				for (int srcY = srcY1; srcY < srcY2; ++srcY) {
 					for (int srcX = srcX1; srcX < srcX2; ++srcX) {
 						const Color pixelColor = src.get(srcX, srcY);
-						const bool isOutlinePixel = pixelColor != transparentColor && (
-							src.get(srcX - 1, srcY) == transparentColor
-							|| src.get(srcX + 1, srcY) == transparentColor
-							|| src.get(srcX, srcY - 1) == transparentColor
-							|| src.get(srcX, srcY + 1) == transparentColor
-							);
+						const bool isOutlinePixel = pixelColor != transparentColor && (src.get(srcX - 1, srcY) == transparentColor || src.get(srcX + 1, srcY) == transparentColor || src.get(srcX, srcY - 1) == transparentColor || src.get(srcX, srcY + 1) == transparentColor);
 						if (isOutlinePixel) {
 							bestColor = pixelColor;
 							goto foundOutlinePixel;
@@ -273,13 +278,13 @@ EqualityMatrix getEqualityMatrix(const Color *pixel, int stride) {
 #define EQUALS(x, y) (pixel[y * stride + x] == *pixel)
 
 	return (EQUALS(-1, 0) ? 0x01 : 0x00)
-		| (EQUALS(-1, -1) ? 0x02 : 0x00)
-		| (EQUALS(0, -1) ? 0x04 : 0x00)
-		| (EQUALS(1, -1) ? 0x08 : 0x00)
-		| (EQUALS(1, 0) ? 0x10 : 0x00)
-		| (EQUALS(1, 1) ? 0x20 : 0x00)
-		| (EQUALS(0, 1) ? 0x40 : 0x00)
-		| (EQUALS(-1, 1) ? 0x80 : 0x00);
+	  | (EQUALS(-1, -1) ? 0x02 : 0x00)
+	  | (EQUALS(0, -1) ? 0x04 : 0x00)
+	  | (EQUALS(1, -1) ? 0x08 : 0x00)
+	  | (EQUALS(1, 0) ? 0x10 : 0x00)
+	  | (EQUALS(1, 1) ? 0x20 : 0x00)
+	  | (EQUALS(0, 1) ? 0x40 : 0x00)
+	  | (EQUALS(-1, 1) ? 0x80 : 0x00);
 
 #undef EQUALS
 }
@@ -288,10 +293,9 @@ EqualityMatrix getEqualityMatrix(const Color *pixel, int stride) {
 #include "larryScale_generated.cpp"
 
 void scaleUp(
-	const MarginedBitmap<Color> &src,
-	int dstWidth, int dstHeight,
-	RowWriter &rowWriter
-) {
+  const MarginedBitmap<Color> &src,
+  int dstWidth, int dstHeight,
+  RowWriter &rowWriter) {
 	const int srcWidth = src.getWidth();
 	const int srcHeight = src.getHeight();
 
@@ -353,19 +357,18 @@ void copyRows(int height, RowReader &rowReader, RowWriter &rowWriter) {
 }
 
 void larryScale(
-	const MarginedBitmap<Color> &src,
-	Color transparentColor,
-	int dstWidth, int dstHeight,
-	RowWriter &rowWriter
-) {
+  const MarginedBitmap<Color> &src,
+  Color transparentColor,
+  int dstWidth, int dstHeight,
+  RowWriter &rowWriter) {
 	const int srcWidth = src.getWidth();
 	const int srcHeight = src.getHeight();
 
 	if (
-		(dstWidth > srcWidth && dstHeight < srcHeight)		// Upscaling along x axis, downscaling along y axis
-		|| (dstWidth < srcWidth && dstHeight > srcHeight)	// Downscaling along x axis, upscaling along y axis
-		|| (dstWidth > 2 * srcWidth)						// Upscaling to more than 200% along x axis
-		|| (dstHeight > 2 * srcHeight)						// Upscaling to more than 200% along y axis
+	  (dstWidth > srcWidth && dstHeight < srcHeight) // Upscaling along x axis, downscaling along y axis
+	  || (dstWidth < srcWidth && dstHeight > srcHeight) // Downscaling along x axis, upscaling along y axis
+	  || (dstWidth > 2 * srcWidth) // Upscaling to more than 200% along x axis
+	  || (dstHeight > 2 * srcHeight) // Upscaling to more than 200% along y axis
 	) {
 		// We can't handle these cases with a single upscale.
 		// Let's do an intermediate scale.
@@ -385,23 +388,20 @@ void larryScale(
 }
 
 void larryScale(
-	int srcWidth, int srcHeight,
-	Color transparentColor,
-	RowReader &rowReader,
-	int dstWidth, int dstHeight,
-	RowWriter &rowWriter
-) {
+  int srcWidth, int srcHeight,
+  Color transparentColor,
+  RowReader &rowReader,
+  int dstWidth, int dstHeight,
+  RowWriter &rowWriter) {
 	// Select the appropriate scaler
 	if (srcWidth <= 0 || srcHeight <= 0 || dstWidth <= 0 || dstHeight <= 0) {
 		// Nothing to do
 	} else if (dstWidth == srcWidth && dstHeight == srcHeight) {
 		copyRows(srcHeight, rowReader, rowWriter);
 	} else {
-		const MarginedBitmap<Color> src =
-			createMarginedBitmap(srcWidth, srcHeight, transparentColor, rowReader);
+		const MarginedBitmap<Color> src = createMarginedBitmap(srcWidth, srcHeight, transparentColor, rowReader);
 		larryScale(src, transparentColor, dstWidth, dstHeight, rowWriter);
 	}
 }
 
 }
-

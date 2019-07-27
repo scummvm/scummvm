@@ -32,7 +32,6 @@ class QueenEngine;
 
 class CmdText {
 public:
-
 	static CmdText *makeCmdTextInstance(uint8 y, QueenEngine *vm);
 
 	CmdText(uint8 y, QueenEngine *vm);
@@ -64,11 +63,10 @@ public:
 
 	enum {
 		MAX_COMMAND_LEN = 256,
-		COMMAND_Y_POS   = 151
+		COMMAND_Y_POS = 151
 	};
 
 protected:
-
 	//! buffer containing the current command sentence
 	char _command[MAX_COMMAND_LEN];
 
@@ -93,7 +91,6 @@ struct CmdState {
 
 class Command {
 public:
-
 	Command(QueenEngine *vm);
 	~Command();
 
@@ -114,7 +111,6 @@ public:
 	};
 
 private:
-
 	//! get a reference to the ObjectData for the specified room object
 	ObjectData *findObjectData(uint16 objRoomNum) const;
 

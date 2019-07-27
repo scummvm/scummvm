@@ -26,8 +26,11 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CRoomItem, CNamedItem);
 
-CRoomItem::CRoomItem() : CNamedItem(), _roomNumber(0),
-		_roomDimensionX(0.0), _roomDimensionY(0.0) {
+CRoomItem::CRoomItem()
+  : CNamedItem()
+  , _roomNumber(0)
+  , _roomDimensionX(0.0)
+  , _roomDimensionY(0.0) {
 }
 
 void CRoomItem::save(SimpleFile *file, int indent) {

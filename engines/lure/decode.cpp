@@ -21,10 +21,10 @@
  */
 
 #include "lure/decode.h"
-#include "lure/lure.h"
-#include "lure/memory.h"
-#include "lure/luredefs.h"
 #include "common/endian.h"
+#include "lure/lure.h"
+#include "lure/luredefs.h"
+#include "lure/memory.h"
 
 namespace Lure {
 
@@ -60,9 +60,9 @@ byte PictureDecoder::DSSI(bool incr) {
 	if (dataPos > dataIn->size())
 		error("PictureDecoder went beyond end of source data");
 
-	byte result = (dataPos == dataIn->size()) ? 0 :
-		dataIn->data()[dataPos];
-	if (incr) ++dataPos;
+	byte result = (dataPos == dataIn->size()) ? 0 : dataIn->data()[dataPos];
+	if (incr)
+		++dataPos;
 	return result;
 }
 
@@ -74,7 +74,8 @@ byte PictureDecoder::ESBX(bool incr) {
 		error("PictureDecoder went beyond end of source data");
 
 	byte result = dataIn->data()[dataPos2];
-	if (incr) ++dataPos2;
+	if (incr)
+		++dataPos2;
 	return result;
 }
 
@@ -103,8 +104,18 @@ MemoryBlock *PictureDecoder::decode(MemoryBlock *src, uint32 maxOutputSize) {
 // egaDecode
 // Takes care of decoding a compressed EGA screen
 
-#define READ_BIT_DX { bitFlag = (dx & 0x8000) != 0; dx <<= 1; if (--bitCtr == 0) { dx = (dx & 0xff00) | DSSI(); bitCtr = 8; } }
-#define READ_BITS(loops) for (int ctr = 0; ctr < loops; ++ctr) READ_BIT_DX
+#define READ_BIT_DX                \
+	{                                \
+		bitFlag = (dx & 0x8000) != 0;  \
+		dx <<= 1;                      \
+		if (--bitCtr == 0) {           \
+			dx = (dx & 0xff00) | DSSI(); \
+			bitCtr = 8;                  \
+		}                              \
+	}
+#define READ_BITS(loops)                \
+	for (int ctr = 0; ctr < loops; ++ctr) \
+	READ_BIT_DX
 
 MemoryBlock *PictureDecoder::egaDecode(MemoryBlock *src, uint32 maxOutputSize) {
 	MemoryBlock *dest = Memory::allocate(maxOutputSize);
@@ -219,7 +230,8 @@ MemoryBlock *PictureDecoder::egaDecode(MemoryBlock *src, uint32 maxOutputSize) {
 	}
 
 	// Resize the output to be the number of outputed bytes and return it
-	if (outputOffset < dest->size()) dest->reallocate(outputOffset);
+	if (outputOffset < dest->size())
+		dest->reallocate(outputOffset);
 
 	return dest;
 }
@@ -244,7 +256,7 @@ MemoryBlock *PictureDecoder::vgaDecode(MemoryBlock *src, uint32 maxOutputSize) {
 	while (loopFlag) {
 		AL = DSSI();
 		writeByte(dest, AL);
-		BP = ((uint16) AL) << 2;
+		BP = ((uint16)AL) << 2;
 
 		// Inner loop
 		for (;;) {
@@ -267,7 +279,7 @@ MemoryBlock *PictureDecoder::vgaDecode(MemoryBlock *src, uint32 maxOutputSize) {
 			} else {
 				decrCtr();
 				if (shlCarry()) {
-					AL = (byte) (BP >> 2);
+					AL = (byte)(BP >> 2);
 					AH = DSSI();
 					if (AH == 0) {
 						AL = DSSI();
@@ -291,12 +303,13 @@ MemoryBlock *PictureDecoder::vgaDecode(MemoryBlock *src, uint32 maxOutputSize) {
 
 			// Write out the next byte
 			writeByte(dest, AL);
-			BP = ((uint16) AL) << 2;
+			BP = ((uint16)AL) << 2;
 		}
 	}
 
 	// Resize the output to be the number of outputed bytes and return it
-	if (outputOffset < dest->size()) dest->reallocate(outputOffset);
+	if (outputOffset < dest->size())
+		dest->reallocate(outputOffset);
 	return dest;
 }
 
@@ -318,18 +331,18 @@ void AnimationDecoder::rcl(uint16 &value, bool &carry) {
 }
 
 #define GET_BYTE currData = (currData & 0xff00) | *pSrc++
-#define BX_VAL(x) *((byte *) (dest->data() + tableOffset + x))
-#define SET_HI_BYTE(x,v) x = (x & 0xff) | ((v) << 8);
-#define SET_LO_BYTE(x,v) x = (x & 0xff00) | (v);
+#define BX_VAL(x) *((byte *)(dest->data() + tableOffset + x))
+#define SET_HI_BYTE(x, v) x = (x & 0xff) | ((v) << 8);
+#define SET_LO_BYTE(x, v) x = (x & 0xff00) | (v);
 
 void AnimationDecoder::decode_data_2(MemoryBlock *src, byte *&pSrc, uint16 &currData,
-									 uint16 &bitCtr, uint16 &dx, bool &carry) {
+                                     uint16 &bitCtr, uint16 &dx, bool &carry) {
 	SET_HI_BYTE(dx, currData >> 8);
 
 	for (int v = 0; v < 8; ++v) {
 		rcl(currData, carry);
 		if (--bitCtr == 0) {
-			uint32 offset = (uint32) (pSrc - src->data());
+			uint32 offset = (uint32)(pSrc - src->data());
 			if (offset >= src->size())
 				// Beyond end of source, so read in a 0 value
 				currData &= 0xff00;
@@ -362,7 +375,7 @@ uint32 AnimationDecoder::decode_data(MemoryBlock *src, MemoryBlock *dest, uint32
 		*(pDest + 0x20) = (currData >> 4) & 0xf;
 	}
 
-	pDest = (byte *) (dest->data() + 0x40);
+	pDest = (byte *)(dest->data() + 0x40);
 	currData = READ_BE_UINT16(pSrc);
 	pSrc += sizeof(uint16);
 
@@ -492,7 +505,8 @@ uint32 AnimationDecoder::decode_data(MemoryBlock *src, MemoryBlock *dest, uint32
 			tableOffset |= dx >> 8;
 
 			v = bitCtr >> 1;
-			while (v-- > 0) *pDest++ = tableOffset;
+			while (v-- > 0)
+				*pDest++ = tableOffset;
 
 			bitCtr &= 1;
 			if (bitCtr != 0) {

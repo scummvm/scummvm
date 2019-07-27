@@ -25,15 +25,15 @@
 
 namespace Agi {
 
-#define _DEFAULT_WIDTH      160
-#define _DEFAULT_HEIGHT     168
+#define _DEFAULT_WIDTH 160
+#define _DEFAULT_HEIGHT 168
 
 /**
  * AGI picture resource.
  */
 struct AgiPicture {
-	uint32 flen;            /**< size of raw data */
-	uint8 *rdata;           /**< raw vector image data */
+	uint32 flen; /**< size of raw data */
+	uint8 *rdata; /**< raw vector image data */
 };
 
 // AGI picture version
@@ -46,11 +46,11 @@ enum AgiPictureVersion {
 };
 
 enum AgiPictureFlags {
-	kPicFNone      = (1 << 0),
-	kPicFCircle    = (1 << 1),
-	kPicFStep      = (1 << 2),
-	kPicFf3Stop    = (1 << 3),
-	kPicFf3Cont    = (1 << 4),
+	kPicFNone = (1 << 0),
+	kPicFCircle = (1 << 1),
+	kPicFStep = (1 << 2),
+	kPicFf3Stop = (1 << 3),
+	kPicFf3Cont = (1 << 4),
 	kPicFTrollMode = (1 << 5)
 };
 
@@ -82,6 +82,7 @@ public:
 	int decodePicture(byte *data, uint32 length, int clear, int pic_width = _DEFAULT_WIDTH, int pic_height = _DEFAULT_HEIGHT);
 	int unloadPicture(int);
 	void drawPicture();
+
 private:
 	void drawPictureC64();
 	void drawPictureV1();
@@ -98,7 +99,7 @@ private:
 	void draw_LineShort();
 	void draw_LineAbsolute();
 
-	int  draw_FillCheck(int16 x, int16 y);
+	int draw_FillCheck(int16 x, int16 y);
 	void draw_Fill(int16 x, int16 y);
 	void draw_Fill();
 
@@ -108,7 +109,7 @@ public:
 	void showPicWithTransition();
 	uint8 *convertV3Pic(uint8 *src, uint32 len);
 
-	void plotPattern(int x, int y);     // public because it's used directly by preagi
+	void plotPattern(int x, int y); // public because it's used directly by preagi
 
 	void setPattern(uint8 code, uint8 num);
 
@@ -130,11 +131,11 @@ public:
 	}
 
 private:
-	int16  _resourceNr;
+	int16 _resourceNr;
 	uint8 *_data;
 	uint32 _dataSize;
 	uint32 _dataOffset;
-	bool   _dataOffsetNibble;
+	bool _dataOffsetNibble;
 
 	uint8 _patCode;
 	uint8 _patNum;

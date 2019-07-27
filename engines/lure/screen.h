@@ -23,12 +23,11 @@
 #ifndef LURE_SCREEN_H
 #define LURE_SCREEN_H
 
-
 #include "engines/engine.h"
-#include "lure/luredefs.h"
-#include "lure/palette.h"
 #include "lure/disk.h"
+#include "lure/luredefs.h"
 #include "lure/memory.h"
+#include "lure/palette.h"
 #include "lure/surface.h"
 
 namespace Lure {
@@ -41,6 +40,7 @@ private:
 	Palette *_palette;
 
 	void setSystemPalette(Palette *p, uint16 start, uint16 num);
+
 public:
 	Screen(OSystem &system);
 	~Screen();

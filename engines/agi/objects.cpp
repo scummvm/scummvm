@@ -62,7 +62,7 @@ int AgiEngine::decodeObjects(uint8 *mem, uint32 flen) {
 		_objects[i].location = *(mem + so + 2);
 		offset = READ_LE_UINT16(mem + so) + spos;
 
-		if ((uint) offset < flen) {
+		if ((uint)offset < flen) {
 			_objects[i].name = (const char *)mem + offset;
 		} else {
 			warning("object %i name beyond object filesize (%04x > %04x)", i, offset, flen);

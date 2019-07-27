@@ -29,7 +29,6 @@
 #ifndef WINTERMUTE_PARTPARTICLE_H
 #define WINTERMUTE_PARTPARTICLE_H
 
-
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/math/vector2.h"
@@ -43,7 +42,9 @@ class BasePersistenceManager;
 class PartParticle : public BaseClass {
 public:
 	enum TParticleState {
-	    PARTICLE_NORMAL, PARTICLE_FADEIN, PARTICLE_FADEOUT
+		PARTICLE_NORMAL,
+		PARTICLE_FADEIN,
+		PARTICLE_FADEOUT
 	};
 
 	PartParticle(BaseGame *inGame);
@@ -78,6 +79,7 @@ public:
 	bool fadeOut(uint32 currentTime, int fadeTime);
 
 	bool persist(BasePersistenceManager *PersistMgr);
+
 private:
 	uint32 _fadeStart;
 	int32 _fadeTime;

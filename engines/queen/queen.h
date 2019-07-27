@@ -23,8 +23,8 @@
 #ifndef QUEEN_QUEEN_H
 #define QUEEN_QUEEN_H
 
-#include "engines/engine.h"
 #include "common/random.h"
+#include "engines/engine.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -62,7 +62,6 @@ class Walk;
 
 class QueenEngine : public Engine {
 public:
-
 	QueenEngine(OSystem *syst);
 	virtual ~QueenEngine();
 
@@ -104,26 +103,24 @@ public:
 	Common::SeekableReadStream *readGameStateHeader(int slot, GameStateHeader *gsh);
 
 	enum {
-		SAVESTATE_CUR_VER  = 1,
-		SAVESTATE_MAX_NUM  = 100,
+		SAVESTATE_CUR_VER = 1,
+		SAVESTATE_MAX_NUM = 100,
 		SAVESTATE_MAX_SIZE = 30000,
 
-		SLOT_LISTPREFIX    = -2,
-		SLOT_AUTOSAVE      = -1,
-		SLOT_QUICKSAVE     = 0,
+		SLOT_LISTPREFIX = -2,
+		SLOT_AUTOSAVE = -1,
+		SLOT_QUICKSAVE = 0,
 
-		MIN_TEXT_SPEED     = 4,
-		MAX_TEXT_SPEED     = 100
+		MIN_TEXT_SPEED = 4,
+		MAX_TEXT_SPEED = 100
 	};
 
 protected:
-
 	// Engine APIs
 	virtual Common::Error run();
 	virtual GUI::Debugger *getDebugger();
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();
-
 
 	int _talkSpeed;
 	bool _subtitles;

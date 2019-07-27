@@ -22,11 +22,11 @@
 
 #include "common/random.h"
 
-#include "pink/pink.h"
 #include "pink/cel_decoder.h"
 #include "pink/objects/actions/action_loop.h"
 #include "pink/objects/actors/actor.h"
 #include "pink/objects/pages/page.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
@@ -49,8 +49,8 @@ void ActionLoop::deserialize(Archive &archive) {
 
 void ActionLoop::toConsole() {
 	debugC(6, kPinkDebugLoadingObjects, "\tActionLoop: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
-				  " _endFrame = %d, _intro = %u, _style = %u",
-		  _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame, _intro, _style);
+	                                    " _endFrame = %d, _intro = %u, _style = %u",
+	       _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame, _intro, _style);
 }
 
 void ActionLoop::update() {

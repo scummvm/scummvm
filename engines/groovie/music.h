@@ -23,10 +23,10 @@
 #ifndef GROOVIE_MUSIC_H
 #define GROOVIE_MUSIC_H
 
-#include "common/array.h"
-#include "common/mutex.h"
 #include "audio/mididrv.h"
 #include "audio/mixer.h"
+#include "common/array.h"
+#include "common/mutex.h"
 
 class MidiParser;
 
@@ -141,7 +141,11 @@ private:
 	// Timbres
 	class Timbre {
 	public:
-		Timbre() : data(NULL), patch(0), bank(0), size(0) {}
+		Timbre()
+		  : data(NULL)
+		  , patch(0)
+		  , bank(0)
+		  , size(0) {}
 		byte patch;
 		byte bank;
 		uint32 size;

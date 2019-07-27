@@ -25,24 +25,22 @@
  *
  */
 
-
-
+#include "graphics/transparent_surface.h"
 #include "common/algorithm.h"
 #include "common/endian.h"
-#include "common/util.h"
-#include "common/rect.h"
 #include "common/math.h"
+#include "common/rect.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 #include "graphics/primitives.h"
-#include "graphics/transparent_surface.h"
 #include "graphics/transform_tools.h"
 
 namespace Graphics {
 
-static const int kBModShift = 0;//img->format.bShift;
-static const int kGModShift = 8;//img->format.gShift;
-static const int kRModShift = 16;//img->format.rShift;
-static const int kAModShift = 24;//img->format.aShift;
+static const int kBModShift = 0; //img->format.bShift;
+static const int kGModShift = 8; //img->format.gShift;
+static const int kRModShift = 16; //img->format.rShift;
+static const int kAModShift = 24; //img->format.aShift;
 
 #ifdef SCUMM_LITTLE_ENDIAN
 static const int kAIndex = 0;
@@ -64,9 +62,13 @@ void doBlitAdditiveBlend(byte *ino, byte *outo, uint32 width, uint32 height, uin
 void doBlitSubtractiveBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color);
 void doBlitMultiplyBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color);
 
-TransparentSurface::TransparentSurface() : Surface(), _alphaMode(ALPHA_FULL) {}
+TransparentSurface::TransparentSurface()
+  : Surface()
+  , _alphaMode(ALPHA_FULL) {}
 
-TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Surface(), _alphaMode(ALPHA_FULL) {
+TransparentSurface::TransparentSurface(const Surface &surf, bool copyData)
+  : Surface()
+  , _alphaMode(ALPHA_FULL) {
 	if (copyData) {
 		copyFrom(surf);
 	} else {
@@ -117,7 +119,7 @@ void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 			uint32 pix = *(uint32 *)in;
 			int a = in[kAIndex];
 
-			if (a != 0) {   // Full opacity (Any value not exactly 0 is Opaque here)
+			if (a != 0) { // Full opacity (Any value not exactly 0 is Opaque here)
 				*(uint32 *)out = pix;
 				out[kAIndex] = 0xFF;
 			}
@@ -304,13 +306,13 @@ void doBlitSubtractiveBlend(byte *ino, byte *outo, uint32 width, uint32 height, 
 
 				out[kAIndex] = 255;
 				if (cb != 255) {
-					out[kBIndex] = MAX(out[kBIndex] - ((in[kBIndex] * cb  * (out[kBIndex]) * in[kAIndex]) >> 24), 0);
+					out[kBIndex] = MAX(out[kBIndex] - ((in[kBIndex] * cb * (out[kBIndex]) * in[kAIndex]) >> 24), 0);
 				} else {
 					out[kBIndex] = MAX(out[kBIndex] - (in[kBIndex] * (out[kBIndex]) * in[kAIndex] >> 16), 0);
 				}
 
 				if (cg != 255) {
-					out[kGIndex] = MAX(out[kGIndex] - ((in[kGIndex] * cg  * (out[kGIndex]) * in[kAIndex]) >> 24), 0);
+					out[kGIndex] = MAX(out[kGIndex] - ((in[kGIndex] * cg * (out[kGIndex]) * in[kAIndex]) >> 24), 0);
 				} else {
 					out[kGIndex] = MAX(out[kGIndex] - (in[kGIndex] * (out[kGIndex]) * in[kAIndex] >> 16), 0);
 				}
@@ -393,7 +395,6 @@ void doBlitMultiplyBlend(byte *ino, byte *outo, uint32 width, uint32 height, uin
 			ino += inoStep;
 		}
 	}
-
 }
 
 Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height, TSpriteBlendMode blendMode) {
@@ -436,11 +437,11 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		srcImage.h = pPartRect->height();
 
 		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping,
-			  pPartRect->left,  pPartRect->top, pPartRect->width(), pPartRect->height(), color, width, height);
+		      pPartRect->left, pPartRect->top, pPartRect->width(), pPartRect->height(), color, width, height);
 	} else {
 
 		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping, 0, 0,
-			  srcImage.w, srcImage.h, color, width, height);
+		      srcImage.w, srcImage.h, color, width, height);
 	}
 
 	if (width == -1) {
@@ -529,7 +530,6 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 				doBlitAlphaBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
 			}
 		}
-
 	}
 
 	retSize.setWidth(img->w);
@@ -583,11 +583,11 @@ Common::Rect TransparentSurface::blitClip(Graphics::Surface &target, Common::Rec
 		srcImage.h = pPartRect->height();
 
 		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping,
-			pPartRect->left, pPartRect->top, pPartRect->width(), pPartRect->height(), color, width, height);
+		      pPartRect->left, pPartRect->top, pPartRect->width(), pPartRect->height(), color, width, height);
 	} else {
 
 		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping, 0, 0,
-			srcImage.w, srcImage.h, color, width, height);
+		      srcImage.w, srcImage.h, color, width, height);
 	}
 
 	if (width == -1) {
@@ -676,7 +676,6 @@ Common::Rect TransparentSurface::blitClip(Graphics::Surface &target, Common::Rec
 				doBlitAlphaBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
 			}
 		}
-
 	}
 
 	retSize.setWidth(img->w);
@@ -724,11 +723,6 @@ void TransparentSurface::setAlphaMode(AlphaType mode) {
 	_alphaMode = mode;
 }
 
-
-
-
-
-
 /*
 
 The below two functions are adapted from SDL_rotozoom.c,
@@ -769,10 +763,12 @@ systems.
 
 */
 
-
-
-
-struct tColorRGBA { byte r; byte g; byte b; byte a; };
+struct tColorRGBA {
+	byte r;
+	byte g;
+	byte b;
+	byte a;
+};
 
 template <TFilteringMode filteringMode>
 TransparentSurface *TransparentSurface::rotoscaleT(const TransformStruct &transform) const {
@@ -799,7 +795,7 @@ TransparentSurface *TransparentSurface::rotoscaleT(const TransformStruct &transf
 	}
 
 	uint32 invAngle = 360 - (transform._angle % 360);
-	float invAngleRad = Common::deg2rad<uint32,float>(invAngle);
+	float invAngleRad = Common::deg2rad<uint32, float>(invAngle);
 	float invCos = cos(invAngleRad);
 	float invSin = sin(invAngleRad);
 
@@ -807,7 +803,6 @@ TransparentSurface *TransparentSurface::rotoscaleT(const TransformStruct &transf
 	int isinx = (int)(invSin * (65536.0f * kDefaultZoomX / transform._zoom.x));
 	int icosy = (int)(invCos * (65536.0f * kDefaultZoomY / transform._zoom.y));
 	int isiny = (int)(invSin * (65536.0f * kDefaultZoomY / transform._zoom.y));
-
 
 	bool flipx = false, flipy = false; // TODO: See mirroring comment in RenderTicket ctor
 
@@ -821,7 +816,7 @@ TransparentSurface *TransparentSurface::rotoscaleT(const TransformStruct &transf
 	int sw = srcW - 1;
 	int sh = srcH - 1;
 
-	tColorRGBA *pc = (tColorRGBA*)target->getBasePtr(0, 0);
+	tColorRGBA *pc = (tColorRGBA *)target->getBasePtr(0, 0);
 
 	for (int y = 0; y < dstH; y++) {
 		int t = cy - y;
@@ -849,12 +844,20 @@ TransparentSurface *TransparentSurface::rotoscaleT(const TransformStruct &transf
 					sp -= 1;
 					c10 = *sp;
 					if (flipx) {
-						cswap = c00; c00=c01; c01=cswap;
-						cswap = c10; c10=c11; c11=cswap;
+						cswap = c00;
+						c00 = c01;
+						c01 = cswap;
+						cswap = c10;
+						c10 = c11;
+						c11 = cswap;
 					}
 					if (flipy) {
-						cswap = c00; c00=c10; c10=cswap;
-						cswap = c01; c01=c11; c11=cswap;
+						cswap = c00;
+						c00 = c10;
+						c10 = cswap;
+						cswap = c01;
+						c01 = c11;
+						c11 = cswap;
 					}
 					/*
 					* Interpolate colors
@@ -906,7 +909,6 @@ TransparentSurface *TransparentSurface::scaleT(uint16 newWidth, uint16 newHeight
 
 		bool flipx = false, flipy = false; // TODO: See mirroring comment in RenderTicket ctor
 
-
 		int *sax = new int[dstW + 1];
 		int *say = new int[dstH + 1];
 		assert(sax && say);
@@ -916,8 +918,8 @@ TransparentSurface *TransparentSurface::scaleT(uint16 newWidth, uint16 newHeight
 		*/
 		int spixelw = (srcW - 1);
 		int spixelh = (srcH - 1);
-		int sx = (int)(65536.0f * (float) spixelw / (float) (dstW - 1));
-		int sy = (int)(65536.0f * (float) spixelh / (float) (dstH - 1));
+		int sx = (int)(65536.0f * (float)spixelw / (float)(dstW - 1));
+		int sy = (int)(65536.0f * (float)spixelh / (float)(dstH - 1));
 
 		/* Maximum scaled source size */
 		int ssx = (srcW << 16) - 1;
@@ -951,8 +953,8 @@ TransparentSurface *TransparentSurface::scaleT(uint16 newWidth, uint16 newHeight
 			}
 		}
 
-		const tColorRGBA *sp = (const tColorRGBA *) getBasePtr(0, 0);
-		tColorRGBA *dp = (tColorRGBA *) target->getBasePtr(0, 0);
+		const tColorRGBA *sp = (const tColorRGBA *)getBasePtr(0, 0);
+		tColorRGBA *dp = (tColorRGBA *)target->getBasePtr(0, 0);
 		int spixelgap = srcW;
 
 		if (flipx) {

@@ -20,10 +20,10 @@
  *
  */
 
-#include "illusions/duckman/illusions_duckman.h"
 #include "illusions/threads/talkthread_duckman.h"
 #include "illusions/actor.h"
 #include "illusions/dictionary.h"
+#include "illusions/duckman/illusions_duckman.h"
 #include "illusions/input.h"
 #include "illusions/resources/talkresource.h"
 #include "illusions/screentext.h"
@@ -35,8 +35,11 @@ namespace Illusions {
 // TalkThread_Duckman
 
 TalkThread_Duckman::TalkThread_Duckman(IllusionsEngine_Duckman *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
-	uint32 objectId, uint32 talkId, uint32 sequenceId1, uint32 sequenceId2)
-	: Thread(vm, threadId, callingThreadId, notifyFlags), _vm(vm), _objectId(objectId), _talkId(talkId) {
+                                       uint32 objectId, uint32 talkId, uint32 sequenceId1, uint32 sequenceId2)
+  : Thread(vm, threadId, callingThreadId, notifyFlags)
+  , _vm(vm)
+  , _objectId(objectId)
+  , _talkId(talkId) {
 	_type = kTTTalkThread;
 
 	if ((sequenceId1 & 0xFFFF0000) == 0x60000) {
@@ -61,7 +64,6 @@ TalkThread_Duckman::TalkThread_Duckman(IllusionsEngine_Duckman *vm, uint32 threa
 	_defDurationMult = _vm->clipTextDuration(240);
 
 	_sceneId = _vm->getCurrentScene();
-
 }
 
 int TalkThread_Duckman::onUpdate() {
@@ -91,7 +93,7 @@ int TalkThread_Duckman::onUpdate() {
 			_flags |= 1;
 		}
 		if (_vm->isSoundActive()) {
-			if (!_vm->_soundMan->cueVoice((char*)talkEntry->_voiceName) && !_durationMult)
+			if (!_vm->_soundMan->cueVoice((char *)talkEntry->_voiceName) && !_durationMult)
 				_durationMult = _defDurationMult;
 		} else {
 			_flags |= 4;
@@ -110,7 +112,7 @@ int TalkThread_Duckman::onUpdate() {
 		// fall through
 
 	case 4:
-		if (!(_flags & 8) ) {
+		if (!(_flags & 8)) {
 			uint32 actorTypeId = _vm->getObjectActorTypeId(_objectId);
 			getActorTypeColor(actorTypeId, _color);
 			refreshText();
@@ -196,11 +198,9 @@ int TalkThread_Duckman::onUpdate() {
 			_flags |= 2;
 		}
 		return kTSTerminate;
-
 	}
 
 	return kTSTerminate;
-
 }
 
 void TalkThread_Duckman::onPause() {
@@ -217,7 +217,7 @@ void TalkThread_Duckman::onUnpause() {
 	if (_status == 3) {
 		TalkEntry *talkEntry = getTalkResourceEntry(_talkId);
 		if (!_vm->isSoundActive())
-			_vm->_soundMan->cueVoice((char*)talkEntry->_voiceName);
+			_vm->_soundMan->cueVoice((char *)talkEntry->_voiceName);
 	} else if (_status == 5) {
 		if (!(_flags & 4)) {
 			_vm->_soundMan->unpauseVoice();
@@ -297,9 +297,9 @@ int TalkThread_Duckman::insertText() {
 	WidthHeight dimensions;
 	_vm->getDefaultTextDimensions(dimensions);
 	uint16 *outTextPtr;
-	_vm->_screenText->insertText((uint16*)_currEntryText, 0x120001, dimensions,
-		Common::Point(0, 0), TEXT_FLAG_CENTER_ALIGN, 0, 0, _color.r, _color.g, _color.b, outTextPtr);
-	_entryText = (byte*)outTextPtr;
+	_vm->_screenText->insertText((uint16 *)_currEntryText, 0x120001, dimensions,
+	                             Common::Point(0, 0), TEXT_FLAG_CENTER_ALIGN, 0, 0, _color.r, _color.g, _color.b, outTextPtr);
+	_entryText = (byte *)outTextPtr;
 	Common::Point pt;
 	_vm->getDefaultTextPosition(pt);
 	_vm->_screenText->updateTextInfoPosition(pt);

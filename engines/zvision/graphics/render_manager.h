@@ -26,8 +26,8 @@
 #include "zvision/graphics/render_table.h"
 #include "zvision/text/truetype_font.h"
 
-#include "common/rect.h"
 #include "common/hashmap.h"
+#include "common/rect.h"
 
 #include "graphics/surface.h"
 
@@ -55,7 +55,7 @@ private:
 	struct OneSubtitle {
 		Common::Rect r;
 		Common::String txt;
-		int16  timer;
+		int16 timer;
 		bool todelete;
 		bool redraw;
 	};
@@ -118,7 +118,6 @@ private:
 
 	// A buffer to store the result of the panorama / tilt warps
 	Graphics::Surface _warpedSceneSurface;
-
 
 	/** Used to warp the background image */
 	RenderTable _renderTable;
@@ -223,8 +222,8 @@ public:
 	void scaleBuffer(const void *src, void *dst, uint32 srcWidth, uint32 srcHeight, byte bytesPerPixel, uint32 dstWidth, uint32 dstHeight);
 
 	// Blitting surface-to-surface methods
-	void blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect , Graphics::Surface &dst, int x, int y);
-	void blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect , Graphics::Surface &dst, int _x, int _y, uint32 colorkey);
+	void blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect, Graphics::Surface &dst, int x, int y);
+	void blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect, Graphics::Surface &dst, int _x, int _y, uint32 colorkey);
 
 	// Blitting surface-to-background methods
 	void blitSurfaceToBkg(const Graphics::Surface &src, int x, int y, int32 colorkey = -1);

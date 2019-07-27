@@ -31,8 +31,8 @@
 #include "avalanche/enums.h"
 
 #include "common/events.h"
-#include "common/str.h"
 #include "common/serializer.h"
+#include "common/str.h"
 
 namespace Avalanche {
 class AvalancheEngine;
@@ -40,10 +40,10 @@ class AvalancheEngine;
 class Parser {
 public:
 	static const int16 kParserWordsNum = 277; // How many words does the parser know?
-	static const int16 kFirstPassword = 88;   // words[kFirstPassword] should equal "TIROS".
-	static const byte kPardon = 254;          // Didn't understand / wasn't given.
+	static const int16 kFirstPassword = 88; // words[kFirstPassword] should equal "TIROS".
+	static const byte kPardon = 254; // Didn't understand / wasn't given.
 	static const byte kNothing = 250;
-	static const byte kMoved = 0;             // This word was moved. (Usually because it was the subject of conversation.)
+	static const byte kMoved = 0; // This word was moved. (Usually because it was the subject of conversation.)
 
 	struct VocabEntry {
 		byte _number;
@@ -104,9 +104,9 @@ private:
 
 	Common::String _thats;
 	byte _thing2;
-	byte _sworeNum;     // number of times you've sworn
+	byte _sworeNum; // number of times you've sworn
 	byte _alcoholLevel; // Your blood alcohol level.
-	bool _boughtOnion;  // Have you bought an onion yet?
+	bool _boughtOnion; // Have you bought an onion yet?
 
 	byte wordNum(Common::String word);
 	void replace(Common::String oldChars, byte newChar);

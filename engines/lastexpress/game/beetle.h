@@ -36,7 +36,6 @@ class LastExpressEngine;
 
 class Beetle {
 public:
-
 	Beetle(LastExpressEngine *engine);
 	~Beetle();
 

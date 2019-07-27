@@ -28,7 +28,8 @@
 
 namespace BladeRunner {
 
-KIAScript::KIAScript(BladeRunnerEngine *vm) : ScriptBase(vm) {}
+KIAScript::KIAScript(BladeRunnerEngine *vm)
+  : ScriptBase(vm) {}
 
 void KIAScript::playClueAssetScript(int notUsed, int clueId) {
 	_vm->_kia->playerReset();
@@ -672,20 +673,18 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 	case kClueDNAChew:
 	case kClueDNAMoraji:
 	case kClueDNALutherLance:
-	case kClueDNAMarcus:
-		{
-			int dnaEvidences = Global_Variable_Query(kVariableDNAEvidence);
-			if (dnaEvidences == 1) {
-				KIA_Play_Slice_Model(kModelAnimationDNAEvidence01OutOf6);
-			} else if (dnaEvidences == 2) {
-				KIA_Play_Slice_Model(kModelAnimationDNAEvidence03OutOf6);
-			} else if (dnaEvidences == 3) {
-				KIA_Play_Slice_Model(kModelAnimationDNAEvidence04OutOf6);
-			} else if (dnaEvidences >= 4) {
-				KIA_Play_Slice_Model(kModelAnimationDNAEvidenceComplete);
-			}
+	case kClueDNAMarcus: {
+		int dnaEvidences = Global_Variable_Query(kVariableDNAEvidence);
+		if (dnaEvidences == 1) {
+			KIA_Play_Slice_Model(kModelAnimationDNAEvidence01OutOf6);
+		} else if (dnaEvidences == 2) {
+			KIA_Play_Slice_Model(kModelAnimationDNAEvidence03OutOf6);
+		} else if (dnaEvidences == 3) {
+			KIA_Play_Slice_Model(kModelAnimationDNAEvidence04OutOf6);
+		} else if (dnaEvidences >= 4) {
+			KIA_Play_Slice_Model(kModelAnimationDNAEvidenceComplete);
 		}
-		break;
+	} break;
 	case kClueGarterSnake:
 		KIA_Play_Slice_Model(kModelAnimationGarterSnake);
 		break;
@@ -818,7 +817,7 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 			KIA_Play_Actor_Dialogue(kActorSteele, 3620); // Let me ask you a question.
 			KIA_Play_Actor_Dialogue(kActorSteele, 3630);
 			KIA_Play_Actor_Dialogue(kActorGrigorian, 1380);
-			KIA_Play_Actor_Dialogue(kActorSteele, 3640);  // such as
+			KIA_Play_Actor_Dialogue(kActorSteele, 3640); // such as
 			KIA_Play_Actor_Dialogue(kActorGrigorian, 1390);
 		}
 		KIA_Play_Actor_Dialogue(kActorSteele, 3560); // Bravo, Spencer.
@@ -838,7 +837,7 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorSteele, 3620); // Let me ask you a question.
 		KIA_Play_Actor_Dialogue(kActorSteele, 3630);
 		KIA_Play_Actor_Dialogue(kActorGrigorian, 1450);
-		KIA_Play_Actor_Dialogue(kActorSteele, 3640);  // such as
+		KIA_Play_Actor_Dialogue(kActorSteele, 3640); // such as
 		KIA_Play_Actor_Dialogue(kActorGrigorian, 1460);
 		KIA_Play_Actor_Dialogue(kActorSteele, 3650);
 		break;

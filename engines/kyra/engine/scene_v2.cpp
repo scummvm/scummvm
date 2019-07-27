@@ -41,8 +41,7 @@ void KyraEngine_v2::updateSpecialSceneScripts() {
 	const int startScript = _lastProcessedSceneScript;
 
 	while (_system->getMillis() <= nextTime) {
-		if (_sceneSpecialScriptsTimer[_lastProcessedSceneScript] <= _system->getMillis() &&
-		        !_specialSceneScriptState[_lastProcessedSceneScript]) {
+		if (_sceneSpecialScriptsTimer[_lastProcessedSceneScript] <= _system->getMillis() && !_specialSceneScriptState[_lastProcessedSceneScript]) {
 			_specialSceneScriptRunFlag = true;
 
 			while (_specialSceneScriptRunFlag && _sceneSpecialScriptsTimer[_lastProcessedSceneScript] <= _system->getMillis()) {
@@ -81,8 +80,10 @@ void KyraEngine_v2::runSceneScript6() {
 #pragma mark - pathfinder
 
 int KyraEngine_v2::findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize) {
-	x &= ~3; toX &= ~3;
-	y &= ~1; toY &= ~1;
+	x &= ~3;
+	toX &= ~3;
+	y &= ~1;
+	toY &= ~1;
 	int size = KyraEngine_v1::findWay(x, y, toX, toY, moveTable, moveTableSize);
 
 	if (size && !_smoothingPath) {

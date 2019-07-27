@@ -42,11 +42,11 @@ enum {
 	DEFAULT_GAPWIDTH = 1
 };
 
-FontResource::FontResource(Kernel *pKernel, const Common::String &fileName) :
-	_pKernel(pKernel),
-	_valid(false),
-	Resource(fileName, Resource::TYPE_FONT),
-	Common::XMLParser() {
+FontResource::FontResource(Kernel *pKernel, const Common::String &fileName)
+  : _pKernel(pKernel)
+  , _valid(false)
+  , Resource(fileName, Resource::TYPE_FONT)
+  , Common::XMLParser() {
 
 	// Get a pointer to the package manager
 	assert(_pKernel);
@@ -76,13 +76,13 @@ bool FontResource::parserCallback_font(ParserNode *node) {
 
 	if (!parseIntegerKey(node->values["lineheight"], 1, &_lineHeight)) {
 		warning("Illegal or missing lineheight attribute in <font> tag in \"%s\". Assuming default (\"%d\").",
-		                 getFileName().c_str(), DEFAULT_LINEHEIGHT);
+		        getFileName().c_str(), DEFAULT_LINEHEIGHT);
 		_lineHeight = DEFAULT_LINEHEIGHT;
 	}
 
 	if (!parseIntegerKey(node->values["gap"], 1, &_gapWidth)) {
 		warning("Illegal or missing gap attribute in <font> tag in \"%s\". Assuming default (\"%d\").",
-		                 getFileName().c_str(), DEFAULT_GAPWIDTH);
+		        getFileName().c_str(), DEFAULT_GAPWIDTH);
 		_gapWidth = DEFAULT_GAPWIDTH;
 	}
 
@@ -95,7 +95,7 @@ bool FontResource::parserCallback_font(ParserNode *node) {
 	_bitmapFileName = pPackage->getAbsolutePath(bitmapFilename);
 	if (_bitmapFileName == "") {
 		error("Image file \"%s\" was specified in <font> tag of \"%s\" but could not be found.",
-		               _bitmapFileName.c_str(), getFileName().c_str());
+		      _bitmapFileName.c_str(), getFileName().c_str());
 	}
 
 #ifdef PRECACHE_RESOURCES

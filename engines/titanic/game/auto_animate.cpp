@@ -25,8 +25,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CAutoAnimate, CBackground)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(InitializeAnimMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(InitializeAnimMsg)
 END_MESSAGE_MAP()
 
 void CAutoAnimate::save(SimpleFile *file, int indent) {

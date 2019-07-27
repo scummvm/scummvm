@@ -48,154 +48,137 @@ Common::Platform CruiseEngine::getPlatform() const {
 }
 
 static const PlainGameDescriptor cruiseGames[] = {
-	{"cruise", "Cinematique evo.2 engine game"},
-	{"cruise", "Cruise for a Corpse"},
-	{0, 0}
+	{ "cruise", "Cinematique evo.2 engine game" },
+	{ "cruise", "Cruise for a Corpse" },
+	{ 0, 0 }
 };
 
 namespace Cruise {
 
 static const CRUISEGameDescription gameDescriptions[] = {
 	{
-		{
-			"cruise",
-			"16 colors",
-			AD_ENTRY1("D1", "cd29a4cd9162076e9a18495fe56a48f3"),
-			Common::EN_GRB,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
+	  { "cruise",
+	    "16 colors",
+	    AD_ENTRY1("D1", "cd29a4cd9162076e9a18495fe56a48f3"),
+	    Common::EN_GRB,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
 	},
 	{
-		{
-			"cruise",
-			"16 colors",
-			AD_ENTRY1("D1", "41a7a4d426dbd048eb369cfee4bb2717"),
-			Common::FR_FRA,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
+	  { "cruise",
+	    "16 colors",
+	    AD_ENTRY1("D1", "41a7a4d426dbd048eb369cfee4bb2717"),
+	    Common::FR_FRA,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
 	},
 	{
-		{
-			"cruise",
-			"256 colors",
-			AD_ENTRY1("D1", "a90d2b9ead6b4d812cd14268672cf178"),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
+	  { "cruise",
+	    "256 colors",
+	    AD_ENTRY1("D1", "a90d2b9ead6b4d812cd14268672cf178"),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
 	},
 	{
-		{
-			"cruise",
-			"256 colors",
-			AD_ENTRY1("D1", "e258865807ea31b2d523340e6f0a606b"),
-			Common::FR_FRA,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
+	  { "cruise",
+	    "256 colors",
+	    AD_ENTRY1("D1", "e258865807ea31b2d523340e6f0a606b"),
+	    Common::FR_FRA,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
 	},
 	{
-		{
-			"cruise",
-			"16 colors",
-			AD_ENTRY1("D1", "287d2ec1799e2f881dee23c70be96e81"),
-			Common::DE_DEU,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
+	  { "cruise",
+	    "16 colors",
+	    AD_ENTRY1("D1", "287d2ec1799e2f881dee23c70be96e81"),
+	    Common::DE_DEU,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
 	},
 	{
-		{
-			"cruise",
-			"256 colors",
-			AD_ENTRY1("D1", "f2a26522d49983c4ae32bcccbb801b02"),
-			Common::DE_DEU,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
+	  { "cruise",
+	    "256 colors",
+	    AD_ENTRY1("D1", "f2a26522d49983c4ae32bcccbb801b02"),
+	    Common::DE_DEU,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
 	},
 	{
-		{
-			"cruise",
-			0,
-			AD_ENTRY1("D1", "70f42a21cc257b01d58667853335f4f1"),
-			Common::DE_DEU,
-			Common::kPlatformAmiga,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-	},
-	{ // Amiga English US GOLD edition.
-		{
-			"cruise",
-			0,
-			AD_ENTRY1("D1", "de084e9d2c6e4b2cc14803bf849eda3e"),
-			Common::EN_ANY,
-			Common::kPlatformAmiga,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-	},
-	{ // Amiga Italian US GOLD edition.
-		{
-			"cruise",
-			0,
-			AD_ENTRY1("D1", "a0011075413b7335e003e8e3c9cf51b9"),
-			Common::IT_ITA,
-			Common::kPlatformAmiga,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-	},
-	{ // AtariST English KixxXL edition.
-		{
-			"cruise",
-			0,
-			AD_ENTRY1("D1", "be78614d5fa34bdb68bb03a2a6130280"),
-			Common::EN_ANY,
-			Common::kPlatformAtariST,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
+	  { "cruise",
+	    0,
+	    AD_ENTRY1("D1", "70f42a21cc257b01d58667853335f4f1"),
+	    Common::DE_DEU,
+	    Common::kPlatformAmiga,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
 	},
 	{
-		{
-			"cruise",
-			"256 colors",
-			AD_ENTRY1("D1", "e19a4ab2e24a69087e4ea994a5506231"),
-			Common::IT_ITA,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
+	  // Amiga English US GOLD edition.
+	  {
+	    "cruise",
+	    0,
+	    AD_ENTRY1("D1", "de084e9d2c6e4b2cc14803bf849eda3e"),
+	    Common::EN_ANY,
+	    Common::kPlatformAmiga,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
 	},
 	{
-		{
-			"cruise",
-			"256 colors",
-			AD_ENTRY1("D1", "9a302ada55600d96061fda1d63a6ccda"),
-			Common::ES_ESP,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
+	  // Amiga Italian US GOLD edition.
+	  {
+	    "cruise",
+	    0,
+	    AD_ENTRY1("D1", "a0011075413b7335e003e8e3c9cf51b9"),
+	    Common::IT_ITA,
+	    Common::kPlatformAmiga,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
 	},
-	{AD_TABLE_END_MARKER}
+	{
+	  // AtariST English KixxXL edition.
+	  {
+	    "cruise",
+	    0,
+	    AD_ENTRY1("D1", "be78614d5fa34bdb68bb03a2a6130280"),
+	    Common::EN_ANY,
+	    Common::kPlatformAtariST,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	},
+	{
+	  { "cruise",
+	    "256 colors",
+	    AD_ENTRY1("D1", "e19a4ab2e24a69087e4ea994a5506231"),
+	    Common::IT_ITA,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	},
+	{
+	  { "cruise",
+	    "256 colors",
+	    AD_ENTRY1("D1", "9a302ada55600d96061fda1d63a6ccda"),
+	    Common::ES_ESP,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	},
+	{ AD_TABLE_END_MARKER }
 };
 
 }
 
 class CruiseMetaEngine : public AdvancedMetaEngine {
 public:
-	CruiseMetaEngine() : AdvancedMetaEngine(Cruise::gameDescriptions, sizeof(Cruise::CRUISEGameDescription), cruiseGames) {
+	CruiseMetaEngine()
+	  : AdvancedMetaEngine(Cruise::gameDescriptions, sizeof(Cruise::CRUISEGameDescription), cruiseGames) {
 		_singleId = "cruise";
 		_guiOptions = GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI);
 	}
@@ -217,12 +200,7 @@ public:
 };
 
 bool CruiseMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSupportsLoadingDuringStartup);
+	return (f == kSupportsListSaves) || (f == kSupportsDeleteSave) || (f == kSavesSupportMetaInfo) || (f == kSavesSupportThumbnail) || (f == kSupportsLoadingDuringStartup);
 }
 
 SaveStateList CruiseMetaEngine::listSaves(const char *target) const {
@@ -259,7 +237,7 @@ void CruiseMetaEngine::removeSaveState(const char *target, int slot) const {
 
 SaveStateDescriptor CruiseMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(
-		Cruise::CruiseEngine::getSavegameFile(slot));
+	  Cruise::CruiseEngine::getSavegameFile(slot));
 
 	if (f) {
 		Cruise::CruiseSavegameHeader header;
@@ -288,9 +266,8 @@ bool CruiseMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 	return gd != 0;
 }
 
-
 #if PLUGIN_ENABLED_DYNAMIC(CRUISE)
-	REGISTER_PLUGIN_DYNAMIC(CRUISE, PLUGIN_TYPE_ENGINE, CruiseMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(CRUISE, PLUGIN_TYPE_ENGINE, CruiseMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(CRUISE, PLUGIN_TYPE_ENGINE, CruiseMetaEngine);
+REGISTER_PLUGIN_STATIC(CRUISE, PLUGIN_TYPE_ENGINE, CruiseMetaEngine);
 #endif

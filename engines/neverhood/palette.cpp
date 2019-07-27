@@ -28,19 +28,22 @@ namespace Neverhood {
 
 // Palette
 
-Palette::Palette(NeverhoodEngine *vm) : Entity(vm, 0) {
+Palette::Palette(NeverhoodEngine *vm)
+  : Entity(vm, 0) {
 	init();
 	memset(_palette, 0, 1024);
 	SetUpdateHandler(&Palette::update);
 }
 
-Palette::Palette(NeverhoodEngine *vm, byte *palette) : Entity(vm, 0) {
+Palette::Palette(NeverhoodEngine *vm, byte *palette)
+  : Entity(vm, 0) {
 	init();
 	memcpy(_palette, palette, 1024);
 	SetUpdateHandler(&Palette::update);
 }
 
-Palette::Palette(NeverhoodEngine *vm, const char *filename) : Entity(vm, 0) {
+Palette::Palette(NeverhoodEngine *vm, const char *filename)
+  : Entity(vm, 0) {
 	PaletteResource paletteResource(_vm);
 	init();
 	paletteResource.load(calcHash(filename));
@@ -48,7 +51,8 @@ Palette::Palette(NeverhoodEngine *vm, const char *filename) : Entity(vm, 0) {
 	SetUpdateHandler(&Palette::update);
 }
 
-Palette::Palette(NeverhoodEngine *vm, uint32 fileHash) : Entity(vm, 0) {
+Palette::Palette(NeverhoodEngine *vm, uint32 fileHash)
+  : Entity(vm, 0) {
 	PaletteResource paletteResource(_vm);
 	init();
 	paletteResource.load(fileHash);
@@ -196,11 +200,11 @@ void Palette::update() {
 }
 
 void Palette::fadeColor(byte *rgb, byte toR, byte toG, byte toB) {
-	#define FADE(color, toColor) color += _fadeStep < toColor - color ? _fadeStep : (-_fadeStep <= toColor - color ? toColor - color : -_fadeStep)
+#define FADE(color, toColor) color += _fadeStep < toColor - color ? _fadeStep : (-_fadeStep <= toColor - color ? toColor - color : -_fadeStep)
 	FADE(rgb[0], toR);
 	FADE(rgb[1], toG);
 	FADE(rgb[2], toB);
-	#undef FADE
+#undef FADE
 }
 
 int Palette::calculateFadeStep(int counter) {

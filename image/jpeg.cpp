@@ -38,17 +38,17 @@
 // its header files are included in a C++ environment. To avoid any linking
 // issues we need to add it on our own.
 extern "C" {
-#include <jpeglib.h>
-#include <jerror.h>
+#	include <jerror.h>
+#	include <jpeglib.h>
 }
 #endif
 
 namespace Image {
 
-JPEGDecoder::JPEGDecoder() :
-		_surface(),
-		_colorSpace(kColorSpaceRGB),
-		_requestedPixelFormat(getByteOrderRgbPixelFormat()) {
+JPEGDecoder::JPEGDecoder()
+  : _surface()
+  , _colorSpace(kColorSpaceRGB)
+  , _requestedPixelFormat(getByteOrderRgbPixelFormat()) {
 }
 
 JPEGDecoder::~JPEGDecoder() {
@@ -85,145 +85,144 @@ Graphics::PixelFormat JPEGDecoder::getPixelFormat() const {
 #ifdef USE_JPEG
 namespace {
 
-#define JPEG_BUFFER_SIZE 4096
+#	define JPEG_BUFFER_SIZE 4096
 
-struct StreamSource : public jpeg_source_mgr {
-	Common::SeekableReadStream *stream;
-	bool startOfFile;
-	JOCTET buffer[JPEG_BUFFER_SIZE];
-};
-
-void initSource(j_decompress_ptr cinfo) {
-	StreamSource *source = (StreamSource *)cinfo->src;
-	source->startOfFile = true;
-}
-
-boolean fillInputBuffer(j_decompress_ptr cinfo) {
-	StreamSource *source = (StreamSource *)cinfo->src;
-
-	uint32 bufferSize = source->stream->read((byte *)source->buffer, sizeof(source->buffer));
-	if (bufferSize == 0) {
-		if (source->startOfFile) {
-			// An empty file is a fatal error
-			ERREXIT(cinfo, JERR_INPUT_EMPTY);
-		} else {
-			// Otherwise we insert an EOF marker
-			WARNMS(cinfo, JWRN_JPEG_EOF);
-			source->buffer[0] = (JOCTET)0xFF;
-			source->buffer[1] = (JOCTET)JPEG_EOI;
-			bufferSize = 2;
-		}
-	}
-
-	source->next_input_byte = source->buffer;
-	source->bytes_in_buffer = bufferSize;
-	source->startOfFile = false;
-
-	return TRUE;
-}
-
-void skipInputData(j_decompress_ptr cinfo, long numBytes) {
-	StreamSource *source = (StreamSource *)cinfo->src;
-
-	if (numBytes > 0) {
-		if (numBytes > (long)source->bytes_in_buffer) {
-			// In case we need to skip more bytes than there are in the buffer
-			// we will skip the remaining data and fill the buffer again
-			numBytes -= (long)source->bytes_in_buffer;
-
-			// Skip the remaining bytes
-			source->stream->skip(numBytes);
-
-			// Fill up the buffer again
-			(*source->fill_input_buffer)(cinfo);
-		} else {
-			source->next_input_byte += (size_t)numBytes;
-			source->bytes_in_buffer -= (size_t)numBytes;
-		}
-
-	}
-}
-
-void termSource(j_decompress_ptr cinfo) {
-}
-
-void jpeg_scummvm_src(j_decompress_ptr cinfo, Common::SeekableReadStream *stream) {
-	StreamSource *source;
-
-	// Initialize the source in case it has not been done yet.
-	if (cinfo->src == NULL) {
-		cinfo->src = (jpeg_source_mgr *)(*cinfo->mem->alloc_small)((j_common_ptr)cinfo, JPOOL_PERMANENT, sizeof(StreamSource));
-	}
-
-	source = (StreamSource *)cinfo->src;
-	source->init_source       = &initSource;
-	source->fill_input_buffer = &fillInputBuffer;
-	source->skip_input_data   = &skipInputData;
-	source->resync_to_restart = &jpeg_resync_to_restart;
-	source->term_source       = &termSource;
-	source->bytes_in_buffer   = 0;
-	source->next_input_byte   = NULL;
-
-	source->stream = stream;
-}
-
-void errorExit(j_common_ptr cinfo) {
-	char buffer[JMSG_LENGTH_MAX];
-	(*cinfo->err->format_message)(cinfo, buffer);
-	// This function is not allowed to return to the caller, thus we simply
-	// error out with our error handling here.
-	error("%s", buffer);
-}
-
-void outputMessage(j_common_ptr cinfo) {
-	char buffer[JMSG_LENGTH_MAX];
-	(*cinfo->err->format_message)(cinfo, buffer);
-	// Is using debug here a good idea? Or do we want to ignore all libjpeg
-	// messages?
-	debug(3, "libjpeg: %s", buffer);
-}
-
-J_COLOR_SPACE fromScummvmPixelFormat(const Graphics::PixelFormat &format) {
-#if defined(JCS_EXTENSIONS) || defined(JCS_ALPHA_EXTENSIONS)
-	struct PixelFormatMapping {
-		Graphics::PixelFormat pixelFormat;
-		J_COLOR_SPACE bigEndianColorSpace;
-		J_COLOR_SPACE littleEndianColorSpace;
+	struct StreamSource : public jpeg_source_mgr {
+		Common::SeekableReadStream *stream;
+		bool startOfFile;
+		JOCTET buffer[JPEG_BUFFER_SIZE];
 	};
 
-	static const PixelFormatMapping mappings[] = {
-#ifdef JCS_EXTENSIONS
-		{ Graphics::PixelFormat(4, 8, 8, 8, 0, 24, 16,  8,  0), JCS_EXT_RGBX, JCS_EXT_XBGR },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 0,  0,  8, 16, 24), JCS_EXT_XBGR, JCS_EXT_RGBX },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 0, 16,  8,  0, 24), JCS_EXT_XRGB, JCS_EXT_BGRX },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 0,  8, 16, 24,  0), JCS_EXT_BGRX, JCS_EXT_XRGB },
-		{ Graphics::PixelFormat(3, 8, 8, 8, 0, 16,  8,  0,  0), JCS_EXT_RGB,  JCS_EXT_BGR  },
-		{ Graphics::PixelFormat(3, 8, 8, 8, 0,  0,  8, 16,  0), JCS_EXT_BGR,  JCS_EXT_RGB  }
-#endif
-#if defined(JCS_EXTENSIONS) && defined(JCS_ALPHA_EXTENSIONS)
-		,
-#endif
-#ifdef JCS_ALPHA_EXTENSIONS
-		{ Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16,  8,  0), JCS_EXT_RGBA, JCS_EXT_ABGR },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 8,  0,  8, 16, 24), JCS_EXT_ABGR, JCS_EXT_RGBA },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 8, 16,  8,  0, 24), JCS_EXT_ARGB, JCS_EXT_BGRA },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 8,  8, 16, 24,  0), JCS_EXT_BGRA, JCS_EXT_ARGB }
-#endif
-	};
+	void initSource(j_decompress_ptr cinfo) {
+		StreamSource *source = (StreamSource *)cinfo->src;
+		source->startOfFile = true;
+	}
 
-	for (uint i = 0; i < ARRAYSIZE(mappings); i++) {
-		if (mappings[i].pixelFormat == format) {
-#ifdef SCUMM_BIG_ENDIAN
-			return mappings[i].bigEndianColorSpace;
-#else
-			return mappings[i].littleEndianColorSpace;
-#endif
+	boolean fillInputBuffer(j_decompress_ptr cinfo) {
+		StreamSource *source = (StreamSource *)cinfo->src;
+
+		uint32 bufferSize = source->stream->read((byte *)source->buffer, sizeof(source->buffer));
+		if (bufferSize == 0) {
+			if (source->startOfFile) {
+				// An empty file is a fatal error
+				ERREXIT(cinfo, JERR_INPUT_EMPTY);
+			} else {
+				// Otherwise we insert an EOF marker
+				WARNMS(cinfo, JWRN_JPEG_EOF);
+				source->buffer[0] = (JOCTET)0xFF;
+				source->buffer[1] = (JOCTET)JPEG_EOI;
+				bufferSize = 2;
+			}
+		}
+
+		source->next_input_byte = source->buffer;
+		source->bytes_in_buffer = bufferSize;
+		source->startOfFile = false;
+
+		return TRUE;
+	}
+
+	void skipInputData(j_decompress_ptr cinfo, long numBytes) {
+		StreamSource *source = (StreamSource *)cinfo->src;
+
+		if (numBytes > 0) {
+			if (numBytes > (long)source->bytes_in_buffer) {
+				// In case we need to skip more bytes than there are in the buffer
+				// we will skip the remaining data and fill the buffer again
+				numBytes -= (long)source->bytes_in_buffer;
+
+				// Skip the remaining bytes
+				source->stream->skip(numBytes);
+
+				// Fill up the buffer again
+				(*source->fill_input_buffer)(cinfo);
+			} else {
+				source->next_input_byte += (size_t)numBytes;
+				source->bytes_in_buffer -= (size_t)numBytes;
+			}
 		}
 	}
-#endif
 
-	return JCS_UNKNOWN;
-}
+	void termSource(j_decompress_ptr cinfo) {
+	}
+
+	void jpeg_scummvm_src(j_decompress_ptr cinfo, Common::SeekableReadStream *stream) {
+		StreamSource *source;
+
+		// Initialize the source in case it has not been done yet.
+		if (cinfo->src == NULL) {
+			cinfo->src = (jpeg_source_mgr *)(*cinfo->mem->alloc_small)((j_common_ptr)cinfo, JPOOL_PERMANENT, sizeof(StreamSource));
+		}
+
+		source = (StreamSource *)cinfo->src;
+		source->init_source = &initSource;
+		source->fill_input_buffer = &fillInputBuffer;
+		source->skip_input_data = &skipInputData;
+		source->resync_to_restart = &jpeg_resync_to_restart;
+		source->term_source = &termSource;
+		source->bytes_in_buffer = 0;
+		source->next_input_byte = NULL;
+
+		source->stream = stream;
+	}
+
+	void errorExit(j_common_ptr cinfo) {
+		char buffer[JMSG_LENGTH_MAX];
+		(*cinfo->err->format_message)(cinfo, buffer);
+		// This function is not allowed to return to the caller, thus we simply
+		// error out with our error handling here.
+		error("%s", buffer);
+	}
+
+	void outputMessage(j_common_ptr cinfo) {
+		char buffer[JMSG_LENGTH_MAX];
+		(*cinfo->err->format_message)(cinfo, buffer);
+		// Is using debug here a good idea? Or do we want to ignore all libjpeg
+		// messages?
+		debug(3, "libjpeg: %s", buffer);
+	}
+
+	J_COLOR_SPACE fromScummvmPixelFormat(const Graphics::PixelFormat &format) {
+#	if defined(JCS_EXTENSIONS) || defined(JCS_ALPHA_EXTENSIONS)
+		struct PixelFormatMapping {
+			Graphics::PixelFormat pixelFormat;
+			J_COLOR_SPACE bigEndianColorSpace;
+			J_COLOR_SPACE littleEndianColorSpace;
+		};
+
+		static const PixelFormatMapping mappings[] = {
+#		ifdef JCS_EXTENSIONS
+			{ Graphics::PixelFormat(4, 8, 8, 8, 0, 24, 16, 8, 0), JCS_EXT_RGBX, JCS_EXT_XBGR },
+			{ Graphics::PixelFormat(4, 8, 8, 8, 0, 0, 8, 16, 24), JCS_EXT_XBGR, JCS_EXT_RGBX },
+			{ Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 24), JCS_EXT_XRGB, JCS_EXT_BGRX },
+			{ Graphics::PixelFormat(4, 8, 8, 8, 0, 8, 16, 24, 0), JCS_EXT_BGRX, JCS_EXT_XRGB },
+			{ Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0), JCS_EXT_RGB, JCS_EXT_BGR },
+			{ Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0), JCS_EXT_BGR, JCS_EXT_RGB }
+#		endif
+#		if defined(JCS_EXTENSIONS) && defined(JCS_ALPHA_EXTENSIONS)
+			,
+#		endif
+#		ifdef JCS_ALPHA_EXTENSIONS
+			{ Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), JCS_EXT_RGBA, JCS_EXT_ABGR },
+			{ Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), JCS_EXT_ABGR, JCS_EXT_RGBA },
+			{ Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24), JCS_EXT_ARGB, JCS_EXT_BGRA },
+			{ Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0), JCS_EXT_BGRA, JCS_EXT_ARGB }
+#		endif
+		};
+
+		for (uint i = 0; i < ARRAYSIZE(mappings); i++) {
+			if (mappings[i].pixelFormat == format) {
+#		ifdef SCUMM_BIG_ENDIAN
+				return mappings[i].bigEndianColorSpace;
+#		else
+				return mappings[i].littleEndianColorSpace;
+#		endif
+			}
+		}
+#	endif
+
+		return JCS_UNKNOWN;
+	}
 
 } // End of anonymous namespace
 #endif

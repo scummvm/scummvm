@@ -41,7 +41,7 @@ void registerDefaults();
  * Parse the command line for options and a command; the options
  * are stored in the map 'settings, the command (if any) is returned.
  */
-Common::String parseCommandLine(Common::StringMap &settings, int argc, const char * const *argv);
+Common::String parseCommandLine(Common::StringMap &settings, int argc, const char *const *argv);
 
 /**
  * Process the command line options and arguments.

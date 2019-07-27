@@ -20,8 +20,8 @@
  *
  */
 
-#include "kyra/sound/sound_intern.h"
 #include "kyra/resource/resource.h"
+#include "kyra/sound/sound_intern.h"
 
 #include "audio/softsynth/fmtowns_pc98/towns_euphony.h"
 
@@ -32,8 +32,17 @@
 namespace Kyra {
 
 SoundTowns_LoK::SoundTowns_LoK(KyraEngine_v1 *vm, Audio::Mixer *mixer)
-	: Sound(vm, mixer), _lastTrack(-1), _musicTrackData(0), _sfxFileData(0), _cdaPlaying(0),
-	_sfxFileIndex((uint)-1), _musicFadeTable(0), _sfxWDTable(0), _sfxBTTable(0), _sfxChannel(0x46), _currentResourceSet(0) {
+  : Sound(vm, mixer)
+  , _lastTrack(-1)
+  , _musicTrackData(0)
+  , _sfxFileData(0)
+  , _cdaPlaying(0)
+  , _sfxFileIndex((uint)-1)
+  , _musicFadeTable(0)
+  , _sfxWDTable(0)
+  , _sfxBTTable(0)
+  , _sfxChannel(0x46)
+  , _currentResourceSet(0) {
 	memset(&_resInfo, 0, sizeof(_resInfo));
 	_player = new EuphonyPlayer(_mixer);
 }
@@ -124,7 +133,7 @@ void SoundTowns_LoK::haltTrack() {
 void SoundTowns_LoK::initAudioResourceInfo(int set, void *info) {
 	if (set >= kMusicIntro && set <= kMusicFinale) {
 		delete _resInfo[set];
-		_resInfo[set] = info ? new SoundResourceInfo_Towns(*(SoundResourceInfo_Towns*)info) : 0;
+		_resInfo[set] = info ? new SoundResourceInfo_Towns(*(SoundResourceInfo_Towns *)info) : 0;
 	}
 }
 
@@ -382,7 +391,7 @@ void SoundTowns_LoK::playEuphonyTrack(uint32 offset, int loop) {
 }
 
 void SoundTowns_LoK::fadeOutSoundEffects() {
-	for (int i = 127; i > 0; i-= 12) {
+	for (int i = 127; i > 0; i -= 12) {
 		_player->driver()->channelVolume(0x46, i);
 		_player->driver()->channelVolume(0x47, i);
 		_vm->delay(_vm->tickLength());
@@ -391,4 +400,3 @@ void SoundTowns_LoK::fadeOutSoundEffects() {
 }
 
 } // End of namespace Kyra
-

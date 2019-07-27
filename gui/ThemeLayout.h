@@ -40,6 +40,7 @@ class ThemeLayout {
 	friend class ThemeLayoutStacked;
 	friend class ThemeLayoutSpacing;
 	friend class ThemeLayoutWidget;
+
 public:
 	enum LayoutType {
 		kLayoutMain,
@@ -49,10 +50,16 @@ public:
 		kLayoutTabWidget
 	};
 
-	ThemeLayout(ThemeLayout *p) :
-		_parent(p), _x(0), _y(0), _w(-1), _h(-1),
-		_centered(false), _defaultW(-1), _defaultH(-1),
-		_textHAlign(Graphics::kTextAlignInvalid) {}
+	ThemeLayout(ThemeLayout *p)
+	  : _parent(p)
+	  , _x(0)
+	  , _y(0)
+	  , _w(-1)
+	  , _h(-1)
+	  , _centered(false)
+	  , _defaultW(-1)
+	  , _defaultH(-1)
+	  , _textHAlign(Graphics::kTextAlignInvalid) {}
 
 	virtual ~ThemeLayout() {
 		for (uint i = 0; i < _children.size(); ++i)
@@ -61,7 +68,12 @@ public:
 
 	virtual void reflowLayout() = 0;
 
-	virtual void resetLayout() { _x = 0; _y = 0; _w = _defaultW; _h = _defaultH; }
+	virtual void resetLayout() {
+		_x = 0;
+		_y = 0;
+		_w = _defaultW;
+		_h = _defaultH;
+	}
 
 	void addChild(ThemeLayout *child) { _children.push_back(child); }
 
@@ -123,7 +135,8 @@ protected:
 
 class ThemeLayoutMain : public ThemeLayout {
 public:
-	ThemeLayoutMain(int16 x, int16 y, int16 w, int16 h) : ThemeLayout(0) {
+	ThemeLayoutMain(int16 x, int16 y, int16 w, int16 h)
+	  : ThemeLayout(0) {
 		_w = _defaultW = w;
 		_h = _defaultH = h;
 		_x = _defaultX = x;
@@ -143,7 +156,10 @@ public:
 
 protected:
 	LayoutType getLayoutType() { return kLayoutMain; }
-	ThemeLayout *makeClone(ThemeLayout *newParent) { assert(!"Do not copy Main Layouts!"); return 0; }
+	ThemeLayout *makeClone(ThemeLayout *newParent) {
+		assert(!"Do not copy Main Layouts!");
+		return 0;
+	}
 
 	int16 _defaultX;
 	int16 _defaultY;
@@ -151,8 +167,9 @@ protected:
 
 class ThemeLayoutStacked : public ThemeLayout {
 public:
-	ThemeLayoutStacked(ThemeLayout *p, LayoutType type, int spacing, bool center) :
-		ThemeLayout(p), _type(type) {
+	ThemeLayoutStacked(ThemeLayout *p, LayoutType type, int spacing, bool center)
+	  : ThemeLayout(p)
+	  , _type(type) {
 		assert((type == kLayoutVertical) || (type == kLayoutHorizontal));
 		_spacing = spacing;
 		_centered = center;
@@ -170,7 +187,8 @@ public:
 #ifdef LAYOUT_DEBUG_DIALOG
 	const char *getName() const {
 		return (_type == kLayoutVertical)
-			? "Vertical Layout" : "Horizontal Layout";
+		  ? "Vertical Layout"
+		  : "Horizontal Layout";
 	}
 #endif
 
@@ -196,7 +214,9 @@ protected:
 
 class ThemeLayoutWidget : public ThemeLayout {
 public:
-	ThemeLayoutWidget(ThemeLayout *p, const Common::String &name, int16 w, int16 h, Graphics::TextAlign align) : ThemeLayout(p), _name(name) {
+	ThemeLayoutWidget(ThemeLayout *p, const Common::String &name, int16 w, int16 h, Graphics::TextAlign align)
+	  : ThemeLayout(p)
+	  , _name(name) {
 		_w = _defaultW = w;
 		_h = _defaultH = h;
 
@@ -228,8 +248,8 @@ class ThemeLayoutTabWidget : public ThemeLayoutWidget {
 	int _tabHeight;
 
 public:
-	ThemeLayoutTabWidget(ThemeLayout *p, const Common::String &name, int16 w, int16 h, Graphics::TextAlign align, int tabHeight):
-		ThemeLayoutWidget(p, name, w, h, align) {
+	ThemeLayoutTabWidget(ThemeLayout *p, const Common::String &name, int16 w, int16 h, Graphics::TextAlign align, int tabHeight)
+	  : ThemeLayoutWidget(p, name, w, h, align) {
 		_tabHeight = tabHeight;
 	}
 
@@ -261,7 +281,8 @@ protected:
 
 class ThemeLayoutSpacing : public ThemeLayout {
 public:
-	ThemeLayoutSpacing(ThemeLayout *p, int size) : ThemeLayout(p) {
+	ThemeLayoutSpacing(ThemeLayout *p, int size)
+	  : ThemeLayout(p) {
 		if (p->getLayoutType() == kLayoutHorizontal) {
 			_w = _defaultW = size;
 			_h = _defaultH = 1;

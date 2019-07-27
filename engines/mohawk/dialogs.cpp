@@ -20,30 +20,33 @@
  *
  */
 
-#include "mohawk/mohawk.h"
 #include "mohawk/dialogs.h"
+#include "mohawk/mohawk.h"
 
+#include "common/system.h"
+#include "common/translation.h"
 #include "gui/gui-manager.h"
 #include "gui/saveload.h"
 #include "gui/widget.h"
 #include "gui/widgets/popup.h"
-#include "common/system.h"
-#include "common/translation.h"
 
 #ifdef ENABLE_MYST
-#include "mohawk/myst.h"
-#include "mohawk/myst_scripts.h"
+#	include "mohawk/myst.h"
+#	include "mohawk/myst_scripts.h"
 #endif
 
 #ifdef ENABLE_RIVEN
-#include "mohawk/riven.h"
-#include "mohawk/riven_graphics.h"
+#	include "mohawk/riven.h"
+#	include "mohawk/riven_graphics.h"
 #endif
 
 namespace Mohawk {
 
 // This used to have GUI::Dialog("MohawkDummyDialog"), but that doesn't work with the gui branch merge :P (Sorry, Tanoku!)
-InfoDialog::InfoDialog(MohawkEngine *vm, const Common::String &message) : _vm(vm), GUI::Dialog(0, 0, 1, 1), _message(message) {
+InfoDialog::InfoDialog(MohawkEngine *vm, const Common::String &message)
+  : _vm(vm)
+  , GUI::Dialog(0, 0, 1, 1)
+  , _message(message) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
 
 	_text = new GUI::StaticTextWidget(this, 0, 0, 10, 10, _message, Graphics::kTextAlignCenter);
@@ -69,7 +72,8 @@ void InfoDialog::reflowLayout() {
 	_text->setSize(_w, _h);
 }
 
-PauseDialog::PauseDialog(MohawkEngine *vm, const Common::String &message) : InfoDialog(vm, message) {
+PauseDialog::PauseDialog(MohawkEngine *vm, const Common::String &message)
+  : InfoDialog(vm, message) {
 }
 
 void PauseDialog::handleKeyDown(Common::KeyState state) {
@@ -93,8 +97,8 @@ enum {
 
 #if defined(ENABLE_MYST) || defined(ENABLE_RIVEN)
 
-MohawkOptionsDialog::MohawkOptionsDialog() :
-		GUI::Dialog(0, 0, 360, 200) {
+MohawkOptionsDialog::MohawkOptionsDialog()
+  : GUI::Dialog(0, 0, 360, 200) {
 	new GUI::ButtonWidget(this, 95, 160, 120, 25, _("~O~K"), nullptr, GUI::kOKCmd);
 	new GUI::ButtonWidget(this, 225, 160, 120, 25, _("~C~ancel"), nullptr, GUI::kCloseCmd);
 }
@@ -113,14 +117,13 @@ void MohawkOptionsDialog::reflowLayout() {
 	GUI::Dialog::reflowLayout();
 }
 
-
 void MohawkOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
-		case GUI::kCloseCmd:
-			close();
-			break;
-		default:
-			GUI::Dialog::handleCommand(sender, cmd, data);
+	case GUI::kCloseCmd:
+		close();
+		break;
+	default:
+		GUI::Dialog::handleCommand(sender, cmd, data);
 	}
 }
 
@@ -128,14 +131,14 @@ void MohawkOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, 
 
 #ifdef ENABLE_MYST
 
-MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) :
-		MohawkOptionsDialog(),
-		_vm(vm),
-		_canDropPage(false),
-		_canShowMap(false),
-		_canReturnToMenu(false),
-		_loadSlot(-1),
-		_saveSlot(-1) {
+MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst *vm)
+  : MohawkOptionsDialog()
+  , _vm(vm)
+  , _canDropPage(false)
+  , _canShowMap(false)
+  , _canReturnToMenu(false)
+  , _loadSlot(-1)
+  , _saveSlot(-1) {
 
 	_loadButton = new GUI::ButtonWidget(this, 245, 25, 100, 25, _("~L~oad"), nullptr, kLoadCmd);
 	_saveButton = new GUI::ButtonWidget(this, 245, 60, 100, 25, _("~S~ave"), nullptr, kSaveCmd);
@@ -250,8 +253,7 @@ void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 	case kQuitCmd: {
 		setResult(kActionShowCredits);
 		close();
-	}
-		break;
+	} break;
 	case GUI::kOKCmd:
 		_vm->_gameState->_globals.zipMode = _zipModeCheckbox->getState();
 		_vm->_gameState->_globals.transitions = _transitionsCheckbox->getState();
@@ -279,9 +281,9 @@ void MystOptionsDialog::setCanReturnToMenu(bool canReturnToMenu) {
 
 #ifdef ENABLE_RIVEN
 
-RivenOptionsDialog::RivenOptionsDialog(MohawkEngine_Riven* vm) :
-		MohawkOptionsDialog(),
-		_vm(vm) {
+RivenOptionsDialog::RivenOptionsDialog(MohawkEngine_Riven *vm)
+  : MohawkOptionsDialog()
+  , _vm(vm) {
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 220, 15, _("~Z~ip Mode Activated"), nullptr, kZipCmd);
 	_waterEffectCheckbox = new GUI::CheckboxWidget(this, 15, 35, 220, 15, _("~W~ater Effect Enabled"), nullptr, kWaterCmd);
 

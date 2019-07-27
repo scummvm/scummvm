@@ -263,7 +263,7 @@ TheoraDecoder::TheoraVideoTrack::TheoraVideoTrack(const Graphics::PixelFormat &f
 
 	// Set up a display surface
 	_displaySurface.init(theoraInfo.pic_width, theoraInfo.pic_height, _surface.pitch,
-	                    _surface.getBasePtr(theoraInfo.pic_x, theoraInfo.pic_y), format);
+	                     _surface.getBasePtr(theoraInfo.pic_x, theoraInfo.pic_y), format);
 
 	// Set the frame rate
 	_frameRate = Common::Rational(theoraInfo.fps_numerator, theoraInfo.fps_denominator);
@@ -330,8 +330,8 @@ void TheoraDecoder::TheoraVideoTrack::translateYUVtoRGBA(th_ycbcr_buffer &YUVBuf
 
 static vorbis_info *info = 0;
 
-TheoraDecoder::VorbisAudioTrack::VorbisAudioTrack(Audio::Mixer::SoundType soundType, vorbis_info &vorbisInfo) :
-		AudioTrack(soundType) {
+TheoraDecoder::VorbisAudioTrack::VorbisAudioTrack(Audio::Mixer::SoundType soundType, vorbis_info &vorbisInfo)
+  : AudioTrack(soundType) {
 	vorbis_synthesis_init(&_vorbisDSP, &vorbisInfo);
 	vorbis_block_init(&_vorbisDSP, &_vorbisBlock);
 	info = &vorbisInfo;
@@ -485,7 +485,7 @@ void TheoraDecoder::ensureAudioBufferSize() {
 			queuePage(&_oggPage);
 
 		bool queuedAudio = queueAudio();
-		if ((_vorbisOut.e_o_s  || _fileStream->eos()) && !queuedAudio) {
+		if ((_vorbisOut.e_o_s || _fileStream->eos()) && !queuedAudio) {
 			_audioTrack->setEndOfAudio();
 			break;
 		}

@@ -23,12 +23,12 @@
 #ifndef MASSADD_DIALOG_H
 #define MASSADD_DIALOG_H
 
-#include "gui/dialog.h"
-#include "gui/widgets/list.h"
 #include "common/fs.h"
 #include "common/hashmap.h"
 #include "common/stack.h"
 #include "common/str.h"
+#include "gui/dialog.h"
+#include "gui/widgets/list.h"
 
 namespace GUI {
 
@@ -36,6 +36,7 @@ class StaticTextWidget;
 
 class MassAddDialog : public Dialog {
 	typedef Common::Array<Common::String> StringArray;
+
 public:
 	MassAddDialog(const Common::FSNode &startDir);
 
@@ -50,7 +51,7 @@ public:
 	}
 
 private:
-	Common::Stack<Common::FSNode>  _scanStack;
+	Common::Stack<Common::FSNode> _scanStack;
 	DetectedGames _games;
 
 	/**
@@ -58,7 +59,7 @@ private:
 	 * Used to detect whether a potential new target is already present in the
 	 * config manager.
 	 */
-	Common::HashMap<Common::String, StringArray>	_pathToTargets;
+	Common::HashMap<Common::String, StringArray> _pathToTargets;
 
 	int _dirsScanned;
 	int _oldGamesCount;
@@ -70,7 +71,6 @@ private:
 
 	ListWidget *_list;
 };
-
 
 } // End of namespace GUI
 

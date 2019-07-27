@@ -31,13 +31,13 @@
 
 #include "sword25/gfx/dynamicbitmap.h"
 #include "sword25/gfx/bitmapresource.h"
-#include "sword25/package/packagemanager.h"
 #include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/package/packagemanager.h"
 
 namespace Sword25 {
 
-DynamicBitmap::DynamicBitmap(RenderObjectPtr<RenderObject> parentPtr, uint width, uint height) :
-	Bitmap(parentPtr, TYPE_DYNAMICBITMAP) {
+DynamicBitmap::DynamicBitmap(RenderObjectPtr<RenderObject> parentPtr, uint width, uint height)
+  : Bitmap(parentPtr, TYPE_DYNAMICBITMAP) {
 	// The BS_BITMAP could not be created, so stop.
 	if (!_initSuccess)
 		return;
@@ -45,8 +45,8 @@ DynamicBitmap::DynamicBitmap(RenderObjectPtr<RenderObject> parentPtr, uint width
 	_initSuccess = createRenderedImage(width, height);
 }
 
-DynamicBitmap::DynamicBitmap(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle) :
-	Bitmap(parentPtr, TYPE_DYNAMICBITMAP, handle) {
+DynamicBitmap::DynamicBitmap(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle)
+  : Bitmap(parentPtr, TYPE_DYNAMICBITMAP, handle) {
 	_initSuccess = unpersist(reader);
 }
 
@@ -86,10 +86,9 @@ bool DynamicBitmap::doRender(RectangleList *updateRects) {
 		// a bit slow when drawing videos, but it's not the main
 		// bottleneck.
 		result = _image->blit(_absoluteX, _absoluteY,
-		                       (_flipV ? Graphics::FLIP_V : 0) |
-		                       (_flipH ? Graphics::FLIP_H : 0),
-		                       0, _modulationColor, -1, -1,
-							   updateRects);
+		                      (_flipV ? Graphics::FLIP_V : 0) | (_flipH ? Graphics::FLIP_H : 0),
+		                      0, _modulationColor, -1, -1,
+		                      updateRects);
 #else
 		// WIP: A bit faster code
 
@@ -105,10 +104,9 @@ bool DynamicBitmap::doRender(RectangleList *updateRects) {
 		return true;
 	} else {
 		result = _image->blit(_absoluteX, _absoluteY,
-		                       (_flipV ? Graphics::FLIP_V : 0) |
-		                       (_flipH ? Graphics::FLIP_H : 0),
-		                       0, _modulationColor, _width, _height,
-							   updateRects);
+		                      (_flipV ? Graphics::FLIP_V : 0) | (_flipH ? Graphics::FLIP_H : 0),
+		                      0, _modulationColor, _width, _height,
+		                      updateRects);
 	}
 
 	return result;

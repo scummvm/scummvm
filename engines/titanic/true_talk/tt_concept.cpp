@@ -21,26 +21,47 @@
  */
 
 #include "titanic/true_talk/tt_concept.h"
+#include "titanic/titanic.h"
 #include "titanic/true_talk/script_handler.h"
 #include "titanic/true_talk/tt_script_base.h"
 #include "titanic/true_talk/tt_word.h"
-#include "titanic/titanic.h"
 
 namespace Titanic {
 
-TTconcept::TTconcept() : _string1(" "), _string2(" "),
-		_nextP(nullptr), _scriptP(nullptr), _wordP(nullptr), _word2P(nullptr), _status(SS_VALID),
-		_scriptType(ST_UNKNOWN_SCRIPT), _field14(0), _field1C(0), _field20(0), _field30(0), _field34(0) {
+TTconcept::TTconcept()
+  : _string1(" ")
+  , _string2(" ")
+  , _nextP(nullptr)
+  , _scriptP(nullptr)
+  , _wordP(nullptr)
+  , _word2P(nullptr)
+  , _status(SS_VALID)
+  , _scriptType(ST_UNKNOWN_SCRIPT)
+  , _field14(0)
+  , _field1C(0)
+  , _field20(0)
+  , _field30(0)
+  , _field34(0) {
 	if (setStatus())
 		setScriptType(ST_UNKNOWN_SCRIPT);
 	else
 		reset();
 }
 
-TTconcept::TTconcept(TTscriptBase *script, ScriptType scriptType) :
-		_string1(" "), _string2(" "), _nextP(nullptr), _wordP(nullptr), _word2P(nullptr), _scriptP(nullptr),
-		_status(SS_VALID), _scriptType(ST_UNKNOWN_SCRIPT), _field14(0), _field1C(0), _field20(0), _field30(0),
-		_field34(0) {
+TTconcept::TTconcept(TTscriptBase *script, ScriptType scriptType)
+  : _string1(" ")
+  , _string2(" ")
+  , _nextP(nullptr)
+  , _wordP(nullptr)
+  , _word2P(nullptr)
+  , _scriptP(nullptr)
+  , _status(SS_VALID)
+  , _scriptType(ST_UNKNOWN_SCRIPT)
+  , _field14(0)
+  , _field1C(0)
+  , _field20(0)
+  , _field30(0)
+  , _field34(0) {
 	if (!script->getStatus()) {
 		setScriptType(scriptType);
 		_scriptP = script;
@@ -53,10 +74,21 @@ TTconcept::TTconcept(TTscriptBase *script, ScriptType scriptType) :
 		reset();
 }
 
-TTconcept::TTconcept(TTword *word, ScriptType scriptType) :
-		_string1(" "), _string2(" "), _nextP(nullptr), _wordP(nullptr), _word2P(nullptr), _scriptP(nullptr),
-		_status(SS_VALID), _scriptType(ST_UNKNOWN_SCRIPT), _field14(0), _field1C(0), _field20(0),
-		_field30(0), _field34(0), _flag(false) {
+TTconcept::TTconcept(TTword *word, ScriptType scriptType)
+  : _string1(" ")
+  , _string2(" ")
+  , _nextP(nullptr)
+  , _wordP(nullptr)
+  , _word2P(nullptr)
+  , _scriptP(nullptr)
+  , _status(SS_VALID)
+  , _scriptType(ST_UNKNOWN_SCRIPT)
+  , _field14(0)
+  , _field1C(0)
+  , _field20(0)
+  , _field30(0)
+  , _field34(0)
+  , _flag(false) {
 	if (!word || !setStatus() || word->getStatus()) {
 		_status = SS_5;
 	} else {
@@ -69,11 +101,21 @@ TTconcept::TTconcept(TTword *word, ScriptType scriptType) :
 		reset();
 }
 
-TTconcept::TTconcept(TTconcept &src) :
-		_string1(src._string1), _string2(src._string2), _nextP(nullptr),
-		_wordP(nullptr), _word2P(nullptr), _scriptP(nullptr), _status(SS_VALID),
-		_scriptType(ST_UNKNOWN_SCRIPT), _field14(0), _field1C(0), _field20(0),
-		_field30(0), _field34(0), _flag(false) {
+TTconcept::TTconcept(TTconcept &src)
+  : _string1(src._string1)
+  , _string2(src._string2)
+  , _nextP(nullptr)
+  , _wordP(nullptr)
+  , _word2P(nullptr)
+  , _scriptP(nullptr)
+  , _status(SS_VALID)
+  , _scriptType(ST_UNKNOWN_SCRIPT)
+  , _field14(0)
+  , _field1C(0)
+  , _field20(0)
+  , _field30(0)
+  , _field34(0)
+  , _flag(false) {
 	if (src.getStatus()) {
 		_status = SS_5;
 	} else {
@@ -152,8 +194,7 @@ void TTconcept::reset() {
 }
 
 bool TTconcept::compareTo(const char *str) const {
-	return _wordP != nullptr &&
-		_wordP->compareTo(str);
+	return _wordP != nullptr && _wordP->compareTo(str);
 }
 
 bool TTconcept::compareTo(TTword *word) const {
@@ -247,9 +288,7 @@ int TTconcept::setOwner(TTword *src, bool dontDup) {
 }
 
 bool TTconcept::checkWordId1() const {
-	return (_wordP && (_wordP->_id == 200 || _wordP->_id == 201 ||
-		_wordP->_id == 602 || _wordP->_id == 607)) ||
-		(_scriptP && _scriptP->_id <= 2);
+	return (_wordP && (_wordP->_id == 200 || _wordP->_id == 201 || _wordP->_id == 602 || _wordP->_id == 607)) || (_scriptP && _scriptP->_id <= 2);
 }
 
 bool TTconcept::checkWordId2() const {
@@ -257,8 +296,7 @@ bool TTconcept::checkWordId2() const {
 }
 
 bool TTconcept::checkWordId3() const {
-	return isWordClass(WC_ABSTRACT) || isWordClass(WC_ADJECTIVE) ||
-		(isWordClass(WC_ADVERB) && getTheWordId() != 910);
+	return isWordClass(WC_ABSTRACT) || isWordClass(WC_ADJECTIVE) || (isWordClass(WC_ADVERB) && getTheWordId() != 910);
 }
 
 bool TTconcept::checkWordClass() const {

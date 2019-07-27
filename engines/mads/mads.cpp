@@ -20,23 +20,25 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "mads/mads.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
+#include "common/scummsys.h"
 #include "engines/util.h"
-#include "mads/mads.h"
 #include "mads/game.h"
-#include "mads/screen.h"
 #include "mads/msurface.h"
 #include "mads/resources.h"
+#include "mads/screen.h"
 #include "mads/sound.h"
 #include "mads/sprites.h"
 
 namespace MADS {
 
-MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
-		_gameDescription(gameDesc), Engine(syst), _randomSource("MADS") {
+MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc)
+  : _gameDescription(gameDesc)
+  , Engine(syst)
+  , _randomSource("MADS") {
 
 	// Set up debug channels
 	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
@@ -184,14 +186,14 @@ int MADSEngine::hypotenuse(int xv, int yv) {
 
 bool MADSEngine::canLoadGameStateCurrently() {
 	return !_game->_winStatus && !_game->globals()[5]
-		&& _dialogs->_pendingDialog == DIALOG_NONE
-		&& _events->_cursorId != CURSOR_WAIT;
+	  && _dialogs->_pendingDialog == DIALOG_NONE
+	  && _events->_cursorId != CURSOR_WAIT;
 }
 
 bool MADSEngine::canSaveGameStateCurrently() {
 	return !_game->_winStatus && !_game->globals()[5]
-		&& _dialogs->_pendingDialog == DIALOG_NONE
-		&& _events->_cursorId != CURSOR_WAIT;
+	  && _dialogs->_pendingDialog == DIALOG_NONE
+	  && _events->_cursorId != CURSOR_WAIT;
 }
 
 void MADSEngine::syncSoundSettings() {

@@ -23,13 +23,13 @@
 #include "common/config-manager.h"
 #include "common/macresman.h"
 
-#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macfontmanager.h"
+#include "graphics/macgui/macwindowmanager.h"
 
-#include "director/director.h"
 #include "director/archive.h"
-#include "director/util.h"
+#include "director/director.h"
 #include "director/lingo/lingo.h"
+#include "director/util.h"
 
 namespace Director {
 
@@ -133,7 +133,6 @@ void DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {
 			stream->seek(riffOffset);
 			Common::String fname = Common::String::format("./dumps/%s", mmmFileName.c_str());
 
-
 			if (!out.open(fname.c_str())) {
 				warning("Can not open dump file %s", fname.c_str());
 				return;
@@ -146,7 +145,6 @@ void DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {
 
 			free(buf);
 		}
-
 
 		_mainArchive = new RIFFArchive();
 
@@ -271,12 +269,12 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 		_wm->_fontMan->loadFonts(filename);
 	}
 
-	_sharedScore->loadConfig(*shardcst->getResource(MKTAG('V','W','C','F'), 1024));
+	_sharedScore->loadConfig(*shardcst->getResource(MKTAG('V', 'W', 'C', 'F'), 1024));
 
 	if (getVersion() < 4)
-		_sharedScore->loadCastDataVWCR(*shardcst->getResource(MKTAG('V','W','C','R'), 1024));
+		_sharedScore->loadCastDataVWCR(*shardcst->getResource(MKTAG('V', 'W', 'C', 'R'), 1024));
 
-	Common::Array<uint16> cast = shardcst->getResourceIDList(MKTAG('C','A','S','t'));
+	Common::Array<uint16> cast = shardcst->getResourceIDList(MKTAG('C', 'A', 'S', 't'));
 	if (cast.size() > 0) {
 		debug(0, "****** Loading %d CASt resources", cast.size());
 
@@ -296,41 +294,41 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 
 	_sharedScore->setSpriteCasts();
 
-	Common::Array<uint16> dib = shardcst->getResourceIDList(MKTAG('D','I','B',' '));
+	Common::Array<uint16> dib = shardcst->getResourceIDList(MKTAG('D', 'I', 'B', ' '));
 	if (dib.size() != 0) {
 		debugC(3, kDebugLoading, "****** Loading %d DIBs", dib.size());
 
 		for (Common::Array<uint16>::iterator iterator = dib.begin(); iterator != dib.end(); ++iterator) {
 			debugC(3, kDebugLoading, "Shared DIB %d", *iterator);
-			_sharedDIB->setVal(*iterator, shardcst->getResource(MKTAG('D','I','B',' '), *iterator));
+			_sharedDIB->setVal(*iterator, shardcst->getResource(MKTAG('D', 'I', 'B', ' '), *iterator));
 		}
 	}
 
-	Common::Array<uint16> stxt = shardcst->getResourceIDList(MKTAG('S','T','X','T'));
+	Common::Array<uint16> stxt = shardcst->getResourceIDList(MKTAG('S', 'T', 'X', 'T'));
 	if (stxt.size() != 0) {
 		debugC(3, kDebugLoading, "****** Loading %d STXTs", stxt.size());
 
 		for (Common::Array<uint16>::iterator iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
 			debugC(3, kDebugLoading, "Shared STXT %d", *iterator);
-			_sharedSTXT->setVal(*iterator, shardcst->getResource(MKTAG('S','T','X','T'), *iterator));
+			_sharedSTXT->setVal(*iterator, shardcst->getResource(MKTAG('S', 'T', 'X', 'T'), *iterator));
 		}
 	}
 
-	Common::Array<uint16> bmp = shardcst->getResourceIDList(MKTAG('B','I','T','D'));
+	Common::Array<uint16> bmp = shardcst->getResourceIDList(MKTAG('B', 'I', 'T', 'D'));
 	if (bmp.size() != 0) {
 		debugC(3, kDebugLoading, "****** Loading %d BITDs", bmp.size());
 		for (Common::Array<uint16>::iterator iterator = bmp.begin(); iterator != bmp.end(); ++iterator) {
 			debugC(3, kDebugLoading, "Shared BITD %d (%s)", *iterator, numToCastNum(*iterator - 1024));
-			_sharedBMP->setVal(*iterator, shardcst->getResource(MKTAG('B','I','T','D'), *iterator));
+			_sharedBMP->setVal(*iterator, shardcst->getResource(MKTAG('B', 'I', 'T', 'D'), *iterator));
 		}
 	}
 
-	Common::Array<uint16> sound = shardcst->getResourceIDList(MKTAG('S','N','D',' '));
+	Common::Array<uint16> sound = shardcst->getResourceIDList(MKTAG('S', 'N', 'D', ' '));
 	if (sound.size() != 0) {
 		debugC(3, kDebugLoading, "****** Loading %d SNDs", sound.size());
 		for (Common::Array<uint16>::iterator iterator = sound.begin(); iterator != sound.end(); ++iterator) {
 			debugC(3, kDebugLoading, "Shared SND  %d", *iterator);
-			_sharedSound->setVal(*iterator, shardcst->getResource(MKTAG('S','N','D',' '), *iterator));
+			_sharedSound->setVal(*iterator, shardcst->getResource(MKTAG('S', 'N', 'D', ' '), *iterator));
 		}
 	}
 

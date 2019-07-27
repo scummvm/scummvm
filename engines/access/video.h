@@ -23,15 +23,16 @@
 #ifndef ACCESS_VIDEO_H
 #define ACCESS_VIDEO_H
 
-#include "common/scummsys.h"
-#include "common/memstream.h"
-#include "access/data.h"
 #include "access/asurface.h"
+#include "access/data.h"
 #include "access/files.h"
+#include "common/memstream.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
-enum VideoFlags { VIDEOFLAG_NONE = 0, VIDEOFLAG_BG = 1 };
+enum VideoFlags { VIDEOFLAG_NONE = 0,
+	                VIDEOFLAG_BG = 1 };
 
 class VideoPlayer : public Manager {
 	struct VideoHeader {
@@ -39,6 +40,7 @@ class VideoPlayer : public Manager {
 		int _width, _height;
 		VideoFlags _flags;
 	};
+
 private:
 	BaseSurface *_vidSurface;
 	Resource *_videoData;
@@ -52,11 +54,13 @@ private:
 
 	void getFrame();
 	void setVideo(BaseSurface *vidSurface, const Common::Point &pt, int rate);
+
 public:
 	int _videoFrame;
 	bool _soundFlag;
 	int _soundFrame;
 	bool _videoEnd;
+
 public:
 	VideoPlayer(AccessEngine *vm);
 	~VideoPlayer();

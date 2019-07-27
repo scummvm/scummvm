@@ -22,17 +22,16 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
-
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
@@ -68,7 +67,7 @@ int scene21_updateCursor() {
 
 void sceneHandler21_doWiggle() {
 	g_vars->scene21_giraffeBottom->setOXY((int)(cos(g_vars->scene21_wigglePos) * 4.0) + g_vars->scene21_giraffeBottom->_ox,
-										  g_vars->scene21_giraffeBottom->_oy);
+	                                      g_vars->scene21_giraffeBottom->_oy);
 
 	g_vars->scene21_wigglePos += 0.19635;
 
@@ -98,23 +97,22 @@ int sceneHandler21(ExCommand *cmd) {
 
 		break;
 
-	case 29:
-		{
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
-				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+	case 29: {
+		StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+		if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
+			int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
-				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
+			PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
 
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param) ) {
-					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
-						|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0))
-						g_fp->processArcade(cmd);
-				}
+			if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
+				if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
+				    || (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0))
+					g_fp->processArcade(cmd);
 			}
-
-			break;
 		}
+
+		break;
+	}
 
 	case 33:
 		if (g_fp->_aniMan2) {

@@ -46,17 +46,17 @@ class KIASectionSuspects : public KIASectionBase {
 		int actorId;
 	};
 
-	bool           _isOpen;
+	bool _isOpen;
 
-	UIContainer     *_uiContainer;
-	UIImagePicker   *_buttons;
-	UIScrollBox     *_cluesScrollBox;
-	UIScrollBox     *_crimesScrollBox;
-	UICheckBox      *_whereaboutsCheckBox;
-	UICheckBox      *_MOCheckBox;
-	UICheckBox      *_replicantCheckBox;
-	UICheckBox      *_nonReplicantCheckBox;
-	UICheckBox      *_othersCheckBox;
+	UIContainer *_uiContainer;
+	UIImagePicker *_buttons;
+	UIScrollBox *_cluesScrollBox;
+	UIScrollBox *_crimesScrollBox;
+	UICheckBox *_whereaboutsCheckBox;
+	UICheckBox *_MOCheckBox;
+	UICheckBox *_replicantCheckBox;
+	UICheckBox *_nonReplicantCheckBox;
+	UICheckBox *_othersCheckBox;
 
 	bool _whereaboutsFilter;
 	bool _MOFilter;
@@ -64,25 +64,25 @@ class KIASectionSuspects : public KIASectionBase {
 	bool _nonReplicantFilter;
 	bool _othersFilter;
 
-	ActorClues    *_clues;
+	ActorClues *_clues;
 
-	int            _acquiredClueCount;
-	AcquiredClue   _acquiredClues[kClueCount];
+	int _acquiredClueCount;
+	AcquiredClue _acquiredClues[kClueCount];
 
-	int                 _suspectSelected;
-	int                 _suspectsFoundCount;
+	int _suspectSelected;
+	int _suspectsFoundCount;
 	Common::Array<bool> _suspectsFound;
 	Common::Array<bool> _suspectsWithIdentity;
 
-	int   _mouseX;
-	int   _mouseY;
+	int _mouseX;
+	int _mouseY;
 
-	int    _suspectPhotoShapeId;
-	int    _suspectPhotoNotUsed;
+	int _suspectPhotoShapeId;
+	int _suspectPhotoNotUsed;
 	Shape *_suspectPhotoShape;
 
 public:
-	int                 _crimeSelected;
+	int _crimeSelected;
 
 public:
 	KIASectionSuspects(BladeRunnerEngine *vm, ActorClues *clues);

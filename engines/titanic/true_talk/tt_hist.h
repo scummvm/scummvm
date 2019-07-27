@@ -32,6 +32,7 @@ protected:
 	int _field0;
 	TTsentence *_sentence;
 	int _status;
+
 public:
 	TThist(TTsentence *sentence);
 	virtual ~TThist();
@@ -39,7 +40,8 @@ public:
 
 class TTscriptHist : public TThist {
 public:
-	TTscriptHist(TTsentence *sentence) : TThist(sentence) {}
+	TTscriptHist(TTsentence *sentence)
+	  : TThist(sentence) {}
 };
 
 } // End of namespace Titanic

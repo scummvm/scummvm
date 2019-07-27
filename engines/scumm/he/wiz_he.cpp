@@ -22,20 +22,21 @@
 
 #ifdef ENABLE_HE
 
-#include "common/archive.h"
-#include "common/system.h"
-#include "graphics/cursorman.h"
-#include "graphics/primitives.h"
-#include "scumm/he/intern_he.h"
-#include "scumm/resource.h"
-#include "scumm/scumm.h"
-#include "scumm/util.h"
-#include "scumm/he/wiz_he.h"
-#include "scumm/he/moonbase/moonbase.h"
+#	include "scumm/he/wiz_he.h"
+#	include "common/archive.h"
+#	include "common/system.h"
+#	include "graphics/cursorman.h"
+#	include "graphics/primitives.h"
+#	include "scumm/he/intern_he.h"
+#	include "scumm/he/moonbase/moonbase.h"
+#	include "scumm/resource.h"
+#	include "scumm/scumm.h"
+#	include "scumm/util.h"
 
 namespace Scumm {
 
-Wiz::Wiz(ScummEngine_v71he *vm) : _vm(vm) {
+Wiz::Wiz(ScummEngine_v71he *vm)
+  : _vm(vm) {
 	_imagesNum = 0;
 	memset(&_images, 0, sizeof(_images));
 	memset(&_polygons, 0, sizeof(_polygons));
@@ -205,8 +206,7 @@ bool Wiz::polygonContains(const WizPolygon &pol, int x, int y) {
 		curdir = (y < pol.vert[i].y);
 
 		if (curdir != diry) {
-			if (((pol.vert[pi].y - pol.vert[i].y) * (pol.vert[i].x - x) <
-				 (pol.vert[pi].x - pol.vert[i].x) * (pol.vert[i].y - y)) == diry)
+			if (((pol.vert[pi].y - pol.vert[i].y) * (pol.vert[i].x - x) < (pol.vert[pi].x - pol.vert[i].x) * (pol.vert[i].y - y)) == diry)
 				r = !r;
 		}
 
@@ -270,7 +270,8 @@ void Wiz::copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int
 	const uint8 *dataPtr = src;
 
 	while (rh--) {
-		uint16 off = READ_LE_UINT16(dataPtr); dataPtr += 2;
+		uint16 off = READ_LE_UINT16(dataPtr);
+		dataPtr += 2;
 		const uint8 *dataPtrNext = off + dataPtr;
 		uint8 *dst1PtrNext = dst1Ptr + dstw;
 		uint8 *dst2PtrNext = dst2Ptr + dstw;
@@ -370,7 +371,7 @@ void Wiz::writeColor(uint8 *dstPtr, int dstType, uint16 color) {
 	}
 }
 
-#ifdef USE_RGB_COLOR
+#	ifdef USE_RGB_COLOR
 void Wiz::copy16BitWizImage(uint8 *dst, const uint8 *src, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *xmapPtr) {
 	Common::Rect r1, r2;
 	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
@@ -390,7 +391,7 @@ void Wiz::copy16BitWizImage(uint8 *dst, const uint8 *src, int dstPitch, int dstT
 		}
 	}
 }
-#endif
+#	endif
 
 void Wiz::copyWizImage(uint8 *dst, const uint8 *src, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, const uint8 *xmapPtr, uint8 bitDepth) {
 	Common::Rect r1, r2;
@@ -448,7 +449,7 @@ static void decodeWizMask(uint8 *&dst, uint8 &mask, int w, int maskType) {
 	}
 }
 
-#ifdef USE_RGB_COLOR
+#	ifdef USE_RGB_COLOR
 void Wiz::copyMaskWizImage(uint8 *dst, const uint8 *src, const uint8 *mask, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr) {
 	Common::Rect srcRect, dstRect;
 	if (!calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, srcRect, dstRect)) {
@@ -489,7 +490,8 @@ void Wiz::copyMaskWizImage(uint8 *dst, const uint8 *src, const uint8 *mask, int 
 
 	while (h--) {
 		w = dstRect.width();
-		uint16 lineSize = READ_LE_UINT16(maskPtr); maskPtr += 2;
+		uint16 lineSize = READ_LE_UINT16(maskPtr);
+		maskPtr += 2;
 		dataPtrNext = dataPtr + dstPitch;
 		dstPtrNext = dstPtr + dstPitch;
 		maskPtrNext = maskPtr + lineSize;
@@ -535,7 +537,7 @@ void Wiz::copyMaskWizImage(uint8 *dst, const uint8 *src, const uint8 *mask, int 
 		maskPtr = maskPtrNext;
 	}
 }
-#endif
+#	endif
 
 void Wiz::copyWizImageWithMask(uint8 *dst, const uint8 *src, int dstPitch, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int maskT, int maskP) {
 	Common::Rect srcRect, dstRect;
@@ -567,7 +569,8 @@ void Wiz::copyWizImageWithMask(uint8 *dst, const uint8 *src, int dstPitch, int d
 		xoff = srcRect.left;
 		w = srcRect.width();
 		mask = revBitMask(dstRect.left & 7);
-		off = READ_LE_UINT16(dataPtr); dataPtr += 2;
+		off = READ_LE_UINT16(dataPtr);
+		dataPtr += 2;
 		dstPtrNext = dstPtr + dstPitch;
 		dataPtrNext = dataPtr + off;
 		if (off != 0) {
@@ -626,7 +629,7 @@ void Wiz::copyWizImageWithMask(uint8 *dst, const uint8 *src, int dstPitch, int d
 	}
 }
 
-#ifdef USE_RGB_COLOR
+#	ifdef USE_RGB_COLOR
 void Wiz::copyRaw16BitWizImage(uint8 *dst, const uint8 *src, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, int transColor) {
 	Common::Rect r1, r2;
 	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
@@ -647,7 +650,7 @@ void Wiz::copyRaw16BitWizImage(uint8 *dst, const uint8 *src, int dstPitch, int d
 		src += (r1.top * srcw + r1.left) * 2;
 		dst += r2.top * dstPitch + r2.left * 2;
 		while (h--) {
-			for (int i = 0; i < w; ++ i) {
+			for (int i = 0; i < w; ++i) {
 				uint16 col = READ_LE_UINT16(src + 2 * i);
 				if (transColor == -1 || transColor != col) {
 					writeColor(dst + i * 2, dstType, col);
@@ -658,7 +661,7 @@ void Wiz::copyRaw16BitWizImage(uint8 *dst, const uint8 *src, int dstPitch, int d
 		}
 	}
 }
-#endif
+#	endif
 
 void Wiz::copyRawWizImage(uint8 *dst, const uint8 *src, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor, uint8 bitDepth) {
 	Common::Rect r1, r2;
@@ -687,8 +690,8 @@ void Wiz::copyRawWizImage(uint8 *dst, const uint8 *src, int dstPitch, int dstTyp
 	}
 }
 
-#ifdef USE_RGB_COLOR
-template<int type>
+#	ifdef USE_RGB_COLOR
+template <int type>
 void Wiz::write16BitColor(uint8 *dstPtr, const uint8 *dataPtr, int dstType, const uint8 *xmapPtr) {
 	uint16 col = READ_LE_UINT16(dataPtr);
 	if (type == kWizXMap) {
@@ -702,7 +705,7 @@ void Wiz::write16BitColor(uint8 *dstPtr, const uint8 *dataPtr, int dstType, cons
 	}
 }
 
-template<int type>
+template <int type>
 void Wiz::decompress16BitWizImage(uint8 *dst, int dstPitch, int dstType, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *xmapPtr) {
 	const uint8 *dataPtr, *dataPtrNext;
 	uint8 code;
@@ -739,7 +742,8 @@ void Wiz::decompress16BitWizImage(uint8 *dst, int dstPitch, int dstType, const u
 	while (h--) {
 		xoff = srcRect.left;
 		w = srcRect.width();
-		uint16 lineSize = READ_LE_UINT16(dataPtr); dataPtr += 2;
+		uint16 lineSize = READ_LE_UINT16(dataPtr);
+		dataPtr += 2;
 		dstPtrNext = dstPtr + dstPitch;
 		dataPtrNext = dataPtr + lineSize;
 		if (lineSize != 0) {
@@ -803,9 +807,9 @@ void Wiz::decompress16BitWizImage(uint8 *dst, int dstPitch, int dstType, const u
 		dstPtr = dstPtrNext;
 	}
 }
-#endif
+#	endif
 
-template<int type>
+template <int type>
 void Wiz::write8BitColor(uint8 *dstPtr, const uint8 *dataPtr, int dstType, const uint8 *palPtr, const uint8 *xmapPtr, uint8 bitDepth) {
 	if (bitDepth == 2) {
 		if (type == kWizXMap) {
@@ -834,7 +838,7 @@ void Wiz::write8BitColor(uint8 *dstPtr, const uint8 *dataPtr, int dstType, const
 	}
 }
 
-template<int type>
+template <int type>
 void Wiz::decompressWizImage(uint8 *dst, int dstPitch, int dstType, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr, const uint8 *xmapPtr, uint8 bitDepth) {
 	const uint8 *dataPtr, *dataPtrNext;
 	uint8 code, *dstPtr, *dstPtrNext;
@@ -873,7 +877,8 @@ void Wiz::decompressWizImage(uint8 *dst, int dstPitch, int dstType, const uint8 
 	while (h--) {
 		xoff = srcRect.left;
 		w = srcRect.width();
-		uint16 lineSize = READ_LE_UINT16(dataPtr); dataPtr += 2;
+		uint16 lineSize = READ_LE_UINT16(dataPtr);
+		dataPtr += 2;
 		dstPtrNext = dstPtr + dstPitch;
 		dataPtrNext = dataPtr + lineSize;
 		if (lineSize != 0) {
@@ -943,7 +948,7 @@ template void Wiz::decompressWizImage<kWizXMap>(uint8 *dst, int dstPitch, int ds
 template void Wiz::decompressWizImage<kWizRMap>(uint8 *dst, int dstPitch, int dstType, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr, const uint8 *xmapPtr, uint8 bitDepth);
 template void Wiz::decompressWizImage<kWizCopy>(uint8 *dst, int dstPitch, int dstType, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr, const uint8 *xmapPtr, uint8 bitDepth);
 
-template<int type>
+template <int type>
 void Wiz::decompressRawWizImage(uint8 *dst, int dstPitch, int dstType, const uint8 *src, int srcPitch, int w, int h, int transColor, const uint8 *palPtr, uint8 bitDepth) {
 	if (type == kWizRMap) {
 		assert(palPtr != 0);
@@ -985,7 +990,8 @@ int Wiz::isPixelNonTransparent(const uint8 *data, int x, int y, int w, int h, ui
 		data += READ_LE_UINT16(data) + 2;
 		--y;
 	}
-	uint16 off = READ_LE_UINT16(data); data += 2;
+	uint16 off = READ_LE_UINT16(data);
+	data += 2;
 	if (off == 0) {
 		return 0;
 	}
@@ -1028,7 +1034,8 @@ uint16 Wiz::getWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint
 		data += READ_LE_UINT16(data) + 2;
 		--y;
 	}
-	uint16 off = READ_LE_UINT16(data); data += 2;
+	uint16 off = READ_LE_UINT16(data);
+	data += 2;
 	if (off == 0) {
 		return color;
 	}
@@ -1061,7 +1068,6 @@ uint16 Wiz::getWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint
 		return (READ_LE_UINT16(data) & 1) ? color : READ_LE_UINT16(data + 2);
 	else
 		return (data[0] & 1) ? color : data[1];
-
 }
 
 uint16 Wiz::getRawWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 bitDepth, uint16 color) {
@@ -1082,7 +1088,8 @@ void Wiz::computeWizHistogram(uint32 *histogram, const uint8 *data, const Common
 
 	h = rCapt.height();
 	while (h--) {
-		uint16 off = READ_LE_UINT16(data); data += 2;
+		uint16 off = READ_LE_UINT16(data);
+		data += 2;
 		if (off != 0) {
 			const uint8 *p = data;
 			int xoffs = rCapt.left;
@@ -1124,14 +1131,16 @@ void Wiz::computeWizHistogram(uint32 *histogram, const uint8 *data, const Common
 					w -= code;
 				} else if (code & 2) {
 					code = (code >> 2) + 1;
-dec_sub2:				w -= code;
+				dec_sub2:
+					w -= code;
 					if (w < 0) {
 						code += w;
 					}
 					histogram[*p++] += code;
 				} else {
 					code = (code >> 2) + 1;
-dec_sub3:				w -= code;
+				dec_sub3:
+					w -= code;
 					if (w < 0) {
 						code += w;
 					}
@@ -1158,8 +1167,8 @@ void Wiz::computeRawWizHistogram(uint32 *histogram, const uint8 *data, int srcPi
 	}
 }
 
-#ifdef USE_RGB_COLOR
-static int wizPackType2(uint8 *dst, const uint8 *src, int srcPitch, const Common::Rect& rCapt) {
+#	ifdef USE_RGB_COLOR
+static int wizPackType2(uint8 *dst, const uint8 *src, int srcPitch, const Common::Rect &rCapt) {
 	debug(9, "wizPackType2([%d,%d,%d,%d])", rCapt.left, rCapt.top, rCapt.right, rCapt.bottom);
 	int w = rCapt.width();
 	int h = rCapt.height();
@@ -1175,9 +1184,9 @@ static int wizPackType2(uint8 *dst, const uint8 *src, int srcPitch, const Common
 	}
 	return size;
 }
-#endif
+#	endif
 
-static int wizPackType1(uint8 *dst, const uint8 *src, int srcPitch, const Common::Rect& rCapt, uint8 transColor) {
+static int wizPackType1(uint8 *dst, const uint8 *src, int srcPitch, const Common::Rect &rCapt, uint8 transColor) {
 	debug(9, "wizPackType1(%d, [%d,%d,%d,%d])", transColor, rCapt.left, rCapt.top, rCapt.right, rCapt.bottom);
 	src += rCapt.top * srcPitch + rCapt.left;
 	int w = rCapt.width();
@@ -1192,7 +1201,7 @@ static int wizPackType1(uint8 *dst, const uint8 *src, int srcPitch, const Common
 		int runCountSame = 0;
 		int runCountDiff = 0;
 		uint8 prevColor = src[0];
-		for (int i = 1; i < w; ) {
+		for (int i = 1; i < w;) {
 			uint8 color = src[i++];
 			if (i == 2) {
 				if (prevColor == color) {
@@ -1296,7 +1305,7 @@ static int wizPackType1(uint8 *dst, const uint8 *src, int srcPitch, const Common
 	return dataSize;
 }
 
-static int wizPackType0(uint8 *dst, const uint8 *src, int srcPitch, const Common::Rect& rCapt) {
+static int wizPackType0(uint8 *dst, const uint8 *src, int srcPitch, const Common::Rect &rCapt) {
 	debug(9, "wizPackType0([%d,%d,%d,%d])", rCapt.left, rCapt.top, rCapt.right, rCapt.bottom);
 	int w = rCapt.width();
 	int h = rCapt.height();
@@ -1312,7 +1321,7 @@ static int wizPackType0(uint8 *dst, const uint8 *src, int srcPitch, const Common
 	return size;
 }
 
-void Wiz::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, int compType) {
+void Wiz::captureWizImage(int resNum, const Common::Rect &r, bool backBuffer, int compType) {
 	uint8 *src = NULL;
 	VirtScreen *pvs = &_vm->_virtscr[kMainVirtScreen];
 	if (backBuffer) {
@@ -1323,7 +1332,7 @@ void Wiz::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, in
 	captureImage(src, pvs->pitch, pvs->w, pvs->h, resNum, r, compType);
 }
 
-void Wiz::captureImage(uint8 *src, int srcPitch, int srcw, int srch, int resNum, const Common::Rect& r, int compType) {
+void Wiz::captureImage(uint8 *src, int srcPitch, int srcw, int srch, int resNum, const Common::Rect &r, int compType) {
 	debug(0, "captureImage(%d, %d, [%d,%d,%d,%d])", resNum, compType, r.left, r.top, r.right, r.bottom);
 	Common::Rect rCapt(srcw, srch);
 	if (rCapt.intersects(r)) {
@@ -1352,11 +1361,11 @@ void Wiz::captureImage(uint8 *src, int srcPitch, int srcw, int srch, int resNum,
 		case 1:
 			dataSize = wizPackType1(0, src, srcPitch, rCapt, transColor);
 			break;
-#ifdef USE_RGB_COLOR
+#	ifdef USE_RGB_COLOR
 		case 2:
 			dataSize = wizPackType2(0, src, srcPitch, rCapt);
 			break;
-#endif
+#	endif
 		default:
 			error("unhandled compression type %d", compType);
 			break;
@@ -1400,11 +1409,11 @@ void Wiz::captureImage(uint8 *src, int srcPitch, int srcw, int srch, int resNum,
 		case 1:
 			wizPackType1(wizImg + headerSize, src, srcPitch, rCapt, transColor);
 			break;
-#ifdef USE_RGB_COLOR
+#	ifdef USE_RGB_COLOR
 		case 2:
 			wizPackType2(wizImg + headerSize, src, srcPitch, rCapt);
 			break;
-#endif
+#	endif
 		default:
 			break;
 		}
@@ -1443,17 +1452,17 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 	if (shadow) {
 		dataPtr = _vm->getResourceAddress(rtImage, shadow);
 		assert(dataPtr);
-		xmapPtr = _vm->findResourceData(MKTAG('X','M','A','P'), dataPtr);
+		xmapPtr = _vm->findResourceData(MKTAG('X', 'M', 'A', 'P'), dataPtr);
 		assert(xmapPtr);
 	}
 
 	dataPtr = _vm->getResourceAddress(rtImage, resNum);
 	assert(dataPtr);
 
-	uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), dataPtr, state, 0);
+	uint8 *wizh = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'H'), dataPtr, state, 0);
 	assert(wizh);
-	uint32 comp   = READ_LE_UINT32(wizh + 0x0);
-	uint32 width  = READ_LE_UINT32(wizh + 0x4);
+	uint32 comp = READ_LE_UINT32(wizh + 0x0);
+	uint32 width = READ_LE_UINT32(wizh + 0x4);
 	uint32 height = READ_LE_UINT32(wizh + 0x8);
 	debug(7, "wiz_header.comp = %d wiz_header.w = %d wiz_header.h = %d", comp, width, height);
 
@@ -1462,28 +1471,28 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 		uint8 *maskPtr = _vm->getResourceAddress(rtImage, maskNum);
 		assert(maskPtr);
 
-		wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), maskPtr, maskState, 0);
+		wizh = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'H'), maskPtr, maskState, 0);
 		assert(wizh);
 		assert(comp == 2 && READ_LE_UINT32(wizh + 0x0) == 1);
-		width  = READ_LE_UINT32(wizh + 0x4);
+		width = READ_LE_UINT32(wizh + 0x4);
 		height = READ_LE_UINT32(wizh + 0x8);
 
-		mask = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), maskPtr, maskState, 0);
+		mask = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), maskPtr, maskState, 0);
 		assert(mask);
 	}
 
 	if (flags & kWIFHasPalette) {
-		uint8 *pal = _vm->findWrappedBlock(MKTAG('R','G','B','S'), dataPtr, state, 0);
+		uint8 *pal = _vm->findWrappedBlock(MKTAG('R', 'G', 'B', 'S'), dataPtr, state, 0);
 		assert(pal);
 		_vm->setPaletteFromPtr(pal, 256);
 	}
 
 	uint8 *rmap = NULL;
 	if (flags & kWIFRemapPalette) {
-		rmap = _vm->findWrappedBlock(MKTAG('R','M','A','P'), dataPtr, state, 0);
+		rmap = _vm->findWrappedBlock(MKTAG('R', 'M', 'A', 'P'), dataPtr, state, 0);
 		assert(rmap);
 		if (_vm->_game.heversion <= 80 || READ_BE_UINT32(rmap) != 0x01234567) {
-			uint8 *rgbs = _vm->findWrappedBlock(MKTAG('R','G','B','S'), dataPtr, state, 0);
+			uint8 *rgbs = _vm->findWrappedBlock(MKTAG('R', 'G', 'B', 'S'), dataPtr, state, 0);
 			assert(rgbs);
 			_vm->remapHEPalette(rgbs, rmap + 4);
 		}
@@ -1521,7 +1530,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 		if (dstResNum) {
 			uint8 *dstPtr = _vm->getResourceAddress(rtImage, dstResNum);
 			assert(dstPtr);
-			dst = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dstPtr, 0, 0);
+			dst = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), dstPtr, 0, 0);
 			assert(dst);
 			getWizImageDim(dstResNum, 0, cw, ch);
 			dstPitch = cw * _vm->_bytesPerPixel;
@@ -1568,12 +1577,11 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 
 	int transColor = -1;
 	if (_vm->VAR_WIZ_TCOLOR != 0xFF) {
-		uint8 *trns = _vm->findWrappedBlock(MKTAG('T','R','N','S'), dataPtr, state, 0);
+		uint8 *trns = _vm->findWrappedBlock(MKTAG('T', 'R', 'N', 'S'), dataPtr, state, 0);
 		transColor = (trns == NULL) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : -1;
 	}
 
-	if (_vm->_game.id == GID_MOONBASE &&
-			((ScummEngine_v100he *)_vm)->_moonbase->isFOW(resNum, state, conditionBits)) {
+	if (_vm->_game.id == GID_MOONBASE && ((ScummEngine_v100he *)_vm)->_moonbase->isFOW(resNum, state, conditionBits)) {
 		((ScummEngine_v100he *)_vm)->_moonbase->renderFOW(dst, dstPitch, dstType, cw, ch, flags);
 		x1 = 0;
 		y1 = 0;
@@ -1581,7 +1589,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 		height = rScreen.height();
 	} else {
 		drawWizImageEx(dst, dataPtr, mask, dstPitch, dstType, cw, ch, x1, y1, width, height,
-			state, &rScreen, flags, palPtr, transColor, _vm->_bytesPerPixel, xmapPtr, conditionBits);
+		               state, &rScreen, flags, palPtr, transColor, _vm->_bytesPerPixel, xmapPtr, conditionBits);
 	}
 
 	if (!(flags & kWIFBlitToMemBuffer) && dstResNum == 0) {
@@ -1601,16 +1609,16 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 }
 
 void Wiz::drawWizImageEx(uint8 *dst, uint8 *dataPtr, uint8 *maskPtr, int dstPitch, int dstType,
-		int dstw, int dsth, int srcx, int srcy, int srcw, int srch, int state, const Common::Rect *rect,
-		int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint32 conditionBits) {
-	uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), dataPtr, state, 0);
+                         int dstw, int dsth, int srcx, int srcy, int srcw, int srch, int state, const Common::Rect *rect,
+                         int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint32 conditionBits) {
+	uint8 *wizh = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'H'), dataPtr, state, 0);
 	assert(wizh);
-	uint32 comp   = READ_LE_UINT32(wizh + 0x0);
-	uint32 width  = READ_LE_UINT32(wizh + 0x4);
+	uint32 comp = READ_LE_UINT32(wizh + 0x0);
+	uint32 width = READ_LE_UINT32(wizh + 0x4);
 	uint32 height = READ_LE_UINT32(wizh + 0x8);
 	debug(7, "wiz_header.comp = %d wiz_header.w = %d wiz_header.h = %d", comp, width, height);
 
-	uint8 *wizd = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dataPtr, state, 0);
+	uint8 *wizd = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), dataPtr, state, 0);
 	assert(wizd);
 
 	switch (comp) {
@@ -1630,7 +1638,7 @@ void Wiz::drawWizImageEx(uint8 *dst, uint8 *dataPtr, uint8 *maskPtr, int dstPitc
 			copyWizImage(dst, wizd, dstPitch, dstType, dstw, dsth, srcx, srcy, srcw, srch, rect, flags, palPtr, xmapPtr, bitDepth);
 		}
 		break;
-#ifdef USE_RGB_COLOR
+#	ifdef USE_RGB_COLOR
 	case 2:
 		if (maskPtr) {
 			copyMaskWizImage(dst, wizd, maskPtr, dstPitch, dstType, dstw, dsth, srcx, srcy, srcw, srch, rect, flags, palPtr);
@@ -1647,22 +1655,22 @@ void Wiz::drawWizImageEx(uint8 *dst, uint8 *dataPtr, uint8 *maskPtr, int dstPitc
 	case 9:
 		copy555WizImage(dst, wizd, dstPitch, dstType, dstw, dsth, srcx, srcy, rect, conditionBits);
 		break;
-#endif
+#	endif
 	default:
 		error("drawWizImageEx: Unhandled wiz compression type %d", comp);
 	}
 }
 
-#ifdef USE_RGB_COLOR
+#	ifdef USE_RGB_COLOR
 
 void Wiz::copyCompositeWizImage(uint8 *dst, uint8 *wizPtr, uint8 *compositeInfoBlockPtr, uint8 *maskPtr, int dstPitch, int dstType,
-		int dstw, int dsth, int srcx, int srcy, int srcw, int srch, int state, const Common::Rect *clipBox,
-		int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint32 conditionBits) {
+                                int dstw, int dsth, int srcx, int srcy, int srcw, int srch, int state, const Common::Rect *clipBox,
+                                int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint32 conditionBits) {
 
-	uint8 *nestedBlockHeader = _vm->heFindResource(MKTAG('N','E','S','T'), wizPtr);
+	uint8 *nestedBlockHeader = _vm->heFindResource(MKTAG('N', 'E', 'S', 'T'), wizPtr);
 	assert(nestedBlockHeader);
 
-	uint8 *nestedWizHeader = _vm->heFindResource(MKTAG('M','U','L','T'), nestedBlockHeader);
+	uint8 *nestedWizHeader = _vm->heFindResource(MKTAG('M', 'U', 'L', 'T'), nestedBlockHeader);
 	assert(nestedWizHeader);
 
 	uint16 layerCount = READ_LE_UINT16(compositeInfoBlockPtr);
@@ -1750,7 +1758,7 @@ void Wiz::copyCompositeWizImage(uint8 *dst, uint8 *wizPtr, uint8 *compositeInfoB
 
 		uint srcw1 = 0, srch1 = 0;
 		if (drawFlags & (kWIFFlipX | kWIFFlipY)) {
-			uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), wizPtr, subState, 0);
+			uint8 *wizh = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'H'), wizPtr, subState, 0);
 			assert(wizh);
 			srcw1 = READ_LE_UINT32(wizh + 0x4);
 			srch1 = READ_LE_UINT32(wizh + 0x8);
@@ -1768,12 +1776,12 @@ void Wiz::copyCompositeWizImage(uint8 *dst, uint8 *wizPtr, uint8 *compositeInfoB
 		}
 
 		drawWizImageEx(dst, nestedWizHeader, maskPtr, dstPitch, dstType, dstw, dsth, srcx + xPos, srcy + yPos, srcw, srch,
-			subState, clipBox, drawFlags, palPtr, transColor, bitDepth, xmapPtr, subConditionBits);
+		               subState, clipBox, drawFlags, palPtr, transColor, bitDepth, xmapPtr, subConditionBits);
 	}
 }
 
 void Wiz::copy555WizImage(uint8 *dst, uint8 *wizd, int dstPitch, int dstType,
-		int dstw, int dsth, int srcx, int srcy, const Common::Rect *clipBox, uint32 conditionBits) {
+                          int dstw, int dsth, int srcx, int srcy, const Common::Rect *clipBox, uint32 conditionBits) {
 
 	int rawROP = conditionBits & kWMSBRopMask;
 	int paramROP = (conditionBits & kWMSBReservedBits) >> kWMSBRopParamRShift;
@@ -1810,7 +1818,6 @@ void Wiz::copy555WizImage(uint8 *dst, uint8 *wizd, int dstPitch, int dstType,
 		break;
 	}
 
-
 	uint32 compID = READ_LE_UINT32(wizd);
 
 	if (compID == 0x12340102) {
@@ -1822,7 +1829,7 @@ void Wiz::copy555WizImage(uint8 *dst, uint8 *wizd, int dstPitch, int dstType,
 	}
 }
 
-#endif
+#	endif
 
 struct PolygonDrawData {
 	struct PolygonArea {
@@ -2018,7 +2025,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 			assert(_vm->_bytesPerPixel == 1);
 			uint8 *dataPtr = _vm->getResourceAddress(rtImage, resNum);
 			assert(dataPtr);
-			srcWizBuf = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dataPtr, state, 0);
+			srcWizBuf = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), dataPtr, state, 0);
 			assert(srcWizBuf);
 			freeBuffer = false;
 		}
@@ -2028,7 +2035,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 		} else {
 			uint8 *dataPtr = _vm->getResourceAddress(rtImage, resNum);
 			assert(dataPtr);
-			srcWizBuf = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dataPtr, state, 0);
+			srcWizBuf = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), dataPtr, state, 0);
 			assert(srcWizBuf);
 			freeBuffer = false;
 		}
@@ -2043,7 +2050,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 	if (dstResNum) {
 		uint8 *dstPtr = _vm->getResourceAddress(rtImage, dstResNum);
 		assert(dstPtr);
-		dst = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dstPtr, 0, 0);
+		dst = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), dstPtr, 0, 0);
 		assert(dst);
 		getWizImageDim(dstResNum, 0, dstw, dsth);
 		dstpitch = dstw * _vm->_bytesPerPixel;
@@ -2347,34 +2354,53 @@ void Wiz::createWizEmptyImage(int resNum, int img_x, int img_y, int img_w, int i
 		_vm->VAR(119) = -1;
 	} else {
 		_vm->VAR(119) = 0;
-		WRITE_BE_UINT32(res_data, 'AWIZ'); res_data += 4;
-		WRITE_BE_UINT32(res_data, res_size); res_data += 4;
-		WRITE_BE_UINT32(res_data, 'WIZH'); res_data += 4;
-		WRITE_BE_UINT32(res_data, 0x14); res_data += 4;
-		WRITE_LE_UINT32(res_data, compType); res_data += 4;
-		WRITE_LE_UINT32(res_data, img_w); res_data += 4;
-		WRITE_LE_UINT32(res_data, img_h); res_data += 4;
+		WRITE_BE_UINT32(res_data, 'AWIZ');
+		res_data += 4;
+		WRITE_BE_UINT32(res_data, res_size);
+		res_data += 4;
+		WRITE_BE_UINT32(res_data, 'WIZH');
+		res_data += 4;
+		WRITE_BE_UINT32(res_data, 0x14);
+		res_data += 4;
+		WRITE_LE_UINT32(res_data, compType);
+		res_data += 4;
+		WRITE_LE_UINT32(res_data, img_w);
+		res_data += 4;
+		WRITE_LE_UINT32(res_data, img_h);
+		res_data += 4;
 		if (flags & 1) {
-			WRITE_BE_UINT32(res_data, 'RGBS'); res_data += 4;
-			WRITE_BE_UINT32(res_data, 0x308); res_data += 4;
-			memcpy(res_data, palPtr, 0x300); res_data += 0x300;
+			WRITE_BE_UINT32(res_data, 'RGBS');
+			res_data += 4;
+			WRITE_BE_UINT32(res_data, 0x308);
+			res_data += 4;
+			memcpy(res_data, palPtr, 0x300);
+			res_data += 0x300;
 		}
 		if (flags & 2) {
-			WRITE_BE_UINT32(res_data, 'SPOT'); res_data += 4;
-			WRITE_BE_UINT32(res_data, 0x10); res_data += 4;
-			WRITE_BE_UINT32(res_data, img_x); res_data += 4;
-			WRITE_BE_UINT32(res_data, img_y); res_data += 4;
+			WRITE_BE_UINT32(res_data, 'SPOT');
+			res_data += 4;
+			WRITE_BE_UINT32(res_data, 0x10);
+			res_data += 4;
+			WRITE_BE_UINT32(res_data, img_x);
+			res_data += 4;
+			WRITE_BE_UINT32(res_data, img_y);
+			res_data += 4;
 		}
 		if (flags & 8) {
-			WRITE_BE_UINT32(res_data, 'RMAP'); res_data += 4;
-			WRITE_BE_UINT32(res_data, 0x10C); res_data += 4;
-			WRITE_BE_UINT32(res_data, 0); res_data += 4;
+			WRITE_BE_UINT32(res_data, 'RMAP');
+			res_data += 4;
+			WRITE_BE_UINT32(res_data, 0x10C);
+			res_data += 4;
+			WRITE_BE_UINT32(res_data, 0);
+			res_data += 4;
 			for (int i = 0; i < 256; ++i) {
 				*res_data++ = i;
 			}
 		}
-		WRITE_BE_UINT32(res_data, 'WIZD'); res_data += 4;
-		WRITE_BE_UINT32(res_data, 8 + img_w * img_h * bitDepth); res_data += 4;
+		WRITE_BE_UINT32(res_data, 'WIZD');
+		res_data += 4;
+		WRITE_BE_UINT32(res_data, 8 + img_w * img_h * bitDepth);
+		res_data += 4;
 	}
 	_vm->_res->setModified(rtImage, resNum);
 }
@@ -2386,7 +2412,7 @@ void Wiz::fillWizRect(const WizParameters *params) {
 	}
 	uint8 *dataPtr = _vm->getResourceAddress(rtImage, params->img.resNum);
 	if (dataPtr) {
-		uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), dataPtr, state, 0);
+		uint8 *wizh = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'H'), dataPtr, state, 0);
 		assert(wizh);
 		int c = READ_LE_UINT32(wizh + 0x0);
 		int w = READ_LE_UINT32(wizh + 0x4);
@@ -2411,7 +2437,7 @@ void Wiz::fillWizRect(const WizParameters *params) {
 		}
 		if (areaRect.intersects(imageRect)) {
 			areaRect.clip(imageRect);
-			uint8 *wizd = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dataPtr, state, 0);
+			uint8 *wizd = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), dataPtr, state, 0);
 			assert(wizd);
 			int dx = areaRect.width();
 			int dy = areaRect.height();
@@ -2457,7 +2483,7 @@ void Wiz::fillWizLine(const WizParameters *params) {
 		}
 		uint8 *dataPtr = _vm->getResourceAddress(rtImage, params->img.resNum);
 		if (dataPtr) {
-			uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), dataPtr, state, 0);
+			uint8 *wizh = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'H'), dataPtr, state, 0);
 			assert(wizh);
 			int c = READ_LE_UINT32(wizh + 0x0);
 			int w = READ_LE_UINT32(wizh + 0x4);
@@ -2475,7 +2501,7 @@ void Wiz::fillWizLine(const WizParameters *params) {
 			if (params->processFlags & kWPFFillColor) {
 				color = params->fillColor;
 			}
-			uint8 *wizd = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dataPtr, state, 0);
+			uint8 *wizd = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), dataPtr, state, 0);
 			assert(wizd);
 			int x1 = params->box2.left;
 			int y1 = params->box2.top;
@@ -2509,7 +2535,7 @@ void Wiz::fillWizPixel(const WizParameters *params) {
 			if (params->processFlags & kWPFNewState) {
 				state = params->img.state;
 			}
-			uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), dataPtr, state, 0);
+			uint8 *wizh = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'H'), dataPtr, state, 0);
 			assert(wizh);
 			int c = READ_LE_UINT32(wizh + 0x0);
 			int w = READ_LE_UINT32(wizh + 0x4);
@@ -2527,7 +2553,7 @@ void Wiz::fillWizPixel(const WizParameters *params) {
 				color = params->fillColor;
 			}
 			if (imageRect.contains(px, py)) {
-				uint8 *wizd = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dataPtr, state, 0);
+				uint8 *wizd = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), dataPtr, state, 0);
 				assert(wizd);
 				*(wizd + py * w + px) = color;
 			}
@@ -2542,7 +2568,7 @@ void Wiz::remapWizImagePal(const WizParameters *params) {
 	const uint8 *index = params->remapIndex;
 	uint8 *iwiz = _vm->getResourceAddress(rtImage, params->img.resNum);
 	assert(iwiz);
-	uint8 *rmap = _vm->findWrappedBlock(MKTAG('R','M','A','P'), iwiz, st, 0);
+	uint8 *rmap = _vm->findWrappedBlock(MKTAG('R', 'M', 'A', 'P'), iwiz, st, 0);
 	assert(rmap);
 	WRITE_BE_UINT32(rmap, 0x01234567);
 	while (num--) {
@@ -2570,7 +2596,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 
 			if (f) {
 				uint32 id = f->readUint32BE();
-				if (id == MKTAG('A','W','I','Z') || id == MKTAG('M','U','L','T')) {
+				if (id == MKTAG('A', 'W', 'I', 'Z') || id == MKTAG('M', 'U', 'L', 'T')) {
 					uint32 size = f->readUint32BE();
 					f->seek(0, SEEK_SET);
 					byte *p = _vm->_res->createResource(rtImage, params->img.resNum, size);
@@ -2638,26 +2664,25 @@ void Wiz::processWizImage(const WizParameters *params) {
 		captureWizPolygon(params->img.resNum, params->sourceImage, (params->processFlags & kWPFNewState) ? params->img.state : 0, params->polygonId1, params->polygonId2, params->compType);
 		break;
 	case 8: {
-			int img_w = 640;
-			if (params->processFlags & kWPFUseDefImgWidth) {
-				img_w = params->resDefImgW;
-			}
-			int img_h = 480;
-			if (params->processFlags & kWPFUseDefImgHeight) {
-				img_h = params->resDefImgH;
-			}
-			int img_x = 0;
-			int img_y = 0;
-			if (params->processFlags & 1) {
-				img_x = params->img.x1;
-				img_y = params->img.y1;
-			}
-			if (params->processFlags & kWPFParams) {
-				debug(0, "Compression %d Color Depth %d", params->params1, params->params2);
-			}
-			createWizEmptyImage(params->img.resNum, img_x, img_y, img_w, img_h);
+		int img_w = 640;
+		if (params->processFlags & kWPFUseDefImgWidth) {
+			img_w = params->resDefImgW;
 		}
-		break;
+		int img_h = 480;
+		if (params->processFlags & kWPFUseDefImgHeight) {
+			img_h = params->resDefImgH;
+		}
+		int img_x = 0;
+		int img_y = 0;
+		if (params->processFlags & 1) {
+			img_x = params->img.x1;
+			img_y = params->img.y1;
+		}
+		if (params->processFlags & kWPFParams) {
+			debug(0, "Compression %d Color Depth %d", params->params1, params->params2);
+		}
+		createWizEmptyImage(params->img.resNum, img_x, img_y, img_w, img_h);
+	} break;
 	case 9:
 		fillWizRect(params);
 		break;
@@ -2703,7 +2728,7 @@ void Wiz::getWizImageDim(int resNum, int state, int32 &w, int32 &h) {
 }
 
 void Wiz::getWizImageDim(uint8 *dataPtr, int state, int32 &w, int32 &h) {
-	uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), dataPtr, state, 0);
+	uint8 *wizh = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'H'), dataPtr, state, 0);
 	assert(wizh);
 	w = READ_LE_UINT32(wizh + 0x4);
 	h = READ_LE_UINT32(wizh + 0x8);
@@ -2716,7 +2741,7 @@ void Wiz::getWizImageSpot(int resId, int state, int32 &x, int32 &y) {
 }
 
 void Wiz::getWizImageSpot(uint8 *dataPtr, int state, int32 &x, int32 &y) {
-	uint8 *spotPtr = _vm->findWrappedBlock(MKTAG('S','P','O','T'), dataPtr, state, 0);
+	uint8 *spotPtr = _vm->findWrappedBlock(MKTAG('S', 'P', 'O', 'T'), dataPtr, state, 0);
 	if (spotPtr) {
 		x = READ_LE_UINT32(spotPtr + 0);
 		y = READ_LE_UINT32(spotPtr + 4);
@@ -2734,17 +2759,17 @@ int Wiz::getWizImageData(int resNum, int state, int type) {
 
 	switch (type) {
 	case 0:
-		wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), dataPtr, state, 0);
+		wizh = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'H'), dataPtr, state, 0);
 		assert(wizh);
 		return READ_LE_UINT32(wizh + 0x0);
 	case 1:
-		return (_vm->findWrappedBlock(MKTAG('R','G','B','S'), dataPtr, state, 0) != NULL) ? 1 : 0;
+		return (_vm->findWrappedBlock(MKTAG('R', 'G', 'B', 'S'), dataPtr, state, 0) != NULL) ? 1 : 0;
 	case 2:
-		return (_vm->findWrappedBlock(MKTAG('R','M','A','P'), dataPtr, state, 0) != NULL) ? 1 : 0;
+		return (_vm->findWrappedBlock(MKTAG('R', 'M', 'A', 'P'), dataPtr, state, 0) != NULL) ? 1 : 0;
 	case 3:
-		return (_vm->findWrappedBlock(MKTAG('T','R','N','S'), dataPtr, state, 0) != NULL) ? 1 : 0;
+		return (_vm->findWrappedBlock(MKTAG('T', 'R', 'N', 'S'), dataPtr, state, 0) != NULL) ? 1 : 0;
 	case 4:
-		return (_vm->findWrappedBlock(MKTAG('X','M','A','P'), dataPtr, state, 0) != NULL) ? 1 : 0;
+		return (_vm->findWrappedBlock(MKTAG('X', 'M', 'A', 'P'), dataPtr, state, 0) != NULL) ? 1 : 0;
 	default:
 		error("getWizImageData: Unknown type %d", type);
 	}
@@ -2758,14 +2783,14 @@ int Wiz::getWizImageStates(int resNum) {
 }
 
 int Wiz::getWizImageStates(const uint8 *dataPtr) {
-	if (READ_BE_UINT32(dataPtr) == MKTAG('M','U','L','T')) {
+	if (READ_BE_UINT32(dataPtr) == MKTAG('M', 'U', 'L', 'T')) {
 		const byte *offs, *wrap;
 
-		wrap = _vm->findResource(MKTAG('W','R','A','P'), dataPtr);
+		wrap = _vm->findResource(MKTAG('W', 'R', 'A', 'P'), dataPtr);
 		if (wrap == NULL)
 			return 1;
 
-		offs = _vm->findResourceData(MKTAG('O','F','F','S'), wrap);
+		offs = _vm->findResourceData(MKTAG('O', 'F', 'F', 'S'), wrap);
 		if (offs == NULL)
 			return 1;
 
@@ -2784,7 +2809,7 @@ int Wiz::isWizPixelNonTransparent(int resNum, int state, int x, int y, int flags
 
 int Wiz::isWizPixelNonTransparent(uint8 *data, int state, int x, int y, int flags) {
 	int ret = 0;
-	uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), data, state, 0);
+	uint8 *wizh = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'H'), data, state, 0);
 	assert(wizh);
 	int c = READ_LE_UINT32(wizh + 0x0);
 	int w = READ_LE_UINT32(wizh + 0x4);
@@ -2797,7 +2822,7 @@ int Wiz::isWizPixelNonTransparent(uint8 *data, int state, int x, int y, int flag
 		return color != 0xffff;
 	}
 
-	uint8 *wizd = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), data, state, 0);
+	uint8 *wizd = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), data, state, 0);
 	assert(wizd);
 	if (x >= 0 && x < w && y >= 0 && y < h) {
 		if (flags & kWIFFlipX) {
@@ -2817,7 +2842,7 @@ int Wiz::isWizPixelNonTransparent(uint8 *data, int state, int x, int y, int flag
 		case 1:
 			ret = isPixelNonTransparent(wizd, x, y, w, h, 1);
 			break;
-#ifdef USE_RGB_COLOR
+#	ifdef USE_RGB_COLOR
 		case 2:
 			ret = getRawWizPixelColor(wizd, x, y, w, h, 2, _vm->VAR(_vm->VAR_WIZ_TCOLOR)) != _vm->VAR(_vm->VAR_WIZ_TCOLOR) ? 1 : 0;
 			break;
@@ -2830,7 +2855,7 @@ int Wiz::isWizPixelNonTransparent(uint8 *data, int state, int x, int y, int flag
 		case 5:
 			ret = isPixelNonTransparent(wizd, x, y, w, h, 2);
 			break;
-#endif
+#	endif
 		default:
 			error("isWizPixelNonTransparent: Unhandled wiz compression type %d", c);
 			break;
@@ -2843,7 +2868,7 @@ uint16 Wiz::getWizPixelColor(int resNum, int state, int x, int y) {
 	uint16 color = 0;
 	uint8 *data = _vm->getResourceAddress(rtImage, resNum);
 	assert(data);
-	uint8 *wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), data, state, 0);
+	uint8 *wizh = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'H'), data, state, 0);
 	assert(wizh);
 	int c = READ_LE_UINT32(wizh + 0x0);
 	int w = READ_LE_UINT32(wizh + 0x4);
@@ -2855,7 +2880,7 @@ uint16 Wiz::getWizPixelColor(int resNum, int state, int x, int y) {
 		return color;
 	}
 
-	uint8 *wizd = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), data, state, 0);
+	uint8 *wizd = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), data, state, 0);
 	assert(wizd);
 	switch (c) {
 	case 0:
@@ -2868,7 +2893,7 @@ uint16 Wiz::getWizPixelColor(int resNum, int state, int x, int y) {
 	case 1:
 		color = getWizPixelColor(wizd, x, y, w, h, 1, _vm->VAR(_vm->VAR_WIZ_TCOLOR));
 		break;
-#ifdef USE_RGB_COLOR
+#	ifdef USE_RGB_COLOR
 	case 2:
 		color = getRawWizPixelColor(wizd, x, y, w, h, 2, _vm->VAR(_vm->VAR_WIZ_TCOLOR));
 		break;
@@ -2878,7 +2903,7 @@ uint16 Wiz::getWizPixelColor(int resNum, int state, int x, int y) {
 	case 5:
 		color = getWizPixelColor(wizd, x, y, w, h, 2, _vm->VAR(_vm->VAR_WIZ_TCOLOR));
 		break;
-#endif
+#	endif
 	default:
 		error("getWizPixelColor: Unhandled wiz compression type %d", c);
 		break;
@@ -2893,13 +2918,13 @@ int ScummEngine_v90he::computeWizHistogram(int resNum, int state, int x, int y, 
 		Common::Rect rCapt(x, y, w + 1, h + 1);
 		uint8 *data = getResourceAddress(rtImage, resNum);
 		assert(data);
-		uint8 *wizh = findWrappedBlock(MKTAG('W','I','Z','H'), data, state, 0);
+		uint8 *wizh = findWrappedBlock(MKTAG('W', 'I', 'Z', 'H'), data, state, 0);
 		assert(wizh);
 		int c = READ_LE_UINT32(wizh + 0x0);
 		w = READ_LE_UINT32(wizh + 0x4);
 		h = READ_LE_UINT32(wizh + 0x8);
 		Common::Rect rWiz(w, h);
-		uint8 *wizd = findWrappedBlock(MKTAG('W','I','Z','D'), data, state, 0);
+		uint8 *wizd = findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), data, state, 0);
 		assert(wizd);
 		if (rCapt.intersects(rWiz)) {
 			rCapt.clip(rWiz);

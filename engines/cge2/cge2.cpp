@@ -25,26 +25,28 @@
  * Copyright (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon
  */
 
-#include "engines/util.h"
-#include "common/config-manager.h"
-#include "common/debug.h"
-#include "common/debug-channels.h"
 #include "cge2/cge2.h"
 #include "cge2/bitmap.h"
-#include "cge2/vga13h.h"
-#include "cge2/sound.h"
-#include "cge2/text.h"
-#include "cge2/hero.h"
+#include "cge2/cge2_main.h"
 #include "cge2/general.h"
+#include "cge2/hero.h"
+#include "cge2/map.h"
+#include "cge2/sound.h"
 #include "cge2/spare.h"
 #include "cge2/talk.h"
-#include "cge2/cge2_main.h"
-#include "cge2/map.h"
+#include "cge2/text.h"
+#include "cge2/vga13h.h"
+#include "common/config-manager.h"
+#include "common/debug-channels.h"
+#include "common/debug.h"
+#include "engines/util.h"
 
 namespace CGE2 {
 
 CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
-	: Engine(syst), _gameDescription(gameDescription), _randomSource("cge2") {
+  : Engine(syst)
+  , _gameDescription(gameDescription)
+  , _randomSource("cge2") {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(kCGE2DebugOpcode, "opcode", "CGE2 opcode debug channel");
@@ -186,7 +188,7 @@ void CGE2Engine::deinit() {
 
 bool CGE2Engine::hasFeature(EngineFeature f) const {
 	return (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime)
-		|| (f == kSupportsRTL);
+	  || (f == kSupportsRTL);
 }
 
 Common::Error CGE2Engine::run() {

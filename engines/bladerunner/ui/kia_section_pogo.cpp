@@ -25,10 +25,10 @@
 #include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/font.h"
+#include "bladerunner/game_constants.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/time.h"
-#include "bladerunner/game_constants.h"
 
 namespace BladeRunner {
 
@@ -212,18 +212,19 @@ const char *KIASectionPogo::kStrings[] = {
 	"Zion National Park"
 };
 
-KIASectionPogo::KIASectionPogo(BladeRunnerEngine *vm) : KIASectionBase(vm) {
+KIASectionPogo::KIASectionPogo(BladeRunnerEngine *vm)
+  : KIASectionBase(vm) {
 	_stringIndex = 0;
-	_timeLast    = 0;
+	_timeLast = 0;
 
 	for (int i = 0; i < kStringCount; ++i) {
 		_strings[i] = nullptr;
 	}
 
 	for (int i = 0; i < kLineCount; ++i) {
-		_lineTexts[i]    = nullptr;
+		_lineTexts[i] = nullptr;
 		_lineTimeouts[i] = 0;
-		_lineOffsets[i]  = 0;
+		_lineOffsets[i] = 0;
 	}
 }
 

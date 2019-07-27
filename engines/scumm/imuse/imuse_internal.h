@@ -23,11 +23,11 @@
 #ifndef SCUMM_IMUSE_INTERNAL
 #define SCUMM_IMUSE_INTERNAL
 
+#include "audio/mididrv.h"
 #include "common/scummsys.h"
 #include "common/serializer.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse/instrument.h"
-#include "audio/mididrv.h"
 
 class MidiParser;
 class OSystem;
@@ -40,12 +40,10 @@ struct ImTrigger;
 struct SustainingNotes;
 struct CommandQueue;
 struct IsNoteCmdData;
-class  Player;
+class Player;
 struct Part;
-class  IMuseInternal;
-class  IMuseSysex_Scumm;
-
-
+class IMuseInternal;
+class IMuseSysex_Scumm;
 
 //////////////////////////////////////////////////
 //
@@ -59,7 +57,6 @@ class  IMuseSysex_Scumm;
 #define COMMAND_ID 1
 
 #define MDPG_TAG "MDpg"
-
 
 ////////////////////////////////////////
 //
@@ -82,8 +79,6 @@ inline int transpose_clamp(int a, int b, int c) {
 		a -= (a - c + 11) / 12 * 12;
 	return a;
 }
-
-
 
 //////////////////////////////////////////////////
 //
@@ -152,8 +147,6 @@ struct CommandQueue {
 	uint16 array[8];
 	CommandQueue() { memset(this, 0, sizeof(CommandQueue)); }
 };
-
-
 
 //////////////////////////////////////////////////
 //
@@ -227,7 +220,7 @@ protected:
 	void maybe_set_program(byte *data);
 	void maybe_set_transpose_part(byte *data);
 	void turn_off_pedals();
-	int  query_part_param(int param, byte chan);
+	int query_part_param(int param, byte chan);
 	void turn_off_parts();
 	void play_active_notes();
 
@@ -292,8 +285,6 @@ public:
 	void metaEvent(byte type, byte *data, uint16 length);
 };
 
-
-
 //////////////////////////////////////////////////
 //
 // Part pseudo-class definition
@@ -342,7 +333,7 @@ struct Part : public Common::Serializable {
 	void chorusLevel(byte value);
 	void allNotesOff();
 
-	void set_param(byte param, int value) { }
+	void set_param(byte param, int value) {}
 	void init();
 	void setup(Player *player);
 	void uninit();
@@ -372,8 +363,6 @@ private:
 	void sendPanPosition(uint8 value);
 	void sendEffectLevel(uint8 value);
 };
-
-
 
 /**
  * SCUMM implementation of IMuse.
@@ -419,8 +408,8 @@ protected:
 
 	int _tempoFactor;
 
-	int  _player_limit;       // Limits how many simultaneous music tracks are played
-	bool _recycle_players;    // Can we stop a player in order to start another one?
+	int _player_limit; // Limits how many simultaneous music tracks are played
+	bool _recycle_players; // Can we stop a player in order to start another one?
 
 	uint _queue_end, _queue_pos, _queue_sound;
 	byte _queue_adding;
@@ -458,8 +447,8 @@ protected:
 	enum ChunkType {
 		kMThd = 1,
 		kFORM = 2,
-		kMDhd = 4,  // Used in MI2 and INDY4. Contain certain start parameters (priority, volume, etc. ) for the player.
-		kMDpg = 8   // These chunks exist in DOTT and SAMNMAX. They don't get processed, however.
+		kMDhd = 4, // Used in MI2 and INDY4. Contain certain start parameters (priority, volume, etc. ) for the player.
+		kMDpg = 8 // These chunks exist in DOTT and SAMNMAX. They don't get processed, however.
 	};
 
 	byte *findStartOfSound(int sound, int ct = (kMThd | kFORM));

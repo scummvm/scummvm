@@ -23,8 +23,8 @@
 #ifndef AGOS_SIMON1_ADLIB_H
 #define AGOS_SIMON1_ADLIB_H
 
-#include "audio/mididrv.h"
 #include "audio/fmopl.h"
+#include "audio/mididrv.h"
 
 namespace AGOS {
 
@@ -45,6 +45,7 @@ public:
 
 	virtual MidiChannel *allocateChannel() { return 0; }
 	virtual MidiChannel *getPercussionChannel() { return 0; }
+
 private:
 	bool _isOpen;
 

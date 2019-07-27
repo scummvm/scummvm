@@ -21,18 +21,18 @@
  */
 
 #if defined(WIN32)
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#	define WIN32_LEAN_AND_MEAN
+#	include <windows.h>
 #endif
 
 #define TRANSLATIONS_DAT_VER 3
 
-#include "common/translation.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #ifdef USE_TRANSLATION
 
@@ -44,7 +44,9 @@ bool operator<(const TLanguage &l, const TLanguage &r) {
 	return strcmp(l.name, r.name) < 0;
 }
 
-TranslationManager::TranslationManager() : _currentLang(-1), _charmap(nullptr) {
+TranslationManager::TranslationManager()
+  : _currentLang(-1)
+  , _charmap(nullptr) {
 	loadTranslationsInfoDat();
 
 	// Set the default language
@@ -130,15 +132,11 @@ const char *TranslationManager::getTranslation(const char *message, const char *
 			// Get the range of messages with the same ID (but different context)
 			leftIndex = rightIndex = midIndex;
 			while (
-			    leftIndex > 0 &&
-			    _currentTranslationMessages[leftIndex - 1].msgid == m->msgid
-			) {
+			  leftIndex > 0 && _currentTranslationMessages[leftIndex - 1].msgid == m->msgid) {
 				--leftIndex;
 			}
 			while (
-			    rightIndex < (int)_currentTranslationMessages.size() - 1 &&
-			    _currentTranslationMessages[rightIndex + 1].msgid == m->msgid
-			) {
+			  rightIndex < (int)_currentTranslationMessages.size() - 1 && _currentTranslationMessages[rightIndex + 1].msgid == m->msgid) {
 				++rightIndex;
 			}
 			// Find the context we want
@@ -231,8 +229,8 @@ bool TranslationManager::openTranslationsFile(File &inFile) {
 	ArchiveMemberList fileList;
 	SearchMan.listMatchingMembers(fileList, "translations.dat");
 	for (ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
-		ArchiveMember       const &m      = **it;
-		SeekableReadStream *const  stream = m.createReadStream();
+		ArchiveMember const &m = **it;
+		SeekableReadStream *const stream = m.createReadStream();
 		if (stream && inFile.open(stream, m.getName())) {
 			if (checkHeader(inFile))
 				return true;
@@ -269,7 +267,7 @@ bool TranslationManager::openTranslationsFile(const FSNode &node, File &inFile, 
 		return false;
 
 	for (FSList::iterator i = fileList.begin(); i != fileList.end(); ++i) {
-		if (openTranslationsFile(*i, inFile, depth == -1 ? - 1 : depth - 1))
+		if (openTranslationsFile(*i, inFile, depth == -1 ? -1 : depth - 1))
 			return true;
 	}
 
@@ -423,7 +421,6 @@ void TranslationManager::loadLanguageDat(int index) {
 		for (int i = 0; i < 256; ++i)
 			_charmap[i] = in.readUint32BE();
 	}
-
 }
 
 bool TranslationManager::checkHeader(File &in) {

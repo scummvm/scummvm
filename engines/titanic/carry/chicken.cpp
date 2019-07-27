@@ -28,24 +28,28 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CChicken, CCarry)
-	ON_MESSAGE(UseWithOtherMsg)
-	ON_MESSAGE(UseWithCharMsg)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(VisibleMsg)
-	ON_MESSAGE(TimerMsg)
-	ON_MESSAGE(PETGainedObjectMsg)
-	ON_MESSAGE(ParrotTriesChickenMsg)
-	ON_MESSAGE(MouseDragEndMsg)
-	ON_MESSAGE(PETObjectStateMsg)
-	ON_MESSAGE(PETLostObjectMsg)
+ON_MESSAGE(UseWithOtherMsg)
+ON_MESSAGE(UseWithCharMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(VisibleMsg)
+ON_MESSAGE(TimerMsg)
+ON_MESSAGE(PETGainedObjectMsg)
+ON_MESSAGE(ParrotTriesChickenMsg)
+ON_MESSAGE(MouseDragEndMsg)
+ON_MESSAGE(PETObjectStateMsg)
+ON_MESSAGE(PETLostObjectMsg)
 END_MESSAGE_MAP()
 
 int CChicken::_temperature;
 
 #define HOT_TEMPERATURE 120
 
-CChicken::CChicken() : CCarry(), _condiment("None"),
-		_greasy(true), _inactive(false), _timerId(0) {
+CChicken::CChicken()
+  : CCarry()
+  , _condiment("None")
+  , _greasy(true)
+  , _inactive(false)
+  , _timerId(0) {
 }
 
 void CChicken::save(SimpleFile *file, int indent) {

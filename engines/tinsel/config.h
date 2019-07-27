@@ -29,8 +29,8 @@ namespace Tinsel {
 
 // double click timer initial value
 enum {
-	DOUBLE_CLICK_TIME	= 10,	// 10 @ 18Hz = .55 sec
-	DEFTEXTSPEED		= 0
+	DOUBLE_CLICK_TIME = 10, // 10 @ 18Hz = .55 sec
+	DEFTEXTSPEED = 0
 };
 
 class TinselEngine;
@@ -56,7 +56,6 @@ public:
 	void writeToDisk();
 	void readFromDisk();
 };
-
 
 extern bool isJapanMode();
 

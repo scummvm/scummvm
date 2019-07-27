@@ -27,17 +27,19 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CParrotNutBowlActor, CGameObject)
-	ON_MESSAGE(MouseButtonUpMsg)
-	ON_MESSAGE(BowlStateChangeMsg)
-	ON_MESSAGE(IsEarBowlPuzzleDone)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(ReplaceBowlAndNutsMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(NutPuzzleMsg)
+ON_MESSAGE(MouseButtonUpMsg)
+ON_MESSAGE(BowlStateChangeMsg)
+ON_MESSAGE(IsEarBowlPuzzleDone)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(ReplaceBowlAndNutsMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(NutPuzzleMsg)
 END_MESSAGE_MAP()
 
-CParrotNutBowlActor::CParrotNutBowlActor() : CGameObject(),
-		_puzzleDone(0), _state(0) {
+CParrotNutBowlActor::CParrotNutBowlActor()
+  : CGameObject()
+  , _puzzleDone(0)
+  , _state(0) {
 }
 
 void CParrotNutBowlActor::save(SimpleFile *file, int indent) {

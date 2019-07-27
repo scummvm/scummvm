@@ -24,8 +24,8 @@
 
 #include "common/archive.h"
 #include "common/file.h"
-#include "common/textconsole.h"
 #include "common/memstream.h"
+#include "common/textconsole.h"
 #include "sci/resource.h"
 #include "sci/resource_intern.h"
 #include "sci/util.h"
@@ -33,7 +33,7 @@
 namespace Sci {
 
 AudioVolumeResourceSource::AudioVolumeResourceSource(ResourceManager *resMan, const Common::String &name, ResourceSource *map, int volNum)
-	: VolumeResourceSource(name, map, volNum, kSourceAudioVolume) {
+  : VolumeResourceSource(name, map, volNum, kSourceAudioVolume) {
 
 	_audioCompressionType = 0;
 
@@ -50,9 +50,9 @@ AudioVolumeResourceSource::AudioVolumeResourceSource(ResourceManager *resMan, co
 	fileStream->seek(0, SEEK_SET);
 	const uint32 compressionType = fileStream->readUint32BE();
 	switch (compressionType) {
-	case MKTAG('M','P','3',' '):
-	case MKTAG('O','G','G',' '):
-	case MKTAG('F','L','A','C'):
+	case MKTAG('M', 'P', '3', ' '):
+	case MKTAG('O', 'G', 'G', ' '):
+	case MKTAG('F', 'L', 'A', 'C'):
 		_audioCompressionType = compressionType;
 		const uint32 numEntries = fileStream->readUint32LE();
 		if (!numEntries) {
@@ -94,7 +94,7 @@ bool Resource::loadFromWaveFile(Common::SeekableReadStream *file) {
 bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 	// Check for WAVE files here
 	uint32 riffTag = file->readUint32BE();
-	if (riffTag == MKTAG('R','I','F','F')) {
+	if (riffTag == MKTAG('R', 'I', 'F', 'F')) {
 		_size = file->readUint32LE() + 8;
 		file->seek(-8, SEEK_CUR);
 		return loadFromWaveFile(file);
@@ -106,7 +106,7 @@ bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 		ResourceType type = _resMan->convertResType(file->readByte());
 
 		if (((getType() == kResourceTypeAudio || getType() == kResourceTypeAudio36) && (type != kResourceTypeAudio))
-			|| ((getType() == kResourceTypeSync || getType() == kResourceTypeSync36) && (type != kResourceTypeSync))) {
+		    || ((getType() == kResourceTypeSync || getType() == kResourceTypeSync36) && (type != kResourceTypeSync))) {
 			warning("Resource type mismatch loading %s", _id.toString().c_str());
 			unalloc();
 			return false;
@@ -503,10 +503,7 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 			// and points to garbage in the RESOURCE.AUD. The affected audio36
 			// assets seem to be able to load successfully from one of the later
 			// CDs, so just ignore the map on this disc
-			if (g_sci->getGameId() == GID_PQSWAT &&
-				g_sci->getLanguage() == Common::EN_ANY &&
-				map->_volumeNumber == 1 &&
-				map->_mapNumber == 405) {
+			if (g_sci->getGameId() == GID_PQSWAT && g_sci->getLanguage() == Common::EN_ANY && map->_volumeNumber == 1 && map->_mapNumber == 405) {
 				continue;
 			}
 
@@ -537,9 +534,7 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 				// does not even exist in the US release), and there is a
 				// correct copy of it on CD 6, so just ignore the bad copy on
 				// CD 1
-				if (g_sci->getLanguage() == Common::DE_DEU &&
-					map->_volumeNumber == 1 &&
-					map->_mapNumber == 2020) {
+				if (g_sci->getLanguage() == Common::DE_DEU && map->_volumeNumber == 1 && map->_mapNumber == 2020) {
 					continue;
 				}
 			}
@@ -549,8 +544,7 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 			// release, but the audio resources are French so the maps don't
 			// match. Since the content was never used, just ignore these maps
 			// everywhere
-			if (g_sci->getGameId() == GID_PHANTASMAGORIA2 &&
-				(map->_mapNumber == 800 || map->_mapNumber == 4176)) {
+			if (g_sci->getGameId() == GID_PHANTASMAGORIA2 && (map->_mapNumber == 800 || map->_mapNumber == 4176)) {
 				continue;
 			}
 
@@ -716,7 +710,9 @@ bool ResourceManager::isGMTrackIncluded() {
 	return result;
 }
 
-SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVersion soundVersion) : _resMan(resMan), _soundVersion(soundVersion) {
+SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVersion soundVersion)
+  : _resMan(resMan)
+  , _soundVersion(soundVersion) {
 	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeSound, resourceNr), true);
 	int trackNr, channelNr;
 	if (!resource)
@@ -1012,9 +1008,7 @@ void AudioVolumeResourceSource::loadResource(ResourceManager *resMan, Resource *
 	// For compressed audio, using loadFromAudioVolumeSCI1 is a hack to bypass
 	// the resource type checking in loadFromAudioVolumeSCI11 (since
 	// loadFromAudioVolumeSCI1 does nothing more than read raw data)
-	if (_audioCompressionType != 0 &&
-		(res->getType() == kResourceTypeAudio ||
-		 res->getType() == kResourceTypeAudio36)) {
+	if (_audioCompressionType != 0 && (res->getType() == kResourceTypeAudio || res->getType() == kResourceTypeAudio36)) {
 		res->loadFromAudioVolumeSCI1(fileStream);
 	} else if (getSciVersion() < SCI_VERSION_1_1)
 		res->loadFromAudioVolumeSCI1(fileStream);
@@ -1095,7 +1089,7 @@ void ResourceManager::changeAudioDirectory(Common::String path) {
 		}
 	}
 
-	for (SourcesList::iterator it = _sources.begin(); it != _sources.end(); ) {
+	for (SourcesList::iterator it = _sources.begin(); it != _sources.end();) {
 		IntMapResourceSource *mapSource = dynamic_cast<IntMapResourceSource *>(*it);
 		if (mapSource && mapSource->_mapNumber != 65535) {
 			delete *it;

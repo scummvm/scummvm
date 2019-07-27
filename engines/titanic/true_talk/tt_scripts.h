@@ -35,10 +35,14 @@ class TTnpcScriptListItem : public ListItem {
 public:
 	TTnpcScript *_npcScript;
 	TTroomScript *_roomScript;
+
 public:
-	TTnpcScriptListItem() : _npcScript(nullptr), _roomScript(nullptr) {}
-	TTnpcScriptListItem(TTnpcScript *script, TTroomScript *roomScript) :
-		_npcScript(script), _roomScript(roomScript) {}
+	TTnpcScriptListItem()
+	  : _npcScript(nullptr)
+	  , _roomScript(nullptr) {}
+	TTnpcScriptListItem(TTnpcScript *script, TTroomScript *roomScript)
+	  : _npcScript(script)
+	  , _roomScript(roomScript) {}
 	virtual ~TTnpcScriptListItem() { delete _npcScript; }
 };
 
@@ -58,6 +62,7 @@ class TTscripts {
 private:
 	TTnpcScriptList _npcScripts;
 	TTroomScriptList _roomScripts;
+
 private:
 	/**
 	 * Add a named script to the named scripts list
@@ -68,6 +73,7 @@ private:
 	 * Add an unnamed script to the unnamed scripts list
 	 */
 	void addScript(TTroomScript *script);
+
 public:
 	TTscripts();
 

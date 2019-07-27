@@ -27,44 +27,36 @@
 
 #include <gxflux/gfx_con.h>
 
+#include "backends/fs/wii/wii-fs-factory.h"
 #include "common/config-manager.h"
 #include "graphics/conversion.h"
-#include "backends/fs/wii/wii-fs-factory.h"
 
 #include "osystem.h"
 
-#define ROUNDUP(x,n) (-(-(x) & -(n)))
+#define ROUNDUP(x, n) (-(-(x) & -(n)))
 #define MAX_FPS 30
 #define TLUT_GAME GX_TLUT0
 #define TLUT_MOUSE GX_TLUT1
 
 static const OSystem::GraphicsMode _supportedGraphicsModes[] = {
-	{
-		"default",
-		"Default",
-		OSystem_Wii::gmStandard
-	},
-	{
-		"defaultbilinear",
-		"Default, bilinear filtering",
-		OSystem_Wii::gmStandardFiltered
-	},
-	{
-		"ds",
-		"Double-strike",
-		OSystem_Wii::gmDoubleStrike
-	},
-	{
-		"dsbilinear",
-		"Double-strike, bilinear filtering",
-		OSystem_Wii::gmDoubleStrikeFiltered
-	},
+	{ "default",
+	  "Default",
+	  OSystem_Wii::gmStandard },
+	{ "defaultbilinear",
+	  "Default, bilinear filtering",
+	  OSystem_Wii::gmStandardFiltered },
+	{ "ds",
+	  "Double-strike",
+	  OSystem_Wii::gmDoubleStrike },
+	{ "dsbilinear",
+	  "Double-strike, bilinear filtering",
+	  OSystem_Wii::gmDoubleStrikeFiltered },
 	{ 0, 0, 0 }
 };
 
 void OSystem_Wii::initGfx() {
 	gfx_set_underscan(ConfMan.getInt("wii_video_default_underscan_x"),
-						ConfMan.getInt("wii_video_default_underscan_y"));
+	                  ConfMan.getInt("wii_video_default_underscan_y"));
 
 	_overlayWidth = gfx_video_get_width();
 	_overlayHeight = gfx_video_get_height();
@@ -75,13 +67,13 @@ void OSystem_Wii::initGfx() {
 #endif
 
 	_overlaySize = _overlayWidth * _overlayHeight * 2;
-	_overlayPixels = (uint16 *) memalign(32, _overlaySize);
+	_overlayPixels = (uint16 *)memalign(32, _overlaySize);
 
 	memset(&_texMouse, 0, sizeof(gfx_tex_t));
 	memset(&_texOverlay, 0, sizeof(gfx_tex_t));
 	memset(&_texGame, 0, sizeof(gfx_tex_t));
 
-	_cursorPalette = (u16 *) malloc(256 * 2);
+	_cursorPalette = (u16 *)malloc(256 * 2);
 	if (!_cursorPalette) {
 		printf("could not alloc palette buffer\n");
 		::abort();
@@ -90,7 +82,7 @@ void OSystem_Wii::initGfx() {
 	memset(_cursorPalette, 0, 256 * 2);
 
 	if (!gfx_tex_init(&_texOverlay, GFX_TF_RGB5A3, 0,
-						_overlayWidth, _overlayHeight)) {
+	                  _overlayWidth, _overlayHeight)) {
 		printf("could not init the overlay texture\n");
 		::abort();
 	}
@@ -174,14 +166,14 @@ void OSystem_Wii::switchVideoMode(int mode) {
 	u16 usx, usy;
 	if (map[mode].mode == GFX_MODE_DS) {
 		usx = ConfMan.getInt("wii_video_ds_underscan_x",
-								Common::ConfigManager::kApplicationDomain);
+		                     Common::ConfigManager::kApplicationDomain);
 		usy = ConfMan.getInt("wii_video_ds_underscan_y",
-								Common::ConfigManager::kApplicationDomain);
+		                     Common::ConfigManager::kApplicationDomain);
 	} else {
 		usx = ConfMan.getInt("wii_video_default_underscan_x",
-								Common::ConfigManager::kApplicationDomain);
+		                     Common::ConfigManager::kApplicationDomain);
 		usy = ConfMan.getInt("wii_video_default_underscan_y",
-								Common::ConfigManager::kApplicationDomain);
+		                     Common::ConfigManager::kApplicationDomain);
 	}
 
 	gfx_set_underscan(usx, usy);
@@ -190,7 +182,7 @@ void OSystem_Wii::switchVideoMode(int mode) {
 	updateScreenResolution();
 }
 
-const OSystem::GraphicsMode* OSystem_Wii::getSupportedGraphicsModes() const {
+const OSystem::GraphicsMode *OSystem_Wii::getSupportedGraphicsModes() const {
 	return _supportedGraphicsModes;
 }
 
@@ -222,7 +214,7 @@ Common::List<Graphics::PixelFormat> OSystem_Wii::getSupportedFormats() const {
 #endif
 
 void OSystem_Wii::initSize(uint width, uint height,
-							const Graphics::PixelFormat *format) {
+                           const Graphics::PixelFormat *format) {
 	bool update = false;
 	gfx_tex_format_t tex_format;
 
@@ -257,7 +249,7 @@ void OSystem_Wii::initSize(uint width, uint height,
 
 		if (width != newWidth || height != newHeight)
 			printf("extending texture for compability: %ux%u -> %ux%u\n",
-					width, height, newWidth, newHeight);
+			       width, height, newWidth, newHeight);
 
 		_gameWidth = newWidth;
 		_gameHeight = newHeight;
@@ -285,24 +277,22 @@ void OSystem_Wii::initSize(uint width, uint height,
 		}
 
 		printf("initSize %u*%u*%u (%u%u%u -> %u%u%u match: %d)\n",
-				_gameWidth, _gameHeight, _pfGame.bytesPerPixel * 8,
-				8 - _pfGame.rLoss, 8 - _pfGame.gLoss, 8 - _pfGame.bLoss,
-				8 - _pfGameTexture.rLoss, 8 - _pfGameTexture.gLoss,
-				8 - _pfGameTexture.bLoss, _pfGame == _pfGameTexture);
+		       _gameWidth, _gameHeight, _pfGame.bytesPerPixel * 8,
+		       8 - _pfGame.rLoss, 8 - _pfGame.gLoss, 8 - _pfGame.bLoss,
+		       8 - _pfGameTexture.rLoss, 8 - _pfGameTexture.gLoss,
+		       8 - _pfGameTexture.bLoss, _pfGame == _pfGameTexture);
 
-		_gamePixels = (u8 *) memalign(32, _gameWidth * _gameHeight *
-										_pfGame.bytesPerPixel);
-		memset(_gamePixels, 0, _gameWidth * _gameHeight *
-				_pfGame.bytesPerPixel);
+		_gamePixels = (u8 *)memalign(32, _gameWidth * _gameHeight * _pfGame.bytesPerPixel);
+		memset(_gamePixels, 0, _gameWidth * _gameHeight * _pfGame.bytesPerPixel);
 #else
 		printf("initSize %u*%u\n", _gameWidth, _gameHeight);
 
-		_gamePixels = (u8 *) memalign(32, _gameWidth * _gameHeight);
+		_gamePixels = (u8 *)memalign(32, _gameWidth * _gameHeight);
 		memset(_gamePixels, 0, _gameWidth * _gameHeight);
 #endif
 
 		if (!gfx_tex_init(&_texGame, tex_format, TLUT_GAME,
-					_gameWidth, _gameHeight)) {
+		                  _gameWidth, _gameHeight)) {
 			printf("could not init the game texture\n");
 			::abort();
 		}
@@ -330,8 +320,8 @@ void OSystem_Wii::setPalette(const byte *colors, uint start, uint num) {
 	const byte *s = colors;
 	u16 *d = _texGame.palette;
 
-	for (uint i = 0; i < num; ++i, s +=3)
-		d[start + i] = Graphics::RGBToColor<Graphics::ColorMasks<565> >(s[0], s[1], s[2]);
+	for (uint i = 0; i < num; ++i, s += 3)
+		d[start + i] = Graphics::RGBToColor<Graphics::ColorMasks<565>>(s[0], s[1], s[2]);
 
 	gfx_tex_flush_palette(&_texGame);
 
@@ -339,14 +329,14 @@ void OSystem_Wii::setPalette(const byte *colors, uint start, uint num) {
 	d = _cursorPalette;
 
 	for (uint i = 0; i < num; ++i, s += 3) {
-		d[start + i] = Graphics::ARGBToColor<Graphics::ColorMasks<3444> >(0xff, s[0], s[1], s[2]);
+		d[start + i] = Graphics::ARGBToColor<Graphics::ColorMasks<3444>>(0xff, s[0], s[1], s[2]);
 	}
 
 	if (_cursorPaletteDisabled) {
 		assert(_texMouse.palette);
 
 		memcpy((u8 *)_texMouse.palette + start * 2,
-			(u8 *)_cursorPalette + start * 2, num * 2);
+		       (u8 *)_cursorPalette + start * 2, num * 2);
 
 		_cursorPaletteDirty = true;
 	}
@@ -362,7 +352,7 @@ void OSystem_Wii::grabPalette(byte *colors, uint start, uint num) const {
 
 	u8 r, g, b;
 	for (uint i = 0; i < num; ++i, d += 3) {
-		Graphics::colorToRGB<Graphics::ColorMasks<565> >(s[start + i], r, g, b);
+		Graphics::colorToRGB<Graphics::ColorMasks<565>>(s[start + i], r, g, b);
 		d[0] = r;
 		d[1] = g;
 		d[2] = b;
@@ -374,7 +364,7 @@ void OSystem_Wii::setCursorPalette(const byte *colors, uint start, uint num) {
 		printf("switching to palette based cursor\n");
 
 		if (!gfx_tex_init(&_texMouse, GFX_TF_PALETTE_RGB5A3, TLUT_MOUSE,
-							16, 16)) {
+		                  16, 16)) {
 			printf("could not init the mouse texture\n");
 			::abort();
 		}
@@ -391,13 +381,13 @@ void OSystem_Wii::setCursorPalette(const byte *colors, uint start, uint num) {
 	u16 *d = _texMouse.palette;
 
 	for (uint i = 0; i < num; ++i, s += 3)
-		d[start + i] = Graphics::ARGBToColor<Graphics::ColorMasks<3444> >(0xff, s[0], s[1], s[2]);
+		d[start + i] = Graphics::ARGBToColor<Graphics::ColorMasks<3444>>(0xff, s[0], s[1], s[2]);
 
 	_cursorPaletteDirty = true;
 }
 
 void OSystem_Wii::copyRectToScreen(const void *buf, int pitch, int x, int y,
-									int w, int h) {
+                                   int w, int h) {
 	assert(x >= 0 && x < _gameWidth);
 	assert(y >= 0 && y < _gameHeight);
 	assert(w > 0 && x + w <= _gameWidth);
@@ -405,11 +395,9 @@ void OSystem_Wii::copyRectToScreen(const void *buf, int pitch, int x, int y,
 
 #ifdef USE_RGB_COLOR
 	if (_pfGame.bytesPerPixel > 1) {
-		if (!Graphics::crossBlit(_gamePixels +
-									y * _gameWidth * _pfGame.bytesPerPixel +
-									x * _pfGame.bytesPerPixel,
-									(const byte *)buf, _gameWidth * _pfGame.bytesPerPixel,
-									pitch, w, h, _pfGameTexture, _pfGame)) {
+		if (!Graphics::crossBlit(_gamePixels + y * _gameWidth * _pfGame.bytesPerPixel + x * _pfGame.bytesPerPixel,
+		                         (const byte *)buf, _gameWidth * _pfGame.bytesPerPixel,
+		                         pitch, w, h, _pfGameTexture, _pfGame)) {
 			printf("crossBlit failed\n");
 			::abort();
 		}
@@ -535,7 +523,7 @@ Graphics::Surface *OSystem_Wii::lockScreen() {
 #else
 	              _gameWidth, _gamePixels, Graphics::PixelFormat::createFormatCLUT8()
 #endif
-	             );
+	);
 
 	return &_surface;
 }
@@ -583,7 +571,7 @@ void OSystem_Wii::grabOverlay(void *buf, int pitch) {
 }
 
 void OSystem_Wii::copyRectToOverlay(const void *buf, int pitch, int x,
-									int y, int w, int h) {
+                                    int y, int w, int h) {
 	const byte *src = (const byte *)buf;
 	if (x < 0) {
 		w += x;
@@ -645,9 +633,9 @@ void OSystem_Wii::warpMouse(int x, int y) {
 }
 
 void OSystem_Wii::setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
-									int hotspotY, uint32 keycolor,
-									bool dontScale,
-									const Graphics::PixelFormat *format) {
+                                 int hotspotY, uint32 keycolor,
+                                 bool dontScale,
+                                 const Graphics::PixelFormat *format) {
 	gfx_tex_format_t tex_format = GFX_TF_PALETTE_RGB5A3;
 	uint tw, th;
 	bool tmpBuf = false;
@@ -690,7 +678,7 @@ void OSystem_Wii::setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 		gfx_tex_convert(&_texMouse, (const byte *)buf);
 	} else {
 		u8 bpp = _texMouse.bpp >> 3;
-		byte *tmp = (byte *) malloc(tw * th * bpp);
+		byte *tmp = (byte *)malloc(tw * th * bpp);
 
 		if (!tmp) {
 			printf("could not alloc temp cursor buffer\n");
@@ -705,16 +693,16 @@ void OSystem_Wii::setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 #ifdef USE_RGB_COLOR
 		if (bpp > 1) {
 			if (!Graphics::crossBlit(tmp, (const byte *)buf,
-										tw * _pfRGB3444.bytesPerPixel,
-										w * _pfCursor.bytesPerPixel,
-										tw, th, _pfRGB3444, _pfCursor)) {
+			                         tw * _pfRGB3444.bytesPerPixel,
+			                         w * _pfCursor.bytesPerPixel,
+			                         tw, th, _pfRGB3444, _pfCursor)) {
 				printf("crossBlit failed (cursor)\n");
 				::abort();
 			}
 
 			// nasty, shouldn't the frontend set the alpha channel?
-			const u16 *s = (const u16 *) buf;
-			u16 *d = (u16 *) tmp;
+			const u16 *s = (const u16 *)buf;
+			u16 *d = (u16 *)tmp;
 			for (u16 y = 0; y < h; ++y) {
 				for (u16 x = 0; x < w; ++x) {
 					if (*s++ == _mouseKeyColor)

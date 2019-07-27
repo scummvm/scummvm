@@ -34,7 +34,7 @@ namespace Lilliput {
 
 class LilliputEngine;
 
-class LilliputSound: public Audio::MidiPlayer {
+class LilliputSound : public Audio::MidiPlayer {
 public:
 	LilliputSound();
 	~LilliputSound();
@@ -66,4 +66,3 @@ private:
 } // End of namespace Lilliput
 
 #endif
-

@@ -193,7 +193,7 @@ bool KyraEngine_HoF::processItemDrop(uint16 sceneId, Item item, int x, int y, in
 		int itemStr = 3;
 		if (_lang == 1)
 			itemStr = getItemCommandStringDrop(item);
-		updateCommandLineEx(item+54, itemStr, 0xD6);
+		updateCommandLineEx(item + 54, itemStr, 0xD6);
 	}
 
 	return true;
@@ -224,17 +224,17 @@ void KyraEngine_HoF::itemDropDown(int startX, int startY, int dstX, int dstY, in
 			int curY = startY;
 			int curX = startX - 8;
 
-			backUpGfxRect24x24(curX, curY-16);
+			backUpGfxRect24x24(curX, curY - 16);
 			while (curY < dstY) {
-				restoreGfxRect24x24(curX, curY-16);
+				restoreGfxRect24x24(curX, curY - 16);
 
 				curY = MIN(curY + speed, dstY);
 				++speed;
 
-				backUpGfxRect24x24(curX, curY-16);
+				backUpGfxRect24x24(curX, curY - 16);
 				uint32 endDelay = _system->getMillis() + _tickLength;
 
-				_screen->drawShape(0, itemShape, curX, curY-16, 0, 0);
+				_screen->drawShape(0, itemShape, curX, curY - 16, 0, 0);
 				_screen->updateScreen();
 
 				delayUntil(endDelay, false, true);
@@ -277,7 +277,7 @@ void KyraEngine_HoF::itemDropDown(int startX, int startY, int dstX, int dstY, in
 
 				restoreGfxRect24x24(x, y);
 			} else {
-				restoreGfxRect24x24(curX, curY-16);
+				restoreGfxRect24x24(curX, curY - 16);
 			}
 		}
 
@@ -415,7 +415,7 @@ void KyraEngine_HoF::setMouseCursor(Item item) {
 	if (item != kItemNone) {
 		hotX = 8;
 		hotY = 15;
-		shape = item+64;
+		shape = item + 64;
 	}
 
 	_screen->setMouseCursor(hotX, hotY, getShapePtr(shape));

@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE1000_H
 #define NEVERHOOD_MODULES_MODULE1000_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -33,6 +33,7 @@ class Module1000 : public Module {
 public:
 	Module1000(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module1000();
+
 protected:
 	int _sceneNum;
 	uint32 _musicFileHash;
@@ -44,6 +45,7 @@ class Scene1001 : public Scene {
 public:
 	Scene1001(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Scene1001();
+
 protected:
 	Sprite *_asHammer;
 	Sprite *_asDoor;
@@ -57,6 +59,7 @@ class Scene1002 : public Scene {
 public:
 	Scene1002(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Scene1002();
+
 protected:
 	Sprite *_asRing1;
 	Sprite *_asRing2;
@@ -84,6 +87,7 @@ protected:
 class Scene1004 : public Scene {
 public:
 	Scene1004(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	Sprite *_asKlaymenLadderHands;
 	Sprite *_asTrashCan;
@@ -96,6 +100,7 @@ protected:
 class Scene1005 : public Scene {
 public:
 	Scene1005(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void drawTextToBackground();

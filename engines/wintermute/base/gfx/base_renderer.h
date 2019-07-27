@@ -29,10 +29,10 @@
 #ifndef WINTERMUTE_BASE_RENDERER_H
 #define WINTERMUTE_BASE_RENDERER_H
 
-#include "engines/wintermute/math/rect32.h"
-#include "engines/wintermute/base/base.h"
-#include "common/rect.h"
 #include "common/array.h"
+#include "common/rect.h"
+#include "engines/wintermute/base/base.h"
+#include "engines/wintermute/math/rect32.h"
 
 namespace Wintermute {
 
@@ -47,7 +47,7 @@ class BasePersistenceManager;
  * this interface is mainly intended to wrap away any differencies between
  * software-rendering/hardware-rendering.
  */
-class BaseRenderer: public BaseClass {
+class BaseRenderer : public BaseClass {
 public:
 	int _realWidth;
 	int _realHeight;
@@ -85,8 +85,8 @@ public:
 	 */
 	virtual void fadeToColor(byte r, byte g, byte b, byte a) = 0;
 
-	virtual bool drawLine(int x1, int y1, int x2, int y2, uint32 color); 	// Unused outside indicator-display
-	virtual bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1); 	// Unused outside indicator-display
+	virtual bool drawLine(int x1, int y1, int x2, int y2, uint32 color); // Unused outside indicator-display
+	virtual bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1); // Unused outside indicator-display
 	BaseRenderer(BaseGame *inGame = nullptr);
 	virtual ~BaseRenderer();
 	virtual bool setProjection() {
@@ -189,6 +189,7 @@ public:
 
 	int32 getWidth() const { return _width; }
 	int32 getHeight() const { return _height; }
+
 protected:
 	int32 _height;
 	int32 _width;
@@ -221,6 +222,7 @@ protected:
 	Rect32 _viewportRect;
 	Rect32 _screenRect;
 	Rect32 _monitorRect;
+
 private:
 	Common::Array<BaseActiveRect *> _rectList;
 };

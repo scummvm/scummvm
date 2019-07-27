@@ -44,7 +44,8 @@ typedef Common::List<ObjectType *> ObjectTypeList;
 
 class ObjectManager {
 public:
-	ObjectManager(SludgeEngine *vm) : _vm(vm) { init(); }
+	ObjectManager(SludgeEngine *vm)
+	  : _vm(vm) { init(); }
 	~ObjectManager();
 
 	bool init();

@@ -22,10 +22,10 @@
 
 #if defined(MAEMO)
 
-#if !defined(BACKEND_EVENTS_SDL_MAEMO_H) && !defined(DISABLE_DEFAULT_EVENTMANAGER)
-#define BACKEND_EVENTS_SDL_MAEMO_H
+#	if !defined(BACKEND_EVENTS_SDL_MAEMO_H) && !defined(DISABLE_DEFAULT_EVENTMANAGER)
+#		define BACKEND_EVENTS_SDL_MAEMO_H
 
-#include "backends/events/sdl/sdl-events.h"
+#		include "backends/events/sdl/sdl-events.h"
 
 namespace Maemo {
 
@@ -37,6 +37,7 @@ public:
 	MaemoSdlEventSource();
 
 	bool toggleClickMode();
+
 protected:
 	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
 	virtual bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
@@ -50,12 +51,13 @@ public:
 	MaemoSdlEventObserver(MaemoSdlEventSource *eventSource);
 
 	virtual bool notifyEvent(const Common::Event &event);
+
 private:
 	MaemoSdlEventSource *_eventSource;
 };
 
 } // namespace Maemo
 
-#endif // include guard
+#	endif // include guard
 
 #endif // if defined(MAEMO)

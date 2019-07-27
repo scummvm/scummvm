@@ -28,9 +28,9 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "common/scummsys.h"
-#include "common/endian.h"
 #include "common/algorithm.h"
+#include "common/endian.h"
+#include "common/scummsys.h"
 
 namespace Common {
 
@@ -44,8 +44,13 @@ private:
 	::FILE *_f;
 	const byte *_memPtr;
 	size_t _offset, _size;
+
 public:
-	File() : _f(nullptr), _memPtr(nullptr), _offset(0), _size(0) {}
+	File()
+	  : _f(nullptr)
+	  , _memPtr(nullptr)
+	  , _offset(0)
+	  , _size(0) {}
 
 	bool open(const char *filename, AccessMode mode = kFileReadMode) {
 		_memPtr = nullptr;

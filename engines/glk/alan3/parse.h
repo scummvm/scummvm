@@ -25,17 +25,17 @@
 
 /*   Parse data for ALAN interpreter module. */
 
-#include "glk/alan3/types.h"
-#include "glk/alan3/params.h"
 #include "glk/alan3/jumps.h"
+#include "glk/alan3/params.h"
+#include "glk/alan3/types.h"
 
 namespace Glk {
 namespace Alan3 {
 
-/* FUNCTIONS */
+	/* FUNCTIONS */
 
-extern void parse(CONTEXT);
-extern void initParsing(void);
+	extern void parse(CONTEXT);
+	extern void initParsing(void);
 
 } // End of namespace Alan3
 } // End of namespace Glk

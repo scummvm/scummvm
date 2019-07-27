@@ -25,7 +25,6 @@
 
 #include "image/codecs/codec.h"
 
-#include "image/jpeg.h"
 #include "image/codecs/bmp_raw.h"
 #include "image/codecs/cdtoons.h"
 #include "image/codecs/cinepak.h"
@@ -34,14 +33,15 @@
 #include "image/codecs/indeo5.h"
 #include "image/codecs/mjpeg.h"
 #include "image/codecs/mpeg.h"
-#include "image/codecs/msvideo1.h"
 #include "image/codecs/msrle.h"
 #include "image/codecs/msrle4.h"
+#include "image/codecs/msvideo1.h"
 #include "image/codecs/qtrle.h"
 #include "image/codecs/rpza.h"
 #include "image/codecs/smc.h"
 #include "image/codecs/svq1.h"
 #include "image/codecs/truemotion1.h"
+#include "image/jpeg.h"
 
 #include "common/endian.h"
 #include "common/textconsole.h"
@@ -50,25 +50,25 @@ namespace Image {
 
 namespace {
 
-/**
+	/**
  * Add a color to the QuickTime dither table check queue if it hasn't already been found.
  */
-inline void addColorToQueue(uint16 color, uint16 index, byte *checkBuffer, Common::List<uint16> &checkQueue) {
-	if ((READ_UINT16(checkBuffer + color * 2) & 0xFF) == 0) {
-		// Previously unfound color
-		WRITE_UINT16(checkBuffer + color * 2, index);
-		checkQueue.push_back(color);
+	inline void addColorToQueue(uint16 color, uint16 index, byte *checkBuffer, Common::List<uint16> &checkQueue) {
+		if ((READ_UINT16(checkBuffer + color * 2) & 0xFF) == 0) {
+			// Previously unfound color
+			WRITE_UINT16(checkBuffer + color * 2, index);
+			checkQueue.push_back(color);
+		}
 	}
-}
 
-inline byte adjustColorRange(byte currentColor, byte correctColor, byte palColor) {
-	return CLIP<int>(currentColor - palColor + correctColor, 0, 255);
-}
+	inline byte adjustColorRange(byte currentColor, byte correctColor, byte palColor) {
+		return CLIP<int>(currentColor - palColor + correctColor, 0, 255);
+	}
 
-inline uint16 makeQuickTimeDitherColor(byte r, byte g, byte b) {
-	// RGB554
-	return ((r & 0xF8) << 6) | ((g & 0xF8) << 1) | (b >> 4);
-}
+	inline uint16 makeQuickTimeDitherColor(byte r, byte g, byte b) {
+		// RGB554
+		return ((r & 0xF8) << 6) | ((g & 0xF8) << 1) | (b >> 4);
+	}
 
 } // End of anonymous namespace
 
@@ -203,13 +203,13 @@ Codec *createBitmapCodec(uint32 tag, int width, int height, int bitsPerPixel) {
 		return new MSRLEDecoder(width, height, bitsPerPixel);
 	case SWAP_CONSTANT_32(2):
 		return new MSRLE4Decoder(width, height, bitsPerPixel);
-	case MKTAG('C','R','A','M'):
-	case MKTAG('m','s','v','c'):
-	case MKTAG('W','H','A','M'):
+	case MKTAG('C', 'R', 'A', 'M'):
+	case MKTAG('m', 's', 'v', 'c'):
+	case MKTAG('W', 'H', 'A', 'M'):
 		return new MSVideo1Decoder(width, height, bitsPerPixel);
-	case MKTAG('c','v','i','d'):
+	case MKTAG('c', 'v', 'i', 'd'):
 		return new CinepakDecoder(bitsPerPixel);
-	case MKTAG('I','V','3','2'):
+	case MKTAG('I', 'V', '3', '2'):
 		return new Indeo3Decoder(width, height, bitsPerPixel);
 	case MKTAG('I', 'V', '4', '1'):
 	case MKTAG('I', 'V', '4', '2'):
@@ -217,16 +217,16 @@ Codec *createBitmapCodec(uint32 tag, int width, int height, int bitsPerPixel) {
 	case MKTAG('I', 'V', '5', '0'):
 		return new Indeo5Decoder(width, height, bitsPerPixel);
 #ifdef IMAGE_CODECS_TRUEMOTION1_H
-	case MKTAG('D','U','C','K'):
-	case MKTAG('d','u','c','k'):
+	case MKTAG('D', 'U', 'C', 'K'):
+	case MKTAG('d', 'u', 'c', 'k'):
 		return new TrueMotion1Decoder();
 #endif
 #ifdef USE_MPEG2
-	case MKTAG('m','p','g','2'):
+	case MKTAG('m', 'p', 'g', '2'):
 		return new MPEGDecoder();
 #endif
-	case MKTAG('M','J','P','G'):
-	case MKTAG('m','j','p','g'):
+	case MKTAG('M', 'J', 'P', 'G'):
+	case MKTAG('m', 'j', 'p', 'g'):
 		return new MJPEGDecoder();
 	default:
 		if (tag & 0x00FFFFFF)
@@ -240,29 +240,29 @@ Codec *createBitmapCodec(uint32 tag, int width, int height, int bitsPerPixel) {
 
 Codec *createQuickTimeCodec(uint32 tag, int width, int height, int bitsPerPixel) {
 	switch (tag) {
-	case MKTAG('c','v','i','d'):
+	case MKTAG('c', 'v', 'i', 'd'):
 		// Cinepak: As used by most Myst and all Riven videos as well as some Myst ME videos. "The Chief" videos also use this.
 		return new CinepakDecoder(bitsPerPixel);
-	case MKTAG('r','p','z','a'):
+	case MKTAG('r', 'p', 'z', 'a'):
 		// Apple Video ("Road Pizza"): Used by some Myst videos.
 		return new RPZADecoder(width, height);
-	case MKTAG('r','l','e',' '):
+	case MKTAG('r', 'l', 'e', ' '):
 		// QuickTime RLE: Used by some Myst ME videos.
 		return new QTRLEDecoder(width, height, bitsPerPixel);
-	case MKTAG('s','m','c',' '):
+	case MKTAG('s', 'm', 'c', ' '):
 		// Apple SMC: Used by some Myst videos.
 		return new SMCDecoder(width, height);
-	case MKTAG('S','V','Q','1'):
+	case MKTAG('S', 'V', 'Q', '1'):
 		// Sorenson Video 1: Used by some Myst ME videos.
 		return new SVQ1Decoder(width, height);
-	case MKTAG('S','V','Q','3'):
+	case MKTAG('S', 'V', 'Q', '3'):
 		// Sorenson Video 3: Used by some Myst ME videos.
 		warning("Sorenson Video 3 not yet supported");
 		break;
-	case MKTAG('j','p','e','g'):
+	case MKTAG('j', 'p', 'e', 'g'):
 		// JPEG: Used by some Myst ME 10th Anniversary videos.
 		return new JPEGDecoder();
-	case MKTAG('Q','k','B','k'):
+	case MKTAG('Q', 'k', 'B', 'k'):
 		// CDToons: Used by most of the Broderbund games.
 		return new CDToonsDecoder(width, height);
 	default:

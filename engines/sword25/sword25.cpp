@@ -29,10 +29,10 @@
  *
  */
 
-#include "common/config-manager.h"
-#include "common/debug-channels.h"
 #include "common/algorithm.h"
 #include "common/array.h"
+#include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "common/error.h"
 #include "common/fs.h"
 #include "common/singleton.h"
@@ -42,26 +42,26 @@
 #include "common/textconsole.h"
 #include "engines/util.h"
 
-#include "sword25/sword25.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/persistenceservice.h"
 #include "sword25/package/packagemanager.h"
 #include "sword25/script/script.h"
+#include "sword25/sword25.h"
 
-#include "sword25/gfx/animationtemplateregistry.h"	// Needed so we can destroy the singleton
-#include "sword25/gfx/renderobjectregistry.h"		// Needed so we can destroy the singleton
+#include "sword25/gfx/animationtemplateregistry.h" // Needed so we can destroy the singleton
+#include "sword25/gfx/renderobjectregistry.h" // Needed so we can destroy the singleton
 namespace Common {
 DECLARE_SINGLETON(Sword25::RenderObjectRegistry);
 }
-#include "sword25/math/regionregistry.h"			// Needed so we can destroy the singleton
+#include "sword25/math/regionregistry.h" // Needed so we can destroy the singleton
 
 namespace Sword25 {
 
 const char *const DEFAULT_SCRIPT_FILE = "/system/boot.lua";
 
-Sword25Engine::Sword25Engine(OSystem *syst, const ADGameDescription *gameDesc):
-	Engine(syst),
-	_gameDescription(gameDesc) {
+Sword25Engine::Sword25Engine(OSystem *syst, const ADGameDescription *gameDesc)
+  : Engine(syst)
+  , _gameDescription(gameDesc) {
 	// Setup mixer
 	syncSoundSettings();
 
@@ -195,8 +195,7 @@ bool Sword25Engine::loadPackages() {
 }
 
 bool Sword25Engine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL);
+	return (f == kSupportsRTL);
 	// TODO: Implement more of these features?!
 #if 0
 	return

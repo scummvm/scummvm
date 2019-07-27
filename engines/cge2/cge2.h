@@ -28,14 +28,14 @@
 #ifndef CGE2_CGE2_H
 #define CGE2_CGE2_H
 
+#include "audio/mixer.h"
+#include "cge2/console.h"
+#include "cge2/fileio.h"
 #include "common/random.h"
 #include "common/savefile.h"
 #include "common/serializer.h"
-#include "engines/engine.h"
 #include "common/system.h"
-#include "cge2/fileio.h"
-#include "cge2/console.h"
-#include "audio/mixer.h"
+#include "engines/engine.h"
 
 struct ADGameDescription;
 
@@ -66,51 +66,51 @@ class Font;
 class Map;
 struct SavegameHeader;
 
-#define kScrWidth         320
-#define kScrHeight        240
-#define kScrDepth         480
-#define kPanHeight         40
-#define kWorldHeight      (kScrHeight - kPanHeight)
-#define kMaxFile          128
-#define kPathMax          128
-#define kDimMax             8
-#define kWayMax            10
-#define kPocketMax          4
-#define kSceneMax         100
-#define kMaxPoint           4
-#define kInfoX            160
-#define kInfoY            -11
-#define kInfoW            180
-#define kPocketsWidth      59
-#define kLineMax          512
+#define kScrWidth 320
+#define kScrHeight 240
+#define kScrDepth 480
+#define kPanHeight 40
+#define kWorldHeight (kScrHeight - kPanHeight)
+#define kMaxFile 128
+#define kPathMax 128
+#define kDimMax 8
+#define kWayMax 10
+#define kPocketMax 4
+#define kSceneMax 100
+#define kMaxPoint 4
+#define kInfoX 160
+#define kInfoY -11
+#define kInfoW 180
+#define kPocketsWidth 59
+#define kLineMax 512
 
-#define kIntroExt         ".I80"
-#define kTabName          "CGE.TAB"
-#define kPocketFull       170
-#define kGameFrameDelay   (750 / 50)
-#define kGameTickDelay    (750 / 62)
+#define kIntroExt ".I80"
+#define kTabName "CGE.TAB"
+#define kPocketFull 170
+#define kGameFrameDelay (750 / 50)
+#define kGameTickDelay (750 / 62)
 
-#define kMusicRef         122
-#define kPowerRef         123
-#define kDvolRef          124
-#define kMvolRef	      125
-#define kBusyRef	      127
+#define kMusicRef 122
+#define kPowerRef 123
+#define kDvolRef 124
+#define kMvolRef 125
+#define kBusyRef 127
 
-#define kOffUseCount      130
-#define kOffUseText       131
+#define kOffUseCount 130
+#define kOffUseText 131
 
-#define kSysTimeRate        6 // 12 Hz
-#define kBlinkRate          4 //  3 Hz
+#define kSysTimeRate 6 // 12 Hz
+#define kBlinkRate 4 //  3 Hz
 
-#define kQuitTitle        200
-#define kQuitText         201
-#define kNoQuitText       202
+#define kQuitTitle 200
+#define kQuitText 201
+#define kNoQuitText 202
 
-#define kSavegameVersion    2
-#define kSavegameStrSize   12
-#define kSavegameStr       "SCUMMVM_CGE2"
+#define kSavegameVersion 2
+#define kSavegameStrSize 12
+#define kSavegameStr "SCUMMVM_CGE2"
 
-#define kColorNum           6
+#define kColorNum 6
 
 struct SavegameHeader {
 	uint8 version;
@@ -121,9 +121,16 @@ struct SavegameHeader {
 	uint32 playTime;
 };
 
-enum ColorBank { kCBRel, kCBStd, kCBSay, kCBInf, kCBMnu, kCBWar };
+enum ColorBank { kCBRel,
+	               kCBStd,
+	               kCBSay,
+	               kCBInf,
+	               kCBMnu,
+	               kCBWar };
 
-enum GamePhase { kPhaseInGame, kPhaseIntro, kPhaseOver };
+enum GamePhase { kPhaseInGame,
+	               kPhaseIntro,
+	               kPhaseOver };
 
 // our engine debug channels
 enum {
@@ -131,10 +138,15 @@ enum {
 };
 
 enum CallbackType {
-	kNullCB = 0, kQGame, kXScene
+	kNullCB = 0,
+	kQGame,
+	kXScene
 };
 
-enum Action { kNear, kMTake, kFTake, kActions };
+enum Action { kNear,
+	            kMTake,
+	            kFTake,
+	            kActions };
 
 typedef void (CGE2Engine::*NotifyFunctionType)();
 
@@ -154,6 +166,7 @@ private:
 	void syncHeader(Common::Serializer &s);
 	void syncGame(Common::SeekableReadStream *readStream, Common::WriteStream *writeStream);
 	void resetGame();
+
 public:
 	CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription);
 	virtual bool hasFeature(EngineFeature f) const;
@@ -231,7 +244,7 @@ public:
 	void checkSounds();
 
 	void setEye(const V3D &e);
-	void setEye(const V2D& e2, int z = -kScrWidth);
+	void setEye(const V2D &e2, int z = -kScrWidth);
 	void setEye(const char *s);
 
 	int number(char *s);

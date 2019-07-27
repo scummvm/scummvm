@@ -28,30 +28,27 @@
 
 #include "common/system.h"
 
-#include "graphics/pixelformat.h"
 #include "graphics/cursorman.h"
+#include "graphics/pixelformat.h"
 
 namespace ZVision {
 
 const char *CursorManager::_cursorNames[NUM_CURSORS] = { "active", "arrow", "backward", "downarrow", "forward", "handpt", "handpu", "hdown", "hleft",
-                                                         "hright", "hup", "idle", "leftarrow", "rightarrow", "suggest_surround", "suggest_tilt", "turnaround", "zuparrow"
-                                                       };
+	                                                       "hright", "hup", "idle", "leftarrow", "rightarrow", "suggest_surround", "suggest_tilt", "turnaround", "zuparrow" };
 
 const char *CursorManager::_zgiCursorFileNames[NUM_CURSORS] = { "g0gbc011.zcr", "g0gac011.zcr", "g0gac021.zcr", "g0gac031.zcr", "g0gac041.zcr", "g0gac051.zcr", "g0gac061.zcr", "g0gac071.zcr", "g0gac081.zcr",
-                                                                "g0gac091.zcr", "g0gac101.zcr", "g0gac011.zcr", "g0gac111.zcr", "g0gac121.zcr", "g0gac131.zcr", "g0gac141.zcr", "g0gac151.zcr", "g0gac161.zcr"
-                                                              };
+	                                                              "g0gac091.zcr", "g0gac101.zcr", "g0gac011.zcr", "g0gac111.zcr", "g0gac121.zcr", "g0gac131.zcr", "g0gac141.zcr", "g0gac151.zcr", "g0gac161.zcr" };
 
 const char *CursorManager::_zNemCursorFileNames[NUM_CURSORS] = { "00act", "arrow", "back", "down", "forw", "handpt", "handpu", "hdown", "hleft",
-                                                                 "hright", "hup", "00idle", "left", "right", "ssurr", "stilt", "turn", "up"
-                                                               };
+	                                                               "hright", "hup", "00idle", "left", "right", "ssurr", "stilt", "turn", "up" };
 
 CursorManager::CursorManager(ZVision *engine, const Graphics::PixelFormat pixelFormat)
-	: _engine(engine),
-	  _pixelFormat(pixelFormat),
-	  _cursorIsPushed(false),
-	  _item(0),
-	  _lastitem(0),
-	  _currentCursor(CursorIndex_Idle) {
+  : _engine(engine)
+  , _pixelFormat(pixelFormat)
+  , _cursorIsPushed(false)
+  , _item(0)
+  , _lastitem(0)
+  , _currentCursor(CursorIndex_Idle) {
 	for (int i = 0; i < NUM_CURSORS; i++) {
 		if (_engine->getGameId() == GID_NEMESIS) {
 			Common::String name;
@@ -89,13 +86,13 @@ void CursorManager::setItemID(int id) {
 				file = Common::String::format("%2.2d%s%c.zcr", id, "act", 'b');
 				_cursors[NUM_CURSORS + 1][0] = ZorkCursor(_engine, file);
 			} else if (_engine->getGameId() == GID_GRANDINQUISITOR) {
-				file = Common::String::format("g0b%cc%2.2x1.zcr", 'a' , id);
+				file = Common::String::format("g0b%cc%2.2x1.zcr", 'a', id);
 				_cursors[NUM_CURSORS][0] = ZorkCursor(_engine, file);
-				file = Common::String::format("g0b%cc%2.2x1.zcr", 'c' , id);
+				file = Common::String::format("g0b%cc%2.2x1.zcr", 'c', id);
 				_cursors[NUM_CURSORS][1] = ZorkCursor(_engine, file);
-				file = Common::String::format("g0b%cc%2.2x1.zcr", 'b' , id);
+				file = Common::String::format("g0b%cc%2.2x1.zcr", 'b', id);
 				_cursors[NUM_CURSORS + 1][0] = ZorkCursor(_engine, file);
-				file = Common::String::format("g0b%cc%2.2x1.zcr", 'd' , id);
+				file = Common::String::format("g0b%cc%2.2x1.zcr", 'd', id);
 				_cursors[NUM_CURSORS + 1][1] = ZorkCursor(_engine, file);
 			} else
 				return;
@@ -124,9 +121,7 @@ void CursorManager::cursorDown(bool pushed) {
 }
 
 void CursorManager::changeCursor(int id) {
-	if (_item && (id == CursorIndex_Active ||
-	              id == CursorIndex_Idle ||
-	              id == CursorIndex_HandPu)) {
+	if (_item && (id == CursorIndex_Active || id == CursorIndex_Idle || id == CursorIndex_HandPu)) {
 		if (id == CursorIndex_Idle) {
 			id = CursorIndex_ItemIdle;
 		} else {

@@ -25,26 +25,26 @@
 #include "common/debug-channels.h"
 #include "common/file.h"
 #include "common/macresman.h"
-#include "common/str.h"
+#include "common/memstream.h"
 #include "common/savefile.h"
+#include "common/str.h"
 #include "common/system.h"
 #include "common/translation.h"
-#include "common/memstream.h"
 
 #include "gui/saveload.h"
 
-#include "sci/sci.h"
+#include "sci/console.h"
 #include "sci/engine/file.h"
-#include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/savegame.h"
+#include "sci/engine/state.h"
+#include "sci/sci.h"
 #include "sci/sound/audio.h"
-#include "sci/console.h"
 #ifdef ENABLE_SCI32
-#include "graphics/thumbnail.h"
-#include "sci/engine/guest_additions.h"
-#include "sci/engine/message.h"
-#include "sci/resource.h"
+#	include "graphics/thumbnail.h"
+#	include "sci/engine/guest_additions.h"
+#	include "sci/engine/message.h"
+#	include "sci/resource.h"
 #endif
 
 namespace Sci {
@@ -103,8 +103,7 @@ reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
 		debug(3, "K_DEVICE_INFO_PATHS_EQUAL(%s,%s)", path1_s.c_str(), path2_s.c_str());
 
 		return make_reg(0, Common::matchString(path2_s.c_str(), path1_s.c_str(), false, true));
-		}
-		break;
+	} break;
 
 	case K_DEVICE_INFO_IS_FLOPPY: {
 		Common::String input_str = s->_segMan->getString(argv[1]);
@@ -124,7 +123,7 @@ reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
 		Common::String game_prefix = s->_segMan->getString(argv[2]);
 		s->_segMan->strcpy(argv[1], "__throwaway");
 		debug(3, "K_DEVICE_INFO_GET_SAVECAT_NAME(%s) -> %s", game_prefix.c_str(), "__throwaway");
-		}
+	}
 
 	break;
 	case K_DEVICE_INFO_GET_SAVEFILE_NAME: {
@@ -159,8 +158,8 @@ reg_t kCheckFreeSpace(EngineState *s, int argc, reg_t *argv) {
 	// argument, but we do not actually check anything, so it is unused
 
 	enum {
-		kSaveGameSize      = 0,
-		kFreeDiskSpace     = 1,
+		kSaveGameSize = 0,
+		kFreeDiskSpace = 1,
 		kEnoughSpaceToSave = 2
 	};
 
@@ -573,12 +572,12 @@ reg_t kFileIOClose(EngineState *s, int argc, reg_t *argv) {
 	if (f) {
 		f->close();
 		if (getSciVersion() <= SCI_VERSION_0_LATE)
-			return s->r_acc;	// SCI0 semantics: no value returned
+			return s->r_acc; // SCI0 semantics: no value returned
 		return getSciVersion() >= SCI_VERSION_2 ? TRUE_REG : SIGNAL_REG;
 	}
 
 	if (getSciVersion() <= SCI_VERSION_0_LATE)
-		return s->r_acc;	// SCI0 semantics: no value returned
+		return s->r_acc; // SCI0 semantics: no value returned
 	return NULL_REG;
 }
 
@@ -597,7 +596,7 @@ reg_t kFileIOReadRaw(EngineState *s, int argc, reg_t *argv) {
 	// been requested? (i.e. if bytesRead is non-zero, but still
 	// less than size)
 	if (bytesRead > 0)
-		s->_segMan->memcpy(argv[1], (const byte*)buf, size);
+		s->_segMan->memcpy(argv[1], (const byte *)buf, size);
 
 	delete[] buf;
 	return make_reg(0, bytesRead);
@@ -672,8 +671,7 @@ reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
 		// Special cases for KQ7 & RAMA, basically identical to the SQ4 case
 		// above, where the game hardcodes its save game names
 		int saveNo;
-		if (sscanf(name.c_str(), "kq7cdsg.%i", &saveNo) == 1 ||
-			sscanf(name.c_str(), "ramasg.%i", &saveNo) == 1) {
+		if (sscanf(name.c_str(), "kq7cdsg.%i", &saveNo) == 1 || sscanf(name.c_str(), "ramasg.%i", &saveNo) == 1) {
 
 			name = g_sci->getSavegameName(saveNo + kSaveIdShift);
 		} else if (g_sci->getGameId() == GID_RAMA && (name == "911.sg" || name == "autorama.sg")) {
@@ -729,7 +727,7 @@ reg_t kFileIOReadString(EngineState *s, int argc, reg_t *argv) {
 		maxsize = dest_r.maxSize;
 	}
 
-	s->_segMan->memcpy(argv[0], (const byte*)buf, maxsize);
+	s->_segMan->memcpy(argv[0], (const byte *)buf, maxsize);
 	delete[] buf;
 	return bytesRead ? argv[0] : NULL_REG;
 }
@@ -748,8 +746,8 @@ reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
 	// this is probably the most straightforward place to handle them.
 	if (handle == kVirtualFileHandleSciAudio) {
 		Common::List<ExecStack>::const_iterator iter = s->_executionStack.reverse_begin();
-		iter--;	// sciAudio
-		iter--;	// sciAudio child
+		iter--; // sciAudio
+		iter--; // sciAudio child
 		g_sci->_audio->handleFanmadeSciAudio(iter->sendp, s->_segMan);
 		return NULL_REG;
 	}
@@ -759,12 +757,12 @@ reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
 	if (f && f->_out) {
 		f->_out->write(str.c_str(), str.size());
 		if (getSciVersion() <= SCI_VERSION_0_LATE)
-			return s->r_acc;	// SCI0 semantics: no value returned
+			return s->r_acc; // SCI0 semantics: no value returned
 		return NULL_REG;
 	}
 
 	if (getSciVersion() <= SCI_VERSION_0_LATE)
-		return s->r_acc;	// SCI0 semantics: no value returned
+		return s->r_acc; // SCI0 semantics: no value returned
 	return make_reg(0, 6); // DOS - invalid handle
 }
 
@@ -869,13 +867,13 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 
 	// SCI2+ debug mode
 	if (DebugMan.isDebugChannelEnabled(kDebugLevelDebugMode)) {
-		if (!exists && name == "1.scr")		// PQ4
+		if (!exists && name == "1.scr") // PQ4
 			exists = true;
-		if (!exists && name == "18.scr")	// QFG4
+		if (!exists && name == "18.scr") // QFG4
 			exists = true;
-		if (!exists && name == "99.scr")	// GK1, KQ7
+		if (!exists && name == "99.scr") // GK1, KQ7
 			exists = true;
-		if (!exists && name == "classes")	// GK2, SQ6, LSL7
+		if (!exists && name == "classes") // GK2, SQ6, LSL7
 			exists = true;
 	}
 
@@ -895,7 +893,7 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 		for (int i = 0; i < 10; i++)
 			outFile->writeByte(defaultContent[i]);
 		outFile->finalize();
-		exists = !outFile->err();	// check whether we managed to create the file.
+		exists = !outFile->err(); // check whether we managed to create the file.
 		delete outFile;
 	}
 
@@ -903,8 +901,7 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 	// if they exist before it plays them. Since we support multiple naming
 	// schemes for resource fork files, we also need to support that here in
 	// case someone has a "HalfDome.bin" file, etc.
-	if (!exists && g_sci->getGameId() == GID_KQ6 && g_sci->getPlatform() == Common::kPlatformMacintosh &&
-			(name == "HalfDome" || name == "Kq6Movie"))
+	if (!exists && g_sci->getGameId() == GID_KQ6 && g_sci->getPlatform() == Common::kPlatformMacintosh && (name == "HalfDome" || name == "Kq6Movie"))
 		exists = Common::MacResManager::exists(name);
 
 	debugC(kDebugLevelFile, "kFileIO(fileExists) %s -> %d", name.c_str(), exists);
@@ -1238,7 +1235,7 @@ reg_t kGetSaveDir(EngineState *s, int argc, reg_t *argv) {
 	//if (argc > 0)
 	//	warning("kGetSaveDir called with %d parameter(s): %04x:%04x", argc, PRINT_REG(argv[0]));
 #endif
-		return s->_segMan->getSaveDirPtr();
+	return s->_segMan->getSaveDirPtr();
 }
 
 reg_t kCheckSaveGame(EngineState *s, int argc, reg_t *argv) {

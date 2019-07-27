@@ -23,35 +23,30 @@
  *
  */
 
-#include "common/config-manager.h"
-#include "common/error.h"
-#include "common/events.h"
-#include "common/fs.h"
-#include "common/file.h"
-#include "common/memstream.h"
-#include "common/savefile.h"
-#include "common/textconsole.h"
-#include "common/translation.h"
-#include "common/random.h"
 #include "backends/keymapper/keymapper.h"
 #include "base/plugins.h"
 #include "base/version.h"
+#include "common/config-manager.h"
+#include "common/error.h"
+#include "common/events.h"
+#include "common/file.h"
+#include "common/fs.h"
+#include "common/memstream.h"
+#include "common/random.h"
+#include "common/savefile.h"
+#include "common/textconsole.h"
+#include "common/translation.h"
 #include "gui/message.h"
 #include "gui/saveload.h"
-#include "video/theora_decoder.h"
 #include "video/qt_decoder.h"
+#include "video/theora_decoder.h"
 
+#include "pegasus/ai/ai_area.h"
 #include "pegasus/console.h"
 #include "pegasus/cursor.h"
 #include "pegasus/energymonitor.h"
 #include "pegasus/gamestate.h"
 #include "pegasus/interface.h"
-#include "pegasus/menu.h"
-#include "pegasus/movie.h"
-#include "pegasus/pegasus.h"
-#include "pegasus/timers.h"
-#include "pegasus/ai/ai_area.h"
-#include "pegasus/items/itemlist.h"
 #include "pegasus/items/biochips/aichip.h"
 #include "pegasus/items/biochips/biochipitem.h"
 #include "pegasus/items/biochips/mapchip.h"
@@ -63,22 +58,33 @@
 #include "pegasus/items/inventory/gascanister.h"
 #include "pegasus/items/inventory/inventoryitem.h"
 #include "pegasus/items/inventory/keycard.h"
-#include "pegasus/neighborhood/neighborhood.h"
+#include "pegasus/items/itemlist.h"
+#include "pegasus/menu.h"
+#include "pegasus/movie.h"
 #include "pegasus/neighborhood/caldoria/caldoria.h"
 #include "pegasus/neighborhood/mars/mars.h"
-#include "pegasus/neighborhood/norad/constants.h"
+#include "pegasus/neighborhood/neighborhood.h"
 #include "pegasus/neighborhood/norad/alpha/noradalpha.h"
+#include "pegasus/neighborhood/norad/constants.h"
 #include "pegasus/neighborhood/norad/delta/noraddelta.h"
 #include "pegasus/neighborhood/prehistoric/prehistoric.h"
 #include "pegasus/neighborhood/tsa/fulltsa.h"
 #include "pegasus/neighborhood/tsa/tinytsa.h"
 #include "pegasus/neighborhood/wsc/wsc.h"
+#include "pegasus/pegasus.h"
+#include "pegasus/timers.h"
 
 namespace Pegasus {
 
-PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamedesc) : Engine(syst), InputHandler(0), _gameDescription(gamedesc),
-		_shellNotification(kJMPDCShellNotificationID, this), _returnHotspot(kInfoReturnSpotID), _itemDragger(this), _bigInfoMovie(kNoDisplayElement),
-		_smallInfoMovie(kNoDisplayElement) {
+PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamedesc)
+  : Engine(syst)
+  , InputHandler(0)
+  , _gameDescription(gamedesc)
+  , _shellNotification(kJMPDCShellNotificationID, this)
+  , _returnHotspot(kInfoReturnSpotID)
+  , _itemDragger(this)
+  , _bigInfoMovie(kNoDisplayElement)
+  , _smallInfoMovie(kNoDisplayElement) {
 	_continuePoint = 0;
 	_saveAllowed = _loadAllowed = true;
 	_saveRequested = _loadRequested = false;
@@ -135,7 +141,7 @@ Common::Error PegasusEngine::run() {
 
 	// Initialize cursors
 	_cursor->addCursorFrames(0x80); // Main
-	_cursor->addCursorFrames(900);  // Mars Shuttle
+	_cursor->addCursorFrames(900); // Mars Shuttle
 
 	// Initialize the item dragger bounds
 	_itemDragger.setHighlightBounds();
@@ -393,12 +399,12 @@ Common::Error PegasusEngine::showSaveDialog() {
 
 void PegasusEngine::showSaveFailedDialog(const Common::Error &status) {
 	Common::String failMessage = Common::String::format(_("Failed to save game (%s)! "
-			"Please consult the README for basic information, and for "
-			"instructions on how to obtain further assistance."), status.getDesc().c_str());
+	                                                      "Please consult the README for basic information, and for "
+	                                                      "instructions on how to obtain further assistance."),
+	                                                    status.getDesc().c_str());
 	GUI::MessageDialog dialog(failMessage);
 	dialog.runModal();
 }
-
 
 GUI::Debugger *PegasusEngine::getDebugger() {
 	return _console;
@@ -519,7 +525,6 @@ bool PegasusEngine::loadFromStream(Common::SeekableReadStream *stream) {
 
 		g_interface->setCurrentBiochipID((ItemID)stream->readUint16BE());
 	}
-
 
 	// TODO: Disc check
 
@@ -1590,7 +1595,7 @@ InventoryResult PegasusEngine::addItemToInventory(InventoryItem *item) {
 
 	GameState.setTakenItem(item, true);
 	if (g_neighborhood)
-			g_neighborhood->pickedUpItem(item);
+		g_neighborhood->pickedUpItem(item);
 
 	g_AIArea->checkMiddleArea();
 
@@ -1958,7 +1963,6 @@ void PegasusEngine::dragTerminated(const Input &) {
 		g_AIArea->unlockAI();
 }
 
-
 void PegasusEngine::dragItem(const Input &input, Item *item, DragType type) {
 	_draggingItem = item;
 	_dragType = type;
@@ -2307,7 +2311,7 @@ void PegasusEngine::doSubChase() {
 	delete video;
 }
 
-template<typename PixelInt>
+template <typename PixelInt>
 static void scaleFrame(const PixelInt *src, PixelInt *dst, int w, int h, int srcPitch) {
 	assert((srcPitch % sizeof(PixelInt)) == 0); // sanity check; allows some simpler code
 
@@ -2399,7 +2403,7 @@ void PegasusEngine::destroyInventoryItem(const ItemID itemID) {
 }
 
 ItemID PegasusEngine::pickItemToDestroy() {
-/*
+	/*
 	Must pick an item to destroy
 
 	Part I: Polite -- try to find an item that's been used
@@ -2410,14 +2414,11 @@ ItemID PegasusEngine::pickItemToDestroy() {
 	if (playerHasItemID(kOrangeJuiceGlassEmpty))
 		return kOrangeJuiceGlassEmpty;
 	if (playerHasItemID(kPoisonDart)) {
-		if (GameState.getCurrentNeighborhood() != kWSCID ||
-				GameState.getWSCAnalyzedDart())
+		if (GameState.getCurrentNeighborhood() != kWSCID || GameState.getWSCAnalyzedDart())
 			return kPoisonDart;
 	}
 	if (playerHasItemID(kJourneymanKey)) {
-		if (GameState.getTSAState() >= kTSAPlayerGotHistoricalLog &&
-				GameState.getTSAState() != kPlayerOnWayToPrehistoric &&
-				GameState.getTSAState() != kPlayerWentToPrehistoric)
+		if (GameState.getTSAState() >= kTSAPlayerGotHistoricalLog && GameState.getTSAState() != kPlayerOnWayToPrehistoric && GameState.getTSAState() != kPlayerWentToPrehistoric)
 			return kJourneymanKey;
 	}
 	if (playerHasItemID(kMarsCard)) {
@@ -2446,8 +2447,7 @@ ItemID PegasusEngine::pickItemToDestroy() {
 		if (GameState.getCurrentNeighborhood() == kMarsID) {
 			if (g_neighborhood->getAirQuality(GameState.getCurrentRoom()) == kAirQualityGood)
 				return kAirMask;
-		} else if (GameState.getCurrentNeighborhood() != kNoradAlphaID &&
-				GameState.getCurrentNeighborhood() != kNoradDeltaID) {
+		} else if (GameState.getCurrentNeighborhood() != kNoradAlphaID && GameState.getCurrentNeighborhood() != kNoradDeltaID) {
 			return kAirMask;
 		}
 	}

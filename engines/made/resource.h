@@ -25,8 +25,8 @@
 
 #include "made/sound.h"
 
-#include "common/endian.h"
 #include "common/array.h"
+#include "common/endian.h"
 #include "common/hashmap.h"
 
 namespace Common {
@@ -53,18 +53,17 @@ const int kMaxResourceCacheSize = 1000 * 1024;
 const int kMaxResourceCacheSize = 400 * 1024;
 #endif
 
-
 enum ResourceType {
-	kResARCH = MKTAG('A','R','C','H'),
-	kResFREE = MKTAG('F','R','E','E'),
-	kResOMNI = MKTAG('O','M','N','I'),
-	kResFLEX = MKTAG('F','L','E','X'),
-	kResSNDS = MKTAG('S','N','D','S'),
-	kResANIM = MKTAG('A','N','I','M'),
-	kResMENU = MKTAG('M','E','N','U'),
-	kResFONT = MKTAG('F','O','N','T'),
-	kResXMID = MKTAG('X','M','I','D'),
-	kResMIDI = MKTAG('M','I','D','I')
+	kResARCH = MKTAG('A', 'R', 'C', 'H'),
+	kResFREE = MKTAG('F', 'R', 'E', 'E'),
+	kResOMNI = MKTAG('O', 'M', 'N', 'I'),
+	kResFLEX = MKTAG('F', 'L', 'E', 'X'),
+	kResSNDS = MKTAG('S', 'N', 'D', 'S'),
+	kResANIM = MKTAG('A', 'N', 'I', 'M'),
+	kResMENU = MKTAG('M', 'E', 'N', 'U'),
+	kResFONT = MKTAG('F', 'O', 'N', 'T'),
+	kResXMID = MKTAG('X', 'M', 'I', 'D'),
+	kResMIDI = MKTAG('M', 'I', 'D', 'I')
 };
 
 struct ResourceSlot;
@@ -84,6 +83,7 @@ public:
 	byte *getPalette() const { return _picturePalette; }
 	bool hasPalette() const { return _hasPalette; }
 	int getPaletteColorCount() const { return _paletteColorCount; }
+
 protected:
 	Graphics::Surface *_picture;
 	byte *_picturePalette;
@@ -110,6 +110,7 @@ public:
 	uint16 getFlags() const { return _flags; }
 	int16 getWidth() const { return _width; }
 	int16 getHeight() const { return _height; }
+
 protected:
 	Common::Array<Graphics::Surface *> _frames;
 	uint16 _flags;
@@ -123,6 +124,7 @@ public:
 	virtual void load(byte *source, int size);
 	Audio::AudioStream *getAudioStream(int soundRate, bool loop = false);
 	SoundEnergyArray *getSoundEnergyArray() const { return _soundEnergyArray; }
+
 protected:
 	byte *_soundData;
 	int _soundSize;
@@ -143,6 +145,7 @@ public:
 	void load(byte *source, int size);
 	int getCount() const { return _strings.size(); }
 	const char *getString(uint index) const;
+
 protected:
 	Common::Array<Common::String> _strings;
 };
@@ -156,6 +159,7 @@ public:
 	int getCharWidth(uint c) const;
 	int getTextWidth(const char *text);
 	byte *getChar(uint c) const;
+
 protected:
 	byte *_data;
 	int _size;
@@ -169,6 +173,7 @@ public:
 	void load(byte *source, int size);
 	byte *getData() const { return _data; }
 	int getSize() const { return _size; }
+
 protected:
 	byte *_data;
 	int _size;
@@ -179,9 +184,17 @@ struct ResourceSlot {
 	uint32 size;
 	Resource *res;
 	int refCount;
-	ResourceSlot() : offs(0), size(0), res(NULL), refCount(0) {
+	ResourceSlot()
+	  : offs(0)
+	  , size(0)
+	  , res(NULL)
+	  , refCount(0) {
 	}
-	ResourceSlot(uint32 roffs, uint32 rsize) : offs(roffs), size(rsize), res(NULL), refCount(0) {
+	ResourceSlot(uint32 roffs, uint32 rsize)
+	  : offs(roffs)
+	  , size(rsize)
+	  , res(NULL)
+	  , refCount(0) {
 	}
 };
 
@@ -204,9 +217,8 @@ public:
 	void freeResource(Resource *resource);
 
 protected:
-
 	Common::File *_fd;
-	Common::File *_fdPics, *_fdSounds, *_fdMusic;		// V1
+	Common::File *_fdPics, *_fdSounds, *_fdMusic; // V1
 	bool _isV1;
 
 	typedef Common::Array<ResourceSlot> ResourceSlots;
@@ -219,7 +231,7 @@ protected:
 
 	void loadIndex(ResourceSlots *slots);
 
-	template<class T>
+	template <class T>
 	T *createResource(uint32 resType, int index) {
 		ResourceSlot *slot = getResourceSlot(resType, index);
 		if (!slot)
@@ -261,7 +273,6 @@ protected:
 	void addResourceToCache(ResourceSlot *slot, Resource *res);
 	void tossResourceFromCache(ResourceSlot *slot);
 	void purgeCache();
-
 };
 
 } // End of namespace Made

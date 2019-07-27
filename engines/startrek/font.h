@@ -42,7 +42,7 @@ private:
 
 	struct Character {
 		byte data[0x40];
-	} *_characters;
+	} * _characters;
 
 	static const byte _fontProperties[256];
 };

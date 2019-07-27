@@ -20,17 +20,17 @@
  *
  */
 
+#include "sync.h"
 #include "sci/engine/kernel.h"
 #include "sci/util.h"
-#include "sync.h"
 
 namespace Sci {
 
-Sync::Sync(ResourceManager *resMan, SegManager *segMan) :
-	_resMan(resMan),
-	_segMan(segMan),
-	_resource(nullptr),
-	_offset(0) {}
+Sync::Sync(ResourceManager *resMan, SegManager *segMan)
+  : _resMan(resMan)
+  , _segMan(segMan)
+  , _resource(nullptr)
+  , _offset(0) {}
 
 Sync::~Sync() {
 	stop();

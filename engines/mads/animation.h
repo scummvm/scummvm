@@ -23,27 +23,29 @@
 #ifndef MADS_ANIMATION_H
 #define MADS_ANIMATION_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
+#include "mads/font.h"
 #include "mads/msurface.h"
 #include "mads/scene_data.h"
-#include "mads/font.h"
 #include "mads/user_interface.h"
 
 namespace MADS {
 
 enum AnimFlag {
-	ANIMFLAG_LOAD_BACKGROUND	  = 0x0100,	// Load background
-	ANIMFLAG_LOAD_BACKGROUND_ONLY = 0x0200,	// Load background only
+	ANIMFLAG_LOAD_BACKGROUND = 0x0100, // Load background
+	ANIMFLAG_LOAD_BACKGROUND_ONLY = 0x0200, // Load background only
 
-	ANIMFLAG_DITHER				  = 0x0001,	// Dither to 16 colors
-	ANIMFLAG_CUSTOM_FONT		  = 0x2000,	// Load custom fonts
-	ANIMFLAG_ANIMVIEW			  = 0x4000	// Cutscene animation
+	ANIMFLAG_DITHER = 0x0001, // Dither to 16 colors
+	ANIMFLAG_CUSTOM_FONT = 0x2000, // Load custom fonts
+	ANIMFLAG_ANIMVIEW = 0x4000 // Cutscene animation
 };
 
 enum AnimBgType {
-	ANIMBG_ROOM = 1, ANIMBG_FULL_SIZE = 2, ANIMBG_BLACK_SCREEN = 3,
+	ANIMBG_ROOM = 1,
+	ANIMBG_FULL_SIZE = 2,
+	ANIMBG_BLACK_SCREEN = 3,
 	ANIMBG_INTERFACE = 4
 };
 
@@ -175,14 +177,16 @@ private:
 	 * Load the user interface display or background for an animation
 	 */
 	void loadBackground(MSurface &backSurface, DepthSurface &depthSurface,
-		AAHeader &header, int flags, Common::Array<PaletteCycle> *palCycles, SceneInfo *sceneInfo);
+	                    AAHeader &header, int flags, Common::Array<PaletteCycle> *palCycles, SceneInfo *sceneInfo);
 
 	/**
 	 * Returns true if there is a scroll required
 	 */
 	bool hasScroll() const;
+
 protected:
 	Animation(MADSEngine *vm, Scene *scene);
+
 public:
 	AAHeader _header;
 	Common::Array<int> _spriteListIndexes;
@@ -205,7 +209,7 @@ public:
 	 * Loads animation data
 	 */
 	void load(MSurface &backSurface, DepthSurface &depthSurface, const Common::String &resName,
-		int flags, Common::Array<PaletteCycle> *palCycles, SceneInfo *sceneInfo);
+	          int flags, Common::Array<PaletteCycle> *palCycles, SceneInfo *sceneInfo);
 
 	/**
 	 * Preload animation data for the scene

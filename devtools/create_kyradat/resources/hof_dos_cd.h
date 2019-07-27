@@ -443,39 +443,39 @@ static const HoFSequence k2SeqplaySeqDataDOSCDSeq[16] = {
 };
 
 static const FrameControl k2SeqplaySeqDataDOSCDSeqNestedControl7[18] = {
-	{  0, 10 },
-	{  1, 10 },
-	{  2, 10 },
-	{  3, 10 },
-	{  4, 10 },
-	{  5, 10 },
-	{  6, 10 },
-	{  7, 10 },
-	{  8, 10 },
-	{  9, 10 },
-	{  8, 10 },
-	{  7, 10 },
-	{  6, 10 },
-	{  5, 40 },
-	{  4, 10 },
-	{  3, 10 },
-	{  2, 10 },
-	{  1, 10 }
+	{ 0, 10 },
+	{ 1, 10 },
+	{ 2, 10 },
+	{ 3, 10 },
+	{ 4, 10 },
+	{ 5, 10 },
+	{ 6, 10 },
+	{ 7, 10 },
+	{ 8, 10 },
+	{ 9, 10 },
+	{ 8, 10 },
+	{ 7, 10 },
+	{ 6, 10 },
+	{ 5, 40 },
+	{ 4, 10 },
+	{ 3, 10 },
+	{ 2, 10 },
+	{ 1, 10 }
 };
 
 static const FrameControl k2SeqplaySeqDataDOSCDSeqNestedControl10[17] = {
-	{  0,  6 },
-	{  1,  6 },
-	{  2,  6 },
-	{  3,  6 },
-	{  4,  6 },
-	{  5,  6 },
-	{  6,  6 },
-	{  7,  6 },
-	{  8,  6 },
-	{  9,  6 },
-	{ 10,  6 },
-	{ 11,  6 },
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 2, 6 },
+	{ 3, 6 },
+	{ 4, 6 },
+	{ 5, 6 },
+	{ 6, 6 },
+	{ 7, 6 },
+	{ 8, 6 },
+	{ 9, 6 },
+	{ 10, 6 },
+	{ 11, 6 },
 	{ 11, 12 },
 	{ 12, 12 },
 	{ 13, 12 },
@@ -484,53 +484,53 @@ static const FrameControl k2SeqplaySeqDataDOSCDSeqNestedControl10[17] = {
 };
 
 static const FrameControl k2SeqplaySeqDataDOSCDSeqNestedControl11[9] = {
-	{  0,  6 },
-	{  1,  6 },
-	{  2,  6 },
-	{  3,  6 },
-	{  4,  6 },
-	{  3,  6 },
-	{  4,  6 },
-	{  5, 64 },
-	{  5,  6 }
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 2, 6 },
+	{ 3, 6 },
+	{ 4, 6 },
+	{ 3, 6 },
+	{ 4, 6 },
+	{ 5, 64 },
+	{ 5, 6 }
 };
 
 static const FrameControl k2SeqplaySeqDataDOSCDSeqNestedControl12[16] = {
-	{  0,  6 },
-	{  1,  6 },
-	{  0,  6 },
-	{  1,  6 },
-	{  0,  6 },
-	{  1,  6 },
-	{  0,  6 },
-	{  1,  6 },
-	{  0,  6 },
-	{  1,  6 },
-	{  0,  6 },
-	{  1,  6 },
-	{  0,  6 },
-	{  1,  6 },
-	{  0,  6 },
-	{  1,  6 }
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 0, 6 },
+	{ 1, 6 }
 };
 
 static const FrameControl k2SeqplaySeqDataDOSCDSeqNestedControl13[5] = {
-	{  0,  6 },
-	{  1,  6 },
-	{  2,  6 },
-	{  1,  6 },
-	{  0,  1 }
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 2, 6 },
+	{ 1, 6 },
+	{ 0, 1 }
 };
 
 static const FrameControl k2SeqplaySeqDataDOSCDSeqNestedControl14[8] = {
-	{  0,  6 },
-	{  1,  6 },
-	{  2,  6 },
-	{  3,  6 },
-	{  4,  6 },
-	{  3,  6 },
-	{  2,  6 },
-	{  1,  6 }
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 2, 6 },
+	{ 3, 6 },
+	{ 4, 6 },
+	{ 3, 6 },
+	{ 2, 6 },
+	{ 1, 6 }
 };
 
 static const HoFNestedSequence k2SeqplaySeqDataDOSCDSeqNested[15] = {
@@ -1015,21 +1015,20 @@ static const FrameControl k2IngameShapeAnimDataDOSCD13FrameControl[4] = {
 };
 
 static const ItemAnimDefinition k2IngameShapeAnimDataDOSCD[14] = {
-	{   6, 12, k2IngameShapeAnimDataDOSCD0FrameControl },
-	{   2,  6, k2IngameShapeAnimDataDOSCD1FrameControl },
-	{  11,  6, k2IngameShapeAnimDataDOSCD2FrameControl },
-	{  28,  4, k2IngameShapeAnimDataDOSCD3FrameControl },
-	{  23,  4, k2IngameShapeAnimDataDOSCD4FrameControl },
-	{  22,  4, k2IngameShapeAnimDataDOSCD5FrameControl },
-	{  58,  4, k2IngameShapeAnimDataDOSCD6FrameControl },
-	{  26,  4, k2IngameShapeAnimDataDOSCD7FrameControl },
-	{ 109,  4, k2IngameShapeAnimDataDOSCD8FrameControl },
-	{ 121,  4, k2IngameShapeAnimDataDOSCD9FrameControl },
-	{ 126,  4, k2IngameShapeAnimDataDOSCD10FrameControl },
-	{ 145,  6, k2IngameShapeAnimDataDOSCD11FrameControl },
-	{ 149,  4, k2IngameShapeAnimDataDOSCD12FrameControl },
-	{ 153,  4, k2IngameShapeAnimDataDOSCD13FrameControl }
+	{ 6, 12, k2IngameShapeAnimDataDOSCD0FrameControl },
+	{ 2, 6, k2IngameShapeAnimDataDOSCD1FrameControl },
+	{ 11, 6, k2IngameShapeAnimDataDOSCD2FrameControl },
+	{ 28, 4, k2IngameShapeAnimDataDOSCD3FrameControl },
+	{ 23, 4, k2IngameShapeAnimDataDOSCD4FrameControl },
+	{ 22, 4, k2IngameShapeAnimDataDOSCD5FrameControl },
+	{ 58, 4, k2IngameShapeAnimDataDOSCD6FrameControl },
+	{ 26, 4, k2IngameShapeAnimDataDOSCD7FrameControl },
+	{ 109, 4, k2IngameShapeAnimDataDOSCD8FrameControl },
+	{ 121, 4, k2IngameShapeAnimDataDOSCD9FrameControl },
+	{ 126, 4, k2IngameShapeAnimDataDOSCD10FrameControl },
+	{ 145, 6, k2IngameShapeAnimDataDOSCD11FrameControl },
+	{ 149, 4, k2IngameShapeAnimDataDOSCD12FrameControl },
+	{ 153, 4, k2IngameShapeAnimDataDOSCD13FrameControl }
 };
 
 static const ItemAnimDefinitionProvider k2IngameShapeAnimDataDOSCDProvider = { ARRAYSIZE(k2IngameShapeAnimDataDOSCD), k2IngameShapeAnimDataDOSCD };
-

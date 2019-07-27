@@ -35,11 +35,11 @@
 
 namespace Mohawk {
 
-RivenCard::RivenCard(MohawkEngine_Riven *vm, uint16 id) :
-	_vm(vm),
-	_id(id),
-	_hoveredHotspot(nullptr),
-	_pressedHotspot(nullptr) {
+RivenCard::RivenCard(MohawkEngine_Riven *vm, uint16 id)
+  : _vm(vm)
+  , _id(id)
+  , _hoveredHotspot(nullptr)
+  , _pressedHotspot(nullptr) {
 	loadCardResource(id);
 	loadHotspots(id);
 	loadCardPictureList(id);
@@ -128,23 +128,23 @@ void RivenCard::applyPropertiesPatch8EB7(uint32 globalId, const Common::String &
 
 	uint16 jGateVariable = _vm->getStack()->getIdFromName(kVariableNames, var);
 	uint16 patchData[] = {
-			1, // Command count in script
-			kRivenCommandSwitch,
-			2, // Unused
-			jGateVariable,
-			2, // Branches count
+		1, // Command count in script
+		kRivenCommandSwitch,
+		2, // Unused
+		jGateVariable,
+		2, // Branches count
 
-			0, // jgate == 0 branch (gate closed)
-			1, // Command count in sub-script
-			kRivenCommandActivateBLST,
-			1, // Argument count
-			forwardDisabled.index,
+		0, // jgate == 0 branch (gate closed)
+		1, // Command count in sub-script
+		kRivenCommandActivateBLST,
+		1, // Argument count
+		forwardDisabled.index,
 
-			1, // jgate == 1 branch (gate open)
-			1, // Command count in sub-script
-			kRivenCommandActivateBLST,
-			1, // Argument count
-			forwardEnabled.index
+		1, // jgate == 1 branch (gate open)
+		1, // Command count in sub-script
+		kRivenCommandActivateBLST,
+		1, // Argument count
+		forwardEnabled.index
 	};
 
 	RivenScriptPtr patchScript = _vm->_scriptMan->readScriptFromData(patchData, ARRAYSIZE(patchData));
@@ -222,27 +222,27 @@ void RivenCard::applyPropertiesPatch2E76(uint32 globalId) {
 		uint16 aGehnVariable = _vm->getStack()->getIdFromName(kVariableNames, "agehn");
 		uint16 aTrapBookVariable = _vm->getStack()->getIdFromName(kVariableNames, "atrapbook");
 		uint16 patchData[] = {
-				1, // Command count in script
-				kRivenCommandSwitch,
-				2, // Unused
-				aGehnVariable,
-				1, // Branches count
+			1, // Command count in script
+			kRivenCommandSwitch,
+			2, // Unused
+			aGehnVariable,
+			1, // Branches count
 
-				1, // agehn == 1 branch
-				1, // Command count in sub-script
-				kRivenCommandSwitch,
-				2, // Unused
-				aTrapBookVariable,
-				1, // Branches count
+			1, // agehn == 1 branch
+			1, // Command count in sub-script
+			kRivenCommandSwitch,
+			2, // Unused
+			aTrapBookVariable,
+			1, // Branches count
 
-				1, // atrapbook == 1 branch
-				2, // Command count in sub-script
-				kRivenCommandTransition,
-				1, // Argument count
-				kRivenTransitionBlend,
-				kRivenCommandChangeCard,
-				1, // Argument count
-				2  // Card id
+			1, // atrapbook == 1 branch
+			2, // Command count in sub-script
+			kRivenCommandTransition,
+			1, // Argument count
+			kRivenTransitionBlend,
+			kRivenCommandChangeCard,
+			1, // Argument count
+			2 // Card id
 		};
 
 		// Add the new script to the list
@@ -367,23 +367,23 @@ void RivenCard::applyPropertiesPatch22118(uint32 globalId) {
 	if (globalId == 0x22118) {
 		uint16 tBookValveVariable = _vm->getStack()->getIdFromName(kVariableNames, "tbookvalve");
 		uint16 patchData[] = {
-				1, // Command count in script
-				kRivenCommandSwitch,
-				2, // Unused
-				tBookValveVariable,
-				2, // Branches count
+			1, // Command count in script
+			kRivenCommandSwitch,
+			2, // Unused
+			tBookValveVariable,
+			2, // Branches count
 
-				0, // tbookvalve == 0 branch (steam escaping at the top of the pipe)
-				1, // Command count in sub-script
-				kRivenCommandActivateSLST,
-				1, // Argument count
-				1, // Steam leaking sound id
+			0, // tbookvalve == 0 branch (steam escaping at the top of the pipe)
+			1, // Command count in sub-script
+			kRivenCommandActivateSLST,
+			1, // Argument count
+			1, // Steam leaking sound id
 
-				1, // tbookvalve == 1 branch (steam going to the left pipe)
-				1, // Command count in sub-script
-				kRivenCommandActivateSLST,
-				1, // Argument count
-				2, // Steam in pipe sound id
+			1, // tbookvalve == 1 branch (steam going to the left pipe)
+			1, // Command count in sub-script
+			kRivenCommandActivateSLST,
+			1, // Argument count
+			2, // Steam in pipe sound id
 		};
 
 		RivenScriptPtr patchScript = _vm->_scriptMan->readScriptFromData(patchData, ARRAYSIZE(patchData));
@@ -403,14 +403,14 @@ void RivenCard::applyPropertiesPatchE2E(uint32 globalId) {
 	// The main menu in the Myst 25th anniversary version is patched to include new items:
 	//   - Save game
 	if (globalId == 0xE2E) {
-		moveHotspot(   22, Common::Rect(470, 175, 602, 190)); // Setup
-		moveHotspot(   16, Common::Rect(470, 201, 602, 216)); // New game
+		moveHotspot(22, Common::Rect(470, 175, 602, 190)); // Setup
+		moveHotspot(16, Common::Rect(470, 201, 602, 216)); // New game
 		addMenuHotspot(23, Common::Rect(470, 227, 602, 242), 3, RivenStacks::ASpit::kExternalRestoreGame, "xarestoregame");
-		addMenuHotspot(24, Common::Rect(470, 256, 602, 271), 4, RivenStacks::ASpit::kExternalSaveGame,    "xaSaveGame");
-		addMenuHotspot(25, Common::Rect(470, 283, 602, 300), 5, RivenStacks::ASpit::kExternalResume,      "xaResumeGame");
-		addMenuHotspot(26, Common::Rect(470, 309, 602, 326), 6, RivenStacks::ASpit::kExternalOptions,     "xaOptions");
-		addMenuHotspot(27, Common::Rect(470, 335, 602, 352), 7, RivenStacks::ASpit::kExternalQuit,        "xademoquit");
-		_vm->getStack()->registerName(kExternalCommandNames,    RivenStacks::ASpit::kExternalNewGame,     "xaNewGame");
+		addMenuHotspot(24, Common::Rect(470, 256, 602, 271), 4, RivenStacks::ASpit::kExternalSaveGame, "xaSaveGame");
+		addMenuHotspot(25, Common::Rect(470, 283, 602, 300), 5, RivenStacks::ASpit::kExternalResume, "xaResumeGame");
+		addMenuHotspot(26, Common::Rect(470, 309, 602, 326), 6, RivenStacks::ASpit::kExternalOptions, "xaOptions");
+		addMenuHotspot(27, Common::Rect(470, 335, 602, 352), 7, RivenStacks::ASpit::kExternalQuit, "xademoquit");
+		_vm->getStack()->registerName(kExternalCommandNames, RivenStacks::ASpit::kExternalNewGame, "xaNewGame");
 	}
 }
 
@@ -438,26 +438,26 @@ void RivenCard::applyPropertiesPatch1518D(uint32 globalId) {
 	if (globalId == 0x1518D) {
 		uint16 jBookVariable = _vm->getStack()->getIdFromName(kVariableNames, "jbook");
 		uint16 patchData[] = {
-		        1, // Command count in script
-		        kRivenCommandSwitch,
-		        2, // Unused
-		        jBookVariable,
-		        1, // Branches count
+			1, // Command count in script
+			kRivenCommandSwitch,
+			2, // Unused
+			jBookVariable,
+			1, // Branches count
 
-		        2, // jbook == 2 branch
-		        3, // Command count in sub-script
+			2, // jbook == 2 branch
+			3, // Command count in sub-script
 
-		        kRivenCommandPlayMovieBlocking,
-		        1, // Argument count
-		        1, // Video id
+			kRivenCommandPlayMovieBlocking,
+			1, // Argument count
+			1, // Video id
 
-		        kRivenCommandSetVariable,
-		        2, // Argument count
-		        jBookVariable,
-		        0, // Variable value
+			kRivenCommandSetVariable,
+			2, // Argument count
+			jBookVariable,
+			0, // Variable value
 
-		        kRivenCommandRefreshCard,
-		        0 // Argument count
+			kRivenCommandRefreshCard,
+			0 // Argument count
 		};
 
 		RivenScriptPtr patchScript = _vm->_scriptMan->readScriptFromData(patchData, ARRAYSIZE(patchData));
@@ -497,37 +497,37 @@ void RivenCard::addMenuHotspot(uint16 blstId, const Common::Rect &position, uint
 	}
 
 	uint16 patchData[] = {
-			blstId,
-			0xFFFF,           // name
-			(uint16) position.left,
-			(uint16) position.top,
-			(uint16) position.right,
-			(uint16) position.bottom,
-			0,                // u0
-			kRivenMainCursor, // cursor
-			index,
-			0xFFFF,           // transition offset
-			0,                // flags
-			2,                // script count
+		blstId,
+		0xFFFF, // name
+		(uint16)position.left,
+		(uint16)position.top,
+		(uint16)position.right,
+		(uint16)position.bottom,
+		0, // u0
+		kRivenMainCursor, // cursor
+		index,
+		0xFFFF, // transition offset
+		0, // flags
+		2, // script count
 
-			kMouseDownScript,          // script type
-			1,                         // command count
-			kRivenCommandRunExternal,  // command type
-			2,                         // argument count
-			externalCommandNameId,
-			0,                         // external argument count
+		kMouseDownScript, // script type
+		1, // command count
+		kRivenCommandRunExternal, // command type
+		2, // argument count
+		externalCommandNameId,
+		0, // external argument count
 
-			kMouseInsideScript,        // script type
-			1,                         // command count
-			kRivenCommandChangeCursor, // command type
-			1,                         // argument count
-			kRivenOpenHandCursor       // cursor
-		};
+		kMouseInsideScript, // script type
+		1, // command count
+		kRivenCommandChangeCursor, // command type
+		1, // argument count
+		kRivenOpenHandCursor // cursor
+	};
 
 	// Script data is expected to be in big endian
 	for (uint i = 0; i < ARRAYSIZE(patchData); i++) {
-			patchData[i] = TO_BE_16(patchData[i]);
-		}
+		patchData[i] = TO_BE_16(patchData[i]);
+	}
 
 	// Add the new hotspot to the existing ones
 	Common::MemoryReadStream patchStream((const byte *)(patchData), ARRAYSIZE(patchData) * sizeof(uint16));
@@ -604,7 +604,7 @@ void RivenCard::defaultLoadScript() {
 }
 
 void RivenCard::loadCardPictureList(uint16 id) {
-	Common::SeekableReadStream* plst = _vm->getResource(ID_PLST, id);
+	Common::SeekableReadStream *plst = _vm->getResource(ID_PLST, id);
 	uint16 recordCount = plst->readUint16BE();
 	_pictureList.resize(recordCount);
 
@@ -657,7 +657,7 @@ void RivenCard::loadCardSoundList(uint16 id) {
 		slstRecord.fadeFlags = slstStream->readUint16BE();
 		slstRecord.loop = slstStream->readUint16BE();
 		slstRecord.globalVolume = slstStream->readUint16BE();
-		slstRecord.u0 = slstStream->readUint16BE();			// Unknown
+		slstRecord.u0 = slstStream->readUint16BE(); // Unknown
 
 		if (slstRecord.u0 > 1)
 			warning("slstRecord.u0: %d non-boolean", slstRecord.u0);
@@ -675,10 +675,10 @@ void RivenCard::loadCardSoundList(uint16 id) {
 			slstRecord.volumes[j] = slstStream->readUint16BE();
 
 		for (uint16 j = 0; j < soundCount; j++)
-			slstRecord.balances[j] = slstStream->readSint16BE();	// negative = left, 0 = center, positive = right
+			slstRecord.balances[j] = slstStream->readSint16BE(); // negative = left, 0 = center, positive = right
 
 		for (uint16 j = 0; j < soundCount; j++) {
-			slstRecord.u2[j] = slstStream->readUint16BE();		// Unknown
+			slstRecord.u2[j] = slstStream->readUint16BE(); // Unknown
 
 			if (slstRecord.u2[j] != 255 && slstRecord.u2[j] != 256)
 				warning("slstRecord.u2[%d]: %d not 255 or 256", j, slstRecord.u2[j]);
@@ -1070,48 +1070,48 @@ void RivenCard::playMovie(uint16 index, bool queue) {
 
 RivenScriptPtr RivenCard::onKeyAction(RivenKeyAction keyAction) {
 	static const char *forwardNames[] = {
-			"forward", "forward1", "forward2", "forward3",
-			"opendoor", "openhatch", "opentrap", "opengate", "opengrate",
-			"open", "door", "drop", "go", "enterprison", "exit",
-			"forwardleft", "forwardright", nullptr
+		"forward", "forward1", "forward2", "forward3",
+		"opendoor", "openhatch", "opentrap", "opengate", "opengrate",
+		"open", "door", "drop", "go", "enterprison", "exit",
+		"forwardleft", "forwardright", nullptr
 	};
 
-	static const char *forwardLeftNames [] = { "forwardleft",              nullptr };
-	static const char *forwardRightNames[] = { "forwardright",             nullptr };
-	static const char *leftNames        [] = { "left",  "afl", "prevpage", nullptr };
-	static const char *rightNames       [] = { "right", "afr", "nextpage", nullptr };
-	static const char *backNames        [] = { "back",                     nullptr };
-	static const char *upNames          [] = { "up",                       nullptr };
-	static const char *downNames        [] = { "down",                     nullptr };
+	static const char *forwardLeftNames[] = { "forwardleft", nullptr };
+	static const char *forwardRightNames[] = { "forwardright", nullptr };
+	static const char *leftNames[] = { "left", "afl", "prevpage", nullptr };
+	static const char *rightNames[] = { "right", "afr", "nextpage", nullptr };
+	static const char *backNames[] = { "back", nullptr };
+	static const char *upNames[] = { "up", nullptr };
+	static const char *downNames[] = { "down", nullptr };
 
 	const char **hotspotNames = nullptr;
 	switch (keyAction) {
-		case kKeyActionMoveForward:
-			hotspotNames = forwardNames;
-			break;
-		case kKeyActionMoveForwardLeft:
-			hotspotNames = forwardLeftNames;
-			break;
-		case kKeyActionMoveForwardRight:
-			hotspotNames = forwardRightNames;
-			break;
-		case kKeyActionMoveLeft:
-			hotspotNames = leftNames;
-			break;
-		case kKeyActionMoveRight:
-			hotspotNames = rightNames;
-			break;
-		case kKeyActionMoveBack:
-			hotspotNames = backNames;
-			break;
-		case kKeyActionLookUp:
-			hotspotNames = upNames;
-			break;
-		case kKeyActionLookDown:
-			hotspotNames = downNames;
-			break;
-		default:
-			break;
+	case kKeyActionMoveForward:
+		hotspotNames = forwardNames;
+		break;
+	case kKeyActionMoveForwardLeft:
+		hotspotNames = forwardLeftNames;
+		break;
+	case kKeyActionMoveForwardRight:
+		hotspotNames = forwardRightNames;
+		break;
+	case kKeyActionMoveLeft:
+		hotspotNames = leftNames;
+		break;
+	case kKeyActionMoveRight:
+		hotspotNames = rightNames;
+		break;
+	case kKeyActionMoveBack:
+		hotspotNames = backNames;
+		break;
+	case kKeyActionLookUp:
+		hotspotNames = upNames;
+		break;
+	case kKeyActionLookDown:
+		hotspotNames = downNames;
+		break;
+	default:
+		break;
 	}
 
 	if (!hotspotNames) {
@@ -1147,8 +1147,8 @@ RivenHotspot *RivenCard::findEnabledHotspotByName(const char **names) const {
 	return nullptr;
 }
 
-RivenHotspot::RivenHotspot(MohawkEngine_Riven *vm, Common::ReadStream *stream) :
-		_vm(vm) {
+RivenHotspot::RivenHotspot(MohawkEngine_Riven *vm, Common::ReadStream *stream)
+  : _vm(vm) {
 	loadFromStream(stream);
 }
 

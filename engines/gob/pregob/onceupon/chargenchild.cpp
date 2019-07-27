@@ -20,97 +20,98 @@
  *
  */
 
-#include "gob/surface.h"
 #include "gob/anifile.h"
+#include "gob/surface.h"
 
 #include "gob/pregob/onceupon/chargenchild.h"
 
 enum Animation {
-	kAnimWalkLeft  =  0,
-	kAnimWalkRight =  1,
-	kAnimJumpLeft  =  2,
-	kAnimJumpRight =  3,
-	kAnimTapFoot   = 14
+	kAnimWalkLeft = 0,
+	kAnimWalkRight = 1,
+	kAnimJumpLeft = 2,
+	kAnimJumpRight = 3,
+	kAnimTapFoot = 14
 };
 
 namespace Gob {
 
 namespace OnceUpon {
 
-CharGenChild::CharGenChild(const ANIFile &ani) : ANIObject(ani) {
-	setPosition(265, 110);
-	setAnimation(kAnimWalkLeft);
-	setVisible(true);
-	setPause(false);
-}
-
-CharGenChild::~CharGenChild() {
-}
-
-void CharGenChild::advance() {
-	bool wasLastFrame = lastFrame();
-
-	ANIObject::advance();
-
-	int16 x, y, left, top, width, height;
-	getPosition(x, y);
-	getFramePosition(left, top);
-	getFrameSize(width, height);
-
-	const int16 right = left + width - 1;
-
-	switch (getAnimation()) {
-	case kAnimWalkLeft:
-		if (left <= 147)
-			setAnimation(kAnimWalkRight);
-		break;
-
-	case kAnimWalkRight:
-		if (right >= 290) {
-			setAnimation(kAnimJumpLeft);
-
-			setPosition(x, y - 14);
-		}
-		break;
-
-	case kAnimJumpLeft:
-		if (wasLastFrame) {
-			setAnimation(kAnimTapFoot);
-
-			setPosition(x, y - 10);
-		}
-		break;
-
-	case kAnimTapFoot:
-		if (wasLastFrame) {
-			setAnimation(kAnimJumpRight);
-
-			setPosition(x, y + 10);
-		}
-		break;
-
-	case kAnimJumpRight:
-		if (wasLastFrame) {
-			setAnimation(kAnimWalkLeft);
-
-			setPosition(x, y + 14);
-		}
-		break;
+	CharGenChild::CharGenChild(const ANIFile &ani)
+	  : ANIObject(ani) {
+		setPosition(265, 110);
+		setAnimation(kAnimWalkLeft);
+		setVisible(true);
+		setPause(false);
 	}
-}
 
-CharGenChild::Sound CharGenChild::shouldPlaySound() const {
-	const uint16 anim  = getAnimation();
-	const uint16 frame = getFrame();
+	CharGenChild::~CharGenChild() {
+	}
 
-	if (((anim == kAnimWalkLeft) || (anim == kAnimWalkRight)) && ((frame == 1) || (frame == 6)))
-		return kSoundWalk;
+	void CharGenChild::advance() {
+		bool wasLastFrame = lastFrame();
 
-	if (((anim == kAnimJumpLeft) || (anim == kAnimJumpRight)) &&  (frame == 0))
-		return kSoundJump;
+		ANIObject::advance();
 
-	return kSoundNone;
-}
+		int16 x, y, left, top, width, height;
+		getPosition(x, y);
+		getFramePosition(left, top);
+		getFrameSize(width, height);
+
+		const int16 right = left + width - 1;
+
+		switch (getAnimation()) {
+		case kAnimWalkLeft:
+			if (left <= 147)
+				setAnimation(kAnimWalkRight);
+			break;
+
+		case kAnimWalkRight:
+			if (right >= 290) {
+				setAnimation(kAnimJumpLeft);
+
+				setPosition(x, y - 14);
+			}
+			break;
+
+		case kAnimJumpLeft:
+			if (wasLastFrame) {
+				setAnimation(kAnimTapFoot);
+
+				setPosition(x, y - 10);
+			}
+			break;
+
+		case kAnimTapFoot:
+			if (wasLastFrame) {
+				setAnimation(kAnimJumpRight);
+
+				setPosition(x, y + 10);
+			}
+			break;
+
+		case kAnimJumpRight:
+			if (wasLastFrame) {
+				setAnimation(kAnimWalkLeft);
+
+				setPosition(x, y + 14);
+			}
+			break;
+		}
+	}
+
+	CharGenChild::Sound CharGenChild::shouldPlaySound() const {
+		const uint16 anim = getAnimation();
+		const uint16 frame = getFrame();
+
+		if (((anim == kAnimWalkLeft) || (anim == kAnimWalkRight)) && ((frame == 1) || (frame == 6)))
+			return kSoundWalk;
+
+		if (((anim == kAnimJumpLeft) || (anim == kAnimJumpRight)) && (frame == 0))
+			return kSoundJump;
+
+		return kSoundNone;
+	}
 
 } // End of namespace OnceUpon
 

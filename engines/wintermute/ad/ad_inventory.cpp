@@ -27,26 +27,25 @@
  */
 
 #include "engines/wintermute/ad/ad_inventory.h"
+#include "common/str.h"
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/ad/ad_item.h"
 #include "engines/wintermute/platform_osystem.h"
-#include "common/str.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdInventory, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdInventory::AdInventory(BaseGame *inGame) : BaseObject(inGame) {
+AdInventory::AdInventory(BaseGame *inGame)
+  : BaseObject(inGame) {
 	_scrollOffset = 0;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 AdInventory::~AdInventory() {
 	_takenItems.clear(); // ref only
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdInventory::insertItem(const char *name, const char *insertAfter) {
@@ -71,7 +70,6 @@ bool AdInventory::insertItem(const char *name, const char *insertAfter) {
 		}
 	}
 
-
 	if (insertIndex == -1) {
 		_takenItems.add(item);
 	} else {
@@ -80,7 +78,6 @@ bool AdInventory::insertItem(const char *name, const char *insertAfter) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdInventory::removeItem(const char *name) {
@@ -100,8 +97,6 @@ bool AdInventory::removeItem(const char *name) {
 
 	return STATUS_FAILED;
 }
-
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdInventory::removeItem(AdItem *item) {

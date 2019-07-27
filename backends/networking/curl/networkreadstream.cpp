@@ -22,10 +22,10 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <curl/curl.h>
 #include "backends/networking/curl/networkreadstream.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "base/version.h"
+#include <curl/curl.h>
 
 namespace Networking {
 
@@ -105,7 +105,7 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, const byt
 			// CURLOPT_COPYPOSTFIELDS available since curl 7.17.1
 			curl_easy_setopt(_easy, CURLOPT_COPYPOSTFIELDS, buffer);
 #else
-			_bufferCopy = (byte*)malloc(bufferSize);
+			_bufferCopy = (byte *)malloc(bufferSize);
 			memcpy(_bufferCopy, buffer, bufferSize);
 			curl_easy_setopt(_easy, CURLOPT_POSTFIELDS, _bufferCopy);
 #endif
@@ -149,12 +149,11 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, Common::H
 
 	for (Common::HashMap<Common::String, Common::String>::iterator i = formFields.begin(); i != formFields.end(); ++i) {
 		CURLFORMcode code = curl_formadd(
-			&formpost,
-			&lastptr,
-			CURLFORM_COPYNAME, i->_key.c_str(),
-			CURLFORM_COPYCONTENTS, i->_value.c_str(),
-			CURLFORM_END
-		);
+		  &formpost,
+		  &lastptr,
+		  CURLFORM_COPYNAME, i->_key.c_str(),
+		  CURLFORM_COPYCONTENTS, i->_value.c_str(),
+		  CURLFORM_END);
 
 		if (code != CURL_FORMADD_OK)
 			warning("NetworkReadStream: field curl_formadd('%s') failed", i->_key.c_str());
@@ -162,12 +161,11 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, Common::H
 
 	for (Common::HashMap<Common::String, Common::String>::iterator i = formFiles.begin(); i != formFiles.end(); ++i) {
 		CURLFORMcode code = curl_formadd(
-			&formpost,
-			&lastptr,
-			CURLFORM_COPYNAME, i->_key.c_str(),
-			CURLFORM_FILE, i->_value.c_str(),
-			CURLFORM_END
-		);
+		  &formpost,
+		  &lastptr,
+		  CURLFORM_COPYNAME, i->_key.c_str(),
+		  CURLFORM_FILE, i->_value.c_str(),
+		  CURLFORM_END);
 
 		if (code != CURL_FORMADD_OK)
 			warning("NetworkReadStream: file curl_formadd('%s') failed", i->_key.c_str());
@@ -178,18 +176,18 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, Common::H
 	ConnMan.registerEasyHandle(_easy);
 }
 
-NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading, bool usingPatch) :
-		_backingStream(DisposeAfterUse::YES) {
+NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading, bool usingPatch)
+  : _backingStream(DisposeAfterUse::YES) {
 	init(url, headersList, (const byte *)postFields.c_str(), postFields.size(), uploading, usingPatch, false);
 }
 
-NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::HashMap<Common::String, Common::String> formFields, Common::HashMap<Common::String, Common::String> formFiles) :
-		_backingStream(DisposeAfterUse::YES) {
+NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::HashMap<Common::String, Common::String> formFields, Common::HashMap<Common::String, Common::String> formFiles)
+  : _backingStream(DisposeAfterUse::YES) {
 	init(url, headersList, formFields, formFiles);
 }
 
-NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post) :
-		_backingStream(DisposeAfterUse::YES) {
+NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post)
+  : _backingStream(DisposeAfterUse::YES) {
 	init(url, headersList, buffer, bufferSize, uploading, usingPatch, post);
 }
 

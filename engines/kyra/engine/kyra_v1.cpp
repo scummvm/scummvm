@@ -21,19 +21,21 @@
  */
 
 #include "kyra/kyra_v1.h"
-#include "kyra/sound/sound_intern.h"
-#include "kyra/resource/resource.h"
 #include "kyra/engine/timer.h"
 #include "kyra/gui/debugger.h"
+#include "kyra/resource/resource.h"
+#include "kyra/sound/sound_intern.h"
 
-#include "common/error.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/error.h"
 
 namespace Kyra {
 
 KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
-	: Engine(system), _flags(flags), _rnd("kyra") {
+  : Engine(system)
+  , _flags(flags)
+  , _rnd("kyra") {
 	_res = 0;
 	_sound = 0;
 	_text = 0;
@@ -253,8 +255,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode >= Common::KEYCODE_1 && event.kbd.keycode <= Common::KEYCODE_9 &&
-			        (event.kbd.hasFlags(Common::KBD_CTRL) || event.kbd.hasFlags(Common::KBD_ALT)) && mainLoop) {
+			if (event.kbd.keycode >= Common::KEYCODE_1 && event.kbd.keycode <= Common::KEYCODE_9 && (event.kbd.hasFlags(Common::KBD_CTRL) || event.kbd.hasFlags(Common::KBD_ALT)) && mainLoop) {
 				int saveLoadSlot = 9 - (event.kbd.keycode - Common::KEYCODE_0) + 990;
 
 				if (event.kbd.hasFlags(Common::KBD_CTRL)) {
@@ -302,7 +303,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 			}
 			keys = (event.type == Common::EVENT_LBUTTONDOWN ? 199 : (200 | 0x800));
 			breakLoop = true;
-			} break;
+		} break;
 
 		case Common::EVENT_RBUTTONDOWN:
 		case Common::EVENT_RBUTTONUP: {
@@ -314,7 +315,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 			}
 			keys = (event.type == Common::EVENT_RBUTTONDOWN ? 201 : (202 | 0x800));
 			breakLoop = true;
-			} break;
+		} break;
 
 		case Common::EVENT_WHEELUP:
 			mouseWheel = -1;
@@ -445,10 +446,7 @@ void KyraEngine_v1::updateInput() {
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_PERIOD || event.kbd.keycode == Common::KEYCODE_ESCAPE ||
-			        event.kbd.keycode == Common::KEYCODE_SPACE || event.kbd.keycode == Common::KEYCODE_RETURN ||
-			        event.kbd.keycode == Common::KEYCODE_UP || event.kbd.keycode == Common::KEYCODE_RIGHT ||
-			        event.kbd.keycode == Common::KEYCODE_DOWN || event.kbd.keycode == Common::KEYCODE_LEFT)
+			if (event.kbd.keycode == Common::KEYCODE_PERIOD || event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_SPACE || event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_UP || event.kbd.keycode == Common::KEYCODE_RIGHT || event.kbd.keycode == Common::KEYCODE_DOWN || event.kbd.keycode == Common::KEYCODE_LEFT)
 				_eventList.push_back(Event(event, true));
 			else if (event.kbd.keycode == Common::KEYCODE_q && event.kbd.hasFlags(Common::KBD_CTRL))
 				quitGame();
@@ -506,7 +504,6 @@ void KyraEngine_v1::resetSkipFlag(bool removeEvent) {
 		}
 	}
 }
-
 
 int KyraEngine_v1::setGameFlag(int flag) {
 	assert((flag >> 3) >= 0 && (flag >> 3) <= ARRAYSIZE(_flagsTable));
@@ -580,11 +577,11 @@ void KyraEngine_v1::readSettings() {
 	bool subtitles = ConfMan.getBool("subtitles");
 
 	if (!speechMute && subtitles)
-		_configVoice = 2;   // Voice & Text
+		_configVoice = 2; // Voice & Text
 	else if (!speechMute && !subtitles)
-		_configVoice = 1;   // Voice only
+		_configVoice = 1; // Voice only
 	else
-		_configVoice = 0;   // Text only
+		_configVoice = 0; // Text only
 
 	setWalkspeed(_configWalkspeed);
 }
@@ -599,15 +596,15 @@ void KyraEngine_v1::writeSettings() {
 	ConfMan.setBool("sfx_mute", _configSounds == 0);
 
 	switch (_configVoice) {
-	case 0:     // Text only
+	case 0: // Text only
 		speechMute = true;
 		subtitles = true;
 		break;
-	case 1:     // Voice only
+	case 1: // Voice only
 		speechMute = false;
 		subtitles = false;
 		break;
-	default:    // Voice & Text
+	default: // Voice & Text
 		speechMute = false;
 		subtitles = true;
 	}

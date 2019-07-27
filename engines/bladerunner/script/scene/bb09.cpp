@@ -35,26 +35,26 @@ void SceneScriptBB09::InitializeScene() {
 	}
 
 	Scene_Exit_Add_2D_Exit(0, 224, 213, 286, 353, 1);
-	Scene_Exit_Add_2D_Exit(1,  75, 450, 480, 479, 2);
+	Scene_Exit_Add_2D_Exit(1, 75, 450, 480, 479, 2);
 
-	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1,  20, 100, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 40,   0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxCTRUNOFF, 50,  55, 1);
-	Ambient_Sounds_Add_Sound(kSfxRADIATR2, 5,  20, 20, 25, -100, -100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxRADIATR3, 5,  20, 20, 25, -100, -100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxRADIATR4, 5,  20, 20, 25, -100, -100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY4,   2, 180, 14, 16, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY5,   2, 180, 14, 16, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY6,   2, 180, 14, 16, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY7,   2, 180, 14, 16, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN1,   5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN2,   5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN3,   5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBMOVE1,  5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBMOVE2,  5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBMOVE3,  5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHAUNT1,   5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHAUNT2,   5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 20, 100, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 40, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRUNOFF, 50, 55, 1);
+	Ambient_Sounds_Add_Sound(kSfxRADIATR2, 5, 20, 20, 25, -100, -100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxRADIATR3, 5, 20, 20, 25, -100, -100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxRADIATR4, 5, 20, 20, 25, -100, -100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY4, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY5, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY6, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY7, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN3, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE1, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE2, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE3, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHAUNT1, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHAUNT2, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
 
 	Actor_Set_Targetable(kActorSadik, true); // Don't kill Sadik yet, game cannot continue. This is an original bug - fixed in ScummVM in Sadik's AI script (method ShotAtAndHit() )
 }

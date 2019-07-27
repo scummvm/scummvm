@@ -25,11 +25,11 @@
 #ifndef SAGA_SCENE_H
 #define SAGA_SCENE_H
 
-#include "saga/font.h"
 #include "saga/actor.h"
+#include "saga/events.h"
+#include "saga/font.h"
 #include "saga/interface.h"
 #include "saga/puzzle.h"
-#include "saga/events.h"
 
 namespace Saga {
 
@@ -54,7 +54,7 @@ namespace Saga {
 class ObjectMap;
 
 enum SceneFlags {
-	kSceneFlagISO        = 1,
+	kSceneFlagISO = 1,
 	kSceneFlagShowCursor = 2
 };
 
@@ -72,8 +72,7 @@ struct BGInfo {
 	byte *buffer;
 };
 
-typedef int (SceneProc) (int, void *);
-
+typedef int(SceneProc)(int, void *);
 
 enum SCENE_PROC_PARAMS {
 	SCENE_BEGIN = 0,
@@ -109,7 +108,10 @@ struct SceneResourceData {
 	int resourceType;
 	bool invalid;
 
-	SceneResourceData() : resourceId(0), resourceType(0),  invalid(false) {
+	SceneResourceData()
+	  : resourceId(0)
+	  , resourceType(0)
+	  , invalid(false) {
 	}
 };
 
@@ -127,7 +129,7 @@ struct SceneDescription {
 	uint16 startScriptEntrypointNumber;
 	int16 musicResourceId;
 
-	void reset()  {
+	void reset() {
 		flags = resourceListResourceId = endSlope = beginSlope = scriptModuleNumber = sceneScriptEntrypointNumber = startScriptEntrypointNumber = musicResourceId = 0;
 	}
 };
@@ -147,11 +149,14 @@ struct SceneImage {
 	ByteArray buffer;
 	PalEntry pal[256];
 
-	SceneImage() : loaded(false), w(0), h(0), p(0) {
+	SceneImage()
+	  : loaded(false)
+	  , w(0)
+	  , h(0)
+	  , p(0) {
 		memset(pal, 0, sizeof(pal));
 	}
 };
-
 
 enum SceneTransitionType {
 	kTransitionNoFade,
@@ -176,20 +181,20 @@ struct LoadSceneParams {
 typedef Common::List<LoadSceneParams> SceneQueueList;
 
 ///// IHNM-specific stuff
-#define IHNM_PALFADE_TIME    1000
+#define IHNM_PALFADE_TIME 1000
 #define IHNM_INTRO_FRAMETIME 80
-#define IHNM_DGLOGO_TIME     8000
-#define IHNM_TITLE_TIME_GM   28750
-#define IHNM_TITLE_TIME_FM   19500
+#define IHNM_DGLOGO_TIME 8000
+#define IHNM_TITLE_TIME_GM 28750
+#define IHNM_TITLE_TIME_FM 19500
 
 #define CREDIT_DURATION1 4000
 
 class Scene {
- public:
+public:
 	Scene(SagaEngine *vm);
 	~Scene();
 
-// Console functions
+	// Console functions
 	void cmdActionMapInfo();
 	void cmdObjectMapInfo();
 
@@ -209,7 +214,7 @@ class Scene {
 	int getFlags() const { return _sceneDescription.flags; }
 	int getScriptModuleNumber() const { return _sceneDescription.scriptModuleNumber; }
 	bool isInIntro() { return !_inGame; }
-	const Rect& getSceneClip() const { return _sceneClip; }
+	const Rect &getSceneClip() const { return _sceneClip; }
 
 	void getBGMaskInfo(int &width, int &height, byte *&buffer);
 	int isBGMaskPresent() { return _bgMask.loaded; }
@@ -221,43 +226,42 @@ class Scene {
 		}
 		offset = testPoint.x + testPoint.y * _bgMask.w;
 
-		#ifdef SCENE_DEBUG
+#ifdef SCENE_DEBUG
 		if (offset >= _bgMask.buf_len) {
 			error("Scene::getBGMaskType offset 0x%X exceed bufferLength 0x%X", offset, (int)_bgMask.buf_len);
 		}
-		#endif
+#endif
 
 		return (_bgMask.buffer[offset] >> 4) & 0x0f;
 	}
 
 	bool validBGMaskPoint(const Point &testPoint) {
-		#ifdef SCENE_DEBUG
+#ifdef SCENE_DEBUG
 		if (!_bgMask.loaded) {
 			error("Scene::validBGMaskPoint _bgMask not loaded");
 		}
-		#endif
+#endif
 
-		return !((testPoint.x < 0) || (testPoint.x >= _bgMask.w) ||
-			(testPoint.y < 0) || (testPoint.y >= _bgMask.h));
+		return !((testPoint.x < 0) || (testPoint.x >= _bgMask.w) || (testPoint.y < 0) || (testPoint.y >= _bgMask.h));
 	}
 
 	bool canWalk(const Point &testPoint);
 	bool offscreenPath(Point &testPoint);
 
 	void setDoorState(int doorNumber, int doorState) {
-		#ifdef SCENE_DEBUG
+#ifdef SCENE_DEBUG
 		if ((doorNumber < 0) || (doorNumber >= SCENE_DOORS_MAX))
 			error("Scene::setDoorState wrong doorNumber");
-		#endif
+#endif
 
 		_sceneDoors[doorNumber] = doorState;
 	}
 
 	int getDoorState(int doorNumber) {
-		#ifdef SCENE_DEBUG
+#ifdef SCENE_DEBUG
 		if ((doorNumber < 0) || (doorNumber >= SCENE_DOORS_MAX))
 			error("Scene::getDoorState wrong doorNumber");
-		#endif
+#endif
 
 		return _sceneDoors[doorNumber];
 	}
@@ -279,11 +283,11 @@ class Scene {
 	bool isSceneLoaded() const { return _sceneLoaded; }
 
 	uint16 getSceneResourceId(int sceneNumber) {
-	#ifdef SCENE_DEBUG
+#ifdef SCENE_DEBUG
 		if ((sceneNumber < 0) || (sceneNumber >= _sceneCount)) {
 			error("getSceneResourceId: wrong sceneNumber %i", sceneNumber);
 		}
-	#endif
+#endif
 		return _sceneLUT[sceneNumber];
 	}
 	int currentSceneNumber() const { return _sceneNumber; }
@@ -324,14 +328,13 @@ class Scene {
 		return _vm->getGameId() == GID_ITE && _vm->_puzzle->isActive();
 	}
 
- private:
+private:
 	void loadScene(LoadSceneParams &loadSceneParams);
 	void loadSceneDescriptor(uint32 resourceId);
 	void loadSceneResourceList(uint32 resourceId, SceneResourceDataArray &resourceList);
 	void loadSceneEntryList(const ByteArray &resourceData);
 	void processSceneResources(SceneResourceDataArray &resourceList);
 	void getResourceTypes(SAGAResourceTypes *&types, int &typesCount);
-
 
 	SagaEngine *_vm;
 
@@ -355,15 +358,14 @@ class Scene {
 
 	int _sceneDoors[SCENE_DOORS_MAX];
 
-
- public:
+public:
 	ObjectMap *_actionMap;
 	ObjectMap *_objectMap;
 	SceneEntryList _entryList;
 	StringsTable _sceneStrings;
 	TextList _textList;
 
- private:
+private:
 	int ITEStartProc();
 	int IHNMStartProc();
 	int IHNMCreditsProc();
@@ -378,19 +380,19 @@ class Scene {
 	bool playTitle(int title, int time, int mode = kPanelVideo);
 	bool playLoopingTitle(int title, int seconds);
 
- public:
+public:
 	static int SC_IHNMIntroMovieProc1(int param, void *refCon);
 	static int SC_IHNMIntroMovieProc2(int param, void *refCon);
 	static int SC_IHNMIntroMovieProc3(int param, void *refCon);
 	static int SC_IHNMCreditsMovieProc(int param, void *refCon);
 
- private:
+private:
 	int IHNMIntroMovieProc1(int param);
 	int IHNMIntroMovieProc2(int param);
 	int IHNMIntroMovieProc3(int param);
 	int IHNMCreditsMovieProc(int param);
 
- public:
+public:
 	static int SC_ITEIntroAnimProc(int param, void *refCon);
 	static int SC_ITEIntroCave1Proc(int param, void *refCon);
 	static int SC_ITEIntroCave2Proc(int param, void *refCon);
@@ -402,7 +404,7 @@ class Scene {
 	static int SC_ITEIntroFaireTentProc(int param, void *refCon);
 	static int SC_ITEIntroCaveDemoProc(int param, void *refCon);
 
- private:
+private:
 	EventColumns *queueIntroDialogue(EventColumns *eventColumns, int n_dialogues, const IntroDialogue dialogue[]);
 	EventColumns *queueCredits(int delta_time, int duration, int n_credits, const IntroCredit credits[]);
 	int ITEIntroAnimProc(int param);
@@ -412,7 +414,6 @@ class Scene {
 	int ITEIntroTreeHouseProc(int param);
 	int ITEIntroFairePathProc(int param);
 	int ITEIntroFaireTentProc(int param);
-
 };
 
 } // End of namespace Saga

@@ -20,10 +20,10 @@
  *
  */
 
-#include "gob/gob.h"
-#include "gob/global.h"
-#include "gob/palanim.h"
 #include "gob/draw.h"
+#include "gob/global.h"
+#include "gob/gob.h"
+#include "gob/palanim.h"
 
 #include "gob/sound/sound.h"
 
@@ -33,84 +33,85 @@ namespace Gob {
 
 namespace OnceUpon {
 
-Title::Title(GobEngine *vm) : SEQFile(vm, "ville.seq") {
-}
-
-Title::~Title() {
-}
-
-void Title::play() {
-	SEQFile::play(true, 0xFFFF, 15);
-
-	// After playback, fade out and stop the music
-	if (!_vm->shouldQuit())
-		_vm->_palAnim->fade(0, 0, 0);
-
-	stopMusic();
-}
-
-void Title::handleFrameEvent() {
-	// On fame 0, start the music and fade in
-	if (getFrame() == 0) {
-		playMusic();
-
-		_vm->_draw->forceBlit();
-		_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, 0, 0);
+	Title::Title(GobEngine *vm)
+	  : SEQFile(vm, "ville.seq") {
 	}
-}
 
-void Title::playMusic() {
-	// Look at what platform this is and play the appropriate music type
+	Title::~Title() {
+	}
 
-	if      (_vm->getPlatform() == Common::kPlatformDOS)
-		playMusicDOS();
-	else if (_vm->getPlatform() == Common::kPlatformAmiga)
-		playMusicAmiga();
-	else if (_vm->getPlatform() == Common::kPlatformAtariST)
-		playMusicAtariST();
-}
+	void Title::play() {
+		SEQFile::play(true, 0xFFFF, 15);
 
-void Title::playMusicDOS() {
-	// Play an AdLib track
+		// After playback, fade out and stop the music
+		if (!_vm->shouldQuit())
+			_vm->_palAnim->fade(0, 0, 0);
 
-	_vm->_sound->adlibLoadTBR("babayaga.tbr");
-	_vm->_sound->adlibLoadMDY("babayaga.mdy");
-	_vm->_sound->adlibSetRepeating(-1);
-	_vm->_sound->adlibPlay();
-}
+		stopMusic();
+	}
 
-void Title::playMusicAmiga() {
-	// Play a Protracker track
+	void Title::handleFrameEvent() {
+		// On fame 0, start the music and fade in
+		if (getFrame() == 0) {
+			playMusic();
 
-	_vm->_sound->protrackerPlay("mod.babayaga");
-}
+			_vm->_draw->forceBlit();
+			_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, 0, 0);
+		}
+	}
 
-void Title::playMusicAtariST() {
-	// Play a Soundblaster composition
+	void Title::playMusic() {
+		// Look at what platform this is and play the appropriate music type
 
-	static const int16        titleMusic[21] = { 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 2, 0, 1, 0, 0, 0, 0, 0, -1};
-	static const char * const titleFiles[ 3] = {"baba1.snd", "baba2.snd", "baba3.snd"};
+		if (_vm->getPlatform() == Common::kPlatformDOS)
+			playMusicDOS();
+		else if (_vm->getPlatform() == Common::kPlatformAmiga)
+			playMusicAmiga();
+		else if (_vm->getPlatform() == Common::kPlatformAtariST)
+			playMusicAtariST();
+	}
 
-	for (uint i = 0; i < ARRAYSIZE(titleFiles); i++)
-		_vm->_sound->sampleLoad(_vm->_sound->sampleGetBySlot(i), SOUND_SND, titleFiles[i]);
+	void Title::playMusicDOS() {
+		// Play an AdLib track
 
-	_vm->_sound->blasterPlayComposition(titleMusic, 0);
-	_vm->_sound->blasterRepeatComposition(-1);
-}
+		_vm->_sound->adlibLoadTBR("babayaga.tbr");
+		_vm->_sound->adlibLoadMDY("babayaga.mdy");
+		_vm->_sound->adlibSetRepeating(-1);
+		_vm->_sound->adlibPlay();
+	}
 
-void Title::stopMusic() {
-	// Just stop everything
+	void Title::playMusicAmiga() {
+		// Play a Protracker track
 
-	_vm->_sound->adlibSetRepeating(0);
-	_vm->_sound->blasterRepeatComposition(0);
+		_vm->_sound->protrackerPlay("mod.babayaga");
+	}
 
-	_vm->_sound->adlibStop();
-	_vm->_sound->blasterStopComposition();
-	_vm->_sound->protrackerStop();
+	void Title::playMusicAtariST() {
+		// Play a Soundblaster composition
 
-	for (int i = 0; i < ::Gob::Sound::kSoundsCount; i++)
-		_vm->_sound->sampleFree(_vm->_sound->sampleGetBySlot(i));
-}
+		static const int16 titleMusic[21] = { 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 2, 0, 1, 0, 0, 0, 0, 0, -1 };
+		static const char *const titleFiles[3] = { "baba1.snd", "baba2.snd", "baba3.snd" };
+
+		for (uint i = 0; i < ARRAYSIZE(titleFiles); i++)
+			_vm->_sound->sampleLoad(_vm->_sound->sampleGetBySlot(i), SOUND_SND, titleFiles[i]);
+
+		_vm->_sound->blasterPlayComposition(titleMusic, 0);
+		_vm->_sound->blasterRepeatComposition(-1);
+	}
+
+	void Title::stopMusic() {
+		// Just stop everything
+
+		_vm->_sound->adlibSetRepeating(0);
+		_vm->_sound->blasterRepeatComposition(0);
+
+		_vm->_sound->adlibStop();
+		_vm->_sound->blasterStopComposition();
+		_vm->_sound->protrackerStop();
+
+		for (int i = 0; i < ::Gob::Sound::kSoundsCount; i++)
+			_vm->_sound->sampleFree(_vm->_sound->sampleGetBySlot(i));
+	}
 
 } // End of namespace OnceUpon
 

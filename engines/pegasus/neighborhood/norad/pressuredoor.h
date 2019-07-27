@@ -28,8 +28,8 @@
 
 #include "pegasus/interaction.h"
 #include "pegasus/movie.h"
-#include "pegasus/notification.h"
 #include "pegasus/neighborhood/norad/pressuretracker.h"
+#include "pegasus/notification.h"
 
 namespace Pegasus {
 
@@ -38,8 +38,8 @@ static const short kNormalSubRoomPressure = 2;
 class PressureDoor : public GameInteraction, public NotificationReceiver {
 public:
 	PressureDoor(Neighborhood *, bool isUpperDoor, const HotSpotID, const HotSpotID,
-			const HotSpotID, TimeValue pressureSoundIn, TimeValue pressureSoundOut,
-			TimeValue equalizeSoundIn, TimeValue equalizeSoundOut);
+	             const HotSpotID, TimeValue pressureSoundIn, TimeValue pressureSoundOut,
+	             TimeValue equalizeSoundIn, TimeValue equalizeSoundOut);
 	virtual ~PressureDoor() {}
 
 	void incrementPressure(const HotSpotID);

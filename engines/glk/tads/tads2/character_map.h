@@ -25,34 +25,31 @@
 
 namespace Glk {
 namespace TADS {
-namespace TADS2 {
+	namespace TADS2 {
 
-struct errcxdef;
+		struct errcxdef;
 
-/* ------------------------------------------------------------------------ */
-/*
+		/* ------------------------------------------------------------------------ */
+		/*
  *   Initialize the default character mappings.  If no mapping file is to
  *   be read, this function will establish identify mappings that leave
  *   characters untranslated. 
  */
-void cmap_init_default(void);
+		void cmap_init_default(void);
 
-
-/*
+		/*
  *   Load a character map file.  Returns zero on success, non-zero on
  *   failure.  If filename is null, we'll use the default mapping.
  */
-int cmap_load(char *filename);
+		int cmap_load(char *filename);
 
-
-/*
+		/*
  *   Turn off character translation.  This overrides any game character
  *   set that we find and simply uses the default translation. 
  */
-void cmap_override(void);
+		void cmap_override(void);
 
-
-/*
+		/*
  *   Set the game's internal character set.  This should be called when a
  *   game is loaded, and the game specifies an internal character set.  If
  *   there is no character map file explicitly loaded, we will attempt to
@@ -67,10 +64,9 @@ void cmap_override(void);
  *   file on systems where mapping files are stored in the same directory
  *   as the TADS executables.  
  */
-void cmap_set_game_charset(struct errcxdef *errctx,
-                           char *internal_id, char *internal_ldesc,
-                           char *argv0);
-
+		void cmap_set_game_charset(struct errcxdef *errctx,
+		                           char *internal_id, char *internal_ldesc,
+		                           char *argv0);
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -83,37 +79,35 @@ void cmap_set_game_charset(struct errcxdef *errctx,
 /* map an internal character into a native character (for display) */
 #define cmap_i2n(c) (G_cmap_output[(unsigned char)(c)])
 
-
-/* ------------------------------------------------------------------------ */
-/*
+		/* ------------------------------------------------------------------------ */
+		/*
  *   Global character mapping tables.  The character map is established at
  *   start-up. 
  */
 
-/* 
+		/* 
  *   input-mapping table - for native character 'n', cmap_input[n] yields
  *   the internal character code 
  */
-extern unsigned char G_cmap_input[256];
+		extern unsigned char G_cmap_input[256];
 
-/*
+		/*
  *   output-mapping table - for internal character 'n', cmap_output[n]
  *   yields the output character code 
  */
-extern unsigned char G_cmap_output[256];
+		extern unsigned char G_cmap_output[256];
 
-/* the ID of the loaded character set */
-extern char G_cmap_id[5];
+		/* the ID of the loaded character set */
+		extern char G_cmap_id[5];
 
 /* the full name (for display purposes) of the loaded character set */
-#define CMAP_LDESC_MAX_LEN  40
-extern char G_cmap_ldesc[CMAP_LDESC_MAX_LEN + 1];
+#define CMAP_LDESC_MAX_LEN 40
+		extern char G_cmap_ldesc[CMAP_LDESC_MAX_LEN + 1];
 
 /*
  *   Maximum expansion for an HTML entity mapping 
  */
-#define CMAP_MAX_ENTITY_EXPANSION  50
-
+#define CMAP_MAX_ENTITY_EXPANSION 50
 
 /* ------------------------------------------------------------------------ */
 /* 
@@ -122,9 +116,9 @@ extern char G_cmap_ldesc[CMAP_LDESC_MAX_LEN + 1];
  */
 
 /* single-byte character map version 1.0.0 */
-#define CMAP_SIG_S100  "TADS2 charmap S100\n\r\01a"
+#define CMAP_SIG_S100 "TADS2 charmap S100\n\r\01a"
 
-} // End of namespace TADS2
+	} // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk
 

@@ -22,12 +22,12 @@
 
 #include "cdtypes.h"
 #include "codyvdfs.h"
-#include <iomanX.h>
-#include <io_common.h>
 #include <errno.h>
-#include <sysmem.h>
-#include <sysclib.h>
+#include <io_common.h>
+#include <iomanX.h>
 #include <sys/stat.h>
+#include <sysclib.h>
+#include <sysmem.h>
 
 #define MAX_DIO_HANDLES 8
 #define MAX_FIO_HANDLES 32
@@ -75,7 +75,7 @@ int allocFioHandle(void) {
 }
 
 int cd_open(iop_file_t *handle, const char *name, int mode) {
-	int	fdSlot;
+	int fdSlot;
 	FioHandle *fd;
 	ISODirectoryRecord *rec;
 
@@ -111,18 +111,18 @@ int cd_open(iop_file_t *handle, const char *name, int mode) {
 int cd_lseek(iop_file_t *handle, int ofs, int whence) {
 	FioHandle *fd = fioHandles + (int)handle->privdata;
 	int newOfs;
-	switch(whence) {
-		case SEEK_SET:
-			newOfs = ofs;
-			break;
-		case SEEK_CUR:
-			newOfs = fd->pos + ofs;
-			break;
-		case SEEK_END:
-			newOfs = fd->size + ofs;
-			break;
-		default:
-			newOfs = -1;
+	switch (whence) {
+	case SEEK_SET:
+		newOfs = ofs;
+		break;
+	case SEEK_CUR:
+		newOfs = fd->pos + ofs;
+		break;
+	case SEEK_END:
+		newOfs = fd->size + ofs;
+		break;
+	default:
+		newOfs = -1;
 	}
 	if ((newOfs >= 0) && (newOfs <= fd->size)) {
 		fd->pos = newOfs;

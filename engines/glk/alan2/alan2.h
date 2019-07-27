@@ -31,74 +31,76 @@
 namespace Glk {
 namespace Alan2 {
 
-/**
+	/**
  * Alan2 game interpreter
  */
-class Alan2 : public GlkAPI {
-private:
-	bool _restartFlag;
-public:
-	bool vm_exited_cleanly;
-	Common::String _advName;
-	int _saveSlot;
-	bool _pendingLook;
-private:
-	/**
+	class Alan2 : public GlkAPI {
+	private:
+		bool _restartFlag;
+
+	public:
+		bool vm_exited_cleanly;
+		Common::String _advName;
+		int _saveSlot;
+		bool _pendingLook;
+
+	private:
+		/**
 	 * Initialization
 	 */
-	bool initialize();
+		bool initialize();
 
-	/**
+		/**
 	 * Deinitialization
 	 */
-	void deinitialize();
+		void deinitialize();
 
-	/**
+		/**
 	 * Synchronize data to or from a save file
 	 */
-	void synchronizeSave(Common::Serializer &s);
-public:
-	/**
+		void synchronizeSave(Common::Serializer &s);
+
+	public:
+		/**
 	 * Constructor
 	 */
-	Alan2(OSystem *syst, const GlkGameDescription &gameDesc);
+		Alan2(OSystem *syst, const GlkGameDescription &gameDesc);
 
-	/**
+		/**
 	 * Run the game
 	 */
-	void runGame();
+		void runGame();
 
-	/**
+		/**
 	 * Flag for the game to restart
 	 */
-	void setRestart(bool flag) { _restartFlag = flag; }
+		void setRestart(bool flag) { _restartFlag = flag; }
 
-	/**
+		/**
 	 * Returns whether the game should restart
 	 */
-	bool shouldRestart() const { return _restartFlag; }
+		bool shouldRestart() const { return _restartFlag; }
 
-	/**
+		/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override {
-		return INTERPRETER_ALAN2;
-	}
+		virtual InterpreterType getInterpreterType() const override {
+			return INTERPRETER_ALAN2;
+		}
 
-	/**
+		/**
 	 * Load a savegame from the passed Quetzal file chunk stream
 	 */
-	virtual Common::Error readSaveData(Common::SeekableReadStream *rs) override;
+		virtual Common::Error readSaveData(Common::SeekableReadStream *rs) override;
 
-	/**
+		/**
 	 * Save the game. The passed write stream represents access to the UMem chunk
 	 * in the Quetzal save file that will be created
 	 */
-	virtual Common::Error writeGameData(Common::WriteStream *ws) override;
+		virtual Common::Error writeGameData(Common::WriteStream *ws) override;
+	};
 
-};
-
-extern Alan2 *g_vm;
+	extern Alan2 *g_vm;
 
 } // End of namespace Alan2
 } // End of namespace Glk

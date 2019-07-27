@@ -30,8 +30,8 @@
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/savegame.h"
 #include "lastexpress/game/savepoint.h"
-#include "lastexpress/game/state.h"
 #include "lastexpress/game/scenes.h"
+#include "lastexpress/game/state.h"
 
 #include "lastexpress/lastexpress.h"
 
@@ -147,7 +147,7 @@ void EntityData::updateParameters(uint32 index) const {
 		error("[EntityData::updateParameters] Invalid param index to update (was:%d, max:32)", index);
 }
 
-void EntityData::saveLoadWithSerializer(Common::Serializer &s, const Common::Array<TypeSetter>* paramsTypeSetters) {
+void EntityData::saveLoadWithSerializer(Common::Serializer &s, const Common::Array<TypeSetter> *paramsTypeSetters) {
 	if (s.isSaving()) {
 		for (uint i = 0; i < ARRAYSIZE(_parameters); i++)
 			_parameters[i].saveLoadWithSerializer(s);
@@ -181,7 +181,9 @@ void EntityData::saveLoadWithSerializer(Common::Serializer &s, const Common::Arr
 //////////////////////////////////////////////////////////////////////////
 // Entity
 //////////////////////////////////////////////////////////////////////////
-Entity::Entity(LastExpressEngine *engine, EntityIndex index) : _engine(engine), _entityIndex(index) {
+Entity::Entity(LastExpressEngine *engine, EntityIndex index)
+  : _engine(engine)
+  , _entityIndex(index) {
 	_data = new EntityData();
 
 	// Add first empty entry to callbacks array
@@ -202,7 +204,7 @@ Entity::~Entity() {
 }
 
 void Entity::setup(ChapterIndex index) {
-	switch(index) {
+	switch (index) {
 	case kChapterAll:
 		getSavePoints()->setCallback(_entityIndex, _callbacks[_data->getCurrentCallback()]);
 		break;
@@ -290,9 +292,9 @@ void Entity::savegame(const SavePoint &savepoint) {
 
 bool Entity::savegameBloodJacket(byte callback) {
 	if (getProgress().jacket == kJacketBlood
-	 && getEntities()->isDistanceBetweenEntities(_entityIndex, kEntityPlayer, 1000)
-	 && !getEntities()->isInsideCompartments(kEntityPlayer)
-	 && !getEntities()->checkFields10(kEntityPlayer)) {
+	    && getEntities()->isDistanceBetweenEntities(_entityIndex, kEntityPlayer, 1000)
+	    && !getEntities()->isInsideCompartments(kEntityPlayer)
+	    && !getEntities()->checkFields10(kEntityPlayer)) {
 		setCallback(callback);
 		setup_savegame(kSavegameTypeEvent, kEventMertensBloodJacket);
 		return true;
@@ -683,7 +685,7 @@ void Entity::setupS(const char *name, uint index, EntityData::TypeSetter paramsT
 	_data->setCurrentCallback(index);
 	paramsTypeSetter(_data->getCurrentCallParameters());
 
-	EntityData::EntityParametersSIIS *params = (EntityData::EntityParametersSIIS*)_data->getCurrentParameters();
+	EntityData::EntityParametersSIIS *params = (EntityData::EntityParametersSIIS *)_data->getCurrentParameters();
 	strncpy(params->seq1, seq1, 12);
 
 	_engine->getGameLogic()->getGameState()->getGameSavePoints()->call(_entityIndex, _entityIndex, kActionDefault);
@@ -696,7 +698,7 @@ void Entity::setupSS(const char *name, uint index, EntityData::TypeSetter params
 	_data->setCurrentCallback(index);
 	paramsTypeSetter(_data->getCurrentCallParameters());
 
-	EntityData::EntityParametersSSII *params = (EntityData::EntityParametersSSII*)_data->getCurrentParameters();
+	EntityData::EntityParametersSSII *params = (EntityData::EntityParametersSSII *)_data->getCurrentParameters();
 	strncpy(params->seq1, seq1, 12);
 	strncpy(params->seq2, seq2, 12);
 
@@ -978,7 +980,7 @@ bool Entity::timeCheckCallbackAction(TimeValue timeValue, uint &parameter) {
 	return false;
 }
 
-bool Entity::timeCheckPlaySoundUpdatePosition(TimeValue timeValue, uint &parameter, byte callback, const char* sound, EntityPosition position) {
+bool Entity::timeCheckPlaySoundUpdatePosition(TimeValue timeValue, uint &parameter, byte callback, const char *sound, EntityPosition position) {
 	if (getState()->time > timeValue && !parameter) {
 		parameter = 1;
 		getData()->entityPosition = position;

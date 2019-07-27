@@ -22,43 +22,43 @@
 
 // Console module
 
-#include "common/md5.h"
-#include "sci/sci.h"
 #include "sci/console.h"
+#include "common/md5.h"
 #include "sci/debug.h"
-#include "sci/event.h"
-#include "sci/resource.h"
-#include "sci/engine/state.h"
-#include "sci/engine/kernel.h"
-#include "sci/engine/selector.h"
-#include "sci/engine/savegame.h"
-#include "sci/engine/gc.h"
 #include "sci/engine/features.h"
+#include "sci/engine/gc.h"
+#include "sci/engine/kernel.h"
+#include "sci/engine/savegame.h"
 #include "sci/engine/scriptdebug.h"
-#include "sci/sound/midiparser_sci.h"
-#include "sci/sound/music.h"
-#include "sci/sound/drivers/mididriver.h"
-#include "sci/sound/drivers/map-mt32-to-gm.h"
+#include "sci/engine/selector.h"
+#include "sci/engine/state.h"
+#include "sci/event.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/cursor.h"
-#include "sci/graphics/screen.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/ports.h"
+#include "sci/graphics/screen.h"
 #include "sci/graphics/view.h"
+#include "sci/resource.h"
+#include "sci/sci.h"
+#include "sci/sound/drivers/map-mt32-to-gm.h"
+#include "sci/sound/drivers/mididriver.h"
+#include "sci/sound/midiparser_sci.h"
+#include "sci/sound/music.h"
 
 #include "sci/parser/vocabulary.h"
 
-#include "video/avi_decoder.h"
 #include "sci/video/seq_decoder.h"
+#include "video/avi_decoder.h"
 #ifdef ENABLE_SCI32
-#include "common/memstream.h"
-#include "sci/graphics/frameout.h"
-#include "sci/graphics/paint32.h"
-#include "sci/graphics/palette32.h"
-#include "sci/sound/decoders/sol.h"
-#include "video/coktel_decoder.h"
+#	include "common/memstream.h"
+#	include "sci/graphics/frameout.h"
+#	include "sci/graphics/paint32.h"
+#	include "sci/graphics/palette32.h"
+#	include "sci/sound/decoders/sol.h"
+#	include "video/coktel_decoder.h"
 #endif
 
 #include "common/file.h"
@@ -75,178 +75,180 @@ bool g_debug_track_mouse_clicks = false;
 // Refer to the "addresses" command on how to pass address parameters
 static int parse_reg_t(EngineState *s, const char *str, reg_t *dest);
 
-Console::Console(SciEngine *engine) : GUI::Debugger(),
-	_engine(engine), _debugState(engine->_debugState) {
+Console::Console(SciEngine *engine)
+  : GUI::Debugger()
+  , _engine(engine)
+  , _debugState(engine->_debugState) {
 
 	assert(_engine);
 	assert(_engine->_gamestate);
 
 	// Variables
-	registerVar("sleeptime_factor",	&g_debug_sleeptime_factor);
-	registerVar("gc_interval",		&engine->_gamestate->scriptGCInterval);
-	registerVar("simulated_key",		&g_debug_simulated_key);
-	registerVar("track_mouse_clicks",	&g_debug_track_mouse_clicks);
+	registerVar("sleeptime_factor", &g_debug_sleeptime_factor);
+	registerVar("gc_interval", &engine->_gamestate->scriptGCInterval);
+	registerVar("simulated_key", &g_debug_simulated_key);
+	registerVar("track_mouse_clicks", &g_debug_track_mouse_clicks);
 	// FIXME: This actually passes an enum type instead of an integer but no
 	// precaution is taken to assure that all assigned values are in the range
 	// of the enum type. We should handle this more carefully...
-	registerVar("script_abort_flag",	(int *)&_engine->_gamestate->abortScriptProcessing);
+	registerVar("script_abort_flag", (int *)&_engine->_gamestate->abortScriptProcessing);
 
 	// General
-	registerCmd("help",				WRAP_METHOD(Console, cmdHelp));
+	registerCmd("help", WRAP_METHOD(Console, cmdHelp));
 	// Kernel
-//	registerCmd("classes",			WRAP_METHOD(Console, cmdClasses));	// TODO
-	registerCmd("opcodes",			WRAP_METHOD(Console, cmdOpcodes));
-	registerCmd("selector",			WRAP_METHOD(Console, cmdSelector));
-	registerCmd("selectors",			WRAP_METHOD(Console, cmdSelectors));
-	registerCmd("functions",			WRAP_METHOD(Console, cmdKernelFunctions));
-	registerCmd("class_table",		WRAP_METHOD(Console, cmdClassTable));
+	//	registerCmd("classes",			WRAP_METHOD(Console, cmdClasses));	// TODO
+	registerCmd("opcodes", WRAP_METHOD(Console, cmdOpcodes));
+	registerCmd("selector", WRAP_METHOD(Console, cmdSelector));
+	registerCmd("selectors", WRAP_METHOD(Console, cmdSelectors));
+	registerCmd("functions", WRAP_METHOD(Console, cmdKernelFunctions));
+	registerCmd("class_table", WRAP_METHOD(Console, cmdClassTable));
 	// Parser
-	registerCmd("suffixes",			WRAP_METHOD(Console, cmdSuffixes));
-	registerCmd("parse_grammar",		WRAP_METHOD(Console, cmdParseGrammar));
-	registerCmd("parser_nodes",		WRAP_METHOD(Console, cmdParserNodes));
-	registerCmd("parser_words",		WRAP_METHOD(Console, cmdParserWords));
-	registerCmd("sentence_fragments",	WRAP_METHOD(Console, cmdSentenceFragments));
-	registerCmd("parse",				WRAP_METHOD(Console, cmdParse));
-	registerCmd("set_parse_nodes",	WRAP_METHOD(Console, cmdSetParseNodes));
-	registerCmd("said",				WRAP_METHOD(Console, cmdSaid));
+	registerCmd("suffixes", WRAP_METHOD(Console, cmdSuffixes));
+	registerCmd("parse_grammar", WRAP_METHOD(Console, cmdParseGrammar));
+	registerCmd("parser_nodes", WRAP_METHOD(Console, cmdParserNodes));
+	registerCmd("parser_words", WRAP_METHOD(Console, cmdParserWords));
+	registerCmd("sentence_fragments", WRAP_METHOD(Console, cmdSentenceFragments));
+	registerCmd("parse", WRAP_METHOD(Console, cmdParse));
+	registerCmd("set_parse_nodes", WRAP_METHOD(Console, cmdSetParseNodes));
+	registerCmd("said", WRAP_METHOD(Console, cmdSaid));
 	// Resources
-	registerCmd("diskdump",			WRAP_METHOD(Console, cmdDiskDump));
-	registerCmd("hexdump",			WRAP_METHOD(Console, cmdHexDump));
-	registerCmd("resource_id",		WRAP_METHOD(Console, cmdResourceId));
-	registerCmd("resource_info",		WRAP_METHOD(Console, cmdResourceInfo));
-	registerCmd("resource_types",		WRAP_METHOD(Console, cmdResourceTypes));
-	registerCmd("list",				WRAP_METHOD(Console, cmdList));
-	registerCmd("alloc_list",				WRAP_METHOD(Console, cmdAllocList));
-	registerCmd("hexgrep",			WRAP_METHOD(Console, cmdHexgrep));
-	registerCmd("verify_scripts",		WRAP_METHOD(Console, cmdVerifyScripts));
-	registerCmd("integrity_dump",	WRAP_METHOD(Console, cmdResourceIntegrityDump));
+	registerCmd("diskdump", WRAP_METHOD(Console, cmdDiskDump));
+	registerCmd("hexdump", WRAP_METHOD(Console, cmdHexDump));
+	registerCmd("resource_id", WRAP_METHOD(Console, cmdResourceId));
+	registerCmd("resource_info", WRAP_METHOD(Console, cmdResourceInfo));
+	registerCmd("resource_types", WRAP_METHOD(Console, cmdResourceTypes));
+	registerCmd("list", WRAP_METHOD(Console, cmdList));
+	registerCmd("alloc_list", WRAP_METHOD(Console, cmdAllocList));
+	registerCmd("hexgrep", WRAP_METHOD(Console, cmdHexgrep));
+	registerCmd("verify_scripts", WRAP_METHOD(Console, cmdVerifyScripts));
+	registerCmd("integrity_dump", WRAP_METHOD(Console, cmdResourceIntegrityDump));
 	// Game
-	registerCmd("save_game",			WRAP_METHOD(Console, cmdSaveGame));
-	registerCmd("restore_game",		WRAP_METHOD(Console, cmdRestoreGame));
-	registerCmd("restart_game",		WRAP_METHOD(Console, cmdRestartGame));
-	registerCmd("version",			WRAP_METHOD(Console, cmdGetVersion));
-	registerCmd("room",				WRAP_METHOD(Console, cmdRoomNumber));
-	registerCmd("quit",				WRAP_METHOD(Console, cmdQuit));
-	registerCmd("list_saves",			WRAP_METHOD(Console, cmdListSaves));
+	registerCmd("save_game", WRAP_METHOD(Console, cmdSaveGame));
+	registerCmd("restore_game", WRAP_METHOD(Console, cmdRestoreGame));
+	registerCmd("restart_game", WRAP_METHOD(Console, cmdRestartGame));
+	registerCmd("version", WRAP_METHOD(Console, cmdGetVersion));
+	registerCmd("room", WRAP_METHOD(Console, cmdRoomNumber));
+	registerCmd("quit", WRAP_METHOD(Console, cmdQuit));
+	registerCmd("list_saves", WRAP_METHOD(Console, cmdListSaves));
 	// Graphics
-	registerCmd("show_map",			WRAP_METHOD(Console, cmdShowMap));
-	registerCmd("set_palette",		WRAP_METHOD(Console, cmdSetPalette));
-	registerCmd("draw_pic",			WRAP_METHOD(Console, cmdDrawPic));
-	registerCmd("draw_cel",			WRAP_METHOD(Console, cmdDrawCel));
-	registerCmd("undither",           WRAP_METHOD(Console, cmdUndither));
-	registerCmd("pic_visualize",		WRAP_METHOD(Console, cmdPicVisualize));
-	registerCmd("play_video",         WRAP_METHOD(Console, cmdPlayVideo));
-	registerCmd("animate_list",       WRAP_METHOD(Console, cmdAnimateList));
-	registerCmd("al",                 WRAP_METHOD(Console, cmdAnimateList));	// alias
-	registerCmd("window_list",        WRAP_METHOD(Console, cmdWindowList));
-	registerCmd("wl",                 WRAP_METHOD(Console, cmdWindowList));	// alias
-	registerCmd("plane_list",         WRAP_METHOD(Console, cmdPlaneList));
-	registerCmd("pl",                 WRAP_METHOD(Console, cmdPlaneList));	// alias
+	registerCmd("show_map", WRAP_METHOD(Console, cmdShowMap));
+	registerCmd("set_palette", WRAP_METHOD(Console, cmdSetPalette));
+	registerCmd("draw_pic", WRAP_METHOD(Console, cmdDrawPic));
+	registerCmd("draw_cel", WRAP_METHOD(Console, cmdDrawCel));
+	registerCmd("undither", WRAP_METHOD(Console, cmdUndither));
+	registerCmd("pic_visualize", WRAP_METHOD(Console, cmdPicVisualize));
+	registerCmd("play_video", WRAP_METHOD(Console, cmdPlayVideo));
+	registerCmd("animate_list", WRAP_METHOD(Console, cmdAnimateList));
+	registerCmd("al", WRAP_METHOD(Console, cmdAnimateList)); // alias
+	registerCmd("window_list", WRAP_METHOD(Console, cmdWindowList));
+	registerCmd("wl", WRAP_METHOD(Console, cmdWindowList)); // alias
+	registerCmd("plane_list", WRAP_METHOD(Console, cmdPlaneList));
+	registerCmd("pl", WRAP_METHOD(Console, cmdPlaneList)); // alias
 	registerCmd("visible_plane_list", WRAP_METHOD(Console, cmdVisiblePlaneList));
-	registerCmd("vpl",                WRAP_METHOD(Console, cmdVisiblePlaneList));	// alias
-	registerCmd("plane_items",        WRAP_METHOD(Console, cmdPlaneItemList));
-	registerCmd("pi",                 WRAP_METHOD(Console, cmdPlaneItemList));	// alias
+	registerCmd("vpl", WRAP_METHOD(Console, cmdVisiblePlaneList)); // alias
+	registerCmd("plane_items", WRAP_METHOD(Console, cmdPlaneItemList));
+	registerCmd("pi", WRAP_METHOD(Console, cmdPlaneItemList)); // alias
 	registerCmd("visible_plane_items", WRAP_METHOD(Console, cmdVisiblePlaneItemList));
-	registerCmd("vpi",                WRAP_METHOD(Console, cmdVisiblePlaneItemList));	// alias
-	registerCmd("saved_bits",         WRAP_METHOD(Console, cmdSavedBits));
-	registerCmd("show_saved_bits",    WRAP_METHOD(Console, cmdShowSavedBits));
+	registerCmd("vpi", WRAP_METHOD(Console, cmdVisiblePlaneItemList)); // alias
+	registerCmd("saved_bits", WRAP_METHOD(Console, cmdSavedBits));
+	registerCmd("show_saved_bits", WRAP_METHOD(Console, cmdShowSavedBits));
 	// Segments
-	registerCmd("segment_table",		WRAP_METHOD(Console, cmdPrintSegmentTable));
-	registerCmd("segtable",			WRAP_METHOD(Console, cmdPrintSegmentTable));	// alias
-	registerCmd("segment_info",		WRAP_METHOD(Console, cmdSegmentInfo));
-	registerCmd("seginfo",			WRAP_METHOD(Console, cmdSegmentInfo));			// alias
-	registerCmd("segment_kill",		WRAP_METHOD(Console, cmdKillSegment));
-	registerCmd("segkill",			WRAP_METHOD(Console, cmdKillSegment));			// alias
+	registerCmd("segment_table", WRAP_METHOD(Console, cmdPrintSegmentTable));
+	registerCmd("segtable", WRAP_METHOD(Console, cmdPrintSegmentTable)); // alias
+	registerCmd("segment_info", WRAP_METHOD(Console, cmdSegmentInfo));
+	registerCmd("seginfo", WRAP_METHOD(Console, cmdSegmentInfo)); // alias
+	registerCmd("segment_kill", WRAP_METHOD(Console, cmdKillSegment));
+	registerCmd("segkill", WRAP_METHOD(Console, cmdKillSegment)); // alias
 	// Garbage collection
-	registerCmd("gc",					WRAP_METHOD(Console, cmdGCInvoke));
-	registerCmd("gc_objects",			WRAP_METHOD(Console, cmdGCObjects));
-	registerCmd("gc_reachable",		WRAP_METHOD(Console, cmdGCShowReachable));
-	registerCmd("gc_freeable",		WRAP_METHOD(Console, cmdGCShowFreeable));
-	registerCmd("gc_normalize",		WRAP_METHOD(Console, cmdGCNormalize));
+	registerCmd("gc", WRAP_METHOD(Console, cmdGCInvoke));
+	registerCmd("gc_objects", WRAP_METHOD(Console, cmdGCObjects));
+	registerCmd("gc_reachable", WRAP_METHOD(Console, cmdGCShowReachable));
+	registerCmd("gc_freeable", WRAP_METHOD(Console, cmdGCShowFreeable));
+	registerCmd("gc_normalize", WRAP_METHOD(Console, cmdGCNormalize));
 	// Music/SFX
-	registerCmd("songlib",			WRAP_METHOD(Console, cmdSongLib));
-	registerCmd("songinfo",			WRAP_METHOD(Console, cmdSongInfo));
-	registerCmd("is_sample",			WRAP_METHOD(Console, cmdIsSample));
-	registerCmd("startsound",			WRAP_METHOD(Console, cmdStartSound));
-	registerCmd("togglesound",		WRAP_METHOD(Console, cmdToggleSound));
-	registerCmd("stopallsounds",		WRAP_METHOD(Console, cmdStopAllSounds));
-	registerCmd("sfx01_header",		WRAP_METHOD(Console, cmdSfx01Header));
-	registerCmd("sfx01_track",		WRAP_METHOD(Console, cmdSfx01Track));
-	registerCmd("show_instruments",	WRAP_METHOD(Console, cmdShowInstruments));
-	registerCmd("map_instrument",		WRAP_METHOD(Console, cmdMapInstrument));
-	registerCmd("audio_list",		WRAP_METHOD(Console, cmdAudioList));
-	registerCmd("audio_dump",		WRAP_METHOD(Console, cmdAudioDump));
+	registerCmd("songlib", WRAP_METHOD(Console, cmdSongLib));
+	registerCmd("songinfo", WRAP_METHOD(Console, cmdSongInfo));
+	registerCmd("is_sample", WRAP_METHOD(Console, cmdIsSample));
+	registerCmd("startsound", WRAP_METHOD(Console, cmdStartSound));
+	registerCmd("togglesound", WRAP_METHOD(Console, cmdToggleSound));
+	registerCmd("stopallsounds", WRAP_METHOD(Console, cmdStopAllSounds));
+	registerCmd("sfx01_header", WRAP_METHOD(Console, cmdSfx01Header));
+	registerCmd("sfx01_track", WRAP_METHOD(Console, cmdSfx01Track));
+	registerCmd("show_instruments", WRAP_METHOD(Console, cmdShowInstruments));
+	registerCmd("map_instrument", WRAP_METHOD(Console, cmdMapInstrument));
+	registerCmd("audio_list", WRAP_METHOD(Console, cmdAudioList));
+	registerCmd("audio_dump", WRAP_METHOD(Console, cmdAudioDump));
 	// Script
-	registerCmd("addresses",			WRAP_METHOD(Console, cmdAddresses));
-	registerCmd("registers",			WRAP_METHOD(Console, cmdRegisters));
-	registerCmd("dissect_script",		WRAP_METHOD(Console, cmdDissectScript));
-	registerCmd("backtrace",			WRAP_METHOD(Console, cmdBacktrace));
-	registerCmd("bt",					WRAP_METHOD(Console, cmdBacktrace));	// alias
-	registerCmd("trace",				WRAP_METHOD(Console, cmdTrace));
-	registerCmd("t",					WRAP_METHOD(Console, cmdTrace));		// alias
-	registerCmd("s",					WRAP_METHOD(Console, cmdTrace));		// alias
-	registerCmd("stepover",			WRAP_METHOD(Console, cmdStepOver));
-	registerCmd("p",					WRAP_METHOD(Console, cmdStepOver));		// alias
-	registerCmd("step_ret",			WRAP_METHOD(Console, cmdStepRet));
-	registerCmd("pret",				WRAP_METHOD(Console, cmdStepRet));		// alias
-	registerCmd("step_event",			WRAP_METHOD(Console, cmdStepEvent));
-	registerCmd("se",					WRAP_METHOD(Console, cmdStepEvent));	// alias
-	registerCmd("step_global",		WRAP_METHOD(Console, cmdStepGlobal));
-	registerCmd("sg",					WRAP_METHOD(Console, cmdStepGlobal));	// alias
-	registerCmd("step_callk",			WRAP_METHOD(Console, cmdStepCallk));
-	registerCmd("snk",				WRAP_METHOD(Console, cmdStepCallk));	// alias
-	registerCmd("disasm",				WRAP_METHOD(Console, cmdDisassemble));
-	registerCmd("disasm_addr",		WRAP_METHOD(Console, cmdDisassembleAddress));
-	registerCmd("find_callk",			WRAP_METHOD(Console, cmdFindKernelFunctionCall));
-	registerCmd("send",				WRAP_METHOD(Console, cmdSend));
-	registerCmd("go",					WRAP_METHOD(Console, cmdGo));
-	registerCmd("logkernel",          WRAP_METHOD(Console, cmdLogKernel));
-	registerCmd("vocab994",          WRAP_METHOD(Console, cmdMapVocab994));
+	registerCmd("addresses", WRAP_METHOD(Console, cmdAddresses));
+	registerCmd("registers", WRAP_METHOD(Console, cmdRegisters));
+	registerCmd("dissect_script", WRAP_METHOD(Console, cmdDissectScript));
+	registerCmd("backtrace", WRAP_METHOD(Console, cmdBacktrace));
+	registerCmd("bt", WRAP_METHOD(Console, cmdBacktrace)); // alias
+	registerCmd("trace", WRAP_METHOD(Console, cmdTrace));
+	registerCmd("t", WRAP_METHOD(Console, cmdTrace)); // alias
+	registerCmd("s", WRAP_METHOD(Console, cmdTrace)); // alias
+	registerCmd("stepover", WRAP_METHOD(Console, cmdStepOver));
+	registerCmd("p", WRAP_METHOD(Console, cmdStepOver)); // alias
+	registerCmd("step_ret", WRAP_METHOD(Console, cmdStepRet));
+	registerCmd("pret", WRAP_METHOD(Console, cmdStepRet)); // alias
+	registerCmd("step_event", WRAP_METHOD(Console, cmdStepEvent));
+	registerCmd("se", WRAP_METHOD(Console, cmdStepEvent)); // alias
+	registerCmd("step_global", WRAP_METHOD(Console, cmdStepGlobal));
+	registerCmd("sg", WRAP_METHOD(Console, cmdStepGlobal)); // alias
+	registerCmd("step_callk", WRAP_METHOD(Console, cmdStepCallk));
+	registerCmd("snk", WRAP_METHOD(Console, cmdStepCallk)); // alias
+	registerCmd("disasm", WRAP_METHOD(Console, cmdDisassemble));
+	registerCmd("disasm_addr", WRAP_METHOD(Console, cmdDisassembleAddress));
+	registerCmd("find_callk", WRAP_METHOD(Console, cmdFindKernelFunctionCall));
+	registerCmd("send", WRAP_METHOD(Console, cmdSend));
+	registerCmd("go", WRAP_METHOD(Console, cmdGo));
+	registerCmd("logkernel", WRAP_METHOD(Console, cmdLogKernel));
+	registerCmd("vocab994", WRAP_METHOD(Console, cmdMapVocab994));
 	// Breakpoints
-	registerCmd("bp_list",			WRAP_METHOD(Console, cmdBreakpointList));
-	registerCmd("bplist",				WRAP_METHOD(Console, cmdBreakpointList));			// alias
-	registerCmd("bl",					WRAP_METHOD(Console, cmdBreakpointList));			// alias
-	registerCmd("bp_del",				WRAP_METHOD(Console, cmdBreakpointDelete));
-	registerCmd("bpdel",				WRAP_METHOD(Console, cmdBreakpointDelete));			// alias
-	registerCmd("bc",					WRAP_METHOD(Console, cmdBreakpointDelete));			// alias
-	registerCmd("bp_action",				WRAP_METHOD(Console, cmdBreakpointAction));
-	registerCmd("bpact",				WRAP_METHOD(Console, cmdBreakpointAction));			// alias
-	registerCmd("bp_address",			WRAP_METHOD(Console, cmdBreakpointAddress));
-	registerCmd("bpa",					WRAP_METHOD(Console, cmdBreakpointAddress));		// alias
-	registerCmd("bp_method",			WRAP_METHOD(Console, cmdBreakpointMethod));
-	registerCmd("bpx",				WRAP_METHOD(Console, cmdBreakpointMethod));			// alias
-	registerCmd("bp_read",			WRAP_METHOD(Console, cmdBreakpointRead));
-	registerCmd("bpr",				WRAP_METHOD(Console, cmdBreakpointRead));			// alias
-	registerCmd("bp_write",			WRAP_METHOD(Console, cmdBreakpointWrite));
-	registerCmd("bpw",				WRAP_METHOD(Console, cmdBreakpointWrite));			// alias
-	registerCmd("bp_kernel",			WRAP_METHOD(Console, cmdBreakpointKernel));
-	registerCmd("bpk",				WRAP_METHOD(Console, cmdBreakpointKernel));			// alias
-	registerCmd("bp_function",		WRAP_METHOD(Console, cmdBreakpointFunction));
-	registerCmd("bpe",				WRAP_METHOD(Console, cmdBreakpointFunction));		// alias
+	registerCmd("bp_list", WRAP_METHOD(Console, cmdBreakpointList));
+	registerCmd("bplist", WRAP_METHOD(Console, cmdBreakpointList)); // alias
+	registerCmd("bl", WRAP_METHOD(Console, cmdBreakpointList)); // alias
+	registerCmd("bp_del", WRAP_METHOD(Console, cmdBreakpointDelete));
+	registerCmd("bpdel", WRAP_METHOD(Console, cmdBreakpointDelete)); // alias
+	registerCmd("bc", WRAP_METHOD(Console, cmdBreakpointDelete)); // alias
+	registerCmd("bp_action", WRAP_METHOD(Console, cmdBreakpointAction));
+	registerCmd("bpact", WRAP_METHOD(Console, cmdBreakpointAction)); // alias
+	registerCmd("bp_address", WRAP_METHOD(Console, cmdBreakpointAddress));
+	registerCmd("bpa", WRAP_METHOD(Console, cmdBreakpointAddress)); // alias
+	registerCmd("bp_method", WRAP_METHOD(Console, cmdBreakpointMethod));
+	registerCmd("bpx", WRAP_METHOD(Console, cmdBreakpointMethod)); // alias
+	registerCmd("bp_read", WRAP_METHOD(Console, cmdBreakpointRead));
+	registerCmd("bpr", WRAP_METHOD(Console, cmdBreakpointRead)); // alias
+	registerCmd("bp_write", WRAP_METHOD(Console, cmdBreakpointWrite));
+	registerCmd("bpw", WRAP_METHOD(Console, cmdBreakpointWrite)); // alias
+	registerCmd("bp_kernel", WRAP_METHOD(Console, cmdBreakpointKernel));
+	registerCmd("bpk", WRAP_METHOD(Console, cmdBreakpointKernel)); // alias
+	registerCmd("bp_function", WRAP_METHOD(Console, cmdBreakpointFunction));
+	registerCmd("bpe", WRAP_METHOD(Console, cmdBreakpointFunction)); // alias
 	// VM
-	registerCmd("script_steps",		WRAP_METHOD(Console, cmdScriptSteps));
-	registerCmd("script_objects",   WRAP_METHOD(Console, cmdScriptObjects));
-	registerCmd("scro",             WRAP_METHOD(Console, cmdScriptObjects));
-	registerCmd("script_strings",   WRAP_METHOD(Console, cmdScriptStrings));
-	registerCmd("scrs",             WRAP_METHOD(Console, cmdScriptStrings));
-	registerCmd("script_said",      WRAP_METHOD(Console, cmdScriptSaid));
-	registerCmd("vm_varlist",			WRAP_METHOD(Console, cmdVMVarlist));
-	registerCmd("vmvarlist",			WRAP_METHOD(Console, cmdVMVarlist));				// alias
-	registerCmd("vl",					WRAP_METHOD(Console, cmdVMVarlist));				// alias
-	registerCmd("vm_vars",			WRAP_METHOD(Console, cmdVMVars));
-	registerCmd("vmvars",				WRAP_METHOD(Console, cmdVMVars));					// alias
-	registerCmd("vv",					WRAP_METHOD(Console, cmdVMVars));					// alias
-	registerCmd("stack",				WRAP_METHOD(Console, cmdStack));
-	registerCmd("value_type",			WRAP_METHOD(Console, cmdValueType));
-	registerCmd("view_listnode",		WRAP_METHOD(Console, cmdViewListNode));
-	registerCmd("view_reference",		WRAP_METHOD(Console, cmdViewReference));
-	registerCmd("vr",					WRAP_METHOD(Console, cmdViewReference));			// alias
-	registerCmd("dump_reference",		WRAP_METHOD(Console, cmdDumpReference));
-	registerCmd("dr",					WRAP_METHOD(Console, cmdDumpReference));			// alias
-	registerCmd("view_object",		WRAP_METHOD(Console, cmdViewObject));
-	registerCmd("vo",					WRAP_METHOD(Console, cmdViewObject));				// alias
-	registerCmd("active_object",		WRAP_METHOD(Console, cmdViewActiveObject));
-	registerCmd("acc_object",			WRAP_METHOD(Console, cmdViewAccumulatorObject));
+	registerCmd("script_steps", WRAP_METHOD(Console, cmdScriptSteps));
+	registerCmd("script_objects", WRAP_METHOD(Console, cmdScriptObjects));
+	registerCmd("scro", WRAP_METHOD(Console, cmdScriptObjects));
+	registerCmd("script_strings", WRAP_METHOD(Console, cmdScriptStrings));
+	registerCmd("scrs", WRAP_METHOD(Console, cmdScriptStrings));
+	registerCmd("script_said", WRAP_METHOD(Console, cmdScriptSaid));
+	registerCmd("vm_varlist", WRAP_METHOD(Console, cmdVMVarlist));
+	registerCmd("vmvarlist", WRAP_METHOD(Console, cmdVMVarlist)); // alias
+	registerCmd("vl", WRAP_METHOD(Console, cmdVMVarlist)); // alias
+	registerCmd("vm_vars", WRAP_METHOD(Console, cmdVMVars));
+	registerCmd("vmvars", WRAP_METHOD(Console, cmdVMVars)); // alias
+	registerCmd("vv", WRAP_METHOD(Console, cmdVMVars)); // alias
+	registerCmd("stack", WRAP_METHOD(Console, cmdStack));
+	registerCmd("value_type", WRAP_METHOD(Console, cmdValueType));
+	registerCmd("view_listnode", WRAP_METHOD(Console, cmdViewListNode));
+	registerCmd("view_reference", WRAP_METHOD(Console, cmdViewReference));
+	registerCmd("vr", WRAP_METHOD(Console, cmdViewReference)); // alias
+	registerCmd("dump_reference", WRAP_METHOD(Console, cmdDumpReference));
+	registerCmd("dr", WRAP_METHOD(Console, cmdDumpReference)); // alias
+	registerCmd("view_object", WRAP_METHOD(Console, cmdViewObject));
+	registerCmd("vo", WRAP_METHOD(Console, cmdViewObject)); // alias
+	registerCmd("active_object", WRAP_METHOD(Console, cmdViewActiveObject));
+	registerCmd("acc_object", WRAP_METHOD(Console, cmdViewAccumulatorObject));
 
 	_debugState.seeking = kDebugSeekNothing;
 	_debugState.seekLevel = 0;
@@ -590,7 +592,7 @@ bool Console::cmdSelectors(int argc, const char **argv) {
 
 bool Console::cmdKernelFunctions(int argc, const char **argv) {
 	debugPrintf("Kernel function names in numeric order:\n");
-	for (uint seeker = 0; seeker <  _engine->getKernel()->getKernelNamesSize(); seeker++) {
+	for (uint seeker = 0; seeker < _engine->getKernel()->getKernelNamesSize(); seeker++) {
 		debugPrintf("%03x: %20s | ", seeker, _engine->getKernel()->getKernelName(seeker).c_str());
 		if ((seeker % 3) == 2)
 			debugPrintf("\n");
@@ -653,8 +655,8 @@ bool Console::cmdRegisters(int argc, const char **argv) {
 
 	if (!s->_executionStack.empty()) {
 		debugPrintf("pc=%04x:%04x obj=%04x:%04x fp=ST:%04x sp=ST:%04x\n",
-					PRINT_REG(s->xs->addr.pc), PRINT_REG(s->xs->objp),
-					(unsigned)(s->xs->fp - s->stack_base), (unsigned)(s->xs->sp - s->stack_base));
+		            PRINT_REG(s->xs->addr.pc), PRINT_REG(s->xs->objp),
+		            (unsigned)(s->xs->fp - s->stack_base), (unsigned)(s->xs->sp - s->stack_base));
 	} else
 		debugPrintf("<no execution stack: pc,obj,fp omitted>\n");
 
@@ -1088,7 +1090,7 @@ bool Console::cmdResourceInfo(int argc, const char **argv) {
 bool Console::cmdResourceTypes(int argc, const char **argv) {
 	debugPrintf("The %d valid resource types are:\n", kResourceTypeInvalid);
 	for (int i = 0; i < kResourceTypeInvalid; i++) {
-		debugPrintf("%s", getResourceTypeName((ResourceType) i));
+		debugPrintf("%s", getResourceTypeName((ResourceType)i));
 		debugPrintf((i < kResourceTypeInvalid - 1) ? ", " : "\n");
 	}
 
@@ -1189,11 +1191,11 @@ bool Console::cmdVerifyScripts(int argc, const char **argv) {
 
 			if (script && heap && (script->size() + heap->size() > 65535))
 				debugPrintf("Error: script and heap %d together are larger than 64KB (%u bytes)\n",
-				itr->getNumber(), script->size() + heap->size());
-		} else {	// SCI3
+				            itr->getNumber(), script->size() + heap->size());
+		} else { // SCI3
 			if (script && script->size() > 0x3FFFF)
 				debugPrintf("Error: script %d is larger than 256KB (%u bytes)\n",
-				itr->getNumber(), script->size());
+				            itr->getNumber(), script->size());
 		}
 	}
 
@@ -1265,7 +1267,7 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 			while (*channelData == 0xF8)
 				channelData++;
 
-			channelData++;	// delta
+			channelData++; // delta
 
 			if ((*channelData & 0xF0) >= 0x80)
 				curEvent = *(channelData++);
@@ -1280,9 +1282,9 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 			byte channel;
 
 			switch (command) {
-			case 0xC:	// program change
+			case 0xC: // program change
 				channel = curEvent & 0x0F;
-				if (channel != 15) {	// SCI special
+				if (channel != 15) { // SCI special
 					byte instrument = *channelData++;
 					if (!firstOneShown)
 						firstOneShown = true;
@@ -1297,25 +1299,25 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 				}
 				break;
 			case 0xD:
-				channelData++;	// param1
+				channelData++; // param1
 				break;
 			case 0xB:
 			case 0x8:
 			case 0x9:
 			case 0xA:
 			case 0xE:
-				channelData++;	// param1
-				channelData++;	// param2
+				channelData++; // param1
+				channelData++; // param2
 				break;
 			case 0xF:
 				if ((curEvent & 0x0F) == 0x2) {
-					channelData++;	// param1
-					channelData++;	// param2
+					channelData++; // param1
+					channelData++; // param2
 				} else if ((curEvent & 0x0F) == 0x3) {
-					channelData++;	// param1
-				} else if ((curEvent & 0x0F) == 0xF) {	// META
+					channelData++; // param1
+				} else if ((curEvent & 0x0F) == 0xF) { // META
 					byte type = *channelData++;
-					if (type == 0x2F) {// end of track reached
+					if (type == 0x2F) { // end of track reached
 						endOfTrack = true;
 					} else {
 						// no further processing necessary
@@ -1658,10 +1660,11 @@ bool Console::cmdClassTable(int argc, const char **argv) {
 			const char *className = _engine->_gamestate->_segMan->getObjectName(temp.reg);
 			if (argc == 1 || (argc == 2 && !strcmp(className, argv[1]))) {
 				debugPrintf(" Class 0x%x (%s) at %04x:%04x (script %d)\n", i,
-						className,
-						PRINT_REG(temp.reg),
-						temp.script);
-			} else debugPrintf(" Class 0x%x (not loaded; can't get name) (script %d)\n", i, temp.script);
+				            className,
+				            PRINT_REG(temp.reg),
+				            temp.script);
+			} else
+				debugPrintf(" Class 0x%x (not loaded; can't get name) (script %d)\n", i, temp.script);
 		}
 	}
 
@@ -1777,12 +1780,12 @@ bool Console::cmdSaid(int argc, const char **argv) {
 
 	int p;
 	// Construct the string
-	for (p = 2; p < argc && strcmp(argv[p],"&") != 0; p++) {
+	for (p = 2; p < argc && strcmp(argv[p], "&") != 0; p++) {
 		string += " ";
 		string += argv[p];
 	}
 
-	if (p >= argc-1) {
+	if (p >= argc - 1) {
 		debugPrintf("Matches a string against a said spec\n");
 		debugPrintf("Usage: %s <string> > & <said spec>\n", argv[0]);
 		debugPrintf("<string> is a sequence of actual words.\n");
@@ -1860,8 +1863,6 @@ bool Console::cmdSaid(int argc, const char **argv) {
 			debugPrintf("\n");
 		}
 
-
-
 		if (_engine->getVocabulary()->parseGNF(words, true))
 			syntax_fail = 1; // Building a tree failed
 
@@ -1882,7 +1883,6 @@ bool Console::cmdSaid(int argc, const char **argv) {
 
 	return true;
 }
-
 
 bool Console::cmdParserNodes(int argc, const char **argv) {
 	if (argc != 2) {
@@ -2077,7 +2077,6 @@ bool Console::cmdVisiblePlaneList(int argc, const char **argv) {
 	return true;
 }
 
-
 bool Console::cmdPlaneItemList(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Shows the list of items for a plane\n");
@@ -2137,7 +2136,7 @@ bool Console::cmdVisiblePlaneItemList(int argc, const char **argv) {
 bool Console::cmdSavedBits(int argc, const char **argv) {
 	SegManager *segman = _engine->_gamestate->_segMan;
 	SegmentId id = segman->findSegmentByType(SEG_TYPE_HUNK);
-	HunkTable* hunks = (HunkTable *)segman->getSegmentObj(id);
+	HunkTable *hunks = (HunkTable *)segman->getSegmentObj(id);
 	if (!hunks) {
 		debugPrintf("No hunk segment found.\n");
 		return true;
@@ -2147,9 +2146,9 @@ bool Console::cmdSavedBits(int argc, const char **argv) {
 
 	for (uint i = 0; i < entries.size(); ++i) {
 		uint32 offset = entries[i].getOffset();
-		const Hunk& h = hunks->at(offset);
+		const Hunk &h = hunks->at(offset);
 		if (strcmp(h.type, "SaveBits()") == 0) {
-			byte* memoryPtr = (byte *)h.mem;
+			byte *memoryPtr = (byte *)h.mem;
 
 			if (memoryPtr) {
 				debugPrintf("%04x:%04x:", PRINT_REG(entries[i]));
@@ -2162,7 +2161,7 @@ bool Console::cmdSavedBits(int argc, const char **argv) {
 				memcpy((void *)&mask, memoryPtr + sizeof(rect), sizeof(mask));
 
 				debugPrintf(" %d,%d - %d,%d", rect.top, rect.left,
-				                              rect.bottom, rect.right);
+				            rect.bottom, rect.right);
 				if (mask & GFX_SCREEN_MASK_VISUAL)
 					debugPrintf(" visual");
 				if (mask & GFX_SCREEN_MASK_PRIORITY)
@@ -2175,7 +2174,6 @@ bool Console::cmdSavedBits(int argc, const char **argv) {
 			}
 		}
 	}
-
 
 	return true;
 }
@@ -2203,7 +2201,7 @@ bool Console::cmdShowSavedBits(int argc, const char **argv) {
 
 	SegManager *segman = _engine->_gamestate->_segMan;
 	SegmentId id = segman->findSegmentByType(SEG_TYPE_HUNK);
-	HunkTable* hunks = (HunkTable *)segman->getSegmentObj(id);
+	HunkTable *hunks = (HunkTable *)segman->getSegmentObj(id);
 	if (!hunks) {
 		debugPrintf("No hunk segment found.\n");
 		return true;
@@ -2214,7 +2212,7 @@ bool Console::cmdShowSavedBits(int argc, const char **argv) {
 		return true;
 	}
 
-	const Hunk& h = hunks->at(memoryHandle.getOffset());
+	const Hunk &h = hunks->at(memoryHandle.getOffset());
 
 	if (strcmp(h.type, "SaveBits()") != 0) {
 		debugPrintf("Invalid address.\n");
@@ -2238,12 +2236,12 @@ bool Console::cmdShowSavedBits(int argc, const char **argv) {
 	memcpy((void *)&mask, memoryPtr + sizeof(rect), sizeof(mask));
 
 	Common::Point tl(rect.left, rect.top);
-	Common::Point tr(rect.right-1, rect.top);
-	Common::Point bl(rect.left, rect.bottom-1);
-	Common::Point br(rect.right-1, rect.bottom-1);
+	Common::Point tr(rect.right - 1, rect.top);
+	Common::Point bl(rect.left, rect.bottom - 1);
+	Common::Point br(rect.right - 1, rect.bottom - 1);
 
 	debugPrintf(" %d,%d - %d,%d", rect.top, rect.left,
-	                              rect.bottom, rect.right);
+	            rect.bottom, rect.right);
 	if (mask & GFX_SCREEN_MASK_VISUAL)
 		debugPrintf(" visual");
 	if (mask & GFX_SCREEN_MASK_PRIORITY)
@@ -2263,7 +2261,7 @@ bool Console::cmdShowSavedBits(int argc, const char **argv) {
 	byte bakMask = GFX_SCREEN_MASK_VISUAL | GFX_SCREEN_MASK_PRIORITY | GFX_SCREEN_MASK_CONTROL;
 	int bakSize = _engine->_gfxScreen->bitsGetDataSize(rect, bakMask);
 	reg_t bakScreen = segman->allocateHunkEntry("show_saved_bits backup", bakSize);
-	byte* bakMemory = segman->getHunkPointer(bakScreen);
+	byte *bakMemory = segman->getHunkPointer(bakScreen);
 	assert(bakMemory);
 	_engine->_gfxScreen->bitsSave(rect, bakMask, bakMemory);
 
@@ -2299,7 +2297,6 @@ bool Console::cmdShowSavedBits(int argc, const char **argv) {
 
 	return true;
 }
-
 
 bool Console::cmdParseGrammar(int argc, const char **argv) {
 	debugPrintf("Parse grammar, in strict GNF:\n");
@@ -2410,25 +2407,22 @@ bool Console::segmentInfo(int nr) {
 			const Object *obj = _engine->_gamestate->_segMan->getObject(it->_value.getPos());
 			if (obj)
 				debugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(it->_value.getPos()),
-							_engine->_gamestate->_segMan->getObjectName(it->_value.getPos()),
-							obj->getVarCount(), obj->getMethodCount());
+				            _engine->_gamestate->_segMan->getObjectName(it->_value.getPos()),
+				            obj->getVarCount(), obj->getMethodCount());
 		}
-	}
-	break;
+	} break;
 
 	case SEG_TYPE_LOCALS: {
 		LocalVariables *locals = (LocalVariables *)mobj;
 		debugPrintf("locals for script.%03d\n", locals->script_id);
 		debugPrintf("  %d (0x%x) locals\n", locals->_locals.size(), locals->_locals.size());
-	}
-	break;
+	} break;
 
 	case SEG_TYPE_STACK: {
 		DataStack *stack = (DataStack *)mobj;
 		debugPrintf("stack\n");
 		debugPrintf("  %d (0x%x) entries\n", stack->_capacity, stack->_capacity);
-	}
-	break;
+	} break;
 
 	case SEG_TYPE_CLONES: {
 		CloneTable &ct = *(CloneTable *)mobj;
@@ -2443,11 +2437,10 @@ bool Console::segmentInfo(int nr) {
 				const Object *obj = _engine->_gamestate->_segMan->getObject(ct[i].getPos());
 				if (obj)
 					debugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(ct[i].getPos()),
-								_engine->_gamestate->_segMan->getObjectName(ct[i].getPos()),
-								obj->getVarCount(), obj->getMethodCount());
+					            _engine->_gamestate->_segMan->getObjectName(ct[i].getPos()),
+					            obj->getVarCount(), obj->getMethodCount());
 			}
-	}
-	break;
+	} break;
 
 	case SEG_TYPE_LISTS: {
 		ListTable &lt = *(ListTable *)mobj;
@@ -2458,8 +2451,7 @@ bool Console::segmentInfo(int nr) {
 				debugPrintf("  [%04x]: ", i);
 				printList(lt[i]);
 			}
-	}
-	break;
+	} break;
 
 	case SEG_TYPE_NODES: {
 		debugPrintf("nodes (total %d)\n", (*(NodeTable *)mobj).entries_used);
@@ -2473,18 +2465,16 @@ bool Console::segmentInfo(int nr) {
 		for (uint i = 0; i < ht.size(); i++)
 			if (ht.isValidEntry(i)) {
 				debugPrintf("    [%04x] %d bytes at %p, type=%s\n",
-				          i, ht[i].size, ht[i].mem, ht[i].type);
+				            i, ht[i].size, ht[i].mem, ht[i].type);
 			}
-	}
-	break;
+	} break;
 
 	case SEG_TYPE_DYNMEM: {
 		debugPrintf("dynmem (%s): %d bytes\n",
-		          (*(DynMem *)mobj)._description.c_str(), (*(DynMem *)mobj)._size);
+		            (*(DynMem *)mobj)._description.c_str(), (*(DynMem *)mobj)._size);
 
 		Common::hexdump((*(DynMem *)mobj)._buf, (*(DynMem *)mobj)._size, 16, 0);
-	}
-	break;
+	} break;
 
 #ifdef ENABLE_SCI32
 	case SEG_TYPE_ARRAY: {
@@ -2510,7 +2500,7 @@ bool Console::segmentInfo(int nr) {
 	}
 #endif
 
-	default :
+	default:
 		debugPrintf("Invalid type %d\n", mobj->getType());
 		break;
 	}
@@ -2541,7 +2531,6 @@ bool Console::cmdSegmentInfo(int argc, const char **argv) {
 
 	return true;
 }
-
 
 bool Console::cmdKillSegment(int argc, const char **argv) {
 	if (argc != 2) {
@@ -2711,7 +2700,7 @@ bool Console::cmdIsSample(int argc, const char **argv) {
 	}
 
 	debugPrintf("Sample size: %d, sample rate: %d, channels: %d, digital channel number: %d\n",
-			track->digitalSampleSize, track->digitalSampleRate, track->channelCount, track->digitalChannelNr);
+	            track->digitalSampleSize, track->digitalSampleRate, track->channelCount, track->digitalChannelNr);
 
 	delete soundRes;
 	return true;
@@ -2831,7 +2820,7 @@ bool Console::cmdGCNormalize(int argc, const char **argv) {
 
 bool Console::cmdVMVarlist(int argc, const char **argv) {
 	EngineState *s = _engine->_gamestate;
-	const char *varnames[] = {"global", "local", "temp", "param"};
+	const char *varnames[] = { "global", "local", "temp", "param" };
 
 	debugPrintf("Addresses of variables in the VM:\n");
 
@@ -2856,7 +2845,7 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 	}
 
 	EngineState *s = _engine->_gamestate;
-	const char *varNames[] = {"global", "local", "temp", "param", "acc"};
+	const char *varNames[] = { "global", "local", "temp", "param", "acc" };
 	const char *varAbbrev = "gltpa";
 	const char *varType_pre = strchr(varAbbrev, *argv[1]);
 	int varType;
@@ -3119,12 +3108,12 @@ bool Console::cmdDumpReference(int argc, const char **argv) {
 		out.writeByte(0); // image id length
 		out.writeByte(1); // color map type (present)
 		out.writeByte(1); // image type (uncompressed color-mapped)
-		out.writeSint16LE(0);         // index of first color map entry
+		out.writeSint16LE(0); // index of first color map entry
 		out.writeSint16LE(numColors); // number of color map entries
-		out.writeByte(24);            // number of bits per color entry (RGB24)
-		out.writeSint16LE(0);                      // bottom-left x-origin
+		out.writeByte(24); // number of bits per color entry (RGB24)
+		out.writeSint16LE(0); // bottom-left x-origin
 		out.writeSint16LE(bitmap.getHeight() - 1); // bottom-left y-origin
-		out.writeSint16LE(bitmap.getWidth());  // width
+		out.writeSint16LE(bitmap.getWidth()); // width
 		out.writeSint16LE(bitmap.getHeight()); // height
 		out.writeByte(8); // bits per pixel
 		out.writeByte(1 << 5); // origin of pixel data (top-left)
@@ -3644,11 +3633,7 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 	Common::List<ResourceId>::iterator itr;
 	for (itr = resources.begin(); itr != resources.end(); ++itr) {
 		// Ignore specific leftover scripts, which require other non-existing scripts
-		if ((_engine->getGameId() == GID_HOYLE3         && itr->getNumber() == 995) ||
-		    (_engine->getGameId() == GID_KQ5            && itr->getNumber() == 980) ||
-			(_engine->getGameId() == GID_KQ7            && itr->getNumber() == 111) ||
-			(_engine->getGameId() == GID_MOTHERGOOSE256 && itr->getNumber() == 980) ||
-		    (_engine->getGameId() == GID_SLATER         && itr->getNumber() == 947)) {
+		if ((_engine->getGameId() == GID_HOYLE3 && itr->getNumber() == 995) || (_engine->getGameId() == GID_KQ5 && itr->getNumber() == 980) || (_engine->getGameId() == GID_KQ7 && itr->getNumber() == 111) || (_engine->getGameId() == GID_MOTHERGOOSE256 && itr->getNumber() == 980) || (_engine->getGameId() == GID_SLATER && itr->getNumber() == 947)) {
 			continue;
 		}
 
@@ -3683,8 +3668,8 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 
 						if (kFuncNum == kernelFuncNum) {
 							debugPrintf("Called from script %d, object %s, method %s(%d) with %d bytes for arguments\n",
-								itr->getNumber(), objName,
-								_engine->getKernel()->getSelectorName(obj->getFuncSelector(i)).c_str(), i, argc2);
+							            itr->getNumber(), objName,
+							            _engine->getKernel()->getSelectorName(obj->getFuncSelector(i)).c_str(), i, argc2);
 						}
 					}
 
@@ -3702,9 +3687,9 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 						break;
 					if (opcode == op_ret && offset >= maxJmpOffset)
 						break;
-				}	// while (true)
-			}	// for (uint16 i = 0; i < obj->getMethodCount(); i++)
-		}	// for (it = script->_objects.begin(); it != end; ++it)
+				} // while (true)
+			} // for (uint16 i = 0; i < obj->getMethodCount(); i++)
+		} // for (it = script->_objects.begin(); it != end; ++it)
 
 		customSegMan->uninstantiateScript(itr->getNumber());
 	}
@@ -3719,15 +3704,18 @@ bool Console::cmdFindKernelFunctionCall(int argc, const char **argv) {
 		debugPrintf("Example: %s Display\n", argv[0]);
 		debugPrintf("Special usage:\n");
 		debugPrintf("%s Dummy - find all calls to actual dummy functions "
-					"(mapped to kDummy, and dummy in the kernel table). "
-					"There shouldn't be calls to these (apart from a known "
-					"one in Shivers)\n", argv[0]);
+		            "(mapped to kDummy, and dummy in the kernel table). "
+		            "There shouldn't be calls to these (apart from a known "
+		            "one in Shivers)\n",
+		            argv[0]);
 		debugPrintf("%s Unused - find all calls to unused functions (mapped to "
-					"kDummy - i.e. mapped in SSCI but dummy in ScummVM, thus "
-					"they'll error out when called). Only debug scripts should "
-					"be calling these\n", argv[0]);
+		            "kDummy - i.e. mapped in SSCI but dummy in ScummVM, thus "
+		            "they'll error out when called). Only debug scripts should "
+		            "be calling these\n",
+		            argv[0]);
 		debugPrintf("%s Unmapped - find all calls to currently unmapped or "
-					"unimplemented functions (mapped to kStub/kStubNull)\n", argv[0]);
+		            "unimplemented functions (mapped to kStub/kStubNull)\n",
+		            argv[0]);
 		return true;
 	}
 
@@ -3766,8 +3754,7 @@ bool Console::cmdFindKernelFunctionCall(int argc, const char **argv) {
 	} else if (funcName == "Unmapped") {
 		// Find all unmapped kernel functions (mapped to kStub/kStubNull)
 		for (uint i = 0; i < kernel->_kernelFuncs.size(); i++) {
-			if (kernel->_kernelFuncs[i].function == &kStub ||
-				kernel->_kernelFuncs[i].function == &kStubNull) {
+			if (kernel->_kernelFuncs[i].function == &kStub || kernel->_kernelFuncs[i].function == &kStubNull) {
 				debugPrintf("Searching for kernel function %d (%s)...\n", i, kernel->getKernelName(i).c_str());
 				printKernelCallsFound(i, false);
 			}
@@ -3823,8 +3810,8 @@ bool Console::cmdSend(int argc, const char **argv) {
 	stackframe[0] = make_reg(0, selectorId);
 	stackframe[1] = make_reg(0, send_argc);
 	for (int i = 0; i < send_argc; i++) {
-		if (parse_reg_t(_engine->_gamestate, argv[3+i], &stackframe[2+i])) {
-			debugPrintf("Invalid address \"%s\" passed.\n", argv[3+i]);
+		if (parse_reg_t(_engine->_gamestate, argv[3 + i], &stackframe[2 + i])) {
+			debugPrintf("Invalid address \"%s\" passed.\n", argv[3 + i]);
 			debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 			return true;
 		}
@@ -3849,7 +3836,6 @@ bool Console::cmdSend(int argc, const char **argv) {
 		// after execution.
 		run_vm(_engine->_gamestate);
 		_engine->_gamestate->xs = old_xstack;
-
 	}
 
 	if (restore_acc) {
@@ -4027,7 +4013,7 @@ bool Console::cmdBreakpointAction(int argc, const char **argv) {
 		for (; bp != end; ++bp)
 			bp->_action = bpaction;
 		_debugState.updateActiveBreakpointTypes();
-		return true;	
+		return true;
 	}
 
 	const int idx = atoi(argv[1]);
@@ -4050,7 +4036,6 @@ bool Console::cmdBreakpointAction(int argc, const char **argv) {
 
 	return true;
 }
-
 
 bool Console::cmdBreakpointMethod(int argc, const char **argv) {
 	if (argc < 2 || argc > 3) {
@@ -4351,7 +4336,7 @@ bool Console::cmdSfx01Header(int argc, const char **argv) {
 				debugPrintf(" (PCM data)\n");
 			else
 				debugPrintf(" (channel %d, special %d, %d playing notes, %d foo)\n",
-				          header1 & 0xf, header1 >> 4, header2 & 0xf, header2 >> 4);
+				            header1 & 0xf, header1 >> 4, header2 & 0xf, header2 >> 4);
 			offset += 4;
 		}
 		offset++;
@@ -4380,7 +4365,7 @@ static int _parse_ticks(const byte *data, int *offset_p, int size) {
 static void midi_hexdump(const byte *data, int size, int notational_offset) {
 	int offset = 0;
 	int prev = 0;
-	const int MIDI_cmdlen[16] = {0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 1, 1, 2, 0};
+	const int MIDI_cmdlen[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 1, 1, 2, 0 };
 
 	if (*data == 0xf0) // SCI1 priority spec
 		offset = 8;
@@ -4397,15 +4382,15 @@ static void midi_hexdump(const byte *data, int size, int notational_offset) {
 
 		offset += offset_mod;
 		debugN("  [%04x] %d\t",
-		        old_offset + notational_offset, time);
+		       old_offset + notational_offset, time);
 
 		cmd = data[offset];
 		if (!(cmd & 0x80)) {
 			cmd = prev;
 			if (prev < 0x80) {
 				debugN("Track broken at %x after"
-				        " offset mod of %d\n",
-				        offset + notational_offset, offset_mod);
+				       " offset mod of %d\n",
+				       offset + notational_offset, offset_mod);
 				Common::hexdump(data, size, 16, notational_offset);
 				return;
 			}
@@ -4456,7 +4441,8 @@ static void midi_hexdump(const byte *data, int size, int notational_offset) {
 
 		if (old_offset >= offset) {
 			debugN("-- Not moving forward anymore,"
-			        " aborting (%x/%x)\n", offset, old_offset);
+			       " aborting (%x/%x)\n",
+			       offset, old_offset);
 			return;
 		}
 	}
@@ -4484,7 +4470,7 @@ bool Console::cmdSfx01Track(int argc, const char **argv) {
 }
 
 bool Console::cmdMapVocab994(int argc, const char **argv) {
-	EngineState *s = _engine->_gamestate;	// for the several defines in this function
+	EngineState *s = _engine->_gamestate; // for the several defines in this function
 	reg_t reg;
 
 	if (argc != 4) {
@@ -4503,7 +4489,7 @@ bool Console::cmdMapVocab994(int argc, const char **argv) {
 	const Object *obj = s->_segMan->getObject(reg);
 	SciSpan<const uint16> data = resource->subspan<const uint16>(0);
 	uint32 first = atoi(argv[2]);
-	uint32 last  = atoi(argv[3]);
+	uint32 last = atoi(argv[3]);
 	Common::Array<bool> markers;
 
 	markers.resize(_engine->getKernel()->getSelectorNamesSize());
@@ -4511,7 +4497,7 @@ bool Console::cmdMapVocab994(int argc, const char **argv) {
 		obj = s->_segMan->getObject(obj->getSuperClassSelector());
 
 	first = MIN<uint32>(first, resource->size() / 2 - 2);
-	last =  MIN<uint32>(last, resource->size() / 2 - 2);
+	last = MIN<uint32>(last, resource->size() / 2 - 2);
 
 	for (uint32 i = first; i <= last; ++i) {
 		uint16 ofs = data[i];
@@ -4519,14 +4505,13 @@ bool Console::cmdMapVocab994(int argc, const char **argv) {
 		if (obj && ofs < obj->getVarCount()) {
 			uint16 varSelector = obj->getVarSelector(ofs);
 			debugPrintf("%d: property at index %04x of %s is %s %s\n", i, ofs,
-				    s->_segMan->getObjectName(reg),
-				    _engine->getKernel()->getSelectorName(varSelector).c_str(),
-				    markers[varSelector] ? "(repeat!)" : "");
+			            s->_segMan->getObjectName(reg),
+			            _engine->getKernel()->getSelectorName(varSelector).c_str(),
+			            markers[varSelector] ? "(repeat!)" : "");
 			markers[varSelector] = true;
-		}
-		else {
+		} else {
 			debugPrintf("%d: property at index %04x doesn't match up with %s\n", i, ofs,
-				    s->_segMan->getObjectName(reg));
+			            s->_segMan->getObjectName(reg));
 		}
 	}
 
@@ -4697,7 +4682,7 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
 					charsCountObject++;
 				if ((*strLoop >= 'I') && (*strLoop <= 'Z'))
 					charsCountObject++;
-				if (*strLoop == '_')	// underscores are used as substitutes for spaces in object names
+				if (*strLoop == '_') // underscores are used as substitutes for spaces in object names
 					charsCountObject++;
 			}
 			strLoop++;
@@ -4755,7 +4740,7 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
 			// Look for an offset. It starts with + or -
 			relativeOffset = true;
 			offsetStr = strchr(str, '+');
-			if (!offsetStr)	// No + found, look for -
+			if (!offsetStr) // No + found, look for -
 				offsetStr = strchr(str, '-');
 
 			// Strip away the offset and the leading '?'
@@ -4918,7 +4903,7 @@ void Console::printList(const List &list) {
 
 	if (my_prev != list.last)
 		debugPrintf("   WARNING: Last node was expected to be %04x:%04x, was %04x:%04x!\n",
-				  PRINT_REG(list.last), PRINT_REG(my_prev));
+		            PRINT_REG(list.last), PRINT_REG(my_prev));
 	debugPrintf("\t>\n");
 }
 
@@ -4956,7 +4941,7 @@ int Console::printNode(reg_t addr) {
 		node = &nt->at(addr.getOffset());
 
 		debugPrintf("%04x:%04x : prev x next = (%04x:%04x, %04x:%04x); maps %04x:%04x -> %04x:%04x\n",
-		          PRINT_REG(addr), PRINT_REG(node->pred), PRINT_REG(node->succ), PRINT_REG(node->key), PRINT_REG(node->value));
+		            PRINT_REG(addr), PRINT_REG(node->pred), PRINT_REG(node->succ), PRINT_REG(node->key), PRINT_REG(node->value));
 	}
 
 	return 0;
@@ -4986,7 +4971,6 @@ void Console::printReference(reg_t reg, reg_t reg_end) {
 			debugPrintf("--- Alternatively, it could be a ");
 		}
 
-
 		switch (type) {
 		case 0:
 			break;
@@ -5004,40 +4988,40 @@ void Console::printReference(reg_t reg, reg_t reg_end) {
 		case SIG_TYPE_REFERENCE: {
 			switch (_engine->_gamestate->_segMan->getSegmentType(reg.getSegment())) {
 #ifdef ENABLE_SCI32
-				case SEG_TYPE_ARRAY:
-					printArray(reg);
-					break;
-				case SEG_TYPE_BITMAP:
-					printBitmap(reg);
-					break;
+			case SEG_TYPE_ARRAY:
+				printArray(reg);
+				break;
+			case SEG_TYPE_BITMAP:
+				printBitmap(reg);
+				break;
 #endif
-				default: {
-					const SegmentRef block = _engine->_gamestate->_segMan->dereference(reg);
-					uint16 size = block.maxSize;
+			default: {
+				const SegmentRef block = _engine->_gamestate->_segMan->dereference(reg);
+				uint16 size = block.maxSize;
 
-					debugPrintf("raw data\n");
+				debugPrintf("raw data\n");
 
-					if (reg_end.getSegment() != 0 && (size < reg_end.getOffset() - reg.getOffset())) {
-						debugPrintf("Block end out of bounds (size %d). Resetting.\n", size);
-						reg_end = NULL_REG;
-					}
-
-					if (reg_end.getSegment() != 0 && (size >= reg_end.getOffset() - reg.getOffset()))
-						size = reg_end.getOffset() - reg.getOffset();
-
-					if (reg_end.getSegment() != 0)
-						debugPrintf("Block size less than or equal to %d\n", size);
-
-					if (block.isRaw)
-						Common::hexdump(block.raw, size, 16, 0);
-					else
-						hexDumpReg(block.reg, size / 2, 4, 0);
+				if (reg_end.getSegment() != 0 && (size < reg_end.getOffset() - reg.getOffset())) {
+					debugPrintf("Block end out of bounds (size %d). Resetting.\n", size);
+					reg_end = NULL_REG;
 				}
+
+				if (reg_end.getSegment() != 0 && (size >= reg_end.getOffset() - reg.getOffset()))
+					size = reg_end.getOffset() - reg.getOffset();
+
+				if (reg_end.getSegment() != 0)
+					debugPrintf("Block size less than or equal to %d\n", size);
+
+				if (block.isRaw)
+					Common::hexdump(block.raw, size, 16, 0);
+				else
+					hexDumpReg(block.reg, size / 2, 4, 0);
+			}
 			}
 			break;
 		}
 		case SIG_TYPE_INTEGER:
-			debugPrintf("arithmetic value\n  %d (%04x)\n", (int16) reg.getOffset(), reg.getOffset());
+			debugPrintf("arithmetic value\n  %d (%04x)\n", (int16)reg.getOffset(), reg.getOffset());
 			break;
 		default:
 			debugPrintf("unknown type %d.\n", type);
@@ -5122,7 +5106,7 @@ void Console::printBitmap(reg_t reg) {
 
 	debugPrintf("SCI32 bitmap (%s):\n", bitmap.toString().c_str());
 
-	Common::hexdump((const byte *) bitmap.getRawData(), bitmap.getRawSize(), 16, 0);
+	Common::hexdump((const byte *)bitmap.getRawData(), bitmap.getRawSize(), 16, 0);
 }
 
 #endif

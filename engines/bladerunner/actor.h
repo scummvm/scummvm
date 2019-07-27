@@ -47,33 +47,33 @@ class Actor {
 	static const int kActorTimers = 7;
 
 public:
-	BoundingBox    _bbox;
-	Common::Rect   _screenRectangle;
+	BoundingBox _bbox;
+	Common::Rect _screenRectangle;
 	MovementTrack *_movementTrack;
-	ActorWalk     *_walkInfo;
-	ActorCombat   *_combatInfo;
-	ActorClues    *_clues;
+	ActorWalk *_walkInfo;
+	ActorCombat *_combatInfo;
+	ActorClues *_clues;
 
 private:
-	int                _honesty;
-	int                _intelligence;
-	int                _stability;
-	int                _combatAggressiveness;
-	int                _goalNumber;
+	int _honesty;
+	int _intelligence;
+	int _stability;
+	int _combatAggressiveness;
+	int _goalNumber;
 	Common::Array<int> _friendlinessToOther;
 
 	int _currentHP;
 	int _maxHP;
 
-	int     _id;
-	int     _setId;
+	int _id;
+	int _setId;
 	Vector3 _position;
-	int     _facing; // [0, 1024)
-	int     _targetFacing;
-	int     _walkboxId;
+	int _facing; // [0, 1024)
+	int _targetFacing;
+	int _walkboxId;
 
-	int     _cluesLimit;
-	uint32  _timer4RemainDefault;
+	int _cluesLimit;
+	uint32 _timer4RemainDefault;
 
 	// Flags
 	bool _isTarget;
@@ -86,14 +86,14 @@ private:
 	bool _damageAnimIfMoving;
 
 	// Movement
-	bool   _movementTrackPaused;
-	int    _movementTrackNextWaypointId;
-	int32  _movementTrackNextDelay;  // probably not used
-	int    _movementTrackNextAngle;  // probably not used
-	bool   _movementTrackNextRunning;
+	bool _movementTrackPaused;
+	int _movementTrackNextWaypointId;
+	int32 _movementTrackNextDelay; // probably not used
+	int _movementTrackNextAngle; // probably not used
+	bool _movementTrackNextRunning;
 
-	int    _movementTrackWalkingToWaypointId;
-	int32  _movementTrackDelayOnNextWaypoint;
+	int _movementTrackWalkingToWaypointId;
+	int32 _movementTrackDelayOnNextWaypoint;
 
 	// Animation
 	int _width;
@@ -128,7 +128,7 @@ public:
 	void setAtXYZ(const Vector3 &pos, int facing, bool setFacing = true, bool moving = false, bool retired = false);
 	void setAtWaypoint(int waypointId, int angle, int unknown, bool retired);
 
-	int  getId() const { return _id; };
+	int getId() const { return _id; };
 	float getX() const;
 	float getY() const;
 	float getZ() const;
@@ -143,11 +143,11 @@ public:
 	void setFPS(int fps);
 	void increaseFPS();
 
-	void   timerStart(int timerId, int32 interval);
-	void   timerReset(int timerId);
+	void timerStart(int timerId, int32 interval);
+	void timerReset(int timerId);
 	uint32 timerLeft(int timerId);
-	void   timersUpdate();
-	void   timerUpdate(int timerId);
+	void timersUpdate();
+	void timerUpdate(int timerId);
 
 	void movementTrackNext(bool omitAiScript);
 	void movementTrackPause();
@@ -169,7 +169,7 @@ public:
 	void tickCombat();
 	bool draw(Common::Rect *screenRect);
 
-	int getSetId()  const;
+	int getSetId() const;
 	void setSetId(int setId);
 	const BoundingBox &getBoundingBox() const { return _bbox; }
 	const Common::Rect &getScreenRectangle() { return _screenRectangle; }

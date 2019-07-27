@@ -33,10 +33,17 @@ namespace Titanic {
 class FPoint {
 public:
 	float _x, _y;
+
 public:
-	FPoint() : _x(0), _y(0) {}
-	FPoint(float x, float y) : _x(x), _y(y) {}
-	FPoint(const Common::Point &pt) : _x(pt.x), _y(pt.y) {}
+	FPoint()
+	  : _x(0)
+	  , _y(0) {}
+	FPoint(float x, float y)
+	  : _x(x)
+	  , _y(y) {}
+	FPoint(const Common::Point &pt)
+	  : _x(pt.x)
+	  , _y(pt.y) {}
 
 	bool operator==(const FPoint &p) const { return _x == p._x && _y == p._y; }
 	bool operator!=(const FPoint &p) const { return _x != p._x || _y != p._y; }

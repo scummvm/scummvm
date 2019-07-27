@@ -20,18 +20,19 @@
  *
  */
 
-#include "illusions/illusions.h"
-#include "illusions/actor.h"
-#include "illusions/cursor.h"
-#include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/bbdou/menusystem_bbdou.h"
+#include "illusions/actor.h"
+#include "illusions/bbdou/illusions_bbdou.h"
+#include "illusions/cursor.h"
+#include "illusions/illusions.h"
 
 namespace Illusions {
 
 // BBDOUMenuSystem
 
 BBDOUMenuSystem::BBDOUMenuSystem(IllusionsEngine_BBDOU *vm)
-	: BaseMenuSystem(vm), _vm(vm) {
+  : BaseMenuSystem(vm)
+  , _vm(vm) {
 	clearMenus();
 }
 
@@ -40,8 +41,8 @@ BBDOUMenuSystem::~BBDOUMenuSystem() {
 }
 
 void BBDOUMenuSystem::runMenu(MenuChoiceOffsets menuChoiceOffsets, int16 *menuChoiceOffset,
-	uint32 menuId, uint32 duration, uint timeOutMenuChoiceIndex, uint32 menuCallerThreadId) {
-	
+                              uint32 menuId, uint32 duration, uint timeOutMenuChoiceIndex, uint32 menuCallerThreadId) {
+
 	debug(0, "BBDOUMenuSystem::runMenu(%08X)", menuId);
 
 	setTimeOutDuration(duration, timeOutMenuChoiceIndex);
@@ -51,7 +52,6 @@ void BBDOUMenuSystem::runMenu(MenuChoiceOffsets menuChoiceOffsets, int16 *menuCh
 	int rootMenuId = convertRootMenuId(menuId);
 	BaseMenu *rootMenu = getMenuById(rootMenuId);
 	openMenu(rootMenu);
-
 }
 
 void BBDOUMenuSystem::clearMenus() {

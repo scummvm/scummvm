@@ -25,7 +25,7 @@
 
 #ifdef WIN32
 
-#include "backends/platform/sdl/sdl-window.h"
+#	include "backends/platform/sdl/sdl-window.h"
 
 class SdlWindow_Win32 : public SdlWindow {
 public:

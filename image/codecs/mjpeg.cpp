@@ -39,7 +39,8 @@ class SeekableReadStream;
 
 namespace Image {
 
-MJPEGDecoder::MJPEGDecoder() : Codec() {
+MJPEGDecoder::MJPEGDecoder()
+  : Codec() {
 	_pixelFormat = g_system->getScreenFormat();
 	_surface = 0;
 }
@@ -53,16 +54,16 @@ MJPEGDecoder::~MJPEGDecoder() {
 
 // Header to be inserted
 static const byte s_jpegHeader[] = {
-	0xff, 0xd8,                     // SOI
-	0xff, 0xe0,                     // APP0
-	0x00, 0x10,                     // APP0 header size (including
-	                                // this field, but excluding preceding)
-	'J', 'F', 'I', 'F', 0x00,       // ID string 'JFIF\0'
-	0x01, 0x01,                     // version
-	0x00,                           // bits per type
-	0x00, 0x00,                     // X density
-	0x00, 0x00,                     // Y density
-	0x00,                           // X thumbnail size
+	0xff, 0xd8, // SOI
+	0xff, 0xe0, // APP0
+	0x00, 0x10, // APP0 header size (including
+	// this field, but excluding preceding)
+	'J', 'F', 'I', 'F', 0x00, // ID string 'JFIF\0'
+	0x01, 0x01, // version
+	0x00, // bits per type
+	0x00, 0x00, // X density
+	0x00, 0x00, // Y density
+	0x00, // X thumbnail size
 	0x00
 };
 

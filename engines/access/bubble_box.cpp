@@ -20,13 +20,14 @@
  *
  */
 
-#include "common/algorithm.h"
 #include "access/bubble_box.h"
 #include "access/access.h"
+#include "common/algorithm.h"
 
 namespace Access {
 
-BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w, int h, int val1, int val2, int val3, int val4, Common::String title) : Manager(vm) {
+BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w, int h, int val1, int val2, int val3, int val4, Common::String title)
+  : Manager(vm) {
 	_type = type;
 	_bounds = Common::Rect(x, y, x + w, y + h);
 	_bubbleDisplStr = title;
@@ -182,7 +183,6 @@ void BubbleBox::printBubble_v1(const Common::String &msg) {
 		_vm->_screen->_printOrg.y += 6;
 		_vm->_screen->_printOrg.x = _vm->_screen->_printStart.x;
 	} while (!lastLine);
-
 }
 
 void BubbleBox::printBubble_v2(const Common::String &msg) {
@@ -284,13 +284,13 @@ void BubbleBox::doBox(int item, int box) {
 	// Draw images to form the bottom border
 	yp = screen._orgY2 - (_type == kBoxTypeFileDialog ? 18 : 12);
 	screen.plotImage(icons, (_type == kBoxTypeFileDialog) ? 72 : 22,
-		Common::Point(screen._orgX1, yp));
+	                 Common::Point(screen._orgX1, yp));
 	xp = screen._orgX1 + 12;
 	yp += (_type == kBoxTypeFileDialog) ? 4 : 8;
 
 	for (int x = 0; x < xSize; ++x, xp += 20) {
 		screen.plotImage(icons, (_type == kBoxTypeFileDialog ? 62 : 34) + x,
-			Common::Point(xp, yp));
+		                 Common::Point(xp, yp));
 	}
 
 	yp = screen._orgY2 - (_type == kBoxTypeFileDialog ? 18 : 12);
@@ -315,8 +315,7 @@ void BubbleBox::doBox(int item, int box) {
 	font2._fontColors[1] = 3;
 	font2._fontColors[2] = 2;
 	font2._fontColors[3] = 1;
-	font2.drawString(_vm->_screen, _bubbleDisplStr, Common::Point(
-		_bounds.left + (_bounds.width() / 2) - (titleWidth / 2), _bounds.top + 1));
+	font2.drawString(_vm->_screen, _bubbleDisplStr, Common::Point(_bounds.left + (_bounds.width() / 2) - (titleWidth / 2), _bounds.top + 1));
 
 	// Restore positional state
 	fonts._charSet = charSet;
@@ -450,7 +449,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	fonts._charSet._lo = 1;
 	fonts._charSet._hi = 0;
 
-	_vm->_destIn = _vm->_screen;	// TODO: Redundant
+	_vm->_destIn = _vm->_screen; // TODO: Redundant
 
 	if (_type != TYPE_2) {
 		Common::Rect r = _bounds;
@@ -486,7 +485,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	// Draw upper border
 	_vm->_bcnt = (_vm->_screen->_orgX2 - _vm->_screen->_orgX1) >> 4;
 	int oldX = _vm->_screen->_orgX1;
-	for ( ;_vm->_bcnt > 0; --_vm->_bcnt) {
+	for (; _vm->_bcnt > 0; --_vm->_bcnt) {
 		_vm->_screen->plotImage(icons, 16, Common::Point(_vm->_screen->_orgX1, _vm->_screen->_orgY1));
 		_vm->_screen->_orgX1 += 16;
 	}
@@ -699,7 +698,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 		}
 
 		if ((_vm->_events->_mousePos.x >= _boxStartX) && (_vm->_events->_mousePos.x <= _boxEndX)
-		&&  (_vm->_events->_mousePos.y >= _boxStartY) && (_vm->_events->_mousePos.y <= _boxEndY)) {
+		    && (_vm->_events->_mousePos.y >= _boxStartY) && (_vm->_events->_mousePos.y <= _boxEndY)) {
 			int val = (_vm->_events->_mousePos.x >> 3) - _boxPStartY;
 			if (val > _vm->_bcnt)
 				continue;
@@ -718,7 +717,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 		}
 
 		if ((_vm->_events->_mousePos.y >= ICON1Y) && (_vm->_events->_mousePos.y <= ICON1Y + 8)
-		&&  (_vm->_events->_mousePos.x >= ICON1X)) {
+		    && (_vm->_events->_mousePos.x >= ICON1X)) {
 			btnSelected = 1;
 			if (_vm->_events->_mousePos.x < ICON1X + ICONW[ICON1T])
 				break;

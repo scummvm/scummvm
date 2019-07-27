@@ -49,37 +49,34 @@ Common::Platform CineEngine::getPlatform() const { return _gameDescription->desc
 } // End of namespace Cine
 
 static const PlainGameDescriptor cineGames[] = {
-	{"cine", "Cinematique evo.1 engine game"},
-	{"fw", "Future Wars"},
-	{"os", "Operation Stealth"},
-	{0, 0}
+	{ "cine", "Cinematique evo.1 engine game" },
+	{ "fw", "Future Wars" },
+	{ "os", "Operation Stealth" },
+	{ 0, 0 }
 };
 
 static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
-	{"fw", "cine", Common::kPlatformUnknown},
-	{"os", "cine", Common::kPlatformUnknown},
-	{0, 0, Common::kPlatformUnknown}
+	{ "fw", "cine", Common::kPlatformUnknown },
+	{ "os", "cine", Common::kPlatformUnknown },
+	{ 0, 0, Common::kPlatformUnknown }
 };
 
 #include "cine/detection_tables.h"
 
 static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_ORIGINAL_SAVELOAD,
-		{
-			_s("Use original save/load screens"),
-			_s("Use the original save/load screens instead of the ScummVM ones"),
-			"originalsaveload",
-			false
-		}
-	},
+	{ GAMEOPTION_ORIGINAL_SAVELOAD,
+	  { _s("Use original save/load screens"),
+	    _s("Use the original save/load screens instead of the ScummVM ones"),
+	    "originalsaveload",
+	    false } },
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
 class CineMetaEngine : public AdvancedMetaEngine {
 public:
-	CineMetaEngine() : AdvancedMetaEngine(Cine::gameDescriptions, sizeof(Cine::CINEGameDescription), cineGames, optionsList) {
+	CineMetaEngine()
+	  : AdvancedMetaEngine(Cine::gameDescriptions, sizeof(Cine::CINEGameDescription), cineGames, optionsList) {
 		_singleId = "cine";
 		_guiOptions = GUIO2(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVELOAD);
 	}
@@ -109,17 +106,11 @@ public:
 };
 
 bool CineMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave);
+	return (f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup) || (f == kSupportsDeleteSave);
 }
 
 bool Cine::CineEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
 bool CineMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -218,9 +209,9 @@ void CineMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(CINE)
-	REGISTER_PLUGIN_DYNAMIC(CINE, PLUGIN_TYPE_ENGINE, CineMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(CINE, PLUGIN_TYPE_ENGINE, CineMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(CINE, PLUGIN_TYPE_ENGINE, CineMetaEngine);
+REGISTER_PLUGIN_STATIC(CINE, PLUGIN_TYPE_ENGINE, CineMetaEngine);
 #endif
 
 namespace Cine {

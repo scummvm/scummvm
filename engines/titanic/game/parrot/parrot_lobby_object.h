@@ -29,6 +29,7 @@ namespace Titanic {
 
 class CParrotLobbyObject : public CGameObject {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	static bool _haveParrot;
 	static bool _havePerch;
@@ -36,6 +37,7 @@ public:
 	static int _flags;
 
 	static void init();
+
 public:
 	CLASSDEF;
 

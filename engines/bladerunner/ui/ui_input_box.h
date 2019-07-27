@@ -32,17 +32,17 @@ namespace BladeRunner {
 
 class UIInputBox : public UIComponent {
 	UIComponentCallback *_valueChangedCallback;
-	void                *_callbackData;
+	void *_callbackData;
 
-	bool                 _isVisible;
-	Common::Rect         _rect;
+	bool _isVisible;
+	Common::Rect _rect;
 
-	uint                 _maxLength;
-	Common::String       _text;
+	uint _maxLength;
+	Common::String _text;
 
-	bool                 _cursorIsVisible;
+	bool _cursorIsVisible;
 
-	uint32               _timeLast;
+	uint32 _timeLast;
 
 public:
 	UIInputBox(BladeRunnerEngine *vm, UIComponentCallback *valueChangedCallback, void *callbackData, Common::Rect rect, int maxLength, const Common::String &text);

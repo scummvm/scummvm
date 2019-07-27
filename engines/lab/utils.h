@@ -41,14 +41,14 @@ private:
 	/**
 	 * Undiffs a piece of memory based on the header size.
 	 */
-	template<typename T>
+	template <typename T>
 	void unDiff(T *dest, Common::File *sourceFile);
 
 	/**
 	 * Undiffs a piece of memory when header size is a byte, and copy/skip size
 	 * is a byte or a word or a double word.
 	 */
-	template<typename T>
+	template <typename T>
 	void verticalUnDiff(T *dest, Common::File *sourceFile, uint16 bytesPerRow);
 
 public:
@@ -98,7 +98,6 @@ public:
 	void setBytesPerRow(int num);
 	uint16 getRandom(uint16 max);
 };
-
 
 } // End of namespace Lab
 

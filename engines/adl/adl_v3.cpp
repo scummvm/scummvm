@@ -24,8 +24,8 @@
 
 namespace Adl {
 
-AdlEngine_v3::AdlEngine_v3(OSystem *syst, const AdlGameDescription *gd) :
-		AdlEngine_v2(syst, gd) {
+AdlEngine_v3::AdlEngine_v3(OSystem *syst, const AdlGameDescription *gd)
+  : AdlEngine_v2(syst, gd) {
 }
 
 Common::String AdlEngine_v3::getItemDescription(const Item &item) const {

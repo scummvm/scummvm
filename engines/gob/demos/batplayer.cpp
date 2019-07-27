@@ -22,17 +22,18 @@
 
 #include "common/endian.h"
 
-#include "gob/gob.h"
 #include "gob/demos/batplayer.h"
-#include "gob/global.h"
-#include "gob/util.h"
 #include "gob/draw.h"
+#include "gob/global.h"
+#include "gob/gob.h"
 #include "gob/inter.h"
+#include "gob/util.h"
 #include "gob/videoplayer.h"
 
 namespace Gob {
 
-BATPlayer::BATPlayer(GobEngine *vm) : DemoPlayer(vm) {
+BATPlayer::BATPlayer(GobEngine *vm)
+  : DemoPlayer(vm) {
 }
 
 BATPlayer::~BATPlayer() {

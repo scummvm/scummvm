@@ -24,23 +24,23 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#include <kernel.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sifrpc.h>
-#include <loadfile.h>
-#include <malloc.h>
 #include <assert.h>
 #include <iopcontrol.h>
 #include <iopheap.h>
+#include <kernel.h>
+#include <loadfile.h>
+#include <malloc.h>
+#include <sifrpc.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include <sjpcm.h>
+#include "eecodyvdfs.h"
+#include <fileXio_rpc.h>
 #include <libhdd.h>
 #include <libmc.h>
 #include <libpad.h>
-#include <fileXio_rpc.h>
-#include "eecodyvdfs.h"
+#include <sjpcm.h>
 
 #include "common/config-manager.h"
 #include "common/events.h"
@@ -48,10 +48,10 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 
+#include "backends/platform/ps2/Gs2dScreen.h"
 #include "backends/platform/ps2/asyncfio.h"
 #include "backends/platform/ps2/cd.h"
 #include "backends/platform/ps2/fileio.h"
-#include "backends/platform/ps2/Gs2dScreen.h"
 #include "backends/platform/ps2/ps2debug.h"
 #include "backends/platform/ps2/ps2input.h"
 #include "backends/platform/ps2/savefilemgr.h"
@@ -74,7 +74,7 @@
 #include "ps2temp.h"
 
 #ifdef __PS2_DEBUG__
-#include <debug.h>
+#	include <debug.h>
 #endif
 
 // asm("mfc0	%0, $9\n" : "=r"(tickStart));
@@ -85,7 +85,7 @@ extern void *_gp;
 #define SOUND_STACK_SIZE (1024 * 32)
 #define SMP_PER_BLOCK 800
 #define BUS_CLOCK 147456000 // bus clock, a little less than 150 mhz
-#define CLK_DIVIS 5760	// the timer IRQ handler gets called (BUS_CLOCK / 256) / CLK_DIVIS times per second (100 times)
+#define CLK_DIVIS 5760 // the timer IRQ handler gets called (BUS_CLOCK / 256) / CLK_DIVIS times per second (100 times)
 
 static int g_TimerThreadSema = -1, g_SoundThreadSema = -1;
 static int g_MainWaitSema = -1, g_TimerWaitSema = -1;
@@ -97,7 +97,7 @@ OSystem_PS2 *g_systemPs2;
 #define FOREVER 2147483647
 
 namespace Graphics {
-	extern const BdfFont g_sysfont;
+extern const BdfFont g_sysfont;
 };
 
 PS2Device detectBootPath(const char *elfPath, char *bootPath);
@@ -113,11 +113,11 @@ extern "C" int scummvm_main(int argc, char *argv[]);
 
 extern "C" int main(int argc, char *argv[]) {
 	SifInitRpc(0);
-	#ifdef __NEW_PS2SDK__
+#ifdef __NEW_PS2SDK__
 	ee_thread_status_t thisThread;
-	#else
+#else
 	ee_thread_t thisThread;
-	#endif
+#endif
 	int tid = GetThreadId();
 	ReferThreadStatus(tid, &thisThread);
 
@@ -214,26 +214,26 @@ void OSystem_PS2::startIrxModules(int numModules, IrxReference *modules) {
 				sioprintf("Module \"%s\": EE=%d, IOP=%d\n", modules[i].path, res, rv);
 				if ((res >= 0) && (rv >= 0)) {
 					switch (modules[i].fileRef->purpose) {
-						case MASS_DRIVER:
-							_usbMassLoaded = true;
-							break;
-						case MOUSE_DRIVER:
-							_useMouse = true;
-							break;
-						case KBD_DRIVER:
-							_useKbd = true;
-							break;
-						case CD_DRIVER:
-							_useCd = true;
-							break;
-						case HDD_DRIVER:
-							_useHdd = true;
-							break;
-						case NET_DRIVER:
-							_useNet = true;
-							break;
-						default:
-							break;
+					case MASS_DRIVER:
+						_usbMassLoaded = true;
+						break;
+					case MOUSE_DRIVER:
+						_useMouse = true;
+						break;
+					case KBD_DRIVER:
+						_useKbd = true;
+						break;
+					case CD_DRIVER:
+						_useCd = true;
+						break;
+					case HDD_DRIVER:
+						_useHdd = true;
+						break;
+					case NET_DRIVER:
+						_useNet = true;
+						break;
+					default:
+						break;
 					}
 				}
 			} else
@@ -266,8 +266,7 @@ void OSystem_PS2::startIrxModules(int numModules, IrxReference *modules) {
 	sioprintf("Hdd:     %sloaded\n", _useHdd ? "" : "not ");
 }
 
-bool OSystem_PS2::loadDrivers(IrxType type)
-{
+bool OSystem_PS2::loadDrivers(IrxType type) {
 	IrxReference *modules;
 	int numModules;
 	int res;
@@ -288,7 +287,7 @@ bool OSystem_PS2::loadDrivers(IrxType type)
 			msgPrintf(FOREVER, "SjPCM bind failed: %d\n", res);
 			quit();
 		}
-	break;
+		break;
 
 	case IRX_CDROM:
 		/* Init CDROM & RTC Clock */
@@ -298,27 +297,26 @@ bool OSystem_PS2::loadDrivers(IrxType type)
 		}
 		sioprintf("Reading RTC\n");
 		readRtcTime(); /* depends on CDROM driver! */
-	break;
+		break;
 
 	case IRX_HDD:
 		/* Check HD is available and formatted */
 		if ((hddCheckPresent() < 0) || (hddCheckFormatted() < 0)) {
 			_useHdd = false;
-		}
-		else {
+		} else {
 			poweroffInit();
 			poweroffSetCallback(gluePowerOffCallback, this);
 		}
-	break;
+		break;
 
 	case IRX_NET:
 		if (_bootDevice == HOST_DEV) // net is pre-loaded on host
-			_useNet = true;      // so we need to set by hand
-	break;
+			_useNet = true; // so we need to set by hand
+		break;
 
 	default:
 		/* zzz */
-	break;
+		break;
 	}
 
 	return true;
@@ -357,8 +355,7 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 		SifInitRpc(0);
 		SifLoadFileInit();
 		cdvdInit(CDVD_INIT_WAIT);
-	}
-	else {
+	} else {
 		// romeo : HOST : pre-load
 
 		// TODO: avoid re-loading USB_MASS.IRX -> it will jam mass:
@@ -394,19 +391,17 @@ void OSystem_PS2::init(void) {
 }
 
 void OSystem_PS2::config(void) {
-	#ifndef NO_ADAPTOR
+#ifndef NO_ADAPTOR
 	if (ConfMan.hasKey("hdd_part", "PlayStation2")) { // "hdd" ?
 		const char *hdd = ConfMan.get("hdd_part", "PlayStation2").c_str();
 
-		if ( !strcmp(hdd, "0") || !strcmp(hdd, "no") || !strcmp(hdd, "disable") ) {
+		if (!strcmp(hdd, "0") || !strcmp(hdd, "no") || !strcmp(hdd, "disable")) {
 			_useHdd = false;
-		}
-		else {
+		} else {
 			loadDrivers(IRX_HDD);
 			hddMount(hdd);
 		}
-	}
-	else { // check for HDD and assume partition is +ScummVM
+	} else { // check for HDD and assume partition is +ScummVM
 		loadDrivers(IRX_HDD);
 		hddMount("ScummVM");
 	}
@@ -414,34 +409,30 @@ void OSystem_PS2::config(void) {
 	if (ConfMan.hasKey("net_addr", "PlayStation2")) { // "net" ?
 		const char *net = ConfMan.get("net_addr", "PlayStation2").c_str();
 
-		if ( !strcmp(net, "0") || !strcmp(net, "no") || !strcmp(net, "disable") ) {
+		if (!strcmp(net, "0") || !strcmp(net, "no") || !strcmp(net, "disable")) {
 			_useNet = false;
-		}
-		else {
+		} else {
 			loadDrivers(IRX_NET);
 			// TODO: netInit("xxx.xxx.xxx.xxx");
 		}
-	}
-	else { // setup net - IP hardcoded 192.168.1.20
+	} else { // setup net - IP hardcoded 192.168.1.20
 		loadDrivers(IRX_NET);
 	}
-	#endif
+#endif
 
 	// why USB drivers only load correctly post HDD ?
 	if (ConfMan.hasKey("usb_mass", "PlayStation2")) { // "usb" ?
 		const char *usb = ConfMan.get("usb_mass", "PlayStation2").c_str();
 
-		if ( !strcmp(usb, "0") || !strcmp(usb, "no") || !strcmp(usb, "disable") ) {
+		if (!strcmp(usb, "0") || !strcmp(usb, "no") || !strcmp(usb, "disable")) {
 			_usbMassLoaded = false;
-		}
-		else {
+		} else {
 			loadDrivers(IRX_USB);
 			loadDrivers(IRX_INPUT);
 			sioprintf("Initializing ps2Input\n");
 			_input = new Ps2Input(this, _useMouse, _useKbd);
 		}
-	}
-	else { // load USB drivers (mass & input(
+	} else { // load USB drivers (mass & input(
 		loadDrivers(IRX_USB);
 		loadDrivers(IRX_INPUT);
 		sioprintf("Initializing ps2Input\n");
@@ -463,40 +454,40 @@ void OSystem_PS2::initTimer(void) {
 	g_TimerThreadSema = CreateSema(&threadSema);
 	g_SoundThreadSema = CreateSema(&threadSema);
 	assert((g_TimerThreadSema >= 0) && (g_SoundThreadSema >= 0));
-	#ifdef __NEW_PS2SDK__
+#ifdef __NEW_PS2SDK__
 	ee_thread_t timerThread, soundThread;
 	ee_thread_status_t thisThread;
-	#else
+#else
 	ee_thread_t timerThread, soundThread, thisThread;
-	#endif
+#endif
 	ReferThreadStatus(GetThreadId(), &thisThread);
 
 	_timerStack = (uint8 *)memalign(64, TIMER_STACK_SIZE);
 	_soundStack = (uint8 *)memalign(64, SOUND_STACK_SIZE);
 
-	// gprof doesn't cope with higher thread priority too well
-	#ifdef ENABLE_PROFILING
+// gprof doesn't cope with higher thread priority too well
+#ifdef ENABLE_PROFILING
 	timerThread.initial_priority = thisThread.current_priority;
-	#else
+#else
 	// give timer thread a higher priority than main thread
 	timerThread.initial_priority = thisThread.current_priority - 1;
-	#endif
-	timerThread.stack            = _timerStack;
-	timerThread.stack_size       = TIMER_STACK_SIZE;
-	timerThread.func             = (void *)systemTimerThread;
-	timerThread.gp_reg           = &_gp;
+#endif
+	timerThread.stack = _timerStack;
+	timerThread.stack_size = TIMER_STACK_SIZE;
+	timerThread.func = (void *)systemTimerThread;
+	timerThread.gp_reg = &_gp;
 
-	// gprof doesn't cope with higher thread priority too well
-	#ifdef ENABLE_PROFILING
+// gprof doesn't cope with higher thread priority too well
+#ifdef ENABLE_PROFILING
 	soundThread.initial_priority = thisThread.current_priority;
-	#else
+#else
 	// soundthread's priority is higher than main- and timerthread
 	soundThread.initial_priority = thisThread.current_priority - 2;
-	#endif
-	soundThread.stack            = _soundStack;
-	soundThread.stack_size       = SOUND_STACK_SIZE;
-	soundThread.func             = (void *)systemSoundThread;
-	soundThread.gp_reg           = &_gp;
+#endif
+	soundThread.stack = _soundStack;
+	soundThread.stack_size = SOUND_STACK_SIZE;
+	soundThread.func = (void *)systemSoundThread;
+	soundThread.gp_reg = &_gp;
 
 	_timerTid = CreateThread(&timerThread);
 	_soundTid = CreateThread(&soundThread);
@@ -514,13 +505,13 @@ void OSystem_PS2::initTimer(void) {
 	assert((g_MainWaitSema >= 0) && (g_TimerWaitSema >= 0));
 
 	// threads done, start the interrupt handler
-	_intrId = AddIntcHandler( INT_TIMER0, timerInterruptHandler, 0); // 0=first handler
+	_intrId = AddIntcHandler(INT_TIMER0, timerInterruptHandler, 0); // 0=first handler
 	assert(_intrId >= 0);
 	EnableIntc(INT_TIMER0);
 	T0_HOLD = 0;
 	T0_COUNT = 0;
 	T0_COMP = CLK_DIVIS; // (BUS_CLOCK / 256) / CLK_DIVIS = 100
-	T0_MODE = TIMER_MODE( 2, 0, 0, 0, 1, 1, 1, 0, 1, 1);
+	T0_MODE = TIMER_MODE(2, 0, 0, 0, 1, 1, 1, 0, 1, 1);
 }
 
 void OSystem_PS2::timerThreadCallback(void) {
@@ -555,35 +546,35 @@ void OSystem_PS2::soundThreadCallback(void) {
 			_scummMixer->mixCallback((byte *)0x70000000, SMP_PER_BLOCK * 2 * sizeof(int16));
 
 			// demux data into 2 buffers, L and R
-			 __asm__ (
-				"move  $t2, %1\n\t"             // dest buffer right
-				"move  $t3, %0\n\t"             // dest buffer left
-				"lui   $t8, 0x7000\n\t"         // muxed buffer, fixed at 0x70000000
-				"addiu $t9, $0, 100\n\t"        // number of loops
-				"mtsab $0, 2\n\t"               // set qword shift = 2 byte
+			__asm__(
+			  "move  $t2, %1\n\t" // dest buffer right
+			  "move  $t3, %0\n\t" // dest buffer left
+			  "lui   $t8, 0x7000\n\t" // muxed buffer, fixed at 0x70000000
+			  "addiu $t9, $0, 100\n\t" // number of loops
+			  "mtsab $0, 2\n\t" // set qword shift = 2 byte
 
-				"loop:\n\t"
-				"  lq $t4,  0($t8)\n\t"         // load 8 muxed samples
-				"  lq $t5, 16($t8)\n\t"         // load 8 more muxed samples
+			  "loop:\n\t"
+			  "  lq $t4,  0($t8)\n\t" // load 8 muxed samples
+			  "  lq $t5, 16($t8)\n\t" // load 8 more muxed samples
 
-				"  qfsrv $t6, $0, $t4\n\t"      // shift right for second
-				"  qfsrv $t7, $0, $t5\n\t"      // packing step (right channel)
+			  "  qfsrv $t6, $0, $t4\n\t" // shift right for second
+			  "  qfsrv $t7, $0, $t5\n\t" // packing step (right channel)
 
-				"  ppach $t4, $t5, $t4\n\t"     // combine left channel data
-				"  ppach $t6, $t7, $t6\n\t"     // right channel data
+			  "  ppach $t4, $t5, $t4\n\t" // combine left channel data
+			  "  ppach $t6, $t7, $t6\n\t" // right channel data
 
-				"  sq $t4, 0($t3)\n\t"          // write back
-				"  sq $t6, 0($t2)\n\t"          //
+			  "  sq $t4, 0($t3)\n\t" // write back
+			  "  sq $t6, 0($t2)\n\t" //
 
-				"  addiu $t9, -1\n\t"           // decrement loop counter
-				"  addiu $t2, 16\n\t"           // increment pointers
-				"  addiu $t3, 16\n\t"
-				"  addiu $t8, 32\n\t"
-				"  bnez  $t9, loop\n\t"         // loop
-					:  // outputs
-			 		: "r"(soundBufL), "r"(soundBufR)  // inputs
-				    //  : "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8", "$t9"  // destroyed
-					: "$10", "$11", "$12", "$13", "$14", "$15", "$24", "$25"  // destroyed
+			  "  addiu $t9, -1\n\t" // decrement loop counter
+			  "  addiu $t2, 16\n\t" // increment pointers
+			  "  addiu $t3, 16\n\t"
+			  "  addiu $t8, 32\n\t"
+			  "  bnez  $t9, loop\n\t" // loop
+			  : // outputs
+			  : "r"(soundBufL), "r"(soundBufR) // inputs
+			  //  : "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8", "$t9"  // destroyed
+			  : "$10", "$11", "$12", "$13", "$14", "$15", "$24", "$25" // destroyed
 			);
 			// and feed it into the SPU
 			// non-blocking call, the function will return before the buffer's content
@@ -639,13 +630,12 @@ bool OSystem_PS2::hddMount(const char *partition) {
 	char name[64] = "hdd0:+ScummVM";
 
 	if (partition)
-		strcpy(name+6, partition);
+		strcpy(name + 6, partition);
 
 	if (fio.mount("pfs0:", name, 0) >= 0) {
 		dbg_printf("Successfully mounted (%s)!\n", name);
 		return true;
-	}
-	else {
+	} else {
 		dbg_printf("Failed to mount (%s).\n", name);
 		_useHdd = false;
 		return false;
@@ -775,7 +765,6 @@ Graphics::PixelFormat OSystem_PS2::getOverlayFormat(void) const {
 	return _screen->getOverlayFormat();
 }
 
-
 int16 OSystem_PS2::getOverlayWidth(void) {
 	return _screen->getOverlayWidth();
 }
@@ -900,9 +889,9 @@ void OSystem_PS2::quit(void) {
 	dbg_printf("OSystem_PS2::quit called\n");
 	if (_bootDevice == HOST_DEV) {
 		dbg_printf("OSystem_PS2::quit (HOST)\n");
-		#ifndef ENABLE_PROFILING
+#ifndef ENABLE_PROFILING
 		SleepThread();
-		#endif
+#endif
 	} else {
 		dbg_printf("OSystem_PS2::quit (bootdev=%d)\n", _bootDevice);
 		if (_useHdd) {
@@ -912,13 +901,13 @@ void OSystem_PS2::quit(void) {
 		//setTimerCallback(NULL, 0);
 		_screen->wantAnim(false);
 		_systemQuit = true;
-		#ifdef __NEW_PS2SDK__
+#ifdef __NEW_PS2SDK__
 		ee_thread_status_t statSound, statTimer;
-		#else
+#else
 		ee_thread_t statSound, statTimer;
-		#endif
+#endif
 		dbg_printf("Waiting for timer and sound thread to end\n");
-		do {	// wait until both threads called ExitThread()
+		do { // wait until both threads called ExitThread()
 			ReferThreadStatus(_timerTid, &statTimer);
 			ReferThreadStatus(_soundTid, &statSound);
 		} while ((statSound.status != 0x10) || (statTimer.status != 0x10));
@@ -939,17 +928,18 @@ void OSystem_PS2::quit(void) {
 		dbg_printf("resetting iop\n");
 		SifIopReset(NULL, 0);
 		SifExitRpc();
-		while (!SifIopSync());
+		while (!SifIopSync())
+			;
 		SifInitRpc(0);
 		cdvdExit();
 		SifExitRpc();
 		FlushCache(0);
 		SifLoadFileExit();
 
-		// TODO : let user choose from reboot and forking an ELF on exit
+// TODO : let user choose from reboot and forking an ELF on exit
 
-		// reboot (default)
-		#if 1
+// reboot (default)
+#if 1
 
 		LoadExecPS2("", 0, NULL);
 
@@ -959,7 +949,7 @@ void OSystem_PS2::quit(void) {
 		// ("", 0, NULL);
 
 		/* back to PS2 Browser */
-/*
+		/*
 		__asm__ __volatile__(
 			"   li $3, 0x04;"
 			"   syscall;"
@@ -967,16 +957,16 @@ void OSystem_PS2::quit(void) {
 		);
 */
 
-/*
+		/*
 		SifIopReset("rom0:UNDL ", 0);
 		while (!SifIopSync()) ;
 		// SifIopReboot(...);
 */
-		#else
+#else
 		// reset + load ELF from CD
 		dbg_printf("Restarting ScummVM\n");
 		LoadExecPS2("cdrom0:\\SCUMMVM.ELF", 0, NULL);
-		#endif
+#endif
 	}
 }
 
@@ -1016,7 +1006,7 @@ bool OSystem_PS2::prepMC() {
 		int res;
 		mcInit(MC_TYPE_MC);
 		mcSync(0, NULL, NULL);
-		mcMkDir(0,0,"ScummVM");
+		mcMkDir(0, 0, "ScummVM");
 		mcSync(0, NULL, &res);
 		// TODO : icon
 #else
@@ -1053,8 +1043,7 @@ void OSystem_PS2::makeConfigPath() {
 	// Common::FSNode scumIni("mc0:ScummVM/ScummVM.ini"); // gcc bug !
 
 	switch (_bootDevice) {
-	case CD_DEV:
-	{
+	case CD_DEV: {
 		Common::FSNode scumIni("mc0:ScummVM/ScummVM.ini");
 		if (!scumIni.exists()) {
 
@@ -1077,18 +1066,17 @@ void OSystem_PS2::makeConfigPath() {
 				free(buf);
 			}
 		}
-	}
-	break;
+	} break;
 
 	case MC_DEV:
 		sprintf(path, "mc0:ScummVM/ScummVM.ini");
-	break;
+		break;
 
 	case HD_DEV:
 	case USB_DEV:
 	case HOST_DEV:
 		sprintf(path, "%sScummVM.ini", _bootPath);
-	break;
+		break;
 	}
 
 	src = ps2_fopen(path, "r");

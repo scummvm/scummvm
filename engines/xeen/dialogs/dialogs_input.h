@@ -40,6 +40,7 @@ private:
 	 * Animates the box text cursor
 	 */
 	void animateCursor();
+
 protected:
 	Window *_window;
 	int _cursorAnimIndex;
@@ -49,11 +50,14 @@ protected:
 	 */
 	int getString(Common::String &line, uint maxLen, int maxWidth, bool isNumeric);
 
-	Input(XeenEngine *vm, Window *window) : ButtonContainer(vm),
-		_window(window), _cursorAnimIndex(0) {}
+	Input(XeenEngine *vm, Window *window)
+	  : ButtonContainer(vm)
+	  , _window(window)
+	  , _cursorAnimIndex(0) {}
+
 public:
 	static int show(XeenEngine *vm, Window *window, Common::String &line,
-		uint maxLen, int maxWidth, bool isNumeric = false);
+	                uint maxLen, int maxWidth, bool isNumeric = false);
 };
 
 class StringInput : public Input {
@@ -61,10 +65,11 @@ protected:
 	StringInput(XeenEngine *vm);
 
 	int execute(bool type, const Common::String &expected,
-		const Common::String &title, int opcode);
+	            const Common::String &title, int opcode);
+
 public:
 	static int show(XeenEngine *vm, bool type, const Common::String &msg1,
-		const Common::String &msg2, int opcode);
+	                const Common::String &msg2, int opcode);
 };
 
 class NumericInput : public Input {
@@ -72,6 +77,7 @@ private:
 	NumericInput(XeenEngine *vm, int window);
 
 	int execute(int maxLength, int maxWidth);
+
 public:
 	static int show(XeenEngine *vm, int window, int maxLength, int maxWidth);
 };
@@ -80,11 +86,13 @@ class Choose123 : public ButtonContainer {
 private:
 	SpriteResource _iconSprites;
 
-	Choose123(XeenEngine *vm) : ButtonContainer(vm) {}
+	Choose123(XeenEngine *vm)
+	  : ButtonContainer(vm) {}
 
 	int execute(uint numOptions);
 
 	void loadButtons(uint numOptions);
+
 public:
 	static int show(XeenEngine *vm, uint numOptions);
 };
@@ -93,9 +101,11 @@ class HowMuch : public ButtonContainer {
 private:
 	SpriteResource _iconSprites;
 
-	HowMuch(XeenEngine *vm) : ButtonContainer(vm) {}
+	HowMuch(XeenEngine *vm)
+	  : ButtonContainer(vm) {}
 
 	int execute();
+
 public:
 	static int show(XeenEngine *vm);
 };

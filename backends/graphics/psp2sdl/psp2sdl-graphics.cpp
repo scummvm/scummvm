@@ -23,61 +23,60 @@
 
 #if defined(SDL_BACKEND)
 
-#include "backends/graphics/psp2sdl/psp2sdl-graphics.h"
-#include "backends/events/sdl/sdl-events.h"
-#include "backends/platform/sdl/sdl.h"
-#include "common/config-manager.h"
-#include "common/mutex.h"
-#include "common/textconsole.h"
-#include "common/translation.h"
-#include "common/util.h"
-#include "common/frac.h"
-#ifdef USE_RGB_COLOR
-#include "common/list.h"
-#endif
-#include "graphics/font.h"
-#include "graphics/fontman.h"
-#include "graphics/scaler.h"
-#include "graphics/scaler/aspect.h"
-#include "graphics/surface.h"
-#include "gui/EventRecorder.h"
+#	include "backends/events/sdl/sdl-events.h"
+#	include "backends/graphics/psp2sdl/psp2sdl-graphics.h"
+#	include "backends/platform/sdl/sdl.h"
+#	include "common/config-manager.h"
+#	include "common/frac.h"
+#	include "common/mutex.h"
+#	include "common/textconsole.h"
+#	include "common/translation.h"
+#	include "common/util.h"
+#	ifdef USE_RGB_COLOR
+#		include "common/list.h"
+#	endif
+#	include "graphics/font.h"
+#	include "graphics/fontman.h"
+#	include "graphics/scaler.h"
+#	include "graphics/scaler/aspect.h"
+#	include "graphics/surface.h"
+#	include "gui/EventRecorder.h"
 
-#include <vita2d_fbo.h>
-#include <lcd3x_v.h>
-#include <lcd3x_f.h>
-#include <texture_v.h>
-#include <texture_f.h>
-#include <advanced_aa_v.h>
-#include <advanced_aa_f.h>
-#include <scale2x_f.h>
-#include <scale2x_v.h>
-#include <sharp_bilinear_f.h>
-#include <sharp_bilinear_v.h>
-#include <sharp_bilinear_simple_f.h>
-#include <sharp_bilinear_simple_v.h>
+#	include <advanced_aa_f.h>
+#	include <advanced_aa_v.h>
+#	include <lcd3x_f.h>
+#	include <lcd3x_v.h>
+#	include <scale2x_f.h>
+#	include <scale2x_v.h>
+#	include <sharp_bilinear_f.h>
+#	include <sharp_bilinear_simple_f.h>
+#	include <sharp_bilinear_simple_v.h>
+#	include <sharp_bilinear_v.h>
+#	include <texture_f.h>
+#	include <texture_v.h>
+#	include <vita2d_fbo.h>
 
-#define GFX_SHADER_NONE 0
-#define GFX_SHADER_LCD3X 1
-#define GFX_SHADER_SHARP 2
-#define GFX_SHADER_SHARP_SCAN 3
-#define GFX_SHADER_AAA 4
-#define GFX_SHADER_SCALE2X 5
+#	define GFX_SHADER_NONE 0
+#	define GFX_SHADER_LCD3X 1
+#	define GFX_SHADER_SHARP 2
+#	define GFX_SHADER_SHARP_SCAN 3
+#	define GFX_SHADER_AAA 4
+#	define GFX_SHADER_SCALE2X 5
 
 static const OSystem::GraphicsMode s_supportedShadersPSP2[] = {
-	{"NONE", "Normal (no shader)", GFX_SHADER_NONE},
-	{"LCD", "LCD", GFX_SHADER_LCD3X},
-	{"Sharp", "Sharp", GFX_SHADER_SHARP},
-	{"Scan", "Scan", GFX_SHADER_SHARP_SCAN},
-	{"AAA", "Super2xSAI", GFX_SHADER_AAA},
-	{"Scale", "Scale", GFX_SHADER_SCALE2X},
-	{0, 0, 0}
+	{ "NONE", "Normal (no shader)", GFX_SHADER_NONE },
+	{ "LCD", "LCD", GFX_SHADER_LCD3X },
+	{ "Sharp", "Sharp", GFX_SHADER_SHARP },
+	{ "Scan", "Scan", GFX_SHADER_SHARP_SCAN },
+	{ "AAA", "Super2xSAI", GFX_SHADER_AAA },
+	{ "Scale", "Scale", GFX_SHADER_SCALE2X },
+	{ 0, 0, 0 }
 };
 
 PSP2SdlGraphicsManager::PSP2SdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
-	:
-	SurfaceSdlGraphicsManager(sdlEventSource, window),
-	_vitatex_hwscreen(nullptr),
-	_sdlpixels_hwscreen(nullptr) {
+  : SurfaceSdlGraphicsManager(sdlEventSource, window)
+  , _vitatex_hwscreen(nullptr)
+  , _sdlpixels_hwscreen(nullptr) {
 
 	// do aspect ratio correction in hardware on the Vita
 	if (_videoMode.aspectRatioCorrection == true) {
@@ -90,7 +89,7 @@ PSP2SdlGraphicsManager::PSP2SdlGraphicsManager(SdlEventSource *sdlEventSource, S
 	// shader number 0 is the entry NONE (no shader)
 	const OSystem::GraphicsMode *p = s_supportedShadersPSP2;
 	_numShaders = 0;
-	while (p->name) { 
+	while (p->name) {
 		_numShaders++;
 		p++;
 	}
@@ -118,12 +117,12 @@ PSP2SdlGraphicsManager::~PSP2SdlGraphicsManager() {
 }
 
 OSystem::TransactionError PSP2SdlGraphicsManager::endGFXTransaction() {
-		OSystem::TransactionError returnValue = SurfaceSdlGraphicsManager::endGFXTransaction();
+	OSystem::TransactionError returnValue = SurfaceSdlGraphicsManager::endGFXTransaction();
 
-		// force update of filtering on Vita
-		PSP2_UpdateFiltering();
+	// force update of filtering on Vita
+	PSP2_UpdateFiltering();
 
-		return returnValue;
+	return returnValue;
 }
 
 void PSP2SdlGraphicsManager::setGraphicsModeIntern() {
@@ -187,16 +186,16 @@ bool PSP2SdlGraphicsManager::hotswapGFXMode() {
 }
 
 void PSP2SdlGraphicsManager::updateShader() {
-// shader init code goes here
-// currently only used on Vita port
-// the user-selected shaderID should be obtained via ConfMan.getInt("shader")
-// and the corresponding shader should then be activated here
-// this way the user can combine any software scaling (scalers)
-// with any hardware shading (shaders). The shaders could provide
-// scanline masks, overlays, but could also serve for
-// hardware-based up-scaling (sharp-bilinear-simple, etc.)
+	// shader init code goes here
+	// currently only used on Vita port
+	// the user-selected shaderID should be obtained via ConfMan.getInt("shader")
+	// and the corresponding shader should then be activated here
+	// this way the user can combine any software scaling (scalers)
+	// with any hardware shading (shaders). The shaders could provide
+	// scanline masks, overlays, but could also serve for
+	// hardware-based up-scaling (sharp-bilinear-simple, etc.)
 	if (_vitatex_hwscreen) {
-		if (_shaders[0] == NULL) { 
+		if (_shaders[0] == NULL) {
 			// load shaders
 			_shaders[GFX_SHADER_NONE] = vita2d_create_shader((const SceGxmProgram *)texture_v, (const SceGxmProgram *)texture_f);
 			_shaders[GFX_SHADER_LCD3X] = vita2d_create_shader((const SceGxmProgram *)lcd3x_v, (const SceGxmProgram *)lcd3x_f);

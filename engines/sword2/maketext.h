@@ -62,7 +62,7 @@ enum {
 
 // Info about the text, used to create the SpriteInfo struct
 
- struct TextBloc {
+struct TextBloc {
 	int16 x;
 	int16 y;
 	uint16 type;
@@ -72,8 +72,8 @@ enum {
 // Info for each line of words in the output text sprite
 
 struct LineInfo {
-	uint16 width;	// Width in pixels
-	uint16 length;	// Length in characters
+	uint16 width; // Width in pixels
+	uint16 length; // Length in characters
 };
 
 class FontRenderer {
@@ -84,12 +84,12 @@ private:
 	// Layout variables - these used to be defines, but now we're dealing
 	// with three character sets
 
-	int8 _lineSpacing;	// no. of pixels to separate lines of
-				// characters in the output sprite - negative
-				// for overlap
-	int8 _charSpacing;	// no. of pixels to separate characters along
-				// each line - negative for overlap
-	uint8 _borderPen;	// output pen color of character borders
+	int8 _lineSpacing; // no. of pixels to separate lines of
+	  // characters in the output sprite - negative
+	  // for overlap
+	int8 _charSpacing; // no. of pixels to separate characters along
+	  // each line - negative for overlap
+	uint8 _borderPen; // output pen color of character borders
 
 	uint16 analyzeSentence(const byte *sentence, uint16 maxWidth, uint32 fontRes, LineInfo *line);
 	byte *buildTextSprite(const byte *sentence, uint32 fontRes, uint8 pen, LineInfo *line, uint16 noOfLines);
@@ -99,7 +99,8 @@ private:
 	void copyChar(byte *charPtr, byte *spritePtr, uint16 spriteWidth, uint8 pen);
 
 public:
-	FontRenderer(Sword2Engine *vm) : _vm(vm) {
+	FontRenderer(Sword2Engine *vm)
+	  : _vm(vm) {
 		for (int i = 0; i < MAX_text_blocs; i++)
 			_blocList[i].text_mem = NULL;
 	}

@@ -34,17 +34,18 @@
 namespace Queen {
 
 Debugger::Debugger(QueenEngine *vm)
-	: _vm(vm), _flags(0) {
+  : _vm(vm)
+  , _flags(0) {
 
 	registerCmd("areas", WRAP_METHOD(Debugger, Cmd_Areas));
-	registerCmd("asm",   WRAP_METHOD(Debugger, Cmd_Asm));
-	registerCmd("bob",   WRAP_METHOD(Debugger, Cmd_Bob));
-	registerCmd("bobs",  WRAP_METHOD(Debugger, Cmd_PrintBobs));
-	registerCmd("gs",    WRAP_METHOD(Debugger, Cmd_GameState));
-	registerCmd("info",  WRAP_METHOD(Debugger, Cmd_Info));
+	registerCmd("asm", WRAP_METHOD(Debugger, Cmd_Asm));
+	registerCmd("bob", WRAP_METHOD(Debugger, Cmd_Bob));
+	registerCmd("bobs", WRAP_METHOD(Debugger, Cmd_PrintBobs));
+	registerCmd("gs", WRAP_METHOD(Debugger, Cmd_GameState));
+	registerCmd("info", WRAP_METHOD(Debugger, Cmd_Info));
 	registerCmd("items", WRAP_METHOD(Debugger, Cmd_Items));
-	registerCmd("room",  WRAP_METHOD(Debugger, Cmd_Room));
-	registerCmd("song",  WRAP_METHOD(Debugger, Cmd_Song));
+	registerCmd("room", WRAP_METHOD(Debugger, Cmd_Room));
+	registerCmd("song", WRAP_METHOD(Debugger, Cmd_Song));
 }
 
 Debugger::~Debugger() {} // we need this here for __SYMBIAN32__
@@ -160,7 +161,7 @@ bool Debugger::Cmd_Items(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::Cmd_PrintBobs(int argc, const char**argv) {
+bool Debugger::Cmd_PrintBobs(int argc, const char **argv) {
 	int i;
 	BobSlot *bob = _vm->graphics()->bob(0);
 	debugPrintf("+------------------------------------+\n");
@@ -169,8 +170,8 @@ bool Debugger::Cmd_PrintBobs(int argc, const char**argv) {
 	for (i = 0; i < Graphics::MAX_BOBS_NUMBER; ++i, ++bob) {
 		if (bob->active) {
 			debugPrintf("|%2d|%3d|%3d|%1d|%3d|%3d|%1d|%1d|%3d|%3d|%3d|\n",
-				i, bob->x, bob->y, bob->xflip, bob->scale, bob->frameNum,
-				bob->animating, bob->moving, bob->speed, bob->endx, bob->endy);
+			            i, bob->x, bob->y, bob->xflip, bob->scale, bob->frameNum,
+			            bob->animating, bob->moving, bob->speed, bob->endx, bob->endy);
 		}
 	}
 	debugPrintf("+--------------------------------+\n");
@@ -186,9 +187,9 @@ bool Debugger::Cmd_Room(int argc, const char **argv) {
 		return false;
 	} else {
 		debugPrintf("Current room: %d (%s), use '%s <roomnum>' to switch\n",
-			_vm->logic()->currentRoom(),
-			_vm->logic()->roomName(_vm->logic()->currentRoom()),
-			argv[0]);
+		            _vm->logic()->currentRoom(),
+		            _vm->logic()->roomName(_vm->logic()->currentRoom()),
+		            argv[0]);
 	}
 	return true;
 }

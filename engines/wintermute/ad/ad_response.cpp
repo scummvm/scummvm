@@ -37,7 +37,8 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(AdResponse, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdResponse::AdResponse(BaseGame *inGame) : BaseObject(inGame) {
+AdResponse::AdResponse(BaseGame *inGame)
+  : BaseObject(inGame) {
 	_text = nullptr;
 	_textOrig = nullptr;
 	_icon = _iconHover = _iconPressed = nullptr;
@@ -45,7 +46,6 @@ AdResponse::AdResponse(BaseGame *inGame) : BaseObject(inGame) {
 	_iD = 0;
 	_responseType = RESPONSE_ALWAYS;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 AdResponse::~AdResponse() {
@@ -64,13 +64,11 @@ AdResponse::~AdResponse() {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void AdResponse::setText(const char *text) {
 	BaseUtils::setString(&_text, text);
 	BaseUtils::setString(&_textOrig, text);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdResponse::setIcon(const char *filename) {
@@ -111,7 +109,6 @@ bool AdResponse::setIconHover(const char *filename) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdResponse::setIconPressed(const char *filename) {
 	delete _iconPressed;
@@ -124,7 +121,6 @@ bool AdResponse::setIconPressed(const char *filename) {
 	}
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdResponse::persist(BasePersistenceManager *persistMgr) {

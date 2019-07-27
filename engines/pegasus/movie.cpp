@@ -32,7 +32,8 @@
 
 namespace Pegasus {
 
-Movie::Movie(const DisplayElementID id) : Animation(id) {
+Movie::Movie(const DisplayElementID id)
+  : Animation(id) {
 	_video = 0;
 	setScale(600);
 }
@@ -234,7 +235,8 @@ void Movie::updateTime() {
 	}
 }
 
-GlowingMovie::GlowingMovie(const DisplayElementID id) : Movie(id) {
+GlowingMovie::GlowingMovie(const DisplayElementID id)
+  : Movie(id) {
 	_glowing = false;
 }
 
@@ -262,7 +264,8 @@ void GlowingMovie::setBounds(const Common::Rect &r) {
 	}
 }
 
-ScalingMovie::ScalingMovie(const DisplayElementID id) : GlowingMovie(id) {
+ScalingMovie::ScalingMovie(const DisplayElementID id)
+  : GlowingMovie(id) {
 }
 
 void ScalingMovie::draw(const Common::Rect &) {

@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptTheBard::AIScriptTheBard(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptTheBard::AIScriptTheBard(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 }
 
 void AIScriptTheBard::Initialize() {
@@ -99,17 +100,17 @@ bool AIScriptTheBard::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptTheBard::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptTheBard::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptTheBard::ReachedMovementTrackWaypoint(int waypointId) {

@@ -26,11 +26,11 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CodeWheel, CBomb)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(MouseButtonUpMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(CheckCodeWheelsMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(MouseButtonUpMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(CheckCodeWheelsMsg)
 END_MESSAGE_MAP()
 
 static const int START_FRAMES_EN[15] = {
@@ -66,8 +66,13 @@ static const int END_FRAMES_REV_DE[28] = {
 	251, 244, 236, 229, 221, 214, 207, 0
 };
 
-CodeWheel::CodeWheel() : CBomb(), _correctValue(0), _value(4),
-		_matched(false), _column(0), _row(0) {
+CodeWheel::CodeWheel()
+  : CBomb()
+  , _correctValue(0)
+  , _value(4)
+  , _matched(false)
+  , _column(0)
+  , _row(0) {
 }
 
 void CodeWheel::save(SimpleFile *file, int indent) {
@@ -110,13 +115,13 @@ bool CodeWheel::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		_value = (_value + 1) % TRANSLATE(15, 27);
 
 		playMovie(TRANSLATE(START_FRAMES_EN[_value], START_FRAMES_DE[_value]),
-			TRANSLATE(END_FRAMES_EN[_value], END_FRAMES_DE[_value]),
-			MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
+		          TRANSLATE(END_FRAMES_EN[_value], END_FRAMES_DE[_value]),
+		          MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 
 	} else {
 		playMovie(TRANSLATE(START_FRAMES_EN[14 - _value] + 68, START_FRAMES_REV_DE[_value]),
-			TRANSLATE(END_FRAMES_EN[14 - _value] + 68, END_FRAMES_REV_DE[_value]),
-			MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
+		          TRANSLATE(END_FRAMES_EN[14 - _value] + 68, END_FRAMES_REV_DE[_value]),
+		          MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 
 		_value = (_value <= 0) ? TRANSLATE(14, 26) : _value - 1;
 	}

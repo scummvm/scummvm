@@ -27,8 +27,8 @@
 
 /* Original name: DROPDOWN		A customized version of Oopmenu (qv). */
 
-#include "avalanche/avalanche.h"
 #include "avalanche/dropdown.h"
+#include "avalanche/avalanche.h"
 
 namespace Avalanche {
 
@@ -64,7 +64,6 @@ void HeadType::highlight() {
 
 	// Force reload and redraw of cursor.
 	_dropdown->_vm->_currentMouse = 177;
-
 }
 
 bool HeadType::parseAltTrigger(char key) {
@@ -142,8 +141,8 @@ void MenuItem::wipe() {
 	CursorMan.showMouse(false);
 
 	_dropdown->drawMenuText(_dropdown->_menuBar._menuItems[_dropdown->_activeMenuItem._activeNum]._xpos, 1,
-		_dropdown->_menuBar._menuItems[_dropdown->_activeMenuItem._activeNum]._trigger,
-		_dropdown->_menuBar._menuItems[_dropdown->_activeMenuItem._activeNum]._title, true, false);
+	                        _dropdown->_menuBar._menuItems[_dropdown->_activeMenuItem._activeNum]._trigger,
+	                        _dropdown->_menuBar._menuItems[_dropdown->_activeMenuItem._activeNum]._title, true, false);
 
 	_activeNow = false;
 	_dropdown->_menuActive = false;
@@ -329,7 +328,7 @@ void DropDownMenu::drawMenuText(int16 x, int16 y, char trigger, Common::String t
 	_vm->_graphics->drawNormalText(text, font, 8, x * 8, y, fontColor);
 
 	// Underline the selected character.
-	if ((trigger == 0) || !text.contains(trigger) )
+	if ((trigger == 0) || !text.contains(trigger))
 		return;
 	else {
 		byte i;
@@ -492,7 +491,7 @@ void DropDownMenu::setupMenuWith() {
 		// or (c), the _person you've selected is YOU!
 
 		if ((_lastPerson == kPeopleAvalot) || (_lastPerson == _vm->_parser->kNothing)
-			|| (_vm->getRoom(_lastPerson) != _vm->_room))
+		    || (_vm->getRoom(_lastPerson) != _vm->_room))
 			_activeMenuItem.setupOption("Give to...", 'G', "", false); // Not here.
 		else {
 			_activeMenuItem.setupOption(Common::String("Give to ") + _vm->getName(_lastPerson), 'G', "", true);
@@ -520,8 +519,7 @@ void DropDownMenu::setupMenuWith() {
 			_activeMenuItem.setupOption("Buy some cider", 'c', "", isSober);
 			_activeMenuItem.setupOption("Buy some mead", 'm', "", isSober);
 			_verbStr = _verbStr + 101 + 100 + 102 + 103 + 104;
-			}
-			break;
+		} break;
 		case kPeopleTrader:
 			_activeMenuItem.setupOption("Buy an onion", 'o', "", !_vm->_objects[kObjectOnion - 1]);
 			_verbStr = _verbStr + 105;
@@ -588,8 +586,7 @@ void DropDownMenu::runMenuAction() {
 		Common::String f5Does = _vm->f5Does();
 		VerbCode verb = (VerbCode)(byte)f5Does[0];
 		_vm->callVerb(verb);
-		}
-		break;
+	} break;
 	case 1:
 		_vm->_parser->_thing = _vm->_parser->kPardon;
 		_vm->callVerb(kVerbCodePause);
@@ -611,8 +608,7 @@ void DropDownMenu::runMenuAction() {
 		else
 			avvy->_speedX = kWalk;
 		_vm->_animation->updateSpeed();
-		}
-		break;
+	} break;
 	}
 }
 
@@ -712,16 +708,15 @@ void DropDownMenu::update() {
 
 			if (_vm->_holdLeftMouse) {
 				if (cursorPos.y > 21) {
-					if (!((_activeMenuItem._firstlix) && ((cursorPos.x >= _activeMenuItem._flx1 * 8) && (cursorPos.x <= _activeMenuItem._flx2 * 8)
-						&& (cursorPos.y >= 24) && (cursorPos.y <= (_activeMenuItem._fly * 2 + 1))))) {
-							// Clicked OUTSIDE the menu.
-							if (_activeMenuItem._activeNow) {
-								_activeMenuItem.wipe();
-								_vm->_holdLeftMouse = false;
-								_vm->_graphics->removeBackup();
-								return;
-							} // No "else"- clicking on menu has no effect (only releasing).
-						}
+					if (!((_activeMenuItem._firstlix) && ((cursorPos.x >= _activeMenuItem._flx1 * 8) && (cursorPos.x <= _activeMenuItem._flx2 * 8) && (cursorPos.y >= 24) && (cursorPos.y <= (_activeMenuItem._fly * 2 + 1))))) {
+						// Clicked OUTSIDE the menu.
+						if (_activeMenuItem._activeNow) {
+							_activeMenuItem.wipe();
+							_vm->_holdLeftMouse = false;
+							_vm->_graphics->removeBackup();
+							return;
+						} // No "else"- clicking on menu has no effect (only releasing).
+					}
 				} else {
 					// Clicked on menu bar.
 					if (_activeMenuItem._activeNow) {
@@ -741,8 +736,7 @@ void DropDownMenu::update() {
 				}
 
 				// NOT clicked button...
-				if ((_activeMenuItem._firstlix) && ((cursorPos.x >= _activeMenuItem._flx1 * 8) && (cursorPos.x <= _activeMenuItem._flx2 * 8)
-					&& (cursorPos.y >= 12) && (cursorPos.y <= (_activeMenuItem._fly * 2 + 1)))) {
+				if ((_activeMenuItem._firstlix) && ((cursorPos.x >= _activeMenuItem._flx1 * 8) && (cursorPos.x <= _activeMenuItem._flx2 * 8) && (cursorPos.y >= 12) && (cursorPos.y <= (_activeMenuItem._fly * 2 + 1)))) {
 
 					// We act only if the button is released over a menu item.
 					while (!_vm->shouldQuit()) {
@@ -795,7 +789,7 @@ byte DropDownMenu::getNameChar(People whose) {
 	else if ((whose >= kPeopleArkata) && (whose <= kPeopleWisewoman))
 		return lassChar[whose - kPeopleArkata];
 	else
-		error("getName() - Unexpected character id %d", (byte) whose);
+		error("getName() - Unexpected character id %d", (byte)whose);
 }
 
 Common::String DropDownMenu::getThing(byte which) {
@@ -809,13 +803,13 @@ Common::String DropDownMenu::getThing(byte which) {
 	switch (which) {
 	case kObjectWine:
 		switch (_vm->_wineState) {
-	case 1:
-	case 4:
-		result = Common::String(things[which - 1]);
-		break;
-	case 3:
-		result = "Vinegar";
-		break;
+		case 1:
+		case 4:
+			result = Common::String(things[which - 1]);
+			break;
+		case 3:
+			result = "Vinegar";
+			break;
 		}
 		break;
 	case kObjectOnion:

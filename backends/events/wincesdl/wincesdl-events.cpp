@@ -24,18 +24,20 @@
 
 #ifdef _WIN32_WCE
 
-#include "common/config-manager.h"
+#	include "common/config-manager.h"
 
-#include "backends/events/wincesdl/wincesdl-events.h"
-#include "backends/platform/wince/CEActionsPocket.h"
-#include "backends/platform/wince/CEActionsSmartphone.h"
-#include "backends/platform/wince/CEDevice.h"
+#	include "backends/events/wincesdl/wincesdl-events.h"
+#	include "backends/platform/wince/CEActionsPocket.h"
+#	include "backends/platform/wince/CEActionsSmartphone.h"
+#	include "backends/platform/wince/CEDevice.h"
 
-#include "backends/platform/sdl/sdl.h"
+#	include "backends/platform/sdl/sdl.h"
 
 WINCESdlEventSource::WINCESdlEventSource()
-	: _tapTime(0), _closeClick(false), _rbutton(false),
-	  _graphicsMan(0) {
+  : _tapTime(0)
+  , _closeClick(false)
+  , _rbutton(false)
+  , _graphicsMan(0) {
 }
 
 void WINCESdlEventSource::init(WINCESdlGraphicsManager *graphicsMan) {
@@ -138,7 +140,7 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 				event.kbd.flags = 0xFF;
 			else if (ev.key.keysym.sym == SDLK_PAUSE) {
 				_graphicsMan->_lastKeyPressed = 0;
-				return false;   // chew up the show agi dialog key up event
+				return false; // chew up the show agi dialog key up event
 			}
 
 			event.type = Common::EVENT_KEYUP;
@@ -194,11 +196,9 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 
 			if (!_isSmartphone) {
 				// handle double-taps
-				if (_tapTime) {     // second tap
+				if (_tapTime) { // second tap
 					if (_closeClick && (GetTickCount() - _tapTime < 1000)) {
-						if (event.mouse.y <= 20 &&
-						        _graphicsMan->_panelInitialized &&
-						        !_graphicsMan->_noDoubleTapPT) {
+						if (event.mouse.y <= 20 && _graphicsMan->_panelInitialized && !_graphicsMan->_noDoubleTapPT) {
 							// top of screen (show panel)
 							_graphicsMan->swap_panel_visibility();
 						} else if (!_graphicsMan->_noDoubleTapRMB) {
@@ -223,7 +223,6 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 				event.type = Common::EVENT_MOUSEMOVE;
 				_graphicsMan->setMousePos(event.mouse.x, event.mouse.y);
 			}
-
 
 			if (_graphicsMan->_toolbarHandler.action(event.mouse.x, event.mouse.y, true)) {
 				if (!_graphicsMan->_toolbarHandler.drawn()) {
@@ -275,7 +274,6 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 					_graphicsMan->internUpdateScreen();
 				}
 				return false;
-
 			}
 			return true;
 

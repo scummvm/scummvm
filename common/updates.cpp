@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/system.h"
 #include "common/updates.h"
+#include "common/system.h"
 #include "common/translation.h"
 
 namespace Common {

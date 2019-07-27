@@ -31,31 +31,31 @@
 namespace Glk {
 namespace Magnetic {
 
-/**
+	/**
  * Meta engine for Magnetic interpreter
  */
-class MagneticMetaEngine {
-public:
-	/**
+	class MagneticMetaEngine {
+	public:
+		/**
 	 * Get a list of supported games
 	 */
-	static void getSupportedGames(PlainGameList &games);
+		static void getSupportedGames(PlainGameList &games);
 
-	/**
+		/**
 	 * Returns a game description for the given game Id, if it's supported
 	 */
-	static GameDescriptor findGame(const char *gameId);
+		static GameDescriptor findGame(const char *gameId);
 
-	/**
+		/**
 	 * Detect supported games
 	 */
-	static bool detectGames(const Common::FSList &fslist, DetectedGames &gameList);
+		static bool detectGames(const Common::FSList &fslist, DetectedGames &gameList);
 
-	/**
+		/**
 	 * Check for game Id clashes with other sub-engines
 	 */
-	static void detectClashes(Common::StringMap &map);
-};
+		static void detectClashes(Common::StringMap &map);
+	};
 
 } // End of namespace Magnetic
 } // End of namespace Glk

@@ -35,7 +35,7 @@ class KyraEngine_HoF;
 class Debugger : public ::GUI::Debugger {
 public:
 	Debugger(KyraEngine_v1 *vm);
-	virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
+	virtual ~Debugger() {} // we need this for __SYMBIAN32__ archaic gcc/UIQ
 
 	virtual void initialize();
 
@@ -56,9 +56,10 @@ protected:
 class Debugger_LoK : public Debugger {
 public:
 	Debugger_LoK(KyraEngine_LoK *vm);
-	virtual ~Debugger_LoK() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
+	virtual ~Debugger_LoK() {} // we need this for __SYMBIAN32__ archaic gcc/UIQ
 
 	virtual void initialize();
+
 protected:
 	KyraEngine_LoK *_vm;
 
@@ -74,6 +75,7 @@ public:
 	virtual ~Debugger_v2() {}
 
 	virtual void initialize();
+
 protected:
 	KyraEngine_v2 *_vm;
 
@@ -90,6 +92,7 @@ public:
 	Debugger_HoF(KyraEngine_HoF *vm);
 
 	virtual void initialize();
+
 protected:
 	KyraEngine_HoF *_vm;
 
@@ -116,6 +119,7 @@ public:
 	Debugger_EoB(EoBCoreEngine *vm);
 
 	virtual void initialize();
+
 protected:
 	EoBCoreEngine *_vm;
 

@@ -20,19 +20,20 @@
  *
  */
 
+#include "pink/objects/actors/actor.h"
 #include "pink/constants.h"
 #include "pink/cursor_mgr.h"
-#include "pink/pink.h"
 #include "pink/objects/actions/action_cel.h"
-#include "pink/objects/actors/actor.h"
 #include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/pages/game_page.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
 Actor::Actor()
-		: _page(nullptr), _action(nullptr),
-		  _isActionEnded(1) {}
+  : _page(nullptr)
+  , _action(nullptr)
+  , _isActionEnded(1) {}
 
 Actor::~Actor() {
 	for (uint i = 0; i < _actions.size(); ++i) {

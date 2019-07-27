@@ -33,10 +33,10 @@
 // INCLUDES
 // -----------------------------------------------------------------------------
 
-#include "common/savefile.h"
-#include "sword25/package/packagemanager.h"
-#include "sword25/gfx/image/imgloader.h"
 #include "sword25/gfx/image/renderedimage.h"
+#include "common/savefile.h"
+#include "sword25/gfx/image/imgloader.h"
+#include "sword25/package/packagemanager.h"
 
 #include "sword25/gfx/renderobjectmanager.h"
 
@@ -74,22 +74,22 @@ static byte *readSavegameThumbnail(const Common::String &filename, uint &fileSiz
 		error("Save file \"%s\" could not be loaded.", filename.c_str());
 
 	// Seek to the actual PNG image
-	loadString(*file);		// Marker (BS25SAVEGAME)
-	Common::String storedVersionID = loadString(*file);		// Version
+	loadString(*file); // Marker (BS25SAVEGAME)
+	Common::String storedVersionID = loadString(*file); // Version
 	if (storedVersionID != "SCUMMVM1")
 		loadString(*file);
 
-	loadString(*file);		// Description
+	loadString(*file); // Description
 	uint32 compressedGamedataSize = atoi(loadString(*file).c_str());
-	loadString(*file);		// Uncompressed game data size
-	file->skip(compressedGamedataSize);	// Skip the game data and move to the thumbnail itself
+	loadString(*file); // Uncompressed game data size
+	file->skip(compressedGamedataSize); // Skip the game data and move to the thumbnail itself
 	uint32 thumbnailStart = file->pos();
 
 	fileSize = file->size() - thumbnailStart;
 
 	// Check if the thumbnail is in our own format, or a PNG file.
 	uint32 header = file->readUint32BE();
-	isPNG = (header != MKTAG('S','C','R','N'));
+	isPNG = (header != MKTAG('S', 'C', 'R', 'N'));
 	file->seek(-4, SEEK_CUR);
 
 	pFileData = new byte[fileSize];
@@ -99,8 +99,8 @@ static byte *readSavegameThumbnail(const Common::String &filename, uint &fileSiz
 	return pFileData;
 }
 
-RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
-	_isTransparent(true) {
+RenderedImage::RenderedImage(const Common::String &filename, bool &result)
+  : _isTransparent(true) {
 	result = false;
 
 	PackageManager *pPackage = Kernel::getInstance()->getPackage();
@@ -152,8 +152,8 @@ RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 
 // -----------------------------------------------------------------------------
 
-RenderedImage::RenderedImage(uint width, uint height, bool &result) :
-	_isTransparent(true) {
+RenderedImage::RenderedImage(uint width, uint height, bool &result)
+  : _isTransparent(true) {
 
 	_surface.create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 
@@ -165,7 +165,8 @@ RenderedImage::RenderedImage(uint width, uint height, bool &result) :
 	return;
 }
 
-RenderedImage::RenderedImage() : _isTransparent(true) {
+RenderedImage::RenderedImage()
+  : _isTransparent(true) {
 	_backSurface = Kernel::getInstance()->getGfx()->getSurface();
 
 	_surface.format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);

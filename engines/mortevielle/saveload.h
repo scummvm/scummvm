@@ -30,10 +30,10 @@
 
 #include "common/savefile.h"
 #include "common/serializer.h"
+#include "engines/savestate.h"
 #include "graphics/palette.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
-#include "engines/savestate.h"
 
 #define SAVEGAME_VERSION 1
 
@@ -56,6 +56,7 @@ private:
 	byte _tabdonSaveBuffer[391];
 
 	void sync_save(Common::Serializer &sz);
+
 public:
 	SavegameManager(MortevielleEngine *vm);
 

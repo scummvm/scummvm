@@ -20,10 +20,10 @@
  *
  */
 
+#include "titanic/sound/wave_file.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
 #include "common/memstream.h"
-#include "titanic/sound/wave_file.h"
 #include "titanic/sound/sound_manager.h"
 #include "titanic/support/simple_file.h"
 
@@ -36,8 +36,10 @@ namespace Titanic {
 class AudioBufferStream : public Audio::SeekableAudioStream {
 private:
 	CAudioBuffer *_audioBuffer;
+
 public:
-	AudioBufferStream(CAudioBuffer *audioBuffer) : _audioBuffer(audioBuffer) {}
+	AudioBufferStream(CAudioBuffer *audioBuffer)
+	  : _audioBuffer(audioBuffer) {}
 
 	virtual int readBuffer(int16 *buffer, const int numSamples);
 	virtual bool isStereo() const { return false; }
@@ -57,9 +59,17 @@ bool AudioBufferStream::endOfData() const {
 
 /*------------------------------------------------------------------------*/
 
-CWaveFile::CWaveFile(Audio::Mixer *mixer) : _mixer(mixer), _pendingAudioStream(nullptr),
-		_waveData(nullptr), _waveSize(0), _dataSize(0), _headerSize(0),
-		_rate(0), _flags(0), _wavType(0), _soundType(Audio::Mixer::kPlainSoundType) {
+CWaveFile::CWaveFile(Audio::Mixer *mixer)
+  : _mixer(mixer)
+  , _pendingAudioStream(nullptr)
+  , _waveData(nullptr)
+  , _waveSize(0)
+  , _dataSize(0)
+  , _headerSize(0)
+  , _rate(0)
+  , _flags(0)
+  , _wavType(0)
+  , _soundType(Audio::Mixer::kPlainSoundType) {
 	setup();
 }
 
@@ -166,14 +176,13 @@ Audio::SeekableAudioStream *CWaveFile::createAudioStream() {
 	} else {
 		// Create a new ScummVM audio stream for the wave file data
 		stream = Audio::makeWAVStream(
-			new Common::MemoryReadStream(_waveData, _waveSize, DisposeAfterUse::NO),
-			DisposeAfterUse::YES);
+		  new Common::MemoryReadStream(_waveData, _waveSize, DisposeAfterUse::NO),
+		  DisposeAfterUse::YES);
 	}
 
 	_rate = stream->getRate();
 	return stream;
 }
-
 
 const int16 *CWaveFile::lock() {
 	enum { kWaveFormatPCM = 1 };
@@ -204,10 +213,10 @@ Audio::SoundHandle CWaveFile::play(int numLoops, byte volume) {
 	Audio::AudioStream *stream = audioStream;
 	if (numLoops != 0)
 		stream = new Audio::LoopingAudioStream(audioStream,
-			(numLoops == -1) ? 0 : numLoops);
+		                                       (numLoops == -1) ? 0 : numLoops);
 
 	_mixer->playStream(_soundType, &handle, stream, -1,
-		volume, 0, DisposeAfterUse::YES);
+	                   volume, 0, DisposeAfterUse::YES);
 	return handle;
 }
 

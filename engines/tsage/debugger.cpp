@@ -21,28 +21,29 @@
  */
 
 #include "tsage/debugger.h"
+#include "tsage/blue_force/blueforce_logic.h"
 #include "tsage/globals.h"
 #include "tsage/graphics.h"
 #include "tsage/ringworld/ringworld_logic.h"
-#include "tsage/blue_force/blueforce_logic.h"
 #include "tsage/ringworld2/ringworld2_logic.h"
 
 namespace TsAGE {
 
-Debugger::Debugger() : GUI::Debugger() {
-	registerCmd("continue",         WRAP_METHOD(Debugger, cmdExit));
-	registerCmd("scene",            WRAP_METHOD(Debugger, Cmd_Scene));
-	registerCmd("walk_regions",     WRAP_METHOD(Debugger, Cmd_WalkRegions));
+Debugger::Debugger()
+  : GUI::Debugger() {
+	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("scene", WRAP_METHOD(Debugger, Cmd_Scene));
+	registerCmd("walk_regions", WRAP_METHOD(Debugger, Cmd_WalkRegions));
 	registerCmd("priority_regions", WRAP_METHOD(Debugger, Cmd_PriorityRegions));
-	registerCmd("scene_regions",    WRAP_METHOD(Debugger, Cmd_SceneRegions));
-	registerCmd("setflag",          WRAP_METHOD(Debugger, Cmd_SetFlag));
-	registerCmd("getflag",          WRAP_METHOD(Debugger, Cmd_GetFlag));
-	registerCmd("clearflag",        WRAP_METHOD(Debugger, Cmd_ClearFlag));
-	registerCmd("listobjects",      WRAP_METHOD(Debugger, Cmd_ListObjects));
-	registerCmd("moveobject",       WRAP_METHOD(Debugger, Cmd_MoveObject));
-	registerCmd("hotspots",         WRAP_METHOD(Debugger, Cmd_Hotspots));
-	registerCmd("sound",            WRAP_METHOD(Debugger, Cmd_Sound));
-	registerCmd("setdebug",         WRAP_METHOD(Debugger, Cmd_SetOutpostAlphaDebug));
+	registerCmd("scene_regions", WRAP_METHOD(Debugger, Cmd_SceneRegions));
+	registerCmd("setflag", WRAP_METHOD(Debugger, Cmd_SetFlag));
+	registerCmd("getflag", WRAP_METHOD(Debugger, Cmd_GetFlag));
+	registerCmd("clearflag", WRAP_METHOD(Debugger, Cmd_ClearFlag));
+	registerCmd("listobjects", WRAP_METHOD(Debugger, Cmd_ListObjects));
+	registerCmd("moveobject", WRAP_METHOD(Debugger, Cmd_MoveObject));
+	registerCmd("hotspots", WRAP_METHOD(Debugger, Cmd_Hotspots));
+	registerCmd("sound", WRAP_METHOD(Debugger, Cmd_Sound));
+	registerCmd("setdebug", WRAP_METHOD(Debugger, Cmd_SetOutpostAlphaDebug));
 }
 
 static int strToInt(const char *s) {
@@ -107,11 +108,11 @@ bool Debugger::Cmd_WalkRegions(int argc, const char **argv) {
 
 			for (uint idx = 0; idx < sliceSet.items.size(); ++idx)
 				destSurface.hLine(sliceSet.items[idx].xs - g_globals->_sceneOffset.x, yp,
-				sliceSet.items[idx].xe - g_globals->_sceneOffset.x, color);
+				                  sliceSet.items[idx].xe - g_globals->_sceneOffset.x, color);
 		}
 
 		regionsDesc += Common::String::format("Region #%d d bounds=%d,%d,%d,%d\n",
-					regionIndex, wr._bounds.left, wr._bounds.top, wr._bounds.right, wr._bounds.bottom);
+		                                      regionIndex, wr._bounds.left, wr._bounds.top, wr._bounds.right, wr._bounds.bottom);
 	}
 
 	// Release the surface
@@ -155,7 +156,7 @@ bool Debugger::Cmd_PriorityRegions(int argc, const char **argv) {
 
 				for (int x = 0; x < destSurface.w; ++x) {
 					if (r.contains(Common::Point(g_globals->_sceneManager._scene->_sceneBounds.left + x,
-							g_globals->_sceneManager._scene->_sceneBounds.top + y)))
+					                             g_globals->_sceneManager._scene->_sceneBounds.top + y)))
 						*destP = color;
 					++destP;
 				}
@@ -163,7 +164,7 @@ bool Debugger::Cmd_PriorityRegions(int argc, const char **argv) {
 		}
 
 		regionsDesc += Common::String::format("Region Priority = %d bounds=%d,%d,%d,%d\n",
-			r._regionId, r._bounds.left, r._bounds.top, r._bounds.right, r._bounds.bottom);
+		                                      r._regionId, r._bounds.left, r._bounds.top, r._bounds.right, r._bounds.bottom);
 	}
 
 	// Release the surface
@@ -208,7 +209,7 @@ bool Debugger::Cmd_SceneRegions(int argc, const char **argv) {
 
 				for (int x = 0; x < destSurface.w; ++x) {
 					if (r.contains(Common::Point(g_globals->_sceneManager._scene->_sceneBounds.left + x,
-							g_globals->_sceneManager._scene->_sceneBounds.top + y)))
+					                             g_globals->_sceneManager._scene->_sceneBounds.top + y)))
 						*destP = color;
 					++destP;
 				}
@@ -216,7 +217,7 @@ bool Debugger::Cmd_SceneRegions(int argc, const char **argv) {
 		}
 
 		regionsDesc += Common::String::format("Region id = %d bounds=%d,%d,%d,%d\n",
-			r._regionId, r._bounds.left, r._bounds.top, r._bounds.right, r._bounds.bottom);
+		                                      r._regionId, r._bounds.left, r._bounds.top, r._bounds.right, r._bounds.bottom);
 	}
 
 	// Release the surface
@@ -296,7 +297,8 @@ bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
 			// Scene item doesn't use a region, so fill in the entire area
 			if ((o->_bounds.right > o->_bounds.left) && (o->_bounds.bottom > o->_bounds.top))
 				destSurface.fillRect(Rect(o->_bounds.left - sceneBounds.left, o->_bounds.top - sceneBounds.top,
-					o->_bounds.right - sceneBounds.left - 1, o->_bounds.bottom - sceneBounds.top - 1), colIndex);
+				                          o->_bounds.right - sceneBounds.left - 1, o->_bounds.bottom - sceneBounds.top - 1),
+				                     colIndex);
 		} else {
 			// Scene uses a region, so get it and use it to fill out only the correct parts
 			SceneRegions::iterator ri = g_globals->_sceneRegions.begin();
@@ -312,7 +314,7 @@ bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
 
 					for (uint p = 0; p < set.items.size(); ++p)
 						destSurface.hLine(set.items[p].xs - sceneBounds.left, y - sceneBounds.top,
-							set.items[p].xe - sceneBounds.left - 1, colIndex);
+						                  set.items[p].xe - sceneBounds.left - 1, colIndex);
 				}
 			}
 		}
@@ -413,7 +415,7 @@ bool RingworldDebugger::Cmd_ListObjects(int argc, const char **argv) {
  */
 bool RingworldDebugger::Cmd_MoveObject(int argc, const char **argv) {
 	// Check for a flag to clear
-	if ((argc < 2) || (argc > 3)){
+	if ((argc < 2) || (argc > 3)) {
 		debugPrintf("Usage: %s <object number> [<scene number>]\n", argv[0]);
 		debugPrintf("If no scene is specified, the object will be added to inventory\n");
 		return true;
@@ -611,7 +613,7 @@ bool BlueForceDebugger::Cmd_ListObjects(int argc, const char **argv) {
 
 bool BlueForceDebugger::Cmd_MoveObject(int argc, const char **argv) {
 	// Check for a flag to clear
-	if ((argc < 2) || (argc > 3)){
+	if ((argc < 2) || (argc > 3)) {
 		debugPrintf("Usage: %s <object number> [<scene number>]\n", argv[0]);
 		debugPrintf("If no scene is specified, the object will be added to inventory\n");
 		return true;
@@ -698,7 +700,7 @@ bool Ringworld2Debugger::Cmd_ListObjects(int argc, const char **argv) {
 
 bool Ringworld2Debugger::Cmd_MoveObject(int argc, const char **argv) {
 	// Check for a flag to clear
-	if ((argc < 2) || (argc > 3)){
+	if ((argc < 2) || (argc > 3)) {
 		debugPrintf("Usage: %s <object number> [<scene number>]\n", argv[0]);
 		debugPrintf("If no scene is specified, the object will be added to inventory\n");
 		return true;

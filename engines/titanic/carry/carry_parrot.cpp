@@ -32,19 +32,23 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CCarryParrot, CCarry)
-	ON_MESSAGE(PETGainedObjectMsg)
-	ON_MESSAGE(TimerMsg)
-	ON_MESSAGE(IsParrotPresentMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(MouseDragEndMsg)
-	ON_MESSAGE(PassOnDragStartMsg)
-	ON_MESSAGE(PreEnterViewMsg)
-	ON_MESSAGE(UseWithCharMsg)
-	ON_MESSAGE(ActMsg)
+ON_MESSAGE(PETGainedObjectMsg)
+ON_MESSAGE(TimerMsg)
+ON_MESSAGE(IsParrotPresentMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(MouseDragEndMsg)
+ON_MESSAGE(PassOnDragStartMsg)
+ON_MESSAGE(PreEnterViewMsg)
+ON_MESSAGE(UseWithCharMsg)
+ON_MESSAGE(ActMsg)
 END_MESSAGE_MAP()
 
-CCarryParrot::CCarryParrot() : CCarry(), _parrotName("PerchedParrot"),
-		_timerId(0), _freeCounter(0), _feathersFlag(false) {
+CCarryParrot::CCarryParrot()
+  : CCarry()
+  , _parrotName("PerchedParrot")
+  , _timerId(0)
+  , _freeCounter(0)
+  , _feathersFlag(false) {
 }
 
 void CCarryParrot::save(SimpleFile *file, int indent) {
@@ -107,8 +111,7 @@ bool CCarryParrot::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 	if (msg->_mousePos.y >= 360) {
 		petAddToInventory();
 	} else if (compareViewNameTo("ParrotLobby.Node 1.N")) {
-		if (msg->_mousePos.x >= 75 && msg->_mousePos.x <= 565 &&
-				!CParrot::_takeOff && !CCage::_open) {
+		if (msg->_mousePos.x >= 75 && msg->_mousePos.x <= 565 && !CParrot::_takeOff && !CCage::_open) {
 			setVisible(false);
 			_canTake = false;
 			CTreeItem *perchedParrot = findUnder(getRoot(), "PerchedParrot");

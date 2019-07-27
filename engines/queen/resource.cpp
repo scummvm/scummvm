@@ -20,35 +20,34 @@
  *
  */
 
+#include "queen/resource.h"
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/endian.h"
-#include "common/config-manager.h"
 #include "common/substream.h"
 #include "common/textconsole.h"
-#include "queen/resource.h"
 
 namespace Queen {
-
 
 const char *const Resource::_tableFilename = "queen.tbl";
 
 const RetailGameVersion Resource::_gameVersions[] = {
-	{ "PEM10", 1, 0x00000008,  22677657 },
+	{ "PEM10", 1, 0x00000008, 22677657 },
 	{ "CEM10", 1, 0x0000584E, 190787021 },
-	{ "PFM10", 1, 0x0002CD93,  22157304 },
+	{ "PFM10", 1, 0x0002CD93, 22157304 },
 	{ "CFM10", 1, 0x00032585, 186689095 },
-	{ "PGM10", 1, 0x00059ACA,  22240013 },
+	{ "PGM10", 1, 0x00059ACA, 22240013 },
 	{ "CGM10", 1, 0x0005F2A7, 217648975 },
-	{ "PIM10", 1, 0x000866B1,  22461366 },
+	{ "PIM10", 1, 0x000866B1, 22461366 },
 	{ "CIM10", 1, 0x0008BEE2, 190795582 },
 	{ "CSM10", 1, 0x000B343C, 190730602 },
 	{ "CHM10", 1, 0x000DA981, 190705558 },
-	{ "PE100", 1, 0x00101EC6,   3724538 },
-	{ "PE100", 1, 0x00102B7F,   3732177 },
-	{ "PEint", 1, 0x00103838,   1915913 },
-	{ "aEM10", 2, 0x00103F1E,    351775 },
-	{ "CE101", 2, 0x00107D8D,    563335 },
-	{ "PE100", 2, 0x001086D4,    597032 }
+	{ "PE100", 1, 0x00101EC6, 3724538 },
+	{ "PE100", 1, 0x00102B7F, 3732177 },
+	{ "PEint", 1, 0x00103838, 1915913 },
+	{ "aEM10", 2, 0x00103F1E, 351775 },
+	{ "CE101", 2, 0x00107D8D, 563335 },
+	{ "PE100", 2, 0x001086D4, 597032 }
 };
 
 static int compareResourceEntry(const void *a, const void *b) {
@@ -58,7 +57,8 @@ static int compareResourceEntry(const void *a, const void *b) {
 }
 
 Resource::Resource()
-	: _resourceEntries(0), _resourceTable(NULL) {
+  : _resourceEntries(0)
+  , _resourceTable(NULL) {
 	memset(&_version, 0, sizeof(_version));
 
 	_currentResourceFileNum = 1;
@@ -130,7 +130,7 @@ void Resource::loadTextFile(const char *filename, Common::StringArray &stringLis
 bool Resource::detectVersion(DetectedGameVersion *ver, Common::File *f) {
 	memset(ver, 0, sizeof(DetectedGameVersion));
 
-	if (f->readUint32BE() == MKTAG('Q','T','B','L')) {
+	if (f->readUint32BE() == MKTAG('Q', 'T', 'B', 'L')) {
 		f->read(ver->str, 6);
 		f->skip(2);
 		ver->compression = f->readByte();
@@ -267,11 +267,12 @@ void Resource::seekResourceFile(int num, uint32 offset) {
 void Resource::readTableFile(uint8 version, uint32 offset) {
 	Common::File tableFile;
 	tableFile.open(_tableFilename);
-	if (tableFile.isOpen() && tableFile.readUint32BE() == MKTAG('Q','T','B','L')) {
+	if (tableFile.isOpen() && tableFile.readUint32BE() == MKTAG('Q', 'T', 'B', 'L')) {
 		uint32 tableVersion = tableFile.readUint32BE();
 		if (version > tableVersion) {
 			error("The game you are trying to play requires version %d of queen.tbl, "
-			      "you have version %d ; please update it", version, tableVersion);
+			      "you have version %d ; please update it",
+			      version, tableVersion);
 		}
 		tableFile.seek(offset);
 		readTableEntries(&tableFile);

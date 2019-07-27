@@ -28,28 +28,28 @@
 
 #if defined(OPENPANDORA)
 
-#include "backends/events/openpandora/op-events.h"
-#include "backends/graphics/openpandora/op-graphics.h"
-#include "backends/platform/openpandora/op-sdl.h"
-#include "backends/platform/openpandora/op-options.h"
+#	include "backends/events/openpandora/op-events.h"
+#	include "backends/graphics/openpandora/op-graphics.h"
+#	include "backends/platform/openpandora/op-options.h"
+#	include "backends/platform/openpandora/op-sdl.h"
 
-#include "common/translation.h"
-#include "common/util.h"
-#include "common/events.h"
+#	include "common/events.h"
+#	include "common/translation.h"
+#	include "common/util.h"
 
 /* Quick default button states for modifiers. */
-int BUTTON_STATE_L                  =   false;
+int BUTTON_STATE_L = false;
 
 enum {
 	/* Touchscreen TapMode */
-	TAPMODE_LEFT        = 0,
-	TAPMODE_RIGHT       = 1,
-	TAPMODE_HOVER       = 2,
-	TAPMODE_HOVER_DPAD  = 3
+	TAPMODE_LEFT = 0,
+	TAPMODE_RIGHT = 1,
+	TAPMODE_HOVER = 2,
+	TAPMODE_HOVER_DPAD = 3
 };
 
 OPEventSource::OPEventSource()
-	: _buttonStateL(false) {
+  : _buttonStateL(false) {
 }
 
 /* Custom handleMouseButtonDown/handleMouseButtonUp to deal with 'Tap Mode' for the touchscreen */
@@ -70,16 +70,16 @@ bool OPEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 			event.type = Common::EVENT_LBUTTONDOWN; /* For normal mice etc. */
 	} else if (ev.button.button == SDL_BUTTON_RIGHT)
 		event.type = Common::EVENT_RBUTTONDOWN;
-#if defined(SDL_BUTTON_WHEELUP) && defined(SDL_BUTTON_WHEELDOWN)
+#	if defined(SDL_BUTTON_WHEELUP) && defined(SDL_BUTTON_WHEELDOWN)
 	else if (ev.button.button == SDL_BUTTON_WHEELUP)
 		event.type = Common::EVENT_WHEELUP;
 	else if (ev.button.button == SDL_BUTTON_WHEELDOWN)
 		event.type = Common::EVENT_WHEELDOWN;
-#endif
-#if defined(SDL_BUTTON_MIDDLE)
+#	endif
+#	if defined(SDL_BUTTON_MIDDLE)
 	else if (ev.button.button == SDL_BUTTON_MIDDLE)
 		event.type = Common::EVENT_MBUTTONDOWN;
-#endif
+#	endif
 	else
 		return false;
 
@@ -107,10 +107,10 @@ bool OPEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 			event.type = Common::EVENT_LBUTTONUP; /* For normal mice etc. */
 	} else if (ev.button.button == SDL_BUTTON_RIGHT)
 		event.type = Common::EVENT_RBUTTONUP;
-#if defined(SDL_BUTTON_MIDDLE)
+#	if defined(SDL_BUTTON_MIDDLE)
 	else if (ev.button.button == SDL_BUTTON_MIDDLE)
 		event.type = Common::EVENT_MBUTTONUP;
-#endif
+#	endif
 	else
 		return false;
 
@@ -140,15 +140,15 @@ bool OPEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 			return true;
 			break;
-#if defined(SDL_BUTTON_MIDDLE)
+#	if defined(SDL_BUTTON_MIDDLE)
 		case SDLK_UP:
 			event.type = (ev.type == SDL_KEYDOWN) ? Common::EVENT_MBUTTONDOWN : Common::EVENT_MBUTTONUP;
 			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 			return true;
 			break;
-#endif
+#	endif
 		default:
-		  break;
+			break;
 		}
 	}
 

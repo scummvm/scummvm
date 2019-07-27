@@ -26,21 +26,21 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/ad/ad_node_state.h"
-#include "engines/wintermute/ad/ad_entity.h"
-#include "engines/wintermute/base/base_sprite.h"
-#include "engines/wintermute/utils/utils.h"
-#include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
+#include "engines/wintermute/ad/ad_entity.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_sprite.h"
+#include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/utils/utils.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdNodeState, false)
 
-
 //////////////////////////////////////////////////////////////////////////
-AdNodeState::AdNodeState(BaseGame *inGame) : BaseClass(inGame) {
+AdNodeState::AdNodeState(BaseGame *inGame)
+  : BaseClass(inGame) {
 	_name = nullptr;
 	_active = false;
 	for (int i = 0; i < 7; i++) {
@@ -50,7 +50,6 @@ AdNodeState::AdNodeState(BaseGame *inGame) : BaseClass(inGame) {
 	_filename = nullptr;
 	_cursor = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 AdNodeState::~AdNodeState() {
@@ -66,14 +65,12 @@ AdNodeState::~AdNodeState() {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void AdNodeState::setName(const char *name) {
 	delete[] _name;
 	_name = nullptr;
 	BaseUtils::setString(&_name, name);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void AdNodeState::setFilename(const char *filename) {
@@ -82,14 +79,12 @@ void AdNodeState::setFilename(const char *filename) {
 	BaseUtils::setString(&_filename, filename);
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void AdNodeState::setCursor(const char *filename) {
 	delete[] _cursor;
 	_cursor = nullptr;
 	BaseUtils::setString(&_cursor, filename);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdNodeState::persist(BasePersistenceManager *persistMgr) {
@@ -106,7 +101,6 @@ bool AdNodeState::persist(BasePersistenceManager *persistMgr) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void AdNodeState::setCaption(const char *caption, int caseVal) {
@@ -125,7 +119,6 @@ void AdNodeState::setCaption(const char *caption, int caseVal) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 const char *AdNodeState::getCaption(int caseVal) {
 	if (caseVal == 0) {
@@ -137,7 +130,6 @@ const char *AdNodeState::getCaption(int caseVal) {
 		return _caption[caseVal - 1];
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdNodeState::transferEntity(AdEntity *entity, bool includingSprites, bool saving) {

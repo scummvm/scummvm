@@ -24,28 +24,28 @@
 
 #if defined(ANDROIDSDL)
 
-#include "backends/events/androidsdl/androidsdl-events.h"
-#include "backends/platform/androidsdl/androidsdl-sdl.h"
+#	include "backends/events/androidsdl/androidsdl-events.h"
+#	include "backends/platform/androidsdl/androidsdl-sdl.h"
 
 bool AndroidSdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 	if (ev.button.button == SDL_BUTTON_LEFT)
 		event.type = Common::EVENT_LBUTTONDOWN;
 	else if (ev.button.button == SDL_BUTTON_RIGHT)
 		event.type = Common::EVENT_RBUTTONDOWN;
-#if defined(SDL_BUTTON_WHEELUP) && defined(SDL_BUTTON_WHEELDOWN)
+#	if defined(SDL_BUTTON_WHEELUP) && defined(SDL_BUTTON_WHEELDOWN)
 	else if (ev.button.button == SDL_BUTTON_WHEELUP)
 		event.type = Common::EVENT_WHEELUP;
 	else if (ev.button.button == SDL_BUTTON_WHEELDOWN)
 		event.type = Common::EVENT_WHEELDOWN;
-#endif
-#if defined(SDL_BUTTON_MIDDLE)
+#	endif
+#	if defined(SDL_BUTTON_MIDDLE)
 	else if (ev.button.button == SDL_BUTTON_MIDDLE) {
 		event.type = Common::EVENT_MBUTTONDOWN;
 
 		const bool show_onscreen = g_system->getFeatureState(OSystem::kFeatureOnScreenControl);
 		g_system->setFeatureState(OSystem::kFeatureOnScreenControl, !show_onscreen);
 	}
-#endif
+#	endif
 	else
 		return false;
 
@@ -58,7 +58,8 @@ bool AndroidSdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &
 }
 
 bool AndroidSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
-	if (false) {}
+	if (false) {
+	}
 
 	if (ev.key.keysym.sym == SDLK_F13) {
 		event.type = Common::EVENT_MAINMENU;

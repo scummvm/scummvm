@@ -22,10 +22,10 @@
 
 #ifdef ENABLE_EOB
 
-#ifndef KYRA_EOB2_H
-#define KYRA_EOB2_H
+#	ifndef KYRA_EOB2_H
+#		define KYRA_EOB2_H
 
-#include "kyra/engine/eobcommon.h"
+#		include "kyra/engine/eobcommon.h"
 
 namespace Kyra {
 
@@ -45,8 +45,9 @@ struct DarkMoonAnimCommand {
 };
 
 class DarkMoonEngine : public EoBCoreEngine {
-friend class GUI_EoB;
-friend class DarkmoonSequenceHelper;
+	friend class GUI_EoB;
+	friend class DarkmoonSequenceHelper;
+
 public:
 	DarkMoonEngine(OSystem *system, const GameFlags &flags);
 	~DarkMoonEngine();
@@ -151,6 +152,6 @@ private:
 
 } // End of namespace Kyra
 
-#endif
+#	endif
 
 #endif // ENABLE_EOB

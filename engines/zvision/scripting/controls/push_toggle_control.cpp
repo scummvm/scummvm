@@ -24,19 +24,19 @@
 
 #include "zvision/scripting/controls/push_toggle_control.h"
 
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/zvision.h"
 
 #include "common/stream.h"
 
 namespace ZVision {
 
 PushToggleControl::PushToggleControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)
-	: Control(engine, key, CONTROL_PUSHTGL),
-	  _countTo(2),
-	  _cursor(CursorIndex_Active),
-	  _event(Common::EVENT_LBUTTONUP) {
+  : Control(engine, key, CONTROL_PUSHTGL)
+  , _countTo(2)
+  , _cursor(CursorIndex_Active)
+  , _event(Common::EVENT_LBUTTONUP) {
 
 	_hotspots.clear();
 

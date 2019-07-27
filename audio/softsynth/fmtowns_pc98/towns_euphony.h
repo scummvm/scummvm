@@ -92,7 +92,7 @@ private:
 		int8 next;
 		uint8 note;
 		uint8 pri;
-	} *_channels;
+	} * _channels;
 
 	TownsAudioInterface *_intf;
 };
@@ -122,7 +122,7 @@ public:
 	int setTempo(int tempo);
 	void setLoopStatus(bool loop);
 
-	bool isPlaying() {return _playing; }
+	bool isPlaying() { return _playing; }
 
 	int configPart_enable(int part, int val);
 	int configPart_setType(int part, int val);
@@ -182,7 +182,13 @@ private:
 	int8 *_partConfig_transpose;
 
 	struct PendingEvent {
-		PendingEvent(int ev, int tp, int nt, int vl, int ln, PendingEvent *chain) : evt(ev), type(tp), note(nt), velo(vl), len(ln), next(chain) {}
+		PendingEvent(int ev, int tp, int nt, int vl, int ln, PendingEvent *chain)
+		  : evt(ev)
+		  , type(tp)
+		  , note(nt)
+		  , velo(vl)
+		  , len(ln)
+		  , next(chain) {}
 		uint8 evt;
 		uint8 type;
 		uint8 note;
@@ -194,7 +200,7 @@ private:
 	PendingEvent *_pendingEventsChain;
 
 	typedef Common::Functor0Mem<bool, EuphonyPlayer> EuphonyEvent;
-	typedef Common::Array<const EuphonyEvent*> EuphonyEventsArray;
+	typedef Common::Array<const EuphonyEvent *> EuphonyEventsArray;
 	EuphonyEventsArray _euphonyEvents;
 
 	uint8 _defaultBarLength;

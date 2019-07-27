@@ -37,18 +37,21 @@ namespace Hugo {
 /**
  * Purpose of an automatic route
  */
-enum RouteType {kRouteSpace, kRouteExit, kRouteLook, kRouteGet};
+enum RouteType { kRouteSpace,
+	               kRouteExit,
+	               kRouteLook,
+	               kRouteGet };
 
-struct Segment {                                    // Search segment
-	int16 _y;                                       // y position
-	int16 _x1, _x2;                                 // Range of segment
+struct Segment { // Search segment
+	int16 _y; // y position
+	int16 _x1, _x2; // Range of segment
 };
 
 class Route {
 public:
 	Route(HugoEngine *vm);
 
-	void  resetRoute();
+	void resetRoute();
 	int16 getRouteIndex() const;
 
 	void processRoute();
@@ -59,30 +62,30 @@ public:
 private:
 	HugoEngine *_vm;
 
-	static const int kMapBound = 1;                 // Mark a boundary outline
-	static const int kMapFill = 2;                  // Mark a boundary filled
-	static const int kMaxSeg = 256;                 // Maximum number of segments
-	static const int kMaxNodes = 256;               // Maximum nodes in route
+	static const int kMapBound = 1; // Mark a boundary outline
+	static const int kMapFill = 2; // Mark a boundary filled
+	static const int kMaxSeg = 256; // Maximum number of segments
+	static const int kMaxNodes = 256; // Maximum nodes in route
 
-	uint16 _oldWalkDirection;                       // Last direction char
+	uint16 _oldWalkDirection; // Last direction char
 
-	int16     _routeIndex;                          // Index into route list, or -1
-	RouteType _routeType;                           // Purpose of an automatic route
-	int16     _routeObjId;                          // Index of exit of object walking to
+	int16 _routeIndex; // Index into route list, or -1
+	RouteType _routeType; // Purpose of an automatic route
+	int16 _routeObjId; // Index of exit of object walking to
 
-	byte _boundaryMap[kYPix][kXPix];                // Boundary byte map
-	Segment _segment[kMaxSeg];                      // List of points in fill-path
-	Common::Point _route[kMaxNodes];                // List of nodes in route (global)
-	int16 _segmentNumb;                             // Count number of segments
-	int16 _routeListIndex;                          // Index into route list
+	byte _boundaryMap[kYPix][kXPix]; // Boundary byte map
+	Segment _segment[kMaxSeg]; // List of points in fill-path
+	Common::Point _route[kMaxNodes]; // List of nodes in route (global)
+	int16 _segmentNumb; // Count number of segments
+	int16 _routeListIndex; // Index into route list
 	int16 _destX;
 	int16 _destY;
-	int16 _heroWidth;                               // Hero width
-	bool  _routeFoundFl;                            // TRUE when path found
-	bool  _fullSegmentFl;                           // Segments exhausted
+	int16 _heroWidth; // Hero width
+	bool _routeFoundFl; // TRUE when path found
+	bool _fullSegmentFl; // Segments exhausted
 
 	// CHECKME: Never set to true, could be removed
-	bool  _fullStackFl;                             // TRUE if stack exhausted
+	bool _fullStackFl; // TRUE if stack exhausted
 
 	void segment(int16 x, int16 y);
 	bool findRoute(const int16 cx, const int16 cy);

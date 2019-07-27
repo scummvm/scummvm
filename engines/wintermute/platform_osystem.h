@@ -29,9 +29,9 @@
 #ifndef WINTERMUTE_PLATFORMSDL_H
 #define WINTERMUTE_PLATFORMSDL_H
 
+#include "common/events.h"
 #include "engines/wintermute/dctypes.h"
 #include "engines/wintermute/math/rect32.h"
-#include "common/events.h"
 
 namespace Wintermute {
 

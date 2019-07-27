@@ -30,14 +30,15 @@
 
 namespace CryOmni3D {
 
-#define MAP_ID(id) \
-    do { \
-        if (_map) { \
-            id = (*_map)[id]; \
-        } \
-    } while(false)
+#define MAP_ID(id)      \
+	do {                  \
+		if (_map) {         \
+			id = (*_map)[id]; \
+		}                   \
+	} while (false)
 
-Sprites::Sprites() : _map(nullptr) {
+Sprites::Sprites()
+  : _map(nullptr) {
 	_surface = new Graphics::Surface();
 }
 
@@ -65,8 +66,8 @@ void Sprites::loadSprites(Common::ReadStream &spr_fl) {
 		}
 
 		// 2 unknown uint32
-		(void) spr_fl.readUint32BE();
-		(void) spr_fl.readUint32BE();
+		(void)spr_fl.readUint32BE();
+		(void)spr_fl.readUint32BE();
 
 		CryoCursor *cursor = new CryoCursor();
 
@@ -110,7 +111,8 @@ void Sprites::setupMapTable(const uint *table, uint size) {
 
 		if (unswept) {
 			warning("We got %d unreachable sprites from map table. This should not happen."
-			        " Fixing it for now", unswept);
+			        " Fixing it for now",
+			        unswept);
 			// Enlarge the map to hold new indexes
 			_map->reserve(_map->size() + unswept);
 
@@ -210,8 +212,13 @@ const Graphics::Cursor &Sprites::getCursor(uint spriteId) const {
 	return *_cursors[spriteId];
 }
 
-Sprites::CryoCursor::CryoCursor() : _width(0), _height(0), _offX(0), _offY(0), _data(nullptr),
-	refCnt(1) {
+Sprites::CryoCursor::CryoCursor()
+  : _width(0)
+  , _height(0)
+  , _offX(0)
+  , _offY(0)
+  , _data(nullptr)
+  , refCnt(1) {
 }
 
 Sprites::CryoCursor::~CryoCursor() {

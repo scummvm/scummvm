@@ -42,63 +42,63 @@ static int s_matrixEffectBase = 0;
 static int s_matrixEffectDivide = 1;
 static int s_matrixEffectWidth = 3;
 static int s_matrixEffectHeight = 3;
-static int s_matrixEffectData[9] = {0, 0, 0, 0, 1, 0, 0, 0, 0};
+static int s_matrixEffectData[9] = { 0, 0, 0, 0, 1, 0, 0, 0, 0 };
 static int s_matrixEffectBase = 0;
 #elif 0
 // Brighten
 static int s_matrixEffectDivide = 9;
 static int s_matrixEffectWidth = 1;
 static int s_matrixEffectHeight = 1;
-static int s_matrixEffectData[9] = {10};
+static int s_matrixEffectData[9] = { 10 };
 static int s_matrixEffectBase = 15;
 #elif 0
 // Raised up/left
 static int s_matrixEffectDivide = 4;
 static int s_matrixEffectWidth = 3;
 static int s_matrixEffectHeight = 3;
-static int s_matrixEffectData[9] = {-2, -1, 0, -1, 1, 1, 0, 1, 2};
+static int s_matrixEffectData[9] = { -2, -1, 0, -1, 1, 1, 0, 1, 2 };
 static int s_matrixEffectBase = 16;
 #elif 0
 // Standard emboss
 static int s_matrixEffectDivide = 2;
 static int s_matrixEffectWidth = 3;
 static int s_matrixEffectHeight = 3;
-static int s_matrixEffectData[9] = {-1, 0, 0, 0, 0, 0, 0, 0, 1};
+static int s_matrixEffectData[9] = { -1, 0, 0, 0, 0, 0, 0, 0, 1 };
 static int s_matrixEffectBase = 128;
 #elif 0
 // Horizontal blur
 static int s_matrixEffectDivide = 11;
 static int s_matrixEffectWidth = 5;
 static int s_matrixEffectHeight = 1;
-static int s_matrixEffectData[9] = {1, 3, 3, 3, 1};
+static int s_matrixEffectData[9] = { 1, 3, 3, 3, 1 };
 static int s_matrixEffectBase = 0;
 #elif 0
 // Double vision
 static int s_matrixEffectDivide = 6;
 static int s_matrixEffectWidth = 13;
 static int s_matrixEffectHeight = 2;
-static int s_matrixEffectData[26] = {2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3};
+static int s_matrixEffectData[26] = { 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 };
 static int s_matrixEffectBase = 0;
 #elif 0
 // Negative
 static int s_matrixEffectDivide = 1;
 static int s_matrixEffectWidth = 1;
 static int s_matrixEffectHeight = 1;
-static int s_matrixEffectData[9] = {-1};
+static int s_matrixEffectData[9] = { -1 };
 static int s_matrixEffectBase = 255;
 #elif 0
 // Fog
 static int s_matrixEffectDivide = 4;
 static int s_matrixEffectWidth = 1;
 static int s_matrixEffectHeight = 1;
-static int s_matrixEffectData[9] = {3};
+static int s_matrixEffectData[9] = { 3 };
 static int s_matrixEffectBase = 45;
 #elif 0
 // Blur
 static int s_matrixEffectDivide = 14;
 static int s_matrixEffectWidth = 3;
 static int s_matrixEffectHeight = 3;
-static int s_matrixEffectData[9] = {1, 2, 1, 2, 2, 2, 1, 2, 1};
+static int s_matrixEffectData[9] = { 1, 2, 1, 2, 2, 2, 1, 2, 1 };
 static int s_matrixEffectBase = 0;
 #else
 static int s_matrixEffectDivide = 0;
@@ -195,7 +195,7 @@ bool blur_createSettings(int numParams, VariableStack *&stack) {
 					if (error.empty()) {
 						for (int x = 0; x < width; x++) {
 							int arraySlot = x + (y * width);
-//							s_matrixEffectData[arraySlot] = (rand() % 4);
+							//							s_matrixEffectData[arraySlot] = (rand() % 4);
 							if (!eachNumber->thisVar.getValueType(s_matrixEffectData[arraySlot], SVT_INT)) {
 								error = "";
 								break;

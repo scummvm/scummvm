@@ -47,6 +47,7 @@ public:
 	~PmvPlayer();
 	// Returns true if the movie was played till the end
 	bool play(const char *filename);
+
 protected:
 	MadeEngine *_vm;
 	Audio::Mixer *_mixer;

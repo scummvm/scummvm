@@ -21,8 +21,8 @@
  */
 
 #include "common/debug.h"
-#include "common/str.h"
 #include "common/memstream.h"
+#include "common/str.h"
 
 #include "draci/barchive.h"
 #include "draci/draci.h"
@@ -187,7 +187,7 @@ void BArchive::openArchive(const Common::String &path) {
 	footerSize = _f.size() - footerOffset;
 
 	debugC(2, kDraciArchiverDebugLevel, "Archive info: %d files, %d data bytes",
-		_fileCount, footerOffset - _archiveHeaderSize);
+	       _fileCount, footerOffset - _archiveHeaderSize);
 
 	// Read in footer
 	footer = new byte[footerSize];
@@ -203,22 +203,21 @@ void BArchive::openArchive(const Common::String &path) {
 		uint32 fileOffset;
 
 		fileOffset = reader.readUint32LE();
-		_f.seek(fileOffset);						// Seek to next file in archive
+		_f.seek(fileOffset); // Seek to next file in archive
 
-		_files[i]._compLength = _f.readUint16LE();	// Compressed size
-													// should be the same as uncompressed
+		_files[i]._compLength = _f.readUint16LE(); // Compressed size
+		  // should be the same as uncompressed
 
-		_files[i]._length = _f.readUint16LE();		// Original size
+		_files[i]._length = _f.readUint16LE(); // Original size
 
-		_files[i]._offset = fileOffset;				// Offset of file from start
+		_files[i]._offset = fileOffset; // Offset of file from start
 
 		byte compressionType = _f.readByte();
-		assert(compressionType == 0 &&
-			"Compression type flag is non-zero (file is compressed)");
+		assert(compressionType == 0 && "Compression type flag is non-zero (file is compressed)");
 
-		_files[i]._crc = _f.readByte();	// CRC checksum of the file
-		_files[i]._data = NULL;		// File data will be read in on demand
-		_files[i]._stopper = 0;		// Dummy value; not used in BAR files, needed in DFW
+		_files[i]._crc = _f.readByte(); // CRC checksum of the file
+		_files[i]._data = NULL; // File data will be read in on demand
+		_files[i]._stopper = 0; // Dummy value; not used in BAR files, needed in DFW
 	}
 
 	// Last footer item should be equal to footerOffset
@@ -315,8 +314,8 @@ BAFile *BArchive::loadFileDFW(uint i) {
 	uint16 uncompressedLength = _files[i]._length;
 
 	debugC(2, kDraciArchiverDebugLevel,
-		"File info (DFW): uncompressed %d bytes, compressed %d bytes",
-		uncompressedLength, compressedLength);
+	       "File info (DFW): uncompressed %d bytes, compressed %d bytes",
+	       uncompressedLength, compressedLength);
 
 	// Allocate a buffer for the file data
 	buf = new byte[compressedLength];
@@ -379,7 +378,7 @@ const BAFile *BArchive::getFile(uint i) {
 	}
 
 	debugCN(2, kDraciArchiverDebugLevel, "Accessing file %d from archive %s... ",
-		i, _path.c_str());
+	        i, _path.c_str());
 
 	// Check if file has already been opened and return that
 	if (_files[i]._data) {

@@ -25,17 +25,22 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPhonograph, CMusicPlayer)
-	ON_MESSAGE(PhonographPlayMsg)
-	ON_MESSAGE(PhonographStopMsg)
-	ON_MESSAGE(PhonographRecordMsg)
-	ON_MESSAGE(EnterRoomMsg)
-	ON_MESSAGE(LeaveRoomMsg)
-	ON_MESSAGE(MusicHasStartedMsg)
+ON_MESSAGE(PhonographPlayMsg)
+ON_MESSAGE(PhonographStopMsg)
+ON_MESSAGE(PhonographRecordMsg)
+ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(LeaveRoomMsg)
+ON_MESSAGE(MusicHasStartedMsg)
 END_MESSAGE_MAP()
 
-CPhonograph::CPhonograph() : CMusicPlayer(),
-		_isPlaying(false), _isRecording(false), _isDisabled(false),
-		_playUnpressedFrame(false), _playPressedFrame(false), _unused5(0) {
+CPhonograph::CPhonograph()
+  : CMusicPlayer()
+  , _isPlaying(false)
+  , _isRecording(false)
+  , _isDisabled(false)
+  , _playUnpressedFrame(false)
+  , _playPressedFrame(false)
+  , _unused5(0) {
 }
 
 void CPhonograph::save(SimpleFile *file, int indent) {

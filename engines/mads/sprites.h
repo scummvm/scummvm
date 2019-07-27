@@ -23,22 +23,22 @@
 #ifndef MADS_SPRITES_H
 #define MADS_SPRITES_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 #include "mads/assets.h"
 #include "mads/msurface.h"
 
 namespace MADS {
 
 enum SpriteFlags {
-	IMG_STATIC = 0,			// Item should remain fixed on the screen
-	IMG_UPDATE = 1,			// Item needs to be redrawn
-	IMG_ERASE = -1,			// Erase image and remove it
-	IMG_REFRESH = -2,		// Full refresh
-	IMG_OVERPRINT = -3,		// Interface overprint
-	IMG_DELTA = -4,			// Delta change
-	IMG_FULL_UPDATE = -5,	// Interface refresh
-	IMG_UPDATE_ONLY = -20	// Update the active screen area only
+	IMG_STATIC = 0, // Item should remain fixed on the screen
+	IMG_UPDATE = 1, // Item needs to be redrawn
+	IMG_ERASE = -1, // Erase image and remove it
+	IMG_REFRESH = -2, // Full refresh
+	IMG_OVERPRINT = -3, // Interface overprint
+	IMG_DELTA = -4, // Delta change
+	IMG_FULL_UPDATE = -5, // Interface refresh
+	IMG_UPDATE_ONLY = -20 // Update the active screen area only
 };
 
 class MADSEngine;
@@ -48,26 +48,26 @@ struct BGR8 {
 };
 
 typedef struct {
-	int32	x;			// x position relative	to GrBuff(0, 0)
-	int32	y;			// y position relative	to GrBuff(0, 0)
-	int32	scale_x;	// x scale factor (can be negative for reverse draw)
-	int32	scale_y;	// y scale factor (can't be negative)
-	uint8*	depth_map;	// depth code array for destination (doesn't care if srcDepth is 0)
-	BGR8*	Pal;		// palette for shadow draw (doesn't care if SHADOW bit is not set in Src.encoding)
-	uint8*	ICT;		// Inverse Color Table (doesn't care if SHADOW bit is not set in Src.encoding)
-	uint8	depth;		// depth code for source (0 if no depth processing)
+	int32 x; // x position relative	to GrBuff(0, 0)
+	int32 y; // y position relative	to GrBuff(0, 0)
+	int32 scale_x; // x scale factor (can be negative for reverse draw)
+	int32 scale_y; // y scale factor (can't be negative)
+	uint8 *depth_map; // depth code array for destination (doesn't care if srcDepth is 0)
+	BGR8 *Pal; // palette for shadow draw (doesn't care if SHADOW bit is not set in Src.encoding)
+	uint8 *ICT; // Inverse Color Table (doesn't care if SHADOW bit is not set in Src.encoding)
+	uint8 depth; // depth code for source (0 if no depth processing)
 } DrawRequestX;
 
 typedef struct {
 	uint32 Pack;
 	uint32 Stream;
-	long   hot_x;
-	long   hot_y;
+	long hot_x;
+	long hot_y;
 	uint32 Width;
 	uint32 Height;
 	uint32 Comp;
 	uint32 Reserved[8];
-	uint8* data;
+	uint8 *data;
 } RendCell;
 
 #define SS_HEADER_NUM_FIELDS 14
@@ -110,10 +110,11 @@ struct SpriteFrameHeader {
 class MSprite : public MSurface {
 private:
 	void loadSprite(Common::SeekableReadStream *source, const Common::Array<RGB6> &palette);
+
 public:
 	MSprite();
 	MSprite(Common::SeekableReadStream *source, const Common::Array<RGB6> &palette,
-		const Common::Rect &bounds);
+	        const Common::Rect &bounds);
 	virtual ~MSprite();
 
 	Common::Point _offset;
@@ -135,9 +136,11 @@ class SpriteSlot : public SpriteSlotSubset {
 private:
 	static MADSEngine *_vm;
 	friend class SpriteSlots;
+
 public:
 	SpriteFlags _flags;
 	int _seqIndex;
+
 public:
 	SpriteSlot();
 	SpriteSlot(SpriteFlags type, int seqIndex);
@@ -150,6 +153,7 @@ public:
 class SpriteSlots : public Common::Array<SpriteSlot> {
 private:
 	MADSEngine *_vm;
+
 public:
 	SpriteSlots(MADSEngine *vm);
 
@@ -201,13 +205,17 @@ public:
 class SpriteSets : public Common::Array<SpriteAsset *> {
 private:
 	MADSEngine *_vm;
+
 public:
 	SpriteAsset *_uiSprites;
+
 public:
 	/**
 	 * Constructor
 	 */
-	SpriteSets(MADSEngine *vm) : _vm(vm), _uiSprites(nullptr) {}
+	SpriteSets(MADSEngine *vm)
+	  : _vm(vm)
+	  , _uiSprites(nullptr) {}
 
 	/**
 	 * Destructor

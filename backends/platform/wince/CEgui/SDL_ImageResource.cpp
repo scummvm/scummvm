@@ -20,13 +20,13 @@
  *
  */
 
-#include "backends/platform/sdl/sdl-sys.h"
 #include "SDL_ImageResource.h"
+#include "backends/platform/sdl/sdl-sys.h"
 
 namespace CEGUI {
 
-SDL_ImageResource::SDL_ImageResource() :
-	_surface(0) {
+SDL_ImageResource::SDL_ImageResource()
+  : _surface(0) {
 }
 
 SDL_Surface *SDL_ImageResource::load(WORD resourceID) {

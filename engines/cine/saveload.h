@@ -75,11 +75,10 @@ static const uint32 CURRENT_OS_SAVE_VER = 1;
 
 /** Chunk header used by the temporary Operation Stealth savegame format. */
 struct ChunkHeader {
-	uint32 id;      ///< Identifier (e.g. MKTAG('T','E','M','P'))
+	uint32 id; ///< Identifier (e.g. MKTAG('T','E','M','P'))
 	uint32 version; ///< Version number
-	uint32 size;    ///< Size of the chunk after this header in bytes
+	uint32 size; ///< Size of the chunk after this header in bytes
 };
-
 
 } // End of namespace Cine
 

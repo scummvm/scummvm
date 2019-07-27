@@ -20,17 +20,17 @@
  *
  */
 
-
 #include "common/endian.h"
 
-#include "scumm/scumm.h"	// For DEBUG_SMUSH
-#include "scumm/util.h"
+#include "scumm/imuse_digi/dimuse_codecs.h" // for decode12BitsSample
+#include "scumm/scumm.h" // For DEBUG_SMUSH
 #include "scumm/smush/channel.h"
-#include "scumm/imuse_digi/dimuse_codecs.h"	// for decode12BitsSample
+#include "scumm/util.h"
 
 namespace Scumm {
 
-ImuseChannel::ImuseChannel(int32 track) : SmushChannel(track) {
+ImuseChannel::ImuseChannel(int32 track)
+  : SmushChannel(track) {
 }
 
 bool ImuseChannel::isTerminated() const {
@@ -61,8 +61,8 @@ bool ImuseChannel::appendData(Common::SeekableReadStream &b, int32 size) {
 	if (_dataSize == -1) {
 		assert(size > 8);
 		uint32 imus_type = b.readUint32BE();
-		/*uint32 imus_size =*/ b.readUint32BE();
-		if (imus_type != MKTAG('i','M','U','S'))
+		/*uint32 imus_size =*/b.readUint32BE();
+		if (imus_type != MKTAG('i', 'M', 'U', 'S'))
 			error("Invalid Chunk for imuse_channel");
 		size -= 8;
 		_tbufferSize = size;
@@ -113,24 +113,24 @@ bool ImuseChannel::handleMap(byte *data) {
 		size -= 8;
 
 		switch (subType) {
-		case MKTAG('F','R','M','T'):
+		case MKTAG('F', 'R', 'M', 'T'):
 			if (subSize != 20)
 				error("invalid size for FRMT Chunk");
 			//uint32 imuse_start = READ_BE_UINT32(data);
 			//uint32 unk = READ_BE_UINT32(data+4);
-			_bitsize = READ_BE_UINT32(data+8);
-			_rate = READ_BE_UINT32(data+12);
-			_channels = READ_BE_UINT32(data+16);
+			_bitsize = READ_BE_UINT32(data + 8);
+			_rate = READ_BE_UINT32(data + 12);
+			_channels = READ_BE_UINT32(data + 16);
 			assert(_channels == 1 || _channels == 2);
 			break;
-		case MKTAG('T','E','X','T'):
+		case MKTAG('T', 'E', 'X', 'T'):
 			// Ignore this
 			break;
-		case MKTAG('R','E','G','N'):
+		case MKTAG('R', 'E', 'G', 'N'):
 			if (subSize != 8)
 				error("invalid size for REGN Chunk");
 			break;
-		case MKTAG('S','T','O','P'):
+		case MKTAG('S', 'T', 'O', 'P'):
 			if (subSize != 4)
 				error("invalid size for STOP Chunk");
 			break;
@@ -156,7 +156,7 @@ void ImuseChannel::decode() {
 			_sbufferSize -= remaining_size;
 		} else {
 			debugC(DEBUG_SMUSH, "impossible ! : %p, %d, %d, %p(%d), %p(%d, %d)",
-				(const void *)this, _dataSize, _inData, (void *)_tbuffer, _tbufferSize, (void *)_sbuffer, _sbufferSize, _srbufferSize);
+			       (const void *)this, _dataSize, _inData, (void *)_tbuffer, _tbufferSize, (void *)_sbuffer, _sbufferSize, _srbufferSize);
 			byte *old = _tbuffer;
 			int new_size = remaining_size + _tbufferSize;
 			_tbuffer = (byte *)malloc(new_size);
@@ -181,13 +181,13 @@ bool ImuseChannel::handleSubTags(int32 &offset) {
 		uint32 size = READ_BE_UINT32(_tbuffer + offset + 4);
 		uint32 available_size = _tbufferSize - offset;
 		switch (type) {
-		case MKTAG('M','A','P',' '):
+		case MKTAG('M', 'A', 'P', ' '):
 			_inData = false;
 			if (available_size >= (size + 8)) {
 				handleMap((byte *)_tbuffer + offset);
 			}
 			break;
-		case MKTAG('D','A','T','A'):
+		case MKTAG('D', 'A', 'T', 'A'):
 			_inData = true;
 			_dataSize = size;
 			offset += 8;
@@ -200,7 +200,8 @@ bool ImuseChannel::handleSubTags(int32 &offset) {
 				else if (_bitsize == 12) {
 					if (reqsize > 1)
 						reqsize = reqsize * 3 / 2;
-					else reqsize = 3;
+					else
+						reqsize = 3;
 				}
 				if ((size % reqsize) != 0) {
 					debugC(DEBUG_SMUSH, "Invalid iMUS sound data size : (%d %% %d) != 0, correcting...", size, reqsize);

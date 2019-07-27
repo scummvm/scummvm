@@ -20,21 +20,19 @@
  *
  */
 
-
-
 #ifdef ENABLE_AGOS2
 
-#include "common/savefile.h"
+#	include "common/savefile.h"
 
-#include "graphics/surface.h"
+#	include "graphics/surface.h"
 
-#include "agos/agos.h"
-#include "agos/intern.h"
-#include "agos/vga.h"
+#	include "agos/agos.h"
+#	include "agos/intern.h"
+#	include "agos/vga.h"
 
 namespace AGOS {
 
-void AGOSEngine_Feeble::checkLinkBox() {	// Check for boxes spilling over to next row of text
+void AGOSEngine_Feeble::checkLinkBox() { // Check for boxes spilling over to next row of text
 	if (_hyperLink != 0) {
 		_variableArray[52] = _textWindow->x + _textWindow->textColumn - _variableArray[50];
 		if (_variableArray[52] != 0) {
@@ -42,7 +40,7 @@ void AGOSEngine_Feeble::checkLinkBox() {	// Check for boxes spilling over to nex
 			_variableArray[53]++;
 		}
 		_variableArray[50] = _textWindow->x;
-		_variableArray[51] = _textWindow->textRow + _textWindow->y + (_oracleMaxScrollY-_textWindow->scrollY) * 15;
+		_variableArray[51] = _textWindow->textRow + _textWindow->y + (_oracleMaxScrollY - _textWindow->scrollY) * 15;
 	}
 }
 
@@ -55,7 +53,6 @@ void AGOSEngine_Feeble::hyperLinkOn(uint16 x) {
 	_variableArray[51] = _textWindow->textRow + _textWindow->y + (_oracleMaxScrollY - _textWindow->scrollY) * 15;
 }
 
-
 void AGOSEngine_Feeble::hyperLinkOff() {
 	if (!getBitFlag(51))
 		return;
@@ -66,7 +63,7 @@ void AGOSEngine_Feeble::hyperLinkOff() {
 	_hyperLink = 0;
 }
 
-void AGOSEngine_Feeble::linksUp() {	// Scroll Oracle Links
+void AGOSEngine_Feeble::linksUp() { // Scroll Oracle Links
 	uint16 j;
 	for (j = 700; j < _variableArray[53]; j++) {
 		moveBox(j, 0, -15);
@@ -76,7 +73,7 @@ void AGOSEngine_Feeble::linksUp() {	// Scroll Oracle Links
 void AGOSEngine_Feeble::linksDown() {
 	uint16 i;
 	for (i = 700; i < _variableArray[53]; i++) {
-		moveBox(i,0, 15);
+		moveBox(i, 0, 15);
 	}
 }
 
@@ -112,7 +109,7 @@ void AGOSEngine_Feeble::checkUp(WindowBlock *window) {
 void AGOSEngine_Feeble::inventoryUp(WindowBlock *window) {
 	_marks = 0;
 	checkUp(window);
-	animate(4, 9, 21, 0 ,0, 0);
+	animate(4, 9, 21, 0, 0, 0);
 	while (_currentBoxNum == 0x7FFB && getBitFlag(89)) {
 		checkUp(window);
 		delay(1);
@@ -123,7 +120,6 @@ void AGOSEngine_Feeble::inventoryUp(WindowBlock *window) {
 	waitForMark(1);
 	checkUp(window);
 }
-
 
 void AGOSEngine_Feeble::checkDown(WindowBlock *window) {
 	uint16 j, k;
@@ -178,7 +174,7 @@ void AGOSEngine_Feeble::oracleTextUp() {
 	changeWindow(3);
 	_noOracleScroll = 0;
 
-	if (_textWindow->scrollY > _oracleMaxScrollY)		// For scroll up
+	if (_textWindow->scrollY > _oracleMaxScrollY) // For scroll up
 		_oracleMaxScrollY = _textWindow->scrollY;
 	while (!shouldQuit()) {
 		if (_textWindow->scrollY == _oracleMaxScrollY)
@@ -212,7 +208,7 @@ void AGOSEngine_Feeble::oracleTextDown() {
 	changeWindow(3);
 	_noOracleScroll = 0;
 
-	if (_textWindow->scrollY > _oracleMaxScrollY)		// For scroll up
+	if (_textWindow->scrollY > _oracleMaxScrollY) // For scroll up
 		_oracleMaxScrollY = _textWindow->scrollY;
 	while (!shouldQuit()) {
 		if (_textWindow->scrollY == 0)
@@ -398,7 +394,6 @@ void AGOSEngine_Feeble::listSaveGamesFeeble() {
 			if ((_newLines + 1) == (_textWindow->scrollY + 7))
 				OK = 1;
 		}
-
 
 		if (OK == 1) {
 			if (j == maxFiles + 1) {

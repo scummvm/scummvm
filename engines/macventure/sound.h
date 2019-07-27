@@ -31,8 +31,8 @@
 #ifndef MACVENTURE_SOUND_H
 #define MACVENTURE_SOUND_H
 
-#include "macventure/macventure.h"
 #include "macventure/container.h"
+#include "macventure/macventure.h"
 
 #include "common/file.h"
 #include "common/hashmap.h"
@@ -61,7 +61,6 @@ public:
 	uint32 getPlayLength();
 
 private:
-
 	void decode10(Common::SeekableReadStream *stream);
 	void decode12(Common::SeekableReadStream *stream);
 	void decode18(Common::SeekableReadStream *stream);
@@ -71,7 +70,6 @@ private:
 	void decode7e(Common::SeekableReadStream *stream);
 
 private:
-
 	Container *_container;
 	ObjID _id;
 
@@ -91,12 +89,10 @@ private:
 	void ensureLoaded(ObjID sound);
 
 private:
-
 	Container *_container;
-	Common::HashMap<ObjID, SoundAsset*> _assets;
+	Common::HashMap<ObjID, SoundAsset *> _assets;
 	Audio::SoundHandle _handle;
 	Audio::Mixer *_mixer;
-
 };
 } // End of namespace MacVenture
 

@@ -24,8 +24,8 @@
 
 #if !USE_FORCED_GLES
 
-#include "common/textconsole.h"
-#include "common/util.h"
+#	include "common/textconsole.h"
+#	include "common/util.h"
 
 namespace Common {
 DECLARE_SINGLETON(OpenGL::ShaderManager);
@@ -35,66 +35,61 @@ namespace OpenGL {
 
 namespace {
 
-#pragma mark - Builtin Shader Sources -
+#	pragma mark - Builtin Shader Sources -
 
-const char *const g_defaultVertexShader =
-	"attribute vec4 position;\n"
-	"attribute vec2 texCoordIn;\n"
-	"attribute vec4 blendColorIn;\n"
-	"\n"
-	"uniform mat4 projection;\n"
-	"\n"
-	"varying vec2 texCoord;\n"
-	"varying vec4 blendColor;\n"
-	"\n"
-	"void main(void) {\n"
-	"\ttexCoord    = texCoordIn;\n"
-	"\tblendColor  = blendColorIn;\n"
-	"\tgl_Position = projection * position;\n"
-	"}\n";
+	const char *const g_defaultVertexShader = "attribute vec4 position;\n"
+	                                          "attribute vec2 texCoordIn;\n"
+	                                          "attribute vec4 blendColorIn;\n"
+	                                          "\n"
+	                                          "uniform mat4 projection;\n"
+	                                          "\n"
+	                                          "varying vec2 texCoord;\n"
+	                                          "varying vec4 blendColor;\n"
+	                                          "\n"
+	                                          "void main(void) {\n"
+	                                          "\ttexCoord    = texCoordIn;\n"
+	                                          "\tblendColor  = blendColorIn;\n"
+	                                          "\tgl_Position = projection * position;\n"
+	                                          "}\n";
 
-const char *const g_defaultFragmentShader =
-	"varying vec2 texCoord;\n"
-	"varying vec4 blendColor;\n"
-	"\n"
-	"uniform sampler2D shaderTexture;\n"
-	"\n"
-	"void main(void) {\n"
-	"\tgl_FragColor = blendColor * texture2D(shaderTexture, texCoord);\n"
-	"}\n";
+	const char *const g_defaultFragmentShader = "varying vec2 texCoord;\n"
+	                                            "varying vec4 blendColor;\n"
+	                                            "\n"
+	                                            "uniform sampler2D shaderTexture;\n"
+	                                            "\n"
+	                                            "void main(void) {\n"
+	                                            "\tgl_FragColor = blendColor * texture2D(shaderTexture, texCoord);\n"
+	                                            "}\n";
 
-const char *const g_lookUpFragmentShader =
-	"varying vec2 texCoord;\n"
-	"varying vec4 blendColor;\n"
-	"\n"
-	"uniform sampler2D shaderTexture;\n"
-	"uniform sampler2D palette;\n"
-	"\n"
-	"const float adjustFactor = 255.0 / 256.0 + 1.0 / (2.0 * 256.0);"
-	"\n"
-	"void main(void) {\n"
-	"\tvec4 index = texture2D(shaderTexture, texCoord);\n"
-	"\tgl_FragColor = blendColor * texture2D(palette, vec2(index.a * adjustFactor, 0.0));\n"
-	"}\n";
+	const char *const g_lookUpFragmentShader = "varying vec2 texCoord;\n"
+	                                           "varying vec4 blendColor;\n"
+	                                           "\n"
+	                                           "uniform sampler2D shaderTexture;\n"
+	                                           "uniform sampler2D palette;\n"
+	                                           "\n"
+	                                           "const float adjustFactor = 255.0 / 256.0 + 1.0 / (2.0 * 256.0);"
+	                                           "\n"
+	                                           "void main(void) {\n"
+	                                           "\tvec4 index = texture2D(shaderTexture, texCoord);\n"
+	                                           "\tgl_FragColor = blendColor * texture2D(palette, vec2(index.a * adjustFactor, 0.0));\n"
+	                                           "}\n";
 
-
-// Taken from: https://en.wikibooks.org/wiki/OpenGL_Programming/Modern_OpenGL_Tutorial_03#OpenGL_ES_2_portability
-const char *const g_precisionDefines =
-	"#ifdef GL_ES\n"
-	"\t#if defined(GL_FRAGMENT_PRECISION_HIGH) && GL_FRAGMENT_PRECISION_HIGH == 1\n"
-	"\t\tprecision highp float;\n"
-	"\t#else\n"
-	"\t\tprecision mediump float;\n"
-	"\t#endif\n"
-	"#else\n"
-	"\t#define highp\n"
-	"\t#define mediump\n"
-	"\t#define lowp\n"
-	"#endif\n";
+	// Taken from: https://en.wikibooks.org/wiki/OpenGL_Programming/Modern_OpenGL_Tutorial_03#OpenGL_ES_2_portability
+	const char *const g_precisionDefines = "#ifdef GL_ES\n"
+	                                       "\t#if defined(GL_FRAGMENT_PRECISION_HIGH) && GL_FRAGMENT_PRECISION_HIGH == 1\n"
+	                                       "\t\tprecision highp float;\n"
+	                                       "\t#else\n"
+	                                       "\t\tprecision mediump float;\n"
+	                                       "\t#endif\n"
+	                                       "#else\n"
+	                                       "\t#define highp\n"
+	                                       "\t#define mediump\n"
+	                                       "\t#define lowp\n"
+	                                       "#endif\n";
 
 } // End of anonymous namespace
 
-#pragma mark - Uniform Values -
+#	pragma mark - Uniform Values -
 
 void ShaderUniformInteger::set(GLint location) const {
 	GL_CALL(glUniform1i(location, _value));
@@ -108,10 +103,14 @@ void ShaderUniformMatrix44::set(GLint location) const {
 	GL_CALL(glUniformMatrix4fv(location, 1, GL_FALSE, _matrix));
 }
 
-#pragma mark - Shader Implementation -
+#	pragma mark - Shader Implementation -
 
 Shader::Shader(const Common::String &vertex, const Common::String &fragment)
-    : _vertex(vertex), _fragment(fragment), _isActive(false), _program(0), _uniforms() {
+  : _vertex(vertex)
+  , _fragment(fragment)
+  , _isActive(false)
+  , _program(0)
+  , _uniforms() {
 	recreate();
 }
 
@@ -287,7 +286,8 @@ GLshader Shader::compileShader(const char *source, GLenum shaderType) {
 	return handle;
 }
 
-ShaderManager::ShaderManager() : _initializeShaders(true) {
+ShaderManager::ShaderManager()
+  : _initializeShaders(true) {
 	for (int i = 0; i < ARRAYSIZE(_builtIn); ++i) {
 		_builtIn[i] = nullptr;
 	}

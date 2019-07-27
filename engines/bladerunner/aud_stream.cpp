@@ -29,7 +29,7 @@
 namespace BladeRunner {
 
 AudStream::AudStream(byte *data, int overrideFrequency) {
-	_hash  = 0;
+	_hash = 0;
 	_cache = nullptr;
 	_overrideFrequency = overrideFrequency;
 
@@ -40,7 +40,7 @@ AudStream::AudStream(AudioCache *cache, int32 hash, int overrideFrequency) {
 	assert(cache != nullptr);
 
 	_cache = cache;
-	_hash  = hash;
+	_hash = hash;
 	_overrideFrequency = overrideFrequency;
 
 	_cache->incRef(_hash);
@@ -82,9 +82,9 @@ int AudStream::readBuffer(int16 *buffer, const int numSamples) {
 
 				assert(_end - _p >= 6);
 
-				uint16 blockSize     = READ_LE_UINT16(_p);
-				uint16 blockOutSize  = READ_LE_UINT16(_p + 2);
-				uint32 sig           = READ_LE_UINT32(_p + 4);
+				uint16 blockSize = READ_LE_UINT16(_p);
+				uint16 blockOutSize = READ_LE_UINT16(_p + 2);
+				uint32 sig = READ_LE_UINT32(_p + 4);
 				_p += 8;
 
 				assert(sig == 0xdeaf);

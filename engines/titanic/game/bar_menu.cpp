@@ -25,14 +25,18 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CBarMenu, CGameObject)
-	ON_MESSAGE(PETActivateMsg)
-	ON_MESSAGE(PETDownMsg)
-	ON_MESSAGE(PETUpMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(PETActivateMsg)
+ON_MESSAGE(PETDownMsg)
+ON_MESSAGE(PETUpMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(LeaveViewMsg)
 END_MESSAGE_MAP()
 
-CBarMenu::CBarMenu() : CGameObject(), _barFrameNumber(0), _visibleFlag(false), _numFrames(6) {
+CBarMenu::CBarMenu()
+  : CGameObject()
+  , _barFrameNumber(0)
+  , _visibleFlag(false)
+  , _numFrames(6) {
 }
 
 void CBarMenu::save(SimpleFile *file, int indent) {

@@ -30,31 +30,31 @@
 namespace Glk {
 namespace Alan3 {
 
-struct StackStructure {
-	Aword *stack;           // Array that can take Awords
-	int stackSize;
-	int stackp;
-	int framePointer;
-};
+	struct StackStructure {
+		Aword *stack; // Array that can take Awords
+		int stackSize;
+		int stackp;
+		int framePointer;
+	};
 
-typedef StackStructure *Stack;
+	typedef StackStructure *Stack;
 
-/* FUNCTIONS: */
+	/* FUNCTIONS: */
 
-/* NB: The stack uses Aptr size elements since we need to be able to store pointers to allocated memory */
+	/* NB: The stack uses Aptr size elements since we need to be able to store pointers to allocated memory */
 
-extern Stack createStack(int size);
-extern void deleteStack(Stack stack);
-extern void dumpStack(Stack theStack);
-extern Aptr pop(Stack stack);
-extern void push(Stack stack, Aptr item);
-extern Aptr top(Stack theStack);
-extern int stackDepth(Stack theStack);
+	extern Stack createStack(int size);
+	extern void deleteStack(Stack stack);
+	extern void dumpStack(Stack theStack);
+	extern Aptr pop(Stack stack);
+	extern void push(Stack stack, Aptr item);
+	extern Aptr top(Stack theStack);
+	extern int stackDepth(Stack theStack);
 
-extern void newFrame(Stack theStack, Aint noOfLocals);
-extern void setLocal(Stack theStack, Aint blocksBelow, Aint variableNumber, Aptr value);
-extern Aptr getLocal(Stack theStack, Aint level, Aint variable);
-extern void endFrame(Stack theStack);
+	extern void newFrame(Stack theStack, Aint noOfLocals);
+	extern void setLocal(Stack theStack, Aint blocksBelow, Aint variableNumber, Aptr value);
+	extern Aptr getLocal(Stack theStack, Aint level, Aint variable);
+	extern void endFrame(Stack theStack);
 
 } // End of namespace Alan3
 } // End of namespace Glk

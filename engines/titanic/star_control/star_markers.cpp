@@ -33,7 +33,7 @@ void CStarMarkers::draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClo
 	FPose pose = camera->getPose();
 	double threshold = camera->getThreshold();
 	FPoint center((double)surfaceArea->_width * 0.5,
-		surfaceArea->_height * 0.5);
+	              surfaceArea->_height * 0.5);
 	FVector newV;
 	double xl, xc, xr, yt, yc, yb;
 
@@ -44,11 +44,11 @@ void CStarMarkers::draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClo
 	for (uint idx = 0; idx < _data.size(); ++idx) {
 		const CBaseStarEntry &star = _data[idx];
 		newV._x = pose._row1._x * star._position._x + pose._row3._x * star._position._z
-			+ pose._row2._x * star._position._y + pose._vector._x;
+		  + pose._row2._x * star._position._y + pose._vector._x;
 		newV._y = pose._row1._y * star._position._x + pose._row3._y * star._position._z
-			+ pose._row2._y * star._position._y + pose._vector._y;
+		  + pose._row2._y * star._position._y + pose._vector._y;
 		newV._z = pose._row1._z * star._position._x + pose._row3._z * star._position._z
-			+ pose._row2._z * star._position._y + pose._vector._z;
+		  + pose._row2._z * star._position._y + pose._vector._z;
 
 		if (newV._z > threshold) {
 			FVector vTemp = camera->getRelativePos(2, newV);

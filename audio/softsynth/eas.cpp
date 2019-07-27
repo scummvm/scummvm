@@ -24,19 +24,19 @@
 
 #if defined(__ANDROID__)
 
-#include <dlfcn.h>
+#	include <dlfcn.h>
 
-#include "common/debug.h"
-#include "common/endian.h"
-#include "common/textconsole.h"
-#include "common/error.h"
-#include "common/file.h"
-#include "common/config-manager.h"
-#include "common/system.h"
-#include "audio/audiostream.h"
-#include "audio/mpu401.h"
-#include "audio/musicplugin.h"
-#include "audio/mixer.h"
+#	include "audio/audiostream.h"
+#	include "audio/mixer.h"
+#	include "audio/mpu401.h"
+#	include "audio/musicplugin.h"
+#	include "common/config-manager.h"
+#	include "common/debug.h"
+#	include "common/endian.h"
+#	include "common/error.h"
+#	include "common/file.h"
+#	include "common/system.h"
+#	include "common/textconsole.h"
 
 //#define EAS_DUMPSTREAM
 
@@ -50,16 +50,16 @@
 // devices can't render fast enough
 
 // from rate_arm.cpp
-#define INTERMEDIATE_BUFFER_SIZE 512
+#	define INTERMEDIATE_BUFFER_SIZE 512
 
 // so far all android versions have the very same library version
-#define EAS_LIBRARY "libsonivox.so"
-#define EAS_KNOWNVERSION 0x03060a0e
+#	define EAS_LIBRARY "libsonivox.so"
+#	define EAS_KNOWNVERSION 0x03060a0e
 
-#define EAS_REVERB 2
-#define EAS_REVERB_BYPASS 0
-#define EAS_REVERB_PRESET 1
-#define EAS_REVERB_CHAMBER 2
+#	define EAS_REVERB 2
+#	define EAS_REVERB_BYPASS 0
+#	define EAS_REVERB_PRESET 1
+#	define EAS_REVERB_CHAMBER 2
 
 class MidiDriver_EAS : public MidiDriver_MPU401, Audio::AudioStream {
 public:
@@ -73,7 +73,7 @@ public:
 	virtual void send(uint32 b);
 	virtual void sysEx(const byte *msg, uint16 length);
 	virtual void setTimerCallback(void *timerParam,
-								Common::TimerManager::TimerProc timerProc);
+	                              Common::TimerManager::TimerProc timerProc);
 	virtual uint32 getBaseTempo();
 
 	// AudioStream
@@ -102,8 +102,8 @@ private:
 		long long length;
 	};
 
-	typedef void * EASDataHandle;
-	typedef void * EASHandle;
+	typedef void *EASDataHandle;
+	typedef void *EASHandle;
 
 	typedef EASLibConfig *(*ConfigFunc)();
 	typedef int32 (*InitFunc)(EASDataHandle *);
@@ -116,7 +116,7 @@ private:
 	typedef int32 (*CloseStreamFunc)(EASDataHandle, EASHandle);
 	typedef int32 (*RenderFunc)(EASDataHandle, int16 *, int32, int32 *);
 
-	template<typename T>
+	template <typename T>
 	void sym(T &t, const char *symbol) {
 		union {
 			void *v;
@@ -159,28 +159,28 @@ private:
 	Common::DumpFile _dump;
 };
 
-MidiDriver_EAS::MidiDriver_EAS() :
-	MidiDriver_MPU401(),
-	_dlHandle(0),
-	_configFunc(0),
-	_initFunc(0),
-	_shutdownFunc(0),
-	_loadDLSFunc(0),
-	_setParameterFunc(0),
-	_setVolumeFunc(0),
-	_openStreamFunc(0),
-	_writeStreamFunc(0),
-	_closeStreamFunc(0),
-	_renderFunc(0),
-	_config(0),
-	_EASHandle(0),
-	_midiStream(0),
-	_timerProc(0),
-	_timerParam(0),
-	_baseTempo(0),
-	_rounds(0),
-	_soundHandle(),
-	_dump() {
+MidiDriver_EAS::MidiDriver_EAS()
+  : MidiDriver_MPU401()
+  , _dlHandle(0)
+  , _configFunc(0)
+  , _initFunc(0)
+  , _shutdownFunc(0)
+  , _loadDLSFunc(0)
+  , _setParameterFunc(0)
+  , _setVolumeFunc(0)
+  , _openStreamFunc(0)
+  , _writeStreamFunc(0)
+  , _closeStreamFunc(0)
+  , _renderFunc(0)
+  , _config(0)
+  , _EASHandle(0)
+  , _midiStream(0)
+  , _timerProc(0)
+  , _timerParam(0)
+  , _baseTempo(0)
+  , _rounds(0)
+  , _soundHandle()
+  , _dump() {
 }
 
 MidiDriver_EAS::~MidiDriver_EAS() {
@@ -238,9 +238,7 @@ int MidiDriver_EAS::open() {
 	sym(_closeStreamFunc, "EAS_CloseMIDIStream");
 	sym(_renderFunc, "EAS_Render");
 
-	if (!_initFunc || !_shutdownFunc || !_loadDLSFunc || !_setParameterFunc ||
-			!_openStreamFunc || !_writeStreamFunc || !_closeStreamFunc ||
-			!_renderFunc) {
+	if (!_initFunc || !_shutdownFunc || !_loadDLSFunc || !_setParameterFunc || !_openStreamFunc || !_writeStreamFunc || !_closeStreamFunc || !_renderFunc) {
 		close();
 		return -1;
 	}
@@ -253,7 +251,7 @@ int MidiDriver_EAS::open() {
 	}
 
 	res = _setParameterFunc(_EASHandle, EAS_REVERB, EAS_REVERB_PRESET,
-							EAS_REVERB_CHAMBER);
+	                        EAS_REVERB_CHAMBER);
 	if (res)
 		warning("error setting reverb preset: %d", res);
 
@@ -281,8 +279,9 @@ int MidiDriver_EAS::open() {
 	_rounds = INTERMEDIATE_BUFFER_SIZE / (_config->bufSize * _config->channels);
 
 	debug("EAS initialized (voices:%d channels:%d rate:%d buffer:%d) "
-			"tempo:%u rounds:%u", _config->voices, _config->channels,
-			_config->rate, _config->bufSize, _baseTempo, _rounds);
+	      "tempo:%u rounds:%u",
+	      _config->voices, _config->channels,
+	      _config->rate, _config->bufSize, _baseTempo, _rounds);
 
 	// TODO doesn't seem to work with midi streams?
 	if (ConfMan.hasKey("soundfont")) {
@@ -301,15 +300,15 @@ int MidiDriver_EAS::open() {
 			debug("DLS file loaded");
 	}
 
-#ifdef EAS_DUMPSTREAM
+#	ifdef EAS_DUMPSTREAM
 	if (!_dump.open("/sdcard/eas.dump"))
 		warning("error opening EAS dump file");
-#endif
+#	endif
 
 	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType,
-										&_soundHandle, this, -1,
-										Audio::Mixer::kMaxChannelVolume, 0,
-										DisposeAfterUse::NO, true);
+	                                 &_soundHandle, this, -1,
+	                                 Audio::Mixer::kMaxChannelVolume, 0,
+	                                 DisposeAfterUse::NO, true);
 
 	return 0;
 }
@@ -326,10 +325,10 @@ void MidiDriver_EAS::close() {
 
 	g_system->getMixer()->stopHandle(_soundHandle);
 
-#ifdef EAS_DUMPSTREAM
+#	ifdef EAS_DUMPSTREAM
 	if (_dump.isOpen())
 		_dump.close();
-#endif
+#	endif
 
 	// not pretty, but better than a mutex
 	g_system->delayMillis((_baseTempo * _rounds) / 1000);
@@ -385,7 +384,7 @@ void MidiDriver_EAS::sysEx(const byte *msg, uint16 length) {
 }
 
 void MidiDriver_EAS::setTimerCallback(void *timerParam,
-								Common::TimerManager::TimerProc timerProc) {
+                                      Common::TimerManager::TimerProc timerProc) {
 	_timerParam = timerParam;
 	_timerProc = timerProc;
 }
@@ -412,10 +411,10 @@ int MidiDriver_EAS::readBuffer(int16 *buffer, const int numSamples) {
 			return -1;
 		}
 
-#ifdef EAS_DUMPSTREAM
+#	ifdef EAS_DUMPSTREAM
 		if (_dump.isOpen())
 			_dump.write(buffer, c * _config->channels * 2);
-#endif
+#	endif
 
 		buffer += c * _config->channels;
 	}
@@ -444,7 +443,7 @@ public:
 	const char *getId() const;
 	MusicDevices getDevices() const;
 	Common::Error createInstance(MidiDriver **mididriver,
-									MidiDriver::DeviceHandle = 0) const;
+	                             MidiDriver::DeviceHandle = 0) const;
 };
 
 EASMusicPlugin::EASMusicPlugin() {
@@ -475,9 +474,9 @@ Common::Error EASMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(EAS)
-	//REGISTER_PLUGIN_DYNAMIC(EAS, PLUGIN_TYPE_MUSIC, EASMusicPlugin);
+//REGISTER_PLUGIN_DYNAMIC(EAS, PLUGIN_TYPE_MUSIC, EASMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(EAS, PLUGIN_TYPE_MUSIC, EASMusicPlugin);
+REGISTER_PLUGIN_STATIC(EAS, PLUGIN_TYPE_MUSIC, EASMusicPlugin);
 //#endif
 
 #endif

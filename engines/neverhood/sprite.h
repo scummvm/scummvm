@@ -23,30 +23,30 @@
 #ifndef NEVERHOOD_SPRITE_H
 #define NEVERHOOD_SPRITE_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/entity.h"
 #include "neverhood/graphics.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/resource.h"
 
 namespace Neverhood {
 
-#define SetSpriteUpdate(callback)											\
-	do {																	\
-		_spriteUpdateCb = static_cast <void (Sprite::*)(void)> (callback);	\
-		debug(2, "SetSpriteUpdate(" #callback ")");							\
-		_spriteUpdateCbName = #callback;									\
+#define SetSpriteUpdate(callback)                                    \
+	do {                                                               \
+		_spriteUpdateCb = static_cast<void (Sprite::*)(void)>(callback); \
+		debug(2, "SetSpriteUpdate(" #callback ")");                      \
+		_spriteUpdateCbName = #callback;                                 \
 	} while (0)
 
-#define SetFilterX(callback)												\
-	do {																	\
-		_filterXCb = static_cast <int16 (Sprite::*)(int16)> (callback);		\
-		debug(2, "SetFilterX(" #callback ")");								\
+#define SetFilterX(callback)                                      \
+	do {                                                            \
+		_filterXCb = static_cast<int16 (Sprite::*)(int16)>(callback); \
+		debug(2, "SetFilterX(" #callback ")");                        \
 	} while (0)
 
-#define SetFilterY(callback)												\
-	do {																	\
-		_filterYCb = static_cast <int16 (Sprite::*)(int16)> (callback);		\
-		debug(2, "SetFilterY(" #callback ")");								\
+#define SetFilterY(callback)                                      \
+	do {                                                            \
+		_filterYCb = static_cast<int16 (Sprite::*)(int16)>(callback); \
+		debug(2, "SetFilterY(" #callback ")");                        \
 	} while (0)
 
 const int16 kDefPosition = -32768;
@@ -69,18 +69,19 @@ public:
 	uint16 getFlags() const { return _flags; }
 	bool isDoDeltaX() const { return _doDeltaX; }
 	bool isDoDeltaY() const { return _doDeltaY; }
-	NRect& getCollisionBounds() { return _collisionBounds; }
+	NRect &getCollisionBounds() { return _collisionBounds; }
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void loadDataResource(uint32 fileHash);
 	int16 defFilterY(int16 y);
 	bool getVisible() const { return _surface->getVisible(); }
 	void setVisible(bool value) { _surface->setVisible(value); }
-	NDrawRect& getDrawRect() { return _surface->getDrawRect(); }
+	NDrawRect &getDrawRect() { return _surface->getDrawRect(); }
 	// Some shortcuts to set the clipRect
-	NRect& getClipRect() { return _surface->getClipRect(); }
+	NRect &getClipRect() { return _surface->getClipRect(); }
 	void setClipRect(int16 x1, int16 y1, int16 x2, int16 y2);
-	void setClipRect(NRect& clipRect);
-	void setClipRect(NDrawRect& drawRect);
+	void setClipRect(NRect &clipRect);
+	void setClipRect(NDrawRect &drawRect);
+
 protected:
 	void (Sprite::*_spriteUpdateCb)();
 	Common::String _spriteUpdateCbName; // For debugging purposes
@@ -109,11 +110,11 @@ protected:
 };
 
 enum {
-	kSLFDefDrawOffset				= 1 << 0,
-	kSLFCenteredDrawOffset			= 1 << 1,
-	kSLFDefPosition					= 1 << 2,
-	kSLFSetPosition					= 1 << 3,
-	kSLFDefCollisionBoundsOffset	= 1 << 4
+	kSLFDefDrawOffset = 1 << 0,
+	kSLFCenteredDrawOffset = 1 << 1,
+	kSLFDefPosition = 1 << 2,
+	kSLFSetPosition = 1 << 3,
+	kSLFDefCollisionBoundsOffset = 1 << 4
 };
 
 class StaticSprite : public Sprite {
@@ -122,18 +123,20 @@ public:
 	StaticSprite(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority, int16 x = kDefPosition, int16 y = kDefPosition);
 	void loadSprite(uint32 fileHash, uint flags = 0, int surfacePriority = 0, int16 x = kDefPosition, int16 y = kDefPosition);
 	void updatePosition();
+
 protected:
 	SpriteResource _spriteResource;
 };
 
-#define AnimationCallback(callback) static_cast <void (AnimatedSprite::*)()> (callback)
-#define GotoState(callback) gotoState(static_cast <void (AnimatedSprite::*)()> (callback))
-#define NextState(callback)															\
-	do {																			\
-		_nextStateCb = static_cast <void (AnimatedSprite::*)(void)> (callback);		\
-		debug(2, "NextState(" #callback ")"); _nextStateCbName = #callback;			\
+#define AnimationCallback(callback) static_cast<void (AnimatedSprite::*)()>(callback)
+#define GotoState(callback) gotoState(static_cast<void (AnimatedSprite::*)()>(callback))
+#define NextState(callback)                                               \
+	do {                                                                    \
+		_nextStateCb = static_cast<void (AnimatedSprite::*)(void)>(callback); \
+		debug(2, "NextState(" #callback ")");                                 \
+		_nextStateCbName = #callback;                                         \
 	} while (0)
-#define FinalizeState(callback) setFinalizeState(static_cast <void (AnimatedSprite::*)()> (callback));
+#define FinalizeState(callback) setFinalizeState(static_cast<void (AnimatedSprite::*)()>(callback));
 
 const int STICK_LAST_FRAME = -2;
 
@@ -150,6 +153,7 @@ public:
 	int16 getFrameIndex(uint32 frameHash) { return _animResource.getFrameIndex(frameHash); }
 	void setNewHashListIndex(int value) { _newStickFrameIndex = value; }
 	void startAnimation(uint32 fileHash, int16 plFirstFrameIndex, int16 plLastFrameIndex);
+
 protected:
 	typedef void (AnimatedSprite::*AnimationCb)();
 	AnimResource _animResource;

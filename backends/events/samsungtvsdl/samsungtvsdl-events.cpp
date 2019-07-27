@@ -24,39 +24,39 @@
 
 #ifdef SAMSUNGTV
 
-#include "backends/events/samsungtvsdl/samsungtvsdl-events.h"
+#	include "backends/events/samsungtvsdl/samsungtvsdl-events.h"
 
 bool SamsungTVSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	switch (ev.type) {
-		case SDL_KEYDOWN:{
-			if (ev.key.keysym.sym == SDLK_POWER) {
-				event.type = Common::EVENT_QUIT;
-				return true;
-			} else if (ev.key.keysym.sym == SDLK_F1 && ev.key.keysym.scancode == 20) {
-				event.type = Common::EVENT_KEYDOWN;
-				event.kbd.keycode = Common::KEYCODE_F5;
-				event.kbd.ascii = Common::ASCII_F5;
-				return true;
-			} else if (ev.key.keysym.sym == SDLK_F2 && ev.key.keysym.scancode == 21) {
-#ifdef ENABLE_VKEYBD
-				event.type = Common::EVENT_VIRTUAL_KEYBOARD;
-				return true;
-#endif
-			}
-			break;
+	case SDL_KEYDOWN: {
+		if (ev.key.keysym.sym == SDLK_POWER) {
+			event.type = Common::EVENT_QUIT;
+			return true;
+		} else if (ev.key.keysym.sym == SDLK_F1 && ev.key.keysym.scancode == 20) {
+			event.type = Common::EVENT_KEYDOWN;
+			event.kbd.keycode = Common::KEYCODE_F5;
+			event.kbd.ascii = Common::ASCII_F5;
+			return true;
+		} else if (ev.key.keysym.sym == SDLK_F2 && ev.key.keysym.scancode == 21) {
+#	ifdef ENABLE_VKEYBD
+			event.type = Common::EVENT_VIRTUAL_KEYBOARD;
+			return true;
+#	endif
 		}
-		case SDL_KEYUP: {
-			if (ev.key.keysym.sym == SDLK_POWER) {
-				event.type = Common::EVENT_QUIT;
-				return true;
-			} else if (ev.key.keysym.sym == SDLK_F1 && ev.key.keysym.scancode == 20) {
-				event.type = Common::EVENT_KEYUP;
-				event.kbd.keycode = Common::KEYCODE_F5;
-				event.kbd.ascii = Common::ASCII_F5;
-				return true;
-			}
-			break;
+		break;
+	}
+	case SDL_KEYUP: {
+		if (ev.key.keysym.sym == SDLK_POWER) {
+			event.type = Common::EVENT_QUIT;
+			return true;
+		} else if (ev.key.keysym.sym == SDLK_F1 && ev.key.keysym.scancode == 20) {
+			event.type = Common::EVENT_KEYUP;
+			event.kbd.keycode = Common::KEYCODE_F5;
+			event.kbd.ascii = Common::ASCII_F5;
+			return true;
 		}
+		break;
+	}
 	}
 
 	// Invoke parent implementation of this method

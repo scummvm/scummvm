@@ -22,14 +22,14 @@
 
 #include "scumm/imuse/drivers/mac_m68k.h"
 
-#include "common/util.h"
 #include "common/macresman.h"
 #include "common/stream.h"
+#include "common/util.h"
 
 namespace Scumm {
 
 MacM68kDriver::MacM68kDriver(Audio::Mixer *mixer)
-	: MidiDriver_Emulated(mixer) {
+  : MidiDriver_Emulated(mixer) {
 }
 
 MacM68kDriver::~MacM68kDriver() {
@@ -238,10 +238,10 @@ void MacM68kDriver::addInstrument(int idx, Common::SeekableReadStream *data) {
 	Instrument inst;
 	// Skip (optional) pointer to data
 	data->skip(4);
-	inst.length        = data->readUint32BE();
-	inst.sampleRate    = data->readUint32BE();
-	inst.loopStart     = data->readUint32BE();
-	inst.loopEnd       = data->readUint32BE();
+	inst.length = data->readUint32BE();
+	inst.sampleRate = data->readUint32BE();
+	inst.loopStart = data->readUint32BE();
+	inst.loopEnd = data->readUint32BE();
 	// Skip encoding
 	data->skip(1);
 	inst.baseFrequency = data->readByte();
@@ -346,18 +346,18 @@ void MacM68kDriver::MidiChannel_MacM68k::noteOn(byte note, byte velocity) {
 
 	// Set up the instrument data
 	voice->out.baseFrequency = _instrument.baseFrequency;
-	voice->out.soundStart    = _instrument.data;
-	voice->out.soundEnd      = _instrument.data + _instrument.length;
+	voice->out.soundStart = _instrument.data;
+	voice->out.soundEnd = _instrument.data + _instrument.length;
 	if (_instrument.loopEnd && _instrument.loopEnd - 12 > _instrument.loopStart) {
 		voice->out.loopStart = _instrument.data + _instrument.loopStart;
-		voice->out.loopEnd   = _instrument.data + _instrument.loopEnd;
+		voice->out.loopEnd = _instrument.data + _instrument.loopEnd;
 	} else {
 		voice->out.loopStart = 0;
-		voice->out.loopEnd   = voice->out.soundEnd;
+		voice->out.loopEnd = voice->out.soundEnd;
 	}
 
 	voice->out.start = voice->out.loopStart;
-	voice->out.end   = voice->out.loopEnd;
+	voice->out.end = voice->out.loopEnd;
 
 	// Set up the pitch
 	_owner->setPitch(&voice->out, (note << 7) + _pitchBend);
@@ -506,10 +506,10 @@ MacM68kDriver::VoiceChannel *MacM68kDriver::allocateVoice(int priority) {
 }
 
 const int MacM68kDriver::_volumeBaseTable[32] = {
-	  0,   0,   1,   1,   2,   3,   5,   6,
-	  8,  11,  13,  16,  19,  22,  26,  30,
-	 34,  38,  43,  48,  53,  58,  64,  70,
-	 76,  83,  89,  96, 104, 111, 119, 127
+	0, 0, 1, 1, 2, 3, 5, 6,
+	8, 11, 13, 16, 19, 22, 26, 30,
+	34, 38, 43, 48, 53, 58, 64, 70,
+	76, 83, 89, 96, 104, 111, 119, 127
 };
 
 } // End of namespace Scumm

@@ -22,12 +22,12 @@
 
 #ifdef ENABLE_EOB
 
-#ifndef KYRA_SCRIPT_EOB_H
-#define KYRA_SCRIPT_EOB_H
+#	ifndef KYRA_SCRIPT_EOB_H
+#		define KYRA_SCRIPT_EOB_H
 
-#include "common/func.h"
-#include "common/substream.h"
-#include "common/savefile.h"
+#		include "common/func.h"
+#		include "common/savefile.h"
+#		include "common/substream.h"
 
 namespace Kyra {
 
@@ -92,7 +92,9 @@ private:
 
 	typedef Common::Functor1Mem<int8 *, int, EoBInfProcessor> InfProc;
 	struct InfOpcode : private Common::NonCopyable {
-		InfOpcode(InfProc *p, const char *d) : proc(p), desc(d) {}
+		InfOpcode(InfProc *p, const char *d)
+		  : proc(p)
+		  , desc(d) {}
 		~InfOpcode() { delete proc; }
 
 		InfProc *proc;
@@ -128,6 +130,6 @@ private:
 
 } // End of namespace Kyra
 
-#endif
+#	endif
 
 #endif // ENABLE_EOB

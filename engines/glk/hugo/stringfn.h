@@ -30,38 +30,39 @@ namespace Hugo {
 
 #define NUM_TEMPSTRINGS 2
 
-/**
+	/**
  * The following string-manipulation functions closely mimic BASIC-language string functionality.
  * They do not alter the provided string; instead, they return a pointer to a static (modified) copy.
  */
-class StringFunctions {
-private:
-	char _tempString[NUM_TEMPSTRINGS][1025];
-	int _tempstringCount;
+	class StringFunctions {
+	private:
+		char _tempString[NUM_TEMPSTRINGS][1025];
+		int _tempstringCount;
 
-	char *GetTempString();
-public:
-	StringFunctions() : _tempstringCount(0) {
-		Common::fill(&_tempString[0][0], &_tempString[NUM_TEMPSTRINGS][1025], '\0');
-	}
+		char *GetTempString();
 
-	char *Left(char a[], int l);
+	public:
+		StringFunctions()
+		  : _tempstringCount(0) {
+			Common::fill(&_tempString[0][0], &_tempString[NUM_TEMPSTRINGS][1025], '\0');
+		}
 
-	char *Ltrim(char a[]);
+		char *Left(char a[], int l);
 
-	char *Mid(char a[], int pos, int n);
+		char *Ltrim(char a[]);
 
-	char *Right(char a[], int l);
+		char *Mid(char a[], int pos, int n);
 
-	char *Rtrim(char a[]);
+		char *Right(char a[], int l);
 
-	char *hugo_strcpy(char *s, const char *t);
+		char *Rtrim(char a[]);
 
-	char *strlwr(char *s);
+		char *hugo_strcpy(char *s, const char *t);
 
-	char *strupr(char *s);
-};
+		char *strlwr(char *s);
 
+		char *strupr(char *s);
+	};
 
 } // End of namespace Hugo
 } // End of namespace Glk

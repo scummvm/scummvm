@@ -28,10 +28,14 @@
 
 namespace Common {
 
-RDFT::RDFT(int bits, TransformType trans) : _bits(bits), _sin(1 << bits), _cos(1 << bits), _fft(nullptr) {
+RDFT::RDFT(int bits, TransformType trans)
+  : _bits(bits)
+  , _sin(1 << bits)
+  , _cos(1 << bits)
+  , _fft(nullptr) {
 	assert((_bits >= 4) && (_bits <= 16));
 
-	_inverse        = trans == IDFT_C2R || trans == DFT_C2R;
+	_inverse = trans == IDFT_C2R || trans == DFT_C2R;
 	_signConvention = trans == IDFT_R2C || trans == DFT_C2R ? 1 : -1;
 
 	_fft = new FFT(bits - 1, trans == IDFT_C2R || trans == IDFT_R2C);
@@ -54,7 +58,7 @@ void RDFT::calc(float *data) {
 
 	if (!_inverse) {
 		_fft->permute((Complex *)data);
-		_fft->calc   ((Complex *)data);
+		_fft->calc((Complex *)data);
 	}
 
 	Complex ev, od;
@@ -73,15 +77,15 @@ void RDFT::calc(float *data) {
 		int i2 = n - i1;
 
 		/* Separate even and odd FFTs */
-		ev.re =  k1 * (data[i1    ] + data[i2   ]);
-		od.im = -k2 * (data[i1    ] - data[i2   ]);
-		ev.im =  k1 * (data[i1 + 1] - data[i2 + 1]);
-		od.re =  k2 * (data[i1 + 1] + data[i2 + 1]);
+		ev.re = k1 * (data[i1] + data[i2]);
+		od.im = -k2 * (data[i1] - data[i2]);
+		ev.im = k1 * (data[i1 + 1] - data[i2 + 1]);
+		od.re = k2 * (data[i1 + 1] + data[i2 + 1]);
 
 		/* Apply twiddle factors to the odd FFT and add to the even FFT */
-		data[i1    ] =  ev.re + od.re * _tCos[i] - od.im * _tSin[i];
-		data[i1 + 1] =  ev.im + od.im * _tCos[i] + od.re * _tSin[i];
-		data[i2    ] =  ev.re - od.re * _tCos[i] + od.im * _tSin[i];
+		data[i1] = ev.re + od.re * _tCos[i] - od.im * _tSin[i];
+		data[i1 + 1] = ev.im + od.im * _tCos[i] + od.re * _tSin[i];
+		data[i2] = ev.re - od.re * _tCos[i] + od.im * _tSin[i];
 		data[i2 + 1] = -ev.im + od.im * _tCos[i] + od.re * _tSin[i];
 	}
 
@@ -92,9 +96,8 @@ void RDFT::calc(float *data) {
 		data[1] *= k1;
 
 		_fft->permute((Complex *)data);
-		_fft->calc   ((Complex *)data);
+		_fft->calc((Complex *)data);
 	}
-
 }
 
 } // End of namespace Common

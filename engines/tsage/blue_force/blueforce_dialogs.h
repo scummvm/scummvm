@@ -32,69 +32,72 @@ namespace TsAGE {
 
 namespace BlueForce {
 
-using namespace TsAGE;
+	using namespace TsAGE;
 
-class RightClickDialog : public GfxDialog {
-private:
-	GfxSurface _surface;
-	Visage _btnImages;
-	Rect _rectList1[5];
-	Rect _rectList2[5];
-	Rect _rectList3[5];
-	Rect _rectList4[5];
+	class RightClickDialog : public GfxDialog {
+	private:
+		GfxSurface _surface;
+		Visage _btnImages;
+		Rect _rectList1[5];
+		Rect _rectList2[5];
+		Rect _rectList3[5];
+		Rect _rectList4[5];
 
-	int _highlightedAction;
-	int _selectedAction;
-public:
-	RightClickDialog();
-	~RightClickDialog();
+		int _highlightedAction;
+		int _selectedAction;
 
-	virtual void draw();
-	virtual bool process(Event &event);
-	void execute();
-};
+	public:
+		RightClickDialog();
+		~RightClickDialog();
 
-class AmmoBeltDialog : public GfxDialog {
-private:
-	GfxSurface _surface;
-	Visage _cursorImages;
-	Rect _dialogRect, _loadedRect, _gunRect, _clip1Rect, _clip2Rect;
-	CursorType _cursorNum;
-	int _inDialog;
-	bool _closeFlag;
-public:
-	AmmoBeltDialog();
-	~AmmoBeltDialog();
+		virtual void draw();
+		virtual bool process(Event &event);
+		void execute();
+	};
 
-	virtual void draw();
-	virtual bool process(Event &event);
-	void execute();
-};
+	class AmmoBeltDialog : public GfxDialog {
+	private:
+		GfxSurface _surface;
+		Visage _cursorImages;
+		Rect _dialogRect, _loadedRect, _gunRect, _clip1Rect, _clip2Rect;
+		CursorType _cursorNum;
+		int _inDialog;
+		bool _closeFlag;
 
-class RadioConvDialog : public GfxDialog {
-private:
-	GfxButton _buttons[8];
-public:
-	RadioConvDialog();
-	virtual ~RadioConvDialog();
-	int execute();
+	public:
+		AmmoBeltDialog();
+		~AmmoBeltDialog();
 
-	static int show();
-};
+		virtual void draw();
+		virtual bool process(Event &event);
+		void execute();
+	};
 
-class OptionsDialog: public GfxDialog {
-private:
-	GfxButton _btnSave, _btnRestore, _btnRestart;
-	GfxButton _btnQuit, _btnResume;
-	GfxButton _btnSound;
-	GfxMessage _gfxMessage;
-public:
-	OptionsDialog();
-	virtual ~OptionsDialog() {}
+	class RadioConvDialog : public GfxDialog {
+	private:
+		GfxButton _buttons[8];
 
-	static void show();
-};
+	public:
+		RadioConvDialog();
+		virtual ~RadioConvDialog();
+		int execute();
 
+		static int show();
+	};
+
+	class OptionsDialog : public GfxDialog {
+	private:
+		GfxButton _btnSave, _btnRestore, _btnRestart;
+		GfxButton _btnQuit, _btnResume;
+		GfxButton _btnSound;
+		GfxMessage _gfxMessage;
+
+	public:
+		OptionsDialog();
+		virtual ~OptionsDialog() {}
+
+		static void show();
+	};
 
 } // End of namespace BlueForce
 

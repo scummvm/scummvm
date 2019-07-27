@@ -20,20 +20,22 @@
  *
  */
 
-#include "pink/pink.h"
 #include "pink/objects/module.h"
-#include "pink/objects/pages/game_page.h"
 #include "pink/objects/actors/lead_actor.h"
+#include "pink/objects/pages/game_page.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
 ModuleProxy::ModuleProxy(const Common::String &name)
-		: NamedObject(name) {}
+  : NamedObject(name) {}
 
 ModuleProxy::ModuleProxy() {}
 
 Module::Module(PinkEngine *game, const Common::String &name)
-		: NamedObject(name), _game(game), _page(nullptr) {}
+  : NamedObject(name)
+  , _game(game)
+  , _page(nullptr) {}
 
 Module::~Module() {
 	for (uint i = 0; i < _pages.size(); ++i) {

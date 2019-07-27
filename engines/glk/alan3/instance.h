@@ -26,77 +26,75 @@
 #include "common/serializer.h"
 #include "glk/alan3/acode.h"
 #include "glk/alan3/jumps.h"
-#include "glk/alan3/types.h"
 #include "glk/alan3/set.h"
+#include "glk/alan3/types.h"
 
 namespace Glk {
 namespace Alan3 {
 
-/* Types: */
-struct AdminEntry { /* Administrative data about instances */
-	Aint location;
-	AttributeEntry *attributes;
-	Abool alreadyDescribed;
-	Aint visitsCount;
-	Aint script;
-	Aint step;
-	Aint waitCount;
+	/* Types: */
+	struct AdminEntry { /* Administrative data about instances */
+		Aint location;
+		AttributeEntry *attributes;
+		Abool alreadyDescribed;
+		Aint visitsCount;
+		Aint script;
+		Aint step;
+		Aint waitCount;
 
-	/**
+		/**
 	 * Save/Restore data
 	 */
-	void synchronize(Common::Serializer &s);
-};
+		void synchronize(Common::Serializer &s);
+	};
 
+	/* Data: */
+	extern InstanceEntry *instances; /* Instance table pointer */
 
-/* Data: */
-extern InstanceEntry *instances; /* Instance table pointer */
+	extern AdminEntry *admin; /* Administrative data about instances */
+	extern AttributeEntry *attributes; /* Dynamic attribute values */
 
-extern AdminEntry *admin;   /* Administrative data about instances */
-extern AttributeEntry *attributes; /* Dynamic attribute values */
+	/* Functions: */
+	extern bool isA(int instance, int ancestor);
+	extern bool isAObject(int instance);
+	extern bool isAContainer(int instance);
+	extern bool isAActor(int instance);
+	extern bool isALocation(int instance);
+	extern bool isLiteral(int instance);
+	extern bool isANumeric(int instance);
+	extern bool isAString(int instance);
 
+	extern Aptr getInstanceAttribute(int instance, int attribute);
+	extern char *getInstanceStringAttribute(int instane, int attribute);
+	extern Set *getInstanceSetAttribute(int instance, int attribute);
 
-/* Functions: */
-extern bool isA(int instance, int ancestor);
-extern bool isAObject(int instance);
-extern bool isAContainer(int instance);
-extern bool isAActor(int instance);
-extern bool isALocation(int instance);
-extern bool isLiteral(int instance);
-extern bool isANumeric(int instance);
-extern bool isAString(int instance);
+	extern void setInstanceAttribute(int instance, int atr, Aptr value);
+	extern void setInstanceStringAttribute(int instance, int attribute, char *string);
+	extern void setInstanceSetAttribute(int instance, int atr, Aptr set);
 
-extern Aptr getInstanceAttribute(int instance, int attribute);
-extern char *getInstanceStringAttribute(int instane, int attribute);
-extern Set *getInstanceSetAttribute(int instance, int attribute);
+	extern void say(CONTEXT, int instance);
+	extern void sayForm(CONTEXT, int instance, SayForm form);
+	extern void sayInstance(CONTEXT, int instance);
 
-extern void setInstanceAttribute(int instance, int atr, Aptr value);
-extern void setInstanceStringAttribute(int instance, int attribute, char *string);
-extern void setInstanceSetAttribute(int instance, int atr, Aptr set);
+	extern bool hasDescription(int instance);
+	extern bool isDescribable(int instance);
+	extern void describeAnything(CONTEXT, int instance);
+	extern void describeInstances(CONTEXT);
+	extern bool describe(CONTEXT, int instance);
 
-extern void say(CONTEXT, int instance);
-extern void sayForm(CONTEXT, int instance, SayForm form);
-extern void sayInstance(CONTEXT, int instance);
+	extern int where(int instance, ATrans trans);
+	extern int positionOf(int instance);
+	extern int locationOf(int instance);
 
-extern bool hasDescription(int instance);
-extern bool isDescribable(int instance);
-extern void describeAnything(CONTEXT, int instance);
-extern void describeInstances(CONTEXT);
-extern bool describe(CONTEXT, int instance);
+	extern bool isAt(int instance, int other, ATrans trans);
+	extern bool isIn(int instance, int theContainer, ATrans trans);
+	extern bool isHere(int instance, ATrans trans);
+	extern bool isNearby(int instance, ATrans trans);
+	extern bool isNear(int instance, int other, ATrans trans);
 
-extern int where(int instance, ATrans trans);
-extern int positionOf(int instance);
-extern int locationOf(int instance);
+	extern bool isOpaque(int container);
 
-extern bool isAt(int instance, int other, ATrans trans);
-extern bool isIn(int instance, int theContainer, ATrans trans);
-extern bool isHere(int instance, ATrans trans);
-extern bool isNearby(int instance, ATrans trans);
-extern bool isNear(int instance, int other, ATrans trans);
-
-extern bool isOpaque(int container);
-
-extern void locate(CONTEXT, int instance, int whr);
+	extern void locate(CONTEXT, int instance, int whr);
 
 } // End of namespace Alan3
 } // End of namespace Glk

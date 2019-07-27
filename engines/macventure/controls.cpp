@@ -53,13 +53,13 @@ void CommandButton::draw(Graphics::ManagedSurface &surface) const {
 		const Graphics::Font &font = _gui->getCurrentFont();
 		Common::String title(_data.title);
 		font.drawString(
-			&surface,
-			title,
-			_data.bounds.left,
-			_data.bounds.top,
-			_data.bounds.right - _data.bounds.left,
-			colorText,
-			Graphics::kTextAlignCenter);
+		  &surface,
+		  title,
+		  _data.bounds.left,
+		  _data.bounds.top,
+		  _data.bounds.right - _data.bounds.left,
+		  colorText,
+		  Graphics::kTextAlignCenter);
 	}
 }
 

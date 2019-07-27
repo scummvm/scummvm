@@ -20,28 +20,32 @@
  *
  */
 
-#include "common/util.h"
 #include "common/stack.h"
 #include "common/system.h"
+#include "common/util.h"
 #include "graphics/primitives.h"
 
-#include "sci/sci.h"
-#include "sci/event.h"
 #include "sci/engine/kernel.h"
-#include "sci/engine/state.h"
 #include "sci/engine/selector.h"
+#include "sci/engine/state.h"
+#include "sci/event.h"
 #include "sci/graphics/compare.h"
-#include "sci/graphics/ports.h"
-#include "sci/graphics/paint16.h"
+#include "sci/graphics/controls16.h"
 #include "sci/graphics/font.h"
+#include "sci/graphics/paint16.h"
+#include "sci/graphics/ports.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/text16.h"
-#include "sci/graphics/controls16.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
 GfxControls16::GfxControls16(SegManager *segMan, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16, GfxScreen *screen)
-	: _segMan(segMan), _ports(ports), _paint16(paint16), _text16(text16), _screen(screen) {
+  : _segMan(segMan)
+  , _ports(ports)
+  , _paint16(paint16)
+  , _text16(text16)
+  , _screen(screen) {
 	_texteditBlinkTime = 0;
 	_texteditCursorVisible = false;
 }
@@ -49,8 +53,8 @@ GfxControls16::GfxControls16(SegManager *segMan, GfxPorts *ports, GfxPaint16 *pa
 GfxControls16::~GfxControls16() {
 }
 
-const char controlListUpArrow[2]	= { 0x18, 0 };
-const char controlListDownArrow[2]	= { 0x19, 0 };
+const char controlListUpArrow[2] = { 0x18, 0 };
+const char controlListDownArrow[2] = { 0x19, 0 };
 
 void GfxControls16::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const Common::String *entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias) {
 	Common::Rect workerRect = rect;
@@ -83,7 +87,8 @@ void GfxControls16::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars
 
 	_text16->SetFont(fontId);
 	fontSize = _ports->_curPort->fontHeight;
-	_ports->penColor(_ports->_curPort->penClr); _ports->backColor(_ports->_curPort->backClr);
+	_ports->penColor(_ports->_curPort->penClr);
+	_ports->backColor(_ports->_curPort->backClr);
 	workerRect.bottom = workerRect.top + fontSize;
 	lastYpos = rect.bottom - fontSize;
 
@@ -167,7 +172,8 @@ void GfxControls16::kernelTexteditChange(reg_t controlObject, reg_t eventObject)
 			switch (eventKey) {
 			case kSciKeyBackspace:
 				if (cursorPos > 0) {
-					cursorPos--; text.deleteChar(cursorPos);
+					cursorPos--;
+					text.deleteChar(cursorPos);
 					textChanged = true;
 				}
 				break;
@@ -178,25 +184,30 @@ void GfxControls16::kernelTexteditChange(reg_t controlObject, reg_t eventObject)
 				}
 				break;
 			case kSciKeyHome:
-				cursorPos = 0; textChanged = true;
+				cursorPos = 0;
+				textChanged = true;
 				break;
 			case kSciKeyEnd:
-				cursorPos = textSize; textChanged = true;
+				cursorPos = textSize;
+				textChanged = true;
 				break;
 			case kSciKeyLeft:
 				if (cursorPos > 0) {
-					cursorPos--; textChanged = true;
+					cursorPos--;
+					textChanged = true;
 				}
 				break;
 			case kSciKeyRight:
 				if (cursorPos + 1 <= textSize) {
-					cursorPos++; textChanged = true;
+					cursorPos++;
+					textChanged = true;
 				}
 				break;
 			case kSciKeyEtx:
 				if (modifiers & kSciKeyModCtrl) {
 					// Control-C erases the whole line
-					cursorPos = 0; text.clear();
+					cursorPos = 0;
+					text.clear();
 					textChanged = true;
 				}
 				break;
@@ -204,7 +215,8 @@ void GfxControls16::kernelTexteditChange(reg_t controlObject, reg_t eventObject)
 				if ((modifiers & kSciKeyModCtrl) && eventKey == 99) {
 					// Control-C in earlier SCI games (SCI0 - SCI1 middle)
 					// Control-C erases the whole line
-					cursorPos = 0; text.clear();
+					cursorPos = 0;
+					text.clear();
 					textChanged = true;
 				} else if (eventKey > 31 && eventKey < 256 && textSize < maxChars) {
 					// insert pressed character

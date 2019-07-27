@@ -20,12 +20,13 @@
  *
  */
 
-#include "mads/mads.h"
 #include "mads/camera.h"
+#include "mads/mads.h"
 
 namespace MADS {
 
-Camera::Camera(MADSEngine *vm) : _vm(vm) {
+Camera::Camera(MADSEngine *vm)
+  : _vm(vm) {
 	_panAllowedFl = false;
 	_activeFl = false;
 	_currentFrameFl = false;
@@ -92,7 +93,7 @@ bool Camera::camPan(int16 *picture_view, int16 *player_loc, int display_size, in
 		_currentFrameFl = false;
 
 		uint32 timer;
-		if ((abs((int32) (_timer - player._priorTimer)) < _rate) && (player._ticksAmount == _rate))
+		if ((abs((int32)(_timer - player._priorTimer)) < _rate) && (player._ticksAmount == _rate))
 			timer = player._priorTimer;
 		else
 			timer = _timer;

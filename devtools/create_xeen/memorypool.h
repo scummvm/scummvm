@@ -25,7 +25,6 @@
 
 #include "common/array.h"
 
-
 namespace Common {
 
 /**
@@ -40,22 +39,22 @@ namespace Common {
  */
 class MemoryPool {
 protected:
-	MemoryPool(const MemoryPool&);
-	MemoryPool& operator=(const MemoryPool&);
+	MemoryPool(const MemoryPool &);
+	MemoryPool &operator=(const MemoryPool &);
 
 	struct Page {
 		void *start;
 		size_t numChunks;
 	};
 
-	const size_t	_chunkSize;
-	Array<Page>		_pages;
-	void			*_next;
-	size_t			_chunksPerPage;
+	const size_t _chunkSize;
+	Array<Page> _pages;
+	void *_next;
+	size_t _chunksPerPage;
 
-	void	allocPage();
-	void	addPageToPool(const Page &page);
-	bool	isPointerInPage(void *ptr, const Page &page);
+	void allocPage();
+	void addPageToPool(const Page &page);
+	bool isPointerInPage(void *ptr, const Page &page);
 
 public:
 	/**
@@ -68,7 +67,7 @@ public:
 	/**
 	 * Allocate a new chunk from the memory pool.
 	 */
-	void	*allocChunk();
+	void *allocChunk();
 	/**
 	 * Return a chunk to the memory pool. The given pointer must have
 	 * been obtained from calling the allocChunk() method of the very
@@ -77,7 +76,7 @@ public:
 	 * will lead to undefined behavior and may result in a crash (if
 	 * you are lucky) or in silent data corruption.
 	 */
-	void	freeChunk(void *ptr);
+	void freeChunk(void *ptr);
 
 	/**
 	 * Perform garbage collection. The memory pool stores all the
@@ -87,12 +86,12 @@ public:
 	 * the life time of the memory pool. The exception is when this
 	 * method is called.
 	 */
-	void	freeUnusedPages();
+	void freeUnusedPages();
 
 	/**
 	 * Return the chunk size used by this memory pool.
 	 */
-	size_t	getChunkSize() const { return _chunkSize; }
+	size_t getChunkSize() const { return _chunkSize; }
 };
 
 /**
@@ -100,16 +99,18 @@ public:
  * space for a fixed number of chunks. Thus if the memory pool is only
  * lightly used, no malloc() calls have to be made at all.
  */
-template<size_t CHUNK_SIZE, size_t NUM_INTERNAL_CHUNKS = 32>
+template <size_t CHUNK_SIZE, size_t NUM_INTERNAL_CHUNKS = 32>
 class FixedSizeMemoryPool : public MemoryPool {
 private:
 	enum {
 		REAL_CHUNK_SIZE = (CHUNK_SIZE + sizeof(void *) - 1) & (~(sizeof(void *) - 1))
 	};
 
-	byte	_storage[NUM_INTERNAL_CHUNKS * REAL_CHUNK_SIZE];
+	byte _storage[NUM_INTERNAL_CHUNKS * REAL_CHUNK_SIZE];
+
 public:
-	FixedSizeMemoryPool() : MemoryPool(CHUNK_SIZE) {
+	FixedSizeMemoryPool()
+	  : MemoryPool(CHUNK_SIZE) {
 		assert(REAL_CHUNK_SIZE == _chunkSize);
 		// Insert some static storage
 		Page internalPage = { _storage, NUM_INTERNAL_CHUNKS };
@@ -118,16 +119,17 @@ public:
 };
 
 // Ensure NUM_INTERNAL_CHUNKS == 0 results in a compile error
-template<size_t CHUNK_SIZE>
-class FixedSizeMemoryPool<CHUNK_SIZE,0> : public MemoryPool {
+template <size_t CHUNK_SIZE>
+class FixedSizeMemoryPool<CHUNK_SIZE, 0> : public MemoryPool {
 public:
-	FixedSizeMemoryPool() : MemoryPool(CHUNK_SIZE) {}
+	FixedSizeMemoryPool()
+	  : MemoryPool(CHUNK_SIZE) {}
 };
 
 /**
  * A memory pool for C++ objects.
  */
-template<class T, size_t NUM_INTERNAL_CHUNKS = 32>
+template <class T, size_t NUM_INTERNAL_CHUNKS = 32>
 class ObjectPool : public FixedSizeMemoryPool<sizeof(T), NUM_INTERNAL_CHUNKS> {
 public:
 	/**

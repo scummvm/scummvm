@@ -34,7 +34,7 @@ public:
 
 private:
 	Synth &synth;
-	float * const inBuffer;
+	float *const inBuffer;
 	unsigned int inBufferSize;
 	const double inputToOutputRatio;
 	const double outputToInputRatio;

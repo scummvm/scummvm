@@ -22,8 +22,8 @@
 
 #include "common/debug.h"
 #include "common/endian.h"
-#include "common/system.h"
 #include "common/stream.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 
 #include "graphics/surface.h"
@@ -31,7 +31,7 @@
 #include "video/dxa_decoder.h"
 
 #ifdef USE_ZLIB
-  #include "common/zlib.h"
+#	include "common/zlib.h"
 #endif
 
 namespace Video {
@@ -48,7 +48,7 @@ bool DXADecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	uint32 tag = stream->readUint32BE();
 
-	if (tag != MKTAG('D','E','X','A')) {
+	if (tag != MKTAG('D', 'E', 'X', 'A')) {
 		close();
 		return false;
 	}
@@ -130,18 +130,18 @@ DXADecoder::DXAVideoTrack::DXAVideoTrack(Common::SeekableReadStream *stream) {
 				size = _fileStream->readUint32BE();
 
 			switch (tag) {
-				case 0: // No more tags
-					break;
-				case MKTAG('M','A','X','D'):
-					assert(size == 4);
-					_decompBufferSize = _fileStream->readUint32BE();
-					break;
-				default: // Unknown tag - skip it.
-					while (size > 0) {
-						byte dummy = _fileStream->readByte();
-						size--;
-					}
-					break;
+			case 0: // No more tags
+				break;
+			case MKTAG('M', 'A', 'X', 'D'):
+				assert(size == 4);
+				_decompBufferSize = _fileStream->readUint32BE();
+				break;
+			default: // Unknown tag - skip it.
+				while (size > 0) {
+					byte dummy = _fileStream->readByte();
+					size--;
+				}
+				break;
 			}
 		} while (tag != 0);
 	}
@@ -210,17 +210,16 @@ void DXADecoder::DXAVideoTrack::decode12(int size) {
 			case 13:
 			case 14:
 			case 15:
-			case 1:	{
+			case 1: {
 				unsigned short diffMap;
 				if (type >= 10 && type <= 15) {
 					static const struct { uint8 sh1, sh2; } shiftTbl[6] = {
-						{0, 0},	{8, 0},	{8, 8},	{8, 4},	{4, 0},	{4, 4}
+						{ 0, 0 }, { 8, 0 }, { 8, 8 }, { 8, 4 }, { 4, 0 }, { 4, 4 }
 					};
-					diffMap = ((*dat & 0xF0) << shiftTbl[type-10].sh1) |
-						  ((*dat & 0x0F) << shiftTbl[type-10].sh2);
+					diffMap = ((*dat & 0xF0) << shiftTbl[type - 10].sh1) | ((*dat & 0x0F) << shiftTbl[type - 10].sh2);
 					dat++;
 				} else {
-					diffMap = *(unsigned short*)dat;
+					diffMap = *(unsigned short *)dat;
 					dat += 2;
 				}
 
@@ -235,7 +234,7 @@ void DXADecoder::DXAVideoTrack::decode12(int size) {
 				}
 				break;
 			}
-			case 2:	{
+			case 2: {
 				byte color = *dat++;
 
 				for (int yc = 0; yc < BLOCKH; yc++) {
@@ -246,7 +245,7 @@ void DXADecoder::DXAVideoTrack::decode12(int size) {
 				}
 				break;
 			}
-			case 3:	{
+			case 3: {
 				for (int yc = 0; yc < BLOCKH; yc++) {
 					for (int xc = 0; xc < BLOCKW; xc++) {
 						b2[xc] = *dat++;
@@ -255,7 +254,7 @@ void DXADecoder::DXAVideoTrack::decode12(int size) {
 				}
 				break;
 			}
-			case 4:	{
+			case 4: {
 				byte mbyte = *dat++;
 				int mx = (mbyte >> 4) & 0x07;
 				if (mbyte & 0x80)
@@ -263,7 +262,7 @@ void DXADecoder::DXAVideoTrack::decode12(int size) {
 				int my = mbyte & 0x07;
 				if (mbyte & 0x08)
 					my = -my;
-				byte *b1 = _frameBuffer2 + (bx+mx) + (by+my) * _width;
+				byte *b1 = _frameBuffer2 + (bx + mx) + (by + my) * _width;
 				for (int yc = 0; yc < BLOCKH; yc++) {
 					memcpy(b2, b1, BLOCKW);
 					b1 += _width;
@@ -299,7 +298,7 @@ void DXADecoder::DXAVideoTrack::decode13(int size) {
 	int dataSize, motSize;
 
 	dataSize = READ_BE_UINT32(&_decompBuffer[0]);
-	motSize  = READ_BE_UINT32(&_decompBuffer[4]);
+	motSize = READ_BE_UINT32(&_decompBuffer[4]);
 	//maskSize = READ_BE_UINT32(&_decompBuffer[8]);
 
 	codeBuf = &_decompBuffer[12];
@@ -361,7 +360,7 @@ void DXADecoder::DXAVideoTrack::decode13(int size) {
 				if (mbyte & 0x08)
 					my = -my;
 
-				uint8 *b1 = (uint8 *)_frameBuffer2 + (bx+mx) + (by+my) * _width;
+				uint8 *b1 = (uint8 *)_frameBuffer2 + (bx + mx) + (by + my) * _width;
 				for (int yc = 0; yc < BLOCKH; yc++) {
 					memcpy(b2, b1, BLOCKW);
 					b1 += _width;
@@ -370,8 +369,8 @@ void DXADecoder::DXAVideoTrack::decode13(int size) {
 				break;
 			}
 			case 8: {
-				static const int subX[4] = {0, 2, 0, 2};
-				static const int subY[4] = {0, 0, 2, 2};
+				static const int subX[4] = { 0, 2, 0, 2 };
+				static const int subY[4] = { 0, 0, 2, 2 };
 
 				uint8 subMask = *maskBuf++;
 
@@ -405,7 +404,7 @@ void DXADecoder::DXAVideoTrack::decode13(int size) {
 						if (mbyte & 0x08)
 							my = -my;
 
-						uint8 *b1 = (uint8 *)_frameBuffer2 + (sx+mx) + (sy+my) * _width;
+						uint8 *b1 = (uint8 *)_frameBuffer2 + (sx + mx) + (sy + my) * _width;
 						for (int yc = 0; yc < BLOCKH / 2; yc++) {
 							memcpy(b2, b1, BLOCKW / 2);
 							b1 += _width;
@@ -469,13 +468,13 @@ void DXADecoder::DXAVideoTrack::decode13(int size) {
 
 const Graphics::Surface *DXADecoder::DXAVideoTrack::decodeNextFrame() {
 	uint32 tag = _fileStream->readUint32BE();
-	if (tag == MKTAG('C','M','A','P')) {
+	if (tag == MKTAG('C', 'M', 'A', 'P')) {
 		_fileStream->read(_palette, 256 * 3);
 		_dirtyPalette = true;
 	}
 
 	tag = _fileStream->readUint32BE();
-	if (tag == MKTAG('F','R','A','M')) {
+	if (tag == MKTAG('F', 'R', 'A', 'M')) {
 		byte type = _fileStream->readByte();
 		uint32 size = _fileStream->readUint32BE();
 

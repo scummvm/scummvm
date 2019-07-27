@@ -35,8 +35,8 @@ CachedSourceListingProvider::CachedSourceListingProvider() {
 CachedSourceListingProvider::~CachedSourceListingProvider() {
 	delete _sourceListingProvider;
 	delete _fallbackListingProvider;
-	for (Common::HashMap<Common::String, SourceListing*>::iterator it = _cached.begin();
-			it != _cached.end(); it++) {
+	for (Common::HashMap<Common::String, SourceListing *>::iterator it = _cached.begin();
+	     it != _cached.end(); it++) {
 		delete (it->_value);
 	}
 }
@@ -61,8 +61,8 @@ Listing *CachedSourceListingProvider::getListing(const Common::String &filename,
 }
 
 void CachedSourceListingProvider::invalidateCache() {
-	for (Common::HashMap<Common::String, SourceListing*>::iterator it = _cached.begin();
-			it != _cached.end(); it++) {
+	for (Common::HashMap<Common::String, SourceListing *>::iterator it = _cached.begin();
+	     it != _cached.end(); it++) {
 		delete (it->_value);
 	}
 	_cached.clear();

@@ -23,16 +23,16 @@
 #ifndef SCUMM_PLAYERS_PLAYER_NES_H
 #define SCUMM_PLAYERS_PLAYER_NES_H
 
-#include "common/scummsys.h"
-#include "scumm/music.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "common/scummsys.h"
+#include "scumm/music.h"
 
 namespace Scumm {
 
 class ScummEngine;
 namespace APUe {
-class APU;
+	class APU;
 }
 
 static const int MAXVOLUME = 0x7F;
@@ -51,7 +51,7 @@ public:
 	virtual void startSound(int sound);
 	virtual void stopSound(int sound);
 	virtual void stopAllSounds();
-	virtual int  getSoundStatus(int sound) const;
+	virtual int getSoundStatus(int sound) const;
 
 	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -60,7 +60,6 @@ public:
 	int getRate() const { return _sampleRate; }
 
 private:
-
 	void sound_play();
 	void playSFX(int nr);
 	void playMusic();

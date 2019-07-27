@@ -32,11 +32,11 @@
 
 #include "common/array.h"
 #include "common/fs.h"
-#include "common/str.h"
 #include "common/str-array.h"
+#include "common/str.h"
 
 #ifndef COMMON_MACRESMAN_H
-#define COMMON_MACRESMAN_H
+#	define COMMON_MACRESMAN_H
 
 namespace Common {
 
@@ -247,7 +247,7 @@ private:
 	uint32 _mapLength;
 	ResMap _resMap;
 	ResType *_resTypes;
-	ResPtr  *_resLists;
+	ResPtr *_resLists;
 };
 
 } // End of namespace Common

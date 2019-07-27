@@ -21,19 +21,19 @@
  */
 
 #if !defined(SCUMM_IMUSE_DIGI_H) && defined(ENABLE_SCUMM_7_8)
-#define SCUMM_IMUSE_DIGI_H
+#	define SCUMM_IMUSE_DIGI_H
 
-#include "common/scummsys.h"
-#include "common/mutex.h"
-#include "common/serializer.h"
-#include "common/textconsole.h"
-#include "common/util.h"
+#	include "common/mutex.h"
+#	include "common/scummsys.h"
+#	include "common/serializer.h"
+#	include "common/textconsole.h"
+#	include "common/util.h"
 
-#include "scumm/imuse_digi/dimuse.h"
-#include "scumm/imuse_digi/dimuse_bndmgr.h"
-#include "scumm/imuse_digi/dimuse_sndmgr.h"
-#include "scumm/music.h"
-#include "scumm/sound.h"
+#	include "scumm/imuse_digi/dimuse.h"
+#	include "scumm/imuse_digi/dimuse_bndmgr.h"
+#	include "scumm/imuse_digi/dimuse_sndmgr.h"
+#	include "scumm/music.h"
+#	include "scumm/sound.h"
 
 namespace Audio {
 class AudioStream;
@@ -54,8 +54,7 @@ struct Track;
 
 class IMuseDigital : public MusicEngine {
 private:
-
-	int _callbackFps;		// value how many times callback needs to be called per second
+	int _callbackFps; // value how many times callback needs to be called per second
 
 	struct TriggerParams {
 		char marker[10];
@@ -76,16 +75,16 @@ private:
 	Audio::Mixer *_mixer;
 	ImuseDigiSndMgr *_sound;
 
-	char *_audioNames;		// filenames of sound SFX used in FT
-	int32 _numAudioNames;	// number of above filenames
+	char *_audioNames; // filenames of sound SFX used in FT
+	int32 _numAudioNames; // number of above filenames
 
-	bool _pause;			// flag mean that iMuse callback should be idle
+	bool _pause; // flag mean that iMuse callback should be idle
 
-	int32 _attributes[188];	// internal attributes for each music file to store and check later
-	int32 _nextSeqToPlay;	// id of sequence type of music needed played
-	int32 _curMusicState;	// current or previous id of music
-	int32 _curMusicSeq;		// current or previous id of sequence music
-	int32 _curMusicCue;		// current cue for current music. used in FT
+	int32 _attributes[188]; // internal attributes for each music file to store and check later
+	int32 _nextSeqToPlay; // id of sequence type of music needed played
+	int32 _curMusicState; // current or previous id of music
+	int32 _curMusicSeq; // current or previous id of sequence music
+	int32 _curMusicCue; // current cue for current music. used in FT
 	int _stopingSequence;
 	bool _radioChatterSFX;
 
@@ -133,8 +132,7 @@ public:
 	void startMusic(const char *soundName, int soundId, int hookId, int volume);
 	void startMusicWithOtherPos(const char *soundName, int soundId, int hookId, int volume, Track *otherTrack);
 	void startSfx(int soundId, int priority);
-	void startSound(int sound)
-		{ error("IMuseDigital::startSound(int) should be never called"); }
+	void startSound(int sound) { error("IMuseDigital::startSound(int) should be never called"); }
 
 	void saveLoadEarly(Common::Serializer &ser);
 	void resetState();

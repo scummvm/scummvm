@@ -97,7 +97,7 @@ extern const char *const g_gameStrings[] = {
 	"#COMP\\COMPU192#Please select subject file...",
 	"#COMP\\COMPU193#TLTDH gas: The chemical compound tantalum bi-lithium thalo-dihydroxide. Colorless, odorless, nonflammable gaseous at 1 atm and temperatures within the human norm. Early anesthetic among Vulcans and Romulans, in whom it produces laughter, feelings of exhiliration, euphoria; sometimes leading to unconsciousness. In post-industrial/pre-spaceflight era, a social problem evolved when crude TLTDH became popular to \"cook up\" from non-conductive tantalo-lithial compounds commonly used as electrical insulation.",
 
-	"#DEM0\\DEM0N009#Spock raises an eyebrow.",	// kept because it's used as an enhancement in mudd1
+	"#DEM0\\DEM0N009#Spock raises an eyebrow.", // kept because it's used as an enhancement in mudd1
 	"All mining equipment use this road.",
 
 	"#DEM1\\DEM1_F23#Federation Scum!",
@@ -175,7 +175,6 @@ extern const char *const g_gameStrings[] = {
 	"#TUG0\\TUG0N013#This is the main transporter pad of the Masada.",
 	"#TUG0\\TUG0N014#This man was obviously the transporter engineer. He is unconscious, but alive.",
 
-
 	"#TUG1\\TUG1_001#This is a mess now, isn't it?",
 	"#TUG1\\TUG1_002#A forcefield of unusual configurations has been erected in front of the doorway which leads into the bridge. I don't think it would be healthy to approach too closely, Captain.",
 	"#TUG1\\TUG1_003#I'm getting life readings both on the bridge and in the brig, Jim.",
@@ -209,7 +208,6 @@ extern const char *const g_gameStrings[] = {
 	"#TUG1\\TUG1N010#This viewscreen/ communication terminal has been damaged beyond repair.",
 	"#TUG1\\TUG1N011#Twisted debris has been scattered along the side of the corridor.",
 	"#TUG1\\TUG1N013#You are in a typical starship corridor.",
-
 
 	"#TUG2\\TUG2_001#My God, what have we done?",
 	"#TUG2\\TUG2_002#They've turned this freighter into a prison barge.",
@@ -282,7 +280,6 @@ extern const char *const g_gameStrings[] = {
 	"#TUG2\\TUG2N106#Only the red beret of the elasi guard remains.",
 	"Snip...snip...snip.",
 
-
 	"#TUG3\\TUG3_001#Scotty, beam down a security team to the bridge.  We have regained control.",
 	"#TUG3\\TUG3_002#Check and mate, Elasi. Don't do anything foolish.",
 	"#TUG3\\TUG3_003#Freeze, don't even think about it.",
@@ -313,7 +310,6 @@ extern const char *const g_gameStrings[] = {
 	"#TUG3\\TUG3N006#The Masada goes down in a fireball over Beta Myamid, with you on it. Better luck next season.",
 	"#TUG3\\TUG3N007#This is a standard Starfleet bridge, perhaps not as impressive as the one on the Enterprise. There are quite a few pirates here.",
 	"#TUG3\\TUG3N008#You carefully eye the chief lieutenant of the Elasi Clan, Elasi Cereth.",
-
 
 	"#LOV0\\LOV0_001#A medical data file is attached --  your bailiwick, Bones.",
 	"#LOV0\\LOV0_002#Spock, check out the station's computer and see what you can dig up.",
@@ -380,7 +376,6 @@ extern const char *const g_gameStrings[] = {
 	"#LOV0\\LOV0N008#This is a standard door, leading to another room on this deck.",
 	"#LOV0\\LOV0N009#You are on the bridge of the ARK7.",
 
-
 	"#LOV1\\LOV1_001#When you are finished admiring all the equipment Bones, maybe you can help us figure out what's going on here.",
 	"#LOV1\\LOV1_002#Captain, I believe Dr. McCoy has the necessary skills to run that equipment.",
 	"#LOV1\\LOV1_003#It is a standard research lab.",
@@ -434,7 +429,6 @@ extern const char *const g_gameStrings[] = {
 	"#LOV1\\LOV1N023#This refrigerator has a number of specimen dishes inside.",
 	"#LOV1\\LOV1N034#You have distilled a quantity of Polyberylcarbonate.",
 	"#LOV1\\LOV1N035#You retrieve the Oroborus cure sample.",
-
 
 	"#LOV2\\LOV2_001#Well, gentlemen, I believe this equipment may be of some use.",
 	"#LOV2\\LOV2_002#I think we can call that one a failure, Bones.",
@@ -525,7 +519,6 @@ extern const char *const g_gameStrings[] = {
 	"#LOV2\\LOV2N050#The machine synthesizes a quantity of wet grey goo.",
 	"#LOV2\\LOV2N051#The machine synthesizes a quantity of wet grey goo.",
 
-
 	"#LOV3\\LOV3_001#At least all this equipment appears to be operating.",
 	"#LOV3\\LOV3_002#A prime source of raw material for TLDTH gas.",
 	"#LOV3\\LOV3_003#Captain, the fusion reactor doesn't seem to have been tampered with. I suggest we leave the controls as they are.",
@@ -593,7 +586,6 @@ extern const char *const g_gameStrings[] = {
 	"#LOV3\\LOV3NA23#This is the engineering center for the ARK7 space station.",
 	"#LOV3\\LOV3NJ32#You attach the antigrav unit to the gas tank. It can be moved freely.",
 
-
 	"#LOV4\\LOV4_001#We aren't barbarians, in spite of what some people think.",
 	"#LOV4\\LOV4_002#Being surrounded by Romulans and not at gun point.",
 	"#LOV4\\LOV4_003#I know Mr. Spock. But we'll get through this.",
@@ -636,7 +628,6 @@ extern const char *const g_gameStrings[] = {
 	"#LOV4\\LOV4N011#This Romulan is groggy, but conscious.",
 	"#LOV4\\LOV4N012#McCoy thinks to himself: 'Dammit, I'm a doctor, not a diplomat!'",
 	"#LOV4\\LOV4N013#The Romulans drink thirstily and empty the container.",
-
 
 	"#LOV5\\LOV5_001#Well gentlemen, let's go home.",
 	"#LOV5\\LOV5_002#Goodbye Carol.",
@@ -716,7 +707,6 @@ extern const char *const g_gameStrings[] = {
 	"#LOV5\\LOV5N018#The Romulan Preax drinks thirstily and empties the container.",
 	"(Raises an eyebrow)", // NOTE: no corresponding audio
 
-
 	"#LOVA\\LOVA_100#He's dead, Jim.",
 	"#LOVA\\LOVA_F01#He's been cured of the Oroborus virus.",
 	"#LOVA\\LOVA_F02#I'm picking up some kind of virus. I can't identify it without more information.",
@@ -727,7 +717,6 @@ extern const char *const g_gameStrings[] = {
 	"#LOVA\\LOVA_F10#He has weak vital signs.",
 	"#LOVA\\LOVA_F54#The virus has spread to me, Captain. I suggest you concentrate your efforts on the problem.",
 	"#LOVA\\LOVA_F55#Jim, we need to synthesize more to make the serum before we can use it.", // TYPO
-
 
 	"#MUD0\\MUD0_001#Kirk to Enterprise...",
 	"#MUD0\\MUD0_002#Well! Now I think we know why the Elasi pirates were so interested in finding out where Mudd was getting these!",
@@ -790,7 +779,6 @@ extern const char *const g_gameStrings[] = {
 	"#MUD0\\MUD0N017#You can't take that.",
 	"#MUD0\\MUD0N019#This place is cluttered with stored goods of every sort. It would take an army of workers weeks to examine every container and determine what is inside.",
 
-
 	"#MUD1\\MUD1_001#Kirk to Enterprise...",
 	"#MUD1\\MUD1_002#Well, now! I think we know why the Elasi pirates were so interested in finding out where Mudd was getting these!",
 	"#MUD1\\MUD1_003#I agree that we should take it aboard the Enterprise.  ",
@@ -835,7 +823,6 @@ extern const char *const g_gameStrings[] = {
 	"#MUD1\\MUD1N014#This is much too heavy to lift.",
 	"#MUD1\\MUD1N015#Three triangular blue buttons.",
 	"#MUD1\\MUD1N016#Two yellow triangular buttons.",
-
 
 	"#MUD2\\MUD2_001#Spock, see if you can outflank him...",
 	"#MUD2\\MUD2_002#Well, now! I think we know why the Elasi pirates were so interested in finding out where Mudd was getting these!", // TYPO
@@ -902,7 +889,6 @@ extern const char *const g_gameStrings[] = {
 	"#MUD2\\MUD2N009#The atmosphere in the ship has dropped below the level needed to sustain life. You drop to unconsciousness and slowly die.",
 	"#MUD2\\MUD2N010#These two things fit together like they were made for each other.",
 	"#MUD2\\MUD2N011#This seems to be the main monitoring station for the beds. Above it is some sort of dispensary.",
-
 
 	"#MUD3\\MUD3_002#Harry! Look what you've done! ",
 	"#MUD3\\MUD3_003#Kirk to Enterprise...",
@@ -994,7 +980,6 @@ extern const char *const g_gameStrings[] = {
 	"#MUD3\\MUD3N019#You can't seem to make this work.",
 	"#MUD3\\MUD3N020#You download major portions of the alien library onto the yellow spheroid.",
 	"(Raises eyebrow)", // Custom
-
 
 	"#MUD4\\MUD4_001#Bring us home, Mr. Scott.",
 	"#MUD4\\MUD4_002#<<Communications>>",
@@ -1089,7 +1074,6 @@ extern const char *const g_gameStrings[] = {
 	"#MUD4\\MUD4N012#You already have a doover.",
 	"#MUD4\\MUD4N013#You see a plain grey screen.",
 
-
 	"#MUD5\\MUD5_001#I suspect that's a blessing in disguise, Mr. Spock!",
 	"#MUD5\\MUD5_002#Just think of it, Spock. An advanced civilization, with powerful technology and nearly unlimited knowledge, and yet all of that didn't save them. ",
 	"#MUD5\\MUD5_003#Kirk to Enterprise...",
@@ -1143,7 +1127,6 @@ extern const char *const g_gameStrings[] = {
 	"#MUD5\\MUD5N012#A \"Sav-a-Ship\" emergency life support generator, generally used for temporary life support during evacuation of small damaged ships.",
 	"#MUD5\\MUD5N105#Life support fails completely and you fall unconscious.",
 
-
 	"#FEA0\\FEA0_002#And exactly what would you have done with them? Entering Klingon space for anything puts the peace in peril.",
 	"#FEA0\\FEA0_003#And then your followers were destroyed because when white men arrived on that continent, they were believed to be you in your promised return. Your people perverted your teachings, then were destroyed by it.",
 	"#FEA0\\FEA0_004#Damned right the results were swift. The Klingons have been raiding colonies looking for you.",
@@ -1188,7 +1171,6 @@ extern const char *const g_gameStrings[] = {
 	"#FEA0\\FEA0N007#The moon of Digifal. Legend says that the gods of good and evil fortune live there and will glance back at those who look at them, and either a miracle or a catastrophe will soon befall those who gaze upon it.",
 	"#FEA0\\FEA0N008#There is a tall, slender, dark haired man looking intently at you.",
 	"#FEA0\\FEA0N009#You see dense vegetation in all directions.",
-
 
 	"#FEA1\\FEA1_001#We wouldn't want to bleed all over Dr. McCoy now, would we?",
 	"#FEA1\\FEA1_002#Well, yes.",
@@ -1271,7 +1253,6 @@ extern const char *const g_gameStrings[] = {
 	"#FEA1\\FEA1N021#You cannot reach it from where you are.",
 	"#FEA1\\FEA1N022#You pick up some rocks from the pile.",
 
-
 	"#FEA2\\FEA2_001#Everyone is healthy, Jim, there's no need for the medical kit here.",
 	"#FEA2\\FEA2_002#Nothing interesting in this neck of the woods, Jim.",
 	"#FEA2\\FEA2_003#They're dead, Jim.",
@@ -1291,7 +1272,6 @@ extern const char *const g_gameStrings[] = {
 	"#FEA2\\FEA2N006#This great tree has been in this jungle for centuries.",
 	"#FEA2\\FEA2N007#Trees to the left of you! Trees to the right of you! Into the valley of trees raced the landing party!",
 	"#FEA2\\FEA2N008#You are in a densely vegetated area. The overgrowth blocks your view in all directions.",
-
 
 	"#FEA3\\FEA3_001#Well, does anyone have any suggestions?",
 	"#FEA3\\FEA3_002#Great Tlaoxac, I do not understand. Quetzecoatl says that his is the way of peace, yet you wish blood to be shed?",
@@ -1349,7 +1329,6 @@ extern const char *const g_gameStrings[] = {
 	"#FEA3\\FEA3N011#You see a jewel encrusted, gold colored knife.",
 	"#FEA3\\FEA3N012#Your security officer looks at you for orders and, perhaps, inspiration.",
 
-
 	"#FEA4\\FEA4_001#A swarm of fireflies, Jim.",
 	"#FEA4\\FEA4_002#Everyone is healthy, Jim, there's no need for the medical kit here.",
 	"#FEA4\\FEA4_003#I would strongly recommend against touching these, Jim. They are highly toxic.",
@@ -1372,7 +1351,6 @@ extern const char *const g_gameStrings[] = {
 	"#FEA4\\FEA4N006#McCoy doesn't want to be bothered right now.",
 	"#FEA4\\FEA4N007#Mr. Spock analyzes the surroundings.",
 	"#FEA4\\FEA4N008#You are in a dark forest. You can hear the flow of water to the northwest.",
-
 
 	"#FEA5\\FEA5_001#This is a very finely crafted knife.",
 	"#FEA5\\FEA5_002#Captain, I believe it would be suicide to try crossing the log while the creature is near.",
@@ -1428,7 +1406,6 @@ extern const char *const g_gameStrings[] = {
 	"#FEA5\\FEA5N013#There seems to be a lit cave beyond the log.",
 	"#FEA5\\FEA5N014#This plant has a rather thick stem and prickly leaves.", // TYPO
 	"#FEA5\\FEA5N015#You already have a piece of the plant.",
-
 
 	"#FEA6\\FEA6_001#I think I can get it with a few more blows.",
 	"#FEA6\\FEA6_002#Have you ever made it up the face of Half Dome, Lieutenant?",
@@ -1494,7 +1471,6 @@ extern const char *const g_gameStrings[] = {
 	"#FEA6\\FEA6N028#You manage to pry loose one dilithium crystal.",
 	"#FEA6\\FEA6N029#You scratch your initials. No dilithium crystals were found.",
 
-
 	"#FEA7\\FEA7_001#Scotty, five to beam up.",
 	"#FEA7\\FEA7_002#Scotty, four to beam up.",
 	"#FEA7\\FEA7_003#You've got to do it, Bones! If the Klingons realize he's no longer a threat to them, perhaps we can avoid a war!",
@@ -1525,7 +1501,6 @@ extern const char *const g_gameStrings[] = {
 	"#FEA7\\FEA7_028#Then I shall ask to make use of your advances.",
 	"#FEA7\\FEA7_029#You are clearly not the liars I thought you to be. Were you telling me the truth about my disciples? That they became ruthless savages?",
 	"#FEA7\\FEA7_030#Your harshness is unwarranted, but I sense truth in this. Perhaps this is what happened to my children on the Klingon world of Hrakkour, which would explain why they are searching for me. I have clearly abused the power that was given me long ago.",
-
 
 	"#TRI0\\TRI0_001#I want your word of honor, Vlict, that Quetzecoatl will not be harmed while we take these tests.",
 	"#TRI0\\TRI0_002#I've faced Klingons, both in personal and ship-to-ship combat. Your own records will confirm this. If I'm not worthy of their honors, why didn't they kill me?",
@@ -1601,7 +1576,6 @@ extern const char *const g_gameStrings[] = {
 	"#TRI0\\TRI0N008#This is the famous seal of the Klingon Empire.",
 	"#TRI0\\TRI0N009#Your new found friend looks rather frightened right now, and you don't blame him.",
 	"#TRI0\\TRI0U075#Uhura here. Captain, there's a force field over the planet. We will not be able to beam you aboard.",
-
 
 	"#TRI1\\TRI1_002#Affirmative, Uhura.",
 	"#TRI1\\TRI1_003#Affirmative.",
@@ -1689,7 +1663,6 @@ extern const char *const g_gameStrings[] = {
 	"Zzzt! Sptttz! Zzzt! Tttt!",
 	"Clunk.",
 
-
 	"#SFX\\QUIET#Zzzzzzzzzzzmmmm.",
 	"#TRI2\\TRI2_001#This reminds me of an old practical joke that Finnegan played on me back at the Academy.",
 	"#TRI2\\TRI2_002#...some kind of energy source a few meters from our position. We know.",
@@ -1741,7 +1714,6 @@ extern const char *const g_gameStrings[] = {
 	"#TRI2\\TRI2U091#Do you wish to be beamed up now Captain?",
 	"#TRI2\\TRI2U104#Understood, Captain.",
 
-
 	"#TRI3\\TRI3_001#This is too easy. I don't like it.",
 	"#TRI3\\TRI3_002#Beam us directly to the Enterprise.",
 	"#TRI3\\TRI3_003#Beam us directly to Vlict's position.",
@@ -1788,7 +1760,6 @@ extern const char *const g_gameStrings[] = {
 	"#TRI3\\TRI3U084#Captain, our sensors have picked up phaser fire! Are you all right? Captain, please come in!", // TYPO
 	"#TRI3\\TRI3U089#Do you wish to be beamed up now Captain?",
 	"#TRI3\\TRI3U099#Mr. Scott has found a way to breach the force field!",
-
 
 	"#TRI4\\TRI4_001#Admiral, one day the weaklings are going to surprise the Hell out of you.",
 	"#TRI4\\TRI4_002#Do Klingons believe in ghosts?",
@@ -1866,7 +1837,6 @@ extern const char *const g_gameStrings[] = {
 	"#TRI4\\TRI4_075#Very well. The trial is over. K'etz'koatl is sentenced to death.",
 	"#TRI4\\TRI4_076#You humans have an excellent imagination, but a poor grasp of reality.",
 
-
 	"#TRI5\\TRI5_001#Obviously, they want us to place the gems in the holes, but which one...",
 	"#TRI5\\TRI5_002#Gentlemen, I suggest we start trying to find out what this is. I have a feeling we've come some place Vlict wasn't expecting us to go.",
 	"#TRI5\\TRI5_003#Hoist on your own petard, eh, Vlict? Do you want me to help you?",
@@ -1939,7 +1909,6 @@ extern const char *const g_gameStrings[] = {
 	"#TRI5\\TRI5N020#This large gem appears to be an emerald of unusual size. This is obviously artificial.", // TYPO
 	"#TRI5\\TRI5N021#This large gem appears to be an emerald of unusual size. This is obviously artificial.", // TYPO
 
-
 	"#SIN0\\SIN0_001#Good Mr. Scott. I'll keep you posted. Kirk out.",
 	"#SIN0\\SIN0_002#Let me know if things change. Kirk out.",
 	"#SIN0\\SIN0_003#Mr. Scott?",
@@ -1986,7 +1955,6 @@ extern const char *const g_gameStrings[] = {
 	"#SIN0\\SIN0N011#These stones look like faces.",
 	"#SIN0\\SIN0U069#Nothing new to report Captain.",
 	"#SIN0\\SIN0U082#Captain, Mr. Scott wishes to speak with you.",
-
 
 	"#SIN1\\SIN1_001#Spock, see what you can do with that lock.",
 	"#SIN1\\SIN1_002#Check her record, Mr. Scott. She was in the top ten percent of her class in computer systems analysis.",
@@ -2037,7 +2005,6 @@ extern const char *const g_gameStrings[] = {
 	"#SIN1\\SIN1N010#This heavy-duty door has taken numerous micrometeorite strikes but still appears solid.",
 	"#SIN1\\SIN1N011#This is a keypad that looks functional.",
 	"#SIN1\\SIN1U070#Nothing new to report Captain.",
-
 
 	"#SIN2\\SIN2_001#Spock, see what you can do with that lock.",
 	"#SIN2\\SIN2_002#Spock, see what you can do with this.",
@@ -2103,7 +2070,6 @@ extern const char *const g_gameStrings[] = {
 	"#SIN2\\SIN2U096#If we had a doctor as good with computers as you are with patients, we'd be having a lot fewer problems.", // TYPO
 	"#SIN2\\SIN2U097#I wish I could take credit for it. It was Mr. Kyle who found the pattern. We are attacking it with anti-virus programs.",
 
-
 	"#SIN3\\SIN3_001#Spock, why don't you check out those laser drill controls.",
 	"#SIN3\\SIN3_002#You're right. This is a mess.",
 	"#SIN3\\SIN3_003#A storage box of some kind. I detect no dangerous substances.",
@@ -2151,7 +2117,6 @@ extern const char *const g_gameStrings[] = {
 	"Laser Setting: 010",
 	"Laser Setting: 100",
 	"cancel",
-
 
 	"#SIN4\\SIN4_001#At least the Enterprise is safe.",
 	"#SIN4\\SIN4_002#Right now, I'll take anything that works. Kirk out.",
@@ -2206,7 +2171,6 @@ extern const char *const g_gameStrings[] = {
 	"#SIN4\\SIN4U105#We could destroy some missiles manually, but if this complex decides to launch more than ten missiles at a time...",
 	"#SIN4\\SIN4U107#We may get the tractor beams on-line in time, Captain. I'm afraid even the back-up phaser transmission codes were affected. ",
 	"#SIN4\\SIN4U83B#Captain, we'll help you all we can.",
-
 
 	"#SIN5\\SIN5_001#Hmmmm... This computer doesn't have a keyboard.",
 	"#SIN5\\SIN5_002#I don't have anything to say right now, Bones.",
@@ -2269,7 +2233,6 @@ extern const char *const g_gameStrings[] = {
 	"#SIN5\\SIN5N011#This door is marked with a radiation hazard symbol.",
 	"#SIN5\\SIN5N012#Computer consoles do not take well to phasering. Sparks fly and, in a defensive maneuver prompted by this attack from within, the base launches a full spread of nuclear missiles at the Enterprise.", // TYPO
 	"#SIN5\\SIN5N013#History will not be kind to you. Better luck next time.",
-
 
 	"#VEN0\\VEN0_001#Dick Patterson and I weren't exactly friends, but this...",
 	"#VEN0\\VEN0_002#Any idea of which one it was?",
@@ -2334,7 +2297,6 @@ extern const char *const g_gameStrings[] = {
 	"#VEN0\\VEN0N018#You are in what's left of the bridge of the U.S.S. Republic.",
 	"#VEN0\\VEN0N019#You pick up the beam. It's a little heavy, but you manage it.",
 
-
 	"#VEN1\\VEN1_001#I wonder if anything will be working in Auxilary Control.",
 	"#VEN1\\VEN1_002#You'll get your chance, Bones. I promise.",
 	"#VEN1\\VEN1_004#I'd like to meet the people responsible for this and give them a piece of my mind.",
@@ -2375,7 +2337,6 @@ extern const char *const g_gameStrings[] = {
 	"#VEN1\\VEN1N021#This door leads to auxiliary control.",
 	"#VEN1\\VEN1N022#This is the maintenance panel for the auxiliary control room door.",
 	"#VEN1\\VEN1N023#You retrieve the molecular saw.",
-
 
 	"#VEN2\\VEN2_001#Mr. Spock, what is the condition of the fire control system?",
 	"#VEN2\\VEN2_002#Mr. Spock, what is the status of the ship's computer?",
@@ -2541,7 +2502,6 @@ extern const char *const g_gameStrings[] = {
 	"Hail Enterprise",
 	"cancel",
 
-
 	"#VEN3\\VEN3_001#I wish I were a poet. I wish I had the words to match how this makes me feel. These people were Starfleet officers, giving their lives to explore the cosmos. I wish I knew some eulogy that did them justice.",
 	"#VEN3\\VEN3_002#Captain, using the stun setting is most illogical.",
 	"#VEN3\\VEN3_003#Damn this tricorder. Why couldn't one of them be alive?",
@@ -2574,7 +2534,6 @@ extern const char *const g_gameStrings[] = {
 	"#VEN3\\VEN3N012#This door leads to TurboLift 2.",
 	"#VEN3\\VEN3N013#This is a length of heavy duty insulated power cable.",
 	"#VEN3\\VEN3N014#You have taken the cable.",
-
 
 	"#VEN4\\VEN4_001#Do what you can, Bones. I need to find out what happened here.",
 	"#VEN4\\VEN4_002#You always hope the instruments are wrong...that you'll find someone alive.",
@@ -2617,7 +2576,6 @@ extern const char *const g_gameStrings[] = {
 	"#VEN4\\VEN4N016#You retrieve the medical drill.",
 	"#VEN4\\VEN4N017#You see the dead body of Brittany. Her life was cut short and you won't stop until you find the persons responsible.",
 
-
 	"#VEN5\\VEN5_001#We must complete our mission, gentlemen.",
 	"#VEN5\\VEN5_002#Is the fire in danger of spreading, spock?",
 	"#VEN5\\VEN5_003#Thank you, Spock, I think we get the point.",
@@ -2649,7 +2607,6 @@ extern const char *const g_gameStrings[] = {
 	"#VEN5\\VEN5N008#These ladders are used when turbolifts are unavailable. Unfortunately, it is blocked by debris and a small, smoldering fire.",
 	"#VEN5\\VEN5N009#This is the most powerful portable energy storage device ever developed by man. It is used to provide temporary power to small systems when Main or Auxiliary power is unavailable.",
 	"#VEN5\\VEN5N010#You pick up the portable Fusion power pack.",
-
 
 	"#VEN6\\VEN6_001#Can we re-route the power lines?",
 	"#VEN6\\VEN6_002#Go ahead and adjust the settings, Spock.",
@@ -2696,7 +2653,6 @@ extern const char *const g_gameStrings[] = {
 	"#VEN6\\VEN6N024#You take the engineering technical journals.",
 	"#VEN6\\VEN6N025#This is a library of engineering technical journals.",
 
-
 	"#VEN7\\VEN7_001#I haven't seen anything this bad since I was aboard the Farragut, and this vampire cloud...",
 	"#VEN7\\VEN7_003#Captain, please be careful. The floor in that area is very unstable and might collapse from our added weight.",
 	"#VEN7\\VEN7_005#I do not see the need for conversation, Captain. Humans have an irrational enjoyment of endless discourse.",
@@ -2712,7 +2668,6 @@ extern const char *const g_gameStrings[] = {
 	"#VEN7\\VEN7N007#This door leads to the transporter room.",
 	"#VEN7\\VEN7N008#This is a length of heavy duty insulated power cable.",
 	"#VEN7\\VEN7N009#You pick up a length of cable.",
-
 
 	"#VEN8\\VEN8_001#Let's get back to auxiliary control and give them our... information.",
 	"#VEN8\\VEN8_002#Now, let's give the Elasi something to remember us by.",
@@ -2764,12 +2719,10 @@ extern const char *const g_gameStrings[] = {
 	"#VEN8\\VEN8N009#This door leads back to the corridor and turbolift 2.",
 	"#VEN8\\VEN8N010#This is the transporter chamber. The pads do not seem to be damaged.",
 
-
 	"#VENA\\VENA_F32#The landing party has been taken captive by the Elasi, and you know Starfleet does not negotiate with terrorists. As you look forward to a long captivity you wonder who will take command of the Enterprise. Better luck next time.",
 	"#VENA\\VENA_F34#Captain, it would be unwise to use your phaser considering the already extensive damage sustained by the Republic.",
 	"#VENA\\VENA_F40#The Elasi fire photon torpedoes. The Republic has been destroyed.",
 	"#VENA\\VENA_F41#Kirk out.",
-
 
 	"#sfx\\spokcoff#cough... cough...",
 	"#SFX\\STATICU1#Ent... neu ... trans...",

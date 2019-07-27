@@ -36,45 +36,37 @@ static const PlainGameDescriptor draciGames[] = {
 namespace Draci {
 
 const ADGameDescription gameDescriptions[] = {
-	{
-		"draci",
-		0,
-		AD_ENTRY1s("INIT.DFW", "b890a5aeebaf16af39219cba2416b0a3", 906),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO0()
-	},
+	{ "draci",
+	  0,
+	  AD_ENTRY1s("INIT.DFW", "b890a5aeebaf16af39219cba2416b0a3", 906),
+	  Common::EN_ANY,
+	  Common::kPlatformDOS,
+	  ADGF_NO_FLAGS,
+	  GUIO0() },
 
-	{
-		"draci",
-		0,
-		AD_ENTRY1s("INIT.DFW", "9921c8f0045679a8f37eca8d41c5ec02", 906),
-		Common::CZ_CZE,
-		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO0()
-	},
+	{ "draci",
+	  0,
+	  AD_ENTRY1s("INIT.DFW", "9921c8f0045679a8f37eca8d41c5ec02", 906),
+	  Common::CZ_CZE,
+	  Common::kPlatformDOS,
+	  ADGF_NO_FLAGS,
+	  GUIO0() },
 
-	{
-		"draci",
-		0,
-		AD_ENTRY1s("INIT.DFW", "76b9b78a8a8809a240acc395df4d0715", 906),
-		Common::PL_POL,
-		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO0()
-	},
+	{ "draci",
+	  0,
+	  AD_ENTRY1s("INIT.DFW", "76b9b78a8a8809a240acc395df4d0715", 906),
+	  Common::PL_POL,
+	  Common::kPlatformDOS,
+	  ADGF_NO_FLAGS,
+	  GUIO0() },
 
-	{
-		"draci",
-		0,
-		AD_ENTRY1s("INIT.DFW", "9a7115b91cdea361bcaff3e046ac7ded", 906),
-		Common::DE_DEU,
-		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO0()
-	},
+	{ "draci",
+	  0,
+	  AD_ENTRY1s("INIT.DFW", "9a7115b91cdea361bcaff3e046ac7ded", 906),
+	  Common::DE_DEU,
+	  Common::kPlatformDOS,
+	  ADGF_NO_FLAGS,
+	  GUIO0() },
 
 	AD_TABLE_END_MARKER
 };
@@ -83,7 +75,8 @@ const ADGameDescription gameDescriptions[] = {
 
 class DraciMetaEngine : public AdvancedMetaEngine {
 public:
-	DraciMetaEngine() : AdvancedMetaEngine(Draci::gameDescriptions, sizeof(ADGameDescription), draciGames) {
+	DraciMetaEngine()
+	  : AdvancedMetaEngine(Draci::gameDescriptions, sizeof(ADGameDescription), draciGames) {
 		_singleId = "draci";
 	}
 
@@ -104,14 +97,7 @@ public:
 };
 
 bool DraciMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSupportsLoadingDuringStartup);
+	return (f == kSupportsListSaves) || (f == kSupportsDeleteSave) || (f == kSavesSupportMetaInfo) || (f == kSavesSupportThumbnail) || (f == kSavesSupportCreationDate) || (f == kSavesSupportPlayTime) || (f == kSupportsLoadingDuringStartup);
 }
 
 SaveStateList DraciMetaEngine::listSaves(const char *target) const {
@@ -149,7 +135,7 @@ void DraciMetaEngine::removeSaveState(const char *target, int slot) const {
 
 SaveStateDescriptor DraciMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(
-		Draci::DraciEngine::getSavegameFile(slot));
+	  Draci::DraciEngine::getSavegameFile(slot));
 
 	if (f) {
 		Draci::DraciSavegameHeader header;
@@ -189,7 +175,7 @@ bool DraciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGam
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(DRACI)
-	REGISTER_PLUGIN_DYNAMIC(DRACI, PLUGIN_TYPE_ENGINE, DraciMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(DRACI, PLUGIN_TYPE_ENGINE, DraciMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(DRACI, PLUGIN_TYPE_ENGINE, DraciMetaEngine);
+REGISTER_PLUGIN_STATIC(DRACI, PLUGIN_TYPE_ENGINE, DraciMetaEngine);
 #endif

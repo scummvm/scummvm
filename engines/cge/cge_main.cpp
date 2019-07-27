@@ -25,28 +25,27 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#include "common/scummsys.h"
+#include "cge/cge_main.h"
+#include "cge/cge.h"
+#include "cge/events.h"
+#include "cge/game.h"
+#include "cge/general.h"
+#include "cge/snail.h"
+#include "cge/sound.h"
+#include "cge/talk.h"
+#include "cge/text.h"
+#include "cge/vga13h.h"
+#include "cge/vmenu.h"
+#include "cge/walk.h"
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
 #include "common/str.h"
 #include "graphics/palette.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
-#include "cge/vga13h.h"
-#include "cge/cge.h"
-#include "cge/cge_main.h"
-#include "cge/general.h"
-#include "cge/sound.h"
-#include "cge/snail.h"
-#include "cge/text.h"
-#include "cge/game.h"
-#include "cge/events.h"
-#include "cge/talk.h"
-#include "cge/vmenu.h"
-#include "cge/walk.h"
-#include "cge/sound.h"
 
 namespace CGE {
 
@@ -54,65 +53,66 @@ const char *savegameStr = "SCUMMVM_CGE";
 
 //--------------------------------------------------------------------------
 
-const Dac g_stdPal[] =  {// R    G   B
-	{   0,  60,  0},    // 198
-	{   0, 104,  0},    // 199
-	{  20, 172,  0},    // 200
-	{  82,  82,  0},    // 201
-	{   0, 132, 82},    // 202
-	{ 132, 173, 82},    // 203
-	{  82,   0,  0},    // 204
-	{ 206,   0, 24},    // 205
-	{ 255,  33, 33},    // 206
-	{ 123,  41,  0},    // 207
-	{   0,  41,  0},    // 208
-	{   0,   0, 82},    // 209
-	{ 132,   0,  0},    // 210
-	{ 255,   0,  0},    // 211
-	{ 255,  66, 66},    // 212
-	{ 148,  66, 16},    // 213
-	{   0,  82,  0},    // 214
-	{   0,   0, 132},   // 215
-	{ 173,   0,  0},    // 216
-	{ 255,  49,  0},    // 217
-	{ 255,  99, 99},    // 218
-	{ 181, 107, 49},    // 219
-	{   0, 132,  0},    // 220
-	{   0,   0, 255},   // 221
-	{ 173,  41,  0},    // 222
-	{ 255,  82,  0},    // 223
-	{ 255, 132, 132},   // 224
-	{ 214, 148, 74},    // 225
-	{  41, 214,  0},    // 226
-	{   0,  82, 173},   // 227
-	{ 255, 214,  0},    // 228
-	{ 247, 132, 49},    // 229
-	{ 255, 165, 165},   // 230
-	{ 239, 198, 123},   // 231
-	{ 173, 214,  0},    // 232
-	{   0, 132, 214},   // 233
-	{  57,  57, 57},    // 234
-	{ 247, 189, 74},    // 235
-	{ 255, 198, 198},   // 236
-	{ 255, 239, 173},   // 237
-	{ 214, 255, 173},   // 238
-	{  82, 173, 255},   // 239
-	{ 107, 107, 107},   // 240
-	{ 247, 222, 99},    // 241
-	{ 255,   0, 255},   // 242
-	{ 255, 132, 255},   // 243
-	{ 132, 132, 173},   // 244
-	{ 148, 247, 255},   // 245
-	{ 148, 148, 148},   // 246
-	{  82,   0, 82},    // 247
-	{ 112,  68, 112},   // 248
-	{ 176,  88, 144},   // 249
-	{ 214, 132, 173},   // 250
-	{ 206, 247, 255},   // 251
-	{ 198, 198, 198},   // 252
-	{   0, 214, 255},   // 253
-	{  96, 224, 96 },   // 254
-	{ 255, 255, 255},   // 255
+const Dac g_stdPal[] = {
+	// R    G   B
+	{ 0, 60, 0 }, // 198
+	{ 0, 104, 0 }, // 199
+	{ 20, 172, 0 }, // 200
+	{ 82, 82, 0 }, // 201
+	{ 0, 132, 82 }, // 202
+	{ 132, 173, 82 }, // 203
+	{ 82, 0, 0 }, // 204
+	{ 206, 0, 24 }, // 205
+	{ 255, 33, 33 }, // 206
+	{ 123, 41, 0 }, // 207
+	{ 0, 41, 0 }, // 208
+	{ 0, 0, 82 }, // 209
+	{ 132, 0, 0 }, // 210
+	{ 255, 0, 0 }, // 211
+	{ 255, 66, 66 }, // 212
+	{ 148, 66, 16 }, // 213
+	{ 0, 82, 0 }, // 214
+	{ 0, 0, 132 }, // 215
+	{ 173, 0, 0 }, // 216
+	{ 255, 49, 0 }, // 217
+	{ 255, 99, 99 }, // 218
+	{ 181, 107, 49 }, // 219
+	{ 0, 132, 0 }, // 220
+	{ 0, 0, 255 }, // 221
+	{ 173, 41, 0 }, // 222
+	{ 255, 82, 0 }, // 223
+	{ 255, 132, 132 }, // 224
+	{ 214, 148, 74 }, // 225
+	{ 41, 214, 0 }, // 226
+	{ 0, 82, 173 }, // 227
+	{ 255, 214, 0 }, // 228
+	{ 247, 132, 49 }, // 229
+	{ 255, 165, 165 }, // 230
+	{ 239, 198, 123 }, // 231
+	{ 173, 214, 0 }, // 232
+	{ 0, 132, 214 }, // 233
+	{ 57, 57, 57 }, // 234
+	{ 247, 189, 74 }, // 235
+	{ 255, 198, 198 }, // 236
+	{ 255, 239, 173 }, // 237
+	{ 214, 255, 173 }, // 238
+	{ 82, 173, 255 }, // 239
+	{ 107, 107, 107 }, // 240
+	{ 247, 222, 99 }, // 241
+	{ 255, 0, 255 }, // 242
+	{ 255, 132, 255 }, // 243
+	{ 132, 132, 173 }, // 244
+	{ 148, 247, 255 }, // 245
+	{ 148, 148, 148 }, // 246
+	{ 82, 0, 82 }, // 247
+	{ 112, 68, 112 }, // 248
+	{ 176, 88, 144 }, // 249
+	{ 214, 132, 173 }, // 250
+	{ 206, 247, 255 }, // 251
+	{ 198, 198, 198 }, // 252
+	{ 0, 214, 255 }, // 253
+	{ 96, 224, 96 }, // 254
+	{ 255, 255, 255 }, // 255
 };
 
 char *CGEEngine::mergeExt(char *buf, const char *name, const char *ext) {
@@ -153,10 +153,10 @@ void CGEEngine::syncHeader(Common::Serializer &s) {
 
 	s.syncAsUint16LE(_now);
 	s.syncAsUint16LE(_oldLev);
-	s.syncAsUint16LE(i);        // unused Demo string id
+	s.syncAsUint16LE(i); // unused Demo string id
 	for (i = 0; i < 5; i++)
 		s.syncAsUint16LE(_game);
-	s.syncAsSint16LE(i);		// unused VGA::Mono variable
+	s.syncAsSint16LE(i); // unused VGA::Mono variable
 	s.syncAsUint16LE(_music);
 	s.syncBytes(_volume, 2);
 	for (i = 0; i < 4; i++)
@@ -287,7 +287,7 @@ Common::Error CGEEngine::loadGameState(int slot) {
 	loadGame(slot, NULL);
 	_commandHandler->addCommand(kCmdLevel, -1, _oldLev, &_sceneLight);
 	_sceneLight->gotoxy(kSceneX + ((_now - 1) % kSceneNx) * kSceneDx + kSceneSX,
-	                  kSceneY + ((_now - 1) / kSceneNx) * kSceneDy + kSceneSY);
+	                    kSceneY + ((_now - 1) / kSceneNx) * kSceneDy + kSceneSY);
 	sceneUp();
 
 	return Common::kNoError;
@@ -410,7 +410,7 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 
 				S._prev = S._next = NULL;
 				Sprite *spr = (scumm_stricmp(S._file + 2, "MUCHA") == 0) ? new Fly(this, NULL)
-					  : new Sprite(this, NULL);
+				                                                         : new Sprite(this, NULL);
 				assert(spr != NULL);
 				*spr = S;
 				_vga->_spareQ->append(spr);
@@ -425,15 +425,15 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 }
 
 WARN_UNUSED_RESULT bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail) {
-	header.version     = 0;
+	header.version = 0;
 	header.saveName.clear();
-	header.thumbnail   = nullptr;
-	header.saveYear    = 0;
-	header.saveMonth   = 0;
-	header.saveDay     = 0;
-	header.saveHour    = 0;
+	header.thumbnail = nullptr;
+	header.saveYear = 0;
+	header.saveMonth = 0;
+	header.saveDay = 0;
+	header.saveHour = 0;
 	header.saveMinutes = 0;
-	header.playTime    = 0;
+	header.playTime = 0;
 
 	// Get the savegame version
 	header.version = in->readByte();
@@ -451,10 +451,10 @@ WARN_UNUSED_RESULT bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, Sa
 	}
 
 	// Read in save date/time
-	header.saveYear    = in->readSint16LE();
-	header.saveMonth   = in->readSint16LE();
-	header.saveDay     = in->readSint16LE();
-	header.saveHour    = in->readSint16LE();
+	header.saveYear = in->readSint16LE();
+	header.saveMonth = in->readSint16LE();
+	header.saveDay = in->readSint16LE();
+	header.saveHour = in->readSint16LE();
 	header.saveMinutes = in->readSint16LE();
 
 	if (header.version >= 3) {
@@ -478,7 +478,7 @@ void CGEEngine::trouble(int seq, int text) {
 	_commandHandler->addCommand(kCmdSeq, -1, seq, _hero);
 	_commandHandler->addCommand(kCmdSound, -1, 2, _hero);
 	_commandHandler->addCommand(kCmdWait, -1, -1, _hero);
-	_commandHandler->addCommand(kCmdSay,  1, text, _hero);
+	_commandHandler->addCommand(kCmdSay, 1, text, _hero);
 }
 
 void CGEEngine::offUse() {
@@ -528,7 +528,9 @@ void CGEEngine::loadMapping() {
 	}
 }
 
-Square::Square(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
+Square::Square(CGEEngine *vm)
+  : Sprite(vm, NULL)
+  , _vm(vm) {
 	_flags._kill = true;
 	_flags._bDel = false;
 
@@ -567,7 +569,7 @@ void CGEEngine::keyClick() {
 void CGEEngine::resetQSwitch() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::resetQSwitch()");
 
-	_commandHandlerTurbo->addCommand(kCmdSeq, 123,  0, NULL);
+	_commandHandlerTurbo->addCommand(kCmdSeq, 123, 0, NULL);
 	keyClick();
 }
 
@@ -576,8 +578,8 @@ void CGEEngine::quit() {
 
 	static Choice QuitMenu[] = {
 		{ NULL, &CGEEngine::startCountDown },
-		{ NULL, &CGEEngine::resetQSwitch   },
-		{ NULL, &CGEEngine::dummy          }
+		{ NULL, &CGEEngine::resetQSwitch },
+		{ NULL, &CGEEngine::dummy }
 	};
 
 	if (_commandHandler->idle() && !_hero->_flags._hide) {
@@ -735,8 +737,8 @@ void CGEEngine::switchScene(int newScene) {
 		return;
 
 	if (newScene < 0) {
-		_commandHandler->addCommand(kCmdLabel, -1, 0, NULL);  // wait for repaint
-		_commandHandler->addCallback(kCmdExec,  -1, 0, kQGame); // quit game
+		_commandHandler->addCommand(kCmdLabel, -1, 0, NULL); // wait for repaint
+		_commandHandler->addCallback(kCmdExec, -1, 0, kQGame); // quit game
 	} else {
 		_now = newScene;
 		_mouse->off();
@@ -746,17 +748,18 @@ void CGEEngine::switchScene(int newScene) {
 			_vga->_spareQ->_show = false;
 		}
 		_sceneLight->gotoxy(kSceneX + ((_now - 1) % kSceneNx) * kSceneDx + kSceneSX,
-		                  kSceneY + ((_now - 1) / kSceneNx) * kSceneDy + kSceneSY);
+		                    kSceneY + ((_now - 1) / kSceneNx) * kSceneDy + kSceneSY);
 		killText();
 		if (!_startupMode)
 			keyClick();
-		_commandHandler->addCommand(kCmdLabel, -1, 0, NULL);  // wait for repaint
-		_commandHandler->addCallback(kCmdExec,  0, 0, kXScene); // switch scene
-
+		_commandHandler->addCommand(kCmdLabel, -1, 0, NULL); // wait for repaint
+		_commandHandler->addCallback(kCmdExec, 0, 0, kXScene); // switch scene
 	}
 }
 
-System::System(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
+System::System(CGEEngine *vm)
+  : Sprite(vm, NULL)
+  , _vm(vm) {
 	_funDel = kHeroFun0;
 	setPal();
 	tick();
@@ -795,10 +798,9 @@ void System::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
 			return;
 		int selectedScene = 0;
 		_vm->_infoLine->update(NULL);
-		if (y >= kWorldHeight ) {
-			if (x < kButtonX) {                           // select scene?
-				if (y >= kSceneY && y < kSceneY + kSceneNy * kSceneDy &&
-				    x >= kSceneX && x < kSceneX + kSceneNx * kSceneDx && !_vm->_game) {
+		if (y >= kWorldHeight) {
+			if (x < kButtonX) { // select scene?
+				if (y >= kSceneY && y < kSceneY + kSceneNy * kSceneDy && x >= kSceneX && x < kSceneX + kSceneNx * kSceneDx && !_vm->_game) {
 					selectedScene = ((y - kSceneY) / kSceneDy) * kSceneNx + (x - kSceneX) / kSceneDx + 1;
 					if (selectedScene > _vm->_maxScene)
 						selectedScene = 0;
@@ -806,8 +808,7 @@ void System::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
 					selectedScene = 0;
 				}
 			} else if (mask & kMouseLeftUp) {
-				if (y >= kPocketY && y < kPocketY + kPocketNY * kPocketDY &&
-				    x >= kPocketX && x < kPocketX + kPocketNX * kPocketDX) {
+				if (y >= kPocketY && y < kPocketY + kPocketNY * kPocketDY && x >= kPocketX && x < kPocketX + kPocketNX * kPocketDX) {
 					int n = ((y - kPocketY) / kPocketDY) * kPocketNX + (x - kPocketX) / kPocketDX;
 					_vm->selectPocket(n);
 				}
@@ -830,7 +831,7 @@ void System::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
 				}
 			} else {
 				if (!_vm->_talk && _vm->_commandHandler->idle() && _vm->_hero
-				        && y >= kMapTop && y < kMapTop + kMapHig && !_vm->_game) {
+				    && y >= kMapTop && y < kMapTop + kMapHig && !_vm->_game) {
 					_vm->_hero->findWay(_vm->XZ(x, y));
 				}
 			}
@@ -962,7 +963,7 @@ void Sprite::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
 	}
 
 	if (_flags._syst)
-		return;       // cannot access system sprites
+		return; // cannot access system sprites
 
 	if (_vm->_game)
 		if (mask & kMouseLeftUp) {
@@ -1027,14 +1028,12 @@ void Sprite::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
 
 void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, int row = 0, int pos = 0) {
 	static const char *Comd[] = { "Name", "Type", "Phase", "East",
-	                              "Left", "Right", "Top", "Bottom",
-	                              "Seq", "Near", "Take",
-	                              "Portable", "Transparent",
-	                              NULL
-	                            };
+		                            "Left", "Right", "Top", "Bottom",
+		                            "Seq", "Near", "Take",
+		                            "Portable", "Transparent",
+		                            NULL };
 	static const char *Type[] = { "DEAD", "AUTO", "WALK", "NEWTON", "LISSAJOUS",
-	                              "FLY", NULL
-	                            };
+		                            "FLY", NULL };
 
 	int shpcnt = 0;
 	int type = 0; // DEAD
@@ -1046,7 +1045,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, i
 	Common::String line;
 	mergeExt(tmpStr, fname, kSprExt);
 
-	if (_resman->exist(tmpStr)) {      // sprite description file exist
+	if (_resman->exist(tmpStr)) { // sprite description file exist
 		EncryptedStream sprf(this, tmpStr);
 		if (sprf.err())
 			error("Bad SPR [%s]", tmpStr);
@@ -1063,29 +1062,28 @@ void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, i
 			if ((i = takeEnum(Comd, strtok(tmpStr, " =\t"))) < 0)
 				error("Bad line %d [%s]", lcnt, fname);
 
-
 			switch (i) {
-			case  0 : // Name - will be taken in Expand routine
+			case 0: // Name - will be taken in Expand routine
 				break;
-			case  1 : // Type
+			case 1: // Type
 				if ((type = takeEnum(Type, strtok(NULL, " \t,;/"))) < 0)
 					error("Bad line %d [%s]", lcnt, fname);
 				break;
-			case  2 : // Phase
+			case 2: // Phase
 				shpcnt++;
 				break;
-			case  3 : // East
+			case 3: // East
 				east = (atoi(strtok(NULL, " \t,;/")) != 0);
 				break;
-			case 11 : // Portable
+			case 11: // Portable
 				port = (atoi(strtok(NULL, " \t,;/")) != 0);
 				break;
-			case 12 : // Transparent
+			case 12: // Transparent
 				tran = (atoi(strtok(NULL, " \t,;/")) != 0);
 				break;
 			}
 		}
-		if (! shpcnt)
+		if (!shpcnt)
 			error("No shapes [%s]", fname);
 	} else {
 		// no sprite description: mono-shaped sprite with only .BMP file
@@ -1101,8 +1099,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, i
 			_sprite->gotoxy(col, row);
 		}
 		break;
-	case 2:
-		{ // WALK
+	case 2: { // WALK
 		Walk *w = new Walk(this, NULL);
 		if (w && ref == 1) {
 			w->gotoxy(col, row);
@@ -1112,17 +1109,16 @@ void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, i
 		}
 		_sprite = w;
 		break;
-		}
-	case 3:  // NEWTON
-	case 4:  // LISSAJOUS
+	}
+	case 3: // NEWTON
+	case 4: // LISSAJOUS
 		error("Bad type [%s]", fname);
 		break;
-	case 5:
-		{ // FLY
+	case 5: { // FLY
 		Fly *f = new Fly(this, NULL);
 		_sprite = f;
 		break;
-		}
+	}
 	default:
 		// DEAD
 		_sprite = new Sprite(this, NULL);
@@ -1161,7 +1157,7 @@ void CGEEngine::loadScript(const char *fname) {
 	bool ok = true;
 	int lcnt = 0;
 
-	char tmpStr[kLineMax+1];
+	char tmpStr[kLineMax + 1];
 	Common::String line;
 
 	for (line = scrf.readLine(); !scrf.eos(); line = scrf.readLine()) {
@@ -1172,7 +1168,7 @@ void CGEEngine::loadScript(const char *fname) {
 		if ((line.size() == 0) || (*tmpStr == '.'))
 			continue;
 
-		ok = false;   // not OK if break
+		ok = false; // not OK if break
 
 		// sprite ident number
 		if ((p = strtok(tmpStr, " \t\n")) == NULL)
@@ -1209,7 +1205,7 @@ void CGEEngine::loadScript(const char *fname) {
 			break;
 		bool BkG = atoi(p) == 0;
 
-		ok = true;    // no break: OK
+		ok = true; // no break: OK
 
 		_sprite = NULL;
 		loadSprite(SpN, SpI, SpA, SpX, SpY, SpZ);
@@ -1227,10 +1223,10 @@ Sprite *CGEEngine::locate(int ref) {
 }
 
 Sprite *CGEEngine::spriteAt(int x, int y) {
-	Sprite *spr = NULL, * tail = _vga->_showQ->last();
+	Sprite *spr = NULL, *tail = _vga->_showQ->last();
 	if (tail) {
 		for (spr = tail->_prev; spr; spr = spr->_prev) {
-			if (! spr->_flags._hide && ! spr->_flags._tran) {
+			if (!spr->_flags._hide && !spr->_flags._tran) {
 				if (spr->shp()->solidAt(x - spr->_x, y - spr->_y))
 					break;
 			}
@@ -1335,11 +1331,11 @@ void CGEEngine::runGame() {
 
 	const Seq pocSeq[] = {
 		{ 0, 0, 0, 0, 20 },
-		{ 1, 2, 0, 0,  4 },
-		{ 2, 3, 0, 0,  4 },
+		{ 1, 2, 0, 0, 4 },
+		{ 2, 3, 0, 0, 4 },
 		{ 3, 4, 0, 0, 16 },
-		{ 2, 5, 0, 0,  4 },
-		{ 1, 6, 0, 0,  4 },
+		{ 2, 5, 0, 0, 4 },
+		{ 1, 6, 0, 0, 4 },
 		{ 0, 1, 0, 0, 16 },
 	};
 	Seq *seq = (Seq *)malloc(7 * sizeof(Seq));
@@ -1369,7 +1365,7 @@ void CGEEngine::runGame() {
 		_miniShp[0] = _miniShp[1] = NULL;
 
 		loadSprite("MINI", -1, 0, kMiniX, kMiniY);
-		expandSprite(_miniScene = _sprite);  // NULL is ok
+		expandSprite(_miniScene = _sprite); // NULL is ok
 		if (_miniScene) {
 			_miniScene->_flags._kill = false;
 			_miniScene->_flags._hide = true;
@@ -1417,14 +1413,14 @@ void CGEEngine::runGame() {
 
 	_commandHandler->addCommand(kCmdLevel, -1, _oldLev, &_sceneLight);
 	_sceneLight->gotoxy(kSceneX + ((_now - 1) % kSceneNx) * kSceneDx + kSceneSX,
-	                  kSceneY + ((_now - 1) / kSceneNx) * kSceneDy + kSceneSY);
+	                    kSceneY + ((_now - 1) / kSceneNx) * kSceneDy + kSceneSY);
 	sceneUp();
 
 	_keyboard->setClient(_sys);
 	// main loop
 	while (!_endGame && !_quitFlag) {
 		if (_flag[3]) // Flag FINIS
-			_commandHandler->addCallback(kCmdExec,  -1, 0, kQGame);
+			_commandHandler->addCallback(kCmdExec, -1, 0, kQGame);
 		mainLoop();
 	}
 
@@ -1449,7 +1445,7 @@ void CGEEngine::movie(const char *ext) {
 		return;
 
 	char fn[12];
-	sprintf(fn, "CGE.%s", (*ext == '.') ? ext +1 : ext);
+	sprintf(fn, "CGE.%s", (*ext == '.') ? ext + 1 : ext);
 
 	if (_resman->exist(fn)) {
 		loadScript(fn);

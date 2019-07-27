@@ -23,18 +23,19 @@
 #ifndef PSP_THREAD_H
 #define PSP_THREAD_H
 
-#include <pspthreadman.h>
 #include "common/scummsys.h"
+#include <pspthreadman.h>
 
 // class to inherit for creating threads
 class PspThreadable {
 protected:
 	int _threadId;
-	virtual void threadFunction() = 0;	// this function will be called when the thread starts
+	virtual void threadFunction() = 0; // this function will be called when the thread starts
 public:
-	PspThreadable() : _threadId(-1) {}					// constructor
-	virtual ~PspThreadable() {}							// destructor
-	static int __threadCallback(SceSize, void *__this);	// used to get called by sceKernelStartThread() Don't override
+	PspThreadable()
+	  : _threadId(-1) {} // constructor
+	virtual ~PspThreadable() {} // destructor
+	static int __threadCallback(SceSize, void *__this); // used to get called by sceKernelStartThread() Don't override
 	bool threadCreateAndStart(const char *threadName, int priority, int stackSize, bool useVfpu = false);
 };
 
@@ -42,20 +43,21 @@ public:
 class PspThread {
 public:
 	// static functions
-	static void delayMillis(uint32 ms);	// delay the current thread
+	static void delayMillis(uint32 ms); // delay the current thread
 	static void delayMicros(uint32 us);
 };
 
 class PspSemaphore {
 private:
 	uint32 _handle;
+
 public:
-	PspSemaphore(int initialValue, int maxValue=255);
+	PspSemaphore(int initialValue, int maxValue = 255);
 	~PspSemaphore();
 	bool take() { return takeWithTimeOut(0); }
 	bool takeWithTimeOut(uint32 timeOut);
-	bool give(int num=1);
-	bool pollForValue(int value);	// check for a certain value
+	bool give(int num = 1);
+	bool pollForValue(int value); // check for a certain value
 	int numOfWaitingThreads();
 	int getValue();
 };
@@ -65,8 +67,12 @@ private:
 	PspSemaphore _semaphore;
 	int _recursiveCount;
 	int _ownerId;
+
 public:
-	PspMutex(bool initialValue) : _semaphore(initialValue ? 1 : 0, 255), _recursiveCount(0), _ownerId(0) {}	// initial, max value
+	PspMutex(bool initialValue)
+	  : _semaphore(initialValue ? 1 : 0, 255)
+	  , _recursiveCount(0)
+	  , _ownerId(0) {} // initial, max value
 	bool lock();
 	bool unlock();
 	bool poll() { return _semaphore.pollForValue(1); }
@@ -81,9 +87,14 @@ private:
 	int _signaledThreads;
 	PspSemaphore _waitSem;
 	PspSemaphore _doneSem;
+
 public:
-	PspCondition() : _mutex(true), _waitingThreads(0), _signaledThreads(0),
-								_waitSem(0), _doneSem(0) {}
+	PspCondition()
+	  : _mutex(true)
+	  , _waitingThreads(0)
+	  , _signaledThreads(0)
+	  , _waitSem(0)
+	  , _doneSem(0) {}
 	void wait(PspMutex &externalMutex);
 	void releaseAll();
 };
@@ -91,9 +102,9 @@ public:
 enum ThreadPriority {
 	PRIORITY_MAIN_THREAD = 36,
 	PRIORITY_TIMER_THREAD = 30,
-	PRIORITY_AUDIO_THREAD = 25,		// must be higher than timer or we get stuttering
-	PRIORITY_POWER_THREAD = 20,		// quite a light thread
-	PRIORITY_DISPLAY_THREAD = 17	// very light thread for callbacks only
+	PRIORITY_AUDIO_THREAD = 25, // must be higher than timer or we get stuttering
+	PRIORITY_POWER_THREAD = 20, // quite a light thread
+	PRIORITY_DISPLAY_THREAD = 17 // very light thread for callbacks only
 };
 
 enum StackSizes {

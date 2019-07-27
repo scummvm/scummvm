@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_SEQCOMMAND_H
 #define MUTATIONOFJB_SEQCOMMAND_H
 
-#include "mutationofjb/commands/command.h"
 #include "common/scummsys.h"
+#include "mutationofjb/commands/command.h"
 
 namespace MutationOfJB {
 
@@ -38,7 +38,8 @@ public:
  */
 class SeqCommand : public Command {
 public:
-	SeqCommand() : _nextCommand(nullptr) {}
+	SeqCommand()
+	  : _nextCommand(nullptr) {}
 	void setNextCommand(Command *nextCommand);
 	virtual Command *next() const override;
 

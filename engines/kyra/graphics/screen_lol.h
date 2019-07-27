@@ -22,10 +22,10 @@
 
 #ifdef ENABLE_LOL
 
-#ifndef KYRA_SCREEN_LOL_H
-#define KYRA_SCREEN_LOL_H
+#	ifndef KYRA_SCREEN_LOL_H
+#		define KYRA_SCREEN_LOL_H
 
-#include "kyra/graphics/screen_v2.h"
+#		include "kyra/graphics/screen_v2.h"
 
 namespace Kyra {
 
@@ -60,7 +60,7 @@ public:
 	void copyRegionSpecial(int page1, int w1, int h1, int x1, int y1, int page2, int w2, int h2, int x2, int y2, int w3, int h3, int mode, ...);
 
 	// palette stuff
-	void fadeToBlack(int delay=0x54, const UpdateFunctor *upFunc = 0);
+	void fadeToBlack(int delay = 0x54, const UpdateFunctor *upFunc = 0);
 	void fadeToPalette1(int delay);
 	void loadSpecialColors(Palette &dst);
 	void copyColor(int dstColorIndex, int srcColorIndex);
@@ -100,6 +100,6 @@ private:
 
 } // End of namespace Kyra
 
-#endif
+#	endif
 
 #endif // ENABLE_LOL

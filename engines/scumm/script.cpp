@@ -21,16 +21,16 @@
  */
 
 #include "common/config-manager.h"
-#include "common/util.h"
 #include "common/system.h"
+#include "common/util.h"
 
 #include "scumm/actor.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
-#include "scumm/util.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v2.h"
 #include "scumm/sound.h"
+#include "scumm/util.h"
 #include "scumm/verbs.h"
 
 namespace Scumm {
@@ -53,12 +53,12 @@ void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, in
 
 	if (script < _numGlobalScripts) {
 		// Call getResourceAddress to ensure the resource is loaded & its usage count reset
-		/*scriptPtr =*/ getResourceAddress(rtScript, script);
+		/*scriptPtr =*/getResourceAddress(rtScript, script);
 		scriptOffs = _resourceHeaderSize;
 		scriptType = WIO_GLOBAL;
 
 		debugC(DEBUG_SCRIPTS, "runScript(Global-%d) from %d-%d", script,
-				       number, _roomResource);
+		       number, _roomResource);
 	} else {
 		scriptOffs = _localScriptOffsets[script - _numGlobalScripts];
 		if (scriptOffs == 0)
@@ -66,7 +66,7 @@ void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, in
 		scriptType = WIO_LOCAL;
 
 		debugC(DEBUG_SCRIPTS, "runScript(%d) from %d-%d", script,
-				       number, _roomResource);
+		       number, _roomResource);
 	}
 
 	if (cycle == 0)
@@ -168,13 +168,12 @@ int ScummEngine::getVerbEntrypoint(int obj, int entry) {
 		verbptr = objptr + 14;
 	else if (_game.version <= 2)
 		verbptr = objptr + 15;
-	else if ((_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) ||
-		_game.features & GF_OLD_BUNDLE)
+	else if ((_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) || _game.features & GF_OLD_BUNDLE)
 		verbptr = objptr + 17;
 	else if (_game.features & GF_SMALL_HEADER)
 		verbptr = objptr + 19;
 	else
-		verbptr = findResource(MKTAG('V','E','R','B'), objptr);
+		verbptr = findResource(MKTAG('V', 'E', 'R', 'B'), objptr);
 
 	assert(verbptr);
 
@@ -235,8 +234,7 @@ void ScummEngine::stopScript(int script) {
 
 	ss = vm.slot;
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
-		if (script == ss->number && ss->status != ssDead &&
-			(ss->where == WIO_GLOBAL || ss->where == WIO_LOCAL)) {
+		if (script == ss->number && ss->status != ssDead && (ss->where == WIO_GLOBAL || ss->where == WIO_LOCAL)) {
 			if (ss->cutsceneOverride)
 				if (_game.version >= 5)
 					error("Script %d stopped with active cutscene/override", script);
@@ -249,8 +247,7 @@ void ScummEngine::stopScript(int script) {
 	}
 
 	for (i = 0; i < vm.numNestedScripts; ++i) {
-		if (vm.nest[i].number == script &&
-				(vm.nest[i].where == WIO_GLOBAL || vm.nest[i].where == WIO_LOCAL)) {
+		if (vm.nest[i].number == script && (vm.nest[i].where == WIO_GLOBAL || vm.nest[i].where == WIO_LOCAL)) {
 			nukeArrays(vm.nest[i].slot);
 			vm.nest[i].number = 0;
 			vm.nest[i].slot = 0xFF;
@@ -269,8 +266,7 @@ void ScummEngine::stopObjectScript(int script) {
 
 	ss = vm.slot;
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
-		if (script == ss->number && ss->status != ssDead &&
-		    (ss->where == WIO_ROOM || ss->where == WIO_INVENTORY || ss->where == WIO_FLOBJECT)) {
+		if (script == ss->number && ss->status != ssDead && (ss->where == WIO_ROOM || ss->where == WIO_INVENTORY || ss->where == WIO_FLOBJECT)) {
 			if (ss->cutsceneOverride)
 				if (_game.version >= 5)
 					error("Object %d stopped with active cutscene/override", script);
@@ -283,8 +279,7 @@ void ScummEngine::stopObjectScript(int script) {
 	}
 
 	for (i = 0; i < vm.numNestedScripts; ++i) {
-		if (vm.nest[i].number == script &&
-				(vm.nest[i].where == WIO_ROOM || vm.nest[i].where == WIO_INVENTORY || vm.nest[i].where == WIO_FLOBJECT)) {
+		if (vm.nest[i].number == script && (vm.nest[i].where == WIO_ROOM || vm.nest[i].where == WIO_INVENTORY || vm.nest[i].where == WIO_FLOBJECT)) {
 			nukeArrays(vm.nest[i].slot);
 			vm.nest[i].number = 0;
 			vm.nest[i].slot = 0xFF;
@@ -345,8 +340,7 @@ void ScummEngine::runScriptNested(int script) {
 		// since it invoked us. In particular, we only resume it if it hasn't been
 		// stopped in the meantime, and if it did not already move on.
 		slot = &vm.slot[nest->slot];
-		if (slot->number == nest->number && slot->where == nest->where &&
-				slot->status != ssDead && slot->freezeCount == 0) {
+		if (slot->number == nest->number && slot->where == nest->where && slot->status != ssDead && slot->freezeCount == 0) {
 			_currentScript = nest->slot;
 			getScriptBaseAddress();
 			resetScriptPointer();
@@ -388,7 +382,7 @@ void ScummEngine::getScriptBaseAddress() {
 
 	ss = &vm.slot[_currentScript];
 	switch (ss->where) {
-	case WIO_INVENTORY:					/* inventory script * */
+	case WIO_INVENTORY: /* inventory script * */
 		for (idx = 0; idx < _numInventory; idx++)
 			if (_inventory[idx] == ss->number)
 				break;
@@ -398,7 +392,7 @@ void ScummEngine::getScriptBaseAddress() {
 		break;
 
 	case WIO_LOCAL:
-	case WIO_ROOM:								/* room script */
+	case WIO_ROOM: /* room script */
 		if (_game.version == 8) {
 			_scriptOrgPointer = getResourceAddress(rtRoomScripts, _roomResource);
 			assert(_roomResource < (int)_res->_types[rtRoomScripts].size());
@@ -410,13 +404,13 @@ void ScummEngine::getScriptBaseAddress() {
 		}
 		break;
 
-	case WIO_GLOBAL:							/* global script */
+	case WIO_GLOBAL: /* global script */
 		_scriptOrgPointer = getResourceAddress(rtScript, ss->number);
 		assert(ss->number < _numScripts);
 		_lastCodePtr = &_res->_types[rtScript][ss->number]._address;
 		break;
 
-	case WIO_FLOBJECT:						/* flobject script */
+	case WIO_FLOBJECT: /* flobject script */
 		idx = getObjectIndex(ss->number);
 		assert(idx != -1);
 		idx = _objs[idx].fl_object_index;
@@ -472,10 +466,10 @@ void ScummEngine::executeScript() {
 		if (_game.version > 2) // V0-V2 games didn't use the didexec flag
 			vm.slot[_currentScript].didexec = true;
 		debugC(DEBUG_OPCODES, "Script %d, offset 0x%x: [%X] %s()",
-				vm.slot[_currentScript].number,
-				(uint)(_scriptPointer - _scriptOrgPointer),
-				_opcode,
-				getOpcodeDesc(_opcode));
+		       vm.slot[_currentScript].number,
+		       (uint)(_scriptPointer - _scriptOrgPointer),
+		       _opcode,
+		       getOpcodeDesc(_opcode));
 		if (_hexdumpScripts == true) {
 			for (c = -1; c < 15; c++) {
 				debugN(" %02x", *(_scriptPointer + c));
@@ -484,7 +478,6 @@ void ScummEngine::executeScript() {
 		}
 
 		executeOpcode(_opcode);
-
 	}
 }
 
@@ -569,8 +562,7 @@ int ScummEngine::readVar(uint var) {
 			assertRange(0, var, _numRoomVariables - 1, "room variable (reading)");
 			return _roomVars[var];
 
-		} else if (_game.version <= 3 && !(_game.id == GID_INDY3 && _game.platform == Common::kPlatformFMTowns) &&
-			!(_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine)) {
+		} else if (_game.version <= 3 && !(_game.id == GID_INDY3 && _game.platform == Common::kPlatformFMTowns) && !(_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine)) {
 			int bit = var & 0xF;
 			var = (var >> 4) & 0xFF;
 
@@ -583,7 +575,7 @@ int ScummEngine::readVar(uint var) {
 			}
 
 			assertRange(0, var, _numVariables - 1, "variable (reading)");
-			return (_scummVars[ var ] & ( 1 << bit ) ) ? 1 : 0;
+			return (_scummVars[var] & (1 << bit)) ? 1 : 0;
 		} else {
 			var &= 0x7FFF;
 			if (!_copyProtection) {
@@ -656,7 +648,7 @@ void ScummEngine::writeVar(uint var, int value) {
 				debug(1, "vars[%d] = %d (via script-%d)", var, value, vm.slot[_currentScript].number);
 			else
 				debug(1, "vars[%d] = %d (via room-%d-%d)", var, value, _currentRoom,
-							vm.slot[_currentScript].number);
+				      vm.slot[_currentScript].number);
 		}
 		return;
 	}
@@ -667,17 +659,16 @@ void ScummEngine::writeVar(uint var, int value) {
 			assertRange(0, var, _numRoomVariables - 1, "room variable (writing)");
 			_roomVars[var] = value;
 
-		} else if (_game.version <= 3 && !(_game.id == GID_INDY3 && _game.platform == Common::kPlatformFMTowns) &&
-			!(_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine)) {
+		} else if (_game.version <= 3 && !(_game.id == GID_INDY3 && _game.platform == Common::kPlatformFMTowns) && !(_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine)) {
 			// In the old games, the bit variables were using the same memory
 			// as the normal variables!
 			int bit = var & 0xF;
 			var = (var >> 4) & 0xFF;
 			assertRange(0, var, _numVariables - 1, "variable (writing)");
 			if (value)
-				_scummVars[var] |= ( 1 << bit );
+				_scummVars[var] |= (1 << bit);
 			else
-				_scummVars[var] &= ~( 1 << bit );
+				_scummVars[var] &= ~(1 << bit);
 		} else {
 			var &= 0x7FFF;
 			assertRange(0, var, _numBitVariables - 1, "bit variable (writing)");
@@ -790,7 +781,8 @@ void ScummEngine::inventoryScriptIndy3Mac() {
 		VAR(67) = invCount - 6;
 		// Odd number of inventory items? -> increment VAR(67) to make it even
 		if (invCount & 1) {
-			VAR(67)++;
+			VAR(67)
+			++;
 		}
 		scrolledToBottom = true;
 	}
@@ -884,7 +876,6 @@ void ScummEngine::unfreezeScripts() {
 	}
 }
 
-
 void ScummEngine::runAllScripts() {
 	int i;
 
@@ -926,7 +917,7 @@ void ScummEngine::runExitScript() {
 		// be limiting ourselves to strictly reading the size from the header?
 		if (_game.id == GID_INDY3 && !(_game.features & GF_OLD_BUNDLE)) {
 			byte *roomptr = getResourceAddress(rtRoom, _roomResource);
-			const byte *excd = findResourceData(MKTAG('E','X','C','D'), roomptr) - _resourceHeaderSize;
+			const byte *excd = findResourceData(MKTAG('E', 'X', 'C', 'D'), roomptr) - _resourceHeaderSize;
 			if (!excd || (getResourceDataSize(excd) < 1)) {
 				debug(2, "Exit-%d is empty", _roomResource);
 				return;
@@ -1059,7 +1050,6 @@ void ScummEngine::doSentence(int verb, int objectA, int objectB) {
 			if (_sentenceNum && st->verb == verb && st->objectA == objectA && st->objectB == objectB)
 				return;
 		}
-
 	}
 
 	assert(_sentenceNum < NUM_SENTENCE);
@@ -1110,7 +1100,6 @@ void ScummEngine::checkAndRunSentenceScript() {
 		localParamList[0] = st.verb;
 		localParamList[1] = st.objectA;
 		localParamList[2] = st.objectB;
-
 
 		if (_game.id == GID_FT && !isValidActor(localParamList[1]) && !isValidActor(localParamList[2])) {
 			// WORKAROUND for bug #1407789. The buggy script clearly
@@ -1187,7 +1176,7 @@ bool ScummEngine_v0::checkPendingWalkAction() {
 	// after walking and turning finally execute the script
 	if (_walkToObjectState == kWalkToObjectStateTurn) {
 		runSentenceScript();
-	// change actor facing
+		// change actor facing
 	} else {
 		int x, y, distX, distY;
 		if (objIsActor(_walkToObject)) {
@@ -1248,10 +1237,7 @@ void ScummEngine_v0::checkAndRunSentenceScript() {
 	assert(st.objectA);
 
 	// If two objects are involved, at least one must be in the actors inventory
-	if (st.objectB &&
-		(OBJECT_V0_TYPE(st.objectA) != kObjectV0TypeFG || _objectOwnerTable[st.objectA] != VAR(VAR_EGO)) &&
-		(OBJECT_V0_TYPE(st.objectB) != kObjectV0TypeFG || _objectOwnerTable[st.objectB] != VAR(VAR_EGO)))
-	{
+	if (st.objectB && (OBJECT_V0_TYPE(st.objectA) != kObjectV0TypeFG || _objectOwnerTable[st.objectA] != VAR(VAR_EGO)) && (OBJECT_V0_TYPE(st.objectB) != kObjectV0TypeFG || _objectOwnerTable[st.objectB] != VAR(VAR_EGO))) {
 		if (getVerbEntrypoint(st.objectA, kVerbPickUp))
 			doSentence(kVerbPickUp, st.objectA, 0);
 		else if (getVerbEntrypoint(st.objectB, kVerbPickUp))
@@ -1330,10 +1316,10 @@ void ScummEngine_v2::runInputScript(int clickArea, int val, int mode) {
 	verbScript = 4;
 	VAR(VAR_CLICK_AREA) = clickArea;
 	switch (clickArea) {
-	case kVerbClickArea:		// Verb clicked
+	case kVerbClickArea: // Verb clicked
 		VAR(VAR_CLICK_VERB) = val;
 		break;
-	case kInventoryClickArea:		// Inventory clicked
+	case kInventoryClickArea: // Inventory clicked
 		VAR(VAR_CLICK_OBJECT) = val;
 		break;
 	}
@@ -1385,11 +1371,11 @@ void ScummEngine::runInputScript(int clickArea, int val, int mode) {
 		// The EGA DOS version of Loom also checks that the second click happens
 		// close enough to the first one, but that seems like overkill.
 		uint32 time = _system->getMillis();
-		args[2] = (time < _lastInputScriptTime + 500);	// 500 ms double click delay
+		args[2] = (time < _lastInputScriptTime + 500); // 500 ms double click delay
 		_lastInputScriptTime = time;
 	} else if (_game.id == GID_LOOM && _game.platform == Common::kPlatformMacintosh) {
 		uint32 time = _system->getMillis();
-		VAR(52) = (time < _lastInputScriptTime + 500);	// 500 ms double click delay
+		VAR(52) = (time < _lastInputScriptTime + 500); // 500 ms double click delay
 		_lastInputScriptTime = time;
 	}
 
@@ -1508,7 +1494,7 @@ void ScummEngine::endCutscene() {
 	ScriptSlot *ss = &vm.slot[_currentScript];
 	int args[NUM_SCRIPT_LOCAL];
 
-	if (ss->cutsceneOverride > 0)	// Only terminate if active
+	if (ss->cutsceneOverride > 0) // Only terminate if active
 		ss->cutsceneOverride--;
 
 	memset(args, 0, sizeof(args));
@@ -1516,7 +1502,7 @@ void ScummEngine::endCutscene() {
 
 	VAR(VAR_OVERRIDE) = 0;
 
-	if (vm.cutScenePtr[vm.cutSceneStackPointer] && (ss->cutsceneOverride > 0))	// Only terminate if active
+	if (vm.cutScenePtr[vm.cutSceneStackPointer] && (ss->cutsceneOverride > 0)) // Only terminate if active
 		ss->cutsceneOverride--;
 
 	vm.cutSceneScript[vm.cutSceneStackPointer] = 0;

@@ -23,22 +23,24 @@
 #ifndef COMMON_QUEUE_H
 #define COMMON_QUEUE_H
 
-#include "common/scummsys.h"
 #include "common/list.h"
+#include "common/scummsys.h"
 
 namespace Common {
 
 /**
  * Variable size Queue class, implemented using our List class.
  */
-template<class T>
+template <class T>
 class Queue {
-//public:
-//	typedef T value_type;
+	//public:
+	//	typedef T value_type;
 
 public:
-	Queue<T>() : _impl() {}
-	Queue<T>(const Queue<T> &queue) : _impl(queue._impl) {}
+	Queue<T>()
+	  : _impl() {}
+	Queue<T>(const Queue<T> &queue)
+	  : _impl(queue._impl) {}
 
 	bool empty() const {
 		return _impl.empty();
@@ -79,7 +81,7 @@ public:
 	}
 
 private:
-	List<T>	_impl;
+	List<T> _impl;
 };
 
 } // End of namespace Common

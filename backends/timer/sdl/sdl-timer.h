@@ -40,5 +40,4 @@ protected:
 	SDL_TimerID _timerID;
 };
 
-
 #endif

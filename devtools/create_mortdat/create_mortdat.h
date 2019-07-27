@@ -42,6 +42,7 @@ enum DataType {
 class File {
 private:
 	FILE *f;
+
 public:
 	bool open(const char *filename, AccessMode mode = kFileReadMode);
 	void close();
@@ -60,4 +61,3 @@ public:
 };
 
 File outputFile, mortCom;
-

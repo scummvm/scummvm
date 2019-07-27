@@ -20,25 +20,25 @@
  *
  */
 
-#include "common/system.h"
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/memstream.h"
+#include "common/system.h"
 
 #include "engines/util.h"
 #include "graphics/font.h"
-#include "graphics/palette.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
+#include "graphics/palette.h"
 #include "image/bmp.h"
 
-#include "director/cast.h"
-#include "director/score.h"
-#include "director/frame.h"
 #include "director/archive.h"
+#include "director/cast.h"
+#include "director/frame.h"
+#include "director/lingo/lingo.h"
+#include "director/score.h"
 #include "director/sound.h"
 #include "director/sprite.h"
-#include "director/lingo/lingo.h"
 
 namespace Director {
 
@@ -58,7 +58,6 @@ const char *scriptType2str(ScriptType scr) {
 
 	return scriptTypes[scr];
 }
-
 
 Score::Score(DirectorEngine *vm) {
 	_vm = vm;
@@ -131,7 +130,6 @@ void Score::loadArchive() {
 	assert(_movieArchive->hasResource(MKTAG('V', 'W', 'S', 'C'), 1024));
 	loadFrames(*_movieArchive->getResource(MKTAG('V', 'W', 'S', 'C'), 1024));
 
-
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'C', 'F'), -1)) {
 		loadConfig(*_movieArchive->getResource(MKTAG('V', 'W', 'C', 'F'), 1024));
 	} else {
@@ -182,18 +180,17 @@ void Score::loadArchive() {
 
 	// Try to load movie script, it sits in resource A11
 	if (_vm->getVersion() <= 3) {
-		Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S','T','X','T'));
+		Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S', 'T', 'X', 'T'));
 		if (stxt.size() > 0) {
 			debugC(2, kDebugLoading, "****** Loading %d STXT resources", stxt.size());
 
 			for (Common::Array<uint16>::iterator iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
-				loadScriptText(*_movieArchive->getResource(MKTAG('S','T','X','T'), *iterator));
+				loadScriptText(*_movieArchive->getResource(MKTAG('S', 'T', 'X', 'T'), *iterator));
 				// Load STXTS
 
 				_loadedStxts->setVal(*iterator,
-									 new Stxt(*_movieArchive->getResource(MKTAG('S','T','X','T'),
-																		  *iterator))
-									 );
+				                     new Stxt(*_movieArchive->getResource(MKTAG('S', 'T', 'X', 'T'),
+				                                                          *iterator)));
 			}
 		}
 		copyCastStxts();
@@ -203,10 +200,8 @@ void Score::loadArchive() {
 void Score::copyCastStxts() {
 	Common::HashMap<int, TextCast *>::iterator tc;
 	for (tc = _loadedText->begin(); tc != _loadedText->end(); ++tc) {
-		uint stxtid = (_vm->getVersion() < 4) ?
-			tc->_key + 1024 :
-			tc->_value->children[0].index;
-		if (_loadedStxts->getVal(stxtid)){
+		uint stxtid = (_vm->getVersion() < 4) ? tc->_key + 1024 : tc->_value->children[0].index;
+		if (_loadedStxts->getVal(stxtid)) {
 			const Stxt *stxt = _loadedStxts->getVal(stxtid);
 			tc->_value->importStxt(stxt);
 		}
@@ -249,7 +244,7 @@ void Score::loadSpriteImages(bool isSharedCast) {
 					pic = _vm->getSharedBMP()->getVal(imgId);
 					if (pic != NULL)
 						pic->seek(0); // TODO: this actually gets re-read every loop... we need to rewind it!
-				} else 	if (_movieArchive->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
+				} else if (_movieArchive->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
 					pic = _movieArchive->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);
 				}
 				break;
@@ -260,7 +255,7 @@ void Score::loadSpriteImages(bool isSharedCast) {
 
 			int w = bitmapCast->initialRect.width(), h = bitmapCast->initialRect.height();
 			debugC(4, kDebugImages, "id: %d, w: %d, h: %d, flags: %x, some: %x, unk1: %d, unk2: %d",
-				imgId, w, h, bitmapCast->flags, bitmapCast->someFlaggyThing, bitmapCast->unk1, bitmapCast->unk2);
+			       imgId, w, h, bitmapCast->flags, bitmapCast->someFlaggyThing, bitmapCast->unk1, bitmapCast->unk2);
 
 			if (pic != NULL && bitmapCast != NULL && w > 0 && h > 0) {
 				if (_vm->getVersion() < 4) {
@@ -503,8 +498,7 @@ void Score::setSpriteCasts() {
 			if (_vm->getSharedScore() != nullptr && _vm->getSharedScore()->_loadedButtons->contains(castId)) {
 				_frames[i]->_sprites[j]->_buttonCast = _vm->getSharedScore()->_loadedButtons->getVal(castId);
 				if (_frames[i]->_sprites[j]->_buttonCast->children.size() == 1) {
-					_frames[i]->_sprites[j]->_textCast =
-						_vm->getSharedScore()->_loadedText->getVal(_frames[i]->_sprites[j]->_buttonCast->children[0].index);
+					_frames[i]->_sprites[j]->_textCast = _vm->getSharedScore()->_loadedText->getVal(_frames[i]->_sprites[j]->_buttonCast->children[0].index);
 				} else if (_frames[i]->_sprites[j]->_buttonCast->children.size() > 0) {
 					warning("Cast %d has too many children!", j);
 				}
@@ -552,7 +546,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 
 	if (_vm->getVersion() <= 3) {
 		size1 = stream.readUint16();
-		sizeToRead = size1 +16; // 16 is for bounding rects
+		sizeToRead = size1 + 16; // 16 is for bounding rects
 		size2 = stream.readUint32();
 		size3 = 0;
 		castType = stream.readByte();
@@ -572,7 +566,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		size2 = stream.readUint32();
 		size1 = stream.readUint32();
 		if (castType == 1) {
-			if (size3 == 0) 
+			if (size3 == 0)
 				return;
 			for (uint32 skip = 0; skip < (size1 - 4) / 4; skip++)
 				stream.readUint32();
@@ -584,7 +578,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 	}
 
 	debugC(3, kDebugLoading, "CASt: id: %d type: %x size1: %d size2: %d (%x) size3: %d unk1: %d unk2: %d unk3: %d",
-		id, castType, size1, size2, size2, size3, unk1, unk2, unk3);
+	       id, castType, size1, size2, size2, size3, unk1, unk2, unk3);
 
 	byte *data = (byte *)calloc(sizeToRead, 1);
 	stream.read(data, sizeToRead);
@@ -945,7 +939,7 @@ void Score::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 	ci->type = castStrings[4];
 
 	debugC(5, kDebugLoading, "CastInfo: name: '%s' directory: '%s', fileName: '%s', type: '%s'",
-				ci->name.c_str(), ci->directory.c_str(), ci->fileName.c_str(), ci->type.c_str());
+	       ci->name.c_str(), ci->directory.c_str(), ci->fileName.c_str(), ci->type.c_str());
 
 	if (!ci->name.empty())
 		_castsNames[ci->name] = id;

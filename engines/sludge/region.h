@@ -22,8 +22,8 @@
 #ifndef SLUDGE_REGION_H
 #define SLUDGE_REGION_H
 
-#include "sludge/objtypes.h"
 #include "sludge/freeze.h"
+#include "sludge/objtypes.h"
 
 namespace Sludge {
 

@@ -42,6 +42,7 @@ public:
 
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const override;
+
 private:
 	uint8 _sceneId;
 	uint16 _x;

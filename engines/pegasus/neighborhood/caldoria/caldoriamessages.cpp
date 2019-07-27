@@ -23,18 +23,20 @@
  *
  */
 
-#include "pegasus/gamestate.h"
-#include "pegasus/pegasus.h"
-#include "pegasus/neighborhood/neighborhood.h"
-#include "pegasus/neighborhood/caldoria/caldoria.h"
 #include "pegasus/neighborhood/caldoria/caldoriamessages.h"
+#include "pegasus/gamestate.h"
+#include "pegasus/neighborhood/caldoria/caldoria.h"
+#include "pegasus/neighborhood/neighborhood.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
 static const NotificationFlags kMessageDoneFlag = 1;
 
-CaldoriaMessages::CaldoriaMessages(Neighborhood *owner, const NotificationID id, NotificationManager *manager) :
-		GameInteraction(kCaldoriaMessagesInteractionID, owner), Notification(id, manager), _messageMovie(kCaldoriaMessagesID) {
+CaldoriaMessages::CaldoriaMessages(Neighborhood *owner, const NotificationID id, NotificationManager *manager)
+  : GameInteraction(kCaldoriaMessagesInteractionID, owner)
+  , Notification(id, manager)
+  , _messageMovie(kCaldoriaMessagesID) {
 	_neighborhoodNotification = nullptr;
 	_messageNumber = 0;
 }

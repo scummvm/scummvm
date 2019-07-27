@@ -31,45 +31,45 @@
 
 #include "sword25/gfx/renderobject.h"
 
-#include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
 
-#include "sword25/gfx/renderobjectregistry.h"
-#include "sword25/gfx/renderobjectmanager.h"
 #include "sword25/gfx/graphicengine.h"
+#include "sword25/gfx/renderobjectmanager.h"
+#include "sword25/gfx/renderobjectregistry.h"
 
-#include "sword25/gfx/bitmap.h"
-#include "sword25/gfx/staticbitmap.h"
-#include "sword25/gfx/dynamicbitmap.h"
 #include "sword25/gfx/animation.h"
-#include "sword25/gfx/panel.h"
-#include "sword25/gfx/text.h"
 #include "sword25/gfx/animationtemplate.h"
+#include "sword25/gfx/bitmap.h"
+#include "sword25/gfx/dynamicbitmap.h"
+#include "sword25/gfx/panel.h"
+#include "sword25/gfx/staticbitmap.h"
+#include "sword25/gfx/text.h"
 
 namespace Sword25 {
 
 int RenderObject::_nextGlobalVersion = 0;
 
-RenderObject::RenderObject(RenderObjectPtr<RenderObject> parentPtr, TYPES type, uint handle) :
-	_managerPtr(0),
-	_parentPtr(parentPtr),
-	_x(0),
-	_y(0),
-	_z(0),
-	_oldX(-1),
-	_oldY(-1),
-	_oldZ(-1),
-	_width(0),
-	_height(0),
-	_visible(true),
-	_oldVisible(false),
-	_childChanged(true),
-	_type(type),
-	_initSuccess(false),
-	_refreshForced(true),
-	_handle(0),
-	_version(++_nextGlobalVersion),
-	_isSolid(false) {
+RenderObject::RenderObject(RenderObjectPtr<RenderObject> parentPtr, TYPES type, uint handle)
+  : _managerPtr(0)
+  , _parentPtr(parentPtr)
+  , _x(0)
+  , _y(0)
+  , _z(0)
+  , _oldX(-1)
+  , _oldY(-1)
+  , _oldZ(-1)
+  , _width(0)
+  , _height(0)
+  , _visible(true)
+  , _oldVisible(false)
+  , _childChanged(true)
+  , _type(type)
+  , _initSuccess(false)
+  , _refreshForced(true)
+  , _handle(0)
+  , _version(++_nextGlobalVersion)
+  , _isSolid(false) {
 
 	if (handle == 0)
 		_handle = RenderObjectRegistry::instance().registerObject(this);
@@ -125,7 +125,6 @@ void RenderObject::preRender(RenderObjectQueue *renderQueue) {
 	RENDEROBJECT_ITER it = _children.begin();
 	for (; it != _children.end(); ++it)
 		(*it)->preRender(renderQueue);
-
 }
 
 bool RenderObject::render(RectangleList *updateRects, const Common::Array<int> &updateRectsMinZ) {
@@ -167,12 +166,7 @@ void RenderObject::validateObject() {
 bool RenderObject::updateObjectState() {
 	// If the object has changed, the internal state must be recalculated and possibly
 	// update Regions be registered for the next frame.
-	if ((calcBoundingBox() != _oldBbox) ||
-	        (_visible != _oldVisible) ||
-	        (_x != _oldX) ||
-	        (_y != _oldY) ||
-	        (_z != _oldZ) ||
-	        _refreshForced) {
+	if ((calcBoundingBox() != _oldBbox) || (_visible != _oldVisible) || (_x != _oldX) || (_y != _oldY) || (_z != _oldZ) || _refreshForced) {
 		if (_parentPtr.isValid())
 			_parentPtr->signalChildChange();
 

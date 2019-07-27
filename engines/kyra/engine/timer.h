@@ -25,9 +25,9 @@
 
 #include "kyra/kyra_v1.h"
 
+#include "common/func.h"
 #include "common/list.h"
 #include "common/stream.h"
-#include "common/func.h"
 
 namespace Kyra {
 
@@ -48,7 +48,13 @@ struct TimerEntry {
 
 class TimerManager {
 public:
-	TimerManager(KyraEngine_v1 *vm, OSystem *sys) : _vm(vm), _system(sys), _timers(), _nextRun(0), _isPaused(0), _pauseStart(0) {}
+	TimerManager(KyraEngine_v1 *vm, OSystem *sys)
+	  : _vm(vm)
+	  , _system(sys)
+	  , _timers()
+	  , _nextRun(0)
+	  , _isPaused(0)
+	  , _pauseStart(0) {}
 	~TimerManager() { reset(); }
 
 	void pause(bool p);
@@ -95,8 +101,10 @@ private:
 
 class PauseTimer {
 public:
-	PauseTimer(TimerManager &timer) : _timer(timer) { _timer.pause(true); }
+	PauseTimer(TimerManager &timer)
+	  : _timer(timer) { _timer.pause(true); }
 	~PauseTimer() { _timer.pause(false); }
+
 private:
 	TimerManager &_timer;
 };

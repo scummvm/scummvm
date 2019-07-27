@@ -20,8 +20,8 @@
 #include "internals.h"
 
 #include "LA32FloatWaveGenerator.h"
-#include "mmath.h"
 #include "Tables.h"
+#include "mmath.h"
 
 namespace MT32Emu {
 
@@ -53,7 +53,7 @@ void LA32FloatWaveGenerator::initSynth(const bool useSawtoothWaveform, const Bit
 	active = true;
 }
 
-void LA32FloatWaveGenerator::initPCM(const Bit16s * const usePCMWaveAddress, const Bit32u usePCMWaveLength, const bool usePCMWaveLooped, const bool usePCMWaveInterpolated) {
+void LA32FloatWaveGenerator::initPCM(const Bit16s *const usePCMWaveAddress, const Bit32u usePCMWaveLength, const bool usePCMWaveLooped, const bool usePCMWaveInterpolated) {
 	pcmWaveAddress = usePCMWaveAddress;
 	pcmWaveLength = usePCMWaveLength;
 	pcmWaveLooped = usePCMWaveLooped;
@@ -177,17 +177,17 @@ float LA32FloatWaveGenerator::generateNextSample(const Bit32u ampVal, const Bit1
 			sample = -cos(FLOAT_PI * relWavePos / cosineLen);
 		} else
 
-		// high linear segment
-		if (relWavePos < (cosineLen + hLen)) {
+		  // high linear segment
+		  if (relWavePos < (cosineLen + hLen)) {
 			sample = 1.f;
 		} else
 
-		// 2nd cosine segment
-		if (relWavePos < (2 * cosineLen + hLen)) {
+		  // 2nd cosine segment
+		  if (relWavePos < (2 * cosineLen + hLen)) {
 			sample = cos(FLOAT_PI * (relWavePos - (cosineLen + hLen)) / cosineLen);
 		} else {
 
-		// low linear segment
+			// low linear segment
 			sample = -1.f;
 		}
 
@@ -231,8 +231,8 @@ float LA32FloatWaveGenerator::generateNextSample(const Bit32u ampVal, const Bit1
 				relWavePos -= waveLen;
 			} else
 
-			// positive segment
-			if (!(wavePos < (hLen + 0.5f * cosineLen))) {
+			  // positive segment
+			  if (!(wavePos < (hLen + 0.5f * cosineLen))) {
 				relWavePos -= cosineLen + hLen;
 			}
 

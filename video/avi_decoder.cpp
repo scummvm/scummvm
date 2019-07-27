@@ -43,46 +43,45 @@ namespace Video {
 
 // IDs used throughout the AVI files
 // that will be handled by this player
-#define ID_RIFF MKTAG('R','I','F','F')
-#define ID_AVI  MKTAG('A','V','I',' ')
-#define ID_LIST MKTAG('L','I','S','T')
-#define ID_HDRL MKTAG('h','d','r','l')
-#define ID_AVIH MKTAG('a','v','i','h')
-#define ID_STRL MKTAG('s','t','r','l')
-#define ID_STRH MKTAG('s','t','r','h')
-#define ID_VIDS MKTAG('v','i','d','s')
-#define ID_AUDS MKTAG('a','u','d','s')
-#define ID_MIDS MKTAG('m','i','d','s')
-#define ID_TXTS MKTAG('t','x','t','s')
-#define ID_JUNK MKTAG('J','U','N','K')
-#define ID_JUNQ MKTAG('J','U','N','Q')
-#define ID_DMLH MKTAG('d','m','l','h')
-#define ID_STRF MKTAG('s','t','r','f')
-#define ID_MOVI MKTAG('m','o','v','i')
-#define ID_REC  MKTAG('r','e','c',' ')
-#define ID_VEDT MKTAG('v','e','d','t')
-#define ID_IDX1 MKTAG('i','d','x','1')
-#define ID_STRD MKTAG('s','t','r','d')
-#define ID_INFO MKTAG('I','N','F','O')
-#define ID_ISFT MKTAG('I','S','F','T')
-#define ID_DISP MKTAG('D','I','S','P')
-#define ID_PRMI MKTAG('P','R','M','I')
-#define ID_STRN MKTAG('s','t','r','n')
+#define ID_RIFF MKTAG('R', 'I', 'F', 'F')
+#define ID_AVI MKTAG('A', 'V', 'I', ' ')
+#define ID_LIST MKTAG('L', 'I', 'S', 'T')
+#define ID_HDRL MKTAG('h', 'd', 'r', 'l')
+#define ID_AVIH MKTAG('a', 'v', 'i', 'h')
+#define ID_STRL MKTAG('s', 't', 'r', 'l')
+#define ID_STRH MKTAG('s', 't', 'r', 'h')
+#define ID_VIDS MKTAG('v', 'i', 'd', 's')
+#define ID_AUDS MKTAG('a', 'u', 'd', 's')
+#define ID_MIDS MKTAG('m', 'i', 'd', 's')
+#define ID_TXTS MKTAG('t', 'x', 't', 's')
+#define ID_JUNK MKTAG('J', 'U', 'N', 'K')
+#define ID_JUNQ MKTAG('J', 'U', 'N', 'Q')
+#define ID_DMLH MKTAG('d', 'm', 'l', 'h')
+#define ID_STRF MKTAG('s', 't', 'r', 'f')
+#define ID_MOVI MKTAG('m', 'o', 'v', 'i')
+#define ID_REC MKTAG('r', 'e', 'c', ' ')
+#define ID_VEDT MKTAG('v', 'e', 'd', 't')
+#define ID_IDX1 MKTAG('i', 'd', 'x', '1')
+#define ID_STRD MKTAG('s', 't', 'r', 'd')
+#define ID_INFO MKTAG('I', 'N', 'F', 'O')
+#define ID_ISFT MKTAG('I', 'S', 'F', 'T')
+#define ID_DISP MKTAG('D', 'I', 'S', 'P')
+#define ID_PRMI MKTAG('P', 'R', 'M', 'I')
+#define ID_STRN MKTAG('s', 't', 'r', 'n')
 
 // Stream Types
 enum {
 	kStreamTypePaletteChange = MKTAG16('p', 'c'),
-	kStreamTypeAudio         = MKTAG16('w', 'b')
+	kStreamTypeAudio = MKTAG16('w', 'b')
 };
 
-
-AVIDecoder::AVIDecoder() :
-		_frameRateOverride(0) {
+AVIDecoder::AVIDecoder()
+  : _frameRateOverride(0) {
 	initCommon();
 }
 
-AVIDecoder::AVIDecoder(const Common::Rational &frameRateOverride) :
-		_frameRateOverride(frameRateOverride) {
+AVIDecoder::AVIDecoder(const Common::Rational &frameRateOverride)
+  : _frameRateOverride(frameRateOverride) {
 	initCommon();
 }
 
@@ -253,7 +252,7 @@ void AVIDecoder::handleList(uint32 listSize) {
 		_fileStream->skip(listSize);
 		return;
 	case ID_STRL: // Stream list
-	default:      // (Just hope we can parse it!)
+	default: // (Just hope we can parse it!)
 		break;
 	}
 
@@ -583,7 +582,7 @@ void AVIDecoder::handleNextPacket(TrackStatus &status) {
 	}
 }
 
-bool AVIDecoder::shouldQueueAudio(TrackStatus& status) {
+bool AVIDecoder::shouldQueueAudio(TrackStatus &status) {
 	// Sanity check:
 	if (status.track->getTrackType() != Track::kTrackTypeAudio)
 		return false;
@@ -900,7 +899,10 @@ VideoDecoder::AudioTrack *AVIDecoder::getAudioTrack(int index) {
 }
 
 AVIDecoder::AVIVideoTrack::AVIVideoTrack(int frameCount, const AVIStreamHeader &streamHeader, const BitmapInfoHeader &bitmapInfoHeader, byte *initialPalette)
-		: _frameCount(frameCount), _vidsHeader(streamHeader), _bmInfo(bitmapInfoHeader), _initialPalette(initialPalette) {
+  : _frameCount(frameCount)
+  , _vidsHeader(streamHeader)
+  , _bmInfo(bitmapInfoHeader)
+  , _initialPalette(initialPalette) {
 	_videoCodec = createCodec();
 	_lastFrame = 0;
 	_curFrame = -1;
@@ -1038,13 +1040,13 @@ void AVIDecoder::AVIVideoTrack::setDither(const byte *palette) {
 	_videoCodec->setDither(Image::Codec::kDitherTypeVFW, palette);
 }
 
-AVIDecoder::AVIAudioTrack::AVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType) :
-		AudioTrack(soundType),
-		_audsHeader(streamHeader),
-		_wvInfo(waveFormat),
-		_audioStream(0),
-		_packetStream(0),
-		_curChunk(0) {
+AVIDecoder::AVIAudioTrack::AVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType)
+  : AudioTrack(soundType)
+  , _audsHeader(streamHeader)
+  , _wvInfo(waveFormat)
+  , _audioStream(0)
+  , _packetStream(0)
+  , _curChunk(0) {
 }
 
 AVIDecoder::AVIAudioTrack::~AVIAudioTrack() {
@@ -1136,13 +1138,14 @@ void AVIDecoder::AVIAudioTrack::createAudioStream() {
 		_audioStream = Audio::makeNullAudioStream();
 }
 
-AVIDecoder::TrackStatus::TrackStatus() : track(0), chunkSearchOffset(0) {
+AVIDecoder::TrackStatus::TrackStatus()
+  : track(0)
+  , chunkSearchOffset(0) {
 }
 
 AVIDecoder::OldIndex *AVIDecoder::IndexEntries::find(uint index, uint frameNumber) {
 	for (uint idx = 0, frameCtr = 0; idx < size(); ++idx) {
-		if ((*this)[idx].id != ID_REC &&
-				AVIDecoder::getStreamIndex((*this)[idx].id) == index) {
+		if ((*this)[idx].id != ID_REC && AVIDecoder::getStreamIndex((*this)[idx].id) == index) {
 			if (frameCtr++ == frameNumber)
 				return &(*this)[idx];
 		}

@@ -25,13 +25,13 @@
 
 #include "common/stream.h"
 
+#include "pegasus/ai/ai_condition.h"
 #include "pegasus/energymonitor.h"
 #include "pegasus/gamestate.h"
-#include "pegasus/pegasus.h"
-#include "pegasus/ai/ai_condition.h"
-#include "pegasus/items/itemlist.h"
 #include "pegasus/items/biochips/biochipitem.h"
 #include "pegasus/items/inventory/inventoryitem.h"
+#include "pegasus/items/itemlist.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -79,21 +79,24 @@ void AITwoChildrenCondition::readAICondition(Common::ReadStream *stream) {
 		_rightChild->readAICondition(stream);
 }
 
-AINotCondition::AINotCondition(AICondition* child) : AIOneChildCondition(child) {
+AINotCondition::AINotCondition(AICondition *child)
+  : AIOneChildCondition(child) {
 }
 
 bool AINotCondition::fireCondition() {
 	return _child && !_child->fireCondition();
 }
 
-AIAndCondition::AIAndCondition(AICondition *leftChild, AICondition *rightChild) : AITwoChildrenCondition(leftChild, rightChild) {
+AIAndCondition::AIAndCondition(AICondition *leftChild, AICondition *rightChild)
+  : AITwoChildrenCondition(leftChild, rightChild) {
 }
 
 bool AIAndCondition::fireCondition() {
 	return _leftChild && _leftChild->fireCondition() && _rightChild && _rightChild->fireCondition();
 }
 
-AIOrCondition::AIOrCondition(AICondition *leftChild, AICondition *rightChild) : AITwoChildrenCondition(leftChild, rightChild) {
+AIOrCondition::AIOrCondition(AICondition *leftChild, AICondition *rightChild)
+  : AITwoChildrenCondition(leftChild, rightChild) {
 }
 
 bool AIOrCondition::fireCondition() {
@@ -239,7 +242,7 @@ bool AICurrentItemCondition::fireCondition() {
 	return item != 0 && item->getObjectID() == _item;
 }
 
-AICurrentBiochipCondition::AICurrentBiochipCondition(const ItemID biochip)  {
+AICurrentBiochipCondition::AICurrentBiochipCondition(const ItemID biochip) {
 	_biochip = biochip;
 }
 

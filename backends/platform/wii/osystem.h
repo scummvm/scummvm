@@ -23,20 +23,20 @@
 #ifndef _WII_OSYSTEM_H_
 #define _WII_OSYSTEM_H_
 
-#include <gctypes.h>
 #include <gccore.h>
+#include <gctypes.h>
 
 #include <gxflux/gfx.h>
 
+#include "audio/mixer_intern.h"
+#include "backends/base-backend.h"
 #include "base/main.h"
+#include "common/events.h"
 #include "common/fs.h"
 #include "common/rect.h"
-#include "common/events.h"
-#include "backends/base-backend.h"
 #include "graphics/colormasks.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
-#include "audio/mixer_intern.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -158,18 +158,20 @@ public:
 #endif
 	virtual int getGraphicsMode() const;
 	virtual void initSize(uint width, uint height,
-							const Graphics::PixelFormat *format);
+	                      const Graphics::PixelFormat *format);
 	virtual int16 getWidth();
 	virtual int16 getHeight();
 
 	virtual PaletteManager *getPaletteManager() { return this; }
+
 protected:
 	virtual void setPalette(const byte *colors, uint start, uint num);
 	virtual void grabPalette(byte *colors, uint start, uint num) const;
+
 public:
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y,
-									int w, int h);
+	                              int w, int h);
 	virtual void updateScreen();
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
@@ -180,7 +182,7 @@ public:
 	virtual void clearOverlay();
 	virtual void grabOverlay(void *buf, int pitch);
 	virtual void copyRectToOverlay(const void *buf, int pitch,
-									int x, int y, int w, int h);
+	                               int x, int y, int w, int h);
 	virtual int16 getOverlayWidth();
 	virtual int16 getOverlayHeight();
 	virtual Graphics::PixelFormat getOverlayFormat() const;
@@ -189,9 +191,9 @@ public:
 
 	virtual void warpMouse(int x, int y);
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
-								int hotspotY, uint32 keycolor,
-								bool dontScale,
-								const Graphics::PixelFormat *format);
+	                            int hotspotY, uint32 keycolor,
+	                            bool dontScale,
+	                            const Graphics::PixelFormat *format);
 
 	virtual bool pollEvent(Common::Event &event);
 	virtual uint32 getMillis(bool skipRecord = false);

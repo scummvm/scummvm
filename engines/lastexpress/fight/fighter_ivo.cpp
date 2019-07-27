@@ -36,7 +36,8 @@ namespace LastExpress {
 //////////////////////////////////////////////////////////////////////////
 // Player
 //////////////////////////////////////////////////////////////////////////
-FighterPlayerIvo::FighterPlayerIvo(LastExpressEngine *engine) : Fighter(engine) {
+FighterPlayerIvo::FighterPlayerIvo(LastExpressEngine *engine)
+  : Fighter(engine) {
 	_sequences.push_back(loadSequence("2003cr.seq"));
 	_sequences.push_back(loadSequence("2003car.seq"));
 	_sequences.push_back(loadSequence("2003cal.seq"));
@@ -134,7 +135,8 @@ bool FighterPlayerIvo::canInteract(FightAction action) {
 //////////////////////////////////////////////////////////////////////////
 // Opponent
 //////////////////////////////////////////////////////////////////////////
-FighterOpponentIvo::FighterOpponentIvo(LastExpressEngine *engine) : Opponent(engine) {
+FighterOpponentIvo::FighterOpponentIvo(LastExpressEngine *engine)
+  : Opponent(engine) {
 	_sequences.push_back(loadSequence("2003or.seq"));
 	_sequences.push_back(loadSequence("2003oal.seq"));
 	_sequences.push_back(loadSequence("2003oar.seq"));
@@ -178,7 +180,7 @@ void FighterOpponentIvo::handleAction(FightAction action) {
 			break;
 
 		if (rnd(100) <= (unsigned int)(_countdown > 2 ? 60 : 75)) {
-			setSequenceAndDraw(3 , kFightSequenceType1);
+			setSequenceAndDraw(3, kFightSequenceType1);
 			if (_opponent->getSequenceIndex() == 4)
 				setSequenceAndDraw(2, kFightSequenceType2);
 		}

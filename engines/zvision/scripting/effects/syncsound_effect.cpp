@@ -24,19 +24,19 @@
 
 #include "zvision/scripting/effects/syncsound_effect.h"
 
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
 #include "zvision/sound/zork_raw.h"
+#include "zvision/zvision.h"
 
-#include "common/stream.h"
-#include "common/file.h"
 #include "audio/decoders/wave.h"
+#include "common/file.h"
+#include "common/stream.h"
 
 namespace ZVision {
 
 SyncSoundNode::SyncSoundNode(ZVision *engine, uint32 key, Common::String &filename, int32 syncto)
-	: ScriptingEffect(engine, key, SCRIPTING_EFFECT_AUDIO) {
+  : ScriptingEffect(engine, key, SCRIPTING_EFFECT_AUDIO) {
 	_syncto = syncto;
 	_sub = NULL;
 
@@ -69,7 +69,7 @@ SyncSoundNode::~SyncSoundNode() {
 }
 
 bool SyncSoundNode::process(uint32 deltaTimeInMillis) {
-	if (! _engine->_mixer->isSoundHandleActive(_handle))
+	if (!_engine->_mixer->isSoundHandleActive(_handle))
 		return stop();
 	else {
 

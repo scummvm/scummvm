@@ -20,8 +20,8 @@
  *
  */
 
-#include "neverhood/navigationscene.h"
 #include "neverhood/modules/module2300.h"
+#include "neverhood/navigationscene.h"
 
 namespace Neverhood {
 
@@ -31,7 +31,8 @@ static const uint32 kModule2300SoundList[] = {
 };
 
 Module2300::Module2300(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule), _waterfallSoundVolume(0) {
+  : Module(vm, parentModule)
+  , _waterfallSoundVolume(0) {
 
 	_vm->_soundMan->addSoundList(0x1A214010, kModule2300SoundList);
 	_vm->_soundMan->setSoundListParams(kModule2300SoundList, true, 50, 600, 10, 150);
@@ -60,7 +61,6 @@ Module2300::Module2300(NeverhoodEngine *vm, Module *parentModule, int which)
 		createScene(1, 3);
 	else
 		createScene(0, 1);
-
 }
 
 Module2300::~Module2300() {
@@ -161,13 +161,11 @@ void Module2300::updateScene() {
 	} else {
 		switch (_sceneNum) {
 		case 1:
-			if (_isWaterfallRunning && navigationScene()->isWalkingForward() && navigationScene()->getNavigationIndex() == 4 &&
-				navigationScene()->getFrameNumber() % 2) {
+			if (_isWaterfallRunning && navigationScene()->isWalkingForward() && navigationScene()->getNavigationIndex() == 4 && navigationScene()->getFrameNumber() % 2) {
 				_waterfallSoundVolume++;
 				_vm->_soundMan->setSoundVolume(0x90F0D1C3, _waterfallSoundVolume);
 			}
-			if (navigationScene()->isWalkingForward() && navigationScene()->getNavigationIndex() == 0 &&
-				navigationScene()->getFrameNumber() == 50) {
+			if (navigationScene()->isWalkingForward() && navigationScene()->getNavigationIndex() == 0 && navigationScene()->getFrameNumber() == 50) {
 				_vm->_soundMan->playTwoSounds(0x1A214010, 0x48498E46, 0x50399F64, 0);
 				_vm->_soundMan->setSoundVolume(0x48498E46, 70);
 				_vm->_soundMan->setSoundVolume(0x50399F64, 70);

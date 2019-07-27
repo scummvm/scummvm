@@ -30,7 +30,7 @@ namespace Gnap {
 
 class GnapEngine;
 
-class SceneIntro: public Scene {
+class SceneIntro : public Scene {
 public:
 	SceneIntro(GnapEngine *vm);
 	virtual ~SceneIntro() {}

@@ -20,47 +20,48 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "access/access.h"
-#include "access/room.h"
-#include "access/martian/martian_game.h"
 #include "access/martian/martian_player.h"
+#include "access/access.h"
+#include "access/martian/martian_game.h"
 #include "access/martian/martian_resources.h"
+#include "access/room.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
 namespace Martian {
 
-MartianPlayer::MartianPlayer(AccessEngine *vm) : Player(vm) {
-	_game = (MartianEngine *)vm;
-}
-
-void MartianPlayer::load() {
-	Player::load();
-
-	// Overwrite game-specific values
-	_playerOffset.x = _vm->_screen->_scaleTable1[20];
-	_playerOffset.y = _vm->_screen->_scaleTable1[52];
-	_leftDelta = -9;
-	_rightDelta = 33;
-	_upDelta = 5;
-	_downDelta = -5;
-	_scrollConst = 5;
-
-	for (int i = 0; i < _vm->_playerDataCount; ++i) {
-		_walkOffRight[i] = SIDEOFFR[i];
-		_walkOffLeft[i] = SIDEOFFL[i];
-		_walkOffUp[i] = SIDEOFFU[i];
-		_walkOffDown[i] = SIDEOFFD[i];
+	MartianPlayer::MartianPlayer(AccessEngine *vm)
+	  : Player(vm) {
+		_game = (MartianEngine *)vm;
 	}
 
-	_sideWalkMin = 0;
-	_sideWalkMax = 7;
-	_upWalkMin = 8;
-	_upWalkMax = 14;
-	_downWalkMin = 15;
-	_downWalkMax = 23;
-}
+	void MartianPlayer::load() {
+		Player::load();
+
+		// Overwrite game-specific values
+		_playerOffset.x = _vm->_screen->_scaleTable1[20];
+		_playerOffset.y = _vm->_screen->_scaleTable1[52];
+		_leftDelta = -9;
+		_rightDelta = 33;
+		_upDelta = 5;
+		_downDelta = -5;
+		_scrollConst = 5;
+
+		for (int i = 0; i < _vm->_playerDataCount; ++i) {
+			_walkOffRight[i] = SIDEOFFR[i];
+			_walkOffLeft[i] = SIDEOFFL[i];
+			_walkOffUp[i] = SIDEOFFU[i];
+			_walkOffDown[i] = SIDEOFFD[i];
+		}
+
+		_sideWalkMin = 0;
+		_sideWalkMax = 7;
+		_upWalkMin = 8;
+		_upWalkMax = 14;
+		_downWalkMin = 15;
+		_downWalkMax = 23;
+	}
 
 } // End of namespace Martian
 

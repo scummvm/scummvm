@@ -27,7 +27,8 @@
 
 namespace Mohawk {
 
-CSTimeCase1::CSTimeCase1(MohawkEngine_CSTime *vm) : CSTimeCase(vm, 1) {
+CSTimeCase1::CSTimeCase1(MohawkEngine_CSTime *vm)
+  : CSTimeCase(vm, 1) {
 }
 
 CSTimeCase1::~CSTimeCase1() {
@@ -217,7 +218,7 @@ void CSTimeCase1::handleConditionalEvent(const CSTimeEvent &event) {
 		// Poking at the jars. The response depends on whether the hieroglyphs on the tomb wall
 		// have been seen yet or not.
 		_vm->addEvent(CSTimeEvent(kCSTimeEventCharStartFlapping, getCurrScene()->getHelperId(),
-			_vm->_caseVariable[2] ? 14304 : 14303));
+		                          _vm->_caseVariable[2] ? 14304 : 14303));
 		break;
 
 	case 2:
@@ -363,7 +364,7 @@ void CSTimeCase1::handleConditionalEvent(const CSTimeEvent &event) {
 				// Does the Good Guide complain (if we gave it to her, or put it in the inventory)?
 				newEvent.param1 = (event.param1 == 1 || event.param1 == 6) ? getCurrScene()->getHelperId() : 2;
 				// Which string?
-				static const uint16 strings[7] = { 30201, 30103, 30202, 30203, 30203, 0, 10352};
+				static const uint16 strings[7] = { 30201, 30103, 30202, 30203, 30203, 0, 10352 };
 				newEvent.param2 = strings[event.param1];
 				_vm->insertEventAtFront(newEvent);
 			}

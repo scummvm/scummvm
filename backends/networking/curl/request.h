@@ -45,11 +45,14 @@ class Request;
  * and corresponding callback pointer is DataCallback.
  */
 
-template<typename T> struct Response {
+template <typename T>
+struct Response {
 	Request *request;
 	T value;
 
-	Response(Request *rq, T v) : request(rq), value(v) {}
+	Response(Request *rq, T v)
+	  : request(rq)
+	  , value(v) {}
 };
 
 /**

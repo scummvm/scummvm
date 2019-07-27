@@ -58,7 +58,7 @@ void Sword25FileProxy::setupConfigFile() {
 	bool subtitles = !ConfMan.hasKey("subtitles") ? true : ConfMan.getBool("subtitles");
 
 	_readData = Common::String::format(
-"GAME_LANGUAGE = \"%s\"\r\n\
+	  "GAME_LANGUAGE = \"%s\"\r\n\
 GAME_SUBTITLES = %s\r\n\
 MAX_MEMORY_USAGE = 256000000\r\n\
 GFX_VSYNC_ACTIVE = true\r\n\
@@ -67,10 +67,10 @@ SFX_CHANNEL_COUNT = 32\r\n\
 SFX_SOUND_VOLUME = %s\r\n\
 SFX_MUSIC_VOLUME = %s\r\n\
 SFX_SPEECH_VOLUME = %s\r\n",
-		getLanguage().c_str(), subtitles ? "true" : "false",
-		formatDouble(sfxVolume).c_str(),
-		formatDouble(musicVolume).c_str(),
-		formatDouble(speechVolume).c_str());
+	  getLanguage().c_str(), subtitles ? "true" : "false",
+	  formatDouble(sfxVolume).c_str(),
+	  formatDouble(musicVolume).c_str(),
+	  formatDouble(speechVolume).c_str());
 
 	_readPos = 0;
 }
@@ -97,7 +97,8 @@ size_t Sword25FileProxy::write(const char *ptr, size_t count) {
 		} else {
 			// Legitimate data
 			const char *p = strchr(ptr, '\n');
-			if (!p) p = ptr + strlen(ptr);
+			if (!p)
+				p = ptr + strlen(ptr);
 			while ((*p == '\r') || (*p == '\n'))
 				++p;
 

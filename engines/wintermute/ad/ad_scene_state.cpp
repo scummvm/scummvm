@@ -27,20 +27,20 @@
  */
 
 #include "engines/wintermute/ad/ad_scene_state.h"
+#include "common/str.h"
 #include "engines/wintermute/ad/ad_node_state.h"
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/platform_osystem.h"
-#include "common/str.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdSceneState, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdSceneState::AdSceneState(BaseGame *inGame) : BaseClass(inGame) {
+AdSceneState::AdSceneState(BaseGame *inGame)
+  : BaseClass(inGame) {
 	_filename = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 AdSceneState::~AdSceneState() {
@@ -53,7 +53,6 @@ AdSceneState::~AdSceneState() {
 	_nodeStates.clear();
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneState::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferCharPtr(TMEMBER(_filename));
@@ -62,11 +61,10 @@ bool AdSceneState::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void AdSceneState::setFilename(const char *filename) {
 	delete[] _filename;
-	_filename = new char [strlen(filename) + 1];
+	_filename = new char[strlen(filename) + 1];
 	if (_filename) {
 		strcpy(_filename, filename);
 	}

@@ -20,10 +20,10 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/sequenceopcodes.h"
 #include "illusions/actor.h"
 #include "illusions/dictionary.h"
+#include "illusions/illusions.h"
 #include "illusions/resources/actorresource.h"
 #include "illusions/screen.h"
 #include "illusions/scriptopcodes.h"
@@ -34,7 +34,7 @@ namespace Illusions {
 // SequenceOpcodes
 
 SequenceOpcodes::SequenceOpcodes(IllusionsEngine *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 	initOpcodes();
 }
 
@@ -49,8 +49,8 @@ void SequenceOpcodes::execOpcode(Control *control, OpCall &opCall) {
 	(*_opcodes[opCall._op])(control, opCall);
 }
 
-typedef Common::Functor2Mem<Control*, OpCall&, void, SequenceOpcodes> SequenceOpcodeI;
-#define OPCODE(op, func) \
+typedef Common::Functor2Mem<Control *, OpCall &, void, SequenceOpcodes> SequenceOpcodeI;
+#define OPCODE(op, func)                                            \
 	_opcodes[op] = new SequenceOpcodeI(this, &SequenceOpcodes::func); \
 	_opcodeNames[op] = #func;
 

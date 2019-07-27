@@ -27,17 +27,16 @@
  */
 
 #include "engines/wintermute/base/scriptables/script_ext_math.h"
+#include "common/math.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/persistent.h"
-#include "common/math.h"
 
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-
 
 IMPLEMENT_PERSISTENT(SXMath, true)
 
@@ -46,16 +45,13 @@ BaseScriptable *makeSXMath(BaseGame *inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-SXMath::SXMath(BaseGame *inGame) : BaseScriptable(inGame) {
-
+SXMath::SXMath(BaseGame *inGame)
+  : BaseScriptable(inGame) {
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 SXMath::~SXMath() {
-
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
@@ -247,7 +243,6 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *SXMath::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
@@ -270,7 +265,6 @@ ScValue *SXMath::scGetProperty(const Common::String &name) {
 		return _scValue;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool SXMath::persist(BasePersistenceManager *persistMgr) {

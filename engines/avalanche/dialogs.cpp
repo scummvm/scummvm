@@ -25,13 +25,13 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
- /* SCROLLS		The scroll driver. */
+/* SCROLLS		The scroll driver. */
 
-#include "avalanche/avalanche.h"
 #include "avalanche/dialogs.h"
+#include "avalanche/avalanche.h"
 
-#include "common/system.h"
 #include "common/random.h"
+#include "common/system.h"
 
 namespace Avalanche {
 
@@ -45,22 +45,22 @@ const Dialogs::TuneType Dialogs::kTune = {
 // "A" is Dogfood. The rooms aren't stored because I'm leaving that to context.
 const QuasipedType Dialogs::kQuasipeds[16] = {
 	//_whichPed, _foregroundColor,   _room,      _backgroundColor,     _who
-	{1, kColorLightgray,    kRoomArgentPub,    kColorBrown,    kPeopleDogfood},   // A: Dogfood (screen 19).
-	{2, kColorGreen,        kRoomArgentPub,    kColorWhite,    kPeopleIbythneth}, // B: Ibythneth (screen 19).
-	{2, kColorWhite,        kRoomYours,        kColorMagenta,  kPeopleArkata},    // C: Arkata (screen 1).
-	{2, kColorBlack,        kRoomLustiesRoom,  kColorRed,      kPeopleInvisible}, // D: Hawk (screen 23).
-	{2, kColorLightgreen,   kRoomOutsideDucks, kColorBrown,    kPeopleTrader},    // E: Trader (screen 50).
-	{5, kColorYellow,       kRoomRobins,       kColorRed,      kPeopleAvalot},    // F: Avvy, tied up (scr.42)
-	{1, kColorBlue,         kRoomAylesOffice,  kColorWhite,    kPeopleAyles},     // G: Ayles (screen 16).
-	{1, kColorBrown,        kRoomMusicRoom,    kColorWhite,    kPeopleJacques},   // H: Jacques (screen 7).
-	{1, kColorLightgreen,   kRoomNottsPub,     kColorGreen,    kPeopleSpurge},    // I: Spurge (screen 47).
-	{2, kColorYellow,       kRoomNottsPub,     kColorRed,      kPeopleAvalot},    // J: Avalot (screen 47).
-	{1, kColorLightgray,    kRoomLustiesRoom,  kColorBlack,    kPeopleDuLustie},  // K: du Lustie (screen 23).
-	{1, kColorYellow,       kRoomOubliette,    kColorRed,      kPeopleAvalot},    // L: Avalot (screen 27).
-	{2, kColorWhite,        kRoomOubliette,    kColorRed,      kPeopleInvisible}, // M: Avaroid (screen 27).
-	{3, kColorLightgray,    kRoomArgentPub,    kColorDarkgray, kPeopleMalagauche},// N: Malagauche (screen 19).
-	{4, kColorLightmagenta, kRoomNottsPub,     kColorRed,      kPeoplePort},      // O: Port (screen 47).
-	{1, kColorLightgreen,   kRoomDucks,        kColorDarkgray, kPeopleDrDuck}     // P: Duck (screen 51).
+	{ 1, kColorLightgray, kRoomArgentPub, kColorBrown, kPeopleDogfood }, // A: Dogfood (screen 19).
+	{ 2, kColorGreen, kRoomArgentPub, kColorWhite, kPeopleIbythneth }, // B: Ibythneth (screen 19).
+	{ 2, kColorWhite, kRoomYours, kColorMagenta, kPeopleArkata }, // C: Arkata (screen 1).
+	{ 2, kColorBlack, kRoomLustiesRoom, kColorRed, kPeopleInvisible }, // D: Hawk (screen 23).
+	{ 2, kColorLightgreen, kRoomOutsideDucks, kColorBrown, kPeopleTrader }, // E: Trader (screen 50).
+	{ 5, kColorYellow, kRoomRobins, kColorRed, kPeopleAvalot }, // F: Avvy, tied up (scr.42)
+	{ 1, kColorBlue, kRoomAylesOffice, kColorWhite, kPeopleAyles }, // G: Ayles (screen 16).
+	{ 1, kColorBrown, kRoomMusicRoom, kColorWhite, kPeopleJacques }, // H: Jacques (screen 7).
+	{ 1, kColorLightgreen, kRoomNottsPub, kColorGreen, kPeopleSpurge }, // I: Spurge (screen 47).
+	{ 2, kColorYellow, kRoomNottsPub, kColorRed, kPeopleAvalot }, // J: Avalot (screen 47).
+	{ 1, kColorLightgray, kRoomLustiesRoom, kColorBlack, kPeopleDuLustie }, // K: du Lustie (screen 23).
+	{ 1, kColorYellow, kRoomOubliette, kColorRed, kPeopleAvalot }, // L: Avalot (screen 27).
+	{ 2, kColorWhite, kRoomOubliette, kColorRed, kPeopleInvisible }, // M: Avaroid (screen 27).
+	{ 3, kColorLightgray, kRoomArgentPub, kColorDarkgray, kPeopleMalagauche }, // N: Malagauche (screen 19).
+	{ 4, kColorLightmagenta, kRoomNottsPub, kColorRed, kPeoplePort }, // O: Port (screen 47).
+	{ 1, kColorLightgreen, kRoomDucks, kColorDarkgray, kPeopleDrDuck } // P: Duck (screen 51).
 };
 
 Dialogs::Dialogs(AvalancheEngine *vm) {
@@ -140,7 +140,7 @@ void Dialogs::say(int16 x, int16 y, Common::String z) {
 			i++;
 			Common::String chr(z[xx]);
 			_vm->_graphics->drawScrollText(chr, itw, 12, (x - 1) * 8 + offset * 4 + i * 8, y, kColorBlack);
-			}
+		}
 		}
 	}
 }
@@ -169,10 +169,7 @@ void Dialogs::scrollModeNormal() {
 	while (!_vm->shouldQuit() && !escape) {
 		_vm->_graphics->refreshScreen();
 		while (_vm->getEvent(event)) {
-			if ((event.type == Common::EVENT_LBUTTONUP) ||
-				((event.type == Common::EVENT_KEYDOWN) && ((event.kbd.keycode == Common::KEYCODE_ESCAPE) ||
-				(event.kbd.keycode == Common::KEYCODE_RETURN) || (event.kbd.keycode == Common::KEYCODE_HASH) ||
-				(event.kbd.keycode == Common::KEYCODE_PLUS)))) {
+			if ((event.type == Common::EVENT_LBUTTONUP) || ((event.type == Common::EVENT_KEYDOWN) && ((event.kbd.keycode == Common::KEYCODE_ESCAPE) || (event.kbd.keycode == Common::KEYCODE_RETURN) || (event.kbd.keycode == Common::KEYCODE_HASH) || (event.kbd.keycode == Common::KEYCODE_PLUS)))) {
 				escape = true;
 				break;
 			} else if (event.type == Common::EVENT_KEYDOWN)
@@ -251,11 +248,11 @@ void Dialogs::scrollModeDialogue() {
 
 		if (_vm->shouldQuit() || (event.type == Common::EVENT_LBUTTONUP) || (event.type == Common::EVENT_KEYDOWN)) {
 			if (((cursorPos.x >= _shadowBoxX - 65) && (cursorPos.y >= _shadowBoxY - 24) && (cursorPos.x <= _shadowBoxX - 5) && (cursorPos.y <= _shadowBoxY - 10))
-				|| (inChar == 'Y') || (inChar == 'J') || (inChar == 'O')) { // Yes, Ja, Oui
+			    || (inChar == 'Y') || (inChar == 'J') || (inChar == 'O')) { // Yes, Ja, Oui
 				_scReturn = true;
 				break;
 			} else if (((cursorPos.x >= _shadowBoxX + 5) && (cursorPos.y >= _shadowBoxY - 24) && (cursorPos.x <= _shadowBoxX + 65) && (cursorPos.y <= _shadowBoxY - 10))
-						|| (inChar == 'N')){ // No, Non, Nein
+			           || (inChar == 'N')) { // No, Non, Nein
 				_scReturn = false;
 				break;
 			}
@@ -310,82 +307,81 @@ void Dialogs::scrollModeMusic() {
 		_vm->getEvent(event);
 
 		// When we stop playing?
-		if ((event.type == Common::EVENT_LBUTTONDOWN) ||
-			((event.type == Common::EVENT_KEYDOWN) && ((event.kbd.keycode == Common::KEYCODE_RETURN) || (event.kbd.keycode == Common::KEYCODE_ESCAPE)))) {
-				break;
+		if ((event.type == Common::EVENT_LBUTTONDOWN) || ((event.type == Common::EVENT_KEYDOWN) && ((event.kbd.keycode == Common::KEYCODE_RETURN) || (event.kbd.keycode == Common::KEYCODE_ESCAPE)))) {
+			break;
 		}
 
 		// When we DO play:
 		if ((event.type == Common::EVENT_KEYDOWN)
-			&& ((event.kbd.keycode == Common::KEYCODE_q) || (event.kbd.keycode == Common::KEYCODE_w)
-			|| (event.kbd.keycode == Common::KEYCODE_e) || (event.kbd.keycode == Common::KEYCODE_r)
-			|| (event.kbd.keycode == Common::KEYCODE_t) || (event.kbd.keycode == Common::KEYCODE_y)
-			|| (event.kbd.keycode == Common::KEYCODE_u) || (event.kbd.keycode == Common::KEYCODE_i)
-			|| (event.kbd.keycode == Common::KEYCODE_o) || (event.kbd.keycode == Common::KEYCODE_p)
-			|| (event.kbd.keycode == Common::KEYCODE_LEFTBRACKET) || (event.kbd.keycode == Common::KEYCODE_RIGHTBRACKET))) {
-				byte value = 0;
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_q:
-					value = 0;
-					break;
-				case Common::KEYCODE_w:
-					value = 1;
-					break;
-				case Common::KEYCODE_e:
-					value = 2;
-					break;
-				case Common::KEYCODE_r:
-					value = 3;
-					break;
-				case Common::KEYCODE_t:
-					value = 4;
-					break;
-				case Common::KEYCODE_y:
-					value = 5;
-					break;
-				case Common::KEYCODE_u:
-					value = 6;
-					break;
-				case Common::KEYCODE_i:
-					value = 7;
-					break;
-				case Common::KEYCODE_o:
-					value = 8;
-					break;
-				case Common::KEYCODE_p:
-					value = 9;
-					break;
-				case Common::KEYCODE_LEFTBRACKET:
-					value = 10;
-					break;
-				case Common::KEYCODE_RIGHTBRACKET:
-					value = 11;
-					break;
-				default:
-					error("cannot happen");
-					break;
-				}
+		    && ((event.kbd.keycode == Common::KEYCODE_q) || (event.kbd.keycode == Common::KEYCODE_w)
+		        || (event.kbd.keycode == Common::KEYCODE_e) || (event.kbd.keycode == Common::KEYCODE_r)
+		        || (event.kbd.keycode == Common::KEYCODE_t) || (event.kbd.keycode == Common::KEYCODE_y)
+		        || (event.kbd.keycode == Common::KEYCODE_u) || (event.kbd.keycode == Common::KEYCODE_i)
+		        || (event.kbd.keycode == Common::KEYCODE_o) || (event.kbd.keycode == Common::KEYCODE_p)
+		        || (event.kbd.keycode == Common::KEYCODE_LEFTBRACKET) || (event.kbd.keycode == Common::KEYCODE_RIGHTBRACKET))) {
+			byte value = 0;
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_q:
+				value = 0;
+				break;
+			case Common::KEYCODE_w:
+				value = 1;
+				break;
+			case Common::KEYCODE_e:
+				value = 2;
+				break;
+			case Common::KEYCODE_r:
+				value = 3;
+				break;
+			case Common::KEYCODE_t:
+				value = 4;
+				break;
+			case Common::KEYCODE_y:
+				value = 5;
+				break;
+			case Common::KEYCODE_u:
+				value = 6;
+				break;
+			case Common::KEYCODE_i:
+				value = 7;
+				break;
+			case Common::KEYCODE_o:
+				value = 8;
+				break;
+			case Common::KEYCODE_p:
+				value = 9;
+				break;
+			case Common::KEYCODE_LEFTBRACKET:
+				value = 10;
+				break;
+			case Common::KEYCODE_RIGHTBRACKET:
+				value = 11;
+				break;
+			default:
+				error("cannot happen");
+				break;
+			}
 
-				lastOne = thisOne;
-				thisOne = value;
+			lastOne = thisOne;
+			thisOne = value;
 
-				_vm->_sound->playNote(_vm->kNotes[thisOne], 100);
-				_vm->_system->delayMillis(200);
+			_vm->_sound->playNote(_vm->kNotes[thisOne], 100);
+			_vm->_system->delayMillis(200);
 
-				if (!_vm->_bellsAreRinging) { // These handle playing the right tune.
-					if (thisOne < lastOne)
-						store(kPitchLower, played);
-					else if (thisOne == lastOne)
-						store(kPitchSame, played);
-					else
-						store(kPitchHigher, played);
-				}
+			if (!_vm->_bellsAreRinging) { // These handle playing the right tune.
+				if (thisOne < lastOne)
+					store(kPitchLower, played);
+				else if (thisOne == lastOne)
+					store(kPitchSame, played);
+				else
+					store(kPitchHigher, played);
+			}
 
-				if (theyMatch(played)) {
-					setReadyLight(0);
-					_vm->_timer->addTimer(8, Timer::kProcJacquesWakesUp, Timer::kReasonJacquesWakingUp);
-					break;
-				}
+			if (theyMatch(played)) {
+				setReadyLight(0);
+				_vm->_timer->addTimer(8, Timer::kProcJacquesWakesUp, Timer::kReasonJacquesWakingUp);
+				break;
+			}
 		}
 	}
 
@@ -603,7 +599,7 @@ Common::String Dialogs::displayMoney() {
 			result = Common::String::format("%d/%d", _vm->_money / 12, _vm->_money % 12);
 	} else { // L, s & d
 		result = Common::String::format("\x9C%d.%d.%d", _vm->_money / 240, (_vm->_money / 12) % 20,
-		                _vm->_money % 12);
+		                                _vm->_money % 12);
 	}
 	if (_vm->_money > 12) {
 		Common::String extraStr = Common::String::format(" (that's %dd)", _vm->_money);
@@ -743,8 +739,7 @@ void Dialogs::displayText(Common::String text) {
 				case 2: {
 					int pwdId = _vm->_parser->kFirstPassword + _vm->_passwordNum;
 					displayText(_vm->_parser->_vocabulary[pwdId]._word + kControlToBuffer);
-					}
-					break;
+				} break;
 				case 3:
 					displayText(_vm->_favoriteDrink + kControlToBuffer);
 					break;
@@ -758,10 +753,9 @@ void Dialogs::displayText(Common::String text) {
 					displayText(_vm->_spareEvening + kControlToBuffer);
 					break;
 				case 9: {
-					Common::String tmpStr = Common::String::format("%d,%d%c",_vm->_catacombX, _vm->_catacombY, kControlToBuffer);
+					Common::String tmpStr = Common::String::format("%d,%d%c", _vm->_catacombX, _vm->_catacombY, kControlToBuffer);
 					displayText(tmpStr);
-					}
-					break;
+				} break;
 				case 10:
 					switch (_vm->_boxContent) {
 					case 0: // Sixpence.
@@ -869,7 +863,7 @@ void Dialogs::loadFont() {
 		error("AVALANCHE: Scrolls: File not found: ttsmall.fnt");
 
 	for (int16 i = 0; i < 256; i++)
-		file.read(_vm->_font[i],16);
+		file.read(_vm->_font[i], 16);
 	file.close();
 }
 
@@ -879,7 +873,7 @@ void Dialogs::loadFont() {
  */
 void Dialogs::displayMusicalScroll() {
 	Common::String tmpStr = Common::String::format("To play the harp...%c%cUse these keys:%c%cQ W E R T Y U I O P [ ]%c%cOr press Enter to stop playing.%c",
-		        kControlNewLine, kControlNewLine, kControlNewLine, kControlInsertSpaces, kControlNewLine, kControlNewLine, kControlToBuffer);
+	                                               kControlNewLine, kControlNewLine, kControlNewLine, kControlInsertSpaces, kControlNewLine, kControlNewLine, kControlToBuffer);
 	displayText(tmpStr);
 
 	_vm->spriteRun();
@@ -890,7 +884,7 @@ void Dialogs::displayMusicalScroll() {
 }
 
 void Dialogs::unSkrimble(Common::String &text) {
-	for (uint16  i = 0; i < text.size(); i++)
+	for (uint16 i = 0; i < text.size(); i++)
 		text.setChar((~(text[i] - (i + 1))) % 256, i);
 }
 
@@ -1024,9 +1018,9 @@ void Dialogs::talkTo(byte whom) {
 				case 2: {
 					Common::String objStr = _vm->getItem(AvalancheEngine::kSpludwicksOrder[_vm->_givenToSpludwick]);
 					Common::String tmpStr = Common::String::format("Can you get me %s, please?%c2%c",
-						objStr.c_str(), kControlRegister, kControlSpeechBubble);
+					                                               objStr.c_str(), kControlRegister, kControlSpeechBubble);
 					displayText(tmpStr);
-					}
+				}
 					return;
 				case 3:
 					displayScrollChain('Q', 30); // Need any help with the game?
@@ -1086,7 +1080,7 @@ void Dialogs::talkTo(byte whom) {
 			}
 			break;
 		}
-	// On a subject. Is there any reason to block it?
+		// On a subject. Is there any reason to block it?
 	} else if ((whom == kPeopleAyles) && (!_vm->_aylesIsAwake)) {
 		displayScrollChain('Q', 43); // He's fast asleep!
 		return;

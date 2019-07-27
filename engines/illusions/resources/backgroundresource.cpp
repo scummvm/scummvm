@@ -20,15 +20,15 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/resources/backgroundresource.h"
+#include "common/str.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
 #include "illusions/dictionary.h"
+#include "illusions/illusions.h"
 #include "illusions/resources/actorresource.h"
 #include "illusions/screen.h"
 #include "illusions/sequenceopcodes.h"
-#include "common/str.h"
 
 namespace Illusions {
 
@@ -39,8 +39,7 @@ void BackgroundResourceLoader::load(Resource *resource) {
 }
 
 bool BackgroundResourceLoader::isFlag(int flag) {
-	return
-		flag == kRlfLoadFile;
+	return flag == kRlfLoadFile;
 }
 
 // TileMap
@@ -52,7 +51,7 @@ void TileMap::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	uint32 mapOffs = stream.pos();
 	_map = dataStart + mapOffs;
 	debug(0, "TileMap::load() _width: %d; _height: %d",
-		_width, _height);
+	      _width, _height);
 }
 
 // BgInfo
@@ -69,7 +68,7 @@ void BgInfo::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_tileMap.load(dataStart, stream);
 	_tilePixels = dataStart + tilePixelsOffs;
 	debug(0, "BgInfo::load() _flags: %08X; unknown: %04X; _priorityBase: %d; tileMapOffs: %08X; tilePixelsOffs: %08X",
-		_flags, unknown, _priorityBase, tileMapOffs, tilePixelsOffs);
+	      _flags, unknown, _priorityBase, tileMapOffs, tilePixelsOffs);
 }
 
 // PriorityLayer
@@ -85,7 +84,7 @@ void PriorityLayer::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_map += 8;
 	_values = dataStart + valuesOffs;
 	debug(0, "PriorityLayer::load() _width: %d; _height: %d; mapOffs: %08X; valuesOffs: %08X; _mapWidth: %d; _mapHeight: %d",
-		_width, _height, mapOffs, valuesOffs, _mapWidth, _mapHeight);
+	      _width, _height, mapOffs, valuesOffs, _mapWidth, _mapHeight);
 }
 
 int PriorityLayer::getPriority(Common::Point pos) {
@@ -105,7 +104,7 @@ void ScaleLayer::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	uint32 valuesOffs = stream.readUint32LE();
 	_values = dataStart + valuesOffs;
 	debug(0, "ScaleLayer::load() _height: %d; valuesOffs: %08X",
-		_height, valuesOffs);
+	      _height, valuesOffs);
 }
 
 int ScaleLayer::getScale(Common::Point pos) {
@@ -129,7 +128,7 @@ void RegionLayer::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_mapHeight = READ_LE_UINT16(_map + 2);
 	_map += 8;
 	debug(1, "RegionLayer::load() %d; regionSequenceIdsOffs: %08X; _width: %d; _height: %d; mapOffs: %08X; valuesOffs: %08X",
-		_unk, regionSequenceIdsOffs, _width, _height, mapOffs, valuesOffs);
+	      _unk, regionSequenceIdsOffs, _width, _height, mapOffs, valuesOffs);
 }
 
 int RegionLayer::getRegionIndex(Common::Point pos) {
@@ -163,7 +162,7 @@ void BackgroundObject::load(byte *dataStart, Common::SeekableReadStream &stream)
 	uint32 pointsConfigOffs = stream.readUint32LE();
 	_pointsConfig = dataStart + pointsConfigOffs;
 	debug(0, "BackgroundObject::load() _objectId: %08X; _flags: %04X; _priority: %d; pointsConfigOffs: %08X",
-		_objectId, _flags, _priority, pointsConfigOffs);
+	      _objectId, _flags, _priority, pointsConfigOffs);
 }
 
 // PathWalkPoints
@@ -180,7 +179,7 @@ void PathWalkPoints::load(byte *dataStart, Common::SeekableReadStream &stream) {
 		_points->push_back(pt);
 	}
 	debug(0, "PathWalkPoints::load() count: %d; pointsOffs: %08X",
-		count, pointsOffs);
+	      count, pointsOffs);
 }
 
 // PathWalkRects
@@ -198,15 +197,21 @@ void PathWalkRects::load(byte *dataStart, Common::SeekableReadStream &stream) {
 		_rects->push_back(rect);
 	}
 	debug(0, "PathWalkRects::load() count: %d; rectsOffs: %08X",
-		count, rectsOffs);
+	      count, rectsOffs);
 }
 
 // BackgroundResource
 
 BackgroundResource::BackgroundResource()
-	: _bgInfos(0), _scaleLayers(0), _priorityLayers(0), _regionLayers(0),
-	_regionSequences(0), _backgroundObjects(0), _pathWalkPoints(0),
-	_pathWalkRects(0), _palettes(0) {
+  : _bgInfos(0)
+  , _scaleLayers(0)
+  , _priorityLayers(0)
+  , _regionLayers(0)
+  , _regionSequences(0)
+  , _backgroundObjects(0)
+  , _pathWalkPoints(0)
+  , _pathWalkRects(0)
+  , _palettes(0) {
 }
 
 BackgroundResource::~BackgroundResource() {
@@ -340,7 +345,6 @@ void BackgroundResource::load(byte *data, uint32 dataSize) {
 		stream.seek(palettesOffs + i * 8);
 		_palettes[i].load(data, stream);
 	}
-
 }
 
 int BackgroundResource::findMasterBgIndex() {
@@ -382,7 +386,11 @@ bool BackgroundResource::findNamedPoint(uint32 namedPointId, Common::Point &pt) 
 // BackgroundInstance
 
 BackgroundInstance::BackgroundInstance(IllusionsEngine *vm)
-	: _vm(vm), _sceneId(0), _pauseCtr(0), _bgRes(0), _savedPalette(0) {
+  : _vm(vm)
+  , _sceneId(0)
+  , _pauseCtr(0)
+  , _bgRes(0)
+  , _savedPalette(0) {
 }
 
 void BackgroundInstance::load(Resource *resource) {
@@ -411,7 +419,6 @@ void BackgroundInstance::load(Resource *resource) {
 		Palette *palette = _bgRes->getPalette(_bgRes->_paletteIndex - 1);
 		_vm->_screenPalette->setPalette(palette->_palette, 1, palette->_count);
 	}
-
 }
 
 void BackgroundInstance::unload() {
@@ -520,7 +527,7 @@ void BackgroundInstance::drawTiles8(Graphics::Surface *surface, TileMap &tileMap
 			uint16 tileIndex = READ_LE_UINT16(tileMap._map + 2 * tileMapIndex);
 			++tileMapIndex;
 			byte *src = tilePixels + (tileIndex - 1) * kTileSize;
-			byte *dst = (byte*)surface->getBasePtr(tileDestX, tileDestY);
+			byte *dst = (byte *)surface->getBasePtr(tileDestX, tileDestY);
 			for (int h = 0; h < tileDestH; ++h) {
 				memcpy(dst, src, tileDestW);
 				dst += surface->pitch;
@@ -544,7 +551,7 @@ void BackgroundInstance::drawTiles16(Graphics::Surface *surface, TileMap &tileMa
 			uint16 tileIndex = READ_LE_UINT16(tileMap._map + 2 * tileMapIndex);
 			++tileMapIndex;
 			byte *src = tilePixels + (tileIndex - 1) * kTileSize;
-			byte *dst = (byte*)surface->getBasePtr(tileDestX, tileDestY);
+			byte *dst = (byte *)surface->getBasePtr(tileDestX, tileDestY);
 			for (int h = 0; h < tileDestH; ++h) {
 				for (int w = 0; w < tileDestW; ++w) {
 					uint16 pixel = READ_LE_UINT16(src + w * 2);
@@ -560,7 +567,7 @@ void BackgroundInstance::drawTiles16(Graphics::Surface *surface, TileMap &tileMa
 // BackgroundInstanceList
 
 BackgroundInstanceList::BackgroundInstanceList(IllusionsEngine *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 }
 
 BackgroundInstanceList::~BackgroundInstanceList() {

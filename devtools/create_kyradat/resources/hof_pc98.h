@@ -64,39 +64,39 @@ static const HoFSequence k2SeqplaySeqDataPC98Seq[16] = {
 };
 
 static const FrameControl k2SeqplaySeqDataPC98SeqNestedControl7[18] = {
-	{  0, 10 },
-	{  1, 10 },
-	{  2, 10 },
-	{  3, 10 },
-	{  4, 10 },
-	{  5, 10 },
-	{  6, 10 },
-	{  7, 10 },
-	{  8, 10 },
-	{  9, 10 },
-	{  8, 10 },
-	{  7, 10 },
-	{  6, 10 },
-	{  5, 40 },
-	{  4, 10 },
-	{  3, 10 },
-	{  2, 10 },
-	{  1, 10 }
+	{ 0, 10 },
+	{ 1, 10 },
+	{ 2, 10 },
+	{ 3, 10 },
+	{ 4, 10 },
+	{ 5, 10 },
+	{ 6, 10 },
+	{ 7, 10 },
+	{ 8, 10 },
+	{ 9, 10 },
+	{ 8, 10 },
+	{ 7, 10 },
+	{ 6, 10 },
+	{ 5, 40 },
+	{ 4, 10 },
+	{ 3, 10 },
+	{ 2, 10 },
+	{ 1, 10 }
 };
 
 static const FrameControl k2SeqplaySeqDataPC98SeqNestedControl10[17] = {
-	{  0,  6 },
-	{  1,  6 },
-	{  2,  6 },
-	{  3,  6 },
-	{  4,  6 },
-	{  5,  6 },
-	{  6,  6 },
-	{  7,  6 },
-	{  8,  6 },
-	{  9,  6 },
-	{ 10,  6 },
-	{ 11,  6 },
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 2, 6 },
+	{ 3, 6 },
+	{ 4, 6 },
+	{ 5, 6 },
+	{ 6, 6 },
+	{ 7, 6 },
+	{ 8, 6 },
+	{ 9, 6 },
+	{ 10, 6 },
+	{ 11, 6 },
 	{ 11, 12 },
 	{ 12, 12 },
 	{ 13, 12 },
@@ -105,53 +105,53 @@ static const FrameControl k2SeqplaySeqDataPC98SeqNestedControl10[17] = {
 };
 
 static const FrameControl k2SeqplaySeqDataPC98SeqNestedControl11[9] = {
-	{  0,  6 },
-	{  1,  6 },
-	{  2,  6 },
-	{  3,  6 },
-	{  4,  6 },
-	{  3,  6 },
-	{  4,  6 },
-	{  5, 64 },
-	{  5,  6 }
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 2, 6 },
+	{ 3, 6 },
+	{ 4, 6 },
+	{ 3, 6 },
+	{ 4, 6 },
+	{ 5, 64 },
+	{ 5, 6 }
 };
 
 static const FrameControl k2SeqplaySeqDataPC98SeqNestedControl12[16] = {
-	{  0,  6 },
-	{  1,  6 },
-	{  0,  6 },
-	{  1,  6 },
-	{  0,  6 },
-	{  1,  6 },
-	{  0,  6 },
-	{  1,  6 },
-	{  0,  6 },
-	{  1,  6 },
-	{  0,  6 },
-	{  1,  6 },
-	{  0,  6 },
-	{  1,  6 },
-	{  0,  6 },
-	{  1,  6 }
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 0, 6 },
+	{ 1, 6 }
 };
 
 static const FrameControl k2SeqplaySeqDataPC98SeqNestedControl13[5] = {
-	{  0,  6 },
-	{  1,  6 },
-	{  2,  6 },
-	{  1,  6 },
-	{  0,  1 }
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 2, 6 },
+	{ 1, 6 },
+	{ 0, 1 }
 };
 
 static const FrameControl k2SeqplaySeqDataPC98SeqNestedControl14[8] = {
-	{  0,  6 },
-	{  1,  6 },
-	{  2,  6 },
-	{  3,  6 },
-	{  4,  6 },
-	{  3,  6 },
-	{  2,  6 },
-	{  1,  6 }
+	{ 0, 6 },
+	{ 1, 6 },
+	{ 2, 6 },
+	{ 3, 6 },
+	{ 4, 6 },
+	{ 3, 6 },
+	{ 2, 6 },
+	{ 1, 6 }
 };
 
 static const HoFNestedSequence k2SeqplaySeqDataPC98SeqNested[15] = {
@@ -516,9 +516,17 @@ static const ByteProvider k2IngameTalkObjIndexPC98Provider = { ARRAYSIZE(k2Ingam
 
 static const char *const k2IngameTimJpStringsPC98[4] = {
 	"Yippee!",
-	"\x82\xE2\x82\xC1\x82\xBD\x81""[""\x81""I",
+	"\x82\xE2\x82\xC1\x82\xBD\x81"
+	"["
+	"\x81"
+	"I",
 	"Hop on!",
-	"\x82\xB3\x82\xA0\x81""A""\x8D""s""\x82\xB1\x82\xA4\x82\xE6\x81""I"
+	"\x82\xB3\x82\xA0\x81"
+	"A"
+	"\x8D"
+	"s"
+	"\x82\xB1\x82\xA4\x82\xE6\x81"
+	"I"
 };
 
 static const StringListProvider k2IngameTimJpStringsPC98Provider = { ARRAYSIZE(k2IngameTimJpStringsPC98), k2IngameTimJpStringsPC98 };
@@ -636,21 +644,20 @@ static const FrameControl k2IngameShapeAnimDataPC9813FrameControl[4] = {
 };
 
 static const ItemAnimDefinition k2IngameShapeAnimDataPC98[14] = {
-	{   6, 12, k2IngameShapeAnimDataPC980FrameControl },
-	{   2,  6, k2IngameShapeAnimDataPC981FrameControl },
-	{  11,  6, k2IngameShapeAnimDataPC982FrameControl },
-	{  28,  4, k2IngameShapeAnimDataPC983FrameControl },
-	{  23,  4, k2IngameShapeAnimDataPC984FrameControl },
-	{  22,  4, k2IngameShapeAnimDataPC985FrameControl },
-	{  58,  4, k2IngameShapeAnimDataPC986FrameControl },
-	{  26,  4, k2IngameShapeAnimDataPC987FrameControl },
-	{ 109,  4, k2IngameShapeAnimDataPC988FrameControl },
-	{ 121,  4, k2IngameShapeAnimDataPC989FrameControl },
-	{ 126,  4, k2IngameShapeAnimDataPC9810FrameControl },
-	{ 145,  6, k2IngameShapeAnimDataPC9811FrameControl },
-	{ 149,  4, k2IngameShapeAnimDataPC9812FrameControl },
-	{ 153,  4, k2IngameShapeAnimDataPC9813FrameControl }
+	{ 6, 12, k2IngameShapeAnimDataPC980FrameControl },
+	{ 2, 6, k2IngameShapeAnimDataPC981FrameControl },
+	{ 11, 6, k2IngameShapeAnimDataPC982FrameControl },
+	{ 28, 4, k2IngameShapeAnimDataPC983FrameControl },
+	{ 23, 4, k2IngameShapeAnimDataPC984FrameControl },
+	{ 22, 4, k2IngameShapeAnimDataPC985FrameControl },
+	{ 58, 4, k2IngameShapeAnimDataPC986FrameControl },
+	{ 26, 4, k2IngameShapeAnimDataPC987FrameControl },
+	{ 109, 4, k2IngameShapeAnimDataPC988FrameControl },
+	{ 121, 4, k2IngameShapeAnimDataPC989FrameControl },
+	{ 126, 4, k2IngameShapeAnimDataPC9810FrameControl },
+	{ 145, 6, k2IngameShapeAnimDataPC9811FrameControl },
+	{ 149, 4, k2IngameShapeAnimDataPC9812FrameControl },
+	{ 153, 4, k2IngameShapeAnimDataPC9813FrameControl }
 };
 
 static const ItemAnimDefinitionProvider k2IngameShapeAnimDataPC98Provider = { ARRAYSIZE(k2IngameShapeAnimDataPC98), k2IngameShapeAnimDataPC98 };
-

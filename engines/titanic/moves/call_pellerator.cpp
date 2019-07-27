@@ -26,11 +26,11 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CCallPellerator, CGameObject)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(PETActivateMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(TimerMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(PETActivateMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(TimerMsg)
 END_MESSAGE_MAP()
 
 void CCallPellerator::save(SimpleFile *file, int indent) {

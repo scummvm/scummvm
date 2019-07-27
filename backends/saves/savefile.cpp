@@ -20,16 +20,17 @@
  *
  */
 
-#include "common/util.h"
 #include "common/savefile.h"
 #include "common/str.h"
+#include "common/util.h"
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
-#include "backends/cloud/cloudmanager.h"
+#	include "backends/cloud/cloudmanager.h"
 #endif
 
 namespace Common {
 
-OutSaveFile::OutSaveFile(WriteStream *w): _wrapped(w) {}
+OutSaveFile::OutSaveFile(WriteStream *w)
+  : _wrapped(w) {}
 
 OutSaveFile::~OutSaveFile() {
 	delete _wrapped;

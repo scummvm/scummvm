@@ -33,6 +33,7 @@ class VoyeurEngine;
 class Debugger : public GUI::Debugger {
 private:
 	VoyeurEngine *_vm;
+
 public:
 	/**
 	 * Specifies whether time should pass, and the video camera's batteries go down
@@ -44,6 +45,7 @@ public:
 	 * Specifies whether to show the current mouse position on the screen
 	 */
 	bool _showMousePosition;
+
 protected:
 	/**
 	 * Turn time on or off, set the current time period, or the camera delay
@@ -60,6 +62,7 @@ protected:
 	 * Toggle showing the mouse on the screen
 	 */
 	bool Cmd_Mouse(int argc, const char **argv);
+
 public:
 	Debugger(VoyeurEngine *vm);
 	virtual ~Debugger() {}

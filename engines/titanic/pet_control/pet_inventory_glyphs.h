@@ -63,16 +63,24 @@ private:
 	 * Reposition the inventory item
 	 */
 	void reposition(const Point &pt);
+
 public:
 	CGameObject *_item;
 	bool _active;
 	CGameObject *_repeated;
 	CGameObject *_singular;
+
 public:
-	CPetInventoryGlyph() : _item(nullptr), _active(true),
-		_repeated(nullptr), _singular(nullptr) {}
-	CPetInventoryGlyph(CCarry *item, bool active) : _item(item),
-		_active(active), _repeated(nullptr), _singular(nullptr) {}
+	CPetInventoryGlyph()
+	  : _item(nullptr)
+	  , _active(true)
+	  , _repeated(nullptr)
+	  , _singular(nullptr) {}
+	CPetInventoryGlyph(CCarry *item, bool active)
+	  : _item(item)
+	  , _active(active)
+	  , _repeated(nullptr)
+	  , _singular(nullptr) {}
 
 	/**
 	 * Called when the PET area is entered
@@ -138,15 +146,19 @@ public:
 class CInventoryGlyphAction : public CGlyphAction {
 public:
 	CGameObject *_item;
+
 public:
-	CInventoryGlyphAction(CGameObject *item, GlyphActionMode mode) :
-		CGlyphAction(mode), _item(item) {}
+	CInventoryGlyphAction(CGameObject *item, GlyphActionMode mode)
+	  : CGlyphAction(mode)
+	  , _item(item) {}
 };
 
 class CPetInventoryGlyphs : public CPetGlyphs {
 	friend class CPetInventoryGlyph;
+
 private:
 	CGameObject *getBackground(int index);
+
 public:
 	/**
 	 * Do an action on the glyphs

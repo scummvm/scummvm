@@ -23,11 +23,11 @@
 #ifndef ILLUSIONS_BACKGROUNDRESOURCE_H
 #define ILLUSIONS_BACKGROUNDRESOURCE_H
 
+#include "graphics/surface.h"
 #include "illusions/camera.h"
 #include "illusions/graphics.h"
 #include "illusions/pathfinder.h"
 #include "illusions/resourcesystem.h"
-#include "graphics/surface.h"
 
 #include "common/array.h"
 #include "common/file.h"
@@ -44,10 +44,12 @@ struct Sequence;
 
 class BackgroundResourceLoader : public BaseResourceLoader {
 public:
-	BackgroundResourceLoader(IllusionsEngine *vm) : _vm(vm) {}
+	BackgroundResourceLoader(IllusionsEngine *vm)
+	  : _vm(vm) {}
 	virtual ~BackgroundResourceLoader() {}
 	virtual void load(Resource *resource);
 	virtual bool isFlag(int flag);
+
 protected:
 	IllusionsEngine *_vm;
 };
@@ -74,6 +76,7 @@ class PriorityLayer {
 public:
 	void load(byte *dataStart, Common::SeekableReadStream &stream);
 	int getPriority(Common::Point pos);
+
 protected:
 	int16 _width, _height;
 	int16 _mapWidth, _mapHeight;
@@ -84,6 +87,7 @@ class ScaleLayer {
 public:
 	void load(byte *dataStart, Common::SeekableReadStream &stream);
 	int getScale(Common::Point pos);
+
 protected:
 	int16 _height;
 	byte *_values;
@@ -94,6 +98,7 @@ public:
 	void load(byte *dataStart, Common::SeekableReadStream &stream);
 	int getRegionIndex(Common::Point pos);
 	uint32 getRegionSequenceId(int regionIndex);
+
 protected:
 	uint32 _unk;
 	byte *_regionSequenceIds;
@@ -119,14 +124,16 @@ struct BackgroundObject {
 
 struct PathWalkPoints {
 	PointArray *_points;
-	PathWalkPoints() : _points(0) {}
+	PathWalkPoints()
+	  : _points(0) {}
 	~PathWalkPoints() { delete _points; }
 	void load(byte *dataStart, Common::SeekableReadStream &stream);
 };
 
 struct PathWalkRects {
 	PathLines *_rects;
-	PathWalkRects() : _rects(0) {}
+	PathWalkRects()
+	  : _rects(0) {}
 	~PathWalkRects() { delete _rects; }
 	void load(byte *dataStart, Common::SeekableReadStream &stream);
 };
@@ -144,8 +151,8 @@ public:
 	PathWalkRects *getPathWalkRects(uint index);
 	Palette *getPalette(uint index);
 	bool findNamedPoint(uint32 namedPointId, Common::Point &pt);
-public:
 
+public:
 	uint _paletteIndex;
 
 	uint _bgInfosCount;
@@ -176,7 +183,6 @@ public:
 
 	uint _palettesCount;
 	Palette *_palettes;
-
 };
 
 const uint kMaxBackgroundItemSurfaces = 3;
@@ -188,6 +194,7 @@ public:
 	virtual void unload();
 	virtual void pause();
 	virtual void unpause();
+
 public:
 	IllusionsEngine *_vm;
 	uint32 _sceneId;
@@ -220,9 +227,9 @@ public:
 	WidthHeight getMasterBgDimensions();
 	void refreshPan();
 	bool findActiveBackgroundNamedPoint(uint32 namedPointId, Common::Point &pt);
-//protected:
+	//protected:
 public:
-	typedef Common::List<BackgroundInstance*> Items;
+	typedef Common::List<BackgroundInstance *> Items;
 	typedef Items::iterator ItemsIterator;
 	IllusionsEngine *_vm;
 	Items _items;

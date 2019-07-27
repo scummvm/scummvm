@@ -68,7 +68,7 @@ void Awards::execute(const Character *ch) {
 				} else if (awardNum == 17) {
 					// Legendary Race
 					awards[numAwards] = Common::String::format(_textStrings[17].c_str(),
-						Res.RACE_NAMES[ch->_race]);
+					                                           Res.RACE_NAMES[ch->_race]);
 				} else {
 					awards[numAwards] = _textStrings[awardNum];
 				}
@@ -82,17 +82,16 @@ void Awards::execute(const Character *ch) {
 		}
 
 		Common::String msg = Common::String::format(Res.AWARDS_FOR,
-			ch->_name.c_str(), Res.CLASS_NAMES[ch->_class],
-			awards[topIndex].c_str(),
-			awards[topIndex + 1].c_str(),
-			awards[topIndex + 2].c_str(),
-			awards[topIndex + 3].c_str(),
-			awards[topIndex + 4].c_str(),
-			awards[topIndex + 5].c_str(),
-			awards[topIndex + 6].c_str(),
-			awards[topIndex + 7].c_str(),
-			awards[topIndex + 8].c_str()
-		);
+		                                            ch->_name.c_str(), Res.CLASS_NAMES[ch->_class],
+		                                            awards[topIndex].c_str(),
+		                                            awards[topIndex + 1].c_str(),
+		                                            awards[topIndex + 2].c_str(),
+		                                            awards[topIndex + 3].c_str(),
+		                                            awards[topIndex + 4].c_str(),
+		                                            awards[topIndex + 5].c_str(),
+		                                            awards[topIndex + 6].c_str(),
+		                                            awards[topIndex + 7].c_str(),
+		                                            awards[topIndex + 8].c_str());
 		windows[30].writeString(msg);
 		windows[24].update();
 

@@ -29,24 +29,24 @@ namespace Gob {
 
 namespace OnceUpon {
 
-/** The Once Upon A Time title animation sequence. */
-class Title : public SEQFile {
-public:
-	Title(GobEngine *vm);
-	~Title();
+	/** The Once Upon A Time title animation sequence. */
+	class Title : public SEQFile {
+	public:
+		Title(GobEngine *vm);
+		~Title();
 
-	void play();
+		void play();
 
-protected:
-	void handleFrameEvent();
+	protected:
+		void handleFrameEvent();
 
-private:
-	void playMusic();        ///< Play the title music.
-	void playMusicDOS();     ///< Play the title music of the DOS      version.
-	void playMusicAmiga();   ///< Play the title music of the Amiga    version.
-	void playMusicAtariST(); ///< Play the title music of the Atari ST version.
-	void stopMusic();        ///< Stop the title music.
-};
+	private:
+		void playMusic(); ///< Play the title music.
+		void playMusicDOS(); ///< Play the title music of the DOS      version.
+		void playMusicAmiga(); ///< Play the title music of the Amiga    version.
+		void playMusicAtariST(); ///< Play the title music of the Atari ST version.
+		void stopMusic(); ///< Stop the title music.
+	};
 
 } // End of namespace OnceUpon
 

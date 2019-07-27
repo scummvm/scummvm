@@ -22,15 +22,16 @@
 
 #include "common/debug-channels.h"
 
+#include "adl/adl.h"
 #include "adl/console.h"
+#include "adl/disk.h"
 #include "adl/display.h"
 #include "adl/graphics.h"
-#include "adl/adl.h"
-#include "adl/disk.h"
 
 namespace Adl {
 
-Console::Console(AdlEngine *engine) : GUI::Debugger() {
+Console::Console(AdlEngine *engine)
+  : GUI::Debugger() {
 	_engine = engine;
 
 	registerCmd("nouns", WRAP_METHOD(Console, Cmd_Nouns));

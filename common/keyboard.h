@@ -28,164 +28,164 @@
 #if defined(__amigaos4__)
 // KEYCODE_LESS and KEYCODE_GREATER are already defined in AmigaOS, inside
 // include/include_h/intuition/intuition.h (bug #3121350)
-#if defined(KEYCODE_LESS) && defined(KEYCODE_GREATER)
-#undef KEYCODE_LESS
-#undef KEYCODE_GREATER
-#endif
+#	if defined(KEYCODE_LESS) && defined(KEYCODE_GREATER)
+#		undef KEYCODE_LESS
+#		undef KEYCODE_GREATER
+#	endif
 #endif
 
 namespace Common {
 
 enum KeyCode {
-	KEYCODE_INVALID     = 0,
+	KEYCODE_INVALID = 0,
 
-	KEYCODE_BACKSPACE   = 8,
-	KEYCODE_TAB         = 9,
-	KEYCODE_CLEAR       = 12,
-	KEYCODE_RETURN      = 13,
-	KEYCODE_PAUSE       = 19,
-	KEYCODE_ESCAPE      = 27,
-	KEYCODE_SPACE       = 32,
-	KEYCODE_EXCLAIM     = 33,      // !
-	KEYCODE_QUOTEDBL    = 34,      // "
-	KEYCODE_HASH        = 35,      // #
-	KEYCODE_DOLLAR      = 36,      // $
-	KEYCODE_AMPERSAND   = 38,      // &
-	KEYCODE_QUOTE       = 39,      // '
-	KEYCODE_LEFTPAREN   = 40,
-	KEYCODE_RIGHTPAREN  = 41,
-	KEYCODE_ASTERISK    = 42,      // *
-	KEYCODE_PLUS        = 43,
-	KEYCODE_COMMA       = 44,
-	KEYCODE_MINUS       = 45,
-	KEYCODE_PERIOD      = 46,
-	KEYCODE_SLASH       = 47,
-	KEYCODE_0           = 48,
-	KEYCODE_1           = 49,
-	KEYCODE_2           = 50,
-	KEYCODE_3           = 51,
-	KEYCODE_4           = 52,
-	KEYCODE_5           = 53,
-	KEYCODE_6           = 54,
-	KEYCODE_7           = 55,
-	KEYCODE_8           = 56,
-	KEYCODE_9           = 57,
-	KEYCODE_COLON       = 58,
-	KEYCODE_SEMICOLON   = 59,
-	KEYCODE_LESS        = 60,
-	KEYCODE_EQUALS      = 61,
-	KEYCODE_GREATER     = 62,
-	KEYCODE_QUESTION    = 63,
-	KEYCODE_AT          = 64,
+	KEYCODE_BACKSPACE = 8,
+	KEYCODE_TAB = 9,
+	KEYCODE_CLEAR = 12,
+	KEYCODE_RETURN = 13,
+	KEYCODE_PAUSE = 19,
+	KEYCODE_ESCAPE = 27,
+	KEYCODE_SPACE = 32,
+	KEYCODE_EXCLAIM = 33, // !
+	KEYCODE_QUOTEDBL = 34, // "
+	KEYCODE_HASH = 35, // #
+	KEYCODE_DOLLAR = 36, // $
+	KEYCODE_AMPERSAND = 38, // &
+	KEYCODE_QUOTE = 39, // '
+	KEYCODE_LEFTPAREN = 40,
+	KEYCODE_RIGHTPAREN = 41,
+	KEYCODE_ASTERISK = 42, // *
+	KEYCODE_PLUS = 43,
+	KEYCODE_COMMA = 44,
+	KEYCODE_MINUS = 45,
+	KEYCODE_PERIOD = 46,
+	KEYCODE_SLASH = 47,
+	KEYCODE_0 = 48,
+	KEYCODE_1 = 49,
+	KEYCODE_2 = 50,
+	KEYCODE_3 = 51,
+	KEYCODE_4 = 52,
+	KEYCODE_5 = 53,
+	KEYCODE_6 = 54,
+	KEYCODE_7 = 55,
+	KEYCODE_8 = 56,
+	KEYCODE_9 = 57,
+	KEYCODE_COLON = 58,
+	KEYCODE_SEMICOLON = 59,
+	KEYCODE_LESS = 60,
+	KEYCODE_EQUALS = 61,
+	KEYCODE_GREATER = 62,
+	KEYCODE_QUESTION = 63,
+	KEYCODE_AT = 64,
 
 	KEYCODE_LEFTBRACKET = 91,
-	KEYCODE_BACKSLASH   = 92,
-	KEYCODE_RIGHTBRACKET= 93,
-	KEYCODE_CARET       = 94,
-	KEYCODE_UNDERSCORE  = 95,
-	KEYCODE_BACKQUOTE   = 96,
-	KEYCODE_a           = 97,
-	KEYCODE_b           = 98,
-	KEYCODE_c           = 99,
-	KEYCODE_d           = 100,
-	KEYCODE_e           = 101,
-	KEYCODE_f           = 102,
-	KEYCODE_g           = 103,
-	KEYCODE_h           = 104,
-	KEYCODE_i           = 105,
-	KEYCODE_j           = 106,
-	KEYCODE_k           = 107,
-	KEYCODE_l           = 108,
-	KEYCODE_m           = 109,
-	KEYCODE_n           = 110,
-	KEYCODE_o           = 111,
-	KEYCODE_p           = 112,
-	KEYCODE_q           = 113,
-	KEYCODE_r           = 114,
-	KEYCODE_s           = 115,
-	KEYCODE_t           = 116,
-	KEYCODE_u           = 117,
-	KEYCODE_v           = 118,
-	KEYCODE_w           = 119,
-	KEYCODE_x           = 120,
-	KEYCODE_y           = 121,
-	KEYCODE_z           = 122,
-	KEYCODE_DELETE      = 127,
-	KEYCODE_TILDE       = 176,      // ~
+	KEYCODE_BACKSLASH = 92,
+	KEYCODE_RIGHTBRACKET = 93,
+	KEYCODE_CARET = 94,
+	KEYCODE_UNDERSCORE = 95,
+	KEYCODE_BACKQUOTE = 96,
+	KEYCODE_a = 97,
+	KEYCODE_b = 98,
+	KEYCODE_c = 99,
+	KEYCODE_d = 100,
+	KEYCODE_e = 101,
+	KEYCODE_f = 102,
+	KEYCODE_g = 103,
+	KEYCODE_h = 104,
+	KEYCODE_i = 105,
+	KEYCODE_j = 106,
+	KEYCODE_k = 107,
+	KEYCODE_l = 108,
+	KEYCODE_m = 109,
+	KEYCODE_n = 110,
+	KEYCODE_o = 111,
+	KEYCODE_p = 112,
+	KEYCODE_q = 113,
+	KEYCODE_r = 114,
+	KEYCODE_s = 115,
+	KEYCODE_t = 116,
+	KEYCODE_u = 117,
+	KEYCODE_v = 118,
+	KEYCODE_w = 119,
+	KEYCODE_x = 120,
+	KEYCODE_y = 121,
+	KEYCODE_z = 122,
+	KEYCODE_DELETE = 127,
+	KEYCODE_TILDE = 176, // ~
 
 	// Numeric keypad
-	KEYCODE_KP0         = 256,
-	KEYCODE_KP1         = 257,
-	KEYCODE_KP2         = 258,
-	KEYCODE_KP3         = 259,
-	KEYCODE_KP4         = 260,
-	KEYCODE_KP5         = 261,
-	KEYCODE_KP6         = 262,
-	KEYCODE_KP7         = 263,
-	KEYCODE_KP8         = 264,
-	KEYCODE_KP9         = 265,
-	KEYCODE_KP_PERIOD   = 266,
-	KEYCODE_KP_DIVIDE   = 267,
+	KEYCODE_KP0 = 256,
+	KEYCODE_KP1 = 257,
+	KEYCODE_KP2 = 258,
+	KEYCODE_KP3 = 259,
+	KEYCODE_KP4 = 260,
+	KEYCODE_KP5 = 261,
+	KEYCODE_KP6 = 262,
+	KEYCODE_KP7 = 263,
+	KEYCODE_KP8 = 264,
+	KEYCODE_KP9 = 265,
+	KEYCODE_KP_PERIOD = 266,
+	KEYCODE_KP_DIVIDE = 267,
 	KEYCODE_KP_MULTIPLY = 268,
-	KEYCODE_KP_MINUS    = 269,
-	KEYCODE_KP_PLUS     = 270,
-	KEYCODE_KP_ENTER    = 271,
-	KEYCODE_KP_EQUALS   = 272,
+	KEYCODE_KP_MINUS = 269,
+	KEYCODE_KP_PLUS = 270,
+	KEYCODE_KP_ENTER = 271,
+	KEYCODE_KP_EQUALS = 272,
 
 	// Arrows + Home/End pad
-	KEYCODE_UP          = 273,
-	KEYCODE_DOWN        = 274,
-	KEYCODE_RIGHT       = 275,
-	KEYCODE_LEFT        = 276,
-	KEYCODE_INSERT      = 277,
-	KEYCODE_HOME        = 278,
-	KEYCODE_END         = 279,
-	KEYCODE_PAGEUP      = 280,
-	KEYCODE_PAGEDOWN    = 281,
+	KEYCODE_UP = 273,
+	KEYCODE_DOWN = 274,
+	KEYCODE_RIGHT = 275,
+	KEYCODE_LEFT = 276,
+	KEYCODE_INSERT = 277,
+	KEYCODE_HOME = 278,
+	KEYCODE_END = 279,
+	KEYCODE_PAGEUP = 280,
+	KEYCODE_PAGEDOWN = 281,
 
 	// Function keys
-	KEYCODE_F1          = 282,
-	KEYCODE_F2          = 283,
-	KEYCODE_F3          = 284,
-	KEYCODE_F4          = 285,
-	KEYCODE_F5          = 286,
-	KEYCODE_F6          = 287,
-	KEYCODE_F7          = 288,
-	KEYCODE_F8          = 289,
-	KEYCODE_F9          = 290,
-	KEYCODE_F10         = 291,
-	KEYCODE_F11         = 292,
-	KEYCODE_F12         = 293,
-	KEYCODE_F13         = 294,
-	KEYCODE_F14         = 295,
-	KEYCODE_F15         = 296,
+	KEYCODE_F1 = 282,
+	KEYCODE_F2 = 283,
+	KEYCODE_F3 = 284,
+	KEYCODE_F4 = 285,
+	KEYCODE_F5 = 286,
+	KEYCODE_F6 = 287,
+	KEYCODE_F7 = 288,
+	KEYCODE_F8 = 289,
+	KEYCODE_F9 = 290,
+	KEYCODE_F10 = 291,
+	KEYCODE_F11 = 292,
+	KEYCODE_F12 = 293,
+	KEYCODE_F13 = 294,
+	KEYCODE_F14 = 295,
+	KEYCODE_F15 = 296,
 
 	// Key state modifier keys
-	KEYCODE_NUMLOCK     = 300,
-	KEYCODE_CAPSLOCK    = 301,
-	KEYCODE_SCROLLOCK   = 302,
-	KEYCODE_RSHIFT      = 303,
-	KEYCODE_LSHIFT      = 304,
-	KEYCODE_RCTRL       = 305,
-	KEYCODE_LCTRL       = 306,
-	KEYCODE_RALT        = 307,
-	KEYCODE_LALT        = 308,
-	KEYCODE_RMETA       = 309,
-	KEYCODE_LMETA       = 310,
-	KEYCODE_LSUPER      = 311,      // Left "Windows" key
-	KEYCODE_RSUPER      = 312,      // Right "Windows" key
-	KEYCODE_MODE        = 313,      // "Alt Gr" key
-	KEYCODE_COMPOSE     = 314,      // Multi-key compose key
+	KEYCODE_NUMLOCK = 300,
+	KEYCODE_CAPSLOCK = 301,
+	KEYCODE_SCROLLOCK = 302,
+	KEYCODE_RSHIFT = 303,
+	KEYCODE_LSHIFT = 304,
+	KEYCODE_RCTRL = 305,
+	KEYCODE_LCTRL = 306,
+	KEYCODE_RALT = 307,
+	KEYCODE_LALT = 308,
+	KEYCODE_RMETA = 309,
+	KEYCODE_LMETA = 310,
+	KEYCODE_LSUPER = 311, // Left "Windows" key
+	KEYCODE_RSUPER = 312, // Right "Windows" key
+	KEYCODE_MODE = 313, // "Alt Gr" key
+	KEYCODE_COMPOSE = 314, // Multi-key compose key
 
 	// Miscellaneous function keys
-	KEYCODE_HELP        = 315,
-	KEYCODE_PRINT       = 316,
-	KEYCODE_SYSREQ      = 317,
-	KEYCODE_BREAK       = 318,
-	KEYCODE_MENU        = 319,
-	KEYCODE_POWER       = 320,      // Power Macintosh power key
-	KEYCODE_EURO        = 321,      // Some european keyboards
-	KEYCODE_UNDO        = 322       // Atari keyboard has Undo
+	KEYCODE_HELP = 315,
+	KEYCODE_PRINT = 316,
+	KEYCODE_SYSREQ = 317,
+	KEYCODE_BREAK = 318,
+	KEYCODE_MENU = 319,
+	KEYCODE_POWER = 320, // Power Macintosh power key
+	KEYCODE_EURO = 321, // Some european keyboards
+	KEYCODE_UNDO = 322 // Atari keyboard has Undo
 };
 
 /**
@@ -196,24 +196,24 @@ enum KeyCode {
  * the keycode value to handle these.
  */
 enum {
-	ASCII_BACKSPACE     = 8,
-	ASCII_TAB           = 9,
-	ASCII_RETURN        = 13,
-	ASCII_ESCAPE        = 27,
-	ASCII_SPACE         = 32,
+	ASCII_BACKSPACE = 8,
+	ASCII_TAB = 9,
+	ASCII_RETURN = 13,
+	ASCII_ESCAPE = 27,
+	ASCII_SPACE = 32,
 
-	ASCII_F1            = 315,
-	ASCII_F2            = 316,
-	ASCII_F3            = 317,
-	ASCII_F4            = 318,
-	ASCII_F5            = 319,
-	ASCII_F6            = 320,
-	ASCII_F7            = 321,
-	ASCII_F8            = 322,
-	ASCII_F9            = 323,
-	ASCII_F10           = 324,
-	ASCII_F11           = 325,
-	ASCII_F12           = 326
+	ASCII_F1 = 315,
+	ASCII_F2 = 316,
+	ASCII_F3 = 317,
+	ASCII_F4 = 318,
+	ASCII_F5 = 319,
+	ASCII_F6 = 320,
+	ASCII_F7 = 321,
+	ASCII_F8 = 322,
+	ASCII_F9 = 323,
+	ASCII_F10 = 324,
+	ASCII_F11 = 325,
+	ASCII_F12 = 326
 };
 
 /**
@@ -221,17 +221,17 @@ enum {
  */
 enum {
 	// Non-sticky modifier flags
-	KBD_CTRL  = 1 << 0,
-	KBD_ALT   = 1 << 1,
+	KBD_CTRL = 1 << 0,
+	KBD_ALT = 1 << 1,
 	KBD_SHIFT = 1 << 2,
-	KBD_META  = 1 << 3,
-	KBD_NON_STICKY = (KBD_CTRL|KBD_ALT|KBD_SHIFT|KBD_META),
+	KBD_META = 1 << 3,
+	KBD_NON_STICKY = (KBD_CTRL | KBD_ALT | KBD_SHIFT | KBD_META),
 
 	// Sticky modifier flags
-	KBD_NUM   = 1 << 4,
-	KBD_CAPS  = 1 << 5,
-	KBD_SCRL  = 1 << 6,
-	KBD_STICKY = (KBD_NUM|KBD_CAPS|KBD_SCRL)
+	KBD_NUM = 1 << 4,
+	KBD_CAPS = 1 << 5,
+	KBD_SCRL = 1 << 6,
+	KBD_STICKY = (KBD_NUM | KBD_CAPS | KBD_SCRL)
 
 };
 

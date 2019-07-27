@@ -33,8 +33,7 @@ void SceneScriptKP07::InitializeScene() {
 
 	if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 		if (Game_Flag_Query(kFlagDektoraIsReplicant)
-		 && Actor_Query_Goal_Number(kActorDektora) < kGoalDektoraGone
-		) {
+		    && Actor_Query_Goal_Number(kActorDektora) < kGoalDektoraGone) {
 			Actor_Set_Targetable(kActorDektora, true);
 			Global_Variable_Increment(kVariableReplicantsSurvivorsAtMoonbus, 1);
 			Actor_Put_In_Set(kActorDektora, kSetKP07);
@@ -49,8 +48,7 @@ void SceneScriptKP07::InitializeScene() {
 		}
 
 		if (Game_Flag_Query(kFlagIzoIsReplicant)
-		 && Actor_Query_Goal_Number(kActorIzo) < 599
-		) {
+		    && Actor_Query_Goal_Number(kActorIzo) < 599) {
 			Global_Variable_Increment(kVariableReplicantsSurvivorsAtMoonbus, 1);
 			Actor_Set_Targetable(kActorIzo, true);
 			Actor_Put_In_Set(kActorIzo, kSetKP07);
@@ -58,8 +56,7 @@ void SceneScriptKP07::InitializeScene() {
 		}
 
 		if (Game_Flag_Query(kFlagGordoIsReplicant)
-		 && Actor_Query_Goal_Number(kActorGordo) < kGoalGordoGone
-		) {
+		    && Actor_Query_Goal_Number(kActorGordo) < kGoalGordoGone) {
 			Global_Variable_Increment(kVariableReplicantsSurvivorsAtMoonbus, 1);
 			Actor_Set_Targetable(kActorGordo, true);
 			Actor_Put_In_Set(kActorGordo, kSetKP07);
@@ -67,8 +64,7 @@ void SceneScriptKP07::InitializeScene() {
 		}
 
 		if (Game_Flag_Query(kFlagLucyIsReplicant)
-		 && Actor_Query_Goal_Number(kActorLucy) < kGoalLucyGone
-		) {
+		    && Actor_Query_Goal_Number(kActorLucy) < kGoalLucyGone) {
 			Global_Variable_Increment(kVariableReplicantsSurvivorsAtMoonbus, 1);
 			Actor_Put_In_Set(kActorLucy, kSetKP07);
 			Actor_Set_At_XYZ(kActorLucy, 78.0f, -41.52f, -119.0f, 659);
@@ -88,7 +84,7 @@ void SceneScriptKP07::InitializeScene() {
 	else {
 		// McCoy is not helping the Replicants
 		if (Actor_Query_Goal_Number(kActorClovis) == kGoalClovisKP07Wait
-			&& !Game_Flag_Query(kFlagClovisLyingDown)) {
+		    && !Game_Flag_Query(kFlagClovisLyingDown)) {
 			// this goal set is only for the purpose of switch Clovis goal out of kGoalClovisKP07Wait
 			Actor_Set_Goal_Number(kActorClovis, kGoalClovisStartChapter5);
 			// And explicitly switching back to kGoalClovisKP07Wait in order
@@ -98,9 +94,9 @@ void SceneScriptKP07::InitializeScene() {
 	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 
-	Ambient_Sounds_Add_Looping_Sound(kSfxCOMPBED1,  7, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCOMPBED1, 7, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxMOONBED2, 52, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED3,   38, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED3, 38, 1, 1);
 
 	if (Game_Flag_Query(kFlagKP07BusActive)) {
 		Scene_Loop_Set_Default(2);
@@ -132,9 +128,8 @@ bool SceneScriptKP07::ClickedOn3DObject(const char *objectName, bool a2) {
 bool SceneScriptKP07::ClickedOnActor(int actorId) {
 	if (actorId == kActorClovis) {
 		if (!Game_Flag_Query(kFlagKP07McCoyPulledGun)
-		 &&  Actor_Query_Goal_Number(kActorClovis) != kGoalClovisGone
-		 &&  Actor_Query_Goal_Number(kActorClovis) != kGoalClovisKP07SayFinalWords
-		) {
+		    && Actor_Query_Goal_Number(kActorClovis) != kGoalClovisGone
+		    && Actor_Query_Goal_Number(kActorClovis) != kGoalClovisKP07SayFinalWords) {
 			if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 				Actor_Set_Goal_Number(kActorClovis, kGoalClovisKP07FlyAway);
 			} else {

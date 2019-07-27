@@ -23,10 +23,10 @@
 #include "backends/platform/3ds/gui.h"
 #include "common/system.h"
 
-StatusMessageDialog* StatusMessageDialog::_opened = 0;
+StatusMessageDialog *StatusMessageDialog::_opened = 0;
 
 StatusMessageDialog::StatusMessageDialog(const Common::String &message, uint32 duration)
-	: MessageDialog(message, 0, 0) {
+  : MessageDialog(message, 0, 0) {
 	_timer = g_system->getMillis() + duration;
 	if (_opened)
 		_opened->close();
@@ -40,7 +40,7 @@ void StatusMessageDialog::handleTickle() {
 }
 
 void StatusMessageDialog::close() {
-    GUI::Dialog::close();
+	GUI::Dialog::close();
 	if (_opened)
 		_opened = 0;
 }

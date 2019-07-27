@@ -25,29 +25,28 @@
 
 /* The interpreter of Acode */
 
-#include "glk/alan3/types.h"
-#include "glk/alan3/stack.h"
 #include "glk/alan3/jumps.h"
+#include "glk/alan3/stack.h"
+#include "glk/alan3/types.h"
 
 namespace Glk {
 namespace Alan3 {
 
-/* DATA: */
+	/* DATA: */
 
-extern bool stopAtNextLine;
-extern int currentLine;
-extern int recursionDepth;
+	extern bool stopAtNextLine;
+	extern int currentLine;
+	extern int recursionDepth;
 
-/* Global failure flag */
-extern bool fail;
+	/* Global failure flag */
+	extern bool fail;
 
+	/* FUNCTIONS: */
 
-/* FUNCTIONS: */
-
-extern void setInterpreterMock(void (*mock)(Aaddr adr));
-extern void setInterpreterStack(Stack stack);
-extern void interpret(CONTEXT, Aaddr adr);
-extern Aword evaluate(CONTEXT, Aaddr adr);
+	extern void setInterpreterMock(void (*mock)(Aaddr adr));
+	extern void setInterpreterStack(Stack stack);
+	extern void interpret(CONTEXT, Aaddr adr);
+	extern Aword evaluate(CONTEXT, Aaddr adr);
 
 } // End of namespace Alan3
 } // End of namespace Glk

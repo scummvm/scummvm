@@ -23,11 +23,11 @@
  *
  */
 
-#include "pegasus/gamestate.h"
-#include "pegasus/pegasus.h"
-#include "pegasus/ai/ai_area.h"
 #include "pegasus/items/inventory/airmask.h"
+#include "pegasus/ai/ai_area.h"
+#include "pegasus/gamestate.h"
 #include "pegasus/neighborhood/neighborhood.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -41,8 +41,9 @@ void AirMask::airMaskTimerExpired() {
 		g_neighborhood->checkAirMask();
 }
 
-AirMask::AirMask(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
-		InventoryItem(id, neighborhood, room, direction), _toggleSpot(kAirMaskToggleSpotID) {
+AirMask::AirMask(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction)
+  : InventoryItem(id, neighborhood, room, direction)
+  , _toggleSpot(kAirMaskToggleSpotID) {
 	g_airMask = this;
 	_toggleSpot.setArea(Common::Rect(kAIMiddleAreaLeft + 10, kAIMiddleAreaTop + 17, kAIMiddleAreaLeft + 110, kAIMiddleAreaTop + 57));
 	_toggleSpot.setHotspotFlags(kAirMaskSpotFlag);
@@ -164,17 +165,17 @@ void AirMask::useIdleTime() {
 
 void AirMask::refillAirMask() {
 	switch (getItemState()) {
-		case kAirMaskEmptyOff:
-		case kAirMaskLowOff:
-			setItemState(kAirMaskFullOff);
-			break;
-		case kAirMaskEmptyFilter:
-		case kAirMaskLowFilter:
-			setItemState(kAirMaskFullFilter);
-			break;
-		case kAirMaskLowOn:
-			setItemState(kAirMaskFullOn);
-			break;
+	case kAirMaskEmptyOff:
+	case kAirMaskLowOff:
+		setItemState(kAirMaskFullOff);
+		break;
+	case kAirMaskEmptyFilter:
+	case kAirMaskLowFilter:
+		setItemState(kAirMaskFullFilter);
+		break;
+	case kAirMaskLowOn:
+		setItemState(kAirMaskFullOn);
+		break;
 	}
 
 	if (_oxygenTimer.isFuseLit()) {

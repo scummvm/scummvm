@@ -23,11 +23,11 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include "backends/platform/psp/png_loader.h"
+#include "backends/platform/psp/display_client.h"
+#include "backends/platform/psp/psppixelformat.h"
 #include "common/scummsys.h"
 #include "common/stream.h"
-#include "backends/platform/psp/psppixelformat.h"
-#include "backends/platform/psp/display_client.h"
-#include "backends/platform/psp/png_loader.h"
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging function calls */
 //#define __PSP_DEBUG_PRINT__	/* For debug printouts */
@@ -46,12 +46,12 @@ PngLoader::Status PngLoader::allocate() {
 
 	uint32 bitsPerPixel = _bitDepth;
 
-	if (_paletteSize) {	// 8 or 4-bit image
+	if (_paletteSize) { // 8 or 4-bit image
 		if (bitsPerPixel == 4) {
 			_buffer->setPixelFormat(PSPPixelFormat::Type_Palette_4bit);
 			_palette->setPixelFormats(PSPPixelFormat::Type_4444, PSPPixelFormat::Type_Palette_4bit);
-			_paletteSize = 16;	// round up
-		} else if (bitsPerPixel == 8) {			// 8-bit image
+			_paletteSize = 16; // round up
+		} else if (bitsPerPixel == 8) { // 8-bit image
 			_buffer->setPixelFormat(PSPPixelFormat::Type_Palette_8bit);
 			_palette->setPixelFormats(PSPPixelFormat::Type_4444, PSPPixelFormat::Type_Palette_8bit);
 			_paletteSize = 256; // round up
@@ -60,7 +60,7 @@ PngLoader::Status PngLoader::allocate() {
 			return BAD_FILE;
 		}
 
-	} else {	// 32-bit image
+	} else { // 32-bit image
 		_buffer->setPixelFormat(PSPPixelFormat::Type_8888);
 	}
 
@@ -78,7 +78,7 @@ PngLoader::Status PngLoader::allocate() {
 bool PngLoader::load() {
 	DEBUG_ENTER_FUNC();
 	// Try to load the image
-	_file.seek(0);	// Go back to start
+	_file.seek(0); // Go back to start
 
 	if (!loadImageIntoBuffer()) {
 		PSP_DEBUG_PRINT("failed to load image\n");
@@ -87,8 +87,8 @@ bool PngLoader::load() {
 
 	PSP_DEBUG_PRINT("succeded in loading image\n");
 
-	if (_bitDepth == 4)		// 4-bit
-		_buffer->flipNibbles();	// required because of PNG 4-bit format
+	if (_bitDepth == 4) // 4-bit
+		_buffer->flipNibbles(); // required because of PNG 4-bit format
 	return true;
 }
 
@@ -110,7 +110,7 @@ bool PngLoader::basicImageLoad() {
 	if (!_pngPtr)
 		return false;
 
-	png_set_error_fn(_pngPtr, (png_voidp) NULL, (png_error_ptr) NULL, warningFn);
+	png_set_error_fn(_pngPtr, (png_voidp)NULL, (png_error_ptr)NULL, warningFn);
 
 	_infoPtr = png_create_info_struct(_pngPtr);
 	if (!_infoPtr) {
@@ -126,7 +126,7 @@ bool PngLoader::basicImageLoad() {
 	png_read_info(_pngPtr, _infoPtr);
 	int interlaceType;
 	png_get_IHDR(_pngPtr, _infoPtr, (png_uint_32 *)&_width, (png_uint_32 *)&_height, &_bitDepth,
-		&_colorType, &interlaceType, NULL, NULL);
+	             &_colorType, &interlaceType, NULL, NULL);
 	_channels = png_get_channels(_pngPtr, _infoPtr);
 
 	if (_colorType & PNG_COLOR_MASK_PALETTE) {
@@ -159,7 +159,7 @@ bool PngLoader::loadImageIntoBuffer() {
 		png_destroy_read_struct(&_pngPtr, &_infoPtr, NULL);
 		return false;
 	}
-	png_set_strip_16(_pngPtr);		// Strip off 16 bit channels in case they occur
+	png_set_strip_16(_pngPtr); // Strip off 16 bit channels in case they occur
 
 	if (_paletteSize) {
 		// Copy the palette
@@ -171,17 +171,17 @@ bool PngLoader::loadImageIntoBuffer() {
 		png_color_16p transColor;
 		png_get_tRNS(_pngPtr, _infoPtr, &transAlpha, &numTrans, &transColor);
 		for (int i = 0; i < numPalette; i++) {
-			unsigned char alphaVal = (i < numTrans) ? transAlpha[i] : 0xFF;	// Load alpha if it's there
+			unsigned char alphaVal = (i < numTrans) ? transAlpha[i] : 0xFF; // Load alpha if it's there
 			_palette->setSingleColorRGBA(i, srcPal->red, srcPal->green, srcPal->blue, alphaVal);
 			srcPal++;
 		}
-	} else {	// Not a palettized image
+	} else { // Not a palettized image
 		if (_colorType == PNG_COLOR_TYPE_GRAY && _bitDepth < 8)
-			png_set_expand_gray_1_2_4_to_8(_pngPtr);	// Round up grayscale images
+			png_set_expand_gray_1_2_4_to_8(_pngPtr); // Round up grayscale images
 		if (png_get_valid(_pngPtr, _infoPtr, PNG_INFO_tRNS))
-			png_set_tRNS_to_alpha(_pngPtr);		// Convert trans channel to alpha for 32 bits
+			png_set_tRNS_to_alpha(_pngPtr); // Convert trans channel to alpha for 32 bits
 
-		png_set_add_alpha(_pngPtr, 0xff, PNG_FILLER_AFTER);		// Filler for alpha if none exists
+		png_set_add_alpha(_pngPtr, 0xff, PNG_FILLER_AFTER); // Filler for alpha if none exists
 	}
 
 	uint32 rowBytes = png_get_rowbytes(_pngPtr, _infoPtr);
@@ -195,7 +195,7 @@ bool PngLoader::loadImageIntoBuffer() {
 
 	PSP_DEBUG_PRINT("rowBytes[%d], channels[%d]\n", rowBytes, _channels);
 
-	unsigned char *line = (unsigned char*) malloc(rowBytes);
+	unsigned char *line = (unsigned char *)malloc(rowBytes);
 	if (!line) {
 		png_destroy_read_struct(&_pngPtr, NULL, NULL);
 		PSP_ERROR("Couldn't allocate line\n");
@@ -204,7 +204,7 @@ bool PngLoader::loadImageIntoBuffer() {
 
 	for (size_t y = 0; y < _height; y++) {
 		png_read_row(_pngPtr, line, NULL);
-		_buffer->copyFromRect(line, rowBytes, 0, y, _width, 1);	// Copy into buffer
+		_buffer->copyFromRect(line, rowBytes, 0, y, _width, 1); // Copy into buffer
 	}
 	free(line);
 	png_read_end(_pngPtr, _infoPtr);

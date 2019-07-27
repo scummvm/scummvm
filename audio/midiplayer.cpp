@@ -27,19 +27,19 @@
 
 namespace Audio {
 
-MidiPlayer::MidiPlayer() :
-	_driver(0),
-	_parser(0),
-	_midiData(0),
-	_isLooping(false),
-	_isPlaying(false),
-	_masterVolume(0),
-	_nativeMT32(false) {
+MidiPlayer::MidiPlayer()
+  : _driver(0)
+  , _parser(0)
+  , _midiData(0)
+  , _isLooping(false)
+  , _isPlaying(false)
+  , _masterVolume(0)
+  , _nativeMT32(false) {
 
 	memset(_channelsTable, 0, sizeof(_channelsTable));
 	memset(_channelsVolume, 127, sizeof(_channelsVolume));
 
-// TODO
+	// TODO
 }
 
 MidiPlayer::~MidiPlayer() {
@@ -68,7 +68,6 @@ void MidiPlayer::createDriver(int flags) {
 		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 }
 
-
 void MidiPlayer::setVolume(int volume) {
 	volume = CLIP(volume, 0, 255);
 	if (_masterVolume == volume)
@@ -91,7 +90,6 @@ void MidiPlayer::syncVolume() {
 	}
 	setVolume(volume);
 }
-
 
 void MidiPlayer::send(uint32 b) {
 	byte ch = (byte)(b & 0x0F);
@@ -125,7 +123,7 @@ void MidiPlayer::sendToChannel(byte ch, uint32 b) {
 
 void MidiPlayer::metaEvent(byte type, byte *data, uint16 length) {
 	switch (type) {
-	case 0x2F:	// End of Track
+	case 0x2F: // End of Track
 		endOfTrack();
 		break;
 	default:
@@ -158,7 +156,6 @@ void MidiPlayer::onTimer() {
 	}
 }
 
-
 void MidiPlayer::stop() {
 	Common::StackLock lock(_mutex);
 
@@ -181,13 +178,13 @@ void MidiPlayer::stop() {
 }
 
 void MidiPlayer::pause() {
-//	debugC(2, kDraciSoundDebugLevel, "Pausing track %d", _track);
+	//	debugC(2, kDraciSoundDebugLevel, "Pausing track %d", _track);
 	_isPlaying = false;
-	setVolume(-1);	// FIXME: This should be 0, shouldn't it?
+	setVolume(-1); // FIXME: This should be 0, shouldn't it?
 }
 
 void MidiPlayer::resume() {
-//	debugC(2, kDraciSoundDebugLevel, "Resuming track %d", _track);
+	//	debugC(2, kDraciSoundDebugLevel, "Resuming track %d", _track);
 	syncVolume();
 	_isPlaying = true;
 }

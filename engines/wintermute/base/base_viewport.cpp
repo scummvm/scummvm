@@ -36,18 +36,16 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(BaseViewport, false)
 
 //////////////////////////////////////////////////////////////////////////
-BaseViewport::BaseViewport(BaseGame *inGame) : BaseClass(inGame) {
+BaseViewport::BaseViewport(BaseGame *inGame)
+  : BaseClass(inGame) {
 	_rect.setEmpty();
 	_mainObject = nullptr;
 	_offsetX = _offsetY = 0;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 BaseViewport::~BaseViewport() {
-
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseViewport::persist(BasePersistenceManager *persistMgr) {
@@ -61,7 +59,6 @@ bool BaseViewport::persist(BasePersistenceManager *persistMgr) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseViewport::setRect(int32 left, int32 top, int32 right, int32 bottom, bool noCheck) {
@@ -78,18 +75,15 @@ bool BaseViewport::setRect(int32 left, int32 top, int32 right, int32 bottom, boo
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 Rect32 *BaseViewport::getRect() {
 	return &_rect;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 int BaseViewport::getWidth() const {
 	return _rect.right - _rect.left;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 int BaseViewport::getHeight() const {

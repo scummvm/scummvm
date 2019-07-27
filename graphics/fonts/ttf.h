@@ -27,7 +27,7 @@
 
 #ifdef USE_FREETYPE2
 
-#include "common/stream.h"
+#	include "common/stream.h"
 
 namespace Graphics {
 
@@ -121,4 +121,3 @@ void shutdownTTF();
 #endif
 
 #endif
-

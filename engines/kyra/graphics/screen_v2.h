@@ -23,8 +23,8 @@
 #ifndef KYRA_SCREEN_V2_H
 #define KYRA_SCREEN_V2_H
 
-#include "kyra/graphics/screen.h"
 #include "kyra/engine/kyra_v2.h"
+#include "kyra/graphics/screen.h"
 
 namespace Kyra {
 
@@ -71,7 +71,8 @@ public:
 
 	// used in non-interactive HoF/LoL demos
 	void copyPageMemory(int srcPage, int srcPos, int dstPage, int dstPos, int numBytes);
-	void copyRegionEx(int srcPage, int srcW, int srcH, int dstPage, int dstX,int dstY, int dstW, int dstH, const ScreenDim *d, bool flag = false);
+	void copyRegionEx(int srcPage, int srcW, int srcH, int dstPage, int dstX, int dstY, int dstW, int dstH, const ScreenDim *d, bool flag = false);
+
 protected:
 	uint8 *_wsaFrameAnimBuffer;
 };

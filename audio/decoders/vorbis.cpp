@@ -29,24 +29,23 @@
 
 #ifdef USE_VORBIS
 
-#include "common/ptr.h"
-#include "common/stream.h"
-#include "common/textconsole.h"
-#include "common/util.h"
+#	include "common/ptr.h"
+#	include "common/stream.h"
+#	include "common/textconsole.h"
+#	include "common/util.h"
 
-#include "audio/audiostream.h"
+#	include "audio/audiostream.h"
 
-#ifdef USE_TREMOR
-#ifdef USE_TREMOLO
-#include <tremolo/ivorbisfile.h>
-#else
-#include <tremor/ivorbisfile.h>
-#endif
-#else
-#define OV_EXCLUDE_STATIC_CALLBACKS
-#include <vorbis/vorbisfile.h>
-#endif
-
+#	ifdef USE_TREMOR
+#		ifdef USE_TREMOLO
+#			include <tremolo/ivorbisfile.h>
+#		else
+#			include <tremor/ivorbisfile.h>
+#		endif
+#	else
+#		define OV_EXCLUDE_STATIC_CALLBACKS
+#		include <vorbis/vorbisfile.h>
+#	endif
 
 namespace Audio {
 
@@ -81,12 +80,9 @@ static ov_callbacks g_stream_wrap = {
 	read_stream_wrap, seek_stream_wrap, close_stream_wrap, tell_stream_wrap
 };
 
-
-
-#pragma mark -
-#pragma mark --- Ogg Vorbis stream ---
-#pragma mark -
-
+#	pragma mark -
+#	pragma mark--- Ogg Vorbis stream ---
+#	pragma mark -
 
 class VorbisStream : public SeekableAudioStream {
 protected:
@@ -110,20 +106,21 @@ public:
 
 	int readBuffer(int16 *buffer, const int numSamples);
 
-	bool endOfData() const		{ return _pos >= _bufferEnd; }
-	bool isStereo() const		{ return _isStereo; }
-	int getRate() const			{ return _rate; }
+	bool endOfData() const { return _pos >= _bufferEnd; }
+	bool isStereo() const { return _isStereo; }
+	int getRate() const { return _rate; }
 
 	bool seek(const Timestamp &where);
 	Timestamp getLength() const { return _length; }
+
 protected:
 	bool refill();
 };
 
-VorbisStream::VorbisStream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag dispose) :
-	_inStream(inStream, dispose),
-	_length(0, 1000),
-	_bufferEnd(ARRAYEND(_buffer)) {
+VorbisStream::VorbisStream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag dispose)
+  : _inStream(inStream, dispose)
+  , _length(0, 1000)
+  , _bufferEnd(ARRAYEND(_buffer)) {
 
 	int res = ov_open_callbacks(inStream, &_ovFile, NULL, 0, g_stream_wrap);
 	if (res < 0) {
@@ -140,11 +137,11 @@ VorbisStream::VorbisStream(Common::SeekableReadStream *inStream, DisposeAfterUse
 	_isStereo = ov_info(&_ovFile, -1)->channels >= 2;
 	_rate = ov_info(&_ovFile, -1)->rate;
 
-#ifdef USE_TREMOR
+#	ifdef USE_TREMOR
 	_length = Timestamp(ov_time_total(&_ovFile, -1), getRate());
-#else
+#	else
 	_length = Timestamp(uint32(ov_time_total(&_ovFile, -1) * 1000.0), getRate());
-#endif
+#	endif
 }
 
 VorbisStream::~VorbisStream() {
@@ -188,27 +185,27 @@ bool VorbisStream::refill() {
 	while (len_left > 0) {
 		long result;
 
-#ifdef USE_TREMOR
+#	ifdef USE_TREMOR
 		// Tremor ov_read() always returns data as signed 16 bit interleaved PCM
 		// in host byte order. As such, it does not take arguments to request
 		// specific signedness, byte order or bit depth as in Vorbisfile.
 		result = ov_read(&_ovFile, read_pos, len_left,
-						NULL);
-#else
-#ifdef SCUMM_BIG_ENDIAN
+		                 NULL);
+#	else
+#		ifdef SCUMM_BIG_ENDIAN
 		result = ov_read(&_ovFile, read_pos, len_left,
-						1,
-						2,	// 16 bit
-						1,	// signed
-						NULL);
-#else
+		                 1,
+		                 2, // 16 bit
+		                 1, // signed
+		                 NULL);
+#		else
 		result = ov_read(&_ovFile, read_pos, len_left,
-						0,
-						2,	// 16 bit
-						1,	// signed
-						NULL);
-#endif
-#endif
+		                 0,
+		                 2, // 16 bit
+		                 1, // signed
+		                 NULL);
+#		endif
+#	endif
 		if (result == OV_HOLE) {
 			// Possibly recoverable, just warn about it
 			warning("Corrupted data in Vorbis file");
@@ -235,14 +232,13 @@ bool VorbisStream::refill() {
 	return true;
 }
 
-
-#pragma mark -
-#pragma mark --- Ogg Vorbis factory functions ---
-#pragma mark -
+#	pragma mark -
+#	pragma mark--- Ogg Vorbis factory functions ---
+#	pragma mark -
 
 SeekableAudioStream *makeVorbisStream(
-	Common::SeekableReadStream *stream,
-	DisposeAfterUse::Flag disposeAfterUse) {
+  Common::SeekableReadStream *stream,
+  DisposeAfterUse::Flag disposeAfterUse) {
 	SeekableAudioStream *s = new VorbisStream(stream, disposeAfterUse);
 	if (s && s->endOfData()) {
 		delete s;

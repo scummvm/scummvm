@@ -20,13 +20,13 @@
  *
  */
 
+#include "gui/widget.h"
+#include "common/rect.h"
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "common/rect.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "graphics/pixelformat.h"
-#include "gui/widget.h"
 #include "gui/gui-manager.h"
 
 #include "gui/ThemeEval.h"
@@ -36,14 +36,26 @@
 namespace GUI {
 
 Widget::Widget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip)
-	: GuiObject(x, y, w, h), _type(0), _boss(boss), _tooltip(tooltip),
-	  _id(0), _flags(0), _hasFocus(false), _state(ThemeEngine::kStateEnabled) {
+  : GuiObject(x, y, w, h)
+  , _type(0)
+  , _boss(boss)
+  , _tooltip(tooltip)
+  , _id(0)
+  , _flags(0)
+  , _hasFocus(false)
+  , _state(ThemeEngine::kStateEnabled) {
 	init();
 }
 
 Widget::Widget(GuiObject *boss, const Common::String &name, const char *tooltip)
-	: GuiObject(name), _type(0), _boss(boss), _tooltip(tooltip),
-	  _id(0), _flags(0), _hasFocus(false), _state(ThemeEngine::kStateDisabled) {
+  : GuiObject(name)
+  , _type(0)
+  , _boss(boss)
+  , _tooltip(tooltip)
+  , _id(0)
+  , _flags(0)
+  , _hasFocus(false)
+  , _state(ThemeEngine::kStateDisabled) {
 	init();
 }
 
@@ -259,7 +271,8 @@ Common::String Widget::cleanupHotkey(const Common::String &label) {
 #pragma mark -
 
 StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, Graphics::TextAlign align, const char *tooltip, ThemeEngine::FontStyle font)
-	: Widget(boss, x, y, w, h, tooltip), _align(align) {
+  : Widget(boss, x, y, w, h, tooltip)
+  , _align(align) {
 	setFlags(WIDGET_ENABLED);
 	_type = kStaticTextWidget;
 	_label = text;
@@ -267,7 +280,7 @@ StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, 
 }
 
 StaticTextWidget::StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::String &text, const char *tooltip, ThemeEngine::FontStyle font)
-	: Widget(boss, name, tooltip) {
+  : Widget(boss, name, tooltip) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kStaticTextWidget;
 	_label = text;
@@ -289,40 +302,46 @@ void StaticTextWidget::setLabel(const Common::String &label) {
 }
 
 void StaticTextWidget::setAlign(Graphics::TextAlign align) {
-	if (_align != align){
+	if (_align != align) {
 		_align = align;
 
 		markAsDirty();
 	}
 }
 
-
 void StaticTextWidget::drawWidget() {
 	g_gui.theme()->drawText(
-			Common::Rect(_x, _y, _x + _w, _y + _h),
-			_label, _state, _align, ThemeEngine::kTextInversionNone, 0, true, _font
-	);
+	  Common::Rect(_x, _y, _x + _w, _y + _h),
+	  _label, _state, _align, ThemeEngine::kTextInversionNone, 0, true, _font);
 }
 
 #pragma mark -
 
 ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey)
-	: StaticTextWidget(boss, x, y, w, h, cleanupHotkey(label), Graphics::kTextAlignCenter, tooltip), CommandSender(boss),
-	  _cmd(cmd), _hotkey(hotkey), _lastTime(0), _duringPress(false) {
+  : StaticTextWidget(boss, x, y, w, h, cleanupHotkey(label), Graphics::kTextAlignCenter, tooltip)
+  , CommandSender(boss)
+  , _cmd(cmd)
+  , _hotkey(hotkey)
+  , _lastTime(0)
+  , _duringPress(false) {
 
 	if (hotkey == 0)
 		_hotkey = parseHotkey(label);
 
-	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
+	setFlags(WIDGET_ENABLED /* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
 
 ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey)
-	: StaticTextWidget(boss, name, cleanupHotkey(label), tooltip), CommandSender(boss),
-	  _cmd(cmd), _hotkey(hotkey), _lastTime(0), _duringPress(false) {
+  : StaticTextWidget(boss, name, cleanupHotkey(label), tooltip)
+  , CommandSender(boss)
+  , _cmd(cmd)
+  , _hotkey(hotkey)
+  , _lastTime(0)
+  , _duringPress(false) {
 	if (hotkey == 0)
 		_hotkey = parseHotkey(label);
-	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
+	setFlags(WIDGET_ENABLED /* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
 
@@ -360,10 +379,10 @@ ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32
 		((PicButtonWidget *)button)->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEraser));
 	} else
 #endif
-		if (!name.empty())
-			button = new ButtonWidget(boss, name, "C", _("Clear value"), cmd);
-		else
-			button = new ButtonWidget(boss, x, y, w, h, "C", _("Clear value"), cmd);
+	  if (!name.empty())
+		button = new ButtonWidget(boss, name, "C", _("Clear value"), cmd);
+	else
+		button = new ButtonWidget(boss, x, y, w, h, "C", _("Clear value"), cmd);
 
 	return button;
 }
@@ -387,17 +406,21 @@ void ButtonWidget::setUnpressedState() {
 #pragma mark -
 
 PicButtonWidget::PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip, uint32 cmd, uint8 hotkey)
-	: ButtonWidget(boss, x, y, w, h, "", tooltip, cmd, hotkey),
-	  _alpha(255), _transparency(false), _showButton(true) {
+  : ButtonWidget(boss, x, y, w, h, "", tooltip, cmd, hotkey)
+  , _alpha(255)
+  , _transparency(false)
+  , _showButton(true) {
 
-	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
+	setFlags(WIDGET_ENABLED /* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
 
 PicButtonWidget::PicButtonWidget(GuiObject *boss, const Common::String &name, const char *tooltip, uint32 cmd, uint8 hotkey)
-	: ButtonWidget(boss, name, "", tooltip, cmd, hotkey),
-	  _alpha(255), _transparency(false), _showButton(true) {
-	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
+  : ButtonWidget(boss, name, "", tooltip, cmd, hotkey)
+  , _alpha(255)
+  , _transparency(false)
+  , _showButton(true) {
+	setFlags(WIDGET_ENABLED /* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
 
@@ -416,7 +439,6 @@ void PicButtonWidget::setGfx(const Graphics::Surface *gfx, int statenum) {
 		warning("PicButtonWidget::setGfx got paletted surface passed");
 		return;
 	}
-
 
 	if (gfx->w > _w || gfx->h > _h) {
 		warning("PicButtonWidget has size %dx%d, but a surface with %dx%d is to be set", _w, _h, gfx->w, gfx->h);
@@ -475,13 +497,15 @@ void PicButtonWidget::drawWidget() {
 #pragma mark -
 
 CheckboxWidget::CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey)
-	: ButtonWidget(boss, x, y, w, h, label, tooltip, cmd, hotkey), _state(false) {
+  : ButtonWidget(boss, x, y, w, h, label, tooltip, cmd, hotkey)
+  , _state(false) {
 	setFlags(WIDGET_ENABLED);
 	_type = kCheckboxWidget;
 }
 
 CheckboxWidget::CheckboxWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey)
-	: ButtonWidget(boss, name, label, tooltip, cmd, hotkey), _state(false) {
+  : ButtonWidget(boss, name, label, tooltip, cmd, hotkey)
+  , _state(false) {
 	setFlags(WIDGET_ENABLED);
 	_type = kCheckboxWidget;
 }
@@ -507,7 +531,8 @@ void CheckboxWidget::drawWidget() {
 }
 
 #pragma mark -
-RadiobuttonGroup::RadiobuttonGroup(GuiObject *boss, uint32 cmd) : CommandSender(boss) {
+RadiobuttonGroup::RadiobuttonGroup(GuiObject *boss, uint32 cmd)
+  : CommandSender(boss) {
 	_value = -1;
 	_cmd = cmd;
 }
@@ -537,14 +562,20 @@ void RadiobuttonGroup::setEnabled(bool ena) {
 #pragma mark -
 
 RadiobuttonWidget::RadiobuttonWidget(GuiObject *boss, int x, int y, int w, int h, RadiobuttonGroup *group, int value, const Common::String &label, const char *tooltip, uint8 hotkey)
-	: ButtonWidget(boss, x, y, w, h, label, tooltip, 0, hotkey), _state(false), _value(value), _group(group) {
+  : ButtonWidget(boss, x, y, w, h, label, tooltip, 0, hotkey)
+  , _state(false)
+  , _value(value)
+  , _group(group) {
 	setFlags(WIDGET_ENABLED);
 	_type = kRadiobuttonWidget;
 	_group->addButton(this);
 }
 
 RadiobuttonWidget::RadiobuttonWidget(GuiObject *boss, const Common::String &name, RadiobuttonGroup *group, int value, const Common::String &label, const char *tooltip, uint8 hotkey)
-	: ButtonWidget(boss, name, label, tooltip, 0, hotkey), _state(false), _value(value), _group(group) {
+  : ButtonWidget(boss, name, label, tooltip, 0, hotkey)
+  , _state(false)
+  , _value(value)
+  , _group(group) {
 	setFlags(WIDGET_ENABLED);
 	_type = kRadiobuttonWidget;
 	_group->addButton(this);
@@ -578,15 +609,29 @@ void RadiobuttonWidget::drawWidget() {
 #pragma mark -
 
 SliderWidget::SliderWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip, uint32 cmd)
-	: Widget(boss, x, y, w, h, tooltip), CommandSender(boss),
-	  _cmd(cmd), _value(0), _oldValue(0), _valueMin(0), _valueMax(100), _isDragging(false), _labelWidth(0) {
+  : Widget(boss, x, y, w, h, tooltip)
+  , CommandSender(boss)
+  , _cmd(cmd)
+  , _value(0)
+  , _oldValue(0)
+  , _valueMin(0)
+  , _valueMax(100)
+  , _isDragging(false)
+  , _labelWidth(0) {
 	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG);
 	_type = kSliderWidget;
 }
 
 SliderWidget::SliderWidget(GuiObject *boss, const Common::String &name, const char *tooltip, uint32 cmd)
-	: Widget(boss, name, tooltip), CommandSender(boss),
-	  _cmd(cmd), _value(0), _oldValue(0), _valueMin(0), _valueMax(100), _isDragging(false), _labelWidth(0) {
+  : Widget(boss, name, tooltip)
+  , CommandSender(boss)
+  , _cmd(cmd)
+  , _value(0)
+  , _oldValue(0)
+  , _valueMin(0)
+  , _valueMax(100)
+  , _isDragging(false)
+  , _labelWidth(0) {
 	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG);
 	_type = kSliderWidget;
 }
@@ -602,7 +647,7 @@ void SliderWidget::handleMouseMoved(int x, int y, int button) {
 		if (newValue != _value) {
 			_value = newValue;
 			markAsDirty();
-			sendCommand(_cmd, _value);	// FIXME - hack to allow for "live update" in sound dialog
+			sendCommand(_cmd, _value); // FIXME - hack to allow for "live update" in sound dialog
 		}
 	}
 }
@@ -634,7 +679,7 @@ void SliderWidget::handleMouseWheel(int x, int y, int direction) {
 		if (newValue != _value) {
 			_value = newValue;
 			markAsDirty();
-			sendCommand(_cmd, _value);	// FIXME - hack to allow for "live update" in sound dialog
+			sendCommand(_cmd, _value); // FIXME - hack to allow for "live update" in sound dialog
 		}
 	}
 }
@@ -660,13 +705,19 @@ int SliderWidget::posToValue(int pos) {
 #pragma mark -
 
 GraphicsWidget::GraphicsWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip)
-	: Widget(boss, x, y, w, h, tooltip), _gfx(), _alpha(255), _transparency(false) {
+  : Widget(boss, x, y, w, h, tooltip)
+  , _gfx()
+  , _alpha(255)
+  , _transparency(false) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kGraphicsWidget;
 }
 
 GraphicsWidget::GraphicsWidget(GuiObject *boss, const Common::String &name, const char *tooltip)
-	: Widget(boss, name, tooltip), _gfx(), _alpha(255), _transparency(false) {
+  : Widget(boss, name, tooltip)
+  , _gfx()
+  , _alpha(255)
+  , _transparency(false) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kGraphicsWidget;
 }
@@ -725,12 +776,14 @@ void GraphicsWidget::drawWidget() {
 
 #pragma mark -
 
-ContainerWidget::ContainerWidget(GuiObject *boss, int x, int y, int w, int h) : Widget(boss, x, y, w, h) {
+ContainerWidget::ContainerWidget(GuiObject *boss, int x, int y, int w, int h)
+  : Widget(boss, x, y, w, h) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kContainerWidget;
 }
 
-ContainerWidget::ContainerWidget(GuiObject *boss, const Common::String &name) : Widget(boss, name) {
+ContainerWidget::ContainerWidget(GuiObject *boss, const Common::String &name)
+  : Widget(boss, name) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kContainerWidget;
 }

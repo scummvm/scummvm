@@ -33,11 +33,11 @@
 #include "bladerunner/savefile.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/screen_effects.h"
+#include "bladerunner/script/police_maze.h"
+#include "bladerunner/script/scene_script.h"
 #include "bladerunner/set.h"
 #include "bladerunner/settings.h"
 #include "bladerunner/slice_renderer.h"
-#include "bladerunner/script/police_maze.h"
-#include "bladerunner/script/scene_script.h"
 #include "bladerunner/ui/spinner.h"
 #include "bladerunner/vqa_player.h"
 #include "bladerunner/zbuffer.h"
@@ -47,24 +47,25 @@
 namespace BladeRunner {
 
 Scene::Scene(BladeRunnerEngine *vm)
-	: _vm(vm),
-	_setId(-1),
-	_sceneId(-1),
-	_vqaPlayer(nullptr),
-	_defaultLoop(0),
-	_defaultLoopSet(false),
-	_specialLoopMode(kSceneLoopModeLoseControl),
-	_specialLoop(0),
-	_defaultLoopPreloadedSet(false),
-	// _introFinished(false),
-	_nextSetId(-1),
-	_nextSceneId(-1),
-	_frame(0),
-	_actorStartFacing(0),
-	_playerWalkedIn(false),
-	_set(new Set(vm)),
-	_regions(new Regions()),
-	_exits(new Regions()) {
+  : _vm(vm)
+  , _setId(-1)
+  , _sceneId(-1)
+  , _vqaPlayer(nullptr)
+  , _defaultLoop(0)
+  , _defaultLoopSet(false)
+  , _specialLoopMode(kSceneLoopModeLoseControl)
+  , _specialLoop(0)
+  , _defaultLoopPreloadedSet(false)
+  ,
+  // _introFinished(false),
+  _nextSetId(-1)
+  , _nextSceneId(-1)
+  , _frame(0)
+  , _actorStartFacing(0)
+  , _playerWalkedIn(false)
+  , _set(new Set(vm))
+  , _regions(new Regions())
+  , _exits(new Regions()) {
 }
 
 Scene::~Scene() {
@@ -136,7 +137,7 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 
 	if (isLoadingGame) {
 		resume(true);
-		if (sceneId == kScenePS10    // police maze
+		if (sceneId == kScenePS10 // police maze
 		    || sceneId == kScenePS11 // police maze
 		    || sceneId == kScenePS12 // police maze
 		    || sceneId == kScenePS13 // police maze
@@ -172,14 +173,13 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 		Actor *actor = _vm->_actors[i];
 		if (actor->getSetId() == setId) {
 			_vm->_sceneObjects->addActor(
-				i + kSceneObjectOffsetActors,
-				actor->getBoundingBox(),
-				actor->getScreenRectangle(),
-				true,
-				false,
-				actor->isTarget(),
-				actor->isRetired()
-			);
+			  i + kSceneObjectOffsetActors,
+			  actor->getBoundingBox(),
+			  actor->getScreenRectangle(),
+			  true,
+			  false,
+			  actor->isTarget(),
+			  actor->isRetired());
 		}
 	}
 
@@ -286,7 +286,6 @@ void Scene::resume(bool isLoadingGame) {
 			loopStartSpecial(_specialLoopMode, _specialLoop, true);
 			if (_specialLoopMode == kSceneLoopModeLoseControl || _specialLoopMode == kSceneLoopModeChangeSet) {
 				_vm->playerGainsControl();
-
 			}
 		}
 		if (_specialLoopMode == kSceneLoopModeChangeSet) {

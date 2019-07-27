@@ -23,35 +23,41 @@
 #ifndef XEEN_dialogs_message_H
 #define XEEN_dialogs_message_H
 
-#include "xeen/dialogs/dialogs.h"
 #include "xeen/character.h"
+#include "xeen/dialogs/dialogs.h"
 
 namespace Xeen {
 
-enum MessageWaitType { WT_FREEZE_WAIT = 0, WT_NONFREEZED_WAIT = 1,
-	WT_LOC_WAIT = 2, WT_ANIMATED_WAIT = 3 };
+enum MessageWaitType { WT_FREEZE_WAIT = 0,
+	                     WT_NONFREEZED_WAIT = 1,
+	                     WT_LOC_WAIT = 2,
+	                     WT_ANIMATED_WAIT = 3 };
 
 class MessageDialog : public ButtonContainer {
 private:
-	MessageDialog(XeenEngine *vm) : ButtonContainer(vm) { setWaitBounds(); }
+	MessageDialog(XeenEngine *vm)
+	  : ButtonContainer(vm) { setWaitBounds(); }
 
 	void execute(const Common::String &msg, MessageWaitType waitType);
+
 public:
 	static void show(XeenEngine *vm, const Common::String &msg,
-		MessageWaitType waitType = WT_FREEZE_WAIT);
+	                 MessageWaitType waitType = WT_FREEZE_WAIT);
 };
 
 class ErrorScroll {
 public:
 	static void show(XeenEngine *vm, const Common::String &msg,
-		MessageWaitType waitType = WT_FREEZE_WAIT);
+	                 MessageWaitType waitType = WT_FREEZE_WAIT);
 };
 
-class CantCast: public ButtonContainer {
+class CantCast : public ButtonContainer {
 private:
-	CantCast(XeenEngine *vm) : ButtonContainer(vm) { setWaitBounds(); }
+	CantCast(XeenEngine *vm)
+	  : ButtonContainer(vm) { setWaitBounds(); }
 
 	void execute(int spellId, int componentNum);
+
 public:
 	static void show(XeenEngine *vm, int spellId, int componentNum);
 };

@@ -26,11 +26,11 @@
  * Copyright (c) 1997-2003 Nayma Software
  */
 
+#include "tony/gfxengine.h"
 #include "common/savefile.h"
+#include "tony/custom.h"
 #include "tony/mpal/lzo.h"
 #include "tony/mpal/mpalutils.h"
-#include "tony/custom.h"
-#include "tony/gfxengine.h"
 #include "tony/tony.h"
 
 namespace Tony {
@@ -171,7 +171,7 @@ void RMGfxEngine::doFrame(CORO_PARAM, bool bDrawLocation) {
 			if (_inv.haveFocus(_input.mousePos()) && !_inter.active()) {
 				// Left Click
 				// **********
-				if (_input.mouseLeftClicked()/* && m_itemName.IsItemSelected()*/) {
+				if (_input.mouseLeftClicked() /* && m_itemName.IsItemSelected()*/) {
 					// Left click activates the combine, if we are on an object
 					if (_inv.leftClick(_input.mousePos(), _curActionObj)) {
 						_curAction = TA_COMBINE;
@@ -179,26 +179,26 @@ void RMGfxEngine::doFrame(CORO_PARAM, bool bDrawLocation) {
 					}
 				} else
 
-					// Right Click
-					// ***********
-					if (_input.mouseRightClicked()) {
-						if (_itemName.isItemSelected()) {
-							_curActionObj = 0;
-							_inv.rightClick(_input.mousePos());
-						} else
-							_inv.rightClick(_input.mousePos());
+				  // Right Click
+				  // ***********
+				  if (_input.mouseRightClicked()) {
+					if (_itemName.isItemSelected()) {
+						_curActionObj = 0;
+						_inv.rightClick(_input.mousePos());
 					} else
+						_inv.rightClick(_input.mousePos());
+				} else
 
-						// Right Release
-						// *************
-						if (_input.mouseRightReleased()) {
-							if (_inv.rightRelease(_input.mousePos(), _curAction)) {
-								CORO_INVOKE_3(_tony.moveAndDoAction, _itemName.getHotspot(), _itemName.getSelectedItem(), _curAction);
+				  // Right Release
+				  // *************
+				  if (_input.mouseRightReleased()) {
+					if (_inv.rightRelease(_input.mousePos(), _curAction)) {
+						CORO_INVOKE_3(_tony.moveAndDoAction, _itemName.getHotspot(), _itemName.getSelectedItem(), _curAction);
 
-								_curAction = TA_GOTO;
-								_point.setAction(_curAction);
-							}
-						}
+						_curAction = TA_GOTO;
+						_point.setAction(_curAction);
+					}
+				}
 			} else {
 				// Options Menu
 				// ************
@@ -238,7 +238,7 @@ void RMGfxEngine::doFrame(CORO_PARAM, bool bDrawLocation) {
 					_point.setAction(_curAction);
 				}
 
-SKIPCLICKSINISTRO:
+			SKIPCLICKSINISTRO:
 				// Right Click
 				// ************
 				if (_curAction == TA_COMBINE) {
@@ -311,7 +311,7 @@ SKIPCLICKSINISTRO:
 	// **********************
 	CORO_INVOKE_0(_bigBuf.drawOT);
 
-#define FSTEP (480/32)
+#define FSTEP (480 / 32)
 
 	// Wipe
 	if (_bWiping) {
@@ -711,7 +711,7 @@ void RMGfxEngine::loadState(CORO_PARAM, const Common::String &fn) {
 	_inv.loadState(_ctx->state);
 	delete[] _ctx->state;
 
-	if (_ctx->ver >= 0x2) {   // Version 2: box please
+	if (_ctx->ver >= 0x2) { // Version 2: box please
 		_ctx->size = _ctx->f->readUint32LE();
 		_ctx->state = new byte[_ctx->size];
 		_ctx->f->read(_ctx->state, _ctx->size);

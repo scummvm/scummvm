@@ -49,8 +49,7 @@ World::World(MacVentureEngine *engine, Common::MacResManager *resMan) {
 	_gameText = new Container(_engine->getFilePath(kTextPathID));
 }
 
-
-World::~World()	{
+World::~World() {
 
 	if (_saveGame)
 		delete _saveGame;
@@ -138,9 +137,9 @@ bool MacVenture::World::isObjActive(ObjID obj) {
 	if (!getAncestor(obj)) {
 		return false; // If our ancestor is the garbage (obj 0), we're inactive
 	}
-	if (_engine->getInvolvedObjects() >= 2 &&	// If (we need > 1 objs for the command) &&
-		destObj > 0 &&			// we have a destination object &&
-		!getAncestor(destObj)) {	// but that destination object is in the garbage
+	if (_engine->getInvolvedObjects() >= 2 && // If (we need > 1 objs for the command) &&
+	    destObj > 0 && // we have a destination object &&
+	    !getAncestor(destObj)) { // but that destination object is in the garbage
 		return false;
 	}
 	if (selectedControl != kMoveObject) {
@@ -225,11 +224,8 @@ Common::String World::getText(ObjID objID, ObjID source, ObjID target) {
 	return *text.decode();
 }
 
-
 bool World::isObjDraggable(ObjID objID) {
-	return (getObjAttr(objID, kAttrInvisible) == 0 &&
-			getObjAttr(objID, kAttrUnclickable) == 0 &&
-			getObjAttr(objID, kAttrUndraggable) == 0);
+	return (getObjAttr(objID, kAttrInvisible) == 0 && getObjAttr(objID, kAttrUnclickable) == 0 && getObjAttr(objID, kAttrUndraggable) == 0);
 }
 
 bool World::intersects(ObjID objID, Common::Rect rect) {
@@ -300,7 +296,6 @@ SaveGame::SaveGame(MacVentureEngine *engine, Common::SeekableReadStream *res) {
 
 SaveGame::~SaveGame() {
 }
-
 
 Attribute SaveGame::getAttr(ObjID objID, uint32 attrID) {
 	return _groups[attrID][objID];
@@ -375,6 +370,5 @@ void SaveGame::loadText(MacVentureEngine *engine, Common::SeekableReadStream *re
 	// TODO: Load console text. For now, the GUI doesn't even look at this.
 	_text = "Placeholder Console Text";
 }
-
 
 } // End of namespace MacVenture

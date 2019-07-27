@@ -25,14 +25,15 @@
 
 namespace TeenAgent {
 
-Console::Console(TeenAgentEngine *engine) : _engine(engine) {
-	registerCmd("enable_object",		WRAP_METHOD(Console, enableObject));
-	registerCmd("disable_object",		WRAP_METHOD(Console, enableObject));
-	registerCmd("set_ons",			WRAP_METHOD(Console, setOns));
-	registerCmd("set_music",			WRAP_METHOD(Console, setMusic));
-	registerCmd("animation",			WRAP_METHOD(Console, playAnimation));
-	registerCmd("actor_animation",	WRAP_METHOD(Console, playActorAnimation));
-	registerCmd("call",				WRAP_METHOD(Console, call));
+Console::Console(TeenAgentEngine *engine)
+  : _engine(engine) {
+	registerCmd("enable_object", WRAP_METHOD(Console, enableObject));
+	registerCmd("disable_object", WRAP_METHOD(Console, enableObject));
+	registerCmd("set_ons", WRAP_METHOD(Console, setOns));
+	registerCmd("set_music", WRAP_METHOD(Console, setMusic));
+	registerCmd("animation", WRAP_METHOD(Console, playAnimation));
+	registerCmd("actor_animation", WRAP_METHOD(Console, playActorAnimation));
+	registerCmd("call", WRAP_METHOD(Console, call));
 }
 
 bool Console::enableObject(int argc, const char **argv) {

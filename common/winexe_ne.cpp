@@ -20,12 +20,12 @@
  *
  */
 
+#include "common/winexe_ne.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/str.h"
 #include "common/stream.h"
-#include "common/winexe_ne.h"
 
 namespace Common {
 
@@ -92,7 +92,7 @@ bool NEResources::loadFromCompressedEXE(const String &fileName) {
 		return false;
 
 	// First part of the signature
-	if (file.readUint32BE() != MKTAG('S','Z','D','D'))
+	if (file.readUint32BE() != MKTAG('S', 'Z', 'D', 'D'))
 		return false;
 
 	// Second part of the signature
@@ -136,7 +136,6 @@ bool NEResources::loadFromCompressedEXE(const String &fileName) {
 					matchPos &= 0xFFF;
 				}
 			}
-
 		}
 	}
 
@@ -219,11 +218,11 @@ bool NEResources::readResourceTable(uint32 offset) {
 
 			// Resource properties
 			res.offset = _exe->readUint16LE() * align;
-			res.size   = _exe->readUint16LE() * align;
-			res.flags  = _exe->readUint16LE();
-			uint16 id  = _exe->readUint16LE();
+			res.size = _exe->readUint16LE() * align;
+			res.flags = _exe->readUint16LE();
+			uint16 id = _exe->readUint16LE();
 			res.handle = _exe->readUint16LE();
-			res.usage  = _exe->readUint16LE();
+			res.usage = _exe->readUint16LE();
 
 			res.type = type;
 

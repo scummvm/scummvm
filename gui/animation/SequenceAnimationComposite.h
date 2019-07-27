@@ -25,19 +25,19 @@
 #ifndef GUI_ANIMATION_SEQUENCEANIMATION_H
 #define GUI_ANIMATION_SEQUENCEANIMATION_H
 
-#include "gui/animation/Animation.h"
 #include "common/array.h"
+#include "gui/animation/Animation.h"
 
 namespace GUI {
 
-class SequenceAnimationComposite: public Animation {
+class SequenceAnimationComposite : public Animation {
 public:
 	SequenceAnimationComposite() {}
 	virtual ~SequenceAnimationComposite() {}
 
 	virtual void addAnimation(AnimationPtr animation);
 
-	virtual void update(Drawable* drawable, long currentTime);
+	virtual void update(Drawable *drawable, long currentTime);
 
 	virtual void start(long currentTime);
 

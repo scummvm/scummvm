@@ -26,8 +26,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CEndCredits, CGameObject)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(FrameMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(FrameMsg)
 END_MESSAGE_MAP()
 
 void CEndCredits::save(SimpleFile *file, int indent) {

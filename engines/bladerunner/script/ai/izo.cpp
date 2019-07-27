@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptIzo::AIScriptIzo(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptIzo::AIScriptIzo(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 	_flag = 0;
 	_var1 = 6;
 	_var2 = 1;
@@ -52,38 +53,33 @@ void AIScriptIzo::Initialize() {
 
 bool AIScriptIzo::Update() {
 	if (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoStopRunning
-	 && Player_Query_Current_Scene() == kSceneUG02
-	) {
+	    && Player_Query_Current_Scene() == kSceneUG02) {
 		Actor_Set_Targetable(kActorIzo, true);
 		Actor_Set_Goal_Number(kActorIzo, kGoalIzoRunToRC03);
 		return true;
 	}
 
 	if (Global_Variable_Query(kVariableChapter) == 3
-	 && Actor_Query_Goal_Number(kActorIzo) == kGoalIzoGone
-	 && Actor_Query_Which_Set_In(kActorIzo) == kSetRC03
-	) {
+	    && Actor_Query_Goal_Number(kActorIzo) == kGoalIzoGone
+	    && Actor_Query_Which_Set_In(kActorIzo) == kSetRC03) {
 		Actor_Put_In_Set(kActorIzo, kSetFreeSlotI);
 		Actor_Set_At_Waypoint(kActorIzo, 41, 0);
 	}
 
 	if (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoDefault
-	 && Player_Query_Current_Scene() == kSceneTB02
-	) {
+	    && Player_Query_Current_Scene() == kSceneTB02) {
 		Actor_Set_Goal_Number(kActorIzo, kGoalIzoGoToHC03);
 	}
 
 	if (Global_Variable_Query(kVariableChapter) == 4
-	 && Actor_Query_Goal_Number(kActorIzo) < kGoalIzoGone
-	 && Actor_Query_Goal_Number(kActorIzo) < 300
-	 && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoGotArrested
-	) {
+	    && Actor_Query_Goal_Number(kActorIzo) < kGoalIzoGone
+	    && Actor_Query_Goal_Number(kActorIzo) < 300
+	    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoGotArrested) {
 		Actor_Set_Goal_Number(kActorIzo, 300);
 	}
 
 	if (Global_Variable_Query(kVariableChapter) == 5
-	 && Actor_Query_Goal_Number(kActorIzo) < 400
-	) {
+	    && Actor_Query_Goal_Number(kActorIzo) < 400) {
 		Actor_Set_Goal_Number(kActorIzo, 400);
 	}
 
@@ -126,8 +122,7 @@ void AIScriptIzo::CompletedMovementTrack() {
 		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleIzoBlockedByMcCoy
 		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleShootIzo
 		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleLeaveRC03
-		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleGoToPoliceStation
-		) {
+		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleGoToPoliceStation) {
 			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleApprehendIzo);
 		}
 #endif // BLADERUNNER_ORIGINAL_BUGS
@@ -175,8 +170,7 @@ void AIScriptIzo::ClickedByPlayer() {
 	}
 
 	if (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRunToRC03
-	 && Player_Query_Current_Set() == kSetUG02
-	) {
+	    && Player_Query_Current_Set() == kSetUG02) {
 		Player_Loses_Control();
 		Actor_Set_Goal_Number(kActorIzo, kGoalIzoStopRunning);
 		Actor_Face_Actor(kActorMcCoy, kActorIzo, true);
@@ -206,8 +200,7 @@ void AIScriptIzo::ClickedByPlayer() {
 		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleIzoBlockedByMcCoy
 		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleShootIzo
 		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleLeaveRC03
-		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleGoToPoliceStation
-		) {
+		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleGoToPoliceStation) {
 			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleApprehendIzo);
 		}
 #endif // BLADERUNNER_ORIGINAL_BUGS
@@ -247,9 +240,8 @@ void AIScriptIzo::ShotAtAndMissed() {
 
 bool AIScriptIzo::ShotAtAndHit() {
 	if (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03Walk
-	 || Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03Run
-	 || Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03RunAway
-	) {
+	    || Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03Run
+	    || Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03RunAway) {
 		Actor_Set_Health(kActorIzo, 50, 50);
 
 		if (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03Walk) {
@@ -260,8 +252,7 @@ bool AIScriptIzo::ShotAtAndHit() {
 		AI_Movement_Track_Flush(kActorIzo);
 		Global_Variable_Increment(kVariableIzoShot, 1);
 		if (!Game_Flag_Query(kFlagIzoShot)
-		 &&  Global_Variable_Query(kVariableIzoShot) == 1
-		) {
+		    && Global_Variable_Query(kVariableIzoShot) == 1) {
 			Game_Flag_Set(kFlagIzoShot);
 			_animationFrame = 0;
 			_animationState = 19;
@@ -302,11 +293,10 @@ int AIScriptIzo::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId)
 
 bool AIScriptIzo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	if (newGoalNumber == 200
-	 || newGoalNumber == kGoalIzoDie
-	 || newGoalNumber == kGoalIzoDieHidden
-	 || newGoalNumber == kGoalIzoGotArrested
-	 || newGoalNumber == kGoalIzoEscape
-	) {
+	    || newGoalNumber == kGoalIzoDie
+	    || newGoalNumber == kGoalIzoDieHidden
+	    || newGoalNumber == kGoalIzoGotArrested
+	    || newGoalNumber == kGoalIzoEscape) {
 		Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationDNARow, true);
 	}
 
@@ -485,7 +475,6 @@ bool AIScriptIzo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case 9999:
 		return true;
-
 	}
 
 	return false;
@@ -602,8 +591,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 			Actor_Combat_AI_Hit_Attempt(kActorIzo);
 		}
 		if (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoWaitingAtRC03
-		 && _animationFrame == 6
-		) {
+		    && _animationFrame == 6) {
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDodge);
 		}
 		Actor_Query_Goal_Number(kActorIzo);
@@ -645,10 +633,8 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 		*animation = _animationFrame + 280;
 		_animationFrame++;
 		if (_animationFrame >= 2
-		 && (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03Walk
-		  || Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03Run
-		 )
-		) {
+		    && (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03Walk
+		        || Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03Run)) {
 			*animation = 297;
 			_animationFrame = 0;
 			_animationState = 0;
@@ -1033,17 +1019,17 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptIzo::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptIzo::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptIzo::ReachedMovementTrackWaypoint(int waypointId) {
@@ -1072,7 +1058,7 @@ void AIScriptIzo::dialogueWithIzo() {
 	switch (input) {
 	case 0: // MOTIVES -> Should be "LET GO"?
 		Actor_Says(kActorMcCoy, 5470, 15); // Get lost, Izo. Take off.
-		Actor_Says(kActorIzo, 710, 13);    //
+		Actor_Says(kActorIzo, 710, 13); //
 		Actor_Set_Goal_Number(kActorIzo, kGoalIzoEscape);
 		Player_Gains_Control();
 		break;

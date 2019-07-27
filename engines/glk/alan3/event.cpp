@@ -25,17 +25,17 @@
 namespace Glk {
 namespace Alan3 {
 
-/* PUBLIC DATA */
-int eventQueueSize = 0;
-EventQueueEntry *eventQueue = NULL;
-int eventQueueTop = 0;
-EventEntry *events;
+	/* PUBLIC DATA */
+	int eventQueueSize = 0;
+	EventQueueEntry *eventQueue = NULL;
+	int eventQueueTop = 0;
+	EventEntry *events;
 
-void EventQueueEntry::synchronize(Common::Serializer &s) {
-	s.syncAsSint32LE(after);
-	s.syncAsSint32LE(event);
-	s.syncAsSint32LE(where);
-}
+	void EventQueueEntry::synchronize(Common::Serializer &s) {
+		s.syncAsSint32LE(after);
+		s.syncAsSint32LE(event);
+		s.syncAsSint32LE(where);
+	}
 
 } // End of namespace Alan3
 } // End of namespace Glk

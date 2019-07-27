@@ -23,8 +23,8 @@
 #ifndef TITANIC_BASE_STARS_H
 #define TITANIC_BASE_STARS_H
 
-#include "titanic/star_control/frange.h" // class Fvector
 #include "common/array.h"
+#include "titanic/star_control/frange.h" // class Fvector
 
 namespace Common {
 class SeekableReadStream;
@@ -32,7 +32,8 @@ class SeekableReadStream;
 
 namespace Titanic {
 
-enum StarMode { MODE_STARFIELD = 0, MODE_PHOTO = 1 };
+enum StarMode { MODE_STARFIELD = 0,
+	              MODE_PHOTO = 1 };
 
 class CStarCamera;
 class CStarCloseup;
@@ -62,7 +63,9 @@ struct CBaseStarEntry {
 struct CStarPosition : public Common::Point {
 	int _index1;
 	int _index2;
-	CStarPosition() : _index1(0), _index2(0) {}
+	CStarPosition()
+	  : _index1(0)
+	  , _index2(0) {}
 
 	bool operator==(const CStarPosition &sp) const {
 		return x == sp.x && y == sp.y && _index1 == sp._index1 && _index2 == sp._index2;
@@ -78,6 +81,7 @@ private:
 	void draw2(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup);
 	void draw3(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup);
 	void draw4(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup);
+
 protected:
 	FRange _minMax;
 	double _minVal;
@@ -85,6 +89,7 @@ protected:
 	double _range;
 	double _value1, _value2;
 	double _value3, _value4;
+
 protected:
 	/**
 	 * Load entry data from a passed stream
@@ -100,8 +105,10 @@ protected:
 	 * Reset the data for an entry
 	 */
 	void resetEntry(CBaseStarEntry &entry);
+
 public:
 	Common::Array<CBaseStarEntry> _data;
+
 public:
 	CBaseStars();
 	virtual ~CBaseStars() {}
@@ -117,7 +124,7 @@ public:
 	 * Selects a star
 	 */
 	virtual bool selectStar(CSurfaceArea *surfaceArea, CStarCamera *camera,
-		const Common::Point &pt, void *handler = nullptr) { return false; }
+	                        const Common::Point &pt, void *handler = nullptr) { return false; }
 
 	/**
 	 * Adds a new star, or removes one if already present at the given co-ordinates
@@ -155,7 +162,7 @@ public:
 	 * screen given the specified camera view, and returns it's index
 	 */
 	int findStar(CSurfaceArea *surfaceArea, CStarCamera *camera,
-		const Common::Point &pt);
+	             const Common::Point &pt);
 
 	int baseFn2(CSurfaceArea *surfaceArea, CStarCamera *camera);
 };
@@ -164,8 +171,11 @@ class CStarVector {
 private:
 	CStarCamera *_owner;
 	FVector _vector;
+
 public:
-	CStarVector(CStarCamera *owner, const FVector &v) : _owner(owner), _vector(v) {}
+	CStarVector(CStarCamera *owner, const FVector &v)
+	  : _owner(owner)
+	  , _vector(v) {}
 
 	/**
 	 * Applies the saved vector

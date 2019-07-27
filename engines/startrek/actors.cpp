@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/stream.h"
 #include "common/memstream.h"
+#include "common/stream.h"
 
 #include "startrek/iwfile.h"
 #include "startrek/room.h"
@@ -275,7 +275,6 @@ void StarTrekEngine::renderBanBelowSprites() {
 			_banFiles[i]->seek(_banFileOffsets[i], SEEK_SET);
 			renderBan(bgPixels, _banFiles[i]);
 		}
-
 	}
 
 	_gfx->unlockScreenPixels();
@@ -338,9 +337,9 @@ void StarTrekEngine::renderBanAboveSprites() {
 		int16 size = _banFiles[i]->readSint16();
 		if (size != 0) {
 			Common::Rect rect;
-			rect.left   = _banFiles[i]->readSint16();
-			rect.top    = _banFiles[i]->readSint16();
-			rect.right  = _banFiles[i]->readSint16() + 1;
+			rect.left = _banFiles[i]->readSint16();
+			rect.top = _banFiles[i]->readSint16();
+			rect.right = _banFiles[i]->readSint16() + 1;
 			rect.bottom = _banFiles[i]->readSint16() + 1;
 
 			// Draw all sprites in this rectangle to a custom surface, and only update the
@@ -368,14 +367,13 @@ void StarTrekEngine::renderBanAboveSprites() {
 				if (b == -128) {
 					uint16 skip = _banFiles[i]->readUint16();
 					dest += skip;
-					src  += skip;
+					src += skip;
 				} else if (b < 0) {
 					byte c = _banFiles[i]->readByte();
 					if (c == 0) {
 						dest += (-b) + 1;
-						src  += (-b) + 1;
-					}
-					else {
+						src += (-b) + 1;
+					} else {
 						for (int j = 0; j < (-b) + 1; j++)
 							*(dest++) = *(src++);
 					}
@@ -703,7 +701,7 @@ SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filen
 
 	char c = filename[0];
 	if ((strcmp(basename, "stnd") == 0 || strcmp(basename, "tele") == 0)
-	        && (c == 'm' || c == 's' || c == 'k' || c == 'r')) {
+	    && (c == 'm' || c == 's' || c == 'k' || c == 'r')) {
 		if (c == 'm') {
 			// Mccoy has the "base" animations for all crewmen
 			bitmapToReturn = _gfx->loadBitmap(filename);
@@ -795,7 +793,6 @@ SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filen
 	return bitmapToReturn;
 }
 
-
 int StarTrekEngine::selectObjectForUseAction() {
 	while (true) {
 		if (!(_awayMission.crewDownBitset & (1 << OBJECT_KIRK)))
@@ -820,13 +817,13 @@ int StarTrekEngine::selectObjectForUseAction() {
 				break;
 			} else if (event.type == TREKEVENT_KEYDOWN) {
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE
-				        || event.kbd.keycode == Common::KEYCODE_w
-				        || event.kbd.keycode == Common::KEYCODE_t
-				        || event.kbd.keycode == Common::KEYCODE_u
-				        || event.kbd.keycode == Common::KEYCODE_g
-				        || event.kbd.keycode == Common::KEYCODE_l
-				        || event.kbd.keycode == Common::KEYCODE_SPACE
-				        || event.kbd.keycode == Common::KEYCODE_F2) {
+				    || event.kbd.keycode == Common::KEYCODE_w
+				    || event.kbd.keycode == Common::KEYCODE_t
+				    || event.kbd.keycode == Common::KEYCODE_u
+				    || event.kbd.keycode == Common::KEYCODE_g
+				    || event.kbd.keycode == Common::KEYCODE_l
+				    || event.kbd.keycode == Common::KEYCODE_SPACE
+				    || event.kbd.keycode == Common::KEYCODE_F2) {
 					// Allow these buttons to be processed by main away mission loop
 					break;
 				} else if (event.kbd.keycode == Common::KEYCODE_i) {
@@ -893,26 +890,29 @@ Common::String StarTrekEngine::getCrewmanAnimFilename(int actorIndex, const Comm
 }
 
 void StarTrekEngine::updateMouseBitmap() {
-	const bool worksOnCrewmen[] = { // True if the action reacts with crewmen
+	const bool worksOnCrewmen[] = {
+		// True if the action reacts with crewmen
 		false, // ACTION_WALK
-		true,  // ACTION_USE
+		true, // ACTION_USE
 		false, // ACTION_GET
-		true,  // ACTION_LOOK
-		true   // ACTION_TALK
+		true, // ACTION_LOOK
+		true // ACTION_TALK
 	};
-	const bool worksOnActors[] = { // True if the action reacts with other objects
+	const bool worksOnActors[] = {
+		// True if the action reacts with other objects
 		false, // ACTION_WALK
-		true,  // ACTION_USE
-		true,  // ACTION_GET
-		true,  // ACTION_LOOK
-		true   // ACTION_TALK
+		true, // ACTION_USE
+		true, // ACTION_GET
+		true, // ACTION_LOOK
+		true // ACTION_TALK
 	};
-	const bool worksOnHotspots[] = { // True if the action reacts with hotspots
+	const bool worksOnHotspots[] = {
+		// True if the action reacts with hotspots
 		false, // ACTION_WALK
-		true,  // ACTION_USE
-		true,  // ACTION_GET
-		true,  // ACTION_LOOK
-		false  // ACTION_TALK
+		true, // ACTION_USE
+		true, // ACTION_GET
+		true, // ACTION_LOOK
+		false // ACTION_TALK
 	};
 
 	Common::Point mousePos = _gfx->getMousePos();
@@ -961,7 +961,7 @@ bool StarTrekEngine::walkActiveObjectToHotspot() {
 	else {
 		// If this action has code defined for it in this room, buffer the action to be
 		// done after the object finished walking there.
-		Action action = {_awayMission.activeAction, _awayMission.activeObject, 0, 0};
+		Action action = { _awayMission.activeAction, _awayMission.activeObject, 0, 0 };
 		if (_awayMission.activeAction == ACTION_USE)
 			action.b2 = _awayMission.passiveObject;
 
@@ -1186,12 +1186,12 @@ int StarTrekEngine::showInventoryMenu(int x, int y, bool restoreMouse) {
 		}
 
 		case TREKEVENT_LBUTTONDOWN:
-exitWithSelection:
+		exitWithSelection:
 			displayMenu = false;
 			break;
 
 		case TREKEVENT_RBUTTONDOWN:
-exitWithoutSelection:
+		exitWithoutSelection:
 			displayMenu = false;
 			lastItemIndex = -1;
 			break;
@@ -1290,9 +1290,9 @@ void StarTrekEngine::initStarfieldSprite(Sprite *sprite, SharedPtr<Bitmap> bitma
 }
 
 SharedPtr<Bitmap> StarTrekEngine::scaleBitmap(SharedPtr<Bitmap> bitmap, Fixed8 scale) {
-	int scaledWidth  = scale.multToInt(bitmap->width);
+	int scaledWidth = scale.multToInt(bitmap->width);
 	int scaledHeight = scale.multToInt(bitmap->height);
-	int origWidth  = bitmap->width;
+	int origWidth = bitmap->width;
 	int origHeight = bitmap->height;
 
 	if (scaledWidth < 1)

@@ -54,39 +54,43 @@
 
 namespace LastExpress {
 
-Debugger::Debugger(LastExpressEngine *engine) : _engine(engine), _command(NULL), _numParams(0), _commandParams(NULL) {
+Debugger::Debugger(LastExpressEngine *engine)
+  : _engine(engine)
+  , _command(NULL)
+  , _numParams(0)
+  , _commandParams(NULL) {
 
 	//////////////////////////////////////////////////////////////////////////
 	// Register the debugger commands
 
 	// General
-	registerCmd("help",      WRAP_METHOD(Debugger, cmdHelp));
+	registerCmd("help", WRAP_METHOD(Debugger, cmdHelp));
 
 	// Data
-	registerCmd("ls",        WRAP_METHOD(Debugger, cmdListFiles));
-	registerCmd("dump",      WRAP_METHOD(Debugger, cmdDumpFiles));
+	registerCmd("ls", WRAP_METHOD(Debugger, cmdListFiles));
+	registerCmd("dump", WRAP_METHOD(Debugger, cmdDumpFiles));
 
 	registerCmd("showframe", WRAP_METHOD(Debugger, cmdShowFrame));
-	registerCmd("showbg",    WRAP_METHOD(Debugger, cmdShowBg));
-	registerCmd("playseq",   WRAP_METHOD(Debugger, cmdPlaySeq));
-	registerCmd("playsnd",   WRAP_METHOD(Debugger, cmdPlaySnd));
-	registerCmd("playsbe",   WRAP_METHOD(Debugger, cmdPlaySbe));
-	registerCmd("playnis",   WRAP_METHOD(Debugger, cmdPlayNis));
+	registerCmd("showbg", WRAP_METHOD(Debugger, cmdShowBg));
+	registerCmd("playseq", WRAP_METHOD(Debugger, cmdPlaySeq));
+	registerCmd("playsnd", WRAP_METHOD(Debugger, cmdPlaySnd));
+	registerCmd("playsbe", WRAP_METHOD(Debugger, cmdPlaySbe));
+	registerCmd("playnis", WRAP_METHOD(Debugger, cmdPlayNis));
 
 	// Scene & interaction
 	registerCmd("loadscene", WRAP_METHOD(Debugger, cmdLoadScene));
-	registerCmd("fight",     WRAP_METHOD(Debugger, cmdFight));
-	registerCmd("beetle",    WRAP_METHOD(Debugger, cmdBeetle));
+	registerCmd("fight", WRAP_METHOD(Debugger, cmdFight));
+	registerCmd("beetle", WRAP_METHOD(Debugger, cmdBeetle));
 
 	// Game
-	registerCmd("delta",     WRAP_METHOD(Debugger, cmdTimeDelta));
-	registerCmd("time",      WRAP_METHOD(Debugger, cmdTime));
-	registerCmd("show",      WRAP_METHOD(Debugger, cmdShow));
-	registerCmd("entity",    WRAP_METHOD(Debugger, cmdEntity));
+	registerCmd("delta", WRAP_METHOD(Debugger, cmdTimeDelta));
+	registerCmd("time", WRAP_METHOD(Debugger, cmdTime));
+	registerCmd("show", WRAP_METHOD(Debugger, cmdShow));
+	registerCmd("entity", WRAP_METHOD(Debugger, cmdEntity));
 
 	// Misc
-	registerCmd("chapter",   WRAP_METHOD(Debugger, cmdSwitchChapter));
-	registerCmd("clear",     WRAP_METHOD(Debugger, cmdClear));
+	registerCmd("chapter", WRAP_METHOD(Debugger, cmdSwitchChapter));
+	registerCmd("clear", WRAP_METHOD(Debugger, cmdClear));
 
 	resetCommand();
 
@@ -275,27 +279,28 @@ bool Debugger::cmdListFiles(int argc, const char **argv) {
  * @return true if it was handled, false otherwise
  */
 bool Debugger::cmdDumpFiles(int argc, const char **) {
-#define OUTPUT_ARCHIVE_FILES(name, filename) { \
-	_engine->getResourceManager()->reset(); \
-	_engine->getResourceManager()->loadArchive(filename); \
-	Common::ArchiveMemberList list; \
-	int count = _engine->getResourceManager()->listMatchingMembers(list, "*"); \
-	debugC(1, kLastExpressDebugResource, "\n\n--------------------------------------------------------------------\n"); \
-	debugC(1, kLastExpressDebugResource, "-- " #name " (%d files)\n", count); \
-	debugC(1, kLastExpressDebugResource, "--------------------------------------------------------------------\n\n"); \
-	debugC(1, kLastExpressDebugResource, "Filename,Size,MD5\n"); \
-	for (Common::ArchiveMemberList::iterator it = list.begin(); it != list.end(); ++it) { \
-		Common::SeekableReadStream *stream = getArchive((*it)->getName()); \
-		if (!stream) { \
-			debugPrintf("ERROR: Cannot create stream for file: %s\n", (*it)->getName().c_str()); \
-			restoreArchive(); \
-			return true; \
-		} \
-		Common::String md5str = Common::computeStreamMD5AsString(*stream); \
-		debugC(1, kLastExpressDebugResource, "%s, %d, %s", (*it)->getName().c_str(), stream->size(), md5str.c_str()); \
-		delete stream; \
-	} \
-}
+#define OUTPUT_ARCHIVE_FILES(name, filename)                                                                            \
+	{                                                                                                                     \
+		_engine->getResourceManager()->reset();                                                                             \
+		_engine->getResourceManager()->loadArchive(filename);                                                               \
+		Common::ArchiveMemberList list;                                                                                     \
+		int count = _engine->getResourceManager()->listMatchingMembers(list, "*");                                          \
+		debugC(1, kLastExpressDebugResource, "\n\n--------------------------------------------------------------------\n"); \
+		debugC(1, kLastExpressDebugResource, "-- " #name " (%d files)\n", count);                                           \
+		debugC(1, kLastExpressDebugResource, "--------------------------------------------------------------------\n\n");   \
+		debugC(1, kLastExpressDebugResource, "Filename,Size,MD5\n");                                                        \
+		for (Common::ArchiveMemberList::iterator it = list.begin(); it != list.end(); ++it) {                               \
+			Common::SeekableReadStream *stream = getArchive((*it)->getName());                                                \
+			if (!stream) {                                                                                                    \
+				debugPrintf("ERROR: Cannot create stream for file: %s\n", (*it)->getName().c_str());                            \
+				restoreArchive();                                                                                               \
+				return true;                                                                                                    \
+			}                                                                                                                 \
+			Common::String md5str = Common::computeStreamMD5AsString(*stream);                                                \
+			debugC(1, kLastExpressDebugResource, "%s, %d, %s", (*it)->getName().c_str(), stream->size(), md5str.c_str());     \
+			delete stream;                                                                                                    \
+		}                                                                                                                   \
+	}
 
 	if (argc == 1) {
 		// For each archive file, dump the list of files
@@ -835,7 +840,7 @@ bool Debugger::cmdFight(int argc, const char **argv) {
 			resetCommand();
 		}
 	} else {
-error:
+	error:
 		debugPrintf("Syntax: fight <id> (id=2001-2005)\n");
 	}
 
@@ -992,7 +997,7 @@ bool Debugger::cmdTimeDelta(int argc, const char **argv) {
 
 		getState()->timeDelta = (uint)delta;
 	} else {
-label_error:
+	label_error:
 		debugPrintf("Syntax: delta <time delta> (delta=1-500)\n");
 	}
 
@@ -1021,7 +1026,7 @@ bool Debugger::cmdTime(int argc, const char **argv) {
 
 		debugPrintf("%02d:%02d\n", hours, minutes);
 	} else {
-label_error:
+	label_error:
 		debugPrintf("Syntax: time <time to convert> (time=0-INT_MAX)\n");
 	}
 
@@ -1037,10 +1042,10 @@ label_error:
  * @return true if it was handled, false otherwise
  */
 bool Debugger::cmdShow(int argc, const char **argv) {
-#define OUTPUT_DUMP(name, text) \
-	debugPrintf(#name "\n"); \
+#define OUTPUT_DUMP(name, text)                                                            \
+	debugPrintf(#name "\n");                                                                 \
 	debugPrintf("--------------------------------------------------------------------\n\n"); \
-	debugPrintf("%s", text); \
+	debugPrintf("%s", text);                                                                 \
 	debugPrintf("\n");
 
 	if (argc == 2) {
@@ -1066,7 +1071,7 @@ bool Debugger::cmdShow(int argc, const char **argv) {
 		}
 
 	} else {
-label_error:
+	label_error:
 		debugPrintf("Syntax: state <option>\n");
 		debugPrintf("          state / st\n");
 		debugPrintf("          progress / pr\n");
@@ -1113,10 +1118,10 @@ bool Debugger::cmdEntity(int argc, const char **argv) {
 
 		debugPrintf("\n");
 	} else {
-label_error:
+	label_error:
 		debugPrintf("Syntax: entity <index>\n");
 		for (int i = 0; i < 40; i += 4)
-			debugPrintf(" %s - %d        %s - %d        %s - %d        %s - %d\n", ENTITY_NAME(i), i, ENTITY_NAME(i+1), i+1, ENTITY_NAME(i+2), i+2, ENTITY_NAME(i+3), i+3);
+			debugPrintf(" %s - %d        %s - %d        %s - %d        %s - %d\n", ENTITY_NAME(i), i, ENTITY_NAME(i + 1), i + 1, ENTITY_NAME(i + 2), i + 2, ENTITY_NAME(i + 3), i + 3);
 	}
 
 	return true;
@@ -1152,7 +1157,7 @@ bool Debugger::cmdSwitchChapter(int argc, const char **argv) {
 			resetCommand();
 		}
 	} else {
-error:
+	error:
 		debugPrintf("Syntax: chapter <id> (id=2-6)\n");
 	}
 

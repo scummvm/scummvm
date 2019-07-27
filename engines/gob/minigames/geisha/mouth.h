@@ -29,44 +29,44 @@ namespace Gob {
 
 namespace Geisha {
 
-/** A kissing/biting mouth in Geisha's "Penetration" minigame. */
-class Mouth : public ANIObject {
-public:
-	Mouth(const ANIFile &ani, const CMPFile &cmp,
-	      uint16 mouthAnim, uint16 mouthSprite, uint16 floorSprite);
-	~Mouth();
+	/** A kissing/biting mouth in Geisha's "Penetration" minigame. */
+	class Mouth : public ANIObject {
+	public:
+		Mouth(const ANIFile &ani, const CMPFile &cmp,
+		      uint16 mouthAnim, uint16 mouthSprite, uint16 floorSprite);
+		~Mouth();
 
-	/** Advance the animation to the next frame. */
-	void advance();
+		/** Advance the animation to the next frame. */
+		void advance();
 
-	/** Active the mouth's animation. */
-	void activate();
+		/** Active the mouth's animation. */
+		void activate();
 
-	/** Is the mouth deactivated? */
-	bool isDeactivated() const;
+		/** Is the mouth deactivated? */
+		bool isDeactivated() const;
 
-	/** Set the current position. */
-	void setPosition(int16 x, int16 y);
+		/** Set the current position. */
+		void setPosition(int16 x, int16 y);
 
-	/** Draw the current frame onto the surface and return the affected rectangle. */
-	bool draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
-	/** Draw the current frame from the surface and return the affected rectangle. */
-	bool clear(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
+		/** Draw the current frame onto the surface and return the affected rectangle. */
+		bool draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
+		/** Draw the current frame from the surface and return the affected rectangle. */
+		bool clear(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
 
-private:
-	static const int kFloorCount = 2;
+	private:
+		static const int kFloorCount = 2;
 
-	enum State {
-		kStateDeactivated,
-		kStateActivated,
-		kStateDead
+		enum State {
+			kStateDeactivated,
+			kStateActivated,
+			kStateDead
+		};
+
+		ANIObject *_sprite;
+		ANIObject *_floor[kFloorCount];
+
+		State _state;
 	};
-
-	ANIObject *_sprite;
-	ANIObject *_floor[kFloorCount];
-
-	State _state;
-};
 
 } // End of namespace Geisha
 

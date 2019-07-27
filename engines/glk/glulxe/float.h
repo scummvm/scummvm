@@ -29,7 +29,6 @@
 namespace Glk {
 namespace Glulxe {
 
-
 } // End of namespace Glulxe
 } // End of namespace Glk
 

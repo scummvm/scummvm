@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "audio/midiparser.h"
 #include "common/textconsole.h"
 
@@ -34,19 +33,17 @@ namespace Scumm {
 
 class MidiParser_RO : public MidiParser {
 protected:
-	int _markerCount;     // Number of markers encountered in stream so far
+	int _markerCount; // Number of markers encountered in stream so far
 	int _lastMarkerCount; // Cache markers until parsed event is actually consumed
 
 protected:
 	void compressToType0();
-	void parseNextEvent (EventInfo &info);
+	void parseNextEvent(EventInfo &info);
 
 public:
-	bool loadMusic (byte *data, uint32 size);
-	uint32 getTick() { return (uint32) _markerCount * _ppqn / 2; }
+	bool loadMusic(byte *data, uint32 size);
+	uint32 getTick() { return (uint32)_markerCount * _ppqn / 2; }
 };
-
-
 
 //////////////////////////////////////////////////
 //
@@ -54,7 +51,7 @@ public:
 //
 //////////////////////////////////////////////////
 
-void MidiParser_RO::parseNextEvent (EventInfo &info) {
+void MidiParser_RO::parseNextEvent(EventInfo &info) {
 	_markerCount += _lastMarkerCount;
 	_lastMarkerCount = 0;
 
@@ -100,7 +97,9 @@ void MidiParser_RO::parseNextEvent (EventInfo &info) {
 		info.basic.param2 = 0;
 		break;
 
-	case 0x8: case 0x9: case 0xB:
+	case 0x8:
+	case 0x9:
+	case 0xB:
 		info.basic.param1 = *(_position._playPos++);
 		info.basic.param2 = *(_position._playPos++);
 		if (info.command() == 0x9 && info.basic.param2 == 0)
@@ -122,11 +121,11 @@ void MidiParser_RO::parseNextEvent (EventInfo &info) {
 	}
 }
 
-bool MidiParser_RO::loadMusic (byte *data, uint32 size) {
+bool MidiParser_RO::loadMusic(byte *data, uint32 size) {
 	unloadMusic();
 	byte *pos = data;
 
-	if (memcmp (pos, "RO", 2)) {
+	if (memcmp(pos, "RO", 2)) {
 		error("'RO' header expected but found '%c%c' instead", pos[0], pos[1]);
 		return false;
 	}
@@ -140,8 +139,8 @@ bool MidiParser_RO::loadMusic (byte *data, uint32 size) {
 	// will persist beyond this call, i.e. we do NOT
 	// copy the data to our own buffer. Take warning....
 	resetTracking();
-	setTempo (500000);
-	setTrack (0);
+	setTempo(500000);
+	setTrack(0);
 	return true;
 }
 

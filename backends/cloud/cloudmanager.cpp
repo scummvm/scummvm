@@ -23,13 +23,13 @@
 #include "backends/cloud/cloudmanager.h"
 #include "backends/cloud/box/boxstorage.h"
 #include "backends/cloud/dropbox/dropboxstorage.h"
-#include "backends/cloud/onedrive/onedrivestorage.h"
 #include "backends/cloud/googledrive/googledrivestorage.h"
-#include "common/translation.h"
+#include "backends/cloud/onedrive/onedrivestorage.h"
 #include "common/config-manager.h"
 #include "common/str.h"
+#include "common/translation.h"
 #ifdef USE_SDL_NET
-#include "backends/networking/sdl_net/localwebserver.h"
+#	include "backends/networking/sdl_net/localwebserver.h"
 #endif
 
 namespace Common {
@@ -42,7 +42,9 @@ namespace Cloud {
 
 const char *const CloudManager::kStoragePrefix = "storage_";
 
-CloudManager::CloudManager() : _currentStorageIndex(0), _activeStorage(nullptr) {}
+CloudManager::CloudManager()
+  : _currentStorageIndex(0)
+  , _activeStorage(nullptr) {}
 
 CloudManager::~CloudManager() {
 	g_system->getEventManager()->getEventDispatcher()->unregisterSource(this);
@@ -53,11 +55,16 @@ CloudManager::~CloudManager() {
 
 Common::String CloudManager::getStorageConfigName(uint32 index) const {
 	switch (index) {
-	case kStorageNoneId: return "<none>";
-	case kStorageDropboxId: return "Dropbox";
-	case kStorageOneDriveId: return "OneDrive";
-	case kStorageGoogleDriveId: return "GoogleDrive";
-	case kStorageBoxId: return "Box";
+	case kStorageNoneId:
+		return "<none>";
+	case kStorageDropboxId:
+		return "Dropbox";
+	case kStorageOneDriveId:
+		return "OneDrive";
+	case kStorageGoogleDriveId:
+		return "GoogleDrive";
+	case kStorageBoxId:
+		return "Box";
 	}
 	assert(false); // Unhandled StorageID value
 	return "";

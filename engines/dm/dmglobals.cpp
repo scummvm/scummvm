@@ -27,32 +27,32 @@
 
 #include "common/system.h"
 
+#include "dm/champion.h"
 #include "dm/dm.h"
-#include "dm/gfx.h"
 #include "dm/dungeonman.h"
 #include "dm/eventman.h"
-#include "dm/menus.h"
-#include "dm/champion.h"
-#include "dm/loadsave.h"
-#include "dm/objectman.h"
+#include "dm/gfx.h"
 #include "dm/inventory.h"
-#include "dm/text.h"
+#include "dm/loadsave.h"
+#include "dm/menus.h"
 #include "dm/movesens.h"
+#include "dm/objectman.h"
+#include "dm/text.h"
 
 namespace DM {
 
 void DMEngine::initConstants() {
 	// G0233_ai_Graphic559_DirectionToStepEastCount
-	_dirIntoStepCountEast[0] = 0;  // North
-	_dirIntoStepCountEast[1] = 1;  // East
-	_dirIntoStepCountEast[2] = 0;  // West
+	_dirIntoStepCountEast[0] = 0; // North
+	_dirIntoStepCountEast[1] = 1; // East
+	_dirIntoStepCountEast[2] = 0; // West
 	_dirIntoStepCountEast[3] = -1; // South
 
 	// G0234_ai_Graphic559_DirectionToStepNorthCount
 	_dirIntoStepCountNorth[0] = -1; // North
-	_dirIntoStepCountNorth[1] = 0;  // East
-	_dirIntoStepCountNorth[2] = 1;  // West
-	_dirIntoStepCountNorth[3] = 0;  // South
+	_dirIntoStepCountNorth[1] = 0; // East
+	_dirIntoStepCountNorth[2] = 1; // West
+	_dirIntoStepCountNorth[3] = 0; // South
 }
 
 } // End of namespace DM

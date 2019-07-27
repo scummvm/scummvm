@@ -32,10 +32,9 @@
 #ifndef SWORD25_SWIMAGE_H
 #define SWORD25_SWIMAGE_H
 
-#include "sword25/kernel/common.h"
-#include "sword25/gfx/image/image.h"
 #include "sword25/gfx/graphicengine.h"
-
+#include "sword25/gfx/image/image.h"
+#include "sword25/kernel/common.h"
 
 namespace Sword25 {
 
@@ -59,32 +58,33 @@ public:
 	                  Common::Rect *pPartRect = NULL,
 	                  uint color = BS_ARGB(255, 255, 255, 255),
 	                  int width = -1, int height = -1,
-					  RectangleList *updateRects = 0);
+	                  RectangleList *updateRects = 0);
 	virtual bool fill(const Common::Rect *fillRectPtr, uint color);
 	virtual bool setContent(const byte *pixeldata, uint size, uint offset, uint stride);
 	virtual uint getPixel(int x, int y);
 
-	virtual bool isBlitSource() const               {
+	virtual bool isBlitSource() const {
 		return false;
 	}
-	virtual bool isBlitTarget() const               {
+	virtual bool isBlitTarget() const {
 		return false;
 	}
-	virtual bool isScalingAllowed() const           {
+	virtual bool isScalingAllowed() const {
 		return false;
 	}
-	virtual bool isFillingAllowed() const           {
+	virtual bool isFillingAllowed() const {
 		return false;
 	}
-	virtual bool isAlphaAllowed() const             {
+	virtual bool isAlphaAllowed() const {
 		return false;
 	}
-	virtual bool isColorModulationAllowed() const   {
+	virtual bool isColorModulationAllowed() const {
 		return false;
 	}
-	virtual bool isSetContentAllowed() const        {
+	virtual bool isSetContentAllowed() const {
 		return false;
 	}
+
 private:
 	Graphics::Surface _image;
 };

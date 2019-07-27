@@ -30,54 +30,62 @@
 namespace Xeen {
 namespace WorldOfXeen {
 
-enum GooberState {
-	NON_GOOBER = 0, GOOBER = 1, SUPER_GOOBER = 2
-};
+	enum GooberState {
+		NON_GOOBER = 0,
+		GOOBER = 1,
+		SUPER_GOOBER = 2
+	};
 
-class WorldOfXeenCutscenes : public CloudsCutscenes,
-	public DarkSideCutscenes {
-private:
-	XeenEngine *_vm;
-	Subtitles _subtitles;
-	GooberState _goober;
-	uint _finalScore;
-private:
-	/**
+	class WorldOfXeenCutscenes : public CloudsCutscenes,
+	                             public DarkSideCutscenes {
+	private:
+		XeenEngine *_vm;
+		Subtitles _subtitles;
+		GooberState _goober;
+		uint _finalScore;
+
+	private:
+		/**
 	 * Sets a subtitle during the world of xeen ending
 	 */
-	void setSubtitle(const Common::String &msg);
+		void setSubtitle(const Common::String &msg);
 
-	/**
+		/**
 	 * Sets a subtitle during the world of xeen ending
 	 */
-	void setSubtitle2(const Common::String &msg);
+		void setSubtitle2(const Common::String &msg);
 
-	/**
+		/**
 	 * Part 1 of World of Xeen ending, up to the point the Cube and Scepter have been
 	 * placed onto the Altar of Joining
 	 */
-	bool worldEnding1();
+		bool worldEnding1();
 
-	/**
+		/**
 	 * Part 2 of World of Xeen ending, showing beams of light erupting from Altar,
 	 * and four beams arcing across the top and bottom sides of Xeen
 	 */
-	bool worldEnding2();
+		bool worldEnding2();
 
-	/**
+		/**
 	 * Part 3 of World of Xeen ending, with further beams covering Xeen, and it
 	 * transforming the world into a sphere
 	 */
-	bool worldEnding3();
-public:
-	WorldOfXeenCutscenes(XeenEngine *vm) : _vm(vm), CloudsCutscenes(vm),
-		DarkSideCutscenes(vm), _goober(NON_GOOBER), _finalScore(0) {}
+		bool worldEnding3();
 
-	/**
+	public:
+		WorldOfXeenCutscenes(XeenEngine *vm)
+		  : _vm(vm)
+		  , CloudsCutscenes(vm)
+		  , DarkSideCutscenes(vm)
+		  , _goober(NON_GOOBER)
+		  , _finalScore(0) {}
+
+		/**
 	 * Shows the World of Xeen ending sequence
 	 */
-	void showWorldOfXeenEnding(GooberState state, uint score);
-};
+		void showWorldOfXeenEnding(GooberState state, uint score);
+	};
 
 } // End of namespace WorldOfXeen
 } // End of namespace Xeen

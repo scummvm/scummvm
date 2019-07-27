@@ -29,7 +29,7 @@ void SceneScriptTB06::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 330, 195, 417, 334, 0);
 	Ambient_Sounds_Add_Looping_Sound(kSfxTB5LOOP1, 50, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxTB5LOOP2, 50, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxTBLOOP1,  66, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxTBLOOP1, 66, 0, 1);
 	if (!Game_Flag_Query(kFlagNotUsed103)) {
 		Actor_Put_In_Set(kActorMarcus, kSetTB06);
 		Actor_Set_At_XYZ(kActorMarcus, 135.0f, 151.0f, -671.0f, 800);
@@ -48,8 +48,7 @@ void SceneScriptTB06::SceneLoaded() {
 	Unclickable_Object("SMUDGE_GLASS01");
 
 	if (!Game_Flag_Query(kFlagTB06DogCollarTaken)
-	 &&  Actor_Query_Goal_Number(kActorPhotographer) != 199
-	) {
+	    && Actor_Query_Goal_Number(kActorPhotographer) != 199) {
 		Item_Add_To_World(kItemDogCollar, kModelAnimationDogCollar, kSetTB06, 36.54f, 149.48f, -565.67f, 0, 6, 6, false, true, false, true);
 	}
 
@@ -127,9 +126,8 @@ bool SceneScriptTB06::ClickedOnItem(int itemId, bool a2) {
 	}
 
 	if (itemId == kItemDeadDogA
-	 || itemId == kItemDeadDogB
-	 || itemId == kItemDeadDogC
-	) {
+	    || itemId == kItemDeadDogB
+	    || itemId == kItemDeadDogC) {
 		if (!Loop_Actor_Walk_To_Item(kActorMcCoy, kItemDeadDogA, 24, true, false)) {
 			Actor_Face_Item(kActorMcCoy, kItemDeadDogA, true);
 			Actor_Voice_Over(2380, kActorVoiceOver);
@@ -162,7 +160,7 @@ void SceneScriptTB06::SceneFrameAdvanced(int frame) {
 		Sound_Play(kSfxLABMISC5, Random_Query(52, 52), 0, 0, 50);
 	}
 	if (frame == 63) {
-		Sound_Play(kSfxTBDOOR1,  Random_Query(55, 55), 0, 0, 50);
+		Sound_Play(kSfxTBDOOR1, Random_Query(55, 55), 0, 0, 50);
 	}
 	//return true;
 }
@@ -172,8 +170,7 @@ void SceneScriptTB06::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptTB06::PlayerWalkedIn() {
 	if (!Game_Flag_Query(kFlagTB06Visited)
-	 && !Game_Flag_Query(kFlagTB06Introduction)
-	) {
+	    && !Game_Flag_Query(kFlagTB06Introduction)) {
 		Actor_Face_Actor(kActorMcCoy, kActorMarcus, true);
 		Actor_Says(kActorMcCoy, 5290, kAnimationModeTalk);
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.0f, 149.0f, -631.0f, 0, false, false, false);

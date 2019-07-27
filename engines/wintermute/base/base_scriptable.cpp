@@ -27,15 +27,16 @@
  */
 
 #include "engines/wintermute/base/base_scriptable.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseScriptable, false)
 
 //////////////////////////////////////////////////////////////////////////
-BaseScriptable::BaseScriptable(BaseGame *inGame, bool noValue, bool persistable) : BaseNamedObject(inGame) {
+BaseScriptable::BaseScriptable(BaseGame *inGame, bool noValue, bool persistable)
+  : BaseNamedObject(inGame) {
 	_refCount = 0;
 
 	if (noValue) {
@@ -49,7 +50,6 @@ BaseScriptable::BaseScriptable(BaseGame *inGame, bool noValue, bool persistable)
 	_scProp = nullptr;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 BaseScriptable::~BaseScriptable() {
 	//if (_refCount>0) BaseEngine::LOG(0, "Warning: Destroying object, _refCount=%d", _refCount);
@@ -58,7 +58,6 @@ BaseScriptable::~BaseScriptable() {
 	_scValue = nullptr;
 	_scProp = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
@@ -74,7 +73,6 @@ bool BaseScriptable::scCallMethod(ScScript *script, ScStack *stack, ScStack *thi
 	return STATUS_FAILED;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *BaseScriptable::scGetProperty(const Common::String &name) {
 	if (!_scProp) {
@@ -86,7 +84,6 @@ ScValue *BaseScriptable::scGetProperty(const Common::String &name) {
 		return nullptr;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseScriptable::scSetProperty(const char *name, ScValue *value) {
@@ -100,7 +97,6 @@ bool BaseScriptable::scSetProperty(const char *name, ScValue *value) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 const char *BaseScriptable::scToString() {
 	return "[native object]";
@@ -111,44 +107,36 @@ void *BaseScriptable::scToMemBuffer() {
 	return (void *)NULL;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 int BaseScriptable::scToInt() {
 	return 0;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 double BaseScriptable::scToFloat() {
 	return 0.0f;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseScriptable::scToBool() {
 	return false;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void BaseScriptable::scSetString(const char *val) {
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseScriptable::scSetInt(int val) {
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void BaseScriptable::scSetFloat(double val) {
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void BaseScriptable::scSetBool(bool val) {
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseScriptable::persist(BasePersistenceManager *persistMgr) {
@@ -159,7 +147,6 @@ bool BaseScriptable::persist(BasePersistenceManager *persistMgr) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 int BaseScriptable::scCompare(BaseScriptable *val) {
@@ -182,7 +169,6 @@ bool BaseScriptable::canHandleMethod(const char *eventMethod) const {
 	return false;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScScript *BaseScriptable::invokeMethodThread(const char *methodName) {
 	return nullptr;
@@ -191,6 +177,5 @@ ScScript *BaseScriptable::invokeMethodThread(const char *methodName) {
 Common::String BaseScriptable::debuggerToString() const {
 	return Common::String::format("%p: BaseScriptable %s", (const void *)this, getName());
 }
-
 
 } // End of namespace Wintermute

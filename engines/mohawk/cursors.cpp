@@ -34,8 +34,8 @@
 #include "graphics/wincursor.h"
 
 #ifdef ENABLE_MYST
-#include "mohawk/myst.h"
-#include "mohawk/myst_graphics.h"
+#	include "mohawk/myst.h"
+#	include "mohawk/myst_graphics.h"
 #endif
 
 namespace Mohawk {
@@ -52,7 +52,7 @@ void CursorManager::setDefaultCursor() {
 	Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
 
 	CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(),
-			cursor->getHotspotY(), cursor->getKeyColor());
+	                        cursor->getHotspotY(), cursor->getKeyColor());
 	CursorMan.replaceCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());
 
 	delete cursor;
@@ -72,7 +72,7 @@ void CursorManager::setMacCursor(Common::SeekableReadStream *stream) {
 		error("Could not parse Mac cursor");
 
 	CursorMan.replaceCursor(macCursor->getSurface(), macCursor->getWidth(), macCursor->getHeight(),
-			macCursor->getHotspotX(), macCursor->getHotspotY(), macCursor->getKeyColor());
+	                        macCursor->getHotspotX(), macCursor->getHotspotY(), macCursor->getKeyColor());
 	CursorMan.replaceCursorPalette(macCursor->getPalette(), 0, 256);
 
 	delete macCursor;
@@ -85,7 +85,8 @@ void DefaultCursorManager::setCursor(uint16 id) {
 
 #ifdef ENABLE_MYST
 
-MystCursorManager::MystCursorManager(MohawkEngine_Myst *vm) : _vm(vm) {
+MystCursorManager::MystCursorManager(MohawkEngine_Myst *vm)
+  : _vm(vm) {
 }
 
 MystCursorManager::~MystCursorManager() {
@@ -201,11 +202,11 @@ void MacCursorManager::setCursor(uint16 id) {
 	}
 
 	// Try a color cursor first
-	Common::SeekableReadStream *stream = _resFork->getResource(MKTAG('c','r','s','r'), id);
+	Common::SeekableReadStream *stream = _resFork->getResource(MKTAG('c', 'r', 's', 'r'), id);
 
 	// Fall back to monochrome cursors
 	if (!stream)
-		stream = _resFork->getResource(MKTAG('C','U','R','S'), id);
+		stream = _resFork->getResource(MKTAG('C', 'U', 'R', 'S'), id);
 
 	if (stream)
 		setMacCursor(stream);

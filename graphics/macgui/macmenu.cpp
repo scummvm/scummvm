@@ -20,15 +20,15 @@
  *
  */
 
-#include "common/system.h"
 #include "common/keyboard.h"
+#include "common/system.h"
 
-#include "graphics/primitives.h"
 #include "graphics/font.h"
 #include "graphics/macgui/macfontmanager.h"
-#include "graphics/macgui/macwindowmanager.h"
-#include "graphics/macgui/macwindow.h"
 #include "graphics/macgui/macmenu.h"
+#include "graphics/macgui/macwindow.h"
+#include "graphics/macgui/macwindowmanager.h"
+#include "graphics/primitives.h"
 
 namespace Graphics {
 
@@ -75,8 +75,20 @@ struct MacMenuSubItem {
 	bool enabled;
 	Common::Rect bbox;
 
-	MacMenuSubItem(const char *t, int a, int s = 0, char sh = 0, bool e = true) : text(t), unicode(false), action(a), style(s), shortcut(sh), enabled(e) {}
-	MacMenuSubItem(const Common::U32String &t, int a, int s = 0, char sh = 0, bool e = true) : unicodeText(t), unicode(true), action(a), style(s), shortcut(sh), enabled(e) {}
+	MacMenuSubItem(const char *t, int a, int s = 0, char sh = 0, bool e = true)
+	  : text(t)
+	  , unicode(false)
+	  , action(a)
+	  , style(s)
+	  , shortcut(sh)
+	  , enabled(e) {}
+	MacMenuSubItem(const Common::U32String &t, int a, int s = 0, char sh = 0, bool e = true)
+	  : unicodeText(t)
+	  , unicode(true)
+	  , action(a)
+	  , style(s)
+	  , shortcut(sh)
+	  , enabled(e) {}
 };
 
 typedef Common::Array<MacMenuSubItem *> SubItemArray;
@@ -89,12 +101,16 @@ struct MacMenuItem {
 	Common::Rect bbox;
 	Common::Rect subbbox;
 
-	MacMenuItem(const char *n) : name(n), unicode(false) {}
-	MacMenuItem(const Common::U32String &n) : unicodeName(n), unicode(true) {}
+	MacMenuItem(const char *n)
+	  : name(n)
+	  , unicode(false) {}
+	MacMenuItem(const Common::U32String &n)
+	  : unicodeName(n)
+	  , unicode(true) {}
 };
 
 MacMenu::MacMenu(int id, const Common::Rect &bounds, MacWindowManager *wm)
-		: BaseMacWindow(id, false, wm) {
+  : BaseMacWindow(id, false, wm) {
 	_font = getMenuFont();
 
 	_screen.create(bounds.width(), bounds.height(), PixelFormat::createFormatCLUT8());
@@ -147,7 +163,7 @@ Common::StringArray *MacMenu::readMenuFromResource(Common::SeekableReadStream *r
 		}
 		menu += menuItem;
 		res->read(itemData, 4);
-		static const char styles[] = {'B', 'I', 'U', 'O', 'S', 'C', 'E', 0};
+		static const char styles[] = { 'B', 'I', 'U', 'O', 'S', 'C', 'E', 0 };
 		for (int i = 0; styles[i] != 0; i++) {
 			if ((itemData[3] & (1 << i)) != 0) {
 				menu += '<';
@@ -180,7 +196,6 @@ static Common::U32String readUnicodeString(Common::SeekableReadStream *stream) {
 	}
 	return strData.empty() ? Common::U32String() : Common::U32String(strData.data(), strData.size());
 }
-
 
 MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources &exe, MacWindowManager *wm) {
 	Common::SeekableReadStream *menuData = exe.getResource(Common::kWinMenu, 128);
@@ -325,7 +340,7 @@ void MacMenu::createSubMenuFromString(int id, const char *str, int commandId) {
 	Common::String item;
 
 	for (uint i = 0; i < string.size(); i++) {
-		while(i < string.size() && string[i] != ';') // Read token
+		while (i < string.size() && string[i] != ';') // Read token
 			item += string[i++];
 
 		if (item == "(-") {
@@ -491,10 +506,10 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 
 		if (it->unicode) {
 			_font->drawString(&_screen, it->unicodeName, it->bbox.left + kMenuLeftMargin,
-							  it->bbox.top + (_wm->_fontMan->hasBuiltInFonts() ? 2 : 1), it->bbox.width(), color);
+			                  it->bbox.top + (_wm->_fontMan->hasBuiltInFonts() ? 2 : 1), it->bbox.width(), color);
 		} else {
 			_font->drawString(&_screen, it->name, it->bbox.left + kMenuLeftMargin,
-							  it->bbox.top + (_wm->_fontMan->hasBuiltInFonts() ? 2 : 1), it->bbox.width(), color);
+			                  it->bbox.top + (_wm->_fontMan->hasBuiltInFonts() ? 2 : 1), it->bbox.width(), color);
 		}
 	}
 
@@ -563,7 +578,7 @@ void MacMenu::renderSubmenu(MacMenuItem *menu) {
 				// fake it here
 				for (int ii = 0; ii < _tempSurface.h; ii++) {
 					const byte *src = (const byte *)_tempSurface.getBasePtr(0, ii);
-					byte *dst = (byte *)_screen.getBasePtr(x, y+ii);
+					byte *dst = (byte *)_screen.getBasePtr(x, y + ii);
 					byte pat = _wm->getPatterns()[kPatternCheckers2 - 1][ii % 8];
 					for (int j = 0; j < r->width(); j++) {
 						if (*src != kColorGreen && (pat & (1 << (7 - (x + j) % 8))))
@@ -624,7 +639,7 @@ bool MacMenu::mouseClick(int x, int y) {
 	if (_bbox.contains(x, y)) {
 		for (uint i = 0; i < _items.size(); i++)
 			if (_items[i]->bbox.contains(x, y)) {
-			  if ((uint)_activeItem == i)
+				if ((uint)_activeItem == i)
 					return false;
 
 				if (_activeItem != -1) { // Restore background
@@ -693,10 +708,10 @@ bool MacMenu::mouseRelease(int x, int y) {
 		if (_activeItem != -1 && _activeSubItem != -1 && _items[_activeItem]->subitems[_activeSubItem]->enabled) {
 			if (_items[_activeItem]->subitems[_activeSubItem]->unicode) {
 				(*_unicodeccallback)(_items[_activeItem]->subitems[_activeSubItem]->action,
-							  _items[_activeItem]->subitems[_activeSubItem]->unicodeText, _cdata);
+				                     _items[_activeItem]->subitems[_activeSubItem]->unicodeText, _cdata);
 			} else {
 				(*_ccallback)(_items[_activeItem]->subitems[_activeSubItem]->action,
-							  _items[_activeItem]->subitems[_activeSubItem]->text, _cdata);
+				              _items[_activeItem]->subitems[_activeSubItem]->text, _cdata);
 			}
 		}
 

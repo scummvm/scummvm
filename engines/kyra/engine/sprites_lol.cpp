@@ -22,8 +22,8 @@
 
 #ifdef ENABLE_LOL
 
-#include "kyra/engine/lol.h"
-#include "kyra/graphics/screen_lol.h"
+#	include "kyra/engine/lol.h"
+#	include "kyra/graphics/screen_lol.h"
 
 namespace Kyra {
 
@@ -325,7 +325,7 @@ int LoLEngine::calcMonsterDirection(uint16 x1, uint16 y1, uint16 x2, uint16 y2) 
 	f = (t1 > t2) ? 1 : 0;
 	r = (r << 1) | f;
 
-	static const uint8 retVal[] = { 1, 2, 1, 0, 7, 6, 7, 0, 3, 2, 3, 4, 5, 6, 5, 4};
+	static const uint8 retVal[] = { 1, 2, 1, 0, 7, 6, 7, 0, 3, 2, 3, 4, 5, 6, 5, 4 };
 	return retVal[r];
 }
 
@@ -581,8 +581,7 @@ void LoLEngine::drawBlockObjects(int blockArrayIndex) {
 					fy += (shp[2] >> 2);
 
 			} else {
-				shp = (_itemProperties[i->itemPropertyIndex].flags & 0x40) ? _gameShapes[_itemProperties[i->itemPropertyIndex].shpIndex] :
-				      _itemShapes[_gameShapeMap[_itemProperties[i->itemPropertyIndex].shpIndex << 1]];
+				shp = (_itemProperties[i->itemPropertyIndex].flags & 0x40) ? _gameShapes[_itemProperties[i->itemPropertyIndex].shpIndex] : _itemShapes[_gameShapeMap[_itemProperties[i->itemPropertyIndex].shpIndex << 1]];
 			}
 
 			if (shp)
@@ -773,7 +772,7 @@ void LoLEngine::redrawSceneItem() {
 	assignVisibleBlocks(_currentBlock, _currentDirection);
 	_screen->fillRect(112, 0, 287, 119, 0);
 
-	static const uint8 sceneClickTileIndex[] = { 13, 16};
+	static const uint8 sceneClickTileIndex[] = { 13, 16 };
 
 	int16 x1 = 0;
 	int16 x2 = 0;
@@ -797,8 +796,7 @@ void LoLEngine::redrawSceneItem() {
 						if (item->flyingHeight > 1)
 							fy -= ((item->flyingHeight - 1) * 6);
 
-						uint8 *shp = (_itemProperties[item->itemPropertyIndex].flags & 0x40) ? _gameShapes[_itemProperties[item->itemPropertyIndex].shpIndex] :
-						             _itemShapes[_gameShapeMap[_itemProperties[item->itemPropertyIndex].shpIndex << 1]];
+						uint8 *shp = (_itemProperties[item->itemPropertyIndex].flags & 0x40) ? _gameShapes[_itemProperties[item->itemPropertyIndex].shpIndex] : _itemShapes[_gameShapeMap[_itemProperties[item->itemPropertyIndex].shpIndex << 1]];
 
 						drawItemOrMonster(shp, 0, item->x, item->y, fx, fy, 0, t, 0);
 						_screen->updateScreen();

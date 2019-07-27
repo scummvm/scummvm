@@ -32,11 +32,15 @@ class CStarlingPuret : public CGameObject {
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
+
 private:
 	bool _flag;
+
 public:
 	CLASSDEF;
-	CStarlingPuret() : CGameObject(), _flag(false) {}
+	CStarlingPuret()
+	  : CGameObject()
+	  , _flag(false) {}
 
 	/**
 	 * Save the data for the class to file

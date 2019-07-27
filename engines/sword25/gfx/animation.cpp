@@ -31,22 +31,22 @@
 
 #include "sword25/gfx/animation.h"
 
-#include "sword25/kernel/kernel.h"
-#include "sword25/kernel/resmanager.h"
-#include "sword25/kernel/inputpersistenceblock.h"
-#include "sword25/kernel/outputpersistenceblock.h"
-#include "sword25/package/packagemanager.h"
-#include "sword25/gfx/image/image.h"
+#include "sword25/gfx/animationresource.h"
 #include "sword25/gfx/animationtemplate.h"
 #include "sword25/gfx/animationtemplateregistry.h"
-#include "sword25/gfx/animationresource.h"
 #include "sword25/gfx/bitmapresource.h"
 #include "sword25/gfx/graphicengine.h"
+#include "sword25/gfx/image/image.h"
+#include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/kernel/outputpersistenceblock.h"
+#include "sword25/kernel/resmanager.h"
+#include "sword25/package/packagemanager.h"
 
 namespace Sword25 {
 
-Animation::Animation(RenderObjectPtr<RenderObject> parentPtr, const Common::String &fileName) :
-	TimedRenderObject(parentPtr, RenderObject::TYPE_ANIMATION) {
+Animation::Animation(RenderObjectPtr<RenderObject> parentPtr, const Common::String &fileName)
+  : TimedRenderObject(parentPtr, RenderObject::TYPE_ANIMATION) {
 	// Das BS_RenderObject konnte nicht erzeugt werden, daher muss an dieser Stelle abgebrochen werden.
 	if (!_initSuccess)
 		return;
@@ -62,8 +62,8 @@ Animation::Animation(RenderObjectPtr<RenderObject> parentPtr, const Common::Stri
 	_initSuccess = true;
 }
 
-Animation::Animation(RenderObjectPtr<RenderObject> parentPtr, const AnimationTemplate &templ) :
-	TimedRenderObject(parentPtr, RenderObject::TYPE_ANIMATION) {
+Animation::Animation(RenderObjectPtr<RenderObject> parentPtr, const AnimationTemplate &templ)
+  : TimedRenderObject(parentPtr, RenderObject::TYPE_ANIMATION) {
 	// Das BS_RenderObject konnte nicht erzeugt werden, daher muss an dieser Stelle abgebrochen werden.
 	if (!_initSuccess)
 		return;
@@ -79,8 +79,8 @@ Animation::Animation(RenderObjectPtr<RenderObject> parentPtr, const AnimationTem
 	_initSuccess = true;
 }
 
-Animation::Animation(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle) :
-	TimedRenderObject(parentPtr, RenderObject::TYPE_ANIMATION, handle) {
+Animation::Animation(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle)
+  : TimedRenderObject(parentPtr, RenderObject::TYPE_ANIMATION, handle) {
 	// Das BS_RenderObject konnte nicht erzeugt werden, daher muss an dieser Stelle abgebrochen werden.
 	if (!_initSuccess)
 		return;
@@ -134,7 +134,6 @@ Animation::~Animation() {
 	// Invoke the "delete" callback
 	if (_deleteCallback)
 		(_deleteCallback)(getHandle());
-
 }
 
 void Animation::play() {
@@ -164,7 +163,7 @@ void Animation::setFrame(uint nr) {
 
 	if (nr >= animationDescriptionPtr->getFrameCount()) {
 		error("Tried to set animation to illegal frame (%d). Value must be between 0 and %d.",
-		               nr, animationDescriptionPtr->getFrameCount());
+		      nr, animationDescriptionPtr->getFrameCount());
 		return;
 	}
 
@@ -193,16 +192,14 @@ bool Animation::doRender(RectangleList *updateRects) {
 	bool result;
 	if (isScalingAllowed() && (_width != pBitmapResource->getWidth() || _height != pBitmapResource->getHeight())) {
 		result = pBitmapResource->blit(_absoluteX, _absoluteY,
-		                               (animationDescriptionPtr->getFrame(_currentFrame).flipV ? Graphics::FLIP_V : 0) |
-		                               (animationDescriptionPtr->getFrame(_currentFrame).flipH ? Graphics::FLIP_H : 0),
+		                               (animationDescriptionPtr->getFrame(_currentFrame).flipV ? Graphics::FLIP_V : 0) | (animationDescriptionPtr->getFrame(_currentFrame).flipH ? Graphics::FLIP_H : 0),
 		                               0, _modulationColor, _width, _height,
-									   updateRects);
+		                               updateRects);
 	} else {
 		result = pBitmapResource->blit(_absoluteX, _absoluteY,
-		                               (animationDescriptionPtr->getFrame(_currentFrame).flipV ? Graphics::FLIP_V : 0) |
-		                               (animationDescriptionPtr->getFrame(_currentFrame).flipH ? Graphics::FLIP_H : 0),
+		                               (animationDescriptionPtr->getFrame(_currentFrame).flipV ? Graphics::FLIP_V : 0) | (animationDescriptionPtr->getFrame(_currentFrame).flipH ? Graphics::FLIP_H : 0),
 		                               0, _modulationColor, -1, -1,
-									   updateRects);
+		                               updateRects);
 	}
 
 	// Resource freigeben
@@ -250,7 +247,7 @@ void Animation::frameNotification(int timeElapsed) {
 
 			// An underflow may only occur if the animation type is JOJO.
 			assert(animationDescriptionPtr->getAnimationType() == AT_JOJO);
-			tmpCurFrame = - tmpCurFrame;
+			tmpCurFrame = -tmpCurFrame;
 			_direction = FORWARD;
 		} else if (static_cast<uint>(tmpCurFrame) >= animationDescriptionPtr->getFrameCount()) {
 			// Loop-Point callback
@@ -517,8 +514,7 @@ int Animation::computeXModifier() const {
 	assert(pResource->getType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmap = static_cast<BitmapResource *>(pResource);
 
-	int result = curFrame.flipV ? - static_cast<int>((pBitmap->getWidth() - 1 - curFrame.hotspotX) * _scaleFactorX) :
-	             - static_cast<int>(curFrame.hotspotX * _scaleFactorX);
+	int result = curFrame.flipV ? -static_cast<int>((pBitmap->getWidth() - 1 - curFrame.hotspotX) * _scaleFactorX) : -static_cast<int>(curFrame.hotspotX * _scaleFactorX);
 
 	pBitmap->release();
 
@@ -535,8 +531,7 @@ int Animation::computeYModifier() const {
 	assert(pResource->getType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmap = static_cast<BitmapResource *>(pResource);
 
-	int result = curFrame.flipH ? - static_cast<int>((pBitmap->getHeight() - 1 - curFrame.hotspotY) * _scaleFactorY) :
-	             - static_cast<int>(curFrame.hotspotY * _scaleFactorY);
+	int result = curFrame.flipH ? -static_cast<int>((pBitmap->getHeight() - 1 - curFrame.hotspotY) * _scaleFactorY) : -static_cast<int>(curFrame.hotspotY * _scaleFactorY);
 
 	pBitmap->release();
 
@@ -629,7 +624,6 @@ bool Animation::unpersist(InputPersistenceBlock &reader) {
 	reader.read(_framesLocked);
 	if (_framesLocked)
 		lockAllFrames();
-
 
 	// The following is only there to for compatibility with older saves
 	// resp. the original engine.

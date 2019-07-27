@@ -24,26 +24,26 @@
 
 #include "zvision/scripting/script_manager.h"
 
-#include "zvision/zvision.h"
-#include "zvision/graphics/render_manager.h"
-#include "zvision/graphics/cursors/cursor_manager.h"
 #include "zvision/file/save_manager.h"
+#include "zvision/graphics/cursors/cursor_manager.h"
+#include "zvision/graphics/render_manager.h"
 #include "zvision/scripting/actions.h"
-#include "zvision/scripting/menu.h"
 #include "zvision/scripting/effects/timer_effect.h"
+#include "zvision/scripting/menu.h"
+#include "zvision/zvision.h"
 
 #include "common/algorithm.h"
-#include "common/hashmap.h"
-#include "common/debug.h"
-#include "common/stream.h"
 #include "common/config-manager.h"
+#include "common/debug.h"
+#include "common/hashmap.h"
+#include "common/stream.h"
 
 namespace ZVision {
 
 ScriptManager::ScriptManager(ZVision *engine)
-	: _engine(engine),
-	  _currentlyFocusedControl(0),
-	  _activeControls(NULL) {
+  : _engine(engine)
+  , _currentlyFocusedControl(0)
+  , _activeControls(NULL) {
 }
 
 ScriptManager::~ScriptManager() {
@@ -148,7 +148,7 @@ void ScriptManager::addPuzzlesToReferenceTable(ScriptScope &scope) {
 		referenceTableAddPuzzle(puzzlePtr->key, ref);
 
 		// Iterate through each CriteriaEntry and add a reference from the criteria key to the Puzzle
-		for (Common::List<Common::List<Puzzle::CriteriaEntry> >::iterator criteriaIter = (*PuzzleIter)->criteriaList.begin(); criteriaIter != (*PuzzleIter)->criteriaList.end(); ++criteriaIter) {
+		for (Common::List<Common::List<Puzzle::CriteriaEntry>>::iterator criteriaIter = (*PuzzleIter)->criteriaList.begin(); criteriaIter != (*PuzzleIter)->criteriaList.end(); ++criteriaIter) {
 			for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = criteriaIter->begin(); entryIter != criteriaIter->end(); ++entryIter) {
 				referenceTableAddPuzzle(entryIter->key, ref);
 			}
@@ -160,7 +160,7 @@ void ScriptManager::updateNodes(uint deltaTimeMillis) {
 	// If process() returns true, it means the node can be deleted
 	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end();) {
 		if ((*iter)->process(deltaTimeMillis)) {
-			delete(*iter);
+			delete (*iter);
 			// Remove the node
 			iter = _activeSideFx.erase(iter);
 		} else {
@@ -219,7 +219,7 @@ bool ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
 	}
 
 	bool criteriaMet = false;
-	for (Common::List<Common::List<Puzzle::CriteriaEntry> >::iterator criteriaIter = puzzle->criteriaList.begin(); criteriaIter != puzzle->criteriaList.end(); ++criteriaIter) {
+	for (Common::List<Common::List<Puzzle::CriteriaEntry>>::iterator criteriaIter = puzzle->criteriaList.begin(); criteriaIter != puzzle->criteriaList.end(); ++criteriaIter) {
 		criteriaMet = false;
 
 		for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = criteriaIter->begin(); entryIter != criteriaIter->end(); ++entryIter) {
@@ -293,13 +293,13 @@ void ScriptManager::cleanScriptScope(ScriptScope &scope) {
 	scope.scopeQueue = &scope.privQueueOne;
 	scope.execQueue = &scope.privQueueTwo;
 	for (PuzzleList::iterator iter = scope.puzzles.begin(); iter != scope.puzzles.end(); ++iter) {
-		delete(*iter);
+		delete (*iter);
 	}
 
 	scope.puzzles.clear();
 
 	for (ControlList::iterator iter = scope.controls.begin(); iter != scope.controls.end(); ++iter) {
-		delete(*iter);
+		delete (*iter);
 	}
 
 	scope.controls.clear();
@@ -430,7 +430,7 @@ ScriptingEffect *ScriptManager::getSideFX(uint32 key) {
 void ScriptManager::deleteSideFx(uint32 key) {
 	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); ++iter) {
 		if ((*iter)->getKey() == key) {
-			delete(*iter);
+			delete (*iter);
 			_activeSideFx.erase(iter);
 			break;
 		}
@@ -442,7 +442,7 @@ void ScriptManager::stopSideFx(uint32 key) {
 		if ((*iter)->getKey() == key) {
 			bool ret = (*iter)->stop();
 			if (ret) {
-				delete(*iter);
+				delete (*iter);
 				_activeSideFx.erase(iter);
 			}
 			break;
@@ -454,7 +454,7 @@ void ScriptManager::killSideFx(uint32 key) {
 	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); ++iter) {
 		if ((*iter)->getKey() == key) {
 			(*iter)->kill();
-			delete(*iter);
+			delete (*iter);
 			_activeSideFx.erase(iter);
 			break;
 		}
@@ -465,7 +465,7 @@ void ScriptManager::killSideFxType(ScriptingEffect::ScriptingEffectType type) {
 	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end();) {
 		if ((*iter)->getType() & type) {
 			(*iter)->kill();
-			delete(*iter);
+			delete (*iter);
 			iter = _activeSideFx.erase(iter);
 		} else {
 			++iter;
@@ -753,7 +753,7 @@ void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
 	_currentLocation.view = 0;
 
 	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); iter++) {
-		delete(*iter);
+		delete (*iter);
 	}
 
 	_activeSideFx.clear();
@@ -793,8 +793,7 @@ void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
 				time /= 1000;
 			}
 			addSideFX(new TimerNode(_engine, key, time));
-		}
-		break;
+		} break;
 		case MKTAG('F', 'L', 'A', 'G'):
 			for (uint32 i = 0; i < tagSize / 2; i++) {
 				setStateFlagSilent(i, stream->readUint16LE());
@@ -875,8 +874,8 @@ void ScriptManager::trimCommentsAndWhiteSpace(Common::String *string) const {
 	string->trim();
 }
 
-ValueSlot::ValueSlot(ScriptManager *scriptManager, const char *slotValue):
-	_scriptManager(scriptManager) {
+ValueSlot::ValueSlot(ScriptManager *scriptManager, const char *slotValue)
+  : _scriptManager(scriptManager) {
 	value = 0;
 	slot = false;
 	const char *isSlot = strstr(slotValue, "[");
@@ -892,8 +891,7 @@ int16 ValueSlot::getValue() {
 	if (slot) {
 		if (value >= 0) {
 			return _scriptManager->getStateValue(value);
-		}
-		else {
+		} else {
 			return 0;
 		}
 	} else {

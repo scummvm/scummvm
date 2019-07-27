@@ -23,8 +23,8 @@
 #ifndef SHERLOCK_SAVELOAD_H
 #define SHERLOCK_SAVELOAD_H
 
-#include "common/scummsys.h"
 #include "common/savefile.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
 #include "common/str-array.h"
 #include "engines/savestate.h"
@@ -40,7 +40,9 @@ enum {
 	MINIMUM_SAVEGAME_VERSION = 4
 };
 
-enum SaveMode { SAVEMODE_NONE = 0, SAVEMODE_LOAD = 1, SAVEMODE_SAVE = 2 };
+enum SaveMode { SAVEMODE_NONE = 0,
+	              SAVEMODE_LOAD = 1,
+	              SAVEMODE_SAVE = 2 };
 
 extern const char *const EMPTY_SAVEGAME_SLOT;
 
@@ -72,10 +74,12 @@ protected:
 	 * Synchronize the data for a savegame
 	 */
 	void synchronize(Serializer &s);
+
 public:
 	Common::StringArray _savegames;
 	int _savegameIndex;
 	bool _justLoaded;
+
 public:
 	static SaveManager *init(SherlockEngine *vm, const Common::String &target);
 	SaveManager(SherlockEngine *vm, const Common::String &target);

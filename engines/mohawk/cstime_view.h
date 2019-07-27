@@ -33,9 +33,9 @@ public:
 	CSTimeModule(MohawkEngine_CSTime *vm);
 
 	// TODO: these don't really belong here
-	void init() { }
-	void shutdown() { }
-	void update() { }
+	void init() {}
+	void shutdown() {}
+	void update() {}
 
 	void defaultMoveProc(Feature *feature);
 	void defaultDrawProc(Feature *feature);

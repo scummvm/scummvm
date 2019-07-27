@@ -22,15 +22,15 @@
 
 #ifdef USE_MPEG2
 
-#ifndef IMAGE_CODECS_MPEG_H
-#define IMAGE_CODECS_MPEG_H
+#	ifndef IMAGE_CODECS_MPEG_H
+#		define IMAGE_CODECS_MPEG_H
 
-#include "common/inttypes.h"
-#include "image/codecs/codec.h"
-#include "graphics/pixelformat.h"
+#		include "common/inttypes.h"
+#		include "graphics/pixelformat.h"
+#		include "image/codecs/codec.h"
 
 extern "C" {
-	#include <mpeg2dec/mpeg2.h>
+#		include <mpeg2dec/mpeg2.h>
 }
 
 namespace Common {
@@ -75,6 +75,6 @@ private:
 
 } // End of namespace Image
 
-#endif // IMAGE_CODECS_MPEG_H
+#	endif // IMAGE_CODECS_MPEG_H
 
 #endif // USE_MPEG2

@@ -72,17 +72,17 @@
 	Note values <= 1 are silent.
 */
 
+#include "scumm/players/player_v5m.h"
 #include "common/macresman.h"
 #include "common/translation.h"
 #include "engines/engine.h"
 #include "gui/message.h"
-#include "scumm/players/player_v5m.h"
 #include "scumm/scumm.h"
 
 namespace Scumm {
 
 Player_V5M::Player_V5M(ScummEngine *scumm, Audio::Mixer *mixer)
-	: Player_Mac(scumm, mixer, 3, 0x07, false) {
+  : Player_Mac(scumm, mixer, 3, 0x07, false) {
 	assert(_vm->_game.id == GID_MONKEY);
 }
 
@@ -104,8 +104,9 @@ bool Player_V5M::checkMusicAvailable() {
 	}
 
 	GUI::MessageDialog dialog(_(
-		"Could not find the 'Monkey Island' Macintosh executable to read the\n"
-		"instruments from. Music will be disabled."), _("OK"));
+	                            "Could not find the 'Monkey Island' Macintosh executable to read the\n"
+	                            "instruments from. Music will be disabled."),
+	                          _("OK"));
 	dialog.runModal();
 	return false;
 }

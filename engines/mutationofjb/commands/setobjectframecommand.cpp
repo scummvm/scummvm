@@ -39,13 +39,12 @@ bool SetObjectFrameCommandParser::parse(const Common::String &line, ScriptParseC
 	if (line.size() < 13 || !line.hasPrefix("SETANIM "))
 		return false;
 
-	const uint8 objectId = (uint8) atoi(line.c_str() + 8);
+	const uint8 objectId = (uint8)atoi(line.c_str() + 8);
 	const unsigned int frame = atoi(line.c_str() + 11);
 
 	command = new SetObjectFrameCommand(objectId, frame);
 	return true;
 }
-
 
 Command::ExecuteResult SetObjectFrameCommand::execute(ScriptExecutionContext &scriptExecCtx) {
 	Object *const object = scriptExecCtx.getGameData().getCurrentScene()->getObject(_objectId);
@@ -58,7 +57,7 @@ Command::ExecuteResult SetObjectFrameCommand::execute(ScriptExecutionContext &sc
 }
 
 Common::String SetObjectFrameCommand::debugString() const {
-	return Common::String::format("SETOBJECTFRAME %u %u", (unsigned int) _objectId, (unsigned int) _frame);
+	return Common::String::format("SETOBJECTFRAME %u %u", (unsigned int)_objectId, (unsigned int)_frame);
 }
 
 }

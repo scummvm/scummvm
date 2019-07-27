@@ -27,17 +27,17 @@
 
 #define DATAALIGNMENT 4
 
-#define TONY_DAT_VER_MAJ 0  // 1 byte
-#define TONY_DAT_VER_MIN 3  // 1 byte
+#define TONY_DAT_VER_MAJ 0 // 1 byte
+#define TONY_DAT_VER_MIN 3 // 1 byte
 
 // Number of variants of the game. For the moment, it's the same
 // as the number of languages
-#define NUM_VARIANTS   6
+#define NUM_VARIANTS 6
 
-typedef unsigned char  uint8;
-typedef unsigned char  byte;
+typedef unsigned char uint8;
+typedef unsigned char byte;
 typedef unsigned short uint16;
-typedef signed   short int16;
+typedef signed short int16;
 
 void writeTextArray(FILE *outFile, const char *textData[], int nbrText);
 

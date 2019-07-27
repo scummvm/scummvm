@@ -31,9 +31,8 @@
 
 #include "common/system.h"
 
-#include "sword25/sword25.h"	// for kDebugScript
-#include "sword25/gfx/graphicengine.h"
 #include "sword25/fmv/movieplayer.h"
+#include "sword25/gfx/graphicengine.h"
 #include "sword25/input/inputengine.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/persistenceservice.h"
@@ -41,22 +40,22 @@
 #include "sword25/package/packagemanager.h"
 #include "sword25/script/luascript.h"
 #include "sword25/sfx/soundengine.h"
+#include "sword25/sword25.h" // for kDebugScript
 
 namespace Sword25 {
 
 Kernel *Kernel::_instance = 0;
 
-Kernel::Kernel() :
-	_resourceManager(NULL),
-	_initSuccess(false),
-	_gfx(0),
-	_sfx(0),
-	_input(0),
-	_package(0),
-	_script(0),
-	_fmv(0),
-	_rnd("sword25")
-	{
+Kernel::Kernel()
+  : _resourceManager(NULL)
+  , _initSuccess(false)
+  , _gfx(0)
+  , _sfx(0)
+  , _input(0)
+  , _package(0)
+  , _script(0)
+  , _fmv(0)
+  , _rnd("sword25") {
 
 	_instance = this;
 

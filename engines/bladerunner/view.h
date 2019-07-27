@@ -33,13 +33,13 @@ namespace BladeRunner {
 
 class View {
 public:
-	float     _fovX;
+	float _fovX;
 	Matrix4x3 _frameViewMatrix;
 	Matrix4x3 _sliceViewMatrix;
-	uint32    _frame;
+	uint32 _frame;
 
-	Vector3   _cameraPosition;
-	Vector3   _viewportPosition;
+	Vector3 _cameraPosition;
+	Vector3 _viewportPosition;
 
 	bool readVqa(Common::ReadStream *stream);
 	Vector3 calculateScreenPosition(Vector3 worldPosition);

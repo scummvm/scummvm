@@ -65,103 +65,102 @@
 #define BLUGEM3_X 0xad
 #define BLUGEM3_Y 0xa5
 
-#define COMBO(a,b,c) (holes[0] == a && holes[1] == b && holes[2] == c)
+#define COMBO(a, b, c) (holes[0] == a && holes[1] == b && holes[2] == c)
 
 namespace StarTrek {
 
 extern const RoomAction trial5ActionList[] = {
-	{ {ACTION_TICK,  1,     0, 0}, &Room::trial5Tick1 },
-	{ {ACTION_TICK, 60,     0, 0}, &Room::trial5Tick60 },
-	{ {ACTION_DONE_ANIM, 1, 0, 0}, &Room::trial5VlictAppeared },
-	{ {ACTION_USE, OBJECT_KIRK, HOTSPOT_INTERFACE, 0}, &Room::trial5WalkToInterface },
-	{ {ACTION_WALK, HOTSPOT_INTERFACE,          0, 0}, &Room::trial5WalkToInterface },
-	{ {ACTION_DONE_WALK, 2,                     0, 0}, &Room::trial5ReachedInterface },
-	{ {ACTION_DONE_WALK, 30,                    0, 0}, &Room::trial5ReachedGem },
-	{ {ACTION_DONE_ANIM, 31,                    0, 0}, &Room::trial5PickedUpGem },
+	{ { ACTION_TICK, 1, 0, 0 }, &Room::trial5Tick1 },
+	{ { ACTION_TICK, 60, 0, 0 }, &Room::trial5Tick60 },
+	{ { ACTION_DONE_ANIM, 1, 0, 0 }, &Room::trial5VlictAppeared },
+	{ { ACTION_USE, OBJECT_KIRK, HOTSPOT_INTERFACE, 0 }, &Room::trial5WalkToInterface },
+	{ { ACTION_WALK, HOTSPOT_INTERFACE, 0, 0 }, &Room::trial5WalkToInterface },
+	{ { ACTION_DONE_WALK, 2, 0, 0 }, &Room::trial5ReachedInterface },
+	{ { ACTION_DONE_WALK, 30, 0, 0 }, &Room::trial5ReachedGem },
+	{ { ACTION_DONE_ANIM, 31, 0, 0 }, &Room::trial5PickedUpGem },
 
-	{ {ACTION_GET, OBJECT_REDGEM1, 0, 0}, &Room::trial5GetRedGem1 },
-	{ {ACTION_GET, OBJECT_REDGEM2, 0, 0}, &Room::trial5GetRedGem2 },
-	{ {ACTION_GET, OBJECT_REDGEM3, 0, 0}, &Room::trial5GetRedGem3 },
-	{ {ACTION_GET, OBJECT_GRNGEM1, 0, 0}, &Room::trial5GetGreenGem1 },
-	{ {ACTION_GET, OBJECT_GRNGEM2, 0, 0}, &Room::trial5GetGreenGem2 },
-	{ {ACTION_GET, OBJECT_GRNGEM3, 0, 0}, &Room::trial5GetGreenGem3 },
-	{ {ACTION_GET, OBJECT_BLUGEM1, 0, 0}, &Room::trial5GetBlueGem1 },
-	{ {ACTION_GET, OBJECT_BLUGEM2, 0, 0}, &Room::trial5GetBlueGem2 },
-	{ {ACTION_GET, OBJECT_BLUGEM3, 0, 0}, &Room::trial5GetBlueGem3 },
+	{ { ACTION_GET, OBJECT_REDGEM1, 0, 0 }, &Room::trial5GetRedGem1 },
+	{ { ACTION_GET, OBJECT_REDGEM2, 0, 0 }, &Room::trial5GetRedGem2 },
+	{ { ACTION_GET, OBJECT_REDGEM3, 0, 0 }, &Room::trial5GetRedGem3 },
+	{ { ACTION_GET, OBJECT_GRNGEM1, 0, 0 }, &Room::trial5GetGreenGem1 },
+	{ { ACTION_GET, OBJECT_GRNGEM2, 0, 0 }, &Room::trial5GetGreenGem2 },
+	{ { ACTION_GET, OBJECT_GRNGEM3, 0, 0 }, &Room::trial5GetGreenGem3 },
+	{ { ACTION_GET, OBJECT_BLUGEM1, 0, 0 }, &Room::trial5GetBlueGem1 },
+	{ { ACTION_GET, OBJECT_BLUGEM2, 0, 0 }, &Room::trial5GetBlueGem2 },
+	{ { ACTION_GET, OBJECT_BLUGEM3, 0, 0 }, &Room::trial5GetBlueGem3 },
 
-	{ {ACTION_LOOK, OBJECT_KIRK,       0, 0}, &Room::trial5LookAtKirk },
-	{ {ACTION_LOOK, OBJECT_SPOCK,      0, 0}, &Room::trial5LookAtSpock },
-	{ {ACTION_LOOK, OBJECT_MCCOY,      0, 0}, &Room::trial5LookAtMccoy },
-	{ {ACTION_LOOK, OBJECT_REDSHIRT,   0, 0}, &Room::trial5LookAtRedshirt },
-	{ {ACTION_LOOK, OBJECT_BEAM,       0, 0}, &Room::trial5LookAtBeam },
-	{ {ACTION_LOOK, HOTSPOT_INTERFACE, 0, 0}, &Room::trial5LookAtInterface },
+	{ { ACTION_LOOK, OBJECT_KIRK, 0, 0 }, &Room::trial5LookAtKirk },
+	{ { ACTION_LOOK, OBJECT_SPOCK, 0, 0 }, &Room::trial5LookAtSpock },
+	{ { ACTION_LOOK, OBJECT_MCCOY, 0, 0 }, &Room::trial5LookAtMccoy },
+	{ { ACTION_LOOK, OBJECT_REDSHIRT, 0, 0 }, &Room::trial5LookAtRedshirt },
+	{ { ACTION_LOOK, OBJECT_BEAM, 0, 0 }, &Room::trial5LookAtBeam },
+	{ { ACTION_LOOK, HOTSPOT_INTERFACE, 0, 0 }, &Room::trial5LookAtInterface },
 
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_INTERFACE, 0}, &Room::trial5UseSTricorderOnInterface },
-	{ {ACTION_USE, OBJECT_IMTRICOR, HOTSPOT_INTERFACE, 0}, &Room::trial5UseMTricorderOnInterface },
+	{ { ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_INTERFACE, 0 }, &Room::trial5UseSTricorderOnInterface },
+	{ { ACTION_USE, OBJECT_IMTRICOR, HOTSPOT_INTERFACE, 0 }, &Room::trial5UseMTricorderOnInterface },
 
-	{ {ACTION_LOOK, OBJECT_REDGEM1, 0, 0}, &Room::trial5LookAtRedGem1 },
-	{ {ACTION_LOOK, OBJECT_REDGEM2, 0, 0}, &Room::trial5LookAtRedGem2 },
-	{ {ACTION_LOOK, OBJECT_REDGEM3, 0, 0}, &Room::trial5LookAtRedGem3 },
-	{ {ACTION_LOOK, OBJECT_GRNGEM1, 0, 0}, &Room::trial5LookAtGreenGem1 },
-	{ {ACTION_LOOK, OBJECT_GRNGEM2, 0, 0}, &Room::trial5LookAtGreenGem2 },
-	{ {ACTION_LOOK, OBJECT_GRNGEM3, 0, 0}, &Room::trial5LookAtGreenGem3 },
-	{ {ACTION_LOOK, OBJECT_BLUGEM1, 0, 0}, &Room::trial5LookAtBlueGem1 },
-	{ {ACTION_LOOK, OBJECT_BLUGEM2, 0, 0}, &Room::trial5LookAtBlueGem2 },
-	{ {ACTION_LOOK, OBJECT_BLUGEM3, 0, 0}, &Room::trial5LookAtBlueGem3 },
+	{ { ACTION_LOOK, OBJECT_REDGEM1, 0, 0 }, &Room::trial5LookAtRedGem1 },
+	{ { ACTION_LOOK, OBJECT_REDGEM2, 0, 0 }, &Room::trial5LookAtRedGem2 },
+	{ { ACTION_LOOK, OBJECT_REDGEM3, 0, 0 }, &Room::trial5LookAtRedGem3 },
+	{ { ACTION_LOOK, OBJECT_GRNGEM1, 0, 0 }, &Room::trial5LookAtGreenGem1 },
+	{ { ACTION_LOOK, OBJECT_GRNGEM2, 0, 0 }, &Room::trial5LookAtGreenGem2 },
+	{ { ACTION_LOOK, OBJECT_GRNGEM3, 0, 0 }, &Room::trial5LookAtGreenGem3 },
+	{ { ACTION_LOOK, OBJECT_BLUGEM1, 0, 0 }, &Room::trial5LookAtBlueGem1 },
+	{ { ACTION_LOOK, OBJECT_BLUGEM2, 0, 0 }, &Room::trial5LookAtBlueGem2 },
+	{ { ACTION_LOOK, OBJECT_BLUGEM3, 0, 0 }, &Room::trial5LookAtBlueGem3 },
 
-	{ {ACTION_LOOK, HOTSPOT_HOLE1, 0, 0}, &Room::trial5LookAtHole },
-	{ {ACTION_LOOK, HOTSPOT_HOLE2, 0, 0}, &Room::trial5LookAtHole },
-	{ {ACTION_LOOK, HOTSPOT_HOLE3, 0, 0}, &Room::trial5LookAtHole },
+	{ { ACTION_LOOK, HOTSPOT_HOLE1, 0, 0 }, &Room::trial5LookAtHole },
+	{ { ACTION_LOOK, HOTSPOT_HOLE2, 0, 0 }, &Room::trial5LookAtHole },
+	{ { ACTION_LOOK, HOTSPOT_HOLE3, 0, 0 }, &Room::trial5LookAtHole },
 
-	{ {ACTION_TALK, OBJECT_KIRK,       0, 0}, &Room::trial5TalkToKirk },
-	{ {ACTION_TALK, OBJECT_SPOCK,      0, 0}, &Room::trial5TalkToSpock },
-	{ {ACTION_TALK, OBJECT_MCCOY,      0, 0}, &Room::trial5TalkToMccoy },
-	{ {ACTION_TALK, OBJECT_REDSHIRT,   0, 0}, &Room::trial5TalkToRedshirt },
+	{ { ACTION_TALK, OBJECT_KIRK, 0, 0 }, &Room::trial5TalkToKirk },
+	{ { ACTION_TALK, OBJECT_SPOCK, 0, 0 }, &Room::trial5TalkToSpock },
+	{ { ACTION_TALK, OBJECT_MCCOY, 0, 0 }, &Room::trial5TalkToMccoy },
+	{ { ACTION_TALK, OBJECT_REDSHIRT, 0, 0 }, &Room::trial5TalkToRedshirt },
 
-	{ {ACTION_USE, OBJECT_IPHASERS, 0xff, 0}, &Room::trial5UsePhaser },
-	{ {ACTION_USE, OBJECT_IPHASERK, 0xff, 0}, &Room::trial5UsePhaser },
-	{ {ACTION_USE, OBJECT_IMTRICOR, 0xff, 0}, &Room::trial5UseMTricorderAnywhere },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0}, &Room::trial5UseSTricorderAnywhere },
-	{ {ACTION_USE, OBJECT_ICOMM,    0xff, 0}, &Room::trial5UseCommunicator },
+	{ { ACTION_USE, OBJECT_IPHASERS, 0xff, 0 }, &Room::trial5UsePhaser },
+	{ { ACTION_USE, OBJECT_IPHASERK, 0xff, 0 }, &Room::trial5UsePhaser },
+	{ { ACTION_USE, OBJECT_IMTRICOR, 0xff, 0 }, &Room::trial5UseMTricorderAnywhere },
+	{ { ACTION_USE, OBJECT_ISTRICOR, 0xff, 0 }, &Room::trial5UseSTricorderAnywhere },
+	{ { ACTION_USE, OBJECT_ICOMM, 0xff, 0 }, &Room::trial5UseCommunicator },
 
-	{ {ACTION_DONE_WALK, 3, 0, 0},  &Room::trial5ReachedHoleToPutGem },
-	{ {ACTION_DONE_ANIM, 32, 0, 0}, &Room::trial5CrewmanBeamedOut },
+	{ { ACTION_DONE_WALK, 3, 0, 0 }, &Room::trial5ReachedHoleToPutGem },
+	{ { ACTION_DONE_ANIM, 32, 0, 0 }, &Room::trial5CrewmanBeamedOut },
 
-	{ {ACTION_USE, OBJECT_IREDGEM1, HOTSPOT_HOLE1, 0}, &Room::trial5UseRedGem1OnHole1 },
-	{ {ACTION_USE, OBJECT_IREDGEM2, HOTSPOT_HOLE1, 0}, &Room::trial5UseRedGem2OnHole1 },
-	{ {ACTION_USE, OBJECT_IREDGEM3, HOTSPOT_HOLE1, 0}, &Room::trial5UseRedGem3OnHole1 },
-	{ {ACTION_USE, OBJECT_IGRNGEM1, HOTSPOT_HOLE1, 0}, &Room::trial5UseGreenGem1OnHole1 },
-	{ {ACTION_USE, OBJECT_IGRNGEM2, HOTSPOT_HOLE1, 0}, &Room::trial5UseGreenGem2OnHole1 },
-	{ {ACTION_USE, OBJECT_IGRNGEM3, HOTSPOT_HOLE1, 0}, &Room::trial5UseGreenGem3OnHole1 },
-	{ {ACTION_USE, OBJECT_IBLUGEM1, HOTSPOT_HOLE1, 0}, &Room::trial5UseBlueGem1OnHole1 },
-	{ {ACTION_USE, OBJECT_IBLUGEM2, HOTSPOT_HOLE1, 0}, &Room::trial5UseBlueGem2OnHole1 },
-	{ {ACTION_USE, OBJECT_IBLUGEM3, HOTSPOT_HOLE1, 0}, &Room::trial5UseBlueGem3OnHole1 },
+	{ { ACTION_USE, OBJECT_IREDGEM1, HOTSPOT_HOLE1, 0 }, &Room::trial5UseRedGem1OnHole1 },
+	{ { ACTION_USE, OBJECT_IREDGEM2, HOTSPOT_HOLE1, 0 }, &Room::trial5UseRedGem2OnHole1 },
+	{ { ACTION_USE, OBJECT_IREDGEM3, HOTSPOT_HOLE1, 0 }, &Room::trial5UseRedGem3OnHole1 },
+	{ { ACTION_USE, OBJECT_IGRNGEM1, HOTSPOT_HOLE1, 0 }, &Room::trial5UseGreenGem1OnHole1 },
+	{ { ACTION_USE, OBJECT_IGRNGEM2, HOTSPOT_HOLE1, 0 }, &Room::trial5UseGreenGem2OnHole1 },
+	{ { ACTION_USE, OBJECT_IGRNGEM3, HOTSPOT_HOLE1, 0 }, &Room::trial5UseGreenGem3OnHole1 },
+	{ { ACTION_USE, OBJECT_IBLUGEM1, HOTSPOT_HOLE1, 0 }, &Room::trial5UseBlueGem1OnHole1 },
+	{ { ACTION_USE, OBJECT_IBLUGEM2, HOTSPOT_HOLE1, 0 }, &Room::trial5UseBlueGem2OnHole1 },
+	{ { ACTION_USE, OBJECT_IBLUGEM3, HOTSPOT_HOLE1, 0 }, &Room::trial5UseBlueGem3OnHole1 },
 
-	{ {ACTION_USE, OBJECT_IREDGEM1, HOTSPOT_HOLE2, 0}, &Room::trial5UseRedGem1OnHole2 },
-	{ {ACTION_USE, OBJECT_IREDGEM2, HOTSPOT_HOLE2, 0}, &Room::trial5UseRedGem2OnHole2 },
-	{ {ACTION_USE, OBJECT_IREDGEM3, HOTSPOT_HOLE2, 0}, &Room::trial5UseRedGem3OnHole2 },
-	{ {ACTION_USE, OBJECT_IGRNGEM1, HOTSPOT_HOLE2, 0}, &Room::trial5UseGreenGem1OnHole2 },
-	{ {ACTION_USE, OBJECT_IGRNGEM2, HOTSPOT_HOLE2, 0}, &Room::trial5UseGreenGem2OnHole2 },
-	{ {ACTION_USE, OBJECT_IGRNGEM3, HOTSPOT_HOLE2, 0}, &Room::trial5UseGreenGem3OnHole2 },
-	{ {ACTION_USE, OBJECT_IBLUGEM1, HOTSPOT_HOLE2, 0}, &Room::trial5UseBlueGem1OnHole2 },
-	{ {ACTION_USE, OBJECT_IBLUGEM2, HOTSPOT_HOLE2, 0}, &Room::trial5UseBlueGem2OnHole2 },
-	{ {ACTION_USE, OBJECT_IBLUGEM3, HOTSPOT_HOLE2, 0}, &Room::trial5UseBlueGem3OnHole2 },
+	{ { ACTION_USE, OBJECT_IREDGEM1, HOTSPOT_HOLE2, 0 }, &Room::trial5UseRedGem1OnHole2 },
+	{ { ACTION_USE, OBJECT_IREDGEM2, HOTSPOT_HOLE2, 0 }, &Room::trial5UseRedGem2OnHole2 },
+	{ { ACTION_USE, OBJECT_IREDGEM3, HOTSPOT_HOLE2, 0 }, &Room::trial5UseRedGem3OnHole2 },
+	{ { ACTION_USE, OBJECT_IGRNGEM1, HOTSPOT_HOLE2, 0 }, &Room::trial5UseGreenGem1OnHole2 },
+	{ { ACTION_USE, OBJECT_IGRNGEM2, HOTSPOT_HOLE2, 0 }, &Room::trial5UseGreenGem2OnHole2 },
+	{ { ACTION_USE, OBJECT_IGRNGEM3, HOTSPOT_HOLE2, 0 }, &Room::trial5UseGreenGem3OnHole2 },
+	{ { ACTION_USE, OBJECT_IBLUGEM1, HOTSPOT_HOLE2, 0 }, &Room::trial5UseBlueGem1OnHole2 },
+	{ { ACTION_USE, OBJECT_IBLUGEM2, HOTSPOT_HOLE2, 0 }, &Room::trial5UseBlueGem2OnHole2 },
+	{ { ACTION_USE, OBJECT_IBLUGEM3, HOTSPOT_HOLE2, 0 }, &Room::trial5UseBlueGem3OnHole2 },
 
-	{ {ACTION_USE, OBJECT_IREDGEM1, HOTSPOT_HOLE3, 0}, &Room::trial5UseRedGem1OnHole3 },
-	{ {ACTION_USE, OBJECT_IREDGEM2, HOTSPOT_HOLE3, 0}, &Room::trial5UseRedGem2OnHole3 },
-	{ {ACTION_USE, OBJECT_IREDGEM3, HOTSPOT_HOLE3, 0}, &Room::trial5UseRedGem3OnHole3 },
-	{ {ACTION_USE, OBJECT_IGRNGEM1, HOTSPOT_HOLE3, 0}, &Room::trial5UseGreenGem1OnHole3 },
-	{ {ACTION_USE, OBJECT_IGRNGEM2, HOTSPOT_HOLE3, 0}, &Room::trial5UseGreenGem2OnHole3 },
-	{ {ACTION_USE, OBJECT_IGRNGEM3, HOTSPOT_HOLE3, 0}, &Room::trial5UseGreenGem3OnHole3 },
-	{ {ACTION_USE, OBJECT_IBLUGEM1, HOTSPOT_HOLE3, 0}, &Room::trial5UseBlueGem1OnHole3 },
-	{ {ACTION_USE, OBJECT_IBLUGEM2, HOTSPOT_HOLE3, 0}, &Room::trial5UseBlueGem2OnHole3 },
-	{ {ACTION_USE, OBJECT_IBLUGEM3, HOTSPOT_HOLE3, 0}, &Room::trial5UseBlueGem3OnHole3 },
+	{ { ACTION_USE, OBJECT_IREDGEM1, HOTSPOT_HOLE3, 0 }, &Room::trial5UseRedGem1OnHole3 },
+	{ { ACTION_USE, OBJECT_IREDGEM2, HOTSPOT_HOLE3, 0 }, &Room::trial5UseRedGem2OnHole3 },
+	{ { ACTION_USE, OBJECT_IREDGEM3, HOTSPOT_HOLE3, 0 }, &Room::trial5UseRedGem3OnHole3 },
+	{ { ACTION_USE, OBJECT_IGRNGEM1, HOTSPOT_HOLE3, 0 }, &Room::trial5UseGreenGem1OnHole3 },
+	{ { ACTION_USE, OBJECT_IGRNGEM2, HOTSPOT_HOLE3, 0 }, &Room::trial5UseGreenGem2OnHole3 },
+	{ { ACTION_USE, OBJECT_IGRNGEM3, HOTSPOT_HOLE3, 0 }, &Room::trial5UseGreenGem3OnHole3 },
+	{ { ACTION_USE, OBJECT_IBLUGEM1, HOTSPOT_HOLE3, 0 }, &Room::trial5UseBlueGem1OnHole3 },
+	{ { ACTION_USE, OBJECT_IBLUGEM2, HOTSPOT_HOLE3, 0 }, &Room::trial5UseBlueGem2OnHole3 },
+	{ { ACTION_USE, OBJECT_IBLUGEM3, HOTSPOT_HOLE3, 0 }, &Room::trial5UseBlueGem3OnHole3 },
 
-	{ {ACTION_USE, OBJECT_IMEDKIT, 0xff, 0}, &Room::trial5UseMedkitAnywhere },
+	{ { ACTION_USE, OBJECT_IMEDKIT, 0xff, 0 }, &Room::trial5UseMedkitAnywhere },
 };
 
 extern const int trial5NumActions = ARRAYSIZE(trial5ActionList);
-
 
 void Room::trial5Tick1() {
 	playVoc("TRI5LOOP");
@@ -180,18 +179,18 @@ void Room::trial5Tick1() {
 
 void Room::trial5Tick60() {
 	showText(TX_SPEAKER_BENNIE, TX_TRI5_052);
-	showText(TX_SPEAKER_SPOCK,  TX_TRI5_017);
-	showText(TX_SPEAKER_MCCOY,  TX_TRI5_014);
-	showText(TX_SPEAKER_KIRK,   TX_TRI5_002);
+	showText(TX_SPEAKER_SPOCK, TX_TRI5_017);
+	showText(TX_SPEAKER_MCCOY, TX_TRI5_014);
+	showText(TX_SPEAKER_KIRK, TX_TRI5_002);
 }
 
 void Room::trial5VlictAppeared() {
 	showText(TX_SPEAKER_BIALBI, TX_TRI5_027);
-	showText(TX_SPEAKER_VLICT,  TX_TRI5_020);
+	showText(TX_SPEAKER_VLICT, TX_TRI5_020);
 	showText(TX_SPEAKER_BIALBI, TX_TRI5_031);
-	showText(TX_SPEAKER_VLICT,  TX_TRI5_022);
+	showText(TX_SPEAKER_VLICT, TX_TRI5_022);
 	showText(TX_SPEAKER_BIALBI, TX_TRI5_029);
-	showText(TX_SPEAKER_VLICT,  TX_TRI5_018);
+	showText(TX_SPEAKER_VLICT, TX_TRI5_018);
 
 	const TextRef choices[] = {
 		TX_SPEAKER_KIRK,
@@ -228,12 +227,12 @@ void Room::trial5VlictAppeared() {
 
 		showText(TX_SPEAKER_BIALBI, TX_TRI5_025);
 		_awayMission->trial.missionScore += 4;
-		showText(TX_SPEAKER_KIRK,   TX_TRI5_004);
+		showText(TX_SPEAKER_KIRK, TX_TRI5_004);
 		showText(TX_SPEAKER_BIALBI, TX_TRI5_030);
 		showText(TX_SPEAKER_BIALBI, TX_TRI5_026);
-		showText(TX_SPEAKER_VLICT,  TX_TRI5_021);
+		showText(TX_SPEAKER_VLICT, TX_TRI5_021);
 		showText(TX_SPEAKER_BIALBI, TX_TRI5_028);
-		showText(TX_SPEAKER_KIRK,   TX_TRI5_005);
+		showText(TX_SPEAKER_KIRK, TX_TRI5_005);
 		showText(TX_SPEAKER_BIALBI, TX_TRI5_033);
 		showText(TX_SPEAKER_BIALBI, TX_TRI5_032);
 
@@ -462,9 +461,15 @@ void Room::trial5ReachedHoleToPutGem() {
 		Common::Point(0x3c, 0x95),
 	};
 	const char *const gemAnims[] = {
-		"RedGem1", "RedGem2", "RedGem3",
-		"GrnGem1", "GrnGem2", "GrnGem3",
-		"BluGem1", "BluGem2", "BluGem3",
+		"RedGem1",
+		"RedGem2",
+		"RedGem3",
+		"GrnGem1",
+		"GrnGem2",
+		"GrnGem3",
+		"BluGem1",
+		"BluGem2",
+		"BluGem3",
 	};
 
 	const int16 hole = _roomVar.trial.hole;
@@ -499,92 +504,146 @@ void Room::trial5ReachedHoleToPutGem() {
 				holes[i] = BLUE;
 		}
 
-		if COMBO(RED, RED, RED) {
-			trial5ActivateLightOfWar();
-			playMidiMusicTracks(MIDITRACK_1, -1);
-			showText(TX_SPEAKER_LIGHT_OF_WAR, TX_TRI5_050); // All ships in orbit destroyed
-			showGameOverMenu();
-		} else if COMBO(RED, RED, GREEN) {
-			trial5RestrictedCombination1();
-		} else if COMBO(RED, RED, BLUE) {
-			trial5RestrictedCombination1();
-		} else if COMBO(RED, GREEN, RED) {
-			trial5RestrictedCombination1();
-		} else if COMBO(RED, GREEN, GREEN) {
-			trial5ActivateLightOfWar();
-			showText(TX_SPEAKER_LIGHT_OF_WAR, TX_TRI5_036);
-		} else if COMBO(RED, GREEN, BLUE) {
-			trial5ActivateLightOfWar();
-			showText(TX_SPEAKER_LIGHT_OF_WAR, TX_TRI5_048);
-		} else if COMBO(RED, BLUE, RED) {
-			trial5RestrictedCombination1();
-		} else if COMBO(RED, BLUE, GREEN) {
-			trial5RestrictedCombination1();
-		} else if COMBO(RED, BLUE, BLUE) {
-			trial5ActivateLightOfWar();
-			showText(TX_SPEAKER_LIGHT_OF_WAR, TX_TRI5_049);
-		} else if COMBO(GREEN, RED, RED) {
-			trial5ActivateLightOfKnowledge();
-			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, TX_TRI5_047);
-		} else if COMBO(GREEN, RED, GREEN) {
-			trial5RestrictedCombination2();
-		} else if COMBO(GREEN, RED, BLUE) {
-			trial5RestrictedCombination2();
-		} else if COMBO(GREEN, GREEN, RED) {
-			trial5RestrictedCombination1();
-		} else if COMBO(GREEN, GREEN, GREEN) {
-			trial5ActivateLightOfKnowledge();
-			playVoc("EFX12B");
-			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, TX_TRI5_040);
-			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, TX_TRI5_037);
-			_awayMission->trial.neuralInterfaceActive = true;
-
-			if (!_awayMission->trial.gotPointsForActivatingInterface) {
-				_awayMission->trial.gotPointsForActivatingInterface = true;
-				_awayMission->trial.missionScore += 3;
+		if
+			COMBO(RED, RED, RED) {
+				trial5ActivateLightOfWar();
+				playMidiMusicTracks(MIDITRACK_1, -1);
+				showText(TX_SPEAKER_LIGHT_OF_WAR, TX_TRI5_050); // All ships in orbit destroyed
+				showGameOverMenu();
 			}
-		} else if COMBO(GREEN, GREEN, BLUE) {
-			trial5RestrictedCombination1();
-		} else if COMBO(GREEN, BLUE, RED) {
-			trial5ActivateLightOfKnowledge();
-			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, TX_TRI5_041);
-		} else if COMBO(GREEN, BLUE, GREEN) {
-			trial5RestrictedCombination2();
-		} else if COMBO(GREEN, BLUE, BLUE) {
-			trial5ActivateLightOfKnowledge();
-			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, TX_TRI5_038);
-		} else if COMBO(BLUE, RED, RED) {
-			trial5ActivateLightOfTravel();
-			showText(TX_SPEAKER_LIGHT_OF_TRAVEL, TX_TRI5_045);
-		} else if COMBO(BLUE, RED, GREEN) {
-			trial5DestinationNoLongerExists();
-		} else if COMBO(BLUE, RED, BLUE) {
-			trial5DestinationNoLongerExists();
-		} else if COMBO(BLUE, GREEN, RED) {
-			trial5ActivateLightOfTravel();
-			showText(TX_SPEAKER_LIGHT_OF_TRAVEL, TX_TRI5_042);
-		} else if COMBO(BLUE, GREEN, GREEN) {
-			trial5ActivateLightOfTravel();
-			showText(TX_SPEAKER_LIGHT_OF_TRAVEL, TX_TRI5_044);
-		} else if COMBO(BLUE, GREEN, BLUE) {
-			trial5DestinationNoLongerExists();
-		} else if COMBO(BLUE, BLUE, RED) {
-			trial5RestrictedCombination1();
-		} else if COMBO(BLUE, BLUE, GREEN) {
-			trial5RestrictedCombination1();
-		} else if COMBO(BLUE, BLUE, BLUE) {
-			trial5ActivateLightOfTravel();
-			showText(TX_SPEAKER_LIGHT_OF_TRAVEL, TX_TRI5_046);
+		else if
+			COMBO(RED, RED, GREEN) {
+				trial5RestrictedCombination1();
+			}
+		else if
+			COMBO(RED, RED, BLUE) {
+				trial5RestrictedCombination1();
+			}
+		else if
+			COMBO(RED, GREEN, RED) {
+				trial5RestrictedCombination1();
+			}
+		else if
+			COMBO(RED, GREEN, GREEN) {
+				trial5ActivateLightOfWar();
+				showText(TX_SPEAKER_LIGHT_OF_WAR, TX_TRI5_036);
+			}
+		else if
+			COMBO(RED, GREEN, BLUE) {
+				trial5ActivateLightOfWar();
+				showText(TX_SPEAKER_LIGHT_OF_WAR, TX_TRI5_048);
+			}
+		else if
+			COMBO(RED, BLUE, RED) {
+				trial5RestrictedCombination1();
+			}
+		else if
+			COMBO(RED, BLUE, GREEN) {
+				trial5RestrictedCombination1();
+			}
+		else if
+			COMBO(RED, BLUE, BLUE) {
+				trial5ActivateLightOfWar();
+				showText(TX_SPEAKER_LIGHT_OF_WAR, TX_TRI5_049);
+			}
+		else if
+			COMBO(GREEN, RED, RED) {
+				trial5ActivateLightOfKnowledge();
+				showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, TX_TRI5_047);
+			}
+		else if
+			COMBO(GREEN, RED, GREEN) {
+				trial5RestrictedCombination2();
+			}
+		else if
+			COMBO(GREEN, RED, BLUE) {
+				trial5RestrictedCombination2();
+			}
+		else if
+			COMBO(GREEN, GREEN, RED) {
+				trial5RestrictedCombination1();
+			}
+		else if
+			COMBO(GREEN, GREEN, GREEN) {
+				trial5ActivateLightOfKnowledge();
+				playVoc("EFX12B");
+				showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, TX_TRI5_040);
+				showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, TX_TRI5_037);
+				_awayMission->trial.neuralInterfaceActive = true;
 
-			_awayMission->disableInput = true;
-			playSoundEffectIndex(SND_TRANSDEM);
+				if (!_awayMission->trial.gotPointsForActivatingInterface) {
+					_awayMission->trial.gotPointsForActivatingInterface = true;
+					_awayMission->trial.missionScore += 3;
+				}
+			}
+		else if
+			COMBO(GREEN, GREEN, BLUE) {
+				trial5RestrictedCombination1();
+			}
+		else if
+			COMBO(GREEN, BLUE, RED) {
+				trial5ActivateLightOfKnowledge();
+				showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, TX_TRI5_041);
+			}
+		else if
+			COMBO(GREEN, BLUE, GREEN) {
+				trial5RestrictedCombination2();
+			}
+		else if
+			COMBO(GREEN, BLUE, BLUE) {
+				trial5ActivateLightOfKnowledge();
+				showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, TX_TRI5_038);
+			}
+		else if
+			COMBO(BLUE, RED, RED) {
+				trial5ActivateLightOfTravel();
+				showText(TX_SPEAKER_LIGHT_OF_TRAVEL, TX_TRI5_045);
+			}
+		else if
+			COMBO(BLUE, RED, GREEN) {
+				trial5DestinationNoLongerExists();
+			}
+		else if
+			COMBO(BLUE, RED, BLUE) {
+				trial5DestinationNoLongerExists();
+			}
+		else if
+			COMBO(BLUE, GREEN, RED) {
+				trial5ActivateLightOfTravel();
+				showText(TX_SPEAKER_LIGHT_OF_TRAVEL, TX_TRI5_042);
+			}
+		else if
+			COMBO(BLUE, GREEN, GREEN) {
+				trial5ActivateLightOfTravel();
+				showText(TX_SPEAKER_LIGHT_OF_TRAVEL, TX_TRI5_044);
+			}
+		else if
+			COMBO(BLUE, GREEN, BLUE) {
+				trial5DestinationNoLongerExists();
+			}
+		else if
+			COMBO(BLUE, BLUE, RED) {
+				trial5RestrictedCombination1();
+			}
+		else if
+			COMBO(BLUE, BLUE, GREEN) {
+				trial5RestrictedCombination1();
+			}
+		else if
+			COMBO(BLUE, BLUE, BLUE) {
+				trial5ActivateLightOfTravel();
+				showText(TX_SPEAKER_LIGHT_OF_TRAVEL, TX_TRI5_046);
 
-			loadActorAnimC(OBJECT_KIRK,  "kteled", -1, -1, &Room::trial5CrewmanBeamedOut);
-			loadActorAnimC(OBJECT_SPOCK, "steled", -1, -1, &Room::trial5CrewmanBeamedOut);
-			loadActorAnimC(OBJECT_MCCOY, "mteled", -1, -1, &Room::trial5CrewmanBeamedOut);
-			if (!_awayMission->redshirtDead)
-				loadActorAnimC(OBJECT_REDSHIRT, "rteled", -1, -1, &Room::trial5CrewmanBeamedOut);
-		} else {
+				_awayMission->disableInput = true;
+				playSoundEffectIndex(SND_TRANSDEM);
+
+				loadActorAnimC(OBJECT_KIRK, "kteled", -1, -1, &Room::trial5CrewmanBeamedOut);
+				loadActorAnimC(OBJECT_SPOCK, "steled", -1, -1, &Room::trial5CrewmanBeamedOut);
+				loadActorAnimC(OBJECT_MCCOY, "mteled", -1, -1, &Room::trial5CrewmanBeamedOut);
+				if (!_awayMission->redshirtDead)
+					loadActorAnimC(OBJECT_REDSHIRT, "rteled", -1, -1, &Room::trial5CrewmanBeamedOut);
+			}
+		else {
 			// Some holes are empty
 			loadActorStandAnim(OBJECT_BEAM);
 		}
@@ -633,7 +692,6 @@ void Room::trial5CrewmanBeamedOut() {
 	loadRoomIndex(4, 4);
 }
 
-
 void Room::trial5UseRedGem1OnHole1() {
 	trial5UseGemOnHole(OBJECT_IREDGEM1, OBJECT_REDGEM1, 1);
 }
@@ -669,7 +727,6 @@ void Room::trial5UseBlueGem2OnHole1() {
 void Room::trial5UseBlueGem3OnHole1() {
 	trial5UseGemOnHole(OBJECT_IBLUGEM3, OBJECT_BLUGEM3, 1);
 }
-
 
 void Room::trial5UseRedGem1OnHole2() {
 	trial5UseGemOnHole(OBJECT_IREDGEM1, OBJECT_REDGEM1, 2);
@@ -707,7 +764,6 @@ void Room::trial5UseBlueGem3OnHole2() {
 	trial5UseGemOnHole(OBJECT_IBLUGEM3, OBJECT_BLUGEM3, 2);
 }
 
-
 void Room::trial5UseRedGem1OnHole3() {
 	trial5UseGemOnHole(OBJECT_IREDGEM1, OBJECT_REDGEM1, 3);
 }
@@ -743,7 +799,6 @@ void Room::trial5UseBlueGem2OnHole3() {
 void Room::trial5UseBlueGem3OnHole3() {
 	trial5UseGemOnHole(OBJECT_IBLUGEM3, OBJECT_BLUGEM3, 3);
 }
-
 
 void Room::trial5UseMedkitAnywhere() {
 	showText(TX_SPEAKER_MCCOY, TX_TRI5_012);

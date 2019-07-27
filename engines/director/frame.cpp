@@ -23,21 +23,21 @@
 #include "common/system.h"
 #include "graphics/font.h"
 #include "graphics/macgui/macfontmanager.h"
-#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/mactext.h"
+#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/primitives.h"
 #include "image/bmp.h"
 
-#include "director/director.h"
+#include "director/archive.h"
 #include "director/cachedmactext.h"
 #include "director/cast.h"
+#include "director/director.h"
 #include "director/frame.h"
 #include "director/images.h"
-#include "director/archive.h"
+#include "director/lingo/lingo.h"
 #include "director/score.h"
 #include "director/sprite.h"
 #include "director/util.h"
-#include "director/lingo/lingo.h"
 
 namespace Director {
 
@@ -177,7 +177,6 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 		stream->read(unk, 10);
 	}
 
-
 	stream->read(unk, 6);
 
 	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
@@ -241,14 +240,13 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			sprite._width = stream->readUint16();
 			stream->readUint16();
 			stream->readUint16();
-
 		}
 
 		if (sprite._castId) {
 			debugC(kDebugLoading, 4, "CH: %-3d castId: %03d(%s) (e:%d) [%x,%x, flags:%04x, %dx%d@%d,%d linesize: %d] script: %d",
-				i + 1, sprite._castId, numToCastNum(sprite._castId), sprite._enabled, sprite._x1, sprite._x2, sprite._flags,
-				sprite._width, sprite._height, sprite._startPoint.x, sprite._startPoint.y,
-				sprite._lineSize, sprite._scriptId);
+			       i + 1, sprite._castId, numToCastNum(sprite._castId), sprite._enabled, sprite._x1, sprite._x2, sprite._flags,
+			       sprite._width, sprite._height, sprite._startPoint.x, sprite._startPoint.y,
+			       sprite._lineSize, sprite._scriptId);
 		} else {
 			debugC(kDebugLoading, 4, "CH: %-3d castId: 000", i + 1);
 		}
@@ -259,7 +257,7 @@ void Frame::readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16
 	uint16 finishPosition = offset + size;
 
 	while (offset < finishPosition) {
-		switch(offset) {
+		switch (offset) {
 		case kScriptIdPosition:
 			_actionId = stream.readByte();
 			offset++;
@@ -269,15 +267,14 @@ void Frame::readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16
 			offset++;
 			break;
 		case kTransFlagsPosition: {
-				uint8 transFlags = stream.readByte();
-				if (transFlags & 0x80)
-					_transArea = 1;
-				else
-					_transArea = 0;
-				_transDuration = transFlags & 0x7f;
-				offset++;
-			}
-			break;
+			uint8 transFlags = stream.readByte();
+			if (transFlags & 0x80)
+				_transArea = 1;
+			else
+				_transArea = 0;
+			_transDuration = transFlags & 0x7f;
+			offset++;
+		} break;
 		case kTransChunkSizePosition:
 			_transChunkSize = stream.readByte();
 			offset++;
@@ -292,7 +289,7 @@ void Frame::readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16
 			break;
 		case kSound1Position:
 			_sound1 = stream.readUint16();
-			offset+=2;
+			offset += 2;
 			break;
 		case kSkipFrameFlagsPosition:
 			_skipFrameFlag = stream.readByte();
@@ -399,7 +396,6 @@ void Frame::readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offse
 		}
 	}
 	warning("%03d(%d)[%x,%x,%04x,%d/%d/%d/%d]", sprite._castId, sprite._enabled, x1, x2, sprite._flags, sprite._startPoint.x, sprite._startPoint.y, sprite._width, sprite._height);
-
 }
 
 void Frame::prepareFrame(Score *score) {
@@ -433,136 +429,125 @@ void Frame::playTransition(Score *score) {
 	uint16 steps = duration / stepDuration;
 
 	switch (_transType) {
-	case kTransCoverDown:
-		{
-			uint16 stepSize = score->_movieRect.height() / steps;
-			Common::Rect r = score->_movieRect;
+	case kTransCoverDown: {
+		uint16 stepSize = score->_movieRect.height() / steps;
+		Common::Rect r = score->_movieRect;
 
-			for (uint16 i = 1; i < steps; i++) {
-				r.setHeight(stepSize * i);
+		for (uint16 i = 1; i < steps; i++) {
+			r.setHeight(stepSize * i);
 
-				g_system->delayMillis(stepDuration);
-				processQuitEvent();
+			g_system->delayMillis(stepDuration);
+			processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height());
-				g_system->updateScreen();
-			}
+			g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height());
+			g_system->updateScreen();
 		}
-		break;
-	case kTransCoverUp:
-		{
-			uint16 stepSize = score->_movieRect.height() / steps;
-			Common::Rect r = score->_movieRect;
+	} break;
+	case kTransCoverUp: {
+		uint16 stepSize = score->_movieRect.height() / steps;
+		Common::Rect r = score->_movieRect;
 
-			for (uint16 i = 1; i < steps; i++) {
-				r.setHeight(stepSize * i);
+		for (uint16 i = 1; i < steps; i++) {
+			r.setHeight(stepSize * i);
 
-				g_system->delayMillis(stepDuration);
-				processQuitEvent();
+			g_system->delayMillis(stepDuration);
+			processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, score->_movieRect.height() - stepSize * i, r.width(), r.height());
-				g_system->updateScreen();
-			}
+			g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, score->_movieRect.height() - stepSize * i, r.width(), r.height());
+			g_system->updateScreen();
 		}
-		break;
+	} break;
 	case kTransCoverRight: {
-			uint16 stepSize = score->_movieRect.width() / steps;
-			Common::Rect r = score->_movieRect;
+		uint16 stepSize = score->_movieRect.width() / steps;
+		Common::Rect r = score->_movieRect;
 
-			for (uint16 i = 1; i < steps; i++) {
-				r.setWidth(stepSize * i);
+		for (uint16 i = 1; i < steps; i++) {
+			r.setWidth(stepSize * i);
 
-				g_system->delayMillis(stepDuration);
-				processQuitEvent();
+			g_system->delayMillis(stepDuration);
+			processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height());
-				g_system->updateScreen();
-			}
+			g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height());
+			g_system->updateScreen();
 		}
-		break;
+	} break;
 	case kTransCoverLeft: {
-			uint16 stepSize = score->_movieRect.width() / steps;
-			Common::Rect r = score->_movieRect;
+		uint16 stepSize = score->_movieRect.width() / steps;
+		Common::Rect r = score->_movieRect;
 
-			for (uint16 i = 1; i < steps; i++) {
-				r.setWidth(stepSize * i);
+		for (uint16 i = 1; i < steps; i++) {
+			r.setWidth(stepSize * i);
 
-				g_system->delayMillis(stepDuration);
-				processQuitEvent();
+			g_system->delayMillis(stepDuration);
+			processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, 0, r.width(), r.height());
-				g_system->updateScreen();
-			}
+			g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, 0, r.width(), r.height());
+			g_system->updateScreen();
 		}
-		break;
+	} break;
 	case kTransCoverUpLeft: {
-			uint16 stepSize = score->_movieRect.width() / steps;
-			Common::Rect r = score->_movieRect;
+		uint16 stepSize = score->_movieRect.width() / steps;
+		Common::Rect r = score->_movieRect;
 
-			for (uint16 i = 1; i < steps; i++) {
-				r.setWidth(stepSize * i);
-				r.setHeight(stepSize * i);
+		for (uint16 i = 1; i < steps; i++) {
+			r.setWidth(stepSize * i);
+			r.setHeight(stepSize * i);
 
-				g_system->delayMillis(stepDuration);
-				processQuitEvent();
+			g_system->delayMillis(stepDuration);
+			processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, score->_movieRect.height() - stepSize * i, r.width(), r.height());
-				g_system->updateScreen();
-			}
+			g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, score->_movieRect.height() - stepSize * i, r.width(), r.height());
+			g_system->updateScreen();
 		}
-		break;
+	} break;
 	case kTransCoverUpRight: {
-			uint16 stepSize = score->_movieRect.width() / steps;
-			Common::Rect r = score->_movieRect;
+		uint16 stepSize = score->_movieRect.width() / steps;
+		Common::Rect r = score->_movieRect;
 
-			for (uint16 i = 1; i < steps; i++) {
-				r.setWidth(stepSize * i);
-				r.setHeight(stepSize * i);
+		for (uint16 i = 1; i < steps; i++) {
+			r.setWidth(stepSize * i);
+			r.setHeight(stepSize * i);
 
-				g_system->delayMillis(stepDuration);
-				processQuitEvent();
+			g_system->delayMillis(stepDuration);
+			processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, score->_movieRect.height() - stepSize * i, r.width(), r.height());
-				g_system->updateScreen();
-			}
+			g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, score->_movieRect.height() - stepSize * i, r.width(), r.height());
+			g_system->updateScreen();
 		}
-		break;
+	} break;
 	case kTransCoverDownLeft: {
-			uint16 stepSize = score->_movieRect.width() / steps;
-			Common::Rect r = score->_movieRect;
+		uint16 stepSize = score->_movieRect.width() / steps;
+		Common::Rect r = score->_movieRect;
 
-			for (uint16 i = 1; i < steps; i++) {
-				r.setWidth(stepSize * i);
-				r.setHeight(stepSize * i);
+		for (uint16 i = 1; i < steps; i++) {
+			r.setWidth(stepSize * i);
+			r.setHeight(stepSize * i);
 
-				g_system->delayMillis(stepDuration);
-				processQuitEvent();
+			g_system->delayMillis(stepDuration);
+			processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, 0, r.width(), r.height());
-				g_system->updateScreen();
-			}
+			g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, 0, r.width(), r.height());
+			g_system->updateScreen();
 		}
-		break;
+	} break;
 	case kTransCoverDownRight: {
-			uint16 stepSize = score->_movieRect.width() / steps;
-			Common::Rect r = score->_movieRect;
+		uint16 stepSize = score->_movieRect.width() / steps;
+		Common::Rect r = score->_movieRect;
 
-			for (uint16 i = 1; i < steps; i++) {
-				r.setWidth(stepSize * i);
-				r.setHeight(stepSize * i);
+		for (uint16 i = 1; i < steps; i++) {
+			r.setWidth(stepSize * i);
+			r.setHeight(stepSize * i);
 
-				g_system->delayMillis(stepDuration);
-				processQuitEvent();
+			g_system->delayMillis(stepDuration);
+			processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height());
-				g_system->updateScreen();
-			}
+			g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height());
+			g_system->updateScreen();
 		}
-		break;
+	} break;
 	default:
 		warning("Unhandled transition type %d %d %d", _transType, duration, _transChunkSize);
 		break;
-
 	}
 }
 
@@ -643,9 +628,9 @@ void Frame::addDrawRect(uint16 spriteId, Common::Rect &rect) {
 
 void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	Common::Rect shapeRect = Common::Rect(_sprites[spriteId]->_startPoint.x,
-		_sprites[spriteId]->_startPoint.y,
-		_sprites[spriteId]->_startPoint.x + _sprites[spriteId]->_width,
-		_sprites[spriteId]->_startPoint.y + _sprites[spriteId]->_height);
+	                                      _sprites[spriteId]->_startPoint.y,
+	                                      _sprites[spriteId]->_startPoint.x + _sprites[spriteId]->_width,
+	                                      _sprites[spriteId]->_startPoint.y + _sprites[spriteId]->_height);
 
 	Graphics::ManagedSurface tmpSurface;
 	tmpSurface.create(shapeRect.width(), shapeRect.height(), Graphics::PixelFormat::createFormatCLUT8());
@@ -699,12 +684,11 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 		addDrawRect(spriteId, _rect);
 		break;
 	case kTypeButton: {
-			_rect = Common::Rect(x, y, x + width, y + height + 3);
-			Graphics::MacPlotData pd(&surface, &_vm->getMacWindowManager()->getPatterns(), Graphics::MacGUIConstants::kPatternSolid, 1, Graphics::kColorWhite);
-			Graphics::drawRoundRect(_rect, 4, 0, false, Graphics::macDrawPixel, &pd);
-			addDrawRect(spriteId, _rect);
-		}
-		break;
+		_rect = Common::Rect(x, y, x + width, y + height + 3);
+		Graphics::MacPlotData pd(&surface, &_vm->getMacWindowManager()->getPatterns(), Graphics::MacGUIConstants::kPatternSolid, 1, Graphics::kColorWhite);
+		Graphics::drawRoundRect(_rect, 4, 0, false, Graphics::macDrawPixel, &pd);
+		addDrawRect(spriteId, _rect);
+	} break;
 	case kTypeRadio:
 		warning("STUB: renderButton: kTypeRadio");
 		break;
@@ -739,10 +723,8 @@ void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics
 	}
 }
 
-
 void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::Rect *textSize) {
-	TextCast *textCast = _sprites[spriteId]->_buttonCast != nullptr ? (TextCast*)_sprites[spriteId]->_buttonCast : _sprites[spriteId]->_textCast;
-
+	TextCast *textCast = _sprites[spriteId]->_buttonCast != nullptr ? (TextCast *)_sprites[spriteId]->_buttonCast : _sprites[spriteId]->_textCast;
 
 	int x = _sprites[spriteId]->_startPoint.x; // +rectLeft;
 	int y = _sprites[spriteId]->_startPoint.y; // +rectTop;
@@ -928,9 +910,7 @@ void Frame::drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Su
 
 		byte color = *(byte *)tmp.getBasePtr(x, y);
 
-		if (_vm->getPalette()[color * 3 + 0] == 0xff &&
-			_vm->getPalette()[color * 3 + 1] == 0xff &&
-			_vm->getPalette()[color * 3 + 2] == 0xff) {
+		if (_vm->getPalette()[color * 3 + 0] == 0xff && _vm->getPalette()[color * 3 + 1] == 0xff && _vm->getPalette()[color * 3 + 2] == 0xff) {
 			whiteColor = color;
 			break;
 		}

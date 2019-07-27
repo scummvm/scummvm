@@ -32,7 +32,8 @@
 
 namespace Pegasus {
 
-DisplayElement::DisplayElement(const DisplayElementID id) : IDObject(id) {
+DisplayElement::DisplayElement(const DisplayElementID id)
+  : IDObject(id) {
 	_elementIsDisplaying = false;
 	_elementIsVisible = false;
 	_elementOrder = 0;
@@ -159,13 +160,11 @@ void DisplayElement::setTriggeredElement(DisplayElement *element) {
 }
 
 bool DisplayElement::validToDraw(DisplayOrder backLayer, DisplayOrder frontLayer) {
-	return	isDisplaying() && _elementIsVisible &&
-			(getObjectID() <= kHighestReservedElementID ||
-			(getDisplayOrder() >= backLayer &&
-			getDisplayOrder() <= frontLayer));
+	return isDisplaying() && _elementIsVisible && (getObjectID() <= kHighestReservedElementID || (getDisplayOrder() >= backLayer && getDisplayOrder() <= frontLayer));
 }
 
-DropHighlight::DropHighlight(const DisplayElementID id) : DisplayElement(id) {
+DropHighlight::DropHighlight(const DisplayElementID id)
+  : DisplayElement(id) {
 	_highlightColor = 0;
 	_thickness = 2;
 	_cornerDiameter = 0;
@@ -193,7 +192,8 @@ void DropHighlight::draw(const Common::Rect &) {
 	}
 }
 
-IdlerAnimation::IdlerAnimation(const DisplayElementID id) : Animation(id) {
+IdlerAnimation::IdlerAnimation(const DisplayElementID id)
+  : Animation(id) {
 	_lastTime = 0xffffffff;
 }
 
@@ -224,7 +224,8 @@ void IdlerAnimation::timeChanged(const TimeValue) {
 	triggerRedraw();
 }
 
-FrameSequence::FrameSequence(const DisplayElementID id) : IdlerAnimation(id) {
+FrameSequence::FrameSequence(const DisplayElementID id)
+  : IdlerAnimation(id) {
 	_duration = 0;
 	_currentFrameNum = 0;
 	_resFork = new Common::MacResManager();
@@ -312,7 +313,8 @@ bool FrameSequence::isSequenceOpen() const {
 	return _numFrames != 0;
 }
 
-Sprite::Sprite(const DisplayElementID id) : DisplayElement(id) {
+Sprite::Sprite(const DisplayElementID id)
+  : DisplayElement(id) {
 	_numFrames = 0;
 	_currentFrameNum = 0xffffffff;
 	_currentFrame = 0;
@@ -436,8 +438,10 @@ void Sprite::draw(const Common::Rect &r) {
 	}
 }
 
-SpriteSequence::SpriteSequence(const DisplayElementID id, const DisplayElementID spriteID) :
-		FrameSequence(id), _sprite(spriteID), _transparent(false) {
+SpriteSequence::SpriteSequence(const DisplayElementID id, const DisplayElementID spriteID)
+  : FrameSequence(id)
+  , _sprite(spriteID)
+  , _transparent(false) {
 }
 
 void SpriteSequence::openFrameSequence() {
@@ -478,10 +482,10 @@ void SpriteSequence::newFrame(const uint16 frame) {
 	_sprite.setCurrentFrameIndex(frame);
 }
 
-#define DRAW_PIXEL() \
-	if (bytesPerPixel == 2) \
+#define DRAW_PIXEL()          \
+	if (bytesPerPixel == 2)     \
 		*((uint16 *)dst) = black; \
-	else \
+	else                        \
 		*((uint32 *)dst) = black; \
 	dst += bytesPerPixel
 
@@ -524,7 +528,8 @@ void ScreenDimmer::draw(const Common::Rect &r) {
 #undef DRAW_PIXEL
 #undef SKIP_PIXEL
 
-SoundLevel::SoundLevel(const DisplayElementID id) : DisplayElement(id) {
+SoundLevel::SoundLevel(const DisplayElementID id)
+  : DisplayElement(id) {
 	_soundLevel = 0;
 }
 

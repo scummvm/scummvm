@@ -44,6 +44,7 @@ public:
 
 	bool isStereo() const { return _pcSpk.isStereo(); }
 	int getRate() const { return _pcSpk.getRate(); }
+
 protected:
 	void generateSamples(int16 *buf, int len);
 	void onTimer();

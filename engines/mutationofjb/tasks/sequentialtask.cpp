@@ -26,7 +26,8 @@
 
 namespace MutationOfJB {
 
-SequentialTask::SequentialTask(const TaskPtrs &tasks) : _tasks(tasks) {
+SequentialTask::SequentialTask(const TaskPtrs &tasks)
+  : _tasks(tasks) {
 }
 
 void SequentialTask::start() {

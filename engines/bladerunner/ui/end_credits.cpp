@@ -20,16 +20,16 @@
  *
  */
 
-#include "common/system.h"
 #include "common/rect.h"
+#include "common/system.h"
 
 #include "audio/mixer.h"
 
-#include "bladerunner/bladerunner.h"
-#include "bladerunner/game_constants.h"
 #include "bladerunner/ambient_sounds.h"
 #include "bladerunner/audio_speech.h"
+#include "bladerunner/bladerunner.h"
 #include "bladerunner/font.h"
+#include "bladerunner/game_constants.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/mouse.h"
 #include "bladerunner/music.h"

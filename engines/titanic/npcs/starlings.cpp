@@ -25,13 +25,14 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CStarlings, CCharacter)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(StatusChangeMsg)
 END_MESSAGE_MAP()
 
 bool CStarlings::_dead;
 
-CStarlings::CStarlings() : CCharacter() {
+CStarlings::CStarlings()
+  : CCharacter() {
 }
 
 void CStarlings::save(SimpleFile *file, int indent) {
@@ -53,7 +54,7 @@ bool CStarlings::EnterViewMsg(CEnterViewMsg *msg) {
 		// Tis but a flesh wound
 		setVisible(false);
 	else
-		// Repeatedly play the starlings flying 
+		// Repeatedly play the starlings flying
 		playMovie(MOVIE_REPEAT);
 	return true;
 }

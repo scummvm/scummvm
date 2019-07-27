@@ -23,7 +23,6 @@
 #ifndef SKY_CONTROL_H
 #define SKY_CONTROL_H
 
-
 #include "common/events.h"
 #include "common/scummsys.h"
 #include "common/str-array.h"
@@ -52,10 +51,10 @@ struct MegaSet;
 #define PAN_LINE_WIDTH 184
 #define PAN_CHAR_HEIGHT 12
 #define STATUS_WIDTH 146
-#define MPNL_X 60  // Main Panel
+#define MPNL_X 60 // Main Panel
 #define MPNL_Y 10
 
-#define SPNL_X 20  // Save Panel
+#define SPNL_X 20 // Save Panel
 #define SPNL_Y 20
 #define SP_HEIGHT 149
 #define SP_TOP_GAP 12
@@ -65,8 +64,8 @@ struct MegaSet;
 
 #define TEXT_FLAG_MASK (SF_ALLOW_SPEECH | SF_ALLOW_TEXT)
 
-#define GAME_NAME_X (SPNL_X + 18)				// x coordinate of game names
-#define GAME_NAME_Y (SPNL_Y + SP_TOP_GAP)		// start y coord of game names
+#define GAME_NAME_X (SPNL_X + 18) // x coordinate of game names
+#define GAME_NAME_Y (SPNL_Y + SP_TOP_GAP) // start y coord of game names
 #define MAX_ON_SCREEN ((SP_HEIGHT - SP_TOP_GAP - SP_BOT_GAP) / PAN_CHAR_HEIGHT) // no of save games on screen
 #define CP_PANEL 60400 // main panel sprite
 
@@ -77,52 +76,52 @@ struct MegaSet;
 #define WITH_MASK true
 
 // resource's onClick routines
-#define DO_NOTHING		0
-#define REST_GAME_PANEL	1
-#define SAVE_GAME_PANEL	2
-#define SAVE_A_GAME		3
-#define RESTORE_A_GAME	4
-#define SP_CANCEL		5
-#define SHIFT_DOWN_FAST	6
-#define SHIFT_DOWN_SLOW	7
-#define SHIFT_UP_FAST	8
-#define SHIFT_UP_SLOW	9
-#define SPEED_SLIDE		10
-#define MUSIC_SLIDE		11
-#define TOGGLE_FX		12
-#define TOGGLE_MS		13
-#define TOGGLE_TEXT		14
-#define EXIT			15
-#define RESTART			16
-#define QUIT_TO_DOS		17
-#define RESTORE_AUTO	18
+#define DO_NOTHING 0
+#define REST_GAME_PANEL 1
+#define SAVE_GAME_PANEL 2
+#define SAVE_A_GAME 3
+#define RESTORE_A_GAME 4
+#define SP_CANCEL 5
+#define SHIFT_DOWN_FAST 6
+#define SHIFT_DOWN_SLOW 7
+#define SHIFT_UP_FAST 8
+#define SHIFT_UP_SLOW 9
+#define SPEED_SLIDE 10
+#define MUSIC_SLIDE 11
+#define TOGGLE_FX 12
+#define TOGGLE_MS 13
+#define TOGGLE_TEXT 14
+#define EXIT 15
+#define RESTART 16
+#define QUIT_TO_DOS 17
+#define RESTORE_AUTO 18
 
 // onClick return codes
-#define CANCEL_PRESSED	100
-#define NAME_TOO_SHORT	101
-#define GAME_SAVED		102
-#define SHIFTED			103
-#define TOGGLED			104
-#define RESTARTED		105
-#define GAME_RESTORED	106
-#define RESTORE_FAILED	107
-#define NO_DISK_SPACE	108
-#define SPEED_CHANGED	109
-#define QUIT_PANEL		110
+#define CANCEL_PRESSED 100
+#define NAME_TOO_SHORT 101
+#define GAME_SAVED 102
+#define SHIFTED 103
+#define TOGGLED 104
+#define RESTARTED 105
+#define GAME_RESTORED 106
+#define RESTORE_FAILED 107
+#define NO_DISK_SPACE 108
+#define SPEED_CHANGED 109
+#define QUIT_PANEL 110
 
 #define SLOW 0
 #define FAST 1
 
-#define SPEED_MULTIPLY	12
+#define SPEED_MULTIPLY 12
 
 //-
-#define SAVE_EXT	 1
-#define SAVE_MEGA0	 2
-#define SAVE_MEGA1	 4
-#define SAVE_MEGA2	 8
-#define SAVE_MEGA3	16
-#define SAVE_GRAFX	32
-#define SAVE_TURNP	64
+#define SAVE_EXT 1
+#define SAVE_MEGA0 2
+#define SAVE_MEGA1 4
+#define SAVE_MEGA2 8
+#define SAVE_MEGA3 16
+#define SAVE_GRAFX 32
+#define SAVE_TURNP 64
 
 #define SAVE_FILE_REVISION 6
 #define OLD_SAVEGAME_TYPE 5
@@ -137,8 +136,16 @@ public:
 	ConResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, uint16 pX, uint16 pY, uint32 pText, uint8 pOnClick, OSystem *system, uint8 *screen);
 	virtual ~ConResource() {}
 	void setSprite(void *pSpData) { _spriteData = (DataFileHeader *)pSpData; }
-	void setText(uint32 pText) { if (pText) _text = pText + 0x7000; else _text = 0; }
-	void setXY(uint16 x, uint16 y) { _x = x; _y = y; }
+	void setText(uint32 pText) {
+		if (pText)
+			_text = pText + 0x7000;
+		else
+			_text = 0;
+	}
+	void setXY(uint16 x, uint16 y) {
+		_x = x;
+		_y = y;
+	}
 	bool isMouseOver(uint32 mouseX, uint32 mouseY);
 	virtual void drawToScreen(bool doMask);
 
@@ -149,6 +156,7 @@ public:
 	uint8 _onClick;
 	OSystem *_system;
 	uint8 *_screen;
+
 private:
 };
 
@@ -158,6 +166,7 @@ public:
 	virtual ~TextResource();
 	virtual void drawToScreen(bool doMask);
 	void flushForRedraw();
+
 private:
 	uint16 _oldX, _oldY;
 	uint8 *_oldScreen;
@@ -170,6 +179,7 @@ public:
 	void setToText(const char *newText);
 	void setToText(uint16 textNum);
 	void drawToScreen();
+
 private:
 	TextResource *_statusText;
 	DataFileHeader *_textData;
@@ -234,7 +244,7 @@ private:
 	bool autoSaveExists();
 	uint16 restoreGameFromFile(bool autoSave);
 	void importOldMegaSet(uint8 **srcPos, MegaSet *mega);
-	void importOldCompact(Compact* destCpt, uint8 **srcPos, uint16 numElems, uint16 type, char *name);
+	void importOldCompact(Compact *destCpt, uint8 **srcPos, uint16 numElems, uint16 type, char *name);
 	uint16 parseSaveData(uint8 *srcBuf);
 
 	Common::SaveFileManager *_saveFileMan;

@@ -29,6 +29,7 @@ namespace Titanic {
 
 class PETLeaf : public CGameObject {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	CLASSDEF;
 

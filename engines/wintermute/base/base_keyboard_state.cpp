@@ -27,10 +27,10 @@
  */
 
 #include "engines/wintermute/base/base_keyboard_state.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
-#include "engines/wintermute/base/scriptables/script_stack.h"
-#include "common/system.h"
 #include "common/keyboard.h"
+#include "common/system.h"
+#include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 
 #define KEYSTATES_ARRAY_SIZE (Common::KEYCODE_UNDO + 1) // Hardcoded size for the common/keyboard.h enum
 
@@ -39,7 +39,8 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(BaseKeyboardState, false)
 
 //////////////////////////////////////////////////////////////////////////
-BaseKeyboardState::BaseKeyboardState(BaseGame *inGame) : BaseScriptable(inGame) {
+BaseKeyboardState::BaseKeyboardState(BaseGame *inGame)
+  : BaseScriptable(inGame) {
 	_currentPrintable = false;
 	_currentCharCode = 0;
 	_currentKeyData = 0;
@@ -87,8 +88,8 @@ bool BaseKeyboardState::scCallMethod(ScScript *script, ScStack *stack, ScStack *
 			// IsKeyDown(strings) checks if a key with given ASCII code is pressed
 			// Only 1st character of given string is used for the check
 
-			// This check must be case insensitive, which means that 
-			// IsKeyDown("a") & IsKeyDown("A") are either both true or both false 
+			// This check must be case insensitive, which means that
+			// IsKeyDown("a") & IsKeyDown("A") are either both true or both false
 			const char *str = val->getString();
 			char temp = str[0];
 			if (temp >= 'A' && temp <= 'Z') {
@@ -119,7 +120,6 @@ bool BaseKeyboardState::scCallMethod(ScScript *script, ScStack *stack, ScStack *
 		return BaseScriptable::scCallMethod(script, stack, thisStack, name);
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 ScValue *BaseKeyboardState::scGetProperty(const Common::String &name) {
@@ -192,7 +192,6 @@ ScValue *BaseKeyboardState::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseKeyboardState::scSetProperty(const char *name, ScValue *value) {
 	/*
@@ -205,15 +204,14 @@ bool BaseKeyboardState::scSetProperty(const char *name, ScValue *value) {
 	    return STATUS_OK;
 	}
 
-	else*/ return BaseScriptable::scSetProperty(name, value);
+	else*/
+	return BaseScriptable::scSetProperty(name, value);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 const char *BaseKeyboardState::scToString() {
 	return "[keyboard state]";
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseKeyboardState::readKey(Common::Event *event) {
@@ -249,23 +247,17 @@ bool BaseKeyboardState::readKey(Common::Event *event) {
 	// some keys are printable from those keys
 	else {
 		_currentCharCode = keyCodeToVKey(event);
-		_currentPrintable = code == Common::KEYCODE_BACKSPACE || 
-		                    code == Common::KEYCODE_TAB || 
-		                    code == Common::KEYCODE_RETURN || 
-		                    code == Common::KEYCODE_KP_ENTER || 
-		                    code == Common::KEYCODE_ESCAPE || 
-		                    code == Common::KEYCODE_SPACE;
+		_currentPrintable = code == Common::KEYCODE_BACKSPACE || code == Common::KEYCODE_TAB || code == Common::KEYCODE_RETURN || code == Common::KEYCODE_KP_ENTER || code == Common::KEYCODE_ESCAPE || code == Common::KEYCODE_SPACE;
 	}
 
 	//_currentKeyData = KeyData;
 
 	_currentControl = isControlDown();
-	_currentAlt     = isAltDown();
-	_currentShift   = isShiftDown();
+	_currentAlt = isAltDown();
+	_currentShift = isShiftDown();
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseKeyboardState::persist(BasePersistenceManager *persistMgr) {
@@ -314,88 +306,88 @@ bool BaseKeyboardState::isCurrentPrintable() const {
 
 //////////////////////////////////////////////////////////////////////////
 enum VKeyCodes {
-	kVkBack       = 8,  //printable
-	kVkTab        = 9,  //printable
-	kVkClear      = 12,
-	kVkReturn     = 13, //printable
-	kVkPause      = 19,
-	kVkCapital    = 20,
-	kVkEscape     = 27, //printable
-	kVkSpace      = 32, //printable
+	kVkBack = 8, //printable
+	kVkTab = 9, //printable
+	kVkClear = 12,
+	kVkReturn = 13, //printable
+	kVkPause = 19,
+	kVkCapital = 20,
+	kVkEscape = 27, //printable
+	kVkSpace = 32, //printable
 
-	kVkPrior      = 33,
-	kVkNext       = 34,
-	kVkEnd        = 35,
-	kVkHome       = 36,
-	kVkLeft       = 37,
-	kVkUp         = 38,
-	kVkRight      = 39,
-	kVkDown       = 40,
-	kVkPrint      = 42,
-	kVkInsert     = 45,
-	kVkDelete     = 46,
+	kVkPrior = 33,
+	kVkNext = 34,
+	kVkEnd = 35,
+	kVkHome = 36,
+	kVkLeft = 37,
+	kVkUp = 38,
+	kVkRight = 39,
+	kVkDown = 40,
+	kVkPrint = 42,
+	kVkInsert = 45,
+	kVkDelete = 46,
 
-	kVkA          = 65, //printable
-	kVkB          = 66, //printable
-	kVkC          = 67, //printable
-	kVkD          = 68, //printable
-	kVkE          = 69, //printable
-	kVkF          = 70, //printable
-	kVkG          = 71, //printable
-	kVkH          = 72, //printable
-	kVkI          = 73, //printable
-	kVkJ          = 74, //printable
-	kVkK          = 75, //printable
-	kVkL          = 76, //printable
-	kVkM          = 77, //printable
-	kVkN          = 78, //printable
-	kVkO          = 79, //printable
-	kVkP          = 80, //printable
-	kVkQ          = 81, //printable
-	kVkR          = 82, //printable
-	kVkS          = 83, //printable
-	kVkT          = 84, //printable
-	kVkU          = 85, //printable
-	kVkV          = 86, //printable
-	kVkW          = 87, //printable
-	kVkX          = 88, //printable
-	kVkY          = 89, //printable
-	kVkZ          = 90, //printable
+	kVkA = 65, //printable
+	kVkB = 66, //printable
+	kVkC = 67, //printable
+	kVkD = 68, //printable
+	kVkE = 69, //printable
+	kVkF = 70, //printable
+	kVkG = 71, //printable
+	kVkH = 72, //printable
+	kVkI = 73, //printable
+	kVkJ = 74, //printable
+	kVkK = 75, //printable
+	kVkL = 76, //printable
+	kVkM = 77, //printable
+	kVkN = 78, //printable
+	kVkO = 79, //printable
+	kVkP = 80, //printable
+	kVkQ = 81, //printable
+	kVkR = 82, //printable
+	kVkS = 83, //printable
+	kVkT = 84, //printable
+	kVkU = 85, //printable
+	kVkV = 86, //printable
+	kVkW = 87, //printable
+	kVkX = 88, //printable
+	kVkY = 89, //printable
+	kVkZ = 90, //printable
 
-	kVkNumpad0    = 96, //printable
-	kVkNumpad1    = 97, //printable
-	kVkNumpad2    = 98, //printable
-	kVkNumpad3    = 99, //printable
-	kVkNumpad4    = 100, //printable
-	kVkNumpad5    = 101, //printable
-	kVkNumpad6    = 102, //printable
-	kVkNumpad7    = 103, //printable
-	kVkNumpad8    = 104, //printable
-	kVkNumpad9    = 105, //printable
-	kVkMultiply   = 106, //printable
-	kVkAdd        = 107, //printable
-	kVkSeparator  = 108, //printable
-	kVkSubtract   = 109, //printable
-	kVkDecimal    = 110, //printable
-	kVkDivide     = 111, //printable
+	kVkNumpad0 = 96, //printable
+	kVkNumpad1 = 97, //printable
+	kVkNumpad2 = 98, //printable
+	kVkNumpad3 = 99, //printable
+	kVkNumpad4 = 100, //printable
+	kVkNumpad5 = 101, //printable
+	kVkNumpad6 = 102, //printable
+	kVkNumpad7 = 103, //printable
+	kVkNumpad8 = 104, //printable
+	kVkNumpad9 = 105, //printable
+	kVkMultiply = 106, //printable
+	kVkAdd = 107, //printable
+	kVkSeparator = 108, //printable
+	kVkSubtract = 109, //printable
+	kVkDecimal = 110, //printable
+	kVkDivide = 111, //printable
 
-	kVkF1         = 112,
-	kVkF2         = 113,
-	kVkF3         = 114,
-	kVkF4         = 115,
-	kVkF5         = 116,
-	kVkF6         = 117,
-	kVkF7         = 118,
-	kVkF8         = 119,
-	kVkF9         = 120,
-	kVkF10        = 121,
-	kVkF11        = 122,
-	kVkF12        = 123,
+	kVkF1 = 112,
+	kVkF2 = 113,
+	kVkF3 = 114,
+	kVkF4 = 115,
+	kVkF5 = 116,
+	kVkF6 = 117,
+	kVkF7 = 118,
+	kVkF8 = 119,
+	kVkF9 = 120,
+	kVkF10 = 121,
+	kVkF11 = 122,
+	kVkF12 = 123,
 
-	kVkNumLock    = 144,
-	kVkScroll     = 145
+	kVkNumLock = 144,
+	kVkScroll = 145
 
-    //TODO: shift, ctrl, menu, etc...
+	//TODO: shift, ctrl, menu, etc...
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -488,7 +480,6 @@ uint32 BaseKeyboardState::keyCodeToVKey(Common::Event *event) {
 		return event->kbd.ascii;
 		break;
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -649,7 +640,6 @@ Common::KeyCode BaseKeyboardState::vKeyToKeyCode(uint32 vkey) {
 		return (Common::KeyCode)(vkey < KEYSTATES_ARRAY_SIZE ? vkey : 0);
 		break;
 	}
-
 }
 
 } // End of namespace Wintermute

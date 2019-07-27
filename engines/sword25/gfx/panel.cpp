@@ -31,18 +31,18 @@
 
 #include "sword25/gfx/panel.h"
 
-#include "sword25/kernel/inputpersistenceblock.h"
-#include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/gfx/graphicengine.h"
 #include "sword25/gfx/image/image.h"
+#include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
 
 #include "sword25/gfx/renderobjectmanager.h"
 
 namespace Sword25 {
 
-Panel::Panel(RenderObjectPtr<RenderObject> parentPtr, int width, int height, uint color) :
-	RenderObject(parentPtr, RenderObject::TYPE_PANEL),
-	_color(color) {
+Panel::Panel(RenderObjectPtr<RenderObject> parentPtr, int width, int height, uint color)
+  : RenderObject(parentPtr, RenderObject::TYPE_PANEL)
+  , _color(color) {
 	_initSuccess = false;
 
 	_width = width;
@@ -61,8 +61,9 @@ Panel::Panel(RenderObjectPtr<RenderObject> parentPtr, int width, int height, uin
 	_initSuccess = true;
 }
 
-Panel::Panel(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle) :
-	RenderObject(parentPtr, RenderObject::TYPE_PANEL, handle), _color(0) {
+Panel::Panel(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle)
+  : RenderObject(parentPtr, RenderObject::TYPE_PANEL, handle)
+  , _color(0) {
 	_initSuccess = unpersist(reader);
 }
 

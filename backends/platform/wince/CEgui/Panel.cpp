@@ -24,11 +24,11 @@
 
 namespace CEGUI {
 
-Panel::Panel(int interleave_first, int interleave) : Toolbar() {
+Panel::Panel(int interleave_first, int interleave)
+  : Toolbar() {
 	_interleave = interleave;
 	_currentItem = interleave_first;
 }
-
 
 bool Panel::add(const String &name, const PanelItem *item) {
 	_itemsMap[name] = (PanelItem *)item;

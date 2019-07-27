@@ -20,8 +20,6 @@
  *
  */
 
-
-
 #include "engines/engine.h"
 
 #include "common/config-manager.h"
@@ -315,7 +313,6 @@ void Insane::shutCurrentScene() {
 
 	_battleScene = true;
 }
-
 
 // insane_loadSceneData1 & insane_loadSceneData2
 int Insane::loadSceneData(int scene, int flag, int phase) {
@@ -657,7 +654,7 @@ void Insane::setSceneCostumes(int sceneId) {
 			smlayer_setActorCostume(0, 2, readArray(10));
 		else
 			smlayer_setActorCostume(0, 2, readArray(11));
-		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1+190, _smlayer_room2);
+		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1 + 190, _smlayer_room2);
 		setupValues();
 		return;
 	case 7:
@@ -684,9 +681,9 @@ void Insane::setEnemyCostumes() {
 	smlayer_setActorLayer(0, 1, 1);
 	smlayer_setActorLayer(0, 2, 5);
 	smlayer_setActorLayer(0, 0, 10);
-	smlayer_putActor(0, 2, _actor[0].x+11, _actor[0].y1+102, _smlayer_room2);
-	smlayer_putActor(0, 1, _actor[0].x, _actor[0].y1+200, _smlayer_room2);
-	smlayer_putActor(0, 0, _actor[0].x, _actor[0].y1+200, _smlayer_room2);
+	smlayer_putActor(0, 2, _actor[0].x + 11, _actor[0].y1 + 102, _smlayer_room2);
+	smlayer_putActor(0, 1, _actor[0].x, _actor[0].y1 + 200, _smlayer_room2);
+	smlayer_putActor(0, 0, _actor[0].x, _actor[0].y1 + 200, _smlayer_room2);
 
 	if (_currEnemy == EN_CAVEFISH) {
 		smlayer_setActorCostume(1, 2, readArray(_enemy[_currEnemy].costume4));
@@ -700,7 +697,7 @@ void Insane::setEnemyCostumes() {
 		_actor[1].act[1].state = 98;
 
 		smlayer_putActor(1, 2, _actor[1].x + _actor[1].act[2].tilt - 17,
-						 _actor[1].y + _actor[1].y1 - 98, _smlayer_room2);
+		                 _actor[1].y + _actor[1].y1 - 98, _smlayer_room2);
 	} else if (_currEnemy == EN_TORQUE) {
 		smlayer_setActorCostume(1, 2, readArray(_enemy[_currEnemy].costume4));
 		_actor[1].act[2].room = 1;
@@ -711,7 +708,7 @@ void Insane::setEnemyCostumes() {
 		_actor[1].act[0].state = 1;
 		_actor[1].act[1].state = 1;
 		smlayer_putActor(1, 2, _actor[1].x + _actor[1].act[2].tilt - 17,
-						 _actor[1].y + _actor[1].y1 - 98, _smlayer_room2);
+		                 _actor[1].y + _actor[1].y1 - 98, _smlayer_room2);
 	} else {
 		_actor[1].act[2].room = 1;
 		_actor[1].act[1].room = 1;
@@ -733,17 +730,17 @@ void Insane::setEnemyCostumes() {
 
 		if (_actor[1].act[2].room != 0)
 			smlayer_putActor(1, 2, _actor[1].x + _actor[1].act[2].tilt - 17,
-							 _actor[1].y + _actor[1].y1 - 98,
-							 _smlayer_room2);
+			                 _actor[1].y + _actor[1].y1 - 98,
+			                 _smlayer_room2);
 	}
 
 	if (_actor[1].act[1].room != 0)
 		smlayer_putActor(1, 1, _actor[1].x, _actor[1].y + _actor[1].y1,
-						 _smlayer_room2);
+		                 _smlayer_room2);
 
 	if (_actor[1].act[0].room != 0)
 		smlayer_putActor(1, 0, _actor[1].x, _actor[1].y + _actor[1].y1,
-						 _smlayer_room2);
+		                 _smlayer_room2);
 
 	smlayer_setActorLayer(1, 1, 1);
 	smlayer_setActorLayer(1, 2, 5);
@@ -799,7 +796,7 @@ void Insane::setEnemyCostumes() {
 	_actor[1].field_48 = false;
 	if (_enemy[_currEnemy].initializer != -1)
 		enemyInitializer(_enemy[_currEnemy].initializer, _actor[1].damage,
-							 _actor[0].damage, _actor[1].probability);
+		                 _actor[0].damage, _actor[1].probability);
 
 	smush_warpMouse(160, 100, -1);
 }
@@ -825,7 +822,7 @@ void Insane::procPreRendering() {
 }
 
 void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-							   int32 setupsan13, int32 curFrame, int32 maxFrame) {
+                               int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	int32 tmpSnd;
 	bool needMore = false;
 
@@ -838,7 +835,7 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 			postCase0(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
 			if (!smlayer_isSoundRunning(88))
 				smlayer_startSfx(88);
-			smlayer_soundSetPan(88, ((_actor[0].x+160)>>2)+64);
+			smlayer_soundSetPan(88, ((_actor[0].x + 160) >> 2) + 64);
 			if (_tiresRustle) {
 				if (!smlayer_isSoundRunning(87))
 					smlayer_startSfx(87);
@@ -875,8 +872,8 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 				smlayer_startSfx(tmpSnd);
 				smlayer_soundSetPriority(tmpSnd, 100);
 			}
-			smlayer_soundSetPan(89, ((_actor[0].x+160)>>2)+64);
-			smlayer_soundSetPan(tmpSnd, ((_actor[1].x+160)>>2)+64);
+			smlayer_soundSetPan(89, ((_actor[0].x + 160) >> 2) + 64);
+			smlayer_soundSetPan(tmpSnd, ((_actor[1].x + 160) >> 2) + 64);
 			if (!_tiresRustle) {
 				smlayer_stopSound(87);
 			} else {
@@ -896,21 +893,21 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 				smlayer_startSfx(tmpSnd);
 				smlayer_soundSetPriority(tmpSnd, 100);
 			}
-			smlayer_soundSetPan(89, ((_actor[0].x+160)>>2)+64);
-			smlayer_soundSetPan(tmpSnd, ((_actor[1].x+160)>>2)+64);
+			smlayer_soundSetPan(89, ((_actor[0].x + 160) >> 2) + 64);
+			smlayer_soundSetPan(tmpSnd, ((_actor[1].x + 160) >> 2) + 64);
 			break;
 		case 4:
 		case 5:
 			postCase3(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
 			if (!smlayer_isSoundRunning(88))
 				smlayer_startSfx(88);
-			smlayer_soundSetPan(88, ((_actor[0].x+160)>>2)+64);
+			smlayer_soundSetPan(88, ((_actor[0].x + 160) >> 2) + 64);
 			break;
 		case 6:
 			postCase5(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
 			if (!smlayer_isSoundRunning(88))
 				smlayer_startSfx(88);
-			smlayer_soundSetPan(88, ((_actor[0].x+160)>>2)+64);
+			smlayer_soundSetPan(88, ((_actor[0].x + 160) >> 2) + 64);
 			break;
 		case 7:
 		case 8:
@@ -943,8 +940,8 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 				smlayer_startSfx(tmpSnd);
 				smlayer_soundSetPriority(tmpSnd, 100);
 			}
-			smlayer_soundSetPan(89, ((_actor[0].x+160)>>2)+64);
-			smlayer_soundSetPan(tmpSnd, ((_actor[1].x+160)>>2)+64);
+			smlayer_soundSetPan(89, ((_actor[0].x + 160) >> 2) + 64);
+			smlayer_soundSetPan(tmpSnd, ((_actor[1].x + 160) >> 2) + 64);
 			break;
 		case 24:
 			if (!smlayer_isSoundRunning(90)) {
@@ -995,7 +992,7 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 }
 
 void Insane::postCase11(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-						int32 setupsan13, int32 curFrame, int32 maxFrame) {
+                        int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	if (curFrame >= maxFrame && !_needSceneSwitch) {
 		if (_firstBattle) {
 			smush_setToFinish();
@@ -1004,7 +1001,7 @@ void Insane::postCase11(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				queueSceneSwitch(1, 0, "minedriv.san", 64, 0, 0, 0);
 			else
 				queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0,
-							 _continueFrame, 1300);
+				                 _continueFrame, 1300);
 		}
 	}
 	_roadBranch = false;
@@ -1012,7 +1009,7 @@ void Insane::postCase11(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::postCase0(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					   int32 setupsan13, int32 curFrame, int32 maxFrame) {
+                       int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	turnBen(true);
 
 	if (!curFrame || curFrame == 420)
@@ -1030,15 +1027,15 @@ void Insane::postCase0(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::postCase17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-						int32 setupsan13, int32 curFrame, int32 maxFrame) {
+                        int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	if (curFrame >= maxFrame && !_needSceneSwitch) {
 		if (_currSceneId == 18) {
 			queueSceneSwitch(17, _smush_minedrivFlu, "minedriv.san", 64, 0,
-							 _continueFrame1, 1300);
+			                 _continueFrame1, 1300);
 			writeArray(9, 1);
 		} else {
 			queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0,
-							 _continueFrame1, 1300);
+			                 _continueFrame1, 1300);
 			writeArray(9, 0);
 		}
 	}
@@ -1047,14 +1044,14 @@ void Insane::postCase17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::postCase16(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-						int32 setupsan13, int32 curFrame, int32 maxFrame) {
+                        int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	char buf[12];
 	int32 tmp;
 
 	turnBen(true);
 	sprintf(buf, "^f01%02o", curFrame & 0x3f);
 	smlayer_showStatusMsg(-1, renderBitmap, codecparam, 180, 168, 1, 2, 0, "%s", buf);
-	tmp = 400-curFrame;
+	tmp = 400 - curFrame;
 
 	if (tmp < 0)
 		tmp += 1300;
@@ -1070,7 +1067,7 @@ void Insane::postCase16(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 	if (!_objectDetected)
 		smlayer_drawSomething(renderBitmap, codecparam, 24, 170, 1,
-							  _smush_iconsNut, 23, 0, 0);
+		                      _smush_iconsNut, 23, 0, 0);
 
 	if (!curFrame)
 		smlayer_setFluPalette(_smush_goglpaltRip, 0);
@@ -1091,7 +1088,7 @@ void Insane::postCase16(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::postCase1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					   int32 setupsan13, int32 curFrame, int32 maxFrame) {
+                       int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	struct fluConf *flu;
 
 	if ((curFrame >= maxFrame) && !_needSceneSwitch) {
@@ -1100,14 +1097,14 @@ void Insane::postCase1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			queueSceneSwitch(4, 0, "tovista.san", 64, 0, 0, 0);
 		else
 			queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
-							 flu->startFrame, flu->numFrames);
+			                 flu->startFrame, flu->numFrames);
 	}
 	_roadBranch = false;
 	_roadStop = false;
 }
 
 void Insane::postCase2(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					   int32 setupsan13, int32 curFrame, int32 maxFrame) {
+                       int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	turnBen(_battleScene != 0);
 	turnEnemy(true);
 
@@ -1124,7 +1121,7 @@ void Insane::postCase2(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::postCase20(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-						int32 setupsan13, int32 curFrame, int32 maxFrame) {
+                        int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	turnBen(true);
 	turnEnemy(true);
 
@@ -1138,7 +1135,7 @@ void Insane::postCase20(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::postCase3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					   int32 setupsan13, int32 curFrame, int32 maxFrame) {
+                       int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	turnBen(true);
 
 	if (_actor[0].x >= 158 && _actor[0].x <= 168) {
@@ -1182,7 +1179,7 @@ void Insane::postCase3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::postCase5(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					   int32 setupsan13, int32 curFrame, int32 maxFrame) {
+                       int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	turnBen(true);
 
 	if (_actor[0].x >= 158 && _actor[0].x <= 168) {
@@ -1215,7 +1212,7 @@ void Insane::postCase5(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::postCase6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					   int32 setupsan13, int32 curFrame, int32 maxFrame) {
+                       int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	struct fluConf *flu;
 
 	if ((curFrame >= maxFrame) && !_needSceneSwitch) {
@@ -1228,20 +1225,20 @@ void Insane::postCase6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			queueSceneSwitch(1, 0, "minedriv.san", 64, 0, 0, 0);
 		else
 			queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
-							 flu->startFrame, flu->numFrames);
+			                 flu->startFrame, flu->numFrames);
 	}
 	_roadBranch = false;
 	_roadStop = false;
 }
 
 void Insane::postCase8(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					   int32 setupsan13, int32 curFrame, int32 maxFrame) {
+                       int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	if (curFrame >= maxFrame && !_needSceneSwitch) {
 		_actor[0].damage = 0;
 
 		if (_firstBattle) {
 			queueSceneSwitch(13, _smush_minefiteFlu, "minefite.san", 64, 0,
-							 _continueFrame, 1300);
+			                 _continueFrame, 1300);
 		} else {
 			if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
 				queueSceneSwitch(1, 0, "minedriv.san", 64, 0, 0, 0);
@@ -1250,7 +1247,7 @@ void Insane::postCase8(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					queueSceneSwitch(21, 0, "rottfite.san", 64, 0, 0, 0);
 				} else {
 					queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0,
-							 _continueFrame, 1300);
+					                 _continueFrame, 1300);
 				}
 			}
 		}
@@ -1261,18 +1258,18 @@ void Insane::postCase8(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::postCase9(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-					   int32 setupsan13, int32 curFrame, int32 maxFrame) {
+                       int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	if (curFrame >= maxFrame && !_needSceneSwitch) {
 		_actor[0].damage = 0;
 		queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0,
-						 _continueFrame1, 1300);
+		                 _continueFrame1, 1300);
 	}
 	_roadBranch = false;
 	_roadStop = false;
 }
 
 void Insane::postCase10(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-						int32 setupsan13, int32 curFrame, int32 maxFrame) {
+                        int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	if (curFrame >= maxFrame && !_needSceneSwitch) {
 		_actor[0].damage = 0;
 
@@ -1288,7 +1285,7 @@ void Insane::postCase10(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		default:
 			if (_actor[0].inventory[_enemy[_currEnemy].weapon]) {
 				queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0,
-								 _continueFrame, 1300);
+				                 _continueFrame, 1300);
 				break;
 			}
 
@@ -1311,7 +1308,7 @@ void Insane::postCase10(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				break;
 			default:
 				queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0,
-								 _continueFrame, 1300);
+				                 _continueFrame, 1300);
 				break;
 			}
 		}
@@ -1322,7 +1319,7 @@ void Insane::postCase10(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::postCase12(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-						int32 setupsan13, int32 curFrame, int32 maxFrame) {
+                        int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	if (_actor[1].y <= 200) {
 		initScene(3);
 		_actor[1].y = 200;
@@ -1409,7 +1406,7 @@ void Insane::postCase12(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::postCase23(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-						int32 setupsan13, int32 curFrame, int32 maxFrame) {
+                        int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	if (curFrame >= maxFrame) {
 		if (_currSceneId == 24) {
 			queueSceneSwitch(21, 0, "rottfite.san", 64, 0, 0, 0);
@@ -1425,7 +1422,7 @@ void Insane::postCase23(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::postCase14(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-						int32 setupsan13, int32 curFrame, int32 maxFrame) {
+                        int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	if (curFrame >= maxFrame) {
 		if (_currSceneId == 16) {
 			writeArray(4, 0);
@@ -1450,7 +1447,7 @@ void Insane::postCase14(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::postCaseAll(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-						 int32 setupsan13, int32 curFrame, int32 maxFrame) {
+                         int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	struct sceneProp *tsceneProp;
 
 	tsceneProp = &_sceneProp[_currScenePropIdx + _currScenePropSubIdx];
@@ -1458,13 +1455,12 @@ void Insane::postCaseAll(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		if (_actor[tsceneProp->actor].field_54) {
 			tsceneProp->counter++;
 			if (!_actor[tsceneProp->actor].runningSound || ConfMan.getBool("subtitles")) {
-				if (_actor[tsceneProp->actor].act[3].state == 72 &&
-					_currTrsMsg) {
+				if (_actor[tsceneProp->actor].act[3].state == 72 && _currTrsMsg) {
 					_player->setPaletteValue(0, tsceneProp->r, tsceneProp->g, tsceneProp->b);
 					_player->setPaletteValue(1, tsceneProp->r, tsceneProp->g, tsceneProp->b);
 					_player->setPaletteValue(0, 0, 0, 0);
 					smlayer_showStatusMsg(-1, renderBitmap, codecparam, 160, 20, 1, 2, 5,
-										  "^f00%s", _currTrsMsg);
+					                      "^f00%s", _currTrsMsg);
 				}
 			}
 		} else {
@@ -1498,10 +1494,10 @@ void Insane::postCaseAll(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::postCaseMore(byte *renderBitmap, int32 codecparam, int32 setupsan12,
-						  int32 setupsan13, int32 curFrame, int32 maxFrame) {
+                          int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	if (_actor[0].weapon <= 7) {
 		smlayer_drawSomething(renderBitmap, codecparam, 5, 160, 1, _smush_iconsNut,
-							  _actor[0].weapon + 11, 0, 0);
+		                      _actor[0].weapon + 11, 0, 0);
 	}
 }
 

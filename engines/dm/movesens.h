@@ -25,7 +25,6 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
-
 #ifndef DM_MOVESENS_H
 #define DM_MOVESENS_H
 
@@ -41,11 +40,12 @@ enum SensorEffect {
 };
 
 namespace DM {
-	class Sensor;
-	class Teleporter;
+class Sensor;
+class Teleporter;
 
-	class MovesensMan {
+class MovesensMan {
 	DMEngine *_vm;
+
 public:
 	explicit MovesensMan(DMEngine *vm);
 
@@ -66,14 +66,14 @@ public:
 	bool moveIsKilledByProjectileImpact(int16 srcMapX, int16 srcMapY, int16 destMapX, int16 destMapY, Thing thing); // @ F0266_MOVE_IsKilledByProjectileImpact
 	void addEvent(TimelineEventType type, byte mapX, byte mapY, Cell cell, SensorEffect effect, int32 time); // @ F0268_SENSOR_AddEvent
 	int16 getSound(CreatureType creatureType); // @ F0514_MOVE_GetSound
-	int16 getTeleporterRotatedGroupResult(Teleporter *teleporter, Thing thing, uint16 mapIndex);// @ F0262_MOVE_GetTeleporterRotatedGroupResult
+	int16 getTeleporterRotatedGroupResult(Teleporter *teleporter, Thing thing, uint16 mapIndex); // @ F0262_MOVE_GetTeleporterRotatedGroupResult
 	Thing getTeleporterRotatedProjectileThing(Teleporter *teleporter, Thing projectileThing); // @ F0263_MOVE_GetTeleporterRotatedProjectileThing
-	void processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing thing, bool partySquare, bool addThing);// @ F0276_SENSOR_ProcessThingAdditionOrRemoval
+	void processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing thing, bool partySquare, bool addThing); // @ F0276_SENSOR_ProcessThingAdditionOrRemoval
 	bool isObjectInPartyPossession(int16 objectType); // @ F0274_SENSOR_IsObjectInPartyPossession
 	void triggerEffect(Sensor *sensor, SensorEffect effect, int16 mapX, int16 mapY, uint16 cell); // @ F0272_SENSOR_TriggerEffect
 	void triggerLocalEffect(SensorEffect localEffect, int16 effX, int16 effY, int16 effCell); // @ F0270_SENSOR_TriggerLocalEffect
 	void addSkillExperience(int16 skillIndex, uint16 exp, bool leaderOnly); // @ F0269_SENSOR_AddSkillExperience
-	void processRotationEffect();// @ F0271_SENSOR_ProcessRotationEffect
+	void processRotationEffect(); // @ F0271_SENSOR_ProcessRotationEffect
 	void createEventMoveGroup(Thing groupThing, int16 mapX, int16 mapY, int16 mapIndex, bool audible); // @ F0265_MOVE_CreateEvent60To61_MoveGroup
 	Thing getObjectOfTypeInCell(int16 mapX, int16 mapY, int16 cell, int16 objectType); // @ F0273_SENSOR_GetObjectOfTypeInCell
 };

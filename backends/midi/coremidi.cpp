@@ -27,16 +27,14 @@
 
 #ifdef MACOSX
 
-#include "common/config-manager.h"
-#include "common/error.h"
-#include "common/textconsole.h"
-#include "common/util.h"
-#include "audio/musicplugin.h"
-#include "audio/mpu401.h"
+#	include "audio/mpu401.h"
+#	include "audio/musicplugin.h"
+#	include "common/config-manager.h"
+#	include "common/error.h"
+#	include "common/textconsole.h"
+#	include "common/util.h"
 
-#include <CoreMIDI/CoreMIDI.h>
-
-
+#	include <CoreMIDI/CoreMIDI.h>
 
 /*
 For information on how to unify the CoreMidi and MusicDevice code:
@@ -46,7 +44,6 @@ http://lists.apple.com/archives/coreaudio-api/2003/Mar/msg00248.html
 http://lists.apple.com/archives/coreaudio-api/2003/Jul/msg00137.html
 
 */
-
 
 /* CoreMIDI MIDI driver
  * By Max Horn
@@ -63,13 +60,16 @@ public:
 
 private:
 	ItemCount mDevice;
-	MIDIClientRef	mClient;
-	MIDIPortRef		mOutPort;
-	MIDIEndpointRef	mDest;
+	MIDIClientRef mClient;
+	MIDIPortRef mOutPort;
+	MIDIEndpointRef mDest;
 };
 
 MidiDriver_CoreMIDI::MidiDriver_CoreMIDI(ItemCount device)
-	: mDevice(device), mClient(0), mOutPort(0), mDest(0) {
+  : mDevice(device)
+  , mClient(0)
+  , mOutPort(0)
+  , mDest(0) {
 
 	OSStatus err;
 	err = MIDIClientCreate(CFSTR("ScummVM MIDI Driver for OS X"), NULL, NULL, &mClient);
@@ -92,9 +92,9 @@ int MidiDriver_CoreMIDI::open() {
 	ItemCount dests = MIDIGetNumberOfDestinations();
 	if (mDevice < dests && mClient) {
 		mDest = MIDIGetDestination(mDevice);
-		err = MIDIOutputPortCreate( mClient,
-									CFSTR("scummvm_output_port"),
-									&mOutPort);
+		err = MIDIOutputPortCreate(mClient,
+		                           CFSTR("scummvm_output_port"),
+		                           &mOutPort);
 	} else {
 		return MERR_DEVICE_NOT_AVAILABLE;
 	}
@@ -137,15 +137,15 @@ void MidiDriver_CoreMIDI::send(uint32 b) {
 	// Compute the correct length of the MIDI command. This is important,
 	// else things may screw up badly...
 	switch (status_byte & 0xF0) {
-	case 0x80:	// Note Off
-	case 0x90:	// Note On
-	case 0xA0:	// Polyphonic Aftertouch
-	case 0xB0:	// Controller Change
-	case 0xE0:	// Pitch Bending
+	case 0x80: // Note Off
+	case 0x90: // Note On
+	case 0xA0: // Polyphonic Aftertouch
+	case 0xB0: // Controller Change
+	case 0xE0: // Pitch Bending
 		packet->length = 3;
 		break;
-	case 0xC0:	// Programm Change
-	case 0xD0:	// Monophonic Aftertouch
+	case 0xC0: // Programm Change
+	case 0xD0: // Monophonic Aftertouch
 		packet->length = 2;
 		break;
 	default:
@@ -181,7 +181,6 @@ void MidiDriver_CoreMIDI::sysEx(const byte *msg, uint16 length) {
 	MIDISend(mOutPort, mDest, packetList);
 }
 
-
 // Plugin interface
 
 class CoreMIDIMusicPlugin : public MusicPluginObject {
@@ -207,7 +206,7 @@ MusicDevices CoreMIDIMusicPlugin::getDevices() const {
 
 	MusicDevices devices;
 	ItemCount deviceCount = MIDIGetNumberOfDestinations();
-	for (ItemCount i = 0 ; i < deviceCount ; ++i) {
+	for (ItemCount i = 0; i < deviceCount; ++i) {
 		Common::String name;
 		if (getDeviceName(i, name))
 			devices.push_back(MusicDevice(this, name, MT_GM));
@@ -217,7 +216,7 @@ MusicDevices CoreMIDIMusicPlugin::getDevices() const {
 
 Common::Error CoreMIDIMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle device) const {
 	ItemCount deviceCount = MIDIGetNumberOfDestinations();
-	for (ItemCount i = 0 ; i < deviceCount ; ++i) {
+	for (ItemCount i = 0; i < deviceCount; ++i) {
 		Common::String name;
 		if (getDeviceName(i, name)) {
 			MusicDevice md(this, name, MT_GM);
@@ -252,9 +251,9 @@ bool CoreMIDIMusicPlugin::getDeviceName(ItemCount deviceIndex, Common::String &o
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(COREMIDI)
-	//REGISTER_PLUGIN_DYNAMIC(COREMIDI, PLUGIN_TYPE_MUSIC, CoreMIDIMusicPlugin);
+//REGISTER_PLUGIN_DYNAMIC(COREMIDI, PLUGIN_TYPE_MUSIC, CoreMIDIMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(COREMIDI, PLUGIN_TYPE_MUSIC, CoreMIDIMusicPlugin);
+REGISTER_PLUGIN_STATIC(COREMIDI, PLUGIN_TYPE_MUSIC, CoreMIDIMusicPlugin);
 //#endif
 
 #endif // MACOSX

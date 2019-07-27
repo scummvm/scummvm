@@ -40,9 +40,10 @@
 namespace Sludge {
 
 const uint32 UTF8Converter::offsetsFromUTF8[6] = {
-		0x00000000UL, 0x00003080UL,
-		0x000E2080UL, 0x03C82080UL,
-		0xFA082080UL, 0x82082080UL };
+	0x00000000UL, 0x00003080UL,
+	0x000E2080UL, 0x03C82080UL,
+	0xFA082080UL, 0x82082080UL
+};
 
 /* reads the next utf-8 sequence out of a string, updating an index */
 uint32 UTF8Converter::nextchar(const char *s, int *i) {
@@ -78,10 +79,7 @@ int UTF8Converter::getOriginOffset(int origIdx) {
 	uint offs = 0;
 	while (origIdx > 0 && offs < _str.size()) {
 		// increment if it's not the start of a utf8 sequence
-		(void)(	(++offs < _str.size() && isutf(_str[offs])) ||
-				(++offs < _str.size() && isutf(_str[offs])) ||
-				(++offs < _str.size() && isutf(_str[offs])) ||
-				++offs);
+		(void)((++offs < _str.size() && isutf(_str[offs])) || (++offs < _str.size() && isutf(_str[offs])) || (++offs < _str.size() && isutf(_str[offs])) || ++offs);
 		origIdx--;
 	}
 	return offs;

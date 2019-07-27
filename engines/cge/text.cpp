@@ -25,17 +25,18 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#include "cge/general.h"
 #include "cge/text.h"
-#include "cge/talk.h"
-#include "cge/game.h"
-#include "cge/snail.h"
 #include "cge/cge_main.h"
+#include "cge/game.h"
+#include "cge/general.h"
+#include "cge/snail.h"
+#include "cge/talk.h"
 #include "common/str.h"
 
 namespace CGE {
 
-Text::Text(CGEEngine *vm, const char *fname) : _vm(vm) {
+Text::Text(CGEEngine *vm, const char *fname)
+  : _vm(vm) {
 	_vm->mergeExt(_fileName, fname, kSayExt);
 	if (!_vm->_resman->exist(_fileName))
 		error("No talk (%s)", _fileName);

@@ -23,15 +23,15 @@
 #ifndef GOB_PREGOB_GCTFILE_H
 #define GOB_PREGOB_GCTFILE_H
 
-#include "common/str.h"
 #include "common/array.h"
 #include "common/list.h"
+#include "common/str.h"
 
 #include "gob/backbuffer.h"
 
 namespace Common {
-	class RandomSource;
-	class SeekableReadStream;
+class RandomSource;
+class SeekableReadStream;
 }
 
 namespace Gob {
@@ -41,9 +41,8 @@ class Font;
 
 class GCTFile : public BackBuffer {
 public:
-	static const uint16 kSelectorAll    = 0xFFFE; ///< Print all lines.
+	static const uint16 kSelectorAll = 0xFFFE; ///< Print all lines.
 	static const uint16 kSelectorRandom = 0xFFFF; ///< Print a random line.
-
 
 	GCTFile(Common::SeekableReadStream &gct, Common::RandomSource &rnd);
 	~GCTFile();
@@ -81,9 +80,9 @@ public:
 private:
 	/** The type of a chunk. */
 	enum ChunkType {
-		kChunkTypeNone   = 0, ///< Do nothing.
-		kChunkTypeString    , ///< A direct string.
-		kChunkTypeItem        ///< A reference to an item to print instead.
+		kChunkTypeNone = 0, ///< Do nothing.
+		kChunkTypeString, ///< A direct string.
+		kChunkTypeItem ///< A reference to an item to print instead.
 	};
 
 	/** A chunk in an item text line. */
@@ -108,19 +107,18 @@ private:
 
 	/** A GCT item. */
 	struct Item {
-		Lines  lines;    ///< The text lines in the item
+		Lines lines; ///< The text lines in the item
 		uint16 selector; ///< Which line to print.
 	};
 
 	typedef Common::Array<Item> Items;
-
 
 	Common::RandomSource *_rnd;
 
 	Items _items; ///< All GCT items.
 
 	// The area on which to print
-	bool  _hasArea;
+	bool _hasArea;
 	int16 _areaLeft;
 	int16 _areaTop;
 	int16 _areaRight;
@@ -131,12 +129,10 @@ private:
 	/** Text left to draw. */
 	Common::List<Common::String> _currentText;
 
-
 	// -- Loading helpers --
 
 	void load(Common::SeekableReadStream &gct);
 	void readLine(Common::SeekableReadStream &gct, Line &line, uint16 lineSize) const;
-
 
 	// -- Draw helpers --
 

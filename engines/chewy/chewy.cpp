@@ -42,9 +42,9 @@
 namespace Chewy {
 
 ChewyEngine::ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc)
-	: Engine(syst),
-	_gameDescription(gameDesc),
-	_rnd("chewy") {
+  : Engine(syst)
+  , _gameDescription(gameDesc)
+  , _rnd("chewy") {
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 

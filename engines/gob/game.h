@@ -25,9 +25,9 @@
 
 #include "common/str.h"
 
+#include "gob/sound/sounddesc.h"
 #include "gob/util.h"
 #include "gob/video.h"
-#include "gob/sound/sounddesc.h"
 
 namespace Gob {
 
@@ -49,7 +49,7 @@ public:
 	const Common::String &getTotFile(uint8 env) const;
 
 	bool has(Variables *variables, uint8 startEnv = 0, int16 except = -1) const;
-	bool has(Script    *script   , uint8 startEnv = 0, int16 except = -1) const;
+	bool has(Script *script, uint8 startEnv = 0, int16 except = -1) const;
 	bool has(Resources *resources, uint8 startEnv = 0, int16 except = -1) const;
 
 	void deleted(Variables *variables);
@@ -62,24 +62,24 @@ public:
 
 private:
 	struct Environment {
-		int32          cursorHotspotX;
-		int32          cursorHotspotY;
+		int32 cursorHotspotX;
+		int32 cursorHotspotY;
 		Common::String totFile;
-		Variables     *variables;
-		Script        *script;
-		Resources     *resources;
+		Variables *variables;
+		Script *script;
+		Resources *resources;
 	};
 
 	struct Media {
 		SurfacePtr sprites[10];
-		SoundDesc  sounds[10];
-		Font      *fonts[17];
+		SoundDesc sounds[10];
+		Font *fonts[17];
 	};
 
 	GobEngine *_vm;
 
 	Environment _environments[kEnvironmentCount];
-	Media       _media[kEnvironmentCount];
+	Media _media[kEnvironmentCount];
 };
 
 class TotFunctions {
@@ -109,7 +109,7 @@ private:
 
 		Common::List<Function> functions;
 
-		Script    *script;
+		Script *script;
 		Resources *resources;
 	};
 
@@ -129,9 +129,9 @@ private:
 
 class Game {
 public:
-	Script    *_script;
+	Script *_script;
 	Resources *_resources;
-	Hotspots  *_hotspots;
+	Hotspots *_hotspots;
 
 	Common::String _curTotFile;
 	Common::String _totToLoad;
@@ -142,7 +142,7 @@ public:
 	bool _noScroll;
 	bool _preventScroll;
 
-	bool  _wantScroll;
+	bool _wantScroll;
 	int16 _wantScrollX;
 	int16 _wantScrollY;
 
@@ -165,7 +165,7 @@ public:
 	void evaluateScroll();
 
 	int16 checkKeys(int16 *pMousex = 0, int16 *pMouseY = 0,
-			MouseButtons *pButtons = 0, char handleMouse = 0);
+	                MouseButtons *pButtons = 0, char handleMouse = 0);
 	void start();
 
 	void totSub(int8 flags, const Common::String &totFile);

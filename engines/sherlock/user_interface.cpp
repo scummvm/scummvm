@@ -35,7 +35,8 @@ UserInterface *UserInterface::init(SherlockEngine *vm) {
 		return new Tattoo::TattooUserInterface(vm);
 }
 
-UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
+UserInterface::UserInterface(SherlockEngine *vm)
+  : _vm(vm) {
 	_menuMode = STD_MODE;
 	_menuCounter = 0;
 	_infoFlag = false;
@@ -122,7 +123,7 @@ void UserInterface::checkAction(ActionType &action, int objNum, FixedTextActionI
 
 		for (int nameIdx = 0; nameIdx < NAMES_COUNT; ++nameIdx) {
 			if (action._names[nameIdx].hasPrefix("*") && action._names[nameIdx].size() >= 2
-					&& toupper(action._names[nameIdx][1]) == 'W') {
+			    && toupper(action._names[nameIdx][1]) == 'W') {
 				if (obj->checkNameForCodes(Common::String(action._names[nameIdx].c_str() + 2), fixedTextActionId)) {
 					if (!talk._talkToAbort)
 						printed = true;
@@ -163,7 +164,7 @@ void UserInterface::checkAction(ActionType &action, int objNum, FixedTextActionI
 
 		for (int nameIdx = 0; nameIdx < NAMES_COUNT; ++nameIdx) {
 			if (action._names[nameIdx].hasPrefix("*") && action._names[nameIdx].size() >= 2
-					&& toupper(action._names[nameIdx][1]) == 'F') {
+			    && toupper(action._names[nameIdx][1]) == 'F') {
 				if (obj->checkNameForCodes(action._names[nameIdx].c_str() + 2, fixedTextActionId)) {
 					if (!talk._talkToAbort)
 						printed = true;
@@ -204,6 +205,5 @@ void UserInterface::reset() {
 	_oldTemp = _temp = -1;
 	_exitZone = -1;
 }
-
 
 } // End of namespace Sherlock

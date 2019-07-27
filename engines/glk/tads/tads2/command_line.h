@@ -26,14 +26,14 @@
 #ifndef GLK_TADS_TADS2_COMMAND_LINE
 #define GLK_TADS_TADS2_COMMAND_LINE
 
-#include "glk/tads/tads2/error_handling.h"
 #include "glk/tads/os_frob_tads.h"
+#include "glk/tads/tads2/error_handling.h"
 
 namespace Glk {
 namespace TADS {
-namespace TADS2 {
+	namespace TADS2 {
 
-/*
+		/*
  *   Get argument to an option.  Option can be rammed up against option
  *   letter(s) with no space, or can be separated by a space.  argp is a
  *   pointer to the pointer to the current position in the argv[] array;
@@ -45,11 +45,10 @@ namespace TADS2 {
  *   the parsing fails; it is not expected to return, but should signal an
  *   error instead.  
  */
-char *cmdarg(errcxdef *ec, char ***argpp, int *ip, int argc,
-             int ofs, void (*usagefn)(errcxdef*));
+		char *cmdarg(errcxdef *ec, char ***argpp, int *ip, int argc,
+		             int ofs, void (*usagefn)(errcxdef *));
 
-
-/*
+		/*
  *   Read a toggle argument.  prv is the previous value (prior to this
  *   switch) of the parameter (TRUE or FALSE).  argp is a pointer to the
  *   current argument word.  ofs is the length of this option flag, NOT
@@ -60,10 +59,10 @@ char *cmdarg(errcxdef *ec, char ***argpp, int *ip, int argc,
  *   it's followed by any other character, we call the usage callback,
  *   which is not expected to return, but should signal an error. 
  */
-int cmdtog(struct errcxdef *ec, int prv, char *argp, int ofs,
-           void (*usagefn)(errcxdef*));
+		int cmdtog(struct errcxdef *ec, int prv, char *argp, int ofs,
+		           void (*usagefn)(errcxdef *));
 
-} // End of namespace TADS2
+	} // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk
 

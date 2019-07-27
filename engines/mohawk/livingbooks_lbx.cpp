@@ -20,8 +20,8 @@
  *
  */
 
-#include "engines/mohawk/livingbooks.h"
 #include "engines/mohawk/livingbooks_lbx.h"
+#include "engines/mohawk/livingbooks.h"
 
 namespace Mohawk {
 
@@ -40,7 +40,8 @@ protected:
 	bool sectionExists(const Common::String &section);
 };
 
-LBXDataFile::LBXDataFile(MohawkEngine_LivingBooks *vm) : LBXObject(vm) {
+LBXDataFile::LBXDataFile(MohawkEngine_LivingBooks *vm)
+  : LBXObject(vm) {
 }
 
 LBXDataFile::~LBXDataFile() {
@@ -74,14 +75,13 @@ bool LBXDataFile::call(uint callId, const Common::Array<LBValue> &params, LBValu
 		_curSection = params[0].toString();
 		return false;
 
-	case kLBXDataFileGetSectionList:
-		{
+	case kLBXDataFileGetSectionList: {
 		Common::SharedPtr<LBList> list = Common::SharedPtr<LBList>(new LBList);
 		Common::INIFile::SectionList sections = _dataFile.getSections();
 		for (Common::List<Common::INIFile::Section>::const_iterator i = sections.begin(); i != sections.end(); ++i)
 			list->array.push_back(LBValue(i->name));
 		result = LBValue(list);
-		}
+	}
 		return true;
 
 	case kLBXDataFileSetCurSection:
@@ -103,13 +103,13 @@ bool LBXDataFile::call(uint callId, const Common::Array<LBValue> &params, LBValu
 			error("incorrect number of parameters (%d) to LBXDataFile::loadCurSectionVars", params.size());
 
 		{
-		const Common::INIFile::SectionKeyList globals = _dataFile.getKeys(_curSection);
-		for (Common::INIFile::SectionKeyList::const_iterator i = globals.begin(); i != globals.end(); i++) {
-			Common::String command = Common::String::format("%s = %s", i->key.c_str(), i->value.c_str());
-			LBCode tempCode(_vm, 0);
-			uint offset = tempCode.parseCode(command);
-			tempCode.runCode(NULL, offset);
-		}
+			const Common::INIFile::SectionKeyList globals = _dataFile.getKeys(_curSection);
+			for (Common::INIFile::SectionKeyList::const_iterator i = globals.begin(); i != globals.end(); i++) {
+				Common::String command = Common::String::format("%s = %s", i->key.c_str(), i->value.c_str());
+				LBCode tempCode(_vm, 0);
+				uint offset = tempCode.parseCode(command);
+				tempCode.runCode(NULL, offset);
+			}
 		}
 		return false;
 

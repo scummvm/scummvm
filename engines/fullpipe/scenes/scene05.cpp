@@ -22,17 +22,17 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/gameloader.h"
-#include "fullpipe/objects.h"
-#include "fullpipe/objectnames.h"
-#include "fullpipe/constants.h"
-#include "fullpipe/statics.h"
-#include "fullpipe/scene.h"
-#include "fullpipe/motion.h"
-#include "fullpipe/scenes.h"
-#include "fullpipe/messages.h"
-#include "fullpipe/floaters.h"
 #include "fullpipe/behavior.h"
+#include "fullpipe/constants.h"
+#include "fullpipe/floaters.h"
+#include "fullpipe/gameloader.h"
+#include "fullpipe/messages.h"
+#include "fullpipe/motion.h"
+#include "fullpipe/objectnames.h"
+#include "fullpipe/objects.h"
+#include "fullpipe/scene.h"
+#include "fullpipe/scenes.h"
+#include "fullpipe/statics.h"
 
 namespace Fullpipe {
 
@@ -48,7 +48,6 @@ void scene05_initScene(Scene *sc) {
 	g_vars->scene05_handle = sc->getStaticANIObject1ById(ANI_HANDLE, -1);
 	g_vars->scene05_wacko = sc->getStaticANIObject1ById(ANI_OTMOROZ, -1);
 	g_vars->scene05_bigHatch = sc->getStaticANIObject1ById(ANI_BIGLUK, -1);
-
 
 	g_vars->scene05_wackoTicker = 0;
 	g_vars->scene05_handleFlipper = 1;
@@ -140,8 +139,7 @@ void sceneHandler05_makeWackoFeedback() {
 }
 
 void sceneHandler05_resetTicks() {
-	if (g_fp->_aniMan->_movement && (g_fp->_aniMan->_movement->_id == MV_MANHDL_HANDLEUP
-											|| g_fp->_aniMan->_movement->_id == MV_MANHDL_HANDLEDOWN))
+	if (g_fp->_aniMan->_movement && (g_fp->_aniMan->_movement->_id == MV_MANHDL_HANDLEUP || g_fp->_aniMan->_movement->_id == MV_MANHDL_HANDLEDOWN))
 		g_vars->scene05_wackoTicker = g_fp->_updateTicks;
 	else
 		g_vars->scene05_wackoTicker = 0;
@@ -313,7 +311,6 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 	}
 }
 
-
 int sceneHandler05(ExCommand *ex) {
 	if (ex->_messageKind != 17)
 		return 0;
@@ -332,8 +329,7 @@ int sceneHandler05(ExCommand *ex) {
 		break;
 
 	case MSG_SC5_MAKEOTMFEEDBACK:
-		if (!g_fp->_aniMan->_movement || (g_fp->_aniMan->_movement->_id != MV_MANHDL_HANDLEUP
-												&& g_fp->_aniMan->_movement->_id != MV_MANHDL_HANDLEDOWN)) {
+		if (!g_fp->_aniMan->_movement || (g_fp->_aniMan->_movement->_id != MV_MANHDL_HANDLEUP && g_fp->_aniMan->_movement->_id != MV_MANHDL_HANDLEDOWN)) {
 			sceneHandler05_makeWackoFeedback();
 			g_vars->scene05_wackoTicker = 0;
 		}
@@ -361,43 +357,41 @@ int sceneHandler05(ExCommand *ex) {
 		sceneHandler05_testHatch(ex);
 		break;
 
-	case 33:
-		{
-			int res = 0;
-			if (g_fp->_aniMan2) {
-				if (g_fp->_aniMan2->_ox < g_fp->_sceneRect.left + 200)
-					g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.left - 300;
+	case 33: {
+		int res = 0;
+		if (g_fp->_aniMan2) {
+			if (g_fp->_aniMan2->_ox < g_fp->_sceneRect.left + 200)
+				g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.left - 300;
 
-				if (g_fp->_aniMan2->_ox > g_fp->_sceneRect.right - 200)
-					g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.right + 300;
+			if (g_fp->_aniMan2->_ox > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.right + 300;
 
-				res = 1;
-			}
+			res = 1;
+		}
 
-			if (g_vars->scene05_wackoTicker) {
-				if ((g_fp->_updateTicks - g_vars->scene05_wackoTicker) > 62) {
-					if (!g_fp->_aniMan->_movement || (g_fp->_aniMan->_movement->_id != MV_MANHDL_HANDLEUP
-															&& g_fp->_aniMan->_movement->_id != MV_MANHDL_HANDLEDOWN)) {
-						if (g_vars->scene05_handleFlipper % 2)
-							sceneHandler05_makeWackoFeedback();
+		if (g_vars->scene05_wackoTicker) {
+			if ((g_fp->_updateTicks - g_vars->scene05_wackoTicker) > 62) {
+				if (!g_fp->_aniMan->_movement || (g_fp->_aniMan->_movement->_id != MV_MANHDL_HANDLEUP && g_fp->_aniMan->_movement->_id != MV_MANHDL_HANDLEDOWN)) {
+					if (g_vars->scene05_handleFlipper % 2)
+						sceneHandler05_makeWackoFeedback();
 
-						g_vars->scene05_wackoTicker = 0;
+					g_vars->scene05_wackoTicker = 0;
 
-						++g_vars->scene05_handleFlipper;
-					}
+					++g_vars->scene05_handleFlipper;
 				}
 			}
-
-			++g_vars->scene05_floatersTicker;
-
-			g_fp->_floaters->update();
-
-			g_fp->_behaviorManager->updateBehaviors();
-
-			g_fp->startSceneTrack();
-
-			return res;
 		}
+
+		++g_vars->scene05_floatersTicker;
+
+		g_fp->_floaters->update();
+
+		g_fp->_behaviorManager->updateBehaviors();
+
+		g_fp->startSceneTrack();
+
+		return res;
+	}
 	}
 
 	return 0;

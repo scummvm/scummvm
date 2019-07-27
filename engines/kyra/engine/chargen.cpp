@@ -22,17 +22,17 @@
 
 #ifdef ENABLE_EOB
 
-#include "kyra/engine/eobcommon.h"
-#include "kyra/resource/resource.h"
-#include "kyra/sound/sound_intern.h"
+#	include "kyra/engine/eobcommon.h"
+#	include "kyra/resource/resource.h"
+#	include "kyra/sound/sound_intern.h"
 
-#include "common/savefile.h"
-#include "common/str-array.h"
+#	include "common/savefile.h"
+#	include "common/str-array.h"
 
-#include "common/config-manager.h"
-#include "base/plugins.h"
-#include "engines/metaengine.h"
-#include "engines/game.h"
+#	include "base/plugins.h"
+#	include "common/config-manager.h"
+#	include "engines/game.h"
+#	include "engines/metaengine.h"
 
 namespace Kyra {
 
@@ -122,9 +122,17 @@ private:
 	Screen_EoB *_screen;
 };
 
-CharacterGenerator::CharacterGenerator(EoBCoreEngine *vm, Screen_EoB *screen) : _vm(vm), _screen(screen),
-	_characters(0), _faceShapes(0), _chargenMagicShapes(0), _chargenMagicShapeTimer(0),
-	_updateBoxShapesIndex(0), _lastUpdateBoxShapesIndex(0), _magicShapesBox(6), _activeBox(0) {
+CharacterGenerator::CharacterGenerator(EoBCoreEngine *vm, Screen_EoB *screen)
+  : _vm(vm)
+  , _screen(screen)
+  , _characters(0)
+  , _faceShapes(0)
+  , _chargenMagicShapes(0)
+  , _chargenMagicShapeTimer(0)
+  , _updateBoxShapesIndex(0)
+  , _lastUpdateBoxShapesIndex(0)
+  , _magicShapesBox(6)
+  , _activeBox(0) {
 
 	_chargenStatStrings = _vm->_chargenStatStrings;
 	_chargenRaceSexStrings = _vm->_chargenRaceSexStrings;
@@ -272,7 +280,7 @@ void CharacterGenerator::init() {
 		delete[] _faceShapes;
 	}
 
-	_faceShapes = new uint8*[44];
+	_faceShapes = new uint8 *[44];
 	for (int i = 0; i < 44; i++)
 		_faceShapes[i] = _screen->encodeShape((i % 10) << 2, (i / 10) << 5, 4, 32, true, _vm->_cgaMappingDefault);
 	_screen->_curPage = 0;
@@ -292,7 +300,7 @@ void CharacterGenerator::init() {
 		delete[] _chargenMagicShapes;
 	}
 
-	_chargenMagicShapes = new uint8*[10];
+	_chargenMagicShapes = new uint8 *[10];
 	for (int i = 0; i < 10; i++)
 		_chargenMagicShapes[i] = _screen->encodeShape(i << 2, 0, 4, 32, true, _vm->_cgaMappingDefault);
 
@@ -300,7 +308,7 @@ void CharacterGenerator::init() {
 		const CreatePartyModButton *c = &_chargenModButtons[i];
 		_chargenButtonLabels[i] = c->labelW ? _screen->encodeShape(c->encodeLabelX, c->encodeLabelY, c->labelW, c->labelH, true, _vm->_cgaMappingDefault) : 0;
 	}
-	
+
 	_screen->convertPage(3, 2, _vm->_cgaMappingDefault);
 	_screen->_curPage = 0;
 	_screen->convertToHiColor(2);
@@ -1183,17 +1191,17 @@ void CharacterGenerator::finish() {
 
 	if (_vm->game() == GI_EOB1) {
 		static const int8 classDefaultItemsList[] = {
-			 1, 17,  2, 17, 46, -1,  4, -1,  5, -1,  6,
-			 2,  7, -1,  8, -1,  9, 21, 10,  2, 31,  2
+			1, 17, 2, 17, 46, -1, 4, -1, 5, -1, 6,
+			2, 7, -1, 8, -1, 9, 21, 10, 2, 31, 2
 		};
 
 		static const int8 classDefaultItemsListIndex[] = {
-			 4,  8,  0, -1,  4,  3,  0, -1,  4, 10,
-			 0,  8,  3,  6,  1, -1,  2,  7,  0, -1,
-			 4,  5,  0, -1,  4,  7,  0,  8,  4,  5,
-			 0,  8,  4,  6,  8,  8,  4,  6,  5,  8,
-			 3,  6,  5, -1,  2,  7,  5,  0,  4,  6,
-			 7,  0,  4,  3,  7,  0,  2,  6,  7,  1
+			4, 8, 0, -1, 4, 3, 0, -1, 4, 10,
+			0, 8, 3, 6, 1, -1, 2, 7, 0, -1,
+			4, 5, 0, -1, 4, 7, 0, 8, 4, 5,
+			0, 8, 4, 6, 8, 8, 4, 6, 5, 8,
+			3, 6, 5, -1, 2, 7, 5, 0, 4, 6,
+			7, 0, 4, 3, 7, 0, 2, 6, 7, 1
 		};
 
 		_characters[0].inventory[2] = _vm->duplicateItem(35);
@@ -1495,7 +1503,6 @@ private:
 	bool selectAndLoadTransferFile();
 	bool transferFileDialogue(Common::String &dest);
 
-
 	int selectCharactersMenu();
 	void drawCharPortraitWithStats(int charIndex, bool enabled);
 	void updateHighlight(int index);
@@ -1520,7 +1527,9 @@ private:
 	const char *const *_labels;
 };
 
-TransferPartyWiz::TransferPartyWiz(EoBCoreEngine *vm, Screen_EoB *screen) : _vm(vm), _screen(screen) {
+TransferPartyWiz::TransferPartyWiz(EoBCoreEngine *vm, Screen_EoB *screen)
+  : _vm(vm)
+  , _screen(screen) {
 	int temp;
 	_portraitFrames = _vm->staticres()->loadRawDataBe16(kEoB2TransferPortraitFrames, temp);
 	_convertTable = _vm->staticres()->loadRawData(kEoB2TransferConvertTable, temp);
@@ -1580,8 +1589,8 @@ bool TransferPartyWiz::start() {
 bool TransferPartyWiz::selectAndLoadTransferFile() {
 	do {
 		_screen->copyPage(12, 0);
-		 if (transferFileDialogue(_vm->_savegameFilename))
-			 break;
+		if (transferFileDialogue(_vm->_savegameFilename))
+			break;
 	} while (_vm->_gui->confirmDialogue2(15, 68, 1));
 
 	if (_vm->_savegameFilename.empty())
@@ -1593,7 +1602,7 @@ bool TransferPartyWiz::selectAndLoadTransferFile() {
 	return true;
 }
 
- bool TransferPartyWiz::transferFileDialogue(Common::String &dest) {
+bool TransferPartyWiz::transferFileDialogue(Common::String &dest) {
 	_vm->_gui->transferWaitBox();
 
 	Common::Array<Common::String> eobTargets;

@@ -25,8 +25,8 @@
 #include "common/stream.h"
 #include "common/substream.h"
 
-#include "gnap/gnap.h"
 #include "gnap/datarchive.h"
+#include "gnap/gnap.h"
 
 #include "engines/util.h"
 

@@ -28,8 +28,8 @@
 
 #include "engines/wintermute/ad/ad_sprite_set.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
-#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_sprite.h"
 
@@ -38,14 +38,14 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(AdSpriteSet, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdSpriteSet::AdSpriteSet(BaseGame *inGame, BaseObject *owner) : BaseObject(inGame) {
+AdSpriteSet::AdSpriteSet(BaseGame *inGame, BaseObject *owner)
+  : BaseObject(inGame) {
 	_owner = owner;
 
 	for (int i = 0; i < NUM_DIRECTIONS; i++) {
 		_sprites[i] = nullptr;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 AdSpriteSet::~AdSpriteSet() {
@@ -56,7 +56,6 @@ AdSpriteSet::~AdSpriteSet() {
 
 	_owner = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSpriteSet::loadFile(const char *filename, int lifeTime, TSpriteCacheType cacheType) {
@@ -76,7 +75,6 @@ bool AdSpriteSet::loadFile(const char *filename, int lifeTime, TSpriteCacheType 
 
 	return ret;
 }
-
 
 TOKEN_DEF_START
 TOKEN_DEF(SPRITESET)
@@ -137,7 +135,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 		case TOKEN_LEFT:
 			delete _sprites[DI_LEFT];
 			_sprites[DI_LEFT] = nullptr;
-			spr = new BaseSprite(_gameRef,  _owner);
+			spr = new BaseSprite(_gameRef, _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -148,7 +146,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 		case TOKEN_RIGHT:
 			delete _sprites[DI_RIGHT];
 			_sprites[DI_RIGHT] = nullptr;
-			spr = new BaseSprite(_gameRef,  _owner);
+			spr = new BaseSprite(_gameRef, _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -159,7 +157,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 		case TOKEN_UP:
 			delete _sprites[DI_UP];
 			_sprites[DI_UP] = nullptr;
-			spr = new BaseSprite(_gameRef,  _owner);
+			spr = new BaseSprite(_gameRef, _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -170,7 +168,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 		case TOKEN_DOWN:
 			delete _sprites[DI_DOWN];
 			_sprites[DI_DOWN] = nullptr;
-			spr = new BaseSprite(_gameRef,  _owner);
+			spr = new BaseSprite(_gameRef, _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -181,7 +179,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 		case TOKEN_UP_LEFT:
 			delete _sprites[DI_UPLEFT];
 			_sprites[DI_UPLEFT] = nullptr;
-			spr = new BaseSprite(_gameRef,  _owner);
+			spr = new BaseSprite(_gameRef, _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -192,7 +190,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 		case TOKEN_UP_RIGHT:
 			delete _sprites[DI_UPRIGHT];
 			_sprites[DI_UPRIGHT] = nullptr;
-			spr = new BaseSprite(_gameRef,  _owner);
+			spr = new BaseSprite(_gameRef, _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -203,7 +201,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 		case TOKEN_DOWN_LEFT:
 			delete _sprites[DI_DOWNLEFT];
 			_sprites[DI_DOWNLEFT] = nullptr;
-			spr = new BaseSprite(_gameRef,  _owner);
+			spr = new BaseSprite(_gameRef, _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -214,7 +212,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 		case TOKEN_DOWN_RIGHT:
 			delete _sprites[DI_DOWNRIGHT];
 			_sprites[DI_DOWNRIGHT] = nullptr;
-			spr = new BaseSprite(_gameRef,  _owner);
+			spr = new BaseSprite(_gameRef, _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -243,7 +241,6 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdSpriteSet::persist(BasePersistenceManager *persistMgr) {
 
@@ -256,7 +253,6 @@ bool AdSpriteSet::persist(BasePersistenceManager *persistMgr) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 BaseSprite *AdSpriteSet::getSprite(TDirection direction) {
@@ -293,8 +289,6 @@ BaseSprite *AdSpriteSet::getSprite(TDirection direction) {
 	return ret;
 }
 
-
-
 //////////////////////////////////////////////////////////////////////////
 bool AdSpriteSet::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "SPRITESET {\n");
@@ -305,28 +299,28 @@ bool AdSpriteSet::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		if (_sprites[i]) {
 			switch (i) {
 			case DI_UP:
-				buffer->putTextIndent(indent + 2, "UP=\"%s\"\n",         _sprites[i]->getFilename());
+				buffer->putTextIndent(indent + 2, "UP=\"%s\"\n", _sprites[i]->getFilename());
 				break;
 			case DI_UPRIGHT:
-				buffer->putTextIndent(indent + 2, "UP_RIGHT=\"%s\"\n",   _sprites[i]->getFilename());
+				buffer->putTextIndent(indent + 2, "UP_RIGHT=\"%s\"\n", _sprites[i]->getFilename());
 				break;
 			case DI_RIGHT:
-				buffer->putTextIndent(indent + 2, "RIGHT=\"%s\"\n",      _sprites[i]->getFilename());
+				buffer->putTextIndent(indent + 2, "RIGHT=\"%s\"\n", _sprites[i]->getFilename());
 				break;
 			case DI_DOWNRIGHT:
 				buffer->putTextIndent(indent + 2, "DOWN_RIGHT=\"%s\"\n", _sprites[i]->getFilename());
 				break;
 			case DI_DOWN:
-				buffer->putTextIndent(indent + 2, "DOWN=\"%s\"\n",       _sprites[i]->getFilename());
+				buffer->putTextIndent(indent + 2, "DOWN=\"%s\"\n", _sprites[i]->getFilename());
 				break;
 			case DI_DOWNLEFT:
-				buffer->putTextIndent(indent + 2, "DOWN_LEFT=\"%s\"\n",  _sprites[i]->getFilename());
+				buffer->putTextIndent(indent + 2, "DOWN_LEFT=\"%s\"\n", _sprites[i]->getFilename());
 				break;
 			case DI_LEFT:
-				buffer->putTextIndent(indent + 2, "LEFT=\"%s\"\n",       _sprites[i]->getFilename());
+				buffer->putTextIndent(indent + 2, "LEFT=\"%s\"\n", _sprites[i]->getFilename());
 				break;
 			case DI_UPLEFT:
-				buffer->putTextIndent(indent + 2, "UP_LEFT=\"%s\"\n",    _sprites[i]->getFilename());
+				buffer->putTextIndent(indent + 2, "UP_LEFT=\"%s\"\n", _sprites[i]->getFilename());
 				break;
 			}
 		}

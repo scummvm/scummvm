@@ -20,21 +20,25 @@
  *
  */
 
+#include "gui/widgets/editable.h"
 #include "common/rect.h"
 #include "common/system.h"
-#include "gui/widgets/editable.h"
-#include "gui/gui-manager.h"
 #include "graphics/font.h"
+#include "gui/gui-manager.h"
 
 namespace GUI {
 
 EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip, uint32 cmd)
-	: Widget(boss, x, y, w, h, tooltip), CommandSender(boss), _cmd(cmd) {
+  : Widget(boss, x, y, w, h, tooltip)
+  , CommandSender(boss)
+  , _cmd(cmd) {
 	init();
 }
 
 EditableWidget::EditableWidget(GuiObject *boss, const String &name, const char *tooltip, uint32 cmd)
-	: Widget(boss, name, tooltip), CommandSender(boss), _cmd(cmd) {
+  : Widget(boss, name, tooltip)
+  , CommandSender(boss)
+  , _cmd(cmd) {
 	init();
 }
 
@@ -101,20 +105,20 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 	// This code relies on the fact that the various KEYCODE_KP* values are
 	// consecutive.
 	if (0 == (state.flags & Common::KBD_NUM)
-		&& Common::KEYCODE_KP0 <= state.keycode
-		&& state.keycode <= Common::KEYCODE_KP_PERIOD) {
+	    && Common::KEYCODE_KP0 <= state.keycode
+	    && state.keycode <= Common::KEYCODE_KP_PERIOD) {
 		const Common::KeyCode remap[11] = {
-			Common::KEYCODE_INSERT, 	// KEYCODE_KP0
-			Common::KEYCODE_END,	 	// KEYCODE_KP1
-			Common::KEYCODE_DOWN, 		// KEYCODE_KP2
-			Common::KEYCODE_PAGEDOWN, 	// KEYCODE_KP3
-			Common::KEYCODE_LEFT, 		// KEYCODE_KP4
-			Common::KEYCODE_INVALID, 	// KEYCODE_KP5
-			Common::KEYCODE_RIGHT,	 	// KEYCODE_KP6
-			Common::KEYCODE_HOME,	 	// KEYCODE_KP7
-			Common::KEYCODE_UP, 		// KEYCODE_KP8
-			Common::KEYCODE_PAGEUP, 	// KEYCODE_KP9
-			Common::KEYCODE_DELETE,	 	// KEYCODE_KP_PERIOD
+			Common::KEYCODE_INSERT, // KEYCODE_KP0
+			Common::KEYCODE_END, // KEYCODE_KP1
+			Common::KEYCODE_DOWN, // KEYCODE_KP2
+			Common::KEYCODE_PAGEDOWN, // KEYCODE_KP3
+			Common::KEYCODE_LEFT, // KEYCODE_KP4
+			Common::KEYCODE_INVALID, // KEYCODE_KP5
+			Common::KEYCODE_RIGHT, // KEYCODE_KP6
+			Common::KEYCODE_HOME, // KEYCODE_KP7
+			Common::KEYCODE_UP, // KEYCODE_KP8
+			Common::KEYCODE_PAGEUP, // KEYCODE_KP9
+			Common::KEYCODE_DELETE, // KEYCODE_KP_PERIOD
 		};
 		state.keycode = remap[state.keycode - Common::KEYCODE_KP0];
 	}

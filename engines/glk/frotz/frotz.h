@@ -28,72 +28,73 @@
 namespace Glk {
 namespace Frotz {
 
-class FrotzScreen;
+	class FrotzScreen;
 
-/**
+	/**
  * Frotz interpreter for Z-code games
  */
-class Frotz : public Processor {
-	friend class FrotzScreen;
-protected:
-	/**
+	class Frotz : public Processor {
+		friend class FrotzScreen;
+
+	protected:
+		/**
 	 * Setup the video mode
 	 */
-	virtual void initGraphicsMode();
+		virtual void initGraphicsMode();
 
-	/**
+		/**
 	 * Create the screen class
 	 */
-	virtual Screen *createScreen() override;
-public:
-	/**
+		virtual Screen *createScreen() override;
+
+	public:
+		/**
 	 * Constructor
 	 */
-	Frotz(OSystem *syst, const GlkGameDescription &gameDesc);
+		Frotz(OSystem *syst, const GlkGameDescription &gameDesc);
 
-	/**
+		/**
 	 * Destructor
 	 */
-	virtual ~Frotz();
+		virtual ~Frotz();
 
-	/**
+		/**
 	 * Initialization
 	 */
-	void initialize();
+		void initialize();
 
-	/**
+		/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override { return INTERPRETER_FROTZ; }
+		virtual InterpreterType getInterpreterType() const override { return INTERPRETER_FROTZ; }
 
-	/**
+		/**
 	 * Execute the game
 	 */
-	virtual void runGame() override;
+		virtual void runGame() override;
 
-	/**
+		/**
 	 * Load a savegame from a given slot
 	 */
-	virtual Common::Error loadGameState(int slot) override;
+		virtual Common::Error loadGameState(int slot) override;
 
-	/**
+		/**
 	 * Save the game to a given slot
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
+		virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
 
-	/**
+		/**
 	 * Loading method not used for Frotz sub-engine
 	 */
-	virtual Common::Error readSaveData(Common::SeekableReadStream *rs) override { return Common::kReadingFailed; }
+		virtual Common::Error readSaveData(Common::SeekableReadStream *rs) override { return Common::kReadingFailed; }
 
-	/**
+		/**
 	 * Saving method not used for Frotz sub-engine
 	 */
-	virtual Common::Error writeGameData(Common::WriteStream *ws) override { return Common::kWritingFailed; }
+		virtual Common::Error writeGameData(Common::WriteStream *ws) override { return Common::kWritingFailed; }
+	};
 
-};
-
-extern Frotz *g_vm;
+	extern Frotz *g_vm;
 
 } // End of namespace Frotz
 } // End of namespace Glk

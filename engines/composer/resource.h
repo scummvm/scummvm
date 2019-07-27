@@ -20,35 +20,35 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "common/endian.h"
-#include "common/hashmap.h"
 #include "common/file.h"
+#include "common/hashmap.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 
 #ifndef COMPOSER_RESOURCE_H
-#define COMPOSER_RESOURCE_H
+#	define COMPOSER_RESOURCE_H
 
 namespace Composer {
 
 struct Animation;
 
-#define ID_LBRC MKTAG('L','B','R','C') // Main FourCC
+#	define ID_LBRC MKTAG('L', 'B', 'R', 'C') // Main FourCC
 
-#define ID_ACEL MKTAG('A','C','E','L') // Keyboard Accelerator (v1)
-#define ID_AMBI MKTAG('A','M','B','I') // Ambient (v1 sprite button)
-#define ID_ANIM MKTAG('A','N','I','M') // Animation
-#define ID_BMAP MKTAG('B','M','A','P') // Bitmap
-#define ID_BUTN MKTAG('B','U','T','N') // Button
-#define ID_CTBL MKTAG('C','T','B','L') // Color Table
-#define ID_EVNT MKTAG('E','V','N','T') // Event
-#define ID_PIPE MKTAG('P','I','P','E') // Pipe
-#define ID_RAND MKTAG('R','A','N','D') // Random Object
-#define ID_SCRP MKTAG('S','C','R','P') // Script
-#define ID_VARI MKTAG('V','A','R','I') // Variables
-#define ID_WAVE MKTAG('W','A','V','E') // Wave
+#	define ID_ACEL MKTAG('A', 'C', 'E', 'L') // Keyboard Accelerator (v1)
+#	define ID_AMBI MKTAG('A', 'M', 'B', 'I') // Ambient (v1 sprite button)
+#	define ID_ANIM MKTAG('A', 'N', 'I', 'M') // Animation
+#	define ID_BMAP MKTAG('B', 'M', 'A', 'P') // Bitmap
+#	define ID_BUTN MKTAG('B', 'U', 'T', 'N') // Button
+#	define ID_CTBL MKTAG('C', 'T', 'B', 'L') // Color Table
+#	define ID_EVNT MKTAG('E', 'V', 'N', 'T') // Event
+#	define ID_PIPE MKTAG('P', 'I', 'P', 'E') // Pipe
+#	define ID_RAND MKTAG('R', 'A', 'N', 'D') // Random Object
+#	define ID_SCRP MKTAG('S', 'C', 'R', 'P') // Script
+#	define ID_VARI MKTAG('V', 'A', 'R', 'I') // Variables
+#	define ID_WAVE MKTAG('W', 'A', 'V', 'E') // Wave
 
-#define ID_FRME MKTAG('F','R','M','E') // Frame
+#	define ID_FRME MKTAG('F', 'R', 'M', 'E') // Frame
 
 class Archive {
 public:
@@ -89,7 +89,8 @@ protected:
 
 class ComposerArchive : public Archive {
 public:
-	ComposerArchive() : Archive() {}
+	ComposerArchive()
+	  : Archive() {}
 	~ComposerArchive() {}
 
 	bool openStream(Common::SeekableReadStream *stream);
@@ -118,8 +119,11 @@ public:
 	virtual const Common::Array<uint16> *getScripts() { return NULL; }
 	uint16 getPipeId() const { return _pipeId; }
 	virtual uint32 getOffset() const { return _offset; }
-	virtual void setOffset(uint32 offset) { while (_offset < offset) nextFrame(); }
-	typedef Common::HashMap<uint32, Common::List<uint16> > DelMap;
+	virtual void setOffset(uint32 offset) {
+		while (_offset < offset)
+			nextFrame();
+	}
+	typedef Common::HashMap<uint32, Common::List<uint16>> DelMap;
 	DelMap _bufferedResources;
 
 protected:
@@ -140,7 +144,10 @@ public:
 
 	const Common::Array<uint16> *getScripts() { return &_scripts; }
 	uint32 getOffset() const { return _currFrame; }
-	void setOffset(uint32 offset) { while (_currFrame < offset) nextFrame(); }
+	void setOffset(uint32 offset) {
+		while (_currFrame < offset)
+			nextFrame();
+	}
 
 protected:
 	uint32 _currFrame, _numFrames;

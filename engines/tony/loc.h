@@ -29,9 +29,9 @@
 #ifndef TONY_LOC_H
 #define TONY_LOC_H
 
+#include "common/file.h"
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "common/file.h"
 #include "tony/sound.h"
 #include "tony/utils.h"
 
@@ -292,10 +292,10 @@ public:
 
 public:
 	int _left, _top, _right, _bottom; // Vertici bounding boxes
-	int _adj[MAXBOXES];               // List of adjacent bounding boxes
-	int _numHotspot;                  // Hotspot number
-	uint8 _destZ;                     // Z value for the bounding box
-	Hotspot _hotspot[MAXHOTSPOT];     // List of hotspots
+	int _adj[MAXBOXES]; // List of adjacent bounding boxes
+	int _numHotspot; // Hotspot number
+	uint8 _destZ; // Z value for the bounding box
+	Hotspot _hotspot[MAXHOTSPOT]; // List of hotspots
 
 	bool _bActive;
 	bool _bReversed;
@@ -483,16 +483,16 @@ public:
 	Common::String _name; // Name
 
 private:
-	RMColorMode _cmode;      // Color mode
+	RMColorMode _cmode; // Color mode
 	RMGfxSourceBuffer *_buf; // Location picture
 
-	int _nItems;             // Number of objects
-	RMItem *_items;          // Objects
+	int _nItems; // Number of objects
+	RMItem *_items; // Objects
 
-	RMPoint _curScroll;      // Current scroll position
+	RMPoint _curScroll; // Current scroll position
 	RMPoint _fixedScroll;
 
-	RMPoint _prevScroll;     // Previous scroll position
+	RMPoint _prevScroll; // Previous scroll position
 	RMPoint _prevFixedScroll;
 
 public:

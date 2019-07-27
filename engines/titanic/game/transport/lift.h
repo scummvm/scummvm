@@ -36,6 +36,7 @@ class CLift : public CTransport {
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
 	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
 	bool ActMsg(CActMsg *msg);
+
 public:
 	static bool _hasHead;
 	static bool _hasCorrectHead;
@@ -45,9 +46,12 @@ public:
 	static int _elevator4Floor;
 
 	int _liftNum;
+
 public:
 	CLASSDEF;
-	CLift() : CTransport(), _liftNum(1) {}
+	CLift()
+	  : CTransport()
+	  , _liftNum(1) {}
 
 	/**
 	 * Save the data for the class to file

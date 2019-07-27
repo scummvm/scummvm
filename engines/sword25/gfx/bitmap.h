@@ -32,8 +32,8 @@
 #ifndef SWORD25_BITMAP_H
 #define SWORD25_BITMAP_H
 
-#include "sword25/kernel/common.h"
 #include "sword25/gfx/renderobject.h"
+#include "sword25/kernel/common.h"
 
 namespace Sword25 {
 
@@ -42,7 +42,6 @@ protected:
 	Bitmap(RenderObjectPtr<RenderObject> parentPtr, TYPES type, uint handle = 0);
 
 public:
-
 	virtual ~Bitmap();
 
 	/**
@@ -161,24 +160,24 @@ public:
 	    @return Gibt false zurück, falls der Aufruf fehlgeschlagen ist.
 	    @remark Ein Aufruf dieser Methode ist nur erlaubt, wenn IsSetContentAllowed() true zurückgibt.
 	*/
-	virtual bool    setContent(const byte *pixeldata, uint size, uint offset = 0, uint stride = 0) = 0;
+	virtual bool setContent(const byte *pixeldata, uint size, uint offset = 0, uint stride = 0) = 0;
 
-	virtual bool    isScalingAllowed() const = 0;
-	virtual bool    isAlphaAllowed() const = 0;
-	virtual bool    isColorModulationAllowed() const = 0;
-	virtual bool    isSetContentAllowed() const = 0;
+	virtual bool isScalingAllowed() const = 0;
+	virtual bool isAlphaAllowed() const = 0;
+	virtual bool isColorModulationAllowed() const = 0;
+	virtual bool isSetContentAllowed() const = 0;
 
-	virtual bool    persist(OutputPersistenceBlock &writer);
-	virtual bool    unpersist(InputPersistenceBlock &reader);
+	virtual bool persist(OutputPersistenceBlock &writer);
+	virtual bool unpersist(InputPersistenceBlock &reader);
 
 protected:
-	bool  _flipH;
-	bool  _flipV;
+	bool _flipH;
+	bool _flipV;
 	float _scaleFactorX;
 	float _scaleFactorY;
-	uint32  _modulationColor;
-	int32   _originalWidth;
-	int32   _originalHeight;
+	uint32 _modulationColor;
+	int32 _originalWidth;
+	int32 _originalHeight;
 };
 
 } // End of namespace Sword25

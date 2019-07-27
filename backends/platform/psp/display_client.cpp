@@ -34,15 +34,15 @@
 // for the PSP port
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
+#include <pspdisplay.h>
 #include <pspgu.h>
 #include <pspkerneltypes.h>
-#include <pspdisplay.h>
 #include <psputils.h>
 
-#include "common/scummsys.h"
-#include "backends/platform/psp/psppixelformat.h"
 #include "backends/platform/psp/display_client.h"
 #include "backends/platform/psp/display_manager.h"
+#include "backends/platform/psp/psppixelformat.h"
+#include "common/scummsys.h"
 #define PSP_INCLUDE_SWAP
 #include "backends/platform/psp/memory.h"
 
@@ -51,12 +51,11 @@
 #include "backends/platform/psp/trace.h"
 
 #define PSP_BUFFER_WIDTH (512)
-#define	PSP_SCREEN_WIDTH	480
-#define	PSP_SCREEN_HEIGHT	272
+#define PSP_SCREEN_WIDTH 480
+#define PSP_SCREEN_HEIGHT 272
 #define PSP_FRAME_SIZE (PSP_BUFFER_WIDTH * PSP_SCREEN_HEIGHT)
 
 DisplayManager *GuRenderer::_displayManager = 0;
-
 
 // class Palette ------------------------------------------------------------
 //
@@ -87,15 +86,13 @@ void Palette::setColorPositionAlpha(uint32 position, bool alpha) {
 
 	switch (_pixelFormat.bitsPerPixel) {
 	case 16: {
-		uint16 *shortVal = (uint16 *) & _values[_pixelFormat.pixelsToBytes(position)];
-		*shortVal = _pixelFormat.setColorAlpha((uint32) * shortVal, alpha ? 255 : 0);
-	}
-	break;
+		uint16 *shortVal = (uint16 *)&_values[_pixelFormat.pixelsToBytes(position)];
+		*shortVal = _pixelFormat.setColorAlpha((uint32)*shortVal, alpha ? 255 : 0);
+	} break;
 	case 32: {
-		uint32 *wordVal = (uint32 *) & _values[_pixelFormat.pixelsToBytes(position)];
-		*wordVal = _pixelFormat.setColorAlpha((uint32) * wordVal, alpha ? 255 : 0);
-	}
-	break;
+		uint32 *wordVal = (uint32 *)&_values[_pixelFormat.pixelsToBytes(position)];
+		*wordVal = _pixelFormat.setColorAlpha((uint32)*wordVal, alpha ? 255 : 0);
+	} break;
 	default:
 		PSP_ERROR("Incorrect bits per pixel value[%u]\n", _pixelFormat.bitsPerPixel);
 	}
@@ -111,7 +108,7 @@ void Palette::setPartial(const byte *colors, uint32 start, uint32 num, bool supp
 
 	const byte *src = colors;
 
-	if (start + num > _numOfEntries)	// Check boundary
+	if (start + num > _numOfEntries) // Check boundary
 		num = _numOfEntries - start;
 
 	if (_pixelFormat.bitsPerPixel == 16) {
@@ -155,7 +152,7 @@ void Palette::setPixelFormats(PSPPixelFormat::Type paletteType, PSPPixelFormat::
 	case PSPPixelFormat::Type_None:
 		PSP_ERROR("Unhandled bufferType[%u]\n", bufferType);
 		break;
-	default:		// No palette
+	default: // No palette
 		_numOfEntries = 0;
 		break;
 	}
@@ -212,7 +209,7 @@ void Palette::getPartial(byte *colors, uint start, uint num) const {
 
 	uint32 r, g, b, a;
 
-	if (start + num > _numOfEntries)	// Check boundary
+	if (start + num > _numOfEntries) // Check boundary
 		num = _numOfEntries - start;
 
 	if (_pixelFormat.bitsPerPixel == 16) {
@@ -296,22 +293,20 @@ uint32 Palette::getRGBAColorAt(uint32 position) const {
 	uint32 color = getRawColorAt(position);
 	uint32 r, g, b, a;
 	_pixelFormat.colorToRgba(color, r, g, b, a);
-	return (a << 24 | b << 16 | g << 8 |  r);
+	return (a << 24 | b << 16 | g << 8 | r);
 }
 
 // class Buffer ---------------------------------------------------
 
 void Buffer::setPixelFormat(PSPPixelFormat::Type type, bool swapRedBlue) {
-	if (type == PSPPixelFormat::Type_None ||
-	        type == PSPPixelFormat::Type_Unknown)
+	if (type == PSPPixelFormat::Type_None || type == PSPPixelFormat::Type_Unknown)
 		PSP_ERROR("Unhandled buffer format[%u]\n", type);
 
 	_pixelFormat.set(type, swapRedBlue);
 }
 
 bool Buffer::hasPalette() {
-	if (_pixelFormat.format == PSPPixelFormat::Type_Palette_8bit ||
-	        _pixelFormat.format == PSPPixelFormat::Type_Palette_4bit)
+	if (_pixelFormat.format == PSPPixelFormat::Type_Palette_8bit || _pixelFormat.format == PSPPixelFormat::Type_Palette_4bit)
 		return true;
 
 	return false;
@@ -387,7 +382,7 @@ void Buffer::copyToArray(byte *dst, int pitch) {
 	} while (--h);
 }
 
-void Buffer::setSize(uint32 width, uint32 height, HowToSize textureOrSource/*=kSizeByTextureSize*/) {
+void Buffer::setSize(uint32 width, uint32 height, HowToSize textureOrSource /*=kSizeByTextureSize*/) {
 	DEBUG_ENTER_FUNC();
 
 	// We can size the buffer either by texture size (multiple of 2^n) or source size.
@@ -396,14 +391,14 @@ void Buffer::setSize(uint32 width, uint32 height, HowToSize textureOrSource/*=kS
 	_sourceSize.width = width;
 	_sourceSize.height = height;
 
-	_textureSize.width = scaleUpToPowerOfTwo(width);		// can only scale up to 512
+	_textureSize.width = scaleUpToPowerOfTwo(width); // can only scale up to 512
 	_textureSize.height = scaleUpToPowerOfTwo(height);
 
 	if (textureOrSource == kSizeByTextureSize) {
 		_width = _textureSize.width;
 		_height = _textureSize.height;
 	} else { // sizeBySourceSize
-		_width =  _sourceSize.width;
+		_width = _sourceSize.width;
 		_height = _sourceSize.height;
 
 		// adjust allocated width to be divisible by 32.
@@ -430,16 +425,16 @@ uint32 Buffer::scaleUpToPowerOfTwo(uint32 size) {
 	return textureDimension;
 }
 
-bool Buffer::allocate(bool inVram/*=false*/) {
+bool Buffer::allocate(bool inVram /*=false*/) {
 	DEBUG_ENTER_FUNC();
 
 	PSP_DEBUG_PRINT("_width[%u], _height[%u]\n", _width, _height);
 	PSP_DEBUG_PRINT("_pixelFormat: format[%u], bpp[%u]\n", _pixelFormat.format, _pixelFormat.bitsPerPixel);
 
 	if (_pixels) {
-		if (VramAllocator::isAddressInVram(_pixels)) 	// Check if in VRAM
+		if (VramAllocator::isAddressInVram(_pixels)) // Check if in VRAM
 			VramAllocator::instance().deallocate(_pixels);
-		else	// not in VRAM
+		else // not in VRAM
 			free(CACHED(_pixels));
 
 		_pixels = 0;
@@ -451,7 +446,7 @@ bool Buffer::allocate(bool inVram/*=false*/) {
 		_pixels = (byte *)VramAllocator::instance().allocate(size);
 	}
 
-	if (!_pixels) {	// Either we are not in vram or we didn't manage to allocate in vram
+	if (!_pixels) { // Either we are not in vram or we didn't manage to allocate in vram
 		// Align to 64 bytes. All normal buffer sizes are multiples of 64 anyway
 		_pixels = (byte *)memalign(64, size);
 	}
@@ -475,7 +470,7 @@ void Buffer::deallocate() {
 	if (!_pixels)
 		return;
 
-	if (VramAllocator::isAddressInVram(_pixels)) 	// Check if in VRAM
+	if (VramAllocator::isAddressInVram(_pixels)) // Check if in VRAM
 		VramAllocator::instance().deallocate(_pixels);
 	else
 		free(CACHED(_pixels));
@@ -502,7 +497,7 @@ void Buffer::flipNibbles() {
 	uint32 *dest = (uint32 *)_pixels;
 
 	for (uint32 i = 0; i < getSourceHeight(); i++) {
-		for (uint32 j = 0; j < (getWidth() >> 3); j++) {	// /8 because we do it in 32bit chunks
+		for (uint32 j = 0; j < (getWidth() >> 3); j++) { // /8 because we do it in 32bit chunks
 			uint32 val = *dest;
 			*dest++ = ((val >> 4) & 0x0F0F0F0F) | ((val << 4) & 0xF0F0F0F0);
 		}
@@ -521,7 +516,7 @@ void Buffer::print(uint32 mask, uint32 numToPrint /*=0*/) {
 
 	for (unsigned int i = 0; i < _sourceSize.height; i++) {
 		for (unsigned int j = 0; j < _sourceSize.width; j++) {
-			if (numToPrint <= 0)	// check if done
+			if (numToPrint <= 0) // check if done
 				break;
 
 			byte *pcolor = &_pixels[_pixelFormat.pixelsToBytes((i * _width) + j)];
@@ -542,7 +537,6 @@ void Buffer::print(uint32 mask, uint32 numToPrint /*=0*/) {
 //#define __PSP_DEBUG_PRINT__
 
 #include "backends/platform/psp/trace.h"
-
 
 void GuRenderer::render() {
 	DEBUG_ENTER_FUNC();
@@ -574,15 +568,15 @@ void GuRenderer::render() {
 inline void GuRenderer::guProgramDrawBehavior() {
 	DEBUG_ENTER_FUNC();
 	PSP_DEBUG_PRINT("blending[%s] colorTest[%s] reverseAlpha[%s] keyColor[%u]\n",
-		_blending ? "on" : "off", _colorTest ? "on" : "off",
-		_alphaReverse ? "on" : "off", _keyColor);
+	                _blending ? "on" : "off", _colorTest ? "on" : "off",
+	                _alphaReverse ? "on" : "off", _keyColor);
 
 	if (_blending) {
 		sceGuEnable(GU_BLEND);
 
-		if (_alphaReverse)	// Reverse the alpha value (ie. 0 is 1) easier to do in some cases
+		if (_alphaReverse) // Reverse the alpha value (ie. 0 is 1) easier to do in some cases
 			sceGuBlendFunc(GU_ADD, GU_ONE_MINUS_SRC_ALPHA, GU_SRC_ALPHA, 0, 0);
-		else				// Normal alpha values
+		else // Normal alpha values
 			sceGuBlendFunc(GU_ADD, GU_SRC_ALPHA, GU_ONE_MINUS_SRC_ALPHA, 0, 0);
 
 	} else
@@ -590,9 +584,9 @@ inline void GuRenderer::guProgramDrawBehavior() {
 
 	if (_colorTest) {
 		sceGuEnable(GU_COLOR_TEST);
-		sceGuColorFunc(GU_NOTEQUAL, 	// show only colors not equal to this color
-					   _keyColor,
-					   0x00ffffff);		// match everything but alpha
+		sceGuColorFunc(GU_NOTEQUAL, // show only colors not equal to this color
+		               _keyColor,
+		               0x00ffffff); // match everything but alpha
 	} else
 		sceGuDisable(GU_COLOR_TEST);
 }
@@ -607,14 +601,14 @@ inline void GuRenderer::guLoadPalette() {
 	else if (_buffer->getBitsPerPixel() == 8)
 		mask = 0xFF;
 	else
-		assert(0);	/* error */
+		assert(0); /* error */
 
 	PSP_DEBUG_PRINT("numOfEntries[%d]\n", _palette->getNumOfEntries());
 	PSP_DEBUG_PRINT("bpp[%d], pixelformat[%d], mask[%x]\n", _buffer->getBitsPerPixel(), _palette->getPixelFormat(), mask);
 
 	sceGuClutMode(convertToGuPixelFormat(_palette->getPixelFormat()), 0, mask, 0);
-	sceGuClutLoad(_palette->getNumOfEntries() >> 3, 	// it's in batches of 8 for some reason
-				  _palette->getRawValues());
+	sceGuClutLoad(_palette->getNumOfEntries() >> 3, // it's in batches of 8 for some reason
+	              _palette->getRawValues());
 }
 
 inline void GuRenderer::guProgramTextureFormat() {
@@ -667,10 +661,10 @@ inline void GuRenderer::guLoadTexture() {
 		startPoint += _buffer->getWidthInBytes() * _textureLoadOffset.y;
 
 	sceGuTexImage(0,
-				_buffer->getTextureWidth(), 	// texture width (must be power of 2)
-				_buffer->getTextureHeight(), 	// texture height (must be power of 2)
-				_buffer->getWidth(),			// width of a line of the image (to get to the next line)
-				startPoint);					// where to start reading
+	              _buffer->getTextureWidth(), // texture width (must be power of 2)
+	              _buffer->getTextureHeight(), // texture height (must be power of 2)
+	              _buffer->getWidth(), // width of a line of the image (to get to the next line)
+	              startPoint); // where to start reading
 }
 
 inline Vertex *GuRenderer::guGetVertices() {
@@ -691,9 +685,8 @@ void GuRenderer::fillVertices(Vertex *vertices) {
 	// Texture adjustments for eliminating half-pixel artifacts from scaling
 	// Not necessary if we don't scale
 	float textureFix = 0.0f;
-	if (_useGlobalScaler &&
-	        (_displayManager->getScaleX() != 1.0f || _displayManager->getScaleY() != 1.0f))
-			textureFix = 0.5f;
+	if (_useGlobalScaler && (_displayManager->getScaleX() != 1.0f || _displayManager->getScaleY() != 1.0f))
+		textureFix = 0.5f;
 
 	// These coordinates describe an area within the texture. ie. we already loaded a square of texture,
 	// now the coordinates within it are 0 to the edge of the area of the texture we want to draw

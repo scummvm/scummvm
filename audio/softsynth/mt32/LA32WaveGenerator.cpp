@@ -28,7 +28,7 @@ static const Bit32u SINE_SEGMENT_RELATIVE_LENGTH = 1 << 18;
 static const Bit32u MIDDLE_CUTOFF_VALUE = 128 << 18;
 static const Bit32u RESONANCE_DECAY_THRESHOLD_CUTOFF_VALUE = 144 << 18;
 static const Bit32u MAX_CUTOFF_VALUE = 240 << 18;
-static const LogSample SILENCE = {65535, LogSample::POSITIVE};
+static const LogSample SILENCE = { 65535, LogSample::POSITIVE };
 
 Bit16u LA32Utilites::interpolateExp(const Bit16u fract) {
 	Bit16u expTabIndex = fract >> 3;
@@ -134,19 +134,19 @@ void LA32WaveGenerator::advancePosition() {
 void LA32WaveGenerator::generateNextSquareWaveLogSample() {
 	Bit32u logSampleValue;
 	switch (phase) {
-		case POSITIVE_RISING_SINE_SEGMENT:
-		case NEGATIVE_FALLING_SINE_SEGMENT:
-			logSampleValue = Tables::getInstance().logsin9[(squareWavePosition >> 9) & 511];
-			break;
-		case POSITIVE_FALLING_SINE_SEGMENT:
-		case NEGATIVE_RISING_SINE_SEGMENT:
-			logSampleValue = Tables::getInstance().logsin9[~(squareWavePosition >> 9) & 511];
-			break;
-		case POSITIVE_LINEAR_SEGMENT:
-		case NEGATIVE_LINEAR_SEGMENT:
-		default:
-			logSampleValue = 0;
-			break;
+	case POSITIVE_RISING_SINE_SEGMENT:
+	case NEGATIVE_FALLING_SINE_SEGMENT:
+		logSampleValue = Tables::getInstance().logsin9[(squareWavePosition >> 9) & 511];
+		break;
+	case POSITIVE_FALLING_SINE_SEGMENT:
+	case NEGATIVE_RISING_SINE_SEGMENT:
+		logSampleValue = Tables::getInstance().logsin9[~(squareWavePosition >> 9) & 511];
+		break;
+	case POSITIVE_LINEAR_SEGMENT:
+	case NEGATIVE_LINEAR_SEGMENT:
+	default:
+		logSampleValue = 0;
+		break;
 	}
 	logSampleValue <<= 2;
 	logSampleValue += amp >> 10;
@@ -273,7 +273,7 @@ void LA32WaveGenerator::initSynth(const bool useSawtoothWaveform, const Bit8u us
 	active = true;
 }
 
-void LA32WaveGenerator::initPCM(const Bit16s * const usePCMWaveAddress, const Bit32u usePCMWaveLength, const bool usePCMWaveLooped, const bool usePCMWaveInterpolated) {
+void LA32WaveGenerator::initPCM(const Bit16s *const usePCMWaveAddress, const Bit32u usePCMWaveLength, const bool usePCMWaveLooped, const bool usePCMWaveInterpolated) {
 	pcmWaveAddress = usePCMWaveAddress;
 	pcmWaveLength = usePCMWaveLength;
 	pcmWaveLooped = usePCMWaveLooped;

@@ -24,22 +24,22 @@
 #define NEVERHOOD_RESOURCE_H
 
 #include "common/str.h"
-#include "neverhood/neverhood.h"
 #include "neverhood/graphics.h"
-#include "neverhood/staticdata.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/resourceman.h"
+#include "neverhood/staticdata.h"
 
 namespace Neverhood {
 
 enum {
-	kResTypeBitmap		= 2,
-	kResTypePalette		= 3,
-	kResTypeAnimation	= 4,
-	kResTypeData		= 5,
-	kResTypeText		= 6,
-	kResTypeSound		= 7,
-	kResTypeMusic		= 8,
-	kResTypeVideo		= 10
+	kResTypeBitmap = 2,
+	kResTypePalette = 3,
+	kResTypeAnimation = 4,
+	kResTypeData = 5,
+	kResTypeText = 6,
+	kResTypeSound = 7,
+	kResTypeMusic = 8,
+	kResTypeVideo = 10
 };
 
 class SpriteResource {
@@ -49,10 +49,11 @@ public:
 	void draw(Graphics::Surface *destSurface, bool flipX, bool flipY);
 	bool load(uint32 fileHash, bool doLoadPosition = false);
 	void unload();
-	const NDimensions& getDimensions() { return _dimensions; }
-	NPoint& getPosition() { return _position; }
+	const NDimensions &getDimensions() { return _dimensions; }
+	NPoint &getPosition() { return _position; }
 	bool isRle() const { return _rle; }
 	const byte *getPixels() const { return _pixels; }
+
 protected:
 	NeverhoodEngine *_vm;
 	ResourceHandle _resourceHandle;
@@ -70,6 +71,7 @@ public:
 	void unload();
 	void copyPalette(byte *destPalette);
 	const byte *palette() { return _palette; }
+
 protected:
 	NeverhoodEngine *_vm;
 	ResourceHandle _resourceHandle;
@@ -94,11 +96,12 @@ public:
 	void unload();
 	void clear();
 	uint getFrameCount() const { return _frames.size(); }
-	const AnimFrameInfo& getFrameInfo(int16 index) const { return _frames[index]; }
+	const AnimFrameInfo &getFrameInfo(int16 index) const { return _frames[index]; }
 	int16 getFrameIndex(uint32 frameHash);
 	void setReplEnabled(bool value) { _replEnabled = value; }
 	void setRepl(byte oldColor, byte newColor);
 	NDimensions loadSpriteDimensions(uint32 fileHash);
+
 protected:
 	NeverhoodEngine *_vm;
 	ResourceHandle _resourceHandle;
@@ -118,10 +121,11 @@ public:
 	MouseCursorResource(NeverhoodEngine *vm);
 	void load(uint32 fileHash);
 	void unload();
-	NDrawRect& getRect();
+	NDrawRect &getRect();
 	void draw(int frameNum, Graphics::Surface *destSurface);
 	int getCursorNum() const { return _cursorNum; }
 	void setCursorNum(int cursorNum) { _cursorNum = cursorNum; }
+
 protected:
 	int _cursorNum;
 	SpriteResource _cursorSprite;
@@ -136,7 +140,8 @@ public:
 	void load(uint32 fileHash);
 	void unload();
 	const char *getString(uint index, const char *&textEnd);
-	uint getCount() const { return _count;}
+	uint getCount() const { return _count; }
+
 protected:
 	NeverhoodEngine *_vm;
 	ResourceHandle _resourceHandle;
@@ -164,8 +169,8 @@ public:
 	NRectArray *getRectArray(uint32 nameHash);
 	HitRectList *getHitRectList();
 	MessageList *getMessageListAtPos(int16 klaymenX, int16 klaymenY, int16 mouseX, int16 mouseY);
-protected:
 
+protected:
 	struct DRDirectoryItem {
 		uint32 nameHash;
 		uint16 offset;
@@ -189,12 +194,12 @@ protected:
 	ResourceHandle _resourceHandle;
 	Common::Array<DRDirectoryItem> _directory;
 	Common::Array<NPoint> _points;
-	Common::Array<NPointArray*> _pointArrays;
-	Common::Array<NRectArray*> _rectArrays;
-	Common::Array<HitRectList*> _hitRectLists;
-	Common::Array<MessageList*> _messageLists;
+	Common::Array<NPointArray *> _pointArrays;
+	Common::Array<NRectArray *> _rectArrays;
+	Common::Array<HitRectList *> _hitRectLists;
+	Common::Array<MessageList *> _messageLists;
 	Common::Array<DRRect> _drRects;
-	Common::Array<DRSubRectList*> _drSubRectLists;
+	Common::Array<DRSubRectList *> _drSubRectLists;
 	DataResource::DRDirectoryItem *findDRDirectoryItem(uint32 nameHash, uint16 type);
 };
 

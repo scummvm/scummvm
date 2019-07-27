@@ -20,11 +20,10 @@
  *
  */
 
-
 #include "common/debug.h"
-#include "common/textconsole.h"
 #include "common/endian.h"
 #include "common/file.h"
+#include "common/textconsole.h"
 
 #include "sky/disk.h"
 #include "sky/sky.h"
@@ -207,7 +206,7 @@ void Disk::fnCacheChip(uint16 *fList) {
 	do {
 		_buildList[cnt + fCnt] = fList[fCnt] & 0x7FFFU;
 		fCnt++;
-	} while (fList[fCnt-1]);
+	} while (fList[fCnt - 1]);
 	fnCacheFiles();
 }
 
@@ -217,7 +216,7 @@ void Disk::fnCacheFast(uint16 *fList) {
 		do {
 			_buildList[cnt] = fList[cnt] & 0x7FFFU;
 			cnt++;
-		} while (fList[cnt-1]);
+		} while (fList[cnt - 1]);
 	}
 }
 
@@ -266,9 +265,9 @@ void Disk::fnCacheFiles() {
 		_loadedFilesList[targCnt] = _buildList[bCnt] & 0x7FFFU;
 		targCnt++;
 		_loadedFilesList[targCnt] = 0;
-		SkyEngine::_itemList[_buildList[bCnt] & 2047] = (void**)loadFile(_buildList[bCnt] & 0x7FFF);
+		SkyEngine::_itemList[_buildList[bCnt] & 2047] = (void **)loadFile(_buildList[bCnt] & 0x7FFF);
 		if (!SkyEngine::_itemList[_buildList[bCnt] & 2047])
-			warning("fnCacheFiles: Disk::loadFile() returned NULL for file %d",_buildList[bCnt] & 0x7FFF);
+			warning("fnCacheFiles: Disk::loadFile() returned NULL for file %d", _buildList[bCnt] & 0x7FFF);
 		bCnt++;
 	}
 	_buildList[0] = 0;
@@ -285,7 +284,7 @@ void Disk::refreshFilesList(uint32 *list) {
 	cnt = 0;
 	while (list[cnt]) {
 		_loadedFilesList[cnt] = list[cnt];
-		SkyEngine::_itemList[_loadedFilesList[cnt] & 2047] = (void**)loadFile((uint16)(_loadedFilesList[cnt] & 0x7FFF));
+		SkyEngine::_itemList[_loadedFilesList[cnt] & 2047] = (void **)loadFile((uint16)(_loadedFilesList[cnt] & 0x7FFF));
 		cnt++;
 	}
 	_loadedFilesList[cnt] = 0;
@@ -300,7 +299,7 @@ void Disk::fnMiniLoad(uint16 fileNum) {
 	}
 	_loadedFilesList[cnt] = fileNum & 0x7FFFU;
 	_loadedFilesList[cnt + 1] = 0;
-	SkyEngine::_itemList[fileNum & 2047] = (void**)loadFile(fileNum);
+	SkyEngine::_itemList[fileNum & 2047] = (void **)loadFile(fileNum);
 }
 
 void Disk::fnFlushBuffers() {
@@ -317,7 +316,7 @@ void Disk::fnFlushBuffers() {
 void Disk::dumpFile(uint16 fileNr) {
 	char buf[128];
 	Common::DumpFile out;
-	byte* filePtr;
+	byte *filePtr;
 
 	filePtr = loadFile(fileNr);
 	sprintf(buf, "dumps/file-%d.dmp", fileNr);

@@ -28,9 +28,9 @@
 #include "common/hash-str.h"
 
 #include "director/director.h"
-#include "director/score.h"
 #include "director/lingo/lingo-gr.h"
 #include "director/lingo/lingo-the.h"
+#include "director/score.h"
 
 namespace Director {
 
@@ -74,8 +74,8 @@ enum LEvent {
 };
 
 typedef void (*inst)(void);
-#define	STOP (inst)0
-#define ENTITY_INDEX(t,id) ((t) * 100000 + (id))
+#define STOP (inst)0
+#define ENTITY_INDEX(t, id) ((t)*100000 + (id))
 
 typedef Common::Array<inst> ScriptData;
 typedef Common::Array<double> FloatArray;
@@ -84,47 +84,62 @@ struct FuncDesc {
 	Common::String name;
 	const char *proto;
 
-	FuncDesc(Common::String n, const char *p) { name = n; proto = p; }
+	FuncDesc(Common::String n, const char *p) {
+		name = n;
+		proto = p;
+	}
 };
 
 typedef Common::HashMap<void *, FuncDesc *> FuncHash;
 
-struct Symbol {	/* symbol table entry */
+struct Symbol { /* symbol table entry */
 	Common::String name;
 	int type;
 	union {
-		int		i;			/* VAR */
-		double	f;			/* FLOAT */
-		ScriptData	*defn;	/* FUNCTION, PROCEDURE */
-		void (*func)();		/* OPCODE */
-		void (*bltin)(int);	/* BUILTIN */
-		Common::String	*s;	/* STRING */
-		FloatArray *arr;	/* ARRAY, POINT, RECT */
+		int i; /* VAR */
+		double f; /* FLOAT */
+		ScriptData *defn; /* FUNCTION, PROCEDURE */
+		void (*func)(); /* OPCODE */
+		void (*bltin)(int); /* BUILTIN */
+		Common::String *s; /* STRING */
+		FloatArray *arr; /* ARRAY, POINT, RECT */
 	} u;
-	int nargs;		/* number of arguments */
-	int maxArgs;	/* maximal number of arguments, for builtins */
-	bool parens;	/* whether parens required or not, for builitins */
+	int nargs; /* number of arguments */
+	int maxArgs; /* maximal number of arguments, for builtins */
+	bool parens; /* whether parens required or not, for builitins */
 
 	bool global;
 
 	Symbol();
 };
 
-struct Datum {	/* interpreter stack type */
+struct Datum { /* interpreter stack type */
 	int type;
 
 	union {
-		int	i;
+		int i;
 		double f;
 		Common::String *s;
-		Symbol	*sym;
-		FloatArray *arr;	/* ARRAY, POINT, RECT */
+		Symbol *sym;
+		FloatArray *arr; /* ARRAY, POINT, RECT */
 	} u;
 
-	Datum() { u.sym = NULL; type = VOID; }
-	Datum(int val) { u.i = val; type = INT; }
-	Datum(double val) { u.f = val; type = FLOAT; }
-	Datum(Common::String *val) { u.s = val; type = STRING; }
+	Datum() {
+		u.sym = NULL;
+		type = VOID;
+	}
+	Datum(int val) {
+		u.i = val;
+		type = INT;
+	}
+	Datum(double val) {
+		u.f = val;
+		type = FLOAT;
+	}
+	Datum(Common::String *val) {
+		u.s = val;
+		type = STRING;
+	}
 
 	double toFloat();
 	int toInt();
@@ -137,7 +152,9 @@ struct Builtin {
 	void (*func)(void);
 	int nargs;
 
-	Builtin(void (*func1)(void), int nargs1) : func(func1), nargs(nargs1) {}
+	Builtin(void (*func1)(void), int nargs1)
+	  : func(func1)
+	  , nargs(nargs1) {}
 };
 
 typedef Common::HashMap<int32, ScriptData *> ScriptHash;
@@ -148,10 +165,10 @@ typedef Common::HashMap<Common::String, Builtin *, Common::IgnoreCase_Hash, Comm
 typedef Common::HashMap<Common::String, TheEntity *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityHash;
 typedef Common::HashMap<Common::String, TheEntityField *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityFieldHash;
 
-struct CFrame {	/* proc/func call stack frame */
-	Symbol	*sp;	/* symbol table entry */
-	int		retpc;	/* where to resume after return */
-	ScriptData	*retscript;	 /* which script to resume after return */
+struct CFrame { /* proc/func call stack frame */
+	Symbol *sp; /* symbol table entry */
+	int retpc; /* where to resume after return */
+	ScriptData *retscript; /* which script to resume after return */
 	SymbolHash *localvars;
 };
 
@@ -186,6 +203,7 @@ private:
 	void runMovieScript(LEvent event);
 	void processSpriteEvent(LEvent event);
 	void processEvent(LEvent event, ScriptType st, int entityId);
+
 public:
 	ScriptType event2script(LEvent ev);
 	Symbol *getHandler(Common::String &name);
@@ -203,9 +221,21 @@ public:
 
 	int alignTypes(Datum &d1, Datum &d2);
 
-	int code1(inst code) { _currentScript->push_back(code); return _currentScript->size() - 1; }
-	int code2(inst code_1, inst code_2) { int o = code1(code_1); code1(code_2); return o; }
-	int code3(inst code_1, inst code_2, inst code_3) { int o = code1(code_1); code1(code_2); code1(code_3); return o; }
+	int code1(inst code) {
+		_currentScript->push_back(code);
+		return _currentScript->size() - 1;
+	}
+	int code2(inst code_1, inst code_2) {
+		int o = code1(code_1);
+		code1(code_2);
+		return o;
+	}
+	int code3(inst code_1, inst code_2, inst code_3) {
+		int o = code1(code_1);
+		code1(code_2);
+		code1(code_3);
+		return o;
+	}
 	int codeString(const char *s);
 	void codeLabel(int label);
 	int codeConst(int val);

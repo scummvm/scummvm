@@ -36,7 +36,7 @@ namespace Alan2 {
 
 #define PROGNAME "alan2"
 
-extern void args(int argc, char *argv[]);
+	extern void args(int argc, char *argv[]);
 
 } // End of namespace Alan2
 } // End of namespace Glk

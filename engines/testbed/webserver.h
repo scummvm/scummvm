@@ -29,16 +29,16 @@ namespace Testbed {
 
 namespace WebserverTests {
 
-// Helper functions for Webserver tests
+	// Helper functions for Webserver tests
 
-bool startServer();
-TestExitStatus testIP();
-TestExitStatus testIndexPage();
-TestExitStatus testFilesPageInvalidParameterValue();
-TestExitStatus testFilesPageCreateDirectory();
-TestExitStatus testFilesPageUploadFile();
-TestExitStatus testFilesPageUploadDirectory();
-TestExitStatus testFilesPageDownloadFile();
+	bool startServer();
+	TestExitStatus testIP();
+	TestExitStatus testIndexPage();
+	TestExitStatus testFilesPageInvalidParameterValue();
+	TestExitStatus testFilesPageCreateDirectory();
+	TestExitStatus testFilesPageUploadFile();
+	TestExitStatus testFilesPageUploadDirectory();
+	TestExitStatus testFilesPageDownloadFile();
 
 } // End of namespace WebserverTests
 
@@ -61,7 +61,6 @@ public:
 	const char *getDescription() const {
 		return "Webserver tests";
 	}
-
 };
 
 } // End of namespace Testbed

@@ -32,9 +32,11 @@ class CToggleSwitch : public CGameObject {
 	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 	bool ChildDragStartMsg(CChildDragStartMsg *msg);
 	bool ChildDragMoveMsg(CChildDragMoveMsg *msg);
+
 protected:
 	bool _pressed;
 	Point _pos1;
+
 public:
 	CLASSDEF;
 	CToggleSwitch();

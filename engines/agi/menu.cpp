@@ -20,11 +20,11 @@
  *
  */
 
+#include "agi/menu.h"
 #include "agi/agi.h"
 #include "agi/graphics.h"
-#include "agi/text.h"
 #include "agi/keyboard.h"
-#include "agi/menu.h"
+#include "agi/text.h"
 
 namespace Agi {
 
@@ -427,10 +427,10 @@ void GfxMenu::drawMenu(int16 selectedMenuNr, int16 selectedMenuItemNr) {
 
 	// calculate active menu dimensions
 	_drawnMenuHeight = (menuEntry->itemCount + 2) * FONT_VISUAL_HEIGHT;
-	_drawnMenuWidth  = (menuEntry->maxItemTextLen * FONT_VISUAL_WIDTH) + 8;
-	_drawnMenuY      = (1 - _text->getWindowRowMin()) * FONT_VISUAL_HEIGHT;
+	_drawnMenuWidth = (menuEntry->maxItemTextLen * FONT_VISUAL_WIDTH) + 8;
+	_drawnMenuY = (1 - _text->getWindowRowMin()) * FONT_VISUAL_HEIGHT;
 	//(menuEntry->itemCount + 3 - _text->getWindowRowMin()) * FONT_VISUAL_HEIGHT - 1;
-	_drawnMenuX      = (itemEntry->column - 1) * FONT_VISUAL_WIDTH;
+	_drawnMenuX = (itemEntry->column - 1) * FONT_VISUAL_WIDTH;
 
 	_gfx->drawBox(_drawnMenuX, _drawnMenuY, _drawnMenuWidth, _drawnMenuHeight, 15, 0);
 

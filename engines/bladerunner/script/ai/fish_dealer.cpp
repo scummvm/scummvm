@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptFishDealer::AIScriptFishDealer(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptFishDealer::AIScriptFishDealer(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 	_flag = false;
 }
 
@@ -43,16 +44,14 @@ void AIScriptFishDealer::Initialize() {
 bool AIScriptFishDealer::Update() {
 #if BLADERUNNER_ORIGINAL_BUGS
 	if (Global_Variable_Query(kVariableChapter) == 5
-	 && Actor_Query_Goal_Number(kActorFishDealer) < 400
-	) {
+	    && Actor_Query_Goal_Number(kActorFishDealer) < 400) {
 		Actor_Set_Goal_Number(kActorFishDealer, 400);
 		return true;
 
 	} else if (Player_Query_Current_Scene() == kSceneAR01
-	        && Actor_Query_Goal_Number(kActorFishDealer) != 1
-	        && Actor_Query_Goal_Number(kActorFishDealer) != 2
-	        && Actor_Query_Goal_Number(kActorFishDealer) != 400
-	) {
+	           && Actor_Query_Goal_Number(kActorFishDealer) != 1
+	           && Actor_Query_Goal_Number(kActorFishDealer) != 2
+	           && Actor_Query_Goal_Number(kActorFishDealer) != 400) {
 		Actor_Set_Goal_Number(kActorFishDealer, 1);
 		return true;
 	}
@@ -61,8 +60,7 @@ bool AIScriptFishDealer::Update() {
 	if (Global_Variable_Query(kVariableChapter) < 5) {
 		// prevent Fish Dealer from blinking out while McCoy is flying out from Animoid
 		if (Player_Query_Current_Scene() == kSceneAR01
-		 && Actor_Query_Goal_Number(kActorFishDealer) == 3
-		) {
+		    && Actor_Query_Goal_Number(kActorFishDealer) == 3) {
 			Actor_Set_Goal_Number(kActorFishDealer, 1);
 			return true;
 		}
@@ -314,17 +312,17 @@ bool AIScriptFishDealer::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptFishDealer::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptFishDealer::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptFishDealer::ReachedMovementTrackWaypoint(int waypointId) {

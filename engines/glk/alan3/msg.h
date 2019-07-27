@@ -25,31 +25,29 @@
 
 #include "glk/alan3/acode.h"
 #include "glk/alan3/jumps.h"
-#include "glk/alan3/types.h"
 #include "glk/alan3/params.h"
+#include "glk/alan3/types.h"
 
 namespace Glk {
 namespace Alan3 {
 
-/* TYPES */
-typedef struct MessageEntry {   /* MESSAGE TABLE */
-	Aaddr stms;           /* Address to statements*/
-} MessageEntry;
+	/* TYPES */
+	typedef struct MessageEntry { /* MESSAGE TABLE */
+		Aaddr stms; /* Address to statements*/
+	} MessageEntry;
 
+	/* DATA */
+	extern MessageEntry *msgs; /* Message table pointer */
 
-/* DATA */
-extern MessageEntry *msgs;  /* Message table pointer */
-
-
-/* FUNCTIONS */
-extern void setErrorHandler(void (*handler)(MsgKind));
-extern void abortPlayerCommand(CONTEXT);
-extern void error(CONTEXT, MsgKind msg);
-extern bool confirm(CONTEXT, MsgKind msgno);
-extern void printMessage(MsgKind msg);
-extern void printMessageWithParameters(MsgKind msg, Parameter *messageParameters);
-extern void printMessageWithInstanceParameter(MsgKind message, int i);
-extern void printMessageUsing2InstanceParameters(MsgKind message, int instance1, int instance2);
+	/* FUNCTIONS */
+	extern void setErrorHandler(void (*handler)(MsgKind));
+	extern void abortPlayerCommand(CONTEXT);
+	extern void error(CONTEXT, MsgKind msg);
+	extern bool confirm(CONTEXT, MsgKind msgno);
+	extern void printMessage(MsgKind msg);
+	extern void printMessageWithParameters(MsgKind msg, Parameter *messageParameters);
+	extern void printMessageWithInstanceParameter(MsgKind message, int i);
+	extern void printMessageUsing2InstanceParameters(MsgKind message, int instance1, int instance2);
 
 } // End of namespace Alan3
 } // End of namespace Glk

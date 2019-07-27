@@ -20,11 +20,12 @@
  *
  */
 
-#include "cryo/cryo.h"
 #include "cryo/video.h"
+#include "cryo/cryo.h"
 
 namespace Cryo {
-HnmPlayer::HnmPlayer(CryoEngine *vm) : _vm(vm) {
+HnmPlayer::HnmPlayer(CryoEngine *vm)
+  : _vm(vm) {
 	_soundStarted = false;
 	_pendingSounds = 0;
 	_timeDrift = 0.0;
@@ -102,7 +103,8 @@ void HnmPlayer::waitLoop() {
 	_nextFrameTime = _expectedFrameTime - _timeDrift;
 	if (_useSoundSync && _vm->_timerTicks > 1000.0 + _nextFrameTime)
 		_useSound = false;
-	while (_vm->_timerTicks < _nextFrameTime) {} // waste time
+	while (_vm->_timerTicks < _nextFrameTime) {
+	} // waste time
 	_timeDrift = _vm->_timerTicks - _nextFrameTime;
 }
 
@@ -120,7 +122,7 @@ void HnmPlayer::setupSound(unsigned int rate, bool stereo, bool is16bits) {
 void HnmPlayer::closeSound() {
 	if (_soundChannel) {
 		_soundChannel->stop();
-		delete(_soundChannel);
+		delete (_soundChannel);
 		_soundChannel = nullptr;
 	}
 }
@@ -165,14 +167,14 @@ void HnmPlayer::readHeader() {
 
 // Original name: CLHNM_GetVersion
 int16 HnmPlayer::getVersion() {
-	if (_header._signature == MKTAG('H','N','M','4'))
+	if (_header._signature == MKTAG('H', 'N', 'M', '4'))
 		return 4;
 	return -1;
 }
 
 // Original name: CLHNM_AllocMemory
 void HnmPlayer::allocMemory() {
-// TODO: rework this code
+	// TODO: rework this code
 	_tmpBuffer[0] = (byte *)malloc(_header._bufferSize + 2);
 
 	if (!_tmpBuffer[0])
@@ -226,7 +228,7 @@ bool HnmPlayer::loadFrame() {
 	tryRead(4);
 	int chunk = *(int *)_readBuffer;
 	chunk = LE32(chunk);
-	chunk &= 0xFFFFFF;  // upper bit - keyframe mark?
+	chunk &= 0xFFFFFF; // upper bit - keyframe mark?
 	if (!chunk)
 		return false;
 
@@ -247,7 +249,7 @@ void HnmPlayer::decompLempelZiv(byte *buffer, byte *output) {
 	int qpos = -1;
 
 	//TODO: fix for BE
-#define GetBit() ( 1 & ( (qpos >= 0) ? (queue >> qpos--) : (queue = *(unsigned int*)((inp += 4) - 4)) >> ((qpos = 30) + 1) ) )
+#define GetBit() (1 & ((qpos >= 0) ? (queue >> qpos--) : (queue = *(unsigned int *)((inp += 4) - 4)) >> ((qpos = 30) + 1)))
 
 	for (;;) {
 		if (GetBit()) {
@@ -322,7 +324,7 @@ void HnmPlayer::desentrelace() {
 
 // Original name: CLHNM_DecompUBA
 void HnmPlayer::decompUBA(byte *output, byte *curr_buffer, byte *prev_buffer, byte *input, int width, char flags) {
-	 //	return;
+	//	return;
 	byte *out_start = output;
 	byte count;
 	unsigned int code;
@@ -384,7 +386,7 @@ void HnmPlayer::decompUBA(byte *output, byte *curr_buffer, byte *prev_buffer, by
 						*(output++) = color;
 					}
 					break;
-					}
+				}
 				default:
 					return;
 				}
@@ -467,7 +469,7 @@ bool HnmPlayer::nextElement() {
 				memcpy(_oldFrameBuffer, _newFrameBuffer, _header._width * _header._height);
 			}
 #else
-			memcpy(_oldFrameBuffer, _newFrameBuffer, _header._bufferSize);  //TODO strange buffer size here
+			memcpy(_oldFrameBuffer, _newFrameBuffer, _header._bufferSize); //TODO strange buffer size here
 #endif
 			if (!(h6 & 1))
 				desentrelace();
@@ -475,7 +477,7 @@ bool HnmPlayer::nextElement() {
 				//				if(_header._width == 640)
 				//					CLBlitter_RawCopy640(_newFrameBuffer, finalBuffer, _header._height);
 				//				else
-				memcpy(_finalBuffer, _newFrameBuffer, _header._height);   //TODO: wrong size?
+				memcpy(_finalBuffer, _newFrameBuffer, _header._height); //TODO: wrong size?
 			}
 
 			if (!_soundStarted) {
@@ -613,5 +615,4 @@ void HnmPlayer::selectBuffers() {
 	}
 }
 
-}   // namespace Cryo
-
+} // namespace Cryo

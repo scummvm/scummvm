@@ -24,7 +24,8 @@
 
 namespace Titanic {
 
-CGameObjectDescItem::CGameObjectDescItem(): CTreeItem() {
+CGameObjectDescItem::CGameObjectDescItem()
+  : CTreeItem() {
 }
 
 void CGameObjectDescItem::save(SimpleFile *file, int indent) {

@@ -38,8 +38,10 @@ class CExitPellerator : public CGameObject {
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
 	bool ChangeSeasonMsg(CChangeSeasonMsg *msg);
+
 private:
 	static CExitPelleratorStatics *_statics;
+
 public:
 	CLASSDEF;
 	static void init();

@@ -81,7 +81,6 @@ public:
 	void handleEvents();
 
 protected:
-
 	struct Item {
 		bool enabled;
 		Common::Rect rect;
@@ -96,9 +95,11 @@ protected:
 		int _slotNum;
 		Common::String _description;
 		SavegameItem()
-			: _slotNum(-1), _description("") {}
+		  : _slotNum(-1)
+		  , _description("") {}
 		SavegameItem(int slotNum, Common::String description)
-			: _slotNum(slotNum), _description(description) {}
+		  : _slotNum(slotNum)
+		  , _description(description) {}
 	};
 
 	ToltecsEngine *_vm;
@@ -122,7 +123,7 @@ protected:
 	void drawItem(ItemID itemID, bool active);
 	void handleMouseMove(int x, int y);
 	void handleMouseClick(int x, int y);
-	void handleKeyDown(const Common::KeyState& kbd);
+	void handleKeyDown(const Common::KeyState &kbd);
 
 	ItemID findItemAt(int x, int y);
 	Item *getItem(ItemID id);
@@ -151,7 +152,6 @@ protected:
 	void setCfgVoices(bool value, bool active);
 	void drawVolumeBar(ItemID itemID);
 	void changeVolumeBar(ItemID itemID, int delta);
-
 };
 
 } // End of namespace Toltecs

@@ -8,9 +8,9 @@
 #ifndef _CD_H_
 #define _CD_H_
 
-#define CDVD_INIT_WAIT   0
+#define CDVD_INIT_WAIT 0
 #define CDVD_INIT_NOWAIT 1
-#define CDVD_EXIT        5
+#define CDVD_EXIT 5
 
 #ifdef __cplusplus
 extern "C" {

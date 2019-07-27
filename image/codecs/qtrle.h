@@ -42,7 +42,10 @@ public:
 	Graphics::PixelFormat getPixelFormat() const;
 
 	bool containsPalette() const { return _ditherPalette != 0; }
-	const byte *getPalette() { _dirtyPalette = false; return _ditherPalette; }
+	const byte *getPalette() {
+		_dirtyPalette = false;
+		return _ditherPalette;
+	}
 	bool hasDirtyPalette() const { return _dirtyPalette; }
 	bool canDither(DitherType type) const;
 	void setDither(DitherType type, const byte *palette);

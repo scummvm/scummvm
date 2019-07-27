@@ -22,22 +22,22 @@
 
 #ifdef ENABLE_HE
 
-#include "scumm/players/player_he.h"
-#include "scumm/scumm.h"
-#include "scumm/file.h"
-#include "audio/miles.h"
-#include "audio/midiparser.h"
-#include "audio/mixer.h"
-#include "common/memstream.h"
+#	include "scumm/players/player_he.h"
+#	include "audio/midiparser.h"
+#	include "audio/miles.h"
+#	include "audio/mixer.h"
+#	include "common/memstream.h"
+#	include "scumm/file.h"
+#	include "scumm/scumm.h"
 
 namespace Scumm {
-Player_HE::Player_HE(ScummEngine *scumm) :
-	_vm(scumm),
-	_currentMusic(-1),
-	_bank(NULL),
-	_parser(NULL),
-	_midi(NULL),
-	_masterVolume(256) {
+Player_HE::Player_HE(ScummEngine *scumm)
+  : _vm(scumm)
+  , _currentMusic(-1)
+  , _bank(NULL)
+  , _parser(NULL)
+  , _midi(NULL)
+  , _masterVolume(256) {
 
 	for (int chan = 0; chan < 16; chan++)
 		_channelVolume[chan] = 127;
@@ -183,7 +183,7 @@ void Player_HE::loadAdLibBank() {
 			error("Player_HE::loadAdLibBank(): unknown entry format");
 
 		if (entryName == bankName) {
-			_bank = (byte*)malloc(fileSize);
+			_bank = (byte *)malloc(fileSize);
 			file.read(_bank, fileSize);
 			_bankSize = fileSize;
 			return;

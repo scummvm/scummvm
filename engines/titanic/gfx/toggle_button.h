@@ -29,11 +29,15 @@ namespace Titanic {
 
 class CToggleButton : public CBackground {
 	DECLARE_MESSAGE_MAP;
+
 protected:
 	int _fieldE0;
+
 public:
 	CLASSDEF;
-	CToggleButton() : CBackground(), _fieldE0(1) {}
+	CToggleButton()
+	  : CBackground()
+	  , _fieldE0(1) {}
 
 	/**
 	 * Save the data for the class to file

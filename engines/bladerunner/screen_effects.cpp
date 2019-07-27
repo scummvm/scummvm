@@ -65,7 +65,7 @@ void ScreenEffects::toggleEntry(int effectId, bool skip) {
 				}
 			}
 			_skipEntries.insert_at(newSlot, effectId);
-		} else if (!skip && foundAt >= 0 ) {
+		} else if (!skip && foundAt >= 0) {
 			_skipEntries.remove_at(foundAt);
 		}
 	} else if (effectId == -1 && !skip) {
@@ -76,7 +76,7 @@ void ScreenEffects::toggleEntry(int effectId, bool skip) {
 
 void ScreenEffects::readVqa(Common::SeekableReadStream *stream) {
 	uint8 *dataPtr = _data;
-	int dataSize   = _dataSize;
+	int dataSize = _dataSize;
 
 	int entryCount = stream->readUint32LE();
 
@@ -90,11 +90,11 @@ void ScreenEffects::readVqa(Common::SeekableReadStream *stream) {
 	for (Common::Array<Entry>::iterator entry = _entries.begin(); entry != _entries.end(); ++entry) {
 		stream->read(&entry->palette, sizeof(Color256) * 16);
 
-		entry->x      = stream->readUint16LE();
-		entry->y      = stream->readUint16LE();
-		entry->width  = stream->readUint16LE();
+		entry->x = stream->readUint16LE();
+		entry->y = stream->readUint16LE();
+		entry->width = stream->readUint16LE();
 		entry->height = stream->readUint16LE();
-		entry->z      = stream->readUint16LE();
+		entry->z = stream->readUint16LE();
 
 		int entryDataSize = stream->readUint16LE();
 
@@ -116,14 +116,14 @@ void ScreenEffects::readVqa(Common::SeekableReadStream *stream) {
 			if (count & 0x80) { // repeat same data
 				uint8 colors = stream->readByte();
 				for (uint8 j = 0; j < (count & 0x7F) + 1; j++) {
-					*(dataPtr++) = colors >> 4;  // upper 4 bit
+					*(dataPtr++) = colors >> 4; // upper 4 bit
 					*(dataPtr++) = colors & 0xF; // lower 4 bit
 					pixelCount -= 2;
 				}
 			} else { // copy data
 				for (uint8 j = 0; j < count + 1; j++) {
 					uint8 colors = stream->readByte();
-					*(dataPtr++) = colors >> 4;  // upper 4 bit
+					*(dataPtr++) = colors >> 4; // upper 4 bit
 					*(dataPtr++) = colors & 0xF; // lower 4 bit
 					pixelCount -= 2;
 				}

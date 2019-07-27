@@ -23,11 +23,11 @@
 #ifndef MUTATIONOFJB_SCRIPT_H
 #define MUTATIONOFJB_SCRIPT_H
 
-#include "mutationofjb/commands/command.h"
 #include "common/array.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/stack.h"
+#include "mutationofjb/commands/command.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -106,7 +106,10 @@ private:
 
 class ScriptExecutionContext {
 public:
-	ScriptExecutionContext(Game &game, Script *localScriptOverride = nullptr) : _game(game), _activeCommand(nullptr), _localScriptOverride(localScriptOverride) {}
+	ScriptExecutionContext(Game &game, Script *localScriptOverride = nullptr)
+	  : _game(game)
+	  , _activeCommand(nullptr)
+	  , _localScriptOverride(localScriptOverride) {}
 	void clear();
 
 	Command::ExecuteResult runActiveCommand();

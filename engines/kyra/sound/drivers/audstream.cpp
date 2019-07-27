@@ -20,8 +20,8 @@
  *
  */
 
-#include "kyra/resource/resource.h"
 #include "audio/audiostream.h"
+#include "kyra/resource/resource.h"
 
 #include "common/util.h"
 
@@ -34,20 +34,21 @@ namespace Kyra {
 
 class AUDStream : public Audio::SeekableAudioStream {
 public:
-	AUDStream(Common::SeekableReadStream* stream);
+	AUDStream(Common::SeekableReadStream *stream);
 	~AUDStream();
 
-	int readBuffer(int16* buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples);
 
 	bool isStereo() const { return false; }
 	bool endOfData() const { return _endOfData; }
 
 	int getRate() const { return _rate; }
 
-	bool seek(const Audio::Timestamp& where);
+	bool seek(const Audio::Timestamp &where);
 	Audio::Timestamp getLength() const { return _length; }
+
 private:
-	Common::SeekableReadStream* _stream;
+	Common::SeekableReadStream *_stream;
 	uint32 _streamStart;
 	bool _endOfData;
 	int _rate;
@@ -57,14 +58,14 @@ private:
 
 	int _bytesLeft;
 
-	byte* _outBuffer;
+	byte *_outBuffer;
 	int _outBufferOffset;
 	uint _outBufferSize;
 
-	byte* _inBuffer;
+	byte *_inBuffer;
 	uint _inBufferSize;
 
-	int readChunk(int16* buffer, const int maxSamples);
+	int readChunk(int16 *buffer, const int maxSamples);
 
 	static const int8 WSTable2Bit[];
 	static const int8 WSTable4Bit[];
@@ -73,19 +74,29 @@ private:
 const int8 AUDStream::WSTable2Bit[] = { -2, -1, 0, 1 };
 const int8 AUDStream::WSTable4Bit[] = {
 	-9, -8, -6, -5, -4, -3, -2, -1,
-	 0,  1,  2,  3,  4,  5,  6,  8
+	0, 1, 2, 3, 4, 5, 6, 8
 };
 
-AUDStream::AUDStream(Common::SeekableReadStream *stream) : _stream(stream), _endOfData(true), _rate(0),
-	_processedSize(0), _totalSize(0), _length(0, 1), _bytesLeft(0), _outBuffer(0),
-	_outBufferOffset(0), _outBufferSize(0), _inBuffer(0), _inBufferSize(0) {
+AUDStream::AUDStream(Common::SeekableReadStream *stream)
+  : _stream(stream)
+  , _endOfData(true)
+  , _rate(0)
+  , _processedSize(0)
+  , _totalSize(0)
+  , _length(0, 1)
+  , _bytesLeft(0)
+  , _outBuffer(0)
+  , _outBufferOffset(0)
+  , _outBufferSize(0)
+  , _inBuffer(0)
+  , _inBufferSize(0) {
 
 	_rate = _stream->readUint16LE();
 	_totalSize = _stream->readUint32LE();
 
 	// TODO?: add checks
-	int flags = _stream->readByte();	// flags
-	int type = _stream->readByte();	// type
+	int flags = _stream->readByte(); // flags
+	int type = _stream->readByte(); // type
 
 	_streamStart = stream->pos();
 
@@ -313,7 +324,7 @@ bool AUDStream::seek(const Audio::Timestamp &where) {
 	return (curSample == seekSample);
 }
 
-Audio::SeekableAudioStream* makeAUDStream(Common::SeekableReadStream* stream, DisposeAfterUse::Flag disposeAfterUse) {
+Audio::SeekableAudioStream *makeAUDStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
 	return new AUDStream(stream);
 }
 

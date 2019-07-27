@@ -63,7 +63,7 @@ public:
 	};
 
 	struct PaletteRange {
-		int16  timer, step, flags;
+		int16 timer, step, flags;
 		byte first, last;
 	};
 
@@ -103,8 +103,8 @@ public:
 	* NOTE: this property must be reset manually, and is not reset by a call to destroy().
 	*/
 	void setPixelPacking(const bool pixelPacking) { _pixelPacking = pixelPacking; }
-private:
 
+private:
 	Header _header;
 	Graphics::Surface *_surface;
 	byte *_palette;

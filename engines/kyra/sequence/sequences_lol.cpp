@@ -22,18 +22,18 @@
 
 #ifdef ENABLE_LOL
 
-#include "kyra/engine/lol.h"
-#include "kyra/graphics/screen_lol.h"
-#include "kyra/resource/resource.h"
-#include "kyra/sound/sound.h"
+#	include "kyra/engine/lol.h"
+#	include "kyra/graphics/screen_lol.h"
+#	include "kyra/resource/resource.h"
+#	include "kyra/sound/sound.h"
 
-#include "base/version.h"
+#	include "base/version.h"
 
-#include "common/system.h"
+#	include "common/system.h"
 
 namespace Kyra {
 
-#pragma mark - Intro
+#	pragma mark - Intro
 
 int LoLEngine::processPrologue() {
 	// There are two non-interactive demos (one which plays the intro and another one) which plays a number of specific scenes.
@@ -96,25 +96,25 @@ int LoLEngine::processPrologue() {
 			// quit instantly.
 			break;
 
-		case 0:     // New game
+		case 0: // New game
 			processSelection = 0;
 			break;
 
-		case 1:     // Show intro
+		case 1: // Show intro
 			showIntro();
 			break;
 
-		case 2: {   // "Lore of the Lands" (only CD version)
+		case 2: { // "Lore of the Lands" (only CD version)
 			HistoryPlayer history(this);
 			history.play();
 		} break;
 
-		case 3:     // Load game
+		case 3: // Load game
 			if (_gui->runMenu(_gui->_loadMenu))
 				processSelection = 3;
 			break;
 
-		case 4:     // Quit game
+		case 4: // Quit game
 		default:
 			quitGame();
 			updateInput();
@@ -199,7 +199,8 @@ void LoLEngine::setupPrologueData(bool load) {
 		if (_flags.isDemo)
 			_sound->loadSoundFile("LOREINTR");
 	} else {
-		delete _chargenWSA; _chargenWSA = 0;
+		delete _chargenWSA;
+		_chargenWSA = 0;
 
 		_screen->getPalette(0).clear();
 		_screen->setScreenPalette(_screen->getPalette(0));
@@ -680,8 +681,7 @@ int LoLEngine::getCharSelection() {
 
 	if (inputFlag == 200) {
 		for (int i = 0; i < 4; ++i) {
-			if (_charPreviews[i].x <= _mouseX && _mouseX <= _charPreviews[i].x + 31 &&
-			        _charPreviews[i].y <= _mouseY && _mouseY <= _charPreviews[i].y + 31)
+			if (_charPreviews[i].x <= _mouseX && _mouseX <= _charPreviews[i].x + 31 && _charPreviews[i].y <= _mouseY && _mouseY <= _charPreviews[i].y + 31)
 				return i;
 		}
 	}
@@ -747,7 +747,10 @@ void LoLEngine::showStarcraftLogo() {
 
 // history player
 
-HistoryPlayer::HistoryPlayer(LoLEngine *vm) : _system(vm->_system), _vm(vm), _screen(vm->screen()) {
+HistoryPlayer::HistoryPlayer(LoLEngine *vm)
+  : _system(vm->_system)
+  , _vm(vm)
+  , _screen(vm->screen()) {
 	_x = _y = _width = _height = 0;
 	_frame = _fireFrame = 0;
 	_nextFireTime = 0;
@@ -812,14 +815,21 @@ void HistoryPlayer::play() {
 					sound->voicePlay(voiceFilename);
 					break;
 
-				case 1: case 2: case 8:
-				case 16: case 25:
+				case 1:
+				case 2:
+				case 8:
+				case 16:
+				case 25:
 					sound->voicePlay(voiceFilename);
 					playWsa(true);
 					break;
 
-				case 3: case 7: case 10:
-				case 17: case 23: case 26:
+				case 3:
+				case 7:
+				case 10:
+				case 17:
+				case 23:
+				case 26:
 					sound->voicePlay(voiceFilename);
 					playWsa(true);
 					restoreWsaBkgd();

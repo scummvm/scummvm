@@ -30,10 +30,12 @@ namespace Titanic {
 class CPETSentinal : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool EnterViewMsg(CEnterViewMsg *msg);
+
 private:
 	int _elevatorNum;
 	int _wellEntry;
 	bool _resetHighlight;
+
 public:
 	CLASSDEF;
 	CPETSentinal();

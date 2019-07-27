@@ -32,10 +32,14 @@ namespace CryOmni3D {
 ZonFixedImage::ZonFixedImage(CryOmni3DEngine &engine,
                              Inventory &inventory,
                              const Sprites &sprites,
-                             const FixedImageConfiguration *configuration) :
-	_engine(engine), _inventory(inventory), _sprites(sprites),
-	_configuration(configuration),
-	_callback(nullptr), _imageDecoder(nullptr), _imageSurface(nullptr) {
+                             const FixedImageConfiguration *configuration)
+  : _engine(engine)
+  , _inventory(inventory)
+  , _sprites(sprites)
+  , _configuration(configuration)
+  , _callback(nullptr)
+  , _imageDecoder(nullptr)
+  , _imageSurface(nullptr) {
 }
 
 ZonFixedImage::~ZonFixedImage() {
@@ -215,9 +219,7 @@ void ZonFixedImage::manage() {
 		return;
 	}
 
-	if (_key == Common::KEYCODE_SPACE ||
-	        _engine.getCurrentMouseButton() == 2 ||
-	        mousePos.y > _configuration->toolbarTriggerY) {
+	if (_key == Common::KEYCODE_SPACE || _engine.getCurrentMouseButton() == 2 || mousePos.y > _configuration->toolbarTriggerY) {
 		bool mustRedraw = _engine.displayToolbar(_imageSurface);
 		// We just came back from toolbar: check if an object is selected and go into object mode
 		if (_inventory.selectedObject()) {
@@ -271,7 +273,6 @@ void ZonFixedImage::manage() {
 		} else {
 			_engine.setCursor(selectedObj->idSl());
 		}
-
 	}
 
 	g_system->updateScreen();
@@ -312,9 +313,7 @@ void ZonFixedImage::handleMouseZones(const Common::Array<Zone>::const_iterator &
 }
 
 void ZonFixedImage::updateSurface(const Graphics::Surface *newSurface) {
-	if (newSurface->w != _imageSurface->w ||
-	        newSurface->h != _imageSurface->h ||
-	        newSurface->format != _imageSurface->format) {
+	if (newSurface->w != _imageSurface->w || newSurface->h != _imageSurface->h || newSurface->format != _imageSurface->format) {
 		error("New surface has invalid attributes");
 	}
 

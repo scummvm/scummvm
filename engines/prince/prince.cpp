@@ -20,38 +20,38 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/debug.h"
 #include "common/events.h"
 #include "common/file.h"
-#include "common/random.h"
 #include "common/fs.h"
 #include "common/keyboard.h"
-#include "common/substream.h"
+#include "common/random.h"
+#include "common/scummsys.h"
 #include "common/str.h"
+#include "common/substream.h"
 
-#include "graphics/surface.h"
 #include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 
 #include "engines/util.h"
 
-#include "prince/prince.h"
-#include "prince/graphics.h"
-#include "prince/script.h"
+#include "prince/animation.h"
+#include "prince/archive.h"
+#include "prince/cursor.h"
+#include "prince/curve_values.h"
 #include "prince/debugger.h"
-#include "prince/object.h"
+#include "prince/font.h"
+#include "prince/graphics.h"
+#include "prince/hero.h"
+#include "prince/mhwanh.h"
 #include "prince/mob.h"
 #include "prince/music.h"
+#include "prince/object.h"
+#include "prince/prince.h"
+#include "prince/script.h"
 #include "prince/variatxt.h"
-#include "prince/font.h"
-#include "prince/mhwanh.h"
-#include "prince/cursor.h"
-#include "prince/archive.h"
-#include "prince/hero.h"
-#include "prince/animation.h"
-#include "prince/curve_values.h"
 
 namespace Prince {
 
@@ -66,28 +66,120 @@ void PrinceEngine::debugEngine(const char *s, ...) {
 	debug("Prince::Engine %s", buf);
 }
 
-PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc) :
-	Engine(syst), _gameDescription(gameDesc), _graph(nullptr), _script(nullptr), _interpreter(nullptr), _flags(nullptr),
-	_locationNr(0), _debugger(nullptr), _midiPlayer(nullptr), _room(nullptr),
-	_cursor1(nullptr), _cursor2(nullptr), _cursor3(nullptr), _font(nullptr),
-	_suitcaseBmp(nullptr), _roomBmp(nullptr), _cursorNr(0), _picWindowX(0), _picWindowY(0), _randomSource("prince"),
-	_invLineX(134), _invLineY(176), _invLine(5), _invLines(3), _invLineW(70), _invLineH(76), _maxInvW(72), _maxInvH(76),
-	_invLineSkipX(2), _invLineSkipY(3), _showInventoryFlag(false), _inventoryBackgroundRemember(false),
-	_mst_shadow(0), _mst_shadow2(0), _candleCounter(0), _invX1(53), _invY1(18), _invWidth(536), _invHeight(438),
-	_invCurInside(false), _optionsFlag(false), _optionEnabled(0), _invExamY(120), _invMaxCount(2), _invCounter(0),
-	_optionsMob(-1), _currentPointerNumber(1), _selectedMob(-1), _selectedItem(0), _selectedMode(0),
-	_optionsWidth(210), _optionsHeight(170), _invOptionsWidth(210), _invOptionsHeight(130), _optionsStep(20),
-	_invOptionsStep(20), _optionsNumber(7), _invOptionsNumber(5), _optionsColor1(236), _optionsColor2(252),
-	_dialogWidth(600), _dialogHeight(0), _dialogLineSpace(10), _dialogColor1(220), _dialogColor2(223),
-	_dialogFlag(false), _dialogLines(0), _dialogText(nullptr), _mouseFlag(1),
-	_roomPathBitmap(nullptr), _roomPathBitmapTemp(nullptr), _coordsBufEnd(nullptr), _coordsBuf(nullptr), _coords(nullptr),
-	_traceLineLen(0), _rembBitmapTemp(nullptr), _rembBitmap(nullptr), _rembMask(0), _rembX(0), _rembY(0), _fpX(0), _fpY(0),
-	_checkBitmapTemp(nullptr), _checkBitmap(nullptr), _checkMask(0), _checkX(0), _checkY(0), _traceLineFirstPointFlag(false),
-	_tracePointFirstPointFlag(false), _coordsBuf2(nullptr), _coords2(nullptr), _coordsBuf3(nullptr), _coords3(nullptr),
-	_shanLen(0), _directionTable(nullptr), _currentMidi(0), _lightX(0), _lightY(0), _curveData(nullptr), _curvPos(0),
-	_creditsData(nullptr), _creditsDataSize(0), _currentTime(0), _zoomBitmap(nullptr), _shadowBitmap(nullptr), _transTable(nullptr),
-	_flcFrameSurface(nullptr), _shadScaleValue(0), _shadLineLen(0), _scaleValue(0), _dialogImage(nullptr), _mobTranslationData(nullptr),
-	_mobTranslationSize(0) {
+PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
+  : Engine(syst)
+  , _gameDescription(gameDesc)
+  , _graph(nullptr)
+  , _script(nullptr)
+  , _interpreter(nullptr)
+  , _flags(nullptr)
+  , _locationNr(0)
+  , _debugger(nullptr)
+  , _midiPlayer(nullptr)
+  , _room(nullptr)
+  , _cursor1(nullptr)
+  , _cursor2(nullptr)
+  , _cursor3(nullptr)
+  , _font(nullptr)
+  , _suitcaseBmp(nullptr)
+  , _roomBmp(nullptr)
+  , _cursorNr(0)
+  , _picWindowX(0)
+  , _picWindowY(0)
+  , _randomSource("prince")
+  , _invLineX(134)
+  , _invLineY(176)
+  , _invLine(5)
+  , _invLines(3)
+  , _invLineW(70)
+  , _invLineH(76)
+  , _maxInvW(72)
+  , _maxInvH(76)
+  , _invLineSkipX(2)
+  , _invLineSkipY(3)
+  , _showInventoryFlag(false)
+  , _inventoryBackgroundRemember(false)
+  , _mst_shadow(0)
+  , _mst_shadow2(0)
+  , _candleCounter(0)
+  , _invX1(53)
+  , _invY1(18)
+  , _invWidth(536)
+  , _invHeight(438)
+  , _invCurInside(false)
+  , _optionsFlag(false)
+  , _optionEnabled(0)
+  , _invExamY(120)
+  , _invMaxCount(2)
+  , _invCounter(0)
+  , _optionsMob(-1)
+  , _currentPointerNumber(1)
+  , _selectedMob(-1)
+  , _selectedItem(0)
+  , _selectedMode(0)
+  , _optionsWidth(210)
+  , _optionsHeight(170)
+  , _invOptionsWidth(210)
+  , _invOptionsHeight(130)
+  , _optionsStep(20)
+  , _invOptionsStep(20)
+  , _optionsNumber(7)
+  , _invOptionsNumber(5)
+  , _optionsColor1(236)
+  , _optionsColor2(252)
+  , _dialogWidth(600)
+  , _dialogHeight(0)
+  , _dialogLineSpace(10)
+  , _dialogColor1(220)
+  , _dialogColor2(223)
+  , _dialogFlag(false)
+  , _dialogLines(0)
+  , _dialogText(nullptr)
+  , _mouseFlag(1)
+  , _roomPathBitmap(nullptr)
+  , _roomPathBitmapTemp(nullptr)
+  , _coordsBufEnd(nullptr)
+  , _coordsBuf(nullptr)
+  , _coords(nullptr)
+  , _traceLineLen(0)
+  , _rembBitmapTemp(nullptr)
+  , _rembBitmap(nullptr)
+  , _rembMask(0)
+  , _rembX(0)
+  , _rembY(0)
+  , _fpX(0)
+  , _fpY(0)
+  , _checkBitmapTemp(nullptr)
+  , _checkBitmap(nullptr)
+  , _checkMask(0)
+  , _checkX(0)
+  , _checkY(0)
+  , _traceLineFirstPointFlag(false)
+  , _tracePointFirstPointFlag(false)
+  , _coordsBuf2(nullptr)
+  , _coords2(nullptr)
+  , _coordsBuf3(nullptr)
+  , _coords3(nullptr)
+  , _shanLen(0)
+  , _directionTable(nullptr)
+  , _currentMidi(0)
+  , _lightX(0)
+  , _lightY(0)
+  , _curveData(nullptr)
+  , _curvPos(0)
+  , _creditsData(nullptr)
+  , _creditsDataSize(0)
+  , _currentTime(0)
+  , _zoomBitmap(nullptr)
+  , _shadowBitmap(nullptr)
+  , _transTable(nullptr)
+  , _flcFrameSurface(nullptr)
+  , _shadScaleValue(0)
+  , _shadLineLen(0)
+  , _scaleValue(0)
+  , _dialogImage(nullptr)
+  , _mobTranslationData(nullptr)
+  , _mobTranslationSize(0) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -649,7 +741,7 @@ void PrinceEngine::showTexts(Graphics::Surface *screen) {
 			break;
 		}
 
-		Text& text = _textSlots[slot];
+		Text &text = _textSlots[slot];
 		if (!text._str && !text._time) {
 			continue;
 		}
@@ -674,7 +766,7 @@ void PrinceEngine::showTexts(Graphics::Surface *screen) {
 		}
 
 		int leftBorderText = 6;
-		if (x + wideLine / 2 >  kNormalWidth - leftBorderText) {
+		if (x + wideLine / 2 > kNormalWidth - leftBorderText) {
 			x = kNormalWidth - leftBorderText - wideLine / 2;
 		}
 
@@ -777,7 +869,7 @@ void PrinceEngine::leftMouseButton() {
 			if (!_flags->getFlagValue(Flags::NOCLSTEXT)) {
 				for (int slot = 0; slot < kMaxTexts; slot++) {
 					if (slot != 9) {
-						Text& text = _textSlots[slot];
+						Text &text = _textSlots[slot];
 						if (!text._str) {
 							continue;
 						}
@@ -1024,9 +1116,9 @@ void PrinceEngine::mouseWeirdo() {
 			mousePos.y -= kCelStep;
 			break;
 		}
-		mousePos.x = CLIP(mousePos.x, (int16) 315, (int16) 639);
+		mousePos.x = CLIP(mousePos.x, (int16)315, (int16)639);
 		_flags->setFlagValue(Flags::MXFLAG, mousePos.x);
-		mousePos.y = CLIP(mousePos.y, (int16) 0, (int16) 170);
+		mousePos.y = CLIP(mousePos.y, (int16)0, (int16)170);
 		_flags->setFlagValue(Flags::MYFLAG, mousePos.y);
 		_system->warpMouse(mousePos.x, mousePos.y);
 	}

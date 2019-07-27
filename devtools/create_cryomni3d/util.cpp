@@ -27,7 +27,7 @@
 #include <stdarg.h>
 
 #ifdef _MSC_VER
-#define vsnprintf _vsnprintf
+#	define vsnprintf _vsnprintf
 #endif
 
 void error(const char *s, ...) {
@@ -59,9 +59,9 @@ int scumm_stricmp(const char *s1, const char *s2) {
 	do {
 		// Don't use ++ inside tolower, in case the macro uses its
 		// arguments more than once.
-		l1 = (byte) * s1++;
+		l1 = (byte)*s1++;
 		l1 = tolower(l1);
-		l2 = (byte) * s2++;
+		l2 = (byte)*s2++;
 		l2 = tolower(l2);
 	} while (l1 == l2 && l1 != 0);
 	return l1 - l2;
@@ -127,7 +127,7 @@ size_t writeString16(FILE *fp, const char *string) {
 	return written;
 }
 
-template<typename T, size_t (*Tf)(FILE *fp, T), typename U, size_t (*Uf)(FILE *fp, U)>
+template <typename T, size_t (*Tf)(FILE *fp, T), typename U, size_t (*Uf)(FILE *fp, U)>
 size_t writeArray(FILE *fp, T const *array, U elems) {
 	size_t written = 0;
 	written += Uf(fp, elems);
@@ -141,13 +141,27 @@ size_t writeString16Array16(FILE *fp, char const *const *array, uint16 elems) {
 	return writeArray<char const *, writeString16, uint16, writeUint16LE>(fp, array, elems);
 }
 
-
 //#define DEBUG
 static const char padBuf[PADDING_ALIGNMENT] = {
 #ifndef DEBUG
 	0
 #else
-	0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C,
+	0x1C,
+	0x1C,
+	0x1C,
+	0x1C,
+	0x1C,
+	0x1C,
+	0x1C,
+	0x1C,
+	0x1C,
+	0x1C,
+	0x1C,
+	0x1C,
+	0x1C,
+	0x1C,
+	0x1C,
+	0x1C,
 #endif
 };
 

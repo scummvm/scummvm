@@ -23,15 +23,18 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 
-#include "gui/saveload.h"
 #include "gui/saveload-dialog.h"
+#include "gui/saveload.h"
 
 #include "engines/metaengine.h"
 
 namespace GUI {
 
 SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode)
-	: _impl(0), _title(title), _buttonLabel(buttonLabel), _saveMode(saveMode) {
+  : _impl(0)
+  , _title(title)
+  , _buttonLabel(buttonLabel)
+  , _saveMode(saveMode) {
 }
 
 SaveLoadChooser::~SaveLoadChooser() {

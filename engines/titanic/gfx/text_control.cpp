@@ -26,13 +26,26 @@
 
 namespace Titanic {
 
-CTextControl::CTextControl(uint count) :
-		_stringsMerged(false), _maxCharsPerLine(-1), _lineCount(0),
-		_displayEndCharIndex(-1), _unused1(0), _unused2(0), _unused3(0),
-		_backR(0xff), _backG(0xff), _backB(0xff),
-		_textR(0), _textG(0), _textB(200),
-		_fontNumber(0), _npcFlag(0), _npcId(0), _hasBorder(true),
-		_scrollTop(0), _textCursor(nullptr) {
+CTextControl::CTextControl(uint count)
+  : _stringsMerged(false)
+  , _maxCharsPerLine(-1)
+  , _lineCount(0)
+  , _displayEndCharIndex(-1)
+  , _unused1(0)
+  , _unused2(0)
+  , _unused3(0)
+  , _backR(0xff)
+  , _backG(0xff)
+  , _backB(0xff)
+  , _textR(0)
+  , _textG(0)
+  , _textB(200)
+  , _fontNumber(0)
+  , _npcFlag(0)
+  , _npcId(0)
+  , _hasBorder(true)
+  , _scrollTop(0)
+  , _textCursor(nullptr) {
 	setupArrays(count);
 }
 
@@ -185,8 +198,7 @@ void CTextControl::mergeStrings() {
 		_lines.clear();
 
 		for (int idx = 0; idx <= _lineCount; ++idx) {
-			CString line = _array[idx]._rgb + _array[idx]._string3 +
-				_array[idx]._line + "\n";
+			CString line = _array[idx]._rgb + _array[idx]._string3 + _array[idx]._line + "\n";
 			_lines += line;
 		}
 
@@ -397,7 +409,7 @@ void CTextControl::addLine(const CString &str) {
 
 void CTextControl::addLine(const CString &str, uint color) {
 	addLine(str, color & 0xff, (color >> 8) & 0xff,
-		(color >> 16) & 0xff);
+	        (color >> 16) & 0xff);
 }
 
 void CTextControl::addLine(const CString &str, byte r, byte g, byte b) {
@@ -470,7 +482,7 @@ int CTextControl::getNPCNum(uint ident, uint startIndex) {
 
 	// Loop backwards from the starting index to find an NPC ident sequence
 	for (const char *strP = _lines.c_str() + startIndex;
-			strP >= (_lines.c_str() + 5); --strP) {
+	     strP >= (_lines.c_str() + 5); --strP) {
 		if (*strP == 26) {
 			byte id = *(strP - 2);
 			if (id == ident)

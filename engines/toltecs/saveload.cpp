@@ -24,13 +24,13 @@
 
 #include "graphics/thumbnail.h"
 
-#include "toltecs/toltecs.h"
 #include "toltecs/animation.h"
 #include "toltecs/music.h"
 #include "toltecs/palette.h"
-#include "toltecs/script.h"
 #include "toltecs/screen.h"
+#include "toltecs/script.h"
 #include "toltecs/sound.h"
+#include "toltecs/toltecs.h"
 
 namespace Toltecs {
 

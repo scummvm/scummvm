@@ -39,57 +39,56 @@ namespace MystStacks {
 
 #define DECLARE_OPCODE(x) void x(uint16 var, const ArgumentsArray &args)
 
-class Menu : public MystScriptParser {
-public:
-	explicit Menu(MohawkEngine_Myst *vm);
-	~Menu() override;
+	class Menu : public MystScriptParser {
+	public:
+		explicit Menu(MohawkEngine_Myst *vm);
+		~Menu() override;
 
-	void setInGame(bool inGame) {
-		_inGame = inGame;
-	}
+		void setInGame(bool inGame) {
+			_inGame = inGame;
+		}
 
-	void setCanSave(bool canSave) {
-		_canSave = canSave;
-	}
+		void setCanSave(bool canSave) {
+			_canSave = canSave;
+		}
 
-	void disablePersistentScripts() override;
-	void runPersistentScripts() override;
+		void disablePersistentScripts() override;
+		void runPersistentScripts() override;
 
-private:
-	void setupOpcodes();
-	uint16 getVar(uint16 var) override;
+	private:
+		void setupOpcodes();
+		uint16 getVar(uint16 var) override;
 
-	DECLARE_OPCODE(o_playIntroMovies);
-	DECLARE_OPCODE(o_menuItemEnter);
-	DECLARE_OPCODE(o_menuItemLeave);
-	DECLARE_OPCODE(o_menuResume);
-	DECLARE_OPCODE(o_menuLoad);
-	DECLARE_OPCODE(o_menuSave);
-	DECLARE_OPCODE(o_menuNew);
-	DECLARE_OPCODE(o_menuOptions);
-	DECLARE_OPCODE(o_menuQuit);
-	DECLARE_OPCODE(o_menuInit);
-	DECLARE_OPCODE(o_menuExit);
+		DECLARE_OPCODE(o_playIntroMovies);
+		DECLARE_OPCODE(o_menuItemEnter);
+		DECLARE_OPCODE(o_menuItemLeave);
+		DECLARE_OPCODE(o_menuResume);
+		DECLARE_OPCODE(o_menuLoad);
+		DECLARE_OPCODE(o_menuSave);
+		DECLARE_OPCODE(o_menuNew);
+		DECLARE_OPCODE(o_menuOptions);
+		DECLARE_OPCODE(o_menuQuit);
+		DECLARE_OPCODE(o_menuInit);
+		DECLARE_OPCODE(o_menuExit);
 
-	bool _inGame;
-	bool _canSave;
-	bool _menuItemHovered[6];
-	bool _wasCursorVisible;
+		bool _inGame;
+		bool _canSave;
+		bool _menuItemHovered[6];
+		bool _wasCursorVisible;
 
-	bool _introMoviesRunning;
-	int _introStep;
-	void introMovies_run();
+		bool _introMoviesRunning;
+		int _introStep;
+		void introMovies_run();
 
-	bool showConfirmationDialog(const char *message, const char *confirmButton, const char *cancelButton);
+		bool showConfirmationDialog(const char *message, const char *confirmButton, const char *cancelButton);
 
-	void drawButtonImages(const Common::U32String &text, MystAreaImageSwitch *area, Graphics::TextAlign align, uint16 highlightedIndex, uint16 disabledIndex) const;
-	void replaceButtonSubImageWithText(const Common::U32String &text, const Graphics::TextAlign &align, MystAreaImageSwitch *area,
-	                                   uint16 subimageIndex, const Common::Rect &backgroundRect, int16 deltaY,
-	                                   uint8 r, uint8 g, uint8 b) const;
-	const char **getButtonCaptions() const;
-	void resetButtons();
-
-};
+		void drawButtonImages(const Common::U32String &text, MystAreaImageSwitch *area, Graphics::TextAlign align, uint16 highlightedIndex, uint16 disabledIndex) const;
+		void replaceButtonSubImageWithText(const Common::U32String &text, const Graphics::TextAlign &align, MystAreaImageSwitch *area,
+		                                   uint16 subimageIndex, const Common::Rect &backgroundRect, int16 deltaY,
+		                                   uint8 r, uint8 g, uint8 b) const;
+		const char **getButtonCaptions() const;
+		void resetButtons();
+	};
 
 } // End of namespace MystStacks
 } // End of namespace Mohawk

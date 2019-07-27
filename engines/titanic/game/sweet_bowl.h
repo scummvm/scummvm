@@ -32,6 +32,7 @@ class CSweetBowl : public CGameObject {
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool ActMsg(CActMsg *msg);
+
 public:
 	CLASSDEF;
 

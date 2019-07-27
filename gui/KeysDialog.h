@@ -23,11 +23,11 @@
 #ifndef KEYSDIALOG_H
 #define KEYSDIALOG_H
 
-#include "gui/gui-manager.h"
-#include "gui/dialog.h"
-#include "gui/widgets/list.h"
 #include "common/str.h"
 #include "common/translation.h"
+#include "gui/dialog.h"
+#include "gui/gui-manager.h"
+#include "gui/widgets/list.h"
 
 namespace GUI {
 
@@ -40,11 +40,10 @@ public:
 	virtual void handleKeyDown(Common::KeyState state);
 
 protected:
-
-	GUI::ListWidget		 *_actionsList;
+	GUI::ListWidget *_actionsList;
 	GUI::StaticTextWidget *_actionTitle;
 	GUI::StaticTextWidget *_keyMapping;
-	int				 _actionSelected;
+	int _actionSelected;
 };
 
 } // namespace GUI

@@ -32,8 +32,9 @@ CSoundItem::~CSoundItem() {
 
 /*------------------------------------------------------------------------*/
 
-CSound::CSound(CGameManager *owner, Audio::Mixer *mixer) :
-		_gameManager(owner), _soundManager(mixer) {
+CSound::CSound(CGameManager *owner, Audio::Mixer *mixer)
+  : _gameManager(owner)
+  , _soundManager(mixer) {
 	g_vm->_movieManager.setSoundManager(&_soundManager);
 }
 
@@ -99,7 +100,7 @@ void CSound::stopChannel(int channel) {
 }
 
 void CSound::checkSounds() {
-	for (CSoundItemList::iterator i = _sounds.begin(); i != _sounds.end(); ) {
+	for (CSoundItemList::iterator i = _sounds.begin(); i != _sounds.end();) {
 		CSoundItem *soundItem = *i;
 
 		if (soundItem->_active && soundItem->_disposeAfterUse == DisposeAfterUse::YES) {
@@ -116,7 +117,7 @@ void CSound::checkSounds() {
 
 void CSound::removeOldest() {
 	for (CSoundItemList::iterator i = _sounds.reverse_begin();
-			i != _sounds.end(); --i) {
+	     i != _sounds.end(); --i) {
 		CSoundItem *soundItem = *i;
 		if (soundItem->_active && !_soundManager.isActive(soundItem->_waveFile)) {
 			_sounds.remove(soundItem);
@@ -166,7 +167,7 @@ CWaveFile *CSound::loadSound(const CString &name) {
 }
 
 int CSound::playSound(const CString &name, CProximity &prox) {
-	CWaveFile *waveFile  = loadSound(name);
+	CWaveFile *waveFile = loadSound(name);
 	if (!waveFile)
 		return -1;
 
@@ -186,7 +187,7 @@ CWaveFile *CSound::loadSpeech(CDialogueFile *dialogueFile, int speechId) {
 	for (CSoundItemList::iterator i = _sounds.begin(); i != _sounds.end(); ++i) {
 		CSoundItem *soundItem = *i;
 		if (soundItem->_dialogueFileHandle == dialogueFile->getFile()
-				&& soundItem->_speechId == speechId) {
+		    && soundItem->_speechId == speechId) {
 			// Found it, so move it to the front of the list and return
 			_sounds.remove(soundItem);
 			_sounds.push_front(soundItem);

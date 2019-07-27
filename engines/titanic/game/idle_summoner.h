@@ -33,6 +33,7 @@ class CIdleSummoner : public CGameObject {
 	bool TimerMsg(CTimerMsg *msg);
 	bool ActMsg(CActMsg *msg);
 	bool LoadSuccessMsg(CLoadSuccessMsg *msg);
+
 public:
 	int _fieldBC;
 	int _fieldC0;
@@ -43,6 +44,7 @@ public:
 	int _timerId;
 	uint _oldNodesCtr;
 	uint _ticks;
+
 public:
 	CIdleSummoner();
 	CLASSDEF;

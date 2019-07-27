@@ -28,7 +28,8 @@
 
 namespace Chewy {
 
-Text::Text() : Resource("atds.tap") {
+Text::Text()
+  : Resource("atds.tap") {
 }
 
 Text::~Text() {
@@ -43,18 +44,19 @@ TextEntryList *Text::getDialog(uint dialogNum, uint entryNum) {
 	byte *data = getChunkData(dialogNum);
 	byte *ptr = data;
 
-	ptr += 2;	// entry number
-	ptr += 2;	// number of persons
-	ptr += 2;	// automove count
-	ptr += 2;	// cursor number
-	ptr += 13;	// misc data
+	ptr += 2; // entry number
+	ptr += 2; // number of persons
+	ptr += 2; // automove count
+	ptr += 2; // cursor number
+	ptr += 13; // misc data
 
 	for (uint i = 0; i <= entryNum; i++) {
 		do {
 			TextEntry curDialog;
-			ptr++;	// current entry
+			ptr++; // current entry
 			ptr += 2;
-			curDialog.speechId = READ_LE_UINT16(ptr) - VOICE_OFFSET;	ptr += 2;
+			curDialog.speechId = READ_LE_UINT16(ptr) - VOICE_OFFSET;
+			ptr += 2;
 
 			do {
 				curDialog.text += *ptr++;
@@ -70,9 +72,9 @@ TextEntryList *Text::getDialog(uint dialogNum, uint entryNum) {
 
 		} while (*(ptr + 1) != kEndEntry);
 
-		ptr += 2;	// kEndText, kEndEntry
+		ptr += 2; // kEndText, kEndEntry
 
-		if (*ptr == kEndBlock)	// not found
+		if (*ptr == kEndBlock) // not found
 			break;
 	}
 
@@ -98,7 +100,8 @@ TextEntry *Text::getText(uint dialogNum, uint entryNum) {
 
 	for (uint i = 0; i <= entryNum; i++) {
 		ptr += 13;
-		d->speechId = READ_LE_UINT16(ptr) - VOICE_OFFSET;	ptr += 2;
+		d->speechId = READ_LE_UINT16(ptr) - VOICE_OFFSET;
+		ptr += 2;
 
 		do {
 			if (i == entryNum)
@@ -122,7 +125,7 @@ TextEntry *Text::getText(uint dialogNum, uint entryNum) {
 		}
 
 		if (!isText)
-			ptr += 3;	// 0, kEndText, kEndChunk
+			ptr += 3; // 0, kEndText, kEndChunk
 		if (isAutoDialog)
 			ptr += 3;
 
@@ -151,7 +154,7 @@ Font::Font(Common::String filename) {
 	if (header != headerFont)
 		error("Invalid resource - %s", filename.c_str());
 
-	stream.skip(4);	// total memory
+	stream.skip(4); // total memory
 	_count = stream.readUint16LE();
 	_first = stream.readUint16LE();
 	_last = stream.readUint16LE();

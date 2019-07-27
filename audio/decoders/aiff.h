@@ -53,8 +53,8 @@ class RewindableAudioStream;
  * @return	a new SeekableAudioStream, or NULL, if an error occurred
  */
 RewindableAudioStream *makeAIFFStream(
-	Common::SeekableReadStream *stream,
-	DisposeAfterUse::Flag disposeAfterUse);
+  Common::SeekableReadStream *stream,
+  DisposeAfterUse::Flag disposeAfterUse);
 
 } // End of namespace Audio
 

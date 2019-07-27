@@ -27,12 +27,11 @@
 #include "common/types.h"
 
 #include "common/fs.h"
-#include "common/list.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
-#include "common/stack.h"
+#include "common/hashmap.h"
+#include "common/list.h"
 #include "common/memorypool.h"
-
+#include "common/stack.h"
 
 namespace Common {
 
@@ -40,43 +39,50 @@ class SeekableReadStream;
 
 #define MAX_XML_DEPTH 8
 
-#define XML_KEY(keyName) {\
-		lay = new CustomXMLKeyLayout;\
-		lay->callback = (&kLocalParserName::parserCallback_##keyName);\
-		layout.top()->children[#keyName] = lay;\
-		layout.push(lay); \
+#define XML_KEY(keyName)                                           \
+	{                                                                \
+		lay = new CustomXMLKeyLayout;                                  \
+		lay->callback = (&kLocalParserName::parserCallback_##keyName); \
+		layout.top()->children[#keyName] = lay;                        \
+		layout.push(lay);                                              \
 		_layoutList.push_back(lay);
 
-#define XML_KEY_RECURSIVE(keyName) {\
-			layout.top()->children[#keyName] = layout.top();\
-			layout.push(layout.top());\
-		}
+#define XML_KEY_RECURSIVE(keyName)                   \
+	{                                                  \
+		layout.top()->children[#keyName] = layout.top(); \
+		layout.push(layout.top());                       \
+	}
 
-#define KEY_END() layout.pop(); }
+#define KEY_END() \
+	layout.pop();   \
+	}
 
-#define XML_PROP(propName, req) {\
-		prop.name = #propName; \
-		prop.required = req; \
-		layout.top()->properties.push_back(prop); }
+#define XML_PROP(propName, req)               \
+	{                                           \
+		prop.name = #propName;                    \
+		prop.required = req;                      \
+		layout.top()->properties.push_back(prop); \
+	}
 
-
-
-#define CUSTOM_XML_PARSER(parserName) \
-	protected: \
-	typedef parserName kLocalParserName; \
-	bool keyCallback(ParserNode *node) {return node->layout->doCallback(this, node); }\
-	struct CustomXMLKeyLayout : public XMLKeyLayout {\
-		typedef bool (parserName::*ParserCallback)(ParserNode *node);\
-		ParserCallback callback;\
-		bool doCallback(XMLParser *parent, ParserNode *node) {return ((kLocalParserName *)parent->*callback)(node);} };\
-	virtual void buildLayout() { \
-		Common::Stack<XMLKeyLayout *> layout; \
-		CustomXMLKeyLayout *lay = 0; \
-		XMLKeyLayout::XMLKeyProperty prop; \
-		_XMLkeys = new CustomXMLKeyLayout; \
+#define CUSTOM_XML_PARSER(parserName)                                                                              \
+protected:                                                                                                         \
+	typedef parserName kLocalParserName;                                                                             \
+	bool keyCallback(ParserNode *node) { return node->layout->doCallback(this, node); }                              \
+	struct CustomXMLKeyLayout : public XMLKeyLayout {                                                                \
+		typedef bool (parserName::*ParserCallback)(ParserNode * node);                                                 \
+		ParserCallback callback;                                                                                       \
+		bool doCallback(XMLParser *parent, ParserNode *node) { return ((kLocalParserName *)parent->*callback)(node); } \
+	};                                                                                                               \
+	virtual void buildLayout() {                                                                                     \
+		Common::Stack<XMLKeyLayout *> layout;                                                                          \
+		CustomXMLKeyLayout *lay = 0;                                                                                   \
+		XMLKeyLayout::XMLKeyProperty prop;                                                                             \
+		_XMLkeys = new CustomXMLKeyLayout;                                                                             \
 		layout.push(_XMLkeys);
 
-#define PARSER_END() layout.clear(); }
+#define PARSER_END() \
+	layout.clear();    \
+	}
 
 /**
  * The base XMLParser class implements generic functionality for parsing
@@ -92,7 +98,9 @@ public:
 	/**
 	 * Parser constructor.
 	 */
-	XMLParser() : _XMLkeys(nullptr), _stream(nullptr) {}
+	XMLParser()
+	  : _XMLkeys(nullptr)
+	  , _stream(nullptr) {}
 
 	virtual ~XMLParser();
 
@@ -112,7 +120,7 @@ public:
 	struct XMLKeyLayout;
 	struct ParserNode;
 
-	typedef HashMap<String, XMLParser::XMLKeyLayout*, IgnoreCase_Hash, IgnoreCase_EqualTo> ChildMap;
+	typedef HashMap<String, XMLParser::XMLKeyLayout *, IgnoreCase_Hash, IgnoreCase_EqualTo> ChildMap;
 
 	/** nested struct representing the layout of the XML file */
 	struct XMLKeyLayout {
@@ -206,7 +214,6 @@ public:
 	}
 
 protected:
-
 	/**
 	 * The buildLayout function builds the layout for the parser to use
 	 * based on a series of helper macros. This function is automatically

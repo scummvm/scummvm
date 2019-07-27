@@ -22,19 +22,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
 #include "common/file.h"
 #include "common/textconsole.h"
 
-#include "sword2/sword2.h"
+#include "sword2/console.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"
-#include "sword2/console.h"
 #include "sword2/logic.h"
 #include "sword2/maketext.h"
 #include "sword2/object.h"
 #include "sword2/resman.h"
 #include "sword2/screen.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
@@ -46,16 +45,16 @@ namespace Sword2 {
 #define GAP_ABOVE_HEAD 20
 
 enum {
-	S_OB_GRAPHIC	= 0,
-	S_OB_SPEECH	= 1,
-	S_OB_LOGIC	= 2,
-	S_OB_MEGA	= 3,
+	S_OB_GRAPHIC = 0,
+	S_OB_SPEECH = 1,
+	S_OB_LOGIC = 2,
+	S_OB_MEGA = 3,
 
-	S_TEXT		= 4,
-	S_WAV		= 5,
-	S_ANIM		= 6,
-	S_DIR_TABLE	= 7,
-	S_ANIM_MODE	= 8
+	S_TEXT = 4,
+	S_WAV = 5,
+	S_ANIM = 6,
+	S_DIR_TABLE = 7,
+	S_ANIM_MODE = 8
 };
 
 /**
@@ -180,10 +179,10 @@ void Logic::formText(int32 *params) {
 	// number
 
 	_speechTextBlocNo = _vm->_fontRenderer->buildNewBloc(
-		text + 2, _textX, _textY,
-		textWidth, obSpeech.getPen(),
-		RDSPR_TRANS | RDSPR_DISPLAYALIGN,
-		_vm->_speechFontId, POSITION_AT_CENTER_OF_BASE);
+	  text + 2, _textX, _textY,
+	  textWidth, obSpeech.getPen(),
+	  RDSPR_TRANS | RDSPR_DISPLAYALIGN,
+	  _vm->_speechFontId, POSITION_AT_CENTER_OF_BASE);
 
 	_vm->_resman->closeResource(text_res);
 
@@ -198,33 +197,33 @@ void Logic::formText(int32 *params) {
 
 bool Logic::wantSpeechForLine(uint32 wavId) {
 	switch (wavId) {
-	case 1328:	// AttendantSpeech
-			//	SFX(Phone71);
-			//	FX <Telephone rings>
-	case 2059:	// PabloSpeech
-			//	SFX (2059);
-			//	FX <Sound of sporadic gunfire from below>
-	case 4082:	// DuaneSpeech
-			//	SFX (4082);
-			//	FX <Pffffffffffft! Frp. (Unimpressive, flatulent noise.)>
-	case 4214:	// cat_52
-			//	SFX (4214);
-			//	4214FXMeow!
-	case 4568:	// trapdoor_13
-			//	SFX (4568);
-			//	4568fx<door slamming>
-	case 4913:	// LobineauSpeech
-			//	SFX (tone2);
-			//	FX <Lobineau hangs up>
-	case 5120:	// bush_66
-			//	SFX (5120);
-			//	5120FX<loud buzzing>
-	case 528:	// PresidentaSpeech
-			//	SFX (528);
-			//	FX <Nearby Crash of Collapsing Masonry>
-	case 920:	// Zombie Island forest maze (bird)
-	case 923:	// Zombie Island forest maze (monkey)
-	case 926:	// Zombie Island forest maze (zombie)
+	case 1328: // AttendantSpeech
+	  //	SFX(Phone71);
+	  //	FX <Telephone rings>
+	case 2059: // PabloSpeech
+	  //	SFX (2059);
+	  //	FX <Sound of sporadic gunfire from below>
+	case 4082: // DuaneSpeech
+	  //	SFX (4082);
+	  //	FX <Pffffffffffft! Frp. (Unimpressive, flatulent noise.)>
+	case 4214: // cat_52
+	  //	SFX (4214);
+	  //	4214FXMeow!
+	case 4568: // trapdoor_13
+	  //	SFX (4568);
+	  //	4568fx<door slamming>
+	case 4913: // LobineauSpeech
+	  //	SFX (tone2);
+	  //	FX <Lobineau hangs up>
+	case 5120: // bush_66
+	  //	SFX (5120);
+	  //	5120FX<loud buzzing>
+	case 528: // PresidentaSpeech
+	  //	SFX (528);
+	  //	FX <Nearby Crash of Collapsing Masonry>
+	case 920: // Zombie Island forest maze (bird)
+	case 923: // Zombie Island forest maze (monkey)
+	case 926: // Zombie Island forest maze (zombie)
 		// Don't want speech for these lines!
 		return false;
 	default:

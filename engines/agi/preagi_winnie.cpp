@@ -20,9 +20,9 @@
  *
  */
 
-#include "agi/preagi.h"
 #include "agi/preagi_winnie.h"
 #include "agi/graphics.h"
+#include "agi/preagi.h"
 
 #include "graphics/cursorman.h"
 
@@ -242,7 +242,7 @@ int WinnieEngine::parser(int pc, int index, uint8 *buffer) {
 
 	int iSel, iDir, iBlock;
 	int fCanSel[IDI_WTP_SEL_LAST + 1];
-	char szMenu[121] = {0};
+	char szMenu[121] = { 0 };
 	bool done;
 	int fBlock;
 
@@ -275,8 +275,7 @@ int WinnieEngine::parser(int pc, int index, uint8 *buffer) {
 
 			// check if NSEW directions should be displayed
 			if (hdr.roomNew[0]) {
-				fCanSel[IDI_WTP_SEL_NORTH] = fCanSel[IDI_WTP_SEL_SOUTH] =
-				fCanSel[IDI_WTP_SEL_EAST] = fCanSel[IDI_WTP_SEL_WEST] = true;
+				fCanSel[IDI_WTP_SEL_NORTH] = fCanSel[IDI_WTP_SEL_SOUTH] = fCanSel[IDI_WTP_SEL_EAST] = fCanSel[IDI_WTP_SEL_WEST] = true;
 			}
 
 			// check if object in room or player carrying one
@@ -379,7 +378,8 @@ int WinnieEngine::parser(int pc, int index, uint8 *buffer) {
 		pc = hdr.opt[index].ofsOpt[iSel] - _roomOffset;
 
 		opcode = *(buffer + pc);
-		if (!opcode) pc++;
+		if (!opcode)
+			pc++;
 
 		// process script
 		do {
@@ -508,7 +508,8 @@ bool WinnieEngine::isRightObj(int iRoom, int iObj, int *iCode) {
 
 	*iCode = objhdr.objId;
 
-	if (objhdr.objId == 11) objhdr.objId = 34;
+	if (objhdr.objId == 11)
+		objhdr.objId = 34;
 
 	if (roomhdr.objId == objhdr.objId)
 		return true;
@@ -709,7 +710,6 @@ void WinnieEngine::showOwlHelp() {
 	}
 }
 
-
 void WinnieEngine::drawMenu(char *szMenu, int iSel, int fCanSel[]) {
 	int iRow = 0, iCol = 0;
 
@@ -762,14 +762,16 @@ void WinnieEngine::drawMenu(char *szMenu, int iSel, int fCanSel[]) {
 void WinnieEngine::incMenuSel(int *iSel, int fCanSel[]) {
 	do {
 		*iSel += 1;
-		if (*iSel > IDI_WTP_SEL_DROP) *iSel = IDI_WTP_SEL_OPT_1;
+		if (*iSel > IDI_WTP_SEL_DROP)
+			*iSel = IDI_WTP_SEL_OPT_1;
 	} while (!fCanSel[*iSel]);
 }
 
 void WinnieEngine::decMenuSel(int *iSel, int fCanSel[]) {
 	do {
 		*iSel -= 1;
-		if (*iSel < IDI_WTP_SEL_OPT_1) *iSel = IDI_WTP_SEL_DROP;
+		if (*iSel < IDI_WTP_SEL_OPT_1)
+			*iSel = IDI_WTP_SEL_DROP;
 	} while (!fCanSel[*iSel]);
 }
 
@@ -778,15 +780,22 @@ void WinnieEngine::getMenuMouseSel(int *iSel, int fCanSel[], int x, int y) {
 	case IDI_WTP_ROW_OPTION_1:
 	case IDI_WTP_ROW_OPTION_2:
 	case IDI_WTP_ROW_OPTION_3:
-		if (fCanSel[y - IDI_WTP_ROW_OPTION_1])  *iSel = y - IDI_WTP_ROW_OPTION_1;
+		if (fCanSel[y - IDI_WTP_ROW_OPTION_1])
+			*iSel = y - IDI_WTP_ROW_OPTION_1;
 		break;
 	case IDI_WTP_ROW_OPTION_4:
-		if (fCanSel[IDI_WTP_SEL_NORTH] && (x > IDI_WTP_COL_NORTH - 1) && (x < 6)) *iSel = IDI_WTP_SEL_NORTH;
-		if (fCanSel[IDI_WTP_SEL_SOUTH] && (x > IDI_WTP_COL_SOUTH - 1) && (x < 13)) *iSel = IDI_WTP_SEL_SOUTH;
-		if (fCanSel[IDI_WTP_SEL_EAST] && (x > IDI_WTP_COL_EAST - 1) && (x < 19)) *iSel = IDI_WTP_SEL_EAST;
-		if (fCanSel[IDI_WTP_SEL_WEST] && (x > IDI_WTP_COL_WEST - 1) && (x < 25)) *iSel = IDI_WTP_SEL_WEST;
-		if (fCanSel[IDI_WTP_SEL_TAKE] && (x > IDI_WTP_COL_TAKE - 1) && (x < 33)) *iSel = IDI_WTP_SEL_TAKE;
-		if (fCanSel[IDI_WTP_SEL_DROP] && (x > IDI_WTP_COL_DROP - 1) && (x < 39)) *iSel = IDI_WTP_SEL_DROP;
+		if (fCanSel[IDI_WTP_SEL_NORTH] && (x > IDI_WTP_COL_NORTH - 1) && (x < 6))
+			*iSel = IDI_WTP_SEL_NORTH;
+		if (fCanSel[IDI_WTP_SEL_SOUTH] && (x > IDI_WTP_COL_SOUTH - 1) && (x < 13))
+			*iSel = IDI_WTP_SEL_SOUTH;
+		if (fCanSel[IDI_WTP_SEL_EAST] && (x > IDI_WTP_COL_EAST - 1) && (x < 19))
+			*iSel = IDI_WTP_SEL_EAST;
+		if (fCanSel[IDI_WTP_SEL_WEST] && (x > IDI_WTP_COL_WEST - 1) && (x < 25))
+			*iSel = IDI_WTP_SEL_WEST;
+		if (fCanSel[IDI_WTP_SEL_TAKE] && (x > IDI_WTP_COL_TAKE - 1) && (x < 33))
+			*iSel = IDI_WTP_SEL_TAKE;
+		if (fCanSel[IDI_WTP_SEL_DROP] && (x > IDI_WTP_COL_DROP - 1) && (x < 39))
+			*iSel = IDI_WTP_SEL_DROP;
 		break;
 	}
 }
@@ -1270,25 +1279,25 @@ void WinnieEngine::loadGame() {
 		// Since we read the save file data as little-endian, we skip the first byte of each
 		// variable
 
-		infile->seek(0);                    // Jump back to the beginning of the file
+		infile->seek(0); // Jump back to the beginning of the file
 
-		infile->readUint16LE();             // skip unused field
-		infile->readByte();                 // first 8 bits of fSound
+		infile->readUint16LE(); // skip unused field
+		infile->readByte(); // first 8 bits of fSound
 		_gameStateWinnie.fSound = infile->readByte();
-		infile->readByte();                 // first 8 bits of nMoves
+		infile->readByte(); // first 8 bits of nMoves
 		_gameStateWinnie.nMoves = infile->readByte();
-		infile->readByte();                 // first 8 bits of nObjMiss
+		infile->readByte(); // first 8 bits of nObjMiss
 		_gameStateWinnie.nObjMiss = infile->readByte();
-		infile->readByte();                 // first 8 bits of nObjRet
+		infile->readByte(); // first 8 bits of nObjRet
 		_gameStateWinnie.nObjRet = infile->readByte();
-		infile->readUint16LE();             // skip unused field
-		infile->readUint16LE();             // skip unused field
-		infile->readUint16LE();             // skip unused field
-		infile->readByte();                 // first 8 bits of iObjHave
+		infile->readUint16LE(); // skip unused field
+		infile->readUint16LE(); // skip unused field
+		infile->readUint16LE(); // skip unused field
+		infile->readByte(); // first 8 bits of iObjHave
 		_gameStateWinnie.iObjHave = infile->readByte();
-		infile->readUint16LE();             // skip unused field
-		infile->readUint16LE();             // skip unused field
-		infile->readUint16LE();             // skip unused field
+		infile->readUint16LE(); // skip unused field
+		infile->readUint16LE(); // skip unused field
+		infile->readUint16LE(); // skip unused field
 	}
 
 	for (i = 0; i < IDI_WTP_MAX_FLAG; i++)
@@ -1319,7 +1328,8 @@ void WinnieEngine::debugCurRoom() {
 	_console->debugPrintf("Current Room = %d\n", _room);
 }
 
-WinnieEngine::WinnieEngine(OSystem *syst, const AGIGameDescription *gameDesc) : PreAgiEngine(syst, gameDesc) {
+WinnieEngine::WinnieEngine(OSystem *syst, const AGIGameDescription *gameDesc)
+  : PreAgiEngine(syst, gameDesc) {
 	_console = new WinnieConsole(this);
 }
 
@@ -1372,8 +1382,8 @@ void WinnieEngine::init() {
 
 	hotspotNorth = Common::Rect(20, 0, (IDI_WTP_PIC_WIDTH + 10) * 2, 10);
 	hotspotSouth = Common::Rect(20, IDI_WTP_PIC_HEIGHT - 10, (IDI_WTP_PIC_WIDTH + 10) * 2, IDI_WTP_PIC_HEIGHT);
-	hotspotEast  = Common::Rect(IDI_WTP_PIC_WIDTH * 2, 0, (IDI_WTP_PIC_WIDTH + 10) * 2, IDI_WTP_PIC_HEIGHT);
-	hotspotWest  = Common::Rect(20, 0, 30, IDI_WTP_PIC_HEIGHT);
+	hotspotEast = Common::Rect(IDI_WTP_PIC_WIDTH * 2, 0, (IDI_WTP_PIC_WIDTH + 10) * 2, IDI_WTP_PIC_HEIGHT);
+	hotspotWest = Common::Rect(20, 0, 30, IDI_WTP_PIC_HEIGHT);
 }
 
 Common::Error WinnieEngine::go() {

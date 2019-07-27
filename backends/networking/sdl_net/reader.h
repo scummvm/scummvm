@@ -23,9 +23,9 @@
 #ifndef BACKENDS_NETWORKING_SDL_NET_READER_H
 #define BACKENDS_NETWORKING_SDL_NET_READER_H
 
-#include "common/str.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
+#include "common/str.h"
 
 namespace Common {
 class MemoryReadWriteStream;

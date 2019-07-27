@@ -23,14 +23,14 @@
 #ifndef GUI_WIDGETS_POPUP_H
 #define GUI_WIDGETS_POPUP_H
 
-#include "gui/widget.h"
-#include "common/str.h"
 #include "common/array.h"
+#include "common/str.h"
+#include "gui/widget.h"
 
 namespace GUI {
 
 enum {
-	kPopUpItemSelectedCmd	= 'POPs'
+	kPopUpItemSelectedCmd = 'POPs'
 };
 
 /**
@@ -45,16 +45,17 @@ class PopUpWidget : public Widget, public CommandSender {
 	typedef Common::String String;
 
 	struct Entry {
-		String	name;
-		uint32	tag;
+		String name;
+		uint32 tag;
 	};
 	typedef Common::Array<Entry> EntryList;
-protected:
-	EntryList		_entries;
-	int				_selectedItem;
 
-	int				_leftPadding;
-	int				_rightPadding;
+protected:
+	EntryList _entries;
+	int _selectedItem;
+
+	int _leftPadding;
+	int _rightPadding;
 
 public:
 	PopUpWidget(GuiObject *boss, const String &name, const char *tooltip = 0);
@@ -73,14 +74,21 @@ public:
 	/** Select the first entry matching the given tag. */
 	void setSelectedTag(uint32 tag);
 
-	int getSelected() const						{ return _selectedItem; }
-	uint32 getSelectedTag() const				{ return (_selectedItem >= 0) ? _entries[_selectedItem].tag : (uint32)-1; }
-//	const String& getSelectedString() const		{ return (_selectedItem >= 0) ? _entries[_selectedItem].name : String::emptyString; }
+	int getSelected() const { return _selectedItem; }
+	uint32 getSelectedTag() const { return (_selectedItem >= 0) ? _entries[_selectedItem].tag : (uint32)-1; }
+	//	const String& getSelectedString() const		{ return (_selectedItem >= 0) ? _entries[_selectedItem].name : String::emptyString; }
 
-	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); markAsDirty(); }
-	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
+	void handleMouseEntered(int button) {
+		setFlags(WIDGET_HILITED);
+		markAsDirty();
+	}
+	void handleMouseLeft(int button) {
+		clearFlags(WIDGET_HILITED);
+		markAsDirty();
+	}
 
 	virtual void reflowLayout();
+
 protected:
 	void drawWidget();
 };

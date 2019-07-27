@@ -25,9 +25,9 @@
 
 #if defined(POSIX) && defined(USE_TASKBAR) && defined(USE_UNITY)
 
-#include "common/events.h"
-#include "common/str.h"
-#include "common/taskbar.h"
+#	include "common/events.h"
+#	include "common/str.h"
+#	include "common/taskbar.h"
 
 typedef struct _GMainLoop GMainLoop;
 typedef struct _UnityLauncherEntry UnityLauncherEntry;
@@ -43,10 +43,10 @@ public:
 	virtual void setCount(int count);
 
 	// Implementation of the EventSource interface
-        virtual bool pollEvent(Common::Event &event);
+	virtual bool pollEvent(Common::Event &event);
 
 private:
-	GMainLoop          *_loop;
+	GMainLoop *_loop;
 	UnityLauncherEntry *_launcher;
 };
 

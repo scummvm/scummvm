@@ -26,7 +26,8 @@
 namespace Kyra {
 
 Screen_HoF::Screen_HoF(KyraEngine_HoF *vm, OSystem *system)
-	: Screen_v2(vm, system, _screenDimTable, _screenDimTableCount), _vm(vm) {
+  : Screen_v2(vm, system, _screenDimTable, _screenDimTableCount)
+  , _vm(vm) {
 }
 
 void Screen_HoF::generateGrayOverlay(const Palette &srcPal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool flag) {
@@ -35,7 +36,10 @@ void Screen_HoF::generateGrayOverlay(const Palette &srcPal, uint8 *grayOverlay, 
 	for (int i = 0; i != lastColor; i++) {
 		if (flag) {
 			int v = ((((srcPal[3 * i] & 0x3F) + (srcPal[3 * i + 1] & 0x3F)
-				+ (srcPal[3 * i + 2] & 0x3F)) / 3) * factor) / 0x40;
+			           + (srcPal[3 * i + 2] & 0x3F))
+			          / 3)
+			         * factor)
+			  / 0x40;
 			tmpPal[3 * i] = tmpPal[3 * i + 1] = tmpPal[3 * i + 2] = v & 0xFF;
 		} else {
 			int v = (((srcPal[3 * i] & 0x3F) * factor) / 0x40) + addR;
@@ -52,7 +56,7 @@ void Screen_HoF::generateGrayOverlay(const Palette &srcPal, uint8 *grayOverlay, 
 }
 
 void Screen_HoF::cmpFadeFrameStep(int srcPage, int srcW, int srcH, int srcX, int srcY, int dstPage, int dstW,
-	int dstH, int dstX, int dstY, int cmpW, int cmpH, int cmpPage) {
+                                  int dstH, int dstX, int dstY, int cmpW, int cmpH, int cmpPage) {
 
 	if (!cmpW || !cmpH)
 		return;

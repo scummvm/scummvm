@@ -31,8 +31,9 @@ namespace Mohawk {
 
 class LBXObject {
 public:
-	LBXObject(MohawkEngine_LivingBooks *vm) : _vm(vm) { }
-	virtual ~LBXObject() { }
+	LBXObject(MohawkEngine_LivingBooks *vm)
+	  : _vm(vm) {}
+	virtual ~LBXObject() {}
 
 	virtual bool call(uint callId, const Common::Array<LBValue> &params, LBValue &result) = 0;
 

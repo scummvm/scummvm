@@ -32,7 +32,8 @@
 namespace Gob {
 
 SaveConverter::SaveConverter(GobEngine *vm, const Common::String &fileName)
-: _vm(vm), _fileName(fileName) {
+  : _vm(vm)
+  , _fileName(fileName) {
 
 	_data = 0;
 	_stream = 0;
@@ -119,7 +120,7 @@ bool SaveConverter::swapDataEndian(byte *data, const byte *sizes, uint32 count) 
 		return false;
 
 	while (count-- > 0) {
-		if      (*sizes == 3) // 32bit value (3 additional bytes)
+		if (*sizes == 3) // 32bit value (3 additional bytes)
 			WRITE_UINT32(data, SWAP_BYTES_32(READ_UINT32(data)));
 		else if (*sizes == 1) // 16bit value (1 additional byte)
 			WRITE_UINT16(data, SWAP_BYTES_16(READ_UINT16(data)));
@@ -127,7 +128,7 @@ bool SaveConverter::swapDataEndian(byte *data, const byte *sizes, uint32 count) 
 			return false;
 
 		count -= *sizes;
-		data  += *sizes + 1;
+		data += *sizes + 1;
 		sizes += *sizes + 1;
 	}
 
@@ -135,7 +136,7 @@ bool SaveConverter::swapDataEndian(byte *data, const byte *sizes, uint32 count) 
 }
 
 SavePartInfo *SaveConverter::readInfo(Common::SeekableReadStream &stream,
-	uint32 descLength, bool hasSizes) const {
+                                      uint32 descLength, bool hasSizes) const {
 
 	uint32 varSize = SaveHandler::getVarSize(_vm);
 	if (varSize == 0)
@@ -152,8 +153,8 @@ SavePartInfo *SaveConverter::readInfo(Common::SeekableReadStream &stream,
 			return 0;
 		}
 
-	SavePartInfo *info = new SavePartInfo(descLength, (uint32) _vm->getGameType(),
-			0, _vm->getEndianness(), varSize);
+	SavePartInfo *info = new SavePartInfo(descLength, (uint32)_vm->getGameType(),
+	                                      0, _vm->getEndianness(), varSize);
 
 	info->setDesc(desc);
 
@@ -163,7 +164,7 @@ SavePartInfo *SaveConverter::readInfo(Common::SeekableReadStream &stream,
 }
 
 byte *SaveConverter::readData(Common::SeekableReadStream &stream,
-		uint32 count, bool endian) const {
+                              uint32 count, bool endian) const {
 
 	byte *data = new byte[count];
 
@@ -209,7 +210,7 @@ byte *SaveConverter::readData(Common::SeekableReadStream &stream,
 }
 
 SavePartVars *SaveConverter::readVars(Common::SeekableReadStream &stream,
-		uint32 count, bool endian) const {
+                                      uint32 count, bool endian) const {
 
 	byte *data = readData(stream, count, endian);
 	if (!data)
@@ -229,7 +230,7 @@ SavePartVars *SaveConverter::readVars(Common::SeekableReadStream &stream,
 }
 
 SavePartMem *SaveConverter::readMem(Common::SeekableReadStream &stream,
-		uint32 count, bool endian) const {
+                                    uint32 count, bool endian) const {
 
 	byte *data = readData(stream, count, endian);
 	if (!data)
@@ -249,7 +250,7 @@ SavePartMem *SaveConverter::readMem(Common::SeekableReadStream &stream,
 }
 
 SavePartSprite *SaveConverter::readSprite(Common::SeekableReadStream &stream,
-		uint32 width, uint32 height, bool palette) const {
+                                          uint32 width, uint32 height, bool palette) const {
 
 	assert((width > 0) && (height > 0));
 
@@ -353,9 +354,9 @@ bool SaveConverter::seek(int32 offset, int whence) {
 	return _stream->seek(offset, whence);
 }
 
-
 SaveConverter_Notes::SaveConverter_Notes(GobEngine *vm, uint32 notesSize,
-		const Common::String &fileName) : SaveConverter(vm, fileName) {
+                                         const Common::String &fileName)
+  : SaveConverter(vm, fileName) {
 
 	_size = notesSize;
 }
@@ -384,7 +385,7 @@ int SaveConverter_Notes::isOldSave(Common::InSaveFile **save) const {
 	return 0;
 }
 
-char *SaveConverter_Notes::getDescription(Common::SeekableReadStream &save) const  {
+char *SaveConverter_Notes::getDescription(Common::SeekableReadStream &save) const {
 	return 0;
 }
 

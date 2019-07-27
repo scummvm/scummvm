@@ -32,16 +32,34 @@
 
 namespace Titanic {
 
-CPetRoomsGlyph::CPetRoomsGlyph() : CPetGlyph(),
-		_roomFlags(0), _mailFlag(0), _mode(RGM_UNASSIGNED),
-		_chevLeftOnDim(nullptr), _chevLeftOffDim(nullptr), _chevLeftOnLit(nullptr), _chevLeftOffLit(nullptr),
-		_chevRightOnDim(nullptr), _chevRightOffDim(nullptr), _chevRightOnLit(nullptr), _chevRightOffLit(nullptr) {
+CPetRoomsGlyph::CPetRoomsGlyph()
+  : CPetGlyph()
+  , _roomFlags(0)
+  , _mailFlag(0)
+  , _mode(RGM_UNASSIGNED)
+  , _chevLeftOnDim(nullptr)
+  , _chevLeftOffDim(nullptr)
+  , _chevLeftOnLit(nullptr)
+  , _chevLeftOffLit(nullptr)
+  , _chevRightOnDim(nullptr)
+  , _chevRightOffDim(nullptr)
+  , _chevRightOnLit(nullptr)
+  , _chevRightOffLit(nullptr) {
 }
 
-CPetRoomsGlyph::CPetRoomsGlyph(uint flags) : CPetGlyph(),
-		_roomFlags(flags), _mailFlag(0), _mode(RGM_UNASSIGNED),
-		_chevLeftOnDim(nullptr), _chevLeftOffDim(nullptr), _chevLeftOnLit(nullptr), _chevLeftOffLit(nullptr),
-		_chevRightOnDim(nullptr), _chevRightOffDim(nullptr), _chevRightOnLit(nullptr), _chevRightOffLit(nullptr) {
+CPetRoomsGlyph::CPetRoomsGlyph(uint flags)
+  : CPetGlyph()
+  , _roomFlags(flags)
+  , _mailFlag(0)
+  , _mode(RGM_UNASSIGNED)
+  , _chevLeftOnDim(nullptr)
+  , _chevLeftOffDim(nullptr)
+  , _chevLeftOnLit(nullptr)
+  , _chevLeftOffLit(nullptr)
+  , _chevRightOnDim(nullptr)
+  , _chevRightOffDim(nullptr)
+  , _chevRightOnLit(nullptr)
+  , _chevRightOffLit(nullptr) {
 }
 
 bool CPetRoomsGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
@@ -95,7 +113,7 @@ void CPetRoomsGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool
 	drawObjects(roomBits >> 3, destPt, screenManager);
 	destPt.y += 10;
 	drawObjects(((roomBits & 7) << 1) + (roomFlags.getBit0() ? 1 : 0),
-		destPt, screenManager);
+	            destPt, screenManager);
 
 	// Restore original image pointers
 	_chevLeftOnDim = leftOnDim;
@@ -228,7 +246,6 @@ void CPetRoomsGlyph::drawObjects(uint flags, const Point &pt, CScreenManager *sc
 		((flags & 1) ? _chevRightOnDim : _chevRightOffDim)->draw(screenManager, destPos);
 	}
 }
-
 
 /*------------------------------------------------------------------------*/
 

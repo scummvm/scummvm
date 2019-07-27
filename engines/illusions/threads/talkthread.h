@@ -31,16 +31,16 @@ class IllusionsEngine;
 struct TalkEntry;
 
 enum {
-	kMsgQueryTalkThreadActive    = 0,
-	kMsgClearSequenceId1         = 1,
-	kMsgClearSequenceId2         = 2
+	kMsgQueryTalkThreadActive = 0,
+	kMsgClearSequenceId1 = 1,
+	kMsgClearSequenceId2 = 2
 };
 
 class TalkThread : public Thread {
 public:
 	TalkThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
-		int16 duration, uint32 objectId, uint32 talkId, uint32 sequenceId1, uint32 sequenceId2,
-		uint32 namedPointId);
+	           int16 duration, uint32 objectId, uint32 talkId, uint32 sequenceId1, uint32 sequenceId2,
+	           uint32 namedPointId);
 	virtual int onUpdate();
 	virtual void onSuspend();
 	virtual void onPause();
@@ -48,6 +48,7 @@ public:
 	virtual void onTerminated();
 	virtual void onKill();
 	virtual uint32 sendMessage(int msgNum, uint32 msgValue);
+
 public:
 	//field0 dw
 	int _status;

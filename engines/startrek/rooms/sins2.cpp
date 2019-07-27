@@ -31,61 +31,60 @@
 namespace StarTrek {
 
 extern const RoomAction sins2ActionList[] = {
-	{ {ACTION_TICK, 1, 0, 0}, &Room::sins2Tick1 },
-	{ {ACTION_USE, OBJECT_IPHASERK, HOTSPOT_DOOR, 0}, &Room::sins2UsePhaserOnDoor },
-	{ {ACTION_USE, OBJECT_IPHASERS, HOTSPOT_DOOR, 0}, &Room::sins2UsePhaserOnDoor },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff,         0}, &Room::sins2UseSTricorderAnywhere },
+	{ { ACTION_TICK, 1, 0, 0 }, &Room::sins2Tick1 },
+	{ { ACTION_USE, OBJECT_IPHASERK, HOTSPOT_DOOR, 0 }, &Room::sins2UsePhaserOnDoor },
+	{ { ACTION_USE, OBJECT_IPHASERS, HOTSPOT_DOOR, 0 }, &Room::sins2UsePhaserOnDoor },
+	{ { ACTION_USE, OBJECT_ISTRICOR, 0xff, 0 }, &Room::sins2UseSTricorderAnywhere },
 
-	{ {ACTION_USE, OBJECT_KIRK,  HOTSPOT_TERMINAL,    0}, &Room::sins2UseKirkOnTerminal },
-	{ {ACTION_USE, OBJECT_SPOCK, HOTSPOT_TERMINAL,    0}, &Room::sins2UseSpockOnTerminal },
-	{ {ACTION_DONE_WALK, 5,                        0, 0}, &Room::sins2SpockReachedTerminal },
-	{ {ACTION_DONE_ANIM, 6,                        0, 0}, &Room::sins2SpockUsedTerminal },
-	{ {ACTION_USE, OBJECT_MCCOY,    HOTSPOT_TERMINAL, 0}, &Room::sins2UseMccoyOnTerminal },
-	{ {ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_TERMINAL, 0}, &Room::sins2UseRedshirtOnTerminal },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_TERMINAL, 0}, &Room::sins2UseSTricorderOnTerminal },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_KEYPAD,   0}, &Room::sins2UseSTricorderOnKeypad },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_DOOR,     0}, &Room::sins2UseSTricorderOnDoor },
-	{ {ACTION_USE, OBJECT_KIRK,     HOTSPOT_KEYPAD,   0}, &Room::sins2UseKirkOnKeypad },
-	{ {ACTION_USE, OBJECT_SPOCK,    HOTSPOT_KEYPAD,   0}, &Room::sins2UseSpockOnKeypad },
-	{ {ACTION_DONE_WALK, 2,                        0, 0}, &Room::sins2SpockReachedKeypad },
-	{ {ACTION_DONE_ANIM, 3,                        0, 0}, &Room::sins2EnteredCorrectCode },
-	{ {ACTION_DONE_ANIM, 4,                        0, 0}, &Room::sins2EnteredIncorrectCode },
-	{ {ACTION_DONE_ANIM, 1,                        0, 0}, &Room::sins2DoorFinishedOpening },
+	{ { ACTION_USE, OBJECT_KIRK, HOTSPOT_TERMINAL, 0 }, &Room::sins2UseKirkOnTerminal },
+	{ { ACTION_USE, OBJECT_SPOCK, HOTSPOT_TERMINAL, 0 }, &Room::sins2UseSpockOnTerminal },
+	{ { ACTION_DONE_WALK, 5, 0, 0 }, &Room::sins2SpockReachedTerminal },
+	{ { ACTION_DONE_ANIM, 6, 0, 0 }, &Room::sins2SpockUsedTerminal },
+	{ { ACTION_USE, OBJECT_MCCOY, HOTSPOT_TERMINAL, 0 }, &Room::sins2UseMccoyOnTerminal },
+	{ { ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_TERMINAL, 0 }, &Room::sins2UseRedshirtOnTerminal },
+	{ { ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_TERMINAL, 0 }, &Room::sins2UseSTricorderOnTerminal },
+	{ { ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_KEYPAD, 0 }, &Room::sins2UseSTricorderOnKeypad },
+	{ { ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_DOOR, 0 }, &Room::sins2UseSTricorderOnDoor },
+	{ { ACTION_USE, OBJECT_KIRK, HOTSPOT_KEYPAD, 0 }, &Room::sins2UseKirkOnKeypad },
+	{ { ACTION_USE, OBJECT_SPOCK, HOTSPOT_KEYPAD, 0 }, &Room::sins2UseSpockOnKeypad },
+	{ { ACTION_DONE_WALK, 2, 0, 0 }, &Room::sins2SpockReachedKeypad },
+	{ { ACTION_DONE_ANIM, 3, 0, 0 }, &Room::sins2EnteredCorrectCode },
+	{ { ACTION_DONE_ANIM, 4, 0, 0 }, &Room::sins2EnteredIncorrectCode },
+	{ { ACTION_DONE_ANIM, 1, 0, 0 }, &Room::sins2DoorFinishedOpening },
 
-	{ {ACTION_TICK, 40,               0, 0}, &Room::sins2Tick40 },
-	{ {ACTION_LOOK, 0xff,             0, 0}, &Room::sins2LookAnywhere },
-	{ {ACTION_LOOK, OBJECT_DOOR,      0, 0}, &Room::sins2LookAtOpenDoor },
-	{ {ACTION_LOOK, HOTSPOT_TERMINAL, 0, 0}, &Room::sins2LookAtTerminal },
-	{ {ACTION_LOOK, HOTSPOT_KEYPAD,   0, 0}, &Room::sins2LookAtKeypad },
-	{ {ACTION_LOOK, OBJECT_KIRK,      0, 0}, &Room::sins2LookAtKirk },
-	{ {ACTION_LOOK, OBJECT_SPOCK,     0, 0}, &Room::sins2LookAtSpock },
-	{ {ACTION_LOOK, OBJECT_MCCOY,     0, 0}, &Room::sins2LookAtMccoy },
-	{ {ACTION_LOOK, OBJECT_REDSHIRT,  0, 0}, &Room::sins2LookAtRedshirt },
-	{ {ACTION_TALK, OBJECT_KIRK,      0, 0}, &Room::sins2TalkToKirk },
-	{ {ACTION_TALK, OBJECT_SPOCK,     0, 0}, &Room::sins2TalkToSpock },
-	{ {ACTION_TALK, OBJECT_MCCOY,     0, 0}, &Room::sins2TalkToMccoy },
-	{ {ACTION_TALK, OBJECT_REDSHIRT,  0, 0}, &Room::sins2TalkToRedshirt },
-	{ {ACTION_LOOK, HOTSPOT_DOOR,     0, 0}, &Room::sins2LookAtDoor },
+	{ { ACTION_TICK, 40, 0, 0 }, &Room::sins2Tick40 },
+	{ { ACTION_LOOK, 0xff, 0, 0 }, &Room::sins2LookAnywhere },
+	{ { ACTION_LOOK, OBJECT_DOOR, 0, 0 }, &Room::sins2LookAtOpenDoor },
+	{ { ACTION_LOOK, HOTSPOT_TERMINAL, 0, 0 }, &Room::sins2LookAtTerminal },
+	{ { ACTION_LOOK, HOTSPOT_KEYPAD, 0, 0 }, &Room::sins2LookAtKeypad },
+	{ { ACTION_LOOK, OBJECT_KIRK, 0, 0 }, &Room::sins2LookAtKirk },
+	{ { ACTION_LOOK, OBJECT_SPOCK, 0, 0 }, &Room::sins2LookAtSpock },
+	{ { ACTION_LOOK, OBJECT_MCCOY, 0, 0 }, &Room::sins2LookAtMccoy },
+	{ { ACTION_LOOK, OBJECT_REDSHIRT, 0, 0 }, &Room::sins2LookAtRedshirt },
+	{ { ACTION_TALK, OBJECT_KIRK, 0, 0 }, &Room::sins2TalkToKirk },
+	{ { ACTION_TALK, OBJECT_SPOCK, 0, 0 }, &Room::sins2TalkToSpock },
+	{ { ACTION_TALK, OBJECT_MCCOY, 0, 0 }, &Room::sins2TalkToMccoy },
+	{ { ACTION_TALK, OBJECT_REDSHIRT, 0, 0 }, &Room::sins2TalkToRedshirt },
+	{ { ACTION_LOOK, HOTSPOT_DOOR, 0, 0 }, &Room::sins2LookAtDoor },
 
-	{ {ACTION_USE, OBJECT_SPOCK,    HOTSPOT_DOOR,    0}, &Room::sins2UseSpockOnDoor },
-	{ {ACTION_USE, OBJECT_ICOMM,    0xff,            0}, &Room::sins2UseCommunicator },
-	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_KIRK,     0}, &Room::sins2UseMedkitOnCrewman },
-	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_SPOCK,    0}, &Room::sins2UseMedkitOnCrewman },
-	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_MCCOY,    0}, &Room::sins2UseMedkitOnCrewman },
-	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_REDSHIRT, 0}, &Room::sins2UseMedkitOnCrewman },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK,     0}, &Room::sins2UseMTricorderOnCrewman },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPOCK,    0}, &Room::sins2UseMTricorderOnCrewman },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY,    0}, &Room::sins2UseMTricorderOnCrewman },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0}, &Room::sins2UseMTricorderOnCrewman },
-	{ {ACTION_USE, OBJECT_MCCOY,    HOTSPOT_KEYPAD,  0}, &Room::sins2UseMccoyOnKeypad },
-	{ {ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_KEYPAD,  0}, &Room::sins2UseRedshirtOnKeypad },
+	{ { ACTION_USE, OBJECT_SPOCK, HOTSPOT_DOOR, 0 }, &Room::sins2UseSpockOnDoor },
+	{ { ACTION_USE, OBJECT_ICOMM, 0xff, 0 }, &Room::sins2UseCommunicator },
+	{ { ACTION_USE, OBJECT_IMEDKIT, OBJECT_KIRK, 0 }, &Room::sins2UseMedkitOnCrewman },
+	{ { ACTION_USE, OBJECT_IMEDKIT, OBJECT_SPOCK, 0 }, &Room::sins2UseMedkitOnCrewman },
+	{ { ACTION_USE, OBJECT_IMEDKIT, OBJECT_MCCOY, 0 }, &Room::sins2UseMedkitOnCrewman },
+	{ { ACTION_USE, OBJECT_IMEDKIT, OBJECT_REDSHIRT, 0 }, &Room::sins2UseMedkitOnCrewman },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK, 0 }, &Room::sins2UseMTricorderOnCrewman },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPOCK, 0 }, &Room::sins2UseMTricorderOnCrewman },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY, 0 }, &Room::sins2UseMTricorderOnCrewman },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0 }, &Room::sins2UseMTricorderOnCrewman },
+	{ { ACTION_USE, OBJECT_MCCOY, HOTSPOT_KEYPAD, 0 }, &Room::sins2UseMccoyOnKeypad },
+	{ { ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_KEYPAD, 0 }, &Room::sins2UseRedshirtOnKeypad },
 
-	{ {ACTION_WALK, HOTSPOT_DOOR, 0, 0}, &Room::sins2WalkToDoor },
-	{ {ACTION_WALK, OBJECT_DOOR,  0, 0}, &Room::sins2WalkToDoor },
+	{ { ACTION_WALK, HOTSPOT_DOOR, 0, 0 }, &Room::sins2WalkToDoor },
+	{ { ACTION_WALK, OBJECT_DOOR, 0, 0 }, &Room::sins2WalkToDoor },
 };
 
 extern const int sins2NumActions = ARRAYSIZE(sins2ActionList);
-
 
 void Room::sins2Tick1() {
 	playVoc("SIN2LOOP");
@@ -135,23 +134,23 @@ void Room::sins2SpockUsedTerminal() {
 		_awayMission->sins.gotPointsForAccessingTerminal = true;
 	}
 
-	showText(TX_SPEAKER_MCCOY,  TX_SIN2_015);
-	showText(TX_SPEAKER_SPOCK,  TX_SIN2_032);
+	showText(TX_SPEAKER_MCCOY, TX_SIN2_015);
+	showText(TX_SPEAKER_SPOCK, TX_SIN2_032);
 	showText(TX_SPEAKER_MOSHER, TX_SIN2_050);
-	showText(TX_SPEAKER_SPOCK,  TX_SIN2_035);
-	showText(TX_SPEAKER_SPOCK,  TX_SIN2_043);
-	showText(TX_SPEAKER_SPOCK,  TX_SIN2_041);
-	showText(TX_SPEAKER_SPOCK,  TX_SIN2_040);
-	showText(TX_SPEAKER_MCCOY,  TX_SIN2_021);
-	showText(TX_SPEAKER_SPOCK,  TX_SIN2_034);
-	showText(TX_SPEAKER_SPOCK,  TX_SIN2_031);
-	showText(TX_SPEAKER_SPOCK,  TX_SIN2_038);
-	showText(TX_SPEAKER_MCCOY,  TX_SIN2_020);
-	showText(TX_SPEAKER_SPOCK,  TX_SIN2_033);
-	showText(TX_SPEAKER_KIRK,   TX_SIN2_007);
-	showText(TX_SPEAKER_SPOCK,  TX_SIN2_037);
-	showText(TX_SPEAKER_MCCOY,  TX_SIN2_022);
-	showText(TX_SPEAKER_SPOCK,  TX_SIN2_029);
+	showText(TX_SPEAKER_SPOCK, TX_SIN2_035);
+	showText(TX_SPEAKER_SPOCK, TX_SIN2_043);
+	showText(TX_SPEAKER_SPOCK, TX_SIN2_041);
+	showText(TX_SPEAKER_SPOCK, TX_SIN2_040);
+	showText(TX_SPEAKER_MCCOY, TX_SIN2_021);
+	showText(TX_SPEAKER_SPOCK, TX_SIN2_034);
+	showText(TX_SPEAKER_SPOCK, TX_SIN2_031);
+	showText(TX_SPEAKER_SPOCK, TX_SIN2_038);
+	showText(TX_SPEAKER_MCCOY, TX_SIN2_020);
+	showText(TX_SPEAKER_SPOCK, TX_SIN2_033);
+	showText(TX_SPEAKER_KIRK, TX_SIN2_007);
+	showText(TX_SPEAKER_SPOCK, TX_SIN2_037);
+	showText(TX_SPEAKER_MCCOY, TX_SIN2_022);
+	showText(TX_SPEAKER_SPOCK, TX_SIN2_029);
 }
 
 void Room::sins2UseMccoyOnTerminal() {
@@ -223,15 +222,15 @@ void Room::sins2Tick40() {
 	if (!_awayMission->sins.enteredRoom2FirstTime) {
 		_awayMission->disableInput = false;
 
-		showText(TX_SPEAKER_KIRK,  TX_SIN2_005);
+		showText(TX_SPEAKER_KIRK, TX_SIN2_005);
 		showText(TX_SPEAKER_SCOTT, TX_SIN2_S05);
 		showText(TX_SPEAKER_UHURA, TX_SIN2U085);
-		showText(TX_SPEAKER_KIRK,  TX_SIN2_008);
+		showText(TX_SPEAKER_KIRK, TX_SIN2_008);
 		showText(TX_SPEAKER_UHURA, TX_SIN2U097);
 		showText(TX_SPEAKER_MCCOY, TX_SIN2_F26);
 		showText(TX_SPEAKER_UHURA, TX_SIN2U096);
 		showText(TX_SPEAKER_MCCOY, TX_SIN2_019);
-		showText(TX_SPEAKER_KIRK,  TX_SIN2_004);
+		showText(TX_SPEAKER_KIRK, TX_SIN2_004);
 
 		_awayMission->sins.enteredRoom2FirstTime = true;
 	}
@@ -279,7 +278,7 @@ void Room::sins2TalkToSpock() {
 }
 
 void Room::sins2TalkToMccoy() {
-	showText(TX_SPEAKER_MCCOY,  TX_SIN2_023);
+	showText(TX_SPEAKER_MCCOY, TX_SIN2_023);
 	showText(TX_SPEAKER_MOSHER, TX_SIN2_049);
 }
 
@@ -294,15 +293,15 @@ void Room::sins2LookAtDoor() {
 
 void Room::sins2UseSpockOnDoor() {
 	if (!_awayMission->sins.openedInnerDoor) {
-		showText(TX_SPEAKER_SPOCK,  TX_SIN2_F12);
+		showText(TX_SPEAKER_SPOCK, TX_SIN2_F12);
 		showText(TX_SPEAKER_MOSHER, TX_SIN2_048);
-		showText(TX_SPEAKER_SPOCK,  TX_SIN2_030);
+		showText(TX_SPEAKER_SPOCK, TX_SIN2_030);
 	}
 }
 
 void Room::sins2UseCommunicator() {
 	if (!_awayMission->sins.enteredRoom4FirstTime) {
-		showText(TX_SPEAKER_KIRK,  TX_SIN2_006);
+		showText(TX_SPEAKER_KIRK, TX_SIN2_006);
 		showText(TX_SPEAKER_SCOTT, TX_SIN2_S16);
 		showText(TX_SPEAKER_MCCOY, TX_SIN2_017);
 	} else

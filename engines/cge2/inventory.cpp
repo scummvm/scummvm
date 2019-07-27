@@ -76,7 +76,7 @@ void CGE2Engine::releasePocket(Sprite *spr) {
 
 int CGE2Engine::freePockets(int sx) {
 	int n = 0;
-	for (int i = 0; i < kPocketMax; i++){
+	for (int i = 0; i < kPocketMax; i++) {
 		if (_heroTab[sx]->_pocket[i] == nullptr)
 			++n;
 	}

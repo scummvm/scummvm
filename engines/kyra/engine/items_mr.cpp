@@ -83,7 +83,7 @@ void KyraEngine_MR::setMouseCursor(Item item) {
 	if (item != kItemNone) {
 		hotX = 12;
 		hotY = 19;
-		shape = item+248;
+		shape = item + 248;
 	}
 
 	_mouseState = item;
@@ -96,7 +96,7 @@ void KyraEngine_MR::setItemMouseCursor() {
 	if (_itemInHand == kItemNone)
 		_screen->setMouseCursor(0, 0, _gameShapes[0]);
 	else
-		_screen->setMouseCursor(12, 19, _gameShapes[_itemInHand+248]);
+		_screen->setMouseCursor(12, 19, _gameShapes[_itemInHand + 248]);
 }
 
 bool KyraEngine_MR::dropItem(int unk1, Item item, int x, int y, int unk2) {
@@ -243,22 +243,22 @@ void KyraEngine_MR::itemDropDown(int startX, int startY, int dstX, int dstY, int
 			int curY = startY;
 			int curX = startX - 12;
 
-			backUpGfxRect32x32(curX, curY-16);
+			backUpGfxRect32x32(curX, curY - 16);
 			while (curY < dstY) {
-				restoreGfxRect32x32(curX, curY-16);
+				restoreGfxRect32x32(curX, curY - 16);
 
 				curY = MIN(curY + speed, dstY);
 				++speed;
 
-				backUpGfxRect32x32(curX, curY-16);
+				backUpGfxRect32x32(curX, curY - 16);
 				uint32 endDelay = _system->getMillis() + _tickLength;
 
-				_screen->drawShape(0, itemShape, curX, curY-16, 0, 0);
+				_screen->drawShape(0, itemShape, curX, curY - 16, 0, 0);
 				_screen->updateScreen();
 
 				delayUntil(endDelay);
 			}
-			restoreGfxRect32x32(curX, curY-16);
+			restoreGfxRect32x32(curX, curY - 16);
 
 			if (dstX != dstY || (dstY - startY > 16)) {
 				snd_playSoundEffect(0x11, 0xC8);
@@ -399,9 +399,9 @@ bool KyraEngine_MR::itemListMagic(Item handItem, int itemSlot) {
 
 		snd_playSoundEffect(0x93, 0xC8);
 		for (int i = 109; i <= 141; ++i) {
-			_animObjects[animObjIndex].shapeIndex1 = i+248;
+			_animObjects[animObjIndex].shapeIndex1 = i + 248;
 			_animObjects[animObjIndex].needRefresh = true;
-			delay(1*_tickLength, true);
+			delay(1 * _tickLength, true);
 		}
 
 		deleteItemAnimEntry(itemSlot);
@@ -410,7 +410,7 @@ bool KyraEngine_MR::itemListMagic(Item handItem, int itemSlot) {
 	}
 
 	if (_mainCharacter.sceneId == 51 && queryGameFlag(0x19B) && !queryGameFlag(0x19C)
-		&& ((item == 63 && handItem == 56) || (item == 56 && handItem == 63))) {
+	    && ((item == 63 && handItem == 56) || (item == 56 && handItem == 63))) {
 
 		if (queryGameFlag(0x1AC)) {
 			setGameFlag(0x19C);
@@ -424,11 +424,11 @@ bool KyraEngine_MR::itemListMagic(Item handItem, int itemSlot) {
 	}
 
 	for (int i = 0; _itemMagicTable[i] != 0xFF; i += 4) {
-		if (_itemMagicTable[i+0] != handItem || (int8)_itemMagicTable[i+1] != item)
+		if (_itemMagicTable[i + 0] != handItem || (int8)_itemMagicTable[i + 1] != item)
 			continue;
 
-		uint8 resItem = _itemMagicTable[i+2];
-		uint8 newItem = _itemMagicTable[i+3];
+		uint8 resItem = _itemMagicTable[i + 2];
+		uint8 newItem = _itemMagicTable[i + 3];
 
 		snd_playSoundEffect(0x0F, 0xC8);
 
@@ -448,7 +448,7 @@ bool KyraEngine_MR::itemListMagic(Item handItem, int itemSlot) {
 		// Unlike the original we give points for when combining with scene items
 		if (resItem == 7) {
 			updateScore(35, 100);
-			delay(60*_tickLength, true);
+			delay(60 * _tickLength, true);
 		}
 
 		return true;
@@ -468,11 +468,11 @@ bool KyraEngine_MR::itemInventoryMagic(Item handItem, int invSlot) {
 		snd_playSoundEffect(0x93, 0xC8);
 		for (int i = 109; i <= 141; ++i) {
 			_mainCharacter.inventory[invSlot] = i;
-			_screen->drawShape(2, getShapePtr(invSlot+422), 0, 144, 0, 0);
-			_screen->drawShape(2, getShapePtr(i+248), 0, 144, 0, 0);
+			_screen->drawShape(2, getShapePtr(invSlot + 422), 0, 144, 0, 0);
+			_screen->drawShape(2, getShapePtr(i + 248), 0, 144, 0, 0);
 			_screen->copyRegion(0, 144, _inventoryX[invSlot], _inventoryY[invSlot], 24, 20, 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->updateScreen();
-			delay(1*_tickLength, true);
+			delay(1 * _tickLength, true);
 		}
 
 		_mainCharacter.inventory[invSlot] = kItemNone;
@@ -482,11 +482,11 @@ bool KyraEngine_MR::itemInventoryMagic(Item handItem, int invSlot) {
 	}
 
 	for (int i = 0; _itemMagicTable[i] != 0xFF; i += 4) {
-		if (_itemMagicTable[i+0] != handItem || _itemMagicTable[i+1] != item)
+		if (_itemMagicTable[i + 0] != handItem || _itemMagicTable[i + 1] != item)
 			continue;
 
-		uint8 resItem = _itemMagicTable[i+2];
-		uint8 newItem = _itemMagicTable[i+3];
+		uint8 resItem = _itemMagicTable[i + 2];
+		uint8 newItem = _itemMagicTable[i + 3];
 
 		snd_playSoundEffect(0x0F, 0xC8);
 
@@ -506,7 +506,7 @@ bool KyraEngine_MR::itemInventoryMagic(Item handItem, int invSlot) {
 		// Unlike the original we give points for every language
 		if (resItem == 7) {
 			updateScore(35, 100);
-			delay(60*_tickLength, true);
+			delay(60 * _tickLength, true);
 		}
 
 		return true;

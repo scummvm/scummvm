@@ -21,8 +21,8 @@
  */
 
 #include "illusions/resourcesystem.h"
-#include "illusions/resourcereader.h"
 #include "illusions/illusions.h"
+#include "illusions/resourcereader.h"
 
 #include "common/algorithm.h"
 #include "common/debug.h"
@@ -61,7 +61,7 @@ void Resource::unloadData() {
 // ResourceSystem
 
 ResourceSystem::ResourceSystem(IllusionsEngine *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 }
 
 ResourceSystem::~ResourceSystem() {
@@ -101,7 +101,6 @@ void ResourceSystem::loadResource(uint32 resId, uint32 sceneId, uint32 threadId)
 	resource->_loaded = true;
 
 	_resources.push_back(resource);
-
 }
 
 void ResourceSystem::unloadResourceById(uint32 resId) {

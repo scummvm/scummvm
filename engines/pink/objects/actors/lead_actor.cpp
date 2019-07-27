@@ -20,24 +20,30 @@
  *
  */
 
+#include "pink/objects/actors/lead_actor.h"
 #include "pink/archive.h"
 #include "pink/cursor_mgr.h"
-#include "pink/pink.h"
 #include "pink/director.h"
 #include "pink/objects/actions/action.h"
 #include "pink/objects/actors/supporting_actor.h"
-#include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/pages/game_page.h"
 #include "pink/objects/sequences/sequence_context.h"
 #include "pink/objects/sequences/sequencer.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
 LeadActor::LeadActor()
-	: _state(kReady), _nextState(kUndefined), _stateBeforeInventory(kUndefined),
-	_stateBeforePDA(kUndefined), _isHaveItem(false), _recipient(nullptr),
-	_cursorMgr(nullptr), _walkMgr(nullptr), _sequencer(nullptr),
-	_audioInfoMgr(this) {}
+  : _state(kReady)
+  , _nextState(kUndefined)
+  , _stateBeforeInventory(kUndefined)
+  , _stateBeforePDA(kUndefined)
+  , _isHaveItem(false)
+  , _recipient(nullptr)
+  , _cursorMgr(nullptr)
+  , _walkMgr(nullptr)
+  , _sequencer(nullptr)
+  , _audioInfoMgr(this) {}
 
 void LeadActor::deserialize(Archive &archive) {
 	_state = kReady;
@@ -305,7 +311,7 @@ void LeadActor::onWalkEnd(const Common::String &stopName) {
 			sendUseClickMessage(_recipient);
 		else
 			sendLeftClickMessage(_recipient);
-	} else {  // on ESC button
+	} else { // on ESC button
 		Action *action = findAction(stopName);
 		assert(action);
 		setAction(action);
@@ -336,7 +342,7 @@ void LeadActor::setNextExecutors(const Common::String &nextModule, const Common:
 }
 
 void LeadActor::forceUpdateCursor() {
-	PinkEngine *vm =_page->getGame();
+	PinkEngine *vm = _page->getGame();
 	vm->getDirector()->update(); // we have actions, that should be drawn to properly update cursor
 	const Common::Point point = vm->getEventManager()->getMousePos();
 	updateCursor(point);
@@ -495,8 +501,7 @@ WalkLocation *PubPink::getWalkDestination() {
 }
 
 bool PubPink::playingMiniGame() {
-	return !(_page->checkValueOfVariable(kFoodPuzzle, kTrueValue) ||
-			_page->checkValueOfVariable(kFoodPuzzle, kUndefinedValue));
+	return !(_page->checkValueOfVariable(kFoodPuzzle, kTrueValue) || _page->checkValueOfVariable(kFoodPuzzle, kUndefinedValue));
 }
 
 } // End of namespace Pink

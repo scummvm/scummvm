@@ -29,10 +29,10 @@
 namespace Glk {
 namespace Alan3 {
 
-/* FUNCTIONS */
-extern ScriptEntry *scriptOf(int actor);
-extern StepEntry *stepOf(int actor);
-extern void describeActor(CONTEXT, int actor);
+	/* FUNCTIONS */
+	extern ScriptEntry *scriptOf(int actor);
+	extern StepEntry *stepOf(int actor);
+	extern void describeActor(CONTEXT, int actor);
 
 } // End of namespace Alan3
 } // End of namespace Glk

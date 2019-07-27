@@ -23,9 +23,9 @@
 #ifndef PRINCE_SCRIPT_H
 #define PRINCE_SCRIPT_H
 
-#include "common/random.h"
-#include "common/endian.h"
 #include "common/array.h"
+#include "common/endian.h"
+#include "common/random.h"
 #include "common/stream.h"
 
 #include "prince/flags.h"
@@ -62,7 +62,6 @@ public:
 	int getOptionOffset(int option);
 
 private:
-
 	typedef void (Room::*LoadingStep)(Common::SeekableReadStream &stream);
 
 	void nextLoadStep(Common::SeekableReadStream &stream, LoadingStep step);
@@ -82,7 +81,6 @@ private:
 	void loadTalk(Common::SeekableReadStream &stream);
 	void loadGive(Common::SeekableReadStream &stream);
 };
-
 
 class Script {
 public:
@@ -169,6 +167,7 @@ public:
 
 	static const uint16 kFlagMask = 0x8000;
 	static const uint16 kMaxFlags = 2000;
+
 private:
 	int32 _flags[kMaxFlags];
 };
@@ -268,7 +267,7 @@ private:
 	void O__WAIT();
 	void O_UPDATEOFF();
 	void O_UPDATEON();
-	void O_UPDATE ();
+	void O_UPDATE();
 	void O_CLS();
 	void O__CALL();
 	void O_RETURN();
@@ -390,7 +389,6 @@ private:
 	void O_INPUTLINE();
 	void O_SETVOICED();
 	void O_BREAK_POINT();
-
 };
 
 } // End of namespace Prince

@@ -28,30 +28,30 @@
 namespace Gob {
 
 enum RelativeDirection {
-	kRelDirNone  = 0 ,
+	kRelDirNone = 0,
 
-	kRelDirLeft  = (1 << 0),
-	kRelDirUp    = (1 << 1),
+	kRelDirLeft = (1 << 0),
+	kRelDirUp = (1 << 1),
 	kRelDirRight = (1 << 2),
-	kRelDirDown  = (1 << 3),
+	kRelDirDown = (1 << 3),
 
-	kRelDirLeftUp    = kRelDirLeft  | kRelDirUp,
-	kRelDirLeftDown  = kRelDirLeft  | kRelDirDown,
-	kRelDirRightUp   = kRelDirRight | kRelDirUp,
+	kRelDirLeftUp = kRelDirLeft | kRelDirUp,
+	kRelDirLeftDown = kRelDirLeft | kRelDirDown,
+	kRelDirRightUp = kRelDirRight | kRelDirUp,
 	kRelDirRightDown = kRelDirRight | kRelDirDown
 };
 
 // The same numeric values are also used for the arrow keys.
 enum Direction {
 	kDirNone = 0x0000,
-	kDirNW   = 0x4700,
-	kDirN    = 0x4800,
-	kDirNE   = 0x4900,
-	kDirW    = 0x4B00,
-	kDirE    = 0x4D00,
-	kDirSW   = 0x4F00,
-	kDirS    = 0x5000,
-	kDirSE   = 0x5100
+	kDirNW = 0x4700,
+	kDirN = 0x4800,
+	kDirNE = 0x4900,
+	kDirW = 0x4B00,
+	kDirE = 0x4D00,
+	kDirSW = 0x4F00,
+	kDirS = 0x5000,
+	kDirSE = 0x5100
 };
 
 struct WayPoint {
@@ -65,7 +65,6 @@ struct ItemPos {
 	int8 y;
 	int8 orient;
 };
-
 
 class Map {
 public:
@@ -104,7 +103,7 @@ public:
 	const WayPoint &getWayPoint(int n) const;
 
 	void findNearestWalkable(int16 &gobDestX, int16 &gobDestY,
-		int16 mouseX, int16 mouseY);
+	                         int16 mouseX, int16 mouseY);
 
 	int16 getItem(int x, int y) const;
 	void setItem(int x, int y, int16 item);
@@ -113,9 +112,9 @@ public:
 	Direction getDirection(int16 x0, int16 y0, int16 x1, int16 y1);
 
 	int16 checkDirectPath(Mult::Mult_Object *obj, int16 x0,
-			int16 y0, int16 x1, int16 y1);
+	                      int16 y0, int16 x1, int16 y1);
 	int16 checkLongPath(int16 x0, int16 y0,
-			int16 x1, int16 y1, int16 i0, int16 i1);
+	                    int16 x1, int16 y1, int16 i0, int16 i1);
 
 	void loadMapsInitGobs();
 

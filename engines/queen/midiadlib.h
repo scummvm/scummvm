@@ -27,7 +27,6 @@ namespace Queen {
 
 class AdLibMidiDriver : public MidiDriver {
 public:
-
 	AdLibMidiDriver() {
 		_adlibWaveformSelect = 0;
 		_isOpen = false;
@@ -49,7 +48,6 @@ public:
 	void setVolume(uint32 volume);
 
 private:
-
 	void handleMidiEvent0x90_NoteOn(int channel, int param1, int param2);
 	void handleSequencerSpecificMetaEvent1(int channel, const uint8 *data);
 	void handleSequencerSpecificMetaEvent2(uint8 value);

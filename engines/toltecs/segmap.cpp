@@ -20,13 +20,14 @@
  *
  */
 
-#include "toltecs/toltecs.h"
-#include "toltecs/render.h"
 #include "toltecs/segmap.h"
+#include "toltecs/render.h"
+#include "toltecs/toltecs.h"
 
 namespace Toltecs {
 
-SegmentMap::SegmentMap(ToltecsEngine *vm) : _vm(vm) {
+SegmentMap::SegmentMap(ToltecsEngine *vm)
+  : _vm(vm) {
 	_maskRectData = NULL;
 	memset(_deadEndPathRects, 0, sizeof(_closedPathRects));
 	_closedPathRectsCount = 0;
@@ -67,7 +68,7 @@ void SegmentMap::load(byte *source) {
 		loadSegmapMaskRectSurface(maskData + maskOffset, maskRect);
 
 		debug(0, "SegmentMap::load() (%d, %d, %d, %d, %04X, %d)",
-			maskRect.x, maskRect.y, maskRect.width, maskRect.height, maskOffset, maskRect.priority);
+		      maskRect.x, maskRect.y, maskRect.width, maskRect.height, maskOffset, maskRect.priority);
 
 		source += 12;
 		_maskRects.push_back(maskRect);
@@ -116,22 +117,19 @@ void SegmentMap::load(byte *source) {
 		infoRect.c = source[11];
 
 		debug(0, "SegmentMap::load() (%d, %d, %d, %d) (%d, %d, %d, %d)",
-			infoRect.x, infoRect.y, infoRect.width, infoRect.height,
-			infoRect.id, (int8)infoRect.a, (int8)infoRect.b, (int8)infoRect.c);
+		      infoRect.x, infoRect.y, infoRect.width, infoRect.height,
+		      infoRect.id, (int8)infoRect.a, (int8)infoRect.b, (int8)infoRect.c);
 
 		source += 12;
 		_infoRects.push_back(infoRect);
 	}
 
 	// TODO Other stuff
-
-
 }
 
 int16 SegmentMap::findPathRectAtPoint(int16 x, int16 y) {
 	for (int16 rectIndex = 0; rectIndex < (int16)_pathRects.size(); rectIndex++) {
-		if (y >= _pathRects[rectIndex].y1 && y <= _pathRects[rectIndex].y2 &&
-			x >= _pathRects[rectIndex].x1 && x <= _pathRects[rectIndex].x2) {
+		if (y >= _pathRects[rectIndex].y1 && y <= _pathRects[rectIndex].y2 && x >= _pathRects[rectIndex].x1 && x <= _pathRects[rectIndex].x2) {
 			return rectIndex;
 		}
 	}
@@ -176,12 +174,10 @@ void SegmentMap::adjustPathPoint(int16 &x, int16 &y) {
 			}
 			minDistance = distance;
 		}
-
 	}
 
 	x = adjustedX;
 	y = adjustedY;
-
 }
 
 int16 SegmentMap::findNextPathRect(int16 srcRectIndex, int16 destX, int16 destY) {
@@ -261,7 +257,6 @@ int16 SegmentMap::findNextPathRect(int16 srcRectIndex, int16 destX, int16 destY)
 			_pathNodes[_pathNodesCount].x = nodeX;
 			_pathNodes[_pathNodesCount].y = nodeY;
 		}
-
 	}
 
 	return result;
@@ -339,7 +334,6 @@ void SegmentMap::findPath(int16 *pointsArray, int16 destX, int16 destY, int16 so
 		sy = y;
 	}
 #endif
-
 }
 
 int8 SegmentMap::getScalingAtPoint(int16 x, int16 y) {
@@ -394,7 +388,6 @@ void SegmentMap::loadSegmapMaskRectSurface(byte *maskData, SegmapMaskRect &maskR
 		}
 		backScreen += _vm->_sceneWidth - maskRect.width;
 	}
-
 }
 
 void SegmentMap::freeSegmapMaskRectSurfaces() {

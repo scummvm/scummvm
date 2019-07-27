@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptHysteriaPatron1::AIScriptHysteriaPatron1(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptHysteriaPatron1::AIScriptHysteriaPatron1(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 }
 
 void AIScriptHysteriaPatron1::Initialize() {
@@ -96,20 +97,19 @@ bool AIScriptHysteriaPatron1::GoalChanged(int currentGoalNumber, int newGoalNumb
 const int kAnimationsCount = 27;
 const int animationList[kAnimationsCount] = {
 	kModelAnimationHysteriaPatron1DanceStandingUpSemiSitAndUp, kModelAnimationHysteriaPatron1DanceStandingUpLeftMotion, kModelAnimationHysteriaPatron1DanceStandingUpSemiSitAndUp,
-	kModelAnimationHysteriaPatron1DanceStandingUpToSplits,     kModelAnimationHysteriaPatron1DanceSplitsDuckAndDown,    kModelAnimationHysteriaPatron1DanceSplitsSemiUpAndDown,
-	kModelAnimationHysteriaPatron1DanceSplitsBackAndForth,     kModelAnimationHysteriaPatron1DanceSplitsToStandingUp,   kModelAnimationHysteriaPatron1DanceStandingUpLeftMotion,
-	kModelAnimationHysteriaPatron1DanceStandingUpSemiSitAndUp, kModelAnimationHysteriaPatron1DanceStandingUpToSplits,   kModelAnimationHysteriaPatron1DanceSplitsSemiUpAndDown,
-	kModelAnimationHysteriaPatron1DanceSplitsDuckAndDown,      kModelAnimationHysteriaPatron1DanceSplitsToStandingUp,   kModelAnimationHysteriaPatron1DanceStandingUpSemiSitAndUp,
+	kModelAnimationHysteriaPatron1DanceStandingUpToSplits, kModelAnimationHysteriaPatron1DanceSplitsDuckAndDown, kModelAnimationHysteriaPatron1DanceSplitsSemiUpAndDown,
+	kModelAnimationHysteriaPatron1DanceSplitsBackAndForth, kModelAnimationHysteriaPatron1DanceSplitsToStandingUp, kModelAnimationHysteriaPatron1DanceStandingUpLeftMotion,
+	kModelAnimationHysteriaPatron1DanceStandingUpSemiSitAndUp, kModelAnimationHysteriaPatron1DanceStandingUpToSplits, kModelAnimationHysteriaPatron1DanceSplitsSemiUpAndDown,
+	kModelAnimationHysteriaPatron1DanceSplitsDuckAndDown, kModelAnimationHysteriaPatron1DanceSplitsToStandingUp, kModelAnimationHysteriaPatron1DanceStandingUpSemiSitAndUp,
 	kModelAnimationHysteriaPatron1DanceStandingUpSemiSitAndUp, kModelAnimationHysteriaPatron1DanceStandingUpLeftMotion, kModelAnimationHysteriaPatron1DanceStandingUpToSplits,
-	kModelAnimationHysteriaPatron1DanceSplitsBackAndForth,     kModelAnimationHysteriaPatron1DanceSplitsToStandingUp,   kModelAnimationHysteriaPatron1DanceStandingUpLeftMotion,
-	kModelAnimationHysteriaPatron1DanceStandingUpSemiSitAndUp, kModelAnimationHysteriaPatron1DanceStandingUpToSplits,   kModelAnimationHysteriaPatron1DanceSplitsBackAndForth,
-	kModelAnimationHysteriaPatron1DanceSplitsDuckAndDown,      kModelAnimationHysteriaPatron1DanceSplitsSemiUpAndDown,  kModelAnimationHysteriaPatron1DanceSplitsToStandingUp
+	kModelAnimationHysteriaPatron1DanceSplitsBackAndForth, kModelAnimationHysteriaPatron1DanceSplitsToStandingUp, kModelAnimationHysteriaPatron1DanceStandingUpLeftMotion,
+	kModelAnimationHysteriaPatron1DanceStandingUpSemiSitAndUp, kModelAnimationHysteriaPatron1DanceStandingUpToSplits, kModelAnimationHysteriaPatron1DanceSplitsBackAndForth,
+	kModelAnimationHysteriaPatron1DanceSplitsDuckAndDown, kModelAnimationHysteriaPatron1DanceSplitsSemiUpAndDown, kModelAnimationHysteriaPatron1DanceSplitsToStandingUp
 };
 
 bool AIScriptHysteriaPatron1::UpdateAnimation(int *animation, int *frame) {
 	if (_vm->_cutContent
-	    && (_animationState == 2 || _animationState == 16 || _animationState == 21)
-	) {
+	    && (_animationState == 2 || _animationState == 16 || _animationState == 21)) {
 		// replace a few of the repeated "standing up" animations
 		// with the cut animation kModelAnimationHysteriaPatron1DanceStandingUpStowingMoney
 		*animation = kModelAnimationHysteriaPatron1DanceStandingUpStowingMoney;
@@ -125,8 +125,7 @@ bool AIScriptHysteriaPatron1::UpdateAnimation(int *animation, int *frame) {
 		}
 
 		if (_vm->_cutContent
-		    && (_animationState == 2 || _animationState == 16 || _animationState == 21)
-		) {
+		    && (_animationState == 2 || _animationState == 16 || _animationState == 21)) {
 			// replace a few of the repeated "standing up" animations
 			// with the cut animation kModelAnimationHysteriaPatron1DanceStandingUpStowingMoney
 			*animation = kModelAnimationHysteriaPatron1DanceStandingUpStowingMoney;
@@ -145,17 +144,17 @@ bool AIScriptHysteriaPatron1::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptHysteriaPatron1::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptHysteriaPatron1::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptHysteriaPatron1::ReachedMovementTrackWaypoint(int waypointId) {

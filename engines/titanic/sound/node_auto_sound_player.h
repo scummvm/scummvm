@@ -23,8 +23,8 @@
 #ifndef TITANIC_NODE_AUTO_SOUND_PLAYER_H
 #define TITANIC_NODE_AUTO_SOUND_PLAYER_H
 
-#include "titanic/sound/auto_sound_player.h"
 #include "titanic/messages/messages.h"
+#include "titanic/sound/auto_sound_player.h"
 
 namespace Titanic {
 
@@ -32,11 +32,15 @@ class CNodeAutoSoundPlayer : public CAutoSoundPlayer {
 	DECLARE_MESSAGE_MAP;
 	bool EnterNodeMsg(CEnterNodeMsg *msg);
 	bool LeaveNodeMsg(CLeaveNodeMsg *msg);
+
 private:
 	bool _enabled;
+
 public:
 	CLASSDEF;
-	CNodeAutoSoundPlayer() : CAutoSoundPlayer(), _enabled(true) {}
+	CNodeAutoSoundPlayer()
+	  : CAutoSoundPlayer()
+	  , _enabled(true) {}
 
 	/**
 	 * Save the data for the class to file

@@ -23,7 +23,6 @@
 #ifndef PARALLACTION_INVENTORY_H
 #define PARALLACTION_INVENTORY_H
 
-
 #include "graphics/surface.h"
 
 namespace Parallaction {
@@ -31,8 +30,8 @@ namespace Parallaction {
 class Parallaction;
 
 struct InventoryItem {
-	uint32		_id;			// object name (lowest 16 bits are always zero)
-	uint16		_index;			// index to frame in objs file
+	uint32 _id; // object name (lowest 16 bits are always zero)
+	uint16 _index; // index to frame in objs file
 };
 
 struct InventoryProperties {
@@ -49,7 +48,7 @@ struct InventoryProperties {
 	int _height;
 };
 
-#define MAKE_INVENTORY_ID(x) (((x) & 0xFFFF) << 16)
+#define MAKE_INVENTORY_ID(x) (((x)&0xFFFF) << 16)
 
 typedef int16 ItemPosition;
 typedef uint16 ItemName;
@@ -57,11 +56,11 @@ typedef uint16 ItemName;
 class Inventory {
 
 protected:
-	uint16			_numVerbs;
+	uint16 _numVerbs;
 
-	InventoryItem	*_items;
-	uint16			_numItems;
-	int				_maxItems;
+	InventoryItem *_items;
+	uint16 _numItems;
+	int _maxItems;
 
 public:
 	Inventory(int maxItems, InventoryItem *verbs);
@@ -72,24 +71,22 @@ public:
 	void removeItem(ItemName name);
 	void clear(bool keepVerbs = true);
 
-	const InventoryItem* getItem(ItemPosition pos) const;
+	const InventoryItem *getItem(ItemPosition pos) const;
 	ItemName getItemName(ItemPosition pos) const;
 
 	ItemPosition findItem(ItemName name) const;
 
-	int16	getNumItems() const { return _numItems; }
+	int16 getNumItems() const { return _numItems; }
 };
 
-
-
 class InventoryRenderer {
-	Parallaction	*_vm;
+	Parallaction *_vm;
 	InventoryProperties *_props;
 
-	Inventory		*_inv;
-	Common::Point	_pos;
+	Inventory *_inv;
+	Common::Point _pos;
 
-	Graphics::Surface	_surf;
+	Graphics::Surface _surf;
 
 protected:
 	void getItemRect(ItemPosition pos, Common::Rect &r);
@@ -108,10 +105,10 @@ public:
 	void highlightItem(ItemPosition pos, byte color);
 	void drawItem(ItemName name, byte *buffer, uint pitch);
 
-	byte	*getData() { return (byte *)_surf.getPixels(); }
+	byte *getData() { return (byte *)_surf.getPixels(); }
 
-	void	getRect(Common::Rect &r) const;
-	int16	getNumLines() const;
+	void getRect(Common::Rect &r) const;
+	int16 getNumLines() const;
 };
 
 } // namespace Parallaction

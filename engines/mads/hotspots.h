@@ -57,23 +57,25 @@ public:
 
 #define DYNAMIC_HOTSPOTS_SIZE 16
 
-#define SYNTAX_SINGULAR               0
-#define SYNTAX_PLURAL                 1
-#define SYNTAX_PARTITIVE              2
-#define SYNTAX_SINGULAR_MASC          3
-#define SYNTAX_SINGULAR_FEM           4
-#define SYNTAX_SINGULAR_LIVING        5
-#define SYNTAX_MASC_NOT_PROPER        6
-#define SYNTAX_FEM_NOT_PROPER         7
-#define MAX_SYNTAX                    8
+#define SYNTAX_SINGULAR 0
+#define SYNTAX_PLURAL 1
+#define SYNTAX_PARTITIVE 2
+#define SYNTAX_SINGULAR_MASC 3
+#define SYNTAX_SINGULAR_FEM 4
+#define SYNTAX_SINGULAR_LIVING 5
+#define SYNTAX_MASC_NOT_PROPER 6
+#define SYNTAX_FEM_NOT_PROPER 7
+#define MAX_SYNTAX 8
 
 class DynamicHotspots {
 private:
 	MADSEngine *_vm;
 	Common::Array<DynamicHotspot> _entries;
 	int _count;
+
 public:
 	bool _changed;
+
 public:
 	DynamicHotspots(MADSEngine *vm);
 
@@ -118,8 +120,10 @@ public:
 class Hotspots : public Common::Array<Hotspot> {
 private:
 	MADSEngine *_vm;
+
 public:
-	Hotspots(MADSEngine *vm) : _vm(vm) {}
+	Hotspots(MADSEngine *vm)
+	  : _vm(vm) {}
 
 	/**
 	 * Sets the active state of a given hotspot
@@ -130,9 +134,8 @@ public:
 	 * Sets the active state of a given hotspot if it includes a given position
 	 */
 	void activateAtPos(int vocabId, bool active, Common::Point pos);
-
 };
 
 } // End of namespace MADS
 
-#endif	/* MADS_HOTSPOTS_H */
+#endif /* MADS_HOTSPOTS_H */

@@ -28,22 +28,22 @@
 namespace Mohawk {
 namespace RivenStacks {
 
-/**
+	/**
  * Rebel Age / Tay
  */
-class RSpit : public RivenStack {
-public:
-	RSpit(MohawkEngine_Riven *vm);
+	class RSpit : public RivenStack {
+	public:
+		RSpit(MohawkEngine_Riven *vm);
 
-	// External commands
-	void xrcredittime(const ArgumentArray &args);
-	void xrshowinventory(const ArgumentArray &args);
-	void xrhideinventory(const ArgumentArray &args);
-	void xrwindowsetup(const ArgumentArray &args);
+		// External commands
+		void xrcredittime(const ArgumentArray &args);
+		void xrshowinventory(const ArgumentArray &args);
+		void xrhideinventory(const ArgumentArray &args);
+		void xrwindowsetup(const ArgumentArray &args);
 
-	// Timer callbacks
-	void rebelPrisonWindowTimer();
-};
+		// Timer callbacks
+		void rebelPrisonWindowTimer();
+	};
 
 } // End of namespace RivenStacks
 } // End of namespace Mohawk

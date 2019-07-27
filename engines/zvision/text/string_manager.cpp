@@ -20,26 +20,25 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/file.h"
-#include "common/tokenizer.h"
 #include "common/debug.h"
-#include "graphics/fontman.h"
+#include "common/file.h"
+#include "common/scummsys.h"
+#include "common/tokenizer.h"
 #include "graphics/colormasks.h"
+#include "graphics/fontman.h"
 
-#include "zvision/zvision.h"
 #include "zvision/file/search_manager.h"
 #include "zvision/text/string_manager.h"
 #include "zvision/text/text.h"
+#include "zvision/zvision.h"
 
 namespace ZVision {
 
 StringManager::StringManager(ZVision *engine)
-	: _engine(engine) {
+  : _engine(engine) {
 }
 
 StringManager::~StringManager() {
-
 }
 
 void StringManager::initialize(ZVisionGameId gameId) {

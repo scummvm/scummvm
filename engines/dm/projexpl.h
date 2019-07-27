@@ -32,9 +32,9 @@
 namespace DM {
 
 enum KillOutcome {
-	kDMKillOutcomeNoCreaturesInGroup = 0,   // @ C0_OUTCOME_KILLED_NO_CREATURES_IN_GROUP
+	kDMKillOutcomeNoCreaturesInGroup = 0, // @ C0_OUTCOME_KILLED_NO_CREATURES_IN_GROUP
 	kDMKillOutcomeSomeCreaturesInGroup = 1, // @ C1_OUTCOME_KILLED_SOME_CREATURES_IN_GROUP
-	kDMKillOutcomeAllCreaturesInGroup = 2   // @ C2_OUTCOME_KILLED_ALL_CREATURES_IN_GROUP
+	kDMKillOutcomeAllCreaturesInGroup = 2 // @ C2_OUTCOME_KILLED_ALL_CREATURES_IN_GROUP
 };
 
 class TimelineEvent;
@@ -42,6 +42,7 @@ class Projectile;
 
 class ProjExpl {
 	DMEngine *_vm;
+
 public:
 	int16 _creatureDamageOutcome; // @ G0364_i_CreatureDamageOutcome
 	int16 _secondaryDirToOrFromParty; // @ G0363_i_SecondaryDirectionToOrFromParty
@@ -54,12 +55,12 @@ public:
 	explicit ProjExpl(DMEngine *vm);
 
 	void createProjectile(Thing thing, int16 mapX, int16 mapY, uint16 cell, Direction dir,
-							   byte kineticEnergy, byte attack, byte stepEnergy); // @ F0212_PROJECTILE_Create
+	                      byte kineticEnergy, byte attack, byte stepEnergy); // @ F0212_PROJECTILE_Create
 	bool hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, int16 mapYCombo,
-										  int16 cell, Thing projectileThing); // @ F0217_PROJECTILE_HasImpactOccured
+	                                 int16 cell, Thing projectileThing); // @ F0217_PROJECTILE_HasImpactOccured
 	uint16 getProjectileImpactAttack(Projectile *projectile, Thing thing); // @ F0216_PROJECTILE_GetImpactAttack
 	void createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo,
-							  uint16 mapYCombo, uint16 cell); // @ F0213_EXPLOSION_Create
+	                     uint16 mapYCombo, uint16 cell); // @ F0213_EXPLOSION_Create
 	int16 projectileGetImpactCount(int16 impactType, int16 mapX, int16 mapY, int16 cell); // @ F0218_PROJECTILE_GetImpactCount
 	void projectileDeleteEvent(Thing thing); // @ F0214_PROJECTILE_DeleteEvent
 	void projectileDelete(Thing projectileThing, Thing *groupSlot, int16 mapX, int16 mapY); // @ F0215_PROJECTILE_Delete

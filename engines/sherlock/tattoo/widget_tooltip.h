@@ -23,8 +23,8 @@
 #ifndef SHERLOCK_TATTOO_WIDGET_TOOLTIP_H
 #define SHERLOCK_TATTOO_WIDGET_TOOLTIP_H
 
-#include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "sherlock/tattoo/widget_base.h"
 
 namespace Sherlock {
@@ -33,54 +33,58 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-class WidgetTooltipBase : public WidgetBase {
-public:
-	WidgetTooltipBase(SherlockEngine *vm) : WidgetBase(vm) {}
-	virtual ~WidgetTooltipBase() {}
+	class WidgetTooltipBase : public WidgetBase {
+	public:
+		WidgetTooltipBase(SherlockEngine *vm)
+		  : WidgetBase(vm) {}
+		virtual ~WidgetTooltipBase() {}
 
-	/**
+		/**
 	 * Erase any previous display of the widget on the screen
 	 */
-	virtual void erase();
+		virtual void erase();
 
-	/**
+		/**
 	 * Update the display of the widget on the screen
 	 */
-	virtual void draw();
-};
+		virtual void draw();
+	};
 
-class WidgetTooltip: public WidgetTooltipBase {
-public:
-	int _offsetY;
-public:
-	WidgetTooltip(SherlockEngine *vm);
-	virtual ~WidgetTooltip() {}
+	class WidgetTooltip : public WidgetTooltipBase {
+	public:
+		int _offsetY;
 
-	/**
+	public:
+		WidgetTooltip(SherlockEngine *vm);
+		virtual ~WidgetTooltip() {}
+
+		/**
 	 * Set the text for the tooltip
 	 */
-	void setText(const Common::String &str);
+		void setText(const Common::String &str);
 
-	/**
+		/**
 	 * Handle updating the tooltip state
 	 */
-	virtual void handleEvents();
-};
+		virtual void handleEvents();
+	};
 
-class WidgetSceneTooltip : public WidgetTooltip {
-public:
-	WidgetSceneTooltip(SherlockEngine *vm) : WidgetTooltip(vm) {}
+	class WidgetSceneTooltip : public WidgetTooltip {
+	public:
+		WidgetSceneTooltip(SherlockEngine *vm)
+		  : WidgetTooltip(vm) {}
 
-	/**
+		/**
 	 * Handle updating the tooltip state
 	 */
-	virtual void handleEvents();
-};
+		virtual void handleEvents();
+	};
 
-class WidgetMapTooltip : public WidgetTooltip {
-public:
-	WidgetMapTooltip(SherlockEngine *vm) : WidgetTooltip(vm) {}
-};
+	class WidgetMapTooltip : public WidgetTooltip {
+	public:
+		WidgetMapTooltip(SherlockEngine *vm)
+		  : WidgetTooltip(vm) {}
+	};
 
 } // End of namespace Tattoo
 

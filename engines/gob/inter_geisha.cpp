@@ -26,18 +26,18 @@
 
 #include "gui/message.h"
 
+#include "gob/cheater.h"
+#include "gob/dataio.h"
+#include "gob/draw.h"
+#include "gob/game.h"
 #include "gob/gob.h"
 #include "gob/inter.h"
-#include "gob/dataio.h"
-#include "gob/script.h"
 #include "gob/resources.h"
-#include "gob/game.h"
-#include "gob/draw.h"
-#include "gob/video.h"
-#include "gob/cheater.h"
 #include "gob/save/saveload.h"
+#include "gob/script.h"
 #include "gob/sound/sound.h"
 #include "gob/sound/sounddesc.h"
+#include "gob/video.h"
 
 #include "gob/minigames/geisha/diving.h"
 #include "gob/minigames/geisha/penetration.h"
@@ -45,14 +45,16 @@
 namespace Gob {
 
 #define OPCODEVER Inter_Geisha
-#define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
-#define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
-#define OPCODEGOB(i, x)   _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
+#define OPCODEDRAW(i, x) _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
+#define OPCODEFUNC(i, x) _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
+#define OPCODEGOB(i, x) _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 
-Inter_Geisha::Inter_Geisha(GobEngine *vm) : Inter_v1(vm),
-	_diving(0), _penetration(0) {
+Inter_Geisha::Inter_Geisha(GobEngine *vm)
+  : Inter_v1(vm)
+  , _diving(0)
+  , _penetration(0) {
 
-	_diving      = new Geisha::Diving(vm);
+	_diving = new Geisha::Diving(vm);
 	_penetration = new Geisha::Penetration(vm);
 
 	_cheater = new Cheater_Geisha(vm, _diving, _penetration);
@@ -110,18 +112,18 @@ struct TOTTransition {
 };
 
 static const TOTTransition kTOTTransitions[] = {
-	{"chambre.tot", "photo.tot"  ,  1801},
-	{"mo.tot"     , "chambre.tot", 13580},
-	{"chambre.tot", "mo.tot"     ,   564},
-	{"hard.tot"   , "chambre.tot", 13917},
-	{"carte.tot"  , "hard.tot"   , 17926},
-	{"chambre.tot", "carte.tot"  , 14609},
-	{"chambre.tot", "mo.tot"     ,  3658},
-	{"streap.tot" , "chambre.tot", 14652},
-	{"bonsai.tot" , "porte.tot"  ,  2858},
-	{"lit.tot"    , "napa.tot"   ,  3380},
-	{"oko.tot"    , "chambre.tot", 14146},
-	{"chambre.tot", "oko.tot"    ,  2334}
+	{ "chambre.tot", "photo.tot", 1801 },
+	{ "mo.tot", "chambre.tot", 13580 },
+	{ "chambre.tot", "mo.tot", 564 },
+	{ "hard.tot", "chambre.tot", 13917 },
+	{ "carte.tot", "hard.tot", 17926 },
+	{ "chambre.tot", "carte.tot", 14609 },
+	{ "chambre.tot", "mo.tot", 3658 },
+	{ "streap.tot", "chambre.tot", 14652 },
+	{ "bonsai.tot", "porte.tot", 2858 },
+	{ "lit.tot", "napa.tot", 3380 },
+	{ "oko.tot", "chambre.tot", 14146 },
+	{ "chambre.tot", "oko.tot", 2334 }
 };
 
 void Inter_Geisha::oGeisha_loadTot(OpFuncParams &params) {
@@ -134,9 +136,7 @@ void Inter_Geisha::oGeisha_loadTot(OpFuncParams &params) {
 	bool needWait = false;
 
 	for (int i = 0; i < ARRAYSIZE(kTOTTransitions); i++)
-		if ((_vm->_game->_script->pos() == kTOTTransitions[i].offset) &&
-		    (_vm->_game->_totToLoad     == kTOTTransitions[i].to) &&
-		    (_vm->_game->_curTotFile    == kTOTTransitions[i].from)) {
+		if ((_vm->_game->_script->pos() == kTOTTransitions[i].offset) && (_vm->_game->_totToLoad == kTOTTransitions[i].to) && (_vm->_game->_curTotFile == kTOTTransitions[i].from)) {
 
 			needWait = true;
 			break;
@@ -249,7 +249,7 @@ void Inter_Geisha::oGeisha_writeData(OpFuncParams &params) {
 	const char *file = _vm->_game->_script->evalString();
 
 	int16 dataVar = _vm->_game->_script->readVarIndex();
-	int32 size    = _vm->_game->_script->readValExpr();
+	int32 size = _vm->_game->_script->readValExpr();
 
 	debugC(2, kDebugFileIO, "Write to file \"%s\" (%d, %d bytes)", file, dataVar, size);
 
@@ -277,9 +277,9 @@ void Inter_Geisha::oGeisha_writeData(OpFuncParams &params) {
 
 void Inter_Geisha::oGeisha_gamePenetration(OpGobParams &params) {
 	uint16 hasAccessPass = _vm->_game->_script->readUint16();
-	uint16 hasMaxEnergy  = _vm->_game->_script->readUint16();
-	uint16 testMode      = _vm->_game->_script->readUint16();
-	uint16 resultVar     = _vm->_game->_script->readUint16();
+	uint16 hasMaxEnergy = _vm->_game->_script->readUint16();
+	uint16 testMode = _vm->_game->_script->readUint16();
+	uint16 resultVar = _vm->_game->_script->readUint16();
 
 	bool result = _penetration->play(hasAccessPass, hasMaxEnergy, testMode);
 
@@ -287,9 +287,9 @@ void Inter_Geisha::oGeisha_gamePenetration(OpGobParams &params) {
 }
 
 void Inter_Geisha::oGeisha_gameDiving(OpGobParams &params) {
-	uint16 playerCount      = _vm->_game->_script->readUint16();
+	uint16 playerCount = _vm->_game->_script->readUint16();
 	uint16 hasPearlLocation = _vm->_game->_script->readUint16();
-	uint16 resultVar        = _vm->_game->_script->readUint16();
+	uint16 resultVar = _vm->_game->_script->readUint16();
 
 	bool result = _diving->play(playerCount, hasPearlLocation);
 

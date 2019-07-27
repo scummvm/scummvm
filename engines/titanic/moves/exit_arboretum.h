@@ -33,10 +33,12 @@ class CExitArboretum : public CMovePlayerTo {
 	bool ChangeSeasonMsg(CChangeSeasonMsg *msg);
 	bool TurnOn(CTurnOn *msg);
 	bool TurnOff(CTurnOff *msg);
+
 protected:
 	Season _seasonNum;
 	int _exitDirection;
 	bool _enabled;
+
 public:
 	CLASSDEF;
 	CExitArboretum();

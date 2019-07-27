@@ -31,12 +31,12 @@
 
 #include "image/iff.h"
 
-#include "cine/cine.h"
 #include "cine/bg_list.h"
+#include "cine/cine.h"
 #include "cine/main_loop.h"
 #include "cine/object.h"
-#include "cine/texte.h"
 #include "cine/sound.h"
+#include "cine/texte.h"
 #include "cine/various.h"
 
 namespace Cine {
@@ -46,12 +46,12 @@ Sound *g_sound = 0;
 CineEngine *g_cine = 0;
 
 CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc)
-	: Engine(syst),
-	_gameDescription(gameDesc),
-	_rnd("cine") {
-	DebugMan.addDebugChannel(kCineDebugScript,    "Script",    "Script debug level");
-	DebugMan.addDebugChannel(kCineDebugPart,      "Part",      "Part debug level");
-	DebugMan.addDebugChannel(kCineDebugSound,     "Sound",     "Sound debug level");
+  : Engine(syst)
+  , _gameDescription(gameDesc)
+  , _rnd("cine") {
+	DebugMan.addDebugChannel(kCineDebugScript, "Script", "Script debug level");
+	DebugMan.addDebugChannel(kCineDebugPart, "Part", "Part debug level");
+	DebugMan.addDebugChannel(kCineDebugSound, "Sound", "Sound debug level");
 	DebugMan.addDebugChannel(kCineDebugCollision, "Collision", "Collision debug level");
 
 	// Setup mixer
@@ -90,7 +90,7 @@ void CineEngine::syncSoundSettings() {
 	// so previously the music and sfx volume controls didn't affect it at all).
 	// FIXME: Make AdLib player differentiate between playing sound effects and music and remove this.
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType,
-									mute ? 0 : ConfMan.getInt("music_volume"));
+	                              mute ? 0 : ConfMan.getInt("music_volume"));
 }
 
 Common::Error CineEngine::run() {

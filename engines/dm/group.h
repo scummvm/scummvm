@@ -33,9 +33,9 @@
 #include "dm/timeline.h"
 
 namespace DM {
-	class Champion;
-	class TimelineEvent;
-	class CreatureInfo;
+class Champion;
+class TimelineEvent;
+class CreatureInfo;
 
 /* Creature types */
 enum CreatureType {
@@ -70,18 +70,18 @@ enum CreatureType {
 
 enum CreatureSize {
 	kDMCreatureSizeQuarter = 0, // @ C0_SIZE_QUARTER_SQUARE
-	kDMCreatureSizeHalf = 1,    // @ C1_SIZE_HALF_SQUARE
-	kDMCreatureSizeFull = 2     // @ C2_SIZE_FULL_SQUARE
+	kDMCreatureSizeHalf = 1, // @ C1_SIZE_HALF_SQUARE
+	kDMCreatureSizeFull = 2 // @ C2_SIZE_FULL_SQUARE
 };
 
 enum Behavior {
-	kDMBehaviorWander = 0,   // @ C0_BEHAVIOR_WANDER
+	kDMBehaviorWander = 0, // @ C0_BEHAVIOR_WANDER
 	kDMBehaviorUnknown2 = 2, // @ C2_BEHAVIOR_USELESS
 	kDMBehaviorUnknown3 = 3, // @ C3_BEHAVIOR_USELESS
 	kDMBehaviorUnknown4 = 4, // @ C4_BEHAVIOR_USELESS
-	kDMBehaviorFlee = 5,     // @ C5_BEHAVIOR_FLEE
-	kDMBehaviorAttack = 6,   // @ C6_BEHAVIOR_ATTACK
-	kDMBehaviorApproach = 7  // @ C7_BEHAVIOR_APPROACH
+	kDMBehaviorFlee = 5, // @ C5_BEHAVIOR_FLEE
+	kDMBehaviorAttack = 6, // @ C6_BEHAVIOR_ATTACK
+	kDMBehaviorApproach = 7 // @ C7_BEHAVIOR_APPROACH
 };
 
 #define kDMImmuneToFear 15 // @ C15_IMMUNE_TO_FEAR
@@ -90,18 +90,18 @@ enum Behavior {
 #define kDMCreatureTypeSingleCenteredCreature 255 // @ C255_SINGLE_CENTERED_CREATURE
 
 enum CreatureMask {
-	kDMCreatureMaskSize = 0x0003,           // @ MASK0x0003_SIZE
-	kDMCreatureMaskSideAttack = 0x0004,     // @ MASK0x0004_SIDE_ATTACK
-	kDMCreatureMaskPreferBackRow = 0x0008,  // @ MASK0x0008_PREFER_BACK_ROW
+	kDMCreatureMaskSize = 0x0003, // @ MASK0x0003_SIZE
+	kDMCreatureMaskSideAttack = 0x0004, // @ MASK0x0004_SIDE_ATTACK
+	kDMCreatureMaskPreferBackRow = 0x0008, // @ MASK0x0008_PREFER_BACK_ROW
 	kDMCreatureMaskAttackAnyChamp = 0x0010, // @ MASK0x0010_ATTACK_ANY_CHAMPION
-	kDMCreatureMaskLevitation = 0x0020,     // @ MASK0x0020_LEVITATION
-	kDMCreatureMaskNonMaterial = 0x0040,    // @ MASK0x0040_NON_MATERIAL
-	kDMCreatureMaskDropFixedPoss = 0x0200,  // @ MASK0x0200_DROP_FIXED_POSSESSIONS
+	kDMCreatureMaskLevitation = 0x0020, // @ MASK0x0020_LEVITATION
+	kDMCreatureMaskNonMaterial = 0x0040, // @ MASK0x0040_NON_MATERIAL
+	kDMCreatureMaskDropFixedPoss = 0x0200, // @ MASK0x0200_DROP_FIXED_POSSESSIONS
 	kDMCreatureMaskKeepThrownSharpWeapon = 0x0400, // @ MASK0x0400_KEEP_THROWN_SHARP_WEAPONS
-	kDMCreatureMaskSeeInvisible = 0x0800,   // @ MASK0x0800_SEE_INVISIBLE
-	kDMCreatureMaskNightVision = 0x1000,    // @ MASK0x1000_NIGHT_VISION
-	kDMCreatureMaskArchenemy = 0x2000,      // @ MASK0x2000_ARCHENEMY
-	kDMCreatureMaskMagicMap = 0x4000        // @ MASK0x4000_MAGICMAP
+	kDMCreatureMaskSeeInvisible = 0x0800, // @ MASK0x0800_SEE_INVISIBLE
+	kDMCreatureMaskNightVision = 0x1000, // @ MASK0x1000_NIGHT_VISION
+	kDMCreatureMaskArchenemy = 0x2000, // @ MASK0x2000_ARCHENEMY
+	kDMCreatureMaskMagicMap = 0x4000 // @ MASK0x4000_MAGICMAP
 };
 
 enum aspectMask {
@@ -133,8 +133,13 @@ public:
 	uint16 _cells;
 	uint16 _health[4];
 	uint16 _flags;
+
 public:
-	explicit Group(uint16 *rawDat) : _nextThing(rawDat[0]), _slot(rawDat[1]), _cells(rawDat[3]), _flags(rawDat[8]) {
+	explicit Group(uint16 *rawDat)
+	  : _nextThing(rawDat[0])
+	  , _slot(rawDat[1])
+	  , _cells(rawDat[3])
+	  , _flags(rawDat[8]) {
 		_type = (CreatureType)rawDat[2];
 		_health[0] = rawDat[4];
 		_health[1] = rawDat[5];
@@ -145,7 +150,10 @@ public:
 	uint16 &getActiveGroupIndex() { return _cells; }
 
 	uint16 getBehaviour() { return _flags & 0xF; }
-	uint16 setBehaviour(uint16 val) { _flags = (_flags & ~0xF) | (val & 0xF); return (val & 0xF); }
+	uint16 setBehaviour(uint16 val) {
+		_flags = (_flags & ~0xF) | (val & 0xF);
+		return (val & 0xF);
+	}
 	uint16 getCount() { return (_flags >> 5) & 0x3; }
 	void setCount(uint16 val) { _flags = (_flags & ~(0x3 << 5)) | ((val & 0x3) << 5); }
 	Direction getDir() { return (Direction)((_flags >> 8) & 0x3); }
@@ -190,16 +198,16 @@ public:
 	uint16 getCreatureValue(uint16 groupVal, uint16 creatureIndex); // @ M50_CREATURE_VALUE
 	void dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, SoundMode mode); // @ F0188_GROUP_DropGroupPossessions
 	void dropCreatureFixedPossessions(CreatureType creatureType, int16 mapX, int16 mapY, uint16 cell,
-										   SoundMode soundMode); // @ F0186_GROUP_DropCreatureFixedPossessions
+	                                  SoundMode soundMode); // @ F0186_GROUP_DropCreatureFixedPossessions
 	int16 getDirsWhereDestIsVisibleFromSource(int16 srcMapX, int16 srcMapY,
-												   int16 destMapX, int16 destMapY); // @ F0228_GROUP_GetDirectionsWhereDestinationIsVisibleFromSource
+	                                          int16 destMapX, int16 destMapY); // @ F0228_GROUP_GetDirectionsWhereDestinationIsVisibleFromSource
 	bool isDestVisibleFromSource(uint16 dir, int16 srcMapX, int16 srcMapY, int16 destMapX,
-									  int16 destMapY); // @ F0227_GROUP_IsDestinationVisibleFromSource
+	                             int16 destMapY); // @ F0227_GROUP_IsDestinationVisibleFromSource
 	bool groupIsDoorDestoryedByAttack(uint16 mapX, uint16 mapY, int16 attack,
-										   bool magicAttack, int16 ticks); // @ F0232_GROUP_IsDoorDestroyedByAttack
+	                                  bool magicAttack, int16 ticks); // @ F0232_GROUP_IsDoorDestroyedByAttack
 	Thing groupGetThing(int16 mapX, int16 mapY); // @ F0175_GROUP_GetThing
 	int16 groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex,
-											 int16 mapX, int16 mapY, int16 damage, bool notMoving); // @ F0190_GROUP_GetDamageCreatureOutcome
+	                                    int16 mapX, int16 mapY, int16 damage, bool notMoving); // @ F0190_GROUP_GetDamageCreatureOutcome
 	void groupDelete(int16 mapX, int16 mapY); // @ F0189_GROUP_Delete
 	void groupDeleteEvents(int16 mapX, int16 mapY); // @ F0181_GROUP_DeleteEvents
 	uint16 getGroupValueUpdatedWithCreatureValue(uint16 groupVal, uint16 creatureIndex, uint16 creatureVal); // @ F0178_GROUP_GetGroupValueUpdatedWithCreatureValue
@@ -207,29 +215,29 @@ public:
 	int16 groupGetResistanceAdjustedPoisonAttack(CreatureType creatureType, int16 poisonAttack); // @ F0192_GROUP_GetResistanceAdjustedPoisonAttack
 	void processEvents29to41(int16 eventMapX, int16 eventMapY, TimelineEventType eventType, uint16 ticks); // @ F0209_GROUP_ProcessEvents29to41
 	bool isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 mapY,
-								 uint16 dir, bool allowMovementOverImaginaryPitsAndFakeWalls); // @ F0202_GROUP_IsMovementPossible
+	                        uint16 dir, bool allowMovementOverImaginaryPitsAndFakeWalls); // @ F0202_GROUP_IsMovementPossible
 	int16 getDistanceBetweenSquares(int16 srcMapX, int16 srcMapY, int16 destMapX,
-										 int16 destMapY); // @ F0226_GROUP_GetDistanceBetweenSquares
+	                                int16 destMapY); // @ F0226_GROUP_GetDistanceBetweenSquares
 
 	int16 groupGetDistanceToVisibleParty(Group *group, int16 creatureIndex, int16 mapX, int16 mapY); // @ F0200_GROUP_GetDistanceToVisibleParty
 	int16 getDistanceBetweenUnblockedSquares(int16 srcMapX, int16 srcMapY,
-												  int16 destMapX, int16 destMapY, bool (GroupMan::*isBlocked)(uint16, uint16)); // @ F0199_GROUP_GetDistanceBetweenUnblockedSquares
+	                                         int16 destMapX, int16 destMapY, bool (GroupMan::*isBlocked)(uint16, uint16)); // @ F0199_GROUP_GetDistanceBetweenUnblockedSquares
 	bool isViewPartyBlocked(uint16 mapX, uint16 mapY); // @ F0197_GROUP_IsViewPartyBlocked
 	int32 getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 creatureIndex,
-										   bool isAttacking); // @ F0179_GROUP_GetCreatureAspectUpdateTime
+	                                  bool isAttacking); // @ F0179_GROUP_GetCreatureAspectUpdateTime
 	void setGroupDirection(ActiveGroup *activeGroup, int16 dir, int16 creatureIndex, bool twoHalfSquareSizedCreatures); // @ F0205_GROUP_SetDirection
 	void addGroupEvent(TimelineEvent *event, uint32 time); // @ F0208_GROUP_AddEvent
 	int16 getSmelledPartyPrimaryDirOrdinal(CreatureInfo *creatureInfo, int16 mapY, int16 mapX); // @ F0201_GROUP_GetSmelledPartyPrimaryDirectionOrdinal
 	bool isSmellPartyBlocked(uint16 mapX, uint16 mapY); // @ F0198_GROUP_IsSmellPartyBlocked
 	int16 getFirstPossibleMovementDirOrdinal(CreatureInfo *info, int16 mapX, int16 mapY,
-												  bool allowMovementOverImaginaryPitsAndFakeWalls); // @ F0203_GROUP_GetFirstPossibleMovementDirectionOrdinal
+	                                         bool allowMovementOverImaginaryPitsAndFakeWalls); // @ F0203_GROUP_GetFirstPossibleMovementDirectionOrdinal
 	void setDirGroup(ActiveGroup *activeGroup, int16 dir, int16 creatureIndex,
-							   int16 creatureSize); // @ F0206_GROUP_SetDirectionGroup
-	void stopAttacking(ActiveGroup *group, int16 mapX, int16 mapY);// @ F0182_GROUP_StopAttacking
+	                 int16 creatureSize); // @ F0206_GROUP_SetDirectionGroup
+	void stopAttacking(ActiveGroup *group, int16 mapX, int16 mapY); // @ F0182_GROUP_StopAttacking
 	bool isArchenemyDoubleMovementPossible(CreatureInfo *info, int16 mapX, int16 mapY, uint16 dir); // @ F0204_GROUP_IsArchenemyDoubleMovementPossible
 	bool isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 creatureIndex); // @ F0207_GROUP_IsCreatureAttacking
 	void setOrderedCellsToAttack(signed char *orderedCellsToAttack, int16 targetMapX,
-	                                  int16 targetMapY, int16 attackerMapX, int16 attackerMapY, uint16 cellSource); // @ F0229_GROUP_SetOrderedCellsToAttack
+	                             int16 targetMapY, int16 attackerMapX, int16 attackerMapY, uint16 cellSource); // @ F0229_GROUP_SetOrderedCellsToAttack
 	void stealFromChampion(Group *group, uint16 championIndex); // @ F0193_GROUP_StealFromChampion
 	int16 getChampionDamage(Group *group, uint16 champIndex); // @ F0230_GROUP_GetChampionDamage
 	void dropMovingCreatureFixedPossession(Thing thing, int16 mapX, int16 mapY); // @ F0187_GROUP_DropMovingCreatureFixedPossessions
@@ -241,9 +249,9 @@ public:
 	Thing groupGetGenerated(CreatureType creatureType, int16 healthMultiplier, uint16 creatureCount, Direction dir, int16 mapX, int16 mapY); // @ F0185_GROUP_GetGenerated
 	bool isSquareACorridorTeleporterPitOrDoor(int16 mapX, int16 mapY); // @ F0223_GROUP_IsSquareACorridorTeleporterPitOrDoor
 	int16 getMeleeTargetCreatureOrdinal(int16 groupX, int16 groupY, int16 partyX, int16 paryY,
-											 uint16 champCell); // @ F0177_GROUP_GetMeleeTargetCreatureOrdinal
+	                                    uint16 champCell); // @ F0177_GROUP_GetMeleeTargetCreatureOrdinal
 	int16 getMeleeActionDamage(Champion *champ, int16 champIndex, Group *group, int16 creatureIndex,
-									int16 mapX, int16 mapY, uint16 actionHitProbability, uint16 actionDamageFactor, int16 skillIndex); // @ F0231_GROUP_GetMeleeActionDamage
+	                           int16 mapX, int16 mapY, uint16 actionHitProbability, uint16 actionDamageFactor, int16 skillIndex); // @ F0231_GROUP_GetMeleeActionDamage
 	void fluxCageAction(int16 mapX, int16 mapY); // @ F0224_GROUP_FluxCageAction
 	uint16 isLordChaosOnSquare(int16 mapX, int16 mapY); // @ F0222_GROUP_IsLordChaosOnSquare
 	bool isFluxcageOnSquare(int16 mapX, int16 mapY); // @ F0221_GROUP_IsFluxcageOnSquare

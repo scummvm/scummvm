@@ -20,10 +20,10 @@
  *
  */
 
+#include "mohawk/riven_saveload.h"
 #include "mohawk/resource.h"
 #include "mohawk/riven.h"
 #include "mohawk/riven_card.h"
-#include "mohawk/riven_saveload.h"
 #include "mohawk/riven_stack.h"
 
 #include "common/system.h"
@@ -62,7 +62,9 @@ bool RivenSaveMetadata::sync(Common::Serializer &s) {
 
 const int RivenSaveLoad::kAutoSaveSlot = 0;
 
-RivenSaveLoad::RivenSaveLoad(MohawkEngine_Riven *vm, Common::SaveFileManager *saveFileMan) : _vm(vm), _saveFileMan(saveFileMan) {
+RivenSaveLoad::RivenSaveLoad(MohawkEngine_Riven *vm, Common::SaveFileManager *saveFileMan)
+  : _vm(vm)
+  , _saveFileMan(saveFileMan) {
 }
 
 RivenSaveLoad::~RivenSaveLoad() {
@@ -143,7 +145,7 @@ SaveStateDescriptor RivenSaveLoad::querySaveMetaInfos(const int slot) {
 	descriptor.setSaveDate(metadata.saveYear, metadata.saveMonth, metadata.saveDay);
 	descriptor.setSaveTime(metadata.saveHour, metadata.saveMinute);
 	if (metadata.autoSave) // Allow non-saves to be deleted, but not autosaves
-		descriptor.setDeletableFlag(slot != kAutoSaveSlot);	
+		descriptor.setDeletableFlag(slot != kAutoSaveSlot);
 
 	delete metaStream;
 
@@ -225,7 +227,7 @@ Common::Error RivenSaveLoad::loadGame(const int slot) {
 	uint32 saveGameVersion = vers->readUint32BE();
 	delete vers;
 	if ((saveGameVersion == kCDSaveGameVersion && (_vm->getFeatures() & GF_DVD))
-		|| (saveGameVersion == kDVDSaveGameVersion && !(_vm->getFeatures() & GF_DVD))) {
+	    || (saveGameVersion == kDVDSaveGameVersion && !(_vm->getFeatures() & GF_DVD))) {
 		warning("Unable to load: Saved game created using an incompatible game version - CD vs DVD");
 		delete mhk;
 		return Common::Error(Common::kUnknownError, "Saved game created using an incompatible game version - CD vs DVD");
@@ -239,8 +241,8 @@ Common::Error RivenSaveLoad::loadGame(const int slot) {
 		// The original engine stores the variables values in an array. All the slots in
 		// the array may not be in use, which is why it needs a reference counter and
 		// a flag to tell if the value has been set.
-		vars->readUint32BE();	// Reference counter
-		vars->readUint32BE();	// Variable initialized flag
+		vars->readUint32BE(); // Reference counter
+		vars->readUint32BE(); // Variable initialized flag
 		rawVariables.push_back(vars->readUint32BE());
 	}
 
@@ -255,7 +257,7 @@ Common::Error RivenSaveLoad::loadGame(const int slot) {
 	for (uint16 i = 0; i < namesCount; i++)
 		stringOffsets[i] = names->readUint16BE();
 	for (uint16 i = 0; i < namesCount; i++)
-		names->readUint16BE();	// Skip unknown values
+		names->readUint16BE(); // Skip unknown values
 	uint32 curNamesPos = names->pos();
 
 	for (uint32 i = 0; i < namesCount && !names->eos(); i++) {
@@ -289,7 +291,7 @@ Common::Error RivenSaveLoad::loadGame(const int slot) {
 			var = rawVariables[i];
 	}
 
-	_vm->_gfx->setTransitionMode((RivenTransitionMode) _vm->_vars["transitionmode"]);
+	_vm->_gfx->setTransitionMode((RivenTransitionMode)_vm->_vars["transitionmode"]);
 
 	_vm->changeToStack(_vm->_vars["CurrentStackID"]);
 	_vm->changeToCard(_vm->_vars["CurrentCardID"]);
@@ -461,7 +463,7 @@ Common::Error RivenSaveLoad::saveGame(const int slot, const Common::String &desc
 	if (!saveFile)
 		return Common::kWritingFailed;
 
-	debug (0, "Saving game to \'%s\'", filename.c_str());
+	debug(0, "Saving game to \'%s\'", filename.c_str());
 
 	Common::MemoryWriteStreamDynamic *metaSection = genMETASection(description, autoSave);
 	Common::MemoryWriteStreamDynamic *nameSection = genNAMESection();
@@ -632,7 +634,7 @@ Common::Error RivenSaveLoad::saveGame(const int slot, const Common::String &desc
 void RivenSaveLoad::deleteSave(const int slot) {
 	Common::String filename = buildSaveFilename(slot);
 
-	debug (0, "Deleting save file \'%s\'", filename.c_str());
+	debug(0, "Deleting save file \'%s\'", filename.c_str());
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 

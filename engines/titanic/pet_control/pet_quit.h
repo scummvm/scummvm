@@ -23,9 +23,9 @@
 #ifndef TITANIC_PET_QUIT_H
 #define TITANIC_PET_QUIT_H
 
+#include "titanic/gfx/text_control.h"
 #include "titanic/pet_control/pet_gfx_element.h"
 #include "titanic/pet_control/pet_glyphs.h"
-#include "titanic/gfx/text_control.h"
 
 namespace Titanic {
 
@@ -33,6 +33,7 @@ class CPetQuit : public CPetGlyph {
 private:
 	CTextControl _text;
 	CPetGfxElement _btnYes;
+
 public:
 	/**
 	 * Setup the glyph

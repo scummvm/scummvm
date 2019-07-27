@@ -22,13 +22,13 @@
 
 #ifdef ENABLE_EOB
 
-#include "kyra/engine/eobcommon.h"
-#include "kyra/graphics/screen_eob.h"
-#include "kyra/script/script_eob.h"
-#include "kyra/resource/resource.h"
-#include "kyra/sound/sound.h"
+#	include "kyra/script/script_eob.h"
+#	include "kyra/engine/eobcommon.h"
+#	include "kyra/graphics/screen_eob.h"
+#	include "kyra/resource/resource.h"
+#	include "kyra/sound/sound.h"
 
-#include "common/system.h"
+#	include "common/system.h"
 
 namespace Kyra {
 
@@ -88,11 +88,18 @@ void EoBCoreEngine::updateScriptTimers() {
 		updateScriptTimersExtra();
 }
 
-EoBInfProcessor::EoBInfProcessor(EoBCoreEngine *engine, Screen_EoB *screen) : _vm(engine), _screen(screen),
-	_commandMin(engine->game() == GI_EOB1 ? -27 : -31) {
+EoBInfProcessor::EoBInfProcessor(EoBCoreEngine *engine, Screen_EoB *screen)
+  : _vm(engine)
+  , _screen(screen)
+  , _commandMin(engine->game() == GI_EOB1 ? -27 : -31) {
 
-#define Opcode(x) _opcodes.push_back(new InfOpcode(new InfProc(this, &EoBInfProcessor::x), #x))
-#define OpcodeAlt(x) if (_vm->game() == GI_EOB1) { Opcode(x##_v1); } else { Opcode(x##_v2); }
+#	define Opcode(x) _opcodes.push_back(new InfOpcode(new InfProc(this, &EoBInfProcessor::x), #  x))
+#	define OpcodeAlt(x)            \
+		if (_vm->game() == GI_EOB1) { \
+			Opcode(x##_v1);             \
+		} else {                      \
+			Opcode(x##_v2);             \
+		}
 	Opcode(oeob_setWallType);
 	Opcode(oeob_toggleWallState);
 	Opcode(oeob_openDoor);
@@ -123,8 +130,8 @@ EoBInfProcessor::EoBInfProcessor(EoBCoreEngine *engine, Screen_EoB *screen) : _v
 	Opcode(oeob_drawScene);
 	Opcode(oeob_dialogue);
 	Opcode(oeob_specialEvent);
-#undef Opcode
-#undef OpcodeAlt
+#	undef Opcode
+#	undef OpcodeAlt
 
 	_scriptData = 0;
 	_scriptSize = 0;
@@ -137,7 +144,7 @@ EoBInfProcessor::EoBInfProcessor(EoBCoreEngine *engine, Screen_EoB *screen) : _v
 	_lastScriptFunc = 0;
 	_lastScriptFlags = 0;
 
-	_subroutineStack = new int8*[10];
+	_subroutineStack = new int8 *[10];
 	memset(_subroutineStack, 0, 10 * sizeof(int8 *));
 	_subroutineStackPos = 0;
 
@@ -550,7 +557,7 @@ int EoBInfProcessor::oeob_printMessage_v1(int8 *data) {
 }
 
 int EoBInfProcessor::oeob_printMessage_v2(int8 *data) {
-	
+
 	int8 *pos = data;
 	uint16 str = READ_LE_UINT16(pos);
 	pos += 2;
@@ -563,7 +570,7 @@ int EoBInfProcessor::oeob_printMessage_v2(int8 *data) {
 		assert(col < 16);
 		col = _amigaColorMap[col];
 	}
-	
+
 	if (_activeCharacter == -1) {
 		c = _vm->rollDice(1, 6, -1);
 		while (!_vm->testCharacter(c, 3))
@@ -1426,7 +1433,7 @@ int EoBInfProcessor::oeob_launchObject(int8 *data) {
 	uint16 block = READ_LE_UINT16(pos);
 	pos += 2;
 	int dir = *pos++;
-	int dirOffs =  *pos++;
+	int dirOffs = *pos++;
 
 	if (m) {
 		uint8 openBookType = _vm->_openBookType;

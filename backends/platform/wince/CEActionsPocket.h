@@ -23,12 +23,12 @@
 #ifndef CEACTIONSPOCKET_H
 #define CEACTIONSPOCKET_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
-#include "common/str.h"
-#include "gui/Key.h"
-#include "gui/Actions.h"
 #include "backends/graphics/wincesdl/wincesdl-graphics.h"
+#include "common/scummsys.h"
+#include "common/str.h"
+#include "common/system.h"
+#include "gui/Actions.h"
+#include "gui/Key.h"
 
 #define POCKET_ACTION_VERSION 5
 
@@ -79,6 +79,7 @@ public:
 	bool needsZoomMapping();
 
 	~CEActionsPocket();
+
 private:
 	CEActionsPocket(const Common::String &gameid);
 	WINCESdlGraphicsManager *_graphicsMan;

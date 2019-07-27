@@ -33,11 +33,16 @@ namespace Made {
 
 class ValueReader {
 public:
-	ValueReader(byte *source, bool nibbleMode) : _buffer(source), _nibbleBuf(0), _nibbleMode(nibbleMode), _nibbleSwitch(false) {}
+	ValueReader(byte *source, bool nibbleMode)
+	  : _buffer(source)
+	  , _nibbleBuf(0)
+	  , _nibbleMode(nibbleMode)
+	  , _nibbleSwitch(false) {}
 	byte readPixel();
 	uint16 readUint16();
 	uint32 readUint32();
 	void resetNibbleSwitch();
+
 protected:
 	byte _nibbleBuf;
 	bool _nibbleMode, _nibbleSwitch;

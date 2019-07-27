@@ -32,33 +32,33 @@ namespace Cryo {
 
 class CryoEngine;
 
-#define SW16(n) ( (((n) & 0xFF) << 8) | (((n) >> 8) & 0xFF) )
-#define SW32(n) ( (((n) & 0xFF) << 24) | (((n) >> 24) & 0xFF) | (((n) & 0xFF00) << 8) | (((n) >> 8) & 0xFF00))
+#define SW16(n) ((((n)&0xFF) << 8) | (((n) >> 8) & 0xFF))
+#define SW32(n) ((((n)&0xFF) << 24) | (((n) >> 24) & 0xFF) | (((n)&0xFF00) << 8) | (((n) >> 8) & 0xFF00))
 #ifdef SCUMM_BIG_ENDIAN
 //big-endian host
-#define LE16(n) SW16(n)
-#define LE32(n) SW32(n)
-#define BE16(n) (n)
-#define BE32(n) (n)
+#	define LE16(n) SW16(n)
+#	define LE32(n) SW32(n)
+#	define BE16(n) (n)
+#	define BE32(n) (n)
 #else
 //little-endian host
-#define LE16(n) (n)
-#define LE32(n) (n)
-#define BE16(n) SW16(n)
-#define BE32(n) SW32(n)
+#	define LE16(n) (n)
+#	define LE32(n) (n)
+#	define BE16(n) SW16(n)
+#	define BE32(n) SW32(n)
 #endif
 
 enum {
 	fsFromStart = 1
 };
 
-struct BlitView{
-	int     _srcLeft;
-	int     _srcTop;
-	int     _dstLeft;
-	int     _dstTop;
-	int     _width;
-	int     _height;
+struct BlitView {
+	int _srcLeft;
+	int _srcTop;
+	int _dstLeft;
+	int _dstTop;
+	int _width;
+	int _height;
 };
 
 class View {
@@ -71,35 +71,35 @@ public:
 	void initDatas(int w, int h, void *buffer);
 	void centerIn(View *parent);
 
-	int      _width;
-	int      _height;
-	byte    *_bufferPtr;
-	int16    _pitch;
+	int _width;
+	int _height;
+	byte *_bufferPtr;
+	int16 _pitch;
 	BlitView _normal;
 	BlitView _zoom;
 };
 
 struct color3_t {
-	uint16   r, g, b;
+	uint16 r, g, b;
 };
 
 struct color_t {
-	uint16   a, r, g, b;
+	uint16 a, r, g, b;
 };
 
 struct HNMHeader {
-	int32   _signature;
-	uint16  _width;
-	uint16  _height;
-	int32   _numbFrame;
-	int32   _bufferSize;
+	int32 _signature;
+	uint16 _width;
+	uint16 _height;
+	int32 _numbFrame;
+	int32 _bufferSize;
 };
 
 class Sound {
 private:
-	int32  _headerOffset;
-	int16  _mode;
-	int16  _volume;
+	int32 _headerOffset;
+	int16 _mode;
+	int16 _volume;
 
 public:
 	Sound(int16 length, float rate, int16 sampleSize, int16 mode);
@@ -109,25 +109,25 @@ public:
 	void prepareSample(int16 mode);
 	void setWantsDesigned(int16 designed);
 
-	char  *_sndHandle;
-	char  *_buffer;
+	char *_sndHandle;
+	char *_buffer;
 
-	float  _rate;
+	float _rate;
 
-	int16  _maxLength;
-	int16  _headerLen;
-	int16  _sampleSize;
+	int16 _maxLength;
+	int16 _headerLen;
+	int16 _sampleSize;
 
-	int    _length;
+	int _length;
 };
 
 #define kCryoMaxChSounds 10
 
 class SoundChannel {
 private:
-	int16   _volumeLeft;
-	int16   _volumeRight;
-	int16   _numSounds;
+	int16 _volumeLeft;
+	int16 _volumeRight;
+	int16 _numSounds;
 
 	Sound *_sounds[kCryoMaxChSounds];
 

@@ -39,6 +39,7 @@ class CBomb : public CBackground {
 	bool TrueTalkGetStateValueMsg(CTrueTalkGetStateValueMsg *msg);
 	bool SetFrameMsg(CSetFrameMsg *msg);
 	DECLARE_MESSAGE_MAP;
+
 private:
 	bool _active;
 	int _numCorrectWheels;
@@ -50,6 +51,7 @@ private:
 	int _unusedHandle;
 	int _startingTicks;
 	int _volume;
+
 public:
 	CLASSDEF;
 	CBomb();

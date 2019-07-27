@@ -23,13 +23,15 @@
 #ifndef TITANIC_PET_STARFIELD_H
 #define TITANIC_PET_STARFIELD_H
 
-#include "titanic/pet_control/pet_section.h"
 #include "titanic/gfx/text_control.h"
 #include "titanic/pet_control/pet_gfx_element.h"
+#include "titanic/pet_control/pet_section.h"
 
 namespace Titanic {
 
-enum MarkerState { MS_BLANK = 0, MS_FLICKERING = 1, MS_HIGHLIGHTED = 2};
+enum MarkerState { MS_BLANK = 0,
+	                 MS_FLICKERING = 1,
+	                 MS_HIGHLIGHTED = 2 };
 
 class CPetStarfield : public CPetSection {
 private:
@@ -44,6 +46,7 @@ private:
 	CTextControl _text;
 	bool _photoOn;
 	bool _hasReference;
+
 private:
 	/**
 	 * Setup the control
@@ -64,6 +67,7 @@ private:
 	 * Handles clicking on a specific locked star LED marker
 	 */
 	bool markerMouseDown(int index, CMouseButtonDownMsg *msg, const Rect &rect);
+
 public:
 	CPetStarfield();
 

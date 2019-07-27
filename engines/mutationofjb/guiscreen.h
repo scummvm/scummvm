@@ -45,7 +45,6 @@ class Widget;
  */
 class GuiScreen {
 public:
-
 	GuiScreen(Game &game, Graphics::Screen *screen);
 	virtual ~GuiScreen();
 	Game &getGame();

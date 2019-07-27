@@ -28,10 +28,10 @@
 namespace Glk {
 namespace Alan2 {
 
-extern void saveInfo();
-extern void restoreInfo();
-extern void debug();
-extern void debugsay(int item);
+	extern void saveInfo();
+	extern void restoreInfo();
+	extern void debug();
+	extern void debugsay(int item);
 
 } // End of namespace Alan2
 } // End of namespace Glk

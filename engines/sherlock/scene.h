@@ -23,9 +23,9 @@
 #ifndef SHERLOCK_SCENE_H
 #define SHERLOCK_SCENE_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
 #include "sherlock/objects.h"
 #include "sherlock/resources.h"
@@ -33,8 +33,8 @@
 
 namespace Sherlock {
 
-#define MAX_ZONES	40
-#define INFO_LINE	140
+#define MAX_ZONES 40
+#define INFO_LINE 140
 
 class SherlockEngine;
 
@@ -50,10 +50,9 @@ struct BgFileHeader {
 
 	// Rose Tattoo
 	int _scrollSize;
-	int _bytesWritten;				// Size of the main body of the RRM
-	int _fadeStyle;					// Fade style
-	byte _palette[PALETTE_SIZE];	// Palette
-
+	int _bytesWritten; // Size of the main body of the RRM
+	int _fadeStyle; // Fade style
+	byte _palette[PALETTE_SIZE]; // Palette
 
 	BgFileHeader();
 
@@ -64,9 +63,9 @@ struct BgFileHeader {
 };
 
 struct BgFileHeaderInfo {
-	int _filesize;				// How long images are
-	int _maxFrames;				// How many unique frames in object
-	Common::String _filename;	// Filename of object
+	int _filesize; // How long images are
+	int _maxFrames; // How many unique frames in object
+	Common::String _filename; // Filename of object
 
 	/**
 	 * Load the data for the object
@@ -75,14 +74,14 @@ struct BgFileHeaderInfo {
 	void load3DO(Common::SeekableReadStream &s);
 };
 
-class Exit: public Common::Rect {
+class Exit : public Common::Rect {
 public:
 	int _scene;
 	int _allow;
 	PositionFacing _newPosition;
 
 	Common::String _dest;
-	int _image;					// Arrow image to use
+	int _image; // Arrow image to use
 
 	/**
 	 * Load the data for the object
@@ -122,20 +121,22 @@ public:
 	int indexOf(const Object &obj) const;
 };
 
-class ScaleZone: public Common::Rect {
+class ScaleZone : public Common::Rect {
 public:
-	int _topNumber;		// Numerator of scale size at the top of the zone
-	int _bottomNumber;	// Numerator of scale size at the bottom of the zone
+	int _topNumber; // Numerator of scale size at the top of the zone
+	int _bottomNumber; // Numerator of scale size at the bottom of the zone
 
 	void load(Common::SeekableReadStream &s);
 };
 
-class WalkArray : public Common::Array < Common::Point > {
+class WalkArray : public Common::Array<Common::Point> {
 public:
 	int _pointsCount;
 	int _fileOffset;
 
-	WalkArray() : _pointsCount(0), _fileOffset(-1) {}
+	WalkArray()
+	  : _pointsCount(0)
+	  , _fileOffset(-1) {}
 
 	/**
 	 * Load data for the walk array entry
@@ -174,6 +175,7 @@ private:
 	 * will remain the same on future visits to the scene
 	 */
 	void saveSceneStatus();
+
 protected:
 	SherlockEngine *_vm;
 	Common::String _roomFilename;
@@ -207,6 +209,7 @@ protected:
 	virtual void paletteLoaded() {}
 
 	Scene(SherlockEngine *vm);
+
 public:
 	int _currentScene;
 	int _goToScene;
@@ -235,6 +238,7 @@ public:
 	bool _doBgAnimDone;
 	int _tempFadeStyle;
 	int _cAnimFramePause;
+
 public:
 	static Scene *init(SherlockEngine *vm);
 	virtual ~Scene();
@@ -293,6 +297,7 @@ public:
 	 * Synchronize the data for a savegame
 	 */
 	virtual void synchronize(Serializer &s);
+
 public:
 	/**
 	 * Draw all objects and characters.

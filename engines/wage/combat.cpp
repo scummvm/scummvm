@@ -45,9 +45,9 @@
  *
  */
 
-#include "wage/wage.h"
 #include "wage/entities.h"
 #include "wage/randomhat.h"
+#include "wage/wage.h"
 #include "wage/world.h"
 
 namespace Wage {
@@ -73,7 +73,7 @@ void WageEngine::encounter(Chr *player, Chr *chr) {
 	char buf[512];
 
 	snprintf(buf, 512, "You encounter %s%s.", chr->_nameProperNoun ? "" : getIndefiniteArticle(chr->_name),
-				chr->_name.c_str());
+	         chr->_name.c_str());
 	appendText(buf);
 
 	if (!chr->_initialComment.empty())
@@ -81,19 +81,19 @@ void WageEngine::encounter(Chr *player, Chr *chr) {
 
 	if (chr->_armor[Chr::HEAD_ARMOR] != NULL) {
 		snprintf(buf, 512, "%s%s is wearing %s.", chr->getDefiniteArticle(true), chr->_name.c_str(),
-					getIndefiniteArticle(chr->_armor[Chr::HEAD_ARMOR]->_name));
+		         getIndefiniteArticle(chr->_armor[Chr::HEAD_ARMOR]->_name));
 		appendText(buf);
 	}
 	if (chr->_armor[Chr::BODY_ARMOR] != NULL) {
 		snprintf(buf, 512, "%s is protected by %s%s.", getGenderSpecificPronoun(chr->_gender, true),
-					prependGenderSpecificPronoun(chr->_gender), chr->_armor[Chr::BODY_ARMOR]->_name.c_str());
+		         prependGenderSpecificPronoun(chr->_gender), chr->_armor[Chr::BODY_ARMOR]->_name.c_str());
 		appendText(buf);
 	}
 	if (chr->_armor[Chr::SHIELD_ARMOR] != NULL) {
 		Obj *obj = chr->_armor[Chr::SHIELD_ARMOR];
 
 		snprintf(buf, 512, "%s carries %s%s.", getGenderSpecificPronoun(chr->_gender, true),
-				obj->_namePlural ? "" : getIndefiniteArticle(obj->_name), obj->_name.c_str());
+		         obj->_namePlural ? "" : getIndefiniteArticle(obj->_name), obj->_name.c_str());
 		appendText(buf);
 	}
 }
@@ -163,14 +163,13 @@ void WageEngine::performCombatAction(Chr *npc, Chr *player) {
 		break;
 	case kTokNone:
 		break;
-	default:
-		{
-			int cnt = 0;
-			for (ObjList::const_iterator it = objs->begin(); it != objs->end(); ++it, ++cnt)
-				if (cnt == token)
-					performTake(npc, *it);
-			break;
-		}
+	default: {
+		int cnt = 0;
+		for (ObjList::const_iterator it = objs->begin(); it != objs->end(); ++it, ++cnt)
+			if (cnt == token)
+				performTake(npc, *it);
+		break;
+	}
 	}
 
 	delete weapons;
@@ -197,19 +196,19 @@ void WageEngine::performAttack(Chr *attacker, Chr *victim, Obj *weapon) {
 
 		if (!attacker->_playerCharacter) {
 			snprintf(buf, 256, "%s%s %ss %s%s at %s%s's %s.",
-				attacker->getDefiniteArticle(true), attacker->_name.c_str(),
-				weapon->_operativeVerb.c_str(),
-				prependGenderSpecificPronoun(attacker->_gender), weapon->_name.c_str(),
-				victim->getDefiniteArticle(true), victim->_name.c_str(),
-				targets[targetIndex]);
+			         attacker->getDefiniteArticle(true), attacker->_name.c_str(),
+			         weapon->_operativeVerb.c_str(),
+			         prependGenderSpecificPronoun(attacker->_gender), weapon->_name.c_str(),
+			         victim->getDefiniteArticle(true), victim->_name.c_str(),
+			         targets[targetIndex]);
 			appendText(buf);
 		}
 	} else if (!attacker->_playerCharacter) {
 		snprintf(buf, 256, "%s%s %ss %s%s at %s%s.",
-			attacker->getDefiniteArticle(true), attacker->_name.c_str(),
-			weapon->_operativeVerb.c_str(),
-			prependGenderSpecificPronoun(attacker->_gender), weapon->_name.c_str(),
-			victim->getDefiniteArticle(true), victim->_name.c_str());
+		         attacker->getDefiniteArticle(true), attacker->_name.c_str(),
+		         weapon->_operativeVerb.c_str(),
+		         prependGenderSpecificPronoun(attacker->_gender), weapon->_name.c_str(),
+		         victim->getDefiniteArticle(true), victim->_name.c_str());
 		appendText(buf);
 	}
 
@@ -260,10 +259,10 @@ bool WageEngine::attackHit(Chr *attacker, Chr *victim, Obj *weapon, int targetIn
 		if (armor != NULL) {
 			// TODO: Absorb some damage.
 			snprintf(buf, 512, "%s%s's %s weakens the impact of %s%s's %s.",
-				victim->getDefiniteArticle(true), victim->_name.c_str(),
-				victim->_armor[targetIndex]->_name.c_str(),
-				attacker->getDefiniteArticle(false), attacker->_name.c_str(),
-				weapon->_name.c_str());
+			         victim->getDefiniteArticle(true), victim->_name.c_str(),
+			         victim->_armor[targetIndex]->_name.c_str(),
+			         attacker->getDefiniteArticle(false), attacker->_name.c_str(),
+			         weapon->_name.c_str());
 			appendText(buf);
 			decrementUses(armor);
 		} else {
@@ -322,11 +321,10 @@ bool WageEngine::attackHit(Chr *attacker, Chr *victim, Obj *weapon, int targetIn
 			}
 			_world->move(victim, _world->_storageScene);
 		} else if (attacker->_playerCharacter && !receivedHitTextPrinted) {
-			double physicalPercent = (double)victim->_context._userVariables[SPIR_HIT_CUR] /
-					victim->_context._userVariables[SPIR_HIT_BAS];
+			double physicalPercent = (double)victim->_context._userVariables[SPIR_HIT_CUR] / victim->_context._userVariables[SPIR_HIT_BAS];
 			snprintf(buf, 512, "%s%s's condition appears to be %s.",
-				victim->getDefiniteArticle(true), victim->_name.c_str(),
-				getPercentMessage(physicalPercent));
+			         victim->getDefiniteArticle(true), victim->_name.c_str(),
+			         getPercentMessage(physicalPercent));
 			appendText(buf);
 		}
 	}
@@ -360,9 +358,9 @@ void WageEngine::performHealingMagic(Chr *chr, Obj *magicalObject) {
 
 	if (!chr->_playerCharacter) {
 		snprintf(buf, 512, "%s%s %ss %s%s.",
-			chr->getDefiniteArticle(true), chr->_name.c_str(),
-			magicalObject->_operativeVerb.c_str(),
-			getIndefiniteArticle(magicalObject->_name), magicalObject->_name.c_str());
+		         chr->getDefiniteArticle(true), chr->_name.c_str(),
+		         magicalObject->_operativeVerb.c_str(),
+		         getIndefiniteArticle(magicalObject->_name), magicalObject->_name.c_str());
 		appendText(buf);
 	}
 
@@ -438,7 +436,7 @@ void WageEngine::performOffer(Chr *attacker, Chr *victim) {
 	char buf[512];
 
 	snprintf(buf, 512, "%s%s offers %s%s.", attacker->getDefiniteArticle(true), attacker->_name.c_str(),
-			obj->_namePlural ? "some " : getIndefiniteArticle(obj->_name), obj->_name.c_str());
+	         obj->_namePlural ? "some " : getIndefiniteArticle(obj->_name), obj->_name.c_str());
 
 	appendText(buf);
 
@@ -449,7 +447,7 @@ void WageEngine::performTake(Chr *npc, Obj *obj) {
 	char buf[512];
 
 	snprintf(buf, 512, "%s%s picks up the %s%s.", npc->getDefiniteArticle(true), npc->_name.c_str(),
-			getIndefiniteArticle(obj->_name), obj->_name.c_str());
+	         getIndefiniteArticle(obj->_name), obj->_name.c_str());
 
 	appendText(buf);
 
@@ -678,7 +676,7 @@ bool WageEngine::handleAcceptCommand() {
 
 	char buf[512];
 	snprintf(buf, 512, "%s%s lays the %s on the ground and departs peacefully.",
-		chr->getDefiniteArticle(true), chr->_name.c_str(), _offer->_name.c_str());
+	         chr->getDefiniteArticle(true), chr->_name.c_str(), _offer->_name.c_str());
 	appendText(buf);
 
 	_world->move(_offer, chr->_currentScene);
@@ -819,7 +817,6 @@ void WageEngine::wearObj(Obj *o, int pos) {
 		appendText(buf);
 	}
 }
-
 
 bool WageEngine::handleOfferCommand(const char *target) {
 	Chr *player = _world->_player;

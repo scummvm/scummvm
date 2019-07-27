@@ -44,7 +44,8 @@ struct SpeechStruct {
 
 class SpeechManager {
 public:
-	SpeechManager(SludgeEngine *vm) : _vm(vm) { init(); }
+	SpeechManager(SludgeEngine *vm)
+	  : _vm(vm) { init(); }
 	~SpeechManager() { kill(); }
 
 	void init();

@@ -25,11 +25,12 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CViewTogglesOtherMusic, CEnterViewTogglesOtherMusic)
-	ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(LeaveViewMsg)
 END_MESSAGE_MAP()
 
-CViewTogglesOtherMusic::CViewTogglesOtherMusic() :
-		CEnterViewTogglesOtherMusic(), _value(1) {
+CViewTogglesOtherMusic::CViewTogglesOtherMusic()
+  : CEnterViewTogglesOtherMusic()
+  , _value(1) {
 }
 
 void CViewTogglesOtherMusic::save(SimpleFile *file, int indent) {

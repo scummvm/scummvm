@@ -20,14 +20,15 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "access/scripts.h"
 #include "access/access.h"
 #include "access/resources.h"
-#include "access/scripts.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
-Scripts::Scripts(AccessEngine *vm) : Manager(vm) {
+Scripts::Scripts(AccessEngine *vm)
+  : Manager(vm) {
 	_resource = nullptr;
 	_specialFunction = -1;
 	_data = nullptr;
@@ -152,7 +153,8 @@ void Scripts::searchForSequence() {
 	_data->seek(0);
 	int sequenceId;
 	do {
-		while (_data->readByte() != SCRIPT_START_BYTE) {}
+		while (_data->readByte() != SCRIPT_START_BYTE) {
+		}
 		sequenceId = _data->readUint16LE();
 	} while (sequenceId != _sequence);
 }
@@ -834,7 +836,6 @@ void Scripts::cmdTexChoice() {
 		{ 0, 76 }, { 77, 154 }, { 155, 232 }, { 233, 276 }, { 0, 0 }, { 277, 319 }
 	};
 
-
 	_vm->_oldRects.clear();
 	_choiceStart = _data->pos() - 1;
 	_vm->_fonts._charSet._lo = 1;
@@ -913,7 +914,7 @@ void Scripts::cmdTexChoice() {
 				int x = _vm->_events->_mousePos.x;
 				for (int i = 0; i < BTN_COUNT; i++) {
 					if (((_vm->getGameID() == GType_MartianMemorandum) && (x >= BTN_RANGES_v1[i][0]) && (x < BTN_RANGES_v1[i][1]))
-					||  ((_vm->getGameID() == GType_Amazon) && (x >= BTN_RANGES_v2[i][0]) && (x < BTN_RANGES_v2[i][1]))) {
+					    || ((_vm->getGameID() == GType_Amazon) && (x >= BTN_RANGES_v2[i][0]) && (x < BTN_RANGES_v2[i][1]))) {
 
 						choice = i;
 						break;
@@ -937,8 +938,7 @@ void Scripts::cmdWait() {
 	_vm->_timers[3]._flag++;
 	_vm->_events->zeroKeys();
 
-	while (!_vm->shouldQuit() && !_vm->_events->isKeyMousePressed() &&
-			_vm->_timers[3]._flag) {
+	while (!_vm->shouldQuit() && !_vm->_events->isKeyMousePressed() && _vm->_timers[3]._flag) {
 		_vm->_midi->midiRepeat();
 		charLoop();
 
@@ -1022,8 +1022,7 @@ void Scripts::cmdSetVideoSound() {
 
 void Scripts::cmdPlayVideoSound() {
 	_vm->_video->playVideo();
-	if (_vm->_video->_soundFrame == _vm->_video->_videoFrame &&
-			!_vm->_video->_soundFlag) {
+	if (_vm->_video->_soundFrame == _vm->_video->_videoFrame && !_vm->_video->_soundFlag) {
 		_vm->_sound->playSound(0);
 		_vm->_video->_soundFlag = true;
 	}
@@ -1068,10 +1067,10 @@ void Scripts::cmdCheckTravel() {
 
 void Scripts::cmdBlock() {
 	error("TODO: cmdBlock");
-	/*int val1 = */_data->readSint16LE();
-	/*int val2 = */_data->readUint16LE();
-	/*int val3 = */_data->readSint16LE();
-	/*int val4 = */_data->readUint16LE();
+	/*int val1 = */ _data->readSint16LE();
+	/*int val2 = */ _data->readUint16LE();
+	/*int val3 = */ _data->readSint16LE();
+	/*int val4 = */ _data->readUint16LE();
 }
 
 void Scripts::cmdPlayerOff() {

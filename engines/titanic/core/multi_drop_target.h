@@ -30,12 +30,16 @@ namespace Titanic {
 class CMultiDropTarget : public CDropTarget {
 	DECLARE_MESSAGE_MAP;
 	bool DropObjectMsg(CDropObjectMsg *msg);
+
 public:
 	CString _dropFrames;
 	CString _dropNames;
+
 public:
 	CLASSDEF;
-	CMultiDropTarget() : CDropTarget(), _dropFrames("1,2") {}
+	CMultiDropTarget()
+	  : CDropTarget()
+	  , _dropFrames("1,2") {}
 
 	/**
 	 * Save the data for the class to file

@@ -20,10 +20,10 @@
  *
  */
 
-#include "cruise/cruise.h"
-#include "cruise/cruise_main.h"
 #include "common/endian.h"
 #include "common/util.h"
+#include "cruise/cruise.h"
+#include "cruise/cruise_main.h"
 
 namespace Cruise {
 
@@ -55,7 +55,7 @@ void computeAllDistance(int16 table[][10], short int coordCount) {
 		int y1 = ctp_routeCoords[i][1];
 
 		for (int j = 0; j < ctp_routes[i][0]; j++) {
-			int p = ctp_routes[i][j+1];
+			int p = ctp_routes[i][j + 1];
 
 			int x2 = ctp_routeCoords[p][0];
 			int y2 = ctp_routeCoords[p][1];
@@ -72,8 +72,8 @@ void getWalkBoxCenter(int n, int16 table[][40]) {
 	int maxY = -1;
 
 	for (int i = 0; i < table[n][0]; i++) {
-		int x = table[n][i*2+1];
-		int y = table[n][i*2+2];
+		int x = table[n][i * 2 + 1];
+		int y = table[n][i * 2 + 2];
 
 		if (x < minX)
 			minX = x;
@@ -138,12 +138,12 @@ void makeCtStruct(Common::Array<CtStruct> &lst, int16 table[][40], int num, int 
 	currentWalkBoxCenterXBis = currentWalkBoxCenterX;
 	currentWalkBoxCenterYBis = currentWalkBoxCenterY;
 
-	renderCTPWalkBox(&table[num][0], currentWalkBoxCenterX, currentWalkBoxCenterY,  currentWalkBoxCenterX, currentWalkBoxCenterY, z + 0x200);
+	renderCTPWalkBox(&table[num][0], currentWalkBoxCenterX, currentWalkBoxCenterY, currentWalkBoxCenterX, currentWalkBoxCenterY, z + 0x200);
 
 	lst.push_back(CtStruct());
 	CtStruct &ct = lst[lst.size() - 1];
 
-	int16* XArray = XMIN_XMAX;
+	int16 *XArray = XMIN_XMAX;
 	int minY = *XArray++;
 
 	int i = 0;
@@ -189,7 +189,7 @@ int setNodeColor(int nodeIdx, int nodeColor) {
 	if (nodeColor == -1)
 		return
 
-		    walkboxColor[nodeIdx] = nodeColor;
+		  walkboxColor[nodeIdx] = nodeColor;
 
 	return oldColor;
 }
@@ -209,16 +209,16 @@ int setNodeState(int nodeIdx, int nodeState) {
 }
 
 int initCt(const char *ctpName) {
-	uint8 *dataPointer;	// ptr2
-	char fileType[5];	// string2
-	short int segementSizeTable[7];	// tempTable
+	uint8 *dataPointer; // ptr2
+	char fileType[5]; // string2
+	short int segementSizeTable[7]; // tempTable
 
 	if (!loadCtFromSave) {
 		for (int i = 0; i < 10; i++) {
 			persoTable[i] = NULL;
 		}
 	}
-	uint8* ptr = NULL;
+	uint8 *ptr = NULL;
 	if (!loadFileSub1(&ptr, ctpName, 0)) {
 		MemFree(ptr);
 		return (-18);
@@ -227,7 +227,7 @@ int initCt(const char *ctpName) {
 	dataPointer = ptr;
 
 	fileType[4] = 0;
-	memcpy(fileType, dataPointer, 4);	// get the file type, first 4 bytes of the CTP file
+	memcpy(fileType, dataPointer, 4); // get the file type, first 4 bytes of the CTP file
 	dataPointer += 4;
 
 	if (strcmp(fileType, "CTP ")) {
@@ -309,9 +309,9 @@ int initCt(const char *ctpName) {
 	if (ctpName != currentCtpName)
 		Common::strlcpy(currentCtpName, ctpName, 40);
 
-	numberOfWalkboxes = segementSizeTable[6] / 2;	// get the number of walkboxes
+	numberOfWalkboxes = segementSizeTable[6] / 2; // get the number of walkboxes
 
-	computeAllDistance(distanceTable, ctp_routeCoordCount);	// process path-finding stuff
+	computeAllDistance(distanceTable, ctp_routeCoordCount); // process path-finding stuff
 
 	// Load the polyStructNorm list
 

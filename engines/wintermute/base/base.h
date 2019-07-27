@@ -29,11 +29,11 @@
 #ifndef WINTERMUTE_BASE_BASE_H
 #define WINTERMUTE_BASE_BASE_H
 
-#include "engines/wintermute/wintypes.h"
-#include "engines/wintermute/dctypes.h"
-#include "common/str.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
+#include "common/str.h"
+#include "engines/wintermute/dctypes.h"
+#include "engines/wintermute/wintypes.h"
 
 namespace Wintermute {
 
@@ -52,6 +52,7 @@ public:
 	BaseClass(BaseGame *GameOwner);
 	virtual ~BaseClass();
 	BaseGame *_gameRef;
+
 protected:
 	Common::HashMap<Common::String, Common::String> _editorProps;
 	Common::HashMap<Common::String, Common::String>::iterator _editorPropsIter;

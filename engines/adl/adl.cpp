@@ -20,16 +20,16 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/error.h"
-#include "common/file.h"
-#include "common/system.h"
 #include "common/events.h"
-#include "common/stream.h"
-#include "common/savefile.h"
+#include "common/file.h"
 #include "common/random.h"
+#include "common/savefile.h"
+#include "common/scummsys.h"
+#include "common/stream.h"
+#include "common/system.h"
 
 #include "engines/util.h"
 
@@ -37,8 +37,8 @@
 #include "graphics/thumbnail.h"
 
 #include "adl/adl.h"
-#include "adl/display_a2.h"
 #include "adl/detection.h"
+#include "adl/display_a2.h"
 #include "adl/graphics.h"
 #include "adl/sound.h"
 
@@ -46,10 +46,10 @@ namespace Adl {
 
 class ScriptEnv_6502 : public ScriptEnv {
 public:
-	ScriptEnv_6502(const Command &cmd, byte room, byte verb, byte noun) :
-			ScriptEnv(cmd, room, verb, noun),
-			_remCond(cmd.numCond),
-			_remAct(cmd.numAct) { }
+	ScriptEnv_6502(const Command &cmd, byte room, byte verb, byte noun)
+	  : ScriptEnv(cmd, room, verb, noun)
+	  , _remCond(cmd.numCond)
+	  , _remAct(cmd.numAct) {}
 
 private:
 	kOpType getOpType() const {
@@ -80,29 +80,29 @@ AdlEngine::~AdlEngine() {
 	delete _random;
 }
 
-AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
-		Engine(syst),
-		_dumpFile(nullptr),
-		_display(nullptr),
-		_graphics(nullptr),
-		_textMode(false),
-		_linesPrinted(0),
-		_isRestarting(false),
-		_isRestoring(false),
-		_isQuitting(false),
-		_abortScript(false),
-		_gameDescription(gd),
-		_inputScript(nullptr),
-		_scriptDelay(1000),
-		_scriptPaused(false),
-		_console(nullptr),
-		_messageIds(),
-		_saveVerb(0),
-		_saveNoun(0),
-		_restoreVerb(0),
-		_restoreNoun(0),
-		_canSaveNow(false),
-		_canRestoreNow(false) {
+AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd)
+  : Engine(syst)
+  , _dumpFile(nullptr)
+  , _display(nullptr)
+  , _graphics(nullptr)
+  , _textMode(false)
+  , _linesPrinted(0)
+  , _isRestarting(false)
+  , _isRestoring(false)
+  , _isQuitting(false)
+  , _abortScript(false)
+  , _gameDescription(gd)
+  , _inputScript(nullptr)
+  , _scriptDelay(1000)
+  , _scriptPaused(false)
+  , _console(nullptr)
+  , _messageIds()
+  , _saveVerb(0)
+  , _saveNoun(0)
+  , _restoreVerb(0)
+  , _restoreNoun(0)
+  , _canSaveNow(false)
+  , _canRestoreNow(false) {
 
 	_random = new Common::RandomSource("adl");
 	DebugMan.addDebugChannel(kDebugChannelScript, "Script", "Trace script execution");
@@ -940,7 +940,7 @@ Common::Error AdlEngine::saveGameState(int slot, const Common::String &desc) {
 	outFile->writeUint32BE(MKTAG('A', 'D', 'L', ':'));
 	outFile->writeByte(SAVEGAME_VERSION);
 
-	char name[SAVEGAME_NAME_LEN] = { };
+	char name[SAVEGAME_NAME_LEN] = {};
 
 	if (!desc.empty())
 		strncpy(name, desc.c_str(), sizeof(name) - 1);

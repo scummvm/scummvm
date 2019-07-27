@@ -25,8 +25,8 @@
 
 #if defined(WIN32) && defined(USE_SYSDIALOGS)
 
-#include "common/fs.h"
-#include "common/dialogs.h"
+#	include "common/dialogs.h"
+#	include "common/fs.h"
 
 class SdlWindow_Win32;
 

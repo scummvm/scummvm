@@ -33,13 +33,13 @@
 
 #include "gui/message.h"
 
-#include "lab/lab.h"
 #include "lab/anim.h"
 #include "lab/dispman.h"
 #include "lab/eventman.h"
 #include "lab/image.h"
 #include "lab/interface.h"
 #include "lab/intro.h"
+#include "lab/lab.h"
 #include "lab/labsets.h"
 #include "lab/music.h"
 #include "lab/processroom.h"
@@ -95,11 +95,11 @@ enum AltButtons {
 };
 
 static char initColors[] = { '\x00', '\x00', '\x00', '\x30',
-							 '\x30', '\x30', '\x10', '\x10',
-							 '\x10', '\x14', '\x14', '\x14',
-							 '\x20', '\x20', '\x20', '\x24',
-							 '\x24', '\x24', '\x2c', '\x2c',
-							 '\x2c', '\x08', '\x08', '\x08' };
+	                           '\x30', '\x30', '\x10', '\x10',
+	                           '\x10', '\x14', '\x14', '\x14',
+	                           '\x20', '\x20', '\x20', '\x24',
+	                           '\x24', '\x24', '\x2c', '\x2c',
+	                           '\x2c', '\x08', '\x08', '\x08' };
 
 void LabEngine::handleTrialWarning() {
 	// Check if this is the Wyrmkeep trial
@@ -116,15 +116,13 @@ void LabEngine::handleTrialWarning() {
 		byte checkByte = roomFile.readByte();
 		if (checkByte == 0x00) {
 			// Full Windows version
-		}
-		else if (checkByte == 0x80) {
+		} else if (checkByte == 0x80) {
 			// Wyrmkeep trial version
 			_extraGameFeatures = GF_WINDOWS_TRIAL;
 
 			GUI::MessageDialog trialMessage("This is a trial Windows version of the game. To play the full version, you will need to use the original interpreter and purchase a key from Wyrmkeep");
 			trialMessage.runModal();
-		}
-		else {
+		} else {
 			knownVersion = false;
 		}
 
@@ -554,7 +552,7 @@ void LabEngine::showLab2Teaser() {
 }
 
 bool LabEngine::processEvent(MessageClass tmpClass, uint16 code, uint16 qualifier, Common::Point tmpPos,
-			uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 buttonId, uint16 &actionMode) {
+                             uint16 &curInv, IntuiMessage *curMsg, bool &forceDraw, uint16 buttonId, uint16 &actionMode) {
 
 	if (shouldQuit())
 		return false;
@@ -772,8 +770,7 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 		_direction = newDir;
 		forceDraw = true;
 		_interface->mayShowCrumbIndicator();
-		}
-		break;
+	} break;
 
 	case kButtonForward: {
 		_closeDataPtr = nullptr;
@@ -835,8 +832,7 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 		}
 
 		_interface->mayShowCrumbIndicator();
-		}
-		break;
+	} break;
 
 	case kButtonMap:
 		doUse(kItemMap);
@@ -883,8 +879,7 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 			_graphics->setPalette(initColors, 8);
 			_system->delayMillis(1000);
 		}
-		}
-		break;
+	} break;
 
 	case kButtonUseItem:
 		if (!doUse(curInv)) {
@@ -1009,8 +1004,7 @@ void LabEngine::performAction(uint16 actionMode, Common::Point curPos, uint16 &c
 			_closeDataPtr = tmpClosePtr;
 		} else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 			drawStaticMessage(kTextNothing);
-		}
-		break;
+	} break;
 
 	case 5:
 		if (_conditions->in(curInv)) {
@@ -1020,8 +1014,7 @@ void LabEngine::performAction(uint16 actionMode, Common::Point curPos, uint16 &c
 
 				if (!_conditions->in(curInv))
 					decIncInv(&curInv, false);
-			}
-			else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
+			} else if (curPos.y < (_utils->vgaScaleY(149) + _utils->svgaCord(2)))
 				drawStaticMessage(kTextNothing);
 		}
 	}

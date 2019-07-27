@@ -25,13 +25,14 @@
 namespace BladeRunner {
 
 enum kRunciterStates {
-	kRunciterStateIdle         = 0,
-	kRunciterStateWalking      = 1,
-	kRunciterStateDying        = 14,
-	kRunciterStateDead         = 15
+	kRunciterStateIdle = 0,
+	kRunciterStateWalking = 1,
+	kRunciterStateDying = 14,
+	kRunciterStateDead = 15
 };
 
-AIScriptRunciter::AIScriptRunciter(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptRunciter::AIScriptRunciter(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 	var_45CD78 = 0;
 	var_45CD7C = 0;
 	var_45CD80 = 0;
@@ -53,14 +54,12 @@ void AIScriptRunciter::Initialize() {
 
 bool AIScriptRunciter::Update() {
 	if (Actor_Query_Goal_Number(kActorRunciter) == kGoalRunciterDefault
-	 && Game_Flag_Query(kFlagRC01PoliceDone)
-	) {
+	    && Game_Flag_Query(kFlagRC01PoliceDone)) {
 		Actor_Set_Goal_Number(kActorRunciter, kGoalRunciterGoToFreeSlotGH);
 	}
 
 	if (Global_Variable_Query(kVariableChapter) == 4
-	 && Actor_Query_Goal_Number(kActorRunciter) < kGoalRunciterRC02Wait
-	) {
+	    && Actor_Query_Goal_Number(kActorRunciter) < kGoalRunciterRC02Wait) {
 		Actor_Set_Goal_Number(kActorRunciter, kGoalRunciterRC02Wait);
 	}
 
@@ -104,10 +103,9 @@ void AIScriptRunciter::OtherAgentEnteredThisScene(int otherActorId) {}
 void AIScriptRunciter::OtherAgentExitedThisScene(int otherActorId) {}
 
 void AIScriptRunciter::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
-	if ( Actor_Query_Goal_Number(kActorRunciter) == kGoalRunciterRC02Wait
-	 &&  combatMode
-	 && !Game_Flag_Query(kFlagRC02RunciterTalkWithGun)
-	) {
+	if (Actor_Query_Goal_Number(kActorRunciter) == kGoalRunciterRC02Wait
+	    && combatMode
+	    && !Game_Flag_Query(kFlagRC02RunciterTalkWithGun)) {
 		Actor_Set_Targetable(kActorRunciter, true);
 		Actor_Face_Actor(kActorRunciter, kActorMcCoy, true);
 		Actor_Says(kActorRunciter, 420, 12);
@@ -508,8 +506,7 @@ bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 	switch (mode) {
 	case kAnimationModeIdle:
 		if (_animationState >= 2
-		 && _animationState <= 11
-		) {
+		    && _animationState <= 11) {
 			var_45CD88 = 1;
 		} else {
 			_animationState = 0;
@@ -530,7 +527,7 @@ bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 		break;
 
 	case kAnimationModeTalk:
-		if (_animationState  != 0) {
+		if (_animationState != 0) {
 			_animationState = 2;
 			_animationFrame = 0;
 		} else {
@@ -651,17 +648,17 @@ bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptRunciter::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptRunciter::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptRunciter::ReachedMovementTrackWaypoint(int waypointId) {

@@ -23,8 +23,8 @@
 #ifndef HOPKINS_EVENTS_H
 #define HOPKINS_EVENTS_H
 
-#include "common/scummsys.h"
 #include "common/events.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 
 namespace Hopkins {
@@ -34,7 +34,11 @@ namespace Hopkins {
 
 class HopkinsEngine;
 
-enum DIALOG_KEY { KEY_NONE = 0, KEY_INVENTORY = 1, KEY_OPTIONS = 2, KEY_SAVE = 3, KEY_LOAD = 4 };
+enum DIALOG_KEY { KEY_NONE = 0,
+	                KEY_INVENTORY = 1,
+	                KEY_OPTIONS = 2,
+	                KEY_SAVE = 3,
+	                KEY_LOAD = 4 };
 
 class EventsManager {
 private:

@@ -63,8 +63,6 @@ public:
 	bool allocate();
 };
 
-
-
 class MidiDriver_MPU401 : public MidiDriver {
 private:
 	MidiChannel_MPU401 _midi_channels[16];
@@ -83,6 +81,5 @@ public:
 	virtual MidiChannel *allocateChannel();
 	virtual MidiChannel *getPercussionChannel() { return &_midi_channels[9]; }
 };
-
 
 #endif

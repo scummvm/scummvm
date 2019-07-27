@@ -23,27 +23,27 @@
 #ifndef CRUISE_CRUISE_MAIN_H
 #define CRUISE_CRUISE_MAIN_H
 
-#include "common/scummsys.h"
 #include "common/savefile.h"
+#include "common/scummsys.h"
 
-#include "cruise/overlay.h"
-#include "cruise/object.h"
-#include "cruise/ctp.h"
 #include "cruise/actor.h"
-#include "cruise/vars.h"
-#include "cruise/font.h"
-#include "cruise/volume.h"
-#include "cruise/stack.h"
-#include "cruise/script.h"
-#include "cruise/various.h"
-#include "cruise/function.h"
-#include "cruise/saveload.h"
-#include "cruise/linker.h"
-#include "cruise/mouse.h"
-#include "cruise/gfxModule.h"
+#include "cruise/ctp.h"
 #include "cruise/dataLoader.h"
-#include "cruise/perso.h"
+#include "cruise/font.h"
+#include "cruise/function.h"
+#include "cruise/gfxModule.h"
+#include "cruise/linker.h"
 #include "cruise/menu.h"
+#include "cruise/mouse.h"
+#include "cruise/object.h"
+#include "cruise/overlay.h"
+#include "cruise/perso.h"
+#include "cruise/saveload.h"
+#include "cruise/script.h"
+#include "cruise/stack.h"
+#include "cruise/various.h"
+#include "cruise/vars.h"
+#include "cruise/volume.h"
 
 #include "cruise/background.h"
 #include "cruise/backgroundIncrust.h"
@@ -75,7 +75,7 @@ enum ResType {
 	OBJ_TYPE_EXIT = 9
 };
 
-extern gfxEntryStruct* linkedMsgList;
+extern gfxEntryStruct *linkedMsgList;
 
 extern int buttonDown;
 extern int selectDown;
@@ -89,20 +89,20 @@ void resetFileEntry(int32 entryNumber);
 uint8 *mainProc14(uint16 overlay, uint16 idx);
 void printInfoBlackBox(const char *string);
 void waitForPlayerInput();
-void loadPackedFileToMem(int fileIdx, uint8 * buffer);
+void loadPackedFileToMem(int fileIdx, uint8 *buffer);
 int getNumObjectsByClass(int scriptIdx, int param);
 void resetFileEntryRange(int param1, int param2);
-int getProcParam(int overlayIdx, int param2, const char * name);
-void changeScriptParamInList(int param1, int param2, scriptInstanceStruct * pScriptInstance, int newValue, int param3);
-uint8 *getDataFromData3(ovlData3Struct * ptr, int param);
+int getProcParam(int overlayIdx, int param2, const char *name);
+void changeScriptParamInList(int param1, int param2, scriptInstanceStruct *pScriptInstance, int newValue, int param3);
+uint8 *getDataFromData3(ovlData3Struct *ptr, int param);
 void removeExtention(const char *name, char *buffer);
-void resetPtr2(scriptInstanceStruct * ptr);
+void resetPtr2(scriptInstanceStruct *ptr);
 void getFileExtention(const char *name, char *buffer);
 void *allocAndZero(int size);
 void freeStuff2();
 void mainLoop();
 void getMouseStatus(int16 *pMouseVar, int16 *pMouseX, int16 *pMouseButton, int16 *pMouseY);
-bool testMask(int x, int y, unsigned char* pData, int stride);
+bool testMask(int x, int y, unsigned char *pData, int stride);
 menuElementSubStruct *getSelectedEntryInMenu(menuStruct *pMenu);
 void closeAllMenu();
 int removeFinishedScripts(scriptInstanceStruct *ptrHandle);

@@ -20,24 +20,24 @@
  *
  */
 
-#include <pspctrl.h>
-#include "gui/message.h"
 #include "backends/platform/psp/input.h"
 #include "common/config-manager.h"
+#include "gui/message.h"
+#include <pspctrl.h>
 
 //#define __PSP_DEBUG_FUNCS__	/* Uncomment for debugging the stack */
 //#define __PSP_DEBUG_PRINT__ /* Uncomment for debug prints */
 #include "backends/platform/psp/trace.h"
 
 // Defines for working with PSP buttons
-#define DOWN(x)		 ((pad.Buttons & (x)) == (x))
-#define UP(x)		 (!(pad.Buttons & (x)))
-#define PSP_DPAD	 (PSP_CTRL_DOWN|PSP_CTRL_UP|PSP_CTRL_LEFT|PSP_CTRL_RIGHT)
+#define DOWN(x) ((pad.Buttons & (x)) == (x))
+#define UP(x) (!(pad.Buttons & (x)))
+#define PSP_DPAD (PSP_CTRL_DOWN | PSP_CTRL_UP | PSP_CTRL_LEFT | PSP_CTRL_RIGHT)
 #define PSP_4BUTTONS (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE | PSP_CTRL_TRIANGLE | PSP_CTRL_SQUARE)
 #define PSP_TRIGGERS (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER)
 #define PSP_ALL_BUTTONS (PSP_DPAD | PSP_4BUTTONS | PSP_TRIGGERS | PSP_CTRL_START | PSP_CTRL_SELECT)
 
-#define PAD_CHECK_TIME	13 // was 53
+#define PAD_CHECK_TIME 13 // was 53
 
 Button::Button() {
 	clear();
@@ -65,7 +65,7 @@ inline bool Button::getEvent(Common::Event &event, PspEvent &pspEvent, bool down
 		event.kbd.ascii = _ascii;
 		event.kbd.flags |= _flag;
 		return true;
-	} else if (_flag) {	// handle flag only events
+	} else if (_flag) { // handle flag only events
 		event.type = down ? Common::EVENT_KEYDOWN : Common::EVENT_KEYUP;
 		event.kbd.flags |= down ? _flag : 0;
 		return true;
@@ -92,8 +92,12 @@ const uint32 ButtonPad::_buttonMap[] = {
 	PSP_CTRL_LTRIGGER, PSP_CTRL_RTRIGGER, PSP_CTRL_START, PSP_CTRL_SELECT
 };
 
-ButtonPad::ButtonPad() : _prevButtonState(0), _shifted(UNSHIFTED), _padMode(PAD_MODE_NORMAL),
-						_comboMode(false), _combosEnabled(true) {
+ButtonPad::ButtonPad()
+  : _prevButtonState(0)
+  , _shifted(UNSHIFTED)
+  , _padMode(PAD_MODE_NORMAL)
+  , _comboMode(false)
+  , _combosEnabled(true) {
 	for (int i = UNSHIFTED; i < SHIFTED_MODE_LAST; i++)
 		_buttonsChanged[i] = 0;
 	clearButtons();
@@ -126,17 +130,17 @@ void ButtonPad::initButtonsNormalMode() {
 
 	// Dpad
 	_button[BTN_UP_LEFT][UNSHIFTED].setKey(Common::KEYCODE_KP7, '7');
-	_button[BTN_LEFT][SHIFTED].setKey(Common::KEYCODE_KP7, '7');		// same as up_left
+	_button[BTN_LEFT][SHIFTED].setKey(Common::KEYCODE_KP7, '7'); // same as up_left
 	_button[BTN_UP][UNSHIFTED].setKey(Common::KEYCODE_KP8, '8');
 	_button[BTN_UP_RIGHT][UNSHIFTED].setKey(Common::KEYCODE_KP9, '9');
-	_button[BTN_UP][SHIFTED].setKey(Common::KEYCODE_KP9, '9');			// same as up_right
+	_button[BTN_UP][SHIFTED].setKey(Common::KEYCODE_KP9, '9'); // same as up_right
 	_button[BTN_LEFT][UNSHIFTED].setKey(Common::KEYCODE_KP4, '4');
 	_button[BTN_RIGHT][UNSHIFTED].setKey(Common::KEYCODE_KP6, '6');
 	_button[BTN_DOWN_LEFT][UNSHIFTED].setKey(Common::KEYCODE_KP1, '1');
-	_button[BTN_DOWN][SHIFTED].setKey(Common::KEYCODE_KP1, '1');		// same as down_left
+	_button[BTN_DOWN][SHIFTED].setKey(Common::KEYCODE_KP1, '1'); // same as down_left
 	_button[BTN_DOWN][UNSHIFTED].setKey(Common::KEYCODE_KP2, '2');
 	_button[BTN_DOWN_RIGHT][UNSHIFTED].setKey(Common::KEYCODE_KP3, '3');
-	_button[BTN_RIGHT][SHIFTED].setKey(Common::KEYCODE_KP3, '3');		// same as down_right
+	_button[BTN_RIGHT][SHIFTED].setKey(Common::KEYCODE_KP3, '3'); // same as down_right
 
 	// Other buttons
 	_button[BTN_CROSS][UNSHIFTED].setPspEvent(PSP_EVENT_LBUTTON, true, PSP_EVENT_LBUTTON, false);
@@ -157,7 +161,7 @@ void ButtonPad::initButtonsNormalMode() {
 
 void ButtonPad::initButtonsLolMode() {
 	DEBUG_ENTER_FUNC();
-	initButtonsNormalMode();	// set normal button configuration
+	initButtonsNormalMode(); // set normal button configuration
 	PSP_DEBUG_PRINT("initializing buttons for LOL mode\n");
 
 	// Square is our new shift button
@@ -183,7 +187,7 @@ void ButtonPad::initButtonsLolMode() {
 	// Buttons
 	_button[BTN_LTRIGGER][UNSHIFTED].clear();
 	_button[BTN_LTRIGGER][SHIFTED].clear();
-	_button[BTN_LTRIGGER][UNSHIFTED].setKey(Common::KEYCODE_KP4, '4');		// Triggers turn
+	_button[BTN_LTRIGGER][UNSHIFTED].setKey(Common::KEYCODE_KP4, '4'); // Triggers turn
 	_button[BTN_RTRIGGER][UNSHIFTED].clear();
 	_button[BTN_RTRIGGER][SHIFTED].clear();
 	_button[BTN_RTRIGGER][UNSHIFTED].setKey(Common::KEYCODE_KP6, '6');
@@ -196,30 +200,30 @@ bool ButtonPad::getEvent(Common::Event &event, PspEvent &pspEvent, SceCtrlData &
 
 	//PSP_DEBUG_PRINT("buttons[%x]\n", pad.Buttons);
 
-	uint32 curButtonState = PSP_ALL_BUTTONS & pad.Buttons;	// we only care about these
+	uint32 curButtonState = PSP_ALL_BUTTONS & pad.Buttons; // we only care about these
 
 	if (_combosEnabled)
-		modifyButtonsForCombos(pad);						// change buttons for combos
+		modifyButtonsForCombos(pad); // change buttons for combos
 
 	return getEventFromButtonState(event, pspEvent, curButtonState);
 }
 
 bool ButtonPad::getEventFromButtonState(Common::Event &event, PspEvent &pspEvent, uint32 buttonState) {
 	DEBUG_ENTER_FUNC();
-	_buttonsChanged[_shifted] |= buttonState ^ _prevButtonState;	// add any buttons that changed
+	_buttonsChanged[_shifted] |= buttonState ^ _prevButtonState; // add any buttons that changed
 	_prevButtonState = buttonState;
 
 	for (int shiftState = UNSHIFTED; shiftState < SHIFTED_MODE_LAST; shiftState++) {
-		if (_buttonsChanged[shiftState]) {	// any button to address?
+		if (_buttonsChanged[shiftState]) { // any button to address?
 			PSP_DEBUG_PRINT("found changed buttons\n");
 			ButtonType buttonType = BTN_LAST;
-			bool buttonDown = false;		// normally we release a button (as in when we're in a different shiftmode)
+			bool buttonDown = false; // normally we release a button (as in when we're in a different shiftmode)
 
 			for (int i = BTN_UP_LEFT; i < BTN_LAST; i++) {
 				uint32 buttonCode = _buttonMap[i];
 				if ((_buttonsChanged[shiftState] & buttonCode) == buttonCode) { // check for this changed button
-					buttonType = (ButtonType)i;						// we know which button changed
-					_buttonsChanged[shiftState] &= ~buttonCode;	// save the fact that we treated this button
+					buttonType = (ButtonType)i; // we know which button changed
+					_buttonsChanged[shiftState] &= ~buttonCode; // save the fact that we treated this button
 					if (shiftState == _shifted)
 						buttonDown = buttonState & buttonCode ? true : false; // pressed or released?
 
@@ -228,7 +232,7 @@ bool ButtonPad::getEventFromButtonState(Common::Event &event, PspEvent &pspEvent
 				}
 			}
 
-			assert (buttonType < BTN_LAST);
+			assert(buttonType < BTN_LAST);
 			bool haveEvent = _button[buttonType][shiftState].getEvent(event, pspEvent, buttonDown);
 			if (haveEvent)
 				PSP_DEBUG_PRINT("have event. key[%d] flag[%x] %s\n", event.kbd.ascii, event.kbd.flags, buttonDown ? "down" : "up");
@@ -241,7 +245,7 @@ bool ButtonPad::getEventFromButtonState(Common::Event &event, PspEvent &pspEvent
 
 void ButtonPad::modifyButtonsForCombos(SceCtrlData &pad) {
 	if (DOWN(PSP_CTRL_RTRIGGER | PSP_CTRL_LTRIGGER)) {
-		if (!_comboMode) {  // we're entering combo mode
+		if (!_comboMode) { // we're entering combo mode
 			PSP_DEBUG_PRINT("entering combo mode\n");
 			_button[BTN_SQUARE][UNSHIFTED].clear();
 			_button[BTN_SQUARE][SHIFTED].clear();
@@ -257,9 +261,9 @@ void ButtonPad::modifyButtonsForCombos(SceCtrlData &pad) {
 			_button[BTN_UP][SHIFTED].setPspEvent(PSP_EVENT_CHANGE_SPEED, true, PSP_EVENT_NONE, true);
 			_comboMode = true;
 		}
-	} else {					// no combo buttons are pressed	now
-		if (_comboMode) {		// we have been running in combo mode
-			initButtons();		// reset the button configuration
+	} else { // no combo buttons are pressed	now
+		if (_comboMode) { // we have been running in combo mode
+			initButtons(); // reset the button configuration
 			_comboMode = false;
 		}
 	}
@@ -268,13 +272,13 @@ void ButtonPad::modifyButtonsForCombos(SceCtrlData &pad) {
 bool Nub::getEvent(Common::Event &event, PspEvent &pspEvent, SceCtrlData &pad) {
 	DEBUG_ENTER_FUNC();
 
-	if (_dpadMode) {	// Convert the nub to a D-Pad
+	if (_dpadMode) { // Convert the nub to a D-Pad
 		uint32 buttonState;
 		translateToDpadState(pad.Lx, pad.Ly, buttonState);
 		return _buttonPad.getEventFromButtonState(event, pspEvent, buttonState);
 	}
 
-	int32 analogStepX = pad.Lx;             // Goes up to 255.
+	int32 analogStepX = pad.Lx; // Goes up to 255.
 	int32 analogStepY = pad.Ly;
 
 	analogStepX = modifyNubAxisMotion(analogStepX);
@@ -361,7 +365,7 @@ bool Nub::getEvent(Common::Event &event, PspEvent &pspEvent, SceCtrlData &pad) {
 }
 
 void Nub::translateToDpadState(int dpadX, int dpadY, uint32 &buttonState) {
-	#define MIN_NUB_POSITION 70
+#define MIN_NUB_POSITION 70
 	buttonState = 0;
 
 	if (dpadX > 127 + MIN_NUB_POSITION)
@@ -380,23 +384,23 @@ inline int32 Nub::modifyNubAxisMotion(int32 input) {
 
 	int MIN_NUB_MOTION = 10 * ConfMan.getInt("joystick_deadzone");
 
-	input -= 128;	// Center on 0.
+	input -= 128; // Center on 0.
 
 	if (input < -MIN_NUB_MOTION - 1)
-		input += MIN_NUB_MOTION + 1;	// reduce the velocity
+		input += MIN_NUB_MOTION + 1; // reduce the velocity
 	else if (input > MIN_NUB_MOTION)
-		input -= MIN_NUB_MOTION;	// same
-	else 				// between these points, dampen the response to 0
+		input -= MIN_NUB_MOTION; // same
+	else // between these points, dampen the response to 0
 		input = 0;
 
 	if (input != 0) { // scaled deadzone
-		input = (input * 128)/(128 - MIN_NUB_MOTION);
+		input = (input * 128) / (128 - MIN_NUB_MOTION);
 	}
 	return input;
 }
 
 inline bool Nub::isButtonDown() {
-	if (_dpadMode) 		// only relevant in dpad mode
+	if (_dpadMode) // only relevant in dpad mode
 		return _buttonPad.isButtonDown();
 	return false;
 }
@@ -407,8 +411,8 @@ const char *InputHandler::_padModeText[] = {
 };
 
 void InputHandler::init() {
-	sceCtrlSetSamplingCycle(0);	// set sampling to vsync. n = n usecs
-	sceCtrlSetSamplingMode(1);  // analog
+	sceCtrlSetSamplingCycle(0); // set sampling to vsync. n = n usecs
+	sceCtrlSetSamplingMode(1); // analog
 
 	_buttonPad.initButtons();
 	_nub.init();
@@ -417,7 +421,7 @@ void InputHandler::init() {
 bool InputHandler::getAllInputs(Common::Event &event) {
 	DEBUG_ENTER_FUNC();
 
-	uint32 time = g_system->getMillis();	// may not be necessary with read
+	uint32 time = g_system->getMillis(); // may not be necessary with read
 	if (time - _lastPadCheckTime < PAD_CHECK_TIME) {
 		return false;
 	}
@@ -425,7 +429,7 @@ bool InputHandler::getAllInputs(Common::Event &event) {
 	_lastPadCheckTime = time;
 	SceCtrlData pad;
 
-	sceCtrlPeekBufferPositive(&pad, 1);	// Peek doesn't sleep. Read sleeps the thread
+	sceCtrlPeekBufferPositive(&pad, 1); // Peek doesn't sleep. Read sleeps the thread
 
 	bool haveEvent;
 	//memset(&event, 0, sizeof(event));
@@ -447,7 +451,7 @@ bool InputHandler::getEvent(Common::Event &event, SceCtrlData &pad) {
 
 	if (_keyboard->isVisible()) {
 		haveEvent = _keyboard->processInput(event, pspEvent, pad);
-	} else {	// only process buttonpad if keyboard invisible
+	} else { // only process buttonpad if keyboard invisible
 		haveEvent = _buttonPad.getEvent(event, pspEvent, pad);
 	}
 
@@ -464,7 +468,7 @@ bool InputHandler::getEvent(Common::Event &event, SceCtrlData &pad) {
 
 	// handle any PSP events we might have
 	if (!pspEvent.isEmpty())
-		haveEvent |= handlePspEvent(event, pspEvent);	// overrides any event we might have
+		haveEvent |= handlePspEvent(event, pspEvent); // overrides any event we might have
 
 	return haveEvent;
 }
@@ -480,8 +484,8 @@ bool InputHandler::handlePspEvent(Common::Event &event, PspEvent &pspEvent) {
 		break;
 	case PSP_EVENT_SHOW_VIRTUAL_KB:
 		_keyboard->setVisible((bool)pspEvent.data);
-		if ((pspEvent.data && _keyboard->isVisible()) || !pspEvent.data) 	// don't change mode if keyboard didn't load
-			_nub.setDpadMode((bool)pspEvent.data);							// set nub to keypad/regular mode
+		if ((pspEvent.data && _keyboard->isVisible()) || !pspEvent.data) // don't change mode if keyboard didn't load
+			_nub.setDpadMode((bool)pspEvent.data); // set nub to keypad/regular mode
 		break;
 	case PSP_EVENT_LBUTTON:
 		haveEvent = true;
@@ -531,10 +535,10 @@ void InputHandler::handleShiftEvent(ShiftMode shifted) {
 
 void InputHandler::handleModeSwitchEvent() {
 	// check if we can't switch modes right now
-	if (_buttonPad.isButtonDown() || _nub.isButtonDown()) {	// can't switch yet
+	if (_buttonPad.isButtonDown() || _nub.isButtonDown()) { // can't switch yet
 		PSP_DEBUG_PRINT("postponing mode switch event\n");
-		_pendingPspEvent.type = PSP_EVENT_MODE_SWITCH;		// queue it to be done later
-	} else {	// we can switch
+		_pendingPspEvent.type = PSP_EVENT_MODE_SWITCH; // queue it to be done later
+	} else { // we can switch
 		PSP_DEBUG_PRINT("mode switch event\n");
 		_padMode = (PspPadMode)(_padMode + 1);
 		if (_padMode >= PAD_MODE_LAST)
@@ -560,18 +564,18 @@ void InputHandler::handleSpeedChange(bool up) {
 }*/
 
 void InputHandler::setImageViewerMode(bool active) {
-	if (_buttonPad.isButtonDown() || _nub.isButtonDown()) {	// can't switch yet
+	if (_buttonPad.isButtonDown() || _nub.isButtonDown()) { // can't switch yet
 		PSP_DEBUG_PRINT("postponing image viewer on event\n");
-		_pendingPspEvent.type = PSP_EVENT_IMAGE_VIEWER_SET_BUTTONS;		// queue it to be done later
+		_pendingPspEvent.type = PSP_EVENT_IMAGE_VIEWER_SET_BUTTONS; // queue it to be done later
 		_pendingPspEvent.data = active;
 	} else if (active) {
 		_nub.setDpadMode(true);
-		_buttonPad.enableCombos(false);	// disable combos
+		_buttonPad.enableCombos(false); // disable combos
 		setButtonsForImageViewer();
-	} else {	// deactivate
+	} else { // deactivate
 		_nub.setDpadMode(false);
 		_nub.init();
-		_buttonPad.enableCombos(true);	// re-enable combos
+		_buttonPad.enableCombos(true); // re-enable combos
 		_buttonPad.initButtons();
 	}
 }
@@ -581,31 +585,19 @@ void InputHandler::setButtonsForImageViewer() {
 
 	// Dpad
 	_buttonPad.clearButtons();
-	_buttonPad.getButton(ButtonPad::BTN_UP, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_ZOOM_IN,
-		PSP_EVENT_NONE, false);
-	_buttonPad.getButton(ButtonPad::BTN_DOWN, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_ZOOM_OUT,
-		PSP_EVENT_NONE, false);
-	_buttonPad.getButton(ButtonPad::BTN_LEFT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_LAST_IMAGE,
-		PSP_EVENT_NONE, false);
-	_buttonPad.getButton(ButtonPad::BTN_RIGHT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_NEXT_IMAGE,
-		PSP_EVENT_NONE, false);
-	_buttonPad.getButton(ButtonPad::BTN_LTRIGGER, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_HIDE,
-		PSP_EVENT_NONE, false);
-	_buttonPad.getButton(ButtonPad::BTN_RTRIGGER, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_HIDE,
-		PSP_EVENT_NONE, false);
-	_buttonPad.getButton(ButtonPad::BTN_START, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_HIDE,
-		PSP_EVENT_NONE, false);
-	_buttonPad.getButton(ButtonPad::BTN_SELECT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_HIDE,
-		PSP_EVENT_NONE, false);
+	_buttonPad.getButton(ButtonPad::BTN_UP, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_ZOOM_IN, PSP_EVENT_NONE, false);
+	_buttonPad.getButton(ButtonPad::BTN_DOWN, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_ZOOM_OUT, PSP_EVENT_NONE, false);
+	_buttonPad.getButton(ButtonPad::BTN_LEFT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_LAST_IMAGE, PSP_EVENT_NONE, false);
+	_buttonPad.getButton(ButtonPad::BTN_RIGHT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_NEXT_IMAGE, PSP_EVENT_NONE, false);
+	_buttonPad.getButton(ButtonPad::BTN_LTRIGGER, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_HIDE, PSP_EVENT_NONE, false);
+	_buttonPad.getButton(ButtonPad::BTN_RTRIGGER, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_HIDE, PSP_EVENT_NONE, false);
+	_buttonPad.getButton(ButtonPad::BTN_START, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_HIDE, PSP_EVENT_NONE, false);
+	_buttonPad.getButton(ButtonPad::BTN_SELECT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_HIDE, PSP_EVENT_NONE, false);
 
 	//Nub
 	_nub.getPad().clearButtons();
-	_nub.getPad().getButton(ButtonPad::BTN_UP, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_UP,
-		PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_STOP);
-	_nub.getPad().getButton(ButtonPad::BTN_DOWN, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_DOWN,
-		PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_STOP);
-	_nub.getPad().getButton(ButtonPad::BTN_LEFT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_LEFT,
-		PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_STOP);
-	_nub.getPad().getButton(ButtonPad::BTN_RIGHT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_RIGHT,
-		PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_STOP);
+	_nub.getPad().getButton(ButtonPad::BTN_UP, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_UP, PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_STOP);
+	_nub.getPad().getButton(ButtonPad::BTN_DOWN, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_DOWN, PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_STOP);
+	_nub.getPad().getButton(ButtonPad::BTN_LEFT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_LEFT, PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_STOP);
+	_nub.getPad().getButton(ButtonPad::BTN_RIGHT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_RIGHT, PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_STOP);
 }

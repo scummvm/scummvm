@@ -101,7 +101,7 @@ public:
 	byte _x1;
 	uint16 _x2;
 	uint16 _scriptId;
-	byte _flags2;  // x40 editable, 0x80 moveable
+	byte _flags2; // x40 editable, 0x80 moveable
 	byte _unk2;
 	uint32 _unk3;
 

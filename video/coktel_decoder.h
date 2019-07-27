@@ -27,19 +27,19 @@
 
 #else
 
-#ifndef VIDEO_COKTELDECODER_H
-#define VIDEO_COKTELDECODER_H
+#	ifndef VIDEO_COKTELDECODER_H
+#		define VIDEO_COKTELDECODER_H
 
-#include "common/list.h"
-#include "common/array.h"
-#include "common/rational.h"
-#include "common/str.h"
+#		include "common/array.h"
+#		include "common/list.h"
+#		include "common/rational.h"
+#		include "common/str.h"
 
-#include "graphics/surface.h"
+#		include "graphics/surface.h"
 
-#include "video/video_decoder.h"
+#		include "video/video_decoder.h"
 
-#include "audio/mixer.h"
+#		include "audio/mixer.h"
 
 namespace Common {
 struct Rect;
@@ -79,7 +79,7 @@ public:
 	};
 
 	CoktelDecoder(Audio::Mixer *mixer,
-			Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
+	              Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	virtual ~CoktelDecoder();
 
 	/** Replace the current video stream with this identical one. */
@@ -115,7 +115,7 @@ public:
 	bool hasPalette() const;
 	virtual bool hasVideo() const;
 
-	bool hasSound()       const;
+	bool hasSound() const;
 	bool isSoundEnabled() const;
 	bool isSoundPlaying() const;
 
@@ -175,14 +175,14 @@ public:
 	/** Get the AudioStream for the audio. */
 	Audio::AudioStream *getAudioStream() const;
 
-	uint16 getWidth()  const;
+	uint16 getWidth() const;
 	uint16 getHeight() const;
 	virtual Graphics::PixelFormat getPixelFormat() const = 0;
 
 	uint32 getFrameCount() const;
 
 	const byte *getPalette();
-	bool  hasDirtyPalette() const;
+	bool hasDirtyPalette() const;
 
 	uint32 getTimeToNextFrame() const;
 	uint32 getStaticTimeToNextFrame() const;
@@ -191,21 +191,21 @@ public:
 
 protected:
 	enum SoundStage {
-		kSoundNone     = 0, ///< No sound.
-		kSoundLoaded   = 1, ///< Sound loaded.
-		kSoundPlaying  = 2, ///< Sound is playing.
-		kSoundFinished = 3  ///< No more new sound data.
+		kSoundNone = 0, ///< No sound.
+		kSoundLoaded = 1, ///< Sound loaded.
+		kSoundPlaying = 2, ///< Sound is playing.
+		kSoundFinished = 3 ///< No more new sound data.
 	};
 
 	enum Features {
-		kFeaturesNone        = 0x0000,
-		kFeaturesPalette     = 0x0008, ///< Has an own palette.
-		kFeaturesDataSize    = 0x0020, ///< Suggests a data size.
-		kFeaturesSound       = 0x0040, ///< Has sound.
+		kFeaturesNone = 0x0000,
+		kFeaturesPalette = 0x0008, ///< Has an own palette.
+		kFeaturesDataSize = 0x0020, ///< Suggests a data size.
+		kFeaturesSound = 0x0040, ///< Has sound.
 		kFeaturesFrameCoords = 0x0080, ///< Has specific frame coordinates.
-		kFeaturesStdCoords   = 0x0100, ///< Has general standard coordinates.
-		kFeaturesFramePos    = 0x0200, ///< Has a frame positions table.
-		kFeaturesVideo       = 0x0400  ///< Has video.
+		kFeaturesStdCoords = 0x0100, ///< Has general standard coordinates.
+		kFeaturesFramePos = 0x0200, ///< Has a frame positions table.
+		kFeaturesVideo = 0x0400 ///< Has video.
 	};
 
 	Audio::Mixer *_mixer;
@@ -222,7 +222,7 @@ protected:
 
 	uint32 _features;
 
-	 int32 _curFrame;
+	int32 _curFrame;
 	uint32 _frameCount;
 
 	uint32 _startTime;
@@ -230,7 +230,7 @@ protected:
 	byte _palette[768];
 	bool _paletteDirty;
 
-	bool    _ownSurface;
+	bool _ownSurface;
 	Graphics::Surface _surface;
 
 	Common::List<Common::Rect> _dirtyRects;
@@ -238,8 +238,8 @@ protected:
 	Common::Rational _frameRate;
 
 	// Current sound state
-	bool       _hasSound;
-	bool       _soundEnabled;
+	bool _hasSound;
+	bool _soundEnabled;
 	SoundStage _soundStage;
 
 	Audio::QueuingAudioStream *_audioStream;
@@ -257,25 +257,25 @@ protected:
 	void deRLE(byte *&destPtr, const byte *&srcPtr, int16 destLen, int16 srcLen);
 
 	// Block rendering
-	void renderBlockWhole   (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
-	void renderBlockWhole4X (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
-	void renderBlockWhole2Y (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
-	void renderBlockSparse  (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
+	void renderBlockWhole(Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
+	void renderBlockWhole4X(Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
+	void renderBlockWhole2Y(Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
+	void renderBlockSparse(Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
 	void renderBlockSparse2Y(Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
-	void renderBlockRLE     (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
+	void renderBlockRLE(Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
 
 	// Sound helper functions
 	inline void unsignedToSigned(byte *buffer, int length);
 
 private:
 	uint32 _pauseStartTime;
-	bool   _isPaused;
+	bool _isPaused;
 };
 
 class PreIMDDecoder : public CoktelDecoder {
 public:
 	PreIMDDecoder(uint16 width, uint16 height, Audio::Mixer *mixer,
-			Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
+	              Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	~PreIMDDecoder();
 
 	bool reloadStream(Common::SeekableReadStream *stream);
@@ -295,7 +295,7 @@ private:
 	Common::SeekableReadStream *_stream;
 
 	// Buffer for processed frame data
-	byte  *_videoBuffer;
+	byte *_videoBuffer;
 	uint32 _videoBufferSize;
 
 	// Frame decoding
@@ -325,19 +325,19 @@ public:
 
 private:
 	enum Command {
-		kCommandNextSound   = 0xFF00,
-		kCommandStartSound  = 0xFF01,
+		kCommandNextSound = 0xFF00,
+		kCommandStartSound = 0xFF01,
 
-		kCommandBreak       = 0xFFF0,
-		kCommandBreakSkip0  = 0xFFF1,
+		kCommandBreak = 0xFFF0,
+		kCommandBreakSkip0 = 0xFFF1,
 		kCommandBreakSkip16 = 0xFFF2,
 		kCommandBreakSkip32 = 0xFFF3,
-		kCommandBreakMask   = 0xFFF8,
+		kCommandBreakMask = 0xFFF8,
 
-		kCommandPalette     = 0xFFF4,
-		kCommandVideoData   = 0xFFFC,
+		kCommandPalette = 0xFFF4,
+		kCommandVideoData = 0xFFFC,
 
-		kCommandJump        = 0xFFFD
+		kCommandJump = 0xFFFD
 	};
 
 	struct Coord {
@@ -359,19 +359,19 @@ private:
 
 	uint32 _flags;
 
-	uint32  _firstFramePos; ///< Position of the first frame's data within the stream.
-	uint32 *_framePos;      ///< Positions of all frames.
-	Coord  *_frameCoords;   ///< Coordinates of all frames.
+	uint32 _firstFramePos; ///< Position of the first frame's data within the stream.
+	uint32 *_framePos; ///< Positions of all frames.
+	Coord *_frameCoords; ///< Coordinates of all frames.
 
-	uint32 _videoBufferSize;   ///< Size of the video buffers.
-	byte  *_videoBuffer[2];    ///< Video buffers.
+	uint32 _videoBufferSize; ///< Size of the video buffers.
+	byte *_videoBuffer[2]; ///< Video buffers.
 	uint32 _videoBufferLen[2]; ///< Size of the video buffers filled.
 
 	// Sound properties
 	uint16 _soundFlags;
-	 int16 _soundFreq;
-	 int16 _soundSliceSize;
-	 int16 _soundSlicesCount;
+	int16 _soundFreq;
+	int16 _soundSliceSize;
+	int16 _soundSlicesCount;
 
 	// Loading helper functions
 	bool loadCoordinates();
@@ -394,7 +394,7 @@ private:
 };
 
 class VMDDecoder : public CoktelDecoder {
-friend class AdvancedVMDDecoder;
+	friend class AdvancedVMDDecoder;
 
 public:
 	VMDDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
@@ -434,16 +434,16 @@ protected:
 private:
 	enum PartType {
 		kPartTypeSeparator = 0,
-		kPartTypeAudio     = 1,
-		kPartTypeVideo     = 2,
-		kPartTypeFile      = 3,
-		kPartType4         = 4,
-		kPartTypeSubtitle  = 5
+		kPartTypeAudio = 1,
+		kPartTypeVideo = 2,
+		kPartTypeFile = 3,
+		kPartType4 = 4,
+		kPartTypeSubtitle = 5
 	};
 
 	enum AudioFormat {
-		kAudioFormat8bitRaw    = 0,
-		kAudioFormat16bitDPCM  = 1,
+		kAudioFormat8bitRaw = 0,
+		kAudioFormat16bitDPCM = 1,
 		kAudioFormat16bitADPCM = 2
 	};
 
@@ -459,22 +459,22 @@ private:
 
 	struct Part {
 		PartType type;
-		byte     field_1;
-		byte     field_E;
-		uint32   size;
-		int16    left;
-		int16    top;
-		int16    right;
-		int16    bottom;
-		uint16   id;
-		byte     flags;
+		byte field_1;
+		byte field_E;
+		uint32 size;
+		int16 left;
+		int16 top;
+		int16 right;
+		int16 bottom;
+		uint16 id;
+		byte flags;
 
 		Part();
 	};
 
 	struct Frame {
 		uint32 offset;
-		Part  *parts;
+		Part *parts;
 
 		Frame();
 		~Frame();
@@ -482,7 +482,7 @@ private:
 
 	Common::SeekableReadStream *_stream;
 
-	byte   _version;
+	byte _version;
 	uint32 _flags;
 
 	uint32 _frameInfoOffset;
@@ -493,16 +493,16 @@ private:
 
 	// Sound properties
 	uint16 _soundFlags;
-	int16  _soundFreq;
-	int16  _soundSliceSize;
-	int16  _soundSlicesCount;
-	byte   _soundBytesPerSample;
-	byte   _soundStereo; // (0: mono, 1: old-style stereo, 2: new-style stereo)
+	int16 _soundFreq;
+	int16 _soundSliceSize;
+	int16 _soundSlicesCount;
+	byte _soundBytesPerSample;
+	byte _soundStereo; // (0: mono, 1: old-style stereo, 2: new-style stereo)
 	uint32 _soundHeaderSize;
 	uint32 _soundDataSize;
 	uint32 _soundLastFilledFrame;
 	AudioFormat _audioFormat;
-	bool   _autoStartSound;
+	bool _autoStartSound;
 
 	/**
 	 * Old stereo format packs a DPCM stream into audio packets without ensuring
@@ -516,15 +516,15 @@ private:
 	Common::MemoryReadWriteStream *_oldStereoBuffer;
 
 	// Video properties
-	bool   _hasVideo;
+	bool _hasVideo;
 	uint32 _videoCodec;
-	byte   _blitMode;
-	byte   _bytesPerPixel;
+	byte _blitMode;
+	byte _bytesPerPixel;
 
-	uint32  _firstFramePos; ///< Position of the first frame's data within the stream.
+	uint32 _firstFramePos; ///< Position of the first frame's data within the stream.
 
-	uint32 _videoBufferSize;   ///< Size of the video buffers.
-	byte  *_videoBuffer[3];    ///< Video buffers.
+	uint32 _videoBufferSize; ///< Size of the video buffers.
+	byte *_videoBuffer[3]; ///< Video buffers.
 	uint32 _videoBufferLen[3]; ///< Size of the video buffers filled.
 
 	Graphics::Surface _8bppSurface[3]; ///< Fake 8bpp surfaces over the video buffers.
@@ -549,21 +549,21 @@ private:
 	// Video
 	bool renderFrame(Common::Rect &rect);
 	bool getRenderRects(const Common::Rect &rect,
-			Common::Rect &realRect, Common::Rect &fakeRect);
+	                    Common::Rect &realRect, Common::Rect &fakeRect);
 	void blit16(const Graphics::Surface &srcSurf, Common::Rect &rect);
 	void blit24(const Graphics::Surface &srcSurf, Common::Rect &rect);
 
 	// Sound
-	void emptySoundSlice  (uint32 size);
-	void filledSoundSlice (uint32 size);
+	void emptySoundSlice(uint32 size);
+	void filledSoundSlice(uint32 size);
 	void filledSoundSlices(uint32 size, uint32 mask);
 	void createAudioStream();
 
 	uint8 evaluateMask(uint32 mask, bool *fillInfo, uint8 &max);
 
 	// Generating audio streams
-	Audio::AudioStream *create8bitRaw   (Common::SeekableReadStream *stream);
-	Audio::AudioStream *create16bitDPCM (Common::SeekableReadStream *stream);
+	Audio::AudioStream *create8bitRaw(Common::SeekableReadStream *stream);
+	Audio::AudioStream *create16bitDPCM(Common::SeekableReadStream *stream);
 	Audio::AudioStream *create16bitADPCM(Common::SeekableReadStream *stream);
 
 	bool getPartCoords(int16 frame, PartType type, int16 &x, int16 &y, int16 &width, int16 &height);
@@ -615,13 +615,13 @@ private:
 		VMDDecoder *_decoder;
 	};
 
-	VMDDecoder    *_decoder;
+	VMDDecoder *_decoder;
 	VMDVideoTrack *_videoTrack;
 	VMDAudioTrack *_audioTrack;
 };
 
 } // End of namespace Video
 
-#endif // VIDEO_COKTELDECODER_H
+#	endif // VIDEO_COKTELDECODER_H
 
 #endif // Engine and dynamic plugins guard

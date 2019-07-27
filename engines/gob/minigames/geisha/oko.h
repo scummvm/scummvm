@@ -32,50 +32,50 @@ class SoundDesc;
 
 namespace Geisha {
 
-/** Oko, the person you control, in Geisha's "Diving" minigame. */
-class Oko : public ANIObject {
-public:
-	enum State {
-		kStateEnter,
-		kStateSwim,
-		kStateSink,
-		kStateRaise,
-		kStateBreathe,
-		kStatePick,
-		kStateHurt,
-		kStateDead
+	/** Oko, the person you control, in Geisha's "Diving" minigame. */
+	class Oko : public ANIObject {
+	public:
+		enum State {
+			kStateEnter,
+			kStateSwim,
+			kStateSink,
+			kStateRaise,
+			kStateBreathe,
+			kStatePick,
+			kStateHurt,
+			kStateDead
+		};
+
+		Oko(const ANIFile &ani, Sound &sound, SoundDesc &breathe);
+		~Oko();
+
+		/** Advance the animation to the next frame. */
+		void advance();
+
+		/** Oko should sink a level. */
+		void sink();
+		/** Oko should raise a level. */
+		void raise();
+
+		/** Oko should get hurt. */
+		void hurt();
+
+		/** Oko should die. */
+		void die();
+
+		State getState() const;
+
+		bool isBreathing() const;
+		bool isMoving() const;
+
+	private:
+		Sound *_sound;
+		SoundDesc *_breathe;
+
+		State _state;
+
+		uint8 _level;
 	};
-
-	Oko(const ANIFile &ani, Sound &sound, SoundDesc &breathe);
-	~Oko();
-
-	/** Advance the animation to the next frame. */
-	void advance();
-
-	/** Oko should sink a level. */
-	void sink();
-	/** Oko should raise a level. */
-	void raise();
-
-	/** Oko should get hurt. */
-	void hurt();
-
-	/** Oko should die. */
-	void die();
-
-	State getState() const;
-
-	bool isBreathing() const;
-	bool isMoving() const;
-
-private:
-	Sound *_sound;
-	SoundDesc *_breathe;
-
-	State _state;
-
-	uint8 _level;
-};
 
 } // End of namespace Geisha
 

@@ -20,15 +20,15 @@
  *
  */
 
-#include "tucker/tucker.h"
-#include "tucker/graphics.h"
 #include "common/system.h"
 #include "graphics/palette.h"
+#include "tucker/graphics.h"
+#include "tucker/tucker.h"
 
 namespace Tucker {
 
-static const int _data3UpdateLocation1_xTable[] = { 287, 120,  61 };
-static const int _data3UpdateLocation1_yTable[] = { 152,   8,  95 };
+static const int _data3UpdateLocation1_xTable[] = { 287, 120, 61 };
+static const int _data3UpdateLocation1_yTable[] = { 152, 8, 95 };
 
 void TuckerEngine::execData3PreUpdate_locationNum1() {
 	if (_flagsTable[1] == 1) {
@@ -70,8 +70,8 @@ void TuckerEngine::execData3PreUpdate_locationNum1Helper1() {
 	} else {
 		setVolumeSound(12, 0);
 	}
-	static const int dxTable[] = {  0, -1, -1, -1, 0, 1, 1,  1 };
-	static const int dyTable[] = { -1, -1,  0,  1, 1, 1, 0, -1 };
+	static const int dxTable[] = { 0, -1, -1, -1, 0, 1, 1, 1 };
+	static const int dyTable[] = { -1, -1, 0, 1, 1, 1, 0, -1 };
 	for (int i = 0; code == 0 && i < 8; ++i) {
 		code = execData3PreUpdate_locationNum1Helper3(dxTable[i], dyTable[i]);
 	}
@@ -80,7 +80,7 @@ void TuckerEngine::execData3PreUpdate_locationNum1Helper1() {
 
 void TuckerEngine::execData3PreUpdate_locationNum1Helper2() {
 	static const int dxTable[] = { -95, 84, 110 };
-	static const int dyTable[] = { -50, 46,   0 };
+	static const int dyTable[] = { -50, 46, 0 };
 	int xPos = 0;
 	int yPos = 0;
 	for (int i = 0; i < 6; i += 2) {
@@ -178,8 +178,8 @@ void TuckerEngine::updateSprite_locationNum2() {
 
 void TuckerEngine::execData3PreUpdate_locationNum2() {
 	static const int xPosTable[] = { 110, 117, 127, 146, 160, 183, 195, 210 };
-	static const int yPosTable[] = {  50,  60,  60,  60,  50,  55,  50,  50 };
-	static const int yMaxTable[] = { 100,  97,  94,  91,  89,  86,  83,  80 };
+	static const int yPosTable[] = { 50, 60, 60, 60, 50, 55, 50, 50 };
+	static const int yMaxTable[] = { 100, 97, 94, 91, 89, 86, 83, 80 };
 	if (_execData3Counter == 0) {
 		_execData3Counter = 1;
 		for (int i = 0; i < 3; ++i) {
@@ -655,7 +655,7 @@ void TuckerEngine::execData3PostUpdate_locationNum8() {
 		_locationBackgroundGfxBuf[offset] = 142;
 		for (int j = 1; j <= 3; ++j) {
 			for (int i = -1; i <= 1; ++i) {
-				_locationBackgroundGfxBuf[offset + 640 * j + i] = colorsTable[(j - 1) * 3  + i + 1];
+				_locationBackgroundGfxBuf[offset + 640 * j + i] = colorsTable[(j - 1) * 3 + i + 1];
 			}
 		}
 		addDirtyRect(_updateLocationXPosTable2[0] - 1, _updateLocationYPosTable2[0], 3, 4);
@@ -2265,7 +2265,7 @@ void TuckerEngine::execData3PreUpdate_locationNum49() {
 			_nextAction = 62;
 			_csDataLoaded = false;
 		} else if (counter == 13 && _flagsTable[236] == 3) {
-			_nextAction =  65;
+			_nextAction = 65;
 			_csDataLoaded = false;
 		}
 	}
@@ -2305,7 +2305,6 @@ void TuckerEngine::updateSprite_locationNum51(int i) {
 	_spritesTable[i]._colorType = 1;
 	_spritesTable[i]._yMaxBackground = 0;
 }
-
 
 void TuckerEngine::execData3PreUpdate_locationNum52() {
 	if (_selectedObject._xPos > 108 && _panelLockedFlag && _nextAction == 0 && _locationMaskType == 0) {

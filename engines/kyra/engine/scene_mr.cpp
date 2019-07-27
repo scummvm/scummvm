@@ -22,8 +22,8 @@
 
 #include "kyra/engine/kyra_mr.h"
 #include "kyra/graphics/screen_mr.h"
-#include "kyra/sound/sound_digital_mr.h"
 #include "kyra/resource/resource.h"
+#include "kyra/sound/sound_digital_mr.h"
 
 #include "common/system.h"
 
@@ -170,8 +170,10 @@ void KyraEngine_MR::enterNewSceneUnk1(int facing, int unk1, int unk2) {
 	bool needProc = true;
 
 	if (_mainCharX == -1 && _mainCharY == -1) {
-		switch (facing+1) {
-		case 1: case 2: case 8:
+		switch (facing + 1) {
+		case 1:
+		case 2:
+		case 8:
 			x2 = _sceneEnterX3;
 			y2 = _sceneEnterY3;
 			break;
@@ -181,7 +183,9 @@ void KyraEngine_MR::enterNewSceneUnk1(int facing, int unk1, int unk2) {
 			y2 = _sceneEnterY4;
 			break;
 
-		case 4: case 5: case 6:
+		case 4:
+		case 5:
+		case 6:
 			x2 = _sceneEnterX1;
 			y2 = _sceneEnterY1;
 			break;
@@ -334,12 +338,11 @@ void KyraEngine_MR::loadSceneMsc() {
 	_screen->loadBitmap(filename, 5, 5, 0, true);
 
 	// HACK
-	uint8 *data = new uint8[320*200];
+	uint8 *data = new uint8[320 * 200];
 	_screen->copyRegionToBuffer(5, 0, 0, 320, 200, data);
 	_screen->clearPage(5);
 	_screen->copyBlockToPage(5, 0, _maskPageMinY, 320, height, data);
 	delete[] data;
-
 }
 
 void KyraEngine_MR::initSceneScript(int unk1) {
@@ -421,7 +424,7 @@ void KyraEngine_MR::initSceneScript(int unk1) {
 
 	for (int i = 0; i < 10; ++i) {
 		_emc->init(&_sceneSpecialScripts[i], &_sceneScriptData);
-		_emc->start(&_sceneSpecialScripts[i], i+9);
+		_emc->start(&_sceneSpecialScripts[i], i + 9);
 		_sceneSpecialScriptsTimer[i] = 0;
 	}
 
@@ -461,7 +464,7 @@ void KyraEngine_MR::initSceneAnims(int unk1) {
 
 	for (int i = 0; i < 16; ++i) {
 		const SceneAnim &anim = _sceneAnims[i];
-		obj = &_animObjects[i+1];
+		obj = &_animObjects[i + 1];
 		obj->enabled = false;
 		obj->needRefresh = false;
 
@@ -511,7 +514,7 @@ void KyraEngine_MR::initSceneAnims(int unk1) {
 		_animList = initAnimList(_animList, &_animObjects[0]);
 
 	for (int i = 0; i < 50; ++i) {
-		obj = &_animObjects[i+17];
+		obj = &_animObjects[i + 17];
 		const ItemDefinition &item = _itemList[i];
 		if (item.id != kItemNone && item.sceneId == _mainCharacter.sceneId) {
 			obj->xPos1 = item.x;

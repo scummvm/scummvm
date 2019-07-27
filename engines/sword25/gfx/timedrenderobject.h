@@ -29,8 +29,8 @@
  *
  */
 
-#include "sword25/kernel/common.h"
 #include "sword25/gfx/renderobject.h"
+#include "sword25/kernel/common.h"
 
 namespace Sword25 {
 

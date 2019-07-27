@@ -37,41 +37,44 @@ static const struct {
 	uint8 frame;
 	TimeValue time;
 } _trainCities[31] = {
-	{0, kTimeCityParis},
-	{9, kTimeCityEpernay},
-	{11, kTimeCityChalons},
-	{16, kTimeCityBarLeDuc},
-	{21, kTimeCityNancy},
-	{25, kTimeCityLuneville},
-	{35, kTimeCityAvricourt},
-	{37, kTimeCityDeutschAvricourt},
-	{40, kTimeCityStrasbourg},
-	{53, kTimeCityBadenOos},
-	{56, kTimeCityKarlsruhe},
-	{60, kTimeCityStuttgart},
-	{63, kTimeCityGeislingen},
-	{66, kTimeCityUlm},
-	{68, kTimeCityAugsburg},
-	{73, kTimeCityMunich},
-	{84, kTimeCitySalzbourg},
-	{89, kTimeCityAttnangPuchheim},
-	{97, kTimeCityWels},
-	{100, kTimeCityLinz},
-	{104, kTimeCityAmstetten},
-	{111, kTimeCityVienna},
-	{120, kTimeCityPoszony},
-	{124, kTimeCityGalanta},
-	{132, kTimeCityBudapest},
-	{148, kTimeCityBelgrade},
+	{ 0, kTimeCityParis },
+	{ 9, kTimeCityEpernay },
+	{ 11, kTimeCityChalons },
+	{ 16, kTimeCityBarLeDuc },
+	{ 21, kTimeCityNancy },
+	{ 25, kTimeCityLuneville },
+	{ 35, kTimeCityAvricourt },
+	{ 37, kTimeCityDeutschAvricourt },
+	{ 40, kTimeCityStrasbourg },
+	{ 53, kTimeCityBadenOos },
+	{ 56, kTimeCityKarlsruhe },
+	{ 60, kTimeCityStuttgart },
+	{ 63, kTimeCityGeislingen },
+	{ 66, kTimeCityUlm },
+	{ 68, kTimeCityAugsburg },
+	{ 73, kTimeCityMunich },
+	{ 84, kTimeCitySalzbourg },
+	{ 89, kTimeCityAttnangPuchheim },
+	{ 97, kTimeCityWels },
+	{ 100, kTimeCityLinz },
+	{ 104, kTimeCityAmstetten },
+	{ 111, kTimeCityVienna },
+	{ 120, kTimeCityPoszony },
+	{ 124, kTimeCityGalanta },
+	{ 132, kTimeCityBudapest },
+	{ 148, kTimeCityBelgrade },
 	/* Line 1 ends at 150 - line 2 begins at 0 */
-	{157, kTimeCityNish},
-	{165, kTimeCityTzaribrod},
-	{174, kTimeCitySofia},
-	{198, kTimeCityAdrianople},
-	{210, kTimeCityConstantinople}
+	{ 157, kTimeCityNish },
+	{ 165, kTimeCityTzaribrod },
+	{ 174, kTimeCitySofia },
+	{ 198, kTimeCityAdrianople },
+	{ 210, kTimeCityConstantinople }
 };
 
-TrainLine::TrainLine(LastExpressEngine *engine) : _engine(engine), _frameLine1(NULL), _frameLine2(NULL) {
+TrainLine::TrainLine(LastExpressEngine *engine)
+  : _engine(engine)
+  , _frameLine1(NULL)
+  , _frameLine2(NULL) {
 	_frameLine1 = new SequenceFrame(loadSequence("line1.seq"), 0, true);
 	_frameLine2 = new SequenceFrame(loadSequence("line2.seq"), 0, true);
 }

@@ -22,8 +22,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef	SWORD2_MEMORY_H
-#define	SWORD2_MEMORY_H
+#ifndef SWORD2_MEMORY_H
+#define SWORD2_MEMORY_H
 
 enum {
 	MAX_MEMORY_BLOCKS = 999

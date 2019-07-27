@@ -20,10 +20,10 @@
  *
  */
 
-
 #include "common/debug.h"
 #include "common/util.h"
 
+#include "sky/compact.h"
 #include "sky/debug.h"
 #include "sky/grid.h"
 #include "sky/logic.h"
@@ -31,7 +31,6 @@
 #include "sky/screen.h"
 #include "sky/sky.h"
 #include "sky/struc.h"
-#include "sky/compact.h"
 
 namespace Sky {
 
@@ -1068,33 +1067,35 @@ void Debug::logic(uint32 logic) {
 void Debug::script(uint32 command, uint16 *scriptData) {
 	debug(6, "SCRIPT: %s", opcodes[command]);
 	if (command == 0 || command == 6)
-		debug(6, " %s", scriptVars[(*scriptData)/4]);
+		debug(6, " %s", scriptVars[(*scriptData) / 4]);
 	else {
 		int i;
 		for (i = 0; i < opcode_par[command]; i++) {
 			debug(6, " %d", *(scriptData + i));
 		}
 	}
-	debug(6, " ");	// Print an empty line as separator
+	debug(6, " "); // Print an empty line as separator
 }
 
 void Debug::mcode(uint32 mcode, uint32 a, uint32 b, uint32 c) {
 	debug(6, "MCODE: %s(%d, %d, %d)", mcodes[mcode], a, b, c);
 }
 
-
-
-
 Debugger::Debugger(Logic *logic, Mouse *mouse, Screen *screen, SkyCompact *skyCompact)
-: GUI::Debugger(), _logic(logic), _mouse(mouse), _screen(screen), _skyCompact(skyCompact), _showGrid(false) {
-	registerCmd("info",       WRAP_METHOD(Debugger, Cmd_Info));
-	registerCmd("showgrid",   WRAP_METHOD(Debugger, Cmd_ShowGrid));
+  : GUI::Debugger()
+  , _logic(logic)
+  , _mouse(mouse)
+  , _screen(screen)
+  , _skyCompact(skyCompact)
+  , _showGrid(false) {
+	registerCmd("info", WRAP_METHOD(Debugger, Cmd_Info));
+	registerCmd("showgrid", WRAP_METHOD(Debugger, Cmd_ShowGrid));
 	registerCmd("reloadgrid", WRAP_METHOD(Debugger, Cmd_ReloadGrid));
-	registerCmd("compact",    WRAP_METHOD(Debugger, Cmd_ShowCompact));
-	registerCmd("logiccmd",   WRAP_METHOD(Debugger, Cmd_LogicCommand));
-	registerCmd("scriptvar",  WRAP_METHOD(Debugger, Cmd_ScriptVar));
-	registerCmd("section",    WRAP_METHOD(Debugger, Cmd_Section));
-	registerCmd("logiclist",  WRAP_METHOD(Debugger, Cmd_LogicList));
+	registerCmd("compact", WRAP_METHOD(Debugger, Cmd_ShowCompact));
+	registerCmd("logiccmd", WRAP_METHOD(Debugger, Cmd_LogicCommand));
+	registerCmd("scriptvar", WRAP_METHOD(Debugger, Cmd_ScriptVar));
+	registerCmd("section", WRAP_METHOD(Debugger, Cmd_Section));
+	registerCmd("logiclist", WRAP_METHOD(Debugger, Cmd_LogicList));
 }
 
 Debugger::~Debugger() {} // we need this here for __SYMBIAN32__
@@ -1120,7 +1121,8 @@ static bool isNumeric(const char *arg) {
 bool Debugger::Cmd_ShowGrid(int argc, const char **argv) {
 	_showGrid = !_showGrid;
 	debugPrintf("Show grid: %s\n", _showGrid ? "On" : "Off");
-	if (!_showGrid)	_screen->forceRefresh();
+	if (!_showGrid)
+		_screen->forceRefresh();
 	return true;
 }
 
@@ -1146,14 +1148,14 @@ void Debugger::dumpCompact(uint16 cptId) {
 		debugPrintf("Compact %s: id = %04X, section %d, id %d\n", name, cptId, cptId >> 12, cptId & 0xFFF);
 		debugPrintf("logic      : %04X: %s\n", cpt->logic, (cpt->logic <= 16) ? logicTypes[cpt->logic] : "unknown");
 		debugPrintf("status     : %04X\n", cpt->status);
-		debugPrintf("           : background  : %s\n", noYes[(cpt->status &  ST_BACKGROUND) >> 0]);
-		debugPrintf("           : foreground  : %s\n", noYes[(cpt->status &  ST_FOREGROUND) >> 1]);
-		debugPrintf("           : sort list   : %s\n", noYes[(cpt->status &        ST_SORT) >> 2]);
-		debugPrintf("           : recreate    : %s\n", noYes[(cpt->status &    ST_RECREATE) >> 3]);
-		debugPrintf("           : mouse       : %s\n", noYes[(cpt->status &       ST_MOUSE) >> 4]);
-		debugPrintf("           : collision   : %s\n", noYes[(cpt->status &   ST_COLLISION) >> 5]);
-		debugPrintf("           : logic       : %s\n", noYes[(cpt->status &       ST_LOGIC) >> 6]);
-		debugPrintf("           : on grid     : %s\n", noYes[(cpt->status &   ST_GRID_PLOT) >> 7]);
+		debugPrintf("           : background  : %s\n", noYes[(cpt->status & ST_BACKGROUND) >> 0]);
+		debugPrintf("           : foreground  : %s\n", noYes[(cpt->status & ST_FOREGROUND) >> 1]);
+		debugPrintf("           : sort list   : %s\n", noYes[(cpt->status & ST_SORT) >> 2]);
+		debugPrintf("           : recreate    : %s\n", noYes[(cpt->status & ST_RECREATE) >> 3]);
+		debugPrintf("           : mouse       : %s\n", noYes[(cpt->status & ST_MOUSE) >> 4]);
+		debugPrintf("           : collision   : %s\n", noYes[(cpt->status & ST_COLLISION) >> 5]);
+		debugPrintf("           : logic       : %s\n", noYes[(cpt->status & ST_LOGIC) >> 6]);
+		debugPrintf("           : on grid     : %s\n", noYes[(cpt->status & ST_GRID_PLOT) >> 7]);
 		debugPrintf("           : ar priority : %s\n", noYes[(cpt->status & ST_AR_PRIORITY) >> 8]);
 		debugPrintf("sync       : %04X\n", cpt->sync);
 		debugPrintf("screen     : %d\n", cpt->screen);
@@ -1249,15 +1251,15 @@ bool Debugger::Cmd_LogicCommand(int argc, const char **argv) {
 	uint32 arg1 = 0, arg2 = 0, arg3 = 0;
 
 	switch (argc) {
-		case  5:
-			arg3 = atoi(argv[4]);
-			// fall through
-		case  4:
-			arg2 = atoi(argv[3]);
-			// fall through
-		case  3:
-			arg1 = atoi(argv[2]);
-			// fall through
+	case 5:
+		arg3 = atoi(argv[4]);
+		// fall through
+	case 4:
+		arg2 = atoi(argv[3]);
+		// fall through
+	case 3:
+		arg1 = atoi(argv[2]);
+		// fall through
 	}
 
 	for (int i = 0; i < numMCodes; ++i) {

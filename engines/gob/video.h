@@ -24,8 +24,8 @@
 #define GOB_VIDEO_H
 
 #include "common/list.h"
-#include "common/rect.h"
 #include "common/ptr.h"
+#include "common/rect.h"
 
 #include "gob/gob.h"
 #include "gob/surface.h"
@@ -37,9 +37,9 @@ public:
 	Font(const byte *data);
 	~Font();
 
-	uint8  getCharWidth (uint8 c) const;
-	uint8  getCharWidth ()        const;
-	uint8  getCharHeight()        const;
+	uint8 getCharWidth(uint8 c) const;
+	uint8 getCharWidth() const;
+	uint8 getCharHeight() const;
 
 	bool hasChar(uint8 c) const;
 
@@ -53,15 +53,15 @@ public:
 
 private:
 	const byte *_dataPtr;
-	const byte  *_data;
+	const byte *_data;
 	const uint8 *_charWidths;
 
-	int8   _itemWidth;
-	int8   _itemHeight;
-	uint8  _startItem;
-	uint8  _endItem;
-	uint8  _itemSize;
-	int8   _bitWidth;
+	int8 _itemWidth;
+	int8 _itemHeight;
+	uint8 _startItem;
+	uint8 _endItem;
+	uint8 _itemSize;
+	int8 _bitWidth;
 
 	uint16 getCharCount() const;
 	const byte *getCharData(uint8 c) const;
@@ -71,12 +71,12 @@ class Video {
 public:
 #define GDR_VERSION 4
 
-#define PRIMARY_SURFACE   0x80
-#define RETURN_PRIMARY    0x01
+#define PRIMARY_SURFACE 0x80
+#define RETURN_PRIMARY 0x01
 #define DISABLE_SPR_ALLOC 0x20
-#define SCUMMVM_CURSOR    0x100
+#define SCUMMVM_CURSOR 0x100
 
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 	struct Color {
 		byte red;
@@ -84,13 +84,16 @@ public:
 		byte blue;
 	} PACKED_STRUCT;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h" // END STRUCT PACKING
 
 	struct PalDesc {
 		Color *vgaPal;
 		int16 *unused1;
 		int16 *unused2;
-		PalDesc() : vgaPal(0), unused1(0), unused2(0) {}
+		PalDesc()
+		  : vgaPal(0)
+		  , unused1(0)
+		  , unused2(0) {}
 	};
 
 	bool _doRangeClamp;
@@ -120,7 +123,7 @@ public:
 	void sparseRetrace(int max);
 
 	void drawPackedSprite(byte *sprBuf, int16 width, int16 height,
-			int16 x, int16 y, int16 transp, Surface &dest);
+	                      int16 x, int16 y, int16 transp, Surface &dest);
 	void drawPackedSprite(const char *path, Surface &dest, int width = 320);
 
 	void setPalColor(byte *pal, byte red, byte green, byte blue) {
@@ -132,7 +135,7 @@ public:
 		setPalColor(pal, color.red, color.green, color.blue);
 	}
 	void setPalElem(int16 index, char red, char green, char blue,
-			int16 unused, int16 vidMode);
+	                int16 unused, int16 vidMode);
 	void setPalette(PalDesc *palDesc);
 	void setFullPalette(PalDesc *palDesc);
 	void setPalette(Color *palette);
@@ -143,8 +146,9 @@ public:
 	void dirtyRectsApply(int left, int top, int width, int height, int x, int y);
 
 	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth,
-			int16 srcHeight, int16 x, int16 y, int16 transp,
-			Surface &destDesc) = 0;
+	                                int16 srcHeight, int16 x, int16 y, int16 transp,
+	                                Surface &destDesc)
+	  = 0;
 
 	Video(class GobEngine *vm);
 	virtual ~Video();
@@ -164,7 +168,7 @@ protected:
 class Video_v1 : public Video {
 public:
 	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
-			int16 x, int16 y, int16 transp, Surface &destDesc);
+	                                int16 x, int16 y, int16 transp, Surface &destDesc);
 
 	Video_v1(GobEngine *vm);
 	virtual ~Video_v1() {}
@@ -173,7 +177,7 @@ public:
 class Video_v2 : public Video_v1 {
 public:
 	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
-			int16 x, int16 y, int16 transp, Surface &destDesc);
+	                                int16 x, int16 y, int16 transp, Surface &destDesc);
 
 	Video_v2(GobEngine *vm);
 	virtual ~Video_v2() {}
@@ -182,7 +186,7 @@ public:
 class Video_v6 : public Video_v2 {
 public:
 	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
-			int16 x, int16 y, int16 transp, Surface &destDesc);
+	                                int16 x, int16 y, int16 transp, Surface &destDesc);
 
 	Video_v6(GobEngine *vm);
 	virtual ~Video_v6() {}
@@ -190,10 +194,10 @@ public:
 private:
 	void drawPacked(const byte *sprBuf, int16 x, int16 y, Surface &surfDesc);
 	void drawYUVData(const byte *srcData, Surface &destDesc,
-			int16 width, int16 height, int16 x, int16 y);
+	                 int16 width, int16 height, int16 x, int16 y);
 	void drawYUV(Surface &destDesc, int16 x, int16 y,
-			int16 dataWidth, int16 dataHeight, int16 width, int16 height,
-			const byte *dataY, const byte *dataU, const byte *dataV);
+	             int16 dataWidth, int16 dataHeight, int16 width, int16 height,
+	             const byte *dataY, const byte *dataU, const byte *dataV);
 };
 
 } // End of namespace Gob

@@ -23,11 +23,11 @@
 #ifndef GUIMANAGER_H
 #define GUIMANAGER_H
 
+#include "common/list.h"
 #include "common/scummsys.h"
 #include "common/singleton.h"
 #include "common/stack.h"
 #include "common/str.h"
-#include "common/list.h"
 
 #include "gui/ThemeEngine.h"
 
@@ -38,7 +38,7 @@ class Font;
 }
 
 namespace Common {
-	struct Event;
+struct Event;
 }
 
 namespace GUI {
@@ -47,18 +47,14 @@ class Dialog;
 class ThemeEval;
 class GuiObject;
 
-#define g_gui	(GUI::GuiManager::instance())
-
+#define g_gui (GUI::GuiManager::instance())
 
 // Height of a single text line
-#define kLineHeight	(g_gui.getFontHeight() + 2)
-
-
+#define kLineHeight (g_gui.getFontHeight() + 2)
 
 // Simple dialog stack class
 // Anybody nesting dialogs deeper than 4 is mad anyway
 typedef Common::FixedStack<Dialog *> DialogStack;
-
 
 /**
  * GUI manager singleton.
@@ -68,8 +64,8 @@ class GuiManager : public Common::Singleton<GuiManager> {
 	friend class Common::Singleton<SingletonBaseType>;
 	GuiManager();
 	~GuiManager();
-public:
 
+public:
 	// Main entry for the GUI: this will start an event loop that keeps running
 	// until no dialogs are active anymore.
 	void runLoop();
@@ -77,7 +73,7 @@ public:
 	void processEvent(const Common::Event &event, Dialog *const activeDialog);
 	void scheduleTopDialogRedraw();
 
-	bool isActive() const	{ return ! _dialogStack.empty(); }
+	bool isActive() const { return !_dialogStack.empty(); }
 
 	bool loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx = ThemeEngine::kGfxDisabled, bool force = false);
 	ThemeEngine *theme() { return _theme; }
@@ -106,7 +102,7 @@ public:
 	 * dialog is provided and is present in the DialogStack, the object will
 	 * only be deleted when that dialog is the top level dialog.
 	 */
-	void addToTrash(GuiObject*, Dialog* parent = 0);
+	void addToTrash(GuiObject *, Dialog *parent = 0);
 
 	bool _launched;
 
@@ -119,37 +115,40 @@ protected:
 		kRedrawFull
 	};
 
-	OSystem			*_system;
+	OSystem *_system;
 
-	ThemeEngine		*_theme;
+	ThemeEngine *_theme;
 
-//	bool		_needRedraw;
+	//	bool		_needRedraw;
 	RedrawStatus _redrawStatus;
-	int			_lastScreenChangeID;
-	int			_width, _height;
-	DialogStack	_dialogStack;
+	int _lastScreenChangeID;
+	int _width, _height;
+	DialogStack _dialogStack;
 
-	bool		_stateIsSaved;
+	bool _stateIsSaved;
 
-	bool		_useStdCursor;
+	bool _useStdCursor;
 
 	// position and time of last mouse click (used to detect double clicks)
 	struct MousePos {
-		MousePos() : x(-1), y(-1), count(0) { time = 0; }
-		int16 x, y;	// Position of mouse when the click occurred
-		uint32 time;	// Time
-		int count;	// How often was it already pressed?
+		MousePos()
+		  : x(-1)
+		  , y(-1)
+		  , count(0) { time = 0; }
+		int16 x, y; // Position of mouse when the click occurred
+		uint32 time; // Time
+		int count; // How often was it already pressed?
 	} _lastClick, _lastMousePosition, _globalMousePosition;
 
 	// mouse cursor state
-	int		_cursorAnimateCounter;
-	int		_cursorAnimateTimer;
-	byte	_cursor[2048];
+	int _cursorAnimateCounter;
+	int _cursorAnimateTimer;
+	byte _cursor[2048];
 
 	// delayed deletion of GuiObject
 	struct GuiObjectTrashItem {
-		GuiObject* object;
-		Dialog* parent;
+		GuiObject *object;
+		Dialog *parent;
 	};
 	Common::List<GuiObjectTrashItem> _guiObjectTrash;
 

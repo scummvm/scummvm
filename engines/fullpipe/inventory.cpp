@@ -22,11 +22,11 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/utils.h"
-#include "fullpipe/inventory.h"
 #include "fullpipe/gameloader.h"
-#include "fullpipe/statics.h"
 #include "fullpipe/input.h"
+#include "fullpipe/inventory.h"
+#include "fullpipe/statics.h"
+#include "fullpipe/utils.h"
 
 namespace Fullpipe {
 
@@ -319,7 +319,7 @@ void Inventory2::draw() {
 		}
 		if (_topOffset + 10 >= 20) {
 			v11 = -20;
-cont:
+		cont:
 			_topOffset += v11;
 			goto reset;
 		}
@@ -327,11 +327,11 @@ cont:
 		goto LABEL_25;
 	}
 	if (!_isInventoryOut) {
-LABEL_30:
+	LABEL_30:
 		if (_topOffset != -65) {
 			if (_topOffset < -65) {
 				v10 = -65;
-LABEL_13:
+			LABEL_13:
 				v11 = v10 - _topOffset;
 				if (v11 >= 20)
 					v11 = 20;
@@ -342,7 +342,7 @@ LABEL_13:
 				goto cont;
 			}
 			v12 = -65;
-LABEL_25:
+		LABEL_25:
 			v11 = v12 - _topOffset;
 			goto cont;
 		}
@@ -352,7 +352,6 @@ reset:
 
 	g_fp->_sceneRect.top = oldScTop;
 	g_fp->_sceneRect.left = oldScLeft;
-
 }
 
 void Inventory2::slideIn() {
@@ -387,8 +386,7 @@ bool Inventory2::handleLeftClick(ExCommand *cmd) {
 
 	for (uint i = 0; i < _inventoryIcons.size(); i++) {
 		InventoryIcon &icon = _inventoryIcons[i];
-		if (cmd->_x >= icon.x1 && cmd->_x <= icon.x2 &&
-			cmd->_y >= icon.y1 && cmd->_y <= icon.y2) {
+		if (cmd->_x >= icon.x1 && cmd->_x <= icon.x2 && cmd->_y >= icon.y1 && cmd->_y <= icon.y2) {
 			if (getSelectedItemId()) {
 				if (getSelectedItemId() != icon.inventoryItemId)
 					unselectItem(0);
@@ -469,11 +467,7 @@ int Inventory2::getHoveredItem(Common::Point *point) {
 
 	for (uint i = 0; i < _inventoryIcons.size(); i++) {
 		InventoryIcon &icn = _inventoryIcons[i];
-		if (selId ||
-			point->x < icn.x1 ||
-			point->x > icn.x2 ||
-			point->y < _topOffset + icn.y1 ||
-			point->y > _topOffset + icn.y2) {
+		if (selId || point->x < icn.x1 || point->x > icn.x2 || point->y < _topOffset + icn.y1 || point->y > _topOffset + icn.y2) {
 			icn.isMouseHover = false;
 		} else {
 			icn.isMouseHover = true;
@@ -496,7 +490,7 @@ void Inventory2::clear() {
 void FullpipeEngine::getAllInventory() {
 	Inventory2 *inv = getGameLoaderInventory();
 
-	for (uint i = 0; i < inv->getItemsPoolCount(); ++i ) {
+	for (uint i = 0; i < inv->getItemsPoolCount(); ++i) {
 		int id = inv->getInventoryPoolItemIdAtIndex(i);
 
 		if (inv->getCountItemsWithId(id) < 1)

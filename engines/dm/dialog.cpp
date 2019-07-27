@@ -26,13 +26,14 @@
 */
 
 #include "dm/dialog.h"
+#include "dm/eventman.h"
 #include "dm/gfx.h"
 #include "dm/text.h"
-#include "dm/eventman.h"
 
 namespace DM {
 
-DialogMan::DialogMan(DMEngine *vm) : _vm(vm) {
+DialogMan::DialogMan(DMEngine *vm)
+  : _vm(vm) {
 	_selectedDialogChoice = 0;
 }
 
@@ -183,7 +184,7 @@ int16 DialogMan::getChoice(uint16 choiceCount, uint16 dialogSetIndex, int16 driv
 		_vm->delay(1);
 		displMan.updateScreen();
 		if ((_selectedDialogChoice == 99) && (choiceCount == 1)
-			&& (eventType != Common::EVENT_INVALID) && key.kbd.keycode == Common::KEYCODE_RETURN) {
+		    && (eventType != Common::EVENT_INVALID) && key.kbd.keycode == Common::KEYCODE_RETURN) {
 			/* If a choice has not been made yet with the mouse and the dialog has only one possible choice and carriage return was pressed on the keyboard */
 			_selectedDialogChoice = kDMDialogChoice1;
 		}
@@ -198,7 +199,7 @@ int16 DialogMan::getChoice(uint16 choiceCount, uint16 dialogSetIndex, int16 driv
 	displMan._drawFloorAndCeilingRequested = true;
 	Box boxB(0, 0, boxA._rect.right - boxA._rect.left + 3, boxA._rect.bottom - boxA._rect.top + 3);
 	displMan.blitToBitmap(displMan._bitmapScreen, displMan._bitmapViewport,
-										boxB, boxA._rect.left, boxA._rect.top, k160_byteWidthScreen, k160_byteWidthScreen, kDMColorNoTransparency, 200, 25);
+	                      boxB, boxA._rect.left, boxA._rect.top, k160_byteWidthScreen, k160_byteWidthScreen, kDMColorNoTransparency, 200, 25);
 	_vm->delay(1);
 	boxB = boxA;
 	boxB._rect.bottom = boxB._rect.top;
@@ -247,7 +248,7 @@ int16 DialogMan::getChoice(uint16 choiceCount, uint16 dialogSetIndex, int16 driv
 	boxA._rect.right += 3;
 	boxA._rect.bottom += 3;
 	displMan.blitToBitmap(displMan._bitmapViewport, displMan._bitmapScreen,
-										boxA, 0, 0, k160_byteWidthScreen, k160_byteWidthScreen, kDMColorNoTransparency, 25, k200_heightScreen);
+	                      boxA, 0, 0, k160_byteWidthScreen, k160_byteWidthScreen, kDMColorNoTransparency, 25, k200_heightScreen);
 	evtMan.hideMouse();
 	evtMan._primaryMouseInput = primaryMouseInputBackup;
 	evtMan._secondaryMouseInput = secondaryMouseInputBackup;

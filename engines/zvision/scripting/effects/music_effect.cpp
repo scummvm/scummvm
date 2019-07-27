@@ -24,38 +24,37 @@
 
 #include "zvision/scripting/effects/music_effect.h"
 
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
 #include "zvision/sound/midi.h"
 #include "zvision/sound/zork_raw.h"
+#include "zvision/zvision.h"
 
-#include "common/stream.h"
-#include "common/file.h"
 #include "audio/decoders/wave.h"
+#include "common/file.h"
+#include "common/stream.h"
 
 namespace ZVision {
 
-static const uint8 dbMapLinear[256] =
-{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2,
-2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4,
-4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7,
-8, 8, 8, 9, 9, 9, 10, 10, 11, 11, 11, 12, 12, 13, 13, 14,
-14, 15, 15, 16, 16, 17, 18, 18, 19, 20, 21, 21, 22, 23, 24, 25,
-26, 27, 28, 29, 30, 31, 32, 33, 34, 36, 37, 38, 40, 41, 43, 45,
-46, 48, 50, 52, 53, 55, 57, 60, 62, 64, 67, 69, 72, 74, 77, 80,
-83, 86, 89, 92, 96, 99, 103, 107, 111, 115, 119, 123, 128, 133, 137, 143,
-148, 153, 159, 165, 171, 177, 184, 191, 198, 205, 212, 220, 228, 237, 245, 255};
+static const uint8 dbMapLinear[256] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	                                      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	                                      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	                                      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	                                      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	                                      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	                                      0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	                                      1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2,
+	                                      2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4,
+	                                      4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7,
+	                                      8, 8, 8, 9, 9, 9, 10, 10, 11, 11, 11, 12, 12, 13, 13, 14,
+	                                      14, 15, 15, 16, 16, 17, 18, 18, 19, 20, 21, 21, 22, 23, 24, 25,
+	                                      26, 27, 28, 29, 30, 31, 32, 33, 34, 36, 37, 38, 40, 41, 43, 45,
+	                                      46, 48, 50, 52, 53, 55, 57, 60, 62, 64, 67, 69, 72, 74, 77, 80,
+	                                      83, 86, 89, 92, 96, 99, 103, 107, 111, 115, 119, 123, 128, 133, 137, 143,
+	                                      148, 153, 159, 165, 171, 177, 184, 191, 198, 205, 212, 220, 228, 237, 245, 255 };
 
 MusicNode::MusicNode(ZVision *engine, uint32 key, Common::String &filename, bool loop, uint8 volume)
-	: MusicNodeBASE(engine, key, SCRIPTING_EFFECT_AUDIO) {
+  : MusicNodeBASE(engine, key, SCRIPTING_EFFECT_AUDIO) {
 	_loop = loop;
 	_volume = volume;
 	_deltaVolume = 0;
@@ -131,7 +130,7 @@ void MusicNode::setFade(int32 time, uint8 target) {
 }
 
 bool MusicNode::process(uint32 deltaTimeInMillis) {
-	if (!_loaded || ! _engine->_mixer->isSoundHandleActive(_handle))
+	if (!_loaded || !_engine->_mixer->isSoundHandleActive(_handle))
 		return stop();
 	else {
 		uint8 _newvol = _volume;
@@ -174,7 +173,7 @@ uint8 MusicNode::getVolume() {
 }
 
 PanTrackNode::PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos)
-	: ScriptingEffect(engine, key, SCRIPTING_EFFECT_PANTRACK) {
+  : ScriptingEffect(engine, key, SCRIPTING_EFFECT_PANTRACK) {
 	_slot = slot;
 	_position = pos;
 
@@ -186,7 +185,7 @@ PanTrackNode::~PanTrackNode() {
 }
 
 bool PanTrackNode::process(uint32 deltaTimeInMillis) {
-	ScriptManager * scriptManager = _engine->getScriptManager();
+	ScriptManager *scriptManager = _engine->getScriptManager();
 	ScriptingEffect *fx = scriptManager->getSideFX(_slot);
 	if (fx && fx->getType() == SCRIPTING_EFFECT_AUDIO) {
 		MusicNodeBASE *mus = (MusicNodeBASE *)fx;
@@ -216,7 +215,7 @@ bool PanTrackNode::process(uint32 deltaTimeInMillis) {
 		}
 
 		// Originally it's value -90...90 but we use -127...127 and therefore 360 replaced by 508
-		mus->setBalance( (508 * tmp) / _width );
+		mus->setBalance((508 * tmp) / _width);
 
 		tmp = (360 * tmp) / _width;
 
@@ -242,7 +241,7 @@ bool PanTrackNode::process(uint32 deltaTimeInMillis) {
 }
 
 MusicMidiNode::MusicMidiNode(ZVision *engine, uint32 key, int8 program, int8 note, int8 volume)
-	: MusicNodeBASE(engine, key, SCRIPTING_EFFECT_AUDIO) {
+  : MusicNodeBASE(engine, key, SCRIPTING_EFFECT_AUDIO) {
 	_volume = volume;
 	_prog = program;
 	_noteNumber = note;

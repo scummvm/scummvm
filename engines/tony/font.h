@@ -28,8 +28,8 @@
 #ifndef TONY_FONT_H
 #define TONY_FONT_H
 
-#include "common/system.h"
 #include "common/coroutines.h"
+#include "common/system.h"
 #include "tony/gfxcore.h"
 #include "tony/resid.h"
 
@@ -49,6 +49,7 @@ class RMFont : public RMGfxTaskSetPrior {
 protected:
 	int _nLetters;
 	RMGfxSourceBuffer8RLEByte *_letter;
+
 public:
 	int _fontDimx, _fontDimy;
 
@@ -57,9 +58,11 @@ private:
 
 	class RMFontPrimitive : public RMGfxPrimitive {
 	public:
-		RMFontPrimitive() : RMGfxPrimitive() { _nChar = 0; }
-		RMFontPrimitive(RMGfxTask *task) : RMGfxPrimitive(task) { _nChar = 0; }
-		virtual ~RMFontPrimitive() { }
+		RMFontPrimitive()
+		  : RMGfxPrimitive() { _nChar = 0; }
+		RMFontPrimitive(RMGfxTask *task)
+		  : RMGfxPrimitive(task) { _nChar = 0; }
+		virtual ~RMFontPrimitive() {}
 		virtual RMGfxPrimitive *duplicate() {
 			return new RMFontPrimitive(*this);
 		}

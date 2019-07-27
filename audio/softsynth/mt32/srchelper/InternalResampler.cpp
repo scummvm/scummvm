@@ -16,8 +16,8 @@
 
 #include "InternalResampler.h"
 
-#include "srctools/include/SincResampler.h"
 #include "srctools/include/ResamplerModel.h"
+#include "srctools/include/SincResampler.h"
 
 #include "../Synth.h"
 
@@ -29,8 +29,8 @@ class SynthWrapper : public FloatSampleProvider {
 	Synth &synth;
 
 public:
-	SynthWrapper(Synth &useSynth) : synth(useSynth)
-	{}
+	SynthWrapper(Synth &useSynth)
+	  : synth(useSynth) {}
 
 	void getOutputSamples(FloatSample *outBuffer, unsigned int size) {
 		synth.render(outBuffer, size);
@@ -59,10 +59,9 @@ static FloatSampleProvider &createModel(Synth &synth, SRCTools::FloatSampleProvi
 
 using namespace MT32Emu;
 
-InternalResampler::InternalResampler(Synth &synth, double targetSampleRate, SamplerateConversionQuality quality) :
-	synthSource(*new SynthWrapper(synth)),
-	model(createModel(synth, synthSource, targetSampleRate, quality))
-{}
+InternalResampler::InternalResampler(Synth &synth, double targetSampleRate, SamplerateConversionQuality quality)
+  : synthSource(*new SynthWrapper(synth))
+  , model(createModel(synth, synthSource, targetSampleRate, quality)) {}
 
 InternalResampler::~InternalResampler() {
 	ResamplerModel::freeResamplerModel(model, synthSource);

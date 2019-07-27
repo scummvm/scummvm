@@ -26,21 +26,22 @@
 */
 
 #include "dm/console.h"
-#include "dm/dm.h"
 #include "dm/champion.h"
+#include "dm/dm.h"
 #include "dm/dungeonman.h"
 #include "dm/movesens.h"
 #include "dm/objectman.h"
 
-
 namespace DM {
 
-bool cstrEquals(const char* a, const char *b) { return strcmp(a, b) == 0; }
+bool cstrEquals(const char *a, const char *b) { return strcmp(a, b) == 0; }
 
 class SingleUseFlag {
 	bool _flag;
+
 public:
-	SingleUseFlag() : _flag(true) {}
+	SingleUseFlag()
+	  : _flag(true) {}
 	bool check() {
 		bool currFlagState = _flag;
 		_flag = false;
@@ -49,13 +50,14 @@ public:
 };
 
 const char *Console::debugGetDirectionName(int16 dir) {
-	static const char *directionNames[] = {"North", "East", "South", "West"};
+	static const char *directionNames[] = { "North", "East", "South", "West" };
 	if (dir < 0 || dir > 3)
 		return "Invalid direction";
 	return directionNames[dir];
 }
 
-Console::Console(DM::DMEngine* vm) : _vm(vm) {
+Console::Console(DM::DMEngine *vm)
+  : _vm(vm) {
 	_debugGodmodeMana = false;
 	_debugGodmodeHP = false;
 	_debugGodmodeStamina = false;
@@ -70,7 +72,7 @@ Console::Console(DM::DMEngine* vm) : _vm(vm) {
 	registerCmd("gimme", WRAP_METHOD(Console, Cmd_gimme));
 }
 
-bool Console::Cmd_godmode(int argc, const char** argv) {
+bool Console::Cmd_godmode(int argc, const char **argv) {
 	if (argc != 3)
 		goto argumentError;
 
@@ -102,7 +104,7 @@ argumentError:
 	return true;
 }
 
-bool Console::Cmd_noclip(int argc, const char** argv) {
+bool Console::Cmd_noclip(int argc, const char **argv) {
 	if (argc != 2)
 		goto argumentError;
 
@@ -124,11 +126,11 @@ argumentError:
 	return true;
 }
 
-bool Console::Cmd_pos(int argc, const char** argv) {
+bool Console::Cmd_pos(int argc, const char **argv) {
 	DungeonMan &dm = *_vm->_dungeonMan;
 	if (argc == 2 && cstrEquals("get", argv[1])) {
 		debugPrintf("Position: (%d, %d)  Direction: %s\n", dm._partyMapX + dm._currMap->_offsetMapX,
-					dm._partyMapY + dm._currMap->_offsetMapY, debugGetDirectionName(_vm->_dungeonMan->_partyDir));
+		            dm._partyMapY + dm._currMap->_offsetMapY, debugGetDirectionName(_vm->_dungeonMan->_partyDir));
 	} else if (argc == 4 && cstrEquals("set", argv[1])) {
 		int x = atoi(argv[2]);
 		int y = atoi(argv[3]);
@@ -140,9 +142,9 @@ bool Console::Cmd_pos(int argc, const char** argv) {
 		Map &currMap = *_vm->_dungeonMan->_currMap;
 		// not >= because dimensions are inslucsive
 		if (x < currMap._offsetMapX || x > currMap._width + currMap._offsetMapX
-			|| y < currMap._offsetMapY || y > currMap._height + currMap._offsetMapY) {
+		    || y < currMap._offsetMapY || y > currMap._height + currMap._offsetMapY) {
 			debugPrintf("Position (%d, %d) is out of bounds, possible values: ([1-%d],[1-%d])\n", x, y,
-						currMap._width + currMap._offsetMapX, currMap._height + currMap._offsetMapY);
+			            currMap._width + currMap._offsetMapX, currMap._height + currMap._offsetMapY);
 			return true;
 		}
 
@@ -151,7 +153,7 @@ bool Console::Cmd_pos(int argc, const char** argv) {
 			debugPrintf("Setting position directly can cause glitches and crashes.\n");
 		debugPrintf("Position set to (%d, %d)\n", x, y);
 		_vm->_moveSens->getMoveResult(_vm->_thingParty, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY,
-										   x - currMap._offsetMapX, y - currMap._offsetMapY);
+		                              x - currMap._offsetMapX, y - currMap._offsetMapY);
 	} else
 		goto argumentError;
 
@@ -163,7 +165,7 @@ argumentError:
 	return true;
 }
 
-bool Console::Cmd_map(int argc, const char** argv) {
+bool Console::Cmd_map(int argc, const char **argv) {
 	if (argc == 2 && cstrEquals("get", argv[1])) {
 		debugPrintf("Map index: %d\n", _vm->_dungeonMan->_partyMapIndex);
 	} else if (argc == 3 && cstrEquals("set", argv[1])) {
@@ -186,8 +188,8 @@ bool Console::Cmd_map(int argc, const char** argv) {
 
 		_vm->_moveSens->getMoveResult(_vm->_thingParty, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMMapXNotOnASquare, 0);
 		_vm->_newPartyMapIndex = _vm->_dungeonMan->getLocationAfterLevelChange(
-			_vm->_dungeonMan->_partyMapIndex, index - _vm->_dungeonMan->_partyMapIndex,
-			&_vm->_dungeonMan->_partyMapX, &_vm->_dungeonMan->_partyMapY);
+		  _vm->_dungeonMan->_partyMapIndex, index - _vm->_dungeonMan->_partyMapIndex,
+		  &_vm->_dungeonMan->_partyMapX, &_vm->_dungeonMan->_partyMapY);
 		if (_vm->_newPartyMapIndex == -1)
 			_vm->_newPartyMapIndex = index;
 		_vm->_dungeonMan->setCurrentMap(_vm->_newPartyMapIndex);
@@ -204,7 +206,7 @@ argumentError:
 	return true;
 }
 
-bool Console::Cmd_listItems(int argc, const char** argv) {
+bool Console::Cmd_listItems(int argc, const char **argv) {
 	Common::String searchedString = "";
 	for (int16 i = 1; i < argc; ++i) {
 		searchedString += argv[i];
@@ -215,7 +217,7 @@ bool Console::Cmd_listItems(int argc, const char** argv) {
 	bool atleastOneFound = false;
 	int16 namesPrintedInLine = 0;
 
-	if(strstr(_vm->_objectMan->_objectNames[0], searchedString.c_str()) != nullptr)
+	if (strstr(_vm->_objectMan->_objectNames[0], searchedString.c_str()) != nullptr)
 		debugPrintf("| %s", _vm->_objectMan->_objectNames[0]);
 
 	for (uint16 i = 1; i < kDMObjectNameCount; ++i) {
@@ -242,7 +244,7 @@ bool Console::Cmd_listItems(int argc, const char** argv) {
 	return true;
 }
 
-bool Console::Cmd_gimme(int argc, const char** argv) {
+bool Console::Cmd_gimme(int argc, const char **argv) {
 	if (argc < 2) {
 		debugPrintf("Usage: gimme <item name>   // item name can have spaces\n");
 		return true;

@@ -29,6 +29,7 @@ namespace Titanic {
 
 class CSplashAnimation : public CGameObject {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	CLASSDEF;
 

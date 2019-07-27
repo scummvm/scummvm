@@ -26,8 +26,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CRestrictedAutoMusicPlayer, CAutoMusicPlayer)
-	ON_MESSAGE(EnterRoomMsg)
-	ON_MESSAGE(LeaveRoomMsg)
+ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(LeaveRoomMsg)
 END_MESSAGE_MAP()
 
 void CRestrictedAutoMusicPlayer::save(SimpleFile *file, int indent) {

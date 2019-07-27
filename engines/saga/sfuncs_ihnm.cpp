@@ -24,30 +24,30 @@
 
 // Scripting module script function component
 
-#include "saga/saga.h"
+#	include "saga/saga.h"
 
-#include "saga/gfx.h"
-#include "saga/actor.h"
-#include "saga/animation.h"
-#include "saga/console.h"
-#include "saga/events.h"
-#include "saga/font.h"
-#include "saga/interface.h"
-#include "saga/music.h"
-#include "saga/itedata.h"
-#include "saga/puzzle.h"
-#include "saga/render.h"
-#include "saga/sound.h"
-#include "saga/sndres.h"
-#include "saga/resource.h"
+#	include "saga/actor.h"
+#	include "saga/animation.h"
+#	include "saga/console.h"
+#	include "saga/events.h"
+#	include "saga/font.h"
+#	include "saga/gfx.h"
+#	include "saga/interface.h"
+#	include "saga/itedata.h"
+#	include "saga/music.h"
+#	include "saga/puzzle.h"
+#	include "saga/render.h"
+#	include "saga/resource.h"
+#	include "saga/sndres.h"
+#	include "saga/sound.h"
 
-#include "saga/script.h"
-#include "saga/objectmap.h"
+#	include "saga/objectmap.h"
+#	include "saga/script.h"
 
-#include "saga/scene.h"
-#include "saga/isomap.h"
+#	include "saga/isomap.h"
+#	include "saga/scene.h"
 
-#include "common/config-manager.h"
+#	include "common/config-manager.h"
 
 namespace Saga {
 
@@ -145,7 +145,7 @@ void Script::setupIHNMScriptFuncList() {
 		OPCODE(sfShowIHNMDemoHelpPage),
 		OPCODE(sfVstopFX),
 		OPCODE(sfVstopLoopedFX),
-		OPCODE(sfDemoSetInteractive),	// only used in the demo version of IHNM
+		OPCODE(sfDemoSetInteractive), // only used in the demo version of IHNM
 		OPCODE(sfDemoIsInteractive),
 		OPCODE(sfVsetTrack),
 		OPCODE(sfGetPoints),
@@ -172,7 +172,7 @@ void Script::sfSetChapterPoints(SCRIPTFUNC_PARAMS) {
 	byte portraitColor = (_vm->getLanguage() == Common::ES_ESP) ? 253 : 254;
 
 	_vm->_spiritualBarometer = _vm->_ethicsPoints[chapter] * 256 / barometer;
-	_vm->_scene->setChapterPointsChanged(true);		// don't save this music when saving in IHNM
+	_vm->_scene->setChapterPointsChanged(true); // don't save this music when saving in IHNM
 
 	// Set the portrait bg color, in case a saved state is restored from the
 	// launcher. In this case, sfSetPortraitBgColor is not called, thus the
@@ -184,9 +184,9 @@ void Script::sfSetChapterPoints(SCRIPTFUNC_PARAMS) {
 		_vm->_gfx->setPaletteColor(portraitColor, 0xff, 0xff, 0xff);
 	else
 		_vm->_gfx->setPaletteColor(portraitColor,
-			_vm->_spiritualBarometer * portraitBgColor.red / 256,
-			_vm->_spiritualBarometer * portraitBgColor.green / 256,
-			_vm->_spiritualBarometer * portraitBgColor.blue / 256);
+		                           _vm->_spiritualBarometer * portraitBgColor.red / 256,
+		                           _vm->_spiritualBarometer * portraitBgColor.green / 256,
+		                           _vm->_spiritualBarometer * portraitBgColor.blue / 256);
 
 	_vm->_gfx->getCurrentPal(cur_pal);
 	_vm->_gfx->setPalette(cur_pal);
@@ -202,7 +202,7 @@ void Script::sfSetPortraitBgColor(SCRIPTFUNC_PARAMS) {
 
 void Script::sfScriptStartCutAway(SCRIPTFUNC_PARAMS) {
 	int16 cut = thread->pop();
-	thread->pop();		// Not used
+	thread->pop(); // Not used
 	int16 fade = thread->pop();
 
 	_vm->_anim->setCutAwayMode(kPanelCutaway);

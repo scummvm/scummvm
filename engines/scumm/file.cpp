@@ -30,10 +30,13 @@
 namespace Scumm {
 
 #pragma mark -
-#pragma mark --- ScummFile ---
+#pragma mark--- ScummFile ---
 #pragma mark -
 
-ScummFile::ScummFile() : _subFileStart(0), _subFileLen(0), _myEos(false) {
+ScummFile::ScummFile()
+  : _subFileStart(0)
+  , _subFileLen(0)
+  , _myEos(false) {
 }
 
 void ScummFile::setSubfileRange(int32 start, int32 len) {
@@ -71,7 +74,7 @@ bool ScummFile::openSubFile(const Common::String &filename) {
 	// Read in the filename table and look for the specified file
 
 	unsigned long file_off, file_len;
-	char file_name[0x20+1];
+	char file_name[0x20 + 1];
 	unsigned long i;
 
 	// Get the length of the data file to use for consistency checks
@@ -117,7 +120,6 @@ bool ScummFile::openSubFile(const Common::String &filename) {
 
 	return false;
 }
-
 
 bool ScummFile::eos() const {
 	return _subFileLen ? _myEos : File::eos();
@@ -170,7 +172,6 @@ uint32 ScummFile::read(void *dataPtr, uint32 dataSize) {
 
 	realLen = File::read(dataPtr, dataSize);
 
-
 	// If an encryption byte was specified, XOR the data we just read by it.
 	// This simple kind of "encryption" was used by some of the older SCUMM
 	// games.
@@ -185,7 +186,7 @@ uint32 ScummFile::read(void *dataPtr, uint32 dataSize) {
 }
 
 #pragma mark -
-#pragma mark --- ScummSteamFile ---
+#pragma mark--- ScummSteamFile ---
 #pragma mark -
 
 bool ScummSteamFile::open(const Common::String &filename) {
@@ -209,36 +210,35 @@ bool ScummSteamFile::openWithSubRange(const Common::String &filename, int32 subF
 }
 
 #pragma mark -
-#pragma mark --- ScummDiskImage ---
+#pragma mark--- ScummDiskImage ---
 #pragma mark -
 
 static const int maniacResourcesPerFile[55] = {
-	 0, 11,  1,  3,  9, 12,  1, 13, 10,  6,
-	 4,  1,  7,  1,  1,  2,  7,  8, 19,  9,
-	 6,  9,  2,  6,  8,  4, 16,  8,  3,  3,
-	12, 12,  2,  8,  1,  1,  2,  1,  9,  1,
-	 3,  7,  3,  3, 13,  5,  4,  3,  1,  1,
-	 3, 10,  1,  0,  0
+	0, 11, 1, 3, 9, 12, 1, 13, 10, 6,
+	4, 1, 7, 1, 1, 2, 7, 8, 19, 9,
+	6, 9, 2, 6, 8, 4, 16, 8, 3, 3,
+	12, 12, 2, 8, 1, 1, 2, 1, 9, 1,
+	3, 7, 3, 3, 13, 5, 4, 3, 1, 1,
+	3, 10, 1, 0, 0
 };
 
 static const int maniacDemoResourcesPerFile[55] = {
-	 0, 12,  0,  2,  1, 12,  1, 13,  6,  0,
-	 31, 0,  1,  0,  0,  0,  0,  1,  1,  1,
-	 0,  1,  0,  0,  2,  0,  0,  1,  0,  0,
-	 2,  7,  1, 11,  0,  0,  5,  1,  0,  0,
-	 1,  0,  1,  3,  4,  3,  1,  0,  0,  1,
-	 2,  2,  0,  0,  0
+	0, 12, 0, 2, 1, 12, 1, 13, 6, 0,
+	31, 0, 1, 0, 0, 0, 0, 1, 1, 1,
+	0, 1, 0, 0, 2, 0, 0, 1, 0, 0,
+	2, 7, 1, 11, 0, 0, 5, 1, 0, 0,
+	1, 0, 1, 3, 4, 3, 1, 0, 0, 1,
+	2, 2, 0, 0, 0
 };
 
 static const int zakResourcesPerFile[59] = {
-	 0, 29, 12, 14, 13,  4,  4, 10,  7,  4,
-	14, 19,  5,  4,  7,  6, 11,  9,  4,  4,
-	 1,  3,  3,  5,  1,  9,  4, 10, 13,  6,
-	 7, 10,  2,  6,  1, 11,  2,  5,  7,  1,
-	 7,  1,  4,  2,  8,  6,  6,  6,  4, 13,
-	 3,  1,  2,  1,  2,  1, 10,  1,  1
+	0, 29, 12, 14, 13, 4, 4, 10, 7, 4,
+	14, 19, 5, 4, 7, 6, 11, 9, 4, 4,
+	1, 3, 3, 5, 1, 9, 4, 10, 13, 6,
+	7, 10, 2, 6, 1, 11, 2, 5, 7, 1,
+	7, 1, 4, 2, 8, 6, 6, 6, 4, 13,
+	3, 1, 2, 1, 2, 1, 10, 1, 1
 };
-
 
 static uint16 write_byte(Common::WriteStream *out, byte val) {
 	val ^= 0xFF;
@@ -255,8 +255,12 @@ static uint16 write_word(Common::WriteStream *out, uint16 val) {
 }
 
 ScummDiskImage::ScummDiskImage(const char *disk1, const char *disk2, GameSettings game)
-	: _stream(0), _buf(0), _game(game),
-	_disk1(disk1), _disk2(disk2), _openedDisk(0) {
+  : _stream(0)
+  , _buf(0)
+  , _game(game)
+  , _disk1(disk1)
+  , _disk2(disk2)
+  , _openedDisk(0) {
 
 	if (_game.id == GID_MANIAC) {
 		_numGlobalObjects = 256;
@@ -361,10 +365,8 @@ bool ScummDiskImage::open(const Common::String &filename) {
 			error("Error: signature not found in disk 2");
 	}
 
-
 	return true;
 }
-
 
 uint16 ScummDiskImage::extractIndex(Common::WriteStream *out) {
 	int i;

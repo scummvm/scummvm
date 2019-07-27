@@ -21,83 +21,83 @@
  */
 
 #include "glk/magnetic/detection.h"
-#include "glk/magnetic/detection_tables.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
 #include "engines/game.h"
+#include "glk/magnetic/detection_tables.h"
 
 namespace Glk {
 namespace Magnetic {
 
-void MagneticMetaEngine::getSupportedGames(PlainGameList &games) {
-	for (const PlainGameDescriptor *pd = MAGNETIC_GAME_LIST; pd->gameId; ++pd) {
-		games.push_back(*pd);
-	}
-}
-
-GameDescriptor MagneticMetaEngine::findGame(const char *gameId) {
-	for (const PlainGameDescriptor *pd = MAGNETIC_GAME_LIST; pd->gameId; ++pd) {
-		if (!strcmp(gameId, pd->gameId))
-			return *pd;
+	void MagneticMetaEngine::getSupportedGames(PlainGameList &games) {
+		for (const PlainGameDescriptor *pd = MAGNETIC_GAME_LIST; pd->gameId; ++pd) {
+			games.push_back(*pd);
+		}
 	}
 
-	return PlainGameDescriptor();
-}
+	GameDescriptor MagneticMetaEngine::findGame(const char *gameId) {
+		for (const PlainGameDescriptor *pd = MAGNETIC_GAME_LIST; pd->gameId; ++pd) {
+			if (!strcmp(gameId, pd->gameId))
+				return *pd;
+		}
 
-bool MagneticMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
-	const char *const EXTENSIONS[] = { ".mag", ".rsc", nullptr };
+		return PlainGameDescriptor();
+	}
 
-	// Loop through the files of the folder
-	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		// Check for a recognised filename
-		if (file->isDirectory())
-			continue;
-		Common::String filename = file->getName();
-		bool hasExt = false;
-		for (const char *const *ext = &EXTENSIONS[0]; *ext && !hasExt; ++ext)
-			hasExt = filename.hasSuffixIgnoreCase(*ext);
-		if (!hasExt)
-			continue;
+	bool MagneticMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
+		const char *const EXTENSIONS[] = { ".mag", ".rsc", nullptr };
 
-		// Open up the file and calculate the md5
-		Common::File gameFile;
-		if (!gameFile.open(*file))
-			continue;
-		if (gameFile.readUint32BE() != MKTAG('M', 'a', 'S', 'c')) {
+		// Loop through the files of the folder
+		for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+			// Check for a recognised filename
+			if (file->isDirectory())
+				continue;
+			Common::String filename = file->getName();
+			bool hasExt = false;
+			for (const char *const *ext = &EXTENSIONS[0]; *ext && !hasExt; ++ext)
+				hasExt = filename.hasSuffixIgnoreCase(*ext);
+			if (!hasExt)
+				continue;
+
+			// Open up the file and calculate the md5
+			Common::File gameFile;
+			if (!gameFile.open(*file))
+				continue;
+			if (gameFile.readUint32BE() != MKTAG('M', 'a', 'S', 'c')) {
+				gameFile.close();
+				continue;
+			}
+
+			gameFile.seek(0);
+			Common::String md5 = Common::computeStreamMD5AsString(gameFile, 5000);
+			size_t filesize = gameFile.size();
 			gameFile.close();
-			continue;
+
+			// Check for known games
+			const MagneticGameDescription *p = MAGNETIC_GAMES;
+			while (p->_gameId && (md5 != p->_md5 || filesize != p->_filesize))
+				++p;
+
+			if (!p->_gameId) {
+				const PlainGameDescriptor &desc = MAGNETIC_GAME_LIST[0];
+				gameList.push_back(GlkDetectedGame(desc.gameId, desc.description, filename, md5, filesize));
+			} else {
+				PlainGameDescriptor gameDesc = findGame(p->_gameId);
+				gameList.push_back(GlkDetectedGame(p->_gameId, gameDesc.description, filename));
+			}
 		}
 
-		gameFile.seek(0);
-		Common::String md5 = Common::computeStreamMD5AsString(gameFile, 5000);
-		size_t filesize = gameFile.size();
-		gameFile.close();
+		return !gameList.empty();
+	}
 
-		// Check for known games
-		const MagneticGameDescription *p = MAGNETIC_GAMES;
-		while (p->_gameId && (md5 != p->_md5 || filesize != p->_filesize))
-			++p;
-
-		if (!p->_gameId) {
-			const PlainGameDescriptor &desc = MAGNETIC_GAME_LIST[0];
-			gameList.push_back(GlkDetectedGame(desc.gameId, desc.description, filename, md5, filesize));
-		} else {
-			PlainGameDescriptor gameDesc = findGame(p->_gameId);
-			gameList.push_back(GlkDetectedGame(p->_gameId, gameDesc.description, filename));
+	void MagneticMetaEngine::detectClashes(Common::StringMap &map) {
+		for (const PlainGameDescriptor *pd = MAGNETIC_GAME_LIST; pd->gameId; ++pd) {
+			if (map.contains(pd->gameId))
+				error("Duplicate game Id found - %s", pd->gameId);
+			map[pd->gameId] = "";
 		}
 	}
-
-	return !gameList.empty();
-}
-
-void MagneticMetaEngine::detectClashes(Common::StringMap &map) {
-	for (const PlainGameDescriptor *pd = MAGNETIC_GAME_LIST; pd->gameId; ++pd) {
-		if (map.contains(pd->gameId))
-			error("Duplicate game Id found - %s", pd->gameId);
-		map[pd->gameId] = "";
-	}
-}
 
 } // End of namespace Magnetic
 } // End of namespace Glk

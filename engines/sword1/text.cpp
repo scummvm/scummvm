@@ -20,23 +20,21 @@
  *
  */
 
-
 #include "common/textconsole.h"
 
-#include "sword1/text.h"
-#include "sword1/resman.h"
 #include "sword1/objectman.h"
-#include "sword1/swordres.h"
-#include "sword1/sworddefs.h"
+#include "sword1/resman.h"
 #include "sword1/screen.h"
 #include "sword1/sword1.h"
+#include "sword1/sworddefs.h"
+#include "sword1/swordres.h"
+#include "sword1/text.h"
 
 namespace Sword1 {
 
 #define OVERLAP 3
 #define SPACE ' '
-#define MAX_LINES       30
-
+#define MAX_LINES 30
 
 Text::Text(ObjectMan *pObjMan, ResMan *pResMan, bool czechVersion) {
 	_objMan = pObjMan;
@@ -90,10 +88,10 @@ void Text::makeTextSprite(uint8 slot, const uint8 *text, uint16 maxWidth, uint8 
 
 	memcpy(_textBlocks[slot]->runTimeComp, "Nu  ", 4);
 	_textBlocks[slot]->compSize = 0;
-	_textBlocks[slot]->width    = _resMan->toUint16(sprWidth);
-	_textBlocks[slot]->height   = _resMan->toUint16(sprHeight);
-	_textBlocks[slot]->offsetX  = 0;
-	_textBlocks[slot]->offsetY  = 0;
+	_textBlocks[slot]->width = _resMan->toUint16(sprWidth);
+	_textBlocks[slot]->height = _resMan->toUint16(sprHeight);
+	_textBlocks[slot]->offsetX = 0;
+	_textBlocks[slot]->offsetY = 0;
 
 	uint8 *linePtr = ((uint8 *)_textBlocks[slot]) + sizeof(FrameHeader);
 	memset(linePtr, NO_COL, sprSize);
@@ -132,7 +130,7 @@ uint16 Text::analyzeSentence(const uint8 *text, uint16 maxWidth, LineInfo *line)
 			text++;
 
 		wordWidth += OVERLAP; // no overlap on final letter of word!
-		if (firstWord)  { // first word on first line, so no separating SPACE needed
+		if (firstWord) { // first word on first line, so no separating SPACE needed
 			line[0].width = wordWidth;
 			line[0].length = wordLength;
 			firstWord = false;
@@ -144,7 +142,7 @@ uint16 Text::analyzeSentence(const uint8 *text, uint16 maxWidth, LineInfo *line)
 			if (line[lineNo].width + spaceNeeded <= maxWidth) {
 				line[lineNo].width += spaceNeeded;
 				line[lineNo].length += 1 + wordLength; // NB. space+word characters
-			} else {    // put word (without separating SPACE) at start of next line
+			} else { // put word (without separating SPACE) at start of next line
 				lineNo++;
 				assert(lineNo < MAX_LINES);
 				line[lineNo].width = wordWidth;
@@ -152,7 +150,7 @@ uint16 Text::analyzeSentence(const uint8 *text, uint16 maxWidth, LineInfo *line)
 			}
 		}
 	}
-	return lineNo + 1;  // return no of lines
+	return lineNo + 1; // return no of lines
 }
 
 uint16 Text::copyChar(uint8 ch, uint8 *sprPtr, uint16 sprWidth, uint8 pen) {
@@ -174,7 +172,7 @@ uint16 Text::copyChar(uint8 ch, uint8 *sprPtr, uint16 sprWidth, uint8 pen) {
 		} else //Normal game fonts are not compressed
 			decChr = chData;
 	} else {
-		frameHeight =  _resMan->getUint16(chFrame->height);
+		frameHeight = _resMan->getUint16(chFrame->height);
 		decChr = chData;
 	}
 

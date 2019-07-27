@@ -23,8 +23,8 @@
 #if defined(__ANDROID__)
 
 // Allow use of stuff in <time.h> and abort()
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
-#define FORBIDDEN_SYMBOL_EXCEPTION_abort
+#	define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+#	define FORBIDDEN_SYMBOL_EXCEPTION_abort
 
 // Disable printf override in common/forbidden.h to avoid
 // clashes with log.h from the Android SDK.
@@ -38,22 +38,23 @@
 // (which then wouldn't be portable, though).
 // Anyway, for now we just disable the printf override globally
 // for the Android port
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+#	define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#include "base/main.h"
-#include "base/version.h"
-#include "common/config-manager.h"
-#include "common/error.h"
-#include "common/textconsole.h"
-#include "common/translation.h"
-#include "engines/engine.h"
+#	include "base/main.h"
+#	include "base/version.h"
+#	include "common/config-manager.h"
+#	include "common/error.h"
+#	include "common/textconsole.h"
+#	include "common/translation.h"
+#	include "engines/engine.h"
 
-#include "backends/platform/android/android.h"
-#include "backends/platform/android/asset-archive.h"
-#include "backends/platform/android/jni.h"
+#	include "backends/platform/android/android.h"
+#	include "backends/platform/android/asset-archive.h"
+#	include "backends/platform/android/jni.h"
 
-__attribute__ ((visibility("default")))
-jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
+__attribute__((visibility("default")))
+jint JNICALL
+JNI_OnLoad(JavaVM *vm, void *) {
 	return JNI::onLoad(vm);
 }
 
@@ -98,24 +99,24 @@ jmethodID JNI::_MID_AudioTrack_write = 0;
 
 const JNINativeMethod JNI::_natives[] = {
 	{ "create", "(Landroid/content/res/AssetManager;"
-				"Ljavax/microedition/khronos/egl/EGL10;"
-				"Ljavax/microedition/khronos/egl/EGLDisplay;"
-				"Landroid/media/AudioTrack;II)V",
-		(void *)JNI::create },
+	            "Ljavax/microedition/khronos/egl/EGL10;"
+	            "Ljavax/microedition/khronos/egl/EGLDisplay;"
+	            "Landroid/media/AudioTrack;II)V",
+	  (void *)JNI::create },
 	{ "destroy", "()V",
-		(void *)JNI::destroy },
+	  (void *)JNI::destroy },
 	{ "setSurface", "(II)V",
-		(void *)JNI::setSurface },
+	  (void *)JNI::setSurface },
 	{ "main", "([Ljava/lang/String;)I",
-		(void *)JNI::main },
+	  (void *)JNI::main },
 	{ "pushEvent", "(IIIIIII)V",
-		(void *)JNI::pushEvent },
+	  (void *)JNI::pushEvent },
 	{ "enableZoning", "(Z)V",
-		(void *)JNI::enableZoning },
+	  (void *)JNI::enableZoning },
 	{ "setPause", "(Z)V",
-		(void *)JNI::setPause },
+	  (void *)JNI::setPause },
 	{ "getCurrentCharset", "()Ljava/lang/String;",
-		(void *)JNI::getCurrentCharset }
+	  (void *)JNI::getCurrentCharset }
 };
 
 JNI::JNI() {
@@ -289,8 +290,8 @@ Common::String JNI::getTextFromClipboard() {
 	}
 
 	int len = env->GetArrayLength(javaText);
-	char* buf = new char[len];
-	env->GetByteArrayRegion(javaText, 0, len, reinterpret_cast<jbyte*>(buf));
+	char *buf = new char[len];
+	env->GetByteArrayRegion(javaText, 0, len, reinterpret_cast<jbyte *>(buf));
 	Common::String text(buf, len);
 	delete[] buf;
 
@@ -301,7 +302,7 @@ bool JNI::setTextInClipboard(const Common::String &text) {
 	JNIEnv *env = JNI::getEnv();
 
 	jbyteArray javaText = env->NewByteArray(text.size());
-	env->SetByteArrayRegion(javaText, 0, text.size(), reinterpret_cast<const jbyte*>(text.c_str()));
+	env->SetByteArrayRegion(javaText, 0, text.size(), reinterpret_cast<const jbyte *>(text.c_str()));
 
 	bool success = env->CallBooleanMethod(_jobj, _MID_setTextInClipboard, javaText);
 
@@ -366,8 +367,7 @@ void JNI::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 
 	s.add("ASSET", _asset_archive, priority, false);
 
-	jobjectArray array =
-		(jobjectArray)env->CallObjectMethod(_jobj, _MID_getSysArchives);
+	jobjectArray array = (jobjectArray)env->CallObjectMethod(_jobj, _MID_getSysArchives);
 
 	if (env->ExceptionCheck()) {
 		LOGE("Error finding system archive path");
@@ -478,8 +478,8 @@ void JNI::setAudioStop() {
 // natives for the dark side
 
 void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
-				jobject egl, jobject egl_display,
-				jobject at, jint audio_sample_rate, jint audio_buffer_size) {
+                 jobject egl, jobject egl_display,
+                 jobject at, jint audio_sample_rate, jint audio_buffer_size) {
 	LOGI("%s", gScummVMFullVersion);
 
 	assert(!_system);
@@ -502,11 +502,12 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 
 	jclass cls = env->GetObjectClass(_jobj);
 
-#define FIND_METHOD(prefix, name, signature) do {							\
-		_MID_ ## prefix ## name = env->GetMethodID(cls, #name, signature);	\
-		if (_MID_ ## prefix ## name == 0)									\
-			return;															\
-	} while (0)
+#	define FIND_METHOD(prefix, name, signature)                       \
+		do {                                                             \
+			_MID_##prefix##name = env->GetMethodID(cls, #name, signature); \
+			if (_MID_##prefix##name == 0)                                  \
+				return;                                                      \
+		} while (0)
 
 	FIND_METHOD(, setWindowCaption, "(Ljava/lang/String;)V");
 	FIND_METHOD(, getDPI, "([F)V");
@@ -527,8 +528,8 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	cls = env->GetObjectClass(_jobj_egl);
 
 	FIND_METHOD(EGL10_, eglSwapBuffers,
-				"(Ljavax/microedition/khronos/egl/EGLDisplay;"
-				"Ljavax/microedition/khronos/egl/EGLSurface;)Z");
+	            "(Ljavax/microedition/khronos/egl/EGLDisplay;"
+	            "Ljavax/microedition/khronos/egl/EGLSurface;)Z");
 
 	_jobj_audio_track = env->NewGlobalRef(at);
 
@@ -540,7 +541,7 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(AudioTrack_, stop, "()V");
 	FIND_METHOD(AudioTrack_, write, "([BII)I");
 
-#undef FIND_METHOD
+#	undef FIND_METHOD
 
 	g_system = _system;
 }
@@ -579,7 +580,7 @@ jint JNI::main(JNIEnv *env, jobject self, jobjectArray args) {
 	int argc = env->GetArrayLength(args);
 	if (argc > MAX_NARGS) {
 		throwByName(env, "java/lang/IllegalArgumentException",
-					"too many arguments");
+		            "too many arguments");
 		return 0;
 	}
 
@@ -635,7 +636,7 @@ cleanup:
 }
 
 void JNI::pushEvent(JNIEnv *env, jobject self, int type, int arg1, int arg2,
-					int arg3, int arg4, int arg5, int arg6) {
+                    int arg3, int arg4, int arg5, int arg6) {
 	// drop events until we're ready and after we quit
 	if (!_ready_for_events) {
 		LOGW("dropping event");
@@ -678,11 +679,11 @@ void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
 }
 
 jstring JNI::getCurrentCharset(JNIEnv *env, jobject self) {
-#ifdef USE_TRANSLATION
+#	ifdef USE_TRANSLATION
 	if (TransMan.getCurrentCharset() != "ASCII") {
 		return env->NewStringUTF(TransMan.getCurrentCharset().c_str());
 	}
-#endif
+#	endif
 	return env->NewStringUTF("ISO-8859-1");
 }
 

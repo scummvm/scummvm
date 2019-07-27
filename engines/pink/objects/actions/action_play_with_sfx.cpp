@@ -20,13 +20,13 @@
  *
  */
 
-#include "pink/cel_decoder.h"
-#include "pink/sound.h"
-#include "pink/pink.h"
-#include "pink/objects/actors/actor.h"
 #include "pink/objects/actions/action_play_with_sfx.h"
+#include "pink/cel_decoder.h"
+#include "pink/objects/actors/actor.h"
 #include "pink/objects/pages/game_page.h"
 #include "pink/objects/sequences/sequencer.h"
+#include "pink/pink.h"
+#include "pink/sound.h"
 
 namespace Pink {
 
@@ -45,7 +45,8 @@ void ActionPlayWithSfx::deserialize(Pink::Archive &archive) {
 
 void ActionPlayWithSfx::toConsole() {
 	debugC(6, kPinkDebugLoadingObjects, "\tActionPlayWithSfx: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
-				  " _endFrame = %d, _isLoop = %u", _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame, _isLoop);
+	                                    " _endFrame = %d, _isLoop = %u",
+	       _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame, _isLoop);
 	for (uint i = 0; i < _sfxArray.size(); ++i) {
 		_sfxArray[i]->toConsole();
 	}

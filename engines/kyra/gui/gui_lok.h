@@ -23,77 +23,78 @@
 #ifndef KYRA_GUI_LOK_H
 #define KYRA_GUI_LOK_H
 
-#include "kyra/gui/gui_v1.h"
 #include "kyra/graphics/screen_lok.h"
+#include "kyra/gui/gui_v1.h"
 
 namespace Kyra {
 
-#define GUI_V1_BUTTON(button, a, b, c, d, e, f, g, h, i, j, k) \
-	do { \
-		button.nextButton = 0; \
-		button.index = a; \
-		button.keyCode = button.keyCode2 = 0; \
-		button.data0Val1 = b; \
-		button.data1Val1 = c; \
-		button.data2Val1 = d; \
+#define GUI_V1_BUTTON(button, a, b, c, d, e, f, g, h, i, j, k)              \
+	do {                                                                      \
+		button.nextButton = 0;                                                  \
+		button.index = a;                                                       \
+		button.keyCode = button.keyCode2 = 0;                                   \
+		button.data0Val1 = b;                                                   \
+		button.data1Val1 = c;                                                   \
+		button.data2Val1 = d;                                                   \
 		button.data0ShapePtr = button.data1ShapePtr = button.data2ShapePtr = 0; \
-		button.flags = e; \
-		button.dimTableIndex = f; \
-		button.x = g; \
-		button.y = h; \
-		button.width = i; \
-		button.height = j; \
-		button.flags2 = k; \
-		button.mouseWheel = 0; \
-		button.arg = 0; \
+		button.flags = e;                                                       \
+		button.dimTableIndex = f;                                               \
+		button.x = g;                                                           \
+		button.y = h;                                                           \
+		button.width = i;                                                       \
+		button.height = j;                                                      \
+		button.flags2 = k;                                                      \
+		button.mouseWheel = 0;                                                  \
+		button.arg = 0;                                                         \
 	} while (0)
 
 #define GUI_V1_MENU(menu, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q) \
-	do { \
-		menu.x = a; \
-		menu.y = b; \
-		menu.width = c; \
-		menu.height = d; \
-		menu.bkgdColor = e; \
-		menu.color1 = f; \
-		menu.color2 = g; \
-		menu.menuNameString = h; \
-		menu.textColor = i; \
-		menu.titleX = j; \
-		menu.titleY = k; \
-		menu.highlightedItem = l; \
-		menu.numberOfItems = m; \
-		menu.scrollUpButtonX = n; \
-		menu.scrollUpButtonY = o; \
-		menu.scrollDownButtonX = p; \
-		menu.scrollDownButtonY = q; \
+	do {                                                                       \
+		menu.x = a;                                                              \
+		menu.y = b;                                                              \
+		menu.width = c;                                                          \
+		menu.height = d;                                                         \
+		menu.bkgdColor = e;                                                      \
+		menu.color1 = f;                                                         \
+		menu.color2 = g;                                                         \
+		menu.menuNameString = h;                                                 \
+		menu.textColor = i;                                                      \
+		menu.titleX = j;                                                         \
+		menu.titleY = k;                                                         \
+		menu.highlightedItem = l;                                                \
+		menu.numberOfItems = m;                                                  \
+		menu.scrollUpButtonX = n;                                                \
+		menu.scrollUpButtonY = o;                                                \
+		menu.scrollDownButtonX = p;                                              \
+		menu.scrollDownButtonY = q;                                              \
 	} while (0)
 
 #define GUI_V1_MENU_ITEM(item, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v) \
-	do { \
-		item.enabled = a; \
-		item.itemString = d; \
-		item.x = e; \
-		item.y = g; \
-		item.width = h; \
-		item.height = i; \
-		item.textColor = j; \
-		item.highlightColor = k; \
-		item.titleX = l; \
-		item.bkgdColor = n; \
-		item.color1 = o; \
-		item.color2 = p; \
-		item.saveSlot = q; \
-		item.labelString = r; \
-		item.labelX = s; \
-		item.labelY = t; \
-		item.keyCode = v; \
+	do {                                                                                           \
+		item.enabled = a;                                                                            \
+		item.itemString = d;                                                                         \
+		item.x = e;                                                                                  \
+		item.y = g;                                                                                  \
+		item.width = h;                                                                              \
+		item.height = i;                                                                             \
+		item.textColor = j;                                                                          \
+		item.highlightColor = k;                                                                     \
+		item.titleX = l;                                                                             \
+		item.bkgdColor = n;                                                                          \
+		item.color1 = o;                                                                             \
+		item.color2 = p;                                                                             \
+		item.saveSlot = q;                                                                           \
+		item.labelString = r;                                                                        \
+		item.labelX = s;                                                                             \
+		item.labelY = t;                                                                             \
+		item.keyCode = v;                                                                            \
 	} while (0)
 
 class KyraEngine_LoK;
 
 class GUI_LoK : public GUI_v1 {
 	friend class KyraEngine_LoK;
+
 public:
 	GUI_LoK(KyraEngine_LoK *vm, Screen_LoK *screen);
 	~GUI_LoK();
@@ -104,6 +105,7 @@ public:
 	int buttonMenuCallback(Button *caller);
 
 	void createScreenThumbnail(Graphics::Surface &dst);
+
 private:
 	void initStaticResource();
 

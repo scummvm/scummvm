@@ -26,8 +26,8 @@
 #include "gui/message.h"
 
 #include "supernova/screen.h"
-#include "supernova/supernova.h"
 #include "supernova/state.h"
+#include "supernova/supernova.h"
 
 namespace Supernova {
 
@@ -81,7 +81,6 @@ bool GameManager::serialize(Common::WriteStream *out) {
 
 	return !out->err();
 }
-
 
 bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	if (in->err())
@@ -208,16 +207,14 @@ Object *Inventory::get(ObjectId id) const {
 	return _nullObject;
 }
 
-
 GuiElement::GuiElement()
-	: _isHighlighted(false)
-	, _bgColorNormal(kColorWhite25)
-	, _bgColorHighlighted(kColorWhite44)
-	, _bgColor(kColorWhite25)
-	, _textColorNormal(kColorGreen)
-	, _textColorHighlighted(kColorLightGreen)
-	, _textColor(kColorGreen)
-{
+  : _isHighlighted(false)
+  , _bgColorNormal(kColorWhite25)
+  , _bgColorHighlighted(kColorWhite44)
+  , _bgColor(kColorWhite25)
+  , _textColorNormal(kColorGreen)
+  , _textColorHighlighted(kColorLightGreen)
+  , _textColor(kColorGreen) {
 	memset(_text, 0, sizeof(_text));
 }
 
@@ -263,12 +260,12 @@ static Common::String timeToString(int msec) {
 	msec /= 1000;
 	s[7] = msec % 10 + '0';
 	msec /= 10;
-	s[6] = msec %  6 + '0';
-	msec /=  6;
+	s[6] = msec % 6 + '0';
+	msec /= 6;
 	s[4] = msec % 10 + '0';
 	msec /= 10;
-	s[3] = msec %  6 + '0';
-	msec /=  6;
+	s[3] = msec % 6 + '0';
+	msec /= 6;
 	s[1] = msec % 10 + '0';
 	msec /= 10;
 	if (msec)
@@ -288,10 +285,10 @@ StringId GameManager::guiStatusCommands[] = {
 };
 
 GameManager::GameManager(SupernovaEngine *vm, Sound *sound)
-	: _inventory(&_nullObject, _inventoryScroll)
-	, _vm(vm)
-    , _sound(sound)
-    , _mouseClickType(Common::EVENT_INVALID) {
+  : _inventory(&_nullObject, _inventoryScroll)
+  , _vm(vm)
+  , _sound(sound)
+  , _mouseClickType(Common::EVENT_INVALID) {
 	initRooms();
 	changeRoom(INTRO);
 	initState();
@@ -377,7 +374,7 @@ void GameManager::initState() {
 	_animationTimer = 0;
 
 	_currentSentence = -1;
-	for (int i = 0 ; i < 6 ; ++i) {
+	for (int i = 0; i < 6; ++i) {
 		_sentenceNumber[i] = -1;
 		_texts[i] = kNoString;
 		_rows[i] = 0;
@@ -386,7 +383,7 @@ void GameManager::initState() {
 
 	_state._time = ticksToMsec(916364); // 2 pm
 	_state._timeSleep = 0;
-	_state._timeAlarm = ticksToMsec(458182);    // 7 am
+	_state._timeAlarm = ticksToMsec(458182); // 7 am
 	_state._eventTime = kMaxTimerValue;
 	_state._eventCallback = kNoFn;
 	_state._arrivalDaysLeft = 2840;
@@ -657,7 +654,7 @@ void GameManager::processInput() {
 				return;
 		}
 
-		switch(mouseLocation) {
+		switch (mouseLocation) {
 		case onObject:
 		case onInventory:
 			// Fallthrough
@@ -742,15 +739,13 @@ void GameManager::processInput() {
 			field = (_mouseY > 180) ? 769 : 768;
 		} else {
 			/* normal item */
-			for (int i = 0; (_currentRoom->getObject(i)->_id != INVALIDOBJECT) &&
-							(field == -1) && i < kMaxObject; i++) {
+			for (int i = 0; (_currentRoom->getObject(i)->_id != INVALIDOBJECT) && (field == -1) && i < kMaxObject; i++) {
 				click = _currentRoom->getObject(i)->_click;
 				const MSNImage *image = _vm->_screen->getCurrentImage();
 				if (click != 255 && image) {
 					const MSNImage::ClickField *clickField = image->_clickField;
 					do {
-						if ((_mouseX >= clickField[click].x1) && (_mouseX <= clickField[click].x2) &&
-							(_mouseY >= clickField[click].y1) && (_mouseY <= clickField[click].y2))
+						if ((_mouseX >= clickField[click].x1) && (_mouseX <= clickField[click].x2) && (_mouseY >= clickField[click].y1) && (_mouseY <= clickField[click].y2))
 							field = i;
 
 						click = clickField[click].next;
@@ -855,7 +850,7 @@ void GameManager::telomat(int nr) {
 	dial1[2] = kStringTelomat3;
 	dial1[3] = kStringDialogSeparator;
 
-	static byte rows1[3] = {1, 2, 1};
+	static byte rows1[3] = { 1, 2, 1 };
 
 	StringId dial2[4];
 	dial2[0] = kStringTelomat4;
@@ -863,7 +858,7 @@ void GameManager::telomat(int nr) {
 	dial2[2] = kStringTelomat6;
 	dial2[3] = kStringDialogSeparator;
 
-	static byte rows2[4] = {1, 1, 1, 1};
+	static byte rows2[4] = { 1, 1, 1, 1 };
 
 	_vm->renderBox(0, 0, 320, 200, kColorBlack);
 	_vm->renderText(kStringTelomat7, 100, 70, kColorGreen);
@@ -938,7 +933,8 @@ void GameManager::telomat(int nr) {
 				_currentRoom->removeSentence(1, 1);
 
 			switch (dialog(3, rows1, dial1, 1)) {
-			case 1: _vm->renderMessage(kStringTelomat18, kMessageTop);
+			case 1:
+				_vm->renderMessage(kStringTelomat18, kMessageTop);
 				waitOnInput(_messageDuration);
 				_vm->removeMessage();
 				if ((_state._destination == 255) && !_rooms[BCORRIDOR]->isSectionVisible(7)) {
@@ -948,7 +944,8 @@ void GameManager::telomat(int nr) {
 					_state._destination = nr;
 				}
 				break;
-			case 0: _vm->renderMessage(kStringTelomat19, kMessageTop);
+			case 0:
+				_vm->renderMessage(kStringTelomat19, kMessageTop);
 				waitOnInput(_messageDuration);
 				_vm->removeMessage();
 				if (dialog(4, rows2, dial2, 0) != 3) {
@@ -963,7 +960,7 @@ void GameManager::telomat(int nr) {
 			_guiEnabled = true;
 			drawMapExits();
 			return;
-			}
+		}
 		case Common::KEYCODE_1:
 		case Common::KEYCODE_3:
 		case Common::KEYCODE_4:
@@ -1067,23 +1064,12 @@ void GameManager::busted(int i) {
 }
 
 void GameManager::novaScroll() {
-	static byte planet_f[6] = {0xeb,0xec,0xf0,0xed,0xf1,0xf2};
-	static byte nova_f[13] = {0xea,0xe9,0xf5,0xf3,0xf7,0xf4,0xf6,
-		0xf9,0xfb,0xfc,0xfd,0xfe,0xfa};
+	static byte planet_f[6] = { 0xeb, 0xec, 0xf0, 0xed, 0xf1, 0xf2 };
+	static byte nova_f[13] = { 0xea, 0xe9, 0xf5, 0xf3, 0xf7, 0xf4, 0xf6,
+		                         0xf9, 0xfb, 0xfc, 0xfd, 0xfe, 0xfa };
 	static byte rgb[65][3] = {
-		{ 5, 0, 0},{10, 0, 0},{15, 0, 0},{20, 0, 0},{25, 0, 0},
-		{30, 0, 0},{35, 0, 0},{40, 0, 0},{45, 0, 0},{50, 0, 0},
-		{55, 0, 0},{60, 0, 0},{63,10, 5},{63,20,10},{63,30,15},
-		{63,40,20},{63,50,25},{63,60,30},{63,63,33},{63,63,30},
-		{63,63,25},{63,63,20},{63,63,15},{63,63,10},{60,60,15},
-		{57,57,20},{53,53,25},{50,50,30},{47,47,35},{43,43,40},
-		{40,40,45},{37,37,50},{33,33,53},{30,30,56},{27,27,59},
-		{23,23,61},{20,20,63},{21,25,63},{22,30,63},{25,35,63},
-		{30,40,63},{35,45,63},{40,50,63},{45,55,63},{50,60,63},
-		{55,63,63},{59,63,63},{63,63,63},{63,60,63},{60,50,60},
-		{55,40,55},{50,30,50},{45,20,45},{40,10,40},{42,15,42},
-		{45,20,45},{47,25,47},{50,30,50},{52,35,52},{55,40,55},
-		{57,45,57},{60,50,60},{62,55,62},{63,60,63},{63,63,63}};
+		{ 5, 0, 0 }, { 10, 0, 0 }, { 15, 0, 0 }, { 20, 0, 0 }, { 25, 0, 0 }, { 30, 0, 0 }, { 35, 0, 0 }, { 40, 0, 0 }, { 45, 0, 0 }, { 50, 0, 0 }, { 55, 0, 0 }, { 60, 0, 0 }, { 63, 10, 5 }, { 63, 20, 10 }, { 63, 30, 15 }, { 63, 40, 20 }, { 63, 50, 25 }, { 63, 60, 30 }, { 63, 63, 33 }, { 63, 63, 30 }, { 63, 63, 25 }, { 63, 63, 20 }, { 63, 63, 15 }, { 63, 63, 10 }, { 60, 60, 15 }, { 57, 57, 20 }, { 53, 53, 25 }, { 50, 50, 30 }, { 47, 47, 35 }, { 43, 43, 40 }, { 40, 40, 45 }, { 37, 37, 50 }, { 33, 33, 53 }, { 30, 30, 56 }, { 27, 27, 59 }, { 23, 23, 61 }, { 20, 20, 63 }, { 21, 25, 63 }, { 22, 30, 63 }, { 25, 35, 63 }, { 30, 40, 63 }, { 35, 45, 63 }, { 40, 50, 63 }, { 45, 55, 63 }, { 50, 60, 63 }, { 55, 63, 63 }, { 59, 63, 63 }, { 63, 63, 63 }, { 63, 60, 63 }, { 60, 50, 60 }, { 55, 40, 55 }, { 50, 30, 50 }, { 45, 20, 45 }, { 40, 10, 40 }, { 42, 15, 42 }, { 45, 20, 45 }, { 47, 25, 47 }, { 50, 30, 50 }, { 52, 35, 52 }, { 55, 40, 55 }, { 57, 45, 57 }, { 60, 50, 60 }, { 62, 55, 62 }, { 63, 60, 63 }, { 63, 63, 63 }
+	};
 
 	byte palette[768];
 	_vm->_system->getPaletteManager()->grabPalette(palette, 0, 255);
@@ -1091,14 +1077,14 @@ void GameManager::novaScroll() {
 	for (int t = 0; t < 65; ++t) {
 		for (int i = 0; i < 6; ++i) {
 			int idx = 3 * (planet_f[i] - 1);
-			for (int c = 0 ; c < 3 ; ++c) {
-				if (palette[idx+c] < rgb[t][c])
-					palette[idx+c] = rgb[t][c];
+			for (int c = 0; c < 3; ++c) {
+				if (palette[idx + c] < rgb[t][c])
+					palette[idx + c] = rgb[t][c];
 			}
 		}
 		for (int cycle = 0; cycle < t && cycle < 13; ++cycle) {
 			int idx = 3 * (nova_f[cycle] - 1);
-			for (int c = 0 ; c < 3 ; ++c)
+			for (int c = 0; c < 3; ++c)
 				palette[idx + c] = rgb[t - cycle - 1][c];
 		}
 
@@ -1214,8 +1200,7 @@ void GameManager::walk(int imgId) {
 
 void GameManager::guardWalkEvent() {
 	_prevImgId = 0;
-	bool behind = (!_rooms[BCORRIDOR]->getObject(_state._origin + 4)->hasProperty(OCCUPIED) ||
-				   _rooms[BCORRIDOR]->getObject(_state._origin + 4)->hasProperty(OPENED));
+	bool behind = (!_rooms[BCORRIDOR]->getObject(_state._origin + 4)->hasProperty(OCCUPIED) || _rooms[BCORRIDOR]->getObject(_state._origin + 4)->hasProperty(OPENED));
 	_rooms[BCORRIDOR]->getObject(_state._origin + 4)->disableProperty(OCCUPIED);
 	if (_currentRoom == _rooms[BCORRIDOR]) {
 		if (_vm->_screen->isMessageShown())
@@ -1385,16 +1370,7 @@ void GameManager::great(uint number) {
 }
 
 bool GameManager::airless() {
-	return (_currentRoom->getId() == HOLD ||
-			_currentRoom->getId() == LANDINGMODULE ||
-			_currentRoom->getId() == GENERATOR ||
-			_currentRoom->getId() == OUTSIDE ||
-			_currentRoom->getId() == ROCKS ||
-			_currentRoom->getId() == CAVE ||
-			_currentRoom->getId() == MEETUP ||
-			_currentRoom->getId() == MEETUP2 ||
-			_currentRoom->getId() == MEETUP3 ||
-			(_currentRoom->getId() == AIRLOCK && _rooms[AIRLOCK]->getObject(1)->hasProperty(OPENED)));
+	return (_currentRoom->getId() == HOLD || _currentRoom->getId() == LANDINGMODULE || _currentRoom->getId() == GENERATOR || _currentRoom->getId() == OUTSIDE || _currentRoom->getId() == ROCKS || _currentRoom->getId() == CAVE || _currentRoom->getId() == MEETUP || _currentRoom->getId() == MEETUP2 || _currentRoom->getId() == MEETUP3 || (_currentRoom->getId() == AIRLOCK && _rooms[AIRLOCK]->getObject(1)->hasProperty(OPENED)));
 }
 
 void GameManager::sentence(int number, bool brightness) {
@@ -1476,7 +1452,7 @@ int GameManager::dialog(int num, byte rowLength[6], StringId text[6], int number
 
 	_vm->renderBox(0, 138, 320, 62, kColorBlack);
 
-	for (int i = 0; i < 6 ; ++i)
+	for (int i = 0; i < 6; ++i)
 		_sentenceNumber[i] = -1;
 
 	int r = 0, rq = 0;
@@ -1557,9 +1533,9 @@ void GameManager::drawCommandBox() {
 		_vm->renderBox(_guiCommandButton[i]);
 		int space = (_guiCommandButton[i].width() - Screen::textWidth(_guiCommandButton[i].getText())) / 2;
 		_vm->renderText(_guiCommandButton[i].getText(),
-						_guiCommandButton[i].getTextPos().x + space,
-						_guiCommandButton[i].getTextPos().y,
-						_guiCommandButton[i].getTextColor());
+		                _guiCommandButton[i].getTextPos().x + space,
+		                _guiCommandButton[i].getTextPos().y,
+		                _guiCommandButton[i].getTextColor());
 	}
 }
 
@@ -1567,9 +1543,9 @@ void GameManager::drawInventory() {
 	for (int i = 0; i < ARRAYSIZE(_guiInventory); ++i) {
 		_vm->renderBox(_guiInventory[i]);
 		_vm->renderText(_inventory.get(i + _inventoryScroll)->_name,
-						_guiInventory[i].getTextPos().x,
-						_guiInventory[i].getTextPos().y,
-						_guiInventory[i].getTextColor());
+		                _guiInventory[i].getTextPos().x,
+		                _guiInventory[i].getTextPos().y,
+		                _guiInventory[i].getTextColor());
 	}
 
 	_vm->renderBox(_guiInventoryArrow[0]);
@@ -1666,7 +1642,7 @@ bool GameManager::waitOnInput(int ticks, Common::KeyCode &keycode) {
 			return true;
 		} else if (_mouseClicked)
 			return true;
-	} while (_state._time < end  && !_vm->shouldQuit());
+	} while (_state._time < end && !_vm->shouldQuit());
 	return false;
 }
 
@@ -1738,7 +1714,7 @@ void GameManager::showMenu() {
 }
 
 void GameManager::drawMapExits() {
-// TODO: Preload _exitList on room entry instead on every call
+	// TODO: Preload _exitList on room entry instead on every call
 	_vm->renderBox(281, 161, 39, 39, kColorWhite25);
 
 	for (int i = 0; i < 25; i++)
@@ -1766,8 +1742,7 @@ void GameManager::edit(Common::String &input, int x, int y, uint length) {
 	bool isEditing = true;
 	uint cursorIndex = input.size();
 	// NOTE: Pixels for char needed = kFontWidth + 2px left and right side bearing
-	int overdrawWidth = ((int)((length + 1) * (kFontWidth + 2)) > (kScreenWidth - x)) ?
-						kScreenWidth - x : (length + 1) * (kFontWidth + 2);
+	int overdrawWidth = ((int)((length + 1) * (kFontWidth + 2)) > (kScreenWidth - x)) ? kScreenWidth - x : (length + 1) * (kFontWidth + 2);
 
 	while (isEditing) {
 		_vm->_screen->setTextCursorPos(x, y);
@@ -1777,7 +1752,7 @@ void GameManager::edit(Common::String &input, int x, int y, uint length) {
 			// Draw char highlight depending on cursor position
 			if (i == cursorIndex) {
 				_vm->renderBox(_vm->_screen->getTextCursorPos().x, y - 1,
-							   Screen::textWidth(input[i]), 9, kColorWhite99);
+				               Screen::textWidth(input[i]), 9, kColorWhite99);
 				_vm->_screen->setTextCursorColor(kColorDarkBlue);
 				_vm->renderText(input[i]);
 				_vm->_screen->setTextCursorColor(kColorWhite99);
@@ -1975,8 +1950,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 			_state._language = 2;
 			takeObject(*_rooms[ENTRANCE]->getObject(17));
 		}
-	} else if ((verb == ACTION_LOOK) && (obj1._id == PILL_HULL) &&
-			   (_state._language == 2)) {
+	} else if ((verb == ACTION_LOOK) && (obj1._id == PILL_HULL) && (_state._language == 2)) {
 		_vm->renderMessage(kStringGenericInteract_6);
 		_state._language = 1;
 	} else if ((verb == ACTION_OPEN) && (obj1._id == WALLET)) {
@@ -2261,16 +2235,14 @@ void GameManager::handleInput() {
 				_vm->renderImage(_inputObject[0]->_section);
 				_inputObject[0]->setProperty(OPENED);
 				byte i = _inputObject[0]->_click;
-				_inputObject[0]->_click  = _inputObject[0]->_click2;
+				_inputObject[0]->_click = _inputObject[0]->_click2;
 				_inputObject[0]->_click2 = i;
 				_sound->play(kAudioDoorOpen);
 			}
 			break;
 
 		case ACTION_CLOSE:
-			if (!_inputObject[0]->hasProperty(OPENABLE) ||
-				(_inputObject[0]->hasProperty(CLOSED) &&
-				 _inputObject[0]->hasProperty(OPENED))) {
+			if (!_inputObject[0]->hasProperty(OPENABLE) || (_inputObject[0]->hasProperty(CLOSED) && _inputObject[0]->hasProperty(OPENED))) {
 				// This can't be closed.
 				_vm->renderMessage(kStringGenericInteract_41);
 			} else if (!_inputObject[0]->hasProperty(OPENED)) {
@@ -2280,7 +2252,7 @@ void GameManager::handleInput() {
 				_vm->renderImage(invertSection(_inputObject[0]->_section));
 				_inputObject[0]->disableProperty(OPENED);
 				byte i = _inputObject[0]->_click;
-				_inputObject[0]->_click  = _inputObject[0]->_click2;
+				_inputObject[0]->_click = _inputObject[0]->_click2;
 				_inputObject[0]->_click2 = i;
 				_sound->play(kAudioDoorClose);
 			}
@@ -2365,7 +2337,7 @@ void GameManager::guard3Shot() {
 	wait(5);
 	_vm->renderImage(2);
 	wait(3);
-	shot(3,2);
+	shot(3, 2);
 }
 
 void GameManager::alarm() {
@@ -2381,10 +2353,7 @@ void GameManager::alarm() {
 		else if (_currentRoom->getId() == CORRIDOR1)
 			busted(33);
 	} else {
-		if (_currentRoom->getId() == CORRIDOR2 || _currentRoom->getId() == CORRIDOR4 ||
-			_currentRoom->getId() == GUARD     || _currentRoom->getId() == CORRIDOR7 ||
-			_currentRoom->getId() == CELL)
-		{
+		if (_currentRoom->getId() == CORRIDOR2 || _currentRoom->getId() == CORRIDOR4 || _currentRoom->getId() == GUARD || _currentRoom->getId() == CORRIDOR7 || _currentRoom->getId() == CELL) {
 			alarmSound();
 			if (_currentRoom->getId() == GUARD)
 				guardShot();

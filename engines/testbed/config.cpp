@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/stream.h"
 #include "common/config-manager.h"
+#include "common/stream.h"
 
 #include "engines/engine.h"
 
@@ -30,7 +30,9 @@
 
 namespace Testbed {
 
-TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, TestbedConfigManager *tsConfMan) : GUI::Dialog("Browser"), _testbedConfMan(tsConfMan) {
+TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, TestbedConfigManager *tsConfMan)
+  : GUI::Dialog("Browser")
+  , _testbedConfMan(tsConfMan) {
 
 	new GUI::StaticTextWidget(this, "Browser.Headline", "Select Testsuites to Execute");
 	new GUI::StaticTextWidget(this, "Browser.Path", "Use Doubleclick to select/deselect");
@@ -76,7 +78,7 @@ void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 	Common::WriteStream *ws;
 	switch (cmd) {
 	case GUI::kListItemDoubleClickedCmd:
-		ts  = _testSuiteArray[_testListDisplay->getSelected()];
+		ts = _testSuiteArray[_testListDisplay->getSelected()];
 		if (ts) {
 			// Toggle status
 			if (ts->isEnabled()) {
@@ -104,7 +106,7 @@ void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 		_selectButton->setCmd(kTestbedSelectAll);
 		for (uint i = 0; i < _testSuiteArray.size(); i++) {
 			_testListDisplay->markAsDeselected(i);
-			ts  = _testSuiteArray[i];
+			ts = _testSuiteArray[i];
 			if (ts) {
 				ts->enable(false);
 			}
@@ -116,7 +118,7 @@ void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 		_selectButton->setCmd(kTestbedDeselectAll);
 		for (uint i = 0; i < _testSuiteArray.size(); i++) {
 			_testListDisplay->markAsSelected(i);
-			ts  = _testSuiteArray[i];
+			ts = _testSuiteArray[i];
 			if (ts) {
 				ts->enable(true);
 			}
@@ -280,14 +282,14 @@ void TestbedConfigManager::selectTestsuites() {
 	// XXX: disabling these as of now for fastly testing other tests
 	// Testsuite::isSessionInteractive = false;
 	Common::String prompt("Welcome to the ScummVM testbed!\n"
-						"It is a framework to test the various ScummVM subsystems namely GFX, Sound, FS, events etc.\n"
-						"If you see this, it means interactive tests would run on this system :)\n");
+	                      "It is a framework to test the various ScummVM subsystems namely GFX, Sound, FS, events etc.\n"
+	                      "If you see this, it means interactive tests would run on this system :)\n");
 
 	if (!ConfParams.isGameDataFound()) {
 		prompt += "\nSeems like Game data files are not configured properly.\n"
-		"Create Game data files using script ./create-testbed-data.sh in dists/engine-data\n"
-		"Next, Configure the game path in launcher / command-line.\n"
-		"Currently a few testsuites namely FS/AudioCD/MIDI would be disabled\n";
+		          "Create Game data files using script ./create-testbed-data.sh in dists/engine-data\n"
+		          "Next, Configure the game path in launcher / command-line.\n"
+		          "Currently a few testsuites namely FS/AudioCD/MIDI would be disabled\n";
 	}
 
 	Testsuite::logPrintf("Info! : Interactive tests are also being executed.\n");

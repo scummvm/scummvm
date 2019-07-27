@@ -23,17 +23,19 @@
  *
  */
 
-#include "pegasus/pegasus.h"
-#include "pegasus/ai/ai_area.h"
 #include "pegasus/items/biochips/opticalchip.h"
+#include "pegasus/ai/ai_area.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
 OpticalChip *g_opticalChip = 0;
 
-OpticalChip::OpticalChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
-		BiochipItem(id, neighborhood, room, direction), _ariesHotspot(kAriesSpotID), _mercuryHotspot(kMercurySpotID),
-		_poseidonHotspot(kPoseidonSpotID) {
+OpticalChip::OpticalChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction)
+  : BiochipItem(id, neighborhood, room, direction)
+  , _ariesHotspot(kAriesSpotID)
+  , _mercuryHotspot(kMercurySpotID)
+  , _poseidonHotspot(kPoseidonSpotID) {
 	_ariesHotspot.setArea(Common::Rect(kAIMiddleAreaLeft + 60, kAIMiddleAreaTop + 27, kAIMiddleAreaLeft + 60 + 121, kAIMiddleAreaTop + 27 + 20));
 	_ariesHotspot.setHotspotFlags(kOpticalBiochipSpotFlag);
 	g_allHotspots.push_back(&_ariesHotspot);

@@ -37,6 +37,7 @@ class CGondolierMixer : public CGondolierBase {
 	bool SetVolumeMsg(CSetVolumeMsg *msg);
 	bool SignalObject(CSignalObject *msg);
 	bool LoadSuccessMsg(CLoadSuccessMsg *msg);
+
 private:
 	int _soundHandle1;
 	int _soundHandle2;
@@ -45,6 +46,7 @@ private:
 	CString _soundName1;
 	CString _soundName2;
 	bool _soundActive;
+
 public:
 	CLASSDEF;
 	CGondolierMixer();

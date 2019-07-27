@@ -29,7 +29,9 @@
 
 namespace Kyra {
 
-KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const EngineDesc &desc) : KyraEngine_v1(system, flags), _desc(desc) {
+KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const EngineDesc &desc)
+  : KyraEngine_v1(system, flags)
+  , _desc(desc) {
 	memset(&_sceneAnims, 0, sizeof(_sceneAnims));
 	memset(&_sceneAnimMovie, 0, sizeof(_sceneAnimMovie));
 
@@ -164,8 +166,7 @@ void KyraEngine_v2::delay(uint32 amount, bool updateGame, bool isMainLoop) {
 }
 
 bool KyraEngine_v2::checkSpecialSceneExit(int num, int x, int y) {
-	if (_specialExitTable[0 + num] > x || _specialExitTable[5 + num] > y ||
-	        _specialExitTable[10 + num] < x || _specialExitTable[15 + num] < y)
+	if (_specialExitTable[0 + num] > x || _specialExitTable[5 + num] > y || _specialExitTable[10 + num] < x || _specialExitTable[15 + num] < y)
 		return false;
 	return true;
 }

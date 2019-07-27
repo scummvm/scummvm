@@ -23,9 +23,9 @@
 #ifndef GUI_OBJECT_H
 #define GUI_OBJECT_H
 
+#include "common/rect.h"
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "common/rect.h"
 
 namespace GUI {
 
@@ -33,6 +33,7 @@ class CommandSender;
 
 class CommandReceiver {
 	friend class CommandSender;
+
 protected:
 	virtual ~CommandReceiver() {}
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {}
@@ -42,13 +43,15 @@ class CommandSender {
 	// TODO - allow for multiple targets, i.e. store targets in a list
 	// and add methods addTarget/removeTarget.
 protected:
-	CommandReceiver	*_target;
+	CommandReceiver *_target;
+
 public:
-	CommandSender(CommandReceiver *target) : _target(target) {}
+	CommandSender(CommandReceiver *target)
+	  : _target(target) {}
 	virtual ~CommandSender() {}
 
-	void setTarget(CommandReceiver *target)	{ _target = target; }
-	CommandReceiver *getTarget() const		{ return _target; }
+	void setTarget(CommandReceiver *target) { _target = target; }
+	CommandReceiver *getTarget() const { return _target; }
 
 	virtual void sendCommand(uint32 cmd, uint32 data) {
 		if (_target && cmd)
@@ -60,38 +63,44 @@ class Widget;
 
 class GuiObject : public CommandReceiver {
 	friend class Widget;
+
 protected:
 	Common::Rect _textDrawableArea;
 
-	int16		_x, _y;
-	uint16		_w, _h;
+	int16 _x, _y;
+	uint16 _w, _h;
 	const Common::String _name;
 
-	Widget		*_firstWidget;
+	Widget *_firstWidget;
 
 public:
-	GuiObject(int x, int y, int w, int h) : _x(x), _y(y), _w(w), _h(h), _firstWidget(nullptr) { }
+	GuiObject(int x, int y, int w, int h)
+	  : _x(x)
+	  , _y(y)
+	  , _w(w)
+	  , _h(h)
+	  , _firstWidget(nullptr) {}
 	GuiObject(const Common::String &name);
 	~GuiObject();
 
 	virtual void setTextDrawableArea(const Common::Rect &r) { _textDrawableArea = r; }
 
-	virtual int16	getRelX() const		{ return _x; }
-	virtual int16	getRelY() const		{ return _y; }
-	virtual int16	getAbsX() const		{ return _x; }
-	virtual int16	getAbsY() const		{ return _y; }
-	virtual int16	getChildX() const	{ return getAbsX(); }
-	virtual int16	getChildY() const	{ return getAbsY(); }
-	virtual uint16	getWidth() const	{ return _w; }
-	virtual uint16	getHeight() const	{ return _h; }
+	virtual int16 getRelX() const { return _x; }
+	virtual int16 getRelY() const { return _y; }
+	virtual int16 getAbsX() const { return _x; }
+	virtual int16 getAbsY() const { return _y; }
+	virtual int16 getChildX() const { return getAbsX(); }
+	virtual int16 getChildY() const { return getAbsY(); }
+	virtual uint16 getWidth() const { return _w; }
+	virtual uint16 getHeight() const { return _h; }
 
-	virtual bool	isVisible() const = 0;
+	virtual bool isVisible() const = 0;
 
-	virtual void	reflowLayout();
+	virtual void reflowLayout();
 
-	virtual void	removeWidget(Widget *widget);
+	virtual void removeWidget(Widget *widget);
 
-	virtual bool	isPointIn(int x, int y) {
+	virtual bool isPointIn(int x, int y) {
 		return (x >= _x && x < (_x + _w) && (y >= _y) && (y < _y + _h));
 	}
 
@@ -101,7 +110,7 @@ public:
 	virtual Common::Rect getClipRect() const;
 
 protected:
-	virtual void	releaseFocus() = 0;
+	virtual void releaseFocus() = 0;
 };
 
 } // End of namespace GUI

@@ -30,6 +30,7 @@ namespace Lilliput {
 class ScriptStream : public Common::MemoryReadStream {
 private:
 	byte *_orgPtr;
+
 public:
 	ScriptStream(byte *buf, int bufSize);
 	virtual ~ScriptStream();

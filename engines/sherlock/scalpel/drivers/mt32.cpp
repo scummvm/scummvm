@@ -20,8 +20,8 @@
  *
  */
 
-#include "sherlock/sherlock.h"
 #include "sherlock/scalpel/drivers/mididriver.h"
+#include "sherlock/sherlock.h"
 
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -172,7 +172,7 @@ void MidiDriver_MT32::newMusicData(byte *musicData, int32 musicDataSize) {
 	// Also send these bytes to MT32 (SysEx) - seems to be reverb configuration
 	if (_nativeMT32) {
 		const byte *reverbData = mt32ReverbDataSysEx;
-		int32       reverbDataSize = sizeof(mt32ReverbDataSysEx);
+		int32 reverbDataSize = sizeof(mt32ReverbDataSysEx);
 		mt32SysEx(reverbData, reverbDataSize);
 	}
 }
@@ -188,10 +188,10 @@ void MidiDriver_MT32::uploadMT32Patches(byte *driverData, int32 driverSize) {
 	assert(driverSize == 0x13B9); // Security check
 	assert(driverData[0x863] == 0x7F); // another security check
 
-	const byte *patchPtr  = driverData + 0x863;
-	int32       bytesLeft = driverSize - 0x863;
+	const byte *patchPtr = driverData + 0x863;
+	int32 bytesLeft = driverSize - 0x863;
 
-	while(1) {
+	while (1) {
 		mt32SysEx(patchPtr, bytesLeft);
 
 		assert(bytesLeft);
@@ -201,9 +201,9 @@ void MidiDriver_MT32::uploadMT32Patches(byte *driverData, int32 driverSize) {
 }
 
 void MidiDriver_MT32::mt32SysEx(const byte *&dataPtr, int32 &bytesLeft) {
-	byte   sysExMessage[270];
-	uint16 sysExPos      = 0;
-	byte   sysExByte     = 0;
+	byte sysExMessage[270];
+	uint16 sysExPos = 0;
+	byte sysExByte = 0;
 	uint16 sysExChecksum = 0;
 
 	memset(&sysExMessage, 0, sizeof(sysExMessage));
@@ -213,7 +213,7 @@ void MidiDriver_MT32::mt32SysEx(const byte *&dataPtr, int32 &bytesLeft) {
 	sysExMessage[2] = 0x16; // Model MT32
 	sysExMessage[3] = 0x12; // Command DT1
 
-	sysExPos      = 4;
+	sysExPos = 4;
 	sysExChecksum = 0;
 	while (1) {
 		assert(bytesLeft);

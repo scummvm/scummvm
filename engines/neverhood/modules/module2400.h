@@ -23,11 +23,11 @@
 #ifndef NEVERHOOD_MODULES_MODULE2400_H
 #define NEVERHOOD_MODULES_MODULE2400_H
 
-#include "neverhood/neverhood.h"
-#include "neverhood/module.h"
-#include "neverhood/scene.h"
-#include "neverhood/gamemodule.h"
 #include "neverhood/diskplayerscene.h"
+#include "neverhood/gamemodule.h"
+#include "neverhood/module.h"
+#include "neverhood/neverhood.h"
+#include "neverhood/scene.h"
 
 namespace Neverhood {
 
@@ -37,6 +37,7 @@ class Module2400 : public Module {
 public:
 	Module2400(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module2400();
+
 protected:
 	int _sceneNum;
 	void createScene(int sceneNum, int which);
@@ -47,6 +48,7 @@ protected:
 class Scene2401 : public Scene {
 public:
 	Scene2401(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	Sprite *_sprite1;
 	Sprite *_asFlowingWater;
@@ -71,6 +73,7 @@ class Scene2402 : public Scene {
 public:
 	Scene2402(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Scene2402();
+
 protected:
 	Sprite *_asDoor;
 	Sprite *_ssButton;
@@ -87,6 +90,7 @@ protected:
 class Scene2403 : public Scene {
 public:
 	Scene2403(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	Sprite *_ssButton;
 	Sprite *_asTape;
@@ -99,6 +103,7 @@ protected:
 class Scene2406 : public Scene {
 public:
 	Scene2406(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	Sprite *_asTape;
 	Sprite *_asKey;

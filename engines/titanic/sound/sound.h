@@ -23,12 +23,12 @@
 #ifndef TITANIC_SOUND_H
 #define TITANIC_SOUND_H
 
-#include "titanic/support/simple_file.h"
+#include "titanic/core/list.h"
+#include "titanic/core/view_item.h"
 #include "titanic/sound/proximity.h"
 #include "titanic/sound/sound_manager.h"
 #include "titanic/sound/wave_file.h"
-#include "titanic/core/list.h"
-#include "titanic/core/view_item.h"
+#include "titanic/support/simple_file.h"
 #include "titanic/true_talk/dialogue_file.h"
 
 namespace Titanic {
@@ -43,15 +43,30 @@ public:
 	int _speechId;
 	DisposeAfterUse::Flag _disposeAfterUse;
 	bool _active;
+
 public:
-	CSoundItem() : ListItem(), _waveFile(nullptr), _dialogueFileHandle(nullptr),
-		_speechId(0), _disposeAfterUse(DisposeAfterUse::NO), _active(false) {}
-	CSoundItem(const CString &name) : ListItem(), _name(name), _waveFile(nullptr),
-		_dialogueFileHandle(nullptr), _disposeAfterUse(DisposeAfterUse::NO),
-		_speechId(0), _active(false) {}
-	CSoundItem(File *dialogueFile, int speechId) : ListItem(), _waveFile(nullptr),
-		_dialogueFileHandle(dialogueFile), _speechId(speechId), _active(false),
-		_disposeAfterUse(DisposeAfterUse::NO) {}
+	CSoundItem()
+	  : ListItem()
+	  , _waveFile(nullptr)
+	  , _dialogueFileHandle(nullptr)
+	  , _speechId(0)
+	  , _disposeAfterUse(DisposeAfterUse::NO)
+	  , _active(false) {}
+	CSoundItem(const CString &name)
+	  : ListItem()
+	  , _name(name)
+	  , _waveFile(nullptr)
+	  , _dialogueFileHandle(nullptr)
+	  , _disposeAfterUse(DisposeAfterUse::NO)
+	  , _speechId(0)
+	  , _active(false) {}
+	CSoundItem(File *dialogueFile, int speechId)
+	  : ListItem()
+	  , _waveFile(nullptr)
+	  , _dialogueFileHandle(dialogueFile)
+	  , _speechId(speechId)
+	  , _active(false)
+	  , _disposeAfterUse(DisposeAfterUse::NO) {}
 	virtual ~CSoundItem();
 };
 
@@ -62,6 +77,7 @@ class CSound {
 private:
 	CGameManager *_gameManager;
 	CSoundItemList _sounds;
+
 private:
 	/**
 	 * Check whether any sounds are done and can be be removed
@@ -73,8 +89,10 @@ private:
 	 * currently playing
 	 */
 	void removeOldest();
+
 public:
 	QSoundManager _soundManager;
+
 public:
 	CSound(CGameManager *owner, Audio::Mixer *mixer);
 	~CSound();
@@ -131,7 +149,7 @@ public:
 	 * Flags a sound about to be played as activated
 	 */
 	void activateSound(CWaveFile *waveFile,
-		DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::NO);
+	                   DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::NO);
 
 	/**
 	 * Stops any sounds attached to a given channel

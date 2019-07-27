@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/file.h"
 #include "common/debug-channels.h"
+#include "common/file.h"
 #include "common/textconsole.h"
 
 #include "engines/util.h"
@@ -40,8 +40,10 @@ namespace Cruise {
 
 CruiseEngine *_vm;
 
-CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc)
-	: Engine(syst), _gameDescription(gameDesc), _rnd("cruise") {
+CruiseEngine::CruiseEngine(OSystem *syst, const CRUISEGameDescription *gameDesc)
+  : Engine(syst)
+  , _gameDescription(gameDesc)
+  , _rnd("cruise") {
 
 	DebugMan.addDebugChannel(kCruiseDebugScript, "scripts", "Scripts debug level");
 	DebugMan.addDebugChannel(kCruiseDebugSound, "sound", "Sound debug level");
@@ -76,10 +78,7 @@ CruiseEngine::~CruiseEngine() {
 }
 
 bool CruiseEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
 Common::Error CruiseEngine::run() {
@@ -88,7 +87,7 @@ Common::Error CruiseEngine::run() {
 
 	if (!loadLanguageStrings()) {
 		error("Could not setup language data for your version");
-		return Common::kUnknownError;	// for compilers that don't support NORETURN
+		return Common::kUnknownError; // for compilers that don't support NORETURN
 	}
 
 	initialize();
@@ -136,11 +135,13 @@ bool CruiseEngine::loadLanguageStrings() {
 
 		for (int i = 0; i < MAX_LANGUAGE_STRINGS; ++i) {
 			// Get the start of the next string
-			while (*ptr != '"') ++ptr;
+			while (*ptr != '"')
+				++ptr;
 			const char *v = ++ptr;
 
 			// Find the end of the string, and replace the end '"' with a NULL
-			while (*ptr != '"') ++ptr;
+			while (*ptr != '"')
+				++ptr;
 			*ptr++ = '\0';
 
 			// Add the string to the list

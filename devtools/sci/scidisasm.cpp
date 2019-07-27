@@ -21,18 +21,18 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#  include <config.h>
+#	include <config.h>
 #endif /* HAVE_CONFIG_H */
 
 #define MALLOC_DEBUG
 
-#include <sciresource.h>
-#include <engine.h>
 #include <console.h>
+#include <engine.h>
+#include <sciresource.h>
 #include <versions.h>
 
 #ifdef HAVE_GETOPT_H
-#include <getopt.h>
+#	include <getopt.h>
 #endif /* HAVE_GETOPT_H */
 
 static int hexdump = 0;
@@ -43,13 +43,13 @@ static resource_mgr_t *resmgr;
 
 #ifdef HAVE_GETOPT_LONG
 static struct option options[] = {
-	{"version", no_argument, 0, 256},
-	{"help", no_argument, 0, 'h'},
-	{"hexdump", no_argument, &hexdump, 1},
-	{"opcode-size", no_argument, &opcode_size, 1},
-	{"verbose", no_argument, &verbose, 1},
-	{"gamedir", required_argument, 0, 'd'},
-	{0, 0, 0, 0}
+	{ "version", no_argument, 0, 256 },
+	{ "help", no_argument, 0, 'h' },
+	{ "hexdump", no_argument, &hexdump, 1 },
+	{ "opcode-size", no_argument, &opcode_size, 1 },
+	{ "verbose", no_argument, &verbose, 1 },
+	{ "gamedir", required_argument, 0, 'd' },
+	{ 0, 0, 0, 0 }
 };
 #endif /* HAVE_GETOPT_LONG */
 
@@ -69,12 +69,15 @@ typedef struct area_s {
 	struct area_s *next;
 } area_t;
 
-enum area_type { area_said, area_string, area_object, area_last };
+enum area_type { area_said,
+	               area_string,
+	               area_object,
+	               area_last };
 
 typedef struct script_state_s {
 	int script_no;
 	name_t *names;
-	area_t *areas [area_last];
+	area_t *areas[area_last];
 
 	struct script_state_s *next;
 } script_state_t;
@@ -97,39 +100,31 @@ typedef struct disasm_state_s {
 	script_state_t *scripts;
 } disasm_state_t;
 
-void
-disassemble_script(disasm_state_t *d, int res_no, int pass_no);
+void disassemble_script(disasm_state_t *d, int res_no, int pass_no);
 
 script_state_t *
 find_script_state(disasm_state_t *d, int script_no);
 
-void
-script_free_names(script_state_t *s);
+void script_free_names(script_state_t *s);
 
-void
-script_add_name(script_state_t *s, int aoffset, char *aname, int aclass_no);
+void script_add_name(script_state_t *s, int aoffset, char *aname, int aclass_no);
 
 char *
 script_find_name(script_state_t *s, int offset, int *class_no);
 
-void
-script_add_area(script_state_t *s, int start_offset, int end_offset, int type, void *data);
+void script_add_area(script_state_t *s, int start_offset, int end_offset, int type, void *data);
 
-void
-script_free_areas(script_state_t *s);
+void script_free_areas(script_state_t *s);
 
-int
-script_get_area_type(script_state_t *s, int offset, void **pdata);
+int script_get_area_type(script_state_t *s, int offset, void **pdata);
 
-void
-disasm_init(disasm_state_t *d);
+void disasm_init(disasm_state_t *d);
 
-void
-disasm_free_state(disasm_state_t *d);
+void disasm_free_state(disasm_state_t *d);
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
 	int i;
-	char outfilename [256];
+	char outfilename[256];
 	int optindex = 0;
 	int c;
 	disasm_state_t disasm_state;
@@ -144,7 +139,7 @@ int main(int argc, char** argv) {
 
 		switch (c) {
 		case 256:
-			printf("scidisasm ("PACKAGE") "VERSION"\n");
+			printf("scidisasm (" PACKAGE ") " VERSION "\n");
 			printf("This program is copyright (C) 1999 Christoph Reichenbach.\n"
 			       "It comes WITHOUT WARRANTY of any kind.\n"
 			       "This is free software, released under the GNU General Public License.\n");
@@ -162,7 +157,8 @@ int main(int argc, char** argv) {
 			exit(0);
 
 		case 'd':
-			if (gamedir) sci_free(gamedir);
+			if (gamedir)
+				sci_free(gamedir);
 			gamedir = sci_strdup(optarg);
 			break;
 
@@ -188,7 +184,7 @@ int main(int argc, char** argv) {
 
 	printf("Loading resources...\n");
 	if (!(resmgr = scir_new_resource_manager(sci_getcwd(), res_version,
-	               1, 1024 * 128))) {
+	                                         1, 1024 * 128))) {
 		fprintf(stderr, "Could not find any resources; quitting.\n");
 		exit(1);
 	}
@@ -223,8 +219,7 @@ int main(int argc, char** argv) {
 
 /* -- General operations on disasm_state_t -------------------------------  */
 
-void
-disasm_init(disasm_state_t *d) {
+void disasm_init(disasm_state_t *d) {
 	d->snames = vocabulary_get_snames(resmgr, &d->selector_count, SCI_ASSUME_VERSION);
 	d->opcodes = vocabulary_get_opcodes(resmgr);
 	d->kernel_names = vocabulary_get_knames(resmgr, &d->kernel_names_nr);
@@ -233,16 +228,15 @@ disasm_init(disasm_state_t *d) {
 	d->old_header = 0;
 
 	d->class_count = vocabulary_get_class_count(resmgr);
-	d->class_names = (char **) sci_malloc(d->class_count * sizeof(char *));
+	d->class_names = (char **)sci_malloc(d->class_count * sizeof(char *));
 	memset(d->class_names, 0, d->class_count * sizeof(char *));
-	d->class_selector_count = (int *) sci_malloc(d->class_count * sizeof(int));
+	d->class_selector_count = (int *)sci_malloc(d->class_count * sizeof(int));
 	memset(d->class_selector_count, 0, d->class_count * sizeof(int));
-	d->class_selectors = (short **) sci_malloc(d->class_count * sizeof(short *));
+	d->class_selectors = (short **)sci_malloc(d->class_count * sizeof(short *));
 	memset(d->class_selectors, 0, d->class_count * sizeof(short *));
 }
 
-void
-disasm_free_state(disasm_state_t *d) {
+void disasm_free_state(disasm_state_t *d) {
 	script_state_t *s, *next_script;
 	int i;
 
@@ -255,8 +249,10 @@ disasm_free_state(disasm_state_t *d) {
 	}
 
 	for (i = 0; i < d->class_count; i++) {
-		if (d->class_names [i]) sci_free(d->class_names [i]);
-		if (d->class_selectors [i]) sci_free(d->class_selectors [i]);
+		if (d->class_names[i])
+			sci_free(d->class_names[i]);
+		if (d->class_selectors[i])
+			sci_free(d->class_selectors[i]);
 	}
 
 	free(d->class_names);
@@ -274,9 +270,10 @@ find_script_state(disasm_state_t *d, int script_no) {
 	script_state_t *s;
 
 	for (s = d->scripts; s; s = s->next)
-		if (s->script_no == script_no) return s;
+		if (s->script_no == script_no)
+			return s;
 
-	s = (script_state_t *) sci_malloc(sizeof(script_state_t));
+	s = (script_state_t *)sci_malloc(sizeof(script_state_t));
 	memset(s, 0, sizeof(script_state_t));
 	s->script_no = script_no;
 	s->next = d->scripts;
@@ -287,8 +284,7 @@ find_script_state(disasm_state_t *d, int script_no) {
 
 /* -- Name table operations ----------------------------------------------  */
 
-void
-script_free_names(script_state_t *s) {
+void script_free_names(script_state_t *s) {
 	name_t *p = s->names, *next_name;
 
 	while (p) {
@@ -301,13 +297,13 @@ script_free_names(script_state_t *s) {
 	s->names = NULL;
 }
 
-void
-script_add_name(script_state_t *s, int aoffset, char *aname, int aclass_no) {
+void script_add_name(script_state_t *s, int aoffset, char *aname, int aclass_no) {
 	name_t *p;
 	char *name = script_find_name(s, aoffset, NULL);
-	if (name) return;
+	if (name)
+		return;
 
-	p = (name_t *) sci_malloc(sizeof(name_t));
+	p = (name_t *)sci_malloc(sizeof(name_t));
 	p->offset = aoffset;
 	p->name = sci_strdup(aname);
 	p->class_no = aclass_no;
@@ -321,7 +317,8 @@ script_find_name(script_state_t *s, int offset, int *aclass_no) {
 
 	for (p = s->names; p; p = p->next)
 		if (p->offset == offset) {
-			if (aclass_no && p->class_no != -2) *aclass_no = p->class_no;
+			if (aclass_no && p->class_no != -2)
+				*aclass_no = p->class_no;
 			return p->name;
 		}
 
@@ -330,25 +327,23 @@ script_find_name(script_state_t *s, int offset, int *aclass_no) {
 
 /* -- Area table operations ----------------------------------------------  */
 
-void
-script_add_area(script_state_t *s, int start_offset, int end_offset, int type, void *data) {
+void script_add_area(script_state_t *s, int start_offset, int end_offset, int type, void *data) {
 	area_t *area;
 
-	area = (area_t *) sci_malloc(sizeof(area_t));
+	area = (area_t *)sci_malloc(sizeof(area_t));
 	area->start_offset = start_offset;
 	area->end_offset = end_offset;
 	area->data = data;
-	area->next = s->areas [type];
+	area->next = s->areas[type];
 
-	s->areas [type] = area;
+	s->areas[type] = area;
 }
 
-void
-script_free_areas(script_state_t *s) {
+void script_free_areas(script_state_t *s) {
 	int i;
 
 	for (i = 0; i < area_last; i++) {
-		area_t *area = s->areas [i], *next_area;
+		area_t *area = s->areas[i], *next_area;
 		while (area) {
 			next_area = area->next;
 			free(area);
@@ -357,15 +352,15 @@ script_free_areas(script_state_t *s) {
 	}
 }
 
-int
-script_get_area_type(script_state_t *s, int offset, void **pdata) {
+int script_get_area_type(script_state_t *s, int offset, void **pdata) {
 	int i;
 
 	for (i = 0; i < area_last; i++) {
-		area_t *area = s->areas [i];
+		area_t *area = s->areas[i];
 		while (area) {
-			if (area->start_offset <= offset && area->end_offset >= offset)     {
-				if (pdata != NULL) *pdata = area->data;
+			if (area->start_offset <= offset && area->end_offset >= offset) {
+				if (pdata != NULL)
+					*pdata = area->data;
 				return i;
 			}
 			area = area->next;
@@ -377,10 +372,10 @@ script_get_area_type(script_state_t *s, int offset, void **pdata) {
 
 char *
 get_selector_name(disasm_state_t *d, int selector) {
-	static char selector_name [256];
+	static char selector_name[256];
 
 	if (d->snames && selector >= 0 && selector < d->selector_count)
-		return d->snames [selector];
+		return d->snames[selector];
 	else {
 		sprintf(selector_name, "unknown_sel_%X", selector);
 		return selector_name;
@@ -389,12 +384,12 @@ get_selector_name(disasm_state_t *d, int selector) {
 
 const char *
 get_class_name(disasm_state_t *d, int class_no) {
-	static char class_name [256];
+	static char class_name[256];
 
 	if (class_no == -1)
 		return "<none>";
-	else if (class_no >= 0 && class_no < d->class_count && d->class_names [class_no])
-		return d->class_names [class_no];
+	else if (class_no >= 0 && class_no < d->class_count && d->class_names[class_no])
+		return d->class_names[class_no];
 	else {
 		sprintf(class_name, "class_%d", class_no);
 		return class_name;
@@ -413,7 +408,7 @@ script_dump_object(disasm_state_t *d, script_state_t *s,
 	int i = 0;
 	short sel;
 	const char *name;
-	char buf [256];
+	char buf[256];
 	short *sels;
 
 	selectors = (selectorsize = getInt16(data + seeker + 6));
@@ -437,15 +432,15 @@ script_dump_object(disasm_state_t *d, script_state_t *s,
 	seeker += 8;
 
 	if (species < d->class_count)
-		sels = d->class_selectors [species];
+		sels = d->class_selectors[species];
 	else
 		sels = NULL;
 
 	while (selectors--) {
 		if (pass_no == 2) {
 			sel = getInt16(data + seeker) & 0xffff;
-			if (sels && (sels [i] >= 0) && (sels[i] < d->selector_count)) {
-				sciprintf("  [#%03x] %s = 0x%x\n", i, d->snames [sels [i]], sel);
+			if (sels && (sels[i] >= 0) && (sels[i] < d->selector_count)) {
+				sciprintf("  [#%03x] %s = 0x%x\n", i, d->snames[sels[i]], sel);
 				i++;
 			} else
 				sciprintf("  [#%03x] <unknown> = 0x%x\n", i++, sel);
@@ -463,14 +458,15 @@ script_dump_object(disasm_state_t *d, script_state_t *s,
 
 	while (overloads--) {
 		word selector = getInt16(data + (seeker)) & 0xffff;
-		if (d->old_header) selector >>= 1;
+		if (d->old_header)
+			selector >>= 1;
 
 		if (pass_no == 1) {
 			sprintf(buf, "%s::%s", name, get_selector_name(d, selector));
-			script_add_name(s, getInt16(data + seeker + selectors*2 + 2), buf, species);
+			script_add_name(s, getInt16(data + seeker + selectors * 2 + 2), buf, species);
 		} else {
 			sciprintf("  [%03x] %s: @", selector, get_selector_name(d, selector));
-			sciprintf("%04x\n", getInt16(data + seeker + selectors*2 + 2));
+			sciprintf("%04x\n", getInt16(data + seeker + selectors * 2 + 2));
 		}
 
 		seeker += 2;
@@ -485,7 +481,7 @@ script_dump_class(disasm_state_t *d, script_state_t *s,
 	int superclass = getInt16(data + 10 + seeker);
 	int namepos = getInt16(data + 14 + seeker);
 	const char *name;
-	char buf [256];
+	char buf[256];
 	int i;
 
 	name = namepos ? ((const char *)data + namepos) : "<unknown>";
@@ -495,12 +491,12 @@ script_dump_class(disasm_state_t *d, script_state_t *s,
 		if (species >= 0 && species < d->class_count) {
 			if (!namepos) {
 				sprintf(buf, "class_%d", species);
-				d->class_names [species] = sci_strdup(buf);
+				d->class_names[species] = sci_strdup(buf);
 			} else
-				d->class_names [species] = sci_strdup(name);
+				d->class_names[species] = sci_strdup(name);
 
-			d->class_selector_count [species] = selectors;
-			d->class_selectors [species] = (short *) sci_malloc(sizeof(short) * selectors);
+			d->class_selector_count[species] = selectors;
+			d->class_selectors[species] = (short *)sci_malloc(sizeof(short) * selectors);
 		}
 	}
 
@@ -520,11 +516,12 @@ script_dump_class(disasm_state_t *d, script_state_t *s,
 
 	for (i = 0; i < selectors; i++) {
 		word selector = 0xffff & getInt16(data + (seeker) + selectorsize);
-		if (d->old_header) selector >>= 1;
+		if (d->old_header)
+			selector >>= 1;
 
 		if (pass_no == 1) {
 			if (species >= 0 && species < d->class_count)
-				d->class_selectors [species][i] = selector;
+				d->class_selectors[species][i] = selector;
 		} else
 			sciprintf("  [%03x] %s = 0x%x\n", selector, get_selector_name(d, selector),
 			          getInt16(data + seeker) & 0xffff);
@@ -542,14 +539,15 @@ script_dump_class(disasm_state_t *d, script_state_t *s,
 
 	while (overloads--) {
 		word selector = getInt16(data + (seeker)) & 0xffff;
-		if (d->old_header) selector >>= 1;
+		if (d->old_header)
+			selector >>= 1;
 
 		if (pass_no == 1) {
 			sprintf(buf, "%s::%s", name, get_selector_name(d, selector));
-			script_add_name(s, getInt16(data + seeker + selectors*2 + 2) & 0xffff, buf, species);
+			script_add_name(s, getInt16(data + seeker + selectors * 2 + 2) & 0xffff, buf, species);
 		} else {
 			sciprintf("  [%03x] %s: @", selector & 0xffff, get_selector_name(d, selector));
-			sciprintf("%04x\n", getInt16(data + seeker + selectors*2 + 2) & 0xffff);
+			sciprintf("%04x\n", getInt16(data + seeker + selectors * 2 + 2) & 0xffff);
 		}
 
 		seeker += 2;
@@ -559,8 +557,9 @@ script_dump_class(disasm_state_t *d, script_state_t *s,
 static int
 script_dump_said_string(disasm_state_t *d, unsigned char *data, int seeker) {
 	while (1) {
-		unsigned short nextitem = (unsigned char) data [seeker++];
-		if (nextitem == 0xFF) return seeker;
+		unsigned short nextitem = (unsigned char)data[seeker++];
+		if (nextitem == 0xFF)
+			return seeker;
 
 		if (nextitem >= 0xF0) {
 			switch (nextitem) {
@@ -596,7 +595,7 @@ script_dump_said_string(disasm_state_t *d, unsigned char *data, int seeker) {
 				break;
 			}
 		} else {
-			nextitem = nextitem << 8 | (unsigned char) data [seeker++];
+			nextitem = nextitem << 8 | (unsigned char)data[seeker++];
 			sciprintf("%s ", vocab_get_any_group_word(nextitem, d->words, d->word_count));
 			if (verbose)
 				sciprintf("[%03x] ", nextitem);
@@ -633,7 +632,8 @@ script_dump_synonyms(disasm_state_t *d, script_state_t *s,
 		int search = getInt16(data + seeker);
 		int replace = getInt16(data + seeker + 2);
 		seeker += 4;
-		if (search < 0) break;
+		if (search < 0)
+			break;
 		sciprintf("%s[%03x] ==> %s[%03x]\n",
 		          vocab_get_any_group_word(search, d->words, d->word_count), search,
 		          vocab_get_any_group_word(replace, d->words, d->word_count), replace);
@@ -651,9 +651,9 @@ script_dump_strings(disasm_state_t *d, script_state_t *s,
 	}
 
 	sciprintf(".strings\n");
-	while (data [seeker] && seeker < endptr) {
+	while (data[seeker] && seeker < endptr) {
 		sciprintf("%04x: %s\n", seeker, data + seeker);
-		seeker += strlen((char *) data + seeker) + 1;
+		seeker += strlen((char *)data + seeker) + 1;
 	}
 }
 
@@ -663,11 +663,12 @@ script_dump_exports(disasm_state_t *d, script_state_t *s,
 	byte *pexport = (byte *)(data + seeker);
 	word export_count = getUInt16(pexport);
 	int i;
-	char buf [256];
+	char buf[256];
 
 	pexport += 2;
 
-	if (pass_no == 2) sciprintf(".exports\n");
+	if (pass_no == 2)
+		sciprintf(".exports\n");
 
 	for (i = 0; i < export_count; i++) {
 		if (pass_no == 1) {
@@ -690,13 +691,14 @@ script_disassemble_code(disasm_state_t *d, script_state_t *s,
 	int cur_class = -1;
 	word dest;
 	void *area_data;
-	char buf [256];
+	char buf[256];
 	char *dest_name;
 
-	if (pass_no == 2) sciprintf(".code\n");
+	if (pass_no == 2)
+		sciprintf(".code\n");
 
 	while (seeker < endptr - 1) {
-		unsigned char opsize = data [seeker];
+		unsigned char opsize = data[seeker];
 		unsigned char opcode = opsize >> 1;
 		word param_value;
 		char *name;
@@ -705,7 +707,8 @@ script_disassemble_code(disasm_state_t *d, script_state_t *s,
 
 		if (pass_no == 2) {
 			name = script_find_name(s, seeker, &cur_class);
-			if (name) sciprintf("      %s:\n", name);
+			if (name)
+				sciprintf("      %s:\n", name);
 			sciprintf("%04X: ", seeker);
 			sciprintf("%s", d->opcodes[opcode].name);
 			if (opcode_size && formats[opcode][0])
@@ -720,19 +723,21 @@ script_disassemble_code(disasm_state_t *d, script_state_t *s,
 			switch (formats[opcode][i]) {
 
 			case Script_Invalid:
-				if (pass_no == 2) sciprintf("-Invalid operation-");
+				if (pass_no == 2)
+					sciprintf("-Invalid operation-");
 				break;
 
 			case Script_SByte:
 			case Script_Byte:
-				if (pass_no == 2) sciprintf(" %02x", data[seeker]);
+				if (pass_no == 2)
+					sciprintf(" %02x", data[seeker]);
 				seeker++;
 				break;
 
 			case Script_Word:
 			case Script_SWord:
 				if (pass_no == 2)
-					sciprintf(" %04x", 0xffff & (data[seeker] | (data[seeker+1] << 8)));
+					sciprintf(" %04x", 0xffff & (data[seeker] | (data[seeker + 1] << 8)));
 				seeker += 2;
 				break;
 
@@ -746,15 +751,15 @@ script_disassemble_code(disasm_state_t *d, script_state_t *s,
 			case Script_Property:
 			case Script_Offset:
 				if (opsize)
-					param_value = data [seeker++];
+					param_value = data[seeker++];
 				else {
-					param_value = 0xffff & (data[seeker] | (data[seeker+1] << 8));
+					param_value = 0xffff & (data[seeker] | (data[seeker + 1] << 8));
 					seeker += 2;
 				}
 
 				if (pass_no == 1) {
-					if (opcode == op_jmp || opcode == op_bt || opcode == op_bnt)					{
-						dest = seeker + (short) param_value;
+					if (opcode == op_jmp || opcode == op_bt || opcode == op_bnt) {
+						dest = seeker + (short)param_value;
 						sprintf(buf, "lbl_%04X", dest);
 						script_add_name(s, dest, buf, -2);
 					}
@@ -764,17 +769,18 @@ script_disassemble_code(disasm_state_t *d, script_state_t *s,
 					case Script_SVariable:
 					case Script_Variable:
 						if (opcode == op_callk) {
-							sciprintf(" #%s", (param_value < d->kernel_names_nr)
-							          ? d->kernel_names[param_value] : "<invalid>");
-							if (verbose) sciprintf("[%x]", param_value);
-						} else if (opcode == op_class || (opcode == op_super && i == 0))           {
-							sciprintf(" %s", (d->class_names && param_value < d->class_count)
-							          ? d->class_names[param_value] : "<invalid>");
-							if (verbose) sciprintf("[%x]", param_value);
-						} else sciprintf(opsize ? " %02x" : " %04x", param_value);
+							sciprintf(" #%s", (param_value < d->kernel_names_nr) ? d->kernel_names[param_value] : "<invalid>");
+							if (verbose)
+								sciprintf("[%x]", param_value);
+						} else if (opcode == op_class || (opcode == op_super && i == 0)) {
+							sciprintf(" %s", (d->class_names && param_value < d->class_count) ? d->class_names[param_value] : "<invalid>");
+							if (verbose)
+								sciprintf("[%x]", param_value);
+						} else
+							sciprintf(opsize ? " %02x" : " %04x", param_value);
 
 						if (opcode == op_pushi && param_value > 0 && param_value < d->selector_count)
-							sciprintf("\t\t; selector <%s>", d->snames [param_value]);
+							sciprintf("\t\t; selector <%s>", d->snames[param_value]);
 
 						break;
 
@@ -795,7 +801,7 @@ script_disassemble_code(disasm_state_t *d, script_state_t *s,
 						break;
 
 					case Script_Offset:
-						dest = (short) param_value;
+						dest = (short)param_value;
 						dest_name = script_find_name(s, dest, NULL);
 						if (dest_name)
 							sciprintf(" %s", dest_name);
@@ -808,10 +814,10 @@ script_disassemble_code(disasm_state_t *d, script_state_t *s,
 						if (opcode == op_lofsa || opcode == op_lofss) {
 							int atype = script_get_area_type(s, dest, &area_data);
 							if (atype == area_string) {
-								strncpy(buf, (char *) &data [dest], sizeof(buf) - 1);
-								buf [sizeof(buf)-1] = 0;
+								strncpy(buf, (char *)&data[dest], sizeof(buf) - 1);
+								buf[sizeof(buf) - 1] = 0;
 								if (strlen(buf) > 40) {
-									buf [40] = 0;
+									buf[40] = 0;
 									strcat(buf, "...");
 								}
 								sciprintf("\t\t; \"%s\"", buf);
@@ -825,7 +831,7 @@ script_disassemble_code(disasm_state_t *d, script_state_t *s,
 						break;
 
 					case Script_SRelative:
-						dest = seeker + (short) param_value;
+						dest = seeker + (short)param_value;
 						dest_name = script_find_name(s, dest, NULL);
 						if (dest_name)
 							sciprintf(" %s", dest_name);
@@ -838,10 +844,10 @@ script_disassemble_code(disasm_state_t *d, script_state_t *s,
 						if (opcode == op_lofsa || opcode == op_lofss) {
 							int atype = script_get_area_type(s, dest, &area_data);
 							if (atype == area_string) {
-								strncpy(buf, (char *) &data [dest], sizeof(buf) - 1);
-								buf [sizeof(buf)-1] = 0;
+								strncpy(buf, (char *)&data[dest], sizeof(buf) - 1);
+								buf[sizeof(buf) - 1] = 0;
 								if (strlen(buf) > 40) {
-									buf [40] = 0;
+									buf[40] = 0;
 									strcat(buf, "...");
 								}
 								sciprintf("\t\t; \"%s\"", buf);
@@ -855,16 +861,18 @@ script_disassemble_code(disasm_state_t *d, script_state_t *s,
 						break;
 
 					case Script_Property:
-						if (cur_class != -1 && param_value / 2 < d->class_selector_count [cur_class]) {
-							sciprintf(" %s", get_selector_name(d, d->class_selectors [cur_class][param_value/2]));
-							if (verbose) sciprintf("[%x]", param_value);
+						if (cur_class != -1 && param_value / 2 < d->class_selector_count[cur_class]) {
+							sciprintf(" %s", get_selector_name(d, d->class_selectors[cur_class][param_value / 2]));
+							if (verbose)
+								sciprintf("[%x]", param_value);
 						} else
 							sciprintf(opsize ? " %02x" : " %04x", param_value);
 
 						break;
 
 					case Script_End:
-						if (pass_no == 2) sciprintf("\n");
+						if (pass_no == 2)
+							sciprintf("\n");
 						break;
 
 					default:
@@ -874,31 +882,32 @@ script_disassemble_code(disasm_state_t *d, script_state_t *s,
 			default:
 				break;
 			}
-		if (pass_no == 2) sciprintf("\n");
-
+		if (pass_no == 2)
+			sciprintf("\n");
 	}
-
 }
 
-void
-disassemble_script_pass(disasm_state_t *d, script_state_t *s,
-                        resource_t *script, int pass_no) {
+void disassemble_script_pass(disasm_state_t *d, script_state_t *s,
+                             resource_t *script, int pass_no) {
 	int _seeker = 0;
 	word id = getInt16(script->data);
 
 	if (id > 15) {
-		if (pass_no == 2) sciprintf("; Old script header detected\n");
+		if (pass_no == 2)
+			sciprintf("; Old script header detected\n");
 		d->old_header = 1;
 	}
 
-	if (d->old_header) _seeker = 2;
+	if (d->old_header)
+		_seeker = 2;
 
 	while (_seeker < script->size) {
 		int objtype = getInt16(script->data + _seeker);
 		int objsize;
 		int seeker = _seeker + 4;
 
-		if (!objtype) return;
+		if (!objtype)
+			return;
 
 		if (pass_no == 2)
 			sciprintf("\n");
@@ -907,7 +916,8 @@ disassemble_script_pass(disasm_state_t *d, script_state_t *s,
 
 		if (pass_no == 2) {
 			sciprintf("; Obj type #%x, offset 0x%x, size 0x%x:\n", objtype, _seeker, objsize);
-			if (hexdump) sci_hexdump(script->data + seeker, objsize - 4, seeker);
+			if (hexdump)
+				sci_hexdump(script->data + seeker, objsize - 4, seeker);
 		}
 
 		_seeker += objsize;
@@ -970,8 +980,7 @@ disassemble_script_pass(disasm_state_t *d, script_state_t *s,
 	sciprintf("Script ends without terminator\n");
 }
 
-void
-disassemble_script(disasm_state_t *d, int res_no, int pass_no) {
+void disassemble_script(disasm_state_t *d, int res_no, int pass_no) {
 	resource_t *script = scir_find_resource(resmgr, sci_script, res_no, 0);
 	script_state_t *s = find_script_state(d, res_no);
 

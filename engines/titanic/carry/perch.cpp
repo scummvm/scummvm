@@ -25,7 +25,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPerch, CCentralCore)
-	ON_MESSAGE(UseWithOtherMsg)
+ON_MESSAGE(UseWithOtherMsg)
 END_MESSAGE_MAP()
 
 void CPerch::save(SimpleFile *file, int indent) {

@@ -20,12 +20,12 @@
  *
  */
 
-#include "common/stream.h"
-#include "common/substream.h"
-#include "common/memstream.h"
-#include "common/md5.h"
 #include "common/algorithm.h"
 #include "common/bitstream.h"
+#include "common/md5.h"
+#include "common/memstream.h"
+#include "common/stream.h"
+#include "common/substream.h"
 
 #include "adl/disk.h"
 
@@ -252,12 +252,12 @@ static bool decodeTrack(Common::SeekableReadStream &stream, uint trackLen, bool 
 				if (n < 86) { // use first pair of bits
 					output[n] |= ((inbuffer[n] & 1) << 1);
 					output[n] |= ((inbuffer[n] & 2) >> 1);
-				} else if (n < 86*2) { // second pair
-					output[n] |= ((inbuffer[n-86] & 4) >> 1);
-					output[n] |= ((inbuffer[n-86] & 8) >> 3);
+				} else if (n < 86 * 2) { // second pair
+					output[n] |= ((inbuffer[n - 86] & 4) >> 1);
+					output[n] |= ((inbuffer[n - 86] & 8) >> 3);
 				} else { // third pair
-					output[n] |= ((inbuffer[n-86*2] & 0x10) >> 3);
-					output[n] |= ((inbuffer[n-86*2] & 0x20) >> 5);
+					output[n] |= ((inbuffer[n - 86 * 2] & 0x10) >> 3);
+					output[n] |= ((inbuffer[n - 86 * 2] & 0x20) >> 5);
 				}
 			}
 		} else {
@@ -271,16 +271,16 @@ static bool decodeTrack(Common::SeekableReadStream &stream, uint trackLen, bool 
 			// so we have 51 of these batches (255 bytes), plus 2 bytes of 'leftover' nibbles for byte 256
 			for (uint n = 0; n < 51; ++n) {
 				// e.g. figure 3.18 of Beneath Apple DOS
-				byte lowbits1 = inbuffer[51*3 - n];
-				byte lowbits2 = inbuffer[51*2 - n];
-				byte lowbits3 = inbuffer[51*1 - n];
+				byte lowbits1 = inbuffer[51 * 3 - n];
+				byte lowbits2 = inbuffer[51 * 2 - n];
+				byte lowbits3 = inbuffer[51 * 1 - n];
 				byte lowbits4 = (lowbits1 & 2) << 1 | (lowbits2 & 2) | (lowbits3 & 2) >> 1;
 				byte lowbits5 = (lowbits1 & 1) << 2 | (lowbits2 & 1) << 1 | (lowbits3 & 1);
-				output[250 - 5*n] = (inbuffer[n + 51*3 + 1] << 3) | ((lowbits1 >> 2) & 0x7);
-				output[251 - 5*n] = (inbuffer[n + 51*4 + 1] << 3) | ((lowbits2 >> 2) & 0x7);
-				output[252 - 5*n] = (inbuffer[n + 51*5 + 1] << 3) | ((lowbits3 >> 2) & 0x7);
-				output[253 - 5*n] = (inbuffer[n + 51*6 + 1] << 3) | lowbits4;
-				output[254 - 5*n] = (inbuffer[n + 51*7 + 1] << 3) | lowbits5;
+				output[250 - 5 * n] = (inbuffer[n + 51 * 3 + 1] << 3) | ((lowbits1 >> 2) & 0x7);
+				output[251 - 5 * n] = (inbuffer[n + 51 * 4 + 1] << 3) | ((lowbits2 >> 2) & 0x7);
+				output[252 - 5 * n] = (inbuffer[n + 51 * 5 + 1] << 3) | ((lowbits3 >> 2) & 0x7);
+				output[253 - 5 * n] = (inbuffer[n + 51 * 6 + 1] << 3) | lowbits4;
+				output[254 - 5 * n] = (inbuffer[n + 51 * 7 + 1] << 3) | lowbits5;
 			}
 			output[255] = (inbuffer[409] << 3) | (inbuffer[0] & 0x7);
 		}
@@ -394,7 +394,7 @@ static Common::SeekableReadStream *readTrack_WOZ(Common::File &f, uint track, bo
 		return nullptr;
 	}
 
-	Common::BitStreamMemory8MSB bitStream(new Common::BitStreamMemoryStream(inBuf, byteSize, DisposeAfterUse::YES), DisposeAfterUse::YES); 
+	Common::BitStreamMemory8MSB bitStream(new Common::BitStreamMemoryStream(inBuf, byteSize, DisposeAfterUse::YES), DisposeAfterUse::YES);
 
 	byte nibble = 0;
 	bool stop = false;
@@ -648,8 +648,8 @@ Files_AppleDOS::~Files_AppleDOS() {
 	delete _disk;
 }
 
-Files_AppleDOS::Files_AppleDOS() :
-		_disk(nullptr) {
+Files_AppleDOS::Files_AppleDOS()
+  : _disk(nullptr) {
 }
 
 void Files_AppleDOS::readSectorList(TrackSector start, Common::Array<TrackSector> &list) {
@@ -691,7 +691,7 @@ void Files_AppleDOS::readVTOC(uint trackVTOC) {
 	byte sector = stream->readByte();
 
 	while (track != 0) {
-		char name[kFilenameLen + 1] = { };
+		char name[kFilenameLen + 1] = {};
 
 		stream.reset(_disk->createReadStream(track, sector));
 		stream->readByte();
@@ -800,7 +800,7 @@ Common::SeekableReadStream *Files_AppleDOS::createReadStream(const Common::Strin
 
 	Common::SeekableReadStream *stream;
 
-	switch(entry.type) {
+	switch (entry.type) {
 	case kFileTypeText:
 		stream = createReadStreamText(entry);
 		break;

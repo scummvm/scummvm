@@ -34,7 +34,7 @@ void SceneScriptPS09::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 0, 0, 30, 479, 3);
 
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
-	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED5X,  50, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED5X, 50, 0, 0);
 	Ambient_Sounds_Add_Looping_Sound(kSfxPRISAMB1, 30, 0, 0);
 	Ambient_Sounds_Add_Looping_Sound(kSfxPRISAMB3, 30, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxPRISSLM1, 15, 60, 7, 10, 100, 100, -101, -101, 0, 0);
@@ -88,12 +88,11 @@ bool SceneScriptPS09::ClickedOnActor(int actorId) {
 				return true;
 			}
 
-			if ( Game_Flag_Query(kFlagPS09GrigorianTalk1)
-			 && !Game_Flag_Query(kFlagPS09GrigorianTalk2)
-			 && !Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
-			 && !Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
-			 && !Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)
-			) {
+			if (Game_Flag_Query(kFlagPS09GrigorianTalk1)
+			    && !Game_Flag_Query(kFlagPS09GrigorianTalk2)
+			    && !Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
+			    && !Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
+			    && !Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)) {
 				Actor_Says(kActorMcCoy, 4245, 14);
 				Actor_Says(kActorGrigorian, 20, 14);
 				Game_Flag_Set(kFlagPS09GrigorianTalk2);
@@ -101,13 +100,11 @@ bool SceneScriptPS09::ClickedOnActor(int actorId) {
 			}
 
 			if (!Game_Flag_Query(kFlagPS09GrigorianDialogue)
-			 &&  Game_Flag_Query(kFlagPS09GrigorianTalk1)
-			 &&  (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
-			  ||  Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
-			  ||  Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)
-			  ||  Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)
-			 )
-			) {
+			    && Game_Flag_Query(kFlagPS09GrigorianTalk1)
+			    && (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
+			        || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
+			        || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)
+			        || Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote))) {
 				Game_Flag_Set(kFlagPS09GrigorianDialogue);
 				Actor_Says(kActorMcCoy, 4240, 13);
 				Actor_Says(kActorGrigorian, 550, 15);
@@ -124,12 +121,10 @@ bool SceneScriptPS09::ClickedOnActor(int actorId) {
 			}
 
 			if (Game_Flag_Query(kFlagPS09GrigorianDialogue)
-			 && Game_Flag_Query(kFlagPS09GrigorianTalk1)
-			 && (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
-			  || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
-			  || Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)
-			 )
-			) {
+			    && Game_Flag_Query(kFlagPS09GrigorianTalk1)
+			    && (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
+			        || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
+			        || Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote))) {
 				dialogueWithGrigorian();
 				return true;
 			}
@@ -154,9 +149,8 @@ bool SceneScriptPS09::ClickedOnActor(int actorId) {
 				return true;
 			}
 
-			if ( Game_Flag_Query(kFlagPS09IzoTalk1)
-			 && !Game_Flag_Query(kFlagPS09IzoTalk2)
-			) {
+			if (Game_Flag_Query(kFlagPS09IzoTalk1)
+			    && !Game_Flag_Query(kFlagPS09IzoTalk2)) {
 				Actor_Says(kActorMcCoy, 4210, 18);
 				Actor_Says(kActorIzo, 580, kAnimationModeTalk);
 				Actor_Says(kActorMcCoy, 4215, 14);
@@ -188,10 +182,9 @@ bool SceneScriptPS09::ClickedOnActor(int actorId) {
 				Game_Flag_Set(kFlagPS09CrazylegsTalk1);
 			}
 
-			if ( Game_Flag_Query(kFlagPS09CrazylegsTalk1)
-			 &&  Game_Flag_Query(kFlagGrigorianArrested)
-			 && !Game_Flag_Query(kFlagPS09CrazylegsGrigorianTalk)
-			) {
+			if (Game_Flag_Query(kFlagPS09CrazylegsTalk1)
+			    && Game_Flag_Query(kFlagGrigorianArrested)
+			    && !Game_Flag_Query(kFlagPS09CrazylegsGrigorianTalk)) {
 				Actor_Face_Actor(kActorGrigorian, kActorCrazylegs, true);
 				Actor_Says(kActorGrigorian, 420, 14);
 				Actor_Face_Actor(kActorCrazylegs, kActorGrigorian, true);
@@ -204,9 +197,9 @@ bool SceneScriptPS09::ClickedOnActor(int actorId) {
 				return true;
 			}
 
-			if ( Game_Flag_Query(kFlagPS09CrazylegsTalk1)
-			 && !Game_Flag_Query(kFlagGrigorianArrested)
-			 && !Game_Flag_Query(kFlagPS09CrazylegsTalk2)) {
+			if (Game_Flag_Query(kFlagPS09CrazylegsTalk1)
+			    && !Game_Flag_Query(kFlagGrigorianArrested)
+			    && !Game_Flag_Query(kFlagPS09CrazylegsTalk2)) {
 				Actor_Says(kActorMcCoy, 4425, 18);
 				Actor_Says(kActorCrazylegs, 1100, kAnimationModeTalk);
 				Actor_Says(kActorMcCoy, 4430, 19);
@@ -246,14 +239,13 @@ bool SceneScriptPS09::ClickedOn2DRegion(int region) {
 
 void SceneScriptPS09::SceneFrameAdvanced(int frame) {
 	if (frame == 1
-	 || frame == 15
-	 || frame == 20
-	 || frame == 31
-	 || frame == 33
-	 || frame == 35
-	 || frame == 52
-	 || frame == 54
-	) {
+	    || frame == 15
+	    || frame == 20
+	    || frame == 31
+	    || frame == 33
+	    || frame == 35
+	    || frame == 52
+	    || frame == 54) {
 		Sound_Play(kSfxNEON7, Random_Query(50, 33), 10, 10, 50);
 	}
 	//return true;
@@ -293,16 +285,14 @@ void SceneScriptPS09::DialogueQueueFlushed(int a1) {
 void SceneScriptPS09::dialogueWithGrigorian() {
 	Dialogue_Menu_Clear_List();
 	if (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
-	 || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
-	 || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)
-	) {
-		DM_Add_To_List_Never_Repeat_Once_Selected(170,  5, 5, 3); // PROTEST
+	    || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
+	    || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)) {
+		DM_Add_To_List_Never_Repeat_Once_Selected(170, 5, 5, 3); // PROTEST
 		DM_Add_To_List_Never_Repeat_Once_Selected(180, -1, 5, 5); // CARS
 		if ((_vm->_cutContent
 		     && (!Game_Flag_Query(kFlagPS09GrigorianVKChosen)
 		         && (!Actor_Clue_Query(kActorMcCoy, kClueVKGrigorianHuman) && !Actor_Clue_Query(kActorMcCoy, kClueVKGrigorianReplicant))))
-		    || !_vm->_cutContent
-		) {
+		    || !_vm->_cutContent) {
 			if (_vm->_cutContent) {
 				Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(200);
 			}
@@ -310,11 +300,9 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 		}
 	}
 	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote) // cut feature? it is impossible to obtain this clue
-	 && (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
-	  || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
-	  || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)
-	 )
-	) {
+	    && (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
+	        || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
+	        || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2))) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(190, 5, 6, -1); // NOTE
 	}
 #if BLADERUNNER_ORIGINAL_BUGS

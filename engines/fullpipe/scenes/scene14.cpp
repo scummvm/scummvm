@@ -22,17 +22,17 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
 #include "fullpipe/input.h"
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
@@ -408,9 +408,10 @@ void sceneHandler14_declineCallback(int *arg) {
 
 	if (g_vars->scene14_dudeIsKicking) {
 		*arg = (int)(sqrt((double)(g_fp->_mouseVirtY - g_vars->scene14_mouseCursorPos.y)
-							 * (g_fp->_mouseVirtY - g_vars->scene14_mouseCursorPos.y)
-					+ (g_fp->_mouseVirtX - g_vars->scene14_mouseCursorPos.x)
-							 * (g_fp->_mouseVirtX - g_vars->scene14_mouseCursorPos.x)) * 0.1);
+		                    * (g_fp->_mouseVirtY - g_vars->scene14_mouseCursorPos.y)
+		                  + (g_fp->_mouseVirtX - g_vars->scene14_mouseCursorPos.x)
+		                    * (g_fp->_mouseVirtX - g_vars->scene14_mouseCursorPos.x))
+		             * 0.1);
 
 		if (*arg > 11)
 			*arg = 11;
@@ -633,7 +634,7 @@ void sceneHandler14_animateBall() {
 	if (g_vars->scene14_ballY <= 517) {
 		if (x <= g_vars->scene14_dudeX - 16) {
 			if (g_vars->scene14_ballDeltaX >= 0 || x >= g_vars->scene14_grandmaX + 65
-					|| x <= g_vars->scene14_grandmaX - 135 || y <= g_vars->scene14_grandmaY - 102) {
+			    || x <= g_vars->scene14_grandmaX - 135 || y <= g_vars->scene14_grandmaY - 102) {
 				if (g_vars->scene14_flyingBall->_movement)
 					g_vars->scene14_flyingBall->_movement->setOXY(x, y);
 				else
@@ -656,7 +657,7 @@ int sceneHandler14(ExCommand *cmd) {
 	if (cmd->_messageKind != 17)
 		return 0;
 
-	switch(cmd->_messageNum) {
+	switch (cmd->_messageNum) {
 	case MSG_SC14_SHOWBALLGMAHIT2:
 		sceneHandler14_showBallGrandmaHit2();
 		break;
@@ -753,52 +754,51 @@ int sceneHandler14(ExCommand *cmd) {
 		g_fp->lift_hoverButton(cmd);
 		break;
 
-	case 33:
-		{
-			Movement *mov = g_fp->_aniMan->_movement;
+	case 33: {
+		Movement *mov = g_fp->_aniMan->_movement;
 
-			if (mov) {
-				g_vars->scene14_dudeX = mov->_ox;
-				g_vars->scene14_dudeY = mov->_oy;
+		if (mov) {
+			g_vars->scene14_dudeX = mov->_ox;
+			g_vars->scene14_dudeY = mov->_oy;
 
-				if (mov->_id == MV_MAN14_KICK)
-					g_vars->scene14_dudeX = mov->_ox + 2 * g_fp->_aniMan->_movement->_currDynamicPhaseIndex;
-			} else {
-				g_vars->scene14_dudeX = g_fp->_aniMan->_ox;
-				g_vars->scene14_dudeY = g_fp->_aniMan->_oy;
-			}
-
-			mov = g_vars->scene14_grandma->_movement;
-			if (mov) {
-				g_vars->scene14_grandmaX = mov->_ox;
-				g_vars->scene14_grandmaY = mov->_oy;
-			} else {
-				g_vars->scene14_grandmaX = g_vars->scene14_grandma->_ox;
-				g_vars->scene14_grandmaY = g_vars->scene14_grandma->_oy;
-			}
-
-			if (g_fp->_aniMan2) {
-				int x = g_fp->_aniMan2->_ox;
-				g_vars->scene14_dude2X = x;
-
-				if (x < g_fp->_sceneRect.left + g_vars->scene14_sceneDeltaX) {
-					g_fp->_currentScene->_x = x - g_vars->scene14_sceneDiffX - g_fp->_sceneRect.left;
-					x = g_vars->scene14_dude2X;
-				}
-
-				if (x > g_fp->_sceneRect.right - g_vars->scene14_sceneDeltaX)
-					g_fp->_currentScene->_x = x + g_vars->scene14_sceneDiffX - g_fp->_sceneRect.right;
-
-				g_fp->sceneAutoScrolling();
-			}
-
-			if (g_vars->scene14_ballIsFlying)
-				sceneHandler14_animateBall();
-
-			g_fp->_behaviorManager->updateBehaviors();
-			g_fp->startSceneTrack();
-			break;
+			if (mov->_id == MV_MAN14_KICK)
+				g_vars->scene14_dudeX = mov->_ox + 2 * g_fp->_aniMan->_movement->_currDynamicPhaseIndex;
+		} else {
+			g_vars->scene14_dudeX = g_fp->_aniMan->_ox;
+			g_vars->scene14_dudeY = g_fp->_aniMan->_oy;
 		}
+
+		mov = g_vars->scene14_grandma->_movement;
+		if (mov) {
+			g_vars->scene14_grandmaX = mov->_ox;
+			g_vars->scene14_grandmaY = mov->_oy;
+		} else {
+			g_vars->scene14_grandmaX = g_vars->scene14_grandma->_ox;
+			g_vars->scene14_grandmaY = g_vars->scene14_grandma->_oy;
+		}
+
+		if (g_fp->_aniMan2) {
+			int x = g_fp->_aniMan2->_ox;
+			g_vars->scene14_dude2X = x;
+
+			if (x < g_fp->_sceneRect.left + g_vars->scene14_sceneDeltaX) {
+				g_fp->_currentScene->_x = x - g_vars->scene14_sceneDiffX - g_fp->_sceneRect.left;
+				x = g_vars->scene14_dude2X;
+			}
+
+			if (x > g_fp->_sceneRect.right - g_vars->scene14_sceneDeltaX)
+				g_fp->_currentScene->_x = x + g_vars->scene14_sceneDiffX - g_fp->_sceneRect.right;
+
+			g_fp->sceneAutoScrolling();
+		}
+
+		if (g_vars->scene14_ballIsFlying)
+			sceneHandler14_animateBall();
+
+		g_fp->_behaviorManager->updateBehaviors();
+		g_fp->startSceneTrack();
+		break;
+	}
 
 	case 30:
 		if (g_vars->scene14_dudeIsKicking) {
@@ -833,7 +833,7 @@ int sceneHandler14(ExCommand *cmd) {
 
 				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
 					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
-							|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
+					    || (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
 						g_fp->processArcade(cmd);
 						sceneHandler14_arcadeProcessClick(cmd);
 						break;

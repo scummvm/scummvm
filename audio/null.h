@@ -23,18 +23,17 @@
 #ifndef AUDIO_NULL_H
 #define AUDIO_NULL_H
 
-#include "audio/musicplugin.h"
 #include "audio/mpu401.h"
+#include "audio/musicplugin.h"
 #include "common/translation.h"
 
 /* NULL driver */
 class MidiDriver_NULL : public MidiDriver_MPU401 {
 public:
 	int open() { return 0; }
- 	bool isOpen() const { return true; }
-	void send(uint32 b) { }
+	bool isOpen() const { return true; }
+	void send(uint32 b) {}
 };
-
 
 // Plugin interface
 

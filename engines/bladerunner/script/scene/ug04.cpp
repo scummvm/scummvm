@@ -26,17 +26,17 @@ namespace BladeRunner {
 
 enum kUG04Loops {
 	kUG04LoopTrainLoop = 0,
-	kUG04LoopMainLoop  = 1
+	kUG04LoopMainLoop = 1
 };
 
 void SceneScriptUG04::InitializeScene() {
 	if (Game_Flag_Query(kFlagUG05toUG04)) {
-		Setup_Scene_Information(   0.0f, -1.74f, -2400.0f, 496);
+		Setup_Scene_Information(0.0f, -1.74f, -2400.0f, 496);
 		Game_Flag_Reset(kFlagUG05toUG04);
 	} else if (Game_Flag_Query(kFlagUG06toUG04)) {
-		Setup_Scene_Information( 164.0f, 11.87f, -1013.0f,  83);
+		Setup_Scene_Information(164.0f, 11.87f, -1013.0f, 83);
 	} else {
-		Setup_Scene_Information(-172.0f, 16.29f,  -735.0f, 380);
+		Setup_Scene_Information(-172.0f, 16.29f, -735.0f, 380);
 		Game_Flag_Reset(kFlagUG03toUG04);
 	}
 
@@ -47,22 +47,22 @@ void SceneScriptUG04::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(2, 344, 298, 451, 390, 1);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxSTMLOOP7, 25, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1,   40, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED2,   40, 0, 1);
-	Ambient_Sounds_Add_Sound(kSfxPIPER1,   2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBANG1,    2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBANG2,    2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBANG4,    2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBANG6,    2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxYELL1M1,  2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxGRUNT1M1, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxGRUNT2M1, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSQUEAK1,  2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSQUEAK3,  2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSQUEAK5,  2, 190, 12, 16, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN1,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN2,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN3,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1, 40, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED2, 40, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxPIPER1, 2, 190, 12, 16, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBANG1, 2, 190, 12, 16, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBANG2, 2, 190, 12, 16, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBANG4, 2, 190, 12, 16, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBANG6, 2, 190, 12, 16, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxYELL1M1, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT1M1, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT2M1, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSQUEAK1, 2, 190, 12, 16, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSQUEAK3, 2, 190, 12, 16, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSQUEAK5, 2, 190, 12, 16, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN3, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
 
 #if BLADERUNNER_ORIGINAL_BUGS
 	Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kUG04LoopTrainLoop, false);
@@ -84,8 +84,7 @@ void SceneScriptUG04::SceneLoaded() {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	if ((Global_Variable_Query(kVariableChapter) == 3)
-	    || (Global_Variable_Query(kVariableChapter) > 3 && Random_Query(1, 4) == 1)
-	) {
+	    || (Global_Variable_Query(kVariableChapter) > 3 && Random_Query(1, 4) == 1)) {
 		// Enhancement: don't always play the overground train after chapter 3
 		// Bug fix: don't remove control from player. There is no chance to glitch into the scenery
 		// while the video is playing and rats may attack!
@@ -164,8 +163,7 @@ void SceneScriptUG04::PlayerWalkedIn() {
 	}
 	if (_vm->_cutContent
 	    && !Game_Flag_Query(kFlagUG04DispatchOnHoodooRats)
-	    && !Game_Flag_Query(kFlagMcCoyCommentsOnHoodooRats)
-	) {
+	    && !Game_Flag_Query(kFlagMcCoyCommentsOnHoodooRats)) {
 		if (Random_Query(0, 2) == 1) {
 			Game_Flag_Set(kFlagUG04DispatchOnHoodooRats);
 			ADQ_Add_Pause(Random_Query(0, 1) * 1000);

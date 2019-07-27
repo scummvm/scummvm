@@ -20,21 +20,21 @@
  *
  */
 
- // Disable symbol overrides so that we can use system headers.
+// Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
 #ifdef main
-#undef main
+#	undef main
 #endif // main
 
+#include "common/algorithm.h"
+#include "common/endian.h"
+#include "graphics/surface.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "graphics/surface.h"
-#include "common/algorithm.h"
-#include "common/endian.h"
 
 const byte FONT[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -134,13 +134,11 @@ const byte FONT[] = {
 	0x00, 0x00, 0x40, 0xA8, 0x10, 0x00, 0x00, 0x00
 };
 
-
 #define X_COUNT 32
 #define CHAR_COUNT sizeof(FONT) / 8
 #define Y_COUNT 3
 #define CHAR_WIDTH 6
 #define CHAR_HEIGHT 8
-
 
 /**
  * Stream reader
@@ -148,9 +146,11 @@ const byte FONT[] = {
 class MemoryReadStream {
 private:
 	const byte *_ptr;
+
 public:
-	MemoryReadStream(const byte *ptr) : _ptr(ptr) {}
-	
+	MemoryReadStream(const byte *ptr)
+	  : _ptr(ptr) {}
+
 	byte readByte() {
 		return *_ptr++;
 	}
@@ -164,7 +164,9 @@ struct Surface {
 	int _h;
 	byte *_pixels;
 
-	Surface(int w, int h) : _w(w), _h(h) {
+	Surface(int w, int h)
+	  : _w(w)
+	  , _h(h) {
 		_pixels = new byte[w * h];
 		memset(_pixels, 0xff, w * h);
 	}
@@ -198,6 +200,7 @@ struct Surface {
 class File {
 private:
 	FILE *_f;
+
 public:
 	File(const char *filename) {
 		_f = fopen(filename, "wb");
@@ -224,7 +227,6 @@ public:
 		fwrite(buf, 1, count, _f);
 	}
 };
-
 
 int main(int argc, char *argv[]) {
 	MemoryReadStream src(FONT);
@@ -261,22 +263,22 @@ void Surface::saveToFile(const char *filename) {
 	File f(filename);
 	f.writeByte('B');
 	f.writeByte('M');
-	f.writeUint32LE(0x436 + _w * _h + 2);	// File size
-	f.writeUint16LE(0);			// Custom 1
-	f.writeUint16LE(0);			// Custom 2
-	f.writeUint32LE(0x436);		// Pixels offset
+	f.writeUint32LE(0x436 + _w * _h + 2); // File size
+	f.writeUint16LE(0); // Custom 1
+	f.writeUint16LE(0); // Custom 2
+	f.writeUint32LE(0x436); // Pixels offset
 
-	f.writeUint32LE(40);		// Info size
-	f.writeUint32LE(_w);		// Width
-	f.writeUint32LE(_h);		// Height
-	f.writeUint16LE(1);			// # Planes
-	f.writeUint16LE(8);			// Bits per pixel
-	f.writeUint32LE(0);			// Compression
-	f.writeUint32LE(_w * _h);	// Image size
-	f.writeUint32LE(3790);		// Pixels per meter X
-	f.writeUint32LE(3800);		// Pixels per meter Y
-	f.writeUint32LE(0);			// color count
-	f.writeUint32LE(0);			// important colors
+	f.writeUint32LE(40); // Info size
+	f.writeUint32LE(_w); // Width
+	f.writeUint32LE(_h); // Height
+	f.writeUint16LE(1); // # Planes
+	f.writeUint16LE(8); // Bits per pixel
+	f.writeUint32LE(0); // Compression
+	f.writeUint32LE(_w * _h); // Image size
+	f.writeUint32LE(3790); // Pixels per meter X
+	f.writeUint32LE(3800); // Pixels per meter Y
+	f.writeUint32LE(0); // color count
+	f.writeUint32LE(0); // important colors
 
 	// Palette
 	for (int idx = 0; idx < 256; ++idx) {

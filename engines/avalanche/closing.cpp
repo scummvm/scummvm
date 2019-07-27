@@ -27,8 +27,8 @@
 
 /* CLOSING		The closing screen and error handler. */
 
-#include "avalanche/avalanche.h"
 #include "avalanche/closing.h"
+#include "avalanche/avalanche.h"
 
 #include "common/random.h"
 
@@ -53,12 +53,12 @@ void Closing::putIn(Common::String str, uint16 where) {
 
 void Closing::exitGame() {
 	static const char nouns[12][14] = {
-		"sackbut", "harpsichord", "camel",   "conscience", "ice-cream", "serf",
-		"abacus",  "castle",      "carrots", "megaphone",  "manticore", "drawbridge"
+		"sackbut", "harpsichord", "camel", "conscience", "ice-cream", "serf",
+		"abacus", "castle", "carrots", "megaphone", "manticore", "drawbridge"
 	};
 
 	static const char verbs[12][12] = {
-		"haunt",    "daunt",  "tickle",   "gobble",    "erase",    "provoke",
+		"haunt", "daunt", "tickle", "gobble", "erase", "provoke",
 		"surprise", "ignore", "stare at", "shriek at", "frighten", "quieten"
 	};
 

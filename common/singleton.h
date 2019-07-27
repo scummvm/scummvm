@@ -30,7 +30,7 @@ namespace Common {
 /**
  * Generic template base class for implementing the singleton design pattern.
  */
-template<class T>
+template <class T>
 class Singleton : NonCopyable {
 private:
 	Singleton<T>(const Singleton<T> &);
@@ -45,7 +45,7 @@ private:
 	 */
 	//template<class T>
 #if defined(__WINS__)
-//FIXME verify if __WINS__ needs this still
+	//FIXME verify if __WINS__ needs this still
 public:
 #endif
 	static T *makeInstance() {
@@ -57,13 +57,12 @@ public:
 		_singleton = 0;
 	}
 
-
 public:
 	static bool hasInstance() {
 		return _singleton != 0;
 	}
 
-	static T& instance() {
+	static T &instance() {
 		// TODO: We aren't thread safe. For now we ignore it since the
 		// only thing using this singleton template is the config manager,
 		// and that is first instantiated long before any threads.
@@ -79,15 +78,16 @@ public:
 	static void destroy() {
 		T::destroyInstance();
 	}
+
 protected:
-	Singleton<T>()		{ }
+	Singleton<T>() {}
 #ifdef __SYMBIAN32__
-	virtual ~Singleton()	{ }
+	virtual ~Singleton() {}
 #else
-	virtual ~Singleton<T>()	{ }
+	virtual ~Singleton<T>() {}
 #endif
 
-	typedef T	SingletonBaseType;
+	typedef T SingletonBaseType;
 
 	static T *_singleton;
 };
@@ -99,7 +99,8 @@ protected:
  * to be placed in the same namespace as the template.
  */
 #define DECLARE_SINGLETON(T) \
-	template<> T *Singleton<T>::_singleton = 0
+	template <>                \
+	T *Singleton<T>::_singleton = 0
 
 } // End of namespace Common
 

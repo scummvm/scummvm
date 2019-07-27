@@ -101,8 +101,23 @@ private:
 	};
 
 	struct IOUnit {
-		IOUnit() : program(0), block(0), volume(63), currentLevel(0), fadeTargetLevel(0), fadeLevelDelta(0), fadeLevelMod(0), levelFadeTriggerDC(0), fadeLevelTicks(0),
-			fadeLevelTicker(0), fadeLevelDuration(0), releaseData(0), releaseDataSize(0), repeatData(0), repeatDataSize(0), envelopeState(kReady) {}
+		IOUnit()
+		  : program(0)
+		  , block(0)
+		  , volume(63)
+		  , currentLevel(0)
+		  , fadeTargetLevel(0)
+		  , fadeLevelDelta(0)
+		  , fadeLevelMod(0)
+		  , levelFadeTriggerDC(0)
+		  , fadeLevelTicks(0)
+		  , fadeLevelTicker(0)
+		  , fadeLevelDuration(0)
+		  , releaseData(0)
+		  , releaseDataSize(0)
+		  , repeatData(0)
+		  , repeatDataSize(0)
+		  , envelopeState(kReady) {}
 		uint8 program;
 		uint8 block;
 		uint8 volume;
@@ -175,8 +190,15 @@ private:
 	IMuseDriver_Amiga *_driver;
 };
 
-SoundChannel_Amiga::SoundChannel_Amiga(IMuseDriver_Amiga *driver, int id, Instrument_Amiga *instruments) : _driver(driver), _id(id), _instruments(instruments), 
-	_assign(0), _next(0), _prev(0), _sustain(false), _note(0) {
+SoundChannel_Amiga::SoundChannel_Amiga(IMuseDriver_Amiga *driver, int id, Instrument_Amiga *instruments)
+  : _driver(driver)
+  , _id(id)
+  , _instruments(instruments)
+  , _assign(0)
+  , _next(0)
+  , _prev(0)
+  , _sustain(false)
+  , _note(0) {
 	assert(id > -1 && id < 4);
 	_channels[id] = this;
 	createVolumeTable();
@@ -194,7 +216,7 @@ SoundChannel_Amiga::~SoundChannel_Amiga() {
 	delete[] _volTable;
 	_volTable = 0;
 }
- 
+
 SoundChannel_Amiga *SoundChannel_Amiga::allocate(int prio) {
 	SoundChannel_Amiga *res = 0;
 
@@ -276,10 +298,10 @@ void SoundChannel_Amiga::noteOn(byte note, byte volume, byte program, int8 trans
 	_driver->disableChannel(_id);
 	setVelocity(0, 0);
 	setVolume(volume);
-	
+
 	if (s->type > 1)
 		return;
-	
+
 	uint16 period = calculatePeriod(pitchBend + ((_note + transpose) << 7), s->baseNote, s->rate);
 
 	if (s->type == 1) {
@@ -412,7 +434,7 @@ void SoundChannel_Amiga::setVelocity(uint8 velo, int delay) {
 	} else {
 		_driver->setChannelVolume(_id, _volTable[(_ioUnit.volume << 5) + velo]);
 		_ioUnit.currentLevel = _ioUnit.fadeTargetLevel = velo;
-		_ioUnit.fadeLevelMod = 0;		
+		_ioUnit.fadeLevelMod = 0;
 	}
 }
 
@@ -475,8 +497,19 @@ SoundChannel_Amiga *SoundChannel_Amiga::_channels[4] = { 0, 0, 0, 0 };
 
 const int8 SoundChannel_Amiga::_muteData[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-IMusePart_Amiga::IMusePart_Amiga(IMuseDriver_Amiga *driver, int id) : _driver(driver), _id(id), _allocated(false), _out(0), _priority(0), _program(0),
-	_pitchBend(0), _pitchBendSensitivity(2), _volume(0), _modulation(0), _transpose(0), _sustain(false) {
+IMusePart_Amiga::IMusePart_Amiga(IMuseDriver_Amiga *driver, int id)
+  : _driver(driver)
+  , _id(id)
+  , _allocated(false)
+  , _out(0)
+  , _priority(0)
+  , _program(0)
+  , _pitchBend(0)
+  , _pitchBendSensitivity(2)
+  , _volume(0)
+  , _modulation(0)
+  , _transpose(0)
+  , _sustain(false) {
 }
 
 bool IMusePart_Amiga::allocate() {
@@ -595,19 +628,32 @@ void IMusePart_Amiga::controlSustain(byte value) {
 	}
 }
 
-IMuseDriver_Amiga::IMuseDriver_Amiga(Audio::Mixer *mixer) : Paula(true, mixer->getOutputRate(), (mixer->getOutputRate() * 1000) / 181818), _mixer(mixer), _isOpen(false), _soundHandle(),
-	_numParts(24), _baseTempo(5500), _internalTempo(5500), _timerProc(0), _timerProcPara(0), _parts(0), _chan(0), _instruments(0), _missingFiles(0), _ticker(0) {
+IMuseDriver_Amiga::IMuseDriver_Amiga(Audio::Mixer *mixer)
+  : Paula(true, mixer->getOutputRate(), (mixer->getOutputRate() * 1000) / 181818)
+  , _mixer(mixer)
+  , _isOpen(false)
+  , _soundHandle()
+  , _numParts(24)
+  , _baseTempo(5500)
+  , _internalTempo(5500)
+  , _timerProc(0)
+  , _timerProcPara(0)
+  , _parts(0)
+  , _chan(0)
+  , _instruments(0)
+  , _missingFiles(0)
+  , _ticker(0) {
 	setAudioFilter(true);
 
 	_instruments = new Instrument_Amiga[129];
 	memset(_instruments, 0, sizeof(Instrument_Amiga) * 129);
 	loadInstrument(128);
 
-	_parts = new IMusePart_Amiga*[_numParts];
+	_parts = new IMusePart_Amiga *[_numParts];
 	for (int i = 0; i < _numParts; i++)
 		_parts[i] = new IMusePart_Amiga(this, i);
 
-	_chan = new SoundChannel_Amiga*[4];
+	_chan = new SoundChannel_Amiga *[4];
 	for (int i = 0; i < 4; i++)
 		_chan[i] = new SoundChannel_Amiga(this, i, _instruments);
 }
@@ -663,7 +709,7 @@ int IMuseDriver_Amiga::open() {
 
 	startPaula();
 	_mixer->playStream(Audio::Mixer::kPlainSoundType,
-		&_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	                   &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	_isOpen = true;
 
@@ -751,7 +797,7 @@ void IMuseDriver_Amiga::interrupt() {
 	if (!_isOpen)
 		return;
 
-	for (_ticker += _internalTempo; _ticker >= _baseTempo; _ticker -= _baseTempo) {	
+	for (_ticker += _internalTempo; _ticker >= _baseTempo; _ticker -= _baseTempo) {
 		updateParser();
 		updateSounds();
 	}
@@ -775,7 +821,7 @@ void IMuseDriver_Amiga::loadInstrument(int program) {
 	if (program == 128) {
 		// The hard-coded default instrument definitions and sample data are the same in MI2 and INDY4.
 		static const int8 defaultData[16] = { 0, 49, 90, 117, 127, 117, 90, 49, 0, -49, -90, -117, -127, -117, -90, -49 };
-		static Instrument_Amiga::Samples defaultSamples = { 428, 60, 0, 127, 33, 0, /*0, 0,*/16, 0, 0, 5, 300, 5, 100, defaultData };
+		static Instrument_Amiga::Samples defaultSamples = { 428, 60, 0, 127, 33, 0, /*0, 0,*/ 16, 0, 0, 5, 300, 5, 100, defaultData };
 		_instruments[128].numBlocks = 1;
 		memcpy(&_instruments[128].samples[0], &defaultSamples, sizeof(Instrument_Amiga::Samples));
 	}
@@ -795,7 +841,7 @@ void IMuseDriver_Amiga::loadInstrument(int program) {
 		}
 	}
 
-	for (int fileNo = 1; fileNo != -1 && !ims.isOpen(); ) {
+	for (int fileNo = 1; fileNo != -1 && !ims.isOpen();) {
 		if (!ims.open(Common::String::format("amiga%d.ims", fileNo))) {
 			_missingFiles |= (1 << (fileNo - 1));
 			return;
@@ -831,12 +877,12 @@ void IMuseDriver_Amiga::loadInstrument(int program) {
 
 		if (size <= 0)
 			break;
-			
+
 		size -= 38;
 		Instrument_Amiga::Samples *s = &_instruments[program].samples[block];
 		ims.seek(594 + offset + header[block], SEEK_SET);
 		int8 *buf = new int8[size];
-		
+
 		s->rate = ims.readUint16BE();
 		s->baseNote = ims.readUint16BE();
 		s->noteRangeMin = ims.readSint16BE();

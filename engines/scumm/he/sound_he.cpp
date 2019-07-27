@@ -20,13 +20,13 @@
  *
  */
 
+#include "scumm/he/sound_he.h"
 #include "scumm/actor.h"
 #include "scumm/file.h"
+#include "scumm/he/intern_he.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
-#include "scumm/he/sound_he.h"
-#include "scumm/he/intern_he.h"
 #include "scumm/util.h"
 
 #include "common/config-manager.h"
@@ -36,19 +36,18 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/adpcm.h"
-#include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
+#include "audio/mixer.h"
 
 namespace Scumm {
 
 SoundHE::SoundHE(ScummEngine *parent, Audio::Mixer *mixer)
-	:
-	Sound(parent, mixer),
-	_vm((ScummEngine_v60he *)parent),
-	_overrideFreq(0),
-	_heMusic(0),
-	_heMusicTracks(0) {
+  : Sound(parent, mixer)
+  , _vm((ScummEngine_v60he *)parent)
+  , _overrideFreq(0)
+  , _heMusic(0)
+  , _heMusicTracks(0) {
 
 	memset(_heChannel, 0, sizeof(_heChannel));
 	_heSoundChannels = new Audio::SoundHandle[8]();
@@ -84,7 +83,7 @@ void SoundHE::processSoundQueues() {
 	int snd, heOffset, heChannel, heFlags, heFreq, hePan, heVol;
 
 	if (_vm->_game.heversion >= 72) {
-		for (int i = 0; i <_soundQue2Pos; i++) {
+		for (int i = 0; i < _soundQue2Pos; i++) {
 			snd = _soundQue2[i].sound;
 			heOffset = _soundQue2[i].offset;
 			heChannel = _soundQue2[i].channel;
@@ -133,7 +132,7 @@ int SoundHE::isSoundRunning(int sound) const {
 	if (isSoundInQueue(sound))
 		return sound;
 
-	if (_vm->_musicEngine &&_vm->_musicEngine->getSoundStatus(sound))
+	if (_vm->_musicEngine && _vm->_musicEngine->getSoundStatus(sound))
 		return sound;
 
 	return 0;
@@ -141,7 +140,7 @@ int SoundHE::isSoundRunning(int sound) const {
 
 void SoundHE::stopSound(int sound) {
 	if (_vm->_game.heversion >= 70) {
-		if ( sound >= 10000) {
+		if (sound >= 10000) {
 			stopSoundChannel(sound - 10000);
 		}
 	} else if (_vm->_game.heversion >= 60) {
@@ -236,7 +235,7 @@ int SoundHE::findFreeSoundChannel() {
 
 int SoundHE::isSoundCodeUsed(int sound) {
 	int chan = -1;
-	for (int i = 0; i < ARRAYSIZE(_heChannel); i ++) {
+	for (int i = 0; i < ARRAYSIZE(_heChannel); i++) {
 		if (_heChannel[i].sound == sound)
 			chan = i;
 	}
@@ -250,13 +249,13 @@ int SoundHE::isSoundCodeUsed(int sound) {
 
 int SoundHE::getSoundPos(int sound) {
 	int chan = -1;
-	for (int i = 0; i < ARRAYSIZE(_heChannel); i ++) {
+	for (int i = 0; i < ARRAYSIZE(_heChannel); i++) {
 		if (_heChannel[i].sound == sound)
 			chan = i;
 	}
 
 	if (chan != -1 && _mixer->isSoundHandleActive(_heSoundChannels[chan])) {
-		int time =  _vm->getHETimer(chan + 4) * _heChannel[chan].rate / 1000;
+		int time = _vm->getHETimer(chan + 4) * _heChannel[chan].rate / 1000;
 		return time;
 	} else {
 		return 0;
@@ -271,7 +270,7 @@ int SoundHE::getSoundVar(int sound, int var) {
 	assertRange(0, var, 25, "sound variable");
 
 	int chan = -1;
-	for (int i = 0; i < ARRAYSIZE(_heChannel); i ++) {
+	for (int i = 0; i < ARRAYSIZE(_heChannel); i++) {
 		if (_heChannel[i].sound == sound)
 			chan = i;
 	}
@@ -288,7 +287,7 @@ void SoundHE::setSoundVar(int sound, int var, int val) {
 	assertRange(0, var, 25, "sound variable");
 
 	int chan = -1;
-	for (int i = 0; i < ARRAYSIZE(_heChannel); i ++) {
+	for (int i = 0; i < ARRAYSIZE(_heChannel); i++) {
 		if (_heChannel[i].sound == sound)
 			chan = i;
 	}
@@ -310,7 +309,7 @@ void SoundHE::setupHEMusicFile() {
 
 	if (musicFile.open(buf) == true) {
 		musicFile.seek(4, SEEK_SET);
-		/*int total_size =*/ musicFile.readUint32BE();
+		/*int total_size =*/musicFile.readUint32BE();
 		musicFile.seek(16, SEEK_SET);
 		_heMusicTracks = musicFile.readUint32LE();
 		debug(5, "Total music tracks %d", _heMusicTracks);
@@ -423,7 +422,8 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 
 	while (READ_LE_UINT16(codePtr) != 0) {
 		codePtr += 2;
-		opcode = READ_LE_UINT16(codePtr); codePtr += 2;
+		opcode = READ_LE_UINT16(codePtr);
+		codePtr += 2;
 		opcode = (opcode & 0xFFF) >> 4;
 		arg = opcode & 3;
 		opcode &= ~3;
@@ -432,20 +432,25 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 		case 0: // Continue
 			break;
 		case 16: // Set talk state
-			val = READ_LE_UINT16(codePtr); codePtr += 2;
+			val = READ_LE_UINT16(codePtr);
+			codePtr += 2;
 			setSoundVar(sound, 19, val);
 			break;
 		case 32: // Set var
-			var = READ_LE_UINT16(codePtr); codePtr += 2;
-			val = READ_LE_UINT16(codePtr); codePtr += 2;
+			var = READ_LE_UINT16(codePtr);
+			codePtr += 2;
+			val = READ_LE_UINT16(codePtr);
+			codePtr += 2;
 			if (arg == 2) {
 				val = getSoundVar(sound, val);
 			}
 			setSoundVar(sound, var, val);
 			break;
 		case 48: // Add
-			var = READ_LE_UINT16(codePtr); codePtr += 2;
-			val = READ_LE_UINT16(codePtr); codePtr += 2;
+			var = READ_LE_UINT16(codePtr);
+			codePtr += 2;
+			val = READ_LE_UINT16(codePtr);
+			codePtr += 2;
 			if (arg == 2) {
 				val = getSoundVar(sound, val);
 			}
@@ -453,8 +458,10 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 			setSoundVar(sound, var, val);
 			break;
 		case 56: // Subtract
-			var = READ_LE_UINT16(codePtr); codePtr += 2;
-			val = READ_LE_UINT16(codePtr); codePtr += 2;
+			var = READ_LE_UINT16(codePtr);
+			codePtr += 2;
+			val = READ_LE_UINT16(codePtr);
+			codePtr += 2;
 			if (arg == 2) {
 				val = getSoundVar(sound, val);
 			}
@@ -462,8 +469,10 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 			setSoundVar(sound, var, val);
 			break;
 		case 64: // Multiple
-			var = READ_LE_UINT16(codePtr); codePtr += 2;
-			val = READ_LE_UINT16(codePtr); codePtr += 2;
+			var = READ_LE_UINT16(codePtr);
+			codePtr += 2;
+			val = READ_LE_UINT16(codePtr);
+			codePtr += 2;
 			if (arg == 2) {
 				val = getSoundVar(sound, val);
 			}
@@ -471,8 +480,10 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 			setSoundVar(sound, var, val);
 			break;
 		case 80: // Divide
-			var = READ_LE_UINT16(codePtr); codePtr += 2;
-			val = READ_LE_UINT16(codePtr); codePtr += 2;
+			var = READ_LE_UINT16(codePtr);
+			codePtr += 2;
+			val = READ_LE_UINT16(codePtr);
+			codePtr += 2;
 			if (arg == 2) {
 				val = getSoundVar(sound, val);
 			}
@@ -484,12 +495,14 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 			setSoundVar(sound, var, val);
 			break;
 		case 96: // Increment
-			var = READ_LE_UINT16(codePtr); codePtr += 2;
+			var = READ_LE_UINT16(codePtr);
+			codePtr += 2;
 			val = getSoundVar(sound, var) + 1;
 			setSoundVar(sound, var, val);
 			break;
 		case 104: // Decrement
-			var = READ_LE_UINT16(codePtr); codePtr += 2;
+			var = READ_LE_UINT16(codePtr);
+			codePtr += 2;
 			val = getSoundVar(sound, var) - 1;
 			setSoundVar(sound, var, val);
 			break;
@@ -503,11 +516,11 @@ byte *findSoundTag(uint32 tag, byte *ptr) {
 	byte *endPtr;
 	uint32 offset, size;
 
-	if (READ_BE_UINT32(ptr) == MKTAG('W','S','O','U')) {
+	if (READ_BE_UINT32(ptr) == MKTAG('W', 'S', 'O', 'U')) {
 		ptr += 8;
 	}
 
-	if (READ_BE_UINT32(ptr) != MKTAG('R','I','F','F'))
+	if (READ_BE_UINT32(ptr) != MKTAG('R', 'I', 'F', 'F'))
 		return NULL;
 
 	endPtr = (ptr + 12);
@@ -544,11 +557,10 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 	else if (soundID == 1)
 		type = Audio::Mixer::kSpeechSoundType;
 
-
 	if (heChannel == -1)
 		heChannel = (_vm->VAR_RESERVED_SOUND_CHANNELS != 0xFF) ? findFreeSoundChannel() : 1;
 
-	debug(5,"playHESound: soundID %d heOffset %d heChannel %d heFlags %d", soundID, heOffset, heChannel, heFlags);
+	debug(5, "playHESound: soundID %d heOffset %d heChannel %d heFlags %d", soundID, heOffset, heChannel, heFlags);
 
 	if (soundID >= 10000) {
 		// Special codes, used in pjgames
@@ -595,14 +607,14 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 	}
 
 	// Support for sound in later HE games
-	if (READ_BE_UINT32(ptr) == MKTAG('R','I','F','F') || READ_BE_UINT32(ptr) == MKTAG('W','S','O','U')) {
+	if (READ_BE_UINT32(ptr) == MKTAG('R', 'I', 'F', 'F') || READ_BE_UINT32(ptr) == MKTAG('W', 'S', 'O', 'U')) {
 		uint16 compType;
 		int blockAlign;
 		int codeOffs = -1;
 
 		priority = (soundID > _vm->_numSounds) ? 255 : *(ptr + 18);
 
-		byte *sbngPtr = findSoundTag(MKTAG('S','B','N','G'), ptr);
+		byte *sbngPtr = findSoundTag(MKTAG('S', 'B', 'N', 'G'), ptr);
 		if (sbngPtr != NULL) {
 			codeOffs = sbngPtr - ptr + 8;
 		}
@@ -615,7 +627,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 				return;
 		}
 
-		if (READ_BE_UINT32(ptr) == MKTAG('W','S','O','U'))
+		if (READ_BE_UINT32(ptr) == MKTAG('W', 'S', 'O', 'U'))
 			ptr += 8;
 
 		size = READ_LE_UINT32(ptr + 4);
@@ -666,8 +678,8 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 			if (_heChannel[heChannel].timer)
 				_heChannel[heChannel].timer = size * 1000 / (rate * blockAlign);
 
-			// makeADPCMStream returns a stream in native endianness, but RawMemoryStream
-			// defaults to big endian. If we're on a little endian system, set the LE flag.
+				// makeADPCMStream returns a stream in native endianness, but RawMemoryStream
+				// defaults to big endian. If we're on a little endian system, set the LE flag.
 #ifdef SCUMM_LITTLE_ENDIAN
 			flags |= Audio::FLAG_LITTLE_ENDIAN;
 #endif
@@ -676,10 +688,10 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 			stream = Audio::makeRawStream(ptr + memStream.pos() + heOffset, size - heOffset, rate, flags, DisposeAfterUse::NO);
 		}
 		_mixer->playStream(type, &_heSoundChannels[heChannel],
-						Audio::makeLoopingAudioStream(stream, (heFlags & 1) ? 0 : 1), soundID);
+		                   Audio::makeLoopingAudioStream(stream, (heFlags & 1) ? 0 : 1), soundID);
 	}
 	// Support for sound in Humongous Entertainment games
-	else if (READ_BE_UINT32(ptr) == MKTAG('D','I','G','I') || READ_BE_UINT32(ptr) == MKTAG('T','A','L','K')) {
+	else if (READ_BE_UINT32(ptr) == MKTAG('D', 'I', 'G', 'I') || READ_BE_UINT32(ptr) == MKTAG('T', 'A', 'L', 'K')) {
 		byte *sndPtr = ptr;
 		int codeOffs = -1;
 
@@ -697,12 +709,12 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 				return;
 		}
 
-		if (READ_BE_UINT32(ptr) == MKTAG('S','B','N','G')) {
+		if (READ_BE_UINT32(ptr) == MKTAG('S', 'B', 'N', 'G')) {
 			codeOffs = ptr - sndPtr + 8;
 			ptr += READ_BE_UINT32(ptr + 4);
 		}
 
-		assert(READ_BE_UINT32(ptr) == MKTAG('S','D','A','T'));
+		assert(READ_BE_UINT32(ptr) == MKTAG('S', 'D', 'A', 'T'));
 		size = READ_BE_UINT32(ptr + 4) - 8;
 		if (heOffset < 0 || heOffset > size) {
 			// Occurs when making fireworks in puttmoon
@@ -735,17 +747,17 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 
 		stream = Audio::makeRawStream(ptr + heOffset + 8, size, rate, flags, DisposeAfterUse::NO);
 		_mixer->playStream(type, &_heSoundChannels[heChannel],
-						Audio::makeLoopingAudioStream(stream, (heFlags & 1) ? 0 : 1), soundID);
+		                   Audio::makeLoopingAudioStream(stream, (heFlags & 1) ? 0 : 1), soundID);
 	}
 	// Support for PCM music in 3DO versions of Humongous Entertainment games
-	else if (READ_BE_UINT32(ptr) == MKTAG('M','R','A','W')) {
+	else if (READ_BE_UINT32(ptr) == MKTAG('M', 'R', 'A', 'W')) {
 		priority = *(ptr + 18);
 		rate = READ_LE_UINT16(ptr + 22);
 
 		// Skip DIGI (8) and HSHD (24) blocks
 		ptr += 32;
 
-		assert(READ_BE_UINT32(ptr) == MKTAG('S','D','A','T'));
+		assert(READ_BE_UINT32(ptr) == MKTAG('S', 'D', 'A', 'T'));
 		size = READ_BE_UINT32(ptr + 4) - 8;
 
 		byte *sound = (byte *)malloc(size);
@@ -756,8 +768,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 
 		stream = Audio::makeRawStream(sound, size, rate, 0);
 		_mixer->playStream(Audio::Mixer::kMusicSoundType, NULL, stream, soundID);
-	}
-	else if (READ_BE_UINT32(ptr) == MKTAG('M','I','D','I')) {
+	} else if (READ_BE_UINT32(ptr) == MKTAG('M', 'I', 'D', 'I')) {
 		if (_vm->_imuse) {
 			// This is used in the DOS version of Fatty Bear's
 			// Birthday Surprise to change the note on the piano
@@ -798,7 +809,7 @@ void SoundHE::startHETalkSound(uint32 offset) {
 	_vm->_res->nukeResource(rtSound, 1);
 
 	file.seek(offset + 4, SEEK_SET);
-	 size = file.readUint32BE();
+	size = file.readUint32BE();
 	file.seek(offset, SEEK_SET);
 
 	_vm->_res->createResource(rtSound, 1, size);
@@ -844,12 +855,12 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 	int chan = -1;
 	for (i = 0; i < ARRAYSIZE(((SoundHE *)_sound)->_heChannel); i++) {
 		if (((SoundHE *)_sound)->_heChannel[i].sound == snd1id)
-			chan =  i;
+			chan = i;
 	}
 
-	if (!findSoundTag(MKTAG('d','a','t','a'), snd1Ptr)) {
-		sbng1Ptr = heFindResource(MKTAG('S','B','N','G'), snd1Ptr);
-		sbng2Ptr = heFindResource(MKTAG('S','B','N','G'), snd2Ptr);
+	if (!findSoundTag(MKTAG('d', 'a', 't', 'a'), snd1Ptr)) {
+		sbng1Ptr = heFindResource(MKTAG('S', 'B', 'N', 'G'), snd1Ptr);
+		sbng2Ptr = heFindResource(MKTAG('S', 'B', 'N', 'G'), snd2Ptr);
 	}
 
 	if (sbng1Ptr != NULL && sbng2Ptr != NULL) {
@@ -899,10 +910,10 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 	}
 
 	// Find the data pointers and sizes
-	if (findSoundTag(MKTAG('d','a','t','a'), snd1Ptr)) {
-		sdat1Ptr = findSoundTag(MKTAG('d','a','t','a'), snd1Ptr);
+	if (findSoundTag(MKTAG('d', 'a', 't', 'a'), snd1Ptr)) {
+		sdat1Ptr = findSoundTag(MKTAG('d', 'a', 't', 'a'), snd1Ptr);
 		assert(sdat1Ptr);
-		sdat2Ptr = findSoundTag(MKTAG('d','a','t','a'), snd2Ptr);
+		sdat2Ptr = findSoundTag(MKTAG('d', 'a', 't', 'a'), snd2Ptr);
 		assert(sdat2Ptr);
 
 		if (!_sndDataSize)
@@ -910,9 +921,9 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 
 		sdat2size = READ_LE_UINT32(sdat2Ptr + 4) - 8;
 	} else {
-		sdat1Ptr = heFindResource(MKTAG('S','D','A','T'), snd1Ptr);
+		sdat1Ptr = heFindResource(MKTAG('S', 'D', 'A', 'T'), snd1Ptr);
 		assert(sdat1Ptr);
-		sdat2Ptr = heFindResource(MKTAG('S','D','A','T'), snd2Ptr);
+		sdat2Ptr = heFindResource(MKTAG('S', 'D', 'A', 'T'), snd2Ptr);
 		assert(sdat2Ptr);
 
 		_sndDataSize = READ_BE_UINT32(sdat1Ptr + 4) - 8;

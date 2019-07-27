@@ -23,15 +23,15 @@
 #ifndef ADL_ADL_H
 #define ADL_ADL_H
 
-#include "common/debug-channels.h"
 #include "common/array.h"
-#include "common/rect.h"
-#include "common/str.h"
-#include "common/hashmap.h"
-#include "common/hash-str.h"
+#include "common/debug-channels.h"
 #include "common/func.h"
+#include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/ptr.h"
+#include "common/rect.h"
 #include "common/scummsys.h"
+#include "common/str.h"
 
 #include "engines/engine.h"
 
@@ -39,9 +39,9 @@
 #include "audio/softsynth/pcspk.h"
 
 #include "adl/console.h"
+#include "adl/detection.h"
 #include "adl/disk.h"
 #include "adl/sound.h"
-#include "adl/detection.h"
 
 namespace Common {
 class ReadStream;
@@ -65,8 +65,8 @@ enum kDebugChannels {
 };
 
 // Save and restore opcodes
-#define IDO_ACT_SAVE           0x0f
-#define IDO_ACT_LOAD           0x10
+#define IDO_ACT_SAVE 0x0f
+#define IDO_ACT_LOAD 0x10
 
 #define IDI_CUR_ROOM 0xfc
 #define IDI_VOID_ROOM 0xfd
@@ -85,11 +85,11 @@ enum Direction {
 };
 
 struct Room {
-	Room() :
-			description(0),
-			picture(0),
-			curPicture(0),
-			isFirstTime(true) {
+	Room()
+	  : description(0)
+	  , picture(0)
+	  , curPicture(0)
+	  , isFirstTime(true) {
 		memset(connections, 0, sizeof(connections));
 	}
 
@@ -114,10 +114,14 @@ struct Command {
 
 class ScriptEnv {
 public:
-	ScriptEnv(const Command &cmd, byte room, byte verb, byte noun) :
-			_cmd(cmd), _room(room), _verb(verb), _noun(noun), _ip(0) { }
+	ScriptEnv(const Command &cmd, byte room, byte verb, byte noun)
+	  : _cmd(cmd)
+	  , _room(room)
+	  , _verb(verb)
+	  , _noun(noun)
+	  , _ip(0) {}
 
-	virtual ~ScriptEnv() { }
+	virtual ~ScriptEnv() {}
 
 	enum kOpType {
 		kOpTypeDone,
@@ -132,9 +136,7 @@ public:
 	virtual void next(uint numArgs) = 0;
 
 	bool isMatch() const {
-		return (_cmd.room == IDI_ANY || _cmd.room == _room) &&
-		       (_cmd.verb == IDI_ANY || _cmd.verb == _verb) &&
-		       (_cmd.noun == IDI_ANY || _cmd.noun == _noun);
+		return (_cmd.room == IDI_ANY || _cmd.room == _room) && (_cmd.verb == IDI_ANY || _cmd.verb == _verb) && (_cmd.noun == IDI_ANY || _cmd.noun == _noun);
 	}
 
 	byte getNoun() const { return _noun; }
@@ -167,13 +169,24 @@ struct Item {
 	Common::Array<byte> roomPictures;
 	bool isOnScreen;
 
-	Item() : id(0), noun(0), region(0), room(0), picture(0), isShape(false), state(0), description(0), isOnScreen(false) { }
+	Item()
+	  : id(0)
+	  , noun(0)
+	  , region(0)
+	  , room(0)
+	  , picture(0)
+	  , isShape(false)
+	  , state(0)
+	  , description(0)
+	  , isOnScreen(false) {}
 };
 
 struct Time {
 	byte hours, minutes;
 
-	Time() : hours(12), minutes(0) { }
+	Time()
+	  : hours(12)
+	  , minutes(0) {}
 };
 
 struct RoomState {
@@ -199,7 +212,13 @@ struct State {
 	bool isDark;
 	Time time;
 
-	State() : region(0), prevRegion(0), room(1), curPicture(0), moves(1), isDark(false) { }
+	State()
+	  : region(0)
+	  , prevRegion(0)
+	  , room(1)
+	  , curPicture(0)
+	  , moves(1)
+	  , isDark(false) {}
 };
 
 typedef Common::List<Command> Commands;
@@ -212,33 +231,39 @@ struct RoomData {
 };
 
 // Opcode debugging macros
-#define OP_DEBUG_0(F) do { \
-	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F)) \
-		return 0; \
-} while (0)
+#define OP_DEBUG_0(F)                                                       \
+	do {                                                                      \
+		if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F)) \
+			return 0;                                                             \
+	} while (0)
 
-#define OP_DEBUG_1(F, P1) do { \
-	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F, P1)) \
-		return 1; \
-} while (0)
+#define OP_DEBUG_1(F, P1)                                                       \
+	do {                                                                          \
+		if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F, P1)) \
+			return 1;                                                                 \
+	} while (0)
 
-#define OP_DEBUG_2(F, P1, P2) do { \
-	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F, P1, P2)) \
-		return 2; \
-} while (0)
+#define OP_DEBUG_2(F, P1, P2)                                                       \
+	do {                                                                              \
+		if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F, P1, P2)) \
+			return 2;                                                                     \
+	} while (0)
 
-#define OP_DEBUG_3(F, P1, P2, P3) do { \
-	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F, P1, P2, P3)) \
-		return 3; \
-} while (0)
+#define OP_DEBUG_3(F, P1, P2, P3)                                                       \
+	do {                                                                                  \
+		if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F, P1, P2, P3)) \
+			return 3;                                                                         \
+	} while (0)
 
-#define OP_DEBUG_4(F, P1, P2, P3, P4) do { \
-	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F, P1, P2, P3, P4)) \
-		return 4; \
-} while (0)
+#define OP_DEBUG_4(F, P1, P2, P3, P4)                                                       \
+	do {                                                                                      \
+		if (DebugMan.isDebugChannelEnabled(kDebugChannelScript) && op_debug(F, P1, P2, P3, P4)) \
+			return 4;                                                                             \
+	} while (0)
 
 class AdlEngine : public Engine {
-friend class Console;
+	friend class Console;
+
 public:
 	virtual ~AdlEngine();
 
@@ -283,18 +308,18 @@ protected:
 	void checkInput(byte verb, byte noun);
 	virtual bool isInputValid(byte verb, byte noun, bool &is_any);
 	virtual bool isInputValid(const Commands &commands, byte verb, byte noun, bool &is_any);
-	virtual void applyRoomWorkarounds(byte roomNr) { }
-	virtual void applyRegionWorkarounds() { }
+	virtual void applyRoomWorkarounds(byte roomNr) {}
+	virtual void applyRegionWorkarounds() {}
 
 	virtual void setupOpcodeTables();
 	virtual void initState();
 	virtual void switchRoom(byte roomNr);
 	virtual byte roomArg(byte room) const;
-	virtual void advanceClock() { }
+	virtual void advanceClock() {}
 	void loadDroppedItemOffsets(Common::ReadStream &stream, byte count);
 
 	// Opcodes
-	typedef Common::SharedPtr<Common::Functor1<ScriptEnv &, int> > Opcode;
+	typedef Common::SharedPtr<Common::Functor1<ScriptEnv &, int>> Opcode;
 
 	template <class T>
 	Opcode opcode(int (T::*f)(ScriptEnv &)) {
@@ -432,14 +457,14 @@ protected:
 	mutable bool _scriptPaused;
 
 private:
-	virtual void runIntro() { }
+	virtual void runIntro() {}
 	virtual void init() = 0;
 	virtual void initGameState() = 0;
 	virtual void drawItems() = 0;
 	virtual void drawItem(Item &item, const Common::Point &pos) = 0;
 	virtual void loadRoom(byte roomNr) = 0;
 	virtual void showRoom() = 0;
-	virtual void switchRegion(byte region) { }
+	virtual void switchRegion(byte region) {}
 	void runScript(const char *filename) const;
 	void stopScript() const;
 	void setScriptDelay(uint scriptDelay) const { _scriptDelay = scriptDelay; }

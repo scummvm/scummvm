@@ -32,11 +32,11 @@ void SceneScriptUG17::InitializeScene() {
 		Setup_Scene_Information(1000.0f, 67.96f, -1539.0f, 0);
 	}
 
-	Scene_Exit_Add_2D_Exit(0, 610,   0, 639, 479, 1);
+	Scene_Exit_Add_2D_Exit(0, 610, 0, 639, 479, 1);
 	Scene_Exit_Add_2D_Exit(1, 551, 347, 594, 386, 0);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxWINDLOOP, 100, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxRUMLOOP1,  50, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRUMLOOP1, 50, 1, 1);
 	Ambient_Sounds_Add_Sound(kSfxSWEEP2, 5, 80, 10, 11, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxSWEEP3, 5, 80, 10, 11, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxSWEEP4, 5, 80, 10, 11, -100, 100, -101, -101, 0, 0);

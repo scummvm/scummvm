@@ -23,10 +23,10 @@
 #ifndef TITANIC_STAR_FIELD_H
 #define TITANIC_STAR_FIELD_H
 
-#include "titanic/star_control/star_field_base.h"
 #include "titanic/star_control/star_closeup.h"
-#include "titanic/star_control/star_markers.h"
 #include "titanic/star_control/star_crosshairs.h"
+#include "titanic/star_control/star_field_base.h"
+#include "titanic/star_control/star_markers.h"
 #include "titanic/star_control/star_points1.h"
 #include "titanic/star_control/star_points2.h"
 
@@ -45,6 +45,7 @@ private:
 	bool _showBox;
 	bool _closeToMarker;
 	bool _isSolved;
+
 private:
 	/**
 	 * Draws the big square box in the middle of the screen
@@ -52,6 +53,7 @@ private:
 	void drawBox(CSurfaceArea *surfaceArea);
 
 	void fn4(CSurfaceArea *surfaceArea, CStarCamera *camera);
+
 public:
 	CStarField();
 
@@ -138,7 +140,7 @@ public:
 
 	void fn1(CErrorCode *errorCode);
 	double fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
-		FVector &v1, FVector &v2, FVector &v3);
+	           FVector &v1, FVector &v2, FVector &v3);
 	void fn6(CVideoSurface *surface, CStarCamera *camera);
 
 	/**
@@ -153,7 +155,7 @@ public:
 	 * Called when the starfield is clicked
 	 */
 	bool mouseButtonDown(CVideoSurface *surface, CStarCamera *camera,
-		int flags, const Common::Point &pt);
+	                     int flags, const Common::Point &pt);
 
 	/**
 	 * Gets a random star

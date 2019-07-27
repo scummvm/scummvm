@@ -26,16 +26,16 @@
 namespace DS {
 namespace CD {
 
-// FIXME/TODO: The code in this file should be turned into a custom
-// AudioCDManager subclass, see backends/audiocd/ and common/system.h
+	// FIXME/TODO: The code in this file should be turned into a custom
+	// AudioCDManager subclass, see backends/audiocd/ and common/system.h
 
-void setActive(bool active);
-void playTrack(int track, int numLoops, int startFrame, int duration);
-void stopTrack();
-bool checkCD();
-bool getActive();
-bool isPlaying();
-void update();
+	void setActive(bool active);
+	void playTrack(int track, int numLoops, int startFrame, int duration);
+	void stopTrack();
+	bool checkCD();
+	bool getActive();
+	bool isPlaying();
+	void update();
 
 }
 } // End of namespace DS

@@ -23,9 +23,9 @@
  *
  */
 
-#include "pegasus/pegasus.h"
-#include "pegasus/notification.h"
 #include "pegasus/timers.h"
+#include "pegasus/notification.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -375,7 +375,8 @@ void NotificationCallBack::callBack() {
 
 static const NotificationFlags kFuseExpiredFlag = 1;
 
-Fuse::Fuse() : _fuseNotification(0, (NotificationManager *)((PegasusEngine *)g_engine)) {
+Fuse::Fuse()
+  : _fuseNotification(0, (NotificationManager *)((PegasusEngine *)g_engine)) {
 	_fuseNotification.notifyMe(this, kFuseExpiredFlag, kFuseExpiredFlag);
 	_fuseCallBack.setNotification(&_fuseNotification);
 	_fuseCallBack.initCallBack(&_fuseTimer, kCallBackAtExtremes);

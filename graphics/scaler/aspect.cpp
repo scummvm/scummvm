@@ -20,24 +20,23 @@
  *
  */
 
-#include "graphics/scaler/intern.h"
 #include "graphics/scaler/aspect.h"
+#include "graphics/scaler/intern.h"
 
 #ifdef USE_ARM_NEON_ASPECT_CORRECTOR
-#include <arm_neon.h>
+#	include <arm_neon.h>
 #endif
 
-#define	kSuperFastAndUglyAspectMode	0	// No interpolation at all, but super-fast
-#define	kVeryFastAndGoodAspectMode	1	// Good quality with very good speed
-#define	kFastAndVeryGoodAspectMode	2	// Very good quality with good speed
-#define	kSlowAndPerfectAspectMode	3	// Accurate but slow code
+#define kSuperFastAndUglyAspectMode 0 // No interpolation at all, but super-fast
+#define kVeryFastAndGoodAspectMode 1 // Good quality with very good speed
+#define kFastAndVeryGoodAspectMode 2 // Very good quality with good speed
+#define kSlowAndPerfectAspectMode 3 // Accurate but slow code
 
-#define ASPECT_MODE	kVeryFastAndGoodAspectMode
-
+#define ASPECT_MODE kVeryFastAndGoodAspectMode
 
 #if ASPECT_MODE == kSlowAndPerfectAspectMode
 
-template<typename ColorMask, int scale>
+template <typename ColorMask, int scale>
 static inline uint16 interpolate5(uint16 A, uint16 B) {
 	uint16 r = (uint16)(((A & ColorMask::kRedBlueMask & 0xFF00) * scale + (B & ColorMask::kRedBlueMask & 0xFF00) * (5 - scale)) / 5);
 	uint16 g = (uint16)(((A & ColorMask::kGreenMask) * scale + (B & ColorMask::kGreenMask) * (5 - scale)) / 5);
@@ -46,8 +45,7 @@ static inline uint16 interpolate5(uint16 A, uint16 B) {
 	return (uint16)((r & ColorMask::kRedBlueMask & 0xFF00) | (g & ColorMask::kGreenMask) | (b & ColorMask::kRedBlueMask & 0x00FF));
 }
 
-
-template<typename ColorMask, int scale>
+template <typename ColorMask, int scale>
 static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width) {
 	// Accurate but slightly slower code
 	while (width--) {
@@ -58,9 +56,9 @@ static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint1
 
 #if ASPECT_MODE == kVeryFastAndGoodAspectMode
 
-#ifdef USE_ARM_NEON_ASPECT_CORRECTOR
+#	ifdef USE_ARM_NEON_ASPECT_CORRECTOR
 
-template<typename ColorMask>
+template <typename ColorMask>
 static void interpolate5LineNeon(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width, int k1, int k2) {
 	uint16x4_t kRedBlueMask_4 = vdup_n_u16(ColorMask::kRedBlueMask);
 	uint16x4_t kGreenMask_4 = vdup_n_u16(ColorMask::kGreenMask);
@@ -73,12 +71,12 @@ static void interpolate5LineNeon(uint16 *dst, const uint16 *srcA, const uint16 *
 		uint16x4_t p2_4 = srcA_4;
 
 		uint16x4_t p1_rb_4 = vand_u16(p1_4, kRedBlueMask_4);
-		uint16x4_t p1_g_4  = vand_u16(p1_4, kGreenMask_4);
+		uint16x4_t p1_g_4 = vand_u16(p1_4, kGreenMask_4);
 		uint16x4_t p2_rb_4 = vand_u16(p2_4, kRedBlueMask_4);
-		uint16x4_t p2_g_4  = vand_u16(p2_4, kGreenMask_4);
+		uint16x4_t p2_g_4 = vand_u16(p2_4, kGreenMask_4);
 
 		uint32x4_t tmp_rb_4 = vshrq_n_u32(vmlal_u16(vmull_u16(p2_rb_4, k2_4), p1_rb_4, k1_4), 3);
-		uint32x4_t tmp_g_4  = vshrq_n_u32(vmlal_u16(vmull_u16(p2_g_4, k2_4), p1_g_4, k1_4), 3);
+		uint32x4_t tmp_g_4 = vshrq_n_u32(vmlal_u16(vmull_u16(p2_g_4, k2_4), p1_g_4, k1_4), 3);
 		uint16x4_t p_rb_4 = vmovn_u32(tmp_rb_4);
 		p_rb_4 = vand_u16(p_rb_4, kRedBlueMask_4);
 		uint16x4_t p_g_4 = vmovn_u32(tmp_g_4);
@@ -93,31 +91,31 @@ static void interpolate5LineNeon(uint16 *dst, const uint16 *srcA, const uint16 *
 		width -= 4;
 	}
 }
-#endif // USE_ARM_NEON_ASPECT_CORRECTOR
+#	endif // USE_ARM_NEON_ASPECT_CORRECTOR
 
-template<typename ColorMask, int scale>
+template <typename ColorMask, int scale>
 static void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width) {
 	if (scale == 1) {
-#ifdef USE_NEON_ASPECT_CORRECTOR
+#	ifdef USE_NEON_ASPECT_CORRECTOR
 		int width4 = width & ~3;
 		interpolate5LineNeon<ColorMask>(dst, srcA, srcB, width4, 7, 1);
 		srcA += width4;
 		srcB += width4;
 		dst += width4;
 		width -= width4;
-#endif // USE_ARM_NEON_ASPECT_CORRECTOR
+#	endif // USE_ARM_NEON_ASPECT_CORRECTOR
 		while (width--) {
 			*dst++ = interpolate16_7_1<ColorMask>(*srcB++, *srcA++);
 		}
 	} else {
-#ifdef USE_ARM_NEON_ASPECT_CORRECTOR
+#	ifdef USE_ARM_NEON_ASPECT_CORRECTOR
 		int width4 = width & ~3;
 		interpolate5LineNeon<ColorMask>(dst, srcA, srcB, width4, 5, 3);
 		srcA += width4;
 		srcB += width4;
 		dst += width4;
 		width -= width4;
-#endif // USE_ARM_NEON_ASPECT_CORRECTOR
+#	endif // USE_ARM_NEON_ASPECT_CORRECTOR
 		while (width--) {
 			*dst++ = interpolate16_5_3<ColorMask>(*srcB++, *srcA++);
 		}
@@ -127,7 +125,7 @@ static void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB
 
 #if ASPECT_MODE == kFastAndVeryGoodAspectMode
 
-template<typename ColorMask, int scale>
+template <typename ColorMask, int scale>
 static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width) {
 	// For efficiency reasons we blit two pixels at a time, so it is important
 	// that makeRectStretchable() guarantees that the width is even and that
@@ -171,7 +169,7 @@ void makeRectStretchable(int &x, int &y, int &w, int &h, bool interpolate) {
 		h += m;
 	}
 
-  #if ASPECT_MODE == kVeryFastAndGoodAspectMode
+#	if ASPECT_MODE == kVeryFastAndGoodAspectMode
 	// Force x to be even, to ensure aligned memory access (this assumes
 	// that each line starts at an even memory location, but that should
 	// be the case on every target anyway).
@@ -185,7 +183,7 @@ void makeRectStretchable(int &x, int &y, int &w, int &h, bool interpolate) {
 	// this should actually be faster than having the check for the
 	if (w & 1)
 		w++;
-  #endif
+#	endif
 #endif
 }
 
@@ -205,8 +203,8 @@ void makeRectStretchable(int &x, int &y, int &w, int &h, bool interpolate) {
  * srcY + height - 1, and it should be stretched to Y coordinates srcY
  * through real2Aspect(srcY + height - 1).
  */
- 
-template<typename ColorMask>
+
+template <typename ColorMask>
 int stretch200To240Nearest(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY) {
 	int maxDstY = real2Aspect(origSrcY + height - 1);
 	int y;
@@ -224,8 +222,7 @@ int stretch200To240Nearest(uint8 *buf, uint32 pitch, int width, int height, int 
 	return 1 + maxDstY - srcY;
 }
 
- 
-template<typename ColorMask>
+template <typename ColorMask>
 int stretch200To240Interpolated(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY) {
 	int maxDstY = real2Aspect(origSrcY + height - 1);
 	int y;
@@ -264,21 +261,21 @@ int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, i
 #if ASPECT_MODE != kSuperFastAndUglyAspectMode
 	if (interpolate) {
 		if (gBitFormat == 565)
-			return stretch200To240Interpolated<Graphics::ColorMasks<565> >(buf, pitch, width, height, srcX, srcY, origSrcY);
+			return stretch200To240Interpolated<Graphics::ColorMasks<565>>(buf, pitch, width, height, srcX, srcY, origSrcY);
 		else // gBitFormat == 555
-			return stretch200To240Interpolated<Graphics::ColorMasks<555> >(buf, pitch, width, height, srcX, srcY, origSrcY);
+			return stretch200To240Interpolated<Graphics::ColorMasks<555>>(buf, pitch, width, height, srcX, srcY, origSrcY);
 	} else {
 #endif
 		if (gBitFormat == 565)
-			return stretch200To240Nearest<Graphics::ColorMasks<565> >(buf, pitch, width, height, srcX, srcY, origSrcY);
+			return stretch200To240Nearest<Graphics::ColorMasks<565>>(buf, pitch, width, height, srcX, srcY, origSrcY);
 		else // gBitFormat == 555
-			return stretch200To240Nearest<Graphics::ColorMasks<555> >(buf, pitch, width, height, srcX, srcY, origSrcY);
+			return stretch200To240Nearest<Graphics::ColorMasks<555>>(buf, pitch, width, height, srcX, srcY, origSrcY);
 #if ASPECT_MODE != kSuperFastAndUglyAspectMode
 	}
 #endif
 }
 
-template<typename ColorMask>
+template <typename ColorMask>
 void Normal1xAspectTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 
 	for (int y = 0; y < (height * 6 / 5); ++y) {
@@ -326,31 +323,31 @@ void Normal1xAspectTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
 void Normal1xAspect(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	extern int gBitFormat;
 	if (gBitFormat == 565)
-		Normal1xAspectTemplate<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		Normal1xAspectTemplate<Graphics::ColorMasks<565>>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 	else
-		Normal1xAspectTemplate<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		Normal1xAspectTemplate<Graphics::ColorMasks<555>>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 }
 
 #ifdef USE_ARM_SCALER_ASM
-extern "C" void Normal2xAspectMask(const uint8  *srcPtr,
-                                         uint32  srcPitch,
-                                         uint8  *dstPtr,
-                                         uint32  dstPitch,
-                                         int     width,
-                                         int     height,
-                                         uint32  mask);
+extern "C" void Normal2xAspectMask(const uint8 *srcPtr,
+                                   uint32 srcPitch,
+                                   uint8 *dstPtr,
+                                   uint32 dstPitch,
+                                   int width,
+                                   int height,
+                                   uint32 mask);
 
 /**
  * A 2x scaler which also does aspect ratio correction.
  * This is Normal2x combined with vertical stretching,
  * so it will scale a 320x200 surface to a 640x480 surface.
  */
-void Normal2xAspect(const uint8  *srcPtr,
-                          uint32  srcPitch,
-                          uint8  *dstPtr,
-                          uint32  dstPitch,
-                          int     width,
-                          int     height) {
+void Normal2xAspect(const uint8 *srcPtr,
+                    uint32 srcPitch,
+                    uint8 *dstPtr,
+                    uint32 dstPitch,
+                    int width,
+                    int height) {
 	extern int gBitFormat;
 	if (gBitFormat == 565) {
 		Normal2xAspectMask(srcPtr,
@@ -371,4 +368,4 @@ void Normal2xAspect(const uint8  *srcPtr,
 	}
 }
 
-#endif	// USE_ARM_SCALER_ASM
+#endif // USE_ARM_SCALER_ASM

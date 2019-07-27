@@ -20,18 +20,25 @@
  *
  */
 
-#include "common/md5.h"
-#include "common/config-manager.h"
 #include "xeen/sound_driver.h"
-#include "xeen/xeen.h"
+#include "common/config-manager.h"
+#include "common/md5.h"
 #include "xeen/files.h"
+#include "xeen/xeen.h"
 
 namespace Xeen {
 
-SoundDriver::SoundDriver() : _musicPlaying(false), _fxPlaying(false),
-		_musCountdownTimer(0), _fxCountdownTimer(0), _musDataPtr(nullptr),
-		_fxDataPtr(nullptr), _fxStartPtr(nullptr), _musStartPtr(nullptr),
-		_exclude7(false), _frameCtr(0) {
+SoundDriver::SoundDriver()
+  : _musicPlaying(false)
+  , _fxPlaying(false)
+  , _musCountdownTimer(0)
+  , _fxCountdownTimer(0)
+  , _musDataPtr(nullptr)
+  , _fxDataPtr(nullptr)
+  , _fxStartPtr(nullptr)
+  , _musStartPtr(nullptr)
+  , _exclude7(false)
+  , _frameCtr(0) {
 	_channels.resize(CHANNEL_COUNT);
 }
 
@@ -82,7 +89,6 @@ void SoundDriver::execute() {
 		breakFlag = (this->*fn)(srcP, param);
 	}
 }
-
 
 bool SoundDriver::musCallSubroutine(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "musCallSubroutine");
@@ -234,25 +240,25 @@ int SoundDriver::songCommand(uint commandId, byte musicVolume, byte sfxVolume) {
 }
 
 const CommandFn SoundDriver::MUSIC_COMMANDS[16] = {
-	&SoundDriver::musCallSubroutine,   &SoundDriver::musSetCountdown,
-	&SoundDriver::musSetInstrument,    &SoundDriver::cmdNoOperation,
-	&SoundDriver::musSetPitchWheel,    &SoundDriver::musSkipWord,
-	&SoundDriver::musSetPanning,       &SoundDriver::cmdNoOperation,
-	&SoundDriver::musFade,             &SoundDriver::musStartNote,
-	&SoundDriver::musSetVolume,        &SoundDriver::musInjectMidi,
-	&SoundDriver::musPlayInstrument,   &SoundDriver::cmdFreezeFrequency,
-	&SoundDriver::cmdChangeFrequency,  &SoundDriver::musEndSubroutine
+	&SoundDriver::musCallSubroutine, &SoundDriver::musSetCountdown,
+	&SoundDriver::musSetInstrument, &SoundDriver::cmdNoOperation,
+	&SoundDriver::musSetPitchWheel, &SoundDriver::musSkipWord,
+	&SoundDriver::musSetPanning, &SoundDriver::cmdNoOperation,
+	&SoundDriver::musFade, &SoundDriver::musStartNote,
+	&SoundDriver::musSetVolume, &SoundDriver::musInjectMidi,
+	&SoundDriver::musPlayInstrument, &SoundDriver::cmdFreezeFrequency,
+	&SoundDriver::cmdChangeFrequency, &SoundDriver::musEndSubroutine
 };
 
 const CommandFn SoundDriver::FX_COMMANDS[16] = {
-	&SoundDriver::fxCallSubroutine,    &SoundDriver::fxSetCountdown,
-	&SoundDriver::fxSetInstrument,     &SoundDriver::fxSetVolume,
-	&SoundDriver::fxMidiReset,         &SoundDriver::fxMidiDword,
-	&SoundDriver::fxSetPanning,        &SoundDriver::fxChannelOff,
-	&SoundDriver::fxFade,              &SoundDriver::fxStartNote,
-	&SoundDriver::cmdNoOperation,      &SoundDriver::fxInjectMidi,
-	&SoundDriver::fxPlayInstrument,    &SoundDriver::cmdFreezeFrequency,
-	&SoundDriver::cmdChangeFrequency,  &SoundDriver::fxEndSubroutine
+	&SoundDriver::fxCallSubroutine, &SoundDriver::fxSetCountdown,
+	&SoundDriver::fxSetInstrument, &SoundDriver::fxSetVolume,
+	&SoundDriver::fxMidiReset, &SoundDriver::fxMidiDword,
+	&SoundDriver::fxSetPanning, &SoundDriver::fxChannelOff,
+	&SoundDriver::fxFade, &SoundDriver::fxStartNote,
+	&SoundDriver::cmdNoOperation, &SoundDriver::fxInjectMidi,
+	&SoundDriver::fxPlayInstrument, &SoundDriver::cmdFreezeFrequency,
+	&SoundDriver::cmdChangeFrequency, &SoundDriver::fxEndSubroutine
 };
 
 } // End of namespace Xeen

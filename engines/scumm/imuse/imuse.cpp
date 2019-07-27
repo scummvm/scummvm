@@ -20,13 +20,11 @@
  *
  */
 
-
-
 #include "base/version.h"
 
-#include "common/util.h"
-#include "common/system.h"
 #include "common/endian.h"
+#include "common/system.h"
+#include "common/util.h"
 
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse/imuse_internal.h"
@@ -42,29 +40,29 @@ namespace Scumm {
 //
 ////////////////////////////////////////
 
-IMuseInternal::IMuseInternal() :
-	_native_mt32(false),
-	_enable_gs(false),
-	_isAmiga(false),
-	_midi_adlib(NULL),
-	_midi_native(NULL),
-	_sysex(NULL),
-	_paused(false),
-	_initialized(false),
-	_tempoFactor(0),
-	_player_limit(ARRAYSIZE(_players)),
-	_recycle_players(false),
-	_queue_end(0),
-	_queue_pos(0),
-	_queue_sound(0),
-	_queue_adding(0),
-	_queue_marker(0),
-	_queue_cleared(0),
-	_master_volume(0),
-	_music_volume(0),
-	_trigger_count(0),
-	_snm_trigger_index(0),
-	_pcSpeaker(false) {
+IMuseInternal::IMuseInternal()
+  : _native_mt32(false)
+  , _enable_gs(false)
+  , _isAmiga(false)
+  , _midi_adlib(NULL)
+  , _midi_native(NULL)
+  , _sysex(NULL)
+  , _paused(false)
+  , _initialized(false)
+  , _tempoFactor(0)
+  , _player_limit(ARRAYSIZE(_players))
+  , _recycle_players(false)
+  , _queue_end(0)
+  , _queue_pos(0)
+  , _queue_sound(0)
+  , _queue_adding(0)
+  , _queue_marker(0)
+  , _queue_cleared(0)
+  , _master_volume(0)
+  , _music_volume(0)
+  , _trigger_count(0)
+  , _snm_trigger_index(0)
+  , _pcSpeaker(false) {
 	memset(_channel_volume, 0, sizeof(_channel_volume));
 	memset(_channel_volume_eff, 0, sizeof(_channel_volume_eff));
 	memset(_volchan_table, 0, sizeof(_volchan_table));
@@ -90,7 +88,7 @@ IMuseInternal::~IMuseInternal() {
 	if (_midi_native) {
 		if (_native_mt32) {
 			// Reset the MT-32
-			_midi_native->sysEx((const byte *) "\x41\x10\x16\x12\x7f\x00\x00\x01\x00", 9);
+			_midi_native->sysEx((const byte *)"\x41\x10\x16\x12\x7f\x00\x00\x01\x00", 9);
 			_system->delayMillis(250);
 		}
 
@@ -685,7 +683,7 @@ bool IMuseInternal::startSound_internal(int sound, int offset) {
 	//
 	// Tunes involved
 	// 100 - Captain Dread's map
-	// 113 - Guard Kiosk / Mardi Grass 
+	// 113 - Guard Kiosk / Mardi Grass
 	// 115 - Map of Booty Island / Ville de la Booty
 	// 118 - Ville de la Booty
 	//
@@ -849,8 +847,7 @@ int32 IMuseInternal::doCommand_internal(int numargs, int a[]) {
 				// trigger ID.
 				a[0] = 0;
 				for (i = 0; i < ARRAYSIZE(_snm_triggers); ++i) {
-					if (_snm_triggers[i].sound == a[1] && _snm_triggers[i].id &&
-					        (a[3] == -1 || _snm_triggers[i].id == a[3])) {
+					if (_snm_triggers[i].sound == a[1] && _snm_triggers[i].id && (a[3] == -1 || _snm_triggers[i].id == a[3])) {
 						++a[0];
 					}
 				}
@@ -1073,8 +1070,7 @@ int IMuseInternal::get_queue_sound_status(int sound) const {
 	}
 
 	for (i = 0; i < ARRAYSIZE(_deferredCommands); ++i) {
-		if (_deferredCommands[i].time_left && _deferredCommands[i].a == 8 &&
-		        _deferredCommands[i].b == sound) {
+		if (_deferredCommands[i].time_left && _deferredCommands[i].a == 8 && _deferredCommands[i].b == sound) {
 			return 2;
 		}
 	}
@@ -1472,16 +1468,16 @@ void IMuseInternal::initMT32(MidiDriver *midi) {
 	int len;
 
 	// Reset the MT-32
-	midi->sysEx((const byte *) "\x41\x10\x16\x12\x7f\x00\x00\x01\x00", 9);
+	midi->sysEx((const byte *)"\x41\x10\x16\x12\x7f\x00\x00\x01\x00", 9);
 	_system->delayMillis(250);
 
 	// Setup master tune, reverb mode, reverb time, reverb level,
 	// channel mapping, partial reserve and master volume
-	midi->sysEx((const byte *) "\x41\x10\x16\x12\x10\x00\x00\x40\x00\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x64\x77", 31);
+	midi->sysEx((const byte *)"\x41\x10\x16\x12\x10\x00\x00\x40\x00\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x64\x77", 31);
 	_system->delayMillis(250);
 
 	// Map percussion to notes 24 - 34 without reverb
-	midi->sysEx((const byte *) "\x41\x10\x16\x12\x03\x01\x10\x40\x64\x07\x00\x4a\x64\x06\x00\x41\x64\x07\x00\x4b\x64\x08\x00\x45\x64\x06\x00\x44\x64\x0b\x00\x51\x64\x05\x00\x43\x64\x08\x00\x50\x64\x07\x00\x42\x64\x03\x00\x4c\x64\x07\x00\x44", 52);
+	midi->sysEx((const byte *)"\x41\x10\x16\x12\x03\x01\x10\x40\x64\x07\x00\x4a\x64\x06\x00\x41\x64\x07\x00\x4b\x64\x08\x00\x45\x64\x06\x00\x44\x64\x0b\x00\x51\x64\x05\x00\x43\x64\x08\x00\x50\x64\x07\x00\x42\x64\x03\x00\x4c\x64\x07\x00\x44", 52);
 	_system->delayMillis(250);
 
 	// Compute version string (truncated to 20 chars max.)
@@ -1539,9 +1535,9 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 
 		// Set Channels 1-16 to SC-55 Map, then CM-64/32L Variation
 		for (i = 0; i < 16; ++i) {
-			midi->send((127 << 16) | (0  << 8) | (0xB0 | i));
-			midi->send((1   << 16) | (32 << 8) | (0xB0 | i));
-			midi->send((0   << 16) | (0  << 8) | (0xC0 | i));
+			midi->send((127 << 16) | (0 << 8) | (0xB0 | i));
+			midi->send((1 << 16) | (32 << 8) | (0xB0 | i));
+			midi->send((0 << 16) | (0 << 8) | (0xC0 | i));
 		}
 		debug(2, "GS Program Change: CM-64/32L Map Selected");
 
@@ -1700,9 +1696,7 @@ void IMuseInternal::reallocateMidiChannels(MidiDriver *midi) {
 		hipri = 0;
 		hipart = NULL;
 		for (i = 32, part = _parts; i; i--, part++) {
-			if (part->_player && part->_player->getMidiDriver() == midi &&
-			        !part->_percussion && part->_on &&
-			        !part->_mc && part->_pri_eff >= hipri) {
+			if (part->_player && part->_player->getMidiDriver() == midi && !part->_percussion && part->_on && !part->_mc && part->_pri_eff >= hipri) {
 				hipri = part->_pri_eff;
 				hipart = part;
 			}
@@ -1762,8 +1756,6 @@ void IMuseInternal::copyGlobalInstrument(byte slot, Instrument *dest) {
 		dest->adlib(defaultInstr);
 	}
 }
-
-
 
 /**
  * IMuseInternal factory creation method.

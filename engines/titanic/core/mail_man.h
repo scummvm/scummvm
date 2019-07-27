@@ -30,9 +30,12 @@ namespace Titanic {
 class CMailMan : public CGameObject {
 public:
 	int _value;
+
 public:
 	CLASSDEF;
-	CMailMan() : CGameObject(), _value(1) {}
+	CMailMan()
+	  : CGameObject()
+	  , _value(1) {}
 
 	/**
 	 * Save the data for the class to file
@@ -77,7 +80,6 @@ public:
 
 	void resetValue() { _value = 0; }
 };
-
 
 } // End of namespace Titanic
 

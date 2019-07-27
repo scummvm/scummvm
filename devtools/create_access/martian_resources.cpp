@@ -24,7 +24,6 @@
 
 namespace Martian {
 
-
 const byte MOUSE0[] = {
 	// hotspot x and y, uint16 LE
 	0, 0, 0, 0,

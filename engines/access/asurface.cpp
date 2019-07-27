@@ -20,11 +20,11 @@
  *
  */
 
+#include "access/asurface.h"
+#include "access/access.h"
 #include "common/algorithm.h"
 #include "common/endian.h"
 #include "common/memstream.h"
-#include "access/access.h"
-#include "access/asurface.h"
 
 namespace Access {
 
@@ -36,7 +36,7 @@ SpriteResource::SpriteResource(AccessEngine *vm, Resource *res) {
 
 	for (int i = 0; i < count; i++)
 		offsets.push_back(res->_stream->readUint32LE());
-	offsets.push_back(res->_size);	// For easier calculations of Noctropolis sizes
+	offsets.push_back(res->_size); // For easier calculations of Noctropolis sizes
 
 	// Build up the frames
 	for (int i = 0; i < count; ++i) {
@@ -110,8 +110,9 @@ void ImageEntryList::addToList(ImageEntry &ie) {
 int BaseSurface::_clipWidth;
 int BaseSurface::_clipHeight;
 
-BaseSurface::BaseSurface(): Graphics::Screen(0, 0) {
-	free();		// Free the 0x0 surface allocated by Graphics::Screen
+BaseSurface::BaseSurface()
+  : Graphics::Screen(0, 0) {
+	free(); // Free the 0x0 surface allocated by Graphics::Screen
 	_leftSkip = _rightSkip = 0;
 	_topSkip = _bottomSkip = 0;
 	_lastBoundsX = _lastBoundsY = 0;
@@ -182,14 +183,14 @@ void BaseSurface::saveBlock(const Common::Rect &bounds) {
 
 	_savedBlock.free();
 	_savedBlock.create(bounds.width(), bounds.height(),
-		Graphics::PixelFormat::createFormatCLUT8());
+	                   Graphics::PixelFormat::createFormatCLUT8());
 	_savedBlock.copyRectToSurface(*this, 0, 0, _savedBounds);
 }
 
 void BaseSurface::restoreBlock() {
 	if (!_savedBounds.isEmpty()) {
 		copyRectToSurface(_savedBlock, _savedBounds.left, _savedBounds.top,
-			Common::Rect(0, 0, _savedBlock.w, _savedBlock.h));
+		                  Common::Rect(0, 0, _savedBlock.w, _savedBlock.h));
 
 		_savedBlock.free();
 		_savedBounds = Common::Rect(0, 0, 0, 0);

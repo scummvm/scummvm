@@ -23,9 +23,9 @@
 #ifndef SCUMM_PLAYERS_PLAYER_V3M_H
 #define SCUMM_PLAYERS_PLAYER_V3M_H
 
+#include "common/mutex.h"
 #include "common/scummsys.h"
 #include "common/util.h"
-#include "common/mutex.h"
 #include "scumm/music.h"
 #include "scumm/players/player_mac.h"
 

@@ -4,9 +4,8 @@
 #include "common/noncopyable.h"
 #include "common/str.h"
 
-class ArrayTestSuite : public CxxTest::TestSuite
-{
-	public:
+class ArrayTestSuite : public CxxTest::TestSuite {
+public:
 	void test_empty_clear() {
 		Common::Array<int> array;
 		TS_ASSERT(array.empty());
@@ -147,7 +146,6 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(array[4], -1);
 		TS_ASSERT_EQUALS(array[5], 25);
 		TS_ASSERT_EQUALS(array[6], -11);
-
 	}
 
 	void test_self_insert() {
@@ -173,11 +171,10 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		for (i = 0; i < 12; ++i)
 			TS_ASSERT_EQUALS(array[i], i);
 		for (i = 0; i < 64; ++i)
-			TS_ASSERT_EQUALS(array[i+12], i);
+			TS_ASSERT_EQUALS(array[i + 12], i);
 		for (i = 12; i < 64; ++i)
-			TS_ASSERT_EQUALS(array[i+64], i);
+			TS_ASSERT_EQUALS(array[i + 64], i);
 	}
-
 
 	void test_remove_at() {
 		Common::Array<int> array;
@@ -227,8 +224,10 @@ class ArrayTestSuite : public CxxTest::TestSuite
 
 	struct SafeInt {
 		int val;
-		SafeInt() : val(0) {}
-		SafeInt(int v) : val(v) {}
+		SafeInt()
+		  : val(0) {}
+		SafeInt(int v)
+		  : val(v) {}
 		~SafeInt() { val = -1; }
 		bool operator==(int v) {
 			return val == v;
@@ -303,10 +302,17 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		bool _copied;
 		int _value;
 		Copyable &operator=(Copyable &);
+
 	public:
-		Copyable() : _copied(false), _value(1) {}
-		explicit Copyable(const int v) : _copied(false), _value(v) {}
-		Copyable(const Copyable &other) : _copied(true), _value(other._value) {}
+		Copyable()
+		  : _copied(false)
+		  , _value(1) {}
+		explicit Copyable(const int v)
+		  : _copied(false)
+		  , _value(v) {}
+		Copyable(const Copyable &other)
+		  : _copied(true)
+		  , _value(other._value) {}
 		bool copied() const { return _copied; }
 		int value() const { return _value; }
 	};
@@ -370,7 +376,7 @@ class ArrayTestSuite : public CxxTest::TestSuite
 	void test_front_back_push_pop() {
 		Common::Array<int> container;
 
-		container.push_back( 42);
+		container.push_back(42);
 		container.push_back(-23);
 
 		TS_ASSERT_EQUALS(container.front(), 42);
@@ -379,11 +385,11 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		container.front() = -17;
 		container.back() = 163;
 		TS_ASSERT_EQUALS(container.front(), -17);
-		TS_ASSERT_EQUALS(container.back(),  163);
+		TS_ASSERT_EQUALS(container.back(), 163);
 
 		container.pop_back();
 		TS_ASSERT_EQUALS(container.front(), -17);
-		TS_ASSERT_EQUALS(container.back(),  -17);
+		TS_ASSERT_EQUALS(container.back(), -17);
 	}
 
 	void test_resize() {
@@ -409,13 +415,13 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(array[0], -3);
 		TS_ASSERT_EQUALS(array[1], 163);
 	}
-
 };
 
 struct ListElement {
 	int value;
 
-	ListElement(int v) : value(v) {}
+	ListElement(int v)
+	  : value(v) {}
 };
 
 static int compareInts(const void *a, const void *b) {
@@ -449,5 +455,4 @@ public:
 
 		TS_ASSERT_EQUALS(iter, container.end());
 	}
-
 };

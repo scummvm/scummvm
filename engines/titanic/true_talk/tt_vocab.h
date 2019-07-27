@@ -36,6 +36,7 @@ private:
 	TTword *_tailP;
 	TTword *_word;
 	VocabMode _vocabMode;
+
 private:
 	/**
 	 * Load the vocab data
@@ -77,6 +78,7 @@ private:
 	 * @returns			New word instance for found match, or nullptr otherwise
 	 */
 	TTword *getPrefixedWord(TTstring &str, TTword **srcWord = nullptr) const;
+
 public:
 	TTvocab(VocabMode vocabMode);
 	~TTvocab();

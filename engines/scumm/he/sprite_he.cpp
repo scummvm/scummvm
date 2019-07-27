@@ -22,26 +22,25 @@
 
 #ifdef ENABLE_HE
 
-#include "scumm/he/intern_he.h"
-#include "scumm/resource.h"
-#include "scumm/scumm.h"
-#include "scumm/he/sprite_he.h"
-#include "scumm/usage_bits.h"
-#include "scumm/util.h"
-#include "scumm/he/wiz_he.h"
+#	include "scumm/he/sprite_he.h"
+#	include "scumm/he/intern_he.h"
+#	include "scumm/he/wiz_he.h"
+#	include "scumm/resource.h"
+#	include "scumm/scumm.h"
+#	include "scumm/usage_bits.h"
+#	include "scumm/util.h"
 
 namespace Scumm {
 
 Sprite::Sprite(ScummEngine_v90he *vm)
-	:
-	_vm(vm),
-	_spriteGroups(0),
-	_spriteTable(0),
-	_activeSpritesTable(0),
-	_numSpritesToProcess(0),
-	_varNumSpriteGroups(0),
-	_varNumSprites(0),
-	_varMaxSprites(0) {
+  : _vm(vm)
+  , _spriteGroups(0)
+  , _spriteTable(0)
+  , _activeSpritesTable(0)
+  , _numSpritesToProcess(0)
+  , _varNumSpriteGroups(0)
+  , _varNumSprites(0)
+  , _varMaxSprites(0) {
 }
 
 Sprite::~Sprite() {
@@ -589,7 +588,7 @@ void Sprite::moveSprite(int spriteId, int value1, int value2) {
 	_spriteTable[spriteId].tx += value1;
 	_spriteTable[spriteId].ty += value2;
 
-	if  (value1 || value2)
+	if (value1 || value2)
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 }
 
@@ -1001,7 +1000,6 @@ void Sprite::setGroupScaling(int spriteGroupId) {
 		_spriteGroups[spriteGroupId].scaling = 1;
 	else
 		_spriteGroups[spriteGroupId].scaling = 0;
-
 }
 
 void Sprite::setGroupXMul(int spriteGroupId, int value) {
@@ -1204,8 +1202,8 @@ void Sprite::updateImages() {
 }
 
 static int compareSprTable(const void *a, const void *b) {
-	const SpriteInfo *spr1 = *(const SpriteInfo *const*)a;
-	const SpriteInfo *spr2 = *(const SpriteInfo *const*)b;
+	const SpriteInfo *spr1 = *(const SpriteInfo *const *)a;
+	const SpriteInfo *spr2 = *(const SpriteInfo *const *)b;
 
 	if (spr1->zorder > spr2->zorder)
 		return 1;
@@ -1457,7 +1455,7 @@ void Sprite::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncArray(_spriteGroups, _varNumSpriteGroups + 1, syncWithSerializer);
 	} else {
 		// TODO: This had been bogus, what is it really supposed to do?
-//		s->saveLoadArrayOf(_activeSpritesTable, _varNumSprites, sizeof(_activeSpritesTable[0]), spriteEntries);
+		//		s->saveLoadArrayOf(_activeSpritesTable, _varNumSprites, sizeof(_activeSpritesTable[0]), spriteEntries);
 		s.syncArray(*_activeSpritesTable, _varNumSprites, syncWithSerializer);
 		s.syncArray(_spriteTable, _varNumSprites, syncWithSerializer);
 		s.syncArray(_spriteGroups, _varNumSpriteGroups, syncWithSerializer);

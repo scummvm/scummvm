@@ -28,7 +28,7 @@
 namespace Pink {
 
 AudioInfoMgr::AudioInfoMgr(LeadActor *lead)
-	: _lead(lead) {}
+  : _lead(lead) {}
 
 void AudioInfoMgr::loadState(Archive &archive) {
 	_aboutWhom = archive.readString();

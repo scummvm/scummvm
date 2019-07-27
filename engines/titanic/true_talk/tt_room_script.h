@@ -33,9 +33,10 @@ class TTsentence;
 class TTroomScriptBase : public TTscriptBase {
 public:
 	uint _scriptId;
+
 public:
 	TTroomScriptBase(int scriptId, const char *charClass, const char *charName,
-		int v3, int v4, int v5, int v6, int v2, int v7);
+	                 int v3, int v4, int v5, int v6, int v2, int v7);
 
 	/**
 	 * Returns true if a response can be made
@@ -58,10 +59,10 @@ public:
 	virtual bool proc11() const = 0;
 };
 
-
 class TTroomScript : public TTroomScriptBase {
 public:
 	int _field54;
+
 public:
 	TTroomScript(int scriptId);
 
@@ -79,7 +80,7 @@ public:
 		return true;
 	}
 
-	virtual bool  proc8() const;
+	virtual bool proc8() const;
 
 	virtual void proc9(int v);
 

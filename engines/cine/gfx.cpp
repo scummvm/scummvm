@@ -20,11 +20,11 @@
  *
  */
 
-#include "cine/cine.h"
 #include "cine/bg.h"
 #include "cine/bg_list.h"
-#include "cine/various.h"
+#include "cine/cine.h"
 #include "cine/pal.h"
+#include "cine/various.h"
 
 #include "common/endian.h"
 #include "common/events.h"
@@ -45,7 +45,6 @@ FWRenderer *renderer = NULL;
 
 /** Low resolution (9-bit) color format used in Cine's 16-color modes. */
 #define kLowPalFormat Graphics::PixelFormat(kLowPalBytesPerColor, 3, 3, 3, 0, 8, 4, 0, 0)
-
 
 // Constants related to kHighPalFormat
 #define kHighPalBytesPerColor 3
@@ -106,16 +105,22 @@ static const byte cursorPalette[] = {
 /**
  * Initialize renderer
  */
-FWRenderer::FWRenderer() : _background(NULL), _backupPal(), _cmd(""),
-	_cmdY(0), _messageBg(0), _backBuffer(new byte[_screenSize]),
-	_activePal(), _changePal(0), _showCollisionPage(false) {
+FWRenderer::FWRenderer()
+  : _background(NULL)
+  , _backupPal()
+  , _cmd("")
+  , _cmdY(0)
+  , _messageBg(0)
+  , _backBuffer(new byte[_screenSize])
+  , _activePal()
+  , _changePal(0)
+  , _showCollisionPage(false) {
 
 	assert(_backBuffer);
 
 	memset(_backBuffer, 0, _screenSize);
 	memset(_bgName, 0, sizeof(_bgName));
 }
-
 
 /**
  * Destroy renderer
@@ -131,7 +136,6 @@ bool FWRenderer::initialize() {
 	_activePal = Palette(kLowPalFormat, kLowPalNumColors);
 	return true;
 }
-
 
 /**
  * Reset renderer state
@@ -962,7 +966,11 @@ void FWRenderer::clearMenuStack() {
 }
 
 SelectionMenu::SelectionMenu(Common::Point p, int width, Common::StringArray elements)
-	: Menu(kSelectionMenu), _pos(p), _width(width), _elements(elements), _selection(-1) {
+  : Menu(kSelectionMenu)
+  , _pos(p)
+  , _width(width)
+  , _elements(elements)
+  , _selection(-1) {
 }
 
 void SelectionMenu::setSelection(int selection) {
@@ -1029,7 +1037,12 @@ void SelectionMenu::drawMenu(FWRenderer &r, bool top) {
 }
 
 TextInputMenu::TextInputMenu(Common::Point p, int width, const char *info)
-	: Menu(kTextInputMenu), _pos(p), _width(width), _info(info), _input(), _cursor(0) {
+  : Menu(kTextInputMenu)
+  , _pos(p)
+  , _width(width)
+  , _info(info)
+  , _input()
+  , _cursor(0) {
 }
 
 void TextInputMenu::setInput(const char *input, int cursor) {
@@ -1127,8 +1140,12 @@ void TextInputMenu::drawMenu(FWRenderer &r, bool top) {
 /**
  * Initialize Operation Stealth renderer
  */
-OSRenderer::OSRenderer() : FWRenderer(), _bgTable(), _currentBg(0), _scrollBg(0),
-	_bgShift(0) {
+OSRenderer::OSRenderer()
+  : FWRenderer()
+  , _bgTable()
+  , _currentBg(0)
+  , _scrollBg(0)
+  , _bgShift(0) {
 
 	_bgTable.resize(9); // Resize the background table to its required size
 }
@@ -1343,7 +1360,7 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 		height = obj->costume;
 		drawPlainBox(obj->x, obj->y, width, height, color);
 		debug(5, "renderOverlay: type=%d, x=%d, y=%d, width=%d, height=%d, color=%d",
-			  it->type, obj->x, obj->y, width, height, color);
+		      it->type, obj->x, obj->y, width, height, color);
 		break;
 
 	// something else
@@ -1693,7 +1710,6 @@ void gfxDrawLine(int16 x1, int16 y1, int16 x2, int16 y2, byte color, byte *page)
 			x1++;
 		}
 	}
-
 }
 
 void gfxDrawPlainBoxRaw(int16 x1, int16 y1, int16 x2, int16 y2, byte color, byte *page) {
@@ -1882,7 +1898,7 @@ void drawSpriteRaw2(const byte *spritePtr, byte transColor, int16 width, int16 h
 }
 
 void maskBgOverlay(const byte *bgPtr, const byte *maskPtr, int16 width, int16 height,
-				   byte *page, int16 x, int16 y) {
+                   byte *page, int16 x, int16 y) {
 	int16 i, j, tmpWidth, tmpHeight;
 	Common::List<BGIncrust>::iterator it;
 	const byte *backup = maskPtr;
@@ -1895,8 +1911,7 @@ void maskBgOverlay(const byte *bgPtr, const byte *maskPtr, int16 width, int16 he
 		srcPtr += i * 320;
 
 		for (j = 0; j < width; j++) {
-			if ((!maskPtr || !(*maskPtr)) && (x + j >= 0
-					&& x + j < 320 && i + y >= 0 && i + y < 200)) {
+			if ((!maskPtr || !(*maskPtr)) && (x + j >= 0 && x + j < 320 && i + y >= 0 && i + y < 200)) {
 				*destPtr = *srcPtr;
 			}
 

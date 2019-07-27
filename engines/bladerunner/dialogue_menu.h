@@ -45,37 +45,37 @@ class DialogueMenu {
 
 	struct DialogueItem {
 		Common::String text;
-		int            answerValue;
-		int            colorIntensity;
-		int            priorityPolite;
-		int            priorityNormal;
-		int            prioritySurly;
-		int            isDone;
+		int answerValue;
+		int colorIntensity;
+		int priorityPolite;
+		int priorityNormal;
+		int prioritySurly;
+		int isDone;
 	};
 
 	BladeRunnerEngine *_vm;
 
-	TextResource         *_textResource;
-	Common::Array<Shape>  _shapes;
-	bool                  _isVisible;
-	bool                  _waitingForInput;
-	int                   _selectedItemIndex;
-	int                   _listSize;
+	TextResource *_textResource;
+	Common::Array<Shape> _shapes;
+	bool _isVisible;
+	bool _waitingForInput;
+	int _selectedItemIndex;
+	int _listSize;
 
 	// These track whether a dialogue option
 	// has previously been selected
-	int                   _neverRepeatListSize;
-	int                   _neverRepeatValues[kMaxRepeatHistory];
-	bool                  _neverRepeatWasSelected[kMaxRepeatHistory];
+	int _neverRepeatListSize;
+	int _neverRepeatValues[kMaxRepeatHistory];
+	bool _neverRepeatWasSelected[kMaxRepeatHistory];
 
-	int                   _centerX;
-	int                   _centerY;
-	int                   _screenX;
-	int                   _screenY;
-	int                   _maxItemWidth;
-	DialogueItem          _items[kMaxItems];
+	int _centerX;
+	int _centerY;
+	int _screenX;
+	int _screenY;
+	int _maxItemWidth;
+	DialogueItem _items[kMaxItems];
 
-	int                   _fadeInItemIndex;
+	int _fadeInItemIndex;
 
 public:
 	DialogueMenu(BladeRunnerEngine *vm);
@@ -92,8 +92,8 @@ public:
 	bool addToListNeverRepeatOnceSelected(int answer, int priorityPolite, int priorityNormal, int prioritySurly);
 	bool removeFromList(int answer);
 	bool clearList();
-	int  queryInput();
-	int  listSize() const;
+	int queryInput();
+	int listSize() const;
 	bool isVisible() const;
 	bool isOpen() const;
 	void tick(int x, int y);
@@ -107,7 +107,7 @@ public:
 
 private:
 	bool showAt(int x, int y);
-	int  getAnswerIndex(int answer) const;
+	int getAnswerIndex(int answer) const;
 	const char *getText(int id) const;
 	void calculatePosition(int unusedX = 0, int unusedY = 0);
 	void reset();

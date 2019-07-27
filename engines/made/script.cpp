@@ -21,10 +21,10 @@
  */
 
 #include "made/script.h"
-#include "made/scriptfuncs.h"
-#include "made/made.h"
 #include "made/database.h"
+#include "made/made.h"
 #include "made/screen.h"
+#include "made/scriptfuncs.h"
 
 #include "common/util.h"
 
@@ -32,12 +32,14 @@ namespace Made {
 
 /* ScriptInterpreter */
 
-
-ScriptInterpreter::ScriptInterpreter(MadeEngine *vm) : _vm(vm) {
+ScriptInterpreter::ScriptInterpreter(MadeEngine *vm)
+  : _vm(vm) {
 #ifdef DUMP_SCRIPTS
-#define COMMAND(x, sig) { &ScriptInterpreter::x, #x, sig }
+#	define COMMAND(x, sig) \
+		{ &ScriptInterpreter::x, #x, sig }
 #else
-#define COMMAND(x, sig) { &ScriptInterpreter::x, #x}
+#	define COMMAND(x, sig) \
+		{ &ScriptInterpreter::x, #x }
 #endif
 	static CommandEntry commandProcs[] = {
 		/* 01 */
@@ -149,7 +151,7 @@ void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 		byte opcode = readByte();
 
 		if (opcode >= 1 && opcode <= _commandsMax) {
-			debug(4, "[%04X:%04X] %s", _runningScriptObjectIndex, (uint) (_codeIp - _codeBase), _commands[opcode - 1].desc);
+			debug(4, "[%04X:%04X] %s", _runningScriptObjectIndex, (uint)(_codeIp - _codeBase), _commands[opcode - 1].desc);
 			(this->*_commands[opcode - 1].proc)();
 		} else {
 			warning("ScriptInterpreter::runScript(%d) Unknown opcode %02X", _runningScriptObjectIndex, opcode);
@@ -161,7 +163,6 @@ void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 			_vm->_screen->updateScreenAndWait(5);
 			opcodeSleepCounter = 0;
 		}
-
 	}
 }
 
@@ -557,7 +558,6 @@ void ScriptInterpreter::cmd_send() {
 		_stack.push(0);
 		cmd_return();
 	}
-
 }
 
 void ScriptInterpreter::cmd_extend() {
@@ -577,7 +577,6 @@ void ScriptInterpreter::cmd_extend() {
 	_stack.free(argc);
 
 	_stack.setTop(result);
-
 }
 
 void ScriptInterpreter::cmd_catch() {

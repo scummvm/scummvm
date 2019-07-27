@@ -31,11 +31,15 @@ class CBarMenuButton : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+
 public:
 	int _value;
+
 public:
 	CLASSDEF;
-	CBarMenuButton() : CGameObject(), _value(1) {}
+	CBarMenuButton()
+	  : CGameObject()
+	  , _value(1) {}
 
 	/**
 	 * Save the data for the class to file

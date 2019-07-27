@@ -20,8 +20,8 @@
  *
  */
 
-#include "sci/engine/features.h"
 #include "sci/engine/hoyle5poker.h"
+#include "sci/engine/features.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/script.h"
 #include "sci/engine/selector.h"
@@ -56,7 +56,7 @@ enum Hoyle5PokerData {
 	kStatusPlayer4 = 11,
 	// 12 - 16 seem to be unused?
 	kCurrentPlayer = 17,
-	kCurrentStage = 18	// Stage 1: Card changes, 2: Betting
+	kCurrentStage = 18 // Stage 1: Card changes, 2: Betting
 	// 19 - 28: current player's cards (number + suit)
 	// 29 - 38: next clockwise player's cards (number + suit)
 	// 39 - 48: next clockwise player's cards (number + suit)
@@ -65,7 +65,7 @@ enum Hoyle5PokerData {
 	// 77 seems to be a bit array?
 };
 
-#if 0
+#	if 0
 Common::String getCardDescription(int16 card, int16 suit) {
 	Common::String result;
 
@@ -103,10 +103,10 @@ void printPlayerCards(int player, SciArray *data) {
 			debug("- %s", getCardDescription(data->getAsInt16(i), data->getAsInt16(i + 1)).c_str());
 	}
 }
-#endif
+#	endif
 
 reg_t hoyle5PokerEngine(SciArray *data) {
-#if 0
+#	if 0
 	debug("Player %d's turn", data->getAsInt16(kCurrentPlayer));
 
 	debug("Pot: %d, bet: %d", data->getAsInt16(kCurrentPot), data->getAsInt16(kCurrentBet));
@@ -140,10 +140,10 @@ reg_t hoyle5PokerEngine(SciArray *data) {
 		if (data->getAsInt16(i) != 0)
 			debug("%d: %d", i, data->getAsInt16(i));
 	}
-#endif
+#	endif
 
 	warning("The Poker game logic has not been implemented yet");
-	return NULL_REG;	// Returning 0 is a DLL invocation error for the game scripts
+	return NULL_REG; // Returning 0 is a DLL invocation error for the game scripts
 }
 #endif
 

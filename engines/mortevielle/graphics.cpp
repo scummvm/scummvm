@@ -25,8 +25,8 @@
  * Copyright (c) 1987-1989 Lankhor
  */
 
-#include "mortevielle/mortevielle.h"
 #include "mortevielle/graphics.h"
+#include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
 
 #include "common/endian.h"
@@ -53,7 +53,7 @@ void PaletteManager::setPalette(const int *palette, uint idx, uint size) {
 	for (int i = 0; i < 64; ++i) {
 		*p++ = (i >> 2 & 1) * 0xaa + (i >> 5 & 1) * 0x55;
 		*p++ = (i >> 1 & 1) * 0xaa + (i >> 4 & 1) * 0x55;
-		*p++ = (i      & 1) * 0xaa + (i >> 3 & 1) * 0x55;
+		*p++ = (i & 1) * 0xaa + (i >> 3 & 1) * 0x55;
 	}
 
 	// Loop through setting palette colors based on the passed indexes
@@ -82,7 +82,11 @@ void PaletteManager::setDefaultPalette() {
  * of 18 different encoding methods.
  *-------------------------------------------------------------------------*/
 
-#define INCR_XSIZE { if (_xSize & 1) ++_xSize; }
+#define INCR_XSIZE  \
+	{                 \
+		if (_xSize & 1) \
+			++_xSize;     \
+	}
 #define DEFAULT_WIDTH (SCREEN_WIDTH / 2)
 #define BUFFER_SIZE 40000
 
@@ -128,7 +132,7 @@ void GfxSurface::decode(const byte *pSrc) {
 	const byte *pLookup = NULL;
 
 	byte *lookupTable = (byte *)malloc(sizeof(byte) * BUFFER_SIZE);
-	byte *srcBuffer   = (byte *)malloc(sizeof(byte) * BUFFER_SIZE);
+	byte *srcBuffer = (byte *)malloc(sizeof(byte) * BUFFER_SIZE);
 
 	// Main processing loop
 	for (int entryIndex = 0; entryIndex < entryCount; ++entryIndex) {
@@ -414,7 +418,7 @@ void GfxSurface::decode(const byte *pSrc) {
 
 		pSrc = pSrcStart;
 		debugC(2, kMortevielleGraphics, "Decoding image block %d position %d,%d size %d,%d method %d",
-			entryIndex + 1, _xp, _yp, w, h, decomIndex);
+		       entryIndex + 1, _xp, _yp, w, h, decomIndex);
 	}
 
 	// At this point, the outputBuffer has the data for the image. Initialize the surface
@@ -913,7 +917,7 @@ void ScreenSurface::updateScreen() {
 	for (Common::List<Common::Rect>::iterator i = _dirtyRects.begin(); i != _dirtyRects.end(); ++i) {
 		Common::Rect r = *i;
 		g_system->copyRectToScreen((const byte *)getBasePtr(r.left, r.top), pitch,
-			r.left, r.top, r.width(), r.height());
+		                           r.left, r.top, r.width(), r.height());
 	}
 	_dirtyRects.clear();
 
@@ -937,7 +941,7 @@ void ScreenSurface::drawPicture(GfxSurface &surface, int x, int y) {
 
 	// Lock the affected area of the surface to write to
 	Graphics::Surface destSurface = lockArea(Common::Rect(x * 2, y * 2,
-		(x + surface.w) * 2, (y + surface.h) * 2));
+	                                                      (x + surface.w) * 2, (y + surface.h) * 2));
 
 	// Get a lookup for the palette mapping
 	const byte *paletteMap = &_vm->_curPict[2];
@@ -993,7 +997,7 @@ void ScreenSurface::copyFrom(Graphics::Surface &src, int x, int y) {
  */
 void ScreenSurface::writeCharacter(const Common::Point &pt, unsigned char ch, int palIndex) {
 	Graphics::Surface destSurface = lockArea(Common::Rect(pt.x, pt.y * 2,
-		pt.x + FONT_WIDTH, (pt.y + FONT_HEIGHT) * 2));
+	                                                      pt.x + FONT_WIDTH, (pt.y + FONT_HEIGHT) * 2));
 
 	// Get the start of the character to use
 	assert((ch >= ' ') && (ch <= (unsigned char)(32 + FONT_NUM_CHARS)));
@@ -1019,7 +1023,8 @@ void ScreenSurface::writeCharacter(const Common::Point &pt, unsigned char ch, in
  *		simulate the original 640x400 surface, all Y values have to be doubled
  */
 void ScreenSurface::drawBox(int x, int y, int dx, int dy, int col) {
-	dx++; dy++;	// Original function draws 1px bigger
+	dx++;
+	dy++; // Original function draws 1px bigger
 
 	Graphics::Surface destSurface = lockArea(Common::Rect(x, y * 2, x + dx, (y + dy) * 2));
 
@@ -1040,7 +1045,7 @@ void ScreenSurface::drawBox(int x, int y, int dx, int dy, int col) {
  */
 void ScreenSurface::fillRect(int color, const Common::Rect &bounds) {
 	Graphics::Surface destSurface = lockArea(Common::Rect(bounds.left, bounds.top * 2,
-		bounds.right, bounds.bottom * 2));
+	                                                      bounds.right, bounds.bottom * 2));
 
 	// Fill the area
 	destSurface.fillRect(Common::Rect(0, 0, destSurface.w, destSurface.h), color);

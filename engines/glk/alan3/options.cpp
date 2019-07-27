@@ -23,18 +23,18 @@
 namespace Glk {
 namespace Alan3 {
 
-bool verboseOption;
-bool ignoreErrorOption;
-bool debugOption;
-bool traceSectionOption;
-bool tracePushOption;
-bool traceStackOption;
-bool traceSourceOption;
-bool traceInstructionOption;
-bool transcriptOption;
-bool logOption;
-bool statusLineOption;
-bool regressionTestOption;
+	bool verboseOption;
+	bool ignoreErrorOption;
+	bool debugOption;
+	bool traceSectionOption;
+	bool tracePushOption;
+	bool traceStackOption;
+	bool traceSourceOption;
+	bool traceInstructionOption;
+	bool transcriptOption;
+	bool logOption;
+	bool statusLineOption;
+	bool regressionTestOption;
 
 } // End of namespace Alan3
 } // End of namespace Glk

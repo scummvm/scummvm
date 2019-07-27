@@ -27,11 +27,11 @@
  *
  */
 
-#include "common/debug.h"
-#include "common/system.h"
-#include "common/savefile.h"
-#include "common/textconsole.h"
 #include "common/config-manager.h"
+#include "common/debug.h"
+#include "common/savefile.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 #include "common/translation.h"
 
 #include "graphics/surface.h"
@@ -41,24 +41,24 @@
 
 #include "image/pcx.h"
 
-#include "hugo/hugo.h"
-#include "hugo/file.h"
-#include "hugo/schedule.h"
 #include "hugo/display.h"
-#include "hugo/util.h"
-#include "hugo/object.h"
-#include "hugo/text.h"
+#include "hugo/file.h"
+#include "hugo/hugo.h"
 #include "hugo/mouse.h"
+#include "hugo/object.h"
+#include "hugo/schedule.h"
+#include "hugo/text.h"
+#include "hugo/util.h"
 
 namespace Hugo {
 
 namespace {
-static const char s_bootCypher[] = "Copyright 1992, David P Gray, Gray Design Associates";
-static const int s_bootCypherLen = sizeof(s_bootCypher) - 1;
+	static const char s_bootCypher[] = "Copyright 1992, David P Gray, Gray Design Associates";
+	static const int s_bootCypherLen = sizeof(s_bootCypher) - 1;
 }
 
-
-FileManager::FileManager(HugoEngine *vm) : _vm(vm) {
+FileManager::FileManager(HugoEngine *vm)
+  : _vm(vm) {
 	_hasReadHeader = false;
 	_firstUIFFl = true;
 
@@ -129,7 +129,7 @@ Seq *FileManager::readPCX(Common::SeekableReadStream &f, Seq *seqPtr, byte *imag
 
 	// Allocate memory for image data if NULL
 	if (imagePtr == 0)
-		imagePtr = (byte *)malloc((size_t) size);
+		imagePtr = (byte *)malloc((size_t)size);
 
 	assert(imagePtr);
 
@@ -154,13 +154,13 @@ void FileManager::readImage(const int objNum, Object *objPtr) {
 		uint32 objLength;
 	};
 
-	if (!objPtr->_seqNumb)                           // This object has no images
+	if (!objPtr->_seqNumb) // This object has no images
 		return;
 
 	if (_vm->isPacked()) {
 		_objectsArchive.seek((uint32)objNum * sizeof(objBlock_t), SEEK_SET);
 
-		objBlock_t objBlock;                        // Info on file within database
+		objBlock_t objBlock; // Info on file within database
 		objBlock.objOffset = _objectsArchive.readUint32LE();
 		objBlock.objLength = _objectsArchive.readUint32LE();
 
@@ -175,18 +175,18 @@ void FileManager::readImage(const int objNum, Object *objPtr) {
 		}
 	}
 
-	bool  firstImgFl = true;                        // Initializes pcx read function
-	Seq *seqPtr = 0;                              // Ptr to sequence structure
+	bool firstImgFl = true; // Initializes pcx read function
+	Seq *seqPtr = 0; // Ptr to sequence structure
 
 	// Now read the images into an images list
-	for (int j = 0; j < objPtr->_seqNumb; j++) {     // for each sequence
+	for (int j = 0; j < objPtr->_seqNumb; j++) { // for each sequence
 		for (int k = 0; k < objPtr->_seqList[j]._imageNbr; k++) { // each image
-			if (k == 0) {                           // First image
+			if (k == 0) { // First image
 				// Read this image - allocate both seq and image memory
 				seqPtr = readPCX(_objectsArchive, 0, 0, firstImgFl, _vm->_text->getNoun(objPtr->_nounIndex, 0));
 				objPtr->_seqList[j]._seqPtr = seqPtr;
 				firstImgFl = false;
-			} else {                                // Subsequent image
+			} else { // Subsequent image
 				// Read this image - allocate both seq and image memory
 				seqPtr->_nextSeqPtr = readPCX(_objectsArchive, 0, 0, firstImgFl, _vm->_text->getNoun(objPtr->_nounIndex, 0));
 				seqPtr = seqPtr->_nextSeqPtr;
@@ -203,7 +203,7 @@ void FileManager::readImage(const int objNum, Object *objPtr) {
 			ImagePtr dibPtr = seqPtr->_imagePtr;
 			for (int y = 0; y < seqPtr->_lines; y++, dibPtr += seqPtr->_bytesPerLine8 - x2) {
 				for (int x = 0; x < x2; x++) {
-					if (*dibPtr++) {                // Some data found
+					if (*dibPtr++) { // Some data found
 						if (x < seqPtr->_x1)
 							seqPtr->_x1 = x;
 						if (x > seqPtr->_x2)
@@ -222,7 +222,7 @@ void FileManager::readImage(const int objNum, Object *objPtr) {
 
 	// Set the current image sequence to first or last
 	switch (objPtr->_cycling) {
-	case kCycleInvisible:                           // (May become visible later)
+	case kCycleInvisible: // (May become visible later)
 	case kCycleAlmostInvisible:
 	case kCycleNotCycling:
 	case kCycleForward:
@@ -251,7 +251,7 @@ SoundPtr FileManager::getSound(const int16 sound, uint16 *size) {
 		return nullptr;
 
 	// Open sounds file
-	Common::File fp;                                // Handle to SOUND_FILE
+	Common::File fp; // Handle to SOUND_FILE
 	if (!fp.open(getSoundFilename())) {
 		warning("Hugo Error: File not found %s", getSoundFilename());
 		return nullptr;
@@ -308,7 +308,7 @@ bool FileManager::saveGame(const int16 slot, const Common::String &descrip) {
 		}
 	}
 
-	if (savegameId < 0)                             // dialog aborted
+	if (savegameId < 0) // dialog aborted
 		return false;
 
 	Common::String savegameFile = _vm->getSavegameFilename(savegameId);
@@ -404,7 +404,7 @@ bool FileManager::restoreGame(const int16 slot) {
 		savegameId = slot;
 	}
 
-	if (savegameId < 0)                             // dialog aborted
+	if (savegameId < 0) // dialog aborted
 		return false;
 
 	Common::String savegameFile = _vm->getSavegameFilename(savegameId);
@@ -431,7 +431,7 @@ bool FileManager::restoreGame(const int16 slot) {
 
 	Graphics::skipThumbnail(*in);
 
-	in->skip(6);                                    // Skip date & time
+	in->skip(6); // Skip date & time
 
 	// If hero image is currently swapped, swap it back before restore
 	if (_vm->_heroImage != kHeroIndex)
@@ -475,9 +475,8 @@ bool FileManager::restoreGame(const int16 slot) {
 	_vm->_maze._firstScreenIndex = in->readByte();
 
 	_vm->_scheduler->restoreScreen(*_vm->_screenPtr);
-	if ((_vm->getGameStatus()._viewState = (Vstate) in->readByte()) != kViewPlay)
+	if ((_vm->getGameStatus()._viewState = (Vstate)in->readByte()) != kViewPlay)
 		_vm->_screen->hideCursor();
-
 
 	delete in;
 	return true;
@@ -549,7 +548,7 @@ UifHdr *FileManager::getUIFHeader(const Uif id) {
 	if (_firstUIFFl) {
 		_firstUIFFl = false;
 		// Open unbuffered to do far read
-		Common::File ip;                            // Image data file
+		Common::File ip; // Image data file
 		if (!ip.open(getUifFilename()))
 			error("File not found: %s", getUifFilename());
 
@@ -573,7 +572,7 @@ void FileManager::readUIFItem(const int16 id, byte *buf) {
 	debugC(1, kDebugFile, "readUIFItem(%d, ...)", id);
 
 	// Open uif file to read data
-	Common::File ip;                                // UIF_FILE handle
+	Common::File ip; // UIF_FILE handle
 	if (!ip.open(getUifFilename()))
 		error("File not found: %s", getUifFilename());
 
@@ -582,13 +581,13 @@ void FileManager::readUIFItem(const int16 id, byte *buf) {
 	ip.seek(_UIFHeaderPtr->_offset, SEEK_SET);
 
 	// We support pcx images and straight data
-	Seq *dummySeq;                                // Dummy Seq for image data
+	Seq *dummySeq; // Dummy Seq for image data
 	switch (id) {
-	case UIF_IMAGES:                                // Read uif images file
+	case UIF_IMAGES: // Read uif images file
 		dummySeq = readPCX(ip, 0, buf, true, getUifFilename());
 		free(dummySeq);
 		break;
-	default:                                        // Read file data into supplied array
+	default: // Read file data into supplied array
 		if (ip.read(buf, _UIFHeaderPtr->_size) != _UIFHeaderPtr->_size)
 			error("Wrong UIF file format");
 		break;
@@ -603,7 +602,7 @@ void FileManager::readUIFItem(const int16 id, byte *buf) {
 void FileManager::readUIFImages() {
 	debugC(1, kDebugFile, "readUIFImages()");
 
-	readUIFItem(UIF_IMAGES, _vm->_screen->getGUIBuffer());   // Read all uif images
+	readUIFItem(UIF_IMAGES, _vm->_screen->getGUIBuffer()); // Read all uif images
 }
 
 } // End of namespace Hugo

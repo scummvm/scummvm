@@ -23,9 +23,9 @@
 #ifndef GUI_THEME_EVAL_H
 #define GUI_THEME_EVAL_H
 
-#include "common/scummsys.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
+#include "common/scummsys.h"
 #include "common/stack.h"
 #include "common/str.h"
 #include "common/textconsole.h"
@@ -83,7 +83,10 @@ public:
 	void addPadding(int16 l, int16 r, int16 t, int16 b) { _curLayout.top()->setPadding(l, r, t, b); }
 
 	void closeLayout() { _curLayout.pop(); }
-	void closeDialog() { _curLayout.pop()->reflowLayout(); _curDialog.clear(); }
+	void closeDialog() {
+		_curLayout.pop()->reflowLayout();
+		_curDialog.clear();
+	}
 
 	bool getWidgetData(const Common::String &widget, int16 &x, int16 &y, uint16 &w, uint16 &h);
 

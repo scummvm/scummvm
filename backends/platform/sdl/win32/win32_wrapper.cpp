@@ -23,19 +23,19 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
- // required for SHGetSpecialFolderPath in shlobj.h
-#define _WIN32_IE 0x400
+// required for SHGetSpecialFolderPath in shlobj.h
+#	define _WIN32_IE 0x400
 #endif
 #include <shlobj.h>
 
+#include "backends/platform/sdl/win32/win32_wrapper.h"
 #include "common/scummsys.h"
 #include "common/translation.h"
-#include "backends/platform/sdl/win32/win32_wrapper.h"
 
 // VerSetConditionMask, VerifyVersionInfo and SHGetFolderPath didn't appear until Windows 2000,
 // so we need to check for them at runtime
 ULONGLONG VerSetConditionMaskFunc(ULONGLONG dwlConditionMask, DWORD dwTypeMask, BYTE dwConditionMask) {
-	typedef ULONGLONG(WINAPI *VerSetConditionMaskFunction)(ULONGLONG conditionMask, DWORD typeMask, BYTE conditionOperator);
+	typedef ULONGLONG(WINAPI * VerSetConditionMaskFunction)(ULONGLONG conditionMask, DWORD typeMask, BYTE conditionOperator);
 
 	VerSetConditionMaskFunction verSetConditionMask = (VerSetConditionMaskFunction)GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "VerSetConditionMask");
 	if (verSetConditionMask == NULL)
@@ -45,7 +45,7 @@ ULONGLONG VerSetConditionMaskFunc(ULONGLONG dwlConditionMask, DWORD dwTypeMask, 
 }
 
 BOOL VerifyVersionInfoFunc(LPOSVERSIONINFOEXA lpVersionInformation, DWORD dwTypeMask, DWORDLONG dwlConditionMask) {
-	typedef BOOL(WINAPI *VerifyVersionInfoFunction)(LPOSVERSIONINFOEXA versionInformation, DWORD typeMask, DWORDLONG conditionMask);
+	typedef BOOL(WINAPI * VerifyVersionInfoFunction)(LPOSVERSIONINFOEXA versionInformation, DWORD typeMask, DWORDLONG conditionMask);
 
 	VerifyVersionInfoFunction verifyVersionInfo = (VerifyVersionInfoFunction)GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "VerifyVersionInfoA");
 	if (verifyVersionInfo == NULL)
@@ -55,7 +55,7 @@ BOOL VerifyVersionInfoFunc(LPOSVERSIONINFOEXA lpVersionInformation, DWORD dwType
 }
 
 HRESULT SHGetFolderPathFunc(HWND hwnd, int csidl, HANDLE hToken, DWORD dwFlags, LPSTR pszPath) {
-	typedef HRESULT (WINAPI *SHGetFolderPathFunc)(HWND hwnd, int csidl, HANDLE hToken, DWORD dwFlags, LPSTR pszPath);
+	typedef HRESULT(WINAPI * SHGetFolderPathFunc)(HWND hwnd, int csidl, HANDLE hToken, DWORD dwFlags, LPSTR pszPath);
 
 	SHGetFolderPathFunc pSHGetFolderPath = (SHGetFolderPathFunc)GetProcAddress(GetModuleHandle(TEXT("shell32.dll")), "SHGetFolderPathA");
 	if (pSHGetFolderPath)

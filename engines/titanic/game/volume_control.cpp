@@ -24,7 +24,8 @@
 
 namespace Titanic {
 
-CVolumeControl::CVolumeControl() : CGameObject() {
+CVolumeControl::CVolumeControl()
+  : CGameObject() {
 }
 
 void CVolumeControl::save(SimpleFile *file, int indent) {

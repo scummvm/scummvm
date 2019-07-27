@@ -332,11 +332,11 @@ public:
 
 private:
 	static const int _compartmentsCount = 16;
-	static const int _positionsCount = 100 * 10;  // 100 positions per train car
+	static const int _positionsCount = 100 * 10; // 100 positions per train car
 
-	LastExpressEngine       *_engine;
-	EntityData              *_header;
-	Common::Array<Entity *>  _entities;
+	LastExpressEngine *_engine;
+	EntityData *_header;
+	Common::Array<Entity *> _entities;
 
 	// Compartments & positions
 	uint _compartments[_compartmentsCount];

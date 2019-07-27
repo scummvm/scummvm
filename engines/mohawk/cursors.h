@@ -72,7 +72,9 @@ protected:
 // Uses standard tCUR resources
 class DefaultCursorManager : public CursorManager {
 public:
-	explicit DefaultCursorManager(MohawkEngine *vm, uint32 tag = ID_TCUR) : _vm(vm), _tag(tag) {}
+	explicit DefaultCursorManager(MohawkEngine *vm, uint32 tag = ID_TCUR)
+	  : _vm(vm)
+	  , _tag(tag) {}
 	~DefaultCursorManager() override {}
 
 	void setCursor(uint16 id) override;
@@ -88,20 +90,20 @@ private:
 // 803-805 are animated, one large bmp which is in chunks - these are NEVER USED
 // Other cursors (200, 300, 400, 500, 600, 700) are not the same in each stack
 enum {
-	kDefaultMystCursor = 100,				// The default hand
-	kWhitePageCursor = 800,					// Holding a white page
-	kRedPageCursor = 801,					// Holding a red page
-	kBluePageCursor = 802,					// Holding a blue page
+	kDefaultMystCursor = 100, // The default hand
+	kWhitePageCursor = 800, // Holding a white page
+	kRedPageCursor = 801, // Holding a red page
+	kBluePageCursor = 802, // Holding a blue page
 	// kDroppingWhitePageAnimCursor = 803,
 	// kDroppingRedPageAnimCursor = 804,
 	// kDroppingBluePageAnimCursor = 805,
-	kNewMatchCursor = 900,					// Match that has not yet been lit
-	kLitMatchCursor = 901,					// Match that's burning
-	kDeadMatchCursor = 902,					// Match that's been extinguished
-	kKeyCursor = 903, 						// Key in Lighthouse in Stoneship
-	kRotateClockwiseCursor = 904, 			// Rotate gear clockwise (boiler on Myst)
-	kRotateCounterClockwiseCursor = 905,	// Rotate gear counter clockwise (boiler on Myst)
-	kMystZipModeCursor = 999				// Zip Mode cursor
+	kNewMatchCursor = 900, // Match that has not yet been lit
+	kLitMatchCursor = 901, // Match that's burning
+	kDeadMatchCursor = 902, // Match that's been extinguished
+	kKeyCursor = 903, // Key in Lighthouse in Stoneship
+	kRotateClockwiseCursor = 904, // Rotate gear clockwise (boiler on Myst)
+	kRotateCounterClockwiseCursor = 905, // Rotate gear counter clockwise (boiler on Myst)
+	kMystZipModeCursor = 999 // Zip Mode cursor
 };
 
 class MohawkEngine_Myst;

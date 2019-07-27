@@ -20,24 +20,30 @@
  *
  */
 
+#include "common/str.h"
 #include "common/stream.h"
 #include "common/substream.h"
-#include "common/str.h"
 
-#include "gob/gob.h"
-#include "gob/util.h"
-#include "gob/surface.h"
-#include "gob/video.h"
-#include "gob/dataio.h"
-#include "gob/rxyfile.h"
 #include "gob/cmpfile.h"
+#include "gob/dataio.h"
+#include "gob/gob.h"
+#include "gob/rxyfile.h"
+#include "gob/surface.h"
+#include "gob/util.h"
+#include "gob/video.h"
 
 namespace Gob {
 
 CMPFile::CMPFile(GobEngine *vm, const Common::String &baseName,
-                 uint16 width, uint16 height, uint8 bpp) :
-	_vm(vm), _width(width), _height(height), _bpp(bpp), _maxWidth(0), _maxHeight(0),
-	_surface(0), _coordinates(0) {
+                 uint16 width, uint16 height, uint8 bpp)
+  : _vm(vm)
+  , _width(width)
+  , _height(height)
+  , _bpp(bpp)
+  , _maxWidth(0)
+  , _maxHeight(0)
+  , _surface(0)
+  , _coordinates(0) {
 
 	if (baseName.empty())
 		return;
@@ -55,9 +61,15 @@ CMPFile::CMPFile(GobEngine *vm, const Common::String &baseName,
 }
 
 CMPFile::CMPFile(GobEngine *vm, const Common::String &cmpFile, const Common::String &rxyFile,
-                 uint16 width, uint16 height, uint8 bpp) :
-	_vm(vm), _width(width), _height(height), _bpp(bpp), _maxWidth(0), _maxHeight(0),
-	_surface(0), _coordinates(0) {
+                 uint16 width, uint16 height, uint8 bpp)
+  : _vm(vm)
+  , _width(width)
+  , _height(height)
+  , _bpp(bpp)
+  , _maxWidth(0)
+  , _maxHeight(0)
+  , _surface(0)
+  , _coordinates(0) {
 
 	if (cmpFile.empty() || !_vm->_dataIO->hasFile(cmpFile))
 		return;
@@ -69,9 +81,15 @@ CMPFile::CMPFile(GobEngine *vm, const Common::String &cmpFile, const Common::Str
 }
 
 CMPFile::CMPFile(GobEngine *vm, Common::SeekableReadStream &cmp, Common::SeekableReadStream &rxy,
-                 uint16 width, uint16 height, uint8 bpp) :
-	_vm(vm), _width(width), _height(height), _bpp(bpp), _maxWidth(0), _maxHeight(0),
-	_surface(0), _coordinates(0) {
+                 uint16 width, uint16 height, uint8 bpp)
+  : _vm(vm)
+  , _width(width)
+  , _height(height)
+  , _bpp(bpp)
+  , _maxWidth(0)
+  , _maxHeight(0)
+  , _surface(0)
+  , _coordinates(0) {
 
 	loadRXY(rxy);
 	createSurface();
@@ -80,9 +98,15 @@ CMPFile::CMPFile(GobEngine *vm, Common::SeekableReadStream &cmp, Common::Seekabl
 }
 
 CMPFile::CMPFile(GobEngine *vm, Common::SeekableReadStream &cmp,
-                 uint16 width, uint16 height, uint8 bpp) :
-	_vm(vm), _width(width), _height(height), _bpp(bpp), _maxWidth(0), _maxHeight(0),
-	_surface(0), _coordinates(0) {
+                 uint16 width, uint16 height, uint8 bpp)
+  : _vm(vm)
+  , _width(width)
+  , _height(height)
+  , _bpp(bpp)
+  , _maxWidth(0)
+  , _maxHeight(0)
+  , _surface(0)
+  , _coordinates(0) {
 
 	createRXY();
 	createSurface();
@@ -133,7 +157,7 @@ void CMPFile::loadRXY(const Common::String &rxy) {
 
 void CMPFile::loadCMP(Common::SeekableReadStream &cmp) {
 	uint32 size = cmp.size();
-	byte  *data = new byte[size];
+	byte *data = new byte[size];
 
 	if (cmp.read(data, size) != size) {
 		delete[] data;
@@ -147,9 +171,7 @@ void CMPFile::loadCMP(Common::SeekableReadStream &cmp) {
 }
 
 void CMPFile::loadRXY(Common::SeekableReadStream &rxy) {
-	bool bigEndian = (_vm->getEndiannessMethod() == kEndiannessMethodBE) ||
-	                 ((_vm->getEndiannessMethod() == kEndiannessMethodSystem) &&
-	                  (_vm->getEndianness() == kEndiannessBE));
+	bool bigEndian = (_vm->getEndiannessMethod() == kEndiannessMethodBE) || ((_vm->getEndiannessMethod() == kEndiannessMethodSystem) && (_vm->getEndianness() == kEndiannessBE));
 
 	Common::SeekableSubReadStreamEndian sub(&rxy, 0, rxy.size(), bigEndian, DisposeAfterUse::NO);
 
@@ -161,10 +183,10 @@ void CMPFile::loadRXY(Common::SeekableReadStream &rxy) {
 		if (c.left == 0xFFFF)
 			continue;
 
-		const uint16 width  = c.right  - c.left + 1;
-		const uint16 height = c.bottom - c.top  + 1;
+		const uint16 width = c.right - c.left + 1;
+		const uint16 height = c.bottom - c.top + 1;
 
-		_maxWidth  = MAX(_maxWidth , width);
+		_maxWidth = MAX(_maxWidth, width);
 		_maxHeight = MAX(_maxHeight, height);
 	}
 }
@@ -172,7 +194,7 @@ void CMPFile::loadRXY(Common::SeekableReadStream &rxy) {
 void CMPFile::createRXY() {
 	_coordinates = new RXYFile(_width, _height);
 
-	_maxWidth  = _width;
+	_maxWidth = _width;
 	_maxHeight = _height;
 }
 
@@ -189,9 +211,9 @@ bool CMPFile::getCoordinates(uint16 sprite, uint16 &left, uint16 &top, uint16 &r
 	if (empty() || (sprite >= _coordinates->size()))
 		return false;
 
-	left   = (*_coordinates)[sprite].left;
-	top    = (*_coordinates)[sprite].top;
-	right  = (*_coordinates)[sprite].right;
+	left = (*_coordinates)[sprite].left;
+	top = (*_coordinates)[sprite].top;
+	right = (*_coordinates)[sprite].right;
 	bottom = (*_coordinates)[sprite].bottom;
 
 	return left != 0xFFFF;
@@ -201,18 +223,18 @@ uint16 CMPFile::getWidth(uint16 sprite) const {
 	if (empty() || (sprite >= _coordinates->size()))
 		return 0;
 
-	return (*_coordinates)[sprite].right  - (*_coordinates)[sprite].left + 1;
+	return (*_coordinates)[sprite].right - (*_coordinates)[sprite].left + 1;
 }
 
 uint16 CMPFile::getHeight(uint16 sprite) const {
 	if (empty() || (sprite >= _coordinates->size()))
 		return 0;
 
-	return (*_coordinates)[sprite].bottom - (*_coordinates)[sprite].top  + 1;
+	return (*_coordinates)[sprite].bottom - (*_coordinates)[sprite].top + 1;
 }
 
 void CMPFile::getMaxSize(uint16 &width, uint16 &height) const {
-	width  = _maxWidth;
+	width = _maxWidth;
 	height = _maxHeight;
 }
 
@@ -244,10 +266,10 @@ uint16 CMPFile::addSprite(uint16 left, uint16 top, uint16 right, uint16 bottom) 
 	if (empty())
 		return 0;
 
-	const uint16 height = bottom - top  + 1;
-	const uint16 width  = right  - left + 1;
+	const uint16 height = bottom - top + 1;
+	const uint16 width = right - left + 1;
 
-	_maxWidth  = MAX(_maxWidth , width);
+	_maxWidth = MAX(_maxWidth, width);
 	_maxHeight = MAX(_maxHeight, height);
 
 	return _coordinates->add(left, top, right, bottom);

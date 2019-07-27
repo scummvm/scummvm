@@ -27,7 +27,7 @@ namespace Sci {
 
 #define SCI_TEXT16_ALIGNMENT_RIGHT -1
 #define SCI_TEXT16_ALIGNMENT_CENTER 1
-#define SCI_TEXT16_ALIGNMENT_LEFT	0
+#define SCI_TEXT16_ALIGNMENT_LEFT 0
 
 typedef Common::Array<Common::Rect> CodeRefRectArray;
 

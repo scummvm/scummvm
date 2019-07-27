@@ -24,9 +24,9 @@
 #define NEVERHOOD_ENTITY_H
 
 #include "common/str.h"
-#include "neverhood/neverhood.h"
 #include "neverhood/gamevars.h"
 #include "neverhood/graphics.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/sound.h"
 
 namespace Neverhood {
@@ -42,12 +42,19 @@ enum MessageParamType {
 
 struct MessageParam {
 public:
-	MessageParam(uint32 value) : _type(mptInteger), _integer(value) {}
-	MessageParam(NPoint value) : _type(mptPoint), _point(value) {}
-	MessageParam(Entity *entity) : _type(mptEntity), _entity(entity) {}
+	MessageParam(uint32 value)
+	  : _type(mptInteger)
+	  , _integer(value) {}
+	MessageParam(NPoint value)
+	  : _type(mptPoint)
+	  , _point(value) {}
+	MessageParam(Entity *entity)
+	  : _type(mptEntity)
+	  , _entity(entity) {}
 	uint32 asInteger() const;
 	NPoint asPoint() const;
 	Entity *asEntity() const;
+
 protected:
 	union {
 		uint32 _integer;
@@ -59,18 +66,18 @@ protected:
 
 // TODO: Disable heavy debug stuff in release mode
 
-#define SetUpdateHandler(handler)												\
-	do {																		\
-		_updateHandlerCb = static_cast <void (Entity::*)(void)> (handler);		\
-		debug(5, "SetUpdateHandler(" #handler ")");								\
-		_updateHandlerCbName = #handler;										\
+#define SetUpdateHandler(handler)                                    \
+	do {                                                               \
+		_updateHandlerCb = static_cast<void (Entity::*)(void)>(handler); \
+		debug(5, "SetUpdateHandler(" #handler ")");                      \
+		_updateHandlerCbName = #handler;                                 \
 	} while (0)
 
-#define SetMessageHandler(handler)												\
-	do {																		\
-		_messageHandlerCb = static_cast <uint32 (Entity::*)(int messageNum, const MessageParam &param, Entity *sender)> (handler);	\
-		debug(5, "SetMessageHandler(" #handler ")");							\
-		_messageHandlerCbName = #handler;										\
+#define SetMessageHandler(handler)                                                                                           \
+	do {                                                                                                                       \
+		_messageHandlerCb = static_cast<uint32 (Entity::*)(int messageNum, const MessageParam &param, Entity *sender)>(handler); \
+		debug(5, "SetMessageHandler(" #handler ")");                                                                             \
+		_messageHandlerCbName = #handler;                                                                                        \
 	} while (0)
 
 const uint kMaxSoundResources = 16;
@@ -99,6 +106,7 @@ public:
 	void incSubVar(uint32 nameHash, uint32 subNameHash, int incrValue);
 	int getPriority() const { return _priority; }
 	bool hasMessageHandler() const { return _messageHandlerCb != nullptr; }
+
 protected:
 	void (Entity::*_updateHandlerCb)();
 	uint32 (Entity::*_messageHandlerCb)(int messageNum, const MessageParam &param, Entity *sender);

@@ -20,15 +20,15 @@
  *
  */
 
-#include "tsage/events.h"
 #include "tsage/graphics.h"
-#include "tsage/resources.h"
-#include "tsage/tsage.h"
-#include "tsage/core.h"
 #include "common/algorithm.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
+#include "tsage/core.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
+#include "tsage/resources.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -134,8 +134,10 @@ GfxSurface surfaceFromRes(int resNum, int rlbNum, int subNum) {
 /*--------------------------------------------------------------------------*/
 
 void Rect::set(int16 x1, int16 y1, int16 x2, int16 y2) {
-	left = x1; top = y1;
-	right = x2; bottom = y2;
+	left = x1;
+	top = y1;
+	right = x2;
+	bottom = y2;
 }
 
 /**
@@ -145,8 +147,10 @@ void Rect::set(int16 x1, int16 y1, int16 x2, int16 y2) {
  * @dy y amount to collapse y edges by
  */
 void Rect::collapse(int dx, int dy) {
-	left += dx; right -= dx;
-	top += dy; bottom -= dy;
+	left += dx;
+	right -= dx;
+	top += dy;
+	bottom -= dy;
 }
 
 /**
@@ -174,10 +178,14 @@ void Rect::center(const Rect &r) {
  * @r The bounds the current rect should be within
  */
 void Rect::contain(const Rect &r) {
-	if (left < r.left) translate(r.left - left, 0);
-	if (right > r.right) translate(r.right - right, 0);
-	if (top < r.top) translate(0, r.top - top);
-	if (bottom > r.bottom) translate(0, r.bottom - bottom);
+	if (left < r.left)
+		translate(r.left - left, 0);
+	if (right > r.right)
+		translate(r.right - right, 0);
+	if (top < r.top)
+		translate(0, r.top - top);
+	if (bottom > r.bottom)
+		translate(0, r.bottom - bottom);
 }
 
 /**
@@ -194,15 +202,15 @@ void Rect::resize(const GfxSurface &surface, int xp, int yp, int percent) {
 	int ye = bounds.height() * percent / 100;
 	this->set(0, 0, xe, ye);
 
-	if (!right) ++right;
-	if (!bottom) ++bottom;
+	if (!right)
+		++right;
+	if (!bottom)
+		++bottom;
 
 	this->moveTo(xp, yp);
 
-	int xa = (surface._flags & FRAME_FLIP_CENTROID_X) == 0 ? surface._centroid.x :
-		bounds.width() - (surface._centroid.x + 1);
-	int ya = (surface._flags & FRAME_FLIP_CENTROID_Y) == 0 ? surface._centroid.y :
-		bounds.height() - (surface._centroid.y + 1);
+	int xa = (surface._flags & FRAME_FLIP_CENTROID_X) == 0 ? surface._centroid.x : bounds.width() - (surface._centroid.x + 1);
+	int ya = (surface._flags & FRAME_FLIP_CENTROID_Y) == 0 ? surface._centroid.y : bounds.height() - (surface._centroid.y + 1);
 
 	int xd = xa * percent / 100;
 	int yd = ya * percent / 100;
@@ -229,16 +237,19 @@ void Rect::synchronize(Serializer &s) {
 
 /*--------------------------------------------------------------------------*/
 
-GfxSurface::GfxSurface() : Graphics::Screen(0, 0), _bounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) {
-	free();		// Free the 0x0 surface allocated by Graphics::Screen
+GfxSurface::GfxSurface()
+  : Graphics::Screen(0, 0)
+  , _bounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) {
+	free(); // Free the 0x0 surface allocated by Graphics::Screen
 	_disableUpdates = false;
 	_lockSurfaceCtr = 0;
 	_transColor = -1;
 	_flags = 0;
 }
 
-GfxSurface::GfxSurface(const GfxSurface &s): Graphics::Screen(0, 0) {
-	free();		// Free the 0x0 surface allocated by Graphics::Screen
+GfxSurface::GfxSurface(const GfxSurface &s)
+  : Graphics::Screen(0, 0) {
+	free(); // Free the 0x0 surface allocated by Graphics::Screen
 	_lockSurfaceCtr = 0;
 
 	operator=(s);
@@ -472,7 +483,7 @@ static GfxSurface ResizeSurface(GfxSurface &src, int xSize, int ySize, int trans
  *
  */
 void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds,
-		Region *priorityRegion, const byte *shadowMap) {
+                          Region *priorityRegion, const byte *shadowMap) {
 	GfxSurface srcImage;
 	if (srcBounds.isEmpty())
 		return;
@@ -503,8 +514,7 @@ void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds,
 	Graphics::Surface destSurface = lockSurface();
 
 	// Get clipping area
-	Rect clipRect = !_clipRect.isEmpty() ? _clipRect :
-		Rect(0, 0, destSurface.w, destSurface.h);
+	Rect clipRect = !_clipRect.isEmpty() ? _clipRect : Rect(0, 0, destSurface.w, destSurface.h);
 
 	// Adjust bounds to ensure destination will be on-screen
 	int srcX = 0, srcY = 0;
@@ -521,8 +531,7 @@ void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds,
 	if (destBounds.bottom > clipRect.bottom)
 		destBounds.bottom = clipRect.bottom;
 
-	if (destBounds.isValidRect() && !((destBounds.right < 0) || (destBounds.bottom < 0)
-		|| (destBounds.left >= destSurface.w) || (destBounds.top >= destSurface.h))) {
+	if (destBounds.isValidRect() && !((destBounds.right < 0) || (destBounds.bottom < 0) || (destBounds.left >= destSurface.w) || (destBounds.top >= destSurface.h))) {
 		// Register the affected area as dirty
 		addDirtyRect(destBounds);
 
@@ -539,9 +548,7 @@ void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds,
 				int xp = destBounds.left;
 
 				while (tempSrc < (pSrc + destBounds.width())) {
-					if (!priorityRegion || !priorityRegion->contains(Common::Point(
-							xp + g_globals->_sceneManager._scene->_sceneBounds.left,
-							destBounds.top + y + g_globals->_sceneManager._scene->_sceneBounds.top))) {
+					if (!priorityRegion || !priorityRegion->contains(Common::Point(xp + g_globals->_sceneManager._scene->_sceneBounds.left, destBounds.top + y + g_globals->_sceneManager._scene->_sceneBounds.top))) {
 						if (*tempSrc != src._transColor) {
 							if (shadowMap) {
 								// Using a shadow map, so translate the dest pixel using the mapping array
@@ -619,8 +626,10 @@ void GfxElement::highlight() {
 	for (int yp = 0; yp < dest.h; ++yp) {
 		byte *lineP = (byte *)dest.getBasePtr(0, yp);
 		for (int xp = 0; xp < tempRect.right; ++xp, ++lineP) {
-			if (*lineP == _colors.background) *lineP = _colors.foreground;
-			else if (*lineP == _colors.foreground) *lineP = _colors.background;
+			if (*lineP == _colors.background)
+				*lineP = _colors.foreground;
+			else if (*lineP == _colors.foreground)
+				*lineP = _colors.background;
 		}
 	}
 
@@ -702,7 +711,8 @@ void GfxElement::drawFrame() {
 		// Fill dialog content with specified background color
 		gfxManager.fillRect(tempRect, _colors.background);
 
-		--tempRect.bottom; --tempRect.right;
+		--tempRect.bottom;
+		--tempRect.right;
 		gfxManager.fillArea(tempRect.left, tempRect.top, bgColor);
 		gfxManager.fillArea(tempRect.left, tempRect.bottom, fgColor);
 		gfxManager.fillArea(tempRect.right, tempRect.top, fgColor);
@@ -776,7 +786,8 @@ bool GfxElement::focusedEvent(Event &event) {
 
 /*--------------------------------------------------------------------------*/
 
-GfxImage::GfxImage() : GfxElement() {
+GfxImage::GfxImage()
+  : GfxElement() {
 	_resNum = 0;
 	_rlbNum = 0;
 	_cursorNum = 0;
@@ -813,7 +824,8 @@ void GfxImage::draw() {
 
 /*--------------------------------------------------------------------------*/
 
-GfxMessage::GfxMessage() : GfxElement() {
+GfxMessage::GfxMessage()
+  : GfxElement() {
 	_textAlign = ALIGN_LEFT;
 	_width = 0;
 }
@@ -1118,13 +1130,17 @@ void GfxDialog::setPalette() {
 
 /*--------------------------------------------------------------------------*/
 
-GfxManager::GfxManager() : _surface(g_globals->_screen), _oldManager(NULL) {
+GfxManager::GfxManager()
+  : _surface(g_globals->_screen)
+  , _oldManager(NULL) {
 	_font.setOwner(this);
 	_font._fillFlag = false;
 	_bounds = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
-GfxManager::GfxManager(GfxSurface &s) : _surface(s), _oldManager(NULL) {
+GfxManager::GfxManager(GfxSurface &s)
+  : _surface(s)
+  , _oldManager(NULL) {
 	_font.setOwner(this);
 	_font._fillFlag = false;
 }
@@ -1239,7 +1255,6 @@ void GfxManager::copyFrom(GfxSurface &src, const Rect &srcBounds, const Rect &de
 }
 
 /*--------------------------------------------------------------------------*/
-
 
 GfxFont::GfxFont() {
 	if ((g_vm->getGameID() == GType_Ringworld) && (g_vm->getFeatures() & GF_DEMO))
@@ -1433,7 +1448,8 @@ int GfxFont::writeChar(const char ch) {
 
 		for (int xs = 0; xs < charRect.width(); ++xs, ++destP) {
 			// Get the next color index to use
-			if ((bitCtr % 8) == 0) v = *dataP++;
+			if ((bitCtr % 8) == 0)
+				v = *dataP++;
 			int colIndex = 0;
 			for (int subCtr = 0; subCtr < _bpp; ++subCtr, ++bitCtr) {
 				colIndex = (colIndex << 1) | (v & 0x80 ? 1 : 0);
@@ -1442,9 +1458,15 @@ int GfxFont::writeChar(const char ch) {
 
 			switch (colIndex) {
 			//case 0: *destP = _colors.background; break;
-			case 1: *destP = _colors.foreground; break;
-			case 2: *destP = _colors2.background; break;
-			case 3: *destP = _colors2.foreground; break;
+			case 1:
+				*destP = _colors.foreground;
+				break;
+			case 2:
+				*destP = _colors2.background;
+				break;
+			case 3:
+				*destP = _colors2.foreground;
+				break;
 			}
 		}
 	}
@@ -1579,6 +1601,5 @@ GfxFontBackup::~GfxFontBackup() {
 	g_globals->gfxManager()._font._position = _position;
 	g_globals->gfxManager()._font._colors = _colors;
 }
-
 
 } // End of namespace TsAGE

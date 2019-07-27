@@ -22,13 +22,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "common/file.h"
 #include "common/endian.h"
+#include "common/file.h"
 
-#include "sword2/sword2.h"
 #include "sword2/header.h"
-#include "sword2/resman.h"
 #include "sword2/logic.h"
+#include "sword2/resman.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
@@ -73,7 +73,8 @@ void Sword2Engine::fetchPalette(byte *screenFile, byte *palBuffer) {
 
 byte *Sword2Engine::fetchPaletteMatchTable(byte *screenFile) {
 
-	if (isPsx()) return NULL;
+	if (isPsx())
+		return NULL;
 
 	MultiScreenHeader mscreenHeader;
 
@@ -129,7 +130,8 @@ byte *Sword2Engine::fetchLayerHeader(byte *screenFile, uint16 layerNo) {
  */
 
 byte *Sword2Engine::fetchShadingMask(byte *screenFile) {
-	if (isPsx()) return NULL;
+	if (isPsx())
+		return NULL;
 
 	MultiScreenHeader mscreenHeader;
 
@@ -399,7 +401,7 @@ byte *Sword2Engine::fetchPsxParallax(uint32 location, uint8 level) {
 		plxYres = header.bgPlxYres;
 		plxOffset = header.bgPlxOffset;
 		plxSize = header.bgPlxSize;
-	} else {  // a foreground parallax
+	} else { // a foreground parallax
 		plxXres = header.fgPlxXres;
 		plxYres = header.fgPlxYres;
 		plxOffset = header.fgPlxOffset;

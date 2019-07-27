@@ -23,12 +23,12 @@
 #include "common/hash-str.h"
 
 #include "pink/archive.h"
-#include "pink/pink.h"
-#include "pink/objects/side_effect.h"
 #include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/pages/game_page.h"
+#include "pink/objects/side_effect.h"
 #include "pink/objects/walk/walk_location.h"
 #include "pink/objects/walk/walk_mgr.h"
+#include "pink/pink.h"
 
 namespace Pink {
 

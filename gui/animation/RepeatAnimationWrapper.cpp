@@ -26,7 +26,7 @@
 
 namespace GUI {
 
-void RepeatAnimationWrapper::update(Drawable* drawable, long currentTime) {
+void RepeatAnimationWrapper::update(Drawable *drawable, long currentTime) {
 	// Update wrapped animation
 	_animation->update(drawable, currentTime);
 

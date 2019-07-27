@@ -23,14 +23,14 @@
 #ifndef GLK_GLK_H
 #define GLK_GLK_H
 
-#include "common/scummsys.h"
 #include "common/random.h"
-#include "common/system.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
+#include "common/system.h"
 #include "engines/engine.h"
 #include "glk/glk_types.h"
-#include "glk/streams.h"
 #include "glk/pc_speaker.h"
+#include "glk/streams.h"
 
 namespace Glk {
 
@@ -46,12 +46,11 @@ class Streams;
 class Windows;
 
 enum GlkDebugChannels {
-	kDebugCore      = 1 << 0,
-	kDebugScripts   = 1 << 1,
-	kDebugGraphics  = 1 << 2,
-	kDebugSound     = 1 << 3
+	kDebugCore = 1 << 0,
+	kDebugScripts = 1 << 1,
+	kDebugGraphics = 1 << 2,
+	kDebugSound = 1 << 3
 };
-
 
 #define GLK_SAVEGAME_VERSION 1
 
@@ -73,6 +72,7 @@ private:
 	 * Handles basic initialization
 	 */
 	void initialize();
+
 protected:
 	const GlkGameDescription _gameDescription;
 	Common::RandomSource _random;
@@ -102,6 +102,7 @@ protected:
 	 * Main game loop for the individual interpreters
 	 */
 	virtual void runGame() = 0;
+
 public:
 	Blorb *_blorb;
 	Clipboard *_clipboard;
@@ -116,10 +117,11 @@ public:
 	bool _copySelect;
 	bool _terminated;
 
-	gidispatch_rock_t(*gli_register_obj)(void *obj, uint objclass);
-	void(*gli_unregister_obj)(void *obj, uint objclass, gidispatch_rock_t objrock);
-	gidispatch_rock_t(*gli_register_arr)(void *array, uint len, const char *typecode);
-	void(*gli_unregister_arr)(void *array, uint len, const char *typecode, gidispatch_rock_t objrock);
+	gidispatch_rock_t (*gli_register_obj)(void *obj, uint objclass);
+	void (*gli_unregister_obj)(void *obj, uint objclass, gidispatch_rock_t objrock);
+	gidispatch_rock_t (*gli_register_arr)(void *array, uint len, const char *typecode);
+	void (*gli_unregister_arr)(void *array, uint len, const char *typecode, gidispatch_rock_t objrock);
+
 public:
 	GlkEngine(OSystem *syst, const GlkGameDescription &gameDesc);
 	virtual ~GlkEngine();

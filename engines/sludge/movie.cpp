@@ -211,12 +211,12 @@ inline static int video_queue_get(videoQueue *q,
 	return ret;
 }
 
-#if 0
+#	if 0
 static void die_codec(vpx_codec_ctx_t *ctx, const char *s) {
 	//const char *detail = vpx_codec_error_detail(ctx);
 	fatal(s, vpx_codec_error(ctx));
 }
-#endif
+#	endif
 
 void setMovieViewport() {
 	float realAspect = (float) realWinWidth / realWinHeight;
@@ -233,9 +233,9 @@ void setMovieViewport() {
 		vpOffsetY = (realWinHeight - vpHeight) / 2;
 		vpOffsetX = 0;
 	}
-#if 0
+#	if 0
 	glViewport(vpOffsetX, vpOffsetY, vpWidth, vpHeight);
-#endif
+#	endif
 	const GLfloat bPMVMatrix[] = {
 		2.0f / 640.f, .0, .0, .0,
 		.0, -2.0f / 400.f, .0, .0,

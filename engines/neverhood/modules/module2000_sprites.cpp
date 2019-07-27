@@ -25,7 +25,7 @@
 namespace Neverhood {
 
 KmScene2001::KmScene2001(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+  : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }

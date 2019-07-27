@@ -31,33 +31,48 @@
  * Note that 'alignment' must be a power of two!
  */
 #define IS_ALIGNED(value, alignment) \
-          ((((size_t)value) & ((alignment) - 1)) == 0)
+	((((size_t)value) & ((alignment)-1)) == 0)
 
 #ifdef ABS
-#undef ABS
+#	undef ABS
 #endif
 
 #ifdef MIN
-#undef MIN
+#	undef MIN
 #endif
 
 #ifdef MAX
-#undef MAX
+#	undef MAX
 #endif
 
-template<typename T> inline T ABS(T x)		{ return (x >= 0) ? x : -x; }
-template<typename T> inline T MIN(T a, T b)	{ return (a < b) ? a : b; }
-template<typename T> inline T MAX(T a, T b)	{ return (a > b) ? a : b; }
-template<typename T> inline T CLIP(T v, T amin, T amax)
-		{ if (v < amin) return amin; else if (v > amax) return amax; else return v; }
+template <typename T>
+inline T ABS(T x) { return (x >= 0) ? x : -x; }
+template <typename T>
+inline T MIN(T a, T b) { return (a < b) ? a : b; }
+template <typename T>
+inline T MAX(T a, T b) { return (a > b) ? a : b; }
+template <typename T>
+inline T CLIP(T v, T amin, T amax) {
+	if (v < amin)
+		return amin;
+	else if (v > amax)
+		return amax;
+	else
+		return v;
+}
 
 /**
  * Template method which swaps the vaulues of its two parameters.
  */
-template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
+template <typename T>
+inline void SWAP(T &a, T &b) {
+	T tmp = a;
+	a = b;
+	b = tmp;
+}
 
 #ifdef ARRAYSIZE
-#undef ARRAYSIZE
+#	undef ARRAYSIZE
 #endif
 
 /**
@@ -70,19 +85,18 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
  */
 #define ARRAYEND(x) ((x) + ARRAYSIZE((x)))
 
-
 /**
  * @def SCUMMVM_CURRENT_FUNCTION
  * This macro evaluates to the current function's name on compilers supporting this.
  */
 #if defined(__GNUC__)
-# define SCUMMVM_CURRENT_FUNCTION __PRETTY_FUNCTION__
+#	define SCUMMVM_CURRENT_FUNCTION __PRETTY_FUNCTION__
 #elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901)
-#  define SCUMMVM_CURRENT_FUNCTION	__func__
+#	define SCUMMVM_CURRENT_FUNCTION __func__
 #elif defined(_MSC_VER)
-#  define SCUMMVM_CURRENT_FUNCTION __FUNCTION__
+#	define SCUMMVM_CURRENT_FUNCTION __FUNCTION__
 #else
-#  define SCUMMVM_CURRENT_FUNCTION "<unknown>"
+#	define SCUMMVM_CURRENT_FUNCTION "<unknown>"
 #endif
 
 namespace Common {
@@ -95,8 +109,7 @@ namespace Common {
  * @param bytesPerLine	number of bytes to print per line (default: 16)
  * @param startOffset	shift the shown offsets by the starting offset (default: 0)
  */
-extern void hexdump(const byte * data, int len, int bytesPerLine = 16, int startOffset = 0);
-
+extern void hexdump(const byte *data, int len, int bytesPerLine = 16, int startOffset = 0);
 
 /**
  * Parse a string for a boolean value.
@@ -109,7 +122,6 @@ extern void hexdump(const byte * data, int len, int bytesPerLine = 16, int start
  * @return 	true if the string parsed correctly, false if an error occurred.
  */
 bool parseBool(const String &val, bool &valAsBool);
-
 
 /**
  * Test whether the given character is alphanumeric (a-z, A-Z, 0-9).

@@ -23,13 +23,12 @@
 #include "backends/base-backend.h"
 
 #ifndef DISABLE_DEFAULT_EVENT_MANAGER
-#include "backends/events/default/default-events.h"
+#	include "backends/events/default/default-events.h"
 #endif
 
 #ifndef DISABLE_DEFAULT_AUDIOCD_MANAGER
-#include "backends/audiocd/default/default-audiocd.h"
+#	include "backends/audiocd/default/default-audiocd.h"
 #endif
-
 
 #include "gui/message.h"
 
@@ -46,7 +45,7 @@ void BaseBackend::initBackend() {
 		_eventManager = new DefaultEventManager(getDefaultEventSource());
 #endif
 
-	// Init audio CD manager
+		// Init audio CD manager
 #ifndef DISABLE_DEFAULT_AUDIOCD_MANAGER
 	if (!_audiocdManager)
 		_audiocdManager = new DefaultAudioCDManager();

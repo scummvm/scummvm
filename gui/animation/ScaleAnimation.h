@@ -29,9 +29,11 @@
 
 namespace GUI {
 
-class ScaleAnimation: public Animation {
+class ScaleAnimation : public Animation {
 public:
-	ScaleAnimation() : _endWidth(0), _endWidthFactor(0) {}
+	ScaleAnimation()
+	  : _endWidth(0)
+	  , _endWidthFactor(0) {}
 
 	virtual ~ScaleAnimation() {}
 
@@ -64,6 +66,5 @@ private:
 };
 
 } // End of namespace GUI
-
 
 #endif /* GUI_ANIMATION_SCALEANIMATION_H */

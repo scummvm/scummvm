@@ -28,9 +28,9 @@
 #include "tony/input.h"
 #include "tony/inventory.h"
 #include "tony/loc.h"
-#include "tony/tonychar.h"
 #include "tony/mpal/mpal.h"
 #include "tony/mpal/mpaldll.h"
+#include "tony/tonychar.h"
 
 namespace Tony {
 
@@ -155,7 +155,10 @@ typedef struct {
 typedef CfCall *LpCfCall;
 
 struct CoroutineMutex {
-	CoroutineMutex() : _eventId(0), _ownerPid(0), _lockCount(0) { }
+	CoroutineMutex()
+	  : _eventId(0)
+	  , _ownerPid(0)
+	  , _lockCount(0) {}
 
 	uint32 _eventId;
 	uint32 _ownerPid;
@@ -244,43 +247,43 @@ public:
 	/**
 	 * @defgroup MPAL variables
 	 */
-	uint32              _mpalError;
-	LPITEMIRQFUNCTION   _lpiifCustom;
-	LPLPCUSTOMFUNCTION  _lplpFunctions;
-	Common::String     *_lplpFunctionStrings;
-	uint16              _nObjs;
-	uint16              _nVars;
-	MpalHandle          _hVars;
-	LpMpalVar           _lpmvVars;
-	uint16              _nMsgs;
-	MpalHandle          _hMsgs;
-	LpMpalMsg           _lpmmMsgs;
-	uint16              _nDialogs;
-	MpalHandle          _hDialogs;
-	LpMpalDialog        _lpmdDialogs;
-	uint16              _nItems;
-	MpalHandle          _hItems;
-	LpMpalItem          _lpmiItems;
-	uint16              _nLocations;
-	MpalHandle          _hLocations;
-	LpMpalLocation      _lpmlLocations;
-	uint16              _nScripts;
-	MpalHandle          _hScripts;
-	LpMpalScript        _lpmsScripts;
-	Common::File        _hMpr;
-	uint16              _nResources;
-	uint32             *_lpResources;
-	bool                _bExecutingAction;
-	bool                _bExecutingDialog;
-	uint32              _nPollingLocations[MAXPOLLINGLOCATIONS];
-	uint32              _hEndPollingLocations[MAXPOLLINGLOCATIONS];
-	uint32              _pollingThreads[MAXPOLLINGLOCATIONS];
-	uint32              _hAskChoice;
-	uint32              _hDoneChoice;
-	uint32              _nExecutingAction;
-	uint32              _nExecutingDialog;
-	uint32              _nExecutingChoice;
-	uint32              _nSelectedChoice;
+	uint32 _mpalError;
+	LPITEMIRQFUNCTION _lpiifCustom;
+	LPLPCUSTOMFUNCTION _lplpFunctions;
+	Common::String *_lplpFunctionStrings;
+	uint16 _nObjs;
+	uint16 _nVars;
+	MpalHandle _hVars;
+	LpMpalVar _lpmvVars;
+	uint16 _nMsgs;
+	MpalHandle _hMsgs;
+	LpMpalMsg _lpmmMsgs;
+	uint16 _nDialogs;
+	MpalHandle _hDialogs;
+	LpMpalDialog _lpmdDialogs;
+	uint16 _nItems;
+	MpalHandle _hItems;
+	LpMpalItem _lpmiItems;
+	uint16 _nLocations;
+	MpalHandle _hLocations;
+	LpMpalLocation _lpmlLocations;
+	uint16 _nScripts;
+	MpalHandle _hScripts;
+	LpMpalScript _lpmsScripts;
+	Common::File _hMpr;
+	uint16 _nResources;
+	uint32 *_lpResources;
+	bool _bExecutingAction;
+	bool _bExecutingDialog;
+	uint32 _nPollingLocations[MAXPOLLINGLOCATIONS];
+	uint32 _hEndPollingLocations[MAXPOLLINGLOCATIONS];
+	uint32 _pollingThreads[MAXPOLLINGLOCATIONS];
+	uint32 _hAskChoice;
+	uint32 _hDoneChoice;
+	uint32 _nExecutingAction;
+	uint32 _nExecutingDialog;
+	uint32 _nExecutingChoice;
+	uint32 _nSelectedChoice;
 };
 
 } // End of namespace Tony

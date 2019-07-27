@@ -29,9 +29,9 @@
  *
  */
 
-#include "sword25/kernel/outputpersistenceblock.h"
-#include "sword25/kernel/inputpersistenceblock.h"
 #include "sword25/math/regionregistry.h"
+#include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/math/region.h"
 
 namespace Common {
@@ -71,7 +71,7 @@ bool RegionRegistry::unpersist(InputPersistenceBlock &reader) {
 	reader.read(_nextHandle);
 
 	// Destroy all existing BS_Regions
-//FIXME: This doesn't seem right - the value is being deleted but not the actual hash node itself?
+	//FIXME: This doesn't seem right - the value is being deleted but not the actual hash node itself?
 	while (!_handle2PtrMap.empty())
 		delete _handle2PtrMap.begin()->_value;
 
@@ -80,7 +80,7 @@ bool RegionRegistry::unpersist(InputPersistenceBlock &reader) {
 	reader.read(regionCount);
 
 	// Restore all the BS_Regions objects
-	for (uint i = 0; i < regionCount; ++i)  {
+	for (uint i = 0; i < regionCount; ++i) {
 		// Handle read
 		uint32 handle;
 		reader.read(handle);

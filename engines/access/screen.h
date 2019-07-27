@@ -23,11 +23,11 @@
 #ifndef ACCESS_SCREEN_H
 #define ACCESS_SCREEN_H
 
-#include "common/scummsys.h"
+#include "access/asurface.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/stream.h"
 #include "graphics/screen.h"
-#include "access/asurface.h"
 
 namespace Access {
 
@@ -64,6 +64,7 @@ private:
 	Common::List<Common::Rect> _dirtyRects;
 
 	void updatePalette();
+
 public:
 	int _vesaMode;
 	int _startColor, _numColors;
@@ -80,6 +81,7 @@ public:
 	int _vWindowLinesTall;
 	bool _screenChangeFlag;
 	bool _fadeIn;
+
 public:
 	/**
 	 * Updates the screen
@@ -95,6 +97,7 @@ public:
 	virtual void drawBox();
 
 	virtual void copyBuffer(Graphics::ManagedSurface *src);
+
 public:
 	Screen(AccessEngine *vm);
 

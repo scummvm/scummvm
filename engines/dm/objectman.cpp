@@ -32,41 +32,42 @@
 namespace DM {
 
 void ObjectMan::initConstants() {
-	int16 iconGraphicHeight[7] = {32, 32, 32, 32, 32, 32, 32}; // @ K0077_ai_IconGraphicHeight
-	int16 iconGraphicFirstIndex[7] = { // G0026_ai_Graphic562_IconGraphicFirstIconIndex
-		0,     /* First icon index in graphic #42 */
-		32,    /* First icon index in graphic #43 */
-		64,    /* First icon index in graphic #44 */
-		96,    /* First icon index in graphic #45 */
-		128,   /* First icon index in graphic #46 */
-		160,   /* First icon index in graphic #47 */
-		192    /* First icon index in graphic #48 */
+	int16 iconGraphicHeight[7] = { 32, 32, 32, 32, 32, 32, 32 }; // @ K0077_ai_IconGraphicHeight
+	int16 iconGraphicFirstIndex[7] = {
+		// G0026_ai_Graphic562_IconGraphicFirstIconIndex
+		0, /* First icon index in graphic #42 */
+		32, /* First icon index in graphic #43 */
+		64, /* First icon index in graphic #44 */
+		96, /* First icon index in graphic #45 */
+		128, /* First icon index in graphic #46 */
+		160, /* First icon index in graphic #47 */
+		192 /* First icon index in graphic #48 */
 	};
 
 	/* 8 for champion hands in status boxes, 30 for champion inventory, 8 for chest */
-	_slotBoxes[0] = SlotBox(4, 10, 0);    /* Champion Status Box 0 Ready Hand */
-	_slotBoxes[1] = SlotBox(24, 10, 0);   /* Champion Status Box 0 Action Hand */
-	_slotBoxes[2] = SlotBox(73, 10, 0);   /* Champion Status Box 1 Ready Hand */
-	_slotBoxes[3] = SlotBox(93, 10, 0);   /* Champion Status Box 1 Action Hand */
-	_slotBoxes[4] = SlotBox(142, 10, 0);  /* Champion Status Box 2 Ready Hand */
-	_slotBoxes[5] = SlotBox(162, 10, 0);  /* Champion Status Box 2 Action Hand */
-	_slotBoxes[6] = SlotBox(211, 10, 0);  /* Champion Status Box 3 Ready Hand */
-	_slotBoxes[7] = SlotBox(231, 10, 0);  /* Champion Status Box 3 Action Hand */
-	_slotBoxes[8] = SlotBox(6, 53, 0);    /* Ready Hand */
-	_slotBoxes[9] = SlotBox(62, 53, 0);   /* Action Hand */
-	_slotBoxes[10] = SlotBox(34, 26, 0);  /* Head */
-	_slotBoxes[11] = SlotBox(34, 46, 0);  /* Torso */
-	_slotBoxes[12] = SlotBox(34, 66, 0);  /* Legs */
-	_slotBoxes[13] = SlotBox(34, 86, 0);  /* Feet */
-	_slotBoxes[14] = SlotBox(6, 90, 0);   /* Pouch 2 */
-	_slotBoxes[15] = SlotBox(79, 73, 0);  /* Quiver Line2 1 */
-	_slotBoxes[16] = SlotBox(62, 90, 0);  /* Quiver Line1 2 */
-	_slotBoxes[17] = SlotBox(79, 90, 0);  /* Quiver Line2 2 */
-	_slotBoxes[18] = SlotBox(6, 33, 0);   /* Neck */
-	_slotBoxes[19] = SlotBox(6, 73, 0);   /* Pouch 1 */
-	_slotBoxes[20] = SlotBox(62, 73, 0);  /* Quiver Line1 1 */
-	_slotBoxes[21] = SlotBox(66, 33, 0);  /* Backpack Line1 1 */
-	_slotBoxes[22] = SlotBox(83, 16, 0);  /* Backpack Line2 2 */
+	_slotBoxes[0] = SlotBox(4, 10, 0); /* Champion Status Box 0 Ready Hand */
+	_slotBoxes[1] = SlotBox(24, 10, 0); /* Champion Status Box 0 Action Hand */
+	_slotBoxes[2] = SlotBox(73, 10, 0); /* Champion Status Box 1 Ready Hand */
+	_slotBoxes[3] = SlotBox(93, 10, 0); /* Champion Status Box 1 Action Hand */
+	_slotBoxes[4] = SlotBox(142, 10, 0); /* Champion Status Box 2 Ready Hand */
+	_slotBoxes[5] = SlotBox(162, 10, 0); /* Champion Status Box 2 Action Hand */
+	_slotBoxes[6] = SlotBox(211, 10, 0); /* Champion Status Box 3 Ready Hand */
+	_slotBoxes[7] = SlotBox(231, 10, 0); /* Champion Status Box 3 Action Hand */
+	_slotBoxes[8] = SlotBox(6, 53, 0); /* Ready Hand */
+	_slotBoxes[9] = SlotBox(62, 53, 0); /* Action Hand */
+	_slotBoxes[10] = SlotBox(34, 26, 0); /* Head */
+	_slotBoxes[11] = SlotBox(34, 46, 0); /* Torso */
+	_slotBoxes[12] = SlotBox(34, 66, 0); /* Legs */
+	_slotBoxes[13] = SlotBox(34, 86, 0); /* Feet */
+	_slotBoxes[14] = SlotBox(6, 90, 0); /* Pouch 2 */
+	_slotBoxes[15] = SlotBox(79, 73, 0); /* Quiver Line2 1 */
+	_slotBoxes[16] = SlotBox(62, 90, 0); /* Quiver Line1 2 */
+	_slotBoxes[17] = SlotBox(79, 90, 0); /* Quiver Line2 2 */
+	_slotBoxes[18] = SlotBox(6, 33, 0); /* Neck */
+	_slotBoxes[19] = SlotBox(6, 73, 0); /* Pouch 1 */
+	_slotBoxes[20] = SlotBox(62, 73, 0); /* Quiver Line1 1 */
+	_slotBoxes[21] = SlotBox(66, 33, 0); /* Backpack Line1 1 */
+	_slotBoxes[22] = SlotBox(83, 16, 0); /* Backpack Line2 2 */
 	_slotBoxes[23] = SlotBox(100, 16, 0); /* Backpack Line2 3 */
 	_slotBoxes[24] = SlotBox(117, 16, 0); /* Backpack Line2 4 */
 	_slotBoxes[25] = SlotBox(134, 16, 0); /* Backpack Line2 5 */
@@ -74,7 +75,7 @@ void ObjectMan::initConstants() {
 	_slotBoxes[27] = SlotBox(168, 16, 0); /* Backpack Line2 7 */
 	_slotBoxes[28] = SlotBox(185, 16, 0); /* Backpack Line2 8 */
 	_slotBoxes[29] = SlotBox(202, 16, 0); /* Backpack Line2 9 */
-	_slotBoxes[30] = SlotBox(83, 33, 0);  /* Backpack Line1 2 */
+	_slotBoxes[30] = SlotBox(83, 33, 0); /* Backpack Line1 2 */
 	_slotBoxes[31] = SlotBox(100, 33, 0); /* Backpack Line1 3 */
 	_slotBoxes[32] = SlotBox(117, 33, 0); /* Backpack Line1 4 */
 	_slotBoxes[33] = SlotBox(134, 33, 0); /* Backpack Line1 5 */
@@ -97,7 +98,8 @@ void ObjectMan::initConstants() {
 	}
 }
 
-ObjectMan::ObjectMan(DMEngine *vm) : _vm(vm) {
+ObjectMan::ObjectMan(DMEngine *vm)
+  : _vm(vm) {
 	for (uint16 i = 0; i < kDMObjectNameCount; ++i)
 		_objectNames[i] = nullptr;
 
@@ -143,24 +145,22 @@ IconIndice ObjectMan::getObjectType(Thing thing) {
 }
 
 IconIndice ObjectMan::getIconIndex(Thing thing) {
-	static byte chargeCountToTorchType[16] = {0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3}; // @ G0029_auc_Graphic562_ChargeCountToTorchType
+	static byte chargeCountToTorchType[16] = { 0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3 }; // @ G0029_auc_Graphic562_ChargeCountToTorchType
 
 	int16 iconIndex = getObjectType(thing);
 	if (iconIndex != kDMIconIndiceNone) {
-		if (((iconIndex < kDMIconIndiceWeaponDagger) && (iconIndex >= kDMIconIndiceJunkCompassNorth)) ||
-			((iconIndex >= kDMIconIndicePotionMaPotionMonPotion) && (iconIndex <= kDMIconIndicePotionWaterFlask)) ||
-			(iconIndex == kDMIconIndicePotionEmptyFlask)) {
-			Junk *junkThing = (Junk*)_vm->_dungeonMan->getThingData(thing);
+		if (((iconIndex < kDMIconIndiceWeaponDagger) && (iconIndex >= kDMIconIndiceJunkCompassNorth)) || ((iconIndex >= kDMIconIndicePotionMaPotionMonPotion) && (iconIndex <= kDMIconIndicePotionWaterFlask)) || (iconIndex == kDMIconIndicePotionEmptyFlask)) {
+			Junk *junkThing = (Junk *)_vm->_dungeonMan->getThingData(thing);
 			switch (iconIndex) {
 			case kDMIconIndiceJunkCompassNorth:
 				iconIndex += _vm->_dungeonMan->_partyDir;
 				break;
 			case kDMIconIndiceWeaponTorchUnlit:
-				if (((Weapon*)junkThing)->isLit())
-					iconIndex += chargeCountToTorchType[((Weapon*)junkThing)->getChargeCount()];
+				if (((Weapon *)junkThing)->isLit())
+					iconIndex += chargeCountToTorchType[((Weapon *)junkThing)->getChargeCount()];
 				break;
 			case kDMIconIndiceScrollOpen:
-				if (((Scroll*)junkThing)->getClosed())
+				if (((Scroll *)junkThing)->getClosed())
 					iconIndex++;
 				break;
 			case kDMIconIndiceJunkWater:
@@ -175,7 +175,7 @@ IconIndice ObjectMan::getIconIndex(Thing thing) {
 			case kDMIconIndiceWeaponFuryRaBladeEmpty:
 			case kDMIconIndiceWeaponEyeOfTimeEmpty:
 			case kDMIconIndiceWeaponStaffOfClawsEmpty:
-				if (((Weapon*)junkThing)->getChargeCount())
+				if (((Weapon *)junkThing)->getChargeCount())
 					iconIndex++;
 				break;
 			}
@@ -219,14 +219,14 @@ void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 	byte *iconBitmap = _vm->_displayMan->getNativeBitmapOrGraphic(iconGraphicIndex + kDMGraphicIdxObjectIcons000To031);
 	iconIndex -= _iconGraphicFirstIndex[iconGraphicIndex];
 	int16 byteWidth;
-	byte* blitDestination;
+	byte *blitDestination;
 	int16 destHeight;
 	if (slotBoxIndex >= kDMSlotBoxInventoryFirstSlot) {
 		blitDestination = _vm->_displayMan->_bitmapViewport;
 		byteWidth = k112_byteWidthViewport;
 		destHeight = 136;
 	} else {
-		blitDestination = (unsigned char*)_vm->_displayMan->_bitmapScreen;
+		blitDestination = (unsigned char *)_vm->_displayMan->_bitmapScreen;
 		byteWidth = k160_byteWidthScreen;
 		destHeight = 200;
 	}
@@ -238,7 +238,7 @@ void ObjectMan::drawLeaderObjectName(Thing thing) {
 	Common::String objectName;
 	int16 iconIndex = getIconIndex(thing);
 	if (iconIndex == kDMIconIndiceJunkChampionBones) {
-		Junk *junk = (Junk*)_vm->_dungeonMan->getThingData(thing);
+		Junk *junk = (Junk *)_vm->_dungeonMan->getThingData(thing);
 		Common::String champBonesName;
 
 		switch (_vm->getGameLanguage()) { // localized

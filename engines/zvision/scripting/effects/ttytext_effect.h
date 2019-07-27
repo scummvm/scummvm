@@ -48,6 +48,7 @@ public:
 	 * @return                     If true, the node can be deleted after process() finishes
 	 */
 	bool process(uint32 deltaTimeInMillis);
+
 private:
 	Common::Rect _r;
 
@@ -61,8 +62,8 @@ private:
 	Graphics::Surface _img;
 	int16 _dx;
 	int16 _dy;
-private:
 
+private:
 	void newline();
 	void scroll();
 	void outchar(uint16 chr);

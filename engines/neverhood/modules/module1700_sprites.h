@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE1700_SPRITES_H
 #define NEVERHOOD_MODULES_MODULE1700_SPRITES_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -37,6 +37,7 @@ public:
 class SsScene1705Tape : public StaticSprite {
 public:
 	SsScene1705Tape(NeverhoodEngine *vm, Scene *parentScene, uint32 tapeIndex, int surfacePriority, int16 x, int16 y, uint32 fileHash);
+
 protected:
 	Scene *_parentScene;
 	uint32 _tapeIndex;
@@ -46,6 +47,7 @@ protected:
 class KmScene1705 : public Klaymen {
 public:
 	KmScene1705(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };

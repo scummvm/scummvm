@@ -20,12 +20,12 @@
  *
  */
 
-#include "common/ptr.h"
-#include "common/file.h"
 #include "common/debug.h"
+#include "common/file.h"
+#include "common/ptr.h"
 
 #ifndef ADL_DISK_H
-#define ADL_DISK_H
+#	define ADL_DISK_H
 
 namespace Common {
 class SeekableReadStream;
@@ -39,7 +39,7 @@ int32 computeMD5(const Common::FSNode &node, Common::String &md5, uint32 md5Byte
 
 class DataBlock {
 public:
-	virtual ~DataBlock() { }
+	virtual ~DataBlock() {}
 
 	virtual Common::SeekableReadStream *createReadStream() const = 0;
 };
@@ -49,7 +49,7 @@ typedef Common::ScopedPtr<Common::SeekableReadStream> StreamPtr;
 
 class Files {
 public:
-	virtual ~Files() { }
+	virtual ~Files() {}
 
 	virtual const DataBlockPtr getDataBlock(const Common::String &filename, uint offset = 0) const = 0;
 	virtual Common::SeekableReadStream *createReadStream(const Common::String &filename, uint offset = 0) const = 0;
@@ -57,10 +57,10 @@ public:
 protected:
 	class DataBlock : public Adl::DataBlock {
 	public:
-		DataBlock(const Files *files, const Common::String &filename, uint offset) :
-				_files(files),
-				_filename(filename),
-				_offset(offset) { }
+		DataBlock(const Files *files, const Common::String &filename, uint offset)
+		  : _files(files)
+		  , _filename(filename)
+		  , _offset(offset) {}
 
 		Common::SeekableReadStream *createReadStream() const override {
 			return _files->createReadStream(_filename, _offset);
@@ -75,13 +75,13 @@ protected:
 
 class DiskImage {
 public:
-	DiskImage() :
-			_stream(nullptr),
-			_tracks(0),
-			_sectorsPerTrack(0),
-			_bytesPerSector(0),
-			_sectorLimit(0),
-			_firstSector(0) { }
+	DiskImage()
+	  : _stream(nullptr)
+	  , _tracks(0)
+	  , _sectorsPerTrack(0)
+	  , _bytesPerSector(0)
+	  , _sectorLimit(0)
+	  , _firstSector(0) {}
 
 	~DiskImage() {
 		delete _stream;
@@ -98,13 +98,13 @@ public:
 protected:
 	class DataBlock : public Adl::DataBlock {
 	public:
-		DataBlock(const DiskImage *disk, uint track, uint sector, uint offset, uint size, uint sectorLimit) :
-				_track(track),
-				_sector(sector),
-				_offset(offset),
-				_size(size),
-				_sectorLimit(sectorLimit),
-				_disk(disk) { }
+		DataBlock(const DiskImage *disk, uint track, uint sector, uint offset, uint size, uint sectorLimit)
+		  : _track(track)
+		  , _sector(sector)
+		  , _offset(offset)
+		  , _size(size)
+		  , _sectorLimit(sectorLimit)
+		  , _disk(disk) {}
 
 		Common::SeekableReadStream *createReadStream() const override {
 			return _disk->createReadStream(_track, _sector, _offset, _size, _sectorLimit);
@@ -177,13 +177,13 @@ private:
 // prefixed with an uint16 containing the data size.
 class DataBlock_PC : public DataBlock {
 public:
-	DataBlock_PC(DiskImage *disk, byte track, byte sector, uint16 offset = 0) :
-			_disk(disk),
-			_track(track),
-			_sector(sector),	
-			_offset(offset) { }
+	DataBlock_PC(DiskImage *disk, byte track, byte sector, uint16 offset = 0)
+	  : _disk(disk)
+	  , _track(track)
+	  , _sector(sector)
+	  , _offset(offset) {}
 
-	virtual ~DataBlock_PC() { }
+	virtual ~DataBlock_PC() {}
 
 	Common::SeekableReadStream *createReadStream() const override;
 

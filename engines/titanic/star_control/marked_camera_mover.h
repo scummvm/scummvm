@@ -34,6 +34,7 @@ class FVector;
 class CMarkedCameraMover : public CCameraMover {
 private:
 	CMarkedAutoMover _autoMover;
+
 public:
 	CMarkedCameraMover(const CNavigationInfo *src);
 	virtual ~CMarkedCameraMover() {}
@@ -43,7 +44,7 @@ public:
 	 * position and orientation
 	 */
 	virtual void transitionBetweenPosOrients(const FVector &oldPos, const FVector &newPos,
-		const FMatrix &oldOrientation, const FMatrix &newOrientation);
+	                                         const FMatrix &oldOrientation, const FMatrix &newOrientation);
 
 	/**
 	 * Update the passed position and orientation matrix

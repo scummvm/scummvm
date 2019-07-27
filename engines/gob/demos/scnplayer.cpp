@@ -22,17 +22,18 @@
 
 #include "common/endian.h"
 
-#include "gob/gob.h"
 #include "gob/demos/scnplayer.h"
-#include "gob/global.h"
-#include "gob/util.h"
 #include "gob/draw.h"
+#include "gob/global.h"
+#include "gob/gob.h"
 #include "gob/inter.h"
+#include "gob/util.h"
 #include "gob/videoplayer.h"
 
 namespace Gob {
 
-SCNPlayer::SCNPlayer(GobEngine *vm) : DemoPlayer(vm) {
+SCNPlayer::SCNPlayer(GobEngine *vm)
+  : DemoPlayer(vm) {
 }
 
 SCNPlayer::~SCNPlayer() {
@@ -106,7 +107,7 @@ bool SCNPlayer::readLabels(Common::SeekableReadStream &scn, LabelMap &labels) {
 }
 
 void SCNPlayer::gotoLabel(Common::SeekableReadStream &scn,
-		const LabelMap &labels, const char *label) {
+                          const LabelMap &labels, const char *label) {
 
 	debugC(2, kDebugDemo, "Jumping to label \"%s\"", label);
 

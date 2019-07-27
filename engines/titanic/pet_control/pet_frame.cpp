@@ -36,8 +36,8 @@ static const PetArea PET_AREAS_DE[6] = {
 	PET_ROOMS, PET_REAL_LIFE
 };
 
-
-CPetFrame::CPetFrame() : CPetSection() {
+CPetFrame::CPetFrame()
+  : CPetSection() {
 }
 
 bool CPetFrame::setup(CPetControl *petControl) {
@@ -127,7 +127,7 @@ bool CPetFrame::setPetControl(CPetControl *petControl) {
 		for (uint idx = 0; idx < _modeButtons.size(); ++idx) {
 			_modeButtons[idx].setBounds(r);
 			_modeButtons[idx].translate(TRANSLATE(4, 0),
-				TRANSLATE(YLIST_EN[idx], YLIST_DE[idx]));
+			                            TRANSLATE(YLIST_EN[idx], YLIST_DE[idx]));
 		}
 		setArea(PET_CONVERSATION);
 

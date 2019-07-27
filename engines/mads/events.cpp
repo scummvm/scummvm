@@ -20,12 +20,12 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "graphics/cursorman.h"
 #include "common/events.h"
+#include "common/scummsys.h"
 #include "engines/util.h"
-#include "mads/mads.h"
+#include "graphics/cursorman.h"
 #include "mads/events.h"
+#include "mads/mads.h"
 #include "mads/scene.h"
 
 namespace MADS {
@@ -121,7 +121,7 @@ void EventsManager::changeCursor() {
 
 		// Set the raw cursor data to use
 		CursorMan.replaceCursor(destCursor, cursor->w - 1, cursor->h - 1,
-			hotspotX, hotspotY, transIndex);
+		                        hotspotX, hotspotY, transIndex);
 		showCursor();
 		delete[] destCursor;
 	}
@@ -198,7 +198,7 @@ void EventsManager::pollEvents() {
 			_mouseMoved = true;
 			break;
 		default:
- 			break;
+			break;
 		}
 	}
 }
@@ -272,6 +272,5 @@ void EventsManager::initVars() {
 void EventsManager::clearEvents() {
 	_pendingKeys.clear();
 }
-
 
 } // End of namespace MADS

@@ -20,8 +20,8 @@
  *
  */
 
-#include "engines/engine.h"
 #include "scumm/players/player_v4a.h"
+#include "engines/engine.h"
 #include "scumm/scumm.h"
 
 #include "common/file.h"
@@ -29,16 +29,16 @@
 namespace Scumm {
 
 Player_V4A::Player_V4A(ScummEngine *scumm, Audio::Mixer *mixer)
-	: _vm(scumm),
-	  _mixer(mixer),
-	  _tfmxMusic(_mixer->getOutputRate(), true),
-	  _tfmxSfx(_mixer->getOutputRate(), true),
-	  _musicHandle(),
-	  _sfxHandle(),
-	  _musicId(),
-	  _sfxSlots(),
-	  _initState(0),
-	  _signal(0) {
+  : _vm(scumm)
+  , _mixer(mixer)
+  , _tfmxMusic(_mixer->getOutputRate(), true)
+  , _tfmxSfx(_mixer->getOutputRate(), true)
+  , _musicHandle()
+  , _sfxHandle()
+  , _musicId()
+  , _sfxSlots()
+  , _initState(0)
+  , _signal(0) {
 
 	assert(scumm);
 	assert(mixer);
@@ -109,13 +109,13 @@ void Player_V4A::stopSound(int nr) {
 
 void Player_V4A::startSound(int nr) {
 	static const int8 monkeyCommands[52] = {
-		 -1,  -2,  -3,  -4,  -5,  -6,  -7,  -8,
-		 -9, -10, -11, -12, -13, -14,  18,  17,
+		-1, -2, -3, -4, -5, -6, -7, -8,
+		-9, -10, -11, -12, -13, -14, 18, 17,
 		-17, -18, -19, -20, -21, -22, -23, -24,
 		-25, -26, -27, -28, -29, -30, -31, -32,
-		-33,  16, -35,   0,   1,   2,   3,   7,
-		  8,  10,  11,   4,   5,  14,  15,  12,
-		  6,  13,   9,  19
+		-33, 16, -35, 0, 1, 2, 3, 7,
+		8, 10, 11, 4, 5, 14, 15, 12,
+		6, 13, 9, 19
 	};
 
 	const byte *ptr = _vm->getResourceAddress(rtSound, nr);
@@ -135,7 +135,7 @@ void Player_V4A::startSound(int nr) {
 
 	int index = monkeyCommands[val];
 	const byte type = ptr[6];
-	if (index < 0) {	// SoundFX
+	if (index < 0) { // SoundFX
 		index = -index - 1;
 		debug(3, "player_v4a: play %d: custom %i - %02X", nr, index, type);
 
@@ -153,7 +153,7 @@ void Player_V4A::startSound(int nr) {
 		if (!_mixer->isSoundHandleActive(_sfxHandle))
 			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, &_tfmxSfx, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 
-	} else {	// Song
+	} else { // Song
 		debug(3, "player_v4a: play %d: song %i - %02X", nr, index, type);
 		if (ptr[6] != 0x7F)
 			warning("player_v4a: Song has wrong type");

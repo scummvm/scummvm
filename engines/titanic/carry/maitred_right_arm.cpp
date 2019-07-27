@@ -25,7 +25,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMaitreDRightArm, CArm)
-	ON_MESSAGE(DropZoneLostObjectMsg)
+ON_MESSAGE(DropZoneLostObjectMsg)
 END_MESSAGE_MAP()
 
 void CMaitreDRightArm::save(SimpleFile *file, int indent) {

@@ -27,8 +27,7 @@ namespace Gob {
 
 class Scenery {
 public:
-
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 	struct PieceDesc {
 		int16 left;
@@ -73,14 +72,18 @@ public:
 		AnimFramePiece *frames;
 	} PACKED_STRUCT;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h" // END STRUCT PACKING
 
 	struct Static {
 		int16 layersCount;
 		StaticLayer *layers;
 		PieceDesc **pieces;
 		uint32 *piecesCount;
-		Static() : layersCount(0), layers(0), pieces(0), piecesCount(0) {}
+		Static()
+		  : layersCount(0)
+		  , layers(0)
+		  , pieces(0)
+		  , piecesCount(0) {}
 	};
 
 	struct Animation {
@@ -88,7 +91,11 @@ public:
 		AnimLayer *layers;
 		PieceDesc **pieces;
 		uint32 *piecesCount;
-		Animation() : layersCount(0), layers(0), pieces(0), piecesCount(0) {}
+		Animation()
+		  : layersCount(0)
+		  , layers(0)
+		  , pieces(0)
+		  , piecesCount(0) {}
 	};
 
 	int16 _curStatic;
@@ -113,10 +120,10 @@ public:
 	void updateStatic(int16 orderFrom);
 	void freeAnim(int16 index);
 	void updateAnim(int16 layer, int16 frame, int16 animation,
-			int16 flags, int16 drawDeltaX, int16 drawDeltaY, char doDraw);
+	                int16 flags, int16 drawDeltaX, int16 drawDeltaY, char doDraw);
 
 	void writeAnimLayerInfo(uint16 index, uint16 layer,
-			int16 varDX, int16 varDY, int16 varUnk0, int16 varFrames);
+	                        int16 varDX, int16 varDY, int16 varUnk0, int16 varFrames);
 	int16 getStaticLayersCount(uint16 index);
 	int16 getAnimLayersCount(uint16 index);
 	StaticLayer *getStaticLayer(uint16 index, uint16 layer);

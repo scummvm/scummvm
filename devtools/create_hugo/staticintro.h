@@ -45,7 +45,7 @@
 const byte x_intro_dummy[] = { 0 };
 
 const byte x_intro_v1d[NUM_INTRO_TICK_V1D] = {
-	0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0
 };
 
@@ -59,19 +59,19 @@ const byte x_intro_v3[NUM_INTRO_TICK_V3] = {
 const byte y_intro_dummy[] = { 0 };
 
 const byte y_intro_v1d[NUM_INTRO_TICK_V1D] = {
-	0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0
 };
 
 const byte y_intro_v3[NUM_INTRO_TICK_V3] = {
-	61,  61,  61,  61,  61,  61,  61,  61,  61,  61,
-	63,  66,  71,  74,  72,  75,  80,  82,  83,  84,
-	84,  84,  85,  89,  94,  99, 103, 104, 100,  98,
+	61, 61, 61, 61, 61, 61, 61, 61, 61, 61,
+	63, 66, 71, 74, 72, 75, 80, 82, 83, 84,
+	84, 84, 85, 89, 94, 99, 103, 104, 100, 98,
 	100, 103, 106, 109, 111, 112
 };
 
 // Only Hugo 3 uses texts during intro
-const char *textIntro_dummy[NUM_INTRO_TEXT_DUMMY] = {""};
+const char *textIntro_dummy[NUM_INTRO_TEXT_DUMMY] = { "" };
 const char *textIntro_v3[NUM_INTRO_TEXT_V3] = {
 	"Hugo and Penelope are returning\nhome from their vacation at the\ncottage of Great Uncle Horace.",
 	"Suddenly, a freak magnetic storm\ncauses the compass in their light\naircraft to spin wildly!  Unable\nto navigate, Hugo loses all sense\nof direction...",

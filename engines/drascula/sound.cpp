@@ -21,12 +21,12 @@
  */
 
 #include "audio/audiostream.h"
-#include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "audio/mixer.h"
 
 #include "common/config-manager.h"
-#include "common/textconsole.h"
 #include "common/substream.h"
+#include "common/textconsole.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -154,7 +154,6 @@ void DrasculaEngine::volumeControls() {
 			_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, musicVolume);
 			ConfMan.setInt("music_volume", musicVolume);
 		}
-
 	}
 
 	if (_lang == kSpanish && currentChapter != 6)
@@ -205,8 +204,8 @@ void DrasculaEngine::MusicFadeout() {
 	while (!shouldQuit()) {
 		int vol = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
 		vol -= 10;
-			if (vol < 0)
-				vol = 0;
+		if (vol < 0)
+			vol = 0;
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol);
 		if (vol == 0)
 			break;
@@ -235,7 +234,7 @@ void DrasculaEngine::playFile(const char *fname) {
 		}
 
 		Common::SeekableReadStream *subStream = new Common::SeekableSubReadStream(
-		    stream, startOffset, startOffset + soundSize, DisposeAfterUse::YES);
+		  stream, startOffset, startOffset + soundSize, DisposeAfterUse::YES);
 		if (!subStream) {
 			warning("playFile: Out of memory");
 			delete stream;

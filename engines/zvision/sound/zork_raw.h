@@ -50,6 +50,7 @@ public:
 
 	~RawChunkStream() {
 	}
+
 private:
 	uint _stereo;
 
@@ -66,7 +67,6 @@ private:
 	static const int32 _amplitudeLookupTable[89];
 
 public:
-
 	struct RawChunk {
 		int16 *data;
 		uint32 size;
@@ -94,10 +94,10 @@ public:
 	static const SoundParams _zgiSoundParamLookupTable[24];
 
 private:
-	const int _rate;                                           // Sample rate of stream
-	Audio::Timestamp _playtime;                                // Calculated total play time
+	const int _rate; // Sample rate of stream
+	Audio::Timestamp _playtime; // Calculated total play time
 	Common::DisposablePtr<Common::SeekableReadStream> _stream; // Stream to read data from
-	bool _endOfData;                                           // Whether the stream end has been reached
+	bool _endOfData; // Whether the stream end has been reached
 	uint _stereo;
 
 	RawChunkStream _streamReader;
@@ -131,9 +131,9 @@ public:
  * @return           The new SeekableAudioStream (or 0 on failure).
  */
 Audio::RewindableAudioStream *makeRawZorkStream(Common::SeekableReadStream *stream,
-        int rate,
-        bool stereo,
-        DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+                                                int rate,
+                                                bool stereo,
+                                                DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 Audio::RewindableAudioStream *makeRawZorkStream(const Common::String &filePath, ZVision *engine);
 

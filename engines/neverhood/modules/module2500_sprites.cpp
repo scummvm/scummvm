@@ -25,7 +25,9 @@
 namespace Neverhood {
 
 SsScene2504Button::SsScene2504Button(NeverhoodEngine *vm)
-	: StaticSprite(vm, 1400), _countdown(0), _isSoundPlaying(false) {
+  : StaticSprite(vm, 1400)
+  , _countdown(0)
+  , _isSoundPlaying(false) {
 
 	loadSprite(0x070220D9, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
 	setVisible(false);
@@ -73,7 +75,7 @@ uint32 SsScene2504Button::handleMessage(int messageNum, const MessageParam &para
 }
 
 KmScene2501::KmScene2501(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+  : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }

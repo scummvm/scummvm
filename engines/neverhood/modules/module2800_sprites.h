@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE2800_SPRITES_H
 #define NEVERHOOD_MODULES_MODULE2800_SPRITES_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -35,6 +35,7 @@ public:
 	void stPulled();
 	void stIdle();
 	void setFileHashes(uint32 fileHash1, uint32 fileHash2);
+
 protected:
 	Scene *_parentScene;
 	uint32 _fileHash1, _fileHash2;
@@ -46,6 +47,7 @@ protected:
 class AsScene2803TestTubeOne : public AnimatedSprite {
 public:
 	AsScene2803TestTubeOne(NeverhoodEngine *vm, uint32 fileHash1, uint32 fileHash2);
+
 protected:
 	uint32 _fileHash1, _fileHash2;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -54,6 +56,7 @@ protected:
 class AsScene2803Rope : public AnimatedSprite {
 public:
 	AsScene2803Rope(NeverhoodEngine *vm, Scene *parentScene, int16 x);
+
 protected:
 	Scene *_parentScene;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -67,6 +70,7 @@ class Scene2804;
 class SsScene2804RedButton : public StaticSprite {
 public:
 	SsScene2804RedButton(NeverhoodEngine *vm, Scene2804 *parentScene);
+
 protected:
 	Scene2804 *_parentScene;
 	int _countdown;
@@ -77,6 +81,7 @@ protected:
 class SsScene2804LightCoil : public StaticSprite {
 public:
 	SsScene2804LightCoil(NeverhoodEngine *vm);
+
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -89,6 +94,7 @@ public:
 class SsScene2804LightTarget : public StaticSprite {
 public:
 	SsScene2804LightTarget(NeverhoodEngine *vm);
+
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -104,6 +110,7 @@ public:
 	AsScene2804CrystalWaves(NeverhoodEngine *vm, uint crystalIndex);
 	void show();
 	void hide();
+
 protected:
 	uint _crystalIndex;
 };
@@ -115,6 +122,7 @@ public:
 	void hide();
 	void activate();
 	int16 getColorNum() const { return _colorNum; }
+
 protected:
 	AsScene2804CrystalWaves *_asCrystalWaves;
 	uint _crystalIndex;
@@ -126,6 +134,7 @@ protected:
 class SsScene2804CrystalButton : public StaticSprite {
 public:
 	SsScene2804CrystalButton(NeverhoodEngine *vm, Scene2804 *parentScene, AsScene2804Crystal *asCrystal, uint crystalIndex);
+
 protected:
 	Scene2804 *_parentScene;
 	AsScene2804Crystal *_asCrystal;
@@ -139,6 +148,7 @@ class AsScene2804BeamCoil : public AnimatedSprite {
 public:
 	AsScene2804BeamCoil(NeverhoodEngine *vm, Scene *parentScene, SsScene2804BeamCoilBody *ssBeamCoilBody);
 	virtual ~AsScene2804BeamCoil();
+
 protected:
 	Scene *_parentScene;
 	SsScene2804BeamCoilBody *_ssBeamCoilBody;
@@ -154,6 +164,7 @@ protected:
 class AsScene2804BeamTarget : public AnimatedSprite {
 public:
 	AsScene2804BeamTarget(NeverhoodEngine *vm);
+
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -161,6 +172,7 @@ protected:
 class AsScene2806Spew : public AnimatedSprite {
 public:
 	AsScene2806Spew(NeverhoodEngine *vm);
+
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -169,6 +181,7 @@ class SsScene2808Dispenser : public StaticSprite {
 public:
 	SsScene2808Dispenser(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum, int testTubeIndex);
 	void startCountdown(int index);
+
 protected:
 	Scene *_parentScene;
 	int _countdown;
@@ -183,6 +196,7 @@ public:
 	void fill();
 	void flush();
 	uint32 getFillLevel() const { return _fillLevel; }
+
 protected:
 	SsScene2808Dispenser *_ssDispenser;
 	int _testTubeSetNum;
@@ -196,6 +210,7 @@ public:
 	AsScene2808Handle(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum);
 	void activate();
 	void stActivated();
+
 protected:
 	Scene *_parentScene;
 	int _testTubeSetNum;
@@ -209,6 +224,7 @@ public:
 	AsScene2808Flow(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum);
 	void start();
 	void stKeepFlowing();
+
 protected:
 	Scene *_parentScene;
 	int _testTubeSetNum;
@@ -218,6 +234,7 @@ protected:
 class AsScene2808LightEffect : public AnimatedSprite {
 public:
 	AsScene2808LightEffect(NeverhoodEngine *vm, int which);
+
 protected:
 	int _countdown;
 	void update();
@@ -226,6 +243,7 @@ protected:
 class AsScene2809Spew : public AnimatedSprite {
 public:
 	AsScene2809Spew(NeverhoodEngine *vm);
+
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -233,6 +251,7 @@ protected:
 class AsScene2810Rope : public AnimatedSprite {
 public:
 	AsScene2810Rope(NeverhoodEngine *vm, Scene *parentScene, int16 x);
+
 protected:
 	Scene *_parentScene;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -242,6 +261,7 @@ class AsScene2812Winch : public AnimatedSprite {
 public:
 	AsScene2812Winch(NeverhoodEngine *vm);
 	virtual ~AsScene2812Winch();
+
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -249,6 +269,7 @@ protected:
 class AsScene2812Rope : public AnimatedSprite {
 public:
 	AsScene2812Rope(NeverhoodEngine *vm, Scene *parentScene);
+
 protected:
 	Scene *_parentScene;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -259,6 +280,7 @@ protected:
 class AsScene2812TrapDoor : public AnimatedSprite {
 public:
 	AsScene2812TrapDoor(NeverhoodEngine *vm);
+
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -266,6 +288,7 @@ protected:
 class KmScene2801 : public Klaymen {
 public:
 	KmScene2801(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
@@ -273,6 +296,7 @@ protected:
 class KmScene2803 : public Klaymen {
 public:
 	KmScene2803(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
@@ -280,6 +304,7 @@ protected:
 class KmScene2803Small : public Klaymen {
 public:
 	KmScene2803Small(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	void stShrink();
 	uint32 hmShrink(int messageNum, const MessageParam &param, Entity *sender);
@@ -290,6 +315,7 @@ protected:
 class KmScene2805 : public Klaymen {
 public:
 	KmScene2805(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
@@ -297,7 +323,8 @@ protected:
 class KmScene2806 : public Klaymen {
 public:
 	KmScene2806(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
-		bool needsLargeSurface, NRect *clipRects, uint clipRectsCount);
+	            bool needsLargeSurface, NRect *clipRects, uint clipRectsCount);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
@@ -305,7 +332,8 @@ protected:
 class KmScene2809 : public Klaymen {
 public:
 	KmScene2809(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
-		bool needsLargeSurface, NRect *clipRects, uint clipRectsCount);
+	            bool needsLargeSurface, NRect *clipRects, uint clipRectsCount);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
@@ -313,6 +341,7 @@ protected:
 class KmScene2810Small : public Klaymen {
 public:
 	KmScene2810Small(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
@@ -320,7 +349,8 @@ protected:
 class KmScene2810 : public Klaymen {
 public:
 	KmScene2810(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
-		NRect *clipRects, uint clipRectsCount);
+	            NRect *clipRects, uint clipRectsCount);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
@@ -328,6 +358,7 @@ protected:
 class KmScene2812 : public Klaymen {
 public:
 	KmScene2812(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };

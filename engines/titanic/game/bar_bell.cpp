@@ -26,14 +26,19 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CBarBell, CGameObject)
-	ON_MESSAGE(EnterRoomMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(MouseButtonUpMsg)
-	ON_MESSAGE(ActMsg)
+ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseButtonUpMsg)
+ON_MESSAGE(ActMsg)
 END_MESSAGE_MAP()
 
-CBarBell::CBarBell() : CGameObject(), _fieldBC(0),
-	_volume(65), _soundVal3(0), _fieldC8(0), _fieldCC(0) {
+CBarBell::CBarBell()
+  : CGameObject()
+  , _fieldBC(0)
+  , _volume(65)
+  , _soundVal3(0)
+  , _fieldC8(0)
+  , _fieldCC(0) {
 }
 
 void CBarBell::save(SimpleFile *file, int indent) {

@@ -25,9 +25,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CVase, CSGTStateRoom)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(TurnOff)
-	ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(TurnOff)
+ON_MESSAGE(MovieEndMsg)
 END_MESSAGE_MAP()
 
 void CVase::save(SimpleFile *file, int indent) {
@@ -55,8 +55,8 @@ bool CVase::TurnOn(CTurnOn *msg) {
 
 bool CVase::TurnOff(CTurnOff *msg) {
 	if (CSGTStateRoom::_statics->_vase == "Open"
-			&& CSGTStateRoom::_statics->_bedhead != "RestingV"
-			&& CSGTStateRoom::_statics->_bedhead != "RestingUV") {
+	    && CSGTStateRoom::_statics->_bedhead != "RestingV"
+	    && CSGTStateRoom::_statics->_bedhead != "RestingUV") {
 		CSGTStateRoom::_statics->_vase = "Closed";
 		_isClosed = true;
 		_startFrame = 12;

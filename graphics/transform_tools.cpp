@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "graphics/transform_tools.h"
 #include "common/math.h"
 #include <math.h>

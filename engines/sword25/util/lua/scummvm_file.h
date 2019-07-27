@@ -43,6 +43,7 @@ private:
 	void setLanguage(const Common::String &lang);
 	void writeSettings();
 	void updateSetting(const Common::String &setting, const Common::String &value);
+
 public:
 	Sword25FileProxy(const Common::String &filename, const Common::String &mode);
 	~Sword25FileProxy();

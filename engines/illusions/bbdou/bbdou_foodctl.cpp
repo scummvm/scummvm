@@ -20,18 +20,18 @@
  *
  */
 
-#include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/bbdou/bbdou_foodctl.h"
 #include "illusions/actor.h"
+#include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/dictionary.h"
+#include "illusions/resources/scriptresource.h"
 #include "illusions/textdrawer.h"
 #include "illusions/time.h"
-#include "illusions/resources/scriptresource.h"
 
 namespace Illusions {
 
 BbdouFoodCtl::BbdouFoodCtl(IllusionsEngine_BBDOU *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 }
 
 BbdouFoodCtl::~BbdouFoodCtl() {

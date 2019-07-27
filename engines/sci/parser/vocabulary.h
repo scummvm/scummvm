@@ -23,13 +23,13 @@
 #ifndef SCI_SCICORE_VOCABULARY_H
 #define SCI_SCICORE_VOCABULARY_H
 
-#include "common/str.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/list.h"
+#include "common/str.h"
 
-#include "sci/sci.h"
 #include "sci/engine/vm_types.h"
+#include "sci/sci.h"
 #include "sci/util.h"
 
 namespace Common {
@@ -57,7 +57,6 @@ enum {
 
 	VOCAB_RESOURCE_ALT_INPUTS = 913
 };
-
 
 enum {
 	VOCAB_CLASS_PREPOSITION = 0x01,
@@ -96,17 +95,17 @@ enum {
 #define VOCAB_TREE_NODE_COMPARE_GROUP 0x14d
 #define VOCAB_TREE_NODE_FORCE_STORAGE 0x154
 
-#define SAID_COMMA   0xf0
-#define SAID_AMP     0xf1
-#define SAID_SLASH   0xf2
-#define SAID_PARENO  0xf3
-#define SAID_PARENC  0xf4
-#define SAID_BRACKO  0xf5
-#define SAID_BRACKC  0xf6
-#define SAID_HASH    0xf7
-#define SAID_LT      0xf8
-#define SAID_GT      0xf9
-#define SAID_TERM    0xff
+#define SAID_COMMA 0xf0
+#define SAID_AMP 0xf1
+#define SAID_SLASH 0xf2
+#define SAID_PARENO 0xf3
+#define SAID_PARENC 0xf4
+#define SAID_BRACKO 0xf5
+#define SAID_BRACKC 0xf6
+#define SAID_HASH 0xf7
+#define SAID_LT 0xf8
+#define SAID_GT 0xf9
+#define SAID_TERM 0xff
 
 #define SAID_FIRST SAID_COMMA
 
@@ -127,7 +126,6 @@ typedef Common::List<ResultWordList> ResultWordListList;
 
 typedef Common::HashMap<Common::String, ResultWordList, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> WordMap;
 
-
 struct ParseRuleList;
 
 struct suffix_t {
@@ -140,11 +138,9 @@ struct suffix_t {
 
 	const char *alt_suffix; /**< The alternative suffix */
 	const char *word_suffix; /**< The suffix as used in the word vocabulary */
-
 };
 
 typedef Common::List<suffix_t> SuffixList;
-
 
 struct synonym_t {
 	uint16 replaceant; /**< The word group to replace */
@@ -153,14 +149,12 @@ struct synonym_t {
 
 typedef Common::Array<synonym_t> SynonymList;
 
-
 struct AltInput {
 	const char *_input;
 	const char *_replacement;
 	uint32 _inputLength;
 	bool _prefix;
 };
-
 
 struct parse_tree_branch_t {
 	int id;
@@ -174,10 +168,10 @@ enum ParseTypes {
 };
 
 struct ParseTreeNode {
-	ParseTypes type;  /**< leaf or branch */
+	ParseTypes type; /**< leaf or branch */
 	int value; /**< For leaves */
-	ParseTreeNode* left; /**< Left child, for branches */
-	ParseTreeNode* right; /**< Right child, for branches (and word leaves) */
+	ParseTreeNode *left; /**< Left child, for branches */
+	ParseTreeNode *right; /**< Right child, for branches (and word leaves) */
 };
 
 enum VocabularyVersions {
@@ -199,7 +193,6 @@ public:
 	 */
 	const char *getAnyWordFromGroup(int group);
 
-
 	/**
 	 * Looks up a single word in the words and suffixes list.
 	 * @param retval	the list of matches
@@ -207,7 +200,6 @@ public:
 	 * @param word_len	length of the word to look up
 	 */
 	void lookupWord(ResultWordList &retval, const char *word, int word_len);
-
 
 	/**
 	 * Tokenizes a string and compiles it into word_ts.
@@ -304,7 +296,7 @@ public:
 	 * @param cursorPos The cursor position
 	 * @return true if anything changed
 	 */
-	bool checkAltInput(Common::String& text, uint16& cursorPos);
+	bool checkAltInput(Common::String &text, uint16 &cursorPos);
 
 	/**
 	 * Save/load vocabulary data
@@ -343,7 +335,6 @@ private:
 	 */
 	void freeRuleList(ParseRuleList *rule_list);
 
-
 	/**
 	 * Retrieves all alternative input combinations from vocab 913.
 	 * @return true on success, false on error
@@ -369,7 +360,7 @@ private:
 	Common::Array<parse_tree_branch_t> _parserBranches;
 	WordMap _parserWords;
 	SynonymList _synonyms; /**< The list of synonyms */
-	Common::Array<Common::List<AltInput> > _altInputs;
+	Common::Array<Common::List<AltInput>> _altInputs;
 
 	int _pronounReference;
 
@@ -388,8 +379,6 @@ public:
  * @param nodes			The nodes containing the parse tree
  */
 void vocab_dump_parse_tree(const char *tree_name, ParseTreeNode *nodes);
-
-
 
 /**
  * Builds a parse tree from a spec and compares it to a parse tree.

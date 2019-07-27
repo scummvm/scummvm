@@ -20,14 +20,14 @@
  *
  */
 
-#ifndef TINSEL_FILM_H	// prevent multiple includes
+#ifndef TINSEL_FILM_H // prevent multiple includes
 #define TINSEL_FILM_H
 
 #include "tinsel/dw.h"
 
 namespace Tinsel {
 
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 struct FREEL {
 	SCNHANDLE mobj;
@@ -35,12 +35,12 @@ struct FREEL {
 } PACKED_STRUCT;
 
 struct FILM {
-	int32	frate;
-	int32	numreels;
-	FREEL	reels[1];
+	int32 frate;
+	int32 numreels;
+	FREEL reels[1];
 } PACKED_STRUCT;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h" // END STRUCT PACKING
 
 } // End of namespace Tinsel
 

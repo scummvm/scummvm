@@ -28,44 +28,44 @@
 namespace Sci {
 
 // Please do not use the #defines, that are called SIG_CODE_* / PATCH_CODE_* inside signature/patch-tables
-#define SIG_END                      0xFFFF
-#define SIG_MISMATCH                 0xFFFE
-#define SIG_COMMANDMASK              0xF000
-#define SIG_VALUEMASK                0x0FFF
-#define SIG_BYTEMASK                 0x00FF
-#define SIG_MAGICDWORD               0xF000
-#define SIG_CODE_ADDTOOFFSET         0xE000
-#define SIG_ADDTOOFFSET(_offset_)    SIG_CODE_ADDTOOFFSET | (_offset_)
-#define SIG_CODE_SELECTOR16          0x9000
+#define SIG_END 0xFFFF
+#define SIG_MISMATCH 0xFFFE
+#define SIG_COMMANDMASK 0xF000
+#define SIG_VALUEMASK 0x0FFF
+#define SIG_BYTEMASK 0x00FF
+#define SIG_MAGICDWORD 0xF000
+#define SIG_CODE_ADDTOOFFSET 0xE000
+#define SIG_ADDTOOFFSET(_offset_) SIG_CODE_ADDTOOFFSET | (_offset_)
+#define SIG_CODE_SELECTOR16 0x9000
 #define SIG_SELECTOR16(_selectorID_) SIG_CODE_SELECTOR16 | SELECTOR_##_selectorID_
-#define SIG_CODE_SELECTOR8           0x8000
-#define SIG_SELECTOR8(_selectorID_)  SIG_CODE_SELECTOR8 | SELECTOR_##_selectorID_
-#define SIG_CODE_UINT16              0x1000
-#define SIG_UINT16(_value_)          SIG_CODE_UINT16 | ((_value_) & 0xFF), ((_value_) >> 8)
-#define SIG_CODE_BYTE                0x0000
+#define SIG_CODE_SELECTOR8 0x8000
+#define SIG_SELECTOR8(_selectorID_) SIG_CODE_SELECTOR8 | SELECTOR_##_selectorID_
+#define SIG_CODE_UINT16 0x1000
+#define SIG_UINT16(_value_) SIG_CODE_UINT16 | ((_value_)&0xFF), ((_value_) >> 8)
+#define SIG_CODE_BYTE 0x0000
 
-#define PATCH_END                                              SIG_END
-#define PATCH_COMMANDMASK                                      SIG_COMMANDMASK
-#define PATCH_VALUEMASK                                        SIG_VALUEMASK
-#define PATCH_BYTEMASK                                         SIG_BYTEMASK
-#define PATCH_CODE_ADDTOOFFSET                                 SIG_CODE_ADDTOOFFSET
-#define PATCH_ADDTOOFFSET(_offset_)                            SIG_CODE_ADDTOOFFSET | (_offset_)
-#define PATCH_CODE_GETORIGINALBYTE                             0xC000
-#define PATCH_GETORIGINALBYTE(_offset_)                        PATCH_CODE_GETORIGINALBYTE | (_offset_), 0
-#define PATCH_GETORIGINALBYTEADJUST(_offset_, _adjustValue_)   PATCH_CODE_GETORIGINALBYTE | (_offset_), (uint16)(_adjustValue_)
-#define PATCH_CODE_GETORIGINALUINT16                           0xD000
-#define PATCH_GETORIGINALUINT16(_offset_)                      PATCH_CODE_GETORIGINALUINT16 | (_offset_), 0
+#define PATCH_END SIG_END
+#define PATCH_COMMANDMASK SIG_COMMANDMASK
+#define PATCH_VALUEMASK SIG_VALUEMASK
+#define PATCH_BYTEMASK SIG_BYTEMASK
+#define PATCH_CODE_ADDTOOFFSET SIG_CODE_ADDTOOFFSET
+#define PATCH_ADDTOOFFSET(_offset_) SIG_CODE_ADDTOOFFSET | (_offset_)
+#define PATCH_CODE_GETORIGINALBYTE 0xC000
+#define PATCH_GETORIGINALBYTE(_offset_) PATCH_CODE_GETORIGINALBYTE | (_offset_), 0
+#define PATCH_GETORIGINALBYTEADJUST(_offset_, _adjustValue_) PATCH_CODE_GETORIGINALBYTE | (_offset_), (uint16)(_adjustValue_)
+#define PATCH_CODE_GETORIGINALUINT16 0xD000
+#define PATCH_GETORIGINALUINT16(_offset_) PATCH_CODE_GETORIGINALUINT16 | (_offset_), 0
 #define PATCH_GETORIGINALUINT16ADJUST(_offset_, _adjustValue_) PATCH_CODE_GETORIGINALUINT16 | (_offset_), (uint16)(_adjustValue_)
-#define PATCH_CODE_SELECTOR16                                  SIG_CODE_SELECTOR16
-#define PATCH_SELECTOR16(_selectorID_)                         SIG_CODE_SELECTOR16 | SELECTOR_##_selectorID_
-#define PATCH_CODE_SELECTOR8                                   SIG_CODE_SELECTOR8
-#define PATCH_SELECTOR8(_selectorID_)                          SIG_CODE_SELECTOR8 | SELECTOR_##_selectorID_
-#define PATCH_CODE_UINT16                                      SIG_CODE_UINT16
-#define PATCH_UINT16(_value_)                                  SIG_CODE_UINT16 | ((_value_) & 0xFF), ((_value_) >> 8)
-#define PATCH_CODE_BYTE                                        SIG_CODE_BYTE
+#define PATCH_CODE_SELECTOR16 SIG_CODE_SELECTOR16
+#define PATCH_SELECTOR16(_selectorID_) SIG_CODE_SELECTOR16 | SELECTOR_##_selectorID_
+#define PATCH_CODE_SELECTOR8 SIG_CODE_SELECTOR8
+#define PATCH_SELECTOR8(_selectorID_) SIG_CODE_SELECTOR8 | SELECTOR_##_selectorID_
+#define PATCH_CODE_UINT16 SIG_CODE_UINT16
+#define PATCH_UINT16(_value_) SIG_CODE_UINT16 | ((_value_)&0xFF), ((_value_) >> 8)
+#define PATCH_CODE_BYTE SIG_CODE_BYTE
 
 // defines maximum scratch area for getting original bytes from unpatched script data
-#define PATCH_VALUELIMIT      4096
+#define PATCH_VALUELIMIT 4096
 
 struct SciScriptPatcherEntry {
 	bool defaultActive;
@@ -76,7 +76,8 @@ struct SciScriptPatcherEntry {
 	const uint16 *patchData;
 };
 
-#define SCI_SIGNATUREENTRY_TERMINATOR { false, 0, NULL, 0, NULL, NULL }
+#define SCI_SIGNATUREENTRY_TERMINATOR \
+	{ false, 0, NULL, 0, NULL, NULL }
 
 struct SciScriptPatcherRuntimeEntry {
 	bool active;

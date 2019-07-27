@@ -32,22 +32,22 @@ namespace LastExpress {
 //////////////////////////////////////////////////////////////////////////
 
 enum SoundTag {
-	kSoundTagNone        = 0,
-	kSoundTagAmbient     = 1,
-	kSoundTagOldAmbient  = 2,
-	kSoundTagWalla       = 3,
-	kSoundTagOldWalla    = 4,
-	kSoundTagConcert     = 5,
+	kSoundTagNone = 0,
+	kSoundTagAmbient = 1,
+	kSoundTagOldAmbient = 2,
+	kSoundTagWalla = 3,
+	kSoundTagOldWalla = 4,
+	kSoundTagConcert = 5,
 	// 6 is unused
-	kSoundTagLink        = 7,
-	kSoundTagOldLink     = 8,
-	kSoundTagNIS         = 9,
-	kSoundTagOldNIS      = 10,
-	kSoundTagIntro       = 11,
+	kSoundTagLink = 7,
+	kSoundTagOldLink = 8,
+	kSoundTagNIS = 9,
+	kSoundTagOldNIS = 10,
+	kSoundTagIntro = 11,
 	// 12 is unused
-	kSoundTagMenu        = 13,
-	kSoundTagOldMenu     = 14,
-	kSoundTagCredits     = 15,
+	kSoundTagMenu = 13,
+	kSoundTagOldMenu = 14,
+	kSoundTagCredits = 15,
 	kSoundTagFirstNormal = 16
 	// every normal sound gets its own tag from an incrementing counter
 	// initialized as kSoundTagFirstNormal,
@@ -103,67 +103,67 @@ enum SoundTag {
 enum SoundFlag {
 	kSoundVolumeEntityDefault = 0xFFFFFFFF, // special value for SoundManager::playSound; choose volume based on distance to the entity
 
-	kVolumeNone               = 0x0,
-	kVolume1                  = 0x1,
-	kVolume2                  = 0x2,
-	kVolume3                  = 0x3,
-	kVolume4                  = 0x4,
-	kVolume5                  = 0x5,
-	kVolume6                  = 0x6,
-	kVolume7                  = 0x7,
-	kVolume8                  = 0x8,
-	kVolume9                  = 0x9,
-	kVolume10                 = 0xA,
-	kVolume11                 = 0xB,
-	kVolume12                 = 0xC,
-	kVolume13                 = 0xD,
-	kVolume14                 = 0xE,
-	kVolume15                 = 0xF,
-	kVolumeFull               = 0x10,
+	kVolumeNone = 0x0,
+	kVolume1 = 0x1,
+	kVolume2 = 0x2,
+	kVolume3 = 0x3,
+	kVolume4 = 0x4,
+	kVolume5 = 0x5,
+	kVolume6 = 0x6,
+	kVolume7 = 0x7,
+	kVolume8 = 0x8,
+	kVolume9 = 0x9,
+	kVolume10 = 0xA,
+	kVolume11 = 0xB,
+	kVolume12 = 0xC,
+	kVolume13 = 0xD,
+	kVolume14 = 0xE,
+	kVolume15 = 0xF,
+	kVolumeFull = 0x10,
 
-	kSoundVolumeMask          = 0x1F,
+	kSoundVolumeMask = 0x1F,
 
-	kSoundFlagPlayRequested   = 0x20,
-	kSoundFlagPlaying         = 0x40, // IRQ handler has seen kSoundFlagPlayRequested and has started the playback
-	kSoundFlagMuteRequested   = 0x80,
-	kSoundFlagMuteProcessed   = 0x100, // IRQ handler has seen kSoundFlagMuteRequested
-	kSoundFlagMute            = kSoundFlagMuteRequested | kSoundFlagMuteProcessed,
-	kSoundFlagCloseRequested  = 0x200, // close requested, waiting for IRQ handler to confirm
-	kSoundFlagClosed          = 0x400, // IRQ handler has seen kSoundFlagClosing and is completely done with this sound
-	kSoundFlagCloseOnDataEnd  = 0x800, // used as the opposite of kSoundFlagLooped
-	kSoundFlagLooped          = 0x1000,
-	kSoundFlagCyclicBuffer    = 0x2000, // when the decoder reaches the end of buffer, the decoder should continue from the beginning of buffer
-	kSoundFlagHasUnreadData   = 0x4000, // stream has more data
+	kSoundFlagPlayRequested = 0x20,
+	kSoundFlagPlaying = 0x40, // IRQ handler has seen kSoundFlagPlayRequested and has started the playback
+	kSoundFlagMuteRequested = 0x80,
+	kSoundFlagMuteProcessed = 0x100, // IRQ handler has seen kSoundFlagMuteRequested
+	kSoundFlagMute = kSoundFlagMuteRequested | kSoundFlagMuteProcessed,
+	kSoundFlagCloseRequested = 0x200, // close requested, waiting for IRQ handler to confirm
+	kSoundFlagClosed = 0x400, // IRQ handler has seen kSoundFlagClosing and is completely done with this sound
+	kSoundFlagCloseOnDataEnd = 0x800, // used as the opposite of kSoundFlagLooped
+	kSoundFlagLooped = 0x1000,
+	kSoundFlagCyclicBuffer = 0x2000, // when the decoder reaches the end of buffer, the decoder should continue from the beginning of buffer
+	kSoundFlagHasUnreadData = 0x4000, // stream has more data
 	kSoundFlagDelayedActivate = 0x8000, // start playing at _activateTime
-	kSoundFlagHasLinkAfter    = 0x10000, // _linkAfter is valid and should be activated after this sound; used by xxx.NIS sounds for xxx.LNK
-	kSoundFlagHasSubtitles    = 0x20000,
-	kSoundFlagPaused          = 0x40000, // IRQ handler has seen kSoundFlagPauseRequested and does not use the buffer anymore
-	kSoundFlagFixedVolume     = 0x80000, // Turns off the logic of volume adjusting for entity-related sounds when distance to entity is changed
-	kSoundFlagVolumeChanging  = 0x100000, // smooth changing of the volume is in progress
+	kSoundFlagHasLinkAfter = 0x10000, // _linkAfter is valid and should be activated after this sound; used by xxx.NIS sounds for xxx.LNK
+	kSoundFlagHasSubtitles = 0x20000,
+	kSoundFlagPaused = 0x40000, // IRQ handler has seen kSoundFlagPauseRequested and does not use the buffer anymore
+	kSoundFlagFixedVolume = 0x80000, // Turns off the logic of volume adjusting for entity-related sounds when distance to entity is changed
+	kSoundFlagVolumeChanging = 0x100000, // smooth changing of the volume is in progress
 	kSoundFlagHeaderProcessed = 0x200000, // count of blocks is the accurate value from the header
-	kSoundFlagPauseRequested  = 0x400000, // used when the reader needs to change the buffer
-	kSoundFlagDecodeStall     = 0x800000, // the decoder has stopped because the reader is too slow and has not yet provided further data
+	kSoundFlagPauseRequested = 0x400000, // used when the reader needs to change the buffer
+	kSoundFlagDecodeStall = 0x800000, // the decoder has stopped because the reader is too slow and has not yet provided further data
 
-	kSoundTypeNormal          = 0x0000000, // everything not included in any specific category
-	kSoundTypeAmbient         = 0x1000000, // train sounds, steam, wind, restaurant sounds
-	kSoundTypeConcert         = 0x2000000, // 1917.LNK
-	kSoundTypeMenu            = 0x3000000, // menu screen, blinking egg after time travel; excluded from savefiles
-	kSoundTypeLink            = 0x4000000, // xxx.LNK linked after NIS sound, except for 1917.LNK
-	kSoundTypeIntro           = 0x5000000, // intro at game start before showing the menu
-	kSoundTypeWalla           = 0x6000000, // LOOP8A.SND by kEntityTables2
-	kSoundTypeNIS             = 0x7000000, // special entry managed by NIS code
+	kSoundTypeNormal = 0x0000000, // everything not included in any specific category
+	kSoundTypeAmbient = 0x1000000, // train sounds, steam, wind, restaurant sounds
+	kSoundTypeConcert = 0x2000000, // 1917.LNK
+	kSoundTypeMenu = 0x3000000, // menu screen, blinking egg after time travel; excluded from savefiles
+	kSoundTypeLink = 0x4000000, // xxx.LNK linked after NIS sound, except for 1917.LNK
+	kSoundTypeIntro = 0x5000000, // intro at game start before showing the menu
+	kSoundTypeWalla = 0x6000000, // LOOP8A.SND by kEntityTables2
+	kSoundTypeNIS = 0x7000000, // special entry managed by NIS code
 
-	kSoundTypeMask            = 0x7000000,
+	kSoundTypeMask = 0x7000000,
 
 	kSoundFlagKeepAfterFinish = 0x8000000, // don't free the entry when it has stopped playing; used for kSoundTypeNIS
-	kSoundFlagDecodeError     = 0x20000000, // error in compressed stream
-	kSoundFlagFading          = 0x40000000, // prevents attempts to unfade once fade is requested
-	kSoundFlagUnmuteRequested = 0x80000000  // purely informational
+	kSoundFlagDecodeError = 0x20000000, // error in compressed stream
+	kSoundFlagFading = 0x40000000, // prevents attempts to unfade once fade is requested
+	kSoundFlagUnmuteRequested = 0x80000000 // purely informational
 };
 
 enum AmbientSoundState {
-	kAmbientSoundEnabled  = 1,
-	kAmbientSoundSteam    = 2
+	kAmbientSoundEnabled = 1,
+	kAmbientSoundSteam = 2
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -174,287 +174,286 @@ enum AmbientSoundState {
 // ticks, one hour is 54,000 ticks, and one day is 1,296,000 ticks.
 
 enum TimeValue {
-	kTimeNone                 = 0,
-	kTime5933                 = 5933,
+	kTimeNone = 0,
+	kTime5933 = 5933,
 
-	kTimeCityParis            = 1037700,	// Day 1, 19:13
-	kTime1039500              = 1039500,	// Day 1, 19:15
-	kTimeStartGame            = 1061100,	// Day 1, 19:39
+	kTimeCityParis = 1037700, // Day 1, 19:13
+	kTime1039500 = 1039500, // Day 1, 19:15
+	kTimeStartGame = 1061100, // Day 1, 19:39
 
 	// Chapter 1
-	kTimeChapter1             = 1062000,	// Day 1, 19:40
-	kTime1071000              = 1071000,	// Day 1, 19:50
-	kTimeParisEpernay         = 1075500,	// Day 1, 19:55
-	kTime1080000              = 1080000,	// Day 1, 20:00
-	kTime1084500              = 1084500,	// Day 1, 20:05
-	kTime1089000              = 1089000,	// Day 1, 20:10
-	kTime1093500              = 1093500,	// Day 1, 20:15
-	kTime1094400              = 1094400,	// Day 1, 20:16
-	kTime1096200              = 1096200,	// Day 1, 20:18
-	kTime1098000              = 1098000,	// Day 1, 20:20
-	kTime1102500              = 1102500,	// Day 1, 20:25
-	kTime1107000              = 1107000,	// Day 1, 20:30
-	kTime1111500              = 1111500,	// Day 1, 20:35
-	kTime1120500              = 1120500,	// Day 1, 20:45
-	kTime1125000              = 1125000,	// Day 1, 20:50
-	kTime1134000              = 1134000,	// Day 1, 21:00
-	kTime1138500              = 1138500,	// Day 1, 21:05
-	kTime1143000              = 1143000,	// Day 1, 21:10
-	kTimeEnterEpernay         = 1147500,	// Day 1, 21:15
-	kTimeCityEpernay          = 1148400,	// Day 1, 21:16
-	kTimeExitEpernay          = 1150200,	// Day 1, 21:18
-	kTime1156500              = 1156500,	// Day 1, 21:25
-	kTime1161000              = 1161000,	// Day 1, 21:30
-	kTime1162800              = 1162800,	// Day 1, 21:32
-	kTime1165500              = 1165500,	// Day 1, 21:35
-	kTime1167300              = 1167300,	// Day 1, 21:37
-	kTimeEnterChalons         = 1170000,	// Day 1, 21:40
-	kTimeCityChalons          = 1170900,	// Day 1, 21:41
-	kTimeExitChalons          = 1173600,	// Day 1, 21:44
-	kTime1174500              = 1174500,	// Day 1, 21:45
-	kTime1179000              = 1179000,	// Day 1, 21:50
-	kTime1183500              = 1183500,	// Day 1, 21:55
-	kTime1184400              = 1184400,	// Day 1, 21:56
-	kTime1188000              = 1188000,	// Day 1, 22:00
-	kTime1189800              = 1189800,	// Day 1, 22:02
-	kTime1192500              = 1192500,	// Day 1, 22:05
-	kTime1197000              = 1197000,	// Day 1, 22:10
-	kTime1201500              = 1201500,	// Day 1, 22:15
-	kTime1206000              = 1206000,	// Day 1, 22:20
-	kTime1215000              = 1215000,	// Day 1, 22:30
-	kTime1224000              = 1224000,	// Day 1, 22:40
-	kTime1225800              = 1225800,	// Day 1, 22:42
-	kTimeCityBarLeDuc         = 1228500,	// Day 1, 22:45
-	kTimeExitBarLeDuc         = 1231200,	// Day 1, 22:48
-	kTime1233000              = 1233000,	// Day 1, 22:50
-	kTime1242000              = 1242000,	// Day 1, 23:00
-	kTime1260000              = 1260000,	// Day 1, 23:20
-	kTimeCityNancy            = 1303200,	// Day 2, 00:08
-	kTimeExitNancy            = 1307700,	// Day 2, 00:13
-	kTime1323000              = 1323000,	// Day 2, 00:30
-	kTimeCityLuneville        = 1335600,	// Day 2, 00:44
-	kTimeExitLuneville        = 1338300,	// Day 2, 00:47
-	kTimeCityAvricourt        = 1359900,	// Day 2, 01:11
-	kTimeExitAvricourt        = 1363500,	// Day 2, 01:15
-	kTimeCityDeutschAvricourt = 1367100,	// Day 2, 01:19
-	kTimeExitDeutschAvricourt = 1370700,	// Day 2, 01:23
-	kTime1386000              = 1386000,	// Day 2, 01:40
-	kTimeBedTime              = 1404000,	// Day 2, 02:00
-	kTime1417500              = 1417500,	// Day 2, 02:15
-	kTimeEnterStrasbourg      = 1424700,	// Day 2, 02:23
-	kTime1449000              = 1449000,	// Day 2, 02:50
-	kTime1458000              = 1458000,	// Day 2, 03:00
-	kTime1485000              = 1485000,	// Day 2, 03:30
-	kTime1489500              = 1489500,	// Day 2, 03:35
-	kTimeCityStrasbourg       = 1490400,	// Day 2, 03:36
-	kTime1492200              = 1492200,	// Day 2, 03:38
-	kTimeExitStrasbourg       = 1493100,	// Day 2, 03:39
-	kTimeChapter1End          = 1494000,	// Day 2, 03:40
-	kTime1503000              = 1503000,	// Day 2, 03:50
-	kTime1512000              = 1512000,	// Day 2, 04:00
-	kTimeCityBadenOos         = 1539000,	// Day 2, 04:30
-	kTimeExitBadenOos         = 1541700,	// Day 2, 04:33
-	kTimeCityKarlsruhe        = 1563300,	// Day 2, 04:57
-	kTimeCityStuttgart        = 1656000,	// Day 2, 06:40
-	kTimeChapter1End2         = 1647000,	// Day 2, 06:30
-	kTimeChapter1End3         = 1674000,	// Day 2, 07:00
-	kTimeCityGeislingen       = 1713600,	// Day 2, 07:44
-	kTime1714500              = 1714500,	// Day 2, 07:45
-	kTimeCityUlm              = 1739700,	// Day 2, 08:13
+	kTimeChapter1 = 1062000, // Day 1, 19:40
+	kTime1071000 = 1071000, // Day 1, 19:50
+	kTimeParisEpernay = 1075500, // Day 1, 19:55
+	kTime1080000 = 1080000, // Day 1, 20:00
+	kTime1084500 = 1084500, // Day 1, 20:05
+	kTime1089000 = 1089000, // Day 1, 20:10
+	kTime1093500 = 1093500, // Day 1, 20:15
+	kTime1094400 = 1094400, // Day 1, 20:16
+	kTime1096200 = 1096200, // Day 1, 20:18
+	kTime1098000 = 1098000, // Day 1, 20:20
+	kTime1102500 = 1102500, // Day 1, 20:25
+	kTime1107000 = 1107000, // Day 1, 20:30
+	kTime1111500 = 1111500, // Day 1, 20:35
+	kTime1120500 = 1120500, // Day 1, 20:45
+	kTime1125000 = 1125000, // Day 1, 20:50
+	kTime1134000 = 1134000, // Day 1, 21:00
+	kTime1138500 = 1138500, // Day 1, 21:05
+	kTime1143000 = 1143000, // Day 1, 21:10
+	kTimeEnterEpernay = 1147500, // Day 1, 21:15
+	kTimeCityEpernay = 1148400, // Day 1, 21:16
+	kTimeExitEpernay = 1150200, // Day 1, 21:18
+	kTime1156500 = 1156500, // Day 1, 21:25
+	kTime1161000 = 1161000, // Day 1, 21:30
+	kTime1162800 = 1162800, // Day 1, 21:32
+	kTime1165500 = 1165500, // Day 1, 21:35
+	kTime1167300 = 1167300, // Day 1, 21:37
+	kTimeEnterChalons = 1170000, // Day 1, 21:40
+	kTimeCityChalons = 1170900, // Day 1, 21:41
+	kTimeExitChalons = 1173600, // Day 1, 21:44
+	kTime1174500 = 1174500, // Day 1, 21:45
+	kTime1179000 = 1179000, // Day 1, 21:50
+	kTime1183500 = 1183500, // Day 1, 21:55
+	kTime1184400 = 1184400, // Day 1, 21:56
+	kTime1188000 = 1188000, // Day 1, 22:00
+	kTime1189800 = 1189800, // Day 1, 22:02
+	kTime1192500 = 1192500, // Day 1, 22:05
+	kTime1197000 = 1197000, // Day 1, 22:10
+	kTime1201500 = 1201500, // Day 1, 22:15
+	kTime1206000 = 1206000, // Day 1, 22:20
+	kTime1215000 = 1215000, // Day 1, 22:30
+	kTime1224000 = 1224000, // Day 1, 22:40
+	kTime1225800 = 1225800, // Day 1, 22:42
+	kTimeCityBarLeDuc = 1228500, // Day 1, 22:45
+	kTimeExitBarLeDuc = 1231200, // Day 1, 22:48
+	kTime1233000 = 1233000, // Day 1, 22:50
+	kTime1242000 = 1242000, // Day 1, 23:00
+	kTime1260000 = 1260000, // Day 1, 23:20
+	kTimeCityNancy = 1303200, // Day 2, 00:08
+	kTimeExitNancy = 1307700, // Day 2, 00:13
+	kTime1323000 = 1323000, // Day 2, 00:30
+	kTimeCityLuneville = 1335600, // Day 2, 00:44
+	kTimeExitLuneville = 1338300, // Day 2, 00:47
+	kTimeCityAvricourt = 1359900, // Day 2, 01:11
+	kTimeExitAvricourt = 1363500, // Day 2, 01:15
+	kTimeCityDeutschAvricourt = 1367100, // Day 2, 01:19
+	kTimeExitDeutschAvricourt = 1370700, // Day 2, 01:23
+	kTime1386000 = 1386000, // Day 2, 01:40
+	kTimeBedTime = 1404000, // Day 2, 02:00
+	kTime1417500 = 1417500, // Day 2, 02:15
+	kTimeEnterStrasbourg = 1424700, // Day 2, 02:23
+	kTime1449000 = 1449000, // Day 2, 02:50
+	kTime1458000 = 1458000, // Day 2, 03:00
+	kTime1485000 = 1485000, // Day 2, 03:30
+	kTime1489500 = 1489500, // Day 2, 03:35
+	kTimeCityStrasbourg = 1490400, // Day 2, 03:36
+	kTime1492200 = 1492200, // Day 2, 03:38
+	kTimeExitStrasbourg = 1493100, // Day 2, 03:39
+	kTimeChapter1End = 1494000, // Day 2, 03:40
+	kTime1503000 = 1503000, // Day 2, 03:50
+	kTime1512000 = 1512000, // Day 2, 04:00
+	kTimeCityBadenOos = 1539000, // Day 2, 04:30
+	kTimeExitBadenOos = 1541700, // Day 2, 04:33
+	kTimeCityKarlsruhe = 1563300, // Day 2, 04:57
+	kTimeCityStuttgart = 1656000, // Day 2, 06:40
+	kTimeChapter1End2 = 1647000, // Day 2, 06:30
+	kTimeChapter1End3 = 1674000, // Day 2, 07:00
+	kTimeCityGeislingen = 1713600, // Day 2, 07:44
+	kTime1714500 = 1714500, // Day 2, 07:45
+	kTimeCityUlm = 1739700, // Day 2, 08:13
 
 	// Chapter 2
-	kTimeChapter2             = 1750500,	// Day 2, 08:25
-	kTime1759500              = 1759500,	// Day 2, 08:35
-	kTime1755000              = 1755000,	// Day 2, 08:30
-	kTime1764000              = 1764000,	// Day 2, 08:40
-	kTime1768500              = 1768500,	// Day 2, 08:45
-	kTime1773000              = 1773000,	// Day 2, 08:50
-	kTime1777500              = 1777500,	// Day 2, 08:55
-	kTime1782000              = 1782000,	// Day 2, 09:00
-	kTime1786500              = 1786500,	// Day 2, 09:05
-	kTime1791000              = 1791000,	// Day 2, 09:10
-	kTime1800000              = 1800000,	// Day 2, 09:20
-	kTime1801800              = 1801800,	// Day 2, 09:22
-	kTime1806300              = 1806300,	// Day 2, 09:27
-	kTime1809000              = 1809000,	// Day 2, 09:30
-	kTimeCityAugsburg         = 1809900,	// Day 2, 09:31
-	kTime1813500              = 1813500,	// Day 2, 09:35
-	kTime1818000              = 1818000,	// Day 2, 09:40
-	kTime1818900              = 1818900,	// Day 2, 09:41
-	kTime1820700              = 1820700,	// Day 2, 09:43
-	kTime1822500              = 1822500,	// Day 2, 09:45
-	kTime1827000              = 1827000,	// Day 2, 09:50
-	kTime1831500              = 1831500,	// Day 2, 09:55
-	kTime1836000              = 1836000,	// Day 2, 10:00
-	kTime1845000              = 1845000,	// Day 2, 10:10
-	kTime1849500              = 1849500,	// Day 2, 10:15
-	kTimeCityMunich           = 1852200,	// Day 2, 10:18
+	kTimeChapter2 = 1750500, // Day 2, 08:25
+	kTime1759500 = 1759500, // Day 2, 08:35
+	kTime1755000 = 1755000, // Day 2, 08:30
+	kTime1764000 = 1764000, // Day 2, 08:40
+	kTime1768500 = 1768500, // Day 2, 08:45
+	kTime1773000 = 1773000, // Day 2, 08:50
+	kTime1777500 = 1777500, // Day 2, 08:55
+	kTime1782000 = 1782000, // Day 2, 09:00
+	kTime1786500 = 1786500, // Day 2, 09:05
+	kTime1791000 = 1791000, // Day 2, 09:10
+	kTime1800000 = 1800000, // Day 2, 09:20
+	kTime1801800 = 1801800, // Day 2, 09:22
+	kTime1806300 = 1806300, // Day 2, 09:27
+	kTime1809000 = 1809000, // Day 2, 09:30
+	kTimeCityAugsburg = 1809900, // Day 2, 09:31
+	kTime1813500 = 1813500, // Day 2, 09:35
+	kTime1818000 = 1818000, // Day 2, 09:40
+	kTime1818900 = 1818900, // Day 2, 09:41
+	kTime1820700 = 1820700, // Day 2, 09:43
+	kTime1822500 = 1822500, // Day 2, 09:45
+	kTime1827000 = 1827000, // Day 2, 09:50
+	kTime1831500 = 1831500, // Day 2, 09:55
+	kTime1836000 = 1836000, // Day 2, 10:00
+	kTime1845000 = 1845000, // Day 2, 10:10
+	kTime1849500 = 1849500, // Day 2, 10:15
+	kTimeCityMunich = 1852200, // Day 2, 10:18
 
 	// Chapter 3
-	kTimeChapter3             = 1944000,	// Day 2, 12:00
-	kTime1953000              = 1953000,	// Day 2, 12:10
-	kTime1966500              = 1966500,	// Day 2, 12:25
-	kTime1969200              = 1969200,	// Day 2, 12:28
-	kTime1971000              = 1971000,	// Day 2, 12:30
-	kTimeEnterSalzbourg       = 1982700,	// Day 2, 12:43
-	kTime1983600              = 1983600,	// Day 2, 12:44
-	kTimeCitySalzbourg        = 1984500,	// Day 2, 12:45
-	kTime1989000              = 1989000,	// Day 2, 12:50
-	kTimeExitSalzbourg        = 1989900,	// Day 2, 12:51
-	kTime1993500              = 1993500,	// Day 2, 12:55
-	kTime1998000              = 1998000,	// Day 2, 13:00
-	kTime2002500              = 2002500,	// Day 2, 13:05
-	kTime2011500              = 2011500,	// Day 2, 13:15
-	kTime2016000              = 2016000,	// Day 2, 13:20
-	kTime2020500              = 2020500,	// Day 2, 13:25
-	kTime2025000              = 2025000,	// Day 2, 13:30
-	kTime2034000              = 2034000,	// Day 2, 13:40
-	kTime2038500              = 2038500,	// Day 2, 13:45
-	kTime2040300              = 2040300,	// Day 2, 13:47
-	kTime2043000              = 2043000,	// Day 2, 13:50
-	kTimeEnterAttnangPuchheim = 2047500,	// Day 2, 13:55
-	kTimeCityAttnangPuchheim  = 2049300,	// Day 2, 13:57
-	kTime2052000              = 2052000,	// Day 2, 14:00
-	kTimeExitAttnangPuchheim  = 2052900,	// Day 2, 14:01
-	kTime2056500              = 2056500,	// Day 2, 14:05
-	kTime2061000              = 2061000,	// Day 2, 14:10
-	kTime2062800              = 2062800,	// Day 2, 14:12
-	kTime2065500              = 2065500,	// Day 2, 14:15
-	kTime2070000              = 2070000,	// Day 2, 14:20
-	kTimeEnterWels            = 2073600,	// Day 2, 14:24
-	kTimeCityWels             = 2075400,	// Day 2, 14:26
-	kTime2079000              = 2079000,	// Day 2, 14:30
-	kTimeExitWels             = 2079900,	// Day 2, 14:31
-	kTime2083500              = 2083500,	// Day 2, 14:35
-	kTime2088000              = 2088000,	// Day 2, 14:40
-	kTime2088900              = 2088900,	// Day 2, 14:41
-	kTime2092500              = 2092500,	// Day 2, 14:45
-	kTime2097000              = 2097000,	// Day 2, 14:50
-	kTimeEnterLinz            = 2099700,	// Day 2, 14:53
-	kTimeCityLinz             = 2101500,	// Day 2, 14:55
-	kTimeExitLinz             = 2105100,    // Day 2, 14:59
-	kTime2106000              = 2106000,	// Day 2, 15:00
-	kTime2110500              = 2110500,	// Day 2, 15:05
-	kTime2115000              = 2115000,	// Day 2, 15:10
-	kTime2117700              = 2117700,	// Day 2, 15:13
-	kTime2119500              = 2119500,	// Day 2, 15:15
-	kTime2124000              = 2124000,	// Day 2, 15:20
-	kTime2133000              = 2133000,	// Day 2, 15:30
-	kTime2138400              = 2138400,	// Day 2, 15:36
-	kTime2142000              = 2142000,	// Day 2, 15:40
-	kTime2146500              = 2146500,	// Day 2, 15:45
-	kTime2147400              = 2147400,	// Day 2, 15:46
-	kTime2151000              = 2151000,	// Day 2, 15:50
-	kTimeCityAmstetten        = 2154600,	// Day 2, 15:54
-	kTime2155500              = 2155500,	// Day 2, 15:55
-	kTime2160000              = 2160000,	// Day 2, 16:00
-	kTime2169000              = 2169000,	// Day 2, 16:10
-	kTime2173500              = 2173500,	// Day 2, 16:15
-	kTime2187000              = 2187000,	// Day 2, 16:30
-	kTime2182500              = 2182500,	// Day 2, 16:25
-	kTime2196000              = 2196000,	// Day 2, 16:40
-	kTime2200500              = 2200500,	// Day 2, 16:45
-	kTime2205000              = 2205000,	// Day 2, 16:50
-	kTime2214000              = 2214000,	// Day 2, 17:00
-	kTime2218500              = 2218500,	// Day 2, 17:05
-	kTime2223000              = 2223000,	// Day 2, 17:10
-	kTime2227500              = 2227500,	// Day 2, 17:15
-	kTime2241000              = 2241000,	// Day 2, 17:30
-	kTime2248200              = 2248200,	// Day 2, 17:38
-	kTime2250000              = 2250000,	// Day 2, 17:40
-	kTime2254500              = 2254500,	// Day 2, 17:45
-	kTime2259000              = 2259000,	// Day 2, 17:50
-	kTime2263500              = 2263500,	// Day 2, 17:55
-	kTime2266200              = 2266200,	// Day 2, 17:58
-	kTimeCityVienna           = 2268000,	// Day 2, 18:00
+	kTimeChapter3 = 1944000, // Day 2, 12:00
+	kTime1953000 = 1953000, // Day 2, 12:10
+	kTime1966500 = 1966500, // Day 2, 12:25
+	kTime1969200 = 1969200, // Day 2, 12:28
+	kTime1971000 = 1971000, // Day 2, 12:30
+	kTimeEnterSalzbourg = 1982700, // Day 2, 12:43
+	kTime1983600 = 1983600, // Day 2, 12:44
+	kTimeCitySalzbourg = 1984500, // Day 2, 12:45
+	kTime1989000 = 1989000, // Day 2, 12:50
+	kTimeExitSalzbourg = 1989900, // Day 2, 12:51
+	kTime1993500 = 1993500, // Day 2, 12:55
+	kTime1998000 = 1998000, // Day 2, 13:00
+	kTime2002500 = 2002500, // Day 2, 13:05
+	kTime2011500 = 2011500, // Day 2, 13:15
+	kTime2016000 = 2016000, // Day 2, 13:20
+	kTime2020500 = 2020500, // Day 2, 13:25
+	kTime2025000 = 2025000, // Day 2, 13:30
+	kTime2034000 = 2034000, // Day 2, 13:40
+	kTime2038500 = 2038500, // Day 2, 13:45
+	kTime2040300 = 2040300, // Day 2, 13:47
+	kTime2043000 = 2043000, // Day 2, 13:50
+	kTimeEnterAttnangPuchheim = 2047500, // Day 2, 13:55
+	kTimeCityAttnangPuchheim = 2049300, // Day 2, 13:57
+	kTime2052000 = 2052000, // Day 2, 14:00
+	kTimeExitAttnangPuchheim = 2052900, // Day 2, 14:01
+	kTime2056500 = 2056500, // Day 2, 14:05
+	kTime2061000 = 2061000, // Day 2, 14:10
+	kTime2062800 = 2062800, // Day 2, 14:12
+	kTime2065500 = 2065500, // Day 2, 14:15
+	kTime2070000 = 2070000, // Day 2, 14:20
+	kTimeEnterWels = 2073600, // Day 2, 14:24
+	kTimeCityWels = 2075400, // Day 2, 14:26
+	kTime2079000 = 2079000, // Day 2, 14:30
+	kTimeExitWels = 2079900, // Day 2, 14:31
+	kTime2083500 = 2083500, // Day 2, 14:35
+	kTime2088000 = 2088000, // Day 2, 14:40
+	kTime2088900 = 2088900, // Day 2, 14:41
+	kTime2092500 = 2092500, // Day 2, 14:45
+	kTime2097000 = 2097000, // Day 2, 14:50
+	kTimeEnterLinz = 2099700, // Day 2, 14:53
+	kTimeCityLinz = 2101500, // Day 2, 14:55
+	kTimeExitLinz = 2105100, // Day 2, 14:59
+	kTime2106000 = 2106000, // Day 2, 15:00
+	kTime2110500 = 2110500, // Day 2, 15:05
+	kTime2115000 = 2115000, // Day 2, 15:10
+	kTime2117700 = 2117700, // Day 2, 15:13
+	kTime2119500 = 2119500, // Day 2, 15:15
+	kTime2124000 = 2124000, // Day 2, 15:20
+	kTime2133000 = 2133000, // Day 2, 15:30
+	kTime2138400 = 2138400, // Day 2, 15:36
+	kTime2142000 = 2142000, // Day 2, 15:40
+	kTime2146500 = 2146500, // Day 2, 15:45
+	kTime2147400 = 2147400, // Day 2, 15:46
+	kTime2151000 = 2151000, // Day 2, 15:50
+	kTimeCityAmstetten = 2154600, // Day 2, 15:54
+	kTime2155500 = 2155500, // Day 2, 15:55
+	kTime2160000 = 2160000, // Day 2, 16:00
+	kTime2169000 = 2169000, // Day 2, 16:10
+	kTime2173500 = 2173500, // Day 2, 16:15
+	kTime2187000 = 2187000, // Day 2, 16:30
+	kTime2182500 = 2182500, // Day 2, 16:25
+	kTime2196000 = 2196000, // Day 2, 16:40
+	kTime2200500 = 2200500, // Day 2, 16:45
+	kTime2205000 = 2205000, // Day 2, 16:50
+	kTime2214000 = 2214000, // Day 2, 17:00
+	kTime2218500 = 2218500, // Day 2, 17:05
+	kTime2223000 = 2223000, // Day 2, 17:10
+	kTime2227500 = 2227500, // Day 2, 17:15
+	kTime2241000 = 2241000, // Day 2, 17:30
+	kTime2248200 = 2248200, // Day 2, 17:38
+	kTime2250000 = 2250000, // Day 2, 17:40
+	kTime2254500 = 2254500, // Day 2, 17:45
+	kTime2259000 = 2259000, // Day 2, 17:50
+	kTime2263500 = 2263500, // Day 2, 17:55
+	kTime2266200 = 2266200, // Day 2, 17:58
+	kTimeCityVienna = 2268000, // Day 2, 18:00
 
 	// Chapter 4
-	kTime2349000              = 2349000,	// Day 2, 19:30
-	kTimeChapter4             = 2353500,	// Day 2, 19:35
-	kTime2354400              = 2354400,	// Day 2, 19:36
-	kTime2356200              = 2356200,	// Day 2, 19:38
-	kTime2358000              = 2358000,	// Day 2, 19:40
-	kTime2360700              = 2360700,	// Day 2, 19:43
-	kTime2362500              = 2362500,	// Day 2, 19:45
-	kTime2361600              = 2361600,	// Day 2, 19:44
-	kTime2367000              = 2367000,	// Day 2, 19:50
-	kTime2370600              = 2370600,	// Day 2, 19:54
-	kTime2378700              = 2378700,	// Day 2, 20:03
-	kTimeEnterPoszony         = 2381400,	// Day 2, 20:06
-	kTimeCityPoszony          = 2383200,	// Day 2, 20:08
-	kTime2385000              = 2385000,	// Day 2, 20:10
-	kTimeExitPoszony          = 2386800,	// Day 2, 20:12
-	kTime2389500              = 2389500,	// Day 2, 20:15
-	kTime2394000              = 2394000,	// Day 2, 20:20
-	kTime2398500              = 2398500,	// Day 2, 20:25
-	kTime2403000              = 2403000,	// Day 2, 20:30
-	kTime2407500              = 2407500,	// Day 2, 20:35
-	kTime2410200              = 2410200,	// Day 2, 20:38
-	kTime2412000              = 2412000,	// Day 2, 20:40
-	kTime2414700              = 2414700,	// Day 2, 20:43
-	kTime2415600              = 2415600,	// Day 2, 20:44
-	kTimeEnterGalanta         = 2416500,	// Day 2, 20:45
-	kTimeCityGalanta          = 2418300,	// Day 2, 20:47
-	kTime2421000              = 2421000,	// Day 2, 20:50
-	kTimeExitGalanta          = 2421900,	// Day 2, 20:51
-	kTime2422800              = 2422800,	// Day 2, 20:52
-	kTime2428200              = 2428200,	// Day 2, 20:58
-	kTime2425500              = 2425500,	// Day 2, 20:55
-	kTime2430000              = 2430000,	// Day 2, 21:00
-	kTime2434500              = 2434500,	// Day 2, 21:05
-	kTime2439000              = 2439000,	// Day 2, 21:10
-	kTime2443500              = 2443500,	// Day 2, 21:15
-	kTime2448000              = 2448000,	// Day 2, 21:20
-	kTime2452500              = 2452500,	// Day 2, 21:25
-	kTime2455200              = 2455200,	// Day 2, 21:28
-	kTime2457000              = 2457000,	// Day 2, 21:30
-	kTime2466000              = 2466000,	// Day 2, 21:40
-	kTime2470500              = 2470500,	// Day 2, 21:45
-	kTime2475000              = 2475000,	// Day 2, 21:50
-	kTime2479500              = 2479500,	// Day 2, 21:55
-	kTime2484000              = 2484000,	// Day 2, 22:00
-	kTime2488500              = 2488500,	// Day 2, 22:05
-	kTime2493000              = 2493000,	// Day 2, 22:10
-	kTime2506500              = 2506500,	// Day 2, 22:25
-	kTime2507400              = 2507400,	// Day 2, 22:26
-	kTime2511000              = 2511000,	// Day 2, 22:30
-	kTime2511900              = 2511900,	// Day 2, 22:31
-	kTime2517300              = 2517300,	// Day 2, 22:37
-	kTime2519100              = 2519100,	// Day 2, 22:39
-	kTime2520000              = 2520000,	// Day 2, 22:40
-	kTime2533500              = 2533500,	// Day 2, 22:55
-	kTime2535300              = 2535300,	// Day 2, 22:57
-	kTime2538000              = 2538000,	// Day 2, 23:00
-	kTimeCityBudapest         = 2551500,	// Day 2, 23:15
+	kTime2349000 = 2349000, // Day 2, 19:30
+	kTimeChapter4 = 2353500, // Day 2, 19:35
+	kTime2354400 = 2354400, // Day 2, 19:36
+	kTime2356200 = 2356200, // Day 2, 19:38
+	kTime2358000 = 2358000, // Day 2, 19:40
+	kTime2360700 = 2360700, // Day 2, 19:43
+	kTime2362500 = 2362500, // Day 2, 19:45
+	kTime2361600 = 2361600, // Day 2, 19:44
+	kTime2367000 = 2367000, // Day 2, 19:50
+	kTime2370600 = 2370600, // Day 2, 19:54
+	kTime2378700 = 2378700, // Day 2, 20:03
+	kTimeEnterPoszony = 2381400, // Day 2, 20:06
+	kTimeCityPoszony = 2383200, // Day 2, 20:08
+	kTime2385000 = 2385000, // Day 2, 20:10
+	kTimeExitPoszony = 2386800, // Day 2, 20:12
+	kTime2389500 = 2389500, // Day 2, 20:15
+	kTime2394000 = 2394000, // Day 2, 20:20
+	kTime2398500 = 2398500, // Day 2, 20:25
+	kTime2403000 = 2403000, // Day 2, 20:30
+	kTime2407500 = 2407500, // Day 2, 20:35
+	kTime2410200 = 2410200, // Day 2, 20:38
+	kTime2412000 = 2412000, // Day 2, 20:40
+	kTime2414700 = 2414700, // Day 2, 20:43
+	kTime2415600 = 2415600, // Day 2, 20:44
+	kTimeEnterGalanta = 2416500, // Day 2, 20:45
+	kTimeCityGalanta = 2418300, // Day 2, 20:47
+	kTime2421000 = 2421000, // Day 2, 20:50
+	kTimeExitGalanta = 2421900, // Day 2, 20:51
+	kTime2422800 = 2422800, // Day 2, 20:52
+	kTime2428200 = 2428200, // Day 2, 20:58
+	kTime2425500 = 2425500, // Day 2, 20:55
+	kTime2430000 = 2430000, // Day 2, 21:00
+	kTime2434500 = 2434500, // Day 2, 21:05
+	kTime2439000 = 2439000, // Day 2, 21:10
+	kTime2443500 = 2443500, // Day 2, 21:15
+	kTime2448000 = 2448000, // Day 2, 21:20
+	kTime2452500 = 2452500, // Day 2, 21:25
+	kTime2455200 = 2455200, // Day 2, 21:28
+	kTime2457000 = 2457000, // Day 2, 21:30
+	kTime2466000 = 2466000, // Day 2, 21:40
+	kTime2470500 = 2470500, // Day 2, 21:45
+	kTime2475000 = 2475000, // Day 2, 21:50
+	kTime2479500 = 2479500, // Day 2, 21:55
+	kTime2484000 = 2484000, // Day 2, 22:00
+	kTime2488500 = 2488500, // Day 2, 22:05
+	kTime2493000 = 2493000, // Day 2, 22:10
+	kTime2506500 = 2506500, // Day 2, 22:25
+	kTime2507400 = 2507400, // Day 2, 22:26
+	kTime2511000 = 2511000, // Day 2, 22:30
+	kTime2511900 = 2511900, // Day 2, 22:31
+	kTime2517300 = 2517300, // Day 2, 22:37
+	kTime2519100 = 2519100, // Day 2, 22:39
+	kTime2520000 = 2520000, // Day 2, 22:40
+	kTime2533500 = 2533500, // Day 2, 22:55
+	kTime2535300 = 2535300, // Day 2, 22:57
+	kTime2538000 = 2538000, // Day 2, 23:00
+	kTimeCityBudapest = 2551500, // Day 2, 23:15
 
 	// Chapter 5
-	kTimeChapter5             = 2844000,	// Day 3, 04:40
-	kTimeTrainStopped         = 2898000,	// Day 3, 05:40
-	kTime2907000              = 2907000,	// Day 3, 05:50
-	kTime2916000              = 2916000,	// Day 3, 06:00
-	kTime2934000              = 2934000,    // Day 3, 06:20
-	kTimeTrainStopped2        = 2943000,	// Day 3, 06:30
-	kTime2949300              = 2949300,    // Day 3, 06:37
-	kTimeCityBelgrade         = 2952000,	// Day 3, 06:40
-	kTime2983500              = 2983500,	// Day 3, 07:15
-	kTimeCityNish             = 3205800,	// Day 3, 11:22
-	kTimeCityTzaribrod        = 3492000,	// Day 3, 16:40
-	kTime3645000              = 3645000,	// Day 3, 19:30
-	kTimeCitySofia            = 3690000,	// Day 3, 20:20
-	kTimeCityAdrianople       = 4320900,	// Day 4, 08:01
-	kTime4914000              = 4914000,    // Day 4, 19:00
-	kTime4920300              = 4920300,    // Day 4, 19:07
-	kTime4923000              = 4923000,	// Day 4, 19:10
-	kTime4929300              = 4929300,	// Day 4, 19:17
-	kTimeCityConstantinople   = 4941000,	// Day 4, 19:30
+	kTimeChapter5 = 2844000, // Day 3, 04:40
+	kTimeTrainStopped = 2898000, // Day 3, 05:40
+	kTime2907000 = 2907000, // Day 3, 05:50
+	kTime2916000 = 2916000, // Day 3, 06:00
+	kTime2934000 = 2934000, // Day 3, 06:20
+	kTimeTrainStopped2 = 2943000, // Day 3, 06:30
+	kTime2949300 = 2949300, // Day 3, 06:37
+	kTimeCityBelgrade = 2952000, // Day 3, 06:40
+	kTime2983500 = 2983500, // Day 3, 07:15
+	kTimeCityNish = 3205800, // Day 3, 11:22
+	kTimeCityTzaribrod = 3492000, // Day 3, 16:40
+	kTime3645000 = 3645000, // Day 3, 19:30
+	kTimeCitySofia = 3690000, // Day 3, 20:20
+	kTimeCityAdrianople = 4320900, // Day 4, 08:01
+	kTime4914000 = 4914000, // Day 4, 19:00
+	kTime4920300 = 4920300, // Day 4, 19:07
+	kTime4923000 = 4923000, // Day 4, 19:10
+	kTime4929300 = 4929300, // Day 4, 19:17
+	kTimeCityConstantinople = 4941000, // Day 4, 19:30
 
+	kTime10881000 = 10881000,
+	kTimeEnd = 15803100,
+	kTime16451100 = 16451100,
 
-	kTime10881000             = 10881000,
-	kTimeEnd                  = 15803100,
-	kTime16451100             = 16451100,
-
-	kTimeInvalid              = 2147483647,
-	kTimeInvalid2             = 0xFFFFFEDA
+	kTimeInvalid = 2147483647,
+	kTimeInvalid2 = 0xFFFFFEDA
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -469,82 +468,82 @@ enum ArchiveIndex {
 
 enum ChapterIndex {
 	kChapterAll = 0,
-	kChapter1   = 1,
-	kChapter2   = 2,
-	kChapter3   = 3,
-	kChapter4   = 4,
-	kChapter5   = 5
+	kChapter1 = 1,
+	kChapter2 = 2,
+	kChapter3 = 3,
+	kChapter4 = 4,
+	kChapter5 = 5
 };
 
 //////////////////////////////////////////////////////////////////////////
 // Index of scenes
 //////////////////////////////////////////////////////////////////////////
 enum SceneIndex {
-	kSceneNone                    = 0,
-	kSceneMenu                    = 1,
+	kSceneNone = 0,
+	kSceneMenu = 1,
 
-	kSceneIntro                   = 30,
+	kSceneIntro = 30,
 
 	// Inventory
-	kSceneMatchbox                = 31,
-	kSceneTelegram                = 32,
-	kScenePassengerList           = 33,
-	kSceneScarf                   = 34,
-	kSceneParchemin               = 35,
-	kSceneArticle                 = 36,
-	kScenePaper                   = 37,
-	kSceneFirebird                = 38,
-	kSceneBriefcase               = 39,
+	kSceneMatchbox = 31,
+	kSceneTelegram = 32,
+	kScenePassengerList = 33,
+	kSceneScarf = 34,
+	kSceneParchemin = 35,
+	kSceneArticle = 36,
+	kScenePaper = 37,
+	kSceneFirebird = 38,
+	kSceneBriefcase = 39,
 
 	// Normal scenes
-	kSceneDefault                 = 40,
-	kScene41                      = 41,
-	kSceneCompartmentCorpse       = 42,     // Tyler compartment with corpse on floor
+	kSceneDefault = 40,
+	kScene41 = 41,
+	kSceneCompartmentCorpse = 42, // Tyler compartment with corpse on floor
 
 	// Fight
-	kSceneFightMilos              = 43,
-	kSceneFightMilosBedOpened     = 44,
-	kSceneFightAnna               = 45,
-	kSceneFightIvo                = 46,
-	kSceneFightSalko              = 47,
-	kSceneFightVesna              = 48,
+	kSceneFightMilos = 43,
+	kSceneFightMilosBedOpened = 44,
+	kSceneFightAnna = 45,
+	kSceneFightIvo = 46,
+	kSceneFightSalko = 47,
+	kSceneFightVesna = 48,
 
-	kSceneEuropeMap               = 49,
+	kSceneEuropeMap = 49,
 
 	// Game over
-	kSceneGameOverStopPolice      = 50,
-	kSceneGameOverTrainStopped    = 51,
-	kSceneGameOverTrainStopped2   = 52,
-	kSceneGameOverTrainExplosion  = 53,
+	kSceneGameOverStopPolice = 50,
+	kSceneGameOverTrainStopped = 51,
+	kSceneGameOverTrainStopped2 = 52,
+	kSceneGameOverTrainExplosion = 53,
 	kSceneGameOverTrainExplosion2 = 54,
-	kSceneGameOverBloodJacket     = 55,
-	kSceneGameOverPolice          = 56,
-	kSceneGameOverPolice1         = 57,
-	kSceneGameOverAnnaDied        = 58,
-	kSceneGameOverVienna          = 59,
-	kSceneGameOverVienna1         = 60,
-	kSceneGameOverVienna2         = 61,
-	kSceneGameOverAlarm           = 62,
-	kSceneGameOverPolice2         = 63,
-	kSceneGameOverAlarm2          = 64,
+	kSceneGameOverBloodJacket = 55,
+	kSceneGameOverPolice = 56,
+	kSceneGameOverPolice1 = 57,
+	kSceneGameOverAnnaDied = 58,
+	kSceneGameOverVienna = 59,
+	kSceneGameOverVienna1 = 60,
+	kSceneGameOverVienna2 = 61,
+	kSceneGameOverAlarm = 62,
+	kSceneGameOverPolice2 = 63,
+	kSceneGameOverAlarm2 = 64,
 
 	// Start screen
-	kSceneStartScreen             = 65,
+	kSceneStartScreen = 65,
 
-	kSceneBeetle                  = 128,
+	kSceneBeetle = 128,
 
-	kSceneFightDefault            = 820,
+	kSceneFightDefault = 820,
 
-	kSceneInvalid                 = 0xffffffff
+	kSceneInvalid = 0xffffffff
 };
 
 //////////////////////////////////////////////////////////////////////////
 // Jacket
 //////////////////////////////////////////////////////////////////////////
 enum JacketType {
-	kJacketOriginal   = 0,
-	kJacketBlood      = 1,
-	kJacketGreen      = 2
+	kJacketOriginal = 0,
+	kJacketBlood = 1,
+	kJacketGreen = 2
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -556,17 +555,17 @@ enum CityIndex {
 	kCityBarleduc,
 	kCityNancy,
 	kCityLuneville,
-	kCityAvricourt,                // 5
+	kCityAvricourt, // 5
 	kCityDeutschAvricourt,
 	kCityStrasbourg,
 	kCityBadenOos,
 	kCitySalzbourg,
-	kCityAttnangPuchheim,          // 10
+	kCityAttnangPuchheim, // 10
 	kCityWels,
 	kCityLinz,
 	kCityVienna,
 	kCityPoszony,
-	kCityGalanta,                  // 15
+	kCityGalanta, // 15
 	kCityPolice
 };
 
@@ -605,19 +604,19 @@ enum CursorStyle {
 	kCursorLeft,
 	kCursorRight,
 	kCursorHand,
-	kCursorHandKnock,                     // 10
+	kCursorHandKnock, // 10
 	kCursorMagnifier,
 	kCursorHandPointer,
 	kCursorSleep,
 	kCursorTalk,
-	kCursorTalk2,     // Need better name
+	kCursorTalk2, // Need better name
 
 	// Items
 	kCursorMatchBox,
 	kCursorTelegram,
 	kCursorPassengerList,
 	kCursorArticle,
-	kCursorScarf,     // 20
+	kCursorScarf, // 20
 	kCursorPaper,
 	kCursorParchemin,
 	kCursorMatch,
@@ -629,11 +628,11 @@ enum CursorStyle {
 	kCursorCorpse,
 
 	// Combat
-	kCursorPunchLeft,                      // 30
+	kCursorPunchLeft, // 30
 	kCursorPunchRight,
 
 	// Portraits
-	kCursorPortrait,                      // 32
+	kCursorPortrait, // 32
 	kCursorPortraitSelected,
 	kCursorPortraitGreen,
 	kCursorPortraitGreenSelected,
@@ -641,7 +640,7 @@ enum CursorStyle {
 	kCursorPortraitYellowSelected,
 	kCursorHourGlass,
 	kCursorEggBlue,
-	kCursorEggRed,                        // 40
+	kCursorEggRed, // 40
 	kCursorEggGreen,
 	kCursorEggPurple,
 	kCursorEggTeal,
@@ -665,118 +664,118 @@ typedef unsigned char Position;
 // EntityPosition
 //////////////////////////////////////////////////////////////////////////
 enum EntityPosition {
-	kPositionNone     = 0,
-	kPosition_1     = 1,
-	kPosition_3     = 3,
-	kPosition_4     = 4,
-	kPosition_500   = 500,
-	kPosition_540   = 540,
-	kPosition_750   = 750,
-	kPosition_849   = 849,
-	kPosition_850   = 850,
-	kPosition_851   = 851,
-	kPosition_1200  = 1200,
-	kPosition_1430  = 1430,
-	kPosition_1500  = 1500,
-	kPosition_1540  = 1540,
-	kPosition_1750  = 1750,
-	kPosition_2000  = 2000,
-	kPosition_2087  = 2087,
-	kPosition_2086  = 2086,
-	kPosition_2088  = 2088,
-	kPosition_2110  = 2110,
-	kPosition_2300  = 2300,
-	kPosition_2330  = 2330,
-	kPosition_2410  = 2410,
-	kPosition_2436  = 2436,
-	kPosition_2490  = 2490,
-	kPosition_2500  = 2500,
-	kPosition_2587  = 2587,
-	kPosition_2588  = 2588,
-	kPosition_2690  = 2690,
-	kPosition_2740  = 2740,
-	kPosition_2830  = 2830,
-	kPosition_2980  = 2980,
-	kPosition_3050  = 3050,
-	kPosition_3110  = 3110,
-	kPosition_3390  = 3390,
-	kPosition_3450  = 3450,
-	kPosition_3500  = 3500,
-	kPosition_3550  = 3550,
-	kPosition_3650  = 3650,
-	kPosition_3760  = 3760,
-	kPosition_3820  = 3820,
-	kPosition_3890  = 3890,
-	kPosition_3969  = 3969,
-	kPosition_3970  = 3970,
-	kPosition_4070  = 4070,
-	kPosition_4100  = 4100,
-	kPosition_4370  = 4370,
-	kPosition_4455  = 4455,
-	kPosition_4460  = 4460,
-	kPosition_4500  = 4500,
-	kPosition_4590  = 4590,
-	kPosition_4680  = 4680,
-	kPosition_4689  = 4689,
-	kPosition_4690  = 4690,
-	kPosition_4691  = 4691,
-	kPosition_4770  = 4470,
-	kPosition_4840  = 4840,
-	kPosition_5000  = 5000,
-	kPosition_5090  = 5090,
-	kPosition_5140  = 5140,
-	kPosition_5419  = 5419,
-	kPosition_5420  = 5420,
-	kPosition_5440  = 5440,
-	kPosition_5500  = 5500,
-	kPosition_5540  = 5540,
-	kPosition_5610  = 5610,
-	kPosition_5790  = 5790,
-	kPosition_5799  = 5799,
-	kPosition_5800  = 5800,
-	kPosition_5810  = 5810,
-	kPosition_5890  = 5890,
-	kPosition_5900  = 5900,
-	kPosition_5970  = 5970,
-	kPosition_6000  = 6000,
-	kPosition_6130  = 6130,
-	kPosition_6160  = 6160,
-	kPosition_6220  = 6220,
-	kPosition_6410  = 6410,
-	kPosition_6460  = 6460,
-	kPosition_6469  = 6469,
-	kPosition_6470  = 6470,
-	kPosition_6471  = 6471,
-	kPosition_6800  = 6800,
-	kPosition_6850  = 6850,
-	kPosition_7000  = 7000,
-	kPosition_7160  = 7160,
-	kPosition_7250  = 7250,
-	kPosition_7320  = 7320,
-	kPosition_7500  = 7500,
-	kPosition_7510  = 7510,
-	kPosition_7850  = 7850,
-	kPosition_7870  = 7870,
-	kPosition_7900  = 7900,
-	kPosition_7950  = 7950,
-	kPosition_8000  = 8000,
-	kPosition_8012  = 8012,
-	kPosition_8013  = 8013,
-	kPosition_8160  = 8160,
-	kPosition_8200  = 8200,
-	kPosition_8500  = 8500,
-	kPosition_8512  = 8512,
-	kPosition_8513  = 8513,
-	kPosition_8514  = 8514,
-	kPosition_8800  = 8800,
-	kPosition_9020  = 9020,
-	kPosition_9269  = 9269,
-	kPosition_9250  = 9250,
-	kPosition_9270  = 9270,
-	kPosition_9271  = 9271,
-	kPosition_9460  = 9460,
-	kPosition_9500  = 9500,
-	kPosition_9510  = 9510,
+	kPositionNone = 0,
+	kPosition_1 = 1,
+	kPosition_3 = 3,
+	kPosition_4 = 4,
+	kPosition_500 = 500,
+	kPosition_540 = 540,
+	kPosition_750 = 750,
+	kPosition_849 = 849,
+	kPosition_850 = 850,
+	kPosition_851 = 851,
+	kPosition_1200 = 1200,
+	kPosition_1430 = 1430,
+	kPosition_1500 = 1500,
+	kPosition_1540 = 1540,
+	kPosition_1750 = 1750,
+	kPosition_2000 = 2000,
+	kPosition_2087 = 2087,
+	kPosition_2086 = 2086,
+	kPosition_2088 = 2088,
+	kPosition_2110 = 2110,
+	kPosition_2300 = 2300,
+	kPosition_2330 = 2330,
+	kPosition_2410 = 2410,
+	kPosition_2436 = 2436,
+	kPosition_2490 = 2490,
+	kPosition_2500 = 2500,
+	kPosition_2587 = 2587,
+	kPosition_2588 = 2588,
+	kPosition_2690 = 2690,
+	kPosition_2740 = 2740,
+	kPosition_2830 = 2830,
+	kPosition_2980 = 2980,
+	kPosition_3050 = 3050,
+	kPosition_3110 = 3110,
+	kPosition_3390 = 3390,
+	kPosition_3450 = 3450,
+	kPosition_3500 = 3500,
+	kPosition_3550 = 3550,
+	kPosition_3650 = 3650,
+	kPosition_3760 = 3760,
+	kPosition_3820 = 3820,
+	kPosition_3890 = 3890,
+	kPosition_3969 = 3969,
+	kPosition_3970 = 3970,
+	kPosition_4070 = 4070,
+	kPosition_4100 = 4100,
+	kPosition_4370 = 4370,
+	kPosition_4455 = 4455,
+	kPosition_4460 = 4460,
+	kPosition_4500 = 4500,
+	kPosition_4590 = 4590,
+	kPosition_4680 = 4680,
+	kPosition_4689 = 4689,
+	kPosition_4690 = 4690,
+	kPosition_4691 = 4691,
+	kPosition_4770 = 4470,
+	kPosition_4840 = 4840,
+	kPosition_5000 = 5000,
+	kPosition_5090 = 5090,
+	kPosition_5140 = 5140,
+	kPosition_5419 = 5419,
+	kPosition_5420 = 5420,
+	kPosition_5440 = 5440,
+	kPosition_5500 = 5500,
+	kPosition_5540 = 5540,
+	kPosition_5610 = 5610,
+	kPosition_5790 = 5790,
+	kPosition_5799 = 5799,
+	kPosition_5800 = 5800,
+	kPosition_5810 = 5810,
+	kPosition_5890 = 5890,
+	kPosition_5900 = 5900,
+	kPosition_5970 = 5970,
+	kPosition_6000 = 6000,
+	kPosition_6130 = 6130,
+	kPosition_6160 = 6160,
+	kPosition_6220 = 6220,
+	kPosition_6410 = 6410,
+	kPosition_6460 = 6460,
+	kPosition_6469 = 6469,
+	kPosition_6470 = 6470,
+	kPosition_6471 = 6471,
+	kPosition_6800 = 6800,
+	kPosition_6850 = 6850,
+	kPosition_7000 = 7000,
+	kPosition_7160 = 7160,
+	kPosition_7250 = 7250,
+	kPosition_7320 = 7320,
+	kPosition_7500 = 7500,
+	kPosition_7510 = 7510,
+	kPosition_7850 = 7850,
+	kPosition_7870 = 7870,
+	kPosition_7900 = 7900,
+	kPosition_7950 = 7950,
+	kPosition_8000 = 8000,
+	kPosition_8012 = 8012,
+	kPosition_8013 = 8013,
+	kPosition_8160 = 8160,
+	kPosition_8200 = 8200,
+	kPosition_8500 = 8500,
+	kPosition_8512 = 8512,
+	kPosition_8513 = 8513,
+	kPosition_8514 = 8514,
+	kPosition_8800 = 8800,
+	kPosition_9020 = 9020,
+	kPosition_9269 = 9269,
+	kPosition_9250 = 9250,
+	kPosition_9270 = 9270,
+	kPosition_9271 = 9271,
+	kPosition_9460 = 9460,
+	kPosition_9500 = 9500,
+	kPosition_9510 = 9510,
 	kPosition_30000 = 30000
 };
 
@@ -822,10 +821,10 @@ enum ClothesIndex {
 //////////////////////////////////////////////////////////////////////////
 enum ObjectLocation {
 	kObjectLocationNone = 0,
-	kObjectLocation1    = 1, // Floor?
-	kObjectLocation2    = 2, // Bed ?
-	kObjectLocation3    = 3,
-	kObjectLocation4    = 4, // Window ?
+	kObjectLocation1 = 1, // Floor?
+	kObjectLocation2 = 2, // Bed ?
+	kObjectLocation3 = 3,
+	kObjectLocation4 = 4, // Window ?
 	kObjectLocation5 = 5,
 	kObjectLocation6 = 6,
 	kObjectLocation7 = 7,
@@ -837,27 +836,27 @@ enum ObjectLocation {
 
 enum ObjectModel {
 	kObjectModelNone = 0,
-	kObjectModel1    = 1,
-	kObjectModel2    = 2,
-	kObjectModel3    = 3,
-	kObjectModel4    = 4,
-	kObjectModel5    = 5,
-	kObjectModel6    = 6,
-	kObjectModel7    = 7,
-	kObjectModel8    = 8,
-	kObjectModel9    = 9,
-	kObjectModel10   = 10
+	kObjectModel1 = 1,
+	kObjectModel2 = 2,
+	kObjectModel3 = 3,
+	kObjectModel4 = 4,
+	kObjectModel5 = 5,
+	kObjectModel6 = 6,
+	kObjectModel7 = 7,
+	kObjectModel8 = 8,
+	kObjectModel9 = 9,
+	kObjectModel10 = 10
 };
 
 //////////////////////////////////////////////////////////////////////////
 // Entity direction
 //////////////////////////////////////////////////////////////////////////
 enum EntityDirection {
-	kDirectionNone   = 0,
-	kDirectionUp     = 1,
-	kDirectionDown   = 2,
-	kDirectionLeft   = 3,
-	kDirectionRight  = 4,
+	kDirectionNone = 0,
+	kDirectionUp = 1,
+	kDirectionDown = 2,
+	kDirectionLeft = 3,
+	kDirectionRight = 4,
 	kDirectionSwitch = 5
 };
 
@@ -865,11 +864,11 @@ enum EntityDirection {
 // Combat
 //////////////////////////////////////////////////////////////////////////
 enum FightType {
-	kFightMilos   = 2001,
-	kFightAnna    = 2002,
-	kFightIvo     = 2003,
-	kFightSalko   = 2004,
-	kFightVesna   = 2005
+	kFightMilos = 2001,
+	kFightAnna = 2002,
+	kFightIvo = 2003,
+	kFightSalko = 2004,
+	kFightVesna = 2005
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -881,47 +880,47 @@ enum InventoryItem {
 	kItem2,
 	kItem3,
 	kItemTelegram,
-	kItem5,               // 5
+	kItem5, // 5
 	kItemPassengerList,
 	kItem7,
 	kItemScarf,
 	kItem9,
-	kItemParchemin,       // 10
+	kItemParchemin, // 10
 	kItem11,
 	kItemMatch,
 	kItemWhistle,
 	kItemBeetle,
-	kItemKey,             // 15
+	kItemKey, // 15
 	kItemBomb,
 	kItem17,
 	kItemFirebird,
 	kItemBriefcase,
-	kItemCorpse,          // 20
+	kItemCorpse, // 20
 	kItemGreenJacket,
 	kItem22,
 	kItemPaper,
 	kItemArticle,
-	kItem25,             // 25
+	kItem25, // 25
 	kItem26,
 	kItem27,
 	kItem28,
 	kItem29,
-	kItem30,            // 30
+	kItem30, // 30
 	kItem31,
 
 	// Portrait (not an index)
-	kPortraitOriginal  = 32,
-	kPortraitGreen     = 34,
-	kPortraitYellow    = 36,
+	kPortraitOriginal = 32,
+	kPortraitGreen = 34,
+	kPortraitYellow = 36,
 
-	kItemInvalid       = 128,
+	kItemInvalid = 128,
 
-	kItem146           = 146,
-	kItem147           = 147,
+	kItem146 = 146,
+	kItem147 = 147,
 
 	// Toggles
-	kItemToggleHigh    = 0x7F,
-	kItemToggleLow     = 0xF7
+	kItemToggleHigh = 0x7F,
+	kItemToggleLow = 0xF7
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -933,127 +932,127 @@ enum ObjectIndex {
 	kObjectCompartment2,
 	kObjectCompartment3,
 	kObjectCompartment4,
-	kObjectCompartment5,                 // 5
+	kObjectCompartment5, // 5
 	kObjectCompartment6,
 	kObjectCompartment7,
 	kObjectCompartment8,
 	kObjectOutsideTylerCompartment,
-	kObject10,                           // 10
+	kObject10, // 10
 	kObject11,
 	kObject12,
 	kObject13,
 	kObject14,
-	kObject15,                           // 15
+	kObject15, // 15
 	kObject16,
 	kObjectHandleBathroom,
 	kObjectHandleInsideBathroom,
 	kObjectKitchen,
-	kObject20,                          // 20
+	kObject20, // 20
 	kObject21,
 	kObject22,
 	kObjectTrainTimeTable,
 	kObjectRedSleepingCar,
-	kObject25,                          // 25
+	kObject25, // 25
 	kObjectHandleOutsideLeft,
 	kObjectHandleOutsideRight,
 	kObject28,
 	kObject29,
-	kObject30,                          // 30
+	kObject30, // 30
 	kObject31,
 	kObjectCompartmentA,
 	kObjectCompartmentB,
 	kObjectCompartmentC,
-	kObjectCompartmentD,                // 35
+	kObjectCompartmentD, // 35
 	kObjectCompartmentE,
 	kObjectCompartmentF,
 	kObjectCompartmentG,
 	kObjectCompartmentH,
-	kObject40,                          // 40
+	kObject40, // 40
 	kObject41,
 	kObject42,
 	kObject43,
 	kObjectOutsideBetweenCompartments,
-	kObjectOutsideAnnaCompartment,     // 45
+	kObjectOutsideAnnaCompartment, // 45
 	kObject46,
 	kObject47,
 	kObject48, // might be the egg
 	kObject49,
-	kObject50,                          // 50
+	kObject50, // 50
 	kObject51,
 	kObject52,
 	kObject53,
 	kObject54,
-	kObjectRestaurantCar,               // 55
+	kObjectRestaurantCar, // 55
 	kObject56,
 	kObject57,
 	kObject58,
 	kObject59,
-	kObject60,                          // 60
+	kObject60, // 60
 	kObject61,
 	kObject62,
 	kObject63,
 	kObject64,
-	kObject65,                          // 65
+	kObject65, // 65
 	kObject66,
 	kObject67,
 	kObject68,
 	kObject69,
-	kObject70,                          // 70
+	kObject70, // 70
 	kObject71,
 	kObject72,
 	kObjectCeiling,
 	kObject74,
-	kObjectCompartmentKronos,           // 75
+	kObjectCompartmentKronos, // 75
 	kObject76,
 	kObject77,
 	kObject78,
 	kObject79,
-	kObject80,                          // 80
+	kObject80, // 80
 	kObject81,
 	kObject82,
 	kObject83,
 	kObject84,
-	kObject85,                          // 85
+	kObject85, // 85
 	kObject86,
 	kObject87,
 	kObject88,
 	kObject89,
-	kObject90,                          // 90
+	kObject90, // 90
 	kObject91,
 	kObject92,
 	kObject93,
 	kObject94,
-	kObject95,                          // 95
+	kObject95, // 95
 	kObject96,
 	kObject97,
 	kObject98,
 	kObject99,
-	kObject100,                         // 100
+	kObject100, // 100
 	kObject101,
 	kObject102,
 	kObject103,
 	kObject104,
-	kObject105,                         // 105
+	kObject105, // 105
 	kObject106,
 	kObject107,
 	kObject108,
 	kObjectCageMax,
-	kObject110,                         // 110
+	kObject110, // 110
 	kObject111,
 	kObject112,
 	kObject113,
 	kObject114,
-	kObject115,                         // 115
+	kObject115, // 115
 	kObject116,
 	kObject117,
 	kObject118,
 	kObject119,
-	kObject120,                         // 120
+	kObject120, // 120
 	kObject121,
 	kObject122,
 	kObject123,
 	kObject124,
-	kObject125,                         // 125
+	kObject125, // 125
 	kObject126,
 	kObject127,
 	kObjectMax
@@ -1068,37 +1067,37 @@ enum EntityIndex {
 	kEntityAugust,
 	kEntityMertens,
 	kEntityCoudert,
-	kEntityPascale,             // 5
+	kEntityPascale, // 5
 	kEntityWaiter1,
 	kEntityWaiter2,
 	kEntityCooks,
 	kEntityVerges,
-	kEntityTatiana,             // 10
+	kEntityTatiana, // 10
 	kEntityVassili,
 	kEntityAlexei,
 	kEntityAbbot,
 	kEntityMilos,
-	kEntityVesna,               // 15
+	kEntityVesna, // 15
 	kEntityIvo,
 	kEntitySalko,
 	kEntityKronos,
 	kEntityKahina,
-	kEntityFrancois,            // 20
+	kEntityFrancois, // 20
 	kEntityMmeBoutarel,
 	kEntityBoutarel,
 	kEntityRebecca,
 	kEntitySophie,
-	kEntityMahmud,              // 25
+	kEntityMahmud, // 25
 	kEntityYasmin,
 	kEntityHadija,
 	kEntityAlouan,
 	kEntityGendarmes,
-	kEntityMax,                 // 30
+	kEntityMax, // 30
 	kEntityChapters,
 	kEntityTrain,
 	kEntityTables0,
 	kEntityTables1,
-	kEntityTables2,             // 35
+	kEntityTables2, // 35
 	kEntityTables3,
 	kEntityTables4,
 	kEntityTables5,
@@ -1209,7 +1208,7 @@ enum EventIndex {
 	kEventTatianaCompartment = 90,
 	kEventVassiliCompartmentStealEgg = 91,
 	kEventTatianaTylerCompartment = 92,
-	kEventTylerCastleDream= 93,
+	kEventTylerCastleDream = 93,
 	kEventVassiliDeadAlexei = 94,
 	kEventCathFreePassengers = 95,
 	kEventTatianaVassiliTalk = 96,
@@ -1364,7 +1363,7 @@ enum EventIndex {
 	kEventCathClimbUpTrainNoJacketDay = 245,
 	kEventCathClimbDownTrainGreenJacket = 246,
 	kEventCathClimbDownTrainNoJacketNight = 247,
-	kEventCathClimbDownTrainNoJacketDay= 248,
+	kEventCathClimbDownTrainNoJacketDay = 248,
 	kEventCathTopTrainGreenJacket = 249,
 	kEventCathTopTrainNoJacketNight = 250,
 	kEventCathTopTrainNoJacketDay = 251,
@@ -1395,26 +1394,26 @@ enum EventIndex {
 // Action ID (used by entity logic)
 //////////////////////////////////////////////////////////////////////////
 enum ActionIndex {
-	kActionNone            = 0,
-	kAction1               = 1,
-	kActionEndSound        = 2,
+	kActionNone = 0,
+	kAction1 = 1,
+	kActionEndSound = 2,
 	kActionExitCompartment = 3,
-	kAction4               = 4,
-	kActionExcuseMeCath    = 5,
-	kActionExcuseMe        = 6,
-	kActionKnock           = 8,
-	kActionOpenDoor        = 9,
-	kAction10              = 10,
-	kAction11              = 11,
-	kActionDefault         = 12,
-	kAction16              = 16,
-	kActionDrawScene       = 17,
-	kActionCallback        = 18,
+	kAction4 = 4,
+	kActionExcuseMeCath = 5,
+	kActionExcuseMe = 6,
+	kActionKnock = 8,
+	kActionOpenDoor = 9,
+	kAction10 = 10,
+	kAction11 = 11,
+	kActionDefault = 12,
+	kAction16 = 16,
+	kActionDrawScene = 17,
+	kActionCallback = 18,
 
 	/////////////////////////////
 	// Abbot
 	/////////////////////////////
-	kAction100969180 = 100969180,    // Anna
+	kAction100969180 = 100969180, // Anna
 	kAction101169422 = 101169422,
 	kAction104060776 = 104060776,
 	kAction135600432 = 135600432,
@@ -1441,7 +1440,7 @@ enum ActionIndex {
 	// Alouan
 	/////////////////////////////
 	kAction189489753 = 189489753,
-	kAction190219584 = 190219584,    // Francois
+	kAction190219584 = 190219584, // Francois
 
 	/////////////////////////////
 	// Anna
@@ -1451,16 +1450,15 @@ enum ActionIndex {
 	kAction156049968 = 156049968,
 	kAction157370960 = 157370960,
 	kAction157894320 = 157894320,
-	kAction159332865 = 159332865,   // August
+	kAction159332865 = 159332865, // August
 	kAction189299008 = 189299008,
-	kAction191668032 = 191668032,   // some action during or before concert?
+	kAction191668032 = 191668032, // some action during or before concert?
 	kAction201437056 = 201437056,
 	kAction235856512 = 235856512,
 	kAction236060709 = 236060709,
 	kAction238936000 = 238936000,
 	kAction259136835 = 259136835,
 	kAction291662081 = 291662081,
-
 
 	/////////////////////////////
 	// August
@@ -1472,7 +1470,7 @@ enum ActionIndex {
 	kAction169032608 = 169032608,
 	kAction189426612 = 189426612,
 	kAction203859488 = 203859488,
-	kAction219522616 = 219522616,    // Waiter1
+	kAction219522616 = 219522616, // Waiter1
 	kAction225182640 = 225182640,
 	kAction235257824 = 235257824,
 
@@ -1490,8 +1488,8 @@ enum ActionIndex {
 	// Chapters
 	/////////////////////////////
 	kAction135800432 = 135800432,
-	kActionChapter3  = 139122728,
-	kActionChapter5  = 139254416,
+	kActionChapter3 = 139122728,
+	kActionChapter5 = 139254416,
 	kAction156435676 = 156435676,
 	kAction169629818 = 169629818,
 	kAction171843264 = 171843264,
@@ -1513,31 +1511,31 @@ enum ActionIndex {
 	kAction157026693 = 157026693,
 	kAction168253822 = 168253822,
 	kAction168254872 = 168254872,
-	kAction168316032 = 168316032,    // Tatiana
+	kAction168316032 = 168316032, // Tatiana
 	kAction169557824 = 169557824,
-	kAction171394341 = 171394341,    // Mertens
+	kAction171394341 = 171394341, // Mertens
 	kAction185671840 = 185671840,
 	kAction185737168 = 185737168,
 	kAction188570113 = 188570113,
 	kAction189026624 = 189026624,
 	kAction189750912 = 189750912,
-	kAction192063264 = 192063264,    // Anna
-	kAction201431954 = 201431954,    // Mertens / Verges
+	kAction192063264 = 192063264, // Anna
+	kAction201431954 = 201431954, // Mertens / Verges
 	kAction201439712 = 201439712,
 	kAction205033696 = 205033696,
-	kAction205346192 = 205346192,    // Francois
-	kAction219971920 = 219971920,    // Anna
-	kAction223068211 = 223068211,    // MmeBoutarel
+	kAction205346192 = 205346192, // Francois
+	kAction219971920 = 219971920, // Anna
+	kAction223068211 = 223068211, // MmeBoutarel
 	kAction225932896 = 225932896,
-	kAction226031488 = 226031488,    // Verges
-	kAction235061888 = 235061888,    // Tatiana
-	kAction238358920 = 238358920,    // Anna
-	kAction253868128 = 253868128,    // Anna
-	kAction285528346 = 285528346,    // Rebecca
+	kAction226031488 = 226031488, // Verges
+	kAction235061888 = 235061888, // Tatiana
+	kAction238358920 = 238358920, // Anna
+	kAction253868128 = 253868128, // Anna
+	kAction285528346 = 285528346, // Rebecca
 	kAction292048641 = 292048641,
 	kAction305159806 = 305159806,
 	kAction326348944 = 326348944,
-	kAction339669520 = 339669520,    // Verges
+	kAction339669520 = 339669520, // Verges
 
 	/////////////////////////////
 	// Francois
@@ -1557,7 +1555,7 @@ enum ActionIndex {
 	/////////////////////////////
 	// Kahina
 	/////////////////////////////
-	kAction92186062  = 92186062,
+	kAction92186062 = 92186062,
 	kAction137503360 = 137503360,
 	kAction237555748 = 237555748,
 
@@ -1572,7 +1570,7 @@ enum ActionIndex {
 	/////////////////////////////
 	// Mahmud
 	/////////////////////////////
-	kAction102227384 = 102227384,    // Mertens
+	kAction102227384 = 102227384, // Mertens
 	kAction156567128 = 156567128,
 	kAction170483072 = 170483072,
 	kAction225563840 = 225563840,
@@ -1580,17 +1578,17 @@ enum ActionIndex {
 	/////////////////////////////
 	// Max
 	/////////////////////////////
-	kAction71277948  = 71277948,
+	kAction71277948 = 71277948,
 	kAction158007856 = 158007856,
 	kAction101687594 = 101687594,
-	kAction122358304 = 122358304,    // also Waiter2/Boutarel?
+	kAction122358304 = 122358304, // also Waiter2/Boutarel?
 	kActionMaxFreeFromCage = 135204609,
 	kAction156622016 = 156622016,
 
 	/////////////////////////////
 	// Mertens
 	/////////////////////////////
-	kAction155604840 = 155604840,    // MmeBoutarel
+	kAction155604840 = 155604840, // MmeBoutarel
 	kAction169633856 = 169633856,
 	kAction188635520 = 188635520,
 	kAction190082817 = 190082817,
@@ -1598,7 +1596,7 @@ enum ActionIndex {
 	kAction204379649 = 204379649,
 	kAction224122407 = 224122407,
 	kAction238732837 = 238732837,
-	kAction238790488 = 238790488,    // Tatiana
+	kAction238790488 = 238790488, // Tatiana
 	kAction269436673 = 269436673,
 	kAction269624833 = 269624833,
 	kAction302614416 = 302614416,
@@ -1607,10 +1605,10 @@ enum ActionIndex {
 	/////////////////////////////
 	// Milos
 	/////////////////////////////
-	kAction88652208 = 88652208,      // Coudert
+	kAction88652208 = 88652208, // Coudert
 	kAction122865568 = 122865568,
 	kAction123852928 = 123852928,
-	kAction123199584 = 123199584,    // Coudert
+	kAction123199584 = 123199584, // Coudert
 	kAction157691176 = 157691176,
 	kAction208228224 = 208228224,
 	kAction221683008 = 221683008,
@@ -1655,9 +1653,9 @@ enum ActionIndex {
 	/////////////////////////////
 	// Salko
 	/////////////////////////////
-	kAction55996766  = 55996766,
+	kAction55996766 = 55996766,
 	kAction101169464 = 101169464,
-	kAction102675536 = 102675536,    // Ivo
+	kAction102675536 = 102675536, // Ivo
 	kAction136184016 = 136184016,
 
 	/////////////////////////////
@@ -1665,7 +1663,7 @@ enum ActionIndex {
 	/////////////////////////////
 	kAction170016384 = 170016384,
 	kAction188893625 = 188893625,
-	kAction201964801 = 201964801,    // August
+	kAction201964801 = 201964801, // August
 	kAction204704037 = 204704037,
 	kAction207330561 = 207330561,
 	kAction218128129 = 218128129,
@@ -1674,7 +1672,7 @@ enum ActionIndex {
 	kAction223712416 = 223712416,
 	kAction237485916 = 237485916,
 	kAction252568704 = 252568704,
-	kAction268773672 = 268773672,    // Anna / August
+	kAction268773672 = 268773672, // Anna / August
 	kAction270068760 = 270068760,
 	kAction270410280 = 270410280,
 	kAction286403504 = 286403504,
@@ -1687,11 +1685,11 @@ enum ActionIndex {
 	// Servers 1
 	/////////////////////////////
 	kAction101106391 = 101106391,
-	kAction122288808 = 122288808,    // Boutarel
-	kAction123712592 = 123712592,    // Ivo
-	kAction125826561 = 125826561,    // August
-	kAction134486752 = 134486752,    // August
-	kAction168717392 = 168717392,    // Boutarel
+	kAction122288808 = 122288808, // Boutarel
+	kAction123712592 = 123712592, // Ivo
+	kAction125826561 = 125826561, // August
+	kAction134486752 = 134486752, // August
+	kAction168717392 = 168717392, // Boutarel
 	kAction189688608 = 189688608,
 	kAction219377792 = 219377792,
 	kAction223002560 = 223002560,
@@ -1707,7 +1705,7 @@ enum ActionIndex {
 	/////////////////////////////
 	// Sophie
 	/////////////////////////////
-	kActionProceedChapter5  = 70549068,
+	kActionProceedChapter5 = 70549068,
 	kAction123668192 = 123668192,
 	kAction125242096 = 125242096,
 	kAction136654208 = 136654208,
@@ -1723,18 +1721,18 @@ enum ActionIndex {
 	/////////////////////////////
 	// Tatiana
 	/////////////////////////////
-	kAction69239528  = 69239528,
+	kAction69239528 = 69239528,
 	kAction123857088 = 123857088,
 	kAction124973510 = 124973510,
 	kAction154071333 = 154071333,
 	kAction156444784 = 156444784,
 	kAction169360385 = 169360385,
 	kAction191198209 = 191198209,
-	kAction223183000 = 223183000,    // August
-	kAction236053296 = 236053296,    // Alexei
-	kAction236241630 = 236241630,    // Anna
-	kAction236517970 = 236517970,    // Anna
-	kAction268620864 = 268620864,    // August
+	kAction223183000 = 223183000, // August
+	kAction236053296 = 236053296, // Alexei
+	kAction236241630 = 236241630, // Anna
+	kAction236517970 = 236517970, // Anna
+	kAction268620864 = 268620864, // August
 	kAction290869168 = 290869168,
 
 	/////////////////////////////
@@ -1754,7 +1752,7 @@ enum ActionIndex {
 	/////////////////////////////
 	// Verges
 	/////////////////////////////
-	kAction125233040 = 125233040,   // Abbot
+	kAction125233040 = 125233040, // Abbot
 	kAction125499160 = 125499160,
 	kAction155853632 = 155853632,
 	kAction158617345 = 158617345,

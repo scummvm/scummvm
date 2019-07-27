@@ -20,14 +20,15 @@
  *
  */
 
-#include "gnap/gnap.h"
-#include "gnap/gamesys.h"
-#include "gnap/resource.h"
 #include "gnap/scenes/group5.h"
+#include "gnap/gamesys.h"
+#include "gnap/gnap.h"
+#include "gnap/resource.h"
 
 namespace Gnap {
 
-Scene53::Scene53(GnapEngine *vm) : Scene(vm) {
+Scene53::Scene53(GnapEngine *vm)
+  : Scene(vm) {
 	_isGnapPhoning = false;
 	_currHandSequenceId = -1;
 	_callsMadeCtr = 0;
@@ -35,7 +36,7 @@ Scene53::Scene53(GnapEngine *vm) : Scene(vm) {
 }
 
 int Scene53::init() {
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 1);
@@ -75,8 +76,8 @@ int Scene53::pressPhoneNumberButton(int phoneNumber, int buttonNum) {
 		0x58, 0x59, 0x5A, 0x5C, 0x5D, 0x5B
 	};
 
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (_isGnapPhoning) {
 		gameSys.setAnimation(kGnapHandSequenceIds[buttonNum], 40, 6);
@@ -121,8 +122,8 @@ void Scene53::runRandomCall() {
 		0x6A, 0x6B, 0x6C, 0x6D, 0x71
 	};
 
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	++_callsMadeCtr;
 	if (_callsMadeCtr <= 10) {
@@ -148,8 +149,8 @@ void Scene53::runRandomCall() {
 }
 
 void Scene53::runChitChatLine() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 	bool flag = false;
 	int sequenceId = -1;
 
@@ -255,8 +256,8 @@ void Scene53::runChitChatLine() {
 }
 
 void Scene53::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	int phoneNumber = 0;
 	int phoneNumberLen = 0;

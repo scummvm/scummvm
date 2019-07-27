@@ -34,6 +34,7 @@ class CTitania : public CCharacter {
 	bool ActMsg(CActMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool TimerMsg(CTimerMsg *msg);
+
 private:
 	bool _speechCentre;
 	bool _olfactoryCentre;
@@ -47,6 +48,7 @@ private:
 	bool _nose;
 	bool _mouth;
 	bool _showSpeech;
+
 public:
 	CLASSDEF;
 	CTitania();

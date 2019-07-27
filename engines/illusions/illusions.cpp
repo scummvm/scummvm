@@ -25,11 +25,11 @@
 #include "illusions/camera.h"
 #include "illusions/cursor.h"
 #include "illusions/dictionary.h"
-#include "illusions/resources/fontresource.h"
 #include "illusions/graphics.h"
 #include "illusions/input.h"
 #include "illusions/resources/actorresource.h"
 #include "illusions/resources/backgroundresource.h"
+#include "illusions/resources/fontresource.h"
 #include "illusions/resources/scriptresource.h"
 #include "illusions/resources/soundresource.h"
 #include "illusions/resources/talkresource.h"
@@ -45,8 +45,6 @@
 #include "illusions/threads/talkthread.h"
 
 #include "audio/audiostream.h"
-#include "video/video_decoder.h"
-#include "video/avi_decoder.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
@@ -58,6 +56,8 @@
 #include "graphics/fontman.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
+#include "video/avi_decoder.h"
+#include "video/video_decoder.h"
 
 namespace Illusions {
 
@@ -74,8 +74,9 @@ char *debugW2I(byte *wstr) {
 	return buf;
 }
 
-IllusionsEngine::IllusionsEngine(OSystem *syst, const IllusionsGameDescription *gd) :
-	Engine(syst), _gameDescription(gd) {
+IllusionsEngine::IllusionsEngine(OSystem *syst, const IllusionsGameDescription *gd)
+  : Engine(syst)
+  , _gameDescription(gd) {
 
 	_random = new Common::RandomSource("illusions");
 
@@ -89,13 +90,11 @@ IllusionsEngine::IllusionsEngine(OSystem *syst, const IllusionsGameDescription *
 	_nextTempThreadId = 0;
 
 	Engine::syncSoundSettings();
-
 }
 
 IllusionsEngine::~IllusionsEngine() {
 
 	delete _random;
-
 }
 
 void IllusionsEngine::updateEvents() {
@@ -126,7 +125,7 @@ Common::Point *IllusionsEngine::getObjectActorPositionPtr(uint32 objectId) {
 uint32 IllusionsEngine::getElapsedUpdateTime() {
 	uint32 result = 0;
 	uint32 currTime = getCurrentTime();
-	if (_resGetCtr <= 0 ) {
+	if (_resGetCtr <= 0) {
 		if (_unpauseControlActorFlag) {
 			_unpauseControlActorFlag = false;
 			result = 0;
@@ -176,7 +175,7 @@ int IllusionsEngine::updateGraphics(uint flags) {
 			BgInfo *bgInfo = &bgRes->_bgInfos[i];
 			uint32 priority = getPriorityFromBase(bgInfo->_priorityBase);
 			_screen->_drawQueue->insertSurface(backgroundItem->_surfaces[i],
-				bgInfo->_surfInfo._dimensions, backgroundItem->_panPoints[i], priority);
+			                                   bgInfo->_surfInfo._dimensions, backgroundItem->_panPoints[i], priority);
 			if (bgInfo->_flags & 1)
 				panPoint = backgroundItem->_panPoints[i];
 		}
@@ -190,15 +189,15 @@ int IllusionsEngine::updateGraphics(uint flags) {
 			if (actor->_flags & Illusions::ACTOR_FLAG_2000) {
 				Frame *frame = &(*actor->_frames)[actor->_frameIndex - 1];
 				_screen->_decompressQueue->insert(&actor->_drawFlags, frame->_flags,
-					frame->_surfInfo._pixelSize, frame->_surfInfo._dimensions,
-					frame->_compressedPixels, actor->_surface);
+				                                  frame->_surfInfo._pixelSize, frame->_surfInfo._dimensions,
+				                                  frame->_compressedPixels, actor->_surface);
 				actor->_flags &= ~Illusions::ACTOR_FLAG_2000;
 			}
 			if (actor->_surfInfo._dimensions._width && actor->_surfInfo._dimensions._height) {
 				uint32 priority = control->getDrawPriority();
 				_screen->_drawQueue->insertSprite(&actor->_drawFlags, actor->_surface,
-					actor->_surfInfo._dimensions, drawPosition, control->_position,
-					priority, actor->_scale, actor->_spriteFlags);
+				                                  actor->_surfInfo._dimensions, drawPosition, control->_position,
+				                                  priority, actor->_scale, actor->_spriteFlags);
 			}
 		}
 	}
@@ -206,7 +205,7 @@ int IllusionsEngine::updateGraphics(uint flags) {
 	if (_screenText->_surface) {
 		uint32 priority = getGameId() == kGameIdDuckman ? getPriorityFromBase(19) : getPriorityFromBase(99);
 		_screen->_drawQueue->insertTextSurface(_screenText->_surface, _screenText->_dimensions,
-			_screenText->_position, priority);
+		                                       _screenText->_position, priority);
 	}
 
 	return kUFNext;

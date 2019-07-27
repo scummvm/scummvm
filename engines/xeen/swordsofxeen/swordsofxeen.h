@@ -23,54 +23,56 @@
 #ifndef XEEN_SWORDSOFXEEN_SWORDSOFXEEN_H
 #define XEEN_SWORDSOFXEEN_SWORDSOFXEEN_H
 
-#include "xeen/xeen.h"
 #include "xeen/worldofxeen/worldofxeen_cutscenes.h"
+#include "xeen/xeen.h"
 
 namespace Xeen {
 namespace SwordsOfXeen {
 
-/**
+	/**
  * Implements a descendant of the base Xeen engine to handle
  * Swords of Xeen specific game code
  */
-class SwordsOfXeenEngine: public XeenEngine {
-private:
-	/**
+	class SwordsOfXeenEngine : public XeenEngine {
+	private:
+		/**
 	 * Show the ending "You won" screen
 	 */
-	bool showEnding();
-protected:
-	/**
+		bool showEnding();
+
+	protected:
+		/**
 	 * Show the starting sequence/intro
 	 */
-	virtual void showStartup() { 
-		// Swords of Xeen doesn't have a starting title or intro
-		_gameMode = GMODE_MENU;
-	}
+		virtual void showStartup() {
+			// Swords of Xeen doesn't have a starting title or intro
+			_gameMode = GMODE_MENU;
+		}
 
-	/**
+		/**
 	 * Show the startup menu
 	 */
-	virtual void showMainMenu();
+		virtual void showMainMenu();
 
-	/**
+		/**
 	 * Death cutscene
 	 */
-	virtual void death();
-public:
-	SwordsOfXeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
-	virtual ~SwordsOfXeenEngine() {}
+		virtual void death();
 
-	/**
+	public:
+		SwordsOfXeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
+		virtual ~SwordsOfXeenEngine() {}
+
+		/**
 	 * Show a cutscene
 	 */
-	virtual void showCutscene(const Common::String &name, int status, uint score);
+		virtual void showCutscene(const Common::String &name, int status, uint score);
 
-	/**
+		/**
 	 * Dream sequence
 	 */
-	virtual void dream();
-};
+		virtual void dream();
+	};
 
 #define SWORDS_VM (*(::Xeen::SwordsOfXeen::SwordsOfXeenEngine *)g_vm)
 

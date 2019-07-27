@@ -21,20 +21,36 @@
  */
 
 #include "titanic/true_talk/tt_concept_node.h"
-#include "titanic/true_talk/script_handler.h"
 #include "titanic/titanic.h"
+#include "titanic/true_talk/script_handler.h"
 
 namespace Titanic {
 
-TTconceptNode::TTconceptNode() : _concept0P(_concepts[0]), _concept1P(_concepts[1]),
-		_concept2P(_concepts[2]), _concept3P(_concepts[3]), _concept4P(_concepts[4]),
-		_concept5P(_concepts[5]), _field18(0), _field1C(0), _nextP(nullptr), _status(0) {
+TTconceptNode::TTconceptNode()
+  : _concept0P(_concepts[0])
+  , _concept1P(_concepts[1])
+  , _concept2P(_concepts[2])
+  , _concept3P(_concepts[3])
+  , _concept4P(_concepts[4])
+  , _concept5P(_concepts[5])
+  , _field18(0)
+  , _field1C(0)
+  , _nextP(nullptr)
+  , _status(0) {
 	Common::fill(&_concepts[0], &_concepts[6], (TTconcept *)nullptr);
 }
 
-TTconceptNode::TTconceptNode(const TTconceptNode &src) : _concept0P(_concepts[0]), _concept1P(_concepts[1]),
-		_concept2P(_concepts[2]), _concept3P(_concepts[3]), _concept4P(_concepts[4]),
-		_concept5P(_concepts[5]), _field18(0), _field1C(0), _nextP(nullptr), _status(0) {
+TTconceptNode::TTconceptNode(const TTconceptNode &src)
+  : _concept0P(_concepts[0])
+  , _concept1P(_concepts[1])
+  , _concept2P(_concepts[2])
+  , _concept3P(_concepts[3])
+  , _concept4P(_concepts[4])
+  , _concept5P(_concepts[5])
+  , _field18(0)
+  , _field1C(0)
+  , _nextP(nullptr)
+  , _status(0) {
 	Common::fill(&_concepts[0], &_concepts[6], (TTconcept *)nullptr);
 
 	if (src._status) {

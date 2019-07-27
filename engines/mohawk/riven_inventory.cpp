@@ -30,11 +30,11 @@
 
 namespace Mohawk {
 
-RivenInventory::RivenInventory(MohawkEngine_Riven *vm) :
-		_vm(vm),
-		_inventoryDrawn(false),
-		_forceVisible(false),
-		_forceHidden(false) {
+RivenInventory::RivenInventory(MohawkEngine_Riven *vm)
+  : _vm(vm)
+  , _inventoryDrawn(false)
+  , _forceVisible(false)
+  , _forceHidden(false) {
 
 	_atrusJournalRect1 = Common::Rect(295, 402, 313, 426);
 	_atrusJournalRect2 = Common::Rect(259, 402, 278, 426);
@@ -46,7 +46,6 @@ RivenInventory::RivenInventory(MohawkEngine_Riven *vm) :
 }
 
 RivenInventory::~RivenInventory() {
-
 }
 
 void RivenInventory::draw() {

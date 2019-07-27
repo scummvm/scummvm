@@ -394,7 +394,30 @@ static const char *const k1GUIStringsDOSCDEnglish[81] = {
 	"off",
 	"Yes",
 	"No",
-	"\xCD\x0E\x17""+""\xD5\x0E\x17""+""\xDA\x0E\x17""+""\xE1\x0E\x17""+""\xE6\x0E\x17""+""\xEE\x0E\x17""+""\xF8\x0E\x17""+""\x03\x0F\x17""+""\x10\x0F\x17""+""\x18\x0F\x17""+""\x1F\x0F\x17""+$""\x0F\x17""+Walk speed ",
+	"\xCD\x0E\x17"
+	"+"
+	"\xD5\x0E\x17"
+	"+"
+	"\xDA\x0E\x17"
+	"+"
+	"\xE1\x0E\x17"
+	"+"
+	"\xE6\x0E\x17"
+	"+"
+	"\xEE\x0E\x17"
+	"+"
+	"\xF8\x0E\x17"
+	"+"
+	"\x03\x0F\x17"
+	"+"
+	"\x10\x0F\x17"
+	"+"
+	"\x18\x0F\x17"
+	"+"
+	"\x1F\x0F\x17"
+	"+$"
+	"\x0F\x17"
+	"+Walk speed ",
 	"Text speed ",
 	"Music is ",
 	"Sounds are ",
@@ -425,4 +448,3 @@ static const char *const k1ConfigStringsDOSCDEnglish[12] = {
 };
 
 static const StringListProvider k1ConfigStringsDOSCDEnglishProvider = { ARRAYSIZE(k1ConfigStringsDOSCDEnglish), k1ConfigStringsDOSCDEnglish };
-

@@ -23,15 +23,15 @@
 #ifndef TITANIC_SCREEN_MANAGER_H
 #define TITANIC_SCREEN_MANAGER_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
+#include "titanic/core/resource_key.h"
+#include "titanic/input_handler.h"
 #include "titanic/support/direct_draw.h"
 #include "titanic/support/font.h"
-#include "titanic/input_handler.h"
 #include "titanic/support/mouse_cursor.h"
 #include "titanic/support/text_cursor.h"
 #include "titanic/support/video_surface.h"
-#include "titanic/core/resource_key.h"
 
 namespace Titanic {
 
@@ -41,8 +41,8 @@ namespace Titanic {
  * remapped to the primary surface
  */
 enum SurfaceNum {
-	SURFACE_PRIMARY = -1,		// Surface 0
-	SURFACE_BACKBUFFER = -1		// Surface -1
+	SURFACE_PRIMARY = -1, // Surface 0
+	SURFACE_BACKBUFFER = -1 // Surface -1
 };
 
 class TitanicEngine;
@@ -52,8 +52,10 @@ class CScreenManager {
 		CVideoSurface *_surface;
 		Rect _bounds;
 	};
+
 protected:
 	TitanicEngine *_vm;
+
 public:
 	static CScreenManager *_screenManagerPtr;
 	static CScreenManager *_currentScreenManagerPtr;
@@ -62,6 +64,7 @@ public:
 	 * Set the current screen manager
 	 */
 	static CScreenManager *setCurrent();
+
 public:
 	Common::Array<VideoSurfaceEntry> _backSurfaces;
 	Rect _frontSurfaceBounds;
@@ -70,6 +73,7 @@ public:
 	CTextCursor *_textCursor;
 	CInputHandler *_inputHandler;
 	int _fontNumber;
+
 public:
 	CScreenManager(TitanicEngine *vm);
 	virtual ~CScreenManager();
@@ -119,7 +123,8 @@ public:
 	 * Blits a surface onto one of the screen surfaces
 	 */
 	virtual void blitFrom(SurfaceNum surfaceNum, CVideoSurface *src, const Point *destPos = nullptr,
-		const Rect *srcRect = nullptr) = 0;
+	                      const Rect *srcRect = nullptr)
+	  = 0;
 
 	/**
 	 * Blits a surface onto one of the screen surfaces
@@ -136,7 +141,8 @@ public:
 	 * @param textCursor	Optional text cursor pointer
 	 */
 	virtual int writeString(int surfaceNum, const Rect &destRect,
-		int yOffset, const CString &str, CTextCursor *textCursor) = 0;
+	                        int yOffset, const CString &str, CTextCursor *textCursor)
+	  = 0;
 
 	/**
 	 * Write a string
@@ -147,7 +153,8 @@ public:
 	 * @param maxWidth		Maximum allowed line width
 	 */
 	virtual void writeString(int surfaceNum, const Point &destPos,
-		const Rect &clipRect, const CString &str, int maxWidth) = 0;
+	                         const Rect &clipRect, const CString &str, int maxWidth)
+	  = 0;
 
 	/**
 	 * Set the font color
@@ -236,7 +243,7 @@ public:
 	void preLoad();
 };
 
-class OSScreenManager: CScreenManager {
+class OSScreenManager : CScreenManager {
 private:
 	DirectDrawManager _directDrawManager;
 
@@ -254,12 +261,14 @@ private:
 	 * Gets an underlying surface
 	 */
 	DirectDrawSurface *getDDSurface(SurfaceNum surfaceNum);
+
 public:
 	int _field48;
 	int _field4C;
 	int _field50;
 	int _field54;
 	STFont _fonts[4];
+
 public:
 	OSScreenManager(TitanicEngine *vm);
 	virtual ~OSScreenManager();
@@ -296,7 +305,6 @@ public:
 		return _frontRenderSurface;
 	}
 
-
 	/**
 	 * Fill an area with a specific color
 	 */
@@ -306,7 +314,7 @@ public:
 	 * Blits a surface onto one of the screen surfaces
 	 */
 	virtual void blitFrom(SurfaceNum surfaceNum, CVideoSurface *src, const Point *destPos,
-		const Rect *srcRect = nullptr);
+	                      const Rect *srcRect = nullptr);
 
 	/**
 	 * Blits a surface onto one of the screen surfaces
@@ -323,7 +331,7 @@ public:
 	 * @param textCursor	Optional text cursor pointer
 	 */
 	virtual int writeString(int surfaceNum, const Rect &destRect,
-		int yOffset, const CString &str, CTextCursor *textCursor);
+	                        int yOffset, const CString &str, CTextCursor *textCursor);
 
 	/**
 	 * Write a string
@@ -334,7 +342,7 @@ public:
 	 * @param lineWidth		Width in pixels of the string, if known.
 	 */
 	virtual void writeString(int surfaceNum, const Point &destPos,
-		const Rect &clipRect, const CString &str, int lineWidth = 0);
+	                         const Rect &clipRect, const CString &str, int lineWidth = 0);
 
 	/**
 	 * Set the font color

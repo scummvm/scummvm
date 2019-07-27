@@ -29,9 +29,9 @@
 #ifndef WINTERMUTE_ADPATH_H
 #define WINTERMUTE_ADPATH_H
 
-#include "engines/wintermute/persistent.h"
-#include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/base/base.h"
+#include "engines/wintermute/coll_templ.h"
+#include "engines/wintermute/persistent.h"
 
 namespace Wintermute {
 class BasePoint;

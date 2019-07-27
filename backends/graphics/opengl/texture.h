@@ -131,6 +131,7 @@ public:
 	 * destroy will invalidate the texture name.
 	 */
 	GLuint getGLTexture() const { return _glTexture; }
+
 private:
 	const GLenum _glIntFormat;
 	const GLenum _glFormat;
@@ -138,7 +139,7 @@ private:
 
 	uint _width, _height;
 	uint _logicalWidth, _logicalHeight;
-	GLfloat _texCoords[4*2];
+	GLfloat _texCoords[4 * 2];
 
 	GLint _glFilter;
 
@@ -238,10 +239,15 @@ public:
 	 * Obtain underlying OpenGL texture.
 	 */
 	virtual const GLTexture &getGLTexture() const = 0;
+
 protected:
-	void clearDirty() { _allDirty = false; _dirtyArea = Common::Rect(); }
+	void clearDirty() {
+		_allDirty = false;
+		_dirtyArea = Common::Rect();
+	}
 
 	Common::Rect getDirtyArea() const;
+
 private:
 	bool _allDirty;
 	Common::Rect _dirtyArea;
@@ -285,6 +291,7 @@ public:
 
 	virtual void updateGLTexture();
 	virtual const GLTexture &getGLTexture() const { return _glTexture; }
+
 protected:
 	const Graphics::PixelFormat _format;
 
@@ -313,6 +320,7 @@ public:
 	virtual const Graphics::Surface *getSurface() const { return &_clut8Data; }
 
 	virtual void updateGLTexture();
+
 private:
 	Graphics::Surface _clut8Data;
 	byte *_palette;
@@ -332,6 +340,7 @@ public:
 	virtual const Graphics::Surface *getSurface() const { return &_rgb555Data; }
 
 	virtual void updateTexture();
+
 private:
 	Graphics::Surface _rgb555Data;
 };
@@ -374,9 +383,10 @@ public:
 
 	static bool isSupportedByContext() {
 		return g_context.shadersSupported
-		    && g_context.multitextureSupported
-		    && g_context.framebufferObjectSupported;
+		  && g_context.multitextureSupported
+		  && g_context.framebufferObjectSupported;
 	}
+
 private:
 	void lookUpColors();
 
@@ -386,7 +396,7 @@ private:
 	TextureTarget *_target;
 	CLUT8LookUpPipeline *_clut8Pipeline;
 
-	GLfloat _clut8Vertices[4*2];
+	GLfloat _clut8Vertices[4 * 2];
 
 	Graphics::Surface _clut8Data;
 	Graphics::Surface _userPixelData;

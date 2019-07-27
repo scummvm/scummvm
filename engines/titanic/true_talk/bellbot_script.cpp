@@ -20,32 +20,27 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "titanic/true_talk/bellbot_script.h"
-#include "titanic/true_talk/true_talk_manager.h"
-#include "titanic/pet_control/pet_control.h"
+#include "common/textconsole.h"
 #include "titanic/core/node_item.h"
+#include "titanic/pet_control/pet_control.h"
 #include "titanic/titanic.h"
 #include "titanic/translation.h"
+#include "titanic/true_talk/true_talk_manager.h"
 
 namespace Titanic {
 
 uint BellbotScript::_oldId;
 
 static const RoomDialogueId ROOM_DIALOGUE_IDS[] = {
-	{ 100, 201442 },{ 101, 201417 },{ 107, 201491 },{ 108, 201421 },
-	{ 109, 201437 },{ 110, 201431 },{ 111, 201457 },{ 112, 201411 },
-	{ 113, 201424 },{ 114, 201464 },{ 115, 201407 },{ 116, 201468 },
-	{ 117, 201447 },{ 122, 201491 },{ 123, 201299 },{ 124, 201479 },
-	{ 125, 201480 },{ 126, 201476 },{ 127, 201483 },{ 128, 201399 },
-	{ 129, 201400 },{ 130, 201387 },{ 131, 201395 },{ 132, 201388 },
-	{ 0, 0 }
+	{ 100, 201442 }, { 101, 201417 }, { 107, 201491 }, { 108, 201421 }, { 109, 201437 }, { 110, 201431 }, { 111, 201457 }, { 112, 201411 }, { 113, 201424 }, { 114, 201464 }, { 115, 201407 }, { 116, 201468 }, { 117, 201447 }, { 122, 201491 }, { 123, 201299 }, { 124, 201479 }, { 125, 201480 }, { 126, 201476 }, { 127, 201483 }, { 128, 201399 }, { 129, 201400 }, { 130, 201387 }, { 131, 201395 }, { 132, 201388 }, { 0, 0 }
 };
 
 BellbotScript::BellbotScript(int val1, const char *charClass, int v2,
-		const char *charName, int v3, int val2) :
-		TTnpcScript(val1, charClass, v2, charName, v3, val2, -1, -1, -1, 0),
-		_responseFlag(false), _room107First(false) {
+                             const char *charName, int v3, int val2)
+  : TTnpcScript(val1, charClass, v2, charName, v3, val2, -1, -1, -1, 0)
+  , _responseFlag(false)
+  , _room107First(false) {
 	CTrueTalkManager::setFlags(25, 0);
 	CTrueTalkManager::setFlags(24, 0);
 	CTrueTalkManager::setFlags(40, 0);
@@ -162,17 +157,16 @@ int BellbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 			return 2;
 	}
 
-	if (sentence->contains("pretend you summoned yourself") ||
-		sentence->contains("pretend you just summoned yourself")) {
+	if (sentence->contains("pretend you summoned yourself") || sentence->contains("pretend you just summoned yourself")) {
 		if (scriptChanged(roomScript, 157) == 2)
 			return 2;
 	}
 
 	if (sentence->localWord("television") || roomScript->_scriptId == 111) {
 		if (sentence->localWord("drop") || sentence->localWord("throw")
-			|| sentence->localWord("smash") || sentence->localWord("destroy")
-			|| sentence->localWord("toss") || sentence->localWord("put")
-			|| sentence->localWord("pitch") || sentence->localWord("heft")) {
+		    || sentence->localWord("smash") || sentence->localWord("destroy")
+		    || sentence->localWord("toss") || sentence->localWord("put")
+		    || sentence->localWord("pitch") || sentence->localWord("heft")) {
 			// You've instructed the Bellbot to go all Pete Townshend on a TV
 			if (getValue(40) == 1) {
 				// Won't smash
@@ -197,30 +191,30 @@ int BellbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 	}
 
 	if (sentence->contains("what should i do here")
-			|| sentence->contains("what do i do here")
-			|| sentence->contains("what shall i do in here")
-			|| sentence->contains("what shall i do in this room")
-			|| sentence->contains("what should i do in this room")
-			|| sentence->contains("what am i supposed to do in here")
-			|| sentence->contains("what should i do in here")
-			|| sentence->contains("what do i do in this room")
-			|| sentence->localWord("doidohere")
-			|| sentence->contains("was soll ich denn hier tun")
-			|| sentence->contains("was soll ich hier tun")
-			|| sentence->contains("was gibt es hier zu tun")
-			|| sentence->contains("was kann man denn hier machen")
-			|| sentence->contains("was kann man denn hier tun")
-			|| sentence->contains("was soll ich hier drin tun")
-			|| sentence->contains("was soll ich hier")
-			|| sentence->contains("wohin soll ich jetzt")
-			|| sentence->contains("was ist das hier fuer ein raum")
-			|| sentence->contains("was ist denn hier zu tun")
-			|| sentence->contains("was kann man hier machen")
-			|| sentence->contains("was soll ich jetzt machen")
-			|| sentence->contains("was kommt jetzt")
-			|| sentence->contains("was kommt nun")
-			|| sentence->contains("wozu bin ich eigentlich hier")
-			|| sentence->contains("wozu bin ich denn hier")) {
+	    || sentence->contains("what do i do here")
+	    || sentence->contains("what shall i do in here")
+	    || sentence->contains("what shall i do in this room")
+	    || sentence->contains("what should i do in this room")
+	    || sentence->contains("what am i supposed to do in here")
+	    || sentence->contains("what should i do in here")
+	    || sentence->contains("what do i do in this room")
+	    || sentence->localWord("doidohere")
+	    || sentence->contains("was soll ich denn hier tun")
+	    || sentence->contains("was soll ich hier tun")
+	    || sentence->contains("was gibt es hier zu tun")
+	    || sentence->contains("was kann man denn hier machen")
+	    || sentence->contains("was kann man denn hier tun")
+	    || sentence->contains("was soll ich hier drin tun")
+	    || sentence->contains("was soll ich hier")
+	    || sentence->contains("wohin soll ich jetzt")
+	    || sentence->contains("was ist das hier fuer ein raum")
+	    || sentence->contains("was ist denn hier zu tun")
+	    || sentence->contains("was kann man hier machen")
+	    || sentence->contains("was soll ich jetzt machen")
+	    || sentence->contains("was kommt jetzt")
+	    || sentence->contains("was kommt nun")
+	    || sentence->contains("wozu bin ich eigentlich hier")
+	    || sentence->contains("wozu bin ich denn hier")) {
 		if (addRoomDescription(roomScript)) {
 			applyResponse();
 			return 2;
@@ -228,30 +222,30 @@ int BellbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 	}
 
 	if (sentence->localWord("help")
-			|| (g_language == Common::DE_DEU && sentence->contains("help"))
-			|| sentence->contains("what now")
-			|| sentence->contains("what next")
-			|| sentence->contains("give me a hint")
-			|| sentence->contains("i need a hint")
-			|| sentence->contains("what should i be doing")
-			|| sentence->contains("what do you reckon i should do now")
-			|| sentence->contains("what shall i do")
-			|| sentence->contains("what would you do")
-			|| sentence->contains("what should i do")
-			|| sentence->contains("what do i do")
-			|| sentence->contains("was nun")
-			|| sentence->contains("so und was kommt jetzt")
-			|| sentence->contains("und jetzt")
-			|| sentence->contains("einen hinweis")
-			|| sentence->contains("einen tip")
-			|| sentence->contains("ich bin verzweifelt")
-			|| sentence->contains("bin ich auf der richtigen spur")
-			|| sentence->contains("was soll ich jetzt anfangen")
-			|| sentence->contains("wozu raetst du mir")
-			|| sentence->contains("was muss ich jetzt")
-			|| sentence->contains("was wuerdest du an meiner stelle")
-			|| sentence->contains("was soll ich als naechstes tun")
-			|| sentence->contains("was soll ich hier")) {
+	    || (g_language == Common::DE_DEU && sentence->contains("help"))
+	    || sentence->contains("what now")
+	    || sentence->contains("what next")
+	    || sentence->contains("give me a hint")
+	    || sentence->contains("i need a hint")
+	    || sentence->contains("what should i be doing")
+	    || sentence->contains("what do you reckon i should do now")
+	    || sentence->contains("what shall i do")
+	    || sentence->contains("what would you do")
+	    || sentence->contains("what should i do")
+	    || sentence->contains("what do i do")
+	    || sentence->contains("was nun")
+	    || sentence->contains("so und was kommt jetzt")
+	    || sentence->contains("und jetzt")
+	    || sentence->contains("einen hinweis")
+	    || sentence->contains("einen tip")
+	    || sentence->contains("ich bin verzweifelt")
+	    || sentence->contains("bin ich auf der richtigen spur")
+	    || sentence->contains("was soll ich jetzt anfangen")
+	    || sentence->contains("wozu raetst du mir")
+	    || sentence->contains("was muss ich jetzt")
+	    || sentence->contains("was wuerdest du an meiner stelle")
+	    || sentence->contains("was soll ich als naechstes tun")
+	    || sentence->contains("was soll ich hier")) {
 		if (getDialRegion(0) == 1) {
 			randomResponse4(roomScript, getValue(1));
 			applyResponse();
@@ -278,12 +272,11 @@ int BellbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 
 	if (g_language != Common::DE_DEU) {
 		if ((sentence->_category == 4 && sentence->localWord("am") && sentence->localWord("i"))
-				|| (sentence->localWord("are") && sentence->localWord("we"))
-				|| (sentence->_category == 3 && sentence->localWord("room")
-						&& sentence->localWord("we") && sentence->localWord("in"))
-				|| (sentence->_category == 3 && sentence->localWord("rom")
-						&& sentence->localWord("is") && sentence->localWord("this"))
-				) {
+		    || (sentence->localWord("are") && sentence->localWord("we"))
+		    || (sentence->_category == 3 && sentence->localWord("room")
+		        && sentence->localWord("we") && sentence->localWord("in"))
+		    || (sentence->_category == 3 && sentence->localWord("rom")
+		        && sentence->localWord("is") && sentence->localWord("this"))) {
 			uint id = getRangeValue(getRoomDialogueId(roomScript));
 			addResponse(getDialogueId(id ? id : 201384));
 			applyResponse();
@@ -306,18 +299,14 @@ int BellbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 		if (result == 2)
 			return 2;
 	} else {
-		if (getValue(1) == 1 && (sentence->localWord("shrinkbot") ||
-				sentence->contains("psychobot"))) {
+		if (getValue(1) == 1 && (sentence->localWord("shrinkbot") || sentence->contains("psychobot"))) {
 			addResponse(getDialogueId(200583));
 			applyResponse();
 			return 2;
 		}
 	}
 
-	if ((g_language != Common::DE_DEU || getValue(40) == 0) &&
-			(sentence->localWord("television") || sentence->localWord("tv")
-			|| sentence->localWord("crush") || sentence->localWord("crushed")
-			|| sentence->localWord("crushedtv"))) {
+	if ((g_language != Common::DE_DEU || getValue(40) == 0) && (sentence->localWord("television") || sentence->localWord("tv") || sentence->localWord("crush") || sentence->localWord("crushed") || sentence->localWord("crushedtv"))) {
 		if (roomScript->_scriptId == 111 || getRandomBit()) {
 			addResponse(getDialogueId(getRandomBit() ? 200912 : 200913));
 		} else {
@@ -336,30 +325,29 @@ int BellbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 	}
 
 	if ((sentence->contains("my") || sentence->contains("mein"))
-		&& (sentence->contains("where can i find")
-			|| sentence->contains("where is")
-			|| sentence->contains("wheres")
-			|| sentence->contains("help me find")
-			|| sentence->contains("what have you done with")
-			|| sentence->contains("have you got")
-			|| sentence->contains("id like")
-			|| sentence->contains("i would like")
-			|| sentence->contains("have you seen")
-			|| sentence->contains("gibt es hier")
-			|| sentence->contains("wo finde ich")
-			|| sentence->contains("sind hier")
-			|| sentence->contains("habt ihr")
-			|| sentence->contains("gibt es")
-			|| sentence->contains("wo sind")
-			|| sentence->contains("wo ist")
-			|| sentence->contains("wie komme ich")
-			|| sentence->contains("wie erreicht man")
-			|| sentence->contains("hast du")
-			|| sentence->contains("ich moechte")
-			|| sentence->contains("gib mir")
-			|| sentence->contains("haettest du vielleicht")
-			|| sentence->contains("ich haette gern")
-			)) {
+	    && (sentence->contains("where can i find")
+	        || sentence->contains("where is")
+	        || sentence->contains("wheres")
+	        || sentence->contains("help me find")
+	        || sentence->contains("what have you done with")
+	        || sentence->contains("have you got")
+	        || sentence->contains("id like")
+	        || sentence->contains("i would like")
+	        || sentence->contains("have you seen")
+	        || sentence->contains("gibt es hier")
+	        || sentence->contains("wo finde ich")
+	        || sentence->contains("sind hier")
+	        || sentence->contains("habt ihr")
+	        || sentence->contains("gibt es")
+	        || sentence->contains("wo sind")
+	        || sentence->contains("wo ist")
+	        || sentence->contains("wie komme ich")
+	        || sentence->contains("wie erreicht man")
+	        || sentence->contains("hast du")
+	        || sentence->contains("ich moechte")
+	        || sentence->contains("gib mir")
+	        || sentence->contains("haettest du vielleicht")
+	        || sentence->contains("ich haette gern"))) {
 		addResponse(getDialogueId(200799));
 		applyResponse();
 		return 2;
@@ -479,7 +467,7 @@ ScriptChangedResult BellbotScript::scriptChanged(const TTroomScript *roomScript,
 }
 
 int BellbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
-		uint tag1, uint tag2, uint remainder) {
+                               uint tag1, uint tag2, uint remainder) {
 	switch (tag2) {
 	case MKTAG('A', 'D', 'V', 'T'):
 	case MKTAG('A', 'R', 'T', 'I'):
@@ -631,8 +619,7 @@ int BellbotScript::updateState(uint oldId, uint newId, int index) {
 	}
 
 	if (getValue(1) >= 3) {
-		if (newId == 200841 || newId == 200842 || newId == 200843 ||
-				newId == 200847 || newId == 200848 || newId == 200854) {
+		if (newId == 200841 || newId == 200842 || newId == 200843 || newId == 200847 || newId == 200848 || newId == 200854) {
 			newId = getRangeValue(202038);
 		}
 	}
@@ -703,7 +690,7 @@ int BellbotScript::updateState(uint oldId, uint newId, int index) {
 
 int BellbotScript::preResponse(uint id) {
 	if (g_language == Common::DE_DEU && getDialRegion(0) == 0
-			&& getRandomNumber(100) > 80)
+	    && getRandomNumber(100) > 80)
 		return 251250;
 
 	int newId = _preResponses.find(id);
@@ -747,13 +734,12 @@ int BellbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 				return 2;
 			}
 
-			if (!sentence->localWord("broken") && !sentence->contains("broken") &&
-				CTrueTalkManager::_currentNPC) {
+			if (!sentence->localWord("broken") && !sentence->contains("broken") && CTrueTalkManager::_currentNPC) {
 				CNodeItem *node = CTrueTalkManager::_currentNPC->getNode();
 				if (node) {
 					CString nodeName = node->getName();
 					if (nodeName.containsIgnoreCase("5") || nodeName.containsIgnoreCase("6")
-						|| nodeName.containsIgnoreCase("7")) {
+					    || nodeName.containsIgnoreCase("7")) {
 						CTrueTalkManager::triggerAction(29, 2);
 						selectResponse(201571);
 						applyResponse();
@@ -774,13 +760,12 @@ int BellbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 				return 2;
 			}
 
-			if (!sentence->localWord("broken") && !sentence->contains("broken") &&
-				CTrueTalkManager::_currentNPC) {
+			if (!sentence->localWord("broken") && !sentence->contains("broken") && CTrueTalkManager::_currentNPC) {
 				CNodeItem *node = CTrueTalkManager::_currentNPC->getNode();
 				if (node) {
 					CString nodeName = node->getName();
 					if (nodeName.containsIgnoreCase("5") || nodeName.containsIgnoreCase("6")
-						|| nodeName.containsIgnoreCase("7")) {
+					    || nodeName.containsIgnoreCase("7")) {
 						CTrueTalkManager::triggerAction(29, 2);
 						selectResponse(201571);
 						applyResponse();
@@ -829,9 +814,7 @@ int BellbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 			if (CTrueTalkManager::getStateValue(7)) {
 				bool flag = true;
 
-				if (!sentence->localWord("broken") && !sentence->contains("kaputt") &&
-					!sentence->contains("im eimer") && !sentence->contains("funktioniert nicht") &&
-					CTrueTalkManager::_currentNPC) {
+				if (!sentence->localWord("broken") && !sentence->contains("kaputt") && !sentence->contains("im eimer") && !sentence->contains("funktioniert nicht") && CTrueTalkManager::_currentNPC) {
 					CNodeItem *node = CTrueTalkManager::_currentNPC->getNode();
 					if (node) {
 						CString nodeName = node->getName();
@@ -1090,10 +1073,9 @@ int BellbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 17:
 		if ((sentence->_category == 3 && sentence->localWord("code"))
-				|| (sentence->localWord("which") && sentence->localWord("is"))
-				|| sentence->localWord("remember")
-				|| sentence->localWord("know")
-		) {
+		    || (sentence->localWord("which") && sentence->localWord("is"))
+		    || sentence->localWord("remember")
+		    || sentence->localWord("know")) {
 			addResponse(getDialogueId(200044));
 			applyFlag = true;
 			stateFlag = false;
@@ -1113,8 +1095,7 @@ int BellbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		break;
 
 	case 21:
-		if (sentence->localWord("hiker") && (sentence->contains("hug") ||
-				sentence->contains("anhalter"))) {
+		if (sentence->localWord("hiker") && (sentence->contains("hug") || sentence->contains("anhalter"))) {
 			addResponse(getDialogueId(200379));
 			applyFlag = true;
 		}
@@ -1178,9 +1159,9 @@ int BellbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 30:
 		if ((sentence->localWord("did") && sentence->localWord("not"))
-				|| (sentence->localWord("would") && sentence->localWord("not"))
-				|| (sentence->localWord("could") && sentence->localWord("not"))
-				|| sentence->localWord("tried")) {
+		    || (sentence->localWord("would") && sentence->localWord("not"))
+		    || (sentence->localWord("could") && sentence->localWord("not"))
+		    || sentence->localWord("tried")) {
 			addResponse(getDialogueId(200416));
 			applyFlag = true;
 		}
@@ -1208,7 +1189,7 @@ int BellbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 35:
 		if (sentence->_category == 3 && sentence->localWord("it")
-				&& (sentence->localWord("for") || sentence->localWord("do"))) {
+		    && (sentence->localWord("for") || sentence->localWord("do"))) {
 			addResponse(getDialogueId(200768));
 			applyFlag = true;
 		}
@@ -1256,12 +1237,12 @@ int BellbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 42:
 		if ((sentence->localWord("carry") && sentence->localWord("on"))
-				|| (sentence->localWord("go") && sentence->localWord("on"))
-				|| sentence->localWord("more")
-				|| sentence->localWord("going")
-				|| sentence->localWord("elaborate")
-				|| sentence->localWord("suspicious")
-				|| sentence->localWord("they")) {
+		    || (sentence->localWord("go") && sentence->localWord("on"))
+		    || sentence->localWord("more")
+		    || sentence->localWord("going")
+		    || sentence->localWord("elaborate")
+		    || sentence->localWord("suspicious")
+		    || sentence->localWord("they")) {
 			addResponse(getDialogueId(200642));
 			applyFlag = true;
 			stateFlag = false;
@@ -1276,7 +1257,7 @@ int BellbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		break;
 
 	case 44:
-case44:
+	case44:
 		if (better(sentence, 200615, 200613)) {
 			applyFlag = true;
 			stateFlag = false;
@@ -1311,11 +1292,11 @@ case44:
 
 	case 48:
 		if ((sentence->localWord("carry") && sentence->localWord("on"))
-				|| sentence->localWord("more")
-				|| (sentence->localWord("go") && sentence->localWord("on"))
-				|| sentence->localWord("going")
-				|| sentence->localWord("yes")
-				|| sentence->localWord("really")) {
+		    || sentence->localWord("more")
+		    || (sentence->localWord("go") && sentence->localWord("on"))
+		    || sentence->localWord("going")
+		    || sentence->localWord("yes")
+		    || sentence->localWord("really")) {
 			addResponse(getDialogueId(200367));
 			applyFlag = true;
 		}
@@ -1341,8 +1322,8 @@ case44:
 
 	case 51:
 		if ((sentence->localWord("no") && sentence->localWord("it")
-				&& sentence->localWord("is") && sentence->localWord("not"))
-				|| sentence->contains("yeah right")) {
+		     && sentence->localWord("is") && sentence->localWord("not"))
+		    || sentence->contains("yeah right")) {
 			addResponse(getDialogueId(200636));
 			applyFlag = true;
 		}
@@ -1382,7 +1363,7 @@ case44:
 
 	case 56:
 		if (sentence->localWord("sure")
-			|| (sentence->localWord("nothing") && sentence->localWord("else"))) {
+		    || (sentence->localWord("nothing") && sentence->localWord("else"))) {
 			addResponse(getDialogueId(200649));
 			applyFlag = true;
 			stateFlag = false;
@@ -1391,7 +1372,7 @@ case44:
 
 	case 57:
 		if (sentence->localWord("bad")
-				|| (sentence->localWord("not") && sentence->localWord("good"))) {
+		    || (sentence->localWord("not") && sentence->localWord("good"))) {
 			addResponse(getDialogueId(200654));
 		} else {
 			addResponse(getDialogueId(200655));
@@ -1402,8 +1383,8 @@ case44:
 
 	case 58:
 		if (sentence->localWord("more")
-				|| (sentence->localWord("go") && sentence->localWord("on"))
-				|| (sentence->_category == 11 && sentence->localWord("really"))) {
+		    || (sentence->localWord("go") && sentence->localWord("on"))
+		    || (sentence->_category == 11 && sentence->localWord("really"))) {
 			addResponse(getDialogueId(200650));
 			applyFlag = true;
 			stateFlag = false;
@@ -1422,13 +1403,13 @@ case44:
 		if (sentence->_category == 3 && sentence->localWord("they") && sentence->localWord("do")) {
 			addResponse(getDialogueId(200652));
 			applyFlag = true;
-stateFlag = false;
+			stateFlag = false;
 		}
 		break;
 
 	case 61:
 		if ((sentence->localWord("that") && sentence->localWord("all"))
-			|| (sentence->localWord("anything") && sentence->localWord("else"))) {
+		    || (sentence->localWord("anything") && sentence->localWord("else"))) {
 			addResponse(getDialogueId(200653));
 			applyFlag = true;
 		}
@@ -1478,9 +1459,8 @@ stateFlag = false;
 		break;
 
 	case 68:
-		if ((sentence->localWord("i") && (sentence->localWord("care") ||
-				sentence->localWord("do")))
-				|| sentence->localWord("me")) {
+		if ((sentence->localWord("i") && (sentence->localWord("care") || sentence->localWord("do")))
+		    || sentence->localWord("me")) {
 			addResponse(getDialogueId(201006));
 			applyFlag = true;
 		}
@@ -1488,7 +1468,7 @@ stateFlag = false;
 
 	case 69:
 		if ((sentence->localWord("what") && sentence->localWord("happen"))
-			|| sentence->localWord("filigon")) {
+		    || sentence->localWord("filigon")) {
 			addResponse(getDialogueId(201011));
 			applyFlag = true;
 			stateFlag = false;
@@ -1521,8 +1501,7 @@ stateFlag = false;
 		break;
 
 	case 73:
-		if (sentence->localWord("mood") || sentence->contains("stimmung") ||
-				sentence->contains("laune") || sentence->contains("verfassung")) {
+		if (sentence->localWord("mood") || sentence->contains("stimmung") || sentence->contains("laune") || sentence->contains("verfassung")) {
 			if (charId() == 7 || charId() == 5) {
 				addResponse(getDialogueId(201021));
 				applyFlag = true;
@@ -1574,7 +1553,7 @@ stateFlag = false;
 			addResponse(getDialogueId(201040));
 			applyFlag = true;
 		} else if ((sentence->localWord("not") && sentence->localWord("remember"))
-				|| sentence->localWord("forgot")) {
+		           || sentence->localWord("forgot")) {
 			addResponse(getDialogueId(201041));
 			applyFlag = true;
 			stateFlag = false;
@@ -1600,8 +1579,8 @@ stateFlag = false;
 
 	case 80:
 		if ((!sentence->localWord("what") && sentence->localWord("how"))
-				|| sentence->localWord("about")
-				|| sentence->localWord("you")) {
+		    || sentence->localWord("about")
+		    || sentence->localWord("you")) {
 			if (sentence->_category != 3 && sentence->_category != 4 && sentence->_category != 7) {
 				addResponse(getDialogueId(201694));
 				applyFlag = true;
@@ -1615,8 +1594,8 @@ stateFlag = false;
 
 	case 81:
 		if ((!sentence->localWord("what") && !sentence->localWord("how"))
-				|| !sentence->localWord("about")
-				|| !sentence->localWord("you")) {
+		    || !sentence->localWord("about")
+		    || !sentence->localWord("you")) {
 			if (!sentence->localWord("and") || !sentence->localWord("yourself"))
 				break;
 		}
@@ -1626,9 +1605,9 @@ stateFlag = false;
 
 	case 82:
 		if ((sentence->_category == 3 && sentence->localWord("mean"))
-				|| sentence->localWord("surf")
-				|| (sentence->localWord("what") && sentence->localWord("talk")
-					&& sentence->localWord("about"))) {
+		    || sentence->localWord("surf")
+		    || (sentence->localWord("what") && sentence->localWord("talk")
+		        && sentence->localWord("about"))) {
 			addResponse(getDialogueId(201694));
 			applyFlag = true;
 			stateFlag = false;
@@ -1696,8 +1675,7 @@ stateFlag = false;
 		break;
 
 	case 88:
-		if (sentence->_category == 6 || 
-				(g_language != Common::DE_DEU && sentence->contains("upside down"))) {
+		if (sentence->_category == 6 || (g_language != Common::DE_DEU && sentence->contains("upside down"))) {
 			addResponse(getDialogueId(202142));
 			applyFlag = true;
 		}
@@ -1761,8 +1739,7 @@ bool BellbotScript::randomResponse0(const TTroomScript *roomScript, uint id) {
 		}
 	}
 
-	bool result = dr0 ? randomResponse1(roomScript, newId) :
-		randomResponse2(roomScript, newId);
+	bool result = dr0 ? randomResponse1(roomScript, newId) : randomResponse2(roomScript, newId);
 	if (result)
 		CTrueTalkManager::triggerAction(1, 0);
 
@@ -1878,8 +1855,7 @@ bool BellbotScript::checkCommonWords(const TTroomScript *roomScript, const TTsen
 		addResponse(getDialogueId(200847));
 	} else if (sentence->localWord("canal")) {
 		addResponse(getDialogueId(getValue(1) == 1 ? 200846 : 200847));
-	} else if (sentence->localWord("firstclass") &&
-			(sentence->localWord("stateroom") || sentence->localWord("room"))) {
+	} else if (sentence->localWord("firstclass") && (sentence->localWord("stateroom") || sentence->localWord("room"))) {
 		addResponse(getDialogueId(getValue(1) == 1 ? 200840 : 200306));
 	} else if (sentence->localWord("secondclass") && sentence->localWord("stateroom") && sentence->localWord("room")) {
 		addResponse(getDialogueId(getValue(1) < 3 ? 202231 : 200306));
@@ -1913,13 +1889,12 @@ bool BellbotScript::checkCommonWords(const TTroomScript *roomScript, const TTsen
 		addResponse(getDialogueId(200851));
 	} else if (sentence->localWord("parrotlobby")) {
 		addResponse(getDialogueId(200852));
-	} else if (sentence->localWord("parrot") &&
-			(sentence->localWord("room") || sentence->localWord("lobby"))) {
+	} else if (sentence->localWord("parrot") && (sentence->localWord("room") || sentence->localWord("lobby"))) {
 		addResponse(getDialogueId(200852));
 	} else if (sentence->localWord("promenade")) {
 		addResponse(getDialogueId(200853));
 	} else if (sentence->localWord("sculpture") || sentence->localWord("sculptureroom")
-				|| sentence->localWord("statue")) {
+	           || sentence->localWord("statue")) {
 		addResponse(getDialogueId(200854));
 	} else if (sentence->localWord("lounge")) {
 		addResponse(getDialogueId(200856));
@@ -1940,12 +1915,12 @@ bool BellbotScript::checkCommonWords(const TTroomScript *roomScript, const TTsen
 			addResponse(getDialogueId(200686));
 		}
 	} else if (sentence->localWord("embarklobby")
-			|| sentence->localWord("lobby")) {
+	           || sentence->localWord("lobby")) {
 		addResponse(getDialogueId(200850));
 	} else if (sentence->localWord("pellerator")) {
 		addResponse(getDialogueId(200862));
 	} else if (sentence->localWord("servicelift")
-			|| (sentence->localWord("service") && sentence->localWord("elevator"))) {
+	           || (sentence->localWord("service") && sentence->localWord("elevator"))) {
 		addResponse(getDialogueId(200855));
 	} else if (sentence->localWord("elevator")) {
 		addResponse(getDialogueId(202256));

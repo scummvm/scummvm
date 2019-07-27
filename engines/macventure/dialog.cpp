@@ -33,9 +33,9 @@
 #include "macventure/dialog.h"
 namespace MacVenture {
 
-
-Dialog::Dialog(Gui *gui, Common::Point pos, uint width, uint height) :
-	_gui(gui), _bounds(Common::Rect(pos.x, pos.y, pos.x + width, pos.y + height)) {}
+Dialog::Dialog(Gui *gui, Common::Point pos, uint width, uint height)
+  : _gui(gui)
+  , _bounds(Common::Rect(pos.x, pos.y, pos.x + width, pos.y + height)) {}
 
 Dialog::Dialog(Gui *gui, PrebuiltDialogs prebuilt) {
 	_gui = gui;
@@ -47,13 +47,13 @@ Dialog::Dialog(Gui *gui, PrebuiltDialogs prebuilt) {
 }
 
 Dialog::~Dialog() {
-	for (Common::Array<DialogElement*>::iterator it = _elements.begin(); it != _elements.end(); it++) {
+	for (Common::Array<DialogElement *>::iterator it = _elements.begin(); it != _elements.end(); it++) {
 		delete *it;
 	}
 }
 
 void Dialog::handleDialogAction(DialogElement *trigger, DialogAction action) {
-	switch(action) {
+	switch (action) {
 	case kDACloseDialog:
 		_gui->closeDialog();
 		break;
@@ -87,7 +87,7 @@ const Graphics::Font &Dialog::getFont() {
 }
 
 bool Dialog::processEvent(Common::Event event) {
-	for (Common::Array<DialogElement*>::iterator it = _elements.begin(); it != _elements.end(); it++) {
+	for (Common::Array<DialogElement *>::iterator it = _elements.begin(); it != _elements.end(); it++) {
 		if ((*it)->processEvent(this, event)) {
 			return true;
 		}
@@ -114,13 +114,13 @@ void Dialog::draw() {
 	Common::Rect base(0, 0, _bounds.width(), _bounds.height());
 	compose.fillRect(base, kColorWhite);
 	compose.frameRect(base, kColorBlack);
-	for (Common::Array<DialogElement*>::iterator it = _elements.begin(); it != _elements.end(); it++) {
+	for (Common::Array<DialogElement *>::iterator it = _elements.begin(); it != _elements.end(); it++) {
 		(*it)->draw(this, compose);
 	}
 
 	g_system->copyRectToScreen(compose.getPixels(), compose.pitch,
-		_bounds.left, _bounds.top, _bounds.width(), _bounds.height());
-	}
+	                           _bounds.left, _bounds.top, _bounds.width(), _bounds.height());
+}
 
 void Dialog::localize(Common::Point &point) {
 	point.x -= _bounds.left;
@@ -133,7 +133,7 @@ void Dialog::setUserInput(Common::String content) {
 
 void Dialog::addPrebuiltElement(const MacVenture::PrebuiltDialogElement &element) {
 	Common::Point position(element.left, element.top);
-	switch(element.type) {
+	switch (element.type) {
 	case kDEButton:
 		addButton(element.title, element.action, position, element.width, element.height);
 		break;
@@ -150,8 +150,9 @@ void Dialog::addPrebuiltElement(const MacVenture::PrebuiltDialogElement &element
 
 // Dialog Element
 
-DialogElement::DialogElement(Dialog *dialog, Common::String title, DialogAction action, Common::Point position, uint width, uint height) :
-	_text(title), _action(action) {
+DialogElement::DialogElement(Dialog *dialog, Common::String title, DialogAction action, Common::Point position, uint width, uint height)
+  : _text(title)
+  , _action(action) {
 	if (width == 0) {
 		width = dialog->getFont().getStringWidth(title);
 	}
@@ -179,8 +180,8 @@ const Common::String &DialogElement::doGetText() {
 
 // CONCRETE DIALOG ELEMENTS
 
-DialogButton::DialogButton(Dialog *dialog, Common::String title, DialogAction action, Common::Point position, uint width, uint height):
-	DialogElement(dialog, title, action, position, width, height) {}
+DialogButton::DialogButton(Dialog *dialog, Common::String title, DialogAction action, Common::Point position, uint width, uint height)
+  : DialogElement(dialog, title, action, position, width, height) {}
 
 bool DialogButton::doProcessEvent(MacVenture::Dialog *dialog, Common::Event event) {
 	Common::Point mouse = event.mouse;
@@ -191,8 +192,8 @@ bool DialogButton::doProcessEvent(MacVenture::Dialog *dialog, Common::Event even
 			dialog->handleDialogAction(this, _action);
 			return true;
 		}
- 	}
- 	return false;
+	}
+	return false;
 }
 
 void DialogButton::doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target) {
@@ -200,11 +201,11 @@ void DialogButton::doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &
 	target.frameRect(_bounds, kColorBlack);
 	// Draw title
 	dialog->getFont().drawString(
-		&target, _text, _bounds.left, _bounds.top, _bounds.width(), kColorBlack, Graphics::kTextAlignCenter);
+	  &target, _text, _bounds.left, _bounds.top, _bounds.width(), kColorBlack, Graphics::kTextAlignCenter);
 }
 
-DialogPlainText::DialogPlainText(Dialog *dialog, Common::String content, Common::Point position) :
-	DialogElement(dialog, content, kDANone, position, 0, 0) { }
+DialogPlainText::DialogPlainText(Dialog *dialog, Common::String content, Common::Point position)
+  : DialogElement(dialog, content, kDANone, position, 0, 0) {}
 
 DialogPlainText::~DialogPlainText() {}
 
@@ -215,12 +216,11 @@ bool DialogPlainText::doProcessEvent(MacVenture::Dialog *dialog, Common::Event e
 void DialogPlainText::doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target) {
 	// Draw contents
 	dialog->getFont().drawString(
-		&target, _text, _bounds.left, _bounds.top, _bounds.width(), kColorBlack, Graphics::kTextAlignCenter);
-
+	  &target, _text, _bounds.left, _bounds.top, _bounds.width(), kColorBlack, Graphics::kTextAlignCenter);
 }
 
-DialogTextInput::DialogTextInput(Dialog *dialog, Common::Point position, uint width, uint height) :
-	DialogElement(dialog, "", kDANone, position, width, height) {}
+DialogTextInput::DialogTextInput(Dialog *dialog, Common::Point position, uint width, uint height)
+  : DialogElement(dialog, "", kDANone, position, width, height) {}
 DialogTextInput::~DialogTextInput() {}
 
 bool DialogTextInput::doProcessEvent(Dialog *dialog, Common::Event event) {
@@ -253,9 +253,9 @@ void DialogTextInput::doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurfac
 
 void Dialog::calculateBoundsFromPrebuilt(const PrebuiltDialogBounds &bounds) {
 	_bounds = Common::Rect(
-		bounds.left,
-		bounds.top,
-		bounds.right,
-		bounds.bottom);
+	  bounds.left,
+	  bounds.top,
+	  bounds.right,
+	  bounds.bottom);
 }
 } // End of namespace MacVenture

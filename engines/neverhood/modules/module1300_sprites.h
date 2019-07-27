@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE1300_SPRITES_H
 #define NEVERHOOD_MODULES_MODULE1300_SPRITES_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -32,6 +32,7 @@ namespace Neverhood {
 class AsScene1302Bridge : public AnimatedSprite {
 public:
 	AsScene1302Bridge(NeverhoodEngine *vm, Scene *parentScene);
+
 protected:
 	Scene *_parentScene;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -43,6 +44,7 @@ protected:
 class SsScene1302Fence : public StaticSprite {
 public:
 	SsScene1302Fence(NeverhoodEngine *vm);
+
 protected:
 	int16 _firstY;
 	void update();
@@ -54,6 +56,7 @@ protected:
 class AsScene1303Balloon : public AnimatedSprite {
 public:
 	AsScene1303Balloon(NeverhoodEngine *vm, Scene *parentScene);
+
 protected:
 	Scene *_parentScene;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -64,6 +67,7 @@ protected:
 class AsScene1304Needle : public AnimatedSprite {
 public:
 	AsScene1304Needle(NeverhoodEngine *vm, Scene *parentScene, int surfacePriority, int16 x, int16 y);
+
 protected:
 	Scene *_parentScene;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -72,6 +76,7 @@ protected:
 class AsScene1306Elevator : public AnimatedSprite {
 public:
 	AsScene1306Elevator(NeverhoodEngine *vm, Scene *parentScene, AnimatedSprite *asElevatorDoor);
+
 protected:
 	Scene *_parentScene;
 	AnimatedSprite *_asElevatorDoor;
@@ -90,6 +95,7 @@ protected:
 class AsScene1307Key : public AnimatedSprite {
 public:
 	AsScene1307Key(NeverhoodEngine *vm, Scene *parentScene, uint keyIndex, NRect *clipRects);
+
 protected:
 	Scene *_parentScene;
 	NPointArray *_pointList;
@@ -114,6 +120,7 @@ protected:
 class AsScene1308JaggyDoor : public AnimatedSprite {
 public:
 	AsScene1308JaggyDoor(NeverhoodEngine *vm, Scene *parentScene);
+
 protected:
 	Scene *_parentScene;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -126,6 +133,7 @@ protected:
 class AsScene1308KeyboardDoor : public AnimatedSprite {
 public:
 	AsScene1308KeyboardDoor(NeverhoodEngine *vm, Scene *parentScene);
+
 protected:
 	Scene *_parentScene;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -136,6 +144,7 @@ protected:
 class AsScene1308LightWallSymbols : public AnimatedSprite {
 public:
 	AsScene1308LightWallSymbols(NeverhoodEngine *vm, Scene *parentScene);
+
 protected:
 	Scene *_parentScene;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -152,6 +161,7 @@ public:
 class AsScene1308Mouse : public AnimatedSprite {
 public:
 	AsScene1308Mouse(NeverhoodEngine *vm);
+
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -159,6 +169,7 @@ protected:
 class KmScene1303 : public Klaymen {
 public:
 	KmScene1303(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
@@ -166,6 +177,7 @@ protected:
 class KmScene1304 : public Klaymen {
 public:
 	KmScene1304(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
@@ -173,6 +185,7 @@ protected:
 class KmScene1305 : public Klaymen {
 public:
 	KmScene1305(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	void stCrashDown();
 	void stCrashDownFinished();
@@ -183,6 +196,7 @@ protected:
 class KmScene1306 : public Klaymen {
 public:
 	KmScene1306(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
@@ -190,6 +204,7 @@ protected:
 class KmScene1308 : public Klaymen {
 public:
 	KmScene1308(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };

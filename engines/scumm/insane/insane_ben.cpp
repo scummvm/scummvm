@@ -20,8 +20,6 @@
  *
  */
 
-
-
 #include "engines/engine.h"
 
 #include "scumm/insane/insane.h"
@@ -85,7 +83,7 @@ void Insane::turnBen(bool controllable) {
 				buttons = 0;
 		}
 		debug(5, "00:%d 01:%d 02:%d 03:%d", _actor[0].act[0].state,
-				_actor[0].act[1].state, _actor[0].act[2].state, _actor[0].act[3].state);
+		      _actor[0].act[1].state, _actor[0].act[2].state, _actor[0].act[3].state);
 		actor01Reaction(buttons);
 		actor02Reaction(buttons);
 		actor03Reaction(buttons);
@@ -154,9 +152,8 @@ int32 Insane::actionBen() {
 
 	if (_actor[0].x > 100)
 		_actor[0].x--;
-	else
-		if (_actor[0].x < 100)
-			_actor[0].x++;
+	else if (_actor[0].x < 100)
+		_actor[0].x++;
 
 	if (_actor[0].x >= 0) {
 		if (_actor[1].x - 90 <= _actor[0].x && !_actor[0].lost && !_actor[1].lost) {
@@ -183,7 +180,7 @@ int32 Insane::actionBen() {
 	} else {
 		_actor[0].x = 0;
 		_actor[0].damage++; // FIXME: apparently it is a bug in original
-							// and damage is doubled
+		  // and damage is doubled
 		doDamage = true;
 	}
 
@@ -466,21 +463,18 @@ void Insane::drawSpeedyActor(int32 buttons) {
 		return;
 
 	smlayer_putActor(0, 2, _actor[0].x + _actor[0].x1, _actor[0].y + _actor[0].y1,
-					 _smlayer_room2);
+	                 _smlayer_room2);
 }
 
 bool Insane::weaponBenIsEffective() {
-	if ((_actor[1].x - _actor[0].x > weaponMaxRange(0)) ||
-		(_actor[1].x - _actor[0].x < weaponMinRange(0)) ||
-		!_actor[1].kicking)
+	if ((_actor[1].x - _actor[0].x > weaponMaxRange(0)) || (_actor[1].x - _actor[0].x < weaponMinRange(0)) || !_actor[1].kicking)
 		return false;
 
 	return true;
 }
 
 int32 Insane::calcBenDamage(bool arg_0, bool arg_4) {
-	if ((_actor[1].x - _actor[0].x > weaponMaxRange(1)) ||
-		(_actor[1].x - _actor[0].x < weaponMinRange(1)))
+	if ((_actor[1].x - _actor[0].x > weaponMaxRange(1)) || (_actor[1].x - _actor[0].x < weaponMinRange(1)))
 		return 0;
 
 	if (_actor[0].field_44 && arg_4)
@@ -577,9 +571,7 @@ void Insane::actor02Reaction(int32 buttons) {
 						smlayer_startSfx(62);
 				}
 			} else {
-				if ((_actor[1].x - _actor[0].x <= weaponMaxRange(0)) &&
-					(_actor[1].x - _actor[0].x >= weaponMinRange(0)) &&
-					!_actor[0].field_54)
+				if ((_actor[1].x - _actor[0].x <= weaponMaxRange(0)) && (_actor[1].x - _actor[0].x >= weaponMinRange(0)) && !_actor[0].field_54)
 					prepareScenePropScene(1, 0, 0);
 			}
 		}
@@ -671,9 +663,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].kicking = true;
 		if (_actor[0].act[2].frame >= 2) {
 			if (_currEnemy == EN_VULTM2) {
-				if ((_actor[1].x - _actor[0].x <= weaponMaxRange(0)) &&
-					(_actor[1].x - _actor[0].x >= weaponMinRange(0)) &&
-					calcEnemyDamage(0, 0)) {
+				if ((_actor[1].x - _actor[0].x <= weaponMaxRange(0)) && (_actor[1].x - _actor[0].x >= weaponMinRange(0)) && calcEnemyDamage(0, 0)) {
 					smlayer_setActorFacing(0, 2, 20, 180);
 					_actor[0].act[2].state = 97;
 					_actor[0].act[2].room = 0;
@@ -723,11 +713,8 @@ void Insane::actor02Reaction(int32 buttons) {
 					break;
 				}
 			} else {
-				if ((_actor[1].x - _actor[0].x <= weaponMaxRange(0)) &&
-					(_actor[1].x - _actor[0].x >= weaponMinRange(0)) &&
-					!_actor[0].field_54)
+				if ((_actor[1].x - _actor[0].x <= weaponMaxRange(0)) && (_actor[1].x - _actor[0].x >= weaponMinRange(0)) && !_actor[0].field_54)
 					prepareScenePropScene(1, 0, 0);
-
 			}
 			smlayer_setActorFacing(0, 2, 21, 180);
 			_actor[0].act[2].state = 13;
@@ -803,8 +790,7 @@ void Insane::actor02Reaction(int32 buttons) {
 				calcEnemyDamage(0, 1);
 				break;
 			case INV_DUST:
-				if ((_actor[1].x - _actor[0].x <= weaponMaxRange(0)) &&
-					(_actor[1].x - _actor[0].x >= weaponMinRange(0))) {
+				if ((_actor[1].x - _actor[0].x <= weaponMaxRange(0)) && (_actor[1].x - _actor[0].x >= weaponMinRange(0))) {
 					smlayer_startSfx(76);
 					_actor[1].damage += weaponDamage(0);
 				}
@@ -909,9 +895,7 @@ void Insane::actor02Reaction(int32 buttons) {
 					break;
 				}
 			} else {
-				if ((_actor[1].x - _actor[0].x <= weaponMaxRange(0)) &&
-					(_actor[1].x - _actor[0].x >= weaponMinRange(0)) &&
-					!_actor[0].field_54)
+				if ((_actor[1].x - _actor[0].x <= weaponMaxRange(0)) && (_actor[1].x - _actor[0].x >= weaponMinRange(0)) && !_actor[0].field_54)
 					prepareScenePropScene(1, 0, 0);
 			}
 			smlayer_setActorFacing(0, 2, 21, 180);
@@ -1079,9 +1063,7 @@ void Insane::actor02Reaction(int32 buttons) {
 					break;
 				}
 			} else {
-				if ((_actor[1].x - _actor[0].x <= weaponMaxRange(0)) &&
-					(_actor[1].x - _actor[0].x >= weaponMinRange(0)) &&
-					!_actor[0].field_54)
+				if ((_actor[1].x - _actor[0].x <= weaponMaxRange(0)) && (_actor[1].x - _actor[0].x >= weaponMinRange(0)) && !_actor[0].field_54)
 					prepareScenePropScene(1, 0, 0);
 			}
 			smlayer_setActorFacing(0, 2, 21, 180);
@@ -1217,12 +1199,10 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].kicking = false;
 		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
 			if (_actor[0].act[2].frame >= 28) {
-					queueSceneSwitch(9, 0, "bencrshe.san", 64, 0, 0, 0);
-					_actor[0].act[2].state = 38;
+				queueSceneSwitch(9, 0, "bencrshe.san", 64, 0, 0, 0);
+				_actor[0].act[2].state = 38;
 			}
-		} else if (_actor[0].act[2].frame >= 18 ||
-			(_actor[0].x < 50 && _actor[0].act[2].frame >= 10) ||
-			 (_actor[0].x > 270 && _actor[0].act[2].frame >= 10)) {
+		} else if (_actor[0].act[2].frame >= 18 || (_actor[0].x < 50 && _actor[0].act[2].frame >= 10) || (_actor[0].x > 270 && _actor[0].act[2].frame >= 10)) {
 			if (_currSceneId == 21) {
 				queueSceneSwitch(23, 0, "benflip.san", 64, 0, 0, 0);
 			} else {

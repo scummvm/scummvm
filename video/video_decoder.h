@@ -24,7 +24,7 @@
 #define VIDEO_DECODER_H
 
 #include "audio/mixer.h"
-#include "audio/timestamp.h"	// TODO: Move this to common/ ?
+#include "audio/timestamp.h" // TODO: Move this to common/ ?
 #include "common/array.h"
 #include "common/rational.h"
 #include "common/str.h"
@@ -93,7 +93,6 @@ public:
 	 * Returns if a video stream is currently loaded or not.
 	 */
 	bool isVideoLoaded() const;
-
 
 	/////////////////////////////////////////
 	// Playback Control
@@ -229,7 +228,6 @@ public:
 	 */
 	Audio::Timestamp getEndTime() const { return _endTime; }
 
-
 	/////////////////////////////////////////
 	// Playback Status
 	/////////////////////////////////////////
@@ -267,7 +265,6 @@ public:
 	 * timing).
 	 */
 	uint32 getTime() const;
-
 
 	/////////////////////////////////////////
 	// Video Info
@@ -307,7 +304,6 @@ public:
 	 * overriden, it will take the length of the longest track.
 	 */
 	virtual Audio::Timestamp getDuration() const;
-
 
 	/////////////////////////////////////////
 	// Frame Decoding
@@ -558,7 +554,7 @@ protected:
 		VideoTrack() {}
 		virtual ~VideoTrack() {}
 
-		TrackType getTrackType() const  { return kTrackTypeVideo; }
+		TrackType getTrackType() const { return kTrackTypeVideo; }
 		virtual bool endOfTrack() const;
 
 		/**
@@ -751,7 +747,8 @@ protected:
 	 */
 	class RewindableAudioTrack : public AudioTrack {
 	public:
-		RewindableAudioTrack(Audio::Mixer::SoundType soundType) : AudioTrack(soundType) {}
+		RewindableAudioTrack(Audio::Mixer::SoundType soundType)
+		  : AudioTrack(soundType) {}
 		virtual ~RewindableAudioTrack() {}
 
 		bool isRewindable() const { return true; }
@@ -773,7 +770,8 @@ protected:
 	 */
 	class SeekableAudioTrack : public AudioTrack {
 	public:
-		SeekableAudioTrack(Audio::Mixer::SoundType soundType) : AudioTrack(soundType) {}
+		SeekableAudioTrack(Audio::Mixer::SoundType soundType)
+		  : AudioTrack(soundType) {}
 		virtual ~SeekableAudioTrack() {}
 
 		bool isSeekable() const { return true; }

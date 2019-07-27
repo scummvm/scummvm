@@ -20,20 +20,19 @@
  *
  */
 
-
 #include "common/textconsole.h"
 
+#include "audio/audiostream.h"
 #include "audio/decoders/flac.h"
-#include "audio/mixer.h"
 #include "audio/decoders/mp3.h"
+#include "audio/decoders/raw.h"
 #include "audio/decoders/voc.h"
 #include "audio/decoders/vorbis.h"
-#include "audio/decoders/raw.h"
-#include "audio/audiostream.h"
+#include "audio/mixer.h"
 
+#include "touche/graphics.h"
 #include "touche/midi.h"
 #include "touche/touche.h"
-#include "touche/graphics.h"
 
 namespace Touche {
 
@@ -45,8 +44,8 @@ enum {
 struct CompressedSpeechFile {
 	const char *filename;
 	Audio::SeekableAudioStream *(*makeStream)(
-			Common::SeekableReadStream *stream,
-			DisposeAfterUse::Flag disposeAfterUse);
+	  Common::SeekableReadStream *stream,
+	  DisposeAfterUse::Flag disposeAfterUse);
 };
 
 static const CompressedSpeechFile compressedSpeechFilesTable[] = {
@@ -191,14 +190,14 @@ uint32 ToucheEngine::res_getDataOffset(ResourceType type, int num, uint32 *size)
 		int count;
 		int type;
 	} dataTypesTable[] = {
-		{ 0x048, 100, kResourceTypeRoomImage   },
-		{ 0x228,  30, kResourceTypeSequence    },
-		{ 0x2A0,  50, kResourceTypeSpriteImage },
-		{ 0x390, 100, kResourceTypeIconImage   },
-		{ 0x6B0,  80, kResourceTypeRoomInfo    },
-		{ 0x908, 150, kResourceTypeProgram     },
-		{ 0xB60,  50, kResourceTypeMusic       },
-		{ 0xC28, 120, kResourceTypeSound       }
+		{ 0x048, 100, kResourceTypeRoomImage },
+		{ 0x228, 30, kResourceTypeSequence },
+		{ 0x2A0, 50, kResourceTypeSpriteImage },
+		{ 0x390, 100, kResourceTypeIconImage },
+		{ 0x6B0, 80, kResourceTypeRoomInfo },
+		{ 0x908, 150, kResourceTypeProgram },
+		{ 0xB60, 50, kResourceTypeMusic },
+		{ 0xC28, 120, kResourceTypeSound }
 	};
 
 	const ResourceData *rd = NULL;
@@ -258,10 +257,14 @@ void ToucheEngine::res_decodeProgramData() {
 	_programRectsTable.clear();
 	p = _programData + READ_LE_UINT32(_programData + 20);
 	while (p < programDataEnd) {
-		int16 x = READ_LE_UINT16(p); p += 2;
-		int16 y = READ_LE_UINT16(p); p += 2;
-		int16 w = READ_LE_UINT16(p); p += 2;
-		int16 h = READ_LE_UINT16(p); p += 2;
+		int16 x = READ_LE_UINT16(p);
+		p += 2;
+		int16 y = READ_LE_UINT16(p);
+		p += 2;
+		int16 w = READ_LE_UINT16(p);
+		p += 2;
+		int16 h = READ_LE_UINT16(p);
+		p += 2;
 		_programRectsTable.push_back(Common::Rect(x, y, x + w, y + h));
 		if (x == -1) {
 			break;
@@ -272,10 +275,14 @@ void ToucheEngine::res_decodeProgramData() {
 	p = _programData + READ_LE_UINT32(_programData + 24);
 	while (p < programDataEnd) {
 		ProgramPointData ppd;
-		ppd.x = READ_LE_UINT16(p); p += 2;
-		ppd.y = READ_LE_UINT16(p); p += 2;
-		ppd.z = READ_LE_UINT16(p); p += 2;
-		ppd.order = READ_LE_UINT16(p); p += 2;
+		ppd.x = READ_LE_UINT16(p);
+		p += 2;
+		ppd.y = READ_LE_UINT16(p);
+		p += 2;
+		ppd.z = READ_LE_UINT16(p);
+		p += 2;
+		ppd.order = READ_LE_UINT16(p);
+		p += 2;
 		_programPointsTable.push_back(ppd);
 		if (ppd.x == -1) {
 			break;
@@ -286,16 +293,21 @@ void ToucheEngine::res_decodeProgramData() {
 	p = _programData + READ_LE_UINT32(_programData + 28);
 	while (p < programDataEnd) {
 		ProgramWalkData pwd;
-		pwd.point1 = READ_LE_UINT16(p); p += 2;
+		pwd.point1 = READ_LE_UINT16(p);
+		p += 2;
 		if (pwd.point1 == -1) {
 			break;
 		}
 		assert((uint16)pwd.point1 < _programPointsTable.size());
-		pwd.point2 = READ_LE_UINT16(p); p += 2;
+		pwd.point2 = READ_LE_UINT16(p);
+		p += 2;
 		assert((uint16)pwd.point2 < _programPointsTable.size());
-		pwd.clippingRect = READ_LE_UINT16(p); p += 2;
-		pwd.area1 = READ_LE_UINT16(p); p += 2;
-		pwd.area2 = READ_LE_UINT16(p); p += 2;
+		pwd.clippingRect = READ_LE_UINT16(p);
+		p += 2;
+		pwd.area1 = READ_LE_UINT16(p);
+		p += 2;
+		pwd.area2 = READ_LE_UINT16(p);
+		p += 2;
 		p += 12; // unused
 		_programWalkTable.push_back(pwd);
 	}
@@ -304,20 +316,30 @@ void ToucheEngine::res_decodeProgramData() {
 	p = _programData + READ_LE_UINT32(_programData + 8);
 	while (p < programDataEnd) {
 		ProgramAreaData pad;
-		int16 x = READ_LE_UINT16(p); p += 2;
+		int16 x = READ_LE_UINT16(p);
+		p += 2;
 		if (x == -1) {
 			break;
 		}
-		int16 y = READ_LE_UINT16(p); p += 2;
-		int16 w = READ_LE_UINT16(p); p += 2;
-		int16 h = READ_LE_UINT16(p); p += 2;
+		int16 y = READ_LE_UINT16(p);
+		p += 2;
+		int16 w = READ_LE_UINT16(p);
+		p += 2;
+		int16 h = READ_LE_UINT16(p);
+		p += 2;
 		pad.area.r = Common::Rect(x, y, x + w, y + h);
-		pad.area.srcX = READ_LE_UINT16(p); p += 2;
-		pad.area.srcY = READ_LE_UINT16(p); p += 2;
-		pad.id = READ_LE_UINT16(p); p += 2;
-		pad.state = READ_LE_UINT16(p); p += 2;
-		pad.animCount = READ_LE_UINT16(p); p += 2;
-		pad.animNext = READ_LE_UINT16(p); p += 2;
+		pad.area.srcX = READ_LE_UINT16(p);
+		p += 2;
+		pad.area.srcY = READ_LE_UINT16(p);
+		p += 2;
+		pad.id = READ_LE_UINT16(p);
+		p += 2;
+		pad.state = READ_LE_UINT16(p);
+		p += 2;
+		pad.animCount = READ_LE_UINT16(p);
+		p += 2;
+		pad.animNext = READ_LE_UINT16(p);
+		p += 2;
 		_programAreaTable.push_back(pad);
 	}
 
@@ -325,20 +347,30 @@ void ToucheEngine::res_decodeProgramData() {
 	p = _programData + READ_LE_UINT32(_programData + 12);
 	while (p < programDataEnd) {
 		ProgramBackgroundData pbd;
-		int16 x = READ_LE_UINT16(p); p += 2;
+		int16 x = READ_LE_UINT16(p);
+		p += 2;
 		if (x == -1) {
 			break;
 		}
-		int16 y = READ_LE_UINT16(p); p += 2;
-		int16 w = READ_LE_UINT16(p); p += 2;
-		int16 h = READ_LE_UINT16(p); p += 2;
+		int16 y = READ_LE_UINT16(p);
+		p += 2;
+		int16 w = READ_LE_UINT16(p);
+		p += 2;
+		int16 h = READ_LE_UINT16(p);
+		p += 2;
 		pbd.area.r = Common::Rect(x, y, x + w, y + h);
-		pbd.area.srcX = READ_LE_UINT16(p); p += 2;
-		pbd.area.srcY = READ_LE_UINT16(p); p += 2;
-		pbd.type = READ_LE_UINT16(p); p += 2;
-		pbd.offset = READ_LE_UINT16(p); p += 2;
-		pbd.scaleMul = READ_LE_UINT16(p); p += 2;
-		pbd.scaleDiv = READ_LE_UINT16(p); p += 2;
+		pbd.area.srcX = READ_LE_UINT16(p);
+		p += 2;
+		pbd.area.srcY = READ_LE_UINT16(p);
+		p += 2;
+		pbd.type = READ_LE_UINT16(p);
+		p += 2;
+		pbd.offset = READ_LE_UINT16(p);
+		p += 2;
+		pbd.scaleMul = READ_LE_UINT16(p);
+		p += 2;
+		pbd.scaleDiv = READ_LE_UINT16(p);
+		p += 2;
 		_programBackgroundTable.push_back(pbd);
 	}
 
@@ -346,22 +378,32 @@ void ToucheEngine::res_decodeProgramData() {
 	p = _programData + READ_LE_UINT32(_programData + 16);
 	while (p < programDataEnd) {
 		ProgramHitBoxData phbd;
-		phbd.item = READ_LE_UINT16(p); p += 2;
+		phbd.item = READ_LE_UINT16(p);
+		p += 2;
 		if (phbd.item == 0) {
 			break;
 		}
-		phbd.talk = READ_LE_UINT16(p); p += 2;
-		phbd.state = READ_LE_UINT16(p); p += 2;
-		phbd.str = READ_LE_UINT16(p); p += 2;
-		phbd.defaultStr = READ_LE_UINT16(p); p += 2;
+		phbd.talk = READ_LE_UINT16(p);
+		p += 2;
+		phbd.state = READ_LE_UINT16(p);
+		p += 2;
+		phbd.str = READ_LE_UINT16(p);
+		p += 2;
+		phbd.defaultStr = READ_LE_UINT16(p);
+		p += 2;
 		for (int i = 0; i < 8; ++i) {
-			phbd.actions[i] = READ_LE_UINT16(p); p += 2;
+			phbd.actions[i] = READ_LE_UINT16(p);
+			p += 2;
 		}
 		for (int i = 0; i < 2; ++i) {
-			int16 x = READ_LE_UINT16(p); p += 2;
-			int16 y = READ_LE_UINT16(p); p += 2;
-			int16 w = READ_LE_UINT16(p); p += 2;
-			int16 h = READ_LE_UINT16(p); p += 2;
+			int16 x = READ_LE_UINT16(p);
+			p += 2;
+			int16 y = READ_LE_UINT16(p);
+			p += 2;
+			int16 w = READ_LE_UINT16(p);
+			p += 2;
+			int16 h = READ_LE_UINT16(p);
+			p += 2;
 			phbd.hitBoxes[i].left = x;
 			phbd.hitBoxes[i].top = y;
 			phbd.hitBoxes[i].right = x + w;
@@ -375,13 +417,17 @@ void ToucheEngine::res_decodeProgramData() {
 	p = _programData + READ_LE_UINT32(_programData + 36);
 	while (p < programDataEnd) {
 		ProgramActionScriptOffsetData pasod;
-		pasod.object1 = READ_LE_UINT16(p); p += 2;
+		pasod.object1 = READ_LE_UINT16(p);
+		p += 2;
 		if (pasod.object1 == 0) {
 			break;
 		}
-		pasod.action = READ_LE_UINT16(p); p += 2;
-		pasod.object2 = READ_LE_UINT16(p); p += 2;
-		pasod.offset = READ_LE_UINT16(p); p += 2;
+		pasod.action = READ_LE_UINT16(p);
+		p += 2;
+		pasod.object2 = READ_LE_UINT16(p);
+		p += 2;
+		pasod.offset = READ_LE_UINT16(p);
+		p += 2;
 		_programActionScriptOffsetTable.push_back(pasod);
 	}
 
@@ -391,9 +437,12 @@ void ToucheEngine::res_decodeProgramData() {
 	p = _programData + READ_LE_UINT32(_programData + 40);
 	while (p < programDataEnd && count != 0) {
 		ProgramConversationData pcd;
-		pcd.num = READ_LE_UINT16(p); p += 2;
-		pcd.offset = READ_LE_UINT16(p); p += 2;
-		pcd.msg = READ_LE_UINT16(p); p += 2;
+		pcd.num = READ_LE_UINT16(p);
+		p += 2;
+		pcd.offset = READ_LE_UINT16(p);
+		p += 2;
+		pcd.msg = READ_LE_UINT16(p);
+		p += 2;
 		_programConversationTable.push_back(pcd);
 		--count;
 	}
@@ -402,11 +451,13 @@ void ToucheEngine::res_decodeProgramData() {
 	p = _programData + READ_LE_UINT32(_programData + 44);
 	while (p < programDataEnd) {
 		ProgramKeyCharScriptOffsetData pksod;
-		pksod.keyChar = READ_LE_UINT16(p); p += 2;
+		pksod.keyChar = READ_LE_UINT16(p);
+		p += 2;
 		if (pksod.keyChar == 0) {
 			break;
 		}
-		pksod.offset = READ_LE_UINT16(p); p += 2;
+		pksod.offset = READ_LE_UINT16(p);
+		p += 2;
 		_programKeyCharScriptOffsetTable.push_back(pksod);
 	}
 }
@@ -432,8 +483,7 @@ void ToucheEngine::res_loadRoom(int num) {
 	// Workaround to what appears to be a scripting bug. Scripts 27 and 100 triggers
 	// a palette fading just after loading a room. Catch this, so that only *one*
 	// palette refresh occurs.
-	if ((_currentEpisodeNum == 27 && _currentRoomNum == 56 && num == 34) ||
-	    (_currentEpisodeNum == 100 && _currentRoomNum == 2 && num == 1)) {
+	if ((_currentEpisodeNum == 27 && _currentRoomNum == 56 && num == 34) || (_currentEpisodeNum == 100 && _currentRoomNum == 2 && num == 1)) {
 		updateScreenPalette = false;
 	}
 

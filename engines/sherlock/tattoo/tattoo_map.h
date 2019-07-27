@@ -35,56 +35,61 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-struct MapEntry : Common::Point {
-	int _iconNum;
-	Common::String _description;
+	struct MapEntry : Common::Point {
+		int _iconNum;
+		Common::String _description;
 
-	MapEntry() : Common::Point(), _iconNum(-1) {}
-	MapEntry(int posX, int posY, int iconNum) : Common::Point(posX, posY), _iconNum(iconNum) {}
-	void clear();
-};
+		MapEntry()
+		  : Common::Point()
+		  , _iconNum(-1) {}
+		MapEntry(int posX, int posY, int iconNum)
+		  : Common::Point(posX, posY)
+		  , _iconNum(iconNum) {}
+		void clear();
+	};
 
-class TattooMap : public Map {
-private:
-	Common::Array<MapEntry> _data;
-	ImageFile *_iconImages;
-	int _bgFound, _oldBgFound;
-	WidgetMapTooltip _mapTooltip;
-	Common::Point _targetScroll;
+	class TattooMap : public Map {
+	private:
+		Common::Array<MapEntry> _data;
+		ImageFile *_iconImages;
+		int _bgFound, _oldBgFound;
+		WidgetMapTooltip _mapTooltip;
+		Common::Point _targetScroll;
 
-	/**
+		/**
 	 * Load data  needed for the map
 	 */
-	void loadData();
+		void loadData();
 
-	/**
+		/**
 	 * Draws all available location icons onto the back buffer
 	 */
-	void drawMapIcons();
+		void drawMapIcons();
 
-	/**
+		/**
 	 * Draws the location names of whatever the mouse moves over on the map
 	 */
-	void checkMapNames(bool slamIt);
+		void checkMapNames(bool slamIt);
 
-	/**
+		/**
 	 * Restores an area of the map background
 	 */
-	void restoreArea(const Common::Rect &bounds);
+		void restoreArea(const Common::Rect &bounds);
 
-	/**
+		/**
 	 * This will load a specified close up and zoom it up to the middle of the screen
 	 */
-	void showCloseUp(int closeUpNum);
-public:
-	TattooMap(SherlockEngine *vm);
-	virtual ~TattooMap() {}
+		void showCloseUp(int closeUpNum);
 
-	/**
+	public:
+		TattooMap(SherlockEngine *vm);
+		virtual ~TattooMap() {}
+
+		/**
 	 * Show the map
 	 */
-	virtual int show();
-};
+		virtual int show();
+	};
 
 } // End of namespace Tattoo
 

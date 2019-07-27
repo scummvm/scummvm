@@ -30,7 +30,8 @@
 
 namespace Toon {
 
-Character::Character(ToonEngine *vm) : _vm(vm) {
+Character::Character(ToonEngine *vm)
+  : _vm(vm) {
 	_animationInstance = NULL;
 	_shadowAnimationInstance = NULL;
 	_x = 0;
@@ -60,7 +61,7 @@ Character::Character(ToonEngine *vm) : _vm(vm) {
 	_currentWalkStamp = 0;
 	_currentFacingStamp = 0;
 	_visible = true;
-	_speed = 150;   // 150 = nominal drew speed
+	_speed = 150; // 150 = nominal drew speed
 	_lastWalkTime = 0;
 	_numPixelToWalk = 0;
 	_nextIdleTime = _vm->_system->getMillis() + (_vm->randRange(0, 600) + 300) * _vm->getTickLength();
@@ -213,8 +214,8 @@ bool Character::walkTo(int16 newPosX, int16 newPosY) {
 				if (_currentPathNode < _currentPath.size() - 4) {
 					int32 delta = MIN<int32>(4, _currentPath.size() - 1 - _currentPathNode);
 
-					int16 dx = _currentPath[_currentPathNode+delta].x - _x;
-					int16 dy = _currentPath[_currentPathNode+delta].y - _y;
+					int16 dx = _currentPath[_currentPathNode + delta].x - _x;
+					int16 dy = _currentPath[_currentPathNode + delta].y - _y;
 
 					// smooth the facing computation. It prevents some ugly flickering from happening
 					if (!smoothDx && !smoothDy) {
@@ -251,7 +252,6 @@ bool Character::walkTo(int16 newPosX, int16 newPosY) {
 					// another walkTo was started in doFrame, we need to cancel this one.
 					return false;
 				}
-
 			}
 			playStandingAnim();
 			_flags &= ~0x1;
@@ -364,8 +364,8 @@ void Character::update(int32 timeIncrement) {
 		if (_currentPathNode < _currentPath.size()) {
 			if (_currentPathNode < _currentPath.size() - 10) {
 				int32 delta = MIN<int32>(10, _currentPath.size() - 1 - _currentPathNode);
-				int16 dx = _currentPath[_currentPathNode+delta].x - _x;
-				int16 dy = _currentPath[_currentPathNode+delta].y - _y;
+				int16 dx = _currentPath[_currentPathNode + delta].x - _x;
+				int16 dy = _currentPath[_currentPathNode + delta].y - _y;
 				setFacing(getFacingFromDirection(dx, dy));
 				playWalkAnim(0, 0);
 			}
@@ -439,13 +439,11 @@ void Character::update(int32 timeIncrement) {
 			_animationInstance->setFrame(0);
 			_time = _vm->getOldMilli() + 8 * _vm->getTickLength();
 		}
-
 	}
 
 	if ((_animFlags & 3) == 2) {
-		if ((((_animFlags & 8) == 8) && _vm->getCurrentLineToSay() != _lineToSayId) || !_vm->getAudioManager()->voiceStillPlaying())  // || (_flags & 8)) && _vm->getAudioManager()->voiceStillPlaying())
+		if ((((_animFlags & 8) == 8) && _vm->getCurrentLineToSay() != _lineToSayId) || !_vm->getAudioManager()->voiceStillPlaying()) // || (_flags & 8)) && _vm->getAudioManager()->voiceStillPlaying())
 			_animFlags |= 1;
-
 	}
 
 	if (_time > _vm->getOldMilli())
@@ -531,7 +529,6 @@ void Character::update(int32 timeIncrement) {
 		_animFlags &= ~0x10;
 		_animationInstance->forceFrame(0);
 		return;
-
 	}
 
 	//if ((_flags & 8) == 0 || !_vm->getAudioManager()->voiceStillPlaying( ) || )
@@ -544,7 +541,7 @@ int32 Character::getFacingFromDirection(int16 dx, int16 dy) {
 
 	static const int facingTable[] = {
 		//1, 0, 1, 2,  3, 4, 3, 2,  7, 0, 7, 6,  5, 4, 5, 6
-		5, 6, 5, 4,  3, 2, 3, 4,  7, 6, 7, 0,  1, 2, 1, 0
+		5, 6, 5, 4, 3, 2, 3, 4, 7, 6, 7, 0, 1, 2, 1, 0
 	};
 	dx = -dx;
 
@@ -976,7 +973,7 @@ const SpecialCharacterAnimation *Character::getSpecialAnimation(int32 characterI
 	};
 
 	static const int32 characterAnims[] = {
-		0,   39,  81,  89,  91,  108, 117, 124, 138, 146,
+		0, 39, 81, 89, 91, 108, 117, 124, 138, 146,
 		148, 156, 164, 169, 174, 179, 184, 193, 197, 207,
 		213, 218, 233, 235, 244, 245, 246, 246, 246, 246,
 		253, 253, 253, 253, 260, 262, 264, 269, 271, 273,
@@ -1005,9 +1002,9 @@ bool Character::loadShadowAnimation(const Common::String &animName) {
 	return true;
 }
 
-void Character::plotPath(Graphics::Surface& surface) {
+void Character::plotPath(Graphics::Surface &surface) {
 	for (uint32 i = 0; i < _currentPath.size(); i++) {
-		 *(byte *)surface.getBasePtr(_currentPath[i].x, _currentPath[i].y) = (i < _currentPathNode);
+		*(byte *)surface.getBasePtr(_currentPath[i].x, _currentPath[i].y) = (i < _currentPathNode);
 	}
 }
 

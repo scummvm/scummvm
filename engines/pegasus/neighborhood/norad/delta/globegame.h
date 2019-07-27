@@ -112,7 +112,7 @@ public:
 	};
 
 	struct Line3D {
-		Point3D	pt1, pt2;
+		Point3D pt1, pt2;
 	};
 
 protected:

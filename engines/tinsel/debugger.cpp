@@ -20,15 +20,15 @@
  *
  */
 
-#include "tinsel/tinsel.h"
 #include "tinsel/debugger.h"
 #include "tinsel/dialogs.h"
+#include "tinsel/font.h"
+#include "tinsel/music.h"
 #include "tinsel/pcode.h"
 #include "tinsel/scene.h"
 #include "tinsel/sound.h"
-#include "tinsel/music.h"
-#include "tinsel/font.h"
 #include "tinsel/strres.h"
+#include "tinsel/tinsel.h"
 
 namespace Tinsel {
 
@@ -61,12 +61,13 @@ int strToInt(const char *s) {
 
 //----------------- CONSOLE CLASS  ---------------------
 
-Console::Console() : GUI::Debugger() {
-	registerCmd("item",		WRAP_METHOD(Console, cmd_item));
-	registerCmd("scene",		WRAP_METHOD(Console, cmd_scene));
-	registerCmd("music",		WRAP_METHOD(Console, cmd_music));
-	registerCmd("sound",		WRAP_METHOD(Console, cmd_sound));
-	registerCmd("string",		WRAP_METHOD(Console, cmd_string));
+Console::Console()
+  : GUI::Debugger() {
+	registerCmd("item", WRAP_METHOD(Console, cmd_item));
+	registerCmd("scene", WRAP_METHOD(Console, cmd_scene));
+	registerCmd("music", WRAP_METHOD(Console, cmd_music));
+	registerCmd("sound", WRAP_METHOD(Console, cmd_sound));
+	registerCmd("string", WRAP_METHOD(Console, cmd_string));
 }
 
 Console::~Console() {

@@ -23,11 +23,11 @@
 #ifndef SHERLOCK_TALK_H
 #define SHERLOCK_TALK_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
-#include "common/stream.h"
+#include "common/scummsys.h"
 #include "common/stack.h"
+#include "common/stream.h"
 #include "sherlock/objects.h"
 #include "sherlock/saveload.h"
 
@@ -37,94 +37,98 @@ namespace Sherlock {
 #define MAX_TALK_SEQUENCES 11
 
 enum {
-	OP_SWITCH_SPEAKER			= 0,
-	OP_RUN_CANIMATION			= 1,
+	OP_SWITCH_SPEAKER = 0,
+	OP_RUN_CANIMATION = 1,
 	OP_ASSIGN_PORTRAIT_LOCATION = 2,
-	OP_PAUSE					= 3,
-	OP_REMOVE_PORTRAIT			= 4,
-	OP_CLEAR_WINDOW				= 5,
-	OP_ADJUST_OBJ_SEQUENCE		= 6,
-	OP_WALK_TO_COORDS			= 7,
-	OP_PAUSE_WITHOUT_CONTROL	= 8,
-	OP_BANISH_WINDOW			= 9,
-	OP_SUMMON_WINDOW			= 10,
-	OP_SET_FLAG					= 11,
-	OP_SFX_COMMAND				= 12,
-	OP_TOGGLE_OBJECT			= 13,
-	OP_STEALTH_MODE_ACTIVE		= 14,
-	OP_IF_STATEMENT				= 15,
-	OP_ELSE_STATEMENT			= 16,
-	OP_END_IF_STATEMENT			= 17,
-	OP_STEALTH_MODE_DEACTIVATE	= 18,
-	OP_TURN_HOLMES_OFF			= 19,
-	OP_TURN_HOLMES_ON			= 20,
-	OP_GOTO_SCENE				= 21,
-	OP_PLAY_PROLOGUE			= 22,
-	OP_ADD_ITEM_TO_INVENTORY	= 23,
-	OP_SET_OBJECT				= 24,
-	OP_CALL_TALK_FILE			= 25,
-	OP_MOVE_MOUSE				= 26,
-	OP_DISPLAY_INFO_LINE		= 27,
-	OP_CLEAR_INFO_LINE			= 28,
-	OP_WALK_TO_CANIMATION		= 29,
+	OP_PAUSE = 3,
+	OP_REMOVE_PORTRAIT = 4,
+	OP_CLEAR_WINDOW = 5,
+	OP_ADJUST_OBJ_SEQUENCE = 6,
+	OP_WALK_TO_COORDS = 7,
+	OP_PAUSE_WITHOUT_CONTROL = 8,
+	OP_BANISH_WINDOW = 9,
+	OP_SUMMON_WINDOW = 10,
+	OP_SET_FLAG = 11,
+	OP_SFX_COMMAND = 12,
+	OP_TOGGLE_OBJECT = 13,
+	OP_STEALTH_MODE_ACTIVE = 14,
+	OP_IF_STATEMENT = 15,
+	OP_ELSE_STATEMENT = 16,
+	OP_END_IF_STATEMENT = 17,
+	OP_STEALTH_MODE_DEACTIVATE = 18,
+	OP_TURN_HOLMES_OFF = 19,
+	OP_TURN_HOLMES_ON = 20,
+	OP_GOTO_SCENE = 21,
+	OP_PLAY_PROLOGUE = 22,
+	OP_ADD_ITEM_TO_INVENTORY = 23,
+	OP_SET_OBJECT = 24,
+	OP_CALL_TALK_FILE = 25,
+	OP_MOVE_MOUSE = 26,
+	OP_DISPLAY_INFO_LINE = 27,
+	OP_CLEAR_INFO_LINE = 28,
+	OP_WALK_TO_CANIMATION = 29,
 	OP_REMOVE_ITEM_FROM_INVENTORY = 30,
-	OP_ENABLE_END_KEY			= 31,
-	OP_DISABLE_END_KEY			= 32,
-	OP_END_TEXT_WINDOW			= 33,
+	OP_ENABLE_END_KEY = 31,
+	OP_DISABLE_END_KEY = 32,
+	OP_END_TEXT_WINDOW = 33,
 
-	OP_MOUSE_OFF_ON				= 34,
-	OP_SET_WALK_CONTROL			= 35,
-	OP_SET_TALK_SEQUENCE		= 36,
-	OP_PLAY_SONG				= 37,
+	OP_MOUSE_OFF_ON = 34,
+	OP_SET_WALK_CONTROL = 35,
+	OP_SET_TALK_SEQUENCE = 36,
+	OP_PLAY_SONG = 37,
 	OP_WALK_HOLMES_AND_NPC_TO_CANIM = 38,
-	OP_SET_NPC_PATH_DEST		= 39,
-	OP_NEXT_SONG				= 40,
-	OP_SET_NPC_PATH_PAUSE		= 41,
-	OP_NEED_PASSWORD			= 42,
-	OP_SET_SCENE_ENTRY_FLAG		= 43,
-	OP_WALK_NPC_TO_CANIM		= 44,
-	OP_WALK_NPC_TO_COORDS		= 45,
+	OP_SET_NPC_PATH_DEST = 39,
+	OP_NEXT_SONG = 40,
+	OP_SET_NPC_PATH_PAUSE = 41,
+	OP_NEED_PASSWORD = 42,
+	OP_SET_SCENE_ENTRY_FLAG = 43,
+	OP_WALK_NPC_TO_CANIM = 44,
+	OP_WALK_NPC_TO_COORDS = 45,
 	OP_WALK_HOLMES_AND_NPC_TO_COORDS = 46,
-	OP_SET_NPC_TALK_FILE		= 47,
-	OP_TURN_NPC_OFF				= 48,
-	OP_TURN_NPC_ON				= 49,
-	OP_NPC_DESC_ON_OFF			= 50,
-	OP_NPC_PATH_PAUSE_TAKING_NOTES	= 51,
+	OP_SET_NPC_TALK_FILE = 47,
+	OP_TURN_NPC_OFF = 48,
+	OP_TURN_NPC_ON = 49,
+	OP_NPC_DESC_ON_OFF = 50,
+	OP_NPC_PATH_PAUSE_TAKING_NOTES = 51,
 	OP_NPC_PATH_PAUSE_LOOKING_HOLMES = 52,
-	OP_ENABLE_TALK_INTERRUPTS	= 53,
-	OP_DISABLE_TALK_INTERRUPTS	= 54,
-	OP_SET_NPC_INFO_LINE		= 55,
-	OP_SET_NPC_POSITION			= 56,
-	OP_NPC_PATH_LABEL			= 57,
-	OP_PATH_GOTO_LABEL			= 58,
-	OP_PATH_IF_FLAG_GOTO_LABEL	= 59,
-	OP_NPC_WALK_GRAPHICS		= 60,
-	OP_NPC_VERB					= 61,
-	OP_NPC_VERB_CANIM			= 62,
-	OP_NPC_VERB_SCRIPT			= 63,
-	OP_RESTORE_PEOPLE_SEQUENCE	= 64,
-	OP_NPC_VERB_TARGET			= 65,
-	OP_TURN_SOUNDS_OFF			= 66,
-	OP_NULL						= 67
+	OP_ENABLE_TALK_INTERRUPTS = 53,
+	OP_DISABLE_TALK_INTERRUPTS = 54,
+	OP_SET_NPC_INFO_LINE = 55,
+	OP_SET_NPC_POSITION = 56,
+	OP_NPC_PATH_LABEL = 57,
+	OP_PATH_GOTO_LABEL = 58,
+	OP_PATH_IF_FLAG_GOTO_LABEL = 59,
+	OP_NPC_WALK_GRAPHICS = 60,
+	OP_NPC_VERB = 61,
+	OP_NPC_VERB_CANIM = 62,
+	OP_NPC_VERB_SCRIPT = 63,
+	OP_RESTORE_PEOPLE_SEQUENCE = 64,
+	OP_NPC_VERB_TARGET = 65,
+	OP_TURN_SOUNDS_OFF = 66,
+	OP_NULL = 67
 };
 
-enum OpcodeReturn { RET_EXIT = -1, RET_SUCCESS = 0, RET_CONTINUE = 1 };
+enum OpcodeReturn { RET_EXIT = -1,
+	                  RET_SUCCESS = 0,
+	                  RET_CONTINUE = 1 };
 
 class SherlockEngine;
 class Talk;
-namespace Scalpel { class ScalpelUserInterface; }
+namespace Scalpel {
+	class ScalpelUserInterface;
+}
 
-typedef OpcodeReturn(Talk::*OpcodeMethod)(const byte *&str);
+typedef OpcodeReturn (Talk::*OpcodeMethod)(const byte *&str);
 
 struct SequenceEntry {
 	int _objNum;
 	Common::Array<byte> _sequences;
-	Object *_obj;			// Pointer to the bgshape that these values go to
-	short _frameNumber;		// Frame number in frame sequence to draw
-	short _sequenceNumber;	// Start frame of sequences that are repeated
-	int _seqStack;			// Allows gosubs to return to calling frame
-	int _seqTo;				// Allows 1-5, 8-3 type sequences encoded
-	int _seqCounter;		// How many times this sequence has been executed
+	Object *_obj; // Pointer to the bgshape that these values go to
+	short _frameNumber; // Frame number in frame sequence to draw
+	short _sequenceNumber; // Start frame of sequences that are repeated
+	int _seqStack; // Allows gosubs to return to calling frame
+	int _seqTo; // Allows 1-5, 8-3 type sequences encoded
+	int _seqCounter; // How many times this sequence has been executed
 	int _seqCounter2;
 
 	SequenceEntry();
@@ -164,11 +168,13 @@ struct TalkHistoryEntry {
 
 class Talk {
 	friend class Scalpel::ScalpelUserInterface;
+
 private:
 	/**
 	 * Remove any voice commands from a loaded statement list
 	 */
 	void stripVoiceCommands();
+
 protected:
 	SherlockEngine *_vm;
 	OpcodeMethod *_opcodeTable;
@@ -192,6 +198,7 @@ protected:
 	bool _endStr, _noTextYet;
 	int _seqCount;
 	const byte *_scriptStart, *_scriptEnd;
+
 protected:
 	Talk(SherlockEngine *vm);
 
@@ -213,6 +220,7 @@ protected:
 	OpcodeReturn cmdStealthModeDeactivate(const byte *&str);
 	OpcodeReturn cmdToggleObject(const byte *&str);
 	OpcodeReturn cmdWalkToCAnimation(const byte *&str);
+
 protected:
 	/**
 	 * Checks if a character is an opcode
@@ -254,6 +262,7 @@ protected:
 	 * Called when the active speaker is switched
 	 */
 	virtual void switchSpeaker() {}
+
 public:
 	Common::Array<Statement> _statements;
 	bool _talkToAbort;
@@ -266,6 +275,7 @@ public:
 	int _converseNum;
 	const byte *_opcodes;
 	int _speaker;
+
 public:
 	static Talk *init(SherlockEngine *vm);
 	virtual ~Talk() {}

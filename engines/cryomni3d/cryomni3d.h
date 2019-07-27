@@ -68,15 +68,15 @@ enum CryOmni3DGameType {
 };
 
 enum CryOmni3DGameFeatures {
-	GF_VERSAILLES_NUMERICFONTS             = (1 << 0), // Fonts are font01.crf, ...
-	GF_VERSAILLES_AUDIOPADDING             = (1 << 1)  // Audio files have underscore padding before extension
+	GF_VERSAILLES_NUMERICFONTS = (1 << 0), // Fonts are font01.crf, ...
+	GF_VERSAILLES_AUDIOPADDING = (1 << 1) // Audio files have underscore padding before extension
 };
 
 struct CryOmni3DGameDescription;
 
 // Engine Debug Flags
 enum {
-	kDebugFile     = (1 << 0),
+	kDebugFile = (1 << 0),
 	kDebugVariable = (1 << 1),
 	kDebugSaveLoad = (1 << 2)
 };
@@ -111,6 +111,7 @@ public:
 
 	void setCanLoadSave(bool canLoadSave) { _canLoadSave = canLoadSave; }
 	static const uint kSaveDescriptionLen = 20;
+
 private:
 	void pauseEngineIntern(bool);
 
@@ -161,8 +162,14 @@ protected:
 
 	void copySubPalette(byte *dst, const byte *src, uint start, uint num);
 	void setPalette(const byte *colors, uint start, uint num);
-	void lockPalette(uint startRW, uint endRW) { _lockPaletteStartRW = startRW; _lockPaletteEndRW = endRW; }
-	void unlockPalette() { _lockPaletteStartRW = 0; _lockPaletteEndRW = 255; }
+	void lockPalette(uint startRW, uint endRW) {
+		_lockPaletteStartRW = startRW;
+		_lockPaletteEndRW = endRW;
+	}
+	void unlockPalette() {
+		_lockPaletteStartRW = 0;
+		_lockPaletteEndRW = 255;
+	}
 	void fadeOutPalette();
 	void fadeInPalette(const byte *colors);
 	void setBlackPalette();

@@ -35,55 +35,54 @@ class BasePersistenceManager;
 
 // persistence support
 typedef void *(*PERSISTBUILD)(void);
-typedef bool(*PERSISTLOAD)(void *, BasePersistenceManager *);
-typedef void(*SYS_INSTANCE_CALLBACK)(void *instance, void *data);
+typedef bool (*PERSISTLOAD)(void *, BasePersistenceManager *);
+typedef void (*SYS_INSTANCE_CALLBACK)(void *instance, void *data);
 } // End of namespace Wintermute
 
 #include "engines/wintermute/system/sys_class_registry.h"
 namespace Wintermute {
 
+#define DECLARE_PERSISTENT(className, parentClass)                             \
+	static const char _className[];                                              \
+	static void *persistBuild(void);                                             \
+	virtual const char *getClassName();                                          \
+	static bool persistLoad(void *Instance, BasePersistenceManager *PersistMgr); \
+	className(TDynamicConstructor p1, TDynamicConstructor p2)                    \
+	  : parentClass(p1, p2) { /*memset(this, 0, sizeof(class_name));*/ };        \
+	virtual bool persist(BasePersistenceManager *persistMgr);                    \
+	void *operator new(size_t size);                                             \
+	void operator delete(void *p);
 
-#define DECLARE_PERSISTENT(className, parentClass)\
-	static const char _className[];\
-	static void *persistBuild(void);\
-	virtual const char *getClassName();\
-	static bool persistLoad(void* Instance, BasePersistenceManager* PersistMgr);\
-	className(TDynamicConstructor p1, TDynamicConstructor p2) : parentClass(p1, p2) { /*memset(this, 0, sizeof(class_name));*/ };\
-	virtual bool persist(BasePersistenceManager *persistMgr);\
-	void* operator new (size_t size);\
-	void operator delete(void* p);\
-
-
-#define IMPLEMENT_PERSISTENT(className, persistentClass)\
-	const char className::_className[] = #className;\
-	void* className::persistBuild() {\
-		return ::new className(DYNAMIC_CONSTRUCTOR, DYNAMIC_CONSTRUCTOR);\
-	}\
-	\
-	bool className::persistLoad(void *instance, BasePersistenceManager *persistMgr) {\
-		return ((className*)instance)->persist(persistMgr);\
-	}\
-	\
-	const char *className::getClassName() {\
-		return #className;\
-	}\
-	\
-	/*SystemClass Register##class_name(class_name::_className, class_name::PersistBuild, class_name::PersistLoad, persistent_class);*/\
-	\
-	void* className::operator new(size_t size) {\
-		void* ret = ::operator new(size);\
-		SystemClassRegistry::getInstance()->registerInstance(#className, ret);\
-		return ret;\
-	}\
-	\
-	void className::operator delete(void *p) {\
-		SystemClassRegistry::getInstance()->unregisterInstance(#className, p);\
-		::operator delete(p);\
-	}\
+#define IMPLEMENT_PERSISTENT(className, persistentClass)                                                                             \
+	const char className::_className[] = #className;                                                                                   \
+	void *className::persistBuild() {                                                                                                  \
+		return ::new className(DYNAMIC_CONSTRUCTOR, DYNAMIC_CONSTRUCTOR);                                                                \
+	}                                                                                                                                  \
+                                                                                                                                     \
+	bool className::persistLoad(void *instance, BasePersistenceManager *persistMgr) {                                                  \
+		return ((className *)instance)->persist(persistMgr);                                                                             \
+	}                                                                                                                                  \
+                                                                                                                                     \
+	const char *className::getClassName() {                                                                                            \
+		return #className;                                                                                                               \
+	}                                                                                                                                  \
+                                                                                                                                     \
+	/*SystemClass Register##class_name(class_name::_className, class_name::PersistBuild, class_name::PersistLoad, persistent_class);*/ \
+                                                                                                                                     \
+	void *className::operator new(size_t size) {                                                                                       \
+		void *ret = ::operator new(size);                                                                                                \
+		SystemClassRegistry::getInstance()->registerInstance(#className, ret);                                                           \
+		return ret;                                                                                                                      \
+	}                                                                                                                                  \
+                                                                                                                                     \
+	void className::operator delete(void *p) {                                                                                         \
+		SystemClassRegistry::getInstance()->unregisterInstance(#className, p);                                                           \
+		::operator delete(p);                                                                                                            \
+	}
 
 #define TMEMBER(memberName) #memberName, &memberName
 #define TMEMBER_PTR(memberName) #memberName, &memberName
-#define TMEMBER_INT(memberName) #memberName, (int32*)&memberName
+#define TMEMBER_INT(memberName) #memberName, (int32 *)&memberName
 
 } // End of namespace Wintermute
 

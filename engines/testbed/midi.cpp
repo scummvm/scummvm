@@ -78,8 +78,8 @@ void MidiTests::waitForMusicToPlay(MidiParser *parser) {
 TestExitStatus MidiTests::playMidiMusic() {
 	Testsuite::clearScreen();
 	Common::String info = "Testing Midi Sound output.\n"
-						  "Here, We generate some Music by using the Midi Driver selected in the GUI.\n"
-						  "You should expect to hear that. The initialization may take some time.\n";
+	                      "Here, We generate some Music by using the Midi Driver selected in the GUI.\n"
+	                      "You should expect to hear that. The initialization may take some time.\n";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Play Midi Music\n");
@@ -122,7 +122,6 @@ TestExitStatus MidiTests::playMidiMusic() {
 			Testsuite::logDetailedPrintf("Info! Midi: Playing music!\n");
 		}
 	}
-
 
 	// Play until track ends or an exit is requested.
 	waitForMusicToPlay(smfParser);

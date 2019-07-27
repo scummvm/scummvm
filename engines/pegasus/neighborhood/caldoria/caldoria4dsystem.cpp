@@ -23,10 +23,10 @@
  *
  */
 
-#include "pegasus/pegasus.h"
+#include "pegasus/neighborhood/caldoria/caldoria4dsystem.h"
 #include "pegasus/ai/ai_area.h"
 #include "pegasus/neighborhood/caldoria/caldoria.h"
-#include "pegasus/neighborhood/caldoria/caldoria4dsystem.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -102,8 +102,9 @@ static const ExtraID s_shutDownExtras[3][3] = {
 	{ k4DMountain0ToIsland0, k4DMountain1ToIsland0, k4DMountain2ToIsland0 }
 };
 
-Caldoria4DSystem::Caldoria4DSystem(Neighborhood *owner) : GameInteraction(kCaldoria4DInteractionID, owner),
-		_4DSpritesMovie(kCaldoria4DSpritesID) {
+Caldoria4DSystem::Caldoria4DSystem(Neighborhood *owner)
+  : GameInteraction(kCaldoria4DInteractionID, owner)
+  , _4DSpritesMovie(kCaldoria4DSpritesID) {
 	_4DSpritesScale = 0;
 	_whichMenu = k4DVideoMenu;
 	_videoChoice = k4DIslandChoice;

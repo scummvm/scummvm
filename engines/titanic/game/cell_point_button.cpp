@@ -26,11 +26,12 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CCellPointButton, CBackground)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(EnterViewMsg)
 END_MESSAGE_MAP()
 
-CCellPointButton::CCellPointButton() : CBackground() {
+CCellPointButton::CCellPointButton()
+  : CBackground() {
 	_unused1 = 0;
 	_unused2 = 0;
 	_unused3 = 0;

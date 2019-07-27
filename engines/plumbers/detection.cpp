@@ -22,11 +22,10 @@
 
 #include "base/plugins.h"
 
-#include "engines/advancedDetector.h"
 #include "common/file.h"
+#include "engines/advancedDetector.h"
 
 #include "plumbers/plumbers.h"
-
 
 namespace Plumbers {
 const char *PlumbersGame::getGameId() const { return _gameDescription->gameId; }
@@ -34,8 +33,8 @@ Common::Platform PlumbersGame::getPlatform() const { return _gameDescription->pl
 }
 
 static const PlainGameDescriptor plumbersGames[] = {
-	{"plumbers", "Plumbers Don't Wear Ties!"},
-	{0, 0}
+	{ "plumbers", "Plumbers Don't Wear Ties!" },
+	{ 0, 0 }
 };
 
 namespace Plumbers {
@@ -43,14 +42,13 @@ namespace Plumbers {
 static const ADGameDescription gameDescriptions[] = {
 	// Plumbers PC version
 	{
-		"plumbers",
-		0,
-		AD_ENTRY1s("GAME.BIN", 0, 41622),
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
-	},
+	  "plumbers",
+	  0,
+	  AD_ENTRY1s("GAME.BIN", 0, 41622),
+	  Common::EN_ANY,
+	  Common::kPlatformWindows,
+	  ADGF_NO_FLAGS,
+	  GUIO1(GUIO_NONE) },
 
 	/*
 	// Plumbers 3DO version
@@ -72,7 +70,8 @@ static const ADGameDescription gameDescriptions[] = {
 
 class PlumbersMetaEngine : public AdvancedMetaEngine {
 public:
-	PlumbersMetaEngine() : AdvancedMetaEngine(Plumbers::gameDescriptions, sizeof(ADGameDescription), plumbersGames) {
+	PlumbersMetaEngine()
+	  : AdvancedMetaEngine(Plumbers::gameDescriptions, sizeof(ADGameDescription), plumbersGames) {
 		_singleId = "plumbers";
 	}
 

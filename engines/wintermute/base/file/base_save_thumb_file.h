@@ -29,7 +29,6 @@
 #ifndef WINTERMUTE_BASE_SAVETHUMBFILE_H
 #define WINTERMUTE_BASE_SAVETHUMBFILE_H
 
-
 #include "engines/wintermute/base/file/base_file.h"
 
 namespace Wintermute {
@@ -43,6 +42,7 @@ public:
 	virtual bool read(void *buffer, uint32 size);
 	virtual bool close();
 	virtual bool open(const Common::String &filename);
+
 private:
 	byte *_data;
 };

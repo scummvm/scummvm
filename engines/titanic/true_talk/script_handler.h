@@ -23,12 +23,12 @@
 #ifndef TITANIC_SCRIPT_HANDLER_H
 #define TITANIC_SCRIPT_HANDLER_H
 
+#include "titanic/support/exe_resources.h"
 #include "titanic/true_talk/tt_npc_script.h"
 #include "titanic/true_talk/tt_parser.h"
 #include "titanic/true_talk/tt_room_script.h"
 #include "titanic/true_talk/tt_string.h"
 #include "titanic/true_talk/tt_vocab.h"
-#include "titanic/support/exe_resources.h"
 
 namespace Titanic {
 
@@ -38,9 +38,11 @@ class CScriptHandler {
 private:
 	CTitleEngine *_owner;
 	int _inputCtr;
+
 private:
 	void handleWord1(const TTstring *str);
 	void handleWord2(const TTstring *str);
+
 public:
 	TTparser _parser;
 	TTvocab *_vocab;
@@ -49,6 +51,7 @@ public:
 	TTconcept *_concept2P;
 	TTconcept *_concept3P;
 	TTconcept *_concept4P;
+
 public:
 	CScriptHandler(CTitleEngine *owner, int val1, VocabMode vocabMode);
 	~CScriptHandler();
@@ -57,10 +60,10 @@ public:
 	 * Set the character and room
 	 */
 	ScriptChangedResult scriptChanged(TTroomScript *roomScript,
-		TTnpcScript *npcScript, uint dialogueId);
+	                                  TTnpcScript *npcScript, uint dialogueId);
 
 	int processInput(TTroomScript *roomScript, TTnpcScript *npcScript,
-		const TTstring &line);
+	                 const TTstring &line);
 
 	/**
 	 * Open a resource for access

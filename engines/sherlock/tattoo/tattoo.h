@@ -31,87 +31,90 @@ namespace Sherlock {
 
 namespace Tattoo {
 
-enum {
-	INV_FOREGROUND		= 167,
-	INV_BACKGROUND		= 1,
-	INFO_FOREGROUND		= 233,
-	INFO_BACKGROUND		= 239,
-	INFO_TOP			= 185,
-	INFO_MIDDLE			= 186,
-	INFO_BOTTOM			= 188,
-	MENU_BACKGROUND		= 225,
-	COMMAND_FOREGROUND	= 15,
-	COMMAND_HIGHLIGHTED	= 254,
-	COMMAND_NULL		= 193,
-	PEN_COLOR			= 248,
-	PEN_HIGHLIGHT_COLOR	= 129
-};
+	enum {
+		INV_FOREGROUND = 167,
+		INV_BACKGROUND = 1,
+		INFO_FOREGROUND = 233,
+		INFO_BACKGROUND = 239,
+		INFO_TOP = 185,
+		INFO_MIDDLE = 186,
+		INFO_BOTTOM = 188,
+		MENU_BACKGROUND = 225,
+		COMMAND_FOREGROUND = 15,
+		COMMAND_HIGHLIGHTED = 254,
+		COMMAND_NULL = 193,
+		PEN_COLOR = 248,
+		PEN_HIGHLIGHT_COLOR = 129
+	};
 
-enum {
-	FLAG_PLAYER_IS_HOLMES	= 76,
-	FLAG_ALT_MAP_MUSIC		= 525
-};
+	enum {
+		FLAG_PLAYER_IS_HOLMES = 76,
+		FLAG_ALT_MAP_MUSIC = 525
+	};
 
-class TattooEngine : public SherlockEngine {
-private:
-	Darts _darts;
-	WidgetFoolscap _foolscapWidget;
+	class TattooEngine : public SherlockEngine {
+	private:
+		Darts _darts;
+		WidgetFoolscap _foolscapWidget;
 
-	/**
+		/**
 	 * Loads the initial palette for the game
 	 */
-	void loadInitialPalette();
+		void loadInitialPalette();
 
-	/**
+		/**
 	 * Load the initial inventory
 	 */
-	void loadInventory();
-protected:
-	/**
+		void loadInventory();
+
+	protected:
+		/**
 	 * Initialize the engine
 	 */
-	virtual void initialize();
+		virtual void initialize();
 
-	virtual void showOpening();
+		virtual void showOpening();
 
-	/**
+		/**
 	 * Starting a scene within the game
 	 */
-	virtual void startScene();
+		virtual void startScene();
 
-	/**
+		/**
 	 * Load configuration options
 	 */
-	virtual void loadConfig();
-public:
-	bool _runningProlog;
-	bool _fastMode, _allowFastMode;
-	bool _transparentMenus;
-	bool _textWindowsOn;
-public:
-	TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
-	virtual ~TattooEngine();
+		virtual void loadConfig();
 
-	/**
+	public:
+		bool _runningProlog;
+		bool _fastMode, _allowFastMode;
+		bool _transparentMenus;
+		bool _textWindowsOn;
+
+	public:
+		TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
+		virtual ~TattooEngine();
+
+		/**
 	 * Shows the foolscap puzzle
 	 */
-	void doFoolscapPuzzle();
+		void doFoolscapPuzzle();
 
-	/**
+		/**
 	 * Save the game configuration
 	 */
-	virtual void saveConfig();
+		virtual void saveConfig();
 
-	/**
+		/**
 	 * Returns true if a savegame can be loaded
 	 */
-	virtual bool canLoadGameStateCurrently();
+		virtual bool canLoadGameStateCurrently();
 
-	/**
+		/**
 	 * Returns true if the game can be saved
 	 */
-	virtual bool canSaveGameStateCurrently();
-};
+		virtual bool canSaveGameStateCurrently();
+	};
 
 } // End of namespace Tattoo
 

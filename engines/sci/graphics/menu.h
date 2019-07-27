@@ -26,17 +26,17 @@
 namespace Sci {
 
 enum {
-	SCI_MENU_ATTRIBUTE_SAID		= 0x6d,
-	SCI_MENU_ATTRIBUTE_TEXT		= 0x6e,
-	SCI_MENU_ATTRIBUTE_KEYPRESS	= 0x6f,
-	SCI_MENU_ATTRIBUTE_ENABLED	= 0x70,
-	SCI_MENU_ATTRIBUTE_TAG		= 0x71
+	SCI_MENU_ATTRIBUTE_SAID = 0x6d,
+	SCI_MENU_ATTRIBUTE_TEXT = 0x6e,
+	SCI_MENU_ATTRIBUTE_KEYPRESS = 0x6f,
+	SCI_MENU_ATTRIBUTE_ENABLED = 0x70,
+	SCI_MENU_ATTRIBUTE_TAG = 0x71
 };
 
 enum {
-	SCI_MENU_REPLACE_ONCONTROL	= 0x03,
-	SCI_MENU_REPLACE_ONALT		= 0x02,
-	SCI_MENU_REPLACE_ONFUNCTION	= 'F'
+	SCI_MENU_REPLACE_ONCONTROL = 0x03,
+	SCI_MENU_REPLACE_ONALT = 0x02,
+	SCI_MENU_REPLACE_ONFUNCTION = 'F'
 };
 
 struct GuiMenuEntry {
@@ -46,7 +46,8 @@ struct GuiMenuEntry {
 	int16 textWidth;
 
 	GuiMenuEntry(uint16 curId)
-	 : id(curId), textWidth(0) { }
+	  : id(curId)
+	  , textWidth(0) {}
 };
 typedef Common::List<GuiMenuEntry *> GuiMenuList;
 
@@ -67,8 +68,15 @@ struct GuiMenuItemEntry {
 	int16 textRightAlignedWidth;
 
 	GuiMenuItemEntry(uint16 curMenuId, uint16 curId)
-	 : menuId(curMenuId), id(curId),
-		enabled(true), tag(0), keyPress(0), keyModifier(0), separatorLine(false), textWidth(0), textRightAlignedWidth(0) {
+	  : menuId(curMenuId)
+	  , id(curId)
+	  , enabled(true)
+	  , tag(0)
+	  , keyPress(0)
+	  , keyModifier(0)
+	  , separatorLine(false)
+	  , textWidth(0)
+	  , textRightAlignedWidth(0) {
 		saidVmPtr = NULL_REG;
 		textVmPtr = NULL_REG;
 	}

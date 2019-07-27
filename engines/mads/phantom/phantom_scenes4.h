@@ -26,239 +26,241 @@
 #include "common/scummsys.h"
 #include "common/serializer.h"
 #include "mads/game.h"
-#include "mads/scene.h"
 #include "mads/phantom/phantom_scenes.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
 namespace Phantom {
 
-class Scene4xx : public PhantomScene {
-protected:
-	/**
+	class Scene4xx : public PhantomScene {
+	protected:
+		/**
 	 * Plays an appropriate sound when entering a scene
 	 */
-	void sceneEntrySound();
+		void sceneEntrySound();
 
-	/**
+		/**
 	 *Sets the AA file to use for the scene
 	 */
-	void setAAName();
+		void setAAName();
 
-	/**
+		/**
 	 * Updates the prefix used for getting player sprites for the scene
 	 */
-	void setPlayerSpritesPrefix();
-public:
-	Scene4xx(MADSEngine *vm) : PhantomScene(vm) {}
-};
+		void setPlayerSpritesPrefix();
 
-class Scene401 : public Scene4xx {
-private:
-	bool _anim0ActvFl;
-	bool _frameInRoomFl;
-	bool _takingFrameInRoomFl;
+	public:
+		Scene4xx(MADSEngine *vm)
+		  : PhantomScene(vm) {}
+	};
 
-	int _redFrameHotspotId;
-	int _greenFrameHostpotId;
-	int _blueFrameHotspotId;
-	int _yellowFrameHotspotId;
+	class Scene401 : public Scene4xx {
+	private:
+		bool _anim0ActvFl;
+		bool _frameInRoomFl;
+		bool _takingFrameInRoomFl;
 
-public:
-	Scene401(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		int _redFrameHotspotId;
+		int _greenFrameHostpotId;
+		int _blueFrameHotspotId;
+		int _yellowFrameHotspotId;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene401(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene403 : public Scene4xx {
-private:
-	bool _frameInRoomFl;
-	bool _takingFrameInRoomFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	int _redFrameHotspotId;
-	int _greenFrameHostpotId;
-	int _blueFrameHotspotId;
-	int _yellowFrameHotspotId;
+	class Scene403 : public Scene4xx {
+	private:
+		bool _frameInRoomFl;
+		bool _takingFrameInRoomFl;
 
-public:
-	Scene403(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		int _redFrameHotspotId;
+		int _greenFrameHostpotId;
+		int _blueFrameHotspotId;
+		int _yellowFrameHotspotId;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene403(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene404 : public Scene4xx {
-private:
-	bool _frameInRoomFl;
-	bool _takingFrameInRoomFl;
-	bool _anim0ActvFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	int _redFrameHotspotId;
-	int _greenFrameHostpotId;
-	int _blueFrameHotspotId;
-	int _yellowFrameHotspotId;
+	class Scene404 : public Scene4xx {
+	private:
+		bool _frameInRoomFl;
+		bool _takingFrameInRoomFl;
+		bool _anim0ActvFl;
 
-public:
-	Scene404(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		int _redFrameHotspotId;
+		int _greenFrameHostpotId;
+		int _blueFrameHotspotId;
+		int _yellowFrameHotspotId;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene404(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene406 : public Scene4xx {
-private:
-	bool _frameInRoomFl;
-	bool _takingFrameInRoomFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	int _redFrameHotspotId;
-	int _greenFrameHostpotId;
-	int _blueFrameHotspotId;
-	int _yellowFrameHotspotId;
+	class Scene406 : public Scene4xx {
+	private:
+		bool _frameInRoomFl;
+		bool _takingFrameInRoomFl;
 
-public:
-	Scene406(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		int _redFrameHotspotId;
+		int _greenFrameHostpotId;
+		int _blueFrameHotspotId;
+		int _yellowFrameHotspotId;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene406(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene407 : public Scene4xx {
-private:
-	bool _frameInRoomFl;
-	bool _takingFrameInRoomFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	int _redFrameHotspotId;
-	int _greenFrameHotspotId;
-	int _blueFrameHotspotId;
-	int _yellowFrameHotspotId;
+	class Scene407 : public Scene4xx {
+	private:
+		bool _frameInRoomFl;
+		bool _takingFrameInRoomFl;
 
-public:
-	Scene407(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		int _redFrameHotspotId;
+		int _greenFrameHotspotId;
+		int _blueFrameHotspotId;
+		int _yellowFrameHotspotId;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene407(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene408 : public Scene4xx {
-private:
-	bool _frameInRoomFl;
-	bool _takingFrameInRoomFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	int _redFrameHotspotId;
-	int _greenFrameHotspotId;
-	int _blueFrameHotspotId;
-	int _yellowFrameHotspotId;
+	class Scene408 : public Scene4xx {
+	private:
+		bool _frameInRoomFl;
+		bool _takingFrameInRoomFl;
 
-public:
-	Scene408(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		int _redFrameHotspotId;
+		int _greenFrameHotspotId;
+		int _blueFrameHotspotId;
+		int _yellowFrameHotspotId;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene408(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene409 : public Scene4xx {
-private:
-	bool _frameInRoomFl;
-	bool _takingFrameInRoomFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	int _redFrameHotspotId;
-	int _greenFrameHotspotId;
-	int _blueFrameHotspotId;
-	int _yellowFrameHotspotId;
+	class Scene409 : public Scene4xx {
+	private:
+		bool _frameInRoomFl;
+		bool _takingFrameInRoomFl;
 
-public:
-	Scene409(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		int _redFrameHotspotId;
+		int _greenFrameHotspotId;
+		int _blueFrameHotspotId;
+		int _yellowFrameHotspotId;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene409(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene410 : public Scene4xx {
-private:
-	int _skullSequence[26];
-	void getLeverInfo(Common::Point *pos, int *type, int lever_number, int *noun);
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-public:
-	Scene410(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	class Scene410 : public Scene4xx {
+	private:
+		int _skullSequence[26];
+		void getLeverInfo(Common::Point *pos, int *type, int lever_number, int *noun);
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene410(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene453 : public Scene4xx {
-private:
-	bool _frameInRoomFl;
-	bool _takingFrameInRoomFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	int _redFrameHotspotId;
-	int _greenFrameHotspotId;
-	int _blueFrameHotspotId;
-	int _yellowFrameHotspotId;
+	class Scene453 : public Scene4xx {
+	private:
+		bool _frameInRoomFl;
+		bool _takingFrameInRoomFl;
 
-public:
-	Scene453(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		int _redFrameHotspotId;
+		int _greenFrameHotspotId;
+		int _blueFrameHotspotId;
+		int _yellowFrameHotspotId;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene453(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene456 : public Scene4xx {
-private:
-	bool _frameInRoomFl;
-	bool _takingFrameInRoomFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	int _redFrameHotspotId;
-	int _greenFrameHotspotId;
-	int _blueFrameHotspotId;
-	int _yellowFrameHotspotId;
+	class Scene456 : public Scene4xx {
+	private:
+		bool _frameInRoomFl;
+		bool _takingFrameInRoomFl;
 
-public:
-	Scene456(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		int _redFrameHotspotId;
+		int _greenFrameHotspotId;
+		int _blueFrameHotspotId;
+		int _yellowFrameHotspotId;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene456(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
+
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 } // End of namespace Phantom
 } // End of namespace MADS
 

@@ -20,15 +20,15 @@
  *
  */
 
-#include "sci/sci.h"
-#include "sci/graphics/palette.h"
 #include "sci/graphics/remap.h"
+#include "sci/graphics/palette.h"
 #include "sci/graphics/screen.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
 GfxRemap::GfxRemap(GfxPalette *palette)
-	: _palette(palette) {
+  : _palette(palette) {
 	_remapOn = false;
 	resetRemapping();
 }
@@ -42,7 +42,7 @@ byte GfxRemap::remapColor(byte remappedColor, byte screenColor) {
 	else
 		error("remapColor(): Color %d isn't remapped", remappedColor);
 
-	return 0;	// should never reach here
+	return 0; // should never reach here
 }
 
 void GfxRemap::resetRemapping() {

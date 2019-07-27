@@ -44,23 +44,23 @@
 
 #ifdef MACOSX
 
-#include <sys/stat.h>
-#include <sys/mount.h>
-#include <limits.h>
+#	include <limits.h>
+#	include <sys/mount.h>
+#	include <sys/stat.h>
 
-#include "common/scummsys.h"
+#	include "common/scummsys.h"
 
-#include "audio/audiostream.h"
-#include "audio/decoders/aiff.h"
-#include "audio/timestamp.h"
-#include "common/config-manager.h"
-#include "common/debug.h"
-#include "common/fs.h"
-#include "common/hashmap.h"
-#include "common/textconsole.h"
-#include "backends/audiocd/default/default-audiocd.h"
-#include "backends/audiocd/macosx/macosx-audiocd.h"
-#include "backends/fs/stdiostream.h"
+#	include "audio/audiostream.h"
+#	include "audio/decoders/aiff.h"
+#	include "audio/timestamp.h"
+#	include "backends/audiocd/default/default-audiocd.h"
+#	include "backends/audiocd/macosx/macosx-audiocd.h"
+#	include "backends/fs/stdiostream.h"
+#	include "common/config-manager.h"
+#	include "common/debug.h"
+#	include "common/fs.h"
+#	include "common/hashmap.h"
+#	include "common/textconsole.h"
 
 // Partially based on SDL's code
 
@@ -75,7 +75,7 @@ public:
 	bool open() override;
 	void close() override;
 	bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
-			Audio::Mixer::SoundType soundType) override;
+	          Audio::Mixer::SoundType soundType) override;
 
 protected:
 	bool openCD(int drive) override;
@@ -83,8 +83,10 @@ protected:
 
 private:
 	struct Drive {
-		Drive(const Common::String &m, const Common::String &d, const Common::String &f) :
-			mountPoint(m), deviceName(d), fsType(f) {}
+		Drive(const Common::String &m, const Common::String &d, const Common::String &f)
+		  : mountPoint(m)
+		  , deviceName(d)
+		  , fsType(f) {}
 
 		Common::String mountPoint;
 		Common::String deviceName;
@@ -211,7 +213,7 @@ MacOSXAudioCDManager::DriveList MacOSXAudioCDManager::detectAllDrives() {
 }
 
 bool MacOSXAudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
-		Audio::Mixer::SoundType soundType) {
+                                Audio::Mixer::SoundType soundType) {
 	// Prefer emulation
 	if (DefaultAudioCDManager::play(track, numLoops, startFrame, duration, onlyEmulate, soundType))
 		return true;

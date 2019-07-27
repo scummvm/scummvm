@@ -23,8 +23,8 @@
 #ifndef CACHED_LISTING_PROVIDER_H_
 #define CACHED_LISTING_PROVIDER_H_
 
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "engines/wintermute/debugger/error.h"
 #include "source_listing_provider.h"
 
@@ -39,6 +39,7 @@ class CachedSourceListingProvider : public SourceListingProvider {
 	BlankListingProvider *_fallbackListingProvider;
 	Common::HashMap<Common::String, SourceListing *> _cached;
 	void invalidateCache();
+
 public:
 	CachedSourceListingProvider();
 	virtual ~CachedSourceListingProvider();

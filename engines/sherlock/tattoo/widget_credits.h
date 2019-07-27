@@ -28,59 +28,63 @@
 
 namespace Sherlock {
 
-	class SherlockEngine;
+class SherlockEngine;
 
 namespace Tattoo {
 
-struct CreditLine {
-	Common::Point _position;
-	int _xOffset;
-	int _width;
-	Common::String _line, _line2;
+	struct CreditLine {
+		Common::Point _position;
+		int _xOffset;
+		int _width;
+		Common::String _line, _line2;
 
-	CreditLine(const Common::String &line, const Common::Point &pt, int width) :
-		_line(line), _position(pt), _width(width), _xOffset(0) {}
-};
+		CreditLine(const Common::String &line, const Common::Point &pt, int width)
+		  : _line(line)
+		  , _position(pt)
+		  , _width(width)
+		  , _xOffset(0) {}
+	};
 
-class WidgetCredits {
-private:
-	SherlockEngine *_vm;
-	Common::Array<CreditLine> _creditLines;
-	int _creditSpeed;
-	bool _creditsActive;
-public:
-	WidgetCredits(SherlockEngine *vm);
+	class WidgetCredits {
+	private:
+		SherlockEngine *_vm;
+		Common::Array<CreditLine> _creditLines;
+		int _creditSpeed;
+		bool _creditsActive;
 
-	/**
+	public:
+		WidgetCredits(SherlockEngine *vm);
+
+		/**
 	 * Returns true if the credits are active
 	 */
-	bool active() const { return _creditsActive; }
+		bool active() const { return _creditsActive; }
 
-	/**
+		/**
 	 * Initialize and load credit data for display
 	 */
-	void initCredits();
+		void initCredits();
 
-	/**
+		/**
 	 * Closes down credits display
 	 */
-	void close();
+		void close();
 
-	/**
+		/**
 	 * Draw credits on the screen
 	 */
-	void drawCredits();
+		void drawCredits();
 
-	/**
+		/**
 	 * Blit the drawn credits to the screen
 	 */
-	void blitCredits();
+		void blitCredits();
 
-	/**
+		/**
 	 * Erase any area of the screen covered by credits
 	 */
-	void eraseCredits();
-};
+		void eraseCredits();
+	};
 
 } // End of namespace Tattoo
 

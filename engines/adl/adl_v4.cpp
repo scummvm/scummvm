@@ -27,10 +27,9 @@
 
 namespace Adl {
 
-AdlEngine_v4::AdlEngine_v4(OSystem *syst, const AdlGameDescription *gd) :
-		AdlEngine_v3(syst, gd),
-		_itemPicIndex(nullptr) {
-
+AdlEngine_v4::AdlEngine_v4(OSystem *syst, const AdlGameDescription *gd)
+  : AdlEngine_v3(syst, gd)
+  , _itemPicIndex(nullptr) {
 }
 
 AdlEngine_v4::~AdlEngine_v4() {
@@ -256,22 +255,22 @@ void AdlEngine_v4::adjustDataBlockPtr(byte &track, byte &sector, byte &offset, b
 
 AdlEngine_v4::RegionChunkType AdlEngine_v4::getRegionChunkType(const uint16 addr) const {
 	switch (addr) {
-		case 0x9000:
-			return kRegionChunkMessages;
-		case 0x4a80:
-			return kRegionChunkGlobalPics;
-		case 0x4000:
-			return kRegionChunkVerbs;
-		case 0x1800:
-			return kRegionChunkNouns;
-		case 0x0e00:
-			return kRegionChunkRooms;
-		case 0x7b00:
-			return kRegionChunkRoomCmds;
-		case 0x9500:
-			return kRegionChunkGlobalCmds;
-		default:
-			return kRegionChunkUnknown;
+	case 0x9000:
+		return kRegionChunkMessages;
+	case 0x4a80:
+		return kRegionChunkGlobalPics;
+	case 0x4000:
+		return kRegionChunkVerbs;
+	case 0x1800:
+		return kRegionChunkNouns;
+	case 0x0e00:
+		return kRegionChunkRooms;
+	case 0x7b00:
+		return kRegionChunkRoomCmds;
+	case 0x9500:
+		return kRegionChunkGlobalCmds;
+	default:
+		return kRegionChunkUnknown;
 	}
 }
 

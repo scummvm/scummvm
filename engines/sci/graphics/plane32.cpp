@@ -20,6 +20,7 @@
  *
  */
 
+#include "sci/graphics/plane32.h"
 #include "sci/console.h"
 #include "sci/engine/features.h"
 #include "sci/engine/kernel.h"
@@ -28,7 +29,6 @@
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/helpers.h"
 #include "sci/graphics/lists32.h"
-#include "sci/graphics/plane32.h"
 #include "sci/graphics/remap32.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/screen_item32.h"
@@ -47,36 +47,36 @@ void DrawList::add(ScreenItem *screenItem, const Common::Rect &rect) {
 uint16 Plane::_nextObjectId; // Will be initialized in Plane::init()
 uint32 Plane::_nextCreationId; // ditto
 
-Plane::Plane(const Common::Rect &gameRect, PlanePictureCodes pictureId) :
-_creationId(_nextCreationId++),
-_pictureId(pictureId),
-_mirrored(false),
-_type(kPlaneTypeColored),
-_back(0),
-_priorityChanged(false),
-_object(make_reg(0, _nextObjectId++)),
-_redrawAllCount(g_sci->_gfxFrameout->getScreenCount()),
-_created(g_sci->_gfxFrameout->getScreenCount()),
-_updated(0),
-_deleted(0),
-_moved(0),
-_gameRect(gameRect) {
+Plane::Plane(const Common::Rect &gameRect, PlanePictureCodes pictureId)
+  : _creationId(_nextCreationId++)
+  , _pictureId(pictureId)
+  , _mirrored(false)
+  , _type(kPlaneTypeColored)
+  , _back(0)
+  , _priorityChanged(false)
+  , _object(make_reg(0, _nextObjectId++))
+  , _redrawAllCount(g_sci->_gfxFrameout->getScreenCount())
+  , _created(g_sci->_gfxFrameout->getScreenCount())
+  , _updated(0)
+  , _deleted(0)
+  , _moved(0)
+  , _gameRect(gameRect) {
 	convertGameRectToPlaneRect();
 	_priority = MAX(10000, g_sci->_gfxFrameout->getPlanes().getTopPlanePriority() + 1);
 	setType();
 	_screenRect = _planeRect;
 }
 
-Plane::Plane(reg_t object) :
-_creationId(_nextCreationId++),
-_type(kPlaneTypeColored),
-_priorityChanged(false),
-_object(object),
-_redrawAllCount(g_sci->_gfxFrameout->getScreenCount()),
-_created(g_sci->_gfxFrameout->getScreenCount()),
-_updated(0),
-_deleted(0),
-_moved(0) {
+Plane::Plane(reg_t object)
+  : _creationId(_nextCreationId++)
+  , _type(kPlaneTypeColored)
+  , _priorityChanged(false)
+  , _object(object)
+  , _redrawAllCount(g_sci->_gfxFrameout->getScreenCount())
+  , _created(g_sci->_gfxFrameout->getScreenCount())
+  , _updated(0)
+  , _deleted(0)
+  , _moved(0) {
 	SegManager *segMan = g_sci->getEngineState()->_segMan;
 	_vanishingPoint.x = readSelectorValue(segMan, object, SELECTOR(vanishingX));
 	_vanishingPoint.y = readSelectorValue(segMan, object, SELECTOR(vanishingY));
@@ -104,18 +104,18 @@ _moved(0) {
 	changePic();
 }
 
-Plane::Plane(const Plane &other) :
-_creationId(other._creationId),
-_pictureId(other._pictureId),
-_mirrored(other._mirrored),
-_type(other._type),
-_back(other._back),
-_object(other._object),
-_priority(other._priority),
-_planeRect(other._planeRect),
-_gameRect(other._gameRect),
-_screenRect(other._screenRect),
-_screenItemList(other._screenItemList) {}
+Plane::Plane(const Plane &other)
+  : _creationId(other._creationId)
+  , _pictureId(other._pictureId)
+  , _mirrored(other._mirrored)
+  , _type(other._type)
+  , _back(other._back)
+  , _object(other._object)
+  , _priority(other._priority)
+  , _planeRect(other._planeRect)
+  , _gameRect(other._gameRect)
+  , _screenRect(other._screenRect)
+  , _screenItemList(other._screenItemList) {}
 
 void Plane::operator=(const Plane &other) {
 	_creationId = other._creationId;
@@ -158,20 +158,18 @@ void Plane::printDebugInfo(Console *con) const {
 	}
 
 	con->debugPrintf("%04x:%04x (%s): type %d, prio %d, ins %u, pic %d, mirror %d, back %d\n",
-		PRINT_REG(_object),
-		name,
-		_type,
-		_priority,
-		_creationId,
-		_pictureId,
-		_mirrored,
-		_back
-	);
+	                 PRINT_REG(_object),
+	                 name,
+	                 _type,
+	                 _priority,
+	                 _creationId,
+	                 _pictureId,
+	                 _mirrored,
+	                 _back);
 	con->debugPrintf("  game rect: (%d, %d, %d, %d), plane rect: (%d, %d, %d, %d)\n  screen rect: (%d, %d, %d, %d)\n",
-		PRINT_RECT(_gameRect),
-		PRINT_RECT(_planeRect),
-		PRINT_RECT(_screenRect)
-	);
+	                 PRINT_RECT(_gameRect),
+	                 PRINT_RECT(_planeRect),
+	                 PRINT_RECT(_screenRect));
 	con->debugPrintf("  # screen items: %d\n", _screenItemList.size());
 }
 
@@ -269,9 +267,7 @@ void Plane::breakDrawListByPlanes(DrawList &drawList, const PlaneList &planeList
 	for (DrawList::size_type i = 0; i < drawList.size(); ++i) {
 		for (PlaneList::size_type j = nextPlaneIndex; j < planeCount; ++j) {
 			if (
-				planeList[j]->_type != kPlaneTypeTransparent &&
-				planeList[j]->_type != kPlaneTypeTransparentPicture
-			) {
+			  planeList[j]->_type != kPlaneTypeTransparent && planeList[j]->_type != kPlaneTypeTransparentPicture) {
 				Common::Rect outRects[4];
 				int splitCount = splitRects(drawList[i]->rect, planeList[j]->_screenRect, outRects);
 				if (splitCount != -1) {
@@ -295,9 +291,7 @@ void Plane::breakEraseListByPlanes(RectList &eraseList, const PlaneList &planeLi
 	for (RectList::size_type i = 0; i < eraseList.size(); ++i) {
 		for (PlaneList::size_type j = nextPlaneIndex; j < planeCount; ++j) {
 			if (
-				planeList[j]->_type != kPlaneTypeTransparent &&
-				planeList[j]->_type != kPlaneTypeTransparentPicture
-			) {
+			  planeList[j]->_type != kPlaneTypeTransparent && planeList[j]->_type != kPlaneTypeTransparentPicture) {
 				Common::Rect outRects[4];
 				int splitCount = splitRects(*eraseList[i], planeList[j]->_screenRect, outRects);
 				if (splitCount != -1) {
@@ -352,9 +346,7 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 		if (item->_deleted) {
 			// Add item's rect to erase list
 			if (
-				visibleItem != nullptr &&
-				!visibleItemScreenRect.isEmpty()
-			) {
+			  visibleItem != nullptr && !visibleItemScreenRect.isEmpty()) {
 				if (g_sci->_gfxRemap32->getRemapCount()) {
 					mergeToRectList(visibleItemScreenRect, eraseList);
 				} else {
@@ -372,7 +364,7 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 
 		if (item->_created) {
 			// Add item to draw list
-			if(!itemScreenRect.isEmpty()) {
+			if (!itemScreenRect.isEmpty()) {
 				if (g_sci->_gfxRemap32->getRemapCount()) {
 					drawList.add(item, itemScreenRect);
 					mergeToRectList(itemScreenRect, eraseList);
@@ -385,11 +377,7 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 
 			if (g_sci->_gfxRemap32->getRemapCount()) {
 				// If item and visibleItem don't overlap...
-				if (itemScreenRect.isEmpty() ||
-					visibleItem == nullptr ||
-					visibleItemScreenRect.isEmpty() ||
-					!visibleItemScreenRect.intersects(itemScreenRect)
-				) {
+				if (itemScreenRect.isEmpty() || visibleItem == nullptr || visibleItemScreenRect.isEmpty() || !visibleItemScreenRect.intersects(itemScreenRect)) {
 					// ...add item to draw list, and old rect to erase list...
 					if (!itemScreenRect.isEmpty()) {
 						drawList.add(item, itemScreenRect);
@@ -481,10 +469,7 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 			for (ScreenItemList::size_type j = 0; j < screenItemCount; ++j) {
 				ScreenItem *item = _screenItemList[j];
 				if (
-					item != nullptr &&
-					!item->_created && !item->_updated && !item->_deleted &&
-					rect.intersects(item->_screenRect)
-				) {
+				  item != nullptr && !item->_created && !item->_updated && !item->_deleted && rect.intersects(item->_screenRect)) {
 					drawList.add(item, rect.findIntersectingRect(item->_screenRect));
 				}
 			}
@@ -511,14 +496,10 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 				}
 
 				if (
-					drawListEntry != nullptr && newItem != nullptr &&
-					!newItem->_created && !newItem->_updated && !newItem->_deleted
-				) {
+				  drawListEntry != nullptr && newItem != nullptr && !newItem->_created && !newItem->_updated && !newItem->_deleted) {
 					const ScreenItem *drawnItem = drawListEntry->screenItem;
 
-					if (newItem->hasPriorityAbove(*drawnItem) &&
-						drawListEntry->rect.intersects(newItem->_screenRect)
-					) {
+					if (newItem->hasPriorityAbove(*drawnItem) && drawListEntry->rect.intersects(newItem->_screenRect)) {
 						mergeToDrawList(j, drawListEntry->rect.findIntersectingRect(newItem->_screenRect), drawList);
 					}
 				}
@@ -536,8 +517,7 @@ void Plane::decrementScreenItemArrayCounts(Plane *visiblePlane, const bool force
 
 		if (item != nullptr) {
 			// update item in visiblePlane if item is updated
-			if (visiblePlane != nullptr && (
-				item->_updated || (forceUpdate && visiblePlane->_screenItemList.findByObject(item->_object) != nullptr))) {
+			if (visiblePlane != nullptr && (item->_updated || (forceUpdate && visiblePlane->_screenItemList.findByObject(item->_object) != nullptr))) {
 				*visiblePlane->_screenItemList[i] = *item;
 			}
 
@@ -786,11 +766,7 @@ void Plane::sync(const Plane *other, const Common::Rect &screenRect) {
 		}
 	} else {
 		if (
-			_planeRect.top != other->_planeRect.top ||
-			_planeRect.left != other->_planeRect.left ||
-			_planeRect.right > other->_planeRect.right ||
-			_planeRect.bottom > other->_planeRect.bottom
-		) {
+		  _planeRect.top != other->_planeRect.top || _planeRect.left != other->_planeRect.left || _planeRect.right > other->_planeRect.right || _planeRect.bottom > other->_planeRect.bottom) {
 			// the plane moved or got larger
 			_redrawAllCount = g_sci->_gfxFrameout->getScreenCount();
 			_moved = g_sci->_gfxFrameout->getScreenCount();
@@ -875,10 +851,7 @@ void Plane::remapMarkRedraw() {
 	for (ScreenItemList::size_type i = 0; i < screenItemCount; ++i) {
 		ScreenItem *screenItem = _screenItemList[i];
 		if (
-			screenItem != nullptr &&
-			!screenItem->_deleted && !screenItem->_created &&
-			screenItem->getCelObj()._remap
-		) {
+		  screenItem != nullptr && !screenItem->_deleted && !screenItem->_created && screenItem->getCelObj()._remap) {
 			screenItem->_updated = g_sci->_gfxFrameout->getScreenCount();
 		}
 	}

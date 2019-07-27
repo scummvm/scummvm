@@ -34,7 +34,8 @@
 
 namespace Toon {
 
-ToonstruckSmackerDecoder::ToonstruckSmackerDecoder() : Video::SmackerDecoder() {
+ToonstruckSmackerDecoder::ToonstruckSmackerDecoder()
+  : Video::SmackerDecoder() {
 	_lowRes = false;
 }
 
@@ -63,7 +64,7 @@ Video::SmackerDecoder::SmackerVideoTrack *ToonstruckSmackerDecoder::createVideoT
 }
 
 // decoder is deallocated with Movie destruction i.e. new ToonstruckSmackerDecoder is needed
-Movie::Movie(ToonEngine *vm , ToonstruckSmackerDecoder *decoder) {
+Movie::Movie(ToonEngine *vm, ToonstruckSmackerDecoder *decoder) {
 	_vm = vm;
 	_playing = false;
 	_decoder = decoder;
@@ -106,7 +107,7 @@ void Movie::playVideo(bool isFirstIntroVideo) {
 			if (frame) {
 				if (_decoder->isLowRes()) {
 					// handle manually 2x scaling here
-					Graphics::Surface* surf = _vm->_system->lockScreen();
+					Graphics::Surface *surf = _vm->_system->lockScreen();
 					for (int y = 0; y < frame->h / 2; y++) {
 						memcpy(surf->getBasePtr(0, y * 2 + 0), frame->getBasePtr(0, y), frame->pitch);
 						memcpy(surf->getBasePtr(0, y * 2 + 1), frame->getBasePtr(0, y), frame->pitch);
@@ -120,8 +121,8 @@ void Movie::playVideo(bool isFirstIntroVideo) {
 						int32 currentFrame = _decoder->getCurFrame();
 						if (currentFrame >= 956 && currentFrame <= 1038) {
 							debugC(1, kDebugMovie, "Triggered workaround for glitch in first intro video...");
-							_vm->_system->copyRectToScreen(frame->getBasePtr(frame->w-188, 123), frame->pitch, frame->w-188, 124, 188, 1);
-							_vm->_system->copyRectToScreen(frame->getBasePtr(frame->w-188, 126), frame->pitch, frame->w-188, 125, 188, 1);
+							_vm->_system->copyRectToScreen(frame->getBasePtr(frame->w - 188, 123), frame->pitch, frame->w - 188, 124, 188, 1);
+							_vm->_system->copyRectToScreen(frame->getBasePtr(frame->w - 188, 126), frame->pitch, frame->w - 188, 125, 188, 1);
 							_vm->_system->copyRectToScreen(frame->getBasePtr(0, 125), frame->pitch, 0, 126, 64, 1);
 							_vm->_system->copyRectToScreen(frame->getBasePtr(0, 128), frame->pitch, 0, 127, 64, 1);
 						}

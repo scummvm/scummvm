@@ -109,15 +109,15 @@ void ActorDialogueQueue::flush(int a1, bool callScript) {
 * return true when queue is empty and object is flushed
 */
 bool ActorDialogueQueue::isEmpty() {
-	return _entries.empty() \
-	        && !_isNotPause \
-	        && !_isPause \
-	        && _actorId == -1 \
-	        && _sentenceId == -1 \
-	        && _animationMode == -1 \
-	        && _animationModePrevious == -1 \
-	        && _delay == 0 \
-	        && _timeLast == 0u;
+	return _entries.empty()
+	  && !_isNotPause
+	  && !_isPause
+	  && _actorId == -1
+	  && _sentenceId == -1
+	  && _animationMode == -1
+	  && _animationModePrevious == -1
+	  && _delay == 0
+	  && _timeLast == 0u;
 }
 
 void ActorDialogueQueue::tick() {
@@ -126,7 +126,7 @@ void ActorDialogueQueue::tick() {
 			uint32 time = _vm->_time->current();
 			uint32 timeDiff = time - _timeLast; // unsigned difference is intentional
 			_timeLast = time;
-			_delay = (_delay < 0 || ((uint32)_delay < timeDiff) ) ? 0 : ((uint32)_delay - timeDiff);
+			_delay = (_delay < 0 || ((uint32)_delay < timeDiff)) ? 0 : ((uint32)_delay - timeDiff);
 			if (_delay > 0) {
 				return;
 			}

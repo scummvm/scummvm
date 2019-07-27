@@ -20,15 +20,15 @@
  *
  */
 
+#include "sci/graphics/paint32.h"
 #include "graphics/primitives.h"
 #include "sci/engine/seg_manager.h"
-#include "sci/graphics/paint32.h"
 #include "sci/graphics/text32.h"
 
 namespace Sci {
 
-GfxPaint32::GfxPaint32(SegManager *segMan) :
-	_segMan(segMan) {}
+GfxPaint32::GfxPaint32(SegManager *segMan)
+  : _segMan(segMan) {}
 
 reg_t GfxPaint32::kernelAddLine(const reg_t planeObject, const Common::Point &startPoint, const Common::Point &endPoint, const int16 priority, const uint8 color, const LineStyle style, const uint16 pattern, const uint8 thickness) {
 	Plane *plane = g_sci->_gfxFrameout->getPlanes().findByObject(planeObject);
@@ -88,7 +88,7 @@ void GfxPaint32::plotter(int x, int y, int color, void *data) {
 	LineProperties &properties = *static_cast<LineProperties *>(data);
 	byte *pixels = properties.bitmap->getPixels();
 
-	const uint16 bitmapWidth  = properties.bitmap->getWidth();
+	const uint16 bitmapWidth = properties.bitmap->getWidth();
 	const uint16 bitmapHeight = properties.bitmap->getHeight();
 	const uint32 index = bitmapWidth * y + x;
 
@@ -126,12 +126,12 @@ reg_t GfxPaint32::makeLineBitmap(const Common::Point &startPoint, const Common::
 	thickness = (MAX<uint8>(1, thickness) - 1) | 1;
 	const uint8 halfThickness = thickness >> 1;
 
-	const uint16 scriptWidth  = g_sci->_gfxFrameout->getScriptWidth();
+	const uint16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
 	const uint16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
 
-	outRect.left   = MIN<int16>(startPoint.x, endPoint.x);
-	outRect.top    = MIN<int16>(startPoint.y, endPoint.y);
-	outRect.right  = MAX<int16>(startPoint.x, endPoint.x) + 1;
+	outRect.left = MIN<int16>(startPoint.x, endPoint.x);
+	outRect.top = MIN<int16>(startPoint.y, endPoint.y);
+	outRect.right = MAX<int16>(startPoint.x, endPoint.x) + 1;
 	outRect.bottom = MAX<int16>(startPoint.y, endPoint.y) + 1;
 
 	outRect.grow(halfThickness);
@@ -166,8 +166,8 @@ reg_t GfxPaint32::makeLineBitmap(const Common::Point &startPoint, const Common::
 	// Change coordinates to be relative to the bitmap
 	const int16 x1 = startPoint.x - outRect.left;
 	const int16 y1 = startPoint.y - outRect.top;
-	const int16 x2 =   endPoint.x - outRect.left;
-	const int16 y2 =   endPoint.y - outRect.top;
+	const int16 x2 = endPoint.x - outRect.left;
+	const int16 y2 = endPoint.y - outRect.top;
 
 	if (!properties.solid) {
 		for (int i = 0; i < ARRAYSIZE(properties.pattern); ++i) {
@@ -188,6 +188,5 @@ reg_t GfxPaint32::makeLineBitmap(const Common::Point &startPoint, const Common::
 
 	return bitmapId;
 }
-
 
 } // End of namespace Sci

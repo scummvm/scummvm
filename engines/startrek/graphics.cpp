@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "startrek/common.h"
 #include "startrek/graphics.h"
+#include "startrek/common.h"
 
 #include "common/algorithm.h"
 #include "common/config-manager.h"
@@ -32,7 +32,9 @@
 
 namespace StarTrek {
 
-Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
+Graphics::Graphics(StarTrekEngine *vm)
+  : _vm(vm)
+  , _egaMode(false) {
 	_font = nullptr;
 	_egaData = nullptr;
 	_lutData = nullptr;
@@ -78,7 +80,6 @@ Graphics::~Graphics() {
 	delete _font;
 }
 
-
 void Graphics::setBackgroundImage(SharedPtr<Bitmap> bitmap) {
 	_backgroundImage = SharedPtr<Bitmap>(new Bitmap(*bitmap));
 }
@@ -86,7 +87,7 @@ void Graphics::setBackgroundImage(SharedPtr<Bitmap> bitmap) {
 void Graphics::drawBitmapToBackground(const Common::Rect &origRect, const Common::Rect &drawRect, Bitmap *bitmap) {
 	byte *dest = _backgroundImage->pixels + drawRect.top * SCREEN_WIDTH + drawRect.left;
 	byte *src = bitmap->pixels + (drawRect.left - origRect.left)
-	            + (drawRect.top - origRect.top) * bitmap->width;
+	  + (drawRect.top - origRect.top) * bitmap->width;
 
 	for (int y = drawRect.top; y < drawRect.bottom; y++) {
 		for (int x = drawRect.left; x < drawRect.right; x++) {
@@ -219,7 +220,6 @@ void Graphics::decPaletteFadeLevel() {
 	}
 }
 
-
 void Graphics::loadPri(const Common::String &priFile) {
 	Common::MemoryReadStream *priStream = _vm->loadFile(priFile + ".pri");
 	priStream->read(_priData, SCREEN_WIDTH * SCREEN_HEIGHT / 2);
@@ -321,7 +321,7 @@ void Graphics::drawSprite(const Sprite &sprite, ::Graphics::Surface *surface) {
 // sprite's actual, full rectangle.
 void Graphics::drawSprite(const Sprite &sprite, ::Graphics::Surface *surface, const Common::Rect &rect, int rectLeft, int rectTop) {
 	Common::Rect spriteRect = Common::Rect(sprite.drawX, sprite.drawY,
-	        sprite.drawX + sprite.bitmap->width, sprite.drawY + sprite.bitmap->height);
+	                                       sprite.drawX + sprite.bitmap->width, sprite.drawY + sprite.bitmap->height);
 
 	assert(_screenRect.contains(rect));
 	assert(spriteRect.contains(rect));
@@ -331,7 +331,7 @@ void Graphics::drawSprite(const Sprite &sprite, ::Graphics::Surface *surface, co
 	switch (sprite.drawMode) {
 	case 0: { // Normal sprite
 		byte *src = sprite.bitmap->pixels + (rect.left - sprite.drawX)
-		            + (rect.top - sprite.drawY) * sprite.bitmap->width;
+		  + (rect.top - sprite.drawY) * sprite.bitmap->width;
 
 		int priOffset = rect.top * SCREEN_WIDTH + rect.left;
 
@@ -353,8 +353,8 @@ void Graphics::drawSprite(const Sprite &sprite, ::Graphics::Surface *surface, co
 				*dest++ = b;
 			}
 
-			src       += sprite.bitmap->width - rect.width();
-			dest      += SCREEN_WIDTH - rect.width();
+			src += sprite.bitmap->width - rect.width();
+			dest += SCREEN_WIDTH - rect.width();
 			priOffset += SCREEN_WIDTH - rect.width();
 		}
 		break;
@@ -365,7 +365,7 @@ void Graphics::drawSprite(const Sprite &sprite, ::Graphics::Surface *surface, co
 
 	case 2: { // Normal sprite with darkened background for "transparent" pixels (and no priority)
 		byte *src = sprite.bitmap->pixels + (rect.left - sprite.drawX)
-		            + (rect.top - sprite.drawY) * sprite.bitmap->width;
+		  + (rect.top - sprite.drawY) * sprite.bitmap->width;
 
 		for (int y = rect.top; y < rect.bottom; y++) {
 			for (int x = rect.left; x < rect.right; x++) {
@@ -395,16 +395,16 @@ void Graphics::drawSprite(const Sprite &sprite, ::Graphics::Surface *surface, co
 		// characters to be drawn.
 		Common::Rect rectangle1;
 
-		rectangle1.left   = (rect.left   - sprite.drawX) / 8;
-		rectangle1.top    = (rect.top    - sprite.drawY) / 8;
-		rectangle1.right  = (rect.right  - sprite.drawX + 7) / 8;
+		rectangle1.left = (rect.left - sprite.drawX) / 8;
+		rectangle1.top = (rect.top - sprite.drawY) / 8;
+		rectangle1.right = (rect.right - sprite.drawX + 7) / 8;
 		rectangle1.bottom = (rect.bottom - sprite.drawY + 7) / 8;
 
 		int drawWidth = rectangle1.width();
 		int drawHeight = rectangle1.height();
 
 		dest = (byte *)surface->getPixels() + sprite.drawY * SCREEN_WIDTH + sprite.drawX
-		       + rectangle1.top * 8 * SCREEN_WIDTH + rectangle1.left * 8;
+		  + rectangle1.top * 8 * SCREEN_WIDTH + rectangle1.left * 8;
 
 		byte *src = sprite.bitmap->pixels + rectangle1.top * sprite.bitmap->width / 8 + rectangle1.left;
 
@@ -443,7 +443,6 @@ void Graphics::drawSprite(const Sprite &sprite, ::Graphics::Surface *surface, co
 
 			src += (sprite.bitmap->width / 8) - drawWidth;
 			dest += (SCREEN_WIDTH * 8) - drawWidth * 8;
-
 		}
 
 		break;
@@ -481,9 +480,9 @@ void Graphics::drawAllSprites(bool updateScreenFlag) {
 			Sprite *spr = _sprites[i];
 			Common::Rect rect;
 
-			rect.left   = spr->pos.x - spr->bitmap->xoffset;
-			rect.top    = spr->pos.y - spr->bitmap->yoffset;
-			rect.right  = rect.left + spr->bitmap->width;
+			rect.left = spr->pos.x - spr->bitmap->xoffset;
+			rect.top = spr->pos.y - spr->bitmap->yoffset;
+			rect.right = rect.left + spr->bitmap->width;
 			rect.bottom = rect.top + spr->bitmap->height;
 
 			spr->drawX = rect.left;
@@ -721,7 +720,6 @@ byte *Graphics::getFontGfx(char c) {
 	return _font->getCharData(c & 0xff);
 }
 
-
 void Graphics::copyBackgroundScreen() {
 	drawDirectToScreen(_backgroundImage);
 }
@@ -729,7 +727,6 @@ void Graphics::copyBackgroundScreen() {
 void Graphics::drawDirectToScreen(SharedPtr<Bitmap> bitmap) {
 	_vm->_system->copyRectToScreen(bitmap->pixels, bitmap->width, bitmap->xoffset, bitmap->yoffset, bitmap->width, bitmap->height);
 }
-
 
 void Graphics::loadEGAData(const char *filename) {
 	// Load EGA palette data

@@ -22,9 +22,9 @@
 
 #include "made/graphics.h"
 
+#include "common/debug.h"
 #include "common/endian.h"
 #include "common/textconsole.h"
-#include "common/debug.h"
 #include "common/util.h"
 
 #include "graphics/surface.h"
@@ -158,13 +158,10 @@ void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, u
 							lineBuf[drawDestOfs + offsets[i]] = maskReader.readPixel();
 					}
 					break;
-
 				}
 
 				drawDestOfs += 4;
-
 			}
-
 		}
 
 		if (deltaFrame) {
@@ -181,9 +178,7 @@ void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, u
 				destPtr += width;
 			}
 		}
-
 	}
-
 }
 
 void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, uint16 pixelOffs, uint16 maskOffs, uint16 lineSize) {
@@ -263,7 +258,6 @@ void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOf
 
 				case 3:
 					break;
-
 				}
 
 				if (cmd != 3) {
@@ -283,15 +277,11 @@ void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOf
 					bx = 0;
 					by += 4;
 				}
-
 			}
-
 		}
 
 		height -= 4;
-
 	}
-
 }
 
 } // End of namespace Made

@@ -26,7 +26,8 @@
 
 namespace Toon {
 
-CharacterDrew::CharacterDrew(ToonEngine *vm) : Character(vm) {
+CharacterDrew::CharacterDrew(ToonEngine *vm)
+  : Character(vm) {
 	_id = 0;
 	_blockingWalk = true;
 	_animationInstance = vm->getAnimationManager()->createNewInstance(kAnimationCharacter);
@@ -59,14 +60,14 @@ void CharacterDrew::setPosition(int16 x, int16 y) {
 	// work out position and scale of the character sprite
 	int32 width = _walkAnim->getWidth() * _scale / 1024;
 	int32 height = 210 * _scale / 1024;
-	_animationInstance->setPosition(x - width / 2, y - height, _z , false);
+	_animationInstance->setPosition(x - width / 2, y - height, _z, false);
 	_animationInstance->setScale(_scale);
 
 	// work out position and scale of the shadow below character
 	int32 shadowWidth = _shadowAnim->getWidth() * _scale / 1024;
 	int32 shadowHeight = _shadowAnim->getHeight() * _scale / 1024;
 
-	_shadowAnimationInstance->setPosition(x - shadowWidth / 2, y - shadowHeight / 2 - 4 , _z , false);
+	_shadowAnimationInstance->setPosition(x - shadowWidth / 2, y - shadowHeight / 2 - 4, _z, false);
 	_shadowAnimationInstance->setScale(_scale);
 
 	_x = x;
@@ -123,8 +124,7 @@ int32 CharacterDrew::getRandomIdleAnim() {
 	return idle[_vm->randRange(0, 4)];
 }
 
-void CharacterDrew::resetScale()
-{
+void CharacterDrew::resetScale() {
 	_scale = _currentScale;
 	setPosition(_x, _y);
 }

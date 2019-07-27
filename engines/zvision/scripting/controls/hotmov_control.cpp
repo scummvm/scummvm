@@ -24,13 +24,13 @@
 
 #include "zvision/scripting/controls/hotmov_control.h"
 
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
-#include "zvision/graphics/render_manager.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/zvision.h"
 
-#include "common/stream.h"
 #include "common/file.h"
+#include "common/stream.h"
 #include "common/system.h"
 #include "graphics/surface.h"
 #include "video/video_decoder.h"
@@ -38,7 +38,7 @@
 namespace ZVision {
 
 HotMovControl::HotMovControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)
-	: Control(engine, key, CONTROL_HOTMOV) {
+  : Control(engine, key, CONTROL_HOTMOV) {
 	_animation = NULL;
 	_cycle = 0;
 	_frames.clear();

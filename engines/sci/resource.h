@@ -23,12 +23,12 @@
 #ifndef SCI_RESOURCE_H
 #define SCI_RESOURCE_H
 
-#include "common/str.h"
-#include "common/list.h"
 #include "common/hashmap.h"
+#include "common/list.h"
+#include "common/str.h"
 
-#include "sci/graphics/helpers.h"		// for ViewType
 #include "sci/decompressor.h"
+#include "sci/graphics/helpers.h" // for ViewType
 #include "sci/sci.h"
 #include "sci/util.h"
 
@@ -67,12 +67,12 @@ enum ResourceErrorCodes {
 	SCI_ERROR_NONE = 0,
 	SCI_ERROR_IO_ERROR = 1,
 	SCI_ERROR_EMPTY_RESOURCE = 2,
-	SCI_ERROR_RESMAP_INVALID_ENTRY = 3,	/**< Invalid resource.map entry */
+	SCI_ERROR_RESMAP_INVALID_ENTRY = 3, /**< Invalid resource.map entry */
 	SCI_ERROR_RESMAP_NOT_FOUND = 4,
-	SCI_ERROR_NO_RESOURCE_FILES_FOUND = 5,	/**< No resource at all was found */
+	SCI_ERROR_NO_RESOURCE_FILES_FOUND = 5, /**< No resource at all was found */
 	SCI_ERROR_UNKNOWN_COMPRESSION = 6,
-	SCI_ERROR_DECOMPRESSION_ERROR = 7,	/**< sanity checks failed during decompression */
-	SCI_ERROR_RESOURCE_TOO_BIG = 8	/**< Resource size exceeds SCI_MAX_RESOURCE_SIZE */
+	SCI_ERROR_DECOMPRESSION_ERROR = 7, /**< sanity checks failed during decompression */
+	SCI_ERROR_RESOURCE_TOO_BIG = 8 /**< Resource size exceeds SCI_MAX_RESOURCE_SIZE */
 };
 
 enum {
@@ -121,9 +121,9 @@ enum ResourceType {
 	// Mac-only resources
 	kResourceTypeMacIconBarPictN, // IBIN resources (icon bar, not selected)
 	kResourceTypeMacIconBarPictS, // IBIS resources (icon bar, selected)
-	kResourceTypeMacPict,        // PICT resources (inventory)
+	kResourceTypeMacPict, // PICT resources (inventory)
 
-	kResourceTypeRave,	// KQ6 hires RAVE (special sync) resources
+	kResourceTypeRave, // KQ6 hires RAVE (special sync) resources
 
 	kResourceTypeInvalid
 };
@@ -173,14 +173,20 @@ class ResourceId {
 	friend void syncWithSerializer(Common::Serializer &s, ResourceId &obj);
 
 public:
-	ResourceId() : _type(kResourceTypeInvalid), _number(0), _tuple(0) { }
+	ResourceId()
+	  : _type(kResourceTypeInvalid)
+	  , _number(0)
+	  , _tuple(0) {}
 
 	ResourceId(ResourceType type_, uint16 number_, uint32 tuple_ = 0)
-			: _type(fixupType(type_)), _number(number_), _tuple(tuple_) {
+	  : _type(fixupType(type_))
+	  , _number(number_)
+	  , _tuple(tuple_) {
 	}
 
 	ResourceId(ResourceType type_, uint16 number_, byte noun, byte verb, byte cond, byte seq)
-			: _type(fixupType(type_)), _number(number_) {
+	  : _type(fixupType(type_))
+	  , _number(number_) {
 		_tuple = (noun << 24) | (verb << 16) | (cond << 8) | seq;
 	}
 
@@ -203,12 +209,12 @@ public:
 		} else {
 			output += (getType() == kResourceTypeAudio36) ? '@' : '#'; // Identifier
 		}
-		output += intToBase36(getNumber(), 3);                     // Map
-		output += intToBase36(getTuple() >> 24, 2);                // Noun
-		output += intToBase36((getTuple() >> 16) & 0xff, 2);       // Verb
-		output += '.';                                                   // Separator
-		output += intToBase36((getTuple() >> 8) & 0xff, 2);        // Cond
-		output += intToBase36(getTuple() & 0xff, 1);               // Seq
+		output += intToBase36(getNumber(), 3); // Map
+		output += intToBase36(getTuple() >> 24, 2); // Noun
+		output += intToBase36((getTuple() >> 16) & 0xff, 2); // Verb
+		output += '.'; // Separator
+		output += intToBase36((getTuple() >> 8) & 0xff, 2); // Cond
+		output += intToBase36(getTuple() & 0xff, 1); // Seq
 
 		assert(output.size() == 12); // We should always get 12 characters in the end
 		return output;
@@ -232,7 +238,7 @@ public:
 
 	bool operator<(const ResourceId &other) const {
 		return (_type < other._type) || ((_type == other._type) && (_number < other._number))
-			    || ((_type == other._type) && (_number == other._number) && (_tuple < other._tuple));
+		  || ((_type == other._type) && (_number == other._number) && (_tuple < other._tuple));
 	}
 };
 
@@ -292,7 +298,7 @@ public:
 	uint16 getNumLockers() const { return _lockers; }
 
 protected:
-	ResourceId _id;	// TODO: _id could almost be made const, only readResourceInfo() modifies it...
+	ResourceId _id; // TODO: _id could almost be made const, only readResourceInfo() modifies it...
 	int32 _fileOffset; /**< Offset in file */
 	ResourceStatus _status;
 	uint16 _lockers; /**< Number of places where this resource was locked */
@@ -334,7 +340,6 @@ public:
 	ResourceManager(const bool detectionMode = false);
 	~ResourceManager();
 
-
 	/**
 	 * Initializes the resource manager.
 	 */
@@ -348,7 +353,7 @@ public:
 	/**
 	 * Similar to the function above, only called from the fallback detector
 	 */
-	int addAppropriateSourcesForDetection(const Common::FSList &fslist);	// TODO: Switch from FSList to Common::Archive?
+	int addAppropriateSourcesForDetection(const Common::FSList &fslist); // TODO: Switch from FSList to Common::Archive?
 
 	/**
 	 * Looks up a resource's data.
@@ -477,8 +482,8 @@ protected:
 	ViewType _viewType; // Used to determine if the game has EGA or VGA graphics
 	typedef Common::List<ResourceSource *> SourcesList;
 	SourcesList _sources;
-	int _memoryLocked;	///< Amount of resource bytes in locked memory
-	int _memoryLRU;		///< Amount of resource bytes under LRU control
+	int _memoryLocked; ///< Amount of resource bytes in locked memory
+	int _memoryLRU; ///< Amount of resource bytes under LRU control
 	Common::List<Resource *> _LRU; ///< Last Resource Used list
 	ResourceMap _resMap;
 	Common::List<Common::File *> _volumeFiles; ///< list of opened volume files
@@ -639,13 +644,13 @@ public:
 		long time;
 		byte prev;
 
-		Channel() :
-			number(0),
-			flags(0),
-			poly(0),
-			prio(0),
-			data(),
-			curPos(0) {
+		Channel()
+		  : number(0)
+		  , flags(0)
+		  , poly(0)
+		  , prio(0)
+		  , data()
+		  , curPos(0) {
 			time = 0;
 			prev = 0;
 		}
@@ -662,6 +667,7 @@ public:
 		uint16 digitalSampleStart;
 		uint16 digitalSampleEnd;
 	};
+
 public:
 	SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersion soundVersion);
 	~SoundResource();

@@ -25,37 +25,37 @@
 namespace BladeRunner {
 
 enum kUG08Loops {
-	kUG08LoopElevatorComingUp  = 0,
-	kUG08LoopMainLoopElevator  = 1,
+	kUG08LoopElevatorComingUp = 0,
+	kUG08LoopMainLoopElevator = 1,
 	kUG08LoopElevatorGoingDown = 3,
-	kUG08LoopMainNoElevator    = 4
+	kUG08LoopMainNoElevator = 4
 };
 
 void SceneScriptUG08::InitializeScene() {
 	if (Game_Flag_Query(kFlagUG13toUG08)) {
-		Setup_Scene_Information(-124.0f, 93.18f,   71.0f, 745);
+		Setup_Scene_Information(-124.0f, 93.18f, 71.0f, 745);
 	} else {
-		Setup_Scene_Information(-432.0f,   0.0f, -152.0f, 370);
+		Setup_Scene_Information(-432.0f, 0.0f, -152.0f, 370);
 	}
 
 	Scene_Exit_Add_2D_Exit(0, 125, 220, 157, 303, 3);
 	Scene_Exit_Add_2D_Exit(1, 353, 145, 552, 309, 1);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxSTMLOOP7, 28, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1,   40, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED2,   40, 0, 1);
-	Ambient_Sounds_Add_Sound(kSfxYELL1M1,  2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxYELL1M2,  2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxGRUNT1M1, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxGRUNT2M3, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP1,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP2,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP3,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP4,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP5,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN1,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN2,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN3,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1, 40, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED2, 40, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxYELL1M1, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxYELL1M2, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT1M1, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT2M3, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP1, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP2, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP3, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP4, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP5, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN3, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
 
 	if (!Game_Flag_Query(kFlagUG08Entered)) {
 		Game_Flag_Set(kFlagUG08ElevatorUp);
@@ -75,8 +75,7 @@ void SceneScriptUG08::InitializeScene() {
 	//		and by ~66% it won't be up, so we remove the elevator exit, and force McCoy to go the long way round again (or retry the room)
 	if (!Game_Flag_Query(kFlagUG08ElevatorUp)) {
 		if (Query_Difficulty_Level() == kGameDifficultyEasy
-		    || Random_Query(1, 3) == 1
-		) {
+		    || Random_Query(1, 3) == 1) {
 			Game_Flag_Set(kFlagUG08ElevatorUp);
 		} else {
 			Scene_Exit_Remove(1);
@@ -165,7 +164,7 @@ void SceneScriptUG08::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptUG08::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagUG13toUG08)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -167.0f, 93.18f,  71.0f, 0, false, false, false);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -167.0f, 93.18f, 71.0f, 0, false, false, false);
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -180.0f, 93.18f, 134.0f, 0, false, false, false);
 		Actor_Face_Heading(kActorMcCoy, 745, false);
 		Footstep_Sound_Override_On(2);

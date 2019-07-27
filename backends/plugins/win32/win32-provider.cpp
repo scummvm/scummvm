@@ -24,27 +24,25 @@
 
 #if defined(DYNAMIC_MODULES) && defined(_WIN32)
 
-#include "backends/plugins/win32/win32-provider.h"
-#include "backends/plugins/dynamic-plugin.h"
-#include "common/debug.h"
-#include "common/fs.h"
+#	include "backends/plugins/dynamic-plugin.h"
+#	include "backends/plugins/win32/win32-provider.h"
+#	include "common/debug.h"
+#	include "common/fs.h"
 
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-
+#	define WIN32_LEAN_AND_MEAN
+#	include <windows.h>
 
 class Win32Plugin : public DynamicPlugin {
 private:
-	static const TCHAR* toUnicode(const char *x) {
-	#ifndef UNICODE
+	static const TCHAR *toUnicode(const char *x) {
+#	ifndef UNICODE
 		return (const TCHAR *)x;
-	#else
+#	else
 		static TCHAR unicodeString[MAX_PATH];
 		MultiByteToWideChar(CP_ACP, 0, x, strlen(x) + 1, unicodeString, sizeof(unicodeString) / sizeof(TCHAR));
 		return unicodeString;
-	#endif
+#	endif
 	}
-
 
 protected:
 	void *_dlHandle;
@@ -59,14 +57,15 @@ protected:
 
 public:
 	Win32Plugin(const Common::String &filename)
-		: DynamicPlugin(filename), _dlHandle(0) {}
+	  : DynamicPlugin(filename)
+	  , _dlHandle(0) {}
 
 	bool loadPlugin() {
 		assert(!_dlHandle);
 		_dlHandle = LoadLibrary(toUnicode(_filename.c_str()));
 
 		if (!_dlHandle) {
-			debug("Failed loading plugin '%s' (error code %d)", _filename.c_str(), (int32) GetLastError());
+			debug("Failed loading plugin '%s' (error code %d)", _filename.c_str(), (int32)GetLastError());
 			return false;
 		} else {
 			debug(1, "Success loading plugin '%s', handle %p", _filename.c_str(), _dlHandle);
@@ -87,23 +86,21 @@ public:
 	}
 };
 
-
-Plugin* Win32PluginProvider::createPlugin(const Common::FSNode &node) const {
+Plugin *Win32PluginProvider::createPlugin(const Common::FSNode &node) const {
 	return new Win32Plugin(node.getPath());
 }
 
 bool Win32PluginProvider::isPluginFilename(const Common::FSNode &node) const {
 	// Check the plugin suffix
 	Common::String filename = node.getName();
-#ifndef _WIN32_WCE
+#	ifndef _WIN32_WCE
 	if (!filename.hasSuffix(".dll"))
-#else
+#	else
 	if (!filename.hasSuffix(".plugin"))
-#endif
+#	endif
 		return false;
 
 	return true;
 }
-
 
 #endif // defined(DYNAMIC_MODULES) && defined(_WIN32)

@@ -25,7 +25,9 @@
 
 namespace Touche {
 
-ToucheConsole::ToucheConsole(ToucheEngine *vm) : GUI::Debugger(), _vm(vm) {
+ToucheConsole::ToucheConsole(ToucheEngine *vm)
+  : GUI::Debugger()
+  , _vm(vm) {
 	registerCmd("startMusic", WRAP_METHOD(ToucheConsole, Cmd_StartMusic));
 	registerCmd("stopMusic", WRAP_METHOD(ToucheConsole, Cmd_StopMusic));
 }

@@ -20,11 +20,10 @@
  *
  */
 
-#include "common/util.h"
 #include "common/stack.h"
+#include "common/util.h"
 #include "graphics/primitives.h"
 
-#include "sci/sci.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/state.h"
@@ -35,22 +34,24 @@
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/text32.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
 int16 GfxText32::_xResolution = 0;
 int16 GfxText32::_yResolution = 0;
 
-GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts) :
-	_segMan(segMan),
-	_cache(fonts),
-	// SSCI did not initialise height, so we intentionally do not do so also
-	_width(0),
-	_text(""),
-	_bitmap(NULL_REG) {
-		_fontId = kSci32SystemFont;
-		_font = _cache->getFont(kSci32SystemFont);
-	}
+GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts)
+  : _segMan(segMan)
+  , _cache(fonts)
+  ,
+  // SSCI did not initialise height, so we intentionally do not do so also
+  _width(0)
+  , _text("")
+  , _bitmap(NULL_REG) {
+	_fontId = kSci32SystemFont;
+	_font = _cache->getFont(kSci32SystemFont);
+}
 
 void GfxText32::init() {
 	_xResolution = g_sci->_gfxFrameout->getScriptWidth();
@@ -404,9 +405,7 @@ uint GfxText32::getLongest(uint *charIndex, const int16 width) {
 			// In SSCI, the `text` pointer had not been advanced yet here, so
 			// the indexes used to access characters were one higher there
 			if (
-				(currentChar == '\r' && text[0] == '\n') ||
-				(currentChar == '\n' && text[0] == '\r' && text[1] != '\n')
-			) {
+			  (currentChar == '\r' && text[0] == '\n') || (currentChar == '\n' && text[0] == '\r' && text[1] != '\n')) {
 				++*charIndex;
 			}
 
@@ -731,6 +730,5 @@ void GfxText32::scrollLine(const Common::String &lineText, int numLines, uint8 c
 
 	drawText(0, lineText.size());
 }
-
 
 } // End of namespace Sci

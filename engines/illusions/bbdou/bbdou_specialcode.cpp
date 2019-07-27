@@ -20,45 +20,50 @@
  *
  */
 
-#include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/bbdou/bbdou_specialcode.h"
+#include "illusions/actor.h"
 #include "illusions/bbdou/bbdou_bubble.h"
-#include "illusions/bbdou/bbdou_inventory.h"
 #include "illusions/bbdou/bbdou_credits.h"
 #include "illusions/bbdou/bbdou_cursor.h"
 #include "illusions/bbdou/bbdou_foodctl.h"
-#include "illusions/resources/scriptresource.h"
-#include "illusions/actor.h"
+#include "illusions/bbdou/bbdou_inventory.h"
+#include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/camera.h"
 #include "illusions/dictionary.h"
 #include "illusions/input.h"
-#include "illusions/scriptstack.h"
+#include "illusions/resources/scriptresource.h"
 #include "illusions/scriptopcodes.h"
+#include "illusions/scriptstack.h"
 #include "illusions/sound.h"
 
 namespace Illusions {
 
 static const Struct10 kVerbIconSequenceIds[] = {
-	{0x1B0000,       0,       0,       0},
-	{0x1B0001, 0x6001A, 0x6001B, 0x6001C}, // TALK, LOOK
-	{0x1B0002, 0x6001D, 0x6001E, 0x6001F}, // USE, LOOK
-	{0x1B0003, 0x60020, 0x60021, 0x60022}, // USE
-	{0x1B0004, 0x60023, 0x60024, 0x60025}, // USE, LOOK
-	{0x1B0005, 0x60026, 0x60027, 0x60028}, // TALK, LOOK
-	{0x1B0006,       0,       0,       0},
-	{0x1B0007,       0,       0,       0},
-	{0x1B0008,       0,       0,       0},
-	{0x1B0009,       0,       0,       0},
-	{0x1B000A,       0,       0,       0},
-	{0x1B000B,       0,       0,       0},
-	{0x1B000C,       0,       0,       0},
+	{ 0x1B0000, 0, 0, 0 },
+	{ 0x1B0001, 0x6001A, 0x6001B, 0x6001C }, // TALK, LOOK
+	{ 0x1B0002, 0x6001D, 0x6001E, 0x6001F }, // USE, LOOK
+	{ 0x1B0003, 0x60020, 0x60021, 0x60022 }, // USE
+	{ 0x1B0004, 0x60023, 0x60024, 0x60025 }, // USE, LOOK
+	{ 0x1B0005, 0x60026, 0x60027, 0x60028 }, // TALK, LOOK
+	{ 0x1B0006, 0, 0, 0 },
+	{ 0x1B0007, 0, 0, 0 },
+	{ 0x1B0008, 0, 0, 0 },
+	{ 0x1B0009, 0, 0, 0 },
+	{ 0x1B000A, 0, 0, 0 },
+	{ 0x1B000B, 0, 0, 0 },
+	{ 0x1B000C, 0, 0, 0 },
 };
 
 CauseThread_BBDOU::CauseThread_BBDOU(IllusionsEngine_BBDOU *vm, uint32 threadId, uint32 callingThreadId,
-	BbdouSpecialCode *bbdou, uint32 cursorObjectId, uint32 sceneId, uint32 verbId,
-	uint32 objectId2, uint32 objectId)
-	: Thread(vm, threadId, callingThreadId, 0), _bbdou(bbdou), _cursorObjectId(cursorObjectId),
-	_sceneId(sceneId), _verbId(verbId), _objectId2(objectId2), _objectId(objectId) {
+                                     BbdouSpecialCode *bbdou, uint32 cursorObjectId, uint32 sceneId, uint32 verbId,
+                                     uint32 objectId2, uint32 objectId)
+  : Thread(vm, threadId, callingThreadId, 0)
+  , _bbdou(bbdou)
+  , _cursorObjectId(cursorObjectId)
+  , _sceneId(sceneId)
+  , _verbId(verbId)
+  , _objectId2(objectId2)
+  , _objectId(objectId) {
 	_type = kTTSpecialThread;
 }
 
@@ -75,17 +80,17 @@ void CauseThread_BBDOU::onTerminated() {
 // RadarMicrophoneThread
 
 RadarMicrophoneThread::RadarMicrophoneThread(IllusionsEngine_BBDOU *vm, uint32 threadId,
-	uint32 callingThreadId, uint32 cursorObjectId)
-	: Thread(vm, threadId, callingThreadId, 0), _cursorObjectId(cursorObjectId), _zonesCount(0) {
+                                             uint32 callingThreadId, uint32 cursorObjectId)
+  : Thread(vm, threadId, callingThreadId, 0)
+  , _cursorObjectId(cursorObjectId)
+  , _zonesCount(0) {
 	_sceneId = _vm->getCurrentScene();
 }
 
 int RadarMicrophoneThread::onUpdate() {
 	Control *control = _vm->getObjectControl(_cursorObjectId);
 	int16 cursorX = control->getActorPosition().x;
-	if (_currZoneIndex == 0 ||
-		cursorX >= _zones[_currZoneIndex - 1]._x ||
-		(_currZoneIndex >= 2 && cursorX < _zones[_currZoneIndex - 2]._x)) {//CHECKME
+	if (_currZoneIndex == 0 || cursorX >= _zones[_currZoneIndex - 1]._x || (_currZoneIndex >= 2 && cursorX < _zones[_currZoneIndex - 2]._x)) { //CHECKME
 		for (uint i = 0; i < _zonesCount; ++i) {
 			if (cursorX < _zones[i]._x) {
 				_currZoneIndex = i + 1;
@@ -150,7 +155,8 @@ int ObjectInteractModeMap::getObjectInteractMode(uint32 objectId) {
 // BbdouSpecialCode
 
 BbdouSpecialCode::BbdouSpecialCode(IllusionsEngine_BBDOU *vm)
-	: _vm(vm), _credits(0) {
+  : _vm(vm)
+  , _credits(0) {
 	_bubble = new BbdouBubble(_vm, this);
 	_cursor = new BbdouCursor(_vm, this);
 	_inventory = new BbdouInventory(_vm, this);
@@ -164,7 +170,7 @@ BbdouSpecialCode::~BbdouSpecialCode() {
 	delete _bubble;
 }
 
-typedef Common::Functor1Mem<OpCall&, void, BbdouSpecialCode> SpecialCodeFunctionI;
+typedef Common::Functor1Mem<OpCall &, void, BbdouSpecialCode> SpecialCodeFunctionI;
 #define SPECIAL(id, func) _map[id] = new SpecialCodeFunctionI(this, &BbdouSpecialCode::func);
 
 void BbdouSpecialCode::init() {
@@ -298,7 +304,7 @@ void BbdouSpecialCode::spcSetupBubble(OpCall &opCall) {
 	ARG_UINT32(namedPointId);
 	ARG_INT16(count);
 	_bubble->addBubbleStyle(sequenceId1, sequenceId2, progResKeywordId, namedPointId,
-		count, (uint32*)opCall._code);
+	                        count, (uint32 *)opCall._code);
 	_vm->notifyThreadId(opCall._threadId);
 }
 
@@ -388,19 +394,15 @@ void BbdouSpecialCode::spcSetCursorField90(OpCall &opCall) {
 void BbdouSpecialCode::spcFoodCtl(OpCall &opCall) {
 	ARG_UINT32(cmd);
 	switch (cmd) {
-	case 1:
-		{
-			ARG_UINT32(minCount);
-			ARG_UINT32(maxCount);
-			_foodCtl->placeFood(minCount, maxCount);
-		}
-		break;
-	case 2:
-		{
-			ARG_UINT32(propertyId);
-			_foodCtl->addFood(propertyId);
-		}
-		break;
+	case 1: {
+		ARG_UINT32(minCount);
+		ARG_UINT32(maxCount);
+		_foodCtl->placeFood(minCount, maxCount);
+	} break;
+	case 2: {
+		ARG_UINT32(propertyId);
+		_foodCtl->addFood(propertyId);
+	} break;
 	case 3:
 		_foodCtl->requestFirstFood();
 		break;
@@ -450,7 +452,7 @@ void BbdouSpecialCode::spcInitRadarMicrophone(OpCall &opCall) {
 	ARG_UINT32(cursorObjectId);
 	uint32 tempThreadId = _vm->newTempThreadId();
 	RadarMicrophoneThread *radarMicrophoneThread = new RadarMicrophoneThread(_vm,
-		tempThreadId, opCall._callerThreadId, cursorObjectId);
+	                                                                         tempThreadId, opCall._callerThreadId, cursorObjectId);
 	for (uint i = 0; i < 7; ++i) {
 		ARG_UINT32(zoneThreadId);
 		if (zoneThreadId == 0)
@@ -464,13 +466,11 @@ void BbdouSpecialCode::spcInitRadarMicrophone(OpCall &opCall) {
 void BbdouSpecialCode::spcCreditsCtl(OpCall &opCall) {
 	ARG_UINT32(cmd);
 	switch (cmd) {
-	case 1:
-		{
-			ARG_UINT32(endSignalPropertyId);
-			_credits = new BbdouCredits(_vm);
-			_credits->start(endSignalPropertyId, 0.5);
-		}
-		break;
+	case 1: {
+		ARG_UINT32(endSignalPropertyId);
+		_credits = new BbdouCredits(_vm);
+		_credits->start(endSignalPropertyId, 0.5);
+	} break;
 	case 2:
 		_credits->drawNextLine();
 		break;
@@ -507,12 +507,12 @@ void BbdouSpecialCode::spcRunCause(OpCall &opCall) {
 
 void BbdouSpecialCode::playSoundEffect(int soundIndex) {
 	static const uint32 kSoundEffectIds[] = {
-		      0, 1,
+		0, 1,
 		0x900C1, 2,
-		      0, 3,
+		0, 3,
 		0x900C0, 4,
 		0x900C2, 5,
-		      0, 6
+		0, 6
 	};
 	uint32 soundEffectId = kSoundEffectIds[2 * soundIndex];
 	if (soundEffectId) {
@@ -539,10 +539,10 @@ void BbdouSpecialCode::setCursorControlRoutine(uint32 objectId, int num) {
 	Control *control = _vm->getObjectControl(objectId);
 	if (num == 0)
 		control->_actor->setControlRoutine(
-			new Common::Functor2Mem<Control*, uint32, void, BbdouSpecialCode>(this, &BbdouSpecialCode::cursorInteractControlRoutine));
+		  new Common::Functor2Mem<Control *, uint32, void, BbdouSpecialCode>(this, &BbdouSpecialCode::cursorInteractControlRoutine));
 	else
 		control->_actor->setControlRoutine(
-			new Common::Functor2Mem<Control*, uint32, void, BbdouSpecialCode>(this, &BbdouSpecialCode::cursorCrosshairControlRoutine));
+		  new Common::Functor2Mem<Control *, uint32, void, BbdouSpecialCode>(this, &BbdouSpecialCode::cursorCrosshairControlRoutine));
 }
 
 Common::Point BbdouSpecialCode::getBackgroundCursorPos(Common::Point cursorPos) {
@@ -550,7 +550,7 @@ Common::Point BbdouSpecialCode::getBackgroundCursorPos(Common::Point cursorPos) 
 }
 
 void BbdouSpecialCode::showBubble(uint32 objectId, uint32 overlappedObjectId, uint32 holdingObjectId,
-	VerbState *verbState, uint32 progResKeywordId) {
+                                  VerbState *verbState, uint32 progResKeywordId) {
 
 	Common::Rect collisionRect;
 	Control *overlappedControl, *control2;
@@ -602,7 +602,6 @@ void BbdouSpecialCode::showBubble(uint32 objectId, uint32 overlappedObjectId, ui
 
 	verbState->_isBubbleVisible = true;
 	_vm->_input->discardAllEvents();
-
 }
 
 bool BbdouSpecialCode::findVerbId(VerbState *verbState, uint32 currOverlappedObjectId, int always0, uint32 &outVerbId) {
@@ -654,10 +653,10 @@ void BbdouSpecialCode::cursorInteractControlRoutine(Control *cursorControl, uint
 			foundOverlapped = false;
 		} else if (_vm->getCurrentScene() == 0x1000D) {
 			foundOverlapped = _vm->_controls->getOverlappedObjectAccurate(cursorControl, cursorPos,
-				&overlappedControl, cursorData._verbState._minPriority);
+			                                                              &overlappedControl, cursorData._verbState._minPriority);
 		} else {
 			foundOverlapped = _vm->_controls->getOverlappedObject(cursorControl, cursorPos,
-				&overlappedControl, cursorData._verbState._minPriority);
+			                                                      &overlappedControl, cursorData._verbState._minPriority);
 		}
 
 		if (foundOverlapped) {
@@ -679,16 +678,15 @@ void BbdouSpecialCode::cursorInteractControlRoutine(Control *cursorControl, uint
 						if (cursorData._holdingObjectId) {
 							cursorData._verbState._verbId = 0x1B0003;
 							cursorData._currOverlappedObjectId = overlappedControl->_objectId;
-						}
-						else {
+						} else {
 							cursorData._verbState._verbId = 0x1B0002;
 							cursorData._currOverlappedObjectId = overlappedControl->_objectId;
 						}
 					} else {
 						playSoundEffect(3);
 						showBubble(cursorControl->_objectId, overlappedControl->_objectId,
-							cursorData._holdingObjectId, &cursorData._verbState,
-							cursorData._progResKeywordId);
+						           cursorData._holdingObjectId, &cursorData._verbState,
+						           cursorData._progResKeywordId);
 						cursorData._currOverlappedObjectId = overlappedControl->_objectId;
 					}
 				} else {
@@ -747,8 +745,7 @@ void BbdouSpecialCode::cursorInteractControlRoutine(Control *cursorControl, uint
 			if (cursorData._holdingObjectId) {
 				runCause(cursorControl, cursorData, 0x1B000B, 0, 0x40003, 0);
 				cursorData._currOverlappedObjectId = 0;
-			} else if (findVerbId(&cursorData._verbState, cursorData._currOverlappedObjectId, 0, verbId) &&
-				runCause(cursorControl, cursorData, verbId, cursorData._holdingObjectId, cursorData._currOverlappedObjectId, 1)) {
+			} else if (findVerbId(&cursorData._verbState, cursorData._currOverlappedObjectId, 0, verbId) && runCause(cursorControl, cursorData, verbId, cursorData._holdingObjectId, cursorData._currOverlappedObjectId, 1)) {
 				hideVerbBubble(cursorControl->_objectId, &cursorData._verbState);
 				cursorData._currOverlappedObjectId = 0;
 				cursorControl->setActorIndexTo1();
@@ -764,7 +761,6 @@ void BbdouSpecialCode::cursorInteractControlRoutine(Control *cursorControl, uint
 				runCause(cursorControl, cursorData, cursorData._holdingObjectId != 0 ? 0x1B000B : 0x1B0004, 0, 0x40003, 0);
 		}
 	}
-
 }
 
 void BbdouSpecialCode::cursorCrosshairControlRoutine(Control *cursorControl, uint32 deltaTime) {
@@ -774,17 +770,23 @@ void BbdouSpecialCode::cursorCrosshairControlRoutine(Control *cursorControl, uin
 		uint32 sequenceIds1[8];
 		uint32 sequenceIds2[8];
 	} kShooterAnims[] = {
-		{0x401C4,
-		{0x60637, 0x60638, 0x60639, 0x6063A, 0x6063B, 0x6063C, 0x6063D, 0x6063E},
-		{0x6063F, 0x60640, 0x60641, 0x60642, 0x60643, 0x60644, 0x60645, 0x60646}},
-		{0x401C3,
-		{0x6064A, 0x6064B, 0x6064C, 0x6064D, 0x6064E, 0x6064F, 0x60650, 0x60651},
-		{0x60652, 0x60653, 0x60654, 0x60655, 0x60656, 0x60657, 0x60658, 0x60659}}
+		{ 0x401C4,
+		  { 0x60637, 0x60638, 0x60639, 0x6063A, 0x6063B, 0x6063C, 0x6063D, 0x6063E },
+		  { 0x6063F, 0x60640, 0x60641, 0x60642, 0x60643, 0x60644, 0x60645, 0x60646 } },
+		{ 0x401C3,
+		  { 0x6064A, 0x6064B, 0x6064C, 0x6064D, 0x6064E, 0x6064F, 0x60650, 0x60651 },
+		  { 0x60652, 0x60653, 0x60654, 0x60655, 0x60656, 0x60657, 0x60658, 0x60659 } }
 	};
 
 	static const uint32 kShooterObjectIds[] = {
-		0x401DF, 0x401E0, 0x401E1, 0x401E2,
-		0x401E3, 0x401E4, 0x401E5, 0x401E6,
+		0x401DF,
+		0x401E0,
+		0x401E1,
+		0x401E2,
+		0x401E3,
+		0x401E4,
+		0x401E5,
+		0x401E6,
 	};
 
 	Actor *actor = cursorControl->_actor;
@@ -819,7 +821,6 @@ void BbdouSpecialCode::cursorCrosshairControlRoutine(Control *cursorControl, uin
 				}
 			}
 		}
-
 	}
 
 	Common::Point cursorPos = getBackgroundCursorPos(screenCursorPos);
@@ -830,7 +831,7 @@ void BbdouSpecialCode::cursorCrosshairControlRoutine(Control *cursorControl, uin
 		foundOverlapped = false;
 	else {
 		foundOverlapped = _vm->_controls->getOverlappedObjectAccurate(cursorControl, cursorPos,
-			&overlappedControl, cursorData._verbState._minPriority);
+		                                                              &overlappedControl, cursorData._verbState._minPriority);
 	}
 
 	if (foundOverlapped) {
@@ -899,8 +900,8 @@ void BbdouSpecialCode::cursorCrosshairControlRoutine(Control *cursorControl, uin
 
 			uint32 outSceneId, outVerbId, outObjectId2, outObjectId;
 			bool success = getShooterCause(_vm->getCurrentScene(),
-				cursorData._verbState._verbId, cursorData._holdingObjectId, cursorData._currOverlappedObjectId,
-				outSceneId, outVerbId, outObjectId2, outObjectId);
+			                               cursorData._verbState._verbId, cursorData._holdingObjectId, cursorData._currOverlappedObjectId,
+			                               outSceneId, outVerbId, outObjectId2, outObjectId);
 
 			uint index = (uint)_vm->getRandom(2);
 			const ShooterAnim &anim = kShooterAnims[index];
@@ -957,18 +958,16 @@ void BbdouSpecialCode::cursorCrosshairControlRoutine(Control *cursorControl, uin
 		++_shooterObjectIdIndex;
 		if (_shooterObjectIdIndex >= ARRAYSIZE(kShooterObjectIds))
 			_shooterObjectIdIndex = 0;
-
 	}
-
 }
 
 bool BbdouSpecialCode::testVerbId(uint32 verbId, uint32 holdingObjectId, uint32 overlappedObjectId) {
-	static const uint32 kVerbIdsEE[] = {0x001B0002, 0x001B0001, 0};
-	static const uint32 kVerbIdsE9[] = {0x001B0005, 0};
-	static const uint32 kVerbIdsE8[] = {0x001B0005, 0x001B0001, 0};
-	static const uint32 kVerbIdsHE[] = {0x001B0003, 0x001B0001, 0};
-	static const uint32 kVerbIdsH9[] = {0x001B0003, 0};
-	static const uint32 kVerbIdsH8[] = {0x001B0003, 0x001B0001, 0};
+	static const uint32 kVerbIdsEE[] = { 0x001B0002, 0x001B0001, 0 };
+	static const uint32 kVerbIdsE9[] = { 0x001B0005, 0 };
+	static const uint32 kVerbIdsE8[] = { 0x001B0005, 0x001B0001, 0 };
+	static const uint32 kVerbIdsHE[] = { 0x001B0003, 0x001B0001, 0 };
+	static const uint32 kVerbIdsH9[] = { 0x001B0003, 0 };
+	static const uint32 kVerbIdsH8[] = { 0x001B0003, 0x001B0001, 0 };
 
 	const uint32 *verbIds;
 	int interactMode = _objectInteractModeMap.getObjectInteractMode(overlappedObjectId);
@@ -997,7 +996,7 @@ bool BbdouSpecialCode::testVerbId(uint32 verbId, uint32 holdingObjectId, uint32 
 }
 
 bool BbdouSpecialCode::getCause(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId,
-	uint32 &outVerbId, uint32 &outObjectId2, uint32 &outObjectId) {
+                                uint32 &outVerbId, uint32 &outObjectId2, uint32 &outObjectId) {
 	bool success = false;
 	objectId2 = verbId != 0x1B0003 ? 0 : objectId2;
 	if (_vm->causeIsDeclared(sceneId, verbId, objectId2, objectId)) {
@@ -1030,7 +1029,7 @@ bool BbdouSpecialCode::getCause(uint32 sceneId, uint32 verbId, uint32 objectId2,
 }
 
 bool BbdouSpecialCode::runCause(Control *cursorControl, CursorData &cursorData,
-	uint32 verbId, uint32 objectId2, uint32 objectId, int soundIndex) {
+                                uint32 verbId, uint32 objectId2, uint32 objectId, int soundIndex) {
 	//debug("runCause(%08X, %08X, %08X)", verbId, objectId2, objectId);
 	uint32 sceneId = _vm->getCurrentScene();
 	uint32 outVerbId, outObjectId2, outObjectId;
@@ -1069,7 +1068,7 @@ uint32 BbdouSpecialCode::startCauseThread(uint32 cursorObjectId, uint32 sceneId,
 	uint32 tempThreadId = _vm->newTempThreadId();
 	debug(3, "Starting cause thread %08X...", tempThreadId);
 	CauseThread_BBDOU *causeThread = new CauseThread_BBDOU(_vm, tempThreadId, 0, this,
-		cursorObjectId, sceneId, verbId, objectId2, objectId);
+	                                                       cursorObjectId, sceneId, verbId, objectId2, objectId);
 	_vm->_threads->startThread(causeThread);
 	causeThread->suspend();
 	return tempThreadId;
@@ -1133,7 +1132,7 @@ void BbdouSpecialCode::addSalad(uint32 sequenceId) {
 }
 
 bool BbdouSpecialCode::getShooterCause(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId,
-	uint32 &outSceneId, uint32 &outVerbId, uint32 &outObjectId2, uint32 &outObjectId) {
+                                       uint32 &outSceneId, uint32 &outVerbId, uint32 &outObjectId2, uint32 &outObjectId) {
 	bool success = false;
 	objectId2 = verbId != 0x1B0003 ? 0 : objectId2;
 	if (_vm->causeIsDeclared(sceneId, verbId, objectId2, objectId)) {

@@ -20,18 +20,18 @@
  *
  */
 
-#include "illusions/duckman/illusions_duckman.h"
 #include "illusions/duckman/duckman_dialog.h"
-#include "illusions/duckman/scriptopcodes_duckman.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
 #include "illusions/cursor.h"
 #include "illusions/dictionary.h"
-#include "illusions/resources/fontresource.h"
+#include "illusions/duckman/illusions_duckman.h"
+#include "illusions/duckman/scriptopcodes_duckman.h"
 #include "illusions/graphics.h"
 #include "illusions/input.h"
 #include "illusions/resources/actorresource.h"
 #include "illusions/resources/backgroundresource.h"
+#include "illusions/resources/fontresource.h"
 #include "illusions/resources/midiresource.h"
 #include "illusions/resources/scriptresource.h"
 #include "illusions/resources/soundresource.h"
@@ -60,7 +60,7 @@ namespace Illusions {
 // DuckmanDialogSystem
 
 DuckmanDialogSystem::DuckmanDialogSystem(IllusionsEngine_Duckman *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 }
 
 DuckmanDialogSystem::~DuckmanDialogSystem() {
@@ -120,7 +120,6 @@ void DuckmanDialogSystem::startDialog(int16 *choiceOfsPtr, uint32 actorTypeId, u
 	}
 
 	_dialogItems.clear();
-
 }
 
 void DuckmanDialogSystem::updateDialogState() {
@@ -172,7 +171,6 @@ void DuckmanDialogSystem::updateDialogState() {
 			_vm->_cursor._control->disappearActor();
 		}
 	}
-
 }
 
 } // End of namespace Illusions

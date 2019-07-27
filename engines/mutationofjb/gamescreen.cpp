@@ -26,8 +26,8 @@
 #include "mutationofjb/encryptedfile.h"
 #include "mutationofjb/game.h"
 #include "mutationofjb/gamedata.h"
-#include "mutationofjb/mutationofjb.h"
 #include "mutationofjb/inventory.h"
+#include "mutationofjb/mutationofjb.h"
 #include "mutationofjb/room.h"
 #include "mutationofjb/util.h"
 #include "mutationofjb/widgets/conversationwidget.h"
@@ -72,13 +72,12 @@ enum {
 	STATUS_BAR_HEIGHT = 8
 };
 
-
 GameScreen::GameScreen(Game &game, Graphics::Screen *screen)
-	: GuiScreen(game, screen),
-	  _inventoryWidget(nullptr),
-	  _conversationWidget(nullptr),
-	  _statusBarWidget(nullptr),
-	  _currentAction(ActionInfo::Walk) {}
+  : GuiScreen(game, screen)
+  , _inventoryWidget(nullptr)
+  , _conversationWidget(nullptr)
+  , _statusBarWidget(nullptr)
+  , _currentAction(ActionInfo::Walk) {}
 
 GameScreen::~GameScreen() {}
 
@@ -227,9 +226,11 @@ void GameScreen::refreshAfterSceneChanged() {
 
 class InventoryAnimationDecoderCallback : public AnimationDecoderCallback {
 public:
-	InventoryAnimationDecoderCallback(GameScreen &gui) : _gui(gui) {}
+	InventoryAnimationDecoderCallback(GameScreen &gui)
+	  : _gui(gui) {}
 	virtual void onFrame(int frameNo, Graphics::Surface &surface) override;
 	virtual void onPaletteUpdated(byte palette[PALETTE_SIZE]) override;
+
 private:
 	GameScreen &_gui;
 };
@@ -254,14 +255,16 @@ bool GameScreen::loadInventoryGfx() {
 
 class HudAnimationDecoderCallback : public AnimationDecoderCallback {
 public:
-	HudAnimationDecoderCallback(GameScreen &gui) : _gui(gui) {}
+	HudAnimationDecoderCallback(GameScreen &gui)
+	  : _gui(gui) {}
 	virtual void onFrame(int frameNo, Graphics::Surface &surface) override;
 	virtual void onPaletteUpdated(byte palette[PALETTE_SIZE]) override;
+
 private:
 	GameScreen &_gui;
 };
 
-void HudAnimationDecoderCallback::onPaletteUpdated(byte [PALETTE_SIZE]) {
+void HudAnimationDecoderCallback::onPaletteUpdated(byte[PALETTE_SIZE]) {
 }
 
 void HudAnimationDecoderCallback::onFrame(int frameNo, Graphics::Surface &surface) {
@@ -335,7 +338,7 @@ void GameScreen::onInventoryChanged() {
 void GameScreen::onButtonClicked(ButtonWidget *button) {
 	const int buttonId = button->getId();
 	if (buttonId <= BUTTON_PICKUP) {
-		const ActionInfo::Action actions[] = {ActionInfo::Walk, ActionInfo::Talk, ActionInfo::Look, ActionInfo::Use, ActionInfo::PickUp};
+		const ActionInfo::Action actions[] = { ActionInfo::Walk, ActionInfo::Talk, ActionInfo::Look, ActionInfo::Use, ActionInfo::PickUp };
 		_currentAction = actions[buttonId];
 		_currentPickedItem.clear();
 	} else if (buttonId == BUTTON_SCROLL_LEFT) {

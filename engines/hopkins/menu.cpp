@@ -23,21 +23,26 @@
 #include "hopkins/menu.h"
 
 #include "hopkins/dialogs.h"
-#include "hopkins/files.h"
-#include "hopkins/hopkins.h"
-#include "hopkins/globals.h"
 #include "hopkins/events.h"
+#include "hopkins/files.h"
+#include "hopkins/globals.h"
 #include "hopkins/graphics.h"
+#include "hopkins/hopkins.h"
 #include "hopkins/sound.h"
 
-#include "common/scummsys.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/scummsys.h"
 #include "common/util.h"
 
 namespace Hopkins {
 
-enum MenuSelection { MENU_NONE = 0, PLAY_GAME = 1, LOAD_GAME = 2, OPTIONS = 3, INTRODUCTION = 4, QUIT = 5 };
+enum MenuSelection { MENU_NONE = 0,
+	                   PLAY_GAME = 1,
+	                   LOAD_GAME = 2,
+	                   OPTIONS = 3,
+	                   INTRODUCTION = 4,
+	                   QUIT = 5 };
 
 MenuManager::MenuManager(HopkinsEngine *vm) {
 	_vm = vm;

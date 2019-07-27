@@ -25,8 +25,8 @@
 
 #include "mutationofjb/inventory.h"
 
-#include "common/serializer.h"
 #include "common/scummsys.h"
+#include "common/serializer.h"
 
 namespace Common {
 class ReadStream;
@@ -63,7 +63,7 @@ struct Door : public Common::Serializable {
 	 * Scene ID where the door leads (LT register).
 	 * Can be 0 - you can hover your mouse over it, but clicking it doesn't do anything (unless scripted).
 	 */
-	uint8  _destSceneId;
+	uint8 _destSceneId;
 	/** X coordinate for player's position after going through the door (SX register). */
 	uint16 _destX;
 	/** Y coordinate for player's position after going through the door (SY register). */
@@ -71,21 +71,21 @@ struct Door : public Common::Serializable {
 	/** X coordinate of the door rectangle (XX register). */
 	uint16 _x;
 	/** Y coordinate of the door rectangle (YY register). */
-	uint8  _y;
+	uint8 _y;
 	/** Width of the door rectangle (XL register). */
 	uint16 _width;
 	/** Height of the door rectangle (YL register). */
-	uint8  _height;
+	uint8 _height;
 	/** X coordinate for position player will walk towards after clicking the door (WX register). */
 	uint16 _walkToX;
 	/** Y coordinate for position player will walk towards after clicking the door (WY register). */
-	uint8  _walkToY;
+	uint8 _walkToY;
 	/**
 	 * Encoded player frames.
 	 *   4 bits - destFrame
 	 *   4 bits - walkToFrame
 	 */
-	uint8  _SP;
+	uint8 _SP;
 
 	/**
 	 * Check if this door can be interacted with.
@@ -131,7 +131,7 @@ struct Door : public Common::Serializable {
  */
 struct Object : public Common::Serializable {
 	/** Controls whether the animation is playing. */
-	uint8  _active;
+	uint8 _active;
 	/**
 	 * Number of the first frame this object has in the shared object frame space (FA register).
 	 *
@@ -141,7 +141,7 @@ struct Object : public Common::Serializable {
 	 * @note The numbering starts from 1.
 	 * @note Technically this field is useless because it can be calculated.
 	 */
-	uint8  _firstFrame;
+	uint8 _firstFrame;
 	/**
 	 * The frame that is jumped to randomly based on _jumpChance (FR register).
 	 *
@@ -150,36 +150,36 @@ struct Object : public Common::Serializable {
 	 * @see objectanimationtask.cpp
 	 * @see _jumpChance
 	 */
-	uint8  _randomFrame;
+	uint8 _randomFrame;
 	/** Number of animation frames (NA register). */
-	uint8  _numFrames;
+	uint8 _numFrames;
 	/**
 	 * Low 8 bits of the 16-bit starting room frame (FS register).
 	 * This is in the room frame space.
 	 *
 	 * @see _roomFrameMSB
 	 */
-	uint8  _roomFrameLSB;
+	uint8 _roomFrameLSB;
 	/**
 	 * Chance (1 in x) of the animation jumping to _randomFrame.
 	 *
 	 * @see objectanimationtask.cpp
 	*/
-	uint8  _jumpChance;
+	uint8 _jumpChance;
 	/**
 	 * Current animation frame (CA register).
 	 *
 	 * @note Index in the shared object frame space. Numbered from 1.
 	 */
-	uint8  _currentFrame;
+	uint8 _currentFrame;
 	/** X coordinate of the object rectangle (XX register). */
 	uint16 _x;
 	/** Y coordinate of the object rectangle (YY register). */
-	uint8  _y;
+	uint8 _y;
 	/** Width of the object rectangle (XL register). */
 	uint16 _width;
 	/** Height of the object rectangle (YL register). */
-	uint8  _height;
+	uint8 _height;
 	/** A general-purpose register for use in scripts. Nothing to do with animation. */
 	uint16 _WX;
 	/**
@@ -188,9 +188,9 @@ struct Object : public Common::Serializable {
 	 *
 	 * @see _roomFrameLSB
 	 */
-	uint8  _roomFrameMSB;
+	uint8 _roomFrameMSB;
 	/** Unknown. TODO: Figure out what this does. */
-	uint8  _SP;
+	uint8 _SP;
 
 	/**
 	 * Load initial state from game data file.
@@ -213,7 +213,7 @@ struct Object : public Common::Serializable {
  */
 struct Static : public Common::Serializable {
 	/** Whether you can mouse over and interact with the static (AC register). */
-	uint8  _active;
+	uint8 _active;
 	/**
 	 * Static name (NM register).
 	 *
@@ -232,17 +232,17 @@ struct Static : public Common::Serializable {
 	/** X coordinate of the static rectangle (XX register). */
 	uint16 _x;
 	/** Y coordinate of the static rectangle (YY register). */
-	uint8  _y;
+	uint8 _y;
 	/** Width of the static rectangle (XL register). */
 	uint16 _width;
 	/** Height of the static rectangle (YL register). */
-	uint8  _height;
+	uint8 _height;
 	/** X coordinate of the position the player will walk towards after clicking the static (WX register). */
 	uint16 _walkToX;
 	/** Y coordinate of the position the player will walk towards after clicking the static (WY register). */
-	uint8  _walkToY;
+	uint8 _walkToY;
 	/** Player frame (rotation) set after the player finishes walking towards the walk to position (SP register). */
-	uint8  _walkToFrame;
+	uint8 _walkToFrame;
 
 	/**
 	 * Load initial state from game data file.
@@ -282,17 +282,17 @@ struct Static : public Common::Serializable {
  */
 struct Bitmap : public Common::Serializable {
 	/** Room frame that this bitmap carves out of. */
-	uint8  _roomFrame;
+	uint8 _roomFrame;
 	/** Whether to draw the bitmap. */
-	uint8  _isVisible;
+	uint8 _isVisible;
 	/** X coordinate of the top left corner of the bitmap rectangle. */
 	uint16 _x1;
 	/** Y coordinate of the top left corner of the bitmap rectangle. */
-	uint8  _y1;
+	uint8 _y1;
 	/** X coordinate of the bottom right corner of the bitmap rectangle. */
 	uint16 _x2;
 	/** Y coordinate of the bottom right corner of the bitmap rectangle. */
-	uint8  _y2;
+	uint8 _y2;
 
 	/**
 	 * Load initial state from game data file.
@@ -331,9 +331,10 @@ struct ExhaustedConvItem {
 		return _encodedData & 0xF;
 	}
 
-	ExhaustedConvItem() : _encodedData(0) {}
-	ExhaustedConvItem(uint8 context, uint8 convItemIndex, uint8 convGroupIndex) :
-		_encodedData(((context & 0x1) << 7) | ((convItemIndex & 0x7) << 4) | (convGroupIndex & 0xF)) {}
+	ExhaustedConvItem()
+	  : _encodedData(0) {}
+	ExhaustedConvItem(uint8 context, uint8 convItemIndex, uint8 convGroupIndex)
+	  : _encodedData(((context & 0x1) << 7) | ((convItemIndex & 0x7) << 4) | (convGroupIndex & 0xF)) {}
 };
 
 struct Scene : Common::Serializable {
@@ -471,6 +472,7 @@ public:
 	ConversationInfo _conversationInfo;
 	/** Current SayCommand color. */
 	uint8 _color;
+
 private:
 	Scene _scenes[45]; // Persistent.
 };

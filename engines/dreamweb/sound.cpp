@@ -32,7 +32,8 @@
 
 namespace DreamWeb {
 
-DreamWebSound::DreamWebSound(DreamWebEngine *vm) : _vm(vm) {
+DreamWebSound::DreamWebSound(DreamWebEngine *vm)
+  : _vm(vm) {
 	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
@@ -133,8 +134,7 @@ void DreamWebSound::playSound(uint8 channel, uint8 id, uint8 loops) {
 
 	int bank = 0;
 	bool speech = false;
-	Audio::Mixer::SoundType type = channel == 0?
-		Audio::Mixer::kMusicSoundType: Audio::Mixer::kSFXSoundType;
+	Audio::Mixer::SoundType type = channel == 0 ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
 
 	if (id >= 12) {
 		id -= 12;

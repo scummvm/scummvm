@@ -31,31 +31,32 @@
 namespace Cloud {
 namespace Box {
 
-class BoxStorage;
+	class BoxStorage;
 
-class BoxListDirectoryByIdRequest: public Networking::Request {
-	Common::String _requestedId;
-	BoxStorage *_storage;
+	class BoxListDirectoryByIdRequest : public Networking::Request {
+		Common::String _requestedId;
+		BoxStorage *_storage;
 
-	Storage::ListDirectoryCallback _listDirectoryCallback;
-	Common::Array<StorageFile> _files;
-	Request *_workingRequest;
-	bool _ignoreCallback;
-	Common::String _date;
+		Storage::ListDirectoryCallback _listDirectoryCallback;
+		Common::Array<StorageFile> _files;
+		Request *_workingRequest;
+		bool _ignoreCallback;
+		Common::String _date;
 
-	void start();
-	void makeRequest(uint32 offset);
-	void responseCallback(Networking::JsonResponse response);
-	void errorCallback(Networking::ErrorResponse error);
-	void finishListing(Common::Array<StorageFile> &files);
-public:
-	BoxListDirectoryByIdRequest(BoxStorage *storage, Common::String id, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb);
-	virtual ~BoxListDirectoryByIdRequest();
+		void start();
+		void makeRequest(uint32 offset);
+		void responseCallback(Networking::JsonResponse response);
+		void errorCallback(Networking::ErrorResponse error);
+		void finishListing(Common::Array<StorageFile> &files);
 
-	virtual void handle();
-	virtual void restart();
-	virtual Common::String date() const;
-};
+	public:
+		BoxListDirectoryByIdRequest(BoxStorage *storage, Common::String id, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb);
+		virtual ~BoxListDirectoryByIdRequest();
+
+		virtual void handle();
+		virtual void restart();
+		virtual Common::String date() const;
+	};
 
 } // End of namespace Box
 } // End of namespace Cloud

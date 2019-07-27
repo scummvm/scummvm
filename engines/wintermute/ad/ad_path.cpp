@@ -34,17 +34,16 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(AdPath, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdPath::AdPath(BaseGame *inGame) : BaseClass(inGame) {
+AdPath::AdPath(BaseGame *inGame)
+  : BaseClass(inGame) {
 	_currIndex = -1;
 	_ready = false;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 AdPath::~AdPath() {
 	reset();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void AdPath::reset() {
@@ -57,7 +56,6 @@ void AdPath::reset() {
 	_ready = false;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 BasePoint *AdPath::getFirst() {
 	if (_points.size() > 0) {
@@ -67,7 +65,6 @@ BasePoint *AdPath::getFirst() {
 		return nullptr;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 BasePoint *AdPath::getNext() {
@@ -79,7 +76,6 @@ BasePoint *AdPath::getNext() {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 BasePoint *AdPath::getCurrent() {
 	if (_currIndex >= 0 && _currIndex < (int32)_points.size()) {
@@ -89,12 +85,10 @@ BasePoint *AdPath::getCurrent() {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void AdPath::addPoint(BasePoint *point) {
 	_points.add(point);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdPath::setReady(bool ready) {
@@ -103,7 +97,6 @@ bool AdPath::setReady(bool ready) {
 
 	return orig;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdPath::persist(BasePersistenceManager *persistMgr) {

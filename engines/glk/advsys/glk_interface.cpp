@@ -25,53 +25,53 @@
 namespace Glk {
 namespace AdvSys {
 
-bool GlkInterface::initialize() {
-	_window = glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
-	return _window != nullptr;
-}
-
-void GlkInterface::print(const Common::String &msg) {
-	// Don't print out text if loading a savegame directly from the launcher, since we don't
-	// want any of the intro text displayed by the startup code to show
-	if (_saveSlot == -1)
-		glk_put_string_stream(glk_window_get_stream(_window), msg.c_str());
-}
-
-void GlkInterface::print(int number) {
-	Common::String s = Common::String::format("%d", number);
-	print(s);
-}
-
-Common::String GlkInterface::readLine() {
-	event_t ev;
-	char line[200];
-
-	print(": ");
-
-	if (!_pendingLine.empty()) {
-		// The next input line has been manually provided, so return it
-		print(_pendingLine);
-		print("\n");
-
-		Common::String l = _pendingLine;
-		_pendingLine = "";
-		return l;
+	bool GlkInterface::initialize() {
+		_window = glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
+		return _window != nullptr;
 	}
 
-	glk_request_line_event(_window, line, 199, 0);
+	void GlkInterface::print(const Common::String &msg) {
+		// Don't print out text if loading a savegame directly from the launcher, since we don't
+		// want any of the intro text displayed by the startup code to show
+		if (_saveSlot == -1)
+			glk_put_string_stream(glk_window_get_stream(_window), msg.c_str());
+	}
 
-	do {
-		glk_select(&ev);
-		if (ev.type == evtype_Quit)
-			return "";
-		else if (ev.type == evtype_LineInput) {
-			line[ev.val1] = '\0';
-			return Common::String(line);
+	void GlkInterface::print(int number) {
+		Common::String s = Common::String::format("%d", number);
+		print(s);
+	}
+
+	Common::String GlkInterface::readLine() {
+		event_t ev;
+		char line[200];
+
+		print(": ");
+
+		if (!_pendingLine.empty()) {
+			// The next input line has been manually provided, so return it
+			print(_pendingLine);
+			print("\n");
+
+			Common::String l = _pendingLine;
+			_pendingLine = "";
+			return l;
 		}
-	} while (!shouldQuit() && ev.type != evtype_Quit);
 
-	return "";
-}
+		glk_request_line_event(_window, line, 199, 0);
+
+		do {
+			glk_select(&ev);
+			if (ev.type == evtype_Quit)
+				return "";
+			else if (ev.type == evtype_LineInput) {
+				line[ev.val1] = '\0';
+				return Common::String(line);
+			}
+		} while (!shouldQuit() && ev.type != evtype_Quit);
+
+		return "";
+	}
 
 } // End of namespace AdvSys
 } // End of namespace Glk

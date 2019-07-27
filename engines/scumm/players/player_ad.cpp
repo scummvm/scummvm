@@ -22,21 +22,21 @@
 
 #include "scumm/players/player_ad.h"
 #include "scumm/imuse/imuse.h"
-#include "scumm/scumm.h"
 #include "scumm/resource.h"
+#include "scumm/scumm.h"
 
 #include "audio/fmopl.h"
 #include "audio/mixer.h"
 
-#include "common/textconsole.h"
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 
 namespace Scumm {
 
 #define AD_CALLBACK_FREQUENCY 472
 
 Player_AD::Player_AD(ScummEngine *scumm)
-	: _vm(scumm) {
+  : _vm(scumm) {
 	_opl2 = OPL::Config::create();
 	if (!_opl2->init()) {
 		error("Could not initialize OPL2 emulator");
@@ -334,9 +334,9 @@ void Player_AD::limitHWChannels(int newCount) {
 }
 
 const int Player_AD::_operatorOffsetToChannel[22] = {
-	 0,  1,  2,  0,  1,  2, -1, -1,
-	 3,  4,  5,  3,  4,  5, -1, -1,
-	 6,  7,  8,  6,  7,  8
+	0, 1, 2, 0, 1, 2, -1, -1,
+	3, 4, 5, 3, 4, 5, -1, -1,
+	6, 7, 8, 6, 7, 8
 };
 
 void Player_AD::writeReg(int r, int v) {
@@ -419,9 +419,9 @@ void Player_AD::setupOperator(const uint opr, const byte *&instrOffset) {
 }
 
 const int Player_AD::_operatorOffsetTable[18] = {
-	 0,  3,  1,  4,
-	 2,  5,  8, 11,
-	 9, 12, 10, 13,
+	0, 3, 1, 4,
+	2, 5, 8, 11,
+	9, 12, 10, 13,
 	16, 19, 17, 20,
 	18, 21
 };
@@ -1150,18 +1150,18 @@ const uint Player_AD::_noteBiasTable[7] = {
 };
 
 const uint Player_AD::_numStepsTable[16] = {
-	    1,    4,    6,    8,
-	   10,   14,   18,   24,
-	   36,   64,  100,  160,
-	  240,  340,  600, 1200
+	1, 4, 6, 8,
+	10, 14, 18, 24,
+	36, 64, 100, 160,
+	240, 340, 600, 1200
 };
 
 const uint Player_AD::_noteAdjustScaleTable[7] = {
-	255,   7,  63,  15,  63,  15,  63
+	255, 7, 63, 15, 63, 15, 63
 };
 
 const uint Player_AD::_noteAdjustTable[16] = {
-	    0,  4369,  8738, 13107,
+	0, 4369, 8738, 13107,
 	17476, 21845, 26214, 30583,
 	34952, 39321, 43690, 48059,
 	52428, 56797, 61166, 65535
@@ -1172,9 +1172,9 @@ const bool Player_AD::_useOperatorTable[7] = {
 };
 
 const uint Player_AD::_channelOffsetTable[11] = {
-	 0,  1,  2,  3,
-	 4,  5,  6,  7,
-	 8,  8,  7
+	0, 1, 2, 3,
+	4, 5, 6, 7,
+	8, 8, 7
 };
 
 const uint Player_AD::_channelOperatorOffsetTable[7] = {

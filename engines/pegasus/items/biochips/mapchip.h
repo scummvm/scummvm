@@ -30,8 +30,8 @@
 #include "pegasus/items/biochips/mapimage.h"
 
 namespace Common {
-	class ReadStream;
-	class WriteStream;
+class ReadStream;
+class WriteStream;
 }
 
 namespace Pegasus {

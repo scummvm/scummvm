@@ -68,8 +68,10 @@ public:
 
 	class MutexLock {
 		friend class PC98AudioCore;
+
 	public:
 		~MutexLock();
+
 	private:
 		MutexLock(PC98AudioCoreInternal *pc98int);
 		PC98AudioCoreInternal *_pc98int;

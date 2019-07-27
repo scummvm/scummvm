@@ -35,8 +35,8 @@ namespace Saga {
 #define SAGA_FRAME_NOOP 0x1F
 #define SAGA_FRAME_REPOSITION 0x30
 #define SAGA_FRAME_ROW_END 0x2F
-#define SAGA_FRAME_LONG_COMPRESSED_RUN	0x20
-#define SAGA_FRAME_LONG_UNCOMPRESSED_RUN	0x10
+#define SAGA_FRAME_LONG_COMPRESSED_RUN 0x20
+#define SAGA_FRAME_LONG_UNCOMPRESSED_RUN 0x10
 #define SAGA_FRAME_COMPRESSED_RUN 0x80
 #define SAGA_FRAME_UNCOMPRESSED_RUN 0x40
 #define SAGA_FRAME_EMPTY_RUN 0xC0
@@ -49,7 +49,7 @@ enum AnimationState {
 
 enum AnimationFlags {
 	ANIM_FLAG_NONE = 0x00,
-	ANIM_FLAG_ENDSCENE = 0x01	// When animation ends, dispatch scene end event
+	ANIM_FLAG_ENDSCENE = 0x01 // When animation ends, dispatch scene end event
 };
 
 // Cutaway info array member. Cutaways are basically animations with a really
@@ -137,9 +137,9 @@ public:
 
 	bool hasCutaway() { return _cutawayActive; }
 	void setCutAwayMode(int mode) { _cutAwayMode = mode; }
-//	int cutawayListLength() { return _cutawayListLength; }
-//	int cutawayBgResourceID(int cutaway) { return _cutawayList[cutaway].backgroundResourceId; }
-//	int cutawayAnimResourceID(int cutaway) { return _cutawayList[cutaway].animResourceId; }
+	//	int cutawayListLength() { return _cutawayListLength; }
+	//	int cutawayBgResourceID(int cutaway) { return _cutawayList[cutaway].backgroundResourceId; }
+	//	int cutawayAnimResourceID(int cutaway) { return _cutawayList[cutaway].animResourceId; }
 
 private:
 	void decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_t bufLength);
@@ -168,7 +168,7 @@ private:
 		return true;
 	}
 
-	AnimationData* getAnimation(uint16 animId) {
+	AnimationData *getAnimation(uint16 animId) {
 		validateAnimationId(animId);
 		if (animId >= MAX_ANIMATIONS)
 			return _cutawayAnimations[animId - MAX_ANIMATIONS];
@@ -197,4 +197,4 @@ private:
 
 } // End of namespace Saga
 
-#endif				// ANIMATION_H_
+#endif // ANIMATION_H_

@@ -27,17 +27,20 @@ namespace Neverhood {
 // Background
 
 Background::Background(NeverhoodEngine *vm, int objectPriority)
-	: Entity(vm, objectPriority), _surface(NULL), _spriteResource(vm) {
+  : Entity(vm, objectPriority)
+  , _surface(NULL)
+  , _spriteResource(vm) {
 	// Empty
 }
 
 Background::Background(NeverhoodEngine *vm, uint32 fileHash, int objectPriority, int surfacePriority)
-	: Entity(vm, objectPriority), _surface(NULL), _spriteResource(vm) {
+  : Entity(vm, objectPriority)
+  , _surface(NULL)
+  , _spriteResource(vm) {
 
 	_spriteResource.load(fileHash);
 	createSurface(surfacePriority, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_surface->drawSpriteResource(_spriteResource);
-
 }
 
 Background::~Background() {

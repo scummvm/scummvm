@@ -33,63 +33,62 @@
 namespace StarTrek {
 
 extern const RoomAction veng5ActionList[] = {
-	{ {ACTION_TICK, 1,  0, 0}, &Room::veng5Tick1 },
-	{ {ACTION_TICK, 45, 0, 0}, &Room::veng5Tick45 },
+	{ { ACTION_TICK, 1, 0, 0 }, &Room::veng5Tick1 },
+	{ { ACTION_TICK, 45, 0, 0 }, &Room::veng5Tick45 },
 
-	{ {ACTION_WALK, HOTSPOT_DOOR, 0, 0}, &Room::veng5WalkToDoor },
-	{ {ACTION_DONE_WALK, 2,       0, 0}, &Room::veng5ReachedDoor },
-	{ {ACTION_DONE_ANIM, 1,       0, 0}, &Room::veng5DoorOpened },
-	{ {ACTION_TOUCHED_WARP, 1,    0, 0}, &Room::veng5TouchedTurboliftDoor },
+	{ { ACTION_WALK, HOTSPOT_DOOR, 0, 0 }, &Room::veng5WalkToDoor },
+	{ { ACTION_DONE_WALK, 2, 0, 0 }, &Room::veng5ReachedDoor },
+	{ { ACTION_DONE_ANIM, 1, 0, 0 }, &Room::veng5DoorOpened },
+	{ { ACTION_TOUCHED_WARP, 1, 0, 0 }, &Room::veng5TouchedTurboliftDoor },
 
-	{ {ACTION_LOOK, HOTSPOT_DOOR,      0, 0}, &Room::veng5LookAtDoor },
-	{ {ACTION_LOOK, OBJECT_DOOR,       0, 0}, &Room::veng5LookAtDoor },
-	{ {ACTION_LOOK, HOTSPOT_LADDER,    0, 0}, &Room::veng5LookAtLadder },
-	{ {ACTION_LOOK, OBJECT_DEAD_GUY,   0, 0}, &Room::veng5LookAtDeadGuy },
-	{ {ACTION_LOOK, OBJECT_POWER_PACK, 0, 0}, &Room::veng5LookAtPowerPack },
-	{ {ACTION_LOOK, OBJECT_DEBRIS,     0, 0}, &Room::veng5LookAtDebris },
-	{ {ACTION_LOOK, OBJECT_KIRK,       0, 0}, &Room::veng5LookAtKirk },
-	{ {ACTION_LOOK, OBJECT_SPOCK,      0, 0}, &Room::veng5LookAtSpock },
-	{ {ACTION_LOOK, OBJECT_MCCOY,      0, 0}, &Room::veng5LookAtMccoy },
-	{ {ACTION_LOOK, OBJECT_REDSHIRT,   0, 0}, &Room::veng5LookAtRedshirt },
-	{ {ACTION_LOOK, 0xff,              0, 0}, &Room::veng5LookAnywhere },
+	{ { ACTION_LOOK, HOTSPOT_DOOR, 0, 0 }, &Room::veng5LookAtDoor },
+	{ { ACTION_LOOK, OBJECT_DOOR, 0, 0 }, &Room::veng5LookAtDoor },
+	{ { ACTION_LOOK, HOTSPOT_LADDER, 0, 0 }, &Room::veng5LookAtLadder },
+	{ { ACTION_LOOK, OBJECT_DEAD_GUY, 0, 0 }, &Room::veng5LookAtDeadGuy },
+	{ { ACTION_LOOK, OBJECT_POWER_PACK, 0, 0 }, &Room::veng5LookAtPowerPack },
+	{ { ACTION_LOOK, OBJECT_DEBRIS, 0, 0 }, &Room::veng5LookAtDebris },
+	{ { ACTION_LOOK, OBJECT_KIRK, 0, 0 }, &Room::veng5LookAtKirk },
+	{ { ACTION_LOOK, OBJECT_SPOCK, 0, 0 }, &Room::veng5LookAtSpock },
+	{ { ACTION_LOOK, OBJECT_MCCOY, 0, 0 }, &Room::veng5LookAtMccoy },
+	{ { ACTION_LOOK, OBJECT_REDSHIRT, 0, 0 }, &Room::veng5LookAtRedshirt },
+	{ { ACTION_LOOK, 0xff, 0, 0 }, &Room::veng5LookAnywhere },
 
-	{ {ACTION_USE, OBJECT_IPHASERS, OBJECT_POWER_PACK, 0}, &Room::veng5UsePhaserOnPowerPack },
-	{ {ACTION_USE, OBJECT_IPHASERK, OBJECT_POWER_PACK, 0}, &Room::veng5UsePhaserOnPowerPack },
-	{ {ACTION_USE, OBJECT_IPHASERS, OBJECT_DEBRIS,     0}, &Room::veng5UseStunPhaserOnDebris },
-	{ {ACTION_USE, OBJECT_IPHASERK, OBJECT_DEBRIS,     0}, &Room::veng5UseKillPhaserOnDebris },
-	{ {ACTION_DONE_WALK, 4,                         0, 0}, &Room::veng5ReachedPositionToShootDebris },
-	{ {ACTION_DONE_ANIM, 5,                         0, 0}, &Room::veng5DrewPhaser },
-	{ {ACTION_DONE_ANIM, 3,                         0, 0}, &Room::veng5VaporizedDebris },
+	{ { ACTION_USE, OBJECT_IPHASERS, OBJECT_POWER_PACK, 0 }, &Room::veng5UsePhaserOnPowerPack },
+	{ { ACTION_USE, OBJECT_IPHASERK, OBJECT_POWER_PACK, 0 }, &Room::veng5UsePhaserOnPowerPack },
+	{ { ACTION_USE, OBJECT_IPHASERS, OBJECT_DEBRIS, 0 }, &Room::veng5UseStunPhaserOnDebris },
+	{ { ACTION_USE, OBJECT_IPHASERK, OBJECT_DEBRIS, 0 }, &Room::veng5UseKillPhaserOnDebris },
+	{ { ACTION_DONE_WALK, 4, 0, 0 }, &Room::veng5ReachedPositionToShootDebris },
+	{ { ACTION_DONE_ANIM, 5, 0, 0 }, &Room::veng5DrewPhaser },
+	{ { ACTION_DONE_ANIM, 3, 0, 0 }, &Room::veng5VaporizedDebris },
 
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_DEBRIS,     0}, &Room::veng5UseMTricorderOnDebris },
-	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_DEBRIS,     0}, &Room::veng5UseSTricorderOnDebris },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_POWER_PACK, 0}, &Room::veng5UseMTricorderOnPowerPack },
-	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_POWER_PACK, 0}, &Room::veng5UseSTricorderOnPowerPack },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_DEBRIS, 0 }, &Room::veng5UseMTricorderOnDebris },
+	{ { ACTION_USE, OBJECT_ISTRICOR, OBJECT_DEBRIS, 0 }, &Room::veng5UseSTricorderOnDebris },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_POWER_PACK, 0 }, &Room::veng5UseMTricorderOnPowerPack },
+	{ { ACTION_USE, OBJECT_ISTRICOR, OBJECT_POWER_PACK, 0 }, &Room::veng5UseSTricorderOnPowerPack },
 
-	{ {ACTION_TALK, OBJECT_KIRK,       0, 0}, &Room::veng5TalkToKirk },
-	{ {ACTION_TALK, OBJECT_MCCOY,      0, 0}, &Room::veng5TalkToMccoy },
-	{ {ACTION_TALK, OBJECT_SPOCK,      0, 0}, &Room::veng5TalkToSpock },
-	{ {ACTION_TALK, OBJECT_REDSHIRT,   0, 0}, &Room::veng5TalkToRedshirt },
+	{ { ACTION_TALK, OBJECT_KIRK, 0, 0 }, &Room::veng5TalkToKirk },
+	{ { ACTION_TALK, OBJECT_MCCOY, 0, 0 }, &Room::veng5TalkToMccoy },
+	{ { ACTION_TALK, OBJECT_SPOCK, 0, 0 }, &Room::veng5TalkToSpock },
+	{ { ACTION_TALK, OBJECT_REDSHIRT, 0, 0 }, &Room::veng5TalkToRedshirt },
 
-	{ {ACTION_TOUCHED_HOTSPOT, 0, 0, 0}, &Room::veng5TouchedHotspot0 },
+	{ { ACTION_TOUCHED_HOTSPOT, 0, 0, 0 }, &Room::veng5TouchedHotspot0 },
 
-	{ {ACTION_GET, OBJECT_POWER_PACK, 0, 0}, &Room::veng5GetPowerPack },
-	{ {ACTION_DONE_WALK, 6,           0, 0}, &Room::veng5ReachedPowerPack },
-	{ {ACTION_DONE_ANIM, 7,           0, 0}, &Room::veng5PickedUpPowerPack },
+	{ { ACTION_GET, OBJECT_POWER_PACK, 0, 0 }, &Room::veng5GetPowerPack },
+	{ { ACTION_DONE_WALK, 6, 0, 0 }, &Room::veng5ReachedPowerPack },
+	{ { ACTION_DONE_ANIM, 7, 0, 0 }, &Room::veng5PickedUpPowerPack },
 
 	// Common code
-	{ {ACTION_TICK, 0xff, 0xff, 0xff}, &Room::vengaTick },
-	{ {ACTION_USE, OBJECT_IPHASERS, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
-	{ {ACTION_USE, OBJECT_IPHASERK, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
-	{ {ACTION_LOOK, OBJECT_IHYPO,          0, 0}, &Room::vengaLookAtHypo },
-	{ {ACTION_USE, OBJECT_ICOMM, OBJECT_KIRK, 0}, &Room::vengaUseCommunicator },
-	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
-	{ {ACTION_USE, OBJECT_MCCOY,    OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
+	{ { ACTION_TICK, 0xff, 0xff, 0xff }, &Room::vengaTick },
+	{ { ACTION_USE, OBJECT_IPHASERS, 0xff, 0 }, &Room::vengaUsePhaserAnywhere },
+	{ { ACTION_USE, OBJECT_IPHASERK, 0xff, 0 }, &Room::vengaUsePhaserAnywhere },
+	{ { ACTION_LOOK, OBJECT_IHYPO, 0, 0 }, &Room::vengaLookAtHypo },
+	{ { ACTION_USE, OBJECT_ICOMM, OBJECT_KIRK, 0 }, &Room::vengaUseCommunicator },
+	{ { ACTION_USE, OBJECT_IMEDKIT, OBJECT_DEAD_GUY, 0 }, &Room::vengaUseMccoyOnDeadGuy },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_DEAD_GUY, 0 }, &Room::vengaUseMccoyOnDeadGuy },
+	{ { ACTION_USE, OBJECT_MCCOY, OBJECT_DEAD_GUY, 0 }, &Room::vengaUseMccoyOnDeadGuy },
 };
 
 extern const int veng5NumActions = ARRAYSIZE(veng5ActionList);
-
 
 void Room::veng5Tick1() {
 	playVoc("VEN5LOOP");
@@ -199,7 +198,7 @@ void Room::veng5VaporizedDebris() {
 	showText(TX_SPEAKER_SPOCK, TX_VEN5_018);
 	showText(TX_SPEAKER_MCCOY, TX_VEN5_010);
 	showText(TX_SPEAKER_SPOCK, TX_VEN5_019);
-	showText(TX_SPEAKER_KIRK,  TX_VEN5_003);
+	showText(TX_SPEAKER_KIRK, TX_VEN5_003);
 
 	_awayMission->veng.clearedDebrisInRoom5 = true;
 	_awayMission->disableInput = false;
@@ -231,7 +230,7 @@ void Room::veng5TalkToMccoy() {
 
 void Room::veng5TalkToSpock() {
 	showText(TX_SPEAKER_SPOCK, TX_VEN5_017);
-	showText(TX_SPEAKER_KIJE,  TX_VEN5_R20);
+	showText(TX_SPEAKER_KIJE, TX_VEN5_R20);
 }
 
 void Room::veng5TalkToRedshirt() {
@@ -243,7 +242,7 @@ void Room::veng5TouchedHotspot0() { // Approached too close to fire
 
 	if (!_awayMission->veng.askedSpockAboutFire) {
 		_awayMission->veng.askedSpockAboutFire = true;
-		showText(TX_SPEAKER_KIRK,  TX_VEN5_002);
+		showText(TX_SPEAKER_KIRK, TX_VEN5_002);
 		showText(TX_SPEAKER_SPOCK, TX_VEN5_016);
 	}
 }

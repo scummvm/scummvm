@@ -27,18 +27,17 @@
 #include "common/endian.h"
 #include "common/textconsole.h"
 
-#include "cine/cine.h"
 #include "cine/bg_list.h"
+#include "cine/cine.h"
+#include "cine/console.h"
 #include "cine/object.h"
+#include "cine/script.h"
 #include "cine/sound.h"
 #include "cine/various.h"
-#include "cine/script.h"
-#include "cine/console.h"
 
 namespace Cine {
 
 uint16 compareVars(int16 a, int16 b);
-
 
 const Opcode *FWScript::_opcodeTable = 0;
 unsigned int FWScript::_numOpcodes = 0;
@@ -229,7 +228,9 @@ void setupOpcodes() {
  *
  * Explicit to prevent var=0 instead of var[i]=0 typos.
  */
-ScriptVars::ScriptVars(unsigned int len) : _size(len), _vars(new int16[len]) {
+ScriptVars::ScriptVars(unsigned int len)
+  : _size(len)
+  , _vars(new int16[len]) {
 	assert(_vars);
 	reset();
 }
@@ -240,7 +241,8 @@ ScriptVars::ScriptVars(unsigned int len) : _size(len), _vars(new int16[len]) {
  * @param len Size of array
  */
 ScriptVars::ScriptVars(Common::SeekableReadStream &fHandle, unsigned int len)
-	: _size(len), _vars(new int16[len]) {
+  : _size(len)
+  , _vars(new int16[len]) {
 
 	assert(_vars);
 
@@ -258,7 +260,9 @@ void ScriptVars::reinit(unsigned int len) {
 /**
  * Copy constructor
  */
-ScriptVars::ScriptVars(const ScriptVars &src) : _size(src._size), _vars(new int16[_size]) {
+ScriptVars::ScriptVars(const ScriptVars &src)
+  : _size(src._size)
+  , _vars(new int16[_size]) {
 	assert(_vars);
 	memcpy(_vars, src._vars, _size * sizeof(int16));
 }
@@ -362,16 +366,20 @@ void ScriptVars::reset() {
  * This constructor _MUST_ be followed by setdata() method call before the
  * instance can be used. It leaves the instance in partially invalid state.
  */
-RawScript::RawScript(uint16 s) : _size(s), _data(NULL),
-	_labels(SCRIPT_STACK_SIZE) { }
+RawScript::RawScript(uint16 s)
+  : _size(s)
+  , _data(NULL)
+  , _labels(SCRIPT_STACK_SIZE) {}
 
 /**
  * Complete constructor
  * @param data Script bytecode
  * @param s Bytecode length
  */
-RawScript::RawScript(const FWScriptInfo &info, const byte *data, uint16 s) :
-	_size(s), _data(NULL), _labels(SCRIPT_STACK_SIZE) {
+RawScript::RawScript(const FWScriptInfo &info, const byte *data, uint16 s)
+  : _size(s)
+  , _data(NULL)
+  , _labels(SCRIPT_STACK_SIZE) {
 
 	setData(info, data);
 }
@@ -379,8 +387,10 @@ RawScript::RawScript(const FWScriptInfo &info, const byte *data, uint16 s) :
 /**
  * Copy constructor
  */
-RawScript::RawScript(const RawScript &src) : _size(src._size),
-	_data(new byte[src._size + 1]), _labels(src._labels) {
+RawScript::RawScript(const RawScript &src)
+  : _size(src._size)
+  , _data(new byte[src._size + 1])
+  , _labels(src._labels) {
 	assert(_data);
 	memcpy(_data, src._data, _size + 1);
 }
@@ -449,8 +459,7 @@ int RawScript::getNextLabel(const FWScriptInfo &info, int offset) const {
 				} else {
 					pos += 2;
 				}
-			}
-				break;
+			} break;
 			case 'l': // label
 				return pos;
 			case 's': // string
@@ -577,7 +586,11 @@ const char *RawScript::getString(unsigned int pos) const {
  * instance can be used. It leaves the instance in partially invalid state.
  */
 RawObjectScript::RawObjectScript(uint16 s, uint16 p1, uint16 p2, uint16 p3)
-	: RawScript(s), _runCount(0), _param1(p1), _param2(p2), _param3(p3) {
+  : RawScript(s)
+  , _runCount(0)
+  , _param1(p1)
+  , _param2(p2)
+  , _param3(p3) {
 }
 
 /**
@@ -590,7 +603,11 @@ RawObjectScript::RawObjectScript(uint16 s, uint16 p1, uint16 p2, uint16 p3)
  */
 RawObjectScript::RawObjectScript(const FWScriptInfo &info, const byte *data,
                                  uint16 s, uint16 p1, uint16 p2, uint16 p3)
-	: RawScript(info, data, s), _runCount(0), _param1(p1), _param2(p2), _param3(p3) {
+  : RawScript(info, data, s)
+  , _runCount(0)
+  , _param1(p1)
+  , _param2(p2)
+  , _param3(p3) {
 }
 
 /**
@@ -598,19 +615,31 @@ RawObjectScript::RawObjectScript(const FWScriptInfo &info, const byte *data,
  * @param script Script bytecode reference
  * @param idx Script bytecode index
  */
-FWScript::FWScript(const RawScript &script, int16 idx) : _script(script),
-	_pos(0), _line(0), _compare(0), _index(idx),
-	_labels(script.labels()), _localVars(LOCAL_VARS_SIZE),
-	_globalVars(g_cine->_globalVars), _info(new FWScriptInfo) {
+FWScript::FWScript(const RawScript &script, int16 idx)
+  : _script(script)
+  , _pos(0)
+  , _line(0)
+  , _compare(0)
+  , _index(idx)
+  , _labels(script.labels())
+  , _localVars(LOCAL_VARS_SIZE)
+  , _globalVars(g_cine->_globalVars)
+  , _info(new FWScriptInfo) {
 }
 
 /**
  * Copy constructor
  */
-FWScript::FWScript(const FWScript &src) : _script(src._script), _pos(src._pos),
-	_line(src._line), _compare(src._compare), _index(src._index),
-	_labels(src._labels), _localVars(src._localVars),
-	_globalVars(src._globalVars), _info(new FWScriptInfo) {
+FWScript::FWScript(const FWScript &src)
+  : _script(src._script)
+  , _pos(src._pos)
+  , _line(src._line)
+  , _compare(src._compare)
+  , _index(src._index)
+  , _labels(src._labels)
+  , _localVars(src._localVars)
+  , _globalVars(src._globalVars)
+  , _info(new FWScriptInfo) {
 }
 
 /**
@@ -619,9 +648,15 @@ FWScript::FWScript(const FWScript &src) : _script(src._script), _pos(src._pos),
  * @param idx Script bytecode index
  */
 FWScript::FWScript(const RawScript &script, int16 idx, FWScriptInfo *info)
-	: _script(script), _pos(0), _line(0), _compare(0), _index(idx),
-	_labels(script.labels()), _localVars(LOCAL_VARS_SIZE),
-	_globalVars(g_cine->_globalVars), _info(info) {
+  : _script(script)
+  , _pos(0)
+  , _line(0)
+  , _compare(0)
+  , _index(idx)
+  , _labels(script.labels())
+  , _localVars(LOCAL_VARS_SIZE)
+  , _globalVars(g_cine->_globalVars)
+  , _info(info) {
 }
 
 /**
@@ -630,9 +665,15 @@ FWScript::FWScript(const RawScript &script, int16 idx, FWScriptInfo *info)
  * @param idx Script bytecode index
  */
 FWScript::FWScript(RawObjectScript &script, int16 idx, FWScriptInfo *info)
-	: _script(script), _pos(0), _line(0), _compare(0), _index(idx),
-	_labels(script.labels()), _localVars(LOCAL_VARS_SIZE),
-	_globalVars(g_cine->_globalVars), _info(info) {
+  : _script(script)
+  , _pos(0)
+  , _line(0)
+  , _compare(0)
+  , _index(idx)
+  , _labels(script.labels())
+  , _localVars(LOCAL_VARS_SIZE)
+  , _globalVars(g_cine->_globalVars)
+  , _info(info) {
 
 	_localVars[0] = script.run();
 }
@@ -641,9 +682,15 @@ FWScript::FWScript(RawObjectScript &script, int16 idx, FWScriptInfo *info)
  * Copy constructor for derived classes
  */
 FWScript::FWScript(const FWScript &src, FWScriptInfo *info)
-	: _script(src._script), _pos(src._pos), _line(src._line),
-	_compare(src._compare), _index(src._index), _labels(src._labels),
-	_localVars(src._localVars), _globalVars(src._globalVars), _info(info) { }
+  : _script(src._script)
+  , _pos(src._pos)
+  , _line(src._line)
+  , _compare(src._compare)
+  , _index(src._index)
+  , _labels(src._labels)
+  , _localVars(src._localVars)
+  , _globalVars(src._globalVars)
+  , _info(info) {}
 
 FWScript::~FWScript() {
 	delete _info;
@@ -1089,9 +1136,7 @@ int FWScript::o1_compareVar() {
 	// be compared against value 0. So looks like someone made a typo when
 	// making the scripts. Therefore we change that particular comparison
 	// from using the local variable 251 to using the global variable 251.
-	if (g_cine->getGameType() == Cine::GType_FW && scumm_stricmp(currentPrcName, "CODE2.PRC") == 0 &&
-		(g_cine->getPlatform() == Common::kPlatformAmiga || g_cine->getPlatform() == Common::kPlatformAtariST) &&
-		_script.getByte(_pos) == 251 && _script.getByte(_pos + 1) == 0 && _script.getWord(_pos + 2) == 0) {
+	if (g_cine->getGameType() == Cine::GType_FW && scumm_stricmp(currentPrcName, "CODE2.PRC") == 0 && (g_cine->getPlatform() == Common::kPlatformAmiga || g_cine->getPlatform() == Common::kPlatformAtariST) && _script.getByte(_pos) == 251 && _script.getByte(_pos + 1) == 0 && _script.getWord(_pos + 2) == 0) {
 		return o1_compareGlobalVar();
 	}
 
@@ -1453,7 +1498,7 @@ int FWScript::o1_blitAndFade() {
 	debugC(5, kCineDebugScript, "Line: %d: request fadein", _line);
 	// TODO: use real code
 
-//	fadeFromBlack();
+	//	fadeFromBlack();
 
 	renderer->reloadPalette();
 	return 0;
@@ -1531,11 +1576,8 @@ int FWScript::o1_break() {
 	//
 	// TODO: Check whether the speed is halved in any other scenes in Amiga/Atari ST versions under ScummVM
 	// TODO: Check whether the speed is halved when running the original executable under an emulator
-	if (g_cine->getGameType() == Cine::GType_FW &&
-		(g_cine->getPlatform() == Common::kPlatformAmiga || g_cine->getPlatform() == Common::kPlatformAtariST) &&
-		_pos < _script._size && _script.getByte(_pos) == (0x4F + 1) && // Is the next opcode a BREAK too?
-		scumm_stricmp(currentPrcName, "PART02.PRC") == 0 &&
-		scumm_stricmp(renderer->getBgName(), "L11.PI1") == 0) {
+	if (g_cine->getGameType() == Cine::GType_FW && (g_cine->getPlatform() == Common::kPlatformAmiga || g_cine->getPlatform() == Common::kPlatformAtariST) && _pos < _script._size && _script.getByte(_pos) == (0x4F + 1) && // Is the next opcode a BREAK too?
+	    scumm_stricmp(currentPrcName, "PART02.PRC") == 0 && scumm_stricmp(renderer->getBgName(), "L11.PI1") == 0) {
 		return 0;
 	}
 
@@ -1837,7 +1879,7 @@ int FWScript::o1_playSample() {
 				channel2 = 2;
 			}
 			g_sound->playSound(channel1, freq, data, size, -1, volume, 63, repeat);
-			g_sound->playSound(channel2, freq, data, size,  1, volume,  0, repeat);
+			g_sound->playSound(channel2, freq, data, size, 1, volume, 0, repeat);
 		} else {
 			channel -= 10;
 			if (volume > 63) {
@@ -1913,7 +1955,7 @@ int FWScript::o1_playSampleSwapped() {
 	}
 
 	g_sound->playSound(channel1, freq, data, size, -1, volume, 63, repeat);
-	g_sound->playSound(channel2, freq, data, size,  1, volume,  0, repeat);
+	g_sound->playSound(channel2, freq, data, size, 1, volume, 0, repeat);
 	return 0;
 }
 
@@ -2308,7 +2350,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			} else {
 				int16 param3;
 
-				param3 = READ_BE_UINT16(localScriptPtr +  position);
+				param3 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
 
 				if (opcode - 1 == 0xA) {
@@ -2537,7 +2579,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			position += strlen((const char *)localScriptPtr + position) + 1;
 			break;
 		}
-		case OP_requestCheckPendingDataLoad: {  // nop
+		case OP_requestCheckPendingDataLoad: { // nop
 			sprintf(lineBuffer, "requestCheckPendingDataLoad()\n");
 			break;
 		}

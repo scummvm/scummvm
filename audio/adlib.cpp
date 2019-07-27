@@ -20,16 +20,16 @@
  *
  */
 
+#include "audio/fmopl.h"
+#include "audio/musicplugin.h"
 #include "common/debug.h"
 #include "common/error.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 #include "common/types.h"
 #include "common/util.h"
-#include "audio/fmopl.h"
-#include "audio/musicplugin.h"
-#include "common/translation.h"
 
 #ifdef DEBUG_ADLIB
 static int g_tick;
@@ -38,7 +38,7 @@ static int g_tick;
 // Only include OPL3 when we actually have an AdLib emulator builtin, which
 // supports OPL3.
 #ifndef DISABLE_DOSBOX_OPL
-#define ENABLE_OPL3
+#	define ENABLE_OPL3
 #endif
 
 class MidiDriver_ADLIB;
@@ -81,7 +81,7 @@ class AdLibPart : public MidiChannel {
 	friend class MidiDriver_ADLIB;
 
 protected:
-//	AdLibPart *_prev, *_next;
+	//	AdLibPart *_prev, *_next;
 	AdLibVoice *_voice;
 	int16 _pitchBend;
 	byte _pitchBendFactor;
@@ -175,14 +175,14 @@ public:
 
 	void noteOff(byte note);
 	void noteOn(byte note, byte velocity);
-	void programChange(byte program) { }
+	void programChange(byte program) {}
 
 	// Control Change messages
-	void modulationWheel(byte value) { }
-	void pitchBendFactor(byte value) { }
-	void detune(byte value) { }
-	void priority(byte value) { }
-	void sustain(bool value) { }
+	void modulationWheel(byte value) {}
+	void pitchBendFactor(byte value) {}
+	void detune(byte value) {}
+	void priority(byte value) {}
+	void sustain(bool value) {}
 
 	// SysEx messages
 	void sysEx_customInstrument(uint32 type, const byte *instr);
@@ -261,21 +261,21 @@ static const byte g_operator2Offsets[9] = {
 };
 
 static const AdLibSetParams g_setParamTable[] = {
-	{0x40, 0, 63, 63},  // level
-	{0xE0, 2, 0, 0},    // unused
-	{0x40, 6, 192, 0},  // level key scaling
-	{0x20, 0, 15, 0},   // modulator frequency multiple
-	{0x60, 4, 240, 15}, // attack rate
-	{0x60, 0, 15, 15},  // decay rate
-	{0x80, 4, 240, 15}, // sustain level
-	{0x80, 0, 15, 15},  // release rate
-	{0xE0, 0, 3, 0},    // waveformSelect select
-	{0x20, 7, 128, 0},  // amp mod
-	{0x20, 6, 64, 0},   // vib
-	{0x20, 5, 32, 0},   // eg typ
-	{0x20, 4, 16, 0},   // ksr
-	{0xC0, 0, 1, 0},    // decay alg
-	{0xC0, 1, 14, 0}    // feedback
+	{ 0x40, 0, 63, 63 }, // level
+	{ 0xE0, 2, 0, 0 }, // unused
+	{ 0x40, 6, 192, 0 }, // level key scaling
+	{ 0x20, 0, 15, 0 }, // modulator frequency multiple
+	{ 0x60, 4, 240, 15 }, // attack rate
+	{ 0x60, 0, 15, 15 }, // decay rate
+	{ 0x80, 4, 240, 15 }, // sustain level
+	{ 0x80, 0, 15, 15 }, // release rate
+	{ 0xE0, 0, 3, 0 }, // waveformSelect select
+	{ 0x20, 7, 128, 0 }, // amp mod
+	{ 0x20, 6, 64, 0 }, // vib
+	{ 0x20, 5, 32, 0 }, // eg typ
+	{ 0x20, 4, 16, 0 }, // ksr
+	{ 0xC0, 0, 1, 0 }, // decay alg
+	{ 0xC0, 1, 14, 0 } // feedback
 };
 
 static const byte g_paramTable1[16] = {
@@ -1012,7 +1012,7 @@ private:
 	static void linkMc(AdLibPart *part, AdLibVoice *voice);
 	void mcIncStuff(AdLibVoice *voice, Struct10 *s10, Struct11 *s11);
 	void mcInitStuff(AdLibVoice *voice, Struct10 *s10, Struct11 *s11, byte flags,
-					   const InstrumentExtra *ie);
+	                 const InstrumentExtra *ie);
 
 	void struct10Init(Struct10 *s10, const InstrumentExtra *ie);
 	static byte struct10OnTimer(Struct10 *s10, Struct11 *s11);
@@ -1051,11 +1051,11 @@ void AdLibPart::noteOn(byte note, byte velocity) {
 #endif
 	_owner->partKeyOn(this, &_partInstr, note, velocity,
 #ifdef ENABLE_OPL3
-			&_partInstrSecondary,
+	                  &_partInstrSecondary,
 #else
-			NULL,
+	                  NULL,
 #endif
-			_pan);
+	                  _pan);
 }
 
 void AdLibPart::programChange(byte program) {
@@ -1077,7 +1077,7 @@ void AdLibPart::programChange(byte program) {
 		memcpy(&_partInstr, &g_gmInstruments[program], sizeof(AdLibInstrument));
 #ifdef ENABLE_OPL3
 	} else {
-		memcpy(&_partInstr,          &g_gmInstrumentsOPL3[program][0], sizeof(AdLibInstrument));
+		memcpy(&_partInstr, &g_gmInstrumentsOPL3[program][0], sizeof(AdLibInstrument));
 		memcpy(&_partInstrSecondary, &g_gmInstrumentsOPL3[program][1], sizeof(AdLibInstrument));
 	}
 #endif
@@ -1091,8 +1091,8 @@ void AdLibPart::pitchBend(int16 bend) {
 #ifdef ENABLE_OPL3
 		if (!_owner->_opl3Mode) {
 #endif
-			_owner->adlibNoteOn(voice->_channel, voice->_note/* + _transposeEff*/,
-								  (_pitchBend * _pitchBendFactor >> 6) + _detuneEff);
+			_owner->adlibNoteOn(voice->_channel, voice->_note /* + _transposeEff*/,
+			                    (_pitchBend * _pitchBendFactor >> 6) + _detuneEff);
 #ifdef ENABLE_OPL3
 		} else {
 			_owner->adlibNoteOn(voice->_channel, voice->_note, _pitchBend >> 1);
@@ -1178,10 +1178,10 @@ void AdLibPart::volume(byte value) {
 			}
 #ifdef ENABLE_OPL3
 		} else {
-			_owner->adlibSetParam(voice->_channel, 0, g_volumeTable[((voice->_vol2    + 1) * _volEff) >> 7], true);
+			_owner->adlibSetParam(voice->_channel, 0, g_volumeTable[((voice->_vol2 + 1) * _volEff) >> 7], true);
 			_owner->adlibSetParam(voice->_channel, 0, g_volumeTable[((voice->_secVol2 + 1) * _volEff) >> 7], false);
 			if (voice->_twoChan) {
-				_owner->adlibSetParam(voice->_channel, 13, g_volumeTable[((voice->_vol1    + 1) * _volEff) >> 7], true);
+				_owner->adlibSetParam(voice->_channel, 13, g_volumeTable[((voice->_vol1 + 1) * _volEff) >> 7], true);
 			}
 			if (voice->_secTwoChan) {
 				_owner->adlibSetParam(voice->_channel, 13, g_volumeTable[((voice->_secVol1 + 1) * _volEff) >> 7], false);
@@ -1207,8 +1207,8 @@ void AdLibPart::pitchBendFactor(byte value) {
 
 	_pitchBendFactor = value;
 	for (voice = _voice; voice; voice = voice->_next) {
-		_owner->adlibNoteOn(voice->_channel, voice->_note/* + _transposeEff*/,
-							  (_pitchBend * _pitchBendFactor >> 6) + _detuneEff);
+		_owner->adlibNoteOn(voice->_channel, voice->_note /* + _transposeEff*/,
+		                    (_pitchBend * _pitchBendFactor >> 6) + _detuneEff);
 	}
 }
 
@@ -1229,8 +1229,8 @@ void AdLibPart::detune(byte value) {
 
 	_detuneEff = value;
 	for (voice = _voice; voice; voice = voice->_next) {
-		_owner->adlibNoteOn(voice->_channel, voice->_note/* + _transposeEff*/,
-							  (_pitchBend * _pitchBendFactor >> 6) + _detuneEff);
+		_owner->adlibNoteOn(voice->_channel, voice->_note /* + _transposeEff*/,
+		                    (_pitchBend * _pitchBendFactor >> 6) + _detuneEff);
 	}
 }
 
@@ -1298,12 +1298,12 @@ void AdLibPercussionChannel::noteOff(byte note) {
 	// to stop automatically. This is not the case for (Groovie's) custom
 	// percussion instruments though. Also the OPL3 driver of Sam&Max actually
 	// does not handle the duration value, so we need it there too.
-	 _owner->partKeyOff(this, note);
+	_owner->partKeyOff(this, note);
 }
 
 void AdLibPercussionChannel::noteOn(byte note, byte velocity) {
 	const AdLibInstrument *inst = NULL;
-	const AdLibInstrument *sec  = NULL;
+	const AdLibInstrument *sec = NULL;
 
 	// The custom instruments have priority over the default mapping
 	// We do not support custom instruments in OPL3 mode though.
@@ -1328,7 +1328,7 @@ void AdLibPercussionChannel::noteOn(byte note, byte velocity) {
 #ifdef ENABLE_OPL3
 			} else {
 				inst = &g_gmPercussionInstrumentsOPL3[key][0];
-				sec  = &g_gmPercussionInstrumentsOPL3[key][1];
+				sec = &g_gmPercussionInstrumentsOPL3[key][1];
 			}
 #endif
 		}
@@ -1362,17 +1362,17 @@ void AdLibPercussionChannel::sysEx_customInstrument(uint32 type, const byte *ins
 		}
 
 		// Save the new instrument data
-		_customInstruments[note]->modCharacteristic     = instr[2];
+		_customInstruments[note]->modCharacteristic = instr[2];
 		_customInstruments[note]->modScalingOutputLevel = instr[3];
-		_customInstruments[note]->modAttackDecay        = instr[4];
-		_customInstruments[note]->modSustainRelease     = instr[5];
-		_customInstruments[note]->modWaveformSelect     = instr[6];
-		_customInstruments[note]->carCharacteristic     = instr[7];
+		_customInstruments[note]->modAttackDecay = instr[4];
+		_customInstruments[note]->modSustainRelease = instr[5];
+		_customInstruments[note]->modWaveformSelect = instr[6];
+		_customInstruments[note]->carCharacteristic = instr[7];
 		_customInstruments[note]->carScalingOutputLevel = instr[8];
-		_customInstruments[note]->carAttackDecay        = instr[9];
-		_customInstruments[note]->carSustainRelease     = instr[10];
-		_customInstruments[note]->carWaveformSelect     = instr[11];
-		_customInstruments[note]->feedback               = instr[12];
+		_customInstruments[note]->carAttackDecay = instr[9];
+		_customInstruments[note]->carSustainRelease = instr[10];
+		_customInstruments[note]->carWaveformSelect = instr[11];
+		_customInstruments[note]->feedback = instr[12];
 	}
 }
 
@@ -1405,7 +1405,7 @@ MidiDriver_ADLIB::MidiDriver_ADLIB() {
 	_timerThreshold = 0x411B;
 	_opl = 0;
 	_adlibTimerProc = 0;
-        _adlibTimerParam = 0;
+	_adlibTimerParam = 0;
 	_isOpen = false;
 }
 
@@ -1491,8 +1491,8 @@ void MidiDriver_ADLIB::send(uint32 b) {
 void MidiDriver_ADLIB::send(byte chan, uint32 b) {
 	//byte param3 = (byte) ((b >> 24) & 0xFF);
 	byte param2 = (byte)((b >> 16) & 0xFF);
-	byte param1 = (byte)((b >>  8) & 0xFF);
-	byte cmd    = (byte)(b & 0xF0);
+	byte param1 = (byte)((b >> 8) & 0xFF);
+	byte cmd = (byte)(b & 0xF0);
 
 	AdLibPart *part;
 	if (chan == 9)
@@ -1501,7 +1501,7 @@ void MidiDriver_ADLIB::send(byte chan, uint32 b) {
 		part = &_parts[chan];
 
 	switch (cmd) {
-	case 0x80:// Note Off
+	case 0x80: // Note Off
 		part->noteOff(param1);
 		break;
 	case 0x90: // Note On
@@ -1567,8 +1567,8 @@ void MidiDriver_ADLIB::setPitchBendRange(byte channel, uint range) {
 
 	part->_pitchBendFactor = range;
 	for (voice = part->_voice; voice; voice = voice->_next) {
-		adlibNoteOn(voice->_channel, voice->_note/* + part->_transposeEff*/,
-					  (part->_pitchBend * part->_pitchBendFactor >> 6) + part->_detuneEff);
+		adlibNoteOn(voice->_channel, voice->_note /* + part->_transposeEff*/,
+		            (part->_pitchBend * part->_pitchBendFactor >> 6) + part->_detuneEff);
 	}
 }
 
@@ -1611,9 +1611,9 @@ void MidiDriver_ADLIB::adlibWriteSecondary(byte reg, byte value) {
 	if (_regCacheSecondary[reg] == value) {
 		return;
 	}
-#ifdef DEBUG_ADLIB
+#	ifdef DEBUG_ADLIB
 	debug(6, "%10d: adlibWriteSecondary[%x] = %x", g_tick, reg, value);
-#endif
+#	endif
 	_regCacheSecondary[reg] = value;
 
 	_opl->writeReg(reg | 0x100, value);
@@ -1688,8 +1688,8 @@ void MidiDriver_ADLIB::mcIncStuff(AdLibVoice *voice, Struct10 *s10, Struct11 *s1
 			voice->_vol2 = s10->startValue + s11->modifyVal;
 			if (!_scummSmallHeader) {
 				adlibSetParam(voice->_channel, 0,
-								g_volumeTable[g_volumeLookupTable[voice->_vol2]
-											  [part->_volEff >> 2]]);
+				              g_volumeTable[g_volumeLookupTable[voice->_vol2]
+				                                               [part->_volEff >> 2]]);
 			} else {
 				adlibSetParam(voice->_channel, 0, voice->_vol2);
 			}
@@ -1698,8 +1698,8 @@ void MidiDriver_ADLIB::mcIncStuff(AdLibVoice *voice, Struct10 *s10, Struct11 *s1
 			voice->_vol1 = s10->startValue + s11->modifyVal;
 			if (voice->_twoChan && !_scummSmallHeader) {
 				adlibSetParam(voice->_channel, 13,
-								g_volumeTable[g_volumeLookupTable[voice->_vol1]
-											  [part->_volEff >> 2]]);
+				              g_volumeTable[g_volumeLookupTable[voice->_vol1]
+				                                               [part->_volEff >> 2]]);
 			} else {
 				adlibSetParam(voice->_channel, 13, voice->_vol1);
 			}
@@ -1712,7 +1712,7 @@ void MidiDriver_ADLIB::mcIncStuff(AdLibVoice *voice, Struct10 *s10, Struct11 *s1
 			break;
 		default:
 			adlibSetParam(voice->_channel, s11->param,
-							s10->startValue + s11->modifyVal);
+			              s10->startValue + s11->modifyVal);
 			break;
 		}
 	}
@@ -2010,7 +2010,7 @@ void MidiDriver_ADLIB::mcKeyOn(AdLibVoice *voice, const AdLibInstrument *instr, 
 			vol1 = (instr->modScalingOutputLevel & 0x3F) + (velocity * ((instr->modWaveformSelect >> 3) + 1)) / 64;
 		else
 #endif
-		vol1 = (instr->modScalingOutputLevel & 0x3F) + g_volumeLookupTable[velocity >> 1][instr->modWaveformSelect >> 2];
+			vol1 = (instr->modScalingOutputLevel & 0x3F) + g_volumeLookupTable[velocity >> 1][instr->modWaveformSelect >> 2];
 	} else {
 		vol1 = 0x3f - (instr->modScalingOutputLevel & 0x3F);
 	}
@@ -2024,7 +2024,7 @@ void MidiDriver_ADLIB::mcKeyOn(AdLibVoice *voice, const AdLibInstrument *instr, 
 			vol2 = (instr->carScalingOutputLevel & 0x3F) + (velocity * ((instr->carWaveformSelect >> 3) + 1)) / 64;
 		else
 #endif
-		vol2 = (instr->carScalingOutputLevel & 0x3F) + g_volumeLookupTable[velocity >> 1][instr->carWaveformSelect >> 2];
+			vol2 = (instr->carScalingOutputLevel & 0x3F) + g_volumeLookupTable[velocity >> 1][instr->carWaveformSelect >> 2];
 	} else {
 		vol2 = 0x3f - (instr->carScalingOutputLevel & 0x3F);
 	}
@@ -2058,10 +2058,10 @@ void MidiDriver_ADLIB::mcKeyOn(AdLibVoice *voice, const AdLibInstrument *instr, 
 				vol1 = g_volumeTable[g_volumeLookupTable[vol1][c]];
 #ifdef ENABLE_OPL3
 		} else {
-			vol2    = g_volumeTable[((vol2    + 1) * part->_volEff) >> 7];
+			vol2 = g_volumeTable[((vol2 + 1) * part->_volEff) >> 7];
 			secVol2 = g_volumeTable[((secVol2 + 1) * part->_volEff) >> 7];
 			if (voice->_twoChan)
-				vol1    = g_volumeTable[((vol1    + 1) * part->_volEff) >> 7];
+				vol1 = g_volumeTable[((vol1 + 1) * part->_volEff) >> 7];
 			if (voice->_secTwoChan)
 				secVol1 = g_volumeTable[((secVol1 + 1) * part->_volEff) >> 7];
 		}
@@ -2072,7 +2072,7 @@ void MidiDriver_ADLIB::mcKeyOn(AdLibVoice *voice, const AdLibInstrument *instr, 
 #ifdef ENABLE_OPL3
 	if (!_opl3Mode) {
 #endif
-		adlibNoteOnEx(voice->_channel, /*part->_transposeEff + */note, part->_detuneEff + (part->_pitchBend * part->_pitchBendFactor >> 6));
+		adlibNoteOnEx(voice->_channel, /*part->_transposeEff + */ note, part->_detuneEff + (part->_pitchBend * part->_pitchBendFactor >> 6));
 
 		if (instr->flagsA & 0x80) {
 			mcInitStuff(voice, &voice->_s10a, &voice->_s11a, instr->flagsA, &instr->extraA);
@@ -2112,9 +2112,9 @@ void MidiDriver_ADLIB::adlibSetupChannel(int chan, const AdLibInstrument *instr,
 
 	adlibWrite((byte)chan + 0xC0, instr->feedback
 #ifdef ENABLE_OPL3
-			| (_opl3Mode ? 0x30 : 0)
+	             | (_opl3Mode ? 0x30 : 0)
 #endif
-			);
+	);
 }
 
 #ifdef ENABLE_OPL3
@@ -2137,20 +2137,20 @@ void MidiDriver_ADLIB::adlibSetupChannelSecondary(int chan, const AdLibInstrumen
 	adlibWriteSecondary(channel + 0xE0, instr->carWaveformSelect);
 
 	// The original uses the following (strange) behavior:
-#if 0
+#	if 0
 	if (instr->feedback | (pan > 64)) {
 		adlibWriteSecondary((byte)chan + 0xC0, 0x20);
 	} else {
 		adlibWriteSecondary((byte)chan + 0xC0, 0x10);
 	}
-#else
+#	else
 	adlibWriteSecondary((byte)chan + 0xC0, instr->feedback | ((pan > 64) ? 0x20 : 0x10));
-#endif
+#	endif
 }
 #endif
 
 void MidiDriver_ADLIB::mcInitStuff(AdLibVoice *voice, Struct10 *s10,
-									 Struct11 *s11, byte flags, const InstrumentExtra *ie) {
+                                   Struct11 *s11, byte flags, const InstrumentExtra *ie) {
 	AdLibPart *part = voice->_part;
 	s11->modifyVal = 0;
 	s11->flag0x40 = flags & 0x40;
@@ -2311,7 +2311,7 @@ Common::Error AdLibEmuMusicPlugin::createInstance(MidiDriver **mididriver, MidiD
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(ADLIB)
-	//REGISTER_PLUGIN_DYNAMIC(ADLIB, PLUGIN_TYPE_MUSIC, AdLibEmuMusicPlugin);
+//REGISTER_PLUGIN_DYNAMIC(ADLIB, PLUGIN_TYPE_MUSIC, AdLibEmuMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(ADLIB, PLUGIN_TYPE_MUSIC, AdLibEmuMusicPlugin);
+REGISTER_PLUGIN_STATIC(ADLIB, PLUGIN_TYPE_MUSIC, AdLibEmuMusicPlugin);
 //#endif

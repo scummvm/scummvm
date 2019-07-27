@@ -31,7 +31,7 @@ Common::String MiscTests::getHumanReadableFormat(const TimeDate &td) {
 
 void MiscTests::timerCallback(void *arg) {
 	// Increment arg which actually points to an int
-	int &valToModify = *((int *) arg);
+	int &valToModify = *((int *)arg);
 	valToModify = 999; // some arbitrary value
 }
 
@@ -132,7 +132,7 @@ TestExitStatus MiscTests::testMutexes() {
 		Testsuite::writeOnScreen("Installing mutex", Common::Point(0, 100));
 	}
 
-	SharedVars sv = {1, 1, true, g_system->createMutex()};
+	SharedVars sv = { 1, 1, true, g_system->createMutex() };
 
 	if (g_system->getTimerManager()->installTimerProc(criticalSection, 100000, &sv, "testbedMutex")) {
 		g_system->delayMillis(150);
@@ -162,7 +162,7 @@ TestExitStatus MiscTests::testMutexes() {
 
 TestExitStatus MiscTests::testOpenUrl() {
 	Common::String info = "Testing openUrl() method.\n"
-		"In this test we'll try to open scummvm.org in your default browser.";
+	                      "In this test we'll try to open scummvm.org in your default browser.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : openUrl()\n");

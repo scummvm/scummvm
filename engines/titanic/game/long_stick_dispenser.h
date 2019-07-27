@@ -38,14 +38,19 @@ class CLongStickDispenser : public CGameObject {
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+
 private:
 	int _fieldBC;
 	int _fieldC0;
 	int _fieldC4;
+
 public:
 	CLASSDEF;
-	CLongStickDispenser() : CGameObject(), _fieldBC(0),
-		_fieldC0(0), _fieldC4(1) {}
+	CLongStickDispenser()
+	  : CGameObject()
+	  , _fieldBC(0)
+	  , _fieldC0(0)
+	  , _fieldC4(1) {}
 
 	/**
 	 * Save the data for the class to file

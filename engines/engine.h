@@ -23,12 +23,12 @@
 #ifndef ENGINES_ENGINE_H
 #define ENGINES_ENGINE_H
 
-#include "common/scummsys.h"
-#include "common/str.h"
 #include "common/language.h"
 #include "common/platform.h"
 #include "common/queue.h"
+#include "common/scummsys.h"
 #include "common/singleton.h"
+#include "common/str.h"
 
 class OSystem;
 
@@ -52,7 +52,6 @@ class Dialog;
  */
 void GUIErrorMessage(const Common::String &msg);
 void GUIErrorMessageFormat(const char *fmt, ...) GCC_PRINTF(1, 2);
-
 
 class Engine {
 public:
@@ -97,8 +96,6 @@ private:
 	int _saveSlotToLoad;
 
 public:
-
-
 	/**
 	 * A feature in this context means an ability of the engine which can be
 	 * either available or not.
@@ -143,8 +140,6 @@ public:
 
 	};
 
-
-
 	/** @name Overloadable methods
 	 *
 	 *  All Engine subclasses should consider overloading some or all of the following methods.
@@ -186,7 +181,7 @@ public:
 	 */
 	virtual bool hasFeature(EngineFeature f) const { return false; }
 
-//	virtual EnginePlugin *getMetaEnginePlugin() const;
+	//	virtual EnginePlugin *getMetaEnginePlugin() const;
 
 	/**
 	 * Notify the engine that the sound settings in the config manager may have
@@ -255,7 +250,6 @@ public:
 	virtual bool canSaveGameStateCurrently();
 
 protected:
-
 	/**
 	 * Actual implementation of pauseEngine by subclasses. See there
 	 * for details.
@@ -264,9 +258,7 @@ protected:
 
 	//@}
 
-
 public:
-
 	/**
 	 * Request the engine to quit. Sends a EVENT_QUIT event to the Event
 	 * Manager.
@@ -332,17 +324,14 @@ public:
 	inline Common::SaveFileManager *getSaveFileManager() { return _saveFileMan; }
 
 public:
-
 	/** On some systems, check if the game appears to be run from CD. */
 	void checkCD();
 
 protected:
-
 	/**
 	 * Indicate whether an autosave should be performed.
 	 */
 	bool shouldPerformAutoSave(int lastSaveTime);
-
 };
 
 // Chained games

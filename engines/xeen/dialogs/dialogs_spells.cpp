@@ -31,7 +31,7 @@
 namespace Xeen {
 
 Character *SpellsDialog::show(XeenEngine *vm, ButtonContainer *priorDialog,
-		Character *c, SpellDialogMode mode) {
+                              Character *c, SpellDialogMode mode) {
 	SpellsDialog *dlg = new SpellsDialog(vm);
 	Character *result = dlg->execute(priorDialog, c, mode);
 	delete dlg;
@@ -70,7 +70,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 
 			Common::String title = Common::String::format(Res.BUY_SPELLS, c->_name.c_str());
 			Common::String msg = Common::String::format(Res.GUILD_OPTIONS,
-				title.c_str(), XeenEngine::printMil(party._gold).c_str());
+			                                            title.c_str(), XeenEngine::printMil(party._gold).c_str());
 			windows[10].writeString(msg);
 			priorDialog->drawButtons(&windows[10]);
 		}
@@ -78,8 +78,8 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 		_spells.clear();
 		const char *errorMsg = setSpellText(c, modeCopy);
 		w.writeString(Common::String::format(Res.SPELLS_FOR,
-			errorMsg == nullptr ? Res.SPELL_LINES_0_TO_9 : "",
-			c->_name.c_str()));
+		                                     errorMsg == nullptr ? Res.SPELL_LINES_0_TO_9 : "",
+		                                     c->_name.c_str()));
 
 		// Setup and write out spell list
 		const char *names[10];
@@ -101,13 +101,12 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 			names[0] = errorMsg;
 
 		windows[37].writeString(Common::String::format(Res.SPELLS_DIALOG_SPELLS,
-			colors[0], names[0], colors[1], names[1], colors[2], names[2],
-			colors[3], names[3], colors[4], names[4], colors[5], names[5],
-			colors[6], names[6], colors[7], names[7], colors[8], names[8],
-			colors[9], names[9],
-			mode ? Res.SPELL_PTS : Res.GOLD,
-			mode ? c->_currentSp : party._gold
-		));
+		                                               colors[0], names[0], colors[1], names[1], colors[2], names[2],
+		                                               colors[3], names[3], colors[4], names[4], colors[5], names[5],
+		                                               colors[6], names[6], colors[7], names[7], colors[8], names[8],
+		                                               colors[9], names[9],
+		                                               mode ? Res.SPELL_PTS : Res.GOLD,
+		                                               mode ? c->_currentSp : party._gold));
 
 		_scrollSprites.draw(0, 4, Common::Point(39, 26));
 		_scrollSprites.draw(0, 0, Common::Point(187, 26));
@@ -139,16 +138,16 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 
 					if (_vm->_mode == MODE_INTERACTIVE7) {
 						windows[10].writeString(Common::String::format(Res.GUILD_OPTIONS,
-							XeenEngine::printMil(party._gold).c_str(), Res.GUILD_TEXT, c->_name.c_str()));
+						                                               XeenEngine::printMil(party._gold).c_str(), Res.GUILD_TEXT, c->_name.c_str()));
 					} else {
 						SpellsCategory category = c->getSpellsCategory();
 						int spellIndex = (c->_currentSpell == -1) ? SPELLS_PER_CLASS : c->_currentSpell;
 						int spellId = (category == SPELLCAT_INVALID) ? NO_SPELL : Res.SPELLS_ALLOWED[category][spellIndex];
 
 						windows[10].writeString(Common::String::format(Res.CAST_SPELL_DETAILS,
-							c->_name.c_str(), spells._spellNames[spellId].c_str(),
-							spells.calcSpellPoints(spellId, c->getCurrentLevel()),
-							Res.SPELL_GEM_COST[spellId], c->_currentSp));
+						                                               c->_name.c_str(), spells._spellNames[spellId].c_str(),
+						                                               spells.calcSpellPoints(spellId, c->getCurrentLevel()),
+						                                               Res.SPELL_GEM_COST[spellId], c->_currentSp));
 					}
 
 					if (priorDialog != nullptr)
@@ -180,8 +179,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 		case Common::KEYCODE_7:
 		case Common::KEYCODE_8:
 		case Common::KEYCODE_9:
-			newSelection = topIndex + ((_buttonValue == Common::KEYCODE_0) ? 9 :
-				(_buttonValue - Common::KEYCODE_1));
+			newSelection = topIndex + ((_buttonValue == Common::KEYCODE_0) ? 9 : (_buttonValue - Common::KEYCODE_1));
 
 			if (newSelection < (int)_spells.size()) {
 				SpellsCategory category = c->getSpellsCategory();
@@ -199,9 +197,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 					const Common::String &spellName = spells._spellNames[spellId];
 					const Common::String &spellDesc = _textStrings[spellId];
 
-					Common::String msg = (modeCopy & 0x80) ?
-						Common::String::format(Res.SPELL_INFO, spellName.c_str(), spellDesc.c_str()) :
-						Common::String::format(Res.SPELL_PURCHASE, spellDesc.c_str(), spellName.c_str(), spellCost);
+					Common::String msg = (modeCopy & 0x80) ? Common::String::format(Res.SPELL_INFO, spellName.c_str(), spellDesc.c_str()) : Common::String::format(Res.SPELL_PURCHASE, spellDesc.c_str(), spellName.c_str(), spellCost);
 
 					if (Confirm::show(_vm, msg, modeCopy + 1)) {
 						if (party.subtract(CONS_GOLD, spellCost, WHERE_PARTY, WT_FREEZE_WAIT)) {
@@ -286,16 +282,16 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 			if (_vm->getGameID() == GType_Swords && party._mazeId == 49) {
 				for (int spellId = 0; spellId < 10; ++spellId) {
 					int idx = 0;
-					while (idx < SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] !=
-						Res.DARK_SPELL_OFFSETS[category][spellId])
+					while (idx < SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] != Res.DARK_SPELL_OFFSETS[category][spellId])
 						++idx;
 
 					if (idx < SPELLS_PER_CLASS) {
 						if (!c->_spells[idx] || (mode & 0x80)) {
 							int cost = spells.calcSpellCost(Res.SPELLS_ALLOWED[category][idx], expenseFactor);
-							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9""000%u",
-								spells._spellNames[Res.SPELLS_ALLOWED[category][idx]].c_str(), cost),
-								idx, spellId));
+							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9"
+							                                                    "000%u",
+							                                                    spells._spellNames[Res.SPELLS_ALLOWED[category][idx]].c_str(), cost),
+							                             idx, spellId));
 						}
 					}
 				}
@@ -309,9 +305,10 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 					if (idx < SPELLS_PER_CLASS) {
 						if (!c->_spells[idx] || (mode & 0x80)) {
 							int cost = spells.calcSpellCost(Res.SPELLS_ALLOWED[category][idx], expenseFactor);
-							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9""000%u",
-								spells._spellNames[Res.SPELLS_ALLOWED[category][idx]].c_str(), cost),
-								idx, spellId));
+							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9"
+							                                                    "000%u",
+							                                                    spells._spellNames[Res.SPELLS_ALLOWED[category][idx]].c_str(), cost),
+							                             idx, spellId));
 						}
 					}
 				}
@@ -341,32 +338,32 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 
 				for (int spellId = RANGE[0]; spellId < RANGE[1]; ++spellId) {
 					int idx = 0;
-					while (idx < SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] !=
-							Res.DARK_SPELL_OFFSETS[category][spellId])
+					while (idx < SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] != Res.DARK_SPELL_OFFSETS[category][spellId])
 						++idx;
 
 					if (idx < SPELLS_PER_CLASS) {
 						if (!c->_spells[idx] || (mode & 0x80)) {
 							int cost = spells.calcSpellCost(Res.SPELLS_ALLOWED[category][idx], expenseFactor);
-							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9""000%u",
-								spells._spellNames[Res.SPELLS_ALLOWED[category][idx]].c_str(), cost),
-								idx, spellId));
+							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9"
+							                                                    "000%u",
+							                                                    spells._spellNames[Res.SPELLS_ALLOWED[category][idx]].c_str(), cost),
+							                             idx, spellId));
 						}
 					}
 				}
 			} else {
 				for (int spellId = 0; spellId < 20; ++spellId) {
 					int idx = 0;
-					while (idx < SPELLS_PER_CLASS && Res.CLOUDS_GUILD_SPELLS[party._mazeId - 28][spellId] !=
-							(int)Res.SPELLS_ALLOWED[category][idx])
+					while (idx < SPELLS_PER_CLASS && Res.CLOUDS_GUILD_SPELLS[party._mazeId - 28][spellId] != (int)Res.SPELLS_ALLOWED[category][idx])
 						++idx;
 
 					if (idx < SPELLS_PER_CLASS) {
 						if (!c->_spells[idx] || (mode & 0x80)) {
 							int cost = spells.calcSpellCost(Res.SPELLS_ALLOWED[category][idx], expenseFactor);
-							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9""000%u",
-								spells._spellNames[Res.SPELLS_ALLOWED[category][idx]].c_str(), cost),
-								idx, spellId));
+							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9"
+							                                                    "000%u",
+							                                                    spells._spellNames[Res.SPELLS_ALLOWED[category][idx]].c_str(), cost),
+							                             idx, spellId));
 						}
 					}
 				}
@@ -386,8 +383,9 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 					int gemCost = Res.SPELL_GEM_COST[spellId];
 					int spCost = spells.calcSpellPoints(spellId, currLevel);
 
-					Common::String msg = Common::String::format("\x3l%s\x3r\x9""000%u/%u",
-						spells._spellNames[spellId].c_str(), spCost, gemCost);
+					Common::String msg = Common::String::format("\x3l%s\x3r\x9"
+					                                            "000%u/%u",
+					                                            spells._spellNames[spellId].c_str(), spCost, gemCost);
 					_spells.push_back(SpellEntry(msg, spellIndex, spellId));
 				}
 			}
@@ -399,7 +397,8 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 
 /*------------------------------------------------------------------------*/
 
-CastSpell::CastSpell(XeenEngine *vm) : ButtonContainer(vm) {
+CastSpell::CastSpell(XeenEngine *vm)
+  : ButtonContainer(vm) {
 	Windows &windows = *_vm->_windows;
 	_oldMode = _vm->_mode;
 	_vm->_mode = MODE_3;
@@ -417,7 +416,6 @@ CastSpell::~CastSpell() {
 
 	_vm->_mode = (Mode)_oldMode;
 }
-
 
 int CastSpell::show(XeenEngine *vm) {
 	Combat &combat = *vm->_combat;
@@ -481,8 +479,8 @@ int CastSpell::execute(Character *&c) {
 			int spCost = spells.calcSpellPoints(spellId, c->getCurrentLevel());
 
 			w.writeString(Common::String::format(Res.CAST_SPELL_DETAILS,
-				c->_name.c_str(), spells._spellNames[spellId].c_str(),
-				spCost, gemCost, c->_currentSp));
+			                                     c->_name.c_str(), spells._spellNames[spellId].c_str(),
+			                                     spCost, gemCost, c->_currentSp));
 			drawButtons(&windows[0]);
 			w.update();
 
@@ -567,8 +565,7 @@ Character *SpellOnWho::show(XeenEngine *vm, int spellId) {
 
 	Combat &combat = *vm->_combat;
 	Party &party = *vm->_party;
-	return combat._combatMode == 2 ? combat._combatParty[result] :
-		&party._activeParty[result];
+	return combat._combatMode == 2 ? combat._combatParty[result] : &party._activeParty[result];
 }
 
 int SpellOnWho::execute(int spellId) {
@@ -615,8 +612,7 @@ int SpellOnWho::execute(int spellId) {
 		case Common::KEYCODE_F5:
 		case Common::KEYCODE_F6:
 			_buttonValue -= Common::KEYCODE_F1;
-			if (_buttonValue < (int)(combat._combatMode == 2 ? combat._combatParty.size() :
-					party._activeParty.size())) {
+			if (_buttonValue < (int)(combat._combatMode == 2 ? combat._combatParty.size() : party._activeParty.size())) {
 				result = _buttonValue;
 			}
 			break;
@@ -728,7 +724,7 @@ void NotWhileEngaged::execute(int spellId) {
 
 	w.open();
 	w.writeString(Common::String::format(Res.CANT_CAST_WHILE_ENGAGED,
-		spells._spellNames[spellId].c_str()));
+	                                     spells._spellNames[spellId].c_str()));
 	w.update();
 
 	while (!_vm->shouldExit() && !events.isKeyMousePressed())
@@ -782,7 +778,7 @@ bool LloydsBeacon::execute() {
 	// Display the dialog
 	w.open();
 	w.writeString(Common::String::format(Res.LLOYDS_BEACON, mapName.c_str(),
-		c._lloydPosition.x, c._lloydPosition.y));
+	                                     c._lloydPosition.x, c._lloydPosition.y));
 	drawButtons(&w);
 	w.update();
 
@@ -861,7 +857,7 @@ int Teleport::execute() {
 
 	w.open();
 	w.writeString(Common::String::format(Res.HOW_MANY_SQUARES,
-		Res.DIRECTION_TEXT[party._mazeDirection]));
+	                                     Res.DIRECTION_TEXT[party._mazeDirection]));
 	w.update();
 	int lineSize = Input::show(_vm, &w, num, 1, 200, true);
 	w.close();
@@ -929,21 +925,20 @@ int TownPortal::execute() {
 		}
 
 		w.writeString(Common::String::format(Res.TOWN_PORTAL_SWORDS, townNames[0].c_str(), townNames[1].c_str(),
-			townNames[2].c_str()));
+		                                     townNames[2].c_str()));
 	} else {
 		// Build up a lsit of the names of the towns on the current side of Xeen
 		for (int idx = 0; idx < 5; ++idx) {
 			Common::String txtName = Common::String::format("%s%04d.txt", map._sideTownPortal ? "dark" : "xeen",
-				Res.TOWN_MAP_NUMBERS[map._sideTownPortal][idx]);
+			                                                Res.TOWN_MAP_NUMBERS[map._sideTownPortal][idx]);
 			File f(txtName, 1);
 			townNames[idx] = f.readString();
 			f.close();
 		}
 
 		w.writeString(Common::String::format(Res.TOWN_PORTAL,
-			townNames[0].c_str(), townNames[1].c_str(), townNames[2].c_str(),
-			townNames[3].c_str(), townNames[4].c_str()
-		));
+		                                     townNames[0].c_str(), townNames[1].c_str(), townNames[2].c_str(),
+		                                     townNames[3].c_str(), townNames[4].c_str()));
 	}
 
 	w.update();
@@ -988,17 +983,16 @@ void IdentifyMonster::execute() {
 		MonsterStruct &monsterData = *monster._monsterData;
 
 		monsterDesc[monIndex] = Common::String::format(Res.MONSTER_DETAILS,
-			monsterData._name.c_str(),
-			_vm->printK2(monster._hp).c_str(),
-			monsterData._armorClass, monsterData._numberOfAttacks,
-			Res.MONSTER_SPECIAL_ATTACKS[monsterData._specialAttack]
-		);
+		                                               monsterData._name.c_str(),
+		                                               _vm->printK2(monster._hp).c_str(),
+		                                               monsterData._armorClass, monsterData._numberOfAttacks,
+		                                               Res.MONSTER_SPECIAL_ATTACKS[monsterData._specialAttack]);
 	}
 
 	sound.playFX(20);
 	w.open();
 	w.writeString(Common::String::format(Res.IDENTIFY_MONSTERS,
-		monsterDesc[0].c_str(), monsterDesc[1].c_str(), monsterDesc[2].c_str()));
+	                                     monsterDesc[0].c_str(), monsterDesc[1].c_str(), monsterDesc[2].c_str()));
 	w.update();
 
 	do {
@@ -1012,7 +1006,6 @@ void IdentifyMonster::execute() {
 
 	w.close();
 }
-
 
 /*------------------------------------------------------------------------*/
 

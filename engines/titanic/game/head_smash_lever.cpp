@@ -26,14 +26,17 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CHeadSmashLever, CBackground)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(FrameMsg)
-	ON_MESSAGE(LoadSuccessMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(FrameMsg)
+ON_MESSAGE(LoadSuccessMsg)
 END_MESSAGE_MAP()
 
-CHeadSmashLever::CHeadSmashLever() : CBackground(),
-		_enabled(false), _fieldE4(false), _ticks(0) {}
+CHeadSmashLever::CHeadSmashLever()
+  : CBackground()
+  , _enabled(false)
+  , _fieldE4(false)
+  , _ticks(0) {}
 
 void CHeadSmashLever::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);

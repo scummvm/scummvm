@@ -22,19 +22,19 @@
 
 #include "glk/alan3/utils.h"
 #include "glk/alan3/alan_version.h"
-#include "glk/alan3/glkio.h"
-#include "glk/alan3/options.h"
-#include "glk/alan3/memory.h"
-#include "glk/alan3/output.h"
 #include "glk/alan3/exe.h"
-#include "glk/alan3/state.h"
-#include "glk/alan3/lists.h"
 #include "glk/alan3/fnmatch.h"
+#include "glk/alan3/glkio.h"
+#include "glk/alan3/lists.h"
+#include "glk/alan3/memory.h"
+#include "glk/alan3/options.h"
+#include "glk/alan3/output.h"
+#include "glk/alan3/state.h"
 
 namespace Glk {
 namespace Alan3 {
 
-/*======================================================================
+	/*======================================================================
 
   terminate()
 
@@ -42,61 +42,60 @@ namespace Alan3 {
   return buffers...
 
  */
-void terminate(CONTEXT, int code) {
-	newline();
+	void terminate(CONTEXT, int code) {
+		newline();
 
-	terminateStateStack();
+		terminateStateStack();
 
-	stopTranscript();
+		stopTranscript();
 
-	if (memory) {
-		deallocate(memory);
-		memory = nullptr;
+		if (memory) {
+			deallocate(memory);
+			memory = nullptr;
+		}
+
+		g_io->glk_exit();
+		LONG_JUMP
 	}
 
-	g_io->glk_exit();
-	LONG_JUMP
-}
+	/*======================================================================*/
+	void printVersion(int buildNumber) {
+		printf("Arun - Adventure Language Interpreter version %s", alan.version.string);
+		if (buildNumber != 0)
+			printf("-%d", buildNumber);
+		printf(" (%s %s)", alan.date, alan.time);
+	}
 
-/*======================================================================*/
-void printVersion(int buildNumber) {
-	printf("Arun - Adventure Language Interpreter version %s", alan.version.string);
-	if (buildNumber != 0) printf("-%d", buildNumber);
-	printf(" (%s %s)", alan.date, alan.time);
-}
-
-
-/*======================================================================*/
-void usage(const char *programName) {
-#if (BUILD+0) != 0
-	printVersion(BUILD);
+	/*======================================================================*/
+	void usage(const char *programName) {
+#if (BUILD + 0) != 0
+		printVersion(BUILD);
 #else
-	printVersion(0);
+		printVersion(0);
 #endif
-	printf("\n\nUsage:\n\n");
-	printf("    %s [<switches>] <adventure>\n\n", programName);
-	printf("where the possible optional switches are:\n");
+		printf("\n\nUsage:\n\n");
+		printf("    %s [<switches>] <adventure>\n\n", programName);
+		printf("where the possible optional switches are:\n");
 
-	g_io->glk_set_style(style_Preformatted);
-	printf("    -v       verbose mode\n");
-	printf("    -l       log transcript to a file\n");
-	printf("    -c       log player commands to a file\n");
-	printf("    -n       no Status Line\n");
-	printf("    -d       enter debug mode\n");
-	printf("    -t[<n>]  trace game execution, higher <n> gives more trace\n");
-	printf("    -i       ignore version and checksum errors\n");
-	printf("    -r       make regression test easier (don't timestamp, page break, randomize...)\n");
-	g_io->glk_set_style(style_Normal);
-}
-
+		g_io->glk_set_style(style_Preformatted);
+		printf("    -v       verbose mode\n");
+		printf("    -l       log transcript to a file\n");
+		printf("    -c       log player commands to a file\n");
+		printf("    -n       no Status Line\n");
+		printf("    -d       enter debug mode\n");
+		printf("    -t[<n>]  trace game execution, higher <n> gives more trace\n");
+		printf("    -i       ignore version and checksum errors\n");
+		printf("    -r       make regression test easier (don't timestamp, page break, randomize...)\n");
+		g_io->glk_set_style(style_Normal);
+	}
 
 #ifndef FNM_CASEFOLD
-#define FNM_CASEFOLD 0
+#	define FNM_CASEFOLD 0
 #endif
-/*======================================================================*/
-bool match(const char *pattern, char *input) {
-	return fnmatch(pattern, input, FNM_CASEFOLD) == 0;
-}
+	/*======================================================================*/
+	bool match(const char *pattern, char *input) {
+		return fnmatch(pattern, input, FNM_CASEFOLD) == 0;
+	}
 
 } // End of namespace Alan3
 } // End of namespace Glk

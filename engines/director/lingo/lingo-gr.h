@@ -35,99 +35,99 @@
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
-# define YYTOKENTYPE
-   /* Put the tokens into the symbol table, so that GDB and other debuggers
+#	define YYTOKENTYPE
+/* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
-   enum yytokentype {
-     UNARY = 258,
-     CASTREF = 259,
-     VOID = 260,
-     VAR = 261,
-     POINT = 262,
-     RECT = 263,
-     ARRAY = 264,
-     OBJECT = 265,
-     REFERENCE = 266,
-     INT = 267,
-     THEENTITY = 268,
-     THEENTITYWITHID = 269,
-     FLOAT = 270,
-     BLTIN = 271,
-     BLTINNOARGS = 272,
-     BLTINNOARGSORONE = 273,
-     BLTINONEARG = 274,
-     BLTINARGLIST = 275,
-     TWOWORDBUILTIN = 276,
-     FBLTIN = 277,
-     FBLTINNOARGS = 278,
-     FBLTINONEARG = 279,
-     FBLTINARGLIST = 280,
-     RBLTIN = 281,
-     RBLTINONEARG = 282,
-     ID = 283,
-     STRING = 284,
-     HANDLER = 285,
-     SYMBOL = 286,
-     ENDCLAUSE = 287,
-     tPLAYACCEL = 288,
-     tDOWN = 289,
-     tELSE = 290,
-     tNLELSIF = 291,
-     tEXIT = 292,
-     tFRAME = 293,
-     tGLOBAL = 294,
-     tGO = 295,
-     tIF = 296,
-     tINTO = 297,
-     tLOOP = 298,
-     tMACRO = 299,
-     tMOVIE = 300,
-     tNEXT = 301,
-     tOF = 302,
-     tPREVIOUS = 303,
-     tPUT = 304,
-     tREPEAT = 305,
-     tSET = 306,
-     tTHEN = 307,
-     tTHENNL = 308,
-     tTO = 309,
-     tWHEN = 310,
-     tWITH = 311,
-     tWHILE = 312,
-     tNLELSE = 313,
-     tFACTORY = 314,
-     tMETHOD = 315,
-     tOPEN = 316,
-     tPLAY = 317,
-     tDONE = 318,
-     tINSTANCE = 319,
-     tGE = 320,
-     tLE = 321,
-     tGT = 322,
-     tLT = 323,
-     tEQ = 324,
-     tNEQ = 325,
-     tAND = 326,
-     tOR = 327,
-     tNOT = 328,
-     tMOD = 329,
-     tAFTER = 330,
-     tBEFORE = 331,
-     tCONCAT = 332,
-     tCONTAINS = 333,
-     tSTARTS = 334,
-     tCHAR = 335,
-     tITEM = 336,
-     tLINE = 337,
-     tWORD = 338,
-     tSPRITE = 339,
-     tINTERSECTS = 340,
-     tWITHIN = 341,
-     tTELL = 342,
-     tPROPERTY = 343,
-     tON = 344,
-     tME = 345
-   };
+enum yytokentype {
+	UNARY = 258,
+	CASTREF = 259,
+	VOID = 260,
+	VAR = 261,
+	POINT = 262,
+	RECT = 263,
+	ARRAY = 264,
+	OBJECT = 265,
+	REFERENCE = 266,
+	INT = 267,
+	THEENTITY = 268,
+	THEENTITYWITHID = 269,
+	FLOAT = 270,
+	BLTIN = 271,
+	BLTINNOARGS = 272,
+	BLTINNOARGSORONE = 273,
+	BLTINONEARG = 274,
+	BLTINARGLIST = 275,
+	TWOWORDBUILTIN = 276,
+	FBLTIN = 277,
+	FBLTINNOARGS = 278,
+	FBLTINONEARG = 279,
+	FBLTINARGLIST = 280,
+	RBLTIN = 281,
+	RBLTINONEARG = 282,
+	ID = 283,
+	STRING = 284,
+	HANDLER = 285,
+	SYMBOL = 286,
+	ENDCLAUSE = 287,
+	tPLAYACCEL = 288,
+	tDOWN = 289,
+	tELSE = 290,
+	tNLELSIF = 291,
+	tEXIT = 292,
+	tFRAME = 293,
+	tGLOBAL = 294,
+	tGO = 295,
+	tIF = 296,
+	tINTO = 297,
+	tLOOP = 298,
+	tMACRO = 299,
+	tMOVIE = 300,
+	tNEXT = 301,
+	tOF = 302,
+	tPREVIOUS = 303,
+	tPUT = 304,
+	tREPEAT = 305,
+	tSET = 306,
+	tTHEN = 307,
+	tTHENNL = 308,
+	tTO = 309,
+	tWHEN = 310,
+	tWITH = 311,
+	tWHILE = 312,
+	tNLELSE = 313,
+	tFACTORY = 314,
+	tMETHOD = 315,
+	tOPEN = 316,
+	tPLAY = 317,
+	tDONE = 318,
+	tINSTANCE = 319,
+	tGE = 320,
+	tLE = 321,
+	tGT = 322,
+	tLT = 323,
+	tEQ = 324,
+	tNEQ = 325,
+	tAND = 326,
+	tOR = 327,
+	tNOT = 328,
+	tMOD = 329,
+	tAFTER = 330,
+	tBEFORE = 331,
+	tCONCAT = 332,
+	tCONTAINS = 333,
+	tSTARTS = 334,
+	tCHAR = 335,
+	tITEM = 336,
+	tLINE = 337,
+	tWORD = 338,
+	tSPRITE = 339,
+	tINTERSECTS = 340,
+	tWITHIN = 341,
+	tTELL = 342,
+	tPROPERTY = 343,
+	tON = 344,
+	tME = 345
+};
 #endif
 /* Tokens.  */
 #define UNARY 258
@@ -219,28 +219,24 @@
 #define tON 344
 #define tME 345
 
-
-
-
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+#if !defined YYSTYPE && !defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 79 "engines/director/lingo/lingo-gr.y"
+#	line 79 "engines/director/lingo/lingo-gr.y"
 {
 	Common::String *s;
 	int i;
 	double f;
-	int e[2];	// Entity + field
+	int e[2]; // Entity + field
 	int code;
-	int narg;	/* number of arguments */
+	int narg; /* number of arguments */
 	Common::Array<double> *arr;
 }
 /* Line 1529 of yacc.c.  */
-#line 239 "engines/director/lingo/lingo-gr.hpp"
-	YYSTYPE;
-# define yystype YYSTYPE /* obsolescent; will be withdrawn */
-# define YYSTYPE_IS_DECLARED 1
-# define YYSTYPE_IS_TRIVIAL 1
+#	line 239 "engines/director/lingo/lingo-gr.hpp"
+YYSTYPE;
+#	define yystype YYSTYPE /* obsolescent; will be withdrawn */
+#	define YYSTYPE_IS_DECLARED 1
+#	define YYSTYPE_IS_TRIVIAL 1
 #endif
 
 extern YYSTYPE yylval;
-

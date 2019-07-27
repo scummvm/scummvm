@@ -22,17 +22,18 @@
 
 #include "mutationofjb/tasks/objectanimationtask.h"
 
-#include "mutationofjb/tasks/taskmanager.h"
 #include "mutationofjb/game.h"
 #include "mutationofjb/gamedata.h"
 #include "mutationofjb/room.h"
+#include "mutationofjb/tasks/taskmanager.h"
 
 namespace MutationOfJB {
 
 static const int TICK_MILLIS = 100;
 
 // TODO: Respect currentScene._delay.
-ObjectAnimationTask::ObjectAnimationTask() : _timer(TICK_MILLIS) {
+ObjectAnimationTask::ObjectAnimationTask()
+  : _timer(TICK_MILLIS) {
 }
 
 void ObjectAnimationTask::start() {

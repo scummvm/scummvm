@@ -27,15 +27,15 @@
 #include "zvision/core/console.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
 #include "zvision/graphics/render_manager.h"
-#include "zvision/scripting/script_manager.h"
 #include "zvision/scripting/menu.h"
+#include "zvision/scripting/script_manager.h"
 #include "zvision/sound/zork_raw.h"
 #include "zvision/text/string_manager.h"
 
-#include "common/events.h"
-#include "common/system.h"
-#include "common/rational.h"
 #include "audio/mixer.h"
+#include "common/events.h"
+#include "common/rational.h"
+#include "common/system.h"
 
 #include "engines/util.h"
 
@@ -109,10 +109,10 @@ void ZVision::cheatCodes(uint8 key) {
 
 		if (checkCode("3100OPB")) {
 			_renderManager->showDebugMsg(Common::String::format("Current location: %c%c%c%c",
-			                                    _scriptManager->getStateValue(StateKey_World),
-			                                    _scriptManager->getStateValue(StateKey_Room),
-			                                    _scriptManager->getStateValue(StateKey_Node),
-			                                    _scriptManager->getStateValue(StateKey_View)));
+			                                                    _scriptManager->getStateValue(StateKey_World),
+			                                                    _scriptManager->getStateValue(StateKey_Room),
+			                                                    _scriptManager->getStateValue(StateKey_Node),
+			                                                    _scriptManager->getStateValue(StateKey_View)));
 		}
 
 		if (checkCode("KILLMENOW")) {
@@ -136,10 +136,10 @@ void ZVision::cheatCodes(uint8 key) {
 
 		if (checkCode("77MASSAVE")) {
 			_renderManager->showDebugMsg(Common::String::format("Current location: %c%c%c%c",
-			                                    _scriptManager->getStateValue(StateKey_World),
-			                                    _scriptManager->getStateValue(StateKey_Room),
-			                                    _scriptManager->getStateValue(StateKey_Node),
-			                                    _scriptManager->getStateValue(StateKey_View)));
+			                                                    _scriptManager->getStateValue(StateKey_World),
+			                                                    _scriptManager->getStateValue(StateKey_Room),
+			                                                    _scriptManager->getStateValue(StateKey_Node),
+			                                                    _scriptManager->getStateValue(StateKey_View)));
 		}
 
 		if (checkCode("IDKFA")) {
@@ -235,24 +235,19 @@ void ZVision::processEvents() {
 			case Common::KEYCODE_LEFT:
 			case Common::KEYCODE_RIGHT:
 				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::PANORAMA)
-					_keyboardVelocity = (_event.kbd.keycode == Common::KEYCODE_LEFT ?
-					                     -_scriptManager->getStateValue(StateKey_KbdRotateSpeed) :
-					                     _scriptManager->getStateValue(StateKey_KbdRotateSpeed)) * 2;
+					_keyboardVelocity = (_event.kbd.keycode == Common::KEYCODE_LEFT ? -_scriptManager->getStateValue(StateKey_KbdRotateSpeed) : _scriptManager->getStateValue(StateKey_KbdRotateSpeed)) * 2;
 				break;
 
 			case Common::KEYCODE_UP:
 			case Common::KEYCODE_DOWN:
 				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::TILT)
-					_keyboardVelocity = (_event.kbd.keycode == Common::KEYCODE_UP ?
-					                     -_scriptManager->getStateValue(StateKey_KbdRotateSpeed) :
-					                     _scriptManager->getStateValue(StateKey_KbdRotateSpeed)) * 2;
+					_keyboardVelocity = (_event.kbd.keycode == Common::KEYCODE_UP ? -_scriptManager->getStateValue(StateKey_KbdRotateSpeed) : _scriptManager->getStateValue(StateKey_KbdRotateSpeed)) * 2;
 				break;
 
 			case Common::KEYCODE_F10: {
 				Common::String fpsStr = Common::String::format("FPS: %d", getFPS());
 				_renderManager->showDebugMsg(fpsStr);
-				}
-				break;
+			} break;
 			default:
 				break;
 			}
@@ -264,8 +259,7 @@ void ZVision::processEvents() {
 			_scriptManager->addEvent(_event);
 			shortKeys(_event);
 			cheatCodes(vkKey);
-		}
-		break;
+		} break;
 		case Common::EVENT_KEYUP:
 			_scriptManager->addEvent(_event);
 			switch (_event.kbd.keycode) {
@@ -340,8 +334,7 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 				if (mspeed <= 0) {
 					mspeed = 25;
 				}
-				_mouseVelocity  = MIN(((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (clippedPos.x - _workingWindow.left)) - mspeed).toInt(), -1);
-
+				_mouseVelocity = MIN(((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (clippedPos.x - _workingWindow.left)) - mspeed).toInt(), -1);
 
 				_cursorManager->changeCursor(CursorIndex_Left);
 				cursorWasChanged = true;
@@ -351,7 +344,7 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 				if (mspeed <= 0) {
 					mspeed = 25;
 				}
-				_mouseVelocity  = MAX((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (clippedPos.x - _workingWindow.right + ROTATION_SCREEN_EDGE_OFFSET)).toInt(), 1);
+				_mouseVelocity = MAX((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (clippedPos.x - _workingWindow.right + ROTATION_SCREEN_EDGE_OFFSET)).toInt(), 1);
 
 				_cursorManager->changeCursor(CursorIndex_Right);
 				cursorWasChanged = true;
@@ -365,7 +358,7 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 				if (mspeed <= 0) {
 					mspeed = 25;
 				}
-				_mouseVelocity  = MIN(((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (pos.y - _workingWindow.top)) - mspeed).toInt(), -1);
+				_mouseVelocity = MIN(((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (pos.y - _workingWindow.top)) - mspeed).toInt(), -1);
 
 				_cursorManager->changeCursor(CursorIndex_UpArr);
 				cursorWasChanged = true;

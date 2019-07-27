@@ -27,10 +27,10 @@
 
 #include <limits.h>
 
-#include "engines/metaengine.h"
 #include "base/commandLine.h"
 #include "base/plugins.h"
 #include "base/version.h"
+#include "engines/metaengine.h"
 
 #include "common/config-manager.h"
 #include "common/fs.h"
@@ -50,134 +50,130 @@ namespace Base {
 
 #ifndef DISABLE_COMMAND_LINE
 
-static const char USAGE_STRING[] =
-	"%s: %s\n"
-	"Usage: %s [OPTIONS]... [GAME]\n"
-	"\n"
-	"Try '%s --help' for more options.\n"
-;
+static const char USAGE_STRING[] = "%s: %s\n"
+                                   "Usage: %s [OPTIONS]... [GAME]\n"
+                                   "\n"
+                                   "Try '%s --help' for more options.\n";
 
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
-#if defined(__SYMBIAN32__) || defined(ANDROID) || defined(__DS__) || defined(__3DS__)
+#	if defined(__SYMBIAN32__) || defined(ANDROID) || defined(__DS__) || defined(__3DS__)
 static const char HELP_STRING[] = "NoUsageString"; // save more data segment space
-#else
-static const char HELP_STRING[] =
-	"ScummVM - Graphical Adventure Game Interpreter\n"
-	"Usage: %s [OPTIONS]... [GAME]\n"
-	"  -v, --version            Display ScummVM version information and exit\n"
-	"  -h, --help               Display a brief help text and exit\n"
-	"  -z, --list-games         Display list of supported games and exit\n"
-	"  -t, --list-targets       Display list of configured targets and exit\n"
-	"  --list-saves             Display a list of saved games for the target specified\n"
-	"                           with --game=TARGET, or all targets if none is specified\n"
-	"  -a, --add                Add all games from current or specified directory.\n"
-	"                           If --game=ID is passed only the game with id ID is added. See also --detect\n"
-	"                           Use --path=PATH to specify a directory.\n"
-	"  --detect                 Display a list of games with their ID from current or\n"
-	"                           specified directory without adding it to the config.\n"
-	"                           Use --path=PATH to specify a directory.\n"
-	"  --game=ID                In combination with --add or --detect only adds or attempts to\n"
-	"                           detect the game with id ID.\n"
-	"  --auto-detect            Display a list of games from current or specified directory\n"
-	"                           and start the first one. Use --path=PATH to specify a directory.\n"
-	"  --recursive              In combination with --add or --detect recurse down all subdirectories\n"
-#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
-	"  --console                Enable the console window (default:enabled)\n"
-#endif
-	"\n"
-	"  -c, --config=CONFIG      Use alternate configuration file\n"
-	"  -p, --path=PATH          Path to where the game is installed\n"
-	"  -x, --save-slot[=NUM]    Save game slot to load (default: autosave)\n"
-	"  -f, --fullscreen         Force full-screen mode\n"
-	"  -F, --no-fullscreen      Force windowed mode\n"
-	"  -g, --gfx-mode=MODE      Select graphics scaler (1x,2x,3x,2xsai,super2xsai,\n"
-	"                           supereagle,advmame2x,advmame3x,hq2x,hq3x,tv2x,\n"
-	"                           dotmatrix)\n"
-	"  --stretch-mode=MODE      Select stretch mode (center, integral, fit, stretch)"
-	"  --filtering              Force filtered graphics mode\n"
-	"  --no-filtering           Force unfiltered graphics mode\n"
-	"  --gui-theme=THEME        Select GUI theme\n"
-	"  --themepath=PATH         Path to where GUI themes are stored\n"
-	"  --list-themes            Display list of all usable GUI themes\n"
-	"  -e, --music-driver=MODE  Select music driver (see README for details)\n"
-	"  --list-audio-devices     List all available audio devices\n"
-	"  -q, --language=LANG      Select language (en,de,fr,it,pt,es,jp,zh,kr,se,gb,\n"
-	"                           hb,ru,cz)\n"
-	"  -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)\n"
-	"  -s, --sfx-volume=NUM     Set the sfx volume, 0-255 (default: 192)\n"
-	"  -r, --speech-volume=NUM  Set the speech volume, 0-255 (default: 192)\n"
-	"  --midi-gain=NUM          Set the gain for MIDI playback, 0-1000 (default:\n"
-	"                           100) (only supported by some MIDI drivers)\n"
-	"  -n, --subtitles          Enable subtitles (use with games that have voice)\n"
-	"  -b, --boot-param=NUM     Pass number to the boot script (boot param)\n"
-	"  -d, --debuglevel=NUM     Set debug verbosity level\n"
-	"  --debugflags=FLAGS       Enable engine specific debug flags\n"
-	"                           (separated by commas)\n"
-	"  --debug-channels-only    Show only the specified debug channels\n"
-	"  -u, --dump-scripts       Enable script dumping if a directory called 'dumps'\n"
-	"                           exists in the current directory\n"
-	"\n"
-	"  --cdrom=DRIVE            CD drive to play CD audio from; can either be a\n"
-	"                           drive, path, or numeric index (default: 0 = best\n"
-	"                           choice drive)\n"
-	"  --joystick[=NUM]         Enable joystick input (default: 0 = first joystick)\n"
-	"  --platform=WORD          Specify platform of game (allowed values: 2gs, 3do,\n"
-	"                           acorn, amiga, atari, c64, fmtowns, nes, mac, pc, pc98,\n"
-	"                           pce, segacd, wii, windows)\n"
-	"  --savepath=PATH          Path to where saved games are stored\n"
-	"  --extrapath=PATH         Extra path to additional game data\n"
-	"  --soundfont=FILE         Select the SoundFont for MIDI playback (only\n"
-	"                           supported by some MIDI drivers)\n"
-	"  --multi-midi             Enable combination AdLib and native MIDI\n"
-	"  --native-mt32            True Roland MT-32 (disable GM emulation)\n"
-	"  --enable-gs              Enable Roland GS mode for MIDI playback\n"
-	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
-	"  --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame"
-#ifndef DISABLE_NUKED_OPL
-                                                                     ", nuked"
-#endif
-#ifdef ENABLE_OPL2LPT
-                                                                     ", opl2lpt"
-#endif
-                                                                              ")\n"
-	"  --aspect-ratio           Enable aspect ratio correction\n"
-	"  --render-mode=MODE       Enable additional render modes (hercGreen, hercAmber,\n"
-	"                           cga, ega, vga, amiga, fmtowns, pc9821, pc9801, 2gs,\n"
-	"                           atari, macintosh)\n"
-#ifdef ENABLE_EVENTRECORDER
-	"  --record-mode=MODE       Specify record mode for event recorder (record, playback,\n"
-	"                           passthrough [default])\n"
-	"  --record-file-name=FILE  Specify record file name\n"
-	"  --disable-display        Disable any gfx output. Used for headless events\n"
-	"                           playback by Event Recorder\n"
-#endif
-	"\n"
-#if defined(ENABLE_SKY) || defined(ENABLE_QUEEN)
-	"  --alt-intro              Use alternative intro for CD versions of Beneath a\n"
-	"                           Steel Sky and Flight of the Amazon Queen\n"
-#endif
-	"  --copy-protection        Enable copy protection in games, when\n"
-	"                           ScummVM disables it by default.\n"
-	"  --talkspeed=NUM          Set talk speed for games (default: 60)\n"
-#if defined(ENABLE_SCUMM) || defined(ENABLE_GROOVIE)
-	"  --demo-mode              Start demo mode of Maniac Mansion or The 7th Guest\n"
-#endif
-#if defined(ENABLE_DIRECTOR)
-	"  --start-movie=NAME       Start movie for Director\n"
-#endif
-#ifdef ENABLE_SCUMM
-	"  --tempo=NUM              Set music tempo (in percent, 50-200) for SCUMM games\n"
-	"                           (default: 100)\n"
-#ifdef ENABLE_SCUMM_7_8
-	"  --dimuse-tempo=NUM       Set internal Digital iMuse tempo (10 - 100) per second\n"
-	"                           (default: 10)\n"
-#endif
-#endif
-	"\n"
-	"The meaning of boolean long options can be inverted by prefixing them with\n"
-	"\"no-\", e.g. \"--no-aspect-ratio\".\n"
-;
-#endif
+#	else
+static const char HELP_STRING[] = "ScummVM - Graphical Adventure Game Interpreter\n"
+                                  "Usage: %s [OPTIONS]... [GAME]\n"
+                                  "  -v, --version            Display ScummVM version information and exit\n"
+                                  "  -h, --help               Display a brief help text and exit\n"
+                                  "  -z, --list-games         Display list of supported games and exit\n"
+                                  "  -t, --list-targets       Display list of configured targets and exit\n"
+                                  "  --list-saves             Display a list of saved games for the target specified\n"
+                                  "                           with --game=TARGET, or all targets if none is specified\n"
+                                  "  -a, --add                Add all games from current or specified directory.\n"
+                                  "                           If --game=ID is passed only the game with id ID is added. See also --detect\n"
+                                  "                           Use --path=PATH to specify a directory.\n"
+                                  "  --detect                 Display a list of games with their ID from current or\n"
+                                  "                           specified directory without adding it to the config.\n"
+                                  "                           Use --path=PATH to specify a directory.\n"
+                                  "  --game=ID                In combination with --add or --detect only adds or attempts to\n"
+                                  "                           detect the game with id ID.\n"
+                                  "  --auto-detect            Display a list of games from current or specified directory\n"
+                                  "                           and start the first one. Use --path=PATH to specify a directory.\n"
+                                  "  --recursive              In combination with --add or --detect recurse down all subdirectories\n"
+#		if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+                                  "  --console                Enable the console window (default:enabled)\n"
+#		endif
+                                  "\n"
+                                  "  -c, --config=CONFIG      Use alternate configuration file\n"
+                                  "  -p, --path=PATH          Path to where the game is installed\n"
+                                  "  -x, --save-slot[=NUM]    Save game slot to load (default: autosave)\n"
+                                  "  -f, --fullscreen         Force full-screen mode\n"
+                                  "  -F, --no-fullscreen      Force windowed mode\n"
+                                  "  -g, --gfx-mode=MODE      Select graphics scaler (1x,2x,3x,2xsai,super2xsai,\n"
+                                  "                           supereagle,advmame2x,advmame3x,hq2x,hq3x,tv2x,\n"
+                                  "                           dotmatrix)\n"
+                                  "  --stretch-mode=MODE      Select stretch mode (center, integral, fit, stretch)"
+                                  "  --filtering              Force filtered graphics mode\n"
+                                  "  --no-filtering           Force unfiltered graphics mode\n"
+                                  "  --gui-theme=THEME        Select GUI theme\n"
+                                  "  --themepath=PATH         Path to where GUI themes are stored\n"
+                                  "  --list-themes            Display list of all usable GUI themes\n"
+                                  "  -e, --music-driver=MODE  Select music driver (see README for details)\n"
+                                  "  --list-audio-devices     List all available audio devices\n"
+                                  "  -q, --language=LANG      Select language (en,de,fr,it,pt,es,jp,zh,kr,se,gb,\n"
+                                  "                           hb,ru,cz)\n"
+                                  "  -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)\n"
+                                  "  -s, --sfx-volume=NUM     Set the sfx volume, 0-255 (default: 192)\n"
+                                  "  -r, --speech-volume=NUM  Set the speech volume, 0-255 (default: 192)\n"
+                                  "  --midi-gain=NUM          Set the gain for MIDI playback, 0-1000 (default:\n"
+                                  "                           100) (only supported by some MIDI drivers)\n"
+                                  "  -n, --subtitles          Enable subtitles (use with games that have voice)\n"
+                                  "  -b, --boot-param=NUM     Pass number to the boot script (boot param)\n"
+                                  "  -d, --debuglevel=NUM     Set debug verbosity level\n"
+                                  "  --debugflags=FLAGS       Enable engine specific debug flags\n"
+                                  "                           (separated by commas)\n"
+                                  "  --debug-channels-only    Show only the specified debug channels\n"
+                                  "  -u, --dump-scripts       Enable script dumping if a directory called 'dumps'\n"
+                                  "                           exists in the current directory\n"
+                                  "\n"
+                                  "  --cdrom=DRIVE            CD drive to play CD audio from; can either be a\n"
+                                  "                           drive, path, or numeric index (default: 0 = best\n"
+                                  "                           choice drive)\n"
+                                  "  --joystick[=NUM]         Enable joystick input (default: 0 = first joystick)\n"
+                                  "  --platform=WORD          Specify platform of game (allowed values: 2gs, 3do,\n"
+                                  "                           acorn, amiga, atari, c64, fmtowns, nes, mac, pc, pc98,\n"
+                                  "                           pce, segacd, wii, windows)\n"
+                                  "  --savepath=PATH          Path to where saved games are stored\n"
+                                  "  --extrapath=PATH         Extra path to additional game data\n"
+                                  "  --soundfont=FILE         Select the SoundFont for MIDI playback (only\n"
+                                  "                           supported by some MIDI drivers)\n"
+                                  "  --multi-midi             Enable combination AdLib and native MIDI\n"
+                                  "  --native-mt32            True Roland MT-32 (disable GM emulation)\n"
+                                  "  --enable-gs              Enable Roland GS mode for MIDI playback\n"
+                                  "  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
+                                  "  --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame"
+#		ifndef DISABLE_NUKED_OPL
+                                  ", nuked"
+#		endif
+#		ifdef ENABLE_OPL2LPT
+                                  ", opl2lpt"
+#		endif
+                                  ")\n"
+                                  "  --aspect-ratio           Enable aspect ratio correction\n"
+                                  "  --render-mode=MODE       Enable additional render modes (hercGreen, hercAmber,\n"
+                                  "                           cga, ega, vga, amiga, fmtowns, pc9821, pc9801, 2gs,\n"
+                                  "                           atari, macintosh)\n"
+#		ifdef ENABLE_EVENTRECORDER
+                                  "  --record-mode=MODE       Specify record mode for event recorder (record, playback,\n"
+                                  "                           passthrough [default])\n"
+                                  "  --record-file-name=FILE  Specify record file name\n"
+                                  "  --disable-display        Disable any gfx output. Used for headless events\n"
+                                  "                           playback by Event Recorder\n"
+#		endif
+                                  "\n"
+#		if defined(ENABLE_SKY) || defined(ENABLE_QUEEN)
+                                  "  --alt-intro              Use alternative intro for CD versions of Beneath a\n"
+                                  "                           Steel Sky and Flight of the Amazon Queen\n"
+#		endif
+                                  "  --copy-protection        Enable copy protection in games, when\n"
+                                  "                           ScummVM disables it by default.\n"
+                                  "  --talkspeed=NUM          Set talk speed for games (default: 60)\n"
+#		if defined(ENABLE_SCUMM) || defined(ENABLE_GROOVIE)
+                                  "  --demo-mode              Start demo mode of Maniac Mansion or The 7th Guest\n"
+#		endif
+#		if defined(ENABLE_DIRECTOR)
+                                  "  --start-movie=NAME       Start movie for Director\n"
+#		endif
+#		ifdef ENABLE_SCUMM
+                                  "  --tempo=NUM              Set music tempo (in percent, 50-200) for SCUMM games\n"
+                                  "                           (default: 100)\n"
+#			ifdef ENABLE_SCUMM_7_8
+                                  "  --dimuse-tempo=NUM       Set internal Digital iMuse tempo (10 - 100) per second\n"
+                                  "                           (default: 10)\n"
+#			endif
+#		endif
+                                  "\n"
+                                  "The meaning of boolean long options can be inverted by prefixing them with\n"
+                                  "\"no-\", e.g. \"--no-aspect-ratio\".\n";
+#	endif
 
 static const char *s_appName = "scummvm";
 
@@ -191,9 +187,9 @@ static void usage(const char *s, ...) {
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
-#if !(defined(__SYMBIAN32__) || defined(__DS__))
+#	if !(defined(__SYMBIAN32__) || defined(__DS__))
 	printf(USAGE_STRING, s_appName, buf, s_appName, s_appName);
-#endif
+#	endif
 	exit(1);
 }
 
@@ -203,7 +199,6 @@ static void ensureFirstCommand(const Common::String &existingCommand, const char
 }
 
 #endif // DISABLE_COMMAND_LINE
-
 
 void registerDefaults() {
 
@@ -262,9 +257,9 @@ void registerDefaults() {
 #endif
 #ifdef ENABLE_SCUMM
 	ConfMan.registerDefault("tempo", 0);
-#ifdef ENABLE_SCUMM_7_8
+#	ifdef ENABLE_SCUMM_7_8
 	ConfMan.registerDefault("dimuse_tempo", 10);
-#endif
+#	endif
 #endif
 
 #if defined(ENABLE_SKY) || defined(ENABLE_QUEEN)
@@ -315,76 +310,82 @@ void registerDefaults() {
 #ifndef DISABLE_COMMAND_LINE
 
 // Use this for options which have an *optional* value
-#define DO_OPTION_OPT(shortCmd, longCmd, defaultVal) \
-	if (isLongCmd ? (!strcmp(s + 2, longCmd) || !memcmp(s + 2, longCmd"=", sizeof(longCmd"=") - 1)) : (tolower(s[1]) == shortCmd)) { \
-		s += 2; \
-		if (isLongCmd) { \
-			s += sizeof(longCmd) - 1; \
-			if (*s == '=') \
-				s++; \
-		} \
-		const char *option = s; \
-		if (*s == '\0' && !isLongCmd) { option = s2; i++; } \
-		if (!option || *option == '\0') option = defaultVal; \
-		if (option) settings[longCmd] = option;
+#	define DO_OPTION_OPT(shortCmd, longCmd, defaultVal)                                                                                 \
+		if (isLongCmd ? (!strcmp(s + 2, longCmd) || !memcmp(s + 2, longCmd "=", sizeof(longCmd "=") - 1)) : (tolower(s[1]) == shortCmd)) { \
+			s += 2;                                                                                                                          \
+			if (isLongCmd) {                                                                                                                 \
+				s += sizeof(longCmd) - 1;                                                                                                      \
+				if (*s == '=')                                                                                                                 \
+					s++;                                                                                                                         \
+			}                                                                                                                                \
+			const char *option = s;                                                                                                          \
+			if (*s == '\0' && !isLongCmd) {                                                                                                  \
+				option = s2;                                                                                                                   \
+				i++;                                                                                                                           \
+			}                                                                                                                                \
+			if (!option || *option == '\0')                                                                                                  \
+				option = defaultVal;                                                                                                           \
+			if (option)                                                                                                                      \
+				settings[longCmd] = option;
 
 // Use this for options which have a required (string) value
-#define DO_OPTION(shortCmd, longCmd) \
-	DO_OPTION_OPT(shortCmd, longCmd, 0) \
-	if (!option) usage("Option '%s' requires an argument", argv[isLongCmd ? i : i-1]);
+#	define DO_OPTION(shortCmd, longCmd)  \
+		DO_OPTION_OPT(shortCmd, longCmd, 0) \
+		if (!option)                        \
+			usage("Option '%s' requires an argument", argv[isLongCmd ? i : i - 1]);
 
 // Use this for options which have a required integer value
 // (we don't check ERANGE because WinCE doesn't support errno, so we're stuck just rejecting LONG_MAX/LONG_MIN..)
-#define DO_OPTION_INT(shortCmd, longCmd) \
-	DO_OPTION(shortCmd, longCmd) \
-	char *endptr; \
-	long int retval = strtol(option, &endptr, 0); \
-	if (*endptr != '\0' || retval == LONG_MAX || retval == LONG_MIN) \
-		usage("--%s: Invalid number '%s'", longCmd, option);
+#	define DO_OPTION_INT(shortCmd, longCmd)                           \
+		DO_OPTION(shortCmd, longCmd)                                     \
+		char *endptr;                                                    \
+		long int retval = strtol(option, &endptr, 0);                    \
+		if (*endptr != '\0' || retval == LONG_MAX || retval == LONG_MIN) \
+			usage("--%s: Invalid number '%s'", longCmd, option);
 
 // Use this for boolean options; this distinguishes between "-x" and "-X",
 // resp. between "--some-option" and "--no-some-option".
-#define DO_OPTION_BOOL(shortCmd, longCmd) \
-	if (isLongCmd ? (!strcmp(s + 2, longCmd) || !strcmp(s + 2, "no-" longCmd)) : (tolower(s[1]) == shortCmd)) { \
-		bool boolValue = (Common::isLower(s[1]) != 0); \
-		s += 2; \
-		if (isLongCmd) { \
-			boolValue = !strcmp(s, longCmd); \
-			s += boolValue ? (sizeof(longCmd) - 1) : (sizeof("no-" longCmd) - 1); \
-		} \
-		if (*s != '\0') goto unknownOption; \
-		const char *option = boolValue ? "true" : "false"; \
-		settings[longCmd] = option;
+#	define DO_OPTION_BOOL(shortCmd, longCmd)                                                                     \
+		if (isLongCmd ? (!strcmp(s + 2, longCmd) || !strcmp(s + 2, "no-" longCmd)) : (tolower(s[1]) == shortCmd)) { \
+			bool boolValue = (Common::isLower(s[1]) != 0);                                                            \
+			s += 2;                                                                                                   \
+			if (isLongCmd) {                                                                                          \
+				boolValue = !strcmp(s, longCmd);                                                                        \
+				s += boolValue ? (sizeof(longCmd) - 1) : (sizeof("no-" longCmd) - 1);                                   \
+			}                                                                                                         \
+			if (*s != '\0')                                                                                           \
+				goto unknownOption;                                                                                     \
+			const char *option = boolValue ? "true" : "false";                                                        \
+			settings[longCmd] = option;
 
 // Use this for options which never have a value, i.e. for 'commands', like "--help".
-#define DO_COMMAND(shortCmd, longCmd) \
-	if (isLongCmd ? (!strcmp(s + 2, longCmd)) : (tolower(s[1]) == shortCmd)) { \
-		s += 2; \
-		if (isLongCmd) \
-			s += sizeof(longCmd) - 1; \
-		if (*s != '\0') goto unknownOption; \
-		ensureFirstCommand(command, longCmd); \
-		command = longCmd;
+#	define DO_COMMAND(shortCmd, longCmd)                                        \
+		if (isLongCmd ? (!strcmp(s + 2, longCmd)) : (tolower(s[1]) == shortCmd)) { \
+			s += 2;                                                                  \
+			if (isLongCmd)                                                           \
+				s += sizeof(longCmd) - 1;                                              \
+			if (*s != '\0')                                                          \
+				goto unknownOption;                                                    \
+			ensureFirstCommand(command, longCmd);                                    \
+			command = longCmd;
 
-
-#define DO_LONG_OPTION_OPT(longCmd, d)  DO_OPTION_OPT(0, longCmd, d)
-#define DO_LONG_OPTION(longCmd)         DO_OPTION(0, longCmd)
-#define DO_LONG_OPTION_INT(longCmd)     DO_OPTION_INT(0, longCmd)
-#define DO_LONG_OPTION_BOOL(longCmd)    DO_OPTION_BOOL(0, longCmd)
-#define DO_LONG_COMMAND(longCmd)        DO_COMMAND(0, longCmd)
-
-// End an option handler
-#define END_OPTION \
-		continue; \
-	}
+#	define DO_LONG_OPTION_OPT(longCmd, d) DO_OPTION_OPT(0, longCmd, d)
+#	define DO_LONG_OPTION(longCmd) DO_OPTION(0, longCmd)
+#	define DO_LONG_OPTION_INT(longCmd) DO_OPTION_INT(0, longCmd)
+#	define DO_LONG_OPTION_BOOL(longCmd) DO_OPTION_BOOL(0, longCmd)
+#	define DO_LONG_COMMAND(longCmd) DO_COMMAND(0, longCmd)
 
 // End an option handler
-#define END_COMMAND \
-		continue; \
-	}
+#	define END_OPTION \
+		continue;        \
+		}
 
+// End an option handler
+#	define END_COMMAND \
+		continue;         \
+		}
 
-Common::String parseCommandLine(Common::StringMap &settings, int argc, const char * const *argv) {
+Common::String parseCommandLine(Common::StringMap &settings, int argc, const char *const *argv) {
 	const char *s, *s2;
 	Common::String command;
 
@@ -402,7 +403,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 	// Iterate over all command line arguments and parse them into our string map.
 	for (int i = 1; i < argc; ++i) {
 		s = argv[i];
-		s2 = (i < argc-1) ? argv[i+1] : 0;
+		s2 = (i < argc - 1) ? argv[i + 1] : 0;
 
 		if (s[0] != '-') {
 			// The argument doesn't start with a dash, so it's not an option.
@@ -418,14 +419,14 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			// to pass the process serial number. We need to ignore it to avoid an error.
 			// When using XCode it also adds -NSDocumentRevisionsDebugMode YES argument if XCode option
 			// "Allow debugging when using document Versions Browser" is on (which is the default).
-#ifdef MACOSX
+#	ifdef MACOSX
 			if (strncmp(s, "-psn_", 5) == 0)
 				continue;
 			if (strcmp(s, "-NSDocumentRevisionsDebugMode") == 0) {
 				++i; // Also skip the YES that follows
 				continue;
 			}
-#endif
+#	endif
 
 			bool isLongCmd = (s[0] == '-' && s[1] == '-');
 
@@ -450,17 +451,17 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_COMMAND("auto-detect")
 			END_COMMAND
 
-#ifdef DETECTOR_TESTING_HACK
+#	ifdef DETECTOR_TESTING_HACK
 			// HACK FIXME TODO: This command is intentionally *not* documented!
 			DO_LONG_COMMAND("test-detector")
 			END_COMMAND
-#endif
+#	endif
 
-#ifdef UPGRADE_ALL_TARGETS_HACK
+#	ifdef UPGRADE_ALL_TARGETS_HACK
 			// HACK FIXME TODO: This command is intentionally *not* documented!
 			DO_LONG_COMMAND("upgrade-targets")
 			END_COMMAND
-#endif
+#	endif
 
 			DO_LONG_COMMAND("list-saves")
 			END_COMMAND
@@ -495,7 +496,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION_BOOL("filtering")
 			END_OPTION
 
-#ifdef ENABLE_EVENTRECORDER
+#	ifdef ENABLE_EVENTRECORDER
 			DO_LONG_OPTION_INT("disable-display")
 			END_OPTION
 
@@ -504,7 +505,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 
 			DO_LONG_OPTION("record-file-name")
 			END_OPTION
-#endif
+#	endif
 
 			DO_LONG_OPTION("opl-driver")
 			END_OPTION
@@ -522,17 +523,17 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_OPTION('p', "path")
-				Common::FSNode path(option);
-				if (!path.exists()) {
-					usage("Non-existent game path '%s'", option);
-				} else if (!path.isReadable()) {
-					usage("Non-readable game path '%s'", option);
-				}
+			Common::FSNode path(option);
+			if (!path.exists()) {
+				usage("Non-existent game path '%s'", option);
+			} else if (!path.isReadable()) {
+				usage("Non-readable game path '%s'", option);
+			}
 			END_OPTION
 
 			DO_OPTION('q', "language")
-				if (Common::parseLanguage(option) == Common::UNK_LANG)
-					usage("Unrecognized language '%s'", option);
+			if (Common::parseLanguage(option) == Common::UNK_LANG)
+				usage("Unrecognized language '%s'", option);
 			END_OPTION
 
 			DO_OPTION_INT('s', "sfx-volume")
@@ -554,23 +555,23 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION_OPT("joystick", "0")
-				settings["joystick_num"] = option;
-				settings.erase("joystick");
+			settings["joystick_num"] = option;
+			settings.erase("joystick");
 			END_OPTION
 
 			DO_LONG_OPTION("platform")
-				int platform = Common::parsePlatform(option);
-				if (platform == Common::kPlatformUnknown)
-					usage("Unrecognized platform '%s'", option);
+			int platform = Common::parsePlatform(option);
+			if (platform == Common::kPlatformUnknown)
+				usage("Unrecognized platform '%s'", option);
 			END_OPTION
 
 			DO_LONG_OPTION("soundfont")
-				Common::FSNode path(option);
-				if (!path.exists()) {
-					usage("Non-existent soundfont path '%s'", option);
-				} else if (!path.isReadable()) {
-					usage("Non-readable soundfont path '%s'", option);
-				}
+			Common::FSNode path(option);
+			if (!path.exists()) {
+				usage("Non-existent soundfont path '%s'", option);
+			} else if (!path.isReadable()) {
+				usage("Non-readable soundfont path '%s'", option);
+			}
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("disable-sdl-parachute")
@@ -589,27 +590,27 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION("render-mode")
-				int renderMode = Common::parseRenderMode(option);
-				if (renderMode == Common::kRenderDefault)
-					usage("Unrecognized render mode '%s'", option);
+			int renderMode = Common::parseRenderMode(option);
+			if (renderMode == Common::kRenderDefault)
+				usage("Unrecognized render mode '%s'", option);
 			END_OPTION
 
 			DO_LONG_OPTION("savepath")
-				Common::FSNode path(option);
-				if (!path.exists()) {
-					usage("Non-existent saved games path '%s'", option);
-				} else if (!path.isWritable()) {
-					usage("Non-writable saved games path '%s'", option);
-				}
+			Common::FSNode path(option);
+			if (!path.exists()) {
+				usage("Non-existent saved games path '%s'", option);
+			} else if (!path.isWritable()) {
+				usage("Non-writable saved games path '%s'", option);
+			}
 			END_OPTION
 
 			DO_LONG_OPTION("extrapath")
-				Common::FSNode path(option);
-				if (!path.exists()) {
-					usage("Non-existent extra path '%s'", option);
-				} else if (!path.isReadable()) {
-					usage("Non-readable extra path '%s'", option);
-				}
+			Common::FSNode path(option);
+			if (!path.exists()) {
+				usage("Non-existent extra path '%s'", option);
+			} else if (!path.isReadable()) {
+				usage("Non-readable extra path '%s'", option);
+			}
 			END_OPTION
 
 			DO_LONG_OPTION_INT("talkspeed")
@@ -628,12 +629,12 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION("themepath")
-				Common::FSNode path(option);
-				if (!path.exists()) {
-					usage("Non-existent theme path '%s'", option);
-				} else if (!path.isReadable()) {
-					usage("Non-readable theme path '%s'", option);
-				}
+			Common::FSNode path(option);
+			if (!path.exists()) {
+				usage("Non-existent theme path '%s'", option);
+			} else if (!path.isReadable()) {
+				usage("Non-readable theme path '%s'", option);
+			}
 			END_OPTION
 
 			DO_LONG_COMMAND("list-themes")
@@ -642,42 +643,42 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION("target-md5")
 			END_OPTION
 
-#ifdef ENABLE_SCUMM
+#	ifdef ENABLE_SCUMM
 			DO_LONG_OPTION_INT("tempo")
 			END_OPTION
-#ifdef ENABLE_SCUMM_7_8
+#		ifdef ENABLE_SCUMM_7_8
 			DO_LONG_OPTION_INT("dimuse-tempo")
 			END_OPTION
-#endif
-#endif
-#if defined(ENABLE_SCUMM) || defined(ENABLE_GROOVIE)
+#		endif
+#	endif
+#	if defined(ENABLE_SCUMM) || defined(ENABLE_GROOVIE)
 			DO_LONG_OPTION_BOOL("demo-mode")
 			END_OPTION
-#endif
+#	endif
 
-#if defined(ENABLE_SKY) || defined(ENABLE_QUEEN)
+#	if defined(ENABLE_SKY) || defined(ENABLE_QUEEN)
 			DO_LONG_OPTION_BOOL("alt-intro")
 			END_OPTION
-#endif
+#	endif
 
-#ifdef IPHONE
+#	ifdef IPHONE
 			// This is automatically set when launched from the Springboard.
 			DO_LONG_OPTION_OPT("launchedFromSB", 0)
 			END_OPTION
-#endif
+#	endif
 
-#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+#	if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 			// Optional console window on Windows (default: enabled)
 			DO_LONG_OPTION_BOOL("console")
 			END_OPTION
-#endif
+#	endif
 
-#if defined(ENABLE_DIRECTOR)
+#	if defined(ENABLE_DIRECTOR)
 			DO_LONG_OPTION("start-movie")
 			END_OPTION
-#endif
+#	endif
 
-unknownOption:
+		unknownOption:
 			// If we get till here, the option is unhandled and hence unknown.
 			usage("Unrecognized option '%s'", argv[i]);
 		}
@@ -807,7 +808,7 @@ static Common::Error listSaves(const Common::String &target) {
 				printf("\n");
 			printf("Save states for target '%s' (gameid '%s'):\n", i->c_str(), gameid.c_str());
 			printf("  Slot Description                                           \n"
-					   "  ---- ------------------------------------------------------\n");
+			       "  ---- ------------------------------------------------------\n");
 
 			for (SaveStateList::const_iterator x = saveList.begin(); x != saveList.end(); ++x) {
 				printf("  %-4d %s\n", x->getSaveSlot(), x->getDescription().c_str());
@@ -944,8 +945,7 @@ static int recAddGames(const Common::FSNode &dir, const Common::String &game, bo
 			       v->gameId.c_str(),
 			       v->description.c_str(),
 			       Common::getLanguageDescription(v->language),
-			       Common::getPlatformDescription(v->platform)
-			);
+			       Common::getPlatformDescription(v->platform));
 		}
 	}
 
@@ -973,7 +973,7 @@ static bool addGames(const Common::String &path, const Common::String &game, boo
 	return true;
 }
 
-#ifdef DETECTOR_TESTING_HACK
+#	ifdef DETECTOR_TESTING_HACK
 static void runDetectorTest() {
 	// HACK: The following code can be used to test the detection code of our
 	// engines. Basically, it loops over all targets, and calls the detector
@@ -988,7 +988,7 @@ static void runDetectorTest() {
 		Common::String gameid(iter->_value.getVal("gameid"));
 		Common::String path(iter->_value.getVal("path"));
 		printf("Looking at target '%s', gameid '%s', path '%s' ...\n",
-				name.c_str(), gameid.c_str(), path.c_str());
+		       name.c_str(), gameid.c_str(), path.c_str());
 		if (path.empty()) {
 			printf(" ... no path specified, skipping\n");
 			continue;
@@ -1033,19 +1033,19 @@ static void runDetectorTest() {
 
 		for (x = candidates.begin(); x != candidates.end(); ++x) {
 			printf("    gameid '%s', desc '%s', language '%s', platform '%s'\n",
-				   x->gameId.c_str(),
-				   x->description.c_str(),
-				   Common::getLanguageDescription(x->language),
-				   Common::getPlatformDescription(x->platform));
+			       x->gameId.c_str(),
+			       x->description.c_str(),
+			       Common::getLanguageDescription(x->language),
+			       Common::getPlatformDescription(x->platform));
 		}
 	}
 	int total = domains.size();
 	printf("Detector test run: %d fail, %d success, %d skipped, out of %d\n",
-			failure, success, total - failure - success, total);
+	       failure, success, total - failure - success, total);
 }
-#endif
+#	endif
 
-#ifdef UPGRADE_ALL_TARGETS_HACK
+#	ifdef UPGRADE_ALL_TARGETS_HACK
 void upgradeTargets() {
 	// HACK: The following upgrades all your targets to the latest and
 	// greatest. Right now that means updating the guioptions and (optionally)
@@ -1063,7 +1063,7 @@ void upgradeTargets() {
 		Common::String gameid(dom.getVal("gameid"));
 		Common::String path(dom.getVal("path"));
 		printf("Looking at target '%s', gameid '%s' ...\n",
-				name.c_str(), gameid.c_str());
+		       name.c_str(), gameid.c_str());
 		if (path.empty()) {
 			printf(" ... no path specified, skipping\n");
 			continue;
@@ -1148,29 +1148,26 @@ void upgradeTargets() {
 		// Esp. because for some games (e.g. the combined Zak/Loom FM-TOWNS demo etc.)
 		// ScummVM still generates an incorrect description string. So, the description
 		// should only be updated if the user explicitly requests this.
-#if 0
+#		if 0
 		if (desc != g->description()) {
 			printf("  -> update desc from '%s' to\n                      '%s' ?\n", desc.c_str(), g->description.c_str());
 			dom["description"] = g->description;
 		}
-#endif
+#		endif
 	}
 
 	// Finally, save our changes to disk
 	ConfMan.flushToDisk();
 }
-#endif
+#	endif
 
 #else // DISABLE_COMMAND_LINE
 
-
-Common::String parseCommandLine(Common::StringMap &settings, int argc, const char * const *argv) {
+Common::String parseCommandLine(Common::StringMap &settings, int argc, const char *const *argv) {
 	return Common::String();
 }
 
-
 #endif // DISABLE_COMMAND_LINE
-
 
 bool processSettings(Common::String &command, Common::StringMap &settings, Common::Error &err) {
 	err = Common::kNoError;
@@ -1228,21 +1225,20 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		addGames(settings["path"], settings["game"], settings["recursive"] == "true");
 		return true;
 	}
-#ifdef DETECTOR_TESTING_HACK
+#	ifdef DETECTOR_TESTING_HACK
 	else if (command == "test-detector") {
 		runDetectorTest();
 		return true;
 	}
-#endif
-#ifdef UPGRADE_ALL_TARGETS_HACK
+#	endif
+#	ifdef UPGRADE_ALL_TARGETS_HACK
 	else if (command == "upgrade-targets") {
 		upgradeTargets();
 		return true;
 	}
-#endif
+#	endif
 
 #endif // DISABLE_COMMAND_LINE
-
 
 	// If a target was specified, check whether there is either a game
 	// domain (i.e. a target) matching this argument, or alternatively
@@ -1273,7 +1269,6 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 #endif // DISABLE_COMMAND_LINE
 		}
 	}
-
 
 	// Finally, store the command line settings into the config manager.
 	for (Common::StringMap::const_iterator x = settings.begin(); x != settings.end(); ++x) {

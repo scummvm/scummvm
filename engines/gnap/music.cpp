@@ -27,12 +27,13 @@
 #include "common/debug.h"
 #include "common/file.h"
 
-#include "gnap/music.h"
 #include "gnap/gnap.h"
+#include "gnap/music.h"
 
 namespace Gnap {
 
-MusicPlayer::MusicPlayer(const char *filename) : _filename(filename) {
+MusicPlayer::MusicPlayer(const char *filename)
+  : _filename(filename) {
 
 	MidiPlayer::createDriver();
 

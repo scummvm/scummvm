@@ -21,14 +21,15 @@
  */
 
 #include "kyra/engine/sprites.h"
-#include "kyra/resource/resource.h"
 #include "kyra/graphics/animator_lok.h"
+#include "kyra/resource/resource.h"
 
 #include "common/system.h"
 
 namespace Kyra {
 
-Sprites::Sprites(KyraEngine_LoK *vm, OSystem *system) : _rnd("kyraSprites") {
+Sprites::Sprites(KyraEngine_LoK *vm, OSystem *system)
+  : _rnd("kyraSprites") {
 	_vm = vm;
 	_res = vm->resource();
 	_screen = vm->screen();
@@ -180,7 +181,7 @@ void Sprites::updateSceneAnims() {
 		case 0xFFB3:
 			data += 2;
 			debugC(6, kDebugLevelSprites, "func: Set time to wait to random value");
-			rndNr = READ_LE_UINT16(data) + _rnd.getRandomNumber( READ_LE_UINT16(data) + 2);
+			rndNr = READ_LE_UINT16(data) + _rnd.getRandomNumber(READ_LE_UINT16(data) + 2);
 			debugC(6, kDebugLevelSprites, "Minimum time %i", READ_LE_UINT16(data));
 			data += 2;
 			debugC(6, kDebugLevelSprites, "Maximum time %i", READ_LE_UINT16(data));
@@ -297,7 +298,7 @@ void Sprites::updateSceneAnims() {
 			_anims[anim].play = false;
 			_anims[anim].sprite = -1;
 			break;
-/*		case 0xFF97:
+			/*		case 0xFF97:
 			data += 2;
 			debugC(1, kDebugLevelSprites, "func: Set value of animation property 34h to 0");
 			break;*/
@@ -429,7 +430,7 @@ void Sprites::loadDat(const char *filename, SceneExits &exits) {
 	data += 2;
 
 	if (length > 2) {
-		assert( length < fileSize);
+		assert(length < fileSize);
 		uint8 *animstart;
 		uint8 *start = data;
 
@@ -487,13 +488,17 @@ void Sprites::loadDat(const char *filename, SceneExits &exits) {
 
 	assert(fileSize - (data - _dat) == 0xC);
 
-	exits.northXPos = READ_LE_UINT16(data) & 0xFFFC; data += 2;
+	exits.northXPos = READ_LE_UINT16(data) & 0xFFFC;
+	data += 2;
 	exits.northYPos = *data++ & 0xFFFE;
-	exits.eastXPos = READ_LE_UINT16(data) & 0xFFFC; data += 2;
+	exits.eastXPos = READ_LE_UINT16(data) & 0xFFFC;
+	data += 2;
 	exits.eastYPos = *data++ & 0xFFFE;
-	exits.southXPos = READ_LE_UINT16(data) & 0xFFFC; data += 2;
+	exits.southXPos = READ_LE_UINT16(data) & 0xFFFC;
+	data += 2;
 	exits.southYPos = *data++ & 0xFFFE;
-	exits.westXPos = READ_LE_UINT16(data) & 0xFFFC; data += 2;
+	exits.westXPos = READ_LE_UINT16(data) & 0xFFFC;
+	data += 2;
 	exits.westYPos = *data++ & 0xFFFE;
 }
 
@@ -509,7 +514,7 @@ void Sprites::loadSceneShapes() {
 	int spriteNum, x, y, width, height;
 
 	freeSceneShapes();
-	memset( _sceneShapes, 0, sizeof(_sceneShapes));
+	memset(_sceneShapes, 0, sizeof(_sceneShapes));
 
 	if (_spriteDefStart == 0)
 		return;

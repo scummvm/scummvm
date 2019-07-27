@@ -22,97 +22,99 @@
 
 namespace Agi {
 
-#define GAMEOPTION_ORIGINAL_SAVELOAD          GUIO_GAMEOPTIONS1
-#define GAMEOPTION_AMIGA_ALTERNATIVE_PALETTE  GUIO_GAMEOPTIONS2
-#define GAMEOPTION_DISABLE_MOUSE              GUIO_GAMEOPTIONS3
-#define GAMEOPTION_USE_HERCULES_FONT          GUIO_GAMEOPTIONS4
-#define GAMEOPTION_COMMAND_PROMPT_WINDOW      GUIO_GAMEOPTIONS5
+#define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
+#define GAMEOPTION_AMIGA_ALTERNATIVE_PALETTE GUIO_GAMEOPTIONS2
+#define GAMEOPTION_DISABLE_MOUSE GUIO_GAMEOPTIONS3
+#define GAMEOPTION_USE_HERCULES_FONT GUIO_GAMEOPTIONS4
+#define GAMEOPTION_COMMAND_PROMPT_WINDOW GUIO_GAMEOPTIONS5
 // TODO: properly implement GAMEOPTIONs
 
-#define GAMEOPTIONS_DEFAULT                   GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_DISABLE_MOUSE,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW)
-#define GAMEOPTIONS_AMIGA                     GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_AMIGA_ALTERNATIVE_PALETTE,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW)
-#define GAMEOPTIONS_FANMADE_MOUSE             GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW)
+#define GAMEOPTIONS_DEFAULT GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DISABLE_MOUSE, GAMEOPTION_USE_HERCULES_FONT, GAMEOPTION_COMMAND_PROMPT_WINDOW)
+#define GAMEOPTIONS_AMIGA GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_AMIGA_ALTERNATIVE_PALETTE, GAMEOPTION_USE_HERCULES_FONT, GAMEOPTION_COMMAND_PROMPT_WINDOW)
+#define GAMEOPTIONS_FANMADE_MOUSE GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_USE_HERCULES_FONT, GAMEOPTION_COMMAND_PROMPT_WINDOW)
 
-#define GAME_LVFPN(id,extra,fname,md5,size,lang,ver,features,gid,platform,interp,guioptions) { \
-		{ \
-			id, \
-			extra, \
-			AD_ENTRY1s(fname,md5,size), \
-			lang, \
-			platform, \
-			ADGF_NO_FLAGS, \
-			guioptions \
-		}, \
-		gid, \
-		interp, \
-		features, \
-		ver \
+#define GAME_LVFPN(id, extra, fname, md5, size, lang, ver, features, gid, platform, interp, guioptions) \
+	{                                                                                                     \
+		{                                                                                                   \
+			id,                                                                                               \
+			extra,                                                                                            \
+			AD_ENTRY1s(fname, md5, size),                                                                     \
+			lang,                                                                                             \
+			platform,                                                                                         \
+			ADGF_NO_FLAGS,                                                                                    \
+			guioptions                                                                                        \
+		},                                                                                                  \
+		  gid,                                                                                              \
+		  interp,                                                                                           \
+		  features,                                                                                         \
+		  ver                                                                                               \
 	}
 
-#define GAME_LVFPNF(id,name,fname,md5,size,lang,ver,features,gid,platform,interp,guioptions) { \
-		{ \
-			id, \
-			name, \
-			AD_ENTRY1s(fname,md5,size), \
-			lang, \
-			platform, \
-			ADGF_USEEXTRAASTITLE, \
-			guioptions \
-		}, \
-		gid, \
-		interp, \
-		features, \
-		ver \
+#define GAME_LVFPNF(id, name, fname, md5, size, lang, ver, features, gid, platform, interp, guioptions) \
+	{                                                                                                     \
+		{                                                                                                   \
+			id,                                                                                               \
+			name,                                                                                             \
+			AD_ENTRY1s(fname, md5, size),                                                                     \
+			lang,                                                                                             \
+			platform,                                                                                         \
+			ADGF_USEEXTRAASTITLE,                                                                             \
+			guioptions                                                                                        \
+		},                                                                                                  \
+		  gid,                                                                                              \
+		  interp,                                                                                           \
+		  features,                                                                                         \
+		  ver                                                                                               \
 	}
 
-#define BOOTER2(id,extra,fname,md5,size,ver,gid) GAME_LVFPN(id,extra,fname,md5,size,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V2,GAMEOPTIONS_DEFAULT)
-#define GAME(id,extra,md5,ver,gid) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V2,GAMEOPTIONS_DEFAULT)
-#define GAME3(id,extra,fname,md5,ver,gid) GAME_LVFPN(id,extra,fname,md5,-1,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V3,GAMEOPTIONS_DEFAULT)
+#define BOOTER2(id, extra, fname, md5, size, ver, gid) GAME_LVFPN(id, extra, fname, md5, size, Common::EN_ANY, ver, 0, gid, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT)
+#define GAME(id, extra, md5, ver, gid) GAME_LVFPN(id, extra, "logdir", md5, -1, Common::EN_ANY, ver, 0, gid, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT)
+#define GAME3(id, extra, fname, md5, ver, gid) GAME_LVFPN(id, extra, fname, md5, -1, Common::EN_ANY, ver, 0, gid, Common::kPlatformDOS, GType_V3, GAMEOPTIONS_DEFAULT)
 
-#define GAME_P(id,extra,md5,ver,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,0,gid,platform,GType_V2,GAMEOPTIONS_DEFAULT)
-#define GAME_PO(id,extra,md5,ver,gid,platform,guioptions) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,0,gid,platform,GType_V2,guioptions)
+#define GAME_P(id, extra, md5, ver, gid, platform) GAME_LVFPN(id, extra, "logdir", md5, -1, Common::EN_ANY, ver, 0, gid, platform, GType_V2, GAMEOPTIONS_DEFAULT)
+#define GAME_PO(id, extra, md5, ver, gid, platform, guioptions) GAME_LVFPN(id, extra, "logdir", md5, -1, Common::EN_ANY, ver, 0, gid, platform, GType_V2, guioptions)
 
-#define GAME_FP(id,extra,md5,ver,flags,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,flags,gid,platform,GType_V2,GAMEOPTIONS_DEFAULT)
-#define GAME_FPO(id,extra,md5,ver,flags,gid,platform,guioptions) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,flags,gid,platform,GType_V2,guioptions)
-#define GAME_F(id,extra,md5,ver,flags,gid) GAME_FP(id,extra,md5,ver,flags,gid,Common::kPlatformDOS)
-#define GAME_FO(id,extra,md5,ver,flags,gid,guioptions) GAME_FPO(id,extra,md5,ver,flags,gid,Common::kPlatformDOS,guioptions)
+#define GAME_FP(id, extra, md5, ver, flags, gid, platform) GAME_LVFPN(id, extra, "logdir", md5, -1, Common::EN_ANY, ver, flags, gid, platform, GType_V2, GAMEOPTIONS_DEFAULT)
+#define GAME_FPO(id, extra, md5, ver, flags, gid, platform, guioptions) GAME_LVFPN(id, extra, "logdir", md5, -1, Common::EN_ANY, ver, flags, gid, platform, GType_V2, guioptions)
+#define GAME_F(id, extra, md5, ver, flags, gid) GAME_FP(id, extra, md5, ver, flags, gid, Common::kPlatformDOS)
+#define GAME_FO(id, extra, md5, ver, flags, gid, guioptions) GAME_FPO(id, extra, md5, ver, flags, gid, Common::kPlatformDOS, guioptions)
 
-#define GAME_PS(id,extra,md5,size,ver,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,size,Common::EN_ANY,ver,0,gid,platform,GType_V2,GAMEOPTIONS_DEFAULT)
+#define GAME_PS(id, extra, md5, size, ver, gid, platform) GAME_LVFPN(id, extra, "logdir", md5, size, Common::EN_ANY, ver, 0, gid, platform, GType_V2, GAMEOPTIONS_DEFAULT)
 
-#define GAME_LPS(id,extra,md5,size,lang,ver,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,size,lang,ver,0,gid,platform,GType_V2,GAMEOPTIONS_DEFAULT)
+#define GAME_LPS(id, extra, md5, size, lang, ver, gid, platform) GAME_LVFPN(id, extra, "logdir", md5, size, lang, ver, 0, gid, platform, GType_V2, GAMEOPTIONS_DEFAULT)
 
-#define GAME_LFPS(id,extra,md5,size,lang,ver,flags,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,size,lang,ver,flags,gid,platform,GType_V2,GAMEOPTIONS_DEFAULT)
+#define GAME_LFPS(id, extra, md5, size, lang, ver, flags, gid, platform) GAME_LVFPN(id, extra, "logdir", md5, size, lang, ver, flags, gid, platform, GType_V2, GAMEOPTIONS_DEFAULT)
 
-#define GAME3_P(id,extra,fname,md5,ver,flags,gid,platform) GAME_LVFPN(id,extra,fname,md5,-1,Common::EN_ANY,ver,flags,gid,platform,GType_V3,GAMEOPTIONS_DEFAULT)
-#define GAME3_PO(id,extra,fname,md5,ver,flags,gid,platform,guioptions) GAME_LVFPN(id,extra,fname,md5,-1,Common::EN_ANY,ver,flags,gid,platform,GType_V3,guioptions)
+#define GAME3_P(id, extra, fname, md5, ver, flags, gid, platform) GAME_LVFPN(id, extra, fname, md5, -1, Common::EN_ANY, ver, flags, gid, platform, GType_V3, GAMEOPTIONS_DEFAULT)
+#define GAME3_PO(id, extra, fname, md5, ver, flags, gid, platform, guioptions) GAME_LVFPN(id, extra, fname, md5, -1, Common::EN_ANY, ver, flags, gid, platform, GType_V3, guioptions)
 
-#define GAMEpre_P(id,extra,fname,md5,ver,gid,platform) GAME_LVFPN(id,extra,fname,md5,-1,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI,GAMEOPTIONS_DEFAULT)
-#define GAMEpre_PO(id,extra,fname,md5,ver,gid,platform,guioptions) GAME_LVFPN(id,extra,fname,md5,-1,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI,guioptions)
+#define GAMEpre_P(id, extra, fname, md5, ver, gid, platform) GAME_LVFPN(id, extra, fname, md5, -1, Common::EN_ANY, ver, 0, gid, platform, GType_PreAGI, GAMEOPTIONS_DEFAULT)
+#define GAMEpre_PO(id, extra, fname, md5, ver, gid, platform, guioptions) GAME_LVFPN(id, extra, fname, md5, -1, Common::EN_ANY, ver, 0, gid, platform, GType_PreAGI, guioptions)
 
-#define GAMEpre_PS(id,extra,fname,md5,size,ver,gid,platform) GAME_LVFPN(id,extra,fname,md5,size,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI,GAMEOPTIONS_DEFAULT)
+#define GAMEpre_PS(id, extra, fname, md5, size, ver, gid, platform) GAME_LVFPN(id, extra, fname, md5, size, Common::EN_ANY, ver, 0, gid, platform, GType_PreAGI, GAMEOPTIONS_DEFAULT)
 
-#define GAME3_PS(id,extra,fname,md5,size,ver,flags,gid,platform) GAME_LVFPN(id,extra,fname,md5,size,Common::EN_ANY,ver,flags,gid,platform,GType_V3,GAMEOPTIONS_DEFAULT)
-#define GAME3_PSO(id,extra,fname,md5,size,ver,flags,gid,platform,guioptions) GAME_LVFPN(id,extra,fname,md5,size,Common::EN_ANY,ver,flags,gid,platform,GType_V3,guioptions)
+#define GAME3_PS(id, extra, fname, md5, size, ver, flags, gid, platform) GAME_LVFPN(id, extra, fname, md5, size, Common::EN_ANY, ver, flags, gid, platform, GType_V3, GAMEOPTIONS_DEFAULT)
+#define GAME3_PSO(id, extra, fname, md5, size, ver, flags, gid, platform, guioptions) GAME_LVFPN(id, extra, fname, md5, size, Common::EN_ANY, ver, flags, gid, platform, GType_V3, guioptions)
 
-#define FANMADE_ILVFO(id,name,md5,lang,ver,features,guioptions) GAME_LVFPNF(id,name,"logdir",md5,-1,lang,ver,(GF_FANMADE|features),GID_FANMADE,Common::kPlatformDOS,GType_V2,guioptions)
+#define FANMADE_ILVFO(id, name, md5, lang, ver, features, guioptions) GAME_LVFPNF(id, name, "logdir", md5, -1, lang, ver, (GF_FANMADE | features), GID_FANMADE, Common::kPlatformDOS, GType_V2, guioptions)
 
-#define FANMADE_ISVPO(id,name,md5,size,ver,platform,guioptions) GAME_LVFPNF(id,name,"logdir",md5,size,Common::EN_ANY,ver,GF_FANMADE,GID_FANMADE,platform,GType_V2,guioptions)
-#define FANMADE_SVP(name,md5,size,ver,platform) FANMADE_ISVPO("agi-fanmade",name,md5,size,ver,platform,GAMEOPTIONS_DEFAULT)
+#define FANMADE_ISVPO(id, name, md5, size, ver, platform, guioptions) GAME_LVFPNF(id, name, "logdir", md5, size, Common::EN_ANY, ver, GF_FANMADE, GID_FANMADE, platform, GType_V2, guioptions)
+#define FANMADE_SVP(name, md5, size, ver, platform) FANMADE_ISVPO("agi-fanmade", name, md5, size, ver, platform, GAMEOPTIONS_DEFAULT)
 
-#define FANMADE_LVFO(name,md5,lang,ver,features,guioptions) FANMADE_ILVFO("agi-fanmade",name,md5,lang,ver,features,guioptions)
+#define FANMADE_LVFO(name, md5, lang, ver, features, guioptions) FANMADE_ILVFO("agi-fanmade", name, md5, lang, ver, features, guioptions)
 
-#define FANMADE_LF(name,md5,lang,features) FANMADE_LVFO(name,md5,lang,0x2917,features,GAMEOPTIONS_DEFAULT)
-#define FANMADE_LFO(name,md5,lang,features,guioptions) FANMADE_LVFO(name,md5,lang,0x2917,features,guioptions)
-#define FANMADE_IF(id,name,md5,features) FANMADE_ILVF(id,name,md5,Common::EN_ANY,0x2917,features)
+#define FANMADE_LF(name, md5, lang, features) FANMADE_LVFO(name, md5, lang, 0x2917, features, GAMEOPTIONS_DEFAULT)
+#define FANMADE_LFO(name, md5, lang, features, guioptions) FANMADE_LVFO(name, md5, lang, 0x2917, features, guioptions)
+#define FANMADE_IF(id, name, md5, features) FANMADE_ILVF(id, name, md5, Common::EN_ANY, 0x2917, features)
 
-#define FANMADE_V(name,md5,ver) FANMADE_LVFO(name,md5,Common::EN_ANY,ver,0,GAMEOPTIONS_DEFAULT)
-#define FANMADE_F(name,md5,features) FANMADE_LF(name,md5,Common::EN_ANY,features)
-#define FANMADE_FO(name,md5,features,guioptions) FANMADE_LFO(name,md5,Common::EN_ANY,features,guioptions)
-#define FANMADE_L(name,md5,lang) FANMADE_LF(name,md5,lang,0)
-#define FANMADE_I(id,name,md5) FANMADE_IF(id,name,md5,0)
-#define FANMADE_O(name,md5,guioptions) FANMADE_FO(name,md5,0,guioptions)
+#define FANMADE_V(name, md5, ver) FANMADE_LVFO(name, md5, Common::EN_ANY, ver, 0, GAMEOPTIONS_DEFAULT)
+#define FANMADE_F(name, md5, features) FANMADE_LF(name, md5, Common::EN_ANY, features)
+#define FANMADE_FO(name, md5, features, guioptions) FANMADE_LFO(name, md5, Common::EN_ANY, features, guioptions)
+#define FANMADE_L(name, md5, lang) FANMADE_LF(name, md5, lang, 0)
+#define FANMADE_I(id, name, md5) FANMADE_IF(id, name, md5, 0)
+#define FANMADE_O(name, md5, guioptions) FANMADE_FO(name, md5, 0, guioptions)
 
-#define FANMADE(name,md5) FANMADE_F(name,md5,0)
+#define FANMADE(name, md5) FANMADE_F(name, md5, 0)
 
 static const AGIGameDescription gameDescriptions[] = {
 
@@ -137,68 +139,53 @@ static const AGIGameDescription gameDescriptions[] = {
 	// AGI Demo for Kings Quest III and Space Quest I
 	GAME("agidemo", "Demo Kings Quest III and Space Quest I", "502e6bf96827b6c4d3e67c9cdccd1033", 0x2272, GID_AGIDEMO),
 
-	{
-		// Black Cauldron (PC 3.5" booter) 1.1J [AGI 1.12]
-		{
-			"bc",
-			"Booter 1.1J",
-			{
-				{ "bc-d1.img", BooterDisk1, "1d29a82b41c9c7491e2b68d16864bd11", 368640},
-				{ "bc-d2.img", BooterDisk2, "5568f7a52e787305656246f95e2aa375", 368640},
-				{ NULL, 0, NULL, 0}
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GAMEOPTIONS_DEFAULT
-		},
-		GID_BC,
-		GType_V1,
-		0,
-		0x1120
-	},
+	{ // Black Cauldron (PC 3.5" booter) 1.1J [AGI 1.12]
+	  {
+	    "bc",
+	    "Booter 1.1J",
+	    { { "bc-d1.img", BooterDisk1, "1d29a82b41c9c7491e2b68d16864bd11", 368640 },
+	      { "bc-d2.img", BooterDisk2, "5568f7a52e787305656246f95e2aa375", 368640 },
+	      { NULL, 0, NULL, 0 } },
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GAMEOPTIONS_DEFAULT },
+	  GID_BC,
+	  GType_V1,
+	  0,
+	  0x1120 },
 
-	{
-		// Black Cauldron (PC 3.5" booter) 1.1K [AGI 1.12]
-		{
-			"bc",
-			"Booter 1.1K",
-			{
-				{ "bc-d1.img", BooterDisk1, "98a51d3a372baa9df288b6c0f0232567", 368640},
-				{ "bc-d2.img", BooterDisk2, "5568f7a52e787305656246f95e2aa375", 368640},
-				{ NULL, 0, NULL, 0}
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GAMEOPTIONS_DEFAULT
-		},
-		GID_BC,
-		GType_V1,
-		0,
-		0x1120
-	},
+	{ // Black Cauldron (PC 3.5" booter) 1.1K [AGI 1.12]
+	  {
+	    "bc",
+	    "Booter 1.1K",
+	    { { "bc-d1.img", BooterDisk1, "98a51d3a372baa9df288b6c0f0232567", 368640 },
+	      { "bc-d2.img", BooterDisk2, "5568f7a52e787305656246f95e2aa375", 368640 },
+	      { NULL, 0, NULL, 0 } },
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GAMEOPTIONS_DEFAULT },
+	  GID_BC,
+	  GType_V1,
+	  0,
+	  0x1120 },
 
-	{
-		// Black Cauldron (PC 3.5" booter) 1.1M [AGI 1.12]
-		{
-			"bc",
-			"Booter 1.1M",
-			{
-				{ "bc-d1.img", BooterDisk1, "edc0e5befbe5e44bb109cdf9137ee12d", 368640},
-				{ "bc-d2.img", BooterDisk2, "5568f7a52e787305656246f95e2aa375", 368640},
-				{ NULL, 0, NULL, 0}
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GAMEOPTIONS_DEFAULT
-		},
-		GID_BC,
-		GType_V1,
-		0,
-		0x1120
-	},
+	{ // Black Cauldron (PC 3.5" booter) 1.1M [AGI 1.12]
+	  {
+	    "bc",
+	    "Booter 1.1M",
+	    { { "bc-d1.img", BooterDisk1, "edc0e5befbe5e44bb109cdf9137ee12d", 368640 },
+	      { "bc-d2.img", BooterDisk2, "5568f7a52e787305656246f95e2aa375", 368640 },
+	      { NULL, 0, NULL, 0 } },
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GAMEOPTIONS_DEFAULT },
+	  GID_BC,
+	  GType_V1,
+	  0,
+	  0x1120 },
 
 	// Black Cauldron (Amiga) 2.00 6/14/87
 	GAME_PO("bc", "2.00 1987-06-14", "7b01694af21213b4727bb94476f64eb5", 0x2440, GID_BC, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
@@ -211,7 +198,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME("bc", "2.00 1987-06-14", "7f598d4712319b09d7bd5b3be10a2e4a", 0x2440, GID_BC),
 
 	// Black Cauldron (Russian)
-	GAME_LPS("bc", "",  "b7de782dfdf8ea7dde8064f09804bcf5", 357, Common::RU_RUS, 0x2440, GID_BC, Common::kPlatformDOS),
+	GAME_LPS("bc", "", "b7de782dfdf8ea7dde8064f09804bcf5", 357, Common::RU_RUS, 0x2440, GID_BC, Common::kPlatformDOS),
 
 	// Black Cauldron (PC 5.25") 2.10 11/10/88 [AGI 3.002.098]
 	GAME3("bc", "2.10 1988-11-10 5.25\"", "bcdir", "0c5a9acbcc7e51127c34818e75806df6", 0x3149, GID_BC),
@@ -259,27 +246,21 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Gold Rush! (PC 3.5", bought from The Software Farm) 3.0 1998-12-22 [AGI 3.002.149]
 	GAME3("goldrush", "3.0 1998-12-22 3.5\"", "grdir", "6882b6090473209da4cd78bb59f78dbe", 0x3149, GID_GOLDRUSH),
 
-	{
-		// Gold Rush! (PC 5.25") 2.01 12/22/88 [AGI 3.002.149]
-		{
-			"goldrush",
-			"2.01 1988-12-22",
-			{
-				{ "grdir", 0, "db733d199238d4009a9e95f11ece34e9", 2399},
-				{ "vol.0", 0, "4b6423d143674d3757ab1b875d25951d", 25070},
-				{ NULL, 0, NULL, 0}
-			},
-			Common::EN_ANY,
-			Common::kPlatformMacintosh,
-			ADGF_NO_FLAGS,
-			GAMEOPTIONS_DEFAULT
-		},
-		GID_GOLDRUSH,
-		GType_V3,
-		GF_MACGOLDRUSH,
-		0x3149
-	},
-
+	{ // Gold Rush! (PC 5.25") 2.01 12/22/88 [AGI 3.002.149]
+	  {
+	    "goldrush",
+	    "2.01 1988-12-22",
+	    { { "grdir", 0, "db733d199238d4009a9e95f11ece34e9", 2399 },
+	      { "vol.0", 0, "4b6423d143674d3757ab1b875d25951d", 25070 },
+	      { NULL, 0, NULL, 0 } },
+	    Common::EN_ANY,
+	    Common::kPlatformMacintosh,
+	    ADGF_NO_FLAGS,
+	    GAMEOPTIONS_DEFAULT },
+	  GID_GOLDRUSH,
+	  GType_V3,
+	  GF_MACGOLDRUSH,
+	  0x3149 },
 
 	// Gold Rush! (CoCo3 720k) [AGI 2.023]
 	GAME_PS("goldrush", "", "0a41b65efc0cd6c4271e957e6ffbbd8e", 744, 0x2440, GID_GOLDRUSH, Common::kPlatformCoCo3),
@@ -584,27 +565,21 @@ static const AGIGameDescription gameDescriptions[] = {
 	// set.pri.base was possibly discard.sound. For KQ4 onwards it seems this was cleaned up.
 	GAME_P("sq2", "2.0A 1988-07-25 (CE)", "5dfdac98dd3c01fcfb166529f917e911", 0x2917, GID_SQ2, Common::kPlatformApple2GS),
 
-	{
-		// Space Quest 2 (Amiga) 2.0F
-		{
-			"sq2",
-			"2.0F 1986-12-09 [VOL.2->PICTURE.16 broken]",
-			{
-				{ "logdir", 0, "28add5125484302d213911df60d2aded", 426},
-				{ "object", 0, "5dc52be721257719f4b311a84ce22b16", 372},
-				{ NULL, 0, NULL, 0}
-			},
-			Common::EN_ANY,
-			Common::kPlatformAmiga,
-			ADGF_NO_FLAGS,
-			GAMEOPTIONS_AMIGA
-		},
-		GID_SQ2,
-		GType_V2,
-		0,
-		0x2936
-	},
-
+	{ // Space Quest 2 (Amiga) 2.0F
+	  {
+	    "sq2",
+	    "2.0F 1986-12-09 [VOL.2->PICTURE.16 broken]",
+	    { { "logdir", 0, "28add5125484302d213911df60d2aded", 426 },
+	      { "object", 0, "5dc52be721257719f4b311a84ce22b16", 372 },
+	      { NULL, 0, NULL, 0 } },
+	    Common::EN_ANY,
+	    Common::kPlatformAmiga,
+	    ADGF_NO_FLAGS,
+	    GAMEOPTIONS_AMIGA },
+	  GID_SQ2,
+	  GType_V2,
+	  0,
+	  0x2936 },
 
 	// Space Quest 2 (Mac) 2.0D
 	GAME_P("sq2", "2.0D 1988-04-04", "bfbebe0b59d83f931f2e1c62ce9484a7", 0x2936, GID_SQ2, Common::kPlatformMacintosh),
@@ -666,7 +641,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE_O("AGI Mouse Demo 0.60 demo 2", "cc49d8b88ed6faf4f53ce92c84e0fe1b", GAMEOPTIONS_FANMADE_MOUSE),
 	FANMADE_O("AGI Mouse Demo 0.70", "3497c291e4afb6f758e61740678a2aec", GAMEOPTIONS_FANMADE_MOUSE),
 	FANMADE_FO("AGI Mouse Demo 1.00", "20397f0bf0ef936f416bb321fb768fc7", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),
-	FANMADE_FO("AGI Mouse Demo 1.10", "f4ad396b496d6167635ad0b410312ab8", GF_AGIMOUSE|GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
+	FANMADE_FO("AGI Mouse Demo 1.10", "f4ad396b496d6167635ad0b410312ab8", GF_AGIMOUSE | GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
 	FANMADE("AGI Piano (v1.0)", "8778b3d89eb93c1d50a70ef06ef10310"),
 	FANMADE("AGI Quest (v1.46-TJ0)", "1cf1a5307c1a0a405f5039354f679814"),
 	GAME("tetris", "", "7a874e2db2162e7a4ce31c9130248d8a", 0x2917, GID_FANMADE),
@@ -704,12 +679,12 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Coco Coq (English) - Coco Coq In Grostesteing's Base (v.1.0.3)", "97631f8e710544a58bd6da9e780f9320"),
 	FANMADE_L("Coco Coq (French) - Coco Coq Dans la Base de Grostesteing (v1.0.2)", "ef579ebccfe5e356f9a557eb3b2d8649", Common::FR_FRA),
 	FANMADE("Corby's Murder Mystery (v1.0)", "4ebe62ac24c5a8c7b7898c8eb070efe5"),
-	FANMADE_FO("DG: The AGIMouse Adventure (English v1.1)", "efe453b92bc1487ea69fbebede4d5f26", GF_AGIMOUSE|GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
-	FANMADE_LFO("DG: The AGIMouse Adventure (French v1.1)", "eb3d17ca466d672cbb95947e8d6e846a", Common::FR_FRA, GF_AGIMOUSE|GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
+	FANMADE_FO("DG: The AGIMouse Adventure (English v1.1)", "efe453b92bc1487ea69fbebede4d5f26", GF_AGIMOUSE | GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
+	FANMADE_LFO("DG: The AGIMouse Adventure (French v1.1)", "eb3d17ca466d672cbb95947e8d6e846a", Common::FR_FRA, GF_AGIMOUSE | GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
 	FANMADE("DG: The Adventure Game (English v1.1)", "0d6376d493fa7a21ec4da1a063e12b25"),
 	FANMADE_L("DG: The Adventure Game (French v1.1)", "258bdb3bb8e61c92b71f2f456cc69e23", Common::FR_FRA),
 	FANMADE("Dashiki (16 Colors)", "9b2c7b9b0283ab9f12bedc0cb6770a07"),
-	FANMADE_FO("Dashiki (256 Colors)", "c68052bb209e23b39b55ff3d759958e6", GF_AGIMOUSE|GF_AGI256, GAMEOPTIONS_FANMADE_MOUSE),
+	FANMADE_FO("Dashiki (256 Colors)", "c68052bb209e23b39b55ff3d759958e6", GF_AGIMOUSE | GF_AGI256, GAMEOPTIONS_FANMADE_MOUSE),
 	FANMADE("Date Quest 1 (v1.0)", "ba3dcb2600645be53a13170aa1a12e69"),
 	FANMADE("Date Quest 2 (v1.0 Demo)", "1602d6a2874856e928d9a8c8d2d166e9"),
 	FANMADE("Date Quest 2 (v1.0)", "f13f6fc85aa3e6e02b0c20408fb63b47"),
@@ -758,8 +733,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Jiggy Jiggy Uh! Uh!", "bc331588a71e7a1c8840f6cc9b9487e4"),
 	FANMADE("Jimmy In: The Alien Attack (v0.1)", "a4e9db0564a494728de7873684a4307c"),
 	FANMADE("Joe McMuffin In \"What's Cooking, Doc\" (v1.0)", "8a3de7e61a99cb605fa6d233dd91c8e1"),
-	FANMADE_LVFO("Jolimie, le Village Maudit (v0.5)", "21818501636b3cb8ad5de5c1a66de5c2", Common::FR_FRA, 0x2936, GF_AGIMOUSE|GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
-	FANMADE_LVFO("Jolimie, le Village Maudit (v1.1)", "68d7aef1161bb5972fe03efdf29ccb7f", Common::FR_FRA, 0x2936, GF_AGIMOUSE|GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
+	FANMADE_LVFO("Jolimie, le Village Maudit (v0.5)", "21818501636b3cb8ad5de5c1a66de5c2", Common::FR_FRA, 0x2936, GF_AGIMOUSE | GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
+	FANMADE_LVFO("Jolimie, le Village Maudit (v1.1)", "68d7aef1161bb5972fe03efdf29ccb7f", Common::FR_FRA, 0x2936, GF_AGIMOUSE | GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
 	FANMADE("Journey Of Chef", "aa0a0b5a6364801ae65fdb96d6741df5"),
 	FANMADE("Jukebox (v1.0)", "c4b9c5528cc67f6ba777033830de7751"),
 	FANMADE("Justin Quest (v1.0 in development)", "103050989da7e0ffdc1c5e1793a4e1ec"),
@@ -779,14 +754,14 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Naturette 1 (English v1.2)", "0a75884e7f010974a230bdf269651117"),
 	FANMADE("Naturette 1 (English v1.3)", "f15bbf999ac55ebd404aa1eb84f7c1d9"),
 	FANMADE_L("Naturette 1 (French v1.2)", "d3665622cc41aeb9c7ecf4fa43f20e53", Common::FR_FRA),
-	FANMADE_FO("Naturette 2: Daughter of the Moon (v1.0)", "bdf76a45621c7f56d1c9d40292c6137a", GF_AGIMOUSE|GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
-	FANMADE_FO("Naturette 3: Adventure in Treeworld (v1.0a)", "6dbb0e7fc75fec442e6d9e5a06f1530e", GF_AGIMOUSE|GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
+	FANMADE_FO("Naturette 2: Daughter of the Moon (v1.0)", "bdf76a45621c7f56d1c9d40292c6137a", GF_AGIMOUSE | GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
+	FANMADE_FO("Naturette 3: Adventure in Treeworld (v1.0a)", "6dbb0e7fc75fec442e6d9e5a06f1530e", GF_AGIMOUSE | GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
 	FANMADE_FO("Naturette 4: From a Planet to Another Planet (Not Finished)", "13be8cd9cf35aeff0a39b8757057fbc8", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),
 	// FIXME: Actually Naturette 4 has both English and French language support built into it. How to add that information?
-	FANMADE_FO("Naturette 4: From a Planet to Another Planet (2007-10-05)", "8253706b6ef5423a79413b216760297c", GF_AGIMOUSE|GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
+	FANMADE_FO("Naturette 4: From a Planet to Another Planet (2007-10-05)", "8253706b6ef5423a79413b216760297c", GF_AGIMOUSE | GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
 	FANMADE("New AGI Hangman Test", "d69c0e9050ccc29fd662b74d9fc73a15"),
 	FANMADE("Nick's Quest - In Pursuit of QuakeMovie (v2.1 Gold)", "e29cbf9222551aee40397fabc83eeca0"),
-	FANMADE_FO("Open Mic Night (v0.1)", "70000a2f67aac27d1133d019df70246d", GF_AGIMOUSE|GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
+	FANMADE_FO("Open Mic Night (v0.1)", "70000a2f67aac27d1133d019df70246d", GF_AGIMOUSE | GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
 	FANMADE("Operation: Recon", "0679ce8405411866ccffc8a6743370d0"),
 	FANMADE("Patrick's Quest (Demo v1.0)", "f254f5b894b98fec5f92acc07fb62841"),
 	FANMADE("Phantasmagoria", "87d20c1c11aee99a4baad3797b63146b"),
@@ -831,12 +806,12 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Save Santa (v1.3)", "f8afdb6efc5af5e7c0228b44633066af"),
 	FANMADE("Schiller (preview 1)", "ade39dea968c959cfebe1cf935d653e9"),
 	FANMADE("Schiller (preview 2)", "62cd1f8fc758bf6b4aa334e553624cef"),
-	GAME_FO("serguei1", "v1.0", "b86725f067e456e10cdbdf5f58e01dec", 0x2917, GF_FANMADE|GF_AGIMOUSE|GF_AGIPAL, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),
+	GAME_FO("serguei1", "v1.0", "b86725f067e456e10cdbdf5f58e01dec", 0x2917, GF_FANMADE | GF_AGIMOUSE | GF_AGIPAL, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),
 	// FIXME: The following two entries have identical MD5 checksums?
-	GAME_FO("serguei1", "v1.1 2002 Sep 5", "91975c1fb4b13b0f9a8e9ff74731030d", 0x2917, GF_FANMADE|GF_AGIMOUSE|GF_AGIPAL, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),
-	GAME_FO("serguei1", "v1.1 2003 Apr 10", "91975c1fb4b13b0f9a8e9ff74731030d", 0x2917, GF_FANMADE|GF_AGIMOUSE|GF_AGIPAL, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),
-	GAME_FO("serguei2", "v0.1.1 Demo", "906ccbc2ddedb29b63141acc6d10cd28", 0x2917, GF_FANMADE|GF_AGIMOUSE, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),
-	GAME_FO("serguei2", "v1.3.1 Demo (March 22nd 2008)", "ad1308fcb8f48723cd388e012ebf5e20", 0x2917, GF_FANMADE|GF_AGIMOUSE|GF_AGIPAL, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),
+	GAME_FO("serguei1", "v1.1 2002 Sep 5", "91975c1fb4b13b0f9a8e9ff74731030d", 0x2917, GF_FANMADE | GF_AGIMOUSE | GF_AGIPAL, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),
+	GAME_FO("serguei1", "v1.1 2003 Apr 10", "91975c1fb4b13b0f9a8e9ff74731030d", 0x2917, GF_FANMADE | GF_AGIMOUSE | GF_AGIPAL, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),
+	GAME_FO("serguei2", "v0.1.1 Demo", "906ccbc2ddedb29b63141acc6d10cd28", 0x2917, GF_FANMADE | GF_AGIMOUSE, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),
+	GAME_FO("serguei2", "v1.3.1 Demo (March 22nd 2008)", "ad1308fcb8f48723cd388e012ebf5e20", 0x2917, GF_FANMADE | GF_AGIMOUSE | GF_AGIPAL, GID_FANMADE, GAMEOPTIONS_FANMADE_MOUSE),
 	FANMADE("Shifty (v1.0)", "2a07984d27b938364bf6bd243ac75080"),
 	FANMADE_FO("Sliding Tile Game (v1.00)", "949bfff5d8a81c3139152eed4d84ca75", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),
 	FANMADE("Snowboarding Demo (v1.0)", "24bb8f29f1eddb5c0a099705267c86e4"),
@@ -848,7 +823,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME("sqx", "v10.0 Feb 05", "c992ae2f8ab18360404efdf16fa9edd1", 0x2917, GID_FANMADE),
 	GAME("sqx", "v10.0 Jul 18", "812edec45cefad559d190ffde2f9c910", 0x2917, GID_FANMADE),
 	GAME_PS("sqx", "", "f0a59044475a5fa37c055d8c3eb4d1a7", 768, 0x2440, GID_FANMADE, Common::kPlatformCoCo3),
-	FANMADE_FO("Space Quest 3.5", "c077bc28d7b36213dd99dc9ecb0147fc", GF_AGIMOUSE|GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
+	FANMADE_FO("Space Quest 3.5", "c077bc28d7b36213dd99dc9ecb0147fc", GF_AGIMOUSE | GF_AGIPAL, GAMEOPTIONS_FANMADE_MOUSE),
 	FANMADE_F("Space Trek (v1.0)", "807a1aeadb2ace6968831d36ab5ea37a", GF_CLIPCOORDS),
 	FANMADE("Special Delivery", "88764dfe61126b8e73612c851b510a33"),
 	FANMADE("Speeder Bike Challenge (v1.0)", "2deb25bab379285ca955df398d96c1e7"),
@@ -884,22 +859,19 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Ultimate AGI Fangame (Demo)", "2d14d6fa2a2136d681e46e06821905bf"),
 	FANMADE("URI Quest (v0.173 Feb 27)", "3986eefcf546dafc45f920ae91a697c3"),
 	FANMADE("URI Quest (v0.173 Jan 29)", "494150940d34130605a4f2e67ee40b12"),
-	{
-		// V - The Graphical Adventure
-		{
-			"agi-fanmade",
-			"V - The Graphical Adventure (Demo 2)",
-			AD_ENTRY1s("vdir", "c71f5c1e008d352ae9040b77fcf79327", 3080),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_USEEXTRAASTITLE,
-			GAMEOPTIONS_DEFAULT
-		},
-		GID_FANMADE,
-		GType_V3,
-		GF_FANMADE,
-		0x3149
-	},
+	{ // V - The Graphical Adventure
+	  {
+	    "agi-fanmade",
+	    "V - The Graphical Adventure (Demo 2)",
+	    AD_ENTRY1s("vdir", "c71f5c1e008d352ae9040b77fcf79327", 3080),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_USEEXTRAASTITLE,
+	    GAMEOPTIONS_DEFAULT },
+	  GID_FANMADE,
+	  GType_V3,
+	  GF_FANMADE,
+	  0x3149 },
 	FANMADE_SVP("V - The Graphical Adventure", "1646eaade74f137a9041eb427a389969", 768, 0x2440, Common::kPlatformCoCo3),
 
 	FANMADE("Voodoo Girl - Queen of the Darned (v1.2 2002 Jan 1)", "ae95f0c77d9a97b61420fd192348b937"),
@@ -914,15 +886,13 @@ static const AGIGameDescription gameDescriptions[] = {
  * Contents of this struct are to be overwritten by the fallbackDetector.
  */
 static AGIGameDescription g_fallbackDesc = {
-	{
-		"",
-		"",
-		AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
-		Common::UNK_LANG,
-		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GAMEOPTIONS_DEFAULT
-	},
+	{ "",
+	  "",
+	  AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
+	  Common::UNK_LANG,
+	  Common::kPlatformDOS,
+	  ADGF_NO_FLAGS,
+	  GAMEOPTIONS_DEFAULT },
 	GID_FANMADE,
 	GType_V2,
 	GF_FANMADE,

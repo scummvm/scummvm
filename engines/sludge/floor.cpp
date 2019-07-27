@@ -248,7 +248,7 @@ bool FloorManager::setFloor(int fileNum) {
 		delete[] distanceMatrix[i];
 	}
 
-	delete []distanceMatrix;
+	delete[] distanceMatrix;
 	distanceMatrix = nullptr;
 
 	setResourceForFatal(-1);
@@ -263,10 +263,10 @@ void FloorManager::drawFloor() {
 		if (nV > 1) {
 			for (j = 1; j < nV; j++) {
 				g_sludge->_gfxMan->drawLine(_currentFloor->vertex[_currentFloor->polygon[i].vertexID[j - 1]].x, _currentFloor->vertex[_currentFloor->polygon[i].vertexID[j - 1]].y,
-						_currentFloor->vertex[_currentFloor->polygon[i].vertexID[j]].x, _currentFloor->vertex[_currentFloor->polygon[i].vertexID[j]].y);
+				                            _currentFloor->vertex[_currentFloor->polygon[i].vertexID[j]].x, _currentFloor->vertex[_currentFloor->polygon[i].vertexID[j]].y);
 			}
 			g_sludge->_gfxMan->drawLine(_currentFloor->vertex[_currentFloor->polygon[i].vertexID[0]].x, _currentFloor->vertex[_currentFloor->polygon[i].vertexID[0]].y,
-					_currentFloor->vertex[_currentFloor->polygon[i].vertexID[nV - 1]].x, _currentFloor->vertex[_currentFloor->polygon[i].vertexID[nV - 1]].y);
+			                            _currentFloor->vertex[_currentFloor->polygon[i].vertexID[nV - 1]].x, _currentFloor->vertex[_currentFloor->polygon[i].vertexID[nV - 1]].y);
 		}
 	}
 }

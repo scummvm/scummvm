@@ -25,8 +25,8 @@
 * Copyright (c) 1994-1995 Mike: Mark and Thomas Thurman.
 */
 
-#include "avalanche/avalanche.h"
 #include "avalanche/ghostroom.h"
+#include "avalanche/avalanche.h"
 
 #include "common/random.h"
 #include "common/system.h"
@@ -125,7 +125,7 @@ void GhostRoom::doBat() {
 			dx = 1;
 			iy = 1;
 			batImage = 1;
-		} else if((241 <= _batCount) && (_batCount <= 260)) {
+		} else if ((241 <= _batCount) && (_batCount <= 260)) {
 			dx = 1;
 			iy = 4;
 			batImage = 2;
@@ -169,11 +169,11 @@ void GhostRoom::loadPictures() {
 	file.seek(44);
 
 	// Initializing ghost's array.
-	_ghost = new byte***[5];
+	_ghost = new byte ***[5];
 	for (int i = 0; i < 5; i++) {
-		_ghost[i] = new byte**[2];
+		_ghost[i] = new byte **[2];
 		for (int j = 0; j < 2; j++) {
-			_ghost[i][j] = new byte*[66];
+			_ghost[i][j] = new byte *[66];
 			for (int y = 0; y < 66; y++) {
 				_ghost[i][j][y] = new byte[26];
 				for (int x = 0; x < 26; x++)
@@ -204,11 +204,11 @@ void GhostRoom::loadPictures() {
 		_bat[i] = _vm->_graphics->ghostLoadPicture(file, dummyCoord);
 
 	// Initializing glerk's array.
-	_glerk = new byte***[6];
+	_glerk = new byte ***[6];
 	for (int i = 0; i < 6; i++) {
-		_glerk[i] = new byte**[4];
+		_glerk[i] = new byte **[4];
 		for (int j = 0; j < 4; j++) {
-			_glerk[i][j] = new byte*[35];
+			_glerk[i][j] = new byte *[35];
 			for (int y = 0; y < 35; y++) {
 				_glerk[i][j][y] = new byte[9];
 				for (int x = 0; x < 9; x++)
@@ -294,7 +294,6 @@ void GhostRoom::run() {
 	// Blank out the Glerk's space.
 	_vm->_graphics->drawFilledRectangle(Common::Rect(456, 14, 531, 51), kColorBlack);
 	_vm->_graphics->refreshScreen();
-
 
 	// Here comes the descending ghost:
 	for (int y = -64; y <= 103; y++) {

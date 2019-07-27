@@ -20,8 +20,8 @@
  *
  */
 
- #ifndef DIRECTOR_LINGO_LINGO_THE_H
- #define DIRECTOR_LINGO_LINGO_THE_H
+#ifndef DIRECTOR_LINGO_LINGO_THE_H
+#define DIRECTOR_LINGO_LINGO_THE_H
 
 namespace Director {
 
@@ -145,7 +145,7 @@ enum TheEntityType {
 
 enum TheFieldType {
 	kTheNOField = 0,
-	kTheAbbr    = 1,
+	kTheAbbr = 1,
 	kTheBackColor,
 	kTheBlend,
 	kTheBottom,

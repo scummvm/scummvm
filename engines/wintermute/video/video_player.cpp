@@ -26,7 +26,6 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-
 #include "engines/wintermute/video/video_player.h"
 
 namespace Wintermute {
@@ -36,7 +35,8 @@ namespace Wintermute {
 //////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////
-VideoPlayer::VideoPlayer(BaseGame *inGame) : BaseClass(inGame) {
+VideoPlayer::VideoPlayer(BaseGame *inGame)
+  : BaseClass(inGame) {
 	setDefaults();
 }
 

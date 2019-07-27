@@ -21,12 +21,12 @@
  * A (some would say very) small collection of utility functions.
  */
 
+#include "tinsel/scn.h"
 #include "tinsel/dw.h"
 #include "tinsel/film.h"
 #include "tinsel/handle.h"
 #include "tinsel/multiobj.h"
-#include "tinsel/scn.h"
-#include "tinsel/tinsel.h"	// for _vm
+#include "tinsel/tinsel.h" // for _vm
 
 namespace Tinsel {
 
@@ -42,15 +42,13 @@ byte *FindChunk(SCNHANDLE handle, uint32 chunk) {
 	uint32 add;
 
 	// Initial adjustmnet for Tinsel 1 chunk types
-	if ((TinselVersion != TINSEL_V2) && (chunk >= CHUNK_SCENE) &&
-		(chunk != CHUNK_MBSTRING))
+	if ((TinselVersion != TINSEL_V2) && (chunk >= CHUNK_SCENE) && (chunk != CHUNK_MBSTRING))
 		--chunk;
 
 	// V0 chunk types can be found by substracting 2 from the
 	// chunk type. Note that CHUNK_STRING and CHUNK_BITMAP are
 	// the same in V0 and V1
-	if (TinselVersion == TINSEL_V0 &&
-		chunk != CHUNK_STRING && chunk != CHUNK_BITMAP)
+	if (TinselVersion == TINSEL_V0 && chunk != CHUNK_STRING && chunk != CHUNK_BITMAP)
 		chunk -= 0x2L;
 
 	while (1) {

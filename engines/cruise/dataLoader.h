@@ -28,11 +28,11 @@ namespace Cruise {
 int loadFNTSub(uint8 *ptr, int destIdx);
 int loadSPLSub(uint8 *ptr, int destIdx);
 int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentDestEntry);
-int loadFile(const char* name, int idx, int destIdx);
-int loadData(const char * name, int startIdx);
-int loadFileRange(const char * name, int param, int startIdx, int numIdx);
-int loadFileSub1(uint8 ** ptr, const char * name, uint8 * ptr2);
-int loadFullBundle(const char * name, int startIdx);
+int loadFile(const char *name, int idx, int destIdx);
+int loadData(const char *name, int startIdx);
+int loadFileRange(const char *name, int param, int startIdx, int numIdx);
+int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2);
+int loadFullBundle(const char *name, int startIdx);
 
 } // End of namespace Cruise
 

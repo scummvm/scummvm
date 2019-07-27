@@ -20,25 +20,28 @@
  *
  */
 
-#include "common/util.h"
 #include "common/stack.h"
+#include "common/util.h"
 #include "graphics/primitives.h"
 
-#include "sci/sci.h"
 #include "sci/engine/kernel.h"
-#include "sci/engine/state.h"
 #include "sci/engine/selector.h"
-#include "sci/graphics/compare.h"
-#include "sci/graphics/coordadjuster.h"
+#include "sci/engine/state.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cache.h"
+#include "sci/graphics/compare.h"
+#include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/view.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
 GfxCompare::GfxCompare(SegManager *segMan, GfxCache *cache, GfxScreen *screen, GfxCoordAdjuster16 *coordAdjuster)
-	: _segMan(segMan), _cache(cache), _screen(screen), _coordAdjuster(coordAdjuster) {
+  : _segMan(segMan)
+  , _cache(cache)
+  , _screen(screen)
+  , _coordAdjuster(coordAdjuster) {
 }
 
 GfxCompare::~GfxCompare() {
@@ -88,10 +91,7 @@ reg_t GfxCompare::canBeHereCheckRectList(const reg_t checkObject, const Common::
 				// engine did it: a rect cannot be contained within itself
 				// (there is no equality). Do NOT change this to contains(), as
 				// it breaks KQ4 early (bug #3315639).
-				if (curRect.right > checkRect.left &&
-					curRect.left < checkRect.right &&
-					curRect.bottom > checkRect.top &&
-					curRect.top < checkRect.bottom)
+				if (curRect.right > checkRect.left && curRect.left < checkRect.right && curRect.bottom > checkRect.top && curRect.top < checkRect.bottom)
 					return curObject;
 			}
 		}
@@ -138,7 +138,7 @@ reg_t GfxCompare::kernelCanBeHere(reg_t curObject, reg_t listReference) {
 	checkRect.bottom = readSelectorValue(_segMan, curObject, SELECTOR(brBottom));
 	uint16 signal = readSelectorValue(_segMan, curObject, SELECTOR(signal));
 
-	if (!checkRect.isValidRect()) {	// can occur in Iceman and Mother Goose - HACK? TODO: is this really occuring in sierra sci? check this
+	if (!checkRect.isValidRect()) { // can occur in Iceman and Mother Goose - HACK? TODO: is this really occuring in sierra sci? check this
 		warning("kCan(t)BeHere - invalid rect %d, %d -> %d, %d", checkRect.left, checkRect.top, checkRect.right, checkRect.bottom);
 		return NULL_REG; // this means "can be here"
 	}

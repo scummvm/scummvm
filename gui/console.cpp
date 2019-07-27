@@ -21,9 +21,9 @@
  */
 
 #include "gui/console.h"
-#include "gui/widgets/scrollbar.h"
 #include "gui/ThemeEval.h"
 #include "gui/gui-manager.h"
+#include "gui/widgets/scrollbar.h"
 
 #include "base/version.h"
 
@@ -33,15 +33,14 @@
 
 namespace GUI {
 
-#define kConsoleCharWidth  (_font->getCharWidth('M'))
+#define kConsoleCharWidth (_font->getCharWidth('M'))
 #define kConsoleLineHeight (_font->getFontHeight())
 
 enum {
-	kConsoleSlideDownDuration = 200	// Time in milliseconds
+	kConsoleSlideDownDuration = 200 // Time in milliseconds
 };
 
-
-#define PROMPT	") "
+#define PROMPT ") "
 
 /* TODO:
  * - it is very inefficient to redraw the full thingy when just one char is added/removed.
@@ -51,8 +50,9 @@ enum {
  * - a *lot* of others things, this code is in no way complete and heavily under progress
  */
 ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
-	: Dialog(0, 0, 1, 1),
-	_widthPercent(widthPercent), _heightPercent(heightPercent) {
+  : Dialog(0, 0, 1, 1)
+  , _widthPercent(widthPercent)
+  , _heightPercent(heightPercent) {
 
 	// Reset the line buffer
 	memset(_buffer, ' ', kBufferSize);
@@ -184,7 +184,7 @@ void ConsoleDialog::drawLine(int line) {
 #else
 		byte c = buffer((start + line) * kCharsPerLine + column);
 #endif
-		g_gui.theme()->drawChar(Common::Rect(x, y, x+kConsoleCharWidth, y+kConsoleLineHeight), c, _font);
+		g_gui.theme()->drawChar(Common::Rect(x, y, x + kConsoleCharWidth, y + kConsoleLineHeight), c, _font);
 		x += kConsoleCharWidth;
 	}
 }
@@ -280,7 +280,7 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 		if (!keepRunning)
 			slideUpAndClose();
 		break;
-		}
+	}
 
 	case Common::KEYCODE_ESCAPE:
 		slideUpAndClose();
@@ -320,12 +320,12 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 			delete[] str;
 		}
 		break;
-		}
+	}
 
-	// Keypad & special keys
-	//   - if num lock is set, we always go to the default case
-	//   - if num lock is not set, we either fall down to the special key case
-	//     or ignore the key press in case of 0 (INSERT) or 5
+		// Keypad & special keys
+		//   - if num lock is set, we always go to the default case
+		//   - if num lock is not set, we either fall down to the special key case
+		//     or ignore the key press in case of 0 (INSERT) or 5
 
 	case Common::KEYCODE_KP0:
 	case Common::KEYCODE_KP5:
@@ -476,7 +476,7 @@ void ConsoleDialog::defaultKeyDownHandler(Common::KeyState &state) {
 	}
 }
 
-void ConsoleDialog::insertIntoPrompt(const char* str) {
+void ConsoleDialog::insertIntoPrompt(const char *str) {
 	unsigned int l = strlen(str);
 	for (int i = _promptEndPos - 1; i >= _currentPos; i--)
 		buffer(i + l) = buffer(i);
@@ -639,7 +639,6 @@ void ConsoleDialog::nextLine() {
 	updateScrollBuffer();
 }
 
-
 // Call this (at least) when the current line changes or when
 // a new line is added
 void ConsoleDialog::updateScrollBuffer() {
@@ -649,7 +648,7 @@ void ConsoleDialog::updateScrollBuffer() {
 	int firstline = line - numlines + 1;
 	if (firstline > _firstLineInBuffer) {
 		// clear old line from buffer
-		for (int i = lastchar; i < (line+1) * kCharsPerLine; ++i)
+		for (int i = lastchar; i < (line + 1) * kCharsPerLine; ++i)
 			buffer(i) = ' ';
 		_firstLineInBuffer = firstline;
 	}
@@ -661,11 +660,11 @@ void ConsoleDialog::updateScrollBuffer() {
 }
 
 int ConsoleDialog::printFormat(int dummy, const char *format, ...) {
-	va_list	argptr;
+	va_list argptr;
 
 	va_start(argptr, format);
 	int count = this->vprintFormat(dummy, format, argptr);
-	va_end (argptr);
+	va_end(argptr);
 	return count;
 }
 

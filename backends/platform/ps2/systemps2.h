@@ -23,9 +23,9 @@
 #ifndef SYSTEMPS2_H
 #define SYSTEMPS2_H
 
-#include "common/system.h"
 #include "backends/base-backend.h"
 #include "backends/platform/ps2/irxboot.h"
+#include "common/system.h"
 #include "graphics/palette.h"
 
 class Gs2dScreen;
@@ -58,12 +58,13 @@ public:
 	virtual int16 getWidth(void);
 
 	virtual PaletteManager *getPaletteManager() { return this; }
+
 protected:
 	// PaletteManager API
 	virtual void setPalette(const byte *colors, uint start, uint num);
 	virtual void grabPalette(byte *colors, uint start, uint num) const;
-public:
 
+public:
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h);
 	virtual void setShakePos(int shakeOffset);
 	virtual Graphics::Surface *lockScreen();

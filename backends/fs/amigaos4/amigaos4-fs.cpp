@@ -22,13 +22,13 @@
 
 #if defined(__amigaos4__)
 
-#include "backends/fs/amigaos4/amigaos4-fs.h"
-#include "backends/fs/stdiostream.h"
-#include "common/debug.h"
-#include "common/util.h"
+#	include "backends/fs/amigaos4/amigaos4-fs.h"
+#	include "backends/fs/stdiostream.h"
+#	include "common/debug.h"
+#	include "common/util.h"
 
-#define ENTER() /* debug(6, "Enter") */
-#define LEAVE() /* debug(6, "Leave") */
+#	define ENTER() /* debug(6, "Enter") */
+#	define LEAVE() /* debug(6, "Leave") */
 
 /**
  * Returns the last component of a given path.
@@ -46,10 +46,10 @@ const char *lastPathComponent(const Common::String &str) {
 
 	const char *p = str.c_str();
 
-	while (offset > 0 && (p[offset-1] == '/' || p[offset-1] == ':'))
+	while (offset > 0 && (p[offset - 1] == '/' || p[offset - 1] == ':'))
 		offset--;
 
-	while (offset > 0 && (p[offset-1] != '/' && p[offset-1] != ':'))
+	while (offset > 0 && (p[offset - 1] != '/' && p[offset - 1] != ':'))
 		offset--;
 
 	return p + offset;
@@ -85,7 +85,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
 	_bIsValid = false;
 
 	// Check whether the node exists and if it's a directory
-	struct ExamineData * pExd = IDOS->ExamineObjectTags(EX_StringNameInput,_sPath.c_str(),TAG_END);
+	struct ExamineData *pExd = IDOS->ExamineObjectTags(EX_StringNameInput, _sPath.c_str(), TAG_END);
 	if (pExd) {
 		_nProt = pExd->Protection;
 		if (EXD_IS_DIRECTORY(pExd)) {
@@ -137,7 +137,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 	_bIsValid = false;
 	_bIsDirectory = false;
 
-	struct ExamineData * pExd = IDOS->ExamineObjectTags(EX_FileLockInput,pLock,TAG_END);
+	struct ExamineData *pExd = IDOS->ExamineObjectTags(EX_FileLockInput, pLock, TAG_END);
 	if (pExd) {
 		_nProt = pExd->Protection;
 		if (EXD_IS_DIRECTORY(pExd)) {
@@ -153,17 +153,17 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 			_bIsValid = true;
 		}
 
-        IDOS->FreeDosObject(DOS_EXAMINEDATA, pExd);
+		IDOS->FreeDosObject(DOS_EXAMINEDATA, pExd);
 	} else {
 		debug(6, "ExamineObject() returned NULL");
-    }
+	}
 
 	LEAVE();
 }
 
 // We need the custom copy constructor because of DupLock()
-AmigaOSFilesystemNode::AmigaOSFilesystemNode(const AmigaOSFilesystemNode& node)
-: AbstractFSNode() {
+AmigaOSFilesystemNode::AmigaOSFilesystemNode(const AmigaOSFilesystemNode &node)
+  : AbstractFSNode() {
 	ENTER();
 	_sDisplayName = node._sDisplayName;
 	_bIsValid = node._bIsValid;
@@ -259,23 +259,21 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 		return true;
 	}
 
-	APTR context = IDOS->ObtainDirContextTags(  EX_FileLockInput,	_pFileLock,
-												EX_DoCurrentDir,	TRUE,  /* for softlinks */
-												EX_DataFields,		(EXF_NAME|EXF_LINK|EXF_TYPE),
-												TAG_END);
+	APTR context = IDOS->ObtainDirContextTags(EX_FileLockInput, _pFileLock,
+	                                          EX_DoCurrentDir, TRUE, /* for softlinks */
+	                                          EX_DataFields, (EXF_NAME | EXF_LINK | EXF_TYPE),
+	                                          TAG_END);
 	if (context) {
-		struct ExamineData * pExd = NULL; // NB: No need to free the value after usage, everything will be dealt with by the DirContext release
+		struct ExamineData *pExd = NULL; // NB: No need to free the value after usage, everything will be dealt with by the DirContext release
 
 		AmigaOSFilesystemNode *entry;
-		while ( (pExd = IDOS->ExamineDir(context)) ) {
-			if (     (EXD_IS_FILE(pExd) && ( Common::FSNode::kListFilesOnly == mode ))
-				||  (EXD_IS_DIRECTORY(pExd) && ( Common::FSNode::kListDirectoriesOnly == mode ))
-				||  Common::FSNode::kListAll == mode
-				)
-			{
-				BPTR pLock = IDOS->Lock( pExd->Name, SHARED_LOCK );
+		while ((pExd = IDOS->ExamineDir(context))) {
+			if ((EXD_IS_FILE(pExd) && (Common::FSNode::kListFilesOnly == mode))
+			    || (EXD_IS_DIRECTORY(pExd) && (Common::FSNode::kListDirectoriesOnly == mode))
+			    || Common::FSNode::kListAll == mode) {
+				BPTR pLock = IDOS->Lock(pExd->Name, SHARED_LOCK);
 				if (pLock) {
-					entry = new AmigaOSFilesystemNode( pLock, pExd->Name );
+					entry = new AmigaOSFilesystemNode(pLock, pExd->Name);
 					if (entry) {
 						myList.push_back(entry);
 					}
@@ -285,13 +283,12 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 			}
 		}
 
-		if (ERROR_NO_MORE_ENTRIES != IDOS->IoErr() ) {
+		if (ERROR_NO_MORE_ENTRIES != IDOS->IoErr()) {
 			debug(6, "An error occurred during ExamineDir");
 			ret = false;
 		} else {
 			ret = true;
 		}
-
 
 		IDOS->ReleaseDirContext(context);
 	} else {
@@ -323,7 +320,7 @@ AbstractFSNode *AmigaOSFilesystemNode::getParent() const {
 
 	AmigaOSFilesystemNode *node;
 
-	BPTR parentDir = IDOS->ParentDir( pLock );
+	BPTR parentDir = IDOS->ParentDir(pLock);
 	if (parentDir) {
 		node = new AmigaOSFilesystemNode(parentDir);
 		IDOS->UnLock(parentDir);
@@ -380,9 +377,7 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes() const {
 
 	dosList = IDOS->NextDosEntry(dosList, LDF_VOLUMES);
 	while (dosList) {
-		if (dosList->dol_Type == DLT_VOLUME &&
-			dosList->dol_Name &&
-			dosList->dol_Port) {
+		if (dosList->dol_Type == DLT_VOLUME && dosList->dol_Name && dosList->dol_Port) {
 
 			// The original line was
 			//if (dosList->dol_Type == DLT_VOLUME &&
@@ -397,7 +392,7 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes() const {
 			IDOS->CopyStringBSTRToC(dosList->dol_Name, buffer, MAXPATHLEN);
 
 			// Volume name + '\0'
-			char *volName = new char [strlen(buffer) + 1];
+			char *volName = new char[strlen(buffer) + 1];
 
 			strcpy(volName, buffer);
 
@@ -406,7 +401,7 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes() const {
 			BPTR volumeLock = IDOS->Lock((STRPTR)buffer, SHARED_LOCK);
 			if (volumeLock) {
 
-				char *devName = new char [MAXPATHLEN];
+				char *devName = new char[MAXPATHLEN];
 
 				// Find device name
 				IDOS->DevNameFromLock(volumeLock, devName, MAXPATHLEN, DN_DEVICEONLY);

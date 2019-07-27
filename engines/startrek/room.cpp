@@ -20,31 +20,35 @@
  *
  */
 
-#include "startrek/iwfile.h"
 #include "startrek/room.h"
+#include "startrek/iwfile.h"
 #include "startrek/startrek.h"
 
 #include "rooms/function_map.h"
 
 // TODO: Delete this macro, replacing it with the next one.
 // New "[roomName]NumActions" variables need to be made before that.
-#define ADD_ROOM_OLD(ROOM) {\
-		if (name.equalsIgnoreCase(#ROOM)) {\
-			_roomActionList = ROOM##ActionList;\
-			_numRoomActions = ARRAYSIZE(ROOM##ActionList);\
-		}\
+#define ADD_ROOM_OLD(ROOM)                           \
+	{                                                  \
+		if (name.equalsIgnoreCase(#ROOM)) {              \
+			_roomActionList = ROOM##ActionList;            \
+			_numRoomActions = ARRAYSIZE(ROOM##ActionList); \
+		}                                                \
 	}
 
-#define ADD_ROOM(ROOM) {\
-		if (name.equalsIgnoreCase(#ROOM)) {\
-			_roomActionList = ROOM##ActionList;\
-			_numRoomActions = ROOM##NumActions;\
-		}\
+#define ADD_ROOM(ROOM)                    \
+	{                                       \
+		if (name.equalsIgnoreCase(#ROOM)) {   \
+			_roomActionList = ROOM##ActionList; \
+			_numRoomActions = ROOM##NumActions; \
+		}                                     \
 	}
 
 namespace StarTrek {
 
-Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm), _awayMission(&vm->_awayMission) {
+Room::Room(StarTrekEngine *vm, const Common::String &name)
+  : _vm(vm)
+  , _awayMission(&vm->_awayMission) {
 	Common::MemoryReadStreamEndian *rdfFile = _vm->loadFile(name + ".RDF");
 
 	int size = rdfFile->size();
@@ -157,7 +161,7 @@ void Room::loadRoomMessage(const char *text) {
 	if (text[5] != '\\')
 		error("loadRoomMessage: Invalid message");
 
-	isTalkMessage = (text[10] == '_' || text[10] == 'U');	// U = Uhura
+	isTalkMessage = (text[10] == '_' || text[10] == 'U'); // U = Uhura
 	isLookWithTalkerMessage = (text[10] == 'L');
 
 	sscanf((const char *)(text + 11), "%3d", &messageNum);
@@ -170,7 +174,6 @@ void Room::loadRoomMessage(const char *text) {
 		_lookWithTalkerMessages[messageNum] = Common::String((const char *)text);
 	else
 		_lookMessages[messageNum] = Common::String((const char *)text);
-
 }
 
 // HACK: We hardcode the other room messages here. Remove once we figure
@@ -249,7 +252,7 @@ bool Room::actionHasCode(const Action &action) {
 }
 
 bool Room::actionHasCode(byte type, byte b1, byte b2, byte b3) {
-	const Action a = {type, b1, b2, b3};
+	const Action a = { type, b1, b2, b3 };
 	return actionHasCode(a);
 }
 
@@ -270,7 +273,7 @@ bool Room::handleAction(const Action &action) {
 }
 
 bool Room::handleAction(byte type, byte b1, byte b2, byte b3) {
-	const Action a = {type, b1, b2, b3};
+	const Action a = { type, b1, b2, b3 };
 	return handleAction(a);
 }
 
@@ -292,7 +295,7 @@ bool Room::handleActionWithBitmask(const Action &action) {
 }
 
 bool Room::handleActionWithBitmask(byte type, byte b1, byte b2, byte b3) {
-	Action a = {type, b1, b2, b3};
+	Action a = { type, b1, b2, b3 };
 	return handleActionWithBitmask(a);
 }
 
@@ -531,7 +534,8 @@ void Room::showBitmapFor5Ticks(const Common::String &bmpName, int priority) {
 	int ticks = 0;
 
 	while (ticks < 5) {
-		while (!_vm->popNextEvent(&event));
+		while (!_vm->popNextEvent(&event))
+			;
 
 		if (event.type == TREKEVENT_TICK)
 			ticks++;
@@ -608,7 +612,7 @@ void Room::showGameOverMenu() { // TODO: takes an optional parameter?
 	// TODO: finish. Shouldn't do this within a room due to deletion of current room?
 }
 
-int Room::showCodeInputBox(const char * const *codes) {
+int Room::showCodeInputBox(const char *const *codes) {
 	Common::String inputString = _vm->showCodeInputBox();
 
 	// ENHANCEMENT: Extra condition for "nothing entered"

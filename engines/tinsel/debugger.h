@@ -29,7 +29,7 @@ namespace Tinsel {
 
 class TinselEngine;
 
-class Console: public GUI::Debugger {
+class Console : public GUI::Debugger {
 public:
 	Console();
 	virtual ~Console();

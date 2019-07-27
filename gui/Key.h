@@ -47,6 +47,7 @@ public:
 	int ascii();
 	int keycode();
 	int flags();
+
 private:
 	int _ascii;
 	int _keycode;

@@ -1,5 +1,9 @@
 static const char *const kEoB2ChargenStrings1AmigaGerman[9] = {
-	"Die Party ist\rkomplett. W""\xe4""hle\rSPIEL oder\rdr""\xfc""cke 'P', um\rzu starten.",
+	"Die Party ist\rkomplett. W"
+	"\xe4"
+	"hle\rSPIEL oder\rdr"
+	"\xfc"
+	"cke 'P', um\rzu starten.",
 	"          ",
 	"RK\rTP\rSTF",
 	"%s\r%d\r%d\r%d\r%d\r%d",
@@ -7,7 +11,9 @@ static const char *const kEoB2ChargenStrings1AmigaGerman[9] = {
 	"%d",
 	"%d/%d",
 	"%d/%d/%d",
-	"W""\xe4""hle die Box des\rCharakters, den du\rerschaffen oder\ransehen willst."
+	"W"
+	"\xe4"
+	"hle die Box des\rCharakters, den du\rerschaffen oder\ransehen willst."
 };
 
 static const StringListProvider kEoB2ChargenStrings1AmigaGermanProvider = { ARRAYSIZE(kEoB2ChargenStrings1AmigaGerman), kEoB2ChargenStrings1AmigaGerman };
@@ -21,22 +27,31 @@ static const char *const kEoB2ChargenStrings2AmigaGerman[12] = {
 	"%d",
 	"%s",
 	"%d",
-	"W""\xc4""HLE RASSE:",
-	"W""\xc4""HLE KLASSE:",
-	"W""\xc4""HLE GESINNUNG:",
+	"W"
+	"\xc4"
+	"HLE RASSE:",
+	"W"
+	"\xc4"
+	"HLE KLASSE:",
+	"W"
+	"\xc4"
+	"HLE GESINNUNG:",
 	"Name:"
 };
 
 static const StringListProvider kEoB2ChargenStrings2AmigaGermanProvider = { ARRAYSIZE(kEoB2ChargenStrings2AmigaGerman), kEoB2ChargenStrings2AmigaGerman };
 
 static const char *const kEoB2ChargenStatStringsAmigaGerman[12] = {
-	"ST""\xc4",
+	"ST"
+	"\xc4",
 	"INT",
 	"WEI",
 	"GES",
 	"KON",
 	"CHA",
-	"ST""\xc4""RKE",
+	"ST"
+	"\xc4"
+	"RKE",
 	"INTELLIGENZ",
 	"WEISHEIT",
 	"GESCHICK",
@@ -64,22 +79,38 @@ static const char *const kEoB2ChargenRaceSexStringsAmigaGerman[12] = {
 static const StringListProvider kEoB2ChargenRaceSexStringsAmigaGermanProvider = { ARRAYSIZE(kEoB2ChargenRaceSexStringsAmigaGerman), kEoB2ChargenRaceSexStringsAmigaGerman };
 
 static const char *const kEoB2ChargenClassStringsAmigaGerman[21] = {
-	"K""\xc4""MPFER",
-	"WALDL""\xc4""UFER",
+	"K"
+	"\xc4"
+	"MPFER",
+	"WALDL"
+	"\xc4"
+	"UFER",
 	"PALADIN",
 	"MAGIER",
 	"KLERIKER",
 	"DIEB",
-	"K""\xc4""MPFER/KLERIKER",
-	"K""\xc4""MPFER/DIEB",
-	"K""\xc4""MPFER/MAGIER",
-	"K""\xc4""MPFER/MAGIER/DIEB",
+	"K"
+	"\xc4"
+	"MPFER/KLERIKER",
+	"K"
+	"\xc4"
+	"MPFER/DIEB",
+	"K"
+	"\xc4"
+	"MPFER/MAGIER",
+	"K"
+	"\xc4"
+	"MPFER/MAGIER/DIEB",
 	"DIEB/MAGIER",
 	"KLERIKER/DIEB",
-	"K""\xc4""MPFER/KLER./MAG.",
+	"K"
+	"\xc4"
+	"MPFER/KLER./MAG.",
 	"WALDL./KLER.",
 	"KLER./MAGIER",
-	"K""\xc4""MPFER",
+	"K"
+	"\xc4"
+	"MPFER",
 	"MAGIER",
 	"KLERIKER",
 	"DIEB",
@@ -96,9 +127,15 @@ static const char *const kEoB2ChargenAlignmentStringsAmigaGerman[9] = {
 	"RECHTSCH. NEUTRAL",
 	"NEUTRAL",
 	"CHAOTISCH NEUTRAL",
-	"RECHTSCH. B""\xd6""SE",
-	"NEUTRAL B""\xd6""SE",
-	"CHAOTISCH B""\xd6""SE"
+	"RECHTSCH. B"
+	"\xd6"
+	"SE",
+	"NEUTRAL B"
+	"\xd6"
+	"SE",
+	"CHAOTISCH B"
+	"\xd6"
+	"SE"
 };
 
 static const StringListProvider kEoB2ChargenAlignmentStringsAmigaGermanProvider = { ARRAYSIZE(kEoB2ChargenAlignmentStringsAmigaGerman), kEoB2ChargenAlignmentStringsAmigaGerman };
@@ -111,12 +148,26 @@ static const StringListProvider kEoB2ChargenEnterGameStringsAmigaGermanProvider 
 
 static const char *const kEoB2PryDoorStringsAmigaGerman[9] = {
 	"\r",
-	"Ihr k""\xf6""nnt die T""\xfc""r nicht aufbrechen.\r",
-	"\x06\x04""Ihr brecht die T""\xfc""r auf.\r",
-	"\x06\x06""Ihr versucht vergeblich die T""\xfc""r gewaltsam zu\r""\xf6""ffnen.\r",
+	"Ihr k"
+	"\xf6"
+	"nnt die T"
+	"\xfc"
+	"r nicht aufbrechen.\r",
+	"\x06\x04"
+	"Ihr brecht die T"
+	"\xfc"
+	"r auf.\r",
+	"\x06\x06"
+	"Ihr versucht vergeblich die T"
+	"\xfc"
+	"r gewaltsam zu\r"
+	"\xf6"
+	"ffnen.\r",
 	"Das kann man hier nicht ablegen.\r",
 	"Das passt hier nicht.\r",
-	"Niemand kann die T""\xfc""r aufbrechen.\r",
+	"Niemand kann die T"
+	"\xfc"
+	"r aufbrechen.\r",
 	"\r",
 	"\r"
 };
@@ -155,9 +206,13 @@ static const char *const kEoB2ItemSuffixStringsPotionsAmigaGerman[8] = {
 static const StringListProvider kEoB2ItemSuffixStringsPotionsAmigaGermanProvider = { ARRAYSIZE(kEoB2ItemSuffixStringsPotionsAmigaGerman), kEoB2ItemSuffixStringsPotionsAmigaGerman };
 
 static const char *const kEoB2ItemSuffixStringsWandsAmigaGerman[8] = {
-	"r L""\xe4""hmung",
+	"r L"
+	"\xe4"
+	"hmung",
 	"s Gewitters",
-	"r K""\xe4""lte",
+	"r K"
+	"\xe4"
+	"lte",
 	"r Heilung",
 	"s Feuerballs",
 	"Sternenfeuer",
@@ -217,7 +272,9 @@ static const char *const kEoB2PatternGrFix2AmigaGerman[1] = {
 static const StringListProvider kEoB2PatternGrFix2AmigaGermanProvider = { ARRAYSIZE(kEoB2PatternGrFix2AmigaGerman), kEoB2PatternGrFix2AmigaGerman };
 
 static const char *const kEoB2ValidateArmorStringAmigaGerman[1] = {
-	"%s kann diese r""\xfc""stungsart nicht tragen.\r"
+	"%s kann diese r"
+	"\xfc"
+	"stungsart nicht tragen.\r"
 };
 
 static const StringListProvider kEoB2ValidateArmorStringAmigaGermanProvider = { ARRAYSIZE(kEoB2ValidateArmorStringAmigaGerman), kEoB2ValidateArmorStringAmigaGerman };
@@ -236,7 +293,9 @@ static const StringListProvider kEoB2ValidateNoDropStringAmigaGermanProvider = {
 
 static const char *const kEoB2PotionStringsAmigaGerman[2] = {
 	"vergiftet",
-	"%s f""\xfc""hlt sich %s!\r"
+	"%s f"
+	"\xfc"
+	"hlt sich %s!\r"
 };
 
 static const StringListProvider kEoB2PotionStringsAmigaGermanProvider = { ARRAYSIZE(kEoB2PotionStringsAmigaGerman), kEoB2PotionStringsAmigaGerman };
@@ -262,7 +321,9 @@ static const char *const kEoB2TakenStringsAmigaGerman[1] = {
 static const StringListProvider kEoB2TakenStringsAmigaGermanProvider = { ARRAYSIZE(kEoB2TakenStringsAmigaGerman), kEoB2TakenStringsAmigaGerman };
 
 static const char *const kEoB2PotionEffectStringsAmigaGerman[8] = {
-	"viel st""\xe4""rker",
+	"viel st"
+	"\xe4"
+	"rker",
 	"besser",
 	"viel besser",
 	"etwas krank",
@@ -318,10 +379,16 @@ static const char *const kEoB2AbortStringsAmigaGerman[1] = {
 static const StringListProvider kEoB2AbortStringsAmigaGermanProvider = { ARRAYSIZE(kEoB2AbortStringsAmigaGerman), kEoB2AbortStringsAmigaGerman };
 
 static const char *const kEoB2MenuStringsMainAmigaGerman[8] = {
-	"W""\xe4""hle Option:",
+	"W"
+	"\xe4"
+	"hle Option:",
 	"Rasten",
-	"Spr""\xfc""che merken",
-	"Um Spr""\xfc""che beten",
+	"Spr"
+	"\xfc"
+	"che merken",
+	"Um Spr"
+	"\xfc"
+	"che beten",
 	"Rollen notieren",
 	"Voreinstellungen",
 	"Spieloptionen",
@@ -351,21 +418,47 @@ static const char *const kEoB2MenuStringsOnOffAmigaGerman[2] = {
 static const StringListProvider kEoB2MenuStringsOnOffAmigaGermanProvider = { ARRAYSIZE(kEoB2MenuStringsOnOffAmigaGerman), kEoB2MenuStringsOnOffAmigaGerman };
 
 static const char *const kEoB2MenuStringsSpellsAmigaGerman[17] = {
-	"\r\r W""\xe4""hlt einen Charak-\r ter aus der Party,\r der Spr""\xfc""che lernen\r soll.",
+	"\r\r W"
+	"\xe4"
+	"hlt einen Charak-\r ter aus der Party,\r der Spr"
+	"\xfc"
+	"che lernen\r soll.",
 	"\r Der Paladin ist\r eine Stufe zu nied-\r rig zum zaubern.",
 	"\r\r Der magier hat\r kein Spruchbuch!",
-	"\r\r\r W""\xe4""hlt einen Charak-\r ter aus der Party,\r der f""\xfc""r Spr""\xfc""che\r beten will.",
-	"\r Niemand in der\r Party ist in der\r Lage, f""\xfc""r Spr""\xfc""che\r zu beten.",
-	"\r Niemand in der\r Party ist in der\r Lage, sich Spr""\xfc""che\r zu merken.",
-	" Jemand der bewu""\xdf""t-\r los oder tot ist\r kann keine Spr""\xfc""che\r merken.",
-	" Jemand der bewu""\xdf""t-\r los oder tot ist\r kann nicht um\r Spr""\xfc""che beten.",
+	"\r\r\r W"
+	"\xe4"
+	"hlt einen Charak-\r ter aus der Party,\r der f"
+	"\xfc"
+	"r Spr"
+	"\xfc"
+	"che\r beten will.",
+	"\r Niemand in der\r Party ist in der\r Lage, f"
+	"\xfc"
+	"r Spr"
+	"\xfc"
+	"che\r zu beten.",
+	"\r Niemand in der\r Party ist in der\r Lage, sich Spr"
+	"\xfc"
+	"che\r zu merken.",
+	" Jemand der bewu"
+	"\xdf"
+	"t-\r los oder tot ist\r kann keine Spr"
+	"\xfc"
+	"che\r merken.",
+	" Jemand der bewu"
+	"\xdf"
+	"t-\r los oder tot ist\r kann nicht um\r Spr"
+	"\xfc"
+	"che beten.",
 	"1",
 	"2",
 	"3",
 	"4",
 	"5",
 	"Neu",
-	"Verf""\xfc""gbare Zauber:",
+	"Verf"
+	"\xfc"
+	"gbare Zauber:",
 	"Ja",
 	"Nein"
 };
@@ -377,7 +470,9 @@ static const char *const kEoB2MenuStringsRestAmigaGerman[5] = {
 	" Jemand ist noch\r verletzt. Weiter-\r rasten?",
 	"Die Party rastet.",
 	"\r Alle Spieler\r sind voll\r ausgeruht.",
-	" Eure Party braucht\r Rast, um Spr""\xfc""che\r zu erhalten."
+	" Eure Party braucht\r Rast, um Spr"
+	"\xfc"
+	"che\r zu erhalten."
 };
 
 static const StringListProvider kEoB2MenuStringsRestAmigaGermanProvider = { ARRAYSIZE(kEoB2MenuStringsRestAmigaGerman), kEoB2MenuStringsRestAmigaGerman };
@@ -401,19 +496,41 @@ static const char *const kEoB2MenuStringsStarveAmigaGerman[1] = {
 static const StringListProvider kEoB2MenuStringsStarveAmigaGermanProvider = { ARRAYSIZE(kEoB2MenuStringsStarveAmigaGerman), kEoB2MenuStringsStarveAmigaGerman };
 
 static const char *const kEoB2MenuStringsScribeAmigaGerman[5] = {
-	"W""\xe4""hlt die Rolle(n)\rzum notieren.",
-	"\r\r\r W""\xe4""hlt den Magier\r aus der Party,\r der Spr""\xfc""che\r notieren m""\xf6""chte.",
-	" Ihr habt keine\r ""\xfc""bertragbaren\r Schriftrollen.",
+	"W"
+	"\xe4"
+	"hlt die Rolle(n)\rzum notieren.",
+	"\r\r\r W"
+	"\xe4"
+	"hlt den Magier\r aus der Party,\r der Spr"
+	"\xfc"
+	"che\r notieren m"
+	"\xf6"
+	"chte.",
+	" Ihr habt keine\r "
+	"\xfc"
+	"bertragbaren\r Schriftrollen.",
 	" Ihr habt keine\r Rollen, die dieser\r Magier braucht.",
-	"\r Ihr habt keinen\r Magier, der Rollen\r ""\xfc""bertragen kann."
+	"\r Ihr habt keinen\r Magier, der Rollen\r "
+	"\xfc"
+	"bertragen kann."
 };
 
 static const StringListProvider kEoB2MenuStringsScribeAmigaGermanProvider = { ARRAYSIZE(kEoB2MenuStringsScribeAmigaGerman), kEoB2MenuStringsScribeAmigaGerman };
 
 static const char *const kEoB2MenuStringsDrop2AmigaGerman[3] = {
-	" W""\xe4""hlt den Charak-\r ter, den Ihr\r entfernen m""\xf6""chtet.",
-	" Spielst""\xe4""nde m""\xfc""ssen\r einen Namen haben!",
-	" Ganz sicher den\r alten Spielstand\r ""\xfc""berschreiben?"
+	" W"
+	"\xe4"
+	"hlt den Charak-\r ter, den Ihr\r entfernen m"
+	"\xf6"
+	"chtet.",
+	" Spielst"
+	"\xe4"
+	"nde m"
+	"\xfc"
+	"ssen\r einen Namen haben!",
+	" Ganz sicher den\r alten Spielstand\r "
+	"\xfc"
+	"berschreiben?"
 };
 
 static const StringListProvider kEoB2MenuStringsDrop2AmigaGermanProvider = { ARRAYSIZE(kEoB2MenuStringsDrop2AmigaGerman), kEoB2MenuStringsDrop2AmigaGerman };
@@ -427,14 +544,18 @@ static const char *const kEoB2MenuStringsHeadAmigaGerman[3] = {
 static const StringListProvider kEoB2MenuStringsHeadAmigaGermanProvider = { ARRAYSIZE(kEoB2MenuStringsHeadAmigaGerman), kEoB2MenuStringsHeadAmigaGerman };
 
 static const char *const kEoB2MenuStringsPoisonAmigaGerman[1] = {
-	"Vergiftete Spieler\rk""\xf6""nnten sterben!\rTrotzdem rasten?"
+	"Vergiftete Spieler\rk"
+	"\xf6"
+	"nnten sterben!\rTrotzdem rasten?"
 };
 
 static const StringListProvider kEoB2MenuStringsPoisonAmigaGermanProvider = { ARRAYSIZE(kEoB2MenuStringsPoisonAmigaGerman), kEoB2MenuStringsPoisonAmigaGerman };
 
 static const char *const kEoB2MenuStringsMgcAmigaGerman[2] = {
 	"%-18s %1d",
-	"%d von %d verf""\xfc""gbar.  "
+	"%d von %d verf"
+	"\xfc"
+	"gbar.  "
 };
 
 static const StringListProvider kEoB2MenuStringsMgcAmigaGermanProvider = { ARRAYSIZE(kEoB2MenuStringsMgcAmigaGerman), kEoB2MenuStringsMgcAmigaGerman };
@@ -459,13 +580,19 @@ static const char *const kEoB2MenuStringsRest2AmigaGerman[5] = {
 static const StringListProvider kEoB2MenuStringsRest2AmigaGermanProvider = { ARRAYSIZE(kEoB2MenuStringsRest2AmigaGerman), kEoB2MenuStringsRest2AmigaGerman };
 
 static const char *const kEoB2MenuStringsRest3AmigaGerman[1] = {
-	"\x06\x06""Es scheint, als sei es nicht sicher hier zu rasten."
+	"\x06\x06"
+	"Es scheint, als sei es nicht sicher hier zu rasten."
 };
 
 static const StringListProvider kEoB2MenuStringsRest3AmigaGermanProvider = { ARRAYSIZE(kEoB2MenuStringsRest3AmigaGerman), kEoB2MenuStringsRest3AmigaGerman };
 
 static const char *const kEoB2MenuStringsRest4AmigaGerman[1] = {
-	"\x06\x06""In der N""\xe4""he von Monstern k""\xf6""nnt Ihr nicht rasten."
+	"\x06\x06"
+	"In der N"
+	"\xe4"
+	"he von Monstern k"
+	"\xf6"
+	"nnt Ihr nicht rasten."
 };
 
 static const StringListProvider kEoB2MenuStringsRest4AmigaGermanProvider = { ARRAYSIZE(kEoB2MenuStringsRest4AmigaGerman), kEoB2MenuStringsRest4AmigaGerman };
@@ -479,7 +606,9 @@ static const StringListProvider kEoB2MenuStringsDefeatAmigaGermanProvider = { AR
 static const char *const kEoB2MenuStringsTransferAmigaGerman[5] = {
 	"Mindestens vier\rSpieler vor Spiel-\rbeginn transferieren!",
 	"Nur vier Spieler\rtransferieren!",
-	"Bestimmte Habselig-\rkeiten werden\rgel""\xf6""scht.",
+	"Bestimmte Habselig-\rkeiten werden\rgel"
+	"\xf6"
+	"scht.",
 	" \r Kein Magier in\r der Party.",
 	" \r Kein Kleriker\r oder Paladin\r in der Party."
 };
@@ -488,7 +617,9 @@ static const StringListProvider kEoB2MenuStringsTransferAmigaGermanProvider = { 
 
 static const char *const kEoB2MenuStringsSpecAmigaGerman[2] = {
 	"Beim Aufwachen bem-\rerkt Ihr die Ab-\rwesenheit von Insal!",
-	"Eine kurzer Blick\rzeigt, das Ausr""\xfc""st-\rung gestohlen wurde!"
+	"Eine kurzer Blick\rzeigt, das Ausr"
+	"\xfc"
+	"st-\rung gestohlen wurde!"
 };
 
 static const StringListProvider kEoB2MenuStringsSpecAmigaGermanProvider = { ARRAYSIZE(kEoB2MenuStringsSpecAmigaGerman), kEoB2MenuStringsSpecAmigaGerman };
@@ -530,7 +661,9 @@ static const char *const kEoB2CharGuiStringsSt2AmigaGerman[7] = {
 	"BEWUSSTLOS",
 	"GIFT (LANGSAM)",
 	"VERGIFTET",
-	"BET""\xc4""UBT",
+	"BET"
+	"\xc4"
+	"UBT",
 	"AUS STEIN"
 };
 
@@ -538,7 +671,9 @@ static const StringListProvider kEoB2CharGuiStringsSt2AmigaGermanProvider = { AR
 
 static const char *const kEoB2CharGuiStringsInAmigaGerman[4] = {
 	"CHARAKTER INFO",
-	"R""\xdc""STUNGSKL.",
+	"R"
+	"\xdc"
+	"STUNGSKL.",
 	"ERF",
 	"STF"
 };
@@ -546,19 +681,31 @@ static const char *const kEoB2CharGuiStringsInAmigaGerman[4] = {
 static const StringListProvider kEoB2CharGuiStringsInAmigaGermanProvider = { ARRAYSIZE(kEoB2CharGuiStringsInAmigaGerman), kEoB2CharGuiStringsInAmigaGerman };
 
 static const char *const kEoB2CharStatusStrings7AmigaGerman[1] = {
-	"%s hat nicht l""\xe4""nger riesenkr""\xe4""fte.\r"
+	"%s hat nicht l"
+	"\xe4"
+	"nger riesenkr"
+	"\xe4"
+	"fte.\r"
 };
 
 static const StringListProvider kEoB2CharStatusStrings7AmigaGermanProvider = { ARRAYSIZE(kEoB2CharStatusStrings7AmigaGerman), kEoB2CharStatusStrings7AmigaGerman };
 
 static const char *const kEoB2CharStatusStrings82AmigaGerman[1] = {
-	"\x06\x06""%s f""\xfc""hlt Gift in sich!\r"
+	"\x06\x06"
+	"%s f"
+	"\xfc"
+	"hlt Gift in sich!\r"
 };
 
 static const StringListProvider kEoB2CharStatusStrings82AmigaGermanProvider = { ARRAYSIZE(kEoB2CharStatusStrings82AmigaGerman), kEoB2CharStatusStrings82AmigaGerman };
 
 static const char *const kEoB2CharStatusStrings9AmigaGerman[1] = {
-	"\x06\x04""%s ist nicht l""\xe4""nger bet""\xe4""ubt!\r"
+	"\x06\x04"
+	"%s ist nicht l"
+	"\xe4"
+	"nger bet"
+	"\xe4"
+	"ubt!\r"
 };
 
 static const StringListProvider kEoB2CharStatusStrings9AmigaGermanProvider = { ARRAYSIZE(kEoB2CharStatusStrings9AmigaGerman), kEoB2CharStatusStrings9AmigaGerman };
@@ -570,13 +717,17 @@ static const char *const kEoB2CharStatusStrings12AmigaGerman[1] = {
 static const StringListProvider kEoB2CharStatusStrings12AmigaGermanProvider = { ARRAYSIZE(kEoB2CharStatusStrings12AmigaGerman), kEoB2CharStatusStrings12AmigaGerman };
 
 static const char *const kEoB2CharStatusStrings132AmigaGerman[1] = {
-	"\x06\x06""%s %s!\r"
+	"\x06\x06"
+	"%s %s!\r"
 };
 
 static const StringListProvider kEoB2CharStatusStrings132AmigaGermanProvider = { ARRAYSIZE(kEoB2CharStatusStrings132AmigaGerman), kEoB2CharStatusStrings132AmigaGerman };
 
 static const char *const kEoB2LevelGainStringsAmigaGerman[1] = {
-	"\x06\x01""%s steigt eine Stufe auf.""\x06\x0f""\r"
+	"\x06\x01"
+	"%s steigt eine Stufe auf."
+	"\x06\x0f"
+	"\r"
 };
 
 static const StringListProvider kEoB2LevelGainStringsAmigaGermanProvider = { ARRAYSIZE(kEoB2LevelGainStringsAmigaGerman), kEoB2LevelGainStringsAmigaGerman };
@@ -586,7 +737,9 @@ static const char *const kEoB2BookNumbersAmigaGerman[5] = {
 	"Zweite",
 	"Dritte",
 	"Vierte",
-	"F""\xfc""nfte"
+	"F"
+	"\xfc"
+	"nfte"
 };
 
 static const StringListProvider kEoB2BookNumbersAmigaGermanProvider = { ARRAYSIZE(kEoB2BookNumbersAmigaGerman), kEoB2BookNumbersAmigaGerman };
@@ -594,7 +747,9 @@ static const StringListProvider kEoB2BookNumbersAmigaGermanProvider = { ARRAYSIZ
 static const char *const kEoB2MageSpellsListAmigaGerman[33] = {
 	"",
 	"Panzer",
-	"Brennende H""\xe4""nde",
+	"Brennende H"
+	"\xe4"
+	"nde",
 	"Magie entdecken",
 	"Magisch. Geschoss",
 	"Schild",
@@ -603,7 +758,9 @@ static const char *const kEoB2MageSpellsListAmigaGerman[33] = {
 	"Unsichtb. entd.",
 	"Identifiziern+",
 	"Unsichtbarkeit",
-	"M's S""\xe4""urepfeil",
+	"M's S"
+	"\xe4"
+	"urepfeil",
 	"Magie bannen",
 	"Feuerball",
 	"Hast",
@@ -615,15 +772,21 @@ static const char *const kEoB2MageSpellsListAmigaGerman[33] = {
 	"Eissturm",
 	"Unsichtbarkeit+",
 	"Fluch brechen",
-	"K""\xe4""ltekegel",
+	"K"
+	"\xe4"
+	"ltekegel",
 	"Monster halten",
 	"Kraftfeld",
-	"Aufl""\xf6""sung",
+	"Aufl"
+	"\xf6"
+	"sung",
 	"Fleisch zu Stein",
 	"Stein zu Fleisch",
 	"Wahrer Blick",
 	"Todesfinger",
-	"Wort:Bet""\xe4""ubung",
+	"Wort:Bet"
+	"\xe4"
+	"ubung",
 	"Bigbys Faust"
 };
 
@@ -635,8 +798,12 @@ static const char *const kEoB2ClericSpellsListAmigaGerman[30] = {
 	"Leicht verwunden",
 	"L. Wunden heilen",
 	"Magie entdecken",
-	"Schutz v. B""\xf6""sem",
-	"St""\xe4""rkung",
+	"Schutz v. B"
+	"\xf6"
+	"sem",
+	"St"
+	"\xe4"
+	"rkung",
 	"Flammenklinge",
 	"Person halten",
 	"Gift verlangs.",
@@ -644,11 +811,15 @@ static const char *const kEoB2ClericSpellsListAmigaGerman[30] = {
 	"Magie bannen",
 	"Schutzgewand",
 	"Gebet",
-	"L""\xe4""hmung aufheben",
+	"L"
+	"\xe4"
+	"hmung aufheben",
 	"Schwer verwunden",
 	"S. Wunden heilen",
 	"Gift neutr.",
-	"Schutz-B""\xf6""ses 3m",
+	"Schutz-B"
+	"\xf6"
+	"ses 3m",
 	"Kritisch verw.",
 	"K. Wunden heilen",
 	"Flammenschlag",
@@ -666,7 +837,9 @@ static const StringListProvider kEoB2ClericSpellsListAmigaGermanProvider = { ARR
 
 static const char *const kEoB2SpellNamesAmigaGerman[68] = {
 	"panzer",
-	"brennende H""\xe4""nde",
+	"brennende H"
+	"\xe4"
+	"nde",
 	"magie entdecken",
 	"magisches Geschoss",
 	"schild",
@@ -675,7 +848,9 @@ static const char *const kEoB2SpellNamesAmigaGerman[68] = {
 	"unsichtbares entdecken",
 	"verbessertes identifizieren",
 	"unsichtbarkeit",
-	"melfs S""\xe4""urepfeil",
+	"melfs S"
+	"\xe4"
+	"urepfeil",
 	"magie bannen",
 	"feuerball",
 	"hast",
@@ -687,22 +862,32 @@ static const char *const kEoB2SpellNamesAmigaGerman[68] = {
 	"eissturm",
 	"verbesserte Unsichtbarkeit",
 	"fluch brechen",
-	"k""\xe4""ltekegel",
+	"k"
+	"\xe4"
+	"ltekegel",
 	"monster halten",
 	"kraftfeld",
-	"aufl""\xf6""sung",
+	"aufl"
+	"\xf6"
+	"sung",
 	"fleisch zu stein",
 	"stein zu fleisch",
 	"wahrer Blick",
 	"Todesfinger",
-	"wort der Macht: Bet""\xe4""ubung",
+	"wort der Macht: Bet"
+	"\xe4"
+	"ubung",
 	"bigbys geballte Faust",
 	"segen",
 	"leichte Wunden verursachen",
 	"leichte Wunden heilen",
 	"magie entdecken",
-	"schutz vor B""\xf6""sem",
-	"st""\xe4""rkung",
+	"schutz vor B"
+	"\xf6"
+	"sem",
+	"st"
+	"\xe4"
+	"rkung",
 	"flammenklinge",
 	"person halten",
 	"gift verlangsamen",
@@ -710,11 +895,15 @@ static const char *const kEoB2SpellNamesAmigaGerman[68] = {
 	"magie bannen",
 	"schutzgewand",
 	"gebet",
-	"l""\xe4""hmung aufheben",
+	"l"
+	"\xe4"
+	"hmung aufheben",
 	"schwere wunden verursachen",
 	"schwere wunden heilen",
 	"gift neutralisieren",
-	"schutz vor b""\xf6""sem 3m",
+	"schutz vor b"
+	"\xf6"
+	"sem 3m",
 	"kritische wunden verursachen",
 	"kritische wunden heilen",
 	"flammenschlag",
@@ -740,7 +929,9 @@ static const StringListProvider kEoB2SpellNamesAmigaGermanProvider = { ARRAYSIZE
 static const char *const kEoB2MagicStrings1AmigaGerman[6] = {
 	"ABBRECHEN",
 	"ABBRECHEN",
-	"Man braucht eine freie Hand f""\xfc""r diesen Zauber.\r",
+	"Man braucht eine freie Hand f"
+	"\xfc"
+	"r diesen Zauber.\r",
 	"Von diesen Zaubern kann man nur einen aktivieren.\r",
 	"%s zaubert %s.\r",
 	"\rok\r"
@@ -750,9 +941,13 @@ static const StringListProvider kEoB2MagicStrings1AmigaGermanProvider = { ARRAYS
 
 static const char *const kEoB2MagicStrings2AmigaGerman[5] = {
 	"Der Zauber versagt!\r",
-	"%s wurde aufgel""\xf6""st!\r",
-	"\x06\x06""Die Party wurde von einem Todeszauber getroffen!\r",
-	"\x06\x06""%s wurde von einem schwer verwunden Zauber getroffen.\r",
+	"%s wurde aufgel"
+	"\xf6"
+	"st!\r",
+	"\x06\x06"
+	"Die Party wurde von einem Todeszauber getroffen!\r",
+	"\x06\x06"
+	"%s wurde von einem schwer verwunden Zauber getroffen.\r",
 	"AUS STEIN"
 };
 
@@ -761,7 +956,9 @@ static const StringListProvider kEoB2MagicStrings2AmigaGermanProvider = { ARRAYS
 static const char *const kEoB2MagicStrings3AmigaGerman[5] = {
 	"Wen verzaubern? ",
 	"\rSpruch abgebrochen.\r",
-	"%s's %s Zauber l""\xe4""sst nach.\r",
+	"%s's %s Zauber l"
+	"\xe4"
+	"sst nach.\r",
 	"%s verfehlt das Monster.\r",
 	"%s muss vorn stehen um zu treffen!\r"
 };
@@ -775,7 +972,11 @@ static const char *const kEoB2MagicStrings4AmigaGerman[1] = {
 static const StringListProvider kEoB2MagicStrings4AmigaGermanProvider = { ARRAYSIZE(kEoB2MagicStrings4AmigaGerman), kEoB2MagicStrings4AmigaGerman };
 
 static const char *const kEoB2MagicStrings6AmigaGerman[1] = {
-	"%s hat schon eine R""\xfc""stungklasse ""\xfc""ber 6."
+	"%s hat schon eine R"
+	"\xfc"
+	"stungklasse "
+	"\xfc"
+	"ber 6."
 };
 
 static const StringListProvider kEoB2MagicStrings6AmigaGermanProvider = { ARRAYSIZE(kEoB2MagicStrings6AmigaGerman), kEoB2MagicStrings6AmigaGerman };
@@ -789,11 +990,15 @@ static const StringListProvider kEoB2MagicStrings7AmigaGermanProvider = { ARRAYS
 
 static const char *const kEoB2MagicStrings8AmigaGerman[6] = {
 	"Der Zauber versagt!\r",
-	"ist gel""\xe4""hmt",
+	"ist gel"
+	"\xe4"
+	"hmt",
 	"Der Zauber versagt!\r",
 	"Der Zauber versagt!\r",
 	"Kein Monster in Reichweite!\r",
-	"%s steht bereits unter einem St""\xe4""rkungszauber.\r"
+	"%s steht bereits unter einem St"
+	"\xe4"
+	"rkungszauber.\r"
 };
 
 static const StringListProvider kEoB2MagicStrings8AmigaGermanProvider = { ARRAYSIZE(kEoB2MagicStrings8AmigaGerman), kEoB2MagicStrings8AmigaGerman };
@@ -908,8 +1113,12 @@ static const char *const kEoB2TransferStrings1AmigaGerman[2] = {
 static const StringListProvider kEoB2TransferStrings1AmigaGermanProvider = { ARRAYSIZE(kEoB2TransferStrings1AmigaGerman), kEoB2TransferStrings1AmigaGerman };
 
 static const char *const kEoB2TransferStrings2AmigaGerman[2] = {
-	"Dieses Abenteuer ist nur f""\xfc""r vier Charaktere.",
-	"OK w""\xe4""hlen, wenn Partyerstellung beendet."
+	"Dieses Abenteuer ist nur f"
+	"\xfc"
+	"r vier Charaktere.",
+	"OK w"
+	"\xe4"
+	"hlen, wenn Partyerstellung beendet."
 };
 
 static const StringListProvider kEoB2TransferStrings2AmigaGermanProvider = { ARRAYSIZE(kEoB2TransferStrings2AmigaGerman), kEoB2TransferStrings2AmigaGerman };
@@ -922,26 +1131,52 @@ static const char *const kEoB2TransferLabelsAmigaGerman[2] = {
 static const StringListProvider kEoB2TransferLabelsAmigaGermanProvider = { ARRAYSIZE(kEoB2TransferLabelsAmigaGerman), kEoB2TransferLabelsAmigaGerman };
 
 static const char *const kEoB2IntroStringsAmigaGerman[20] = {
-	"Ihr hattet euch gerade gem""\xfc""tlich am \rKamin niedergelassen.",
+	"Ihr hattet euch gerade gem"
+	"\xfc"
+	"tlich am \rKamin niedergelassen.",
 	"Da wurde euch eine Botschaft\rzugespielt.",
 	"Sie war von eurem Freund Khelben \rBlackstaff, dem Erzmagier der Stadt.",
 	"Die Mitteilung war dringend.",
 	"Was konnte Khelben nur wollen?",
 	"Willkommen, bitte tretet ein.",
 	"Khelben erwartet euch im Studierzimmer.",
-	"Danke f""\xfc""r euer schnelles Kommen.",
+	"Danke f"
+	"\xfc"
+	"r euer schnelles Kommen.",
 	"Meine Freunde, ich bin besorgt.",
-	"Uralte, b""\xf6""se M""\xe4""chte rumoren im \rTempel Darkmoon.",
-	"Ich f""\xfc""rchte um die Sicherheit \runserer Stadt.",
+	"Uralte, b"
+	"\xf6"
+	"se M"
+	"\xe4"
+	"chte rumoren im \rTempel Darkmoon.",
+	"Ich f"
+	"\xfc"
+	"rchte um die Sicherheit \runserer Stadt.",
 	"Ich brauche eure Hilfe...",
-	"Vor drei N""\xe4""chten \rentsandte ich einen Kundschafter.",
-	"Sie kam niemals zur""\xfc""ck.",
-	"Ich f""\xfc""rchte um ihr Leben.",
-	"Nehmt diese M""\xfc""nze.",
+	"Vor drei N"
+	"\xe4"
+	"chten \rentsandte ich einen Kundschafter.",
+	"Sie kam niemals zur"
+	"\xfc"
+	"ck.",
+	"Ich f"
+	"\xfc"
+	"rchte um ihr Leben.",
+	"Nehmt diese M"
+	"\xfc"
+	"nze.",
 	"Mit ihrer Hilfe werde \rich euch erreichen.",
-	"Ihr m""\xfc\xdf""t schnell handeln.",
-	"Ich teleportiere euch nun in \rdie N""\xe4""he von Darkmoon.",
-	"M""\xf6""ge das Gl""\xfc""ck auf eurer Seite\rsein, Freunde."
+	"Ihr m"
+	"\xfc\xdf"
+	"t schnell handeln.",
+	"Ich teleportiere euch nun in \rdie N"
+	"\xe4"
+	"he von Darkmoon.",
+	"M"
+	"\xf6"
+	"ge das Gl"
+	"\xfc"
+	"ck auf eurer Seite\rsein, Freunde."
 };
 
 static const StringListProvider kEoB2IntroStringsAmigaGermanProvider = { ARRAYSIZE(kEoB2IntroStringsAmigaGerman), kEoB2IntroStringsAmigaGerman };
@@ -969,24 +1204,58 @@ static const StringListProvider kEoB2IntroCPSFilesAmigaGermanProvider = { ARRAYS
 
 static const char *const kEoB2FinaleStringsAmigaGerman[20] = {
 	"Nun endlich wurde Dran besiegt.",
-	"Pl""\xf6""tzlich erscheint euer Freund \rKhelben.",
-	"Seid gegr""\xfc\xdf""t, meine siegreichen \rFreunde.",
+	"Pl"
+	"\xf6"
+	"tzlich erscheint euer Freund \rKhelben.",
+	"Seid gegr"
+	"\xfc\xdf"
+	"t, meine siegreichen \rFreunde.",
 	"Ihr seid die Bezwinger von Dran!",
-	"Ich hatte keine Ahnung, da""\xdf"" \rDran ein Drache war.",
-	"Er mu""\xdf"" ""\xfc""ber 300 Jahre alt \rgewesen sein!",
+	"Ich hatte keine Ahnung, da"
+	"\xdf"
+	" \rDran ein Drache war.",
+	"Er mu"
+	"\xdf"
+	" "
+	"\xfc"
+	"ber 300 Jahre alt \rgewesen sein!",
 	"Seine Macht ist vergangen.",
-	"Noch immer ist Darkmoon\reine Quelle des B""\xf6""sen.",
+	"Noch immer ist Darkmoon\reine Quelle des B"
+	"\xf6"
+	"sen.",
 	"Und ein Teil seines Gefolges\rexistiert noch.",
-	"Daher m""\xfc""ssen wir diesen Platz\rnun verlassen.",
-	"So da""\xdf"" meine Kr""\xe4""fte ihn ein\r f""\xfc""r allemal\rzerst""\xf6""ren k""\xf6""nnen.",
+	"Daher m"
+	"\xfc"
+	"ssen wir diesen Platz\rnun verlassen.",
+	"So da"
+	"\xdf"
+	" meine Kr"
+	"\xe4"
+	"fte ihn ein\r f"
+	"\xfc"
+	"r allemal\rzerst"
+	"\xf6"
+	"ren k"
+	"\xf6"
+	"nnen.",
 	"Folgt mir.",
-	"M""\xe4""chtige Magier sind bereit\rf""\xfc""r den letzten Schlag\rgegen Darkmoon.",
-	"Das B""\xf6""se im Tempel ist sehr stark.",
+	"M"
+	"\xe4"
+	"chtige Magier sind bereit\rf"
+	"\xfc"
+	"r den letzten Schlag\rgegen Darkmoon.",
+	"Das B"
+	"\xf6"
+	"se im Tempel ist sehr stark.",
 	"Es darf keinesfalls weiter\rbestehen!",
-	"Der Tempel h""\xf6""rt auf zu\rexistieren.",
+	"Der Tempel h"
+	"\xf6"
+	"rt auf zu\rexistieren.",
 	"Unsere Arbeit ist nun getan,\rmeine Freunde.",
 	"Seid bedankt.",
-	"Ihr habt Euch meinen tiefen\r Respekt erk""\xe4""mpft.",
+	"Ihr habt Euch meinen tiefen\r Respekt erk"
+	"\xe4"
+	"mpft.",
 	"Wir werden Euch nie vergessen."
 };
 
@@ -1014,7 +1283,9 @@ static const char *const kEoB2MonsterDistAttStringsAmigaGerman[5] = {
 	"Die Party wurde von einem psychischen Angriff getroffen!\r",
 	"paralysiert",
 	"vergiftet",
-	"bet""\xe4""ubt",
+	"bet"
+	"\xe4"
+	"ubt",
 	"versteinert"
 };
 
@@ -1047,11 +1318,16 @@ static const char *const kEoB2KheldranStringsAmigaGerman[1] = {
 static const StringListProvider kEoB2KheldranStringsAmigaGermanProvider = { ARRAYSIZE(kEoB2KheldranStringsAmigaGerman), kEoB2KheldranStringsAmigaGerman };
 
 static const char *const kEoB2HornStringsAmigaGerman[4] = {
-	"Ein br""\xfc""llendes Ger""\xe4""usch kommt aus dem Horn.\r",
+	"Ein br"
+	"\xfc"
+	"llendes Ger"
+	"\xe4"
+	"usch kommt aus dem Horn.\r",
 	"Ein hohler Ton dringt aus dem Horn.\r",
 	"Ein melodischer Ton klingt aus dem Horn.\r",
-	"Ein unheimliches Ger""\xe4""usch entweicht dem Horn.\r"
+	"Ein unheimliches Ger"
+	"\xe4"
+	"usch entweicht dem Horn.\r"
 };
 
 static const StringListProvider kEoB2HornStringsAmigaGermanProvider = { ARRAYSIZE(kEoB2HornStringsAmigaGerman), kEoB2HornStringsAmigaGerman };
-

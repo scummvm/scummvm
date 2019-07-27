@@ -29,10 +29,17 @@
 
 namespace Cloud {
 
-FolderDownloadRequest::FolderDownloadRequest(Storage *storage, Storage::FileArrayCallback callback, Networking::ErrorCallback ecb, Common::String remoteDirectoryPath, Common::String localDirectoryPath, bool recursive):
-	Request(nullptr, ecb), CommandSender(nullptr), _storage(storage), _fileArrayCallback(callback),
-	_remoteDirectoryPath(remoteDirectoryPath), _localDirectoryPath(localDirectoryPath), _recursive(recursive),
-	_workingRequest(nullptr), _ignoreCallback(false), _totalFiles(0) {
+FolderDownloadRequest::FolderDownloadRequest(Storage *storage, Storage::FileArrayCallback callback, Networking::ErrorCallback ecb, Common::String remoteDirectoryPath, Common::String localDirectoryPath, bool recursive)
+  : Request(nullptr, ecb)
+  , CommandSender(nullptr)
+  , _storage(storage)
+  , _fileArrayCallback(callback)
+  , _remoteDirectoryPath(remoteDirectoryPath)
+  , _localDirectoryPath(localDirectoryPath)
+  , _recursive(recursive)
+  , _workingRequest(nullptr)
+  , _ignoreCallback(false)
+  , _totalFiles(0) {
 	start();
 }
 
@@ -58,11 +65,10 @@ void FolderDownloadRequest::start() {
 
 	//list directory first
 	_workingRequest = _storage->listDirectory(
-		_remoteDirectoryPath,
-		new Common::Callback<FolderDownloadRequest, Storage::ListDirectoryResponse>(this, &FolderDownloadRequest::directoryListedCallback),
-		new Common::Callback<FolderDownloadRequest, Networking::ErrorResponse>(this, &FolderDownloadRequest::directoryListedErrorCallback),
-		_recursive
-	);
+	  _remoteDirectoryPath,
+	  new Common::Callback<FolderDownloadRequest, Storage::ListDirectoryResponse>(this, &FolderDownloadRequest::directoryListedCallback),
+	  new Common::Callback<FolderDownloadRequest, Networking::ErrorResponse>(this, &FolderDownloadRequest::directoryListedErrorCallback),
+	  _recursive);
 }
 
 void FolderDownloadRequest::directoryListedCallback(Storage::ListDirectoryResponse response) {
@@ -96,7 +102,8 @@ void FolderDownloadRequest::fileDownloadedCallback(Storage::BoolResponse respons
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
-	if (!response.value) _failedFiles.push_back(_currentFile);
+	if (!response.value)
+		_failedFiles.push_back(_currentFile);
 	_downloadedBytes += _currentFile.size();
 	downloadNextFile();
 }
@@ -141,10 +148,9 @@ void FolderDownloadRequest::downloadNextFile() {
 	}
 	debug(9, "FolderDownloadRequest: %s -> %s", remotePath.c_str(), localPath.c_str());
 	_workingRequest = _storage->downloadById(
-		_currentFile.id(), localPath,
-		new Common::Callback<FolderDownloadRequest, Storage::BoolResponse>(this, &FolderDownloadRequest::fileDownloadedCallback),
-		new Common::Callback<FolderDownloadRequest, Networking::ErrorResponse>(this, &FolderDownloadRequest::fileDownloadedErrorCallback)
-	);
+	  _currentFile.id(), localPath,
+	  new Common::Callback<FolderDownloadRequest, Storage::BoolResponse>(this, &FolderDownloadRequest::fileDownloadedCallback),
+	  new Common::Callback<FolderDownloadRequest, Networking::ErrorResponse>(this, &FolderDownloadRequest::fileDownloadedErrorCallback));
 }
 
 void FolderDownloadRequest::handle() {

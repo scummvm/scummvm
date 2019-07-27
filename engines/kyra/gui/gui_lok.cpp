@@ -22,10 +22,10 @@
 
 #include "kyra/gui/gui_lok.h"
 #include "kyra/engine/kyra_lok.h"
-#include "kyra/graphics/animator_lok.h"
-#include "kyra/text/text.h"
 #include "kyra/engine/timer.h"
 #include "kyra/engine/util.h"
+#include "kyra/graphics/animator_lok.h"
+#include "kyra/text/text.h"
 
 #include "common/savefile.h"
 #include "common/system.h"
@@ -178,7 +178,10 @@ int KyraEngine_LoK::buttonAmuletCallback(Button *caller) {
 
 #pragma mark -
 
-GUI_LoK::GUI_LoK(KyraEngine_LoK *vm, Screen_LoK *screen) : GUI_v1(vm), _vm(vm), _screen(screen) {
+GUI_LoK::GUI_LoK(KyraEngine_LoK *vm, Screen_LoK *screen)
+  : GUI_v1(vm)
+  , _vm(vm)
+  , _screen(screen) {
 	_lastScreenUpdate = 0;
 	_menu = 0;
 	_pressFlag = false;
@@ -198,7 +201,7 @@ void GUI_LoK::createScreenThumbnail(Graphics::Surface &dst) {
 		uint8 screenPal[768];
 
 		if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
-			_screen->getRealPalette(0, &screenPal[ 0]);
+			_screen->getRealPalette(0, &screenPal[0]);
 			_screen->getRealPalette(1, &screenPal[96]);
 
 			// Set the interface palette text color to white
@@ -451,8 +454,8 @@ void GUI_LoK::setGUILabels() {
 		_voiceTextString = _vm->_guiStrings[28 + offset];
 
 	_textSpeedString = _vm->_guiStrings[25 + offsetOptions];
-	_onString =  _vm->_guiStrings[20 + offsetOn];
-	_offString =  _vm->_guiStrings[21 + offset];
+	_onString = _vm->_guiStrings[20 + offsetOn];
+	_offString = _vm->_guiStrings[21 + offset];
 	_onCDString = _vm->_guiStrings[21];
 }
 
@@ -709,14 +712,12 @@ void GUI_LoK::updateSavegameString() {
 				_savegameName[length + 1] = 0;
 				redrawTextfield();
 			}
-		} else if (_keyPressed.keycode == Common::KEYCODE_BACKSPACE ||
-		           _keyPressed.keycode == Common::KEYCODE_DELETE) {
+		} else if (_keyPressed.keycode == Common::KEYCODE_BACKSPACE || _keyPressed.keycode == Common::KEYCODE_DELETE) {
 			if (length > 0) {
 				_savegameName[length - 1] = 0;
 				redrawTextfield();
 			}
-		} else if (_keyPressed.keycode == Common::KEYCODE_RETURN ||
-		           _keyPressed.keycode == Common::KEYCODE_KP_ENTER) {
+		} else if (_keyPressed.keycode == Common::KEYCODE_RETURN || _keyPressed.keycode == Common::KEYCODE_KP_ENTER) {
 			_displaySubMenu = false;
 		}
 	}
@@ -924,7 +925,6 @@ void GUI_LoK::setupControls(Menu &menu) {
 	else
 		menu.item[1].itemString = _offString; //"Off"
 
-
 	switch (_vm->_configWalkspeed) {
 	case 0:
 		menu.item[2].itemString = _vm->_configStrings[0]; //"Slowest"
@@ -1074,7 +1074,7 @@ void GUI_LoK::fadePalette() {
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		return;
 
-	static const int16 menuPalIndexes[] = {248, 249, 250, 251, 252, 253, 254, -1};
+	static const int16 menuPalIndexes[] = { 248, 249, 250, 251, 252, 253, 254, -1 };
 	int index = 0;
 
 	_screen->copyPalette(2, 0);
@@ -1101,10 +1101,10 @@ void GUI_LoK::restorePalette() {
 #pragma mark -
 
 void KyraEngine_LoK::drawAmulet() {
-	static const int16 amuletTable1[] = {0x167, 0x162, 0x15D, 0x158, 0x153, 0x150, 0x155, 0x15A, 0x15F, 0x164, 0x145, -1};
-	static const int16 amuletTable3[] = {0x167, 0x162, 0x15D, 0x158, 0x153, 0x14F, 0x154, 0x159, 0x15E, 0x163, 0x144, -1};
-	static const int16 amuletTable2[] = {0x167, 0x162, 0x15D, 0x158, 0x153, 0x152, 0x157, 0x15C, 0x161, 0x166, 0x147, -1};
-	static const int16 amuletTable4[] = {0x167, 0x162, 0x15D, 0x158, 0x153, 0x151, 0x156, 0x15B, 0x160, 0x165, 0x146, -1};
+	static const int16 amuletTable1[] = { 0x167, 0x162, 0x15D, 0x158, 0x153, 0x150, 0x155, 0x15A, 0x15F, 0x164, 0x145, -1 };
+	static const int16 amuletTable3[] = { 0x167, 0x162, 0x15D, 0x158, 0x153, 0x14F, 0x154, 0x159, 0x15E, 0x163, 0x144, -1 };
+	static const int16 amuletTable2[] = { 0x167, 0x162, 0x15D, 0x158, 0x153, 0x152, 0x157, 0x15C, 0x161, 0x166, 0x147, -1 };
+	static const int16 amuletTable4[] = { 0x167, 0x162, 0x15D, 0x158, 0x153, 0x151, 0x156, 0x15B, 0x160, 0x165, 0x146, -1 };
 
 	resetGameFlag(0xF1);
 	_screen->hideMouse();

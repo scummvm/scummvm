@@ -23,11 +23,11 @@
 #ifndef SCUMM_CHARSET_H
 #define SCUMM_CHARSET_H
 
-#include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "graphics/sjis.h"
-#include "scumm/scumm.h"
 #include "scumm/gfx.h"
+#include "scumm/scumm.h"
 
 namespace Scumm {
 
@@ -41,10 +41,8 @@ static inline bool checkSJISCode(byte c) {
 	return false;
 }
 
-
 class CharsetRenderer {
 public:
-
 	Common::Rect _str;
 
 	int _top;
@@ -57,8 +55,8 @@ protected:
 public:
 	bool _center;
 
-	bool _hasMask;	// True if "removable" text is visible somewhere (should be called _hasText or so)
-	VirtScreenNumber _textScreenID;	// ID of the virtual screen on which the text is visible.
+	bool _hasMask; // True if "removable" text is visible somewhere (should be called _hasText or so)
+	VirtScreenNumber _textScreenID; // ID of the virtual screen on which the text is visible.
 
 	bool _blitAlso;
 	bool _firstChar;
@@ -86,7 +84,10 @@ public:
 	virtual int getCharHeight(byte chr) { return getFontHeight(); }
 	virtual int getCharWidth(uint16 chr) = 0;
 
-	virtual void setColor(byte color) { _color = color; translateColor(); }
+	virtual void setColor(byte color) {
+		_color = color;
+		translateColor();
+	}
 
 	void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -123,7 +124,9 @@ protected:
 	virtual void drawBits1(Graphics::Surface &dest, int x, int y, const byte *src, int drawTop, int width, int height);
 
 public:
-	CharsetRendererPC(ScummEngine *vm) : CharsetRendererCommon(vm), _shadowType(kNoShadowType) { }
+	CharsetRendererPC(ScummEngine *vm)
+	  : CharsetRendererCommon(vm)
+	  , _shadowType(kNoShadowType) {}
 };
 
 class CharsetRendererClassic : public CharsetRendererPC {
@@ -140,7 +143,8 @@ protected:
 	VirtScreenNumber _drawScreen;
 
 public:
-	CharsetRendererClassic(ScummEngine *vm) : CharsetRendererPC(vm) {}
+	CharsetRendererClassic(ScummEngine *vm)
+	  : CharsetRendererPC(vm) {}
 
 	void printChar(int chr, bool ignoreCharsetMask);
 	void drawChar(int chr, Graphics::Surface &s, int x, int y);
@@ -149,7 +153,7 @@ public:
 };
 
 #ifdef USE_RGB_COLOR
-#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+#	ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 class CharsetRendererTownsClassic : public CharsetRendererClassic {
 public:
 	CharsetRendererTownsClassic(ScummEngine *vm);
@@ -166,7 +170,7 @@ private:
 
 	uint16 _sjisCurChar;
 };
-#endif
+#	endif
 #endif
 
 class CharsetRendererNES : public CharsetRendererCommon {
@@ -176,7 +180,8 @@ protected:
 	void drawBits1(Graphics::Surface &dest, int x, int y, const byte *src, int drawTop, int width, int height);
 
 public:
-	CharsetRendererNES(ScummEngine *vm) : CharsetRendererCommon(vm) {}
+	CharsetRendererNES(ScummEngine *vm)
+	  : CharsetRendererCommon(vm) {}
 
 	void setCurID(int32 id) {}
 	void printChar(int chr, bool ignoreCharsetMask);
@@ -195,7 +200,8 @@ protected:
 	const byte *_widthTable;
 
 public:
-	CharsetRendererV3(ScummEngine *vm) : CharsetRendererPC(vm) {}
+	CharsetRendererV3(ScummEngine *vm)
+	  : CharsetRendererPC(vm) {}
 
 	void printChar(int chr, bool ignoreCharsetMask);
 	void drawChar(int chr, Graphics::Surface &s, int x, int y);
@@ -234,7 +240,9 @@ private:
 	uint16 _sjisCurChar;
 
 public:
-	CharsetRendererPCE(ScummEngine *vm) : CharsetRendererV3(vm), _sjisCurChar(0) {}
+	CharsetRendererPCE(ScummEngine *vm)
+	  : CharsetRendererV3(vm)
+	  , _sjisCurChar(0) {}
 
 	void setColor(byte color);
 };
@@ -273,6 +281,5 @@ public:
 #endif
 
 } // End of namespace Scumm
-
 
 #endif

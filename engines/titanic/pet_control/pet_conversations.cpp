@@ -21,16 +21,19 @@
  */
 
 #include "titanic/pet_control/pet_conversations.h"
-#include "titanic/pet_control/pet_control.h"
 #include "titanic/debugger.h"
 #include "titanic/game_manager.h"
+#include "titanic/pet_control/pet_control.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
 
-CPetConversations::CPetConversations() : CPetSection(),
-		_logChanged(false), _field418(0), _npcNum(-1),
-		_rect1(22, 352, 598, 478) {
+CPetConversations::CPetConversations()
+  : CPetSection()
+  , _logChanged(false)
+  , _field418(0)
+  , _npcNum(-1)
+  , _rect1(22, 352, 598, 478) {
 	Rect logRect(85, 18, 513, 87);
 	logRect.translate(20, 350);
 	_log.setBounds(logRect);
@@ -157,14 +160,11 @@ bool CPetConversations::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		return true;
 	}
 
-	return
-		_doorBot.MouseButtonDownMsg(msg->_mousePos) ||
-		_bellBot.MouseButtonDownMsg(msg->_mousePos);
+	return _doorBot.MouseButtonDownMsg(msg->_mousePos) || _bellBot.MouseButtonDownMsg(msg->_mousePos);
 }
 
 bool CPetConversations::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
-	if (_scrollUp.MouseButtonUpMsg(msg->_mousePos) ||
-			_scrollDown.MouseButtonUpMsg(msg->_mousePos))
+	if (_scrollUp.MouseButtonUpMsg(msg->_mousePos) || _scrollDown.MouseButtonUpMsg(msg->_mousePos))
 		return true;
 
 	if (_doorBot.MouseButtonUpMsg(msg->_mousePos)) {
@@ -206,7 +206,7 @@ bool CPetConversations::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 
 bool CPetConversations::MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) {
 	return _scrollDown.MouseDoubleClickMsg(msg->_mousePos)
-		|| _scrollUp.MouseDoubleClickMsg(msg->_mousePos);
+	  || _scrollUp.MouseDoubleClickMsg(msg->_mousePos);
 }
 
 bool CPetConversations::MouseWheelMsg(CMouseWheelMsg *msg) {
@@ -484,7 +484,7 @@ bool CPetConversations::handleKey(const Common::KeyState &keyState) {
 		return true;
 	default:
 		if (keyState.ascii > 0 && keyState.ascii <= 127
-				&& keyState.ascii != Common::KEYCODE_TAB) {
+		    && keyState.ascii != Common::KEYCODE_TAB) {
 			if (_textInput.handleKey(keyState.ascii))
 				// Text line finished, so process line
 				textLineEntered(_textInput.getText());
@@ -545,7 +545,7 @@ void CPetConversations::npcDialChange(uint dialNum, uint oldLevel, uint newLevel
 
 	if (newLevel != oldLevel) {
 		debugC(DEBUG_DETAILED, kDebugScripts, "Dial %d change from %d to %d",
-			dialNum, oldLevel, newLevel);
+		       dialNum, oldLevel, newLevel);
 		uint src = ascending[0], dest = ascending[1];
 		if (newLevel < oldLevel) {
 			src = descending[0];

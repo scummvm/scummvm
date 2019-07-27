@@ -31,14 +31,14 @@
 
 #include "sword25/gfx/staticbitmap.h"
 #include "sword25/gfx/bitmapresource.h"
-#include "sword25/package/packagemanager.h"
-#include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
+#include "sword25/package/packagemanager.h"
 
 namespace Sword25 {
 
-StaticBitmap::StaticBitmap(RenderObjectPtr<RenderObject> parentPtr, const Common::String &filename) :
-	Bitmap(parentPtr, TYPE_STATICBITMAP) {
+StaticBitmap::StaticBitmap(RenderObjectPtr<RenderObject> parentPtr, const Common::String &filename)
+  : Bitmap(parentPtr, TYPE_STATICBITMAP) {
 	// Das BS_Bitmap konnte nicht erzeugt werden, daher muss an dieser Stelle abgebrochen werden.
 	if (!_initSuccess)
 		return;
@@ -46,8 +46,8 @@ StaticBitmap::StaticBitmap(RenderObjectPtr<RenderObject> parentPtr, const Common
 	_initSuccess = initBitmapResource(filename);
 }
 
-StaticBitmap::StaticBitmap(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle) :
-	Bitmap(parentPtr, TYPE_STATICBITMAP, handle) {
+StaticBitmap::StaticBitmap(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle)
+  : Bitmap(parentPtr, TYPE_STATICBITMAP, handle) {
 	_initSuccess = unpersist(reader);
 }
 
@@ -98,16 +98,14 @@ bool StaticBitmap::doRender(RectangleList *updateRects) {
 	bool result;
 	if (_scaleFactorX == 1.0f && _scaleFactorY == 1.0f) {
 		result = bitmapResourcePtr->blit(_absoluteX, _absoluteY,
-		                                 (_flipV ? Graphics::FLIP_V : 0) |
-		                                 (_flipH ? Graphics::FLIP_H : 0),
+		                                 (_flipV ? Graphics::FLIP_V : 0) | (_flipH ? Graphics::FLIP_H : 0),
 		                                 0, _modulationColor, -1, -1,
-										 updateRects);
+		                                 updateRects);
 	} else {
 		result = bitmapResourcePtr->blit(_absoluteX, _absoluteY,
-		                                 (_flipV ? Graphics::FLIP_V : 0) |
-		                                 (_flipH ? Graphics::FLIP_H : 0),
+		                                 (_flipV ? Graphics::FLIP_V : 0) | (_flipH ? Graphics::FLIP_H : 0),
 		                                 0, _modulationColor, _width, _height,
-										 updateRects);
+		                                 updateRects);
 	}
 
 	// Resource freigeben

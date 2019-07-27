@@ -20,10 +20,10 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "mads/mads.h"
 #include "mads/action.h"
+#include "common/scummsys.h"
 #include "mads/inventory.h"
+#include "mads/mads.h"
 #include "mads/resources.h"
 #include "mads/scene.h"
 #include "mads/staticres.h"
@@ -50,7 +50,8 @@ void ActionSavedFields::synchronize(Common::Serializer &s) {
 
 /*------------------------------------------------------------------------*/
 
-MADSAction::MADSAction(MADSEngine *vm) : _vm(vm) {
+MADSAction::MADSAction(MADSEngine *vm)
+  : _vm(vm) {
 	clear();
 	_statusTextIndex = -1;
 	_selectedAction = 0;
@@ -136,7 +137,7 @@ void MADSAction::set() {
 	} else {
 		bool flag = false;
 		if ((_commandSource == CAT_INV_VOCAB) && (_selectedRow >= 0)
-				&& (_verbType == VERB_THAT) && (_prepType == PREP_NONE)) {
+		    && (_verbType == VERB_THAT) && (_prepType == PREP_NONE)) {
 			// Use/to action
 			int invIndex = userInterface._selectedInvIndex;
 			InventoryObject &objEntry = _vm->_game->_objects.getItem(invIndex);
@@ -246,8 +247,7 @@ void MADSAction::set() {
 
 					_statusText += kArticleList[articleNum];
 				}
-			} else if ((_articleNumber != VERB_LOOK) || (_vm->getGameID() != GType_RexNebular) ||
-				(_action._indirectObjectId >= 0 && scene.getVocab(_action._indirectObjectId) != kFenceStr)) {
+			} else if ((_articleNumber != VERB_LOOK) || (_vm->getGameID() != GType_RexNebular) || (_action._indirectObjectId >= 0 && scene.getVocab(_action._indirectObjectId) != kFenceStr)) {
 				// Write out the article
 				_statusText += kArticleList[_articleNumber];
 			} else {
@@ -284,8 +284,7 @@ void MADSAction::refresh() {
 	}
 
 	if (!_statusText.empty()) {
-		if ((_vm->_game->_screenObjects._inputMode == kInputBuildingSentences) ||
-				(_vm->_game->_screenObjects._inputMode == kInputLimitedSentences)) {
+		if ((_vm->_game->_screenObjects._inputMode == kInputBuildingSentences) || (_vm->_game->_screenObjects._inputMode == kInputLimitedSentences)) {
 			Font *font = _vm->_font->getFont(FONT_MAIN);
 			int textSpacing = -1;
 
@@ -299,7 +298,7 @@ void MADSAction::refresh() {
 
 			// Add a new text display entry to display the status text at the bottom of the screen area
 			_statusTextIndex = scene._textDisplay.add(160 - (strWidth / 2),
-				MADS_SCENE_HEIGHT + scene._posAdjust.y - 13, 3, textSpacing, _statusText, font);
+			                                          MADS_SCENE_HEIGHT + scene._posAdjust.y - 13, 3, textSpacing, _statusText, font);
 		}
 	}
 
@@ -405,10 +404,8 @@ void MADSAction::checkActionAtMousePos() {
 	Scene &scene = _vm->_game->_scene;
 	UserInterface &userInterface = scene._userInterface;
 
-	if ((userInterface._category == CAT_COMMAND || userInterface._category == CAT_INV_VOCAB) &&
-			_interAwaiting != AWAITING_COMMAND && _pickedWord >= 0) {
-		if (_recentCommandSource == userInterface._category || _recentCommand != _pickedWord ||
-			(_interAwaiting != AWAITING_THIS && _interAwaiting != 3))
+	if ((userInterface._category == CAT_COMMAND || userInterface._category == CAT_INV_VOCAB) && _interAwaiting != AWAITING_COMMAND && _pickedWord >= 0) {
+		if (_recentCommandSource == userInterface._category || _recentCommand != _pickedWord || (_interAwaiting != AWAITING_THIS && _interAwaiting != 3))
 			clear();
 		else if (_selectedRow != 0 || userInterface._category != CAT_COMMAND)
 			scene._lookFlag = false;
@@ -444,8 +441,7 @@ void MADSAction::checkActionAtMousePos() {
 					_hotspotId = userInterface._selectedInvIndex;
 					_articleNumber = _prepType;
 
-					if ((_verbType == VERB_THIS && _prepType == PREP_NONE) ||
-							(_verbType == VERB_THAT && _prepType != PREP_NONE))
+					if ((_verbType == VERB_THIS && _prepType == PREP_NONE) || (_verbType == VERB_THAT && _prepType != PREP_NONE))
 						_interAwaiting = AWAITING_RIGHT_MOUSE;
 					else
 						_interAwaiting = AWAITING_THAT;
@@ -543,10 +539,7 @@ void MADSAction::leftClick() {
 	UserInterface &userInterface = scene._userInterface;
 	bool abortFlag = false;
 
-	if ((userInterface._category == CAT_COMMAND || userInterface._category == CAT_INV_VOCAB) &&
-		_interAwaiting != 1 && _pickedWord >= 0 &&
-			_recentCommandSource == userInterface._category && _recentCommand == _pickedWord &&
-			(_interAwaiting == 2 || userInterface._category == CAT_INV_VOCAB)) {
+	if ((userInterface._category == CAT_COMMAND || userInterface._category == CAT_INV_VOCAB) && _interAwaiting != 1 && _pickedWord >= 0 && _recentCommandSource == userInterface._category && _recentCommand == _pickedWord && (_interAwaiting == 2 || userInterface._category == CAT_INV_VOCAB)) {
 		abortFlag = true;
 		if (_selectedRow == 0 && userInterface._category == CAT_COMMAND) {
 			_selectedAction = CAT_COMMAND;
@@ -558,8 +551,7 @@ void MADSAction::leftClick() {
 		}
 	}
 
-	if (abortFlag || (_vm->_events->_rightMousePressed && (userInterface._category == CAT_COMMAND ||
-			userInterface._category == CAT_INV_VOCAB)))
+	if (abortFlag || (_vm->_events->_rightMousePressed && (userInterface._category == CAT_COMMAND || userInterface._category == CAT_INV_VOCAB)))
 		return;
 
 	switch (_interAwaiting) {

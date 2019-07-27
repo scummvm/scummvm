@@ -24,19 +24,18 @@
 #ifndef TINSEL_HEAPMEM_H
 #define TINSEL_HEAPMEM_H
 
-#include "tinsel/dw.h"		// new data types
+#include "tinsel/dw.h" // new data types
 
 namespace Tinsel {
 
 struct MEM_NODE;
 
-
 /*----------------------------------------------------------------------*\
 |*			Memory Function Prototypes			*|
 \*----------------------------------------------------------------------*/
 
-void MemoryInit();			// initializes the memory manager
-void MemoryDeinit();		// deinitializes the memory manager
+void MemoryInit(); // initializes the memory manager
+void MemoryDeinit(); // deinitializes the memory manager
 
 // reserves a memory node for a movable & discardable block
 MEM_NODE *MemoryNoAlloc();
@@ -44,18 +43,18 @@ MEM_NODE *MemoryNoAlloc();
 // allocates a fixed block with the specified number of bytes
 MEM_NODE *MemoryAllocFixed(long size);
 
-void MemoryDiscard(		// discards the specified memory object
-	MEM_NODE *pMemNode);	// node of the memory object
+void MemoryDiscard( // discards the specified memory object
+  MEM_NODE *pMemNode); // node of the memory object
 
-void *MemoryLock(		// locks a memory object and returns a pointer to the first byte of the objects memory block
-	MEM_NODE *pMemNode);	// node of the memory object
+void *MemoryLock( // locks a memory object and returns a pointer to the first byte of the objects memory block
+  MEM_NODE *pMemNode); // node of the memory object
 
-void MemoryReAlloc(	// changes the size or attributes of a specified memory object
-	MEM_NODE *pMemNode,	// node of the memory object
-	long size);		// new size of block
+void MemoryReAlloc( // changes the size or attributes of a specified memory object
+  MEM_NODE *pMemNode, // node of the memory object
+  long size); // new size of block
 
-void MemoryUnlock(		// unlocks a memory object
-	MEM_NODE *pMemNode);	// node of the memory object
+void MemoryUnlock( // unlocks a memory object
+  MEM_NODE *pMemNode); // node of the memory object
 
 // 'touch' the memory object, i.e., update its "least recently used" counter.
 void MemoryTouch(MEM_NODE *pMemNode);

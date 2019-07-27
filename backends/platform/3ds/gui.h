@@ -35,7 +35,7 @@ protected:
 	virtual void close();
 
 	uint32 _timer;
-	static StatusMessageDialog* _opened;
+	static StatusMessageDialog *_opened;
 };
 
 #endif // GUI_3DS_H

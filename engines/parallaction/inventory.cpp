@@ -27,7 +27,6 @@
 
 namespace Parallaction {
 
-
 /*
 #define INVENTORYITEM_PITCH			32
 #define INVENTORYITEM_WIDTH			24
@@ -58,30 +57,30 @@ InventoryItem _verbs_BR[] = {
 	{ 0, 0 }
 };
 
-InventoryProperties	_invProps_NS = {
-	32,		// INVENTORYITEM_PITCH
-	24,		// INVENTORYITEM_WIDTH
-	24,		// INVENTORYITEM_HEIGHT
-	30,		// INVENTORY_MAX_ITEMS
-	5,		// INVENTORY_ITEMS_PER_LINE
-	6,		// INVENTORY_LINES
-	5 * 24,		// INVENTORY_WIDTH =(INVENTORY_ITEMS_PER_LINE*INVENTORYITEM_WIDTH)
-	6 * 24		// INVENTORY_HEIGHT = (INVENTORY_LINES*INVENTORYITEM_HEIGHT)
+InventoryProperties _invProps_NS = {
+	32, // INVENTORYITEM_PITCH
+	24, // INVENTORYITEM_WIDTH
+	24, // INVENTORYITEM_HEIGHT
+	30, // INVENTORY_MAX_ITEMS
+	5, // INVENTORY_ITEMS_PER_LINE
+	6, // INVENTORY_LINES
+	5 * 24, // INVENTORY_WIDTH =(INVENTORY_ITEMS_PER_LINE*INVENTORYITEM_WIDTH)
+	6 * 24 // INVENTORY_HEIGHT = (INVENTORY_LINES*INVENTORYITEM_HEIGHT)
 };
 
-InventoryProperties	_invProps_BR = {
-	51,		// INVENTORYITEM_PITCH
-	51,		// INVENTORYITEM_WIDTH
-	51,		// INVENTORYITEM_HEIGHT
-	48,		// INVENTORY_MAX_ITEMS
-	6,		// INVENTORY_ITEMS_PER_LINE
-	8,		// INVENTORY_LINES
-	6 * 51,		// INVENTORY_WIDTH =(INVENTORY_ITEMS_PER_LINE*INVENTORYITEM_WIDTH)
-	8 * 51		// INVENTORY_HEIGHT = (INVENTORY_LINES*INVENTORYITEM_HEIGHT)
+InventoryProperties _invProps_BR = {
+	51, // INVENTORYITEM_PITCH
+	51, // INVENTORYITEM_WIDTH
+	51, // INVENTORYITEM_HEIGHT
+	48, // INVENTORY_MAX_ITEMS
+	6, // INVENTORY_ITEMS_PER_LINE
+	8, // INVENTORY_LINES
+	6 * 51, // INVENTORY_WIDTH =(INVENTORY_ITEMS_PER_LINE*INVENTORYITEM_WIDTH)
+	8 * 51 // INVENTORY_HEIGHT = (INVENTORY_LINES*INVENTORYITEM_HEIGHT)
 };
 
 int16 Parallaction::getHoverInventoryItem(int16 x, int16 y) {
-	return _inventoryRenderer->hitTest(Common::Point(x,y));
+	return _inventoryRenderer->hitTest(Common::Point(x, y));
 }
 
 void Parallaction::highlightInventoryItem(ItemPosition pos) {
@@ -114,7 +113,7 @@ bool Parallaction::isItemInInventory(int32 v) {
 	return (_inventory->findItem(v) != -1);
 }
 
-const InventoryItem* Parallaction::getInventoryItem(int16 pos) {
+const InventoryItem *Parallaction::getInventoryItem(int16 pos) {
 	return _inventory->getItem(pos);
 }
 
@@ -134,10 +133,10 @@ void Parallaction::closeInventory() {
 	_inventoryRenderer->hideInventory();
 }
 
-
-
-
-InventoryRenderer::InventoryRenderer(Parallaction *vm, InventoryProperties *props, Inventory *inv) : _vm(vm), _props(props), _inv(inv) {
+InventoryRenderer::InventoryRenderer(Parallaction *vm, InventoryProperties *props, Inventory *inv)
+  : _vm(vm)
+  , _props(props)
+  , _inv(inv) {
 	_surf.create(_props->_width, _props->_height, Graphics::PixelFormat::createFormatCLUT8());
 }
 
@@ -165,7 +164,7 @@ void InventoryRenderer::hideInventory() {
 		error("InventoryRenderer not bound to inventory");
 }
 
-void InventoryRenderer::getRect(Common::Rect& r) const {
+void InventoryRenderer::getRect(Common::Rect &r) const {
 	r.setWidth(_props->_width);
 	r.setHeight(_props->_itemHeight * getNumLines());
 	r.moveTo(_pos);
@@ -183,13 +182,13 @@ ItemPosition InventoryRenderer::hitTest(const Common::Point &p) const {
 void InventoryRenderer::drawItem(ItemPosition pos, ItemName name) {
 	Common::Rect r;
 	getItemRect(pos, r);
-	byte* d = (byte *)_surf.getBasePtr(r.left, r.top);
+	byte *d = (byte *)_surf.getBasePtr(r.left, r.top);
 	drawItem(name, d, _surf.pitch);
 }
 
 void InventoryRenderer::drawItem(ItemName name, byte *buffer, uint pitch) {
-	byte* s = _vm->_objects->getData(name);
-	byte* d = buffer;
+	byte *s = _vm->_objects->getData(name);
+	byte *d = buffer;
 	for (uint i = 0; i < _props->_itemHeight; i++) {
 		memcpy(d, s, _props->_itemWidth);
 
@@ -198,12 +197,10 @@ void InventoryRenderer::drawItem(ItemName name, byte *buffer, uint pitch) {
 	}
 }
 
-
 int16 InventoryRenderer::getNumLines() const {
 	int16 num = _inv->getNumItems();
 	return (num / _props->_itemsPerLine) + ((num % _props->_itemsPerLine) > 0 ? 1 : 0);
 }
-
 
 void InventoryRenderer::refresh() {
 	for (uint16 i = 0; i < _props->_maxItems; i++) {
@@ -234,19 +231,19 @@ void InventoryRenderer::getItemRect(ItemPosition pos, Common::Rect &r) {
 	uint16 col = pos % _props->_itemsPerLine;
 
 	r.moveTo(col * _props->_itemWidth, line * _props->_itemHeight);
-
 }
 
-Inventory::Inventory(int maxItems, InventoryItem *verbs) : _numItems(0), _maxItems(maxItems) {
+Inventory::Inventory(int maxItems, InventoryItem *verbs)
+  : _numItems(0)
+  , _maxItems(maxItems) {
 	_items = (InventoryItem *)calloc(_maxItems, sizeof(InventoryItem));
 
 	int i = 0;
-	for ( ; verbs[i]._id; i++) {
+	for (; verbs[i]._id; i++) {
 		addItem(verbs[i]._id, verbs[i]._index);
 	}
 	_numVerbs = i;
 }
-
 
 Inventory::~Inventory() {
 	free(_items);
@@ -302,7 +299,7 @@ void Inventory::removeItem(ItemName name) {
 	_numItems--;
 
 	if (_numItems != pos) {
-		memmove(&_items[pos], &_items[pos+1], (_numItems - pos) * sizeof(InventoryItem));
+		memmove(&_items[pos], &_items[pos + 1], (_numItems - pos) * sizeof(InventoryItem));
 	}
 
 	_items[_numItems]._id = 0;
@@ -324,16 +321,13 @@ void Inventory::clear(bool keepVerbs) {
 	_numItems = first;
 }
 
-
 ItemName Inventory::getItemName(ItemPosition pos) const {
 	return (pos >= 0 && pos < _maxItems) ? _items[pos]._index : 0;
 }
 
-const InventoryItem* Inventory::getItem(ItemPosition pos) const {
+const InventoryItem *Inventory::getItem(ItemPosition pos) const {
 	return &_items[pos];
 }
-
-
 
 void Parallaction_ns::initInventory() {
 	_inventory = new Inventory(_invProps_NS._maxItems, _verbs_NS);
@@ -373,6 +367,5 @@ void Parallaction_br::destroyInventory() {
 	_charInventories[1] = 0;
 	_charInventories[2] = 0;
 }
-
 
 } // namespace Parallaction

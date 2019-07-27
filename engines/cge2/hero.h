@@ -28,8 +28,8 @@
 #define CGE2_HERO_H
 
 #include "cge2/cge2.h"
-#include "cge2/vga13h.h"
 #include "cge2/snail.h"
+#include "cge2/vga13h.h"
 
 namespace CGE2 {
 
@@ -64,10 +64,15 @@ struct HeroTab {
 class Hero : public Sprite {
 	int _hig[kDimMax];
 	Sprite *_contact;
+
 public:
 	BitmapPtr _dim[kDimMax];
 	V3D _trace[kWayMax];
-	enum Dir { kNoDir = -1, kSS, kWW, kNN, kEE } _dir;
+	enum Dir { kNoDir = -1,
+		         kSS,
+		         kWW,
+		         kNN,
+		         kEE } _dir;
 	int _curDim;
 	int _tracePtr;
 	int _reachStart, _reachCycle, _sayStart, _funStart;
@@ -82,7 +87,7 @@ public:
 	Sprite *setContact();
 	int stepSize() { return _ext->_seq[7]._dx; }
 	int distance(V3D pos);
-	int distance(Sprite * spr);
+	int distance(Sprite *spr);
 	void turn(Dir d);
 	void park();
 	int len(V2D v);
@@ -96,11 +101,11 @@ public:
 	void fun();
 	void resetFun() { _funDel = _funDel0; }
 	void hStep();
-	bool lower(Sprite * spr);
+	bool lower(Sprite *spr);
 	int cross(const V2D &a, const V2D &b);
 	int mapCross(const V2D &a, const V2D &b);
 	int mapCross(const V3D &a, const V3D &b);
-	Hero *other() { return _vm->_heroTab[!(_ref & 1)]->_ptr;}
+	Hero *other() { return _vm->_heroTab[!(_ref & 1)]->_ptr; }
 	Action action() { return (Action)(_ref % 10); }
 	void reach(int mode);
 	void setCurrent();

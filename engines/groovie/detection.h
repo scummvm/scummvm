@@ -24,7 +24,7 @@
 #define GROOVIE_DETECTION_H
 
 #include "engines/advancedDetector.h"
-#include "groovie/script.h"	// for EngineVersion
+#include "groovie/script.h" // for EngineVersion
 
 namespace Groovie {
 

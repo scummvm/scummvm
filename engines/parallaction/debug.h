@@ -12,7 +12,7 @@ class Parallaction;
 class Debugger : public GUI::Debugger {
 public:
 	Debugger(Parallaction *vm);
-	virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
+	virtual ~Debugger() {} // we need this for __SYMBIAN32__ archaic gcc/UIQ
 
 private:
 	virtual void preEnter();
@@ -31,8 +31,8 @@ private:
 	bool Cmd_ToggleGlobalFlag(int argc, const char **argv);
 	bool Cmd_Locations(int argc, const char **argv);
 	bool Cmd_GfxObjects(int argc, const char **argv);
-	bool Cmd_Programs(int argc, const char** argv);
-	bool Cmd_ShowMouse(int argc, const char** argv);
+	bool Cmd_Programs(int argc, const char **argv);
+	bool Cmd_ShowMouse(int argc, const char **argv);
 
 	Common::String decodeZoneFlags(uint32 flags);
 };

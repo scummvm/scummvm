@@ -28,20 +28,24 @@
 #include "graphics/cursorman.h"
 #include "graphics/maccursor.h"
 
-#include "sci/sci.h"
-#include "sci/event.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/palette.h"
-#include "sci/graphics/screen.h"
+#include "sci/event.h"
 #include "sci/graphics/coordadjuster.h"
-#include "sci/graphics/view.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/maciconbar.h"
+#include "sci/graphics/palette.h"
+#include "sci/graphics/screen.h"
+#include "sci/graphics/view.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
 GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *screen, GfxCoordAdjuster16 *coordAdjuster, EventManager *eventMan)
-	: _resMan(resMan), _palette(palette), _screen(screen), _coordAdjuster(coordAdjuster), _event(eventMan) {
+  : _resMan(resMan)
+  , _palette(palette)
+  , _screen(screen)
+  , _coordAdjuster(coordAdjuster)
+  , _event(eventMan) {
 
 	_upscaledHires = _screen->getUpscaledHires();
 	_isVisible = true;
@@ -145,7 +149,7 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 	if (g_sci->getGameId() == GID_LONGBOW)
 		colorMapping[3] = _palette->matchColor(223, 223, 223) & SCI_PALETTE_MATCH_COLORMASK; // Light Grey
 
-	Common::SpanOwner<SciSpan<byte> > rawBitmap;
+	Common::SpanOwner<SciSpan<byte>> rawBitmap;
 	rawBitmap->allocate(SCI_CURSOR_SCI0_HEIGHTWIDTH * SCI_CURSOR_SCI0_HEIGHTWIDTH, resource->name() + " copy");
 
 	pOut = rawBitmap->getUnsafeDataAt(0, SCI_CURSOR_SCI0_HEIGHTWIDTH * SCI_CURSOR_SCI0_HEIGHTWIDTH);
@@ -167,7 +171,7 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 		hotspot.x *= 2;
 		hotspot.y *= 2;
 
-		Common::SpanOwner<SciSpan<byte> > upscaledBitmap;
+		Common::SpanOwner<SciSpan<byte>> upscaledBitmap;
 		upscaledBitmap->allocate(heightWidth * heightWidth, "upscaled cursor bitmap");
 		_screen->scale2x(*rawBitmap, *upscaledBitmap, SCI_CURSOR_SCI0_HEIGHTWIDTH, SCI_CURSOR_SCI0_HEIGHTWIDTH);
 		rawBitmap.moveFrom(upscaledBitmap);
@@ -175,7 +179,7 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 
 	if (hotspot.x >= heightWidth || hotspot.y >= heightWidth) {
 		error("cursor %d's hotspot (%d, %d) is out of range of the cursor's dimensions (%dx%d)",
-				resourceId, hotspot.x, hotspot.y, heightWidth, heightWidth);
+		      resourceId, hotspot.x, hotspot.y, heightWidth, heightWidth);
 	}
 
 	CursorMan.replaceCursor(rawBitmap->getUnsafeDataAt(0, heightWidth * heightWidth), heightWidth, heightWidth, hotspot.x, hotspot.y, SCI_CURSOR_SCI0_TRANSPARENCYCOLOR);
@@ -188,11 +192,11 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 
 	// Use the original Windows cursors in KQ6, if requested
 	if (_useOriginalKQ6WinCursors)
-		viewNum += 2000;		// Windows cursors
+		viewNum += 2000; // Windows cursors
 
 	// Use the alternate silver cursors in SQ4 CD, if requested
 	if (_useSilverSQ4CDCursors) {
-		switch(viewNum) {
+		switch (viewNum) {
 		case 850:
 		case 852:
 		case 854:
@@ -240,7 +244,7 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 		height *= 2;
 		cursorHotspot->x *= 2;
 		cursorHotspot->y *= 2;
-		Common::SpanOwner<SciSpan<byte> > cursorBitmap;
+		Common::SpanOwner<SciSpan<byte>> cursorBitmap;
 		cursorBitmap->allocate(width * height, "upscaled cursor bitmap");
 		_screen->scale2x(rawBitmap, *cursorBitmap, celInfo->width, celInfo->height);
 		CursorMan.replaceCursor(cursorBitmap->getUnsafeDataAt(0, width * height), width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
@@ -257,12 +261,12 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 // Refer to GfxCursor::setPosition() below
 //    Game,            newPosition,  validRect
 static const SciCursorSetPositionWorkarounds setPositionWorkarounds[] = {
-	{ GID_ISLANDBRAIN,  84, 109,     46,  76, 174, 243 },  // Island of Dr. Brain, game menu
-	{ GID_ISLANDBRAIN, 143, 135,     57, 102, 163, 218 },  // Island of Dr. Brain, pause menu within copy protection
-	{ GID_LSL5,         23, 171,      0,   0,  26, 320 },  // Larry 5, skip forward helper pop-up
-	{ GID_QFG1VGA,      64, 174,     40,  37,  74, 284 },  // Quest For Glory 1 VGA, run/walk/sleep sub-menu
-	{ GID_QFG3,         70, 170,     40,  61,  81, 258 },  // Quest For Glory 3, run/walk/sleep sub-menu
-	{ (SciGameId)0,     -1,  -1,     -1,  -1,  -1,  -1 }
+	{ GID_ISLANDBRAIN, 84, 109, 46, 76, 174, 243 }, // Island of Dr. Brain, game menu
+	{ GID_ISLANDBRAIN, 143, 135, 57, 102, 163, 218 }, // Island of Dr. Brain, pause menu within copy protection
+	{ GID_LSL5, 23, 171, 0, 0, 26, 320 }, // Larry 5, skip forward helper pop-up
+	{ GID_QFG1VGA, 64, 174, 40, 37, 74, 284 }, // Quest For Glory 1 VGA, run/walk/sleep sub-menu
+	{ GID_QFG3, 70, 170, 40, 61, 81, 258 }, // Quest For Glory 3, run/walk/sleep sub-menu
+	{ (SciGameId)0, -1, -1, -1, -1, -1, -1 }
 };
 
 void GfxCursor::setPosition(Common::Point pos) {
@@ -305,7 +309,7 @@ void GfxCursor::setPosition(Common::Point pos) {
 	workaround = setPositionWorkarounds;
 	while (workaround->newPositionX != -1) {
 		if (workaround->gameId == gameId
-			&& ((workaround->newPositionX == pos.x) && (workaround->newPositionY == pos.y))) {
+		    && ((workaround->newPositionX == pos.x) && (workaround->newPositionY == pos.y))) {
 			EngineState *s = g_sci->getEngineState();
 			s->_cursorWorkaroundActive = true;
 			// At least on OpenPandora it seems that the cursor is actually set, but a bit afterwards
@@ -483,11 +487,11 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 	// QFG1/Freddy/Hoyle4 use a straight viewNum->cursor ID mapping
 	// KQ6 uses this mapping for its cursors
 	if (g_sci->getGameId() == GID_KQ6) {
-		if (viewNum == 990)      // Inventory Cursors
+		if (viewNum == 990) // Inventory Cursors
 			viewNum = loopNum * 16 + celNum + 2000;
 		else if (viewNum == 998) // Regular Cursors
 			viewNum = celNum + 1000;
-		else                     // Unknown cursor, ignored
+		else // Unknown cursor, ignored
 			return;
 	}
 	if (g_sci->hasMacIconBar())
@@ -515,7 +519,7 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 	}
 
 	CursorMan.replaceCursor(macCursor->getSurface(), macCursor->getWidth(), macCursor->getHeight(),
-			macCursor->getHotspotX(), macCursor->getHotspotY(), macCursor->getKeyColor());
+	                        macCursor->getHotspotX(), macCursor->getHotspotY(), macCursor->getKeyColor());
 	CursorMan.replaceCursorPalette(macCursor->getPalette(), 0, 256);
 
 	delete macCursor;

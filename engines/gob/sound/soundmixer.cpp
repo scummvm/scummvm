@@ -22,14 +22,15 @@
 
 #include "common/util.h"
 
-#include "gob/sound/soundmixer.h"
 #include "gob/sound/sounddesc.h"
+#include "gob/sound/soundmixer.h"
 
 #include "audio/decoders/raw.h"
 
 namespace Gob {
 
-SoundMixer::SoundMixer(Audio::Mixer &mixer, Audio::Mixer::SoundType type) : _mixer(&mixer) {
+SoundMixer::SoundMixer(Audio::Mixer &mixer, Audio::Mixer::SoundType type)
+  : _mixer(&mixer) {
 	_playingSound = 0;
 
 	_rate = _mixer->getOutputRate();
@@ -61,9 +62,9 @@ SoundMixer::~SoundMixer() {
 
 inline int16 SoundMixer::getData(int offset) {
 	if (!_16bit)
-		return (int16) ((int8) _data[offset]);
+		return (int16)((int8)_data[offset]);
 	else
-		return (int16) READ_LE_UINT16(_data + (offset * 2));
+		return (int16)READ_LE_UINT16(_data + (offset * 2));
 }
 
 bool SoundMixer::isPlaying() const {
@@ -86,8 +87,8 @@ void SoundMixer::stop(int16 fadeLength) {
 
 	_fade = true;
 	_fadeVol = 65536;
-	_fadeSamples = (int)(fadeLength * (((double) _rate) / 10.0));
-	_fadeVolStep = MAX((int32) 1, (int32) (65536 / _fadeSamples));
+	_fadeSamples = (int)(fadeLength * (((double)_rate) / 10.0));
+	_fadeVolStep = MAX((int32)1, (int32)(65536 / _fadeSamples));
 	_curFadeSamples = 0;
 }
 
@@ -98,7 +99,7 @@ void SoundMixer::setRepeating(int32 repCount) {
 }
 
 void SoundMixer::setSample(SoundDesc &sndDesc, int16 repCount, int16 frequency,
-		int16 fadeLength) {
+                           int16 fadeLength) {
 
 	if (frequency <= 0)
 		frequency = sndDesc._frequency;
@@ -133,13 +134,13 @@ void SoundMixer::setSample(SoundDesc &sndDesc, int16 repCount, int16 frequency,
 	} else {
 		_fade = true;
 		_fadeVol = 0;
-		_fadeSamples = (int)(fadeLength * (((double) _rate) / 10.0));
-		_fadeVolStep = - MAX((int32) 1, (int32) (65536 / _fadeSamples));
+		_fadeSamples = (int)(fadeLength * (((double)_rate) / 10.0));
+		_fadeVolStep = -MAX((int32)1, (int32)(65536 / _fadeSamples));
 	}
 }
 
 void SoundMixer::play(SoundDesc &sndDesc, int16 repCount, int16 frequency,
-		int16 fadeLength) {
+                      int16 fadeLength) {
 	Common::StackLock slock(_mutex);
 
 	if (!_end)
@@ -173,8 +174,7 @@ int SoundMixer::readBuffer(int16 *buffer, const int numSamples) {
 
 		// Linear interpolation. See sound/rate.cpp
 
-		int16 val = (_last + (((_cur - _last) * _offsetFrac +
-					FRAC_HALF) >> FRAC_BITS)) << (_16bit ? 0 : 8);
+		int16 val = (_last + (((_cur - _last) * _offsetFrac + FRAC_HALF) >> FRAC_BITS)) << (_16bit ? 0 : 8);
 		*buffer++ = (val * _fadeVol) >> 16;
 
 		_offsetFrac += _offsetInc;
@@ -196,7 +196,6 @@ int SoundMixer::readBuffer(int16 *buffer, const int numSamples) {
 
 			if (_fadeVol < 0)
 				_fadeVol = 0;
-
 		}
 	}
 	return numSamples;

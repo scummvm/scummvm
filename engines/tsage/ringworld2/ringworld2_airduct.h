@@ -23,65 +23,68 @@
 #ifndef TSAGE_RINGWORLD2_AIRDUCT_H
 #define TSAGE_RINGWORLD2_AIRDUCT_H
 
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
-#include "tsage/sound.h"
 #include "tsage/ringworld2/ringworld2_logic.h"
+#include "tsage/scenes.h"
+#include "tsage/sound.h"
 
 namespace TsAGE {
 
 namespace Ringworld2 {
 
-using namespace TsAGE;
+	using namespace TsAGE;
 
-class Scene1200 : public SceneExt {
-	enum CrawlDirection { CRAWL_EAST = 1, CRAWL_WEST = 2, CRAWL_SOUTH = 3, CRAWL_NORTH = 4 };
+	class Scene1200 : public SceneExt {
+		enum CrawlDirection { CRAWL_EAST = 1,
+			                    CRAWL_WEST = 2,
+			                    CRAWL_SOUTH = 3,
+			                    CRAWL_NORTH = 4 };
 
-	class LaserPanel: public ModalWindow {
-	public:
-		class Jumper : public SceneActorExt {
+		class LaserPanel : public ModalWindow {
 		public:
-			void init(int state);
-			virtual bool startAction(CursorType action, Event &event);
+			class Jumper : public SceneActorExt {
+			public:
+				void init(int state);
+				virtual bool startAction(CursorType action, Event &event);
+			};
+
+			Jumper _jumper1;
+			Jumper _jumper2;
+			Jumper _jumper3;
+
+			LaserPanel();
+
+			virtual void postInit(SceneObjectList *OwnerList = NULL);
+			virtual void remove();
 		};
 
-		Jumper _jumper1;
-		Jumper _jumper2;
-		Jumper _jumper3;
+	public:
+		NamedHotspot _item1;
+		SceneActor _actor1;
+		LaserPanel _laserPanel;
+		MazeUI _mazeUI;
+		SequenceManager _sequenceManager;
 
-		LaserPanel();
+		int _nextCrawlDirection;
+		int _field414;
+		int _field416;
+		int _field418;
+		int _field41A;
+		bool _fixupMaze;
+
+		Scene1200();
+		void synchronize(Serializer &s);
+
+		void startCrawling(CrawlDirection dir);
 
 		virtual void postInit(SceneObjectList *OwnerList = NULL);
-		virtual void remove();
+		virtual void signal();
+		virtual void process(Event &event);
+		virtual void dispatch();
+		virtual void saveCharacter(int characterIndex);
 	};
-
-public:
-	NamedHotspot _item1;
-	SceneActor _actor1;
-	LaserPanel _laserPanel;
-	MazeUI _mazeUI;
-	SequenceManager _sequenceManager;
-
-	int _nextCrawlDirection;
-	int _field414;
-	int _field416;
-	int _field418;
-	int _field41A;
-	bool _fixupMaze;
-
-	Scene1200();
-	void synchronize(Serializer &s);
-
-	void startCrawling(CrawlDirection dir);
-
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void signal();
-	virtual void process(Event &event);
-	virtual void dispatch();
-	virtual void saveCharacter(int characterIndex);
-};
 
 } // End of namespace Ringworld2
 } // End of namespace TsAGE

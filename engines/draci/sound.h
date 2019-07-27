@@ -23,10 +23,10 @@
 #ifndef DRACI_SOUND_H
 #define DRACI_SOUND_H
 
-#include "common/str.h"
+#include "audio/mixer.h"
 #include "common/file.h"
 #include "common/list.h"
-#include "audio/mixer.h"
+#include "common/str.h"
 
 namespace Common {
 class Archive;
@@ -35,22 +35,32 @@ class SeekableReadStream;
 
 namespace Draci {
 
-enum SoundFormat { RAW, RAW80, MP3, OGG, FLAC };	// RAW80 means skip the first 80 bytes
+enum SoundFormat { RAW,
+	                 RAW80,
+	                 MP3,
+	                 OGG,
+	                 FLAC }; // RAW80 means skip the first 80 bytes
 
 /**
  *  Represents individual files inside the archive.
  */
 struct SoundSample {
-	uint _offset;		// For internal use of LegacySoundArchive
+	uint _offset; // For internal use of LegacySoundArchive
 	uint _length;
 
-	uint _frequency;	// Only when _format == RAW or RAW80
+	uint _frequency; // Only when _format == RAW or RAW80
 	SoundFormat _format;
 
-	byte *_data;		// At most one of these two pointer can be non-NULL
-	Common::SeekableReadStream* _stream;
+	byte *_data; // At most one of these two pointer can be non-NULL
+	Common::SeekableReadStream *_stream;
 
-	SoundSample() : _offset(0), _length(0), _frequency(0), _format(RAW), _data(NULL), _stream(NULL) { }
+	SoundSample()
+	  : _offset(0)
+	  , _length(0)
+	  , _frequency(0)
+	  , _format(RAW)
+	  , _data(NULL)
+	  , _stream(NULL) {}
 	// The standard copy constructor is good enough, since we only store numbers and pointers.
 	// Don't call close() automaticall in the destructor, otherwise copying causes SIGSEGV.
 	void close() {
@@ -66,8 +76,8 @@ struct SoundSample {
  */
 class SoundArchive {
 public:
-	SoundArchive() { }
-	virtual ~SoundArchive() { }
+	SoundArchive() {}
+	virtual ~SoundArchive() {}
 
 	/**
 	 * Returns the number of sound samples in the archive.  Zero means that
@@ -103,8 +113,13 @@ public:
  */
 class LegacySoundArchive : public SoundArchive {
 public:
-	LegacySoundArchive(const char *path, uint defaultFreq) :
-	_path(NULL), _samples(NULL), _sampleCount(0), _defaultFreq(defaultFreq), _opened(false), _f(NULL) {
+	LegacySoundArchive(const char *path, uint defaultFreq)
+	  : _path(NULL)
+	  , _samples(NULL)
+	  , _sampleCount(0)
+	  , _defaultFreq(defaultFreq)
+	  , _opened(false)
+	  , _f(NULL) {
 		openArchive(path);
 	}
 	virtual ~LegacySoundArchive() { closeArchive(); }
@@ -119,12 +134,12 @@ public:
 	virtual SoundSample *getSample(int i, uint freq);
 
 private:
-	const char *_path;    ///< Path to file
-	SoundSample *_samples;          ///< Internal array of files
-	uint _sampleCount;         ///< Number of files in archive
-	uint _defaultFreq;	///< The default sampling frequency of the archived samples
-	bool _opened;            ///< True if the archive is opened, false otherwise
-	Common::File *_f;	///< Opened file
+	const char *_path; ///< Path to file
+	SoundSample *_samples; ///< Internal array of files
+	uint _sampleCount; ///< Number of files in archive
+	uint _defaultFreq; ///< The default sampling frequency of the archived samples
+	bool _opened; ///< True if the archive is opened, false otherwise
+	Common::File *_f; ///< Opened file
 };
 
 /**
@@ -134,7 +149,14 @@ private:
  */
 class ZipSoundArchive : public SoundArchive {
 public:
-	ZipSoundArchive() : _archive(NULL), _path(NULL), _extension(NULL), _format(RAW), _sampleCount(0), _defaultFreq(0), _cache() { }
+	ZipSoundArchive()
+	  : _archive(NULL)
+	  , _path(NULL)
+	  , _extension(NULL)
+	  , _format(RAW)
+	  , _sampleCount(0)
+	  , _defaultFreq(0)
+	  , _cache() {}
 	virtual ~ZipSoundArchive() { closeArchive(); }
 
 	void openArchive(const char *path, const char *extension, SoundFormat format, int raw_frequency = 0);
@@ -182,7 +204,6 @@ struct SndHandle {
 // decompression until we support compressed files too).
 class Sound {
 public:
-
 	Sound(Audio::Mixer *mixer);
 	~Sound() {}
 
@@ -198,17 +219,20 @@ public:
 	void stopVoice();
 	bool isMutedVoice() const { return _muteVoice; }
 
-	void stopAll() { stopVoice(); stopSound(); }
+	void stopAll() {
+		stopVoice();
+		stopSound();
+	}
 
 	void setVolume();
 
 	bool showSubtitles() const { return _showSubtitles; }
 	int talkSpeed() const { return _talkSpeed; }
 
- private:
+private:
 	// Returns the length of the sound sample in miliseconds.
 	uint playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffer, int volume,
-				sndHandleType handleType, bool loop);
+	                     sndHandleType handleType, bool loop);
 
 	SndHandle *getHandle();
 

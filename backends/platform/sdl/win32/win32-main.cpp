@@ -31,28 +31,28 @@
 // We need to keep this on top of the "common/scummsys.h"(base/main.h) include,
 // otherwise we will get errors about the windows headers redefining
 // "ARRAYSIZE" for example.
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#	define WIN32_LEAN_AND_MEAN
+#	include <windows.h>
 
-#include "backends/platform/sdl/win32/win32.h"
-#include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
+#	include "backends/platform/sdl/win32/win32.h"
+#	include "backends/plugins/sdl/sdl-provider.h"
+#	include "base/main.h"
 
-int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
+int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/, LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
+#	if !SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_SetModuleHandle(GetModuleHandle(NULL));
-#endif
+#	endif
 // HACK: __argc, __argv are broken and return zero when using mingwrt 4.0+ on MinGW
 // HACK: MinGW-w64 based toolchains neither feature _argc nor _argv. The 32 bit
 // incarnation only defines __MINGW32__. This leads to build breakage due to
 // missing declarations. Luckily MinGW-w64 based toolchains define
 // __MINGW64_VERSION_foo macros inside _mingw.h, which is included from all
 // system headers. Thus we abuse that to detect them.
-#if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
+#	if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
 	return main(_argc, _argv);
-#else
+#	else
 	return main(__argc, __argv);
-#endif
+#	endif
 }
 
 int main(int argc, char *argv[]) {
@@ -63,9 +63,9 @@ int main(int argc, char *argv[]) {
 	// Pre initialize the backend
 	((OSystem_Win32 *)g_system)->init();
 
-#ifdef DYNAMIC_MODULES
+#	ifdef DYNAMIC_MODULES
 	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
-#endif
+#	endif
 
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);

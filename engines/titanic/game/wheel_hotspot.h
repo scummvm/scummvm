@@ -28,19 +28,27 @@
 namespace Titanic {
 
 enum WheelHotspotAction {
-	WH_NONE = 0, WH_STOP = 1, WH_CRUISE = 2, WH_GO = 3
+	WH_NONE = 0,
+	WH_STOP = 1,
+	WH_CRUISE = 2,
+	WH_GO = 3
 };
 
 class CWheelHotSpot : public CBackground {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool SignalObject(CSignalObject *msg);
+
 public:
 	bool _active;
 	WheelHotspotAction _action;
+
 public:
 	CLASSDEF;
-	CWheelHotSpot() : CBackground(), _active(false), _action(WH_NONE) {}
+	CWheelHotSpot()
+	  : CBackground()
+	  , _active(false)
+	  , _action(WH_NONE) {}
 
 	/**
 	 * Save the data for the class to file

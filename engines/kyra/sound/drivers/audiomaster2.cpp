@@ -22,12 +22,12 @@
 
 #ifdef ENABLE_EOB
 
-#include "kyra/resource/resource.h"
-#include "kyra/sound/drivers/audiomaster2.h"
+#	include "kyra/sound/drivers/audiomaster2.h"
+#	include "kyra/resource/resource.h"
 
-#include "audio/mods/paula.h"
+#	include "audio/mods/paula.h"
 
-#include "common/iff_container.h"
+#	include "common/iff_container.h"
 
 namespace Kyra {
 
@@ -41,8 +41,26 @@ public:
 	~AudioMaster2IOManager();
 
 	struct IOUnit {
-		IOUnit() : _next(0), _sampleData(0), _sampleDataRepeat(0), _lenOnce(0), _lenRepeat(0), _startTick(0), _endTick(0), _transposeData(0), _rate(0), _period(0), _transposePara(0), _transposeDuration(0),
-			_levelAdjustData(0), _volumeSetting(0), _outputVolume(0), _levelAdjustPara(0), _levelAdjustDuration(0), _fadeOutState(-1), _flags(0) {}
+		IOUnit()
+		  : _next(0)
+		  , _sampleData(0)
+		  , _sampleDataRepeat(0)
+		  , _lenOnce(0)
+		  , _lenRepeat(0)
+		  , _startTick(0)
+		  , _endTick(0)
+		  , _transposeData(0)
+		  , _rate(0)
+		  , _period(0)
+		  , _transposePara(0)
+		  , _transposeDuration(0)
+		  , _levelAdjustData(0)
+		  , _volumeSetting(0)
+		  , _outputVolume(0)
+		  , _levelAdjustPara(0)
+		  , _levelAdjustDuration(0)
+		  , _fadeOutState(-1)
+		  , _flags(0) {}
 
 		IOUnit *_next;
 		const int8 *_sampleData;
@@ -68,7 +86,7 @@ public:
 	void clearChain();
 	void deployChannels(IOUnit **dest);
 	IOUnit *requestFreeUnit();
-	
+
 	void fadeOut();
 	bool isFading();
 
@@ -81,9 +99,11 @@ private:
 };
 
 class AudioMaster2Internal : public Audio::Paula {
-friend class AudioMaster2IOManager;
+	friend class AudioMaster2IOManager;
+
 private:
 	AudioMaster2Internal(Audio::Mixer *mixer);
+
 public:
 	~AudioMaster2Internal();
 
@@ -133,8 +153,16 @@ private:
 
 class SoundResource {
 protected:
-	SoundResource(AudioMaster2ResourceManager *res, int type) : _res(res), _type(type), _playing(false), _next(0), _flags(0), _masterVolume(64), _refCnt(1) {}
+	SoundResource(AudioMaster2ResourceManager *res, int type)
+	  : _res(res)
+	  , _type(type)
+	  , _playing(false)
+	  , _next(0)
+	  , _flags(0)
+	  , _masterVolume(64)
+	  , _refCnt(1) {}
 	virtual ~SoundResource() {}
+
 public:
 	void loadName(Common::ReadStream *stream, uint32 size);
 
@@ -179,8 +207,10 @@ private:
 class SoundResource8SVX : public SoundResource {
 public:
 	SoundResource8SVX(AudioMaster2ResourceManager *res);
+
 private:
 	virtual ~SoundResource8SVX();
+
 public:
 	void loadHeader(Common::ReadStream *stream, uint32 size);
 	void loadData(Common::ReadStream *stream, uint32 size);
@@ -209,9 +239,15 @@ private:
 
 class SoundResourceINST : public SoundResource {
 public:
-	SoundResourceINST(AudioMaster2ResourceManager *res) : SoundResource(res, 2), _samplesResource(0), _transpose(0), _levelAdjust(0) {}
+	SoundResourceINST(AudioMaster2ResourceManager *res)
+	  : SoundResource(res, 2)
+	  , _samplesResource(0)
+	  , _transpose(0)
+	  , _levelAdjust(0) {}
+
 private:
 	virtual ~SoundResourceINST();
+
 public:
 	void loadPitchData(Common::ReadStream *stream, uint32 size);
 	void loadSamples(Common::ReadStream *stream, uint32 size);
@@ -221,7 +257,10 @@ public:
 	void setupSoundEffect(AudioMaster2IOManager::IOUnit *unit, uint32 sync, uint32 rate);
 
 	struct EnvelopeData {
-		EnvelopeData(const uint8 *data, uint32 size) : volume(0x40), _data(data), _dataSize(size) {}
+		EnvelopeData(const uint8 *data, uint32 size)
+		  : volume(0x40)
+		  , _data(data)
+		  , _dataSize(size) {}
 		~EnvelopeData() { delete[] _data; }
 		uint8 volume;
 		const uint8 *_data;
@@ -240,9 +279,15 @@ private:
 
 class SoundResourceSMUS : public SoundResource {
 public:
-	SoundResourceSMUS(AudioMaster2ResourceManager *res) : SoundResource(res, 1), _tempo(0), _songVolume(0), _playFlags(0) {}
+	SoundResourceSMUS(AudioMaster2ResourceManager *res)
+	  : SoundResource(res, 1)
+	  , _tempo(0)
+	  , _songVolume(0)
+	  , _playFlags(0) {}
+
 private:
 	virtual ~SoundResourceSMUS();
+
 public:
 	void loadHeader(Common::ReadStream *stream, uint32 size);
 	void loadInstrument(Common::ReadStream *stream, uint32 size);
@@ -258,7 +303,13 @@ private:
 	void release();
 
 	struct Track {
-		Track() : _dataStart(0), _dataEnd(0), _dataCur(0), _instrument(0), _volume(0), _sync(0) {}
+		Track()
+		  : _dataStart(0)
+		  , _dataEnd(0)
+		  , _dataCur(0)
+		  , _instrument(0)
+		  , _volume(0)
+		  , _sync(0) {}
 		~Track() {
 			if (_instrument)
 				_instrument->close();
@@ -281,14 +332,14 @@ private:
 	};
 
 	bool parse(AudioMaster2IOManager *io, Track *track);
-	
+
 	uint16 _tempo;
 	uint8 _songVolume;
 
 	static const uint16 _durationTable[64];
 
-	Common::Array<Track*> _tracks;
-	Common::Array<SoundResource*> _instruments;
+	Common::Array<Track *> _tracks;
+	Common::Array<SoundResource *> _instruments;
 	uint16 _playFlags;
 };
 
@@ -311,7 +362,7 @@ public:
 	void setMasterVolume(int type, int volume);
 
 	void interrupt(AudioMaster2IOManager *io);
-	
+
 private:
 	SoundResource *retrieveFromChain(const Common::String &resName);
 	void linkToChain(SoundResource *resource, SoundResource::Mode mode);
@@ -327,7 +378,12 @@ private:
 
 class AudioMaster2IFFLoader : public Common::IFFParser {
 public:
-	AudioMaster2IFFLoader(Common::SeekableReadStream *stream, AudioMaster2ResourceManager *res) : Common::IFFParser(stream), _res(res), _curSong(0), _curSfx(0), _curIns(0) {}
+	AudioMaster2IFFLoader(Common::SeekableReadStream *stream, AudioMaster2ResourceManager *res)
+	  : Common::IFFParser(stream)
+	  , _res(res)
+	  , _curSong(0)
+	  , _curSfx(0)
+	  , _curIns(0) {}
 	virtual ~AudioMaster2IFFLoader();
 
 	bool loadChunk(Common::IFFChunk &chunk);
@@ -354,7 +410,10 @@ private:
 	AudioMaster2ResourceManager *_res;
 };
 
-AudioMaster2IOManager::AudioMaster2IOManager() : _sync(1), _tempo(1), _ioChain(0) {
+AudioMaster2IOManager::AudioMaster2IOManager()
+  : _sync(1)
+  , _tempo(1)
+  , _ioChain(0) {
 	for (int i = 0; i < 8; ++i)
 		_units[i] = new IOUnit();
 }
@@ -453,7 +512,7 @@ void SoundResource::loadName(Common::ReadStream *stream, uint32 size) {
 	stream->read(data, size);
 	data[size] = '\0';
 	_name = data;
-	
+
 	delete[] data;
 }
 
@@ -497,7 +556,8 @@ void SoundResource::interrupt(AudioMaster2IOManager *io) {
 	setupSoundEffect(unit, io->_sync, io->_tempo);
 }
 
-SoundResource8SVX::SoundResource8SVX(AudioMaster2ResourceManager *res) : SoundResource(res, 4) {
+SoundResource8SVX::SoundResource8SVX(AudioMaster2ResourceManager *res)
+  : SoundResource(res, 4) {
 	_numSamplesOnce = _numSamplesRepeat = _numSamplesPerCycle = _trackVolume = _dataSize = 0;
 	_rate = 0;
 	_numBlocks = _format = 0;
@@ -539,9 +599,9 @@ void SoundResource8SVX::setupMusicNote(AudioMaster2IOManager::IOUnit *unit, uint
 	// The original code uses 3579546 here. But since the Paula code uses kPalPaulaClock I do the same.
 	uint32 rt = Audio::Paula::kPalPaulaClock;
 	uint32 offs = 0;
-	
+
 	if (_numSamplesRepeat && _numSamplesPerCycle) {
-		uint32 octave = _numBlocks;		
+		uint32 octave = _numBlocks;
 		rt = _periods[note] << 13;
 
 		for (rt /= _numSamplesPerCycle; rt >= 0x4000000 && octave > 1; octave--) {
@@ -650,7 +710,7 @@ void SoundResourceINST::loadSamples(Common::ReadStream *stream, uint32 size) {
 	char *data = new char[size + 1];
 	stream->read(data, size);
 	data[size] = '\0';
-	
+
 	if (_samplesResource)
 		_samplesResource->close();
 
@@ -709,7 +769,7 @@ void SoundResourceINST::setupEnvelopes(AudioMaster2IOManager::IOUnit *unit) {
 void SoundResourceINST::setupSoundEffect(AudioMaster2IOManager::IOUnit *unit, uint32 sync, uint32 rate) {
 	if (!unit)
 		return;
-	
+
 	if (_samplesResource)
 		_samplesResource->setupSoundEffect(unit, sync, rate);
 
@@ -717,16 +777,16 @@ void SoundResourceINST::setupSoundEffect(AudioMaster2IOManager::IOUnit *unit, ui
 }
 
 SoundResourceSMUS::~SoundResourceSMUS() {
-	for (Common::Array<Track*>::iterator i = _tracks.begin(); i != _tracks.end(); ++i)
+	for (Common::Array<Track *>::iterator i = _tracks.begin(); i != _tracks.end(); ++i)
 		delete *i;
-	for (Common::Array<SoundResource*>::iterator i = _instruments.begin(); i != _instruments.end(); ++i)
+	for (Common::Array<SoundResource *>::iterator i = _instruments.begin(); i != _instruments.end(); ++i)
 		(*i)->close();
 }
 
 void SoundResourceSMUS::loadHeader(Common::ReadStream *stream, uint32 size) {
 	if (size < 3)
 		error("SoundResourceSMUS:loadHeader(): Invalid data chunk size");
-	
+
 	_tempo = stream->readUint16BE() / 68;
 	_songVolume = stream->readByte();
 }
@@ -750,14 +810,14 @@ void SoundResourceSMUS::loadInstrument(Common::ReadStream *stream, uint32 size) 
 		warning("SoundResourceSMUS::loadInstrument(): Samples resource '%s' not found for '%s'.", data, _name.c_str());
 	}
 
-	delete[] data;	
+	delete[] data;
 }
 
 void SoundResourceSMUS::loadTrack(Common::ReadStream *stream, uint32 size) {
 	Track *track = new Track();
 	uint8 *data = new uint8[size];
 	stream->read(data, size);
-	
+
 	track->_dataStart = data;
 	track->_dataEnd = data + size;
 	track->_volume = 128;
@@ -767,7 +827,7 @@ void SoundResourceSMUS::loadTrack(Common::ReadStream *stream, uint32 size) {
 
 void SoundResourceSMUS::prepare() {
 	_playFlags = 0;
-	for (Common::Array<Track*>::iterator trk = _tracks.begin(); trk != _tracks.end(); ++trk) {
+	for (Common::Array<Track *>::iterator trk = _tracks.begin(); trk != _tracks.end(); ++trk) {
 		(*trk)->_dataCur = (*trk)->_dataStart;
 		(*trk)->setInstrument(*_instruments.begin());
 
@@ -783,7 +843,7 @@ uint16 SoundResourceSMUS::getTempo() const {
 }
 
 void SoundResourceSMUS::setSync(uint32 sync) {
-	for (Common::Array<Track*>::iterator i = _tracks.begin(); i != _tracks.end(); ++i)
+	for (Common::Array<Track *>::iterator i = _tracks.begin(); i != _tracks.end(); ++i)
 		(*i)->_sync = sync;
 }
 
@@ -803,7 +863,7 @@ void SoundResourceSMUS::release() {
 
 bool SoundResourceSMUS::parse(AudioMaster2IOManager *io, Track *track) {
 	uint32 duration = 0;
-	
+
 	while (track->_sync <= io->_sync) {
 		if (track->_dataCur >= track->_dataEnd)
 			return false;
@@ -823,7 +883,7 @@ bool SoundResourceSMUS::parse(AudioMaster2IOManager *io, Track *track) {
 				AudioMaster2IOManager::IOUnit *unit = io->requestFreeUnit();
 				if (unit) {
 					unit->_startTick = track->_sync;
-					unit->_endTick = unit->_startTick + duration;					
+					unit->_endTick = unit->_startTick + duration;
 					track->_instrument->setupMusicNote(unit, cmd, _masterVolume * track->_volume);
 				}
 			}
@@ -869,7 +929,11 @@ const uint16 SoundResourceSMUS::_durationTable[64] = {
 	0x8700, 0x4380, 0x21c0, 0x10e0, 0x0870, 0x0438, 0x021c, 0x010e
 };
 
-AudioMaster2ResourceManager::AudioMaster2ResourceManager(AudioMaster2Internal *driver, Common::Mutex &mutex) : _driver(driver), _mutex(mutex), _chainPlaying(0), _chainStorage(0) {
+AudioMaster2ResourceManager::AudioMaster2ResourceManager(AudioMaster2Internal *driver, Common::Mutex &mutex)
+  : _driver(driver)
+  , _mutex(mutex)
+  , _chainPlaying(0)
+  , _chainStorage(0) {
 	memset(_masterVolume, 0, sizeof(_masterVolume));
 }
 
@@ -880,7 +944,7 @@ AudioMaster2ResourceManager::~AudioMaster2ResourceManager() {
 void AudioMaster2ResourceManager::loadResourceFile(Common::SeekableReadStream *data) {
 	do {
 		AudioMaster2IFFLoader loader(data, this);
-		Common::Functor1Mem<Common::IFFChunk&, bool, AudioMaster2IFFLoader> cb(&loader, &AudioMaster2IFFLoader::loadChunk);
+		Common::Functor1Mem<Common::IFFChunk &, bool, AudioMaster2IFFLoader> cb(&loader, &AudioMaster2IFFLoader::loadChunk);
 		loader.parse(cb);
 	} while (data->pos() + 8 < data->size());
 
@@ -959,7 +1023,7 @@ void AudioMaster2ResourceManager::stopChain() {
 void AudioMaster2ResourceManager::flush() {
 	Common::StackLock lock(_mutex);
 
-	stopChain();	
+	stopChain();
 
 	while (_chainPlaying) {
 		SoundResource *res = _chainPlaying;
@@ -1082,7 +1146,6 @@ SoundResource *AudioMaster2ResourceManager::retrieveFromChain(const Common::Stri
 	return 0;
 }
 
-
 void AudioMaster2ResourceManager::linkToChain(SoundResource *resource, SoundResource::Mode mode) {
 	Common::StackLock lock(_mutex);
 
@@ -1192,7 +1255,14 @@ void AudioMaster2IFFLoader::initResource() {
 AudioMaster2Internal *AudioMaster2Internal::_refInstance = 0;
 int AudioMaster2Internal::_refCount = 0;
 
-AudioMaster2Internal::AudioMaster2Internal(Audio::Mixer *mixer) : Paula(true, mixer->getOutputRate(), mixer->getOutputRate() / 50), _mixer(mixer), _res(0), _io(0), _fadeOutSteps(0), _durationCounter(0), _ready(false) {
+AudioMaster2Internal::AudioMaster2Internal(Audio::Mixer *mixer)
+  : Paula(true, mixer->getOutputRate(), mixer->getOutputRate() / 50)
+  , _mixer(mixer)
+  , _res(0)
+  , _io(0)
+  , _fadeOutSteps(0)
+  , _durationCounter(0)
+  , _ready(false) {
 	_channels[0] = _channels[1] = _channels[2] = _channels[3] = 0;
 	setAudioFilter(true);
 }
@@ -1239,9 +1309,9 @@ bool AudioMaster2Internal::init() {
 	_res = new AudioMaster2ResourceManager(this, _mutex);
 
 	startPaula();
-	
+
 	_mixer->playStream(Audio::Mixer::kPlainSoundType,
-		&_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	                   &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	_ready = true;
 
@@ -1325,7 +1395,7 @@ void AudioMaster2Internal::sync(SoundResource *res) {
 
 	Common::StackLock lock(_mutex);
 
-	SoundResourceSMUS *smus = static_cast<SoundResourceSMUS*>(res);
+	SoundResourceSMUS *smus = static_cast<SoundResourceSMUS *>(res);
 	_io->_tempo = smus->getTempo();
 	smus->setSync(_io->_sync);
 }
@@ -1360,13 +1430,13 @@ void AudioMaster2Internal::updateDevice() {
 		}
 
 		bool next = false;
-		
+
 		if (unit->_transposeData) {
 			unit->_period += unit->_transposePara;
 			const uint8 *data = unit->_transposeData;
-			
+
 			if (unit->_transposeDuration-- <= 1) {
-				for (bool loop = true; loop; ) {
+				for (bool loop = true; loop;) {
 					uint8 para = *data++;
 
 					if (para == 0xFF) {
@@ -1412,7 +1482,7 @@ void AudioMaster2Internal::updateDevice() {
 			const uint8 *data = unit->_levelAdjustData;
 
 			if (unit->_levelAdjustDuration-- <= 1) {
-				for (bool loop = true; loop; ) {
+				for (bool loop = true; loop;) {
 					uint8 para = *data++;
 					if (para == 0xFF) {
 						para = *data++;
@@ -1442,7 +1512,7 @@ void AudioMaster2Internal::updateDevice() {
 						} else {
 							para2 = (unit->_volumeSetting * para2) >> 6;
 							if (para2 > 0x4000)
-								para2 = 0x4000;							
+								para2 = 0x4000;
 						}
 
 						if (!para) {
@@ -1457,7 +1527,7 @@ void AudioMaster2Internal::updateDevice() {
 							unit->_levelAdjustPara = 0;
 						} else {
 							int16 va = para2 - unit->_outputVolume;
-							unit->_levelAdjustPara =  va / para;
+							unit->_levelAdjustPara = va / para;
 						}
 
 						unit->_levelAdjustData = data;
@@ -1482,7 +1552,7 @@ void AudioMaster2Internal::updateDevice() {
 				setChannelSampleStart(i, unit->_sampleDataRepeat);
 				setChannelSampleLen(i, unit->_lenRepeat);
 			}
-	
+
 		} else if (unit->_transposeData || unit->_levelAdjustData) {
 			setChannelPeriod(i, unit->_period);
 			setChannelVolume(i, unit->_outputVolume >> 8);

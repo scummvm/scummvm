@@ -24,24 +24,24 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_getcwd
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
+#include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <errno.h>
 #include <unistd.h>
 
-#include "osystem.h"
 #include "backends/plugins/wii/wii-provider.h"
+#include "osystem.h"
 
-#include <ogc/machine/processor.h>
 #include <fat.h>
+#include <ogc/machine/processor.h>
 #ifndef GAMECUBE
-#include <wiiuse/wpad.h>
+#	include <wiiuse/wpad.h>
 #endif
 #ifdef USE_WII_DI
-#include <di/di.h>
+#	include <di/di.h>
 #endif
 #ifdef DEBUG_WII_GDB
-#include <debug.h>
+#	include <debug.h>
 #endif
 #include <gxflux/gfx_con.h>
 
@@ -148,12 +148,11 @@ void wii_memstats(void) {
 	static u32 level;
 
 	_CPU_ISR_Disable(level);
-#ifdef GAMECUBE
-	temp_free = (u32) SYS_GetArenaHi() - (u32) SYS_GetArenaLo();
-#else
-	temp_free = (u32) SYS_GetArena1Hi() - (u32) SYS_GetArena1Lo() +
-				(u32) SYS_GetArena2Hi() - (u32) SYS_GetArena2Lo();
-#endif
+#	ifdef GAMECUBE
+	temp_free = (u32)SYS_GetArenaHi() - (u32)SYS_GetArenaLo();
+#	else
+	temp_free = (u32)SYS_GetArena1Hi() - (u32)SYS_GetArena1Lo() + (u32)SYS_GetArena2Hi() - (u32)SYS_GetArena2Lo();
+#	endif
 	_CPU_ISR_Restore(level);
 
 	if (temp_free < min_free) {

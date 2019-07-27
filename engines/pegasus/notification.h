@@ -52,7 +52,7 @@ typedef Common::Array<ReceiverEntry> ReceiverList;
 */
 
 class Notification : public IDObject {
-friend class NotificationManager;
+	friend class NotificationManager;
 
 public:
 	Notification(const NotificationID id, NotificationManager *owner);
@@ -65,10 +65,10 @@ public:
 
 	// Can selectively set or clear notification bits by using the flags and mask argument.
 
-	void notifyMe(NotificationReceiver*, NotificationFlags flags, NotificationFlags mask);
+	void notifyMe(NotificationReceiver *, NotificationFlags flags, NotificationFlags mask);
 	void cancelNotification(NotificationReceiver *receiver);
 
-	void setNotificationFlags(NotificationFlags flags,	NotificationFlags mask);
+	void setNotificationFlags(NotificationFlags flags, NotificationFlags mask);
 	NotificationFlags getNotificationFlags() { return _currentFlags; }
 
 	void clearNotificationFlags() { setNotificationFlags(0, ~(NotificationFlags)0); }
@@ -82,7 +82,7 @@ protected:
 };
 
 class NotificationReceiver {
-friend class Notification;
+	friend class Notification;
 
 public:
 	NotificationReceiver();
@@ -102,7 +102,7 @@ private:
 typedef Common::List<Notification *> NotificationList;
 
 class NotificationManager : public NotificationReceiver {
-friend class Notification;
+	friend class Notification;
 
 public:
 	NotificationManager();

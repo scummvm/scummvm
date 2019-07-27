@@ -48,7 +48,6 @@
 #include "startrek/sound.h"
 #include "startrek/space.h"
 
-
 using Common::SharedPtr;
 using Common::String;
 
@@ -61,7 +60,7 @@ namespace StarTrek {
 class StarTrekEngine;
 class Room;
 
-typedef String(StarTrekEngine::*TextGetterFunc)(int, uintptr, String *);
+typedef String (StarTrekEngine::*TextGetterFunc)(int, uintptr, String *);
 // FIXME: Eventually get rid of Common::SharedPtr and dispose of file streams properly
 typedef Common::SharedPtr<Common::MemoryReadStreamEndian> FileStream;
 
@@ -101,7 +100,6 @@ struct SavegameMetadata {
 	}
 };
 
-
 const int MAX_MENUBUTTONS = 32;
 const int TEXTBOX_WIDTH = 26;
 const int TEXT_CHARS_PER_LINE = TEXTBOX_WIDTH - 2;
@@ -114,23 +112,22 @@ const int MAX_BUFFERED_WALK_ACTIONS = 32;
 
 const int MAX_BAN_FILES = 16;
 
-
 enum StarTrekGameType {
 	GType_ST25 = 1,
 	GType_STJR = 2
 };
 
 enum StarTrekGameFeatures {
-	GF_DEMO  = (1 << 0),
+	GF_DEMO = (1 << 0),
 	GF_CDROM = (1 << 1)
 };
 
 enum kDebugLevels {
-	kDebugSound =     1 << 0,
-	kDebugGraphics =  1 << 1,
-	kDebugSavegame =  1 << 2,
-	kDebugSpace =     1 << 3,
-	kDebugGeneral =   1 << 4
+	kDebugSound = 1 << 0,
+	kDebugGraphics = 1 << 1,
+	kDebugSavegame = 1 << 2,
+	kDebugSpace = 1 << 3,
+	kDebugGeneral = 1 << 4
 };
 
 enum GameMode {
@@ -142,16 +139,16 @@ enum GameMode {
 };
 
 enum TextDisplayMode {
-	TEXTDISPLAY_WAIT = 0,  // Wait for input before closing text
+	TEXTDISPLAY_WAIT = 0, // Wait for input before closing text
 	TEXTDISPLAY_SUBTITLES, // Automatically continue when speech is done
-	TEXTDISPLAY_NONE       // No text displayed
+	TEXTDISPLAY_NONE // No text displayed
 };
 
 enum TextColor {
-	TEXTCOLOR_GREY   = 0x88,
-	TEXTCOLOR_RED    = 0xa1,
+	TEXTCOLOR_GREY = 0x88,
+	TEXTCOLOR_RED = 0xa1,
 	TEXTCOLOR_YELLOW = 0xb0,
-	TEXTCOLOR_BLUE   = 0xc0
+	TEXTCOLOR_BLUE = 0xc0
 };
 
 // Keeps track of data for a list of buttons making up a menu
@@ -168,7 +165,7 @@ struct Menu {
 // (Normally it returns the "retval" of a pressed button, which is positive.)
 enum MenuEvent {
 	MENUEVENT_RCLICK_OFFBUTTON = -4,
-	MENUEVENT_ENABLEINPUT,          // Makes buttons selectable (occurs after a delay)
+	MENUEVENT_ENABLEINPUT, // Makes buttons selectable (occurs after a delay)
 	MENUEVENT_RCLICK_ONBUTTON,
 	MENUEVENT_LCLICK_OFFBUTTON
 };
@@ -217,7 +214,6 @@ struct TrekEvent {
 	uint32 tick;
 };
 
-
 struct StarTrekGameDescription;
 class Graphics;
 class IWFile;
@@ -261,7 +257,6 @@ public:
 	 * string index.
 	 */
 	Common::String getLoadedText(int textIndex);
-
 
 	// math.cpp
 	/**
@@ -355,7 +350,6 @@ private:
 	 */
 	Matrix initMatrix();
 	Matrix initSpeedMatrixForXZMovement(Angle angle, const Matrix &matrix);
-
 
 	// actors.cpp (handles actors and animations)
 public:
@@ -476,7 +470,6 @@ private:
 	bool _mouseMoveEventInQueue;
 	bool _tickEventInQueue;
 	uint32 _frameStartMillis;
-
 
 	// textbox.cpp
 public:
@@ -639,7 +632,6 @@ public:
 	 */
 	int getRepublicMapAreaOrFailure(int16 turbolift);
 
-
 private:
 	int16 _textDisplayMode;
 	uint32 _textboxVar2;
@@ -672,7 +664,6 @@ public:
 	Common::Platform getPlatform() const;
 	uint8 getGameType() const;
 	Common::Language getLanguage() const;
-
 
 	// Variables
 public:

@@ -32,12 +32,17 @@ class CComputer : public CBackground {
 	bool ActMsg(CActMsg *msg);
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
+
 public:
 	CString _currentCD;
 	int _state;
+
 public:
 	CLASSDEF;
-	CComputer() : CBackground(), _currentCD("None"), _state(0) {}
+	CComputer()
+	  : CBackground()
+	  , _currentCD("None")
+	  , _state(0) {}
 
 	/**
 	 * Save the data for the class to file

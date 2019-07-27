@@ -32,7 +32,7 @@ namespace StarTrek {
 /**
  * Signed fixed-point number.
  */
-template<typename T, uint totalBits, uint decimalBits>
+template <typename T, uint totalBits, uint decimalBits>
 class TFixedInt : Common::Serializable {
 	static const int max = (1 << (totalBits - decimalBits - 1)) - 1;
 	static const int min = -max - 1;
@@ -46,7 +46,8 @@ public:
 		return ret;
 	}
 
-	TFixedInt() : val(0) {}
+	TFixedInt()
+	  : val(0) {}
 	TFixedInt(double d) {
 		assert(d >= min && d <= max); // FIXME: downgrade this to a warning?
 		val = (T)(d * (1 << decimalBits));
@@ -55,7 +56,7 @@ public:
 	/**
 	 * Constructor from other fixed-point formats.
 	 */
-	template<typename T2, uint otherTB, uint otherDB>
+	template <typename T2, uint otherTB, uint otherDB>
 	explicit TFixedInt<T, totalBits, decimalBits>(const TFixedInt<T2, otherTB, otherDB> &fi) {
 		int diff = otherDB - decimalBits;
 		if (otherDB >= decimalBits)
@@ -168,11 +169,10 @@ public:
 	}
 };
 
-template<typename T, uint totalBits, uint decimalBits>
+template <typename T, uint totalBits, uint decimalBits>
 int32 operator*(const int16 lhs, const TFixedInt<T, totalBits, decimalBits> &rhs) {
 	return rhs * lhs;
 }
-
 
 // Fixed-point (2.14) number (between -1 and 1)
 typedef TFixedInt<int16, 16, 14> Fixed14;

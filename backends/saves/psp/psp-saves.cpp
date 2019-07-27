@@ -38,16 +38,15 @@
 
 #ifdef __PSP__
 
-#include "backends/saves/psp/psp-saves.h"
-#include "backends/platform/psp/powerman.h"
+#	include "backends/platform/psp/powerman.h"
+#	include "backends/saves/psp/psp-saves.h"
 
-#include "common/config-manager.h"
-#include "common/savefile.h"
+#	include "common/config-manager.h"
+#	include "common/savefile.h"
 
-#include <pspkernel.h>
+#	include <pspkernel.h>
 
-#define PSP_DEFAULT_SAVE_PATH "ms0:/scummvm_savegames"
-
+#	define PSP_DEFAULT_SAVE_PATH "ms0:/scummvm_savegames"
 
 PSPSaveFileManager::PSPSaveFileManager() {
 	// Register default savepath

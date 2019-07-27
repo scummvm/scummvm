@@ -24,12 +24,12 @@
 
 #include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/game_constants.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/slice_animations.h"
 #include "bladerunner/slice_renderer.h"
 #include "bladerunner/time.h"
 #include "bladerunner/zbuffer.h"
-#include "bladerunner/game_constants.h"
 
 namespace BladeRunner {
 

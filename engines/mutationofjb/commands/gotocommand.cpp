@@ -54,7 +54,6 @@ bool GotoCommandParser::parse(const Common::String &line, ScriptParseContext &pa
 	return true;
 }
 
-
 void GotoCommand::setLabelCommand(LabelCommand *labelCmd) {
 	_labelCommand = labelCmd;
 }

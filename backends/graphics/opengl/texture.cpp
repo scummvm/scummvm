@@ -21,10 +21,10 @@
  */
 
 #include "backends/graphics/opengl/texture.h"
-#include "backends/graphics/opengl/shader.h"
-#include "backends/graphics/opengl/pipelines/pipeline.h"
-#include "backends/graphics/opengl/pipelines/clut8.h"
 #include "backends/graphics/opengl/framebuffer.h"
+#include "backends/graphics/opengl/pipelines/clut8.h"
+#include "backends/graphics/opengl/pipelines/pipeline.h"
+#include "backends/graphics/opengl/shader.h"
 
 #include "common/rect.h"
 #include "common/textconsole.h"
@@ -43,12 +43,17 @@ static GLuint nextHigher2(GLuint v) {
 	return ++v;
 }
 
-
 GLTexture::GLTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType)
-    : _glIntFormat(glIntFormat), _glFormat(glFormat), _glType(glType),
-      _width(0), _height(0), _logicalWidth(0), _logicalHeight(0),
-      _texCoords(), _glFilter(GL_NEAREST),
-      _glTexture(0) {
+  : _glIntFormat(glIntFormat)
+  , _glFormat(glFormat)
+  , _glType(glType)
+  , _width(0)
+  , _height(0)
+  , _logicalWidth(0)
+  , _logicalHeight(0)
+  , _texCoords()
+  , _glFilter(GL_NEAREST)
+  , _glTexture(0) {
 	create();
 }
 
@@ -102,18 +107,18 @@ void GLTexture::bind() const {
 }
 
 void GLTexture::setSize(uint width, uint height) {
-	const uint oldWidth  = _width;
+	const uint oldWidth = _width;
 	const uint oldHeight = _height;
 
 	if (!g_context.NPOTSupported) {
-		_width  = nextHigher2(width);
+		_width = nextHigher2(width);
 		_height = nextHigher2(height);
 	} else {
-		_width  = width;
+		_width = width;
 		_height = height;
 	}
 
-	_logicalWidth  = width;
+	_logicalWidth = width;
 	_logicalHeight = height;
 
 	// If a size is specified, allocate memory for it.
@@ -165,7 +170,7 @@ void GLTexture::updateArea(const Common::Rect &area, const Graphics::Surface &sr
 	// 3) Use glTexSubImage2D per line changed. This is what the old OpenGL
 	//    graphics manager did but it is much slower! Thus, we do not use it.
 	GL_CALL(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, area.top, src.w, area.height(),
-	                       _glFormat, _glType, src.getBasePtr(0, area.top)));
+	                        _glFormat, _glType, src.getBasePtr(0, area.top)));
 }
 
 //
@@ -173,7 +178,8 @@ void GLTexture::updateArea(const Common::Rect &area, const Graphics::Surface &sr
 //
 
 Surface::Surface()
-    : _allDirty(false), _dirtyArea() {
+  : _allDirty(false)
+  , _dirtyArea() {
 }
 
 void Surface::copyRectToTexture(uint x, uint y, uint w, uint h, const void *srcPtr, uint srcPitch) {
@@ -227,8 +233,11 @@ Common::Rect Surface::getDirtyArea() const {
 //
 
 Texture::Texture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format)
-    : Surface(), _format(format), _glTexture(glIntFormat, glFormat, glType),
-      _textureData(), _userPixelData() {
+  : Surface()
+  , _format(format)
+  , _glTexture(glIntFormat, glFormat, glType)
+  , _textureData()
+  , _userPixelData() {
 }
 
 Texture::~Texture() {
@@ -317,7 +326,9 @@ void Texture::updateGLTexture() {
 }
 
 TextureCLUT8::TextureCLUT8(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format)
-    : Texture(glIntFormat, glFormat, glType, format), _clut8Data(), _palette(new byte[256 * format.bytesPerPixel]) {
+  : Texture(glIntFormat, glFormat, glType, format)
+  , _clut8Data()
+  , _palette(new byte[256 * format.bytesPerPixel]) {
 	memset(_palette, 0, sizeof(byte) * format.bytesPerPixel);
 }
 
@@ -363,13 +374,13 @@ void TextureCLUT8::setColorKey(uint colorKey) {
 }
 
 namespace {
-template<typename ColorType>
-inline void convertPalette(ColorType *dst, const byte *src, uint colors, const Graphics::PixelFormat &format) {
-	while (colors-- > 0) {
-		*dst++ = format.RGBToColor(src[0], src[1], src[2]);
-		src += 3;
+	template <typename ColorType>
+	inline void convertPalette(ColorType *dst, const byte *src, uint colors, const Graphics::PixelFormat &format) {
+		while (colors-- > 0) {
+			*dst++ = format.RGBToColor(src[0], src[1], src[2]);
+			src += 3;
+		}
 	}
-}
 } // End of anonymous namespace
 
 void TextureCLUT8::setPalette(uint start, uint colors, const byte *palData) {
@@ -386,20 +397,20 @@ void TextureCLUT8::setPalette(uint start, uint colors, const byte *palData) {
 }
 
 namespace {
-template<typename PixelType>
-inline void doPaletteLookUp(PixelType *dst, const byte *src, uint width, uint height, uint dstPitch, uint srcPitch, const PixelType *palette) {
-	uint srcAdd = srcPitch - width;
-	uint dstAdd = dstPitch - width * sizeof(PixelType);
+	template <typename PixelType>
+	inline void doPaletteLookUp(PixelType *dst, const byte *src, uint width, uint height, uint dstPitch, uint srcPitch, const PixelType *palette) {
+		uint srcAdd = srcPitch - width;
+		uint dstAdd = dstPitch - width * sizeof(PixelType);
 
-	while (height-- > 0) {
-		for (uint x = width; x > 0; --x) {
-			*dst++ = palette[*src++];
+		while (height-- > 0) {
+			for (uint x = width; x > 0; --x) {
+				*dst++ = palette[*src++];
+			}
+
+			dst = (PixelType *)((byte *)dst + dstAdd);
+			src += srcAdd;
 		}
-
-		dst = (PixelType *)((byte *)dst + dstAdd);
-		src += srcAdd;
 	}
-}
 } // End of anonymous namespace
 
 void TextureCLUT8::updateGLTexture() {
@@ -432,8 +443,8 @@ void TextureCLUT8::updateGLTexture() {
 
 #if !USE_FORCED_GL
 TextureRGB555::TextureRGB555()
-    : Texture(GL_RGB, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)),
-      _rgb555Data() {
+  : Texture(GL_RGB, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0))
+  , _rgb555Data() {
 }
 
 TextureRGB555::~TextureRGB555() {
@@ -476,9 +487,9 @@ void TextureRGB555::updateTexture() {
 		for (int width = dirtyArea.width(); width > 0; --width) {
 			const uint16 color = *src++;
 
-			*dst++ =   ((color & 0x7C00) << 1)                             // R
-			         | (((color & 0x03E0) << 1) | ((color & 0x0200) >> 4)) // G
-			         | (color & 0x001F);                                   // B
+			*dst++ = ((color & 0x7C00) << 1) // R
+			  | (((color & 0x03E0) << 1) | ((color & 0x0200) >> 4)) // G
+			  | (color & 0x001F); // B
 		}
 
 		src = (const uint16 *)((const byte *)src + srcAdd);
@@ -498,11 +509,15 @@ void TextureRGB555::updateTexture() {
 // problems, we need to switch to GL_R8 and GL_RED, but that is only supported
 // for ARB_texture_rg and GLES3+ (EXT_rexture_rg does not support GL_R8).
 TextureCLUT8GPU::TextureCLUT8GPU()
-    : _clut8Texture(GL_ALPHA, GL_ALPHA, GL_UNSIGNED_BYTE),
-      _paletteTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE),
-      _target(new TextureTarget()), _clut8Pipeline(new CLUT8LookUpPipeline()),
-      _clut8Vertices(), _clut8Data(), _userPixelData(), _palette(),
-      _paletteDirty(false) {
+  : _clut8Texture(GL_ALPHA, GL_ALPHA, GL_UNSIGNED_BYTE)
+  , _paletteTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE)
+  , _target(new TextureTarget())
+  , _clut8Pipeline(new CLUT8LookUpPipeline())
+  , _clut8Vertices()
+  , _clut8Data()
+  , _userPixelData()
+  , _palette()
+  , _paletteDirty(false) {
 	// Allocate space for 256 colors.
 	_paletteTexture.setSize(256, 1);
 
@@ -585,7 +600,7 @@ void TextureCLUT8GPU::setColorKey(uint colorKey) {
 	// to avoid color fringes due to filtering.
 	// Erasing the color data is not a problem as the palette is always fully re-initialized
 	// before setting the key color.
-	_palette[colorKey * 4    ] = 0x00;
+	_palette[colorKey * 4] = 0x00;
 	_palette[colorKey * 4 + 1] = 0x00;
 	_palette[colorKey * 4 + 2] = 0x00;
 	_palette[colorKey * 4 + 3] = 0x00;
@@ -624,12 +639,12 @@ void TextureCLUT8GPU::updateGLTexture() {
 	if (_paletteDirty) {
 		Graphics::Surface palSurface;
 		palSurface.init(256, 1, 256, _palette,
-#ifdef SCUMM_LITTLE_ENDIAN
+#	ifdef SCUMM_LITTLE_ENDIAN
 		                Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24) // ABGR8888
-#else
+#	else
 		                Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0) // RGBA8888
-#endif
-		               );
+#	endif
+		);
 
 		_paletteTexture.updateArea(Common::Rect(256, 1), palSurface);
 		_paletteDirty = false;

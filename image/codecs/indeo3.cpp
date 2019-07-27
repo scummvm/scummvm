@@ -28,9 +28,9 @@
  * written, produced, and directed by Alan Smithee
  */
 
-#include "common/system.h"
 #include "common/endian.h"
 #include "common/stream.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 
@@ -40,7 +40,9 @@
 
 namespace Image {
 
-Indeo3Decoder::Indeo3Decoder(uint16 width, uint16 height, uint bitsPerPixel) : _ModPred(0), _corrector_type(0) {
+Indeo3Decoder::Indeo3Decoder(uint16 width, uint16 height, uint bitsPerPixel)
+  : _ModPred(0)
+  , _corrector_type(0) {
 	_iv_frame[0].the_buf = 0;
 	_iv_frame[1].the_buf = 0;
 
@@ -101,7 +103,7 @@ bool Indeo3Decoder::isIndeo3(Common::SeekableReadStream &stream) {
 		return false;
 
 	// These 4 uint32s XOR'd need to spell "FRMH"
-	if ((id0 ^ id1 ^ id2 ^ id3) != MKTAG('F','R','M','H'))
+	if ((id0 ^ id1 ^ id2 ^ id3) != MKTAG('F', 'R', 'M', 'H'))
 		return false;
 
 	return true;
@@ -111,44 +113,39 @@ void Indeo3Decoder::buildModPred() {
 	_ModPred = new byte[8 * 128];
 
 	for (int i = 0; i < 128; i++) {
-		_ModPred[i+0*128] = (i > 126) ? 254 : 2*((i + 1) - ((i + 1) % 2));
-		_ModPred[i+1*128] = (i == 7)  ?  20 : ((i == 119 || i == 120)
-		                              ? 236 : 2*((i + 2) - ((i + 1) % 3)));
-		_ModPred[i+2*128] = (i > 125) ? 248 : 2*((i + 2) - ((i + 2) % 4));
-		_ModPred[i+3*128] =                   2*((i + 1) - ((i - 3) % 5));
-		_ModPred[i+4*128] = (i == 8)  ?  20 : 2*((i + 1) - ((i - 3) % 6));
-		_ModPred[i+5*128] =                   2*((i + 4) - ((i + 3) % 7));
-		_ModPred[i+6*128] = (i > 123) ? 240 : 2*((i + 4) - ((i + 4) % 8));
-		_ModPred[i+7*128] =                   2*((i + 5) - ((i + 4) % 9));
+		_ModPred[i + 0 * 128] = (i > 126) ? 254 : 2 * ((i + 1) - ((i + 1) % 2));
+		_ModPred[i + 1 * 128] = (i == 7) ? 20 : ((i == 119 || i == 120) ? 236 : 2 * ((i + 2) - ((i + 1) % 3)));
+		_ModPred[i + 2 * 128] = (i > 125) ? 248 : 2 * ((i + 2) - ((i + 2) % 4));
+		_ModPred[i + 3 * 128] = 2 * ((i + 1) - ((i - 3) % 5));
+		_ModPred[i + 4 * 128] = (i == 8) ? 20 : 2 * ((i + 1) - ((i - 3) % 6));
+		_ModPred[i + 5 * 128] = 2 * ((i + 4) - ((i + 3) % 7));
+		_ModPred[i + 6 * 128] = (i > 123) ? 240 : 2 * ((i + 4) - ((i + 4) % 8));
+		_ModPred[i + 7 * 128] = 2 * ((i + 5) - ((i + 4) % 9));
 	}
 
 	_corrector_type = new uint16[24 * 256];
 
 	for (int i = 0; i < 24; i++) {
 		for (int j = 0; j < 256; j++) {
-			_corrector_type[i*256+j] =
-				 (j < _corrector_type_0[i])         ? 1 :
-			  ((j < 248 || (i == 16 && j == 248)) ? 0 :
-			  _corrector_type_2[j - 248]);
+			_corrector_type[i * 256 + j] = (j < _corrector_type_0[i]) ? 1 : ((j < 248 || (i == 16 && j == 248)) ? 0 : _corrector_type_2[j - 248]);
 		}
 	}
 }
 
 void Indeo3Decoder::allocFrames() {
-	int32 luma_width   = (_surface->w + 3) & (~3);
-	int32 luma_height  = (_surface->h + 3) & (~3);
+	int32 luma_width = (_surface->w + 3) & (~3);
+	int32 luma_height = (_surface->h + 3) & (~3);
 
-	int32 chroma_width  = ((luma_width  >> 2) + 3) & (~3);
+	int32 chroma_width = ((luma_width >> 2) + 3) & (~3);
 	int32 chroma_height = ((luma_height >> 2) + 3) & (~3);
 
 	int32 luma_pixels = luma_width * luma_height;
 	int32 chroma_pixels = chroma_width * chroma_height;
 
-	uint32 bufsize = luma_pixels * 2 + luma_width * 3 +
-		(chroma_pixels + chroma_width) * 4;
+	uint32 bufsize = luma_pixels * 2 + luma_width * 3 + (chroma_pixels + chroma_width) * 4;
 
-	_iv_frame[0].y_w  = _iv_frame[1].y_w  = luma_width;
-	_iv_frame[0].y_h  = _iv_frame[1].y_h  = luma_height;
+	_iv_frame[0].y_w = _iv_frame[1].y_w = luma_width;
+	_iv_frame[0].y_h = _iv_frame[1].y_h = luma_height;
 	_iv_frame[0].uv_w = _iv_frame[1].uv_w = chroma_width;
 	_iv_frame[0].uv_h = _iv_frame[1].uv_h = chroma_height;
 
@@ -174,14 +171,13 @@ void Indeo3Decoder::allocFrames() {
 	_iv_frame[1].Vbuf = _iv_frame[0].the_buf + offs;
 
 	for (int i = 1; i <= luma_width; i++)
-		_iv_frame[0].Ybuf[-i] = _iv_frame[1].Ybuf[-i] =
-			_iv_frame[0].Ubuf[-i] = 0x80;
+		_iv_frame[0].Ybuf[-i] = _iv_frame[1].Ybuf[-i] = _iv_frame[0].Ubuf[-i] = 0x80;
 
 	for (int i = 1; i <= chroma_width; i++) {
 		_iv_frame[1].Ubuf[-i] = 0x80;
 		_iv_frame[0].Vbuf[-i] = 0x80;
 		_iv_frame[1].Vbuf[-i] = 0x80;
-		_iv_frame[1].Vbuf[chroma_pixels+i-1] = 0x80;
+		_iv_frame[1].Vbuf[chroma_pixels + i - 1] = 0x80;
 	}
 }
 
@@ -198,11 +194,11 @@ const Graphics::Surface *Indeo3Decoder::decodeFrame(Common::SeekableReadStream &
 		return 0;
 
 	stream.seek(16); // Behind header
-	stream.skip(2);  // Unknown
+	stream.skip(2); // Unknown
 
 	uint16 flags1 = stream.readUint16LE();
 	uint32 flags3 = stream.readUint32LE();
-	uint8  flags2 = stream.readByte();
+	uint8 flags2 = stream.readByte();
 
 	// Finding the reference frame
 	if (flags1 & 0x200) {
@@ -219,10 +215,10 @@ const Graphics::Surface *Indeo3Decoder::decodeFrame(Common::SeekableReadStream &
 	stream.skip(3);
 
 	uint16 fHeight = stream.readUint16LE();
-	uint16 fWidth  = stream.readUint16LE();
+	uint16 fWidth = stream.readUint16LE();
 
 	uint32 chromaHeight = ((fHeight >> 2) + 3) & 0x7FFC;
-	uint32 chromaWidth  = ((fWidth  >> 2) + 3) & 0x7FFC;
+	uint32 chromaWidth = ((fWidth >> 2) + 3) & 0x7FFC;
 
 	uint32 offs;
 	uint32 offsY = stream.readUint32LE() + 16;
@@ -263,21 +259,21 @@ const Graphics::Surface *Indeo3Decoder::decodeFrame(Common::SeekableReadStream &
 	buf_pos = inData + offsY + 4 - hPos;
 	offs = stream.readUint32LE();
 	decodeChunk(_cur_frame->Ybuf, _ref_frame->Ybuf, fWidth, fHeight,
-			buf_pos + offs * 2, flags2, hdr_pos, buf_pos, MIN<int>(fWidth, 160));
+	            buf_pos + offs * 2, flags2, hdr_pos, buf_pos, MIN<int>(fWidth, 160));
 
 	// Chrominance U
 	stream.seek(offsU);
 	buf_pos = inData + offsU + 4 - hPos;
 	offs = stream.readUint32LE();
 	decodeChunk(_cur_frame->Vbuf, _ref_frame->Vbuf, chromaWidth, chromaHeight,
-			buf_pos + offs * 2, flags2, hdr_pos, buf_pos, MIN<int>(chromaWidth, 40));
+	            buf_pos + offs * 2, flags2, hdr_pos, buf_pos, MIN<int>(chromaWidth, 40));
 
 	// Chrominance V
 	stream.seek(offsV);
 	buf_pos = inData + offsV + 4 - hPos;
 	offs = stream.readUint32LE();
 	decodeChunk(_cur_frame->Ubuf, _ref_frame->Ubuf, chromaWidth, chromaHeight,
-			buf_pos + offs * 2, flags2, hdr_pos, buf_pos, MIN<int>(chromaWidth, 40));
+	            buf_pos + offs * 2, flags2, hdr_pos, buf_pos, MIN<int>(chromaWidth, 40));
 
 	delete[] inData;
 
@@ -298,25 +294,25 @@ const Graphics::Surface *Indeo3Decoder::decodeFrame(Common::SeekableReadStream &
 	}
 
 	memcpy(tempU + (chromaWidth + 1) * chromaHeight, tempU + (chromaWidth + 1) * (chromaHeight - 1),
-			chromaWidth + 1);
+	       chromaWidth + 1);
 	memcpy(tempV + (chromaWidth + 1) * chromaHeight, tempV + (chromaWidth + 1) * (chromaHeight - 1),
-			chromaWidth + 1);
+	       chromaWidth + 1);
 
 	// Blit the frame onto the surface
-	uint32 scaleWidth  = _surface->w / fWidth;
+	uint32 scaleWidth = _surface->w / fWidth;
 	uint32 scaleHeight = _surface->h / fHeight;
 
 	if (scaleWidth == 1 && scaleHeight == 1) {
 		// Shortcut: Don't need to scale so we can decode straight to the surface
 		YUVToRGBMan.convert410(_surface, Graphics::YUVToRGBManager::kScaleITU, srcY, tempU, tempV,
-				fWidth, fHeight, fWidth, chromaWidth + 1);
+		                       fWidth, fHeight, fWidth, chromaWidth + 1);
 	} else {
 		// Need to upscale, so decode to a temp surface first
 		Graphics::Surface tempSurface;
 		tempSurface.create(fWidth, fHeight, _surface->format);
 
 		YUVToRGBMan.convert410(&tempSurface, Graphics::YUVToRGBManager::kScaleITU, srcY, tempU, tempV,
-				fWidth, fHeight, fWidth, chromaWidth + 1);
+		                       fWidth, fHeight, fWidth, chromaWidth + 1);
 
 		// Upscale
 		for (int y = 0; y < _surface->h; y++) {
@@ -327,7 +323,7 @@ const Graphics::Surface *Indeo3Decoder::decodeFrame(Common::SeekableReadStream &
 					*((uint16 *)_surface->getBasePtr(x, y)) = *((uint16 *)tempSurface.getBasePtr(x / scaleWidth, y / scaleHeight));
 				else if (_surface->format.bytesPerPixel == 4)
 					*((uint32 *)_surface->getBasePtr(x, y)) = *((uint32 *)tempSurface.getBasePtr(x / scaleWidth, y / scaleHeight));
- 			}
+			}
 		}
 
 		tempSurface.free();
@@ -351,51 +347,48 @@ typedef struct {
 
 /* ---------------------------------------------------------------------- */
 
-#define LV1_CHECK(buf1,rle_v3,lv1,lp2)  \
-	if ((lv1 & 0x80) != 0) {   \
-		if (rle_v3 != 0)         \
-			rle_v3 = 0;           \
-		else {                  \
-			rle_v3 = 1;           \
-			buf1 -= 2;            \
-		}                       \
-	}                         \
+#define LV1_CHECK(buf1, rle_v3, lv1, lp2) \
+	if ((lv1 & 0x80) != 0) {                \
+		if (rle_v3 != 0)                      \
+			rle_v3 = 0;                         \
+		else {                                \
+			rle_v3 = 1;                         \
+			buf1 -= 2;                          \
+		}                                     \
+	}                                       \
 	lp2 = 4;
 
-
-#define RLE_V3_CHECK(buf1,rle_v1,rle_v2,rle_v3)  \
-	if (rle_v3 == 0) {         \
-		rle_v2 = *buf1;         \
-		rle_v1 = 1;             \
-		if (rle_v2 > 32) {       \
-			rle_v2 -= 32;         \
-			rle_v1 = 0;           \
-		}                       \
-		rle_v3 = 1;             \
-	}                         \
+#define RLE_V3_CHECK(buf1, rle_v1, rle_v2, rle_v3) \
+	if (rle_v3 == 0) {                               \
+		rle_v2 = *buf1;                                \
+		rle_v1 = 1;                                    \
+		if (rle_v2 > 32) {                             \
+			rle_v2 -= 32;                                \
+			rle_v1 = 0;                                  \
+		}                                              \
+		rle_v3 = 1;                                    \
+	}                                                \
 	buf1--;
 
-
-#define LP2_CHECK(buf1,rle_v3,lp2)  \
-	if (lp2 == 0 && rle_v3 != 0)     \
-		rle_v3 = 0;           \
-	else {                  \
-		buf1--;               \
-		rle_v3 = 1;           \
+#define LP2_CHECK(buf1, rle_v3, lp2) \
+	if (lp2 == 0 && rle_v3 != 0)       \
+		rle_v3 = 0;                      \
+	else {                             \
+		buf1--;                          \
+		rle_v3 = 1;                      \
 	}
 
-
-#define RLE_V2_CHECK(buf1,rle_v2, rle_v3,lp2) \
-	rle_v2--;             \
-	if (rle_v2 == 0) {     \
-		rle_v3 = 0;         \
-		buf1 += 2;          \
-	}                     \
+#define RLE_V2_CHECK(buf1, rle_v2, rle_v3, lp2) \
+	rle_v2--;                                     \
+	if (rle_v2 == 0) {                            \
+		rle_v3 = 0;                                 \
+		buf1 += 2;                                  \
+	}                                             \
 	lp2 = 4;
 
 void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
-		const byte *buf1, uint32 fflags2, const byte *hdr,
-		const byte *buf2, int min_width_160) {
+                                const byte *buf1, uint32 fflags2, const byte *hdr,
+                                const byte *buf2, int min_width_160) {
 
 	byte bit_buf;
 	uint32 bit_pos, lv, lv1, lv2;
@@ -420,7 +413,7 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 	ref_vectors = NULL;
 
 	width_tbl = width_tbl_arr + 1;
-	i = (width < 0 ? width + 3 : width)/4;
+	i = (width < 0 ? width + 3 : width) / 4;
 	for (j = -1; j < 8; j++)
 		width_tbl[j] = i * j;
 
@@ -452,17 +445,17 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 
 		if (cmd == 0) {
 			strip++;
-			memcpy(strip, strip-1, sizeof(ustr_t));
+			memcpy(strip, strip - 1, sizeof(ustr_t));
 			strip->split_flag = 1;
 			strip->split_direction = 0;
-			strip->height = (strip->height > 8 ? ((strip->height+8)>>4)<<3 : 4);
+			strip->height = (strip->height > 8 ? ((strip->height + 8) >> 4) << 3 : 4);
 			continue;
 		} else if (cmd == 1) {
 			strip++;
-			memcpy(strip, strip-1, sizeof(ustr_t));
+			memcpy(strip, strip - 1, sizeof(ustr_t));
 			strip->split_flag = 1;
 			strip->split_direction = 1;
-			strip->width = (strip->width > 8 ? ((strip->width+8)>>4)<<3 : 4);
+			strip->width = (strip->width > 8 ? ((strip->width + 8) >> 4) << 3 : 4);
 			continue;
 		} else if (cmd == 2) {
 			if (strip->usl7 == 0) {
@@ -473,7 +466,7 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 		} else if (cmd == 3) {
 			if (strip->usl7 == 0) {
 				strip->usl7 = 1;
-				ref_vectors = (const signed char*)buf2 + (*buf1 * 2);
+				ref_vectors = (const signed char *)buf2 + (*buf1 * 2);
 				buf1++;
 				continue;
 			}
@@ -487,8 +480,7 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 		blks_height = strip->height;
 
 		if (ref_vectors != NULL) {
-			ref_frm_pos = ref + (ref_vectors[0] + strip->ypos) * width +
-				ref_vectors[1] + strip->xpos;
+			ref_frm_pos = ref + (ref_vectors[0] + strip->ypos) * width + ref_vectors[1] + strip->xpos;
 		} else
 			ref_frm_pos = cur_frm_pos - width_tbl[4];
 
@@ -504,7 +496,7 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 			if (cmd == 0 || ref_vectors != NULL) {
 				for (lp1 = 0; lp1 < blks_width; lp1++) {
 					for (i = 0, j = 0; i < blks_height; i++, j += width_tbl[1])
-						((uint32 *)cur_frm_pos)[j] = READ_UINT32(((uint32 *)ref_frm_pos)+j);
+						((uint32 *)cur_frm_pos)[j] = READ_UINT32(((uint32 *)ref_frm_pos) + j);
 					cur_frm_pos += 4;
 					ref_frm_pos += 4;
 				}
@@ -520,8 +512,8 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 				cp2 = _ModPred + ((lv - 8) << 7);
 				cp = ref_frm_pos;
 				for (i = 0; i < blks_width << 2; i++) {
-						int v = *cp >> 1;
-						*(cp++) = cp2[v];
+					int v = *cp >> 1;
+					*(cp++) = cp2[v];
 				}
 			}
 
@@ -540,187 +532,395 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 			}
 
 			switch (k) {
-				case 1:
-				case 0:                    /********** CASE 0 **********/
-					for ( ; blks_height > 0; blks_height -= 4) {
-						for (lp1 = 0; lp1 < blks_width; lp1++) {
-							for (lp2 = 0; lp2 < 4; ) {
-								k = *buf1++;
-								cur_lp = ((uint32 *)cur_frm_pos) + width_tbl[lp2];
-								ref_lp = ((uint32 *)ref_frm_pos) + width_tbl[lp2];
+			case 1:
+			case 0: /********** CASE 0 **********/
+				for (; blks_height > 0; blks_height -= 4) {
+					for (lp1 = 0; lp1 < blks_width; lp1++) {
+						for (lp2 = 0; lp2 < 4;) {
+							k = *buf1++;
+							cur_lp = ((uint32 *)cur_frm_pos) + width_tbl[lp2];
+							ref_lp = ((uint32 *)ref_frm_pos) + width_tbl[lp2];
 
-								switch (correction_type_sp[0][k]) {
-									case 0:
-										*cur_lp = FROM_LE_32(((READ_LE_UINT32(ref_lp) >> 1) + correction_lp[lp2 & 0x01][k]) << 1);
-										lp2++;
-										break;
+							switch (correction_type_sp[0][k]) {
+							case 0:
+								*cur_lp = FROM_LE_32(((READ_LE_UINT32(ref_lp) >> 1) + correction_lp[lp2 & 0x01][k]) << 1);
+								lp2++;
+								break;
 
-									case 1:
-										if (correction_type_sp[0][*buf1] != 1) {
-											// both correction types must be DYAD. If it's not the case
-											// we have an incorrect data and we should skip the rest.
-											// This occurs in some Urban Runner videos, and produced a glitch.
-											// The glitch is not visible anymore if we skip this part of the frame.
-											// The old Y values are then used.
-											// This is also the behavior of the codec in the original game.
-											//warning("Glitch");
-											return;
-										}
-										res = ((READ_LE_UINT16(((uint16 *)(ref_lp))) >> 1) + correction_lp[lp2 & 0x01][*buf1]) << 1;
-										((uint16 *)cur_lp)[0] = FROM_LE_16(res);
-										res = ((READ_LE_UINT16(((uint16 *)(ref_lp))+1) >> 1) + correction_lp[lp2 & 0x01][k]) << 1;
-										((uint16 *)cur_lp)[1] = FROM_LE_16(res);
-										buf1++;
-										lp2++;
-										break;
-
-									case 2:
-										if (lp2 == 0) {
-											for (i = 0, j = 0; i < 2; i++, j += width_tbl[1])
-												cur_lp[j] = READ_UINT32(ref_lp+j);
-											lp2 += 2;
-										}
-										break;
-
-									case 3:
-										if (lp2 < 2) {
-											for (i = 0, j = 0; i < (3 - lp2); i++, j += width_tbl[1])
-												cur_lp[j] = READ_UINT32(ref_lp+j);
-											lp2 = 3;
-										}
-										break;
-
-									case 8:
-										if (lp2 == 0) {
-											RLE_V3_CHECK(buf1,rle_v1,rle_v2,rle_v3)
-
-											if (rle_v1 == 1 || ref_vectors != NULL) {
-												for (i = 0, j = 0; i < 4; i++, j += width_tbl[1])
-													cur_lp[j] = READ_UINT32(ref_lp+j);
-											}
-
-											RLE_V2_CHECK(buf1,rle_v2, rle_v3,lp2)
-											break;
-										} else {
-											rle_v1 = 1;
-											rle_v2 = *buf1 - 1;
-										}
-										// fall through
-									case 5:
-										LP2_CHECK(buf1,rle_v3,lp2)
-										// fall through
-									case 4:
-										for (i = 0, j = 0; i < (4 - lp2); i++, j += width_tbl[1])
-											cur_lp[j] = READ_UINT32(ref_lp+j);
-										lp2 = 4;
-										break;
-
-									case 7:
-										if (rle_v3 != 0)
-											rle_v3 = 0;
-										else {
-											buf1--;
-											rle_v3 = 1;
-										}
-										// fall through
-									case 6:
-										if (lp2 > 0) {
-											//This case can't happen either.
-											//If it occurs, it must happen on the first line.
-											//warning("Glitch");
-											return;
-										}
-										if (ref_vectors != NULL) {
-											for (i = 0, j = 0; i < 4; i++, j += width_tbl[1])
-												cur_lp[j] = READ_UINT32(ref_lp+j);
-										}
-										lp2 = 4;
-										break;
-
-									case 9:
-										lv1 = *buf1++;
-										lv = (lv1 & 0x7F) << 1;
-										lv += (lv << 8);
-										lv += (lv << 16);
-										for (i = 0, j = 0; i < 4; i++, j += width_tbl[1])
-											cur_lp[j] = lv;
-
-										LV1_CHECK(buf1,rle_v3,lv1,lp2)
-										break;
-
-									default:
-										return;
+							case 1:
+								if (correction_type_sp[0][*buf1] != 1) {
+									// both correction types must be DYAD. If it's not the case
+									// we have an incorrect data and we should skip the rest.
+									// This occurs in some Urban Runner videos, and produced a glitch.
+									// The glitch is not visible anymore if we skip this part of the frame.
+									// The old Y values are then used.
+									// This is also the behavior of the codec in the original game.
+									//warning("Glitch");
+									return;
 								}
-							}
+								res = ((READ_LE_UINT16(((uint16 *)(ref_lp))) >> 1) + correction_lp[lp2 & 0x01][*buf1]) << 1;
+								((uint16 *)cur_lp)[0] = FROM_LE_16(res);
+								res = ((READ_LE_UINT16(((uint16 *)(ref_lp)) + 1) >> 1) + correction_lp[lp2 & 0x01][k]) << 1;
+								((uint16 *)cur_lp)[1] = FROM_LE_16(res);
+								buf1++;
+								lp2++;
+								break;
 
-							cur_frm_pos += 4;
-							ref_frm_pos += 4;
+							case 2:
+								if (lp2 == 0) {
+									for (i = 0, j = 0; i < 2; i++, j += width_tbl[1])
+										cur_lp[j] = READ_UINT32(ref_lp + j);
+									lp2 += 2;
+								}
+								break;
+
+							case 3:
+								if (lp2 < 2) {
+									for (i = 0, j = 0; i < (3 - lp2); i++, j += width_tbl[1])
+										cur_lp[j] = READ_UINT32(ref_lp + j);
+									lp2 = 3;
+								}
+								break;
+
+							case 8:
+								if (lp2 == 0) {
+									RLE_V3_CHECK(buf1, rle_v1, rle_v2, rle_v3)
+
+									if (rle_v1 == 1 || ref_vectors != NULL) {
+										for (i = 0, j = 0; i < 4; i++, j += width_tbl[1])
+											cur_lp[j] = READ_UINT32(ref_lp + j);
+									}
+
+									RLE_V2_CHECK(buf1, rle_v2, rle_v3, lp2)
+									break;
+								} else {
+									rle_v1 = 1;
+									rle_v2 = *buf1 - 1;
+								}
+								// fall through
+							case 5:
+								LP2_CHECK(buf1, rle_v3, lp2)
+								// fall through
+							case 4:
+								for (i = 0, j = 0; i < (4 - lp2); i++, j += width_tbl[1])
+									cur_lp[j] = READ_UINT32(ref_lp + j);
+								lp2 = 4;
+								break;
+
+							case 7:
+								if (rle_v3 != 0)
+									rle_v3 = 0;
+								else {
+									buf1--;
+									rle_v3 = 1;
+								}
+								// fall through
+							case 6:
+								if (lp2 > 0) {
+									//This case can't happen either.
+									//If it occurs, it must happen on the first line.
+									//warning("Glitch");
+									return;
+								}
+								if (ref_vectors != NULL) {
+									for (i = 0, j = 0; i < 4; i++, j += width_tbl[1])
+										cur_lp[j] = READ_UINT32(ref_lp + j);
+								}
+								lp2 = 4;
+								break;
+
+							case 9:
+								lv1 = *buf1++;
+								lv = (lv1 & 0x7F) << 1;
+								lv += (lv << 8);
+								lv += (lv << 16);
+								for (i = 0, j = 0; i < 4; i++, j += width_tbl[1])
+									cur_lp[j] = lv;
+
+								LV1_CHECK(buf1, rle_v3, lv1, lp2)
+								break;
+
+							default:
+								return;
+							}
 						}
 
-						cur_frm_pos += ((width - blks_width) * 4);
-						ref_frm_pos += ((width - blks_width) * 4);
+						cur_frm_pos += 4;
+						ref_frm_pos += 4;
 					}
-					break;
 
-				case 4:
-				case 3:                    /********** CASE 3 **********/
-					if (ref_vectors != NULL)
-						return;
+					cur_frm_pos += ((width - blks_width) * 4);
+					ref_frm_pos += ((width - blks_width) * 4);
+				}
+				break;
+
+			case 4:
+			case 3: /********** CASE 3 **********/
+				if (ref_vectors != NULL)
+					return;
+				flag1 = 1;
+
+				for (; blks_height > 0; blks_height -= 8) {
+					for (lp1 = 0; lp1 < blks_width; lp1++) {
+						for (lp2 = 0; lp2 < 4;) {
+							k = *buf1++;
+
+							cur_lp = ((uint32 *)cur_frm_pos) + width_tbl[lp2 * 2];
+							ref_lp = ((uint32 *)cur_frm_pos) + width_tbl[(lp2 * 2) - 1];
+
+							switch (correction_type_sp[lp2 & 0x01][k]) {
+							case 0:
+								cur_lp[width_tbl[1]] = FROM_LE_32(((READ_LE_UINT32(ref_lp) >> 1) + correction_lp[lp2 & 0x01][k]) << 1);
+								if (lp2 > 0 || flag1 == 0 || strip->ypos != 0)
+									cur_lp[0] = ((cur_lp[-width_tbl[1]] >> 1) + (cur_lp[width_tbl[1]] >> 1)) & 0xFEFEFEFE;
+								else
+									cur_lp[0] = FROM_LE_32(((READ_LE_UINT32(ref_lp) >> 1) + correction_lp[lp2 & 0x01][k]) << 1);
+								lp2++;
+								break;
+
+							case 1:
+								res = ((READ_LE_UINT16(((uint16 *)ref_lp)) >> 1) + correction_lp[lp2 & 0x01][*buf1]) << 1;
+								((uint16 *)cur_lp)[width_tbl[2]] = FROM_LE_16(res);
+								res = ((READ_LE_UINT16(((uint16 *)ref_lp) + 1) >> 1) + correction_lp[lp2 & 0x01][k]) << 1;
+								((uint16 *)cur_lp)[width_tbl[2] + 1] = FROM_LE_16(res);
+
+								if (lp2 > 0 || flag1 == 0 || strip->ypos != 0)
+									cur_lp[0] = ((cur_lp[-width_tbl[1]] >> 1) + (cur_lp[width_tbl[1]] >> 1)) & 0xFEFEFEFE;
+								else
+									cur_lp[0] = cur_lp[width_tbl[1]];
+								buf1++;
+								lp2++;
+								break;
+
+							case 2:
+								if (lp2 == 0) {
+									for (i = 0, j = 0; i < 4; i++, j += width_tbl[1])
+										cur_lp[j] = READ_UINT32(ref_lp);
+									lp2 += 2;
+								}
+								break;
+
+							case 3:
+								if (lp2 < 2) {
+									for (i = 0, j = 0; i < 6 - (lp2 * 2); i++, j += width_tbl[1])
+										cur_lp[j] = READ_UINT32(ref_lp);
+									lp2 = 3;
+								}
+								break;
+
+							case 6:
+								lp2 = 4;
+								break;
+
+							case 7:
+								if (rle_v3 != 0)
+									rle_v3 = 0;
+								else {
+									buf1--;
+									rle_v3 = 1;
+								}
+								lp2 = 4;
+								break;
+
+							case 8:
+								if (lp2 == 0) {
+									RLE_V3_CHECK(buf1, rle_v1, rle_v2, rle_v3)
+
+									if (rle_v1 == 1) {
+										for (i = 0, j = 0; i < 8; i++, j += width_tbl[1])
+											cur_lp[j] = READ_UINT32(ref_lp + j);
+									}
+
+									RLE_V2_CHECK(buf1, rle_v2, rle_v3, lp2)
+									break;
+								} else {
+									rle_v2 = (*buf1) - 1;
+									rle_v1 = 1;
+								}
+								// fall through
+							case 5:
+								LP2_CHECK(buf1, rle_v3, lp2)
+								// fall through
+							case 4:
+								for (i = 0, j = 0; i < 8 - (lp2 * 2); i++, j += width_tbl[1])
+									cur_lp[j] = READ_UINT32(ref_lp);
+								lp2 = 4;
+								break;
+
+							case 9:
+								warning("Indeo3Decoder::decodeChunk: Untested (1)");
+								lv1 = *buf1++;
+								lv = (lv1 & 0x7F) << 1;
+								lv += (lv << 8);
+								lv += (lv << 16);
+
+								for (i = 0, j = 0; i < 4; i++, j += width_tbl[1])
+									cur_lp[j] = lv;
+
+								LV1_CHECK(buf1, rle_v3, lv1, lp2)
+								break;
+
+							default:
+								return;
+							}
+						}
+
+						cur_frm_pos += 4;
+					}
+
+					cur_frm_pos += (((width * 2) - blks_width) * 4);
+					flag1 = 0;
+				}
+				break;
+
+			case 10: /********** CASE 10 **********/
+				if (ref_vectors == NULL) {
 					flag1 = 1;
 
-					for ( ; blks_height > 0; blks_height -= 8) {
-						for (lp1 = 0; lp1 < blks_width; lp1++) {
-							for (lp2 = 0; lp2 < 4; ) {
+					for (; blks_height > 0; blks_height -= 8) {
+						for (lp1 = 0; lp1 < blks_width; lp1 += 2) {
+							for (lp2 = 0; lp2 < 4;) {
 								k = *buf1++;
-
 								cur_lp = ((uint32 *)cur_frm_pos) + width_tbl[lp2 * 2];
 								ref_lp = ((uint32 *)cur_frm_pos) + width_tbl[(lp2 * 2) - 1];
+								lv1 = READ_UINT32(ref_lp);
+								lv2 = READ_UINT32(ref_lp + 1);
+								if (lp2 == 0 && flag1 != 0) {
+#if defined(SCUMM_BIG_ENDIAN)
+									lv1 = lv1 & 0xFF00FF00;
+									lv1 = (lv1 >> 8) | lv1;
+									lv2 = lv2 & 0xFF00FF00;
+									lv2 = (lv2 >> 8) | lv2;
+#else
+									lv1 = lv1 & 0x00FF00FF;
+									lv1 = (lv1 << 8) | lv1;
+									lv2 = lv2 & 0x00FF00FF;
+									lv2 = (lv2 << 8) | lv2;
+#endif
+								}
 
 								switch (correction_type_sp[lp2 & 0x01][k]) {
-									case 0:
-										cur_lp[width_tbl[1]] = FROM_LE_32(((READ_LE_UINT32(ref_lp) >> 1) + correction_lp[lp2 & 0x01][k]) << 1);
-										if (lp2 > 0 || flag1 == 0 || strip->ypos != 0)
+								case 0:
+									cur_lp[width_tbl[1]] = FROM_LE_32(((FROM_LE_32(lv1) >> 1) + correctionloworder_lp[lp2 & 0x01][k]) << 1);
+									cur_lp[width_tbl[1] + 1] = FROM_LE_32(((FROM_LE_32(lv2) >> 1) + correctionhighorder_lp[lp2 & 0x01][k]) << 1);
+									if (lp2 > 0 || strip->ypos != 0 || flag1 == 0) {
+										cur_lp[0] = ((cur_lp[-width_tbl[1]] >> 1) + (cur_lp[width_tbl[1]] >> 1)) & 0xFEFEFEFE;
+										cur_lp[1] = ((cur_lp[-width_tbl[1] + 1] >> 1) + (cur_lp[width_tbl[1] + 1] >> 1)) & 0xFEFEFEFE;
+									} else {
+										cur_lp[0] = cur_lp[width_tbl[1]];
+										cur_lp[1] = cur_lp[width_tbl[1] + 1];
+									}
+									lp2++;
+									break;
+
+								case 1:
+									if (correction_type_sp[lp2 & 0x01][*buf1] != 1) {
+										//See the mode 0/1
+										//warning("Glitch");
+										return;
+									}
+									cur_lp[width_tbl[1]] = FROM_LE_32(((FROM_LE_32(lv1) >> 1) + correctionloworder_lp[lp2 & 0x01][*buf1]) << 1);
+									cur_lp[width_tbl[1] + 1] = FROM_LE_32(((FROM_LE_32(lv2) >> 1) + correctionloworder_lp[lp2 & 0x01][k]) << 1);
+									if (lp2 > 0 || strip->ypos != 0 || flag1 == 0) {
+										cur_lp[0] = ((cur_lp[-width_tbl[1]] >> 1) + (cur_lp[width_tbl[1]] >> 1)) & 0xFEFEFEFE;
+										cur_lp[1] = ((cur_lp[-width_tbl[1] + 1] >> 1) + (cur_lp[width_tbl[1] + 1] >> 1)) & 0xFEFEFEFE;
+									} else {
+										cur_lp[0] = cur_lp[width_tbl[1]];
+										cur_lp[1] = cur_lp[width_tbl[1] + 1];
+									}
+									buf1++;
+									lp2++;
+									break;
+
+								case 2:
+									if (lp2 == 0) {
+										if (flag1 != 0) {
+											for (i = 0, j = width_tbl[1]; i < 3; i++, j += width_tbl[1]) {
+												cur_lp[j] = lv1;
+												cur_lp[j + 1] = lv2;
+											}
 											cur_lp[0] = ((cur_lp[-width_tbl[1]] >> 1) + (cur_lp[width_tbl[1]] >> 1)) & 0xFEFEFEFE;
-										else
-											cur_lp[0] = FROM_LE_32(((READ_LE_UINT32(ref_lp) >> 1) + correction_lp[lp2 & 0x01][k]) << 1);
-										lp2++;
-										break;
+											cur_lp[1] = ((cur_lp[-width_tbl[1] + 1] >> 1) + (cur_lp[width_tbl[1] + 1] >> 1)) & 0xFEFEFEFE;
+										} else {
+											for (i = 0, j = 0; i < 4; i++, j += width_tbl[1]) {
+												cur_lp[j] = lv1;
+												cur_lp[j + 1] = lv2;
+											}
+										}
+										lp2 += 2;
+									}
+									break;
 
-									case 1:
-										res = ((READ_LE_UINT16(((uint16 *)ref_lp)) >> 1) + correction_lp[lp2 & 0x01][*buf1]) << 1;
-										((uint16 *)cur_lp)[width_tbl[2]] = FROM_LE_16(res);
-										res = ((READ_LE_UINT16(((uint16 *)ref_lp)+1) >> 1) + correction_lp[lp2 & 0x01][k]) << 1;
-										((uint16 *)cur_lp)[width_tbl[2]+1] = FROM_LE_16(res);
-
-										if (lp2 > 0 || flag1 == 0 || strip->ypos != 0)
+								case 3:
+									if (lp2 < 2) {
+										if (lp2 == 0 && flag1 != 0) {
+											for (i = 0, j = width_tbl[1]; i < 5; i++, j += width_tbl[1]) {
+												cur_lp[j] = lv1;
+												cur_lp[j + 1] = lv2;
+											}
 											cur_lp[0] = ((cur_lp[-width_tbl[1]] >> 1) + (cur_lp[width_tbl[1]] >> 1)) & 0xFEFEFEFE;
-										else
-											cur_lp[0] = cur_lp[width_tbl[1]];
-										buf1++;
-										lp2++;
-										break;
-
-									case 2:
-										if (lp2 == 0) {
-											for (i = 0, j = 0; i < 4; i++, j += width_tbl[1])
-												cur_lp[j] = READ_UINT32(ref_lp);
-											lp2 += 2;
+											cur_lp[1] = ((cur_lp[-width_tbl[1] + 1] >> 1) + (cur_lp[width_tbl[1] + 1] >> 1)) & 0xFEFEFEFE;
+										} else {
+											for (i = 0, j = 0; i < 6 - (lp2 * 2); i++, j += width_tbl[1]) {
+												cur_lp[j] = lv1;
+												cur_lp[j + 1] = lv2;
+											}
 										}
-										break;
+										lp2 = 3;
+									}
+									break;
 
-									case 3:
-										if (lp2 < 2) {
-											for (i = 0, j = 0; i < 6 - (lp2 * 2); i++, j += width_tbl[1])
-												cur_lp[j] = READ_UINT32(ref_lp);
-											lp2 = 3;
+								case 8:
+									if (lp2 == 0) {
+										RLE_V3_CHECK(buf1, rle_v1, rle_v2, rle_v3)
+										if (rle_v1 == 1) {
+											if (flag1 != 0) {
+												for (i = 0, j = width_tbl[1]; i < 7; i++, j += width_tbl[1]) {
+													cur_lp[j] = lv1;
+													cur_lp[j + 1] = lv2;
+												}
+												cur_lp[0] = ((cur_lp[-width_tbl[1]] >> 1) + (cur_lp[width_tbl[1]] >> 1)) & 0xFEFEFEFE;
+												cur_lp[1] = ((cur_lp[-width_tbl[1] + 1] >> 1) + (cur_lp[width_tbl[1] + 1] >> 1)) & 0xFEFEFEFE;
+											} else {
+												for (i = 0, j = 0; i < 8; i++, j += width_tbl[1]) {
+													cur_lp[j] = lv1;
+													cur_lp[j + 1] = lv2;
+												}
+											}
 										}
+										RLE_V2_CHECK(buf1, rle_v2, rle_v3, lp2)
 										break;
+									} else {
+										rle_v1 = 1;
+										rle_v2 = (*buf1) - 1;
+									}
+									// fall through
+								case 5:
+									LP2_CHECK(buf1, rle_v3, lp2)
+									// fall through
+								case 4:
+									if (lp2 == 0 && flag1 != 0) {
+										for (i = 0, j = width_tbl[1]; i < 7; i++, j += width_tbl[1]) {
+											cur_lp[j] = lv1;
+											cur_lp[j + 1] = lv2;
+										}
+										cur_lp[0] = ((cur_lp[-width_tbl[1]] >> 1) + (cur_lp[width_tbl[1]] >> 1)) & 0xFEFEFEFE;
+										cur_lp[1] = ((cur_lp[-width_tbl[1] + 1] >> 1) + (cur_lp[width_tbl[1] + 1] >> 1)) & 0xFEFEFEFE;
+									} else {
+										for (i = 0, j = 0; i < 8 - (lp2 * 2); i++, j += width_tbl[1]) {
+											cur_lp[j] = lv1;
+											cur_lp[j + 1] = lv2;
+										}
+									}
+									lp2 = 4;
+									break;
 
-									case 6:
-										lp2 = 4;
-										break;
+								case 6:
+									lp2 = 4;
+									break;
 
-									case 7:
+								case 7:
+									if (lp2 == 0) {
 										if (rle_v3 != 0)
 											rle_v3 = 0;
 										else {
@@ -728,471 +928,263 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 											rle_v3 = 1;
 										}
 										lp2 = 4;
-										break;
+									}
+									break;
 
-									case 8:
-										if (lp2 == 0) {
-											RLE_V3_CHECK(buf1,rle_v1,rle_v2,rle_v3)
+								case 9:
+									warning("Indeo3Decoder::decodeChunk: Untested (2)");
+									lv1 = *buf1;
+									lv = (lv1 & 0x7F) << 1;
+									lv += (lv << 8);
+									lv += (lv << 16);
+									for (i = 0, j = 0; i < 8; i++, j += width_tbl[1])
+										cur_lp[j] = lv;
+									LV1_CHECK(buf1, rle_v3, lv1, lp2)
+									break;
 
-											if (rle_v1 == 1) {
-												for (i = 0, j = 0; i < 8; i++, j += width_tbl[1])
-													cur_lp[j] = READ_UINT32(ref_lp+j);
-											}
-
-											RLE_V2_CHECK(buf1,rle_v2, rle_v3,lp2)
-											break;
-										} else {
-											rle_v2 = (*buf1) - 1;
-											rle_v1 = 1;
-										}
-										// fall through
-									case 5:
-										LP2_CHECK(buf1,rle_v3,lp2)
-										// fall through
-									case 4:
-										for (i = 0, j = 0; i < 8 - (lp2 * 2); i++, j += width_tbl[1])
-											cur_lp[j] = READ_UINT32(ref_lp);
-										lp2 = 4;
-										break;
-
-									case 9:
-										warning("Indeo3Decoder::decodeChunk: Untested (1)");
-										lv1 = *buf1++;
-										lv = (lv1 & 0x7F) << 1;
-										lv += (lv << 8);
-										lv += (lv << 16);
-
-										for (i = 0, j = 0; i < 4; i++, j += width_tbl[1])
-											cur_lp[j] = lv;
-
-										LV1_CHECK(buf1,rle_v3,lv1,lp2)
-										break;
-
-									default:
-										return;
+								default:
+									return;
 								}
 							}
 
-							cur_frm_pos += 4;
+							cur_frm_pos += 8;
 						}
 
 						cur_frm_pos += (((width * 2) - blks_width) * 4);
 						flag1 = 0;
 					}
-					break;
-
-				case 10:                    /********** CASE 10 **********/
-					if (ref_vectors == NULL) {
-						flag1 = 1;
-
-						for ( ; blks_height > 0; blks_height -= 8) {
-							for (lp1 = 0; lp1 < blks_width; lp1 += 2) {
-								for (lp2 = 0; lp2 < 4; ) {
-									k = *buf1++;
-									cur_lp = ((uint32 *)cur_frm_pos) + width_tbl[lp2 * 2];
-									ref_lp = ((uint32 *)cur_frm_pos) + width_tbl[(lp2 * 2) - 1];
-									lv1 = READ_UINT32(ref_lp);
-									lv2 = READ_UINT32(ref_lp+1);
-									if (lp2 == 0 && flag1 != 0) {
-#if defined(SCUMM_BIG_ENDIAN)
-										lv1 = lv1 & 0xFF00FF00;
-										lv1 = (lv1 >> 8) | lv1;
-										lv2 = lv2 & 0xFF00FF00;
-										lv2 = (lv2 >> 8) | lv2;
-#else
-										lv1 = lv1 & 0x00FF00FF;
-										lv1 = (lv1 << 8) | lv1;
-										lv2 = lv2 & 0x00FF00FF;
-										lv2 = (lv2 << 8) | lv2;
-#endif
-									}
-
-									switch (correction_type_sp[lp2 & 0x01][k]) {
-										case 0:
-											cur_lp[width_tbl[1]] = FROM_LE_32(((FROM_LE_32(lv1) >> 1) + correctionloworder_lp[lp2 & 0x01][k]) << 1);
-											cur_lp[width_tbl[1]+1] = FROM_LE_32(((FROM_LE_32(lv2) >> 1) + correctionhighorder_lp[lp2 & 0x01][k]) << 1);
-											if (lp2 > 0 || strip->ypos != 0 || flag1 == 0) {
-												cur_lp[0] = ((cur_lp[-width_tbl[1]] >> 1) + (cur_lp[width_tbl[1]] >> 1)) & 0xFEFEFEFE;
-												cur_lp[1] = ((cur_lp[-width_tbl[1]+1] >> 1) + (cur_lp[width_tbl[1]+1] >> 1)) & 0xFEFEFEFE;
-											} else {
-												cur_lp[0] = cur_lp[width_tbl[1]];
-												cur_lp[1] = cur_lp[width_tbl[1]+1];
-											}
-											lp2++;
-											break;
-
-										case 1:
-											if (correction_type_sp[lp2 & 0x01][*buf1] != 1) {
-												//See the mode 0/1
-												//warning("Glitch");
-												return;
-											}
-											cur_lp[width_tbl[1]] = FROM_LE_32(((FROM_LE_32(lv1) >> 1) + correctionloworder_lp[lp2 & 0x01][*buf1]) << 1);
-											cur_lp[width_tbl[1]+1] = FROM_LE_32(((FROM_LE_32(lv2) >> 1) + correctionloworder_lp[lp2 & 0x01][k]) << 1);
-											if (lp2 > 0 || strip->ypos != 0 || flag1 == 0) {
-												cur_lp[0] = ((cur_lp[-width_tbl[1]] >> 1) + (cur_lp[width_tbl[1]] >> 1)) & 0xFEFEFEFE;
-												cur_lp[1] = ((cur_lp[-width_tbl[1]+1] >> 1) + (cur_lp[width_tbl[1]+1] >> 1)) & 0xFEFEFEFE;
-											} else {
-												cur_lp[0] = cur_lp[width_tbl[1]];
-												cur_lp[1] = cur_lp[width_tbl[1]+1];
-											}
-											buf1++;
-											lp2++;
-											break;
-
-										case 2:
-											if (lp2 == 0) {
-												if (flag1 != 0) {
-													for (i = 0, j = width_tbl[1]; i < 3; i++, j += width_tbl[1]) {
-														cur_lp[j] = lv1;
-														cur_lp[j+1] = lv2;
-													}
-													cur_lp[0] = ((cur_lp[-width_tbl[1]] >> 1) + (cur_lp[width_tbl[1]] >> 1)) & 0xFEFEFEFE;
-													cur_lp[1] = ((cur_lp[-width_tbl[1]+1] >> 1) + (cur_lp[width_tbl[1]+1] >> 1)) & 0xFEFEFEFE;
-												} else {
-													for (i = 0, j = 0; i < 4; i++, j += width_tbl[1]) {
-														cur_lp[j] = lv1;
-														cur_lp[j+1] = lv2;
-													}
-												}
-												lp2 += 2;
-											}
-											break;
-
-										case 3:
-											if (lp2 < 2) {
-												if (lp2 == 0 && flag1 != 0) {
-													for (i = 0, j = width_tbl[1]; i < 5; i++, j += width_tbl[1]) {
-														cur_lp[j] = lv1;
-														cur_lp[j+1] = lv2;
-													}
-													cur_lp[0] = ((cur_lp[-width_tbl[1]] >> 1) + (cur_lp[width_tbl[1]] >> 1)) & 0xFEFEFEFE;
-													cur_lp[1] = ((cur_lp[-width_tbl[1]+1] >> 1) + (cur_lp[width_tbl[1]+1] >> 1)) & 0xFEFEFEFE;
-												} else {
-													for (i = 0, j = 0; i < 6 - (lp2 * 2); i++, j += width_tbl[1]) {
-														cur_lp[j] = lv1;
-														cur_lp[j+1] = lv2;
-													}
-												}
-												lp2 = 3;
-											}
-											break;
-
-										case 8:
-											if (lp2 == 0) {
-												RLE_V3_CHECK(buf1,rle_v1,rle_v2,rle_v3)
-												if (rle_v1 == 1) {
-													if (flag1 != 0) {
-														for (i = 0, j = width_tbl[1]; i < 7; i++, j += width_tbl[1]) {
-															cur_lp[j] = lv1;
-															cur_lp[j+1] = lv2;
-														}
-														cur_lp[0] = ((cur_lp[-width_tbl[1]] >> 1) + (cur_lp[width_tbl[1]] >> 1)) & 0xFEFEFEFE;
-														cur_lp[1] = ((cur_lp[-width_tbl[1]+1] >> 1) + (cur_lp[width_tbl[1]+1] >> 1)) & 0xFEFEFEFE;
-													} else {
-														for (i = 0, j = 0; i < 8; i++, j += width_tbl[1]) {
-															cur_lp[j] = lv1;
-															cur_lp[j+1] = lv2;
-														}
-													}
-												}
-												RLE_V2_CHECK(buf1,rle_v2, rle_v3,lp2)
-												break;
-											} else {
-												rle_v1 = 1;
-												rle_v2 = (*buf1) - 1;
-											}
-											// fall through
-										case 5:
-											LP2_CHECK(buf1,rle_v3,lp2)
-											// fall through
-										case 4:
-											if (lp2 == 0 && flag1 != 0) {
-												for (i = 0, j = width_tbl[1]; i < 7; i++, j += width_tbl[1]) {
-													cur_lp[j] = lv1;
-													cur_lp[j+1] = lv2;
-												}
-												cur_lp[0] = ((cur_lp[-width_tbl[1]] >> 1) + (cur_lp[width_tbl[1]] >> 1)) & 0xFEFEFEFE;
-												cur_lp[1] = ((cur_lp[-width_tbl[1]+1] >> 1) + (cur_lp[width_tbl[1]+1] >> 1)) & 0xFEFEFEFE;
-											} else {
-												for (i = 0, j = 0; i < 8 - (lp2 * 2); i++, j += width_tbl[1]) {
-													cur_lp[j] = lv1;
-													cur_lp[j+1] = lv2;
-												}
-											}
-											lp2 = 4;
-											break;
-
-										case 6:
-											lp2 = 4;
-											break;
-
-										case 7:
-											if (lp2 == 0) {
-												if (rle_v3 != 0)
-													rle_v3 = 0;
-												else {
-													buf1--;
-													rle_v3 = 1;
-												}
-												lp2 = 4;
-											}
-											break;
-
-										case 9:
-											warning("Indeo3Decoder::decodeChunk: Untested (2)");
-											lv1 = *buf1;
-											lv = (lv1 & 0x7F) << 1;
-											lv += (lv << 8);
-											lv += (lv << 16);
-											for (i = 0, j = 0; i < 8; i++, j += width_tbl[1])
-												cur_lp[j] = lv;
-											LV1_CHECK(buf1,rle_v3,lv1,lp2)
-											break;
-
-										default:
-											return;
-									}
-								}
-
-								cur_frm_pos += 8;
-							}
-
-							cur_frm_pos += (((width * 2) - blks_width) * 4);
-							flag1 = 0;
-						}
-					} else {
-						for ( ; blks_height > 0; blks_height -= 8) {
-							for (lp1 = 0; lp1 < blks_width; lp1 += 2) {
-								for (lp2 = 0; lp2 < 4; ) {
-									k = *buf1++;
-									cur_lp = ((uint32 *)cur_frm_pos) + width_tbl[lp2 * 2];
-									ref_lp = ((uint32 *)ref_frm_pos) + width_tbl[lp2 * 2];
-
-									switch (correction_type_sp[lp2 & 0x01][k]) {
-										case 0:
-											lv1 = correctionloworder_lp[lp2 & 0x01][k];
-											lv2 = correctionhighorder_lp[lp2 & 0x01][k];
-											cur_lp[0] = FROM_LE_32(((READ_LE_UINT32(ref_lp) >> 1) + lv1) << 1);
-											cur_lp[1] = FROM_LE_32(((READ_LE_UINT32(ref_lp+1) >> 1) + lv2) << 1);
-											cur_lp[width_tbl[1]] = FROM_LE_32(((READ_LE_UINT32(ref_lp+width_tbl[1]) >> 1) + lv1) << 1);
-											cur_lp[width_tbl[1]+1] = FROM_LE_32(((READ_LE_UINT32(ref_lp+width_tbl[1]+1) >> 1) + lv2) << 1);
-											lp2++;
-											break;
-
-										case 1:
-											lv1 = correctionloworder_lp[lp2 & 0x01][*buf1++];
-											lv2 = correctionloworder_lp[lp2 & 0x01][k];
-											cur_lp[0] = FROM_LE_32(((READ_LE_UINT32(ref_lp) >> 1) + lv1) << 1);
-											cur_lp[1] = FROM_LE_32(((READ_LE_UINT32(ref_lp+1) >> 1) + lv2) << 1);
-											cur_lp[width_tbl[1]] = FROM_LE_32(((READ_LE_UINT32(ref_lp+width_tbl[1]) >> 1) + lv1) << 1);
-											cur_lp[width_tbl[1]+1] = FROM_LE_32(((READ_LE_UINT32(ref_lp+width_tbl[1]+1) >> 1) + lv2) << 1);
-											lp2++;
-											break;
-
-										case 2:
-											if (lp2 == 0) {
-												for (i = 0, j = 0; i < 4; i++, j += width_tbl[1]) {
-													cur_lp[j] = READ_UINT32(ref_lp+j);
-													cur_lp[j+1] = READ_UINT32(ref_lp+j+1);
-												}
-												lp2 += 2;
-											}
-											break;
-
-										case 3:
-											if (lp2 < 2) {
-												for (i = 0, j = 0; i < 6 - (lp2 * 2); i++, j += width_tbl[1]) {
-													cur_lp[j] = READ_UINT32(ref_lp+j);
-													cur_lp[j+1] = READ_UINT32(ref_lp+j+1);
-												}
-												lp2 = 3;
-											}
-											break;
-
-										case 8:
-											if (lp2 == 0) {
-												RLE_V3_CHECK(buf1,rle_v1,rle_v2,rle_v3)
-												for (i = 0, j = 0; i < 8; i++, j += width_tbl[1]) {
-													((uint32 *)cur_frm_pos)[j] = READ_UINT32(((uint32 *)ref_frm_pos)+j);
-													((uint32 *)cur_frm_pos)[j+1] = READ_UINT32(((uint32 *)ref_frm_pos)+j+1);
-												}
-												RLE_V2_CHECK(buf1,rle_v2, rle_v3,lp2)
-												break;
-											} else {
-												rle_v1 = 1;
-												rle_v2 = (*buf1) - 1;
-											}
-											// fall through
-										case 5:
-										case 7:
-											LP2_CHECK(buf1,rle_v3,lp2)
-											// fall through
-										case 6:
-										case 4:
-											for (i = 0, j = 0; i < 8 - (lp2 * 2); i++, j += width_tbl[1]) {
-												cur_lp[j] = READ_UINT32(ref_lp+j);
-												cur_lp[j+1] = READ_UINT32(ref_lp+j+1);
-											}
-											lp2 = 4;
-											break;
-
-										case 9:
-											warning("Indeo3Decoder::decodeChunk: Untested (3)");
-											lv1 = *buf1;
-											lv = (lv1 & 0x7F) << 1;
-											lv += (lv << 8);
-											lv += (lv << 16);
-											for (i = 0, j = 0; i < 8; i++, j += width_tbl[1])
-												((uint32 *)cur_frm_pos)[j] = ((uint32 *)cur_frm_pos)[j+1] = lv;
-											LV1_CHECK(buf1,rle_v3,lv1,lp2)
-											break;
-
-										default:
-											return;
-									}
-								}
-
-								cur_frm_pos += 8;
-								ref_frm_pos += 8;
-							}
-
-							cur_frm_pos += (((width * 2) - blks_width) * 4);
-							ref_frm_pos += (((width * 2) - blks_width) * 4);
-						}
-					}
-					break;
-
-				case 11:                    /********** CASE 11 **********/
-					if (ref_vectors == NULL)
-						return;
-
-					for ( ; blks_height > 0; blks_height -= 8) {
-						for (lp1 = 0; lp1 < blks_width; lp1++) {
-							for (lp2 = 0; lp2 < 4; ) {
+				} else {
+					for (; blks_height > 0; blks_height -= 8) {
+						for (lp1 = 0; lp1 < blks_width; lp1 += 2) {
+							for (lp2 = 0; lp2 < 4;) {
 								k = *buf1++;
 								cur_lp = ((uint32 *)cur_frm_pos) + width_tbl[lp2 * 2];
 								ref_lp = ((uint32 *)ref_frm_pos) + width_tbl[lp2 * 2];
 
 								switch (correction_type_sp[lp2 & 0x01][k]) {
-									case 0:
-										cur_lp[0] = FROM_LE_32(((READ_LE_UINT32(ref_lp) >> 1) + correction_lp[lp2 & 0x01][k]) << 1);
-										cur_lp[width_tbl[1]] = FROM_LE_32(((READ_LE_UINT32(ref_lp+width_tbl[1]) >> 1) + correction_lp[lp2 & 0x01][k]) << 1);
-										lp2++;
-										break;
+								case 0:
+									lv1 = correctionloworder_lp[lp2 & 0x01][k];
+									lv2 = correctionhighorder_lp[lp2 & 0x01][k];
+									cur_lp[0] = FROM_LE_32(((READ_LE_UINT32(ref_lp) >> 1) + lv1) << 1);
+									cur_lp[1] = FROM_LE_32(((READ_LE_UINT32(ref_lp + 1) >> 1) + lv2) << 1);
+									cur_lp[width_tbl[1]] = FROM_LE_32(((READ_LE_UINT32(ref_lp + width_tbl[1]) >> 1) + lv1) << 1);
+									cur_lp[width_tbl[1] + 1] = FROM_LE_32(((READ_LE_UINT32(ref_lp + width_tbl[1] + 1) >> 1) + lv2) << 1);
+									lp2++;
+									break;
 
-									case 1:
-										if (correction_type_sp[lp2 & 0x01][*buf1] != 1) {
-											// See mode 0/1
-											//warning("Glitch");
-											return;
+								case 1:
+									lv1 = correctionloworder_lp[lp2 & 0x01][*buf1++];
+									lv2 = correctionloworder_lp[lp2 & 0x01][k];
+									cur_lp[0] = FROM_LE_32(((READ_LE_UINT32(ref_lp) >> 1) + lv1) << 1);
+									cur_lp[1] = FROM_LE_32(((READ_LE_UINT32(ref_lp + 1) >> 1) + lv2) << 1);
+									cur_lp[width_tbl[1]] = FROM_LE_32(((READ_LE_UINT32(ref_lp + width_tbl[1]) >> 1) + lv1) << 1);
+									cur_lp[width_tbl[1] + 1] = FROM_LE_32(((READ_LE_UINT32(ref_lp + width_tbl[1] + 1) >> 1) + lv2) << 1);
+									lp2++;
+									break;
+
+								case 2:
+									if (lp2 == 0) {
+										for (i = 0, j = 0; i < 4; i++, j += width_tbl[1]) {
+											cur_lp[j] = READ_UINT32(ref_lp + j);
+											cur_lp[j + 1] = READ_UINT32(ref_lp + j + 1);
 										}
+										lp2 += 2;
+									}
+									break;
 
-										lv1 = (uint16)(correction_lp[lp2 & 0x01][*buf1++]);
-										lv2 = (uint16)(correction_lp[lp2 & 0x01][k]);
-										res = (uint16)(((READ_LE_UINT16(((uint16 *)ref_lp)) >> 1) + lv1) << 1);
-										((uint16 *)cur_lp)[0] = FROM_LE_16(res);
-										res = (uint16)(((READ_LE_UINT16(((uint16 *)ref_lp)+1) >> 1) + lv2) << 1);
-										((uint16 *)cur_lp)[1] = FROM_LE_16(res);
-										res = (uint16)(((READ_LE_UINT16(((uint16 *)ref_lp)+width_tbl[2]) >> 1) + lv1) << 1);
-										((uint16 *)cur_lp)[width_tbl[2]] = FROM_LE_16(res);
-										res = (uint16)(((READ_LE_UINT16(((uint16 *)ref_lp)+width_tbl[2]+1) >> 1) + lv2) << 1);
-										((uint16 *)cur_lp)[width_tbl[2]+1] = FROM_LE_16(res);
-										lp2++;
-										break;
-
-									case 2:
-										if (lp2 == 0) {
-											for (i = 0, j = 0; i < 4; i++, j += width_tbl[1])
-												cur_lp[j] = READ_UINT32(ref_lp+j);
-											lp2 += 2;
+								case 3:
+									if (lp2 < 2) {
+										for (i = 0, j = 0; i < 6 - (lp2 * 2); i++, j += width_tbl[1]) {
+											cur_lp[j] = READ_UINT32(ref_lp + j);
+											cur_lp[j + 1] = READ_UINT32(ref_lp + j + 1);
 										}
-										break;
+										lp2 = 3;
+									}
+									break;
 
-									case 3:
-										if (lp2 < 2) {
-											for (i = 0, j = 0; i < 6 - (lp2 * 2); i++, j += width_tbl[1])
-												cur_lp[j] = READ_UINT32(ref_lp+j);
-											lp2 = 3;
+								case 8:
+									if (lp2 == 0) {
+										RLE_V3_CHECK(buf1, rle_v1, rle_v2, rle_v3)
+										for (i = 0, j = 0; i < 8; i++, j += width_tbl[1]) {
+											((uint32 *)cur_frm_pos)[j] = READ_UINT32(((uint32 *)ref_frm_pos) + j);
+											((uint32 *)cur_frm_pos)[j + 1] = READ_UINT32(((uint32 *)ref_frm_pos) + j + 1);
 										}
+										RLE_V2_CHECK(buf1, rle_v2, rle_v3, lp2)
 										break;
+									} else {
+										rle_v1 = 1;
+										rle_v2 = (*buf1) - 1;
+									}
+									// fall through
+								case 5:
+								case 7:
+									LP2_CHECK(buf1, rle_v3, lp2)
+									// fall through
+								case 6:
+								case 4:
+									for (i = 0, j = 0; i < 8 - (lp2 * 2); i++, j += width_tbl[1]) {
+										cur_lp[j] = READ_UINT32(ref_lp + j);
+										cur_lp[j + 1] = READ_UINT32(ref_lp + j + 1);
+									}
+									lp2 = 4;
+									break;
 
-									case 8:
-										if (lp2 == 0) {
-											RLE_V3_CHECK(buf1,rle_v1,rle_v2,rle_v3)
+								case 9:
+									warning("Indeo3Decoder::decodeChunk: Untested (3)");
+									lv1 = *buf1;
+									lv = (lv1 & 0x7F) << 1;
+									lv += (lv << 8);
+									lv += (lv << 16);
+									for (i = 0, j = 0; i < 8; i++, j += width_tbl[1])
+										((uint32 *)cur_frm_pos)[j] = ((uint32 *)cur_frm_pos)[j + 1] = lv;
+									LV1_CHECK(buf1, rle_v3, lv1, lp2)
+									break;
 
-											for (i = 0, j = 0; i < 8; i++, j += width_tbl[1])
-												cur_lp[j] = READ_UINT32(ref_lp+j);
-
-											RLE_V2_CHECK(buf1,rle_v2, rle_v3,lp2)
-											break;
-										} else {
-											rle_v1 = 1;
-											rle_v2 = (*buf1) - 1;
-										}
-										// fall through
-									case 5:
-									case 7:
-										LP2_CHECK(buf1,rle_v3,lp2)
-										// fall through
-									case 4:
-									case 6:
-										for (i = 0, j = 0; i < 8 - (lp2 * 2); i++, j += width_tbl[1])
-											cur_lp[j] = READ_UINT32(ref_lp+j);
-										lp2 = 4;
-										break;
-
-									case 9:
-										warning("Indeo3Decoder::decodeChunk: Untested (4)");
-										lv1 = *buf1++;
-										lv = (lv1 & 0x7F) << 1;
-										lv += (lv << 8);
-										lv += (lv << 16);
-										for (i = 0, j = 0; i < 4; i++, j += width_tbl[1])
-											cur_lp[j] = lv;
-										LV1_CHECK(buf1,rle_v3,lv1,lp2)
-										break;
-
-									default:
-										return;
+								default:
+									return;
 								}
 							}
 
-							cur_frm_pos += 4;
-							ref_frm_pos += 4;
+							cur_frm_pos += 8;
+							ref_frm_pos += 8;
 						}
 
 						cur_frm_pos += (((width * 2) - blks_width) * 4);
 						ref_frm_pos += (((width * 2) - blks_width) * 4);
 					}
-					break;
+				}
+				break;
 
-				default:
-					// FIXME: I've seen case 13 happen in Urban
-					// Runner. Perhaps it uses a more recent form of
-					// Indeo 3? There appears to have been several.
-					// -> This should not happen anymore with the other skipping for bad data.
-					warning("Indeo3Decoder::decodeChunk: Unknown case %d", k);
+			case 11: /********** CASE 11 **********/
+				if (ref_vectors == NULL)
 					return;
+
+				for (; blks_height > 0; blks_height -= 8) {
+					for (lp1 = 0; lp1 < blks_width; lp1++) {
+						for (lp2 = 0; lp2 < 4;) {
+							k = *buf1++;
+							cur_lp = ((uint32 *)cur_frm_pos) + width_tbl[lp2 * 2];
+							ref_lp = ((uint32 *)ref_frm_pos) + width_tbl[lp2 * 2];
+
+							switch (correction_type_sp[lp2 & 0x01][k]) {
+							case 0:
+								cur_lp[0] = FROM_LE_32(((READ_LE_UINT32(ref_lp) >> 1) + correction_lp[lp2 & 0x01][k]) << 1);
+								cur_lp[width_tbl[1]] = FROM_LE_32(((READ_LE_UINT32(ref_lp + width_tbl[1]) >> 1) + correction_lp[lp2 & 0x01][k]) << 1);
+								lp2++;
+								break;
+
+							case 1:
+								if (correction_type_sp[lp2 & 0x01][*buf1] != 1) {
+									// See mode 0/1
+									//warning("Glitch");
+									return;
+								}
+
+								lv1 = (uint16)(correction_lp[lp2 & 0x01][*buf1++]);
+								lv2 = (uint16)(correction_lp[lp2 & 0x01][k]);
+								res = (uint16)(((READ_LE_UINT16(((uint16 *)ref_lp)) >> 1) + lv1) << 1);
+								((uint16 *)cur_lp)[0] = FROM_LE_16(res);
+								res = (uint16)(((READ_LE_UINT16(((uint16 *)ref_lp) + 1) >> 1) + lv2) << 1);
+								((uint16 *)cur_lp)[1] = FROM_LE_16(res);
+								res = (uint16)(((READ_LE_UINT16(((uint16 *)ref_lp) + width_tbl[2]) >> 1) + lv1) << 1);
+								((uint16 *)cur_lp)[width_tbl[2]] = FROM_LE_16(res);
+								res = (uint16)(((READ_LE_UINT16(((uint16 *)ref_lp) + width_tbl[2] + 1) >> 1) + lv2) << 1);
+								((uint16 *)cur_lp)[width_tbl[2] + 1] = FROM_LE_16(res);
+								lp2++;
+								break;
+
+							case 2:
+								if (lp2 == 0) {
+									for (i = 0, j = 0; i < 4; i++, j += width_tbl[1])
+										cur_lp[j] = READ_UINT32(ref_lp + j);
+									lp2 += 2;
+								}
+								break;
+
+							case 3:
+								if (lp2 < 2) {
+									for (i = 0, j = 0; i < 6 - (lp2 * 2); i++, j += width_tbl[1])
+										cur_lp[j] = READ_UINT32(ref_lp + j);
+									lp2 = 3;
+								}
+								break;
+
+							case 8:
+								if (lp2 == 0) {
+									RLE_V3_CHECK(buf1, rle_v1, rle_v2, rle_v3)
+
+									for (i = 0, j = 0; i < 8; i++, j += width_tbl[1])
+										cur_lp[j] = READ_UINT32(ref_lp + j);
+
+									RLE_V2_CHECK(buf1, rle_v2, rle_v3, lp2)
+									break;
+								} else {
+									rle_v1 = 1;
+									rle_v2 = (*buf1) - 1;
+								}
+								// fall through
+							case 5:
+							case 7:
+								LP2_CHECK(buf1, rle_v3, lp2)
+								// fall through
+							case 4:
+							case 6:
+								for (i = 0, j = 0; i < 8 - (lp2 * 2); i++, j += width_tbl[1])
+									cur_lp[j] = READ_UINT32(ref_lp + j);
+								lp2 = 4;
+								break;
+
+							case 9:
+								warning("Indeo3Decoder::decodeChunk: Untested (4)");
+								lv1 = *buf1++;
+								lv = (lv1 & 0x7F) << 1;
+								lv += (lv << 8);
+								lv += (lv << 16);
+								for (i = 0, j = 0; i < 4; i++, j += width_tbl[1])
+									cur_lp[j] = lv;
+								LV1_CHECK(buf1, rle_v3, lv1, lp2)
+								break;
+
+							default:
+								return;
+							}
+						}
+
+						cur_frm_pos += 4;
+						ref_frm_pos += 4;
+					}
+
+					cur_frm_pos += (((width * 2) - blks_width) * 4);
+					ref_frm_pos += (((width * 2) - blks_width) * 4);
+				}
+				break;
+
+			default:
+				// FIXME: I've seen case 13 happen in Urban
+				// Runner. Perhaps it uses a more recent form of
+				// Indeo 3? There appears to have been several.
+				// -> This should not happen anymore with the other skipping for bad data.
+				warning("Indeo3Decoder::decodeChunk: Unknown case %d", k);
+				return;
 			}
 		}
 
 		if (strip < strip_tbl)
 			return;
 
-		for ( ; strip >= strip_tbl; strip--) {
+		for (; strip >= strip_tbl; strip--) {
 			if (strip->split_flag != 0) {
 				strip->split_flag = 0;
-				strip->usl7 = (strip-1)->usl7;
+				strip->usl7 = (strip - 1)->usl7;
 
 				if (strip->split_direction) {
 					strip->xpos += strip->width;
-					strip->width = (strip-1)->width - strip->width;
+					strip->width = (strip - 1)->width - strip->width;
 					if (region_160_width <= strip->xpos && width < strip->width + strip->xpos)
 						strip->width = width - strip->xpos;
 				} else {
 					strip->ypos += strip->height;
-					strip->height = (strip-1)->height - strip->height;
+					strip->height = (strip - 1)->height - strip->height;
 				}
 				break;
 			}
@@ -1203,9 +1195,9 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 // static data
 
 const int Indeo3Decoder::_corrector_type_0[24] = {
-	195, 159, 133, 115, 101,  93,  87,  77,
-	195, 159, 133, 115, 101,  93,  87,  77,
-	128,  79,  79,  79,  79,  79,  79,  79
+	195, 159, 133, 115, 101, 93, 87, 77,
+	195, 159, 133, 115, 101, 93, 87, 77,
+	128, 79, 79, 79, 79, 79, 79, 79
 };
 
 const int Indeo3Decoder::_corrector_type_2[8] = { 9, 7, 6, 8, 5, 4, 3, 2 };
@@ -1981,7 +1973,6 @@ const uint32 Indeo3Decoder::correction[] = {
 	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
 };
 
-
 const uint32 Indeo3Decoder::correctionloworder[] = {
 	0x00000000, 0x02020202, 0xfdfdfdfe, 0x0302feff, 0xfcfd0101, 0xfeff0303, 0x0100fcfd, 0x04040404,
 	0xfbfbfbfc, 0x05050101, 0xfafafeff, 0x01010505, 0xfefefafb, 0x0403fbfc, 0xfbfc0404, 0x0605fdfe,
@@ -2752,7 +2743,6 @@ const uint32 Indeo3Decoder::correctionloworder[] = {
 	0x0c0c0c0c, 0xf3f3f3f4, 0x14141414, 0xebebebec, 0x20202020, 0xdfdfdfe0, 0x2e2e2e2e, 0xd1d1d1d2,
 	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
 };
-
 
 const uint32 Indeo3Decoder::correctionhighorder[] = {
 	0xdeadbeef, 0xdeadbeef, 0xdeadbeef, 0xdeadbeef, 0xdeadbeef, 0xdeadbeef, 0xdeadbeef, 0xdeadbeef,

@@ -25,11 +25,11 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CSGTStateControl, CBackground)
-	ON_MESSAGE(PETUpMsg)
-	ON_MESSAGE(PETDownMsg)
-	ON_MESSAGE(PETActivateMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(PETUpMsg)
+ON_MESSAGE(PETDownMsg)
+ON_MESSAGE(PETActivateMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(LeaveViewMsg)
 END_MESSAGE_MAP()
 
 void CSGTStateControl::save(SimpleFile *file, int indent) {

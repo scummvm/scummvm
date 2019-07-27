@@ -23,10 +23,10 @@
 #ifndef TITANIC_MAIN_GAME_WINDOW_H
 #define TITANIC_MAIN_GAME_WINDOW_H
 
-#include "titanic/core/project_item.h"
-#include "titanic/events.h"
 #include "common/array.h"
 #include "common/scummsys.h"
+#include "titanic/core/project_item.h"
+#include "titanic/events.h"
 
 namespace Common {
 struct Point;
@@ -46,6 +46,7 @@ private:
 	int _pendingLoadSlot;
 	uint32 _priorLeftDownTime;
 	uint32 _priorMiddleDownTime;
+
 private:
 	/**
 	 * Returns true if a savegame was selected to be loaded
@@ -87,6 +88,7 @@ private:
 	 * Returns true if the player can control the mouse
 	 */
 	bool isMouseControlEnabled() const;
+
 public:
 	CGameView *_gameView;
 	CGameManager *_gameManager;
@@ -94,6 +96,7 @@ public:
 	bool _inputAllowed;
 	Image *_image;
 	void *_cursor;
+
 public:
 	CMainGameWindow(TitanicEngine *vm);
 	virtual ~CMainGameWindow();

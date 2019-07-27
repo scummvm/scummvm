@@ -20,15 +20,14 @@
  *
  */
 
-
 #include "sword1/menu.h"
-#include "sword1/resman.h"
 #include "common/scummsys.h"
-#include "common/util.h"
 #include "common/system.h"
-#include "sword1/mouse.h"
-#include "sword1/screen.h"
+#include "common/util.h"
 #include "sword1/logic.h"
+#include "sword1/mouse.h"
+#include "sword1/resman.h"
+#include "sword1/screen.h"
 
 namespace Sword1 {
 
@@ -334,8 +333,8 @@ void Menu::showMenu(uint8 menuType) {
 }
 
 void Menu::fnStartMenu() {
-	Logic::_scriptVars[OBJECT_HELD]  = 0; // icon no longer selected
-	Logic::_scriptVars[SECOND_ITEM]  = 0; // second icon no longer selected (after using one on another)
+	Logic::_scriptVars[OBJECT_HELD] = 0; // icon no longer selected
+	Logic::_scriptVars[SECOND_ITEM] = 0; // second icon no longer selected (after using one on another)
 	Logic::_scriptVars[MENU_LOOKING] = 0; // no longer 'looking at' an icon
 	buildMenu();
 	showMenu(MENU_TOP);

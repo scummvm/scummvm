@@ -51,9 +51,9 @@ class RewindableAudioStream;
  * @return   a new RewindableAudioStream, or NULL, if an error occurred
  */
 RewindableAudioStream *makeXAStream(
-	Common::SeekableReadStream *stream,
-	int rate,
-	DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+  Common::SeekableReadStream *stream,
+  int rate,
+  DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 } // End of namespace Audio
 

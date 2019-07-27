@@ -34,12 +34,14 @@ class CFanControl : public CGameObject {
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool TimerMsg(CTimerMsg *msg);
+
 public:
 	int _state;
 	bool _enabled;
 	bool _starlings;
 	bool _fanOn;
 	bool _starlingsDying;
+
 public:
 	CLASSDEF;
 	CFanControl();

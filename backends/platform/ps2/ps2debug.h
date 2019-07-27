@@ -24,11 +24,11 @@
 #define __PS2DEBUG_H__
 
 #ifdef LOGORRHEIC
-  #define FORBIDDEN_SYMBOL_EXCEPTION_printf
-  // #define dbg_printf sio_printf
-  #define dbg_printf printf
+#	define FORBIDDEN_SYMBOL_EXCEPTION_printf
+// #define dbg_printf sio_printf
+#	define dbg_printf printf
 #else
-  #define dbg_printf(...) /* ... */
+#	define dbg_printf(...) /* ... */
 #endif
 
 void sioprintf(const char *zFormat, ...);

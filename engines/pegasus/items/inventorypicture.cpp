@@ -23,16 +23,18 @@
  *
  */
 
-#include "pegasus/pegasus.h"
-#include "pegasus/transition.h"
 #include "pegasus/items/inventorypicture.h"
 #include "pegasus/items/biochips/biochipitem.h"
 #include "pegasus/items/inventory/inventoryitem.h"
+#include "pegasus/pegasus.h"
+#include "pegasus/transition.h"
 
 namespace Pegasus {
 
-InventoryPicture::InventoryPicture(const DisplayElementID id, InputHandler *nextHandler, Inventory *inventory) :
-		InputHandler(nextHandler), Picture(id), _panelMovie(kNoDisplayElement){
+InventoryPicture::InventoryPicture(const DisplayElementID id, InputHandler *nextHandler, Inventory *inventory)
+  : InputHandler(nextHandler)
+  , Picture(id)
+  , _panelMovie(kNoDisplayElement) {
 	_inventory = inventory;
 	_lastReferenceCount = 0xffffffff;
 
@@ -256,8 +258,8 @@ void InventoryPicture::highlightCurrentItem() {
 	_highlightBounds.moveTo(x, y);
 }
 
-InventoryItemsPicture::InventoryItemsPicture(const DisplayElementID id, InputHandler *nextHandler, Inventory *inventory) :
-		InventoryPicture(id, nextHandler, inventory) {
+InventoryItemsPicture::InventoryItemsPicture(const DisplayElementID id, InputHandler *nextHandler, Inventory *inventory)
+  : InventoryPicture(id, nextHandler, inventory) {
 	_pictName = "Images/Items/Inventory/Inventory Panel";
 	_movieName = "Images/Items/Inventory/Inventory Panel Movie";
 	_highlightName = "Images/Items/Inventory/Inventory Hilite";
@@ -340,8 +342,8 @@ void InventoryItemsPicture::playEndMessage(DisplayElement *pushElement) {
 	endMessage.stop();
 }
 
-BiochipPicture::BiochipPicture(const DisplayElementID id, InputHandler *nextHandler, Inventory *inventory) :
-		InventoryPicture(id, nextHandler, inventory) {
+BiochipPicture::BiochipPicture(const DisplayElementID id, InputHandler *nextHandler, Inventory *inventory)
+  : InventoryPicture(id, nextHandler, inventory) {
 	_pictName = "Images/Items/Biochips/Biochip Panel";
 	_movieName = "Images/Items/Biochips/Biochip Panel Movie";
 	_highlightName = "Images/Items/Biochips/BioChip Hilite";

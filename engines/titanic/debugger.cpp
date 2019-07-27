@@ -21,30 +21,32 @@
  */
 
 #include "titanic/debugger.h"
+#include "common/str-array.h"
 #include "titanic/core/node_item.h"
 #include "titanic/core/room_item.h"
 #include "titanic/core/tree_item.h"
 #include "titanic/core/view_item.h"
-#include "titanic/game_manager.h"
 #include "titanic/game/movie_tester.h"
+#include "titanic/game_manager.h"
 #include "titanic/main_game_window.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/support/movie.h"
 #include "titanic/titanic.h"
-#include "common/str-array.h"
 
 namespace Titanic {
 
-Debugger::Debugger(TitanicEngine *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("continue",		WRAP_METHOD(Debugger, cmdExit));
-	registerCmd("dump",			WRAP_METHOD(Debugger, cmdDump));
-	registerCmd("room",			WRAP_METHOD(Debugger, cmdRoom));
-	registerCmd("pet",			WRAP_METHOD(Debugger, cmdPET));
-	registerCmd("item",			WRAP_METHOD(Debugger, cmdItem));
-	registerCmd("movie",		WRAP_METHOD(Debugger, cmdMovie));
-	registerCmd("sound",		WRAP_METHOD(Debugger, cmdSound));
-	registerCmd("cheat",        WRAP_METHOD(Debugger, cmdCheat));
-	registerCmd("frame",        WRAP_METHOD(Debugger, cmdFrame));
+Debugger::Debugger(TitanicEngine *vm)
+  : GUI::Debugger()
+  , _vm(vm) {
+	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("dump", WRAP_METHOD(Debugger, cmdDump));
+	registerCmd("room", WRAP_METHOD(Debugger, cmdRoom));
+	registerCmd("pet", WRAP_METHOD(Debugger, cmdPET));
+	registerCmd("item", WRAP_METHOD(Debugger, cmdItem));
+	registerCmd("movie", WRAP_METHOD(Debugger, cmdMovie));
+	registerCmd("sound", WRAP_METHOD(Debugger, cmdSound));
+	registerCmd("cheat", WRAP_METHOD(Debugger, cmdCheat));
+	registerCmd("frame", WRAP_METHOD(Debugger, cmdFrame));
 }
 
 int Debugger::strToInt(const char *s) {
@@ -120,7 +122,7 @@ void Debugger::listRooms() {
 	CNodeItem *node = gm._gameState._gameLocation.getNode();
 	CRoomItem *room = gm._gameState._gameLocation.getRoom();
 	debugPrintf("Current location: %s, %s, %s\n", room->getName().c_str(),
-		node->getName().c_str(), view->getName().c_str());
+	            node->getName().c_str(), view->getName().c_str());
 
 	debugPrintf("Available rooms:\n");
 	for (CTreeItem *treeItem = root; treeItem; treeItem = treeItem->scan(root)) {
@@ -253,7 +255,7 @@ bool Debugger::cmdItem(int argc, const char **argv) {
 
 		// Get the item
 		CCarry *item = dynamic_cast<CCarry *>(
-			g_vm->_window->_project->findByName(argv[1]));
+		  g_vm->_window->_project->findByName(argv[1]));
 		assert(item);
 
 		if (argc == 2) {
@@ -289,7 +291,7 @@ bool Debugger::cmdMovie(int argc, const char **argv) {
 
 	CViewItem *view = g_vm->_window->_gameManager->getView();
 	CMovieTester *tester = static_cast<CMovieTester *>(
-		view->findChildInstanceOf(CMovieTester::_type));
+	  view->findChildInstanceOf(CMovieTester::_type));
 	if (!tester) {
 		// No movie tester present, so create one
 		tester = new CMovieTester();
@@ -356,7 +358,7 @@ bool Debugger::cmdCheat(int argc, const char **argv) {
 bool Debugger::cmdFrame(int argc, const char **argv) {
 	if (argc == 3) {
 		CGameObject *obj = dynamic_cast<CGameObject *>(
-			g_vm->_window->_project->findByName(argv[1]));
+		  g_vm->_window->_project->findByName(argv[1]));
 
 		if (obj) {
 			obj->loadFrame(strToInt(argv[2]));

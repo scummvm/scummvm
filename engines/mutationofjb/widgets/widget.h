@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_WIDGET_H
 #define MUTATIONOFJB_WIDGET_H
 
-#include <common/scummsys.h>
 #include <common/rect.h>
+#include <common/scummsys.h>
 
 namespace Common {
 struct Event;
@@ -45,7 +45,13 @@ public:
 		DIRTY_ALL = 0xFFFFFFFF
 	};
 
-	Widget(GuiScreen &gui, const Common::Rect &area) : _gui(gui), _area(area), _id(0), _visible(true), _enabled(true), _dirtyBits(DIRTY_NONE) {}
+	Widget(GuiScreen &gui, const Common::Rect &area)
+	  : _gui(gui)
+	  , _area(area)
+	  , _id(0)
+	  , _visible(true)
+	  , _enabled(true)
+	  , _dirtyBits(DIRTY_NONE) {}
 	virtual ~Widget() {}
 
 	int getId() const;
@@ -65,6 +71,7 @@ public:
 	void update(Graphics::ManagedSurface &);
 
 	virtual void handleEvent(const Common::Event &) {}
+
 protected:
 	virtual void draw(Graphics::ManagedSurface &) = 0;
 

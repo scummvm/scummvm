@@ -27,17 +27,17 @@
 
 #if defined(__amigaos4__)
 
-#include "common/textconsole.h"
-#include "common/error.h"
-#include "common/endian.h"
-#include "common/util.h"
-#include "common/str.h"
-#include "audio/musicplugin.h"
-#include "audio/mpu401.h"
+#	include "audio/mpu401.h"
+#	include "audio/musicplugin.h"
+#	include "common/endian.h"
+#	include "common/error.h"
+#	include "common/str.h"
+#	include "common/textconsole.h"
+#	include "common/util.h"
 
-#include <proto/camd.h>
-#include <proto/exec.h>
-#include <proto/dos.h>
+#	include <proto/camd.h>
+#	include <proto/dos.h>
+#	include <proto/exec.h>
 
 /*
  * CAMD sequencer driver
@@ -65,7 +65,10 @@ private:
 };
 
 MidiDriver_CAMD::MidiDriver_CAMD()
-	: _isOpen(false), _CamdBase(NULL), _ICamd(NULL), _midi_link(NULL) {
+  : _isOpen(false)
+  , _CamdBase(NULL)
+  , _ICamd(NULL)
+  , _midi_link(NULL) {
 }
 
 int MidiDriver_CAMD::open() {
@@ -78,7 +81,7 @@ int MidiDriver_CAMD::open() {
 		return -1;
 	}
 
-	_ICamd = (struct CamdIFace *) IExec->GetInterface(_CamdBase, "main", 1, NULL);
+	_ICamd = (struct CamdIFace *)IExec->GetInterface(_CamdBase, "main", 1, NULL);
 	if (!_ICamd) {
 		closeAll();
 		error("Error while retrieving CAMD interface");
@@ -167,7 +170,7 @@ char *MidiDriver_CAMD::getDevice() {
 		}
 
 		// If the user has a preference outport set, use this instead
-		if(IDOS->GetVar("DefMidiOut", _outport, 128, 0))
+		if (IDOS->GetVar("DefMidiOut", _outport, 128, 0))
 			retname = _outport;
 
 		_ICamd->UnlockCAMD(key);
@@ -184,7 +187,6 @@ void MidiDriver_CAMD::closeAll() {
 
 	_isOpen = false;
 }
-
 
 // Plugin interface
 
@@ -217,9 +219,9 @@ Common::Error CamdMusicPlugin::createInstance(MidiDriver **mididriver, MidiDrive
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(CAMD)
-	//REGISTER_PLUGIN_DYNAMIC(CAMD, PLUGIN_TYPE_MUSIC, CamdMusicPlugin);
+//REGISTER_PLUGIN_DYNAMIC(CAMD, PLUGIN_TYPE_MUSIC, CamdMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(CAMD, PLUGIN_TYPE_MUSIC, CamdMusicPlugin);
+REGISTER_PLUGIN_STATIC(CAMD, PLUGIN_TYPE_MUSIC, CamdMusicPlugin);
 //#endif
 
 #endif

@@ -37,7 +37,7 @@ CDialogueFile::CDialogueFile(const CString &filename, uint count) {
 
 	_cache.resize(count);
 
-	_file.readUint32LE();		// Skip over file Id
+	_file.readUint32LE(); // Skip over file Id
 	_index.resize(_file.readUint32LE());
 
 	// Read in the entries
@@ -55,7 +55,7 @@ void CDialogueFile::clear() {
 
 DialogueResource *CDialogueFile::addToCache(int index) {
 	if (_index.size() == 0 || index < 0 || index >= (int)_index.size()
-			|| _cache.empty())
+	    || _cache.empty())
 		return nullptr;
 
 	// Scan cache for a free slot
@@ -95,7 +95,7 @@ bool CDialogueFile::closeEntry(DialogueResource *cacheEntry) {
 bool CDialogueFile::read(DialogueResource *cacheEntry, byte *buffer, size_t bytesToRead) {
 	// Sanity checks that a valid record is passed, and the size can be read
 	if (!cacheEntry || !cacheEntry->_active || !bytesToRead
-		|| (cacheEntry->_bytesRead + bytesToRead) > cacheEntry->_size)
+	    || (cacheEntry->_bytesRead + bytesToRead) > cacheEntry->_size)
 		return false;
 
 	// Move to the correct position in the file

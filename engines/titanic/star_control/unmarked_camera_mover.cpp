@@ -23,16 +23,16 @@
 #include "titanic/star_control/unmarked_camera_mover.h"
 #include "titanic/debugger.h"
 #include "titanic/star_control/base_stars.h" // includes class CStarVector
-#include "titanic/star_control/fpose.h"
 #include "titanic/star_control/error_code.h"
 #include "titanic/star_control/fmatrix.h" // includes class FVector
+#include "titanic/star_control/fpose.h"
 #include "titanic/titanic.h"
 // Not currently being used: #include "common/textconsole.h"
 
 namespace Titanic {
 
-CUnmarkedCameraMover::CUnmarkedCameraMover(const CNavigationInfo *src) :
-		CCameraMover(src) {
+CUnmarkedCameraMover::CUnmarkedCameraMover(const CNavigationInfo *src)
+  : CCameraMover(src) {
 }
 
 void CUnmarkedCameraMover::moveTo(const FVector &srcV, const FVector &destV, const FMatrix &orientation) {
@@ -40,7 +40,7 @@ void CUnmarkedCameraMover::moveTo(const FVector &srcV, const FVector &destV, con
 		decLockCount();
 
 	debugC(DEBUG_BASIC, kDebugStarfield, "Starfield move %s to %s", srcV.toString().c_str(),
-		destV.toString().c_str());
+	       destV.toString().c_str());
 	_autoMover.setPathOrient(srcV, destV, orientation);
 }
 

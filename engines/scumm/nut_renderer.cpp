@@ -20,20 +20,19 @@
  *
  */
 
-
-#include "scumm/scumm.h"
-#include "scumm/file.h"
 #include "scumm/nut_renderer.h"
+#include "scumm/file.h"
+#include "scumm/scumm.h"
 #include "scumm/util.h"
 
 namespace Scumm {
 
-NutRenderer::NutRenderer(ScummEngine *vm, const char *filename) :
-	_vm(vm),
-	_numChars(0),
-	_maxCharSize(0),
-	_charBuffer(0),
-	_decodedData(0) {
+NutRenderer::NutRenderer(ScummEngine *vm, const char *filename)
+  : _vm(vm)
+  , _numChars(0)
+  , _maxCharSize(0)
+  , _charBuffer(0)
+  , _decodedData(0) {
 	memset(_chars, 0, sizeof(_chars));
 	loadFont(filename);
 }
@@ -58,13 +57,15 @@ void NutRenderer::codec21(byte *dst, const byte *src, int width, int height, int
 		src += 2;
 		int len = width;
 		do {
-			int offs = READ_LE_UINT16(src); src += 2;
+			int offs = READ_LE_UINT16(src);
+			src += 2;
 			dst += offs;
 			len -= offs;
 			if (len <= 0) {
 				break;
 			}
-			int w = READ_LE_UINT16(src) + 1; src += 2;
+			int w = READ_LE_UINT16(src) + 1;
+			src += 2;
 			len -= w;
 			if (len < 0) {
 				w += len;
@@ -93,7 +94,7 @@ void NutRenderer::loadFont(const char *filename) {
 	}
 
 	uint32 tag = file.readUint32BE();
-	if (tag != MKTAG('A','N','I','M')) {
+	if (tag != MKTAG('A', 'N', 'I', 'M')) {
 		error("NutRenderer::loadFont() there is no ANIM chunk in font header");
 	}
 
@@ -102,7 +103,7 @@ void NutRenderer::loadFont(const char *filename) {
 	file.read(dataSrc, length);
 	file.close();
 
-	if (READ_BE_UINT32(dataSrc) != MKTAG('A','H','D','R')) {
+	if (READ_BE_UINT32(dataSrc) != MKTAG('A', 'H', 'D', 'R')) {
 		error("NutRenderer::loadFont() there is no AHDR chunk in font header");
 	}
 
@@ -140,12 +141,12 @@ void NutRenderer::loadFont(const char *filename) {
 	offset = 0;
 	for (l = 0; l < _numChars; l++) {
 		offset += READ_BE_UINT32(dataSrc + offset + 4) + 8;
-		if (READ_BE_UINT32(dataSrc + offset) != MKTAG('F','R','M','E')) {
+		if (READ_BE_UINT32(dataSrc + offset) != MKTAG('F', 'R', 'M', 'E')) {
 			error("NutRenderer::loadFont(%s) there is no FRME chunk %d (offset %x)", filename, l, offset);
 			break;
 		}
 		offset += 8;
-		if (READ_BE_UINT32(dataSrc + offset) != MKTAG('F','O','B','J')) {
+		if (READ_BE_UINT32(dataSrc + offset) != MKTAG('F', 'O', 'B', 'J')) {
 			error("NutRenderer::loadFont(%s) there is no FOBJ chunk in FRME chunk %d (offset %x)", filename, l, offset);
 			break;
 		}
@@ -415,9 +416,9 @@ void NutRenderer::draw2byte(const Graphics::Surface &s, int c, int x, int y, byt
 		shadowMode = kKoreanV8ShadowMode;
 	}
 
-	int shadowOffsetXTable[4] = {-1, 0, 1, 0};
-	int shadowOffsetYTable[4] = {0, 1, 0, 0};
-	int shadowOffsetColorTable[4] = {0, 0, 0, color};
+	int shadowOffsetXTable[4] = { -1, 0, 1, 0 };
+	int shadowOffsetYTable[4] = { 0, 1, 0, 0 };
+	int shadowOffsetColorTable[4] = { 0, 0, 0, color };
 
 	int shadowIdx = 3;
 	if (shadowMode == kKoreanV8ShadowMode)

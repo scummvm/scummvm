@@ -25,109 +25,94 @@ namespace Mortevielle {
 static const MortevielleGameDescription MortevielleGameDescriptions[] = {
 	// French
 	{
-		{
-			"mortevielle",
-			"",
-			{
-				{"menufr.mor", 0, "e413f36b9e14eef16130adc347a9391f", 144},
-				{"dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744},
-				AD_LISTEND
-			},
-			Common::FR_FRA,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		}, Common::FR_FRA, kUseOriginalData
-	},
+	  { "mortevielle",
+	    "",
+	    { { "menufr.mor", 0, "e413f36b9e14eef16130adc347a9391f", 144 },
+	      { "dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744 },
+	      AD_LISTEND },
+	    Common::FR_FRA,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  Common::FR_FRA,
+	  kUseOriginalData },
 	// German
 	{
-		{
-			"mortevielle",
-			"",
-			{
-				{"menual.mor", 0, "792aea282b07a1d74c4a4abeabc90c19", 144},
-				{"dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744},
-				AD_LISTEND
-			},
-			Common::DE_DEU,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		}, Common::DE_DEU, kUseOriginalData
-	},
+	  { "mortevielle",
+	    "",
+	    { { "menual.mor", 0, "792aea282b07a1d74c4a4abeabc90c19", 144 },
+	      { "dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744 },
+	      AD_LISTEND },
+	    Common::DE_DEU,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  Common::DE_DEU,
+	  kUseOriginalData },
 
 	// German, improved translation
-//	{
-//		{
-//			"mortevielle",
-//			"Improved Translation",
-//			{
-//				{"menual.mor", 0, "792aea282b07a1d74c4a4abeabc90c19", 144},
-//				{"dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744},
-//				AD_LISTEND
-//			},
-//			Common::DE_DEU,
-//			Common::kPlatformDOS,
-//			ADGF_NO_FLAGS,
-//			GUIO0()
-//		}, Common::DE_DEU, kUseEngineDataFile
-//	},
+	//	{
+	//		{
+	//			"mortevielle",
+	//			"Improved Translation",
+	//			{
+	//				{"menual.mor", 0, "792aea282b07a1d74c4a4abeabc90c19", 144},
+	//				{"dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744},
+	//				AD_LISTEND
+	//			},
+	//			Common::DE_DEU,
+	//			Common::kPlatformDOS,
+	//			ADGF_NO_FLAGS,
+	//			GUIO0()
+	//		}, Common::DE_DEU, kUseEngineDataFile
+	//	},
 
 	// DOS English version doesn't exist. Technically, they are French or German versions,
 	// using English strings stored mort.dat
 
 	// English on top of French version
 	{
-		{
-			"mortevielle",
-				"",
-			{
-				{"menufr.mor", 0, "e413f36b9e14eef16130adc347a9391f", 144},
-				{"dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744},
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		}, Common::FR_FRA, kUseEngineDataFile
-	},
+	  { "mortevielle",
+	    "",
+	    { { "menufr.mor", 0, "e413f36b9e14eef16130adc347a9391f", 144 },
+	      { "dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744 },
+	      AD_LISTEND },
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  Common::FR_FRA,
+	  kUseEngineDataFile },
 
 	// English on top of German version
 	{
-		{
-			"mortevielle",
-				"",
-			{
-				{"menual.mor", 0, "792aea282b07a1d74c4a4abeabc90c19", 144},
-				{"dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744},
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		}, Common::DE_DEU, kUseEngineDataFile
-	},
+	  { "mortevielle",
+	    "",
+	    { { "menual.mor", 0, "792aea282b07a1d74c4a4abeabc90c19", 144 },
+	      { "dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744 },
+	      AD_LISTEND },
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  Common::DE_DEU,
+	  kUseEngineDataFile },
 
 	// French, provided by ultrapingu in bug ref #6575
 	{
-		{
-			"mortevielle",
-			"",
-			{
-				{"menu.mor", 0, "3fef0a3f8fca99fdcb6dbca8cbcef46f", 160},
-				{"dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744},
-				AD_LISTEND
-			},
-			Common::FR_FRA,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		}, Common::FR_FRA, kUseEngineDataFile
-	},
+	  { "mortevielle",
+	    "",
+	    { { "menu.mor", 0, "3fef0a3f8fca99fdcb6dbca8cbcef46f", 160 },
+	      { "dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744 },
+	      AD_LISTEND },
+	    Common::FR_FRA,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  Common::FR_FRA,
+	  kUseEngineDataFile },
 
-	{ AD_TABLE_END_MARKER , Common::EN_ANY, kUseEngineDataFile}
+	{ AD_TABLE_END_MARKER, Common::EN_ANY, kUseEngineDataFile }
 };
 
 } // End of namespace Mortevielle

@@ -20,50 +20,49 @@
  *
  */
 
-#include <time.h>
-#include <psptypes.h>
 #include <psprtc.h>
+#include <psptypes.h>
+#include <time.h>
 
-#include "common/scummsys.h"
 #include "backends/platform/psp/rtc.h"
+#include "common/scummsys.h"
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging function calls */
 //#define __PSP_DEBUG_PRINT__	/* For debug printouts */
 
 #include "backends/platform/psp/trace.h"
 
-
 // Class PspRtc ---------------------------------------------------------------
 namespace Common {
 DECLARE_SINGLETON(PspRtc);
 }
 
-void PspRtc::init() {						// init our starting ticks
+void PspRtc::init() { // init our starting ticks
 	uint32 ticks[2];
 	sceRtcGetCurrentTick((u64 *)ticks);
 
-	_startMillis = ticks[0]/1000;
+	_startMillis = ticks[0] / 1000;
 	_startMicros = ticks[0];
 	//_lastMillis = ticks[0]/1000;	//debug - only when we don't subtract startMillis
 }
 
-#define MS_LOOP_AROUND 4294967				/* We loop every 2^32 / 1000 = 71 minutes */
-#define MS_LOOP_CHECK  60000				/* Threading can cause weird mixups without this */
+#define MS_LOOP_AROUND 4294967 /* We loop every 2^32 / 1000 = 71 minutes */
+#define MS_LOOP_CHECK 60000 /* Threading can cause weird mixups without this */
 
 // Note that after we fill up 32 bits ie 50 days we'll loop back to 0, which may cause
 // unpredictable results
 uint32 PspRtc::getMillis(bool skipRecord) {
 	uint32 ticks[2];
 
-	sceRtcGetCurrentTick((u64 *)ticks);		// can introduce weird thread delays
+	sceRtcGetCurrentTick((u64 *)ticks); // can introduce weird thread delays
 
-	uint32 millis = ticks[0]/1000;
-	millis -= _startMillis;					// get ms since start of program
+	uint32 millis = ticks[0] / 1000;
+	millis -= _startMillis; // get ms since start of program
 
-	if ((int)_lastMillis - (int)millis > MS_LOOP_CHECK) {		// we must have looped around
-		if (_looped == false) {					// check to make sure threads do this once
+	if ((int)_lastMillis - (int)millis > MS_LOOP_CHECK) { // we must have looped around
+		if (_looped == false) { // check to make sure threads do this once
 			_looped = true;
-			_milliOffset += MS_LOOP_AROUND;		// add the needed offset
+			_milliOffset += MS_LOOP_AROUND; // add the needed offset
 			PSP_DEBUG_PRINT("looping around. last ms[%d], curr ms[%d]\n", _lastMillis, millis);
 		}
 	} else {

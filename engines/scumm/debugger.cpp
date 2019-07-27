@@ -54,7 +54,7 @@ void debugC(int channel, const char *s, ...) {
 }
 
 ScummDebugger::ScummDebugger(ScummEngine *s)
-	: GUI::Debugger() {
+  : GUI::Debugger() {
 	_vm = s;
 
 	// Register variables
@@ -64,43 +64,43 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 	registerVar("scumm_vars", &_vm->_scummVars, _vm->_numVariables);
 
 	// Register commands
-	registerCmd("continue",  WRAP_METHOD(ScummDebugger, cmdExit));
-	registerCmd("restart",   WRAP_METHOD(ScummDebugger, Cmd_Restart));
+	registerCmd("continue", WRAP_METHOD(ScummDebugger, cmdExit));
+	registerCmd("restart", WRAP_METHOD(ScummDebugger, Cmd_Restart));
 
-	registerCmd("actor",     WRAP_METHOD(ScummDebugger, Cmd_Actor));
-	registerCmd("actors",    WRAP_METHOD(ScummDebugger, Cmd_PrintActor));
-	registerCmd("box",       WRAP_METHOD(ScummDebugger, Cmd_PrintBox));
-	registerCmd("matrix",    WRAP_METHOD(ScummDebugger, Cmd_PrintBoxMatrix));
-	registerCmd("camera",    WRAP_METHOD(ScummDebugger, Cmd_Camera));
-	registerCmd("room",      WRAP_METHOD(ScummDebugger, Cmd_Room));
-	registerCmd("objects",   WRAP_METHOD(ScummDebugger, Cmd_PrintObjects));
-	registerCmd("object",    WRAP_METHOD(ScummDebugger, Cmd_Object));
-	registerCmd("script",    WRAP_METHOD(ScummDebugger, Cmd_Script));
-	registerCmd("scr",       WRAP_METHOD(ScummDebugger, Cmd_Script));
-	registerCmd("scripts",   WRAP_METHOD(ScummDebugger, Cmd_PrintScript));
+	registerCmd("actor", WRAP_METHOD(ScummDebugger, Cmd_Actor));
+	registerCmd("actors", WRAP_METHOD(ScummDebugger, Cmd_PrintActor));
+	registerCmd("box", WRAP_METHOD(ScummDebugger, Cmd_PrintBox));
+	registerCmd("matrix", WRAP_METHOD(ScummDebugger, Cmd_PrintBoxMatrix));
+	registerCmd("camera", WRAP_METHOD(ScummDebugger, Cmd_Camera));
+	registerCmd("room", WRAP_METHOD(ScummDebugger, Cmd_Room));
+	registerCmd("objects", WRAP_METHOD(ScummDebugger, Cmd_PrintObjects));
+	registerCmd("object", WRAP_METHOD(ScummDebugger, Cmd_Object));
+	registerCmd("script", WRAP_METHOD(ScummDebugger, Cmd_Script));
+	registerCmd("scr", WRAP_METHOD(ScummDebugger, Cmd_Script));
+	registerCmd("scripts", WRAP_METHOD(ScummDebugger, Cmd_PrintScript));
 	registerCmd("importres", WRAP_METHOD(ScummDebugger, Cmd_ImportRes));
 
 	if (_vm->_game.id == GID_LOOM)
-		registerCmd("drafts",  WRAP_METHOD(ScummDebugger, Cmd_PrintDraft));
+		registerCmd("drafts", WRAP_METHOD(ScummDebugger, Cmd_PrintDraft));
 
 	if (_vm->_game.id == GID_MONKEY && _vm->_game.platform == Common::kPlatformSegaCD)
-		registerCmd("passcode",  WRAP_METHOD(ScummDebugger, Cmd_Passcode));
+		registerCmd("passcode", WRAP_METHOD(ScummDebugger, Cmd_Passcode));
 
-	registerCmd("loadgame",  WRAP_METHOD(ScummDebugger, Cmd_LoadGame));
-	registerCmd("savegame",  WRAP_METHOD(ScummDebugger, Cmd_SaveGame));
+	registerCmd("loadgame", WRAP_METHOD(ScummDebugger, Cmd_LoadGame));
+	registerCmd("savegame", WRAP_METHOD(ScummDebugger, Cmd_SaveGame));
 
-	registerCmd("debug",     WRAP_METHOD(ScummDebugger, Cmd_Debug));
+	registerCmd("debug", WRAP_METHOD(ScummDebugger, Cmd_Debug));
 
-	registerCmd("show",      WRAP_METHOD(ScummDebugger, Cmd_Show));
-	registerCmd("hide",      WRAP_METHOD(ScummDebugger, Cmd_Hide));
+	registerCmd("show", WRAP_METHOD(ScummDebugger, Cmd_Show));
+	registerCmd("hide", WRAP_METHOD(ScummDebugger, Cmd_Hide));
 
-	registerCmd("imuse",     WRAP_METHOD(ScummDebugger, Cmd_IMuse));
+	registerCmd("imuse", WRAP_METHOD(ScummDebugger, Cmd_IMuse));
 
-	registerCmd("resetcursors",    WRAP_METHOD(ScummDebugger, Cmd_ResetCursors));
+	registerCmd("resetcursors", WRAP_METHOD(ScummDebugger, Cmd_ResetCursors));
 }
 
 ScummDebugger::~ScummDebugger() {
-	 // we need this destructor, even if it is empty, for __SYMBIAN32__
+	// we need this destructor, even if it is empty, for __SYMBIAN32__
 }
 
 void ScummDebugger::preEnter() {
@@ -253,7 +253,7 @@ bool ScummDebugger::Cmd_Hide(int argc, const char **argv) {
 	return true;
 }
 
-bool ScummDebugger::Cmd_Script(int argc, const char** argv) {
+bool ScummDebugger::Cmd_Script(int argc, const char **argv) {
 	int scriptnum;
 
 	if (argc < 3) {
@@ -281,7 +281,7 @@ bool ScummDebugger::Cmd_Script(int argc, const char** argv) {
 	return true;
 }
 
-bool ScummDebugger::Cmd_ImportRes(int argc, const char** argv) {
+bool ScummDebugger::Cmd_ImportRes(int argc, const char **argv) {
 	Common::File file;
 	uint32 size;
 	int resnum;
@@ -331,9 +331,9 @@ bool ScummDebugger::Cmd_PrintScript(int argc, const char **argv) {
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
 		if (ss->number) {
 			debugPrintf("|%2d|%4d|%05x|%3d|%3d|%2d|%3d|%2d|%3d|\n",
-					i, ss->number, ss->offs, ss->status, ss->where,
-					ss->freezeResistant, ss->recursive,
-					ss->freezeCount, ss->cutsceneOverride);
+			            i, ss->number, ss->offs, ss->status, ss->where,
+			            ss->freezeResistant, ss->recursive,
+			            ss->freezeCount, ss->cutsceneOverride);
 		}
 	}
 	debugPrintf("+-----------------------------------+\n");
@@ -394,7 +394,7 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 		}
 	} else if (!strcmp(argv[2], "name")) {
 		debugPrintf("Name of actor %d: %s\n", actnum,
-			_vm->getObjOrActorName(_vm->actorToObj(actnum)));
+		            _vm->getObjOrActorName(_vm->actorToObj(actnum)));
 	} else if (!strcmp(argv[2], "condmask")) {
 		if (argc > 3) {
 			a->_heCondMask = value;
@@ -405,7 +405,6 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 	}
 
 	return true;
-
 }
 bool ScummDebugger::Cmd_PrintActor(int argc, const char **argv) {
 	int i;
@@ -419,10 +418,10 @@ bool ScummDebugger::Cmd_PrintActor(int argc, const char **argv) {
 		const byte *name = _vm->getObjOrActorName(_vm->actorToObj(a->_number));
 		if (a->_visible)
 			debugPrintf("|%2d|%-12.12s|%4d|%4d|%3d|%3d|%4d|%3d|%3d|%3d|%3d|%3d|%3d|%3d|$%08x|\n",
-						 a->_number, name, a->getRealPos().x, a->getRealPos().y, a->_width,  a->_bottom - a->_top,
-						 a->getElevation(),
-						 a->_costume, a->_walkbox, a->_moving, a->_forceClip, a->_frame,
-						 a->_scalex, a->getFacing(), _vm->_classData[a->_number]);
+			            a->_number, name, a->getRealPos().x, a->getRealPos().y, a->_width, a->_bottom - a->_top,
+			            a->getElevation(),
+			            a->_costume, a->_walkbox, a->_moving, a->_forceClip, a->_frame,
+			            a->_scalex, a->getFacing(), _vm->_classData[a->_number]);
 	}
 	debugPrintf("\n");
 	return true;
@@ -443,8 +442,8 @@ bool ScummDebugger::Cmd_PrintObjects(int argc, const char **argv) {
 		int classData = (_vm->_game.version != 0 ? _vm->_classData[o->obj_nr] : 0);
 		const byte *name = _vm->getObjOrActorName(o->obj_nr);
 		debugPrintf("|%4d|%-12.12s|%4d|%4d|%5d|%6d|%5d|%2d|$%08x|\n",
-				o->obj_nr, name, o->x_pos, o->y_pos, o->width, o->height, o->state,
-				o->fl_object_index, classData);
+		            o->obj_nr, name, o->x_pos, o->y_pos, o->width, o->height, o->state,
+		            o->fl_object_index, classData);
 	}
 	debugPrintf("\n");
 
@@ -511,8 +510,8 @@ bool ScummDebugger::Cmd_Debug(int argc, const char **argv) {
 		debugPrintf("Available debug channels:\n");
 		for (Common::DebugManager::DebugChannelList::const_iterator i = lvls.begin(); i != lvls.end(); ++i) {
 			debugPrintf("%c%s - %s (%s)\n", i->enabled ? '+' : ' ',
-					i->name.c_str(), i->description.c_str(),
-					i->enabled ? "enabled" : "disabled");
+			            i->name.c_str(), i->description.c_str(),
+			            i->enabled ? "enabled" : "disabled");
 		}
 		return true;
 	}
@@ -538,8 +537,8 @@ bool ScummDebugger::Cmd_Debug(int argc, const char **argv) {
 
 bool ScummDebugger::Cmd_Camera(int argc, const char **argv) {
 	debugPrintf("Camera: cur (%d,%d) - dest (%d,%d) - accel (%d,%d) -- last (%d,%d)\n",
-		_vm->camera._cur.x, _vm->camera._cur.y, _vm->camera._dest.x, _vm->camera._dest.y,
-		_vm->camera._accel.x, _vm->camera._accel.y, _vm->camera._last.x, _vm->camera._last.y);
+	            _vm->camera._cur.x, _vm->camera._cur.y, _vm->camera._dest.x, _vm->camera._dest.y,
+	            _vm->camera._accel.x, _vm->camera._accel.y, _vm->camera._last.x, _vm->camera._last.y);
 
 	return true;
 }
@@ -598,10 +597,10 @@ void ScummDebugger::printBox(int box) {
 
 	// Print out coords, flags, zbuffer mask
 	debugPrintf("%d: [%d x %d] [%d x %d] [%d x %d] [%d x %d], flags=0x%02x, mask=%d, scale=%d\n",
-								box,
-								coords.ul.x, coords.ul.y, coords.ll.x, coords.ll.y,
-								coords.ur.x, coords.ur.y, coords.lr.x, coords.lr.y,
-								flags, mask, scale);
+	            box,
+	            coords.ul.x, coords.ul.y, coords.ll.x, coords.ll.y,
+	            coords.ur.x, coords.ur.y, coords.lr.x, coords.lr.y,
+	            flags, mask, scale);
 
 	// Draw the box
 	drawBox(box);
@@ -610,7 +609,6 @@ void ScummDebugger::printBox(int box) {
 /************ ENDER: Temporary debug code for boxen **************/
 
 static int gfxPrimitivesCompareInt(const void *a, const void *b);
-
 
 static void hlineColor(ScummEngine *scumm, int x1, int x2, int y, byte color) {
 	VirtScreen *vs = &scumm->_virtscr[kMainVirtScreen];
@@ -632,7 +630,6 @@ static void hlineColor(ScummEngine *scumm, int x1, int x2, int y, byte color) {
 	if (x2 >= right)
 		x2 = right - 1;
 
-
 	ptr = (byte *)vs->getBasePtr(x1, y);
 
 	while (x1++ <= x2) {
@@ -652,7 +649,6 @@ static void fillQuad(ScummEngine *scumm, Common::Point v[4], int color) {
 	Common::Point pt1, pt2;
 
 	int polyInts[N];
-
 
 	// Determine Y maxima
 	miny = maxy = v[0].y;
@@ -726,11 +722,11 @@ void ScummDebugger::drawBox(int box) {
 
 bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 	const char *names[] = {
-		"Opening",      "Straw to Gold", "Dyeing",
-		"Night Vision",	"Twisting",      "Sleep",
-		"Emptying",     "Invisibility",  "Terror",
-		"Sharpening",   "Reflection",    "Healing",
-		"Silence",      "Shaping",       "Unmaking",
+		"Opening", "Straw to Gold", "Dyeing",
+		"Night Vision", "Twisting", "Sleep",
+		"Emptying", "Invisibility", "Terror",
+		"Sharpening", "Reflection", "Healing",
+		"Silence", "Shaping", "Unmaking",
 		"Transcendence"
 	};
 
@@ -799,14 +795,14 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 	for (i = 0; i < 16; i++) {
 		draft = _vm->_scummVars[base + i * 2];
 		debugPrintf("%d %-13s %c%c%c%c %c%c\n",
-			base + 2 * i,
-			names[i],
-			notes[draft & 0x0007],
-			notes[(draft & 0x0038) >> 3],
-			notes[(draft & 0x01c0) >> 6],
-			notes[(draft & 0x0e00) >> 9],
-			(draft & 0x2000) ? 'K' : ' ',
-			(draft & 0x4000) ? 'U' : ' ');
+		            base + 2 * i,
+		            names[i],
+		            notes[draft & 0x0007],
+		            notes[(draft & 0x0038) >> 3],
+		            notes[(draft & 0x01c0) >> 6],
+		            notes[(draft & 0x0e00) >> 9],
+		            (draft & 0x2000) ? 'K' : ' ',
+		            (draft & 0x4000) ? 'U' : ' ');
 	}
 
 	return true;
@@ -821,7 +817,7 @@ bool ScummDebugger::Cmd_Passcode(int argc, const char **argv) {
 
 		_vm->runScript(61, 0, 0, args);
 
-		if (_vm->_bootParam != _vm->_scummVars[411]){
+		if (_vm->_bootParam != _vm->_scummVars[411]) {
 			debugPrintf("Invalid Passcode\n");
 			return true;
 		}
@@ -830,7 +826,7 @@ bool ScummDebugger::Cmd_Passcode(int argc, const char **argv) {
 		detach();
 
 	} else {
-		debugPrintf("Current Passcode is %d \nUse 'passcode <SEGA CD Passcode>'\n",_vm->_scummVars[411]);
+		debugPrintf("Current Passcode is %d \nUse 'passcode <SEGA CD Passcode>'\n", _vm->_scummVars[411]);
 		return true;
 	}
 	return false;

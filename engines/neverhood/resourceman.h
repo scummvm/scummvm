@@ -26,8 +26,8 @@
 #include "common/array.h"
 #include "common/file.h"
 #include "common/hashmap.h"
-#include "neverhood/neverhood.h"
 #include "neverhood/blbarchive.h"
+#include "neverhood/neverhood.h"
 
 namespace Neverhood {
 
@@ -45,13 +45,16 @@ struct Resource {
 struct ResourceData {
 	byte *data;
 	int dataRefCount;
-	ResourceData() : data(NULL), dataRefCount() {}
+	ResourceData()
+	  : data(NULL)
+	  , dataRefCount() {}
 };
 
 class ResourceMan;
 
 struct ResourceHandle {
-friend class ResourceMan;
+	friend class ResourceMan;
+
 public:
 	ResourceHandle();
 	~ResourceHandle();
@@ -61,6 +64,7 @@ public:
 	uint32 size() const { return isValid() ? _resourceFileEntry->archiveEntry->size : 0; };
 	const byte *extData() const { return _extData; };
 	uint32 fileHash() const { return isValid() ? _resourceFileEntry->archiveEntry->fileHash : 0; };
+
 protected:
 	ResourceFileEntry *_resourceFileEntry;
 	const byte *_extData;
@@ -75,18 +79,19 @@ public:
 	ResourceFileEntry *findEntrySimple(uint32 fileHash);
 	ResourceFileEntry *findEntry(uint32 fileHash, ResourceFileEntry **firstEntry = NULL);
 	Common::SeekableReadStream *createStream(uint32 fileHash);
-	const ResourceFileEntry& getEntry(uint index) { return _entries[index]; }
+	const ResourceFileEntry &getEntry(uint index) { return _entries[index]; }
 	uint getEntryCount() { return _entries.size(); }
 	void queryResource(uint32 fileHash, ResourceHandle &resourceHandle);
 	void loadResource(ResourceHandle &resourceHandle, bool applyResourceFixes);
 	void unloadResource(ResourceHandle &resourceHandle);
 	void purgeResources();
+
 protected:
 	typedef Common::HashMap<uint32, ResourceFileEntry> EntriesMap;
-	Common::Array<BlbArchive*> _archives;
+	Common::Array<BlbArchive *> _archives;
 	EntriesMap _entries;
-	Common::HashMap<uint32, ResourceData*> _data;
-	Common::Array<Resource*> _resources;
+	Common::HashMap<uint32, ResourceData *> _data;
+	Common::Array<Resource *> _resources;
 };
 
 } // End of namespace Neverhood

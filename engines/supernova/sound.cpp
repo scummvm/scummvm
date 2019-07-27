@@ -21,8 +21,8 @@
 */
 
 #include "audio/audiostream.h"
-#include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "audio/mixer.h"
 #include "audio/mods/protracker.h"
 #include "common/system.h"
 
@@ -33,8 +33,8 @@
 namespace Supernova {
 
 Sound::Sound(Audio::Mixer *mixer, ResourceManager *resMan)
-	: _mixer(mixer)
-	, _resMan(resMan) {
+  : _mixer(mixer)
+  , _resMan(resMan) {
 }
 
 void Sound::play(AudioId index) {
@@ -42,7 +42,7 @@ void Sound::play(AudioId index) {
 
 	stop();
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, stream,
-					   -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+	                   -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 }
 
 void Sound::play(MusicId index) {
@@ -50,7 +50,7 @@ void Sound::play(MusicId index) {
 
 	stop();
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, stream,
-					   -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+	                   -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 }
 
 bool Sound::isPlaying() {

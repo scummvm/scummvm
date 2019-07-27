@@ -23,9 +23,9 @@
 #ifndef GLK_STREAMS_H
 #define GLK_STREAMS_H
 
-#include "common/scummsys.h"
 #include "common/file.h"
 #include "common/savefile.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 #include "glk/glk_types.h"
 
@@ -110,8 +110,7 @@ struct FileReference {
 };
 
 typedef FileReference *frefid_t;
-typedef Common::Array< Common::SharedPtr<FileReference> > FileRefArray;
-
+typedef Common::Array<Common::SharedPtr<FileReference>> FileRefArray;
 
 /**
  * Base class for streams
@@ -127,6 +126,7 @@ public:
 	uint _readCount;
 	uint _writeCount;
 	bool _readable, _writable;
+
 public:
 	/**
 	 * Constructor
@@ -289,12 +289,14 @@ typedef Stream *strid_t;
 class WindowStream : public Stream {
 private:
 	Window *_window;
+
 public:
 	/**
 	 * Constructor
 	 */
-	WindowStream(Streams *streams, Window *window, uint rock = 0, bool unicode = true) :
-		Stream(streams, false, true, rock, unicode), _window(window) {}
+	WindowStream(Streams *streams, Window *window, uint rock = 0, bool unicode = true)
+	  : Stream(streams, false, true, rock, unicode)
+	  , _window(window) {}
 
 	/**
 	 * Destructor
@@ -359,12 +361,13 @@ public:
  */
 class MemoryStream : public Stream {
 private:
-	void *_buf;     ///< unsigned char* for latin1, uint* for unicode
+	void *_buf; ///< unsigned char* for latin1, uint* for unicode
 	void *_bufPtr;
 	void *_bufEnd;
 	void *_bufEof;
 	size_t _bufLen; ///< # of bytes for latin1, # of 4-byte words for unicode
 	gidispatch_rock_t _arrayRock;
+
 public:
 	/**
 	 * Constructor
@@ -440,8 +443,9 @@ private:
 	Common::OutSaveFile *_outFile;
 	Common::InSaveFile *_inFile;
 	Common::SeekableReadStream *_inStream;
-	uint _lastOp;                 ///< 0, filemode_Write, or filemode_Read
+	uint _lastOp; ///< 0, filemode_Write, or filemode_Read
 	bool _textFile;
+
 private:
 	/**
 	 * Ensure the stream is ready for the given operation
@@ -457,6 +461,7 @@ private:
 	 * Get a UTF8 character
 	 */
 	int getCharUtf8();
+
 public:
 	/**
 	 * Constructor
@@ -538,10 +543,12 @@ public:
  */
 class Streams {
 	friend class Stream;
+
 private:
 	Stream *_streamList;
 	Stream *_currentStream;
 	FileRefArray _fileReferences;
+
 private:
 	/**
 	 * Adds a created stream to the list
@@ -552,6 +559,7 @@ private:
 	 * Remove a stream
 	 */
 	void removeStream(Stream *stream);
+
 public:
 	/**
 	 * Constructor

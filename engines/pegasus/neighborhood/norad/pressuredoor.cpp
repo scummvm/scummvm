@@ -23,13 +23,13 @@
  *
  */
 
-#include "pegasus/gamestate.h"
-#include "pegasus/pegasus.h"
-#include "pegasus/ai/ai_area.h"
-#include "pegasus/neighborhood/norad/constants.h"
-#include "pegasus/neighborhood/norad/norad.h"
 #include "pegasus/neighborhood/norad/pressuredoor.h"
+#include "pegasus/ai/ai_area.h"
+#include "pegasus/gamestate.h"
+#include "pegasus/neighborhood/norad/constants.h"
 #include "pegasus/neighborhood/norad/delta/noraddelta.h"
+#include "pegasus/neighborhood/norad/norad.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -51,16 +51,13 @@ static const TimeValue kCautionLoopStop = 7;
 static const NotificationFlags kSplashFinished = 1;
 static const NotificationFlags kPressureDroppingFlag = kSplashFinished << 1;
 
-static const NotificationFlags kPressureNotificationFlags = kSplashFinished |
-														kPressureDroppingFlag;
+static const NotificationFlags kPressureNotificationFlags = kSplashFinished | kPressureDroppingFlag;
 
 static const NotificationFlags kDoorJumpsUpFlag = 1;
 static const NotificationFlags kDoorJumpsBackFlag = kDoorJumpsUpFlag << 1;
 static const NotificationFlags kDoorCrushedFlag = kDoorJumpsBackFlag << 1;
 
-static const NotificationFlags kUtilityNotificationFlags = kDoorJumpsUpFlag |
-														kDoorJumpsBackFlag |
-														kDoorCrushedFlag;
+static const NotificationFlags kUtilityNotificationFlags = kDoorJumpsUpFlag | kDoorJumpsBackFlag | kDoorCrushedFlag;
 
 enum {
 	kPlayingRobotApproaching,
@@ -105,11 +102,16 @@ static const ResIDType kLowerPressureDownOffPICTID = 406;
 static const ResIDType kLowerPressureDownOnPICTID = 407;
 
 PressureDoor::PressureDoor(Neighborhood *handler, bool isUpperDoor, const HotSpotID upSpotID, const HotSpotID downSpotID,
-		const HotSpotID outSpotID, TimeValue pressureSoundIn, TimeValue pressureSoundOut, TimeValue equalizeSoundIn,
-		TimeValue equalizeSoundOut) : GameInteraction(kNoradPressureDoorInteractionID, handler),
-		_levelsMovie(kPressureDoorLevelsID), _typeMovie(kPressureDoorTypeID), _upButton(kPressureDoorUpButtonID),
-		_downButton(kPressureDoorDownButtonID), _pressureNotification(kNoradPressureNotificationID, ((PegasusEngine *)g_engine)),
-		_doorTracker(this), _utilityNotification(kNoradUtilityNotificationID, ((PegasusEngine *)g_engine)) {
+                           const HotSpotID outSpotID, TimeValue pressureSoundIn, TimeValue pressureSoundOut, TimeValue equalizeSoundIn,
+                           TimeValue equalizeSoundOut)
+  : GameInteraction(kNoradPressureDoorInteractionID, handler)
+  , _levelsMovie(kPressureDoorLevelsID)
+  , _typeMovie(kPressureDoorTypeID)
+  , _upButton(kPressureDoorUpButtonID)
+  , _downButton(kPressureDoorDownButtonID)
+  , _pressureNotification(kNoradPressureNotificationID, ((PegasusEngine *)g_engine))
+  , _doorTracker(this)
+  , _utilityNotification(kNoradUtilityNotificationID, ((PegasusEngine *)g_engine)) {
 	_neighborhoodNotification = handler->getNeighborhoodNotification();
 	_upHotspotID = upSpotID;
 	_downHotspotID = downSpotID;
@@ -221,11 +223,10 @@ void PressureDoor::openInteraction() {
 	_utilityTimer.setMasterTimeBase(getOwner()->getNavMovie());
 
 	if (_playingAgainstRobot)
-		_neighborhoodNotification->notifyMe(this, kExtraCompletedFlag | kDelayCompletedFlag |
-				kSpotSoundCompletedFlag, kExtraCompletedFlag | kDelayCompletedFlag | kSpotSoundCompletedFlag);
+		_neighborhoodNotification->notifyMe(this, kExtraCompletedFlag | kDelayCompletedFlag | kSpotSoundCompletedFlag, kExtraCompletedFlag | kDelayCompletedFlag | kSpotSoundCompletedFlag);
 	else
 		_neighborhoodNotification->notifyMe(this, kDelayCompletedFlag | kSpotSoundCompletedFlag,
-				kDelayCompletedFlag | kSpotSoundCompletedFlag);
+		                                    kDelayCompletedFlag | kSpotSoundCompletedFlag);
 
 	_gameState = kPlayingSplash;
 }
@@ -323,7 +324,7 @@ void PressureDoor::receiveNotification(Notification *notification, const Notific
 				_robotState = kRobotDead;
 				_levelsMovie.stop();
 				_levelsMovie.setSegment((kNormalSubRoomPressure + kPressureBase) * _levelsScale,
-						(GameState.getNoradSubRoomPressure() + kPressureBase) * _levelsScale + 1);
+				                        (GameState.getNoradSubRoomPressure() + kPressureBase) * _levelsScale + 1);
 				_levelsMovie.setTime((GameState.getNoradSubRoomPressure() + kPressureBase) * _levelsScale);
 				_pressureCallBack.setCallBackFlag(kPressureDroppingFlag);
 				_pressureCallBack.scheduleCallBack(kTriggerAtStart, 0, 0);

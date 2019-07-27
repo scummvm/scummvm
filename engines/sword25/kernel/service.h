@@ -54,10 +54,11 @@ class Kernel;
 
 class Service {
 private:
-	Kernel  *_pKernel;
+	Kernel *_pKernel;
 
 protected:
-	Service(Kernel *pKernel) : _pKernel(pKernel) {}
+	Service(Kernel *pKernel)
+	  : _pKernel(pKernel) {}
 
 	Kernel *GetKernel() const {
 		return _pKernel;

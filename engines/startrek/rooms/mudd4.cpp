@@ -47,7 +47,7 @@ void Room::mudd4Tick1() {
 }
 
 void Room::mudd4UseCommunicator() {
-	showText(TX_SPEAKER_KIRK,  TX_MUD4_018);
+	showText(TX_SPEAKER_KIRK, TX_MUD4_018);
 	showText(TX_SPEAKER_UHURA, TX_STATICU1);
 }
 
@@ -80,11 +80,11 @@ void Room::mudd4UseSpockOnConsole() {
 		showText(TX_SPEAKER_SPOCK, TX_MUD4_062);
 	} else {
 		showText(TX_SPEAKER_SPOCK, TX_MUD4_061);
-		showText(TX_SPEAKER_KIRK,  TX_MUD4_013);
+		showText(TX_SPEAKER_KIRK, TX_MUD4_013);
 		showText(TX_SPEAKER_SPOCK, TX_MUD4_062);
 		showText(TX_SPEAKER_MCCOY, TX_MUD4_048);
 		showText(TX_SPEAKER_SPOCK, TX_MUD4_059);
-		showText(TX_SPEAKER_KIRK,  TX_MUD4_031);
+		showText(TX_SPEAKER_KIRK, TX_MUD4_031);
 		showText(TX_SPEAKER_SPOCK, TX_MUD4_060);
 
 		if (!_awayMission->mudd.discoveredBase3System) {
@@ -279,7 +279,7 @@ void Room::mudd4KirkUsedCommunications() {
 	} else {
 		if (!_awayMission->mudd.contactedEnterpriseFirstTime) {
 			_awayMission->mudd.missionScore++;
-			showText(TX_SPEAKER_KIRK,  TX_MUD4_025);
+			showText(TX_SPEAKER_KIRK, TX_MUD4_025);
 			showText(TX_SPEAKER_SCOTT, TX_MUD4_S02);
 
 			if (_awayMission->mudd.torpedoStatus == 1)
@@ -315,7 +315,7 @@ void Room::mudd4KirkUsedCommunications() {
 				TX_BLANK
 			};
 
-			showText(TX_SPEAKER_KIRK,  TX_MUD4_020);
+			showText(TX_SPEAKER_KIRK, TX_MUD4_020);
 			showText(TX_SPEAKER_SCOTT, TX_MUD4_S03);
 			int choice = showMultipleTexts(choices);
 
@@ -354,9 +354,9 @@ void Room::mudd4KirkReachedPositionToTalkToMudd() {
 	_awayMission->disableInput = false;
 
 	if (_awayMission->mudd.discoveredLenseAndDegrimerFunction
-	        || _awayMission->mudd.muddErasedDatabase
-	        || _awayMission->mudd.databaseDestroyed
-	        || !_awayMission->mudd.accessedAlienDatabase) { // NOTE: why this last line? Test this...
+	    || _awayMission->mudd.muddErasedDatabase
+	    || _awayMission->mudd.databaseDestroyed
+	    || !_awayMission->mudd.accessedAlienDatabase) { // NOTE: why this last line? Test this...
 		const TextRef choices[] = {
 			TX_SPEAKER_KIRK,
 			TX_MUD4_009,
@@ -393,10 +393,10 @@ void Room::mudd4KirkReachedPositionToTalkToMudd() {
 				// NOTE: This combination is probably impossible, making this unused?
 				// (Either you give Mudd access to the database, or he destroys it.)
 
-				showText(TX_SPEAKER_MUDD,  TX_MUD4_071);
-				showText(TX_SPEAKER_KIRK,  TX_MUD4_036);
+				showText(TX_SPEAKER_MUDD, TX_MUD4_071);
+				showText(TX_SPEAKER_KIRK, TX_MUD4_036);
 				showText(TX_SPEAKER_SPOCK, TX_MUD4_029);
-				showText(TX_SPEAKER_KIRK,  TX_MUD4_030);
+				showText(TX_SPEAKER_KIRK, TX_MUD4_030);
 			} else {
 				// Mudd is forced to agree to give samples to a university.
 				showText(TX_SPEAKER_MUDD, TX_MUD4_064);
@@ -536,7 +536,7 @@ void Room::mudd4TalkToKirk() {
 
 void Room::mudd4TalkToSpock() {
 	showText(TX_SPEAKER_SPOCK, TX_MUD4_063);
-	showText(TX_SPEAKER_KIRK,  TX_MUD4_015);
+	showText(TX_SPEAKER_KIRK, TX_MUD4_015);
 	showText(TX_SPEAKER_MCCOY, TX_MUD4_047);
 }
 

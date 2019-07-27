@@ -40,7 +40,8 @@
 
 namespace Lab {
 
-Anim::Anim(LabEngine *vm) : _vm(vm) {
+Anim::Anim(LabEngine *vm)
+  : _vm(vm) {
 	_lastBlockHeader = 0;
 	_numChunks = 1;
 	_headerdata._width = 0;

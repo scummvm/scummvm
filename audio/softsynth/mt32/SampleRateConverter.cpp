@@ -19,11 +19,11 @@
 #include "SampleRateConverter.h"
 
 #if MT32EMU_WITH_LIBSOXR_RESAMPLER
-#include "srchelper/SoxrAdapter.h"
+#	include "srchelper/SoxrAdapter.h"
 #elif MT32EMU_WITH_LIBSAMPLERATE_RESAMPLER
-#include "srchelper/SamplerateAdapter.h"
+#	include "srchelper/SamplerateAdapter.h"
 #elif MT32EMU_WITH_INTERNAL_RESAMPLER
-#include "srchelper/InternalResampler.h"
+#	include "srchelper/InternalResampler.h"
 #endif
 
 #include "Synth.h"
@@ -61,11 +61,10 @@ double SampleRateConverter::getSupportedOutputSampleRate(double desiredSampleRat
 #endif
 }
 
-SampleRateConverter::SampleRateConverter(Synth &useSynth, double targetSampleRate, SamplerateConversionQuality useQuality) :
-	synthInternalToTargetSampleRateRatio(SAMPLE_RATE / targetSampleRate),
-	useSynthDelegate(useSynth.getStereoOutputSampleRate() == targetSampleRate),
-	srcDelegate(useSynthDelegate ? &useSynth : createDelegate(useSynth, targetSampleRate, useQuality))
-{}
+SampleRateConverter::SampleRateConverter(Synth &useSynth, double targetSampleRate, SamplerateConversionQuality useQuality)
+  : synthInternalToTargetSampleRateRatio(SAMPLE_RATE / targetSampleRate)
+  , useSynthDelegate(useSynth.getStereoOutputSampleRate() == targetSampleRate)
+  , srcDelegate(useSynthDelegate ? &useSynth : createDelegate(useSynth, targetSampleRate, useQuality)) {}
 
 SampleRateConverter::~SampleRateConverter() {
 	if (!useSynthDelegate) {

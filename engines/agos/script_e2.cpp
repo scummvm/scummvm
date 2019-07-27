@@ -20,14 +20,12 @@
  *
  */
 
-
-
 #include "agos/agos.h"
 #include "agos/intern.h"
 
 namespace AGOS {
 
-#define OPCODE(x)	_OPCODE(AGOSEngine_Elvira2, x)
+#define OPCODE(x) _OPCODE(AGOSEngine_Elvira2, x)
 
 void AGOSEngine_Elvira2::setupOpcodes() {
 	static const OpcodeEntryElvira2 opcodes[] = {
@@ -269,7 +267,7 @@ void AGOSEngine_Elvira2::setupOpcodes() {
 
 void AGOSEngine_Elvira2::executeOpcode(int opcode) {
 	OpcodeProcElvira2 op = _opcodesElvira2[opcode].proc;
-	(this->*op) ();
+	(this->*op)();
 }
 
 // -----------------------------------------------------------------------
@@ -434,7 +432,7 @@ void AGOSEngine_Elvira2::oe2_ifDoorClosed() {
 
 void AGOSEngine_Elvira2::oe2_ifDoorLocked() {
 	// 150: if door locked
-	Item *i=getNextItemPtr();
+	Item *i = getNextItemPtr();
 	uint16 d = getVarOrByte();
 	setScriptCondition(getDoorState(i, d) == 3);
 }

@@ -122,10 +122,10 @@ public:
 
 class FPSfx {
 private:
-	bool _soundSupported;                  // True if the sound is active
-	bool _fileLoaded;                      // True is a file is opened
-	bool _loop;                            // True is sound effect should loop
-	int  _lastVolume;
+	bool _soundSupported; // True if the sound is active
+	bool _fileLoaded; // True is a file is opened
+	bool _loop; // True is sound effect should loop
+	int _lastVolume;
 
 	bool _isVoice;
 	bool _paused;
@@ -247,18 +247,18 @@ public:
 
 class FPStream {
 private:
-	uint32 _bufferSize;                  // Buffer size (bytes)
-	uint32 _size;                        // Stream size (bytes)
+	uint32 _bufferSize; // Buffer size (bytes)
+	uint32 _size; // Stream size (bytes)
 
-	Common::File _file;                  // File handle used for the stream
+	Common::File _file; // File handle used for the stream
 
-	bool _soundSupported;                // True if the sound is active
-	bool _fileLoaded;                    // True if the file is open
-	bool _loop;                          // True if the stream should loop
-	bool _doFadeOut;                     // True if fade out is required
+	bool _soundSupported; // True if the sound is active
+	bool _fileLoaded; // True if the file is open
+	bool _loop; // True if the stream should loop
+	bool _doFadeOut; // True if fade out is required
 	bool _syncExit;
 	bool _paused;
-	int  _lastVolume;
+	int _lastVolume;
 	FPStream *_syncToPlay;
 
 	Audio::AudioStream *_loopStream;
@@ -266,7 +266,6 @@ private:
 	Audio::SoundHandle _handle;
 
 public:
-
 	/**
 	 * Default constructor.
 	 *

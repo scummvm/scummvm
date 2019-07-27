@@ -29,59 +29,59 @@ namespace Gob {
 
 namespace Geisha {
 
-/** An "evil" fish in Geisha's "Diving" minigame. */
-class EvilFish : public ANIObject {
-public:
-	enum Direction {
-		kDirectionLeft  = 0,
-		kDirectionRight = 1
+	/** An "evil" fish in Geisha's "Diving" minigame. */
+	class EvilFish : public ANIObject {
+	public:
+		enum Direction {
+			kDirectionLeft = 0,
+			kDirectionRight = 1
+		};
+
+		EvilFish(const ANIFile &ani, uint16 screenWidth,
+		         uint16 animSwimLeft, uint16 animSwimRight,
+		         uint16 animTurnLeft, uint16 animTurnRight, uint16 animDie);
+		~EvilFish();
+
+		/** Enter from this direction / screen edge. */
+		void enter(Direction from, int16 y);
+		/** Leave the screen in the current direction. */
+		void leave();
+
+		/** Kill the fish. */
+		void die();
+
+		/** Advance the animation to the next frame. */
+		void advance();
+
+		/** Change the fish's animations, effectively making it a different fish type. */
+		void mutate(uint16 animSwimLeft, uint16 animSwimRight,
+		            uint16 animTurnLeft, uint16 animTurnRight, uint16 animDie);
+
+		/** Is the fish dead? */
+		bool isDead() const;
+
+	private:
+		enum State {
+			kStateNone,
+			kStateSwimLeft,
+			kStateSwimRight,
+			kStateTurnLeft,
+			kStateTurnRight,
+			kStateDie
+		};
+
+		uint16 _screenWidth;
+
+		uint16 _animSwimLeft;
+		uint16 _animSwimRight;
+		uint16 _animTurnLeft;
+		uint16 _animTurnRight;
+		uint16 _animDie;
+
+		bool _shouldLeave;
+
+		State _state;
 	};
-
-	EvilFish(const ANIFile &ani, uint16 screenWidth,
-	         uint16 animSwimLeft, uint16 animSwimRight,
-	         uint16 animTurnLeft, uint16 animTurnRight, uint16 animDie);
-	~EvilFish();
-
-	/** Enter from this direction / screen edge. */
-	void enter(Direction from, int16 y);
-	/** Leave the screen in the current direction. */
-	void leave();
-
-	/** Kill the fish. */
-	void die();
-
-	/** Advance the animation to the next frame. */
-	void advance();
-
-	/** Change the fish's animations, effectively making it a different fish type. */
-	void mutate(uint16 animSwimLeft, uint16 animSwimRight,
-	            uint16 animTurnLeft, uint16 animTurnRight, uint16 animDie);
-
-	/** Is the fish dead? */
-	bool isDead() const;
-
-private:
-	enum State {
-		kStateNone,
-		kStateSwimLeft,
-		kStateSwimRight,
-		kStateTurnLeft,
-		kStateTurnRight,
-		kStateDie
-	};
-
-	uint16 _screenWidth;
-
-	uint16 _animSwimLeft;
-	uint16 _animSwimRight;
-	uint16 _animTurnLeft;
-	uint16 _animTurnRight;
-	uint16 _animDie;
-
-	bool _shouldLeave;
-
-	State _state;
-};
 
 } // End of namespace Geisha
 

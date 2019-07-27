@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE2900_H
 #define NEVERHOOD_MODULES_MODULE2900_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -34,6 +34,7 @@ namespace Neverhood {
 class Module2900 : public Module {
 public:
 	Module2900(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	int _sceneNum;
 	int _teleporterModuleResult;
@@ -47,6 +48,7 @@ class SsScene2901LocationButtonLight;
 class Scene2901 : public Scene {
 public:
 	Scene2901(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	Sprite *_ssLocationButtons[6];
 	SsScene2901LocationButtonLight *_ssLocationButtonLights[6];

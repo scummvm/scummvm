@@ -20,15 +20,16 @@
  *
  */
 
+#include "access/data.h"
 #include "common/algorithm.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "graphics/palette.h"
-#include "access/data.h"
 
 namespace Access {
 
-TimerList::TimerList() : Common::Array<TimerEntry>() {
+TimerList::TimerList()
+  : Common::Array<TimerEntry>() {
 	_timersSavedFlag = false;
 }
 

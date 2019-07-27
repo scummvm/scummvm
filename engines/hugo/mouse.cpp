@@ -32,25 +32,26 @@
 #include "common/debug.h"
 #include "common/system.h"
 
-#include "hugo/hugo.h"
 #include "hugo/dialogs.h"
-#include "hugo/game.h"
-#include "hugo/mouse.h"
-#include "hugo/schedule.h"
 #include "hugo/display.h"
+#include "hugo/game.h"
+#include "hugo/hugo.h"
 #include "hugo/inventory.h"
-#include "hugo/route.h"
-#include "hugo/util.h"
+#include "hugo/mouse.h"
 #include "hugo/object.h"
+#include "hugo/route.h"
+#include "hugo/schedule.h"
 #include "hugo/text.h"
+#include "hugo/util.h"
 
 namespace Hugo {
 
-MouseHandler::MouseHandler(HugoEngine *vm) : _vm(vm) {
+MouseHandler::MouseHandler(HugoEngine *vm)
+  : _vm(vm) {
 	_hotspots = nullptr;
-	_leftButtonFl  = false;
+	_leftButtonFl = false;
 	_rightButtonFl = false;
-	_jumpExitFl = false;                            // Can't jump to a screen exit
+	_jumpExitFl = false; // Can't jump to a screen exit
 	_mouseX = kXPix / 2;
 	_mouseY = kYPix / 2;
 }
@@ -118,7 +119,7 @@ void MouseHandler::cursorText(const char *buffer, const int16 cx, const int16 cy
 
 	// Find bounding rect for string
 	int16 sdx = _vm->_screen->stringLength(buffer);
-	int16 sdy = _vm->_screen->fontHeight() + 1;     // + 1 for shadow
+	int16 sdy = _vm->_screen->fontHeight() + 1; // + 1 for shadow
 	int16 sx, sy;
 	if (cx < kXPix / 2) {
 		sx = cx + kCursorNameOffX;
@@ -180,23 +181,22 @@ void MouseHandler::processRightClick(const int16 objId, const int16 cx, const in
 		else if (inventObjId == objId)
 			_vm->_screen->resetInventoryObjId();
 		else
-			_vm->_object->useObject(objId);         // Use status.objid on object
-	} else {                                        // Clicked over viewport object
+			_vm->_object->useObject(objId); // Use status.objid on object
+	} else { // Clicked over viewport object
 		Object *obj = &_vm->_object->_objects[objId];
 		int16 x, y;
-		switch (obj->_viewx) {                      // Where to walk to
-		case -1: {                                  // Walk to object position
+		switch (obj->_viewx) { // Where to walk to
+		case -1: { // Walk to object position
 			bool foundFl = false;
 			if (_vm->_object->findObjectSpace(obj, &x, &y))
-				foundFl = _vm->_route->startRoute(kRouteGet, objId, x, y);  // TRUE if route found to object
-			if (!foundFl)                           // Can't get there, try to use from here
+				foundFl = _vm->_route->startRoute(kRouteGet, objId, x, y); // TRUE if route found to object
+			if (!foundFl) // Can't get there, try to use from here
 				_vm->_object->useObject(objId);
-			}
+		} break;
+		case 0: // Immediate use
+			_vm->_object->useObject(objId); // Pick up or use object
 			break;
-		case 0:                                     // Immediate use
-			_vm->_object->useObject(objId);         // Pick up or use object
-			break;
-		default:                                    // Walk to view point if possible
+		default: // Walk to view point if possible
 			if (!_vm->_route->startRoute(kRouteGet, objId, obj->_viewx, obj->_viewy)) {
 				if (_vm->_hero->_cycling == kCycleInvisible) // If invisible do
 					_vm->_object->useObject(objId); // immediate use
@@ -227,10 +227,10 @@ void MouseHandler::processLeftClick(const int16 objId, const int16 cx, const int
 		return;
 
 	switch (objId) {
-	case -1:                                        // Empty space - attempt to walk there
+	case -1: // Empty space - attempt to walk there
 		_vm->_route->startRoute(kRouteSpace, 0, cx, cy);
 		break;
-	case kLeftArrow:                                // A scroll arrow - scroll the iconbar
+	case kLeftArrow: // A scroll arrow - scroll the iconbar
 	case kRightArrow:
 		// Scroll the iconbar and display results
 		_vm->_inventory->processInventory((objId == kLeftArrow) ? kInventoryActionLeft : kInventoryActionRight);
@@ -238,18 +238,18 @@ void MouseHandler::processLeftClick(const int16 objId, const int16 cx, const int
 		_vm->_screen->moveImage(_vm->_screen->getIconBuffer(), 0, 0, kXPix, kInvDy, kXPix, _vm->_screen->getBackBuffer(), 0, kDibOffY, kXPix);
 		_vm->_screen->displayList(kDisplayAdd, 0, kDibOffY, kXPix, kInvDy);
 		break;
-	case kExitHotspot:                              // Walk to exit hotspot
+	case kExitHotspot: // Walk to exit hotspot
 		i = findExit(cx, cy, *_vm->_screenPtr);
 		x = _hotspots[i]._viewx;
 		y = _hotspots[i]._viewy;
-		if (x >= 0) {                               // Hotspot refers to an exit
+		if (x >= 0) { // Hotspot refers to an exit
 			// Special case of immediate exit
 			if (_jumpExitFl) {
 				// Get rid of iconbar if necessary
 				if (_vm->_inventory->getInventoryState() != kInventoryOff)
 					_vm->_inventory->setInventoryState(kInventoryUp);
 				_vm->_scheduler->insertActionList(_hotspots[i]._actIndex);
-			} else {    // Set up route to exit spot
+			} else { // Set up route to exit spot
 				if (_hotspots[i]._direction == Common::KEYCODE_RIGHT)
 					x -= kHeroMaxWidth;
 				else if (_hotspots[i]._direction == Common::KEYCODE_LEFT)
@@ -262,30 +262,30 @@ void MouseHandler::processLeftClick(const int16 objId, const int16 cx, const int
 			_vm->_screen->resetInventoryObjId();
 		}
 		break;
-	default:                                        // Look at an icon or object
+	default: // Look at an icon or object
 		obj = &_vm->_object->_objects[objId];
 
 		// Over iconbar - immediate description
 		if ((_vm->_inventory->getInventoryState() == kInventoryActive) && (cy < kInvDy + kDibOffY)) {
 			_vm->_object->lookObject(obj);
 		} else {
-			bool foundFl = false;                   // TRUE if route found to object
-			switch (obj->_viewx) {                   // Clicked over viewport object
-			case -1:                                // Walk to object position
+			bool foundFl = false; // TRUE if route found to object
+			switch (obj->_viewx) { // Clicked over viewport object
+			case -1: // Walk to object position
 				if (_vm->_object->findObjectSpace(obj, &x, &y))
 					foundFl = _vm->_route->startRoute(kRouteLook, objId, x, y);
-				if (!foundFl)                       // Can't get there, immediate description
+				if (!foundFl) // Can't get there, immediate description
 					_vm->_object->lookObject(obj);
 				break;
-			case 0:                                 // Immediate description
+			case 0: // Immediate description
 				_vm->_object->lookObject(obj);
 				break;
-			default:                                // Walk to view point if possible
+			default: // Walk to view point if possible
 				if (!_vm->_route->startRoute(kRouteLook, objId, obj->_viewx, obj->_viewy)) {
 					if (_vm->_hero->_cycling == kCycleInvisible) // If invisible do
-						_vm->_object->lookObject(obj);          // immediate decription
+						_vm->_object->lookObject(obj); // immediate decription
 					else
-						Utils::notifyBox(_vm->_text->getTextMouse(kMsNoWayText));  // Can't get there
+						Utils::notifyBox(_vm->_text->getTextMouse(kMsNoWayText)); // Can't get there
 				}
 				break;
 			}
@@ -308,14 +308,14 @@ void MouseHandler::mouseHandler() {
 	int16 cx = getMouseX();
 	int16 cy = getMouseY();
 
-//	gameStatus._cx = cx;                             // Save cursor coords
-//	gameStatus._cy = cy;
+	//	gameStatus._cx = cx;                             // Save cursor coords
+	//	gameStatus._cy = cy;
 
 	// Don't process if outside client area
 	if ((cx < 0) || (cx > kXPix) || (cy < kDibOffY) || (cy > kViewSizeY + kDibOffY))
 		return;
 
-	int16 objId = -1;                               // Current source object
+	int16 objId = -1; // Current source object
 	// Process cursor over an object or icon
 	if (inventState == kInventoryActive) { // Check inventory icon bar first
 		objId = _vm->_inventory->processInventory(kInventoryActionGet, cx, cy);
@@ -326,10 +326,10 @@ void MouseHandler::mouseHandler() {
 	}
 
 	if (!gameStatus._gameOverFl) {
-		if (objId == -1)                            // No match, check rest of view
+		if (objId == -1) // No match, check rest of view
 			objId = _vm->_object->findObject(cx, cy);
 
-		if (objId >= 0) {                           // Got a match
+		if (objId >= 0) { // Got a match
 			// Display object name next to cursor (unless CURSOR_NOCHAR)
 			// Note test for swapped hero name
 			const char *name = _vm->_text->getNoun(_vm->_object->_objects[(objId == kHeroIndex) ? _vm->_heroImage : objId]._nounIndex, kCursorNameIndex);

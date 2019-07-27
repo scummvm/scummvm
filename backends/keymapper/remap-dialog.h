@@ -27,8 +27,8 @@
 
 #ifdef ENABLE_KEYMAPPER
 
-#include "backends/keymapper/keymapper.h"
-#include "gui/dialog.h"
+#	include "backends/keymapper/keymapper.h"
+#	include "gui/dialog.h"
 
 namespace GUI {
 class ButtonWidget;
@@ -72,7 +72,7 @@ protected:
 	void stopRemapping(bool force = false);
 
 	Keymapper *_keymapper;
-	Keymap** _keymapTable;
+	Keymap **_keymapTable;
 
 	Array<ActionInfo> _currentActions;
 	int _topAction;
@@ -93,7 +93,6 @@ protected:
 	bool _changes;
 
 	bool _topKeymapIsGui;
-
 };
 
 } // End of namespace Common

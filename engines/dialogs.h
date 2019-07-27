@@ -63,15 +63,15 @@ protected:
 protected:
 	Engine *_engine;
 
-	GUI::GraphicsWidget  *_logo;
+	GUI::GraphicsWidget *_logo;
 
-	GUI::ButtonWidget    *_rtlButton;
-	GUI::ButtonWidget    *_loadButton;
-	GUI::ButtonWidget    *_saveButton;
-	GUI::ButtonWidget    *_helpButton;
+	GUI::ButtonWidget *_rtlButton;
+	GUI::ButtonWidget *_loadButton;
+	GUI::ButtonWidget *_saveButton;
+	GUI::ButtonWidget *_helpButton;
 
-	GUI::Dialog          *_aboutDialog;
-	GUI::Dialog          *_optionsDialog;
+	GUI::Dialog *_aboutDialog;
+	GUI::Dialog *_optionsDialog;
 
 	GUI::SaveLoadChooser *_loadDialog;
 	GUI::SaveLoadChooser *_saveDialog;

@@ -28,8 +28,14 @@
 
 namespace CryOmni3D {
 
-FontManager::FontManager() : _currentFont(nullptr), _transparentBackground(false),
-	_spaceWidth(0), _charSpacing(0), _lineHeight(30), _foreColor(0), _blockTextRemaining(nullptr) {
+FontManager::FontManager()
+  : _currentFont(nullptr)
+  , _transparentBackground(false)
+  , _spaceWidth(0)
+  , _charSpacing(0)
+  , _lineHeight(30)
+  , _foreColor(0)
+  , _blockTextRemaining(nullptr) {
 }
 
 FontManager::~FontManager() {
@@ -42,7 +48,7 @@ void FontManager::loadFonts(const Common::Array<Common::String> &fontFiles) {
 	_fonts.reserve(_fonts.size() + fontFiles.size());
 
 	for (Common::Array<Common::String>::const_iterator it = fontFiles.begin(); it != fontFiles.end();
-	        it++) {
+	     it++) {
 		Common::File font_fl;
 		//debug("Open font file %s", it->c_str());
 		if (!font_fl.open(*it)) {
@@ -61,9 +67,9 @@ void FontManager::loadFont(Common::ReadStream &font_fl) {
 	}
 
 	// 3 unknown uint16
-	(void) font_fl.readUint16BE();
-	(void) font_fl.readUint16BE();
-	(void) font_fl.readUint16BE();
+	(void)font_fl.readUint16BE();
+	(void)font_fl.readUint16BE();
+	(void)font_fl.readUint16BE();
 
 	Font *font = new Font();
 
@@ -297,7 +303,8 @@ void FontManager::calculateWordWrap(const Common::String &text,
 
 	while (!wordWrap) {
 		Common::String::const_iterator begin = ptr;
-		for (; ptr != text.end() && *ptr != '\r' && *ptr != ' '; ptr++) { }
+		for (; ptr != text.end() && *ptr != '\r' && *ptr != ' '; ptr++) {
+		}
 		Common::String word(begin, ptr);
 		uint width = getStrWidth(word);
 		if (width + offset >= lineWidth) {
@@ -307,7 +314,8 @@ void FontManager::calculateWordWrap(const Common::String &text,
 		} else {
 			words.push_back(word);
 			offset += width + _spaceWidth;
-			for (; ptr != text.end() && *ptr == ' '; ptr++) { }
+			for (; ptr != text.end() && *ptr == ' '; ptr++) {
+			}
 			for (; ptr != text.end() && *ptr == '\r'; ptr++) {
 				wordWrap = true;
 				*hasCr = true;
@@ -322,7 +330,13 @@ void FontManager::calculateWordWrap(const Common::String &text,
 	*position = ptr;
 }
 
-FontManager::Character::Character() : h(0), w(0), offX(0), offY(0), printedWidth(0), data(0) {
+FontManager::Character::Character()
+  : h(0)
+  , w(0)
+  , offX(0)
+  , offY(0)
+  , printedWidth(0)
+  , data(0) {
 }
 
 FontManager::Character::~Character() {

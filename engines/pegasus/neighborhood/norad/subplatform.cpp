@@ -23,13 +23,13 @@
  *
  */
 
-#include "pegasus/gamestate.h"
-#include "pegasus/pegasus.h"
+#include "pegasus/neighborhood/norad/subplatform.h"
 #include "pegasus/ai/ai_area.h"
+#include "pegasus/gamestate.h"
+#include "pegasus/neighborhood/norad/alpha/noradalpha.h"
 #include "pegasus/neighborhood/norad/constants.h"
 #include "pegasus/neighborhood/norad/norad.h"
-#include "pegasus/neighborhood/norad/subplatform.h"
-#include "pegasus/neighborhood/norad/alpha/noradalpha.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -52,16 +52,15 @@ static const NotificationFlags kPrepSubFinished = kNormalSplashFinished << 1;
 static const NotificationFlags kPrepIncompleteFinished = kPrepSubFinished << 1;
 static const NotificationFlags kDamagedFinished = kPrepIncompleteFinished << 1;
 
-static const NotificationFlags kPlatformNotificationFlags = kNormalSplashFinished |
-														kPrepSubFinished |
-														kPrepIncompleteFinished |
-														kDamagedFinished;
+static const NotificationFlags kPlatformNotificationFlags = kNormalSplashFinished | kPrepSubFinished | kPrepIncompleteFinished | kDamagedFinished;
 
 static const uint16 kSubPreppedBit = (1 << 0);
 static const uint16 kWaitingForPlayerBit = (1 << 1);
 
-SubPlatform::SubPlatform(Neighborhood *handler) : GameInteraction(kNoradSubPlatformInteractionID, handler),
-		_platformMovie(kPlatformMonitorID), _platformNotification(kNoradSubPlatformNotificationID, (PegasusEngine *)g_engine) {
+SubPlatform::SubPlatform(Neighborhood *handler)
+  : GameInteraction(kNoradSubPlatformInteractionID, handler)
+  , _platformMovie(kPlatformMonitorID)
+  , _platformNotification(kNoradSubPlatformNotificationID, (PegasusEngine *)g_engine) {
 	_neighborhoodNotification = handler->getNeighborhoodNotification();
 }
 
@@ -137,12 +136,12 @@ void SubPlatform::receiveNotification(Notification *notification, const Notifica
 			owner->getExtraEntry(kNorad19ExitToSub, entry);
 
 			loop1Spec.makeTwoKnotFaderSpec(kNoradAlphaMovieScale, 0, kNoradWarningVolume,
-					entry.movieEnd - entry.movieStart, 0);
+			                               entry.movieEnd - entry.movieStart, 0);
 			loop1Spec.insertFaderKnot(4560, kNoradWarningVolume);
 			loop1Spec.insertFaderKnot(5080, 0);
 
 			loop2Spec.makeTwoKnotFaderSpec(kNoradAlphaMovieScale, 0, kNoradSuckWindVolume,
-					entry.movieEnd - entry.movieStart, 0);
+			                               entry.movieEnd - entry.movieStart, 0);
 			loop1Spec.insertFaderKnot(4560, kNoradSuckWindVolume);
 			loop1Spec.insertFaderKnot(5080, 0);
 

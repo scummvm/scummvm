@@ -64,32 +64,28 @@ bool SceneScriptRC04::ClickedOn3DObject(const char *objectName, bool a2) {
 
 void SceneScriptRC04::dialogueWithBulletBob() {
 	Dialogue_Menu_Clear_List();
-	if ( Actor_Clue_Query(kActorMcCoy, kClueLabShellCasings)
-	 && !Actor_Clue_Query(kActorMcCoy, kClueRadiationGoggles)
-	) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueLabShellCasings)
+	    && !Actor_Clue_Query(kActorMcCoy, kClueRadiationGoggles)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(580, -1, 4, 9); // WEAPONS
 	}
-	if ( Actor_Clue_Query(kActorMcCoy, kClueShellCasings)
-	 && !Actor_Clue_Query(kActorMcCoy, kClueLabShellCasings)
-	 && !Actor_Clue_Query(kActorMcCoy, kClueRadiationGoggles)
-	) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueShellCasings)
+	    && !Actor_Clue_Query(kActorMcCoy, kClueLabShellCasings)
+	    && !Actor_Clue_Query(kActorMcCoy, kClueRadiationGoggles)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(590, 6, 5, 3); // SHELL CASINGS
 	}
 	if (Actor_Clue_Query(kActorMcCoy, kClueHasanInterview)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(600, -1, 3, 7); // HASAN
 		DM_Add_To_List_Never_Repeat_Once_Selected(1310, -1, 2, 8); // VOIGT-KAMPFF
 	}
-	if ( Actor_Clue_Query(kActorMcCoy, kClueRadiationGoggles)
-	 && !Actor_Clue_Query(kActorMcCoy, kClueGogglesReplicantIssue)
-	) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueRadiationGoggles)
+	    && !Actor_Clue_Query(kActorMcCoy, kClueGogglesReplicantIssue)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(610, 4, 5, 6); // GOGGLES
 	}
 	if (!Game_Flag_Query(kFlagRC04BobTalkAmmo)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1280, 1, 2, 3); // AMMO
 	}
-	if ( Actor_Clue_Query(kActorMcCoy, kClueHoldensBadge)
-	 && !Actor_Clue_Query(kActorBulletBob, kClueHoldensBadge)
-	) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueHoldensBadge)
+	    && !Actor_Clue_Query(kActorBulletBob, kClueHoldensBadge)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(620, 1, -1, -1); // HOLDEN'S BADGE
 	}
 	Dialogue_Menu_Add_DONE_To_List(630); // DONE
@@ -127,7 +123,7 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 			Actor_Says(kActorBulletBob, 390, 11);
 			Actor_Says(kActorBulletBob, 400, 37);
 #if BLADERUNNER_ORIGINAL_BUGS
-			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorMcCoy);  // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorMcCoy); // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
 #else
 			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorBulletBob);
 #endif // BLADERUNNER_ORIGINAL_BUGS
@@ -141,7 +137,7 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 			Actor_Says(kActorMcCoy, 5030, 16);
 			Actor_Says(kActorBulletBob, 460, 37);
 #if BLADERUNNER_ORIGINAL_BUGS
-			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview2, true, kActorMcCoy);  // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview2, true, kActorMcCoy); // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
 #else
 			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview2, true, kActorBulletBob);
 #endif // BLADERUNNER_ORIGINAL_BUGS
@@ -174,7 +170,7 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 			Actor_Says(kActorBulletBob, 390, 37);
 			Actor_Says(kActorBulletBob, 400, 32);
 #if BLADERUNNER_ORIGINAL_BUGS
-			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorMcCoy);  // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorMcCoy); // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
 #else
 			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorBulletBob);
 #endif // BLADERUNNER_ORIGINAL_BUGS
@@ -188,7 +184,7 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 			Actor_Says(kActorMcCoy, 5030, 16);
 			Actor_Says(kActorBulletBob, 460, 30);
 #if BLADERUNNER_ORIGINAL_BUGS
-			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview2, true, kActorMcCoy);  // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview2, true, kActorMcCoy); // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
 #else
 			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview2, true, kActorBulletBob);
 #endif // BLADERUNNER_ORIGINAL_BUGS
@@ -222,7 +218,7 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 			Actor_Says(kActorMcCoy, 5080, 11);
 			Actor_Says(kActorBulletBob, 730, 37);
 #if BLADERUNNER_ORIGINAL_BUGS
-			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorMcCoy);  // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorMcCoy); // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
 #else
 			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorBulletBob);
 #endif // BLADERUNNER_ORIGINAL_BUGS
@@ -243,7 +239,7 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 			Actor_Says(kActorBulletBob, 660, 30);
 			Actor_Says(kActorMcCoy, 5060, 13);
 #if BLADERUNNER_ORIGINAL_BUGS
-			Actor_Clue_Acquire(kActorMcCoy, kClueGogglesReplicantIssue, true, kActorMcCoy);  // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
+			Actor_Clue_Acquire(kActorMcCoy, kClueGogglesReplicantIssue, true, kActorMcCoy); // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
 #else
 			Actor_Clue_Acquire(kActorMcCoy, kClueGogglesReplicantIssue, true, kActorBulletBob);
 #endif // BLADERUNNER_ORIGINAL_BUGS
@@ -283,8 +279,7 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 		}
 		Actor_Says(kActorBulletBob, 2120, 31);
 		if (Global_Variable_Query(kVariableChinyen) > 40
-		 || Query_Difficulty_Level() == kGameDifficultyEasy
-		) {
+		    || Query_Difficulty_Level() == kGameDifficultyEasy) {
 			Actor_Says(kActorMcCoy, 4940, 13);
 			if (Query_Difficulty_Level() != kGameDifficultyEasy) {
 				Global_Variable_Decrement(kVariableChinyen, 40);
@@ -336,15 +331,13 @@ bool SceneScriptRC04::ClickedOnActor(int actorId) {
 	}
 
 	if (actorId == kActorBulletBob) {
-		if ( Global_Variable_Query(kVariableChapter) == 2
-		 && !Game_Flag_Query(kFlagRC04McCoyShotBob)
-		) {
+		if (Global_Variable_Query(kVariableChapter) == 2
+		    && !Game_Flag_Query(kFlagRC04McCoyShotBob)) {
 			Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 104, 0, false, false);
 			Actor_Face_Actor(kActorMcCoy, kActorBulletBob, true);
-			if ( Game_Flag_Query(kFlagRC04Entered)
-			 && !Game_Flag_Query(kFlagRC04BobTalk2)
-			 &&  Actor_Query_Friendliness_To_Other(kActorBulletBob, kActorMcCoy) > 45
-			) {
+			if (Game_Flag_Query(kFlagRC04Entered)
+			    && !Game_Flag_Query(kFlagRC04BobTalk2)
+			    && Actor_Query_Friendliness_To_Other(kActorBulletBob, kActorMcCoy) > 45) {
 				Actor_Says(kActorBulletBob, 30, 30);
 				Actor_Says(kActorMcCoy, 4875, 13);
 				Actor_Says(kActorBulletBob, 80, 31);
@@ -353,10 +346,9 @@ bool SceneScriptRC04::ClickedOnActor(int actorId) {
 				Actor_Says(kActorBulletBob, 100, 34);
 				Actor_Says(kActorMcCoy, 4905, 15);
 				Game_Flag_Set(kFlagRC04BobTalk2);
-			} else if ( Game_Flag_Query(kFlagRC04Entered)
-					&& !Game_Flag_Query(kFlagRC04BobTalk1)
-					&& Actor_Query_Friendliness_To_Other(kActorBulletBob, kActorMcCoy) < 45
-			) {
+			} else if (Game_Flag_Query(kFlagRC04Entered)
+			           && !Game_Flag_Query(kFlagRC04BobTalk1)
+			           && Actor_Query_Friendliness_To_Other(kActorBulletBob, kActorMcCoy) < 45) {
 				Actor_Says(kActorBulletBob, 40, 30);
 				Actor_Says(kActorMcCoy, 4880, 13);
 				Actor_Says(kActorBulletBob, 50, 35);
@@ -367,9 +359,8 @@ bool SceneScriptRC04::ClickedOnActor(int actorId) {
 				Actor_Says(kActorMcCoy, 4895, 16);
 				Actor_Modify_Friendliness_To_Other(kActorBulletBob, kActorMcCoy, -5);
 				Game_Flag_Set(kFlagRC04BobTalk1);
-			} else if ( Actor_Query_Friendliness_To_Other(kActorBulletBob, kActorMcCoy) > 51
-					&& !Game_Flag_Query(kFlagRC04BobTalk3)
-			) {
+			} else if (Actor_Query_Friendliness_To_Other(kActorBulletBob, kActorMcCoy) > 51
+			           && !Game_Flag_Query(kFlagRC04BobTalk3)) {
 				Actor_Says(kActorBulletBob, 1870, 30);
 				Actor_Says(kActorBulletBob, 1880, 30);
 				Actor_Says(kActorMcCoy, 8960, 13);
@@ -387,8 +378,7 @@ bool SceneScriptRC04::ClickedOnActor(int actorId) {
 				Delay(1000);
 				Actor_Says(kActorBulletBob, 2010, 35);
 				if (Global_Variable_Query(kVariableChinyen) > 50
-				 || Query_Difficulty_Level() == kGameDifficultyEasy
-				) {
+				    || Query_Difficulty_Level() == kGameDifficultyEasy) {
 					Actor_Says(kActorMcCoy, 8975, 16);
 					if (Query_Difficulty_Level() != kGameDifficultyEasy) {
 						Global_Variable_Decrement(kVariableChinyen, 50);
@@ -404,13 +394,12 @@ bool SceneScriptRC04::ClickedOnActor(int actorId) {
 					Actor_Says(kActorBulletBob, 2050, 33);
 				}
 				Game_Flag_Set(kFlagRC04BobTalk3);
-			} else if ( Actor_Clue_Query(kActorMcCoy, kClueLabShellCasings)
-			        ||  Actor_Clue_Query(kActorMcCoy, kClueShellCasings)
-			        ||  Actor_Clue_Query(kActorMcCoy, kClueRadiationGoggles)
-			        ||  Actor_Clue_Query(kActorMcCoy, kClueHoldensBadge)
-			        ||  Actor_Clue_Query(kActorMcCoy, kClueHasanInterview)
-			        || !Game_Flag_Query(kFlagRC04BobTalkAmmo)
-			) {
+			} else if (Actor_Clue_Query(kActorMcCoy, kClueLabShellCasings)
+			           || Actor_Clue_Query(kActorMcCoy, kClueShellCasings)
+			           || Actor_Clue_Query(kActorMcCoy, kClueRadiationGoggles)
+			           || Actor_Clue_Query(kActorMcCoy, kClueHoldensBadge)
+			           || Actor_Clue_Query(kActorMcCoy, kClueHasanInterview)
+			           || !Game_Flag_Query(kFlagRC04BobTalkAmmo)) {
 				dialogueWithBulletBob();
 			} else {
 				Actor_Says(kActorBulletBob, 1820, 30);
@@ -460,10 +449,9 @@ void SceneScriptRC04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 void SceneScriptRC04::PlayerWalkedIn() {
 	Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 103, 0, false, false);
 
-	if ( Global_Variable_Query(kVariableChapter) == 2
-	 && !Game_Flag_Query(kFlagRC04Entered)
-	 && !Player_Query_Combat_Mode()
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 2
+	    && !Game_Flag_Query(kFlagRC04Entered)
+	    && !Player_Query_Combat_Mode()) {
 		Actor_Says(kActorBulletBob, 0, 31);
 		Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 104, 0, false, false);
 		Actor_Face_Actor(kActorMcCoy, kActorBulletBob, true);
@@ -475,10 +463,9 @@ void SceneScriptRC04::PlayerWalkedIn() {
 		return; //true;
 	}
 
-	if ( Global_Variable_Query(kVariableChapter) == 4
-	 && !Game_Flag_Query(kFlagRC04McCoyShotBob)
-	 && !Game_Flag_Query(kFlagNotUsed306)
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 4
+	    && !Game_Flag_Query(kFlagRC04McCoyShotBob)
+	    && !Game_Flag_Query(kFlagNotUsed306)) {
 		Actor_Says(kActorDispatcher, 40, 3);
 		Actor_Says(kActorBulletBob, 890, 37);
 		Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobShootMcCoy);

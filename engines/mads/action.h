@@ -31,17 +31,17 @@ namespace MADS {
 
 enum TriggerMode {
 	SEQUENCE_TRIGGER_NONE = -1,
-	SEQUENCE_TRIGGER_PARSER = 0,		// Triggers parser
-	SEQUENCE_TRIGGER_DAEMON = 1,		// Triggers step/daemon code
-	SEQUENCE_TRIGGER_PREPARE = 2		// Triggers preparser
+	SEQUENCE_TRIGGER_PARSER = 0, // Triggers parser
+	SEQUENCE_TRIGGER_DAEMON = 1, // Triggers step/daemon code
+	SEQUENCE_TRIGGER_PREPARE = 2 // Triggers preparser
 };
 
 enum InterAwaiting {
 	AWAITING_NONE = 0,
-	AWAITING_COMMAND = 1,       // Initial state: waiting for a command verb
-	AWAITING_THIS = 2,			// Waiting for object
-	AWAITING_THAT = 3,			// Waiting for a second object
-	AWAITING_RIGHT_MOUSE = 4	// Waiting for mouse button release
+	AWAITING_COMMAND = 1, // Initial state: waiting for a command verb
+	AWAITING_THIS = 2, // Waiting for object
+	AWAITING_THAT = 3, // Waiting for a second object
+	AWAITING_RIGHT_MOUSE = 4 // Waiting for mouse button release
 };
 
 enum {
@@ -59,16 +59,33 @@ enum {
 	VERB_WALKTO = 13
 };
 
-enum VerbType { VERB_ONLY, VERB_THIS, VERB_THAT, VERB_INIT };
+enum VerbType { VERB_ONLY,
+	              VERB_THIS,
+	              VERB_THAT,
+	              VERB_INIT };
 
 enum PrepType {
-	PREP_NONE, PREP_WITH, PREP_TO, PREP_AT, PREP_FROM, PREP_ON, PREP_IN,
-	PREP_UNDER, PREP_BEHIND, PREP_RELATIONAL = 0xff
+	PREP_NONE,
+	PREP_WITH,
+	PREP_TO,
+	PREP_AT,
+	PREP_FROM,
+	PREP_ON,
+	PREP_IN,
+	PREP_UNDER,
+	PREP_BEHIND,
+	PREP_RELATIONAL = 0xff
 };
 
 enum ScrCategory {
-	CAT_NONE = 0, CAT_COMMAND = 1, CAT_INV_LIST = 2, CAT_INV_VOCAB = 3,
-	CAT_HOTSPOT = 4, CAT_INV_ANIM = 5, CAT_TALK_ENTRY = 6, CAT_INV_SCROLLER = 7,
+	CAT_NONE = 0,
+	CAT_COMMAND = 1,
+	CAT_INV_LIST = 2,
+	CAT_INV_VOCAB = 3,
+	CAT_HOTSPOT = 4,
+	CAT_INV_ANIM = 5,
+	CAT_TALK_ENTRY = 6,
+	CAT_INV_SCROLLER = 7,
 	CAT_12 = 12
 };
 
@@ -110,6 +127,7 @@ private:
 	void appendVocab(int vocabId, bool capitalize = false);
 
 	void startWalkingDirectly(int walkType);
+
 public:
 	ActionDetails _action, _activeAction;
 	int _articleNumber;
@@ -130,7 +148,7 @@ public:
 	ScrCategory _secondObjectSource;
 	ScrCategory _recentCommandSource;
 	bool _pointEstablished;
-	int  _recentCommand;
+	int _recentCommand;
 	InterAwaiting _interAwaiting;
 	bool _inProgress;
 	int _pickedWord;

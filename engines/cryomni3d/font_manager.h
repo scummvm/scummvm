@@ -24,8 +24,8 @@
 #define CRYOMNI3D_FONT_MANAGER_H
 
 #include "common/array.h"
-#include "common/str.h"
 #include "common/rect.h"
+#include "common/str.h"
 
 namespace Common {
 class ReadStream;
@@ -61,7 +61,12 @@ public:
 
 	uint getLinesCount(const Common::String &text, uint width);
 
-	void setupBlock(const Common::Rect &block, bool justifyText = false) { _blockRect = block; _blockPos.x = block.left; _blockPos.y = block.top; _justifyText = justifyText; }
+	void setupBlock(const Common::Rect &block, bool justifyText = false) {
+		_blockRect = block;
+		_blockPos.x = block.left;
+		_blockPos.y = block.top;
+		_justifyText = justifyText;
+	}
 	bool displayBlockText(const Common::String &text) { return displayBlockText(text, text.begin()); }
 	bool displayBlockText(const Common::String &text, Common::String::const_iterator begin);
 	Common::String::const_iterator blockTextRemaining() { return _blockTextRemaining; }

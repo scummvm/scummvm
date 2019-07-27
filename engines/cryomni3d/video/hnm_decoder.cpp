@@ -22,22 +22,26 @@
 
 #include "common/debug.h"
 #include "common/endian.h"
-#include "common/system.h"
-#include "common/stream.h"
 #include "common/file.h"
+#include "common/stream.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 
 #include "audio/decoders/raw.h"
 
-#include "cryomni3d/video/hnm_decoder.h"
 #include "cryomni3d/image/codecs/hlz.h"
+#include "cryomni3d/video/hnm_decoder.h"
 
 namespace Video {
 
 // When no sound display a frame every 80ms
-HNMDecoder::HNMDecoder(bool loop, byte *initialPalette) : _regularFrameDelay(80),
-	_videoTrack(nullptr), _audioTrack(nullptr), _stream(nullptr),
-	_loop(loop), _initialPalette(initialPalette) {
+HNMDecoder::HNMDecoder(bool loop, byte *initialPalette)
+  : _regularFrameDelay(80)
+  , _videoTrack(nullptr)
+  , _audioTrack(nullptr)
+  , _stream(nullptr)
+  , _loop(loop)
+  , _initialPalette(initialPalette) {
 }
 
 HNMDecoder::~HNMDecoder() {
@@ -153,8 +157,10 @@ void HNMDecoder::readNextPacket() {
 }
 
 HNMDecoder::HNM4VideoTrack::HNM4VideoTrack(uint32 width, uint32 height, uint32 frameSize,
-        uint32 frameCount, uint32 regularFrameDelay, const byte *initialPalette) :
-	_frameCount(frameCount), _regularFrameDelay(regularFrameDelay), _nextFrameStartTime(0) {
+                                           uint32 frameCount, uint32 regularFrameDelay, const byte *initialPalette)
+  : _frameCount(frameCount)
+  , _regularFrameDelay(regularFrameDelay)
+  , _nextFrameStartTime(0) {
 
 	restart();
 
@@ -196,7 +202,6 @@ void HNMDecoder::HNM4VideoTrack::setFrameDelay(uint32 frameDelay) {
 		_nextNextFrameDelay += frameDelay;
 	}
 }
-
 
 void HNMDecoder::HNM4VideoTrack::decodePalette(Common::SeekableReadStream *stream, uint32 size) {
 	while (true) {
@@ -346,8 +351,11 @@ void HNMDecoder::HNM4VideoTrack::decodeIntraframe(Common::SeekableReadStream *st
 }
 
 HNMDecoder::DPCMAudioTrack::DPCMAudioTrack(uint16 channels, uint16 bits, uint sampleRate,
-        Audio::Mixer::SoundType soundType) : AudioTrack(soundType), _audioStream(nullptr),
-	_gotLUT(false), _lastSample(0) {
+                                           Audio::Mixer::SoundType soundType)
+  : AudioTrack(soundType)
+  , _audioStream(nullptr)
+  , _gotLUT(false)
+  , _lastSample(0) {
 	if (bits != 16) {
 		error("Unsupported audio bits");
 	}
@@ -362,7 +370,7 @@ HNMDecoder::DPCMAudioTrack::~DPCMAudioTrack() {
 }
 
 Audio::Timestamp HNMDecoder::DPCMAudioTrack::decodeSound(Common::SeekableReadStream *stream,
-        uint32 size) {
+                                                         uint32 size) {
 	if (!_gotLUT) {
 		if (size < 256 * sizeof(*_lut)) {
 			error("Invalid first sound chunk");

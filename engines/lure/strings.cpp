@@ -21,11 +21,11 @@
  */
 
 #include "lure/strings.h"
+#include "common/endian.h"
 #include "lure/disk.h"
 #include "lure/lure.h"
 #include "lure/res.h"
 #include "lure/room.h"
-#include "common/endian.h"
 
 namespace Lure {
 
@@ -35,7 +35,8 @@ StringData::StringData() {
 	int_strings = this;
 	Disk &disk = Disk::getReference();
 
-	for (uint8 ctr = 0; ctr < MAX_NUM_CHARS; ++ctr) _chars[ctr] = NULL;
+	for (uint8 ctr = 0; ctr < MAX_NUM_CHARS; ++ctr)
+		_chars[ctr] = NULL;
 	_numChars = 0;
 	_names = Disk::getReference().getEntry(NAMES_RESOURCE_ID);
 	_strings[0] = disk.getEntry(STRINGS_RESOURCE_ID);
@@ -45,7 +46,7 @@ StringData::StringData() {
 	// Add in the list of bit sequences, and what characters they represent
 	MemoryBlock *decoderList = disk.getEntry(STRING_DECODER_RESOURCE_ID);
 
-	const char *p = (const char *) decoderList->data();
+	const char *p = (const char *)decoderList->data();
 	while ((byte)*p != 0xff) {
 		char ascii = *p++;
 		add(p, ascii);
@@ -59,8 +60,10 @@ StringData::~StringData() {
 	int_strings = NULL;
 
 	for (uint8 ctr = 0; ctr < MAX_NUM_CHARS; ++ctr)
-		if (_chars[ctr]) delete _chars[ctr];
-		else break;
+		if (_chars[ctr])
+			delete _chars[ctr];
+		else
+			break;
 
 	delete _names;
 	delete _strings[0];
@@ -108,7 +111,7 @@ bool StringData::initPosition(uint16 stringId) {
 
 	if (stringId < STRING_ID_RANGE)
 		_stringTable = _strings[0]->data();
-	else if (stringId < STRING_ID_RANGE*2) {
+	else if (stringId < STRING_ID_RANGE * 2) {
 		stringId -= STRING_ID_RANGE;
 		_stringTable = _strings[1]->data();
 	} else {
@@ -126,7 +129,7 @@ bool StringData::initPosition(uint16 stringId) {
 	}
 
 	numLoops = stringId & 0x1f;
-	if (numLoops!= 0) {
+	if (numLoops != 0) {
 		byte *tempPtr = _stringTable + (stringId & 0xffe0) + READ_LE_UINT16(_stringTable);
 
 		for (int ctr = 0; ctr < numLoops; ++ctr) {
@@ -148,7 +151,8 @@ bool StringData::initPosition(uint16 stringId) {
 
 	// Final positioning to start of string
 	for (;;) {
-		if (readBit() == 0) break;
+		if (readBit() == 0)
+			break;
 		_srcPos += 2;
 	}
 	return readBit() != 0;
@@ -167,28 +171,28 @@ char StringData::readCharacter() {
 
 		// Scan through list for a match
 		for (int index = 0; _chars[index] != NULL; ++index) {
-			if ((_chars[index]->_numBits == numBits) &&
-				(_chars[index]->_sequence == searchValue))
+			if ((_chars[index]->_numBits == numBits) && (_chars[index]->_sequence == searchValue))
 				return _chars[index]->_ascii;
 		}
 	}
 
 	error("Unknown bit sequence encountered when decoding string");
 
-	return 0;	// for compilers that don't support NORETURN
+	return 0; // for compilers that don't support NORETURN
 }
 
 void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
-		const char *characterName, int hotspotArticle, int characterArticle) {
+                           const char *characterName, int hotspotArticle, int characterArticle) {
 	debugC(ERROR_INTERMEDIATE, kLureDebugStrings,
-		"StringData::getString stringId=%xh hotspot=%d,%s character=%d,%s",
-		stringId, hotspotArticle, hotspotName, characterArticle, characterName);
+	       "StringData::getString stringId=%xh hotspot=%d,%s character=%d,%s",
+	       stringId, hotspotArticle, hotspotName, characterArticle, characterName);
 	StringList &stringList = Resources::getReference().stringList();
 	char ch;
 	strcpy(dest, "");
 	char *destPos = dest;
-	stringId &= 0x1fff;      // Strip off any article identifier
-	if (stringId == 0) return;
+	stringId &= 0x1fff; // Strip off any article identifier
+	if (stringId == 0)
+		return;
 
 	bool includeArticles = initPosition(stringId);
 	uint32 charOffset = _srcPos - _stringTable;
@@ -213,26 +217,25 @@ void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 				destPos += strlen(destPos);
 
 				debugC(ERROR_DETAILED, kLureDebugStrings, "String data %xh/%.2xh val=%.2xh name=%s",
-					charOffset, charBitMask, (uint8)ch, p);
+				       charOffset, charBitMask, (uint8)ch, p);
 			}
-		} else if ((uint8) ch >= 0xa0) {
-			const char *p = getName((uint8) ch - 0xa0);
+		} else if ((uint8)ch >= 0xa0) {
+			const char *p = getName((uint8)ch - 0xa0);
 			strcpy(destPos, p);
 			destPos += strlen(p);
 			debugC(ERROR_DETAILED, kLureDebugStrings, "String data %xh/%.2xh val=%.2xh sequence='%s'",
-				charOffset, charBitMask, (uint8)ch, p);
+			       charOffset, charBitMask, (uint8)ch, p);
 		} else {
 			*destPos++ = ch;
 			debugC(ERROR_DETAILED, kLureDebugStrings, "String data %xh/%.2xh val=%.2xh char=%c",
-				charOffset, charBitMask, (uint8)ch, ch);
+			       charOffset, charBitMask, (uint8)ch, ch);
 		}
 
 		charOffset = _srcPos - _stringTable;
 		charBitMask = _bitMask;
 
 		// WORKAROUND: Italian version had an unterminated Look description for Prisoner after cutting sack
-		if ((charOffset == 0x1a08) && (charBitMask == 1) &&
-			(LureEngine::getReference().getLanguage() == Common::IT_ITA))
+		if ((charOffset == 0x1a08) && (charBitMask == 1) && (LureEngine::getReference().getLanguage() == Common::IT_ITA))
 			// Hardcode for end of string
 			ch = '\0';
 		else
@@ -241,7 +244,7 @@ void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 	}
 
 	debugC(ERROR_DETAILED, kLureDebugStrings, "String data %xh/%.2xh val=%.2xh EOS",
-		charOffset, charBitMask, ch);
+	       charOffset, charBitMask, ch);
 	*destPos = '\0';
 }
 
@@ -254,7 +257,7 @@ char *StringData::getName(uint8 nameIndex) {
 		error("Invalid name index was passed to getCharacterName");
 
 	uint16 nameStart = READ_LE_UINT16(_names->data() + (nameIndex * 2));
-	return (char *) (_names->data() + nameStart);
+	return (char *)(_names->data() + nameStart);
 }
 
 } // namespace Lure

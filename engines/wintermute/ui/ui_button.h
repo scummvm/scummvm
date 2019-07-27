@@ -29,15 +29,13 @@
 #ifndef WINTERMUTE_UIBUTTON_H
 #define WINTERMUTE_UIBUTTON_H
 
-
+#include "engines/wintermute/dctypes.h" // Added by ClassView
 #include "engines/wintermute/ui/ui_object.h"
-#include "engines/wintermute/dctypes.h"    // Added by ClassView
 
 namespace Wintermute {
 
 class UIButton : public UIObject {
 public:
-
 	DECLARE_PERSISTENT(UIButton, UIObject)
 	void press();
 	virtual bool display() { return display(0, 0); }
@@ -56,7 +54,6 @@ public:
 	virtual bool scSetProperty(const char *name, ScValue *value) override;
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	virtual const char *scToString() override;
-
 
 	void setFontHover(BaseFont *font);
 	BaseFont *getFontHover();
@@ -88,7 +85,6 @@ private:
 	BaseSprite *_imageFocus;
 	uint32 _oneTimePressTime;
 	TTextAlign _align;
-
 };
 
 } // End of namespace Wintermute

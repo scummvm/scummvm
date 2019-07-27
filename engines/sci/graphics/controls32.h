@@ -32,7 +32,7 @@ class GfxScreen;
 class GfxText32;
 
 enum MessageBoxStyle {
-	kMessageBoxOK    = 0x0,
+	kMessageBoxOK = 0x0,
 	kMessageBoxYesNo = 0x4
 };
 

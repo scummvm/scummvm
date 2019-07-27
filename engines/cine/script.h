@@ -23,10 +23,10 @@
 #ifndef CINE_SCRIPT_H
 #define CINE_SCRIPT_H
 
-#include "common/savefile.h"
 #include "common/array.h"
 #include "common/list.h"
 #include "common/ptr.h"
+#include "common/savefile.h"
 
 namespace Cine {
 
@@ -284,7 +284,7 @@ public:
 	static void setupTable();
 
 	FWScript(const RawScript &script, int16 index);
-//	FWScript(const RawObjectScript &script, int16 index);
+	//	FWScript(const RawObjectScript &script, int16 index);
 	FWScript(const FWScript &src);
 	~FWScript();
 
@@ -374,10 +374,10 @@ void setupOpcodes();
 void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx);
 void dumpScript(char *dumpName);
 
-#define OP_loadPart                     0x3F
-#define OP_loadNewPrcName               0x41
-#define OP_requestCheckPendingDataLoad  0x42
-#define OP_endScript                    0x50
+#define OP_loadPart 0x3F
+#define OP_loadNewPrcName 0x41
+#define OP_requestCheckPendingDataLoad 0x42
+#define OP_endScript 0x50
 
 void addScriptToGlobalScripts(uint16 idx);
 int16 checkCollision(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneIdx);

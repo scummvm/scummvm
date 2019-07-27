@@ -23,8 +23,8 @@
 #ifndef GLK_CONF_H
 #define GLK_CONF_H
 
-#include "glk/glk_types.h"
 #include "glk/fonts.h"
+#include "glk/glk_types.h"
 #include "glk/windows.h"
 
 namespace Glk {
@@ -68,6 +68,7 @@ private:
 	 * Parse a color
 	 */
 	uint parseColor(const Common::String &str);
+
 public:
 	MonoFontInfo _monoInfo;
 	PropFontInfo _propInfo;
@@ -97,6 +98,7 @@ public:
 	WindowStyle _gStylesDefault[style_NUMSTYLES];
 
 	int _imageW, _imageH;
+
 public:
 	/**
 	 * Constructor

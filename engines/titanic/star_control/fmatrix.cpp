@@ -41,8 +41,10 @@ void matProd(const FMatrix &a, const FMatrix &m, FMatrix &C) {
 
 // Member functions
 
-FMatrix::FMatrix() :
-	_row1(1.0, 0.0, 0.0), _row2(0.0, 1.0, 0.0), _row3(0.0, 0.0, 1.0) {
+FMatrix::FMatrix()
+  : _row1(1.0, 0.0, 0.0)
+  , _row2(0.0, 1.0, 0.0)
+  , _row3(0.0, 0.0, 1.0) {
 }
 
 FMatrix::FMatrix(const FVector &row1, const FVector &row2, const FVector &row3) {
@@ -111,7 +113,7 @@ void FMatrix::set(const FVector &v) {
 
 	_row1 = _row3.crossProduct(_row2);
 
-	float unused_scale=0.0;
+	float unused_scale = 0.0;
 	if (!_row1.normalize(unused_scale)) {
 		// Do the normalization, put the scale amount in unused_scale,
 		// but if it is unsuccessful, crash

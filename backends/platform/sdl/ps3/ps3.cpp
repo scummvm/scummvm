@@ -21,16 +21,16 @@
  */
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h	// sys/stat.h includes sys/time.h
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h // sys/stat.h includes sys/time.h
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
 #include "backends/platform/sdl/ps3/ps3.h"
+#include "backends/events/ps3sdl/ps3sdl-events.h"
+#include "backends/fs/ps3/ps3-fs-factory.h"
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 #include "backends/saves/default/default-saves.h"
-#include "backends/fs/ps3/ps3-fs-factory.h"
-#include "backends/events/ps3sdl/ps3sdl-events.h"
+#include "common/config-manager.h"
+#include "common/scummsys.h"
 
 #include <dirent.h>
 #include <sys/stat.h>
@@ -46,7 +46,7 @@ int access(const char *pathname, int mode) {
 }
 
 OSystem_PS3::OSystem_PS3(Common::String baseConfigName)
-	: _baseConfigName(baseConfigName) {
+  : _baseConfigName(baseConfigName) {
 }
 
 void OSystem_PS3::init() {

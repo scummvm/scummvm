@@ -20,8 +20,8 @@
  *
  */
 
-#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
+#include "dreamweb/sound.h"
 
 namespace DreamWeb {
 
@@ -58,67 +58,67 @@ static void (DreamWebEngine::*reelCallbacks[57])(ReelRoutine &) = {
 };
 
 static const ReelRoutine g_initialReelRoutines[] = {
-// Room number and x,y
-// reel pointer
-// speed,speed count,convers. no.
-	{ 1,44,0, 20, 2,0,1 },
-	{ 1,55,0, 0, 50,20,0 },
-	{ 24,22,0, 74, 1,0,0 },
-	{ 24,33,10, 75, 1,0,1 },
-	{ 1,44,0, 27, 2,0,2 },
-	{ 1,44,0, 96, 3,0,4 },
-	{ 1,44,0, 118, 2,0,5 },
-	{ 1,44,10, 0, 2,0,0 },
-	{ 5,22,20, 53, 3,0,0 },
-	{ 5,22,20, 40, 1,0,2 },
-	{ 5,22,20, 50, 1,0,3 },
-	{ 2,11,10, 192, 1,0,0 },
-	{ 2,11,10, 182, 2,0,1 },
-	{ 8,11,10, 0, 2,0,1 },
-	{ 23,0,50, 0, 3,0,0 },
-	{ 28,11,20, 250, 4,0,0 },
-	{ 23,0,50, 43, 2,0,8 },
-	{ 23,11,40, 130, 2,0,1 },
-	{ 23,22,40, 122, 2,0,2 },
-	{ 23,22,40, 105, 2,0,3 },
-	{ 23,22,40, 81, 2,0,4 },
-	{ 23,11,40, 135, 2,0,5 },
-	{ 23,22,40, 145, 2,0,6 },
-	{ 4,22,30, 0, 2,0,0 },
-	{ 45,22,30, 200, 0,0,20 },
-	{ 45,22,30, 39, 2,0,0 },
-	{ 45,22,30, 25, 2,0,0 },
-	{ 8,22,40, 32, 2,0,0 },
-	{ 7,11,20, 64, 2,0,0 },
-	{ 22,22,20, 82, 2,0,0 },
-	{ 27,11,30, 0, 2,0,0 },
-	{ 20,0,30, 0, 2,0,0 },
-	{ 14,33,40, 21, 1,0,0 },
-	{ 29,11,10, 0, 1,0,0 },
-	{ 2,22,0, 2, 2,0,0 },
-	{ 25,0,50, 4, 2,0,0 },
-	{ 50,22,30, 121, 2,0,0 },
-	{ 50,22,30, 0, 20,0,0 },
-	{ 52,22,30, 192, 2,0,0 },
-	{ 52,22,30, 233, 2,0,0 },
-	{ 50,22,40, 104, 55,0,0 }, // ...., 65,0,0 for German CD
-	{ 53,33,0, 99, 2,0,0 },
-	{ 50,22,40, 0, 3,0,0 },
-	{ 50,22,30, 162, 2,0,0 },
-	{ 52,22,30, 57, 2,0,0 },
-	{ 52,22,30, 0, 2,0,0 },
-	{ 54,0,0, 72, 3,0,0 },
-	{ 55,44,0, 0, 2,0,0 },
-	{ 19,0,0, 0, 28,0,0 },
-	{ 14,22,0, 2, 2,0,0 },
-	{ 14,22,0, 300, 1,0,0 },
-	{ 10,22,30, 174, 0,0,0 },
-	{ 12,22,20, 0, 1,0,0 },
-	{ 11,11,20, 0, 50,20,0 },
-	{ 11,11,30, 0, 50,20,0 },
-	{ 11,22,20, 0, 50,20,0 },
-	{ 14,33,40, 0, 50,20,0 },
-	{ 255,0,0, 0, 0,0,0 }
+	// Room number and x,y
+	// reel pointer
+	// speed,speed count,convers. no.
+	{ 1, 44, 0, 20, 2, 0, 1 },
+	{ 1, 55, 0, 0, 50, 20, 0 },
+	{ 24, 22, 0, 74, 1, 0, 0 },
+	{ 24, 33, 10, 75, 1, 0, 1 },
+	{ 1, 44, 0, 27, 2, 0, 2 },
+	{ 1, 44, 0, 96, 3, 0, 4 },
+	{ 1, 44, 0, 118, 2, 0, 5 },
+	{ 1, 44, 10, 0, 2, 0, 0 },
+	{ 5, 22, 20, 53, 3, 0, 0 },
+	{ 5, 22, 20, 40, 1, 0, 2 },
+	{ 5, 22, 20, 50, 1, 0, 3 },
+	{ 2, 11, 10, 192, 1, 0, 0 },
+	{ 2, 11, 10, 182, 2, 0, 1 },
+	{ 8, 11, 10, 0, 2, 0, 1 },
+	{ 23, 0, 50, 0, 3, 0, 0 },
+	{ 28, 11, 20, 250, 4, 0, 0 },
+	{ 23, 0, 50, 43, 2, 0, 8 },
+	{ 23, 11, 40, 130, 2, 0, 1 },
+	{ 23, 22, 40, 122, 2, 0, 2 },
+	{ 23, 22, 40, 105, 2, 0, 3 },
+	{ 23, 22, 40, 81, 2, 0, 4 },
+	{ 23, 11, 40, 135, 2, 0, 5 },
+	{ 23, 22, 40, 145, 2, 0, 6 },
+	{ 4, 22, 30, 0, 2, 0, 0 },
+	{ 45, 22, 30, 200, 0, 0, 20 },
+	{ 45, 22, 30, 39, 2, 0, 0 },
+	{ 45, 22, 30, 25, 2, 0, 0 },
+	{ 8, 22, 40, 32, 2, 0, 0 },
+	{ 7, 11, 20, 64, 2, 0, 0 },
+	{ 22, 22, 20, 82, 2, 0, 0 },
+	{ 27, 11, 30, 0, 2, 0, 0 },
+	{ 20, 0, 30, 0, 2, 0, 0 },
+	{ 14, 33, 40, 21, 1, 0, 0 },
+	{ 29, 11, 10, 0, 1, 0, 0 },
+	{ 2, 22, 0, 2, 2, 0, 0 },
+	{ 25, 0, 50, 4, 2, 0, 0 },
+	{ 50, 22, 30, 121, 2, 0, 0 },
+	{ 50, 22, 30, 0, 20, 0, 0 },
+	{ 52, 22, 30, 192, 2, 0, 0 },
+	{ 52, 22, 30, 233, 2, 0, 0 },
+	{ 50, 22, 40, 104, 55, 0, 0 }, // ...., 65,0,0 for German CD
+	{ 53, 33, 0, 99, 2, 0, 0 },
+	{ 50, 22, 40, 0, 3, 0, 0 },
+	{ 50, 22, 30, 162, 2, 0, 0 },
+	{ 52, 22, 30, 57, 2, 0, 0 },
+	{ 52, 22, 30, 0, 2, 0, 0 },
+	{ 54, 0, 0, 72, 3, 0, 0 },
+	{ 55, 44, 0, 0, 2, 0, 0 },
+	{ 19, 0, 0, 0, 28, 0, 0 },
+	{ 14, 22, 0, 2, 2, 0, 0 },
+	{ 14, 22, 0, 300, 1, 0, 0 },
+	{ 10, 22, 30, 174, 0, 0, 0 },
+	{ 12, 22, 20, 0, 1, 0, 0 },
+	{ 11, 11, 20, 0, 50, 20, 0 },
+	{ 11, 11, 30, 0, 50, 20, 0 },
+	{ 11, 22, 20, 0, 50, 20, 0 },
+	{ 14, 33, 40, 0, 50, 20, 0 },
+	{ 255, 0, 0, 0, 0, 0, 0 }
 };
 
 void DreamWebEngine::setupInitialReelRoutines() {
@@ -134,9 +134,7 @@ void DreamWebEngine::updatePeople() {
 	++_mainTimer;
 
 	for (int i = 0; _reelRoutines[i].reallocation != 255; ++i) {
-		if (_reelRoutines[i].reallocation == _realLocation &&
-		        _reelRoutines[i].mapX == _mapX &&
-		        _reelRoutines[i].mapY == _mapY) {
+		if (_reelRoutines[i].reallocation == _realLocation && _reelRoutines[i].mapX == _mapX && _reelRoutines[i].mapY == _mapY) {
 			assert(reelCallbacks[i]);
 			(this->*(reelCallbacks[i]))(_reelRoutines[i]);
 		}
@@ -157,8 +155,8 @@ void DreamWebEngine::madmanText() {
 
 		if (origCount != 15)
 			length = 32000; // Set subtitle time very high to make it
-			                // always wait for the next line, except for the
-			                // last one, when there is no next line.
+			  // always wait for the next line, except for the
+			  // last one, when there is no next line.
 	} else {
 		if (_vars._combatCount >= 61)
 			return;
@@ -346,7 +344,6 @@ void DreamWebEngine::madmansTelly(ReelRoutine &routine) {
 	showGameReel(&routine);
 }
 
-
 void DreamWebEngine::smokeBloke(ReelRoutine &routine) {
 	if (_vars._rockstarDead == 0) {
 		if (routine.b7 & 128)
@@ -419,8 +416,7 @@ void DreamWebEngine::drinker(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		routine.incReelPointer();
 
-		if ( routine.reelPointer() == 115 ||
-			(routine.reelPointer() == 106 && randomNumber() >= 3))
+		if (routine.reelPointer() == 115 || (routine.reelPointer() == 106 && randomNumber() >= 3))
 			routine.setReelPointer(105);
 	}
 
@@ -600,12 +596,12 @@ void DreamWebEngine::louisChair(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 191) {
-			routine.setReelPointer(182);	// Restart Louis
+			routine.setReelPointer(182); // Restart Louis
 		} else if (nextReelPointer != 185) {
 			routine.setReelPointer(nextReelPointer);
 		} else {
 			if (randomNumber() < 245)
-				routine.setReelPointer(182);	// Restart Louis
+				routine.setReelPointer(182); // Restart Louis
 			else
 				routine.setReelPointer(nextReelPointer);
 		}
@@ -717,9 +713,7 @@ void DreamWebEngine::introMonks1(ReelRoutine &routine) {
 
 		routine.setReelPointer(nextReelPointer);
 
-		if (nextReelPointer ==  5 || nextReelPointer == 15 ||
-			nextReelPointer == 25 || nextReelPointer == 61 ||
-			nextReelPointer == 71) {
+		if (nextReelPointer == 5 || nextReelPointer == 15 || nextReelPointer == 25 || nextReelPointer == 61 || nextReelPointer == 71) {
 			// Wait step
 			intro2Text(nextReelPointer);
 			routine.counter = (uint8)-20;
@@ -802,7 +796,7 @@ void DreamWebEngine::receptionist(ReelRoutine &routine) {
 			if (routine.reelPointer() != 60) {
 				// notdes2
 				if (routine.reelPointer() != 88)
-					routine.incReelPointer();	// not end card
+					routine.incReelPointer(); // not end card
 				else
 					routine.setReelPointer(53);
 			} else if (randomNumber() >= 240) {
@@ -813,7 +807,7 @@ void DreamWebEngine::receptionist(ReelRoutine &routine) {
 		} else {
 			// notdes2
 			if (routine.reelPointer() != 88)
-				routine.incReelPointer();	// not end card
+				routine.incReelPointer(); // not end card
 			else
 				routine.setReelPointer(53);
 		}
@@ -831,17 +825,17 @@ void DreamWebEngine::bartender(ReelRoutine &routine) {
 			if (randomNumber() >= 18)
 				routine.setReelPointer(81);
 			else
-				routine.incReelPointer();	// notsmoket2
+				routine.incReelPointer(); // notsmoket2
 		} else if (routine.reelPointer() == 103) {
-			routine.setReelPointer(81);	// notsmoket1
+			routine.setReelPointer(81); // notsmoket1
 		} else {
-			routine.incReelPointer();	// notsmoket2
+			routine.incReelPointer(); // notsmoket2
 		}
 	}
 
 	showGameReel(&routine);
 	if (_vars._gunPassFlag == 1)
-		routine.b7 = 9;	// got gun
+		routine.b7 = 9; // got gun
 
 	addToPeopleList(&routine);
 }
@@ -921,7 +915,7 @@ void DreamWebEngine::mugger(ReelRoutine &routine) {
 			return; // endmugger2
 
 		if (routine.reelPointer() == 2)
-			_vars._watchingTime = 175 * 2;	// set watch
+			_vars._watchingTime = 175 * 2; // set watch
 
 		if (checkSpeed(routine))
 			routine.incReelPointer();
@@ -960,7 +954,7 @@ void DreamWebEngine::businessMan(ReelRoutine &routine) {
 	_pointerMode = 0;
 	_vars._watchingTime = 2;
 	if (routine.reelPointer() == 2)
-		setupTimedUse(49, 30, 1, 68, 174);	// First
+		setupTimedUse(49, 30, 1, 68, 174); // First
 
 	if (routine.reelPointer() == 95) {
 		// Businessman combat won - end
@@ -975,7 +969,7 @@ void DreamWebEngine::businessMan(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 48) {
-			_vars._manDead = 2;	// before dead body
+			_vars._manDead = 2; // before dead body
 		} else if (nextReelPointer == 15) {
 			nextReelPointer--;
 			if (_vars._lastWeapon == 3) {
@@ -1069,7 +1063,7 @@ void DreamWebEngine::poolGuard(ReelRoutine &routine) {
 	}
 
 	if (routine.reelPointer() == 0)
-		turnPathOn(0);	// first pool
+		turnPathOn(0); // first pool
 
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;

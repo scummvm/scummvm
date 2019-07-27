@@ -23,9 +23,9 @@
 #ifndef VOYEUR_FILES_H
 #define VOYEUR_FILES_H
 
-#include "common/scummsys.h"
 #include "common/file.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 #include "voyeur/screen.h"
 
@@ -54,7 +54,10 @@ public:
 	uint32 _id;
 	byte **_p;
 
-	ResolveEntry(uint32 id, byte **p) { _id = id; _p = p; }
+	ResolveEntry(uint32 id, byte **p) {
+		_id = id;
+		_p = p;
+	}
 };
 
 class BoltFilesState {
@@ -81,6 +84,7 @@ public:
 	Common::Array<ResolveEntry> _resolves;
 
 	byte *_boltPageFrame;
+
 public:
 	BoltFilesState(VoyeurEngine *vm);
 
@@ -91,11 +95,13 @@ public:
 class BoltFile {
 private:
 	Common::Array<BoltGroup> _groups;
+
 protected:
 	BoltFilesState &_state;
 
 	virtual void initResource(int resType) = 0;
 	void initDefault();
+
 private:
 	void resolveAll();
 	byte *getBoltMember(uint32 id);
@@ -120,7 +126,7 @@ public:
 	CMapResource *getCMapResource(uint32 id);
 };
 
-class BVoyBoltFile: public BoltFile {
+class BVoyBoltFile : public BoltFile {
 private:
 	// initType method table
 	void sInitRect();
@@ -132,20 +138,24 @@ private:
 	void initFontInfo();
 	void initFont();
 	void initSoundMap();
+
 protected:
 	virtual void initResource(int resType);
+
 public:
 	BVoyBoltFile(BoltFilesState &state);
 };
 
-class StampBoltFile: public BoltFile {
+class StampBoltFile : public BoltFile {
 private:
 	void initThread();
 	void initState();
 	void initPtr();
 	void initControl();
+
 protected:
 	virtual void initResource(int resType);
+
 public:
 	StampBoltFile(BoltFilesState &state);
 };
@@ -153,12 +163,14 @@ public:
 class BoltGroup {
 private:
 	Common::SeekableReadStream *_file;
+
 public:
 	bool _loaded;
 	bool _processed;
 	int _count;
 	int _fileOffset;
 	Common::Array<BoltEntry> _entries;
+
 public:
 	BoltGroup(Common::SeekableReadStream *f);
 	virtual ~BoltGroup();
@@ -167,10 +179,10 @@ public:
 	void unload();
 };
 
-
 class BoltEntry {
 private:
 	Common::SeekableReadStream *_file;
+
 public:
 	uint16 _id;
 	byte _mode;
@@ -194,6 +206,7 @@ public:
 	ControlResource *_controlResource;
 	StateResource *_stateResource;
 	ThreadResource *_threadResource;
+
 public:
 	BoltEntry(Common::SeekableReadStream *f, uint16 id);
 	virtual ~BoltEntry();
@@ -206,6 +219,7 @@ class FilesManager {
 public:
 	BoltFilesState *_boltFilesState;
 	BoltFile *_curLibPtr;
+
 public:
 	FilesManager(VoyeurEngine *vm);
 	~FilesManager();
@@ -214,7 +228,7 @@ public:
 	byte *fload(const Common::String &filename, int *size);
 };
 
-class RectEntry: public Common::Rect {
+class RectEntry : public Common::Rect {
 public:
 	int _arrIndex;
 	int _count;
@@ -222,9 +236,10 @@ public:
 	RectEntry(int x1, int y1, int x2, int y2, int arrIndex, int count);
 };
 
-class RectResource: public Common::Rect {
+class RectResource : public Common::Rect {
 public:
 	Common::Array<RectEntry> _entries;
+
 public:
 	RectResource(const byte *src, int size, bool isExtendedRects);
 	RectResource(int xp, int yp, int width, int height);
@@ -234,24 +249,44 @@ public:
 /* bvoy.blt resource types */
 
 enum PictureFlag {
-	PICFLAG_2 = 2, PICFLAG_PIC_OFFSET = 8, PICFLAG_CLEAR_SCREEN = 0x10,
-	PICFLAG_20 = 0x20, PICFLAG_HFLIP = 0x40, PICFLAG_VFLIP = 0x80, PICFLAG_100 = 0x100,
+	PICFLAG_2 = 2,
+	PICFLAG_PIC_OFFSET = 8,
+	PICFLAG_CLEAR_SCREEN = 0x10,
+	PICFLAG_20 = 0x20,
+	PICFLAG_HFLIP = 0x40,
+	PICFLAG_VFLIP = 0x80,
+	PICFLAG_100 = 0x100,
 	PICFLAG_CLEAR_SCREEN00 = 0x1000
 };
 
 enum DisplayFlag {
-	DISPFLAG_1 = 1, DISPFLAG_2 = 2, DISPFLAG_4 = 4, DISPFLAG_8 = 8,
-	DISPFLAG_10 = 0x10, DISPFLAG_20 = 0x20, DISPFLAG_40 = 0x40, DISPFLAG_80 = 0x80,
-	DISPFLAG_100 = 0x100, DISPFLAG_200 = 0x200, DISPFLAG_400 = 0x400,
-	DISPFLAG_800 = 0x800, DISPFLAG_1000 = 0x1000, DISPFLAG_2000 = 0x2000,
-	DISPFLAG_4000 = 0x4000, DISPFLAG_VIEWPORT = 0x8000, DISPFLAG_CURSOR = 0x10000,
-	DISPFLAG_NONE = 0};
+	DISPFLAG_1 = 1,
+	DISPFLAG_2 = 2,
+	DISPFLAG_4 = 4,
+	DISPFLAG_8 = 8,
+	DISPFLAG_10 = 0x10,
+	DISPFLAG_20 = 0x20,
+	DISPFLAG_40 = 0x40,
+	DISPFLAG_80 = 0x80,
+	DISPFLAG_100 = 0x100,
+	DISPFLAG_200 = 0x200,
+	DISPFLAG_400 = 0x400,
+	DISPFLAG_800 = 0x800,
+	DISPFLAG_1000 = 0x1000,
+	DISPFLAG_2000 = 0x2000,
+	DISPFLAG_4000 = 0x4000,
+	DISPFLAG_VIEWPORT = 0x8000,
+	DISPFLAG_CURSOR = 0x10000,
+	DISPFLAG_NONE = 0
+};
 
 class DisplayResource {
 private:
 	VoyeurEngine *_vm;
+
 public:
 	uint32 _flags;
+
 public:
 	DisplayResource();
 	DisplayResource(VoyeurEngine *vm);
@@ -277,7 +312,7 @@ public:
 	bool clipRect(Common::Rect &rect);
 };
 
-class PictureResource: public DisplayResource {
+class PictureResource : public DisplayResource {
 private:
 	/**
 	 * Flip the image data horizontally
@@ -288,6 +323,7 @@ private:
 	 * Flip the image data vertically
 	 */
 	void flipVertical(const byte *data);
+
 public:
 	byte _select;
 	byte _pick;
@@ -306,10 +342,11 @@ public:
 	 * Flag to indicate whether to free the image data
 	 */
 	DisposeAfterUse::Flag _freeImgData;
+
 public:
 	PictureResource(BoltFilesState &state, const byte *src);
 	PictureResource(int flags, int select, int pick, int onOff,
-		const Common::Rect &bounds, int maskData, byte *imgData, int planeSize);
+	                const Common::Rect &bounds, int maskData, byte *imgData, int planeSize);
 	PictureResource(Graphics::Surface *surface);
 	PictureResource();
 	virtual ~PictureResource();
@@ -317,12 +354,14 @@ public:
 
 typedef void (ViewPortResource::*ViewPortMethodPtr)();
 
-class ViewPortResource: public DisplayResource {
+class ViewPortResource : public DisplayResource {
 private:
 	BoltFilesState &_state;
+
 private:
 	void setupViewPort(PictureResource *page, Common::Rect *clippingRect, ViewPortSetupPtr setupFn,
-		ViewPortAddPtr addFn, ViewPortRestorePtr restoreFn);
+	                   ViewPortAddPtr addFn, ViewPortRestorePtr restoreFn);
+
 public:
 	ViewPortResource *_parent;
 	ViewPortSetupPtr _setupFn;
@@ -345,6 +384,7 @@ public:
 
 	Common::Rect _clipRect;
 	Common::Rect _fontRect;
+
 public:
 	ViewPortResource(BoltFilesState &state, const byte *src);
 	virtual ~ViewPortResource();
@@ -357,11 +397,12 @@ public:
 	void drawPicPerm(PictureResource *pic, const Common::Point &pt);
 };
 
-class ViewPortPalEntry  {
+class ViewPortPalEntry {
 public:
 	uint16 _rEntry, _gEntry, _bEntry;
 	uint16 _rChange, _gChange, _bChange;
 	uint16 _palIndex;
+
 public:
 	ViewPortPalEntry(const byte *src);
 };
@@ -391,7 +432,9 @@ public:
 	virtual ~FontResource();
 };
 
-enum FontJustify { ALIGN_LEFT = 0, ALIGN_CENTER = 1, ALIGN_RIGHT = 2 };
+enum FontJustify { ALIGN_LEFT = 0,
+	                 ALIGN_CENTER = 1,
+	                 ALIGN_RIGHT = 2 };
 
 class FontInfoResource {
 public:
@@ -410,24 +453,27 @@ public:
 	int _foreColor;
 	int _backColor;
 	int _shadowColor;
+
 public:
 	FontInfoResource(BoltFilesState &state, const byte *src);
 	FontInfoResource();
 	FontInfoResource(byte picFlags, byte picSelect, byte picPick, byte picOnOff, byte fontFlags,
-		FontJustify justify, int fontSaveBack, const Common::Point &pos, int justifyWidth,
-		int justifyHeight, const Common::Point &shadow, int foreColor, int backColor,
-		int shadowColor);
+	                 FontJustify justify, int fontSaveBack, const Common::Point &pos, int justifyWidth,
+	                 int justifyHeight, const Common::Point &shadow, int foreColor, int backColor,
+	                 int shadowColor);
 };
 
 class CMapResource {
 private:
 	VoyeurEngine *_vm;
+
 public:
 	int _steps;
 	int _fadeStatus;
 	int _start;
 	int _end;
 	byte *_entries;
+
 public:
 	CMapResource(BoltFilesState &state, const byte *src);
 	virtual ~CMapResource();
@@ -438,9 +484,11 @@ public:
 class VInitCycleResource {
 private:
 	BoltFilesState &_state;
+
 public:
 	int _type[4];
 	byte *_ptr[4];
+
 public:
 	VInitCycleResource(BoltFilesState &state, const byte *src);
 	virtual ~VInitCycleResource() {}
@@ -496,9 +544,11 @@ public:
 	static void unloadAllStacks(VoyeurEngine *vm);
 
 	static void init();
+
 private:
 	VoyeurEngine *_vm;
 	Common::Point _aptPos;
+
 private:
 	bool getStateInfo();
 	byte *getDataOffset();
@@ -534,6 +584,7 @@ private:
 	 * has been changed.
 	 */
 	bool checkMansionScroll();
+
 public:
 	int _stateId;
 	int _stackId;

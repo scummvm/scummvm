@@ -71,33 +71,33 @@
 #define SD_CARD_BUSY 0xff
 
 /* SD states */
-#define SD_STATE_IDLE 0		// Idle state, after power on or GO_IDLE_STATE command
-#define SD_STATE_READY 1	// Ready state, after card replies non-busy to SD_APP_OP_COND
-#define SD_STATE_IDENT 2	// Identification state, after ALL_SEND_CID
-#define SD_STATE_STBY 3		// Standby state, when card is deselected
-#define SD_STATE_TRAN 4		// Transfer state, after card is selected and ready for data transfer
-#define SD_STATE_DATA 5		//
-#define SD_STATE_RCV 6		// Receive data state
-#define SD_STATE_PRG 7		// Programming state
-#define SD_STATE_DIS 8		// Disconnect state
-#define SD_STATE_INA 9		// Inactive state, after GO_INACTIVE_STATE
+#define SD_STATE_IDLE 0 // Idle state, after power on or GO_IDLE_STATE command
+#define SD_STATE_READY 1 // Ready state, after card replies non-busy to SD_APP_OP_COND
+#define SD_STATE_IDENT 2 // Identification state, after ALL_SEND_CID
+#define SD_STATE_STBY 3 // Standby state, when card is deselected
+#define SD_STATE_TRAN 4 // Transfer state, after card is selected and ready for data transfer
+#define SD_STATE_DATA 5 //
+#define SD_STATE_RCV 6 // Receive data state
+#define SD_STATE_PRG 7 // Programming state
+#define SD_STATE_DIS 8 // Disconnect state
+#define SD_STATE_INA 9 // Inactive state, after GO_INACTIVE_STATE
 
-#define READY_FOR_DATA 1	// bit 8 in card status
+#define READY_FOR_DATA 1 // bit 8 in card status
 
 /*
 Calculate the CRC7 of a command and return it preshifted with
 an end bit added
 */
-extern u8 _SD_CRC7(u8* data, int size);
+extern u8 _SD_CRC7(u8 *data, int size);
 
 /*
 Calculate the CRC16 of a block of data, ready for transmission on
 four data lines at once
 */
-extern void _SD_CRC16 (u8* buff, int buffLength, u8* crc16buff);
+extern void _SD_CRC16(u8 *buff, int buffLength, u8 *crc16buff);
 
-typedef bool (*_SD_FN_CMD_6BYTE_RESPONSE) (u8* responseBuffer, u8 command, u32 data);
-typedef bool (*_SD_FN_CMD_17BYTE_RESPONSE) (u8* responseBuffer, u8 command, u32 data);
+typedef bool (*_SD_FN_CMD_6BYTE_RESPONSE)(u8 *responseBuffer, u8 command, u32 data);
+typedef bool (*_SD_FN_CMD_17BYTE_RESPONSE)(u8 *responseBuffer, u8 command, u32 data);
 
 /*
 Initialise the SD card, after it has been sent into an Idle state
@@ -106,9 +106,9 @@ cmd_17byte_response: a pointer to a function that sends the SD card a command an
 use4bitBus: initialise card to use a 4 bit data bus when communicating with the card
 RCA: a pointer to the location to store the card's Relative Card Address, preshifted up by 16 bits.
 */
-extern bool _SD_InitCard (_SD_FN_CMD_6BYTE_RESPONSE cmd_6byte_response,
-							_SD_FN_CMD_17BYTE_RESPONSE cmd_17byte_response,
-							bool use4bitBus,
-							u32 *RCA);
+extern bool _SD_InitCard(_SD_FN_CMD_6BYTE_RESPONSE cmd_6byte_response,
+                         _SD_FN_CMD_17BYTE_RESPONSE cmd_17byte_response,
+                         bool use4bitBus,
+                         u32 *RCA);
 
 #endif // define IO_SD_COMMON_H

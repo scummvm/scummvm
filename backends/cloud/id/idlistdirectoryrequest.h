@@ -30,35 +30,36 @@
 namespace Cloud {
 namespace Id {
 
-class IdStorage;
+	class IdStorage;
 
-class IdListDirectoryRequest: public Networking::Request {
-	Common::String _requestedPath;
-	bool _requestedRecursive;
-	IdStorage *_storage;
-	Storage::ListDirectoryCallback _listDirectoryCallback;
-	Common::Array<StorageFile> _files;
-	Common::Array<StorageFile> _directoriesQueue;
-	StorageFile _currentDirectory;
-	Request *_workingRequest;
-	bool _ignoreCallback;
-	Common::String _date;
+	class IdListDirectoryRequest : public Networking::Request {
+		Common::String _requestedPath;
+		bool _requestedRecursive;
+		IdStorage *_storage;
+		Storage::ListDirectoryCallback _listDirectoryCallback;
+		Common::Array<StorageFile> _files;
+		Common::Array<StorageFile> _directoriesQueue;
+		StorageFile _currentDirectory;
+		Request *_workingRequest;
+		bool _ignoreCallback;
+		Common::String _date;
 
-	void start();
-	void idResolvedCallback(Storage::UploadResponse response);
-	void idResolveErrorCallback(Networking::ErrorResponse error);
-	void listNextDirectory();
-	void listedDirectoryCallback(Storage::FileArrayResponse response);
-	void listedDirectoryErrorCallback(Networking::ErrorResponse error);
-	void finishListing(Common::Array<StorageFile> &files);
-public:
-	IdListDirectoryRequest(IdStorage *storage, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive = false);
-	virtual ~IdListDirectoryRequest();
+		void start();
+		void idResolvedCallback(Storage::UploadResponse response);
+		void idResolveErrorCallback(Networking::ErrorResponse error);
+		void listNextDirectory();
+		void listedDirectoryCallback(Storage::FileArrayResponse response);
+		void listedDirectoryErrorCallback(Networking::ErrorResponse error);
+		void finishListing(Common::Array<StorageFile> &files);
 
-	virtual void handle();
-	virtual void restart();
-	virtual Common::String date() const;
-};
+	public:
+		IdListDirectoryRequest(IdStorage *storage, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive = false);
+		virtual ~IdListDirectoryRequest();
+
+		virtual void handle();
+		virtual void restart();
+		virtual Common::String date() const;
+	};
 
 } // End of namespace Id
 } // End of namespace Cloud

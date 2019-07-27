@@ -20,9 +20,9 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/resources/fontresource.h"
 #include "illusions/dictionary.h"
+#include "illusions/illusions.h"
 
 namespace Illusions {
 
@@ -35,8 +35,7 @@ void FontResourceLoader::load(Resource *resource) {
 }
 
 bool FontResourceLoader::isFlag(int flag) {
-	return
-		flag == kRlfLoadFile;
+	return flag == kRlfLoadFile;
 }
 
 // CharInfo
@@ -47,7 +46,7 @@ void CharInfo::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	uint32 pixelsOffs = stream.readUint32LE();
 	_pixels = dataStart + pixelsOffs;
 	debug(2, "CharInfo::load() _width: %d; _field_2: %d; pixelsOffs: %08X",
-		_width, _field_2, pixelsOffs);
+	      _width, _field_2, pixelsOffs);
 }
 
 // CharRange
@@ -63,7 +62,7 @@ void CharRange::load(byte *dataStart, Common::SeekableReadStream &stream) {
 		_charInfos[i].load(dataStart, stream);
 	}
 	debug(2, "CharRange::load() _firstChar: %d; _lastChar: %d; charInfosOffs: %08X",
-		_firstChar, _lastChar, charInfosOffs);
+	      _firstChar, _lastChar, charInfosOffs);
 }
 
 CharInfo *CharRange::getCharInfo(uint16 c) {
@@ -100,7 +99,7 @@ void FontResource::load(Resource *resource) {
 		_charRanges[i].load(data, stream);
 	}
 	debug(2, "FontResource::load() _charHeight: %d; _defaultChar: %d; _colorIndex: %d; _lineIncr: %d; _widthC: %d; _charRangesCount: %d",
-		_charHeight, _defaultChar, _colorIndex, _lineIncr, _widthC, _charRangesCount);
+	      _charHeight, _defaultChar, _colorIndex, _lineIncr, _widthC, _charRangesCount);
 }
 
 CharInfo *FontResource::getCharInfo(uint16 c) {
@@ -122,7 +121,8 @@ const Common::Rect FontResource::calculateRectForText(uint16 *text, uint textLen
 
 // FontInstance
 
-FontInstance::FontInstance(IllusionsEngine *vm) : _vm(vm) {
+FontInstance::FontInstance(IllusionsEngine *vm)
+  : _vm(vm) {
 }
 
 void FontInstance::load(Resource *resource) {

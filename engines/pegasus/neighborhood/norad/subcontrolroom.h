@@ -81,12 +81,12 @@ protected:
 
 	void setControlMonitorToTime(const TimeValue, const int, const bool);
 	void playControlMonitorSection(const TimeValue, const TimeValue, const NotificationFlags,
-			const int, const bool);
+	                               const int, const bool);
 
 	void updateClawMonitor();
 	void setClawMonitorToTime(const TimeValue);
 	void playClawMonitorSection(const TimeValue, const TimeValue, const NotificationFlags,
-			const int, const bool);
+	                            const int, const bool);
 
 	Movie _subControlMovie;
 	TimeScale _subControlScale;

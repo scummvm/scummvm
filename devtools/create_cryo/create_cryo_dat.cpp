@@ -27,7 +27,7 @@
 #include "eden_rooms.h"
 #include "eden_static.h"
 
-#define CRYO_DAT_VER 1	// 32-bit integer
+#define CRYO_DAT_VER 1 // 32-bit integer
 
 template <typename T>
 static void writeLE(FILE *f, T value) {
@@ -50,7 +50,7 @@ struct _icon_t : icon_t {
 };
 
 static void emitIcons(FILE *f) {
-	const _icon_t *icons = (const _icon_t*)gameIcons;
+	const _icon_t *icons = (const _icon_t *)gameIcons;
 	for (int i = 0; i < kNumIcons; i++)
 		icons[i].write(f);
 }
@@ -73,7 +73,7 @@ struct _room_t : room_t {
 };
 
 static void emitRooms(FILE *f) {
-	const _room_t *rooms = (const _room_t*)gameRooms;
+	const _room_t *rooms = (const _room_t *)gameRooms;
 	for (int i = 0; i < kNumRooms; i++)
 		rooms[i].write(f);
 }
@@ -110,7 +110,7 @@ static void emitStatic(FILE *f) {
 	fwrite(kDinoSpeedForCitaLevel, 1, kNumDinoSpeedForCitaLevel, f);
 	fwrite(kTabletView, 1, kNumTabletView, f);
 	fwrite(kPersoRoomBankTable, 1, kNumPersoRoomBankTable, f);
-	fwrite(gotos, 5, kNumGotos, f);	// sizeof(Goto)
+	fwrite(gotos, 5, kNumGotos, f); // sizeof(Goto)
 
 	for (int i = 0; i < kNumObjects; i++) {
 		writeLE<byte>(f, _objects[i]._id);

@@ -27,7 +27,6 @@
 #include "audio/decoders/adpcm.h"
 #include "audio/decoders/adpcm_intern.h"
 
-
 namespace Audio {
 
 // Routines to convert 12 bit linear samples to the
@@ -41,12 +40,12 @@ namespace Audio {
 //   <http://wiki.multimedia.cx/index.php?title=Microsoft_IMA_ADPCM>.
 
 ADPCMStream::ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-	: _stream(stream, disposeAfterUse),
-		_startpos(stream->pos()),
-		_endpos(_startpos + size),
-		_channels(channels),
-		_blockAlign(blockAlign),
-		_rate(rate) {
+  : _stream(stream, disposeAfterUse)
+  , _startpos(stream->pos())
+  , _endpos(_startpos + size)
+  , _channels(channels)
+  , _blockAlign(blockAlign)
+  , _rate(rate) {
 
 	reset();
 }
@@ -63,9 +62,7 @@ bool ADPCMStream::rewind() {
 	return true;
 }
 
-
 #pragma mark -
-
 
 int Oki_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples;
@@ -88,13 +85,13 @@ int Oki_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 static const int16 okiStepSize[49] = {
-	   16,   17,   19,   21,   23,   25,   28,   31,
-	   34,   37,   41,   45,   50,   55,   60,   66,
-	   73,   80,   88,   97,  107,  118,  130,  143,
-	  157,  173,  190,  209,  230,  253,  279,  307,
-	  337,  371,  408,  449,  494,  544,  598,  658,
-	  724,  796,  876,  963, 1060, 1166, 1282, 1411,
-	 1552
+	16, 17, 19, 21, 23, 25, 28, 31,
+	34, 37, 41, 45, 50, 55, 60, 66,
+	73, 80, 88, 97, 107, 118, 130, 143,
+	157, 173, 190, 209, 230, 253, 279, 307,
+	337, 371, 408, 449, 494, 544, 598, 658,
+	724, 796, 876, 963, 1060, 1166, 1282, 1411,
+	1552
 };
 
 // Decode Linear to ADPCM
@@ -115,9 +112,7 @@ int16 Oki_ADPCMStream::decodeOKI(byte code) {
 	return samp * 16;
 }
 
-
 #pragma mark -
-
 
 int DVI_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples;
@@ -141,13 +136,12 @@ int DVI_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 
 #pragma mark -
 
-
 int Apple_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 	// Need to write at least one samples per channel
 	assert((numSamples % _channels) == 0);
 
 	// Current sample positions
-	int samples[2] = { 0, 0};
+	int samples[2] = { 0, 0 };
 
 	// Number of samples per channel
 	int chanSamples = numSamples / _channels;
@@ -164,9 +158,9 @@ int Apple_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 				uint16 temp = _stream->readUint16BE();
 
 				// First 9 bits are the upper bits of the predictor
-				_status.ima_ch[i].last      = (int16) (temp & 0xFF80);
+				_status.ima_ch[i].last = (int16)(temp & 0xFF80);
 				// Lower 7 bits are the step index
-				_status.ima_ch[i].stepIndex =          temp & 0x007F;
+				_status.ima_ch[i].stepIndex = temp & 0x007F;
 
 				// Clip the step index
 				_status.ima_ch[i].stepIndex = CLIP<int32>(_status.ima_ch[i].stepIndex, 0, 88);
@@ -177,8 +171,8 @@ int Apple_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 			if (_chunkPos[i] == 0) {
 				// Decode data
 				byte data = _stream->readByte();
-				_buffer[i][0] = decodeIMA(data &  0x0F, i);
-				_buffer[i][1] = decodeIMA(data >>    4, i);
+				_buffer[i][0] = decodeIMA(data & 0x0F, i);
+				_buffer[i][1] = decodeIMA(data >> 4, i);
 			}
 
 			// The original is interleaved block-wise, we want it sample-wise
@@ -205,9 +199,7 @@ int Apple_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 	return samples[0] + samples[1];
 }
 
-
 #pragma mark -
-
 
 int MSIma_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 	// Need to write at least one sample per channel
@@ -251,9 +243,7 @@ int MSIma_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 	return samples;
 }
 
-
 #pragma mark -
-
 
 static const int MSADPCMAdaptCoeff1[] = {
 	256, 512, 0, 192, 240, 460, 392
@@ -331,23 +321,22 @@ int MS_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 	return samples;
 }
 
-
 #pragma mark -
 
-#define DK3_READ_NIBBLE(channelNo) \
-do { \
-	if (_topNibble) { \
-		_nibble = _lastByte >> 4; \
-		_topNibble = false; \
-	} else { \
-		_lastByte = _stream->readByte(); \
-		_nibble = _lastByte & 0xf; \
-		_topNibble = true; \
-		--blockBytesLeft; \
-		--audioBytesLeft; \
-	} \
-	decodeIMA(_nibble, channelNo); \
-} while(0)
+#define DK3_READ_NIBBLE(channelNo)     \
+	do {                                 \
+		if (_topNibble) {                  \
+			_nibble = _lastByte >> 4;        \
+			_topNibble = false;              \
+		} else {                           \
+			_lastByte = _stream->readByte(); \
+			_nibble = _lastByte & 0xf;       \
+			_topNibble = true;               \
+			--blockBytesLeft;                \
+			--audioBytesLeft;                \
+		}                                  \
+		decodeIMA(_nibble, channelNo);     \
+	} while (0)
 
 int DK3_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 	assert((numSamples % 4) == 0);
@@ -420,7 +409,6 @@ int DK3_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 
 #pragma mark -
 
-
 // This table is used to adjust the step for use on the next sample.
 // We could half the table, but since the lookup index used is always
 // a 4-bit nibble, it's more efficient to just keep it as it is.
@@ -430,17 +418,17 @@ const int16 ADPCMStream::_stepAdjustTable[16] = {
 };
 
 const int16 Ima_ADPCMStream::_imaTable[89] = {
-		7,    8,    9,   10,   11,   12,   13,   14,
-	   16,   17,   19,   21,   23,   25,   28,   31,
-	   34,   37,   41,   45,   50,   55,   60,   66,
-	   73,   80,   88,   97,  107,  118,  130,  143,
-	  157,  173,  190,  209,  230,  253,  279,  307,
-	  337,  371,  408,  449,  494,  544,  598,  658,
-	  724,  796,  876,  963, 1060, 1166, 1282, 1411,
-	 1552, 1707, 1878, 2066, 2272, 2499, 2749, 3024,
-	 3327, 3660, 4026, 4428, 4871, 5358, 5894, 6484,
-	 7132, 7845, 8630, 9493,10442,11487,12635,13899,
-	15289,16818,18500,20350,22385,24623,27086,29794,
+	7, 8, 9, 10, 11, 12, 13, 14,
+	16, 17, 19, 21, 23, 25, 28, 31,
+	34, 37, 41, 45, 50, 55, 60, 66,
+	73, 80, 88, 97, 107, 118, 130, 143,
+	157, 173, 190, 209, 230, 253, 279, 307,
+	337, 371, 408, 449, 494, 544, 598, 658,
+	724, 796, 876, 963, 1060, 1166, 1282, 1411,
+	1552, 1707, 1878, 2066, 2272, 2499, 2749, 3024,
+	3327, 3660, 4026, 4428, 4871, 5358, 5894, 6484,
+	7132, 7845, 8630, 9493, 10442, 11487, 12635, 13899,
+	15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794,
 	32767
 };
 
@@ -482,8 +470,10 @@ SeekableAudioStream *makeADPCMStream(Common::SeekableReadStream *stream, Dispose
 
 class PacketizedADPCMStream : public StatelessPacketizedAudioStream {
 public:
-	PacketizedADPCMStream(ADPCMType type, int rate, int channels, uint32 blockAlign) :
-		StatelessPacketizedAudioStream(rate, channels), _type(type), _blockAlign(blockAlign) {}
+	PacketizedADPCMStream(ADPCMType type, int rate, int channels, uint32 blockAlign)
+	  : StatelessPacketizedAudioStream(rate, channels)
+	  , _type(type)
+	  , _blockAlign(blockAlign) {}
 
 protected:
 	AudioStream *makeStream(Common::SeekableReadStream *data);

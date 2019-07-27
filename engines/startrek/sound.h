@@ -26,8 +26,8 @@
 #include "startrek/soundeffects.h"
 #include "startrek/startrek.h"
 
-#include "audio/midiparser.h"
 #include "audio/mididrv.h"
+#include "audio/midiparser.h"
 #include "audio/mixer.h"
 
 namespace Common {
@@ -37,7 +37,6 @@ class MacResManager;
 namespace StarTrek {
 
 class StarTrekEngine;
-
 
 // Max # of VOC files that can play at once
 const int MAX_SFX_PLAYING = 4;
@@ -49,7 +48,6 @@ struct MidiPlaybackSlot {
 	int track;
 	MidiParser *midiParser;
 };
-
 
 class Sound {
 public:

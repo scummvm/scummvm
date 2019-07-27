@@ -28,25 +28,26 @@
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
-#include "gob/gob.h"
-#include "gob/video.h"
-#include "gob/global.h"
-#include "gob/util.h"
 #include "gob/dataio.h"
 #include "gob/draw.h"
+#include "gob/global.h"
+#include "gob/gob.h"
+#include "gob/util.h"
+#include "gob/video.h"
 
 namespace Gob {
 
-Font::Font(const byte *data) : _dataPtr(data) {
+Font::Font(const byte *data)
+  : _dataPtr(data) {
 	assert(data);
 
 	bool hasWidths = _dataPtr[0] & 0x80;
 
-	_data       = _dataPtr + 4;
-	_itemWidth  = _dataPtr[0] & 0x7F;
+	_data = _dataPtr + 4;
+	_itemWidth = _dataPtr[0] & 0x7F;
 	_itemHeight = _dataPtr[1];
-	_startItem  = _dataPtr[2];
-	_endItem    = _dataPtr[3];
+	_startItem = _dataPtr[2];
+	_endItem = _dataPtr[3];
 	_charWidths = 0;
 
 	uint8 rowAlignedBits = (_itemWidth - 1) / 8 + 1;
@@ -93,7 +94,7 @@ bool Font::isMonospaced() const {
 }
 
 void Font::drawLetter(Surface &surf, uint8 c, uint16 x, uint16 y,
-		uint32 color1, uint32 color2, bool transp) const {
+                      uint32 color1, uint32 color2, bool transp) const {
 
 	uint16 data;
 
@@ -131,7 +132,6 @@ void Font::drawLetter(Surface &surf, uint8 c, uint16 x, uint16 y,
 			}
 
 			width -= 8;
-
 		}
 
 		dst += surf.getWidth() - _itemWidth;
@@ -144,7 +144,7 @@ void Font::drawString(const Common::String &str, int16 x, int16 y, int16 color1,
 	const char *s = str.c_str();
 
 	while (*s != '\0') {
-		const int16 charRight  = x + getCharWidth(*s);
+		const int16 charRight = x + getCharWidth(*s);
 		const int16 charBottom = y + getCharHeight();
 
 		if ((x >= 0) && (y >= 0) && (charRight <= dest.getWidth()) && (charBottom <= dest.getHeight()))
@@ -167,8 +167,8 @@ const byte *Font::getCharData(uint8 c) const {
 	return _data + (c - _startItem) * _itemSize;
 }
 
-
-Video::Video(GobEngine *vm) : _vm(vm) {
+Video::Video(GobEngine *vm)
+  : _vm(vm) {
 	_doRangeClamp = false;
 
 	_surfWidth = 320;
@@ -255,7 +255,7 @@ void Video::retrace(bool mouse) {
 		int screenHeight = MIN<int>(_surfHeight - _splitHeight2 - _scrollOffsetY, _vm->_height - _splitHeight2);
 
 		dirtyRectsApply(_scrollOffsetX, _scrollOffsetY, screenWidth, screenHeight,
-				screenX, screenY);
+		                screenX, screenY);
 
 		if (_splitSurf) {
 
@@ -279,7 +279,6 @@ void Video::retrace(bool mouse) {
 		dirtyRectsClear();
 		g_system->updateScreen();
 	}
-
 }
 
 void Video::waitRetrace(bool mouse) {
@@ -300,7 +299,7 @@ void Video::sparseRetrace(int max) {
 }
 
 void Video::drawPacked(byte *sprBuf, int16 width, int16 height,
-		int16 x, int16 y, byte transp, Surface &dest) {
+                       int16 x, int16 y, byte transp, Surface &dest) {
 
 	int destRight = x + width;
 	int destBottom = y + height;
@@ -337,12 +336,11 @@ void Video::drawPacked(byte *sprBuf, int16 width, int16 height,
 					return;
 			}
 		}
-
 	}
 }
 
 void Video::drawPackedSprite(byte *sprBuf, int16 width, int16 height,
-		int16 x, int16 y, int16 transp, Surface &dest) {
+                             int16 x, int16 y, int16 transp, Surface &dest) {
 
 	if (spriteUncompressor(sprBuf, width, height, x, y, transp, dest))
 		return;
@@ -363,7 +361,7 @@ void Video::drawPackedSprite(const char *path, Surface &dest, int width) {
 }
 
 void Video::setPalElem(int16 index, char red, char green, char blue,
-		int16 unused, int16 vidMode) {
+                       int16 unused, int16 vidMode) {
 	byte pal[3];
 
 	_vm->validateVideoMode(vidMode);
@@ -447,14 +445,14 @@ void Video::dirtyRectsApply(int left, int top, int width, int height, int x, int
 		return;
 	}
 
-	int right  = left + width;
-	int bottom = top  + height;
+	int right = left + width;
+	int bottom = top + height;
 
 	Common::List<Common::Rect>::const_iterator it;
 	for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
-		int l = MAX<int>(left  , it->left);
-		int t = MAX<int>(top   , it->top);
-		int r = MIN<int>(right , it->right);
+		int l = MAX<int>(left, it->left);
+		int t = MAX<int>(top, it->top);
+		int r = MIN<int>(right, it->right);
 		int b = MIN<int>(bottom, it->bottom);
 
 		if ((r <= l) || (b <= t))

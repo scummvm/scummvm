@@ -22,24 +22,26 @@
 
 // Misc. graphics routines
 
-#include "saga/saga.h"
 #include "saga/gfx.h"
 #include "saga/interface.h"
-#include "saga/resource.h"
-#include "saga/scene.h"
 #include "saga/render.h"
+#include "saga/resource.h"
+#include "saga/saga.h"
+#include "saga/scene.h"
 
 #include "common/system.h"
+#include "engines/util.h"
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
-#include "engines/util.h"
 
 namespace Saga {
 
 #define RID_IHNM_DEFAULT_PALETTE 1
 #define RID_IHNM_HOURGLASS_CURSOR 11 // not in demo
 
-Gfx::Gfx(SagaEngine *vm, OSystem *system, int width, int height) : _vm(vm), _system(system) {
+Gfx::Gfx(SagaEngine *vm, OSystem *system, int width, int height)
+  : _vm(vm)
+  , _system(system) {
 	initGraphics(width, height);
 
 	debug(5, "Init screen %dx%d", width, height);
@@ -103,8 +105,7 @@ void Surface::blit(const Common::Rect &destRect, const byte *sourceBuffer) {
 	}
 
 	// Transfer buffer data to surface
-	readPointer = (sourceBuffer + clipData.drawSource.x) +
-						(clipData.sourceRect.right * clipData.drawSource.y);
+	readPointer = (sourceBuffer + clipData.drawSource.x) + (clipData.sourceRect.right * clipData.drawSource.y);
 
 	writePointer = ((byte *)pixels + clipData.drawDest.x) + (pitch * clipData.drawDest.y);
 
@@ -154,7 +155,7 @@ void Surface::transitionDissolve(const byte *sourceBuffer, const Common::Rect &s
 			y1 = seq / w;
 
 			if (sourceRect.contains(x1, y1)) {
-				color = sourceBuffer[(x1-sourceRect.left) + sourceRect.width()*(y1-sourceRect.top)];
+				color = sourceBuffer[(x1 - sourceRect.left) + sourceRect.width() * (y1 - sourceRect.top)];
 				if (flags == 0 || color)
 					((byte *)pixels)[seq] = color;
 			}
@@ -289,7 +290,7 @@ void Gfx::palToBlack(PalEntry *srcPal, double percent) {
 		if (new_entry < 0) {
 			ppal[0] = 0;
 		} else {
-			ppal[0] = (byte) new_entry;
+			ppal[0] = (byte)new_entry;
 		}
 
 		new_entry = (int)(palE->green * fpercent);
@@ -297,7 +298,7 @@ void Gfx::palToBlack(PalEntry *srcPal, double percent) {
 		if (new_entry < 0) {
 			ppal[1] = 0;
 		} else {
-			ppal[1] = (byte) new_entry;
+			ppal[1] = (byte)new_entry;
 		}
 
 		new_entry = (int)(palE->blue * fpercent);
@@ -305,7 +306,7 @@ void Gfx::palToBlack(PalEntry *srcPal, double percent) {
 		if (new_entry < 0) {
 			ppal[2] = 0;
 		} else {
-			ppal[2] = (byte) new_entry;
+			ppal[2] = (byte)new_entry;
 		}
 	}
 
@@ -363,7 +364,7 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 		if (new_entry < 0) {
 			ppal[1] = 0;
 		} else {
-			ppal[1] = (byte) new_entry;
+			ppal[1] = (byte)new_entry;
 		}
 
 		new_entry = (int)(palE->blue * fpercent);
@@ -371,7 +372,7 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 		if (new_entry < 0) {
 			ppal[2] = 0;
 		} else {
-			ppal[2] = (byte) new_entry;
+			ppal[2] = (byte)new_entry;
 		}
 	}
 
@@ -396,7 +397,7 @@ void Gfx::palFade(PalEntry *srcPal, int16 from, int16 to, int16 start, int16 num
 	PalEntry *palE;
 
 	from = CLIP<int16>(from, 0, 256);
-	to   = CLIP<int16>(to,   0, 256);
+	to = CLIP<int16>(to, 0, 256);
 
 	if (from == 0 || to == 0) {
 		// This case works like palToBlack or blackToPal, so no changes are needed
@@ -422,7 +423,7 @@ void Gfx::palFade(PalEntry *srcPal, int16 from, int16 to, int16 start, int16 num
 		if (new_entry < 0) {
 			ppal[0] = 0;
 		} else {
-			ppal[0] = (byte) new_entry;
+			ppal[0] = (byte)new_entry;
 		}
 
 		new_entry = (int)(palE->green * percent);
@@ -430,7 +431,7 @@ void Gfx::palFade(PalEntry *srcPal, int16 from, int16 to, int16 start, int16 num
 		if (new_entry < 0) {
 			ppal[1] = 0;
 		} else {
-			ppal[1] = (byte) new_entry;
+			ppal[1] = (byte)new_entry;
 		}
 
 		new_entry = (int)(palE->blue * percent);
@@ -438,7 +439,7 @@ void Gfx::palFade(PalEntry *srcPal, int16 from, int16 to, int16 start, int16 num
 		if (new_entry < 0) {
 			ppal[2] = 0;
 		} else {
-			ppal[2] = (byte) new_entry;
+			ppal[2] = (byte)new_entry;
 		}
 	}
 
@@ -465,13 +466,55 @@ void Gfx::setCursor(CursorType cursorType) {
 		const byte B = kITEColorWhite;
 
 		const byte cursor_img[CURSOR_W * CURSOR_H] = {
-			0, 0, 0, A, 0, 0, 0,
-			0, 0, 0, A, 0, 0, 0,
-			0, 0, 0, A, 0, 0, 0,
-			A, A, A, B, A, A, A,
-			0, 0, 0, A, 0, 0, 0,
-			0, 0, 0, A, 0, 0, 0,
-			0, 0, 0, A, 0, 0, 0,
+			0,
+			0,
+			0,
+			A,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			A,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			A,
+			0,
+			0,
+			0,
+			A,
+			A,
+			A,
+			B,
+			A,
+			A,
+			A,
+			0,
+			0,
+			0,
+			A,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			A,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			A,
+			0,
+			0,
+			0,
 		};
 
 		CursorMan.replaceCursor(cursor_img, CURSOR_W, CURSOR_H, 3, 3, 0);
@@ -517,7 +560,7 @@ void Gfx::setCursor(CursorType cursorType) {
 	}
 }
 
-bool hitTestPoly(const Point *points, unsigned int npoints, const Point& test_point) {
+bool hitTestPoly(const Point *points, unsigned int npoints, const Point &test_point) {
 	int yflag0;
 	int yflag1;
 	bool inside_flag = false;
@@ -530,8 +573,7 @@ bool hitTestPoly(const Point *points, unsigned int npoints, const Point& test_po
 	for (pt = 0; pt < npoints; pt++, vtx1++) {
 		yflag1 = (vtx1->y >= test_point.y);
 		if (yflag0 != yflag1) {
-			if (((vtx1->y - test_point.y) * (vtx0->x - vtx1->x) >=
-				(vtx1->x - test_point.x) * (vtx0->y - vtx1->y)) == yflag1) {
+			if (((vtx1->y - test_point.y) * (vtx0->x - vtx1->x) >= (vtx1->x - test_point.x) * (vtx0->y - vtx1->y)) == yflag1) {
 				inside_flag = !inside_flag;
 			}
 		}
@@ -571,6 +613,5 @@ void Gfx::drawRegion(const Common::Rect &destRect, const byte *sourceBuffer) {
 void Gfx::drawBgRegion(const Common::Rect &destRect, const byte *sourceBuffer) {
 	_backBuffer.blit(destRect, sourceBuffer);
 }
-
 
 } // End of namespace Saga

@@ -30,32 +30,32 @@
 
 namespace Cloud {
 namespace Box {
-class BoxStorage;
+	class BoxStorage;
 
-class BoxUploadRequest: public Networking::Request {
-	BoxStorage *_storage;
-	Common::String _savePath, _localPath;
-	Storage::UploadCallback _uploadCallback;
-	Request *_workingRequest;
-	bool _ignoreCallback;
-	Common::String _resolvedId, _parentId;
+	class BoxUploadRequest : public Networking::Request {
+		BoxStorage *_storage;
+		Common::String _savePath, _localPath;
+		Storage::UploadCallback _uploadCallback;
+		Request *_workingRequest;
+		bool _ignoreCallback;
+		Common::String _resolvedId, _parentId;
 
-	void start();
-	void resolveId();
-	void idResolvedCallback(Storage::UploadResponse response);
-	void idResolveFailedCallback(Networking::ErrorResponse error);
-	void upload();
-	void uploadedCallback(Networking::JsonResponse response);
-	void notUploadedCallback(Networking::ErrorResponse error);
-	void finishUpload(StorageFile status);
+		void start();
+		void resolveId();
+		void idResolvedCallback(Storage::UploadResponse response);
+		void idResolveFailedCallback(Networking::ErrorResponse error);
+		void upload();
+		void uploadedCallback(Networking::JsonResponse response);
+		void notUploadedCallback(Networking::ErrorResponse error);
+		void finishUpload(StorageFile status);
 
-public:
-	BoxUploadRequest(BoxStorage *storage, Common::String path, Common::String localPath, Storage::UploadCallback callback, Networking::ErrorCallback ecb);
-	virtual ~BoxUploadRequest();
+	public:
+		BoxUploadRequest(BoxStorage *storage, Common::String path, Common::String localPath, Storage::UploadCallback callback, Networking::ErrorCallback ecb);
+		virtual ~BoxUploadRequest();
 
-	virtual void handle();
-	virtual void restart();
-};
+		virtual void handle();
+		virtual void restart();
+	};
 
 } // End of namespace Box
 } // End of namespace Cloud

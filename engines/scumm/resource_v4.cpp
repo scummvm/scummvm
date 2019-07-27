@@ -20,10 +20,9 @@
  *
  */
 
-
-#include "scumm/scumm_v4.h"
 #include "scumm/file.h"
 #include "scumm/resource.h"
+#include "scumm/scumm_v4.h"
 #include "scumm/util.h"
 
 namespace Scumm {
@@ -67,22 +66,22 @@ void ScummEngine_v4::readIndexFile() {
 			break;
 
 		switch (blocktype) {
-		case 0x4E52:	// 'NR'
+		case 0x4E52: // 'NR'
 			_fileHandle->readUint16LE();
 			break;
-		case 0x5230:	// 'R0'
+		case 0x5230: // 'R0'
 			_numRooms = _fileHandle->readUint16LE();
 			break;
-		case 0x5330:	// 'S0'
+		case 0x5330: // 'S0'
 			_numScripts = _fileHandle->readUint16LE();
 			break;
-		case 0x4E30:	// 'N0'
+		case 0x4E30: // 'N0'
 			_numSounds = _fileHandle->readUint16LE();
 			break;
-		case 0x4330:	// 'C0'
+		case 0x4330: // 'C0'
 			_numCostumes = _fileHandle->readUint16LE();
 			break;
-		case 0x4F30:	// 'O0'
+		case 0x4F30: // 'O0'
 			_numGlobalObjects = _fileHandle->readUint16LE();
 
 			// Indy3 FM-TOWNS has 32 extra bytes of unknown meaning
@@ -110,9 +109,9 @@ void ScummEngine_v4::readIndexFile() {
 
 		switch (blocktype) {
 
-		case 0x4E52:	// 'NR'
+		case 0x4E52: // 'NR'
 			// Names of rooms. Maybe we should put them into a table, for use by the debugger?
-			for (int room; (room = _fileHandle->readByte()); ) {
+			for (int room; (room = _fileHandle->readByte());) {
 				char buf[10];
 				_fileHandle->read(buf, 9);
 				buf[9] = 0;
@@ -122,23 +121,23 @@ void ScummEngine_v4::readIndexFile() {
 			}
 			break;
 
-		case 0x5230:	// 'R0'
+		case 0x5230: // 'R0'
 			readResTypeList(rtRoom);
 			break;
 
-		case 0x5330:	// 'S0'
+		case 0x5330: // 'S0'
 			readResTypeList(rtScript);
 			break;
 
-		case 0x4E30:	// 'N0'
+		case 0x4E30: // 'N0'
 			readResTypeList(rtSound);
 			break;
 
-		case 0x4330:	// 'C0'
+		case 0x4330: // 'C0'
 			readResTypeList(rtCostume);
 			break;
 
-		case 0x4F30:	// 'O0'
+		case 0x4F30: // 'O0'
 			readGlobalObjects();
 			break;
 
@@ -173,21 +172,21 @@ void ScummEngine_v4::loadCharset(int no) {
 void ScummEngine_v4::readMAXS(int blockSize) {
 	// FIXME - I'm not sure for those values yet, they will have to be rechecked
 
-	_numVariables = 800;				// 800
-	_numBitVariables = 4096;			// 2048
-	_numLocalObjects = 200;				// 200
+	_numVariables = 800; // 800
+	_numBitVariables = 4096; // 2048
+	_numLocalObjects = 200; // 200
 	_numArray = 50;
 	_numVerbs = 100;
 	_numNewNames = 50;
 	_objectRoomTable = NULL;
-	_numCharsets = 9;					// 9
-	_numInventory = 80;					// 80
+	_numCharsets = 9; // 9
+	_numInventory = 80; // 80
 	_numGlobalScripts = 200;
 	_numFlObject = 50;
 
 	_shadowPaletteSize = 256;
 
-	_shadowPalette = (byte *) calloc(_shadowPaletteSize, 1);	// FIXME - needs to be removed later
+	_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1); // FIXME - needs to be removed later
 }
 
 void ScummEngine_v4::readGlobalObjects() {
@@ -225,6 +224,5 @@ void ScummEngine_v4::readGlobalObjects() {
 	if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformFMTowns)
 		_fileHandle->seek(32, SEEK_CUR);
 }
-
 
 } // End of namespace Scumm

@@ -21,12 +21,12 @@
  */
 
 #include "mohawk/view.h"
-#include "mohawk/resource.h"
-#include "mohawk/graphics.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "graphics/palette.h"
+#include "mohawk/graphics.h"
+#include "mohawk/resource.h"
 
 namespace Mohawk {
 
@@ -36,7 +36,8 @@ Module::Module() {
 Module::~Module() {
 }
 
-Feature::Feature(View *view) : _view(view) {
+Feature::Feature(View *view)
+  : _view(view) {
 	_next = _prev = nullptr;
 	_drawProc = nullptr;
 	_moveProc = nullptr;
@@ -210,7 +211,8 @@ void Feature::defaultDraw() {
 	}
 }
 
-OldFeature::OldFeature(View *view) : Feature(view) {
+OldFeature::OldFeature(View *view)
+  : Feature(view) {
 }
 
 OldFeature::~OldFeature() {
@@ -254,7 +256,8 @@ void OldFeature::finishResetFeatureScript() {
 	}
 }
 
-NewFeature::NewFeature(View *view) : Feature(view) {
+NewFeature::NewFeature(View *view)
+  : Feature(view) {
 	_unknown168 = 0;
 	_pickupProc = nullptr;
 	_dropProc = nullptr;
@@ -332,7 +335,8 @@ void NewFeature::finishResetFeatureScript() {
 	_done = false;
 }
 
-View::View(MohawkEngine *vm) : _vm(vm) {
+View::View(MohawkEngine *vm)
+  : _vm(vm) {
 	_currentModule = nullptr;
 
 	_backgroundId = 0xffff;
@@ -810,10 +814,7 @@ Feature *View::mergeLists(Feature *root, Feature *mergeRoot) {
 			Common::Rect &checkRect = check->_data.bounds;
 
 			if (prevRect.bottom < checkRect.bottom || (prevRect.bottom == checkRect.bottom && prevRect.left < checkRect.left)) {
-				if (prevRect.bottom < checkRect.top || (
-					(!(check->_flags & kFeatureSortCheckLeft) || prevRect.left >= checkRect.left) &&
-					(!(check->_flags & kFeatureSortCheckTop) || prevRect.top >= checkRect.top) &&
-					(!(check->_flags & kFeatureSortCheckRight) || prevRect.right <= checkRect.right))) {
+				if (prevRect.bottom < checkRect.top || ((!(check->_flags & kFeatureSortCheckLeft) || prevRect.left >= checkRect.left) && (!(check->_flags & kFeatureSortCheckTop) || prevRect.top >= checkRect.top) && (!(check->_flags & kFeatureSortCheckRight) || prevRect.right <= checkRect.right))) {
 					// Insert ourselves before this one.
 					prev->_prev = check->_prev;
 					prev->_next = check;

@@ -26,19 +26,20 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/base_active_rect.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
-#include "engines/wintermute/base/gfx/base_surface.h"
-#include "engines/wintermute/base/gfx/base_image.h"
-#include "engines/wintermute/base/base_sub_frame.h"
-#include "engines/wintermute/base/base_region.h"
-#include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/base/base_active_rect.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
+#include "engines/wintermute/base/base_region.h"
+#include "engines/wintermute/base/base_sub_frame.h"
+#include "engines/wintermute/base/gfx/base_image.h"
+#include "engines/wintermute/base/gfx/base_surface.h"
+#include "engines/wintermute/platform_osystem.h"
 
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
-BaseRenderer::BaseRenderer(BaseGame *inGame) : BaseClass(inGame) {
+BaseRenderer::BaseRenderer(BaseGame *inGame)
+  : BaseClass(inGame) {
 	_window = 0;
 	_clipperWindow = 0;
 	_active = false;
@@ -71,14 +72,12 @@ BaseRenderer::BaseRenderer(BaseGame *inGame) : BaseClass(inGame) {
 	_drawOffsetX = _drawOffsetY = 0;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 BaseRenderer::~BaseRenderer() {
 	deleteRectList();
 	unclipCursor();
 	delete _saveLoadImage;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 void BaseRenderer::initLoop() {
@@ -193,7 +192,7 @@ BaseObject *BaseRenderer::getObjectAt(int x, int y) {
 				// frame
 				if (_rectList[i]->_frame) {
 					int xx = (int)((_rectList[i]->_frame->getRect().left + x - _rectList[i]->_rect.left + _rectList[i]->_offsetX) / (float)((float)_rectList[i]->_zoomX / (float)100));
-					int yy = (int)((_rectList[i]->_frame->getRect().top  + y - _rectList[i]->_rect.top  + _rectList[i]->_offsetY) / (float)((float)_rectList[i]->_zoomY / (float)100));
+					int yy = (int)((_rectList[i]->_frame->getRect().top + y - _rectList[i]->_rect.top + _rectList[i]->_offsetY) / (float)((float)_rectList[i]->_zoomY / (float)100));
 
 					if (_rectList[i]->_frame->_mirrorX) {
 						int width = _rectList[i]->_frame->getRect().right - _rectList[i]->_frame->getRect().left;
@@ -224,7 +223,6 @@ BaseObject *BaseRenderer::getObjectAt(int x, int y) {
 	return (BaseObject *)nullptr;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderer::deleteRectList() {
 	for (uint32 i = 0; i < _rectList.size(); i++) {
@@ -238,23 +236,19 @@ bool BaseRenderer::initRenderer(int width, int height, bool windowed) {
 	return STATUS_FAILED;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 void BaseRenderer::onWindowChange() {
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::windowedBlt() {
 	return STATUS_FAILED;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::setup2D(bool Force) {
 	return STATUS_FAILED;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::setupLines() {
@@ -266,31 +260,27 @@ bool BaseRenderer::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 	return STATUS_FAILED;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::drawRect(int x1, int y1, int x2, int y2, uint32 color, int width) {
 	for (int i = 0; i < width; i++) {
-		drawLine(x1 + i, y1 + i, x2 - i,   y1 + i,   color); // up
+		drawLine(x1 + i, y1 + i, x2 - i, y1 + i, color); // up
 		drawLine(x1 + i, y2 - i, x2 - i + 1, y2 - i, color); // down
 
-		drawLine(x1 + i, y1 + i, x1 + i, y2 - i,   color); // left
+		drawLine(x1 + i, y1 + i, x1 + i, y2 - i, color); // left
 		drawLine(x2 - i, y1 + i, x2 - i, y2 - i + 1, color); // right
 	}
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::setViewport(int left, int top, int right, int bottom) {
 	return STATUS_FAILED;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::setScreenViewport() {
 	return setViewport(_drawOffsetX, _drawOffsetY, _width + _drawOffsetX, _height + _drawOffsetY);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::setViewport(Rect32 *rect) {
@@ -299,7 +289,6 @@ bool BaseRenderer::setViewport(Rect32 *rect) {
 	                   rect->right + _drawOffsetX,
 	                   rect->bottom + _drawOffsetY);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::clipCursor() {

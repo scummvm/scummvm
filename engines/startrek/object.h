@@ -28,10 +28,10 @@
 #include "startrek/items.h"
 #include "startrek/sprite.h"
 
-#include "common/ptr.h"
-#include "common/stream.h"
 #include "common/memstream.h"
+#include "common/ptr.h"
 #include "common/scummsys.h"
+#include "common/stream.h"
 
 namespace StarTrek {
 
@@ -61,7 +61,6 @@ const int ITEMS_END = ITEMS_START + NUM_ITEMS; // See items.h
 
 const int NUM_OBJECTS = ITEMS_END;
 
-
 enum Directions {
 	DIR_N = 0,
 	DIR_S = 1,
@@ -77,7 +76,6 @@ enum Objects {
 	OBJECT_REDSHIRT = 3,
 	OBJECT_INVENTORY_ICON = 31
 };
-
 
 struct Actor {
 	bool spriteDrawn;
@@ -136,48 +134,50 @@ struct Actor {
 	uint16 fielda6;
 
 public:
-	Actor() :
-		spriteDrawn(false),
-		animType(0),
-		sprite(),
-		scale(0),
-		animFile(),
-		numAnimFrames(0),
-		animFrame(0),
-		frameToStartNextAnim(0),
-		pos(Common::Point(0, 0)),
-		field60(0),
-		field62(0),
-		triggerActionWhenAnimFinished(false),
-		finishedAnimActionParam(0),
-		//animationString2[8](),
-		field70(0),
-		field72(0),
-		field74(0),
-		field76(0),
-		iwSrcPosition(0),
-		iwDestPosition(0),
-		granularPosX(0),
-		granularPosY(0),
-		speedX(0),
-		speedY(0),
+	Actor()
+	  : spriteDrawn(false)
+	  , animType(0)
+	  , sprite()
+	  , scale(0)
+	  , animFile()
+	  , numAnimFrames(0)
+	  , animFrame(0)
+	  , frameToStartNextAnim(0)
+	  , pos(Common::Point(0, 0))
+	  , field60(0)
+	  , field62(0)
+	  , triggerActionWhenAnimFinished(false)
+	  , finishedAnimActionParam(0)
+	  ,
+	  //animationString2[8](),
+	  field70(0)
+	  , field72(0)
+	  , field74(0)
+	  , field76(0)
+	  , iwSrcPosition(0)
+	  , iwDestPosition(0)
+	  , granularPosX(0)
+	  , granularPosY(0)
+	  , speedX(0)
+	  , speedY(0)
+	  ,
 
-		dest(Common::Point(0, 0)),
-		field90(0),
-		field92(0),
+	  dest(Common::Point(0, 0))
+	  , field90(0)
+	  , field92(0)
+	  ,
 
-		direction(0),
-		field94(0),
-		field96(0),
+	  direction(0)
+	  , field94(0)
+	  , field96(0)
+	  ,
 
-		fielda2(0),
-		fielda4(0),
-		fielda6(0) {
+	  fielda2(0)
+	  , fielda4(0)
+	  , fielda6(0) {
 	}
-
 };
 
 } // End of namespace StarTrek
 
 #endif
-

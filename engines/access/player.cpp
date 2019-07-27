@@ -20,13 +20,13 @@
  *
  */
 
-#include "common/algorithm.h"
-#include "common/textconsole.h"
 #include "access/player.h"
 #include "access/access.h"
-#include "access/resources.h"
 #include "access/amazon/amazon_player.h"
 #include "access/martian/martian_player.h"
+#include "access/resources.h"
+#include "common/algorithm.h"
+#include "common/textconsole.h"
 
 namespace Access {
 
@@ -44,7 +44,9 @@ Player *Player::init(AccessEngine *vm) {
 	}
 }
 
-Player::Player(AccessEngine *vm) : Manager(vm), ImageEntry() {
+Player::Player(AccessEngine *vm)
+  : Manager(vm)
+  , ImageEntry() {
 	_playerSprites = nullptr;
 	_playerSprites1 = nullptr;
 	_manPal1 = nullptr;
@@ -178,8 +180,7 @@ void Player::removeSprite1() {
 
 void Player::calcManScale() {
 	if (!_vm->_manScaleOff) {
-		_vm->_scale = ((((_rawPlayer.y - _vm->_scaleMaxY + _vm->_scaleN1) *
-			_vm->_scaleT1 + (_vm->_scaleH2 << 8)) & 0xff00) / _vm->_scaleH1 * _vm->_scaleI) >> 8;
+		_vm->_scale = ((((_rawPlayer.y - _vm->_scaleMaxY + _vm->_scaleN1) * _vm->_scaleT1 + (_vm->_scaleH2 << 8)) & 0xff00) / _vm->_scaleH1 * _vm->_scaleI) >> 8;
 		_vm->_screen->setScaleTable(_vm->_scale);
 
 		_playerOffset.x = _vm->_screen->_scaleTable1[20];
@@ -255,8 +256,7 @@ void Player::walkUp() {
 	int walkOff = _walkOffUp[_frame - _upWalkMin];
 	int tempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOff];
 	_rawYTempL = (byte)tempL;
-	int yTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOff] -
-		(tempL < 0 ? 1 : 0);
+	int yTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOff] - (tempL < 0 ? 1 : 0);
 	_rawYTemp = yTemp;
 	_rawXTemp = _rawPlayer.x;
 
@@ -318,15 +318,13 @@ void Player::walkLeft() {
 	bool flag = _scrollEnd == 1;
 	if (!flag) {
 		calcPlayer();
-		flag = (_playerX - _vm->_screen->_scaleTable1[_scrollConst] -
-			_vm->_player->_scrollThreshold) > 0;
+		flag = (_playerX - _vm->_screen->_scaleTable1[_scrollConst] - _vm->_player->_scrollThreshold) > 0;
 	}
 	if (flag) {
 		int walkOffset = _walkOffLeft[_frame - _sideWalkMin];
 		int tempL = _rawPlayerLow.x - _vm->_screen->_scaleTable2[walkOffset];
 		_rawTempL = (byte)tempL;
-		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset] -
-			(tempL < 0 ? 1 : 0);
+		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset] - (tempL < 0 ? 1 : 0);
 	} else {
 		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[_scrollConst];
 	}
@@ -359,15 +357,13 @@ void Player::walkRight() {
 	bool flag = _scrollEnd == 2;
 	if (!flag) {
 		calcPlayer();
-		flag = (_vm->_screen->_clipWidth - _playerX - _vm->_screen->_scaleTable1[_scrollConst] -
-			_vm->_player->_scrollThreshold) > 0;
+		flag = (_vm->_screen->_clipWidth - _playerX - _vm->_screen->_scaleTable1[_scrollConst] - _vm->_player->_scrollThreshold) > 0;
 	}
 	if (flag) {
 		int walkOffset = _walkOffRight[_frame - _sideWalkMin];
 		int tempL = _rawPlayerLow.x + _vm->_screen->_scaleTable2[walkOffset];
 		_rawTempL = (byte)tempL;
-		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[walkOffset] +
-			(tempL >= 0x100 ? 1 : 0);
+		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[walkOffset] + (tempL >= 0x100 ? 1 : 0);
 	} else {
 		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[_scrollConst];
 	}
@@ -398,15 +394,13 @@ void Player::walkUpLeft() {
 	bool flag = _scrollEnd == 1;
 	if (!flag) {
 		calcPlayer();
-		flag = (_playerX - _vm->_screen->_scaleTable1[_scrollConst] -
-			_vm->_player->_scrollThreshold) > 0;
+		flag = (_playerX - _vm->_screen->_scaleTable1[_scrollConst] - _vm->_player->_scrollThreshold) > 0;
 	}
 	if (flag) {
 		walkOffset = _walkOffUL[_frame - _diagUpWalkMin].x;
 		tempL = _rawPlayerLow.x - _vm->_screen->_scaleTable2[walkOffset];
 		_rawTempL = (byte)tempL;
-		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset] -
-			(tempL < 0 ? 1 : 0);
+		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset] - (tempL < 0 ? 1 : 0);
 	} else {
 		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[_scrollConst];
 	}
@@ -414,8 +408,7 @@ void Player::walkUpLeft() {
 	walkOffset = _walkOffUL[_frame - _diagUpWalkMin].y;
 	tempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOffset];
 	_rawYTempL = (byte)tempL;
-	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOffset] -
-		(tempL < 0 ? 1 : 0);
+	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOffset] - (tempL < 0 ? 1 : 0);
 
 	if (_vm->_room->codeWalls()) {
 		plotCom2();
@@ -449,15 +442,13 @@ void Player::walkDownLeft() {
 	bool flag = _scrollEnd == 1;
 	if (!flag) {
 		calcPlayer();
-		flag = (_playerX - _vm->_screen->_scaleTable1[_scrollConst] -
-			_vm->_player->_scrollThreshold) > 0;
+		flag = (_playerX - _vm->_screen->_scaleTable1[_scrollConst] - _vm->_player->_scrollThreshold) > 0;
 	}
 	if (flag) {
 		walkOffset = _walkOffDL[_frame - _sideWalkMin].x;
 		tempL = _rawPlayerLow.x - _vm->_screen->_scaleTable2[walkOffset];
 		_rawTempL = (byte)tempL;
-		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset] -
-			(tempL < 0 ? 1 : 0);
+		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset] - (tempL < 0 ? 1 : 0);
 	} else {
 		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[_scrollConst];
 	}
@@ -465,8 +456,7 @@ void Player::walkDownLeft() {
 	walkOffset = _walkOffDL[_frame - _diagDownWalkMin].y;
 	tempL = _rawPlayerLow.y + _vm->_screen->_scaleTable2[walkOffset];
 	_rawYTempL = (byte)tempL;
-	_rawYTemp = _rawPlayer.y + _vm->_screen->_scaleTable1[walkOffset] +
-		(tempL >= 0x100 ? 1 : 0);
+	_rawYTemp = _rawPlayer.y + _vm->_screen->_scaleTable1[walkOffset] + (tempL >= 0x100 ? 1 : 0);
 
 	if (_vm->_room->codeWalls()) {
 		plotCom2();
@@ -500,15 +490,13 @@ void Player::walkUpRight() {
 	bool flag = _scrollEnd == 1;
 	if (!flag) {
 		calcPlayer();
-		flag = (_vm->_screen->_clipWidth - _playerX - _vm->_screen->_scaleTable1[_scrollConst] -
-			_vm->_player->_scrollThreshold) > 0;
+		flag = (_vm->_screen->_clipWidth - _playerX - _vm->_screen->_scaleTable1[_scrollConst] - _vm->_player->_scrollThreshold) > 0;
 	}
 	if (flag) {
 		walkOffset = _walkOffUR[_frame - _diagUpWalkMin].x;
 		tempL = _rawPlayerLow.x + _vm->_screen->_scaleTable2[walkOffset];
 		_rawTempL = (byte)tempL;
-		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[walkOffset] +
-			(tempL >= 0x100 ? 1 : 0);
+		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[walkOffset] + (tempL >= 0x100 ? 1 : 0);
 	} else {
 		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[_scrollConst];
 	}
@@ -516,8 +504,7 @@ void Player::walkUpRight() {
 	walkOffset = _walkOffUL[_frame - _diagUpWalkMin].y;
 	tempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOffset];
 	_rawYTempL = (byte)tempL;
-	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOffset] -
-		(tempL < 0 ? 1 : 0);
+	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOffset] - (tempL < 0 ? 1 : 0);
 
 	if (_vm->_room->codeWalls()) {
 		plotCom2();
@@ -551,15 +538,13 @@ void Player::walkDownRight() {
 	bool flag = _scrollEnd == 2;
 	if (!flag) {
 		calcPlayer();
-		flag = (_vm->_screen->_clipWidth - _playerX - _vm->_screen->_scaleTable1[_scrollConst] -
-			_vm->_player->_scrollThreshold) > 0;
+		flag = (_vm->_screen->_clipWidth - _playerX - _vm->_screen->_scaleTable1[_scrollConst] - _vm->_player->_scrollThreshold) > 0;
 	}
 	if (flag) {
 		walkOffset = _walkOffUR[_frame - _diagDownWalkMin].x;
 		tempL = _rawPlayerLow.x + _vm->_screen->_scaleTable2[walkOffset];
 		_rawTempL = (byte)tempL;
-		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[walkOffset] +
-			(tempL >= 0x100 ? 1 : 0);
+		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[walkOffset] + (tempL >= 0x100 ? 1 : 0);
 	} else {
 		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[_scrollConst];
 	}
@@ -567,8 +552,7 @@ void Player::walkDownRight() {
 	walkOffset = _walkOffDR[_frame - _diagDownWalkMin].y;
 	tempL = _rawPlayerLow.y + _vm->_screen->_scaleTable2[walkOffset];
 	_rawYTempL = (byte)tempL;
-	_rawYTemp = _rawPlayer.y + _vm->_screen->_scaleTable1[walkOffset] +
-		(tempL >= 0x100 ? 1 : 0);
+	_rawYTemp = _rawPlayer.y + _vm->_screen->_scaleTable1[walkOffset] + (tempL >= 0x100 ? 1 : 0);
 
 	if (_vm->_room->codeWalls()) {
 		plotCom2();
@@ -694,15 +678,13 @@ void Player::plotCom3() {
 }
 
 void Player::checkScrollUp() {
-	if ((_playerDirection == DOWNRIGHT || _playerDirection == DOWNLEFT ||
-		_playerDirection == DOWN) && (_vm->_screen->_clipHeight -
-		_playerY - _scrollThreshold) <= 0) {
-			// Scroll up
-			if (scrollUp()) {
-				_scrollEnd = 4;
-				_vm->_scrollY &= TILE_HEIGHT;
-				_scrollFlag = true;
-			}
+	if ((_playerDirection == DOWNRIGHT || _playerDirection == DOWNLEFT || _playerDirection == DOWN) && (_vm->_screen->_clipHeight - _playerY - _scrollThreshold) <= 0) {
+		// Scroll up
+		if (scrollUp()) {
+			_scrollEnd = 4;
+			_vm->_scrollY &= TILE_HEIGHT;
+			_scrollFlag = true;
+		}
 	}
 }
 
@@ -711,8 +693,7 @@ void Player::checkScroll() {
 	if (_playerDirection == NONE)
 		return;
 
-	if ((_playerDirection == UPLEFT || _playerDirection == DOWNLEFT ||
-			_playerDirection == LEFT) && _playerX <= _scrollThreshold) {
+	if ((_playerDirection == UPLEFT || _playerDirection == DOWNLEFT || _playerDirection == LEFT) && _playerX <= _scrollThreshold) {
 		// Scroll right
 		if (!scrollRight()) {
 			if (_playerDirection == DOWNLEFT)
@@ -720,9 +701,7 @@ void Player::checkScroll() {
 
 			return;
 		}
-	} else if ((_playerDirection == UPRIGHT || _playerDirection == DOWNRIGHT ||
-			_playerDirection == RIGHT) && (_vm->_screen->_clipWidth -
-			_playerX - _scrollThreshold) <= 0) {
+	} else if ((_playerDirection == UPRIGHT || _playerDirection == DOWNRIGHT || _playerDirection == RIGHT) && (_vm->_screen->_clipWidth - _playerX - _scrollThreshold) <= 0) {
 		// Scroll left
 		if (!scrollLeft()) {
 			if (_playerDirection == DOWNRIGHT)
@@ -732,8 +711,7 @@ void Player::checkScroll() {
 		}
 	}
 
-	if ((_playerDirection == UPRIGHT || _playerDirection == UPLEFT ||
-			_playerDirection == UP) && _playerY <= _scrollThreshold) {
+	if ((_playerDirection == UPRIGHT || _playerDirection == UPLEFT || _playerDirection == UP) && _playerY <= _scrollThreshold) {
 		scrollDown();
 	} else {
 		checkScrollUp();
@@ -746,23 +724,21 @@ bool Player::scrollUp(int forcedAmount) {
 	else
 		_scrollAmount = forcedAmount;
 
-	if ((_vm->_scrollRow + _vm->_screen->_vWindowHeight) >=
-			_vm->_room->_playFieldHeight)
+	if ((_vm->_scrollRow + _vm->_screen->_vWindowHeight) >= _vm->_room->_playFieldHeight)
 		return true;
 
 	_scrollFlag = true;
 	_vm->_scrollY = _vm->_scrollY + _scrollAmount;
 
 	while (_vm->_scrollY >= TILE_HEIGHT && !_vm->shouldQuit()) {
-			_vm->_scrollY -= TILE_HEIGHT;
+		_vm->_scrollY -= TILE_HEIGHT;
 		++_vm->_scrollRow;
 		_vm->_buffer1.moveBufferUp();
 
 		_vm->_room->buildRow(_vm->_scrollRow + _vm->_screen->_vWindowHeight,
-			_vm->_screen->_vWindowLinesTall);
+		                     _vm->_screen->_vWindowLinesTall);
 
-		if ((_vm->_scrollRow + _vm->_screen->_vWindowHeight) >=
-			_vm->_room->_playFieldHeight)
+		if ((_vm->_scrollRow + _vm->_screen->_vWindowHeight) >= _vm->_room->_playFieldHeight)
 			return true;
 
 		if (_vm->_scrollY <= TILE_HEIGHT)
@@ -825,7 +801,7 @@ bool Player::scrollLeft(int forcedAmount) {
 			++_vm->_scrollCol;
 			_vm->_buffer1.moveBufferLeft();
 			_vm->_room->buildColumn(_vm->_scrollCol + screen._vWindowWidth,
-				screen._vWindowBytesWide);
+			                        screen._vWindowBytesWide);
 		} while (!_vm->shouldQuit() && (_vm->_scrollX >= TILE_WIDTH));
 
 		return (_playerDirection == UPRIGHT);

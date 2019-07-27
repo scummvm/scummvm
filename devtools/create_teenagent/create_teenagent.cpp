@@ -26,14 +26,14 @@
 // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
 #ifdef main
-#undef main
+#	undef main
 #endif // main
 
+#include "static_tables.h"
+#include "util.h"
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
-#include "util.h"
-#include "static_tables.h"
 
 int main(int argc, char *argv[]) {
 	const char *dat_name = "teenagent.dat";
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Write out message string block
-	for (uint i = 0; i < (sizeof(messages)/sizeof(char*)); i++) {
+	for (uint i = 0; i < (sizeof(messages) / sizeof(char *)); i++) {
 		if (i == 0) {
 			// Write out reject message pointer block
 			uint16 off = DSEG_STARTBLK_SIZE + (4 * 2);
@@ -103,7 +103,7 @@ int main(int argc, char *argv[]) {
 
 	// Write out dialog string block
 	static const char nulls[6] = "\0\0\0\0\0";
-	for (uint i = 0; i < (sizeof(dialogs)/sizeof(char**)); i++) {
+	for (uint i = 0; i < (sizeof(dialogs) / sizeof(char **)); i++) {
 		//printf("Writing Dialog #%d\n", i);
 		bool dialogEnd = false;
 		uint j = 0;

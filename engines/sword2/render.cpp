@@ -22,15 +22,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
 #include "common/endian.h"
 #include "common/system.h"
 
 #include "graphics/primitives.h"
 
-#include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/screen.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
@@ -38,8 +37,8 @@ namespace Sword2 {
 
 void Screen::updateRect(Common::Rect *r) {
 	_vm->_system->copyRectToScreen(_buffer + r->top * _screenWide + r->left,
-		_screenWide, r->left, r->top, r->right - r->left,
-		r->bottom - r->top);
+	                               _screenWide, r->left, r->top, r->right - r->left,
+	                               r->bottom - r->top);
 }
 
 void Screen::blitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *clipRect) {
@@ -126,10 +125,7 @@ void Screen::scaleImageGood(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 
 				c1 = *srcPtr;
 				transparent = false;
 			} else {
-				if (bbXPos + x >= 0 &&
-				    bbXPos + x < RENDERWIDE &&
-				    bbYPos + y >= MENUDEEP &&
-				    bbYPos + y < MENUDEEP + RENDERDEEP) {
+				if (bbXPos + x >= 0 && bbXPos + x < RENDERWIDE && bbYPos + y >= MENUDEEP && bbYPos + y < MENUDEEP + RENDERDEEP) {
 					c1 = *(backBuf + _screenWide * (bbYPos + y) + bbXPos + x);
 				} else {
 					c1 = 0;
@@ -141,10 +137,7 @@ void Screen::scaleImageGood(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 
 					c2 = *(srcPtr + 1);
 					transparent = false;
 				} else {
-					if (bbXPos + x + 1 >= 0 &&
-					    bbXPos + x + 1 < RENDERWIDE &&
-					    bbYPos + y >= MENUDEEP &&
-					    bbYPos + y + 1 < MENUDEEP + RENDERDEEP) {
+					if (bbXPos + x + 1 >= 0 && bbXPos + x + 1 < RENDERWIDE && bbYPos + y >= MENUDEEP && bbYPos + y + 1 < MENUDEEP + RENDERDEEP) {
 						c2 = *(backBuf + _screenWide * (bbYPos + y) + bbXPos + x + 1);
 					} else {
 						c2 = c1;
@@ -159,10 +152,7 @@ void Screen::scaleImageGood(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 
 					c3 = *(srcPtr + srcPitch);
 					transparent = false;
 				} else {
-					if (bbXPos + x >= 0 &&
-					    bbXPos + x < RENDERWIDE &&
-					    bbYPos + y + 1 >= MENUDEEP &&
-					    bbYPos + y + 1 < MENUDEEP + RENDERDEEP) {
+					if (bbXPos + x >= 0 && bbXPos + x < RENDERWIDE && bbYPos + y + 1 >= MENUDEEP && bbYPos + y + 1 < MENUDEEP + RENDERDEEP) {
 						c3 = *(backBuf + _screenWide * (bbYPos + y + 1) + bbXPos);
 					} else {
 						c3 = c1;
@@ -177,10 +167,7 @@ void Screen::scaleImageGood(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 
 					c4 = *(srcPtr + srcPitch + 1);
 					transparent = false;
 				} else {
-					if (bbXPos + x + 1 >= 0 &&
-					    bbXPos + x + 1 < RENDERWIDE &&
-					    bbYPos + y + 1 >= MENUDEEP &&
-					    bbYPos + y + 1 < MENUDEEP + RENDERDEEP) {
+					if (bbXPos + x + 1 >= 0 && bbXPos + x + 1 < RENDERWIDE && bbYPos + y + 1 >= MENUDEEP && bbYPos + y + 1 < MENUDEEP + RENDERDEEP) {
 						c4 = *(backBuf + _screenWide * (bbYPos + y + 1) + bbXPos + x + 1);
 					} else {
 						c4 = c3;
@@ -248,7 +235,7 @@ void Screen::plotPoint(int x, int y, uint8 color) {
 
 static void plot(int x, int y, int color, void *data) {
 	Screen *screen = (Screen *)data;
-	screen->plotPoint(x, y, (uint8) color);
+	screen->plotPoint(x, y, (uint8)color);
 }
 
 /**
@@ -361,7 +348,7 @@ void Screen::startRenderCycle() {
 
 	_startTime = _vm->_system->getMillis();
 
-	if (_startTime + _renderAverageTime >= _totalTime)	{
+	if (_startTime + _renderAverageTime >= _totalTime) {
 		_scrollX = _scrollXTarget;
 		_scrollY = _scrollYTarget;
 		_renderTooSlow = true;
@@ -614,7 +601,7 @@ int32 Screen::initializePsxBackgroundLayer(byte *parallax) {
 	// Calculate TRUE resolution of background, must be
 	// a multiple of 64
 
-	trueXres = (bgXres % 64) ? ((bgXres/64) + 1) * 64 : bgXres;
+	trueXres = (bgXres % 64) ? ((bgXres / 64) + 1) * 64 : bgXres;
 	totStripes = trueXres / 64;
 
 	_xBlocks[_layer] = (bgXres + BLOCKWIDTH - 1) / BLOCKWIDTH;

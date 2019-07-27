@@ -20,8 +20,8 @@
  *
  */
 
-#include "cruise/cruise_main.h"
 #include "cruise/cruise.h"
+#include "cruise/cruise_main.h"
 
 namespace Cruise {
 
@@ -39,7 +39,7 @@ void addBackgroundIncrustSub1(int fileIdx, int X, int Y, char *ptr2, int16 scale
 	buildPolyModel(X, Y, scale, ptr2, destBuffer, dataPtr);
 }
 
-void backupBackground(backgroundIncrustStruct *pIncrust, int X, int Y, int width, int height, uint8* pBackground) {
+void backupBackground(backgroundIncrustStruct *pIncrust, int X, int Y, int width, int height, uint8 *pBackground) {
 	pIncrust->saveWidth = width;
 	pIncrust->saveHeight = height;
 	pIncrust->saveSize = width * height;
@@ -52,8 +52,7 @@ void backupBackground(backgroundIncrustStruct *pIncrust, int X, int Y, int width
 			int xp = j + X;
 			int yp = i + Y;
 
-			pIncrust->ptr[i * width + j] = ((xp < 0) || (yp < 0) || (xp >= 320) || (yp >= 200)) ?
-				0 : pBackground[yp * 320 + xp];
+			pIncrust->ptr[i * width + j] = ((xp < 0) || (yp < 0) || (xp >= 320) || (yp >= 200)) ? 0 : pBackground[yp * 320 + xp];
 		}
 	}
 }
@@ -66,7 +65,7 @@ void restoreBackground(backgroundIncrustStruct *pIncrust) {
 	if (pIncrust->ptr == NULL)
 		return;
 
-	uint8* pBackground = backgroundScreens[pIncrust->backgroundIdx];
+	uint8 *pBackground = backgroundScreens[pIncrust->backgroundIdx];
 	if (pBackground == NULL)
 		return;
 
@@ -88,7 +87,7 @@ void restoreBackground(backgroundIncrustStruct *pIncrust) {
 	}
 }
 
-backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx, backgroundIncrustStruct *pHead, int16 scriptNumber, int16 scriptOverlay, int16 backgroundIdx, int16 saveBuffer) {
+backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx, int16 objectIdx, backgroundIncrustStruct *pHead, int16 scriptNumber, int16 scriptOverlay, int16 backgroundIdx, int16 saveBuffer) {
 	objectParamsQuery params;
 	getMultipleObjectParam(overlayIdx, objectIdx, &params);
 
@@ -98,8 +97,7 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx,
 	if (!ptr)
 		return NULL;
 
-	if ((filesDatabase[params.fileIdx].subData.resourceType != OBJ_TYPE_SPRITE) &&
-		(filesDatabase[params.fileIdx].subData.resourceType != OBJ_TYPE_POLY))
+	if ((filesDatabase[params.fileIdx].subData.resourceType != OBJ_TYPE_SPRITE) && (filesDatabase[params.fileIdx].subData.resourceType != OBJ_TYPE_POLY))
 		return NULL;
 
 	uint8 *backgroundPtr = backgroundScreens[backgroundIdx];
@@ -149,7 +147,7 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx,
 			backupBackground(newElement, newElement->X, newElement->Y, width, height, backgroundPtr);
 
 		drawSprite(width, height, NULL, filesDatabase[params.fileIdx].subData.ptr, newElement->Y,
-			newElement->X, backgroundPtr, filesDatabase[params.fileIdx].subData.ptrMask);
+		           newElement->X, backgroundPtr, filesDatabase[params.fileIdx].subData.ptrMask);
 	} else {
 		// poly
 		if (saveBuffer == 1) {
@@ -158,13 +156,13 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx,
 			int newScale;
 			char *newFrame;
 
-			int sizeTable[4];	// 0 = left, 1 = right, 2 = bottom, 3 = top
+			int sizeTable[4]; // 0 = left, 1 = right, 2 = bottom, 3 = top
 
 			// this function checks if the dataPtr is not 0, else it retrieves the data for X, Y, scale and DataPtr again (OLD: mainDrawSub1Sub1)
 			flipPoly(params.fileIdx, (int16 *)filesDatabase[params.fileIdx].subData.ptr, params.scale, &newFrame, newElement->X, newElement->Y, &newX, &newY, &newScale);
 
 			// this function fills the sizeTable for the poly (OLD: mainDrawSub1Sub2)
-			getPolySize(newX, newY, newScale, sizeTable, (unsigned char*)newFrame);
+			getPolySize(newX, newY, newScale, sizeTable, (unsigned char *)newFrame);
 
 			int width = (sizeTable[1] + 2) - (sizeTable[0] - 2) + 1;
 			int height = sizeTable[3] - sizeTable[2] + 1;
@@ -183,7 +181,7 @@ void regenerateBackgroundIncrust(backgroundIncrustStruct *pHead) {
 	backgroundIncrustStruct *pl = pHead->next;
 
 	while (pl) {
-		backgroundIncrustStruct* pl2 = pl->next;
+		backgroundIncrustStruct *pl2 = pl->next;
 
 		int frame = pl->frame;
 		if (frame < 0)
@@ -232,7 +230,7 @@ void freeBackgroundIncrustList(backgroundIncrustStruct *pHead) {
 	resetBackgroundIncrustList(pHead);
 }
 
-void removeBackgroundIncrust(int overlay, int idx, backgroundIncrustStruct * pHead) {
+void removeBackgroundIncrust(int overlay, int idx, backgroundIncrustStruct *pHead) {
 	objectParamsQuery params;
 
 	getMultipleObjectParam(overlay, idx, &params);
@@ -277,7 +275,7 @@ void removeBackgroundIncrust(int overlay, int idx, backgroundIncrustStruct * pHe
 	}
 }
 
-void unmergeBackgroundIncrust(backgroundIncrustStruct * pHead, int ovl, int idx) {
+void unmergeBackgroundIncrust(backgroundIncrustStruct *pHead, int ovl, int idx) {
 	objectParamsQuery params;
 	getMultipleObjectParam(ovl, idx, &params);
 

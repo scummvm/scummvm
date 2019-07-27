@@ -20,15 +20,15 @@
  *
  */
 
-#include "prince/prince.h"
 #include "prince/music.h"
 #include "prince/musNum.h"
+#include "prince/prince.h"
 #include "prince/resource.h"
 
-#include "common/archive.h"
-#include "common/debug.h"
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
+#include "common/archive.h"
+#include "common/debug.h"
 
 namespace Prince {
 
@@ -117,8 +117,8 @@ const uint8 MusicPlayer::_musRoomTable[] = {
 	ROOM61MUS
 };
 
-
-MusicPlayer::MusicPlayer(PrinceEngine *vm) : _vm(vm) {
+MusicPlayer::MusicPlayer(PrinceEngine *vm)
+  : _vm(vm) {
 	_data = nullptr;
 	_dataSize = 0;
 	_isGM = false;
@@ -215,11 +215,11 @@ bool PrinceEngine::loadMusic(int musNumber) {
 	uint8 midiNumber = MusicPlayer::_musRoomTable[musNumber];
 	if (midiNumber) {
 		if (midiNumber != 100) {
-			 if (_currentMidi != midiNumber) {
+			if (_currentMidi != midiNumber) {
 				_currentMidi = midiNumber;
 				const char *musName = MusicPlayer::_musTable[_currentMidi];
 				_midiPlayer->loadMidi(musName);
-			 }
+			}
 		}
 	} else {
 		stopMusic();

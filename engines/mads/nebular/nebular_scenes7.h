@@ -25,212 +25,218 @@
 
 #include "common/scummsys.h"
 #include "mads/game.h"
-#include "mads/scene.h"
 #include "mads/nebular/nebular_scenes.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
 namespace Nebular {
 
-class Scene7xx : public NebularScene {
-protected:
-	/**
+	class Scene7xx : public NebularScene {
+	protected:
+		/**
 	 * Plays an appropriate sound when entering a scene
 	 */
-	void setAAName();
+		void setAAName();
 
-	/**
+		/**
 	 * Updates the prefix used for getting player sprites for the scene
 	 */
-	void setPlayerSpritesPrefix();
+		void setPlayerSpritesPrefix();
 
-	void sceneEntrySound();
+		void sceneEntrySound();
 
-public:
-	Scene7xx(MADSEngine *vm) : NebularScene(vm) {}
-};
+	public:
+		Scene7xx(MADSEngine *vm)
+		  : NebularScene(vm) {}
+	};
 
-class Scene701 : public Scene7xx {
-private:
-	int _fishingLineId;
+	class Scene701 : public Scene7xx {
+	private:
+		int _fishingLineId;
 
-public:
-	Scene701(MADSEngine *vm);
-	void synchronize(Common::Serializer &s);
+	public:
+		Scene701(MADSEngine *vm);
+		void synchronize(Common::Serializer &s);
 
-	virtual void setup();
-	virtual void enter();
-	virtual void preActions();
-	virtual void actions();
-	virtual void step();
-};
+		virtual void setup();
+		virtual void enter();
+		virtual void preActions();
+		virtual void actions();
+		virtual void step();
+	};
 
-class Scene702 : public Scene7xx {
-public:
-	Scene702(MADSEngine *vm) : Scene7xx(vm) {}
+	class Scene702 : public Scene7xx {
+	public:
+		Scene702(MADSEngine *vm)
+		  : Scene7xx(vm) {}
 
-	virtual void setup();
-	virtual void enter();
-	virtual void preActions();
-	virtual void actions();
-};
+		virtual void setup();
+		virtual void enter();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-class Scene703 : public Scene7xx{
-private:
-	int _monsterMode;
-	int _boatFrame;
-	int _curSequence;
-	int _boatDir;
+	class Scene703 : public Scene7xx {
+	private:
+		int _monsterMode;
+		int _boatFrame;
+		int _curSequence;
+		int _boatDir;
 
-	bool _useBomb;
-	bool _startMonsterTimer;
-	bool _rexDeathFl;
-	bool _restartTrigger70Fl;
+		bool _useBomb;
+		bool _startMonsterTimer;
+		bool _rexDeathFl;
+		bool _restartTrigger70Fl;
 
-	uint32 _lastFrameTime;
-	uint32 _monsterTime;
+		uint32 _lastFrameTime;
+		uint32 _monsterTime;
 
-	Conversation _dialog1;
+		Conversation _dialog1;
 
-	void handleBottleInterface();
-	void setBottleSequence();
-	void handleFillBottle(int quote);
+		void handleBottleInterface();
+		void setBottleSequence();
+		void handleFillBottle(int quote);
 
-public:
-	Scene703(MADSEngine *vm);
-	void synchronize(Common::Serializer &s);
+	public:
+		Scene703(MADSEngine *vm);
+		void synchronize(Common::Serializer &s);
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void actions();
-};
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void actions();
+	};
 
-class Scene704 : public Scene7xx{
-private:
-	int _bottleHotspotId;
-	int _boatCurrentFrame;
-	int _animationMode;
-	int _boatDirection;
+	class Scene704 : public Scene7xx {
+	private:
+		int _bottleHotspotId;
+		int _boatCurrentFrame;
+		int _animationMode;
+		int _boatDirection;
 
-	bool _takeBottleFl;
+		bool _takeBottleFl;
 
-	Conversation _dialog1;
+		Conversation _dialog1;
 
-	void handleFillBottle(int quote);
-	void setBottleSequence();
-	void handleBottleInterface();
+		void handleFillBottle(int quote);
+		void setBottleSequence();
+		void handleBottleInterface();
 
-public:
-	Scene704(MADSEngine *vm);
-	void synchronize(Common::Serializer &s);
+	public:
+		Scene704(MADSEngine *vm);
+		void synchronize(Common::Serializer &s);
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void actions();
-};
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void actions();
+	};
 
-class Scene705 : public Scene7xx{
-private:
-	Conversation _dialog1;
+	class Scene705 : public Scene7xx {
+	private:
+		Conversation _dialog1;
 
-	void handleFillBottle(int quote);
-	void setBottleSequence();
-	void handleBottleInterface();
+		void handleFillBottle(int quote);
+		void setBottleSequence();
+		void handleBottleInterface();
 
-public:
-	Scene705(MADSEngine *vm) : Scene7xx(vm) {}
-	void synchronize(Common::Serializer &s);
+	public:
+		Scene705(MADSEngine *vm)
+		  : Scene7xx(vm) {}
+		void synchronize(Common::Serializer &s);
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void actions();
-};
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void actions();
+	};
 
-class Scene706 : public Scene7xx{
-private:
-	int _vaseHotspotId;
-	int _vaseMode;
-	int _animationMode;
-	int _animationFrame;
+	class Scene706 : public Scene7xx {
+	private:
+		int _vaseHotspotId;
+		int _vaseMode;
+		int _animationMode;
+		int _animationFrame;
 
-	bool _emptyPedestral;
+		bool _emptyPedestral;
 
-	void handleTakeVase();
-	void handleRexDeath();
+		void handleTakeVase();
+		void handleRexDeath();
 
-public:
-	Scene706(MADSEngine *vm);
-	void synchronize(Common::Serializer &s);
+	public:
+		Scene706(MADSEngine *vm);
+		void synchronize(Common::Serializer &s);
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-class Scene707 : public SceneTeleporter {
-public:
-	Scene707(MADSEngine *vm) : SceneTeleporter(vm) {}
+	class Scene707 : public SceneTeleporter {
+	public:
+		Scene707(MADSEngine *vm)
+		  : SceneTeleporter(vm) {}
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void actions();
-};
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void actions();
+	};
 
-class Scene710 : public Scene7xx {
-public:
-	Scene710(MADSEngine *vm) : Scene7xx(vm) {}
+	class Scene710 : public Scene7xx {
+	public:
+		Scene710(MADSEngine *vm)
+		  : Scene7xx(vm) {}
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void actions();
-};
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void actions();
+	};
 
-class Scene711 : public SceneTeleporter {
-public:
-	Scene711(MADSEngine *vm) : SceneTeleporter(vm) {}
+	class Scene711 : public SceneTeleporter {
+	public:
+		Scene711(MADSEngine *vm)
+		  : SceneTeleporter(vm) {}
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void actions();
-};
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void actions();
+	};
 
-class Scene751 : public Scene7xx{
-private:
-	bool _rexHandingLine;
+	class Scene751 : public Scene7xx {
+	private:
+		bool _rexHandingLine;
 
-public:
-	Scene751(MADSEngine *vm);
-	void synchronize(Common::Serializer &s);
+	public:
+		Scene751(MADSEngine *vm);
+		void synchronize(Common::Serializer &s);
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-class Scene752 : public Scene7xx {
-private:
-	int _cardId;
+	class Scene752 : public Scene7xx {
+	private:
+		int _cardId;
 
-public:
-	Scene752(MADSEngine *vm);
-	void synchronize(Common::Serializer &s);
+	public:
+		Scene752(MADSEngine *vm);
+		void synchronize(Common::Serializer &s);
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
 } // End of namespace Nebular
 } // End of namespace MADS

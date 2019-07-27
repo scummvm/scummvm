@@ -26,8 +26,11 @@
 
 namespace Glk {
 
-RawDecoder::RawDecoder() : Image::ImageDecoder(), _palette(nullptr), _paletteColorCount(0),
-	_transColor(0) {
+RawDecoder::RawDecoder()
+  : Image::ImageDecoder()
+  , _palette(nullptr)
+  , _paletteColorCount(0)
+  , _transColor(0) {
 }
 
 RawDecoder::~RawDecoder() {

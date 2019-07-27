@@ -23,26 +23,54 @@
 #include "common/debug.h"
 #include "common/random.h"
 
+#include "prince/animation.h"
+#include "prince/flags.h"
+#include "prince/graphics.h"
 #include "prince/hero.h"
 #include "prince/hero_set.h"
-#include "prince/animation.h"
-#include "prince/resource.h"
 #include "prince/prince.h"
-#include "prince/graphics.h"
-#include "prince/flags.h"
+#include "prince/resource.h"
 #include "prince/script.h"
 
 namespace Prince {
 
-Hero::Hero(PrinceEngine *vm, GraphicsMan *graph) : _vm(vm), _graph(graph),
-	_number(0), _visible(false), _state(kHeroStateStay), _middleX(0), _middleY(0),
-	_boreNum(1), _currHeight(0), _moveDelay(0), _shadMinus(0), _moveSetType(0), _zoomedHeroSurface(nullptr),
-	_lastDirection(kHeroDirDown), _destDirection(kHeroDirDown), _talkTime(0), _boredomTime(0), _phase(0),
-	_specAnim(nullptr), _drawX(0), _drawY(0), _drawZ(0),
-	_frameXSize(0), _frameYSize(0), _scaledFrameXSize(0), _scaledFrameYSize(0), _color(0),
-	_coords(nullptr), _dirTab(nullptr), _currCoords(nullptr), _currDirTab(nullptr), _step(0),
-	_maxBoredom(200), _leftRightMainDir(0), _upDownMainDir(0), _animSetNr(0)
-{
+Hero::Hero(PrinceEngine *vm, GraphicsMan *graph)
+  : _vm(vm)
+  , _graph(graph)
+  , _number(0)
+  , _visible(false)
+  , _state(kHeroStateStay)
+  , _middleX(0)
+  , _middleY(0)
+  , _boreNum(1)
+  , _currHeight(0)
+  , _moveDelay(0)
+  , _shadMinus(0)
+  , _moveSetType(0)
+  , _zoomedHeroSurface(nullptr)
+  , _lastDirection(kHeroDirDown)
+  , _destDirection(kHeroDirDown)
+  , _talkTime(0)
+  , _boredomTime(0)
+  , _phase(0)
+  , _specAnim(nullptr)
+  , _drawX(0)
+  , _drawY(0)
+  , _drawZ(0)
+  , _frameXSize(0)
+  , _frameYSize(0)
+  , _scaledFrameXSize(0)
+  , _scaledFrameYSize(0)
+  , _color(0)
+  , _coords(nullptr)
+  , _dirTab(nullptr)
+  , _currCoords(nullptr)
+  , _currDirTab(nullptr)
+  , _step(0)
+  , _maxBoredom(200)
+  , _leftRightMainDir(0)
+  , _upDownMainDir(0)
+  , _animSetNr(0) {
 }
 
 Hero::~Hero() {
@@ -675,7 +703,7 @@ void Hero::showHero() {
 				if (!_vm->_interpreter->getLastOPCode() || !_vm->_interpreter->getFgOpcodePC()) {
 					_boredomTime++;
 					if (_boredomTime == _maxBoredom) {
-						_boreNum =_vm->_randomSource.getRandomNumber(1); // rand one of two 'bored' animation
+						_boreNum = _vm->_randomSource.getRandomNumber(1); // rand one of two 'bored' animation
 						_phase = 0;
 						_state = kHeroStateBore;
 						if (_lastDirection == kHeroDirUp) {
@@ -861,7 +889,6 @@ void Hero::drawHero() {
 			_vm->_drawNodeList.push_back(newDrawNode);
 
 			drawHeroShadow(mainHeroSurface);
-
 		}
 	}
 }
@@ -962,7 +989,7 @@ void Hero::scrollHero() {
 		destValue = position - _vm->kNormalWidth / 2;
 	}
 
-	if(destValue < 0) {
+	if (destValue < 0) {
 		destValue = 0;
 	}
 	_vm->_picWindowX = destValue;

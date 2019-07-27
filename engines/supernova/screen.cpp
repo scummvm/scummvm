@@ -29,8 +29,8 @@
 
 #include "supernova/imageid.h"
 #include "supernova/resman.h"
-#include "supernova/state.h"
 #include "supernova/screen.h"
+#include "supernova/state.h"
 #include "supernova/supernova.h"
 
 #include "supernova/screenstatic.cpp"
@@ -38,15 +38,15 @@
 namespace Supernova {
 
 ScreenBuffer::ScreenBuffer()
-	: _x(0)
-	, _y(0)
-	, _width(0)
-	, _height(0)
-	, _pixels(nullptr) {
+  : _x(0)
+  , _y(0)
+  , _width(0)
+  , _height(0)
+  , _pixels(nullptr) {
 }
 
 ScreenBufferStack::ScreenBufferStack()
-	: _last(_buffer) {
+  : _last(_buffer) {
 }
 
 void ScreenBufferStack::push(int x, int y, int width, int height) {
@@ -95,19 +95,19 @@ void ScreenBufferStack::restore() {
 
 	--_last;
 	g_system->lockScreen()->copyRectToSurface(_last->_pixels, _last->_width, _last->_x,
-											  _last->_y, _last->_width, _last->_height);
+	                                          _last->_y, _last->_width, _last->_height);
 	g_system->unlockScreen();
 
 	delete[] _last->_pixels;
 }
 
 Marquee::Marquee(Screen *screen, MarqueeId id, const char *text)
-	: _text(text)
-	, _textBegin(text)
-	, _delay(0)
-	, _color(kColorLightBlue)
-	, _loop(false)
-	, _screen(screen) {
+  : _text(text)
+  , _textBegin(text)
+  , _delay(0)
+  , _color(kColorLightBlue)
+  , _loop(false)
+  , _screen(screen) {
 	if (id == kMarqueeIntro) {
 		_y = 191;
 		_loop = true;
@@ -169,20 +169,20 @@ void Marquee::renderCharacter() {
 }
 
 Screen::Screen(SupernovaEngine *vm, ResourceManager *resMan)
-	: _vm(vm)
-	, _resMan(resMan)
-	, _currentImage(nullptr)
-	, _viewportBrightness(255)
-	, _guiBrightness(255)
-	, _screenWidth(320)
-	, _screenHeight(200)
-	, _textColor(kColorBlack)
-	, _textCursorX(0)
-	, _textCursorY(0)
-	, _messageShown(false) {
+  : _vm(vm)
+  , _resMan(resMan)
+  , _currentImage(nullptr)
+  , _viewportBrightness(255)
+  , _guiBrightness(255)
+  , _screenWidth(320)
+  , _screenHeight(200)
+  , _textColor(kColorBlack)
+  , _textCursorX(0)
+  , _textCursorY(0)
+  , _messageShown(false) {
 
 	CursorMan.replaceCursor(_resMan->getImage(ResourceManager::kCursorNormal),
-							16, 16, 0, 0, kColorCursorTransparent);
+	                        16, 16, 0, 0, kColorCursorTransparent);
 	CursorMan.replaceCursorPalette(initVGAPalette, 0, 16);
 	CursorMan.showMouse(true);
 }
@@ -241,7 +241,7 @@ void Screen::setTextCursorColor(byte color) {
 }
 
 void Screen::renderMessage(StringId stringId, MessagePosition position,
-						   Common::String var1, Common::String var2) {
+                           Common::String var1, Common::String var2) {
 	Common::String text = _vm->getGameString(stringId);
 
 	if (!var1.empty()) {
@@ -281,7 +281,7 @@ void Screen::renderText(const Common::String &text) {
 
 void Screen::renderText(const GuiElement &guiElement) {
 	renderText(guiElement.getText(), guiElement.getTextPos().x,
-			   guiElement.getTextPos().y, guiElement.getTextColor());
+	           guiElement.getTextPos().y, guiElement.getTextColor());
 }
 
 void Screen::renderText(const uint16 character, int x, int y, byte color) {
@@ -345,9 +345,9 @@ void Screen::renderImageSection(const MSNImage *image, int section, bool invert)
 		return;
 
 	Common::Rect sectionRect(image->_section[section].x1,
-							 image->_section[section].y1,
-							 image->_section[section].x2 + 1,
-							 image->_section[section].y2 + 1);
+	                         image->_section[section].y1,
+	                         image->_section[section].x2 + 1,
+	                         image->_section[section].y2 + 1);
 	if (image->_filenumber == 1 || image->_filenumber == 2) {
 		sectionRect.setWidth(640);
 		sectionRect.setHeight(480);
@@ -368,15 +368,14 @@ void Screen::renderImageSection(const MSNImage *image, int section, bool invert)
 	int pitch = sectionRect.width();
 	if (invert) {
 		pitch = image->_pitch;
-		offset = image->_section[section].y1 * pitch +
-				 image->_section[section].x1;
+		offset = image->_section[section].y1 * pitch + image->_section[section].x1;
 		section = 0;
 	}
 
 	void *pixels = image->_sectionSurfaces[section]->getPixels();
 	_vm->_system->copyRectToScreen(static_cast<const byte *>(pixels) + offset,
-								   pitch, sectionRect.left, sectionRect.top,
-								   sectionRect.width(), sectionRect.height());
+	                               pitch, sectionRect.left, sectionRect.top,
+	                               sectionRect.width(), sectionRect.height());
 }
 
 void Screen::renderImage(ImageId id, bool removeImage) {
@@ -565,7 +564,7 @@ void Screen::renderBox(int x, int y, int width, int height, byte color) {
 
 void Screen::renderBox(const GuiElement &guiElement) {
 	renderBox(guiElement.left, guiElement.top, guiElement.width(),
-			  guiElement.height(), guiElement.getBackgroundColor());
+	          guiElement.height(), guiElement.getBackgroundColor());
 }
 
 void Screen::initPalette() {
@@ -622,7 +621,7 @@ void Screen::paletteFadeIn(int maxViewportBrightness) {
 }
 
 void Screen::setColor63(byte value) {
-	byte color[3] = {value, value, value};
+	byte color[3] = { value, value, value };
 	_vm->_system->getPaletteManager()->setPalette(color, 63, 1);
 }
 

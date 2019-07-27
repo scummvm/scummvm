@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/endian.h"
 #include "common/archive.h"
+#include "common/endian.h"
 #include "common/winexe.h"
 #include "common/winexe_pe.h"
 
@@ -30,24 +30,26 @@
 
 #include "image/iff.h"
 
-#include "gob/gob.h"
-#include "gob/global.h"
 #include "gob/dataio.h"
-#include "gob/inter.h"
-#include "gob/game.h"
-#include "gob/script.h"
 #include "gob/expression.h"
-#include "gob/videoplayer.h"
+#include "gob/game.h"
+#include "gob/global.h"
+#include "gob/gob.h"
+#include "gob/inter.h"
+#include "gob/script.h"
 #include "gob/sound/sound.h"
+#include "gob/videoplayer.h"
 
 namespace Gob {
 
 #define OPCODEVER Inter_v7
-#define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
-#define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
-#define OPCODEGOB(i, x)   _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
+#define OPCODEDRAW(i, x) _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
+#define OPCODEFUNC(i, x) _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
+#define OPCODEGOB(i, x) _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 
-Inter_v7::Inter_v7(GobEngine *vm) : Inter_Playtoons(vm), _cursors(0) {
+Inter_v7::Inter_v7(GobEngine *vm)
+  : Inter_Playtoons(vm)
+  , _cursors(0) {
 }
 
 Inter_v7::~Inter_v7() {
@@ -101,18 +103,17 @@ void Inter_v7::resizeCursors(int16 width, int16 height, int16 count, bool transp
 	if (height <= 0)
 		height = _vm->_draw->_cursorHeight;
 
-	width  = MAX<uint16>(width , _vm->_draw->_cursorWidth);
+	width = MAX<uint16>(width, _vm->_draw->_cursorWidth);
 	height = MAX<uint16>(height, _vm->_draw->_cursorHeight);
 
 	_vm->_draw->_transparentCursor = transparency;
 
 	// Cursors sprite already big enough
-	if ((_vm->_draw->_cursorWidth >= width) && (_vm->_draw->_cursorHeight >= height) &&
-	    (_vm->_draw->_cursorCount >= count))
+	if ((_vm->_draw->_cursorWidth >= width) && (_vm->_draw->_cursorHeight >= height) && (_vm->_draw->_cursorCount >= count))
 		return;
 
-	_vm->_draw->_cursorCount  = count;
-	_vm->_draw->_cursorWidth  = width;
+	_vm->_draw->_cursorCount = count;
+	_vm->_draw->_cursorWidth = width;
 	_vm->_draw->_cursorHeight = height;
 
 	_vm->_draw->freeSprite(Draw::kCursorSurface);
@@ -123,7 +124,7 @@ void Inter_v7::resizeCursors(int16 width, int16 height, int16 count, bool transp
 	_vm->_draw->initSpriteSurf(Draw::kCursorSurface, width * count, height, 2);
 
 	_vm->_draw->_cursorSpritesBack = _vm->_draw->_spritesArray[Draw::kCursorSurface];
-	_vm->_draw->_cursorSprites     = _vm->_draw->_cursorSpritesBack;
+	_vm->_draw->_cursorSprites = _vm->_draw->_cursorSpritesBack;
 
 	_vm->_draw->_scummvmCursor = _vm->_video->initSurfDesc(width, height, SCUMMVM_CURSOR);
 
@@ -142,31 +143,31 @@ void Inter_v7::resizeCursors(int16 width, int16 height, int16 count, bool transp
 	delete[] _vm->_draw->_cursorHotspotsX;
 	delete[] _vm->_draw->_cursorHotspotsY;
 
-	_vm->_draw->_cursorPalettes      = new byte[256 * 3 * count];
-	_vm->_draw->_doCursorPalettes    = new bool[count];
-	_vm->_draw->_cursorKeyColors     = new byte[count];
+	_vm->_draw->_cursorPalettes = new byte[256 * 3 * count];
+	_vm->_draw->_doCursorPalettes = new bool[count];
+	_vm->_draw->_cursorKeyColors = new byte[count];
 	_vm->_draw->_cursorPaletteStarts = new uint16[count];
 	_vm->_draw->_cursorPaletteCounts = new uint16[count];
-	_vm->_draw->_cursorHotspotsX     = new int32[count];
-	_vm->_draw->_cursorHotspotsY     = new int32[count];
+	_vm->_draw->_cursorHotspotsX = new int32[count];
+	_vm->_draw->_cursorHotspotsY = new int32[count];
 
-	memset(_vm->_draw->_cursorPalettes     , 0, count * 256 * 3);
-	memset(_vm->_draw->_doCursorPalettes   , 0, count * sizeof(bool));
-	memset(_vm->_draw->_cursorKeyColors    , 0, count * sizeof(byte));
+	memset(_vm->_draw->_cursorPalettes, 0, count * 256 * 3);
+	memset(_vm->_draw->_doCursorPalettes, 0, count * sizeof(bool));
+	memset(_vm->_draw->_cursorKeyColors, 0, count * sizeof(byte));
 	memset(_vm->_draw->_cursorPaletteStarts, 0, count * sizeof(uint16));
 	memset(_vm->_draw->_cursorPaletteCounts, 0, count * sizeof(uint16));
-	memset(_vm->_draw->_cursorHotspotsX    , 0, count * sizeof(int32));
-	memset(_vm->_draw->_cursorHotspotsY    , 0, count * sizeof(int32));
+	memset(_vm->_draw->_cursorHotspotsX, 0, count * sizeof(int32));
+	memset(_vm->_draw->_cursorHotspotsY, 0, count * sizeof(int32));
 }
 
 void Inter_v7::o7_loadCursor() {
-	int16          cursorIndex = _vm->_game->_script->readValExpr();
-	Common::String cursorName  = _vm->_game->_script->evalString();
+	int16 cursorIndex = _vm->_game->_script->readValExpr();
+	Common::String cursorName = _vm->_game->_script->evalString();
 
 	// Clear the cursor sprite at that index
 	_vm->_draw->_cursorSprites->fillRect(cursorIndex * _vm->_draw->_cursorWidth, 0,
-			cursorIndex * _vm->_draw->_cursorWidth + _vm->_draw->_cursorWidth - 1,
-			_vm->_draw->_cursorHeight - 1, 0);
+	                                     cursorIndex * _vm->_draw->_cursorWidth + _vm->_draw->_cursorWidth - 1,
+	                                     _vm->_draw->_cursorHeight - 1, 0);
 
 	// If the cursor name is empty, that cursor will be drawn by the scripts
 	if (cursorName.empty()) {
@@ -201,12 +202,12 @@ void Inter_v7::o7_loadCursor() {
 
 	memcpy(_vm->_draw->_cursorPalettes + cursorIndex * 256 * 3, cursor->getPalette(), cursor->getPaletteCount() * 3);
 
-	_vm->_draw->_doCursorPalettes   [cursorIndex] = true;
-	_vm->_draw->_cursorKeyColors    [cursorIndex] = cursor->getKeyColor();
+	_vm->_draw->_doCursorPalettes[cursorIndex] = true;
+	_vm->_draw->_cursorKeyColors[cursorIndex] = cursor->getKeyColor();
 	_vm->_draw->_cursorPaletteStarts[cursorIndex] = cursor->getPaletteStartIndex();
 	_vm->_draw->_cursorPaletteCounts[cursorIndex] = cursor->getPaletteCount();
-	_vm->_draw->_cursorHotspotsX    [cursorIndex] = cursor->getHotspotX();
-	_vm->_draw->_cursorHotspotsY    [cursorIndex] = cursor->getHotspotY();
+	_vm->_draw->_cursorHotspotsX[cursorIndex] = cursor->getHotspotX();
+	_vm->_draw->_cursorHotspotsY[cursorIndex] = cursor->getHotspotY();
 
 	delete cursorGroup;
 	delete defaultCursor;
@@ -214,10 +215,10 @@ void Inter_v7::o7_loadCursor() {
 
 void Inter_v7::o7_displayWarning() {
 	Common::String caption = _vm->_game->_script->evalString();
-	Common::String text    = _vm->_game->_script->evalString();
-	Common::String source  = _vm->_game->_script->evalString();
-	Common::String msg     = _vm->_game->_script->evalString();
-	Common::String param   = _vm->_game->_script->evalString();
+	Common::String text = _vm->_game->_script->evalString();
+	Common::String source = _vm->_game->_script->evalString();
+	Common::String msg = _vm->_game->_script->evalString();
+	Common::String param = _vm->_game->_script->evalString();
 
 	warning("%s: %s (%s)", source.c_str(), msg.c_str(), param.c_str());
 }
@@ -230,19 +231,19 @@ void Inter_v7::o7_logString() {
 	_vm->_system->getTimeAndDate(t);
 
 	debug(1, "%-9s%04d-%02d-%02dT%02d:%02d:%02d --> %s", str0.c_str(),
-			t.tm_year + 1900, t.tm_mon + 1, t.tm_mday,
-			t.tm_hour, t.tm_min, t.tm_sec, str1.c_str());
+	      t.tm_year + 1900, t.tm_mon + 1, t.tm_mday,
+	      t.tm_hour, t.tm_min, t.tm_sec, str1.c_str());
 }
 
 void Inter_v7::o7_intToString() {
 	uint16 valueIndex = _vm->_game->_script->readVarIndex();
-	uint16 destIndex  = _vm->_game->_script->readVarIndex();
+	uint16 destIndex = _vm->_game->_script->readVarIndex();
 
 	sprintf(GET_VARO_STR(destIndex), "%d", (int32)READ_VARO_UINT32(valueIndex));
 }
 
 void Inter_v7::o7_callFunction() {
-	Common::String tot      = _vm->_game->_script->evalString();
+	Common::String tot = _vm->_game->_script->evalString();
 	Common::String function = _vm->_game->_script->evalString();
 
 	int16 param = _vm->_game->_script->readValExpr();
@@ -269,21 +270,22 @@ void Inter_v7::o7_playVmdOrMusic() {
 
 	VideoPlayer::Properties props;
 
-	props.x          = _vm->_game->_script->readValExpr();
-	props.y          = _vm->_game->_script->readValExpr();
+	props.x = _vm->_game->_script->readValExpr();
+	props.y = _vm->_game->_script->readValExpr();
 	props.startFrame = _vm->_game->_script->readValExpr();
-	props.lastFrame  = _vm->_game->_script->readValExpr();
-	props.breakKey   = _vm->_game->_script->readValExpr();
-	props.flags      = _vm->_game->_script->readValExpr();
-	props.palStart   = _vm->_game->_script->readValExpr();
-	props.palEnd     = _vm->_game->_script->readValExpr();
-	props.palCmd     = 1 << (props.flags & 0x3F);
-	props.forceSeek  = true;
+	props.lastFrame = _vm->_game->_script->readValExpr();
+	props.breakKey = _vm->_game->_script->readValExpr();
+	props.flags = _vm->_game->_script->readValExpr();
+	props.palStart = _vm->_game->_script->readValExpr();
+	props.palEnd = _vm->_game->_script->readValExpr();
+	props.palCmd = 1 << (props.flags & 0x3F);
+	props.forceSeek = true;
 
 	debugC(1, kDebugVideo, "Playing video \"%s\" @ %d+%d, frames %d - %d, "
-			"paletteCmd %d (%d - %d), flags %X", file.c_str(),
-			props.x, props.y, props.startFrame, props.lastFrame,
-			props.palCmd, props.palStart, props.palEnd, props.flags);
+	                       "paletteCmd %d (%d - %d), flags %X",
+	       file.c_str(),
+	       props.x, props.y, props.startFrame, props.lastFrame,
+	       props.palCmd, props.palStart, props.palEnd, props.flags);
 
 	if (file == "RIEN") {
 		_vm->_vidPlayer->closeAll();
@@ -301,7 +303,7 @@ void Inter_v7::o7_playVmdOrMusic() {
 			return;
 		}
 
-		props.flags  = VideoPlayer::kFlagOtherSurface;
+		props.flags = VideoPlayer::kFlagOtherSurface;
 		props.sprite = -1;
 
 		_vm->_mult->_objects[props.startFrame].pAnimData->animation = -props.startFrame - 1;
@@ -329,14 +331,14 @@ void Inter_v7::o7_playVmdOrMusic() {
 		warning("Woodruff Stub: Video/Music command -4: Play background video %s", file.c_str());
 		return;
 	} else if (props.lastFrame == -5) {
-//		warning("Urban/Playtoons Stub: Stop without delay");
+		//		warning("Urban/Playtoons Stub: Stop without delay");
 		_vm->_sound->bgStop();
 		return;
 	} else if (props.lastFrame == -6) {
-//		warning("Urban/Playtoons Stub: Video/Music command -6 (cache video)");
+		//		warning("Urban/Playtoons Stub: Video/Music command -6 (cache video)");
 		return;
 	} else if (props.lastFrame == -7) {
-//		warning("Urban/Playtoons Stub: Video/Music command -6 (flush cache)");
+		//		warning("Urban/Playtoons Stub: Video/Music command -6 (flush cache)");
 		return;
 	} else if ((props.lastFrame == -8) || (props.lastFrame == -9)) {
 		if (!file.contains('.'))
@@ -363,8 +365,8 @@ void Inter_v7::o7_playVmdOrMusic() {
 
 	if (props.startFrame == -2) {
 		props.startFrame = 0;
-		props.lastFrame  = -1;
-		props.noBlock    = true;
+		props.lastFrame = -1;
+		props.noBlock = true;
 	}
 
 	_vm->_vidPlayer->evaluateFlags(props);
@@ -375,7 +377,7 @@ void Inter_v7::o7_playVmdOrMusic() {
 
 	int slot = 0;
 	if (!file.empty() && ((slot = _vm->_vidPlayer->openVideo(primary, file, props)) < 0)) {
-		WRITE_VAR(11, (uint32) -1);
+		WRITE_VAR(11, (uint32)-1);
 		return;
 	}
 
@@ -390,7 +392,6 @@ void Inter_v7::o7_playVmdOrMusic() {
 			_vm->_vidPlayer->waitSoundEnd(slot);
 		_vm->_vidPlayer->closeVideo(slot);
 	}
-
 }
 void Inter_v7::o7_draw0x89() {
 	Common::String str0 = _vm->_game->_script->evalString();
@@ -451,13 +452,13 @@ void Inter_v7::o7_loadImage() {
 		file += ".TGA";
 
 	int16 spriteIndex = _vm->_game->_script->readValExpr();
-	int16 left        = _vm->_game->_script->readValExpr();
-	int16 top         = _vm->_game->_script->readValExpr();
-	int16 width       = _vm->_game->_script->readValExpr();
-	int16 height      = _vm->_game->_script->readValExpr();
-	int16 x           = _vm->_game->_script->readValExpr();
-	int16 y           = _vm->_game->_script->readValExpr();
-	int16 transp      = _vm->_game->_script->readValExpr();
+	int16 left = _vm->_game->_script->readValExpr();
+	int16 top = _vm->_game->_script->readValExpr();
+	int16 width = _vm->_game->_script->readValExpr();
+	int16 height = _vm->_game->_script->readValExpr();
+	int16 x = _vm->_game->_script->readValExpr();
+	int16 y = _vm->_game->_script->readValExpr();
+	int16 transp = _vm->_game->_script->readValExpr();
 
 	if (spriteIndex > 100)
 		spriteIndex -= 80;
@@ -485,8 +486,8 @@ void Inter_v7::o7_loadImage() {
 		return;
 	}
 
-	int16 right  = left + width  - 1;
-	int16 bottom = top  + height - 1;
+	int16 right = left + width - 1;
+	int16 bottom = top + height - 1;
 	destSprite->blit(*image, left, top, right, bottom, x, y, transp);
 }
 
@@ -506,8 +507,8 @@ void Inter_v7::o7_getINIValue() {
 	Common::String file = getFile(_vm->_game->_script->evalString());
 
 	Common::String section = _vm->_game->_script->evalString();
-	Common::String key     = _vm->_game->_script->evalString();
-	Common::String def     = _vm->_game->_script->evalString();
+	Common::String key = _vm->_game->_script->evalString();
+	Common::String def = _vm->_game->_script->evalString();
 
 	Common::String value;
 	_inis.getValue(value, file, section, key, def);
@@ -519,8 +520,8 @@ void Inter_v7::o7_setINIValue() {
 	Common::String file = getFile(_vm->_game->_script->evalString());
 
 	Common::String section = _vm->_game->_script->evalString();
-	Common::String key     = _vm->_game->_script->evalString();
-	Common::String value   = _vm->_game->_script->evalString();
+	Common::String key = _vm->_game->_script->evalString();
+	Common::String value = _vm->_game->_script->evalString();
 
 	_inis.setValue(file, section, key, value);
 }
@@ -531,7 +532,7 @@ void Inter_v7::o7_loadIFFPalette() {
 		file += ".LBM";
 
 	int16 startIndex = CLIP<int16>(_vm->_game->_script->readValExpr(), 0, 255);
-	int16 stopIndex  = CLIP<int16>(_vm->_game->_script->readValExpr(), 0, 255);
+	int16 stopIndex = CLIP<int16>(_vm->_game->_script->readValExpr(), 0, 255);
 
 	if (startIndex > stopIndex)
 		SWAP(startIndex, stopIndex);
@@ -558,7 +559,7 @@ void Inter_v7::o7_loadIFFPalette() {
 	const byte *palette = decoder.getPalette();
 
 	startIndex *= 3;
-	stopIndex  *= 3;
+	stopIndex *= 3;
 
 	byte *dst = (byte *)_vm->_draw->_vgaPalette + startIndex;
 	const byte *src = palette + startIndex;
@@ -581,7 +582,7 @@ void Inter_v7::o7_loadIFFPalette() {
 
 void Inter_v7::o7_opendBase() {
 	Common::String dbFile = _vm->_game->_script->evalString();
-	Common::String id     = _vm->_game->_script->evalString();
+	Common::String id = _vm->_game->_script->evalString();
 
 	dbFile += ".DBF";
 
@@ -604,8 +605,8 @@ void Inter_v7::o7_closedBase() {
 }
 
 void Inter_v7::o7_getDBString() {
-	Common::String id      = _vm->_game->_script->evalString();
-	Common::String group   = _vm->_game->_script->evalString();
+	Common::String id = _vm->_game->_script->evalString();
+	Common::String group = _vm->_game->_script->evalString();
 	Common::String section = _vm->_game->_script->evalString();
 	Common::String keyword = _vm->_game->_script->evalString();
 

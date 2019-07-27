@@ -35,7 +35,8 @@
 
 namespace Image {
 
-QTRLEDecoder::QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel) : Codec() {
+QTRLEDecoder::QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel)
+  : Codec() {
 	_bitsPerPixel = bitsPerPixel;
 	_ditherPalette = 0;
 	_width = width;
@@ -61,20 +62,20 @@ QTRLEDecoder::~QTRLEDecoder() {
 	delete[] _ditherPalette;
 }
 
-#define CHECK_STREAM_PTR(n) \
-	do { \
-		if ((stream.pos() + n) > stream.size()) { \
+#define CHECK_STREAM_PTR(n)                                                                      \
+	do {                                                                                           \
+		if ((stream.pos() + n) > stream.size()) {                                                    \
 			warning("QTRLE Problem: stream out of bounds (%d > %d)", stream.pos() + n, stream.size()); \
-			return; \
-		} \
+			return;                                                                                    \
+		}                                                                                            \
 	} while (0)
 
-#define CHECK_PIXEL_PTR(n) \
-	do { \
-		if ((int32)pixelPtr + n > (int)_paddedWidth * _surface->h) { \
+#define CHECK_PIXEL_PTR(n)                                                                                  \
+	do {                                                                                                      \
+		if ((int32)pixelPtr + n > (int)_paddedWidth * _surface->h) {                                            \
 			warning("QTRLE Problem: pixel ptr = %d, pixel limit = %d", pixelPtr + n, _paddedWidth * _surface->h); \
-			return; \
-		} \
+			return;                                                                                               \
+		}                                                                                                       \
 	} while (0)
 
 void QTRLEDecoder::decode1(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange) {
@@ -201,7 +202,7 @@ void QTRLEDecoder::decode8(Common::SeekableReadStream &stream, uint32 rowPtr, ui
 				// get the next 4 bytes from the stream, treat them as palette indices, and output them rleCode times
 				CHECK_STREAM_PTR(4);
 
-				byte pi[4];  // 4 palette indexes
+				byte pi[4]; // 4 palette indexes
 
 				for (byte i = 0; i < 4; i++)
 					pi[i] = stream.readByte();
@@ -312,12 +313,12 @@ void QTRLEDecoder::decode24(Common::SeekableReadStream &stream, uint32 rowPtr, u
 
 namespace {
 
-inline uint16 readDitherColor24(Common::ReadStream &stream) {
-	uint16 color = (stream.readByte() & 0xF8) << 6;
-	color |= (stream.readByte() & 0xF8) << 1;
-	color |= stream.readByte() >> 4;
-	return color;
-}
+	inline uint16 readDitherColor24(Common::ReadStream &stream) {
+		uint16 color = (stream.readByte() & 0xF8) << 6;
+		color |= (stream.readByte() & 0xF8) << 1;
+		color |= stream.readByte() >> 4;
+		return color;
+	}
 
 } // End of anonymous namespace
 

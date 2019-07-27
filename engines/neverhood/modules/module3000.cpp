@@ -20,10 +20,10 @@
  *
  */
 
-#include "neverhood/gamemodule.h"
-#include "neverhood/navigationscene.h"
 #include "neverhood/modules/module3000.h"
+#include "neverhood/gamemodule.h"
 #include "neverhood/modules/module3000_sprites.h"
+#include "neverhood/navigationscene.h"
 
 namespace Neverhood {
 
@@ -39,7 +39,8 @@ static const uint32 kModule3000SoundList[] = {
 };
 
 Module3000::Module3000(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule), _waterfallSoundVolume(0) {
+  : Module(vm, parentModule)
+  , _waterfallSoundVolume(0) {
 
 	_vm->_soundMan->addSoundList(0x81293110, kModule3000SoundList);
 	_vm->_soundMan->setSoundListParams(kModule3000SoundList, true, 50, 600, 5, 150);
@@ -66,7 +67,6 @@ Module3000::Module3000(NeverhoodEngine *vm, Module *parentModule, int which)
 	} else if (which == 3) {
 		createScene(5, 1);
 	}
-
 }
 
 Module3000::~Module3000() {
@@ -74,8 +74,8 @@ Module3000::~Module3000() {
 }
 
 void Module3000::createScene(int sceneNum, int which) {
-	static const byte kNavigationTypes05[] = {2, 0};
-	static const byte kNavigationTypes06[] = {5};
+	static const byte kNavigationTypes05[] = { 2, 0 };
+	static const byte kNavigationTypes06[] = { 5 };
 	debug(1, "Module3000::createScene(%d, %d)", sceneNum, which);
 	_vm->gameState().sceneNum = sceneNum;
 	switch (_vm->gameState().sceneNum) {
@@ -155,11 +155,10 @@ void Module3000::createScene(int sceneNum, int which) {
 				createSmackerScene(0x00940021, true, true, false);
 			else
 				createSmackerScene(0x01140021, true, true, false);
+		else if (getGlobalVar(V_WALL_BROKEN))
+			createSmackerScene(0x001011B1, true, true, false);
 		else
-			if (getGlobalVar(V_WALL_BROKEN))
-				createSmackerScene(0x001011B1, true, true, false);
-			else
-				createSmackerScene(0x001021B1, true, true, false);
+			createSmackerScene(0x001021B1, true, true, false);
 		setGlobalVar(V_BOLT_DOOR_OPEN, getGlobalVar(V_BOLT_DOOR_OPEN) ? 0 : 1);
 		break;
 	case 1006:
@@ -361,22 +360,22 @@ void Module3000::updateScene() {
 // Scene3009
 
 enum {
-	kCTSNull				= 0,
-	kCTSBreakWall			= 1,
-	kCTSWall				= 2,
-	kCTSEmptyness			= 3,
-	kCTSFireRobotNoTarget	= 4,
-	kCTSFireRobotIsTarget	= 5,
-	kCTSFireNoRobot			= 6,
-	kCTSRaiseCannon			= 7,
-	kCTSRightRobotNoTarget	= 8,
-	kCTSRightRobotIsTarget	= 9,
-	kCTSRightNoRobot		= 10,
-	kCTSLeftRobotNoTarget	= 11,
-	kCTSLeftRobotIsTarget	= 12,
-	kCTSLeftNoRobot			= 13,
-	kCTSLowerCannon			= 14,
-	kCTSCount				= 14
+	kCTSNull = 0,
+	kCTSBreakWall = 1,
+	kCTSWall = 2,
+	kCTSEmptyness = 3,
+	kCTSFireRobotNoTarget = 4,
+	kCTSFireRobotIsTarget = 5,
+	kCTSFireNoRobot = 6,
+	kCTSRaiseCannon = 7,
+	kCTSRightRobotNoTarget = 8,
+	kCTSRightRobotIsTarget = 9,
+	kCTSRightNoRobot = 10,
+	kCTSLeftRobotNoTarget = 11,
+	kCTSLeftRobotIsTarget = 12,
+	kCTSLeftNoRobot = 13,
+	kCTSLowerCannon = 14,
+	kCTSCount = 14
 };
 
 static const uint32 kScene3009CannonScopeVideos[] = {
@@ -399,25 +398,29 @@ static const uint32 kScene3009CannonScopeVideos[] = {
 
 static const uint32 kScene3009CannonActionVideos[] = {
 	0x00000000,
-	0x8004001B,	// 1 Fire cannon at wall, it breaks (lowered)
-	0x0004001A,	// 2 Fire cannon at wall, nothing happens (lowered)
-	0x1048404B,	// 3 Fire cannon at emptyness (raised)
-	0x50200109,	// 4 Fire cannon, robot missed (raised)
-	0x12032109,	// 5 Fire cannon, robot hit (raised)
-	0x10201109,	// 6 Fire cannon, no robot (raised)
-	0x000A2030,	// 7 Raise the cannon
-	0x000A0028,	// 8
-	0x000A0028,	// 9
-	0x000A0028,	// 10
-	0x040A1069,	// 11
-	0x040A1069,	// 12
-	0x040A1069,	// 13
-	0x240A1101	// 14 Lower the cannon
+	0x8004001B, // 1 Fire cannon at wall, it breaks (lowered)
+	0x0004001A, // 2 Fire cannon at wall, nothing happens (lowered)
+	0x1048404B, // 3 Fire cannon at emptyness (raised)
+	0x50200109, // 4 Fire cannon, robot missed (raised)
+	0x12032109, // 5 Fire cannon, robot hit (raised)
+	0x10201109, // 6 Fire cannon, no robot (raised)
+	0x000A2030, // 7 Raise the cannon
+	0x000A0028, // 8
+	0x000A0028, // 9
+	0x000A0028, // 10
+	0x040A1069, // 11
+	0x040A1069, // 12
+	0x040A1069, // 13
+	0x240A1101 // 14 Lower the cannon
 };
 
 Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _keepVideo(false), _moveCannonLeftFirst(false),
-	_isTurning(false), _lockSymbolsPart1Countdown(1), _lockSymbolsPart2Countdown(1) {
+  : Scene(vm, parentModule)
+  , _keepVideo(false)
+  , _moveCannonLeftFirst(false)
+  , _isTurning(false)
+  , _lockSymbolsPart1Countdown(1)
+  , _lockSymbolsPart2Countdown(1) {
 
 	_cannonTargetStatus = getGlobalVar(V_CANNON_TARGET_STATUS);
 
@@ -545,7 +548,6 @@ void Scene3009::update() {
 			_asHorizontalIndicator->show();
 		}
 	}
-
 }
 
 uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -667,7 +669,10 @@ static const uint32 kScene3010ButtonNameHashes[] = {
 };
 
 Scene3010::Scene3010(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _countdown(0), _doorUnlocked(false), _checkUnlocked(false) {
+  : Scene(vm, parentModule)
+  , _countdown(0)
+  , _doorUnlocked(false)
+  , _checkUnlocked(false) {
 
 	int initCountdown = 0;
 
@@ -675,8 +680,8 @@ Scene3010::Scene3010(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(0x80802626);
 
 	for (int i = 0; i < 3; i++) {
-		_asDeadBolts[i] = insertSprite<AsScene3010DeadBolt>(this, i, which == 1);//CHECKME
-		_ssDeadBoltButtons[i] = insertSprite<SsScene3010DeadBoltButton>(this, i, initCountdown, which == 1);//CHECKME
+		_asDeadBolts[i] = insertSprite<AsScene3010DeadBolt>(this, i, which == 1); //CHECKME
+		_ssDeadBoltButtons[i] = insertSprite<SsScene3010DeadBoltButton>(this, i, initCountdown, which == 1); //CHECKME
 		addCollisionSprite(_ssDeadBoltButtons[i]);
 		if (getSubVar(VA_LOCKS_DISABLED, kScene3010ButtonNameHashes[i]))
 			initCountdown++;
@@ -701,7 +706,6 @@ Scene3010::Scene3010(NeverhoodEngine *vm, Module *parentModule, int which)
 			_asDeadBolts[i]->setCountdown(i + 1);
 		}
 	}
-
 }
 
 void Scene3010::update() {
@@ -769,7 +773,11 @@ uint32 Scene3010::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene3011::Scene3011(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _updateStatus(0), _buttonClicked(false), _currentSymbolIndex(0), _countdown(0) {
+  : Scene(vm, parentModule)
+  , _updateStatus(0)
+  , _buttonClicked(false)
+  , _currentSymbolIndex(0)
+  , _countdown(0) {
 
 	_vm->gameModule()->initCodeSymbolsPuzzle();
 	_noisySymbolIndex = getGlobalVar(V_NOISY_SYMBOL_INDEX);
@@ -788,7 +796,6 @@ Scene3011::Scene3011(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_ssButton = insertSprite<SsScene3011Button>(this, true);
 	addCollisionSprite(_ssButton);
-
 }
 
 void Scene3011::update() {

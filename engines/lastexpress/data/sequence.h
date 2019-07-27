@@ -94,14 +94,14 @@ enum FrameSubType {
 struct FrameInfo {
 	void read(Common::SeekableReadStream *in, bool isSequence);
 
-	uint32 dataOffset;            ///< Data offset (from beginning of file)
-	uint32 unknown;               ///< FIXME: unknown data
-	uint32 paletteOffset;         ///< Palette offset (from beginning of file)
-	uint32 xPos1;                 ///< Top-left X coordinate
-	uint32 yPos1;                 ///< Top-left Y coordinate
-	uint32 xPos2;                 ///< Bottom-right X coordinate
-	uint32 yPos2;                 ///< Bottom-right Y coordinate
-	uint32 initialSkip;           ///< Initial on-screen offset of decompressed data (doubled, since each pixel occupies one color word)
+	uint32 dataOffset; ///< Data offset (from beginning of file)
+	uint32 unknown; ///< FIXME: unknown data
+	uint32 paletteOffset; ///< Palette offset (from beginning of file)
+	uint32 xPos1; ///< Top-left X coordinate
+	uint32 yPos1; ///< Top-left Y coordinate
+	uint32 xPos2; ///< Bottom-right X coordinate
+	uint32 yPos2; ///< Bottom-right Y coordinate
+	uint32 initialSkip; ///< Initial on-screen offset of decompressed data (doubled, since each pixel occupies one color word)
 	uint32 decompressedEndOffset; ///< End of data after decompression
 
 	// NIS frame headers end here. SEQ frame headers have additional 32 bytes of
@@ -110,8 +110,8 @@ struct FrameInfo {
 
 	Common::Rect hotspot;
 
-	byte compressionType;         ///< Type of frame compression (0x03, 0x04, 0x05, 0x07, 0xFF)
-	FrameSubType subType;         ///< Subtype (byte)
+	byte compressionType; ///< Type of frame compression (0x03, 0x04, 0x05, 0x07, 0xFF)
+	FrameSubType subType; ///< Subtype (byte)
 
 	byte field_2E;
 	byte keepPreviousFrame;
@@ -151,7 +151,11 @@ private:
 
 class Sequence {
 public:
-	Sequence(Common::String name) : _stream(NULL), _isLoaded(false), _name(name), _field30(15) {}
+	Sequence(Common::String name)
+	  : _stream(NULL)
+	  , _isLoaded(false)
+	  , _name(name)
+	  , _field30(15) {}
 	~Sequence();
 
 	static Sequence *load(Common::String name, Common::SeekableReadStream *stream = NULL, byte field30 = 15);
@@ -183,7 +187,10 @@ private:
 
 class SequenceFrame : public Drawable {
 public:
-	SequenceFrame(Sequence *sequence, uint16 frame = 0, bool dispose = false) : _sequence(sequence), _frame(frame), _dispose(dispose) {}
+	SequenceFrame(Sequence *sequence, uint16 frame = 0, bool dispose = false)
+	  : _sequence(sequence)
+	  , _frame(frame)
+	  , _dispose(dispose) {}
 	~SequenceFrame();
 
 	Common::Rect draw(Graphics::Surface *surface);

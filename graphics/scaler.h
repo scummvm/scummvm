@@ -30,12 +30,11 @@ extern void InitScalers(uint32 BitFormat);
 extern void DestroyScalers();
 
 typedef void ScalerProc(const uint8 *srcPtr, uint32 srcPitch,
-							uint8 *dstPtr, uint32 dstPitch, int width, int height);
+                        uint8 *dstPtr, uint32 dstPitch, int width, int height);
 
-#define DECLARE_SCALER(x)	\
+#define DECLARE_SCALER(x)                                            \
 	extern void x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, \
-					uint32 dstPitch, int width, int height)
-
+	              uint32 dstPitch, int width, int height)
 
 DECLARE_SCALER(Normal1x);
 
@@ -55,10 +54,10 @@ DECLARE_SCALER(AdvMame3x);
 DECLARE_SCALER(TV2x);
 DECLARE_SCALER(DotMatrix);
 
-#ifdef USE_HQ_SCALERS
+#	ifdef USE_HQ_SCALERS
 DECLARE_SCALER(HQ2x);
 DECLARE_SCALER(HQ3x);
-#endif
+#	endif
 
 #endif // #ifdef USE_SCALERS
 

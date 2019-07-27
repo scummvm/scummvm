@@ -45,20 +45,21 @@ void KeyMap::add(Common::KeyCode key, int mouseButton) {
 
 // InputEvent
 
-InputEvent::InputEvent() : _bitMask(0) {
+InputEvent::InputEvent()
+  : _bitMask(0) {
 }
 
-InputEvent& InputEvent::setBitMask(uint bitMask) {
+InputEvent &InputEvent::setBitMask(uint bitMask) {
 	_bitMask = bitMask;
 	return *this;
 }
 
-InputEvent& InputEvent::addKey(Common::KeyCode key) {
+InputEvent &InputEvent::addKey(Common::KeyCode key) {
 	_keyMap.addKey(key);
 	return *this;
 }
 
-InputEvent& InputEvent::addMouseButton(int mouseButton) {
+InputEvent &InputEvent::addMouseButton(int mouseButton) {
 	_keyMap.addMouseButton(mouseButton);
 	return *this;
 }
@@ -67,8 +68,7 @@ uint InputEvent::handle(Common::KeyCode key, int mouseButton, bool down) {
 	uint newKeys = 0;
 	for (KeyMap::iterator it = _keyMap.begin(); it != _keyMap.end(); ++it) {
 		KeyMapping &keyMapping = *it;
-		if ((keyMapping._key != Common::KEYCODE_INVALID && keyMapping._key == key) ||
-			(keyMapping._mouseButton != MOUSE_NONE && keyMapping._mouseButton == mouseButton)) {
+		if ((keyMapping._key != Common::KEYCODE_INVALID && keyMapping._key == key) || (keyMapping._mouseButton != MOUSE_NONE && keyMapping._mouseButton == mouseButton)) {
 			if (down && !keyMapping._down) {
 				newKeys |= _bitMask;
 				keyMapping._down = true;
@@ -169,8 +169,8 @@ Common::Point Input::getCursorDelta() {
 	return deltaPos;
 }
 
-InputEvent& Input::setInputEvent(uint evt, uint bitMask) {
-	InputEvent& inputEvent = _inputEvents[evt];
+InputEvent &Input::setInputEvent(uint evt, uint bitMask) {
+	InputEvent &inputEvent = _inputEvents[evt];
 	return inputEvent.setBitMask(bitMask);
 }
 
@@ -199,8 +199,8 @@ void Input::handleKey(Common::KeyCode key, int mouseButton, bool down) {
 	_newKeys = 0;
 	_newButtons = ~prevButtonStates & _buttonStates;
 
-	if ( !down && !isCheatModeActive()) {
-		if ( _cheatCodeIndex < 7 && key == kCheatCode[_cheatCodeIndex]) {
+	if (!down && !isCheatModeActive()) {
+		if (_cheatCodeIndex < 7 && key == kCheatCode[_cheatCodeIndex]) {
 			_cheatCodeIndex++;
 		} else {
 			_cheatCodeIndex = 0;

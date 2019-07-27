@@ -25,14 +25,18 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CEnterExitView, CGameObject)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(MovieEndMsg)
 END_MESSAGE_MAP()
 
-CEnterExitView::CEnterExitView() : CGameObject(), _leaveEndFrame(0),
-	_leaveStartFrame(0), _enterEndFrame(0), _enterStartFrame(0),
-	_visibleAfterMovie(true) {
+CEnterExitView::CEnterExitView()
+  : CGameObject()
+  , _leaveEndFrame(0)
+  , _leaveStartFrame(0)
+  , _enterEndFrame(0)
+  , _enterStartFrame(0)
+  , _visibleAfterMovie(true) {
 }
 
 void CEnterExitView::save(SimpleFile *file, int indent) {

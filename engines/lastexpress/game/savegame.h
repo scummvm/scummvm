@@ -73,9 +73,9 @@
 
 #include "lastexpress/shared.h"
 
+#include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/serializer.h"
-#include "common/memstream.h"
 
 namespace LastExpress {
 
@@ -83,8 +83,8 @@ namespace LastExpress {
 #define DISABLE_COMPRESSION 1
 
 // Savegame signatures
-#define SAVEGAME_SIGNATURE       (0x12001200 ^ DISABLE_COMPRESSION)    // 301994496
-#define SAVEGAME_ENTRY_SIGNATURE 0xE660E660    // 3865110112
+#define SAVEGAME_SIGNATURE (0x12001200 ^ DISABLE_COMPRESSION) // 301994496
+#define SAVEGAME_ENTRY_SIGNATURE 0xE660E660 // 3865110112
 
 #define WRAP_SYNC_FUNCTION(instance, className, method) \
 	new Common::Functor1Mem<Common::Serializer &, void, className>(instance, &className::method)
@@ -93,7 +93,9 @@ class LastExpressEngine;
 
 class SavegameStream : public Common::MemoryWriteStreamDynamic, public Common::SeekableReadStream {
 public:
-	SavegameStream() : MemoryWriteStreamDynamic(DisposeAfterUse::YES), _eos(false) {
+	SavegameStream()
+	  : MemoryWriteStreamDynamic(DisposeAfterUse::YES)
+	  , _eos(false) {
 		_enableCompression = false;
 		_bufferOffset = -1;
 		_valueCount = 0;
@@ -134,12 +136,12 @@ private:
 	bool _eos;
 
 	// Compression handling
-	bool                   _enableCompression;
-	int16                  _bufferOffset;
-	byte                   _valueCount;
-	byte                   _previousValue;
-	int16                  _repeatCount;
-	uint32                 _offset;
+	bool _enableCompression;
+	int16 _bufferOffset;
+	byte _valueCount;
+	byte _previousValue;
+	int16 _repeatCount;
+	uint32 _offset;
 	CompressedStreamStatus _status;
 
 	byte _buffer[256];
@@ -170,10 +172,10 @@ public:
 	bool isGameFinished(uint32 menuIndex, uint32 savegameIndex);
 
 	// Accessors
-	uint32       getTime(uint32 index) { return getEntry(index)->time; }
+	uint32 getTime(uint32 index) { return getEntry(index)->time; }
 	ChapterIndex getChapter(uint32 index) { return getEntry(index)->chapter; }
-	uint32       getValue(uint32 index) { return getEntry(index)->value; }
-	uint32       getLastSavegameTicks() const { return _gameTicksLastSavegame; }
+	uint32 getValue(uint32 index) { return getEntry(index)->value; }
+	uint32 getLastSavegameTicks() const { return _gameTicksLastSavegame; }
 
 private:
 	LastExpressEngine *_engine;
@@ -311,7 +313,7 @@ private:
 
 	// Opening save files
 	static Common::String getFilename(GameId id);
-	static Common::InSaveFile  *openForLoading(GameId id);
+	static Common::InSaveFile *openForLoading(GameId id);
 	static Common::OutSaveFile *openForSaving(GameId id);
 
 	// Savegame stream

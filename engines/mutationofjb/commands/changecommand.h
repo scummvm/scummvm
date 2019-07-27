@@ -58,7 +58,7 @@ public:
 		NS, // Number of statics
 		PF, // Palette rotation first
 		PL, // Palette rotation last
-		PD  // Palette rotation delay
+		PD // Palette rotation delay
 	};
 
 	enum ChangeOperation {
@@ -67,9 +67,13 @@ public:
 		SubtractValue
 	};
 
-	ChangeCommand(uint8 sceneId, uint8 entityId, ChangeRegister reg, ChangeOperation op, const ChangeCommandValue &val) :
-		_sceneId(sceneId), _entityId(entityId), _register(reg), _operation(op), _value(val)
-	{}
+	ChangeCommand(uint8 sceneId, uint8 entityId, ChangeRegister reg, ChangeOperation op, const ChangeCommandValue &val)
+	  : _sceneId(sceneId)
+	  , _entityId(entityId)
+	  , _register(reg)
+	  , _operation(op)
+	  , _value(val) {}
+
 protected:
 	const char *getRegisterAsString() const;
 	Common::String getValueAsString() const;
@@ -111,8 +115,7 @@ public:
 class ChangeDoorCommand : public ChangeCommand {
 public:
 	ChangeDoorCommand(uint8 sceneId, uint8 doorId, ChangeRegister reg, ChangeOperation op, const ChangeCommandValue &val)
-		: ChangeCommand(sceneId, doorId, reg, op, val)
-	{}
+	  : ChangeCommand(sceneId, doorId, reg, op, val) {}
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const;
 };
@@ -120,8 +123,7 @@ public:
 class ChangeObjectCommand : public ChangeCommand {
 public:
 	ChangeObjectCommand(uint8 sceneId, uint8 objectId, ChangeRegister reg, ChangeOperation op, const ChangeCommandValue &val)
-		: ChangeCommand(sceneId, objectId, reg, op, val)
-	{}
+	  : ChangeCommand(sceneId, objectId, reg, op, val) {}
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const;
 };
@@ -129,8 +131,7 @@ public:
 class ChangeStaticCommand : public ChangeCommand {
 public:
 	ChangeStaticCommand(uint8 sceneId, uint8 staticId, ChangeRegister reg, ChangeOperation op, const ChangeCommandValue &val)
-		: ChangeCommand(sceneId, staticId, reg, op, val)
-	{}
+	  : ChangeCommand(sceneId, staticId, reg, op, val) {}
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const;
 };
@@ -138,8 +139,7 @@ public:
 class ChangeSceneCommand : public ChangeCommand {
 public:
 	ChangeSceneCommand(uint8 sceneId, uint8 staticId, ChangeRegister reg, ChangeOperation op, const ChangeCommandValue &val)
-		: ChangeCommand(sceneId, staticId, reg, op, val)
-	{}
+	  : ChangeCommand(sceneId, staticId, reg, op, val) {}
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const;
 };

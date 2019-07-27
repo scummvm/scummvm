@@ -23,22 +23,25 @@
 #ifndef TITANIC_FIXED_QUEUE_H
 #define TITANIC_FIXED_QUEUE_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 
 namespace Titanic {
 
 /**
  * Extremly simple fixed size queue class.
  */
-template<class T, uint MAX_SIZE = 10>
+template <class T, uint MAX_SIZE = 10>
 class FixedQueue {
 	typedef uint size_type;
+
 protected:
 	Common::Array<T> _data;
 	size_type _topIndex;
+
 public:
-	FixedQueue<T, MAX_SIZE>() : _topIndex(0) {
+	FixedQueue<T, MAX_SIZE>()
+	  : _topIndex(0) {
 		_data.reserve(MAX_SIZE);
 	}
 

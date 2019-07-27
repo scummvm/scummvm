@@ -25,21 +25,21 @@
  * Copyright (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon
  */
 
-#include "sound.h"
-#include "common/config-manager.h"
 #include "cge2/cge2.h"
-#include "cge2/events.h"
-#include "cge2/vmenu.h"
-#include "cge2/text.h"
 #include "cge2/cge2_main.h"
+#include "cge2/events.h"
+#include "cge2/text.h"
+#include "cge2/vmenu.h"
+#include "common/config-manager.h"
+#include "sound.h"
 
 namespace CGE2 {
 
-#define kSoundNumToStateRate  25.7
+#define kSoundNumToStateRate 25.7
 // == 257 / 10; where 10 equals to the volume switches' number of states [0..9]
 // and ScummVM has a scale of 257 different values for setting sounds.
 
-#define kSoundStateToNumRate  28.45
+#define kSoundStateToNumRate 28.45
 // == 256 / 9 + 0.1; where 256 is the positive range of numbers we can set the volume to
 // and the 10 states of a switch cut this range up to 9 equally big parts.
 // We don't take into account 0 regarding the 256 different values (it would be the 257th),

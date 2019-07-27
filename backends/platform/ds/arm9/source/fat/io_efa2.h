@@ -25,4 +25,4 @@
 // export interface
 extern LPIO_INTERFACE EFA2_GetInterface(void);
 
-#endif	// define IO_EFA2_H
+#endif // define IO_EFA2_H

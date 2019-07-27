@@ -20,16 +20,16 @@
  *
  */
 
+#include "sci/graphics/screen_item32.h"
 #include "sci/console.h"
-#include "sci/resource.h"
 #include "sci/engine/features.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/celobj32.h"
 #include "sci/graphics/frameout.h"
-#include "sci/graphics/screen_item32.h"
 #include "sci/graphics/view.h"
+#include "sci/resource.h"
 
 namespace Sci {
 #pragma mark ScreenItem
@@ -37,85 +37,85 @@ namespace Sci {
 uint16 ScreenItem::_nextObjectId = 20000;
 uint32 ScreenItem::_nextCreationId = 0;
 
-ScreenItem::ScreenItem(const reg_t object) :
-_creationId(_nextCreationId++),
-_object(object),
-_pictureId(-1),
-_created(g_sci->_gfxFrameout->getScreenCount()),
-_updated(0),
-_deleted(0),
-_mirrorX(false),
-_drawBlackLines(false) {
+ScreenItem::ScreenItem(const reg_t object)
+  : _creationId(_nextCreationId++)
+  , _object(object)
+  , _pictureId(-1)
+  , _created(g_sci->_gfxFrameout->getScreenCount())
+  , _updated(0)
+  , _deleted(0)
+  , _mirrorX(false)
+  , _drawBlackLines(false) {
 	SegManager *segMan = g_sci->getEngineState()->_segMan;
 
 	setFromObject(segMan, object, true, true);
 	_plane = readSelector(segMan, object, SELECTOR(plane));
 }
 
-ScreenItem::ScreenItem(const reg_t plane, const CelInfo32 &celInfo) :
-_creationId(_nextCreationId++),
-_plane(plane),
-_useInsetRect(false),
-_z(0),
-_celInfo(celInfo),
-_fixedPriority(false),
-_position(0, 0),
-_object(make_reg(0, _nextObjectId++)),
-_pictureId(-1),
-_created(g_sci->_gfxFrameout->getScreenCount()),
-_updated(0),
-_deleted(0),
-_mirrorX(false),
-_drawBlackLines(false) {}
+ScreenItem::ScreenItem(const reg_t plane, const CelInfo32 &celInfo)
+  : _creationId(_nextCreationId++)
+  , _plane(plane)
+  , _useInsetRect(false)
+  , _z(0)
+  , _celInfo(celInfo)
+  , _fixedPriority(false)
+  , _position(0, 0)
+  , _object(make_reg(0, _nextObjectId++))
+  , _pictureId(-1)
+  , _created(g_sci->_gfxFrameout->getScreenCount())
+  , _updated(0)
+  , _deleted(0)
+  , _mirrorX(false)
+  , _drawBlackLines(false) {}
 
-ScreenItem::ScreenItem(const reg_t plane, const CelInfo32 &celInfo, const Common::Rect &rect) :
-_creationId(_nextCreationId++),
-_plane(plane),
-_useInsetRect(false),
-_z(0),
-_celInfo(celInfo),
-_fixedPriority(false),
-_position(rect.left, rect.top),
-_object(make_reg(0, _nextObjectId++)),
-_pictureId(-1),
-_created(g_sci->_gfxFrameout->getScreenCount()),
-_updated(0),
-_deleted(0),
-_mirrorX(false),
-_drawBlackLines(false) {
+ScreenItem::ScreenItem(const reg_t plane, const CelInfo32 &celInfo, const Common::Rect &rect)
+  : _creationId(_nextCreationId++)
+  , _plane(plane)
+  , _useInsetRect(false)
+  , _z(0)
+  , _celInfo(celInfo)
+  , _fixedPriority(false)
+  , _position(rect.left, rect.top)
+  , _object(make_reg(0, _nextObjectId++))
+  , _pictureId(-1)
+  , _created(g_sci->_gfxFrameout->getScreenCount())
+  , _updated(0)
+  , _deleted(0)
+  , _mirrorX(false)
+  , _drawBlackLines(false) {
 	if (celInfo.type == kCelTypeColor) {
 		_insetRect = rect;
 	}
 }
 
-ScreenItem::ScreenItem(const reg_t plane, const CelInfo32 &celInfo, const Common::Point &position, const ScaleInfo &scaleInfo) :
-_creationId(_nextCreationId++),
-_plane(plane),
-_scale(scaleInfo),
-_useInsetRect(false),
-_z(0),
-_celInfo(celInfo),
-_fixedPriority(false),
-_position(position),
-_object(make_reg(0, _nextObjectId++)),
-_pictureId(-1),
-_created(g_sci->_gfxFrameout->getScreenCount()),
-_updated(0),
-_deleted(0),
-_mirrorX(false),
-_drawBlackLines(false) {}
+ScreenItem::ScreenItem(const reg_t plane, const CelInfo32 &celInfo, const Common::Point &position, const ScaleInfo &scaleInfo)
+  : _creationId(_nextCreationId++)
+  , _plane(plane)
+  , _scale(scaleInfo)
+  , _useInsetRect(false)
+  , _z(0)
+  , _celInfo(celInfo)
+  , _fixedPriority(false)
+  , _position(position)
+  , _object(make_reg(0, _nextObjectId++))
+  , _pictureId(-1)
+  , _created(g_sci->_gfxFrameout->getScreenCount())
+  , _updated(0)
+  , _deleted(0)
+  , _mirrorX(false)
+  , _drawBlackLines(false) {}
 
-ScreenItem::ScreenItem(const ScreenItem &other) :
-_creationId(other._creationId),
-_plane(other._plane),
-_scale(other._scale),
-_useInsetRect(other._useInsetRect),
-_celInfo(other._celInfo),
-_object(other._object),
-_mirrorX(other._mirrorX),
-_scaledPosition(other._scaledPosition),
-_screenRect(other._screenRect),
-_drawBlackLines(other._drawBlackLines) {
+ScreenItem::ScreenItem(const ScreenItem &other)
+  : _creationId(other._creationId)
+  , _plane(other._plane)
+  , _scale(other._scale)
+  , _useInsetRect(other._useInsetRect)
+  , _celInfo(other._celInfo)
+  , _object(other._object)
+  , _mirrorX(other._mirrorX)
+  , _scaledPosition(other._scaledPosition)
+  , _screenRect(other._screenRect)
+  , _drawBlackLines(other._drawBlackLines) {
 	if (other._useInsetRect) {
 		_insetRect = other._insetRect;
 	}
@@ -473,17 +473,17 @@ void ScreenItem::calcRects(const Plane &plane) {
 CelObj &ScreenItem::getCelObj() const {
 	if (!_celObj) {
 		switch (_celInfo.type) {
-			case kCelTypeView:
-				_celObj.reset(new CelObjView(_celInfo.resourceId, _celInfo.loopNo, _celInfo.celNo));
+		case kCelTypeView:
+			_celObj.reset(new CelObjView(_celInfo.resourceId, _celInfo.loopNo, _celInfo.celNo));
 			break;
-			case kCelTypePic:
-				error("Internal error, pic screen item with no cel.");
+		case kCelTypePic:
+			error("Internal error, pic screen item with no cel.");
 			break;
-			case kCelTypeMem:
-				_celObj.reset(new CelObjMem(_celInfo.bitmap));
+		case kCelTypeMem:
+			_celObj.reset(new CelObjMem(_celInfo.bitmap));
 			break;
-			case kCelTypeColor:
-				_celObj.reset(new CelObjColor(_celInfo.color, _insetRect.width(), _insetRect.height()));
+		case kCelTypeColor:
+			_celObj.reset(new CelObjColor(_celInfo.color, _insetRect.width(), _insetRect.height()));
 			break;
 		}
 	}
@@ -500,17 +500,16 @@ void ScreenItem::printDebugInfo(Console *con) const {
 	}
 
 	con->debugPrintf("%04x:%04x (%s), prio %d, ins %u, x %d, y %d, z: %d, scaledX: %d, scaledY: %d flags: %d\n",
-		PRINT_REG(_object),
-		name,
-		_priority,
-		_creationId,
-		_position.x,
-		_position.y,
-		_z,
-		_scaledPosition.x,
-		_scaledPosition.y,
-		_created | (_updated << 1) | (_deleted << 2)
-	);
+	                 PRINT_REG(_object),
+	                 name,
+	                 _priority,
+	                 _creationId,
+	                 _position.x,
+	                 _position.y,
+	                 _z,
+	                 _scaledPosition.x,
+	                 _scaledPosition.y,
+	                 _created | (_updated << 1) | (_deleted << 2));
 	con->debugPrintf("    screen rect (%d, %d, %d, %d)\n", PRINT_RECT(_screenRect));
 	if (_useInsetRect) {
 		con->debugPrintf("    inset rect: (%d, %d, %d, %d)\n", PRINT_RECT(_insetRect));
@@ -520,11 +519,10 @@ void ScreenItem::printDebugInfo(Console *con) const {
 
 	if (_celObj) {
 		con->debugPrintf("    width %d, height %d, x-resolution %d, y-resolution %d\n",
-			_celObj->_width,
-			_celObj->_height,
-			_celObj->_xResolution,
-			_celObj->_yResolution
-		);
+		                 _celObj->_width,
+		                 _celObj->_height,
+		                 _celObj->_xResolution,
+		                 _celObj->_yResolution);
 	}
 }
 
@@ -535,11 +533,7 @@ void ScreenItem::update(const reg_t object) {
 	const int16 loopNo = readSelectorValue(segMan, object, SELECTOR(loop));
 	const int16 celNo = readSelectorValue(segMan, object, SELECTOR(cel));
 
-	const bool updateCel = (
-		_celInfo.resourceId != view ||
-		_celInfo.loopNo != loopNo ||
-		_celInfo.celNo != celNo
-	);
+	const bool updateCel = (_celInfo.resourceId != view || _celInfo.loopNo != loopNo || _celInfo.celNo != celNo);
 
 	const bool updateBitmap = !readSelector(segMan, object, SELECTOR(bitmap)).isNull();
 
@@ -715,7 +709,7 @@ void ScreenItemList::sort() {
 	for (size_type i = size() - 1; i > 0; --i) {
 		bool swap = false;
 
-		for (size_type j = 0; j < i; ++j)  {
+		for (size_type j = 0; j < i; ++j) {
 			value_type &a = operator[](j);
 			value_type &b = operator[](j + 1);
 

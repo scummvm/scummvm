@@ -23,8 +23,8 @@
 #include <FApp.h>
 #include <FSysSystemTime.h>
 
-#include "common/translation.h"
 #include "base/main.h"
+#include "common/translation.h"
 
 #include "backends/platform/tizen/form.h"
 #include "backends/platform/tizen/system.h"
@@ -45,14 +45,14 @@ using namespace Tizen::Ui::Controls;
 //
 // TizenAppForm
 //
-TizenAppForm::TizenAppForm() :
-	_gestureMode(false),
-	_osdMessage(NULL),
-	_gameThread(NULL),
-	_eventQueueLock(NULL),
-	_state(kInitState),
-	_buttonState(kLeftButton),
-	_shortcut(kEscapeKey) {
+TizenAppForm::TizenAppForm()
+  : _gestureMode(false)
+  , _osdMessage(NULL)
+  , _gameThread(NULL)
+  , _eventQueueLock(NULL)
+  , _state(kInitState)
+  , _buttonState(kLeftButton)
+  , _shortcut(kEscapeKey) {
 }
 
 result TizenAppForm::Construct() {
@@ -358,23 +358,23 @@ int TizenAppForm::getTouchCount() {
 }
 
 void TizenAppForm::OnTouchDoublePressed(const Control &source,
-		const Point &currentPosition, const TouchEventInfo &touchInfo) {
+                                        const Point &currentPosition, const TouchEventInfo &touchInfo) {
 	if (_buttonState != kMoveOnly) {
 		pushEvent(_buttonState == kLeftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
-							currentPosition);
+		          currentPosition);
 	}
 }
 
 void TizenAppForm::OnTouchFocusIn(const Control &source,
-		const Point &currentPosition, const TouchEventInfo &touchInfo) {
+                                  const Point &currentPosition, const TouchEventInfo &touchInfo) {
 }
 
 void TizenAppForm::OnTouchFocusOut(const Control &source,
-		const Point &currentPosition, const TouchEventInfo &touchInfo) {
+                                   const Point &currentPosition, const TouchEventInfo &touchInfo) {
 }
 
 void TizenAppForm::OnTouchLongPressed(const Control &source,
-		const Point &currentPosition, const TouchEventInfo &touchInfo) {
+                                      const Point &currentPosition, const TouchEventInfo &touchInfo) {
 	logEntered();
 	if (_buttonState != kLeftButton) {
 		pushKey(Common::KEYCODE_RETURN);
@@ -382,24 +382,24 @@ void TizenAppForm::OnTouchLongPressed(const Control &source,
 }
 
 void TizenAppForm::OnTouchMoved(const Control &source,
-		const Point &currentPosition, const TouchEventInfo &touchInfo) {
+                                const Point &currentPosition, const TouchEventInfo &touchInfo) {
 	if (!_gestureMode) {
-	  pushEvent(Common::EVENT_MOUSEMOVE, currentPosition);
+		pushEvent(Common::EVENT_MOUSEMOVE, currentPosition);
 	}
 }
 
 void TizenAppForm::OnTouchPressed(const Control &source,
-		const Point &currentPosition, const TouchEventInfo &touchInfo) {
+                                  const Point &currentPosition, const TouchEventInfo &touchInfo) {
 	if (getTouchCount() > 1) {
 		_gestureMode = true;
 	} else if (_buttonState != kMoveOnly) {
 		pushEvent(_buttonState == kLeftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
-							currentPosition);
+		          currentPosition);
 	}
 }
 
 void TizenAppForm::OnTouchReleased(const Control &source,
-		const Point &currentPosition, const TouchEventInfo &touchInfo) {
+                                   const Point &currentPosition, const TouchEventInfo &touchInfo) {
 	if (_gestureMode) {
 		int touchCount = getTouchCount();
 		if (touchCount == 1) {
@@ -412,7 +412,7 @@ void TizenAppForm::OnTouchReleased(const Control &source,
 		}
 	} else if (_buttonState != kMoveOnly) {
 		pushEvent(_buttonState == kLeftButton ? Common::EVENT_LBUTTONUP : Common::EVENT_RBUTTONUP,
-							currentPosition);
+		          currentPosition);
 		if (_buttonState == kRightButtonOnce) {
 			_buttonState = kLeftButton;
 		}

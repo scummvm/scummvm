@@ -30,8 +30,8 @@
 #define AUDIO_3DO_SDX2_H
 
 #include "common/scummsys.h"
-#include "common/types.h"
 #include "common/stream.h"
+#include "common/types.h"
 
 #include "audio/audiostream.h"
 
@@ -117,13 +117,12 @@ protected:
  * @return					a new SeekableAudioStream, or NULL, if an error occurred
  */
 RewindableAudioStream *make3DO_ADP4AudioStream(
-	Common::SeekableReadStream *stream,
-	uint16 sampleRate,
-	bool stereo,
-	uint32 *audioLengthMSecsPtr = NULL, // returns the audio length in milliseconds
-	DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES,
-	audio_3DO_ADP4_PersistentSpace *persistentSpacePtr = NULL
-);
+  Common::SeekableReadStream *stream,
+  uint16 sampleRate,
+  bool stereo,
+  uint32 *audioLengthMSecsPtr = NULL, // returns the audio length in milliseconds
+  DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES,
+  audio_3DO_ADP4_PersistentSpace *persistentSpacePtr = NULL);
 
 /**
  * Try to decode 3DO SDX2 data from the given seekable stream and create a SeekableAudioStream
@@ -138,13 +137,12 @@ RewindableAudioStream *make3DO_ADP4AudioStream(
  * @return					a new SeekableAudioStream, or NULL, if an error occurred
  */
 RewindableAudioStream *make3DO_SDX2AudioStream(
-	Common::SeekableReadStream *stream,
-	uint16 sampleRate,
-	bool stereo,
-	uint32 *audioLengthMSecsPtr = NULL, // returns the audio length in milliseconds
-	DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES,
-	audio_3DO_SDX2_PersistentSpace *persistentSpacePtr = NULL
-);
+  Common::SeekableReadStream *stream,
+  uint16 sampleRate,
+  bool stereo,
+  uint32 *audioLengthMSecsPtr = NULL, // returns the audio length in milliseconds
+  DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES,
+  audio_3DO_SDX2_PersistentSpace *persistentSpacePtr = NULL);
 
 } // End of namespace Audio
 

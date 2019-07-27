@@ -25,8 +25,8 @@
 
 #include "kyra/engine/kyra_v2.h"
 #include "kyra/graphics/screen_mr.h"
-#include "kyra/script/script.h"
 #include "kyra/gui/gui_mr.h"
+#include "kyra/script/script.h"
 
 #include "common/hashmap.h"
 #include "common/list.h"
@@ -41,8 +41,9 @@ class TextDisplayer_MR;
 struct Button;
 
 class KyraEngine_MR : public KyraEngine_v2 {
-friend class TextDisplayer_MR;
-friend class GUI_MR;
+	friend class TextDisplayer_MR;
+	friend class GUI_MR;
+
 public:
 	KyraEngine_MR(OSystem *system, const GameFlags &flags);
 	~KyraEngine_MR();

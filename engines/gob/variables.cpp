@@ -180,15 +180,15 @@ bool Variables::copyFrom(uint32 offset, const byte *variables, uint32 n) {
 	return true;
 }
 
-
-VariablesLE::VariablesLE(uint32 size) : Variables(size) {
+VariablesLE::VariablesLE(uint32 size)
+  : Variables(size) {
 }
 
 VariablesLE::~VariablesLE() {
 }
 
 void VariablesLE::write8(byte *buf, uint8 data) const {
-	*buf = (byte) data;
+	*buf = (byte)data;
 }
 
 void VariablesLE::write16(byte *buf, uint16 data) const {
@@ -200,7 +200,7 @@ void VariablesLE::write32(byte *buf, uint32 data) const {
 }
 
 uint8 VariablesLE::read8(const byte *buf) const {
-	return (uint8) *buf;
+	return (uint8)*buf;
 }
 
 uint16 VariablesLE::read16(const byte *buf) const {
@@ -211,15 +211,15 @@ uint32 VariablesLE::read32(const byte *buf) const {
 	return READ_LE_UINT32(buf);
 }
 
-
-VariablesBE::VariablesBE(uint32 size) : Variables(size) {
+VariablesBE::VariablesBE(uint32 size)
+  : Variables(size) {
 }
 
 VariablesBE::~VariablesBE() {
 }
 
 void VariablesBE::write8(byte *buf, uint8 data) const {
-	*buf = (byte) data;
+	*buf = (byte)data;
 }
 
 void VariablesBE::write16(byte *buf, uint16 data) const {
@@ -231,7 +231,7 @@ void VariablesBE::write32(byte *buf, uint32 data) const {
 }
 
 uint8 VariablesBE::read8(const byte *buf) const {
-	return (uint8) *buf;
+	return (uint8)*buf;
 }
 
 uint16 VariablesBE::read16(const byte *buf) const {
@@ -263,15 +263,15 @@ void VariableReference::set(Variables &vars, uint32 offset, Variables::Type type
 VariableReference &VariableReference::operator=(uint32 value) {
 	if (_vars) {
 		switch (_type) {
-			case Variables::kVariableType8:
-				_vars->writeOff8(_offset, (uint8) value);
-				break;
-			case Variables::kVariableType16:
-				_vars->writeOff16(_offset, (uint16) value);
-				break;
-			case Variables::kVariableType32:
-				_vars->writeOff32(_offset, value);
-				break;
+		case Variables::kVariableType8:
+			_vars->writeOff8(_offset, (uint8)value);
+			break;
+		case Variables::kVariableType16:
+			_vars->writeOff16(_offset, (uint16)value);
+			break;
+		case Variables::kVariableType32:
+			_vars->writeOff32(_offset, value);
+			break;
 		}
 	}
 	return *this;
@@ -280,12 +280,12 @@ VariableReference &VariableReference::operator=(uint32 value) {
 VariableReference::operator uint32() {
 	if (_vars) {
 		switch (_type) {
-			case Variables::kVariableType8:
-				return (uint32) _vars->readOff8(_offset);
-			case Variables::kVariableType16:
-				return (uint32) _vars->readOff16(_offset);
-			case Variables::kVariableType32:
-				return _vars->readOff32(_offset);
+		case Variables::kVariableType8:
+			return (uint32)_vars->readOff8(_offset);
+		case Variables::kVariableType16:
+			return (uint32)_vars->readOff16(_offset);
+		case Variables::kVariableType32:
+			return _vars->readOff32(_offset);
 		}
 	}
 
@@ -300,8 +300,9 @@ VariableReference &VariableReference::operator*=(uint32 value) {
 	return (*this = (*this * value));
 }
 
-
-VariableStack::VariableStack(uint32 size) : _size(size), _position(0) {
+VariableStack::VariableStack(uint32 size)
+  : _size(size)
+  , _position(0) {
 	_stack = new byte[_size];
 
 	memset(_stack, 0, _size);
@@ -338,8 +339,8 @@ void VariableStack::pop(Variables &vars, uint32 offset) {
 	// Sanity check
 	assert(_position >= 2);
 
-	bool   isInt = _stack[--_position] == 1;
-	uint32 size  = _stack[--_position];
+	bool isInt = _stack[--_position] == 1;
+	uint32 size = _stack[--_position];
 
 	// Sanity check
 	assert(_position >= size);

@@ -43,14 +43,14 @@ class Overlays {
 	static const int kOverlayVideos = 5;
 
 	struct Video {
-		bool            loaded;
-		VQAPlayer      *vqaPlayer;
-		Common::String  name;
-		int32           hash;
-		int             loopId;
-		int             enqueuedLoopId;
-		bool            loopForever;
-		int             frame;
+		bool loaded;
+		VQAPlayer *vqaPlayer;
+		Common::String name;
+		int32 hash;
+		int loopId;
+		int enqueuedLoopId;
+		bool loopForever;
+		int frame;
 	};
 
 	BladeRunnerEngine *_vm;

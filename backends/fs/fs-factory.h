@@ -23,8 +23,8 @@
 #ifndef FILESYSTEM_FACTORY_H
 #define FILESYSTEM_FACTORY_H
 
-#include "common/str.h"
 #include "backends/fs/abstract-fs.h"
+#include "common/str.h"
 
 /**
  * Creates concrete FSNode objects depending on the current architecture.

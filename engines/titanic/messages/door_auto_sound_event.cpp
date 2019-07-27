@@ -25,9 +25,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CDoorAutoSoundEvent, CAutoSoundEvent)
-	ON_MESSAGE(PreEnterNodeMsg)
-	ON_MESSAGE(LeaveNodeMsg)
-	ON_MESSAGE(TimerMsg)
+ON_MESSAGE(PreEnterNodeMsg)
+ON_MESSAGE(LeaveNodeMsg)
+ON_MESSAGE(TimerMsg)
 END_MESSAGE_MAP()
 
 void CDoorAutoSoundEvent::save(SimpleFile *file, int indent) {

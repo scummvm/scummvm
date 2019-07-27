@@ -45,6 +45,7 @@ public:
 	 * @return                     If true, the node can be deleted after process() finishes
 	 */
 	bool process(uint32 deltaTimeInMillis);
+
 private:
 	int32 _syncto;
 	Audio::SoundHandle _handle;

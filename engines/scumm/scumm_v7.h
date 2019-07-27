@@ -25,7 +25,7 @@
 
 #ifdef ENABLE_SCUMM_7_8
 
-#include "scumm/scumm_v6.h"
+#	include "scumm/scumm_v6.h"
 
 namespace Scumm {
 
@@ -36,10 +36,10 @@ class SmushPlayer;
 class ScummEngine_v7 : public ScummEngine_v6 {
 	friend class SmushPlayer;
 	friend class Insane;
+
 public:
 	ScummEngine_v7(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v7();
-
 
 protected:
 	int _smushFrameRate;
@@ -58,9 +58,8 @@ public:
 	SmushMixer *_smixer;
 	SmushPlayer *_splayer;
 
-
 	struct LangIndexNode {
-		char tag[12+1];
+		char tag[12 + 1];
 		int32 offset;
 	};
 
@@ -70,9 +69,9 @@ protected:
 	char *_languageBuffer;
 	LangIndexNode *_languageIndex;
 	int _languageIndexSize;
-	char _lastStringTag[12+1];
+	char _lastStringTag[12 + 1];
 
-#if defined(__SYMBIAN32__) // for some reason VC6 cannot find the base class TextObject
+#	if defined(__SYMBIAN32__) // for some reason VC6 cannot find the base class TextObject
 	struct SubtitleText {
 		int16 xpos, ypos;
 		byte color;
@@ -80,12 +79,12 @@ protected:
 		byte text[256];
 		bool actorSpeechMsg;
 	};
-#else
+#	else
 	struct SubtitleText : TextObject {
 		bool actorSpeechMsg;
 	};
 	friend void syncWithSerializer(Common::Serializer &, SubtitleText &);
-#endif
+#	endif
 
 	int _subtitleQueuePos;
 	SubtitleText _subtitleQueue[20];
@@ -132,10 +131,8 @@ protected:
 
 	virtual void drawVerb(int verb, int mode);
 
-
 	virtual void o6_kernelSetFunctions();
 };
-
 
 } // End of namespace Scumm
 

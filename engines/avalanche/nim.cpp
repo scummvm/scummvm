@@ -25,14 +25,14 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
-#include "avalanche/avalanche.h"
 #include "avalanche/nim.h"
+#include "avalanche/avalanche.h"
 
 #include "common/system.h"
 
 namespace Avalanche {
 
-const char * const Nim::kNames[2] = {"Avalot", "Dogfood"};
+const char *const Nim::kNames[2] = { "Avalot", "Dogfood" };
 
 Nim::Nim(AvalancheEngine *vm) {
 	_vm = vm;
@@ -112,7 +112,7 @@ void Nim::playNim() {
 
 	if (_dogfoodsTurn) {
 		// Dogfood won - as usual.
-		if (_playedNim == 1)   // Your first game.
+		if (_playedNim == 1) // Your first game.
 			_vm->_dialogs->displayScrollChain('Q', 4); // Goody! Play me again?
 		else
 			_vm->_dialogs->displayScrollChain('Q', 5); // Oh, look at that! I've won again!
@@ -197,8 +197,8 @@ void Nim::board() {
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < _stones[i]; j++)
 			_vm->_graphics->nimDrawStone(64 + j * 8 * 8, 75 + i * 35);
-			// It's practically the body of the Pascal function "plotstone()", reimplemented.
-			// It's the only place where we use it, so there's no reason to keep it separated as a function.
+	// It's practically the body of the Pascal function "plotstone()", reimplemented.
+	// It's the only place where we use it, so there's no reason to keep it separated as a function.
 	_vm->_graphics->refreshScreen();
 }
 
@@ -477,7 +477,7 @@ void Nim::findAp(byte start, byte stepSize) {
 			return;
 		}
 		break;
-	case 3:  // We're actually IN an A.P! Trouble! Oooh dear.
+	case 3: // We're actually IN an A.P! Trouble! Oooh dear.
 		// Take 1 from the largest pile.
 		_row = _r[2];
 		_number = 1;
@@ -510,12 +510,10 @@ void Nim::dogFood() {
 		if (sr[0] > sr[1]) { // T > b
 			_row = _r[0];
 			_number = sr[0] - sr[1];
-		}
-		else if (sr[0] < sr[1]) { // B > t
+		} else if (sr[0] < sr[1]) { // B > t
 			_row = _r[1];
 			_number = sr[1] - sr[0];
-		}
-		else { // B = t... oh no, we've lost!
+		} else { // B = t... oh no, we've lost!
 			_row = _r[0];
 			_number = 1;
 		}

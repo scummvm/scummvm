@@ -23,17 +23,17 @@
 #ifndef CEGUI_PANEL_H
 #define CEGUI_PANEL_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
-#include "common/hashmap.h"
-#include "common/str.h"
 #include "common/config-manager.h"
+#include "common/hashmap.h"
+#include "common/scummsys.h"
+#include "common/str.h"
+#include "common/system.h"
 
 #include "PanelItem.h"
 #include "Toolbar.h"
 
-using Common::String;
 using Common::HashMap;
+using Common::String;
 
 namespace CEGUI {
 
@@ -46,9 +46,9 @@ public:
 	void clear();
 	virtual void forceRedraw();
 	virtual bool action(int x, int y, bool pushed);
-private:
 
-	typedef HashMap<String, PanelItem *, Common::IgnoreCase_Hash , Common::IgnoreCase_EqualTo> ItemMap;
+private:
+	typedef HashMap<String, PanelItem *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ItemMap;
 
 	ItemMap _itemsMap;
 	int _interleave;

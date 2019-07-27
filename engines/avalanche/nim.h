@@ -40,7 +40,7 @@ public:
 private:
 	AvalancheEngine *_vm;
 
-	static const char * const kNames[2];
+	static const char *const kNames[2];
 
 	byte _old[3];
 	byte _stones[3];

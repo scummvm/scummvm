@@ -20,17 +20,21 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/thread.h"
 #include "illusions/actor.h"
+#include "illusions/illusions.h"
 
 namespace Illusions {
 
 // Thread
 
 Thread::Thread(IllusionsEngine *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags)
-	: _vm(vm), _threadId(threadId), _callingThreadId(callingThreadId), _notifyFlags(notifyFlags),
-	_pauseCtr(0), _terminated(false) {
+  : _vm(vm)
+  , _threadId(threadId)
+  , _callingThreadId(callingThreadId)
+  , _notifyFlags(notifyFlags)
+  , _pauseCtr(0)
+  , _terminated(false) {
 }
 
 Thread::~Thread() {
@@ -133,7 +137,7 @@ void Thread::terminate() {
 // ThreadList
 
 ThreadList::ThreadList(IllusionsEngine *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 }
 
 void ThreadList::startThread(Thread *thread) {
@@ -319,7 +323,6 @@ void ThreadList::killThread(uint32 threadId) {
 	}
 
 	thread->onKill();
-
 }
 
 void ThreadList::setThreadSceneId(uint32 threadId, uint32 sceneId) {
@@ -337,8 +340,7 @@ bool ThreadList::isActiveThread(int msgNum) {
 	// Check if at least one thread returns a non-null value for the message
 	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
 		Thread *thread = *it;
-		if (!thread->_terminated && thread->_pauseCtr <= 0 &&
-			thread->sendMessage(msgNum, 0) != 0)
+		if (!thread->_terminated && thread->_pauseCtr <= 0 && thread->sendMessage(msgNum, 0) != 0)
 			return true;
 	}
 	return false;

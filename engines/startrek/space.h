@@ -27,14 +27,20 @@
 
 namespace StarTrek {
 
-template<typename T>
+template <typename T>
 struct TPoint {
 	T x;
 	T y;
 	T z;
 
-	TPoint() : x(0), y(0), z(0) {}
-	TPoint(T _x, T _y, T _z) : x(_x), y(_y), z(_z) {}
+	TPoint()
+	  : x(0)
+	  , y(0)
+	  , z(0) {}
+	TPoint(T _x, T _y, T _z)
+	  : x(_x)
+	  , y(_y)
+	  , z(_z) {}
 
 	int32 getDiagonal() {
 		return (int32)sqrt((double)x * x + y * y + z * z);
@@ -94,8 +100,7 @@ typedef TPoint<int32> Point3;
 typedef TPoint<int16> Point3_Short;
 typedef TPoint<Fixed14> Point_Fixed14;
 
-
-template<typename T>
+template <typename T>
 struct TMatrix {
 private:
 	T m[3];

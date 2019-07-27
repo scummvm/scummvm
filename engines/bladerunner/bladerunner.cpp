@@ -43,20 +43,20 @@
 #include "bladerunner/lights.h"
 #include "bladerunner/mouse.h"
 #include "bladerunner/music.h"
-#include "bladerunner/outtake.h"
 #include "bladerunner/obstacles.h"
+#include "bladerunner/outtake.h"
 #include "bladerunner/overlays.h"
 #include "bladerunner/regions.h"
 #include "bladerunner/savefile.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/screen_effects.h"
-#include "bladerunner/set.h"
 #include "bladerunner/script/ai_script.h"
 #include "bladerunner/script/init_script.h"
 #include "bladerunner/script/kia_script.h"
 #include "bladerunner/script/police_maze.h"
 #include "bladerunner/script/scene_script.h"
+#include "bladerunner/set.h"
 #include "bladerunner/settings.h"
 #include "bladerunner/shape.h"
 #include "bladerunner/slice_animations.h"
@@ -78,60 +78,60 @@
 
 #include "common/array.h"
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "common/error.h"
 #include "common/events.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "common/debug-channels.h"
 #include "common/translation.h"
 #include "gui/message.h"
 
-#include "engines/util.h"
 #include "engines/advancedDetector.h"
+#include "engines/util.h"
 
 #include "graphics/pixelformat.h"
 
 namespace BladeRunner {
 
 BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *desc)
-	: Engine(syst),
-	  _rnd("bladerunner") {
+  : Engine(syst)
+  , _rnd("bladerunner") {
 
 	DebugMan.addDebugChannel(kDebugScript, "Script", "Debug the scripts");
 
 	_windowIsActive = true;
-	_gameIsRunning  = true;
+	_gameIsRunning = true;
 
-	_vqaIsPlaying       = false;
+	_vqaIsPlaying = false;
 	_vqaStopIsRequested = false;
 
-	_actorIsSpeaking           = false;
+	_actorIsSpeaking = false;
 	_actorSpeakStopIsRequested = false;
 
 	_subtitlesEnabled = false;
 
-	_sitcomMode       = false;
-	_shortyMode       = false;
-	_cutContent       = Common::String(desc->gameId).contains("bladerunner-final");
+	_sitcomMode = false;
+	_shortyMode = false;
+	_cutContent = Common::String(desc->gameId).contains("bladerunner-final");
 
 	_playerLosesControlCounter = 0;
 
 	_playerActorIdle = false;
-	_playerDead      = false;
+	_playerDead = false;
 
-	_gameOver               = false;
-	_gameAutoSaveTextId     = -1;
-	_gameIsAutoSaving       = false;
-	_gameIsLoading          = false;
-	_sceneIsLoading         = false;
+	_gameOver = false;
+	_gameAutoSaveTextId = -1;
+	_gameIsAutoSaving = false;
+	_gameIsLoading = false;
+	_sceneIsLoading = false;
 
-	_runningActorId         = -1;
+	_runningActorId = -1;
 	_isWalkingInterruptible = false;
-	_interruptWalking       = false;
+	_interruptWalking = false;
 
-	_walkSoundId      = -1;
-	_walkSoundVolume  = 0;
-	_walkSoundPan     = 0;
+	_walkSoundId = -1;
+	_walkSoundVolume = 0;
+	_walkSoundPan = 0;
 
 	_crimesDatabase = nullptr;
 
@@ -159,66 +159,66 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 		_languageCode = "E";
 	}
 
-	_screenEffects           = nullptr;
-	_combat                  = nullptr;
-	_actorDialogueQueue      = nullptr;
-	_settings                = nullptr;
-	_itemPickup              = nullptr;
-	_lights                  = nullptr;
-	_obstacles               = nullptr;
-	_sceneScript             = nullptr;
-	_time                    = nullptr;
-	_gameInfo                = nullptr;
-	_waypoints               = nullptr;
-	_gameVars                = nullptr;
-	_cosTable1024            = nullptr;
-	_sinTable1024            = nullptr;
-	_view                    = nullptr;
-	_sceneObjects            = nullptr;
-	_gameFlags               = nullptr;
-	_items                   = nullptr;
-	_audioCache              = nullptr;
-	_audioMixer              = nullptr;
-	_audioPlayer             = nullptr;
-	_music                   = nullptr;
-	_audioSpeech             = nullptr;
-	_ambientSounds           = nullptr;
-	_chapters                = nullptr;
-	_overlays                = nullptr;
-	_zbuffer                 = nullptr;
-	_playerActor             = nullptr;
-	_textActorNames          = nullptr;
-	_textCrimes              = nullptr;
-	_textClueTypes           = nullptr;
-	_textKIA                 = nullptr;
+	_screenEffects = nullptr;
+	_combat = nullptr;
+	_actorDialogueQueue = nullptr;
+	_settings = nullptr;
+	_itemPickup = nullptr;
+	_lights = nullptr;
+	_obstacles = nullptr;
+	_sceneScript = nullptr;
+	_time = nullptr;
+	_gameInfo = nullptr;
+	_waypoints = nullptr;
+	_gameVars = nullptr;
+	_cosTable1024 = nullptr;
+	_sinTable1024 = nullptr;
+	_view = nullptr;
+	_sceneObjects = nullptr;
+	_gameFlags = nullptr;
+	_items = nullptr;
+	_audioCache = nullptr;
+	_audioMixer = nullptr;
+	_audioPlayer = nullptr;
+	_music = nullptr;
+	_audioSpeech = nullptr;
+	_ambientSounds = nullptr;
+	_chapters = nullptr;
+	_overlays = nullptr;
+	_zbuffer = nullptr;
+	_playerActor = nullptr;
+	_textActorNames = nullptr;
+	_textCrimes = nullptr;
+	_textClueTypes = nullptr;
+	_textKIA = nullptr;
 	_textSpinnerDestinations = nullptr;
-	_textVK                  = nullptr;
-	_textOptions             = nullptr;
-	_dialogueMenu            = nullptr;
-	_suspectsDatabase        = nullptr;
-	_kia                     = nullptr;
-	_endCredits              = nullptr;
-	_spinner                 = nullptr;
-	_scores                  = nullptr;
-	_elevator                = nullptr;
-	_mainFont                = nullptr;
-	_subtitles               = nullptr;
-	_esper                   = nullptr;
-	_vk                      = nullptr;
-	_policeMaze              = nullptr;
-	_mouse                   = nullptr;
-	_sliceAnimations         = nullptr;
-	_sliceRenderer           = nullptr;
-	_crimesDatabase          = nullptr;
-	_scene                   = nullptr;
-	_aiScripts               = nullptr;
+	_textVK = nullptr;
+	_textOptions = nullptr;
+	_dialogueMenu = nullptr;
+	_suspectsDatabase = nullptr;
+	_kia = nullptr;
+	_endCredits = nullptr;
+	_spinner = nullptr;
+	_scores = nullptr;
+	_elevator = nullptr;
+	_mainFont = nullptr;
+	_subtitles = nullptr;
+	_esper = nullptr;
+	_vk = nullptr;
+	_policeMaze = nullptr;
+	_mouse = nullptr;
+	_sliceAnimations = nullptr;
+	_sliceRenderer = nullptr;
+	_crimesDatabase = nullptr;
+	_scene = nullptr;
+	_aiScripts = nullptr;
 	for (int i = 0; i != kActorCount; ++i) {
-		_actors[i]           = nullptr;
+		_actors[i] = nullptr;
 	}
-	_debugger                = nullptr;
+	_debugger = nullptr;
 	walkingReset();
 
-	_actorUpdateCounter  = 0;
+	_actorUpdateCounter = 0;
 	_actorUpdateTimeLast = 0;
 }
 
@@ -226,21 +226,11 @@ BladeRunnerEngine::~BladeRunnerEngine() {
 }
 
 bool BladeRunnerEngine::hasFeature(EngineFeature f) const {
-	return
-		f == kSupportsRTL ||
-		f == kSupportsLoadingDuringRuntime ||
-		f == kSupportsSavingDuringRuntime;
+	return f == kSupportsRTL || f == kSupportsLoadingDuringRuntime || f == kSupportsSavingDuringRuntime;
 }
 
 bool BladeRunnerEngine::canLoadGameStateCurrently() {
-	return
-		playerHasControl() &&
-		!_sceneScript->isInsideScript() &&
-		!_aiScripts->isInsideScript() &&
-		!_kia->isOpen() &&
-		!_spinner->isOpen() &&
-		!_vk->isOpen() &&
-		!_elevator->isOpen();
+	return playerHasControl() && !_sceneScript->isInsideScript() && !_aiScripts->isInsideScript() && !_kia->isOpen() && !_spinner->isOpen() && !_vk->isOpen() && !_elevator->isOpen();
 }
 
 Common::Error BladeRunnerEngine::loadGameState(int slot) {
@@ -268,14 +258,7 @@ Common::Error BladeRunnerEngine::loadGameState(int slot) {
 }
 
 bool BladeRunnerEngine::canSaveGameStateCurrently() {
-	return
-		playerHasControl() &&
-		!_sceneScript->isInsideScript() &&
-		!_aiScripts->isInsideScript() &&
-		!_kia->isOpen() &&
-		!_spinner->isOpen() &&
-		!_vk->isOpen() &&
-		!_elevator->isOpen();
+	return playerHasControl() && !_sceneScript->isInsideScript() && !_aiScripts->isInsideScript() && !_kia->isOpen() && !_spinner->isOpen() && !_vk->isOpen() && !_elevator->isOpen();
 }
 
 Common::Error BladeRunnerEngine::saveGameState(int slot, const Common::String &desc) {
@@ -335,7 +318,6 @@ Common::Error BladeRunnerEngine::run() {
 		shutdown();
 		return Common::Error(Common::kUnknownError, _("Failed to initialize resources"));
 	}
-
 
 	// improvement: Use a do-while() loop to handle the normal end-game state
 	// so that the game won't exit abruptly after end credits
@@ -1017,7 +999,7 @@ void BladeRunnerEngine::gameTick() {
 	}
 
 	bool inDialogueMenu = _dialogueMenu->isVisible();
-	if  (!inDialogueMenu) {
+	if (!inDialogueMenu) {
 		for (int i = 0; i < (int)_gameInfo->getActorCount(); ++i) {
 			_actors[i]->tickCombat();
 		}
@@ -1096,8 +1078,8 @@ void BladeRunnerEngine::gameTick() {
 
 	_subtitles->tick(_surfaceFront);
 
-	 // Without this condition the game may flash back to the game screen
-	 // between and ending outtake and the end credits.
+	// Without this condition the game may flash back to the game screen
+	// between and ending outtake and the end credits.
 	if (!_gameOver) {
 		blitToScreen(_surfaceFront);
 	}
@@ -1120,11 +1102,10 @@ void BladeRunnerEngine::actorsUpdate() {
 	int setId = _scene->getSetId();
 
 	// what a "nice" last minute fix...
-	if ( setId == kSetUG18
-	 && _gameVars[kVariableChapter] == 4
-	 && _gameFlags->query(kFlagCallWithGuzza)
-	 && _aiScripts->isInsideScript()
-	) {
+	if (setId == kSetUG18
+	    && _gameVars[kVariableChapter] == 4
+	    && _gameFlags->query(kFlagCallWithGuzza)
+	    && _aiScripts->isInsideScript()) {
 		return;
 	}
 
@@ -1142,22 +1123,22 @@ void BladeRunnerEngine::actorsUpdate() {
 }
 
 void BladeRunnerEngine::walkingReset() {
-	_mouseClickTimeLast   = 0;
-	_mouseClickTimeDiff   = 0;
-	_walkingToExitId      = -1;
-	_isInsideScriptExit   = false;
-	_walkingToRegionId    = -1;
+	_mouseClickTimeLast = 0;
+	_mouseClickTimeDiff = 0;
+	_walkingToExitId = -1;
+	_isInsideScriptExit = false;
+	_walkingToRegionId = -1;
 	_isInsideScriptRegion = false;
-	_walkingToObjectId    = -1;
+	_walkingToObjectId = -1;
 	_isInsideScriptObject = false;
-	_walkingToItemId      = -1;
-	_isInsideScriptItem   = false;
-	_walkingToEmpty       = false;
-	_walkingToEmptyX      = 0;
-	_walkingToEmptyY      = 0;
-	_isInsideScriptEmpty  = false;
-	_walkingToActorId     = -1;
-	_isInsideScriptActor  = false;
+	_walkingToItemId = -1;
+	_isInsideScriptItem = false;
+	_walkingToEmpty = false;
+	_walkingToEmptyX = 0;
+	_walkingToEmptyY = 0;
+	_isInsideScriptEmpty = false;
+	_walkingToActorId = -1;
+	_isInsideScriptActor = false;
 }
 
 void BladeRunnerEngine::handleEvents() {
@@ -1209,8 +1190,7 @@ void BladeRunnerEngine::handleEvents() {
 			handleMouseAction(event.mouse.x, event.mouse.y, false, false, 1);
 			break;
 
-		default:
-			; // nothing to do
+		default:; // nothing to do
 		}
 	}
 }
@@ -1282,38 +1262,38 @@ void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
 	}
 
 	switch (event.kbd.keycode) {
-		case Common::KEYCODE_F1:
-			_kia->open(kKIASectionHelp);
-			break;
-		case Common::KEYCODE_F2:
-			_kia->open(kKIASectionSave);
-			break;
-		case Common::KEYCODE_F3:
-			_kia->open(kKIASectionLoad);
-			break;
-		case Common::KEYCODE_F4:
-			_kia->open(kKIASectionCrimes);
-			break;
-		case Common::KEYCODE_F5:
-			_kia->open(kKIASectionSuspects);
-			break;
-		case Common::KEYCODE_F6:
-			_kia->open(kKIASectionClues);
-			break;
-		case Common::KEYCODE_F10:
-			_kia->open(kKIASectionQuit);
-			break;
-		case Common::KEYCODE_TAB:
-			_kia->openLastOpened();
-			break;
-		case Common::KEYCODE_ESCAPE:
-			_kia->open(kKIASectionSettings);
-			break;
-		case Common::KEYCODE_SPACE:
-			_combat->change();
-			break;
-		default:
-			break;
+	case Common::KEYCODE_F1:
+		_kia->open(kKIASectionHelp);
+		break;
+	case Common::KEYCODE_F2:
+		_kia->open(kKIASectionSave);
+		break;
+	case Common::KEYCODE_F3:
+		_kia->open(kKIASectionLoad);
+		break;
+	case Common::KEYCODE_F4:
+		_kia->open(kKIASectionCrimes);
+		break;
+	case Common::KEYCODE_F5:
+		_kia->open(kKIASectionSuspects);
+		break;
+	case Common::KEYCODE_F6:
+		_kia->open(kKIASectionClues);
+		break;
+	case Common::KEYCODE_F10:
+		_kia->open(kKIASectionQuit);
+		break;
+	case Common::KEYCODE_TAB:
+		_kia->openLastOpened();
+		break;
+	case Common::KEYCODE_ESCAPE:
+		_kia->open(kKIASectionSettings);
+		break;
+	case Common::KEYCODE_SPACE:
+		_combat->change();
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1417,12 +1397,12 @@ void BladeRunnerEngine::handleMouseAction(int x, int y, bool mainButton, bool bu
 			}
 			// In debug mode we're interested in *all* object/actors/items under mouse click
 			if (sceneObjectId >= kSceneObjectOffsetActors && sceneObjectId < kSceneObjectOffsetItems) {
-				debug("Clicked on Actor: %d", sceneObjectId  - kSceneObjectOffsetActors);
+				debug("Clicked on Actor: %d", sceneObjectId - kSceneObjectOffsetActors);
 			}
 			if (sceneObjectId >= kSceneObjectOffsetItems && sceneObjectId < kSceneObjectOffsetObjects) {
-				debug("Clicked on Item: %d", sceneObjectId  - kSceneObjectOffsetItems);
+				debug("Clicked on Item: %d", sceneObjectId - kSceneObjectOffsetItems);
 			}
-			if (sceneObjectId >= kSceneObjectOffsetObjects && sceneObjectId <= (95 + kSceneObjectOffsetObjects) ) {
+			if (sceneObjectId >= kSceneObjectOffsetObjects && sceneObjectId <= (95 + kSceneObjectOffsetObjects)) {
 				debug("Clicked on Object: %d", sceneObjectId - kSceneObjectOffsetObjects);
 			}
 		}
@@ -1471,12 +1451,12 @@ void BladeRunnerEngine::handleMouseClickExit(int exitId, int x, int y, bool butt
 			_playerActor->increaseFPS();
 		}
 	} else {
-		_walkingToExitId   = exitId;
+		_walkingToExitId = exitId;
 		_walkingToRegionId = -1;
 		_walkingToObjectId = -1;
-		_walkingToItemId   = -1;
-		_walkingToEmpty    = false;
-		_walkingToActorId  = -1;
+		_walkingToItemId = -1;
+		_walkingToEmpty = false;
+		_walkingToActorId = -1;
 
 		_isInsideScriptExit = true;
 		_sceneScript->clickedOnExit(exitId);
@@ -1503,12 +1483,12 @@ void BladeRunnerEngine::handleMouseClickRegion(int regionId, int x, int y, bool 
 			_playerActor->increaseFPS();
 		}
 	} else {
-		_walkingToExitId   = -1;
+		_walkingToExitId = -1;
 		_walkingToRegionId = regionId;
 		_walkingToObjectId = -1;
-		_walkingToItemId   = -1;
-		_walkingToEmpty    = false;
-		_walkingToActorId  = -1;
+		_walkingToItemId = -1;
+		_walkingToEmpty = false;
+		_walkingToActorId = -1;
 
 		_isInsideScriptRegion = true;
 		_sceneScript->clickedOn2DRegion(regionId);
@@ -1542,12 +1522,12 @@ void BladeRunnerEngine::handleMouseClick3DObject(int objectId, bool buttonDown, 
 				_playerActor->increaseFPS();
 			}
 		} else {
-			_walkingToExitId   = -1;
+			_walkingToExitId = -1;
 			_walkingToRegionId = -1;
 			_walkingToObjectId = objectId;
-			_walkingToItemId   = -1;
-			_walkingToEmpty    = false;
-			_walkingToActorId  = -1;
+			_walkingToItemId = -1;
+			_walkingToEmpty = false;
+			_walkingToActorId = -1;
 
 			_isInsideScriptObject = true;
 			_sceneScript->clickedOn3DObject(objectName.c_str(), false);
@@ -1612,12 +1592,12 @@ void BladeRunnerEngine::handleMouseClickEmpty(int x, int y, Vector3 &scenePositi
 			return;
 		}
 
-		_walkingToExitId   = -1;
+		_walkingToExitId = -1;
 		_walkingToRegionId = -1;
 		_walkingToObjectId = -1;
-		_walkingToItemId   = -1;
-		_walkingToEmpty    = true;
-		_walkingToActorId  = -1;
+		_walkingToItemId = -1;
+		_walkingToEmpty = true;
+		_walkingToActorId = -1;
 
 		if (_combat->isActive() && (actorId > 0 || itemId > 0)) {
 			return;
@@ -1812,7 +1792,6 @@ void BladeRunnerEngine::loopQueuedDialogueStillPlaying() {
 	do {
 		gameTick();
 	} while (_gameIsRunning && !_actorDialogueQueue->isEmpty());
-
 }
 
 void BladeRunnerEngine::outtakePlay(int id, bool noLocalization, int container) {
@@ -1982,9 +1961,8 @@ void BladeRunnerEngine::playerDied() {
 }
 
 bool BladeRunnerEngine::saveGame(Common::WriteStream &stream, Graphics::Surface &thumbnail) {
-	if ( !_gameIsAutoSaving
-	     && ( !playerHasControl() || _sceneScript->isInsideScript() || _aiScripts->isInsideScript())
-	) {
+	if (!_gameIsAutoSaving
+	    && (!playerHasControl() || _sceneScript->isInsideScript() || _aiScripts->isInsideScript())) {
 		return false;
 	}
 
@@ -2076,7 +2054,7 @@ bool BladeRunnerEngine::loadGame(Common::SeekableReadStream &stream) {
 	_gameIsLoading = true;
 	_settings->setLoadingGame();
 	s.skip(SaveFileManager::kThumbnailSize); // skip the thumbnail
-	s.skip(4);// always float 1.0, but never used
+	s.skip(4); // always float 1.0, but never used
 	_settings->load(s);
 	_scene->load(s);
 	_scene->_exits->load(s);
@@ -2095,8 +2073,7 @@ bool BladeRunnerEngine::loadGame(Common::SeekableReadStream &stream) {
 	_gameFlags->load(s);
 
 	if ((_gameFlags->query(kFlagGamePlayedInRestoredContentMode) && !_cutContent)
-	    || (!_gameFlags->query(kFlagGamePlayedInRestoredContentMode) && _cutContent)
-	) {
+	    || (!_gameFlags->query(kFlagGamePlayedInRestoredContentMode) && _cutContent)) {
 		Common::String warningMsg;
 		if (!_cutContent) {
 			warningMsg = _("WARNING: This game was saved in Restored Cut Content mode, but you are playing in Original Content mode. The mode will be adjusted to Restored Cut Content for this session until you completely Quit the game.");
@@ -2210,7 +2187,7 @@ void BladeRunnerEngine::autoSaveGame(int textId, bool endgame) {
 	if (endgame) {
 		saveGameState(slot, "END_GAME_STATE");
 	} else {
-		saveGameState(slot,  textAutoSave.getText(textId));
+		saveGameState(slot, textAutoSave.getText(textId));
 	}
 	_gameIsAutoSaving = false;
 }
@@ -2232,7 +2209,7 @@ Graphics::Surface BladeRunnerEngine::generateThumbnail() const {
 		for (int x = 0; x < thumbnail.w; ++x) {
 			uint8 r, g, b;
 
-			uint16  srcPixel = *(const uint16 *)_surfaceFront.getBasePtr(x * 8, y * 8);
+			uint16 srcPixel = *(const uint16 *)_surfaceFront.getBasePtr(x * 8, y * 8);
 			uint16 *dstPixel = (uint16 *)thumbnail.getBasePtr(x, y);
 
 			// Throw away alpha channel as it is not needed

@@ -25,12 +25,12 @@
 
 #include "common/array.h"
 #include "graphics/surface.h"
-#include "neverhood/neverhood.h"
-#include "neverhood/microtiles.h"
 #include "neverhood/graphics.h"
+#include "neverhood/microtiles.h"
+#include "neverhood/neverhood.h"
 
 namespace Video {
-	class SmackerDecoder;
+class SmackerDecoder;
 }
 
 namespace Neverhood {
@@ -44,17 +44,7 @@ struct RenderItem {
 	byte _version;
 	bool _refresh;
 	bool operator==(const RenderItem &second) const {
-		return
-			_surface == second._surface &&
-			_shadowSurface == second._shadowSurface &&
-			_destX == second._destX &&
-			_destY == second._destY &&
-			_srcX == second._srcX &&
-			_srcY == second._srcY &&
-			_width == second._width &&
-			_height == second._height &&
-			_transparent == second._transparent &&
-			_version == second._version;
+		return _surface == second._surface && _shadowSurface == second._shadowSurface && _destX == second._destX && _destY == second._destY && _srcX == second._srcX && _srcY == second._srcY && _width == second._width && _height == second._height && _transparent == second._transparent && _version == second._version;
 	}
 };
 
@@ -80,15 +70,16 @@ public:
 	void clear();
 	void clearRenderQueue();
 	void drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect, NRect &clipRect, bool transparent, byte version,
-		const Graphics::Surface *shadowSurface = NULL);
+	                  const Graphics::Surface *shadowSurface = NULL);
 	void drawSurface3(const Graphics::Surface *surface, int16 x, int16 y, NDrawRect &drawRect, NRect &clipRect, bool transparent, byte version);
 	void drawDoubleSurface2(const Graphics::Surface *surface, NDrawRect &drawRect);
 	void drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDrawRect &sysRect, NRect &clipRect, bool transparent, byte version);
 	void drawSurfaceClipRects(const Graphics::Surface *surface, NDrawRect &drawRect, NRect *clipRects, uint clipRectsCount, bool transparent, byte version);
 	void setSmackerDecoder(Video::SmackerDecoder *smackerDecoder) { _smackerDecoder = smackerDecoder; }
 	void queueBlit(const Graphics::Surface *surface, int16 destX, int16 destY, NRect &ddRect, bool transparent, byte version,
-		const Graphics::Surface *shadowSurface = NULL);
+	               const Graphics::Surface *shadowSurface = NULL);
 	void blitRenderItem(const RenderItem &renderItem, const Common::Rect &clipRect);
+
 protected:
 	NeverhoodEngine *_vm;
 	MicroTileArray *_microTiles;

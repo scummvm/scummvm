@@ -34,7 +34,7 @@ struct SludgeGameDescription {
 };
 
 uint SludgeEngine::getLanguageID() const { return _gameDescription->languageID; }
-const char *SludgeEngine::getGameId() const { return _gameDescription->desc.gameId;}
+const char *SludgeEngine::getGameId() const { return _gameDescription->desc.gameId; }
 uint32 SludgeEngine::getFeatures() const { return _gameDescription->desc.flags; }
 Common::Language SludgeEngine::getLanguage() const { return _gameDescription->desc.language; }
 const char *SludgeEngine::getGameFile() const {
@@ -51,7 +51,7 @@ static const PlainGameDescriptor sludgeGames[] = {
 	{ "outoforder", "Out Of Order" },
 	{ "frasse", "Frasse and the Peas of Kejick" },
 	{ "interview", "The Interview" },
-	{ "life", "Life Flashed By"},
+	{ "life", "Life Flashed By" },
 	{ "tgttpoacs", "The Game That Takes Place on a Cruise Ship" },
 	{ "mandy", "Mandy Christmas Adventure" },
 	{ "cubert", "Cubert Badbone, P.I." },
@@ -60,17 +60,14 @@ static const PlainGameDescriptor sludgeGames[] = {
 
 #include "sludge/detection_tables.h"
 
-static Sludge::SludgeGameDescription s_fallbackDesc =
-{
-	{
-		"",
-		"",
-		AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
-		Common::UNK_LANG,
-		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
-		GUIO0()
-	},
+static Sludge::SludgeGameDescription s_fallbackDesc = {
+	{ "",
+	  "",
+	  AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
+	  Common::UNK_LANG,
+	  Common::kPlatformWindows,
+	  ADGF_NO_FLAGS,
+	  GUIO0() },
 	0
 };
 
@@ -78,7 +75,8 @@ static char s_fallbackFileNameBuffer[51];
 
 class SludgeMetaEngine : public AdvancedMetaEngine {
 public:
-	SludgeMetaEngine() : AdvancedMetaEngine(Sludge::gameDescriptions, sizeof(Sludge::SludgeGameDescription), sludgeGames) {
+	SludgeMetaEngine()
+	  : AdvancedMetaEngine(Sludge::gameDescriptions, sizeof(Sludge::SludgeGameDescription), sludgeGames) {
 		_singleId = "sludge";
 		_maxScanDepth = 1;
 	}
@@ -93,10 +91,10 @@ public:
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 		const Sludge::SludgeGameDescription *gd = (const Sludge::SludgeGameDescription *)desc;
-			if (gd) {
-				*engine = new Sludge::SludgeEngine(syst, gd);
-			}
-			return gd != 0;
+		if (gd) {
+			*engine = new Sludge::SludgeEngine(syst, gd);
+		}
+		return gd != 0;
 	}
 
 	// for fall back detection
@@ -163,7 +161,7 @@ ADDetectedGame SludgeMetaEngine::fallbackDetect(const FileMap &allFiles, const C
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SLUDGE)
-	REGISTER_PLUGIN_DYNAMIC(SLUDGE, PLUGIN_TYPE_ENGINE, SludgeMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(SLUDGE, PLUGIN_TYPE_ENGINE, SludgeMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(SLUDGE, PLUGIN_TYPE_ENGINE, SludgeMetaEngine);
+REGISTER_PLUGIN_STATIC(SLUDGE, PLUGIN_TYPE_ENGINE, SludgeMetaEngine);
 #endif

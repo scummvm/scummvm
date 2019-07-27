@@ -23,13 +23,14 @@
 #include "prince/archive.h"
 #include "prince/decompress.h"
 
-#include "common/stream.h"
 #include "common/debug.h"
 #include "common/memstream.h"
+#include "common/stream.h"
 
 namespace Prince {
 
-PtcArchive::PtcArchive() : _stream(nullptr) {
+PtcArchive::PtcArchive()
+  : _stream(nullptr) {
 }
 
 PtcArchive::~PtcArchive() {
@@ -67,7 +68,7 @@ bool PtcArchive::open(const Common::String &filename) {
 
 	for (byte *fileItem = fileTable; fileItem < fileTableEnd; fileItem += 32) {
 		FileEntry item;
-		Common::String name = (const char*)fileItem;
+		Common::String name = (const char *)fileItem;
 		item._offset = READ_LE_UINT32(fileItem + 24);
 		item._size = READ_LE_UINT32(fileItem + 28);
 		debug(8, "%12s %8X %d", name.c_str(), item._offset, item._size);

@@ -46,6 +46,7 @@ class CCameraMover : public CNavigationInfo {
 public:
 	int _lockCounter;
 	CStarVector *_starVector;
+
 public:
 	CCameraMover(const CNavigationInfo *src);
 	virtual ~CCameraMover();
@@ -91,7 +92,7 @@ public:
 	 * position and orientation
 	 */
 	virtual void transitionBetweenPosOrients(const FVector &oldPos, const FVector &newPos,
-		const FMatrix &oldOrientation, const FMatrix &newOrientation) {}
+	                                         const FMatrix &oldOrientation, const FMatrix &newOrientation) {}
 
 	/**
 	 * Start a movement to a given specified destination

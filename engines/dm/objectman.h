@@ -28,8 +28,8 @@
 #ifndef DM_OBJECTMAN_H
 #define DM_OBJECTMAN_H
 
-#include "dm/dm.h"
 #include "dm/champion.h"
+#include "dm/dm.h"
 
 namespace DM {
 
@@ -42,8 +42,14 @@ public:
 	int16 _x;
 	int16 _y;
 	int16 _iconIndex;
-	SlotBox(int16 x, int16 y, int16 iconIndex): _x(x), _y(y), _iconIndex(iconIndex) {}
-	SlotBox(): _x(-1), _y(-1), _iconIndex(-1) {}
+	SlotBox(int16 x, int16 y, int16 iconIndex)
+	  : _x(x)
+	  , _y(y)
+	  , _iconIndex(iconIndex) {}
+	SlotBox()
+	  : _x(-1)
+	  , _y(-1)
+	  , _iconIndex(-1) {}
 }; // @ SLOT_BOX
 
 class ObjectMan {
@@ -52,7 +58,7 @@ class ObjectMan {
 public:
 	explicit ObjectMan(DMEngine *vm);
 	~ObjectMan();
-	void loadObjectNames();	// @ F0031_OBJECT_LoadNames
+	void loadObjectNames(); // @ F0031_OBJECT_LoadNames
 
 	SlotBox _slotBoxes[46]; // @ G0030_as_Graphic562_SlotBoxes;
 	char *_objectNames[kDMObjectNameCount]; // @ G0352_apc_ObjectNames

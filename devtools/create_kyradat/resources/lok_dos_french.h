@@ -5,50 +5,106 @@ static const char *const k1IntroStringsDOSFrench[51] = {
 	"...Puissant Chef de l'Ordre des Mystiques Royaux!",
 	"Je t'ai fait peur?",
 	"Malcolm!",
-	"On m'a dit hier que tu t'""\x82""tais ""\x82""vad""\x82"".",
+	"On m'a dit hier que tu t'"
+	"\x82"
+	"tais "
+	"\x82"
+	"vad"
+	"\x82"
+	".",
 	"Je t'attendais depuis longtemps.",
-	"Pourquoi me serais-je press""\x82""?",
+	"Pourquoi me serais-je press"
+	"\x82"
+	"?",
 	"C'est moi qui gouverne ce pays!",
 	"Ton faible sort n'a pas d'effet sur moi.",
 	"Tue-moi maintenant!",
 	"Il ne me reste pas beaucoup de pouvoirs magiques.",
-	"Je veux te faire du mal, sois-en s""\x96""r...",
-	"...Maintenant, tu es transform""\x82"" en pierre...",
+	"Je veux te faire du mal, sois-en s"
+	"\x96"
+	"r...",
+	"...Maintenant, tu es transform"
+	"\x82"
+	" en pierre...",
 	"...mais je te laisse tes yeux.",
 	"Je ne verse aucune larme pour Kyrandia...",
 	"...mais je ne peux pas te refuser les tiennes.",
 	"Malcolm le Bouffon est libre!",
-	"Il contr""\x93""le la Kyragemme maintenant...",
+	"Il contr"
+	"\x93"
+	"le la Kyragemme maintenant...",
 	"...source de tous les pouvoirs magiques de Kyrandia!",
 	"",
-	"Comment oses-tu ME faire tr""\x82""bucher!",
-	"Mais non, quelque chose de sp""\x82""cial pour toi...",
+	"Comment oses-tu ME faire tr"
+	"\x82"
+	"bucher!",
+	"Mais non, quelque chose de sp"
+	"\x82"
+	"cial pour toi...",
 	"Un sort humoristique!",
-	"Mais je pr""\x82""viendrai.",
+	"Mais je pr"
+	"\x82"
+	"viendrai.",
 	"Ne saute pas sur CET arbre!",
-	"Ne grimpe pas sur CET arbre, petit ""\x82""cureuil!",
+	"Ne grimpe pas sur CET arbre, petit "
+	"\x82"
+	"cureuil!",
 	"Hou!",
-	"C'est plus marrant comme ""\x87""a...",
+	"C'est plus marrant comme "
+	"\x87"
+	"a...",
 	"...n'est-ce pas?",
 	"Ha ha ha...",
 	"Les doigts ne sont-ils pas une chose merveilleuse?",
-	"C'est super d'""\x88""tre en vie!",
+	"C'est super d'"
+	"\x88"
+	"tre en vie!",
 	"Brandon!",
-	"Grand-P""\x8A""re! On y est arriv""\x82""!",
-	"Non! TU y es arriv""\x82""!",
+	"Grand-P"
+	"\x8A"
+	"re! On y est arriv"
+	"\x82"
+	"!",
+	"Non! TU y es arriv"
+	"\x82"
+	"!",
 	"Longue vie au Roi Brandon!",
-	"Longue vie ""\x85"" l'Ordre des Mystiques Royaux!",
+	"Longue vie "
+	"\x85"
+	" l'Ordre des Mystiques Royaux!",
 	"Retournons mettre de l'ordre dans Kyrandia!",
-	"Bonne id""\x82""e!",
+	"Bonne id"
+	"\x82"
+	"e!",
 	"En tant que Roi...",
-	"je d""\x82""clare que les sandales sont d""\x82""sormais les souliers officiels ""\x85"" Kyrandia!",
-	"Bien jou""\x82"", Brandon!",
+	"je d"
+	"\x82"
+	"clare que les sandales sont d"
+	"\x82"
+	"sormais les souliers officiels "
+	"\x85"
+	" Kyrandia!",
+	"Bien jou"
+	"\x82"
+	", Brandon!",
 	"La Terre ne pleure plus...",
-	"Et tu as retrouv""\x82"" tes amis!",
-	"Ma Ch""\x8A""re Brynn...",
-	"Malcolm s'est ""\x82""vad""\x82""!",
-	"Il viendra me chercher bient""\x93""t.",
-	"S'il te pla""\x8C""t Brandon, aide-moi...",
+	"Et tu as retrouv"
+	"\x82"
+	" tes amis!",
+	"Ma Ch"
+	"\x8A"
+	"re Brynn...",
+	"Malcolm s'est "
+	"\x82"
+	"vad"
+	"\x82"
+	"!",
+	"Il viendra me chercher bient"
+	"\x93"
+	"t.",
+	"S'il te pla"
+	"\x8C"
+	"t Brandon, aide-moi...",
 	""
 };
 
@@ -56,7 +112,9 @@ static const StringListProvider k1IntroStringsDOSFrenchProvider = { ARRAYSIZE(k1
 
 static const char *const k1ItemNamesDOSFrench[108] = {
 	"Grenat",
-	"Am""\x82""thyste",
+	"Am"
+	"\x82"
+	"thyste",
 	"Aigue-marine",
 	"Diamant",
 	"Emeraude",
@@ -70,14 +128,22 @@ static const char *const k1ItemNamesDOSFrench[108] = {
 	"Aventurine",
 	"Pierre de Lune",
 	"Pierre d'Iris",
-	"Magn""\x82""tite",
+	"Magn"
+	"\x82"
+	"tite",
 	"Rose",
 	"Tulipe",
-	"Orchid""\x82""e",
+	"Orchid"
+	"\x82"
+	"e",
 	"Rose d'argent",
 	"Statuette d'argent",
-	"Pi""\x8A""ce d'argent",
-	"Pi""\x8A""ce d'or",
+	"Pi"
+	"\x8A"
+	"ce d'argent",
+	"Pi"
+	"\x8A"
+	"ce d'or",
 	"Bague en or",
 	"Calice royal",
 	"Pomme de pin",
@@ -90,7 +156,9 @@ static const char *const k1ItemNamesDOSFrench[108] = {
 	"Baie de feu",
 	"Baie de feu",
 	"Poisson",
-	"Ar""\x88""te",
+	"Ar"
+	"\x88"
+	"te",
 	"Gigot de mouton",
 	"Os",
 	"Pomme",
@@ -100,21 +168,37 @@ static const char *const k1ItemNamesDOSFrench[108] = {
 	"Note",
 	"Bille",
 	"Scie",
-	"Croix ans""\x82""e",
+	"Croix ans"
+	"\x82"
+	"e",
 	"Plume",
 	"Oeuf",
 	"Feuille",
-	"Tr""\x8A""fle",
-	"Etoile bris""\x82""e",
+	"Tr"
+	"\x8A"
+	"fle",
+	"Etoile bris"
+	"\x82"
+	"e",
 	"Boule de cristal",
 	"Larme",
 	"Miroir",
 	"Tesson de glace",
-	"Fl""\x96""te",
+	"Fl"
+	"\x96"
+	"te",
 	"Sablier",
-	"Cl""\x82"" m""\x82""tallique",
-	"Cl""\x82"" de jade",
-	"Cl""\x82"" obsidion",
+	"Cl"
+	"\x82"
+	" m"
+	"\x82"
+	"tallique",
+	"Cl"
+	"\x82"
+	" de jade",
+	"Cl"
+	"\x82"
+	" obsidion",
 	"Potion rouge",
 	"Potion rouge",
 	"Potion bleue",
@@ -127,10 +211,18 @@ static const char *const k1ItemNamesDOSFrench[108] = {
 	"Potion d'arcs-en-ciel",
 	"Eau fraiche",
 	"Eau fraiche",
-	"Eau sal""\x82""e",
-	"Eau sal""\x82""e",
-	"Eau min""\x82""rale",
-	"Eau min""\x82""rale",
+	"Eau sal"
+	"\x82"
+	"e",
+	"Eau sal"
+	"\x82"
+	"e",
+	"Eau min"
+	"\x82"
+	"rale",
+	"Eau min"
+	"\x82"
+	"rale",
 	"Eau magique",
 	"Eau magique",
 	"Gourde vide",
@@ -160,7 +252,9 @@ static const char *const k1ItemNamesDOSFrench[108] = {
 	"Rocher lourd",
 	"Couronne royale",
 	"Sceptre royal",
-	"Cl""\x82"" en or",
+	"Cl"
+	"\x82"
+	" en or",
 	"Objet inconnu",
 	""
 };
@@ -177,28 +271,50 @@ static const char *const k1TakenStringsDOSFrench[4] = {
 static const StringListProvider k1TakenStringsDOSFrenchProvider = { ARRAYSIZE(k1TakenStringsDOSFrench), k1TakenStringsDOSFrench };
 
 static const char *const k1PlacedStringsDOSFrench[2] = {
-	" plac""\x82""e.",
-	" plac""\x82""."
+	" plac"
+	"\x82"
+	"e.",
+	" plac"
+	"\x82"
+	"."
 };
 
 static const StringListProvider k1PlacedStringsDOSFrenchProvider = { ARRAYSIZE(k1PlacedStringsDOSFrench), k1PlacedStringsDOSFrench };
 
 static const char *const k1DroppedStringsDOSFrench[2] = {
-	" l""\x83""ch""\x82""e.",
-	" l""\x83""ch""\x82""."
+	" l"
+	"\x83"
+	"ch"
+	"\x82"
+	"e.",
+	" l"
+	"\x83"
+	"ch"
+	"\x82"
+	"."
 };
 
 static const StringListProvider k1DroppedStringsDOSFrenchProvider = { ARRAYSIZE(k1DroppedStringsDOSFrench), k1DroppedStringsDOSFrench };
 
 static const char *const k1NoDropStringsDOSFrench[2] = {
-	"Vous ne pouvez pas l""\x83""cher autre chose ici.",
-	"Vous ne pouvez pas mettre ""\x87""a l""\x85""."
+	"Vous ne pouvez pas l"
+	"\x83"
+	"cher autre chose ici.",
+	"Vous ne pouvez pas mettre "
+	"\x87"
+	"a l"
+	"\x85"
+	"."
 };
 
 static const StringListProvider k1NoDropStringsDOSFrenchProvider = { ARRAYSIZE(k1NoDropStringsDOSFrench), k1NoDropStringsDOSFrench };
 
 static const char *const k1PutDownStringDOSFrench[1] = {
-	"Il faudrait peut-""\x88""tre que je pose ""\x87""a d'abord."
+	"Il faudrait peut-"
+	"\x88"
+	"tre que je pose "
+	"\x87"
+	"a d'abord."
 };
 
 static const StringListProvider k1PutDownStringDOSFrenchProvider = { ARRAYSIZE(k1PutDownStringDOSFrench), k1PutDownStringDOSFrench };
@@ -216,15 +332,25 @@ static const char *const k1BlackJewelStringDOSFrench[1] = {
 static const StringListProvider k1BlackJewelStringDOSFrenchProvider = { ARRAYSIZE(k1BlackJewelStringDOSFrench), k1BlackJewelStringDOSFrench };
 
 static const char *const k1HealingTipStringDOSFrench[1] = {
-	"Hue, ""\x87""a pourrait bien m'""\x88""tre utile si je suis bless""\x82""."
+	"Hue, "
+	"\x87"
+	"a pourrait bien m'"
+	"\x88"
+	"tre utile si je suis bless"
+	"\x82"
+	"."
 };
 
 static const StringListProvider k1HealingTipStringDOSFrenchProvider = { ARRAYSIZE(k1HealingTipStringDOSFrench), k1HealingTipStringDOSFrench };
 
 static const char *const k1PoisonGoneStringDOSFrench[3] = {
-	"G""\x82""nial!",
+	"G"
+	"\x82"
+	"nial!",
 	"Les effets du poison ont disparu!",
-	"MBL1ERREUR: Jeu sauvegard""\x82"" d'un autre produit."
+	"MBL1ERREUR: Jeu sauvegard"
+	"\x82"
+	" d'un autre produit."
 };
 
 static const StringListProvider k1PoisonGoneStringDOSFrenchProvider = { ARRAYSIZE(k1PoisonGoneStringDOSFrench), k1PoisonGoneStringDOSFrench };
@@ -232,15 +358,26 @@ static const StringListProvider k1PoisonGoneStringDOSFrenchProvider = { ARRAYSIZ
 static const char *const k1ThePoisonStringsDOSFrench[4] = {
 	"Le poison...",
 	"Je ne peux plus respirer...",
-	"Je ne me sens pas tr""\x8A""s bien...",
-	"Ce serpent doit ""\x88""tre \rvenimeux!"
+	"Je ne me sens pas tr"
+	"\x8A"
+	"s bien...",
+	"Ce serpent doit "
+	"\x88"
+	"tre \rvenimeux!"
 };
 
 static const StringListProvider k1ThePoisonStringsDOSFrenchProvider = { ARRAYSIZE(k1ThePoisonStringsDOSFrench), k1ThePoisonStringsDOSFrench };
 
 static const char *const k1FluteStringsDOSFrench[2] = {
-	"\x80""a ne sonne pas tr""\x8A""s bien.",
-	"Cette derni""\x8A""re note ""\x82""tait vraiment aigue!"
+	"\x80"
+	"a ne sonne pas tr"
+	"\x8A"
+	"s bien.",
+	"Cette derni"
+	"\x8A"
+	"re note "
+	"\x82"
+	"tait vraiment aigue!"
 };
 
 static const StringListProvider k1FluteStringsDOSFrenchProvider = { ARRAYSIZE(k1FluteStringsDOSFrench), k1FluteStringsDOSFrench };
@@ -254,21 +391,33 @@ static const char *const k1WispJewelStringsDOSFrench[3] = {
 static const StringListProvider k1WispJewelStringsDOSFrenchProvider = { ARRAYSIZE(k1WispJewelStringsDOSFrench), k1WispJewelStringsDOSFrench };
 
 static const char *const k1MagicJewelStringsDOSFrench[1] = {
-	"C'""\x82""tait bizarre."
+	"C'"
+	"\x82"
+	"tait bizarre."
 };
 
 static const StringListProvider k1MagicJewelStringsDOSFrenchProvider = { ARRAYSIZE(k1MagicJewelStringsDOSFrench), k1MagicJewelStringsDOSFrench };
 
 static const char *const k1FlaskFullStringDOSFrench[1] = {
-	"Cette gourde est d""\x82""j""\x85"" pleine."
+	"Cette gourde est d"
+	"\x82"
+	"j"
+	"\x85"
+	" pleine."
 };
 
 static const StringListProvider k1FlaskFullStringDOSFrenchProvider = { ARRAYSIZE(k1FlaskFullStringDOSFrench), k1FlaskFullStringDOSFrench };
 
 static const char *const k1FullFlaskStringDOSFrench[4] = {
-	"La gourde est remplie \rd'eau gazeuse fra""\x8C""che.",
-	"La gourde est remplie \rd'eau sal""\x82""e.",
-	"La gourde est remplie \rd'eau min""\x82""rale.",
+	"La gourde est remplie \rd'eau gazeuse fra"
+	"\x8C"
+	"che.",
+	"La gourde est remplie \rd'eau sal"
+	"\x82"
+	"e.",
+	"La gourde est remplie \rd'eau min"
+	"\x82"
+	"rale.",
 	"Eau magique."
 };
 
@@ -290,15 +439,25 @@ static const char *const k1GUIStringsDOSFrench[28] = {
 	"The Legend of Kyrandia",
 	"Charger un jeu",
 	"Sauvegarder ce jeu",
-	"Contr""\x93""les du jeu",
+	"Contr"
+	"\x93"
+	"les du jeu",
 	"Quitter le jeu",
 	"Reprendre le jeu",
-	"Contr""\x93""les du jeu",
+	"Contr"
+	"\x93"
+	"les du jeu",
 	"Quel jeu voulez-vous re-charger?",
-	"S""\x82""lectionnez une position o""\x97"" sauvegarder:",
+	"S"
+	"\x82"
+	"lectionnez une position o"
+	"\x97"
+	" sauvegarder:",
 	"[ EMPLACEMENT VIDE ]",
 	"Annuler",
-	"Entrez description de votre jeu sauvegard""\x82"".",
+	"Entrez description de votre jeu sauvegard"
+	"\x82"
+	".",
 	"Sauvegarder",
 	"Repose en paix, Brandon.",
 	"Vous voulez vraiment quitter le jeu?",
@@ -307,11 +466,35 @@ static const char *const k1GUIStringsDOSFrench[28] = {
 	"XXXXXXXXXXXXXXXXX",
 	"XXXXXXXXXXXXXXXXX",
 	"Menu principal",
-	"activ""\x82",
-	"d""\x82""sactiv""\x82",
+	"activ"
+	"\x82",
+	"d"
+	"\x82"
+	"sactiv"
+	"\x82",
 	"Oui",
 	"Non",
-	"6""\x0F""f+@""\x0F""f+E""\x0F""f+L""\x0F""f+S""\x0F""f+_""\x0F""f+i""\x0F""f+p""\x0F""f+w""\x0F""f+Vitesse de d""\x82""placement",
+	"6"
+	"\x0F"
+	"f+@"
+	"\x0F"
+	"f+E"
+	"\x0F"
+	"f+L"
+	"\x0F"
+	"f+S"
+	"\x0F"
+	"f+_"
+	"\x0F"
+	"f+i"
+	"\x0F"
+	"f+p"
+	"\x0F"
+	"f+w"
+	"\x0F"
+	"f+Vitesse de d"
+	"\x82"
+	"placement",
 	"Vitesse du texte",
 	"La musique est ",
 	"Les sons sont "
@@ -338,4 +521,3 @@ static const char *const k1ConfigStringsDOSFrench[9] = {
 };
 
 static const StringListProvider k1ConfigStringsDOSFrenchProvider = { ARRAYSIZE(k1ConfigStringsDOSFrench), k1ConfigStringsDOSFrench };
-

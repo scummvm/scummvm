@@ -25,17 +25,17 @@
 
 #include "common/keyboard.h"
 
-#include "parallaction/objects.h"
 #include "parallaction/inventory.h"
+#include "parallaction/objects.h"
 
 namespace Parallaction {
 
 enum {
-	kMouseNone			= 0,
-	kMouseLeftUp		= 1,
-	kMouseLeftDown		= 2,
-	kMouseRightUp		= 4,
-	kMouseRightDown		= 8
+	kMouseNone = 0,
+	kMouseLeftUp = 1,
+	kMouseLeftDown = 2,
+	kMouseRightUp = 4,
+	kMouseRightDown = 8
 };
 
 enum MouseTriState {
@@ -45,41 +45,41 @@ enum MouseTriState {
 };
 
 class Input {
-	int		updateGameInput();
+	int updateGameInput();
 
-	bool		_hasKeyPressEvent;
+	bool _hasKeyPressEvent;
 	Common::KeyState _keyPressed;
 
-	bool		_hasDelayedAction;  // actived when the character needs to move before taking an action
-	ZonePtr		_delayedActionZone;
+	bool _hasDelayedAction; // actived when the character needs to move before taking an action
+	ZonePtr _delayedActionZone;
 
-	int16		_transCurrentHoverItem;
+	int16 _transCurrentHoverItem;
 
-	void		translateInput();
-	bool		translateGameInput();
-	bool		updateInventoryInput();
-	void		takeAction(ZonePtr z);
-	void		walkTo(const Common::Point &dest);
+	void translateInput();
+	bool translateGameInput();
+	bool updateInventoryInput();
+	void takeAction(ZonePtr z);
+	void walkTo(const Common::Point &dest);
 
-	Parallaction	*_vm;
+	Parallaction *_vm;
 
-	Common::Point	_mousePos;
-	uint16	_mouseButtons;
+	Common::Point _mousePos;
+	uint16 _mouseButtons;
 
-	ZonePtr			_hoverZone;
+	ZonePtr _hoverZone;
 
-	void	enterInventoryMode();
-	void	exitInventoryMode();
+	void enterInventoryMode();
+	void exitInventoryMode();
 
-	int		_gameType;
+	int _gameType;
 
 	static byte _resMouseArrow_NS[256];
 	static byte _resMouseArrow_BR_Amiga[512];
-	Frames	*_mouseArrow;
-	Frames	*_comboArrow;
-	Frames	*_dinoCursor;
-	Frames	*_dougCursor;
-	Frames	*_donnaCursor;
+	Frames *_mouseArrow;
+	Frames *_comboArrow;
+	Frames *_dinoCursor;
+	Frames *_dougCursor;
+	Frames *_donnaCursor;
 
 	void initCursors();
 
@@ -92,29 +92,28 @@ public:
 		kInputModeMenu = 4
 	};
 
-
 	Input(Parallaction *vm);
 	virtual ~Input();
 
-	void getAbsoluteCursorPos(Common::Point& p) const;
+	void getAbsoluteCursorPos(Common::Point &p) const;
 
-	void getCursorPos(Common::Point& p) const {
+	void getCursorPos(Common::Point &p) const {
 		p = _mousePos;
 	}
 
-	void setCursorPos(const Common::Point& p) {
+	void setCursorPos(const Common::Point &p) {
 		_mousePos = p;
 	}
 
-	int				_inputMode;
-	InventoryItem	_activeItem;
+	int _inputMode;
+	InventoryItem _activeItem;
 
-	void	readInput();
-	int	updateInput();
-	void	trackMouse(ZonePtr z);
-	void	waitForButtonEvent(uint32 buttonEventMask, int32 timeout = -1);
-	uint32	getLastButtonEvent() { return _mouseButtons; }
-	bool	getLastKeyDown(uint16 &ascii);
+	void readInput();
+	int updateInput();
+	void trackMouse(ZonePtr z);
+	void waitForButtonEvent(uint32 buttonEventMask, int32 timeout = -1);
+	uint32 getLastButtonEvent() { return _mouseButtons; }
+	bool getLastKeyDown(uint16 &ascii);
 
 	void stopHovering();
 

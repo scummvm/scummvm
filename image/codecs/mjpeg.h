@@ -23,8 +23,8 @@
 #ifndef IMAGE_CODECS_MJPEG_H
 #define IMAGE_CODECS_MJPEG_H
 
-#include "image/codecs/codec.h"
 #include "graphics/pixelformat.h"
+#include "image/codecs/codec.h"
 
 namespace Common {
 class SeekableReadStream;

@@ -64,8 +64,7 @@ static const uint32 kSsScene2901LocationButtonFileHashes[] = {
 };
 
 static const NPoint kSsScene2901LocationButtonPoints[] = {
-	{525, 120}, {576, 149}, {587, 205},
-	{538, 232}, {484, 205}, {479, 153}
+	{ 525, 120 }, { 576, 149 }, { 587, 205 }, { 538, 232 }, { 484, 205 }, { 479, 153 }
 };
 
 static const uint32 kSsScene2901LocationButtonLightFileHashes1[] = {
@@ -135,7 +134,10 @@ static const uint32 kSsScene2901BigButtonFileHashes[] = {
 };
 
 SsScene2901LocationButton::SsScene2901LocationButton(NeverhoodEngine *vm, Scene *parentScene, int which, uint index)
-	: StaticSprite(vm, 900), _parentScene(parentScene), _index(index), _countdown1(0) {
+  : StaticSprite(vm, 900)
+  , _parentScene(parentScene)
+  , _index(index)
+  , _countdown1(0) {
 
 	const NPoint &pt = kSsScene2901LocationButtonPoints[_index];
 
@@ -171,7 +173,8 @@ uint32 SsScene2901LocationButton::handleMessage(int messageNum, const MessagePar
 }
 
 SsScene2901LocationButtonLight::SsScene2901LocationButtonLight(NeverhoodEngine *vm, int which, uint index)
-	: StaticSprite(vm, 900), _index(index) {
+  : StaticSprite(vm, 900)
+  , _index(index) {
 
 	loadSprite(kSsScene2901LocationButtonLightFileHashes1[which * 6 + index], kSLFDefDrawOffset | kSLFDefPosition, 900);
 	setVisible(false);
@@ -190,13 +193,16 @@ void SsScene2901LocationButtonLight::hide() {
 }
 
 SsScene2901BrokenButton::SsScene2901BrokenButton(NeverhoodEngine *vm, int which)
-	: StaticSprite(vm, 900) {
+  : StaticSprite(vm, 900) {
 
 	loadSprite(kSsScene2901BrokenButtonFileHashes[which], kSLFDefDrawOffset | kSLFDefPosition, 900);
 }
 
 SsScene2901BigButton::SsScene2901BigButton(NeverhoodEngine *vm, Scene *parentScene, int which)
-	: StaticSprite(vm, 900), _parentScene(parentScene), _which(which), _countdown1(0) {
+  : StaticSprite(vm, 900)
+  , _parentScene(parentScene)
+  , _which(which)
+  , _countdown1(0) {
 
 	loadSprite(kSsScene2901BigButtonFileHashes[which], kSLFDefDrawOffset | kSLFDefPosition, 400);
 	_collisionBounds.set(62, 94, 322, 350);

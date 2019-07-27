@@ -112,22 +112,41 @@ void Windows::windowClosed(Window *win) {
 
 /*------------------------------------------------------------------------*/
 
-Window::Window() : FontSurface(), _enabled(false),
-	_a(0), _border(0), _xLo(0), _xHi(0), _ycL(0), _ycH(0) {
+Window::Window()
+  : FontSurface()
+  , _enabled(false)
+  , _a(0)
+  , _border(0)
+  , _xLo(0)
+  , _xHi(0)
+  , _ycL(0)
+  , _ycH(0) {
 }
 
-Window::Window(const Window &src) : FontSurface(), _enabled(src._enabled),
-		_a(src._a), _border(src._border), _xLo(src._xLo), _ycL(src._ycL),
-		_xHi(src._xHi), _ycH(src._ycH) {
+Window::Window(const Window &src)
+  : FontSurface()
+  , _enabled(src._enabled)
+  , _a(src._a)
+  , _border(src._border)
+  , _xLo(src._xLo)
+  , _ycL(src._ycL)
+  , _xHi(src._xHi)
+  , _ycH(src._ycH) {
 
 	setBounds(src._bounds);
 	create(*g_vm->_screen, Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 }
 
 Window::Window(const Common::Rect &bounds, int a, int border,
-		int xLo, int ycL, int xHi, int ycH): FontSurface(),
-		_enabled(false), _a(a), _border(border),
-		_xLo(xLo), _ycL(ycL), _xHi(xHi), _ycH(ycH) {
+               int xLo, int ycL, int xHi, int ycH)
+  : FontSurface()
+  , _enabled(false)
+  , _a(a)
+  , _border(border)
+  , _xLo(xLo)
+  , _ycL(ycL)
+  , _xHi(xHi)
+  , _ycH(ycH) {
 	setBounds(bounds);
 	create(*g_vm->_screen, Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 }
@@ -174,7 +193,7 @@ void Window::close() {
 
 		// Restore the saved original content
 		screen.copyRectToSurface(_savedArea, _bounds.left, _bounds.top,
-			Common::Rect(0, 0, _bounds.width(), _bounds.height()));
+		                         Common::Rect(0, 0, _bounds.width(), _bounds.height()));
 		addDirtyRect(_bounds);
 
 		// Signal that the window has closed

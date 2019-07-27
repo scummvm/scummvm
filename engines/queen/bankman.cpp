@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "queen/bankman.h"
 #include "queen/resource.h"
 
@@ -29,7 +28,7 @@
 namespace Queen {
 
 BankManager::BankManager(Resource *res)
-	: _res(res) {
+  : _res(res) {
 	memset(_frames, 0, sizeof(_frames));
 	memset(_banks, 0, sizeof(_banks));
 }
@@ -93,7 +92,7 @@ void BankManager::load(const char *bankname, uint32 bankslot) {
 static void convertPlanarBitmap(uint8 *dst, int dstPitch, const uint8 *src, int w, int h, int plane) {
 	assert(w != 0 && h != 0);
 	int planarSize = plane * h * w * 2;
-	uint8 *planarBuf = new uint8[ planarSize ];
+	uint8 *planarBuf = new uint8[planarSize];
 	uint8 *dstPlanar = planarBuf;
 	while (planarSize > 0) {
 		if (src[0] == 0) {
@@ -146,28 +145,28 @@ void BankManager::unpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	const uint8 *p = bank->data + bank->indexes[srcframe];
 
 	if (_res->getPlatform() == Common::kPlatformAmiga) {
-		uint16 w     = READ_BE_UINT16(p + 0);
-		uint16 h     = READ_BE_UINT16(p + 2);
+		uint16 w = READ_BE_UINT16(p + 0);
+		uint16 h = READ_BE_UINT16(p + 2);
 		uint16 plane = READ_BE_UINT16(p + 4);
 		bf->xhotspot = READ_BE_UINT16(p + 6);
 		bf->yhotspot = READ_BE_UINT16(p + 8);
-		bf->width    = w * 16;
-		bf->height   = h;
+		bf->width = w * 16;
+		bf->height = h;
 
 		uint32 size = bf->width * bf->height;
 		if (size != 0) {
-			bf->data = new uint8[ size ];
+			bf->data = new uint8[size];
 			convertPlanarBitmap(bf->data, bf->width, p + 12, w, h, plane);
 		}
 	} else {
-		bf->width    = READ_LE_UINT16(p + 0);
-		bf->height   = READ_LE_UINT16(p + 2);
+		bf->width = READ_LE_UINT16(p + 0);
+		bf->height = READ_LE_UINT16(p + 2);
 		bf->xhotspot = READ_LE_UINT16(p + 4);
 		bf->yhotspot = READ_LE_UINT16(p + 6);
 
 		uint32 size = bf->width * bf->height;
 		if (size != 0) {
-			bf->data = new uint8[ size ];
+			bf->data = new uint8[size];
 			memcpy(bf->data, p + 8, size);
 		}
 	}
@@ -186,8 +185,8 @@ void BankManager::overpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	const uint8 *p = bank->data + bank->indexes[srcframe];
 
 	if (_res->getPlatform() == Common::kPlatformAmiga) {
-		uint16 w     = READ_BE_UINT16(p + 0);
-		uint16 h     = READ_BE_UINT16(p + 2);
+		uint16 w = READ_BE_UINT16(p + 0);
+		uint16 h = READ_BE_UINT16(p + 2);
 		uint16 plane = READ_BE_UINT16(p + 4);
 		uint16 src_w = w * 16;
 		uint16 src_h = h;

@@ -21,9 +21,9 @@
  */
 
 #include "sci/engine/features.h"
-#include "sci/engine/state.h"
-#include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
+#include "sci/engine/selector.h"
+#include "sci/engine/state.h"
 
 namespace Sci {
 //#define CHECK_LISTS	// adds sanity checking for lists and errors out when problems are found
@@ -52,7 +52,7 @@ static bool isSaneNodePointer(SegManager *segMan, reg_t addr) {
 
 		if (havePrev && node->pred != prev) {
 			error("isSaneNodePointer: Node at %04x:%04x points to invalid predecessor %04x:%04x (should be %04x:%04x)",
-					PRINT_REG(addr), PRINT_REG(node->pred), PRINT_REG(prev));
+			      PRINT_REG(addr), PRINT_REG(node->pred), PRINT_REG(prev));
 
 			//node->pred = prev;	// fix the problem in the node
 			return false;
@@ -71,7 +71,7 @@ static void checkListPointer(SegManager *segMan, reg_t addr) {
 
 	if (!list) {
 		error("checkListPointer (list %04x:%04x): The requested list wasn't found",
-				PRINT_REG(addr));
+		      PRINT_REG(addr));
 		return;
 	}
 
@@ -94,7 +94,7 @@ static void checkListPointer(SegManager *segMan, reg_t addr) {
 
 		if (!node_a->pred.isNull()) {
 			error("checkListPointer (list %04x:%04x): First node of the list points to a predecessor node",
-					PRINT_REG(addr));
+			      PRINT_REG(addr));
 
 			//node_a->pred = NULL_REG;	// fix the problem in the node
 
@@ -103,7 +103,7 @@ static void checkListPointer(SegManager *segMan, reg_t addr) {
 
 		if (!node_z->succ.isNull()) {
 			error("checkListPointer (list %04x:%04x): Last node of the list points to a successor node",
-					PRINT_REG(addr));
+			      PRINT_REG(addr));
 
 			//node_z->succ = NULL_REG;	// fix the problem in the node
 
@@ -115,10 +115,10 @@ static void checkListPointer(SegManager *segMan, reg_t addr) {
 		// Not sane list... it's missing pointers to the first or last element
 		if (list->first.isNull())
 			error("checkListPointer (list %04x:%04x): missing pointer to first element",
-					PRINT_REG(addr));
+			      PRINT_REG(addr));
 		if (list->last.isNull())
 			error("checkListPointer (list %04x:%04x): missing pointer to last element",
-					PRINT_REG(addr));
+			      PRINT_REG(addr));
 	}
 }
 
@@ -329,7 +329,7 @@ reg_t kAddAfter(EngineState *s, int argc, reg_t *argv) {
 		firstNode->succ = argv[2];
 		newNode->succ = oldNext;
 
-		if (oldNext.isNull())  // Appended after last node?
+		if (oldNext.isNull()) // Appended after last node?
 			// Set new node as last list node
 			list->last = argv[2];
 		else
@@ -371,7 +371,7 @@ reg_t kAddBefore(EngineState *s, int argc, reg_t *argv) {
 		firstNode->pred = argv[2];
 		newNode->pred = oldPred;
 
-		if (oldPred.isNull())  // Appended before first node?
+		if (oldPred.isNull()) // Appended before first node?
 			// Set new node as first list node
 			list->first = argv[2];
 		else
@@ -459,14 +459,10 @@ int sort_temp_cmp(const void *p1, const void *p2) {
 	const sort_temp_t *st1 = (const sort_temp_t *)p1;
 	const sort_temp_t *st2 = (const sort_temp_t *)p2;
 
-	if (st1->order.getSegment() < st2->order.getSegment() ||
-		(st1->order.getSegment() == st2->order.getSegment() &&
-		st1->order.getOffset() < st2->order.getOffset()))
+	if (st1->order.getSegment() < st2->order.getSegment() || (st1->order.getSegment() == st2->order.getSegment() && st1->order.getOffset() < st2->order.getOffset()))
 		return -1;
 
-	if (st1->order.getSegment() > st2->order.getSegment() ||
-		(st1->order.getSegment() == st2->order.getSegment() &&
-		st1->order.getOffset() > st2->order.getOffset()))
+	if (st1->order.getSegment() > st2->order.getSegment() || (st1->order.getSegment() == st2->order.getSegment() && st1->order.getOffset() > st2->order.getOffset()))
 		return 1;
 
 	return 0;
@@ -514,7 +510,7 @@ reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 
 	qsort(temp_array, input_size, sizeof(sort_temp_t), sort_temp_cmp);
 
-	for (i = 0;i < input_size;i++) {
+	for (i = 0; i < input_size; i++) {
 		reg_t lNode = s->_segMan->newNode(temp_array[i].value, temp_array[i].key);
 		addToEnd(s, output_data, lNode);
 	}
@@ -545,7 +541,7 @@ reg_t kListAt(EngineState *s, int argc, reg_t *argv) {
 	int curIndex = 0;
 
 	while (curIndex != listIndex) {
-		if (curNode->succ.isNull()) {	// end of the list?
+		if (curNode->succ.isNull()) { // end of the list?
 			return NULL_REG;
 		}
 

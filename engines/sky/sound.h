@@ -23,19 +23,18 @@
 #ifndef SKY_SOUND_H
 #define SKY_SOUND_H
 
-
-#include "common/scummsys.h"
 #include "audio/mixer.h"
+#include "common/scummsys.h"
 
 namespace Sky {
 
 class Disk;
 
 enum {
-	SOUND_CH0    = 0,
-	SOUND_CH1    = 1,
-	SOUND_BG     = 2,
-	SOUND_VOICE  = 3,
+	SOUND_CH0 = 0,
+	SOUND_CH1 = 1,
+	SOUND_BG = 2,
+	SOUND_VOICE = 3,
 	SOUND_SPEECH = 4
 };
 
@@ -47,9 +46,7 @@ struct SfxQueue {
 
 class Sound {
 protected:
-
 public:
-
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _voiceHandle;
 	Audio::SoundHandle _effectHandle;
@@ -59,7 +56,6 @@ public:
 	uint16 _saveSounds[2];
 
 protected:
-
 	void playSound(uint32 id, byte *sound, uint32 size, Audio::SoundHandle *handle);
 
 public:

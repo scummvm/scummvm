@@ -28,30 +28,36 @@
 
 namespace Graphics {
 
-	static const float kEpsilon = 0.00001f;  // arbitrarily taken number
+static const float kEpsilon = 0.00001f; // arbitrarily taken number
 
-	struct FloatPoint {
-		float x;
-		float y;
-		FloatPoint() : x(0), y(0) {}
-		FloatPoint(float x1, float y1) : x(x1), y(y1) {}
-		FloatPoint(const Common::Point p) : x(p.x), y(p.y) {}
-		bool operator==(const FloatPoint &p) const { return fabs(x - p.x) < kEpsilon && fabs(y - p.y) < kEpsilon; }
-		bool operator!=(const FloatPoint  &p) const { return fabs(x - p.x) > kEpsilon || fabs(y - p.y) > kEpsilon; }
-		FloatPoint operator+(const FloatPoint &delta) const { return FloatPoint (x + delta.x, y + delta.y);     }
-		FloatPoint operator-(const FloatPoint &delta) const { return FloatPoint (x - delta.x, y - delta.y);     }
+struct FloatPoint {
+	float x;
+	float y;
+	FloatPoint()
+	  : x(0)
+	  , y(0) {}
+	FloatPoint(float x1, float y1)
+	  : x(x1)
+	  , y(y1) {}
+	FloatPoint(const Common::Point p)
+	  : x(p.x)
+	  , y(p.y) {}
+	bool operator==(const FloatPoint &p) const { return fabs(x - p.x) < kEpsilon && fabs(y - p.y) < kEpsilon; }
+	bool operator!=(const FloatPoint &p) const { return fabs(x - p.x) > kEpsilon || fabs(y - p.y) > kEpsilon; }
+	FloatPoint operator+(const FloatPoint &delta) const { return FloatPoint(x + delta.x, y + delta.y); }
+	FloatPoint operator-(const FloatPoint &delta) const { return FloatPoint(x - delta.x, y - delta.y); }
 
-		FloatPoint& operator+=(const FloatPoint &delta) {
-			x += delta.x;
-			y += delta.y;
-			return *this;
-		}
-		FloatPoint& operator-=(const FloatPoint &delta) {
-			x -= delta.x;
-			y -= delta.y;
-			return *this;
-		}
-	};
+	FloatPoint &operator+=(const FloatPoint &delta) {
+		x += delta.x;
+		y += delta.y;
+		return *this;
+	}
+	FloatPoint &operator-=(const FloatPoint &delta) {
+		x -= delta.x;
+		y -= delta.y;
+		return *this;
+	}
+};
 
 class TransformTools {
 public:

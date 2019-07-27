@@ -29,28 +29,29 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CDoorbot, CTrueTalkNPC)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(OnSummonBotMsg)
-	ON_MESSAGE(TrueTalkTriggerActionMsg)
-	ON_MESSAGE(DoorbotNeededInHomeMsg)
-	ON_MESSAGE(DoorbotNeededInElevatorMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(TimerMsg)
-	ON_MESSAGE(NPCPlayTalkingAnimationMsg)
-	ON_MESSAGE(NPCPlayIdleAnimationMsg)
-	ON_MESSAGE(PutBotBackInHisBoxMsg)
-	ON_MESSAGE(DismissBotMsg)
-	ON_MESSAGE(MovieFrameMsg)
-	ON_MESSAGE(TrueTalkNotifySpeechEndedMsg)
-	ON_MESSAGE(TextInputMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(ActMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(OnSummonBotMsg)
+ON_MESSAGE(TrueTalkTriggerActionMsg)
+ON_MESSAGE(DoorbotNeededInHomeMsg)
+ON_MESSAGE(DoorbotNeededInElevatorMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(TimerMsg)
+ON_MESSAGE(NPCPlayTalkingAnimationMsg)
+ON_MESSAGE(NPCPlayIdleAnimationMsg)
+ON_MESSAGE(PutBotBackInHisBoxMsg)
+ON_MESSAGE(DismissBotMsg)
+ON_MESSAGE(MovieFrameMsg)
+ON_MESSAGE(TrueTalkNotifySpeechEndedMsg)
+ON_MESSAGE(TextInputMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(ActMsg)
 END_MESSAGE_MAP()
 
 int CDoorbot::_v1;
 int CDoorbot::_v2;
 
-CDoorbot::CDoorbot() : CTrueTalkNPC() {
+CDoorbot::CDoorbot()
+  : CTrueTalkNPC() {
 	_introMovieNum = 0;
 	_timerId = 0;
 	_field110 = 0;
@@ -85,7 +86,7 @@ void CDoorbot::load(SimpleFile *file) {
 
 bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
 	debugC(DEBUG_DETAILED, kDebugScripts, "CDoorbot MovieEndMsg flags=%x v=%d, start=%d, end=%d",
-		_npcFlags, _introMovieNum, msg->_startFrame, msg->_endFrame);
+	       _npcFlags, _introMovieNum, msg->_startFrame, msg->_endFrame);
 
 	if (_npcFlags & NPCFLAG_DOORBOT_INTRO) {
 		switch (_introMovieNum) {
@@ -140,14 +141,14 @@ bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
 		}
 	} else if (_npcFlags & NPCFLAG_MOVE_END) {
 		if (clipExistsByEnd("Whizz On Left", msg->_endFrame)
-				|| clipExistsByEnd("Whizz On Right", msg->_endFrame)) {
+		    || clipExistsByEnd("Whizz On Right", msg->_endFrame)) {
 			setPosition(Point((600 - _bounds.width()) / 2 + 18, 42));
 			loadFrame(0);
 			setTalking(this, true);
 			_npcFlags |= NPCFLAG_START_IDLING;
 			petSetArea(PET_CONVERSATION);
 		} else if (clipExistsByEnd("Whizz Off Left", msg->_endFrame)
-				|| clipExistsByEnd("Whizz Off Right", msg->_endFrame)) {
+		           || clipExistsByEnd("Whizz Off Right", msg->_endFrame)) {
 			CPutBotBackInHisBoxMsg boxMsg;
 			boxMsg.execute(this);
 			if (_npcFlags & NPCFLAG_SUMMON_BELLBOT)
@@ -194,7 +195,7 @@ bool CDoorbot::OnSummonBotMsg(COnSummonBotMsg *msg) {
 	}
 
 	playClip(getRandomNumber(1) ? "Whizz On Left" : "Whizz On Right",
-		MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+	         MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 	movieEvent();
 	_npcFlags |= NPCFLAG_MOVE_END;
 
@@ -338,7 +339,7 @@ bool CDoorbot::TimerMsg(CTimerMsg *msg) {
 bool CDoorbot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 	static const char *const NAMES1[] = {
 		"Mutter Aside", "Rub Chin", "Drunken Eye Roll", "Drunken Head Move",
-		"Look down and mutter",  "Look side to side", "Gesture forward and around",
+		"Look down and mutter", "Look side to side", "Gesture forward and around",
 		"Arms behind back", "Look down", "Rolling around", "Hold face",
 		"Touch chin", "Cross hands in front", nullptr
 	};
@@ -378,7 +379,7 @@ bool CDoorbot::NPCPlayIdleAnimationMsg(CNPCPlayIdleAnimationMsg *msg) {
 	};
 
 	if (!(_npcFlags & (NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT))
-			&& (_npcFlags & NPCFLAG_MOVE_END))
+	    && (_npcFlags & NPCFLAG_MOVE_END))
 		msg->_names = NAMES;
 
 	return true;
@@ -396,7 +397,7 @@ bool CDoorbot::PutBotBackInHisBoxMsg(CPutBotBackInHisBoxMsg *msg) {
 bool CDoorbot::DismissBotMsg(CDismissBotMsg *msg) {
 	if (_npcFlags & NPCFLAG_MOVE_END) {
 		playClip(getRandomNumber(1) ? "Whizz Off Left" : "Whizz Off Right",
-			MOVIE_STOP_PREVIOUS | MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+		         MOVIE_STOP_PREVIOUS | MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		movieEvent();
 
 		if (_npcFlags & NPCFLAG_START_IDLING) {
@@ -415,10 +416,10 @@ bool CDoorbot::DismissBotMsg(CDismissBotMsg *msg) {
 
 bool CDoorbot::MovieFrameMsg(CMovieFrameMsg *msg) {
 	if (clipExistsByStart("Whizz Off Left", msg->_frameNumber)
-			|| clipExistsByStart("Whizz On Left", msg->_frameNumber)) {
+	    || clipExistsByStart("Whizz On Left", msg->_frameNumber)) {
 		setPosition(Point(20, 42));
 	} else if (clipExistsByStart("Whizz Off Right", msg->_frameNumber)
-			|| clipExistsByStart("Whizz On Right", msg->_frameNumber)) {
+	           || clipExistsByStart("Whizz On Right", msg->_frameNumber)) {
 		setPosition(Point(620 - _bounds.width(), 42));
 	}
 
@@ -429,7 +430,7 @@ bool CDoorbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 	CTrueTalkNPC::TrueTalkNotifySpeechEndedMsg(msg);
 
 	if (_npcFlags & NPCFLAG_DOORBOT_INTRO) {
-		// Initial speech by Doorbot in 
+		// Initial speech by Doorbot in
 		switch (msg->_dialogueId - TRANSLATE(10552, 10563)) {
 		case 0:
 			playClip("SE Try Buttons", MOVIE_NOTIFY_OBJECT);
@@ -544,10 +545,10 @@ bool CDoorbot::TextInputMsg(CTextInputMsg *msg) {
 		_timerId = 0;
 
 		if (msg->_input == "yes" || msg->_input == "yeah"
-				|| msg->_input == "yea" || msg->_input == "yup"
-				|| msg->_input == "yep" || msg->_input == "sure"
-				|| msg->_input == "alright" || msg->_input == "all right"
-				|| msg->_input == "ok") {
+		    || msg->_input == "yea" || msg->_input == "yup"
+		    || msg->_input == "yep" || msg->_input == "sure"
+		    || msg->_input == "alright" || msg->_input == "all right"
+		    || msg->_input == "ok") {
 			startTalking(this, 221479);
 		} else {
 			startTalking(this, 221478);
@@ -572,7 +573,7 @@ bool CDoorbot::EnterViewMsg(CEnterViewMsg *msg) {
 
 bool CDoorbot::ActMsg(CActMsg *msg) {
 	debugC(DEBUG_DETAILED, kDebugScripts, "CDoorbot ActMsg action=%s v108=%d v110=%d v114=%d",
-		msg->_action.c_str(), _introMovieNum, _field110, _field114);
+	       msg->_action.c_str(), _introMovieNum, _field110, _field114);
 
 	if (msg->_action == "DoorbotPlayerPressedTopButton") {
 		disableMouse();

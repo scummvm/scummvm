@@ -30,12 +30,17 @@
 
 namespace Gob {
 
-GCTFile::Chunk::Chunk() : type(kChunkTypeNone) {
+GCTFile::Chunk::Chunk()
+  : type(kChunkTypeNone) {
 }
 
-
-GCTFile::GCTFile(Common::SeekableReadStream &gct, Common::RandomSource &rnd) : _rnd(&rnd),
-	_areaLeft(0), _areaTop(0), _areaRight(0), _areaBottom(0), _currentItem(0xFFFF) {
+GCTFile::GCTFile(Common::SeekableReadStream &gct, Common::RandomSource &rnd)
+  : _rnd(&rnd)
+  , _areaLeft(0)
+  , _areaTop(0)
+  , _areaRight(0)
+  , _areaBottom(0)
+  , _currentItem(0xFFFF) {
 
 	load(gct);
 }
@@ -52,7 +57,7 @@ void GCTFile::load(Common::SeekableReadStream &gct) {
 	_items.resize(itemCount);
 
 	for (Items::iterator i = _items.begin(); i != _items.end(); ++i) {
-		const uint16 selector  = gct.readUint16LE();
+		const uint16 selector = gct.readUint16LE();
 		const uint16 lineCount = gct.readUint16LE();
 
 		i->selector = selector;
@@ -175,7 +180,7 @@ Common::String GCTFile::getLineText(const Line &line) const {
 	for (Chunks::const_iterator c = line.chunks.begin(); c != line.chunks.end(); ++c) {
 		// A chunk is either a direct string, or a reference to another item
 
-		if        (c->type == kChunkTypeItem) {
+		if (c->type == kChunkTypeItem) {
 			Common::List<Common::String> lines;
 
 			getItemText(c->item, lines);
@@ -224,14 +229,14 @@ void GCTFile::setArea(int16 left, int16 top, int16 right, int16 bottom) {
 
 	_hasArea = false;
 
-	const int16 width  = right  - left + 1;
-	const int16 height = bottom - top  + 1;
+	const int16 width = right - left + 1;
+	const int16 height = bottom - top + 1;
 	if ((width <= 0) || (height <= 0))
 		return;
 
-	_areaLeft   = left;
-	_areaTop    = top;
-	_areaRight  = right;
+	_areaLeft = left;
+	_areaTop = top;
+	_areaRight = right;
 	_areaBottom = bottom;
 
 	_hasArea = true;
@@ -244,9 +249,9 @@ bool GCTFile::clear(Surface &dest, int16 &left, int16 &top, int16 &right, int16 
 }
 
 bool GCTFile::fill(Surface &dest, uint8 color, int16 &left, int16 &top, int16 &right, int16 &bottom) {
-	left   = _areaLeft;
-	top    = _areaTop;
-	right  = _areaRight;
+	left = _areaLeft;
+	top = _areaTop;
+	right = _areaRight;
 	bottom = _areaBottom;
 
 	if (!hasSavedBackground())
@@ -267,13 +272,13 @@ bool GCTFile::draw(Surface &dest, uint16 item, const Font &font, uint8 color,
 	if ((item >= _items.size()) || !_hasArea)
 		return false;
 
-	left   = _areaLeft;
-	top    = _areaTop;
-	right  = _areaRight;
+	left = _areaLeft;
+	top = _areaTop;
+	right = _areaRight;
 	bottom = _areaBottom;
 
-	const int16 width  = right  - left + 1;
-	const int16 height = bottom - top  + 1;
+	const int16 width = right - left + 1;
+	const int16 height = bottom - top + 1;
 
 	const uint lineCount = height / font.getCharHeight();
 	if (lineCount == 0)

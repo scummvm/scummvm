@@ -23,9 +23,9 @@
 // Scripting module thread management component
 #include "saga/saga.h"
 
-#include "saga/gfx.h"
 #include "saga/actor.h"
 #include "saga/console.h"
+#include "saga/gfx.h"
 #include "saga/interface.h"
 
 #include "saga/script.h"
@@ -137,13 +137,11 @@ void Script::executeThreads(uint msec) {
 					thread._flags &= ~kTFlagWaiting;
 				break;
 
-			case kWaitTypeWalk:
-				{
-					ActorData *actor = (ActorData *)thread._threadObj;
-					if (actor->_currentAction == kActionWait)
-						thread._flags &= ~kTFlagWaiting;
-				}
-				break;
+			case kWaitTypeWalk: {
+				ActorData *actor = (ActorData *)thread._threadObj;
+				if (actor->_currentAction == kActionWait)
+					thread._flags &= ~kTFlagWaiting;
+			} break;
 
 			case kWaitTypeWaitFrames: // IHNM
 				if (thread._frameWait < _vm->_frameCount)
@@ -159,7 +157,6 @@ void Script::executeThreads(uint msec) {
 
 		++threadIterator;
 	}
-
 }
 
 void Script::abortAllThreads() {

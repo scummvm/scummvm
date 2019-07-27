@@ -21,14 +21,14 @@
  */
 
 #include "titanic/sound/node_auto_sound_player.h"
-#include "titanic/sound/auto_music_player.h"
 #include "titanic/core/room_item.h"
+#include "titanic/sound/auto_music_player.h"
 
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CNodeAutoSoundPlayer, CAutoSoundPlayer)
-	ON_MESSAGE(EnterNodeMsg)
-	ON_MESSAGE(LeaveNodeMsg)
+ON_MESSAGE(EnterNodeMsg)
+ON_MESSAGE(LeaveNodeMsg)
 END_MESSAGE_MAP()
 
 void CNodeAutoSoundPlayer::save(SimpleFile *file, int indent) {
@@ -55,7 +55,7 @@ bool CNodeAutoSoundPlayer::EnterNodeMsg(CEnterNodeMsg *msg) {
 			CChangeMusicMsg changeMsg;
 			changeMsg._action = MUSIC_STOP;
 			changeMsg.execute(room, CAutoMusicPlayer::_type,
-				MSGFLAG_CLASS_DEF | MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_SCAN);
+			                  MSGFLAG_CLASS_DEF | MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_SCAN);
 		}
 	}
 
@@ -74,7 +74,7 @@ bool CNodeAutoSoundPlayer::LeaveNodeMsg(CLeaveNodeMsg *msg) {
 			CChangeMusicMsg changeMsg;
 			changeMsg._action = MUSIC_START;
 			changeMsg.execute(room, CAutoMusicPlayer::_type,
-				MSGFLAG_CLASS_DEF | MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_SCAN);
+			                  MSGFLAG_CLASS_DEF | MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_SCAN);
 		}
 	}
 

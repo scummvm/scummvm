@@ -29,35 +29,35 @@
  *
  */
 
+#include "sword25/gfx/bitmapresource.h"
+#include "sword25/gfx/fontresource.h"
+#include "sword25/kernel/inputpersistenceblock.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/outputpersistenceblock.h"
-#include "sword25/kernel/inputpersistenceblock.h"
-#include "sword25/kernel/resmanager.h"	// for PRECACHE_RESOURCES
-#include "sword25/gfx/fontresource.h"
-#include "sword25/gfx/bitmapresource.h"
+#include "sword25/kernel/resmanager.h" // for PRECACHE_RESOURCES
 
 #include "sword25/gfx/text.h"
 
 namespace Sword25 {
 
 namespace {
-const uint32 AUTO_WRAP_THRESHOLD_DEFAULT = 300;
+	const uint32 AUTO_WRAP_THRESHOLD_DEFAULT = 300;
 }
 
-Text::Text(RenderObjectPtr<RenderObject> parentPtr) :
-	RenderObject(parentPtr, RenderObject::TYPE_TEXT),
-	_modulationColor(0xffffffff),
-	_autoWrap(false),
-	_autoWrapThreshold(AUTO_WRAP_THRESHOLD_DEFAULT) {
-
+Text::Text(RenderObjectPtr<RenderObject> parentPtr)
+  : RenderObject(parentPtr, RenderObject::TYPE_TEXT)
+  , _modulationColor(0xffffffff)
+  , _autoWrap(false)
+  , _autoWrapThreshold(AUTO_WRAP_THRESHOLD_DEFAULT) {
 }
 
-Text::Text(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle) :
-		RenderObject(parentPtr, TYPE_TEXT, handle),
-		// Temporarily set fields prior to unpersisting actual values
-		_modulationColor(0xffffffff),
-		_autoWrap(false),
-		_autoWrapThreshold(AUTO_WRAP_THRESHOLD_DEFAULT) {
+Text::Text(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle)
+  : RenderObject(parentPtr, TYPE_TEXT, handle)
+  ,
+  // Temporarily set fields prior to unpersisting actual values
+  _modulationColor(0xffffffff)
+  , _autoWrap(false)
+  , _autoWrapThreshold(AUTO_WRAP_THRESHOLD_DEFAULT) {
 
 	// Unpersist the fields
 	_initSuccess = unpersist(reader);
@@ -84,7 +84,6 @@ bool Text::setFont(const Common::String &font) {
 	forceRefresh();
 	return true;
 #endif
-
 }
 
 void Text::setText(const Common::String &text) {
@@ -221,7 +220,7 @@ void Text::updateFormat() {
 	updateMetrics(*fontPtr);
 
 	_lines.resize(1);
-	if (_autoWrap && (uint) _width >= _autoWrapThreshold && _text.size() >= 2) {
+	if (_autoWrap && (uint)_width >= _autoWrapThreshold && _text.size() >= 2) {
 		_width = 0;
 		uint curLineWidth = 0;
 		uint curLineHeight = 0;

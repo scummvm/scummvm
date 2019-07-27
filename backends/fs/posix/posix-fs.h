@@ -44,7 +44,9 @@ protected:
 	/**
 	 * Plain constructor, for internal use only (hence protected).
 	 */
-	POSIXFilesystemNode() : _isDirectory(false), _isValid(false) {}
+	POSIXFilesystemNode()
+	  : _isDirectory(false)
+	  , _isValid(false) {}
 
 public:
 	/**

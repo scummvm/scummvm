@@ -27,7 +27,7 @@
 namespace Sludge {
 
 struct ZBufferData {
-//	bool loaded;
+	//	bool loaded;
 	int numPanels;
 	int panel[16];
 	int originalNum;

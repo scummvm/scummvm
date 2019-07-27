@@ -125,7 +125,6 @@ bool SagaEngine::decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, ByteArray
 
 	inbuf_end = (inbuf + inbuf_len) - 1;
 
-
 	while ((inbuf_remain > 1) && (outbuf_remain > 0) && !decode_err) {
 
 		if ((inbuf_ptr > inbuf_end) || (outbuf_ptr > outbuf_end)) {

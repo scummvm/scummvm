@@ -32,7 +32,7 @@ void cmdAssignV(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdAddN(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdAddV(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSubN(AgiGame *state, AgiEngine *vm, uint8 *p);
-void cmdSubV(AgiGame *state, AgiEngine *vm, uint8 *p);  // 0x08
+void cmdSubV(AgiGame *state, AgiEngine *vm, uint8 *p); // 0x08
 void cmdLindirectV(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdRindirect(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdLindirectN(AgiGame *state, AgiEngine *vm, uint8 *p);
@@ -40,7 +40,7 @@ void cmdSet(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdReset(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdToggle(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSetV(AgiGame *state, AgiEngine *vm, uint8 *p);
-void cmdResetV(AgiGame *state, AgiEngine *vm, uint8 *p);    // 0x10
+void cmdResetV(AgiGame *state, AgiEngine *vm, uint8 *p); // 0x10
 void cmdToggleV(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdNewRoom(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdNewRoomF(AgiGame *state, AgiEngine *vm, uint8 *p);
@@ -48,7 +48,7 @@ void cmdLoadLogic(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdLoadLogicF(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdCall(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdCallF(AgiGame *state, AgiEngine *vm, uint8 *p);
-void cmdLoadPic(AgiGame *state, AgiEngine *vm, uint8 *p);   // 0x18
+void cmdLoadPic(AgiGame *state, AgiEngine *vm, uint8 *p); // 0x18
 void cmdLoadPicV1(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdDrawPic(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdDrawPicV1(AgiGame *state, AgiEngine *vm, uint8 *p);
@@ -58,7 +58,7 @@ void cmdOverlayPic(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdShowPriScreen(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdLoadView(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdLoadViewF(AgiGame *state, AgiEngine *vm, uint8 *p);
-void cmdDiscardView(AgiGame *state, AgiEngine *vm, uint8 *p);   // 0x20
+void cmdDiscardView(AgiGame *state, AgiEngine *vm, uint8 *p); // 0x20
 void cmdAnimateObj(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdUnanimateAll(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdDraw(AgiGame *state, AgiEngine *vm, uint8 *p);
@@ -68,8 +68,8 @@ void cmdPositionV1(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdPositionF(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdPositionFV1(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdGetPosn(AgiGame *state, AgiEngine *vm, uint8 *p);
-void cmdReposition(AgiGame *state, AgiEngine *vm, uint8 *p);    // 0x28
-void cmdRepositionV1(AgiGame *state, AgiEngine *vm, uint8 *p);  // 0x28
+void cmdReposition(AgiGame *state, AgiEngine *vm, uint8 *p); // 0x28
+void cmdRepositionV1(AgiGame *state, AgiEngine *vm, uint8 *p); // 0x28
 void cmdSetView(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSetViewF(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSetLoop(AgiGame *state, AgiEngine *vm, uint8 *p);
@@ -77,7 +77,7 @@ void cmdSetLoopF(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdFixLoop(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdReleaseLoop(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSetCel(AgiGame *state, AgiEngine *vm, uint8 *p);
-void cmdSetCelF(AgiGame *state, AgiEngine *vm, uint8 *p);   // 0x30
+void cmdSetCelF(AgiGame *state, AgiEngine *vm, uint8 *p); // 0x30
 void cmdLastCel(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdCurrentCel(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdCurrentLoop(AgiGame *state, AgiEngine *vm, uint8 *p);
@@ -85,7 +85,7 @@ void cmdCurrentView(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdNumberOfLoops(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSetPriority(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSetPriorityF(AgiGame *state, AgiEngine *vm, uint8 *p);
-void cmdReleasePriority(AgiGame *state, AgiEngine *vm, uint8 *p);   // 0x38
+void cmdReleasePriority(AgiGame *state, AgiEngine *vm, uint8 *p); // 0x38
 void cmdGetPriority(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdStopUpdate(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdStartUpdate(AgiGame *state, AgiEngine *vm, uint8 *p);
@@ -101,7 +101,7 @@ void cmdObserveObjs(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdDistance(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdStopCycling(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdStartCycling(AgiGame *state, AgiEngine *vm, uint8 *p);
-void cmdNormalCycle(AgiGame *state, AgiEngine *vm, uint8 *p);   // 0x48
+void cmdNormalCycle(AgiGame *state, AgiEngine *vm, uint8 *p); // 0x48
 void cmdEndOfLoop(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdEndOfLoopV1(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdReverseCycle(AgiGame *state, AgiEngine *vm, uint8 *p);
@@ -113,7 +113,7 @@ void cmdStopMotionV1(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdStartMotion(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdStartMotionV1(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdStepSize(AgiGame *state, AgiEngine *vm, uint8 *p);
-void cmdStepTime(AgiGame *state, AgiEngine *vm, uint8 *p);  // 0x50
+void cmdStepTime(AgiGame *state, AgiEngine *vm, uint8 *p); // 0x50
 void cmdMoveObj(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdMoveObjF(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdFollowEgo(AgiGame *state, AgiEngine *vm, uint8 *p);
@@ -121,7 +121,7 @@ void cmdWander(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdNormalMotion(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSetDir(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdGetDir(AgiGame *state, AgiEngine *vm, uint8 *p);
-void cmdIgnoreBlocks(AgiGame *state, AgiEngine *vm, uint8 *p);  // 0x58
+void cmdIgnoreBlocks(AgiGame *state, AgiEngine *vm, uint8 *p); // 0x58
 void cmdObserveBlocks(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdBlock(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdUnblock(AgiGame *state, AgiEngine *vm, uint8 *p);
@@ -130,7 +130,7 @@ void cmdGetV1(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdGetF(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdDrop(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdPut(AgiGame *state, AgiEngine *vm, uint8 *p);
-void cmdPutF(AgiGame *state, AgiEngine *vm, uint8 *p);  // 0x60
+void cmdPutF(AgiGame *state, AgiEngine *vm, uint8 *p); // 0x60
 void cmdGetRoomF(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdLoadSound(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSound(AgiGame *state, AgiEngine *vm, uint8 *p);
@@ -138,7 +138,7 @@ void cmdStopSound(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdPrint(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdPrintF(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdDisplay(AgiGame *state, AgiEngine *vm, uint8 *p);
-void cmdDisplayF(AgiGame *state, AgiEngine *vm, uint8 *p);  // 0x68
+void cmdDisplayF(AgiGame *state, AgiEngine *vm, uint8 *p); // 0x68
 void cmdClearLines(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdTextScreen(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdGraphics(AgiGame *state, AgiEngine *vm, uint8 *p);
@@ -146,7 +146,7 @@ void cmdSetCursorChar(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSetTextAttribute(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdShakeScreen(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdConfigureScreen(AgiGame *state, AgiEngine *vm, uint8 *p);
-void cmdStatusLineOn(AgiGame *state, AgiEngine *vm, uint8 *p);  // 0x70
+void cmdStatusLineOn(AgiGame *state, AgiEngine *vm, uint8 *p); // 0x70
 void cmdStatusLineOff(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSetString(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdGetString(AgiGame *state, AgiEngine *vm, uint8 *p);
@@ -154,7 +154,7 @@ void cmdWordToString(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdParse(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdGetNum(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdPreventInput(AgiGame *state, AgiEngine *vm, uint8 *p);
-void cmdAcceptInput(AgiGame *state, AgiEngine *vm, uint8 *p);   // 0x78
+void cmdAcceptInput(AgiGame *state, AgiEngine *vm, uint8 *p); // 0x78
 void cmdSetKey(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdAddToPic(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdAddToPicV1(AgiGame *state, AgiEngine *vm, uint8 *p);
@@ -163,7 +163,7 @@ void cmdStatus(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSaveGame(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdLoadGame(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdInitDisk(AgiGame *state, AgiEngine *vm, uint8 *p);
-void cmdRestartGame(AgiGame *state, AgiEngine *vm, uint8 *p);   // 0x80
+void cmdRestartGame(AgiGame *state, AgiEngine *vm, uint8 *p); // 0x80
 void cmdShowObj(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdRandom(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdRandomV1(AgiGame *state, AgiEngine *vm, uint8 *p);
@@ -181,7 +181,7 @@ void cmdToggleMonitor(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdVersion(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdScriptSize(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSetGameID(AgiGame *state, AgiEngine *vm, uint8 *p);
-void cmdLog(AgiGame *state, AgiEngine *vm, uint8 *p);   // 0x90
+void cmdLog(AgiGame *state, AgiEngine *vm, uint8 *p); // 0x90
 void cmdSetScanStart(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdResetScanStart(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdRepositionTo(AgiGame *state, AgiEngine *vm, uint8 *p);
@@ -189,7 +189,7 @@ void cmdRepositionToF(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdTraceOn(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdTraceInfo(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdPrintAt(AgiGame *state, AgiEngine *vm, uint8 *p);
-void cmdPrintAtV(AgiGame *state, AgiEngine *vm, uint8 *p);  // 0x98
+void cmdPrintAtV(AgiGame *state, AgiEngine *vm, uint8 *p); // 0x98
 //void cmdDiscardView(AgiGame *state, AgiEngine *vm, uint8 *p); // Opcode repeated from 0x20 ?
 void cmdClearTextRect(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSetUpperLeft(AgiGame *state, AgiEngine *vm, uint8 *p);
@@ -197,7 +197,7 @@ void cmdSetMenu(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSetMenuItem(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSubmitMenu(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdEnableItem(AgiGame *state, AgiEngine *vm, uint8 *p);
-void cmdDisableItem(AgiGame *state, AgiEngine *vm, uint8 *p);   // 0xa0
+void cmdDisableItem(AgiGame *state, AgiEngine *vm, uint8 *p); // 0xa0
 void cmdMenuInput(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdShowObjV(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdOpenDialogue(AgiGame *state, AgiEngine *vm, uint8 *p);
@@ -205,7 +205,7 @@ void cmdCloseDialogue(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdMulN(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdMulV(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdDivN(AgiGame *state, AgiEngine *vm, uint8 *p);
-void cmdDivV(AgiGame *state, AgiEngine *vm, uint8 *p);  // 0xa8
+void cmdDivV(AgiGame *state, AgiEngine *vm, uint8 *p); // 0xa8
 void cmdCloseWindow(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSetSimple(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdPushScript(AgiGame *state, AgiEngine *vm, uint8 *p);

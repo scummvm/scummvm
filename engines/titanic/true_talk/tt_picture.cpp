@@ -26,12 +26,16 @@ namespace Titanic {
 
 bool TTpicture::_staticFlag;
 
-TTpicture::TTpicture(const TTstring &str, WordClass wordClass, int val2, int val3, int val4, int val5, int val6) :
-		TTmajorWord(str, wordClass, val2, val4), _tag(val3), _field30(val5), _field3C(val6),
-		_field38(0) {
+TTpicture::TTpicture(const TTstring &str, WordClass wordClass, int val2, int val3, int val4, int val5, int val6)
+  : TTmajorWord(str, wordClass, val2, val4)
+  , _tag(val3)
+  , _field30(val5)
+  , _field3C(val6)
+  , _field38(0) {
 }
 
-TTpicture::TTpicture(const TTpicture *src) : TTmajorWord(src) {
+TTpicture::TTpicture(const TTpicture *src)
+  : TTmajorWord(src) {
 	if (getStatus()) {
 		_tag = 0;
 		_field30 = 0;
@@ -77,10 +81,7 @@ TTword *TTpicture::copy() const {
 }
 
 bool TTpicture::checkTag() const {
-	return _tag == MKTAG('S', 'E', 'X', 'X') ||
-		_tag == MKTAG('E', 'X', 'C', 'R') ||
-		_tag == MKTAG('P', 'P', 'R', 'T') ||
-		_tag == MKTAG('B', 'L', 'A', 'S');
+	return _tag == MKTAG('S', 'E', 'X', 'X') || _tag == MKTAG('E', 'X', 'C', 'R') || _tag == MKTAG('P', 'P', 'R', 'T') || _tag == MKTAG('B', 'L', 'A', 'S');
 }
 
 bool TTpicture::compareTagTo(uint tag) const {

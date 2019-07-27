@@ -28,8 +28,8 @@
 namespace Cloud {
 namespace ISO8601 {
 
-/** Returns timestamp corresponding to given ISO 8601 date */
-uint32 convertToTimestamp(const Common::String &iso8601Date);
+	/** Returns timestamp corresponding to given ISO 8601 date */
+	uint32 convertToTimestamp(const Common::String &iso8601Date);
 
 } // End of namespace ISO8601
 } // End of namespace Cloud

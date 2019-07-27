@@ -20,11 +20,11 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "titanic/true_talk/barbot_script.h"
-#include "titanic/true_talk/true_talk_manager.h"
+#include "common/textconsole.h"
 #include "titanic/titanic.h"
 #include "titanic/translation.h"
+#include "titanic/true_talk/true_talk_manager.h"
 
 namespace Titanic {
 
@@ -54,8 +54,8 @@ static const uint ARRAY2_DE[10] = {
 };
 
 BarbotScript::BarbotScript(int val1, const char *charClass, int v2,
-		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
-		TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {
+                           const char *charName, int v3, int val2, int v4, int v5, int v6, int v7)
+  : TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {
 	_state = 0;
 	_arrIndex = 0;
 
@@ -83,8 +83,7 @@ void BarbotScript::setupSentences() {
 }
 
 int BarbotScript::chooseResponse(const TTroomScript *roomScript, const TTsentence *sentence, uint tag) {
-	if (tag == MKTAG('D', 'N', 'A', '1') || tag == MKTAG('H', 'H', 'G', 'Q') ||
-			tag == MKTAG('A', 'N', 'S', 'W') || tag == MKTAG('S', 'U', 'M', 'S')) {
+	if (tag == MKTAG('D', 'N', 'A', '1') || tag == MKTAG('H', 'H', 'G', 'Q') || tag == MKTAG('A', 'N', 'S', 'W') || tag == MKTAG('S', 'U', 'M', 'S')) {
 		if (_state < 7) {
 			addResponse(TRANSLATE(STATE_ARRAY_EN[_state++], STATE_ARRAY_DE[_state++]));
 		} else {
@@ -135,8 +134,7 @@ int BarbotScript::chooseResponse(const TTroomScript *roomScript, const TTsentenc
 		return 2;
 	}
 
-	if (tag == MKTAG('T', 'H', 'R', 'T') || tag == MKTAG('S', 'L', 'O', 'W') ||
-			tag == MKTAG('S', 'E', 'X', '1') || tag == MKTAG('P', 'K', 'U', 'P')) {
+	if (tag == MKTAG('T', 'H', 'R', 'T') || tag == MKTAG('S', 'L', 'O', 'W') || tag == MKTAG('S', 'E', 'X', '1') || tag == MKTAG('P', 'K', 'U', 'P')) {
 		adjustDial(0, -7);
 		adjustDial(1, -3);
 	}
@@ -152,13 +150,7 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 
 	checkItems(roomScript, sentence);
 	if (isState9()) {
-		if (sentence->localWord("visioncenter") || sentence->localWord("brain") ||
-				sentence->contains("vision") || sentence->contains("visual") ||
-				sentence->contains("brain") || sentence->contains("crystal") ||
-				sentence->contains("gesichtsmodul") || sentence->contains("sehmodul") ||
-				sentence->contains("gesichtszentrum") || sentence->contains("hirn") ||
-				sentence->contains("hirnstueck")
-			) {
+		if (sentence->localWord("visioncenter") || sentence->localWord("brain") || sentence->contains("vision") || sentence->contains("visual") || sentence->contains("brain") || sentence->contains("crystal") || sentence->contains("gesichtsmodul") || sentence->contains("sehmodul") || sentence->contains("gesichtszentrum") || sentence->contains("hirn") || sentence->contains("hirnstueck")) {
 			if (CTrueTalkManager::getStateValue(2)) {
 				addResponse(getDialogueId(251003));
 				applyResponse();
@@ -249,17 +241,14 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 			return applySentenceIds(TRANSLATE(51897, 51912));
 		break;
 	case 3:
-		if (sentence->localWord("useless") || sentence->contains("useless") ||
-				sentence->contains("hoffnungsloser fall"))
+		if (sentence->localWord("useless") || sentence->contains("useless") || sentence->contains("hoffnungsloser fall"))
 			return applySentenceIds(TRANSLATE(50824, 50837));
 		break;
 	case 4:
 		if (flag)
-			return applySentenceIds(getRandomBit() ?
-				TRANSLATE(50512, 50522) : TRANSLATE(51642, 51657));
+			return applySentenceIds(getRandomBit() ? TRANSLATE(50512, 50522) : TRANSLATE(51642, 51657));
 		else if (flag2)
-			return applySentenceIds(getRandomBit() ?
-				TRANSLATE(50511, 50521) : TRANSLATE(51643, 51658));
+			return applySentenceIds(getRandomBit() ? TRANSLATE(50511, 50521) : TRANSLATE(51643, 51658));
 		break;
 	case 5:
 		if (flag)
@@ -274,8 +263,7 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 			return applySentenceIds(TRANSLATE(50830, 50843));
 		break;
 	case 7:
-		if (flag2 || sentence->contains("never") || sentence->contains("niemals") ||
-				sentence->contains("nie"))
+		if (flag2 || sentence->contains("never") || sentence->contains("niemals") || sentence->contains("nie"))
 			return applySentenceIds(TRANSLATE(51553, 51568));
 		if (flag || sentence->contains("nicest") || sentence->contains("schoenste"))
 			return applySentenceIds(TRANSLATE(51554, 51569));
@@ -323,7 +311,8 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 			return applySentenceIds(getDialogueId(250526), 16);
 		} else {
 			if (g_vm->_trueTalkManager->_quotesTree.search(
-					sentence->_normalizedLine.c_str(), TREE_3, &treeResult[0], 0, nullptr) != -1) {
+			      sentence->_normalizedLine.c_str(), TREE_3, &treeResult[0], 0, nullptr)
+			    != -1) {
 				uint newId = getDialogueId(250526);
 				return applySentenceIds(newId, 16);
 			}
@@ -363,11 +352,11 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 		break;
 	case 24:
 		if (sentence->contains("do not know")
-				|| sentence->contains("no idea")
-				|| sentence->contains("a clue")
-				|| sentence->contains("keine ahnung")
-				|| sentence->contains("weiss nicht")
-				|| sentence->contains("keinen schimmer")) {
+		    || sentence->contains("no idea")
+		    || sentence->contains("a clue")
+		    || sentence->contains("keine ahnung")
+		    || sentence->contains("weiss nicht")
+		    || sentence->contains("keinen schimmer")) {
 			return applySentenceIds(getDialogueId(250553));
 		} else {
 			return applySentenceIds(getDialogueId(250552));
@@ -381,7 +370,8 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 		break;
 	case 26:
 		if (g_vm->_trueTalkManager->_quotesTree.search(
-				sentence->_normalizedLine.c_str(), TREE_3, &treeResult[0], 0, nullptr) != -1)
+		      sentence->_normalizedLine.c_str(), TREE_3, &treeResult[0], 0, nullptr)
+		    != -1)
 			return applySentenceIds(getDialogueId(251899), 26);
 		break;
 
@@ -464,10 +454,10 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 		break;
 	case 45:
 		if (sentence->localWord("summer")
-				|| sentence->contains("summer")
-				|| sentence->localWord("autumn")
-				|| sentence->contains("autumn")
-				|| sentence->contains("herbst")) {
+		    || sentence->contains("summer")
+		    || sentence->localWord("autumn")
+		    || sentence->contains("autumn")
+		    || sentence->contains("herbst")) {
 			return applySentenceIds(TRANSLATE(50743, 50755));
 		} else if (sentence->localWord("winter") || sentence->contains("winter")) {
 			return applySentenceIds(TRANSLATE(50696, 50708));
@@ -490,8 +480,7 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 			return applySentenceIds(TRANSLATE(50225, 50233));
 		break;
 	case 49:
-		if (sentence->localWord("scraliontis") || sentence->contains("scraliontis") ||
-				sentence->contains("skraliontis"))
+		if (sentence->localWord("scraliontis") || sentence->contains("scraliontis") || sentence->contains("skraliontis"))
 			return applySentenceIds(TRANSLATE(50711, 50723));
 		if (sentence->localWord("brobostigon") || sentence->contains("brobostigon"))
 			return applySentenceIds(TRANSLATE(50712, 50724));
@@ -507,7 +496,7 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 	case 52:
 		if (sentence->localWord("note") || sentence->contains("note"))
 			return applySentenceIds(TRANSLATE(50716, 50728));
-		return  applySentenceIds(TRANSLATE(50210, 50218));
+		return applySentenceIds(TRANSLATE(50210, 50218));
 	case 53:
 		return applySentenceIds(TRANSLATE(50210, 50218));
 	case 54:
@@ -534,22 +523,22 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 		break;
 	case 57:
 		if (sentence->localWord("mustard")
-			|| sentence->contains("mustard")
-			|| sentence->localWord("tomato")
-			|| sentence->contains("tomato")
-			|| sentence->contains("senf")
-			|| sentence->contains("tomate"))
+		    || sentence->contains("mustard")
+		    || sentence->localWord("tomato")
+		    || sentence->contains("tomato")
+		    || sentence->contains("senf")
+		    || sentence->contains("tomate"))
 			return applySentenceIds(TRANSLATE(50320, 50329));
 		if (sentence->localWord("sauce")
-			|| sentence->localWord("puree")
-			|| sentence->contains("sauce")
-			|| sentence->contains("puree")
-			|| sentence->contains("bird")
-			|| sentence->contains("starling")
-			|| sentence->contains("sosse")
-			|| sentence->contains("pueree")
-			|| sentence->contains("vogel")
-			|| sentence->contains("staren")) {
+		    || sentence->localWord("puree")
+		    || sentence->contains("sauce")
+		    || sentence->contains("puree")
+		    || sentence->contains("bird")
+		    || sentence->contains("starling")
+		    || sentence->contains("sosse")
+		    || sentence->contains("pueree")
+		    || sentence->contains("vogel")
+		    || sentence->contains("staren")) {
 			applySentenceIds(TRANSLATE(50321, 50330));
 			CTrueTalkManager::triggerAction(30, 0);
 			return 2;
@@ -593,17 +582,17 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 		return applySentenceIds(getDialogueId(250272));
 	case 62:
 		if (flag
-				|| (val2C == 3 && sentence->localWord("do"))
-				|| val2C == 7
-				|| sentence->localWord("help"))
+		    || (val2C == 3 && sentence->localWord("do"))
+		    || val2C == 7
+		    || sentence->localWord("help"))
 			return applySentenceIds(getDialogueId(250270));
 
 		return applySentenceIds(getDialogueId(2570272));
 	case 63:
 		if (flag
-				|| (val2C == 3 || sentence->localWord("do"))
-				|| val2C == 7
-				|| sentence->localWord("help"))
+		    || (val2C == 3 || sentence->localWord("do"))
+		    || val2C == 7
+		    || sentence->localWord("help"))
 			return applySentenceIds(getDialogueId(250271));
 
 		return applySentenceIds(getDialogueId(250272));
@@ -657,7 +646,7 @@ done:
 	if (sentence->contains("goldfish") || sentence->contains("goldfisch")) {
 		addResponse(250184);
 	} else if ((sentence->localWord("puree") || sentence->localWord("pureed"))
-		&& sentence->localWord("parrot")) {
+	           && sentence->localWord("parrot")) {
 		addResponse(250021);
 	} else if (sentence->localWord("starling")) {
 		addResponse(250024);
@@ -669,7 +658,7 @@ done:
 		if (processEntries(&_entries, _entryCount, roomScript, sentence) == 2)
 			return 2;
 		if (processEntries(_defaultEntries, 0, roomScript, sentence) != 2
-				&& !defaultProcess(roomScript, sentence)) {
+		    && !defaultProcess(roomScript, sentence)) {
 			int dval = 0;
 			flag = getRandomNumber(100) > 50;
 			int val;
@@ -741,7 +730,6 @@ done:
 				CTrueTalkManager::setFlags(34, val);
 				break;
 
-
 			case 11:
 				addResponse(getDialogueId(250463));
 				applyResponse();
@@ -796,8 +784,7 @@ ScriptChangedResult BarbotScript::scriptChanged(const TTroomScript *roomScript, 
 			applyResponse();
 		}
 
-		adjustDial(0, getRandomBit() ? getRandomNumber(5) * 4 :
-			-(int)getRandomNumber(5) * 4);
+		adjustDial(0, getRandomBit() ? getRandomNumber(5) * 4 : -(int)getRandomNumber(5) * 4);
 		break;
 
 	case 3:
@@ -819,8 +806,7 @@ ScriptChangedResult BarbotScript::scriptChanged(const TTroomScript *roomScript, 
 	case 4:
 		selectResponse(isState9() ? 250141 : 250140);
 		applyResponse();
-		adjustDial(2, getDialLevel(2, false) < 50 ? -15 - getRandomNumber(30) :
-			15 + getRandomNumber(30));
+		adjustDial(2, getDialLevel(2, false) < 50 ? -15 - getRandomNumber(30) : 15 + getRandomNumber(30));
 
 		if (getDialRegion(1) != 0 && getRandomNumber(100) > 75)
 			adjustDial(1, -35);
@@ -850,7 +836,6 @@ ScriptChangedResult BarbotScript::scriptChanged(const TTroomScript *roomScript, 
 	case 147:
 		addResponse(getDialogueId(250579));
 		break;
-
 	}
 
 	if (id >= 250000 && id <= 251900) {
@@ -872,7 +857,7 @@ ScriptChangedResult BarbotScript::scriptChanged(const TTroomScript *roomScript, 
 }
 
 int BarbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
-		uint tag1, uint tag2, uint remainder) {
+                              uint tag1, uint tag2, uint remainder) {
 	switch (tag2) {
 	case MKTAG('A', 'D', 'V', 'T'):
 	case MKTAG('A', 'R', 'T', 'I'):
@@ -953,7 +938,7 @@ int BarbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *
 	case MKTAG('T', 'O', 'Y', 'S'):
 	case MKTAG('W', 'E', 'A', 'P'):
 		tag2 = MKTAG('M', 'A', 'C', 'H');
-			break;
+		break;
 	case MKTAG('M', 'L', 'T', 'Y'):
 	case MKTAG('P', 'G', 'R', 'P'):
 	case MKTAG('P', 'T', 'I', 'C'):
@@ -1075,14 +1060,12 @@ int BarbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScrip
 		break;
 
 	case 6:
-		if (sentence->contains("do not") || sentence->contains("have no") ||
-			sentence->contains("got no"))
+		if (sentence->contains("do not") || sentence->contains("have no") || sentence->contains("got no"))
 			return 1;
 		break;
 
 	case 7:
-		if (!sentence->contains(TRANSLATE("do not", "idem")) && !sentence->contains(TRANSLATE("have no", "habe kein")) &&
-				!sentence->contains("got no"))
+		if (!sentence->contains(TRANSLATE("do not", "idem")) && !sentence->contains(TRANSLATE("have no", "habe kein")) && !sentence->contains("got no"))
 			return 1;
 		break;
 

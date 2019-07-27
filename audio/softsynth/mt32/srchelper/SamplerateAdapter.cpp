@@ -31,13 +31,12 @@ long SamplerateAdapter::getInputSamples(void *cb_data, float **data) {
 	return length;
 }
 
-SamplerateAdapter::SamplerateAdapter(Synth &useSynth, double targetSampleRate, SamplerateConversionQuality quality) :
-	synth(useSynth),
-	inBuffer(new float[CHANNEL_COUNT * MAX_SAMPLES_PER_RUN]),
-	inBufferSize(MAX_SAMPLES_PER_RUN),
-	inputToOutputRatio(useSynth.getStereoOutputSampleRate() / targetSampleRate),
-	outputToInputRatio(targetSampleRate / useSynth.getStereoOutputSampleRate())
-{
+SamplerateAdapter::SamplerateAdapter(Synth &useSynth, double targetSampleRate, SamplerateConversionQuality quality)
+  : synth(useSynth)
+  , inBuffer(new float[CHANNEL_COUNT * MAX_SAMPLES_PER_RUN])
+  , inBufferSize(MAX_SAMPLES_PER_RUN)
+  , inputToOutputRatio(useSynth.getStereoOutputSampleRate() / targetSampleRate)
+  , outputToInputRatio(targetSampleRate / useSynth.getStereoOutputSampleRate()) {
 	int error;
 	int conversionType;
 	switch (quality) {

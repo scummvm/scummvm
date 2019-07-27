@@ -33,7 +33,7 @@ bool FRect::operator!=(const FRect &r) const {
 }
 
 bool FRect::empty() const {
-	return left == right && top == bottom; 
+	return left == right && top == bottom;
 }
 
 } // End of namespace Titanic

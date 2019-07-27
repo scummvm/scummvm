@@ -21,10 +21,10 @@
  */
 
 #include "glk/conf.h"
-#include "glk/utils.h"
-#include "glk/windows.h"
 #include "common/config-manager.h"
 #include "common/system.h"
+#include "glk/utils.h"
+#include "glk/windows.h"
 
 namespace Glk {
 
@@ -44,7 +44,7 @@ WindowStyleStatic T_STYLES[style_NUMSTYLES] = {
 	{ PROPR, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, 0 }, ///< BlockQuote
 	{ PROPB, { 0xff, 0xff, 0xff }, { 0x00, 0x60, 0x00 }, 0 }, ///< Input
 	{ MONOR, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, 0 }, ///< User1
-	{ MONOR, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, 0 }  ///< User2
+	{ MONOR, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, 0 } ///< User2
 };
 
 WindowStyleStatic G_STYLES[style_NUMSTYLES] = {
@@ -58,7 +58,7 @@ WindowStyleStatic G_STYLES[style_NUMSTYLES] = {
 	{ MONOR, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, 0 }, ///< BlockQuote
 	{ MONOR, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, 0 }, ///< Input
 	{ MONOR, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, 0 }, ///< User1
-	{ MONOR, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, 0 }  ///< User2
+	{ MONOR, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, 0 } ///< User2
 };
 
 Conf *g_conf;
@@ -126,7 +126,9 @@ Conf::Conf(InterpreterType interpType) {
 	get("caretshape", _propInfo._caretShape, 2);
 
 	_propInfo._linkStyle = _monoInfo._linkStyle = ConfMan.hasKey("linkstyle")
-		&& !strToInt(ConfMan.get("linkstyle").c_str()) ? 0 : 1;
+	    && !strToInt(ConfMan.get("linkstyle").c_str())
+	  ? 0
+	  : 1;
 
 	get("scrollwidth", _scrollWidth);
 	get("scrollbg", _scrollBg, SCROLL_BG);
@@ -224,7 +226,7 @@ void Conf::get(const Common::String &key, FACES &field, FACES defaultFont) {
 }
 
 void Conf::get(const Common::String &key, double &field, double defaultVal) {
-	field = ConfMan.hasKey(key) ?  atof(ConfMan.get(key).c_str()) : defaultVal;
+	field = ConfMan.hasKey(key) ? atof(ConfMan.get(key).c_str()) : defaultVal;
 }
 
 uint Conf::parseColor(const Common::String &str) {

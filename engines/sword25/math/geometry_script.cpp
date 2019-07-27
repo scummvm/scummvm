@@ -33,14 +33,14 @@
 #include "sword25/gfx/graphicengine.h"
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/kernel.h"
-#include "sword25/script/script.h"
 #include "sword25/script/luabindhelper.h"
+#include "sword25/script/script.h"
 
 #include "sword25/math/geometry.h"
 #include "sword25/math/region.h"
 #include "sword25/math/regionregistry.h"
-#include "sword25/math/walkregion.h"
 #include "sword25/math/vertex.h"
+#include "sword25/math/walkregion.h"
 
 namespace Sword25 {
 
@@ -178,8 +178,7 @@ static uint tableRegionToRegion(lua_State *L, const char *className) {
 		Polygon polygon;
 		tablePolygonToPolygon(L, polygon);
 		RegionRegistry::instance().resolveHandle(regionHandle)->init(polygon);
-	}
-	break;
+	} break;
 
 	case LUA_TTABLE: {
 		lua_rawgeti(L, -1, 1);
@@ -204,8 +203,7 @@ static uint tableRegionToRegion(lua_State *L, const char *className) {
 
 			RegionRegistry::instance().resolveHandle(regionHandle)->init(polygon, &holes);
 		}
-	}
-	break;
+	} break;
 
 	default:
 		luaL_error(L, "Illegal region definition.");
@@ -245,16 +243,15 @@ static int newWalkRegion(lua_State *L) {
 static const char *GEO_LIBRARY_NAME = "Geo";
 
 static const luaL_reg GEO_FUNCTIONS[] = {
-	{"NewRegion", newRegion},
-	{"NewWalkRegion", newWalkRegion},
-	{0, 0}
+	{ "NewRegion", newRegion },
+	{ "NewWalkRegion", newWalkRegion },
+	{ 0, 0 }
 };
 
 static Region *checkRegion(lua_State *L) {
 	// The first parameter must be of type 'userdata', and the Metatable class Geo.Region or Geo.WalkRegion
 	uint *regionHandlePtr = reinterpret_cast<uint *>(LuaBindhelper::my_checkudata(L, 1, REGION_CLASS_NAME));
-	if (regionHandlePtr != 0 ||
-	        (regionHandlePtr = reinterpret_cast<uint *>(LuaBindhelper::my_checkudata(L, 1, WALKREGION_CLASS_NAME))) != 0) {
+	if (regionHandlePtr != 0 || (regionHandlePtr = reinterpret_cast<uint *>(LuaBindhelper::my_checkudata(L, 1, WALKREGION_CLASS_NAME))) != 0) {
 		return RegionRegistry::instance().resolveHandle(*regionHandlePtr);
 	} else {
 		luaL_argcheck(L, 0, 1, "'" REGION_CLASS_NAME "' expected");
@@ -358,17 +355,17 @@ static int dummyFuncError(lua_State *L) {
 }
 
 static const luaL_reg REGION_METHODS[] = {
-	{"SetPos", r_setPos},
-	{"SetX", r_setX},
-	{"SetY", r_setY},
-	{"GetPos", r_getPos},
-	{"IsPointInRegion", r_isPointInRegion},
-	{"GetX", r_getX},
-	{"GetY", r_getY},
-	{"IsValid", r_isValid},
-	{"Draw", dummyFuncError},
-	{"GetCentroid", r_getCentroid},
-	{0, 0}
+	{ "SetPos", r_setPos },
+	{ "SetX", r_setX },
+	{ "SetY", r_setY },
+	{ "GetPos", r_getPos },
+	{ "IsPointInRegion", r_isPointInRegion },
+	{ "GetX", r_getX },
+	{ "GetY", r_getY },
+	{ "IsValid", r_isValid },
+	{ "Draw", dummyFuncError },
+	{ "GetCentroid", r_getCentroid },
+	{ 0, 0 }
 };
 
 static WalkRegion *checkWalkRegion(lua_State *L) {
@@ -408,8 +405,8 @@ static int wr_getPath(lua_State *L) {
 }
 
 static const luaL_reg WALKREGION_METHODS[] = {
-	{"GetPath", wr_getPath},
-	{0, 0}
+	{ "GetPath", wr_getPath },
+	{ 0, 0 }
 };
 
 bool Geometry::registerScriptBindings() {
@@ -417,17 +414,23 @@ bool Geometry::registerScriptBindings() {
 	assert(pKernel);
 	ScriptEngine *pScript = pKernel->getScript();
 	assert(pScript);
-	lua_State *L = static_cast< lua_State *>(pScript->getScriptObject());
+	lua_State *L = static_cast<lua_State *>(pScript->getScriptObject());
 	assert(L);
 
-	if (!LuaBindhelper::addMethodsToClass(L, REGION_CLASS_NAME, REGION_METHODS)) return false;
-	if (!LuaBindhelper::addMethodsToClass(L, WALKREGION_CLASS_NAME, REGION_METHODS)) return false;
-	if (!LuaBindhelper::addMethodsToClass(L, WALKREGION_CLASS_NAME, WALKREGION_METHODS)) return false;
+	if (!LuaBindhelper::addMethodsToClass(L, REGION_CLASS_NAME, REGION_METHODS))
+		return false;
+	if (!LuaBindhelper::addMethodsToClass(L, WALKREGION_CLASS_NAME, REGION_METHODS))
+		return false;
+	if (!LuaBindhelper::addMethodsToClass(L, WALKREGION_CLASS_NAME, WALKREGION_METHODS))
+		return false;
 
-	if (!LuaBindhelper::setClassGCHandler(L, REGION_CLASS_NAME, r_delete)) return false;
-	if (!LuaBindhelper::setClassGCHandler(L, WALKREGION_CLASS_NAME, r_delete)) return false;
+	if (!LuaBindhelper::setClassGCHandler(L, REGION_CLASS_NAME, r_delete))
+		return false;
+	if (!LuaBindhelper::setClassGCHandler(L, WALKREGION_CLASS_NAME, r_delete))
+		return false;
 
-	if (!LuaBindhelper::addFunctionsToLib(L, GEO_LIBRARY_NAME, GEO_FUNCTIONS)) return false;
+	if (!LuaBindhelper::addFunctionsToLib(L, GEO_LIBRARY_NAME, GEO_FUNCTIONS))
+		return false;
 
 	return true;
 }

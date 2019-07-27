@@ -30,9 +30,9 @@
 
 #include "macventure/sound.h"
 
-#include "audio/mixer.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+#include "audio/mixer.h"
 
 namespace MacVenture {
 
@@ -49,8 +49,8 @@ SoundManager::~SoundManager() {
 	if (_container)
 		delete _container;
 
-	Common::HashMap<ObjID, SoundAsset*>::iterator it;
-	Common::HashMap<ObjID, SoundAsset*>::iterator end = _assets.end();
+	Common::HashMap<ObjID, SoundAsset *>::iterator it;
+	Common::HashMap<ObjID, SoundAsset *>::iterator end = _assets.end();
 	for (it = _assets.begin(); it != end; it++) {
 		delete it->_value;
 	}
@@ -67,8 +67,11 @@ void SoundManager::ensureLoaded(ObjID sound) {
 		_assets[sound] = new SoundAsset(_container, sound);
 }
 
-SoundAsset::SoundAsset(Container *container, ObjID id) :
-	_container(container), _id(id), _length(0), _frequency(1) {
+SoundAsset::SoundAsset(Container *container, ObjID id)
+  : _container(container)
+  , _id(id)
+  , _length(0)
+  , _frequency(1) {
 	if (_container->getItemByteSize(_id) == 0)
 		warning("Trying to load an empty sound asset (%d).", _id);
 
@@ -77,7 +80,7 @@ SoundAsset::SoundAsset(Container *container, ObjID id) :
 	stream->seek(5, SEEK_SET);
 	SoundType type = (SoundType)stream->readByte();
 	debugC(2, kMVDebugSound, "Decoding sound of type %x", type);
-	switch(type) {
+	switch (type) {
 	case kSound10:
 		decode10(stream);
 		break;

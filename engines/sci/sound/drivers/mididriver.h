@@ -23,10 +23,10 @@
 #ifndef SCI_SFX_SOFTSEQ_MIDIDRIVER_H
 #define SCI_SFX_SOFTSEQ_MIDIDRIVER_H
 
-#include "sci/sci.h"
-#include "sci/util.h"
 #include "audio/mididrv.h"
 #include "common/error.h"
+#include "sci/sci.h"
+#include "sci/util.h"
 
 namespace Sci {
 
@@ -80,10 +80,13 @@ protected:
 	int8 _reverb;
 
 public:
-	MidiPlayer(SciVersion version) : _driver(0), _reverb(-1), _version(version) { }
+	MidiPlayer(SciVersion version)
+	  : _driver(0)
+	  , _reverb(-1)
+	  , _version(version) {}
 
 	int open() {
-		ResourceManager *resMan = g_sci->getResMan();	// HACK
+		ResourceManager *resMan = g_sci->getResMan(); // HACK
 		return open(resMan);
 	}
 	virtual int open(ResourceManager *resMan) { return _driver->open(); }
@@ -99,7 +102,7 @@ public:
 	virtual int getLastChannel() const { return 15; }
 
 	virtual void setVolume(byte volume) {
-		if(_driver)
+		if (_driver)
 			_driver->property(MIDI_PROP_MASTER_VOLUME, volume);
 	}
 

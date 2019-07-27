@@ -20,15 +20,15 @@
  *
  */
 
-#include "common/util.h"
 #include "common/system.h"
+#include "common/util.h"
 
 #include "gui/ThemeLayout.h"
 
 #include "graphics/font.h"
 
 #ifdef LAYOUT_DEBUG_DIALOG
-#include "graphics/surface.h"
+#	include "graphics/surface.h"
 #endif
 
 namespace GUI {
@@ -52,8 +52,10 @@ void ThemeLayout::importLayout(ThemeLayout *layout) {
 bool ThemeLayout::getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) {
 	if (name.empty()) {
 		assert(getLayoutType() == kLayoutMain);
-		x = _x; y = _y;
-		w = _w; h = _h;
+		x = _x;
+		y = _y;
+		w = _w;
+		h = _h;
 		return true;
 	}
 
@@ -126,7 +128,7 @@ void ThemeLayout::debugDraw(Graphics::Surface *screen, const Graphics::Font *fon
 	uint32 color = 0xFFFFFFFF;
 	font->drawString(screen, getName(), _x, _y, _w, color, Graphics::kTextAlignRight, 0, true);
 	screen->hLine(_x, _y, _x + _w, color);
-	screen->hLine(_x, _y + _h, _x + _w , color);
+	screen->hLine(_x, _y + _h, _x + _w, color);
 	screen->vLine(_x, _y, _y + _h, color);
 	screen->vLine(_x + _w, _y, _y + _h, color);
 
@@ -135,11 +137,12 @@ void ThemeLayout::debugDraw(Graphics::Surface *screen, const Graphics::Font *fon
 }
 #endif
 
-
 bool ThemeLayoutWidget::getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) {
 	if (name == _name) {
-		x = _x; y = _y;
-		w = _w; h = _h;
+		x = _x;
+		y = _y;
+		w = _w;
+		h = _h;
 		return true;
 	}
 

@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "queen/grid.h"
 
 #include "queen/display.h"
@@ -32,7 +31,7 @@
 namespace Queen {
 
 Grid::Grid(QueenEngine *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 	memset(_zones, 0, sizeof(_zones));
 }
 
@@ -48,16 +47,18 @@ void Grid::readDataFrom(uint16 numObjects, uint16 numRooms, byte *&ptr) {
 
 	_numRoomAreas = numRooms;
 
-	_objMax  = new int16[_numRoomAreas + 1];
+	_objMax = new int16[_numRoomAreas + 1];
 	_areaMax = new int16[_numRoomAreas + 1];
-	_area    = new Area[_numRoomAreas + 1][MAX_AREAS_NUMBER];
+	_area = new Area[_numRoomAreas + 1][MAX_AREAS_NUMBER];
 
 	_objMax[0] = 0;
 	_areaMax[0] = 0;
 	// _area[0][] cleared by default constructor
 	for (i = 1; i <= _numRoomAreas; i++) {
-		_objMax[i] = (int16)READ_BE_INT16(ptr); ptr += 2;
-		_areaMax[i] = (int16)READ_BE_INT16(ptr); ptr += 2;
+		_objMax[i] = (int16)READ_BE_INT16(ptr);
+		ptr += 2;
+		_areaMax[i] = (int16)READ_BE_INT16(ptr);
+		ptr += 2;
 		// _area[i][0] cleared by default constructor
 		for (j = 1; j <= _areaMax[i]; j++) {
 			assert(j < MAX_AREAS_NUMBER);
@@ -168,7 +169,7 @@ void Grid::setupPanel() {
 	}
 
 	// inventory scrolls
-	setZone(GS_PANEL,  9, 160, 10, 179, 29);
+	setZone(GS_PANEL, 9, 160, 10, 179, 29);
 	setZone(GS_PANEL, 10, 160, 30, 179, 49);
 
 	// inventory items
@@ -232,7 +233,7 @@ uint16 Grid::findObjectNumber(uint16 zoneNum) const {
 	debug(9, "Grid::findObjectNumber(%X, %X)", zoneNum, objectMax);
 	if (zoneNum > objectMax) {
 		// this is an area box, check for associated object
-		obj =  _area[room][zoneNum - objectMax].object;
+		obj = _area[room][zoneNum - objectMax].object;
 		if (obj != 0) {
 			// there is an object, get its number
 			obj -= _vm->logic()->currentRoomData();

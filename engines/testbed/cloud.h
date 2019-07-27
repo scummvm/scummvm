@@ -23,8 +23,8 @@
 #ifndef TESTBED_CLOUD_H
 #define TESTBED_CLOUD_H
 
-#include "testbed/testsuite.h"
 #include "backends/cloud/storage.h"
+#include "testbed/testsuite.h"
 
 // This file can be used as template for header files of other newer testsuites.
 
@@ -32,27 +32,27 @@ namespace Testbed {
 
 namespace CloudTests {
 
-// Helper functions for Cloud tests
+	// Helper functions for Cloud tests
 
-bool waitForCallback();
-bool waitForCallbackMore();
-const char *getRemoteTestPath();
-void infoCallback(Cloud::Storage::StorageInfoResponse response);
-void directoryListedCallback(Cloud::Storage::FileArrayResponse response);
-void directoryCreatedCallback(Cloud::Storage::BoolResponse response);
-void fileUploadedCallback(Cloud::Storage::UploadResponse response);
-void fileDownloadedCallback(Cloud::Storage::BoolResponse response);
-void directoryDownloadedCallback(Cloud::Storage::FileArrayResponse response);
-void savesSyncedCallback(Cloud::Storage::BoolResponse response);
-void errorCallback(Networking::ErrorResponse response);
+	bool waitForCallback();
+	bool waitForCallbackMore();
+	const char *getRemoteTestPath();
+	void infoCallback(Cloud::Storage::StorageInfoResponse response);
+	void directoryListedCallback(Cloud::Storage::FileArrayResponse response);
+	void directoryCreatedCallback(Cloud::Storage::BoolResponse response);
+	void fileUploadedCallback(Cloud::Storage::UploadResponse response);
+	void fileDownloadedCallback(Cloud::Storage::BoolResponse response);
+	void directoryDownloadedCallback(Cloud::Storage::FileArrayResponse response);
+	void savesSyncedCallback(Cloud::Storage::BoolResponse response);
+	void errorCallback(Networking::ErrorResponse response);
 
-TestExitStatus testInfo();
-TestExitStatus testDirectoryListing();
-TestExitStatus testDirectoryCreating();
-TestExitStatus testUploading();
-TestExitStatus testDownloading();
-TestExitStatus testFolderDownloading();
-TestExitStatus testSavesSync();
+	TestExitStatus testInfo();
+	TestExitStatus testDirectoryListing();
+	TestExitStatus testDirectoryCreating();
+	TestExitStatus testUploading();
+	TestExitStatus testDownloading();
+	TestExitStatus testFolderDownloading();
+	TestExitStatus testSavesSync();
 
 } // End of namespace CloudTests
 
@@ -75,7 +75,6 @@ public:
 	const char *getDescription() const {
 		return "CloudMan, Storage API tests";
 	}
-
 };
 
 } // End of namespace Testbed

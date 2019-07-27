@@ -26,222 +26,225 @@
 #include "common/scummsys.h"
 #include "common/serializer.h"
 #include "mads/game.h"
-#include "mads/scene.h"
 #include "mads/phantom/phantom_scenes.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
 namespace Phantom {
 
-class Scene3xx : public PhantomScene {
-protected:
-	/**
+	class Scene3xx : public PhantomScene {
+	protected:
+		/**
 	 * Plays an appropriate sound when entering a scene
 	 */
-	void sceneEntrySound();
+		void sceneEntrySound();
 
-	/**
+		/**
 	 *Sets the AA file to use for the scene
 	 */
-	void setAAName();
+		void setAAName();
 
-	/**
+		/**
 	 * Updates the prefix used for getting player sprites for the scene
 	 */
-	void setPlayerSpritesPrefix();
-public:
-	Scene3xx(MADSEngine *vm) : PhantomScene(vm) {}
-};
+		void setPlayerSpritesPrefix();
 
-class Scene301 : public Scene3xx {
-private:
-	bool _anim0ActvFl;
-	bool _skip1Fl;
-	bool _skip2Fl;
+	public:
+		Scene3xx(MADSEngine *vm)
+		  : PhantomScene(vm) {}
+	};
 
-	int _lightingHotspotId;
-	int _sandbagHotspotId;
+	class Scene301 : public Scene3xx {
+	private:
+		bool _anim0ActvFl;
+		bool _skip1Fl;
+		bool _skip2Fl;
 
-public:
-	Scene301(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		int _lightingHotspotId;
+		int _sandbagHotspotId;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene301(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene302 : public Scene3xx {
-public:
-	Scene302(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	class Scene302 : public Scene3xx {
+	public:
+		Scene302(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene303 : public Scene3xx {
-private:
-	bool _anim0ActvFl;
-	int _hempHotspotId;
-	int _skipFrameCheckFl;
-public:
-	Scene303(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	class Scene303 : public Scene3xx {
+	private:
+		bool _anim0ActvFl;
+		int _hempHotspotId;
+		int _skipFrameCheckFl;
 
-class Scene304 : public Scene3xx {
-private:
-	bool _anim0ActvFl;
-	bool _anim1ActvFl;
-	bool _anim2ActvFl;
+	public:
+		Scene303(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-	int _raoulFrame;
-	int _raoulStatus;
-	int _fightFrame;
-	int _fightStatus;
-	int _fightCount;
-	int _phantomFrame;
-	int _phantomStatus;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	void handleConversation23();
-	void handleRaoulAnimation();
-	void handlePhantomAnimation();
-	void handleFightAnimation();
+	class Scene304 : public Scene3xx {
+	private:
+		bool _anim0ActvFl;
+		bool _anim1ActvFl;
+		bool _anim2ActvFl;
 
-public:
-	Scene304(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		int _raoulFrame;
+		int _raoulStatus;
+		int _fightFrame;
+		int _fightStatus;
+		int _fightCount;
+		int _phantomFrame;
+		int _phantomStatus;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+		void handleConversation23();
+		void handleRaoulAnimation();
+		void handlePhantomAnimation();
+		void handleFightAnimation();
 
-class Scene305 : public Scene3xx {
-private:
-	bool _anim0ActvFl;
-	bool _anim1ActvFl;
-	bool _skipFl;
-	bool _unmaskFl;
+	public:
+		Scene304(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-	int _unmaskFrame;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	void handle_animation_unmask();
+	class Scene305 : public Scene3xx {
+	private:
+		bool _anim0ActvFl;
+		bool _anim1ActvFl;
+		bool _skipFl;
+		bool _unmaskFl;
 
-public:
-	Scene305(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		int _unmaskFrame;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+		void handle_animation_unmask();
 
-class Scene306 : public Scene3xx {
-private:
-	bool _speechDoneFl;
+	public:
+		Scene305(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-public:
-	Scene306(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	class Scene306 : public Scene3xx {
+	private:
+		bool _speechDoneFl;
 
-class Scene307 : public Scene3xx {
-public:
-	Scene307(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	public:
+		Scene306(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-class Scene308 : public Scene3xx {
-private:
-	bool _anim0ActvFl;
-	bool _anim1ActvFl;
-	bool _anim2ActvFl;
-	bool _anim3ActvFl;
-	bool _skip1Fl;
-	bool _skip2Fl;
-	int _currentFloor;
+	class Scene307 : public Scene3xx {
+	public:
+		Scene307(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-public:
-	Scene308(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	class Scene308 : public Scene3xx {
+	private:
+		bool _anim0ActvFl;
+		bool _anim1ActvFl;
+		bool _anim2ActvFl;
+		bool _anim3ActvFl;
+		bool _skip1Fl;
+		bool _skip2Fl;
+		int _currentFloor;
 
-class Scene309 : public Scene3xx {
-private:
-	bool _anim0ActvFl;
+	public:
+		Scene308(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-	int _boatStatus;
-	int _boatFrame;
-	int _talkCount;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	void handleBoatAnimation();
+	class Scene309 : public Scene3xx {
+	private:
+		bool _anim0ActvFl;
 
-public:
-	Scene309(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		int _boatStatus;
+		int _boatFrame;
+		int _talkCount;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+		void handleBoatAnimation();
 
-class Scene310 : public Scene3xx {
-private:
-	int _raoulMessageColor;
-	int _chrisMessageColor;
-	int _multiplanePosX[4];
-	int _lakeFrame;
+	public:
+		Scene309(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-	void setMultiplanePos(int x_new);
-	void handleLakeAnimation();
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-public:
-	Scene310(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	class Scene310 : public Scene3xx {
+	private:
+		int _raoulMessageColor;
+		int _chrisMessageColor;
+		int _multiplanePosX[4];
+		int _lakeFrame;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+		void setMultiplanePos(int x_new);
+		void handleLakeAnimation();
+
+	public:
+		Scene310(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
+
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 } // End of namespace Phantom
 } // End of namespace MADS
 

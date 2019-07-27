@@ -20,11 +20,10 @@
  *
  */
 
-
-#include "common/system.h"
 #include "common/endian.h"
 #include "common/list.h"
 #include "common/rect.h"
+#include "common/system.h"
 
 #include "graphics/palette.h"
 
@@ -45,12 +44,12 @@ int palDirtyMax = -1;
 bool _dirtyRectScreen = false;
 
 gfxModuleDataStruct gfxModuleData = {
-	0,			// use Tandy
-	0,			// use EGA
-	1,			// use VGA
+	0, // use Tandy
+	0, // use EGA
+	1, // use VGA
 
-	page00,			// pPage00
-	page10,			// pPage10
+	page00, // pPage00
+	page10, // pPage10
 };
 
 void gfxModuleData_gfxClearFrameBuffer(uint8 *ptr) {
@@ -94,13 +93,13 @@ void convertGfxFromMode5(const uint8 *sourcePtr, int width, int height, uint8 *d
 
 		for (int col = 0; col < 40; col++) {
 			for (int bit = 0; bit < 8; bit++) {
-				p0 = (sourcePtr[line*40 + col + range * 0] >> bit) & 1;
-				p1 = (sourcePtr[line*40 + col + range * 1] >> bit) & 1;
-				p2 = (sourcePtr[line*40 + col + range * 2] >> bit) & 1;
-				p3 = (sourcePtr[line*40 + col + range * 3] >> bit) & 1;
-				p4 = (sourcePtr[line*40 + col + range * 4] >> bit) & 1;
+				p0 = (sourcePtr[line * 40 + col + range * 0] >> bit) & 1;
+				p1 = (sourcePtr[line * 40 + col + range * 1] >> bit) & 1;
+				p2 = (sourcePtr[line * 40 + col + range * 2] >> bit) & 1;
+				p3 = (sourcePtr[line * 40 + col + range * 3] >> bit) & 1;
+				p4 = (sourcePtr[line * 40 + col + range * 4] >> bit) & 1;
 
-				destPtr[line * width + col * 8 + (7-bit)] = p0 | (p1 << 1) | (p2 << 2) | (p3 << 3) | (p4 << 4);
+				destPtr[line * width + col * 8 + (7 - bit)] = p0 | (p1 << 1) | (p2 << 2) | (p3 << 3) | (p4 << 4);
 			}
 		}
 	}
@@ -230,17 +229,17 @@ void gfxModuleData_flipScreen() {
 }
 
 void gfxModuleData_addDirtyRect(const Common::Rect &r) {
-	_vm->_dirtyRects.push_back(Common::Rect(	MAX(r.left, (int16)0), MAX(r.top, (int16)0),
-		MIN(r.right, (int16)320), MIN(r.bottom, (int16)200)));
+	_vm->_dirtyRects.push_back(Common::Rect(MAX(r.left, (int16)0), MAX(r.top, (int16)0),
+	                                        MIN(r.right, (int16)320), MIN(r.bottom, (int16)200)));
 }
 
 /**
  * Creates the union of two rectangles.
  */
 static bool unionRectangle(Common::Rect &pDest, const Common::Rect &pSrc1, const Common::Rect &pSrc2) {
-	pDest.left   = MIN(pSrc1.left, pSrc2.left);
-	pDest.top    = MIN(pSrc1.top, pSrc2.top);
-	pDest.right  = MAX(pSrc1.right, pSrc2.right);
+	pDest.left = MIN(pSrc1.left, pSrc2.left);
+	pDest.top = MIN(pSrc1.top, pSrc2.top);
+	pDest.right = MAX(pSrc1.right, pSrc2.right);
 	pDest.bottom = MAX(pSrc1.bottom, pSrc2.bottom);
 
 	return !pDest.isEmpty();
@@ -277,7 +276,7 @@ void gfxModuleData_updatePalette() {
 			paletteRGB[i * 3 + 1] = lpalette[i].G;
 			paletteRGB[i * 3 + 2] = lpalette[i].B;
 		}
-		g_system->getPaletteManager()->setPalette(paletteRGB + palDirtyMin*3, palDirtyMin, palDirtyMax - palDirtyMin + 1);
+		g_system->getPaletteManager()->setPalette(paletteRGB + palDirtyMin * 3, palDirtyMin, palDirtyMax - palDirtyMin + 1);
 		palDirtyMin = 256;
 		palDirtyMax = -1;
 	}
@@ -311,7 +310,7 @@ void flip() {
 	for (dr = _vm->_dirtyRects.begin(); dr != _vm->_dirtyRects.end(); ++dr) {
 		Common::Rect &r = *dr;
 		g_system->copyRectToScreen(globalScreen + 320 * r.top + r.left, 320,
-			r.left, r.top, r.width(), r.height());
+		                           r.left, r.top, r.width(), r.height());
 	}
 
 	_vm->_dirtyRects.clear();

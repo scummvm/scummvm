@@ -44,6 +44,7 @@ public:
 	bool scSetProperty(const char *name, ScValue *value);
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	const char *scToString();
+
 private:
 	TimeDate _tm;
 	Common::String _strRep;

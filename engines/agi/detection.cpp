@@ -22,16 +22,16 @@
 
 #include "base/plugins.h"
 
-#include "engines/advancedDetector.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/md5.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "engines/advancedDetector.h"
 
-#include "graphics/thumbnail.h"
 #include "graphics/surface.h"
+#include "graphics/thumbnail.h"
 
 #include "agi/agi.h"
 #include "agi/preagi.h"
@@ -39,7 +39,6 @@
 #include "agi/preagi_troll.h"
 #include "agi/preagi_winnie.h"
 #include "agi/wagparser.h"
-
 
 namespace Agi {
 
@@ -107,89 +106,69 @@ const char *AgiBase::getDiskName(uint16 id) {
 }
 
 static const PlainGameDescriptor agiGames[] = {
-	{"agi", "Sierra AGI game"},
-	{"agi-fanmade", "Fanmade AGI game"},
-	{"agidemo", "AGI Demo"},
-	{"bc", "The Black Cauldron"},
-	{"caitlyn", "Caitlyn's Destiny"},
-	{"ddp", "Donald Duck's Playground"},
-	{"goldrush", "Gold Rush!"},
-	{"kq1", "King's Quest I: Quest for the Crown"},
-	{"kq2", "King's Quest II: Romancing the Throne"},
-	{"kq3", "King's Quest III: To Heir Is Human"},
-	{"kq4", "King's Quest IV: The Perils of Rosella"},
-	{"lsl1", "Leisure Suit Larry in the Land of the Lounge Lizards"},
-	{"mickey", "Mickey\'s Space Adventure"},
-	{"mixedup", "Mixed-Up Mother Goose"},
-	{"mh1", "Manhunter 1: New York"},
-	{"mh2", "Manhunter 2: San Francisco"},
-	{"pq1", "Police Quest I: In Pursuit of the Death Angel"},
-	{"serguei1", "Serguei's Destiny 1"},
-	{"serguei2", "Serguei's Destiny 2"},
-	{"sq0", "Space Quest 0: Replicated"},
-	{"sq1", "Space Quest I: The Sarien Encounter"},
-	{"sq2", "Space Quest II: Vohaul's Revenge"},
-	{"sqx", "Space Quest X: The Lost Chapter"},
-	{"tetris", "AGI Tetris"},
-	{"troll", "Troll\'s Tale"},
-	{"winnie", "Winnie the Pooh in the Hundred Acre Wood"},
-	{"xmascard", "Xmas Card"},
+	{ "agi", "Sierra AGI game" },
+	{ "agi-fanmade", "Fanmade AGI game" },
+	{ "agidemo", "AGI Demo" },
+	{ "bc", "The Black Cauldron" },
+	{ "caitlyn", "Caitlyn's Destiny" },
+	{ "ddp", "Donald Duck's Playground" },
+	{ "goldrush", "Gold Rush!" },
+	{ "kq1", "King's Quest I: Quest for the Crown" },
+	{ "kq2", "King's Quest II: Romancing the Throne" },
+	{ "kq3", "King's Quest III: To Heir Is Human" },
+	{ "kq4", "King's Quest IV: The Perils of Rosella" },
+	{ "lsl1", "Leisure Suit Larry in the Land of the Lounge Lizards" },
+	{ "mickey", "Mickey\'s Space Adventure" },
+	{ "mixedup", "Mixed-Up Mother Goose" },
+	{ "mh1", "Manhunter 1: New York" },
+	{ "mh2", "Manhunter 2: San Francisco" },
+	{ "pq1", "Police Quest I: In Pursuit of the Death Angel" },
+	{ "serguei1", "Serguei's Destiny 1" },
+	{ "serguei2", "Serguei's Destiny 2" },
+	{ "sq0", "Space Quest 0: Replicated" },
+	{ "sq1", "Space Quest I: The Sarien Encounter" },
+	{ "sq2", "Space Quest II: Vohaul's Revenge" },
+	{ "sqx", "Space Quest X: The Lost Chapter" },
+	{ "tetris", "AGI Tetris" },
+	{ "troll", "Troll\'s Tale" },
+	{ "winnie", "Winnie the Pooh in the Hundred Acre Wood" },
+	{ "xmascard", "Xmas Card" },
 
-	{0, 0}
+	{ 0, 0 }
 };
 
 #include "agi/detection_tables.h"
 
 static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_ORIGINAL_SAVELOAD,
-		{
-			_s("Use original save/load screens"),
-			_s("Use the original save/load screens instead of the ScummVM ones"),
-			"originalsaveload",
-			false
-		}
-	},
+	{ GAMEOPTION_ORIGINAL_SAVELOAD,
+	  { _s("Use original save/load screens"),
+	    _s("Use the original save/load screens instead of the ScummVM ones"),
+	    "originalsaveload",
+	    false } },
 
-	{
-		GAMEOPTION_AMIGA_ALTERNATIVE_PALETTE,
-		{
-			_s("Use an alternative palette"),
-			_s("Use an alternative palette, common for all Amiga games. This was the old behavior"),
-			"altamigapalette",
-			false
-		}
-	},
+	{ GAMEOPTION_AMIGA_ALTERNATIVE_PALETTE,
+	  { _s("Use an alternative palette"),
+	    _s("Use an alternative palette, common for all Amiga games. This was the old behavior"),
+	    "altamigapalette",
+	    false } },
 
-	{
-		GAMEOPTION_DISABLE_MOUSE,
-		{
-			_s("Mouse support"),
-			_s("Enables mouse support. Allows to use mouse for movement and in game menus."),
-			"mousesupport",
-			true
-		}
-	},
+	{ GAMEOPTION_DISABLE_MOUSE,
+	  { _s("Mouse support"),
+	    _s("Enables mouse support. Allows to use mouse for movement and in game menus."),
+	    "mousesupport",
+	    true } },
 
-	{
-		GAMEOPTION_USE_HERCULES_FONT,
-		{
-			_s("Use Hercules hires font"),
-			_s("Uses Hercules hires font, when font file is available."),
-			"herculesfont",
-			false
-		}
-	},
+	{ GAMEOPTION_USE_HERCULES_FONT,
+	  { _s("Use Hercules hires font"),
+	    _s("Uses Hercules hires font, when font file is available."),
+	    "herculesfont",
+	    false } },
 
-	{
-		GAMEOPTION_COMMAND_PROMPT_WINDOW,
-		{
-			_s("Pause when entering commands"),
-			_s("Shows a command prompt window and pauses the game (like in SCI) instead of a real-time prompt."),
-			"commandpromptwindow",
-			false
-		}
-	},
+	{ GAMEOPTION_COMMAND_PROMPT_WINDOW,
+	  { _s("Pause when entering commands"),
+	    _s("Shows a command prompt window and pauses the game (like in SCI) instead of a real-time prompt."),
+	    "commandpromptwindow",
+	    false } },
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
@@ -201,7 +180,8 @@ class AgiMetaEngine : public AdvancedMetaEngine {
 	mutable Common::String _extra;
 
 public:
-	AgiMetaEngine() : AdvancedMetaEngine(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames, optionsList) {
+	AgiMetaEngine()
+	  : AdvancedMetaEngine(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames, optionsList) {
 		_singleId = "agi";
 		_guiOptions = GUIO1(GUIO_NOSPEECH);
 	}
@@ -224,24 +204,12 @@ public:
 };
 
 bool AgiMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-	    (f == kSupportsListSaves) ||
-	    (f == kSupportsLoadingDuringStartup) ||
-	    (f == kSupportsDeleteSave) ||
-	    (f == kSavesSupportMetaInfo) ||
-	    (f == kSavesSupportThumbnail) ||
-	    (f == kSavesSupportCreationDate) ||
-	    (f == kSavesSupportPlayTime) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup) || (f == kSupportsDeleteSave) || (f == kSavesSupportMetaInfo) || (f == kSavesSupportThumbnail) || (f == kSavesSupportCreationDate) || (f == kSavesSupportPlayTime) || (f == kSimpleSavesNames);
 }
 
 bool AgiBase::hasFeature(EngineFeature f) const {
-	return
-	    (f == kSupportsRTL) ||
-	    (f == kSupportsLoadingDuringRuntime) ||
-	    (f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
-
 
 bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Agi::AGIGameDescription *gd = (const Agi::AGIGameDescription *)desc;
@@ -447,7 +415,8 @@ ADDetectedGame AgiMetaEngine::fallbackDetect(const FileMap &allFilesXXX, const C
 
 	// First grab all filenames and at the same time count the number of *.wag files
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		if (file->isDirectory()) continue;
+		if (file->isDirectory())
+			continue;
 		Common::String filename = file->getName();
 		filename.toLowercase();
 		allFiles[filename] = true; // Save the filename in a hash table
@@ -459,10 +428,7 @@ ADDetectedGame AgiMetaEngine::fallbackDetect(const FileMap &allFilesXXX, const C
 		}
 	}
 
-	if (allFiles.contains("logdir") && allFiles.contains("object") &&
-	        allFiles.contains("picdir") && allFiles.contains("snddir") &&
-	        allFiles.contains("viewdir") && allFiles.contains("vol.0") &&
-	        allFiles.contains("words.tok")) { // Check for v2
+	if (allFiles.contains("logdir") && allFiles.contains("object") && allFiles.contains("picdir") && allFiles.contains("snddir") && allFiles.contains("viewdir") && allFiles.contains("vol.0") && allFiles.contains("words.tok")) { // Check for v2
 
 		// The default AGI interpreter version 0x2917 is okay for v2 games
 		// so we don't have to change it here.
@@ -493,8 +459,7 @@ ADDetectedGame AgiMetaEngine::fallbackDetect(const FileMap &allFilesXXX, const C
 				memset(name, 0, 8);
 				strncpy(name, f->_key.c_str(), MIN((uint)8, f->_key.size() > 5 ? f->_key.size() - 5 : f->_key.size()));
 
-				if (allFiles.contains("object") && allFiles.contains("words.tok") &&
-				        allFiles.contains(Common::String(name) + "dir")) {
+				if (allFiles.contains("object") && allFiles.contains("words.tok") && allFiles.contains(Common::String(name) + "dir")) {
 					matchedUsingFilenames = true;
 					description = "Unknown v3 Game";
 					g_fallbackDesc.version = 0x3149; // Set the default AGI version for an AGI v3 game
@@ -591,9 +556,9 @@ ADDetectedGame AgiMetaEngine::fallbackDetect(const FileMap &allFilesXXX, const C
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(AGI)
-	REGISTER_PLUGIN_DYNAMIC(AGI, PLUGIN_TYPE_ENGINE, AgiMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(AGI, PLUGIN_TYPE_ENGINE, AgiMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(AGI, PLUGIN_TYPE_ENGINE, AgiMetaEngine);
+REGISTER_PLUGIN_STATIC(AGI, PLUGIN_TYPE_ENGINE, AgiMetaEngine);
 #endif
 
 namespace Agi {

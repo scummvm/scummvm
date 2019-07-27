@@ -32,16 +32,16 @@ class BladeRunnerEngine;
 class ItemPickup {
 	BladeRunnerEngine *_vm;
 
-	float        _facingStep;
+	float _facingStep;
 
-	int          _animationId;
-	int          _screenX;
-	int          _screenY;
-	float        _facing;
-	float        _scale;
-	int          _animationFrame;
-	uint32       _timeLeft;
-	uint32       _timeLast;
+	int _animationId;
+	int _screenX;
+	int _screenY;
+	float _facing;
+	float _scale;
+	int _animationFrame;
+	uint32 _timeLeft;
+	uint32 _timeLast;
 	Common::Rect _screenRect;
 
 public:

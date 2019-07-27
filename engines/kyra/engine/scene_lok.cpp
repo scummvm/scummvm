@@ -21,11 +21,11 @@
  */
 
 #include "kyra/engine/kyra_lok.h"
+#include "kyra/engine/sprites.h"
+#include "kyra/engine/timer.h"
+#include "kyra/graphics/animator_lok.h"
 #include "kyra/resource/resource.h"
 #include "kyra/sound/sound.h"
-#include "kyra/engine/sprites.h"
-#include "kyra/graphics/animator_lok.h"
-#include "kyra/engine/timer.h"
 
 #include "common/system.h"
 
@@ -429,7 +429,9 @@ void KyraEngine_LoK::initSceneData(int facing, int unk1, int brandonAlive) {
 			xpos = ypos = -1;
 			break;
 
-		case 1: case 2: case 8:
+		case 1:
+		case 2:
+		case 8:
 			xpos = _sceneExits.southXPos;
 			ypos = _sceneExits.southYPos;
 			break;
@@ -439,7 +441,9 @@ void KyraEngine_LoK::initSceneData(int facing, int unk1, int brandonAlive) {
 			ypos = _sceneExits.westYPos;
 			break;
 
-		case 4: case 5: case 6:
+		case 4:
+		case 5:
+		case 6:
 			xpos = _sceneExits.northXPos;
 			ypos = _sceneExits.northYPos;
 			break;
@@ -899,9 +903,14 @@ int KyraEngine_LoK::processSceneChange(int *table, int unk1, int frameReset) {
 	while (running) {
 		bool forceContinue = false;
 		switch (*table) {
-		case 0: case 1: case 2:
-		case 3: case 4: case 5:
-		case 6: case 7:
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+		case 6:
+		case 7:
 			_currentCharacter->facing = getOppositeFacingDirection(*table);
 			break;
 
@@ -1098,7 +1107,7 @@ void KyraEngine_LoK::setCharactersInDefaultScene() {
 
 		if (cur->sceneId == _currentCharacter->sceneId)
 			//++cur->field_20;
-			cur->sceneId = curTable[1/*cur->field_20*/];
+			cur->sceneId = curTable[1 /*cur->field_20*/];
 
 		//cur->field_23 = curTable[cur->field_20+1];
 	}

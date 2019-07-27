@@ -26,13 +26,13 @@
 #include "common/array.h"
 #include "common/list.h"
 #include "common/rect.h"
-#include "graphics/screen.h"
 #include "glk/events.h"
 #include "glk/fonts.h"
 #include "glk/glk_types.h"
 #include "glk/screen.h"
 #include "glk/selection.h"
 #include "glk/streams.h"
+#include "graphics/screen.h"
 
 namespace Glk {
 
@@ -44,22 +44,25 @@ class PairWindow;
 #define TBLINELEN 300
 #define GLI_SUBPIX 8
 
-
 /**
  * Main windows manager
  */
 class Windows {
 	friend class Window;
+
 public:
 	class iterator {
 	private:
 		Windows *_windows;
 		Window *_current;
+
 	public:
 		/**
 		 * Constructor
 		 */
-		iterator(Windows *windows, Window *start) : _windows(windows), _current(start) {}
+		iterator(Windows *windows, Window *start)
+		  : _windows(windows)
+		  , _current(start) {}
 
 		/**
 		 * Dereference
@@ -93,12 +96,14 @@ public:
 		}
 	};
 	friend class iterator;
+
 private:
 	Graphics::Screen *_screen;
-	Window *_windowList;       ///< List of all windows
-	Window *_rootWin;          ///< The topmost window
-	Window *_focusWin;         ///< The window selected by the player
+	Window *_windowList; ///< List of all windows
+	Window *_rootWin; ///< The topmost window
+	Window *_focusWin; ///< The window selected by the player
 	bool _drawSelect;
+
 private:
 	/**
 	 * Create a new window
@@ -135,6 +140,7 @@ private:
 	 * This is called after pressing page keys.
 	 */
 	void inputScrollFocus();
+
 public:
 	static bool _overrideReverse;
 	static bool _overrideFgSet;
@@ -151,6 +157,7 @@ public:
 	static uint _zcolor_Bright;
 
 	static uint rgbShift(uint color);
+
 public:
 	/**
 	 * Constructor
@@ -166,7 +173,7 @@ public:
 	 * Open a new window
 	 */
 	Window *windowOpen(Window *splitwin, uint method, uint size,
-					   uint wintype, uint rock);
+	                   uint wintype, uint rock);
 
 	/**
 	 * Close an existing window
@@ -266,7 +273,11 @@ struct WindowStyle {
 	/**
 	 * Constructor
 	 */
-	WindowStyle() : font(MONOR), fg(0), bg(0), reverse(false) {}
+	WindowStyle()
+	  : font(MONOR)
+	  , fg(0)
+	  , bg(0)
+	  , reverse(false) {}
 
 	/**
 	 * Constructor
@@ -305,14 +316,22 @@ struct WindowStyle {
 	 * Returns a font that has the following combination of proportinate, bold, and italic
 	 */
 	static FACES makeFont(bool p, bool b, bool i) {
-		if (p && !b && !i) return PROPR;
-		if (p && !b &&  i) return PROPI;
-		if (p &&  b && !i) return PROPB;
-		if (p &&  b &&  i) return PROPZ;
-		if (!p && !b && !i) return MONOR;
-		if (!p && !b &&  i) return MONOI;
-		if (!p &&  b && !i) return MONOB;
-		if (!p &&  b &&  i) return MONOZ;
+		if (p && !b && !i)
+			return PROPR;
+		if (p && !b && i)
+			return PROPI;
+		if (p && b && !i)
+			return PROPB;
+		if (p && b && i)
+			return PROPZ;
+		if (!p && !b && !i)
+			return MONOR;
+		if (!p && !b && i)
+			return MONOI;
+		if (!p && b && !i)
+			return MONOB;
+		if (!p && b && i)
+			return MONOZ;
 		return PROPR;
 	}
 };
@@ -321,11 +340,11 @@ struct WindowStyle {
  * Window attributes
  */
 struct Attributes {
-	bool fgset      : 1;
-	bool bgset      : 1;
-	bool reverse    : 1;
-	unsigned        : 1;
-	unsigned style  : 4;
+	bool fgset : 1;
+	bool bgset : 1;
+	bool reverse : 1;
+	unsigned : 1;
+	unsigned style : 4;
 	uint fgcolor;
 	uint bgcolor;
 	uint hyper;
@@ -355,16 +374,16 @@ struct Attributes {
 	 */
 	bool operator==(const Attributes &src) const {
 		return fgset == src.fgset && bgset == src.bgset && reverse == src.reverse
-			   && style == src.style && fgcolor == src.fgcolor && bgcolor == src.bgcolor
-			   && hyper == src.hyper;
+		  && style == src.style && fgcolor == src.fgcolor && bgcolor == src.bgcolor
+		  && hyper == src.hyper;
 	}
 	/**
 	 * Inequality comparison
 	 */
 	bool operator!=(const Attributes &src) const {
 		return fgset != src.fgset || bgset != src.bgset || reverse != src.reverse
-			   || style != src.style || fgcolor != src.fgcolor || bgcolor != src.bgcolor
-			   || hyper != src.hyper;
+		  || style != src.style || fgcolor != src.fgcolor || bgcolor != src.bgcolor
+		  || hyper != src.hyper;
 	}
 
 	/**
@@ -394,13 +413,13 @@ public:
 	uint _rock;
 	uint _type;
 
-	Window *_parent;       ///< pair window which contains this one
+	Window *_parent; ///< pair window which contains this one
 	Window *_next, *_prev; ///< in the big linked list of windows
 	Rect _bbox;
 	int _yAdj;
 
-	Stream *_stream;       ///< the window stream.
-	Stream *_echoStream;   ///< the window's echo stream, if any.
+	Stream *_stream; ///< the window stream.
+	Stream *_echoStream; ///< the window's echo stream, if any.
 
 	bool _lineRequest;
 	bool _lineRequestUni;
@@ -420,8 +439,10 @@ public:
 	uint _bgColor, _fgColor;
 
 	gidispatch_rock_t _dispRock;
+
 public:
 	static bool checkBasicTerminators(uint32 ch);
+
 public:
 	/**
 	 * Constructor

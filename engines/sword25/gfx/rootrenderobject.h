@@ -33,8 +33,8 @@
 #define SWORD25_ROOTRENDEROBJECT_H
 
 // Includes
-#include "sword25/kernel/common.h"
 #include "sword25/gfx/renderobject.h"
+#include "sword25/kernel/common.h"
 
 namespace Sword25 {
 
@@ -51,8 +51,8 @@ class RootRenderObject : public RenderObject {
 	friend class RenderObjectManager;
 
 private:
-	RootRenderObject(RenderObjectManager *managerPtr, int width, int height) :
-		RenderObject(RenderObjectPtr<RenderObject>(), TYPE_ROOT) {
+	RootRenderObject(RenderObjectManager *managerPtr, int width, int height)
+	  : RenderObject(RenderObjectPtr<RenderObject>(), TYPE_ROOT) {
 		_managerPtr = managerPtr;
 		_width = width;
 		_height = height;

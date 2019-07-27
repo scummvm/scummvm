@@ -77,7 +77,7 @@ struct ClipData {
 	}
 };
 
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 struct PalEntry {
 	byte red;
@@ -85,7 +85,7 @@ struct PalEntry {
 	byte blue;
 } PACKED_STRUCT;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h" // END STRUCT PACKING
 
 struct Color {
 	int red;
@@ -108,7 +108,7 @@ struct Surface : Graphics::Surface {
 	}
 
 	void drawRect(const Common::Rect &destRect, int color) {
-		Common::Rect rect(w , h);
+		Common::Rect rect(w, h);
 		rect.clip(destRect);
 
 		if (rect.isValidRect()) {
@@ -125,12 +125,11 @@ struct Surface : Graphics::Surface {
 #define CURSOR_ORIGIN_X 4
 #define CURSOR_ORIGIN_Y 4
 
-bool hitTestPoly(const Point *points, unsigned int npoints, const Point& test_point);
+bool hitTestPoly(const Point *points, unsigned int npoints, const Point &test_point);
 class SagaEngine;
 
 class Gfx {
 public:
-
 	Gfx(SagaEngine *vm, OSystem *system, int width, int height);
 	~Gfx();
 

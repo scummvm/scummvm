@@ -27,7 +27,10 @@
 
 namespace Titanic {
 
-enum ProdSource { MAITRED_BODY = 0, MAITRED_LEGS = 1, MAITRED_BUTTOCKS = 2, MAITRED_GENERAL = 3 };
+enum ProdSource { MAITRED_BODY = 0,
+	                MAITRED_LEGS = 1,
+	                MAITRED_BUTTOCKS = 2,
+	                MAITRED_GENERAL = 3 };
 
 class CMaitreDProdReceptor : public CGameObject {
 	DECLARE_MESSAGE_MAP;
@@ -35,14 +38,19 @@ class CMaitreDProdReceptor : public CGameObject {
 	bool MouseMoveMsg(CMouseMoveMsg *msg);
 	bool ProdMaitreDMsg(CProdMaitreDMsg *msg);
 	bool DisableMaitreDProdReceptor(CDisableMaitreDProdReceptor *msg);
+
 protected:
 	ProdSource _prodSource;
 	int _counter;
 	bool _proddable;
+
 public:
 	CLASSDEF;
-	CMaitreDProdReceptor() : CGameObject(),
-		_prodSource(MAITRED_BODY), _counter(0), _proddable(true) {}
+	CMaitreDProdReceptor()
+	  : CGameObject()
+	  , _prodSource(MAITRED_BODY)
+	  , _counter(0)
+	  , _proddable(true) {}
 
 	/**
 	 * Save the data for the class to file

@@ -27,7 +27,7 @@
 
 namespace Networking {
 
-class FilesPageHandler: public FilesBaseHandler {
+class FilesPageHandler : public FilesBaseHandler {
 	enum ItemType {
 		IT_DIRECTORY,
 		IT_PARENT_DIRECTORY,

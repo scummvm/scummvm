@@ -20,8 +20,8 @@
  *
  */
 
-#include "pink/archive.h"
 #include "pink/objects/actions/action.h"
+#include "pink/archive.h"
 #include "pink/objects/actors/actor.h"
 
 namespace Pink {
@@ -40,6 +40,5 @@ void Action::pause(bool paused) {}
 Coordinates Action::getCoordinates() {
 	return Coordinates();
 }
-
 
 } // End of namespace Pink

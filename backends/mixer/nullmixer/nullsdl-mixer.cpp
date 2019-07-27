@@ -23,7 +23,8 @@
 #include "backends/mixer/nullmixer/nullsdl-mixer.h"
 #include "common/savefile.h"
 
-NullSdlMixerManager::NullSdlMixerManager() : SdlMixerManager() {
+NullSdlMixerManager::NullSdlMixerManager()
+  : SdlMixerManager() {
 	_outputRate = 22050;
 	_callsCounter = 0;
 	_callbackPeriod = 10;
@@ -54,7 +55,6 @@ int NullSdlMixerManager::resumeAudio() {
 	_audioSuspended = false;
 	return 0;
 }
-
 
 void NullSdlMixerManager::startAudio() {
 }

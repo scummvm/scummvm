@@ -22,17 +22,16 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
-
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
@@ -51,15 +50,14 @@ void scene22_initScene(Scene *sc) {
 		g_vars->scene22_numBagFalls = 0;
 	else if (g_fp->getObjectState(sO_Bag_22) == g_fp->getObjectEnumState(sO_Bag_22, sO_FallenOnce))
 		g_vars->scene22_numBagFalls = 1;
-	else if ( g_fp->getObjectState(sO_Bag_22) == g_fp->getObjectEnumState(sO_Bag_22, sO_FallenTwice))
+	else if (g_fp->getObjectState(sO_Bag_22) == g_fp->getObjectEnumState(sO_Bag_22, sO_FallenTwice))
 		g_vars->scene22_numBagFalls = 2;
 	else {
 		g_vars->scene22_numBagFalls = 3;
 		g_vars->scene22_craneIsOut = false;
 	}
 
-
-	if ( g_fp->getObjectState(sO_LowerPipe_21) == g_fp->getObjectEnumState(sO_LowerPipe_21, sO_IsOpened))
+	if (g_fp->getObjectState(sO_LowerPipe_21) == g_fp->getObjectEnumState(sO_LowerPipe_21, sO_IsOpened))
 		g_vars->scene22_giraffeMiddle->changeStatics2(ST_GRFM_AFTER);
 	else
 		g_vars->scene22_giraffeMiddle->changeStatics2(ST_GRFM_NORM);
@@ -221,7 +219,7 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 				int y = g_fp->_aniMan->_oy;
 
 				if (sqrt((double)((841 - x) * (841 - x) + (449 - y) * (449 - y)))
-					< sqrt((double)((1075 - x) * (1075 - x) + (449 - y) * (449 - y)))) {
+				    < sqrt((double)((1075 - x) * (1075 - x) + (449 - y) * (449 - y)))) {
 					if (abs(841 - x) <= 1) {
 						if (abs(449 - y) <= 1) {
 							chainQueue(QU_SC22_TOSTOOL, 1);
@@ -348,7 +346,7 @@ int sceneHandler22(ExCommand *cmd) {
 
 					if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
 						if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
-							|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
+						    || (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
 							g_fp->processArcade(cmd);
 							return 0;
 						}

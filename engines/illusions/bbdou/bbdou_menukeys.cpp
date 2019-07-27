@@ -20,8 +20,8 @@
  *
  */
 
-#include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/bbdou/bbdou_menukeys.h"
+#include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/bbdou/menusystem_bbdou.h"
 #include "illusions/input.h"
 #include "illusions/screen.h"
@@ -31,11 +31,10 @@ namespace Illusions {
 // BBDOUMenuKeys
 
 BBDOUMenuKeys::BBDOUMenuKeys(IllusionsEngine_BBDOU *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 }
 
 BBDOUMenuKeys::~BBDOUMenuKeys() {
-
 }
 
 void BBDOUMenuKeys::addMenuKey(uint bitMask, uint32 threadId) {

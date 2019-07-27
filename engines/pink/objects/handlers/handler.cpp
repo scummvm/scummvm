@@ -20,15 +20,15 @@
  *
  */
 
-#include "pink/archive.h"
-#include "pink/pink.h"
-#include "pink/objects/side_effect.h"
-#include "pink/objects/condition.h"
-#include "pink/objects/actors/actor.h"
 #include "pink/objects/handlers/handler.h"
+#include "pink/archive.h"
+#include "pink/objects/actors/actor.h"
+#include "pink/objects/condition.h"
 #include "pink/objects/pages/game_page.h"
-#include "pink/objects/sequences/sequencer.h"
 #include "pink/objects/sequences/sequence.h"
+#include "pink/objects/sequences/sequencer.h"
+#include "pink/objects/side_effect.h"
+#include "pink/pink.h"
 
 namespace Pink {
 

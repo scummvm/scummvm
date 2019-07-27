@@ -35,7 +35,9 @@
 namespace Avalanche {
 class AvalancheEngine;
 
-enum PictureType {kEga, kBgi, kNaturalImage};
+enum PictureType { kEga,
+	                 kBgi,
+	                 kNaturalImage };
 
 struct SpriteType {
 	PictureType _type;

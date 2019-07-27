@@ -32,8 +32,8 @@
 #ifndef SWORD25_FONTRESOURCE_H
 #define SWORD25_FONTRESOURCE_H
 
-#include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/xmlparser.h"
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/resource.h"
@@ -107,22 +107,22 @@ private:
 	// Parser
 	CUSTOM_XML_PARSER(FontResource) {
 		XML_KEY(font)
-			XML_PROP(bitmap, true)
-			XML_PROP(lineheight, false)
-			XML_PROP(gap, false)
+		  XML_PROP(bitmap, true)
+		    XML_PROP(lineheight, false)
+		      XML_PROP(gap, false)
 
-			XML_KEY(character)
-				XML_PROP(code, true)
-				XML_PROP(left, true)
-				XML_PROP(top, true)
-				XML_PROP(right, true)
-				XML_PROP(bottom, true)
-			KEY_END()
-		KEY_END()
+		        XML_KEY(character)
+		          XML_PROP(code, true)
+		            XML_PROP(left, true)
+		              XML_PROP(top, true)
+		                XML_PROP(right, true)
+		                  XML_PROP(bottom, true)
+		                    KEY_END()
+		                      KEY_END()
 	} PARSER_END()
 
-	// Parser callback methods
-	bool parserCallback_font(ParserNode *node);
+	  // Parser callback methods
+	  bool parserCallback_font(ParserNode *node);
 	bool parserCallback_character(ParserNode *node);
 };
 

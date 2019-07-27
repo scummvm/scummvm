@@ -20,10 +20,10 @@
  *
  */
 
-#include "common/config-manager.h"
-#include "agi/agi.h"
 #include "agi/font.h"
+#include "agi/agi.h"
 #include "agi/text.h"
+#include "common/config-manager.h"
 
 namespace Agi {
 
@@ -43,7 +43,14 @@ GfxFont::~GfxFont() {
 // Needs to get patched into at least the Apple IIgs font, because the font didn't support
 // that character and original AGI on Apple IIgs used Apple II menus for saving/restoring.
 static const uint8 fontData_ArrowRightCharacter[8] = {
-	0x00, 0x18, 0x0C, 0xFE, 0x0C, 0x18, 0x00, 0x00,
+	0x00,
+	0x18,
+	0x0C,
+	0xFE,
+	0x0C,
+	0x18,
+	0x00,
+	0x00,
 };
 
 // topaz data, same as in engines/parallaction/staticres.cpp
@@ -813,8 +820,8 @@ void GfxFont::loadFontAmigaPseudoTopaz() {
 	uint16 topazModulo = 0;
 	uint32 topazDataOffset = 0;
 	uint32 topazLocationOffset = 0;
-	byte   topazLowChar = 0;
-	byte   topazHighChar = 0;
+	byte topazLowChar = 0;
+	byte topazHighChar = 0;
 	uint16 topazTotalChars = 0;
 	uint16 topazBitLength = 0;
 	uint16 topazBitOffset = 0;
@@ -1237,7 +1244,6 @@ void GfxFont::loadFontHercules() {
 			warning("Fontfile 'hgc_font': unexpected file size");
 		}
 		fontFile.close();
-
 	}
 
 	// It seems hgc_graf.ovl holds a low-res font. It makes no real sense to use it.

@@ -23,8 +23,8 @@
 #ifndef GRAPHICS_SURFACE_H
 #define GRAPHICS_SURFACE_H
 
-#include "common/scummsys.h"
 #include "common/list.h"
+#include "common/scummsys.h"
 
 namespace Common {
 struct Rect;
@@ -79,7 +79,12 @@ public:
 	/**
 	 * Construct a simple Surface object.
 	 */
-	Surface() : w(0), h(0), pitch(0), pixels(0), format() {
+	Surface()
+	  : w(0)
+	  , h(0)
+	  , pitch(0)
+	  , pixels(0)
+	  , format() {
 	}
 
 	/**
@@ -411,6 +416,5 @@ private:
 };
 
 } // End of namespace Graphics
-
 
 #endif

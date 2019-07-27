@@ -23,9 +23,9 @@
 #ifndef LURE_SCRIPTS_H
 #define LURE_SCRIPTS_H
 
+#include "lure/hotspots.h"
 #include "lure/luredefs.h"
 #include "lure/memory.h"
-#include "lure/hotspots.h"
 
 namespace Lure {
 
@@ -67,8 +67,6 @@ namespace Lure {
 #define S2_OPCODE_PLAY_SOUND -8
 #define S2_OPCODE_STOP_SOUND -9
 #define S2_OPCODE_ACTIONS -10
-
-
 
 class Script {
 public:
@@ -146,6 +144,7 @@ public:
 class HotspotScript {
 private:
 	static int16 nextVal(MemoryBlock *data, uint16 &offset);
+
 public:
 	static bool execute(Hotspot *h);
 };

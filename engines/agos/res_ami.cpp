@@ -22,7 +22,6 @@
 
 // Conversion routines for planar graphics in Amiga versions
 
-
 #include "agos/agos.h"
 #include "agos/intern.h"
 
@@ -40,9 +39,11 @@ static void uncompressPlane(const byte *plane, byte *outptr, int length) {
 		signed char x = *plane++;
 		if (x >= 0) {
 			wordlen = MIN<int>(x + 1, length);
-			uint16 w = READ_UINT16(plane); plane += 2;
+			uint16 w = READ_UINT16(plane);
+			plane += 2;
 			for (int i = 0; i < wordlen; ++i) {
-				WRITE_UINT16(outptr, w); outptr += 2;
+				WRITE_UINT16(outptr, w);
+				outptr += 2;
 			}
 		} else {
 			wordlen = MIN<int>(-x, length);
@@ -111,7 +112,8 @@ static void convertCompressedImage(const byte *src, byte *dst, uint8 colorDepth,
 	for (i = 0; i < length; ++i) {
 		uint16 w[kMaxColorDepth];
 		for (j = 0; j < colorDepth; ++j) {
-			w[j] = READ_BE_UINT16(plane[j]); plane[j] += 2;
+			w[j] = READ_BE_UINT16(plane[j]);
+			plane[j] += 2;
 		}
 		bitplaneToChunky(w, colorDepth, uncbfroutptr);
 	}
@@ -145,8 +147,7 @@ byte *AGOSEngine::convertImage(VC10_state *state, bool compressed) {
 
 	uint8 colorDepth = 4;
 	if (getGameType() == GType_SIMON1) {
-		if (((_videoLockOut & 0x20) && !state->palette) || ((getFeatures() & GF_32COLOR) &&
-			state->palette != 0xC0)) {
+		if (((_videoLockOut & 0x20) && !state->palette) || ((getFeatures() & GF_32COLOR) && state->palette != 0xC0)) {
 			colorDepth = 5;
 		}
 	}
@@ -177,7 +178,8 @@ byte *AGOSEngine::convertImage(VC10_state *state, bool compressed) {
 				src += 2;
 			} else {
 				for (j = 0; j < colorDepth; ++j) {
-					w[j] = READ_BE_UINT16(src); src += 2;
+					w[j] = READ_BE_UINT16(src);
+					src += 2;
 				}
 				bitplaneToChunky(w, colorDepth, dst);
 			}

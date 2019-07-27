@@ -22,10 +22,10 @@
 
 #include "common/endian.h"
 
-#include "scumm/scumm.h"
 #include "scumm/charset.h"
-#include "scumm/util.h"
 #include "scumm/resource.h"
+#include "scumm/scumm.h"
+#include "scumm/util.h"
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 
@@ -124,7 +124,7 @@ void ScummEngine::towns_restoreCharsetBg() {
 	_nextTop = _string[0].ypos;
 }
 
-#ifdef USE_RGB_COLOR
+#	ifdef USE_RGB_COLOR
 void ScummEngine::towns_setPaletteFromPtr(const byte *ptr, int numcolor) {
 	setPaletteFromPtr(ptr, numcolor);
 
@@ -145,7 +145,7 @@ void ScummEngine::towns_setPaletteFromPtr(const byte *ptr, int numcolor) {
 void ScummEngine::towns_setTextPaletteFromPtr(const byte *ptr) {
 	memcpy(_textPalette, ptr, 48);
 }
-#endif
+#	endif
 
 void ScummEngine::towns_setupPalCycleField(int x1, int y1, int x2, int y2) {
 	if (_numCyclRects >= 10)
@@ -195,11 +195,15 @@ const uint8 ScummEngine::_townsLayer2Mask[] = {
 	0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-#define DIRTY_RECTS_MAX 20
-#define FULL_REDRAW (DIRTY_RECTS_MAX + 1)
+#	define DIRTY_RECTS_MAX 20
+#	define FULL_REDRAW (DIRTY_RECTS_MAX + 1)
 
-TownsScreen::TownsScreen(OSystem *system, int width, int height, Graphics::PixelFormat &format) :
-	_system(system), _width(width), _height(height), _pixelFormat(format), _pitch(width * format.bytesPerPixel) {
+TownsScreen::TownsScreen(OSystem *system, int width, int height, Graphics::PixelFormat &format)
+  : _system(system)
+  , _width(width)
+  , _height(height)
+  , _pixelFormat(format)
+  , _pitch(width * format.bytesPerPixel) {
 	memset(&_layers[0], 0, sizeof(TownsScreenLayer));
 	memset(&_layers[1], 0, sizeof(TownsScreenLayer));
 	_outBuffer = new byte[_pitch * _height];
@@ -238,7 +242,7 @@ void TownsScreen::setupLayer(int layer, int width, int height, int numCol, void 
 	l->scaleW = _width / width;
 	l->scaleH = _height / height;
 
-	if ((float)l->scaleW !=	((float)_width / (float)width) || (float)l->scaleH != ((float)_height / (float)height))
+	if ((float)l->scaleW != ((float)_width / (float)width) || (float)l->scaleH != ((float)_height / (float)height))
 		error("TownsScreen::setupLayer(): Layer width/height must be equal or an EXACT half, third, etc. of screen width/height.\n More complex aspect ratio scaling is not supported.");
 
 	if (width <= 0 || height <= 0 || numCol < 16)
@@ -265,7 +269,7 @@ void TownsScreen::setupLayer(int layer, int width, int height, int numCol, void 
 		l->bltInternX[i] = (i / l->scaleW) * l->bpp;
 
 	delete[] l->bltInternY;
-	l->bltInternY = new uint8*[_height];
+	l->bltInternY = new uint8 *[_height];
 	for (int i = 0; i < _height; ++i)
 		l->bltInternY[i] = l->pixels + (i / l->scaleH) * l->pitch;
 
@@ -290,7 +294,6 @@ void TownsScreen::clearLayer(int layer) {
 	_dirtyRects.push_back(Common::Rect(_width - 1, _height - 1));
 	_numDirtyRects = FULL_REDRAW;
 }
-
 
 void TownsScreen::fillLayerRect(int layer, int x, int y, int w, int h, int col) {
 	if (layer < 0 || layer > 1 || w <= 0 || h <= 0)
@@ -512,8 +515,8 @@ uint16 TownsScreen::calc16BitColor(const uint8 *palEntry) {
 	return _pixelFormat.RGBToColor(palEntry[0], palEntry[1], palEntry[2]);
 }
 
-#undef DIRTY_RECTS_MAX
-#undef FULL_REDRAW
+#	undef DIRTY_RECTS_MAX
+#	undef FULL_REDRAW
 
 } // End of namespace Scumm
 

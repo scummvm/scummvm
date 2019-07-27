@@ -26,7 +26,8 @@
 
 #include "common/system.h"
 
-#define SEQOP(n, x) { n, &SeqPlayer::x, #x }
+#define SEQOP(n, x) \
+	{ n, &SeqPlayer::x, #x }
 
 namespace Kyra {
 
@@ -135,7 +136,8 @@ void SeqPlayer::s1_wsaPlayFrame() {
 	uint8 wsaObj = *_seqData++;
 	assert(wsaObj < ARRAYSIZE(_seqMovies));
 	int16 frame = (int8)*_seqData++;
-	_seqMovies[wsaObj].pos.x = READ_LE_UINT16(_seqData); _seqData += 2;
+	_seqMovies[wsaObj].pos.x = READ_LE_UINT16(_seqData);
+	_seqData += 2;
 	_seqMovies[wsaObj].pos.y = *_seqData++;
 	assert(_seqMovies[wsaObj].movie);
 	_seqMovies[wsaObj].movie->displayFrame(frame, _seqMovies[wsaObj].page, _seqMovies[wsaObj].pos.x, _seqMovies[wsaObj].pos.y, 0, 0, 0);
@@ -167,13 +169,15 @@ void SeqPlayer::s1_wsaPlayPrevFrame() {
 
 void SeqPlayer::s1_drawShape() {
 	uint8 shapeNum = *_seqData++;
-	int x = READ_LE_UINT16(_seqData); _seqData += 2;
+	int x = READ_LE_UINT16(_seqData);
+	_seqData += 2;
 	int y = *_seqData++;
 	_screen->drawShape(2, _handShapes[shapeNum], x, y, 0, 0, 0);
 }
 
 void SeqPlayer::s1_waitTicks() {
-	uint16 ticks = READ_LE_UINT16(_seqData); _seqData += 2;
+	uint16 ticks = READ_LE_UINT16(_seqData);
+	_seqData += 2;
 	_vm->delay(ticks * _vm->tickLength());
 }
 
@@ -208,7 +212,8 @@ void SeqPlayer::s1_loopInit() {
 
 void SeqPlayer::s1_loopInc() {
 	uint8 seqLoop = *_seqData++;
-	uint16 seqLoopCount = READ_LE_UINT16(_seqData); _seqData += 2;
+	uint16 seqLoopCount = READ_LE_UINT16(_seqData);
+	_seqData += 2;
 	if (_seqLoopTable[seqLoop].count == 0xFFFF) {
 		_seqLoopTable[seqLoop].count = seqLoopCount - 1;
 		_seqData = _seqLoopTable[seqLoop].ptr;
@@ -279,7 +284,8 @@ void SeqPlayer::s1_printText() {
 
 void SeqPlayer::s1_printTalkText() {
 	uint8 txt = *_seqData++;
-	int x = READ_LE_UINT16(_seqData); _seqData += 2;
+	int x = READ_LE_UINT16(_seqData);
+	_seqData += 2;
 	int y = *_seqData++;
 	uint8 fillColor = *_seqData++;
 
@@ -382,7 +388,7 @@ void SeqPlayer::s1_copyRegionSpecial() {
 		if (_vm->gameFlags().platform != Common::kPlatformAmiga)
 			_screen->printText(copyStr, x + 1, y + 1, 0xB, 0xC);
 		_screen->printText(copyStr, x, y, 0xF, 0xC);
-		} break;
+	} break;
 	case 5:
 		_screen->_curPage = 2;
 		break;
@@ -392,9 +398,11 @@ void SeqPlayer::s1_copyRegionSpecial() {
 }
 
 void SeqPlayer::s1_fillRect() {
-	int x1 = READ_LE_UINT16(_seqData); _seqData += 2;
+	int x1 = READ_LE_UINT16(_seqData);
+	_seqData += 2;
 	int y1 = *_seqData++;
-	int x2 = READ_LE_UINT16(_seqData); _seqData += 2;
+	int x2 = READ_LE_UINT16(_seqData);
+	_seqData += 2;
 	int y2 = *_seqData++;
 	uint8 color = *_seqData++;
 	uint8 page = *_seqData++;
@@ -653,6 +661,5 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 	}
 	return seqSkippedFlag;
 }
-
 
 } // End of namespace Kyra

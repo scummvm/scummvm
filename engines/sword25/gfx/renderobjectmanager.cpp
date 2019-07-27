@@ -31,15 +31,15 @@
 
 #include "sword25/gfx/renderobjectmanager.h"
 
-#include "sword25/kernel/kernel.h"
-#include "sword25/kernel/inputpersistenceblock.h"
-#include "sword25/kernel/outputpersistenceblock.h"
-#include "sword25/gfx/graphicengine.h"
-#include "sword25/gfx/animationtemplateregistry.h"
 #include "common/rect.h"
+#include "sword25/gfx/animationtemplateregistry.h"
+#include "sword25/gfx/graphicengine.h"
 #include "sword25/gfx/renderobject.h"
-#include "sword25/gfx/timedrenderobject.h"
 #include "sword25/gfx/rootrenderobject.h"
+#include "sword25/gfx/timedrenderobject.h"
+#include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/kernel/outputpersistenceblock.h"
 
 #include "common/system.h"
 
@@ -51,15 +51,13 @@ void RenderObjectQueue::add(RenderObject *renderObject) {
 
 bool RenderObjectQueue::exists(const RenderObjectQueueItem &renderObjectQueueItem) {
 	for (RenderObjectQueue::iterator it = begin(); it != end(); ++it)
-		if ((*it)._renderObject == renderObjectQueueItem._renderObject &&
-			(*it)._version == renderObjectQueueItem._version && 
-			(*it)._bbox == renderObjectQueueItem._bbox)
+		if ((*it)._renderObject == renderObjectQueueItem._renderObject && (*it)._version == renderObjectQueueItem._version && (*it)._bbox == renderObjectQueueItem._bbox)
 			return true;
 	return false;
 }
 
-RenderObjectManager::RenderObjectManager(int width, int height, int framebufferCount) :
-	_frameStarted(false) {
+RenderObjectManager::RenderObjectManager(int width, int height, int framebufferCount)
+  : _frameStarted(false) {
 	// Wurzel des BS_RenderObject-Baumes erzeugen.
 	_rootPtr = (new RootRenderObject(this, width, height))->getHandle();
 	_uta = new MicroTileArray(width, height);
@@ -126,8 +124,7 @@ bool RenderObjectManager::render() {
 	for (RectangleList::iterator rectIt = updateRects->begin(); rectIt != updateRects->end(); ++rectIt) {
 		int minZ = 0;
 		for (RenderObjectQueue::iterator it = _currQueue->reverse_begin(); it != _currQueue->end(); --it) {
-			if ((*it)._renderObject->isVisible() && (*it)._renderObject->isSolid() &&
-				(*it)._renderObject->getBbox().contains(*rectIt)) {
+			if ((*it)._renderObject->isVisible() && (*it)._renderObject->isSolid() && (*it)._renderObject->getBbox().contains(*rectIt)) {
 				minZ = (*it)._renderObject->getAbsoluteZ();
 				break;
 			}

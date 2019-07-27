@@ -23,19 +23,24 @@
 #ifndef TITANIC_GAME_STATE_H
 #define TITANIC_GAME_STATE_H
 
-#include "titanic/core/list.h"
 #include "titanic/core/link_item.h"
-#include "titanic/support/simple_file.h"
+#include "titanic/core/list.h"
 #include "titanic/game_location.h"
 #include "titanic/support/movie.h"
+#include "titanic/support/simple_file.h"
 
 namespace Titanic {
 
 class CGameManager;
 
 enum GameStateMode {
-	GSMODE_NONE = 0, GSMODE_INTERACTIVE = 1, GSMODE_CUTSCENE = 2,
-	GSMODE_3 = 3, GSMODE_4 = 4, GSMODE_INSERT_CD = 5, GSMODE_PENDING_LOAD = 6
+	GSMODE_NONE = 0,
+	GSMODE_INTERACTIVE = 1,
+	GSMODE_CUTSCENE = 2,
+	GSMODE_3 = 3,
+	GSMODE_4 = 4,
+	GSMODE_INSERT_CD = 5,
+	GSMODE_PENDING_LOAD = 6
 };
 
 enum Season {
@@ -49,8 +54,12 @@ class CGameStateMovieList : public Common::List<CMovie *> {
 public:
 	CViewItem *_destView;
 	CMovieClip *_movieClip;
+
 public:
-	CGameStateMovieList() : Common::List<CMovie *>(), _destView(nullptr), _movieClip(nullptr) {}
+	CGameStateMovieList()
+	  : Common::List<CMovie *>()
+	  , _destView(nullptr)
+	  , _movieClip(nullptr) {}
 
 	/**
 	 * Returns true if there are no movies in the list
@@ -75,6 +84,7 @@ public:
 	uint32 _nodeEnterTicks;
 	Point _mousePos;
 	int _parrotResponseIndex;
+
 public:
 	CGameState(CGameManager *gameManager);
 

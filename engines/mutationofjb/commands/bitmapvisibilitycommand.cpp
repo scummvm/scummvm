@@ -36,14 +36,13 @@ bool BitmapVisibilityCommandParser::parse(const Common::String &line, ScriptPars
 	if (line.size() < 10 || !line.hasPrefix("RB "))
 		return false;
 
-	const uint8 sceneId = (uint8) atoi(line.c_str() + 3);
-	const uint8 bitmapId = (uint8) atoi(line.c_str() + 6);
+	const uint8 sceneId = (uint8)atoi(line.c_str() + 3);
+	const uint8 bitmapId = (uint8)atoi(line.c_str() + 6);
 	const bool visible = (line[9] == '1');
 
 	command = new BitmapVisibilityCommand(sceneId, bitmapId, visible);
 	return true;
 }
-
 
 Command::ExecuteResult BitmapVisibilityCommand::execute(ScriptExecutionContext &scriptExecCtx) {
 	scriptExecCtx.getGameData().getScene(_sceneId)->getBitmap(_bitmapId)->_isVisible = _visible;
@@ -52,7 +51,7 @@ Command::ExecuteResult BitmapVisibilityCommand::execute(ScriptExecutionContext &
 }
 
 Common::String BitmapVisibilityCommand::debugString() const {
-	return Common::String::format("SETBITMAPVIS %u %u %s", (unsigned int) _sceneId, (unsigned int) _bitmapId, _visible ? "true" : "false");
+	return Common::String::format("SETBITMAPVIS %u %u %s", (unsigned int)_sceneId, (unsigned int)_bitmapId, _visible ? "true" : "false");
 }
 
 }

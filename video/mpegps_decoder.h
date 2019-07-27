@@ -23,8 +23,8 @@
 #ifndef VIDEO_MPEGPS_DECODER_H
 #define VIDEO_MPEGPS_DECODER_H
 
-#include "common/inttypes.h"
 #include "common/hashmap.h"
+#include "common/inttypes.h"
 #include "common/queue.h"
 #include "graphics/surface.h"
 #include "video/video_decoder.h"
@@ -79,7 +79,11 @@ private:
 	private:
 		class Packet {
 		public:
-			Packet(Common::SeekableReadStream *stream, int32 startCode, uint32 pts, uint32 dts) : _stream(stream), _startCode(startCode), _pts(pts), _dts(dts) {}
+			Packet(Common::SeekableReadStream *stream, int32 startCode, uint32 pts, uint32 dts)
+			  : _stream(stream)
+			  , _startCode(startCode)
+			  , _pts(pts)
+			  , _dts(dts) {}
 
 			Common::SeekableReadStream *_stream;
 			int32 _startCode;

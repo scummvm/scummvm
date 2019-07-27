@@ -35,12 +35,12 @@ Matrix3x2::Matrix3x2() {
 Matrix3x2::Matrix3x2(float d[6]) {
 	for (int r = 0; r != 2; ++r)
 		for (int c = 0; c != 3; ++c)
-			_m[r][c] = d[r*3+c];
+			_m[r][c] = d[r * 3 + c];
 }
 
 Matrix3x2::Matrix3x2(
-	float m00, float m01, float m02,
-	float m10, float m11, float m12) {
+  float m00, float m01, float m02,
+  float m10, float m11, float m12) {
 	_m[0][0] = m00;
 	_m[0][1] = m01;
 	_m[0][2] = m02;
@@ -58,13 +58,13 @@ Matrix4x3::Matrix4x3() {
 Matrix4x3::Matrix4x3(float d[12]) {
 	for (int r = 0; r != 3; ++r)
 		for (int c = 0; c != 4; ++c)
-			_m[r][c] = d[r*4+c];
+			_m[r][c] = d[r * 4 + c];
 }
 
 Matrix4x3::Matrix4x3(
-	float m00, float m01, float m02, float m03,
-	float m10, float m11, float m12, float m13,
-	float m20, float m21, float m22, float m23) {
+  float m00, float m01, float m02, float m03,
+  float m10, float m11, float m12, float m13,
+  float m20, float m21, float m22, float m23) {
 	_m[0][0] = m00;
 	_m[0][1] = m01;
 	_m[0][2] = m02;
@@ -83,9 +83,9 @@ Matrix4x3 rotationMatrixX(float angle) {
 	float ca = cos(angle);
 	float sa = sin(angle);
 
-	return Matrix4x3( 1.0f, 0.0f, 0.0f, 0.0f,
-	                  0.0f,   ca,   sa, 0.0f,
-	                  0.0f,  -sa,   ca, 0.0f );
+	return Matrix4x3(1.0f, 0.0f, 0.0f, 0.0f,
+	                 0.0f, ca, sa, 0.0f,
+	                 0.0f, -sa, ca, 0.0f);
 }
 
 static inline void swapRows(double *r1, double *r2) {
@@ -112,7 +112,7 @@ Matrix4x3 invertMatrix(const Matrix4x3 &m) {
 	for (int r = 0; r != 3; ++r) {
 		for (int c = 0; c != 4; ++c) {
 			w[r][c] = m(r, c);
-			w[r][c+4] = (r == c) ? 1.0 : 0.0;
+			w[r][c + 4] = (r == c) ? 1.0 : 0.0;
 		}
 	}
 
@@ -146,7 +146,7 @@ Matrix4x3 invertMatrix(const Matrix4x3 &m) {
 
 	for (int r = 0; r != 3; ++r)
 		for (int c = 0; c != 4; ++c)
-			result(r, c) = float(w[r][c+4]);
+			result(r, c) = float(w[r][c + 4]);
 
 	return result;
 }
@@ -159,9 +159,9 @@ void Matrix4x3::unknown() {
 		for (int c = 0; c != 3; ++c)
 			t(r, c) = _m[c][r];
 
-	t(0,3) = -(_m[0][3] * _m[0][0] + _m[1][3] * _m[1][0] + _m[2][3] * _m[2][0]);
-	t(1,3) = -(_m[0][3] * _m[0][1] + _m[1][3] * _m[1][1] + _m[2][3] * _m[2][1]);
-	t(2,3) = -(_m[0][3] * _m[0][2] + _m[1][3] * _m[1][2] + _m[2][3] * _m[2][2]);
+	t(0, 3) = -(_m[0][3] * _m[0][0] + _m[1][3] * _m[1][0] + _m[2][3] * _m[2][0]);
+	t(1, 3) = -(_m[0][3] * _m[0][1] + _m[1][3] * _m[1][1] + _m[2][3] * _m[2][1]);
+	t(2, 3) = -(_m[0][3] * _m[0][2] + _m[1][3] * _m[1][2] + _m[2][3] * _m[2][2]);
 
 	*this = t;
 }

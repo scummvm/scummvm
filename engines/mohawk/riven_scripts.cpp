@@ -20,16 +20,16 @@
  *
  */
 
+#include "mohawk/riven_scripts.h"
+#include "common/memstream.h"
 #include "mohawk/cursors.h"
 #include "mohawk/riven.h"
 #include "mohawk/riven_card.h"
 #include "mohawk/riven_graphics.h"
-#include "mohawk/riven_scripts.h"
 #include "mohawk/riven_sound.h"
 #include "mohawk/riven_stack.h"
 #include "mohawk/riven_stacks/aspit.h"
 #include "mohawk/riven_video.h"
-#include "common/memstream.h"
 
 #include "common/debug-channels.h"
 #include "common/stream.h"
@@ -42,10 +42,10 @@ static void printTabs(byte tabs) {
 		debugN("\t");
 }
 
-RivenScriptManager::RivenScriptManager(MohawkEngine_Riven *vm) :
-		_vm(vm),
-		_runningQueuedScripts(false),
-		_stoppingAllScripts(false) {
+RivenScriptManager::RivenScriptManager(MohawkEngine_Riven *vm)
+  : _vm(vm)
+  , _runningQueuedScripts(false)
+  , _stoppingAllScripts(false) {
 
 	_storedMovieOpcode.time = 0;
 	_storedMovieOpcode.slot = 0;
@@ -69,15 +69,15 @@ RivenScriptPtr RivenScriptManager::readScript(Common::ReadStream *stream) {
 }
 
 RivenCommandPtr RivenScriptManager::readCommand(Common::ReadStream *stream) {
-	RivenCommandType type = (RivenCommandType) stream->readUint16BE();
+	RivenCommandType type = (RivenCommandType)stream->readUint16BE();
 
 	switch (type) {
-		case kRivenCommandSwitch:
-			return RivenCommandPtr(RivenSwitchCommand::createFromStream(_vm, stream));
-		case kRivenCommandChangeStack:
-			return RivenCommandPtr(RivenStackChangeCommand::createFromStream(_vm, stream));
-		default:
-			return RivenCommandPtr(RivenSimpleCommand::createFromStream(_vm, type, stream));
+	case kRivenCommandSwitch:
+		return RivenCommandPtr(RivenSwitchCommand::createFromStream(_vm, stream));
+	case kRivenCommandChangeStack:
+		return RivenCommandPtr(RivenStackChangeCommand::createFromStream(_vm, stream));
+	default:
+		return RivenCommandPtr(RivenSimpleCommand::createFromStream(_vm, type, stream));
 	}
 }
 
@@ -313,7 +313,7 @@ void RivenScript::applyCardPatches(MohawkEngine_Riven *vm, uint32 cardGlobalId, 
 	// switchCard(534);
 	// playSound(112, 256, 0);
 	if (cardGlobalId == 0x2E900 && scriptType == kMouseDownScript && hotspotId == 3
-			&& !(vm->getFeatures() & GF_DVD)) {
+	    && !(vm->getFeatures() & GF_DVD)) {
 		shouldApplyPatches = true;
 		RivenSimpleCommand::ArgumentArray arguments;
 		arguments.push_back(112);
@@ -367,7 +367,7 @@ void RivenScript::applyCardPatches(MohawkEngine_Riven *vm, uint32 cardGlobalId, 
 	// Override the main menu new game script to call an external command.
 	// This way we can reset all the state when starting a new game while a game is already started.
 	if (cardGlobalId == 0xE2E && scriptType == kMouseDownScript && hotspotId == 16
-			&& (vm->getFeatures() & GF_25TH)) {
+	    && (vm->getFeatures() & GF_25TH)) {
 		shouldApplyPatches = true;
 		_commands.clear();
 
@@ -392,19 +392,17 @@ RivenScriptPtr &operator+=(RivenScriptPtr &lhs, const RivenScriptPtr &rhs) {
 	return lhs;
 }
 
-RivenCommand::RivenCommand(MohawkEngine_Riven *vm) :
-		_vm(vm) {
-
+RivenCommand::RivenCommand(MohawkEngine_Riven *vm)
+  : _vm(vm) {
 }
 
 RivenCommand::~RivenCommand() {
-
 }
 
-RivenSimpleCommand::RivenSimpleCommand(MohawkEngine_Riven *vm, RivenCommandType type, const ArgumentArray &arguments) :
-		RivenCommand(vm),
-		_type(type),
-		_arguments(arguments) {
+RivenSimpleCommand::RivenSimpleCommand(MohawkEngine_Riven *vm, RivenCommandType type, const ArgumentArray &arguments)
+  : RivenCommand(vm)
+  , _type(type)
+  , _arguments(arguments) {
 	setupOpcodes();
 }
 
@@ -424,7 +422,8 @@ RivenSimpleCommand *RivenSimpleCommand::createFromStream(MohawkEngine_Riven *vm,
 	return new RivenSimpleCommand(vm, type, arguments);
 }
 
-#define OPCODE(x) { &RivenSimpleCommand::x, #x }
+#define OPCODE(x) \
+	{ &RivenSimpleCommand::x, #x }
 
 void RivenSimpleCommand::setupOpcodes() {
 	static const RivenOpcode riven_opcodes[] = {
@@ -435,59 +434,59 @@ void RivenSimpleCommand::setupOpcodes() {
 		OPCODE(playScriptSLST),
 		// 0x04 (4 decimal)
 		OPCODE(playSound),
-		OPCODE(empty),						// Empty
-		OPCODE(empty),						// Complex animation (not used)
+		OPCODE(empty), // Empty
+		OPCODE(empty), // Complex animation (not used)
 		OPCODE(setVariable),
 		// 0x08 (8 decimal)
-		OPCODE(empty),                      // Not a SimpleCommand
+		OPCODE(empty), // Not a SimpleCommand
 		OPCODE(enableHotspot),
 		OPCODE(disableHotspot),
-		OPCODE(empty),						// Empty
+		OPCODE(empty), // Empty
 		// 0x0C (12 decimal)
 		OPCODE(stopSound),
 		OPCODE(changeCursor),
 		OPCODE(delay),
-		OPCODE(empty),						// Empty
+		OPCODE(empty), // Empty
 		// 0x10 (16 decimal)
-		OPCODE(empty),						// Empty
+		OPCODE(empty), // Empty
 		OPCODE(runExternalCommand),
 		OPCODE(transition),
 		OPCODE(refreshCard),
 		// 0x14 (20 decimal)
 		OPCODE(beginScreenUpdate),
 		OPCODE(applyScreenUpdate),
-		OPCODE(empty),						// Empty
-		OPCODE(empty),						// Empty
+		OPCODE(empty), // Empty
+		OPCODE(empty), // Empty
 		// 0x18 (24 decimal)
 		OPCODE(incrementVariable),
-		OPCODE(empty),						// Empty
-		OPCODE(empty),						// Empty
-		OPCODE(empty),                      // Not a SimpleCommand
+		OPCODE(empty), // Empty
+		OPCODE(empty), // Empty
+		OPCODE(empty), // Not a SimpleCommand
 		// 0x1C (28 decimal)
 		OPCODE(disableMovie),
 		OPCODE(disableAllMovies),
-		OPCODE(empty),						// Set movie rate (not used)
+		OPCODE(empty), // Set movie rate (not used)
 		OPCODE(enableMovie),
 		// 0x20 (32 decimal)
 		OPCODE(playMovieBlocking),
 		OPCODE(playMovie),
 		OPCODE(stopMovie),
-		OPCODE(empty),						// Start a water effect (not used)
+		OPCODE(empty), // Start a water effect (not used)
 		// 0x24 (36 decimal)
-		OPCODE(unk_36),						// Unknown
+		OPCODE(unk_36), // Unknown
 		OPCODE(fadeAmbientSounds),
 		OPCODE(storeMovieOpcode),
 		OPCODE(activatePLST),
 		// 0x28 (40 decimal)
 		OPCODE(activateSLST),
 		OPCODE(activateMLSTAndPlay),
-		OPCODE(empty),						// Empty
+		OPCODE(empty), // Empty
 		OPCODE(activateBLST),
 		// 0x2C (44 decimal)
 		OPCODE(activateFLST),
 		OPCODE(zipMode),
 		OPCODE(activateMLST),
-		OPCODE(empty)                       // Activate an SLST with a volume parameter (not used)
+		OPCODE(empty) // Activate an SLST with a volume parameter (not used)
 	};
 
 	_opcodes = riven_opcodes;
@@ -501,7 +500,7 @@ void RivenSimpleCommand::setupOpcodes() {
 void RivenSimpleCommand::drawBitmap(uint16 op, const ArgumentArray &args) {
 	if (args.size() < 5) // Copy the image to the whole screen, ignoring the rest of the parameters
 		_vm->_gfx->copyImageToScreen(args[0], 0, 0, 608, 392);
-	else          // Copy the image to a certain part of the screen
+	else // Copy the image to a certain part of the screen
 		_vm->_gfx->copyImageToScreen(args[0], args[1], args[2], args[3], args[4]);
 }
 
@@ -516,7 +515,7 @@ void RivenSimpleCommand::playScriptSLST(uint16 op, const ArgumentArray &args) {
 	uint16 soundCount = args[offset++];
 
 	SLSTRecord slstRecord;
-	slstRecord.index = 0;		// not set by the scripts, so we set it to 0
+	slstRecord.index = 0; // not set by the scripts, so we set it to 0
 	slstRecord.soundIds.resize(soundCount);
 
 	for (j = 0; j < soundCount; j++)
@@ -535,10 +534,10 @@ void RivenSimpleCommand::playScriptSLST(uint16 op, const ArgumentArray &args) {
 		slstRecord.volumes[j] = args[offset++];
 
 	for (j = 0; j < soundCount; j++)
-		slstRecord.balances[j] = args[offset++];	// negative = left, 0 = center, positive = right
+		slstRecord.balances[j] = args[offset++]; // negative = left, 0 = center, positive = right
 
 	for (j = 0; j < soundCount; j++)
-		slstRecord.u2[j] = args[offset++];			// Unknown
+		slstRecord.u2[j] = args[offset++]; // Unknown
 
 	// Play the requested sound list
 	_vm->_sound->playSLST(slstRecord);
@@ -581,8 +580,7 @@ void RivenSimpleCommand::stopSound(uint16 op, const ArgumentArray &args) {
 	// would cause all ambient sounds not to play. An alternative
 	// fix would be to stop all scripts on a stack change, but this
 	// does fine for now.
-	if (_vm->getStack()->getId() == kStackTspit && (_vm->getStack()->getCurrentCardGlobalId() == 0x6e9a ||
-			_vm->getStack()->getCurrentCardGlobalId() == 0xfeeb))
+	if (_vm->getStack()->getId() == kStackTspit && (_vm->getStack()->getCurrentCardGlobalId() == 0x6e9a || _vm->getStack()->getCurrentCardGlobalId() == 0xfeeb))
 		return;
 
 	// The argument is a bitflag for the setting.
@@ -623,9 +621,9 @@ void RivenSimpleCommand::runExternalCommand(uint16 op, const ArgumentArray &args
 // Parameters 1-4: transition rectangle
 void RivenSimpleCommand::transition(uint16 op, const ArgumentArray &args) {
 	if (args.size() == 1)
-		_vm->_gfx->scheduleTransition((RivenTransition) args[0]);
+		_vm->_gfx->scheduleTransition((RivenTransition)args[0]);
 	else
-		_vm->_gfx->scheduleTransition((RivenTransition) args[0], Common::Rect(args[1], args[2], args[3], args[4]));
+		_vm->_gfx->scheduleTransition((RivenTransition)args[0], Common::Rect(args[1], args[2], args[3], args[4]));
 }
 
 // Command 19: reload card
@@ -824,21 +822,19 @@ void RivenSimpleCommand::execute() {
 		debugC(kRivenDebugScript, "Running opcode: %s", describe().c_str());
 	}
 
-	(this->*(_opcodes[_type].proc)) (_type, _arguments);
+	(this->*(_opcodes[_type].proc))(_type, _arguments);
 }
 
 RivenCommandType RivenSimpleCommand::getType() const {
 	return _type;
 }
 
-RivenSwitchCommand::RivenSwitchCommand(MohawkEngine_Riven *vm) :
-		RivenCommand(vm),
-		_variableId(0) {
-
+RivenSwitchCommand::RivenSwitchCommand(MohawkEngine_Riven *vm)
+  : RivenCommand(vm)
+  , _variableId(0) {
 }
 
 RivenSwitchCommand::~RivenSwitchCommand() {
-
 }
 
 RivenSwitchCommand *RivenSwitchCommand::createFromStream(MohawkEngine_Riven *vm, Common::ReadStream *stream) {
@@ -869,7 +865,8 @@ RivenSwitchCommand *RivenSwitchCommand::createFromStream(MohawkEngine_Riven *vm,
 
 void RivenSwitchCommand::dump(byte tabs) {
 	Common::String varName = _vm->getStack()->getName(kVariableNames, _variableId);
-	printTabs(tabs); debugN("switch (%s) {\n", varName.c_str());
+	printTabs(tabs);
+	debugN("switch (%s) {\n", varName.c_str());
 	for (uint16 j = 0; j < _branches.size(); j++) {
 		printTabs(tabs + 1);
 		if (_branches[j].value == 0xFFFF)
@@ -877,9 +874,11 @@ void RivenSwitchCommand::dump(byte tabs) {
 		else
 			debugN("case %d:\n", _branches[j].value);
 		_branches[j].script->dumpScript(tabs + 2);
-		printTabs(tabs + 2); debugN("break;\n");
+		printTabs(tabs + 2);
+		debugN("break;\n");
 	}
-	printTabs(tabs); debugN("}\n");
+	printTabs(tabs);
+	debugN("}\n");
 }
 
 void RivenSwitchCommand::execute() {
@@ -893,7 +892,7 @@ void RivenSwitchCommand::execute() {
 
 	// Look for a case matching the value
 	for (uint i = 0; i < _branches.size(); i++) {
-		if  (_branches[i].value == value) {
+		if (_branches[i].value == value) {
 			_vm->_scriptMan->runScript(_branches[i].script, false);
 			return;
 		}
@@ -901,7 +900,7 @@ void RivenSwitchCommand::execute() {
 
 	// Look for the default case if any
 	for (uint i = 0; i < _branches.size(); i++) {
-		if  (_branches[i].value == 0Xffff) {
+		if (_branches[i].value == 0Xffff) {
 			_vm->_scriptMan->runScript(_branches[i].script, false);
 			return;
 		}
@@ -919,17 +918,15 @@ void RivenSwitchCommand::applyCardPatches(uint32 globalId, int scriptType, uint1
 }
 
 RivenStackChangeCommand::RivenStackChangeCommand(MohawkEngine_Riven *vm, uint16 stackId, uint32 globalCardId,
-                                                 bool byStackId, bool byStackCardId) :
-		RivenCommand(vm),
-		_stackId(stackId),
-		_cardId(globalCardId),
-		_byStackId(byStackId),
-		_byStackCardId(byStackCardId) {
-
+                                                 bool byStackId, bool byStackCardId)
+  : RivenCommand(vm)
+  , _stackId(stackId)
+  , _cardId(globalCardId)
+  , _byStackId(byStackId)
+  , _byStackCardId(byStackCardId) {
 }
 
 RivenStackChangeCommand::~RivenStackChangeCommand() {
-
 }
 
 RivenStackChangeCommand *RivenStackChangeCommand::createFromStream(MohawkEngine_Riven *vm, Common::ReadStream *stream) {
@@ -951,7 +948,7 @@ void RivenStackChangeCommand::execute() {
 
 		stackID = RivenStacks::getId(stackName.c_str());
 		if (stackID == kStackUnknown) {
-			error ("'%s' is not a stack name!", stackName.c_str());
+			error("'%s' is not a stack name!", stackName.c_str());
 		}
 	}
 
@@ -976,10 +973,9 @@ RivenCommandType RivenStackChangeCommand::getType() const {
 	return kRivenCommandChangeStack;
 }
 
-RivenTimerCommand::RivenTimerCommand(MohawkEngine_Riven *vm, const Common::SharedPtr<RivenStack::TimerProc> &timerProc) :
-	RivenCommand(vm),
-	_timerProc(timerProc) {
-
+RivenTimerCommand::RivenTimerCommand(MohawkEngine_Riven *vm, const Common::SharedPtr<RivenStack::TimerProc> &timerProc)
+  : RivenCommand(vm)
+  , _timerProc(timerProc) {
 }
 
 void RivenTimerCommand::execute() {

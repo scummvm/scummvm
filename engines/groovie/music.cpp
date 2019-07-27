@@ -23,10 +23,13 @@
 #include "audio/mididrv.h"
 #include "audio/mixer.h"
 
-#include "groovie/music.h"
 #include "groovie/groovie.h"
+#include "groovie/music.h"
 #include "groovie/resource.h"
 
+#include "audio/audiostream.h"
+#include "audio/midiparser.h"
+#include "audio/miles.h"
 #include "backends/audiocd/audiocd.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
@@ -34,18 +37,23 @@
 #include "common/macresman.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
-#include "audio/audiostream.h"
-#include "audio/midiparser.h"
-#include "audio/miles.h"
 
 namespace Groovie {
 
 // MusicPlayer
 
-MusicPlayer::MusicPlayer(GroovieEngine *vm) :
-	_vm(vm), _isPlaying(false), _backgroundFileRef(0), _gameVolume(100),
-	_prevCDtrack(0), _backgroundDelay(0), _fadingStartTime(0), _fadingStartVolume(0),
-	_fadingEndVolume(0), _fadingDuration(0), _userVolume(0) {
+MusicPlayer::MusicPlayer(GroovieEngine *vm)
+  : _vm(vm)
+  , _isPlaying(false)
+  , _backgroundFileRef(0)
+  , _gameVolume(100)
+  , _prevCDtrack(0)
+  , _backgroundDelay(0)
+  , _fadingStartTime(0)
+  , _fadingStartVolume(0)
+  , _fadingEndVolume(0)
+  , _fadingDuration(0)
+  , _userVolume(0) {
 }
 
 MusicPlayer::~MusicPlayer() {
@@ -196,8 +204,7 @@ void MusicPlayer::applyFading() {
 		_gameVolume = _fadingEndVolume;
 	} else {
 		// Calculate the interpolated volume for the current time
-		_gameVolume = (_fadingStartVolume * (_fadingDuration - time) +
-			_fadingEndVolume * time) / _fadingDuration;
+		_gameVolume = (_fadingStartVolume * (_fadingDuration - time) + _fadingEndVolume * time) / _fadingDuration;
 	}
 	if (_gameVolume == _fadingEndVolume) {
 		// If we were fading to 0, stop the playback and restore the volume
@@ -250,8 +257,11 @@ void MusicPlayer::stopCreditsIOS() {
 
 // MusicPlayerMidi
 
-MusicPlayerMidi::MusicPlayerMidi(GroovieEngine *vm) :
-	MusicPlayer(vm), _midiParser(NULL), _data(NULL), _driver(NULL) {
+MusicPlayerMidi::MusicPlayerMidi(GroovieEngine *vm)
+  : MusicPlayer(vm)
+  , _midiParser(NULL)
+  , _data(NULL)
+  , _driver(NULL) {
 	// Initialize the channel volumes
 	for (int i = 0; i < 0x10; i++) {
 		_chanVolumes[i] = 0x7F;
@@ -376,11 +386,10 @@ bool MusicPlayerMidi::loadParser(Common::SeekableReadStream *stream, bool loop) 
 	return true;
 }
 
-
 // MusicPlayerXMI
 
-MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName) :
-	MusicPlayerMidi(vm) {
+MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
+  : MusicPlayerMidi(vm) {
 
 	// Create the driver
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
@@ -433,7 +442,7 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 	// Create the parser
 	_midiParser = MidiParser::createParser_XMIDI(NULL, NULL, newTimbreListProc, _driver);
 
-	_driver->open();	// TODO: Handle return value != 0 (indicating an error)
+	_driver->open(); // TODO: Handle return value != 0 (indicating an error)
 
 	// Set the parser's driver
 	_midiParser->setMidiDriver(this);
@@ -510,8 +519,7 @@ void MusicPlayerXMI::send(uint32 b) {
 			// specified bank
 			int numTimbres = _timbres.size();
 			for (int i = 0; i < numTimbres; i++) {
-				if ((_timbres[i].bank == _chanBanks[chan]) &&
-					(_timbres[i].patch == patch)) {
+				if ((_timbres[i].bank == _chanBanks[chan]) && (_timbres[i].patch == patch)) {
 					if (_musicType == MT_ADLIB) {
 						setTimbreAD(chan, _timbres[i]);
 					} else if (_musicType == MT_MT32) {
@@ -592,7 +600,7 @@ void MusicPlayerXMI::loadTimbres(const Common::String &filename) {
 		// Read the timbre data
 		gtl->read(_timbres[i].data, _timbres[i].size);
 		debugC(5, kDebugMIDI, "Groovie::Music: Loaded patch %x in bank %x with size %d",
-			_timbres[i].patch, _timbres[i].bank, _timbres[i].size);
+		       _timbres[i].patch, _timbres[i].bank, _timbres[i].size);
 	}
 
 	// Close the file
@@ -625,17 +633,17 @@ void MusicPlayerXMI::setTimbreAD(byte channel, const Timbre &timbre) {
 	byte data[32];
 	memset(data, 0, sizeof(data));
 
-	data[2] = timbre.data[1];        // mod_characteristic
+	data[2] = timbre.data[1]; // mod_characteristic
 	data[3] = timbre.data[2] ^ 0x3F; // mod_scalingOutputLevel
-	data[4] = ~timbre.data[3];       // mod_attackDecay
-	data[5] = ~timbre.data[4];       // mod_sustainRelease
-	data[6] = timbre.data[5];        // mod_waveformSelect
-	data[7] = timbre.data[7];        // car_characteristic
+	data[4] = ~timbre.data[3]; // mod_attackDecay
+	data[5] = ~timbre.data[4]; // mod_sustainRelease
+	data[6] = timbre.data[5]; // mod_waveformSelect
+	data[7] = timbre.data[7]; // car_characteristic
 	data[8] = timbre.data[8] ^ 0x3F; // car_scalingOutputLevel
-	data[9] = ~timbre.data[9];       // car_attackDecay
-	data[10] = ~timbre.data[10];     // car_sustainRelease
-	data[11] = timbre.data[11];      // car_waveformSelect
-	data[12] = timbre.data[6];       // feedback
+	data[9] = ~timbre.data[9]; // car_attackDecay
+	data[10] = ~timbre.data[10]; // car_sustainRelease
+	data[11] = timbre.data[11]; // car_waveformSelect
+	data[12] = timbre.data[6]; // feedback
 
 	// Send the instrument to the driver
 	if (timbre.bank == 0x7F) {
@@ -669,8 +677,7 @@ void MusicPlayerXMI::setTimbreAD(byte channel, const Timbre &timbre) {
 	}
 }
 
-
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 struct RolandInstrumentSysex {
 	byte roland_id;
@@ -682,7 +689,7 @@ struct RolandInstrumentSysex {
 	byte checksum;
 } PACKED_STRUCT;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h" // END STRUCT PACKING
 
 void setRolandInstrument(MidiDriver *drv, byte channel, byte *instrument) {
 	RolandInstrumentSysex sysex;
@@ -700,8 +707,8 @@ void setRolandInstrument(MidiDriver *drv, byte channel, byte *instrument) {
 	// Remap instrument to appropriate address space.
 	int address = 0x008000;
 	sysex.address[0] = (address >> 14) & 0x7F;
-	sysex.address[1] = (address >>  7) & 0x7F;
-	sysex.address[2] = (address      ) & 0x7F;
+	sysex.address[1] = (address >> 7) & 0x7F;
+	sysex.address[2] = (address)&0x7F;
 
 	// Compute the checksum.
 	byte checksum = 0;
@@ -712,7 +719,6 @@ void setRolandInstrument(MidiDriver *drv, byte channel, byte *instrument) {
 
 	// Send sysex
 	drv->sysEx((byte *)&sysex, sizeof(RolandInstrumentSysex));
-
 
 	// Wait the time it takes to send the SysEx data
 	uint32 delay = (sizeof(RolandInstrumentSysex) + 2) * 1000 / 3125;
@@ -731,10 +737,10 @@ void MusicPlayerXMI::setTimbreMT(byte channel, const Timbre &timbre) {
 	setRolandInstrument(_driver, channel, timbre.data);
 }
 
-
 // MusicPlayerMac_t7g
 
-MusicPlayerMac_t7g::MusicPlayerMac_t7g(GroovieEngine *vm) : MusicPlayerMidi(vm) {
+MusicPlayerMac_t7g::MusicPlayerMac_t7g(GroovieEngine *vm)
+  : MusicPlayerMidi(vm) {
 	// Create the parser
 	_midiParser = MidiParser::createParser_SMF();
 
@@ -743,7 +749,7 @@ MusicPlayerMac_t7g::MusicPlayerMac_t7g(GroovieEngine *vm) : MusicPlayerMidi(vm) 
 	_driver = MidiDriver::createMidi(dev);
 	assert(_driver);
 
-	_driver->open();	// TODO: Handle return value != 0 (indicating an error)
+	_driver->open(); // TODO: Handle return value != 0 (indicating an error)
 
 	// Set the parser's driver
 	_midiParser->setMidiDriver(this);
@@ -759,7 +765,7 @@ bool MusicPlayerMac_t7g::load(uint32 fileref, bool loop) {
 	debugC(1, kDebugMIDI, "Groovie::Music: Starting the playback of song: %04X", fileref);
 
 	// First try for compressed MIDI
-	Common::SeekableReadStream *file = _vm->_macResFork->getResource(MKTAG('c','m','i','d'), fileref & 0x3FF);
+	Common::SeekableReadStream *file = _vm->_macResFork->getResource(MKTAG('c', 'm', 'i', 'd'), fileref & 0x3FF);
 
 	if (file) {
 		// Found the resource, decompress it
@@ -768,7 +774,7 @@ bool MusicPlayerMac_t7g::load(uint32 fileref, bool loop) {
 		file = tmp;
 	} else {
 		// Otherwise, it's uncompressed
-		file = _vm->_macResFork->getResource(MKTAG('M','i','d','i'), fileref & 0x3FF);
+		file = _vm->_macResFork->getResource(MKTAG('M', 'i', 'd', 'i'), fileref & 0x3FF);
 		if (!file)
 			error("Groovie::Music: Couldn't find resource 0x%04X", fileref);
 	}
@@ -824,7 +830,8 @@ Common::SeekableReadStream *MusicPlayerMac_t7g::decompressMidi(Common::SeekableR
 
 // MusicPlayerMac_v2
 
-MusicPlayerMac_v2::MusicPlayerMac_v2(GroovieEngine *vm) : MusicPlayerMidi(vm) {
+MusicPlayerMac_v2::MusicPlayerMac_v2(GroovieEngine *vm)
+  : MusicPlayerMidi(vm) {
 	// Create the parser
 	_midiParser = MidiParser::createParser_QT();
 
@@ -833,7 +840,7 @@ MusicPlayerMac_v2::MusicPlayerMac_v2(GroovieEngine *vm) : MusicPlayerMidi(vm) {
 	_driver = MidiDriver::createMidi(dev);
 	assert(_driver);
 
-	_driver->open();	// TODO: Handle return value != 0 (indicating an error)
+	_driver->open(); // TODO: Handle return value != 0 (indicating an error)
 
 	// Set the parser's driver
 	_midiParser->setMidiDriver(this);
@@ -850,7 +857,7 @@ bool MusicPlayerMac_v2::load(uint32 fileref, bool loop) {
 	_vm->_resMan->getResInfo(fileref, info);
 	uint len = info.filename.size();
 	if (len < 4)
-		return false;	// This shouldn't actually occur
+		return false; // This shouldn't actually occur
 
 	// Remove the extension and add ".mov"
 	info.filename.deleteLastChar();
@@ -868,7 +875,8 @@ bool MusicPlayerMac_v2::load(uint32 fileref, bool loop) {
 	return loadParser(file, loop);
 }
 
-MusicPlayerIOS::MusicPlayerIOS(GroovieEngine *vm) : MusicPlayer(vm) {
+MusicPlayerIOS::MusicPlayerIOS(GroovieEngine *vm)
+  : MusicPlayer(vm) {
 	vm->getTimerManager()->installTimerProc(&onTimer, 50 * 1000, this, "groovieMusic");
 }
 
@@ -893,7 +901,7 @@ bool MusicPlayerIOS::load(uint32 fileref, bool loop) {
 	_vm->_resMan->getResInfo(fileref, info);
 	uint len = info.filename.size();
 	if (len < 4)
-		return false;	// This shouldn't actually occur
+		return false; // This shouldn't actually occur
 	/*
 	19462 door
 	19463 ??
@@ -914,13 +922,7 @@ bool MusicPlayerIOS::load(uint32 fileref, bool loop) {
 	19514
 	19515 bathroom drain teeth
 	*/
-	if ((fileref >= 19462 && fileref <= 19468) ||
-		fileref == 19470 || fileref == 19471 ||
-		fileref == 19473 || fileref == 19475 ||
-		fileref == 19476 || fileref == 19493 ||
-		fileref == 19499 || fileref == 19509 ||
-		fileref == 19510 || fileref == 19514 ||
-		fileref == 19515)
+	if ((fileref >= 19462 && fileref <= 19468) || fileref == 19470 || fileref == 19471 || fileref == 19473 || fileref == 19475 || fileref == 19476 || fileref == 19493 || fileref == 19499 || fileref == 19509 || fileref == 19510 || fileref == 19514 || fileref == 19515)
 		loop = true; // XMIs for these refs self-loop
 
 	// iOS port provides alternative intro sequence music

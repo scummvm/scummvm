@@ -21,95 +21,96 @@
  */
 
 #include "tony/mpal/mpalutils.h"
-#include "tony/tony.h"
 #include "common/memstream.h"
+#include "tony/tony.h"
 
 namespace Tony {
 
 namespace MPAL {
 
-/****************************************************************************\
+	/****************************************************************************\
 *       RMRes methods
 \****************************************************************************/
 
-/**
+	/**
  * Constructor
  * @param resId					MPAL resource to open
  */
-RMRes::RMRes(uint32 resID) {
-	_buf = NULL;
+	RMRes::RMRes(uint32 resID) {
+		_buf = NULL;
 
-	_h = g_vm->_resUpdate.queryResource(resID);
-	if (_h == NULL)
-		_h = mpalQueryResource(resID);
-	if (_h != NULL)
-		_buf = (byte *)globalLock(_h);
-}
+		_h = g_vm->_resUpdate.queryResource(resID);
+		if (_h == NULL)
+			_h = mpalQueryResource(resID);
+		if (_h != NULL)
+			_buf = (byte *)globalLock(_h);
+	}
 
-/**
+	/**
  * Destructor
  */
-RMRes::~RMRes() {
-	if (_h != NULL) {
-		globalUnlock(_h);
-		globalFree(_h);
+	RMRes::~RMRes() {
+		if (_h != NULL) {
+			globalUnlock(_h);
+			globalFree(_h);
+		}
 	}
-}
 
-/**
+	/**
  * Returns a pointer to the resource
  */
-const byte *RMRes::dataPointer() {
-	return _buf;
-}
+	const byte *RMRes::dataPointer() {
+		return _buf;
+	}
 
-/**
+	/**
  * Returns a pointer to the resource
  */
-RMRes::operator const byte *() {
-	return dataPointer();
-}
+	RMRes::operator const byte *() {
+		return dataPointer();
+	}
 
-/**
+	/**
  * Returns the size of the resource
  */
-unsigned int RMRes::size() {
-	return globalSize(_h);
-}
+	unsigned int RMRes::size() {
+		return globalSize(_h);
+	}
 
-Common::SeekableReadStream *RMRes::getReadStream() {
-	return new Common::MemoryReadStream(_buf, size());
-}
+	Common::SeekableReadStream *RMRes::getReadStream() {
+		return new Common::MemoryReadStream(_buf, size());
+	}
 
-bool RMRes::isValid() {
-	return _h != NULL;
-}
+	bool RMRes::isValid() {
+		return _h != NULL;
+	}
 
-/****************************************************************************\
+	/****************************************************************************\
 *       RMResRaw methods
 \****************************************************************************/
 
-RMResRaw::RMResRaw(uint32 resID) : RMRes(resID) {
-}
+	RMResRaw::RMResRaw(uint32 resID)
+	  : RMRes(resID) {
+	}
 
-RMResRaw::~RMResRaw() {
-}
+	RMResRaw::~RMResRaw() {
+	}
 
-const byte *RMResRaw::dataPointer() {
-	return _buf + 8;
-}
+	const byte *RMResRaw::dataPointer() {
+		return _buf + 8;
+	}
 
-RMResRaw::operator const byte *() {
-	return dataPointer();
-}
+	RMResRaw::operator const byte *() {
+		return dataPointer();
+	}
 
-int RMResRaw::width() {
-	return READ_LE_UINT16(_buf + 4);
-}
+	int RMResRaw::width() {
+		return READ_LE_UINT16(_buf + 4);
+	}
 
-int RMResRaw::height() {
-	return READ_LE_UINT16(_buf + 6);
-}
+	int RMResRaw::height() {
+		return READ_LE_UINT16(_buf + 6);
+	}
 
 } // end of namespace MPAL
 

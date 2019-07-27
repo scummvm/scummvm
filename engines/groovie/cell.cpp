@@ -38,7 +38,7 @@ CellGame::CellGame() {
 
 byte CellGame::getStartX() {
 	if (_startX > BOARDSIZE) {
-		warning ("CellGame::getStartX: not calculated yet (%d)!", _startX);
+		warning("CellGame::getStartX: not calculated yet (%d)!", _startX);
 		return 0;
 	} else {
 		return _startX;
@@ -47,7 +47,7 @@ byte CellGame::getStartX() {
 
 byte CellGame::getStartY() {
 	if (_startY > BOARDSIZE) {
-		warning ("CellGame::getStartY: not calculated yet (%d)!", _startY);
+		warning("CellGame::getStartY: not calculated yet (%d)!", _startY);
 		return 6;
 	} else {
 		return _startY;
@@ -56,7 +56,7 @@ byte CellGame::getStartY() {
 
 byte CellGame::getEndX() {
 	if (_endX > BOARDSIZE) {
-		warning ("CellGame::getEndX: not calculated yet (%d)!", _endX);
+		warning("CellGame::getEndX: not calculated yet (%d)!", _endX);
 		return 1;
 	} else {
 		return _endX;
@@ -65,7 +65,7 @@ byte CellGame::getEndX() {
 
 byte CellGame::getEndY() {
 	if (_endY > BOARDSIZE) {
-		warning ("CellGame::getEndY: not calculated yet (%d)!", _endY);
+		warning("CellGame::getEndY: not calculated yet (%d)!", _endY);
 		return 6;
 	} else {
 		return _endY;
@@ -126,7 +126,6 @@ const int8 possibleMoves[][9] = {
 	{ 39, 40, 41, 46, 48, -1 },
 	{ 40, 41, 47, -1 }
 };
-
 
 const int8 strategy2[][17] = {
 	{ 2, 9, 14, 15, 16, -1 },
@@ -285,10 +284,10 @@ void CellGame::countAllCells() {
 
 	for (int i = 0; i < 49; i++) {
 		switch (_board[i]) {
-		case 1:	// CELL_BLUE
+		case 1: // CELL_BLUE
 			_board[49]++;
 			break;
-		case 2:	// CELL_GREEN
+		case 2: // CELL_GREEN
 			_board[50]++;
 			break;
 		case 3:
@@ -331,7 +330,7 @@ bool CellGame::canMoveFunc1(int8 color) {
 		for (; _board[53] < 49; _board[53]++) {
 			if (_shadowBoard[_board[53]] == color) {
 				str = &possibleMoves[_board[53]][_board[56]];
-				for (;_board[56] < 8; _board[56]++) {
+				for (; _board[56] < 8; _board[56]++) {
 					_board[54] = *str++;
 					if (_board[54] < 0)
 						break;
@@ -352,7 +351,7 @@ bool CellGame::canMoveFunc1(int8 color) {
 		for (; _board[53] < 49; _board[53]++) {
 			if (_shadowBoard[_board[53]] == color) {
 				str = &strategy2[_board[53]][_board[56]];
-				for (;_board[56] < 16; _board[56]++) {
+				for (; _board[56] < 16; _board[56]++) {
 					_board[54] = *str++;
 					if (_board[54] < 0)
 						break;
@@ -376,7 +375,7 @@ bool CellGame::canMoveFunc3(int8 color) {
 		for (; _board[53] < 49; _board[53]++) {
 			if (_shadowBoard[_board[53]] == color) {
 				str = &possibleMoves[_board[53]][_board[56]];
-				for (;_board[56] < 8; _board[56]++) {
+				for (; _board[56] < 8; _board[56]++) {
 					_board[54] = *str++;
 					if (_board[54] < 0)
 						break;
@@ -400,7 +399,7 @@ bool CellGame::canMoveFunc3(int8 color) {
 		for (; _board[53] < 49; _board[53]++) {
 			if (_shadowBoard[_board[53]] == color) {
 				str = &strategy2[_board[53]][_board[56]];
-				for (;_board[56] < 16; _board[56]++) {
+				for (; _board[56] < 16; _board[56]++) {
 					_board[54] = *str++;
 					if (_board[54] < 0)
 						break;
@@ -788,6 +787,5 @@ int CellGame::playStauf(byte color, uint16 depth, byte *scriptBoard) {
 
 	return calcMove(color, depth);
 }
-
 
 } // End of Groovie namespace

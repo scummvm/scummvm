@@ -31,6 +31,7 @@ class CEarSweetBowl : public CSweetBowl {
 	DECLARE_MESSAGE_MAP;
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool ReplaceBowlAndNutsMsg(CReplaceBowlAndNutsMsg *msg);
+
 public:
 	CLASSDEF;
 

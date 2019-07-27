@@ -21,13 +21,13 @@
  */
 
 #include "voyeur/events.h"
-#include "voyeur/voyeur.h"
-#include "voyeur/staticres.h"
 #include "common/events.h"
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/palette.h"
+#include "voyeur/staticres.h"
+#include "voyeur/voyeur.h"
 
 namespace Voyeur {
 
@@ -60,8 +60,11 @@ IntData::IntData() {
 
 /*------------------------------------------------------------------------*/
 
-EventsManager::EventsManager(VoyeurEngine *vm) : _intPtr(_gameData),
-		_fadeIntNode(0, 0, 3), _cycleIntNode(0, 0, 3), _vm(vm) {
+EventsManager::EventsManager(VoyeurEngine *vm)
+  : _intPtr(_gameData)
+  , _fadeIntNode(0, 0, 3)
+  , _cycleIntNode(0, 0, 3)
+  , _vm(vm) {
 	_cycleStatus = 0;
 	_fadeStatus = 0;
 	_priorFrameTime = g_system->getMillis();
@@ -170,8 +173,10 @@ void EventsManager::showMousePosition() {
 	Common::String mousePos = Common::String::format("(%d,%d)", _mousePos.x, _mousePos.y);
 	if (_vm->_voyeurArea == AREA_INTERFACE) {
 		Common::Point pt = _mousePos + _vm->_mansionViewPos - Common::Point(40, 27);
-		if (pt.x < 0) pt.x = 0;
-		if (pt.y < 0) pt.y = 0;
+		if (pt.x < 0)
+			pt.x = 0;
+		if (pt.y < 0)
+			pt.y = 0;
 
 		mousePos += Common::String::format(" - (%d,%d)", pt.x, pt.y);
 	}
@@ -206,16 +211,14 @@ void EventsManager::voyeurTimer() {
 
 		(this->*node._intFunc)();
 	}
-
 }
 
 void EventsManager::videoTimer() {
 	if (_gameData._hasPalette) {
 		_gameData._hasPalette = false;
 
-		g_system->getPaletteManager()->setPalette(_gameData._palette +
-			_gameData._palStartIndex * 3, _gameData._palStartIndex,
-			_gameData._palEndIndex - _gameData._palStartIndex + 1);
+		g_system->getPaletteManager()->setPalette(_gameData._palette + _gameData._palStartIndex * 3, _gameData._palStartIndex,
+		                                          _gameData._palEndIndex - _gameData._palStartIndex + 1);
 	}
 }
 
@@ -238,7 +241,7 @@ void EventsManager::delayClick(int cycles) {
 		g_system->delayMillis(10);
 		getMouseInfo();
 	} while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd
-			&& !_vm->_eventsManager->_mouseClicked);
+	         && !_vm->_eventsManager->_mouseClicked);
 }
 
 void EventsManager::pollEvents() {
@@ -279,7 +282,7 @@ void EventsManager::pollEvents() {
 			_mousePos = event.mouse;
 			break;
 		default:
- 			break;
+			break;
 		}
 	}
 }
@@ -468,7 +471,6 @@ void EventsManager::vDoCycleInt() {
 	}
 }
 
-
 void EventsManager::fadeIntFunc() {
 	switch (_vm->_voy->_fadingType) {
 	case 1:
@@ -603,7 +605,7 @@ Common::String EventsManager::getEvidString(int eventIndex) {
 	assert(eventIndex <= _vm->_voy->_eventCount);
 	VoyeurEvent &e = _vm->_voy->_events[eventIndex];
 	return Common::String::format("%03d %.2d:%.2d %s %s", eventIndex + 1,
-		e._hour, e._minute, e._isAM ? AM : PM, EVENT_TYPE_STRINGS[e._type - 1]);
+	                              e._hour, e._minute, e._isAM ? AM : PM, EVENT_TYPE_STRINGS[e._type - 1]);
 }
 
 } // End of namespace Voyeur

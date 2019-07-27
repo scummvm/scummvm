@@ -303,15 +303,34 @@ static const char *const k1GUIStringsAmigaEnglish[60] = {
 	"Yes",
 	"No",
 	"",
-	"\x01""Y""\xD6",
-	"\x01""Y""\xDE",
-	"\x01""Y""\xE4",
-	"\x01""Y""\xEC",
-	"\x01""Y""\xF2",
-	"\x01""Y""\xD6",
-	"\x01""Y""\xE4",
-	"\x01""Y""\xEC",
-	"\x01""Y""\xFA""Walk speed ",
+	"\x01"
+	"Y"
+	"\xD6",
+	"\x01"
+	"Y"
+	"\xDE",
+	"\x01"
+	"Y"
+	"\xE4",
+	"\x01"
+	"Y"
+	"\xEC",
+	"\x01"
+	"Y"
+	"\xF2",
+	"\x01"
+	"Y"
+	"\xD6",
+	"\x01"
+	"Y"
+	"\xE4",
+	"\x01"
+	"Y"
+	"\xEC",
+	"\x01"
+	"Y"
+	"\xFA"
+	"Walk speed ",
 	"Text speed ",
 	"Music is ",
 	"Sounds are "
@@ -494,4 +513,3 @@ static const byte k1CreditsStringsAmigaEnglish[1228] = {
 };
 
 static const ByteProvider k1CreditsStringsAmigaEnglishProvider = { ARRAYSIZE(k1CreditsStringsAmigaEnglish), k1CreditsStringsAmigaEnglish };
-

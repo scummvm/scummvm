@@ -135,7 +135,7 @@ void DrasculaEngine::showFrame(Common::SeekableReadStream *stream, bool firstFra
 	byte *screenBuffer = (byte *)screenSurf->getPixels();
 	uint16 screenPitch = screenSurf->pitch;
 	for (int y = 0; y < 200; y++) {
-		memcpy(prevFrame+y*320, screenBuffer+y*screenPitch, 320);
+		memcpy(prevFrame + y * 320, screenBuffer + y * screenPitch, 320);
 	}
 
 	decodeRLE(pcxData, screenBuffer, screenPitch);
@@ -154,7 +154,7 @@ void DrasculaEngine::showFrame(Common::SeekableReadStream *stream, bool firstFra
 }
 
 void DrasculaEngine::copyBackground(int xorg, int yorg, int xdes, int ydes, int width, int height, byte *src, byte *dest) {
-	debug(5, "DrasculaEngine::copyBackground(xorg:%d, yorg:%d, xdes:%d, ydes:%d width:%d height:%d, src, dest)", xorg, yorg, xdes, ydes, width,height);
+	debug(5, "DrasculaEngine::copyBackground(xorg:%d, yorg:%d, xdes:%d, ydes:%d width:%d height:%d, src, dest)", xorg, yorg, xdes, ydes, width, height);
 	dest += xdes + ydes * 320;
 	src += xorg + yorg * 320;
 	/* Unoptimized code
@@ -173,7 +173,7 @@ void DrasculaEngine::copyBackground(int xorg, int yorg, int xdes, int ydes, int 
 }
 
 void DrasculaEngine::copyRect(int xorg, int yorg, int xdes, int ydes, int width,
-								   int height, byte *src, byte *dest) {
+                              int height, byte *src, byte *dest) {
 	int y, x;
 
 	//
@@ -210,7 +210,6 @@ void DrasculaEngine::copyRect(int xorg, int yorg, int xdes, int ydes, int width,
 		}
 		ptr += 320 - width;
 	}
-
 }
 
 void DrasculaEngine::updateScreen(int xorg, int yorg, int xdes, int ydes, int width, int height, byte *buffer) {
@@ -235,29 +234,29 @@ void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 				letterX = _charMap[i].mappedChar;
 
 				switch (_charMap[i].charType) {
-				case 0:		// letters
+				case 0: // letters
 					letterY = (_lang == kSpanish) ? 149 : 158;
 					break;
-				case 1:		// signs
+				case 1: // signs
 					letterY = (_lang == kSpanish) ? 160 : 169;
 					break;
-				case 2:		// accented
+				case 2: // accented
 					letterY = 180;
 					break;
-				}	// switch
+				} // switch
 				break;
-			}	// if
-		}	// for
+			} // if
+		} // for
 
 		copyRect(letterX, letterY, screenX, screenY,
-				 CHAR_WIDTH, CHAR_HEIGHT, srcSurface, screenSurface);
+		         CHAR_WIDTH, CHAR_HEIGHT, srcSurface, screenSurface);
 
 		screenX = screenX + CHAR_WIDTH;
 		if (screenX > 317) {
 			screenX = 0;
 			screenY = screenY + CHAR_HEIGHT + 2;
 		}
-	}	// for
+	} // for
 }
 
 int DrasculaEngine::print_abc_opc(const char *said, int screenY, int game) {
@@ -315,11 +314,11 @@ int DrasculaEngine::print_abc_opc(const char *said, int screenY, int game) {
 				if (_charMap[i].charType > 0)
 					letterY = signY;
 				break;
-			}	// if
-		}	// for
+			} // if
+		} // for
 
 		copyRect(letterX, letterY, screenX, screenY,
-				 CHAR_WIDTH_OPC, CHAR_HEIGHT_OPC, backSurface, screenSurface);
+		         CHAR_WIDTH_OPC, CHAR_HEIGHT_OPC, backSurface, screenSurface);
 
 		screenX = screenX + CHAR_WIDTH_OPC;
 	}
@@ -398,7 +397,7 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 	*messageCurLine = 0;
 	*tmpMessageCurLine = 0;
 	// Get a word from the message
-	char* curWord = strtok(msg, " ");
+	char *curWord = strtok(msg, " ");
 	while (curWord != NULL) {
 		// Check if the word and the current line fit on screen
 		if (tmpMessageCurLine[0] != '\0')
@@ -434,7 +433,7 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 	// Also clip to the screen height although the original does not do it.
 	int y = textY - (curLine + 2) * CHAR_HEIGHT;
 	y = CLIP<int>(y, 0, 200 - curLine * (CHAR_HEIGHT + 2) + 2);
-	for (int line = 0 ; line < curLine ; ++line, y += CHAR_HEIGHT + 2) {
+	for (int line = 0; line < curLine; ++line, y += CHAR_HEIGHT + 2) {
 		int textHalfLen = (strlen(messageLines[line]) / 2) * CHAR_WIDTH;
 		print_abc(messageLines[line], textX - textHalfLen - 1, y);
 	}
@@ -574,7 +573,7 @@ int DrasculaEngine::playFrameSSN(Common::SeekableReadStream *stream) {
 		stream->read(dacSSN, 768);
 		setPalette(dacSSN);
 		break;
-		}
+	}
 	case kFrameEmptyFrame:
 		waitFrameSSN();
 		break;
@@ -595,7 +594,7 @@ int DrasculaEngine::playFrameSSN(Common::SeekableReadStream *stream) {
 				mixVideo(screenBuffer, screenSurface, screenPitch);
 			else
 				for (int y = 0; y < 200; y++)
-					memcpy(screenBuffer+y*screenPitch, screenSurface+y*320, 320);
+					memcpy(screenBuffer + y * screenPitch, screenSurface + y * 320, 320);
 
 			_system->unlockScreen();
 			_system->updateScreen();
@@ -614,7 +613,7 @@ int DrasculaEngine::playFrameSSN(Common::SeekableReadStream *stream) {
 					mixVideo(screenBuffer, screenSurface, screenPitch);
 				else
 					for (int y = 0; y < 200; y++)
-						memcpy(screenBuffer+y*screenPitch, screenSurface+y*320, 320);
+						memcpy(screenBuffer + y * screenPitch, screenSurface + y * 320, 320);
 
 				_system->unlockScreen();
 				_system->updateScreen();
@@ -622,7 +621,7 @@ int DrasculaEngine::playFrameSSN(Common::SeekableReadStream *stream) {
 			}
 		}
 		break;
-		}
+	}
 	case kFrameEndAnim:
 		Exit = 1;
 		break;
@@ -650,7 +649,7 @@ void DrasculaEngine::decodeOffset(byte *BufferOFF, byte *MiVideoOFF, int length)
 	}
 }
 
-  void DrasculaEngine::decodeRLE(byte* srcPtr, byte* dstPtr, uint16 pitch) {
+void DrasculaEngine::decodeRLE(byte *srcPtr, byte *dstPtr, uint16 pitch) {
 	bool stopProcessing = false;
 	byte pixel;
 	uint repeat;
@@ -689,7 +688,7 @@ void DrasculaEngine::mixVideo(byte *OldScreen, byte *NewScreen, uint16 oldPitch)
 
 void DrasculaEngine::waitFrameSSN() {
 	uint32 now;
-	while ((now = _system->getMillis()) - LastFrame < ((uint32) globalSpeed))
+	while ((now = _system->getMillis()) - LastFrame < ((uint32)globalSpeed))
 		_system->delayMillis(globalSpeed - (now - LastFrame));
 	LastFrame = LastFrame + globalSpeed;
 }

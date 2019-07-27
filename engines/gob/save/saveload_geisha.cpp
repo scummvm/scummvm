@@ -20,21 +20,19 @@
  *
  */
 
-#include "gob/save/saveload.h"
-#include "gob/save/saveconverter.h"
 #include "gob/inter.h"
+#include "gob/save/saveconverter.h"
+#include "gob/save/saveload.h"
 #include "gob/variables.h"
 
 namespace Gob {
 
 SaveLoad_Geisha::SaveFile SaveLoad_Geisha::_saveFiles[] = {
-	{"save.inf", kSaveModeSave, 0, "savegame"}
+	{ "save.inf", kSaveModeSave, 0, "savegame" }
 };
 
-
-SaveLoad_Geisha::GameHandler::File::File(GobEngine *vm, const Common::String &base) :
-	SlotFileIndexed(vm, SaveLoad_Geisha::kSlotCount, base, "s") {
-
+SaveLoad_Geisha::GameHandler::File::File(GobEngine *vm, const Common::String &base)
+  : SlotFileIndexed(vm, SaveLoad_Geisha::kSlotCount, base, "s") {
 }
 
 SaveLoad_Geisha::GameHandler::File::~File() {
@@ -48,10 +46,9 @@ int SaveLoad_Geisha::GameHandler::File::getSlotRemainder(int32 offset) const {
 	return 0;
 }
 
-
-SaveLoad_Geisha::GameHandler::GameHandler(GobEngine *vm, const Common::String &target) :
-	SaveHandler(vm), _file(vm, target) {
-
+SaveLoad_Geisha::GameHandler::GameHandler(GobEngine *vm, const Common::String &target)
+  : SaveHandler(vm)
+  , _file(vm, target) {
 }
 
 SaveLoad_Geisha::GameHandler::~GameHandler() {
@@ -88,8 +85,8 @@ bool SaveLoad_Geisha::GameHandler::load(int16 dataVar, int32 size, int32 offset)
 			continue;
 		}
 
-		SavePartInfo info(20, (uint32) _vm->getGameType(), 0,
-				_vm->getEndianness(), _vm->_inter->_variables->getSize());
+		SavePartInfo info(20, (uint32)_vm->getGameType(), 0,
+		                  _vm->getEndianness(), _vm->_inter->_variables->getSize());
 		SavePartVars vars(_vm, SaveLoad_Geisha::kSlotSize);
 
 		if (!reader.readPart(0, &info) || !reader.readPart(1, &vars)) {
@@ -97,7 +94,7 @@ bool SaveLoad_Geisha::GameHandler::load(int16 dataVar, int32 size, int32 offset)
 			continue;
 		}
 
-			if (!vars.writeInto(dataVar, 0, SaveLoad_Geisha::kSlotSize)) {
+		if (!vars.writeInto(dataVar, 0, SaveLoad_Geisha::kSlotSize)) {
 			warning("Save slot %d contains corrupted save", slot);
 			continue;
 		}
@@ -136,8 +133,8 @@ bool SaveLoad_Geisha::GameHandler::save(int16 dataVar, int32 size, int32 offset)
 
 		SaveWriter writer(2, slot, slotFile);
 
-		SavePartInfo info(20, (uint32) _vm->getGameType(), 0,
-				_vm->getEndianness(), _vm->_inter->_variables->getSize());
+		SavePartInfo info(20, (uint32)_vm->getGameType(), 0,
+		                  _vm->getEndianness(), _vm->_inter->_variables->getSize());
 		SavePartVars vars(_vm, SaveLoad_Geisha::kSlotSize);
 
 		info.setDesc(Common::String::format("Geisha, slot %d", slot).c_str());
@@ -153,9 +150,8 @@ bool SaveLoad_Geisha::GameHandler::save(int16 dataVar, int32 size, int32 offset)
 	return true;
 }
 
-
-SaveLoad_Geisha::SaveLoad_Geisha(GobEngine *vm, const char *targetName) :
-		SaveLoad(vm) {
+SaveLoad_Geisha::SaveLoad_Geisha(GobEngine *vm, const char *targetName)
+  : SaveLoad(vm) {
 
 	_saveFiles[0].handler = new GameHandler(vm, targetName);
 }

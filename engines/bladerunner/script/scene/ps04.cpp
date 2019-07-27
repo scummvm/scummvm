@@ -25,8 +25,8 @@
 namespace BladeRunner {
 
 enum kPS04Loops {
-	kPS04LoopPanToPS04                 = 0, //   0 -  29
-	kPS04LoopMainLoop                  = 1  //  30 -  90 (actually 31-90)
+	kPS04LoopPanToPS04 = 0, //   0 -  29
+	kPS04LoopMainLoop = 1 //  30 -  90 (actually 31-90)
 };
 
 void SceneScriptPS04::InitializeScene() {
@@ -67,10 +67,9 @@ void SceneScriptPS04::SceneLoaded() {
 	Unclickable_Object("FLOOR");
 #endif // BLADERUNNER_ORIGINAL_BUGS
 
-	if ( Global_Variable_Query(kVariableChapter) == 2
-	 && !Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm)
-	 && !Game_Flag_Query(kFlagPS04WeaponsOrderForm)
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 2
+	    && !Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm)
+	    && !Game_Flag_Query(kFlagPS04WeaponsOrderForm)) {
 		Item_Add_To_World(kItemWeaponsOrderForm, kModelAnimationOriginalRequisitionForm, kSetPS04, -643.5f, -318.82f, 1148.87f, 525, 16, 12, false, true, false, true);
 		Game_Flag_Set(kFlagPS04WeaponsOrderForm);
 	}
@@ -102,8 +101,7 @@ bool SceneScriptPS04::ClickedOnActor(int actorId) {
 
 bool SceneScriptPS04::ClickedOnItem(int itemId, bool a2) {
 	if (itemId == kItemWeaponsOrderForm
-	 && Actor_Query_Is_In_Current_Set(kActorGuzza)
-	) {
+	    && Actor_Query_Is_In_Current_Set(kActorGuzza)) {
 		Actor_Says(kActorGuzza, 560, 30);
 	} else if (!Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm)) {
 		Item_Remove_From_World(kItemWeaponsOrderForm);
@@ -211,12 +209,12 @@ void SceneScriptPS04::dialogueWithGuzza() {
 				}
 			} else {
 				// McCoy has plenty cash already - Guzza denies the loan
-				Actor_Says(kActorGuzza, 470, 33);	// Hey, I'd love to be your own personal ATM but the department's strapped right now.
+				Actor_Says(kActorGuzza, 470, 33); // Hey, I'd love to be your own personal ATM but the department's strapped right now.
 				Actor_Says(kActorGuzza, 480, 31);
 				Actor_Says(kActorGuzza, 490, 31);
 				Actor_Says(kActorGuzza, 500, 32);
 				Actor_Says(kActorMcCoy, 4045, 16);
-				Actor_Says(kActorGuzza, 510, 31);	// Hey, you track down a Rep, you get an advance.
+				Actor_Says(kActorGuzza, 510, 31); // Hey, you track down a Rep, you get an advance.
 				Actor_Says(kActorMcCoy, 4050, 18);
 			}
 		} else {
@@ -236,9 +234,8 @@ void SceneScriptPS04::dialogueWithGuzza() {
 		break;
 
 	case 130: // REPORT IN
-		if ( Game_Flag_Query(kFlagZubenRetired)
-		 && !Game_Flag_Query(kFlagPS04GuzzaTalkZubenRetired)
-		) {
+		if (Game_Flag_Query(kFlagZubenRetired)
+		    && !Game_Flag_Query(kFlagPS04GuzzaTalkZubenRetired)) {
 			Actor_Says(kActorMcCoy, 3920, 13);
 			Actor_Says(kActorGuzza, 140, 30);
 			Actor_Face_Current_Camera(kActorGuzza, true);
@@ -252,12 +249,12 @@ void SceneScriptPS04::dialogueWithGuzza() {
 			Actor_Says(kActorMcCoy, 3930, 13);
 			Actor_Face_Actor(kActorGuzza, kActorMcCoy, true);
 #if BLADERUNNER_ORIGINAL_BUGS
-			Actor_Says(kActorGuzza, 180, 34);	// But I'm proud of you McCoy. Why don't you take the rest of the day off?
-			Actor_Says(kActorMcCoy, 3935, 13);	// Thanks.
+			Actor_Says(kActorGuzza, 180, 34); // But I'm proud of you McCoy. Why don't you take the rest of the day off?
+			Actor_Says(kActorMcCoy, 3935, 13); // Thanks.
 #else
 			if (Global_Variable_Query(kVariableChapter) == 1) { // only play this dialogue (about day off) on day one. It doesn't fit in the next days
-				Actor_Says(kActorGuzza, 180, 34);	// But I'm proud of you McCoy. Why don't you take the rest of the day off?
-				Actor_Says(kActorMcCoy, 3935, 13);	// Thanks.
+				Actor_Says(kActorGuzza, 180, 34); // But I'm proud of you McCoy. Why don't you take the rest of the day off?
+				Actor_Says(kActorMcCoy, 3935, 13); // Thanks.
 			}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 			Actor_Says(kActorGuzza, 190, 30);
@@ -286,36 +283,33 @@ void SceneScriptPS04::dialogueWithGuzza() {
 				Game_Flag_Set(kFlagZubenBountyPaid); // not a proper bug, but was missing from original code, so the flag would remain in non-consistent state in this case
 			}
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		} else if ( Game_Flag_Query(kFlagZubenSpared)
-		        && !Game_Flag_Query(kFlagPS04GuzzaTalkZubenEscaped)
-		) {
+		} else if (Game_Flag_Query(kFlagZubenSpared)
+		           && !Game_Flag_Query(kFlagPS04GuzzaTalkZubenEscaped)) {
 			Actor_Says(kActorMcCoy, 3955, 13);
 			Actor_Says(kActorGuzza, 280, 30);
 			Actor_Says(kActorMcCoy, 3960, 18);
 #if BLADERUNNER_ORIGINAL_BUGS
-			Actor_Says(kActorGuzza, 290, 32);	// Don't push it kid. You look like you're beat anyway.
-			Actor_Says(kActorGuzza, 300, 31);	// Why don't you rest them dogs the rest of the day.
-			Actor_Says(kActorMcCoy, 3965, 13);	// I still got plenty energy.
-			Actor_Says(kActorGuzza, 310, 33);	// That's an order McCoy.
-			Actor_Says(kActorGuzza, 320, 34);	// I'm ordering you to relax.
+			Actor_Says(kActorGuzza, 290, 32); // Don't push it kid. You look like you're beat anyway.
+			Actor_Says(kActorGuzza, 300, 31); // Why don't you rest them dogs the rest of the day.
+			Actor_Says(kActorMcCoy, 3965, 13); // I still got plenty energy.
+			Actor_Says(kActorGuzza, 310, 33); // That's an order McCoy.
+			Actor_Says(kActorGuzza, 320, 34); // I'm ordering you to relax.
 #else
 			if (Global_Variable_Query(kVariableChapter) == 1) { // only play this dialogue (about day off) on day one. It doesn't fit in the next days
-				Actor_Says(kActorGuzza, 290, 32);	// Don't push it kid. You look like you're beat anyway.
-				Actor_Says(kActorGuzza, 300, 31);	// Why don't you rest them dogs the rest of the day.
-				Actor_Says(kActorMcCoy, 3965, 13);	// I still got plenty energy.
-				Actor_Says(kActorGuzza, 310, 33);	// That's an order McCoy.
-				Actor_Says(kActorGuzza, 320, 34);	// I'm ordering you to relax.
+				Actor_Says(kActorGuzza, 290, 32); // Don't push it kid. You look like you're beat anyway.
+				Actor_Says(kActorGuzza, 300, 31); // Why don't you rest them dogs the rest of the day.
+				Actor_Says(kActorMcCoy, 3965, 13); // I still got plenty energy.
+				Actor_Says(kActorGuzza, 310, 33); // That's an order McCoy.
+				Actor_Says(kActorGuzza, 320, 34); // I'm ordering you to relax.
 			}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 			Game_Flag_Set(kFlagPS04GuzzaTalkZubenEscaped);
 		} else if (
-		 (   Actor_Clue_Query(kActorMcCoy, kClueChopstickWrapper)
-		  || Actor_Clue_Query(kActorMcCoy, kClueSushiMenu)
-		 )
-		 &&  Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA)
-		 &&  Actor_Query_Friendliness_To_Other(kActorGuzza, kActorMcCoy) < 50
-		 && !Game_Flag_Query(kFlagPS04GuzzaTalk1)
-		) {
+		  (Actor_Clue_Query(kActorMcCoy, kClueChopstickWrapper)
+		   || Actor_Clue_Query(kActorMcCoy, kClueSushiMenu))
+		  && Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA)
+		  && Actor_Query_Friendliness_To_Other(kActorGuzza, kActorMcCoy) < 50
+		  && !Game_Flag_Query(kFlagPS04GuzzaTalk1)) {
 			Actor_Says(kActorMcCoy, 3970, 18);
 			Actor_Says(kActorGuzza, 330, 30);
 			Actor_Says(kActorGuzza, 340, 32);
@@ -331,12 +325,10 @@ void SceneScriptPS04::dialogueWithGuzza() {
 			Actor_Says(kActorGuzza, 410, 31);
 			Game_Flag_Set(kFlagPS04GuzzaTalk1);
 		} else if (
-		 (   Actor_Clue_Query(kActorMcCoy, kClueChopstickWrapper)
-		  || Actor_Clue_Query(kActorMcCoy, kClueSushiMenu)
-		 )
-		 &&  Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA)
-		 && !Game_Flag_Query(kFlagPS04GuzzaTalk2)
-		) {
+		  (Actor_Clue_Query(kActorMcCoy, kClueChopstickWrapper)
+		   || Actor_Clue_Query(kActorMcCoy, kClueSushiMenu))
+		  && Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA)
+		  && !Game_Flag_Query(kFlagPS04GuzzaTalk2)) {
 			Actor_Says(kActorMcCoy, 3920, 13);
 			Actor_Says(kActorGuzza, 570, 32);
 			Actor_Says(kActorMcCoy, 4070, 13);

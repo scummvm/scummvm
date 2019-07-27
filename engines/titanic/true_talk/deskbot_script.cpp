@@ -20,11 +20,11 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "titanic/true_talk/deskbot_script.h"
-#include "titanic/true_talk/true_talk_manager.h"
+#include "common/textconsole.h"
 #include "titanic/titanic.h"
 #include "titanic/translation.h"
+#include "titanic/true_talk/true_talk_manager.h"
 
 namespace Titanic {
 
@@ -33,8 +33,8 @@ int DeskbotScript::_oldId;
 #define CURRENT_STATE 17
 
 DeskbotScript::DeskbotScript(int val1, const char *charClass, int v2,
-		const char *charName, int v3, int val2) :
-		TTnpcScript(val1, charClass, v2, charName, v3, val2, -1, -1, -1, 0) {
+                             const char *charName, int v3, int val2)
+  : TTnpcScript(val1, charClass, v2, charName, v3, val2, -1, -1, -1, 0) {
 	CTrueTalkManager::setFlags(18, 0);
 	CTrueTalkManager::setFlags(19, 0);
 	CTrueTalkManager::setFlags(20, 0);
@@ -82,20 +82,11 @@ int DeskbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 
 	if (getValue(1) == 3) {
 		if (sentence->localWord("competition") || sentence->contains("competition")
-				|| sentence->localWord("won") || sentence->contains("won")
-				|| sentence->localWord("winning") || sentence->contains("winning")
-				|| sentence->localWord("winner") || sentence->contains("winner")
-				|| sentence->contains("35279") || sentence->contains("3 5 2 7 9")
-				|| (g_language == Common::DE_DEU && (
-					sentence->contains("preisaus") ||
-					sentence->contains("tombola") ||
-					sentence->contains("lotterie") ||
-					sentence->contains("gewonnen") ||
-					sentence->contains("glueck") ||
-					sentence->contains("das goldene los") ||
-					sentence->contains("sechs richtige")
-				))
-			) {
+		    || sentence->localWord("won") || sentence->contains("won")
+		    || sentence->localWord("winning") || sentence->contains("winning")
+		    || sentence->localWord("winner") || sentence->contains("winner")
+		    || sentence->contains("35279") || sentence->contains("3 5 2 7 9")
+		    || (g_language == Common::DE_DEU && (sentence->contains("preisaus") || sentence->contains("tombola") || sentence->contains("lotterie") || sentence->contains("gewonnen") || sentence->contains("glueck") || sentence->contains("das goldene los") || sentence->contains("sechs richtige")))) {
 			addResponse(getDialogueId(41773));
 			applyResponse();
 			return 2;
@@ -104,7 +95,7 @@ int DeskbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 			applyResponse();
 			return 2;
 		} else if (sentence->localWord("upgrade") || sentence->contains("upgrade")
-				|| sentence->localWord("secondclass")) {
+		           || sentence->localWord("secondclass")) {
 			if (CTrueTalkManager::_currentNPC) {
 				CGameObject *obj;
 				if (CTrueTalkManager::_currentNPC->find("Magazine", &obj, FIND_PET)) {
@@ -117,7 +108,7 @@ int DeskbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 	}
 
 	if (processEntries(&_entries, _entryCount, roomScript, sentence) != 2
-			&& processEntries(&_entries2, 0, roomScript, sentence) != 2) {
+	    && processEntries(&_entries2, 0, roomScript, sentence) != 2) {
 		if (sentence->localWord("sauce") || sentence->localWord("pureed")) {
 			addResponse(getDialogueId(240398));
 			applyResponse();
@@ -135,8 +126,8 @@ int DeskbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 				setDialRegion(1, 1);
 
 			if (!defaultProcess(roomScript, sentence)
-					&& processEntries(&_entries3, 0, roomScript, sentence) != 2
-					&& processEntries(_defaultEntries, 0, roomScript, sentence) != 2) {
+			    && processEntries(&_entries3, 0, roomScript, sentence) != 2
+			    && processEntries(_defaultEntries, 0, roomScript, sentence) != 2) {
 				if (flag20)
 					CTrueTalkManager::setFlags(20, 1);
 				addResponse(getDialogueId(240569));
@@ -181,7 +172,7 @@ ScriptChangedResult DeskbotScript::scriptChanged(const TTroomScript *roomScript,
 }
 
 int DeskbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
-		uint tag1, uint tag2, uint remainder) {
+                               uint tag1, uint tag2, uint remainder) {
 	switch (tag2) {
 	case MKTAG('A', 'D', 'V', 'T'):
 	case MKTAG('A', 'R', 'T', 'I'):
@@ -363,12 +354,7 @@ exit:
 
 int DeskbotScript::preResponse(uint id) {
 	int newId = 0;
-	if (getValue(1) >= 3 && (
-			id == (uint)TRANSLATE(41176, 41190) ||
-			id == (uint)TRANSLATE(41738, 41429) ||
-			id == (uint)TRANSLATE(41413, 41755) ||
-			id == (uint)TRANSLATE(41740, 41757)
-		)) {
+	if (getValue(1) >= 3 && (id == (uint)TRANSLATE(41176, 41190) || id == (uint)TRANSLATE(41738, 41429) || id == (uint)TRANSLATE(41413, 41755) || id == (uint)TRANSLATE(41740, 41757))) {
 		newId = 241601;
 	}
 	if (id == (uint)TRANSLATE(42114, 42132))
@@ -572,10 +558,10 @@ void DeskbotScript::setCurrentState(uint newId, uint index) {
 			uint bits = us._dialBits;
 
 			if (!bits
-				|| (index == 1 && (bits & 1) && (bits & 4))
-				|| (index == 0 && (bits & 2) && (bits & 4))
-				|| (index == 3 && (bits & 1) && (bits & 8))
-				|| (index == 2 && (bits & 2) && (bits & 8))) {
+			    || (index == 1 && (bits & 1) && (bits & 4))
+			    || (index == 0 && (bits & 2) && (bits & 4))
+			    || (index == 3 && (bits & 1) && (bits & 8))
+			    || (index == 2 && (bits & 2) && (bits & 8))) {
 				newValue = us._newValue;
 				break;
 			}
@@ -593,8 +579,8 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 	switch (getValue(CURRENT_STATE)) {
 	case 1:
 		if (sentence->_category != 3 && sentence->_category != 4
-				&& sentence->_category != 6 && sentence->_category != 10
-				&& sentence->_category != 2) {
+		    && sentence->_category != 6 && sentence->_category != 10
+		    && sentence->_category != 2) {
 			addResponse(getDialogueId(240423));
 			applyFlag = true;
 		}
@@ -609,7 +595,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 3:
 		if (sentence->_category == 11 || sentence->_category == 13
-				|| sentence->_category == 3 || sentence->localWord("upgrade")) {
+		    || sentence->_category == 3 || sentence->localWord("upgrade")) {
 			addResponse(getDialogueId(240433));
 			applyFlag = true;
 		}
@@ -617,14 +603,15 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 4:
 		addResponse(getDialogueId(sentence->_category == 11 || sentence->_category == 13
-			? 240495 : 240494));
+		                            ? 240495
+		                            : 240494));
 		applyFlag = true;
 		break;
 
 	case 5:
 		if (isDial1Low() && getValue(1) == 4) {
 			if (sentence->localWord("name") || sentence->localWord("called")
-				|| sentence->localWord("passenger")) {
+			    || sentence->localWord("passenger")) {
 				addResponse(getDialogueId(240867));
 				addResponse(getDialogueId(240745));
 			} else {
@@ -643,12 +630,12 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 				applyFlag = true;
 				stateFlag = false;
 			} else if (sentence->localWord("home")
-				|| sentence->localWord("destroy")) {
+			           || sentence->localWord("destroy")) {
 				addResponse(getDialogueId(240574));
 				stateFlag = true;
 			} else if (sentence->localWord("name")
-				|| sentence->localWord("called")
-				|| sentence->_category == 11) {
+			           || sentence->localWord("called")
+			           || sentence->_category == 11) {
 				addResponse(getDialogueId(240448));
 				stateFlag = true;
 			} else {
@@ -660,8 +647,8 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 7:
 		if (sentence->_category == 11 || sentence->_category == 13
-				|| (sentence->localWord("what") && sentence->localWord("wrong"))
-				|| sentence->localWord("clothes")) {
+		    || (sentence->localWord("what") && sentence->localWord("wrong"))
+		    || sentence->localWord("clothes")) {
 			addResponse(getDialogueId(240489));
 			applyFlag = true;
 			stateFlag = false;
@@ -670,8 +657,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 8:
 		if (isDial1Low() && getValue(1) == 4) {
-			if (sentence->_category == 12 || sentence->_category == 13 ||
-					(g_language != Common::DE_DEU && sentence->contains("do not"))) {
+			if (sentence->_category == 12 || sentence->_category == 13 || (g_language != Common::DE_DEU && sentence->contains("do not"))) {
 				addResponse(getDialogueId(240447));
 				setDialRegion(0, 0);
 				setDialRegion(1, 0);
@@ -719,7 +705,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 11:
 		if (isDial0Medium() && isDial1Medium()
-				&& searchQuotes(roomScript, sentence)) {
+		    && searchQuotes(roomScript, sentence)) {
 			addResponse(getDialogueId(240406));
 			applyFlag = true;
 			stateFlag = false;
@@ -728,7 +714,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 12:
 		if (isDial0Medium() && isDial1Medium()
-				&& searchQuotes(roomScript, sentence)) {
+		    && searchQuotes(roomScript, sentence)) {
 			addResponse(getDialogueId(240548));
 			applyFlag = true;
 			stateFlag = false;
@@ -1146,8 +1132,8 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 			addResponse(getDialogueId(240972));
 			applyFlag = true;
 		} else if (sentence->localWord("good") || sentence->localWord("yes")
-				|| sentence->localWord("well") || sentence->localWord("ill")
-				|| sentence->localWord("sad")) {
+		           || sentence->localWord("well") || sentence->localWord("ill")
+		           || sentence->localWord("sad")) {
 			addResponse(getDialogueId(240805));
 			applyFlag = true;
 		}
@@ -1174,8 +1160,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		if (sentence->_category == 11 || sentence->_category == 13) {
 			// Player said they have a reservation
 			addResponse(getDialogueId(241262));
-		} else if (sentence->_category == 12 ||
-				(g_language != Common::DE_DEU && sentence->contains("do not"))) {
+		} else if (sentence->_category == 12 || (g_language != Common::DE_DEU && sentence->contains("do not"))) {
 			// Player said they don't have a reservation
 			setDialRegion(0, 0);
 			setDialRegion(1, 0);
@@ -1233,8 +1218,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		break;
 
 	case 83:
-		if ((isDial1Medium() && isDial0Low()) ||
-				(isDial1Low() && isDial0Medium())) {
+		if ((isDial1Medium() && isDial0Low()) || (isDial1Low() && isDial0Medium())) {
 			if (sentence->localWord("yes") || sentence->localWord("but")) {
 				if (sentence->localWord("will") || sentence->localWord("do")) {
 					addResponse(getDialogueId(241366));
@@ -1246,23 +1230,22 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 84:
 		if (sentence->_category == 12 || sentence->contains("vegetarian")
-				|| sentence->contains("vegitarian")) {
+		    || sentence->contains("vegitarian")) {
 			addResponse(getDialogueId(241718));
 			addResponse(getDialogueId(241709));
 			applyFlag = true;
 			stateFlag = false;
 		} else if (sentence->contains("continental")
-				|| sentence->contains("kontinent")
-				|| sentence->contains("full")
-				|| sentence->contains("porky")
-				|| sentence->contains("the 1")
-				|| sentence->contains("the 2")
-				|| sentence->contains("former")
-				|| sentence->contains("latter")
-				|| sentence->contains("speck")
-				|| sentence->contains("wurst")
-				|| sentence->contains("englisch")
-			) {
+		           || sentence->contains("kontinent")
+		           || sentence->contains("full")
+		           || sentence->contains("porky")
+		           || sentence->contains("the 1")
+		           || sentence->contains("the 2")
+		           || sentence->contains("former")
+		           || sentence->contains("latter")
+		           || sentence->contains("speck")
+		           || sentence->contains("wurst")
+		           || sentence->contains("englisch")) {
 			addResponse(getDialogueId(241717));
 			addResponse(getDialogueId(241709));
 			applyFlag = true;
@@ -1278,15 +1261,14 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 85:
 		if (sentence->_category == 12 || sentence->contains("bugle")
-				|| sentence->contains("buggle") || sentence->contains("trumpet")
-				|| sentence->contains("saxophone") || sentence->contains("kazoo")
-				|| sentence->contains("blerontin 1") || sentence->contains("the 1")
-				|| sentence->contains("the 2") || sentence->contains("the 3")
-				|| sentence->contains("the 4") || sentence->contains("all of them")
-				|| sentence->contains("the lot") || sentence->contains("buegelhorn")
-				|| sentence->contains("bugelhorn") || sentence->contains("trompete")
-				|| sentence->contains("saxophon") || sentence->contains("popanz")
-			) {
+		    || sentence->contains("buggle") || sentence->contains("trumpet")
+		    || sentence->contains("saxophone") || sentence->contains("kazoo")
+		    || sentence->contains("blerontin 1") || sentence->contains("the 1")
+		    || sentence->contains("the 2") || sentence->contains("the 3")
+		    || sentence->contains("the 4") || sentence->contains("all of them")
+		    || sentence->contains("the lot") || sentence->contains("buegelhorn")
+		    || sentence->contains("bugelhorn") || sentence->contains("trompete")
+		    || sentence->contains("saxophon") || sentence->contains("popanz")) {
 			addResponse(getDialogueId(241710));
 			addResponse(getDialogueId(241713));
 		} else {
@@ -1302,7 +1284,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 86:
 		if (sentence->_category == 12 || sentence->_category == 11
-				|| sentence->contains(TRANSLATE("view", "aussicht"))) {
+		    || sentence->contains(TRANSLATE("view", "aussicht"))) {
 			addResponse(getDialogueId(241714));
 			addResponse(getDialogueId(241699));
 		} else {
@@ -1315,7 +1297,6 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 				addResponse(getDialogueId(241712));
 				addResponse(getDialogueId(241713));
 			}
-
 		}
 
 		applyFlag = true;
@@ -1324,11 +1305,11 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 87:
 		if (sentence->contains("corner") || sentence->contains("on the end")
-				|| sentence->contains("balcony") || sentence->contains("neither")
-				|| sentence->contains("the 1") || sentence->contains("the 2")
-				|| sentence->contains("former") || sentence->contains("latter")
-				|| sentence->contains("either") || sentence->contains("suedlage")
-				|| sentence->contains("balkon")) {
+		    || sentence->contains("balcony") || sentence->contains("neither")
+		    || sentence->contains("the 1") || sentence->contains("the 2")
+		    || sentence->contains("former") || sentence->contains("latter")
+		    || sentence->contains("either") || sentence->contains("suedlage")
+		    || sentence->contains("balkon")) {
 			addResponse(getDialogueId(241700));
 			addResponse(getDialogueId(241687));
 		} else {
@@ -1350,10 +1331,10 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		} else if (sentence->contains("royal") || sentence->contains(TRANSLATE("the 2", "majest"))) {
 			addResponse(getDialogueId(241690));
 		} else if (sentence->contains("despotic") || sentence->contains("despot")
-				|| sentence->contains("the last") || sentence->contains("latter")) {
+		           || sentence->contains("the last") || sentence->contains("latter")) {
 			addResponse(getDialogueId(241688));
 		} else if (sentence->contains("president") || sentence->contains("presidential")
-				|| sentence->contains("the 3") || sentence->contains("praesident")) {
+		           || sentence->contains("the 3") || sentence->contains("praesident")) {
 			addResponse(getDialogueId(241689));
 			addResponse(getDialogueId(241739));
 		} else {
@@ -1371,11 +1352,11 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		if (sentence->contains("king")) {
 			addResponse(getDialogueId(241691));
 		} else if (sentence->contains("queen") || sentence->contains("prince")
-				|| sentence->contains("princess") || sentence->contains("small")
-				|| sentence->contains("the 1") || sentence->contains("the 2")
-				|| sentence->contains("the 3") || sentence->contains("the 4")
-				|| sentence->contains("big") || sentence->contains("large")
-			|| sentence->contains("prinz") || sentence->contains("gross")) {
+		           || sentence->contains("princess") || sentence->contains("small")
+		           || sentence->contains("the 1") || sentence->contains("the 2")
+		           || sentence->contains("the 3") || sentence->contains("the 4")
+		           || sentence->contains("big") || sentence->contains("large")
+		           || sentence->contains("prinz") || sentence->contains("gross")) {
 			addResponse(getDialogueId(241700));
 			addResponse(getDialogueId(241739));
 		} else {
@@ -1391,11 +1372,11 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 90:
 		if (sentence->contains("constitutional") || sentence->contains("const")
-				|| sentence->contains("absolute") || sentence->contains("small")
-				|| sentence->contains("the 1") || sentence->contains("the 2")
-				|| sentence->contains("big") || sentence->contains("large")
-				|| sentence->contains("verfassung") || sentence->contains("absolut")
-				|| sentence->contains("gross")) {
+		    || sentence->contains("absolute") || sentence->contains("small")
+		    || sentence->contains("the 1") || sentence->contains("the 2")
+		    || sentence->contains("big") || sentence->contains("large")
+		    || sentence->contains("verfassung") || sentence->contains("absolut")
+		    || sentence->contains("gross")) {
 			addResponse(getDialogueId(241700));
 			addResponse(getDialogueId(241739));
 		} else {
@@ -1411,12 +1392,12 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 91:
 		if (sentence->contains("benev") || sentence->contains("dict")
-				|| sentence->contains("small") || sentence->contains("the 1")
-				|| sentence->contains("the 2") || sentence->contains("big")
-				|| sentence->contains("large") || sentence->contains("former")
-				|| sentence->contains("latter")
-				|| sentence->contains("aufgekl") || sentence->contains("diktator")
-				|| sentence->contains("gross")) {
+		    || sentence->contains("small") || sentence->contains("the 1")
+		    || sentence->contains("the 2") || sentence->contains("big")
+		    || sentence->contains("large") || sentence->contains("former")
+		    || sentence->contains("latter")
+		    || sentence->contains("aufgekl") || sentence->contains("diktator")
+		    || sentence->contains("gross")) {
 			addResponse(getDialogueId(241700));
 			addResponse(getDialogueId(241739));
 		} else {
@@ -1444,12 +1425,12 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 			CTrueTalkManager::setFlags(CURRENT_STATE, 0);
 			return 2;
 		} else if (g_vm->_trueTalkManager->_quotes.find(sentence->_initialLine.c_str())
-				== MKTAG('F', 'I', 'S', 'H')) {
+		           == MKTAG('F', 'I', 'S', 'H')) {
 			// WORKAROUND: Original passed _normalizedLine, but "fish" is one of the common
 			// phrases replaced with with alternative text "completelyrandom"
 			addResponse(getDialogueId(240877));
 			addResponse(getDialogueId(241706));
-		}else {
+		} else {
 			// All other responses
 			if (getRandomNumber(100) < 80 && sentence2C(sentence))
 				addResponse(getDialogueId(241707));
@@ -1465,14 +1446,14 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 94:
 		if (sentence->contains("seperate") || sentence->contains("separate")
-				|| sentence->contains("detached") || sentence->contains("outside")
-				|| sentence->contains("onsweet") || sentence->contains("ensuite")
-				|| sentence->contains("suite") || sentence->contains("next door")
-				|| sentence->contains("the 1") || sentence->contains("the 2")
-				|| sentence->contains("former") || sentence->contains("latter")
-				|| sentence->contains("same room") || sentence->contains("ohne")
-				|| sentence->contains("mit") || sentence->contains("die gleiche kabine")
-				|| sentence->contains("dieselbe kabine")) {
+		    || sentence->contains("detached") || sentence->contains("outside")
+		    || sentence->contains("onsweet") || sentence->contains("ensuite")
+		    || sentence->contains("suite") || sentence->contains("next door")
+		    || sentence->contains("the 1") || sentence->contains("the 2")
+		    || sentence->contains("former") || sentence->contains("latter")
+		    || sentence->contains("same room") || sentence->contains("ohne")
+		    || sentence->contains("mit") || sentence->contains("die gleiche kabine")
+		    || sentence->contains("dieselbe kabine")) {
 			addAssignedRoom();
 			setState(0);
 			CTrueTalkManager::setFlags(CURRENT_STATE, 0);
@@ -1489,7 +1470,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 	case 95:
 		if (isDial1Medium()) {
 			if ((sentence->localWord("i") && sentence->localWord("am"))
-				|| sentence->localWord("me")) {
+			    || sentence->localWord("me")) {
 				addResponse(getDialogueId(240632));
 				applyFlag = true;
 				stateFlag = false;
@@ -1530,7 +1511,8 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 int DeskbotScript::searchQuotes(const TTroomScript *roomScript, const TTsentence *sentence) {
 	TTtreeResult treeResult[32];
 	return g_vm->_trueTalkManager->_quotesTree.search(sentence->_normalizedLine.c_str(),
-		TREE_2, &treeResult[0], 0, 0) != -1;
+	                                                  TREE_2, &treeResult[0], 0, 0)
+	  != -1;
 }
 
 int DeskbotScript::checkCommonWords(const TTsentence *sentence) {
@@ -1541,27 +1523,27 @@ int DeskbotScript::checkCommonWords(const TTsentence *sentence) {
 	if (quotes._loaded) {
 		uint tagId = quotes.find(sentence->_normalizedLine.c_str());
 		if (tagId == MKTAG('F', 'U', 'L', 'N')
-				|| tagId == MKTAG('T', 'D', 'V', 'P')
-				|| tagId == MKTAG('H', 'E', 'R', 'O')
-				|| sentence->contains("douglas adam"))
+		    || tagId == MKTAG('T', 'D', 'V', 'P')
+		    || tagId == MKTAG('H', 'E', 'R', 'O')
+		    || sentence->contains("douglas adam"))
 			return 1;
 		else if (tagId == MKTAG('J', 'N', 'A', 'M')
-				|| tagId == MKTAG('N', 'I', 'K', 'N')
-				|| tagId == MKTAG('B', 'O', 'Y', 'S')
-				|| tagId == MKTAG('G', 'I', 'R', 'L'))
+		         || tagId == MKTAG('N', 'I', 'K', 'N')
+		         || tagId == MKTAG('B', 'O', 'Y', 'S')
+		         || tagId == MKTAG('G', 'I', 'R', 'L'))
 			return 2;
 	} else {
 		if (sentence->contains("douglas adams")
-				|| sentence->contains("shaikh")
-				|| sentence->contains("millican")
-				|| sentence->contains("williams")
-				|| sentence->contains("henkes")
-				|| sentence->contains("kenny"))
+		    || sentence->contains("shaikh")
+		    || sentence->contains("millican")
+		    || sentence->contains("williams")
+		    || sentence->contains("henkes")
+		    || sentence->contains("kenny"))
 			return 1;
 		else if (sentence->contains("richard")
-				|| sentence->contains("jason")
-				|| sentence->contains("mike")
-				|| sentence->contains("renata"))
+		         || sentence->contains("jason")
+		         || sentence->contains("mike")
+		         || sentence->contains("renata"))
 			return 2;
 	}
 

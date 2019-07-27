@@ -22,23 +22,24 @@
 
 #include "common/endian.h"
 
-#include "gob/gob.h"
-#include "gob/mult.h"
-#include "gob/global.h"
-#include "gob/util.h"
 #include "gob/draw.h"
 #include "gob/game.h"
-#include "gob/script.h"
+#include "gob/global.h"
+#include "gob/gob.h"
+#include "gob/inter.h"
+#include "gob/mult.h"
 #include "gob/palanim.h"
 #include "gob/scenery.h"
+#include "gob/script.h"
+#include "gob/sound/sound.h"
+#include "gob/util.h"
 #include "gob/video.h"
 #include "gob/videoplayer.h"
-#include "gob/inter.h"
-#include "gob/sound/sound.h"
 
 namespace Gob {
 
-Mult::Mult(GobEngine *vm) : _vm(vm) {
+Mult::Mult(GobEngine *vm)
+  : _vm(vm) {
 	_multData = 0;
 
 	_frame = 0;
@@ -156,7 +157,7 @@ void Mult::zeroMultData() {
 }
 
 void Mult::playMult(int16 startFrame, int16 endFrame, char checkEscape,
-	    char handleMouse) {
+                    char handleMouse) {
 	bool stopNoClear;
 	bool stop;
 
@@ -243,7 +244,7 @@ void Mult::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 		if (_vm->_sound->blasterPlayingSound())
 			_vm->_sound->blasterStop(10);
 
-		WRITE_VAR(57, (uint32) -1);
+		WRITE_VAR(57, (uint32)-1);
 	} else
 		WRITE_VAR(57, _frame - _multData->frameStart - 1);
 }
@@ -263,8 +264,8 @@ void Mult::drawText(bool &stop, bool &stopNoClear) {
 		} else if (cmd == 3) {
 			warning("Mult::drawText, cmd == 3");
 			stop = false;
-//			uint32 startPos = _vm->_game->_script->pos();
-//			_vm->_global->_inter_execPtr = _multData->textKeys[_index].script;
+			//			uint32 startPos = _vm->_game->_script->pos();
+			//			_vm->_global->_inter_execPtr = _multData->textKeys[_index].script;
 		}
 	}
 }
@@ -293,7 +294,7 @@ void Mult::prepPalAnim(bool &stop) {
 		_multData->palAnimIndices[3] = 0;
 
 		memcpy((char *)_palAnimPalette,
-				(char *)_vm->_global->_pPaletteDesc->vgaPal, 768);
+		       (char *)_vm->_global->_pPaletteDesc->vgaPal, 768);
 		_vm->_global->_pPaletteDesc->vgaPal = _palAnimPalette;
 	}
 }
@@ -313,12 +314,9 @@ void Mult::doPalAnim() {
 		if ((_frame % palKey->rates[_index]) != 0)
 			continue;
 
-		_palAnimRed[_index] =
-		    _vm->_global->_pPaletteDesc->vgaPal[palKey->subst[0][_index] - 1].red;
-		_palAnimGreen[_index] =
-		    _vm->_global->_pPaletteDesc->vgaPal[palKey->subst[0][_index] - 1].green;
-		_palAnimBlue[_index] =
-		    _vm->_global->_pPaletteDesc->vgaPal[palKey->subst[0][_index] - 1].blue;
+		_palAnimRed[_index] = _vm->_global->_pPaletteDesc->vgaPal[palKey->subst[0][_index] - 1].red;
+		_palAnimGreen[_index] = _vm->_global->_pPaletteDesc->vgaPal[palKey->subst[0][_index] - 1].green;
+		_palAnimBlue[_index] = _vm->_global->_pPaletteDesc->vgaPal[palKey->subst[0][_index] - 1].blue;
 
 		while (1) {
 			off = palKey->subst[(_multData->palAnimIndices[_index] + 1) % 16][_index];
@@ -332,12 +330,9 @@ void Mult::doPalAnim() {
 				off = palKey->subst[(_multData->palAnimIndices[_index] + 1) % 16][_index] - 1;
 				off2 = palKey->subst[_multData->palAnimIndices[_index]][_index] - 1;
 
-				_vm->_global->_pPaletteDesc->vgaPal[off2].red =
-					_vm->_global->_pPaletteDesc->vgaPal[off].red;
-				_vm->_global->_pPaletteDesc->vgaPal[off2].green =
-					_vm->_global->_pPaletteDesc->vgaPal[off].green;
-				_vm->_global->_pPaletteDesc->vgaPal[off2].blue =
-					_vm->_global->_pPaletteDesc->vgaPal[off].blue;
+				_vm->_global->_pPaletteDesc->vgaPal[off2].red = _vm->_global->_pPaletteDesc->vgaPal[off].red;
+				_vm->_global->_pPaletteDesc->vgaPal[off2].green = _vm->_global->_pPaletteDesc->vgaPal[off].green;
+				_vm->_global->_pPaletteDesc->vgaPal[off2].blue = _vm->_global->_pPaletteDesc->vgaPal[off].blue;
 			}
 
 			_multData->palAnimIndices[_index] = (_multData->palAnimIndices[_index] + 1) % 16;
@@ -363,7 +358,7 @@ void Mult::doPalAnim() {
 		palPtr = _vm->_global->_pPaletteDesc->vgaPal;
 		for (_counter = 0; _counter < 16; _counter++, palPtr++)
 			_vm->_video->setPalElem(_counter, palPtr->red, palPtr->green,
-					palPtr->blue, 0, 0x13);
+			                        palPtr->blue, 0, 0x13);
 
 		palPtr = _vm->_global->_pPaletteDesc->vgaPal;
 		for (_counter = 0; _counter < 16; _counter++, palPtr++) {
@@ -388,17 +383,14 @@ void Mult::doFadeAnim(bool &stop) {
 		stop = false;
 		if (!(fadeKey->flag & 1)) {
 			if (fadeKey->fade == 0) {
-				_vm->_global->_pPaletteDesc->vgaPal =
-					_multData->fadePal[fadeKey->palIndex];
+				_vm->_global->_pPaletteDesc->vgaPal = _multData->fadePal[fadeKey->palIndex];
 				_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 			} else {
-				_vm->_global->_pPaletteDesc->vgaPal =
-					_multData->fadePal[fadeKey->palIndex];
+				_vm->_global->_pPaletteDesc->vgaPal = _multData->fadePal[fadeKey->palIndex];
 				_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, fadeKey->fade, 0);
 			}
 		} else {
-			_vm->_global->_pPaletteDesc->vgaPal =
-				_multData->fadePal[fadeKey->palIndex];
+			_vm->_global->_pPaletteDesc->vgaPal = _multData->fadePal[fadeKey->palIndex];
 			_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, fadeKey->fade, -1);
 
 			_palFadingRed = (fadeKey->flag >> 1) & 1;
@@ -435,7 +427,7 @@ void Mult::doSoundAnim(bool &stop, int16 frame) {
 				_vm->_sound->blasterStop(0);
 				if (sample && !sample->empty())
 					_vm->_sound->blasterPlay(sample, sndKey->repCount,
-							sndKey->freq, sndKey->fadeLength);
+					                         sndKey->freq, sndKey->fadeLength);
 			}
 		} else {
 			if (_vm->_sound->blasterPlayingSound())

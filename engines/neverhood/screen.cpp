@@ -20,16 +20,23 @@
  *
  */
 
+#include "neverhood/screen.h"
 #include "graphics/palette.h"
 #include "video/smk_decoder.h"
-#include "neverhood/screen.h"
 
 namespace Neverhood {
 
 Screen::Screen(NeverhoodEngine *vm)
-	: _vm(vm), _paletteData(NULL), _paletteChanged(false), _smackerDecoder(NULL),
-	_yOffset(0), _fullRefresh(false), _frameDelay(0), _savedSmackerDecoder(NULL),
-	_savedFrameDelay(0), _savedYOffset(0) {
+  : _vm(vm)
+  , _paletteData(NULL)
+  , _paletteChanged(false)
+  , _smackerDecoder(NULL)
+  , _yOffset(0)
+  , _fullRefresh(false)
+  , _frameDelay(0)
+  , _savedSmackerDecoder(NULL)
+  , _savedFrameDelay(0)
+  , _savedYOffset(0) {
 
 	_ticks = _vm->_system->getMillis();
 
@@ -39,7 +46,6 @@ Screen::Screen(NeverhoodEngine *vm)
 	_renderQueue = new RenderQueue();
 	_prevRenderQueue = new RenderQueue();
 	_microTiles = new MicroTileArray(640, 480);
-
 }
 
 Screen::~Screen() {
@@ -56,7 +62,7 @@ void Screen::update() {
 
 	if (_fullRefresh) {
 		// NOTE When playing a fullscreen/doubled Smacker video usually a full screen refresh is needed
-		_vm->_system->copyRectToScreen((const byte*)_backScreen->getPixels(), _backScreen->pitch, 0, 0, 640, 480);
+		_vm->_system->copyRectToScreen((const byte *)_backScreen->getPixels(), _backScreen->pitch, 0, 0, 640, 480);
 		_fullRefresh = false;
 		return;
 	}
@@ -101,11 +107,10 @@ void Screen::update() {
 
 	for (RectangleList::iterator ri = updateRects->begin(); ri != updateRects->end(); ++ri) {
 		Common::Rect &r = *ri;
-		_vm->_system->copyRectToScreen((const byte*)_backScreen->getBasePtr(r.left, r.top), _backScreen->pitch, r.left, r.top, r.width(), r.height());
+		_vm->_system->copyRectToScreen((const byte *)_backScreen->getBasePtr(r.left, r.top), _backScreen->pitch, r.left, r.top, r.width(), r.height());
 	}
 
 	delete updateRects;
-
 }
 
 uint32 Screen::getNextFrameTime() {
@@ -187,7 +192,7 @@ void Screen::clearRenderQueue() {
 }
 
 void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect, NRect &clipRect, bool transparent, byte version,
-	const Graphics::Surface *shadowSurface) {
+                          const Graphics::Surface *shadowSurface) {
 
 	int16 destX, destY;
 	NRect ddRect;
@@ -219,7 +224,6 @@ void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect,
 	}
 
 	queueBlit(surface, destX, destY, ddRect, transparent, version, shadowSurface);
-
 }
 
 void Screen::drawSurface3(const Graphics::Surface *surface, int16 x, int16 y, NDrawRect &drawRect, NRect &clipRect, bool transparent, byte version) {
@@ -254,13 +258,12 @@ void Screen::drawSurface3(const Graphics::Surface *surface, int16 x, int16 y, ND
 	}
 
 	queueBlit(surface, destX, destY, ddRect, transparent, version);
-
 }
 
 void Screen::drawDoubleSurface2(const Graphics::Surface *surface, NDrawRect &drawRect) {
 
-	const byte *source = (const byte*)surface->getPixels();
-	byte *dest = (byte*)_backScreen->getBasePtr(drawRect.x, drawRect.y);
+	const byte *source = (const byte *)surface->getPixels();
+	byte *dest = (byte *)_backScreen->getBasePtr(drawRect.x, drawRect.y);
 
 	for (int16 yc = 0; yc < surface->h; yc++) {
 		byte *row = dest;
@@ -274,7 +277,6 @@ void Screen::drawDoubleSurface2(const Graphics::Surface *surface, NDrawRect &dra
 	}
 
 	_fullRefresh = true; // See Screen::update
-
 }
 
 void Screen::drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDrawRect &sysRect, NRect &clipRect, bool transparent, byte version) {
@@ -341,7 +343,6 @@ void Screen::drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDra
 		newDrawRect.height = y + drawRect.height - sysRect.height;
 		drawSurface3(surface, sysRect.width + drawRect.x - x, sysRect.height + drawRect.y - y, newDrawRect, clipRect, transparent, version);
 	}
-
 }
 
 void Screen::drawSurfaceClipRects(const Graphics::Surface *surface, NDrawRect &drawRect, NRect *clipRects, uint clipRectsCount, bool transparent, byte version) {
@@ -351,7 +352,7 @@ void Screen::drawSurfaceClipRects(const Graphics::Surface *surface, NDrawRect &d
 }
 
 void Screen::queueBlit(const Graphics::Surface *surface, int16 destX, int16 destY, NRect &ddRect, bool transparent, byte version,
-	const Graphics::Surface *shadowSurface) {
+                       const Graphics::Surface *shadowSurface) {
 
 	const int width = ddRect.x2 - ddRect.x1;
 	const int height = ddRect.y2 - ddRect.y1;
@@ -371,7 +372,6 @@ void Screen::queueBlit(const Graphics::Surface *surface, int16 destX, int16 dest
 	renderItem._transparent = transparent;
 	renderItem._version = version;
 	_renderQueue->push_back(renderItem);
-
 }
 
 void Screen::blitRenderItem(const RenderItem &renderItem, const Common::Rect &clipRect) {
@@ -388,11 +388,11 @@ void Screen::blitRenderItem(const RenderItem &renderItem, const Common::Rect &cl
 	if (width < 0 || height < 0)
 		return;
 
-	const byte *source = (const byte*)surface->getBasePtr(renderItem._srcX + x0 - renderItem._destX, renderItem._srcY + y0 - renderItem._destY);
-	byte *dest = (byte*)_backScreen->getBasePtr(x0, y0);
+	const byte *source = (const byte *)surface->getBasePtr(renderItem._srcX + x0 - renderItem._destX, renderItem._srcY + y0 - renderItem._destY);
+	byte *dest = (byte *)_backScreen->getBasePtr(x0, y0);
 
 	if (shadowSurface) {
-		const byte *shadowSource = (const byte*)shadowSurface->getBasePtr(x0, y0);
+		const byte *shadowSource = (const byte *)shadowSurface->getBasePtr(x0, y0);
 		while (height--) {
 			for (int xc = 0; xc < width; xc++)
 				if (source[xc] != 0)
@@ -416,7 +416,6 @@ void Screen::blitRenderItem(const RenderItem &renderItem, const Common::Rect &cl
 			dest += _backScreen->pitch;
 		}
 	}
-
 }
 
 } // End of namespace Neverhood

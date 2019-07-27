@@ -21,16 +21,16 @@
  */
 #include "common/system.h"
 
-#include "sci/sci.h"	// for INCLUDE_OLDGFX
-#include "sci/debug.h"	// for g_debug_sleeptime_factor
+#include "sci/debug.h" // for g_debug_sleeptime_factor
 #include "sci/engine/file.h"
 #include "sci/engine/guest_additions.h"
 #include "sci/engine/kernel.h"
-#include "sci/engine/state.h"
-#include "sci/engine/selector.h"
-#include "sci/engine/vm.h"
-#include "sci/engine/script.h"
 #include "sci/engine/message.h"
+#include "sci/engine/script.h"
+#include "sci/engine/selector.h"
+#include "sci/engine/state.h"
+#include "sci/engine/vm.h"
+#include "sci/sci.h" // for INCLUDE_OLDGFX
 
 namespace Sci {
 
@@ -67,8 +67,8 @@ static const uint16 s_halfWidthSJISMap[256] = {
 };
 
 EngineState::EngineState(SegManager *segMan)
-: _segMan(segMan),
-	_dirseeker() {
+  : _segMan(segMan)
+  , _dirseeker() {
 
 	reset(false);
 }
@@ -224,7 +224,7 @@ Common::String SciEngine::getSciLanguageString(const Common::String &str, kLangu
 			if (foundLanguage != K_LANG_NONE) {
 				// Return language splitter
 				if (languageSplitter)
-					*languageSplitter = curChar | ( curChar2 << 8 );
+					*languageSplitter = curChar | (curChar2 << 8);
 				// Return the secondary language found in the string
 				if (secondaryLanguage)
 					*secondaryLanguage = foundLanguage;

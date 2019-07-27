@@ -22,9 +22,9 @@
 
 #include "common/system.h"
 
-#include "toltecs/toltecs.h"
 #include "toltecs/render.h"
 #include "toltecs/resource.h"
+#include "toltecs/toltecs.h"
 
 namespace Toltecs {
 
@@ -37,7 +37,8 @@ Common::Rect makeRect(int16 x, int16 y, int16 width, int16 height) {
 	return rect;
 }
 
-RenderQueue::RenderQueue(ToltecsEngine *vm) : _vm(vm) {
+RenderQueue::RenderQueue(ToltecsEngine *vm)
+  : _vm(vm) {
 	_currQueue = new RenderQueueArray();
 	_prevQueue = new RenderQueueArray();
 	_updateUta = new MicroTileArray(640, 400);
@@ -67,7 +68,6 @@ void RenderQueue::addSprite(SpriteDrawItem &sprite) {
 		++iter;
 	}
 	_currQueue->insert(iter, item);
-
 }
 
 void RenderQueue::addText(int16 x, int16 y, byte color, uint fontResIndex, byte *text, int len) {
@@ -86,7 +86,6 @@ void RenderQueue::addText(int16 x, int16 y, byte color, uint fontResIndex, byte 
 	item.text.len = len;
 
 	_currQueue->push_back(item);
-
 }
 
 void RenderQueue::addMask(SegmapMaskRect &mask) {
@@ -107,7 +106,6 @@ void RenderQueue::addMask(SegmapMaskRect &mask) {
 		}
 		_currQueue->insert(iter, item);
 	}
-
 }
 
 void RenderQueue::update() {
@@ -174,7 +172,7 @@ void RenderQueue::update() {
 				break;
 			case kText:
 				_vm->_screen->drawString(item->rect.left, item->rect.top, item->text.color, item->text.fontResIndex,
-					item->text.text, item->text.len, NULL, true);
+				                         item->text.text, item->text.len, NULL, true);
 				break;
 			case kMask:
 				_vm->_screen->drawSurface(item->rect.left, item->rect.top, item->mask.surface);
@@ -185,9 +183,7 @@ void RenderQueue::update() {
 
 			if (!doFullRefresh)
 				addDirtyRect(item->rect);
-
 		}
-
 	}
 
 	if (doFullRefresh) {
@@ -199,7 +195,6 @@ void RenderQueue::update() {
 
 	SWAP(_currQueue, _prevQueue);
 	_currQueue->clear();
-
 }
 
 void RenderQueue::clear() {
@@ -225,13 +220,11 @@ RenderQueueItem *RenderQueue::findItemInQueue(RenderQueueArray *queue, const Ren
 		if (prevItem->type == item.type) {
 			switch (item.type) {
 			case kSprite:
-				if (prevItem->sprite.resIndex == item.sprite.resIndex &&
-					prevItem->sprite.frameNum == item.sprite.frameNum)
+				if (prevItem->sprite.resIndex == item.sprite.resIndex && prevItem->sprite.frameNum == item.sprite.frameNum)
 					return prevItem;
 				break;
 			case kText:
-				if (prevItem->text.text == item.text.text &&
-					prevItem->text.len == item.text.len)
+				if (prevItem->text.text == item.text.text && prevItem->text.len == item.text.len)
 					return prevItem;
 				break;
 			case kMask:
@@ -249,10 +242,7 @@ bool RenderQueue::hasItemChanged(const RenderQueueItem &item1, const RenderQueue
 	if (item1.type != item2.type)
 		return true;
 
-	if (item1.rect.left != item2.rect.left ||
-		item1.rect.top != item2.rect.top ||
-		item1.rect.right != item2.rect.right ||
-		item1.rect.bottom != item2.rect.bottom)
+	if (item1.rect.left != item2.rect.left || item1.rect.top != item2.rect.top || item1.rect.right != item2.rect.right || item1.rect.bottom != item2.rect.bottom)
 		return true;
 
 	if (item1.type == kText && item1.text.color != item2.text.color)
@@ -264,9 +254,7 @@ bool RenderQueue::hasItemChanged(const RenderQueueItem &item1, const RenderQueue
 void RenderQueue::invalidateItemsByRect(const Common::Rect &rect, const RenderQueueItem *item) {
 	for (RenderQueueArray::iterator iter = _currQueue->begin(); iter != _currQueue->end(); ++iter) {
 		RenderQueueItem *subItem = &(*iter);
-		if (item != subItem &&
-			subItem->flags == kUnchanged &&
-			rect.intersects(subItem->rect)) {
+		if (item != subItem && subItem->flags == kUnchanged && rect.intersects(subItem->rect)) {
 
 			subItem->flags = kRefresh;
 			invalidateItemsByRect(subItem->rect, subItem);
@@ -301,10 +289,9 @@ void RenderQueue::updateDirtyRects() {
 	Common::Rect *rects = _updateUta->getRectangles(&n_rects, 0, 0, 639, _vm->_cameraHeight - 1);
 	for (int i = 0; i < n_rects; i++) {
 		_vm->_system->copyRectToScreen(_vm->_screen->_frontScreen + rects[i].left + rects[i].top * 640,
-			640, rects[i].left, rects[i].top, rects[i].width(), rects[i].height());
+		                               640, rects[i].left, rects[i].top, rects[i].width(), rects[i].height());
 	}
 	delete[] rects;
 }
-
 
 } // End of namespace Toltecs

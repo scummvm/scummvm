@@ -27,7 +27,8 @@
 
 namespace Mohawk {
 
-InstallerArchive::InstallerArchive() : Common::Archive() {
+InstallerArchive::InstallerArchive()
+  : Common::Archive() {
 	_stream = nullptr;
 }
 
@@ -96,14 +97,15 @@ bool InstallerArchive::open(const Common::String &filename) {
 		_map[name] = entry;
 
 		debug(3, "Found file '%s' at 0x%08x (Comp: 0x%08x, Uncomp: 0x%08x)", name.c_str(),
-				entry.offset, entry.compressedSize, entry.uncompressedSize);
+		      entry.offset, entry.compressedSize, entry.uncompressedSize);
 	}
 
 	return true;
 }
 
 void InstallerArchive::close() {
-	delete _stream; _stream = nullptr;
+	delete _stream;
+	_stream = nullptr;
 	_map.clear();
 }
 

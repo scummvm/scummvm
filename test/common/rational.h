@@ -29,19 +29,19 @@ public:
 		TS_ASSERT(!(r3 == 2));
 		TS_ASSERT(r3 != 2);
 
-		TS_ASSERT(  r4 >  r6);
-		TS_ASSERT(  r4 >= r6);
-		TS_ASSERT(!(r4 <  r6));
+		TS_ASSERT(r4 > r6);
+		TS_ASSERT(r4 >= r6);
+		TS_ASSERT(!(r4 < r6));
 		TS_ASSERT(!(r4 <= r6));
 
-		TS_ASSERT(  r4 >  7);
-		TS_ASSERT(  r4 >= 7);
-		TS_ASSERT(!(r4 <  7));
+		TS_ASSERT(r4 > 7);
+		TS_ASSERT(r4 >= 7);
+		TS_ASSERT(!(r4 < 7));
 		TS_ASSERT(!(r4 <= 7));
 
-		TS_ASSERT(  7 <  r4);
-		TS_ASSERT(  7 <= r4);
-		TS_ASSERT(!(7 >  r4));
+		TS_ASSERT(7 < r4);
+		TS_ASSERT(7 <= r4);
+		TS_ASSERT(!(7 > r4));
 		TS_ASSERT(!(7 >= r4));
 	}
 
@@ -88,8 +88,8 @@ public:
 
 	void test_add_sub2() {
 		// Make sure cancelation works correctly
-		const Common::Rational r0(4, 15);	// = 8 / 30
-		const Common::Rational r1(1, 6);	// = 5 / 30
+		const Common::Rational r0(4, 15); // = 8 / 30
+		const Common::Rational r1(1, 6); // = 5 / 30
 
 		TS_ASSERT_EQUALS(r0 + r1, Common::Rational(13, 30));
 		TS_ASSERT_EQUALS(r1 + r0, Common::Rational(13, 30));
@@ -107,8 +107,8 @@ public:
 		const Common::Rational r1(1, 2);
 
 		const Common::Rational r2(15, 14);
-		const Common::Rational r3(7,3);
-		const Common::Rational r4(5,2);
+		const Common::Rational r3(7, 3);
+		const Common::Rational r4(5, 2);
 
 		TS_ASSERT_EQUALS(r0 * r1, 1);
 

@@ -41,7 +41,8 @@ class AITimerCondition;
 // AIAction
 
 class AIAction {
-friend class AIRule;
+	friend class AIRule;
+
 public:
 	AIAction() { _actionCount = 1; }
 	virtual ~AIAction() {}

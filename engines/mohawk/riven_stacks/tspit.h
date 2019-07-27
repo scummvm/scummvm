@@ -30,52 +30,52 @@
 namespace Mohawk {
 namespace RivenStacks {
 
-/**
+	/**
  * Temple Island
  */
-class TSpit : public DomeSpit {
-public:
-	TSpit(MohawkEngine_Riven *vm);
+	class TSpit : public DomeSpit {
+	public:
+		TSpit(MohawkEngine_Riven *vm);
 
-	// External commands - Telescope
-	void xtexterior300_telescopedown(const ArgumentArray &args);
-	void xtexterior300_telescopeup(const ArgumentArray &args);
-	void xtopenfissure();
+		// External commands - Telescope
+		void xtexterior300_telescopedown(const ArgumentArray &args);
+		void xtexterior300_telescopeup(const ArgumentArray &args);
+		void xtopenfissure();
 
-	// External commands - Telescope cover buttons. Button is the button number (1...5).
-	void xtisland390_covercombo(const ArgumentArray &args);	// Param1: button
+		// External commands - Telescope cover buttons. Button is the button number (1...5).
+		void xtisland390_covercombo(const ArgumentArray &args); // Param1: button
 
-	// External commands - Atrus' Journal and Trap Book are added to inventory
-	void xtatrusgivesbooks(const ArgumentArray &args);
+		// External commands - Atrus' Journal and Trap Book are added to inventory
+		void xtatrusgivesbooks(const ArgumentArray &args);
 
-	// External commands - Trap Book is removed from inventory
-	void xtchotakesbook(const ArgumentArray &args);
-	void xthideinventory(const ArgumentArray &args);
+		// External commands - Trap Book is removed from inventory
+		void xtchotakesbook(const ArgumentArray &args);
+		void xthideinventory(const ArgumentArray &args);
 
-	// External commands - Marble Puzzle
-	void xt7500_checkmarbles(const ArgumentArray &args);
-	void xt7600_setupmarbles(const ArgumentArray &args);
-	void xt7800_setup(const ArgumentArray &args);
-	void xdrawmarbles(const ArgumentArray &args);
-	void xtakeit(const ArgumentArray &args);
+		// External commands - Marble Puzzle
+		void xt7500_checkmarbles(const ArgumentArray &args);
+		void xt7600_setupmarbles(const ArgumentArray &args);
+		void xt7800_setup(const ArgumentArray &args);
+		void xdrawmarbles(const ArgumentArray &args);
+		void xtakeit(const ArgumentArray &args);
 
-	// External commands - Dome
-	void xtscpbtn(const ArgumentArray &args);
-	void xtisland4990_domecheck(const ArgumentArray &args);
-	void xtisland5056_opencard(const ArgumentArray &args);
-	void xtisland5056_resetsliders(const ArgumentArray &args);
-	void xtisland5056_slidermd(const ArgumentArray &args);
-	void xtisland5056_slidermw(const ArgumentArray &args);
+		// External commands - Dome
+		void xtscpbtn(const ArgumentArray &args);
+		void xtisland4990_domecheck(const ArgumentArray &args);
+		void xtisland5056_opencard(const ArgumentArray &args);
+		void xtisland5056_resetsliders(const ArgumentArray &args);
+		void xtisland5056_slidermd(const ArgumentArray &args);
+		void xtisland5056_slidermw(const ArgumentArray &args);
 
-	// External commands - Demo-specific
-	void xtatboundary(const ArgumentArray &args);
+		// External commands - Demo-specific
+		void xtatboundary(const ArgumentArray &args);
 
-private:
-	void drawMarbles();
-	void setMarbleHotspots();
+	private:
+		void drawMarbles();
+		void setMarbleHotspots();
 
-	Common::Array<Common::Rect> _marbleBaseHotspots;
-};
+		Common::Array<Common::Rect> _marbleBaseHotspots;
+	};
 
 } // End of namespace RivenStacks
 } // End of namespace Mohawk

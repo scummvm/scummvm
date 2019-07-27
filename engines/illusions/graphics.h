@@ -59,6 +59,7 @@ class NamedPoints {
 public:
 	bool findNamedPoint(uint32 namedPointId, Common::Point &pt);
 	void load(uint count, Common::SeekableReadStream &stream);
+
 protected:
 	typedef Common::Array<NamedPoint> Items;
 	typedef Items::iterator ItemsIterator;

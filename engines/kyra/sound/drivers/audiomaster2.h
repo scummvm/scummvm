@@ -22,16 +22,16 @@
 
 #ifdef ENABLE_EOB
 
-#ifndef KYRA_SOUND_AUDIOMASTER2_H
-#define KYRA_SOUND_AUDIOMASTER2_H
+#	ifndef KYRA_SOUND_AUDIOMASTER2_H
+#		define KYRA_SOUND_AUDIOMASTER2_H
 
 namespace Audio {
-	class Mixer;
+class Mixer;
 }
 
 namespace Common {
-	class SeekableReadStream;
-	class String;
+class SeekableReadStream;
+class String;
 }
 
 namespace Kyra {
@@ -66,6 +66,6 @@ private:
 
 } // End of namespace Kyra
 
-#endif
+#	endif
 
 #endif

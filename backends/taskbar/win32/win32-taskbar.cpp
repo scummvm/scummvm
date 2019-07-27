@@ -23,7 +23,7 @@
 // We cannot use common/scummsys.h directly as it will include
 // windows.h and we need to do it by hand to allow excluded functions
 #if defined(HAVE_CONFIG_H)
-#include "config.h"
+#	include "config.h"
 #endif
 
 #if defined(WIN32) && defined(USE_TASKBAR)
@@ -32,9 +32,9 @@
 // _mingw.h in this file because we do not include any system headers at this
 // point on purpose. The defines are required to detect whether this is a
 // classic MinGW toolchain or a MinGW-w64 based one.
-#if defined(__MINGW32__)
-#include <_mingw.h>
-#endif
+#	if defined(__MINGW32__)
+#		include <_mingw.h>
+#	endif
 
 // Needed for taskbar functions
 // HACK: MinGW-w64 based toolchains include the symbols we require in their
@@ -43,36 +43,40 @@
 // based toolchains define __MINGW64_VERSION_foo macros inside _mingw.h,
 // which is included from all system headers. Thus we abuse that to detect
 // them.
-#if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
-	#include "backends/taskbar/win32/mingw-compat.h"
-#else
-	// We use functionality introduced with Win7 in this file.
-	// To assure that including the respective system headers gives us all
-	// required definitions we set Win7 as minimum version we target.
-	// See: https://msdn.microsoft.com/en-us/library/windows/desktop/aa383745%28v=vs.85%29.aspx#macros_for_conditional_declarations
-	#include <sdkddkver.h>
-	#undef _WIN32_WINNT
-	#define _WIN32_WINNT _WIN32_WINNT_WIN7
+#	if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
+#		include "backends/taskbar/win32/mingw-compat.h"
+#	else
+// We use functionality introduced with Win7 in this file.
+// To assure that including the respective system headers gives us all
+// required definitions we set Win7 as minimum version we target.
+// See: https://msdn.microsoft.com/en-us/library/windows/desktop/aa383745%28v=vs.85%29.aspx#macros_for_conditional_declarations
+#		include <sdkddkver.h>
+#		undef _WIN32_WINNT
+#		define _WIN32_WINNT _WIN32_WINNT_WIN7
 
-	#include <windows.h>
-#endif
+#		include <windows.h>
+#	endif
 
-#include <shlobj.h>
+#	include <shlobj.h>
 
-#include "common/scummsys.h"
+#	include "common/scummsys.h"
 
-#include "backends/taskbar/win32/win32-taskbar.h"
-#include "backends/platform/sdl/win32/win32-window.h"
-#include "backends/platform/sdl/win32/win32_wrapper.h"
+#	include "backends/platform/sdl/win32/win32-window.h"
+#	include "backends/platform/sdl/win32/win32_wrapper.h"
+#	include "backends/taskbar/win32/win32-taskbar.h"
 
-#include "common/config-manager.h"
-#include "common/textconsole.h"
-#include "common/file.h"
+#	include "common/config-manager.h"
+#	include "common/file.h"
+#	include "common/textconsole.h"
 
 // System.Title property key, values taken from http://msdn.microsoft.com/en-us/library/bb787584.aspx
 const PROPERTYKEY PKEY_Title = { /* fmtid = */ { 0xF29F85E0, 0x4FF9, 0x1068, { 0xAB, 0x91, 0x08, 0x00, 0x2B, 0x27, 0xB3, 0xD9 } }, /* propID = */ 2 };
 
-Win32TaskbarManager::Win32TaskbarManager(SdlWindow_Win32 *window) : _window(window), _taskbar(NULL), _count(0), _icon(NULL) {
+Win32TaskbarManager::Win32TaskbarManager(SdlWindow_Win32 *window)
+  : _window(window)
+  , _taskbar(NULL)
+  , _count(0)
+  , _icon(NULL) {
 	// Do nothing if not running on Windows 7 or later
 	if (!Win32::confirmWindowsVersion(6, 1))
 		return;
@@ -84,7 +88,7 @@ Win32TaskbarManager::Win32TaskbarManager(SdlWindow_Win32 *window) : _window(wind
 	                              0,
 	                              CLSCTX_INPROC_SERVER,
 	                              IID_ITaskbarList3,
-	                              reinterpret_cast<void **> (&(_taskbar)));
+	                              reinterpret_cast<void **>(&(_taskbar)));
 
 	if (SUCCEEDED(hr)) {
 		// Initialize taskbar object
@@ -181,17 +185,17 @@ void Win32TaskbarManager::setCount(int count) {
 		// Create transparent background
 		BITMAPV5HEADER bi;
 		ZeroMemory(&bi, sizeof(BITMAPV5HEADER));
-		bi.bV5Size        = sizeof(BITMAPV5HEADER);
-		bi.bV5Width       = 16;
-		bi.bV5Height      = 16;
-		bi.bV5Planes      = 1;
-		bi.bV5BitCount    = 32;
+		bi.bV5Size = sizeof(BITMAPV5HEADER);
+		bi.bV5Width = 16;
+		bi.bV5Height = 16;
+		bi.bV5Planes = 1;
+		bi.bV5BitCount = 32;
 		bi.bV5Compression = BI_RGB;
 		// Set 32 BPP alpha format
-		bi.bV5RedMask     = 0x00FF0000;
-		bi.bV5GreenMask   = 0x0000FF00;
-		bi.bV5BlueMask    = 0x000000FF;
-		bi.bV5AlphaMask   = 0xFF000000;
+		bi.bV5RedMask = 0x00FF0000;
+		bi.bV5GreenMask = 0x0000FF00;
+		bi.bV5BlueMask = 0x000000FF;
+		bi.bV5AlphaMask = 0xFF000000;
 
 		// Get DC
 		HDC hdc;
@@ -227,12 +231,12 @@ void Win32TaskbarManager::setCount(int count) {
 		SetRect(&rect, 4, 4, 12, 12);
 		SetTextColor(hMemDC, RGB(48, 48, 48));
 		SetBkMode(hMemDC, TRANSPARENT);
-		DrawText(hMemDC, countString.c_str(), -1, &rect, DT_NOCLIP|DT_CENTER);
+		DrawText(hMemDC, countString.c_str(), -1, &rect, DT_NOCLIP | DT_CENTER);
 
 		// Set the text alpha to fully opaque (we consider the data inside the text rect)
 		DWORD *lpdwPixel = (DWORD *)lpBits;
 		for (int x = 3; x < 12; x++) {
-			for(int y = 3; y < 12; y++) {
+			for (int y = 3; y < 12; y++) {
 				unsigned char *p = (unsigned char *)(lpdwPixel + x * 16 + y);
 
 				if (p[0] != 0 && p[1] != 0 && p[2] != 0)
@@ -247,10 +251,10 @@ void Win32TaskbarManager::setCount(int count) {
 
 		// Prepare our new icon
 		ICONINFO ii;
-		ii.fIcon    = FALSE;
+		ii.fIcon = FALSE;
 		ii.xHotspot = 0;
 		ii.yHotspot = 0;
-		ii.hbmMask  = hBitmapMask;
+		ii.hbmMask = hBitmapMask;
 		ii.hbmColor = hBitmap;
 
 		_icon = CreateIconIndirect(&ii);
@@ -284,7 +288,7 @@ void Win32TaskbarManager::addRecent(const Common::String &name, const Common::St
 	GetModuleFileNameW(NULL, path, MAX_PATH);
 
 	// Create a shell link.
-	if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC, IID_IShellLinkW, reinterpret_cast<void **> (&link)))) {
+	if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC, IID_IShellLinkW, reinterpret_cast<void **>(&link)))) {
 		// Convert game name and description to Unicode.
 		LPWSTR game = Win32::ansiToUnicode(name.c_str());
 		LPWSTR desc = Win32::ansiToUnicode(description.c_str());
@@ -305,8 +309,8 @@ void Win32TaskbarManager::addRecent(const Common::String &name, const Common::St
 		}
 
 		// The link's display name must be set via property store.
-		IPropertyStore* propStore;
-		HRESULT hr = link->QueryInterface(IID_IPropertyStore, reinterpret_cast<void **> (&(propStore)));
+		IPropertyStore *propStore;
+		HRESULT hr = link->QueryInterface(IID_IPropertyStore, reinterpret_cast<void **>(&(propStore)));
 		if (SUCCEEDED(hr)) {
 			PROPVARIANT pv;
 			pv.vt = VT_LPWSTR;
@@ -344,11 +348,12 @@ Common::String Win32TaskbarManager::getIconPath(Common::String target) {
 	Common::String iconsPath = ConfMan.get("iconspath");
 	Common::String extraPath = ConfMan.get("extrapath");
 
-#define TRY_ICON_PATH(path) { \
-	Common::FSNode node((path)); \
-	if (node.exists()) \
-		return (path); \
-}
+#	define TRY_ICON_PATH(path)      \
+		{                              \
+			Common::FSNode node((path)); \
+			if (node.exists())           \
+				return (path);             \
+		}
 
 	if (!iconsPath.empty()) {
 		TRY_ICON_PATH(iconsPath + "/" + target + ".ico");

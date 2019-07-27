@@ -21,16 +21,16 @@
  */
 
 #include "common/keyboard.h"
-#include "common/serializer.h"
 #include "common/memstream.h"
+#include "common/serializer.h"
 #include "common/system.h"
 #include "common/util.h"
 
-#include "draci/draci.h"
 #include "draci/animation.h"
-#include "draci/game.h"
 #include "draci/barchive.h"
+#include "draci/draci.h"
 #include "draci/font.h"
+#include "draci/game.h"
 #include "draci/mouse.h"
 #include "draci/screen.h"
 #include "draci/script.h"
@@ -49,8 +49,10 @@ enum {
 	kWalkingObliquePathOverlayColor = 73
 };
 
-Game::Game(DraciEngine *vm) : _vm(vm), _walkingState(vm) {
-	_dialogueLinesNum  = 0;
+Game::Game(DraciEngine *vm)
+  : _vm(vm)
+  , _walkingState(vm) {
+	_dialogueLinesNum = 0;
 	_blockNum = 0;
 
 	for (uint i = 0; i < kDialogueLines; i++)
@@ -160,7 +162,7 @@ Game::Game(DraciEngine *vm) : _vm(vm), _walkingState(vm) {
 
 	// Read in variables
 	file = initArchive->getFile(2);
-	uint numVariables = file->_length / sizeof (int16);
+	uint numVariables = file->_length / sizeof(int16);
 
 	_variables = new int[numVariables];
 	Common::MemoryReadStream variableData(file->_data, file->_length);
@@ -258,7 +260,7 @@ void Game::init() {
 	_currentItem = _itemUnderCursor = nullptr;
 	_previousItemPosition = -1;
 
-	_vm->_mouse->setCursorType(kHighlightedCursor);	// anything different from kNormalCursor
+	_vm->_mouse->setCursorType(kHighlightedCursor); // anything different from kNormalCursor
 
 	_objUnderCursor = nullptr;
 
@@ -281,7 +283,7 @@ void Game::init() {
 	Sprite *inventorySprite = new Sprite(f->_data, f->_length, 0, 0, true);
 	_inventoryAnim->addFrame(inventorySprite, NULL);
 	_inventoryAnim->setRelative((kScreenWidth - inventorySprite->getWidth()) / 2,
-	                           (kScreenHeight - inventorySprite->getHeight()) / 2);
+	                            (kScreenHeight - inventorySprite->getHeight()) / 2);
 	_vm->_anims->insert(_inventoryAnim, true);
 
 	for (uint i = 0; i < kDialogueLines; ++i) {
@@ -289,7 +291,7 @@ void Game::init() {
 		_dialogueAnims[i]->addFrame(new Text("", _vm->_smallFont, kLineInactiveColor, 0, 0, 0), NULL);
 
 		_dialogueAnims[i]->setRelative(1,
-		                      kScreenHeight - (i + 1) * _vm->_smallFont->getFontHeight());
+		                               kScreenHeight - (i + 1) * _vm->_smallFont->getFontHeight());
 		_vm->_anims->insert(_dialogueAnims[i], false);
 
 		Text *text = reinterpret_cast<Text *>(_dialogueAnims[i]->getCurrentFrame());
@@ -384,11 +386,13 @@ void Game::handleOrdinaryLoop(int x, int y) {
 
 int Game::inventoryPositionFromMouse() const {
 	const int column = CLIP(scummvm_lround(
-		(_vm->_mouse->getPosX() - kInventoryX + kInventoryItemWidth / 2.) /
-		kInventoryItemWidth) - 1, 0L, (long) kInventoryColumns - 1);
+	                          (_vm->_mouse->getPosX() - kInventoryX + kInventoryItemWidth / 2.) / kInventoryItemWidth)
+	                          - 1,
+	                        0L, (long)kInventoryColumns - 1);
 	const int line = CLIP(scummvm_lround(
-		(_vm->_mouse->getPosY() - kInventoryY + kInventoryItemHeight / 2.) /
-		kInventoryItemHeight) - 1, 0L, (long) kInventoryLines - 1);
+	                        (_vm->_mouse->getPosY() - kInventoryY + kInventoryItemHeight / 2.) / kInventoryItemHeight)
+	                        - 1,
+	                      0L, (long)kInventoryLines - 1);
 	return line * kInventoryColumns + column;
 }
 
@@ -420,8 +424,8 @@ void Game::handleInventoryLoop() {
 		// holding any item, run its look GPL program
 		if (_itemUnderCursor && !getCurrentItem()) {
 			_vm->_script->runWrapper(_itemUnderCursor->_program, _itemUnderCursor->_look, true, false);
-		// Otherwise, if we are holding an item, try to place it inside the
-		// inventory
+			// Otherwise, if we are holding an item, try to place it inside the
+			// inventory
 		} else if (getCurrentItem()) {
 			putItem(getCurrentItem(), inventoryPositionFromMouse());
 			updateInventoryCursor();
@@ -433,7 +437,7 @@ void Game::handleInventoryLoop() {
 		if (_animUnderCursor != _inventoryAnim && !_itemUnderCursor) {
 			inventoryDone();
 
-		// If there is an inventory item under our cursor
+			// If there is an inventory item under our cursor
 		} else if (_itemUnderCursor) {
 			// Again, we have two possibilities:
 
@@ -444,10 +448,10 @@ void Game::handleInventoryLoop() {
 				setPreviousItemPosition(inventoryPositionFromMouse());
 				removeItem(_itemUnderCursor);
 
-			// The second is that there *is* an item in our hands.
-			// In that case, run the canUse script for the inventory item
-			// which will check if the two items are combinable and, finally,
-			// run the use script for the item.
+				// The second is that there *is* an item in our hands.
+				// In that case, run the canUse script for the inventory item
+				// which will check if the two items are combinable and, finally,
+				// run the use script for the item.
 			} else {
 				if (_vm->_script->testExpression(_itemUnderCursor->_program, _itemUnderCursor->_canUse)) {
 					_vm->_script->runWrapper(_itemUnderCursor->_program, _itemUnderCursor->_use, true, false);
@@ -485,8 +489,8 @@ void Game::fadePalette(bool fading_out) {
 	_isFadeOut = fading_out;
 	const byte *startPal = NULL;
 	const byte *endPal = _currentRoom._palette >= 0
-		? _vm->_paletteArchive->getFile(_currentRoom._palette)->_data
-		: NULL;
+	  ? _vm->_paletteArchive->getFile(_currentRoom._palette)->_data
+	  : NULL;
 	if (fading_out) {
 		startPal = endPal;
 		endPal = NULL;
@@ -521,8 +525,7 @@ void Game::advanceAnimationsAndTestLoopExit() {
 	if (_loopSubstatus == kInnerWhileTalk) {
 		// If the current speech text has expired or the user clicked a mouse button,
 		// advance to the next line of text
-		if ((getEnableSpeedText() && (_vm->_mouse->lButtonPressed() || _vm->_mouse->rButtonPressed())) ||
-			(_vm->_system->getMillis() - _speechTick) >= _speechDuration) {
+		if ((getEnableSpeedText() && (_vm->_mouse->lButtonPressed() || _vm->_mouse->rButtonPressed())) || (_vm->_system->getMillis() - _speechTick) >= _speechDuration) {
 
 			setExitLoop(true);
 		}
@@ -556,7 +559,7 @@ void Game::advanceAnimationsAndTestLoopExit() {
 	_vm->_anims->drawScene(_vm->_screen->getSurface());
 	_vm->_screen->copyToScreen();
 	_vm->_system->delayMillis(kTimeUnit);
-	if(_isFadeOut) {
+	if (_isFadeOut) {
 		fadePalette(false);
 		// Set cursor state
 		// Need to do this after we set the palette since the cursors use it
@@ -582,7 +585,7 @@ void Game::advanceAnimationsAndTestLoopExit() {
 			setLoopSubstatus(kOuterLoop);
 		}
 		debugC(2, kDraciWalkingDebugLevel, "Finished walking");
-		_walkingState.callback();	// clears callback pointer first
+		_walkingState.callback(); // clears callback pointer first
 		if (exitLoop) {
 			debugC(3, kDraciWalkingDebugLevel, "Exiting from the inner loop");
 			setExitLoop(true);
@@ -606,7 +609,7 @@ void Game::loop(LoopSubstatus substatus, bool shouldExit) {
 	// true, exactly to ensure to make at least one pass.
 	do {
 		debugC(4, kDraciLogicDebugLevel, "loopstatus: %d, loopsubstatus: %d",
-			_loopStatus, _loopSubstatus);
+		       _loopStatus, _loopSubstatus);
 
 		_vm->handleEvents();
 		if (isReloaded()) {
@@ -672,7 +675,7 @@ void Game::handleStatusChangeByMouse() {
 		// Turn off the timer, but enable switching.
 		_mouseChangeTick = kMouseEnableSwitching;
 
-	// Otherwise the mouse signalizes that the mode should be changed.
+		// Otherwise the mouse signalizes that the mode should be changed.
 	} else if (_mouseChangeTick == kMouseEnableSwitching) {
 		// If the timer is currently disabled, this is the first time
 		// when the mouse left the region.  Start counting.
@@ -720,7 +723,7 @@ void Game::updateOrdinaryCursor() {
 			}
 			mouseChanged = true;
 		}
-	// If there *is* a game object under the cursor, update the cursor image
+		// If there *is* a game object under the cursor, update the cursor image
 	} else {
 		// If there is no walking direction set on the object (i.e. the object
 		// is not a gate / exit), test whether it can be used and, if so,
@@ -734,8 +737,8 @@ void Game::updateOrdinaryCursor() {
 				}
 				mouseChanged = true;
 			}
-		// If the walking direction *is* set, the game object is a gate, so update
-		// the cursor image to the appropriate arrow.
+			// If the walking direction *is* set, the game object is a gate, so update
+			// the cursor image to the appropriate arrow.
 		} else {
 			_vm->_mouse->setCursorType((CursorType)_objUnderCursor->_walkDir);
 			mouseChanged = true;
@@ -868,15 +871,9 @@ void Game::putItem(GameItem *item, int position) {
 	Animation *anim = item->_anim;
 	Drawable *frame = anim->getCurrentFrame();
 
-	const int x = kInventoryX +
-	              (column * kInventoryItemWidth) -
-	              (kInventoryItemWidth / 2) -
-	              (frame->getWidth() / 2);
+	const int x = kInventoryX + (column * kInventoryItemWidth) - (kInventoryItemWidth / 2) - (frame->getWidth() / 2);
 
-	const int y = kInventoryY +
-	              (line * kInventoryItemHeight) -
-	              (kInventoryItemHeight / 2) -
-	              (frame->getHeight() / 2);
+	const int y = kInventoryY + (line * kInventoryItemHeight) - (kInventoryItemHeight / 2) - (frame->getHeight() / 2);
 
 	debug(2, "itemID: %d position: %d line: %d column: %d x: %d y: %d", item->_absNum, position, line, column, x, y);
 
@@ -966,7 +963,7 @@ void Game::inventorySwitch(int keycode) {
 		// Switch between holding an item and the ordinary mouse cursor.
 		if (!getCurrentItem()) {
 			if (getPreviousItemPosition() >= 0) {
-				GameItem* last_item = _inventory[getPreviousItemPosition()];
+				GameItem *last_item = _inventory[getPreviousItemPosition()];
 				setCurrentItem(last_item);
 				removeItem(last_item);
 			}
@@ -983,18 +980,18 @@ void Game::inventorySwitch(int keycode) {
 			// Find the next available item.
 			int pos = getPreviousItemPosition() + direction;
 			while (true) {
-			      if (pos < 0)
-				      pos += kInventorySlots;
-			      else if (pos >= kInventorySlots)
-				      pos -= kInventorySlots;
-			      if (pos == getPreviousItemPosition() || _inventory[pos]) {
-				      break;
-			      }
-			      pos += direction;
+				if (pos < 0)
+					pos += kInventorySlots;
+				else if (pos >= kInventorySlots)
+					pos -= kInventorySlots;
+				if (pos == getPreviousItemPosition() || _inventory[pos]) {
+					break;
+				}
+				pos += direction;
 			}
 			// Swap it with the current item.
 			putItem(getCurrentItem(), getPreviousItemPosition());
-			GameItem* new_item = _inventory[pos];
+			GameItem *new_item = _inventory[pos];
 			setCurrentItem(new_item);
 			setPreviousItemPosition(pos);
 			removeItem(new_item);
@@ -1016,7 +1013,7 @@ void Game::dialogueMenu(int dialogueID) {
 	_dialogueArchive = new BArchive(name);
 
 	debugC(4, kDraciLogicDebugLevel, "Starting dialogue (ID: %d, Archive: %s)",
-	    dialogueID, name.c_str());
+	       dialogueID, name.c_str());
 
 	_currentDialogue = dialogueID;
 	oldLines = 255;
@@ -1027,8 +1024,8 @@ void Game::dialogueMenu(int dialogueID) {
 		hit = dialogueDraw();
 
 		debugC(7, kDraciLogicDebugLevel,
-			"hit: %d, _lines[hit]: %d, lastblock: %d, dialogueLines: %d, dialogueExit: %d",
-			   hit, (hit >= 0 ? _lines[hit] : -1), _lastBlock, _dialogueLinesNum, _dialogueExit);
+		       "hit: %d, _lines[hit]: %d, lastblock: %d, dialogueLines: %d, dialogueExit: %d",
+		       hit, (hit >= 0 ? _lines[hit] : -1), _lastBlock, _dialogueLinesNum, _dialogueExit);
 
 		if ((!_dialogueExit) && (hit >= 0) && (_lines[hit] != -1)) {
 			if ((oldLines == 1) && (_dialogueLinesNum == 1) && (_lines[hit] == _lastBlock)) {
@@ -1139,7 +1136,7 @@ void Game::dialogueInit(int dialogID) {
 		// The first byte of the file is the length of the string (without the length)
 		assert(f->_length - 1 == f->_data[0]);
 
-		_dialogueBlocks[i]._title = Common::String((char *)(f->_data+1), f->_length-1);
+		_dialogueBlocks[i]._title = Common::String((char *)(f->_data + 1), f->_length - 1);
 
 		f = _dialogueArchive->getFile(i * 3 + 2);
 		_dialogueBlocks[i]._program._bytecode = f->_data;
@@ -1238,12 +1235,12 @@ void Game::walkHero(int x, int y, SightDirection dir) {
 	// and replace it by the current one (the callback has already been
 	// reset by our caller).
 	_walkingState.startWalking(_hero, target, Common::Point(x, y), dir,
-		_walkingMap.getDelta(), obliquePath);
+	                           _walkingMap.getDelta(), obliquePath);
 }
 
 void Game::initWalkingOverlays() {
 	_walkingMapOverlay = new Animation(_vm, kWalkingMapOverlay, 256, _vm->_showWalkingMap);
-	_walkingMapOverlay->addFrame(NULL, NULL);	// rewritten below by loadWalkingMap()
+	_walkingMapOverlay->addFrame(NULL, NULL); // rewritten below by loadWalkingMap()
 	_vm->_anims->insert(_walkingMapOverlay, true);
 
 	_walkingShortestPathOverlay = new Animation(_vm, kWalkingShortestPathOverlay, 257, _vm->_showWalkingMap);
@@ -1259,8 +1256,8 @@ void Game::loadRoomObjects() {
 	// Load the room's objects
 	for (uint i = 0; i < _info._numObjects; ++i) {
 		debugC(7, kDraciLogicDebugLevel,
-			"Checking if object %d (%d) is at the current location (%d)", i,
-			_objects[i]._location, getRoomNum());
+		       "Checking if object %d (%d) is at the current location (%d)", i,
+		       _objects[i]._location, getRoomNum());
 
 		if (_objects[i]._location == getRoomNum()) {
 			debugC(6, kDraciLogicDebugLevel, "Loading object %d from room %d", i, getRoomNum());
@@ -1275,7 +1272,7 @@ void Game::loadRoomObjects() {
 		if (_objects[i]._location == getRoomNum()) {
 			const GameObject *obj = getObject(i);
 			debugC(6, kDraciLogicDebugLevel,
-				"Running init program for object %d (offset %d)", i, obj->_init);
+			       "Running init program for object %d (offset %d)", i, obj->_init);
 			_vm->_script->run(obj->_program, obj->_init);
 		}
 	}
@@ -1598,7 +1595,7 @@ void Game::synchronize(Common::Serializer &s, uint8 saveVersion) {
 	s.syncAsUint16LE(_currentRoom._roomNum);
 
 	for (uint i = 0; i < _info._numObjects; ++i) {
-		GameObject& obj = _objects[i];
+		GameObject &obj = _objects[i];
 		s.syncAsSint16LE(obj._location);
 		s.syncAsByte(obj._visible);
 	}
@@ -1625,7 +1622,7 @@ void Game::synchronize(Common::Serializer &s, uint8 saveVersion) {
 		s.syncAsSint16LE(_dialogueVars[i]);
 	}
 
-	if(saveVersion >= 2) {
+	if (saveVersion >= 2) {
 		setPositionLoaded(true);
 		if (s.isSaving()) {
 			s.syncAsSint16LE(_hero.x);
@@ -1751,8 +1748,8 @@ void GameObject::load(uint objNum, BArchive *archive) {
 	_lookY = objReader.readUint16LE();
 	_useX = objReader.readUint16LE();
 	_useY = objReader.readUint16LE();
-	_lookDir = static_cast<SightDirection> (objReader.readByte());
-	_useDir = static_cast<SightDirection> (objReader.readByte());
+	_lookDir = static_cast<SightDirection>(objReader.readByte());
+	_useDir = static_cast<SightDirection>(objReader.readByte());
 
 	_absNum = objNum;
 
@@ -1761,14 +1758,14 @@ void GameObject::load(uint objNum, BArchive *archive) {
 	// The first byte of the file is the length of the string (without the length)
 	assert(file->_length - 1 == file->_data[0]);
 
-	_title = Common::String((char *)(file->_data+1), file->_length-1);
+	_title = Common::String((char *)(file->_data + 1), file->_length - 1);
 
 	file = archive->getFile(objNum * 3 + 2);
 	_program._bytecode = file->_data;
 	_program._length = file->_length;
 
 	_playingAnim = -1;
-	deleteAnims();		// If the object has already been loaded, then discard the previous animations
+	deleteAnims(); // If the object has already been loaded, then discard the previous animations
 }
 
 void GameItem::load(int itemID, BArchive *archive) {

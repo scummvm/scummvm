@@ -23,9 +23,9 @@
 #ifndef COMMON_FILE_H
 #define COMMON_FILE_H
 
-#include "common/scummsys.h"
 #include "common/fs.h"
 #include "common/noncopyable.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 #include "common/stream.h"
 
@@ -117,16 +117,15 @@ public:
 	 */
 	const char *getName() const { return _name.c_str(); }
 
-	bool err() const;	// implement abstract Stream method
-	void clearErr();	// implement abstract Stream method
-	bool eos() const;	// implement abstract SeekableReadStream method
+	bool err() const; // implement abstract Stream method
+	void clearErr(); // implement abstract Stream method
+	bool eos() const; // implement abstract SeekableReadStream method
 
-	int32 pos() const;	// implement abstract SeekableReadStream method
-	int32 size() const;	// implement abstract SeekableReadStream method
-	bool seek(int32 offs, int whence = SEEK_SET);	// implement abstract SeekableReadStream method
-	uint32 read(void *dataPtr, uint32 dataSize);	// implement abstract SeekableReadStream method
+	int32 pos() const; // implement abstract SeekableReadStream method
+	int32 size() const; // implement abstract SeekableReadStream method
+	bool seek(int32 offs, int whence = SEEK_SET); // implement abstract SeekableReadStream method
+	uint32 read(void *dataPtr, uint32 dataSize); // implement abstract SeekableReadStream method
 };
-
 
 /**
  * TODO: document this class

@@ -107,4 +107,3 @@ static const char *const k2SeqplayStringsPC98English[105] = {
 };
 
 static const StringListProvider k2SeqplayStringsPC98EnglishProvider = { ARRAYSIZE(k2SeqplayStringsPC98English), k2SeqplayStringsPC98English };
-

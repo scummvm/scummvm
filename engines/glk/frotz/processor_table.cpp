@@ -25,96 +25,96 @@
 namespace Glk {
 namespace Frotz {
 
-void Processor::z_copy_table() {
-	zword addr;
-	zword size = zargs[2];
-	zbyte value;
-	int i;
+	void Processor::z_copy_table() {
+		zword addr;
+		zword size = zargs[2];
+		zbyte value;
+		int i;
 
-	if (zargs[1] == 0) {
-		// zero table
-		for (i = 0; i < size; i++)
-			storeb((zword)(zargs[0] + i), 0);
-	} else if ((short) size < 0 || zargs[0] > zargs[1])	{
-		// copy forwards
-		for (i = 0; i < (((short)size < 0) ? -(short)size : size); i++) {
-			addr = zargs[0] + i;
-			LOW_BYTE(addr, value);
-			storeb((zword)(zargs[1] + i), value);
-		}
-	} else {
-		// copy backwards
-		for (i = size - 1; i >= 0; i--) {
-			addr = zargs[0] + i;
-			LOW_BYTE(addr, value);
-			storeb((zword)(zargs[1] + i), value);
-		}
-	}
-}
-
-void Processor::z_loadb() {
-	zword addr = zargs[0] + zargs[1];
-	zbyte value;
-
-	LOW_BYTE(addr, value);
-
-	store(value);
-}
-
-void Processor::z_loadw() {
-	zword addr = zargs[0] + 2 * zargs[1];
-	zword value;
-
-	LOW_WORD(addr, value);
-
-	store(value);
-}
-
-void Processor::z_scan_table() {
-	zword addr = zargs[1];
-	int i;
-
-	// Supply default arguments
-	if (zargc < 4)
-	zargs[3] = 0x82;
-
-	// Scan byte or word array
-	for (i = 0; i < zargs[2]; i++) {
-		if (zargs[3] & 0x80) {
-			// scan word array
-			zword wvalue;
-
-			LOW_WORD(addr, wvalue);
-
-			if (wvalue == zargs[0])
-				goto finished;
+		if (zargs[1] == 0) {
+			// zero table
+			for (i = 0; i < size; i++)
+				storeb((zword)(zargs[0] + i), 0);
+		} else if ((short)size < 0 || zargs[0] > zargs[1]) {
+			// copy forwards
+			for (i = 0; i < (((short)size < 0) ? -(short)size : size); i++) {
+				addr = zargs[0] + i;
+				LOW_BYTE(addr, value);
+				storeb((zword)(zargs[1] + i), value);
+			}
 		} else {
-			// scan byte array
-			zbyte bvalue;
-
-			LOW_BYTE(addr, bvalue);
-
-			if (bvalue == zargs[0])
-				goto finished;
+			// copy backwards
+			for (i = size - 1; i >= 0; i--) {
+				addr = zargs[0] + i;
+				LOW_BYTE(addr, value);
+				storeb((zword)(zargs[1] + i), value);
+			}
 		}
-
-		addr += zargs[3] & 0x7f;
 	}
 
-	addr = 0;
+	void Processor::z_loadb() {
+		zword addr = zargs[0] + zargs[1];
+		zbyte value;
 
-finished:
-	store(addr);
-	branch(addr);
-}
+		LOW_BYTE(addr, value);
 
-void Processor::z_storeb() {
-	storeb((zword)(zargs[0] + zargs[1]), zargs[2]);
-}
+		store(value);
+	}
 
-void Processor::z_storew() {
-	storew((zword)(zargs[0] + 2 * zargs[1]), zargs[2]);
-}
+	void Processor::z_loadw() {
+		zword addr = zargs[0] + 2 * zargs[1];
+		zword value;
+
+		LOW_WORD(addr, value);
+
+		store(value);
+	}
+
+	void Processor::z_scan_table() {
+		zword addr = zargs[1];
+		int i;
+
+		// Supply default arguments
+		if (zargc < 4)
+			zargs[3] = 0x82;
+
+		// Scan byte or word array
+		for (i = 0; i < zargs[2]; i++) {
+			if (zargs[3] & 0x80) {
+				// scan word array
+				zword wvalue;
+
+				LOW_WORD(addr, wvalue);
+
+				if (wvalue == zargs[0])
+					goto finished;
+			} else {
+				// scan byte array
+				zbyte bvalue;
+
+				LOW_BYTE(addr, bvalue);
+
+				if (bvalue == zargs[0])
+					goto finished;
+			}
+
+			addr += zargs[3] & 0x7f;
+		}
+
+		addr = 0;
+
+	finished:
+		store(addr);
+		branch(addr);
+	}
+
+	void Processor::z_storeb() {
+		storeb((zword)(zargs[0] + zargs[1]), zargs[2]);
+	}
+
+	void Processor::z_storew() {
+		storew((zword)(zargs[0] + 2 * zargs[1]), zargs[2]);
+	}
 
 } // End of namespace Frotz
 } // End of namespace Glk

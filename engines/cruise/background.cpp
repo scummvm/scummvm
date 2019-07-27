@@ -28,7 +28,7 @@ namespace Cruise {
 
 uint8 colorMode = 0;
 
-uint8 *backgroundScreens[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };	// wasn't initialized in original, but it's probably better
+uint8 *backgroundScreens[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL }; // wasn't initialized in original, but it's probably better
 bool backgroundChanged[8] = { false, false, false, false, false, false, false, false };
 backgroundTableStruct backgroundTable[8];
 
@@ -41,7 +41,7 @@ char *hwMemAddr[] = {
 short int cvtPalette[0x20];
 
 int loadMEN(uint8 **ptr) {
-	char *localPtr = (char *) * ptr;
+	char *localPtr = (char *)*ptr;
 
 	if (!strcmp(localPtr, "MEN")) {
 		localPtr += 4;
@@ -51,7 +51,7 @@ int loadMEN(uint8 **ptr) {
 		itemColor = *(localPtr++);
 		subColor = *(localPtr++);
 
-		*ptr = (uint8 *) localPtr;
+		*ptr = (uint8 *)localPtr;
 
 		return 1;
 	} else {
@@ -62,7 +62,7 @@ int loadMEN(uint8 **ptr) {
 int CVTLoaded;
 
 int loadCVT(uint8 **ptr) {
-	char *localPtr = (char *) * ptr;
+	char *localPtr = (char *)*ptr;
 
 	if (!strcmp(localPtr, "CVT")) {
 		localPtr += 4;
@@ -70,7 +70,7 @@ int loadCVT(uint8 **ptr) {
 		for (int i = 0; i < 0x20; i++)
 			cvtPalette[i] = *(localPtr++);
 
-		*ptr = (uint8 *) localPtr;
+		*ptr = (uint8 *)localPtr;
 
 		CVTLoaded = 1;
 
@@ -128,7 +128,7 @@ int loadBackground(const char *name, int idx) {
 	}
 
 	if (!strcmp((char *)ptr, "PAL")) {
-		memcpy(palScreen[idx], ptr + 4, 256*3);
+		memcpy(palScreen[idx], ptr + 4, 256 * 3);
 		gfxModuleData_setPal256(palScreen[idx]);
 	} else {
 		int mode = ptr2[1];
@@ -144,20 +144,20 @@ int loadBackground(const char *name, int idx) {
 			flipGen(oldPalette, 0x20);
 
 			for (unsigned long int i = 0; i < 32; i++) {
-				gfxModuleData_convertOldPalColor(oldPalette[i], &palScreen[idx][i*3]);
+				gfxModuleData_convertOldPalColor(oldPalette[i], &palScreen[idx][i * 3]);
 			}
 
 			// duplicate the palette
 			for (unsigned long int i = 1; i < 8; i++) {
-				memcpy(&palScreen[idx][32*i*3], &palScreen[idx][0], 32*3);
+				memcpy(&palScreen[idx][32 * i * 3], &palScreen[idx][0], 32 * 3);
 			}
 
 			break;
 		}
 		case 5: { // color on 4 bit
 			for (unsigned long int i = 0; i < 32; i++) {
-				uint8* inPtr = ptr2 + i * 2;
-				uint8* outPtr = palScreen[idx] + i * 3;
+				uint8 *inPtr = ptr2 + i * 2;
+				uint8 *outPtr = palScreen[idx] + i * 3;
 
 				outPtr[2] = ((inPtr[1]) & 0x0F) * 17;
 				outPtr[1] = (((inPtr[1]) & 0xF0) >> 4) * 17;
@@ -167,13 +167,13 @@ int loadBackground(const char *name, int idx) {
 
 			// duplicate the palette
 			for (unsigned long int i = 1; i < 8; i++) {
-				memcpy(&palScreen[idx][32*i*3], &palScreen[idx][0], 32*3);
+				memcpy(&palScreen[idx][32 * i * 3], &palScreen[idx][0], 32 * 3);
 			}
 
 			break;
 		}
 		case 8:
-			memcpy(palScreen[idx], ptr2, 256*3);
+			memcpy(palScreen[idx], ptr2, 256 * 3);
 			ptr2 += 256 * 3;
 			break;
 

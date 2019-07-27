@@ -23,72 +23,75 @@
 #ifndef GLK_ALAN3_GLKIO
 #define GLK_ALAN3_GLKIO
 
+#include "glk/alan3/jumps.h"
 #include "glk/glk_api.h"
 #include "glk/windows.h"
-#include "glk/alan3/jumps.h"
 
 namespace Glk {
 namespace Alan3 {
 
-class GlkIO : public GlkAPI {
-private:
-	winid_t glkMainWin;
-	winid_t glkStatusWin;
-	schanid_t _soundChannel;
-	int _saveSlot;
-public:
-	bool onStatusLine;
-protected:
-	/**
+	class GlkIO : public GlkAPI {
+	private:
+		winid_t glkMainWin;
+		winid_t glkStatusWin;
+		schanid_t _soundChannel;
+		int _saveSlot;
+
+	public:
+		bool onStatusLine;
+
+	protected:
+		/**
 	 * Does initialization
 	 */
-	bool initialize();
-public:
-	/**
+		bool initialize();
+
+	public:
+		/**
 	 * Constructor
 	 */
-	GlkIO(OSystem *syst, const GlkGameDescription &gameDesc);
+		GlkIO(OSystem *syst, const GlkGameDescription &gameDesc);
 
-	/**
+		/**
 	 * Print a string to the window
 	 */
-	void print(const char *fmt, ...);
+		void print(const char *fmt, ...);
 
-	/**
+		/**
 	 * Outputs a string to the window, even during startup
 	 */
-	void forcePrint(const char *str) {
-		glk_put_string(str);
-	}
+		void forcePrint(const char *str) {
+			glk_put_string(str);
+		}
 
-	void showImage(int image, int align);
+		void showImage(int image, int align);
 
-	void playSound(int sound);
+		void playSound(int sound);
 
-	void setStyle(int style);
+		void setStyle(int style);
 
-	void statusLine(CONTEXT);
+		void statusLine(CONTEXT);
 
-	bool readLine(CONTEXT, char *usrBuf, size_t maxLen);
+		bool readLine(CONTEXT, char *usrBuf, size_t maxLen);
 
-	void clear() {
-		glk_window_clear(glkMainWin);
-	}
+		void clear() {
+			glk_window_clear(glkMainWin);
+		}
 
-	void flowBreak() {
-		/* Make a new paragraph, i.e one empty line (one or two newlines). */
-		if (_saveSlot == -1 && glk_gestalt(gestalt_Graphics, 0) == 1)
-			glk_window_flow_break(glkMainWin);
-	}
+		void flowBreak() {
+			/* Make a new paragraph, i.e one empty line (one or two newlines). */
+			if (_saveSlot == -1 && glk_gestalt(gestalt_Graphics, 0) == 1)
+				glk_window_flow_break(glkMainWin);
+		}
 
-	/**
+		/**
 	 * If a savegame was selected to be loaded from the launcher, then load it.
 	 * Otherwise, prompt the user for a savegame to load, and then load it
 	 */
-	Common::Error loadGame();
-};
+		Common::Error loadGame();
+	};
 
-extern GlkIO *g_io;
+	extern GlkIO *g_io;
 
 #undef printf
 #define printf g_io->print

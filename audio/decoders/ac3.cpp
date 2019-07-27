@@ -66,7 +66,12 @@ private:
 	double _audioGain;
 };
 
-AC3Stream::AC3Stream(double decibel) : _a52State(0), _frameSize(0), _inBufPtr(0), _flags(0), _sampleRate(0) {
+AC3Stream::AC3Stream(double decibel)
+  : _a52State(0)
+  , _frameSize(0)
+  , _inBufPtr(0)
+  , _flags(0)
+  , _sampleRate(0) {
 	_audioGain = pow(2, decibel / 6);
 }
 
@@ -82,7 +87,7 @@ bool AC3Stream::init(Common::SeekableReadStream &firstPacket) {
 	deinit();
 
 	// In theory, I should pass mm_accel() to a52_init(), but I don't know
-        // where that's supposed to be defined.
+	// where that's supposed to be defined.
 	_a52State = a52_init(0);
 
 	// Go through the header to find sync
@@ -201,4 +206,3 @@ PacketizedAudioStream *makeAC3Stream(Common::SeekableReadStream &firstPacket, do
 }
 
 } // End of namespace Audio
-

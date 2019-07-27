@@ -21,11 +21,11 @@
  */
 
 #include "voyeur/screen.h"
-#include "voyeur/voyeur.h"
-#include "voyeur/staticres.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
+#include "voyeur/staticres.h"
+#include "voyeur/voyeur.h"
 
 namespace Voyeur {
 
@@ -38,8 +38,11 @@ DrawInfo::DrawInfo(int penColor, const Common::Point &pos) {
 
 /*------------------------------------------------------------------------*/
 
-Screen::Screen(VoyeurEngine *vm) : Graphics::Screen(), _vm(vm), _drawPtr(&_defaultDrawInfo),
-		_defaultDrawInfo(1, Common::Point()) {
+Screen::Screen(VoyeurEngine *vm)
+  : Graphics::Screen()
+  , _vm(vm)
+  , _drawPtr(&_defaultDrawInfo)
+  , _defaultDrawInfo(1, Common::Point()) {
 	_SVGAMode = 0;
 	_planeSelect = 0;
 	_saveBack = true;
@@ -96,11 +99,11 @@ void Screen::restoreMCGASaveRect(ViewPortResource *viewPort) {
 	}
 
 	restoreBack(*viewPort->_rectListPtr[1], viewPort->_rectListCount[1], viewPort->_pages[0],
-		viewPort->_pages[1]);
+	            viewPort->_pages[1]);
 
 	int count = viewPort->_rectListCount[0];
 	restoreBack(*viewPort->_rectListPtr[0], viewPort->_rectListCount[0],
-		viewPort->_activePage, viewPort->_currentPic);
+	            viewPort->_activePage, viewPort->_currentPic);
 
 	SWAP(viewPort->_rectListPtr[0], viewPort->_rectListPtr[1]);
 	viewPort->_rectListCount[1] = count;
@@ -111,7 +114,7 @@ void Screen::addRectNoSaveBack(ViewPortResource *viewPort, int idx, const Common
 }
 
 void Screen::sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay,
-		const Common::Point &initialOffset) {
+                      const Common::Point &initialOffset) {
 	int width1, width2;
 	int widthDiff, widthDiff2;
 	int height1;
@@ -152,7 +155,7 @@ void Screen::sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay,
 	}
 
 	Common::Point offset = Common::Point(initialOffset.x + srcPic->_bounds.left - destPic->_bounds.left,
-		initialOffset.y + srcPic->_bounds.top - destPic->_bounds.top);
+	                                     initialOffset.y + srcPic->_bounds.top - destPic->_bounds.top);
 	width1 = width2 = srcPic->_bounds.width();
 	height1 = srcPic->_bounds.height();
 	srcOffset = 0;
@@ -169,7 +172,7 @@ void Screen::sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay,
 			int xs = destViewPort->_clipRect.left - destPic->_bounds.left;
 			int ys = destViewPort->_clipRect.top - destPic->_bounds.top;
 			newBounds = Common::Rect(xs, ys, xs + destViewPort->_clipRect.width(),
-				ys + destViewPort->_clipRect.height());
+			                         ys + destViewPort->_clipRect.height());
 		} else {
 			newBounds = Common::Rect(0, 0, destPic->_bounds.width(), destPic->_bounds.height());
 		}
@@ -335,7 +338,7 @@ void Screen::sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay,
 							}
 
 							addDirtyRect(Common::Rect(offset.x, offset.y, offset.x + width2,
-								offset.y + height1));
+							                          offset.y + height1));
 						}
 					}
 				} else {
@@ -354,7 +357,7 @@ void Screen::sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay,
 						}
 
 						addDirtyRect(Common::Rect(offset.x, offset.y, offset.x + width2,
-							offset.y + height1));
+						                          offset.y + height1));
 					}
 				}
 			} else {
@@ -544,7 +547,7 @@ void Screen::sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay,
 					}
 
 					addDirtyRect(Common::Rect(offset.x, offset.y, offset.x + width2,
-						offset.y + height1));
+					                          offset.y + height1));
 				} else {
 					// loc_2753C
 					destP = destImgData + screenOffset;
@@ -604,7 +607,7 @@ void Screen::sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay,
 								}
 
 								addDirtyRect(Common::Rect(offset.x, offset.y, offset.x + width2,
-									offset.y + height1));
+								                          offset.y + height1));
 							} else {
 								// loc_26815
 								destP = (byte *)getPixels() + screenOffset;
@@ -633,7 +636,7 @@ void Screen::sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay,
 								}
 
 								addDirtyRect(Common::Rect(offset.x, offset.y, offset.x + width2,
-									offset.y + height1));
+								                          offset.y + height1));
 							}
 						} else {
 							// Direct screen write
@@ -649,7 +652,7 @@ void Screen::sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay,
 							}
 
 							addDirtyRect(Common::Rect(offset.x, offset.y, offset.x + width2,
-								offset.y + height1));
+							                          offset.y + height1));
 						}
 					} else if (srcFlags & PICFLAG_100) {
 						srcP = srcImgData;
@@ -705,7 +708,7 @@ void Screen::sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay,
 							}
 
 							addDirtyRect(Common::Rect(offset.x, offset.y, offset.x + width2,
-								offset.y + height1));
+							                          offset.y + height1));
 						}
 					} else {
 						// loc_26C9A
@@ -720,7 +723,7 @@ void Screen::sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay,
 						}
 
 						addDirtyRect(Common::Rect(offset.x, offset.y, offset.x + width2,
-							offset.y + height1));
+						                          offset.y + height1));
 					}
 				} else {
 					// loc_26D2F
@@ -936,7 +939,7 @@ void Screen::flipPage() {
 }
 
 void Screen::restoreBack(Common::Array<Common::Rect> &rectList, int rectListCount,
-		PictureResource *srcPic, PictureResource *destPic) {
+                         PictureResource *srcPic, PictureResource *destPic) {
 	// WORKAROUND: Since _backgroundPage can point to a resource freed at the end of display methods,
 	// I'm now explicitly resetting it to null in screenReset(), so at this point it can be null
 	if (!srcPic)

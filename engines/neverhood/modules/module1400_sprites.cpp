@@ -26,7 +26,9 @@
 namespace Neverhood {
 
 AsScene1401Pipe::AsScene1401Pipe(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1100), _countdown1(0), _countdown2(0) {
+  : AnimatedSprite(vm, 1100)
+  , _countdown1(0)
+  , _countdown2(0) {
 
 	createSurface(900, 152, 147);
 	_x = 454;
@@ -108,7 +110,7 @@ void AsScene1401Pipe::stSuckInProjector() {
 }
 
 AsScene1401Mouse::AsScene1401Mouse(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1100) {
+  : AnimatedSprite(vm, 1100) {
 
 	createSurface(100, 71, 41);
 	_x = 478;
@@ -153,7 +155,7 @@ void AsScene1401Mouse::stSuckedIn() {
 }
 
 AsScene1401Cheese::AsScene1401Cheese(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1100) {
+  : AnimatedSprite(vm, 1100) {
 
 	createSurface(200, 152, 147);
 	_x = 427;
@@ -190,7 +192,10 @@ void AsScene1401Cheese::stSuckedIn() {
 }
 
 AsScene1401BackDoor::AsScene1401BackDoor(NeverhoodEngine *vm, Sprite *klaymen, bool isOpen)
-	: AnimatedSprite(vm, 1100), _klaymen(klaymen), _countdown(0), _isOpen(isOpen) {
+  : AnimatedSprite(vm, 1100)
+  , _klaymen(klaymen)
+  , _countdown(0)
+  , _isOpen(isOpen) {
 
 	_x = 320;
 	_y = 240;
@@ -212,7 +217,6 @@ void AsScene1401BackDoor::update() {
 		stCloseDoor();
 	AnimatedSprite::update();
 }
-
 
 uint32 AsScene1401BackDoor::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
@@ -257,15 +261,18 @@ void AsScene1401BackDoor::stCloseDoorDone() {
 }
 
 static const AsCommonProjectorItem kAsCommonProjectorItems[] = {
-	{{154, 453}, 4,  2,  0, 0, 1},
-	{{104, 391}, 4, -1, -1, 1, 1},
-	{{ 22, 447}, 6, -1, -1, 1, 1},
-	{{112, 406}, 2, -1, -1, 1, 0},
-	{{262, 433}, 1,  1,  0, 0, 0}
+	{ { 154, 453 }, 4, 2, 0, 0, 1 },
+	{ { 104, 391 }, 4, -1, -1, 1, 1 },
+	{ { 22, 447 }, 6, -1, -1, 1, 1 },
+	{ { 112, 406 }, 2, -1, -1, 1, 0 },
+	{ { 262, 433 }, 1, 1, 0, 0, 0 }
 };
 
 AsCommonProjector::AsCommonProjector(NeverhoodEngine *vm, Scene *parentScene, Sprite *klaymen, Sprite *asPipe)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _klaymen(klaymen), _asPipe(asPipe) {
+  : AnimatedSprite(vm, 1100)
+  , _parentScene(parentScene)
+  , _klaymen(klaymen)
+  , _asPipe(asPipe) {
 
 	_asProjectorItem = &kAsCommonProjectorItems[getGlobalVar(V_PROJECTOR_LOCATION)];
 	createSurface(990, 101, 182);
@@ -331,8 +338,7 @@ uint32 AsCommonProjector::hmLockedInSlot(int messageNum, const MessageParam &par
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1011:
-		if (param.asPoint().x - _x >= 17 && param.asPoint().x - _x <= 56 &&
-			param.asPoint().y - _y >= -120 && param.asPoint().y - _y <= -82) {
+		if (param.asPoint().x - _x >= 17 && param.asPoint().x - _x <= 56 && param.asPoint().y - _y >= -120 && param.asPoint().y - _y <= -82) {
 			sendMessage(_parentScene, 0x4826, 1);
 		} else
 			sendMessage(_parentScene, 0x4826, 0);
@@ -428,7 +434,6 @@ void AsCommonProjector::moveProjector() {
 		playSound(1, 0x5440E474);
 		_lockedInSlot = true;
 	}
-
 }
 
 void AsCommonProjector::stSuckedIn() {
@@ -515,14 +520,15 @@ void AsCommonProjector::stStartSuckedIn() {
 }
 
 SsScene1402BridgePart::SsScene1402BridgePart(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority)
-	: StaticSprite(vm, fileHash, surfacePriority) {
+  : StaticSprite(vm, fileHash, surfacePriority) {
 
 	SetFilterY(&Sprite::defFilterY);
 	SetUpdateHandler(&StaticSprite::updatePosition);
 }
 
 AsScene1402PuzzleBox::AsScene1402PuzzleBox(NeverhoodEngine *vm, Scene *parentScene, int status)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
+  : AnimatedSprite(vm, 1100)
+  , _parentScene(parentScene) {
 
 	createSurface(900, 347, 230);
 
@@ -593,88 +599,90 @@ static const struct {
 	int16 sectionIndex;
 	int16 nextHoleIndex;
 } kScene1407MouseHoles[] = {
-	{125, 0,  0,  7},
-	{452, 7, 21,  0},
-	{337, 4, 11,  4},
-	{286, 6, 17,  6},
-	{348, 6, 17, 39},
-	{536, 6, 18, 42},
-	{111, 1,  3, 18},
-	{203, 1,  3, 38},
-	{270, 1,  3,  9},
-	{197, 5, 14,  3},
-	{252, 5, 14, 35},
-	{297, 5, 14,  7},
-	{359, 5, 14,  8},
-	{422, 4, 12, 26},
-	{467, 4, 12,  2},
-	{539, 4, 12, 40},
-	{111, 5, 13, 17},
-	{211, 0,  1, 20},
-	{258, 0,  1, 11},
-	{322, 0,  1, 16},
-	{ 99, 6, 16, 31},
-	{142, 6, 16, 27},
-	{194, 6, 16, 12},
-	{205, 2,  6, 45},
-	{264, 2,  6, 10},
-	{ 98, 4, 10,  2},
-	{152, 4, 10, 37},
-	{199, 4, 10, 13},
-	{258, 4, 10, 16},
-	{100, 7, 19, 43},
-	{168, 7, 19, 23},
-	{123, 3,  8, 14},
-	{181, 3,  8, 39},
-	{230, 3,  8, 28},
-	{292, 3,  8, 22},
-	{358, 3,  8, 36},
-	{505, 3,  9, 44},
-	{400, 2,  7, 34},
-	{454, 2,  7, 32},
-	{532, 2,  7, 46},
-	{484, 5, 15, 25},
-	{529, 5, 15, 30},
-	{251, 7, 20, 48},
-	{303, 7, 20, 21},
-	{360, 7, 20, 33},
-	{503, 0,  2,  5},
-	{459, 1,  4, 19},
-	{530, 1,  4, 42},
-	{111, 2,  5, 47},
-	{442, 6, 18,  1}
+	{ 125, 0, 0, 7 },
+	{ 452, 7, 21, 0 },
+	{ 337, 4, 11, 4 },
+	{ 286, 6, 17, 6 },
+	{ 348, 6, 17, 39 },
+	{ 536, 6, 18, 42 },
+	{ 111, 1, 3, 18 },
+	{ 203, 1, 3, 38 },
+	{ 270, 1, 3, 9 },
+	{ 197, 5, 14, 3 },
+	{ 252, 5, 14, 35 },
+	{ 297, 5, 14, 7 },
+	{ 359, 5, 14, 8 },
+	{ 422, 4, 12, 26 },
+	{ 467, 4, 12, 2 },
+	{ 539, 4, 12, 40 },
+	{ 111, 5, 13, 17 },
+	{ 211, 0, 1, 20 },
+	{ 258, 0, 1, 11 },
+	{ 322, 0, 1, 16 },
+	{ 99, 6, 16, 31 },
+	{ 142, 6, 16, 27 },
+	{ 194, 6, 16, 12 },
+	{ 205, 2, 6, 45 },
+	{ 264, 2, 6, 10 },
+	{ 98, 4, 10, 2 },
+	{ 152, 4, 10, 37 },
+	{ 199, 4, 10, 13 },
+	{ 258, 4, 10, 16 },
+	{ 100, 7, 19, 43 },
+	{ 168, 7, 19, 23 },
+	{ 123, 3, 8, 14 },
+	{ 181, 3, 8, 39 },
+	{ 230, 3, 8, 28 },
+	{ 292, 3, 8, 22 },
+	{ 358, 3, 8, 36 },
+	{ 505, 3, 9, 44 },
+	{ 400, 2, 7, 34 },
+	{ 454, 2, 7, 32 },
+	{ 532, 2, 7, 46 },
+	{ 484, 5, 15, 25 },
+	{ 529, 5, 15, 30 },
+	{ 251, 7, 20, 48 },
+	{ 303, 7, 20, 21 },
+	{ 360, 7, 20, 33 },
+	{ 503, 0, 2, 5 },
+	{ 459, 1, 4, 19 },
+	{ 530, 1, 4, 42 },
+	{ 111, 2, 5, 47 },
+	{ 442, 6, 18, 1 }
 };
 
 static const struct {
 	int16 x1, x2;
 	int16 goodHoleIndex;
 } kScene1407MouseSections[] = {
-	{100, 149,  0},
-	{182, 351, 17},
-	{430, 524, 45},
-	{ 89, 293,  7},
-	{407, 555, 47},
-	{ 89, 132, 48},
-	{178, 303, 23},
-	{367, 551, 38},
-	{105, 398, 31},
-	{480, 537, 36},
-	{ 84, 275, 27},
-	{318, 359,  2},
-	{402, 560, 15},
-	{ 91, 132, 16},
-	{179, 400, 10},
-	{461, 552, 41},
-	{ 86, 218, 21},
-	{267, 376,  4},
-	{420, 560, 49},
-	{ 77, 188, 30},
-	{237, 394, 44},
-	{438, 515,  5}
+	{ 100, 149, 0 },
+	{ 182, 351, 17 },
+	{ 430, 524, 45 },
+	{ 89, 293, 7 },
+	{ 407, 555, 47 },
+	{ 89, 132, 48 },
+	{ 178, 303, 23 },
+	{ 367, 551, 38 },
+	{ 105, 398, 31 },
+	{ 480, 537, 36 },
+	{ 84, 275, 27 },
+	{ 318, 359, 2 },
+	{ 402, 560, 15 },
+	{ 91, 132, 16 },
+	{ 179, 400, 10 },
+	{ 461, 552, 41 },
+	{ 86, 218, 21 },
+	{ 267, 376, 4 },
+	{ 420, 560, 49 },
+	{ 77, 188, 30 },
+	{ 237, 394, 44 },
+	{ 438, 515, 5 }
 };
 
 AsScene1407Mouse::AsScene1407Mouse(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _currSectionIndex(0) {
+  : AnimatedSprite(vm, 1100)
+  , _parentScene(parentScene)
+  , _currSectionIndex(0) {
 
 	createSurface(100, 117, 45);
 	_x = 108;
@@ -709,54 +717,49 @@ void AsScene1407Mouse::upGoThroughHole() {
 uint32 AsScene1407Mouse::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-	case NM_MOUSE_CLICK:
-		{
-			int16 mouseX = param.asPoint().x;
-			int16 mouseY = param.asPoint().y;
-			int holeIndex;
-			for (holeIndex = 0; holeIndex < 50; holeIndex++) {
-				int16 holeX = kScene1407MouseHoles[holeIndex].x;
-				int16 holeY = kScene1407MouseFloorY[kScene1407MouseHoles[holeIndex].floorIndex];
-				if (mouseX >= holeX - 14 && mouseX <= holeX + 14 && mouseY >= holeY - 36 && mouseY <= holeY)
-					break;
-			}
-			if (holeIndex < 50 && kScene1407MouseHoles[holeIndex].sectionIndex == _currSectionIndex) {
-				_nextHoleIndex = kScene1407MouseHoles[holeIndex].nextHoleIndex;
-				_walkDestX = kScene1407MouseHoles[holeIndex].x;
-				stWalkToHole();
-			} else {
-				if (mouseX < kScene1407MouseSections[_currSectionIndex].x1)
-					_walkDestX = kScene1407MouseSections[_currSectionIndex].x1;
-				else if (mouseX > kScene1407MouseSections[_currSectionIndex].x2)
-					_walkDestX = kScene1407MouseSections[_currSectionIndex].x2;
-				else
-					_walkDestX = mouseX;
-				stWalkToDest();
-			}
+	case NM_MOUSE_CLICK: {
+		int16 mouseX = param.asPoint().x;
+		int16 mouseY = param.asPoint().y;
+		int holeIndex;
+		for (holeIndex = 0; holeIndex < 50; holeIndex++) {
+			int16 holeX = kScene1407MouseHoles[holeIndex].x;
+			int16 holeY = kScene1407MouseFloorY[kScene1407MouseHoles[holeIndex].floorIndex];
+			if (mouseX >= holeX - 14 && mouseX <= holeX + 14 && mouseY >= holeY - 36 && mouseY <= holeY)
+				break;
 		}
-		break;
+		if (holeIndex < 50 && kScene1407MouseHoles[holeIndex].sectionIndex == _currSectionIndex) {
+			_nextHoleIndex = kScene1407MouseHoles[holeIndex].nextHoleIndex;
+			_walkDestX = kScene1407MouseHoles[holeIndex].x;
+			stWalkToHole();
+		} else {
+			if (mouseX < kScene1407MouseSections[_currSectionIndex].x1)
+				_walkDestX = kScene1407MouseSections[_currSectionIndex].x1;
+			else if (mouseX > kScene1407MouseSections[_currSectionIndex].x2)
+				_walkDestX = kScene1407MouseSections[_currSectionIndex].x2;
+			else
+				_walkDestX = mouseX;
+			stWalkToDest();
+		}
+	} break;
 	case NM_SCENE_LEAVE:
 		gotoNextState();
 		break;
-	case 0x2001:
-		{
-			// Reset the position
-			// Find the nearest hole and go through it, and exit at the first hole
-			int16 distance = 640;
-			int matchIndex = 50;
-			for (int index = 0; index < 50; index++)
-				if (kScene1407MouseHoles[index].sectionIndex == _currSectionIndex &&
-					ABS(kScene1407MouseHoles[index].x - _x) < distance) {
-					matchIndex = index;
-					distance = ABS(kScene1407MouseHoles[index].x - _x);
-				}
-			if (matchIndex < 50) {
-				_nextHoleIndex = 0;
-				_walkDestX = kScene1407MouseHoles[matchIndex].x;
-				stWalkToHole();
+	case 0x2001: {
+		// Reset the position
+		// Find the nearest hole and go through it, and exit at the first hole
+		int16 distance = 640;
+		int matchIndex = 50;
+		for (int index = 0; index < 50; index++)
+			if (kScene1407MouseHoles[index].sectionIndex == _currSectionIndex && ABS(kScene1407MouseHoles[index].x - _x) < distance) {
+				matchIndex = index;
+				distance = ABS(kScene1407MouseHoles[index].x - _x);
 			}
+		if (matchIndex < 50) {
+			_nextHoleIndex = 0;
+			_walkDestX = kScene1407MouseHoles[matchIndex].x;
+			stWalkToHole();
 		}
-		break;
+	} break;
 	}
 	return messageResult;
 }
@@ -813,22 +816,15 @@ void AsScene1407Mouse::stArriveAtHole() {
 }
 
 static const NPoint kAsScene1405TileItemPositions[] = {
-	{100,  80}, {162,  78}, {222,  76}, {292,  76},
-	{356,  82}, {422,  84}, {488,  86}, {550,  90},
-	{102, 134}, {164, 132}, {224, 136},	{294, 136},
-	{360, 136},	{422, 138},	{484, 144},	{548, 146},
-	{ 98, 196},	{160, 200},	{228, 200},	{294, 202},
-	{360, 198},	{424, 200},	{482, 202},	{548, 206},
-	{ 98, 260},	{160, 264},	{226, 260},	{296, 262},
-	{358, 260},	{424, 262},	{486, 264},	{550, 266},
-	{ 94, 322},	{160, 316},	{226, 316},	{296, 320},
-	{358, 322},	{422, 324},	{488, 322},	{550, 322},
-	{ 98, 380},	{160, 376},	{226, 376},	{294, 378},
-	{356, 380},	{420, 380},	{490, 378},	{552, 376}
+	{ 100, 80 }, { 162, 78 }, { 222, 76 }, { 292, 76 }, { 356, 82 }, { 422, 84 }, { 488, 86 }, { 550, 90 }, { 102, 134 }, { 164, 132 }, { 224, 136 }, { 294, 136 }, { 360, 136 }, { 422, 138 }, { 484, 144 }, { 548, 146 }, { 98, 196 }, { 160, 200 }, { 228, 200 }, { 294, 202 }, { 360, 198 }, { 424, 200 }, { 482, 202 }, { 548, 206 }, { 98, 260 }, { 160, 264 }, { 226, 260 }, { 296, 262 }, { 358, 260 }, { 424, 262 }, { 486, 264 }, { 550, 266 }, { 94, 322 }, { 160, 316 }, { 226, 316 }, { 296, 320 }, { 358, 322 }, { 422, 324 }, { 488, 322 }, { 550, 322 }, { 98, 380 }, { 160, 376 }, { 226, 376 }, { 294, 378 }, { 356, 380 }, { 420, 380 }, { 490, 378 }, { 552, 376 }
 };
 
 AsScene1405Tile::AsScene1405Tile(NeverhoodEngine *vm, Scene1405 *parentScene, uint32 tileIndex)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _tileIndex(tileIndex), _countdown(0), _isShowing(false) {
+  : AnimatedSprite(vm, 1100)
+  , _parentScene(parentScene)
+  , _tileIndex(tileIndex)
+  , _countdown(0)
+  , _isShowing(false) {
 
 	loadSound(0, 0x05308101);
 	setSoundPan(0, (tileIndex % 8 * 4 + 4) * 25 / 8);
@@ -883,7 +879,7 @@ void AsScene1405Tile::hide(bool playClickSound) {
 }
 
 KmScene1401::KmScene1401(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+  : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }
@@ -950,7 +946,7 @@ uint32 KmScene1401::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene1402::KmScene1402(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+  : Klaymen(vm, parentScene, x, y) {
 
 	SetFilterY(&Sprite::defFilterY);
 }
@@ -991,13 +987,13 @@ uint32 KmScene1402::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 static const KlaymenIdleTableItem klaymenIdleTable1403[] = {
-	{1, kIdleSpinHead},
-	{1, kIdleChest},
-	{1, kIdleHeadOff},
+	{ 1, kIdleSpinHead },
+	{ 1, kIdleChest },
+	{ 1, kIdleHeadOff },
 };
 
 KmScene1403::KmScene1403(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+  : Klaymen(vm, parentScene, x, y) {
 
 	setKlaymenIdleTable(klaymenIdleTable1403, ARRAYSIZE(klaymenIdleTable1403));
 }
@@ -1054,7 +1050,7 @@ uint32 KmScene1403::xHandleMessage(int messageNum, const MessageParam &param) {
 // KmScene1404
 
 KmScene1404::KmScene1404(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+  : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }

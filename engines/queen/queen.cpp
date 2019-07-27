@@ -32,7 +32,6 @@
 
 #include "engines/util.h"
 
-#include "queen/queen.h"
 #include "queen/bankman.h"
 #include "queen/command.h"
 #include "queen/cutaway.h"
@@ -42,6 +41,7 @@
 #include "queen/grid.h"
 #include "queen/input.h"
 #include "queen/logic.h"
+#include "queen/queen.h"
 #include "queen/resource.h"
 #include "queen/sound.h"
 #include "queen/talk.h"
@@ -50,7 +50,9 @@
 namespace Queen {
 
 QueenEngine::QueenEngine(OSystem *syst)
-	: Engine(syst), _debugger(0), randomizer("queen") {
+  : Engine(syst)
+  , _debugger(0)
+  , randomizer("queen") {
 }
 
 QueenEngine::~QueenEngine() {
@@ -247,7 +249,7 @@ Common::Error QueenEngine::loadGameState(int slot) {
 			_sound->loadState(header.version, p);
 			if (header.dataSize != (uint32)(p - saveData)) {
 				warning("Corrupted savegame file");
-				err = Common::kReadingFailed;	// FIXME
+				err = Common::kReadingFailed; // FIXME
 			} else {
 				_logic->setupRestoredGame();
 			}
@@ -265,7 +267,7 @@ Common::InSaveFile *QueenEngine::readGameStateHeader(int slot, GameStateHeader *
 	char name[20];
 	makeGameStateName(slot, name);
 	Common::InSaveFile *file = _saveFileMan->openForLoading(name);
-	if (file && file->readUint32BE() == MKTAG('S','C','V','M')) {
+	if (file && file->readUint32BE() == MKTAG('S', 'C', 'V', 'M')) {
 		gsh->version = file->readUint32BE();
 		gsh->flags = file->readUint32BE();
 		gsh->dataSize = file->readUint32BE();
@@ -316,11 +318,7 @@ GUI::Debugger *QueenEngine::getDebugger() {
 }
 
 bool Queen::QueenEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime) ||
-		(f == kSupportsSubtitleOptions);
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime) || (f == kSupportsSubtitleOptions);
 }
 
 Common::Error QueenEngine::run() {

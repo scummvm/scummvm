@@ -39,7 +39,7 @@ enum Language {
 	CZ_CZE,
 	DA_DAN,
 	NL_NLD,
-	EN_ANY,     // Generic English (when only one game version exist)
+	EN_ANY, // Generic English (when only one game version exist)
 	EN_GRB,
 	EN_USA,
 	ET_EST,
@@ -64,7 +64,7 @@ enum Language {
 	TR_TUR,
 	UA_UKR,
 
-	UNK_LANG = -1	// Use default language (i.e. none specified)
+	UNK_LANG = -1 // Use default language (i.e. none specified)
 };
 
 struct LanguageDescription {
@@ -75,7 +75,6 @@ struct LanguageDescription {
 };
 
 extern const LanguageDescription g_languages[];
-
 
 /** Convert a string containing a language name into a Language enum value. */
 extern Language parseLanguage(const String &str);

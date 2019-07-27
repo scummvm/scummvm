@@ -20,16 +20,17 @@
  *
  */
 
-#include "scumm/he/intern_he.h"
 #include "scumm/he/moonbase/moonbase.h"
+#include "scumm/he/intern_he.h"
 #include "scumm/he/moonbase/ai_main.h"
 #ifdef USE_SDL_NET
-#include "scumm/he/moonbase/net_main.h"
+#	include "scumm/he/moonbase/net_main.h"
 #endif
 
 namespace Scumm {
 
-Moonbase::Moonbase(ScummEngine_v100he *vm) : _vm(vm) {
+Moonbase::Moonbase(ScummEngine_v100he *vm)
+  : _vm(vm) {
 	initFOW();
 
 	_ai = new AI(_vm);
@@ -57,7 +58,7 @@ void Moonbase::deallocateArray(int array) {
 	return _vm->nukeArray(_vm->VAR_U32_ARRAY_UNK);
 }
 
-int Moonbase::callScummFunction(int scriptNumber, int paramCount,...) {
+int Moonbase::callScummFunction(int scriptNumber, int paramCount, ...) {
 	va_list va_params;
 	va_start(va_params, paramCount);
 	int args[25];
@@ -76,7 +77,6 @@ int Moonbase::callScummFunction(int scriptNumber, int paramCount,...) {
 
 	debug(0, "%s", str.c_str());
 
-
 	va_end(va_params);
 
 	_vm->runScript(scriptNumber, 0, 1, args);
@@ -84,9 +84,8 @@ int Moonbase::callScummFunction(int scriptNumber, int paramCount,...) {
 	return _vm->pop();
 }
 
-
 void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, const Common::Rect *clipBox,
-		 uint8 *wizd, int x, int y, int rawROP, int paramROP) {
+                               uint8 *wizd, int x, int y, int rawROP, int paramROP) {
 	bool premulAlpa = false;
 
 	if (rawROP == 1)
@@ -129,9 +128,9 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 	}
 
 	for (int i = 0; i < cy; i++) {
-		uint16 lineSize      = READ_LE_UINT16(dataPointer + 0);
+		uint16 lineSize = READ_LE_UINT16(dataPointer + 0);
 		uint8 *singlesOffset = READ_LE_UINT16(dataPointer + 2) + dataPointer;
-		uint8 *quadsOffset   = READ_LE_UINT16(dataPointer + 4) + dataPointer;
+		uint8 *quadsOffset = READ_LE_UINT16(dataPointer + 4) + dataPointer;
 
 		int pixels = 0;
 		byte *dst1 = dst;
@@ -205,8 +204,8 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 								uint32 oG = orig & 0x03e0;
 								uint32 oB = orig & 0x1f;
 								uint32 dR = ((((color & 0x7c00) - oR) * alpha) >> 5) + oR;
-								uint32 dG = ((((color &  0x3e0) - oG) * alpha) >> 5) + oG;
-								uint32 dB = ((((color &   0x1f) - oB) * alpha) >> 5) + oB;
+								uint32 dG = ((((color & 0x3e0) - oG) * alpha) >> 5) + oG;
+								uint32 dB = ((((color & 0x1f) - oB) * alpha) >> 5) + oB;
 
 								WRITE_LE_UINT16(dst1, (dR & 0x7c00) | (dG & 0x3e0) | (dB & 0x1f));
 							} else {

@@ -42,10 +42,11 @@ public:
 	virtual void start();
 
 	virtual void getClawInfo(HotSpotID &outSpotID, HotSpotID &prepSpotID,
-			HotSpotID &clawControlSpotID, HotSpotID &pinchClawSpotID,
-			HotSpotID &moveClawDownSpotID, HotSpotID &moveClawRightSpotID,
-			HotSpotID &moveClawLeftSpotID,HotSpotID &moveClawUpSpotID,
-			HotSpotID &clawCCWSpotID, HotSpotID &clawCWSpotID, uint32 &, const uint32 *&) = 0;
+	                         HotSpotID &clawControlSpotID, HotSpotID &pinchClawSpotID,
+	                         HotSpotID &moveClawDownSpotID, HotSpotID &moveClawRightSpotID,
+	                         HotSpotID &moveClawLeftSpotID, HotSpotID &moveClawUpSpotID,
+	                         HotSpotID &clawCCWSpotID, HotSpotID &clawCWSpotID, uint32 &, const uint32 *&)
+	  = 0;
 	void checkAirMask();
 
 	virtual uint16 getDateResID() const;
@@ -112,7 +113,7 @@ protected:
 	TimeValue _accessDeniedIn;
 	TimeValue _accessDeniedOut;
 
-	RoomID	 _platformRoom;
+	RoomID _platformRoom;
 	RoomID _subControlRoom;
 };
 

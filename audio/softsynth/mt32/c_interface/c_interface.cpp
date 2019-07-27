@@ -15,17 +15,17 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../globals.h"
-#include "../Types.h"
 #include "../File.h"
 #include "../FileStream.h"
-#include "../ROMInfo.h"
-#include "../Synth.h"
 #include "../MidiStreamParser.h"
+#include "../ROMInfo.h"
 #include "../SampleRateConverter.h"
+#include "../Synth.h"
+#include "../Types.h"
+#include "../globals.h"
 
-#include "c_types.h"
 #include "c_interface.h"
+#include "c_types.h"
 
 using namespace MT32Emu;
 
@@ -134,12 +134,13 @@ namespace MT32Emu {
 
 class DelegatingReportHandlerAdapter : public ReportHandler {
 public:
-	DelegatingReportHandlerAdapter(mt32emu_report_handler_i useReportHandler, void *useInstanceData) :
-		delegate(useReportHandler), instanceData(useInstanceData) {}
+	DelegatingReportHandlerAdapter(mt32emu_report_handler_i useReportHandler, void *useInstanceData)
+	  : delegate(useReportHandler)
+	  , instanceData(useInstanceData) {}
 
 protected:
 	const mt32emu_report_handler_i delegate;
-	void * const instanceData;
+	void *const instanceData;
 
 private:
 	void printDebug(const char *fmt, va_list list) {
@@ -256,8 +257,10 @@ private:
 
 class DelegatingMidiStreamParser : public DefaultMidiStreamParser {
 public:
-	DelegatingMidiStreamParser(const mt32emu_data *useData, mt32emu_midi_receiver_i useMIDIReceiver, void *useInstanceData) :
-		DefaultMidiStreamParser(*useData->synth), delegate(useMIDIReceiver), instanceData(useInstanceData) {}
+	DelegatingMidiStreamParser(const mt32emu_data *useData, mt32emu_midi_receiver_i useMIDIReceiver, void *useInstanceData)
+	  : DefaultMidiStreamParser(*useData->synth)
+	  , delegate(useMIDIReceiver)
+	  , instanceData(useInstanceData) {}
 
 protected:
 	mt32emu_midi_receiver_i delegate;
@@ -370,7 +373,8 @@ mt32emu_context mt32emu_create_context(mt32emu_report_handler_i report_handler, 
 }
 
 void mt32emu_free_context(mt32emu_context data) {
-	if (data == NULL) return;
+	if (data == NULL)
+		return;
 
 	delete data->srcState->src;
 	data->srcState->src = NULL;
@@ -397,7 +401,8 @@ void mt32emu_free_context(mt32emu_context data) {
 }
 
 mt32emu_return_code mt32emu_add_rom_data(mt32emu_context context, const mt32emu_bit8u *data, size_t data_size, const mt32emu_sha1_digest *sha1_digest) {
-	if (sha1_digest == NULL) return addROMFile(context, new ArrayFile(data, data_size));
+	if (sha1_digest == NULL)
+		return addROMFile(context, new ArrayFile(data, data_size));
 	return addROMFile(context, new ArrayFile(data, data_size, *sha1_digest));
 }
 
@@ -407,7 +412,8 @@ mt32emu_return_code mt32emu_add_rom_file(mt32emu_context context, const char *fi
 	if (fs->open(filename)) {
 		if (fs->getData() != NULL) {
 			rc = addROMFile(context, fs);
-			if (rc > 0) return rc;
+			if (rc > 0)
+				return rc;
 		} else {
 			rc = MT32EMU_RC_FILE_NOT_LOADED;
 		}
@@ -547,22 +553,26 @@ void mt32emu_play_short_message_at(mt32emu_const_context context, mt32emu_bit32u
 }
 
 mt32emu_return_code mt32emu_play_msg(mt32emu_const_context context, mt32emu_bit32u msg) {
-	if (!context->synth->isOpen()) return MT32EMU_RC_NOT_OPENED;
+	if (!context->synth->isOpen())
+		return MT32EMU_RC_NOT_OPENED;
 	return (context->synth->playMsg(msg)) ? MT32EMU_RC_OK : MT32EMU_RC_QUEUE_FULL;
 }
 
 mt32emu_return_code mt32emu_play_sysex(mt32emu_const_context context, const mt32emu_bit8u *sysex, mt32emu_bit32u len) {
-	if (!context->synth->isOpen()) return MT32EMU_RC_NOT_OPENED;
+	if (!context->synth->isOpen())
+		return MT32EMU_RC_NOT_OPENED;
 	return (context->synth->playSysex(sysex, len)) ? MT32EMU_RC_OK : MT32EMU_RC_QUEUE_FULL;
 }
 
 mt32emu_return_code mt32emu_play_msg_at(mt32emu_const_context context, mt32emu_bit32u msg, mt32emu_bit32u timestamp) {
-	if (!context->synth->isOpen()) return MT32EMU_RC_NOT_OPENED;
+	if (!context->synth->isOpen())
+		return MT32EMU_RC_NOT_OPENED;
 	return (context->synth->playMsg(msg, timestamp)) ? MT32EMU_RC_OK : MT32EMU_RC_QUEUE_FULL;
 }
 
 mt32emu_return_code mt32emu_play_sysex_at(mt32emu_const_context context, const mt32emu_bit8u *sysex, mt32emu_bit32u len, mt32emu_bit32u timestamp) {
-	if (!context->synth->isOpen()) return MT32EMU_RC_NOT_OPENED;
+	if (!context->synth->isOpen())
+		return MT32EMU_RC_NOT_OPENED;
 	return (context->synth->playSysex(sysex, len, timestamp)) ? MT32EMU_RC_OK : MT32EMU_RC_QUEUE_FULL;
 }
 

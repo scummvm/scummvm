@@ -20,11 +20,11 @@
  *
  */
 
-#include "titanic/star_control/base_stars.h"
 #include "common/rect.h"
+#include "titanic/star_control/base_stars.h"
 
 #ifndef TITANIC_STAR_REF_H
-#define TITANIC_STAR_REF_H
+#	define TITANIC_STAR_REF_H
 
 namespace Titanic {
 
@@ -34,9 +34,12 @@ class CSurfaceArea;
 class CBaseStarRef {
 protected:
 	CBaseStars *_stars;
+
 public:
-	CBaseStarRef(CBaseStars *stars) : _stars(stars) {}
-	CBaseStarRef() : _stars(nullptr) {}
+	CBaseStarRef(CBaseStars *stars)
+	  : _stars(stars) {}
+	CBaseStarRef()
+	  : _stars(nullptr) {}
 	virtual ~CBaseStarRef() {}
 
 	void process(CSurfaceArea *surface, CStarCamera *camera);
@@ -47,11 +50,15 @@ public:
 class CStarRef1 : public CBaseStarRef {
 private:
 	Common::Point _position;
+
 public:
 	int _index;
+
 public:
-	CStarRef1(CBaseStars *stars, const Common::Point &pt) :
-		CBaseStarRef(stars), _position(pt), _index(-1) {}
+	CStarRef1(CBaseStars *stars, const Common::Point &pt)
+	  : CBaseStarRef(stars)
+	  , _position(pt)
+	  , _index(-1) {}
 	virtual ~CStarRef1() {}
 
 	virtual bool check(const Common::Point &pt, int index);
@@ -60,11 +67,15 @@ public:
 class CStarRefArray : public CBaseStarRef {
 private:
 	Common::Array<CStarPosition> *_positions;
+
 public:
 	int _index;
+
 public:
-	CStarRefArray(CBaseStars *stars, Common::Array<CStarPosition> *positions) :
-		CBaseStarRef(stars), _positions(positions), _index(0) {}
+	CStarRefArray(CBaseStars *stars, Common::Array<CStarPosition> *positions)
+	  : CBaseStarRef(stars)
+	  , _positions(positions)
+	  , _index(0) {}
 	virtual ~CStarRefArray() {}
 
 	virtual bool check(const Common::Point &pt, int index);
@@ -73,8 +84,11 @@ public:
 class CStarRef3 : public CBaseStarRef {
 public:
 	int _index;
+
 public:
-	CStarRef3(CBaseStars *stars) :CBaseStarRef(stars), _index(0) {}
+	CStarRef3(CBaseStars *stars)
+	  : CBaseStarRef(stars)
+	  , _index(0) {}
 	virtual ~CStarRef3() {}
 
 	virtual bool check(const Common::Point &pt, int index);

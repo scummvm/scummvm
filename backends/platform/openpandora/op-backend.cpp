@@ -23,39 +23,38 @@
 #if defined(OPENPANDORA)
 
 // Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#	define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "backends/platform/sdl/sdl-sys.h"
+#	include "backends/platform/sdl/sdl-sys.h"
 
-#include "backends/platform/openpandora/op-sdl.h"
-#include "backends/plugins/posix/posix-provider.h"
-#include "backends/saves/default/default-saves.h"
-#include "backends/timer/default/default-timer.h"
+#	include "backends/platform/openpandora/op-sdl.h"
+#	include "backends/plugins/posix/posix-provider.h"
+#	include "backends/saves/default/default-saves.h"
+#	include "backends/timer/default/default-timer.h"
 
-#include "common/archive.h"
-#include "common/config-manager.h"
-#include "common/debug.h"
-#include "common/events.h"
-#include "common/file.h"
-#include "common/textconsole.h"
-#include "common/util.h"
+#	include "common/archive.h"
+#	include "common/config-manager.h"
+#	include "common/debug.h"
+#	include "common/events.h"
+#	include "common/file.h"
+#	include "common/textconsole.h"
+#	include "common/util.h"
 
-#include "audio/mixer_intern.h"
+#	include "audio/mixer_intern.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <limits.h>
-#include <errno.h>
-#include <sys/stat.h>
-#include <time.h>   // for getTimeAndDate()
+#	include <errno.h>
+#	include <limits.h>
+#	include <stdio.h>
+#	include <stdlib.h>
+#	include <sys/stat.h>
+#	include <time.h> // for getTimeAndDate()
+#	include <unistd.h>
 
 /* Dump console info to files. */
-#define DUMP_STDOUT
+#	define DUMP_STDOUT
 
 OSystem_OP::OSystem_OP()
-	:
-	OSystem_POSIX() {
+  : OSystem_POSIX() {
 }
 
 void OSystem_OP::initBackend() {
@@ -64,8 +63,8 @@ void OSystem_OP::initBackend() {
 
 	/* Setup default save path to be workingdir/saves */
 
-	char savePath[PATH_MAX+1];
-	char workDirName[PATH_MAX+1];
+	char savePath[PATH_MAX + 1];
+	char workDirName[PATH_MAX + 1];
 
 	if (getcwd(workDirName, PATH_MAX) == NULL) {
 		error("Could not obtain current working directory.");
@@ -84,11 +83,11 @@ void OSystem_OP::initBackend() {
 
 	_savefileManager = new DefaultSaveFileManager(savePath);
 
-#ifdef DUMP_STDOUT
+#	ifdef DUMP_STDOUT
 	// The OpenPandora has a serial console on the EXT connection but most users do not use this so we
 	// output all our STDOUT and STDERR to files for debug purposes.
-	char STDOUT_FILE[PATH_MAX+1];
-	char STDERR_FILE[PATH_MAX+1];
+	char STDOUT_FILE[PATH_MAX + 1];
+	char STDERR_FILE[PATH_MAX + 1];
 
 	strcpy(STDOUT_FILE, workDirName);
 	strcpy(STDERR_FILE, workDirName);
@@ -102,31 +101,31 @@ void OSystem_OP::initBackend() {
 	// Redirect standard input and standard output
 	FILE *newfp = freopen(STDOUT_FILE, "w", stdout);
 	if (newfp == NULL) {
-#if !defined(stdout)
+#		if !defined(stdout)
 		stdout = fopen(STDOUT_FILE, "w");
-#else
+#		else
 		newfp = fopen(STDOUT_FILE, "w");
 		if (newfp) {
 			*stdout = *newfp;
 		}
-#endif
+#		endif
 	}
 
 	newfp = freopen(STDERR_FILE, "w", stderr);
 	if (newfp == NULL) {
-#if !defined(stderr)
+#		if !defined(stderr)
 		stderr = fopen(STDERR_FILE, "w");
-#else
+#		else
 		newfp = fopen(STDERR_FILE, "w");
 		if (newfp) {
 			*stderr = *newfp;
 		}
-#endif
+#		endif
 	}
 
 	setbuf(stderr, NULL);
 	printf("%s\n", "Debug: STDOUT and STDERR redirected to text files.");
-#endif /* DUMP_STDOUT */
+#	endif /* DUMP_STDOUT */
 
 	/* Trigger autosave every 4 minutes. */
 	ConfMan.registerDefault("autosave_period", 4 * 60);
@@ -174,13 +173,13 @@ void OSystem_OP::initSDL() {
 void OSystem_OP::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 
 	/* Setup default extra data paths for engine data files and plugins */
-	char workDirName[PATH_MAX+1];
+	char workDirName[PATH_MAX + 1];
 
 	if (getcwd(workDirName, PATH_MAX) == NULL) {
 		error("Error: Could not obtain current working directory.");
 	}
 
-	char enginedataPath[PATH_MAX+1];
+	char enginedataPath[PATH_MAX + 1];
 
 	strcpy(enginedataPath, workDirName);
 	strcat(enginedataPath, "/../data");
@@ -194,11 +193,11 @@ void OSystem_OP::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 
 void OSystem_OP::quit() {
 
-#ifdef DUMP_STDOUT
+#	ifdef DUMP_STDOUT
 	printf("%s\n", "Debug: STDOUT and STDERR text files closed.");
 	fclose(stdout);
 	fclose(stderr);
-#endif /* DUMP_STDOUT */
+#	endif /* DUMP_STDOUT */
 
 	OSystem_POSIX::quit();
 }

@@ -27,16 +27,22 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CFanNoises, CGameObject)
-	ON_MESSAGE(EnterRoomMsg)
-	ON_MESSAGE(LeaveRoomMsg)
-	ON_MESSAGE(StatusChangeMsg)
-	ON_MESSAGE(SetVolumeMsg)
-	ON_MESSAGE(LoadSuccessMsg)
+ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(LeaveRoomMsg)
+ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(SetVolumeMsg)
+ON_MESSAGE(LoadSuccessMsg)
 END_MESSAGE_MAP()
 
-CFanNoises::CFanNoises() : CGameObject(), _state(-1),
-	_soundHandle(0), _soundPercent(70), _soundBalance(0), _soundSeconds(0),
-	_stopSeconds(0), _startFlag(true) {
+CFanNoises::CFanNoises()
+  : CGameObject()
+  , _state(-1)
+  , _soundHandle(0)
+  , _soundPercent(70)
+  , _soundBalance(0)
+  , _soundSeconds(0)
+  , _stopSeconds(0)
+  , _startFlag(true) {
 }
 
 void CFanNoises::save(SimpleFile *file, int indent) {

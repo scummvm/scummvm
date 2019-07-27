@@ -21,13 +21,13 @@
  */
 
 #include "sherlock/screen.h"
-#include "sherlock/sherlock.h"
-#include "sherlock/scalpel/scalpel_screen.h"
-#include "sherlock/scalpel/3do/scalpel_3do_screen.h"
-#include "sherlock/tattoo/tattoo_screen.h"
 #include "common/system.h"
 #include "common/util.h"
 #include "graphics/palette.h"
+#include "sherlock/scalpel/3do/scalpel_3do_screen.h"
+#include "sherlock/scalpel/scalpel_screen.h"
+#include "sherlock/sherlock.h"
+#include "sherlock/tattoo/tattoo_screen.h"
 
 namespace Sherlock {
 
@@ -40,9 +40,11 @@ Screen *Screen::init(SherlockEngine *vm) {
 		return new Scalpel::ScalpelScreen(vm);
 }
 
-Screen::Screen(SherlockEngine *vm) : BaseSurface(), _vm(vm),
-		_backBuffer1(vm->getGameID() == GType_RoseTattoo ? 640 : 320, vm->getGameID() == GType_RoseTattoo ? 480 : 200),
-		_backBuffer2(vm->getGameID() == GType_RoseTattoo ? 640 : 320, vm->getGameID() == GType_RoseTattoo ? 480 : 200) {
+Screen::Screen(SherlockEngine *vm)
+  : BaseSurface()
+  , _vm(vm)
+  , _backBuffer1(vm->getGameID() == GType_RoseTattoo ? 640 : 320, vm->getGameID() == GType_RoseTattoo ? 480 : 200)
+  , _backBuffer2(vm->getGameID() == GType_RoseTattoo ? 640 : 320, vm->getGameID() == GType_RoseTattoo ? 480 : 200) {
 	_transitionSeed = 1;
 	_fadeStyle = false;
 	Common::fill(&_cMap[0], &_cMap[PALETTE_SIZE], 0);
@@ -153,12 +155,11 @@ void Screen::verticalTransition() {
 
 	for (int yp = 0; yp < this->height(); ++yp) {
 		for (int xp = 0; xp < this->width(); ++xp) {
-			int temp = (table[xp] >= (this->height() - 3)) ? this->height() - table[xp] :
-				_vm->getRandomNumber(3) + 1;
+			int temp = (table[xp] >= (this->height() - 3)) ? this->height() - table[xp] : _vm->getRandomNumber(3) + 1;
 
 			if (temp) {
 				SHblitFrom(_backBuffer1, Common::Point(xp, table[xp]),
-					Common::Rect(xp, table[xp], xp + 1, table[xp] + temp));
+				           Common::Rect(xp, table[xp], xp + 1, table[xp] + temp));
 				table[xp] += temp;
 			}
 		}
@@ -205,7 +206,7 @@ void Screen::slamRect(const Common::Rect &r) {
 }
 
 void Screen::flushImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, int16 *yp,
-		int16 *width_, int16 *height_) {
+                        int16 *width_, int16 *height_) {
 	Common::Point imgPos = pt + frame->_offset;
 	Common::Rect newBounds(imgPos.x, imgPos.y, imgPos.x + frame->_frame.w, imgPos.y + frame->_frame.h);
 	Common::Rect oldBounds(*xp, *yp, *xp + *width_, *yp + *height_);
@@ -233,10 +234,10 @@ void Screen::flushImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, i
 }
 
 void Screen::flushScaleImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, int16 *yp,
-		int16 *width_, int16 *height_, int scaleVal) {
+                             int16 *width_, int16 *height_, int scaleVal) {
 	Common::Point imgPos(pt.x + frame->sDrawXOffset(scaleVal), pt.y + frame->sDrawYOffset(scaleVal));
 	Common::Rect newBounds(imgPos.x, imgPos.y, imgPos.x + frame->sDrawXSize(scaleVal),
-		imgPos.y + frame->sDrawYSize(scaleVal));
+	                       imgPos.y + frame->sDrawYSize(scaleVal));
 	Common::Rect oldBounds(*xp, *yp, *xp + *width_, *yp + *height_);
 
 	if (!_flushScreen) {
@@ -293,7 +294,7 @@ void Screen::print(const Common::Point &pt, uint color, const char *formatStr, .
 	// Figure out area to draw text in
 	Common::Point pos = pt;
 	int width_ = stringWidth(str);
-	pos.y--;		// Font is always drawing one line higher
+	pos.y--; // Font is always drawing one line higher
 	if (!pos.x)
 		// Center text horizontally
 		pos.x = (this->width() - width_) / 2;
@@ -333,7 +334,7 @@ void Screen::vgaBar(const Common::Rect &r, int color) {
 
 void Screen::setDisplayBounds(const Common::Rect &r) {
 	_backBuffer.create(_backBuffer1, r);
-	assert(_backBuffer.width()  == r.width());
+	assert(_backBuffer.width() == r.width());
 	assert(_backBuffer.height() == r.height());
 }
 

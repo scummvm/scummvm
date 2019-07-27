@@ -37,7 +37,8 @@ namespace LastExpress {
 //////////////////////////////////////////////////////////////////////////
 // Player
 //////////////////////////////////////////////////////////////////////////
-FighterPlayerSalko::FighterPlayerSalko(LastExpressEngine *engine) : Fighter(engine) {
+FighterPlayerSalko::FighterPlayerSalko(LastExpressEngine *engine)
+  : Fighter(engine) {
 	_sequences.push_back(loadSequence("2004cr.seq"));
 	_sequences.push_back(loadSequence("2004cdr.seq"));
 	_sequences.push_back(loadSequence("2004chj.seq"));
@@ -63,7 +64,7 @@ void FighterPlayerSalko::handleAction(FightAction action) {
 			_opponent->handleAction(kFightAction103);
 
 			if (action == kFightAction2)
-				_countdown= 0;
+				_countdown = 0;
 
 			update();
 		} else {
@@ -125,7 +126,8 @@ bool FighterPlayerSalko::canInteract(FightAction action) {
 //////////////////////////////////////////////////////////////////////////
 // Opponent
 //////////////////////////////////////////////////////////////////////////
-FighterOpponentSalko::FighterOpponentSalko(LastExpressEngine *engine) : Opponent(engine) {
+FighterOpponentSalko::FighterOpponentSalko(LastExpressEngine *engine)
+  : Opponent(engine) {
 	_sequences.push_back(loadSequence("2004or.seq"));
 	_sequences.push_back(loadSequence("2004oam.seq"));
 	_sequences.push_back(loadSequence("2004oar.seq"));

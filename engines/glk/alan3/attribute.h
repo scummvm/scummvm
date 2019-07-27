@@ -28,9 +28,9 @@
 namespace Glk {
 namespace Alan3 {
 
-/* FUNCTIONS */
-extern Aptr getAttribute(AttributeEntry *attributeTable, int attributeCode);
-extern void setAttribute(AttributeEntry *attributeTable, int attributeCode, Aptr newValue);
+	/* FUNCTIONS */
+	extern Aptr getAttribute(AttributeEntry *attributeTable, int attributeCode);
+	extern void setAttribute(AttributeEntry *attributeTable, int attributeCode, Aptr newValue);
 
 } // End of namespace Alan3
 } // End of namespace Glk

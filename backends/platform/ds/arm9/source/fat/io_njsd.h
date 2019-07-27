@@ -39,12 +39,11 @@
 #ifdef NDS
 
 // 'NJSD'
-#define DEVICE_TYPE_NJSD 0x44534A4E
-
+#	define DEVICE_TYPE_NJSD 0x44534A4E
 
 // export interface
-extern LPIO_INTERFACE NJSD_GetInterface(void) ;
+extern LPIO_INTERFACE NJSD_GetInterface(void);
 
 #endif // defined NDS
 
-#endif	// define IO_NJSD_H
+#endif // define IO_NJSD_H

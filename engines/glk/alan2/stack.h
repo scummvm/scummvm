@@ -28,11 +28,11 @@
 namespace Glk {
 namespace Alan2 {
 
-/* TYPES */
+	/* TYPES */
 
-extern Aptr pop(void);
-extern void push(Aptr item);
-extern Aptr top(void);
+	extern Aptr pop(void);
+	extern void push(Aptr item);
+	extern Aptr top(void);
 
 } // End of namespace Alan2
 } // End of namespace Glk

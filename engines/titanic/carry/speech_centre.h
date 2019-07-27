@@ -33,14 +33,19 @@ class CSpeechCentre : public CBrain {
 	bool ChangeSeasonMsg(CChangeSeasonMsg *msg);
 	bool SpeechFallsFromTreeMsg(CSpeechFallsFromTreeMsg *msg);
 	bool FrameMsg(CFrameMsg *msg);
+
 private:
 	int _field13C;
 	CString _season;
 	int _field14C;
+
 public:
 	CLASSDEF;
-	CSpeechCentre() : CBrain(), _season("Summer"),
-		_field13C(1), _field14C(0) {}
+	CSpeechCentre()
+	  : CBrain()
+	  , _season("Summer")
+	  , _field13C(1)
+	  , _field14C(0) {}
 
 	/**
 	 * Save the data for the class to file

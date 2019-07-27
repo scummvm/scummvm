@@ -23,13 +23,13 @@
 #ifndef LURE_RESSTRUCT_H
 #define LURE_RESSTRUCT_H
 
-#include "lure/luredefs.h"
-#include "common/rect.h"
-#include "common/list.h"
 #include "common/file.h"
+#include "common/list.h"
 #include "common/ptr.h"
+#include "common/rect.h"
 #include "common/str-array.h"
 #include "common/textconsole.h"
+#include "lure/luredefs.h"
 
 namespace Lure {
 
@@ -43,14 +43,13 @@ namespace Lure {
    properly sequence of struct in lure.dat hardcoding size of struct.
 */
 
-#define GET_NEXT(v, sc)		v = (sc *)(((byte *)v) + kSizeOf##sc)
+#define GET_NEXT(v, sc) v = (sc *)(((byte *)v) + kSizeOf##sc)
 
-#define kSizeOfRoomExitJoinResource			13
-#define kSizeOfHotspotResource				62
-#define kSizeOfHotspotActionResource		3
+#define kSizeOfRoomExitJoinResource 13
+#define kSizeOfHotspotResource 62
+#define kSizeOfHotspotActionResource 3
 
-
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 struct VersionStructure {
 	uint16 id;
@@ -234,7 +233,8 @@ struct RoomExitIndexedHotspotResource {
 	uint16 hotspotId;
 } PACKED_STRUCT;
 
-enum SoundDescFlags {SF_IN_USE = 1, SF_RESTORE = 2};
+enum SoundDescFlags { SF_IN_USE = 1,
+	                    SF_RESTORE = 2 };
 
 // In desc entry, numChannels: bits 0-1 # roland, bits 2-3 #adlib, bits 4-5 #internal
 
@@ -246,10 +246,14 @@ struct SoundDescResource {
 	uint8 volume;
 } PACKED_STRUCT;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h" // END STRUCT PACKING
 
 /** Enumeration used for direction facings */
-enum Direction {UP, DOWN, LEFT, RIGHT, NO_DIRECTION};
+enum Direction { UP,
+	               DOWN,
+	               LEFT,
+	               RIGHT,
+	               NO_DIRECTION };
 
 // Support classes to hold loaded resources
 
@@ -264,7 +268,7 @@ public:
 	uint16 destRoomNumber;
 };
 
-typedef Common::List<Common::SharedPtr<RoomExitHotspotData> > RoomExitHotspotList;
+typedef Common::List<Common::SharedPtr<RoomExitHotspotData>> RoomExitHotspotList;
 
 class RoomExitData {
 public:
@@ -278,7 +282,7 @@ public:
 	uint16 x, y;
 };
 
-class RoomExitList: public Common::List<Common::SharedPtr<RoomExitData> > {
+class RoomExitList : public Common::List<Common::SharedPtr<RoomExitData>> {
 public:
 	RoomExitData *checkExits(int16 xp, int16 yp);
 };
@@ -294,6 +298,7 @@ typedef uint16 RoomPathsDecompressedData[DECODED_PATHS_WIDTH * DECODED_PATHS_HEI
 class RoomPathsData {
 private:
 	byte _data[ROOM_PATHS_HEIGHT * ROOM_PATHS_WIDTH];
+
 public:
 	RoomPathsData() {}
 	RoomPathsData(byte *srcData) { load(srcData); }
@@ -333,7 +338,7 @@ public:
 	RoomPathsData paths;
 };
 
-class RoomDataList: public Common::List<Common::SharedPtr<RoomData> > {
+class RoomDataList : public Common::List<Common::SharedPtr<RoomData>> {
 public:
 	void saveToStream(Common::WriteStream *stream) const;
 	void loadFromStream(Common::ReadStream *stream);
@@ -356,7 +361,7 @@ public:
 	byte blocked;
 };
 
-class RoomExitJoinList: public Common::List<Common::SharedPtr<RoomExitJoinData> > {
+class RoomExitJoinList : public Common::List<Common::SharedPtr<RoomExitJoinData>> {
 public:
 	void saveToStream(Common::WriteStream *stream) const;
 	void loadFromStream(Common::ReadStream *stream);
@@ -370,7 +375,7 @@ public:
 	uint16 sequenceOffset;
 };
 
-class HotspotActionList: public Common::List<Common::SharedPtr<HotspotActionData> > {
+class HotspotActionList : public Common::List<Common::SharedPtr<HotspotActionData>> {
 public:
 	uint16 recordId;
 
@@ -378,21 +383,36 @@ public:
 	uint16 getActionOffset(Action action);
 };
 
-class HotspotActionSet: public Common::List<Common::SharedPtr<HotspotActionList> > {
+class HotspotActionSet : public Common::List<Common::SharedPtr<HotspotActionList>> {
 public:
 	HotspotActionList *getActions(uint16 recordId);
 };
 
-enum CharacterMode {CHARMODE_NONE, CHARMODE_HESITATE, CHARMODE_IDLE, CHARMODE_PAUSED,
-	CHARMODE_WAIT_FOR_PLAYER, CHARMODE_CONVERSING, CHARMODE_PLAYER_WAIT,
-	CHARMODE_WAIT_FOR_INTERACT, CHARMODE_INTERACTING, CHARMODE_SPECIAL_PLAYER};
+enum CharacterMode { CHARMODE_NONE,
+	                   CHARMODE_HESITATE,
+	                   CHARMODE_IDLE,
+	                   CHARMODE_PAUSED,
+	                   CHARMODE_WAIT_FOR_PLAYER,
+	                   CHARMODE_CONVERSING,
+	                   CHARMODE_PLAYER_WAIT,
+	                   CHARMODE_WAIT_FOR_INTERACT,
+	                   CHARMODE_INTERACTING,
+	                   CHARMODE_SPECIAL_PLAYER };
 
-enum BlockedState {BS_NONE, BS_INITIAL, BS_FINAL};
+enum BlockedState { BS_NONE,
+	                  BS_INITIAL,
+	                  BS_FINAL };
 
-enum VariantBool {VB_INITIAL, VB_FALSE, VB_TRUE};
+enum VariantBool { VB_INITIAL,
+	                 VB_FALSE,
+	                 VB_TRUE };
 
-enum CurrentAction {NO_ACTION, START_WALKING, DISPATCH_ACTION, EXEC_HOTSPOT_SCRIPT,
-	PROCESSING_PATH, WALKING};
+enum CurrentAction { NO_ACTION,
+	                   START_WALKING,
+	                   DISPATCH_ACTION,
+	                   EXEC_HOTSPOT_SCRIPT,
+	                   PROCESSING_PATH,
+	                   WALKING };
 
 class CharacterScheduleSet;
 
@@ -402,11 +422,15 @@ private:
 	Action _action;
 	uint16 _params[MAX_TELL_COMMANDS * 3];
 	int _numParams;
+
 public:
-	CharacterScheduleEntry() { _action = NONE; _parent = NULL; }
+	CharacterScheduleEntry() {
+		_action = NONE;
+		_parent = NULL;
+	}
 	CharacterScheduleEntry(int theAction, ...);
 	CharacterScheduleEntry(CharacterScheduleSet *parentSet,
-		CharacterScheduleResource *&rec);
+	                       CharacterScheduleResource *&rec);
 	CharacterScheduleEntry(CharacterScheduleEntry *src);
 
 	Action action() { return _action; }
@@ -425,18 +449,21 @@ private:
 	CharacterScheduleEntry *_supportData;
 	uint16 _roomNumber;
 	bool _dynamicSupportData;
+
 public:
 	CurrentActionEntry(CurrentAction newAction, uint16 roomNum);
 	CurrentActionEntry(CurrentAction newAction, CharacterScheduleEntry *data, uint16 roomNum);
 	CurrentActionEntry(Action newAction, uint16 roomNum, uint16 param1, uint16 param2);
 	CurrentActionEntry(CurrentActionEntry *src);
 	virtual ~CurrentActionEntry() {
-		if (_dynamicSupportData) delete _supportData;
+		if (_dynamicSupportData)
+			delete _supportData;
 	}
 
 	CurrentAction action() const { return _action; }
 	CharacterScheduleEntry &supportData() const {
-		if (!_supportData) error("Access made to non-defined action support record");
+		if (!_supportData)
+			error("Access made to non-defined action support record");
 		return *_supportData;
 	}
 	bool hasSupportData() const { return _supportData != NULL; }
@@ -459,12 +486,13 @@ public:
 
 class CurrentActionStack {
 private:
-	typedef Common::List<Common::SharedPtr<CurrentActionEntry> > ActionsList;
+	typedef Common::List<Common::SharedPtr<CurrentActionEntry>> ActionsList;
 	ActionsList _actions;
 	void validateStack() {
 		if (_actions.size() > 20)
 			error("NPC character got an excessive number of pending actions");
 	}
+
 public:
 	CurrentActionStack() { _actions.clear(); }
 
@@ -569,12 +597,12 @@ public:
 
 	void enable() { flags |= 0x80; }
 	void disable() { flags &= 0x7F; }
-	Direction nonVisualDirection() { return (Direction) scriptLoadFlag; }
+	Direction nonVisualDirection() { return (Direction)scriptLoadFlag; }
 	void saveToStream(Common::WriteStream *stream) const;
 	void loadFromStream(Common::ReadStream *stream);
 };
 
-class HotspotDataList: public Common::List<Common::SharedPtr<HotspotData> > {
+class HotspotDataList : public Common::List<Common::SharedPtr<HotspotData>> {
 public:
 	void saveToStream(Common::WriteStream *stream) const;
 	void loadFromStream(Common::ReadStream *stream);
@@ -588,7 +616,7 @@ public:
 	int16 xs, xe, ys, ye;
 };
 
-typedef Common::List<Common::SharedPtr<HotspotOverrideData> > HotspotOverrideList;
+typedef Common::List<Common::SharedPtr<HotspotOverrideData>> HotspotOverrideList;
 
 class MovementData {
 public:
@@ -599,10 +627,10 @@ public:
 	int16 yChange;
 };
 
-class MovementDataList: public Common::List<Common::SharedPtr<MovementData> > {
+class MovementDataList : public Common::List<Common::SharedPtr<MovementData>> {
 public:
 	bool getFrame(uint16 currentFrame, int16 &xChange, int16 &yChange,
-		uint16 &nextFrame);
+	              uint16 &nextFrame);
 };
 
 class HotspotAnimData {
@@ -621,7 +649,7 @@ public:
 	MovementDataList upFrames, downFrames;
 };
 
-typedef Common::List<Common::SharedPtr<HotspotAnimData> > HotspotAnimList;
+typedef Common::List<Common::SharedPtr<HotspotAnimData>> HotspotAnimList;
 
 // Talk header list
 
@@ -629,6 +657,7 @@ class TalkHeaderData {
 private:
 	uint16 *_data;
 	int _numEntries;
+
 public:
 	TalkHeaderData(uint16 charId, uint16 *entries);
 	~TalkHeaderData();
@@ -637,7 +666,7 @@ public:
 	uint16 getEntry(int index);
 };
 
-typedef Common::List<Common::SharedPtr<TalkHeaderData> > TalkHeaderList;
+typedef Common::List<Common::SharedPtr<TalkHeaderData>> TalkHeaderList;
 
 class TalkEntryData {
 public:
@@ -648,7 +677,7 @@ public:
 	uint16 postSequenceId;
 };
 
-typedef Common::List<Common::SharedPtr<TalkEntryData> > TalkEntryList;
+typedef Common::List<Common::SharedPtr<TalkEntryData>> TalkEntryList;
 
 class TalkData {
 public:
@@ -662,7 +691,7 @@ public:
 	TalkEntryData *getResponse(int index);
 };
 
-class TalkDataList: public Common::List<Common::SharedPtr<TalkData> > {
+class TalkDataList : public Common::List<Common::SharedPtr<TalkData>> {
 public:
 	void saveToStream(Common::WriteStream *stream) const;
 	void loadFromStream(Common::ReadStream *stream);
@@ -679,12 +708,13 @@ class RoomExitCoordinates {
 private:
 	RoomExitCoordinateData _entries[ROOM_EXIT_COORDINATES_NUM_ENTRIES];
 	uint8 _roomIndex[ROOM_EXIT_COORDINATES_NUM_ROOMS];
+
 public:
 	RoomExitCoordinates(RoomExitCoordinateEntryResource *rec);
 	RoomExitCoordinateData &getData(uint16 destRoomNumber);
 };
 
-class RoomExitCoordinatesList: public Common::List<Common::SharedPtr<RoomExitCoordinates> > {
+class RoomExitCoordinatesList : public Common::List<Common::SharedPtr<RoomExitCoordinates>> {
 public:
 	RoomExitCoordinates &getEntry(uint16 roomNumber);
 };
@@ -698,7 +728,7 @@ public:
 	uint16 hotspotId;
 };
 
-class RoomExitIndexedHotspotList: public Common::List<Common::SharedPtr<RoomExitIndexedHotspotData> > {
+class RoomExitIndexedHotspotList : public Common::List<Common::SharedPtr<RoomExitIndexedHotspotData>> {
 public:
 	uint16 getHotspot(uint16 roomNumber, uint8 hotspotIndexId);
 };
@@ -708,6 +738,7 @@ public:
 class SequenceDelayData {
 private:
 	SequenceDelayData() {}
+
 public:
 	SequenceDelayData(uint16 delay, uint16 seqOffset, bool canClearFlag);
 	static SequenceDelayData *load(uint32 delay, uint16 seqOffset, bool canClearFlag);
@@ -717,7 +748,7 @@ public:
 	bool canClear;
 };
 
-class SequenceDelayList: public Common::List<Common::SharedPtr<SequenceDelayData> > {
+class SequenceDelayList : public Common::List<Common::SharedPtr<SequenceDelayData>> {
 public:
 	void add(uint16 delay, uint16 seqOffset, bool canClear);
 	void tick();
@@ -729,18 +760,19 @@ public:
 
 // The following classes holds the data for NPC schedules
 
-extern const int actionNumParams[NPC_JUMP_ADDRESS+1];
+extern const int actionNumParams[NPC_JUMP_ADDRESS + 1];
 
-class CharacterScheduleSet: public Common::List<Common::SharedPtr<CharacterScheduleEntry> > {
+class CharacterScheduleSet : public Common::List<Common::SharedPtr<CharacterScheduleEntry>> {
 private:
 	uint16 _id;
+
 public:
 	CharacterScheduleSet(CharacterScheduleResource *rec, uint16 setId);
 	uint16 getId(CharacterScheduleEntry *rec);
 	uint16 id() { return _id; }
 };
 
-class CharacterScheduleList: public Common::List<Common::SharedPtr<CharacterScheduleSet> > {
+class CharacterScheduleList : public Common::List<Common::SharedPtr<CharacterScheduleSet>> {
 public:
 	CharacterScheduleEntry *getEntry(uint16 id, CharacterScheduleSet *currentSet = NULL);
 };
@@ -749,7 +781,9 @@ typedef Common::List<uint16> CharacterScheduleOffsets;
 
 // The follow classes are used to store the NPC schedule Ids for the random actions a follower can do in each room
 
-enum RandomActionType {REPEATABLE, REPEAT_ONCE, REPEAT_ONCE_DONE};
+enum RandomActionType { REPEATABLE,
+	                      REPEAT_ONCE,
+	                      REPEAT_ONCE_DONE };
 
 class RandomActionSet {
 private:
@@ -757,6 +791,7 @@ private:
 	int _numActions;
 	RandomActionType *_types;
 	uint16 *_ids;
+
 public:
 	RandomActionSet(uint16 *&offset);
 	~RandomActionSet();
@@ -777,7 +812,7 @@ public:
 	void loadFromStream(Common::ReadStream *stream);
 };
 
-class RandomActionList: public Common::List<Common::SharedPtr<RandomActionSet> > {
+class RandomActionList : public Common::List<Common::SharedPtr<RandomActionSet>> {
 public:
 	RandomActionSet *getRoom(uint16 roomNumber);
 	void saveToStream(Common::WriteStream *stream) const;
@@ -796,7 +831,7 @@ public:
 
 class Hotspot;
 
-class PausedCharacterList: public Common::List<Common::SharedPtr<PausedCharacter> > {
+class PausedCharacterList : public Common::List<Common::SharedPtr<PausedCharacter>> {
 public:
 	void reset(uint16 hotspotId);
 	void countdown();
@@ -811,7 +846,10 @@ struct ServeEntry {
 
 #define NUM_SERVE_CUSTOMERS 4
 
-enum BarmanGraphicType {BG_RANDOM = 0, BG_BEER = 1, BG_EXTRA1 = 2, BG_EXTRA2 = 3};
+enum BarmanGraphicType { BG_RANDOM = 0,
+	                       BG_BEER = 1,
+	                       BG_EXTRA1 = 2,
+	                       BG_EXTRA2 = 3 };
 
 struct BarEntry {
 	uint16 roomNumber;
@@ -824,6 +862,7 @@ struct BarEntry {
 
 class BarmanLists {
 	BarEntry _barList[3];
+
 public:
 	BarmanLists();
 
@@ -833,7 +872,11 @@ public:
 	void loadFromStream(Common::ReadStream *stream);
 };
 
-enum BarmanAction {WALK_AROUND = 1, POLISH_BAR = 2, WAIT = 3, WAIT_DIALOG = 4, SERVE_BEER = 5};
+enum BarmanAction { WALK_AROUND = 1,
+	                  POLISH_BAR = 2,
+	                  WAIT = 3,
+	                  WAIT_DIALOG = 4,
+	                  SERVE_BEER = 5 };
 
 struct RoomTranslationRecord {
 	uint8 srcRoom;
@@ -842,16 +885,33 @@ struct RoomTranslationRecord {
 
 extern const RoomTranslationRecord roomTranslations[];
 
-enum StringEnum {S_CREDITS = 25, S_RESTART_GAME = 26, S_SAVE_GAME = 27, S_RESTORE_GAME = 28,
-	S_QUIT = 29, S_FAST_TEXT = 30, S_SLOW_TEXT = 31, S_SOUND_ON = 32, S_SOUND_OFF = 33,
-	S_ACTION_NOTHING = 34, S_FOR = 35, S_TO = 36, S_ON = 37, S_AND_THEN = 38, S_FINISH = 39,
-	S_CONFIRM_YN = 40, S_YOU_ARE_CARRYING = 41, S_INV_NOTHING = 42, S_YOU_HAVE = 43,
-	S_GROAT = 44, S_GROATS = 45,
-	S_ARTICLE_LIST = 46};
+enum StringEnum { S_CREDITS = 25,
+	                S_RESTART_GAME = 26,
+	                S_SAVE_GAME = 27,
+	                S_RESTORE_GAME = 28,
+	                S_QUIT = 29,
+	                S_FAST_TEXT = 30,
+	                S_SLOW_TEXT = 31,
+	                S_SOUND_ON = 32,
+	                S_SOUND_OFF = 33,
+	                S_ACTION_NOTHING = 34,
+	                S_FOR = 35,
+	                S_TO = 36,
+	                S_ON = 37,
+	                S_AND_THEN = 38,
+	                S_FINISH = 39,
+	                S_CONFIRM_YN = 40,
+	                S_YOU_ARE_CARRYING = 41,
+	                S_INV_NOTHING = 42,
+	                S_YOU_HAVE = 43,
+	                S_GROAT = 44,
+	                S_GROATS = 45,
+	                S_ARTICLE_LIST = 46 };
 
 class StringList {
 private:
 	Common::StringArray _entries;
+
 public:
 	StringList() {}
 
@@ -905,6 +965,7 @@ private:
 
 	uint16 _fieldList[NUM_VALUE_FIELDS];
 	bool isKnownField(uint16 fieldIndex);
+
 public:
 	ValueTableData();
 	void reset();

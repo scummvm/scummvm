@@ -27,7 +27,9 @@
 
 namespace Lure {
 
-enum AnimAbortType {ABORT_NONE, ABORT_END_INTRO, ABORT_NEXT_SCENE};
+enum AnimAbortType { ABORT_NONE,
+	                   ABORT_END_INTRO,
+	                   ABORT_NEXT_SCENE };
 
 struct AnimSoundSequence {
 	uint16 numFrames;
@@ -51,9 +53,10 @@ private:
 	AnimAbortType delay(uint32 milliseconds);
 	void egaDecodeFrame(byte *&pPixels);
 	void vgaDecodeFrame(byte *&pPixels, byte *&pLines);
+
 public:
-	AnimationSequence(uint16 screenId, Palette &palette,  bool fadeIn, int frameDelay = 7,
-		const AnimSoundSequence *soundList = NULL);
+	AnimationSequence(uint16 screenId, Palette &palette, bool fadeIn, int frameDelay = 7,
+	                  const AnimSoundSequence *soundList = NULL);
 	~AnimationSequence();
 
 	AnimAbortType show();

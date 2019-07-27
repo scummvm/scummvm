@@ -28,8 +28,8 @@
 
 namespace Draci {
 
-const char * const kFontSmall = "Small.fon";
-const char * const kFontBig = "Big.fon";
+const char *const kFontSmall = "Small.fon";
+const char *const kFontBig = "Big.fon";
 
 Font::Font(const Common::String &filename) {
 	_fontHeight = 0;
@@ -41,7 +41,7 @@ Font::Font(const Common::String &filename) {
 }
 
 Font::~Font() {
-	 freeFont();
+	freeFont();
 }
 
 /**
@@ -71,10 +71,10 @@ bool Font::loadFont(const Common::String &filename) {
 	f.open(filename);
 	if (f.isOpen()) {
 		debugC(6, kDraciGeneralDebugLevel, "Opened font file %s",
-			filename.c_str());
+		       filename.c_str());
 	} else {
 		debugC(6, kDraciGeneralDebugLevel, "Error opening font file %s",
-			filename.c_str());
+		       filename.c_str());
 		return false;
 	}
 
@@ -110,7 +110,8 @@ uint8 Font::getCharWidth(uint8 chr) const {
 	// Czech version, but they do in the (never properly reviewed) English
 	// version.
 	return chr >= kCharIndexOffset && chr < kCharIndexOffset + kCharNum
-		? _charWidths[chr - kCharIndexOffset] : 0;
+	  ? _charWidths[chr - kCharIndexOffset]
+	  : 0;
 }
 
 /**
@@ -195,7 +196,7 @@ void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty, int with_color) con
  * @param spacing   Space to leave between individual characters. Defaults to 0.
  */
 void Font::drawString(Surface *dst, const byte *str, uint len,
-	                  int x, int y, int with_color, int spacing, bool markDirty) const {
+                      int x, int y, int with_color, int spacing, bool markDirty) const {
 	drawString(dst, Common::String((const char *)str, len), x, y, with_color, spacing, markDirty);
 }
 
@@ -210,7 +211,7 @@ void Font::drawString(Surface *dst, const byte *str, uint len,
  */
 
 void Font::drawString(Surface *dst, const Common::String &str,
-	                  int x, int y, int with_color, int spacing, bool markDirty) const {
+                      int x, int y, int with_color, int spacing, bool markDirty) const {
 	assert(dst != NULL);
 	assert(x >= 0);
 	assert(y >= 0);
@@ -226,7 +227,7 @@ void Font::drawString(Surface *dst, const Common::String &str,
 		// skip it and go to the start of the next line
 		if (str[i] == '|') {
 			cury += getFontHeight();
-			curx = x + (widest - getLineWidth(str, i+1, spacing) - 1) / 2;
+			curx = x + (widest - getLineWidth(str, i + 1, spacing) - 1) / 2;
 			continue;
 		}
 

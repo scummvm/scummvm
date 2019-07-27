@@ -33,7 +33,7 @@ class ActionSfx;
 class ActionPlayWithSfx : public ActionPlay {
 public:
 	ActionPlayWithSfx()
-		: _isLoop(false) {}
+	  : _isLoop(false) {}
 	~ActionPlayWithSfx() override;
 
 	void deserialize(Archive &archive) override;

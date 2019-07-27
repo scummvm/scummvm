@@ -29,6 +29,7 @@ namespace Titanic {
 
 class CSGTSelector : public CPetGraphic {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	CLASSDEF;
 

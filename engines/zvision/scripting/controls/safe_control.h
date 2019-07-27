@@ -29,7 +29,7 @@
 #include "common/rect.h"
 
 namespace Video {
-	class VideoDecoder;
+class VideoDecoder;
 }
 
 namespace ZVision {
@@ -41,18 +41,18 @@ public:
 	~SafeControl();
 
 private:
-	int16  _statesCount;
-	int16  _curState;
+	int16 _statesCount;
+	int16 _curState;
 	Video::VideoDecoder *_animation;
 	Common::Point _center;
 	Common::Rect _rectangle;
-	int16  _innerRaduis;
-	int32  _innerRadiusSqr;
-	int16  _outerRadius;
-	int32  _outerRadiusSqr;
-	int16  _zeroPointer;
-	int16  _startPointer;
-	int16  _targetFrame;
+	int16 _innerRaduis;
+	int32 _innerRadiusSqr;
+	int16 _outerRadius;
+	int32 _outerRadiusSqr;
+	int16 _zeroPointer;
+	int16 _startPointer;
+	int16 _targetFrame;
 
 public:
 	bool onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);

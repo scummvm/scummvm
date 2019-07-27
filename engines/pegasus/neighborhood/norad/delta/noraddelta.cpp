@@ -23,18 +23,18 @@
  *
  */
 
+#include "pegasus/neighborhood/norad/delta/noraddelta.h"
+#include "pegasus/ai/ai_area.h"
 #include "pegasus/energymonitor.h"
 #include "pegasus/gamestate.h"
 #include "pegasus/interface.h"
-#include "pegasus/pegasus.h"
-#include "pegasus/ai/ai_area.h"
 #include "pegasus/items/biochips/opticalchip.h"
 #include "pegasus/items/biochips/retscanchip.h"
 #include "pegasus/items/inventory/airmask.h"
 #include "pegasus/neighborhood/norad/constants.h"
-#include "pegasus/neighborhood/norad/subcontrolroom.h"
 #include "pegasus/neighborhood/norad/delta/globegame.h"
-#include "pegasus/neighborhood/norad/delta/noraddelta.h"
+#include "pegasus/neighborhood/norad/subcontrolroom.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -63,7 +63,8 @@ const uint32 NoradDelta::_noradDeltaClawExtras[22] = {
 	kN60ClawDClockwise
 };
 
-NoradDelta::NoradDelta(InputHandler *nextHandler, PegasusEngine *owner) : Norad(nextHandler, owner, "Norad Delta", kNoradDeltaID) {
+NoradDelta::NoradDelta(InputHandler *nextHandler, PegasusEngine *owner)
+  : Norad(nextHandler, owner, "Norad Delta", kNoradDeltaID) {
 	_elevatorUpRoomID = kNorad49South;
 	_elevatorDownRoomID = kNorad48South;
 	_elevatorUpSpotID = kNorad48ElevatorUpSpotID;
@@ -182,7 +183,7 @@ void NoradDelta::getExtraCompassMove(const ExtraTable::Entry &entry, FaderMoveSp
 		break;
 	case kN60PlayerFollowsRobotToDoor:
 		compassMove.makeTwoKnotFaderSpec(kNoradDeltaMovieScale, entry.movieStart, 270 + kSubControlCompassAngle,
-				entry.movieEnd, 270 - 15);
+		                                 entry.movieEnd, 270 - 15);
 		compassMove.insertFaderKnot(entry.movieStart + 280, 270 + kSubControlCompassAngle);
 		compassMove.insertFaderKnot(entry.movieStart + 920, 360);
 		compassMove.insertFaderKnot(entry.movieStart + 1840, 360);
@@ -231,7 +232,7 @@ void NoradDelta::getZoomEntry(const HotSpotID id, ZoomTable::Entry &zoomEntry) {
 }
 
 void NoradDelta::loadAmbientLoops() {
-/*
+	/*
 	Logic:
 
 	loop sound 1:
@@ -341,13 +342,11 @@ void NoradDelta::arriveAt(const RoomID room, const DirectionConstant direction) 
 
 			getExtraEntry(kArriveFromSubChase, entry);
 
-			loop1Spec.makeTwoKnotFaderSpec(kNoradDeltaMovieScale, 0, 0, entry.movieEnd -
-					entry.movieStart, kNoradWarningVolume);
+			loop1Spec.makeTwoKnotFaderSpec(kNoradDeltaMovieScale, 0, 0, entry.movieEnd - entry.movieStart, kNoradWarningVolume);
 			loop1Spec.insertFaderKnot(7320, 0);
 			loop1Spec.insertFaderKnot(7880, kNoradWarningVolume);
 
-			loop2Spec.makeTwoKnotFaderSpec(kNoradDeltaMovieScale, 0, 0, entry.movieEnd -
-					entry.movieStart, kNoradSuckWindVolume);
+			loop2Spec.makeTwoKnotFaderSpec(kNoradDeltaMovieScale, 0, 0, entry.movieEnd - entry.movieStart, kNoradSuckWindVolume);
 			loop1Spec.insertFaderKnot(7320, 0);
 			loop1Spec.insertFaderKnot(7880, kNoradSuckWindVolume);
 
@@ -433,8 +432,8 @@ bool NoradDelta::playingAgainstRobot() {
 }
 
 void NoradDelta::getClawInfo(HotSpotID &outSpotID, HotSpotID &prepSpotID, HotSpotID &clawControlSpotID, HotSpotID &pinchClawSpotID,
-		HotSpotID &moveClawDownSpotID, HotSpotID &moveClawRightSpotID, HotSpotID &moveClawLeftSpotID, HotSpotID &moveClawUpSpotID,
-		HotSpotID &clawCCWSpotID, HotSpotID &clawCWSpotID, uint32 &clawPosition, const uint32 *&clawExtraIDs) {
+                             HotSpotID &moveClawDownSpotID, HotSpotID &moveClawRightSpotID, HotSpotID &moveClawLeftSpotID, HotSpotID &moveClawUpSpotID,
+                             HotSpotID &clawCCWSpotID, HotSpotID &clawCWSpotID, uint32 &clawPosition, const uint32 *&clawExtraIDs) {
 	outSpotID = kNorad60MonitorOutSpotID;
 	prepSpotID = kNorad60LaunchPrepSpotID;
 	clawControlSpotID = kNorad60ClawControlSpotID;
@@ -550,8 +549,7 @@ void NoradDelta::activateHotspots() {
 				_vm->getAllHotspots().deactivateOneHotspot(kDelta59RobotRetinalBiochipSpotID);
 		} else
 			_vm->getAllHotspots().activateOneHotspot(kDelta59RobotHeadSpotID);
-	} else if (GameState.getCurrentRoom() == kNorad60West && GameState.getCurrentDirection() == kWest &&
-			GameState.getNoradBeatRobotWithClaw()) {
+	} else if (GameState.getCurrentRoom() == kNorad60West && GameState.getCurrentDirection() == kWest && GameState.getNoradBeatRobotWithClaw()) {
 		_vm->getAllHotspots().deactivateOneHotspot(kNorad60MonitorOutSpotID);
 
 		if (_privateFlags.getFlag(kNoradPrivateRobotHeadOpenFlag)) {
@@ -644,9 +642,7 @@ void NoradDelta::receiveNotification(Notification *notification, const Notificat
 void NoradDelta::pickedUpItem(Item *item) {
 	switch (item->getObjectID()) {
 	case kShieldBiochip:
-		if (_privateFlags.getFlag(kNoradPrivateGotShieldChipFlag) &&
-					_privateFlags.getFlag(kNoradPrivateGotRetScanChipFlag) &&
-					_privateFlags.getFlag(kNoradPrivateGotOpticalChipFlag)) {
+		if (_privateFlags.getFlag(kNoradPrivateGotShieldChipFlag) && _privateFlags.getFlag(kNoradPrivateGotRetScanChipFlag) && _privateFlags.getFlag(kNoradPrivateGotOpticalChipFlag)) {
 			GameState.setNoradFinished(true);
 
 			if (GameState.getCurrentRoom() == kNorad59West)
@@ -656,9 +652,7 @@ void NoradDelta::pickedUpItem(Item *item) {
 		}
 		break;
 	case kRetinalScanBiochip:
-		if (_privateFlags.getFlag(kNoradPrivateGotShieldChipFlag) &&
-				_privateFlags.getFlag(kNoradPrivateGotRetScanChipFlag) &&
-				_privateFlags.getFlag(kNoradPrivateGotOpticalChipFlag)) {
+		if (_privateFlags.getFlag(kNoradPrivateGotShieldChipFlag) && _privateFlags.getFlag(kNoradPrivateGotRetScanChipFlag) && _privateFlags.getFlag(kNoradPrivateGotOpticalChipFlag)) {
 			GameState.setNoradFinished(true);
 
 			if (GameState.getCurrentRoom() == kNorad59West)
@@ -671,9 +665,7 @@ void NoradDelta::pickedUpItem(Item *item) {
 		g_opticalChip->addPoseidon();
 		GameState.setScoringGotNoradOpMemChip();
 
-		if (_privateFlags.getFlag(kNoradPrivateGotShieldChipFlag) &&
-				_privateFlags.getFlag(kNoradPrivateGotRetScanChipFlag) &&
-				_privateFlags.getFlag(kNoradPrivateGotOpticalChipFlag)) {
+		if (_privateFlags.getFlag(kNoradPrivateGotShieldChipFlag) && _privateFlags.getFlag(kNoradPrivateGotRetScanChipFlag) && _privateFlags.getFlag(kNoradPrivateGotOpticalChipFlag)) {
 			GameState.setNoradFinished(true);
 
 			if (GameState.getCurrentRoom() == kNorad59West)

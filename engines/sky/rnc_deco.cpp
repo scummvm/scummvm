@@ -20,27 +20,26 @@
  *
  */
 
-
-#include "common/endian.h"
 #include "sky/rnc_deco.h"
+#include "common/endian.h"
 
 namespace Sky {
 
 //return codes
-#define NOT_PACKED	0
-#define PACKED_CRC	-1
-#define UNPACKED_CRC	-2
+#define NOT_PACKED 0
+#define PACKED_CRC -1
+#define UNPACKED_CRC -2
 
 //other defines
-#define TABLE_SIZE	(16 * 8)
-#define MIN_LENGTH	2
-#define HEADER_LEN	18
+#define TABLE_SIZE (16 * 8)
+#define MIN_LENGTH 2
+#define HEADER_LEN 18
 
 RncDecoder::RncDecoder() {
 	initCrc();
 }
 
-RncDecoder::~RncDecoder() { }
+RncDecoder::~RncDecoder() {}
 
 void RncDecoder::initCrc() {
 	uint16 cnt = 0;
@@ -149,7 +148,7 @@ uint16 RncDecoder::inputValue(uint16 *table) {
 	} while (valOne != valTwo);
 
 	value = *(table + 0x1e);
-	inputBits((uint8)((value>>8) & 0x00FF));
+	inputBits((uint8)((value >> 8) & 0x00FF));
 	value &= 0x00FF;
 
 	if (value >= 2) {
@@ -172,7 +171,6 @@ int32 RncDecoder::unpackM1(const void *input, void *output, uint16 key) {
 	uint16 crcUnpacked = 0;
 	uint16 crcPacked = 0;
 
-
 	_bitBuffl = 0;
 	_bitBuffh = 0;
 	_bitCount = 0;
@@ -184,14 +182,18 @@ int32 RncDecoder::unpackM1(const void *input, void *output, uint16 key) {
 	inputptr += 4;
 
 	// read unpacked/packed file length
-	unpackLen = READ_BE_UINT32(inputptr); inputptr += 4;
-	packLen = READ_BE_UINT32(inputptr); inputptr += 4;
+	unpackLen = READ_BE_UINT32(inputptr);
+	inputptr += 4;
+	packLen = READ_BE_UINT32(inputptr);
+	inputptr += 4;
 
 	uint8 blocks = *(inputptr + 5);
 
 	//read CRC's
-	crcUnpacked = READ_BE_UINT16(inputptr); inputptr += 2;
-	crcPacked = READ_BE_UINT16(inputptr); inputptr += 2;
+	crcUnpacked = READ_BE_UINT16(inputptr);
+	inputptr += 2;
+	crcPacked = READ_BE_UINT16(inputptr);
+	inputptr += 2;
 	inputptr = (inputptr + HEADER_LEN - 16);
 
 	if (crcBlock(inputptr, packLen) != crcPacked)
@@ -204,11 +206,11 @@ int32 RncDecoder::unpackM1(const void *input, void *output, uint16 key) {
 	outputLow = (uint8 *)output;
 	outputHigh = *(((const uint8 *)input) + 16) + unpackLen + outputLow;
 
-	if (! ((inputHigh <= outputLow) || (outputHigh <= inputHigh)) ) {
+	if (!((inputHigh <= outputLow) || (outputHigh <= inputHigh))) {
 		_srcPtr = inputHigh;
 		_dstPtr = outputHigh;
-		memcpy((_dstPtr-packLen), (_srcPtr-packLen), packLen);
-		_srcPtr = (_dstPtr-packLen);
+		memcpy((_dstPtr - packLen), (_srcPtr - packLen), packLen);
+		_srcPtr = (_dstPtr - packLen);
 	}
 
 	_dstPtr = (uint8 *)output;
@@ -245,7 +247,7 @@ int32 RncDecoder::unpackM1(const void *input, void *output, uint16 key) {
 				inputLength = inputValue(_lenTable) + MIN_LENGTH;
 
 				// Don't use memcpy here! because input and output overlap.
-				uint8 *tmpPtr = (_dstPtr-inputOffset);
+				uint8 *tmpPtr = (_dstPtr - inputOffset);
 				while (inputLength--)
 					*_dstPtr++ = *tmpPtr++;
 			}

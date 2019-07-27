@@ -27,51 +27,51 @@
 #include "saga/events.h"
 #include "saga/isomap.h"
 #include "saga/objectmap.h"
+#include "saga/scene.h"
 #include "saga/script.h"
 #include "saga/sound.h"
-#include "saga/scene.h"
 
 namespace Saga {
 
 static const int angleLUT[16][2] = {
-	{    0, -256 },
-	{   98, -237 },
-	{  181, -181 },
-	{  237,  -98 },
-	{  256,    0 },
-	{  237,	  98 },
-	{  181,  181 },
-	{   98,  237 },
-	{    0,  256 },
-	{  -98,  237 },
-	{ -181,  181 },
-	{ -237,   98 },
-	{ -256,    0 },
-	{ -237,  -98 },
+	{ 0, -256 },
+	{ 98, -237 },
+	{ 181, -181 },
+	{ 237, -98 },
+	{ 256, 0 },
+	{ 237, 98 },
+	{ 181, 181 },
+	{ 98, 237 },
+	{ 0, 256 },
+	{ -98, 237 },
+	{ -181, 181 },
+	{ -237, 98 },
+	{ -256, 0 },
+	{ -237, -98 },
 	{ -181, -181 },
-	{  -98, -237 }
+	{ -98, -237 }
 };
 
 static const int directionLUT[8][2] = {
-	{  0 * 2, -2 * 2 },
-	{  2 * 2, -1 * 2 },
-	{  3 * 2,  0 * 2 },
-	{  2 * 2,  1 * 2 },
-	{  0 * 2,  2 * 2 },
-	{ -2 * 2,  1 * 2 },
-	{ -4 * 2,  0 * 2 },
+	{ 0 * 2, -2 * 2 },
+	{ 2 * 2, -1 * 2 },
+	{ 3 * 2, 0 * 2 },
+	{ 2 * 2, 1 * 2 },
+	{ 0 * 2, 2 * 2 },
+	{ -2 * 2, 1 * 2 },
+	{ -4 * 2, 0 * 2 },
 	{ -2 * 2, -1 * 2 }
 };
 
 static const int tileDirectionLUT[8][2] = {
-	{  1,  1 },
-	{  2,  0 },
-	{  1, -1 },
-	{  0, -2 },
+	{ 1, 1 },
+	{ 2, 0 },
+	{ 1, -1 },
+	{ 0, -2 },
 	{ -1, -1 },
-	{ -2,  0 },
-	{ -1,  1 },
-	{  0,  2 }
+	{ -2, 0 },
+	{ -1, 1 },
+	{ 0, 2 }
 };
 
 struct DragonMove {
@@ -80,26 +80,25 @@ struct DragonMove {
 };
 
 static const DragonMove dragonMoveTable[12] = {
-	{  0, { {  0,  0 }, {  0,  0 }, {   0,   0 }, {   0,   0 } } },
-	{  0, { {  0,  0 }, {  0,  0 }, {   0,   0 }, {   0,   0 } } },
-	{  0, { {  0,  0 }, {  0,  0 }, {   0,   0 }, {   0,   0 } } },
-	{  0, { {  0,  0 }, {  0,  0 }, {   0,   0 }, {   0,   0 } } },
-	{ 28, { { -0,  0 }, { -1,  6 }, {  -5,  11 }, { -10,  15 } } },
-	{ 56, { {  0,  0 }, {  1,  6 }, {   5,  11 }, {  10,  15 } } },
-	{ 40, { {  0,  0 }, {  6,  1 }, {  11,   5 }, {  15,  10 } } },
-	{ 44, { {  0,  0 }, {  6, -1 }, {  11,  -5 }, {  15, -10 } } },
-	{ 32, { { -0, -0 }, { -6, -1 }, { -11,  -5 }, { -15, -10 } } },
-	{ 52, { { -0,  0 }, { -6,  1 }, { -11,   5 }, { -15,  10 } } },
-	{ 36, { {  0, -0 }, {  1, -6 }, {   5, -11 }, {  10, -15 } } },
-	{ 48, { { -0, -0 }, { -1, -6 }, {  -5, -11 }, { -10, -15 } } }
+	{ 0, { { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 } } },
+	{ 0, { { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 } } },
+	{ 0, { { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 } } },
+	{ 0, { { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 } } },
+	{ 28, { { -0, 0 }, { -1, 6 }, { -5, 11 }, { -10, 15 } } },
+	{ 56, { { 0, 0 }, { 1, 6 }, { 5, 11 }, { 10, 15 } } },
+	{ 40, { { 0, 0 }, { 6, 1 }, { 11, 5 }, { 15, 10 } } },
+	{ 44, { { 0, 0 }, { 6, -1 }, { 11, -5 }, { 15, -10 } } },
+	{ 32, { { -0, -0 }, { -6, -1 }, { -11, -5 }, { -15, -10 } } },
+	{ 52, { { -0, 0 }, { -6, 1 }, { -11, 5 }, { -15, 10 } } },
+	{ 36, { { 0, -0 }, { 1, -6 }, { 5, -11 }, { 10, -15 } } },
+	{ 48, { { -0, -0 }, { -1, -6 }, { -5, -11 }, { -10, -15 } } }
 };
 
 bool Actor::validFollowerLocation(const Location &location) {
 	Point point;
 	location.toScreenPointXY(point);
 
-	if ((point.x < 5) || (point.x >= _vm->getDisplayInfo().width - 5) ||
-		(point.y < 0) || (point.y > _vm->_scene->getHeight())) {
+	if ((point.x < 5) || (point.x >= _vm->getDisplayInfo().width - 5) || (point.y < 0) || (point.y > _vm->_scene->getHeight())) {
 		return false;
 	}
 
@@ -111,7 +110,7 @@ void Actor::realLocation(Location &location, uint16 objectId, uint16 walkFlags) 
 	int distance;
 	ActorData *actor;
 	ObjectData *obj;
-	debug (8, "Actor::realLocation objectId=%i", objectId);
+	debug(8, "Actor::realLocation objectId=%i", objectId);
 	if (walkFlags & kWalkUseAngle) {
 		if (_vm->_scene->getFlags() & kSceneFlagISO) {
 			angle = (location.x + 2) & 15;
@@ -199,8 +198,7 @@ void Actor::updateActorsScene(int actorsEntrance) {
 			if (actor->_flags & kProtagonist) {
 				actor->_finalTarget = actor->_location;
 				_centerActor = _protagonist = actor;
-			} else if (_vm->getGameId() == GID_ITE &&
-					   _vm->_scene->currentSceneResourceId() == ITE_SCENE_OVERMAP) {
+			} else if (_vm->getGameId() == GID_ITE && _vm->_scene->currentSceneResourceId() == ITE_SCENE_OVERMAP) {
 				continue;
 			}
 
@@ -265,7 +263,6 @@ void Actor::updateActorsScene(int actorsEntrance) {
 			actor->_walkStepsCount = actor->_walkStepIndex = 0;
 			actor->_location.z = _protagonist->_location.z;
 
-
 			if (_vm->_scene->getFlags() & kSceneFlagISO) {
 				_vm->_isoMap->placeOnTileMap(_protagonist->_location, actor->_location, 3, followerDirection & 0x07);
 			} else {
@@ -304,7 +301,6 @@ void Actor::updateActorsScene(int actorsEntrance) {
 			}
 			followerDirection += 2;
 		}
-
 	}
 
 	handleActions(0, true);
@@ -439,7 +435,7 @@ void Actor::handleActions(int msec, bool setup) {
 
 					if (actor->_walkStepIndex >= actor->_walkStepsCount) {
 						actorEndWalk(actor->_id, true);
-						return;		// break out of select case
+						return; // break out of select case
 					}
 
 					actor->_partialTarget.fromScreenPoint(actor->_walkStepsPoints[actor->_walkStepIndex++]);
@@ -727,7 +723,7 @@ void Actor::direct(int msec) {
 		handleActions(msec, false);
 	}
 
-//process speech
+	//process speech
 	handleSpeech(msec);
 }
 
@@ -754,7 +750,6 @@ bool Actor::followProtagonist(ActorData *actor) {
 		prefU = 60;
 		prefV = 60;
 
-
 		actor->_location.delta(protagonistLocation, delta);
 
 		if (actor->_id == actorIndexToId(2)) {
@@ -766,7 +761,7 @@ bool Actor::followProtagonist(ActorData *actor) {
 			if ((delta.u() > prefU * 2) || (delta.u() < -prefU * 2) || (delta.v() > prefV * 2) || (delta.v() < -prefV * 2)) {
 				actor->_flags |= kFaster;
 
-				if ((delta.u() > prefU * 3) || (delta.u() < -prefU*3) || (delta.v() > prefV * 3) || (delta.v() < -prefV * 3)) {
+				if ((delta.u() > prefU * 3) || (delta.u() < -prefU * 3) || (delta.v() > prefV * 3) || (delta.v() < -prefV * 3)) {
 					actor->_flags |= kFastest;
 				}
 			}
@@ -819,35 +814,31 @@ bool Actor::followProtagonist(ActorData *actor) {
 			return false;
 		}
 
-		if ((delta.x > prefer2.x) || (delta.x < -prefer2.x) ||
-			(delta.y > prefer2.y) || (delta.y < -prefer2.y) ||
-			((_protagonist->_currentAction == kActionWait) &&
-			(delta.x * 2 < prefer1.x) && (delta.x * 2 > -prefer1.x) &&
-			(delta.y < prefer1.y) && (delta.y > -prefer1.y))) {
+		if ((delta.x > prefer2.x) || (delta.x < -prefer2.x) || (delta.y > prefer2.y) || (delta.y < -prefer2.y) || ((_protagonist->_currentAction == kActionWait) && (delta.x * 2 < prefer1.x) && (delta.x * 2 > -prefer1.x) && (delta.y < prefer1.y) && (delta.y > -prefer1.y))) {
 
-				if (ABS(delta.x) > ABS(delta.y)) {
+			if (ABS(delta.x) > ABS(delta.y)) {
 
-					delta.x = (delta.x > 0) ? prefer3.x : -prefer3.x;
+				delta.x = (delta.x > 0) ? prefer3.x : -prefer3.x;
 
-					newLocation.x = delta.x + protagonistLocation.x;
-					newLocation.y = CLIP<int32>(delta.y, -prefer2.y, prefer2.y) + protagonistLocation.y;
-				} else {
-					delta.y = (delta.y > 0) ? prefer3.y : -prefer3.y;
+				newLocation.x = delta.x + protagonistLocation.x;
+				newLocation.y = CLIP<int32>(delta.y, -prefer2.y, prefer2.y) + protagonistLocation.y;
+			} else {
+				delta.y = (delta.y > 0) ? prefer3.y : -prefer3.y;
 
-					newLocation.x = CLIP<int32>(delta.x, -prefer2.x, prefer2.x) + protagonistLocation.x;
-					newLocation.y = delta.y + protagonistLocation.y;
-				}
-				newLocation.z = 0;
-
-				if (protagonistBGMaskType != 3) {
-					newLocation.x += _vm->_rnd.getRandomNumber(prefer1.x - 1) - prefer1.x / 2;
-					newLocation.y += _vm->_rnd.getRandomNumber(prefer1.y - 1) - prefer1.y / 2;
-				}
-
-				newLocation.x = CLIP<int>(newLocation.x, -31 * 4, (_vm->getDisplayInfo().width + 31) * 4);
-
-				return actorWalkTo(actor->_id, newLocation);
+				newLocation.x = CLIP<int32>(delta.x, -prefer2.x, prefer2.x) + protagonistLocation.x;
+				newLocation.y = delta.y + protagonistLocation.y;
 			}
+			newLocation.z = 0;
+
+			if (protagonistBGMaskType != 3) {
+				newLocation.x += _vm->_rnd.getRandomNumber(prefer1.x - 1) - prefer1.x / 2;
+				newLocation.y += _vm->_rnd.getRandomNumber(prefer1.y - 1) - prefer1.y / 2;
+			}
+
+			newLocation.x = CLIP<int>(newLocation.x, -31 * 4, (_vm->getDisplayInfo().width + 31) * 4);
+
+			return actorWalkTo(actor->_id, newLocation);
+		}
 	}
 	return false;
 }
@@ -868,11 +859,11 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 	actor = getActor(actorId);
 
 	if (actor == _protagonist) {
-		_vm->_scene->setDoorState(2, 0xff);		// closed
-		_vm->_scene->setDoorState(3, 0);		// open
+		_vm->_scene->setDoorState(2, 0xff); // closed
+		_vm->_scene->setDoorState(3, 0); // open
 	} else {
-		_vm->_scene->setDoorState(2, 0);		// open
-		_vm->_scene->setDoorState(3, 0xff);		// closed
+		_vm->_scene->setDoorState(2, 0); // open
+		_vm->_scene->setDoorState(3, 0xff); // closed
 	}
 
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
@@ -884,7 +875,6 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 		actor->_finalTarget = toLocation;
 		actor->_walkStepsCount = 0;
 		_vm->_isoMap->findTilePath(actor, actor->_location, toLocation);
-
 
 		if ((actor->_walkStepsCount == 0) && (actor->_flags & kProtagonist)) {
 			actor->_actorFlags |= kActorNoCollide;
@@ -903,13 +893,13 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 
 		actor->_location.toScreenPointXY(pointFrom);
 		// FIXME: why is the following line needed?
-		pointFrom.x &= ~1;	// set last bit to 0
+		pointFrom.x &= ~1; // set last bit to 0
 
 		extraStartNode = _vm->_scene->offscreenPath(pointFrom);
 
 		toLocation.toScreenPointXY(pointTo);
 		// FIXME: why is the following line needed?
-		pointTo.x &= ~1;	// set last bit to 0
+		pointTo.x &= ~1; // set last bit to 0
 
 		// Are we already where we want to go?
 		if (pointFrom.x == pointTo.x && pointFrom.y == pointTo.y) {
@@ -923,9 +913,7 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 		if (_vm->_scene->isBGMaskPresent()) {
 
 			if (
-				((actor->_currentAction >= kActionWalkToPoint && actor->_currentAction <= kActionWalkDir) ||
-				(_vm->getGameId() == GID_ITE && actor == _protagonist)) &&
-				!_vm->_scene->canWalk(pointFrom)) {
+			  ((actor->_currentAction >= kActionWalkToPoint && actor->_currentAction <= kActionWalkDir) || (_vm->getGameId() == GID_ITE && actor == _protagonist)) && !_vm->_scene->canWalk(pointFrom)) {
 
 				int max = _vm->getGameId() == GID_ITE ? 8 : 4;
 
@@ -999,7 +987,6 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 				}
 			}
 
-
 			pointBest = pointTo;
 			actor->_walkStepsCount = 0;
 			findActorPath(actor, pointFrom, pointTo);
@@ -1020,7 +1007,6 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 				actor->_walkStepsCount--;
 				actor->addWalkStepPoint(tempPoint);
 			}
-
 
 			pointBest = actor->_walkStepsPoints[actor->_walkStepsCount - 1];
 
@@ -1121,8 +1107,7 @@ void Actor::moveDragon(ActorData *actor) {
 	Event event;
 	const DragonMove *dragonMove;
 
-	if ((actor->_actionCycle < 0) ||
-		((actor->_actionCycle == 0) && (actor->_dragonMoveType >= ACTOR_DRAGON_TURN_MOVES))) {
+	if ((actor->_actionCycle < 0) || ((actor->_actionCycle == 0) && (actor->_dragonMoveType >= ACTOR_DRAGON_TURN_MOVES))) {
 
 		moveType = kDragonMoveInvalid;
 		if (actor->_location.distance(_protagonist->_location) < 24) {
@@ -1132,11 +1117,11 @@ void Actor::moveDragon(ActorData *actor) {
 				event.op = kEventExecNonBlocking;
 				event.time = 0;
 				event.param = _vm->_scene->getScriptModuleNumber(); // module number
-				event.param2 = ACTOR_EXP_KNOCK_RIF;			// script entry point number
-				event.param3 = -1;		// Action
-				event.param4 = -1;		// Object
-				event.param5 = -1;		// With Object
-				event.param6 = -1;		// Actor
+				event.param2 = ACTOR_EXP_KNOCK_RIF; // script entry point number
+				event.param3 = -1; // Action
+				event.param4 = -1; // Object
+				event.param5 = -1; // With Object
+				event.param6 = -1; // Actor
 				_vm->_events->queue(event);
 
 				_dragonHunt = false;
@@ -1175,7 +1160,7 @@ void Actor::moveDragon(ActorData *actor) {
 		else
 			dir3 = dir2;
 
-		if (dir0 != dir1){
+		if (dir0 != dir1) {
 			actor->_actionDirection = dir0 = dir1;
 		}
 
@@ -1352,7 +1337,6 @@ void Actor::moveDragon(ActorData *actor) {
 		dragonMove = &dragonMoveTable[actor->_dragonMoveType];
 		actor->_dragonBaseFrame = dragonMove->baseFrame;
 
-
 		actor->_location.u() = actor->_partialTarget.u() - dragonMove->offset[actor->_actionCycle][0];
 		actor->_location.v() = actor->_partialTarget.v() - dragonMove->offset[actor->_actionCycle][1];
 
@@ -1368,7 +1352,7 @@ void Actor::moveDragon(ActorData *actor) {
 // Console wrappers - must be safe to run
 
 void Actor::cmdActorWalkTo(int argc, const char **argv) {
-	uint16 actorId = (uint16) atoi(argv[1]);
+	uint16 actorId = (uint16)atoi(argv[1]);
 	Location location;
 	Point movePoint;
 

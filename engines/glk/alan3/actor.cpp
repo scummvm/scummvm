@@ -21,62 +21,61 @@
  */
 
 #include "glk/alan3/actor.h"
-#include "glk/alan3/instance.h"
-#include "glk/alan3/memory.h"
-#include "glk/alan3/lists.h"
-#include "glk/alan3/inter.h"
-#include "glk/alan3/msg.h"
 #include "glk/alan3/container.h"
+#include "glk/alan3/instance.h"
+#include "glk/alan3/inter.h"
+#include "glk/alan3/lists.h"
+#include "glk/alan3/memory.h"
+#include "glk/alan3/msg.h"
 
 namespace Glk {
 namespace Alan3 {
 
-/*======================================================================*/
-ScriptEntry *scriptOf(int actor) {
-	ScriptEntry *scr;
+	/*======================================================================*/
+	ScriptEntry *scriptOf(int actor) {
+		ScriptEntry *scr;
 
-	if (admin[actor].script != 0) {
-		for (scr = (ScriptEntry *) pointerTo(header->scriptTableAddress); !isEndOfArray(scr); scr++)
-			if (scr->code == admin[actor].script)
-				break;
-		if (!isEndOfArray(scr))
-			return scr;
+		if (admin[actor].script != 0) {
+			for (scr = (ScriptEntry *)pointerTo(header->scriptTableAddress); !isEndOfArray(scr); scr++)
+				if (scr->code == admin[actor].script)
+					break;
+			if (!isEndOfArray(scr))
+				return scr;
+		}
+		return NULL;
 	}
-	return NULL;
-}
 
+	/*======================================================================*/
+	StepEntry *stepOf(int actor) {
+		StepEntry *step;
+		ScriptEntry *scr = scriptOf(actor);
 
-/*======================================================================*/
-StepEntry *stepOf(int actor) {
-	StepEntry *step;
-	ScriptEntry *scr = scriptOf(actor);
+		if (scr == NULL)
+			return NULL;
 
-	if (scr == NULL) return NULL;
+		step = (StepEntry *)pointerTo(scr->steps);
+		step = &step[admin[actor].step];
 
-	step = (StepEntry *)pointerTo(scr->steps);
-	step = &step[admin[actor].step];
-
-	return step;
-}
-
-
-/*======================================================================*/
-void describeActor(CONTEXT, int actor) {
-	ScriptEntry *script = scriptOf(actor);
-
-	if (script != NULL && script->description != 0) {
-		CALL1(interpret, script->description)
-	} else if (hasDescription(actor)) {
-		CALL1(describeAnything, actor)
-	} else {
-		printMessageWithInstanceParameter(M_SEE_START, actor);
-		printMessage(M_SEE_END);
-
-		if (instances[actor].container != 0)
-			CALL1(describeContainer, actor)
+		return step;
 	}
-	admin[actor].alreadyDescribed = TRUE;
-}
+
+	/*======================================================================*/
+	void describeActor(CONTEXT, int actor) {
+		ScriptEntry *script = scriptOf(actor);
+
+		if (script != NULL && script->description != 0) {
+			CALL1(interpret, script->description)
+		} else if (hasDescription(actor)) {
+			CALL1(describeAnything, actor)
+		} else {
+			printMessageWithInstanceParameter(M_SEE_START, actor);
+			printMessage(M_SEE_END);
+
+			if (instances[actor].container != 0)
+				CALL1(describeContainer, actor)
+		}
+		admin[actor].alreadyDescribed = TRUE;
+	}
 
 } // End of namespace Alan3
 } // End of namespace Glk

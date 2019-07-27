@@ -20,13 +20,13 @@
  *
  */
 
-#include "graphics/scaler/intern.h"
 #include "CEScaler.h"
+#include "graphics/scaler/intern.h"
 
 extern int gBitFormat;
 #ifdef ARM
 extern "C" {
-	void SmartphoneLandscapeARM(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height, int mask);
+void SmartphoneLandscapeARM(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height, int mask);
 }
 
 void SmartphoneLandscape(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
@@ -38,7 +38,7 @@ void SmartphoneLandscape(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, ui
 
 #else
 
-template<typename ColorMask>
+template <typename ColorMask>
 void SmartphoneLandscapeTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	int line = 0;
 
@@ -80,9 +80,9 @@ void SmartphoneLandscapeTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *ds
 
 void SmartphoneLandscape(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	if (gBitFormat == 565)
-		SmartphoneLandscapeTemplate<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		SmartphoneLandscapeTemplate<Graphics::ColorMasks<565>>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 	else
-		SmartphoneLandscapeTemplate<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		SmartphoneLandscapeTemplate<Graphics::ColorMasks<555>>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 }
 
 #endif

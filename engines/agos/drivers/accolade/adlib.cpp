@@ -20,8 +20,8 @@
  *
  */
 
-#include "agos/drivers/accolade/mididriver.h"
 #include "agos/drivers/accolade/adlib.h"
+#include "agos/drivers/accolade/mididriver.h"
 
 #include "audio/fmopl.h"
 #include "audio/mididrv.h"
@@ -95,8 +95,11 @@ const uint16 frequencyLookUpTableMusicDrv[12] = {
 // I have currently not implemented dynamic channel allocation.
 
 MidiDriver_Accolade_AdLib::MidiDriver_Accolade_AdLib()
-		: _masterVolume(15), _opl(0),
-		  _adlibTimerProc(0), _adlibTimerParam(0), _isOpen(false) {
+  : _masterVolume(15)
+  , _opl(0)
+  , _adlibTimerProc(0)
+  , _adlibTimerParam(0)
+  , _isOpen(false) {
 	memset(_channelMapping, 0, sizeof(_channelMapping));
 	memset(_instrumentMapping, 0, sizeof(_instrumentMapping));
 	memset(_instrumentVolumeAdjust, 0, sizeof(_instrumentVolumeAdjust));
@@ -116,7 +119,7 @@ MidiDriver_Accolade_AdLib::~MidiDriver_Accolade_AdLib() {
 }
 
 int MidiDriver_Accolade_AdLib::open() {
-//	debugC(kDebugLevelAdLibDriver, "AdLib: starting driver");
+	//	debugC(kDebugLevelAdLibDriver, "AdLib: starting driver");
 
 	_opl = OPL::Config::create(OPL::Config::kOpl2);
 
@@ -170,7 +173,7 @@ void MidiDriver_Accolade_AdLib::setVolume(byte volume) {
 	_masterVolume = CLIP<int>(-128 + volume, -128, 127);
 	for (int i = 0; i < AGOS_ADLIB_VOICES_COUNT; i++) {
 		// Adjust channel volume with the master volume and re-set registers
-		byte adjustedVelocity = _channels[i].velocity * ((float) (128 + _masterVolume) / 128);
+		byte adjustedVelocity = _channels[i].velocity * ((float)(128 + _masterVolume) / 128);
 		noteOnSetVolume(i, 1, adjustedVelocity);
 		if (i <= AGOS_ADLIB_VOICES_PERCUSSION_START) {
 			// Set second operator for FM voices + first percussion
@@ -201,7 +204,7 @@ void MidiDriver_Accolade_AdLib::resetAdLib() {
 	setRegister(0x01, 0x20); // enable waveform control on both operators
 	setRegister(0x04, 0x60); // Timer control
 
-	setRegister(0x08, 0);    // select FM music mode
+	setRegister(0x08, 0); // select FM music mode
 	setRegister(0xBD, 0x20); // Enable rhythm
 
 	// reset our percussion register
@@ -239,7 +242,7 @@ void MidiDriver_Accolade_AdLib::send(uint32 b) {
 	byte op1 = (b >> 8) & 0xff;
 	byte op2 = (b >> 16) & 0xff;
 
-	byte mappedChannel    = _channelMapping[channel];
+	byte mappedChannel = _channelMapping[channel];
 	byte mappedInstrument = 0;
 
 	// Ignore everything that is outside of our channel range
@@ -285,19 +288,19 @@ void MidiDriver_Accolade_AdLib::setTimerCallback(void *timerParam, Common::Timer
 }
 
 void MidiDriver_Accolade_AdLib::noteOn(byte FMvoiceChannel, byte note, byte velocity) {
-	byte adjustedNote     = note;
+	byte adjustedNote = note;
 	byte adjustedVelocity = velocity;
-	byte regValueA0h      = 0;
-	byte regValueB0h      = 0;
+	byte regValueA0h = 0;
+	byte regValueB0h = 0;
 
 	// adjust velocity
 	int16 channelVolumeAdjust = _channels[FMvoiceChannel].volumeAdjust;
 	channelVolumeAdjust += adjustedVelocity;
 	channelVolumeAdjust = CLIP<int16>(channelVolumeAdjust, 0, 0x7F);
-	
+
 	// adjust velocity with the master volume
-	byte volumeAdjust = adjustedVelocity * ((float) (128 + _masterVolume) / 128);
-	
+	byte volumeAdjust = adjustedVelocity * ((float)(128 + _masterVolume) / 128);
+
 	adjustedVelocity = volumeAdjust;
 
 	if (!_musicDrvMode) {
@@ -560,7 +563,7 @@ void MidiDriver_Accolade_AdLib::programChange(byte FMvoiceChannel, byte mappedIn
 		}
 		instrumentPtr = &_instrumentTable[percussionInstrumentNr];
 		_channels[FMvoiceChannel].currentInstrumentPtr = instrumentPtr;
-		_channels[FMvoiceChannel].volumeAdjust         = _instrumentVolumeAdjust[percussionInstrumentNr];
+		_channels[FMvoiceChannel].volumeAdjust = _instrumentVolumeAdjust[percussionInstrumentNr];
 	}
 }
 
@@ -606,7 +609,7 @@ void MidiDriver_Accolade_AdLib::programChangeSetInstrument(byte FMvoiceChannel, 
 
 	// Remember instrument
 	_channels[FMvoiceChannel].currentInstrumentPtr = instrumentPtr;
-	_channels[FMvoiceChannel].volumeAdjust         = _instrumentVolumeAdjust[MIDIinstrumentNr];
+	_channels[FMvoiceChannel].volumeAdjust = _instrumentVolumeAdjust[MIDIinstrumentNr];
 }
 
 void MidiDriver_Accolade_AdLib::setRegister(int reg, int value) {
@@ -620,18 +623,18 @@ uint32 MidiDriver_Accolade_AdLib::property(int prop, uint32 param) {
 
 // Called right at the start, we get an INSTR.DAT entry
 bool MidiDriver_Accolade_AdLib::setupInstruments(byte *driverData, uint16 driverDataSize, bool useMusicDrvFile) {
-	uint16 channelMappingOffset         = 0;
-	uint16 channelMappingSize           = 0;
-	uint16 instrumentMappingOffset      = 0;
-	uint16 instrumentMappingSize        = 0;
+	uint16 channelMappingOffset = 0;
+	uint16 channelMappingSize = 0;
+	uint16 instrumentMappingOffset = 0;
+	uint16 instrumentMappingSize = 0;
 	uint16 instrumentVolumeAdjustOffset = 0;
-	uint16 instrumentVolumeAdjustSize   = 0;
-	uint16 keyNoteMappingOffset         = 0;
-	uint16 keyNoteMappingSize           = 0;
-	uint16 instrumentCount              = 0;
-	uint16 instrumentDataOffset         = 0;
-	uint16 instrumentDataSize           = 0;
-	uint16 instrumentEntrySize          = 0;
+	uint16 instrumentVolumeAdjustSize = 0;
+	uint16 keyNoteMappingOffset = 0;
+	uint16 keyNoteMappingSize = 0;
+	uint16 instrumentCount = 0;
+	uint16 instrumentDataOffset = 0;
+	uint16 instrumentDataSize = 0;
+	uint16 instrumentEntrySize = 0;
 
 	if (!useMusicDrvFile) {
 		// INSTR.DAT: we expect at least 354 bytes
@@ -648,16 +651,16 @@ bool MidiDriver_Accolade_AdLib::setupInstruments(byte *driverData, uint16 driver
 		//   1 byte   bytes per instrument
 		//   x bytes  no instruments used for MT32
 
-		channelMappingOffset         = 256 + 16;
-		channelMappingSize           = 16;
-		instrumentMappingOffset      = 0;
-		instrumentMappingSize        = 128;
+		channelMappingOffset = 256 + 16;
+		channelMappingSize = 16;
+		instrumentMappingOffset = 0;
+		instrumentMappingSize = 128;
 		instrumentVolumeAdjustOffset = 128;
-		instrumentVolumeAdjustSize   = 128;
-		keyNoteMappingOffset         = 256 + 16 + 16;
-		keyNoteMappingSize           = 64;
+		instrumentVolumeAdjustSize = 128;
+		keyNoteMappingOffset = 256 + 16 + 16;
+		keyNoteMappingSize = 64;
 
-		byte instrDatInstrumentCount    = driverData[256 + 16 + 16 + 64];
+		byte instrDatInstrumentCount = driverData[256 + 16 + 16 + 64];
 		byte instrDatBytesPerInstrument = driverData[256 + 16 + 16 + 64 + 1];
 
 		// We expect 9 bytes per instrument
@@ -667,10 +670,10 @@ bool MidiDriver_Accolade_AdLib::setupInstruments(byte *driverData, uint16 driver
 		if (!instrDatInstrumentCount)
 			return false;
 
-		instrumentCount      = instrDatInstrumentCount;
+		instrumentCount = instrDatInstrumentCount;
 		instrumentDataOffset = 256 + 16 + 16 + 64 + 2;
-		instrumentDataSize   = instrDatBytesPerInstrument * instrDatInstrumentCount;
-		instrumentEntrySize  = instrDatBytesPerInstrument;
+		instrumentDataSize = instrDatBytesPerInstrument * instrDatInstrumentCount;
+		instrumentEntrySize = instrDatBytesPerInstrument;
 
 	} else {
 		// MUSIC.DRV: we expect at least 468 bytes
@@ -679,21 +682,21 @@ bool MidiDriver_Accolade_AdLib::setupInstruments(byte *driverData, uint16 driver
 
 		// music.drv is basically a driver, but with a few fixed locations for certain data
 
-		channelMappingOffset         = 396;
-		channelMappingSize           = 16;
-		instrumentMappingOffset      = 140;
-		instrumentMappingSize        = 128;
+		channelMappingOffset = 396;
+		channelMappingSize = 16;
+		instrumentMappingOffset = 140;
+		instrumentMappingSize = 128;
 		instrumentVolumeAdjustOffset = 140 + 128;
-		instrumentVolumeAdjustSize   = 128;
-		keyNoteMappingOffset         = 376 + 36; // adjust by 36, because we adjust keyNote before mapping (see noteOn)
-		keyNoteMappingSize           = 64;
+		instrumentVolumeAdjustSize = 128;
+		keyNoteMappingOffset = 376 + 36; // adjust by 36, because we adjust keyNote before mapping (see noteOn)
+		keyNoteMappingSize = 64;
 
 		// seems to have used 128 + 5 instruments
 		// 128 regular ones and an additional 5 for percussion
-		instrumentCount         = 128 + AGOS_ADLIB_EXTRA_INSTRUMENT_COUNT;
-		instrumentDataOffset    = 722;
-		instrumentEntrySize     = 9;
-		instrumentDataSize      = instrumentCount * instrumentEntrySize;
+		instrumentCount = 128 + AGOS_ADLIB_EXTRA_INSTRUMENT_COUNT;
+		instrumentDataOffset = 722;
+		instrumentEntrySize = 9;
+		instrumentDataSize = instrumentCount * instrumentEntrySize;
 	}
 
 	// Channel mapping
@@ -748,7 +751,7 @@ bool MidiDriver_Accolade_AdLib::setupInstruments(byte *driverData, uint16 driver
 	_instrumentTable = new InstrumentEntry[instrumentCount];
 	_instrumentCount = instrumentCount;
 
-	byte            *instrDATReadPtr    = driverData + instrumentDataOffset;
+	byte *instrDATReadPtr = driverData + instrumentDataOffset;
 	InstrumentEntry *instrumentWritePtr = _instrumentTable;
 
 	for (uint16 instrumentNr = 0; instrumentNr < _instrumentCount; instrumentNr++) {
@@ -776,9 +779,9 @@ bool MidiDriver_Accolade_AdLib::setupInstruments(byte *driverData, uint16 driver
 }
 
 MidiDriver *MidiDriver_Accolade_AdLib_create(Common::String driverFilename) {
-	byte  *driverData = NULL;
+	byte *driverData = NULL;
 	uint16 driverDataSize = 0;
-	bool   isMusicDrvFile = false;
+	bool isMusicDrvFile = false;
 
 	MidiDriver_Accolade_readDriver(driverFilename, MT_ADLIB, driverData, driverDataSize, isMusicDrvFile);
 	if (!driverData)

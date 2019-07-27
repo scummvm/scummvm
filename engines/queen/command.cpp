@@ -20,13 +20,12 @@
  *
  */
 
-
 #include "queen/command.h"
 
 #include "queen/display.h"
-#include "queen/input.h"
 #include "queen/graphics.h"
 #include "queen/grid.h"
+#include "queen/input.h"
 #include "queen/logic.h"
 #include "queen/queen.h"
 #include "queen/resource.h"
@@ -37,7 +36,8 @@
 namespace Queen {
 
 CmdText::CmdText(uint8 y, QueenEngine *vm)
-	: _y(y), _vm(vm) {
+  : _y(y)
+  , _vm(vm) {
 	clear();
 }
 
@@ -81,8 +81,8 @@ void CmdText::addObject(const char *objName) {
 
 class CmdTextHebrew : public CmdText {
 public:
-
-	CmdTextHebrew(uint8 y, QueenEngine *vm) : CmdText(y, vm) {}
+	CmdTextHebrew(uint8 y, QueenEngine *vm)
+	  : CmdText(y, vm) {}
 
 	virtual void displayTemp(InkColor color, const char *name, bool outlined) {
 		char temp[MAX_COMMAND_LEN];
@@ -112,8 +112,8 @@ public:
 
 class CmdTextGreek : public CmdText {
 public:
-
-	CmdTextGreek(uint8 y, QueenEngine *vm) : CmdText(y, vm) {}
+	CmdTextGreek(uint8 y, QueenEngine *vm)
+	  : CmdText(y, vm) {}
 
 	virtual void displayTemp(InkColor color, const char *name, bool outlined) {
 		char temp[MAX_COMMAND_LEN];
@@ -154,7 +154,12 @@ void CmdState::init() {
 }
 
 Command::Command(QueenEngine *vm)
-	: _cmdList(NULL), _cmdArea(NULL), _cmdObject(NULL), _cmdInventory(NULL), _cmdGameState(NULL), _vm(vm) {
+  : _cmdList(NULL)
+  , _cmdArea(NULL)
+  , _cmdObject(NULL)
+  , _cmdInventory(NULL)
+  , _cmdGameState(NULL)
+  , _vm(vm) {
 	_cmdText = CmdText::makeCmdTextInstance(CmdText::COMMAND_Y_POS, vm);
 }
 
@@ -332,7 +337,8 @@ void Command::updatePlayer() {
 void Command::readCommandsFrom(byte *&ptr) {
 	uint16 i;
 
-	_numCmdList = READ_BE_UINT16(ptr); ptr += 2;
+	_numCmdList = READ_BE_UINT16(ptr);
+	ptr += 2;
 	_cmdList = new CmdListData[_numCmdList + 1];
 	if (_numCmdList == 0) {
 		_cmdList[0].readFromBE(ptr);
@@ -343,7 +349,8 @@ void Command::readCommandsFrom(byte *&ptr) {
 		}
 	}
 
-	_numCmdArea = READ_BE_UINT16(ptr); ptr += 2;
+	_numCmdArea = READ_BE_UINT16(ptr);
+	ptr += 2;
 	_cmdArea = new CmdArea[_numCmdArea + 1];
 	if (_numCmdArea == 0) {
 		_cmdArea[0].readFromBE(ptr);
@@ -354,7 +361,8 @@ void Command::readCommandsFrom(byte *&ptr) {
 		}
 	}
 
-	_numCmdObject = READ_BE_UINT16(ptr); ptr += 2;
+	_numCmdObject = READ_BE_UINT16(ptr);
+	ptr += 2;
 	_cmdObject = new CmdObject[_numCmdObject + 1];
 	if (_numCmdObject == 0) {
 		_cmdObject[0].readFromBE(ptr);
@@ -376,7 +384,8 @@ void Command::readCommandsFrom(byte *&ptr) {
 		}
 	}
 
-	_numCmdInventory = READ_BE_UINT16(ptr);	ptr += 2;
+	_numCmdInventory = READ_BE_UINT16(ptr);
+	ptr += 2;
 	_cmdInventory = new CmdInventory[_numCmdInventory + 1];
 	if (_numCmdInventory == 0) {
 		_cmdInventory[0].readFromBE(ptr);
@@ -387,7 +396,8 @@ void Command::readCommandsFrom(byte *&ptr) {
 		}
 	}
 
-	_numCmdGameState = READ_BE_UINT16(ptr);	ptr += 2;
+	_numCmdGameState = READ_BE_UINT16(ptr);
+	ptr += 2;
 	_cmdGameState = new CmdGameState[_numCmdGameState + 1];
 	if (_numCmdGameState == 0) {
 		_cmdGameState[0].readFromBE(ptr);
@@ -430,7 +440,7 @@ int16 Command::executeCommand(uint16 comId, int16 condResult) {
 	// don't try to grab if action is TALK or WALK
 	if (_state.selAction != VERB_TALK_TO && _state.selAction != VERB_WALK_TO) {
 		int i;
-		for  (i = 0; i < 2; ++i) {
+		for (i = 0; i < 2; ++i) {
 			int16 obj = _state.subject[i];
 			if (obj > 0) {
 				_vm->logic()->joeGrab(State::findGrab(_vm->logic()->objectData(obj)->state));
@@ -489,9 +499,7 @@ int16 Command::executeCommand(uint16 comId, int16 condResult) {
 	}
 
 	// don't play music on an OPEN/CLOSE command - in case the command fails
-	if (_state.selAction != VERB_NONE &&
-		_state.selAction != VERB_OPEN &&
-		_state.selAction != VERB_CLOSE) {
+	if (_state.selAction != VERB_NONE && _state.selAction != VERB_OPEN && _state.selAction != VERB_CLOSE) {
 		// only play song if it's a PLAY BEFORE type
 		if (com->song > 0) {
 			_vm->sound()->playSong(com->song);
@@ -641,8 +649,7 @@ void Command::grabSelectedItem() {
 	// If we've selected via keyboard, and there is no VERB then do
 	// the ITEMs default, otherwise keep constructing!
 
-	if (_mouseKey == Input::MOUSE_LBUTTON ||
-		(_vm->input()->keyVerb() != VERB_NONE && _state.verb != VERB_NONE)) {
+	if (_mouseKey == Input::MOUSE_LBUTTON || (_vm->input()->keyVerb() != VERB_NONE && _state.verb != VERB_NONE)) {
 		if (_state.action == VERB_NONE) {
 			if (_vm->input()->keyVerb() != VERB_NONE) {
 				// We've selected via the keyboard, no command is being
@@ -698,11 +705,10 @@ void Command::grabSelectedNoun() {
 
 	if (_state.verb == VERB_NONE) {
 		if (_mouseKey == Input::MOUSE_LBUTTON) {
-			if ((_state.commandLevel != 2 && _state.action == VERB_NONE) ||
-				(_state.commandLevel == 2 && _parse)) {
-					_state.verb = VERB_WALK_TO;
-					_state.action = VERB_WALK_TO;
-					_cmdText->setVerb(VERB_WALK_TO);
+			if ((_state.commandLevel != 2 && _state.action == VERB_NONE) || (_state.commandLevel == 2 && _parse)) {
+				_state.verb = VERB_WALK_TO;
+				_state.action = VERB_WALK_TO;
+				_cmdText->setVerb(VERB_WALK_TO);
 			}
 		} else if (_mouseKey == Input::MOUSE_RBUTTON) {
 			if (_cmdText->isEmpty()) {
@@ -749,8 +755,7 @@ void Command::grabSelectedVerb() {
 }
 
 bool Command::executeIfCutaway(const char *description) {
-	if (strlen(description) > 4 &&
-		scumm_stricmp(description + strlen(description) - 4, ".CUT") == 0) {
+	if (strlen(description) > 4 && scumm_stricmp(description + strlen(description) - 4, ".CUT") == 0) {
 
 		_vm->display()->clearTexts(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 
@@ -766,8 +771,7 @@ bool Command::executeIfCutaway(const char *description) {
 }
 
 bool Command::executeIfDialog(const char *description) {
-	if (strlen(description) > 4 &&
-		scumm_stricmp(description + strlen(description) - 4, ".DOG") == 0) {
+	if (strlen(description) > 4 && scumm_stricmp(description + strlen(description) - 4, ".DOG") == 0) {
 
 		_vm->display()->clearTexts(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 
@@ -791,8 +795,7 @@ bool Command::handleWrongAction() {
 	uint16 roomData = _vm->logic()->currentRoomData();
 
 	// select without a command or WALK TO ; do a WALK
-	if ((_state.selAction == VERB_WALK_TO || _state.selAction == VERB_NONE) &&
-		(_state.selNoun > objMax || _state.selNoun == 0)) {
+	if ((_state.selAction == VERB_WALK_TO || _state.selAction == VERB_NONE) && (_state.selNoun > objMax || _state.selNoun == 0)) {
 		if (_state.selAction == VERB_NONE) {
 			_vm->display()->clearTexts(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 		}
@@ -810,8 +813,7 @@ bool Command::handleWrongAction() {
 	}
 
 	// check for USE command on exists
-	if (_state.selAction == VERB_USE &&
-		_state.subject[0] > 0 && _vm->logic()->objectData(_state.subject[0])->entryObj > 0) {
+	if (_state.selAction == VERB_USE && _state.subject[0] > 0 && _vm->logic()->objectData(_state.subject[0])->entryObj > 0) {
 		_state.selAction = VERB_WALK_TO;
 	}
 
@@ -1193,7 +1195,7 @@ void Command::setItems(uint16 command) {
 	}
 }
 
-uint16 Command::nextObjectDescription(ObjectDescription* objDesc, uint16 firstDesc) {
+uint16 Command::nextObjectDescription(ObjectDescription *objDesc, uint16 firstDesc) {
 	// l.69-103 select.c
 	uint16 i;
 	uint16 diff = objDesc->lastDescription - firstDesc;

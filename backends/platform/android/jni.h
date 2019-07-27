@@ -25,11 +25,11 @@
 
 #if defined(__ANDROID__)
 
-#include <jni.h>
-#include <semaphore.h>
+#	include <jni.h>
+#	include <semaphore.h>
 
-#include "common/fs.h"
-#include "common/archive.h"
+#	include "common/archive.h"
+#	include "common/fs.h"
 
 class OSystem_Android;
 
@@ -76,7 +76,7 @@ public:
 	static void setAudioStop();
 
 	static inline int writeAudio(JNIEnv *env, jbyteArray &data, int offset,
-									int size);
+	                             int size);
 
 private:
 	static JavaVM *_vm;
@@ -120,16 +120,16 @@ private:
 
 	// natives for the dark side
 	static void create(JNIEnv *env, jobject self, jobject asset_manager,
-						jobject egl, jobject egl_display,
-						jobject at, jint audio_sample_rate,
-						jint audio_buffer_size);
+	                   jobject egl, jobject egl_display,
+	                   jobject at, jint audio_sample_rate,
+	                   jint audio_buffer_size);
 	static void destroy(JNIEnv *env, jobject self);
 
 	static void setSurface(JNIEnv *env, jobject self, jint width, jint height);
 	static jint main(JNIEnv *env, jobject self, jobjectArray args);
 
 	static void pushEvent(JNIEnv *env, jobject self, int type, int arg1,
-							int arg2, int arg3, int arg4, int arg5, int arg6);
+	                      int arg2, int arg3, int arg4, int arg5, int arg6);
 	static void enableZoning(JNIEnv *env, jobject self, jboolean enable);
 
 	static void setPause(JNIEnv *env, jobject self, jboolean value);
@@ -145,12 +145,12 @@ inline bool JNI::swapBuffers() {
 	JNIEnv *env = JNI::getEnv();
 
 	return env->CallBooleanMethod(_jobj_egl, _MID_EGL10_eglSwapBuffers,
-									_jobj_egl_display, _jobj_egl_surface);
+	                              _jobj_egl_display, _jobj_egl_surface);
 }
 
 inline int JNI::writeAudio(JNIEnv *env, jbyteArray &data, int offset, int size) {
 	return env->CallIntMethod(_jobj_audio_track, _MID_AudioTrack_write, data,
-								offset, size);
+	                          offset, size);
 }
 
 #endif

@@ -20,10 +20,10 @@
  *
  */
 
-#include "sci/sci.h"
+#include "sci/graphics/remap32.h"
 #include "sci/engine/features.h"
 #include "sci/graphics/palette32.h"
-#include "sci/graphics/remap32.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
@@ -218,11 +218,7 @@ bool SingleRemap::apply() {
 		}
 
 		if (
-			_idealColorsChanged[i] &&
-			_originalColorsChanged[_remapColors[i]] &&
-			_matchDistances[i] < 100 &&
-			colorDistance(_idealColors[i], _originalColors[_remapColors[i]]) <= _matchDistances[i]
-		) {
+		  _idealColorsChanged[i] && _originalColorsChanged[_remapColors[i]] && _matchDistances[i] < 100 && colorDistance(_idealColors[i], _originalColors[_remapColors[i]]) <= _matchDistances[i]) {
 			continue;
 		}
 
@@ -287,12 +283,12 @@ int16 SingleRemap::matchColor(const Color &color, const int minimumDistance, int
 #pragma mark -
 #pragma mark GfxRemap32
 
-GfxRemap32::GfxRemap32() :
-	_needsUpdate(false),
-	_blockedRangeStart(0),
-	_blockedRangeCount(0),
-	_remapStartColor(236),
-	_numActiveRemaps(0) {
+GfxRemap32::GfxRemap32()
+  : _needsUpdate(false)
+  , _blockedRangeStart(0)
+  , _blockedRangeCount(0)
+  , _remapStartColor(236)
+  , _numActiveRemaps(0) {
 	// The `_remapStartColor` seems to always be 236 in SSCI, but if it is ever
 	// changed then the various C-style member arrays hard-coded to 236 need to
 	// be changed to match the highest possible value of `_remapStartColor`

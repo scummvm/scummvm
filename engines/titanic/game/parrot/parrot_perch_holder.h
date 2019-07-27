@@ -33,6 +33,7 @@ class CParrotPerchHolder : public CMultiDropTarget {
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
 	bool DropObjectMsg(CDropObjectMsg *msg);
 	bool ActMsg(CActMsg *msg);
+
 public:
 	CLASSDEF;
 

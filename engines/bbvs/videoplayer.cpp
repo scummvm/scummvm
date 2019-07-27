@@ -74,8 +74,7 @@ void BbvsEngine::playVideo(int videoNum) {
 
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
-			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) ||
-				event.type == Common::EVENT_LBUTTONUP)
+			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
 				skipVideo = true;
 		}
 
@@ -85,7 +84,6 @@ void BbvsEngine::playVideo(int videoNum) {
 	delete videoDecoder;
 
 	initGraphics(320, 240);
-
 }
 
 } // End of namespace Bbvs

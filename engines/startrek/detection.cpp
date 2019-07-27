@@ -60,140 +60,139 @@ Common::Language StarTrekEngine::getLanguage() const {
 } // End of Namespace StarTrek
 
 static const PlainGameDescriptor starTrekGames[] = {
-	{"startrek", "Star Trek game"},
-	{"st25", "Star Trek: 25th Anniversary"},
-	{"stjr", "Star Trek: Judgment Rites"},
-	{0, 0}
+	{ "startrek", "Star Trek game" },
+	{ "st25", "Star Trek: 25th Anniversary" },
+	{ "stjr", "Star Trek: Judgment Rites" },
+	{ 0, 0 }
 };
-
 
 namespace StarTrek {
 
 static const StarTrekGameDescription gameDescriptions[] = {
-	{ // ST25 DOS CD-ROM edition (EN)
-		{
-			"st25",
-			"CD",
-			AD_ENTRY1s("data.001", "57040928a0f374281aa86ba4e7db8444", 7793814),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		GType_ST25,
-		GF_CDROM,
+	{
+	  // ST25 DOS CD-ROM edition (EN)
+	  {
+	    "st25",
+	    "CD",
+	    AD_ENTRY1s("data.001", "57040928a0f374281aa86ba4e7db8444", 7793814),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  GType_ST25,
+	  GF_CDROM,
 	},
 
-	{ // ST25 DOS CD-ROM edition (EN) #2
-		{
-			"st25",
-			"CD",
-			AD_ENTRY1s("data.001", "57040928a0f374281aa86ba4e7db8444", 7793808),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		GType_ST25,
-		GF_CDROM,
-	},	
-
-	{ // ST25 DOS CD-ROM edition (FR)
-		{
-			"st25",
-			"CD",
-			AD_ENTRY1s("data.001", "57040928a0f374281aa86ba4e7db8444", 7815278),
-			Common::FR_FRA,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		GType_ST25,
-		GF_CDROM,
+	{
+	  // ST25 DOS CD-ROM edition (EN) #2
+	  {
+	    "st25",
+	    "CD",
+	    AD_ENTRY1s("data.001", "57040928a0f374281aa86ba4e7db8444", 7793808),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  GType_ST25,
+	  GF_CDROM,
 	},
 
-	{ // ST25 DOS CD-ROM edition (GER)
-		{
-			"st25",
-			"CD",
-			AD_ENTRY1s("data.001", "57040928a0f374281aa86ba4e7db8444", 7805836),
-			Common::DE_DEU,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		GType_ST25,
-		GF_CDROM,
+	{
+	  // ST25 DOS CD-ROM edition (FR)
+	  {
+	    "st25",
+	    "CD",
+	    AD_ENTRY1s("data.001", "57040928a0f374281aa86ba4e7db8444", 7815278),
+	    Common::FR_FRA,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  GType_ST25,
+	  GF_CDROM,
 	},
 
-	{ // ST25 DOS floppy edition (EN)
-		{
-			"st25",
-			"Floppy",
-			AD_ENTRY1s("data.001", "57040928a0f374281aa86ba4e7db8444", 7222630),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		GType_ST25,
-		0,
+	{
+	  // ST25 DOS CD-ROM edition (GER)
+	  {
+	    "st25",
+	    "CD",
+	    AD_ENTRY1s("data.001", "57040928a0f374281aa86ba4e7db8444", 7805836),
+	    Common::DE_DEU,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  GType_ST25,
+	  GF_CDROM,
 	},
 
-	{ // ST25 DOS floppy edition (EN) #2
-		{
-			"st25",
-			"Floppy",
-			AD_ENTRY1s("data.001", "57040928a0f374281aa86ba4e7db8444", 7172238),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		GType_ST25,
-		0,
+	{
+	  // ST25 DOS floppy edition (EN)
+	  {
+	    "st25",
+	    "Floppy",
+	    AD_ENTRY1s("data.001", "57040928a0f374281aa86ba4e7db8444", 7222630),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  GType_ST25,
+	  0,
 	},
 
-	{ // ST25 DOS floppy edition (GER)
-		{
-			"st25",
-			"Floppy",
-			AD_ENTRY1s("data.001", "57040928a0f374281aa86ba4e7db8444", 7181890),
-			Common::DE_DEU,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		GType_ST25,
-		0,
+	{
+	  // ST25 DOS floppy edition (EN) #2
+	  {
+	    "st25",
+	    "Floppy",
+	    AD_ENTRY1s("data.001", "57040928a0f374281aa86ba4e7db8444", 7172238),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  GType_ST25,
+	  0,
 	},
 
-	{ // ST25 Mac floppy edition (EN)
-		{
-			"st25",
-			"Floppy",
-			AD_ENTRY1s("Star Trek Data", "d95eb00532b7082d53862c906c7ac3dc", 39032),
-			Common::EN_ANY,
-			Common::kPlatformMacintosh,
-			ADGF_MACRESFORK,
-			GUIO0()
-		},
-		GType_ST25,
-		0,
+	{
+	  // ST25 DOS floppy edition (GER)
+	  {
+	    "st25",
+	    "Floppy",
+	    AD_ENTRY1s("data.001", "57040928a0f374281aa86ba4e7db8444", 7181890),
+	    Common::DE_DEU,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  GType_ST25,
+	  0,
 	},
 
-	{ // ST25 DOS floppy demo (EN)
-		{
-			"st25",
-			"Demo",
-			AD_ENTRY1s("data.001", "093909a9d3dd3afd207c085a24baf9cf", 2598376),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_DEMO,
-			GUIO0()
-		},
-		GType_ST25,
-		GF_DEMO,
+	{
+	  // ST25 Mac floppy edition (EN)
+	  {
+	    "st25",
+	    "Floppy",
+	    AD_ENTRY1s("Star Trek Data", "d95eb00532b7082d53862c906c7ac3dc", 39032),
+	    Common::EN_ANY,
+	    Common::kPlatformMacintosh,
+	    ADGF_MACRESFORK,
+	    GUIO0() },
+	  GType_ST25,
+	  0,
+	},
+
+	{
+	  // ST25 DOS floppy demo (EN)
+	  {
+	    "st25",
+	    "Demo",
+	    AD_ENTRY1s("data.001", "093909a9d3dd3afd207c085a24baf9cf", 2598376),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_DEMO,
+	    GUIO0() },
+	  GType_ST25,
+	  GF_DEMO,
 	},
 
 	// These are commented until future notice because I don't have complete information
@@ -285,32 +284,32 @@ static const StarTrekGameDescription gameDescriptions[] = {
 	},
 	*/
 
-	{ // STJR DOS CD-ROM edition (EN)
-		{
-			"stjr",
-			"CD",
-			AD_ENTRY1s("data.001", "1c8de3c02f69c07c582d59d3c29e4dd9", 3318644),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		GType_STJR,
-		GF_CDROM,
+	{
+	  // STJR DOS CD-ROM edition (EN)
+	  {
+	    "stjr",
+	    "CD",
+	    AD_ENTRY1s("data.001", "1c8de3c02f69c07c582d59d3c29e4dd9", 3318644),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  GType_STJR,
+	  GF_CDROM,
 	},
 
-	{ // STJR DOS CD-ROM edition (GER)
-		{
-			"stjr",
-			"CD",
-			AD_ENTRY1s("data.001", "1c8de3c02f69c07c582d59d3c29e4dd9", 2958818),
-			Common::DE_DEU,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		GType_STJR,
-		GF_CDROM,
+	{
+	  // STJR DOS CD-ROM edition (GER)
+	  {
+	    "stjr",
+	    "CD",
+	    AD_ENTRY1s("data.001", "1c8de3c02f69c07c582d59d3c29e4dd9", 2958818),
+	    Common::DE_DEU,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  GType_STJR,
+	  GF_CDROM,
 	},
 
 	{ AD_TABLE_END_MARKER, 0, 0 }
@@ -320,7 +319,8 @@ static const StarTrekGameDescription gameDescriptions[] = {
 
 class StarTrekMetaEngine : public AdvancedMetaEngine {
 public:
-	StarTrekMetaEngine() : AdvancedMetaEngine(StarTrek::gameDescriptions, sizeof(StarTrek::StarTrekGameDescription), starTrekGames) {
+	StarTrekMetaEngine()
+	  : AdvancedMetaEngine(StarTrek::gameDescriptions, sizeof(StarTrek::StarTrekGameDescription), starTrekGames) {
 		_singleId = "startrek";
 	}
 
@@ -342,15 +342,7 @@ public:
 };
 
 bool StarTrekMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-	    (f == kSupportsListSaves) ||
-	    (f == kSupportsLoadingDuringStartup) ||
-	    (f == kSupportsDeleteSave) ||
-	    (f == kSavesSupportMetaInfo) ||
-	    (f == kSavesSupportThumbnail) ||
-	    (f == kSavesSupportCreationDate) ||
-	    (f == kSavesSupportPlayTime) ||
-	    (f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup) || (f == kSupportsDeleteSave) || (f == kSavesSupportMetaInfo) || (f == kSavesSupportThumbnail) || (f == kSavesSupportCreationDate) || (f == kSavesSupportPlayTime) || (f == kSimpleSavesNames);
 }
 
 bool StarTrekMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -402,7 +394,6 @@ SaveStateList StarTrekMetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
-
 
 int StarTrekMetaEngine::getMaximumSaveSlot() const {
 	return 999;
@@ -471,11 +462,8 @@ SaveStateDescriptor StarTrekMetaEngine::querySaveMetaInfos(const char *target, i
 	}
 }
 
-
-
 #if PLUGIN_ENABLED_DYNAMIC(STARTREK)
 REGISTER_PLUGIN_DYNAMIC(STARTREK, PLUGIN_TYPE_ENGINE, StarTrekMetaEngine);
 #else
 REGISTER_PLUGIN_STATIC(STARTREK, PLUGIN_TYPE_ENGINE, StarTrekMetaEngine);
 #endif
-

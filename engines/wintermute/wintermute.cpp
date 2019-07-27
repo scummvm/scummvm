@@ -23,8 +23,8 @@
 #include "common/scummsys.h"
 
 #include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/debug.h"
 #include "common/error.h"
 #include "common/file.h"
 #include "common/fs.h"
@@ -33,16 +33,16 @@
 
 #include "engines/util.h"
 #include "engines/wintermute/ad/ad_game.h"
-#include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/debugger.h"
 #include "engines/wintermute/game_description.h"
 #include "engines/wintermute/platform_osystem.h"
-#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/wintermute.h"
 
-#include "engines/wintermute/base/sound/base_sound_manager.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/scriptables/script_engine.h"
+#include "engines/wintermute/base/sound/base_sound_manager.h"
 #include "engines/wintermute/debugger/debugger_controller.h"
 
 #include "gui/message.h"
@@ -51,7 +51,8 @@ namespace Wintermute {
 
 // Simple constructor for detection - we need to setup the persistence to avoid special-casing in-engine
 // This might not be the prettiest solution
-WintermuteEngine::WintermuteEngine() : Engine(g_system) {
+WintermuteEngine::WintermuteEngine()
+  : Engine(g_system) {
 	_game = new AdGame("");
 	_debugger = nullptr;
 	_dbgController = nullptr;
@@ -60,11 +61,12 @@ WintermuteEngine::WintermuteEngine() : Engine(g_system) {
 }
 
 WintermuteEngine::WintermuteEngine(OSystem *syst, const WMEGameDescription *desc)
-	: Engine(syst), _gameDescription(desc) {
+  : Engine(syst)
+  , _gameDescription(desc) {
 	// Put your engine in a sane state, but do nothing big yet;
 	// in particular, do not load data from files; rather, if you
 	// need to do such things, do them from init().
-	ConfMan.registerDefault("show_fps","false");
+	ConfMan.registerDefault("show_fps", "false");
 
 	// Do not initialize graphics here
 
@@ -126,9 +128,9 @@ Common::Error WintermuteEngine::run() {
 	_dbgController = new DebuggerController(this);
 	_debugger = new Console(this);
 
-//	DebugMan.enableDebugChannel("enginelog");
+	//	DebugMan.enableDebugChannel("enginelog");
 	debugC(1, kWintermuteDebugLog, "Engine Debug-LOG enabled");
-	debugC(2, kWintermuteDebugSaveGame , "Savegame debugging-enabled");
+	debugC(2, kWintermuteDebugSaveGame, "Savegame debugging-enabled");
 
 	int ret = 1;
 
@@ -147,24 +149,23 @@ Common::Error WintermuteEngine::run() {
 int WintermuteEngine::init() {
 	BaseEngine::createInstance(_targetName, _gameDescription->adDesc.gameId, _gameDescription->adDesc.language, _gameDescription->targetExecutable);
 
-	// check dependencies for games with high resolution assets
-	#if not defined(USE_PNG) || not defined(USE_JPEG) || not defined(USE_VORBIS)
-		if (!(_gameDescription->adDesc.flags & GF_LOWSPEC_ASSETS)) {
-			GUI::MessageDialog dialog(_("This game requires PNG, JPEG and Vorbis support."));
-			dialog.runModal();
-			delete _game;
-			_game = nullptr;
-			return false;
-		}
-	#endif
+// check dependencies for games with high resolution assets
+#if not defined(USE_PNG) || not defined(USE_JPEG) || not defined(USE_VORBIS)
+	if (!(_gameDescription->adDesc.flags & GF_LOWSPEC_ASSETS)) {
+		GUI::MessageDialog dialog(_("This game requires PNG, JPEG and Vorbis support."));
+		dialog.runModal();
+		delete _game;
+		_game = nullptr;
+		return false;
+	}
+#endif
 
 	Common::ArchiveMemberList actors3d;
 	if (BaseEngine::instance().getFileManager()->listMatchingMembers(actors3d, "*.act3d")) {
 		GUI::MessageDialog dialog(
-				_("This game requires 3D characters support, which is out of ScummVM's scope."),
-				_("Start anyway"),
-				_("Cancel")
-			);
+		  _("This game requires 3D characters support, which is out of ScummVM's scope."),
+		  _("Start anyway"),
+		  _("Cancel"));
 		if (dialog.runModal() != GUI::kMessageOK) {
 			delete _game;
 			_game = nullptr;
@@ -214,7 +215,6 @@ int WintermuteEngine::init() {
 	if (DID_FAIL(ret)) {
 		_game->LOG(ret, "Sound is NOT available.");
 	}
-
 
 	// load game
 	uint32 dataInitStart = g_system->getMillis();
@@ -394,7 +394,7 @@ bool WintermuteEngine::getGameInfo(const Common::FSList &fslist, Common::String 
 				if (value[0] == '\"') {
 					value.deleteChar(0);
 				} else {
-					continue;    // not a string
+					continue; // not a string
 				}
 				if (value.lastChar() == '\"') {
 					value.deleteLastChar();

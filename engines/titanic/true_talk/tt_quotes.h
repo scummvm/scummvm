@@ -33,29 +33,38 @@ class TTquotes {
 	struct TTquotesEntry {
 		byte _tagIndex, _maxSize;
 		const char *_strP;
-		TTquotesEntry() : _tagIndex(0), _maxSize(0), _strP(nullptr) {}
+		TTquotesEntry()
+		  : _tagIndex(0)
+		  , _maxSize(0)
+		  , _strP(nullptr) {}
 	};
 	struct TTquotesLetter {
 		Common::Array<TTquotesEntry> _entries;
 		int _field4;
 		int _field8;
 
-		TTquotesLetter() : _field4(0), _field8(0) {}
+		TTquotesLetter()
+		  : _field4(0)
+		  , _field8(0) {}
 	};
+
 private:
 	TTquotesLetter _alphabet[26];
 	uint _tags[256];
 	char *_dataP;
 	size_t _dataSize;
 	int _field544;
+
 private:
 	/**
 	 * Test whether a substring contains one of the quotes,
 	 * and if so, returns the 4-character tag Id associated with it
 	 */
 	int find(const char *startP, const char *endP) const;
+
 public:
 	bool _loaded;
+
 public:
 	TTquotes();
 	~TTquotes();

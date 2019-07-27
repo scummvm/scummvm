@@ -36,6 +36,7 @@ class AsDiskplayerSceneKey : public AnimatedSprite {
 public:
 	AsDiskplayerSceneKey(NeverhoodEngine *vm);
 	void stDropKey();
+
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void stDropKeyDone();
@@ -46,6 +47,7 @@ public:
 	DiskplayerPlayButton(NeverhoodEngine *vm, DiskplayerScene *diskplayerScene);
 	void press();
 	void release();
+
 protected:
 	DiskplayerScene *_diskplayerScene;
 	bool _isPlaying;
@@ -60,6 +62,7 @@ public:
 	void appear();
 	void play();
 	void setLocked(bool isLocked) { _isLocked = isLocked; }
+
 protected:
 	DiskplayerScene *_diskplayerScene;
 	Sprite *_inactiveSlot;
@@ -73,16 +76,17 @@ protected:
 };
 
 enum {
-	kUSStopped		= 0,
-	kUSTuningIn		= 1,
-	kUSPlaying		= 2,
-	kUSPlayingFinal	= 3
+	kUSStopped = 0,
+	kUSTuningIn = 1,
+	kUSPlaying = 2,
+	kUSPlayingFinal = 3
 };
 
 class DiskplayerScene : public Scene {
 public:
 	DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int paletteIndex);
 	bool getDropKey() const { return _dropKey; }
+
 protected:
 	SmackerPlayer *_diskSmackerPlayer;
 	DiskplayerPlayButton *_ssPlayButton;

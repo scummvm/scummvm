@@ -25,7 +25,9 @@
 namespace Neverhood {
 
 SsScene2609Button::SsScene2609Button(NeverhoodEngine *vm, Scene *parentScene)
-	: StaticSprite(vm, 1400), _parentScene(parentScene), _countdown(0) {
+  : StaticSprite(vm, 1400)
+  , _parentScene(parentScene)
+  , _countdown(0) {
 
 	SetUpdateHandler(&SsScene2609Button::update);
 	SetMessageHandler(&SsScene2609Button::handleMessage);
@@ -77,7 +79,7 @@ uint32 SsScene2609Button::handleMessage(int messageNum, const MessageParam &para
 }
 
 AsScene2609Water::AsScene2609Water(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1000) {
+  : AnimatedSprite(vm, 1000) {
 
 	_x = 240;
 	_y = 420;

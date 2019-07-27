@@ -20,18 +20,18 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "graphics/sjis.h"
+#include "common/scummsys.h"
 
 #ifdef GRAPHICS_SJIS_H
 
-#include "common/debug.h"
-#include "common/archive.h"
-#include "common/endian.h"
-#include "common/stream.h"
-#include "common/textconsole.h"
+#	include "common/archive.h"
+#	include "common/debug.h"
+#	include "common/endian.h"
+#	include "common/stream.h"
+#	include "common/textconsole.h"
 
-#include "graphics/surface.h"
+#	include "graphics/surface.h"
 
 namespace Graphics {
 
@@ -71,7 +71,12 @@ void FontSJIS::drawChar(Graphics::Surface &dst, uint16 ch, int x, int y, uint32 
 }
 
 FontSJISBase::FontSJISBase()
-: _drawMode(kDefaultMode), _flippedMode(false), _fatPrint(false), _fontWidth(16), _fontHeight(16), _bitPosNewLineMask(0) {
+  : _drawMode(kDefaultMode)
+  , _flippedMode(false)
+  , _fatPrint(false)
+  , _fontWidth(16)
+  , _fontHeight(16)
+  , _bitPosNewLineMask(0) {
 }
 
 void FontSJISBase::setDrawingMode(DrawingMode mode) {
@@ -128,7 +133,7 @@ uint FontSJISBase::getCharWidth(uint16 ch) const {
 		return getMaxFontWidth();
 }
 
-template<typename Color>
+template <typename Color>
 void FontSJISBase::blitCharacter(const uint8 *glyph, const int w, const int h, uint8 *dst, int pitch, Color c) const {
 	uint8 bitPos = 0;
 	uint8 mask = 0;
@@ -184,7 +189,7 @@ void FontSJISBase::createOutline(uint8 *outline, const uint8 *glyph, const int w
 	}
 }
 
-#ifndef DISABLE_FLIPPED_MODE
+#	ifndef DISABLE_FLIPPED_MODE
 const uint8 *FontSJISBase::flipCharacter(const uint8 *glyph, const int w) const {
 	static const uint8 flipData[] = {
 		0x00, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0, 0x10, 0x90, 0x50, 0xD0, 0x30, 0xB0, 0x70, 0xF0,
@@ -212,7 +217,7 @@ const uint8 *FontSJISBase::flipCharacter(const uint8 *glyph, const int w) const 
 
 	return _tempGlyph;
 }
-#endif
+#	endif
 
 const uint8 *FontSJISBase::makeFatCharacter(const uint8 *glyph, const int w) const {
 	// This is the EOB II FM-Towns implementation.
@@ -272,11 +277,11 @@ void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1,
 	if (_fatPrint)
 		glyphSource = makeFatCharacter(glyphSource, width);
 
-#ifndef DISABLE_FLIPPED_MODE
+#	ifndef DISABLE_FLIPPED_MODE
 	if (_flippedMode)
 		glyphSource = flipCharacter(glyphSource, width);
-#endif
-	
+#	endif
+
 	uint8 outline[18 * 18];
 	if (_drawMode == kOutlineMode) {
 		memset(outline, 0, sizeof(outline));
@@ -358,9 +363,12 @@ const uint8 *FontTowns::getCharData(uint16 ch) const {
 		int base = s - ((s + 1) % 32);
 		int c = 0, p = 0, chunk_f = 0, chunk = 0, cr = 0, kanjiType = KANA;
 
-		if (f >= 0x81 && f <= 0x84) kanjiType = KANA;
-		if (f >= 0x88 && f <= 0x9f) kanjiType = KANJI;
-		if (f >= 0xe0 && f <= 0xea) kanjiType = EKANJI;
+		if (f >= 0x81 && f <= 0x84)
+			kanjiType = KANA;
+		if (f >= 0x88 && f <= 0x9f)
+			kanjiType = KANJI;
+		if (f >= 0xe0 && f <= 0xea)
+			kanjiType = EKANJI;
 
 		if ((f > 0xe8 || (f == 0xe8 && base >= 0x9f)) || (f > 0x90 || (f == 0x90 && base >= 0x9f))) {
 			c = 48; // correction
@@ -390,39 +398,57 @@ const uint8 *FontTowns::getCharData(uint16 ch) const {
 		switch (base) {
 		case 0x3f:
 			cr = 0; // 3f
-			if (kanjiType == KANA) chunk = 1;
-			else if (kanjiType == KANJI) chunk = 31;
-			else if (kanjiType == EKANJI) chunk = 111;
+			if (kanjiType == KANA)
+				chunk = 1;
+			else if (kanjiType == KANJI)
+				chunk = 31;
+			else if (kanjiType == EKANJI)
+				chunk = 111;
 			break;
 		case 0x5f:
 			cr = 0; // 5f
-			if (kanjiType == KANA) chunk = 17;
-			else if (kanjiType == KANJI) chunk = 47;
-			else if (kanjiType == EKANJI) chunk = 127;
+			if (kanjiType == KANA)
+				chunk = 17;
+			else if (kanjiType == KANJI)
+				chunk = 47;
+			else if (kanjiType == EKANJI)
+				chunk = 127;
 			break;
 		case 0x7f:
 			cr = -1; // 80
-			if (kanjiType == KANA) chunk = 9;
-			else if (kanjiType == KANJI) chunk = 63;
-			else if (kanjiType == EKANJI) chunk = 143;
+			if (kanjiType == KANA)
+				chunk = 9;
+			else if (kanjiType == KANJI)
+				chunk = 63;
+			else if (kanjiType == EKANJI)
+				chunk = 143;
 			break;
 		case 0x9f:
 			cr = 1; // 9e
-			if (kanjiType == KANA) chunk = 2;
-			else if (kanjiType == KANJI) chunk = 32;
-			else if (kanjiType == EKANJI) chunk = 112;
+			if (kanjiType == KANA)
+				chunk = 2;
+			else if (kanjiType == KANJI)
+				chunk = 32;
+			else if (kanjiType == EKANJI)
+				chunk = 112;
 			break;
 		case 0xbf:
 			cr = 1; // be
-			if (kanjiType == KANA) chunk = 18;
-			else if (kanjiType == KANJI) chunk = 48;
-			else if (kanjiType == EKANJI) chunk = 128;
+			if (kanjiType == KANA)
+				chunk = 18;
+			else if (kanjiType == KANJI)
+				chunk = 48;
+			else if (kanjiType == EKANJI)
+				chunk = 128;
 			break;
 		case 0xdf:
 			cr = 1; // de
-			if (kanjiType == KANA) chunk = 10;
-			else if (kanjiType == KANJI) chunk = 64;
-			else if (kanjiType == EKANJI) chunk = 144;
+			if (kanjiType == KANA)
+				chunk = 10;
+			else if (kanjiType == KANJI)
+				chunk = 64;
+			else if (kanjiType == EKANJI)
+				chunk = 144;
 			break;
 		default:
 			debug(4, "Invalid Char! f %x s %x base %x c %d p %d", f, s, base, c, p);
@@ -468,7 +494,8 @@ const uint8 *FontPCEngine::getCharData(uint16 ch) const {
 	const int rangeCnt = 45;
 	static const uint16 rangeTbl[rangeCnt][2] = {
 		// Symbols
-		{ 0x8140, 0x817E }, { 0x8180, 0x81AC },
+		{ 0x8140, 0x817E },
+		{ 0x8180, 0x81AC },
 		// 0-9
 		{ 0x824F, 0x8258 },
 		// Latin upper
@@ -476,7 +503,9 @@ const uint8 *FontPCEngine::getCharData(uint16 ch) const {
 		// Latin lower
 		{ 0x8281, 0x829A },
 		// Kana
-		{ 0x829F, 0x82F1 }, { 0x8340, 0x837E }, { 0x8380, 0x8396},
+		{ 0x829F, 0x82F1 },
+		{ 0x8340, 0x837E },
+		{ 0x8380, 0x8396 },
 		// Greek upper
 		{ 0x839F, 0x83B6 },
 		// Greek lower
@@ -484,24 +513,40 @@ const uint8 *FontPCEngine::getCharData(uint16 ch) const {
 		// Cyrillic upper
 		{ 0x8440, 0x8460 },
 		// Cyrillic lower
-		{ 0x8470, 0x847E }, { 0x8480, 0x8491},
+		{ 0x8470, 0x847E },
+		{ 0x8480, 0x8491 },
 		// Kanji
 		{ 0x889F, 0x88FC },
-		{ 0x8940, 0x897E }, { 0x8980, 0x89FC },
-		{ 0x8A40, 0x8A7E }, { 0x8A80, 0x8AFC },
-		{ 0x8B40, 0x8B7E }, { 0x8B80, 0x8BFC },
-		{ 0x8C40, 0x8C7E }, { 0x8C80, 0x8CFC },
-		{ 0x8D40, 0x8D7E }, { 0x8D80, 0x8DFC },
-		{ 0x8E40, 0x8E7E }, { 0x8E80, 0x8EFC },
-		{ 0x8F40, 0x8F7E }, { 0x8F80, 0x8FFC },
-		{ 0x9040, 0x907E }, { 0x9080, 0x90FC },
-		{ 0x9140, 0x917E }, { 0x9180, 0x91FC },
-		{ 0x9240, 0x927E }, { 0x9280, 0x92FC },
-		{ 0x9340, 0x937E }, { 0x9380, 0x93FC },
-		{ 0x9440, 0x947E }, { 0x9480, 0x94FC },
-		{ 0x9540, 0x957E }, { 0x9580, 0x95FC },
-		{ 0x9640, 0x967E }, { 0x9680, 0x96FC },
-		{ 0x9740, 0x977E }, { 0x9780, 0x97FC },
+		{ 0x8940, 0x897E },
+		{ 0x8980, 0x89FC },
+		{ 0x8A40, 0x8A7E },
+		{ 0x8A80, 0x8AFC },
+		{ 0x8B40, 0x8B7E },
+		{ 0x8B80, 0x8BFC },
+		{ 0x8C40, 0x8C7E },
+		{ 0x8C80, 0x8CFC },
+		{ 0x8D40, 0x8D7E },
+		{ 0x8D80, 0x8DFC },
+		{ 0x8E40, 0x8E7E },
+		{ 0x8E80, 0x8EFC },
+		{ 0x8F40, 0x8F7E },
+		{ 0x8F80, 0x8FFC },
+		{ 0x9040, 0x907E },
+		{ 0x9080, 0x90FC },
+		{ 0x9140, 0x917E },
+		{ 0x9180, 0x91FC },
+		{ 0x9240, 0x927E },
+		{ 0x9280, 0x92FC },
+		{ 0x9340, 0x937E },
+		{ 0x9380, 0x93FC },
+		{ 0x9440, 0x947E },
+		{ 0x9480, 0x94FC },
+		{ 0x9540, 0x957E },
+		{ 0x9580, 0x95FC },
+		{ 0x9640, 0x967E },
+		{ 0x9680, 0x96FC },
+		{ 0x9740, 0x977E },
+		{ 0x9780, 0x97FC },
 		{ 0x9840, 0x9872 }
 	};
 
@@ -532,8 +577,12 @@ bool FontPCEngine::hasFeature(int feat) const {
 // ScummVM SJIS font
 
 FontSjisSVM::FontSjisSVM(const Common::Platform platform)
-	: _fontData16x16(0), _fontData16x16Size(0), _fontData8x16(0), _fontData8x16Size(0),
-	  _fontData12x12(0), _fontData12x12Size(0) {
+  : _fontData16x16(0)
+  , _fontData16x16Size(0)
+  , _fontData8x16(0)
+  , _fontData8x16Size(0)
+  , _fontData12x12(0)
+  , _fontData12x12Size(0) {
 
 	if (platform == Common::kPlatformPCEngine) {
 		_fontWidth = 12;

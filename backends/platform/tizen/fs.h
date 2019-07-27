@@ -28,10 +28,10 @@
 #include <FIoDirectory.h>
 #include <FIoFile.h>
 
-#include "config.h"
+#include "backends/fs/abstract-fs.h"
 #include "common/scummsys.h"
 #include "common/stream.h"
-#include "backends/fs/abstract-fs.h"
+#include "config.h"
 
 using namespace Tizen::Io;
 using namespace Tizen::Base;
@@ -45,7 +45,11 @@ Common::String fromString(const Tizen::Base::String &in);
 //
 // Enumerates the possible system paths
 //
-enum SystemPath { kData, kResource, kSdCard, kMedia, kShared };
+enum SystemPath { kData,
+	                kResource,
+	                kSdCard,
+	                kMedia,
+	                kShared };
 
 /**
  * Implementation of the ScummVM file system API based on TIZEN.

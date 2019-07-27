@@ -23,21 +23,21 @@
 #ifndef VOYEUR_VOYEUR_H
 #define VOYEUR_VOYEUR_H
 
-#include "voyeur/debugger.h"
+#include "common/error.h"
+#include "common/random.h"
+#include "common/savefile.h"
+#include "common/scummsys.h"
+#include "common/serializer.h"
+#include "common/system.h"
+#include "common/util.h"
+#include "engines/engine.h"
+#include "graphics/surface.h"
 #include "voyeur/data.h"
+#include "voyeur/debugger.h"
 #include "voyeur/events.h"
 #include "voyeur/files.h"
 #include "voyeur/screen.h"
 #include "voyeur/sound.h"
-#include "common/scummsys.h"
-#include "common/system.h"
-#include "common/error.h"
-#include "common/random.h"
-#include "common/savefile.h"
-#include "common/serializer.h"
-#include "common/util.h"
-#include "engines/engine.h"
-#include "graphics/surface.h"
 
 /**
  * This is the namespace of the Voyeur engine.
@@ -66,10 +66,14 @@ namespace Voyeur {
 #define MANSION_SCROLL_INC_Y 4
 
 enum VoyeurDebugChannels {
-	kDebugScripts	= 1 << 0
+	kDebugScripts = 1 << 0
 };
 
-enum VoyeurArea { AREA_NONE, AREA_APARTMENT, AREA_INTERFACE, AREA_ROOM, AREA_EVIDENCE };
+enum VoyeurArea { AREA_NONE,
+	                AREA_APARTMENT,
+	                AREA_INTERFACE,
+	                AREA_ROOM,
+	                AREA_EVIDENCE };
 
 struct VoyeurGameDescription;
 
@@ -155,10 +159,12 @@ private:
 	 * Resets the mansion view position
 	 */
 	void centerMansionView();
+
 protected:
 	// Engine APIs
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
+
 public:
 	BoltFile *_bVoy;
 	Debugger *_debugger;
@@ -193,6 +199,7 @@ public:
 	ThreadResource *_mainThread;
 	VoyeurArea _voyeurArea;
 	int _loadGameSlot;
+
 public:
 	VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc);
 	virtual ~VoyeurEngine();

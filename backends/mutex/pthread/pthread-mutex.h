@@ -36,5 +36,4 @@ public:
 	virtual void deleteMutex(OSystem::MutexRef mutex);
 };
 
-
 #endif

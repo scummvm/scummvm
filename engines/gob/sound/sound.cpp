@@ -20,26 +20,27 @@
  *
  */
 
-#include "gob/gob.h"
 #include "gob/sound/sound.h"
-#include "gob/global.h"
-#include "gob/util.h"
 #include "gob/dataio.h"
 #include "gob/game.h"
+#include "gob/global.h"
+#include "gob/gob.h"
 #include "gob/inter.h"
+#include "gob/util.h"
 
-#include "gob/sound/bgatmosphere.h"
-#include "gob/sound/pcspeaker.h"
-#include "gob/sound/soundblaster.h"
 #include "gob/sound/adlplayer.h"
-#include "gob/sound/musplayer.h"
-#include "gob/sound/infogrames.h"
-#include "gob/sound/protracker.h"
+#include "gob/sound/bgatmosphere.h"
 #include "gob/sound/cdrom.h"
+#include "gob/sound/infogrames.h"
+#include "gob/sound/musplayer.h"
+#include "gob/sound/pcspeaker.h"
+#include "gob/sound/protracker.h"
+#include "gob/sound/soundblaster.h"
 
 namespace Gob {
 
-Sound::Sound(GobEngine *vm) : _vm(vm) {
+Sound::Sound(GobEngine *vm)
+  : _vm(vm) {
 	_pcspeaker = new PCSpeaker(*_vm->_mixer);
 	_blaster = new SoundBlaster(*_vm->_mixer);
 
@@ -62,8 +63,7 @@ Sound::Sound(GobEngine *vm) : _vm(vm) {
 		_cdrom = new CDROM;
 	if (_vm->getGameType() == kGameTypeWoodruff)
 		_bgatmos = new BackgroundAtmosphere(*_vm->_mixer);
-	if ((_vm->getGameType() == kGameTypeUrban) ||
-	    (_vm->getGameType() == kGameTypeAdibou2)) {
+	if ((_vm->getGameType() == kGameTypeUrban) || (_vm->getGameType() == kGameTypeAdibou2)) {
 		_bgatmos = new BackgroundAtmosphere(*_vm->_mixer);
 		_bgatmos->setShadable(false);
 	}
@@ -145,7 +145,6 @@ void Sound::sampleFree(SoundDesc *sndDesc, bool noteAdLib, int index) {
 
 		if (_blaster)
 			_blaster->stopSound(0, sndDesc);
-
 	}
 
 	sndDesc->free();
@@ -338,7 +337,7 @@ void Sound::adlibPlayBgMusic() {
 	createADLPlayer();
 
 	static const char *const tracksMac[] = {
-//		"musmac1.adl", // This track seems to be missing instruments...
+		//		"musmac1.adl", // This track seems to be missing instruments...
 		"musmac2.adl",
 		"musmac3.adl",
 		"musmac4.adl",
@@ -447,12 +446,12 @@ void Sound::adlibSetRepeating(int32 repCount) {
 }
 
 void Sound::blasterPlay(SoundDesc *sndDesc, int16 repCount,
-		int16 frequency, int16 fadeLength) {
+                        int16 frequency, int16 fadeLength) {
 	if (!_blaster || !sndDesc)
 		return;
 
 	debugC(1, kDebugSound, "SoundBlaster: Playing sample (%d, %d, %d)",
-			repCount, frequency, fadeLength);
+	       repCount, frequency, fadeLength);
 
 	blasterStopComposition();
 
@@ -473,12 +472,12 @@ void Sound::blasterStop(int16 fadeLength, SoundDesc *sndDesc) {
 }
 
 void Sound::blasterPlayComposition(const int16 *composition, int16 freqVal,
-		SoundDesc *sndDescs, int8 sndCount) {
+                                   SoundDesc *sndDescs, int8 sndCount) {
 	if (!_blaster)
 		return;
 
 	debugC(1, kDebugSound, "SoundBlaster: Playing composition (%d, %d)",
-			freqVal, sndCount);
+	       freqVal, sndCount);
 
 	blasterWaitEndPlay();
 	_blaster->stopComposition();
@@ -523,7 +522,7 @@ void Sound::blasterWaitEndPlay(bool interruptible, bool stopComp) {
 
 	while (_blaster->isPlaying() && !_vm->shouldQuit()) {
 		if (interruptible && (_vm->_util->checkKey() == kKeyEscape)) {
-			WRITE_VAR(57, (uint32) -1);
+			WRITE_VAR(57, (uint32)-1);
 			return;
 		}
 		_vm->_util->longDelay(200);
@@ -561,28 +560,28 @@ void Sound::cdPlayBgMusic() {
 		return;
 
 	static const char *const tracks[][2] = {
-		{"avt00.tot",  "mine"},
-		{"avt001.tot", "nuit"},
-		{"avt002.tot", "campagne"},
-		{"avt003.tot", "extsor1"},
-		{"avt004.tot", "interieure"},
-		{"avt005.tot", "zombie"},
-		{"avt006.tot", "zombie"},
-		{"avt007.tot", "campagne"},
-		{"avt008.tot", "campagne"},
-		{"avt009.tot", "extsor1"},
-		{"avt010.tot", "extsor1"},
-		{"avt011.tot", "interieure"},
-		{"avt012.tot", "zombie"},
-		{"avt014.tot", "nuit"},
-		{"avt015.tot", "interieure"},
-		{"avt016.tot", "statue"},
-		{"avt017.tot", "zombie"},
-		{"avt018.tot", "statue"},
-		{"avt019.tot", "mine"},
-		{"avt020.tot", "statue"},
-		{"avt021.tot", "mine"},
-		{"avt022.tot", "zombie"}
+		{ "avt00.tot", "mine" },
+		{ "avt001.tot", "nuit" },
+		{ "avt002.tot", "campagne" },
+		{ "avt003.tot", "extsor1" },
+		{ "avt004.tot", "interieure" },
+		{ "avt005.tot", "zombie" },
+		{ "avt006.tot", "zombie" },
+		{ "avt007.tot", "campagne" },
+		{ "avt008.tot", "campagne" },
+		{ "avt009.tot", "extsor1" },
+		{ "avt010.tot", "extsor1" },
+		{ "avt011.tot", "interieure" },
+		{ "avt012.tot", "zombie" },
+		{ "avt014.tot", "nuit" },
+		{ "avt015.tot", "interieure" },
+		{ "avt016.tot", "statue" },
+		{ "avt017.tot", "zombie" },
+		{ "avt018.tot", "statue" },
+		{ "avt019.tot", "mine" },
+		{ "avt020.tot", "statue" },
+		{ "avt021.tot", "mine" },
+		{ "avt022.tot", "zombie" }
 	};
 
 	for (int i = 0; i < ARRAYSIZE(tracks); i++)
@@ -598,12 +597,12 @@ void Sound::cdPlayMultMusic() {
 		return;
 
 	static const char *const tracks[][6] = {
-		{"avt005.tot", "fra1", "all1", "ang1", "esp1", "ita1"},
-		{"avt006.tot", "fra2", "all2", "ang2", "esp2", "ita2"},
-		{"avt012.tot", "fra3", "all3", "ang3", "esp3", "ita3"},
-		{"avt016.tot", "fra4", "all4", "ang4", "esp4", "ita4"},
-		{"avt019.tot", "fra5", "all5", "ang5", "esp5", "ita5"},
-		{"avt022.tot", "fra6", "all6", "ang6", "esp6", "ita6"}
+		{ "avt005.tot", "fra1", "all1", "ang1", "esp1", "ita1" },
+		{ "avt006.tot", "fra2", "all2", "ang2", "esp2", "ita2" },
+		{ "avt012.tot", "fra3", "all3", "ang3", "esp3", "ita3" },
+		{ "avt016.tot", "fra4", "all4", "ang4", "esp4", "ita4" },
+		{ "avt019.tot", "fra5", "all5", "ang5", "esp5", "ita5" },
+		{ "avt022.tot", "fra6", "all6", "ang6", "esp6", "ita6" }
 	};
 
 	// Default to "ang?" for other languages (including EN_USA)
@@ -621,8 +620,8 @@ void Sound::cdPlay(const Common::String &trackName) {
 		return;
 	debugC(1, kDebugSound, "CDROM: Playing track \"%s\"", trackName.c_str());
 
-// WORKAROUND - In Fascination CD, in the storage room, a track has the wrong
-// name in the scripts, and therefore doesn't play. This fixes the problem.
+	// WORKAROUND - In Fascination CD, in the storage room, a track has the wrong
+	// name in the scripts, and therefore doesn't play. This fixes the problem.
 	if ((_vm->getGameType() == kGameTypeFascination) && trackName.equalsIgnoreCase("boscle"))
 		_cdrom->startTrack("bosscle");
 	else
@@ -758,7 +757,7 @@ void Sound::createADLPlayer() {
 		return;
 
 	delete _mdyPlayer;
-	_mdyPlayer= 0;
+	_mdyPlayer = 0;
 
 	_adlPlayer = new ADLPlayer();
 }

@@ -39,11 +39,20 @@ public:
 	int _dialogueId;
 	int _talkEndState;
 	int _done;
+
 public:
-	TTtalker() : _owner(nullptr), _npc(nullptr),
-		_dialogueId(0), _talkEndState(0), _done(0) {}
-	TTtalker(CTrueTalkManager *owner, CTrueTalkNPC *npc) :
-		_owner(owner), _npc(npc), _dialogueId(0), _talkEndState(0), _done(0) {}
+	TTtalker()
+	  : _owner(nullptr)
+	  , _npc(nullptr)
+	  , _dialogueId(0)
+	  , _talkEndState(0)
+	  , _done(0) {}
+	TTtalker(CTrueTalkManager *owner, CTrueTalkNPC *npc)
+	  : _owner(owner)
+	  , _npc(npc)
+	  , _dialogueId(0)
+	  , _talkEndState(0)
+	  , _done(0) {}
 
 	/**
 	 * Start a new speech

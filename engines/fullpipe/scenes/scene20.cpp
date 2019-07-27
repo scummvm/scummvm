@@ -22,17 +22,17 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
 #include "fullpipe/floaters.h"
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
@@ -40,10 +40,10 @@ void scene20_setExits(Scene *sc) {
 	int thingpar;
 
 	if (g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_OnStool)
-		|| g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_OnTheFloor))
+	    || g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_OnTheFloor))
 		thingpar = 1;
 	else if (g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_NearPipe)
-			 || g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_NearPipeWithStool)) {
+	         || g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_NearPipeWithStool)) {
 		getSc2MctlCompoundBySceneId(sc->_sceneId)->enableLinks(sO_CloseThing, 1);
 		getSc2MctlCompoundBySceneId(sc->_sceneId)->enableLinks(sO_CloseThing2, 1);
 		getSc2MctlCompoundBySceneId(sc->_sceneId)->enableLinks(sO_CloseThing3, 0);
@@ -73,7 +73,7 @@ void scene20_initScene(Scene *sc) {
 	} else if (g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_OnTheFloor)) {
 		g_vars->scene20_grandma->changeStatics2(ST_GMA20_FLOOR);
 	} else if (g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_NearPipe)
-				|| g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_NearPipeWithStool)) {
+	           || g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_NearPipeWithStool)) {
 		g_vars->scene20_grandma->changeStatics2(ST_GMA20_STAND);
 	} else {
 		g_vars->scene20_grandma->hide();

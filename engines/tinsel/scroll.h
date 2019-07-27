@@ -20,12 +20,12 @@
  *
  */
 
-#ifndef TINSEL_SCROLL_H	// prevent multiple includes
+#ifndef TINSEL_SCROLL_H // prevent multiple includes
 #define TINSEL_SCROLL_H
 
 namespace Tinsel {
 
-#define SCROLLPIXELS 8	// Number of pixels to scroll per iteration
+#define SCROLLPIXELS 8 // Number of pixels to scroll per iteration
 
 // Distance from edge that triggers a scroll
 #define RLDISTANCE (TinselV2 ? g_sd.xTrigger : 50)
@@ -33,9 +33,8 @@ namespace Tinsel {
 #define DDISTANCE (TinselV2 ? g_sd.yTriggerBottom : 20)
 
 // Number of iterations to make
-#define RLSCROLL 160	// 20*8 = 160 = half a screen
-#define UDSCROLL 100	// 12.5*8 = 100 = half a screen
-
+#define RLSCROLL 160 // 20*8 = 160 = half a screen
+#define UDSCROLL 100 // 12.5*8 = 100 = half a screen
 
 // These structures defined here so boundaries can be saved
 struct NOSCROLLB {
@@ -44,13 +43,13 @@ struct NOSCROLLB {
 	int c2;
 };
 
-#define MAX_HNOSCROLL	10
-#define MAX_VNOSCROLL	10
+#define MAX_HNOSCROLL 10
+#define MAX_VNOSCROLL 10
 
-struct SCROLLDATA{
-	NOSCROLLB NoVScroll[MAX_VNOSCROLL];	// Vertical no-scroll boundaries
-	NOSCROLLB NoHScroll[MAX_HNOSCROLL];	// Horizontal no-scroll boundaries
-	unsigned NumNoV, NumNoH;		// Counts of no-scroll boundaries
+struct SCROLLDATA {
+	NOSCROLLB NoVScroll[MAX_VNOSCROLL]; // Vertical no-scroll boundaries
+	NOSCROLLB NoHScroll[MAX_HNOSCROLL]; // Horizontal no-scroll boundaries
+	unsigned NumNoV, NumNoH; // Counts of no-scroll boundaries
 	// DW2 fields
 	int xTrigger;
 	int xDistance;
@@ -60,7 +59,6 @@ struct SCROLLDATA{
 	int yDistance;
 	int ySpeed;
 };
-
 
 void DontScrollCursor();
 void DoScrollCursor();
@@ -80,7 +78,7 @@ void GetNoScrollData(SCROLLDATA *ssd);
 void RestoreNoScrollData(SCROLLDATA *ssd);
 
 void SetScrollParameters(int xTrigger, int xDistance, int xSpeed, int yTriggerTop,
-		int yTriggerBottom, int yDistance, int ySpeed);
+                         int yTriggerBottom, int yDistance, int ySpeed);
 
 bool IsScrolling();
 

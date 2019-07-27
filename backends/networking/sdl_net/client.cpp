@@ -29,13 +29,23 @@
 
 namespace Networking {
 
-Client::Client():
-	_state(INVALID), _set(nullptr), _socket(nullptr), _handler(nullptr),
-	_previousHandler(nullptr), _stream(nullptr), _buffer(new byte[CLIENT_BUFFER_SIZE]) {}
+Client::Client()
+  : _state(INVALID)
+  , _set(nullptr)
+  , _socket(nullptr)
+  , _handler(nullptr)
+  , _previousHandler(nullptr)
+  , _stream(nullptr)
+  , _buffer(new byte[CLIENT_BUFFER_SIZE]) {}
 
-Client::Client(SDLNet_SocketSet set, TCPsocket socket):
-	_state(INVALID), _set(nullptr), _socket(nullptr), _handler(nullptr),
-	_previousHandler(nullptr), _stream(nullptr), _buffer(new byte[CLIENT_BUFFER_SIZE]) {
+Client::Client(SDLNet_SocketSet set, TCPsocket socket)
+  : _state(INVALID)
+  , _set(nullptr)
+  , _socket(nullptr)
+  , _handler(nullptr)
+  , _previousHandler(nullptr)
+  , _stream(nullptr)
+  , _buffer(new byte[CLIENT_BUFFER_SIZE]) {
 	open(set, socket);
 }
 
@@ -163,7 +173,6 @@ void Client::close() {
 
 	_state = INVALID;
 }
-
 
 ClientState Client::state() const { return _state; }
 

@@ -22,9 +22,9 @@
 
 #include "bladerunner/ui/kia_section_settings.h"
 
+#include "bladerunner/ambient_sounds.h"
 #include "bladerunner/audio_player.h"
 #include "bladerunner/audio_speech.h"
-#include "bladerunner/ambient_sounds.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/font.h"
 #include "bladerunner/game_constants.h"
@@ -49,28 +49,28 @@ namespace BladeRunner {
 const char *KIASectionSettings::kLeary = "LEARY";
 
 KIASectionSettings::KIASectionSettings(BladeRunnerEngine *vm)
-	: KIASectionBase(vm) {
+  : KIASectionBase(vm) {
 
-	_uiContainer          = new UIContainer(_vm);
+	_uiContainer = new UIContainer(_vm);
 
 #if BLADERUNNER_ORIGINAL_SETTINGS
-	_musicVolume          = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 160, 460, 170), 101, 0);
-	_soundEffectVolume    = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 185, 460, 195), 101, 0);
-	_ambientSoundVolume   = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 210, 460, 220), 101, 0);
-	_speechVolume         = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 235, 460, 245), 101, 0);
-	_gammaCorrection      = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 260, 460, 270), 101, 0);
+	_musicVolume = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 160, 460, 170), 101, 0);
+	_soundEffectVolume = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 185, 460, 195), 101, 0);
+	_ambientSoundVolume = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 210, 460, 220), 101, 0);
+	_speechVolume = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 235, 460, 245), 101, 0);
+	_gammaCorrection = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 260, 460, 270), 101, 0);
 #else
-	_musicVolume          = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 160, 460, 170), _vm->_mixer->kMaxMixerVolume, 0);
-	_soundEffectVolume    = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 185, 460, 195), _vm->_mixer->kMaxMixerVolume, 0);
-	_speechVolume         = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 210, 460, 220), _vm->_mixer->kMaxMixerVolume, 0);
+	_musicVolume = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 160, 460, 170), _vm->_mixer->kMaxMixerVolume, 0);
+	_soundEffectVolume = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 185, 460, 195), _vm->_mixer->kMaxMixerVolume, 0);
+	_speechVolume = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 210, 460, 220), _vm->_mixer->kMaxMixerVolume, 0);
 #endif
 
 	if (_vm->_language == Common::RU_RUS) {
-		_directorsCut         = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(180, 364, 436, 374), 0, false); // expanded click-bounding box x-axis
-		_subtitlesEnable      = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(276, 376, 345, 386), 0, false); // moved to new line
+		_directorsCut = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(180, 364, 436, 374), 0, false); // expanded click-bounding box x-axis
+		_subtitlesEnable = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(276, 376, 345, 386), 0, false); // moved to new line
 	} else {
-		_directorsCut         = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(180, 364, 270, 374), 0, false);
-		_subtitlesEnable      = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(311, 364, 380, 374), 0, false); // moved further to the right to avoid overlap with 'Designer's Cut' in some language versions (ESP)
+		_directorsCut = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(180, 364, 270, 374), 0, false);
+		_subtitlesEnable = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(311, 364, 380, 374), 0, false); // moved further to the right to avoid overlap with 'Designer's Cut' in some language versions (ESP)
 	}
 	_playerAgendaSelector = new UIImagePicker(_vm, 5);
 
@@ -201,23 +201,23 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 		// Allow this to be loading as an extra text item in the resource for text options
 		const char *subtitlesTranslation = "Subtitles";
 		if (_vm->_language == Common::EN_ANY) {
-			subtitlesTranslation = "Subtitles";        // EN_ANY
+			subtitlesTranslation = "Subtitles"; // EN_ANY
 		} else if (_vm->_language == Common::DE_DEU) {
-			subtitlesTranslation = "Untertitel";       // DE_DEU
+			subtitlesTranslation = "Untertitel"; // DE_DEU
 		} else if (_vm->_language == Common::FR_FRA) {
-			subtitlesTranslation = "Sous-titres";      // FR_FRA
+			subtitlesTranslation = "Sous-titres"; // FR_FRA
 		} else if (_vm->_language == Common::IT_ITA) {
-			subtitlesTranslation = "Sottotitoli";      // IT_ITA
+			subtitlesTranslation = "Sottotitoli"; // IT_ITA
 		} else if (_vm->_language == Common::RU_RUS) {
 			// The supported Russian version is using its own KIA6PT.FON
 			// where it has replaced the mapping of Latin characters to Russian characters
 			// So the character string here does not make sense, but it will appear correctly
-			subtitlesTranslation = "CE,NBNHS";         // RU_RUS "Subtitry"
+			subtitlesTranslation = "CE,NBNHS"; // RU_RUS "Subtitry"
 		} else if (_vm->_language == Common::ES_ESP) {
-			subtitlesTranslation = "Subtitulos";       // ES_ESP
+			subtitlesTranslation = "Subtitulos"; // ES_ESP
 		}
 
-		const char *textSubtitles  = strcmp(_vm->_textOptions->getText(42), "") == 0? subtitlesTranslation : _vm->_textOptions->getText(42); // +1 to the max of original index of textOptions which is 41
+		const char *textSubtitles = strcmp(_vm->_textOptions->getText(42), "") == 0 ? subtitlesTranslation : _vm->_textOptions->getText(42); // +1 to the max of original index of textOptions which is 41
 
 		if (_vm->_language == Common::RU_RUS) {
 			_vm->_mainFont->drawString(&surface, textSubtitles, 288, 376, surface.w, surface.format.RGBToColor(232, 208, 136)); // special case for Russian version, put the option in a new line to avoid overlap
@@ -315,8 +315,7 @@ void KIASectionSettings::checkBoxCallback(void *callbackData, void *source) {
 		} else {
 			self->_vm->_gameFlags->reset(kFlagDirectorsCut);
 		}
-	}
-	else if (source == self->_subtitlesEnable) {
+	} else if (source == self->_subtitlesEnable) {
 		self->_vm->setSubtitlesEnabled(self->_subtitlesEnable->_isChecked);
 	}
 }

@@ -65,6 +65,7 @@ public:
 	inline int16 getStackPos() const { return _stackPos; }
 	inline void setStackPos(int16 stackPtr) { _stackPos = stackPtr; }
 	inline int16 *getStackPtr() { return &_stack[_stackPos]; }
+
 protected:
 	int16 _stack[kScriptStackSize];
 	int16 _stackPos;
@@ -77,6 +78,7 @@ public:
 	void runScript(int16 scriptObjectIndex);
 	void dumpScript(int16 objectIndex, int *opcodeStats, int *externStats);
 	void dumpAllScripts();
+
 protected:
 	MadeEngine *_vm;
 
@@ -162,7 +164,6 @@ protected:
 	void cmd_ge();
 	void cmd_varx();
 	void cmd_setx();
-
 };
 
 } // End of namespace Made

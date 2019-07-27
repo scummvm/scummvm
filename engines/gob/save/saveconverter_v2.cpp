@@ -30,8 +30,8 @@
 
 namespace Gob {
 
-SaveConverter_v2::SaveConverter_v2(GobEngine *vm, const Common::String &fileName) :
-	SaveConverter(vm, fileName) {
+SaveConverter_v2::SaveConverter_v2(GobEngine *vm, const Common::String &fileName)
+  : SaveConverter(vm, fileName) {
 }
 
 SaveConverter_v2::~SaveConverter_v2() {
@@ -72,7 +72,7 @@ char *SaveConverter_v2::getDescription(Common::SeekableReadStream &save) const {
 }
 
 bool SaveConverter_v2::loadFail(SavePartInfo *info, SavePartVars *vars,
-		Common::InSaveFile *save) {
+                                Common::InSaveFile *save) {
 
 	delete info;
 	delete vars;

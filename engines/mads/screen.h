@@ -23,10 +23,10 @@
 #ifndef MADS_SCREEN_H
 #define MADS_SCREEN_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
-#include "mads/msurface.h"
+#include "common/scummsys.h"
 #include "mads/action.h"
+#include "mads/msurface.h"
 
 namespace MADS {
 
@@ -39,21 +39,32 @@ enum ScreenMode {
 
 enum ScreenTransition {
 	kTransitionNone = 0,
-	kTransitionFadeIn, kTransitionFadeOutIn,
-	kTransitionBoxInBottomLeft, kTransitionBoxInBottomRight,
-	kTransitionBoxInTopLeft, kTransitionBoxInTopRight,
-	kTransitionPanLeftToRight, kTransitionPanRightToLeft,
-	kTransitionCircleIn1, kTransitionCircleIn2,
-	kTransitionCircleIn3, kTransitionCircleIn4,
-	kVertTransition1, kVertTransition2, kVertTransition3,
-	kVertTransition4, kVertTransition5, kVertTransition6,
-	kVertTransition7, kNullPaletteCopy
+	kTransitionFadeIn,
+	kTransitionFadeOutIn,
+	kTransitionBoxInBottomLeft,
+	kTransitionBoxInBottomRight,
+	kTransitionBoxInTopLeft,
+	kTransitionBoxInTopRight,
+	kTransitionPanLeftToRight,
+	kTransitionPanRightToLeft,
+	kTransitionCircleIn1,
+	kTransitionCircleIn2,
+	kTransitionCircleIn3,
+	kTransitionCircleIn4,
+	kVertTransition1,
+	kVertTransition2,
+	kVertTransition3,
+	kVertTransition4,
+	kVertTransition5,
+	kVertTransition6,
+	kVertTransition7,
+	kNullPaletteCopy
 };
 
 enum InputMode {
-	kInputBuildingSentences = 0,		// Normal sentence building
-	kInputConversation = 1,			// Conversation mode
-	kInputLimitedSentences = 2		// Use only scene hotspots
+	kInputBuildingSentences = 0, // Normal sentence building
+	kInputConversation = 1, // Conversation mode
+	kInputLimitedSentences = 2 // Use only scene hotspots
 };
 
 enum ThroughBlack {
@@ -69,6 +80,7 @@ class DirtyArea {
 private:
 	static MADSEngine *_vm;
 	friend class DirtyAreas;
+
 public:
 	Common::Rect _bounds;
 	bool _textActive;
@@ -96,8 +108,8 @@ public:
 };
 
 class DirtyAreas : public Common::Array<DirtyArea> {
-//private:
-//	MADSEngine *_vm;
+	//private:
+	//	MADSEngine *_vm;
 public:
 	DirtyAreas(MADSEngine *vm);
 
@@ -145,6 +157,7 @@ private:
 	int _objectY;
 
 	int scanBackwards(const Common::Point &pt, int layer);
+
 public:
 	InputMode _inputMode;
 	int _v7FED6;
@@ -212,14 +225,16 @@ private:
 	MSurface _rawSurface;
 
 	void panTransition(MSurface &newScreen, byte *palData, int entrySide,
-		const Common::Point &srcPos, const Common::Point &destPos,
-		ThroughBlack throughBlack, bool setPalette, int numTicks);
+	                   const Common::Point &srcPos, const Common::Point &destPos,
+	                   ThroughBlack throughBlack, bool setPalette, int numTicks);
 
 	void swapForeground(byte newPalette[PALETTE_SIZE], byte *paletteMap);
 
 	void swapPalette(const byte palData[PALETTE_SIZE], byte swapTable[PALETTE_COUNT], bool foreground);
+
 public:
 	int _shakeCountdown;
+
 public:
 	/**
 	 * Constructor

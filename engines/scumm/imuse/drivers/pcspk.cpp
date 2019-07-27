@@ -27,7 +27,8 @@
 namespace Scumm {
 
 PcSpkDriver::PcSpkDriver(Audio::Mixer *mixer)
-	: MidiDriver_Emulated(mixer), _pcSpk(mixer->getOutputRate()) {
+  : MidiDriver_Emulated(mixer)
+  , _pcSpk(mixer->getOutputRate()) {
 }
 
 PcSpkDriver::~PcSpkDriver() {
@@ -505,7 +506,8 @@ void PcSpkDriver::initNextEnvelopeState(EffectEnvelope &env) {
 void PcSpkDriver::updateEffectGenerator(MidiChannel_PcSpk &chan, EffectEnvelope &env, EffectDefinition &def) {
 	if (advanceEffectEnvelope(env, def) & 1) {
 		switch (def.type) {
-		case 0: case 1:
+		case 0:
+		case 1:
 			chan._out.unk60 = def.phase << 4;
 			break;
 
@@ -736,49 +738,49 @@ const byte PcSpkDriver::_outputTable1[] = {
 };
 
 const byte PcSpkDriver::_outputTable2[] = {
-	0,  1,  2,  3,
-	4,  5,  6,  7,
-	8,  9, 10, 11,
-	0,  1,  2,  3,
-	4,  5,  6,  7,
-	8,  9, 10, 11,
-	0,  1,  2,  3,
-	4,  5,  6,  7,
-	8,  9, 10, 11,
-	0,  1,  2,  3,
-	4,  5,  6,  7,
-	8,  9, 10, 11,
-	0,  1,  2,  3,
-	4,  5,  6,  7,
-	8,  9, 10, 11,
-	0,  1,  2,  3,
-	4,  5,  6,  7,
-	8,  9, 10, 11,
-	0,  1,  2,  3,
-	4,  5,  6,  7,
-	8,  9, 10, 11,
-	0,  1,  2,  3,
-	4,  5,  6,  7,
-	8,  9, 10, 11,
-	0,  1,  2,  3,
-	4,  5,  6,  7,
-	8,  9, 10, 11,
-	0,  1,  2,  3,
-	4,  5,  6,  7,
-	8,  9, 10, 11,
-	0,  1,  2,  3,
-	4,  5,  6,  7
+	0, 1, 2, 3,
+	4, 5, 6, 7,
+	8, 9, 10, 11,
+	0, 1, 2, 3,
+	4, 5, 6, 7,
+	8, 9, 10, 11,
+	0, 1, 2, 3,
+	4, 5, 6, 7,
+	8, 9, 10, 11,
+	0, 1, 2, 3,
+	4, 5, 6, 7,
+	8, 9, 10, 11,
+	0, 1, 2, 3,
+	4, 5, 6, 7,
+	8, 9, 10, 11,
+	0, 1, 2, 3,
+	4, 5, 6, 7,
+	8, 9, 10, 11,
+	0, 1, 2, 3,
+	4, 5, 6, 7,
+	8, 9, 10, 11,
+	0, 1, 2, 3,
+	4, 5, 6, 7,
+	8, 9, 10, 11,
+	0, 1, 2, 3,
+	4, 5, 6, 7,
+	8, 9, 10, 11,
+	0, 1, 2, 3,
+	4, 5, 6, 7,
+	8, 9, 10, 11,
+	0, 1, 2, 3,
+	4, 5, 6, 7
 };
 
 const uint16 PcSpkDriver::_effectEnvStepTable[] = {
-	  1,    2,    4,    5,
-	  6,    7,    8,    9,
-	 10,   12,   14,   16,
-	 18,   21,   24,   30,
-	 36,   50,   64,   82,
-	100,  136,  160,  192,
-	240,  276,  340,  460,
-	600,  860, 1200, 1600
+	1, 2, 4, 5,
+	6, 7, 8, 9,
+	10, 12, 14, 16,
+	18, 21, 24, 30,
+	36, 50, 64, 82,
+	100, 136, 160, 192,
+	240, 276, 340, 460,
+	600, 860, 1200, 1600
 };
 
 const uint16 PcSpkDriver::_frequencyTable[] = {

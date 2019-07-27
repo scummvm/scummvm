@@ -29,9 +29,8 @@
 #ifndef WINTERMUTE_UITILEDIMAGE_H
 #define WINTERMUTE_UITILEDIMAGE_H
 
-
-#include "engines/wintermute/ui/ui_object.h"
 #include "common/rect.h"
+#include "engines/wintermute/ui/ui_object.h"
 
 namespace Wintermute {
 class BaseSubFrame;
@@ -48,6 +47,7 @@ public:
 	bool display(int x, int y, int width, int height);
 	UITiledImage(BaseGame *inGame = nullptr);
 	virtual ~UITiledImage();
+
 private:
 	BaseSubFrame *_image;
 	Rect32 _upLeft;

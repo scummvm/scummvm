@@ -22,15 +22,15 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
-#include "zvision/scripting/controls/fist_control.h"
-#include "zvision/graphics/render_manager.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/controls/fist_control.h"
+#include "zvision/scripting/script_manager.h"
 #include "zvision/video/rlf_decoder.h"
+#include "zvision/zvision.h"
 
-#include "common/stream.h"
 #include "common/file.h"
+#include "common/stream.h"
 #include "common/system.h"
 #include "graphics/surface.h"
 #include "video/video_decoder.h"
@@ -38,7 +38,7 @@
 namespace ZVision {
 
 FistControl::FistControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)
-	: Control(engine, key, CONTROL_FIST) {
+  : Control(engine, key, CONTROL_FIST) {
 	_cursor = CursorIndex_Idle;
 	_animation = NULL;
 	_soundKey = 0;
@@ -216,7 +216,7 @@ void FistControl::readDescFile(const Common::String &fileName) {
 			sscanf(values.c_str(), "%hd %hd %hd %hd", &x1, &y1, &x2, &y2);
 			(_fistsDwn[fist])[box] = Common::Rect(x1, y1, x2, y2);
 		} else {
-			int  entry, start, end, sound;
+			int entry, start, end, sound;
 			char bitsStart[33];
 			char bitsEnd[33];
 			entry = atoi(param.c_str());
@@ -232,7 +232,7 @@ void FistControl::readDescFile(const Common::String &fileName) {
 	file.close();
 }
 
-void FistControl::clearFistArray(Common::Array< Common::Array<Common::Rect> > &arr) {
+void FistControl::clearFistArray(Common::Array<Common::Array<Common::Rect>> &arr) {
 	for (uint i = 0; i < arr.size(); i++)
 		arr[i].clear();
 

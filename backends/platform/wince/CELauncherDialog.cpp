@@ -23,18 +23,18 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "backends/platform/wince/wince-sdl.h"
 #include "backends/graphics/wincesdl/wincesdl-graphics.h"
+#include "backends/platform/wince/wince-sdl.h"
 
 #include "CELauncherDialog.h"
 
 #include "engines/metaengine.h"
 
-#include "gui/gui-manager.h"
-#include "gui/widget.h"
-#include "gui/browser.h"
-#include "gui/message.h"
 #include "gui/ThemeEval.h"
+#include "gui/browser.h"
+#include "gui/gui-manager.h"
+#include "gui/message.h"
+#include "gui/widget.h"
 #include "gui/widgets/list.h"
 
 #include "common/config-manager.h"
@@ -47,7 +47,7 @@ using namespace Common;
 class CEAboutDialog : public Dialog {
 public:
 	CEAboutDialog()
-		: Dialog(10, 60, 300, 77) {
+	  : Dialog(10, 60, 300, 77) {
 		char tempo[100];
 		const int buttonWidth = g_gui.xmlEval()->getVar("Globals.Button.Width", 0);
 		const int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
@@ -64,7 +64,8 @@ public:
 	}
 };
 
-CELauncherDialog::CELauncherDialog() : GUI::LauncherDialog() {
+CELauncherDialog::CELauncherDialog()
+  : GUI::LauncherDialog() {
 	dynamic_cast<WINCESdlGraphicsManager *>(((OSystem_SDL *)g_system)->getGraphicsManager())->reset_panel();
 }
 

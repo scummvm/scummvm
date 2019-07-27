@@ -29,13 +29,13 @@ namespace Sword1 {
 
 #define LOOPED 1
 
-#define FRAME_RATE          12                      // number of frames per second (max rate)
-#define SCREEN_WIDTH        640
-#define SCREEN_DEPTH        400
-#define SCREEN_LEFT_EDGE    128
-#define SCREEN_RIGHT_EDGE   (128+SCREEN_WIDTH-1)
-#define SCREEN_TOP_EDGE     128
-#define SCREEN_BOTTOM_EDGE  (128+SCREEN_DEPTH-1)
+#define FRAME_RATE 12 // number of frames per second (max rate)
+#define SCREEN_WIDTH 640
+#define SCREEN_DEPTH 400
+#define SCREEN_LEFT_EDGE 128
+#define SCREEN_RIGHT_EDGE (128 + SCREEN_WIDTH - 1)
+#define SCREEN_TOP_EDGE 128
+#define SCREEN_BOTTOM_EDGE (128 + SCREEN_DEPTH - 1)
 #define TYPE_FLOOR 1
 #define TYPE_MOUSE 2
 #define TYPE_SPRITE 3
@@ -78,25 +78,25 @@ namespace Sword1 {
 #define INS_talk 1
 
 #define TOTAL_pockets 52
-#define TOTAL_subjects (375-256+1)
+#define TOTAL_subjects (375 - 256 + 1)
 #define BASE_SUBJECT 256
 
-#define TOTAL_SECTIONS      150                     //number of sections, rooms + mega sections
-#define TOTAL_ROOMS         100                     //total number of rooms
-#define ITM_PER_SEC         0x10000                 //65536 items per section -> was originally called "SIZE"
-#define ITM_ID              0xFFFF                  //& with this -> originally "NuSIZE"
+#define TOTAL_SECTIONS 150 //number of sections, rooms + mega sections
+#define TOTAL_ROOMS 100 //total number of rooms
+#define ITM_PER_SEC 0x10000 //65536 items per section -> was originally called "SIZE"
+#define ITM_ID 0xFFFF //& with this -> originally "NuSIZE"
 
-#define MAX_text_obs    2           //text compacts
-#define TEXT_sect       149         //text compacts exist in section 149, probably after all the megas
+#define MAX_text_obs 2 //text compacts
+#define TEXT_sect 149 //text compacts exist in section 149, probably after all the megas
 
-#include "common/pack-start.h"  // START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 struct Header {
 	char type[6];
 	uint16 version;
-	uint32  comp_length;
-	char    compression[4];
-	uint32  decomp_length;
+	uint32 comp_length;
+	char compression[4];
+	uint32 decomp_length;
 } PACKED_STRUCT;
 
 struct FrameHeader {
@@ -132,7 +132,7 @@ struct WalkGridHeader {
 	int32 numNodes;
 } PACKED_STRUCT;
 
-#include "common/pack-end.h"    // END STRUCT PACKING
+#include "common/pack-end.h" // END STRUCT PACKING
 
 enum fileTypes {
 	TYPE_CD1 = 0,
@@ -144,10 +144,10 @@ enum fileTypes {
 };
 
 enum fileFlags {
-	FLAG_CD1     = (1 << TYPE_CD1),         // this file is on cd1
-	FLAG_CD2     = (1 << TYPE_CD2),         // this file is on cd2
-	FLAG_DEMO    = (1 << TYPE_DEMO),        // file for the demo version
-	FLAG_IMMED   = (1 << TYPE_IMMED),       // this file is needed immediately, game won't start without it
+	FLAG_CD1 = (1 << TYPE_CD1), // this file is on cd1
+	FLAG_CD2 = (1 << TYPE_CD2), // this file is on cd2
+	FLAG_DEMO = (1 << TYPE_DEMO), // file for the demo version
+	FLAG_IMMED = (1 << TYPE_IMMED), // this file is needed immediately, game won't start without it
 	FLAG_SPEECH1 = (1 << TYPE_SPEECH1),
 	FLAG_SPEECH2 = (1 << TYPE_SPEECH2)
 };
@@ -167,29 +167,29 @@ enum Language {
 	BS1_PORT
 };
 
-#define SAM     2162689
-#define PLAYER  8388608
-#define GEORGE  8388608
-#define NICO    8454144
-#define BENOIR  8585216
-#define ROSSO   8716288
-#define DUANE   8781824
-#define MOUE    9502720
-#define ALBERT  9568256
+#define SAM 2162689
+#define PLAYER 8388608
+#define GEORGE 8388608
+#define NICO 8454144
+#define BENOIR 8585216
+#define ROSSO 8716288
+#define DUANE 8781824
+#define MOUE 9502720
+#define ALBERT 9568256
 
-#define STAND       0
-#define UP          0
-#define UP_RIGHT    1
-#define U_R         1
-#define RIGHT       2
-#define DOWN_RIGHT  3
-#define D_R         3
-#define DOWN        4
-#define DOWN_LEFT   5
-#define D_L         5
-#define LEFT        6
-#define UP_LEFT     7
-#define U_L         7
+#define STAND 0
+#define UP 0
+#define UP_RIGHT 1
+#define U_R 1
+#define RIGHT 2
+#define DOWN_RIGHT 3
+#define D_R 3
+#define DOWN 4
+#define DOWN_LEFT 5
+#define D_L 5
+#define LEFT 6
+#define UP_LEFT 7
+#define U_L 7
 
 #define BEER_TOWEL 3
 #define HOTEL_KEY 4
@@ -296,7 +296,6 @@ enum Language {
 #define FLOOR_91 5963776
 #define FLOOR_99 6488064
 
-
 #define menu_bible 69
 #define menu_newspaper 1
 #define menu_hazel_wand 2
@@ -356,40 +355,40 @@ enum Language {
 #define menu_pipe 56
 #define menu_flashlight 57
 
-#define IT_MCODE                1               // Call an mcode routine
-#define IT_PUSHNUMBER           2               // push a number on the stack
-#define IT_PUSHVARIABLE         3               // push a variable on the stack
+#define IT_MCODE 1 // Call an mcode routine
+#define IT_PUSHNUMBER 2 // push a number on the stack
+#define IT_PUSHVARIABLE 3 // push a variable on the stack
 
-#define IT_FIRSTOPERATOR        4              // Operators come after this and must stay in the same order for precedence table
+#define IT_FIRSTOPERATOR 4 // Operators come after this and must stay in the same order for precedence table
 
-#define IT_NOTEQUAL             4
-#define IT_ISEQUAL              5
-#define IT_PLUS                 6
-#define IT_TIMES                7
-#define IT_ANDAND               8
-#define IT_OROR                 9
-#define IT_LESSTHAN             10
-#define IT_NOT                  11
-#define IT_MINUS                12
-#define IT_AND                  13
-#define IT_OR                   14
-#define IT_GTE          15      // >=
-#define IT_LTE          16      // <=
-#define IT_DEVIDE       17      // <=
-#define IT_GT           18      // >
+#define IT_NOTEQUAL 4
+#define IT_ISEQUAL 5
+#define IT_PLUS 6
+#define IT_TIMES 7
+#define IT_ANDAND 8
+#define IT_OROR 9
+#define IT_LESSTHAN 10
+#define IT_NOT 11
+#define IT_MINUS 12
+#define IT_AND 13
+#define IT_OR 14
+#define IT_GTE 15 // >=
+#define IT_LTE 16 // <=
+#define IT_DEVIDE 17 // <=
+#define IT_GT 18 // >
 
-#define IT_SCRIPTEND            20
-#define IT_POPVAR               21
-#define IT_POPLONGOFFSET        22
-#define IT_PUSHLONGOFFSET       23
-#define IT_SKIPONFALSE          24
-#define IT_SKIP                 25
-#define IT_SWITCH               26
-#define IT_SKIPONTRUE           27
-#define IT_PRINTF               28
-#define IT_RESTARTSCRIPT        30
-#define IT_POPWORDOFFSET        31
-#define IT_PUSHWORDOFFSET       32
+#define IT_SCRIPTEND 20
+#define IT_POPVAR 21
+#define IT_POPLONGOFFSET 22
+#define IT_PUSHLONGOFFSET 23
+#define IT_SKIPONFALSE 24
+#define IT_SKIP 25
+#define IT_SWITCH 26
+#define IT_SKIPONTRUE 27
+#define IT_PRINTF 28
+#define IT_RESTARTSCRIPT 30
+#define IT_POPWORDOFFSET 31
+#define IT_PUSHWORDOFFSET 32
 
 enum ScriptVariableNames {
 	RETURN_VALUE = 0,
@@ -1576,17 +1575,17 @@ enum ScriptVariableNames {
 #define SAND_25 1638407
 #define HOLDING_REPLICA_25 1638408
 #define GMASTER_79 5177345
-#define SCR_std_off (0*0x10000 + 6)
-#define SCR_exit0 (0*0x10000 + 7)
-#define SCR_exit1 (0*0x10000 + 8)
-#define SCR_exit2 (0*0x10000 + 9)
-#define SCR_exit3 (0*0x10000 + 10)
-#define SCR_exit4 (0*0x10000 + 11)
-#define SCR_exit5 (0*0x10000 + 12)
-#define SCR_exit6 (0*0x10000 + 13)
-#define SCR_exit7 (0*0x10000 + 14)
-#define SCR_exit8 (0*0x10000 + 15)
-#define SCR_exit9 (0*0x10000 + 16)
+#define SCR_std_off (0 * 0x10000 + 6)
+#define SCR_exit0 (0 * 0x10000 + 7)
+#define SCR_exit1 (0 * 0x10000 + 8)
+#define SCR_exit2 (0 * 0x10000 + 9)
+#define SCR_exit3 (0 * 0x10000 + 10)
+#define SCR_exit4 (0 * 0x10000 + 11)
+#define SCR_exit5 (0 * 0x10000 + 12)
+#define SCR_exit6 (0 * 0x10000 + 13)
+#define SCR_exit7 (0 * 0x10000 + 14)
+#define SCR_exit8 (0 * 0x10000 + 15)
+#define SCR_exit9 (0 * 0x10000 + 16)
 #define LEFT_SCROLL_POINTER 8388610
 #define RIGHT_SCROLL_POINTER 8388611
 #define FLOOR_63 4128768
@@ -1594,8 +1593,8 @@ enum ScriptVariableNames {
 #define GUARD_ROOF_63 4128781
 #define LEFT_TREE_POINTER_71 4653058
 #define RIGHT_TREE_POINTER_71 4653059
-#define SCR_menu_look (0*0x10000 + 24)
-#define SCR_icon_combine_script (0*0x10000 + 25)
+#define SCR_menu_look (0 * 0x10000 + 24)
+#define SCR_icon_combine_script (0 * 0x10000 + 25)
 
 } // End of namespace Sword1
 

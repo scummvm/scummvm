@@ -26,22 +26,22 @@ namespace BladeRunner {
 
 void SceneScriptMA07::InitializeScene() {
 	if (Game_Flag_Query(kFlagUG19toMA07)) {
-		Setup_Scene_Information(  6.75f, -172.43f, 356.0f, 997);
+		Setup_Scene_Information(6.75f, -172.43f, 356.0f, 997);
 		Game_Flag_Reset(kFlagUG19toMA07);
 		Game_Flag_Set(kFlagUG19Available);
 	} else if (Game_Flag_Query(kFlagPS14toMA07)) {
-		Setup_Scene_Information(-312.0f,  -162.8f, 180.0f,   0);
+		Setup_Scene_Information(-312.0f, -162.8f, 180.0f, 0);
 	} else {
-		Setup_Scene_Information( 104.0f, -162.16f,  56.0f, 519);
+		Setup_Scene_Information(104.0f, -162.16f, 56.0f, 519);
 	}
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxRAIN10, 100, 1, 1);
-	Ambient_Sounds_Add_Sound(kSfxCOLONY,  100, 300, 16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSPIN2B,   60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSPIN3A,   60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDER2,  60, 180, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDER3,  50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDER4,  50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxCOLONY, 100, 300, 16, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B, 60, 180, 16, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN3A, 60, 180, 16, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 60, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 
 	if (Global_Variable_Query(kVariableChapter) > 1) {
 		Scene_Exit_Add_2D_Exit(1, 0, 200, 50, 479, 3);
@@ -81,8 +81,7 @@ bool SceneScriptMA07::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 104.0f, -162.0f, 56.0f, 12, true, false, false)) {
 			if (Global_Variable_Query(kVariableChapter) == 4
-			 && Game_Flag_Query(kFlagUG18GuzzaScene)
-			) {
+			    && Game_Flag_Query(kFlagUG18GuzzaScene)) {
 				Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyStartChapter5);
 			} else {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
@@ -127,8 +126,7 @@ void SceneScriptMA07::SceneFrameAdvanced(int frame) {
 
 void SceneScriptMA07::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
 	if (actorId == kActorGaff
-	 && newGoal == kGoalGaffMA07Left
-	) {
+	    && newGoal == kGoalGaffMA07Left) {
 		Scene_Exits_Enable();
 	}
 }
@@ -143,16 +141,15 @@ void SceneScriptMA07::PlayerWalkedIn() {
 		Actor_Set_Goal_Number(kActorRachael, kGoalRachaelIsOutWalksToPoliceHQAct3);
 	} else if (_vm->_cutContent && Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutsideMcCoysBuildingAct4) {
 		Actor_Set_Goal_Number(kActorRachael, kGoalRachaelIsOutWalksToPoliceHQAct4);
-    }
+	}
 
 	if (Game_Flag_Query(kFlagMA06toMA07)) {
 		Game_Flag_Reset(kFlagMA06toMA07);
 	}
 
 	if (!Game_Flag_Query(kFlagMA07GaffTalk)
-	 &&  Game_Flag_Query(kFlagUG18GuzzaScene)
-	 &&  Global_Variable_Query(kVariableChapter) == 4
-	) {
+	    && Game_Flag_Query(kFlagUG18GuzzaScene)
+	    && Global_Variable_Query(kVariableChapter) == 4) {
 		Scene_Exits_Disable();
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
@@ -174,21 +171,18 @@ void SceneScriptMA07::PlayerWalkedIn() {
 		Set_Enter(kSetMA02_MA04, kSceneMA02);
 	}
 	//return false;
-
 }
 
 void SceneScriptMA07::PlayerWalkedOut() {
 	if (_vm->_cutContent) {
 		if (Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutsideMcCoysBuildingAct3
-			|| Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutWalksToPoliceHQAct3
-			|| Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutFleeingToPoliceHQAct3
-		) {
+		    || Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutWalksToPoliceHQAct3
+		    || Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutFleeingToPoliceHQAct3) {
 			Actor_Set_Goal_Number(kActorRachael, kGoalRachaelAtEndOfAct3IfNotMetWithMcCoy);
 		} else if (Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutResumesWalkToPoliceHQAct3) {
 			Actor_Set_Goal_Number(kActorRachael, kGoalRachaelAtEndOfAct3IfMetWithMcCoy);
 		} else if (Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutsideMcCoysBuildingAct4
-			|| Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutWalksToPoliceHQAct4
-		) {
+		           || Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutWalksToPoliceHQAct4) {
 			Actor_Set_Goal_Number(kActorRachael, kGoalRachaelAtEndOfAct4);
 		}
 	}

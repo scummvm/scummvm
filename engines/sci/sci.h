@@ -23,12 +23,12 @@
 #ifndef SCI_SCI_H
 #define SCI_SCI_H
 
-#include "engines/engine.h"
 #include "common/macresman.h"
-#include "common/util.h"
 #include "common/random.h"
-#include "sci/engine/vm_types.h"	// for Selector
-#include "sci/debug.h"	// for DebugState
+#include "common/util.h"
+#include "engines/engine.h"
+#include "sci/debug.h" // for DebugState
+#include "sci/engine/vm_types.h" // for Selector
 
 struct ADGameDescription;
 
@@ -46,20 +46,20 @@ struct ADGameDescription;
 namespace Sci {
 
 // GUI-options, primarily used by detection_tables.h
-#define GAMEOPTION_PREFER_DIGITAL_SFX       GUIO_GAMEOPTIONS1
-#define GAMEOPTION_ORIGINAL_SAVELOAD        GUIO_GAMEOPTIONS2
-#define GAMEOPTION_FB01_MIDI                GUIO_GAMEOPTIONS3
-#define GAMEOPTION_JONES_CDAUDIO            GUIO_GAMEOPTIONS4
-#define GAMEOPTION_KQ6_WINDOWS_CURSORS      GUIO_GAMEOPTIONS5
-#define GAMEOPTION_SQ4_SILVER_CURSORS       GUIO_GAMEOPTIONS6
-#define GAMEOPTION_EGA_UNDITHER             GUIO_GAMEOPTIONS7
+#define GAMEOPTION_PREFER_DIGITAL_SFX GUIO_GAMEOPTIONS1
+#define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS2
+#define GAMEOPTION_FB01_MIDI GUIO_GAMEOPTIONS3
+#define GAMEOPTION_JONES_CDAUDIO GUIO_GAMEOPTIONS4
+#define GAMEOPTION_KQ6_WINDOWS_CURSORS GUIO_GAMEOPTIONS5
+#define GAMEOPTION_SQ4_SILVER_CURSORS GUIO_GAMEOPTIONS6
+#define GAMEOPTION_EGA_UNDITHER GUIO_GAMEOPTIONS7
 // HIGH_RESOLUTION_GRAPHICS availability is checked for in SciEngine::run()
 #define GAMEOPTION_HIGH_RESOLUTION_GRAPHICS GUIO_GAMEOPTIONS8
 #define GAMEOPTION_ENABLE_BLACK_LINED_VIDEO GUIO_GAMEOPTIONS9
-#define GAMEOPTION_HQ_VIDEO                 GUIO_GAMEOPTIONS10
-#define GAMEOPTION_ENABLE_CENSORING         GUIO_GAMEOPTIONS11
-#define GAMEOPTION_LARRYSCALE               GUIO_GAMEOPTIONS12
-#define GAMEOPTION_UPSCALE_VIDEOS           GUIO_GAMEOPTIONS13
+#define GAMEOPTION_HQ_VIDEO GUIO_GAMEOPTIONS10
+#define GAMEOPTION_ENABLE_CENSORING GUIO_GAMEOPTIONS11
+#define GAMEOPTION_LARRYSCALE GUIO_GAMEOPTIONS12
+#define GAMEOPTION_UPSCALE_VIDEOS GUIO_GAMEOPTIONS13
 
 struct EngineState;
 class Vocabulary;
@@ -106,32 +106,32 @@ class GfxCursor32;
 
 // our engine debug levels
 enum kDebugLevels {
-	kDebugLevelError         = 1 << 0,
-	kDebugLevelNodes         = 1 << 1,
-	kDebugLevelGraphics      = 1 << 2,
-	kDebugLevelStrings       = 1 << 3,
-	kDebugLevelMemory        = 1 << 4,
-	kDebugLevelFuncCheck     = 1 << 5,
-	kDebugLevelBresen        = 1 << 6,
-	kDebugLevelSound         = 1 << 7,
-	kDebugLevelBaseSetter    = 1 << 8,
-	kDebugLevelParser        = 1 << 9,
-	kDebugLevelSaid          = 1 << 10,
-	kDebugLevelFile          = 1 << 11,
-	kDebugLevelTime          = 1 << 12,
-	kDebugLevelRoom          = 1 << 13,
-	kDebugLevelAvoidPath     = 1 << 14,
-	kDebugLevelDclInflate    = 1 << 15,
-	kDebugLevelVM            = 1 << 16,
-	kDebugLevelScripts       = 1 << 17,
-	kDebugLevelGC            = 1 << 18,
-	kDebugLevelResMan        = 1 << 19,
-	kDebugLevelOnStartup     = 1 << 20,
-	kDebugLevelDebugMode     = 1 << 21,
+	kDebugLevelError = 1 << 0,
+	kDebugLevelNodes = 1 << 1,
+	kDebugLevelGraphics = 1 << 2,
+	kDebugLevelStrings = 1 << 3,
+	kDebugLevelMemory = 1 << 4,
+	kDebugLevelFuncCheck = 1 << 5,
+	kDebugLevelBresen = 1 << 6,
+	kDebugLevelSound = 1 << 7,
+	kDebugLevelBaseSetter = 1 << 8,
+	kDebugLevelParser = 1 << 9,
+	kDebugLevelSaid = 1 << 10,
+	kDebugLevelFile = 1 << 11,
+	kDebugLevelTime = 1 << 12,
+	kDebugLevelRoom = 1 << 13,
+	kDebugLevelAvoidPath = 1 << 14,
+	kDebugLevelDclInflate = 1 << 15,
+	kDebugLevelVM = 1 << 16,
+	kDebugLevelScripts = 1 << 17,
+	kDebugLevelGC = 1 << 18,
+	kDebugLevelResMan = 1 << 19,
+	kDebugLevelOnStartup = 1 << 20,
+	kDebugLevelDebugMode = 1 << 21,
 	kDebugLevelScriptPatcher = 1 << 22,
-	kDebugLevelWorkarounds   = 1 << 23,
-	kDebugLevelVideo         = 1 << 24,
-	kDebugLevelGame          = 1 << 25
+	kDebugLevelWorkarounds = 1 << 23,
+	kDebugLevelVideo = 1 << 24,
+	kDebugLevelGame = 1 << 25
 };
 
 enum SciGameId {
@@ -152,7 +152,7 @@ enum SciGameId {
 	GID_FAIRYTALES,
 	GID_FREDDYPHARKAS,
 	GID_FUNSEEKER,
-	GID_GK1DEMO,	// We have a separate ID for GK1 demo, because it's actually a completely different game (SCI1.1 vs SCI2/SCI2.1)
+	GID_GK1DEMO, // We have a separate ID for GK1 demo, because it's actually a completely different game (SCI1.1 vs SCI2/SCI2.1)
 	GID_GK1,
 	GID_GK2,
 	GID_HOYLE1,
@@ -192,14 +192,14 @@ enum SciGameId {
 	GID_PQ2,
 	GID_PQ3,
 	GID_PQ4,
-	GID_PQ4DEMO,	// We have a separate ID for PQ4 demo, because it's actually a completely different game (SCI1.1 vs SCI2/SCI2.1)
+	GID_PQ4DEMO, // We have a separate ID for PQ4 demo, because it's actually a completely different game (SCI1.1 vs SCI2/SCI2.1)
 	GID_PQSWAT,
 	GID_QFG1,
 	GID_QFG1VGA,
 	GID_QFG2,
 	GID_QFG3,
 	GID_QFG4,
-	GID_QFG4DEMO,	// We have a separate ID for QFG4 demo, because it's actually a completely different game (SCI1.1 vs SCI2/SCI2.1)
+	GID_QFG4DEMO, // We have a separate ID for QFG4 demo, because it's actually a completely different game (SCI1.1 vs SCI2/SCI2.1)
 	GID_RAMA,
 	GID_SHIVERS,
 	//GID_SHIVERS2,	// Not SCI
@@ -249,6 +249,7 @@ enum kLanguage {
 
 class SciEngine : public Engine {
 	friend class Console;
+
 public:
 	SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gameId);
 	~SciEngine();
@@ -358,7 +359,7 @@ public:
 	GfxMenu *_gfxMenu; // Menu for 16-bit gfx
 	GfxPalette *_gfxPalette16;
 	GfxPalette32 *_gfxPalette32; // Palette for 32-bit gfx
-	GfxRemap *_gfxRemap16;	// Remapping for the QFG4 demo
+	GfxRemap *_gfxRemap16; // Remapping for the QFG4 demo
 	GfxRemap32 *_gfxRemap32; // Remapping for 32-bit gfx
 	GfxPaint16 *_gfxPaint16; // Painting in 16-bit gfx
 	GfxPaint32 *_gfxPaint32; // Painting in 32-bit gfx
@@ -440,7 +441,6 @@ private:
 	Common::MacResManager _macExecutable;
 	bool _forceHiresGraphics; // user-option for GK1, KQ6, PQ4
 };
-
 
 /**
  * Global instance of the SciEngine class, similar to g_engine.

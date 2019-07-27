@@ -25,9 +25,9 @@
 namespace BladeRunner {
 
 enum kUG01Loops {
-	kUG01LoopMainLoop         = 0, //   0 -  60
+	kUG01LoopMainLoop = 0, //   0 -  60
 	kUG01LoopSteamDissapating = 2, //  61 - 120
-	kUG01LoopMainLoopNoSteam  = 3  // 121 - 181
+	kUG01LoopMainLoopNoSteam = 3 // 121 - 181
 };
 
 void SceneScriptUG01::InitializeScene() {
@@ -40,8 +40,8 @@ void SceneScriptUG01::InitializeScene() {
 		Setup_Scene_Information(-126.0f, -50.13f, -286.0f, 0);
 	}
 	Scene_Exit_Add_2D_Exit(0, 280, 204, 330, 265, 0);
-	Scene_Exit_Add_2D_Exit(1, 144,   0, 210, 104, 0);
-	Scene_Exit_Add_2D_Exit(2,   0, 173, 139, 402, 3);
+	Scene_Exit_Add_2D_Exit(1, 144, 0, 210, 104, 0);
+	Scene_Exit_Add_2D_Exit(2, 0, 173, 139, 402, 3);
 
 #if BLADERUNNER_ORIGINAL_BUGS
 	Ambient_Sounds_Add_Looping_Sound(kSfxSTMLOOP7, 28, 0, 1);
@@ -50,26 +50,26 @@ void SceneScriptUG01::InitializeScene() {
 		Ambient_Sounds_Add_Looping_Sound(kSfxSTMLOOP7, 28, 0, 1);
 	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
-	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1,   40, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED2,   40, 0, 1);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP1,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP3,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxYELL1M3,  2, 120, 10, 11,   20, 100,    0,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxGRUNT2M1, 2, 120, 10, 11,   20, 100,    0,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxGRUNT2M2, 2, 120, 10, 11,   20, 100,    0,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxGRUNT1M3, 2, 120, 10, 11,   20, 100,    0,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP4,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP5,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxPIPER1,   2, 190, 12, 16,    0, 100,    0,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSQUEAK2,  2, 190, 12, 16,    0, 100,    0,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSQUEAK5,  2, 190, 12, 16,    0, 100,    0,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBANG1,    2, 190, 12, 16,    0, 100,    0,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBANG4,    2, 190, 12, 16,    0, 100,    0,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBANG5,    2, 190, 12, 16,    0, 100,    0,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBANG6,    2, 190, 12, 16,    0, 100,    0,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN1,   5,  50, 17, 37,    0, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN2,   5,  50, 17, 37,    0, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN3,   5,  50, 17, 37,    0, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1, 40, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED2, 40, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP1, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP3, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxYELL1M3, 2, 120, 10, 11, 20, 100, 0, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT2M1, 2, 120, 10, 11, 20, 100, 0, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT2M2, 2, 120, 10, 11, 20, 100, 0, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT1M3, 2, 120, 10, 11, 20, 100, 0, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP4, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP5, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPIPER1, 2, 190, 12, 16, 0, 100, 0, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSQUEAK2, 2, 190, 12, 16, 0, 100, 0, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSQUEAK5, 2, 190, 12, 16, 0, 100, 0, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBANG1, 2, 190, 12, 16, 0, 100, 0, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBANG4, 2, 190, 12, 16, 0, 100, 0, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBANG5, 2, 190, 12, 16, 0, 100, 0, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBANG6, 2, 190, 12, 16, 0, 100, 0, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1, 5, 50, 17, 37, 0, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2, 5, 50, 17, 37, 0, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN3, 5, 50, 17, 37, 0, 100, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagUG01SteamOff)) {
 		Scene_Loop_Set_Default(kUG01LoopMainLoopNoSteam);
@@ -98,18 +98,17 @@ bool SceneScriptUG01::MouseClick(int x, int y) {
 bool SceneScriptUG01::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("PIPES_FG_LFT", objectName)) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -9.0f, -50.13f, -148.0f, 0, true, false, false)
-		 && !Game_Flag_Query(kFlagUG01SteamOff)
-		) {
+		    && !Game_Flag_Query(kFlagUG01SteamOff)) {
 #if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Says(kActorMcCoy, 8525, 13);
 			Scene_Loop_Set_Default(kUG01LoopMainLoopNoSteam);
 			Scene_Loop_Start_Special(kSceneLoopModeOnce, kUG01LoopSteamDissapating, true);
 #else
-			Sound_Play(kSfxSQUEAK1,  40, 0, 0, 50);
+			Sound_Play(kSfxSQUEAK1, 40, 0, 0, 50);
 			Screen_Effect_Skip(0);
 			Scene_Loop_Set_Default(kUG01LoopMainLoopNoSteam);
 			Scene_Loop_Start_Special(kSceneLoopModeOnce, kUG01LoopSteamDissapating, false);
-			Sound_Play(kSfxSTEAM6A,  40, 0, 0, 50);
+			Sound_Play(kSfxSTEAM6A, 40, 0, 0, 50);
 			Ambient_Sounds_Remove_Looping_Sound(kSfxSTMLOOP7, 2);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 			Game_Flag_Set(kFlagUG01SteamOff);
@@ -165,8 +164,7 @@ bool SceneScriptUG01::ClickedOn2DRegion(int region) {
 
 void SceneScriptUG01::SceneFrameAdvanced(int frame) {
 	if (frame >= 61
-	 && frame <= 120
-	) {
+	    && frame <= 120) {
 		float density = (120 - frame) / 29500.0f; // why is this so big?
 		Set_Fog_Density("BoxFog01", density);
 		Set_Fog_Density("BoxFog02", density);
@@ -215,6 +213,5 @@ void SceneScriptUG01::PlayerWalkedOut() {
 
 void SceneScriptUG01::DialogueQueueFlushed(int a1) {
 }
-
 
 } // End of namespace BladeRunner

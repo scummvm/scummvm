@@ -128,12 +128,12 @@ Point CPetSlider::getThumbCentroidPos() const {
 
 	if (_orientation & ORIENTATION_HORIZONTAL) {
 		pt = Point(_slidingRect.left + _sliderOffset,
-			_slidingRect.top + _slidingRect.height() / 2);
+		           _slidingRect.top + _slidingRect.height() / 2);
 	}
 
 	if (_orientation & ORIENTATION_VERTICAL) {
 		pt = Point(_slidingRect.left + _slidingRect.width() / 2,
-			_slidingRect.top + _sliderOffset);
+		           _slidingRect.top + _sliderOffset);
 	}
 
 	return pt;

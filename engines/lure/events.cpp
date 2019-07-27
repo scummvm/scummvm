@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "common/events.h"
 
 #include "graphics/cursorman.h"
@@ -53,8 +52,8 @@ Mouse::~Mouse() {
 }
 
 void Mouse::handleEvent(Common::Event event) {
-	_x = (int16) event.mouse.x;
-	_y = (int16) event.mouse.y;
+	_x = (int16)event.mouse.x;
+	_y = (int16)event.mouse.y;
 
 	switch (event.type) {
 	case Common::EVENT_LBUTTONDOWN:
@@ -79,7 +78,6 @@ void Mouse::handleEvent(Common::Event event) {
 		break;
 	}
 }
-
 
 void Mouse::cursorOn() {
 	CursorMan.showMouse(true);
@@ -156,9 +154,9 @@ Events &Events::getReference() {
 	return *int_events;
 }
 
-
 bool Events::pollEvent() {
-	if (!g_system->getEventManager()->pollEvent(_event)) return false;
+	if (!g_system->getEventManager()->pollEvent(_event))
+		return false;
 
 	// Handle keypress
 	switch (_event.type) {
@@ -185,12 +183,11 @@ void Events::waitForPress() {
 	bool keyButton = false;
 	while (!keyButton) {
 		while (pollEvent()) {
-			if ((_event.type == Common::EVENT_QUIT) || (_event.type == Common::EVENT_RTL)) return;
+			if ((_event.type == Common::EVENT_QUIT) || (_event.type == Common::EVENT_RTL))
+				return;
 			else if ((_event.type == Common::EVENT_KEYDOWN) && (_event.kbd.ascii != 0))
 				keyButton = true;
-			else if ((_event.type == Common::EVENT_LBUTTONDOWN) ||
-				(_event.type == Common::EVENT_MBUTTONDOWN) ||
-				(_event.type == Common::EVENT_RBUTTONDOWN)) {
+			else if ((_event.type == Common::EVENT_LBUTTONDOWN) || (_event.type == Common::EVENT_MBUTTONDOWN) || (_event.type == Common::EVENT_RBUTTONDOWN)) {
 				keyButton = true;
 				Mouse::getReference().waitForRelease();
 			}
@@ -209,16 +206,17 @@ bool Events::interruptableDelay(uint32 milliseconds) {
 	uint32 delayCtr = g_system->getMillis() + milliseconds;
 
 	while (g_system->getMillis() < delayCtr) {
-		if (engine.shouldQuit()) return true;
+		if (engine.shouldQuit())
+			return true;
 
 		if (events.pollEvent()) {
-			if (((events.type() == Common::EVENT_KEYDOWN) && (events.event().kbd.ascii != 0)) ||
-				(events.type() == Common::EVENT_LBUTTONDOWN))
+			if (((events.type() == Common::EVENT_KEYDOWN) && (events.event().kbd.ascii != 0)) || (events.type() == Common::EVENT_LBUTTONDOWN))
 				return true;
 		}
 
 		uint32 delayAmount = delayCtr - g_system->getMillis();
-		if (delayAmount > 10) delayAmount = 10;
+		if (delayAmount > 10)
+			delayAmount = 10;
 		g_system->delayMillis(delayAmount);
 	}
 	return false;

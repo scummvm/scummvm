@@ -136,4 +136,3 @@ static const char *const k2IngameTlkDemoStringsDOSCDDemoEnglish[6] = {
 };
 
 static const StringListProvider k2IngameTlkDemoStringsDOSCDDemoEnglishProvider = { ARRAYSIZE(k2IngameTlkDemoStringsDOSCDDemoEnglish), k2IngameTlkDemoStringsDOSCDDemoEnglish };
-

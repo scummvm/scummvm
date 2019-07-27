@@ -20,11 +20,10 @@
  *
  */
 
-
+#include "queen/journal.h"
 #include "common/error.h"
 #include "common/events.h"
 #include "common/system.h"
-#include "queen/journal.h"
 
 #include "queen/bankman.h"
 #include "queen/display.h"
@@ -39,7 +38,7 @@
 namespace Queen {
 
 Journal::Journal(QueenEngine *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 	_currentSavePage = 0;
 	_currentSaveSlot = 0;
 }
@@ -378,7 +377,7 @@ void Journal::handleMouseDown(int x, int y) {
 	update();
 }
 
-static void removeLeadingAndTrailingSpaces(char *dst, size_t dstSize, const char* src) {
+static void removeLeadingAndTrailingSpaces(char *dst, size_t dstSize, const char *src) {
 	assert(dstSize > 0);
 	size_t srcLen = strlen(src);
 	if (0 == srcLen) {
@@ -509,8 +508,10 @@ void Journal::drawInfoPanel() {
 	case 'E':
 		_vm->display()->setTextCentered(144, "English", false);
 		break;
-	case 'F' :
-		_vm->display()->setTextCentered(144, "Fran\x87""ais", false);
+	case 'F':
+		_vm->display()->setTextCentered(144, "Fran\x87"
+		                                     "ais",
+		                                false);
 		break;
 	case 'G':
 		_vm->display()->setTextCentered(144, "Deutsch", false);
@@ -522,7 +523,9 @@ void Journal::drawInfoPanel() {
 		_vm->display()->setTextCentered(144, "Italiano", false);
 		break;
 	case 'S':
-		_vm->display()->setTextCentered(144, "Espa\xA4""ol", false);
+		_vm->display()->setTextCentered(144, "Espa\xA4"
+		                                     "ol",
+		                                false);
 		break;
 	}
 	char versionId[13];
@@ -559,9 +562,7 @@ void Journal::updateTextField(uint16 ascii, int keycode) {
 		}
 		break;
 	default:
-		if (Common::isPrint((char)ascii) &&
-			_textField.textCharsCount < (sizeof(_textField.text) - 1) &&
-			_vm->display()->textWidth(_textField.text) < _textField.w) {
+		if (Common::isPrint((char)ascii) && _textField.textCharsCount < (sizeof(_textField.text) - 1) && _vm->display()->textWidth(_textField.text) < _textField.w) {
 			_textField.text[_textField.textCharsCount] = (char)ascii;
 			++_textField.textCharsCount;
 			dirty = true;
@@ -581,37 +582,37 @@ void Journal::closeTextField() {
 }
 
 const Journal::Zone Journal::_zones[] = {
-	{ ZN_REVIEW_ENTRY,  32,   8,  96,  40 },
-	{ ZN_MAKE_ENTRY,    32,  56,  96,  88 }, // == ZN_YES
-	{ ZN_CLOSE,         32, 104,  96, 136 }, // == ZN_NO
-	{ ZN_GIVEUP,        32, 152,  96, 184 },
-	{ ZN_TEXT_SPEED,   136, 169, 265, 176 },
-	{ ZN_SFX_TOGGLE,   197, 155, 231, 164 },
+	{ ZN_REVIEW_ENTRY, 32, 8, 96, 40 },
+	{ ZN_MAKE_ENTRY, 32, 56, 96, 88 }, // == ZN_YES
+	{ ZN_CLOSE, 32, 104, 96, 136 }, // == ZN_NO
+	{ ZN_GIVEUP, 32, 152, 96, 184 },
+	{ ZN_TEXT_SPEED, 136, 169, 265, 176 },
+	{ ZN_SFX_TOGGLE, 197, 155, 231, 164 },
 	{ ZN_MUSIC_VOLUME, 136, 182, 265, 189 },
-	{ ZN_DESC_1,       131,   7, 290,  18 },
-	{ ZN_DESC_2,       131,  20, 290,  31 },
-	{ ZN_DESC_3,       131,  33, 290,  44 },
-	{ ZN_DESC_4,       131,  46, 290,  57 },
-	{ ZN_DESC_5,       131,  59, 290,  70 },
-	{ ZN_DESC_6,       131,  72, 290,  83 },
-	{ ZN_DESC_7,       131,  85, 290,  96 },
-	{ ZN_DESC_8,       131,  98, 290, 109 },
-	{ ZN_DESC_9,       131, 111, 290, 122 },
-	{ ZN_DESC_10,      131, 124, 290, 135 },
-	{ ZN_PAGE_A,       300,   4, 319,  17 },
-	{ ZN_PAGE_B,       300,  19, 319,  32 },
-	{ ZN_PAGE_C,       300,  34, 319,  47 },
-	{ ZN_PAGE_D,       300,  49, 319,  62 },
-	{ ZN_PAGE_E,       300,  64, 319,  77 },
-	{ ZN_PAGE_F,       300,  79, 319,  92 },
-	{ ZN_PAGE_G,       300,  94, 319, 107 },
-	{ ZN_PAGE_H,       300, 109, 319, 122 },
-	{ ZN_PAGE_I,       300, 124, 319, 137 },
-	{ ZN_PAGE_J,       300, 139, 319, 152 },
-	{ ZN_INFO_BOX,     273, 146, 295, 189 },
+	{ ZN_DESC_1, 131, 7, 290, 18 },
+	{ ZN_DESC_2, 131, 20, 290, 31 },
+	{ ZN_DESC_3, 131, 33, 290, 44 },
+	{ ZN_DESC_4, 131, 46, 290, 57 },
+	{ ZN_DESC_5, 131, 59, 290, 70 },
+	{ ZN_DESC_6, 131, 72, 290, 83 },
+	{ ZN_DESC_7, 131, 85, 290, 96 },
+	{ ZN_DESC_8, 131, 98, 290, 109 },
+	{ ZN_DESC_9, 131, 111, 290, 122 },
+	{ ZN_DESC_10, 131, 124, 290, 135 },
+	{ ZN_PAGE_A, 300, 4, 319, 17 },
+	{ ZN_PAGE_B, 300, 19, 319, 32 },
+	{ ZN_PAGE_C, 300, 34, 319, 47 },
+	{ ZN_PAGE_D, 300, 49, 319, 62 },
+	{ ZN_PAGE_E, 300, 64, 319, 77 },
+	{ ZN_PAGE_F, 300, 79, 319, 92 },
+	{ ZN_PAGE_G, 300, 94, 319, 107 },
+	{ ZN_PAGE_H, 300, 109, 319, 122 },
+	{ ZN_PAGE_I, 300, 124, 319, 137 },
+	{ ZN_PAGE_J, 300, 139, 319, 152 },
+	{ ZN_INFO_BOX, 273, 146, 295, 189 },
 	{ ZN_MUSIC_TOGGLE, 109, 181, 135, 190 },
 	{ ZN_VOICE_TOGGLE, 134, 155, 168, 164 },
-	{ ZN_TEXT_TOGGLE,  109, 168, 135, 177 }
+	{ ZN_TEXT_TOGGLE, 109, 168, 135, 177 }
 };
 
 } // End of namespace Queen

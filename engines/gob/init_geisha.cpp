@@ -22,15 +22,16 @@
 
 #include "common/endian.h"
 
+#include "gob/draw.h"
+#include "gob/global.h"
 #include "gob/gob.h"
 #include "gob/init.h"
-#include "gob/global.h"
-#include "gob/draw.h"
 #include "gob/video.h"
 
 namespace Gob {
 
-Init_Geisha::Init_Geisha(GobEngine *vm) : Init_v1(vm) {
+Init_Geisha::Init_Geisha(GobEngine *vm)
+  : Init_v1(vm) {
 }
 
 Init_Geisha::~Init_Geisha() {
@@ -39,9 +40,9 @@ Init_Geisha::~Init_Geisha() {
 void Init_Geisha::initVideo() {
 	Init_v1::initVideo();
 
-	_vm->_draw->_cursorWidth       = 16;
-	_vm->_draw->_cursorHeight      = 23;
-	_vm->_draw->_transparentCursor =  1;
+	_vm->_draw->_cursorWidth = 16;
+	_vm->_draw->_cursorHeight = 23;
+	_vm->_draw->_transparentCursor = 1;
 }
 
 } // End of namespace Gob

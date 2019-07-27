@@ -20,8 +20,8 @@
  *
  */
 
-#include "mohawk/cstime.h"
 #include "mohawk/cstime_graphics.h"
+#include "mohawk/cstime.h"
 #include "mohawk/resource.h"
 
 #include "common/system.h"
@@ -29,7 +29,9 @@
 
 namespace Mohawk {
 
-CSTimeGraphics::CSTimeGraphics(MohawkEngine_CSTime *vm) : GraphicsManager(), _vm(vm) {
+CSTimeGraphics::CSTimeGraphics(MohawkEngine_CSTime *vm)
+  : GraphicsManager()
+  , _vm(vm) {
 	_bmpDecoder = new MohawkBitmap();
 
 	initGraphics(640, 480);

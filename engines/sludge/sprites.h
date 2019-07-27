@@ -71,10 +71,10 @@ public:
 	}
 
 	void setColor(byte red, byte green, byte blue) {
-			originalRed = red;
-			originalGreen = green;
-			originalBlue = blue;
-		}
+		originalRed = red;
+		originalGreen = green;
+		originalBlue = blue;
+	}
 };
 
 struct SpriteBank {
@@ -93,8 +93,14 @@ struct SpriteDisplay {
 	Graphics::FLIP_FLAGS flip;
 	Graphics::Surface *surface;
 
-	SpriteDisplay(int xpos, int ypos, Graphics::FLIP_FLAGS f, Graphics::Surface *ptr, int w = -1, int h = 1, bool free = false) :
-			x(xpos), y(ypos), flip(f), surface(ptr), width(w), height(h), freeAfterUse(free) {
+	SpriteDisplay(int xpos, int ypos, Graphics::FLIP_FLAGS f, Graphics::Surface *ptr, int w = -1, int h = 1, bool free = false)
+	  : x(xpos)
+	  , y(ypos)
+	  , flip(f)
+	  , surface(ptr)
+	  , width(w)
+	  , height(h)
+	  , freeAfterUse(free) {
 	}
 };
 

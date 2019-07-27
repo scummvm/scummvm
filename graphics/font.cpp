@@ -38,210 +38,212 @@ Common::Rect Font::getBoundingBox(uint32 chr) const {
 
 namespace {
 
-template<class StringType>
-Common::Rect getBoundingBoxImpl(const Font &font, const StringType &str, int x, int y, int w, TextAlign align, int deltax) {
-	// We follow the logic of drawStringImpl here. The only exception is
-	// that we do allow an empty width to be specified here. This allows us
-	// to obtain the complete bounding box of a string.
-	const int leftX = x, rightX = w ? (x + w) : 0x7FFFFFFF;
-	int width = font.getStringWidth(str);
+	template <class StringType>
+	Common::Rect getBoundingBoxImpl(const Font &font, const StringType &str, int x, int y, int w, TextAlign align, int deltax) {
+		// We follow the logic of drawStringImpl here. The only exception is
+		// that we do allow an empty width to be specified here. This allows us
+		// to obtain the complete bounding box of a string.
+		const int leftX = x, rightX = w ? (x + w) : 0x7FFFFFFF;
+		int width = font.getStringWidth(str);
 
-	if (align == kTextAlignCenter)
-		x = x + (w - width)/2;
-	else if (align == kTextAlignRight)
-		x = x + w - width;
-	x += deltax;
+		if (align == kTextAlignCenter)
+			x = x + (w - width) / 2;
+		else if (align == kTextAlignRight)
+			x = x + w - width;
+		x += deltax;
 
-	bool first = true;
-	Common::Rect bbox;
+		bool first = true;
+		Common::Rect bbox;
 
-	typename StringType::unsigned_type last = 0;
-	for (typename StringType::const_iterator i = str.begin(), end = str.end(); i != end; ++i) {
-		const typename StringType::unsigned_type cur = *i;
-		x += font.getKerningOffset(last, cur);
-		last = cur;
+		typename StringType::unsigned_type last = 0;
+		for (typename StringType::const_iterator i = str.begin(), end = str.end(); i != end; ++i) {
+			const typename StringType::unsigned_type cur = *i;
+			x += font.getKerningOffset(last, cur);
+			last = cur;
 
-		Common::Rect charBox = font.getBoundingBox(cur);
-		if (x + charBox.right > rightX)
-			break;
-		if (x + charBox.right >= leftX) {
-			charBox.translate(x, y);
-			if (first) {
-				bbox = charBox;
-				first = false;
-			} else {
-				bbox.extend(charBox);
-			}
-		}
-
-		x += font.getCharWidth(cur);
-	}
-
-	return bbox;
-}
-
-template<class StringType>
-int getStringWidthImpl(const Font &font, const StringType &str) {
-	int space = 0;
-	typename StringType::unsigned_type last = 0;
-
-	for (uint i = 0; i < str.size(); ++i) {
-		const typename StringType::unsigned_type cur = str[i];
-		space += font.getCharWidth(cur) + font.getKerningOffset(last, cur);
-		last = cur;
-	}
-
-	return space;
-}
-
-template<class StringType>
-void drawStringImpl(const Font &font, Surface *dst, const StringType &str, int x, int y, int w, uint32 color, TextAlign align, int deltax) {
-	// The logic in getBoundingImpl is the same as we use here. In case we
-	// ever change something here we will need to change it there too.
-	assert(dst != 0);
-
-	const int leftX = x, rightX = x + w;
-	int width = font.getStringWidth(str);
-
-	if (align == kTextAlignCenter)
-		x = x + (w - width)/2;
-	else if (align == kTextAlignRight)
-		x = x + w - width;
-	x += deltax;
-
-	typename StringType::unsigned_type last = 0;
-	for (typename StringType::const_iterator i = str.begin(), end = str.end(); i != end; ++i) {
-		const typename StringType::unsigned_type cur = *i;
-		x += font.getKerningOffset(last, cur);
-		last = cur;
-
-		Common::Rect charBox = font.getBoundingBox(cur);
-		if (x + charBox.right > rightX)
-			break;
-		if (x + charBox.right >= leftX)
-			font.drawChar(dst, cur, x, y, color);
-
-		x += font.getCharWidth(cur);
-	}
-}
-
-template<class StringType>
-struct WordWrapper {
-	Common::Array<StringType> &lines;
-	int actualMaxLineWidth;
-
-	WordWrapper(Common::Array<StringType> &l) : lines(l), actualMaxLineWidth(0) {
-	}
-
-	void add(StringType &line, int &w) {
-		if (actualMaxLineWidth < w)
-			actualMaxLineWidth = w;
-
-		lines.push_back(line);
-
-		line.clear();
-		w = 0;
-	}
-};
-
-template<class StringType>
-int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Common::Array<StringType> &lines, int initWidth) {
-	WordWrapper<StringType> wrapper(lines);
-	StringType line;
-	StringType tmpStr;
-	int lineWidth = initWidth;
-	int tmpWidth = 0;
-
-	// The rough idea behind this algorithm is as follows:
-	// We accumulate characters into the string tmpStr. Whenever a full word
-	// has been gathered together this way, we 'commit' it to the line buffer
-	// 'line', i.e. we add tmpStr to the end of line, then clear it. Before
-	// we do that, we check whether it would cause 'line' to exceed maxWidth;
-	// in that case, we first add line to lines, then reset it.
-	//
-	// If a newline character is read, then we also add line to lines and clear it.
-	//
-	// Special care has to be taken to account for 'words' that exceed the width
-	// of a line. If we encounter such a word, we have to wrap it over multiple
-	// lines.
-
-	typename StringType::unsigned_type last = 0;
-	for (typename StringType::const_iterator x = str.begin(); x != str.end(); ++x) {
-		typename StringType::unsigned_type c = *x;
-
-		// Convert Windows and Mac line breaks into plain \n
-		if (c == '\r') {
-			if (x != str.end() && *(x + 1) == '\n') {
-				++x;
-			}
-			c = '\n';
-		}
-
-		const int currentCharWidth = font.getCharWidth(c);
-		const int w = currentCharWidth + font.getKerningOffset(last, c);
-		last = c;
-		const bool wouldExceedWidth = (lineWidth + tmpWidth + w > maxWidth);
-
-		// If this char is a whitespace, then it represents a potential
-		// 'wrap point' where wrapping could take place. Everything that
-		// came before it can now safely be added to the line, as we know
-		// that it will not have to be wrapped.
-		if (Common::isSpace(c)) {
-			line += tmpStr;
-			lineWidth += tmpWidth;
-
-			tmpStr.clear();
-			tmpWidth = 0;
-
-			// If we encounter a line break (\n), or if the new space would
-			// cause the line to overflow: start a new line
-			if (c == '\n' || wouldExceedWidth) {
-				wrapper.add(line, lineWidth);
-				continue;
-			}
-		}
-
-		// If the max line width would be exceeded by adding this char,
-		// insert a line break.
-		if (wouldExceedWidth) {
-			// Commit what we have so far, *if* we have anything.
-			// If line is empty, then we are looking at a word
-			// which exceeds the maximum line width.
-			if (lineWidth > 0) {
-				wrapper.add(line, lineWidth);
-				// Trim left side
-				while (tmpStr.size() && Common::isSpace(tmpStr[0])) {
-					tmpStr.deleteChar(0);
-					// This is not very fast, but it is the simplest way to
-					// assure we do not mess something up because of kerning.
-					tmpWidth = font.getStringWidth(tmpStr);
+			Common::Rect charBox = font.getBoundingBox(cur);
+			if (x + charBox.right > rightX)
+				break;
+			if (x + charBox.right >= leftX) {
+				charBox.translate(x, y);
+				if (first) {
+					bbox = charBox;
+					first = false;
+				} else {
+					bbox.extend(charBox);
 				}
+			}
 
-				if (tmpStr.empty()) {
-					// If tmpStr is empty, we might have removed the space before 'c'.
-					// That means we have to recompute the kerning.
+			x += font.getCharWidth(cur);
+		}
 
-					tmpWidth += currentCharWidth + font.getKerningOffset(0, c);
-					tmpStr += c;
+		return bbox;
+	}
+
+	template <class StringType>
+	int getStringWidthImpl(const Font &font, const StringType &str) {
+		int space = 0;
+		typename StringType::unsigned_type last = 0;
+
+		for (uint i = 0; i < str.size(); ++i) {
+			const typename StringType::unsigned_type cur = str[i];
+			space += font.getCharWidth(cur) + font.getKerningOffset(last, cur);
+			last = cur;
+		}
+
+		return space;
+	}
+
+	template <class StringType>
+	void drawStringImpl(const Font &font, Surface *dst, const StringType &str, int x, int y, int w, uint32 color, TextAlign align, int deltax) {
+		// The logic in getBoundingImpl is the same as we use here. In case we
+		// ever change something here we will need to change it there too.
+		assert(dst != 0);
+
+		const int leftX = x, rightX = x + w;
+		int width = font.getStringWidth(str);
+
+		if (align == kTextAlignCenter)
+			x = x + (w - width) / 2;
+		else if (align == kTextAlignRight)
+			x = x + w - width;
+		x += deltax;
+
+		typename StringType::unsigned_type last = 0;
+		for (typename StringType::const_iterator i = str.begin(), end = str.end(); i != end; ++i) {
+			const typename StringType::unsigned_type cur = *i;
+			x += font.getKerningOffset(last, cur);
+			last = cur;
+
+			Common::Rect charBox = font.getBoundingBox(cur);
+			if (x + charBox.right > rightX)
+				break;
+			if (x + charBox.right >= leftX)
+				font.drawChar(dst, cur, x, y, color);
+
+			x += font.getCharWidth(cur);
+		}
+	}
+
+	template <class StringType>
+	struct WordWrapper {
+		Common::Array<StringType> &lines;
+		int actualMaxLineWidth;
+
+		WordWrapper(Common::Array<StringType> &l)
+		  : lines(l)
+		  , actualMaxLineWidth(0) {
+		}
+
+		void add(StringType &line, int &w) {
+			if (actualMaxLineWidth < w)
+				actualMaxLineWidth = w;
+
+			lines.push_back(line);
+
+			line.clear();
+			w = 0;
+		}
+	};
+
+	template <class StringType>
+	int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Common::Array<StringType> &lines, int initWidth) {
+		WordWrapper<StringType> wrapper(lines);
+		StringType line;
+		StringType tmpStr;
+		int lineWidth = initWidth;
+		int tmpWidth = 0;
+
+		// The rough idea behind this algorithm is as follows:
+		// We accumulate characters into the string tmpStr. Whenever a full word
+		// has been gathered together this way, we 'commit' it to the line buffer
+		// 'line', i.e. we add tmpStr to the end of line, then clear it. Before
+		// we do that, we check whether it would cause 'line' to exceed maxWidth;
+		// in that case, we first add line to lines, then reset it.
+		//
+		// If a newline character is read, then we also add line to lines and clear it.
+		//
+		// Special care has to be taken to account for 'words' that exceed the width
+		// of a line. If we encounter such a word, we have to wrap it over multiple
+		// lines.
+
+		typename StringType::unsigned_type last = 0;
+		for (typename StringType::const_iterator x = str.begin(); x != str.end(); ++x) {
+			typename StringType::unsigned_type c = *x;
+
+			// Convert Windows and Mac line breaks into plain \n
+			if (c == '\r') {
+				if (x != str.end() && *(x + 1) == '\n') {
+					++x;
+				}
+				c = '\n';
+			}
+
+			const int currentCharWidth = font.getCharWidth(c);
+			const int w = currentCharWidth + font.getKerningOffset(last, c);
+			last = c;
+			const bool wouldExceedWidth = (lineWidth + tmpWidth + w > maxWidth);
+
+			// If this char is a whitespace, then it represents a potential
+			// 'wrap point' where wrapping could take place. Everything that
+			// came before it can now safely be added to the line, as we know
+			// that it will not have to be wrapped.
+			if (Common::isSpace(c)) {
+				line += tmpStr;
+				lineWidth += tmpWidth;
+
+				tmpStr.clear();
+				tmpWidth = 0;
+
+				// If we encounter a line break (\n), or if the new space would
+				// cause the line to overflow: start a new line
+				if (c == '\n' || wouldExceedWidth) {
+					wrapper.add(line, lineWidth);
 					continue;
 				}
-			} else {
-				wrapper.add(tmpStr, tmpWidth);
 			}
+
+			// If the max line width would be exceeded by adding this char,
+			// insert a line break.
+			if (wouldExceedWidth) {
+				// Commit what we have so far, *if* we have anything.
+				// If line is empty, then we are looking at a word
+				// which exceeds the maximum line width.
+				if (lineWidth > 0) {
+					wrapper.add(line, lineWidth);
+					// Trim left side
+					while (tmpStr.size() && Common::isSpace(tmpStr[0])) {
+						tmpStr.deleteChar(0);
+						// This is not very fast, but it is the simplest way to
+						// assure we do not mess something up because of kerning.
+						tmpWidth = font.getStringWidth(tmpStr);
+					}
+
+					if (tmpStr.empty()) {
+						// If tmpStr is empty, we might have removed the space before 'c'.
+						// That means we have to recompute the kerning.
+
+						tmpWidth += currentCharWidth + font.getKerningOffset(0, c);
+						tmpStr += c;
+						continue;
+					}
+				} else {
+					wrapper.add(tmpStr, tmpWidth);
+				}
+			}
+
+			tmpWidth += w;
+			tmpStr += c;
 		}
 
-		tmpWidth += w;
-		tmpStr += c;
+		// If some text is left over, add it as the final line
+		line += tmpStr;
+		lineWidth += tmpWidth;
+		if (lineWidth > 0) {
+			wrapper.add(line, lineWidth);
+		}
+		return wrapper.actualMaxLineWidth;
 	}
-
-	// If some text is left over, add it as the final line
-	line += tmpStr;
-	lineWidth += tmpWidth;
-	if (lineWidth > 0) {
-		wrapper.add(line, lineWidth);
-	}
-	return wrapper.actualMaxLineWidth;
-}
 
 } // End of anonymous namespace
 

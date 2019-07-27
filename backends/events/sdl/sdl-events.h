@@ -23,8 +23,8 @@
 #ifndef BACKEND_EVENTS_SDL_H
 #define BACKEND_EVENTS_SDL_H
 
-#include "backends/platform/sdl/sdl-sys.h"
 #include "backends/graphics/sdl/sdl-graphics.h"
+#include "backends/platform/sdl/sdl-sys.h"
 
 #include "common/events.h"
 
@@ -123,7 +123,6 @@ protected:
 	 * Dispatchs SDL events for each handler.
 	 */
 	virtual bool dispatchSDLEvent(SDL_Event &ev, Common::Event &event);
-
 
 	/** @name Event Handlers
 	 * Handlers for specific SDL events, called by SdlEventSource::dispatchSDLEvent().

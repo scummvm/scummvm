@@ -23,22 +23,22 @@
 #if defined(RISCOS)
 
 // Re-enable some forbidden symbols to avoid clashes with stat.h and unistd.h.
-#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
-#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
+#	define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
+#	define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 
-#include "backends/platform/sdl/riscos/riscos-utils.h"
-#include "backends/fs/riscos/riscos-fs.h"
-#include "backends/fs/stdiostream.h"
-#include "common/algorithm.h"
+#	include "backends/fs/riscos/riscos-fs.h"
+#	include "backends/fs/stdiostream.h"
+#	include "backends/platform/sdl/riscos/riscos-utils.h"
+#	include "common/algorithm.h"
 
-#include <limits.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <fcntl.h>
+#	include <fcntl.h>
+#	include <limits.h>
+#	include <stdio.h>
+#	include <unistd.h>
 
-#include <unixlib/local.h>
-#include <kernel.h>
-#include <swis.h>
+#	include <kernel.h>
+#	include <swis.h>
+#	include <unixlib/local.h>
 
 bool RISCOSFilesystemNode::exists() const {
 	return access(_path.c_str(), F_OK) == 0;
@@ -58,7 +58,7 @@ RISCOSFilesystemNode::RISCOSFilesystemNode(const Common::String &p) {
 		_isDirectory = true;
 		_isValid = true;
 	} else {
-		int type = _swi(OS_File, _INR(0,1)|_RETURN(0), 20, RISCOS_Utils::toRISCOS(_path).c_str());
+		int type = _swi(OS_File, _INR(0, 1) | _RETURN(0), 20, RISCOS_Utils::toRISCOS(_path).c_str());
 		if (type == 0) {
 			_isDirectory = false;
 			_isValid = false;
@@ -96,7 +96,7 @@ bool RISCOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bo
 		// Special case for the root dir: List all drives
 		char fsname[PATH_MAX] = "";
 		for (int fsNum = 0; fsNum < 256; fsNum += 1) {
-			_swi(OS_FSControl, _INR(0,3), 33, fsNum, fsname, sizeof(fsname));
+			_swi(OS_FSControl, _INR(0, 3), 33, fsNum, fsname, sizeof(fsname));
 			if (strcmp(fsname, "") != 0) {
 				if (!(fsNum == 46 || fsNum == 53 || fsNum == 99)) {
 					int drives = 9;
@@ -106,9 +106,9 @@ bool RISCOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bo
 					for (int discnum = 0; discnum <= drives; discnum += 1) {
 						const Common::String path = Common::String::format("%s::%d.$", fsname, discnum);
 						char outpath[PATH_MAX] = "";
-						if(_swix(OS_FSControl, _INR(0,2)|_IN(5), 37, path.c_str(), outpath, sizeof(outpath)) == NULL) {
+						if (_swix(OS_FSControl, _INR(0, 2) | _IN(5), 37, path.c_str(), outpath, sizeof(outpath)) == NULL) {
 							int exist;
-							if (_swix(OS_File, _INR(0,1)|_OUT(0), 23, outpath, &exist) != NULL || exist != 2)
+							if (_swix(OS_File, _INR(0, 1) | _OUT(0), 23, outpath, &exist) != NULL || exist != 2)
 								continue;
 
 							RISCOSFilesystemNode *entry = new RISCOSFilesystemNode();
@@ -131,7 +131,7 @@ bool RISCOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bo
 	Common::String dir = _path;
 
 	while (count != -1) {
-		_swix(OS_GBPB, _INR(0,5)|_OUTR(3,4), 9, RISCOS_Utils::toRISCOS(dir).c_str(), file, 1, count, sizeof(file), &read, &count);
+		_swix(OS_GBPB, _INR(0, 5) | _OUTR(3, 4), 9, RISCOS_Utils::toRISCOS(dir).c_str(), file, 1, count, sizeof(file), &read, &count);
 
 		if (count == -1)
 			continue;
@@ -144,7 +144,7 @@ bool RISCOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bo
 			entry._path += '/';
 		entry._path += entry._displayName;
 
-		int type = _swi(OS_File, _INR(0,1)|_RETURN(0), 20, RISCOS_Utils::toRISCOS(entry._path).c_str());
+		int type = _swi(OS_File, _INR(0, 1) | _RETURN(0), 20, RISCOS_Utils::toRISCOS(entry._path).c_str());
 		if (type == 0) {
 			continue;
 		} else if (type == 2) {
@@ -154,8 +154,7 @@ bool RISCOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bo
 		}
 
 		// Honor the chosen mode
-		if ((mode == Common::FSNode::kListFilesOnly && entry._isDirectory) ||
-			(mode == Common::FSNode::kListDirectoriesOnly && !entry._isDirectory))
+		if ((mode == Common::FSNode::kListFilesOnly && entry._isDirectory) || (mode == Common::FSNode::kListDirectoriesOnly && !entry._isDirectory))
 			continue;
 
 		myList.push_back(new RISCOSFilesystemNode(entry));
@@ -166,14 +165,14 @@ bool RISCOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bo
 
 AbstractFSNode *RISCOSFilesystemNode::getParent() const {
 	if (_path == "/")
-		return 0;	// The filesystem root has no parent
+		return 0; // The filesystem root has no parent
 
 	const char *start = _path.c_str();
 	const char *end = start + _path.size();
 
 	// Strip of the last component. We make use of the fact that at this
 	// point, _path is guaranteed to be normalized
-	while (end > start && *(end-1) != '/')
+	while (end > start && *(end - 1) != '/')
 		end--;
 
 	if (end == start) {
@@ -184,7 +183,7 @@ AbstractFSNode *RISCOSFilesystemNode::getParent() const {
 		return 0;
 	}
 
-	if (*(end-1) == '/' && end != start + 1)
+	if (*(end - 1) == '/' && end != start + 1)
 		end--;
 
 	return makeNode(Common::String(start, end));
@@ -202,7 +201,7 @@ bool RISCOSFilesystemNode::create(bool isDirectoryFlag) {
 	bool success;
 
 	if (isDirectoryFlag) {
-		success = _swix(OS_File, _INR(0,1), 8, RISCOS_Utils::toRISCOS(_path).c_str()) == NULL;
+		success = _swix(OS_File, _INR(0, 1), 8, RISCOS_Utils::toRISCOS(_path).c_str()) == NULL;
 	} else {
 		int fd = open(_path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0755);
 		success = fd >= 0;
@@ -214,13 +213,14 @@ bool RISCOSFilesystemNode::create(bool isDirectoryFlag) {
 
 	if (success) {
 		if (exists()) {
-			_isDirectory = _swi(OS_File, _INR(0,1)|_RETURN(0), 20, RISCOS_Utils::toRISCOS(_path).c_str()) == 2;
-			if (_isDirectory != isDirectoryFlag) warning("failed to create %s: got %s", isDirectoryFlag ? "directory" : "file", _isDirectory ? "directory" : "file");
+			_isDirectory = _swi(OS_File, _INR(0, 1) | _RETURN(0), 20, RISCOS_Utils::toRISCOS(_path).c_str()) == 2;
+			if (_isDirectory != isDirectoryFlag)
+				warning("failed to create %s: got %s", isDirectoryFlag ? "directory" : "file", _isDirectory ? "directory" : "file");
 			return _isDirectory == isDirectoryFlag;
 		}
 
 		warning("RISCOSFilesystemNode: Attempting to create a %s was a success, but access indicates there is no such %s",
-			isDirectoryFlag ? "directory" : "file", isDirectoryFlag ? "directory" : "file");
+		        isDirectoryFlag ? "directory" : "file", isDirectoryFlag ? "directory" : "file");
 		return false;
 	}
 

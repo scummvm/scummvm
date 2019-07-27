@@ -28,8 +28,8 @@
 #include "common/rect.h"
 #include "common/str.h"
 
-#include "video/video_decoder.h"
 #include "audio/mixer.h"
+#include "video/video_decoder.h"
 
 namespace Audio {
 class AudioStream;
@@ -96,6 +96,7 @@ public:
 	 * Decodes the next transparency track frame
 	 */
 	const Graphics::Surface *decodeNextTransparency();
+
 protected:
 	// VideoDecoder API
 	void readNextPacket();
@@ -262,6 +263,7 @@ protected:
 			_vidsHeader.rate = r.getNumerator();
 			_vidsHeader.scale = r.getDenominator();
 		}
+
 	private:
 		AVIStreamHeader _vidsHeader;
 		BitmapInfoHeader _bmInfo;
@@ -302,7 +304,7 @@ protected:
 			kWaveFormatMSADPCM = 2,
 			kWaveFormatMSIMAADPCM = 17,
 			kWaveFormatMP3 = 85,
-			kWaveFormatDK3 = 98		// rogue format number
+			kWaveFormatDK3 = 98 // rogue format number
 		};
 
 		AVIStreamHeader _audsHeader;
@@ -352,12 +354,13 @@ protected:
 	void checkTruemotion1();
 	uint getVideoTrackOffset(uint trackIndex, uint frameNumber = 0);
 
-	void handleNextPacket(TrackStatus& status);
-	bool shouldQueueAudio(TrackStatus& status);
+	void handleNextPacket(TrackStatus &status);
+	bool shouldQueueAudio(TrackStatus &status);
 	void seekTransparencyFrame(int frame);
 
 	Common::Array<TrackStatus> _videoTracks, _audioTracks;
 	TrackStatus _transparencyTrack;
+
 public:
 	virtual AVIAudioTrack *createAudioTrack(AVIStreamHeader sHeader, PCMWaveFormat wvInfo);
 

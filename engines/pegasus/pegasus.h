@@ -39,19 +39,19 @@
 #include "pegasus/graphics.h"
 #include "pegasus/hotspot.h"
 #include "pegasus/input.h"
-#include "pegasus/notification.h"
-#include "pegasus/timers.h"
 #include "pegasus/items/autodragger.h"
 #include "pegasus/items/inventory.h"
 #include "pegasus/items/itemdragger.h"
 #include "pegasus/neighborhood/neighborhood.h"
+#include "pegasus/notification.h"
+#include "pegasus/timers.h"
 
 namespace Common {
-	class RandomSource;
+class RandomSource;
 }
 
 namespace Video {
-	class VideoDecoder;
+class VideoDecoder;
 }
 
 namespace Pegasus {
@@ -69,7 +69,7 @@ class BiochipItem;
 class Neighborhood;
 
 class PegasusEngine : public ::Engine, public InputHandler, public NotificationManager {
-friend class InputHandler;
+	friend class InputHandler;
 
 public:
 	PegasusEngine(OSystem *syst, const PegasusGameDescription *gamedesc);
@@ -182,7 +182,7 @@ public:
 	Item *getDraggingItem() const { return _draggingItem; }
 	void dragTerminated(const Input &);
 	void autoDragItemIntoRoom(Item *, Sprite *);
-	void autoDragItemIntoInventory(Item *, Sprite*);
+	void autoDragItemIntoInventory(Item *, Sprite *);
 
 	// Save/Load
 	void makeContinuePoint();

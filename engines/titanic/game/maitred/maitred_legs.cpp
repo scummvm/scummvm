@@ -25,8 +25,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMaitreDLegs, CMaitreDProdReceptor)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(AnimateMaitreDMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(AnimateMaitreDMsg)
 END_MESSAGE_MAP()
 
 void CMaitreDLegs::save(SimpleFile *file, int indent) {
@@ -69,7 +69,7 @@ bool CMaitreDLegs::AnimateMaitreDMsg(CAnimateMaitreDMsg *msg) {
 
 			if (getRandomNumber(2) != 0)
 				playSound(ARCING_SOUNDS[getRandomNumber(8)],
-					40 + getRandomNumber(30));
+				          40 + getRandomNumber(30));
 		} else {
 			playClip("Walk Right");
 			_flag = true;

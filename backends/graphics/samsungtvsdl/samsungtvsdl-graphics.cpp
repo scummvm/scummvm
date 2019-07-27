@@ -24,18 +24,16 @@
 
 #if defined(SAMSUNGTV)
 
-#include "backends/platform/samsungtv/samsungtv.h"
-#include "backends/events/samsungtvsdl/samsungtvsdl-events.h"
-#include "backends/graphics/samsungtvsdl/samsungtvsdl-graphics.h"
+#	include "backends/events/samsungtvsdl/samsungtvsdl-events.h"
+#	include "backends/graphics/samsungtvsdl/samsungtvsdl-graphics.h"
+#	include "backends/platform/samsungtv/samsungtv.h"
 
 SamsungTVSdlGraphicsManager::SamsungTVSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
-	: SurfaceSdlGraphicsManager(sdlEventSource, window) {
+  : SurfaceSdlGraphicsManager(sdlEventSource, window) {
 }
 
 bool SamsungTVSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
-	return
-		(f == OSystem::kFeatureAspectRatioCorrection) ||
-		(f == OSystem::kFeatureCursorPalette);
+	return (f == OSystem::kFeatureAspectRatioCorrection) || (f == OSystem::kFeatureCursorPalette);
 }
 
 void SamsungTVSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {

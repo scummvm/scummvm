@@ -23,14 +23,14 @@
 #ifndef BACKENDS_PLATFORM_IPHONE_OSYS_MAIN_H
 #define BACKENDS_PLATFORM_IPHONE_OSYS_MAIN_H
 
-#include "graphics/surface.h"
-#include "backends/platform/iphone/iphone_common.h"
-#include "backends/base-backend.h"
-#include "common/events.h"
 #include "audio/mixer_intern.h"
+#include "backends/base-backend.h"
 #include "backends/fs/posix/posix-fs-factory.h"
+#include "backends/platform/iphone/iphone_common.h"
+#include "common/events.h"
 #include "graphics/colormasks.h"
 #include "graphics/palette.h"
+#include "graphics/surface.h"
 
 #include <AudioToolbox/AudioQueue.h>
 
@@ -69,9 +69,9 @@ protected:
 	TransactionError _gfxTransactionError;
 
 	// For use with the game texture
-	uint16  _gamePalette[256];
+	uint16 _gamePalette[256];
 	// For use with the mouse texture
-	uint16  _gamePaletteRGBA5551[256];
+	uint16 _gamePaletteRGBA5551[256];
 
 	struct timeval _startTime;
 	uint32 _timeSuspended;
@@ -110,7 +110,6 @@ protected:
 	int _screenChangeCount;
 
 public:
-
 	OSystem_IPHONE();
 	virtual ~OSystem_IPHONE();
 
@@ -137,6 +136,7 @@ public:
 #endif
 
 	virtual PaletteManager *getPaletteManager() { return this; }
+
 protected:
 	// PaletteManager API
 	virtual void setPalette(const byte *colors, uint start, uint num);

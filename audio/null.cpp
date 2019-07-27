@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/error.h"
 #include "audio/null.h"
+#include "common/error.h"
 
 Common::Error NullMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
 	*mididriver = new MidiDriver_NULL();
@@ -54,8 +54,8 @@ MusicDevices AutoMusicPlugin::getDevices() const {
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(NULL)
-	//REGISTER_PLUGIN_DYNAMIC(NULL, PLUGIN_TYPE_MUSIC, NullMusicPlugin);
+//REGISTER_PLUGIN_DYNAMIC(NULL, PLUGIN_TYPE_MUSIC, NullMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(AUTO, PLUGIN_TYPE_MUSIC, AutoMusicPlugin);
-	REGISTER_PLUGIN_STATIC(NULL, PLUGIN_TYPE_MUSIC, NullMusicPlugin);
+REGISTER_PLUGIN_STATIC(AUTO, PLUGIN_TYPE_MUSIC, AutoMusicPlugin);
+REGISTER_PLUGIN_STATIC(NULL, PLUGIN_TYPE_MUSIC, NullMusicPlugin);
 //#endif

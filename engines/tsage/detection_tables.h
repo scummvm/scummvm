@@ -26,75 +26,60 @@ static const tSageGameDescription gameDescriptions[] = {
 
 	// Ringworld English CD and First Wave versions
 	{
-		{
-			"ringworld",
-			"CD",
-			AD_ENTRY1s("ring.rlb", "466f0e6492d9d0f34d35c5cd088de90f", 37847618),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_CD,
-			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
-		},
-		GType_Ringworld,
-		GF_CD | GF_ALT_REGIONS
-	},
+	  { "ringworld",
+	    "CD",
+	    AD_ENTRY1s("ring.rlb", "466f0e6492d9d0f34d35c5cd088de90f", 37847618),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_CD,
+	    GUIO2(GUIO_NOSPEECH, GUIO_NOSFX) },
+	  GType_Ringworld,
+	  GF_CD | GF_ALT_REGIONS },
 	// Ringworld Spanish CD
 	{
-		{
-			"ringworld",
-			"CD",
-			AD_ENTRY1s("ring.rlb", "cb8bba91b30cd172712371d7123bd763", 7427980),
-			Common::ES_ESP,
-			Common::kPlatformDOS,
-			ADGF_CD,
-			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
-		},
-		GType_Ringworld,
-		GF_CD | GF_ALT_REGIONS
-	},
+	  { "ringworld",
+	    "CD",
+	    AD_ENTRY1s("ring.rlb", "cb8bba91b30cd172712371d7123bd763", 7427980),
+	    Common::ES_ESP,
+	    Common::kPlatformDOS,
+	    ADGF_CD,
+	    GUIO2(GUIO_NOSPEECH, GUIO_NOSFX) },
+	  GType_Ringworld,
+	  GF_CD | GF_ALT_REGIONS },
 	// Ringworld English Floppy version
 	{
-		{
-			"ringworld",
-			"Floppy",
-			AD_ENTRY1s("ring.rlb", "7b7f0c5b37b58fa5ec06ebb2ca0d0d9d", 8438770),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
-		},
-		GType_Ringworld,
-		GF_FLOPPY
-	},
+	  { "ringworld",
+	    "Floppy",
+	    AD_ENTRY1s("ring.rlb", "7b7f0c5b37b58fa5ec06ebb2ca0d0d9d", 8438770),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO2(GUIO_NOSPEECH, GUIO_NOSFX) },
+	  GType_Ringworld,
+	  GF_FLOPPY },
 	// Ringworld English Floppy Demo #1 version
 	{
-		{
-			"ringworld",
-			"Floppy Demo",
-			AD_ENTRY1s("tsage.rlb", "3b3604a97c06c91f3735d3e9d341f63f", 833453),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_DEMO,
-			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
-		},
-		GType_Ringworld,
-		GF_FLOPPY | GF_DEMO
-	},
+	  { "ringworld",
+	    "Floppy Demo",
+	    AD_ENTRY1s("tsage.rlb", "3b3604a97c06c91f3735d3e9d341f63f", 833453),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_DEMO,
+	    GUIO2(GUIO_NOSPEECH, GUIO_NOSFX) },
+	  GType_Ringworld,
+	  GF_FLOPPY | GF_DEMO },
 
 	// Ringworld English Floppy Demo #2 version
 	{
-		{
-			"ringworld",
-			"Floppy Demo",
-			AD_ENTRY1s("demoring.rlb", "64050e1806203b15bb03876140eb4f56", 832206),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_DEMO,
-			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
-		},
-		GType_Ringworld,
-		GF_FLOPPY | GF_DEMO | GF_ALT_REGIONS
-	},
+	  { "ringworld",
+	    "Floppy Demo",
+	    AD_ENTRY1s("demoring.rlb", "64050e1806203b15bb03876140eb4f56", 832206),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_DEMO,
+	    GUIO2(GUIO_NOSPEECH, GUIO_NOSFX) },
+	  GType_Ringworld,
+	  GF_FLOPPY | GF_DEMO | GF_ALT_REGIONS },
 #if 0
 	// FIXME: Compute new MD5s based on 5000 bytes instead of 0 (unlimited)
 	// Blue Force floppy
@@ -114,32 +99,26 @@ static const tSageGameDescription gameDescriptions[] = {
 #endif
 	// Blue Force
 	{
-		{
-			"blueforce",
-			"",
-			AD_ENTRY1s("blue.rlb", "17eabb456cb1546c66baf1aff387ba6a", 10032614),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
-		},
-		GType_BlueForce,
-		GF_FLOPPY | GF_ALT_REGIONS
-	},
+	  { "blueforce",
+	    "",
+	    AD_ENTRY1s("blue.rlb", "17eabb456cb1546c66baf1aff387ba6a", 10032614),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO2(GUIO_NOSPEECH, GUIO_NOSFX) },
+	  GType_BlueForce,
+	  GF_FLOPPY | GF_ALT_REGIONS },
 	// Blue Force CD and First Wave use the same files
 	{
-		{
-			"blueforce",
-			"CD",
-			AD_ENTRY1s("blue.rlb", "99983f48cb218f1f3760cf2f9a7ef11d", 63863322),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_CD,
-			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
-		},
-		GType_BlueForce,
-		GF_CD | GF_ALT_REGIONS
-	},
+	  { "blueforce",
+	    "CD",
+	    AD_ENTRY1s("blue.rlb", "99983f48cb218f1f3760cf2f9a7ef11d", 63863322),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_CD,
+	    GUIO2(GUIO_NOSPEECH, GUIO_NOSFX) },
+	  GType_BlueForce,
+	  GF_CD | GF_ALT_REGIONS },
 #if 0
 	// Blue Force Spanish doesn't yet work
 	// Blue Force Spanish CD
@@ -159,47 +138,38 @@ static const tSageGameDescription gameDescriptions[] = {
 #endif
 	// Return to Ringworld
 	{
-		{
-			"ringworld2",
-			"CD",
-			AD_ENTRY1s("r2rw.rlb", "df6c25622387007788ca36d99362c1f0", 47586928),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_CD,
-			GUIO0()
-		},
-		GType_Ringworld2,
-		GF_CD | GF_ALT_REGIONS
-	},
+	  { "ringworld2",
+	    "CD",
+	    AD_ENTRY1s("r2rw.rlb", "df6c25622387007788ca36d99362c1f0", 47586928),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_CD,
+	    GUIO0() },
+	  GType_Ringworld2,
+	  GF_CD | GF_ALT_REGIONS },
 	// Return to Ringworld - Demo
 	{
-		{
-			"ringworld2",
-			"CD Demo",
-			AD_ENTRY1s("r2rw.rlb", "c8e1a82c67c3caf57368eadde13dc15f", 32384464),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_CD,
-			GUIO0()
-		},
-		GType_Ringworld2,
-		GF_CD | GF_ALT_REGIONS | GF_DEMO
-	},
+	  { "ringworld2",
+	    "CD Demo",
+	    AD_ENTRY1s("r2rw.rlb", "c8e1a82c67c3caf57368eadde13dc15f", 32384464),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_CD,
+	    GUIO0() },
+	  GType_Ringworld2,
+	  GF_CD | GF_ALT_REGIONS | GF_DEMO },
 #ifdef TSAGE_SHERLOCK_ENABLED
 	// The Lost Files of Sherlock Holmes - The Case of the Serrated Scalpel (Logo)
 	{
-		{
-			"sherlock-logo",
-			"",
-			AD_ENTRY1s("sf3.rlb", "153f9b93eda4e95578e31be30e69b5e5", 50419),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		GType_Sherlock1,
-		GF_FLOPPY
-	},
+	  { "sherlock-logo",
+	    "",
+	    AD_ENTRY1s("sf3.rlb", "153f9b93eda4e95578e31be30e69b5e5", 50419),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO0() },
+	  GType_Sherlock1,
+	  GF_FLOPPY },
 #endif
 
 	{ AD_TABLE_END_MARKER, 0, 0 }

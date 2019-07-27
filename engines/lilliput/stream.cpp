@@ -24,7 +24,8 @@
 
 namespace Lilliput {
 
-ScriptStream::ScriptStream(byte *buf, int bufSize) : Common::MemoryReadStream(buf, bufSize) {
+ScriptStream::ScriptStream(byte *buf, int bufSize)
+  : Common::MemoryReadStream(buf, bufSize) {
 	_orgPtr = buf;
 }
 

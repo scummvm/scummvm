@@ -65,8 +65,8 @@ protected:
 	virtual void processKeyboard(Common::KeyState lastKeyHit);
 
 	virtual void readIndexFile();
-	void readClassicIndexFile();	// V1
-	void readEnhancedIndexFile();	// V2
+	void readClassicIndexFile(); // V1
+	void readEnhancedIndexFile(); // V2
 	virtual void readGlobalObjects();
 	virtual void loadCharset(int no);
 
@@ -185,7 +185,6 @@ protected:
 	byte VAR_CLICK_VERB;
 	byte VAR_CLICK_OBJECT;
 };
-
 
 } // End of namespace Scumm
 

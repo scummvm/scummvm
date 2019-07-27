@@ -21,23 +21,23 @@
  */
 #ifdef __PSP__
 
-#include <pspiofilemgr.h>
+#	include <pspiofilemgr.h>
 
-#include "backends/platform/psp/powerman.h"
-#include "backends/fs/psp/psp-stream.h"
+#	include "backends/fs/psp/psp-stream.h"
+#	include "backends/platform/psp/powerman.h"
 
-#define MIN2(a,b) ((a < b) ? a : b)
-#define MIN3(a,b,c) ( (a < b) ? (a < c ? a : c) : (b < c ? b : c) )
+#	define MIN2(a, b) ((a < b) ? a : b)
+#	define MIN3(a, b, c) ((a < b) ? (a < c ? a : c) : (b < c ? b : c))
 
 //#define __PSP_PRINT_TO_FILE__ /* For debugging suspend stuff, we have no screen output */
 //#define __PSP_DEBUG_FUNCS__ 	/* For debugging function calls */
 //#define __PSP_DEBUG_PRINT__	/* For debug printouts */
 
-#include "backends/platform/psp/trace.h"
+#	include "backends/platform/psp/trace.h"
 
 //#define DEBUG_BUFFERS					/* to see the contents of the buffers being read */
 
-#ifdef DEBUG_BUFFERS
+#	ifdef DEBUG_BUFFERS
 void printBuffer(byte *ptr, uint32 len) {
 	uint32 printLen = len <= 10 ? len : 10;
 
@@ -53,14 +53,24 @@ void printBuffer(byte *ptr, uint32 len) {
 
 	PSP_INFO_PRINT("\n");
 }
-#endif
+#	endif
 
 // Class PspIoStream ------------------------------------------------
 
 PspIoStream::PspIoStream(const Common::String &path, bool writeMode)
-		: _handle(0), _path(path), _fileSize(0), _writeMode(writeMode),
-		  _physicalPos(0), _pos(0), _eos(false),	_error(false),
-		  _errorSuspend(0), _errorSource(0), _errorPos(0), _errorHandle(0), _suspendCount(0) {
+  : _handle(0)
+  , _path(path)
+  , _fileSize(0)
+  , _writeMode(writeMode)
+  , _physicalPos(0)
+  , _pos(0)
+  , _eos(false)
+  , _error(false)
+  , _errorSuspend(0)
+  , _errorSource(0)
+  , _errorPos(0)
+  , _errorHandle(0)
+  , _suspendCount(0) {
 	DEBUG_ENTER_FUNC();
 
 	//assert(!path.empty());	// do we need this?
@@ -72,8 +82,8 @@ PspIoStream::~PspIoStream() {
 	if (PowerMan.beginCriticalSection())
 		PSP_DEBUG_PRINT_FUNC("suspended\n");
 
-	PowerMan.unregisterForSuspend(this); 			// Unregister with powermanager to be suspended
-													// Must do this before fclose() or resume() will reopen.
+	PowerMan.unregisterForSuspend(this); // Unregister with powermanager to be suspended
+	  // Must do this before fclose() or resume() will reopen.
 	sceIoClose(_handle);
 
 	PowerMan.endCriticalSection();
@@ -99,11 +109,11 @@ SceUID PspIoStream::open() {
 	// Get the file size. This way is much faster than going to the end of the file and back
 	SceIoStat stat;
 	sceIoGetstat(_path.c_str(), &stat);
-	_fileSize = stat.st_size;	// 4GB file (32 bits) is big enough for us
+	_fileSize = stat.st_size; // 4GB file (32 bits) is big enough for us
 
 	PSP_DEBUG_PRINT("%s filesize[%d]\n", _path.c_str(), _fileSize);
 
-	PowerMan.registerForSuspend(this);	 // Register with the powermanager to be suspended
+	PowerMan.registerForSuspend(this); // Register with the powermanager to be suspended
 
 	PowerMan.endCriticalSection();
 
@@ -113,11 +123,11 @@ SceUID PspIoStream::open() {
 bool PspIoStream::err() const {
 	DEBUG_ENTER_FUNC();
 
-	if (_error)	// We dump since no printing to screen with suspend callback
+	if (_error) // We dump since no printing to screen with suspend callback
 		PSP_ERROR("mem_error[%d], source[%d], suspend error[%d], pos[%d],"
-				  "_errorPos[%d], _errorHandle[%p], suspendCount[%d]\n",
+		          "_errorPos[%d], _errorHandle[%p], suspendCount[%d]\n",
 		          _error, _errorSource, _errorSuspend, _pos,
-				  _errorPos, _errorHandle, _suspendCount);
+		          _errorPos, _errorHandle, _suspendCount);
 
 	return _error;
 }
@@ -203,19 +213,19 @@ uint32 PspIoStream::read(void *ptr, uint32 len) {
 	// check if we need to seek
 	if (_pos != _physicalPos)
 		PSP_DEBUG_PRINT("seeking from %x to %x\n", _physicalPos, _pos);
-		if (!physicalSeekFromCur(_pos - _physicalPos)) {
-			_error = true;
-			return 0;
-		}
+	if (!physicalSeekFromCur(_pos - _physicalPos)) {
+		_error = true;
+		return 0;
+	}
 
 	int ret = sceIoRead(_handle, ptr, len);
 
 	PowerMan.endCriticalSection();
 
-	_physicalPos += ret;	// Update position
+	_physicalPos += ret; // Update position
 	_pos = _physicalPos;
 
-	if (ret != (int)len) {	// error
+	if (ret != (int)len) { // error
 		PSP_ERROR("sceIoRead returned [0x%x] instead of len[0x%x]\n", ret, len);
 		_error = true;
 		_errorSource = 4;
@@ -227,10 +237,10 @@ uint32 PspIoStream::write(const void *ptr, uint32 len) {
 	DEBUG_ENTER_FUNC();
 	PSP_DEBUG_PRINT_FUNC("filename[%s], len[0x%x], ptr[%p], _pos[%x], _physPos[%x]\n", _path.c_str(), len, ptr, _pos, _physicalPos);
 
-	if (!len || _error)		// we actually get some calls with len == 0!
+	if (!len || _error) // we actually get some calls with len == 0!
 		return 0;
 
-	_eos = false;			// we can't have eos with write
+	_eos = false; // we can't have eos with write
 
 	if (PowerMan.beginCriticalSection())
 		PSP_DEBUG_PRINT_FUNC("suspended\n");
@@ -288,15 +298,15 @@ int PspIoStream::suspend() {
 	DEBUG_ENTER_FUNC();
 	_suspendCount++;
 
-	if (_handle > 0 && _pos < 0) {	/* check for error */
+	if (_handle > 0 && _pos < 0) { /* check for error */
 		_errorSuspend = SuspendError;
 		_errorPos = _pos;
 		_errorHandle = _handle;
 	}
 
 	if (_handle > 0) {
-		sceIoClose(_handle);		// close our file descriptor
-		_handle = 0xFFFFFFFF;		// Set handle to non-null invalid value so makeFromPath doesn't return error
+		sceIoClose(_handle); // close our file descriptor
+		_handle = 0xFFFFFFFF; // Set handle to non-null invalid value so makeFromPath doesn't return error
 	}
 
 	return 0;
@@ -311,7 +321,7 @@ int PspIoStream::resume() {
 	_suspendCount--;
 
 	// We reopen our file descriptor
-	_handle = sceIoOpen(_path.c_str(), _writeMode ? PSP_O_RDWR | PSP_O_CREAT : PSP_O_RDONLY, 0777); 	// open
+	_handle = sceIoOpen(_path.c_str(), _writeMode ? PSP_O_RDWR | PSP_O_CREAT : PSP_O_RDONLY, 0777); // open
 	if (_handle <= 0) {
 		_errorSuspend = ResumeError;
 		_errorPos = _pos;
@@ -323,7 +333,7 @@ int PspIoStream::resume() {
 
 		_physicalPos = _pos;
 
-		if (ret < 0) {		// Check for problem
+		if (ret < 0) { // Check for problem
 			_errorSuspend = ResumeError;
 			_errorPos = _pos;
 			_errorHandle = _handle;

@@ -26,55 +26,55 @@
 
 // Pad buttons
 #define START_BUTTON(a) (a & 0x1000)
-#define A_BUTTON(a)     (a & 0x8000)
-#define B_BUTTON(a)     (a & 0x4000)
-#define Z_BUTTON(a)     (a & 0x2000)
+#define A_BUTTON(a) (a & 0x8000)
+#define B_BUTTON(a) (a & 0x4000)
+#define Z_BUTTON(a) (a & 0x2000)
 
 // Triggers
-#define TL_BUTTON(a)    (a & 0x0020)
-#define TR_BUTTON(a)    (a & 0x0010)
+#define TL_BUTTON(a) (a & 0x0020)
+#define TR_BUTTON(a) (a & 0x0010)
 
 // D-Pad
-#define DL_BUTTON(a)    (a & 0x0200)
-#define DR_BUTTON(a)    (a & 0x0100)
-#define DU_BUTTON(a)    (a & 0x0800)
-#define DD_BUTTON(a)    (a & 0x0400)
+#define DL_BUTTON(a) (a & 0x0200)
+#define DR_BUTTON(a) (a & 0x0100)
+#define DU_BUTTON(a) (a & 0x0800)
+#define DD_BUTTON(a) (a & 0x0400)
 
 // Yellow C buttons
-#define CL_BUTTON(a)    (a & 0x0002)
-#define CR_BUTTON(a)    (a & 0x0001)
-#define CU_BUTTON(a)    (a & 0x0008)
-#define CD_BUTTON(a)    (a & 0x0004)
+#define CL_BUTTON(a) (a & 0x0002)
+#define CR_BUTTON(a) (a & 0x0001)
+#define CU_BUTTON(a) (a & 0x0008)
+#define CD_BUTTON(a) (a & 0x0004)
 
 // Macro for button press checking
-#define PRESSED_START(now, before)	(START_BUTTON(now) && !START_BUTTON(before))
-#define RELEASED_START(now, before)	(!START_BUTTON(now) && START_BUTTON(before))
-#define PRESSED_A(now, before)		(A_BUTTON(now) && !A_BUTTON(before))
-#define RELEASED_A(now, before)		(!A_BUTTON(now) && A_BUTTON(before))
-#define PRESSED_B(now, before)		(B_BUTTON(now) && !B_BUTTON(before))
-#define RELEASED_B(now, before)		(!B_BUTTON(now) && B_BUTTON(before))
-#define PRESSED_Z(now, before)		(Z_BUTTON(now) && !Z_BUTTON(before))
-#define RELEASED_Z(now, before)		(!Z_BUTTON(now) && Z_BUTTON(before))
-#define PRESSED_TL(now, before)		(TL_BUTTON(now) && !TL_BUTTON(before))
-#define RELEASED_TL(now, before)	(!TL_BUTTON(now) && TL_BUTTON(before))
-#define PRESSED_TR(now, before)		(TR_BUTTON(now) && !TR_BUTTON(before))
-#define RELEASED_TR(now, before)	(!TR_BUTTON(now) && TR_BUTTON(before))
-#define PRESSED_DL(now, before)		(DL_BUTTON(now) && !DL_BUTTON(before))
-#define RELEASED_DL(now, before)	(!DL_BUTTON(now) && DL_BUTTON(before))
-#define PRESSED_DR(now, before)		(DR_BUTTON(now) && !DR_BUTTON(before))
-#define RELEASED_DR(now, before)	(!DR_BUTTON(now) && DR_BUTTON(before))
-#define PRESSED_DU(now, before) 	(DU_BUTTON(now) && !DU_BUTTON(before))
-#define RELEASED_DU(now, before)	(!DU_BUTTON(now) && DU_BUTTON(before))
-#define PRESSED_DD(now, before)		(DD_BUTTON(now) && !DD_BUTTON(before))
-#define RELEASED_DD(now, before)	(!DD_BUTTON(now) && DD_BUTTON(before))
-#define PRESSED_CL(now, before)		(CL_BUTTON(now) && !CL_BUTTON(before))
-#define RELEASED_CL(now, before)	(!CL_BUTTON(now) && CL_BUTTON(before))
-#define PRESSED_CR(now, before)		(CR_BUTTON(now) && !CR_BUTTON(before))
-#define RELEASED_CR(now, before)	(!CR_BUTTON(now) && CR_BUTTON(before))
-#define PRESSED_CU(now, before)		(CU_BUTTON(now) && !CU_BUTTON(before))
-#define RELEASED_CU(now, before)	(!CU_BUTTON(now) && CU_BUTTON(before))
-#define PRESSED_CD(now, before)		(CD_BUTTON(now) && !CD_BUTTON(before))
-#define RELEASED_CD(now, before)	(!CD_BUTTON(now) && CD_BUTTON(before))
+#define PRESSED_START(now, before) (START_BUTTON(now) && !START_BUTTON(before))
+#define RELEASED_START(now, before) (!START_BUTTON(now) && START_BUTTON(before))
+#define PRESSED_A(now, before) (A_BUTTON(now) && !A_BUTTON(before))
+#define RELEASED_A(now, before) (!A_BUTTON(now) && A_BUTTON(before))
+#define PRESSED_B(now, before) (B_BUTTON(now) && !B_BUTTON(before))
+#define RELEASED_B(now, before) (!B_BUTTON(now) && B_BUTTON(before))
+#define PRESSED_Z(now, before) (Z_BUTTON(now) && !Z_BUTTON(before))
+#define RELEASED_Z(now, before) (!Z_BUTTON(now) && Z_BUTTON(before))
+#define PRESSED_TL(now, before) (TL_BUTTON(now) && !TL_BUTTON(before))
+#define RELEASED_TL(now, before) (!TL_BUTTON(now) && TL_BUTTON(before))
+#define PRESSED_TR(now, before) (TR_BUTTON(now) && !TR_BUTTON(before))
+#define RELEASED_TR(now, before) (!TR_BUTTON(now) && TR_BUTTON(before))
+#define PRESSED_DL(now, before) (DL_BUTTON(now) && !DL_BUTTON(before))
+#define RELEASED_DL(now, before) (!DL_BUTTON(now) && DL_BUTTON(before))
+#define PRESSED_DR(now, before) (DR_BUTTON(now) && !DR_BUTTON(before))
+#define RELEASED_DR(now, before) (!DR_BUTTON(now) && DR_BUTTON(before))
+#define PRESSED_DU(now, before) (DU_BUTTON(now) && !DU_BUTTON(before))
+#define RELEASED_DU(now, before) (!DU_BUTTON(now) && DU_BUTTON(before))
+#define PRESSED_DD(now, before) (DD_BUTTON(now) && !DD_BUTTON(before))
+#define RELEASED_DD(now, before) (!DD_BUTTON(now) && DD_BUTTON(before))
+#define PRESSED_CL(now, before) (CL_BUTTON(now) && !CL_BUTTON(before))
+#define RELEASED_CL(now, before) (!CL_BUTTON(now) && CL_BUTTON(before))
+#define PRESSED_CR(now, before) (CR_BUTTON(now) && !CR_BUTTON(before))
+#define RELEASED_CR(now, before) (!CR_BUTTON(now) && CR_BUTTON(before))
+#define PRESSED_CU(now, before) (CU_BUTTON(now) && !CU_BUTTON(before))
+#define RELEASED_CU(now, before) (!CU_BUTTON(now) && CU_BUTTON(before))
+#define PRESSED_CD(now, before) (CD_BUTTON(now) && !CD_BUTTON(before))
+#define RELEASED_CD(now, before) (!CD_BUTTON(now) && CD_BUTTON(before))
 
 #define MOUSE_DEADZONE 0
 #define MOUSE_SENSIBILITY 1.5f
@@ -113,10 +113,14 @@ void OSystem_N64::readControllerAnalogInput(void) {
 	// Limit the analog range for pad.
 	// When moving in diagonal the max/min of 128/-128 was not reached
 	// yielding weird results for the tangent acceleration function
-	if (pad_analogX > 60) pad_analogX = 60;
-	else if (pad_analogX < -60) pad_analogX = -60;
-	if (pad_analogY > 60) pad_analogY = 60;
-	else if (pad_analogY < -60) pad_analogY = -60;
+	if (pad_analogX > 60)
+		pad_analogX = 60;
+	else if (pad_analogX < -60)
+		pad_analogX = -60;
+	if (pad_analogY > 60)
+		pad_analogY = 60;
+	else if (pad_analogY < -60)
+		pad_analogY = -60;
 
 	// Gamepad
 	if (abs(pad_analogX) > PAD_DEADZONE)
@@ -434,7 +438,6 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 
 			return true;
 		}
-
 	}
 
 	return false;

@@ -38,14 +38,14 @@ struct SortSpr {
 };
 
 struct RoomDef {
-	int     totalLayers;
-	int     sizeX;
-	int     sizeY;
-	int     gridWidth;  //number of 16*16 grid blocks across - including off screen edges.
-	uint32  layers[4];
-	uint32  grids[3];
-	uint32  palettes[2];
-	uint32  parallax[2];
+	int totalLayers;
+	int sizeX;
+	int sizeY;
+	int gridWidth; //number of 16*16 grid blocks across - including off screen edges.
+	uint32 layers[4];
+	uint32 grids[3];
+	uint32 palettes[2];
+	uint32 parallax[2];
 };
 
 struct PSXDataCache { // Cache for PSX screen, to avoid decompressing background at every screen update
@@ -68,7 +68,7 @@ struct PSXDataCache { // Cache for PSX screen, to avoid decompressing background
 class ResMan;
 class ObjectMan;
 class Text; // Text objects use sprites that are created internally at run-time
-            // the buffer belongs to Text, so we need a reference here.
+  // the buffer belongs to Text, so we need a reference here.
 
 class Screen {
 public:
@@ -136,33 +136,33 @@ private:
 	Text *_textMan;
 
 	uint16 _currentScreen;
-	uint8  *_screenBuf;
-	uint8  *_screenGrid;
+	uint8 *_screenBuf;
+	uint8 *_screenGrid;
 	uint16 *_layerGrid[4];
-	uint8  *_layerBlocks[4];
-	uint8  *_parallax[2];
-	uint8  _rleBuffer[RLE_BUFFER_SIZE];
-	uint8  _shrinkBuffer[SHRINK_BUFFER_SIZE];
-	bool   _fullRefresh;
-	bool   _updatePalette;
+	uint8 *_layerBlocks[4];
+	uint8 *_parallax[2];
+	uint8 _rleBuffer[RLE_BUFFER_SIZE];
+	uint8 _shrinkBuffer[SHRINK_BUFFER_SIZE];
+	bool _fullRefresh;
+	bool _updatePalette;
 	uint16 _oldScrollX, _oldScrollY; // for drawing additional frames
 
 	PSXDataCache _psxCache; // Cache used for PSX backgrounds
 
-	uint32  _foreList[MAX_FORE];
-	uint32  _backList[MAX_BACK];
+	uint32 _foreList[MAX_FORE];
+	uint32 _backList[MAX_BACK];
 	SortSpr _sortList[MAX_SORT];
-	uint8   _foreLength, _backLength, _sortLength;
-	uint16  _scrnSizeX, _scrnSizeY, _gridSizeX, _gridSizeY;
+	uint8 _foreLength, _backLength, _sortLength;
+	uint16 _scrnSizeX, _scrnSizeY, _gridSizeX, _gridSizeY;
 
 	static RoomDef _roomDefTable[TOTAL_ROOMS]; // from ROOMS.C (not const, see fnSetParallax)
 
 	uint8 _targetPalette[256 * 3];
 	uint8 _currentPalette[256 * 3]; // for fading
 	uint8 _fadingStep;
-	int8  _fadingDirection; // 1 for fade up, -1 for fade down
+	int8 _fadingDirection; // 1 for fade up, -1 for fade down
 	bool _isBlack; // if the logic already faded down the palette, this is set to show the
-	               // mainloop that no further fading is necessary.
+	  // mainloop that no further fading is necessary.
 };
 
 } // End of namespace Sword1

@@ -37,7 +37,8 @@
 
 namespace Lab {
 
-Image::Image(Common::File *s, LabEngine *vm) : _vm(vm) {
+Image::Image(Common::File *s, LabEngine *vm)
+  : _vm(vm) {
 	_width = s->readUint16LE();
 	_height = s->readUint16LE();
 	s->skip(4);
@@ -64,7 +65,7 @@ void Image::setData(byte *d, bool autoFree) {
 }
 
 void Image::blitBitmap(uint16 srcX, uint16 srcY, Image *imgDest,
-	uint16 destX, uint16 destY, uint16 width, uint16 height, byte masked) {
+                       uint16 destX, uint16 destY, uint16 width, uint16 height, byte masked) {
 	int clipWidth = width;
 	int clipHeight = height;
 	int destWidth = (imgDest) ? imgDest->_width : _vm->_graphics->_screenWidth;

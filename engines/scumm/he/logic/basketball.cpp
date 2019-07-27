@@ -31,7 +31,8 @@ namespace Scumm {
  */
 class LogicHEbasketball : public LogicHE {
 public:
-	LogicHEbasketball(ScummEngine_v90he *vm) : LogicHE(vm) {}
+	LogicHEbasketball(ScummEngine_v90he *vm)
+	  : LogicHE(vm) {}
 
 	int versionID();
 	int32 dispatch(int op, int numArgs, int32 *args);
@@ -70,73 +71,73 @@ int32 LogicHEbasketball::dispatch(int op, int numArgs, int32 *args) {
 	case 1001:
 		break;
 
-	case 1006:	// WORLD_TO_SCREEN_TRANSLATION
+	case 1006: // WORLD_TO_SCREEN_TRANSLATION
 		break;
 
-	case 1011:	// INIT_SCREEN_TRANSLATIONS
+	case 1011: // INIT_SCREEN_TRANSLATIONS
 		break;
 
-	case 1012:	// GET_COURT_DIMENSIONS
+	case 1012: // GET_COURT_DIMENSIONS
 		res = op_1012();
 		break;
 
-	case 1035:	// COMPUTE_POINTS_FOR_PIXELS
+	case 1035: // COMPUTE_POINTS_FOR_PIXELS
 		break;
 
-	case 1050:	// INIT_COURT
+	case 1050: // INIT_COURT
 		res = op_1050(args);
 		break;
 
-	case 1051:	// INIT_BALL
+	case 1051: // INIT_BALL
 		break;
 
-	case 1052:	// INIT_PLAYER
+	case 1052: // INIT_PLAYER
 		break;
 
-	case 1053:	// DEINIT_COURT
+	case 1053: // DEINIT_COURT
 		res = op_1053();
 		break;
 
-	case 1056:	// DETECT_BALL_COLLISION
+	case 1056: // DETECT_BALL_COLLISION
 		break;
 
-	case 1057:	// DETECT_PLAYER_COLLISION
+	case 1057: // DETECT_PLAYER_COLLISION
 		break;
 
-	case 1058:	// GET_LAST_BALL_COLLISION
+	case 1058: // GET_LAST_BALL_COLLISION
 		break;
 
-	case 1060:	// INIT_VIRTUAL_BALL
+	case 1060: // INIT_VIRTUAL_BALL
 		break;
 
-	case 1064:	// RASIE_SHIELDS
+	case 1064: // RASIE_SHIELDS
 		break;
 
-	case 1067:	// IS_PLAYER_IN_BOUNDS
+	case 1067: // IS_PLAYER_IN_BOUNDS
 		break;
 
-	case 1073:	// SET_BALL_LOCATION
+	case 1073: // SET_BALL_LOCATION
 		break;
 
-	case 1075:	// SET_PLAYER_LOCATION
+	case 1075: // SET_PLAYER_LOCATION
 		break;
 
-	case 1076:	// GET_PLAYER_LOCATION
+	case 1076: // GET_PLAYER_LOCATION
 		break;
 
-	case 1080:	// IS_PLAYER_IN_GAME
+	case 1080: // IS_PLAYER_IN_GAME
 		break;
 
-	case 1081:	// IS_BALL_IN_GAME
+	case 1081: // IS_BALL_IN_GAME
 		break;
 
-	case 1090:	// UPDATE_CURSOR_POS
+	case 1090: // UPDATE_CURSOR_POS
 		break;
 
-	case 1091:	// MAKE_CURSOR_STICKY
+	case 1091: // MAKE_CURSOR_STICKY
 		break;
 
-	case 1513:	// INIT_NETWORK_SYSTEM_KLUDGE
+	case 1513: // INIT_NETWORK_SYSTEM_KLUDGE
 		break;
 
 	default:

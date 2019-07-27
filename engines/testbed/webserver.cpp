@@ -42,7 +42,8 @@ WebserverTestSuite::WebserverTestSuite() {
 
 bool WebserverTests::startServer() {
 	Common::Point pt;
-	pt.x = 10; pt.y = 10;
+	pt.x = 10;
+	pt.y = 10;
 	Testsuite::writeOnScreen("Starting webserver...", pt);
 	LocalServer.start();
 	g_system->delayMillis(500);
@@ -57,9 +58,9 @@ TestExitStatus WebserverTests::testIP() {
 	}
 
 	Common::String info = "Welcome to the Webserver test suite!\n"
-		"You would be visiting different server's pages and saying whether they work like they should.\n\n"
-		"Testing Webserver's IP resolving.\n"
-		"In this test we'll try to resolve server's IP.";
+	                      "You would be visiting different server's pages and saying whether they work like they should.\n\n"
+	                      "Testing Webserver's IP resolving.\n"
+	                      "In this test we'll try to resolve server's IP.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : IP resolving\n");
@@ -67,8 +68,8 @@ TestExitStatus WebserverTests::testIP() {
 	}
 
 	if (Testsuite::handleInteractiveInput(
-			Common::String::format("Is this your machine's IP?\n%s", LocalServer.getAddress().c_str()),
-			"Yes", "No", kOptionRight)) {
+	      Common::String::format("Is this your machine's IP?\n%s", LocalServer.getAddress().c_str()),
+	      "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Error! IP was not resolved!\n");
 		return kTestFailed;
 	}
@@ -84,7 +85,7 @@ TestExitStatus WebserverTests::testIndexPage() {
 	}
 
 	Common::String info = "Testing Webserver's index page.\n"
-		"In this test we'll try to open server's index page.";
+	                      "In this test we'll try to open server's index page.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : index page\n");
@@ -93,8 +94,8 @@ TestExitStatus WebserverTests::testIndexPage() {
 
 	g_system->openUrl(LocalServer.getAddress());
 	if (Testsuite::handleInteractiveInput(
-		Common::String::format("The %s page opens well?", LocalServer.getAddress().c_str()),
-		"Yes", "No", kOptionRight)) {
+	      Common::String::format("The %s page opens well?", LocalServer.getAddress().c_str()),
+	      "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Error! Couldn't open server's index page!\n");
 		return kTestFailed;
 	}
@@ -110,17 +111,17 @@ TestExitStatus WebserverTests::testFilesPageInvalidParameterValue() {
 	}
 
 	Common::String info = "Testing Webserver's files page.\n"
-		"In this test we'll try to pass invalid parameter to files page.";
+	                      "In this test we'll try to pass invalid parameter to files page.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : files page (invalid parameter)\n");
 		return kTestSkipped;
 	}
 
-	g_system->openUrl(LocalServer.getAddress()+"files?path=error");
+	g_system->openUrl(LocalServer.getAddress() + "files?path=error");
 	if (Testsuite::handleInteractiveInput(
-		Common::String::format("The %sfiles?path=error page displays error message?", LocalServer.getAddress().c_str()),
-		"Yes", "No", kOptionRight)) {
+	      Common::String::format("The %sfiles?path=error page displays error message?", LocalServer.getAddress().c_str()),
+	      "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Error! No error message on invalid parameter in '/files'!\n");
 		return kTestFailed;
 	}
@@ -136,7 +137,7 @@ TestExitStatus WebserverTests::testFilesPageCreateDirectory() {
 	}
 
 	Common::String info = "Testing Webserver's files page Create Directory feature.\n"
-		"In this test you'll try to create directory.";
+	                      "In this test you'll try to create directory.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : files page create directory\n");
@@ -145,8 +146,8 @@ TestExitStatus WebserverTests::testFilesPageCreateDirectory() {
 
 	g_system->openUrl(LocalServer.getAddress() + "files?path=/root/");
 	if (Testsuite::handleInteractiveInput(
-		Common::String::format("You could go to %sfiles page, navigate to some directory with write access and create a directory there?", LocalServer.getAddress().c_str()),
-		"Yes", "No", kOptionRight)) {
+	      Common::String::format("You could go to %sfiles page, navigate to some directory with write access and create a directory there?", LocalServer.getAddress().c_str()),
+	      "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Error! Create Directory is not working!\n");
 		return kTestFailed;
 	}
@@ -162,7 +163,7 @@ TestExitStatus WebserverTests::testFilesPageUploadFile() {
 	}
 
 	Common::String info = "Testing Webserver's files page Upload Files feature.\n"
-		"In this test you'll try to upload a file.";
+	                      "In this test you'll try to upload a file.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : files page file upload\n");
@@ -171,8 +172,8 @@ TestExitStatus WebserverTests::testFilesPageUploadFile() {
 
 	g_system->openUrl(LocalServer.getAddress() + "files?path=/root/");
 	if (Testsuite::handleInteractiveInput(
-		Common::String::format("You're able to upload a file in some directory with write access through %sfiles page?", LocalServer.getAddress().c_str()),
-		"Yes", "No", kOptionRight)) {
+	      Common::String::format("You're able to upload a file in some directory with write access through %sfiles page?", LocalServer.getAddress().c_str()),
+	      "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Error! Upload Files is not working!\n");
 		return kTestFailed;
 	}
@@ -188,7 +189,7 @@ TestExitStatus WebserverTests::testFilesPageUploadDirectory() {
 	}
 
 	Common::String info = "Testing Webserver's files page Upload Directory feature.\n"
-		"In this test you'll try to upload a directory (works in Chrome only).";
+	                      "In this test you'll try to upload a directory (works in Chrome only).";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : files page directory upload\n");
@@ -197,8 +198,8 @@ TestExitStatus WebserverTests::testFilesPageUploadDirectory() {
 
 	g_system->openUrl(LocalServer.getAddress() + "files?path=/root/");
 	if (Testsuite::handleInteractiveInput(
-		Common::String::format("You're able to upload a directory into some directory with write access through %sfiles page using Chrome?", LocalServer.getAddress().c_str()),
-		"Yes", "No", kOptionRight)) {
+	      Common::String::format("You're able to upload a directory into some directory with write access through %sfiles page using Chrome?", LocalServer.getAddress().c_str()),
+	      "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Error! Upload Directory is not working!\n");
 		return kTestFailed;
 	}
@@ -214,7 +215,7 @@ TestExitStatus WebserverTests::testFilesPageDownloadFile() {
 	}
 
 	Common::String info = "Testing Webserver's files downloading feature.\n"
-		"In this test you'll try to download a file.";
+	                      "In this test you'll try to download a file.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : files page download\n");
@@ -223,8 +224,8 @@ TestExitStatus WebserverTests::testFilesPageDownloadFile() {
 
 	g_system->openUrl(LocalServer.getAddress() + "files?path=/root/");
 	if (Testsuite::handleInteractiveInput(
-		Common::String::format("You're able to download a file through %sfiles page?", LocalServer.getAddress().c_str()),
-		"Yes", "No", kOptionRight)) {
+	      Common::String::format("You're able to download a file through %sfiles page?", LocalServer.getAddress().c_str()),
+	      "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Error! Files downloading is not working!\n");
 		return kTestFailed;
 	}

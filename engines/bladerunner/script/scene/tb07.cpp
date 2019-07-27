@@ -25,8 +25,8 @@
 namespace BladeRunner {
 
 enum kTB07Loops {
-	kTB07LoopMainLoop      = 0,
-	kTB07LoopShadeDrop     = 2,
+	kTB07LoopMainLoop = 0,
+	kTB07LoopShadeDrop = 2,
 	kTB07LoopMainShadeDown = 3
 };
 
@@ -40,15 +40,14 @@ void SceneScriptTB07::InitializeScene() {
 	Ambient_Sounds_Add_Sound(kSfxSUNROOM2, 2, 55, 14, 14, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxSUNROOM3, 2, 55, 14, 14, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxSUNROOM4, 2, 55, 14, 14, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBELLY1,   1, 15, 20, 25, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBELLY2,   1, 15, 20, 25, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBELLY3,   1, 20, 20, 25, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBELLY4,   1, 15, 20, 25, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBELLY5,   1, 15, 20, 25, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBELLY1, 1, 15, 20, 25, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBELLY2, 1, 15, 20, 25, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBELLY3, 1, 20, 20, 25, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBELLY4, 1, 15, 20, 25, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBELLY5, 1, 15, 20, 25, -100, 100, -101, -101, 0, 0);
 
-	if ( Global_Variable_Query(kVariableChapter) == 4
-	 && !Actor_Clue_Query(kActorMcCoy, kClueDNATyrell)
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 4
+	    && !Actor_Clue_Query(kActorMcCoy, kClueDNATyrell)) {
 		Item_Add_To_World(kItemDNATyrell, kModelAnimationDNADataDisc, kSetTB07, 9.7f, 48.7f, -174.22f, 0, 12, 12, false, true, false, true);
 	}
 	if (Game_Flag_Query(kFlagTB07ShadeDown)) {
@@ -195,10 +194,8 @@ void SceneScriptTB07::PlayerWalkedIn() {
 	int chapter = Global_Variable_Query(kVariableChapter);
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 44.0f, 12.0f, 176.0f, 0, false, false, false);
 	if ((chapter == 2
-	  || chapter == 3
-	 )
-	 && !Game_Flag_Query(kFlagTB07RachaelTalk)
-	) {
+	     || chapter == 3)
+	    && !Game_Flag_Query(kFlagTB07RachaelTalk)) {
 		Player_Set_Combat_Mode(false);
 		McCoyTalkWithRachaelAndTyrell();
 	}
@@ -210,13 +207,11 @@ void SceneScriptTB07::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 	if (Global_Variable_Query(kVariableChapter) < 4
-	    && !Game_Flag_Query(kFlagMcCoyInTyrellBuilding)
-	) {
+	    && !Game_Flag_Query(kFlagMcCoyInTyrellBuilding)) {
 		// Acts 2, 3 - use a spinner fly-through transition
-		Outtake_Play(kOuttakeAway1,    true, -1);  // available in Acts 2, 3
+		Outtake_Play(kOuttakeAway1, true, -1); // available in Acts 2, 3
 	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
-
 }
 
 void SceneScriptTB07::DialogueQueueFlushed(int a1) {

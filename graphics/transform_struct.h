@@ -28,11 +28,11 @@
 namespace Graphics {
 
 enum TSpriteBlendMode {
-	BLEND_UNKNOWN       = -1,
-	BLEND_NORMAL        = 0,
-	BLEND_ADDITIVE      = 1,
-	BLEND_SUBTRACTIVE   = 2,
-	BLEND_MULTIPLY		= 3,
+	BLEND_UNKNOWN = -1,
+	BLEND_NORMAL = 0,
+	BLEND_ADDITIVE = 1,
+	BLEND_SUBTRACTIVE = 2,
+	BLEND_MULTIPLY = 3,
 	NUM_BLEND_MODES
 };
 
@@ -63,13 +63,13 @@ public:
 	TransformStruct(int32 numTimesX, int32 numTimesY);
 	TransformStruct();
 
-	Common::Point _zoom;   ///< Zoom; 100 = no zoom
+	Common::Point _zoom; ///< Zoom; 100 = no zoom
 	Common::Point _hotspot; ///< Position of the hotspot
-	int32 _angle;   ///< Rotation angle, in degrees
-	byte _flip;      ///< Bitflag: see TransparentSurface::FLIP_XXX
+	int32 _angle; ///< Rotation angle, in degrees
+	byte _flip; ///< Bitflag: see TransparentSurface::FLIP_XXX
 	bool _alphaDisable;
 	TSpriteBlendMode _blendMode;
-	uint32 _rgbaMod;      ///< RGBa
+	uint32 _rgbaMod; ///< RGBa
 	Common::Point _offset;
 	int32 _numTimesX;
 	int32 _numTimesY;
@@ -78,16 +78,7 @@ public:
 	bool getMirrorY() const;
 
 	bool operator==(const TransformStruct &compare) const {
-		return (compare._angle == _angle &&
-				compare._flip == _flip &&
-				compare._zoom == _zoom  &&
-				compare._offset == _offset &&
-				compare._alphaDisable == _alphaDisable  &&
-				compare._rgbaMod == _rgbaMod &&
-				compare._blendMode == _blendMode &&
-				compare._numTimesX == _numTimesX &&
-				compare._numTimesY == _numTimesY
-			   );
+		return (compare._angle == _angle && compare._flip == _flip && compare._zoom == _zoom && compare._offset == _offset && compare._alphaDisable == _alphaDisable && compare._rgbaMod == _rgbaMod && compare._blendMode == _blendMode && compare._numTimesX == _numTimesX && compare._numTimesY == _numTimesY);
 	}
 
 	bool operator!=(const TransformStruct &compare) const {

@@ -23,12 +23,13 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/system.h"
-#include "common/translation.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "gui/saveload.h"
 
 #include "mohawk/cursors.h"
+#include "mohawk/dialogs.h"
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_card.h"
@@ -36,7 +37,6 @@
 #include "mohawk/myst_scripts.h"
 #include "mohawk/myst_sound.h"
 #include "mohawk/myst_state.h"
-#include "mohawk/dialogs.h"
 #include "mohawk/resource.h"
 #include "mohawk/resource_cache.h"
 #include "mohawk/video.h"
@@ -58,8 +58,8 @@
 
 namespace Mohawk {
 
-MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription *gamedesc) :
-		MohawkEngine(syst, gamedesc) {
+MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription *gamedesc)
+  : MohawkEngine(syst, gamedesc) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 	DebugMan.addDebugChannel(kDebugView, "View", "Track Card File (VIEW) Parsing");
@@ -259,7 +259,6 @@ VideoEntryPtr MohawkEngine_Myst::playMovieFullscreen(const Common::String &name,
 	return video;
 }
 
-
 VideoEntryPtr MohawkEngine_Myst::findVideo(const Common::String &name, MystStack stack) {
 	Common::String filename = wrapMovieFilename(name, stack);
 	filename = selectLocalizedMovieFilename(filename);
@@ -286,26 +285,26 @@ void MohawkEngine_Myst::playFlybyMovie(MystStack stack) {
 	const char *flyby = nullptr;
 
 	switch (stack) {
-		case kSeleniticStack:
-			flyby = "selenitic flyby";
-			break;
-		case kStoneshipStack:
-			flyby = "stoneship flyby";
-			break;
-			// Myst Flyby Movie not used in Original Masterpiece Edition Engine
-			// We play it when first arriving on Myst, and if the user has chosen so.
-		case kMystStack:
-			if (ConfMan.getBool("playmystflyby"))
-				flyby = "myst flyby";
-			break;
-		case kMechanicalStack:
-			flyby = "mech age flyby";
-			break;
-		case kChannelwoodStack:
-			flyby = "channelwood flyby";
-			break;
-		default:
-			break;
+	case kSeleniticStack:
+		flyby = "selenitic flyby";
+		break;
+	case kStoneshipStack:
+		flyby = "stoneship flyby";
+		break;
+		// Myst Flyby Movie not used in Original Masterpiece Edition Engine
+		// We play it when first arriving on Myst, and if the user has chosen so.
+	case kMystStack:
+		if (ConfMan.getBool("playmystflyby"))
+			flyby = "myst flyby";
+		break;
+	case kMechanicalStack:
+		flyby = "mech age flyby";
+		break;
+	case kChannelwoodStack:
+		flyby = "channelwood flyby";
+		break;
+	default:
+		break;
 	}
 
 	if (!flyby) {
@@ -469,82 +468,82 @@ void MohawkEngine_Myst::doFrame() {
 	Common::Event event;
 	while (_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
-			case Common::EVENT_MOUSEMOVE:
-				_mouseMoved = true;
+		case Common::EVENT_MOUSEMOVE:
+			_mouseMoved = true;
+			break;
+		case Common::EVENT_LBUTTONUP:
+			_mouseClicked = false;
+			break;
+		case Common::EVENT_LBUTTONDOWN:
+			_mouseClicked = true;
+			break;
+		case Common::EVENT_KEYDOWN:
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_d:
+				if (event.kbd.flags & Common::KBD_CTRL) {
+					_console->attach();
+					_console->onFrame();
+				}
 				break;
-			case Common::EVENT_LBUTTONUP:
-				_mouseClicked = false;
+			case Common::KEYCODE_SPACE:
+				pauseGame();
 				break;
-			case Common::EVENT_LBUTTONDOWN:
-				_mouseClicked = true;
+			case Common::KEYCODE_F5:
+				runOptionsDialog();
 				break;
-			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-					case Common::KEYCODE_d:
-						if (event.kbd.flags & Common::KBD_CTRL) {
-							_console->attach();
-							_console->onFrame();
-						}
-						break;
-					case Common::KEYCODE_SPACE:
-						pauseGame();
-						break;
-					case Common::KEYCODE_F5:
-						runOptionsDialog();
-						break;
-					case Common::KEYCODE_ESCAPE:
-						if (_stack->getStackId() == kCreditsStack) {
-							// Don't allow going to the menu while the credits play
-							break;
-						}
+			case Common::KEYCODE_ESCAPE:
+				if (_stack->getStackId() == kCreditsStack) {
+					// Don't allow going to the menu while the credits play
+					break;
+				}
 
-						if (!isInteractive()) {
-							// Try to skip the currently playing video
-							_escapePressed = true;
-						} else if (_stack->getStackId() == kMenuStack) {
-							// If the menu is active and a game is loaded, go back to the game
-							if (_prevStack) {
-								resumeFromMainMenu();
-							}
-						} else if (getFeatures() & GF_25TH) {
-							// If the game is interactive, open the main menu
-							goToMainMenu();
-						}
-						break;
-					case Common::KEYCODE_o:
-						if (event.kbd.flags & Common::KBD_CTRL) {
-							if (canLoadGameStateCurrently()) {
-								runLoadDialog();
-							}
-						}
-						break;
-					case Common::KEYCODE_s:
-						if (event.kbd.flags & Common::KBD_CTRL) {
-							if (canSaveGameStateCurrently()) {
-								runSaveDialog();
-							}
-						}
-						break;
-					default:
-						break;
+				if (!isInteractive()) {
+					// Try to skip the currently playing video
+					_escapePressed = true;
+				} else if (_stack->getStackId() == kMenuStack) {
+					// If the menu is active and a game is loaded, go back to the game
+					if (_prevStack) {
+						resumeFromMainMenu();
+					}
+				} else if (getFeatures() & GF_25TH) {
+					// If the game is interactive, open the main menu
+					goToMainMenu();
 				}
 				break;
-			case Common::EVENT_KEYUP:
-				switch (event.kbd.keycode) {
-					case Common::KEYCODE_ESCAPE:
-						_escapePressed = false;
-						break;
-					default:
-						break;
+			case Common::KEYCODE_o:
+				if (event.kbd.flags & Common::KBD_CTRL) {
+					if (canLoadGameStateCurrently()) {
+						runLoadDialog();
+					}
 				}
 				break;
-			case Common::EVENT_QUIT:
-			case Common::EVENT_RTL:
-				// Attempt to autosave before exiting
-				tryAutoSaving();
+			case Common::KEYCODE_s:
+				if (event.kbd.flags & Common::KBD_CTRL) {
+					if (canSaveGameStateCurrently()) {
+						runSaveDialog();
+					}
+				}
 				break;
 			default:
 				break;
+			}
+			break;
+		case Common::EVENT_KEYUP:
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_ESCAPE:
+				_escapePressed = false;
+				break;
+			default:
+				break;
+			}
+			break;
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RTL:
+			// Attempt to autosave before exiting
+			tryAutoSaving();
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -667,7 +666,7 @@ void MohawkEngine_Myst::changeToStack(MystStack stackId, uint16 card, uint16 lin
 	// In Myst ME, play a fullscreen flyby movie, except when loading saves.
 	// Also play a flyby when first linking to Myst.
 	if (getFeatures() & GF_ME
-			&& ((_stack && _stack->getStackId() == kMystStack) || (stackId == kMystStack && card == 4134))) {
+	    && ((_stack && _stack->getStackId() == kMystStack) || (stackId == kMystStack && card == 4134))) {
 		playFlybyMovie(stackId);
 	}
 
@@ -771,7 +770,7 @@ void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 
 	// The demo resets the cursor at each card change except when in the library
 	if (getFeatures() & GF_DEMO
-			&& _gameState->_globals.currentAge != kMystLibrary) {
+	    && _gameState->_globals.currentAge != kMystLibrary) {
 		_cursor->setDefaultCursor();
 	}
 
@@ -819,28 +818,28 @@ MystArea *MohawkEngine_Myst::loadResource(Common::SeekableReadStream *rlstStream
 
 	switch (type) {
 	case kMystAreaAction:
-		resource =  new MystAreaAction(this, type, rlstStream, parent);
+		resource = new MystAreaAction(this, type, rlstStream, parent);
 		break;
 	case kMystAreaVideo:
-		resource =  new MystAreaVideo(this, type, rlstStream, parent);
+		resource = new MystAreaVideo(this, type, rlstStream, parent);
 		break;
 	case kMystAreaActionSwitch:
-		resource =  new MystAreaActionSwitch(this, type, rlstStream, parent);
+		resource = new MystAreaActionSwitch(this, type, rlstStream, parent);
 		break;
 	case kMystAreaImageSwitch:
-		resource =  new MystAreaImageSwitch(this, type, rlstStream, parent);
+		resource = new MystAreaImageSwitch(this, type, rlstStream, parent);
 		break;
 	case kMystAreaSlider:
-		resource =  new MystAreaSlider(this, type, rlstStream, parent);
+		resource = new MystAreaSlider(this, type, rlstStream, parent);
 		break;
 	case kMystAreaDrag:
-		resource =  new MystAreaDrag(this, type, rlstStream, parent);
+		resource = new MystAreaDrag(this, type, rlstStream, parent);
 		break;
 	case kMystVideoInfo:
-		resource =  new MystVideoInfo(this, type, rlstStream, parent);
+		resource = new MystVideoInfo(this, type, rlstStream, parent);
 		break;
 	case kMystAreaHover:
-		resource =  new MystAreaHover(this, type, rlstStream, parent);
+		resource = new MystAreaHover(this, type, rlstStream, parent);
 		break;
 	default:
 		resource = new MystArea(this, type, rlstStream, parent);
@@ -1114,7 +1113,6 @@ void MohawkEngine_Myst::resumeFromMainMenu() {
 
 	_stack = _prevStack;
 	_prevStack.reset();
-
 
 	// Clear the resource cache and image cache
 	_cache.clear();

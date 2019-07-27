@@ -23,13 +23,13 @@
 #ifndef ACCESS_DATA_H
 #define ACCESS_DATA_H
 
-#include "common/scummsys.h"
+#include "access/files.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
 #include "common/types.h"
 #include "graphics/surface.h"
-#include "access/files.h"
 
 namespace Access {
 
@@ -38,8 +38,10 @@ class AccessEngine;
 class Manager {
 protected:
 	AccessEngine *_vm;
+
 public:
-	Manager(AccessEngine *vm) : _vm(vm) {}
+	Manager(AccessEngine *vm)
+	  : _vm(vm) {}
 };
 
 struct TimerEntry {
@@ -56,8 +58,10 @@ struct TimerEntry {
 class TimerList : public Common::Array<TimerEntry> {
 private:
 	Common::Array<TimerEntry> _savedTimers;
+
 public:
 	bool _timersSavedFlag;
+
 public:
 	TimerList();
 

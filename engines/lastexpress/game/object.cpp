@@ -35,7 +35,8 @@ Common::String Objects::Object::toString() {
 	return Common::String::format("{ %s - %d - %d - %d - %d }", ENTITY_NAME(entity), status, windowCursor, handleCursor, model);
 }
 
-Objects::Objects(LastExpressEngine *engine) : _engine(engine) {}
+Objects::Objects(LastExpressEngine *engine)
+  : _engine(engine) {}
 
 const Objects::Object Objects::get(ObjectIndex index) const {
 	if (index >= kObjectMax)
@@ -71,7 +72,7 @@ void Objects::update(ObjectIndex index, EntityIndex entity, ObjectLocation statu
 	// Compartments
 	if (original_status != status && (original_status == kObjectLocation2 || status == kObjectLocation2)) {
 		if ((index >= kObjectCompartment1 && index <= kObjectCompartment8)
-		   || (index >= kObjectCompartmentA && index <= kObjectCompartmentF)) {
+		    || (index >= kObjectCompartmentA && index <= kObjectCompartmentF)) {
 			getScenes()->updateDoorsAndClock();
 		}
 	}

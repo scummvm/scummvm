@@ -20,16 +20,16 @@
  *
  */
 
+#include "tsage/scenes.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
 #include "gui/saveload.h"
 #include "tsage/dialogs.h"
-#include "tsage/scenes.h"
 #include "tsage/globals.h"
 #include "tsage/ringworld/ringworld_logic.h"
-#include "tsage/tsage.h"
 #include "tsage/saveload.h"
 #include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -193,8 +193,7 @@ void SceneManager::setup() {
 }
 
 void SceneManager::setBackSurface() {
-	int size = g_globals->_sceneManager._scene->_backgroundBounds.width() *
-		g_globals->_sceneManager._scene->_backgroundBounds.height();
+	int size = g_globals->_sceneManager._scene->_backgroundBounds.width() * g_globals->_sceneManager._scene->_backgroundBounds.height();
 
 	if (size > 96000) {
 		if (g_globals->_sceneManager._scene->_backgroundBounds.width() <= SCREEN_WIDTH) {
@@ -208,9 +207,8 @@ void SceneManager::setBackSurface() {
 		}
 	} else {
 		g_globals->_sceneManager._scene->_backSurface.create(
-			g_globals->_sceneManager._scene->_backgroundBounds.width(),
-			g_globals->_sceneManager._scene->_backgroundBounds.height()
-		);
+		  g_globals->_sceneManager._scene->_backgroundBounds.width(),
+		  g_globals->_sceneManager._scene->_backgroundBounds.height());
 		g_globals->_sceneManager._scrollerRect = Rect(80, 20, SCREEN_WIDTH - 80, SCREEN_HEIGHT - 20);
 	}
 }
@@ -270,8 +268,9 @@ void SceneManager::listenerSynchronize(Serializer &s) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene::Scene() : _sceneBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),
-			_backgroundBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) {
+Scene::Scene()
+  : _sceneBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
+  , _backgroundBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) {
 	_sceneMode = 0;
 	_activeScreenNumber = 0;
 	_oldSceneBounds = Rect(4000, 4000, 4100, 4100);
@@ -427,8 +426,7 @@ void Scene::loadBackground(int xAmount, int yAmount) {
 	if ((_backgroundBounds.height() / 100) == 3)
 		g_globals->_sceneOffset.y = 0;
 
-	if ((g_globals->_sceneOffset.x != g_globals->_prevSceneOffset.x) ||
-		(g_globals->_sceneOffset.y != g_globals->_prevSceneOffset.y)) {
+	if ((g_globals->_sceneOffset.x != g_globals->_prevSceneOffset.x) || (g_globals->_sceneOffset.y != g_globals->_prevSceneOffset.y)) {
 		// Change has happend, so refresh background
 		g_globals->_prevSceneOffset = g_globals->_sceneOffset;
 		refreshBackground(xAmount, yAmount);
@@ -456,8 +454,7 @@ void Scene::refreshBackground(int xAmount, int yAmount) {
 
 	for (int yp = ySectionStart; yp != ySectionEnd; yp += yInc) {
 		for (int xp = xSectionStart; xp != xSectionEnd; xp += xInc) {
-			if ((yp < yHalfOffset) || (yp >= (yHalfOffset + yHalfCount)) ||
-				(xp < xHalfOffset) || (xp >= (xHalfOffset + xHalfCount))) {
+			if ((yp < yHalfOffset) || (yp >= (yHalfOffset + yHalfCount)) || (xp < xHalfOffset) || (xp >= (xHalfOffset + xHalfCount))) {
 				// Flag section as enabled
 				_enabledSections[xp * 16 + yp] = 0xffff;
 			} else {
@@ -478,9 +475,9 @@ void Scene::refreshBackground(int xAmount, int yAmount) {
 						int ySectionSrc = _enabledSections[xp * 16 + yp] & 0xf;
 
 						Rect srcBounds(xSectionSrc * 160, ySectionSrc * 100,
-								(xSectionSrc + 1) * 160, (ySectionSrc + 1) * 100);
+						               (xSectionSrc + 1) * 160, (ySectionSrc + 1) * 100);
 						Rect destBounds(xSectionDest * 160, ySectionDest * 100,
-								(xSectionDest + 1) * 160, (ySectionDest + 1) * 100);
+						                (xSectionDest + 1) * 160, (ySectionDest + 1) * 100);
 						if (g_vm->getGameID() != GType_Ringworld) {
 							// For Blue Force and Return to Ringworld, if the scene has an interface area,
 							// exclude it from the copy
@@ -492,8 +489,7 @@ void Scene::refreshBackground(int xAmount, int yAmount) {
 					}
 				}
 
-				_enabledSections[xp * 16 + yp] =
-					((xp - xHalfOffset) << 4) | (yp - yHalfOffset);
+				_enabledSections[xp * 16 + yp] = ((xp - xHalfOffset) << 4) | (yp - yHalfOffset);
 			}
 		}
 	}
@@ -514,7 +510,7 @@ void Scene::drawBackgroundObjects() {
 		// Handle updating object priority
 		if (!(obj->_flags & OBJFLAG_FIXED_PRIORITY)) {
 			obj->_priority = MIN((int)obj->_position.y - 1,
-				(int)g_globals->_sceneManager._scene->_backgroundBounds.bottom);
+			                     (int)g_globals->_sceneManager._scene->_backgroundBounds.bottom);
 		}
 	}
 

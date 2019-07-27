@@ -20,13 +20,11 @@
  *
  */
 
-
-
 #ifdef ENABLE_AGOS2
 
-#include "agos/agos.h"
-#include "agos/intern.h"
-#include "agos/sound.h"
+#	include "agos/agos.h"
+#	include "agos/intern.h"
+#	include "agos/sound.h"
 
 namespace AGOS {
 
@@ -49,22 +47,22 @@ int AGOSEngine::getScale(int16 y, int16 x) {
 	int16 z;
 
 	if (y > _baseY) {
-		return((int16)(x * (1 + ((y - _baseY) * _scale))));
+		return ((int16)(x * (1 + ((y - _baseY) * _scale))));
 	} else {
 		if (x == 0)
-			return(0);
+			return (0);
 		if (x < 0) {
-			z = ((int16)((x * (1 - ((_baseY - y)* _scale))) - 0.5));
-			if (z >- 2)
-				return(-2);
-			return(z);
+			z = ((int16)((x * (1 - ((_baseY - y) * _scale))) - 0.5));
+			if (z > -2)
+				return (-2);
+			return (z);
 		}
 
 		z = ((int16)((x * (1 - ((_baseY - y) * _scale))) + 0.5));
 		if (z < 2)
-			return(2);
+			return (2);
 
-		return(z);
+		return (z);
 	}
 }
 
@@ -132,9 +130,9 @@ void AGOSEngine::vc76_setScaleXOffs() {
 		old_file_1 = _vgaCurSpriteId;
 
 		_vgaCurSpriteId = vcReadVar(vcReadNextWord());
-		 vsp1 = findCurSprite();
+		vsp1 = findCurSprite();
 		_vgaCurSpriteId = vcReadVar(vcReadNextWord());
-		 vsp2 = findCurSprite();
+		vsp2 = findCurSprite();
 
 		tmp1 = vsp1->x;
 		tmp2 = vsp2->x;

@@ -26,230 +26,232 @@ namespace Gob {
 
 namespace Geisha {
 
-enum Animation {
-	kAnimationDriveS   =  4,
-	kAnimationDriveE   =  5,
-	kAnimationDriveN   =  6,
-	kAnimationDriveW   =  7,
-	kAnimationDriveSE  =  8,
-	kAnimationDriveNE  =  9,
-	kAnimationDriveSW  = 10,
-	kAnimationDriveNW  = 11,
-	kAnimationShootS   = 12,
-	kAnimationShootN   = 13,
-	kAnimationShootW   = 14,
-	kAnimationShootE   = 15,
-	kAnimationShootNE  = 16,
-	kAnimationShootSE  = 17,
-	kAnimationShootSW  = 18,
-	kAnimationShootNW  = 19,
-	kAnimationExplodeN = 28,
-	kAnimationExplodeS = 29,
-	kAnimationExplodeW = 30,
-	kAnimationExplodeE = 31,
-	kAnimationExit     = 32
-};
+	enum Animation {
+		kAnimationDriveS = 4,
+		kAnimationDriveE = 5,
+		kAnimationDriveN = 6,
+		kAnimationDriveW = 7,
+		kAnimationDriveSE = 8,
+		kAnimationDriveNE = 9,
+		kAnimationDriveSW = 10,
+		kAnimationDriveNW = 11,
+		kAnimationShootS = 12,
+		kAnimationShootN = 13,
+		kAnimationShootW = 14,
+		kAnimationShootE = 15,
+		kAnimationShootNE = 16,
+		kAnimationShootSE = 17,
+		kAnimationShootSW = 18,
+		kAnimationShootNW = 19,
+		kAnimationExplodeN = 28,
+		kAnimationExplodeS = 29,
+		kAnimationExplodeW = 30,
+		kAnimationExplodeE = 31,
+		kAnimationExit = 32
+	};
 
+	Submarine::Submarine(const ANIFile &ani)
+	  : ANIObject(ani)
+	  , _state(kStateMove)
+	  , _direction(kDirectionNone) {
+		turn(kDirectionN);
+	}
 
-Submarine::Submarine(const ANIFile &ani) : ANIObject(ani), _state(kStateMove), _direction(kDirectionNone) {
-	turn(kDirectionN);
-}
+	Submarine::~Submarine() {
+	}
 
-Submarine::~Submarine() {
-}
+	Submarine::Direction Submarine::getDirection() const {
+		return _direction;
+	}
 
-Submarine::Direction Submarine::getDirection() const {
-	return _direction;
-}
+	void Submarine::turn(Direction to) {
+		// Nothing to do
+		if ((to == kDirectionNone) || ((_state == kStateMove) && (_direction == to)))
+			return;
 
-void Submarine::turn(Direction to) {
-	// Nothing to do
-	if ((to == kDirectionNone) || ((_state == kStateMove) && (_direction == to)))
-		return;
+		_direction = to;
 
-	_direction = to;
+		move();
+	}
 
-	move();
-}
+	void Submarine::move() {
+		uint16 frame = getFrame();
+		uint16 anim = (_state == kStateShoot) ? directionToShoot(_direction) : directionToMove(_direction);
 
-void Submarine::move() {
-	uint16 frame = getFrame();
-	uint16 anim  = (_state == kStateShoot) ? directionToShoot(_direction) : directionToMove(_direction);
+		setAnimation(anim);
+		setFrame(frame);
+		setPause(false);
+		setVisible(true);
 
-	setAnimation(anim);
-	setFrame(frame);
-	setPause(false);
-	setVisible(true);
+		setMode((_state == kStateShoot) ? kModeOnce : kModeContinuous);
+	}
 
-	setMode((_state == kStateShoot) ? kModeOnce : kModeContinuous);
-}
+	void Submarine::shoot() {
+		_state = kStateShoot;
 
-void Submarine::shoot() {
-	_state = kStateShoot;
+		setAnimation(directionToShoot(_direction));
+		setMode(kModeOnce);
+		setPause(false);
+		setVisible(true);
+	}
 
-	setAnimation(directionToShoot(_direction));
-	setMode(kModeOnce);
-	setPause(false);
-	setVisible(true);
-}
+	void Submarine::die() {
+		if (!canMove())
+			return;
 
-void Submarine::die() {
-	if (!canMove())
-		return;
+		_state = kStateDie;
 
-	_state = kStateDie;
+		setAnimation(directionToExplode(_direction));
+		setMode(kModeOnce);
+		setPause(false);
+		setVisible(true);
+	}
 
-	setAnimation(directionToExplode(_direction));
-	setMode(kModeOnce);
-	setPause(false);
-	setVisible(true);
-}
+	void Submarine::leave() {
+		_state = kStateExit;
 
-void Submarine::leave() {
-	_state = kStateExit;
+		setAnimation(kAnimationExit);
+		setMode(kModeOnce);
+		setPause(false);
+		setVisible(true);
+	}
 
-	setAnimation(kAnimationExit);
-	setMode(kModeOnce);
-	setPause(false);
-	setVisible(true);
-}
+	void Submarine::advance() {
+		ANIObject::advance();
 
-void Submarine::advance() {
-	ANIObject::advance();
+		switch (_state) {
+		case kStateShoot:
+			if (isPaused()) {
+				_state = kStateMove;
 
-	switch (_state) {
-	case kStateShoot:
-		if (isPaused()) {
-			_state = kStateMove;
+				move();
+			}
+			break;
 
-			move();
+		case kStateExit:
+			if (isPaused())
+				_state = kStateExited;
+
+			break;
+
+		case kStateDie:
+			if (isPaused())
+				_state = kStateDead;
+			break;
+
+		default:
+			break;
 		}
-		break;
-
-	case kStateExit:
-		if (isPaused())
-			_state = kStateExited;
-
-		break;
-
-	case kStateDie:
-		if (isPaused())
-			_state = kStateDead;
-		break;
-
-	default:
-		break;
-	}
-}
-
-bool Submarine::canMove() const {
-	return (_state == kStateMove) || (_state == kStateShoot);
-}
-
-bool Submarine::isDead() const {
-	return _state == kStateDead;
-}
-
-bool Submarine::isShooting() const {
-	return _state == kStateShoot;
-}
-
-bool Submarine::hasExited() const {
-	return _state == kStateExited;
-}
-
-uint16 Submarine::directionToMove(Direction direction) const {
-	switch (direction) {
-	case kDirectionN:
-		return kAnimationDriveN;
-
-	case kDirectionNE:
-		return kAnimationDriveNE;
-
-	case kDirectionE:
-		return kAnimationDriveE;
-
-	case kDirectionSE:
-		return kAnimationDriveSE;
-
-	case kDirectionS:
-		return kAnimationDriveS;
-
-	case kDirectionSW:
-		return kAnimationDriveSW;
-
-	case kDirectionW:
-		return kAnimationDriveW;
-
-	case kDirectionNW:
-		return kAnimationDriveNW;
-
-	default:
-		break;
 	}
 
-	return 0;
-}
-
-uint16 Submarine::directionToShoot(Direction direction) const {
-	switch (direction) {
-	case kDirectionN:
-		return kAnimationShootN;
-
-	case kDirectionNE:
-		return kAnimationShootNE;
-
-	case kDirectionE:
-		return kAnimationShootE;
-
-	case kDirectionSE:
-		return kAnimationShootSE;
-
-	case kDirectionS:
-		return kAnimationShootS;
-
-	case kDirectionSW:
-		return kAnimationShootSW;
-
-	case kDirectionW:
-		return kAnimationShootW;
-
-	case kDirectionNW:
-		return kAnimationShootNW;
-
-	default:
-		break;
+	bool Submarine::canMove() const {
+		return (_state == kStateMove) || (_state == kStateShoot);
 	}
 
-	return 0;
-}
-
-uint16 Submarine::directionToExplode(Direction direction) const {
-	// Only 4 exploding animations (spinning clockwise)
-
-	switch (direction) {
-	case kDirectionNW:
-	case kDirectionN:
-		return kAnimationExplodeN;
-
-	case kDirectionNE:
-	case kDirectionE:
-		return kAnimationExplodeE;
-
-	case kDirectionSE:
-	case kDirectionS:
-		return kAnimationExplodeS;
-
-	case kDirectionSW:
-	case kDirectionW:
-		return kAnimationExplodeW;
-
-	default:
-		break;
+	bool Submarine::isDead() const {
+		return _state == kStateDead;
 	}
 
-	return 0;
-}
+	bool Submarine::isShooting() const {
+		return _state == kStateShoot;
+	}
+
+	bool Submarine::hasExited() const {
+		return _state == kStateExited;
+	}
+
+	uint16 Submarine::directionToMove(Direction direction) const {
+		switch (direction) {
+		case kDirectionN:
+			return kAnimationDriveN;
+
+		case kDirectionNE:
+			return kAnimationDriveNE;
+
+		case kDirectionE:
+			return kAnimationDriveE;
+
+		case kDirectionSE:
+			return kAnimationDriveSE;
+
+		case kDirectionS:
+			return kAnimationDriveS;
+
+		case kDirectionSW:
+			return kAnimationDriveSW;
+
+		case kDirectionW:
+			return kAnimationDriveW;
+
+		case kDirectionNW:
+			return kAnimationDriveNW;
+
+		default:
+			break;
+		}
+
+		return 0;
+	}
+
+	uint16 Submarine::directionToShoot(Direction direction) const {
+		switch (direction) {
+		case kDirectionN:
+			return kAnimationShootN;
+
+		case kDirectionNE:
+			return kAnimationShootNE;
+
+		case kDirectionE:
+			return kAnimationShootE;
+
+		case kDirectionSE:
+			return kAnimationShootSE;
+
+		case kDirectionS:
+			return kAnimationShootS;
+
+		case kDirectionSW:
+			return kAnimationShootSW;
+
+		case kDirectionW:
+			return kAnimationShootW;
+
+		case kDirectionNW:
+			return kAnimationShootNW;
+
+		default:
+			break;
+		}
+
+		return 0;
+	}
+
+	uint16 Submarine::directionToExplode(Direction direction) const {
+		// Only 4 exploding animations (spinning clockwise)
+
+		switch (direction) {
+		case kDirectionNW:
+		case kDirectionN:
+			return kAnimationExplodeN;
+
+		case kDirectionNE:
+		case kDirectionE:
+			return kAnimationExplodeE;
+
+		case kDirectionSE:
+		case kDirectionS:
+			return kAnimationExplodeS;
+
+		case kDirectionSW:
+		case kDirectionW:
+			return kAnimationExplodeW;
+
+		default:
+			break;
+		}
+
+		return 0;
+	}
 
 } // End of namespace Geisha
 

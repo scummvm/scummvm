@@ -35,7 +35,8 @@ bool CopyProtection::show(XeenEngine *vm) {
 	return result;
 }
 
-CopyProtection::CopyProtection(XeenEngine *vm) : Input(vm, &(*vm->_windows)[11]) {
+CopyProtection::CopyProtection(XeenEngine *vm)
+  : Input(vm, &(*vm->_windows)[11]) {
 	loadEntries();
 }
 
@@ -49,7 +50,7 @@ bool CopyProtection::execute() {
 	// Choose a random entry
 	ProtectionEntry &protEntry = _entries[_vm->getRandomNumber(_entries.size() - 1)];
 	Common::String msg = Common::String::format(Res.WHATS_THE_PASSWORD,
-		protEntry._pageNum, protEntry._lineNum, protEntry._wordNum);
+	                                            protEntry._pageNum, protEntry._lineNum, protEntry._wordNum);
 
 	w.open();
 	w.writeString(msg);
@@ -64,7 +65,8 @@ bool CopyProtection::execute() {
 		}
 
 		sound.playFX(21);
-		w.writeString("\x3l\v040\n\x4""200");
+		w.writeString("\x3l\v040\n\x4"
+		              "200");
 		w.writeString(Res.PASSWORD_INCORRECT);
 		w.update();
 

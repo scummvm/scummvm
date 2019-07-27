@@ -23,11 +23,11 @@
 #ifndef ACCESS_ANIMATION_H
 #define ACCESS_ANIMATION_H
 
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "common/memstream.h"
 #include "access/data.h"
 #include "access/files.h"
+#include "common/array.h"
+#include "common/memstream.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
@@ -40,10 +40,12 @@ class AnimationManager : public Manager {
 private:
 	Common::Array<Animation *> _animationTimers;
 	AnimationResource *_animation;
+
 public:
 	Animation *_animStart;
 	Common::Point _base;
 	int _frameScale;
+
 public:
 	AnimationManager(AccessEngine *vm);
 	~AnimationManager();
@@ -74,6 +76,7 @@ public:
 class AnimationResource {
 private:
 	Common::Array<Animation *> _animations;
+
 public:
 	AnimationResource(AccessEngine *vm, Resource *res);
 	~AnimationResource();
@@ -98,6 +101,7 @@ private:
 	AnimationFrame *calcFrame1();
 	void setFrame(AnimationFrame *frame);
 	void setFrame1(AnimationFrame *frame);
+
 public:
 	int _type;
 	int _scaling;
@@ -106,6 +110,7 @@ public:
 	int _loopCount;
 	int _countdownTicks;
 	int _currentLoopCount;
+
 public:
 	Animation(AccessEngine *vm, Common::SeekableReadStream *stream);
 	~Animation();
@@ -118,6 +123,7 @@ public:
 	int _baseX, _baseY;
 	int _frameDelay;
 	Common::Array<AnimationFramePart *> _parts;
+
 public:
 	AnimationFrame(Common::SeekableReadStream *stream, int startOffset);
 	~AnimationFrame();
@@ -130,6 +136,7 @@ public:
 	int _frameIndex;
 	Common::Point _position;
 	int _offsetY;
+
 public:
 	AnimationFramePart(Common::SeekableReadStream *stream);
 };

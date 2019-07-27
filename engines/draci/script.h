@@ -43,8 +43,8 @@ class DraciEngine;
 class Script;
 
 typedef void (Script::*GPLHandler)(const Common::Array<int> &);
-typedef int  (Script::*GPLOperatorHandler)(int, int) const;
-typedef int  (Script::*GPLFunctionHandler)(int) const;
+typedef int (Script::*GPLOperatorHandler)(int, int) const;
+typedef int (Script::*GPLFunctionHandler)(int) const;
 
 /**
  * Represents a single command in the GPL scripting language bytecode.
@@ -82,7 +82,9 @@ struct GPL2Function {
  *  length of the bytecode. Passed to Script::run().
  */
 struct GPL2Program {
-	GPL2Program() : _bytecode(NULL), _length(0) {}
+	GPL2Program()
+	  : _bytecode(NULL)
+	  , _length(0) {}
 
 	byte *_bytecode;
 	uint16 _length;
@@ -94,7 +96,10 @@ class GameObject;
 class Script {
 
 public:
-	Script(DraciEngine *vm) : _vm(vm), _jump(0), _endProgram(false) { setupCommandList(); }
+	Script(DraciEngine *vm)
+	  : _vm(vm)
+	  , _jump(0)
+	  , _endProgram(false) { setupCommandList(); }
 
 	void run(const GPL2Program &program, uint16 offset);
 	void runWrapper(const GPL2Program &program, uint16 offset, bool disableCursor, bool releaseAnims);

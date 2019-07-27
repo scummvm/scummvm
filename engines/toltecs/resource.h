@@ -24,8 +24,8 @@
 #define TOLTECS_RESOURCE_H
 
 #include "common/file.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 
 #include "engines/engine.h"
 
@@ -33,7 +33,6 @@ namespace Toltecs {
 
 const uint kMaxCacheItems = 1024;
 const uint kMaxCacheSize = 8 * 1024 * 1024; // 8 MB
-
 
 class ArchiveReader : public Common::File {
 public:
@@ -53,7 +52,6 @@ public:
 
 protected:
 	uint32 *_offsets;
-
 };
 
 struct Resource {
@@ -75,9 +73,7 @@ protected:
 	ToltecsEngine *_vm;
 
 	ResourceMap _cache;
-
 };
-
 
 } // End of namespace Toltecs
 

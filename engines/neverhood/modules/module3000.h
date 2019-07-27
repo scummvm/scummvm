@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE3000_H
 #define NEVERHOOD_MODULES_MODULE3000_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -33,6 +33,7 @@ class Module3000 : public Module {
 public:
 	Module3000(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module3000();
+
 protected:
 	int _waterfallSoundVolume;
 	bool _isWaterfallRunning;
@@ -51,6 +52,7 @@ public:
 	Scene3009(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Scene3009();
 	bool isTurning();
+
 protected:
 	int _lockSymbolsPart1Countdown;
 	int _lockSymbolsPart2Countdown;
@@ -80,6 +82,7 @@ class AsScene3010DeadBolt;
 class Scene3010 : public Scene {
 public:
 	Scene3010(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	int _countdown;
 	bool _doorUnlocked;
@@ -97,6 +100,7 @@ class AsScene3011Symbol;
 class Scene3011 : public Scene {
 public:
 	Scene3011(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	Sprite *_ssButton;
 	AsScene3011Symbol *_asSymbols[12];

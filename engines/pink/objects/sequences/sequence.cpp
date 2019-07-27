@@ -23,19 +23,20 @@
 #include "common/debug.h"
 
 #include "pink/archive.h"
-#include "pink/pink.h"
-#include "pink/sound.h"
 #include "pink/objects/actors/actor.h"
 #include "pink/objects/pages/game_page.h"
 #include "pink/objects/sequences/sequence.h"
 #include "pink/objects/sequences/sequence_context.h"
 #include "pink/objects/sequences/sequencer.h"
+#include "pink/pink.h"
+#include "pink/sound.h"
 
 namespace Pink {
 
 Sequence::Sequence()
-		: _canBeSkipped(0), _context(nullptr),
-		  _sequencer(nullptr) {}
+  : _canBeSkipped(0)
+  , _context(nullptr)
+  , _sequencer(nullptr) {}
 
 Sequence::~Sequence() {
 	for (uint i = 0; i < _items.size(); ++i) {
@@ -59,8 +60,7 @@ void Sequence::toConsole() {
 
 void Sequence::start(bool loadingSave) {
 	uint nextItemIndex = _context->getNextItemIndex();
-	if (nextItemIndex >= _items.size() ||
-		!_items[nextItemIndex]->execute(_context->getSegment(), this, loadingSave)) {
+	if (nextItemIndex >= _items.size() || !_items[nextItemIndex]->execute(_context->getSegment(), this, loadingSave)) {
 		debugC(6, kPinkDebugScripts, "Sequence %s ended", _name.c_str());
 		end();
 		return;

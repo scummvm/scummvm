@@ -32,18 +32,19 @@
 #include "common/debug.h"
 #include "common/system.h"
 
-#include "hugo/hugo.h"
-#include "hugo/parser.h"
 #include "hugo/file.h"
-#include "hugo/schedule.h"
-#include "hugo/util.h"
-#include "hugo/sound.h"
+#include "hugo/hugo.h"
 #include "hugo/object.h"
+#include "hugo/parser.h"
+#include "hugo/schedule.h"
+#include "hugo/sound.h"
 #include "hugo/text.h"
+#include "hugo/util.h"
 
 namespace Hugo {
 
-Parser_v2d::Parser_v2d(HugoEngine *vm) : Parser_v1d(vm) {
+Parser_v2d::Parser_v2d(HugoEngine *vm)
+  : Parser_v1d(vm) {
 }
 
 Parser_v2d::~Parser_v2d() {
@@ -64,7 +65,7 @@ void Parser_v2d::lineHandler() {
 		return;
 	}
 
-	Utils::strlwr(_vm->_line);                      // Convert to lower case
+	Utils::strlwr(_vm->_line); // Convert to lower case
 
 	// God Mode cheat commands:
 	// goto <screen>                                Takes hero to named screen
@@ -131,7 +132,7 @@ void Parser_v2d::lineHandler() {
 		return;
 	}
 
-	if (*_vm->_line == '\0')                        // Empty line
+	if (*_vm->_line == '\0') // Empty line
 		return;
 
 	if (strspn(_vm->_line, " ") == strlen(_vm->_line)) // Nothing but spaces!
@@ -145,18 +146,18 @@ void Parser_v2d::lineHandler() {
 
 	// Find the first verb in the line
 	const char *verb = findVerb();
-	const char *noun = 0;                           // Noun not found yet
-	char farComment[kCompLineSize * 5] = "";        // hold 5 line comment if object not nearby
+	const char *noun = 0; // Noun not found yet
+	char farComment[kCompLineSize * 5] = ""; // hold 5 line comment if object not nearby
 
-	if (verb) {                                     // OK, verb found.  Try to match with object
+	if (verb) { // OK, verb found.  Try to match with object
 		do {
-			noun = findNextNoun(noun);              // Find a noun in the line
+			noun = findNextNoun(noun); // Find a noun in the line
 			// Must try at least once for objects allowing verb-context
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
 				Object *obj = &_vm->_object->_objects[i];
 				if (isNear_v1(verb, noun, obj, farComment)) {
-					if (isObjectVerb_v1(verb, obj)  // Foreground object
-					 || isGenericVerb_v1(verb, obj))// Common action type
+					if (isObjectVerb_v1(verb, obj) // Foreground object
+					    || isGenericVerb_v1(verb, obj)) // Common action type
 						return;
 				}
 			}
@@ -166,16 +167,16 @@ void Parser_v2d::lineHandler() {
 	}
 
 	noun = findNextNoun(noun);
-	if (   !isCatchallVerb_v1(true, noun, verb, _backgroundObjects[*_vm->_screenPtr])
-		&& !isCatchallVerb_v1(true, noun, verb, _catchallList)
-		&& !isCatchallVerb_v1(false, noun, verb, _backgroundObjects[*_vm->_screenPtr])
-		&& !isCatchallVerb_v1(false, noun, verb, _catchallList)) {
-		if (*farComment != '\0') {                  // An object matched but not near enough
+	if (!isCatchallVerb_v1(true, noun, verb, _backgroundObjects[*_vm->_screenPtr])
+	    && !isCatchallVerb_v1(true, noun, verb, _catchallList)
+	    && !isCatchallVerb_v1(false, noun, verb, _backgroundObjects[*_vm->_screenPtr])
+	    && !isCatchallVerb_v1(false, noun, verb, _catchallList)) {
+		if (*farComment != '\0') { // An object matched but not near enough
 			Utils::notifyBox(farComment);
 		} else if (_vm->_maze._enabledFl && (verb == _vm->_text->getVerb(_vm->_look, 0))) {
 			Utils::notifyBox(_vm->_text->getTextParser(kTBMaze));
 			_vm->_object->showTakeables();
-		} else if (verb && noun) {                  // A combination I didn't think of
+		} else if (verb && noun) { // A combination I didn't think of
 			Utils::notifyBox(_vm->_text->getTextParser(kTBNoUse_2d));
 		} else if (verb || noun) {
 			Utils::notifyBox(_vm->_text->getTextParser(kTBNoun));

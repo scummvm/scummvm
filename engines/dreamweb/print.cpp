@@ -20,8 +20,8 @@
  *
  */
 
-#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
+#include "dreamweb/sound.h"
 
 namespace DreamWeb {
 
@@ -60,7 +60,7 @@ uint8 DreamWebEngine::getNextWord(const GraphicsFile &charSet, const uint8 *stri
 	}
 }
 
-void DreamWebEngine::printChar(const GraphicsFile &charSet, uint16* x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height, bool kerning) {
+void DreamWebEngine::printChar(const GraphicsFile &charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height, bool kerning) {
 	// WORKAROUND: Some texts contain leftover tab characters, which will cause
 	// OOB memory access when showing a character, as all the printable ones are
 	// from 32 onwards. We compensate for that here by ignoring all the invalid
@@ -107,7 +107,7 @@ uint8 DreamWebEngine::printSlow(const uint8 *string, uint16 x, uint16 y, uint8 m
 				uint16 offset2 = offset;
 				printBoth(_charset1, &offset2, y, c1, c2);
 				_charShift = 0;
-				for (int i=0; i<2; ++i) {
+				for (int i = 0; i < 2; ++i) {
 					uint16 mouseState = waitFrames();
 					if (_quitRequested)
 						return 0;
@@ -126,11 +126,11 @@ uint8 DreamWebEngine::printSlow(const uint8 *string, uint16 x, uint16 y, uint8 m
 	} while (true);
 }
 
-uint8 DreamWebEngine::printDirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
+uint8 DreamWebEngine::printDirect(const uint8 *string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
 	return printDirect(&string, x, &y, maxWidth, centered);
 }
 
-uint8 DreamWebEngine::printDirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered, bool kerning) {
+uint8 DreamWebEngine::printDirect(const uint8 **string, uint16 x, uint16 *y, uint8 maxWidth, bool centered, bool kerning) {
 	_lastXPos = x;
 	const GraphicsFile &charSet = *_currentCharset;
 	while (true) {
@@ -154,7 +154,7 @@ uint8 DreamWebEngine::printDirect(const uint8** string, uint16 x, uint16 *y, uin
 	}
 }
 
-uint8 DreamWebEngine::getNumber(const GraphicsFile &charSet, const uint8 *string, uint16 maxWidth, bool centered, uint16* offset) {
+uint8 DreamWebEngine::getNumber(const GraphicsFile &charSet, const uint8 *string, uint16 maxWidth, bool centered, uint16 *offset) {
 	uint8 totalWidth = 0;
 	uint8 charCount = 0;
 	while (true) {
@@ -196,7 +196,7 @@ uint8 DreamWebEngine::getNumber(const GraphicsFile &charSet, const uint8 *string
 uint8 DreamWebEngine::kernChars(uint8 firstChar, uint8 secondChar, uint8 width) {
 	if ((firstChar == 'a') || (firstChar == 'u')) {
 		if ((secondChar == 'n') || (secondChar == 't') || (secondChar == 'r') || (secondChar == 'i') || (secondChar == 'l'))
-			return width-1;
+			return width - 1;
 	}
 	return width;
 }

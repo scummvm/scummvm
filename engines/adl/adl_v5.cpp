@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/random.h"
 #include "common/error.h"
+#include "common/random.h"
 
 #include "adl/adl_v5.h"
 #include "adl/display.h"
@@ -29,8 +29,8 @@
 
 namespace Adl {
 
-AdlEngine_v5::AdlEngine_v5(OSystem *syst, const AdlGameDescription *gd) :
-		AdlEngine_v4(syst, gd) {
+AdlEngine_v5::AdlEngine_v5(OSystem *syst, const AdlGameDescription *gd)
+  : AdlEngine_v4(syst, gd) {
 }
 
 void AdlEngine_v5::initRoomState(RoomState &roomState) const {

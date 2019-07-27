@@ -35,38 +35,38 @@ namespace MystStacks {
 
 #define DECLARE_OPCODE(x) void x(uint16 var, const ArgumentsArray &args)
 
-class Dni : public MystScriptParser {
-public:
-	explicit Dni(MohawkEngine_Myst *vm);
-	~Dni() override;
+	class Dni : public MystScriptParser {
+	public:
+		explicit Dni(MohawkEngine_Myst *vm);
+		~Dni() override;
 
-	void disablePersistentScripts() override;
-	void runPersistentScripts() override;
+		void disablePersistentScripts() override;
+		void runPersistentScripts() override;
 
-private:
-	void setupOpcodes();
-	uint16 getVar(uint16 var) override;
+	private:
+		void setupOpcodes();
+		uint16 getVar(uint16 var) override;
 
-	void atrus_run();
-	void loopVideo_run();
-	void atrusLeft_run();
+		void atrus_run();
+		void loopVideo_run();
+		void atrusLeft_run();
 
-	DECLARE_OPCODE(o_handPage);
+		DECLARE_OPCODE(o_handPage);
 
-	DECLARE_OPCODE(o_atrus_init);
+		DECLARE_OPCODE(o_atrus_init);
 
-	bool _atrusRunning;
-	bool _notSeenAtrus; // 56
-	uint32 _atrusLeftTime; // 60
+		bool _atrusRunning;
+		bool _notSeenAtrus; // 56
+		uint32 _atrusLeftTime; // 60
 
-	Common::String _video; // 64
-	Common::Point _videoPos;
+		Common::String _video; // 64
+		Common::Point _videoPos;
 
-	bool _waitForLoop;
-	uint32 _loopStart; // 72
-	uint32 _loopEnd; // 76
-	bool _atrusLeft; // 80
-};
+		bool _waitForLoop;
+		uint32 _loopStart; // 72
+		uint32 _loopEnd; // 76
+		bool _atrusLeft; // 80
+	};
 
 } // End of namespace MystStacks
 } // End of namespace Mohawk

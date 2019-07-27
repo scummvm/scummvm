@@ -23,44 +23,41 @@
  *
  */
 
+#include "pegasus/items/biochips/aichip.h"
+#include "pegasus/ai/ai_area.h"
 #include "pegasus/energymonitor.h"
 #include "pegasus/gamestate.h"
-#include "pegasus/pegasus.h"
-#include "pegasus/ai/ai_area.h"
-#include "pegasus/items/biochips/aichip.h"
 #include "pegasus/neighborhood/neighborhood.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
 // indexed by [number of hints][number of solves (0, 1, or 2)][which button to highlight]
 static const ItemState s_highlightState[4][3][7] = {
-	{
-		{kAI000,	-1,			-1,			-1,			-1,			kAI005,		kAI006},
-		{kAI010,	-1,			-1,			-1,			-1,			kAI015,		kAI016},
-		{kAI020,	-1,			-1,			-1,			kAI024,		-1,			-1}
-	},
-	{
-		{kAI100,	kAI101,		-1,			-1,			-1,			kAI105,		kAI106},
-		{kAI110,	kAI111,		-1,			-1,			-1,			kAI115,		kAI116},
-		{kAI120,	kAI121,		-1,			-1,			kAI124,		kAI125,		kAI126}
-	},
-	{
-		{kAI200,	kAI201,		kAI202,		-1,			-1,			kAI205,		kAI206},
-		{kAI210,	kAI211,		kAI212,		-1,			-1,			kAI215,		kAI216},
-		{kAI220,	kAI221,		kAI222,		-1,			kAI224,		kAI225,		kAI226}
-	},
-	{
-		{kAI300,	kAI301,		kAI302,		kAI303,		-1,			kAI305,		kAI306},
-		{kAI310,	kAI311,		kAI312,		kAI313,		-1,			kAI315,		kAI316},
-		{kAI320,	kAI321,		kAI322,		kAI323,		kAI324,		kAI325,		kAI326}
-	}
+	{ { kAI000, -1, -1, -1, -1, kAI005, kAI006 },
+	  { kAI010, -1, -1, -1, -1, kAI015, kAI016 },
+	  { kAI020, -1, -1, -1, kAI024, -1, -1 } },
+	{ { kAI100, kAI101, -1, -1, -1, kAI105, kAI106 },
+	  { kAI110, kAI111, -1, -1, -1, kAI115, kAI116 },
+	  { kAI120, kAI121, -1, -1, kAI124, kAI125, kAI126 } },
+	{ { kAI200, kAI201, kAI202, -1, -1, kAI205, kAI206 },
+	  { kAI210, kAI211, kAI212, -1, -1, kAI215, kAI216 },
+	  { kAI220, kAI221, kAI222, -1, kAI224, kAI225, kAI226 } },
+	{ { kAI300, kAI301, kAI302, kAI303, -1, kAI305, kAI306 },
+	  { kAI310, kAI311, kAI312, kAI313, -1, kAI315, kAI316 },
+	  { kAI320, kAI321, kAI322, kAI323, kAI324, kAI325, kAI326 } }
 };
 
 AIChip *g_AIChip = 0;
 
-AIChip::AIChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
-		BiochipItem(id, neighborhood, room, direction), _briefingSpot(kAIBriefingSpotID), _scanSpot(kAIScanSpotID),
-		_hint1Spot(kAIHint1SpotID), _hint2Spot(kAIHint2SpotID), _hint3Spot(kAIHint3SpotID), _solveSpot(kAISolveSpotID) {
+AIChip::AIChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction)
+  : BiochipItem(id, neighborhood, room, direction)
+  , _briefingSpot(kAIBriefingSpotID)
+  , _scanSpot(kAIScanSpotID)
+  , _hint1Spot(kAIHint1SpotID)
+  , _hint2Spot(kAIHint2SpotID)
+  , _hint3Spot(kAIHint3SpotID)
+  , _solveSpot(kAISolveSpotID) {
 	_briefingSpot.setArea(Common::Rect(kAIMiddleAreaLeft + 10, kAIMiddleAreaTop + 27, kAIMiddleAreaLeft + 10 + 81, kAIMiddleAreaTop + 27 + 31));
 	_briefingSpot.setHotspotFlags(kAIBiochipSpotFlag);
 	g_allHotspots.push_back(&_briefingSpot);

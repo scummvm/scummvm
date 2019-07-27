@@ -58,7 +58,7 @@ private:
 	static const byte kGreldetFade[18];
 
 	Common::Point dummyCoord;
-	byte ****_ghost;// [5][2][66][26]
+	byte ****_ghost; // [5][2][66][26]
 	Graphics::Surface _eyes[2];
 	Graphics::Surface _exclamation;
 	Graphics::Surface _bat[3];

@@ -28,28 +28,27 @@
 #ifndef CGE_VGA13H_H
 #define CGE_VGA13H_H
 
-#include "common/serializer.h"
-#include "common/events.h"
-#include "graphics/surface.h"
-#include "cge/general.h"
 #include "cge/bitmap.h"
-#include "cge/snail.h"
 #include "cge/cge.h"
+#include "cge/general.h"
+#include "cge/snail.h"
+#include "common/events.h"
+#include "common/serializer.h"
+#include "graphics/surface.h"
 
 namespace CGE {
 
-#define kFadeStep        2
-#define kVgaColDark      207
-#define kVgaColDarkGray  225 /*219*/
-#define kVgaColGray      231
+#define kFadeStep 2
+#define kVgaColDark 207
+#define kVgaColDarkGray 225 /*219*/
+#define kVgaColGray 231
 #define kVgaColLightGray 237
-#define kPixelTransp     0xFE
-#define kNoSeq           (-1)
-#define kNoPtr           ((uint8)-1)
-#define kSprExt          ".SPR"
-#define kPalCount        256
-#define kPalSize         (kPalCount * 3)
-
+#define kPixelTransp 0xFE
+#define kNoSeq (-1)
+#define kNoPtr ((uint8)-1)
+#define kSprExt ".SPR"
+#define kPalCount 256
+#define kPalSize (kPalCount * 3)
 
 struct Seq {
 	uint8 _now;
@@ -72,38 +71,44 @@ public:
 	char *_name;
 	CommandHandler::Command *_near;
 	CommandHandler::Command *_take;
-	SprExt() :
-		_x0(0), _y0(0),
-		_x1(0), _y1(0),
-		_b0(NULL), _b1(NULL),
-		_shpList(NULL), _seq(NULL),
-		_name(NULL), _near(NULL), _take(NULL)
-	{}
+	SprExt()
+	  : _x0(0)
+	  , _y0(0)
+	  , _x1(0)
+	  , _y1(0)
+	  , _b0(NULL)
+	  , _b1(NULL)
+	  , _shpList(NULL)
+	  , _seq(NULL)
+	  , _name(NULL)
+	  , _near(NULL)
+	  , _take(NULL) {}
 };
 
 class Sprite {
 protected:
 	SprExt *_ext;
+
 public:
 	int _ref;
 	signed char _scene;
 	struct Flags {
-		bool _hide;       // general visibility switch
-		bool _near;       // Near action lock
-		bool _drag;       // sprite is moveable
-		bool _hold;       // sprite is held with mouse
-		bool _dummy;      // interrupt driven animation
-		bool _slav;       // slave object
-		bool _syst;       // system object
-		bool _kill;       // dispose memory after remove
-		bool _xlat;       // 2nd way display: xlat table
-		bool _port;       // portable
-		bool _kept;       // kept in pocket
-		bool _east;       // talk to east (in opposite to west)
-		bool _shad;       // shadow
-		bool _back;       // 'send to background' request
-		bool _bDel;       // delete bitmaps in ~SPRITE
-		bool _tran;       // transparent (untouchable)
+		bool _hide; // general visibility switch
+		bool _near; // Near action lock
+		bool _drag; // sprite is moveable
+		bool _hold; // sprite is held with mouse
+		bool _dummy; // interrupt driven animation
+		bool _slav; // slave object
+		bool _syst; // system object
+		bool _kill; // dispose memory after remove
+		bool _xlat; // 2nd way display: xlat table
+		bool _port; // portable
+		bool _kept; // kept in pocket
+		bool _east; // talk to east (in opposite to west)
+		bool _shad; // shadow
+		bool _back; // 'send to background' request
+		bool _bDel; // delete bitmaps in ~SPRITE
+		bool _tran; // transparent (untouchable)
 	} _flags;
 	int _x;
 	int _y;
@@ -150,6 +155,7 @@ public:
 	virtual void touch(uint16 mask, int x, int y, Common::KeyCode keyCode);
 	virtual void tick();
 	void sync(Common::Serializer &s);
+
 private:
 	CGEEngine *_vm;
 };
@@ -157,6 +163,7 @@ private:
 class Queue {
 	Sprite *_head;
 	Sprite *_tail;
+
 public:
 	Queue(bool show);
 	~Queue();
@@ -215,26 +222,30 @@ public:
 	void dacToPal(const Dac *tab, byte *palData);
 };
 
-class HorizLine: public Sprite {
+class HorizLine : public Sprite {
 	CGEEngine *_vm;
+
 public:
 	HorizLine(CGEEngine *vm);
 };
 
-class SceneLight: public Sprite {
+class SceneLight : public Sprite {
 	CGEEngine *_vm;
+
 public:
 	SceneLight(CGEEngine *vm);
 };
 
-class Speaker: public Sprite {
+class Speaker : public Sprite {
 	CGEEngine *_vm;
+
 public:
 	Speaker(CGEEngine *vm);
 };
 
-class PocLight: public Sprite {
+class PocLight : public Sprite {
 	CGEEngine *_vm;
+
 public:
 	PocLight(CGEEngine *vm);
 };

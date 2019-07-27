@@ -20,14 +20,14 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/system.h"
 #include "common/translation.h"
 #include "common/updates.h"
-#include "common/config-manager.h"
 
-#include "gui/updates-dialog.h"
-#include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
+#include "gui/gui-manager.h"
+#include "gui/updates-dialog.h"
 #include "gui/widgets/popup.h"
 
 namespace GUI {
@@ -36,8 +36,8 @@ enum {
 	kProceedCmd = 'PROC'
 };
 
-
-UpdatesDialog::UpdatesDialog() : Dialog(30, 20, 260, 124) {
+UpdatesDialog::UpdatesDialog()
+  : Dialog(30, 20, 260, 124) {
 
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
@@ -46,11 +46,11 @@ UpdatesDialog::UpdatesDialog() : Dialog(30, 20, 260, 124) {
 	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
 
 	const char *message = _(
-		"ScummVM now supports automatic check for updates\n"
-		"which requires access to the Internet. Would you\n"
-		"like to enable this feature?");
+	  "ScummVM now supports automatic check for updates\n"
+	  "which requires access to the Internet. Would you\n"
+	  "like to enable this feature?");
 	const char *message2 = _("You can change this setting later in the Misc tab\n"
-		"in the Options dialog.");
+	                         "in the Options dialog.");
 
 	// First, determine the size the dialog needs. For this we have to break
 	// down the string into lines, and taking the maximum of their widths.
@@ -77,7 +77,7 @@ UpdatesDialog::UpdatesDialog() : Dialog(30, 20, 260, 124) {
 	uint y = 10;
 	for (uint i = 0; i < lines.size(); i++) {
 		new StaticTextWidget(this, 10, y, maxlineWidth, kLineHeight,
-								lines[i], Graphics::kTextAlignLeft);
+		                     lines[i], Graphics::kTextAlignLeft);
 		y += kLineHeight;
 	}
 
@@ -104,7 +104,7 @@ UpdatesDialog::UpdatesDialog() : Dialog(30, 20, 260, 124) {
 
 	for (uint i = 0; i < lines2.size(); i++) {
 		new StaticTextWidget(this, 10, y, maxlineWidth2, kLineHeight,
-								lines2[i], Graphics::kTextAlignLeft);
+		                     lines2[i], Graphics::kTextAlignLeft);
 		y += kLineHeight;
 	}
 
@@ -113,7 +113,7 @@ UpdatesDialog::UpdatesDialog() : Dialog(30, 20, 260, 124) {
 	int buttonPos = _w - buttonWidth - 10;
 
 	_proceedButton = new ButtonWidget(this, buttonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight,
-				_("Proceed"), 0, kProceedCmd, Common::ASCII_RETURN);
+	                                  _("Proceed"), 0, kProceedCmd, Common::ASCII_RETURN);
 }
 
 void UpdatesDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

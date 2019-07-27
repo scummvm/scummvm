@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 #ifdef __MINGW32CE__
-#include_next <time.h>
+#	include_next <time.h>
 #else
 struct tm {
 	short tm_year;
@@ -18,11 +18,11 @@ struct tm {
 	short tm_sec;
 };
 
-#ifdef __GNUC__
-#define EXT_C extern "C"
-#else
-#define EXT_C
-#endif
+#	ifdef __GNUC__
+#		define EXT_C extern "C"
+#	else
+#		define EXT_C
+#	endif
 
 EXT_C time_t time(time_t *dummy);
 EXT_C struct tm *localtime(time_t *dummy);

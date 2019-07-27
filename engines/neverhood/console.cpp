@@ -22,25 +22,27 @@
 
 #include "neverhood/console.h"
 #include "gui/debugger.h"
-#include "neverhood/neverhood.h"
 #include "neverhood/gamemodule.h"
+#include "neverhood/modules/module1600.h"
+#include "neverhood/modules/module3000_sprites.h"
 #include "neverhood/navigationscene.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 #include "neverhood/smackerscene.h"
 #include "neverhood/sound.h"
-#include "neverhood/modules/module1600.h"
-#include "neverhood/modules/module3000_sprites.h"
 
 namespace Neverhood {
 
-Console::Console(NeverhoodEngine *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("cheat",			WRAP_METHOD(Console, Cmd_Cheat));
-	registerCmd("checkresource",	WRAP_METHOD(Console, Cmd_CheckResource));
-	registerCmd("dumpresource",	WRAP_METHOD(Console, Cmd_DumpResource));
-	registerCmd("dumpvars",		WRAP_METHOD(Console, Cmd_Dumpvars));
-	registerCmd("playsound",		WRAP_METHOD(Console, Cmd_PlaySound));
-	registerCmd("scene",			WRAP_METHOD(Console, Cmd_Scene));
-	registerCmd("surfaces",		WRAP_METHOD(Console, Cmd_Surfaces));
+Console::Console(NeverhoodEngine *vm)
+  : GUI::Debugger()
+  , _vm(vm) {
+	registerCmd("cheat", WRAP_METHOD(Console, Cmd_Cheat));
+	registerCmd("checkresource", WRAP_METHOD(Console, Cmd_CheckResource));
+	registerCmd("dumpresource", WRAP_METHOD(Console, Cmd_DumpResource));
+	registerCmd("dumpvars", WRAP_METHOD(Console, Cmd_Dumpvars));
+	registerCmd("playsound", WRAP_METHOD(Console, Cmd_PlaySound));
+	registerCmd("scene", WRAP_METHOD(Console, Cmd_Scene));
+	registerCmd("surfaces", WRAP_METHOD(Console, Cmd_Surfaces));
 }
 
 Console::~Console() {
@@ -76,15 +78,15 @@ bool Console::Cmd_Scene(int argc, const char **argv) {
 			NavigationItem curNavigation = (*navigationList)[navigationIndex];
 			debugPrintf("Navigation list ID: 0x%x, index: %d\n", scene->getNavigationListId(), navigationIndex);
 			debugPrintf("File hash: 0x%x, cursor hash: 0x%x, Smacker hashes: [left: 0x%x, middle: 0x%x, right: 0x%x\n",
-				curNavigation.fileHash, curNavigation.mouseCursorFileHash,
-				curNavigation.leftSmackerFileHash, curNavigation.middleSmackerFileHash, curNavigation.rightSmackerFileHash);
+			            curNavigation.fileHash, curNavigation.mouseCursorFileHash,
+			            curNavigation.leftSmackerFileHash, curNavigation.middleSmackerFileHash, curNavigation.rightSmackerFileHash);
 		}
 
 		debugPrintf("Use %s <module> <scene> to change scenes\n", argv[0]);
 		debugPrintf("Modules are incremental by 100, from 1000 to 3000\n");
 	} else {
 		int newModule = atoi(argv[1]);
-		int newScene  = atoi(argv[2]);
+		int newScene = atoi(argv[2]);
 
 		_vm->gameState().sceneNum = newScene;
 		_vm->_gameModule->createModule(newModule, -1);
@@ -123,27 +125,26 @@ bool Console::Cmd_Cheat(int argc, const char **argv) {
 	if (cheatName == "buttons") {
 		Scene *scene = (Scene *)((GameModule *)_vm->_gameModule->_childObject)->_childObject;
 
-		scene->setSubVar(VA_LOCKS_DISABLED, 0x304008D2, 1);	// kScene3010ButtonNameHashes[0]
-		scene->setSubVar(VA_LOCKS_DISABLED, 0x40119852, 1);	// kScene3010ButtonNameHashes[1]
-		scene->setSubVar(VA_LOCKS_DISABLED, 0x01180951, 1);	// kScene3010ButtonNameHashes[2]
+		scene->setSubVar(VA_LOCKS_DISABLED, 0x304008D2, 1); // kScene3010ButtonNameHashes[0]
+		scene->setSubVar(VA_LOCKS_DISABLED, 0x40119852, 1); // kScene3010ButtonNameHashes[1]
+		scene->setSubVar(VA_LOCKS_DISABLED, 0x01180951, 1); // kScene3010ButtonNameHashes[2]
 
 		debugPrintf("All 3 door buttons have been enabled\n");
 	} else if (cheatName == "cannon") {
 		Scene *scene = (Scene *)((GameModule *)_vm->_gameModule->_childObject)->_childObject;
 
 		for (int i = 0; i < 3; i++)
-			scene->setSubVar(VA_CURR_CANNON_SYMBOLS, i,	scene->getSubVar(VA_GOOD_CANNON_SYMBOLS_1, i));
+			scene->setSubVar(VA_CURR_CANNON_SYMBOLS, i, scene->getSubVar(VA_GOOD_CANNON_SYMBOLS_1, i));
 
 		for (int i = 3; i < 6; i++)
-			scene->setSubVar(VA_CURR_CANNON_SYMBOLS, i,	scene->getSubVar(VA_GOOD_CANNON_SYMBOLS_2, i - 3));
+			scene->setSubVar(VA_CURR_CANNON_SYMBOLS, i, scene->getSubVar(VA_GOOD_CANNON_SYMBOLS_2, i - 3));
 
 		debugPrintf("Puzzle solved\n");
 	} else if (cheatName == "dice") {
 		Scene *scene = (Scene *)((GameModule *)_vm->_gameModule->_childObject)->_childObject;
 		debugPrintf("Good: (%d %d %d), current: (%d %d %d)\n",
-			scene->getSubVar(VA_GOOD_DICE_NUMBERS, 0), scene->getSubVar(VA_GOOD_DICE_NUMBERS, 1), scene->getSubVar(VA_GOOD_DICE_NUMBERS, 2),
-			scene->getSubVar(VA_CURR_DICE_NUMBERS, 0), scene->getSubVar(VA_CURR_DICE_NUMBERS, 1), scene->getSubVar(VA_CURR_DICE_NUMBERS, 2)
-		);
+		            scene->getSubVar(VA_GOOD_DICE_NUMBERS, 0), scene->getSubVar(VA_GOOD_DICE_NUMBERS, 1), scene->getSubVar(VA_GOOD_DICE_NUMBERS, 2),
+		            scene->getSubVar(VA_CURR_DICE_NUMBERS, 0), scene->getSubVar(VA_CURR_DICE_NUMBERS, 1), scene->getSubVar(VA_CURR_DICE_NUMBERS, 2));
 	} else if (cheatName == "memory") {
 		Scene *scene = (Scene *)((GameModule *)_vm->_gameModule->_childObject)->_childObject;
 

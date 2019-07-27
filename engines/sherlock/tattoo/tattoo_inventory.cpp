@@ -27,36 +27,37 @@ namespace Sherlock {
 
 namespace Tattoo {
 
-TattooInventory::TattooInventory(SherlockEngine *vm) : Inventory(vm) {
-	_invShapes.resize(8);
-}
-
-TattooInventory::~TattooInventory() {
-}
-
-void TattooInventory::loadInv() {
-	// Exit if the inventory names are already loaded
-	if (_names.size() > 0)
-		return;
-
-	// Load the inventory names
-	Common::SeekableReadStream *stream = _vm->_res->load("invent.txt");
-
-	int count = stream->readByte();
-
-	for (int idx = 0; idx < count; ++idx) {
-		Common::String name;
-		char c;
-		while ((c = stream->readByte()) != 0)
-			name += c;
-
-		_names.push_back(name);
+	TattooInventory::TattooInventory(SherlockEngine *vm)
+	  : Inventory(vm) {
+		_invShapes.resize(8);
 	}
 
-	delete stream;
+	TattooInventory::~TattooInventory() {
+	}
 
-	loadGraphics();
-}
+	void TattooInventory::loadInv() {
+		// Exit if the inventory names are already loaded
+		if (_names.size() > 0)
+			return;
+
+		// Load the inventory names
+		Common::SeekableReadStream *stream = _vm->_res->load("invent.txt");
+
+		int count = stream->readByte();
+
+		for (int idx = 0; idx < count; ++idx) {
+			Common::String name;
+			char c;
+			while ((c = stream->readByte()) != 0)
+				name += c;
+
+			_names.push_back(name);
+		}
+
+		delete stream;
+
+		loadGraphics();
+	}
 
 } // End of namespace Tattoo
 

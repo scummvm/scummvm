@@ -38,7 +38,9 @@ static const uint32 kSsScene1105SymbolDieFileHashes[] = {
 };
 
 SsScene1105Button::SsScene1105Button(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash, NRect &collisionBounds)
-	: StaticSprite(vm, fileHash, 200), _parentScene(parentScene), _countdown(0) {
+  : StaticSprite(vm, fileHash, 200)
+  , _parentScene(parentScene)
+  , _countdown(0) {
 
 	_collisionBounds = collisionBounds;
 	SetMessageHandler(&SsScene1105Button::handleMessage);
@@ -72,7 +74,7 @@ uint32 SsScene1105Button::handleMessage(int messageNum, const MessageParam &para
 }
 
 SsScene1105Symbol::SsScene1105Symbol(NeverhoodEngine *vm, uint32 fileHash, int16 x, int16 y)
-	: StaticSprite(vm, 0) {
+  : StaticSprite(vm, 0) {
 
 	loadSprite(fileHash, kSLFCenteredDrawOffset | kSLFSetPosition, 200, x, y);
 }
@@ -84,7 +86,8 @@ void SsScene1105Symbol::hide() {
 }
 
 SsScene1105SymbolDie::SsScene1105SymbolDie(NeverhoodEngine *vm, uint dieIndex, int16 x, int16 y)
-	: StaticSprite(vm, 1100), _dieIndex(dieIndex) {
+  : StaticSprite(vm, 1100)
+  , _dieIndex(dieIndex) {
 
 	_x = x;
 	_y = y;
@@ -114,7 +117,8 @@ void SsScene1105SymbolDie::hide() {
 }
 
 AsScene1105TeddyBear::AsScene1105TeddyBear(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
+  : AnimatedSprite(vm, 1100)
+  , _parentScene(parentScene) {
 
 	createSurface(100, 556, 328);
 	_x = 320;
@@ -163,7 +167,10 @@ void AsScene1105TeddyBear::hide() {
 }
 
 SsScene1105OpenButton::SsScene1105OpenButton(NeverhoodEngine *vm, Scene *parentScene)
-	: StaticSprite(vm, 900), _parentScene(parentScene), _countdown(0), _isClicked(false) {
+  : StaticSprite(vm, 900)
+  , _parentScene(parentScene)
+  , _countdown(0)
+  , _isClicked(false) {
 
 	loadSprite(0x8228A46C, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
 	setVisible(false);
@@ -198,7 +205,7 @@ uint32 SsScene1105OpenButton::handleMessage(int messageNum, const MessageParam &
 }
 
 KmScene1109::KmScene1109(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+  : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }

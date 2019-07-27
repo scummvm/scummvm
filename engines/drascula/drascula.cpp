@@ -20,10 +20,10 @@
  *
  */
 
-#include "common/events.h"
-#include "common/keyboard.h"
-#include "common/file.h"
 #include "common/config-manager.h"
+#include "common/events.h"
+#include "common/file.h"
+#include "common/keyboard.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 
@@ -31,12 +31,14 @@
 
 #include "engines/util.h"
 
-#include "drascula/drascula.h"
 #include "drascula/console.h"
+#include "drascula/drascula.h"
 
 namespace Drascula {
 
-DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gameDesc)
+  : Engine(syst)
+  , _gameDescription(gameDesc) {
 	_charMap = 0;
 	_itemLocations = 0;
 	_polX = 0;
@@ -73,7 +75,7 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	term_int = 0;
 	currentChapter = 0;
 	_loadedDifferentChapter = false;
-	_canSaveLoad  = false;
+	_canSaveLoad = false;
 	musicStopped = 0;
 	FrameSSN = 0;
 	globalSpeed = 0;
@@ -222,8 +224,7 @@ DrasculaEngine::~DrasculaEngine() {
 }
 
 bool DrasculaEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL || f == kSupportsLoadingDuringRuntime || f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL || f == kSupportsLoadingDuringRuntime || f == kSupportsSavingDuringRuntime);
 }
 
 Common::Error DrasculaEngine::run() {
@@ -481,7 +482,7 @@ bool DrasculaEngine::runCurrentChapter() {
 				return true;
 			}
 		}
-	// From here onwards the items have different IDs
+		// From here onwards the items have different IDs
 	} else if (currentChapter == 4) {
 		addObject(kItemPhone2);
 		addObject(kItemCross2);
@@ -600,22 +601,22 @@ bool DrasculaEngine::runCurrentChapter() {
 #else
 		if (_rightMouseButton == 1 && _menuScreen) {
 #endif
-			_rightMouseButton = 0;
-			if (currentChapter == 2) {
-				loadPic(menuBackground, cursorSurface);
-				loadPic(menuBackground, backSurface);
-			} else {
-				loadPic(99, cursorSurface);
-				loadPic(99, backSurface);
-			}
-			setPalette((byte *)&gamePalette);
-			_menuScreen = false;
+				_rightMouseButton = 0;
+				if (currentChapter == 2) {
+					loadPic(menuBackground, cursorSurface);
+					loadPic(menuBackground, backSurface);
+				} else {
+					loadPic(99, cursorSurface);
+					loadPic(99, backSurface);
+				}
+				setPalette((byte *)&gamePalette);
+				_menuScreen = false;
 #ifndef _WIN32_WCE
-			// FIXME: This call here is in hope that it will catch the rightmouseup event so the
-			// next if block won't be executed. This too is not a good coding practice. I've recoded it
-			// with a mutual exclusive if block for the menu. I would commit this properly but I cannot test
-			// for other (see Desktop) ports right now.
-			updateEvents();
+				// FIXME: This call here is in hope that it will catch the rightmouseup event so the
+				// next if block won't be executed. This too is not a good coding practice. I've recoded it
+				// with a mutual exclusive if block for the menu. I would commit this properly but I cannot test
+				// for other (see Desktop) ports right now.
+				updateEvents();
 #endif
 #ifdef _WIN32_WCE
 			} else {
@@ -625,32 +626,31 @@ bool DrasculaEngine::runCurrentChapter() {
 		// Do not show the inventory screen in chapter 5, if the right mouse button is clicked
 		// while the plug (object 16) is held
 		// Fixes bug #2059621 - "DRASCULA: Plug bug"
-		if (_rightMouseButton == 1 && !_menuScreen &&
-			!(currentChapter == 5 && pickedObject == 16)) {
+		if (_rightMouseButton == 1 && !_menuScreen && !(currentChapter == 5 && pickedObject == 16)) {
 #endif
-			_rightMouseButton = 0;
-			_characterMoved = false;
-			if (trackProtagonist == 2)
-				trackProtagonist = 1;
-			if (currentChapter == 4) {
-				loadPic("icons2.alg", backSurface);
-				loadPic("icons2.alg", cursorSurface);
-			} else if (currentChapter == 5) {
-				loadPic("icons3.alg", backSurface);
-				loadPic("icons3.alg", cursorSurface);
-			} else if (currentChapter == 6) {
-				loadPic("iconsp.alg", backSurface);
-				loadPic("iconsp.alg", cursorSurface);
-			} else {
-				loadPic("icons.alg", backSurface);
-				loadPic("icons.alg", cursorSurface);
-			}
-			_menuScreen = true;
+				_rightMouseButton = 0;
+				_characterMoved = false;
+				if (trackProtagonist == 2)
+					trackProtagonist = 1;
+				if (currentChapter == 4) {
+					loadPic("icons2.alg", backSurface);
+					loadPic("icons2.alg", cursorSurface);
+				} else if (currentChapter == 5) {
+					loadPic("icons3.alg", backSurface);
+					loadPic("icons3.alg", cursorSurface);
+				} else if (currentChapter == 6) {
+					loadPic("iconsp.alg", backSurface);
+					loadPic("iconsp.alg", cursorSurface);
+				} else {
+					loadPic("icons.alg", backSurface);
+					loadPic("icons.alg", cursorSurface);
+				}
+				_menuScreen = true;
 #ifndef _WIN32_WCE
-			updateEvents();
+				updateEvents();
 #endif
-			selectVerb(kVerbNone);
-		}
+				selectVerb(kVerbNone);
+			}
 #ifdef _WIN32_WCE
 		}
 #endif
@@ -740,7 +740,6 @@ bool DrasculaEngine::runCurrentChapter() {
 	return false;
 }
 
-
 bool DrasculaEngine::verify1() {
 	int l;
 
@@ -757,7 +756,7 @@ bool DrasculaEngine::verify1() {
 		}
 
 		if (_mouseX > curX && _mouseY > curY
-				&& _mouseX < curX + curWidth && _mouseY < curY + curHeight)
+		    && _mouseX < curX + curWidth && _mouseY < curY + curHeight)
 			doBreak = 1;
 
 		for (l = 0; l < numRoomObjs; l++) {
@@ -821,7 +820,7 @@ Common::KeyCode DrasculaEngine::getScan() {
 	return key;
 }
 
-void DrasculaEngine::addKeyToBuffer(Common::KeyState& key) {
+void DrasculaEngine::addKeyToBuffer(Common::KeyState &key) {
 	if ((_keyBufferHead + 1) % KEYBUFSIZE == _keyBufferTail) {
 		warning("key buffer overflow");
 		return;
@@ -915,7 +914,7 @@ void DrasculaEngine::reduce_hare_chico(int xx1, int yy1, int xx2, int yy2, int w
 	for (n = 0; n < newHeight; n++) {
 		for (m = 0; m < newWidth; m++) {
 			copyRect((int)pixelX, (int)pixelY, xx2 + m, yy2 + n,
-					 1, 1, dir_inicio, dir_fin);
+			         1, 1, dir_inicio, dir_fin);
 
 			pixelX += totalX;
 		}
@@ -924,7 +923,7 @@ void DrasculaEngine::reduce_hare_chico(int xx1, int yy1, int xx2, int yy2, int w
 	}
 }
 
-void DrasculaEngine::hipo_sin_nadie(int counter){
+void DrasculaEngine::hipo_sin_nadie(int counter) {
 	int y = 0, trackCharacter = 0;
 	if (currentChapter == 3)
 		y = -1;
@@ -993,8 +992,8 @@ bool DrasculaEngine::loadDrasculaDat() {
 
 	if (ver != DRASCULA_DAT_VER) {
 		Common::String errorMessage = Common::String::format(
-			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
-			filename.c_str(), DRASCULA_DAT_VER, 0, ver, 0);
+		  _("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
+		  filename.c_str(), DRASCULA_DAT_VER, 0, ver, 0);
 		GUIErrorMessage(errorMessage);
 		warning("%s", errorMessage.c_str());
 

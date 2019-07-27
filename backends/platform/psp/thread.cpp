@@ -36,7 +36,7 @@ bool PspThreadable::threadCreateAndStart(const char *threadName, int priority, i
 		return false;
 	}
 
-	_threadId = sceKernelCreateThread(threadName, __threadCallback, priority, stackSize, THREAD_ATTR_USER, 0);	// add VFPU support
+	_threadId = sceKernelCreateThread(threadName, __threadCallback, priority, stackSize, THREAD_ATTR_USER, 0); // add VFPU support
 
 	if (_threadId < 0) {
 		PSP_ERROR("failed to create %s thread. Error code %d\n", threadName, _threadId);
@@ -60,9 +60,9 @@ bool PspThreadable::threadCreateAndStart(const char *threadName, int priority, i
 int PspThreadable::__threadCallback(SceSize, void *__this) {
 	DEBUG_ENTER_FUNC();
 
-	PspThreadable *_this = *(PspThreadable **)__this;	// Dereference the copied value which was 'this'
+	PspThreadable *_this = *(PspThreadable **)__this; // Dereference the copied value which was 'this'
 
-	_this->threadFunction();	// call the virtual function
+	_this->threadFunction(); // call the virtual function
 
 	return 0;
 }
@@ -84,12 +84,12 @@ void PspThread::delayMicros(uint32 us) {
 
 #include "backends/platform/psp/trace.h"
 
-PspSemaphore::PspSemaphore(int initialValue, int maxValue/*=255*/) {
+PspSemaphore::PspSemaphore(int initialValue, int maxValue /*=255*/) {
 	DEBUG_ENTER_FUNC();
 	_handle = 0;
 	_handle = (uint32)sceKernelCreateSema("ScummVM Sema", 0 /* attr */,
-								  initialValue, maxValue,
-								  0 /*option*/);
+	                                      initialValue, maxValue,
+	                                      0 /*option*/);
 	if (!_handle)
 		PSP_ERROR("failed to create semaphore.\n");
 }
@@ -139,7 +139,7 @@ bool PspSemaphore::takeWithTimeOut(uint32 timeOut) {
 	if (timeOut)
 		pTimeOut = &timeOut;
 
-	if (sceKernelWaitSema(_handle, 1, pTimeOut) < 0)	// we always wait for 1
+	if (sceKernelWaitSema(_handle, 1, pTimeOut) < 0) // we always wait for 1
 		return false;
 	return true;
 }
@@ -176,7 +176,7 @@ bool PspMutex::unlock() {
 
 	if (_ownerId != threadId) {
 		PSP_ERROR("attempt to unlock mutex by thread[%x] as opposed to owner[%x]\n",
-			threadId, _ownerId);
+		          threadId, _ownerId);
 		return false;
 	}
 
@@ -193,38 +193,38 @@ bool PspMutex::unlock() {
 
 // Release all threads waiting on the condition
 void PspCondition::releaseAll() {
-        _mutex.lock();
-        if (_waitingThreads > _signaledThreads) {	// we have signals to issue
-                int numWaiting = _waitingThreads - _signaledThreads;	// threads we haven't signaled
-                _signaledThreads = _waitingThreads;
+	_mutex.lock();
+	if (_waitingThreads > _signaledThreads) { // we have signals to issue
+		int numWaiting = _waitingThreads - _signaledThreads; // threads we haven't signaled
+		_signaledThreads = _waitingThreads;
 
-				_waitSem.give(numWaiting);
-                _mutex.unlock();
-                for (int i=0; i<numWaiting; i++)	// wait for threads to tell us they're awake
-					_doneSem.take();
-        } else {
-                _mutex.unlock();
-        }
+		_waitSem.give(numWaiting);
+		_mutex.unlock();
+		for (int i = 0; i < numWaiting; i++) // wait for threads to tell us they're awake
+			_doneSem.take();
+	} else {
+		_mutex.unlock();
+	}
 }
 
 // Mutex must be taken before entering wait
 void PspCondition::wait(PspMutex &externalMutex) {
-        _mutex.lock();
-        _waitingThreads++;
-        _mutex.unlock();
+	_mutex.lock();
+	_waitingThreads++;
+	_mutex.unlock();
 
-        externalMutex.unlock();	// must unlock external mutex
+	externalMutex.unlock(); // must unlock external mutex
 
-		_waitSem.take();	// sleep on the wait semaphore
+	_waitSem.take(); // sleep on the wait semaphore
 
-		// let the signaling thread know we're done
-		_mutex.lock();
-        if (_signaledThreads > 0 ) {
-                _doneSem.give();	// let the thread know
-                _signaledThreads--;
-        }
-        _waitingThreads--;
-        _mutex.unlock();
+	// let the signaling thread know we're done
+	_mutex.lock();
+	if (_signaledThreads > 0) {
+		_doneSem.give(); // let the thread know
+		_signaledThreads--;
+	}
+	_waitingThreads--;
+	_mutex.unlock();
 
-        externalMutex.lock();		// must lock external mutex here for continuation
+	externalMutex.lock(); // must lock external mutex here for continuation
 }

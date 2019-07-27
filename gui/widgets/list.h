@@ -23,8 +23,8 @@
 #ifndef GUI_WIDGETS_LIST_H
 #define GUI_WIDGETS_LIST_H
 
-#include "gui/widgets/editable.h"
 #include "common/str.h"
+#include "gui/widgets/editable.h"
 
 #include "gui/ThemeEngine.h"
 
@@ -33,17 +33,17 @@ namespace GUI {
 class ScrollBarWidget;
 
 enum NumberingMode {
-	kListNumberingOff	= -1,
-	kListNumberingZero	= 0,
-	kListNumberingOne	= 1
+	kListNumberingOff = -1,
+	kListNumberingZero = 0,
+	kListNumberingOne = 1
 };
 
 /// Some special commands
 enum {
-	kListItemDoubleClickedCmd	= 'LIdb',	///< double click on item - 'data' will be item index
-	kListItemActivatedCmd		= 'LIac',	///< item activated by return/enter - 'data' will be item index
-	kListItemRemovalRequestCmd	= 'LIrm',	///< request to remove the item with the delete/backspace keys - 'data' will be item index
-	kListSelectionChangedCmd	= 'Lsch'	///< selection changed - 'data' will be item index
+	kListItemDoubleClickedCmd = 'LIdb', ///< double click on item - 'data' will be item index
+	kListItemActivatedCmd = 'LIac', ///< item activated by return/enter - 'data' will be item index
+	kListItemRemovalRequestCmd = 'LIrm', ///< request to remove the item with the delete/backspace keys - 'data' will be item index
+	kListSelectionChangedCmd = 'Lsch' ///< selection changed - 'data' will be item index
 };
 
 /* ListWidget */
@@ -52,35 +52,36 @@ public:
 	typedef Common::String String;
 	typedef Common::Array<Common::String> StringArray;
 	typedef Common::Array<ThemeEngine::FontColor> ColorList;
+
 protected:
-	StringArray		_list;
-	StringArray		_dataList;
-	ColorList		_listColors;
-	Common::Array<int>		_listIndex;
-	bool			_editable;
-	bool			_editMode;
-	NumberingMode	_numberingMode;
-	int				_currentPos;
-	int				_entriesPerPage;
-	int				_selectedItem;
-	ScrollBarWidget	*_scrollBar;
-	int				_currentKeyDown;
+	StringArray _list;
+	StringArray _dataList;
+	ColorList _listColors;
+	Common::Array<int> _listIndex;
+	bool _editable;
+	bool _editMode;
+	NumberingMode _numberingMode;
+	int _currentPos;
+	int _entriesPerPage;
+	int _selectedItem;
+	ScrollBarWidget *_scrollBar;
+	int _currentKeyDown;
 
-	String			_quickSelectStr;
-	uint32			_quickSelectTime;
+	String _quickSelectStr;
+	uint32 _quickSelectTime;
 
-	int				_hlLeftPadding;
-	int				_hlRightPadding;
-	int				_leftPadding;
-	int				_rightPadding;
-	int				_topPadding;
-	int				_bottomPadding;
-	int				_scrollBarWidth;
+	int _hlLeftPadding;
+	int _hlRightPadding;
+	int _leftPadding;
+	int _rightPadding;
+	int _topPadding;
+	int _bottomPadding;
+	int _scrollBarWidth;
 
-	String			_filter;
-	bool			_quickSelect;
+	String _filter;
+	bool _quickSelect;
 
-	uint32			_cmd;
+	uint32 _cmd;
 
 	ThemeEngine::FontColor _editColor;
 
@@ -92,27 +93,27 @@ public:
 	virtual Widget *findWidget(int x, int y);
 
 	void setList(const StringArray &list, const ColorList *colors = 0);
-	const StringArray &getList()	const			{ return _dataList; }
+	const StringArray &getList() const { return _dataList; }
 
 	void append(const String &s, ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal);
 
 	void setSelected(int item);
-	int getSelected() const						{ return (_filter.empty() || _selectedItem == -1) ? _selectedItem : _listIndex[_selectedItem]; }
+	int getSelected() const { return (_filter.empty() || _selectedItem == -1) ? _selectedItem : _listIndex[_selectedItem]; }
 
-	const String &getSelectedString() const		{ return _list[_selectedItem]; }
+	const String &getSelectedString() const { return _list[_selectedItem]; }
 	ThemeEngine::FontColor getSelectionColor() const;
 
-	void setNumberingMode(NumberingMode numberingMode)	{ _numberingMode = numberingMode; }
+	void setNumberingMode(NumberingMode numberingMode) { _numberingMode = numberingMode; }
 
 	void scrollTo(int item);
 	void scrollToEnd();
 	int getCurrentScrollPos() const { return _currentPos; }
 
-	void enableQuickSelect(bool enable) 		{ _quickSelect = enable; }
-	String getQuickSelectString() const 		{ return _quickSelectStr; }
+	void enableQuickSelect(bool enable) { _quickSelect = enable; }
+	String getQuickSelectString() const { return _quickSelectStr; }
 
-	bool isEditable() const						{ return _editable; }
-	void setEditable(bool editable)				{ _editable = editable; }
+	bool isEditable() const { return _editable; }
+	void setEditable(bool editable) { _editable = editable; }
 	void setEditColor(ThemeEngine::FontColor color) { _editColor = color; }
 
 	// Made startEditMode/endEditMode for SaveLoadChooser

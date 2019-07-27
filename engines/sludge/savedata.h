@@ -42,7 +42,6 @@ private:
 	static void writeStringEncoded(const Common::String checker, Common::WriteStream *stream);
 	static Common::String readStringEncoded(Common::SeekableReadStream *fp);
 	static char *readTextPlain(Common::SeekableReadStream *fp);
-
 };
 
 } // End of namespace Sludge

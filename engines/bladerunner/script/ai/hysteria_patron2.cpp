@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptHysteriaPatron2::AIScriptHysteriaPatron2(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptHysteriaPatron2::AIScriptHysteriaPatron2(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 }
 
 void AIScriptHysteriaPatron2::Initialize() {
@@ -96,16 +97,16 @@ bool AIScriptHysteriaPatron2::GoalChanged(int currentGoalNumber, int newGoalNumb
 
 const int kAnimationsCount = 30;
 const int animationList[kAnimationsCount] = {
-	kModelAnimationHysteriaPatron2DanceHandsBellyMotion,       kModelAnimationHysteriaPatron2DanceHandsUpLeftMotion,      kModelAnimationHysteriaPatron2DanceHandsUpSitAndUp,
-	kModelAnimationHysteriaPatron2DanceHandsUpToHandsDown,     kModelAnimationHysteriaPatron2DanceHandsDownHipsSwirl,     kModelAnimationHysteriaPatron2DanceHandsDownLegSwirl,
-	kModelAnimationHysteriaPatron2DanceHandsDownLeanBackForth, kModelAnimationHysteriaPatron2DanceHandsDownToHandsUp,     kModelAnimationHysteriaPatron2DanceHandsUpLeftMotion,
-	kModelAnimationHysteriaPatron2DanceHandsBellyMotion,       kModelAnimationHysteriaPatron2DanceHandsBellyMotion,       kModelAnimationHysteriaPatron2DanceHandsBellyMotion,
-	kModelAnimationHysteriaPatron2DanceHandsBellyMotion,       kModelAnimationHysteriaPatron2DanceHandsUpLeftMotion,      kModelAnimationHysteriaPatron2DanceHandsUpToHandsDown,
-	kModelAnimationHysteriaPatron2DanceHandsDownLegSwirl,      kModelAnimationHysteriaPatron2DanceHandsDownHipsSwirl,     kModelAnimationHysteriaPatron2DanceHandsDownLeanBackForth,
-	kModelAnimationHysteriaPatron2DanceHandsDownToHandsUp,     kModelAnimationHysteriaPatron2DanceHandsUpSitAndUp,        kModelAnimationHysteriaPatron2DanceHandsBellyMotion,
-	kModelAnimationHysteriaPatron2DanceHandsBellyMotion,       kModelAnimationHysteriaPatron2DanceHandsBellyMotion,       kModelAnimationHysteriaPatron2DanceHandsBellyMotion,
-	kModelAnimationHysteriaPatron2DanceHandsBellyMotion,       kModelAnimationHysteriaPatron2DanceHandsUpToHandsDown,     kModelAnimationHysteriaPatron2DanceHandsDownHipsSwirl,
-	kModelAnimationHysteriaPatron2DanceHandsDownHipsSwirl,     kModelAnimationHysteriaPatron2DanceHandsDownLeanBackForth, kModelAnimationHysteriaPatron2DanceHandsDownToHandsUp
+	kModelAnimationHysteriaPatron2DanceHandsBellyMotion, kModelAnimationHysteriaPatron2DanceHandsUpLeftMotion, kModelAnimationHysteriaPatron2DanceHandsUpSitAndUp,
+	kModelAnimationHysteriaPatron2DanceHandsUpToHandsDown, kModelAnimationHysteriaPatron2DanceHandsDownHipsSwirl, kModelAnimationHysteriaPatron2DanceHandsDownLegSwirl,
+	kModelAnimationHysteriaPatron2DanceHandsDownLeanBackForth, kModelAnimationHysteriaPatron2DanceHandsDownToHandsUp, kModelAnimationHysteriaPatron2DanceHandsUpLeftMotion,
+	kModelAnimationHysteriaPatron2DanceHandsBellyMotion, kModelAnimationHysteriaPatron2DanceHandsBellyMotion, kModelAnimationHysteriaPatron2DanceHandsBellyMotion,
+	kModelAnimationHysteriaPatron2DanceHandsBellyMotion, kModelAnimationHysteriaPatron2DanceHandsUpLeftMotion, kModelAnimationHysteriaPatron2DanceHandsUpToHandsDown,
+	kModelAnimationHysteriaPatron2DanceHandsDownLegSwirl, kModelAnimationHysteriaPatron2DanceHandsDownHipsSwirl, kModelAnimationHysteriaPatron2DanceHandsDownLeanBackForth,
+	kModelAnimationHysteriaPatron2DanceHandsDownToHandsUp, kModelAnimationHysteriaPatron2DanceHandsUpSitAndUp, kModelAnimationHysteriaPatron2DanceHandsBellyMotion,
+	kModelAnimationHysteriaPatron2DanceHandsBellyMotion, kModelAnimationHysteriaPatron2DanceHandsBellyMotion, kModelAnimationHysteriaPatron2DanceHandsBellyMotion,
+	kModelAnimationHysteriaPatron2DanceHandsBellyMotion, kModelAnimationHysteriaPatron2DanceHandsUpToHandsDown, kModelAnimationHysteriaPatron2DanceHandsDownHipsSwirl,
+	kModelAnimationHysteriaPatron2DanceHandsDownHipsSwirl, kModelAnimationHysteriaPatron2DanceHandsDownLeanBackForth, kModelAnimationHysteriaPatron2DanceHandsDownToHandsUp
 };
 
 bool AIScriptHysteriaPatron2::UpdateAnimation(int *animation, int *frame) {
@@ -130,17 +131,17 @@ bool AIScriptHysteriaPatron2::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptHysteriaPatron2::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptHysteriaPatron2::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptHysteriaPatron2::ReachedMovementTrackWaypoint(int waypointId) {

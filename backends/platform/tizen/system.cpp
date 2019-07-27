@@ -20,26 +20,26 @@
  *
  */
 
-#include <FUiCtrlMessageBox.h>
 #include <FLocales.h>
+#include <FUiCtrlMessageBox.h>
 
+#include "backends/audiocd/default/default-audiocd.h"
+#include "backends/events/default/default-events.h"
+#include "backends/fs/fs-factory.h"
+#include "backends/mutex/mutex.h"
+#include "backends/saves/default/default-saves.h"
+#include "backends/timer/tizen/timer.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "engines/engine.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/fonts/bdf.h"
-#include "backends/saves/default/default-saves.h"
-#include "backends/events/default/default-events.h"
-#include "backends/audiocd/default/default-audiocd.h"
-#include "backends/mutex/mutex.h"
-#include "backends/fs/fs-factory.h"
-#include "backends/timer/tizen/timer.h"
 
-#include "backends/platform/tizen/form.h"
-#include "backends/platform/tizen/system.h"
-#include "backends/platform/tizen/graphics.h"
 #include "backends/platform/tizen/audio.h"
+#include "backends/platform/tizen/form.h"
+#include "backends/platform/tizen/graphics.h"
+#include "backends/platform/tizen/system.h"
 
 using namespace Tizen::Base;
 using namespace Tizen::Base::Runtime;
@@ -104,13 +104,11 @@ bool TizenSaveFileManager::removeSavefile(const Common::String &filename) {
 			return true;
 
 		case E_ILLEGAL_ACCESS:
-			setError(Common::kWritePermissionDenied, "Search or write permission denied: " +
-						file.getName());
+			setError(Common::kWritePermissionDenied, "Search or write permission denied: " + file.getName());
 			break;
 
 		default:
-			setError(Common::kPathDoesNotExist, "removeSavefile: '" + file.getName() +
-						"' does not exist or path is invalid");
+			setError(Common::kPathDoesNotExist, "removeSavefile: '" + file.getName() + "' does not exist or path is invalid");
 			break;
 		}
 
@@ -128,6 +126,7 @@ struct TizenMutexManager : public MutexManager {
 	void lockMutex(OSystem::MutexRef mutex);
 	void unlockMutex(OSystem::MutexRef mutex);
 	void deleteMutex(OSystem::MutexRef mutex);
+
 private:
 	Mutex *_buffer[MUTEX_BUFFER_SIZE];
 };
@@ -157,7 +156,7 @@ OSystem::MutexRef TizenMutexManager::createMutex() {
 		}
 	}
 
-	return (OSystem::MutexRef) mutex;
+	return (OSystem::MutexRef)mutex;
 }
 
 void TizenMutexManager::lockMutex(OSystem::MutexRef mutex) {
@@ -191,8 +190,8 @@ struct TizenEventManager : public DefaultEventManager {
 	int shouldQuit() const;
 };
 
-TizenEventManager::TizenEventManager(Common::EventSource *boss) :
-	DefaultEventManager(boss) {
+TizenEventManager::TizenEventManager(Common::EventSource *boss)
+  : DefaultEventManager(boss) {
 }
 
 void TizenEventManager::init() {
@@ -231,10 +230,10 @@ struct TizenAppFrame : Frame {
 //
 // TizenSystem
 //
-TizenSystem::TizenSystem(TizenAppForm *appForm) :
-	_appForm(appForm),
-	_audioThread(0),
-	_epoch(0) {
+TizenSystem::TizenSystem(TizenAppForm *appForm)
+  : _appForm(appForm)
+  , _audioThread(0)
+  , _epoch(0) {
 }
 
 result TizenSystem::Construct(void) {
@@ -517,8 +516,7 @@ TizenAppForm *systemStart(Tizen::App::Application *app) {
 		return NULL;
 	}
 
-	if (E_SUCCESS != appForm->Construct() ||
-		E_SUCCESS != appFrame->AddControl(appForm)) {
+	if (E_SUCCESS != appForm->Construct() || E_SUCCESS != appFrame->AddControl(appForm)) {
 		delete appForm;
 		AppLog("Failed to construct appForm");
 		return NULL;

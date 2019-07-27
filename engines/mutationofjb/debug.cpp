@@ -21,18 +21,18 @@
  */
 
 #include "mutationofjb/debug.h"
+#include "common/debug-channels.h"
+#include "common/scummsys.h"
+#include "mutationofjb/commands/callmacrocommand.h"
+#include "mutationofjb/commands/command.h"
+#include "mutationofjb/commands/conditionalcommand.h"
+#include "mutationofjb/commands/randomcommand.h"
+#include "mutationofjb/commands/seqcommand.h"
 #include "mutationofjb/game.h"
 #include "mutationofjb/gamedata.h"
 #include "mutationofjb/inventory.h"
 #include "mutationofjb/mutationofjb.h"
 #include "mutationofjb/script.h"
-#include "mutationofjb/commands/command.h"
-#include "mutationofjb/commands/seqcommand.h"
-#include "mutationofjb/commands/conditionalcommand.h"
-#include "mutationofjb/commands/callmacrocommand.h"
-#include "mutationofjb/commands/randomcommand.h"
-#include "common/debug-channels.h"
-#include "common/scummsys.h"
 
 namespace MutationOfJB {
 
@@ -41,7 +41,7 @@ static Common::String convertToASCII(const Common::String &str) {
 	static const char conversionTable[] = {
 		'C', 'u', 'e', 'd', 'a', 'D', 'T', 'c', 'e', 'E', 'L', 'I', 'l', 'l', 'A', 'A', /* 0x80-0x8F */
 		'E', 'z', 'Z', 'o', 'o', 'O', 'u', 'U', 'y', 'O', 'U', 'S', 'L', 'Y', 'R', 't', /* 0x90-0x9F */
-		'a', 'i', 'o', 'u', 'n', 'N', 'U', 'O', 's', 'r', 'r', 'R'                      /* 0xA0-0xAB */
+		'a', 'i', 'o', 'u', 'n', 'N', 'U', 'O', 's', 'r', 'r', 'R' /* 0xA0-0xAB */
 	};
 
 	Common::String ret = str;
@@ -56,7 +56,8 @@ static Common::String convertToASCII(const Common::String &str) {
 	return ret;
 }
 
-Console::Console(MutationOfJBEngine *vm) : _vm(vm) {
+Console::Console(MutationOfJBEngine *vm)
+  : _vm(vm) {
 	registerCmd("showallcommands", WRAP_METHOD(Console, cmd_showallcommands));
 	registerCmd("listsections", WRAP_METHOD(Console, cmd_listsections));
 	registerCmd("showsection", WRAP_METHOD(Console, cmd_showsection));
@@ -268,7 +269,7 @@ bool Console::cmd_liststartups(int argc, const char **argv) {
 		if (script) {
 			const Startups &startups = script->getStartups();
 			for (Startups::const_iterator it = startups.begin(); it != startups.end(); ++it) {
-				debugPrintf("%u\n", (unsigned int) it->_key);
+				debugPrintf("%u\n", (unsigned int)it->_key);
 			}
 		}
 	} else {
@@ -322,18 +323,18 @@ bool Console::cmd_dumpsceneinfo(int argc, const char **argv) {
 	}
 
 	if (Scene *const scene = _vm->getGame().getGameData().getScene(sceneId)) {
-		debugPrintf("Scene ID: %u\n", (unsigned int) sceneId);
-		debugPrintf("Startup: %u\n", (unsigned int) scene->_startup);
-		debugPrintf("Delay: %u\n", (unsigned int) scene->_delay);
-		debugPrintf("Doors: %u\n", (unsigned int) scene->_noDoors);
-		debugPrintf("Objects: %u\n", (unsigned int) scene->_noObjects);
-		debugPrintf("Statics: %u\n", (unsigned int) scene->_noStatics);
-		debugPrintf("ObstacleY1: %u\n", (unsigned int) scene->_obstacleY1);
-		debugPrintf("PalRotFirst: %u\n", (unsigned int) scene->_palRotFirst);
-		debugPrintf("PalRotLast: %u\n", (unsigned int) scene->_palRotLast);
-		debugPrintf("PalRotDelay: %u\n", (unsigned int) scene->_palRotDelay);
+		debugPrintf("Scene ID: %u\n", (unsigned int)sceneId);
+		debugPrintf("Startup: %u\n", (unsigned int)scene->_startup);
+		debugPrintf("Delay: %u\n", (unsigned int)scene->_delay);
+		debugPrintf("Doors: %u\n", (unsigned int)scene->_noDoors);
+		debugPrintf("Objects: %u\n", (unsigned int)scene->_noObjects);
+		debugPrintf("Statics: %u\n", (unsigned int)scene->_noStatics);
+		debugPrintf("ObstacleY1: %u\n", (unsigned int)scene->_obstacleY1);
+		debugPrintf("PalRotFirst: %u\n", (unsigned int)scene->_palRotFirst);
+		debugPrintf("PalRotLast: %u\n", (unsigned int)scene->_palRotLast);
+		debugPrintf("PalRotDelay: %u\n", (unsigned int)scene->_palRotDelay);
 	} else {
-		debugPrintf("Scene %u not found.\n", (unsigned int) sceneId);
+		debugPrintf("Scene %u not found.\n", (unsigned int)sceneId);
 	}
 
 	return true;
@@ -349,21 +350,21 @@ bool Console::cmd_dumpdoorinfo(int argc, const char **argv) {
 			Door *const door = scene->getDoor(doorId);
 			if (door) {
 				debugPrintf("Name: '%s'\n", convertToASCII(door->_name).c_str());
-				debugPrintf("DestSceneId: %u\n", (unsigned int) door->_destSceneId);
-				debugPrintf("DestX: %u\n", (unsigned int) door->_destX);
-				debugPrintf("DestY: %u\n", (unsigned int) door->_destY);
-				debugPrintf("X: %u\n", (unsigned int) door->_x);
-				debugPrintf("Y: %u\n", (unsigned int) door->_y);
-				debugPrintf("Width: %u\n", (unsigned int) door->_width);
-				debugPrintf("Height: %u\n", (unsigned int) door->_height);
-				debugPrintf("WalkToX: %u\n", (unsigned int) door->_walkToX);
-				debugPrintf("WalkToY: %u\n", (unsigned int) door->_walkToY);
-				debugPrintf("SP: %u\n", (unsigned int) door->_SP);
+				debugPrintf("DestSceneId: %u\n", (unsigned int)door->_destSceneId);
+				debugPrintf("DestX: %u\n", (unsigned int)door->_destX);
+				debugPrintf("DestY: %u\n", (unsigned int)door->_destY);
+				debugPrintf("X: %u\n", (unsigned int)door->_x);
+				debugPrintf("Y: %u\n", (unsigned int)door->_y);
+				debugPrintf("Width: %u\n", (unsigned int)door->_width);
+				debugPrintf("Height: %u\n", (unsigned int)door->_height);
+				debugPrintf("WalkToX: %u\n", (unsigned int)door->_walkToX);
+				debugPrintf("WalkToY: %u\n", (unsigned int)door->_walkToY);
+				debugPrintf("SP: %u\n", (unsigned int)door->_SP);
 			} else {
-				debugPrintf("Door %u not found.\n", (unsigned int) doorId);
+				debugPrintf("Door %u not found.\n", (unsigned int)doorId);
 			}
 		} else {
-			debugPrintf("Scene %u not found.\n", (unsigned int) sceneId);
+			debugPrintf("Scene %u not found.\n", (unsigned int)sceneId);
 		}
 	} else {
 		debugPrintf("dumpdoorinfo <sceneid> <doorid>\n");
@@ -380,25 +381,25 @@ bool Console::cmd_dumpobjectinfo(int argc, const char **argv) {
 		if (scene) {
 			Object *const object = scene->getObject(objectId);
 			if (object) {
-				debugPrintf("AC: %u\n", (unsigned int) object->_active);
-				debugPrintf("FA: %u\n", (unsigned int) object->_firstFrame);
-				debugPrintf("FR: %u\n", (unsigned int) object->_randomFrame);
-				debugPrintf("NA: %u\n", (unsigned int) object->_numFrames);
-				debugPrintf("FS: %u\n", (unsigned int) object->_roomFrameLSB);
-				debugPrintf("Jump chance: %u\n", (unsigned int) object->_jumpChance);
-				debugPrintf("CA: %u\n", (unsigned int) object->_currentFrame);
-				debugPrintf("X: %u\n", (unsigned int) object->_x);
-				debugPrintf("Y: %u\n", (unsigned int) object->_y);
-				debugPrintf("XL: %u\n", (unsigned int) object->_width);
-				debugPrintf("YL: %u\n", (unsigned int) object->_height);
-				debugPrintf("WX: %u\n", (unsigned int) object->_WX);
-				debugPrintf("WY: %u\n", (unsigned int) object->_roomFrameMSB);
-				debugPrintf("SP: %u\n", (unsigned int) object->_SP);
+				debugPrintf("AC: %u\n", (unsigned int)object->_active);
+				debugPrintf("FA: %u\n", (unsigned int)object->_firstFrame);
+				debugPrintf("FR: %u\n", (unsigned int)object->_randomFrame);
+				debugPrintf("NA: %u\n", (unsigned int)object->_numFrames);
+				debugPrintf("FS: %u\n", (unsigned int)object->_roomFrameLSB);
+				debugPrintf("Jump chance: %u\n", (unsigned int)object->_jumpChance);
+				debugPrintf("CA: %u\n", (unsigned int)object->_currentFrame);
+				debugPrintf("X: %u\n", (unsigned int)object->_x);
+				debugPrintf("Y: %u\n", (unsigned int)object->_y);
+				debugPrintf("XL: %u\n", (unsigned int)object->_width);
+				debugPrintf("YL: %u\n", (unsigned int)object->_height);
+				debugPrintf("WX: %u\n", (unsigned int)object->_WX);
+				debugPrintf("WY: %u\n", (unsigned int)object->_roomFrameMSB);
+				debugPrintf("SP: %u\n", (unsigned int)object->_SP);
 			} else {
-				debugPrintf("Object %u not found.\n", (unsigned int) objectId);
+				debugPrintf("Object %u not found.\n", (unsigned int)objectId);
 			}
 		} else {
-			debugPrintf("Scene %u not found.\n", (unsigned int) sceneId);
+			debugPrintf("Scene %u not found.\n", (unsigned int)sceneId);
 		}
 	} else {
 		debugPrintf("dumpobjectinfo <sceneid> <objectid>\n");
@@ -416,20 +417,20 @@ bool Console::cmd_dumpstaticinfo(int argc, const char **argv) {
 		if (scene) {
 			Static *const stat = scene->getStatic(staticId, true);
 			if (stat) {
-				debugPrintf("Active: %u\n", (unsigned int) stat->_active);
+				debugPrintf("Active: %u\n", (unsigned int)stat->_active);
 				debugPrintf("Name: '%s'\n", convertToASCII(stat->_name).c_str());
-				debugPrintf("X: %u\n", (unsigned int) stat->_x);
-				debugPrintf("Y: %u\n", (unsigned int) stat->_y);
-				debugPrintf("Width: %u\n", (unsigned int) stat->_width);
-				debugPrintf("Height: %u\n", (unsigned int) stat->_height);
-				debugPrintf("WalkToX: %u\n", (unsigned int) stat->_walkToY);
-				debugPrintf("WalkToY: %u\n", (unsigned int) stat->_walkToX);
-				debugPrintf("WalkToFrame: %u\n", (unsigned int) stat->_walkToFrame);
+				debugPrintf("X: %u\n", (unsigned int)stat->_x);
+				debugPrintf("Y: %u\n", (unsigned int)stat->_y);
+				debugPrintf("Width: %u\n", (unsigned int)stat->_width);
+				debugPrintf("Height: %u\n", (unsigned int)stat->_height);
+				debugPrintf("WalkToX: %u\n", (unsigned int)stat->_walkToY);
+				debugPrintf("WalkToY: %u\n", (unsigned int)stat->_walkToX);
+				debugPrintf("WalkToFrame: %u\n", (unsigned int)stat->_walkToFrame);
 			} else {
-				debugPrintf("Static %u not found.\n", (unsigned int) staticId);
+				debugPrintf("Static %u not found.\n", (unsigned int)staticId);
 			}
 		} else {
-			debugPrintf("Scene %u not found.\n", (unsigned int) sceneId);
+			debugPrintf("Scene %u not found.\n", (unsigned int)sceneId);
 		}
 	} else {
 		debugPrintf("dumpstaticinfo <sceneid> <staticid>\n");
@@ -447,17 +448,17 @@ bool Console::cmd_dumpbitmapinfo(int argc, const char **argv) {
 		if (scene) {
 			Bitmap *const bitmap = scene->getBitmap(bitmapId);
 			if (bitmap) {
-				debugPrintf("Room Frame: %u\n", (unsigned int) bitmap->_roomFrame);
-				debugPrintf("Visible: %u\n", (unsigned int) bitmap->_isVisible);
-				debugPrintf("X1: %u\n", (unsigned int) bitmap->_x1);
-				debugPrintf("Y1: %u\n", (unsigned int) bitmap->_y1);
-				debugPrintf("X2: %u\n", (unsigned int) bitmap->_x2);
-				debugPrintf("Y2: %u\n", (unsigned int) bitmap->_y2);
+				debugPrintf("Room Frame: %u\n", (unsigned int)bitmap->_roomFrame);
+				debugPrintf("Visible: %u\n", (unsigned int)bitmap->_isVisible);
+				debugPrintf("X1: %u\n", (unsigned int)bitmap->_x1);
+				debugPrintf("Y1: %u\n", (unsigned int)bitmap->_y1);
+				debugPrintf("X2: %u\n", (unsigned int)bitmap->_x2);
+				debugPrintf("Y2: %u\n", (unsigned int)bitmap->_y2);
 			} else {
-				debugPrintf("Bitmap %u not found.\n", (unsigned int) bitmapId);
+				debugPrintf("Bitmap %u not found.\n", (unsigned int)bitmapId);
 			}
 		} else {
-			debugPrintf("Scene %u not found.\n", (unsigned int) sceneId);
+			debugPrintf("Scene %u not found.\n", (unsigned int)sceneId);
 		}
 	} else {
 		debugPrintf("dumpbitmapinfo <sceneid> <bitmapid>\n");

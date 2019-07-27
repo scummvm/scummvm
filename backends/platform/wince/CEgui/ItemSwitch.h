@@ -26,8 +26,8 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 
-#include "Panel.h"
 #include "EventsBuffer.h"
+#include "Panel.h"
 
 using GUI::Key;
 
@@ -41,11 +41,12 @@ public:
 	ItemSwitch(WORD referenceTrue, WORD referenceFalse, int *item, int max);
 	virtual ~ItemSwitch();
 	virtual bool action(int x, int y, bool pushed);
+
 private:
 	void init(WORD referenceTrue, WORD referenceFalse);
 	bool *_item;
 	static bool _itemdummy;
-	int  *_itemmultiple, _itemmax;
+	int *_itemmultiple, _itemmax;
 	SDL_ImageResource *_backgroundTrue;
 	SDL_ImageResource *_backgroundFalse;
 };

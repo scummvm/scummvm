@@ -24,66 +24,69 @@
 
 #include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
-#include "gui/EventRecorder.h"
 #include "common/taskbar.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "gui/EventRecorder.h"
 
 #include "backends/saves/default/default-saves.h"
 
 // Audio CD support was removed with SDL 2.0
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-#include "backends/audiocd/default/default-audiocd.h"
+#	include "backends/audiocd/default/default-audiocd.h"
 #else
-#include "backends/audiocd/sdl/sdl-audiocd.h"
+#	include "backends/audiocd/sdl/sdl-audiocd.h"
 #endif
 
 #include "backends/events/default/default-events.h"
 #include "backends/events/sdl/sdl-events.h"
+#include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
-#include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 #ifdef USE_OPENGL
-#include "backends/graphics/openglsdl/openglsdl-graphics.h"
-#include "graphics/cursorman.h"
+#	include "backends/graphics/openglsdl/openglsdl-graphics.h"
+#	include "graphics/cursorman.h"
 #endif
 
-#include <time.h>	// for getTimeAndDate()
+#include <time.h> // for getTimeAndDate()
 
 #ifdef USE_DETECTLANG
-#ifndef WIN32
-#include <locale.h>
-#endif // !WIN32
+#	ifndef WIN32
+#		include <locale.h>
+#	endif // !WIN32
 #endif
 
 #ifdef USE_SDL_NET
-#include <SDL_net.h>
+#	include <SDL_net.h>
 #endif
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-#include <SDL_clipboard.h>
+#	include <SDL_clipboard.h>
 #endif
 
 OSystem_SDL::OSystem_SDL()
-	:
+  :
 #ifdef USE_OPENGL
-	_desktopWidth(0),
-	_desktopHeight(0),
-	_graphicsModes(),
-	_graphicsMode(0),
-	_firstGLMode(0),
-	_defaultSDLMode(0),
-	_defaultGLMode(0),
+  _desktopWidth(0)
+  , _desktopHeight(0)
+  , _graphicsModes()
+  , _graphicsMode(0)
+  , _firstGLMode(0)
+  , _defaultSDLMode(0)
+  , _defaultGLMode(0)
+  ,
 #endif
-	_inited(false),
-	_initedSDL(false),
+  _inited(false)
+  , _initedSDL(false)
+  ,
 #ifdef USE_SDL_NET
-	_initedSDLnet(false),
+  _initedSDLnet(false)
+  ,
 #endif
-	_logger(0),
-	_mixerManager(0),
-	_eventSource(0),
-	_window(0) {
+  _logger(0)
+  , _mixerManager(0)
+  , _eventSource(0)
+  , _window(0) {
 
 	ConfMan.registerDefault("kbdmouse_speed", 3);
 	ConfMan.registerDefault("joystick_deadzone", 3);
@@ -130,7 +133,8 @@ OSystem_SDL::~OSystem_SDL() {
 	_logger = 0;
 
 #ifdef USE_SDL_NET
-	if (_initedSDLnet) SDLNet_Quit();
+	if (_initedSDLnet)
+		SDLNet_Quit();
 #endif
 
 	SDL_Quit();
@@ -157,7 +161,6 @@ void OSystem_SDL::init() {
 			_logger->open(logFile);
 	}
 
-
 	// Creates the early needed managers, if they don't exist yet
 	// (we check for this to allow subclasses to provide their own).
 	if (_mutexManager == 0)
@@ -170,12 +173,12 @@ void OSystem_SDL::init() {
 	if (_taskbarManager == 0)
 		_taskbarManager = new Common::TaskbarManager();
 #endif
-
 }
 
 bool OSystem_SDL::hasFeature(Feature f) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	if (f == kFeatureClipboardSupport) return true;
+	if (f == kFeatureClipboardSupport)
+		return true;
 #endif
 	if (f == kFeatureJoystickDeadzone || f == kFeatureKbdMouseSpeed) {
 		bool joystickSupportEnabled = ConfMan.getInt("joystick_num") >= 0;
@@ -212,23 +215,22 @@ void OSystem_SDL::initBackend() {
 		_eventManager = eventManager;
 	}
 
-
 #ifdef USE_OPENGL
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+#	if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_DisplayMode displayMode;
 	if (!SDL_GetDesktopDisplayMode(0, &displayMode)) {
-		_desktopWidth  = displayMode.w;
+		_desktopWidth = displayMode.w;
 		_desktopHeight = displayMode.h;
 	}
-#else
+#	else
 	// Query the desktop resolution. We simply hope nothing tried to change
 	// the resolution so far.
 	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
 	if (videoInfo && videoInfo->current_w > 0 && videoInfo->current_h > 0) {
-		_desktopWidth  = videoInfo->current_w;
+		_desktopWidth = videoInfo->current_w;
 		_desktopHeight = videoInfo->current_h;
 	}
-#endif
+#	endif
 #endif
 
 	if (_graphicsManager == 0) {
@@ -357,7 +359,6 @@ void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) 
 		s.add(DATA_PATH, new Common::FSDirectory(dataNode, 4), priority);
 	}
 #endif
-
 }
 
 void OSystem_SDL::setWindowCaption(const char *caption) {
@@ -387,7 +388,6 @@ void OSystem_SDL::fatalError() {
 	destroy();
 	exit(1);
 }
-
 
 void OSystem_SDL::logMessage(LogMessageType::Type type, const char *message) {
 	// First log to stdout/stderr
@@ -449,17 +449,18 @@ bool OSystem_SDL::hasTextInClipboard() {
 }
 
 Common::String OSystem_SDL::getTextFromClipboard() {
-	if (!hasTextInClipboard()) return "";
+	if (!hasTextInClipboard())
+		return "";
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	char *text = SDL_GetClipboardText();
 	// The string returned by SDL is in UTF-8. Convert to the
 	// current TranslationManager encoding or ISO-8859-1.
-#ifdef USE_TRANSLATION
+#	ifdef USE_TRANSLATION
 	char *conv_text = SDL_iconv_string(TransMan.getCurrentCharset().c_str(), "UTF-8", text, SDL_strlen(text) + 1);
-#else
+#	else
 	char *conv_text = SDL_iconv_string("ISO-8859-1", "UTF-8", text, SDL_strlen(text) + 1);
-#endif
+#	endif
 	if (conv_text) {
 		SDL_free(text);
 		text = conv_text;
@@ -477,11 +478,11 @@ bool OSystem_SDL::setTextInClipboard(const Common::String &text) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	// The encoding we need to use is UTF-8. Assume we currently have the
 	// current TranslationManager encoding or ISO-8859-1.
-#ifdef USE_TRANSLATION
+#	ifdef USE_TRANSLATION
 	char *utf8_text = SDL_iconv_string("UTF-8", TransMan.getCurrentCharset().c_str(), text.c_str(), text.size() + 1);
-#else
+#	else
 	char *utf8_text = SDL_iconv_string("UTF-8", "ISO-8859-1", text.c_str(), text.size() + 1);
-#endif
+#	endif
 	if (utf8_text) {
 		int status = SDL_SetClipboardText(utf8_text);
 		SDL_free(utf8_text);
@@ -556,9 +557,9 @@ AudioCDManager *OSystem_SDL::createAudioCDManager() {
 
 Common::SaveFileManager *OSystem_SDL::getSavefileManager() {
 #ifdef ENABLE_EVENTRECORDER
-    return g_eventRec.getSaveManager(_savefileManager);
+	return g_eventRec.getSaveManager(_savefileManager);
 #else
-    return _savefileManager;
+	return _savefileManager;
 #endif
 }
 
@@ -746,9 +747,8 @@ int SDL_SetAlpha(SDL_Surface *surface, Uint32 flag, Uint8 alpha) {
 	return 0;
 }
 
-#undef SDL_SetColorKey
+#	undef SDL_SetColorKey
 int SDL_SetColorKey_replacement(SDL_Surface *surface, Uint32 flag, Uint32 key) {
 	return SDL_SetColorKey(surface, SDL_TRUE, key) ? -1 : 0;
 }
 #endif
-

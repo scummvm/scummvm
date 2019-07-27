@@ -23,14 +23,16 @@
 #include "mads/audio.h"
 #include "mads/compression.h"
 
-#include "common/stream.h"
 #include "audio/audiostream.h"
-#include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "audio/mixer.h"
+#include "common/stream.h"
 
 namespace MADS {
 
-AudioPlayer::AudioPlayer(Audio::Mixer *mixer, uint32 gameID) : _mixer(mixer), _gameID(gameID) {
+AudioPlayer::AudioPlayer(Audio::Mixer *mixer, uint32 gameID)
+  : _mixer(mixer)
+  , _gameID(gameID) {
 	setVolume(Audio::Mixer::kMaxChannelVolume);
 	setDefaultSoundGroup();
 }
@@ -117,9 +119,9 @@ void AudioPlayer::playSound(int soundIndex, bool loop) {
 
 	// Play sound
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
-				Audio::makeRawStream(buffer, uncompSize, frequency, Audio::FLAG_UNSIGNED),
-				loop ? 0 : 1);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handle, stream, -1,  Audio::Mixer::kMaxChannelVolume);
+	  Audio::makeRawStream(buffer, uncompSize, frequency, Audio::FLAG_UNSIGNED),
+	  loop ? 0 : 1);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handle, stream, -1, Audio::Mixer::kMaxChannelVolume);
 
 	/*
 	// Dump the sound file

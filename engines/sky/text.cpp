@@ -20,29 +20,28 @@
  *
  */
 
-
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/textconsole.h"
 
+#include "sky/compact.h"
 #include "sky/disk.h"
 #include "sky/logic.h"
-#include "sky/text.h"
 #include "sky/sky.h"
 #include "sky/skydefs.h"
 #include "sky/struc.h"
-#include "sky/compact.h"
+#include "sky/text.h"
 
 namespace Sky {
 
-#define FIRST_TEXT_SEC	77
-#define	FIRST_TEXT_BUFFER	274
-#define LAST_TEXT_BUFFER	284
-#define NO_OF_TEXT_SECTIONS	8	// 8 sections per language
-#define	CHAR_SET_FILE	60150
-#define MAX_SPEECH_SECTION	7
-#define CHAR_SET_HEADER	128
-#define	MAX_NO_LINES	10
+#define FIRST_TEXT_SEC 77
+#define FIRST_TEXT_BUFFER 274
+#define LAST_TEXT_BUFFER 284
+#define NO_OF_TEXT_SECTIONS 8 // 8 sections per language
+#define CHAR_SET_FILE 60150
+#define MAX_SPEECH_SECTION 7
+#define CHAR_SET_HEADER 128
+#define MAX_NO_LINES 10
 
 Text::Text(Disk *skyDisk, SkyCompact *skyCompact) {
 	_skyDisk = skyDisk;
@@ -107,7 +106,7 @@ void Text::fnSetFont(uint32 fontNr) {
 
 void Text::fnTextModule(uint32 textInfoId, uint32 textNo) {
 	fnSetFont(1);
-	uint16* msgData = (uint16 *)_skyCompact->fetchCpt(textInfoId);
+	uint16 *msgData = (uint16 *)_skyCompact->fetchCpt(textInfoId);
 	DisplayedText textId = lowTextManager(textNo, msgData[1], msgData[2], 209, false);
 	Logic::_scriptVariables[RESULT] = textId.compactNum;
 	Compact *textCompact = _skyCompact->fetchCpt(textId.compactNum);
@@ -186,7 +185,7 @@ void Text::fnPointerText(uint32 pointedId, uint16 mouseX, uint16 mouseY) {
 		if (mouseX < 150)
 			_mouseOfsX = TOP_LEFT_X + 24;
 		else
-			_mouseOfsX = TOP_LEFT_X  - 8 - text.textWidth;
+			_mouseOfsX = TOP_LEFT_X - 8 - text.textWidth;
 	} else {
 		_mouseOfsY = TOP_LEFT_Y - 10;
 		if (mouseX < 150)
@@ -270,24 +269,24 @@ DisplayedText Text::displayText(char *textPtr, uint8 *dest, bool center, uint16 
 			centerTable[numLines] = lineWidth;
 		}
 
-		lineWidth += _characterSet[textChar];	//add character width
-		lineWidth += (uint16)_dtCharSpacing;	//include character spacing
+		lineWidth += _characterSet[textChar]; //add character width
+		lineWidth += (uint16)_dtCharSpacing; //include character spacing
 
 		if (pixelWidth <= lineWidth) {
-			if (*(lastSpace-1) == 10)
+			if (*(lastSpace - 1) == 10)
 				error("line width exceeded");
 
-			*(lastSpace-1) = 10;
+			*(lastSpace - 1) = 10;
 			lineWidth = 0;
 			numLines++;
-			curPos = lastSpace;	//go back for new count
+			curPos = lastSpace; //go back for new count
 		}
 
 		textChar = (uint8)*curPos++;
 		_numLetters++;
 	}
 
-	uint32 dtLastWidth = lineWidth;	//save width of last line
+	uint32 dtLastWidth = lineWidth; //save width of last line
 	centerTable[numLines] = lineWidth; //and update centering table
 	numLines++;
 
@@ -313,7 +312,7 @@ DisplayedText Text::displayText(char *textPtr, uint8 *dest, bool center, uint16 
 	//reset position
 	curPos = textPtr;
 
-	uint8 *curDest = dest +  sizeof(DataFileHeader); //point to where pixels start
+	uint8 *curDest = dest + sizeof(DataFileHeader); //point to where pixels start
 	byte *prevDest = curDest;
 	uint32 *centerTblPtr = centerTable;
 
@@ -330,7 +329,7 @@ DisplayedText Text::displayText(char *textPtr, uint8 *dest, bool center, uint16 
 			textChar = *curPos++;
 		}
 
-		prevDest = curDest = prevDest + dtLineSize;	//start of last line + start of next
+		prevDest = curDest = prevDest + dtLineSize; //start of last line + start of next
 
 	} while (textChar >= 10);
 
@@ -398,7 +397,7 @@ DisplayedText Text::lowTextManager(uint32 textNum, uint16 width, uint16 logicNum
 
 	cpt->logic = logicNum;
 	cpt->status = ST_LOGIC | ST_FOREGROUND | ST_RECREATE;
-	cpt->screen = (uint16) Logic::_scriptVariables[SCREEN];
+	cpt->screen = (uint16)Logic::_scriptVariables[SCREEN];
 
 	textInfo.compactNum = (uint16)compactNum;
 	return textInfo;
@@ -477,13 +476,13 @@ const PatchMessage Text::_patchedMessages[NUM_PATCH_MSG] = {
 
 const uint16 Text::_patchLangIdx[8] = {
 	0xFFFF, // SKY_ENGLISH
-	7,		// SKY_GERMAN
-	8,		// SKY_FRENCH
+	7, // SKY_GERMAN
+	8, // SKY_FRENCH
 	0xFFFF, // SKY_USA
-	3,		// SKY_SWEDISH
-	0,		// SKY_ITALIAN
+	3, // SKY_SWEDISH
+	0, // SKY_ITALIAN
 	0xFFFF, // SKY_PORTUGUESE
-	0xFFFF  // SKY_SPANISH
+	0xFFFF // SKY_SPANISH
 };
 
 const uint16 Text::_patchLangNum[8] = {
@@ -494,7 +493,7 @@ const uint16 Text::_patchLangNum[8] = {
 	4, // SKY_SWEDISH
 	3, // SKY_ITALIAN
 	0, // SKY_PORTUGUESE
-	0  // SKY_SPANISH
+	0 // SKY_SPANISH
 };
 
 } // End of namespace Sky

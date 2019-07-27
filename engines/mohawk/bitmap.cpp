@@ -23,12 +23,12 @@
 #include "mohawk/bitmap.h"
 
 #include "common/debug.h"
-#include "common/util.h"
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "common/substream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 #include "image/bmp.h"
 
 namespace Mohawk {
@@ -79,10 +79,10 @@ void MohawkBitmap::decodeImageData(Common::SeekableReadStream *stream) {
 	_header.bytesPerRow = _data->readSint16BE() & 0x3FFE;
 	_header.format = _data->readUint16BE();
 
-	debug (2, "Decoding Mohawk Bitmap (%dx%d, %dbpp, %s Packing + %s Drawing)", _header.width, _header.height, getBitsPerPixel(), getPackName(), getDrawName());
+	debug(2, "Decoding Mohawk Bitmap (%dx%d, %dbpp, %s Packing + %s Drawing)", _header.width, _header.height, getBitsPerPixel(), getPackName(), getDrawName());
 
 	if (getBitsPerPixel() != 8 && getBitsPerPixel() != 24)
-		error ("Unhandled bpp %d", getBitsPerPixel());
+		error("Unhandled bpp %d", getBitsPerPixel());
 
 	// Read in the palette if it's here.
 	if (_header.format & kBitmapHasCLUT || (PACK_COMPRESSION == kPackRiven && getBitsPerPixel() == 8)) {
@@ -220,12 +220,12 @@ void MohawkBitmap::unpackRaw() {
 // LZ Unpacker
 //////////////////////////////////////////
 
-#define LEN_BITS		6
-#define MIN_STRING		3									// lower limit for string length
-#define POS_BITS		(16 - LEN_BITS)
-#define MAX_STRING		((1 << LEN_BITS) + MIN_STRING - 1)	// upper limit for string length
-#define CBUFFERSIZE		(1 << POS_BITS)						// size of the circular buffer
-#define POS_MASK		(CBUFFERSIZE - 1)
+#define LEN_BITS 6
+#define MIN_STRING 3 // lower limit for string length
+#define POS_BITS (16 - LEN_BITS)
+#define MAX_STRING ((1 << LEN_BITS) + MIN_STRING - 1) // upper limit for string length
+#define CBUFFERSIZE (1 << POS_BITS) // size of the circular buffer
+#define POS_MASK (CBUFFERSIZE - 1)
 
 Common::SeekableReadStream *MohawkBitmap::decompressLZ(Common::SeekableReadStream *stream, uint32 uncompressedSize) {
 	uint16 flags = 0;
@@ -329,9 +329,9 @@ void MohawkBitmap::unpackRiven() {
 
 	while (!_data->eos() && dst < (uncompressedData + _header.bytesPerRow * _header.height)) {
 		byte cmd = _data->readByte();
-		debug (8, "Riven Pack Command %02x", cmd);
+		debug(8, "Riven Pack Command %02x", cmd);
 
-		if (cmd == 0x00) {                       // End of stream
+		if (cmd == 0x00) { // End of stream
 			break;
 		} else if (cmd >= 0x01 && cmd <= 0x3f) { // Simple Pixel Duplet Output
 			for (byte i = 0; i < cmd; i++) {
@@ -354,7 +354,7 @@ void MohawkBitmap::unpackRiven() {
 				*dst++ = pixel[2];
 				*dst++ = pixel[3];
 			}
-		} else {                                 // Subcommand Stream of (cmd - 0xc0) subcommands
+		} else { // Subcommand Stream of (cmd - 0xc0) subcommands
 			handleRivenSubcommandStream(cmd - 0xc0, dst);
 		}
 	}
@@ -375,49 +375,47 @@ static byte getLastFourBits(byte c) {
 	return (c & 0x0f);
 }
 
-#define B_BYTE()				\
-	*dst = _data->readByte();	\
+#define B_BYTE()            \
+	*dst = _data->readByte(); \
 	dst++
 
-#define B_LASTDUPLET()			\
-	*dst = *(dst - 2);			\
+#define B_LASTDUPLET() \
+	*dst = *(dst - 2);   \
 	dst++
 
-#define B_LASTDUPLET_PLUS_M()	\
-	*dst = *(dst - 2) + m;		\
+#define B_LASTDUPLET_PLUS_M() \
+	*dst = *(dst - 2) + m;      \
 	dst++
 
-#define B_LASTDUPLET_MINUS_M()	\
-	*dst = *(dst - 2) - m;		\
+#define B_LASTDUPLET_MINUS_M() \
+	*dst = *(dst - 2) - m;       \
 	dst++
 
-#define B_LASTDUPLET_PLUS(m)	\
-	*dst = *(dst - 2) + (m);	\
+#define B_LASTDUPLET_PLUS(m) \
+	*dst = *(dst - 2) + (m);   \
 	dst++
 
-#define B_LASTDUPLET_MINUS(m)	\
-	*dst = *(dst - 2) - (m);	\
+#define B_LASTDUPLET_MINUS(m) \
+	*dst = *(dst - 2) - (m);    \
 	dst++
 
-#define B_PIXEL_MINUS(m)		\
-	*dst = *(dst - (m));		\
+#define B_PIXEL_MINUS(m) \
+	*dst = *(dst - (m));   \
 	dst++
 
-#define B_NDUPLETS(n)													\
-	uint16 m1 = ((getLastTwoBits(cmd) << 8) + _data->readByte());		\
-		for (uint16 j = 0; j < (n); j++) {								\
-			*dst = *(dst - m1);											\
-			dst++;														\
-		}																\
-		void dummyFuncToAllowTrailingSemicolon()
-
-
+#define B_NDUPLETS(n)                                           \
+	uint16 m1 = ((getLastTwoBits(cmd) << 8) + _data->readByte()); \
+	for (uint16 j = 0; j < (n); j++) {                            \
+		*dst = *(dst - m1);                                         \
+		dst++;                                                      \
+	}                                                             \
+	void dummyFuncToAllowTrailingSemicolon()
 
 void MohawkBitmap::handleRivenSubcommandStream(byte count, byte *&dst) {
 	for (byte i = 0; i < count; i++) {
 		byte cmd = _data->readByte();
 		uint16 m = getLastFourBits(cmd);
-		debug (9, "Riven Pack Subcommand %02x", cmd);
+		debug(9, "Riven Pack Subcommand %02x", cmd);
 
 		// Notes: p = value of the next byte, m = last four bits of the command
 
@@ -513,9 +511,9 @@ void MohawkBitmap::handleRivenSubcommandStream(byte count, byte *&dst) {
 			B_LASTDUPLET_MINUS(pattern >> 4);
 			B_LASTDUPLET_MINUS(getLastFourBits(pattern));
 
-		// Repeat operations
-		// Repeat n duplets from relative position -m (given in pixels, not duplets).
-		// If r is 0, another byte follows and the last pixel is set to that value
+			// Repeat operations
+			// Repeat n duplets from relative position -m (given in pixels, not duplets).
+			// If r is 0, another byte follows and the last pixel is set to that value
 		} else if (cmd >= 0xa4 && cmd <= 0xa7) {
 			B_NDUPLETS(3);
 			B_BYTE();

@@ -131,7 +131,8 @@ bool Picture::loadPicture(const Common::String &file) {
 	return false;
 }
 
-Picture::Picture(ToonEngine *vm) : _vm(vm) {
+Picture::Picture(ToonEngine *vm)
+  : _vm(vm) {
 	_data = NULL;
 	_palette = NULL;
 
@@ -192,7 +193,7 @@ void Picture::drawMask(Graphics::Surface &surface, int16 x, int16 y, int16 dx, i
 	}
 }
 
-void Picture::drawWithRectList(Graphics::Surface& surface, int16 x, int16 y, int16 dx, int16 dy, Common::Array<Common::Rect>& rectArray) {
+void Picture::drawWithRectList(Graphics::Surface &surface, int16 x, int16 y, int16 dx, int16 dy, Common::Array<Common::Rect> &rectArray) {
 	int16 rx = MIN<int16>(_width, surface.w - x);
 	int16 ry = MIN<int16>(_height, surface.h - y);
 
@@ -324,8 +325,8 @@ void Picture::drawLineOnMask(int16 x, int16 y, int16 x2, int16 y2, bool walkable
 		int32 rx = bx >> 16;
 		int32 ry = by >> 16;
 
-		if ( rx >= 0 && rx < _width-1 && ry >= 0 && ry < _height) {	// sanity check: some lines in the game
-																	// were drawing outside the screen causing corruption
+		if (rx >= 0 && rx < _width - 1 && ry >= 0 && ry < _height) { // sanity check: some lines in the game
+			// were drawing outside the screen causing corruption
 			if (!walkable) {
 				_data[_width * ry + rx] &= 0xe0;
 				_data[_width * ry + rx + 1] &= 0xe0;

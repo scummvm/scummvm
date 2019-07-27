@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptLuther::AIScriptLuther(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptLuther::AIScriptLuther(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 	_flag = false;
 }
 
@@ -43,12 +44,11 @@ void AIScriptLuther::Initialize() {
 }
 
 bool AIScriptLuther::Update() {
-	if ( Actor_Query_Is_In_Current_Set(kActorLuther)
-	 &&  Player_Query_Combat_Mode()
-	 &&  Global_Variable_Query(kVariableLutherLanceShot) == 0
-	 && !Game_Flag_Query(kFlagUG16PulledGun)
-	 &&  Global_Variable_Query(kVariableChapter) == 4
-	) {
+	if (Actor_Query_Is_In_Current_Set(kActorLuther)
+	    && Player_Query_Combat_Mode()
+	    && Global_Variable_Query(kVariableLutherLanceShot) == 0
+	    && !Game_Flag_Query(kFlagUG16PulledGun)
+	    && Global_Variable_Query(kVariableChapter) == 4) {
 		Actor_Says(kActorMcCoy, 5720, 12);
 		Actor_Says(kActorLuther, 80, 13);
 		Actor_Says(kActorLance, 40, 12);
@@ -57,8 +57,7 @@ bool AIScriptLuther::Update() {
 	}
 
 	if (Actor_Query_Goal_Number(kActorLuther) == kGoalLutherDefault
-	 && Actor_Query_Goal_Number(kActorLuther) != kGoalLutherDead
-	) {
+	    && Actor_Query_Goal_Number(kActorLuther) != kGoalLutherDead) {
 		Actor_Set_Goal_Number(kActorLuther, kGoalLutherMoveAround);
 		return false;
 	}
@@ -69,9 +68,8 @@ bool AIScriptLuther::Update() {
 		return false;
 	}
 
-	if ( Actor_Query_Goal_Number(kActorLuther) == kGoalLutherDyingStarted
-	 && !Game_Flag_Query(kFlagUG15LutherLanceStartedDying)
-	) {
+	if (Actor_Query_Goal_Number(kActorLuther) == kGoalLutherDyingStarted
+	    && !Game_Flag_Query(kFlagUG15LutherLanceStartedDying)) {
 		AI_Countdown_Timer_Reset(kActorLuther, kActorTimerAIScriptCustomTask2);
 		AI_Countdown_Timer_Start(kActorLuther, kActorTimerAIScriptCustomTask2, 5);
 		Actor_Set_Goal_Number(kActorLuther, kGoalLutherDyingWait);
@@ -79,10 +77,9 @@ bool AIScriptLuther::Update() {
 		return false;
 	}
 
-	if ( Actor_Query_Goal_Number(kActorLuther) == kGoalLutherDyingCheck
-	 &&  Global_Variable_Query(kVariableLutherLanceShot) < 2
-	 && !Game_Flag_Query(kFlagUG16ComputerOff)
-	) {
+	if (Actor_Query_Goal_Number(kActorLuther) == kGoalLutherDyingCheck
+	    && Global_Variable_Query(kVariableLutherLanceShot) < 2
+	    && !Game_Flag_Query(kFlagUG16ComputerOff)) {
 		Game_Flag_Set(kFlagUG16ComputerOff);
 		ChangeAnimationMode(50);
 		ChangeAnimationMode(kAnimationModeDie);
@@ -95,10 +92,9 @@ bool AIScriptLuther::Update() {
 		return false;
 	}
 
-	if ( Actor_Query_Goal_Number(kActorLuther) == kGoalLutherDyingCheck
-	 &&  Global_Variable_Query(kVariableLutherLanceShot) > 1
-	 && !Game_Flag_Query(kFlagUG16ComputerOff)
-	) {
+	if (Actor_Query_Goal_Number(kActorLuther) == kGoalLutherDyingCheck
+	    && Global_Variable_Query(kVariableLutherLanceShot) > 1
+	    && !Game_Flag_Query(kFlagUG16ComputerOff)) {
 		Actor_Set_Targetable(kActorLuther, false);
 		Actor_Set_Goal_Number(kActorLuther, kGoalLutherDie);
 		Actor_Set_Targetable(kActorLuther, false);
@@ -266,8 +262,7 @@ bool AIScriptLuther::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		if (_animationFrame == 0
-		 && _flag
-		) {
+		    && _flag) {
 			*animation = 346;
 			_animationState = 0;
 		} else {
@@ -376,7 +371,6 @@ bool AIScriptLuther::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame++;
 		}
 		break;
-
 	}
 	*frame = _animationFrame;
 
@@ -462,17 +456,17 @@ bool AIScriptLuther::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptLuther::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptLuther::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptLuther::ReachedMovementTrackWaypoint(int waypointId) {

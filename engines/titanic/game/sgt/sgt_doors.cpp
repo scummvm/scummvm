@@ -26,10 +26,10 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CSGTDoors, CGameObject)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(LeaveRoomMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(LeaveRoomMsg)
 END_MESSAGE_MAP()
 
 void CSGTDoors::save(SimpleFile *file, int indent) {
@@ -60,7 +60,7 @@ bool CSGTDoors::EnterViewMsg(CEnterViewMsg *msg) {
 
 		if (pet->getRoomsSublevel() == 1)
 			playMovie(START_FRAMES[roomNum], END_FRAMES[roomNum],
-				MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+			          MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		else
 			playMovie(0, 12, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 	}
@@ -89,7 +89,7 @@ bool CSGTDoors::LeaveRoomMsg(CLeaveRoomMsg *msg) {
 
 		if (pet->getRoomsSublevel() == 1)
 			playMovie(START_FRAMES[roomNum], END_FRAMES[roomNum],
-				MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+			          MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		else
 			playMovie(12, 25, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 	}

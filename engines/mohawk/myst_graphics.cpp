@@ -20,26 +20,26 @@
  *
  */
 
-#include "mohawk/myst.h"
 #include "mohawk/myst_graphics.h"
+#include "mohawk/myst.h"
 #include "mohawk/resource.h"
 
 #include "common/substream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "engines/util.h"
-#include "graphics/fonts/ttf.h"
 #include "graphics/fontman.h"
+#include "graphics/fonts/ttf.h"
 #include "graphics/palette.h"
 #include "graphics/scaler.h"
 #include "image/pict.h"
 
 namespace Mohawk {
 
-MystGraphics::MystGraphics(MohawkEngine_Myst* vm) :
-		GraphicsManager(),
-		_vm(vm),
-		_menuFont(nullptr) {
+MystGraphics::MystGraphics(MohawkEngine_Myst *vm)
+  : GraphicsManager()
+  , _vm(vm)
+  , _menuFont(nullptr) {
 	_bmpDecoder = new MystBitmap();
 
 	_viewport = Common::Rect(544, 332);
@@ -161,51 +161,51 @@ void MystGraphics::applyImagePatches(uint16 id, const MohawkSurface *mhkSurface)
 	// The fixed image was provided by dafioram in bug Trac#10115.
 	if (id == 2019 && _vm->getFeatures() & GF_ME && _vm->getLanguage() == Common::EN_ANY) {
 		static const byte markerSwitchInstructionsFixPic[] = {
-				0x1d, 0x1c, 0x19, 0x19, 0x19, 0x19, 0x1c, 0x19, 0x19, 0x17, 0x19, 0x19, 0x19, 0x19, 0x19,
-				0x1e, 0x1e, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19,
-				0x1c, 0x19, 0x19, 0x19, 0x1c, 0x19, 0x19, 0x19, 0x1c, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19,
-				0x1d, 0x1e, 0x16, 0x0d, 0x0e, 0x12, 0x19, 0x19, 0x17, 0x10, 0x06, 0x05, 0x19, 0x19, 0x19,
-				0x1e, 0x1e, 0x10, 0x13, 0x1c, 0x11, 0x0d, 0x19, 0x12, 0x09, 0x16, 0x04, 0x18, 0x18, 0x19,
-				0x1e, 0x1a, 0x03, 0x1b, 0x1c, 0x17, 0x02, 0x15, 0x13, 0x00, 0x19, 0x06, 0x18, 0x19, 0x18,
-				0x1e, 0x1e, 0x01, 0x1b, 0x1c, 0x1b, 0x02, 0x15, 0x13, 0x00, 0x19, 0x07, 0x0a, 0x19, 0x18,
-				0x1e, 0x1c, 0x0c, 0x0e, 0x14, 0x0c, 0x0c, 0x19, 0x0b, 0x00, 0x19, 0x00, 0x08, 0x19, 0x19,
-				0x1e, 0x1c, 0x19, 0x14, 0x0f, 0x0f, 0x14, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x17,
-				0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19,
-				0x1c, 0x1c, 0x1e, 0x19, 0x19, 0x19, 0x17, 0x19, 0x19, 0x17, 0x19, 0x19, 0x19, 0x19, 0x19
+			0x1d, 0x1c, 0x19, 0x19, 0x19, 0x19, 0x1c, 0x19, 0x19, 0x17, 0x19, 0x19, 0x19, 0x19, 0x19,
+			0x1e, 0x1e, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19,
+			0x1c, 0x19, 0x19, 0x19, 0x1c, 0x19, 0x19, 0x19, 0x1c, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19,
+			0x1d, 0x1e, 0x16, 0x0d, 0x0e, 0x12, 0x19, 0x19, 0x17, 0x10, 0x06, 0x05, 0x19, 0x19, 0x19,
+			0x1e, 0x1e, 0x10, 0x13, 0x1c, 0x11, 0x0d, 0x19, 0x12, 0x09, 0x16, 0x04, 0x18, 0x18, 0x19,
+			0x1e, 0x1a, 0x03, 0x1b, 0x1c, 0x17, 0x02, 0x15, 0x13, 0x00, 0x19, 0x06, 0x18, 0x19, 0x18,
+			0x1e, 0x1e, 0x01, 0x1b, 0x1c, 0x1b, 0x02, 0x15, 0x13, 0x00, 0x19, 0x07, 0x0a, 0x19, 0x18,
+			0x1e, 0x1c, 0x0c, 0x0e, 0x14, 0x0c, 0x0c, 0x19, 0x0b, 0x00, 0x19, 0x00, 0x08, 0x19, 0x19,
+			0x1e, 0x1c, 0x19, 0x14, 0x0f, 0x0f, 0x14, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x17,
+			0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19,
+			0x1c, 0x1c, 0x1e, 0x19, 0x19, 0x19, 0x17, 0x19, 0x19, 0x17, 0x19, 0x19, 0x19, 0x19, 0x19
 		};
 
 		static const byte markerSwitchInstructionsFixPal[] = {
-				0x00, 0x00, 0x00,
-				0x10, 0x08, 0x08,
-				0x18, 0x10, 0x10,
-				0x28, 0x10, 0x08,
-				0x20, 0x18, 0x18,
-				0x28, 0x20, 0x20,
-				0x38, 0x20, 0x10,
-				0x30, 0x28, 0x20,
-				0x38, 0x30, 0x28,
-				0x40, 0x38, 0x28,
-				0x48, 0x38, 0x28,
-				0x48, 0x40, 0x30,
-				0x50, 0x48, 0x38,
-				0x50, 0x48, 0x40,
-				0x60, 0x50, 0x38,
-				0x68, 0x58, 0x40,
-				0x68, 0x58, 0x48,
-				0x70, 0x60, 0x50,
-				0x78, 0x68, 0x50,
-				0x80, 0x70, 0x50,
-				0x80, 0x78, 0x60,
-				0x88, 0x80, 0x60,
-				0x98, 0x90, 0x70,
-				0xb0, 0xa0, 0x78,
-				0xb8, 0xa8, 0x8d,
-				0xb8, 0xa8, 0x90,
-				0xb8, 0xb0, 0x88,
-				0xc0, 0xb8, 0x90,
-				0xd8, 0xcc, 0x98,
-				0xd0, 0xe0, 0xc8,
-				0xf0, 0xe4, 0xc8
+			0x00, 0x00, 0x00,
+			0x10, 0x08, 0x08,
+			0x18, 0x10, 0x10,
+			0x28, 0x10, 0x08,
+			0x20, 0x18, 0x18,
+			0x28, 0x20, 0x20,
+			0x38, 0x20, 0x10,
+			0x30, 0x28, 0x20,
+			0x38, 0x30, 0x28,
+			0x40, 0x38, 0x28,
+			0x48, 0x38, 0x28,
+			0x48, 0x40, 0x30,
+			0x50, 0x48, 0x38,
+			0x50, 0x48, 0x40,
+			0x60, 0x50, 0x38,
+			0x68, 0x58, 0x40,
+			0x68, 0x58, 0x48,
+			0x70, 0x60, 0x50,
+			0x78, 0x68, 0x50,
+			0x80, 0x70, 0x50,
+			0x80, 0x78, 0x60,
+			0x88, 0x80, 0x60,
+			0x98, 0x90, 0x70,
+			0xb0, 0xa0, 0x78,
+			0xb8, 0xa8, 0x8d,
+			0xb8, 0xa8, 0x90,
+			0xb8, 0xb0, 0x88,
+			0xc0, 0xb8, 0x90,
+			0xd8, 0xcc, 0x98,
+			0xd0, 0xe0, 0xc8,
+			0xf0, 0xe4, 0xc8
 		};
 
 		Graphics::Surface fixSurf;
@@ -335,46 +335,44 @@ void MystGraphics::copyBackBufferToScreen(Common::Rect r) {
 void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 steps, uint16 delay) {
 
 	switch (type) {
-	case kTransitionLeftToRight:	{
-			debugC(kDebugView, "Left to Right");
+	case kTransitionLeftToRight: {
+		debugC(kDebugView, "Left to Right");
 
-			uint16 step = (rect.right - rect.left) / steps;
-			Common::Rect area = rect;
-			for (uint i = 0; i < steps; i++) {
-				area.left = rect.left + step * i;
-				area.right = area.left + step;
+		uint16 step = (rect.right - rect.left) / steps;
+		Common::Rect area = rect;
+		for (uint i = 0; i < steps; i++) {
+			area.left = rect.left + step * i;
+			area.right = area.left + step;
 
-				copyBackBufferToScreen(area);
-				_vm->wait(delay);
-			}
-			if (area.right < rect.right) {
-				area.left = area.right;
-				area.right = rect.right;
-
-				copyBackBufferToScreen(area);
-			}
+			copyBackBufferToScreen(area);
+			_vm->wait(delay);
 		}
-		break;
-	case kTransitionRightToLeft:	{
-			debugC(kDebugView, "Right to Left");
+		if (area.right < rect.right) {
+			area.left = area.right;
+			area.right = rect.right;
 
-			uint16 step = (rect.right - rect.left) / steps;
-			Common::Rect area = rect;
-			for (uint i = 0; i < steps; i++) {
-				area.right = rect.right - step * i;
-				area.left = area.right - step;
-
-				copyBackBufferToScreen(area);
-				_vm->wait(delay);
-			}
-			if (area.left > rect.left) {
-				area.right = area.left;
-				area.left = rect.left;
-
-				copyBackBufferToScreen(area);
-			}
+			copyBackBufferToScreen(area);
 		}
-		break;
+	} break;
+	case kTransitionRightToLeft: {
+		debugC(kDebugView, "Right to Left");
+
+		uint16 step = (rect.right - rect.left) / steps;
+		Common::Rect area = rect;
+		for (uint i = 0; i < steps; i++) {
+			area.right = rect.right - step * i;
+			area.left = area.right - step;
+
+			copyBackBufferToScreen(area);
+			_vm->wait(delay);
+		}
+		if (area.left > rect.left) {
+			area.right = area.left;
+			area.left = rect.left;
+
+			copyBackBufferToScreen(area);
+		}
+	} break;
 	case kTransitionSlideToLeft:
 		debugC(kDebugView, "Slide to left");
 		transitionSlideToLeft(rect, steps, delay);
@@ -384,54 +382,51 @@ void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 
 		transitionSlideToRight(rect, steps, delay);
 		break;
 	case kTransitionDissolve: {
-			debugC(kDebugView, "Dissolve");
+		debugC(kDebugView, "Dissolve");
 
-			for (int16 step = 0; step < 8; step++) {
-				transitionDissolve(rect, step);
-				_vm->doFrame();
-			}
+		for (int16 step = 0; step < 8; step++) {
+			transitionDissolve(rect, step);
+			_vm->doFrame();
 		}
-		break;
-	case kTransitionTopToBottom:	{
-			debugC(kDebugView, "Top to Bottom");
+	} break;
+	case kTransitionTopToBottom: {
+		debugC(kDebugView, "Top to Bottom");
 
-			uint16 step = (rect.bottom - rect.top) / steps;
-			Common::Rect area = rect;
-			for (uint i = 0; i < steps; i++) {
-				area.top = rect.top + step * i;
-				area.bottom = area.top + step;
+		uint16 step = (rect.bottom - rect.top) / steps;
+		Common::Rect area = rect;
+		for (uint i = 0; i < steps; i++) {
+			area.top = rect.top + step * i;
+			area.bottom = area.top + step;
 
-				copyBackBufferToScreen(area);
-				_vm->wait(delay);
-			}
-			if (area.bottom < rect.bottom) {
-				area.top = area.bottom;
-				area.bottom = rect.bottom;
-
-				copyBackBufferToScreen(area);
-			}
+			copyBackBufferToScreen(area);
+			_vm->wait(delay);
 		}
-		break;
-	case kTransitionBottomToTop:	{
-			debugC(kDebugView, "Bottom to Top");
+		if (area.bottom < rect.bottom) {
+			area.top = area.bottom;
+			area.bottom = rect.bottom;
 
-			uint16 step = (rect.bottom - rect.top) / steps;
-			Common::Rect area = rect;
-			for (uint i = 0; i < steps; i++) {
-				area.bottom = rect.bottom - step * i;
-				area.top = area.bottom - step;
-
-				copyBackBufferToScreen(area);
-				_vm->wait(delay);
-			}
-			if (area.top > rect.top) {
-				area.bottom = area.top;
-				area.top = rect.top;
-
-				copyBackBufferToScreen(area);
-			}
+			copyBackBufferToScreen(area);
 		}
-		break;
+	} break;
+	case kTransitionBottomToTop: {
+		debugC(kDebugView, "Bottom to Top");
+
+		uint16 step = (rect.bottom - rect.top) / steps;
+		Common::Rect area = rect;
+		for (uint i = 0; i < steps; i++) {
+			area.bottom = rect.bottom - step * i;
+			area.top = area.bottom - step;
+
+			copyBackBufferToScreen(area);
+			_vm->wait(delay);
+		}
+		if (area.top > rect.top) {
+			area.bottom = area.top;
+			area.top = rect.top;
+
+			copyBackBufferToScreen(area);
+		}
+	} break;
 	case kTransitionSlideToTop:
 		debugC(kDebugView, "Slide to top");
 		transitionSlideToTop(rect, steps, delay);
@@ -441,17 +436,15 @@ void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 
 		transitionSlideToBottom(rect, steps, delay);
 		break;
 	case kTransitionPartToRight: {
-			debugC(kDebugView, "Partial left to right");
+		debugC(kDebugView, "Partial left to right");
 
-			transitionPartialToRight(rect, 75, 3);
-		}
-		break;
+		transitionPartialToRight(rect, 75, 3);
+	} break;
 	case kTransitionPartToLeft: {
-			debugC(kDebugView, "Partial right to left");
+		debugC(kDebugView, "Partial right to left");
 
-			transitionPartialToLeft(rect, 75, 3);
-		}
-		break;
+		transitionPartialToLeft(rect, 75, 3);
+	} break;
 	case kTransitionCopy:
 		copyBackBufferToScreen(rect);
 		break;
@@ -462,54 +455,38 @@ void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 
 
 void MystGraphics::transitionDissolve(Common::Rect rect, uint step) {
 	static const bool pattern[][4][4] = {
-		{
-			{ true,  false, false, false },
-			{ false, false, false, false },
-			{ false, false, true,  false },
-			{ false, false, false, false }
-		},
-		{
-			{ false, false, true,  false },
-			{ false, false, false, false },
-			{ true,  false, false, false },
-			{ false, false, false, false }
-		},
-		{
-			{ false, false, false, false },
-			{ false, true,  false, false },
-			{ false, false, false, false },
-			{ false, false, false, true  }
-		},
-		{
-			{ false, false, false, false },
-			{ false, false, false, true  },
-			{ false, false, false, false },
-			{ false, true,  false, false }
-		},
-		{
-			{ false, false, false, false },
-			{ false, false, true,  false },
-			{ false, true,  false, false },
-			{ false, false, false, false }
-		},
-		{
-			{ false, true,  false, false },
-			{ false, false, false, false },
-			{ false, false, false, false },
-			{ false, false, true,  false }
-		},
-		{
-			{ false, false, false, false },
-			{ true,  false, false, false },
-			{ false, false, false, true  },
-			{ false, false, false, false }
-		},
-		{
-			{ false, false, false, true  },
-			{ false, false, false, false },
-			{ false, false, false, false },
-			{ true,  false, false, false }
-		}
+		{ { true, false, false, false },
+		  { false, false, false, false },
+		  { false, false, true, false },
+		  { false, false, false, false } },
+		{ { false, false, true, false },
+		  { false, false, false, false },
+		  { true, false, false, false },
+		  { false, false, false, false } },
+		{ { false, false, false, false },
+		  { false, true, false, false },
+		  { false, false, false, false },
+		  { false, false, false, true } },
+		{ { false, false, false, false },
+		  { false, false, false, true },
+		  { false, false, false, false },
+		  { false, true, false, false } },
+		{ { false, false, false, false },
+		  { false, false, true, false },
+		  { false, true, false, false },
+		  { false, false, false, false } },
+		{ { false, true, false, false },
+		  { false, false, false, false },
+		  { false, false, false, false },
+		  { false, false, true, false } },
+		{ { false, false, false, false },
+		  { true, false, false, false },
+		  { false, false, false, true },
+		  { false, false, false, false } },
+		{ { false, false, false, true },
+		  { false, false, false, false },
+		  { false, false, false, false },
+		  { true, false, false, false } }
 	};
 
 	rect.clip(_viewport);
@@ -554,7 +531,7 @@ void MystGraphics::transitionSlideToLeft(Common::Rect rect, uint16 steps, uint16
 		srcRect.left = srcRect.right - step * stepWidth;
 
 		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
-				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		                               _backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
 		_vm->wait(delay);
 	}
 
@@ -575,7 +552,7 @@ void MystGraphics::transitionSlideToRight(Common::Rect rect, uint16 steps, uint1
 		srcRect.right = srcRect.left + step * stepWidth;
 
 		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
-				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		                               _backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
 		_vm->wait(delay);
 	}
 
@@ -596,10 +573,9 @@ void MystGraphics::transitionSlideToTop(Common::Rect rect, uint16 steps, uint16 
 		srcRect.top = srcRect.bottom - step * stepWidth;
 
 		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
-				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		                               _backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
 		_vm->wait(delay);
 	}
-
 
 	if (dstRect.bottom < rect.bottom) {
 		copyBackBufferToScreen(rect);
@@ -618,10 +594,9 @@ void MystGraphics::transitionSlideToBottom(Common::Rect rect, uint16 steps, uint
 		srcRect.bottom = srcRect.top + step * stepWidth;
 
 		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
-				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		                               _backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
 		_vm->wait(delay);
 	}
-
 
 	if (dstRect.top > rect.top) {
 		copyBackBufferToScreen(rect);
@@ -640,7 +615,7 @@ void MystGraphics::transitionPartialToRight(Common::Rect rect, uint32 width, uin
 		srcRect.left = srcRect.right - step * stepWidth;
 
 		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
-				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		                               _backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
 		_vm->doFrame();
 	}
 
@@ -659,7 +634,7 @@ void MystGraphics::transitionPartialToLeft(Common::Rect rect, uint32 width, uint
 		srcRect.right = srcRect.left + step * stepWidth;
 
 		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
-				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		                               _backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
 		_vm->doFrame();
 	}
 
@@ -803,7 +778,7 @@ void MystGraphics::remapSurfaceToSystemPalette(MohawkSurface *mhkSurface) {
 
 	// Remap the pixel data to the target palette
 	Graphics::Surface *surface = mhkSurface->getSurface();
-	byte *pixels = (byte *) surface->getPixels();
+	byte *pixels = (byte *)surface->getPixels();
 
 	for (int i = 0; i < surface->w * surface->h; i++) {
 		if (pixels[i] < ARRAYSIZE(lowColorMap)) {

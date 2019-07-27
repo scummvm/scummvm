@@ -237,17 +237,7 @@ static const NotificationFlags kActionRequestCompletedFlag = kDelayCompletedFlag
 static const NotificationFlags kDeathExtraCompletedFlag = kActionRequestCompletedFlag << 1;
 static const NotificationFlags kLastNeighborhoodNotificationFlag = kDeathExtraCompletedFlag;
 
-static const NotificationFlags kNeighborhoodFlags =	kNeighborhoodMovieCompletedFlag |
-												kMoveForwardCompletedFlag |
-												kStrideCompletedFlag |
-												kTurnCompletedFlag |
-												kSpotCompletedFlag |
-												kDoorOpenCompletedFlag |
-												kExtraCompletedFlag |
-												kSpotSoundCompletedFlag |
-												kDelayCompletedFlag |
-												kActionRequestCompletedFlag |
-												kDeathExtraCompletedFlag;
+static const NotificationFlags kNeighborhoodFlags = kNeighborhoodMovieCompletedFlag | kMoveForwardCompletedFlag | kStrideCompletedFlag | kTurnCompletedFlag | kSpotCompletedFlag | kDoorOpenCompletedFlag | kExtraCompletedFlag | kSpotSoundCompletedFlag | kDelayCompletedFlag | kActionRequestCompletedFlag | kDeathExtraCompletedFlag;
 
 static const uint32 kPegasusPrimeCreator = MKTAG('J', 'P', 'P', 'P');
 static const uint32 kPegasusPrimeContinueType = MKTAG('P', 'P', 'C', 'T');
@@ -391,9 +381,7 @@ static const NotificationFlags kGameStartingFlag = 1;
 static const NotificationFlags kNeedNewJumpFlag = kGameStartingFlag << 1;
 static const NotificationFlags kPlayerDiedFlag = kNeedNewJumpFlag << 1;
 
-static const NotificationFlags kJMPShellNotificationFlags = kGameStartingFlag |
-														kNeedNewJumpFlag |
-														kPlayerDiedFlag;
+static const NotificationFlags kJMPShellNotificationFlags = kGameStartingFlag | kNeedNewJumpFlag | kPlayerDiedFlag;
 
 // Sent to the interface.
 static const NotificationFlags kInventoryLidOpenFlag = 1;
@@ -405,14 +393,7 @@ static const NotificationFlags kBiochipLidClosedFlag = kBiochipLidOpenFlag << 1;
 static const NotificationFlags kBiochipDrawerUpFlag = kBiochipLidClosedFlag << 1;
 static const NotificationFlags kBiochipDrawerDownFlag = kBiochipDrawerUpFlag << 1;
 
-static const NotificationFlags kInterfaceNotificationFlags =	kInventoryLidOpenFlag |
-														kInventoryLidClosedFlag |
-														kInventoryDrawerUpFlag |
-														kInventoryDrawerDownFlag |
-														kBiochipLidOpenFlag |
-														kBiochipLidClosedFlag |
-														kBiochipDrawerUpFlag |
-														kBiochipDrawerDownFlag;
+static const NotificationFlags kInterfaceNotificationFlags = kInventoryLidOpenFlag | kInventoryLidClosedFlag | kInventoryDrawerUpFlag | kInventoryDrawerDownFlag | kBiochipLidOpenFlag | kBiochipLidClosedFlag | kBiochipDrawerUpFlag | kBiochipDrawerDownFlag;
 
 // Hot spots.
 
@@ -505,14 +486,7 @@ static const HotSpotFlags kPegasusBiochipSpotFlag = kAIBiochipSpotFlag << 1;
 static const HotSpotFlags kOpticalBiochipSpotFlag = kPegasusBiochipSpotFlag << 1;
 static const HotSpotFlags kAirMaskSpotFlag = kOpticalBiochipSpotFlag << 1;
 
-static const HotSpotFlags kJMPClickingSpotFlags = kClickSpotFlag |
-											kPlayExtraSpotFlag |
-											kOpenDoorSpotFlag |
-											kInfoReturnSpotFlag |
-											kAIBiochipSpotFlag |
-											kPegasusBiochipSpotFlag |
-											kOpticalBiochipSpotFlag |
-											kAirMaskSpotFlag;
+static const HotSpotFlags kJMPClickingSpotFlags = kClickSpotFlag | kPlayExtraSpotFlag | kOpenDoorSpotFlag | kInfoReturnSpotFlag | kAIBiochipSpotFlag | kPegasusBiochipSpotFlag | kOpticalBiochipSpotFlag | kAirMaskSpotFlag;
 
 static const int32 kMainMenuID = 1;
 static const int32 kPauseMenuID = 2;
@@ -697,10 +671,10 @@ static const CoordType kAIRightAreaWidth = 96;
 static const CoordType kAIRightAreaHeight = 96;
 
 enum {
-	kTSAPlayerNotArrived,				// initial state, must be zero
-	kTSAPlayerForcedReview,				// Player must watch TBP before rip occurs.
-	kTSAPlayerDetectedRip,				// Player finished TBP, rip alarm just went off.
-	kTSAPlayerNeedsHistoricalLog,		// Player is instructed to get historical log
+	kTSAPlayerNotArrived, // initial state, must be zero
+	kTSAPlayerForcedReview, // Player must watch TBP before rip occurs.
+	kTSAPlayerDetectedRip, // Player finished TBP, rip alarm just went off.
+	kTSAPlayerNeedsHistoricalLog, // Player is instructed to get historical log
 	kTSAPlayerGotHistoricalLog,
 	kTSAPlayerInstalledHistoricalLog,
 	kTSABossSawHistoricalLog,

@@ -23,13 +23,14 @@
 #ifndef TITANIC_PET_SLIDER_H
 #define TITANIC_PET_SLIDER_H
 
+#include "titanic/core/game_object.h"
 #include "titanic/support/rect.h"
 #include "titanic/support/string.h"
-#include "titanic/core/game_object.h"
 
 namespace Titanic {
 
-enum SliderOrientation { ORIENTATION_HORIZONTAL = 1, ORIENTATION_VERTICAL = 2 };
+enum SliderOrientation { ORIENTATION_HORIZONTAL = 1,
+	                       ORIENTATION_VERTICAL = 2 };
 
 class CPetControl;
 
@@ -43,6 +44,7 @@ private:
 	int _sliderOffset;
 	bool _thumbFocused;
 	Rect _dirtyArea;
+
 private:
 	/**
 	 * Center the center position of the slider's thumb
@@ -63,6 +65,7 @@ private:
 	 * Calculates the slider offset at the specificed position
 	 */
 	int calcSliderOffset(const Point &pt) const;
+
 protected:
 	/**
 	 * Get the position to draw the background at
@@ -78,6 +81,7 @@ protected:
 	 * Returns true if the passed point falls within the slider's bounds
 	 */
 	bool containsPt(const Point &pt) const { return _bounds.contains(pt); }
+
 public:
 	CPetSlider();
 	virtual ~CPetSlider() {}
@@ -145,7 +149,6 @@ public:
 	virtual bool proc13() { return false; }
 	virtual bool proc14() { return false; }
 
-
 	virtual bool contains(const Point &pt) const;
 
 	/**
@@ -204,9 +207,12 @@ class CPetSoundSlider : public CPetSlider {
 public:
 	CGameObject *_background;
 	CGameObject *_thumb;
+
 public:
-	CPetSoundSlider() : CPetSlider(), _background(nullptr),
-		_thumb(0) {}
+	CPetSoundSlider()
+	  : CPetSlider()
+	  , _background(nullptr)
+	  , _thumb(0) {}
 
 	/**
 	 * Setup the background

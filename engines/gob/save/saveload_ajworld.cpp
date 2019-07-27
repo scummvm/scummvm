@@ -20,20 +20,19 @@
  *
  */
 
-#include "gob/save/saveload.h"
-#include "gob/save/saveconverter.h"
 #include "gob/inter.h"
+#include "gob/save/saveconverter.h"
+#include "gob/save/saveload.h"
 #include "gob/variables.h"
 
 namespace Gob {
 
 SaveLoad_AJWorld::SaveFile SaveLoad_AJWorld::_saveFiles[] = {
-	{ "menu.inf", kSaveModeSave, 0, "temporary sprite"}
+	{ "menu.inf", kSaveModeSave, 0, "temporary sprite" }
 };
 
-
-SaveLoad_AJWorld::SaveLoad_AJWorld(GobEngine *vm, const char *targetName) :
-		SaveLoad(vm) {
+SaveLoad_AJWorld::SaveLoad_AJWorld(GobEngine *vm, const char *targetName)
+  : SaveLoad(vm) {
 
 	_tempSpriteHandler = new TempSpriteHandler(vm);
 

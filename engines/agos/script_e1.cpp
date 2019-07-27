@@ -20,14 +20,13 @@
  *
  */
 
-
 #include "agos/agos.h"
 #include "agos/intern.h"
 #include "agos/vga.h"
 
 namespace AGOS {
 
-#define OPCODE(x)	_OPCODE(AGOSEngine_Elvira1, x)
+#define OPCODE(x) _OPCODE(AGOSEngine_Elvira1, x)
 
 void AGOSEngine_Elvira1::setupOpcodes() {
 	static const OpcodeEntryElvira1 opcodes[] = {
@@ -394,7 +393,7 @@ void AGOSEngine_Elvira1::setupOpcodes() {
 
 void AGOSEngine_Elvira1::executeOpcode(int opcode) {
 	OpcodeProcElvira1 op = _opcodesElvira1[opcode].proc;
-	(this->*op) ();
+	(this->*op)();
 }
 
 // -----------------------------------------------------------------------
@@ -505,7 +504,7 @@ void AGOSEngine_Elvira1::oe1_whatO() {
 	int a = getVarOrWord();
 
 	if (a == 1)
-		_subjectItem = findMaster(_scriptAdj1,_scriptNoun1);
+		_subjectItem = findMaster(_scriptAdj1, _scriptNoun1);
 	else
 		_objectItem = findMaster(_scriptAdj2, _scriptNoun2);
 }
@@ -559,7 +558,7 @@ void AGOSEngine_Elvira1::oe1_look() {
 
 	Item *l = derefItem(i->child);
 	if (l) {
-		lobjFunc(l, "You can see ");	/* Show objects */
+		lobjFunc(l, "You can see "); /* Show objects */
 	}
 }
 
@@ -912,7 +911,7 @@ restart:
 	window->textColumn = 0;
 	window->textRow = 0;
 	window->textColumnOffset = 0;
-	window->textLength = 0;		// Difference
+	window->textLength = 0; // Difference
 
 	switch (_language) {
 	case Common::FR_FRA:
@@ -943,7 +942,7 @@ restart:
 		window->textColumn = 0;
 		window->textRow = 0;
 		window->textColumnOffset = 0;
-		window->textLength = 0;		// Difference
+		window->textLength = 0; // Difference
 
 		switch (_language) {
 		case Common::FR_FRA:
@@ -1012,7 +1011,8 @@ int16 AGOSEngine::moreText(Item *i) {
 			goto l1;
 		if (i != me())
 			return 1;
-	l1:	i = derefItem(i->next);
+	l1:
+		i = derefItem(i->next);
 	}
 
 	return 0;
@@ -1039,7 +1039,8 @@ void AGOSEngine::lobjFunc(Item *i, const char *f) {
 				showMessageFormat(" and ");
 		}
 		showMessageFormat("%s", (const char *)getStringPtrByID(i->itemName));
-l1:		i = derefItem(i->next);
+	l1:
+		i = derefItem(i->next);
 	}
 	if (f) {
 		if (n == 1)

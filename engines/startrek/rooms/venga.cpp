@@ -94,12 +94,12 @@ void Room::vengaLookAtHypo() {
 void Room::vengaUseCommunicator() {
 	// Use communicator in any room except VENG2
 	if (!_awayMission->veng.enterpriseLeftForDistressCall) {
-		showText(TX_SPEAKER_KIRK,  TX_MUD4_018);
+		showText(TX_SPEAKER_KIRK, TX_MUD4_018);
 		showText(TX_SPEAKER_UHURA, TX_BRIDU146);
 	} else if (!_awayMission->veng.elasiShipDecloaked) {
-		showText(TX_SPEAKER_KIRK,  TX_MUD4_018);
+		showText(TX_SPEAKER_KIRK, TX_MUD4_018);
 		showText(TX_SPEAKER_UHURA, TX_VEN2U093);
-		showText(TX_SPEAKER_KIRK,  TX_VEN2_028);
+		showText(TX_SPEAKER_KIRK, TX_VEN2_028);
 	} else
 		showText(TX_SPEAKER_SPOCK, TX_VEN2_066);
 }

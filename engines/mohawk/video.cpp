@@ -20,31 +20,49 @@
  *
  */
 
+#include "mohawk/video.h"
 #include "mohawk/mohawk.h"
 #include "mohawk/resource.h"
-#include "mohawk/video.h"
 
 #include "common/algorithm.h"
 #include "common/debug.h"
 #include "common/events.h"
-#include "common/textconsole.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
 #include "video/qt_decoder.h"
 
-
 namespace Mohawk {
 
-VideoEntry::VideoEntry() : _video(nullptr), _id(-1), _x(0), _y(0), _loop(false), _enabled(true) {
+VideoEntry::VideoEntry()
+  : _video(nullptr)
+  , _id(-1)
+  , _x(0)
+  , _y(0)
+  , _loop(false)
+  , _enabled(true) {
 }
 
-VideoEntry::VideoEntry(Video::VideoDecoder *video, const Common::String &fileName) : _video(video), _fileName(fileName), _id(-1), _x(0), _y(0), _loop(false), _enabled(true) {
+VideoEntry::VideoEntry(Video::VideoDecoder *video, const Common::String &fileName)
+  : _video(video)
+  , _fileName(fileName)
+  , _id(-1)
+  , _x(0)
+  , _y(0)
+  , _loop(false)
+  , _enabled(true) {
 }
 
-VideoEntry::VideoEntry(Video::VideoDecoder *video, int id) : _video(video), _id(id), _x(0), _y(0), _loop(false), _enabled(true) {
+VideoEntry::VideoEntry(Video::VideoDecoder *video, int id)
+  : _video(video)
+  , _id(id)
+  , _x(0)
+  , _y(0)
+  , _loop(false)
+  , _enabled(true) {
 }
 
 VideoEntry::~VideoEntry() {
@@ -138,7 +156,8 @@ void VideoEntry::setVolume(int volume) {
 	_video->setVolume(CLIP(volume, 0, 255));
 }
 
-VideoManager::VideoManager(MohawkEngine *vm) : _vm(vm) {
+VideoManager::VideoManager(MohawkEngine *vm)
+  : _vm(vm) {
 	// Set dithering enabled, if required
 	_enableDither = (_vm->getGameType() == GType_MYST || _vm->getGameType() == GType_MAKINGOF) && !(_vm->getFeatures() & GF_ME);
 }
@@ -185,7 +204,7 @@ VideoEntryPtr VideoManager::playMovie(uint16 id) {
 bool VideoManager::updateMovies() {
 	bool updateScreen = false;
 
-	for (VideoList::iterator it = _videos.begin(); it != _videos.end(); ) {
+	for (VideoList::iterator it = _videos.begin(); it != _videos.end();) {
 		// Check of the video has reached the end
 		if ((*it)->endOfVideo()) {
 			if ((*it)->isLooping()) {

@@ -23,24 +23,24 @@
 #ifndef TONY_TONY_H
 #define TONY_TONY_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
 #include "common/array.h"
 #include "common/coroutines.h"
 #include "common/error.h"
 #include "common/random.h"
+#include "common/scummsys.h"
+#include "common/system.h"
 #include "common/util.h"
 #include "engines/engine.h"
 #include "gui/debugger.h"
 
-#include "tony/mpal/mpal.h"
-#include "tony/mpal/memory.h"
 #include "tony/debugger.h"
 #include "tony/gfxengine.h"
+#include "tony/globals.h"
 #include "tony/loc.h"
+#include "tony/mpal/memory.h"
+#include "tony/mpal/mpal.h"
 #include "tony/utils.h"
 #include "tony/window.h"
-#include "tony/globals.h"
 
 /**
  * This is the namespace of the Tony engine.
@@ -97,6 +97,7 @@ protected:
 	// Engine APIs
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
+
 public:
 	LPCUSTOMFUNCTION _funcList[300];
 	Common::String _funcListStrings[300];
@@ -149,7 +150,8 @@ public:
 
 	bool _bQuitNow;
 	bool _bTimeFreezed;
-	int  _nTimeFreezed;
+	int _nTimeFreezed;
+
 public:
 	TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc);
 	virtual ~TonyEngine();

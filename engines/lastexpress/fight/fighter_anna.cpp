@@ -36,7 +36,8 @@ namespace LastExpress {
 //////////////////////////////////////////////////////////////////////////
 // Player
 //////////////////////////////////////////////////////////////////////////
-FighterPlayerAnna::FighterPlayerAnna(LastExpressEngine *engine) : Fighter(engine) {
+FighterPlayerAnna::FighterPlayerAnna(LastExpressEngine *engine)
+  : Fighter(engine) {
 	_sequences.push_back(loadSequence("2002cr.seq"));
 	_sequences.push_back(loadSequence("2002cdl.seq"));
 	_sequences.push_back(loadSequence("2002cdr.seq"));
@@ -116,7 +117,8 @@ void FighterPlayerAnna::handleAction(FightAction action) {
 //////////////////////////////////////////////////////////////////////////
 // Opponent
 //////////////////////////////////////////////////////////////////////////
-FighterOpponentAnna::FighterOpponentAnna(LastExpressEngine *engine) : Opponent(engine) {
+FighterOpponentAnna::FighterOpponentAnna(LastExpressEngine *engine)
+  : Opponent(engine) {
 	_sequences.push_back(loadSequence("2002or.seq"));
 	_sequences.push_back(loadSequence("2002oal.seq"));
 	_sequences.push_back(loadSequence("2002oam.seq"));

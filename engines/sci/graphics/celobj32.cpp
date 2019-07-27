@@ -20,20 +20,20 @@
  *
  */
 
-#include "sci/resource.h"
+#include "sci/graphics/celobj32.h"
+#include "common/config-manager.h"
+#include "common/gui_options.h"
+#include "graphics/larryScale.h"
 #include "sci/engine/features.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/celobj32.h"
+#include "sci/engine/workarounds.h"
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/remap32.h"
 #include "sci/graphics/text32.h"
-#include "sci/engine/workarounds.h"
+#include "sci/resource.h"
 #include "sci/util.h"
-#include "graphics/larryScale.h"
-#include "common/config-manager.h"
-#include "common/gui_options.h"
 
 namespace Sci {
 #pragma mark CelScaler
@@ -102,7 +102,7 @@ void CelObj::deinit() {
 #pragma mark -
 #pragma mark CelObj - Scalers
 
-template<bool FLIP, typename READER>
+template <bool FLIP, typename READER>
 struct SCALER_NoScale {
 #ifndef NDEBUG
 	const byte *_rowEdge;
@@ -113,12 +113,12 @@ struct SCALER_NoScale {
 	const int16 _sourceX;
 	const int16 _sourceY;
 
-	SCALER_NoScale(const CelObj &celObj, const int16 maxWidth, const Common::Point &scaledPosition) :
-	_row(nullptr),
-	_reader(celObj, FLIP ? celObj._width : maxWidth),
-	_lastIndex(celObj._width - 1),
-	_sourceX(scaledPosition.x),
-	_sourceY(scaledPosition.y) {}
+	SCALER_NoScale(const CelObj &celObj, const int16 maxWidth, const Common::Point &scaledPosition)
+	  : _row(nullptr)
+	  , _reader(celObj, FLIP ? celObj._width : maxWidth)
+	  , _lastIndex(celObj._width - 1)
+	  , _sourceX(scaledPosition.x)
+	  , _sourceY(scaledPosition.y) {}
 
 	inline void setTarget(const int16 x, const int16 y) {
 		_row = _reader.getRow(y - _sourceY);
@@ -149,7 +149,7 @@ struct SCALER_NoScale {
 	}
 };
 
-template<bool FLIP, typename READER>
+template <bool FLIP, typename READER>
 struct SCALER_Scale {
 #ifndef NDEBUG
 	int16 _minX;
@@ -164,17 +164,19 @@ struct SCALER_Scale {
 	static int16 _valuesX[kCelScalerTableSize];
 	static int16 _valuesY[kCelScalerTableSize];
 
-	SCALER_Scale(const CelObj &celObj, const Common::Rect &targetRect, const Common::Point &scaledPosition, const Ratio scaleX, const Ratio scaleY) :
-	_row(nullptr),
+	SCALER_Scale(const CelObj &celObj, const Common::Rect &targetRect, const Common::Point &scaledPosition, const Ratio scaleX, const Ratio scaleY)
+	  : _row(nullptr)
+	  ,
 #ifndef NDEBUG
-	_minX(targetRect.left),
-	_maxX(targetRect.right - 1),
+	  _minX(targetRect.left)
+	  , _maxX(targetRect.right - 1)
+	  ,
 #endif
-	// The maximum width of the scaled object may not be as wide as the source
-	// data it requires if downscaling, so just always make the reader
-	// decompress an entire line of source data when scaling
-	_reader(celObj, celObj._width),
-	_sourceBuffer() {
+	  // The maximum width of the scaled object may not be as wide as the source
+	  // data it requires if downscaling, so just always make the reader
+	  // decompress an entire line of source data when scaling
+	  _reader(celObj, celObj._width)
+	  , _sourceBuffer() {
 #ifndef NDEBUG
 		assert(_minX <= _maxX);
 #endif
@@ -210,17 +212,18 @@ struct SCALER_Scale {
 			// respect the global scaling pattern. Instead, it simply scales the
 			// cel to the extent of targetRect.
 
-			class Copier: public Graphics::RowReader, public Graphics::RowWriter {
+			class Copier : public Graphics::RowReader, public Graphics::RowWriter {
 				READER &_souceReader;
 				Buffer &_targetBuffer;
+
 			public:
-				Copier(READER& souceReader, Buffer& targetBuffer) :
-					_souceReader(souceReader),
-					_targetBuffer(targetBuffer) {}
-				const Graphics::LarryScaleColor* readRow(int y) {
+				Copier(READER &souceReader, Buffer &targetBuffer)
+				  : _souceReader(souceReader)
+				  , _targetBuffer(targetBuffer) {}
+				const Graphics::LarryScaleColor *readRow(int y) {
 					return _souceReader.getRow(y);
 				}
-				void writeRow(int y, const Graphics::LarryScaleColor* row) {
+				void writeRow(int y, const Graphics::LarryScaleColor *row) {
 					memcpy(_targetBuffer.getBasePtr(0, y), row, _targetBuffer.w);
 				}
 			};
@@ -229,24 +232,24 @@ struct SCALER_Scale {
 			// scaledImageRect is not necessarily identical to targetRect
 			// because targetRect may be cropped to render only a segment.
 			Common::Rect scaledImageRect(
-				scaledPosition.x,
-				scaledPosition.y,
-				scaledPosition.x + (celObj._width * scaleX).toInt(),
-				scaledPosition.y + (celObj._height * scaleY).toInt());
+			  scaledPosition.x,
+			  scaledPosition.y,
+			  scaledPosition.x + (celObj._width * scaleX).toInt(),
+			  scaledPosition.y + (celObj._height * scaleY).toInt());
 			_sourceBuffer = Common::SharedPtr<Buffer>(new Buffer(), Graphics::SurfaceDeleter());
 			_sourceBuffer->create(
-				scaledImageRect.width(), scaledImageRect.height(),
-				Graphics::PixelFormat::createFormatCLUT8());
+			  scaledImageRect.width(), scaledImageRect.height(),
+			  Graphics::PixelFormat::createFormatCLUT8());
 			Copier copier(_reader, *_sourceBuffer);
 			Graphics::larryScale(
-				celObj._width, celObj._height, celObj._skipColor, copier,
-				scaledImageRect.width(), scaledImageRect.height(), copier);
+			  celObj._width, celObj._height, celObj._skipColor, copier,
+			  scaledImageRect.width(), scaledImageRect.height(), copier);
 
 			// Set _valuesX and _valuesY to reference the scaled image without additional scaling
 			for (int16 x = targetRect.left; x < targetRect.right; ++x) {
 				const int16 unsafeValue = FLIP
-					? scaledImageRect.right - x - 1
-					: x - scaledImageRect.left;
+				  ? scaledImageRect.right - x - 1
+				  : x - scaledImageRect.left;
 				_valuesX[x] = CLIP<int16>(unsafeValue, 0, scaledImageRect.width() - 1);
 			}
 			for (int16 y = targetRect.top; y < targetRect.bottom; ++y) {
@@ -293,8 +296,8 @@ struct SCALER_Scale {
 
 	inline void setTarget(const int16 x, const int16 y) {
 		_row = _sourceBuffer
-			? static_cast<const byte *>( _sourceBuffer->getBasePtr(0, _valuesY[y]))
-			: _reader.getRow(_valuesY[y]);
+		  ? static_cast<const byte *>(_sourceBuffer->getBasePtr(0, _valuesY[y]))
+		  : _reader.getRow(_valuesY[y]);
 		_x = x;
 		assert(_x >= _minX && _x <= _maxX);
 	}
@@ -305,9 +308,9 @@ struct SCALER_Scale {
 	}
 };
 
-template<bool FLIP, typename READER>
+template <bool FLIP, typename READER>
 int16 SCALER_Scale<FLIP, READER>::_valuesX[kCelScalerTableSize];
-template<bool FLIP, typename READER>
+template <bool FLIP, typename READER>
 int16 SCALER_Scale<FLIP, READER>::_valuesY[kCelScalerTableSize];
 
 #pragma mark -
@@ -322,11 +325,13 @@ private:
 	const int16 _sourceWidth;
 
 public:
-	READER_Uncompressed(const CelObj &celObj, const int16) :
+	READER_Uncompressed(const CelObj &celObj, const int16)
+	  :
 #ifndef NDEBUG
-	_sourceHeight(celObj._height),
+	  _sourceHeight(celObj._height)
+	  ,
 #endif
-	_sourceWidth(celObj._width) {
+	  _sourceWidth(celObj._width) {
 		const SciSpan<const byte> resource = celObj.getResPointer();
 		const uint32 pixelsOffset = resource.getUint32SEAt(celObj._celHeaderOffset + 24);
 		const int32 numPixels = MIN<int32>(resource.size() - pixelsOffset, celObj._width * celObj._height);
@@ -360,12 +365,12 @@ private:
 	const int16 _maxWidth;
 
 public:
-	READER_Compressed(const CelObj &celObj, const int16 maxWidth) :
-	_resource(celObj.getResPointer()),
-	_y(-1),
-	_sourceHeight(celObj._height),
-	_skipColor(celObj._skipColor),
-	_maxWidth(maxWidth) {
+	READER_Compressed(const CelObj &celObj, const int16 maxWidth)
+	  : _resource(celObj.getResPointer())
+	  , _y(-1)
+	  , _sourceHeight(celObj._height)
+	  , _skipColor(celObj._skipColor)
+	  , _maxWidth(maxWidth) {
 		assert(maxWidth <= celObj._width);
 
 		const SciSpan<const byte> celHeader = _resource.subspan(celObj._celHeaderOffset);
@@ -414,12 +419,12 @@ public:
 					// Fill with skip color
 					if (controlByte & 0x40) {
 						memset(_buffer + i, _skipColor, length);
-					// Next value is fill color
+						// Next value is fill color
 					} else {
 						memset(_buffer + i, *literal, length);
 						++literal;
 					}
-				// Uncompressed
+					// Uncompressed
 				} else {
 					assert(i + length < (int)sizeof(_buffer));
 					memcpy(_buffer + i, literal, length);
@@ -708,16 +713,16 @@ void CelObj::putCopyInCache(const int cacheIndex) const {
 #pragma mark -
 #pragma mark CelObj - Drawing
 
-template<typename MAPPER, typename SCALER, bool DRAW_BLACK_LINES>
+template <typename MAPPER, typename SCALER, bool DRAW_BLACK_LINES>
 struct RENDERER {
 	MAPPER &_mapper;
 	SCALER &_scaler;
 	const uint8 _skipColor;
 
-	RENDERER(MAPPER &mapper, SCALER &scaler, const uint8 skipColor) :
-	_mapper(mapper),
-	_scaler(scaler),
-	_skipColor(skipColor) {}
+	RENDERER(MAPPER &mapper, SCALER &scaler, const uint8 skipColor)
+	  : _mapper(mapper)
+	  , _scaler(scaler)
+	  , _skipColor(skipColor) {}
 
 	inline void draw(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 		byte *targetPixel = (byte *)target.getPixels() + target.w * targetRect.top + targetRect.left;
@@ -743,7 +748,7 @@ struct RENDERER {
 	}
 };
 
-template<typename MAPPER, typename SCALER>
+template <typename MAPPER, typename SCALER>
 void CelObj::render(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 
 	MAPPER mapper;
@@ -752,7 +757,7 @@ void CelObj::render(Buffer &target, const Common::Rect &targetRect, const Common
 	renderer.draw(target, targetRect, scaledPosition);
 }
 
-template<typename MAPPER, typename SCALER>
+template <typename MAPPER, typename SCALER>
 void CelObj::render(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition, const Ratio &scaleX, const Ratio &scaleY) const {
 
 	MAPPER mapper;
@@ -767,119 +772,117 @@ void CelObj::render(Buffer &target, const Common::Rect &targetRect, const Common
 }
 
 void CelObj::drawHzFlip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	render<MAPPER_NoMap, SCALER_NoScale<true, READER_Compressed> >(target, targetRect, scaledPosition);
+	render<MAPPER_NoMap, SCALER_NoScale<true, READER_Compressed>>(target, targetRect, scaledPosition);
 }
 
 void CelObj::drawNoFlip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	render<MAPPER_NoMap, SCALER_NoScale<false, READER_Compressed> >(target, targetRect, scaledPosition);
+	render<MAPPER_NoMap, SCALER_NoScale<false, READER_Compressed>>(target, targetRect, scaledPosition);
 }
 
 void CelObj::drawUncompNoFlip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	render<MAPPER_NoMap, SCALER_NoScale<false, READER_Uncompressed> >(target, targetRect, scaledPosition);
+	render<MAPPER_NoMap, SCALER_NoScale<false, READER_Uncompressed>>(target, targetRect, scaledPosition);
 }
 
 void CelObj::drawUncompHzFlip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	render<MAPPER_NoMap, SCALER_NoScale<true, READER_Uncompressed> >(target, targetRect, scaledPosition);
+	render<MAPPER_NoMap, SCALER_NoScale<true, READER_Uncompressed>>(target, targetRect, scaledPosition);
 }
 
 void CelObj::scaleDraw(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	if (_drawMirrored) {
-		render<MAPPER_NoMap, SCALER_Scale<true, READER_Compressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
+		render<MAPPER_NoMap, SCALER_Scale<true, READER_Compressed>>(target, targetRect, scaledPosition, scaleX, scaleY);
 	} else {
-		render<MAPPER_NoMap, SCALER_Scale<false, READER_Compressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
+		render<MAPPER_NoMap, SCALER_Scale<false, READER_Compressed>>(target, targetRect, scaledPosition, scaleX, scaleY);
 	}
 }
 
 void CelObj::scaleDrawUncomp(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	if (_drawMirrored) {
-		render<MAPPER_NoMap, SCALER_Scale<true, READER_Uncompressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
+		render<MAPPER_NoMap, SCALER_Scale<true, READER_Uncompressed>>(target, targetRect, scaledPosition, scaleX, scaleY);
 	} else {
-		render<MAPPER_NoMap, SCALER_Scale<false, READER_Uncompressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
+		render<MAPPER_NoMap, SCALER_Scale<false, READER_Uncompressed>>(target, targetRect, scaledPosition, scaleX, scaleY);
 	}
 }
 
 void CelObj::drawHzFlipMap(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	render<MAPPER_Map, SCALER_NoScale<true, READER_Compressed> >(target, targetRect, scaledPosition);
+	render<MAPPER_Map, SCALER_NoScale<true, READER_Compressed>>(target, targetRect, scaledPosition);
 }
 
 void CelObj::drawNoFlipMap(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	render<MAPPER_Map, SCALER_NoScale<false, READER_Compressed> >(target, targetRect, scaledPosition);
+	render<MAPPER_Map, SCALER_NoScale<false, READER_Compressed>>(target, targetRect, scaledPosition);
 }
 
 void CelObj::drawUncompNoFlipMap(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	render<MAPPER_Map, SCALER_NoScale<false, READER_Uncompressed> >(target, targetRect, scaledPosition);
+	render<MAPPER_Map, SCALER_NoScale<false, READER_Uncompressed>>(target, targetRect, scaledPosition);
 }
 
 void CelObj::drawUncompHzFlipMap(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	render<MAPPER_Map, SCALER_NoScale<true, READER_Uncompressed> >(target, targetRect, scaledPosition);
+	render<MAPPER_Map, SCALER_NoScale<true, READER_Uncompressed>>(target, targetRect, scaledPosition);
 }
 
 void CelObj::scaleDrawMap(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	if (_drawMirrored) {
-		render<MAPPER_Map, SCALER_Scale<true, READER_Compressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
+		render<MAPPER_Map, SCALER_Scale<true, READER_Compressed>>(target, targetRect, scaledPosition, scaleX, scaleY);
 	} else {
-		render<MAPPER_Map, SCALER_Scale<false, READER_Compressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
+		render<MAPPER_Map, SCALER_Scale<false, READER_Compressed>>(target, targetRect, scaledPosition, scaleX, scaleY);
 	}
 }
 
 void CelObj::scaleDrawUncompMap(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	if (_drawMirrored) {
-		render<MAPPER_Map, SCALER_Scale<true, READER_Uncompressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
+		render<MAPPER_Map, SCALER_Scale<true, READER_Uncompressed>>(target, targetRect, scaledPosition, scaleX, scaleY);
 	} else {
-		render<MAPPER_Map, SCALER_Scale<false, READER_Uncompressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
+		render<MAPPER_Map, SCALER_Scale<false, READER_Uncompressed>>(target, targetRect, scaledPosition, scaleX, scaleY);
 	}
 }
 
 void CelObj::drawNoFlipNoMD(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	render<MAPPER_NoMD, SCALER_NoScale<false, READER_Compressed> >(target, targetRect, scaledPosition);
+	render<MAPPER_NoMD, SCALER_NoScale<false, READER_Compressed>>(target, targetRect, scaledPosition);
 }
 
 void CelObj::drawHzFlipNoMD(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	render<MAPPER_NoMD, SCALER_NoScale<true, READER_Compressed> >(target, targetRect, scaledPosition);
+	render<MAPPER_NoMD, SCALER_NoScale<true, READER_Compressed>>(target, targetRect, scaledPosition);
 }
 
 void CelObj::drawUncompNoFlipNoMD(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	render<MAPPER_NoMD, SCALER_NoScale<false, READER_Uncompressed> >(target, targetRect, scaledPosition);
+	render<MAPPER_NoMD, SCALER_NoScale<false, READER_Uncompressed>>(target, targetRect, scaledPosition);
 }
 
 void CelObj::drawUncompNoFlipNoMDNoSkip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	render<MAPPER_NoMDNoSkip, SCALER_NoScale<false, READER_Uncompressed> >(target, targetRect, scaledPosition);
+	render<MAPPER_NoMDNoSkip, SCALER_NoScale<false, READER_Uncompressed>>(target, targetRect, scaledPosition);
 }
 
 void CelObj::drawUncompHzFlipNoMD(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	render<MAPPER_NoMD, SCALER_NoScale<true, READER_Uncompressed> >(target, targetRect, scaledPosition);
+	render<MAPPER_NoMD, SCALER_NoScale<true, READER_Uncompressed>>(target, targetRect, scaledPosition);
 }
 
 void CelObj::drawUncompHzFlipNoMDNoSkip(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	render<MAPPER_NoMDNoSkip, SCALER_NoScale<true, READER_Uncompressed> >(target, targetRect, scaledPosition);
+	render<MAPPER_NoMDNoSkip, SCALER_NoScale<true, READER_Uncompressed>>(target, targetRect, scaledPosition);
 }
 
 void CelObj::scaleDrawNoMD(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	// In SSCI the checks are > because their rects are BR-inclusive; our checks
 	// are >= because our rects are BR-exclusive
-	if (targetRect.left >= targetRect.right ||
-		 targetRect.top >= targetRect.bottom) {
+	if (targetRect.left >= targetRect.right || targetRect.top >= targetRect.bottom) {
 		return;
 	}
 
 	if (_drawMirrored)
-		render<MAPPER_NoMD, SCALER_Scale<true, READER_Compressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
+		render<MAPPER_NoMD, SCALER_Scale<true, READER_Compressed>>(target, targetRect, scaledPosition, scaleX, scaleY);
 	else
-		render<MAPPER_NoMD, SCALER_Scale<false, READER_Compressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
+		render<MAPPER_NoMD, SCALER_Scale<false, READER_Compressed>>(target, targetRect, scaledPosition, scaleX, scaleY);
 }
 
 void CelObj::scaleDrawUncompNoMD(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
 	// In SSCI the checks are > because their rects are BR-inclusive; our checks
 	// are >= because our rects are BR-exclusive
-	if (targetRect.left >= targetRect.right ||
-		 targetRect.top >= targetRect.bottom) {
+	if (targetRect.left >= targetRect.right || targetRect.top >= targetRect.bottom) {
 		return;
 	}
 
 	if (_drawMirrored) {
-		render<MAPPER_NoMD, SCALER_Scale<true, READER_Uncompressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
+		render<MAPPER_NoMD, SCALER_Scale<true, READER_Uncompressed>>(target, targetRect, scaledPosition, scaleX, scaleY);
 	} else {
-		render<MAPPER_NoMD, SCALER_Scale<false, READER_Uncompressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
+		render<MAPPER_NoMD, SCALER_Scale<false, READER_Uncompressed>>(target, targetRect, scaledPosition, scaleX, scaleY);
 	}
 }
 
@@ -1032,8 +1035,7 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 	// to end up a little bit off. View 64001 renders fine using the existing
 	// palette created by the background image, so here we just ignore the
 	// embedded palette entirely.
-	if (g_sci->getGameId() == GID_PHANTASMAGORIA &&
-		_info.type == kCelTypeView && _info.resourceId == 64001) {
+	if (g_sci->getGameId() == GID_PHANTASMAGORIA && _info.type == kCelTypeView && _info.resourceId == 64001) {
 
 		_hunkPaletteOffset = 0;
 	} else {
@@ -1075,10 +1077,7 @@ bool CelObjView::analyzeUncompressedForRemap() const {
 	for (int i = 0; i < _width * _height; ++i) {
 		const byte pixel = pixels[i];
 		if (
-			pixel >= g_sci->_gfxRemap32->getStartColor() &&
-			pixel <= g_sci->_gfxRemap32->getEndColor() &&
-			pixel != _skipColor
-		) {
+		  pixel >= g_sci->_gfxRemap32->getStartColor() && pixel <= g_sci->_gfxRemap32->getEndColor() && pixel != _skipColor) {
 			return true;
 		}
 	}
@@ -1092,10 +1091,7 @@ bool CelObjView::analyzeForRemap() const {
 		for (int x = 0; x < _width; x++) {
 			const byte pixel = curRow[x];
 			if (
-				pixel >= g_sci->_gfxRemap32->getStartColor() &&
-				pixel <= g_sci->_gfxRemap32->getEndColor() &&
-				pixel != _skipColor
-			) {
+			  pixel >= g_sci->_gfxRemap32->getStartColor() && pixel <= g_sci->_gfxRemap32->getEndColor() && pixel != _skipColor) {
 				return true;
 			}
 		}
@@ -1224,7 +1220,6 @@ CelObjPic::CelObjPic(const GuiResourceId picId, const int16 celNo) {
 		_xResolution = 640;
 		_yResolution = 400;
 	}
-
 
 	const uint16 flags = celHeader.getUint16SEAt(10);
 	if (flags & 0x80) {

@@ -26,8 +26,8 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/scummsys.h"
-#include "common/system.h"
 #include "common/str.h"
+#include "common/system.h"
 #include "graphics/font.h"
 
 #include "graphics/fontman.h"
@@ -40,7 +40,7 @@ enum {
 	kColorBlack = 0,
 	kColorWhite = 1,
 	kColorCustom = 2,
-	kColorSpecial = 5 	///< some random number
+	kColorSpecial = 5 ///< some random number
 };
 
 enum OptionSelected {
@@ -69,19 +69,19 @@ typedef TestExitStatus (*InvokingFunction)();
  */
 
 struct Test {
-	Test(Common::String name, InvokingFunction f, bool interactive) : featureName(name) {
+	Test(Common::String name, InvokingFunction f, bool interactive)
+	  : featureName(name) {
 		driver = f;
 		enabled = true;
 		passed = false;
 		isInteractive = interactive;
 	}
-	const Common::String featureName;	///< Name of feature to be tested
-	InvokingFunction driver;		///< Pointer to the function that will invoke this feature test
-	bool enabled;				    ///< Decides whether or not this test is to be executed
-	bool passed;					///< Collects and stores result of this feature test
-	bool isInteractive;				///< Decides if the test is interactive or not, An interactive testsuite may have non-interactive tests, hence this change.
+	const Common::String featureName; ///< Name of feature to be tested
+	InvokingFunction driver; ///< Pointer to the function that will invoke this feature test
+	bool enabled; ///< Decides whether or not this test is to be executed
+	bool passed; ///< Collects and stores result of this feature test
+	bool isInteractive; ///< Decides if the test is interactive or not, An interactive testsuite may have non-interactive tests, hence this change.
 };
-
 
 /**
  * The basic Testsuite class
@@ -170,18 +170,17 @@ public:
 	}
 
 	static void updateStats(const char *prefix, const char *info, uint numTests, uint testNum, Common::Point pt);
-	const Common::Array<Test *>& getTestList() { return _testsToExecute; }
+	const Common::Array<Test *> &getTestList() { return _testsToExecute; }
 	int getNumTestsEnabled();
 
 protected:
-	Common::Array<Test *> _testsToExecute;			///< List of tests to be executed
-	int		    _numTestsPassed;					///< Number of tests passed
-	int			_numTestsExecuted;					///< Number of tests executed
-	int			_numTestsSkipped;
-	bool		_isTsEnabled;
+	Common::Array<Test *> _testsToExecute; ///< List of tests to be executed
+	int _numTestsPassed; ///< Number of tests passed
+	int _numTestsExecuted; ///< Number of tests executed
+	int _numTestsSkipped;
+	bool _isTsEnabled;
 
 private:
-
 	/**
 	 * Used from the code to decide if the engine needs to exit
 	 */

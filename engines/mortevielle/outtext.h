@@ -36,9 +36,10 @@ class MortevielleEngine;
 class TextHandler {
 private:
 	MortevielleEngine *_vm;
-	int  nextWord(int p, const char *ch, int &tab);
+	int nextWord(int p, const char *ch, int &tab);
+
 public:
-	TextHandler (MortevielleEngine *vm);
+	TextHandler(MortevielleEngine *vm);
 
 	void displayStr(Common::String inputStr, int x, int y, int dx, int dy, int typ);
 	void loadPictureFile(Common::String filename, Common::String altFilename, int32 skipSize, int length);

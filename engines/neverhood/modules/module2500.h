@@ -23,10 +23,10 @@
 #ifndef NEVERHOOD_MODULES_MODULE2500_H
 #define NEVERHOOD_MODULES_MODULE2500_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/modules/module1600_sprites.h" // for Tracks
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
-#include "neverhood/modules/module1600_sprites.h"	// for Tracks
 
 namespace Neverhood {
 
@@ -34,6 +34,7 @@ class Module2500 : public Module {
 public:
 	Module2500(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module2500();
+
 protected:
 	int _sceneNum;
 	int _soundIndex;
@@ -49,6 +50,7 @@ class Scene2501 : public Scene {
 public:
 	Scene2501(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Scene2501();
+
 protected:
 	AsCommonCar *_asCar;
 	Sprite *_ssTrackShadowBackground;
@@ -80,6 +82,7 @@ protected:
 class Scene2504 : public Scene {
 public:
 	Scene2504(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };

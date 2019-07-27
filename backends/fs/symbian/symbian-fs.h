@@ -37,6 +37,7 @@ protected:
 	bool _isDirectory;
 	bool _isValid;
 	bool _isPseudoRoot;
+
 public:
 	/**
 	 * Creates a SymbianFilesystemNode with the root node as path.

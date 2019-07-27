@@ -23,9 +23,9 @@
 #ifndef SHERLOCK_JOURNAL_H
 #define SHERLOCK_JOURNAL_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/str-array.h"
 #include "common/stream.h"
 #include "sherlock/saveload.h"
@@ -44,9 +44,14 @@ struct JournalEntry {
 	bool _replyOnly;
 	int _statementNum;
 
-	JournalEntry() : _converseNum(0), _replyOnly(false), _statementNum(0) {}
-	JournalEntry(int converseNum, int statementNum, bool replyOnly = false) :
-		_converseNum(converseNum), _statementNum(statementNum), _replyOnly(replyOnly) {}
+	JournalEntry()
+	  : _converseNum(0)
+	  , _replyOnly(false)
+	  , _statementNum(0) {}
+	JournalEntry(int converseNum, int statementNum, bool replyOnly = false)
+	  : _converseNum(converseNum)
+	  , _statementNum(statementNum)
+	  , _replyOnly(replyOnly) {}
 };
 
 class Journal {
@@ -77,6 +82,7 @@ protected:
 	 * Returns true if a given character is printable
 	 */
 	bool isPrintable(byte ch) const;
+
 public:
 	static Journal *init(SherlockEngine *vm);
 	virtual ~Journal() {}
@@ -90,6 +96,7 @@ public:
 	 * Synchronize the data for a savegame
 	 */
 	void synchronize(Serializer &s);
+
 public:
 	/**
 	 * Draw the journal background, frame, and interface buttons

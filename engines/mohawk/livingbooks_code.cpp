@@ -100,12 +100,11 @@ double LBValue::toDouble() const {
 
 Common::Point LBValue::toPoint() const {
 	switch (type) {
-	case kLBValueString:
-		{
+	case kLBValueString: {
 		Common::Point ret;
 		sscanf(string.c_str(), "%hd , %hd", &ret.x, &ret.y);
 		return ret;
-		}
+	}
 	case kLBValueInteger:
 		return Common::Point(integer, integer);
 	case kLBValuePoint:
@@ -119,12 +118,11 @@ Common::Point LBValue::toPoint() const {
 
 Common::Rect LBValue::toRect() const {
 	switch (type) {
-	case kLBValueString:
-		{
+	case kLBValueString: {
 		Common::Rect ret;
 		sscanf(string.c_str(), "%hd , %hd , %hd , %hd", &ret.left, &ret.top, &ret.right, &ret.bottom);
 		return ret;
-		}
+	}
 	case kLBValueInteger:
 		return Common::Rect(integer, integer, integer, integer);
 	case kLBValuePoint:
@@ -138,7 +136,8 @@ Common::Rect LBValue::toRect() const {
 	}
 }
 
-LBCode::LBCode(MohawkEngine_LivingBooks *vm, uint16 baseId) : _vm(vm) {
+LBCode::LBCode(MohawkEngine_LivingBooks *vm, uint16 baseId)
+  : _vm(vm) {
 	if (!baseId) {
 		_data = NULL;
 		_size = 0;
@@ -198,19 +197,16 @@ void LBCode::nextToken() {
 
 	// We slurp any value associated with the parameter here too, to simplify things.
 	switch (_currToken) {
-	case kTokenIdentifier:
-		{
+	case kTokenIdentifier: {
 		if (_currOffset + 2 > _size)
 			error("went off the end of code reading identifier");
 		uint16 offset = READ_BE_UINT16(_data + _currOffset);
 		// TODO: check string exists
 		_currValue = _strings[offset];
 		_currOffset += 2;
-		}
-		break;
+	} break;
 
-	case kTokenLiteral:
-		{
+	case kTokenLiteral: {
 		if (_currOffset + 1 > _size)
 			error("went off the end of code reading literal");
 		byte literalType = _data[_currOffset++];
@@ -224,8 +220,7 @@ void LBCode::nextToken() {
 		default:
 			error("unknown kTokenLiteral type %02x", literalType);
 		}
-		}
-		break;
+	} break;
 
 	case kTokenConstMode:
 	case kTokenConstEventId:
@@ -247,16 +242,14 @@ void LBCode::nextToken() {
 		//_currOffset += 2;
 		break;
 
-	case kTokenString:
-		{
+	case kTokenString: {
 		if (_currOffset + 2 > _size)
 			error("went off the end of code reading string");
 		uint16 offset = READ_BE_UINT16(_data + _currOffset);
 		// TODO: check string exists
 		_currValue = _strings[offset];
 		_currOffset += 2;
-		}
-		break;
+	} break;
 
 	default:
 		_currValue = LBValue();
@@ -315,8 +308,7 @@ void LBCode::parseStatement() {
 void LBCode::parseComparisons() {
 	parseConcat();
 
-	if (_currToken != kTokenEquals && _currToken != kTokenLessThan && _currToken != kTokenGreaterThan &&
-		_currToken != kTokenLessThanEq && _currToken != kTokenGreaterThanEq && _currToken != kTokenNotEq)
+	if (_currToken != kTokenEquals && _currToken != kTokenLessThan && _currToken != kTokenGreaterThan && _currToken != kTokenLessThanEq && _currToken != kTokenGreaterThanEq && _currToken != kTokenNotEq)
 		return;
 	byte comparison = _currToken;
 	switch (comparison) {
@@ -480,118 +472,117 @@ void LBCode::parseMain() {
 	case kTokenIdentifier:
 		assert(_currValue.type == kLBValueString);
 		{
-		Common::String varname = _currValue.string;
-		debugN("%s", varname.c_str());
-		nextToken();
-		if (varname.equalsIgnoreCase("self")) {
-			_stack.push(LBValue(_currSource));
-			if (_currToken == kTokenAssign)
-				error("attempted assignment to self");
-			break;
-		}
-		bool indexing = false;
-		Common::Array<LBValue> index;
-		while (_currToken == kTokenListStart) {
-			debugN("[");
+			Common::String varname = _currValue.string;
+			debugN("%s", varname.c_str());
 			nextToken();
-			parseStatement();
-			if (_currToken != kTokenListEnd)
-				error("expected list end");
-			debugN("]");
-			nextToken();
-			if (!_stack.size())
-				error("index failed");
-			indexing = true;
-			index.push_back(_stack.pop());
-		}
-		if (_currToken == kTokenAssign) {
-			debugN(" = ");
-			nextToken();
-			parseStatement();
-			if (!_stack.size())
-				error("assignment failed");
-			LBValue *val;
-			if (indexing)
-				val = getIndexedVar(varname, index);
-			else
-				val = &_vm->_variables[varname];
-			if (val) {
-				*val = _stack.pop();
-				_stack.push(*val);
-			} else
-				error("assignment failed, no dest");
-//				_stack.push(LBValue());
-		} else if (_currToken == kTokenPlusEquals || _currToken == kTokenMinusEquals || _currToken == kTokenAndEquals) {
-			// FIXME: do +=/-= belong here?
-			byte token = _currToken;
-			if (_currToken == kTokenPlusEquals)
-				debugN(" += ");
-			else if (_currToken == kTokenMinusEquals)
-				debugN(" -= ");
-			else if (_currToken == kTokenAndEquals)
-				debugN(" &= ");
-			nextToken();
-			parseStatement();
-			if (!_stack.size())
-				error("assignment failed");
-			LBValue *val;
-			if (indexing)
-				val = getIndexedVar(varname, index);
-			else
-				val = &_vm->_variables[varname];
-			if (val) {
-				if (token == kTokenAndEquals) {
-					if (val->type != kLBValueString)
-						error("operator &= used on non-string");
-					val->string = val->string + _stack.pop().toString();
-				} else {
-					// FIXME: non-integers
-					if (val->type != kLBValueInteger)
-						error("operator used on non-integer");
-					if (token == kTokenPlusEquals)
-						val->integer = val->integer + _stack.pop().toInt();
-					else
-						val->integer = val->integer - _stack.pop().toInt();
-				}
-				_stack.push(*val);
-			} else
-				_stack.push(LBValue());
-		} else {
-			if (indexing) {
-				LBValue *val = getIndexedVar(varname, index);
-				if (val)
-					_stack.push(*val);
+			if (varname.equalsIgnoreCase("self")) {
+				_stack.push(LBValue(_currSource));
+				if (_currToken == kTokenAssign)
+					error("attempted assignment to self");
+				break;
+			}
+			bool indexing = false;
+			Common::Array<LBValue> index;
+			while (_currToken == kTokenListStart) {
+				debugN("[");
+				nextToken();
+				parseStatement();
+				if (_currToken != kTokenListEnd)
+					error("expected list end");
+				debugN("]");
+				nextToken();
+				if (!_stack.size())
+					error("index failed");
+				indexing = true;
+				index.push_back(_stack.pop());
+			}
+			if (_currToken == kTokenAssign) {
+				debugN(" = ");
+				nextToken();
+				parseStatement();
+				if (!_stack.size())
+					error("assignment failed");
+				LBValue *val;
+				if (indexing)
+					val = getIndexedVar(varname, index);
 				else
+					val = &_vm->_variables[varname];
+				if (val) {
+					*val = _stack.pop();
+					_stack.push(*val);
+				} else
+					error("assignment failed, no dest");
+				//				_stack.push(LBValue());
+			} else if (_currToken == kTokenPlusEquals || _currToken == kTokenMinusEquals || _currToken == kTokenAndEquals) {
+				// FIXME: do +=/-= belong here?
+				byte token = _currToken;
+				if (_currToken == kTokenPlusEquals)
+					debugN(" += ");
+				else if (_currToken == kTokenMinusEquals)
+					debugN(" -= ");
+				else if (_currToken == kTokenAndEquals)
+					debugN(" &= ");
+				nextToken();
+				parseStatement();
+				if (!_stack.size())
+					error("assignment failed");
+				LBValue *val;
+				if (indexing)
+					val = getIndexedVar(varname, index);
+				else
+					val = &_vm->_variables[varname];
+				if (val) {
+					if (token == kTokenAndEquals) {
+						if (val->type != kLBValueString)
+							error("operator &= used on non-string");
+						val->string = val->string + _stack.pop().toString();
+					} else {
+						// FIXME: non-integers
+						if (val->type != kLBValueInteger)
+							error("operator used on non-integer");
+						if (token == kTokenPlusEquals)
+							val->integer = val->integer + _stack.pop().toInt();
+						else
+							val->integer = val->integer - _stack.pop().toInt();
+					}
+					_stack.push(*val);
+				} else
 					_stack.push(LBValue());
-			} else
-				_stack.push(_vm->_variables[varname]);
-		}
-		// FIXME: pre/postincrement for non-integers
-		if (_currToken == kTokenPlusPlus) {
-			debugN("++");
-			if (indexing) {
-				LBValue *val = getIndexedVar(varname, index);
-				if (val)
-					val->integer++;
-			} else
-				_vm->_variables[varname].integer++;
-			nextToken();
-		} else if (_currToken == kTokenMinusMinus) {
-			debugN("--");
-			if (indexing) {
-				LBValue *val = getIndexedVar(varname, index);
-				if (val)
-					val->integer--;
-			} else
-				_vm->_variables[varname].integer--;
-			nextToken();
-		}
+			} else {
+				if (indexing) {
+					LBValue *val = getIndexedVar(varname, index);
+					if (val)
+						_stack.push(*val);
+					else
+						_stack.push(LBValue());
+				} else
+					_stack.push(_vm->_variables[varname]);
+			}
+			// FIXME: pre/postincrement for non-integers
+			if (_currToken == kTokenPlusPlus) {
+				debugN("++");
+				if (indexing) {
+					LBValue *val = getIndexedVar(varname, index);
+					if (val)
+						val->integer++;
+				} else
+					_vm->_variables[varname].integer++;
+				nextToken();
+			} else if (_currToken == kTokenMinusMinus) {
+				debugN("--");
+				if (indexing) {
+					LBValue *val = getIndexedVar(varname, index);
+					if (val)
+						val->integer--;
+				} else
+					_vm->_variables[varname].integer--;
+				nextToken();
+			}
 		}
 		break;
 
 	case kTokenPlusPlus:
-	case kTokenMinusMinus:
-		{
+	case kTokenMinusMinus: {
 		byte token = _currToken;
 		if (token == kTokenPlusPlus)
 			debugN("++");
@@ -614,8 +605,7 @@ void LBCode::parseMain() {
 			val.integer--;
 		_stack.push(val);
 		nextToken();
-		}
-		break;
+	} break;
 
 	case kTokenLiteral:
 	case kTokenConstMode:
@@ -660,21 +650,21 @@ void LBCode::parseMain() {
 		debugN("[");
 		nextToken();
 		{
-		Common::SharedPtr<LBList> list = Common::SharedPtr<LBList>(new LBList);
-		while (_currToken != kTokenListEnd) {
-			parseStatement();
-			if (!_stack.size())
-				error("unexpected empty stack during literal list evaluation");
-			list->array.push_back(_stack.pop());
-			if (_currToken == kTokenComma) {
-				debugN(", ");
-				nextToken();
-			} else if (_currToken != kTokenListEnd)
-				error("encountered unexpected token %02x during literal list", _currToken);
-		}
-		debugN("]");
-		nextToken();
-		_stack.push(list);
+			Common::SharedPtr<LBList> list = Common::SharedPtr<LBList>(new LBList);
+			while (_currToken != kTokenListEnd) {
+				parseStatement();
+				if (!_stack.size())
+					error("unexpected empty stack during literal list evaluation");
+				list->array.push_back(_stack.pop());
+				if (_currToken == kTokenComma) {
+					debugN(", ");
+					nextToken();
+				} else if (_currToken != kTokenListEnd)
+					error("encountered unexpected token %02x during literal list", _currToken);
+			}
+			debugN("]");
+			nextToken();
+			_stack.push(list);
 		}
 		break;
 
@@ -696,13 +686,13 @@ void LBCode::parseMain() {
 		if (!_stack.size())
 			error("eval op failed");
 		{
-		// FIXME: XXX
-		LBValue in = _stack.pop();
-		if (in.type != kLBValueString)
-			error("eval op on non-string");
-		Common::String varname = in.string;
-		LBValue &val = _vm->_variables[varname];
-		_stack.push(val);
+			// FIXME: XXX
+			LBValue in = _stack.pop();
+			if (in.type != kLBValueString)
+				error("eval op on non-string");
+			Common::String varname = in.string;
+			LBValue &val = _vm->_variables[varname];
+			_stack.push(val);
 		}
 		break;
 
@@ -1229,7 +1219,7 @@ void LBCode::cmdSetAt(const Common::Array<LBValue> &params) {
 
 	if ((uint)params[1].integer > params[0].list->array.size())
 		params[0].list->array.resize(params[1].integer);
-	params[0].list->array[params[1].integer - 1] =  params[2];
+	params[0].list->array[params[1].integer - 1] = params[2];
 }
 
 void LBCode::cmdListLen(const Common::Array<LBValue> &params) {
@@ -1424,7 +1414,7 @@ CodeCommandInfo itemCommandInfo[NUM_ITEM_COMMANDS] = {
 	{ "show", 0 },
 	{ "getFrame", 0 },
 	{ "getParent", 0 },
-	{ "getPosition" , 0 },
+	{ "getPosition", 0 },
 	{ "getText", 0 },
 	{ "getZNext", 0 },
 	{ "getZPrev", 0 },
@@ -1449,7 +1439,7 @@ CodeCommandInfo itemCommandInfo[NUM_ITEM_COMMANDS] = {
 	// 0x20
 	{ "stop", 0 },
 	{ "unload", 0 },
-	{ "unloadSync", 0}
+	{ "unloadSync", 0 }
 };
 
 void LBCode::runItemCommand() {
@@ -1546,8 +1536,7 @@ void LBCode::runNotifyCommand() {
 	byte commandType = _currValue.integer;
 
 	switch (commandType) {
-	case kLBNotifyChangePage:
-		{
+	case kLBNotifyChangePage: {
 		debugN("goto");
 		Common::Array<LBValue> params = readParams();
 		// TODO: type-checking
@@ -1580,39 +1569,32 @@ void LBCode::runNotifyCommand() {
 			error("incorrect number of parameters (%d) to goto", params.size());
 		}
 		_vm->addNotifyEvent(notifyEvent);
-		}
-		break;
+	} break;
 
 	case kLBNotifyGoToControls:
-	case kLBNotifyGotoQuit:
-		{
+	case kLBNotifyGotoQuit: {
 		debugN(commandType == kLBNotifyGoToControls ? "gotocontrol" : "gotoquit");
 		Common::Array<LBValue> params = readParams();
 		if (params.size() != 0)
 			error("incorrect number of parameters (%d) to notify", params.size());
 		_vm->addNotifyEvent(NotifyEvent(commandType, 0));
-		}
-		break;
+	} break;
 
-	case kLBNotifyIntroDone:
-		{
+	case kLBNotifyIntroDone: {
 		debugN("startphasemain");
 		Common::Array<LBValue> params = readParams();
 		if (params.size() != 0)
 			error("incorrect number of parameters (%d) to startphasemain", params.size());
 		_vm->addNotifyEvent(NotifyEvent(kLBNotifyIntroDone, 1));
-		}
-		break;
+	} break;
 
-	case kLBNotifyQuit:
-		{
+	case kLBNotifyQuit: {
 		debugN("quit");
 		Common::Array<LBValue> params = readParams();
 		if (params.size() != 0)
 			error("incorrect number of parameters (%d) to quit", params.size());
 		_vm->addNotifyEvent(NotifyEvent(kLBNotifyQuit, 0));
-		}
-		break;
+	} break;
 
 	default:
 		error("unknown notify command %02x in code", commandType);
@@ -1719,7 +1701,7 @@ uint LBCode::parseCode(const Common::String &source) {
 		byte lookahead2Op;
 	};
 
-	#define NUM_LB_OPERATORS 11
+#define NUM_LB_OPERATORS 11
 	static const LBCodeOperator operators[NUM_LB_OPERATORS] = {
 		{ '+', kTokenPlus, '+', kTokenPlusPlus, '=', kTokenPlusEquals },
 		{ '-', kTokenMinus, '-', kTokenMinusMinus, '=', kTokenMinusEquals },
@@ -1788,8 +1770,7 @@ uint LBCode::parseCode(const Common::String &source) {
 			break;
 		// literal string
 		case '"':
-		case '\'':
-			{
+		case '\'': {
 			Common::String tempString;
 			while (pos < source.size()) {
 				if (source[pos] == token)
@@ -1808,8 +1789,7 @@ uint LBCode::parseCode(const Common::String &source) {
 			WRITE_BE_UINT16(tmp, (int16)stringId);
 			code.push_back(tmp[0]);
 			code.push_back(tmp[1]);
-			}
-			break;
+		} break;
 		// open bracket
 		case '(':
 			bool parameterless;
@@ -1853,8 +1833,7 @@ uint LBCode::parseCode(const Common::String &source) {
 			counterPositions.pop_back();
 			break;
 		// comma (seperating function params)
-		case ',':
-			{
+		case ',': {
 			if (counterPositions.empty())
 				error("while parsing script '%s', encountered unexpected ,", source.c_str());
 			code.push_back(kTokenComma);
@@ -1862,11 +1841,9 @@ uint LBCode::parseCode(const Common::String &source) {
 			if (!counterPos)
 				error("while parsing script '%s', encountered , outside parameter list", source.c_str());
 			code[counterPos]++;
-			}
-			break;
+		} break;
 		// old-style explicit function call
-		case '@':
-			{
+		case '@': {
 			Common::String tempString;
 			while (pos < source.size()) {
 				if (!Common::isAlpha(source[pos]) && !Common::isDigit(source[pos]))
@@ -1876,9 +1853,8 @@ uint LBCode::parseCode(const Common::String &source) {
 			wasFunction = parseCodeSymbol(tempString, pos, code, true);
 			if (!wasFunction)
 				error("while parsing script '%s', encountered explicit function call to unknown function '%s'",
-					source.c_str(), tempString.c_str());
-			}
-			break;
+				      source.c_str(), tempString.c_str());
+		} break;
 		default:
 			if (Common::isDigit(token)) {
 				const char *in = source.c_str() + pos - 1;

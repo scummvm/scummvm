@@ -38,14 +38,12 @@ namespace Graphics {
 class VectorRenderer;
 struct DrawStep;
 
-
 typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, const Graphics::DrawStep &, const Common::Rect &);
-
 
 struct DrawStep {
 	DrawingFunctionCallback drawingCall; /**< Pointer to drawing function */
-	Graphics::Surface* blitSrc;
-	Graphics::TransparentSurface* blitAlphaSrc;
+	Graphics::Surface *blitSrc;
+	Graphics::TransparentSurface *blitAlphaSrc;
 
 	struct Color {
 		uint8 r, g, b;
@@ -109,9 +107,14 @@ VectorRenderer *createRenderer(int mode);
  */
 class VectorRenderer {
 public:
-	VectorRenderer() : _activeSurface(NULL), _fillMode(kFillDisabled), _shadowOffset(0), _shadowFillMode(kShadowExponential),
-		_disableShadows(false), _strokeWidth(1), _gradientFactor(1) {
-
+	VectorRenderer()
+	  : _activeSurface(NULL)
+	  , _fillMode(kFillDisabled)
+	  , _shadowOffset(0)
+	  , _shadowFillMode(kShadowExponential)
+	  , _disableShadows(false)
+	  , _strokeWidth(1)
+	  , _gradientFactor(1) {
 	}
 
 	virtual ~VectorRenderer() {}
@@ -223,7 +226,6 @@ public:
 	 */
 	virtual void drawTab(int x, int y, int r, int w, int h) = 0;
 	virtual void drawTabClip(int x, int y, int r, int w, int h, Common::Rect clipping) = 0;
-
 
 	/**
 	 * Simple helper function to draw a cross.
@@ -503,10 +505,11 @@ public:
 	virtual void blitKeyBitmapClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping) = 0;
 
 	virtual void blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r,
-			GUI::ThemeEngine::AutoScaleMode autoscale = GUI::ThemeEngine::kAutoScaleNone,
-			Graphics::DrawStep::VectorAlignment xAlign = Graphics::DrawStep::kVectorAlignManual,
-			Graphics::DrawStep::VectorAlignment yAlign = Graphics::DrawStep::kVectorAlignManual,
-			int alpha = 255) = 0;
+	                             GUI::ThemeEngine::AutoScaleMode autoscale = GUI::ThemeEngine::kAutoScaleNone,
+	                             Graphics::DrawStep::VectorAlignment xAlign = Graphics::DrawStep::kVectorAlignManual,
+	                             Graphics::DrawStep::VectorAlignment yAlign = Graphics::DrawStep::kVectorAlignManual,
+	                             int alpha = 255)
+	  = 0;
 
 	/**
 	 * Draws a string into the screen. Wrapper for the Graphics::Font string drawing
@@ -514,7 +517,8 @@ public:
 	 */
 	virtual void drawString(const Graphics::Font *font, const Common::String &text,
 	                        const Common::Rect &area, Graphics::TextAlign alignH,
-	                        GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool useEllipsis, const Common::Rect &textDrawableArea) = 0;
+	                        GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool useEllipsis, const Common::Rect &textDrawableArea)
+	  = 0;
 
 	/**
 	 * Allows to temporarily enable/disable all shadows drawing.

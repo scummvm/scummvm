@@ -24,7 +24,7 @@
 #ifndef TINSEL_HANDLE_H
 #define TINSEL_HANDLE_H
 
-#include "tinsel/dw.h"			// new data types
+#include "tinsel/dw.h" // new data types
 
 namespace Tinsel {
 
@@ -51,14 +51,14 @@ void TouchMem(SCNHANDLE offset);
 void SetCdPlaySceneDetails(int sceneNum, const char *fileName);
 
 // Called at game startup
-void SetCdPlayHandle(int	fileNum);
+void SetCdPlayHandle(int fileNum);
 
 void LoadExtraGraphData(
-	SCNHANDLE start,		// Handle of start of range
-	SCNHANDLE next);		// Handle of end of range + 1
+  SCNHANDLE start, // Handle of start of range
+  SCNHANDLE next); // Handle of end of range + 1
 
 int CdNumber(SCNHANDLE offset);
 
 } // End of namespace Tinsel
 
-#endif	// TINSEL_HANDLE_H
+#endif // TINSEL_HANDLE_H

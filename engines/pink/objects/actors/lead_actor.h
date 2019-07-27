@@ -23,11 +23,11 @@
 #ifndef PINK_LEAD_ACTOR_H
 #define PINK_LEAD_ACTOR_H
 
-#include "common/rect.h"
 #include "common/keyboard.h"
+#include "common/rect.h"
 
-#include "pink/objects/actors/actor.h"
 #include "pink/audio_info_mgr.h"
+#include "pink/objects/actors/actor.h"
 
 namespace Pink {
 
@@ -127,7 +127,6 @@ protected:
 	bool _isHaveItem;
 };
 
-
 class ParlSqPink : public LeadActor {
 public:
 	void toConsole() override;
@@ -153,7 +152,6 @@ protected:
 private:
 	bool playingMiniGame();
 };
-
 
 } // End of namespace Pink
 

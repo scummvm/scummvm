@@ -23,7 +23,6 @@
 #ifndef SKY_TEXT_H
 #define SKY_TEXT_H
 
-
 #include "common/scummsys.h"
 
 namespace Sky {
@@ -59,7 +58,7 @@ public:
 	void changeTextSpriteColor(uint8 *sprData, uint8 newCol);
 	uint32 giveCurrentCharSet();
 
-	uint32 _numLetters;	//no of chars in message
+	uint32 _numLetters; //no of chars in message
 
 private:
 	void initHuffTree();
@@ -81,14 +80,14 @@ private:
 		uint32 charSpacing;
 	} _mainCharacterSet, _linkCharacterSet, _controlCharacterSet;
 
-	uint32	_curCharSet;
-	uint8	*_characterSet;
-	uint8	_charHeight;
+	uint32 _curCharSet;
+	uint8 *_characterSet;
+	uint8 _charHeight;
 
 	char _textBuffer[1024];
 
-	uint32	_dtCharSpacing;	//character separation adjustment
-	uint32	_mouseOfsX, _mouseOfsY;
+	uint32 _dtCharSpacing; //character separation adjustment
+	uint32 _mouseOfsX, _mouseOfsY;
 	static const PatchMessage _patchedMessages[NUM_PATCH_MSG];
 	static const uint16 _patchLangIdx[8];
 	static const uint16 _patchLangNum[8];

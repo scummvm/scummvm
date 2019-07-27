@@ -29,7 +29,8 @@
 
 namespace Gob {
 
-Protracker::Protracker(Audio::Mixer &mixer) : _mixer(&mixer) {
+Protracker::Protracker(Audio::Mixer &mixer)
+  : _mixer(&mixer) {
 	_protrackerStream = 0;
 }
 
@@ -51,7 +52,7 @@ bool Protracker::play(const char *fileName) {
 		return false;
 
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_handle,
-			_protrackerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+	                   _protrackerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 
 	return true;
 }

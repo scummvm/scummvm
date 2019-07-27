@@ -25,8 +25,8 @@
 
 #if defined(WIN32) && defined(USE_TASKBAR)
 
-#include "common/str.h"
-#include "common/taskbar.h"
+#	include "common/str.h"
+#	include "common/taskbar.h"
 
 class SdlWindow_Win32;
 struct ITaskbarList3;
@@ -51,7 +51,7 @@ private:
 
 	// Count handling
 	HICON _icon;
-	int   _count;
+	int _count;
 
 	/**
 	 * 	Get the path to an icon for the game

@@ -20,12 +20,11 @@
  *
  */
 
-
 #include "kyra/sound/sound.h"
 #include "kyra/resource/resource.h"
 
-#include "audio/mixer.h"
 #include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 #include "audio/decoders/flac.h"
 #include "audio/decoders/mp3.h"
@@ -36,8 +35,11 @@
 namespace Kyra {
 
 Sound::Sound(KyraEngine_v1 *vm, Audio::Mixer *mixer)
-	: _vm(vm), _mixer(mixer), _soundChannels(), _musicEnabled(1),
-	  _sfxEnabled(true) {
+  : _vm(vm)
+  , _mixer(mixer)
+  , _soundChannels()
+  , _musicEnabled(1)
+  , _sfxEnabled(true) {
 }
 
 Sound::~Sound() {
@@ -165,7 +167,9 @@ bool Sound::allVoiceChannelsPlaying() const {
 #pragma mark -
 
 MixedSoundDriver::MixedSoundDriver(KyraEngine_v1 *vm, Audio::Mixer *mixer, Sound *music, Sound *sfx)
-	: Sound(vm, mixer), _music(music), _sfx(sfx) {
+  : Sound(vm, mixer)
+  , _music(music)
+  , _sfx(sfx) {
 }
 
 MixedSoundDriver::~MixedSoundDriver() {
@@ -337,12 +341,12 @@ bool KyraEngine_v1::snd_voiceIsPlaying() {
 
 namespace {
 
-// A simple wrapper to create VOC streams the way like creating MP3, OGG/Vorbis and FLAC streams.
-// Possible TODO: Think of making this complete and moving it to sound/voc.cpp ?
-Audio::SeekableAudioStream *makeVOCStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
-	Audio::SeekableAudioStream *as = Audio::makeVOCStream(stream, Audio::FLAG_UNSIGNED, disposeAfterUse);
-	return as;
-}
+	// A simple wrapper to create VOC streams the way like creating MP3, OGG/Vorbis and FLAC streams.
+	// Possible TODO: Think of making this complete and moving it to sound/voc.cpp ?
+	Audio::SeekableAudioStream *makeVOCStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
+		Audio::SeekableAudioStream *as = Audio::makeVOCStream(stream, Audio::FLAG_UNSIGNED, disposeAfterUse);
+		return as;
+	}
 
 } // end of anonymous namespace
 

@@ -35,9 +35,16 @@ class AvalancheEngine;
 class Animation;
 
 enum Direction {
-	kDirUp = 0, kDirRight, kDirDown, kDirLeft,
-	kDirUpRight, kDirDownRight, kDirDownLeft, kDirUpLeft,
-	kDirStopped, kDirNone = 177
+	kDirUp = 0,
+	kDirRight,
+	kDirDown,
+	kDirLeft,
+	kDirUpRight,
+	kDirDownRight,
+	kDirDownLeft,
+	kDirUpLeft,
+	kDirStopped,
+	kDirNone = 177
 };
 
 class AnimationType {
@@ -82,7 +89,7 @@ public:
 private:
 	Animation *_anim;
 
-	int16 _oldX[2], _oldY[2];  // Last xy coords.
+	int16 _oldX[2], _oldY[2]; // Last xy coords.
 	Color _fgBubbleCol, _bgBubbleCol; // Foreground & background bubble colors.
 
 	bool checkCollision();
@@ -140,6 +147,7 @@ public:
 
 	void resetVariables();
 	void synchronize(Common::Serializer &sz);
+
 private:
 	Direction _direction; // The direction Avvy is currently facing.
 	Direction _oldDirection;

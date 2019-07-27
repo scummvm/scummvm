@@ -28,24 +28,24 @@
 #ifndef DM_MENUS_H
 #define DM_MENUS_H
 
-#include "dm/dm.h"
 #include "dm/champion.h"
+#include "dm/dm.h"
 #include "dm/dungeonman.h"
 
 namespace DM {
 
 enum Damage {
-	kDMDamageCantReach = -1,   // @ CM1_DAMAGE_CANT_REACH
+	kDMDamageCantReach = -1, // @ CM1_DAMAGE_CANT_REACH
 	kDMDamageNoAmmunition = -2 // @ CM2_DAMAGE_NO_AMMUNITION
 };
 
 enum SpellArea {
 	kDMSpellAreaAvailableSymbols = 2, // @ C2_SPELL_AREA_AVAILABLE_SYMBOLS
-	kDMSpellAreaChampionSymbols = 3   // @ C3_SPELL_AREA_CHAMPION_SYMBOLS
+	kDMSpellAreaChampionSymbols = 3 // @ C3_SPELL_AREA_CHAMPION_SYMBOLS
 };
 
 enum ActionMask {
-	kDMActionMaskRequiresCharge = 0x0080,         // @ MASK0x0080_ACTION_REQUIRES_CHARGE
+	kDMActionMaskRequiresCharge = 0x0080, // @ MASK0x0080_ACTION_REQUIRES_CHARGE
 	kDMActionMaskHitNonMaterialCreatures = 0x8000 // @ MASK0x8000_HIT_NON_MATERIAL_CREATURES
 };
 
@@ -77,6 +77,7 @@ public:
 
 class MenuMan {
 	DMEngine *_vm;
+
 public:
 	explicit MenuMan(DMEngine *vm);
 	~MenuMan();
@@ -99,7 +100,7 @@ public:
 	void drawActionArea(); // @ F0387_MENUS_DrawActionArea
 	const char *getActionName(ChampionAction actionIndex); // @ F0384_MENUS_GetActionName
 	void drawSpellAreaControls(ChampionIndex champIndex); // @ F0393_MENUS_DrawSpellAreaControls
-	void buildSpellAreaLine(int16 spellAreaBitmapLine);// @ F0392_MENUS_BuildSpellAreaLine
+	void buildSpellAreaLine(int16 spellAreaBitmapLine); // @ F0392_MENUS_BuildSpellAreaLine
 	void setMagicCasterAndDrawSpellArea(ChampionIndex champIndex); // @ F0394_MENUS_SetMagicCasterAndDrawSpellArea
 	void drawEnabledMenus(); // @ F0457_START_DrawEnabledMenus_CPSF
 	int16 getClickOnSpellCastResult(); // @ F0408_MENUS_GetClickOnSpellCastResult
@@ -118,7 +119,7 @@ public:
 	void setChampionDirectionToPartyDirection(Champion *champ); // @ F0406_MENUS_SetChampionDirectionToPartyDirection
 	void decrementCharges(Champion *champ); // @ F0405_MENUS_DecrementCharges
 	bool isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 actionIndex, int16 targetMapX,
-									 int16 targetMapY, int16 skillIndex); // @ F0402_MENUS_IsMeleeActionPerformed
+	                            int16 targetMapY, int16 skillIndex); // @ F0402_MENUS_IsMeleeActionPerformed
 	bool isGroupFrightenedByAction(int16 champIndex, uint16 actionIndex, int16 mapX, int16 mapY); // @ F0401_MENUS_IsGroupFrightenedByAction
 	void printMessageAfterReplacements(const char *str); // @ F0381_MENUS_PrintMessageAfterReplacements
 	void processCommands116To119_setActingChampion(uint16 champIndex); // @ F0389_MENUS_ProcessCommands116To119_SetActingChampion

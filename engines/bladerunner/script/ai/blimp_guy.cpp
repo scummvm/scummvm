@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptBlimpGuy::AIScriptBlimpGuy(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptBlimpGuy::AIScriptBlimpGuy(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 }
 
 void AIScriptBlimpGuy::Initialize() {
@@ -99,17 +100,17 @@ bool AIScriptBlimpGuy::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptBlimpGuy::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptBlimpGuy::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptBlimpGuy::ReachedMovementTrackWaypoint(int waypointId) {

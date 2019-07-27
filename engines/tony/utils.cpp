@@ -27,8 +27,8 @@
  */
 
 #include "tony/utils.h"
-#include "tony/tony.h"
 #include "tony/mpal/lzo.h"
+#include "tony/tony.h"
 
 namespace Tony {
 
@@ -182,16 +182,20 @@ void RMPoint::readFromStream(Common::ReadStream &ds) {
 *       RMPointReference methods
 \****************************************************************************/
 
-RMPointReference::RMPointReference(int &x, int &y): _x(x), _y(y) {
+RMPointReference::RMPointReference(int &x, int &y)
+  : _x(x)
+  , _y(y) {
 }
 
 RMPointReference &RMPointReference::operator=(const RMPoint &p) {
-	_x = p._x; _y = p._y;
+	_x = p._x;
+	_y = p._y;
 	return *this;
 }
 
 RMPointReference &RMPointReference::operator-=(const RMPoint &p) {
-	_x -= p._x; _y -= p._y;
+	_x -= p._x;
+	_y -= p._y;
 	return *this;
 }
 
@@ -203,7 +207,9 @@ RMPointReference::operator RMPoint() const {
 *       RMRect methods
 \****************************************************************************/
 
-RMRect::RMRect(): _topLeft(_x1, _y1), _bottomRight(_x2, _y2) {
+RMRect::RMRect()
+  : _topLeft(_x1, _y1)
+  , _bottomRight(_x2, _y2) {
 	setEmpty();
 }
 
@@ -211,15 +217,21 @@ void RMRect::setEmpty() {
 	_x1 = _y1 = _x2 = _y2 = 0;
 }
 
-RMRect::RMRect(const RMPoint &p1, const RMPoint &p2): _topLeft(_x1, _y1), _bottomRight(_x2, _y2) {
+RMRect::RMRect(const RMPoint &p1, const RMPoint &p2)
+  : _topLeft(_x1, _y1)
+  , _bottomRight(_x2, _y2) {
 	setRect(p1, p2);
 }
 
-RMRect::RMRect(int X1, int Y1, int X2, int Y2): _topLeft(_x1, _y1), _bottomRight(_x2, _y2) {
+RMRect::RMRect(int X1, int Y1, int X2, int Y2)
+  : _topLeft(_x1, _y1)
+  , _bottomRight(_x2, _y2) {
 	setRect(X1, Y1, X2, Y2);
 }
 
-RMRect::RMRect(const RMRect &rc): _topLeft(_x1, _y1), _bottomRight(_x2, _y2) {
+RMRect::RMRect(const RMRect &rc)
+  : _topLeft(_x1, _y1)
+  , _bottomRight(_x2, _y2) {
 	copyRect(rc);
 }
 
@@ -438,7 +450,7 @@ MpalHandle RMResUpdate::queryResource(uint32 dwRes) {
 	lzo1x_decompress(cmpBuf, info._cmpSize, lpDestBuf, &dwSize);
 
 	// Delete buffer for compressed data
-	delete [] cmpBuf;
+	delete[] cmpBuf;
 
 	// Return the resource
 	globalUnlock(destBuf);

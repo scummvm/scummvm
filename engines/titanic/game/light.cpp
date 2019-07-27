@@ -28,19 +28,26 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CLight, CBackground)
-	ON_MESSAGE(TurnOff)
-	ON_MESSAGE(LightsMsg)
-	ON_MESSAGE(MouseButtonUpMsg)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(StatusChangeMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(TurnOff)
+ON_MESSAGE(LightsMsg)
+ON_MESSAGE(MouseButtonUpMsg)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(EnterRoomMsg)
 END_MESSAGE_MAP()
 
-CLight::CLight() : CBackground(), _unused1(0), _topRight(false),
-	_topLeft(false), _bottomLeft(false), _bottomRight(false), _unused2(0),
-	_unused3(0), _eyePresent(false) {
+CLight::CLight()
+  : CBackground()
+  , _unused1(0)
+  , _topRight(false)
+  , _topLeft(false)
+  , _bottomLeft(false)
+  , _bottomRight(false)
+  , _unused2(0)
+  , _unused3(0)
+  , _eyePresent(false) {
 }
 
 void CLight::save(SimpleFile *file, int indent) {
@@ -81,11 +88,9 @@ bool CLight::LightsMsg(CLightsMsg *msg) {
 	// requires referring to the "broken light", don't allow the top left
 	// light to be turned on in the player's stateroom until it's gotten/fixed
 	if (msg->_topLeft && _topLeft) {
-		bool showFlag = !getPetControl()->isFirstClassSuite() ||
-			getRoom()->findByName("Eye1") == nullptr;
+		bool showFlag = !getPetControl()->isFirstClassSuite() || getRoom()->findByName("Eye1") == nullptr;
 		setVisible(showFlag);
-	} else if ((msg->_bottomLeft && _bottomLeft) || (msg->_topRight && _topRight) ||
-			(msg->_bottomRight && _bottomRight)) {
+	} else if ((msg->_bottomLeft && _bottomLeft) || (msg->_topRight && _topRight) || (msg->_bottomRight && _bottomRight)) {
 		setVisible(true);
 	} else {
 		setVisible(false);

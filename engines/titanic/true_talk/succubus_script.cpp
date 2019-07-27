@@ -20,18 +20,18 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "titanic/true_talk/succubus_script.h"
-#include "titanic/true_talk/true_talk_manager.h"
+#include "common/textconsole.h"
 #include "titanic/titanic.h"
 #include "titanic/translation.h"
+#include "titanic/true_talk/true_talk_manager.h"
 
 namespace Titanic {
 
 SuccUBusScript::SuccUBusScript(int val1, const char *charClass, int v2,
-		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
-		TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7),
-		_isRoom101(false) {
+                               const char *charName, int v3, int val2, int v4, int v5, int v6, int v7)
+  : TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7)
+  , _isRoom101(false) {
 
 	loadRanges("Ranges/SuccUBus");
 	setupSentences();
@@ -213,9 +213,7 @@ int SuccUBusScript::updateState(uint oldId, uint newId, int index) {
 	}
 
 	static const uint UPDATE_STATES[][2] = {
-		{ 230078, 1 }, { 230106, 2 }, { 230112, 3 }, { 230115, 4 },
-		{ 230127, 5 }, { 230140, 6 }, { 230156, 7 }, { 230157, 8 },
-		{ 230159, 9 }, { 230160, 10 }, { 230161, 11 }, { 230072, 12 }
+		{ 230078, 1 }, { 230106, 2 }, { 230112, 3 }, { 230115, 4 }, { 230127, 5 }, { 230140, 6 }, { 230156, 7 }, { 230157, 8 }, { 230159, 9 }, { 230160, 10 }, { 230161, 11 }, { 230072, 12 }
 	};
 
 	for (int idx = 0; idx < 12; ++idx) {

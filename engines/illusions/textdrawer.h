@@ -23,11 +23,11 @@
 #ifndef ILLUSIONS_TEXTDRAWER_H
 #define ILLUSIONS_TEXTDRAWER_H
 
-#include "illusions/graphics.h"
-#include "illusions/resources/fontresource.h"
 #include "common/array.h"
 #include "common/rect.h"
 #include "graphics/surface.h"
+#include "illusions/graphics.h"
+#include "illusions/resources/fontresource.h"
 
 namespace Illusions {
 
@@ -37,16 +37,21 @@ struct TextLine {
 	uint16 *_text;
 	int16 _length;
 	int16 _x, _y;
-	TextLine() : _text(0) {}
+	TextLine()
+	  : _text(0) {}
 	TextLine(uint16 *text, int16 length, int16 x, int16 y)
-		: _text(text), _length(length), _x(x), _y(y) {}
+	  : _text(text)
+	  , _length(length)
+	  , _x(x)
+	  , _y(y) {}
 };
 
 class TextDrawer {
 public:
 	bool wrapText(FontResource *font, uint16 *text, WidthHeight *dimensions, Common::Point offsPt,
-		uint textFlags, uint16 *&outTextPtr);
+	              uint textFlags, uint16 *&outTextPtr);
 	void drawText(Screen *screen, Graphics::Surface *surface, uint16 backgroundColor, uint16 borderColor);
+
 protected:
 	FontResource *_font;
 	uint16 *_text;

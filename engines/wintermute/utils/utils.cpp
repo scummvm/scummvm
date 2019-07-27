@@ -27,8 +27,8 @@
  */
 
 #include "engines/wintermute/utils/utils.h"
-#include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/wintermute.h"
 
 namespace Wintermute {
 
@@ -41,7 +41,6 @@ void BaseUtils::swap(int *a, int *b) {
 	*b = temp;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 float BaseUtils::normalizeAngle(float angle) {
 	float origAngle = angle;
@@ -50,7 +49,7 @@ float BaseUtils::normalizeAngle(float angle) {
 	// error, as when normalizing an angle, we expect the number to be between 0
 	// and 359 (since 360 is 0). This check has been fixed in ScummVM to 359. If
 	// the resulting angle is negative, it will be corrected in the while loop
-	// below. 
+	// below.
 	while (angle > 359) {
 		angle -= 360;
 	}
@@ -67,7 +66,6 @@ float BaseUtils::normalizeAngle(float angle) {
 	return angle;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 void BaseUtils::createPath(const char *path, bool pathOnly) {
 	/*  AnsiString pathStr;
@@ -75,24 +73,22 @@ void BaseUtils::createPath(const char *path, bool pathOnly) {
 	    if (!pathOnly) pathStr = PathUtil::getDirectoryName(path);
 	    else pathStr = path;
 	*/
-//	try {
+	//	try {
 	warning("BaseUtils::CreatePath - not implemented: %s", path);
-//		boost::filesystem::create_directories(path);
-//	} catch (...) {
+	//		boost::filesystem::create_directories(path);
+	//	} catch (...) {
 	return;
-//	}
+	//	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseUtils::debugMessage(const char *text) {
 	//MessageBox(hWnd, Text, "WME", MB_OK|MB_ICONINFORMATION);
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 char *BaseUtils::setString(char **string, const char *value) {
-	delete[] *string;
+	delete[] * string;
 	*string = new char[strlen(value) + 1];
 	if (*string) {
 		strcpy(*string, value);
@@ -136,7 +132,7 @@ int BaseUtils::randomInt(int from, int to) {
 		from = i;
 	}
 	return BaseEngine::instance().randInt(from, to);
-//	return (rand() % (to - from + 1)) + from;
+	//	return (rand() % (to - from + 1)) + from;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -213,15 +209,13 @@ void BaseUtils::RGBtoHSL(uint32 rgbColor, byte *outH, byte *outS, byte *outL) {
 	*outL = (byte)(L * 255);
 }
 
-
 //////////////////////////////////////////////////////////////////////////
-uint32 BaseUtils::HSLtoRGB(byte  InH, byte InS, byte InL) {
+uint32 BaseUtils::HSLtoRGB(byte InH, byte InS, byte InL) {
 	float H = InH / 255.0f;
 	float S = InS / 255.0f;
 	float L = InL / 255.0f;
 
 	byte R, G, B;
-
 
 	if (S == 0) {
 		R = (byte)(L * 255);
@@ -244,7 +238,6 @@ uint32 BaseUtils::HSLtoRGB(byte  InH, byte InS, byte InL) {
 	}
 	return BYTETORGBA(255, R, G, B);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 float BaseUtils::Hue2RGB(float v1, float v2, float vH) {

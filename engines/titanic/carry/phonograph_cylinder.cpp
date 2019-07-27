@@ -27,24 +27,34 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPhonographCylinder, CCarry)
-	ON_MESSAGE(UseWithOtherMsg)
-	ON_MESSAGE(QueryCylinderMsg)
-	ON_MESSAGE(RecordOntoCylinderMsg)
-	ON_MESSAGE(SetMusicControlsMsg)
-	ON_MESSAGE(ErasePhonographCylinderMsg)
+ON_MESSAGE(UseWithOtherMsg)
+ON_MESSAGE(QueryCylinderMsg)
+ON_MESSAGE(RecordOntoCylinderMsg)
+ON_MESSAGE(SetMusicControlsMsg)
+ON_MESSAGE(ErasePhonographCylinderMsg)
 END_MESSAGE_MAP()
 
-CPhonographCylinder::CPhonographCylinder() : CCarry(),
-		_bellsMuteControl(false), _bellsPitchControl(0),
-		_bellsSpeedControl(0), _bellsDirectionControl(false),
-		_bellsInversionControl(false), _snakeMuteControl(false),
-		_snakeSpeedControl(0), _snakePitchControl(0),
-		_snakeInversionControl(false), _snakeDirectionControl(false),
-		_pianoMuteControl(false), _pianoSpeedControl(0),
-		_pianoPitchControl(0), _pianoInversionControl(false),
-		_pianoDirectionControl(false), _bassMuteControl(false),
-		_bassSpeedControl(0), _bassPitchControl(0),
-		_bassInversionControl(false) {
+CPhonographCylinder::CPhonographCylinder()
+  : CCarry()
+  , _bellsMuteControl(false)
+  , _bellsPitchControl(0)
+  , _bellsSpeedControl(0)
+  , _bellsDirectionControl(false)
+  , _bellsInversionControl(false)
+  , _snakeMuteControl(false)
+  , _snakeSpeedControl(0)
+  , _snakePitchControl(0)
+  , _snakeInversionControl(false)
+  , _snakeDirectionControl(false)
+  , _pianoMuteControl(false)
+  , _pianoSpeedControl(0)
+  , _pianoPitchControl(0)
+  , _pianoInversionControl(false)
+  , _pianoDirectionControl(false)
+  , _bassMuteControl(false)
+  , _bassSpeedControl(0)
+  , _bassPitchControl(0)
+  , _bassInversionControl(false) {
 }
 
 void CPhonographCylinder::save(SimpleFile *file, int indent) {

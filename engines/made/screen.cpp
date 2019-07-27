@@ -21,19 +21,20 @@
  */
 
 #include "made/screen.h"
+#include "made/database.h"
 #include "made/made.h"
 #include "made/screenfx.h"
-#include "made/database.h"
 
 #include "common/system.h"
 
-#include "graphics/surface.h"
-#include "graphics/palette.h"
 #include "graphics/cursorman.h"
+#include "graphics/palette.h"
+#include "graphics/surface.h"
 
 namespace Made {
 
-Screen::Screen(MadeEngine *vm) : _vm(vm) {
+Screen::Screen(MadeEngine *vm)
+  : _vm(vm) {
 
 	_palette = new byte[768];
 	_newPalette = new byte[768];
@@ -150,7 +151,6 @@ void Screen::setExcludeArea(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 		_excludeClipArea[3].clipRect = Common::Rect(x2, y1, 320, y2);
 		_excludeClipAreaEnabled[3] = true;
 	}
-
 }
 
 void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 flipX, int16 flipY, int16 mask, const ClipInfo &clipInfo) {
@@ -219,7 +219,6 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 		if (_vm->getGameID() != GID_RTZ)
 			maskp += _maskDrawCtx.destSurface->pitch;
 	}
-
 }
 
 void Screen::setRGBPalette(byte *palRGB, int start, int count) {
@@ -334,13 +333,9 @@ void Screen::drawSpriteChannels(const ClipInfo &clipInfo, int16 includeStateMask
 
 			default:
 				break;
-
 			}
-
 		}
-
 	}
-
 }
 
 void Screen::updateSprites() {
@@ -475,7 +470,6 @@ uint16 Screen::placeSprite(uint16 channelIndex, uint16 flexIndex, int16 x, int16
 	}
 
 	return channelIndex + 1;
-
 }
 
 uint16 Screen::placeAnim(uint16 channelIndex, uint16 animIndex, int16 x, int16 y, int16 frameNum) {
@@ -521,13 +515,12 @@ uint16 Screen::placeAnim(uint16 channelIndex, uint16 animIndex, int16 x, int16 y
 	}
 
 	return channelIndex + 1;
-
 }
 
 int16 Screen::setAnimFrame(uint16 channelIndex, int16 frameNum) {
 	if (channelIndex < 1 || channelIndex >= 100 || _channels[channelIndex - 1].type == 0)
 		return 0;
-	 channelIndex--;
+	channelIndex--;
 	_channels[channelIndex].frameNum = frameNum;
 	return updateChannel(channelIndex) + 1;
 }
@@ -649,7 +642,6 @@ void Screen::printChar(uint c, int16 x, int16 y, byte color) {
 		}
 		dest += _fontDrawCtx.destSurface->pitch;
 	}
-
 }
 
 void Screen::printText(const char *text) {
@@ -667,7 +659,7 @@ void Screen::printText(const char *text) {
 
 	for (int textPos = 0; textPos < textLen; textPos++) {
 
-		uint c = ((const byte*)text)[textPos];
+		uint c = ((const byte *)text)[textPos];
 		int charWidth = _font->getCharWidth(c);
 
 		if (c == 9) {
@@ -724,12 +716,10 @@ void Screen::printText(const char *text) {
 			x += charWidth;
 			linePos++;
 		}
-
 	}
 
 	_textX = x;
 	_textY = y;
-
 }
 
 void Screen::printTextEx(const char *text, int16 x, int16 y, int16 fontNum, int16 textColor, int16 outlineColor, const ClipInfo &clipInfo) {
@@ -751,7 +741,6 @@ void Screen::printTextEx(const char *text, int16 x, int16 y, int16 fontNum, int1
 	setTextRect(oldTextRect);
 	setFont(oldFontNum);
 	_fontDrawCtx = oldFontDrawCtx;
-
 }
 
 void Screen::printObjectText(int16 objectIndex, int16 x, int16 y, int16 fontNum, int16 textColor, int16 outlineColor, const ClipInfo &clipInfo) {
@@ -763,7 +752,6 @@ void Screen::printObjectText(int16 objectIndex, int16 x, int16 y, int16 fontNum,
 	const char *text = obj->getString();
 
 	printTextEx(text, x, y, fontNum, textColor, outlineColor, clipInfo);
-
 }
 
 int16 Screen::getTextWidth(int16 fontNum, const char *text) {
@@ -806,7 +794,7 @@ int16 Screen::addToSpriteList(int16 index, int16 xofs, int16 yofs) {
 }
 
 SpriteListItem Screen::getFromSpriteList(int16 index) {
-	if (((uint) index) > _spriteList.size()) {
+	if (((uint)index) > _spriteList.size()) {
 		SpriteListItem emptyItem;
 		emptyItem.index = 0;
 		emptyItem.xofs = 0;

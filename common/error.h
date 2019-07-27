@@ -31,8 +31,6 @@ namespace Common {
  * This file contains an enum with commonly used error codes.
  */
 
-
-
 /**
  * Error codes which may be reported by plugins under various circumstances.
  *
@@ -42,30 +40,30 @@ namespace Common {
  * @todo Adjust all error codes to comply with these conventions.
  */
 enum ErrorCode {
-	kNoError = 0,				///< No error occurred
-	kNoGameDataFoundError,		///< Engine initialization: No game data was found in the specified location
-	kUnsupportedGameidError,	///< Engine initialization: Gameid not supported by this (Meta)Engine
-	kUnsupportedColorMode,		///< Engine initialization: Engine does not support backend's color mode
-	kAudioDeviceInitFailed,		///< Engine initialization: Audio device initialization failed
+	kNoError = 0, ///< No error occurred
+	kNoGameDataFoundError, ///< Engine initialization: No game data was found in the specified location
+	kUnsupportedGameidError, ///< Engine initialization: Gameid not supported by this (Meta)Engine
+	kUnsupportedColorMode, ///< Engine initialization: Engine does not support backend's color mode
+	kAudioDeviceInitFailed, ///< Engine initialization: Audio device initialization failed
 
-	kReadPermissionDenied,		///< Unable to read data due to missing read permission
-	kWritePermissionDenied,		///< Unable to write data due to missing write permission
+	kReadPermissionDenied, ///< Unable to read data due to missing read permission
+	kWritePermissionDenied, ///< Unable to write data due to missing write permission
 
-	kPathDoesNotExist,			///< The specified path does not exist
-	kPathNotDirectory,			///< The specified path does not point to a directory
-	kPathNotFile,				///< The specified path does not point to a file
+	kPathDoesNotExist, ///< The specified path does not exist
+	kPathNotDirectory, ///< The specified path does not point to a directory
+	kPathNotFile, ///< The specified path does not point to a file
 
-	kCreatingFileFailed,		///< Failed creating a (savestate) file
-	kReadingFailed,				///< Failed to read a file (permission denied?)
-	kWritingFailed,				///< Failure to write data -- disk full?
+	kCreatingFileFailed, ///< Failed creating a (savestate) file
+	kReadingFailed, ///< Failed to read a file (permission denied?)
+	kWritingFailed, ///< Failure to write data -- disk full?
 
 	// The following are used by --list-saves
-	kEnginePluginNotFound,		///< Failed to find plugin to handle target
-	kEnginePluginNotSupportSaves,	///< Failed if plugin does not support listing save states
+	kEnginePluginNotFound, ///< Failed to find plugin to handle target
+	kEnginePluginNotSupportSaves, ///< Failed if plugin does not support listing save states
 
-	kUserCanceled,			///< User has canceled the launching of the game
+	kUserCanceled, ///< User has canceled the launching of the game
 
-	kUnknownError				///< Catch-all error, used if no other error code matches
+	kUnknownError ///< Catch-all error, used if no other error code matches
 };
 
 /**
@@ -78,6 +76,7 @@ class Error {
 protected:
 	ErrorCode _code;
 	String _desc;
+
 public:
 	/**
 	 * Construct a new Error with the specified error code and the default

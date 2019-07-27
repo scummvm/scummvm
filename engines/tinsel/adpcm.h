@@ -46,7 +46,7 @@ protected:
 
 public:
 	Tinsel_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
+	  : ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
 
 		if (blockAlign == 0)
 			error("Tinsel_ADPCMStream(): blockAlign isn't specified");
@@ -56,13 +56,12 @@ public:
 
 		memset(&_status, 0, sizeof(_status));
 	}
-
 };
 
 class Tinsel4_ADPCMStream : public Tinsel_ADPCMStream {
 public:
 	Tinsel4_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: Tinsel_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {}
+	  : Tinsel_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {}
 
 	virtual int readBuffer(int16 *buffer, const int numSamples);
 };
@@ -80,7 +79,7 @@ protected:
 
 public:
 	Tinsel6_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: Tinsel_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
+	  : Tinsel_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
 		_chunkPos = 0;
 		_chunkData = 0;
 	}
@@ -91,11 +90,10 @@ public:
 class Tinsel8_ADPCMStream : public Tinsel_ADPCMStream {
 public:
 	Tinsel8_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: Tinsel_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {}
+	  : Tinsel_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {}
 
 	virtual int readBuffer(int16 *buffer, const int numSamples);
 };
-
 
 } // End of namespace Tinsel
 

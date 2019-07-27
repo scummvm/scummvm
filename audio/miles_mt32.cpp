@@ -139,40 +139,43 @@ private:
 
 private:
 	struct MidiChannelEntry {
-		byte   currentPatchBank;
-		byte   currentPatchId;
+		byte currentPatchBank;
+		byte currentPatchId;
 
-		bool   usingCustomTimbre;
-		byte   currentCustomTimbreId;
+		bool usingCustomTimbre;
+		byte currentCustomTimbreId;
 
-		MidiChannelEntry() : currentPatchBank(0),
-							currentPatchId(0),
-							usingCustomTimbre(false),
-							currentCustomTimbreId(0) { }
+		MidiChannelEntry()
+		  : currentPatchBank(0)
+		  , currentPatchId(0)
+		  , usingCustomTimbre(false)
+		  , currentCustomTimbreId(0) {}
 	};
 
 	struct MidiCustomTimbreEntry {
-		bool   used;
-		bool   protectionEnabled;
-		byte   currentPatchBank;
-		byte   currentPatchId;
+		bool used;
+		bool protectionEnabled;
+		byte currentPatchBank;
+		byte currentPatchId;
 
 		uint32 lastUsedNoteCounter;
 
-		MidiCustomTimbreEntry() : used(false),
-								protectionEnabled(false),
-								currentPatchBank(0),
-								currentPatchId(0),
-								lastUsedNoteCounter(0) {}
+		MidiCustomTimbreEntry()
+		  : used(false)
+		  , protectionEnabled(false)
+		  , currentPatchBank(0)
+		  , currentPatchId(0)
+		  , lastUsedNoteCounter(0) {}
 	};
 
 	struct MilesMT32SysExQueueEntry {
 		uint32 targetAddress;
-		byte   dataPos;
-		byte   data[MILES_CONTROLLER_SYSEX_QUEUE_SIZE + 1]; // 1 extra byte for terminator
+		byte dataPos;
+		byte data[MILES_CONTROLLER_SYSEX_QUEUE_SIZE + 1]; // 1 extra byte for terminator
 
-		MilesMT32SysExQueueEntry() : targetAddress(0),
-									dataPos(0) {
+		MilesMT32SysExQueueEntry()
+		  : targetAddress(0)
+		  , dataPos(0) {
 			memset(data, 0, sizeof(data));
 		}
 	};
@@ -187,7 +190,7 @@ private:
 
 	// holds all instruments
 	MilesMT32InstrumentEntry *_instrumentTablePtr;
-	uint16                   _instrumentTableCount;
+	uint16 _instrumentTableCount;
 
 	uint32 _noteCounter; // used to figure out, which timbres are outdated
 
@@ -285,9 +288,9 @@ void MidiDriver_Miles_MT32::resetMT32() {
 }
 
 void MidiDriver_Miles_MT32::MT32SysEx(const uint32 targetAddress, const byte *dataPtr) {
-	byte   sysExMessage[270];
-	uint16 sysExPos      = 0;
-	byte   sysExByte     = 0;
+	byte sysExMessage[270];
+	uint16 sysExPos = 0;
+	byte sysExByte = 0;
 	uint16 sysExChecksum = 0;
 
 	memset(&sysExMessage, 0, sizeof(sysExMessage));
@@ -446,7 +449,7 @@ void MidiDriver_Miles_MT32::controlChange(byte midiChannel, byte controllerNumbe
 		byte sysExPos = _sysExQueues[sysExQueueNr].dataPos;
 		bool sysExSend = false;
 
-		switch(controllerNumber) {
+		switch (controllerNumber) {
 		case MILES_CONTROLLER_SYSEX_COMMAND_ADDRESS1:
 			_sysExQueues[sysExQueueNr].targetAddress &= 0x00FFFF;
 			_sysExQueues[sysExQueueNr].targetAddress |= (controllerValue << 16);
@@ -596,9 +599,9 @@ void MidiDriver_Miles_MT32::processXMIDITimbreChunk(const byte *timbreListPtr, u
 	timbreListSeeker += 2;
 
 	while (timbreCount) {
-		const byte  patchId   = *timbreListSeeker++;
-		const byte  patchBank = *timbreListSeeker++;
-		int16       customTimbreId = 0;
+		const byte patchId = *timbreListSeeker++;
+		const byte patchBank = *timbreListSeeker++;
+		int16 customTimbreId = 0;
 
 		switch (patchBank) {
 		case MILES_MT32_TIMBREBANK_STANDARD_ROLAND:
@@ -621,9 +624,9 @@ void MidiDriver_Miles_MT32::processXMIDITimbreChunk(const byte *timbreListPtr, u
 
 //
 int16 MidiDriver_Miles_MT32::installCustomTimbre(byte patchBank, byte patchId) {
-	switch(patchBank) {
+	switch (patchBank) {
 	case MILES_MT32_TIMBREBANK_STANDARD_ROLAND: // Standard Roland MT32 bank
-	case MILES_MT32_TIMBREBANK_MELODIC_MODULE:  // Reserved for melodic mode
+	case MILES_MT32_TIMBREBANK_MELODIC_MODULE: // Reserved for melodic mode
 		return -1;
 	default:
 		break;
@@ -658,7 +661,7 @@ int16 MidiDriver_Miles_MT32::installCustomTimbre(byte patchBank, byte patchId) {
 				// not protected
 				uint32 customTimbreNoteCounter = _customTimbres[customTimbreNr].lastUsedNoteCounter;
 				if (customTimbreNoteCounter < leastUsedTimbreNoteCounter) {
-					leastUsedTimbreId          = customTimbreNr;
+					leastUsedTimbreId = customTimbreNr;
 					leastUsedTimbreNoteCounter = customTimbreNoteCounter;
 				}
 			}
@@ -676,14 +679,14 @@ int16 MidiDriver_Miles_MT32::installCustomTimbre(byte patchBank, byte patchId) {
 	}
 
 	// setup timbre slot
-	_customTimbres[customTimbreId].used                = true;
-	_customTimbres[customTimbreId].currentPatchBank    = patchBank;
-	_customTimbres[customTimbreId].currentPatchId      = patchId;
+	_customTimbres[customTimbreId].used = true;
+	_customTimbres[customTimbreId].currentPatchBank = patchBank;
+	_customTimbres[customTimbreId].currentPatchId = patchId;
 	_customTimbres[customTimbreId].lastUsedNoteCounter = _noteCounter;
-	_customTimbres[customTimbreId].protectionEnabled   = false;
+	_customTimbres[customTimbreId].protectionEnabled = false;
 
 	uint32 targetAddress = 0x080000 | (customTimbreId << 9);
-	uint32 targetAddressCommon   = targetAddress + 0x000000;
+	uint32 targetAddressCommon = targetAddress + 0x000000;
 	uint32 targetAddressPartial1 = targetAddress + 0x00000E;
 	uint32 targetAddressPartial2 = targetAddress + 0x000048;
 	uint32 targetAddressPartial3 = targetAddress + 0x000102;
@@ -747,7 +750,7 @@ uint32 MidiDriver_Miles_MT32::calculateSysExTargetAddress(uint32 baseAddress, ui
 }
 
 void MidiDriver_Miles_MT32::writeRhythmSetup(byte note, byte customTimbreId) {
-	byte   sysExData[2];
+	byte sysExData[2];
 	uint32 targetAddress = 0;
 
 	targetAddress = calculateSysExTargetAddress(0x030110, ((note - 24) << 2));
@@ -759,21 +762,21 @@ void MidiDriver_Miles_MT32::writeRhythmSetup(byte note, byte customTimbreId) {
 }
 
 void MidiDriver_Miles_MT32::writePatchTimbre(byte patchId, byte timbreGroup, byte timbreId) {
-	byte   sysExData[3];
+	byte sysExData[3];
 	uint32 targetAddress = 0;
 
 	// write to patch memory (starts at 0x050000, each entry is 8 bytes)
 	targetAddress = calculateSysExTargetAddress(0x050000, patchId << 3);
 
 	sysExData[0] = timbreGroup; // 0 - group A, 1 - group B, 2 - memory, 3 - rhythm
-	sysExData[1] = timbreId;    // timbre number (0-63)
+	sysExData[1] = timbreId; // timbre number (0-63)
 	sysExData[2] = MILES_MT32_SYSEX_TERMINATOR; // terminator
 
 	MT32SysEx(targetAddress, sysExData);
 }
 
 void MidiDriver_Miles_MT32::writePatchByte(byte patchId, byte index, byte patchValue) {
-	byte   sysExData[2];
+	byte sysExData[2];
 	uint32 targetAddress = 0;
 
 	targetAddress = calculateSysExTargetAddress(0x050000, (patchId << 3) + index);
@@ -785,7 +788,7 @@ void MidiDriver_Miles_MT32::writePatchByte(byte patchId, byte index, byte patchV
 }
 
 void MidiDriver_Miles_MT32::writeToSystemArea(byte index, byte value) {
-	byte   sysExData[2];
+	byte sysExData[2];
 	uint32 targetAddress = 0;
 
 	targetAddress = calculateSysExTargetAddress(0x100000, index);
@@ -798,22 +801,22 @@ void MidiDriver_Miles_MT32::writeToSystemArea(byte index, byte value) {
 
 MidiDriver *MidiDriver_Miles_MT32_create(const Common::String &instrumentDataFilename) {
 	MilesMT32InstrumentEntry *instrumentTablePtr = NULL;
-	uint16                    instrumentTableCount = 0;
+	uint16 instrumentTableCount = 0;
 
 	if (!instrumentDataFilename.empty()) {
 		// Load MT32 instrument data from file SAMPLE.MT
 		Common::File *fileStream = new Common::File();
-		uint32        fileSize = 0;
-		byte         *fileDataPtr = NULL;
-		uint32        fileDataOffset = 0;
-		uint32        fileDataLeft = 0;
+		uint32 fileSize = 0;
+		byte *fileDataPtr = NULL;
+		uint32 fileDataOffset = 0;
+		uint32 fileDataLeft = 0;
 
 		byte curBankId = 0;
 		byte curPatchId = 0;
 
 		MilesMT32InstrumentEntry *instrumentPtr = NULL;
-		uint32                    instrumentOffset = 0;
-		uint16                    instrumentDataSize = 0;
+		uint32 instrumentOffset = 0;
+		uint16 instrumentDataSize = 0;
 
 		if (!fileStream->open(instrumentDataFilename))
 			error("MILES-MT32: could not open instrument file '%s'", instrumentDataFilename.c_str());
@@ -840,7 +843,7 @@ MidiDriver *MidiDriver_Miles_MT32_create(const Common::String &instrumentDataFil
 				error("MILES-MT32: unexpected EOF in instrument file");
 
 			curPatchId = fileDataPtr[fileDataOffset++];
-			curBankId  = fileDataPtr[fileDataOffset++];
+			curBankId = fileDataPtr[fileDataOffset++];
 
 			if ((curBankId == 0xFF) && (curPatchId == 0xFF))
 				break;
@@ -862,7 +865,7 @@ MidiDriver *MidiDriver_Miles_MT32_create(const Common::String &instrumentDataFil
 		fileDataLeft = fileSize;
 		while (1) {
 			curPatchId = fileDataPtr[fileDataOffset++];
-			curBankId  = fileDataPtr[fileDataOffset++];
+			curBankId = fileDataPtr[fileDataOffset++];
 
 			if ((curBankId == 0xFF) && (curPatchId == 0xFF))
 				break;

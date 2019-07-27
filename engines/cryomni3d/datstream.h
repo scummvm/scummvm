@@ -25,15 +25,14 @@
 
 #include "common/language.h"
 #include "common/platform.h"
-#include "common/str.h"
 #include "common/str-array.h"
+#include "common/str.h"
 #include "common/substream.h"
 
 namespace CryOmni3D {
 
 class DATSeekableStream : public Common::SeekableSubReadStream {
 public:
-
 	/* Parent stream must not be used after this call and will be disposed if fetch succeeded */
 	static DATSeekableStream *getGame(Common::SeekableReadStream *stream,
 	                                  uint32 gameId, uint16 version, Common::Language lang, Common::Platform platform);
@@ -42,8 +41,8 @@ public:
 	void readString16Array16(Common::StringArray &array);
 
 private:
-	DATSeekableStream(SeekableReadStream *parentStream, uint32 start, uint32 end) :
-		SeekableSubReadStream(parentStream, start, end, DisposeAfterUse::YES) { }
+	DATSeekableStream(SeekableReadStream *parentStream, uint32 start, uint32 end)
+	  : SeekableSubReadStream(parentStream, start, end, DisposeAfterUse::YES) {}
 
 	static uint16 translateLanguage(Common::Language lang);
 	static uint32 translatePlatform(Common::Platform platform);

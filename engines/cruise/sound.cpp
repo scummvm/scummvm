@@ -41,11 +41,11 @@ class PCSoundDriver {
 public:
 	typedef void (*UpdateCallback)(void *);
 
-	PCSoundDriver() :
-		_upCb(nullptr),
-		_upRef(nullptr),
-		_musicVolume(0),
-		_sfxVolume(0) {}
+	PCSoundDriver()
+	  : _upCb(nullptr)
+	  , _upRef(nullptr)
+	  , _musicVolume(0)
+	  , _sfxVolume(0) {}
 	virtual ~PCSoundDriver() {}
 
 	virtual void setupChannel(int channel, const byte *data, int instrument, int volume) = 0;
@@ -59,7 +59,6 @@ public:
 	void setUpdateCallback(UpdateCallback upCb, void *ref);
 	void resetChannel(int channel);
 	void findNote(int freq, int *note, int *oct) const;
-
 
 protected:
 	UpdateCallback _upCb;
@@ -157,7 +156,7 @@ const int AdLibSoundDriver::_freqTable[] = {
 const int AdLibSoundDriver::_freqTableCount = ARRAYSIZE(_freqTable);
 
 const int AdLibSoundDriver::_operatorsTable[] = {
-	0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13,	16, 17, 18, 19, 20, 21
+	0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 21
 };
 
 const int AdLibSoundDriver::_operatorsTableCount = ARRAYSIZE(_operatorsTable);
@@ -170,7 +169,8 @@ const int AdLibSoundDriver::_voiceOperatorsTableCount = ARRAYSIZE(_voiceOperator
 
 class AdLibSoundDriverADL : public AdLibSoundDriver {
 public:
-	AdLibSoundDriverADL(Audio::Mixer *mixer) : AdLibSoundDriver(mixer) {}
+	AdLibSoundDriverADL(Audio::Mixer *mixer)
+	  : AdLibSoundDriver(mixer) {}
 	virtual const char *getInstrumentExtension() const { return ".ADL"; }
 	virtual void loadInstrument(const byte *data, AdLibSoundInstrument *asi);
 	virtual void setChannelFrequency(int channel, int frequency);
@@ -219,9 +219,18 @@ public:
 	bool songLoaded() const { return _sfxData != NULL; }
 	bool songPlayed() const { return _songPlayed; }
 	bool playing() const { return _playing; }
-	uint8 numOrders() const { assert(_sfxData); return _sfxData[470]; }
-	void setNumOrders(uint8 v) { assert(_sfxData); _sfxData[470] = v; }
-	void setPattern(int offset, uint8 value) { assert(_sfxData); _sfxData[472 + offset] = value; }
+	uint8 numOrders() const {
+		assert(_sfxData);
+		return _sfxData[470];
+	}
+	void setNumOrders(uint8 v) {
+		assert(_sfxData);
+		_sfxData[470] = v;
+	}
+	void setPattern(int offset, uint8 value) {
+		assert(_sfxData);
+		_sfxData[472 + offset] = value;
+	}
 	const char *musicName() { return _musicName; }
 
 	// Note: Original game never actually uses looping variable. Songs are hardcoded to loop
@@ -232,7 +241,8 @@ public:
 byte *readBundleSoundFile(const char *name) {
 	// Load the correct file
 	int fileIdx = findFileInDisks(name);
-	if (fileIdx < 0) return NULL;
+	if (fileIdx < 0)
+		return NULL;
 
 	int unpackedSize = volumePtrToFileDescriptor[fileIdx].extSize + 2;
 	byte *data = (byte *)MemAlloc(unpackedSize);
@@ -254,7 +264,6 @@ byte *readBundleSoundFile(const char *name) {
 
 	return data;
 }
-
 
 void PCSoundDriver::setUpdateCallback(UpdateCallback upCb, void *ref) {
 	_upCb = upCb;
@@ -298,7 +307,7 @@ void PCSoundDriver::syncSounds() {
 }
 
 AdLibSoundDriver::AdLibSoundDriver(Audio::Mixer *mixer)
-	: _mixer(mixer) {
+  : _mixer(mixer) {
 	_opl = OPL::Config::create();
 	if (!_opl || !_opl->init())
 		error("Failed to create OPL");
@@ -422,7 +431,7 @@ void AdLibSoundDriver::setupInstrument(const AdLibSoundInstrument *ins, int chan
 	int mod, car, tmp;
 	const AdLibRegisterSoundInstrument *reg;
 
-	if (ins->mode != 0)  {
+	if (ins->mode != 0) {
 		mod = _operatorsTable[_voiceOperatorsTable[2 * ins->channel + 0]];
 		car = _operatorsTable[_voiceOperatorsTable[2 * ins->channel + 1]];
 	} else {
@@ -499,8 +508,10 @@ void AdLibSoundDriverADL::loadInstrument(const byte *data, AdLibSoundInstrument 
 	asi->waveSelectCar = *data++ & 3;
 	asi->amDepth = *data++;
 	++data;
-	loadRegisterInstrument(data, &asi->regMod); data += 26;
-	loadRegisterInstrument(data, &asi->regCar); data += 26;
+	loadRegisterInstrument(data, &asi->regMod);
+	data += 26;
+	loadRegisterInstrument(data, &asi->regCar);
+	data += 26;
 }
 
 void AdLibSoundDriverADL::setChannelFrequency(int channel, int frequency) {
@@ -577,7 +588,9 @@ void AdLibSoundDriverADL::playSample(const byte *data, int size, int channel, in
 }
 
 PCSoundFxPlayer::PCSoundFxPlayer(PCSoundDriver *driver)
-	: _playing(false), _songPlayed(false), _driver(driver) {
+  : _playing(false)
+  , _songPlayed(false)
+  , _driver(driver) {
 	memset(_instrumentsData, 0, sizeof(_instrumentsData));
 	_sfxData = NULL;
 	_fadeOutCounter = 0;
@@ -860,7 +873,7 @@ void PCSound::musicLoop(bool v) {
 
 void PCSound::startNote(int channel, int volume, int freq) {
 	warning("TODO: startNote");
-//	_soundDriver->setVolume(channel, volume);
+	//	_soundDriver->setVolume(channel, volume);
 	_soundDriver->setChannelFrequency(channel, freq);
 }
 

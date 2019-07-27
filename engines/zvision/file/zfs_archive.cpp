@@ -20,16 +20,17 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/memstream.h"
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/memstream.h"
+#include "common/scummsys.h"
 
 #include "zvision/file/zfs_archive.h"
 
 namespace ZVision {
 
-ZfsArchive::ZfsArchive(const Common::String &fileName) : _fileName(fileName) {
+ZfsArchive::ZfsArchive(const Common::String &fileName)
+  : _fileName(fileName) {
 	Common::File zfsFile;
 	memset(&_header, 0, sizeof(_header));
 
@@ -43,7 +44,8 @@ ZfsArchive::ZfsArchive(const Common::String &fileName) : _fileName(fileName) {
 	debug(1, "ZfsArchive::ZfsArchive(%s): Located %d files", _fileName.c_str(), _entryHeaders.size());
 }
 
-ZfsArchive::ZfsArchive(const Common::String &fileName, Common::SeekableReadStream *stream) : _fileName(fileName) {
+ZfsArchive::ZfsArchive(const Common::String &fileName, Common::SeekableReadStream *stream)
+  : _fileName(fileName) {
 	readHeaders(stream);
 
 	debug(1, "ZfsArchive::ZfsArchive(%s): Located %d files", _fileName.c_str(), _entryHeaders.size());

@@ -58,7 +58,7 @@ enum ElementType {
 	kDMElementTypeDoorSide = 16, // @ C16_ELEMENT_DOOR_SIDE /* Values 16-19 are only used for square aspect */
 	kDMElementTypeDoorFront = 17, // @ C17_ELEMENT_DOOR_FRONT
 	kDMElementTypeStairsSide = 18, // @ C18_ELEMENT_STAIRS_SIDE
-	kDMElementTypeStairsFront = 19  // @ C19_ELEMENT_STAIRS_FRONT
+	kDMElementTypeStairsFront = 19 // @ C19_ELEMENT_STAIRS_FRONT
 };
 
 enum ObjectAllowedSlot {
@@ -84,19 +84,19 @@ enum ArmourAttribute {
 
 enum WeaponClass {
 	kDMWeaponClassNone = -1,
-/* Class 0: SWING weapons */
+	/* Class 0: SWING weapons */
 	kDMWeaponClassSwingWeapon = 0, // @ C000_CLASS_SWING_WEAPON
-/* Class 1 to 15: THROW weapons */
+	/* Class 1 to 15: THROW weapons */
 	kDMWeaponClassDaggerAndAxes = 2, // @ C002_CLASS_DAGGER_AND_AXES
 	kDMWeaponClassBowAmmunition = 10, // @ C010_CLASS_BOW_AMMUNITION
 	kDMWeaponClassSlingAmmunition = 11, // @ C011_CLASS_SLING_AMMUNITION
 	kDMWeaponClassPoisinDart = 12, // @ C012_CLASS_POISON_DART
-/* Class 16 to 111: SHOOT weapons */
+	/* Class 16 to 111: SHOOT weapons */
 	kDMWeaponClassFirstBow = 16, // @ C016_CLASS_FIRST_BOW
 	kDMWeaponClassLastBow = 31, // @ C031_CLASS_LAST_BOW
 	kDMWeaponClassFirstSling = 32, // @ C032_CLASS_FIRST_SLING
 	kDMWeaponClassLastSling = 47, // @ C047_CLASS_LAST_SLING
-/* Class 112 to 255: Magic and special weapons */
+	/* Class 112 to 255: Magic and special weapons */
 	kDMWeaponClassFirstMagicWeapon = 112 // @ C112_CLASS_FIRST_MAGIC_WEAPON
 };
 
@@ -258,8 +258,15 @@ public:
 	uint16 _actionSetIndex;
 	uint16 _allowedSlots;
 	ObjectInfoIndex(int16 type, uint16 objectAspectIndex, uint16 actionSetIndex, uint16 allowedSlots)
-		: _type(type), _objectAspectIndex(objectAspectIndex), _actionSetIndex(actionSetIndex), _allowedSlots(allowedSlots) {}
-	ObjectInfoIndex() : _type(0), _objectAspectIndex(0), _actionSetIndex(0), _allowedSlots(0) {}
+	  : _type(type)
+	  , _objectAspectIndex(objectAspectIndex)
+	  , _actionSetIndex(actionSetIndex)
+	  , _allowedSlots(allowedSlots) {}
+	ObjectInfoIndex()
+	  : _type(0)
+	  , _objectAspectIndex(0)
+	  , _actionSetIndex(0)
+	  , _allowedSlots(0) {}
 	bool getAllowedSlot(ObjectAllowedSlot slot) { return _allowedSlots & slot; }
 	uint16 getAllowedSlots() { return _allowedSlots; }
 	void setAllowedSlot(ObjectAllowedSlot slot, bool val) {
@@ -278,8 +285,13 @@ public:
 	uint16 _attributes;
 
 	ArmourInfo(uint16 weight, uint16 defense, uint16 attributes)
-		:_weight(weight), _defense(defense), _attributes(attributes) {}
-	ArmourInfo() :_weight(0), _defense(0), _attributes(0) {}
+	  : _weight(weight)
+	  , _defense(defense)
+	  , _attributes(attributes) {}
+	ArmourInfo()
+	  : _weight(0)
+	  , _defense(0)
+	  , _attributes(0) {}
 
 	uint16 getAttribute(ArmourAttribute attribute) { return _attributes & attribute; }
 	void setAttribute(ArmourAttribute attribute) { _attributes |= attribute; }
@@ -291,12 +303,22 @@ public:
 	uint16 _class;
 	uint16 _strength;
 	uint16 _kineticEnergy;
+
 private:
 	uint16 _attributes; /* Bits 15-13 Unreferenced */
 public:
 	WeaponInfo(uint16 weight, uint16 wClass, uint16 strength, uint16 kineticEnergy, uint16 attributes)
-		: _weight(weight), _class(wClass), _strength(strength), _kineticEnergy(kineticEnergy), _attributes(attributes) {}
-	WeaponInfo() : _weight(0), _class(0), _strength(0), _kineticEnergy(0), _attributes(0) {}
+	  : _weight(weight)
+	  , _class(wClass)
+	  , _strength(strength)
+	  , _kineticEnergy(kineticEnergy)
+	  , _attributes(attributes) {}
+	WeaponInfo()
+	  : _weight(0)
+	  , _class(0)
+	  , _strength(0)
+	  , _kineticEnergy(0)
+	  , _attributes(0) {}
 
 	uint16 getShootAttack() { return _attributes & 0xFF; } // @ M65_SHOOT_ATTACK
 	uint16 getProjectileAspectOrdinal() { return (_attributes >> 8) & 0x1F; } // @ M66_PROJECTILE_ASPECT_ORDINAL
@@ -328,16 +350,19 @@ public:
 	uint16 getFireResistance() { return (_resistances >> 4) & 0xF; }
 	uint16 getPoisonResistance() { return (_resistances >> 8) & 0xF; }
 	static uint16 getHeight(uint16 attrib) { return (attrib >> 7) & 0x3; }
-	uint16 getSightRange() { return (_ranges) & 0xF; }
-	uint16 getSmellRange() { return  (_ranges >> 8) & 0xF; }
+	uint16 getSightRange() { return (_ranges)&0xF; }
+	uint16 getSmellRange() { return (_ranges >> 8) & 0xF; }
 	uint16 getAttackRange() { return (_ranges >> 12) & 0xF; }
 }; // @ CREATURE_INFO
 
 class Door {
 	Thing _nextThing;
 	uint16 _attributes;
+
 public:
-	explicit Door(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
+	explicit Door(uint16 *rawDat)
+	  : _nextThing(rawDat[0])
+	  , _attributes(rawDat[1]) {}
 	Thing getNextThing() { return _nextThing; }
 	bool isMeleeDestructible() { return (_attributes >> 8) & 1; }
 	bool isMagicDestructible() { return (_attributes >> 7) & 1; }
@@ -351,8 +376,12 @@ class Teleporter {
 	Thing _nextThing;
 	uint16 _attributes;
 	uint16 _destMapIndex;
+
 public:
-	explicit Teleporter(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]), _destMapIndex(rawDat[2]) {}
+	explicit Teleporter(uint16 *rawDat)
+	  : _nextThing(rawDat[0])
+	  , _attributes(rawDat[1])
+	  , _destMapIndex(rawDat[2]) {}
 	Thing getNextThing() { return _nextThing; }
 	bool isAudible() { return (_attributes >> 15) & 1; }
 	TeleporterScope getScope() { return (TeleporterScope)((_attributes >> 13) & 1); }
@@ -366,8 +395,11 @@ public:
 class TextString {
 	Thing _nextThing;
 	uint16 _textDataRef;
+
 public:
-	explicit TextString(uint16 *rawDat) : _nextThing(rawDat[0]), _textDataRef(rawDat[1]) {}
+	explicit TextString(uint16 *rawDat)
+	  : _nextThing(rawDat[0])
+	  , _textDataRef(rawDat[1]) {}
 
 	Thing getNextThing() { return _nextThing; }
 	uint16 getWordOffset() { return _textDataRef >> 3; }
@@ -381,7 +413,11 @@ class Sensor {
 	uint16 _attributes; // A
 	uint16 _action; // B
 public:
-	explicit Sensor(uint16 *rawDat) : _nextThing(rawDat[0]), _datAndType(rawDat[1]), _attributes(rawDat[2]), _action(rawDat[3]) {}
+	explicit Sensor(uint16 *rawDat)
+	  : _nextThing(rawDat[0])
+	  , _datAndType(rawDat[1])
+	  , _attributes(rawDat[2])
+	  , _action(rawDat[3]) {}
 
 	Thing getNextThing() { return _nextThing; }
 	void setNextThing(Thing thing) { _nextThing = thing; }
@@ -405,19 +441,22 @@ public:
 	Cell getActionTargetCell() { return (Cell)((_action >> 4) & 3); }
 	uint16 getActionHealthMultiplier() { return ((_action >> 4) & 0xF); } // @ M45_HEALTH_MULTIPLIER
 	uint16 getActionTicks() { return ((_action >> 4) >> 4) & 0xFFF; } // @ M46_TICKS
-	uint16 getActionKineticEnergy() { return ((_action >> 4) & 0xFF); }// @ M47_KINETIC_ENERGY
-	uint16 getActionStepEnergy() { return ((_action >> 4) >> 8) & 0xFF; }// @ M48_STEP_ENERGY
+	uint16 getActionKineticEnergy() { return ((_action >> 4) & 0xFF); } // @ M47_KINETIC_ENERGY
+	uint16 getActionStepEnergy() { return ((_action >> 4) >> 8) & 0xFF; } // @ M48_STEP_ENERGY
 	uint16 getActionLocalEffect() { return (_action >> 4); } // @ M49_LOCAL_EFFECT
 
-	void setDatAndTypeWithOr(uint16 val) { _datAndType |= val;  }
+	void setDatAndTypeWithOr(uint16 val) { _datAndType |= val; }
 
 }; // @ SENSOR
 
 class Weapon {
 	Thing _nextThing;
 	uint16 _desc;
+
 public:
-	explicit Weapon(uint16 *rawDat) : _nextThing(rawDat[0]), _desc(rawDat[1]) {}
+	explicit Weapon(uint16 *rawDat)
+	  : _nextThing(rawDat[0])
+	  , _desc(rawDat[1]) {}
 
 	WeaponType getType() { return (WeaponType)(_desc & 0x7F); }
 	void setType(uint16 val) { _desc = (_desc & ~0x7F) | (val & 0x7F); }
@@ -429,9 +468,12 @@ public:
 			_desc &= (~(1 << 15));
 	}
 	uint16 getChargeCount() { return (_desc >> 10) & 0xF; }
-	uint16 setChargeCount(uint16 val) { _desc = (_desc & ~(0xF << 10)) | ((val & 0xF) << 10); return (val & 0xF); }
+	uint16 setChargeCount(uint16 val) {
+		_desc = (_desc & ~(0xF << 10)) | ((val & 0xF) << 10);
+		return (val & 0xF);
+	}
 	Thing getNextThing() { return _nextThing; }
-	void setNextThing(Thing val) { _nextThing = val;  }
+	void setNextThing(Thing val) { _nextThing = val; }
 	uint16 getCursed() { return (_desc >> 8) & 1; }
 	void setCursed(uint16 val) { _desc = (_desc & ~(1 << 8)) | ((val & 1) << 8); }
 	uint16 getPoisoned() { return (_desc >> 9) & 1; }
@@ -443,8 +485,11 @@ public:
 class Armour {
 	Thing _nextThing;
 	uint16 _attributes;
+
 public:
-	explicit Armour(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
+	explicit Armour(uint16 *rawDat)
+	  : _nextThing(rawDat[0])
+	  , _attributes(rawDat[1]) {}
 
 	ArmourType getType() { return (ArmourType)(_attributes & 0x7F); }
 	Thing getNextThing() { return _nextThing; }
@@ -458,8 +503,11 @@ public:
 class Scroll {
 	Thing _nextThing;
 	uint16 _attributes;
+
 public:
-	explicit Scroll(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
+	explicit Scroll(uint16 *rawDat)
+	  : _nextThing(rawDat[0])
+	  , _attributes(rawDat[1]) {}
 	void set(Thing next, uint16 attribs) {
 		_nextThing = next;
 		_attributes = attribs;
@@ -479,7 +527,9 @@ class Potion {
 public:
 	Thing _nextThing;
 	uint16 _attributes;
-	explicit Potion(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
+	explicit Potion(uint16 *rawDat)
+	  : _nextThing(rawDat[0])
+	  , _attributes(rawDat[1]) {}
 
 	PotionType getType() { return (PotionType)((_attributes >> 8) & 0x7F); }
 	void setType(PotionType val) { _attributes = (_attributes & ~(0x7F << 8)) | ((val & 0x7F) << 8); }
@@ -493,8 +543,12 @@ class Container {
 	Thing _nextThing;
 	Thing _slot;
 	uint16 _type;
+
 public:
-	explicit Container(uint16 *rawDat) : _nextThing(rawDat[0]), _slot(rawDat[1]), _type(rawDat[2]) {}
+	explicit Container(uint16 *rawDat)
+	  : _nextThing(rawDat[0])
+	  , _slot(rawDat[1])
+	  , _type(rawDat[2]) {}
 
 	uint16 getType() { return (_type >> 1) & 0x3; }
 	Thing &getSlot() { return _slot; }
@@ -504,8 +558,11 @@ public:
 class Junk {
 	Thing _nextThing;
 	uint16 _attributes;
+
 public:
-	explicit Junk(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
+	explicit Junk(uint16 *rawDat)
+	  : _nextThing(rawDat[0])
+	  , _attributes(rawDat[1]) {}
 
 	JunkType getType() { return (JunkType)(_attributes & 0x7F); }
 	void setType(uint16 val) { _attributes = (_attributes & ~0x7F) | (val & 0x7F); }
@@ -525,21 +582,31 @@ public:
 	uint16 _kineticEnergy;
 	uint16 _attack;
 	uint16 _eventIndex;
-	explicit Projectile(uint16 *rawDat) : _nextThing(rawDat[0]), _slot(rawDat[1]), _kineticEnergy(rawDat[2]),
-		_attack(rawDat[3]), _eventIndex(rawDat[4]) {}
+	explicit Projectile(uint16 *rawDat)
+	  : _nextThing(rawDat[0])
+	  , _slot(rawDat[1])
+	  , _kineticEnergy(rawDat[2])
+	  , _attack(rawDat[3])
+	  , _eventIndex(rawDat[4]) {}
 
 }; // @ PROJECTILE
 
 class Explosion {
 	Thing _nextThing;
 	uint16 _attributes;
+
 public:
-	explicit Explosion(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
+	explicit Explosion(uint16 *rawDat)
+	  : _nextThing(rawDat[0])
+	  , _attributes(rawDat[1]) {}
 
 	Thing getNextThing() { return _nextThing; }
 	Thing setNextThing(Thing val) { return _nextThing = val; }
 	uint16 getType() { return _attributes & 0x7F; }
-	uint16 setType(uint16 val) { _attributes = (_attributes & ~0x7F) | (val & 0x7F); return (val & 0x7F); }
+	uint16 setType(uint16 val) {
+		_attributes = (_attributes & ~0x7F) | (val & 0x7F);
+		return (val & 0x7F);
+	}
 	uint16 getAttack() { return (_attributes >> 8) & 0xFF; }
 	void setAttack(uint16 val) { _attributes = (_attributes & ~(0xFF << 8)) | ((val & 0xFF) << 8); }
 	uint16 getCentered() { return (_attributes >> 7) & 0x1; }
@@ -548,12 +615,21 @@ public:
 
 class Square {
 	byte _data;
+
 public:
-	explicit Square(byte dat = 0) : _data(dat) {}
+	explicit Square(byte dat = 0)
+	  : _data(dat) {}
 	explicit Square(ElementType type) { setType(type); }
-	explicit Square(byte element, byte mask) : _data((element << 5) | mask) {}
-	Square &set(byte dat) { this->_data = dat; return *this; }
-	Square &set(SquareMask mask) { _data |= mask; return *this; }
+	explicit Square(byte element, byte mask)
+	  : _data((element << 5) | mask) {}
+	Square &set(byte dat) {
+		this->_data = dat;
+		return *this;
+	}
+	Square &set(SquareMask mask) {
+		_data |= mask;
+		return *this;
+	}
 	byte get(SquareMask mask) { return _data & mask; }
 	byte getDoorState() { return _data & 0x7; } // @ M36_DOOR_STATE
 	void setDoorState(byte state) { _data = ((_data & ~0x7) | state); } // @ M37_SET_DOOR_STATE
@@ -593,12 +669,13 @@ struct Map {
 	uint8 _doorSet0, _doorSet1;
 }; // @ MAP
 
-
 class DoorInfo {
 public:
 	byte _attributes;
 	byte _defense;
-	DoorInfo(byte b1, byte b2) : _attributes(b1), _defense(b2) {}
+	DoorInfo(byte b1, byte b2)
+	  : _attributes(b1)
+	  , _defense(b2) {}
 	DoorInfo() { resetToZero(); }
 	void resetToZero() { _attributes = _defense = 0; }
 }; // @ DOOR_INFO
@@ -619,7 +696,7 @@ class DungeonMan {
 
 	int16 getRandomOrnOrdinal(bool allowed, int16 count, int16 mapX, int16 mapY, int16 modulo); // @ F0170_DUNGEON_GetRandomOrnamentOrdinal
 	void setSquareAspectOrnOrdinals(uint16 *aspectArray, bool leftAllowed, bool frontAllowed, bool rightAllowed, int16 dir,
-										 int16 mapX, int16 mapY, bool isFakeWall); // @ F0171_DUNGEON_SetSquareAspectRandomWallOrnamentOrdinals
+	                                int16 mapX, int16 mapY, bool isFakeWall); // @ F0171_DUNGEON_SetSquareAspectRandomWallOrnamentOrdinals
 
 public:
 	explicit DungeonMan(DMEngine *dmEngine);
@@ -633,7 +710,7 @@ public:
 	uint16 *getSquareFirstThingData(int16 mapX, int16 mapY); // @ F0157_DUNGEON_GetSquareFirstThingData
 
 	// TODO: this does stuff other than load the file!
-	void loadDungeonFile(Common::InSaveFile *file);	// @ F0434_STARTEND_IsLoadDungeonSuccessful_CPSC
+	void loadDungeonFile(Common::InSaveFile *file); // @ F0434_STARTEND_IsLoadDungeonSuccessful_CPSC
 	void setCurrentMapAndPartyMap(uint16 mapIndex); // @ F0174_DUNGEON_SetCurrentMapAndPartyMap
 
 	bool isWallOrnAnAlcove(int16 wallOrnIndex); // @ F0149_DUNGEON_IsWallOrnamentAnAlcove
@@ -663,7 +740,7 @@ public:
 	Thing getObjForProjectileLaucherOrObjGen(uint16 iconIndex); // @ F0167_DUNGEON_GetObjectForProjectileLauncherOrObjectGenerator
 	int16 getRandomOrnamentIndex(uint16 val1, uint16 val2, int16 modulo); // @ F0169_DUNGEON_GetRandomOrnamentIndex
 
-	uint32 _rawDunFileDataSize;	 // @ probably NONE
+	uint32 _rawDunFileDataSize; // @ probably NONE
 	byte *_rawDunFileData; // @ ???
 	DungeonFileHeader _dungeonFileHeader; // @ G0278_ps_DungeonHeader
 

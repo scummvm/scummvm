@@ -20,12 +20,12 @@
  *
  */
 
-#include "config.h"
 #include "msvc.h"
+#include "config.h"
 
-#include <fstream>
 #include <algorithm>
 #include <cstring>
+#include <fstream>
 
 namespace CreateProjectTool {
 
@@ -33,10 +33,11 @@ namespace CreateProjectTool {
 // MSVC Provider (Base class)
 //////////////////////////////////////////////////////////////////////////
 MSVCProvider::MSVCProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion &msvc)
-	: ProjectProvider(global_warnings, project_warnings, version), _msvcVersion(msvc) {
+  : ProjectProvider(global_warnings, project_warnings, version)
+  , _msvcVersion(msvc) {
 
 	_enableLanguageExtensions = tokenize(ENABLE_LANGUAGE_EXTENSIONS, ',');
-	_disableEditAndContinue   = tokenize(DISABLE_EDIT_AND_CONTINUE, ',');
+	_disableEditAndContinue = tokenize(DISABLE_EDIT_AND_CONTINUE, ',');
 }
 
 void MSVCProvider::createWorkspace(const BuildSetup &setup) {
@@ -91,21 +92,36 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 
 	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
 		solution << "\t\t{" << i->second << "}.Debug|Win32.ActiveCfg = Debug|Win32\n"
-		            "\t\t{" << i->second << "}.Debug|Win32.Build.0 = Debug|Win32\n"
-		            "\t\t{" << i->second << "}.Analysis|Win32.ActiveCfg = Analysis|Win32\n"
-		            "\t\t{" << i->second << "}.Analysis|Win32.Build.0 = Analysis|Win32\n"
-		            "\t\t{" << i->second << "}.LLVM|Win32.ActiveCfg = LLVM|Win32\n"
-		            "\t\t{" << i->second << "}.LLVM|Win32.Build.0 = LLVM|Win32\n"
-		            "\t\t{" << i->second << "}.Release|Win32.ActiveCfg = Release|Win32\n"
-		            "\t\t{" << i->second << "}.Release|Win32.Build.0 = Release|Win32\n"
-		            "\t\t{" << i->second << "}.Debug|x64.ActiveCfg = Debug|x64\n"
-		            "\t\t{" << i->second << "}.Debug|x64.Build.0 = Debug|x64\n"
-		            "\t\t{" << i->second << "}.Analysis|x64.ActiveCfg = Analysis|x64\n"
-		            "\t\t{" << i->second << "}.Analysis|x64.Build.0 = Analysis|x64\n"
-		            "\t\t{" << i->second << "}.LLVM|x64.ActiveCfg = LLVM|x64\n"
-		            "\t\t{" << i->second << "}.LLVM|x64.Build.0 = LLVM|x64\n"
-		            "\t\t{" << i->second << "}.Release|x64.ActiveCfg = Release|x64\n"
-		            "\t\t{" << i->second << "}.Release|x64.Build.0 = Release|x64\n";
+		                                    "\t\t{"
+		         << i->second << "}.Debug|Win32.Build.0 = Debug|Win32\n"
+		                         "\t\t{"
+		         << i->second << "}.Analysis|Win32.ActiveCfg = Analysis|Win32\n"
+		                         "\t\t{"
+		         << i->second << "}.Analysis|Win32.Build.0 = Analysis|Win32\n"
+		                         "\t\t{"
+		         << i->second << "}.LLVM|Win32.ActiveCfg = LLVM|Win32\n"
+		                         "\t\t{"
+		         << i->second << "}.LLVM|Win32.Build.0 = LLVM|Win32\n"
+		                         "\t\t{"
+		         << i->second << "}.Release|Win32.ActiveCfg = Release|Win32\n"
+		                         "\t\t{"
+		         << i->second << "}.Release|Win32.Build.0 = Release|Win32\n"
+		                         "\t\t{"
+		         << i->second << "}.Debug|x64.ActiveCfg = Debug|x64\n"
+		                         "\t\t{"
+		         << i->second << "}.Debug|x64.Build.0 = Debug|x64\n"
+		                         "\t\t{"
+		         << i->second << "}.Analysis|x64.ActiveCfg = Analysis|x64\n"
+		                         "\t\t{"
+		         << i->second << "}.Analysis|x64.Build.0 = Analysis|x64\n"
+		                         "\t\t{"
+		         << i->second << "}.LLVM|x64.ActiveCfg = LLVM|x64\n"
+		                         "\t\t{"
+		         << i->second << "}.LLVM|x64.Build.0 = LLVM|x64\n"
+		                         "\t\t{"
+		         << i->second << "}.Release|x64.ActiveCfg = Release|x64\n"
+		                         "\t\t{"
+		         << i->second << "}.Release|x64.Build.0 = Release|x64\n";
 	}
 
 	solution << "\tEndGlobalSection\n"

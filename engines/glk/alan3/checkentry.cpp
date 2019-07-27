@@ -28,28 +28,28 @@
 namespace Glk {
 namespace Alan3 {
 
-/*======================================================================*/
-bool checksFailed(CONTEXT, Aaddr adr, bool execute) {
-	CheckEntry *chk = (CheckEntry *) pointerTo(adr);
-	bool flag;
+	/*======================================================================*/
+	bool checksFailed(CONTEXT, Aaddr adr, bool execute) {
+		CheckEntry *chk = (CheckEntry *)pointerTo(adr);
+		bool flag;
 
-	if (chk->exp == 0) {
-		if (execute == EXECUTE_CHECK_BODY_ON_FAIL)
-			R0CALL1(interpret, chk->stms)
-		return TRUE;
-	} else {
-		while (!isEndOfArray(chk)) {
-			R0FUNC1(evaluate, flag, chk->exp)
-			if (!flag) {
-				if (execute == EXECUTE_CHECK_BODY_ON_FAIL)
-					R0CALL1(interpret, chk->stms)
-				return TRUE;
+		if (chk->exp == 0) {
+			if (execute == EXECUTE_CHECK_BODY_ON_FAIL)
+				R0CALL1(interpret, chk->stms)
+			return TRUE;
+		} else {
+			while (!isEndOfArray(chk)) {
+				R0FUNC1(evaluate, flag, chk->exp)
+				if (!flag) {
+					if (execute == EXECUTE_CHECK_BODY_ON_FAIL)
+						R0CALL1(interpret, chk->stms)
+					return TRUE;
+				}
+				chk++;
 			}
-			chk++;
+			return FALSE;
 		}
-		return FALSE;
 	}
-}
 
 } // End of namespace Alan3
 } // End of namespace Glk

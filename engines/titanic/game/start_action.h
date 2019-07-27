@@ -32,9 +32,11 @@ class CStartAction : public CBackground {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+
 protected:
 	CString _msgTarget;
 	CString _msgAction;
+
 public:
 	CLASSDEF;
 	CStartAction();

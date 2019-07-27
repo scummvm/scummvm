@@ -20,9 +20,9 @@
  *
  */
 
+#include "neverhood/smackerplayer.h"
 #include "graphics/palette.h"
 #include "neverhood/gamemodule.h"
-#include "neverhood/smackerplayer.h"
 #include "neverhood/palette.h"
 #include "neverhood/resourceman.h"
 #include "neverhood/scene.h"
@@ -32,7 +32,8 @@ namespace Neverhood {
 // SmackerSurface
 
 SmackerSurface::SmackerSurface(NeverhoodEngine *vm)
-	: BaseSurface(vm, 0, 0, 0, "smacker"), _smackerFrame(NULL) {
+  : BaseSurface(vm, 0, 0, 0, "smacker")
+  , _smackerFrame(NULL) {
 }
 
 void SmackerSurface::draw() {
@@ -67,7 +68,7 @@ void SmackerSurface::unsetSmackerFrame() {
 // SmackerDoubleSurface
 
 SmackerDoubleSurface::SmackerDoubleSurface(NeverhoodEngine *vm)
-	: SmackerSurface(vm) {
+  : SmackerSurface(vm) {
 }
 
 void SmackerDoubleSurface::draw() {
@@ -102,9 +103,18 @@ void NeverhoodSmackerDecoder::forceSeekToFrame(uint frame) {
 // SmackerPlayer
 
 SmackerPlayer::SmackerPlayer(NeverhoodEngine *vm, Scene *scene, uint32 fileHash, bool doubleSurface, bool flag, bool paused)
-	: Entity(vm, 0), _scene(scene), _doubleSurface(doubleSurface), _videoDone(false), _paused(paused),
-	_palette(NULL), _smackerDecoder(NULL), _smackerSurface(NULL), _stream(NULL), _smackerFirst(true),
-	_drawX(-1), _drawY(-1) {
+  : Entity(vm, 0)
+  , _scene(scene)
+  , _doubleSurface(doubleSurface)
+  , _videoDone(false)
+  , _paused(paused)
+  , _palette(NULL)
+  , _smackerDecoder(NULL)
+  , _smackerSurface(NULL)
+  , _stream(NULL)
+  , _smackerFirst(true)
+  , _drawX(-1)
+  , _drawY(-1) {
 
 	SetUpdateHandler(&SmackerPlayer::update);
 
@@ -143,7 +153,6 @@ void SmackerPlayer::open(uint32 fileHash, bool keepLastFrame) {
 
 	if (!_paused)
 		_smackerDecoder->start();
-
 }
 
 void SmackerPlayer::close() {
@@ -213,7 +222,6 @@ void SmackerPlayer::update() {
 			_videoDone = false;
 		}
 	}
-
 }
 
 void SmackerPlayer::updateFrame() {
@@ -241,7 +249,6 @@ void SmackerPlayer::updateFrame() {
 
 	if (_smackerDecoder->hasDirtyPalette())
 		updatePalette();
-
 }
 
 void SmackerPlayer::updatePalette() {
@@ -259,7 +266,7 @@ void SmackerPlayer::updatePalette() {
 	// all scenes for a glitch that only seems to manifest in one, therefore
 	// we define color 255 to be white only for that scene.
 	if (_vm->_gameModule->getCurrentModuleNum() == 3000 && _vm->_gameState.sceneNum == 3)
-			tempPalette[255 * 4 + 0] = tempPalette[255 * 4 + 1] = tempPalette[255 * 4 + 2] = 0xFF;
+		tempPalette[255 * 4 + 0] = tempPalette[255 * 4 + 1] = tempPalette[255 * 4 + 2] = 0xFF;
 
 	_palette->copyPalette(tempPalette, 0, 256, 0);
 }

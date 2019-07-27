@@ -22,28 +22,28 @@
 
 #if defined(__WII__)
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
-#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
+#	define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+#	define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
+#	define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 
-#include "backends/fs/wii/wii-fs.h"
-#include "backends/fs/wii/wii-fs-factory.h"
-#include "backends/fs/stdiostream.h"
+#	include "backends/fs/wii/wii-fs.h"
+#	include "backends/fs/stdiostream.h"
+#	include "backends/fs/wii/wii-fs-factory.h"
 
-#include <sys/iosupport.h>
-#include <sys/dir.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <errno.h>
-#include <unistd.h>
+#	include <errno.h>
+#	include <sys/dir.h>
+#	include <sys/iosupport.h>
+#	include <sys/stat.h>
+#	include <sys/types.h>
+#	include <unistd.h>
 
-#include <gctypes.h>
+#	include <gctypes.h>
 
 // gets all registered devoptab devices
 bool WiiFilesystemNode::getDevopChildren(AbstractFSList &list, ListMode mode, bool hidden) const {
 	u8 i;
-	const devoptab_t* dt;
+	const devoptab_t *dt;
 
 	if (mode == Common::FSNode::kListFilesOnly)
 		return true;
@@ -80,9 +80,9 @@ void WiiFilesystemNode::clearFlags() {
 
 void WiiFilesystemNode::setFlags(const struct stat *st) {
 	_exists = true;
-	_isDirectory = ( (st->st_mode & S_IFDIR) != 0 );
-	_isReadable = ( (st->st_mode & S_IRUSR) != 0 );
-	_isWritable = ( (st->st_mode & S_IWUSR) != 0 );
+	_isDirectory = ((st->st_mode & S_IFDIR) != 0);
+	_isReadable = ((st->st_mode & S_IRUSR) != 0);
+	_isWritable = ((st->st_mode & S_IWUSR) != 0);
 }
 
 WiiFilesystemNode::WiiFilesystemNode() {
@@ -106,7 +106,7 @@ WiiFilesystemNode::WiiFilesystemNode(const Common::String &p) {
 	_displayName = lastPathComponent(_path, '/');
 
 	struct stat st;
-	if(stat(_path.c_str(), &st) != -1)
+	if (stat(_path.c_str(), &st) != -1)
 		setFlags(&st);
 	else
 		clearFlags();
@@ -152,8 +152,8 @@ bool WiiFilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hi
 	if (_path.empty())
 		return getDevopChildren(list, mode, hidden);
 
-	DIR* dp = opendir (_path.c_str());
-	DIR* tmpdir;
+	DIR *dp = opendir(_path.c_str());
+	DIR *tmpdir;
 
 	if (dp == NULL)
 		return false;
@@ -166,24 +166,22 @@ bool WiiFilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hi
 
 		Common::String newPath(_path);
 		if (newPath.lastChar() != '/')
-		  newPath += '/';
+			newPath += '/';
 		newPath += pent->d_name;
 
 		bool isDir = false;
 		tmpdir = opendir(newPath.c_str());
-		if(tmpdir)
-		{
+		if (tmpdir) {
 			isDir = true;
 			closedir(tmpdir);
 		}
 
-		if ((mode == Common::FSNode::kListFilesOnly && isDir) ||
-			(mode == Common::FSNode::kListDirectoriesOnly && !isDir))
+		if ((mode == Common::FSNode::kListFilesOnly && isDir) || (mode == Common::FSNode::kListDirectoriesOnly && !isDir))
 			continue;
 
 		struct stat st;
 		st.st_mode = 0;
-		st.st_mode |= ( isDir ? S_IFDIR : 0 );
+		st.st_mode |= (isDir ? S_IFDIR : 0);
 		st.st_mode |= S_IRUSR;
 		st.st_mode |= S_IWUSR;
 

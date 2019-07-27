@@ -21,7 +21,7 @@
  * Low level graphics interface.
  */
 
-#ifndef TINSEL_GRAPHICS_H		// prevent multiple includes
+#ifndef TINSEL_GRAPHICS_H // prevent multiple includes
 #define TINSEL_GRAPHICS_H
 
 #include "tinsel/dw.h"
@@ -36,24 +36,23 @@ struct PALQ;
 
 /** draw object structure - only used when drawing objects */
 struct DRAWOBJECT {
-	char *charBase;		// character set base address
-	int transOffset;	// transparent character offset
-	int flags;		// object flags - see above for list
-	PALQ *pPal;		// objects palette Q position
-	int constant;		// which color in palette for monochrome objects
-	int width;		// width of object
-	int height;		// height of object
-	SCNHANDLE hBits;	// image bitmap handle
-	int lineoffset;		// offset to next line
-	int leftClip;		// amount to clip off object left
-	int rightClip;		// amount to clip off object right
-	int topClip;		// amount to clip off object top
-	int botClip;		// amount to clip off object bottom
-	short xPos;			// x position of object
-	short yPos;			// y position of object
-	uint32 baseCol;		// For 4-bit stuff
+	char *charBase; // character set base address
+	int transOffset; // transparent character offset
+	int flags; // object flags - see above for list
+	PALQ *pPal; // objects palette Q position
+	int constant; // which color in palette for monochrome objects
+	int width; // width of object
+	int height; // height of object
+	SCNHANDLE hBits; // image bitmap handle
+	int lineoffset; // offset to next line
+	int leftClip; // amount to clip off object left
+	int rightClip; // amount to clip off object right
+	int topClip; // amount to clip off object top
+	int botClip; // amount to clip off object bottom
+	short xPos; // x position of object
+	short yPos; // y position of object
+	uint32 baseCol; // For 4-bit stuff
 };
-
 
 /*----------------------------------------------------------------------*\
 |*			    Function Prototypes				*|

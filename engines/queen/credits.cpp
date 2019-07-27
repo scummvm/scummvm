@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "queen/credits.h"
 
 #include "queen/display.h"
@@ -29,8 +28,16 @@
 
 namespace Queen {
 
-Credits::Credits(QueenEngine *vm, const char* filename) :
-	_vm(vm), _running(true), _count(0), _pause(0), _justify(0), _fontSize(0), _color(0), _zone(0), _lineNum(0) {
+Credits::Credits(QueenEngine *vm, const char *filename)
+  : _vm(vm)
+  , _running(true)
+  , _count(0)
+  , _pause(0)
+  , _justify(0)
+  , _fontSize(0)
+  , _color(0)
+  , _zone(0)
+  , _lineNum(0) {
 	_vm->resource()->loadTextFile(filename, _credits);
 }
 
@@ -69,48 +76,48 @@ void Credits::update() {
 			int i;
 
 			switch (tolower(line[1])) {
-			case 'l' :
+			case 'l':
 				_justify = 0;
 				break;
-			case 'c' :
+			case 'c':
 				_justify = 1;
 				break;
-			case 'r' :
+			case 'r':
 				_justify = 2;
 				break;
-			case 's' :
+			case 's':
 				_fontSize = 0;
 				break;
-			case 'b' :
+			case 'b':
 				_fontSize = 1;
 				break;
-			case 'p' :
+			case 'p':
 				_pause = atoi(&line[3]);
 				_pause *= 10;
 				/* wait until next room */
 				if (0 == _pause)
 					_pause = -1;
-				for (i = 0; i < _count; i++)	{
+				for (i = 0; i < _count; i++) {
 					_vm->display()->textCurrentColor(_list[i].color);
 					_vm->display()->setText(_list[i].x, _list[i].y, _list[i].text);
 				}
 				_count = 0;
 				return;
-			case 'i' :
+			case 'i':
 				_color = atoi(&line[3]);
 				if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
 					_color &= 31;
 				}
 				break;
-			case '1' :
-			case '2' :
-			case '3' :
-			case '4' :
-			case '5' :
-			case '6' :
-			case '7' :
-			case '8' :
-			case '9' :
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9':
 				_zone = line[1] - '1';
 				break;
 			}
@@ -138,6 +145,5 @@ void Credits::update() {
 	}
 	_running = false;
 }
-
 
 } // End of namespace Queen

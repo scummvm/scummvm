@@ -28,21 +28,25 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CServiceElevator, CTransport)
-	ON_MESSAGE(BodyInBilgeRoomMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(ServiceElevatorMsg)
-	ON_MESSAGE(TimerMsg)
-	ON_MESSAGE(ServiceElevatorFloorRequestMsg)
-	ON_MESSAGE(LeaveRoomMsg)
-	ON_MESSAGE(OpeningCreditsMsg)
+ON_MESSAGE(BodyInBilgeRoomMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(ServiceElevatorMsg)
+ON_MESSAGE(TimerMsg)
+ON_MESSAGE(ServiceElevatorFloorRequestMsg)
+ON_MESSAGE(LeaveRoomMsg)
+ON_MESSAGE(OpeningCreditsMsg)
 END_MESSAGE_MAP()
 
 bool CServiceElevator::_v1;
 int CServiceElevator::_v2;
 int CServiceElevator::_v3;
 
-CServiceElevator::CServiceElevator() : CTransport(),
-	_fieldF8(0), _soundHandle1(0), _timerId(0), _soundHandle2(0) {
+CServiceElevator::CServiceElevator()
+  : CTransport()
+  , _fieldF8(0)
+  , _soundHandle1(0)
+  , _timerId(0)
+  , _soundHandle2(0) {
 }
 
 void CServiceElevator::save(SimpleFile *file, int indent) {
@@ -137,7 +141,7 @@ bool CServiceElevator::ServiceElevatorMsg(CServiceElevatorMsg *msg) {
 			break;
 
 		case 2:
-			_string1 = _v1 ?  "MoonEmbLobby.Node 1.NE" : "EmbLobby.Node 1.NE";
+			_string1 = _v1 ? "MoonEmbLobby.Node 1.NE" : "EmbLobby.Node 1.NE";
 			queueSound(TRANSLATE("z#411.wav", "z#155.wav"), _soundHandle2, 50);
 			break;
 
@@ -238,7 +242,8 @@ bool CServiceElevator::ServiceElevatorFloorRequestMsg(CServiceElevatorFloorReque
 			break;
 		case 1:
 			_soundHandle1 = playSound(_fieldDC ? TRANSLATE("z#419.wav", "z#163.wav")
-				: TRANSLATE("z#418.wav", "z#162.wav"), 50);
+			                                   : TRANSLATE("z#418.wav", "z#162.wav"),
+			                          50);
 			break;
 		case 2:
 			_soundHandle1 = playSound(TRANSLATE("z#409.wav", "z#153.wav"), 50);

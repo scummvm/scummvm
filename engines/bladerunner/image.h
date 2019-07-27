@@ -26,7 +26,7 @@
 #include "graphics/surface.h"
 
 namespace Common {
-	class String;
+class String;
 }
 
 namespace BladeRunner {
@@ -35,7 +35,7 @@ class BladeRunnerEngine;
 
 class Image {
 	BladeRunnerEngine *_vm;
-	Graphics::Surface  _surface;
+	Graphics::Surface _surface;
 
 public:
 	Image(BladeRunnerEngine *vm);

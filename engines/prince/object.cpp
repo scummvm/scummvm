@@ -32,9 +32,16 @@
 
 namespace Prince {
 
-Object::Object() : _surface(nullptr), _x(0), _y(0), _z(0), _flags(0), _width(0),
-	_height(0), _zoomTime(0), _zoomSurface(nullptr)
-{
+Object::Object()
+  : _surface(nullptr)
+  , _x(0)
+  , _y(0)
+  , _z(0)
+  , _flags(0)
+  , _width(0)
+  , _height(0)
+  , _zoomTime(0)
+  , _zoomSurface(nullptr) {
 }
 
 Object::~Object() {

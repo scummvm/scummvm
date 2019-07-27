@@ -27,10 +27,10 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CBowlUnlocker, CGameObject)
-	ON_MESSAGE(NutPuzzleMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(NutPuzzleMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(LeaveViewMsg)
 END_MESSAGE_MAP()
 
 void CBowlUnlocker::save(SimpleFile *file, int indent) {

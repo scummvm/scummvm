@@ -39,13 +39,19 @@ namespace Kyra {
 
 // Helper structs to format the data passed to the various initAudioResourceInfo() implementations
 struct SoundResourceInfo_PC {
-	SoundResourceInfo_PC(const char *const *files, int numFiles) : fileList(files), fileListSize(numFiles) {}
+	SoundResourceInfo_PC(const char *const *files, int numFiles)
+	  : fileList(files)
+	  , fileListSize(numFiles) {}
 	const char *const *fileList;
 	uint fileListSize;
 };
 
 struct SoundResourceInfo_Towns {
-	SoundResourceInfo_Towns(const char *const *files, int numFiles, const int32 *cdaTbl, int cdaTblSize) : fileList(files), fileListSize(numFiles), cdaTable(cdaTbl), cdaTableSize(cdaTblSize) {}
+	SoundResourceInfo_Towns(const char *const *files, int numFiles, const int32 *cdaTbl, int cdaTblSize)
+	  : fileList(files)
+	  , fileListSize(numFiles)
+	  , cdaTable(cdaTbl)
+	  , cdaTableSize(cdaTblSize) {}
 	const char *const *fileList;
 	uint fileListSize;
 	const int32 *cdaTable;
@@ -53,12 +59,18 @@ struct SoundResourceInfo_Towns {
 };
 
 struct SoundResourceInfo_PC98 {
-	SoundResourceInfo_PC98(const char *fileNamePattern) : pattern(fileNamePattern) {}
+	SoundResourceInfo_PC98(const char *fileNamePattern)
+	  : pattern(fileNamePattern) {}
 	const char *pattern;
 };
 
 struct SoundResourceInfo_TownsPC98V2 {
-	SoundResourceInfo_TownsPC98V2(const char *const *files, int numFiles, const char *fileNamePattern, const uint16 *cdaTbl, int cdaTblSize) : fileList(files), fileListSize(numFiles), pattern(fileNamePattern), cdaTable(cdaTbl), cdaTableSize(cdaTblSize) {}
+	SoundResourceInfo_TownsPC98V2(const char *const *files, int numFiles, const char *fileNamePattern, const uint16 *cdaTbl, int cdaTblSize)
+	  : fileList(files)
+	  , fileListSize(numFiles)
+	  , pattern(fileNamePattern)
+	  , cdaTable(cdaTbl)
+	  , cdaTableSize(cdaTblSize) {}
 	const char *const *fileList;
 	uint fileListSize;
 	const char *pattern;
@@ -67,7 +79,12 @@ struct SoundResourceInfo_TownsPC98V2 {
 };
 
 struct SoundResourceInfo_TownsEoB {
-	SoundResourceInfo_TownsEoB(const char *const *filelist, uint numfiles, const uint8 *pcmdata, uint pcmdataSize, int pcmvolume) : fileList(filelist), numFiles(numfiles), pcmData(pcmdata), pcmDataSize(pcmdataSize), pcmVolume(pcmvolume) {}
+	SoundResourceInfo_TownsEoB(const char *const *filelist, uint numfiles, const uint8 *pcmdata, uint pcmdataSize, int pcmvolume)
+	  : fileList(filelist)
+	  , numFiles(numfiles)
+	  , pcmData(pcmdata)
+	  , pcmDataSize(pcmdataSize)
+	  , pcmVolume(pcmvolume) {}
 	const uint8 *pcmData;
 	uint pcmDataSize;
 	int pcmVolume;
@@ -75,9 +92,12 @@ struct SoundResourceInfo_TownsEoB {
 	uint numFiles;
 };
 
-
 struct SoundResourceInfo_AmigaEoB {
-	SoundResourceInfo_AmigaEoB(const char *const *files, int numFiles, const char *const *soundmap, int numSounds) : fileList(files), fileListSize(numFiles), soundList(soundmap), soundListSize(numSounds) {}
+	SoundResourceInfo_AmigaEoB(const char *const *files, int numFiles, const char *const *soundmap, int numSounds)
+	  : fileList(files)
+	  , fileListSize(numFiles)
+	  , soundList(soundmap)
+	  , soundListSize(numSounds) {}
 	const char *const *fileList;
 	uint fileListSize;
 	const char *const *soundList;
@@ -288,13 +308,16 @@ public:
 	 * Reset sound trigger.
 	 */
 	virtual void resetTrigger() {}
+
 protected:
 	enum {
 		kNumChannelHandles = 4
 	};
 
 	struct SoundChannel {
-		SoundChannel() : handle(), priority(0) {}
+		SoundChannel()
+		  : handle()
+		  , priority(0) {}
 		Audio::SoundHandle handle;
 		int priority;
 	};
@@ -311,8 +334,8 @@ private:
 	struct SpeechCodecs {
 		const char *fileext;
 		Audio::SeekableAudioStream *(*streamFunc)(
-			Common::SeekableReadStream *stream,
-			DisposeAfterUse::Flag disposeAfterUse);
+		  Common::SeekableReadStream *stream,
+		  DisposeAfterUse::Flag disposeAfterUse);
 	};
 
 	static const SpeechCodecs _supportedCodecs[];
@@ -349,6 +372,7 @@ public:
 
 	virtual void beginFadeOut();
 	virtual void pause(bool paused);
+
 private:
 	Sound *_music, *_sfx;
 };

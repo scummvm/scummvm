@@ -29,7 +29,7 @@
 
 class Win32PluginProvider : public FilePluginProvider {
 protected:
-	Plugin* createPlugin(const Common::FSNode &node) const;
+	Plugin *createPlugin(const Common::FSNode &node) const;
 
 	bool isPluginFilename(const Common::FSNode &node) const;
 };

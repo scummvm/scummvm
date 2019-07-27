@@ -20,17 +20,17 @@
  *
  */
 
- // Disable symbol overrides so that we can use system headers.
+// Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
 #ifdef main
-#undef main
+#	undef main
 #endif // main
 
-#include "file.h"
 #include "script_quotes.h"
+#include "file.h"
 
 static const ScriptQuote BARBOT_QUOTES[] = {
 	{ 0x0003d722, 0x0003d372, 0x0000001e },
@@ -452,7 +452,7 @@ static const ScriptQuote MAITRED_QUOTES[] = {
 };
 
 void writeScriptQuotes(const char *name, const ScriptQuote *quotes,
-		uint rangeStart, uint rangeEnd, uint incr) {
+                       uint rangeStart, uint rangeEnd, uint incr) {
 	outputFile.seek(dataOffset);
 	outputFile.writeLong(rangeStart);
 	outputFile.writeLong(rangeEnd);

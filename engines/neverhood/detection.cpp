@@ -22,12 +22,11 @@
 
 #include "base/plugins.h"
 
-#include "engines/advancedDetector.h"
 #include "common/file.h"
 #include "common/translation.h"
+#include "engines/advancedDetector.h"
 
 #include "neverhood/neverhood.h"
-
 
 namespace Neverhood {
 
@@ -71,8 +70,8 @@ bool NeverhoodEngine::applyResourceFixes() const {
 }
 
 static const PlainGameDescriptor neverhoodGames[] = {
-	{"neverhood", "The Neverhood Chronicles"},
-	{0, 0}
+	{ "neverhood", "The Neverhood Chronicles" },
+	{ 0, 0 }
 };
 
 namespace Neverhood {
@@ -80,71 +79,67 @@ namespace Neverhood {
 static const NeverhoodGameDescription gameDescriptions[] = {
 
 	{
-		// Neverhood English version
-		{
-			"neverhood",
-			0,
-			AD_ENTRY1s("hd.blb", "22958d968458c9ff221aee38577bb2b2", 4279716),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
-		},
-		0,
-		0,
-		0,
-		0,
+	  // Neverhood English version
+	  {
+	    "neverhood",
+	    0,
+	    AD_ENTRY1s("hd.blb", "22958d968458c9ff221aee38577bb2b2", 4279716),
+	    Common::EN_ANY,
+	    Common::kPlatformWindows,
+	    ADGF_NO_FLAGS,
+	    GUIO1(GUIO_NONE) },
+	  0,
+	  0,
+	  0,
+	  0,
 	},
 
 	{
-		// Neverhood English demo version
-		{
-			"neverhood",
-			"Demo",
-			AD_ENTRY1s("nevdemo.blb", "05b735cfb1086892bec79b54dca5545b", 22564568),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_DEMO,
-			GUIO1(GUIO_NONE)
-		},
-		0,
-		0,
-		0,
-		0,
+	  // Neverhood English demo version
+	  {
+	    "neverhood",
+	    "Demo",
+	    AD_ENTRY1s("nevdemo.blb", "05b735cfb1086892bec79b54dca5545b", 22564568),
+	    Common::EN_ANY,
+	    Common::kPlatformWindows,
+	    ADGF_DEMO,
+	    GUIO1(GUIO_NONE) },
+	  0,
+	  0,
+	  0,
+	  0,
 	},
 
 	{
-		// Neverhood earlier English demo version
-		{
-			"neverhood",
-			"Demo",
-			AD_ENTRY1s("nevdemo.blb", "9cbc33bc8ebacacfc8071f3e26a9c85f", 22357020),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_DEMO,
-			GUIO1(GUIO_NONE)
-		},
-		0,
-		0,
-		0,
-		0,
+	  // Neverhood earlier English demo version
+	  {
+	    "neverhood",
+	    "Demo",
+	    AD_ENTRY1s("nevdemo.blb", "9cbc33bc8ebacacfc8071f3e26a9c85f", 22357020),
+	    Common::EN_ANY,
+	    Common::kPlatformWindows,
+	    ADGF_DEMO,
+	    GUIO1(GUIO_NONE) },
+	  0,
+	  0,
+	  0,
+	  0,
 	},
 
 	{
-		// Neverhood Russian version. Dyadyushka Risech
-		{
-			"neverhood",
-			"DR",
-			AD_ENTRY1s("hd.blb", "787951bf094aad9962291e69a707bdde", 4248635),
-			Common::RU_RUS,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
-		},
-		0,
-		0,
-		0,
-		0,
+	  // Neverhood Russian version. Dyadyushka Risech
+	  {
+	    "neverhood",
+	    "DR",
+	    AD_ENTRY1s("hd.blb", "787951bf094aad9962291e69a707bdde", 4248635),
+	    Common::RU_RUS,
+	    Common::kPlatformWindows,
+	    ADGF_NO_FLAGS,
+	    GUIO1(GUIO_NONE) },
+	  0,
+	  0,
+	  0,
+	  0,
 	},
 
 // FIXME: Disabled for now, as it has broken resources that corrupt the heap
@@ -194,10 +189,10 @@ static const ExtraGuiOption neverhoodExtraGuiOption3 = {
 	false
 };
 
-
 class NeverhoodMetaEngine : public AdvancedMetaEngine {
 public:
-	NeverhoodMetaEngine() : AdvancedMetaEngine(Neverhood::gameDescriptions, sizeof(Neverhood::NeverhoodGameDescription), neverhoodGames) {
+	NeverhoodMetaEngine()
+	  : AdvancedMetaEngine(Neverhood::gameDescriptions, sizeof(Neverhood::NeverhoodGameDescription), neverhoodGames) {
 		_singleId = "neverhood";
 		_guiOptions = GUIO2(GUIO_NOSUBTITLES, GUIO_NOMIDI);
 	}
@@ -217,26 +212,14 @@ public:
 	virtual int getMaximumSaveSlot() const;
 	void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
-
 };
 
 bool NeverhoodMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup) || (f == kSupportsDeleteSave) || (f == kSavesSupportMetaInfo) || (f == kSavesSupportThumbnail) || (f == kSavesSupportCreationDate) || (f == kSavesSupportPlayTime) || (f == kSimpleSavesNames);
 }
 
 bool Neverhood::NeverhoodEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
 bool NeverhoodMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -327,7 +310,7 @@ SaveStateDescriptor NeverhoodMetaEngine::querySaveMetaInfos(const char *target, 
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(NEVERHOOD)
-	REGISTER_PLUGIN_DYNAMIC(NEVERHOOD, PLUGIN_TYPE_ENGINE, NeverhoodMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(NEVERHOOD, PLUGIN_TYPE_ENGINE, NeverhoodMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(NEVERHOOD, PLUGIN_TYPE_ENGINE, NeverhoodMetaEngine);
+REGISTER_PLUGIN_STATIC(NEVERHOOD, PLUGIN_TYPE_ENGINE, NeverhoodMetaEngine);
 #endif

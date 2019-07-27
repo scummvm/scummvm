@@ -20,16 +20,16 @@
  *
  */
 
-#include "engines/metaengine.h"
+#include "gui/about.h"
 #include "base/plugins.h"
 #include "base/version.h"
 #include "common/events.h"
 #include "common/system.h"
 #include "common/translation.h"
 #include "common/util.h"
-#include "gui/about.h"
-#include "gui/gui-manager.h"
+#include "engines/metaengine.h"
 #include "gui/ThemeEval.h"
+#include "gui/gui-manager.h"
 
 namespace GUI {
 
@@ -56,29 +56,38 @@ enum {
 // TODO: Allow color change in the middle of a line...
 
 static const char *copyright_text[] = {
-"",
-"C0""Copyright (C) 2001-2019 The ScummVM Team",
-"C0""https://www.scummvm.org",
-"",
-"C0""ScummVM is the legal property of its developers, whose names are too numerous to list here. Please refer to the COPYRIGHT file distributed with this binary.",
-"",
+	"",
+	"C0"
+	"Copyright (C) 2001-2019 The ScummVM Team",
+	"C0"
+	"https://www.scummvm.org",
+	"",
+	"C0"
+	"ScummVM is the legal property of its developers, whose names are too numerous to list here. Please refer to the COPYRIGHT file distributed with this binary.",
+	"",
 };
 
 static const char *gpl_text[] = {
-"",
-"C0""This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.",
-"C0""",
-"C0""This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.",
-"",
-"C0""You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.",
-"",
+	"",
+	"C0"
+	"This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.",
+	"C0"
+	"",
+	"C0"
+	"This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.",
+	"",
+	"C0"
+	"You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.",
+	"",
 };
 
 #include "gui/credits.h"
 
 AboutDialog::AboutDialog()
-	: Dialog(10, 20, 300, 174),
-	_scrollPos(0), _scrollTime(0), _willClose(false) {
+  : Dialog(10, 20, 300, 174)
+  , _scrollPos(0)
+  , _scrollTime(0)
+  , _willClose(false) {
 
 	reflowLayout();
 
@@ -87,7 +96,8 @@ AboutDialog::AboutDialog()
 	for (i = 0; i < 1; i++)
 		_lines.push_back("");
 
-	Common::String version("C0""ScummVM ");
+	Common::String version("C0"
+	                       "ScummVM ");
 	version += gScummVMVersion;
 	_lines.push_back(version);
 
@@ -166,7 +176,6 @@ void AboutDialog::addLine(const char *str) {
 		}
 	}
 }
-
 
 void AboutDialog::open() {
 	_scrollTime = g_system->getMillis() + kScrollStartDelay;
@@ -305,7 +314,7 @@ void AboutDialog::reflowLayout() {
 	_lineHeight = g_gui.getFontHeight() + 3;
 
 	// Heuristic to compute 'optimal' dialog width
-	int maxW = _w - 2*_xOff;
+	int maxW = _w - 2 * _xOff;
 	_w = 0;
 	for (i = 0; i < ARRAYSIZE(credits); i++) {
 		int tmp = g_gui.getStringWidth(credits[i]) + 5;
@@ -313,7 +322,7 @@ void AboutDialog::reflowLayout() {
 			_w = tmp;
 		}
 	}
-	_w += 2*_xOff;
+	_w += 2 * _xOff;
 
 	// Center the dialog
 	_x = (screenW - _w) / 2;

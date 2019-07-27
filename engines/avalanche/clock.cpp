@@ -49,7 +49,7 @@ void Clock::update() {
 
 	_hourAngle = (_hour % 12) * 30 + _minute / 2;
 
-	if (_oldHour != _hour)  {
+	if (_oldHour != _hour) {
 		plotHands();
 		chime();
 	}
@@ -58,9 +58,9 @@ void Clock::update() {
 		plotHands();
 
 	if ((_hour == 0) && (_oldHour != 0) && (_oldHour != 17717)) {
-		Common::String tmpStr = Common::String::format("Good morning!%c%cYes, it's just past " \
-			"midnight. Are you having an all-night Avvy session? Glad you like the game that much!",
-			kControlNewLine, kControlNewLine);
+		Common::String tmpStr = Common::String::format("Good morning!%c%cYes, it's just past "
+		                                               "midnight. Are you having an all-night Avvy session? Glad you like the game that much!",
+		                                               kControlNewLine, kControlNewLine);
 		_vm->_dialogs->displayText(tmpStr);
 	}
 	_oldHour = _hour;
@@ -70,10 +70,10 @@ void Clock::update() {
 
 Common::Point Clock::calcHand(uint16 angle, uint16 length, Color color) {
 	if (angle > 900) {
-		return(Common::Point(177, 177));
+		return (Common::Point(177, 177));
 	}
 
-	return(_vm->_graphics->drawScreenArc(kCenterX, kCenterY, 449 - angle, 450 - angle, length, color));
+	return (_vm->_graphics->drawScreenArc(kCenterX, kCenterY, 449 - angle, 450 - angle, length, color));
 }
 
 void Clock::drawHand(const Common::Point &endPoint, Color color) {

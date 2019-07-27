@@ -23,15 +23,16 @@
  *
  */
 
-#include "pegasus/gamestate.h"
-#include "pegasus/pegasus.h"
-#include "pegasus/neighborhood/neighborhood.h"
-#include "pegasus/neighborhood/caldoria/caldoria.h"
 #include "pegasus/neighborhood/caldoria/caldoriamirror.h"
+#include "pegasus/gamestate.h"
+#include "pegasus/neighborhood/caldoria/caldoria.h"
+#include "pegasus/neighborhood/neighborhood.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
-CaldoriaMirror::CaldoriaMirror(Neighborhood *owner) : GameInteraction(kCaldoriaMirrorInteractionID, owner) {
+CaldoriaMirror::CaldoriaMirror(Neighborhood *owner)
+  : GameInteraction(kCaldoriaMirrorInteractionID, owner) {
 	_neighborhoodNotification = nullptr;
 }
 

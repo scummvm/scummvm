@@ -20,8 +20,8 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/threads/abortablethread.h"
+#include "illusions/illusions.h"
 #include "illusions/input.h"
 #include "illusions/time.h"
 
@@ -30,9 +30,11 @@ namespace Illusions {
 // AbortableThread
 
 AbortableThread::AbortableThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
-	uint32 scriptThreadId, byte *scriptCodeIp)
-	: Thread(vm, threadId, callingThreadId, notifyFlags), _scriptThreadId(scriptThreadId),
-	_scriptCodeIp(scriptCodeIp), _status(1) {
+                                 uint32 scriptThreadId, byte *scriptCodeIp)
+  : Thread(vm, threadId, callingThreadId, notifyFlags)
+  , _scriptThreadId(scriptThreadId)
+  , _scriptCodeIp(scriptCodeIp)
+  , _status(1) {
 	_type = kTTAbortableThread;
 	_sceneId = _vm->getCurrentScene();
 	_vm->_input->discardEvent(kEventAbort);

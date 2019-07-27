@@ -38,7 +38,8 @@ void VoyeurEvent::synchronize(Common::Serializer &s) {
 
 /*------------------------------------------------------------------------*/
 
-SVoy::SVoy(VoyeurEngine *vm):_vm(vm) {
+SVoy::SVoy(VoyeurEngine *vm)
+  : _vm(vm) {
 	// Initialize all the data fields
 	_abortInterface = false;
 	_isAM = false;
@@ -95,7 +96,7 @@ SVoy::SVoy(VoyeurEngine *vm):_vm(vm) {
 }
 
 void SVoy::addEvent(int hour, int minute, VoyeurEventType type, int audioVideoId,
-		int on, int off, int dead) {
+                    int on, int off, int dead) {
 	VoyeurEvent &e = _events[_eventCount++];
 
 	e._type = type;

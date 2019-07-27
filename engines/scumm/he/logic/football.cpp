@@ -34,7 +34,8 @@ namespace Scumm {
  */
 class LogicHEfootball : public LogicHE {
 public:
-	LogicHEfootball(ScummEngine_v90he *vm) : LogicHE(vm) {}
+	LogicHEfootball(ScummEngine_v90he *vm)
+	  : LogicHE(vm) {}
 
 	int versionID();
 	virtual int32 dispatch(int op, int numArgs, int32 *args);
@@ -90,26 +91,72 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 		res = getFromArray(args[0], args[1], args[2]);
 		break;
 
-	case 1492: case 1493: case 1494: case 1495: case 1496:
-	case 1497: case 1498: case 1499: case 1500: case 1501:
-	case 1502: case 1503: case 1504: case 1505: case 1506:
-	case 1507: case 1508: case 1509: case 1510: case 1511:
-	case 1512: case 1513: case 1514: case 1555:
+	case 1492:
+	case 1493:
+	case 1494:
+	case 1495:
+	case 1496:
+	case 1497:
+	case 1498:
+	case 1499:
+	case 1500:
+	case 1501:
+	case 1502:
+	case 1503:
+	case 1504:
+	case 1505:
+	case 1506:
+	case 1507:
+	case 1508:
+	case 1509:
+	case 1510:
+	case 1511:
+	case 1512:
+	case 1513:
+	case 1514:
+	case 1555:
 		// DirectPlay-related
 		// 1513: initialize
 		// 1555: set fake lag
 		break;
 
-	case 2200: case 2201: case 2202: case 2203: case 2204:
-	case 2205: case 2206: case 2207: case 2208: case 2209:
-	case 2210: case 2211: case 2212: case 2213: case 2214:
-	case 2215: case 2216: case 2217: case 2218: case 2219:
-	case 2220: case 2221: case 2222: case 2223: case 2224:
-	case 2225: case 2226: case 2227: case 2228:
+	case 2200:
+	case 2201:
+	case 2202:
+	case 2203:
+	case 2204:
+	case 2205:
+	case 2206:
+	case 2207:
+	case 2208:
+	case 2209:
+	case 2210:
+	case 2211:
+	case 2212:
+	case 2213:
+	case 2214:
+	case 2215:
+	case 2216:
+	case 2217:
+	case 2218:
+	case 2219:
+	case 2220:
+	case 2221:
+	case 2222:
+	case 2223:
+	case 2224:
+	case 2225:
+	case 2226:
+	case 2227:
+	case 2228:
 		// Boneyards-related
 		break;
 
-	case 3000: case 3001: case 3002: case 3003: case 3004:
+	case 3000:
+	case 3001:
+	case 3002:
+	case 3003:
+	case 3004:
 		// Internet-related
 		// 3000: check for updates
 		// 3001: check network status
@@ -152,8 +199,7 @@ int LogicHEfootball::translateWorldToScreen(int32 *args) {
 	// 5.3050399e-2 = 1/18.85 = 20/377
 	// 1.1764706e-2 = 1/85 = 40/3400
 	// 1.2360656e-1 = 377/3050
-	res = (1.0 - a1 * 2.9411764e-4 * 5.3050399e-2) * 1.2360656e-1 * args[0] +
-		a1 * 1.1764706e-2 + 46;
+	res = (1.0 - a1 * 2.9411764e-4 * 5.3050399e-2) * 1.2360656e-1 * args[0] + a1 * 1.1764706e-2 + 46;
 
 	// Shortened / optimized version of that formula:
 	// res = (377.0 - a1 / 170.0) / 3050.0 * args[0] + a1 / 85.0 + 46;
@@ -198,8 +244,7 @@ int LogicHEfootball::translateScreenToWorld(int32 *args) {
 	// 5.3050399e-2 = 1/18.85 = 20/377
 	// 1.1764706e-2 = 1/85 = 40/3400
 	// 1.2360656e-1 = 377/3050
-	double a0 = ((double)args[0] - 46 - a1 * 1.1764706e-2) /
-		((1.0 - a1 * 2.9411764e-4 * 5.3050399e-2) * 1.2360656e-1);
+	double a0 = ((double)args[0] - 46 - a1 * 1.1764706e-2) / ((1.0 - a1 * 2.9411764e-4 * 5.3050399e-2) * 1.2360656e-1);
 
 	writeScummVar(108, (int32)a0);
 	writeScummVar(109, (int32)a1);
@@ -238,12 +283,7 @@ int LogicHEfootball::computePlayerBallIntercepts(int32 *args) {
 	var10 = (argf[3] - argf[1]) / (argf[2] - argf[0]);
 	var28 = var10 * var10 + 1;
 	var20 = argf[0] * var10;
-	var18 = (argf[5] + argf[1] + var20) * argf[4] * var10 * 2 +
-		argf[6] * argf[6] * var28 + argf[4] * argf[4] -
-		argf[0] * argf[0] * var10 * var10 -
-		argf[5] * argf[0] * var10 * 2 -
-		argf[5] * argf[1] * 2 -
-		argf[1] * argf[1] - argf[5] * argf[5];
+	var18 = (argf[5] + argf[1] + var20) * argf[4] * var10 * 2 + argf[6] * argf[6] * var28 + argf[4] * argf[4] - argf[0] * argf[0] * var10 * var10 - argf[5] * argf[0] * var10 * 2 - argf[5] * argf[1] * 2 - argf[1] * argf[1] - argf[5] * argf[5];
 
 	if (var18 >= 0) {
 		var18 = sqrt(var18);
@@ -286,11 +326,12 @@ int LogicHEfootball::computeTwoCircleIntercepts(int32 *args) {
 
 class LogicHEfootball2002 : public LogicHEfootball {
 public:
-	LogicHEfootball2002(ScummEngine_v90he *vm) : LogicHEfootball(vm) {
+	LogicHEfootball2002(ScummEngine_v90he *vm)
+	  : LogicHEfootball(vm) {
 		_var0 = _var1 = _var2 = _var3 = _var4 = 0.0;
-                _angle = 0.0;
-                _maxX = -1;
-                _minX = 1000000;
+		_angle = 0.0;
+		_maxX = -1;
+		_minX = 1000000;
 	}
 
 	int32 dispatch(int op, int numArgs, int32 *args);

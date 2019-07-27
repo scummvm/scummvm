@@ -22,12 +22,12 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/messages.h"
-#include "fullpipe/statics.h"
 #include "fullpipe/gameloader.h"
-#include "fullpipe/interaction.h"
-#include "fullpipe/motion.h"
 #include "fullpipe/input.h"
+#include "fullpipe/interaction.h"
+#include "fullpipe/messages.h"
+#include "fullpipe/motion.h"
+#include "fullpipe/statics.h"
 
 #include "fullpipe/constants.h"
 
@@ -197,15 +197,13 @@ int global_messageHandler1(ExCommand *cmd) {
 					g_fp->openHelp();
 				cmd->_messageKind = 0;
 				break;
-			case '8':
-				{
-					int num = 32;
-					for (uint i = 0; i < g_fp->_gameLoader->_sc2array[num]._picAniInfos.size(); i++) {
-						debug("pic %d, %d:", num, i);
-						g_fp->_gameLoader->_sc2array[num]._picAniInfos[i].print();
-					}
+			case '8': {
+				int num = 32;
+				for (uint i = 0; i < g_fp->_gameLoader->_sc2array[num]._picAniInfos.size(); i++) {
+					debug("pic %d, %d:", num, i);
+					g_fp->_gameLoader->_sc2array[num]._picAniInfos[i].print();
 				}
-				break;
+			} break;
 			default:
 				break;
 			}
@@ -218,8 +216,7 @@ int global_messageHandler1(ExCommand *cmd) {
 
 			if (g_fp->_updateFlag && (invItem = g_fp->_inventory->getHoveredItem(&g_fp->_mouseScreenPos))) {
 				g_fp->_cursorId = PIC_CSR_ITN;
-				if (!g_fp->_currSelectedInventoryItemId && !g_fp->_aniMan->_movement &&
-					!(g_fp->_aniMan->_flags & 0x100) && g_fp->_aniMan->isIdle()) {
+				if (!g_fp->_currSelectedInventoryItemId && !g_fp->_aniMan->_movement && !(g_fp->_aniMan->_flags & 0x100) && g_fp->_aniMan->isIdle()) {
 					int st = g_fp->_aniMan->_statics->_staticsId;
 					ExCommand *newex = 0;
 
@@ -379,7 +376,7 @@ int global_messageHandler3(ExCommand *cmd) {
 			return g_fp->_gameLoader->gotoScene(cmd->_parentId, cmd->_param);
 		case 64:
 			if (g_fp->_currentScene && g_fp->_msgObjectId2
-					&& (!(cmd->_param & 4) || g_fp->_msgObjectId2 != cmd->_z || g_fp->_msgId != cmd->_field_20)) {
+			    && (!(cmd->_param & 4) || g_fp->_msgObjectId2 != cmd->_z || g_fp->_msgId != cmd->_field_20)) {
 				ani = g_fp->_currentScene->getStaticANIObject1ById(g_fp->_msgObjectId2, g_fp->_msgId);
 				if (ani) {
 					ani->_flags &= 0xFF7F;

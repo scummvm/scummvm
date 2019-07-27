@@ -29,8 +29,8 @@
 #include "pegasus/timers.h"
 
 namespace Common {
-	class ReadStream;
-	class WriteStream;
+class ReadStream;
+class WriteStream;
 }
 
 namespace Pegasus {

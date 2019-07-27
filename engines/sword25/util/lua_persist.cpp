@@ -43,7 +43,6 @@
  * for Mobile Lua (http://luaos.net/pages/mobile-lua.php)
  */
 
-
 #include "sword25/util/lua_persistence.h"
 
 #include "sword25/util/double_serialization.h"
@@ -51,10 +50,9 @@
 
 #include "common/stream.h"
 
+#include "lua/lgc.h"
 #include "lua/lobject.h"
 #include "lua/lstate.h"
-#include "lua/lgc.h"
-
 
 namespace Lua {
 
@@ -77,7 +75,6 @@ static void persistThread(SerializationInfo *info);
 static void persistProto(SerializationInfo *info);
 static void persistUpValue(SerializationInfo *info);
 static void persistUserData(SerializationInfo *info);
-
 
 void persistLua(lua_State *luaState, Common::WriteStream *writeStream) {
 	SerializationInfo info;
@@ -197,10 +194,8 @@ static void persist(SerializationInfo *info) {
 	lua_rawset(info->luaState, 2);
 	// >>>>> permTbl indexTbl rootObj ...... obj
 
-
 	// Write out the index
 	info->writeStream->writeUint32LE(info->counter);
-
 
 	// Objects that are in the permanents table are serialized in a special way
 
@@ -417,7 +412,6 @@ static void persistTable(SerializationInfo *info) {
 	lua_pop(info->luaState, 1);
 	// >>>>> permTbl indexTbl ...... tbl
 
-
 	lua_pushnil(info->luaState);
 	// >>>>> permTbl indexTbl ...... tbl nil
 
@@ -568,7 +562,6 @@ static void persistThread(SerializationInfo *info) {
 		info->writeStream->writeUint32LE(savedpc);
 	}
 
-
 	// Serialize the state's other parameters, with the exception of upval stuff
 
 	assert(threadState->nCcalls <= 1);
@@ -663,7 +656,6 @@ static void persistProto(SerializationInfo *info) {
 	uint32 len = static_cast<uint32>(sizeof(Instruction) * proto->sizecode);
 	info->writeStream->write(proto->code, len);
 
-
 	// Serialize upvalue names
 	info->writeStream->writeSint32LE(proto->sizeupvalues);
 
@@ -676,7 +668,6 @@ static void persistProto(SerializationInfo *info) {
 		lua_pop(info->luaState, 1);
 		// >>>>> permTbl indexTbl ...... proto
 	}
-
 
 	// Serialize local variable infos
 	info->writeStream->writeSint32LE(proto->sizelocvars);
@@ -693,7 +684,6 @@ static void persistProto(SerializationInfo *info) {
 		info->writeStream->writeSint32LE(proto->locvars[i].startpc);
 		info->writeStream->writeSint32LE(proto->locvars[i].endpc);
 	}
-
 
 	// Serialize source string
 	pushString(info->luaState, proto->source);
@@ -715,7 +705,6 @@ static void persistProto(SerializationInfo *info) {
 	// Serialize linedefined and lastlinedefined
 	info->writeStream->writeSint32LE(proto->linedefined);
 	info->writeStream->writeSint32LE(proto->lastlinedefined);
-
 
 	// Serialize misc values
 	info->writeStream->writeByte(proto->nups);
@@ -797,6 +786,5 @@ static void persistUserData(SerializationInfo *info) {
 	lua_pop(info->luaState, 1);
 	/* perms reftbl ... udata */
 }
-
 
 } // End of namespace Lua

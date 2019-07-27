@@ -27,12 +27,12 @@
  */
 
 #include "engines/wintermute/base/scriptables/script_engine.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
-#include "engines/wintermute/base/base_engine.h"
-#include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/utils/utils.h"
 
 namespace Wintermute {
@@ -41,7 +41,8 @@ IMPLEMENT_PERSISTENT(ScEngine, true)
 
 #define COMPILER_DLL "dcscomp.dll"
 //////////////////////////////////////////////////////////////////////////
-ScEngine::ScEngine(BaseGame *inGame) : BaseClass(inGame) {
+ScEngine::ScEngine(BaseGame *inGame)
+  : BaseClass(inGame) {
 	_gameRef->LOG(0, "Initializing scripting engine...");
 
 	if (_compilerAvailable) {
@@ -52,11 +53,10 @@ ScEngine::ScEngine(BaseGame *inGame) : BaseClass(inGame) {
 
 	_globals = new ScValue(_gameRef);
 
-
 	// register 'Game' as global variable
 	if (!_globals->propExists("Game")) {
 		ScValue val(_gameRef);
-		val.setNative(_gameRef,  true);
+		val.setNative(_gameRef, true);
 		_globals->setProp("Game", &val);
 	}
 
@@ -87,7 +87,6 @@ ScEngine::ScEngine(BaseGame *inGame) : BaseClass(inGame) {
 	//EnableProfiling();
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScEngine::~ScEngine() {
 	_gameRef->LOG(0, "Shutting down scripting engine");
@@ -96,7 +95,6 @@ ScEngine::~ScEngine() {
 
 	cleanup();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::cleanup() {
@@ -121,23 +119,19 @@ bool ScEngine::cleanup() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 byte *ScEngine::loadFile(void *data, char *filename, uint32 *size) {
 	return BaseFileManager::getEngineInstance()->readWholeFile(filename, size);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void ScEngine::closeFile(void *data, byte *buffer) {
 	delete[] buffer;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void ScEngine::parseElement(void *data, int line, int type, void *elementData) {
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 ScScript *ScEngine::runScript(const char *filename, BaseScriptHolder *owner) {
@@ -152,8 +146,8 @@ ScScript *ScEngine::runScript(const char *filename, BaseScriptHolder *owner) {
 
 	// add new script
 #if EXTENDED_DEBUGGER_ENABLED
-	DebuggableScEngine* debuggableEngine;
-	debuggableEngine = dynamic_cast<DebuggableScEngine*>(this);
+	DebuggableScEngine *debuggableEngine;
+	debuggableEngine = dynamic_cast<DebuggableScEngine *>(this);
 	// TODO: Not pretty
 	assert(debuggableEngine);
 	ScScript *script = new DebuggableScript(_gameRef, debuggableEngine);
@@ -182,7 +176,6 @@ ScScript *ScEngine::runScript(const char *filename, BaseScriptHolder *owner) {
 		return script;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 byte *ScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool ignoreCache) {
@@ -250,21 +243,17 @@ byte *ScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool ig
 		*outSize = cachedScript->_size;
 	}
 
-
 	// cleanup
 	delete[] buffer;
 
 	return ret;
 }
 
-
-
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::tick() {
 	if (_scripts.size() == 0) {
 		return STATUS_OK;
 	}
-
 
 	// resolve waiting scripts
 	for (uint32 i = 0; i < _scripts.size(); i++) {
@@ -329,7 +318,6 @@ bool ScEngine::tick() {
 		} // switch
 	} // for each script
 
-
 	// execute scripts
 	for (uint32 i = 0; i < _scripts.size(); i++) {
 
@@ -374,7 +362,6 @@ bool ScEngine::tick() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::tickUnbreakable() {
 	ScScript *oldScript = _currentScript;
@@ -400,7 +387,6 @@ bool ScEngine::tickUnbreakable() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::removeFinishedScripts() {
 	// remove finished scripts
@@ -417,7 +403,6 @@ bool ScEngine::removeFinishedScripts() {
 	}
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 int ScEngine::getNumScripts(int *running, int *waiting, int *persistent) {
@@ -444,7 +429,7 @@ int ScEngine::getNumScripts(int *running, int *waiting, int *persistent) {
 			// * SCRIPT_FINISHED,
 			// * SCRIPT_ERROR,
 			// * SCRIPT_WAITING_SCRIPT,
-			// * SCRIPT_THREAD_FINISHED		
+			// * SCRIPT_THREAD_FINISHED
 			debugN("ScEngine::GetNumScripts - unhandled enum: %d\n", _scripts[i]->_state);
 
 			// This method calculates thread counts to be shown at debug screen only
@@ -466,7 +451,6 @@ int ScEngine::getNumScripts(int *running, int *waiting, int *persistent) {
 	return numTotal;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::emptyScriptCache() {
 	for (int i = 0; i < MAX_CACHED_SCRIPTS; i++) {
@@ -477,7 +461,6 @@ bool ScEngine::emptyScriptCache() {
 	}
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::resetObject(BaseObject *Object) {
@@ -520,7 +503,6 @@ bool ScEngine::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void ScEngine::editorCleanup() {
 	for (uint32 i = 0; i < _scripts.size(); i++) {
@@ -531,7 +513,6 @@ void ScEngine::editorCleanup() {
 		}
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::pauseAll() {
@@ -544,7 +525,6 @@ bool ScEngine::pauseAll() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::resumeAll() {
 	for (uint32 i = 0; i < _scripts.size(); i++) {
@@ -553,7 +533,6 @@ bool ScEngine::resumeAll() {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::isValidScript(ScScript *script) {
@@ -582,7 +561,6 @@ void ScEngine::addScriptTime(const char *filename, uint32 time) {
 	_scriptTimes[fileName] += time;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void ScEngine::enableProfiling() {
 	if (_isProfiling) {
@@ -596,7 +574,6 @@ void ScEngine::enableProfiling() {
 	_isProfiling = true;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void ScEngine::disableProfiling() {
 	if (!_isProfiling) {
@@ -606,7 +583,6 @@ void ScEngine::disableProfiling() {
 	dumpStats();
 	_isProfiling = false;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void ScEngine::dumpStats() {

@@ -32,11 +32,16 @@ class CEnterSecClassState : public CGameObject {
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
+
 public:
 	int _mode, _soundHandle;
+
 public:
 	CLASSDEF;
-	CEnterSecClassState() : CGameObject(), _mode(1), _soundHandle(0) {}
+	CEnterSecClassState()
+	  : CGameObject()
+	  , _mode(1)
+	  , _soundHandle(0) {}
 
 	/**
 	 * Save the data for the class to file

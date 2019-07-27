@@ -33,11 +33,15 @@ class CBowlUnlocker : public CGameObject {
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
+
 public:
 	bool _bowlUnlocked;
+
 public:
 	CLASSDEF;
-	CBowlUnlocker() : CGameObject(), _bowlUnlocked(false) {}
+	CBowlUnlocker()
+	  : CGameObject()
+	  , _bowlUnlocked(false) {}
 
 	/**
 	 * Save the data for the class to file

@@ -23,8 +23,8 @@
 #ifndef TITANIC_STAR_CAMERA_H
 #define TITANIC_STAR_CAMERA_H
 
-#include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/base_stars.h"
+#include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/viewport.h"
 
 namespace Titanic {
@@ -35,7 +35,10 @@ struct CNavigationInfo;
 class FPoint;
 class SimpleFile;
 
-enum StarLockState { ZERO_LOCKED=0, ONE_LOCKED=1, TWO_LOCKED=2, THREE_LOCKED=3 };
+enum StarLockState { ZERO_LOCKED = 0,
+	                   ONE_LOCKED = 1,
+	                   TWO_LOCKED = 2,
+	                   THREE_LOCKED = 3 };
 
 /**
  * Implements a reference point from which the starmap can be viewed
@@ -44,6 +47,7 @@ class CStarCamera {
 private:
 	static FMatrix *_priorOrientation;
 	static FMatrix *_newOrientation;
+
 private:
 	StarLockState _starLockState;
 	FMatrix _lockedStarsPos; // Each row represents the location of a locked star
@@ -68,9 +72,11 @@ private:
 	 * Return whether the handler is locked
 	 */
 	bool isLocked();
+
 public:
 	static void init();
 	static void deinit();
+
 public:
 	CStarCamera(const CNavigationInfo *data);
 	CStarCamera(CViewport *src);
@@ -194,7 +200,7 @@ public:
 	 * Second is the x center coordinate relative to z
 	 * Third is the first x center pixel offset
 	 * Fourth is the second x center pixel offset
-	 */	
+	 */
 	virtual void getRelativeXCenterPixels(double *v1, double *v2, double *v3, double *v4);
 
 	/**

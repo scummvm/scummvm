@@ -54,7 +54,4 @@ void Parallaction_br::_c_password(void *) {
 	warning("Parallaction_br::_c_password() not yet implemented");
 }
 
-
-
-
 } // namespace Parallaction

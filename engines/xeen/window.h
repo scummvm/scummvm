@@ -43,15 +43,27 @@ struct DrawStruct {
 	int _scale;
 	int _flags;
 
-	DrawStruct(int frame, int x, int y, int scale = 0, int flags = 0) :
-		_sprites(nullptr), _frame(frame), _x(x), _y(y), _scale(scale), _flags(flags) {}
-	DrawStruct(): _sprites(nullptr), _frame(0), _x(0), _y(0), _scale(0), _flags(0) {}
+	DrawStruct(int frame, int x, int y, int scale = 0, int flags = 0)
+	  : _sprites(nullptr)
+	  , _frame(frame)
+	  , _x(x)
+	  , _y(y)
+	  , _scale(scale)
+	  , _flags(flags) {}
+	DrawStruct()
+	  : _sprites(nullptr)
+	  , _frame(0)
+	  , _x(0)
+	  , _y(0)
+	  , _scale(0)
+	  , _flags(0) {}
 };
 
 class Windows : public FontData {
 private:
 	Common::Array<Window> _windows;
 	Common::Array<Window *> _windowStack;
+
 public:
 	Windows();
 	~Windows();
@@ -77,7 +89,7 @@ public:
 	void windowClosed(Window *win);
 };
 
-class Window: public FontSurface {
+class Window : public FontSurface {
 private:
 	Common::Rect _bounds;
 	Common::Rect _innerBounds;
@@ -86,18 +98,21 @@ private:
 	int _border;
 	int _xLo, _xHi;
 	int _ycL, _ycH;
+
 private:
 	/**
 	 * Returns true if the window is covering the entire screen
 	 */
 	bool isFullScreen() const;
+
 public:
 	bool _enabled;
+
 public:
 	Window();
 	Window(const Window &src);
 	Window(const Common::Rect &bounds, int a, int border,
-		int xLo, int ycL, int xHi, int ycH);
+	       int xLo, int ycL, int xHi, int ycH);
 	virtual ~Window() {}
 
 	virtual void addDirtyRect(const Common::Rect &r);

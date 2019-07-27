@@ -23,9 +23,9 @@
 #ifndef SHERLOCK_ANIMATION_H
 #define SHERLOCK_ANIMATION_H
 
+#include "common/array.h"
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "common/array.h"
 
 namespace Sherlock {
 
@@ -38,14 +38,15 @@ private:
 	SherlockEngine *_vm;
 
 	Common::Array<const char *> _prologueNames;
-	Common::Array<Common::Array<int> > _prologueFrames;
+	Common::Array<Common::Array<int>> _prologueFrames;
 	Common::Array<const char *> _titleNames;
-	Common::Array<Common::Array<int> > _titleFrames;
+	Common::Array<Common::Array<int>> _titleFrames;
 
 	/**
 	 * Checks for whether an animation is being played that has associated sound
 	 */
 	const int *checkForSoundFrames(const Common::String &filename, bool intro);
+
 public:
 	Common::String _soundLibraryFilename;
 	Common::String _gfxLibraryFilename;

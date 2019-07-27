@@ -25,7 +25,7 @@
 namespace Neverhood {
 
 AsScene1001Door::AsScene1001Door(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1100) {
+  : AnimatedSprite(vm, 1100) {
 
 	createSurface(800, 137, 242);
 	_x = 726;
@@ -104,7 +104,8 @@ void AsScene1001Door::stBustedDoorGone() {
 }
 
 AsScene1001Hammer::AsScene1001Hammer(NeverhoodEngine *vm, Sprite *asDoor)
-	: AnimatedSprite(vm, 1100), _asDoor(asDoor) {
+  : AnimatedSprite(vm, 1100)
+  , _asDoor(asDoor) {
 
 	_x = 547;
 	_y = 206;
@@ -134,7 +135,7 @@ uint32 AsScene1001Hammer::handleMessage(int messageNum, const MessageParam &para
 }
 
 AsScene1001Window::AsScene1001Window(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1200) {
+  : AnimatedSprite(vm, 1200) {
 
 	_x = 320;
 	_y = 240;
@@ -165,7 +166,8 @@ uint32 AsScene1001Window::handleMessage(int messageNum, const MessageParam &para
 }
 
 AsScene1001Lever::AsScene1001Lever(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, int deltaXType)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
+  : AnimatedSprite(vm, 1100)
+  , _parentScene(parentScene) {
 
 	createSurface(1010, 71, 73);
 	setDoDeltaX(deltaXType);
@@ -208,7 +210,9 @@ uint32 AsScene1001Lever::handleMessage(int messageNum, const MessageParam &param
 }
 
 SsCommonButtonSprite::SsCommonButtonSprite(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash, int surfacePriority, uint32 soundFileHash)
-	: StaticSprite(vm, fileHash, surfacePriority), _parentScene(parentScene), _countdown(0) {
+  : StaticSprite(vm, fileHash, surfacePriority)
+  , _parentScene(parentScene)
+  , _countdown(0) {
 
 	_priority = 1100;
 	_soundFileHash = soundFileHash ? soundFileHash : 0x44141000;
@@ -236,7 +240,9 @@ uint32 SsCommonButtonSprite::handleMessage(int messageNum, const MessageParam &p
 }
 
 AsScene1002Ring::AsScene1002Ring(NeverhoodEngine *vm, Scene *parentScene, bool isSpecial, int16 x, int16 y, int16 clipY1, bool isRingLow)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _isSpecial(isSpecial) {
+  : AnimatedSprite(vm, 1100)
+  , _parentScene(parentScene)
+  , _isSpecial(isSpecial) {
 
 	SetUpdateHandler(&AsScene1002Ring::update);
 
@@ -261,7 +267,6 @@ AsScene1002Ring::AsScene1002Ring(NeverhoodEngine *vm, Scene *parentScene, bool i
 	_y = y;
 
 	setDoDeltaX(_vm->_rnd->getRandomNumber(1));
-
 }
 
 void AsScene1002Ring::update() {
@@ -273,13 +278,13 @@ uint32 AsScene1002Ring::hmRingIdle(int messageNum, const MessageParam &param, En
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case NM_KLAYMEN_USE_OBJECT:
-		setDoDeltaX(((Sprite*)sender)->isDoDeltaX() ? 1 : 0);
+		setDoDeltaX(((Sprite *)sender)->isDoDeltaX() ? 1 : 0);
 		sendMessage(_parentScene, NM_KLAYMEN_USE_OBJECT, 0);
 		SetMessageHandler(&AsScene1002Ring::hmRingPulled1);
 		startAnimation(_isSpecial ? 0x87502558 : 0x80DD4010, 0, -1);
 		break;
 	case NM_KLAYMEN_LOWER_LEVER:
-		setDoDeltaX(((Sprite*)sender)->isDoDeltaX() ? 1 : 0);
+		setDoDeltaX(((Sprite *)sender)->isDoDeltaX() ? 1 : 0);
 		sendMessage(_parentScene, NM_KLAYMEN_LOWER_LEVER, 0);
 		SetMessageHandler(&AsScene1002Ring::hmRingPulled2);
 		startAnimation(0x861A2020, 0, -1);
@@ -374,7 +379,7 @@ uint32 AsScene1002Ring::hmRingReleased(int messageNum, const MessageParam &param
 }
 
 AsScene1002Door::AsScene1002Door(NeverhoodEngine *vm, NRect &clipRect)
-	: StaticSprite(vm, 1200) {
+  : StaticSprite(vm, 1200) {
 
 	loadSprite(0x1052370F, kSLFDefDrawOffset | kSLFSetPosition, 800, 526, getGlobalVar(V_FLYTRAP_RING_DOOR) ? 49 : 239);
 	setClipRect(clipRect);
@@ -426,7 +431,7 @@ void AsScene1002Door::suCloseDoor() {
 }
 
 AsScene1002BoxingGloveHitEffect::AsScene1002BoxingGloveHitEffect(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1400) {
+  : AnimatedSprite(vm, 1400) {
 
 	createSurface(1025, 88, 165);
 	setVisible(false);
@@ -438,8 +443,8 @@ uint32 AsScene1002BoxingGloveHitEffect::handleMessage(int messageNum, const Mess
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x2004:
-		_x = ((Sprite*)sender)->getX() - 98;
-		_y = ((Sprite*)sender)->getY() - 111;
+		_x = ((Sprite *)sender)->getX() - 98;
+		_y = ((Sprite *)sender)->getY() - 111;
 		startAnimation(0x0422255A, 0, -1);
 		setVisible(true);
 		break;
@@ -452,7 +457,11 @@ uint32 AsScene1002BoxingGloveHitEffect::handleMessage(int messageNum, const Mess
 }
 
 AsScene1002DoorSpy::AsScene1002DoorSpy(NeverhoodEngine *vm, NRect &clipRect, Scene *parentScene, Sprite *asDoor, Sprite *asScene1002BoxingGloveHitEffect)
-	: AnimatedSprite(vm, 1300), _clipRect(clipRect), _parentScene(parentScene), _asDoor(asDoor), _asBoxingGloveHitEffect(asScene1002BoxingGloveHitEffect) {
+  : AnimatedSprite(vm, 1300)
+  , _clipRect(clipRect)
+  , _parentScene(parentScene)
+  , _asDoor(asDoor)
+  , _asBoxingGloveHitEffect(asScene1002BoxingGloveHitEffect) {
 
 	createSurface(800, 136, 147);
 	setClipRect(clipRect);
@@ -511,7 +520,10 @@ void AsScene1002DoorSpy::stDoorSpyBoxingGlove() {
 }
 
 SsCommonPressButton::SsCommonPressButton(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int surfacePriority, uint32 soundFileHash)
-	: StaticSprite(vm, 1100), _parentScene(parentScene), _status(0), _countdown(0) {
+  : StaticSprite(vm, 1100)
+  , _parentScene(parentScene)
+  , _status(0)
+  , _countdown(0) {
 
 	_soundFileHash = soundFileHash != 0 ? soundFileHash : 0x44141000;
 	_fileHashes[0] = fileHash1;
@@ -561,7 +573,11 @@ uint32 SsCommonPressButton::handleMessage(int messageNum, const MessageParam &pa
 }
 
 AsScene1002VenusFlyTrap::AsScene1002VenusFlyTrap(NeverhoodEngine *vm, Scene *parentScene, Sprite *klaymen, bool isSecond)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _klaymen(klaymen), _isSecond(isSecond), _countdown(0) {
+  : AnimatedSprite(vm, 1100)
+  , _parentScene(parentScene)
+  , _klaymen(klaymen)
+  , _isSecond(isSecond)
+  , _countdown(0) {
 
 	createSurface(995, 175, 195);
 	if (!_isSecond) {
@@ -806,7 +822,9 @@ void AsScene1002VenusFlyTrap::swallowKlaymen() {
 }
 
 AsScene1002OutsideDoorBackground::AsScene1002OutsideDoorBackground(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1200), _countdown(0), _isDoorClosed(true) {
+  : AnimatedSprite(vm, 1200)
+  , _countdown(0)
+  , _isDoorClosed(true) {
 
 	createSurface(850, 186, 212);
 	_x = 320;
@@ -876,7 +894,8 @@ void AsScene1002OutsideDoorBackground::stDoorClosed() {
 }
 
 AsScene1002KlaymenLadderHands::AsScene1002KlaymenLadderHands(NeverhoodEngine *vm, Klaymen *klaymen)
-	: AnimatedSprite(vm, 1200), _klaymen(klaymen) {
+  : AnimatedSprite(vm, 1200)
+  , _klaymen(klaymen) {
 
 	createSurface(1200, 40, 163);
 	setVisible(false);
@@ -905,8 +924,10 @@ void AsScene1002KlaymenLadderHands::update() {
 }
 
 AsScene1002KlaymenPeekHand::AsScene1002KlaymenPeekHand(NeverhoodEngine *vm, Scene *parentScene, Klaymen *klaymen)
-	: AnimatedSprite(vm, 1200), _parentScene(parentScene), _klaymen(klaymen),
-	_isClipRectSaved(false) {
+  : AnimatedSprite(vm, 1200)
+  , _parentScene(parentScene)
+  , _klaymen(klaymen)
+  , _isClipRectSaved(false) {
 
 	createSurface(1000, 33, 41);
 	setVisible(false);
@@ -947,7 +968,7 @@ uint32 AsScene1002KlaymenPeekHand::handleMessage(int messageNum, const MessagePa
 }
 
 AsScene1004TrashCan::AsScene1004TrashCan(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1100) {
+  : AnimatedSprite(vm, 1100) {
 
 	_x = 330;
 	_y = 327;
@@ -977,12 +998,12 @@ uint32 AsScene1004TrashCan::handleMessage(int messageNum, const MessageParam &pa
 }
 
 static const KlaymenIdleTableItem klaymenIdleTable1002[] = {
-	{1, kIdlePickEar},
-	{2, kIdleWonderAbout}
+	{ 1, kIdlePickEar },
+	{ 2, kIdleWonderAbout }
 };
 
 KmScene1001::KmScene1001(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+  : Klaymen(vm, parentScene, x, y) {
 }
 
 uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
@@ -1107,7 +1128,7 @@ uint32 KmScene1001::hmPullHammerLever(int messageNum, const MessageParam &param,
 }
 
 KmScene1002::KmScene1002(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+  : Klaymen(vm, parentScene, x, y) {
 
 	setKlaymenIdleTable1();
 }
@@ -1130,7 +1151,7 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stStandIdleSpecial);
 		break;
 	case NM_CAR_MOVE_TO_PREV_POINT:
-		_otherSprite = (Sprite*)param.asEntity();
+		_otherSprite = (Sprite *)param.asEntity();
 		break;
 	case 0x4001:
 	case 0x4800:
@@ -1542,7 +1563,7 @@ uint32 KmScene1002::hmHitByBoxingGlove(int messageNum, const MessageParam &param
 }
 
 KmScene1004::KmScene1004(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+  : Klaymen(vm, parentScene, x, y) {
 
 	_dataResource.load(0x01900A04);
 }

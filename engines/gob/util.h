@@ -23,12 +23,12 @@
 #ifndef GOB_UTIL_H
 #define GOB_UTIL_H
 
-#include "common/str.h"
-#include "common/keyboard.h"
 #include "common/events.h"
+#include "common/keyboard.h"
+#include "common/str.h"
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Gob {
@@ -38,44 +38,44 @@ class GobEngine;
 #define KEYBUFSIZE 16
 
 enum MouseButtons {
-	kMouseButtonsNone  = 0,
-	kMouseButtonsLeft  = 1,
+	kMouseButtonsNone = 0,
+	kMouseButtonsLeft = 1,
 	kMouseButtonsRight = 2,
-	kMouseButtonsBoth  = 3,
-	kMouseButtonsAny   = 4
+	kMouseButtonsBoth = 3,
+	kMouseButtonsAny = 4
 };
 
 enum Keys {
-	kKeyNone      = 0x0000,
+	kKeyNone = 0x0000,
 	kKeyBackspace = 0x0E08,
-	kKeySpace     = 0x3920,
-	kKeyReturn    = 0x1C0D,
-	kKeyEscape    = 0x011B,
-	kKeyDelete    = 0x5300,
-	kKeyUp        = 0x4800,
-	kKeyDown      = 0x5000,
-	kKeyRight     = 0x4D00,
-	kKeyLeft      = 0x4B00,
-	kKeyF1        = 0x3B00,
-	kKeyF2        = 0x3C00,
-	kKeyF3        = 0x3D00,
-	kKeyF4        = 0x3E00,
-	kKeyF5        = 0x3F00,
-	kKeyF6        = 0x4000,
-	kKeyF7        = 0x4100,
-	kKeyF8        = 0x4200,
-	kKeyF9        = 0x4300,
-	kKeyF10       = 0x4400
+	kKeySpace = 0x3920,
+	kKeyReturn = 0x1C0D,
+	kKeyEscape = 0x011B,
+	kKeyDelete = 0x5300,
+	kKeyUp = 0x4800,
+	kKeyDown = 0x5000,
+	kKeyRight = 0x4D00,
+	kKeyLeft = 0x4B00,
+	kKeyF1 = 0x3B00,
+	kKeyF2 = 0x3C00,
+	kKeyF3 = 0x3D00,
+	kKeyF4 = 0x3E00,
+	kKeyF5 = 0x3F00,
+	kKeyF6 = 0x4000,
+	kKeyF7 = 0x4100,
+	kKeyF8 = 0x4200,
+	kKeyF9 = 0x4300,
+	kKeyF10 = 0x4400
 };
 
 enum ShortKey {
-	kShortKeyUp        = 0x0B,
-	kShortKeyDown      = 0x0A,
-	kShortKeyRight     = 0x09,
-	kShortKeyLeft      = 0x08,
-	kShortKeyEscape    = 0x1B,
+	kShortKeyUp = 0x0B,
+	kShortKeyDown = 0x0A,
+	kShortKeyRight = 0x09,
+	kShortKeyLeft = 0x08,
+	kShortKeyEscape = 0x1B,
 	kShortKeyBackspace = 0x19,
-	kShortKeyDelete    = 0x1A
+	kShortKeyDelete = 0x1A
 };
 
 class Util {
@@ -85,13 +85,18 @@ public:
 		void *pData;
 		struct ListNode *pNext;
 		struct ListNode *pPrev;
-		ListNode() : pData(0), pNext(0), pPrev(0) {}
+		ListNode()
+		  : pData(0)
+		  , pNext(0)
+		  , pPrev(0) {}
 	};
 
 	struct List {
 		ListNode *pHead;
 		ListNode *pTail;
-		List() : pHead(0), pTail(0) {}
+		List()
+		  : pHead(0)
+		  , pTail(0) {}
 	};
 
 	uint32 getTimeKey();

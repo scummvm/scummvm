@@ -26,11 +26,11 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CCage, CBackground)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(PreEnterViewMsg)
-	ON_MESSAGE(MouseMoveMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(PreEnterViewMsg)
+ON_MESSAGE(MouseMoveMsg)
 END_MESSAGE_MAP()
 
 int CCage::_v1;

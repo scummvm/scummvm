@@ -31,16 +31,16 @@
 
 namespace Common {
 
-#define COMMON_SPAN_TYPEDEFS \
-	typedef typename super_type::value_type value_type; \
+#define COMMON_SPAN_TYPEDEFS                                    \
+	typedef typename super_type::value_type value_type;           \
 	typedef typename super_type::difference_type difference_type; \
-	typedef typename super_type::index_type index_type; \
-	typedef typename super_type::size_type size_type; \
-	typedef typename super_type::const_iterator const_iterator; \
-	typedef typename super_type::iterator iterator; \
-	typedef typename super_type::pointer pointer; \
-	typedef typename super_type::const_pointer const_pointer; \
-	typedef typename super_type::reference reference; \
+	typedef typename super_type::index_type index_type;           \
+	typedef typename super_type::size_type size_type;             \
+	typedef typename super_type::const_iterator const_iterator;   \
+	typedef typename super_type::iterator iterator;               \
+	typedef typename super_type::pointer pointer;                 \
+	typedef typename super_type::const_pointer const_pointer;     \
+	typedef typename super_type::reference reference;             \
 	typedef typename super_type::const_reference const_reference;
 
 enum {
@@ -74,19 +74,21 @@ namespace SpanInternal {
 		typedef typename Conditional<IsConst, const span_value_type, span_value_type>::type *pointer;
 		typedef typename Conditional<IsConst, const span_value_type, span_value_type>::type &reference;
 
-		inline SpanIterator() : _span(nullptr), _index(0) {}
+		inline SpanIterator()
+		  : _span(nullptr)
+		  , _index(0) {}
 
-		inline SpanIterator(span_type *const span, const difference_type index) :
-			_span(span),
-			_index(index) {
+		inline SpanIterator(span_type *const span, const difference_type index)
+		  : _span(span)
+		  , _index(index) {
 			if (span != nullptr) {
 				span->validate(index, 0, kValidateSeek);
 			}
 		}
 
-		inline SpanIterator(const SpanIterator &other) :
-			_span(other._span),
-			_index(other._index) {}
+		inline SpanIterator(const SpanIterator &other)
+		  : _span(other._span)
+		  , _index(other._index) {}
 
 		inline SpanIterator &operator=(const SpanIterator &other) {
 			_span = other._span;
@@ -165,28 +167,28 @@ namespace SpanInternal {
 #pragma mark SpanIterator - Comparison operations
 
 	public:
-		inline bool operator==(const SpanIterator& other) const {
+		inline bool operator==(const SpanIterator &other) const {
 			return _span == other._span && _index == other._index;
 		}
 
-		inline bool operator!=(const SpanIterator& other) const {
+		inline bool operator!=(const SpanIterator &other) const {
 			return !operator==(other);
 		}
 
-		inline bool operator<(const SpanIterator& other) const {
+		inline bool operator<(const SpanIterator &other) const {
 			assert(_span == other._span);
 			return _index < other._index;
 		}
 
-		inline bool operator<=(const SpanIterator& other) const {
+		inline bool operator<=(const SpanIterator &other) const {
 			return !other.operator<(*this);
 		}
 
-		inline bool operator>(const SpanIterator& other) const {
+		inline bool operator>(const SpanIterator &other) const {
 			return other.operator<(*this);
 		}
 
-		inline bool operator>=(const SpanIterator& other) const {
+		inline bool operator>=(const SpanIterator &other) const {
 			return !operator<(other);
 		}
 
@@ -252,15 +254,18 @@ namespace SpanInternal {
 #pragma mark SpanBase
 
 template <typename ValueType, template <typename> class Derived>
-class SpanBase : public SafeBool<Derived<ValueType> > {
+class SpanBase : public SafeBool<Derived<ValueType>> {
 	typedef Derived<ValueType> derived_type;
 	typedef typename AddConst<derived_type>::type const_derived_type;
 	typedef typename RemoveConst<derived_type>::type mutable_derived_type;
 
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
-	template <typename T, bool U> friend class SpanInternal::SpanIterator;
-	template <typename T, template <typename> class U> friend class SpanBase;
-	template <typename T, typename U> friend struct SafeBool;
+	template <typename T, bool U>
+	friend class SpanInternal::SpanIterator;
+	template <typename T, template <typename> class U>
+	friend class SpanBase;
+	template <typename T, typename U>
+	friend struct SafeBool;
 #endif
 #ifdef CXXTEST_RUNNING
 	friend class ::SpanTestSuite;
@@ -281,9 +286,9 @@ public:
 	inline size_type byteSize() const { return impl().size() * sizeof(value_type); }
 
 #if !defined(_MSC_VER)
-#if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
+#	if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 protected:
-#endif
+#	endif
 #endif
 	inline SpanBase() {}
 	inline SpanBase(const SpanBase &) {}
@@ -297,9 +302,9 @@ protected:
 #pragma mark SpanBase - Interface
 
 #if !defined(_MSC_VER)
-#if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
+#	if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 protected:
-#endif
+#	endif
 #endif
 	inline void clear();
 
@@ -480,9 +485,9 @@ public:
 	}
 
 #if !defined(_MSC_VER)
-#if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
+#	if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 protected:
-#endif
+#	endif
 #endif
 	inline bool operator_bool() const { return impl().data() != nullptr; }
 
@@ -513,9 +518,9 @@ public:
 #pragma mark SpanBase - Validation
 
 #if !defined(_MSC_VER)
-#if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
+#	if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 protected:
-#endif
+#	endif
 #endif
 	/**
 	 * @returns true if bounds are invalid.
@@ -544,11 +549,12 @@ protected:
 template <typename ValueType, template <typename> class Derived>
 class SpanImpl : public SpanBase<ValueType, Derived> {
 	typedef SpanBase<ValueType, Derived> super_type;
-	typedef typename AddConst<Derived<ValueType> >::type const_derived_type;
-	typedef typename RemoveConst<Derived<ValueType> >::type mutable_derived_type;
+	typedef typename AddConst<Derived<ValueType>>::type const_derived_type;
+	typedef typename RemoveConst<Derived<ValueType>>::type mutable_derived_type;
 
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
-	template <typename T, template <typename> class U> friend class SpanImpl;
+	template <typename T, template <typename> class U>
+	friend class SpanImpl;
 #endif
 #ifdef CXXTEST_RUNNING
 	friend class ::SpanTestSuite;
@@ -557,18 +563,21 @@ class SpanImpl : public SpanBase<ValueType, Derived> {
 public:
 	COMMON_SPAN_TYPEDEFS
 
-	inline SpanImpl() : super_type(), _data(nullptr), _size(0) {}
+	inline SpanImpl()
+	  : super_type()
+	  , _data(nullptr)
+	  , _size(0) {}
 
-	inline SpanImpl(const pointer data_, const size_type size_) :
-		super_type(),
-		_data(data_),
-		_size(size_) {}
+	inline SpanImpl(const pointer data_, const size_type size_)
+	  : super_type()
+	  , _data(data_)
+	  , _size(size_) {}
 
 	template <typename Other>
-	inline SpanImpl(const Other &other) :
-		super_type(),
-		_data(other.data()),
-		_size(other.size()) {}
+	inline SpanImpl(const Other &other)
+	  : super_type()
+	  , _data(other.data())
+	  , _size(other.size()) {}
 
 	inline void clear() {
 		_data = nullptr;
@@ -590,23 +599,23 @@ public:
 	String getValidationMessage(const index_type index, const difference_type deltaInBytes, const SpanValidationMode mode) const {
 		const char *modeName = "unknown";
 		switch (mode) {
-			case kValidateRead:
-				modeName = "reading";
-				break;
-			case kValidateWrite:
-				modeName = "writing";
-				break;
-			case kValidateSeek:
-				modeName = "seeking";
-				break;
+		case kValidateRead:
+			modeName = "reading";
+			break;
+		case kValidateWrite:
+			modeName = "writing";
+			break;
+		case kValidateSeek:
+			modeName = "seeking";
+			break;
 		}
 
 		return String::format("Access violation %s %s: %u + %d > %u",
-							  modeName,
-							  this->impl().name().c_str(),
-							  index,
-							  deltaInBytes / (int)sizeof(value_type),
-							  size());
+		                      modeName,
+		                      this->impl().name().c_str(),
+		                      index,
+		                      deltaInBytes / (int)sizeof(value_type),
+		                      size());
 	}
 
 #pragma mark -
@@ -636,9 +645,9 @@ public:
 	}
 
 #if !defined(_MSC_VER)
-#if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
+#	if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 protected:
-#endif
+#	endif
 #endif
 	template <typename NewValueType>
 	void populateSubspan(Derived<NewValueType> &span, const index_type index, size_type numEntries) const {
@@ -702,23 +711,27 @@ public:
 template <typename ValueType>
 class Span : public SpanImpl<ValueType, Span> {
 	typedef SpanImpl<ValueType, ::Common::Span> super_type;
-	typedef typename AddConst<Span<ValueType> >::type const_derived_type;
-	typedef typename RemoveConst<Span<ValueType> >::type mutable_derived_type;
+	typedef typename AddConst<Span<ValueType>>::type const_derived_type;
+	typedef typename RemoveConst<Span<ValueType>>::type mutable_derived_type;
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
-	template <typename T> friend class Span;
+	template <typename T>
+	friend class Span;
 #endif
 
 public:
 	COMMON_SPAN_TYPEDEFS
 
-	inline Span() : super_type() {}
+	inline Span()
+	  : super_type() {}
 
-	inline Span(const pointer data_, const size_type size_) : super_type(data_, size_) {}
+	inline Span(const pointer data_, const size_type size_)
+	  : super_type(data_, size_) {}
 
 	// Allows unrelated sibling classes like NamedSpan to assign to superclass
 	// siblings like Span
 	template <typename Other>
-	inline Span(const Other &other) : super_type(other) {}
+	inline Span(const Other &other)
+	  : super_type(other) {}
 };
 
 #pragma mark -
@@ -727,11 +740,12 @@ public:
 template <typename ValueType, template <typename> class Derived>
 class NamedSpanImpl : public SpanImpl<ValueType, Derived> {
 	typedef SpanImpl<ValueType, Derived> super_type;
-	typedef typename AddConst<Derived<ValueType> >::type const_derived_type;
-	typedef typename RemoveConst<Derived<ValueType> >::type mutable_derived_type;
+	typedef typename AddConst<Derived<ValueType>>::type const_derived_type;
+	typedef typename RemoveConst<Derived<ValueType>>::type mutable_derived_type;
 
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
-	template <typename T, template <typename> class U> friend class NamedSpanImpl;
+	template <typename T, template <typename> class U>
+	friend class NamedSpanImpl;
 #endif
 #ifdef CXXTEST_RUNNING
 	friend class ::SpanTestSuite;
@@ -740,21 +754,24 @@ class NamedSpanImpl : public SpanImpl<ValueType, Derived> {
 public:
 	COMMON_SPAN_TYPEDEFS
 
-	inline NamedSpanImpl() : super_type(), _name(), _sourceByteOffset(0) {}
+	inline NamedSpanImpl()
+	  : super_type()
+	  , _name()
+	  , _sourceByteOffset(0) {}
 
 	inline NamedSpanImpl(const pointer data_,
-						 const size_type size_,
-						 const String &name_ = String(),
-						 const size_type sourceByteOffset_ = 0) :
-		super_type(data_, size_),
-		_name(name_),
-		_sourceByteOffset(sourceByteOffset_) {}
+	                     const size_type size_,
+	                     const String &name_ = String(),
+	                     const size_type sourceByteOffset_ = 0)
+	  : super_type(data_, size_)
+	  , _name(name_)
+	  , _sourceByteOffset(sourceByteOffset_) {}
 
 	template <typename Other>
-	inline NamedSpanImpl(const Other &other) :
-		super_type(other),
-		_name(other.name()),
-		_sourceByteOffset(other.sourceByteOffset()) {}
+	inline NamedSpanImpl(const Other &other)
+	  : super_type(other)
+	  , _name(other.name())
+	  , _sourceByteOffset(other.sourceByteOffset()) {}
 
 	inline void clear() {
 		super_type::clear();
@@ -799,9 +816,9 @@ public:
 	}
 
 #if !defined(_MSC_VER)
-#if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
+#	if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 protected:
-#endif
+#	endif
 #endif
 	template <typename NewValueType>
 	void populateSubspan(Derived<NewValueType> &span, const index_type index, size_type numEntries, const String &name_, const size_type sourceByteOffset_ = kSpanKeepOffset) const {
@@ -828,11 +845,7 @@ public:
 		const index_type indexInBytes = index * sizeof(value_type);
 		const size_type maxSizeInBytes = this->impl().byteSize();
 
-		return super_type::getValidationMessage(index, deltaInBytes, mode) +
-			String::format(" (abs: %u + %d > %u)",
-						   this->impl().sourceByteOffset() + indexInBytes,
-						   deltaInBytes,
-						   this->impl().sourceByteOffset() + maxSizeInBytes);
+		return super_type::getValidationMessage(index, deltaInBytes, mode) + String::format(" (abs: %u + %d > %u)", this->impl().sourceByteOffset() + indexInBytes, deltaInBytes, this->impl().sourceByteOffset() + maxSizeInBytes);
 	}
 
 #pragma mark -
@@ -884,22 +897,25 @@ class NamedSpan : public NamedSpanImpl<ValueType, NamedSpan> {
 	typedef NamedSpanImpl<ValueType, ::Common::NamedSpan> super_type;
 
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
-	template <typename T> friend class NamedSpan;
+	template <typename T>
+	friend class NamedSpan;
 #endif
 
 public:
 	COMMON_SPAN_TYPEDEFS
 
-	inline NamedSpan() : super_type() {}
+	inline NamedSpan()
+	  : super_type() {}
 
 	inline NamedSpan(const pointer data_,
-					 const size_type size_,
-					 const String &name_ = String(),
-					 const size_type sourceByteOffset_ = 0) :
-		super_type(data_, size_, name_, sourceByteOffset_) {}
+	                 const size_type size_,
+	                 const String &name_ = String(),
+	                 const size_type sourceByteOffset_ = 0)
+	  : super_type(data_, size_, name_, sourceByteOffset_) {}
 
 	template <typename Other>
-	inline NamedSpan(const Other &other) : super_type(other) {}
+	inline NamedSpan(const Other &other)
+	  : super_type(other) {}
 };
 
 #pragma mark -
@@ -910,7 +926,7 @@ public:
  * without requiring an additional pointer to data, and with copyability.
  */
 template <typename OwnedSpan>
-class SpanOwner : public SafeBool<SpanOwner<OwnedSpan> > {
+class SpanOwner : public SafeBool<SpanOwner<OwnedSpan>> {
 	typedef typename OwnedSpan::value_type value_type;
 	typedef typename OwnedSpan::size_type size_type;
 	typedef typename OwnedSpan::index_type index_type;
@@ -919,13 +935,16 @@ class SpanOwner : public SafeBool<SpanOwner<OwnedSpan> > {
 	typedef typename OwnedSpan::const_reference const_reference;
 
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
-	template <typename T, typename U> friend struct SafeBool;
+	template <typename T, typename U>
+	friend struct SafeBool;
 #endif
 
 public:
-	inline SpanOwner() : _span() {}
+	inline SpanOwner()
+	  : _span() {}
 
-	inline SpanOwner(const OwnedSpan &span) : _span(span) {}
+	inline SpanOwner(const OwnedSpan &span)
+	  : _span(span) {}
 
 	/**
 	 * Creates a new owned copy of the memory from the other SpanOwner.
@@ -996,9 +1015,9 @@ public:
 	}
 
 #if !defined(_MSC_VER)
-#if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
+#	if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 protected:
-#endif
+#	endif
 #endif
 	inline bool operator_bool() const { return _span; }
 

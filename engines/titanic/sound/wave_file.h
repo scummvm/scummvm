@@ -31,7 +31,8 @@
 
 namespace Titanic {
 
-enum LoadMode { LOADMODE_AUDIO_BUFFER = 1, LOADMODE_SCUMMVM = 2 };
+enum LoadMode { LOADMODE_AUDIO_BUFFER = 1,
+	              LOADMODE_SCUMMVM = 2 };
 
 class CWaveFile {
 private:
@@ -44,6 +45,7 @@ private:
 	byte _flags;
 	uint16 _wavType;
 	Audio::SeekableAudioStream *_pendingAudioStream;
+
 private:
 	/**
 	 * Handles setup of fields shared by the constructors
@@ -59,6 +61,7 @@ private:
 	 * Returns a ScummVM Audio Stream for playback purposes
 	 */
 	Audio::SeekableAudioStream *createAudioStream();
+
 public:
 	Audio::Mixer::SoundType _soundType;
 
@@ -66,6 +69,7 @@ public:
 	CAudioBuffer *_audioBuffer;
 	DisposeAfterUse::Flag _disposeAudioBuffer;
 	int _channel;
+
 public:
 	CWaveFile(Audio::Mixer *mixer);
 	~CWaveFile();

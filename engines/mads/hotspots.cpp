@@ -20,8 +20,8 @@
  *
  */
 
-#include "mads/mads.h"
 #include "mads/hotspots.h"
+#include "mads/mads.h"
 
 namespace MADS {
 
@@ -37,12 +37,12 @@ DynamicHotspot::DynamicHotspot() {
 }
 
 void DynamicHotspot::synchronize(Common::Serializer &s) {
-
 }
 
 /*------------------------------------------------------------------------*/
 
-DynamicHotspots::DynamicHotspots(MADSEngine *vm) : _vm(vm) {
+DynamicHotspots::DynamicHotspots(MADSEngine *vm)
+  : _vm(vm) {
 	for (int i = 0; i < DYNAMIC_HOTSPOTS_SIZE; ++i) {
 		DynamicHotspot rec;
 		rec._active = false;
@@ -202,8 +202,8 @@ Hotspot::Hotspot(Common::SeekableReadStream &f, bool isV2) {
 	_active = f.readByte() != 0;
 	_cursor = (CursorType)f.readByte();
 	if (isV2) {
-		f.skip(1);		// cursor
-		f.skip(1);		// syntax
+		f.skip(1); // cursor
+		f.skip(1); // syntax
 	}
 	_vocabId = f.readUint16LE();
 	_verbId = f.readUint16LE();
@@ -224,9 +224,7 @@ void Hotspots::activate(int vocabId, bool active) {
 void Hotspots::activateAtPos(int vocabId, bool active, Common::Point pos) {
 	for (uint idx = 0; idx < size(); ++idx) {
 		Hotspot &hotspot = (*this)[idx];
-		if ((hotspot._vocabId == vocabId) && (pos.x >= hotspot._bounds.left) &&
-		    (pos.x <= hotspot._bounds.right) && (pos.y >= hotspot._bounds.top) &&
-		    (pos.y <= hotspot._bounds.bottom)) {
+		if ((hotspot._vocabId == vocabId) && (pos.x >= hotspot._bounds.left) && (pos.x <= hotspot._bounds.right) && (pos.y >= hotspot._bounds.top) && (pos.y <= hotspot._bounds.bottom)) {
 			hotspot._active = active;
 			_vm->_game->_screenObjects.setActive(CAT_HOTSPOT, idx, active);
 		}

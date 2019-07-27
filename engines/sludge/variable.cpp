@@ -35,44 +35,44 @@
 namespace Sludge {
 
 const char *typeName[] = { "undefined", "number", "user function", "string",
-		"built-in function", "file", "stack", "object type", "animation",
-		"costume" };
+	                         "built-in function", "file", "stack", "object type", "animation",
+	                         "costume" };
 
 void Variable::unlinkVar() {
 	switch (varType) {
-		case SVT_STRING:
-			delete []varData.theString;
-			varData.theString = NULL;
-			break;
+	case SVT_STRING:
+		delete[] varData.theString;
+		varData.theString = NULL;
+		break;
 
-		case SVT_STACK:
-			varData.theStack->timesUsed--;
-			if (varData.theStack->timesUsed <= 0) {
-				while (varData.theStack->first)
-					trimStack(varData.theStack->first);
-				delete varData.theStack;
-				varData.theStack = NULL;
-			}
-			break;
+	case SVT_STACK:
+		varData.theStack->timesUsed--;
+		if (varData.theStack->timesUsed <= 0) {
+			while (varData.theStack->first)
+				trimStack(varData.theStack->first);
+			delete varData.theStack;
+			varData.theStack = NULL;
+		}
+		break;
 
-		case SVT_FASTARRAY:
-			varData.fastArray->timesUsed--;
-			if (varData.theStack->timesUsed <= 0) {
-				delete varData.fastArray->fastVariables;
-				delete[] varData.fastArray;
-				varData.fastArray = NULL;
-			}
-			break;
+	case SVT_FASTARRAY:
+		varData.fastArray->timesUsed--;
+		if (varData.theStack->timesUsed <= 0) {
+			delete varData.fastArray->fastVariables;
+			delete[] varData.fastArray;
+			varData.fastArray = NULL;
+		}
+		break;
 
-		case SVT_ANIM:
-			if (varData.animHandler) {
-				delete varData.animHandler;
-				varData.animHandler = nullptr;
-			}
-			break;
+	case SVT_ANIM:
+		if (varData.animHandler) {
+			delete varData.animHandler;
+			varData.animHandler = nullptr;
+		}
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 }
 
@@ -82,7 +82,7 @@ void Variable::setVariable(VariableType vT, int value) {
 	varData.intValue = value;
 }
 
-void Variable::makeAnimationVariable(PersonaAnimation  *i) {
+void Variable::makeAnimationVariable(PersonaAnimation *i) {
 	unlinkVar();
 	varType = SVT_ANIM;
 	varData.animHandler = i;
@@ -109,26 +109,26 @@ Persona *Variable::getCostumeFromVar() {
 	Persona *p = NULL;
 
 	switch (varType) {
-		case SVT_ANIM:
-			p = new Persona;
-			if (!checkNew(p))
-				return NULL;
-			p->numDirections = 1;
-			p->animation = new PersonaAnimation  *[3];
-			if (!checkNew(p->animation))
-				return NULL;
+	case SVT_ANIM:
+		p = new Persona;
+		if (!checkNew(p))
+			return NULL;
+		p->numDirections = 1;
+		p->animation = new PersonaAnimation *[3];
+		if (!checkNew(p->animation))
+			return NULL;
 
-			for (int iii = 0; iii < 3; iii++)
-				p->animation[iii] = new PersonaAnimation(varData.animHandler);
+		for (int iii = 0; iii < 3; iii++)
+			p->animation[iii] = new PersonaAnimation(varData.animHandler);
 
-			break;
+		break;
 
-		case SVT_COSTUME:
-			return varData.costumeHandler;
-			break;
+	case SVT_COSTUME:
+		return varData.costumeHandler;
+		break;
 
-		default:
-			fatal("Expecting an animation variable; found Variable of type", typeName[varType]);
+	default:
+		fatal("Expecting an animation variable; found Variable of type", typeName[varType]);
 	}
 
 	return p;
@@ -207,28 +207,28 @@ int Variable::compareVars(const Variable &other) const {
 	int re = 0;
 	if (other.varType == varType) {
 		switch (other.varType) {
-			case SVT_NULL:
-				re = 1;
-				break;
+		case SVT_NULL:
+			re = 1;
+			break;
 
-			case SVT_COSTUME:
-				re = (other.varData.costumeHandler == varData.costumeHandler);
-				break;
+		case SVT_COSTUME:
+			re = (other.varData.costumeHandler == varData.costumeHandler);
+			break;
 
-			case SVT_ANIM:
-				re = (other.varData.animHandler == varData.animHandler);
-				break;
+		case SVT_ANIM:
+			re = (other.varData.animHandler == varData.animHandler);
+			break;
 
-			case SVT_STRING:
-				re = (strcmp(other.varData.theString, varData.theString) == 0);
-				break;
+		case SVT_STRING:
+			re = (strcmp(other.varData.theString, varData.theString) == 0);
+			break;
 
-			case SVT_STACK:
-				re = (other.varData.theStack == varData.theStack);
-				break;
+		case SVT_STACK:
+			re = (other.varData.theStack == varData.theStack);
+			break;
 
-			default:
-				re = (other.varData.intValue == varData.intValue);
+		default:
+			re = (other.varData.intValue == varData.intValue);
 		}
 	}
 	return re;
@@ -251,58 +251,58 @@ bool Variable::loadStringToVar(int value) {
 
 Common::String Variable::getTextFromAnyVar() const {
 	switch (varType) {
-		case SVT_STRING:
-			return varData.theString;
+	case SVT_STRING:
+		return varData.theString;
 
-		case SVT_FASTARRAY: {
-			Common::String builder = "FAST:";
-			Common::String builder2 = "";
-			Common::String grabText = "";
+	case SVT_FASTARRAY: {
+		Common::String builder = "FAST:";
+		Common::String builder2 = "";
+		Common::String grabText = "";
 
-			for (int i = 0; i < varData.fastArray->size; i++) {
-				builder2 = builder + " ";
-				grabText = varData.fastArray->fastVariables[i].getTextFromAnyVar();
-				builder.clear();
-				builder = builder2 + grabText;
-			}
-			return builder;
+		for (int i = 0; i < varData.fastArray->size; i++) {
+			builder2 = builder + " ";
+			grabText = varData.fastArray->fastVariables[i].getTextFromAnyVar();
+			builder.clear();
+			builder = builder2 + grabText;
 		}
+		return builder;
+	}
 
-		case SVT_STACK: {
-			Common::String builder = "ARRAY:";
-			Common::String builder2 = "";
-			Common::String grabText = "";
+	case SVT_STACK: {
+		Common::String builder = "ARRAY:";
+		Common::String builder2 = "";
+		Common::String grabText = "";
 
-			VariableStack *stacky = varData.theStack->first;
+		VariableStack *stacky = varData.theStack->first;
 
-			while (stacky) {
-				builder2 = builder + " ";
-				grabText = stacky->thisVar.getTextFromAnyVar();
-				builder.clear();
-				builder = builder2 + grabText;
-				stacky = stacky->next;
-			}
-			return builder;
+		while (stacky) {
+			builder2 = builder + " ";
+			grabText = stacky->thisVar.getTextFromAnyVar();
+			builder.clear();
+			builder = builder2 + grabText;
+			stacky = stacky->next;
 		}
+		return builder;
+	}
 
-		case SVT_INT: {
-			Common::String buff = Common::String::format("%i", varData.intValue);
-			return buff;
-		}
+	case SVT_INT: {
+		Common::String buff = Common::String::format("%i", varData.intValue);
+		return buff;
+	}
 
-		case SVT_FILE: {
-			return g_sludge->_resMan->resourceNameFromNum(varData.intValue);
-		}
+	case SVT_FILE: {
+		return g_sludge->_resMan->resourceNameFromNum(varData.intValue);
+	}
 
-		case SVT_OBJTYPE: {
-			ObjectType *thisType = g_sludge->_objMan->findObjectType(varData.intValue);
-			if (thisType)
-				return thisType->screenName;
-			break;
-		}
+	case SVT_OBJTYPE: {
+		ObjectType *thisType = g_sludge->_objMan->findObjectType(varData.intValue);
+		if (thisType)
+			return thisType->screenName;
+		break;
+	}
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	return typeName[varType];
@@ -310,23 +310,23 @@ Common::String Variable::getTextFromAnyVar() const {
 
 bool Variable::getBoolean() const {
 	switch (varType) {
-		case SVT_NULL:
-			return false;
+	case SVT_NULL:
+		return false;
 
-		case SVT_INT:
-			return (bool)(varData.intValue != 0);
+	case SVT_INT:
+		return (bool)(varData.intValue != 0);
 
-		case SVT_STACK:
-			return (bool)(varData.theStack->first != NULL);
+	case SVT_STACK:
+		return (bool)(varData.theStack->first != NULL);
 
-		case SVT_STRING:
-			return (bool)(varData.theString[0] != 0);
+	case SVT_STRING:
+		return (bool)(varData.theString[0] != 0);
 
-		case SVT_FASTARRAY:
-			return (bool)(varData.fastArray->size != 0);
+	case SVT_FASTARRAY:
+		return (bool)(varData.fastArray->size != 0);
 
-		default:
-			break;
+	default:
+		break;
 	}
 	return true;
 }
@@ -334,41 +334,41 @@ bool Variable::getBoolean() const {
 bool Variable::copyMain(const Variable &from) {
 	varType = from.varType;
 	switch (varType) {
-		case SVT_INT:
-		case SVT_FUNC:
-		case SVT_BUILT:
-		case SVT_FILE:
-		case SVT_OBJTYPE:
-			varData.intValue = from.varData.intValue;
-			return true;
+	case SVT_INT:
+	case SVT_FUNC:
+	case SVT_BUILT:
+	case SVT_FILE:
+	case SVT_OBJTYPE:
+		varData.intValue = from.varData.intValue;
+		return true;
 
-		case SVT_FASTARRAY:
-			varData.fastArray = from.varData.fastArray;
-			varData.fastArray->timesUsed++;
-			return true;
+	case SVT_FASTARRAY:
+		varData.fastArray = from.varData.fastArray;
+		varData.fastArray->timesUsed++;
+		return true;
 
-		case SVT_STRING:
-			varData.theString = createCString(from.varData.theString);
-			return varData.theString ? true : false;
+	case SVT_STRING:
+		varData.theString = createCString(from.varData.theString);
+		return varData.theString ? true : false;
 
-		case SVT_STACK:
-			varData.theStack = from.varData.theStack;
-			varData.theStack->timesUsed++;
-			return true;
+	case SVT_STACK:
+		varData.theStack = from.varData.theStack;
+		varData.theStack->timesUsed++;
+		return true;
 
-		case SVT_COSTUME:
-			varData.costumeHandler = from.varData.costumeHandler;
-			return true;
+	case SVT_COSTUME:
+		varData.costumeHandler = from.varData.costumeHandler;
+		return true;
 
-		case SVT_ANIM:
-			varData.animHandler = new PersonaAnimation(from.varData.animHandler);
-			return true;
+	case SVT_ANIM:
+		varData.animHandler = new PersonaAnimation(from.varData.animHandler);
+		return true;
 
-		case SVT_NULL:
-			return true;
+	case SVT_NULL:
+		return true;
 
-		default:
-			break;
+	default:
+		break;
 	}
 	fatal("Unknown value type");
 	return false;
@@ -436,7 +436,7 @@ bool addVarToStackQuick(Variable &va, VariableStack *&thisStack) {
 	if (!checkNew(newStack))
 		return false;
 
-//	if (! copyMain (va, newStack -> thisVar)) return false;
+	//	if (! copyMain (va, newStack -> thisVar)) return false;
 
 	memcpy(&(newStack->thisVar), &va, sizeof(Variable));
 	va.varType = SVT_NULL;
@@ -625,7 +625,7 @@ StackHandler *getStackFromLibrary(int n) {
 StackHandler *loadStackRef(Common::SeekableReadStream *stream) {
 	StackHandler *nsh;
 
-	if (stream->readByte()) {    // It's one we've loaded already...
+	if (stream->readByte()) { // It's one we've loaded already...
 		nsh = getStackFromLibrary(stream->readUint16BE());
 		nsh->timesUsed++;
 	} else {
@@ -657,34 +657,34 @@ StackHandler *loadStackRef(Common::SeekableReadStream *stream) {
 bool Variable::save(Common::WriteStream *stream) {
 	stream->writeByte(varType);
 	switch (varType) {
-		case SVT_INT:
-		case SVT_FUNC:
-		case SVT_BUILT:
-		case SVT_FILE:
-		case SVT_OBJTYPE:
-			stream->writeUint32LE(varData.intValue);
-			return true;
+	case SVT_INT:
+	case SVT_FUNC:
+	case SVT_BUILT:
+	case SVT_FILE:
+	case SVT_OBJTYPE:
+		stream->writeUint32LE(varData.intValue);
+		return true;
 
-		case SVT_STRING:
-			writeString(varData.theString, stream);
-			return true;
+	case SVT_STRING:
+		writeString(varData.theString, stream);
+		return true;
 
-		case SVT_STACK:
-			return saveStackRef(varData.theStack, stream);
+	case SVT_STACK:
+		return saveStackRef(varData.theStack, stream);
 
-		case SVT_COSTUME:
-			varData.costumeHandler->save(stream);
-			return false;
+	case SVT_COSTUME:
+		varData.costumeHandler->save(stream);
+		return false;
 
-		case SVT_ANIM:
-			varData.animHandler->save(stream);
-			return false;
+	case SVT_ANIM:
+		varData.animHandler->save(stream);
+		return false;
 
-		case SVT_NULL:
-			return false;
+	case SVT_NULL:
+		return false;
 
-		default:
-			fatal("Can't save variables of this type:", (varType < SVT_NUM_TYPES) ? typeName[varType] : "bad ID");
+	default:
+		fatal("Can't save variables of this type:", (varType < SVT_NUM_TYPES) ? typeName[varType] : "bad ID");
 	}
 	return true;
 }
@@ -692,38 +692,38 @@ bool Variable::save(Common::WriteStream *stream) {
 bool Variable::load(Common::SeekableReadStream *stream) {
 	varType = (VariableType)stream->readByte();
 	switch (varType) {
-		case SVT_INT:
-		case SVT_FUNC:
-		case SVT_BUILT:
-		case SVT_FILE:
-		case SVT_OBJTYPE:
-			varData.intValue = stream->readUint32LE();
-			return true;
+	case SVT_INT:
+	case SVT_FUNC:
+	case SVT_BUILT:
+	case SVT_FILE:
+	case SVT_OBJTYPE:
+		varData.intValue = stream->readUint32LE();
+		return true;
 
-		case SVT_STRING:
-			varData.theString = createCString(readString(stream));
-			return true;
+	case SVT_STRING:
+		varData.theString = createCString(readString(stream));
+		return true;
 
-		case SVT_STACK:
-			varData.theStack = loadStackRef(stream);
-			return true;
+	case SVT_STACK:
+		varData.theStack = loadStackRef(stream);
+		return true;
 
-		case SVT_COSTUME:
-			varData.costumeHandler = new Persona;
-			if (!checkNew(varData.costumeHandler))
-				return false;
-			varData.costumeHandler->load(stream);
-			return true;
+	case SVT_COSTUME:
+		varData.costumeHandler = new Persona;
+		if (!checkNew(varData.costumeHandler))
+			return false;
+		varData.costumeHandler->load(stream);
+		return true;
 
-		case SVT_ANIM:
-			varData.animHandler = new PersonaAnimation;
-			if (!checkNew(varData.animHandler))
-				return false;
-			varData.animHandler->load(stream);
-			return true;
+	case SVT_ANIM:
+		varData.animHandler = new PersonaAnimation;
+		if (!checkNew(varData.animHandler))
+			return false;
+		varData.animHandler->load(stream);
+		return true;
 
-		default:
-			break;
+	default:
+		break;
 	}
 	return true;
 }

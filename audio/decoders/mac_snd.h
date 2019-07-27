@@ -50,8 +50,8 @@ class SeekableAudioStream;
  * @return	a new SeekableAudioStream, or NULL, if an error occurred
  */
 SeekableAudioStream *makeMacSndStream(
-	Common::SeekableReadStream *stream,
-	DisposeAfterUse::Flag disposeAfterUse);
+  Common::SeekableReadStream *stream,
+  DisposeAfterUse::Flag disposeAfterUse);
 
 } // End of namespace Audio
 

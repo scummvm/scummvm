@@ -20,22 +20,22 @@
  *
  */
 
-#include <tamtypes.h>
+#include "eecodyvdfs.h"
 #include <kernel.h>
 #include <sifrpc.h>
-#include "eecodyvdfs.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <tamtypes.h>
 
 static SifRpcClientData_t cd0;
-static unsigned sbuff[64] __attribute__((aligned (64)));
+static unsigned sbuff[64] __attribute__((aligned(64)));
 
 int driveStopped;
 
 int initCdvdFs(void) {
 	int res;
-	while(((res = SifBindRpc(&cd0, CDVDFS_IRX_ID, 0)) >= 0) && (cd0.server == NULL))
+	while (((res = SifBindRpc(&cd0, CDVDFS_IRX_ID, 0)) >= 0) && (cd0.server == NULL))
 		nopdelay();
 	driveStopped = 0;
 	return res;

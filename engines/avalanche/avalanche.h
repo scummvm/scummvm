@@ -28,25 +28,25 @@
 #ifndef AVALANCHE_AVALANCHE_H
 #define AVALANCHE_AVALANCHE_H
 
-#include "avalanche/console.h"
-#include "avalanche/graphics.h"
-#include "avalanche/parser.h"
-#include "avalanche/avalot.h"
-#include "avalanche/dialogs.h"
-#include "avalanche/background.h"
-#include "avalanche/sequence.h"
-#include "avalanche/timer.h"
 #include "avalanche/animation.h"
-#include "avalanche/dropdown.h"
-#include "avalanche/closing.h"
-#include "avalanche/sound.h"
-#include "avalanche/nim.h"
+#include "avalanche/avalot.h"
+#include "avalanche/background.h"
 #include "avalanche/clock.h"
+#include "avalanche/closing.h"
+#include "avalanche/console.h"
+#include "avalanche/dialogs.h"
+#include "avalanche/dropdown.h"
 #include "avalanche/ghostroom.h"
+#include "avalanche/graphics.h"
 #include "avalanche/help.h"
-#include "avalanche/shootemup.h"
-#include "avalanche/mainmenu.h"
 #include "avalanche/highscore.h"
+#include "avalanche/mainmenu.h"
+#include "avalanche/nim.h"
+#include "avalanche/parser.h"
+#include "avalanche/sequence.h"
+#include "avalanche/shootemup.h"
+#include "avalanche/sound.h"
+#include "avalanche/timer.h"
 
 #include "common/error.h"
 #include "common/serializer.h"
@@ -177,7 +177,7 @@ public:
 	bool _bellsAreRinging; // Is Jacques ringing the bells?
 	bool _standingOnDais; // In room 71, inside Cardiff Castle.
 	bool _takenPen; // Have you taken the pen (in Cardiff?)
-	bool _arrowInTheDoor;  // Did the arrow hit the wall?
+	bool _arrowInTheDoor; // Did the arrow hit the wall?
 	Common::String _favoriteDrink, _favoriteSong, _worstPlaceOnEarth, _spareEvening; // Personalisation str's
 	uint32 _startTime; // When did you start playing this session?
 	uint32 _totalTime; // Your total time playing this game, in seconds. Updated only at saving and loading.
@@ -189,7 +189,7 @@ public:
 	byte _malagauche; // Position of Malagauche. See Celer for more info.
 	char _drinking; // What's he getting you?
 	bool _enteredLustiesRoomAsMonk;
-	byte _catacombX, _catacombY;   // XY coords in the catacombs.
+	byte _catacombX, _catacombY; // XY coords in the catacombs.
 	bool _avvysInTheCupboard; // On screen 22.
 	bool _geidaFollows; // Is Geida following you?
 	bool _givenPotionToGeida; // Does Geida have the potion?
@@ -268,6 +268,7 @@ public:
 
 	void setRoom(People persId, Room roomId);
 	Room getRoom(People persId);
+
 private:
 	static const int16 kMaxSprites = 2; // Current max no. of sprites.
 	static Room _whereIs[29];

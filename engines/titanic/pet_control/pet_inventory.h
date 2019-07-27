@@ -23,10 +23,10 @@
 #ifndef TITANIC_PET_INVENTORY_H
 #define TITANIC_PET_INVENTORY_H
 
-#include "titanic/support/simple_file.h"
-#include "titanic/pet_control/pet_section.h"
-#include "titanic/pet_control/pet_inventory_glyphs.h"
 #include "titanic/gfx/text_control.h"
+#include "titanic/pet_control/pet_inventory_glyphs.h"
+#include "titanic/pet_control/pet_section.h"
+#include "titanic/support/simple_file.h"
 
 namespace Titanic {
 
@@ -41,6 +41,7 @@ private:
 	CGameObject *_movie;
 	bool _isLoading;
 	int _titaniaBitFlags;
+
 private:
 	/**
 	 * Handles initial setup
@@ -56,6 +57,7 @@ private:
 	 * Remove any invalid inventory glyphs
 	 */
 	void removeInvalid();
+
 public:
 	CPetInventory();
 

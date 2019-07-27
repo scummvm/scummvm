@@ -21,8 +21,8 @@
  */
 
 #include "kyra/engine/kyra_hof.h"
-#include "kyra/sound/sound.h"
 #include "kyra/resource/resource.h"
+#include "kyra/sound/sound.h"
 
 #include "common/system.h"
 
@@ -147,8 +147,10 @@ void KyraEngine_HoF::enterNewSceneUnk1(int facing, int unk1, int unk2) {
 	bool needProc = true;
 
 	if (_mainCharX == -1 && _mainCharY == -1) {
-		switch (facing+1) {
-		case 1: case 2: case 8:
+		switch (facing + 1) {
+		case 1:
+		case 2:
+		case 8:
 			x2 = _sceneEnterX3;
 			y2 = _sceneEnterY3;
 			break;
@@ -158,7 +160,9 @@ void KyraEngine_HoF::enterNewSceneUnk1(int facing, int unk1, int unk2) {
 			y2 = _sceneEnterY4;
 			break;
 
-		case 4: case 5: case 6:
+		case 4:
+		case 5:
+		case 6:
 			x2 = _sceneEnterX1;
 			y2 = _sceneEnterY1;
 			break;
@@ -239,9 +243,7 @@ void KyraEngine_HoF::enterNewSceneUnk2(int unk1) {
 	_savedMouseState = -1;
 
 	if (_flags.isTalkie) {
-		if (_mainCharX == -1 && _mainCharY == -1 && _mainCharacter.sceneId != 61 &&
-			!queryGameFlag(0x1F1) && !queryGameFlag(0x192) && !queryGameFlag(0x193) &&
-			_mainCharacter.sceneId != 70 && !queryGameFlag(0x159) && _mainCharacter.sceneId != 37) {
+		if (_mainCharX == -1 && _mainCharY == -1 && _mainCharacter.sceneId != 61 && !queryGameFlag(0x1F1) && !queryGameFlag(0x192) && !queryGameFlag(0x193) && _mainCharacter.sceneId != 70 && !queryGameFlag(0x159) && _mainCharacter.sceneId != 37) {
 			_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
 			updateCharacterAnim(0);
 			refreshAnimObjectsIfNeed();
@@ -396,7 +398,7 @@ void KyraEngine_HoF::loadScenePal() {
 	_screen->loadBitmap(filename, 3, 3, 0);
 	_screen->getPalette(1).copy(_screen->getCPagePtr(3), 0, 128);
 	_screen->getPalette(1).fill(0, 1, 0);
-	memcpy(_scenePal, _screen->getCPagePtr(3)+336, 432);
+	memcpy(_scenePal, _screen->getCPagePtr(3) + 336, 432);
 }
 
 void KyraEngine_HoF::loadSceneMsc() {
@@ -453,7 +455,7 @@ void KyraEngine_HoF::startSceneScript(int unk1) {
 
 	for (int i = 0; i < 10; ++i) {
 		_emc->init(&_sceneSpecialScripts[i], &_sceneScriptData);
-		_emc->start(&_sceneSpecialScripts[i], i+8);
+		_emc->start(&_sceneSpecialScripts[i], i + 8);
 		_sceneSpecialScriptsTimer[i] = 0;
 	}
 
@@ -537,7 +539,7 @@ void KyraEngine_HoF::initSceneAnims(int unk1) {
 	AnimObj *charAnimState = animState;
 
 	for (int i = 0; i < 10; ++i) {
-		animState = &_animObjects[i+1];
+		animState = &_animObjects[i + 1];
 		animState->enabled = 0;
 		animState->needRefresh = 0;
 		animState->specialRefresh = 0;
@@ -600,7 +602,7 @@ void KyraEngine_HoF::initSceneAnims(int unk1) {
 	}
 
 	for (int i = 0; i < 30; ++i) {
-		animState = &_animObjects[i+11];
+		animState = &_animObjects[i + 11];
 
 		uint16 shapeIndex = _itemList[i].id;
 		if (shapeIndex == 0xFFFF || _itemList[i].sceneId != _mainCharacter.sceneId) {
@@ -610,8 +612,8 @@ void KyraEngine_HoF::initSceneAnims(int unk1) {
 		} else {
 			animState->xPos1 = _itemList[i].x;
 			animState->yPos1 = _itemList[i].y;
-			animState->shapePtr = getShapePtr(64+shapeIndex);
-			animState->shapeIndex1 = animState->shapeIndex2 = shapeIndex+64;
+			animState->shapePtr = getShapePtr(64 + shapeIndex);
+			animState->shapeIndex1 = animState->shapeIndex2 = shapeIndex + 64;
 
 			animState->xPos2 = _itemList[i].x;
 			animState->yPos2 = _itemList[i].y;
@@ -727,7 +729,7 @@ bool KyraEngine_HoF::lineIsPassable(int x, int y) {
 	if (x2 > 320)
 		x2 = 320;
 
-	for (;x < x2; ++x)
+	for (; x < x2; ++x)
 		if (!_screen->getShapeFlag1(x, y))
 			return false;
 

@@ -26,8 +26,12 @@
 
 namespace Wintermute {
 
-Breakpoint::Breakpoint(const Common::String &filename, uint line, ScriptMonitor *monitor) :
-	_filename(filename), _line(line), _monitor(monitor), _enabled(0), _hits(0) {}
+Breakpoint::Breakpoint(const Common::String &filename, uint line, ScriptMonitor *monitor)
+  : _filename(filename)
+  , _line(line)
+  , _monitor(monitor)
+  , _enabled(0)
+  , _hits(0) {}
 
 void Breakpoint::hit(DebuggableScript *script) {
 	_hits++;
@@ -54,9 +58,7 @@ void Breakpoint::disable() {
 }
 
 void Breakpoint::evaluate(DebuggableScript *script) {
-	if (isEnabled() &&
-			getLine() == script->_currentLine &&
-	        !getFilename().compareTo(script->_filename)) {
+	if (isEnabled() && getLine() == script->_currentLine && !getFilename().compareTo(script->_filename)) {
 		hit(script);
 	}
 }

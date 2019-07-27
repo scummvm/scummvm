@@ -34,32 +34,32 @@ class Settings {
 
 	BladeRunnerEngine *_vm;
 
-	int   _chapter;
-	int   _scene;
-	int   _set;
-	int   _unk0;
+	int _chapter;
+	int _scene;
+	int _set;
+	int _unk0;
 	float _gamma;
 
-	bool  _chapterChanged;
-	int   _newChapter;
-	int   _newScene;
-	int   _newSet;
+	bool _chapterChanged;
+	int _newChapter;
+	int _newScene;
+	int _newSet;
 
-	bool  _startingGame;
-	bool  _loadingGame;
+	bool _startingGame;
+	bool _loadingGame;
 
 	// int   _unk1;
 
-	int   _fullHDFrames;
-	int   _mst3k;
+	int _fullHDFrames;
+	int _mst3k;
 
-	int   _difficulty;
-	int   _playerAgenda;
+	int _difficulty;
+	int _playerAgenda;
 
-	int   _ammoType;
-	int   _ammoAmounts[kAmmoTypesCount];
+	int _ammoType;
+	int _ammoAmounts[kAmmoTypesCount];
 
-	bool  _learyMode;
+	bool _learyMode;
 
 public:
 	Settings(BladeRunnerEngine *vm);

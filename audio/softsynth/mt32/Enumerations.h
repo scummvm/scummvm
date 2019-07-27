@@ -19,53 +19,53 @@
 
 #if (!defined MT32EMU_CPP_ENUMERATIONS_H && !defined MT32EMU_C_ENUMERATIONS) || (!defined MT32EMU_C_ENUMERATIONS_H && defined MT32EMU_C_ENUMERATIONS)
 
-#ifdef MT32EMU_C_ENUMERATIONS
+#	ifdef MT32EMU_C_ENUMERATIONS
 
-#define MT32EMU_C_ENUMERATIONS_H
+#		define MT32EMU_C_ENUMERATIONS_H
 
-#define MT32EMU_DAC_INPUT_MODE_NAME mt32emu_dac_input_mode
-#define MT32EMU_DAC_INPUT_MODE(ident) MT32EMU_DAC_##ident
+#		define MT32EMU_DAC_INPUT_MODE_NAME mt32emu_dac_input_mode
+#		define MT32EMU_DAC_INPUT_MODE(ident) MT32EMU_DAC_##ident
 
-#define MT32EMU_MIDI_DELAY_MODE_NAME mt32emu_midi_delay_mode
-#define MT32EMU_MIDI_DELAY_MODE(ident) MT32EMU_MDM_##ident
+#		define MT32EMU_MIDI_DELAY_MODE_NAME mt32emu_midi_delay_mode
+#		define MT32EMU_MIDI_DELAY_MODE(ident) MT32EMU_MDM_##ident
 
-#define MT32EMU_ANALOG_OUTPUT_MODE_NAME mt32emu_analog_output_mode
-#define MT32EMU_ANALOG_OUTPUT_MODE(ident) MT32EMU_AOM_##ident
+#		define MT32EMU_ANALOG_OUTPUT_MODE_NAME mt32emu_analog_output_mode
+#		define MT32EMU_ANALOG_OUTPUT_MODE(ident) MT32EMU_AOM_##ident
 
-#define MT32EMU_PARTIAL_STATE_NAME mt32emu_partial_state
-#define MT32EMU_PARTIAL_STATE(ident) MT32EMU_PS_##ident
+#		define MT32EMU_PARTIAL_STATE_NAME mt32emu_partial_state
+#		define MT32EMU_PARTIAL_STATE(ident) MT32EMU_PS_##ident
 
-#define MT32EMU_SAMPLERATE_CONVERSION_QUALITY_NAME mt32emu_samplerate_conversion_quality
-#define MT32EMU_SAMPLERATE_CONVERSION_QUALITY(ident) MT32EMU_SRCQ_##ident
+#		define MT32EMU_SAMPLERATE_CONVERSION_QUALITY_NAME mt32emu_samplerate_conversion_quality
+#		define MT32EMU_SAMPLERATE_CONVERSION_QUALITY(ident) MT32EMU_SRCQ_##ident
 
-#define MT32EMU_RENDERER_TYPE_NAME mt32emu_renderer_type
-#define MT32EMU_RENDERER_TYPE(ident) MT32EMU_RT_##ident
+#		define MT32EMU_RENDERER_TYPE_NAME mt32emu_renderer_type
+#		define MT32EMU_RENDERER_TYPE(ident) MT32EMU_RT_##ident
 
-#else /* #ifdef MT32EMU_C_ENUMERATIONS */
+#	else /* #ifdef MT32EMU_C_ENUMERATIONS */
 
-#define MT32EMU_CPP_ENUMERATIONS_H
+#		define MT32EMU_CPP_ENUMERATIONS_H
 
-#define MT32EMU_DAC_INPUT_MODE_NAME DACInputMode
-#define MT32EMU_DAC_INPUT_MODE(ident) DACInputMode_##ident
+#		define MT32EMU_DAC_INPUT_MODE_NAME DACInputMode
+#		define MT32EMU_DAC_INPUT_MODE(ident) DACInputMode_##ident
 
-#define MT32EMU_MIDI_DELAY_MODE_NAME MIDIDelayMode
-#define MT32EMU_MIDI_DELAY_MODE(ident) MIDIDelayMode_##ident
+#		define MT32EMU_MIDI_DELAY_MODE_NAME MIDIDelayMode
+#		define MT32EMU_MIDI_DELAY_MODE(ident) MIDIDelayMode_##ident
 
-#define MT32EMU_ANALOG_OUTPUT_MODE_NAME AnalogOutputMode
-#define MT32EMU_ANALOG_OUTPUT_MODE(ident) AnalogOutputMode_##ident
+#		define MT32EMU_ANALOG_OUTPUT_MODE_NAME AnalogOutputMode
+#		define MT32EMU_ANALOG_OUTPUT_MODE(ident) AnalogOutputMode_##ident
 
-#define MT32EMU_PARTIAL_STATE_NAME PartialState
-#define MT32EMU_PARTIAL_STATE(ident) PartialState_##ident
+#		define MT32EMU_PARTIAL_STATE_NAME PartialState
+#		define MT32EMU_PARTIAL_STATE(ident) PartialState_##ident
 
-#define MT32EMU_SAMPLERATE_CONVERSION_QUALITY_NAME SamplerateConversionQuality
-#define MT32EMU_SAMPLERATE_CONVERSION_QUALITY(ident) SamplerateConversionQuality_##ident
+#		define MT32EMU_SAMPLERATE_CONVERSION_QUALITY_NAME SamplerateConversionQuality
+#		define MT32EMU_SAMPLERATE_CONVERSION_QUALITY(ident) SamplerateConversionQuality_##ident
 
-#define MT32EMU_RENDERER_TYPE_NAME RendererType
-#define MT32EMU_RENDERER_TYPE(ident) RendererType_##ident
+#		define MT32EMU_RENDERER_TYPE_NAME RendererType
+#		define MT32EMU_RENDERER_TYPE(ident) RendererType_##ident
 
 namespace MT32Emu {
 
-#endif /* #ifdef MT32EMU_C_ENUMERATIONS */
+#	endif /* #ifdef MT32EMU_C_ENUMERATIONS */
 
 /**
  * Methods for emulating the connection between the LA32 and the DAC, which involves
@@ -160,28 +160,28 @@ enum MT32EMU_RENDERER_TYPE_NAME {
 	MT32EMU_RENDERER_TYPE(FLOAT)
 };
 
-#ifndef MT32EMU_C_ENUMERATIONS
+#	ifndef MT32EMU_C_ENUMERATIONS
 
 } // namespace MT32Emu
 
-#endif
+#	endif
 
-#undef MT32EMU_DAC_INPUT_MODE_NAME
-#undef MT32EMU_DAC_INPUT_MODE
+#	undef MT32EMU_DAC_INPUT_MODE_NAME
+#	undef MT32EMU_DAC_INPUT_MODE
 
-#undef MT32EMU_MIDI_DELAY_MODE_NAME
-#undef MT32EMU_MIDI_DELAY_MODE
+#	undef MT32EMU_MIDI_DELAY_MODE_NAME
+#	undef MT32EMU_MIDI_DELAY_MODE
 
-#undef MT32EMU_ANALOG_OUTPUT_MODE_NAME
-#undef MT32EMU_ANALOG_OUTPUT_MODE
+#	undef MT32EMU_ANALOG_OUTPUT_MODE_NAME
+#	undef MT32EMU_ANALOG_OUTPUT_MODE
 
-#undef MT32EMU_PARTIAL_STATE_NAME
-#undef MT32EMU_PARTIAL_STATE
+#	undef MT32EMU_PARTIAL_STATE_NAME
+#	undef MT32EMU_PARTIAL_STATE
 
-#undef MT32EMU_SAMPLERATE_CONVERSION_QUALITY_NAME
-#undef MT32EMU_SAMPLERATE_CONVERSION_QUALITY
+#	undef MT32EMU_SAMPLERATE_CONVERSION_QUALITY_NAME
+#	undef MT32EMU_SAMPLERATE_CONVERSION_QUALITY
 
-#undef MT32EMU_RENDERER_TYPE_NAME
-#undef MT32EMU_RENDERER_TYPE
+#	undef MT32EMU_RENDERER_TYPE_NAME
+#	undef MT32EMU_RENDERER_TYPE
 
 #endif /* #if (!defined MT32EMU_CPP_ENUMERATIONS_H && !defined MT32EMU_C_ENUMERATIONS) || (!defined MT32EMU_C_ENUMERATIONS_H && defined MT32EMU_C_ENUMERATIONS) */

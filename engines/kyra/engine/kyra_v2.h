@@ -23,13 +23,13 @@
 #ifndef KYRA_KYRA_V2_H
 #define KYRA_KYRA_V2_H
 
-#include "kyra/kyra_v1.h"
-#include "kyra/gui/gui_v1.h"
-#include "kyra/graphics/wsamovie.h"
 #include "kyra/engine/item.h"
+#include "kyra/graphics/wsamovie.h"
+#include "kyra/gui/gui_v1.h"
+#include "kyra/kyra_v1.h"
 
-#include "common/list.h"
 #include "common/hashmap.h"
+#include "common/list.h"
 
 namespace Kyra {
 
@@ -52,8 +52,9 @@ struct ActiveItemAnim {
 class Screen_v2;
 
 class KyraEngine_v2 : public KyraEngine_v1 {
-friend class Debugger_v2;
-friend class GUI_v2;
+	friend class Debugger_v2;
+	friend class GUI_v2;
+
 public:
 	struct EngineDesc {
 		// Generic shape related
@@ -80,6 +81,7 @@ public:
 	void delay(uint32 time, bool update = false, bool isMainLoop = false);
 
 	const EngineDesc &engineDesc() const { return _desc; }
+
 protected:
 	EngineDesc _desc;
 
@@ -152,7 +154,7 @@ protected:
 	void addItemToAnimList(int item);
 	void deleteItemAnimEntry(int item);
 
-	virtual void animSetupPaletteEntry(AnimObj *){}
+	virtual void animSetupPaletteEntry(AnimObj *) {}
 
 	virtual void setCharacterAnimDim(int w, int h) = 0;
 	virtual void resetCharacterAnimDim() = 0;
@@ -177,7 +179,7 @@ protected:
 
 	uint16 _sceneExit1, _sceneExit2, _sceneExit3, _sceneExit4;
 	int _sceneEnterX1, _sceneEnterY1, _sceneEnterX2, _sceneEnterY2,
-	    _sceneEnterX3, _sceneEnterY3, _sceneEnterX4, _sceneEnterY4;
+	  _sceneEnterX3, _sceneEnterY3, _sceneEnterX4, _sceneEnterY4;
 	int _specialExitCount;
 	uint16 _specialExitTable[25];
 	bool checkSpecialSceneExit(int num, int x, int y);

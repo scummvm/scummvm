@@ -21,11 +21,13 @@
  */
 
 #include "illusions/bbdou/illusions_bbdou.h"
+#include "illusions/actor.h"
 #include "illusions/bbdou/bbdou_menukeys.h"
+#include "illusions/bbdou/bbdou_specialcode.h"
 #include "illusions/bbdou/bbdou_videoplayer.h"
 #include "illusions/bbdou/gamestate_bbdou.h"
 #include "illusions/bbdou/menusystem_bbdou.h"
-#include "illusions/actor.h"
+#include "illusions/bbdou/scriptopcodes_bbdou.h"
 #include "illusions/camera.h"
 #include "illusions/cursor.h"
 #include "illusions/dictionary.h"
@@ -42,10 +44,8 @@
 #include "illusions/screen.h"
 #include "illusions/screentext.h"
 #include "illusions/scriptstack.h"
-#include "illusions/bbdou/scriptopcodes_bbdou.h"
 #include "illusions/sound.h"
 #include "illusions/specialcode.h"
-#include "illusions/bbdou/bbdou_specialcode.h"
 #include "illusions/thread.h"
 #include "illusions/time.h"
 #include "illusions/updatefunctions.h"
@@ -127,7 +127,7 @@ bool ActiveScenes::isSceneActive(uint32 sceneId) {
 // IllusionsEngine_BBDOU
 
 IllusionsEngine_BBDOU::IllusionsEngine_BBDOU(OSystem *syst, const IllusionsGameDescription *gd)
-	: IllusionsEngine(syst, gd) {
+  : IllusionsEngine(syst, gd) {
 }
 
 Common::Error IllusionsEngine_BBDOU::run() {
@@ -258,37 +258,33 @@ Common::Error IllusionsEngine_BBDOU::run() {
 }
 
 bool IllusionsEngine_BBDOU::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
 void IllusionsEngine_BBDOU::initInput() {
 	_input->setInputEvent(kEventLeftClick, 0x01)
-		.addMouseButton(MOUSE_LEFT_BUTTON)
-		.addKey(Common::KEYCODE_RETURN);
+	  .addMouseButton(MOUSE_LEFT_BUTTON)
+	  .addKey(Common::KEYCODE_RETURN);
 	_input->setInputEvent(kEventRightClick, 0x02)
-		.addMouseButton(MOUSE_RIGHT_BUTTON);
+	  .addMouseButton(MOUSE_RIGHT_BUTTON);
 	_input->setInputEvent(kEventInventory, 0x04)
-		.addMouseButton(MOUSE_RIGHT_BUTTON)
-		.addKey(Common::KEYCODE_TAB);
+	  .addMouseButton(MOUSE_RIGHT_BUTTON)
+	  .addKey(Common::KEYCODE_TAB);
 	_input->setInputEvent(kEventAbort, 0x08)
-		.addKey(Common::KEYCODE_ESCAPE);
+	  .addKey(Common::KEYCODE_ESCAPE);
 	_input->setInputEvent(kEventSkip, 0x10)
-		.addKey(Common::KEYCODE_SPACE);
+	  .addKey(Common::KEYCODE_SPACE);
 	_input->setInputEvent(kEventF1, 0x20)
-		.addKey(Common::KEYCODE_F1);
+	  .addKey(Common::KEYCODE_F1);
 	_input->setInputEvent(kEventUp, 0x40)
-		.addKey(Common::KEYCODE_UP);
+	  .addKey(Common::KEYCODE_UP);
 	_input->setInputEvent(kEventDown, 0x80)
-		.addMouseButton(MOUSE_RIGHT_BUTTON)
-		.addKey(Common::KEYCODE_DOWN);
+	  .addMouseButton(MOUSE_RIGHT_BUTTON)
+	  .addKey(Common::KEYCODE_DOWN);
 }
 
 #define UPDATEFUNCTION(priority, sceneId, callback) \
-	_updateFunctions->add(priority, sceneId, new Common::Functor1Mem<uint, int, IllusionsEngine_BBDOU> \
-		(this, &IllusionsEngine_BBDOU::callback));
+	_updateFunctions->add(priority, sceneId, new Common::Functor1Mem<uint, int, IllusionsEngine_BBDOU>(this, &IllusionsEngine_BBDOU::callback));
 
 void IllusionsEngine_BBDOU::initUpdateFunctions() {
 	UPDATEFUNCTION(30, 0, updateScript);
@@ -315,9 +311,7 @@ int IllusionsEngine_BBDOU::updateMenuKeys(uint flags) {
 
 bool IllusionsEngine_BBDOU::causeIsDeclared(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId) {
 	uint32 codeOffs;
-	return
-		_triggerFunctions->find(sceneId, verbId, objectId2, objectId) ||
-		findTriggerCause(sceneId, verbId, objectId2, objectId, codeOffs);
+	return _triggerFunctions->find(sceneId, verbId, objectId2, objectId) || findTriggerCause(sceneId, verbId, objectId2, objectId, codeOffs);
 }
 
 void IllusionsEngine_BBDOU::causeDeclare(uint32 verbId, uint32 objectId2, uint32 objectId, TriggerFunctionCallback *callback) {
@@ -332,7 +326,7 @@ uint32 IllusionsEngine_BBDOU::causeTrigger(uint32 sceneId, uint32 verbId, uint32
 		triggerFunction->run(callingThreadId);
 	} else if (findTriggerCause(sceneId, verbId, objectId2, objectId, codeOffs)) {
 		causeThreadId = startTempScriptThread(_scriptResource->getCode(codeOffs),
-			callingThreadId, verbId, objectId2, objectId);
+		                                      callingThreadId, verbId, objectId2, objectId);
 	}
 	return causeThreadId;
 }
@@ -393,9 +387,7 @@ Control *IllusionsEngine_BBDOU::getObjectControl(uint32 objectId) {
 
 Common::Point IllusionsEngine_BBDOU::getNamedPointPosition(uint32 namedPointId) {
 	Common::Point pt;
-	if (_backgroundInstances->findActiveBackgroundNamedPoint(namedPointId, pt) ||
-		_actorInstances->findNamedPoint(namedPointId, pt) ||
-		_controls->findNamedPoint(namedPointId, pt))
+	if (_backgroundInstances->findActiveBackgroundNamedPoint(namedPointId, pt) || _actorInstances->findNamedPoint(namedPointId, pt) || _controls->findNamedPoint(namedPointId, pt))
 		return pt;
 	// TODO
 	switch (namedPointId) {
@@ -427,8 +419,7 @@ bool IllusionsEngine_BBDOU::isCursorObject(uint32 actorTypeId, uint32 objectId) 
 }
 
 void IllusionsEngine_BBDOU::setCursorControlRoutine(Control *control) {
-	control->_actor->setControlRoutine(new Common::Functor2Mem<Control*, uint32, void, IllusionsEngine_BBDOU>
-		(this, &IllusionsEngine_BBDOU::cursorControlRoutine));
+	control->_actor->setControlRoutine(new Common::Functor2Mem<Control *, uint32, void, IllusionsEngine_BBDOU>(this, &IllusionsEngine_BBDOU::cursorControlRoutine));
 }
 
 void IllusionsEngine_BBDOU::placeCursorControl(Control *control, uint32 sequenceId) {
@@ -466,7 +457,7 @@ void IllusionsEngine_BBDOU::startScriptThreadSimple(uint32 threadId, uint32 call
 }
 
 void IllusionsEngine_BBDOU::startScriptThread(uint32 threadId, uint32 callingThreadId,
-	uint32 value8, uint32 valueC, uint32 value10) {
+                                              uint32 value8, uint32 valueC, uint32 value10) {
 	if (threadId == 0x0002041E && ConfMan.hasKey("save_slot")) {
 		// Skip intro videos when loading a savegame from the launcher (kludge)
 		notifyThreadId(callingThreadId);
@@ -478,7 +469,7 @@ void IllusionsEngine_BBDOU::startScriptThread(uint32 threadId, uint32 callingThr
 }
 
 void IllusionsEngine_BBDOU::startAnonScriptThread(int32 threadId, uint32 callingThreadId,
-	uint32 value8, uint32 valueC, uint32 value10) {
+                                                  uint32 value8, uint32 valueC, uint32 value10) {
 	debug(2, "Starting anonymous script thread %08X", threadId);
 	uint32 tempThreadId = newTempThreadId();
 	byte *scriptCodeIp = _scriptResource->getThreadCode(threadId);
@@ -499,24 +490,24 @@ uint32 IllusionsEngine_BBDOU::startAbortableThread(byte *scriptCodeIp1, byte *sc
 	debug(2, "Starting abortable thread %08X", tempThreadId);
 	uint32 scriptThreadId = startTempScriptThread(scriptCodeIp1, tempThreadId, 0, 0, 0);
 	AbortableThread *abortableThread = new AbortableThread(this, tempThreadId, callingThreadId, 0,
-		scriptThreadId, scriptCodeIp2);
+	                                                       scriptThreadId, scriptCodeIp2);
 	_threads->startThread(abortableThread);
 	return tempThreadId;
 }
 
 uint32 IllusionsEngine_BBDOU::startTalkThread(int16 duration, uint32 objectId, uint32 talkId, uint32 sequenceId1,
-	uint32 sequenceId2, uint32 namedPointId, uint32 callingThreadId) {
+                                              uint32 sequenceId2, uint32 namedPointId, uint32 callingThreadId) {
 	debug(2, "Starting talk thread");
 	uint32 tempThreadId = newTempThreadId();
 	_threads->endTalkThreadsNoNotify();
 	TalkThread *talkThread = new TalkThread(this, tempThreadId, callingThreadId, 0,
-		duration, objectId, talkId, sequenceId1, sequenceId2, namedPointId);
+	                                        duration, objectId, talkId, sequenceId1, sequenceId2, namedPointId);
 	_threads->startThread(talkThread);
 	return tempThreadId;
 }
 
 uint32 IllusionsEngine_BBDOU::startTempScriptThread(byte *scriptCodeIp, uint32 callingThreadId,
-	uint32 value8, uint32 valueC, uint32 value10) {
+                                                    uint32 value8, uint32 valueC, uint32 value10) {
 	uint32 tempThreadId = newTempThreadId();
 	debug(2, "Starting temp script thread %08X", tempThreadId);
 	newScriptThread(tempThreadId, callingThreadId, 0, scriptCodeIp, value8, valueC, value10);
@@ -524,9 +515,9 @@ uint32 IllusionsEngine_BBDOU::startTempScriptThread(byte *scriptCodeIp, uint32 c
 }
 
 void IllusionsEngine_BBDOU::newScriptThread(uint32 threadId, uint32 callingThreadId, uint notifyFlags,
-	byte *scriptCodeIp, uint32 value8, uint32 valueC, uint32 value10) {
+                                            byte *scriptCodeIp, uint32 value8, uint32 valueC, uint32 value10) {
 	ScriptThread *scriptThread = new ScriptThread(this, threadId, callingThreadId, notifyFlags,
-		scriptCodeIp, value8, valueC, value10);
+	                                              scriptCodeIp, value8, valueC, value10);
 	_threads->startThread(scriptThread);
 	if (_pauseCtr > 0)
 		scriptThread->pause();
@@ -541,7 +532,7 @@ void IllusionsEngine_BBDOU::newScriptThread(uint32 threadId, uint32 callingThrea
 uint32 IllusionsEngine_BBDOU::newTimerThread(uint32 duration, uint32 callingThreadId, bool isAbortable) {
 	uint32 tempThreadId = newTempThreadId();
 	TimerThread *timerThread = new TimerThread(this, tempThreadId, callingThreadId, 0,
-		duration, isAbortable);
+	                                           duration, isAbortable);
 	_threads->startThread(timerThread);
 	return tempThreadId;
 }
@@ -671,7 +662,7 @@ void IllusionsEngine_BBDOU::loadSavegameFromScript(int16 slotNum, uint32 calling
 void IllusionsEngine_BBDOU::saveSavegameFromScript(int16 slotNum, uint32 callingThreadId) {
 	// TODO
 	// const char *fileName = getSavegameFilename(slotNum);
-	_saveGameResult = false;//savegame(fileName, _savegameDescription.c_str());
+	_saveGameResult = false; //savegame(fileName, _savegameDescription.c_str());
 }
 
 void IllusionsEngine_BBDOU::activateSavegame(uint32 callingThreadId) {

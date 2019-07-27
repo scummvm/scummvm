@@ -76,7 +76,10 @@ void KyraEngine_HoF::setupLangButtonShapes() {
 	}
 }
 
-GUI_HoF::GUI_HoF(KyraEngine_HoF *vm) : GUI_v2(vm), _vm(vm), _screen(_vm->_screen) {
+GUI_HoF::GUI_HoF(KyraEngine_HoF *vm)
+  : GUI_v2(vm)
+  , _vm(vm)
+  , _screen(_vm->_screen) {
 }
 
 const char *GUI_HoF::getMenuTitle(const Menu &menu) {
@@ -110,7 +113,6 @@ char *GUI_HoF::getTableString(int id) {
 
 #pragma mark -
 
-
 int KyraEngine_HoF::buttonInventory(Button *button) {
 	if (!_screen->isMouseVisible())
 		return 0;
@@ -125,7 +127,7 @@ int KyraEngine_HoF::buttonInventory(Button *button) {
 		snd_playSoundEffect(0x0B);
 		setMouseCursor(item);
 		int string = (_lang == 1) ? getItemCommandStringPickUp(item) : 7;
-		updateCommandLineEx(item+54, string, 0xD6);
+		updateCommandLineEx(item + 54, string, 0xD6);
 		_itemInHand = (int16)item;
 		_mainCharacter.inventory[inventorySlot] = kItemNone;
 	} else {
@@ -139,7 +141,7 @@ int KyraEngine_HoF::buttonInventory(Button *button) {
 			drawInventoryShape(0, _itemInHand, inventorySlot);
 			setMouseCursor(item);
 			int string = (_lang == 1) ? getItemCommandStringPickUp(item) : 7;
-			updateCommandLineEx(item+54, string, 0xD6);
+			updateCommandLineEx(item + 54, string, 0xD6);
 			_mainCharacter.inventory[inventorySlot] = _itemInHand;
 			setHandItem(item);
 		} else {
@@ -147,7 +149,7 @@ int KyraEngine_HoF::buttonInventory(Button *button) {
 			drawInventoryShape(0, _itemInHand, inventorySlot);
 			_screen->setMouseCursor(0, 0, getShapePtr(0));
 			int string = (_lang == 1) ? getItemCommandStringInv(_itemInHand) : 8;
-			updateCommandLineEx(_itemInHand+54, string, 0xD6);
+			updateCommandLineEx(_itemInHand + 54, string, 0xD6);
 			_mainCharacter.inventory[inventorySlot] = _itemInHand;
 			_itemInHand = kItemNone;
 		}
@@ -161,11 +163,11 @@ int KyraEngine_HoF::scrollInventory(Button *button) {
 	Item *dst = &_mainCharacter.inventory[10];
 	Item temp[5];
 
-	memcpy(temp, src, sizeof(Item)*5);
-	memcpy(src, src+5, sizeof(Item)*5);
-	memcpy(src+5, dst, sizeof(Item)*5);
-	memcpy(dst, dst+5, sizeof(Item)*5);
-	memcpy(dst+5, temp, sizeof(Item)*5);
+	memcpy(temp, src, sizeof(Item) * 5);
+	memcpy(src, src + 5, sizeof(Item) * 5);
+	memcpy(src + 5, dst, sizeof(Item) * 5);
+	memcpy(dst, dst + 5, sizeof(Item) * 5);
+	memcpy(dst + 5, temp, sizeof(Item) * 5);
 	_screen->copyRegion(0x46, 0x90, 0x46, 0x90, 0x71, 0x2E, 0, 2);
 	redrawInventory(2);
 	scrollInventoryWheel();
@@ -220,7 +222,7 @@ bool KyraEngine_HoF::checkInventoryItemExchange(Item handItem, int slot) {
 			removeHandItem();
 
 		if (_lang != 1)
-			updateCommandLineEx(newItem+54, 0x2E, 0xD6);
+			updateCommandLineEx(newItem + 54, 0x2E, 0xD6);
 
 		return true;
 	}
@@ -229,11 +231,11 @@ bool KyraEngine_HoF::checkInventoryItemExchange(Item handItem, int slot) {
 }
 
 void KyraEngine_HoF::drawInventoryShape(int page, Item item, int slot) {
-	_screen->drawShape(page, getShapePtr(item+64), _inventoryX[slot], _inventoryY[slot], 0, 0);
+	_screen->drawShape(page, getShapePtr(item + 64), _inventoryX[slot], _inventoryY[slot], 0, 0);
 }
 
 void KyraEngine_HoF::clearInventorySlot(int slot, int page) {
-	_screen->drawShape(page, getShapePtr(240+slot), _inventoryX[slot], _inventoryY[slot], 0, 0);
+	_screen->drawShape(page, getShapePtr(240 + slot), _inventoryX[slot], _inventoryY[slot], 0, 0);
 }
 
 void KyraEngine_HoF::redrawInventory(int page) {
@@ -244,7 +246,7 @@ void KyraEngine_HoF::redrawInventory(int page) {
 	for (int i = 0; i < 10; ++i) {
 		clearInventorySlot(i, page);
 		if (inventory[i] != kItemNone) {
-			_screen->drawShape(page, getShapePtr(inventory[i]+64), _inventoryX[i], _inventoryY[i], 0, 0);
+			_screen->drawShape(page, getShapePtr(inventory[i] + 64), _inventoryX[i], _inventoryY[i], 0, 0);
 			drawInventoryShape(page, inventory[i], i);
 		}
 	}
@@ -279,7 +281,7 @@ void KyraEngine_HoF::scrollInventoryWheel() {
 		}
 
 		_screen->applyOverlay(0x46, 0x79, 0x71, 0x17, 2, overlay);
-		_screen->copyRegion(0x46, y+0x79, 0x46, 0x90, 0x71, 0x2E, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->copyRegion(0x46, y + 0x79, 0x46, 0x90, 0x71, 0x2E, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 
 		delayUntil(endTime);
@@ -434,7 +436,7 @@ void KyraEngine_HoF::showBookPage() {
 
 	int leftPageY = _bookPageYOffset[_bookCurPage];
 
-	sprintf(filename, "PAGE%.01X.%s", _bookCurPage+1, _languageExtension[_lang]);
+	sprintf(filename, "PAGE%.01X.%s", _bookCurPage + 1, _languageExtension[_lang]);
 	uint8 *rightPage = 0;
 	if (_bookCurPage != _bookMaxPage) {
 		rightPage = _res->fileData(filename, 0);
@@ -444,17 +446,17 @@ void KyraEngine_HoF::showBookPage() {
 		}
 	}
 
-	int rightPageY = _bookPageYOffset[_bookCurPage+1];
+	int rightPageY = _bookPageYOffset[_bookCurPage + 1];
 
 	if (leftPage) {
 		bookDecodeText(leftPage);
-		bookPrintText(2, leftPage, 20, leftPageY+20, 0x31);
+		bookPrintText(2, leftPage, 20, leftPageY + 20, 0x31);
 		delete[] leftPage;
 	}
 
 	if (rightPage) {
 		bookDecodeText(rightPage);
-		bookPrintText(2, rightPage, 176, rightPageY+20, 0x31);
+		bookPrintText(2, rightPage, 176, rightPageY + 20, 0x31);
 		delete[] rightPage;
 	}
 }
@@ -529,12 +531,12 @@ void KyraEngine_HoF::bookPrintText(int dstPage, const uint8 *str, int x, int y, 
 }
 
 int KyraEngine_HoF::bookPrevPage(Button *button) {
-	_bookNewPage = MAX<int>(_bookCurPage-2, 0);
+	_bookNewPage = MAX<int>(_bookCurPage - 2, 0);
 	return 0;
 }
 
 int KyraEngine_HoF::bookNextPage(Button *button) {
-	_bookNewPage = MIN<int>(_bookCurPage+2, _bookMaxPage);
+	_bookNewPage = MIN<int>(_bookCurPage + 2, _bookMaxPage);
 	return 0;
 }
 
@@ -602,7 +604,7 @@ int KyraEngine_HoF::cauldronButton(Button *button) {
 	for (int i = 0; _cauldronBowlTable[i] != -1; i += 2) {
 		if (_itemInHand == _cauldronBowlTable[i]) {
 			addFrontCauldronTable(_itemInHand);
-			setHandItem(_cauldronBowlTable[i+1]);
+			setHandItem(_cauldronBowlTable[i + 1]);
 			if (!updateCauldron()) {
 				_cauldronState = 0;
 				cauldronRndPaletteFade();
@@ -794,8 +796,8 @@ void GUI_HoF::resetState(int item) {
 void GUI_HoF::drawSliderBar(int slider, const uint8 *shape) {
 	const int menuX = _audioOptions.x;
 	const int menuY = _audioOptions.y;
-	int x = menuX + _sliderBarsPosition[slider*2+0] + 10;
-	int y = menuY + _sliderBarsPosition[slider*2+1];
+	int x = menuX + _sliderBarsPosition[slider * 2 + 0] + 10;
+	int y = menuY + _sliderBarsPosition[slider * 2 + 1];
 
 	int position = 0;
 	if (_vm->gameFlags().isTalkie) {
@@ -810,7 +812,7 @@ void GUI_HoF::drawSliderBar(int slider, const uint8 *shape) {
 	}
 
 	position = CLIP(position, 2, 97);
-	_screen->drawShape(0, shape, x+position, y, 0, 0);
+	_screen->drawShape(0, shape, x + position, y, 0, 0);
 }
 
 #pragma mark -
@@ -840,11 +842,11 @@ int GUI_HoF::audioOptions(Button *caller) {
 	initMenu(_audioOptions);
 	const int menuX = _audioOptions.x;
 	const int menuY = _audioOptions.y;
-	const int maxButton = 3;	// 2 if voc is disabled
+	const int maxButton = 3; // 2 if voc is disabled
 
 	for (int i = 0; i < maxButton; ++i) {
-		int x = menuX + _sliderBarsPosition[i*2+0];
-		int y = menuY + _sliderBarsPosition[i*2+1];
+		int x = menuX + _sliderBarsPosition[i * 2 + 0];
+		int y = menuY + _sliderBarsPosition[i * 2 + 1];
 		_screen->drawShape(0, _vm->_buttonShapes[16], x, y, 0, 0);
 		drawSliderBar(i, _vm->_buttonShapes[17]);
 		_sliderButtons[0][i].buttonCallback = _sliderHandlerFunctor;
@@ -894,8 +896,8 @@ int GUI_HoF::gameOptions(Button *caller) {
 	const int menuY = _gameOptions.y;
 
 	for (int i = 0; i < 4; ++i) {
-		int x = menuX + _sliderBarsPosition[i*2+0];
-		int y = menuY + _sliderBarsPosition[i*2+1];
+		int x = menuX + _sliderBarsPosition[i * 2 + 0];
+		int y = menuY + _sliderBarsPosition[i * 2 + 1];
 		_screen->drawShape(0, _vm->_buttonShapes[16], x, y, 0, 0);
 		drawSliderBar(i, _vm->_buttonShapes[17]);
 		_sliderButtons[0][i].buttonCallback = _sliderHandlerFunctor;

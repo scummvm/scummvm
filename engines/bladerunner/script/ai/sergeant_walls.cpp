@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptSergeantWalls::AIScriptSergeantWalls(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptSergeantWalls::AIScriptSergeantWalls(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 }
 
 void AIScriptSergeantWalls::Initialize() {
@@ -36,8 +37,7 @@ void AIScriptSergeantWalls::Initialize() {
 
 bool AIScriptSergeantWalls::Update() {
 	if (Game_Flag_Query(kFlagSergeantWallsBuzzInRequest)
-	 && Game_Flag_Query(kFlagSergeantWallsBuzzInDone)
-	) {
+	    && Game_Flag_Query(kFlagSergeantWallsBuzzInDone)) {
 		Game_Flag_Reset(kFlagSergeantWallsBuzzInRequest);
 	}
 	return false;
@@ -99,9 +99,8 @@ bool AIScriptSergeantWalls::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
 		_animationFrame++;
-		if ( Game_Flag_Query(kFlagSergeantWallsBuzzInRequest)
-		 && !Game_Flag_Query(kFlagSergeantWallsBuzzInDone)
-		) {
+		if (Game_Flag_Query(kFlagSergeantWallsBuzzInRequest)
+		    && !Game_Flag_Query(kFlagSergeantWallsBuzzInDone)) {
 			*animation = 724;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(724)) {
 				_animationFrame = 0;
@@ -235,17 +234,17 @@ bool AIScriptSergeantWalls::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptSergeantWalls::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptSergeantWalls::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptSergeantWalls::ReachedMovementTrackWaypoint(int waypointId) {

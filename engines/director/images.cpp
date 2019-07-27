@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/substream.h"
 #include "common/debug.h"
+#include "common/substream.h"
 #include "common/textconsole.h"
 
 #include "director/director.h"
@@ -87,7 +87,7 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 	_paletteColorCount = stream.readUint32LE();
 	/* uint32 colorsImportant = */ stream.readUint32LE();
 
-	_paletteColorCount = (_paletteColorCount == 0) ? 255: _paletteColorCount;
+	_paletteColorCount = (_paletteColorCount == 0) ? 255 : _paletteColorCount;
 
 	Common::SeekableSubReadStream subStream(&stream, 40, stream.size());
 
@@ -149,7 +149,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	if (stream.size() * 8 == _surface->pitch * _surface->h) {
 		debugC(6, kDebugImages, "Skipping compression");
 		for (y = 0; y < _surface->h; y++) {
-			for (x = 0; x < _surface->pitch; ) {
+			for (x = 0; x < _surface->pitch;) {
 				byte color = stream.readByte();
 				for (int c = 0; c < 8; c++)
 					*((byte *)_surface->getBasePtr(x++, y)) = (color & (1 << (7 - c))) ? 0 : 0xff;
@@ -228,7 +228,6 @@ BITDDecoderV4::BITDDecoderV4(int w, int h, uint16 bitsPerPixel) {
 		break;
 	}
 
-
 	// HACK: Create a padded surface by adjusting w after create()
 	_surface->create(pitch, h, pf);
 	_surface->w = w;
@@ -267,7 +266,7 @@ bool BITDDecoderV4::loadStream(Common::SeekableReadStream &stream) {
 	if (stream.size() * 8 == _surface->pitch * _surface->h) {
 		debugC(6, kDebugImages, "Skipping compression");
 		for (y = 0; y < _surface->h; y++) {
-			for (x = 0; x < _surface->pitch; ) {
+			for (x = 0; x < _surface->pitch;) {
 				byte color = stream.readByte();
 				for (int c = 0; c < 8; c++)
 					*((byte *)_surface->getBasePtr(x++, y)) = (color & (1 << (7 - c))) ? 0 : 0xff;
@@ -322,19 +321,18 @@ bool BITDDecoderV4::loadStream(Common::SeekableReadStream &stream) {
 					break;
 
 				case 16:
-					*((uint16*)_surface->getBasePtr(x, y)) = _surface->format.RGBToColor(
-						(pixels[((y * _surface->w) * 2) + x] & 0x7c) << 1,
-						(pixels[((y * _surface->w) * 2) + x] & 0x03) << 6 |
-						(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0xe0) >> 2,
-						(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0x1f) << 3);
+					*((uint16 *)_surface->getBasePtr(x, y)) = _surface->format.RGBToColor(
+					  (pixels[((y * _surface->w) * 2) + x] & 0x7c) << 1,
+					  (pixels[((y * _surface->w) * 2) + x] & 0x03) << 6 | (pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0xe0) >> 2,
+					  (pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0x1f) << 3);
 					x++;
 					break;
 
 				case 32:
-					*((uint32*)_surface->getBasePtr(x, y)) = _surface->format.RGBToColor(
-						pixels[((y * _surface->w) * 3) + x],
-						pixels[(((y * _surface->w) * 3) + (_surface->w)) + x],
-						pixels[(((y * _surface->w) * 3) + (2 * _surface->w)) + x]);
+					*((uint32 *)_surface->getBasePtr(x, y)) = _surface->format.RGBToColor(
+					  pixels[((y * _surface->w) * 3) + x],
+					  pixels[(((y * _surface->w) * 3) + (_surface->w)) + x],
+					  pixels[(((y * _surface->w) * 3) + (2 * _surface->w)) + x]);
 					x++;
 					break;
 

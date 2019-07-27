@@ -21,14 +21,14 @@
  */
 
 #include "glk/sound.h"
-#include "glk/glk.h"
-#include "glk/events.h"
-#include "common/file.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/aiff.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
+#include "common/file.h"
+#include "glk/events.h"
+#include "glk/glk.h"
 
 namespace Glk {
 
@@ -73,8 +73,11 @@ void Sounds::poll() {
 
 /*--------------------------------------------------------------------------*/
 
-SoundChannel::SoundChannel(Sounds *owner) : _owner(owner), _soundNum(0),
-		_rock(0), _notify(0) {
+SoundChannel::SoundChannel(Sounds *owner)
+  : _owner(owner)
+  , _soundNum(0)
+  , _rock(0)
+  , _notify(0) {
 	if (g_vm->gli_register_obj)
 		_dispRock = (*g_vm->gli_register_obj)(this, gidisp_Class_Schannel);
 }
@@ -167,7 +170,7 @@ void SoundChannel::setVolume(uint volume, uint duration, uint notify) {
 
 	if (notify) {
 		warning("TODO: Gradual volume change");
-		g_vm->_events->store(evtype_VolumeNotify, nullptr, 0, notify);	
+		g_vm->_events->store(evtype_VolumeNotify, nullptr, 0, notify);
 	}
 }
 

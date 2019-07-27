@@ -22,24 +22,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
 #include "common/textconsole.h"
 
-#include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"
 #include "sword2/logic.h"
 #include "sword2/resman.h"
 #include "sword2/router.h"
 #include "sword2/sound.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
-Logic::Logic(Sword2Engine *vm) :
-	_vm(vm), _kills(0), _currentRunList(0), _moviePlayer(0),
-	_smackerLeadIn(0), _smackerLeadOut(0), _sequenceTextLines(0),
-	_speechTime(0), _animId(0), _speechAnimType(0), _leftClickDelay(0),
-	_rightClickDelay(0), _officialTextNumber(0), _speechTextBlocNo(0) {
+Logic::Logic(Sword2Engine *vm)
+  : _vm(vm)
+  , _kills(0)
+  , _currentRunList(0)
+  , _moviePlayer(0)
+  , _smackerLeadIn(0)
+  , _smackerLeadOut(0)
+  , _sequenceTextLines(0)
+  , _speechTime(0)
+  , _animId(0)
+  , _speechAnimType(0)
+  , _leftClickDelay(0)
+  , _rightClickDelay(0)
+  , _officialTextNumber(0)
+  , _speechTextBlocNo(0) {
 
 	_scriptVars = NULL;
 	memset(_eventList, 0, sizeof(_eventList));
@@ -64,7 +73,7 @@ int Logic::processSession() {
 	// might change during the session, so take a copy here
 	uint32 run_list = _currentRunList;
 
-	_pc = 0;	// first object in list
+	_pc = 0; // first object in list
 
 	// by minusing the pc we can cause an immediate cessation of logic
 	// processing on the current list
@@ -98,9 +107,9 @@ int Logic::processSession() {
 		level = _curObjectHub.getLogicLevel();
 
 		debug(5, "Level %d id(%d) pc(%d)",
-			level,
-			_curObjectHub.getScriptId(level),
-			_curObjectHub.getScriptPc(level));
+		      level,
+		      _curObjectHub.getScriptId(level),
+		      _curObjectHub.getScriptPc(level));
 
 		// Do the logic for this object. We keep going until a function
 		// says to stop - remember, system operations are run via
@@ -117,8 +126,8 @@ int Logic::processSession() {
 				// It's our own script
 
 				debug(5, "Run script %d pc=%d",
-					script / SIZE,
-					_curObjectHub.getScriptPc(level));
+				      script / SIZE,
+				      _curObjectHub.getScriptPc(level));
 
 				// This is the script data. Script and data
 				// object are the same.
@@ -246,7 +255,7 @@ void Logic::logicUp(uint32 new_script) {
 	// going up a level - and we'll keep going this cycle
 	_curObjectHub.setLogicLevel(_curObjectHub.getLogicLevel() + 1);
 
-	assert(_curObjectHub.getLogicLevel() < 3);	// Can be 0, 1, 2
+	assert(_curObjectHub.getLogicLevel() < 3); // Can be 0, 1, 2
 	logicReplace(new_script);
 }
 

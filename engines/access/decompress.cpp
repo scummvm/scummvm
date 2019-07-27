@@ -38,7 +38,10 @@ void LzwDecompressor::decompress(byte *source, byte *dest) {
 
 	byte *copyBuf = new byte[8192];
 
-	struct { uint16 code; byte value; } codeTable[8192];
+	struct {
+		uint16 code;
+		byte value;
+	} codeTable[8192];
 	memset(codeTable, 0, sizeof(codeTable));
 
 	_codeLength = 9;
@@ -86,11 +89,9 @@ void LzwDecompressor::decompress(byte *source, byte *dest) {
 				maxCodeValue <<= 1;
 			}
 		}
-
 	}
 
 	delete[] copyBuf;
-
 }
 
 uint16 LzwDecompressor::getCode() {
@@ -98,11 +99,11 @@ uint16 LzwDecompressor::getCode() {
 		0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0x0FF
 	};
 
-	byte   resultBitsLeft = _codeLength;
-	byte   resultBitsPos = 0;
+	byte resultBitsLeft = _codeLength;
+	byte resultBitsPos = 0;
 	uint16 result = 0;
-	byte   currentByte = *_source;
-	byte   currentBits = 0;
+	byte currentByte = *_source;
+	byte currentBits = 0;
 
 	// Get bits of current byte
 	while (resultBitsLeft) {

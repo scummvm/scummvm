@@ -22,19 +22,20 @@
 
 #ifdef ENABLE_EOB
 
-#include "kyra/sound/sound_intern.h"
-#include "kyra/resource/resource.h"
+#	include "kyra/resource/resource.h"
+#	include "kyra/sound/sound_intern.h"
 
-#include "common/config-manager.h"
+#	include "common/config-manager.h"
 
-#include "backends/audiocd/audiocd.h"
+#	include "backends/audiocd/audiocd.h"
 
-#include "audio/audiostream.h"
-#include "audio/decoders/raw.h"
+#	include "audio/audiostream.h"
+#	include "audio/decoders/raw.h"
 
 namespace Kyra {
 
-SoundTowns_Darkmoon::SoundTowns_Darkmoon(KyraEngine_v1 *vm, Audio::Mixer *mixer) : Sound(vm, mixer) {
+SoundTowns_Darkmoon::SoundTowns_Darkmoon(KyraEngine_v1 *vm, Audio::Mixer *mixer)
+  : Sound(vm, mixer) {
 	_intf = new TownsAudioInterface(mixer, this, false);
 	_pcmData = 0;
 	_pcmVol = 0;
@@ -42,7 +43,7 @@ SoundTowns_Darkmoon::SoundTowns_Darkmoon(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	_timerSwitch = 0;
 	memset(_resource, 0, sizeof(_resource));
 }
-	
+
 SoundTowns_Darkmoon::~SoundTowns_Darkmoon() {
 	for (int i = 0; i < 3; i++)
 		initAudioResourceInfo(i, 0);
@@ -87,7 +88,7 @@ void SoundTowns_Darkmoon::timerCallback(int timerId) {
 
 void SoundTowns_Darkmoon::initAudioResourceInfo(int set, void *info) {
 	delete _resource[set];
-	_resource[set] = info ? new SoundResourceInfo_TownsEoB(*(SoundResourceInfo_TownsEoB*)info) : 0;
+	_resource[set] = info ? new SoundResourceInfo_TownsEoB(*(SoundResourceInfo_TownsEoB *)info) : 0;
 }
 
 void SoundTowns_Darkmoon::selectAudioResourceSet(int set) {
@@ -100,7 +101,7 @@ void SoundTowns_Darkmoon::selectAudioResourceSet(int set) {
 	_fileListLen = _resource[set]->numFiles;
 
 	_pcmDataSize = _resource[kMusicIngame]->pcmDataSize;
-	_pcmData = new uint8[_pcmDataSize];	
+	_pcmData = new uint8[_pcmDataSize];
 	_pcmVol = _resource[set]->pcmVolume;
 	memcpy(_pcmData, _resource[kMusicIngame]->pcmData, _pcmDataSize);
 
@@ -141,7 +142,7 @@ void SoundTowns_Darkmoon::loadSoundFile(Common::String name) {
 		uint8 *src = pmb + 8;
 		for (int i = 0; i < 32; i++)
 			_intf->callback(5, 0x40, i, &src[i << 7]);
-		
+
 		_intf->callback(35, -1);
 		src += 0x1000;
 		bytesLeft -= 0x1008;

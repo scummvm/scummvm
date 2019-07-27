@@ -21,11 +21,11 @@
  */
 
 #include "lure/screen.h"
+#include "lure/decode.h"
+#include "lure/disk.h"
+#include "lure/events.h"
 #include "lure/luredefs.h"
 #include "lure/memory.h"
-#include "lure/disk.h"
-#include "lure/decode.h"
-#include "lure/events.h"
 
 #include "graphics/palette.h"
 
@@ -37,10 +37,11 @@ Screen &Screen::getReference() {
 	return *int_disk;
 }
 
-Screen::Screen(OSystem &system): _system(system),
-		_screen(new Surface(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT)),
-		_disk(Disk::getReference()),
-		_palette(new Palette(GAME_PALETTE_RESOURCE_ID, RGB64)) {
+Screen::Screen(OSystem &system)
+  : _system(system)
+  , _screen(new Surface(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT))
+  , _disk(Disk::getReference())
+  , _palette(new Palette(GAME_PALETTE_RESOURCE_ID, RGB64)) {
 	int_disk = this;
 	_screen->empty();
 	_system.getPaletteManager()->setPalette(_palette->data(), 0, GAME_COLORS);
@@ -72,7 +73,7 @@ void Screen::setPaletteEmpty(int numEntries) {
 	Palette emptyPalette(numEntries, NULL, RGB64);
 	setSystemPalette(&emptyPalette, 0, numEntries);
 	_palette->copyFrom(&emptyPalette);
-/*
+	/*
 	delete _palette;
 	_palette = new Palette();
 
@@ -114,7 +115,8 @@ void Screen::paletteFadeIn(Palette *p) {
 		byte *pCurrent = _palette->data();
 
 		for (int palCtr = 0; palCtr < p->numEntries() * PALETTE_FADE_INC_SIZE; ++palCtr, ++pCurrent, ++pFinal) {
-			if (palCtr % PALETTE_FADE_INC_SIZE == (PALETTE_FADE_INC_SIZE - 1)) continue;
+			if (palCtr % PALETTE_FADE_INC_SIZE == (PALETTE_FADE_INC_SIZE - 1))
+				continue;
 			bool isDifferent = *pCurrent < *pFinal;
 
 			if (isDifferent) {
@@ -153,8 +155,10 @@ void Screen::paletteFadeOut(int numEntries) {
 				continue;
 			bool isDifferent = *pTemp > 0;
 			if (isDifferent) {
-				if (*pTemp < PALETTE_FADE_INC_SIZE) *pTemp = 0;
-				else *pTemp -= PALETTE_FADE_INC_SIZE;
+				if (*pTemp < PALETTE_FADE_INC_SIZE)
+					*pTemp = 0;
+				else
+					*pTemp -= PALETTE_FADE_INC_SIZE;
 				changed = true;
 			}
 		}

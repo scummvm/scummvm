@@ -20,12 +20,10 @@
  *
  */
 
-
-
 #include "common/file.h"
 
-#include "agos/intern.h"
 #include "agos/agos.h"
+#include "agos/intern.h"
 #include "agos/vga.h"
 
 namespace AGOS {
@@ -42,22 +40,166 @@ void AGOSEngine::unfreezeBottom() {
 }
 
 static const uint8 zoneTable[160] = {
-	0,  0,  2,  2,  2,  2,  0,  2,  2,  2,
-	3,  0,  0,  0,  0,  0,  0,  0,  1,  0,
-	3,  3,  3,  1,  3,  0,  0,  0,  1,  0,
-	2,  0,  3,  0,  3,  3,  0,  1,  1,  0,
-	1,  2,  2,  2,  0,  2,  2,  2,  0,  2,
-	1,  2,  2,  2,  0,  2,  2,  2,  2,  2,
-	2,  2,  2,  1,  2,  2,  2,  2,  2,  2,
-	2,  2,  2,  2,  2,  2,  2,  2,  2,  2,
-	2,  2,  0,  2,  0,  3,  2,  2,  2,  3,
-	2,  3,  3,  3,  1,  3,  3,  1,  1,  0,
-	2,  2,  2,  2,  2,  2,  2,  2,  2,  2,
-	2,  2,  2,  2,  2,  0,  0,  2,  2,  0,
-	0,  2,  0,  2,  2,  2,  0,  0,  0,  0,
-	0,  0,  0,  0,  0,  2,  2,  2,  2,  2,
-	2,  0,  2,  0,  0,  2,  2,  0,  2,  2,
-	2,  2,  2,  2,  2,  0,  0,  0,  0,  0,
+	0,
+	0,
+	2,
+	2,
+	2,
+	2,
+	0,
+	2,
+	2,
+	2,
+	3,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	1,
+	0,
+	3,
+	3,
+	3,
+	1,
+	3,
+	0,
+	0,
+	0,
+	1,
+	0,
+	2,
+	0,
+	3,
+	0,
+	3,
+	3,
+	0,
+	1,
+	1,
+	0,
+	1,
+	2,
+	2,
+	2,
+	0,
+	2,
+	2,
+	2,
+	0,
+	2,
+	1,
+	2,
+	2,
+	2,
+	0,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	1,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	0,
+	2,
+	0,
+	3,
+	2,
+	2,
+	2,
+	3,
+	2,
+	3,
+	3,
+	3,
+	1,
+	3,
+	3,
+	1,
+	1,
+	0,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	0,
+	0,
+	2,
+	2,
+	0,
+	0,
+	2,
+	0,
+	2,
+	2,
+	2,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	0,
+	2,
+	0,
+	0,
+	2,
+	2,
+	0,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	0,
+	0,
+	0,
+	0,
+	0,
 };
 
 void AGOSEngine::loadZone(uint16 zoneNum, bool useError) {
@@ -78,8 +220,7 @@ void AGOSEngine::loadZone(uint16 zoneNum, bool useError) {
 
 	// Loading order is important due to resource management
 
-	if (getPlatform() == Common::kPlatformAmiga && getGameType() == GType_WW &&
-		zoneTable[zoneNum] == 3) {
+	if (getPlatform() == Common::kPlatformAmiga && getGameType() == GType_WW && zoneTable[zoneNum] == 3) {
 		uint8 num = (zoneNum >= 85) ? 94 : 18;
 		loadVGAVideoFile(num, 2, useError);
 	} else {
@@ -141,8 +282,7 @@ byte *AGOSEngine::allocBlock(uint32 size) {
 }
 
 void AGOSEngine::checkRunningAnims() {
-	if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
-		(_videoLockOut & 0x20)) {
+	if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) && (_videoLockOut & 0x20)) {
 		return;
 	}
 
@@ -199,9 +339,7 @@ void AGOSEngine::checkZonePtrs() {
 	uint count = ARRAYSIZE(_vgaBufferPointers);
 	VgaPointersEntry *vpe = _vgaBufferPointers;
 	do {
-		if (((vpe->vgaFile1 < _blockEnd) && (vpe->vgaFile1End > _block)) ||
-			((vpe->vgaFile2 < _blockEnd) && (vpe->vgaFile2End > _block)) ||
-			((vpe->sfxFile < _blockEnd) && (vpe->sfxFileEnd > _block))) {
+		if (((vpe->vgaFile1 < _blockEnd) && (vpe->vgaFile1End > _block)) || ((vpe->vgaFile2 < _blockEnd) && (vpe->vgaFile2End > _block)) || ((vpe->sfxFile < _blockEnd) && (vpe->sfxFileEnd > _block))) {
 			vpe->vgaFile1 = NULL;
 			vpe->vgaFile1End = NULL;
 			vpe->vgaFile2 = NULL;

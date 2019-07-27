@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_CONVERSATIONLINELIST_H
 #define MUTATIONOFJB_CONVERSATIONLINELIST_H
 
-#include "common/str.h"
 #include "common/array.h"
+#include "common/str.h"
 
 namespace MutationOfJB {
 

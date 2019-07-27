@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/str.h"
 #include "common/winexe.h"
+#include "common/str.h"
 
 namespace Common {
 

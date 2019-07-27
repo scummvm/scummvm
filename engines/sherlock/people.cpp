@@ -21,30 +21,30 @@
  */
 
 #include "sherlock/people.h"
-#include "sherlock/sherlock.h"
 #include "sherlock/scalpel/scalpel_people.h"
+#include "sherlock/sherlock.h"
 #include "sherlock/tattoo/tattoo_people.h"
 
 namespace Sherlock {
 
 // Characer animation sequences
 static const uint8 CHARACTER_SEQUENCES[MAX_HOLMES_SEQUENCE][MAX_FRAME] = {
-	{ 29, 1, 2, 3, 4, 5, 6, 7, 0 },		// Walk Right
-	{ 22, 1, 2, 3, 4, 5, 6, 7, 0 },		// Walk Down
-	{ 29, 1, 2, 3, 4, 5, 6, 7, 0 },		// Walk Left
-	{ 15, 1, 2, 3, 4, 5, 6, 7, 0 },		// Walk Up
-	{ 42, 1, 2, 3, 4, 5, 0 },			// Goto Stand Right
-	{ 47, 1, 2, 3, 4, 5, 0 },			// Goto Stand Down
-	{ 42, 1, 2, 3, 4, 5, 0 },			// Goto Stand Left
-	{ 36, 1, 0 },						// Goto Stand Up
-	{ 8, 1, 2, 3, 4, 5, 6, 7, 0 },		// Walk Up Right
-	{ 1, 1, 2, 3, 4, 5, 6, 7, 0 },		// Walk Down Right
-	{ 8, 1, 2, 3, 4, 5, 6, 7, 0 },		// Walk Up Left
-	{ 1, 1, 2, 3, 4, 5, 6, 7, 0 },		// Walk Down Left
-	{ 37, 1, 2, 3, 4, 5, 0 },			// Goto Stand Up Right
-	{ 37, 1, 2, 3, 4, 5, 0 },			// Goto Stand Up Left
-	{ 52, 1, 2, 3, 4, 0 },				// Goto Stand Down Right
-	{ 52, 1, 2, 3, 4, 0 }				// Goto Stand Down Left
+	{ 29, 1, 2, 3, 4, 5, 6, 7, 0 }, // Walk Right
+	{ 22, 1, 2, 3, 4, 5, 6, 7, 0 }, // Walk Down
+	{ 29, 1, 2, 3, 4, 5, 6, 7, 0 }, // Walk Left
+	{ 15, 1, 2, 3, 4, 5, 6, 7, 0 }, // Walk Up
+	{ 42, 1, 2, 3, 4, 5, 0 }, // Goto Stand Right
+	{ 47, 1, 2, 3, 4, 5, 0 }, // Goto Stand Down
+	{ 42, 1, 2, 3, 4, 5, 0 }, // Goto Stand Left
+	{ 36, 1, 0 }, // Goto Stand Up
+	{ 8, 1, 2, 3, 4, 5, 6, 7, 0 }, // Walk Up Right
+	{ 1, 1, 2, 3, 4, 5, 6, 7, 0 }, // Walk Down Right
+	{ 8, 1, 2, 3, 4, 5, 6, 7, 0 }, // Walk Up Left
+	{ 1, 1, 2, 3, 4, 5, 6, 7, 0 }, // Walk Down Left
+	{ 37, 1, 2, 3, 4, 5, 0 }, // Goto Stand Up Right
+	{ 37, 1, 2, 3, 4, 5, 0 }, // Goto Stand Up Left
+	{ 52, 1, 2, 3, 4, 0 }, // Goto Stand Down Right
+	{ 52, 1, 2, 3, 4, 0 } // Goto Stand Down Left
 };
 
 // Rose Tattoo walk image libraries
@@ -64,7 +64,8 @@ const char *const WALK_LIB_NAMES[NUM_IN_WALK_LIB] = {
 
 /*----------------------------------------------------------------*/
 
-Person::Person() : Sprite() {
+Person::Person()
+  : Sprite() {
 	_walkLoaded = false;
 	_oldWalkSequence = -1;
 	_srcZone = _destZone = 0;
@@ -142,7 +143,8 @@ People *People::init(SherlockEngine *vm) {
 		return new Tattoo::TattooPeople(vm);
 }
 
-People::People(SherlockEngine *vm) : _vm(vm) {
+People::People(SherlockEngine *vm)
+  : _vm(vm) {
 	_holmesOn = true;
 	_allowWalkAbort = true;
 	_portraitLoaded = false;
@@ -264,7 +266,7 @@ int People::findSpeaker(int speaker) {
 			Common::String name(obj._name.c_str(), obj._name.c_str() + 4);
 
 			if (name.equalsIgnoreCase(portrait)
-				&& obj._name[4] >= '0' && obj._name[4] <= '9')
+			    && obj._name[4] >= '0' && obj._name[4] <= '9')
 				return idx;
 		}
 	}

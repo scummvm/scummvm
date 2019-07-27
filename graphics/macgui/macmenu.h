@@ -51,8 +51,14 @@ public:
 	static Common::StringArray *readMenuFromResource(Common::SeekableReadStream *res);
 	static MacMenu *createMenuFromPEexe(Common::PEResources &exe, MacWindowManager *wm);
 
-	void setCommandsCallback(void (*callback)(int, Common::String &, void *), void *data) { _ccallback = callback; _cdata = data; }
-	void setCommandsCallback(void (*callback)(int, Common::U32String &, void *), void *data) { _unicodeccallback = callback; _cdata = data; }
+	void setCommandsCallback(void (*callback)(int, Common::String &, void *), void *data) {
+		_ccallback = callback;
+		_cdata = data;
+	}
+	void setCommandsCallback(void (*callback)(int, Common::U32String &, void *), void *data) {
+		_unicodeccallback = callback;
+		_cdata = data;
+	}
 
 	void addStaticMenus(const MacMenuData *data);
 	void calcDimensions();
@@ -76,7 +82,10 @@ public:
 	bool hasAllFocus() { return _menuActivated; }
 
 	bool isVisible() { return _isVisible; }
-	void setVisible(bool visible) { _isVisible = visible; _contentIsDirty = true; }
+	void setVisible(bool visible) {
+		_isVisible = visible;
+		_contentIsDirty = true;
+	}
 
 	Common::Rect _bbox;
 

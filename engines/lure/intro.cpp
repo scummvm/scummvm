@@ -20,10 +20,10 @@
  *
  */
 
-#include "lure/lure.h"
 #include "lure/intro.h"
 #include "lure/animseq.h"
 #include "lure/events.h"
+#include "lure/lure.h"
 #include "lure/sound.h"
 
 namespace Lure {
@@ -36,14 +36,15 @@ struct AnimRecord {
 	uint8 soundNumber;
 };
 
-static const uint16 start_screens[] = {0x18, 0x1A, 0x1E, 0x1C, 0};
+static const uint16 start_screens[] = { 0x18, 0x1A, 0x1E, 0x1C, 0 };
 static const AnimRecord anim_screens[] = {
-	{0x40, 0, 0x35A, 0x2C8, 0x80},		// The kingdom was at peace
-	{0x42, 1, 0, 0x5FA, 0x81},			// Cliff overhang
-	{0x44, 2, 0, 0, 0x82},				// Siluette in moonlight
-	{0x24, 3, 0, 0x328 + 0x24, 0xff},	// Exposition of reaching town
-	{0x46, 3, 0, 0, 0x83},				// Skorl approaches
-	{0, 0, 0, 0, 0xff}};
+	{ 0x40, 0, 0x35A, 0x2C8, 0x80 }, // The kingdom was at peace
+	{ 0x42, 1, 0, 0x5FA, 0x81 }, // Cliff overhang
+	{ 0x44, 2, 0, 0, 0x82 }, // Siluette in moonlight
+	{ 0x24, 3, 0, 0x328 + 0x24, 0xff }, // Exposition of reaching town
+	{ 0x46, 3, 0, 0, 0x83 }, // Skorl approaches
+	{ 0, 0, 0, 0, 0xff }
+};
 
 // showScreen
 // Shows a screen by loading it from the given resource, and then fading it in
@@ -57,13 +58,17 @@ bool Introduction::showScreen(uint16 screenId, uint16 paletteId, uint16 delaySiz
 	screen.update();
 	Palette p(paletteId);
 
-	if (LureEngine::getReference().shouldQuit()) return true;
+	if (LureEngine::getReference().shouldQuit())
+		return true;
 
-	if (isEGA) screen.setPalette(&p);
-	else screen.paletteFadeIn(&p);
+	if (isEGA)
+		screen.setPalette(&p);
+	else
+		screen.paletteFadeIn(&p);
 
 	bool result = interruptableDelay(delaySize);
-	if (LureEngine::getReference().shouldQuit()) return true;
+	if (LureEngine::getReference().shouldQuit())
+		return true;
 
 	if (!isEGA)
 		screen.paletteFadeOut();
@@ -126,8 +131,8 @@ bool Introduction::show() {
 
 		bool fadeIn = curr_anim == anim_screens;
 		anim = new AnimationSequence(curr_anim->resourceId,
-			isEGA ? EgaPalette : coll.getPalette(curr_anim->paletteIndex), fadeIn,
-			(curr_anim->resourceId == 0x44) ? 4 : 7);
+		                             isEGA ? EgaPalette : coll.getPalette(curr_anim->paletteIndex), fadeIn,
+		                             (curr_anim->resourceId == 0x44) ? 4 : 7);
 
 		if (curr_anim->initialPause != 0) {
 			if (interruptableDelay(curr_anim->initialPause * 1000 / 50)) {
@@ -166,8 +171,10 @@ bool Introduction::show() {
 	do {
 		result = interruptableDelay(2000);
 		screen.paletteFadeOut();
-		if (!result) result = interruptableDelay(500);
-		if (result) break;
+		if (!result)
+			result = interruptableDelay(500);
+		if (result)
+			break;
 	} while (anim->step());
 	delete anim;
 

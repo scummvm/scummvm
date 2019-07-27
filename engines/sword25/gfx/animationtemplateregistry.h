@@ -33,8 +33,8 @@
 #define SWORD25_ANIMATIONTEMPLATEREGISTRY_H
 
 #include "sword25/kernel/common.h"
-#include "sword25/kernel/persistable.h"
 #include "sword25/kernel/objectregistry.h"
+#include "sword25/kernel/persistable.h"
 
 #include "common/singleton.h"
 
@@ -42,12 +42,10 @@ namespace Sword25 {
 
 class AnimationTemplate;
 
-class AnimationTemplateRegistry :
-			public ObjectRegistry<AnimationTemplate>,
-			public Persistable,
-			public Common::Singleton<AnimationTemplateRegistry> {
+class AnimationTemplateRegistry : public ObjectRegistry<AnimationTemplate>,
+                                  public Persistable,
+                                  public Common::Singleton<AnimationTemplateRegistry> {
 public:
-
 	virtual bool persist(OutputPersistenceBlock &writer);
 	virtual bool unpersist(InputPersistenceBlock &reader);
 };

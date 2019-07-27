@@ -32,8 +32,9 @@ void QuickFight::show(XeenEngine *vm, Character *currentChar) {
 	delete dlg;
 }
 
-QuickFight::QuickFight(XeenEngine *vm, Character *currentChar) : ButtonContainer(vm),
-		_currentChar(currentChar) {
+QuickFight::QuickFight(XeenEngine *vm, Character *currentChar)
+  : ButtonContainer(vm)
+  , _currentChar(currentChar) {
 	loadButtons();
 }
 
@@ -49,8 +50,8 @@ void QuickFight::execute() {
 	do {
 		// Draw the dialog text and buttons
 		Common::String msg = Common::String::format(Res.QUICK_FIGHT_TEXT,
-			_currentChar->_name.c_str(),
-			Res.QUICK_FIGHT_OPTIONS[_currentChar->_quickOption]);
+		                                            _currentChar->_name.c_str(),
+		                                            Res.QUICK_FIGHT_OPTIONS[_currentChar->_quickOption]);
 		w.writeString(msg);
 		drawButtons(&w);
 

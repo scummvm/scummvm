@@ -20,15 +20,15 @@
  *
  */
 
-#include "config.h"
 #include "codeblocks.h"
+#include "config.h"
 
 #include <fstream>
 
 namespace CreateProjectTool {
 
 CodeBlocksProvider::CodeBlocksProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version)
-	: ProjectProvider(global_warnings, project_warnings, version) {
+  : ProjectProvider(global_warnings, project_warnings, version) {
 }
 
 void CodeBlocksProvider::createWorkspace(const BuildSetup &setup) {
@@ -88,10 +88,11 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 	           "<CodeBlocks_project_file>\n"
 	           "\t<FileVersion major=\"1\" minor=\"6\" />\n"
 	           "\t<Project>\n"
-	           "\t\t<Option title=\"" << name << "\" />\n"
-	           "\t\t<Option pch_mode=\"2\" />\n"
-	           "\t\t<Option compiler=\"gcc\" />\n"
-	           "\t\t<Build>\n";
+	           "\t\t<Option title=\""
+	        << name << "\" />\n"
+	                   "\t\t<Option pch_mode=\"2\" />\n"
+	                   "\t\t<Option compiler=\"gcc\" />\n"
+	                   "\t\t<Build>\n";
 
 	if (name == setup.projectName) {
 		std::string libraries;
@@ -100,13 +101,16 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 			libraries += processLibraryName(*i) + ".a;";
 
 		project << "\t\t\t<Target title=\"default\">\n"
-		           "\t\t\t\t<Option output=\"" << setup.projectName << "\\" << setup.projectName << "\" prefix_auto=\"1\" extension_auto=\"1\" />\n"
-		           "\t\t\t\t<Option object_output=\"" << setup.projectName << "\" />\n"
-		           "\t\t\t\t<Option external_deps=\"" << libraries /* + list of engines engines\name\name.a */ << "\" />\n"
-		           "\t\t\t\t<Option type=\"1\" />\n"
-		           "\t\t\t\t<Option compiler=\"gcc\" />\n"
-		           "\t\t\t\t<Option parameters=\"-d 8 --debugflags=parser\" />\n"
-		           "\t\t\t\t<Option projectIncludeDirsRelation=\"2\" />\n";
+		           "\t\t\t\t<Option output=\""
+		        << setup.projectName << "\\" << setup.projectName << "\" prefix_auto=\"1\" extension_auto=\"1\" />\n"
+		                                                             "\t\t\t\t<Option object_output=\""
+		        << setup.projectName << "\" />\n"
+		                                "\t\t\t\t<Option external_deps=\""
+		        << libraries /* + list of engines engines\name\name.a */ << "\" />\n"
+		                                                                    "\t\t\t\t<Option type=\"1\" />\n"
+		                                                                    "\t\t\t\t<Option compiler=\"gcc\" />\n"
+		                                                                    "\t\t\t\t<Option parameters=\"-d 8 --debugflags=parser\" />\n"
+		                                                                    "\t\t\t\t<Option projectIncludeDirsRelation=\"2\" />\n";
 
 		//////////////////////////////////////////////////////////////////////////
 		// Compiler
@@ -116,12 +120,13 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 		writeDefines(setup.defines, project);
 
 		project << "\t\t\t\t\t<Add directory=\"$(" << LIBS_DEFINE << ")include\" />\n"
-		           "\t\t\t\t\t<Add directory=\"$(" << LIBS_DEFINE << ")include\\SDL\" />\n"
-		           "\t\t\t\t\t<Add directory=\"..\\..\\engines\" />\n"
-		           "\t\t\t\t\t<Add directory=\"..\\..\\common\" />\n"
-		           "\t\t\t\t\t<Add directory=\"..\\..\" />\n"
-		           "\t\t\t\t\t<Add directory=\".\\\" />\n"
-		           "\t\t\t\t</Compiler>\n";
+		                                                             "\t\t\t\t\t<Add directory=\"$("
+		        << LIBS_DEFINE << ")include\\SDL\" />\n"
+		                          "\t\t\t\t\t<Add directory=\"..\\..\\engines\" />\n"
+		                          "\t\t\t\t\t<Add directory=\"..\\..\\common\" />\n"
+		                          "\t\t\t\t\t<Add directory=\"..\\..\" />\n"
+		                          "\t\t\t\t\t<Add directory=\".\\\" />\n"
+		                          "\t\t\t\t</Compiler>\n";
 
 		//////////////////////////////////////////////////////////////////////////
 		// Linker
@@ -138,36 +143,39 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 		}
 
 		project << "\t\t\t\t\t<Add directory=\"$(" << LIBS_DEFINE << ")lib\\mingw\" />\n"
-		           "\t\t\t\t\t<Add directory=\"$(" << LIBS_DEFINE << ")lib\" />\n"
-		           "\t\t\t\t</Linker>\n";
+		                                                             "\t\t\t\t\t<Add directory=\"$("
+		        << LIBS_DEFINE << ")lib\" />\n"
+		                          "\t\t\t\t</Linker>\n";
 
 		//////////////////////////////////////////////////////////////////////////
 		// Resource compiler
 		project << "\t\t\t\t<ResourceCompiler>\n"
 		           "\t\t\t\t\t<Add directory=\"..\\..\\dists\" />\n"
-		           "\t\t\t\t\t<Add directory=\"..\\..\\..\\" << setup.projectName << "\" />\n"
-		           "\t\t\t\t</ResourceCompiler>\n"
-		           "\t\t\t</Target>\n"
-		           "\t\t</Build>\n";
-
-
+		           "\t\t\t\t\t<Add directory=\"..\\..\\..\\"
+		        << setup.projectName << "\" />\n"
+		                                "\t\t\t\t</ResourceCompiler>\n"
+		                                "\t\t\t</Target>\n"
+		                                "\t\t</Build>\n";
 
 	} else {
 		project << "\t\t\t<Target title=\"default\">\n"
-		           "\t\t\t\t<Option output=\"" << setup.projectName << "\\engines\\" << name << "\\lib" << name << "\" prefix_auto=\"1\" extension_auto=\"1\" />\n"
-		           "\t\t\t\t<Option working_dir=\"\" />\n"
-		           "\t\t\t\t<Option object_output=\"" << setup.projectName << "\" />\n"
-		           "\t\t\t\t<Option type=\"2\" />\n"
-		           "\t\t\t\t<Option compiler=\"gcc\" />\n"
-		           "\t\t\t\t<Option createDefFile=\"1\" />\n"
-		           "\t\t\t\t<Compiler>\n";
+		           "\t\t\t\t<Option output=\""
+		        << setup.projectName << "\\engines\\" << name << "\\lib" << name << "\" prefix_auto=\"1\" extension_auto=\"1\" />\n"
+		                                                                            "\t\t\t\t<Option working_dir=\"\" />\n"
+		                                                                            "\t\t\t\t<Option object_output=\""
+		        << setup.projectName << "\" />\n"
+		                                "\t\t\t\t<Option type=\"2\" />\n"
+		                                "\t\t\t\t<Option compiler=\"gcc\" />\n"
+		                                "\t\t\t\t<Option createDefFile=\"1\" />\n"
+		                                "\t\t\t\t<Compiler>\n";
 
 		writeWarnings(name, project);
 		writeDefines(setup.defines, project);
 
 		project << "\t\t\t\t\t<Add option=\"-g\" />\n"
 		           "\t\t\t\t\t<Add directory=\"..\\..\\engines\" />\n"
-		           "\t\t\t\t\t<Add directory=\"..\\..\\..\\" << setup.projectName << "\" />\n";
+		           "\t\t\t\t\t<Add directory=\"..\\..\\..\\"
+		        << setup.projectName << "\" />\n";
 
 		// Sword2.5 engine needs theora and vorbis includes
 		if (name == "sword25")
@@ -190,14 +198,12 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 	else
 		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix);
 
-
 	project << "\t\t<Extensions>\n"
 	           "\t\t\t<code_completion />\n"
 	           "\t\t\t<debugger />\n"
 	           "\t\t</Extensions>\n"
 	           "\t</Project>\n"
 	           "</CodeBlocks_project_file>";
-
 }
 
 void CodeBlocksProvider::addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList) {
@@ -216,7 +222,6 @@ void CodeBlocksProvider::writeWarnings(const std::string &name, std::ofstream &o
 	if (warningsIterator != _projectWarnings.end())
 		for (StringList::const_iterator i = warningsIterator->second.begin(); i != warningsIterator->second.end(); ++i)
 			output << "\t\t\t\t\t<Add option=\"" << *i << "\" />\n";
-
 }
 
 void CodeBlocksProvider::writeDefines(const StringList &defines, std::ofstream &output) const {
@@ -238,12 +243,13 @@ void CodeBlocksProvider::writeFileListToProject(const FileNode &dir, std::ofstre
 
 			if (ext == "rc") {
 				projectFile << "\t\t<Unit filename=\"" << convertPathToWin(filePrefix + node->name) << "\">\n"
-				               "\t\t\t<Option compilerVar=\"WINDRES\" />\n"
-				               "\t\t</Unit>\n";
+				                                                                                       "\t\t\t<Option compilerVar=\"WINDRES\" />\n"
+				                                                                                       "\t\t</Unit>\n";
 			} else if (ext == "asm") {
 				projectFile << "\t\t<Unit filename=\"" << convertPathToWin(filePrefix + node->name) << "\">\n"
-				               "\t\t\t<Option compiler=\"gcc\" use=\"1\" buildCommand=\"$(" << LIBS_DEFINE << ")bin/nasm.exe -f win32 -g $file -o $object\" />"
-				               "\t\t</Unit>\n";
+				                                                                                       "\t\t\t<Option compiler=\"gcc\" use=\"1\" buildCommand=\"$("
+				            << LIBS_DEFINE << ")bin/nasm.exe -f win32 -g $file -o $object\" />"
+				                              "\t\t</Unit>\n";
 			} else {
 				projectFile << "\t\t<Unit filename=\"" << convertPathToWin(filePrefix + node->name) << "\" />\n";
 			}
@@ -267,6 +273,5 @@ void CodeBlocksProvider::writeReferences(const BuildSetup &setup, std::ofstream 
 const char *CodeBlocksProvider::getProjectExtension() {
 	return ".cbp";
 }
-
 
 } // End of CreateProjectTool namespace

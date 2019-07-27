@@ -25,11 +25,13 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CTurnOnObject, CBackground)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(MouseButtonUpMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseButtonUpMsg)
 END_MESSAGE_MAP()
 
-CTurnOnObject::CTurnOnObject() : CBackground(), _msgName("NULL") {
+CTurnOnObject::CTurnOnObject()
+  : CBackground()
+  , _msgName("NULL") {
 }
 
 void CTurnOnObject::save(SimpleFile *file, int indent) {

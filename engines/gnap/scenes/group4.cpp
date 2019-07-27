@@ -20,18 +20,19 @@
  *
  */
 
-#include "gnap/gnap.h"
-#include "gnap/gamesys.h"
-#include "gnap/resource.h"
 #include "gnap/scenes/group4.h"
+#include "gnap/gamesys.h"
+#include "gnap/gnap.h"
+#include "gnap/resource.h"
 
 namespace Gnap {
 
-Scene40::Scene40(GnapEngine *vm) : Scene(vm) {
+Scene40::Scene40(GnapEngine *vm)
+  : Scene(vm) {
 }
 
 int Scene40::init() {
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 1);
@@ -52,8 +53,8 @@ void Scene40::updateHotspots() {
 }
 
 void Scene40::run() {
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->queueInsertDeviceIcon();
 	_vm->endSceneInit();
@@ -153,7 +154,6 @@ void Scene40::run() {
 			if (_vm->_mouseClickState._left && gnap._actionStatus < 0)
 				_vm->_mouseClickState._left = false;
 			break;
-
 		}
 
 		updateAnimations();
@@ -170,8 +170,8 @@ void Scene40::run() {
 }
 
 void Scene40::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -184,7 +184,8 @@ void Scene40::updateAnimations() {
 
 /*****************************************************************************/
 
-Scene41::Scene41(GnapEngine *vm) : Scene(vm) {
+Scene41::Scene41(GnapEngine *vm)
+  : Scene(vm) {
 	_currKidSequenceId = -1;
 	_nextKidSequenceId = -1;
 	_currToyVendorSequenceId = -1;
@@ -192,7 +193,7 @@ Scene41::Scene41(GnapEngine *vm) : Scene(vm) {
 }
 
 int Scene41::init() {
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 1);
@@ -223,9 +224,9 @@ void Scene41::updateHotspots() {
 }
 
 void Scene41::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->queueInsertDeviceIcon();
 
@@ -561,8 +562,8 @@ void Scene41::run() {
 }
 
 void Scene41::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		switch (gnap._actionStatus) {
@@ -638,8 +639,8 @@ void Scene41::updateAnimations() {
 				_vm->_timers[2] = _vm->getRandom(30) + 20;
 				_vm->_timers[3] = _vm->getRandom(50) + 200;
 				gameSys.insertSequence(0x124, gnap._id,
-					makeRid(gnap._sequenceDatNum, gnap._sequenceId), gnap._id,
-					kSeqSyncWait, 0, 0, 0);
+				                       makeRid(gnap._sequenceDatNum, gnap._sequenceId), gnap._id,
+				                       kSeqSyncWait, 0, 0, 0);
 				gnap._sequenceId = 0x124;
 				gnap._sequenceDatNum = 0;
 				gameSys.setAnimation(0x124, gnap._id, 0);
@@ -671,7 +672,7 @@ void Scene41::updateAnimations() {
 		case kAS41UfoGumAttached:
 			_vm->_toyUfoNextSequenceId = 0x873;
 			gameSys.insertSequence(0x10873, _vm->_toyUfoId, _vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId,
-				kSeqSyncWait, 0, _vm->_toyUfoX - 365, _vm->_toyUfoY - 128);
+			                       kSeqSyncWait, 0, _vm->_toyUfoX - 365, _vm->_toyUfoY - 128);
 			_vm->_toyUfoSequenceId = _vm->_toyUfoNextSequenceId;
 			gameSys.setAnimation(_vm->_toyUfoNextSequenceId | 0x10000, _vm->_toyUfoId, 2);
 			_vm->toyUfoSetStatus(kGFJointTaken);
@@ -679,7 +680,7 @@ void Scene41::updateAnimations() {
 		default:
 			_vm->_toyUfoNextSequenceId = _vm->toyUfoGetSequenceId();
 			gameSys.insertSequence(_vm->_toyUfoNextSequenceId | 0x10000, _vm->_toyUfoId + 1, _vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId,
-				kSeqSyncWait, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
+			                       kSeqSyncWait, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
 			_vm->_toyUfoSequenceId = _vm->_toyUfoNextSequenceId;
 			++_vm->_toyUfoId;
 			gameSys.setAnimation(_vm->_toyUfoNextSequenceId | 0x10000, _vm->_toyUfoId, 2);
@@ -711,13 +712,14 @@ void Scene41::updateAnimations() {
 
 /*****************************************************************************/
 
-Scene42::Scene42(GnapEngine *vm) : Scene(vm) {
+Scene42::Scene42(GnapEngine *vm)
+  : Scene(vm) {
 	_currBBQVendorSequenceId = -1;
 	_nextBBQVendorSequenceId = -1;
 }
 
 int Scene42::init() {
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 1);
@@ -752,9 +754,9 @@ void Scene42::updateHotspots() {
 }
 
 void Scene42::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->queueInsertDeviceIcon();
 
@@ -964,7 +966,6 @@ void Scene42::run() {
 				if (gnap._actionStatus < 0)
 					gnap.walkTo(Common::Point(-1, -1), -1, -1, 1);
 				break;
-
 			}
 		}
 
@@ -1028,8 +1029,8 @@ void Scene42::run() {
 }
 
 void Scene42::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		switch (gnap._actionStatus) {
@@ -1069,14 +1070,14 @@ void Scene42::updateAnimations() {
 				}
 				if (sequenceId == 0x7B7) {
 					gameSys.insertSequence(0x107B7, gnap._id,
-						makeRid(gnap._sequenceDatNum, gnap._sequenceId), gnap._id,
-						kSeqSyncWait, _vm->getSequenceTotalDuration(_nextBBQVendorSequenceId),
-						75 * gnap._pos.x - gnap._gridX, 48 * gnap._pos.y - gnap._gridY);
+					                       makeRid(gnap._sequenceDatNum, gnap._sequenceId), gnap._id,
+					                       kSeqSyncWait, _vm->getSequenceTotalDuration(_nextBBQVendorSequenceId),
+					                       75 * gnap._pos.x - gnap._gridX, 48 * gnap._pos.y - gnap._gridY);
 					gnap._sequenceDatNum = 1;
 				} else {
 					gameSys.insertSequence(sequenceId, gnap._id,
-						makeRid(gnap._sequenceDatNum, gnap._sequenceId), gnap._id,
-						kSeqSyncWait, 0, 0, 0);
+					                       makeRid(gnap._sequenceDatNum, gnap._sequenceId), gnap._id,
+					                       kSeqSyncWait, 0, 0, 0);
 					gnap._sequenceDatNum = 0;
 				}
 				gnap._sequenceId = sequenceId;
@@ -1147,8 +1148,8 @@ void Scene42::updateAnimations() {
 			_vm->_toyUfoNextSequenceId = _vm->toyUfoGetSequenceId();
 			gameSys.setAnimation(_vm->_toyUfoNextSequenceId | 0x10000, (_vm->_toyUfoId + 1) % 10, 3);
 			gameSys.insertSequence(_vm->_toyUfoNextSequenceId | 0x10000, (_vm->_toyUfoId + 1) % 10,
-				_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId,
-				kSeqSyncWait, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
+			                       _vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId,
+			                       kSeqSyncWait, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
 			_vm->_toyUfoSequenceId = _vm->_toyUfoNextSequenceId;
 			_vm->_toyUfoId = (_vm->_toyUfoId + 1) % 10;
 			break;
@@ -1159,13 +1160,14 @@ void Scene42::updateAnimations() {
 
 /*****************************************************************************/
 
-Scene43::Scene43(GnapEngine *vm) : Scene(vm) {
+Scene43::Scene43(GnapEngine *vm)
+  : Scene(vm) {
 	_currTwoHeadedGuySequenceId = -1;
 	_nextTwoHeadedGuySequenceId = -1;
 }
 
 int Scene43::init() {
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 1);
@@ -1205,9 +1207,9 @@ void Scene43::updateHotspots() {
 }
 
 void Scene43::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->queueInsertDeviceIcon();
 
@@ -1383,9 +1385,9 @@ void Scene43::run() {
 						gnap.playScratchingHead(Common::Point(7, 0));
 						break;
 					case TALK_CURSOR:
-							gnap._idleFacing = kDirUpRight;
-							gnap.walkTo(Common::Point(5, 8), 0, gnap.getSequenceId(kGSBrainPulsating, Common::Point(0, 0)) | 0x10000, 1);
-							gnap._actionStatus = 2;
+						gnap._idleFacing = kDirUpRight;
+						gnap.walkTo(Common::Point(5, 8), 0, gnap.getSequenceId(kGSBrainPulsating, Common::Point(0, 0)) | 0x10000, 1);
+						gnap._actionStatus = 2;
 						break;
 					case GRAB_CURSOR:
 					case PLAT_CURSOR:
@@ -1487,8 +1489,8 @@ void Scene43::run() {
 }
 
 void Scene43::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		switch (gnap._actionStatus) {
@@ -1584,8 +1586,8 @@ void Scene43::updateAnimations() {
 		default:
 			_vm->_toyUfoNextSequenceId = _vm->toyUfoGetSequenceId();
 			gameSys.insertSequence(_vm->_toyUfoNextSequenceId | 0x10000, _vm->_toyUfoId + 1,
-				_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId,
-				kSeqSyncWait, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
+			                       _vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId,
+			                       kSeqSyncWait, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
 			_vm->_toyUfoSequenceId = _vm->_toyUfoNextSequenceId;
 			++_vm->_toyUfoId;
 			gameSys.setAnimation(_vm->_toyUfoNextSequenceId | 0x10000, _vm->_toyUfoId, 3);
@@ -1597,7 +1599,8 @@ void Scene43::updateAnimations() {
 
 /*****************************************************************************/
 
-Scene44::Scene44(GnapEngine *vm) : Scene(vm) {
+Scene44::Scene44(GnapEngine *vm)
+  : Scene(vm) {
 	_nextSpringGuySequenceId = -1;
 	_nextKissingLadySequenceId = -1;
 	_currSpringGuySequenceId = -1;
@@ -1605,7 +1608,7 @@ Scene44::Scene44(GnapEngine *vm) : Scene(vm) {
 }
 
 int Scene44::init() {
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 1);
@@ -1641,9 +1644,9 @@ void Scene44::updateHotspots() {
 }
 
 void Scene44::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->queueInsertDeviceIcon();
 
@@ -1907,7 +1910,6 @@ void Scene44::run() {
 				if (gnap._actionStatus < 0)
 					gnap.walkTo(Common::Point(-1, -1), -1, -1, 1);
 				break;
-
 			}
 		}
 
@@ -1986,11 +1988,11 @@ void Scene44::run() {
 }
 
 void Scene44::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
-	if (gameSys.getAnimationStatus(0) == 2) 	{
+	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
 		switch (gnap._actionStatus) {
 		case 0:
@@ -2067,8 +2069,8 @@ void Scene44::updateAnimations() {
 		default:
 			_vm->_toyUfoNextSequenceId = _vm->toyUfoGetSequenceId();
 			gameSys.insertSequence(_vm->_toyUfoNextSequenceId | 0x10000, _vm->_toyUfoId + 1,
-				_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId,
-				kSeqSyncWait, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
+			                       _vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId,
+			                       kSeqSyncWait, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
 			_vm->_toyUfoSequenceId = _vm->_toyUfoNextSequenceId;
 			++_vm->_toyUfoId;
 			gameSys.setAnimation(_vm->_toyUfoNextSequenceId | 0x10000, _vm->_toyUfoId, 3);
@@ -2080,12 +2082,13 @@ void Scene44::updateAnimations() {
 
 /*****************************************************************************/
 
-Scene45::Scene45(GnapEngine *vm) : Scene(vm) {
+Scene45::Scene45(GnapEngine *vm)
+  : Scene(vm) {
 	_currDancerSequenceId = -1;
 }
 
 int Scene45::init() {
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 1);
@@ -2126,9 +2129,9 @@ void Scene45::updateHotspots() {
 }
 
 void Scene45::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	if (!_vm->isSoundPlaying(0x1094A))
 		_vm->playSound(0x1094A, true);
@@ -2215,8 +2218,8 @@ void Scene45::run() {
 			_vm->gameUpdateTick();
 		gameSys.setAnimation(0x107BD, gnap._id, 0);
 		gameSys.insertSequence(0x107BD, gnap._id,
-			makeRid(gnap._sequenceDatNum, gnap._sequenceId), gnap._id,
-			kSeqSyncWait, 0, 75 * gnap._pos.x - gnap._gridX, 48 * gnap._pos.y - gnap._gridY);
+		                       makeRid(gnap._sequenceDatNum, gnap._sequenceId), gnap._id,
+		                       kSeqSyncWait, 0, 75 * gnap._pos.x - gnap._gridX, 48 * gnap._pos.y - gnap._gridY);
 		_vm->removeFullScreenSprite();
 		_vm->showCursor();
 		gnap._sequenceId = 0x7BD;
@@ -2394,9 +2397,9 @@ void Scene45::run() {
 }
 
 void Scene45::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -2451,8 +2454,8 @@ void Scene45::updateAnimations() {
 		default:
 			_vm->_toyUfoNextSequenceId = _vm->toyUfoGetSequenceId();
 			gameSys.insertSequence(_vm->_toyUfoNextSequenceId | 0x10000, _vm->_toyUfoId + 1,
-				_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId,
-				kSeqSyncWait, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
+			                       _vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId,
+			                       kSeqSyncWait, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
 			_vm->_toyUfoSequenceId = _vm->_toyUfoNextSequenceId;
 			++_vm->_toyUfoId;
 			gameSys.setAnimation(_vm->_toyUfoNextSequenceId | 0x10000, _vm->_toyUfoId, 5);
@@ -2464,7 +2467,8 @@ void Scene45::updateAnimations() {
 
 /*****************************************************************************/
 
-Scene46::Scene46(GnapEngine *vm) : Scene(vm) {
+Scene46::Scene46(GnapEngine *vm)
+  : Scene(vm) {
 	_currSackGuySequenceId = -1;
 	_nextItchyGuySequenceId = -1;
 	_nextSackGuySequenceId = -1;
@@ -2472,7 +2476,7 @@ Scene46::Scene46(GnapEngine *vm) : Scene(vm) {
 }
 
 int Scene46::init() {
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 1);
@@ -2503,9 +2507,9 @@ void Scene46::updateHotspots() {
 }
 
 void Scene46::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->queueInsertDeviceIcon();
 	gameSys.insertSequence(0x4D, 0, 0, 0, kSeqLoop, 0, 0, 0);
@@ -2742,8 +2746,8 @@ void Scene46::run() {
 }
 
 void Scene46::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -2785,8 +2789,8 @@ void Scene46::updateAnimations() {
 		default:
 			_vm->_toyUfoNextSequenceId = _vm->toyUfoGetSequenceId();
 			gameSys.insertSequence(_vm->_toyUfoNextSequenceId | 0x10000, _vm->_toyUfoId + 1,
-				_vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId,
-				kSeqSyncWait, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
+			                       _vm->_toyUfoSequenceId | 0x10000, _vm->_toyUfoId,
+			                       kSeqSyncWait, 0, _vm->_toyUfoX - 274, _vm->_toyUfoY - 128);
 			_vm->_toyUfoSequenceId = _vm->_toyUfoNextSequenceId;
 			++_vm->_toyUfoId;
 			gameSys.setAnimation(_vm->_toyUfoNextSequenceId | 0x10000, _vm->_toyUfoId, 2);

@@ -23,8 +23,8 @@
 #ifndef GLK_WINDOW_TEXT_GRID_H
 #define GLK_WINDOW_TEXT_GRID_H
 
-#include "glk/windows.h"
 #include "glk/conf.h"
+#include "glk/windows.h"
 
 namespace Glk {
 
@@ -43,7 +43,8 @@ class TextGridWindow : public Window {
 		/**
 		 * Constructor
 		 */
-		TextGridRow() : dirty(false) {}
+		TextGridRow()
+		  : dirty(false) {}
 
 		/**
 		 * Resize the row
@@ -51,8 +52,10 @@ class TextGridWindow : public Window {
 		void resize(size_t newSize);
 	};
 	typedef Common::Array<TextGridRow> TextGridRows;
+
 private:
 	MonoFontInfo &_font;
+
 private:
 	/**
 	 * Mark a given text row as modified
@@ -63,14 +66,15 @@ private:
 	 * Return or enter, during line input. Ends line input.
 	 */
 	void acceptLine(uint32 keycode);
+
 public:
 	int _width, _height;
 	TextGridRows _lines;
 
-	int _curX, _curY;    ///< the window cursor position
+	int _curX, _curY; ///< the window cursor position
 
 	///< for line input
-	void *_inBuf;        ///< unsigned char* for latin1, uint32* for unicode
+	void *_inBuf; ///< unsigned char* for latin1, uint32* for unicode
 	int _inOrgX, _inOrgY;
 	int _inMax;
 	int _inCurs, _inLen;

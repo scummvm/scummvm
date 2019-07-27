@@ -30,7 +30,7 @@ namespace Illusions {
 
 struct TriggerFunction;
 
-typedef Common::Functor2<TriggerFunction*, uint32, void> TriggerFunctionCallback;
+typedef Common::Functor2<TriggerFunction *, uint32, void> TriggerFunctionCallback;
 
 struct TriggerFunction {
 	uint32 _sceneId;
@@ -48,8 +48,9 @@ public:
 	void add(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, TriggerFunctionCallback *callback);
 	TriggerFunction *find(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId);
 	void removeBySceneId(uint32 sceneId);
+
 public:
-	typedef Common::List<TriggerFunction*> Items;
+	typedef Common::List<TriggerFunction *> Items;
 	typedef Items::iterator ItemsIterator;
 	Items _triggerFunctions;
 	ItemsIterator findInternal(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId);

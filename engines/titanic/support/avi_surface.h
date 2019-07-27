@@ -24,10 +24,10 @@
 #define TITANIC_AVI_SURFACE_H
 
 #include "common/stream.h"
-#include "video/avi_decoder.h"
 #include "graphics/managed_surface.h"
 #include "titanic/core/resource_key.h"
 #include "titanic/support/movie_range_info.h"
+#include "video/avi_decoder.h"
 
 namespace Titanic {
 
@@ -35,11 +35,11 @@ class CSoundManager;
 class CVideoSurface;
 
 enum MovieFlag {
-	MOVIE_REPEAT = 1,				// Repeat movie
-	MOVIE_STOP_PREVIOUS = 2,		// Stop any prior movie playing on the object
-	MOVIE_NOTIFY_OBJECT = 4,		// Notify the object when the movie finishes
-	MOVIE_REVERSE = 8,				// Play the movie in reverse
-	MOVIE_WAIT_FOR_FINISH = 0x10	// Let finish before playing next movie for object
+	MOVIE_REPEAT = 1, // Repeat movie
+	MOVIE_STOP_PREVIOUS = 2, // Stop any prior movie playing on the object
+	MOVIE_NOTIFY_OBJECT = 4, // Notify the object when the movie finishes
+	MOVIE_REVERSE = 8, // Play the movie in reverse
+	MOVIE_WAIT_FOR_FINISH = 0x10 // Let finish before playing next movie for object
 };
 
 /**
@@ -50,6 +50,7 @@ enum MovieFlag {
 class y222 : virtual public Common::SeekableReadStream {
 private:
 	File *_innerStream;
+
 public:
 	y222();
 	virtual ~y222();
@@ -72,12 +73,11 @@ public:
 	}
 };
 
-
 class AVIDecoder : public Video::AVIDecoder {
 public:
 	AVIDecoder() {}
-	AVIDecoder(const Common::Rational &frameRateOverride) :
-		Video::AVIDecoder(frameRateOverride) {}
+	AVIDecoder(const Common::Rational &frameRateOverride)
+	  : Video::AVIDecoder(frameRateOverride) {}
 
 	/**
 	 * Returns the number of video tracks the decoder has
@@ -109,6 +109,7 @@ private:
 	int _currentFrame, _priorFrame;
 	uint32 _priorFrameTime;
 	Common::String _movieName;
+
 private:
 	/**
 	 * Render a frame to the video surface
@@ -129,6 +130,7 @@ private:
 	 * the special transparent color value.
 	 */
 	void copyMovieFrame(const Graphics::Surface &src, Graphics::ManagedSurface &dest);
+
 protected:
 	/**
 	 * Start playback at the specified frame
@@ -139,9 +141,11 @@ protected:
 	 * Seeks to a given frame number in the video
 	 */
 	virtual void seekToFrame(uint frameNumber);
+
 public:
 	CSoundManager *_soundManager;
 	bool _hasAudio;
+
 public:
 	AVISurface(const CResourceKey &key);
 	virtual ~AVISurface();

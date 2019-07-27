@@ -23,7 +23,6 @@
 #ifndef SKY_DISK_H
 #define SKY_DISK_H
 
-
 #include "common/scummsys.h"
 #include "sky/rnc_deco.h"
 

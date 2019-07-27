@@ -20,15 +20,16 @@
  *
  */
 
-#include "gnap/gnap.h"
+#include "gnap/scenes/group0.h"
 #include "gnap/character.h"
 #include "gnap/gamesys.h"
+#include "gnap/gnap.h"
 #include "gnap/resource.h"
-#include "gnap/scenes/group0.h"
 
 namespace Gnap {
 
-Scene01::Scene01(GnapEngine *vm) : Scene(vm) {
+Scene01::Scene01(GnapEngine *vm)
+  : Scene(vm) {
 	_pigsIdCtr = 0;
 	_smokeIdCtr = 0;
 	_spaceshipSurface = nullptr;
@@ -39,7 +40,7 @@ Scene01::~Scene01() {
 }
 
 int Scene01::init() {
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 3);
@@ -69,9 +70,9 @@ void Scene01::updateHotspots() {
 }
 
 void Scene01::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->playSound(0x1091C, true);
 	_vm->startSoundTimerC(5);
@@ -250,7 +251,6 @@ void Scene01::run() {
 				_vm->_mouseClickState._left = false;
 			}
 			break;
-
 		}
 
 		updateAnimations();
@@ -286,8 +286,8 @@ void Scene01::run() {
 }
 
 void Scene01::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -347,22 +347,23 @@ void Scene01::updateAnimations() {
 		_smokeIdCtr = (_smokeIdCtr + 1) % 2;
 		gameSys.setAnimation(0x86, _smokeIdCtr + 20, 4);
 		gameSys.insertSequence(0x86, _smokeIdCtr + 20,
-			0x86, (_smokeIdCtr + 1) % 2 + 20,
-			kSeqSyncWait, 0, 0, 0);
+		                       0x86, (_smokeIdCtr + 1) % 2 + 20,
+		                       kSeqSyncWait, 0, 0, 0);
 	}
 
 	if (gameSys.getAnimationStatus(2) == 2) {
 		_pigsIdCtr = (_pigsIdCtr + 1) % 2;
 		gameSys.setAnimation(0x7F, _pigsIdCtr + 40, 2);
 		gameSys.insertSequence(0x7F, _pigsIdCtr + 40,
-			0x7F, (_pigsIdCtr + 1) % 2 + 40,
-			kSeqSyncWait, 0, 0, 0);
+		                       0x7F, (_pigsIdCtr + 1) % 2 + 40,
+		                       kSeqSyncWait, 0, 0, 0);
 	}
 }
 
 /*****************************************************************************/
 
-Scene02::Scene02(GnapEngine *vm) : Scene(vm) {
+Scene02::Scene02(GnapEngine *vm)
+  : Scene(vm) {
 	_truckGrillCtr = 0;
 	_nextChickenSequenceId = 0;
 	_currChickenSequenceId = 0;
@@ -395,9 +396,9 @@ void Scene02::updateHotspots() {
 }
 
 void Scene02::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->playSound(0x1091C, true);
 	_vm->startSoundTimerC(6);
@@ -711,8 +712,8 @@ void Scene02::run() {
 }
 
 void Scene02::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		switch (gnap._actionStatus) {
@@ -847,7 +848,8 @@ void Scene02::updateAnimations() {
 
 /*****************************************************************************/
 
-Scene03::Scene03(GnapEngine *vm) : Scene(vm) {
+Scene03::Scene03(GnapEngine *vm)
+  : Scene(vm) {
 	_nextPlatSequenceId = -1;
 	_platypusScared = false;
 	_platypusHypnotized = false;
@@ -856,7 +858,7 @@ Scene03::Scene03(GnapEngine *vm) : Scene(vm) {
 }
 
 int Scene03::init() {
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 1);
@@ -887,9 +889,9 @@ void Scene03::updateHotspots() {
 }
 
 void Scene03::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->playSound(0x10925, true);
 	_vm->startSoundTimerC(7);
@@ -1116,7 +1118,6 @@ void Scene03::run() {
 				_vm->_mouseClickState._left = false;
 			}
 			break;
-
 		}
 
 		updateAnimations();
@@ -1175,9 +1176,9 @@ void Scene03::run() {
 }
 
 void Scene03::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -1194,7 +1195,7 @@ void Scene03::updateAnimations() {
 			plat._idleFacing = kDirIdleRight;
 			plat._id = 120;
 			gameSys.insertSequence(0x107CA, plat._id, 0x1BC, 99,
-				kSeqSyncWait, 0, 75 * plat._pos.x - plat._gridX, 48 * plat._pos.y - plat._gridY);
+			                       kSeqSyncWait, 0, 75 * plat._pos.x - plat._gridX, 48 * plat._pos.y - plat._gridY);
 			gameSys.insertSequence(0x1B7, 99, 0, 0, kSeqNone, 0, 0, 0);
 			plat._sequenceDatNum = 1;
 			plat._sequenceId = 0x7CA;
@@ -1319,7 +1320,8 @@ void Scene03::updateAnimations() {
 
 /*****************************************************************************/
 
-Scene04::Scene04(GnapEngine *vm) : Scene(vm) {
+Scene04::Scene04(GnapEngine *vm)
+  : Scene(vm) {
 	_dogIdCtr = 0;
 	_triedWindow = false;
 	_nextDogSequenceId = -1;
@@ -1327,7 +1329,7 @@ Scene04::Scene04(GnapEngine *vm) : Scene(vm) {
 }
 
 int Scene04::init() {
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 1);
@@ -1357,9 +1359,9 @@ void Scene04::updateHotspots() {
 }
 
 void Scene04::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->playSound(0x1091C, true);
 	_vm->startSoundTimerC(4);
@@ -1427,7 +1429,7 @@ void Scene04::run() {
 			_vm->endSceneInit();
 			if (_vm->isFlag(kGFPlatypus))
 				plat.walkTo(Common::Point(9, 8), -1, 0x107C2, 1);
-		gnap.walkTo(Common::Point(9, 9), -1, 0x107BA, 1);
+			gnap.walkTo(Common::Point(9, 9), -1, 0x107BA, 1);
 		}
 	}
 
@@ -1662,7 +1664,6 @@ void Scene04::run() {
 				_vm->_mouseClickState._left = false;
 			}
 			break;
-
 		}
 
 		updateAnimations();
@@ -1709,8 +1710,8 @@ void Scene04::run() {
 }
 
 void Scene04::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -1723,8 +1724,8 @@ void Scene04::updateAnimations() {
 			gameSys.insertSequence(0x207, 121, 521, 121, kSeqSyncWait, 0, 0, 0);
 			gnap._pos = Common::Point(6, 7);
 			gameSys.insertSequence(0x107B5, gnap._id,
-				makeRid(gnap._sequenceDatNum, gnap._sequenceId), gnap._id,
-				kSeqSyncWait, _vm->getSequenceTotalDuration(0x205) - 1, 450 - gnap._gridX, 336 - gnap._gridY);
+			                       makeRid(gnap._sequenceDatNum, gnap._sequenceId), gnap._id,
+			                       kSeqSyncWait, _vm->getSequenceTotalDuration(0x205) - 1, 450 - gnap._gridX, 336 - gnap._gridY);
 			gameSys.setAnimation(0x107B5, gnap._id, 0);
 			gnap._sequenceId = 0x7B5;
 			gnap._sequenceDatNum = 1;
@@ -1754,8 +1755,8 @@ void Scene04::updateAnimations() {
 			gameSys.requestRemoveSequence(0x1FF, 256);
 			gameSys.requestRemoveSequence(0x20B, 256);
 			gameSys.insertSequence(0x107B5, gnap._id,
-				makeRid(gnap._sequenceDatNum, gnap._sequenceId), 255,
-				kSeqSyncWait, 0, 75 * gnap._pos.x - gnap._gridX, 48 * gnap._pos.y - gnap._gridY);
+			                       makeRid(gnap._sequenceDatNum, gnap._sequenceId), 255,
+			                       kSeqSyncWait, 0, 75 * gnap._pos.x - gnap._gridX, 48 * gnap._pos.y - gnap._gridY);
 			gnap._idleFacing = kDirBottomRight;
 			gnap._sequenceId = 0x7B5;
 			gnap._sequenceDatNum = 1;
@@ -1781,8 +1782,8 @@ void Scene04::updateAnimations() {
 			gameSys.removeSequence(0x1FF, 256, true);
 			gameSys.removeSequence(0x20A, 256, true);
 			gameSys.insertSequence(0x107B5, gnap._id,
-				makeRid(gnap._sequenceDatNum, gnap._sequenceId), 255,
-				kSeqSyncWait, 0, 75 * gnap._pos.x - gnap._gridX, 48 * gnap._pos.y - gnap._gridY);
+			                       makeRid(gnap._sequenceDatNum, gnap._sequenceId), 255,
+			                       kSeqSyncWait, 0, 75 * gnap._pos.x - gnap._gridX, 48 * gnap._pos.y - gnap._gridY);
 			gnap._sequenceId = 0x7B5;
 			gnap._sequenceDatNum = 1;
 			gnap._idleFacing = kDirBottomRight;
@@ -1815,8 +1816,8 @@ void Scene04::updateAnimations() {
 	if (gameSys.getAnimationStatus(3) == 2) {
 		if (_nextDogSequenceId == 0x201) {
 			gameSys.insertSequence(_nextDogSequenceId, 139 - _dogIdCtr,
-				_currDogSequenceId, 139 - (_dogIdCtr + 1) % 2,
-				kSeqSyncWait, 0, 0, 0);
+			                       _currDogSequenceId, 139 - (_dogIdCtr + 1) % 2,
+			                       kSeqSyncWait, 0, 0, 0);
 			gameSys.insertSequence(0x200, gnap._id, makeRid(gnap._sequenceDatNum, gnap._sequenceId), gnap._id, kSeqSyncWait, 0, 0, 0);
 			gameSys.setAnimation(_nextDogSequenceId, 139 - _dogIdCtr, 3);
 			_dogIdCtr = (_dogIdCtr + 1) % 2;
@@ -1828,8 +1829,8 @@ void Scene04::updateAnimations() {
 			_nextDogSequenceId = -1;
 		} else if (_nextDogSequenceId != -1) {
 			gameSys.insertSequence(_nextDogSequenceId, 139 - _dogIdCtr,
-				_currDogSequenceId, 139 - (_dogIdCtr + 1) % 2,
-				kSeqSyncWait, 0, 0, 0);
+			                       _currDogSequenceId, 139 - (_dogIdCtr + 1) % 2,
+			                       kSeqSyncWait, 0, 0, 0);
 			gameSys.setAnimation(_nextDogSequenceId, 139 - _dogIdCtr, 3);
 			_dogIdCtr = (_dogIdCtr + 1) % 2;
 			_currDogSequenceId = _nextDogSequenceId;
@@ -1840,13 +1841,14 @@ void Scene04::updateAnimations() {
 
 /*****************************************************************************/
 
-Scene05::Scene05(GnapEngine *vm) : Scene(vm) {
+Scene05::Scene05(GnapEngine *vm)
+  : Scene(vm) {
 	_nextChickenSequenceId = -1;
 	_currChickenSequenceId = -1;
 }
 
 int Scene05::init() {
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 1);
@@ -1873,9 +1875,9 @@ void Scene05::updateHotspots() {
 }
 
 void Scene05::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->playSound(0x1091C, true);
 	_vm->startSoundTimerC(7);
@@ -2045,7 +2047,7 @@ void Scene05::run() {
 		case kHS05Padlock:
 			if (_vm->isFlag(kGFBarnPadlockOpen)) {
 				_vm->_isLeavingScene = true;
-				Common::Point destPt = _vm->_hotspotsWalkPos[2] + Common::Point(- 1, 1);
+				Common::Point destPt = _vm->_hotspotsWalkPos[2] + Common::Point(-1, 1);
 				gnap.walkTo(destPt, 0, -1, 1);
 				gnap._actionStatus = kAS05EnterBarn;
 				if (_vm->_cursorValue == 1)
@@ -2055,7 +2057,7 @@ void Scene05::run() {
 			} else if (gnap._actionStatus < 0) {
 				if (_vm->_grabCursorSpriteIndex == kItemNeedle) {
 					if (gnap.walkTo(_vm->_hotspotsWalkPos[2], 0,
-						gnap.getSequenceId(kGSIdle, _vm->_hotspotsWalkPos[2]) | 0x10000, 1))
+					                gnap.getSequenceId(kGSIdle, _vm->_hotspotsWalkPos[2]) | 0x10000, 1))
 						gnap._actionStatus = kAS05PickPadlock;
 				} else if (_vm->_grabCursorSpriteIndex >= 0) {
 					gnap.playShowCurrItem(_vm->_hotspotsWalkPos[2], 7, 4);
@@ -2108,7 +2110,6 @@ void Scene05::run() {
 				_vm->_mouseClickState._left = false;
 			}
 			break;
-
 		}
 
 		updateAnimations();
@@ -2151,8 +2152,8 @@ void Scene05::run() {
 }
 
 void Scene05::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -2200,8 +2201,8 @@ void Scene05::updateAnimations() {
 			break;
 		case kAS05EnterBarn:
 			gameSys.insertSequence(0x107B1, 1,
-				makeRid(gnap._sequenceDatNum, gnap._sequenceId), gnap._id,
-				kSeqSyncWait, 0, 75 * gnap._pos.x - gnap._gridX, 48 * gnap._pos.y - gnap._gridY);
+			                       makeRid(gnap._sequenceDatNum, gnap._sequenceId), gnap._id,
+			                       kSeqSyncWait, 0, 75 * gnap._pos.x - gnap._gridX, 48 * gnap._pos.y - gnap._gridY);
 			gameSys.setAnimation(0x107B1, 1, 0);
 			gnap._actionStatus = kAS05LeaveScene;
 			break;
@@ -2214,7 +2215,7 @@ void Scene05::updateAnimations() {
 	}
 
 	if (gameSys.getAnimationStatus(1) == 2) {
-		PlayerPlat& plat = *_vm->_plat;
+		PlayerPlat &plat = *_vm->_plat;
 		if (plat._sequenceId == 0x146) {
 			plat._pos = Common::Point(4, 8);
 			gameSys.insertSequence(0x107C1, 160, 0x146, 256, kSeqSyncWait, 0, 300 - plat._gridX, 384 - plat._gridY);
@@ -2262,7 +2263,8 @@ void Scene05::updateAnimations() {
 
 /*****************************************************************************/
 
-Scene06::Scene06(GnapEngine *vm) : Scene(vm) {
+Scene06::Scene06(GnapEngine *vm)
+  : Scene(vm) {
 	_horseTurnedBack = false;
 	_nextPlatSequenceId = -1;
 	_nextHorseSequenceId = -1;
@@ -2270,7 +2272,7 @@ Scene06::Scene06(GnapEngine *vm) : Scene(vm) {
 }
 
 int Scene06::init() {
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 1);
@@ -2304,9 +2306,9 @@ void Scene06::updateHotspots() {
 }
 
 void Scene06::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	bool triedDeviceOnGas = false;
 
@@ -2510,7 +2512,6 @@ void Scene06::run() {
 				_vm->_mouseClickState._left = false;
 			}
 			break;
-
 		}
 
 		updateAnimations();
@@ -2558,9 +2559,9 @@ void Scene06::run() {
 }
 
 void Scene06::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -2637,7 +2638,7 @@ void Scene06::updateAnimations() {
 			plat._sequenceId = 0xFA;
 			plat._sequenceDatNum = 0;
 			gameSys.insertSequence(0x107B7, gnap._id, 0x100, gnap._id,
-				kSeqSyncWait, 0, 75 * gnap._pos.x - gnap._gridX, 48 * gnap._pos.y - gnap._gridY);
+			                       kSeqSyncWait, 0, 75 * gnap._pos.x - gnap._gridX, 48 * gnap._pos.y - gnap._gridY);
 			gnap._sequenceId = 0x7B7;
 			gnap._sequenceDatNum = 1;
 			_currHorseSequenceId = _nextHorseSequenceId;
@@ -2665,7 +2666,8 @@ void Scene06::updateAnimations() {
 
 /*****************************************************************************/
 
-Scene07::Scene07(GnapEngine *vm) : Scene(vm) {
+Scene07::Scene07(GnapEngine *vm)
+  : Scene(vm) {
 }
 
 int Scene07::init() {
@@ -2686,9 +2688,9 @@ void Scene07::updateHotspots() {
 }
 
 void Scene07::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->queueInsertDeviceIcon();
 	gameSys.insertSequence(0x8C, 1, 0, 0, kSeqLoop, 0, 0, 0);
@@ -2780,8 +2782,8 @@ void Scene07::run() {
 					gameSys.setAnimation(0x8E, 1, 2);
 					gameSys.insertSequence(0x8E, 1, 141, 1, kSeqSyncWait, 0, 0, 0);
 					gameSys.insertSequence(gnap.getSequenceId(kGSUseDevice, Common::Point(0, 0)) | 0x10000, gnap._id,
-						makeRid(gnap._sequenceDatNum, gnap._sequenceId), gnap._id,
-						kSeqSyncWait, 0, 75 * gnap._pos.x - gnap._gridX, 48 * gnap._pos.y - gnap._gridY);
+					                       makeRid(gnap._sequenceDatNum, gnap._sequenceId), gnap._id,
+					                       kSeqSyncWait, 0, 75 * gnap._pos.x - gnap._gridX, 48 * gnap._pos.y - gnap._gridY);
 					gnap._sequenceId = gnap.getSequenceId(kGSUseDevice, Common::Point(0, 0));
 					gnap._sequenceDatNum = 1;
 					break;
@@ -2835,11 +2837,11 @@ void Scene07::run() {
 							else if (plat._pos.y == 9)
 								plat.playSequence(0x107CA);
 						} else if (gnapRandomValue == 0 && plat._sequenceId == 0x7C9)
-								plat.playSequence(0x107CB);
+							plat.playSequence(0x107CB);
 						else if (gnapRandomValue == 1 && plat._sequenceId == 0x7C9)
-								plat.playSequence(0x10844);
+							plat.playSequence(0x10844);
 						else if (plat._pos.y == 9)
-								plat.playSequence(0x107C9);
+							plat.playSequence(0x107C9);
 						gameSys.setAnimation(plat._sequenceId | (plat._sequenceDatNum << 16), plat._id, 1);
 					}
 				} else {
@@ -2866,8 +2868,8 @@ void Scene07::run() {
 }
 
 void Scene07::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -2888,7 +2890,8 @@ void Scene07::updateAnimations() {
 
 /*****************************************************************************/
 
-Scene08::Scene08(GnapEngine *vm) : Scene(vm) {
+Scene08::Scene08(GnapEngine *vm)
+  : Scene(vm) {
 	_nextDogSequenceId = -1;
 	_currDogSequenceId = -1;
 	_nextManSequenceId = -1;
@@ -2921,21 +2924,21 @@ void Scene08::updateHotspots() {
 }
 
 void Scene08::updateAnimationsCb() {
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	if (gameSys.getAnimationStatus(3) == 2) {
 		gameSys.setAnimation(_nextDogSequenceId, 100, 3);
 		gameSys.insertSequence(_nextDogSequenceId, 100, _currDogSequenceId, 100, kSeqSyncWait, 0, 0, 0);
 		_currDogSequenceId = _nextDogSequenceId;
-		if ( _nextDogSequenceId != 0x135 )
+		if (_nextDogSequenceId != 0x135)
 			_nextDogSequenceId = 0x134;
 	}
 }
 
 void Scene08::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->queueInsertDeviceIcon();
 
@@ -3208,8 +3211,7 @@ void Scene08::run() {
 			gnap.updateIdleSequence();
 			if (!_vm->_timers[4]) {
 				_vm->_timers[4] = _vm->getRandom(50) + 125;
-				if (gnap._actionStatus < 0 && plat._actionStatus < 0 && _nextManSequenceId == -1 &&
-					(_currDogSequenceId == 0x134 || _currDogSequenceId == 0x135)) {
+				if (gnap._actionStatus < 0 && plat._actionStatus < 0 && _nextManSequenceId == -1 && (_currDogSequenceId == 0x134 || _currDogSequenceId == 0x135)) {
 					int _gnapRandomValue = _vm->getRandom(4);
 					switch (_gnapRandomValue) {
 					case 0:
@@ -3245,9 +3247,9 @@ void Scene08::run() {
 }
 
 void Scene08::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -3371,7 +3373,8 @@ void Scene08::updateAnimations() {
 
 /*****************************************************************************/
 
-Scene09::Scene09(GnapEngine *vm) : Scene(vm) {
+Scene09::Scene09(GnapEngine *vm)
+  : Scene(vm) {
 }
 
 int Scene09::init() {
@@ -3391,9 +3394,9 @@ void Scene09::updateHotspots() {
 }
 
 void Scene09::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->queueInsertDeviceIcon();
 
@@ -3536,8 +3539,8 @@ void Scene09::run() {
 }
 
 void Scene09::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);

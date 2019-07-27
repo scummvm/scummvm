@@ -26,11 +26,11 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CBrainSlot, CGameObject)
-	ON_MESSAGE(SetFrameMsg)
-	ON_MESSAGE(AddHeadPieceMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(SetFrameMsg)
+ON_MESSAGE(AddHeadPieceMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(MouseDragStartMsg)
 END_MESSAGE_MAP()
 
 int CBrainSlot::_numAdded;

@@ -31,6 +31,7 @@ class CEditControl : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool EditControlMsg(CEditControlMsg *msg);
 	bool MouseWheelMsg(CMouseWheelMsg *msg);
+
 protected:
 	bool _showCursor;
 	int _editLeft;
@@ -45,6 +46,7 @@ protected:
 	CString _text;
 	int _fieldF0;
 	bool _isPassword;
+
 public:
 	CLASSDEF;
 	CEditControl();

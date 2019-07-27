@@ -20,17 +20,21 @@
  *
  */
 
+#include "titanic/support/files_manager.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/zlib.h"
-#include "titanic/support/files_manager.h"
 #include "titanic/game_manager.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
 
-CFilesManager::CFilesManager(TitanicEngine *vm) : _vm(vm), _gameManager(nullptr),
-		_assetsPath("Assets"), _drive(-1), _version(0) {
+CFilesManager::CFilesManager(TitanicEngine *vm)
+  : _vm(vm)
+  , _gameManager(nullptr)
+  , _assetsPath("Assets")
+  , _drive(-1)
+  , _version(0) {
 }
 
 CFilesManager::~CFilesManager() {
@@ -144,9 +148,7 @@ Common::SeekableReadStream *CFilesManager::getResource(const CString &str) {
 
 	_datFile.seek(resEntry._offset);
 
-	Common::SeekableReadStream *stream = (resEntry._size > 0) ?
-		_datFile.readStream(resEntry._size) :
-		new Common::MemoryReadStream(nullptr, 0);
+	Common::SeekableReadStream *stream = (resEntry._size > 0) ? _datFile.readStream(resEntry._size) : new Common::MemoryReadStream(nullptr, 0);
 	if (resEntry._flags & FLAG_COMPRESSED)
 		stream = Common::wrapCompressedReadStream(stream);
 

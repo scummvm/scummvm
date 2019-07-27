@@ -31,15 +31,16 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 
-#include "hugo/hugo.h"
-#include "hugo/file.h"
-#include "hugo/schedule.h"
 #include "hugo/display.h"
+#include "hugo/file.h"
+#include "hugo/hugo.h"
+#include "hugo/schedule.h"
 #include "hugo/text.h"
 #include "hugo/util.h"
 
 namespace Hugo {
-FileManager_v2d::FileManager_v2d(HugoEngine *vm) : FileManager_v1d(vm) {
+FileManager_v2d::FileManager_v2d(HugoEngine *vm)
+  : FileManager_v1d(vm) {
 	_fetchStringBuf = (char *)malloc(kMaxBoxChar);
 }
 
@@ -78,9 +79,9 @@ void FileManager_v2d::closeDatabaseFiles() {
 void FileManager_v2d::readBackground(const int screenIndex) {
 	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
 
-	_sceneryArchive1.seek((uint32) screenIndex * sizeof(SceneBlock), SEEK_SET);
+	_sceneryArchive1.seek((uint32)screenIndex * sizeof(SceneBlock), SEEK_SET);
 
-	SceneBlock sceneBlock;                          // Read a database header entry
+	SceneBlock sceneBlock; // Read a database header entry
 	sceneBlock._sceneOffset = _sceneryArchive1.readUint32LE();
 	sceneBlock._sceneLength = _sceneryArchive1.readUint32LE();
 	sceneBlock._boundaryOffset = _sceneryArchive1.readUint32LE();
@@ -93,7 +94,7 @@ void FileManager_v2d::readBackground(const int screenIndex) {
 	_sceneryArchive1.seek(sceneBlock._sceneOffset, SEEK_SET);
 
 	// Read the image into dummy seq and static dib_a
-	Seq *dummySeq;                                  // Image sequence structure for Read_pcx
+	Seq *dummySeq; // Image sequence structure for Read_pcx
 	dummySeq = readPCX(_sceneryArchive1, 0, _vm->_screen->getFrontBuffer(), true, _vm->_text->getScreenNames(screenIndex));
 	free(dummySeq);
 }
@@ -104,10 +105,10 @@ void FileManager_v2d::readBackground(const int screenIndex) {
 void FileManager_v2d::readOverlay(const int screenNum, ImagePtr image, OvlType overlayType) {
 	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
 
-	ImagePtr tmpImage = image;                      // temp ptr to overlay file
+	ImagePtr tmpImage = image; // temp ptr to overlay file
 	_sceneryArchive1.seek((uint32)screenNum * sizeof(SceneBlock), SEEK_SET);
 
-	SceneBlock sceneBlock;                          // Database header entry
+	SceneBlock sceneBlock; // Database header entry
 	sceneBlock._sceneOffset = _sceneryArchive1.readUint32LE();
 	sceneBlock._sceneLength = _sceneryArchive1.readUint32LE();
 	sceneBlock._boundaryOffset = _sceneryArchive1.readUint32LE();
@@ -141,15 +142,15 @@ void FileManager_v2d::readOverlay(const int screenNum, ImagePtr image, OvlType o
 	}
 
 	// Read in the overlay file using MAC Packbits.  (We're not proud!)
-	int16 k = 0;                                    // byte count
+	int16 k = 0; // byte count
 	do {
-		int8 data = _sceneryArchive1.readByte();    // Read a code byte
-		if ((byte)data == 0x80)                     // Noop
+		int8 data = _sceneryArchive1.readByte(); // Read a code byte
+		if ((byte)data == 0x80) // Noop
 			;
-		else if (data >= 0) {                       // Copy next data+1 literally
+		else if (data >= 0) { // Copy next data+1 literally
 			for (i = 0; i <= (byte)data; i++, k++)
 				*tmpImage++ = _sceneryArchive1.readByte();
-		} else {                                    // Repeat next byte -data+1 times
+		} else { // Repeat next byte -data+1 times
 			int16 j = _sceneryArchive1.readByte();
 
 			for (i = 0; i < (byte)(-data + 1); i++, k++)
@@ -173,7 +174,7 @@ const char *FileManager_v2d::fetchString(const int index) {
 		error("An error has occurred: bad String offset");
 
 	// Check size of string
-	if ((off2 - off1) >= (uint32) kMaxBoxChar)
+	if ((off2 - off1) >= (uint32)kMaxBoxChar)
 		error("Fetched string too long!");
 
 	// Position to string and read it into gen purpose _textBoxBuffer
@@ -182,7 +183,7 @@ const char *FileManager_v2d::fetchString(const int index) {
 		error("An error has occurred: fetchString");
 
 	// Null terminate, decode and return it
-	_fetchStringBuf[off2-off1] = '\0';
+	_fetchStringBuf[off2 - off1] = '\0';
 	_vm->_scheduler->decodeString(_fetchStringBuf);
 	return _fetchStringBuf;
 }

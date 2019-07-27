@@ -30,27 +30,26 @@
 namespace Glk {
 namespace Alan3 {
 
-/**
+	/**
  * Event queue entries
  */
-struct EventQueueEntry {
-	int after;
-	int event;
-	int where;
+	struct EventQueueEntry {
+		int after;
+		int event;
+		int where;
 
-	/**
+		/**
 	 * Save/load from a save file
 	 */
-	void synchronize(Common::Serializer &s);
-};
+		void synchronize(Common::Serializer &s);
+	};
 
-
-/* DATA */
-/* Event queue */
-extern int eventQueueSize;
-extern EventQueueEntry *eventQueue;
-extern int eventQueueTop;       /* Event queue top pointer */
-extern EventEntry *events;  /* Event table pointer */
+	/* DATA */
+	/* Event queue */
+	extern int eventQueueSize;
+	extern EventQueueEntry *eventQueue;
+	extern int eventQueueTop; /* Event queue top pointer */
+	extern EventEntry *events; /* Event table pointer */
 
 } // End of namespace Alan3
 } // End of namespace Glk

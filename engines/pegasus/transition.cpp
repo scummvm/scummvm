@@ -110,7 +110,8 @@ uint32 ScreenFader::fadePixel(uint32 color, int32 percent) const {
 	return _screen.format.RGBToColor(r, g, b);
 }
 
-Transition::Transition(const DisplayElementID id) : FaderAnimation(id) {
+Transition::Transition(const DisplayElementID id)
+  : FaderAnimation(id) {
 	_outPicture = 0;
 	_inPicture = 0;
 }

@@ -27,8 +27,8 @@
 
 #ifndef DISABLE_SID
 
-#include "audio/softsynth/sid.h"
-#include "audio/null.h"
+#	include "audio/softsynth/sid.h"
+#	include "audio/null.h"
 
 namespace Resid {
 
@@ -46,7 +46,7 @@ WaveformGenerator::WaveformGenerator() {
 	reset();
 }
 
-void WaveformGenerator::set_sync_source(WaveformGenerator* source) {
+void WaveformGenerator::set_sync_source(WaveformGenerator *source) {
 	sync_source = source;
 	source->sync_dest = this;
 }
@@ -115,7 +115,7 @@ RESID_INLINE void WaveformGenerator::updateClock(cycle_count delta_t) {
 	reg24 accumulator_prev = accumulator;
 
 	// Calculate new accumulator value;
-	reg24 delta_accumulator = delta_t*freq;
+	reg24 delta_accumulator = delta_t * freq;
 	accumulator += delta_accumulator;
 	accumulator &= 0xffffff;
 
@@ -133,15 +133,12 @@ RESID_INLINE void WaveformGenerator::updateClock(cycle_count delta_t) {
 			// NB! Requires two's complement integer.
 			if (shift_period <= 0x080000) {
 				// Check for flip from 0 to 1.
-				if (((accumulator - shift_period) & 0x080000) || !(accumulator & 0x080000))
-				{
+				if (((accumulator - shift_period) & 0x080000) || !(accumulator & 0x080000)) {
 					break;
 				}
-			}
-			else {
+			} else {
 				// Check for flip from 0 (to 1 or via 1 to 0) or from 1 via 0 to 1.
-				if (((accumulator - shift_period) & 0x080000) && !(accumulator & 0x080000))
-				{
+				if (((accumulator - shift_period) & 0x080000) && !(accumulator & 0x080000)) {
 					break;
 				}
 			}
@@ -157,7 +154,6 @@ RESID_INLINE void WaveformGenerator::updateClock(cycle_count delta_t) {
 		delta_accumulator -= shift_period;
 	}
 }
-
 
 /**
  * Synchronize oscillators.
@@ -175,7 +171,6 @@ RESID_INLINE void WaveformGenerator::synchronize() {
 	}
 }
 
-
 /*
  * Output functions
  */
@@ -188,7 +183,7 @@ RESID_INLINE reg12 WaveformGenerator::output____() {
 // Triangle:
 RESID_INLINE reg12 WaveformGenerator::output___T() {
 	reg24 msb = (ring_mod ? accumulator ^ sync_source->accumulator : accumulator)
-		& 0x800000;
+	  & 0x800000;
 	return ((msb ? ~accumulator : accumulator) >> 11) & 0xfff;
 }
 
@@ -204,15 +199,7 @@ RESID_INLINE reg12 WaveformGenerator::output_P__() {
 
 // Noise:
 RESID_INLINE reg12 WaveformGenerator::outputN___() {
-	return
-		((shift_register & 0x400000) >> 11) |
-		((shift_register & 0x100000) >> 10) |
-		((shift_register & 0x010000) >> 7) |
-		((shift_register & 0x002000) >> 5) |
-		((shift_register & 0x000800) >> 4) |
-		((shift_register & 0x000080) >> 1) |
-		((shift_register & 0x000010) << 1) |
-		((shift_register & 0x000004) << 2);
+	return ((shift_register & 0x400000) >> 11) | ((shift_register & 0x100000) >> 10) | ((shift_register & 0x010000) >> 7) | ((shift_register & 0x002000) >> 5) | ((shift_register & 0x000800) >> 4) | ((shift_register & 0x000080) >> 1) | ((shift_register & 0x000010) << 1) | ((shift_register & 0x000004) << 2);
 }
 
 // Combined waveforms:
@@ -318,46 +305,46 @@ RESID_INLINE reg12 WaveformGenerator::output() {
  * Calculation of coefficients.
  */
 inline void cubic_coefficients(double x1, double y1, double x2, double y2,
-						double k1, double k2,
-						double& a, double& b, double& c, double& d)
-{
+                               double k1, double k2,
+                               double &a, double &b, double &c, double &d) {
 	double dx = x2 - x1, dy = y2 - y1;
 
-	a = ((k1 + k2) - 2*dy/dx)/(dx*dx);
-	b = ((k2 - k1)/dx - 3*(x1 + x2)*a)/2;
-	c = k1 - (3*x1*a + 2*b)*x1;
-	d = y1 - ((x1*a + b)*x1 + c)*x1;
+	a = ((k1 + k2) - 2 * dy / dx) / (dx * dx);
+	b = ((k2 - k1) / dx - 3 * (x1 + x2) * a) / 2;
+	c = k1 - (3 * x1 * a + 2 * b) * x1;
+	d = y1 - ((x1 * a + b) * x1 + c) * x1;
 }
 
 /**
  * Evaluation of cubic polynomial by forward differencing.
  */
-template<class PointPlotter>
+template <class PointPlotter>
 inline void interpolate_segment(double x1, double y1, double x2, double y2,
-								double k1, double k2,
-								PointPlotter plot, double res)
-{
+                                double k1, double k2,
+                                PointPlotter plot, double res) {
 	double a, b, c, d;
 	cubic_coefficients(x1, y1, x2, y2, k1, k2, a, b, c, d);
 
-	double y = ((a*x1 + b)*x1 + c)*x1 + d;
-	double dy = (3*a*(x1 + res) + 2*b)*x1*res + ((a*res + b)*res + c)*res;
-	double d2y = (6*a*(x1 + res) + 2*b)*res*res;
-	double d3y = 6*a*res*res*res;
+	double y = ((a * x1 + b) * x1 + c) * x1 + d;
+	double dy = (3 * a * (x1 + res) + 2 * b) * x1 * res + ((a * res + b) * res + c) * res;
+	double d2y = (6 * a * (x1 + res) + 2 * b) * res * res;
+	double d3y = 6 * a * res * res * res;
 
 	// Calculate each point.
 	for (double x = x1; x <= x2; x += res) {
 		plot(x, y);
-		y += dy; dy += d2y; d2y += d3y;
+		y += dy;
+		dy += d2y;
+		d2y += d3y;
 	}
 }
 
-template<class PointIter>
+template <class PointIter>
 inline double x(PointIter p) {
 	return (*p)[0];
 }
 
-template<class PointIter>
+template <class PointIter>
 inline double y(PointIter p) {
 	return (*p)[1];
 }
@@ -370,14 +357,17 @@ inline double y(PointIter p) {
  * Note also that points of non-differentiability and discontinuity can be
  * introduced by repeating points.
  */
-template<class PointIter, class PointPlotter>
+template <class PointIter, class PointPlotter>
 inline void interpolate(PointIter p0, PointIter pn, PointPlotter plot, double res) {
 	double k1, k2;
 
 	// Set up points for first curve segment.
-	PointIter p1 = p0; ++p1;
-	PointIter p2 = p1; ++p2;
-	PointIter p3 = p2; ++p3;
+	PointIter p1 = p0;
+	++p1;
+	PointIter p2 = p1;
+	++p2;
+	PointIter p3 = p2;
+	++p3;
 
 	// Draw each curve segment.
 	for (; p2 != pn; ++p0, ++p1, ++p2, ++p3) {
@@ -387,22 +377,22 @@ inline void interpolate(PointIter p0, PointIter pn, PointPlotter plot, double re
 		}
 		// Both end points repeated; straight line.
 		if (x(p0) == x(p1) && x(p2) == x(p3)) {
-			k1 = k2 = (y(p2) - y(p1))/(x(p2) - x(p1));
+			k1 = k2 = (y(p2) - y(p1)) / (x(p2) - x(p1));
 		}
 		// p0 and p1 equal; use f''(x1) = 0.
 		else if (x(p0) == x(p1)) {
-			k2 = (y(p3) - y(p1))/(x(p3) - x(p1));
-			k1 = (3*(y(p2) - y(p1))/(x(p2) - x(p1)) - k2)/2;
+			k2 = (y(p3) - y(p1)) / (x(p3) - x(p1));
+			k1 = (3 * (y(p2) - y(p1)) / (x(p2) - x(p1)) - k2) / 2;
 		}
 		// p2 and p3 equal; use f''(x2) = 0.
 		else if (x(p2) == x(p3)) {
-			k1 = (y(p2) - y(p0))/(x(p2) - x(p0));
-			k2 = (3*(y(p2) - y(p1))/(x(p2) - x(p1)) - k1)/2;
+			k1 = (y(p2) - y(p0)) / (x(p2) - x(p0));
+			k2 = (3 * (y(p2) - y(p1)) / (x(p2) - x(p1)) - k1) / 2;
 		}
 		// Normal curve.
 		else {
-			k1 = (y(p2) - y(p0))/(x(p2) - x(p0));
-			k2 = (y(p3) - y(p1))/(x(p3) - x(p1));
+			k1 = (y(p2) - y(p0)) / (x(p2) - x(p0));
+			k2 = (y(p3) - y(p1)) / (x(p3) - x(p1));
 		}
 
 		interpolate_segment(x(p1), y(p1), x(p2), y(p2), k1, k2, plot, res);
@@ -412,16 +402,17 @@ inline void interpolate(PointIter p0, PointIter pn, PointPlotter plot, double re
 /**
  * Class for plotting integers into an array.
  */
-template<class F>
+template <class F>
 class PointPlotter {
 protected:
-	F* f;
+	F *f;
 
 public:
-	PointPlotter(F* arr) : f(arr) {
+	PointPlotter(F *arr)
+	  : f(arr) {
 	}
 
-	void operator ()(double x, double y) {
+	void operator()(double x, double y) {
 		// Clamp negative values to zero.
 		if (y < 0) {
 			y = 0;
@@ -434,39 +425,38 @@ public:
 fc_point Filter::f0_points_6581[] = {
 	//  FC      f         FCHI FCLO
 	// ----------------------------
-	{    0,   220 },   // 0x00      - repeated end point
-	{    0,   220 },   // 0x00
-	{  128,   230 },   // 0x10
-	{  256,   250 },   // 0x20
-	{  384,   300 },   // 0x30
-	{  512,   420 },   // 0x40
-	{  640,   780 },   // 0x50
-	{  768,  1600 },   // 0x60
-	{  832,  2300 },   // 0x68
-	{  896,  3200 },   // 0x70
-	{  960,  4300 },   // 0x78
-	{  992,  5000 },   // 0x7c
-	{ 1008,  5400 },   // 0x7e
-	{ 1016,  5700 },   // 0x7f
-	{ 1023,  6000 },   // 0x7f 0x07
-	{ 1023,  6000 },   // 0x7f 0x07 - discontinuity
-	{ 1024,  4600 },   // 0x80      -
-	{ 1024,  4600 },   // 0x80
-	{ 1032,  4800 },   // 0x81
-	{ 1056,  5300 },   // 0x84
-	{ 1088,  6000 },   // 0x88
-	{ 1120,  6600 },   // 0x8c
-	{ 1152,  7200 },   // 0x90
-	{ 1280,  9500 },   // 0xa0
-	{ 1408, 12000 },   // 0xb0
-	{ 1536, 14500 },   // 0xc0
-	{ 1664, 16000 },   // 0xd0
-	{ 1792, 17100 },   // 0xe0
-	{ 1920, 17700 },   // 0xf0
-	{ 2047, 18000 },   // 0xff 0x07
-	{ 2047, 18000 }    // 0xff 0x07 - repeated end point
+	{ 0, 220 }, // 0x00      - repeated end point
+	{ 0, 220 }, // 0x00
+	{ 128, 230 }, // 0x10
+	{ 256, 250 }, // 0x20
+	{ 384, 300 }, // 0x30
+	{ 512, 420 }, // 0x40
+	{ 640, 780 }, // 0x50
+	{ 768, 1600 }, // 0x60
+	{ 832, 2300 }, // 0x68
+	{ 896, 3200 }, // 0x70
+	{ 960, 4300 }, // 0x78
+	{ 992, 5000 }, // 0x7c
+	{ 1008, 5400 }, // 0x7e
+	{ 1016, 5700 }, // 0x7f
+	{ 1023, 6000 }, // 0x7f 0x07
+	{ 1023, 6000 }, // 0x7f 0x07 - discontinuity
+	{ 1024, 4600 }, // 0x80      -
+	{ 1024, 4600 }, // 0x80
+	{ 1032, 4800 }, // 0x81
+	{ 1056, 5300 }, // 0x84
+	{ 1088, 6000 }, // 0x88
+	{ 1120, 6600 }, // 0x8c
+	{ 1152, 7200 }, // 0x90
+	{ 1280, 9500 }, // 0xa0
+	{ 1408, 12000 }, // 0xb0
+	{ 1536, 14500 }, // 0xc0
+	{ 1664, 16000 }, // 0xd0
+	{ 1792, 17100 }, // 0xe0
+	{ 1920, 17700 }, // 0xf0
+	{ 2047, 18000 }, // 0xff 0x07
+	{ 2047, 18000 } // 0xff 0x07 - repeated end point
 };
-
 
 /*
  * Filter
@@ -494,15 +484,14 @@ Filter::Filter() {
 	enable_filter(true);
 
 	// Create mappings from FC to cutoff frequency.
-	interpolate(f0_points_6581, f0_points_6581
-		+ sizeof(f0_points_6581)/sizeof(*f0_points_6581) - 1,
-		PointPlotter<sound_sample>(f0_6581), 1.0);
+	interpolate(f0_points_6581, f0_points_6581 + sizeof(f0_points_6581) / sizeof(*f0_points_6581) - 1,
+	            PointPlotter<sound_sample>(f0_6581), 1.0);
 
-	mixer_DC = (-0xfff*0xff/18) >> 7;
+	mixer_DC = (-0xfff * 0xff / 18) >> 7;
 
 	f0 = f0_6581;
 	f0_points = f0_points_6581;
-	f0_count = sizeof(f0_points_6581)/sizeof(*f0_points_6581);
+	f0_count = sizeof(f0_points_6581) / sizeof(*f0_points_6581);
 
 	set_w0();
 	set_Q();
@@ -566,14 +555,14 @@ void Filter::set_w0() {
 
 	// Multiply with 1.048576 to facilitate division by 1 000 000 by right-
 	// shifting 20 times (2 ^ 20 = 1048576).
-	w0 = static_cast<sound_sample>(2*pi*f0[fc]*1.048576);
+	w0 = static_cast<sound_sample>(2 * pi * f0[fc] * 1.048576);
 
 	// Limit f0 to 16kHz to keep 1 cycle filter stable.
-	const sound_sample w0_max_1 = static_cast<sound_sample>(2*pi*16000*1.048576);
+	const sound_sample w0_max_1 = static_cast<sound_sample>(2 * pi * 16000 * 1.048576);
 	w0_ceil_1 = w0 <= w0_max_1 ? w0 : w0_max_1;
 
 	// Limit f0 to 4kHz to keep delta_t cycle filter stable.
-	const sound_sample w0_max_dt = static_cast<sound_sample>(2*pi*4000*1.048576);
+	const sound_sample w0_max_dt = static_cast<sound_sample>(2 * pi * 4000 * 1.048576);
 	w0_ceil_dt = w0 <= w0_max_dt ? w0 : w0_max_dt;
 }
 
@@ -585,14 +574,13 @@ void Filter::set_Q() {
 
 	// The coefficient 1024 is dispensed of later by right-shifting 10 times
 	// (2 ^ 10 = 1024).
-	_1024_div_Q = static_cast<sound_sample>(1024.0/(0.707 + 1.0*res/0x0f));
+	_1024_div_Q = static_cast<sound_sample>(1024.0 / (0.707 + 1.0 * res / 0x0f));
 }
 
 RESID_INLINE void Filter::updateClock(cycle_count delta_t,
-				   sound_sample voice1,
-				   sound_sample voice2,
-				   sound_sample voice3)
-{
+                                      sound_sample voice1,
+                                      sound_sample voice2,
+                                      sound_sample voice3) {
 	// Scale each voice down from 20 to 13 bits.
 	voice1 >>= 7;
 	voice2 >>= 7;
@@ -601,8 +589,7 @@ RESID_INLINE void Filter::updateClock(cycle_count delta_t,
 	// the filter.
 	if (voice3off && !(filt & 0x04)) {
 		voice3 = 0;
-	}
-	else {
+	} else {
 		voice3 >>= 7;
 	}
 
@@ -709,13 +696,13 @@ RESID_INLINE void Filter::updateClock(cycle_count delta_t,
 		// Vhp = Vbp/Q - Vlp - Vi;
 		// dVbp = -w0*Vhp*dt;
 		// dVlp = -w0*Vbp*dt;
-		sound_sample w0_delta_t = w0_ceil_dt*delta_t_flt >> 6;
+		sound_sample w0_delta_t = w0_ceil_dt * delta_t_flt >> 6;
 
-		sound_sample dVbp = (w0_delta_t*Vhp >> 14);
-		sound_sample dVlp = (w0_delta_t*Vbp >> 14);
+		sound_sample dVbp = (w0_delta_t * Vhp >> 14);
+		sound_sample dVlp = (w0_delta_t * Vbp >> 14);
 		Vbp -= dVbp;
 		Vlp -= dVlp;
-		Vhp = (Vbp*_1024_div_Q >> 10) - Vlp - Vi;
+		Vhp = (Vbp * _1024_div_Q >> 10) - Vlp - Vi;
 
 		delta_t -= delta_t_flt;
 	}
@@ -724,7 +711,7 @@ RESID_INLINE void Filter::updateClock(cycle_count delta_t,
 RESID_INLINE sound_sample Filter::output() {
 	// This is handy for testing.
 	if (!enabled) {
-		return (Vnf + mixer_DC)*static_cast<sound_sample>(vol);
+		return (Vnf + mixer_DC) * static_cast<sound_sample>(vol);
 	}
 
 	// Mix highpass, bandpass, and lowpass outputs. The sum is not
@@ -768,9 +755,8 @@ RESID_INLINE sound_sample Filter::output() {
 
 	// Sum non-filtered and filtered output.
 	// Multiply the sum with volume.
-	return (Vnf + Vf + mixer_DC)*static_cast<sound_sample>(vol);
+	return (Vnf + Vf + mixer_DC) * static_cast<sound_sample>(vol);
 }
-
 
 /*
  * EnvelopeGenerator
@@ -800,24 +786,23 @@ void EnvelopeGenerator::reset() {
 }
 
 reg16 EnvelopeGenerator::rate_counter_period[] = {
-	9,  //   2ms*1.0MHz/256 =     7.81
-	32,  //   8ms*1.0MHz/256 =    31.25
-	63,  //  16ms*1.0MHz/256 =    62.50
-	95,  //  24ms*1.0MHz/256 =    93.75
-	149,  //  38ms*1.0MHz/256 =   148.44
-	220,  //  56ms*1.0MHz/256 =   218.75
-	267,  //  68ms*1.0MHz/256 =   265.63
-	313,  //  80ms*1.0MHz/256 =   312.50
-	392,  // 100ms*1.0MHz/256 =   390.63
-	977,  // 250ms*1.0MHz/256 =   976.56
-	1954,  // 500ms*1.0MHz/256 =  1953.13
-	3126,  // 800ms*1.0MHz/256 =  3125.00
-	3907,  //   1 s*1.0MHz/256 =  3906.25
-	11720,  //   3 s*1.0MHz/256 = 11718.75
-	19532,  //   5 s*1.0MHz/256 = 19531.25
-	31251   //   8 s*1.0MHz/256 = 31250.00
+	9, //   2ms*1.0MHz/256 =     7.81
+	32, //   8ms*1.0MHz/256 =    31.25
+	63, //  16ms*1.0MHz/256 =    62.50
+	95, //  24ms*1.0MHz/256 =    93.75
+	149, //  38ms*1.0MHz/256 =   148.44
+	220, //  56ms*1.0MHz/256 =   218.75
+	267, //  68ms*1.0MHz/256 =   265.63
+	313, //  80ms*1.0MHz/256 =   312.50
+	392, // 100ms*1.0MHz/256 =   390.63
+	977, // 250ms*1.0MHz/256 =   976.56
+	1954, // 500ms*1.0MHz/256 =  1953.13
+	3126, // 800ms*1.0MHz/256 =  3125.00
+	3907, //   1 s*1.0MHz/256 =  3906.25
+	11720, //   3 s*1.0MHz/256 = 11718.75
+	19532, //   5 s*1.0MHz/256 = 19531.25
+	31251 //   8 s*1.0MHz/256 = 31250.00
 };
-
 
 reg8 EnvelopeGenerator::sustain_level[] = {
 	0x00,
@@ -866,8 +851,7 @@ void EnvelopeGenerator::writeATTACK_DECAY(reg8 attack_decay) {
 	decay = attack_decay & 0x0f;
 	if (state == ATTACK) {
 		rate_period = rate_counter_period[attack];
-	}
-	else if (state == DECAY_SUSTAIN) {
+	} else if (state == DECAY_SUSTAIN) {
 		rate_period = rate_counter_period[decay];
 	}
 }
@@ -914,8 +898,7 @@ RESID_INLINE void EnvelopeGenerator::updateClock(cycle_count delta_t) {
 		// The first envelope step in the attack state also resets the exponential
 		// counter. This has been verified by sampling ENV3.
 		//
-		if (state == ATTACK	|| ++exponential_counter == exponential_counter_period)
-		{
+		if (state == ATTACK || ++exponential_counter == exponential_counter_period) {
 			exponential_counter = 0;
 
 			// Check whether the envelope counter is frozen at zero.
@@ -991,7 +974,6 @@ RESID_INLINE reg8 EnvelopeGenerator::output() {
 	return envelope_counter;
 }
 
-
 /*
  * ExternalFilter
  */
@@ -1000,7 +982,7 @@ ExternalFilter::ExternalFilter() {
 	reset();
 	enable_filter(true);
 	set_sampling_parameter(15915.6);
-	mixer_DC = ((((0x800 - 0x380) + 0x800)*0xff*3 - 0xfff*0xff/18) >> 7)*0x0f;
+	mixer_DC = ((((0x800 - 0x380) + 0x800) * 0xff * 3 - 0xfff * 0xff / 18) >> 7) * 0x0f;
 }
 
 void ExternalFilter::enable_filter(bool enable) {
@@ -1011,7 +993,7 @@ void ExternalFilter::set_sampling_parameter(double pass_freq) {
 	static const double pi = 3.1415926535897932385;
 
 	w0hp = 105;
-	w0lp = (sound_sample) (pass_freq * (2.0 * pi * 1.048576));
+	w0lp = (sound_sample)(pass_freq * (2.0 * pi * 1.048576));
 	if (w0lp > 104858)
 		w0lp = 104858;
 }
@@ -1049,8 +1031,8 @@ RESID_INLINE void ExternalFilter::updateClock(cycle_count delta_t, sound_sample 
 		// Vlp = Vlp + w0lp*(Vi - Vlp)*delta_t;
 		// Vhp = Vhp + w0hp*(Vlp - Vhp)*delta_t;
 
-		sound_sample dVlp = (w0lp*delta_t_flt >> 8)*(Vi - Vlp) >> 12;
-		sound_sample dVhp = w0hp*delta_t_flt*(Vlp - Vhp) >> 20;
+		sound_sample dVlp = (w0lp * delta_t_flt >> 8) * (Vi - Vlp) >> 12;
+		sound_sample dVhp = w0hp * delta_t_flt * (Vlp - Vhp) >> 20;
 		Vo = Vlp - Vhp;
 		Vlp += dVlp;
 		Vhp += dVhp;
@@ -1063,17 +1045,16 @@ RESID_INLINE sound_sample ExternalFilter::output() {
 	return Vo;
 }
 
-
 /*
  * Voice
  */
 
 Voice::Voice() {
 	wave_zero = 0x380;
-	voice_DC = 0x800*0xff;
+	voice_DC = 0x800 * 0xff;
 }
 
-void Voice::set_sync_source(Voice* source) {
+void Voice::set_sync_source(Voice *source) {
 	wave.set_sync_source(&source->wave);
 }
 
@@ -1086,7 +1067,6 @@ void Voice::reset() {
 	wave.reset();
 	envelope.reset();
 }
-
 
 /*
  * SID
@@ -1119,7 +1099,7 @@ void SID::reset() {
 int SID::output() {
 	const int range = 1 << 16;
 	const int half = range >> 1;
-	int sample = extfilt.output()/((4095*255 >> 7)*3*15*2/range);
+	int sample = extfilt.output() / ((4095 * 255 >> 7) * 3 * 15 * 2 / range);
 	if (sample >= half) {
 		return half - 1;
 	}
@@ -1128,7 +1108,6 @@ int SID::output() {
 	}
 	return sample;
 }
-
 
 /**
  * Read registers.
@@ -1149,15 +1128,15 @@ int SID::output() {
  */
 reg8 SID::read(reg8 offset) {
 	switch (offset) {
-		case 0x19:
-		case 0x1a:
-			return 0; //readPOT();
-		case 0x1b:
-			return voice[2].wave.readOSC();
-		case 0x1c:
-			return voice[2].envelope.readENV();
-		default:
-			return bus_value;
+	case 0x19:
+	case 0x1a:
+		return 0; //readPOT();
+	case 0x1b:
+		return voice[2].wave.readOSC();
+	case 0x1c:
+		return voice[2].envelope.readENV();
+	default:
+		return bus_value;
 	}
 }
 
@@ -1166,83 +1145,83 @@ void SID::write(reg8 offset, reg8 value) {
 	bus_value_ttl = 0x2000;
 
 	switch (offset) {
-	  case 0x00:
-		  voice[0].wave.writeFREQ_LO(value);
-		  break;
-	  case 0x01:
-		  voice[0].wave.writeFREQ_HI(value);
-		  break;
-	  case 0x02:
-		  voice[0].wave.writePW_LO(value);
-		  break;
-	  case 0x03:
-		  voice[0].wave.writePW_HI(value);
-		  break;
-	  case 0x04:
-		  voice[0].writeCONTROL_REG(value);
-		  break;
-	  case 0x05:
-		  voice[0].envelope.writeATTACK_DECAY(value);
-		  break;
-	  case 0x06:
-		  voice[0].envelope.writeSUSTAIN_RELEASE(value);
-		  break;
-	  case 0x07:
-		  voice[1].wave.writeFREQ_LO(value);
-		  break;
-	  case 0x08:
-		  voice[1].wave.writeFREQ_HI(value);
-		  break;
-	  case 0x09:
-		  voice[1].wave.writePW_LO(value);
-		  break;
-	  case 0x0a:
-		  voice[1].wave.writePW_HI(value);
-		  break;
-	  case 0x0b:
-		  voice[1].writeCONTROL_REG(value);
-		  break;
-	  case 0x0c:
-		  voice[1].envelope.writeATTACK_DECAY(value);
-		  break;
-	  case 0x0d:
-		  voice[1].envelope.writeSUSTAIN_RELEASE(value);
-		  break;
-	  case 0x0e:
-		  voice[2].wave.writeFREQ_LO(value);
-		  break;
-	  case 0x0f:
-		  voice[2].wave.writeFREQ_HI(value);
-		  break;
-	  case 0x10:
-		  voice[2].wave.writePW_LO(value);
-		  break;
-	  case 0x11:
-		  voice[2].wave.writePW_HI(value);
-		  break;
-	  case 0x12:
-		  voice[2].writeCONTROL_REG(value);
-		  break;
-	  case 0x13:
-		  voice[2].envelope.writeATTACK_DECAY(value);
-		  break;
-	  case 0x14:
-		  voice[2].envelope.writeSUSTAIN_RELEASE(value);
-		  break;
-	  case 0x15:
-		  filter.writeFC_LO(value);
-		  break;
-	  case 0x16:
-		  filter.writeFC_HI(value);
-		  break;
-	  case 0x17:
-		  filter.writeRES_FILT(value);
-		  break;
-	  case 0x18:
-		  filter.writeMODE_VOL(value);
-		  break;
-	  default:
-		  break;
+	case 0x00:
+		voice[0].wave.writeFREQ_LO(value);
+		break;
+	case 0x01:
+		voice[0].wave.writeFREQ_HI(value);
+		break;
+	case 0x02:
+		voice[0].wave.writePW_LO(value);
+		break;
+	case 0x03:
+		voice[0].wave.writePW_HI(value);
+		break;
+	case 0x04:
+		voice[0].writeCONTROL_REG(value);
+		break;
+	case 0x05:
+		voice[0].envelope.writeATTACK_DECAY(value);
+		break;
+	case 0x06:
+		voice[0].envelope.writeSUSTAIN_RELEASE(value);
+		break;
+	case 0x07:
+		voice[1].wave.writeFREQ_LO(value);
+		break;
+	case 0x08:
+		voice[1].wave.writeFREQ_HI(value);
+		break;
+	case 0x09:
+		voice[1].wave.writePW_LO(value);
+		break;
+	case 0x0a:
+		voice[1].wave.writePW_HI(value);
+		break;
+	case 0x0b:
+		voice[1].writeCONTROL_REG(value);
+		break;
+	case 0x0c:
+		voice[1].envelope.writeATTACK_DECAY(value);
+		break;
+	case 0x0d:
+		voice[1].envelope.writeSUSTAIN_RELEASE(value);
+		break;
+	case 0x0e:
+		voice[2].wave.writeFREQ_LO(value);
+		break;
+	case 0x0f:
+		voice[2].wave.writeFREQ_HI(value);
+		break;
+	case 0x10:
+		voice[2].wave.writePW_LO(value);
+		break;
+	case 0x11:
+		voice[2].wave.writePW_HI(value);
+		break;
+	case 0x12:
+		voice[2].writeCONTROL_REG(value);
+		break;
+	case 0x13:
+		voice[2].envelope.writeATTACK_DECAY(value);
+		break;
+	case 0x14:
+		voice[2].envelope.writeSUSTAIN_RELEASE(value);
+		break;
+	case 0x15:
+		filter.writeFC_LO(value);
+		break;
+	case 0x16:
+		filter.writeFC_HI(value);
+		break;
+	case 0x17:
+		filter.writeRES_FILT(value);
+		break;
+	case 0x18:
+		filter.writeMODE_VOL(value);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1253,7 +1232,6 @@ void SID::enable_filter(bool enable) {
 void SID::enable_external_filter(bool enable) {
 	extfilt.enable_filter(enable);
 }
-
 
 /**
  * Setting of SID sampling parameters.
@@ -1278,19 +1256,18 @@ void SID::enable_external_filter(bool enable) {
  * not overfilled.
  */
 bool SID::set_sampling_parameters(double clock_freq,
-								  double sample_freq, double pass_freq,
-								  double filter_scale)
-{
+                                  double sample_freq, double pass_freq,
+                                  double filter_scale) {
 	// The default passband limit is 0.9*sample_freq/2 for sample
 	// frequencies below ~ 44.1kHz, and 20kHz for higher sample frequencies.
 	if (pass_freq < 0) {
 		pass_freq = 20000;
-		if (2*pass_freq/sample_freq >= 0.9) {
-			pass_freq = 0.9*sample_freq/2;
+		if (2 * pass_freq / sample_freq >= 0.9) {
+			pass_freq = 0.9 * sample_freq / 2;
 		}
 	}
 	// Check whether the FIR table would overfill.
-	else if (pass_freq > 0.9*sample_freq/2) {
+	else if (pass_freq > 0.9 * sample_freq / 2) {
 		return false;
 	}
 
@@ -1301,11 +1278,10 @@ bool SID::set_sampling_parameters(double clock_freq,
 	}
 
 	// Set the external filter to the pass freq
-	extfilt.set_sampling_parameter (pass_freq);
+	extfilt.set_sampling_parameter(pass_freq);
 	clock_frequency = clock_freq;
 
-	cycles_per_sample =
-		cycle_count(clock_freq/sample_freq*(1 << FIXP_SHIFT) + 0.5);
+	cycles_per_sample = cycle_count(clock_freq / sample_freq * (1 << FIXP_SHIFT) + 0.5);
 
 	sample_offset = 0;
 	sample_prev = 0;
@@ -1342,7 +1318,7 @@ void SID::updateClock(cycle_count delta_t) {
 		// We have to clock on each MSB on / MSB off for hard sync to operate
 		// correctly.
 		for (i = 0; i < 3; i++) {
-			WaveformGenerator& wave = voice[i].wave;
+			WaveformGenerator &wave = voice[i].wave;
 
 			// It is only necessary to clock on the MSB of an oscillator that is
 			// a sync source and has freq != 0.
@@ -1354,11 +1330,10 @@ void SID::updateClock(cycle_count delta_t) {
 			reg24 accumulator = wave.accumulator;
 
 			// Clock on MSB off if MSB is on, clock on MSB on if MSB is off.
-			reg24 delta_accumulator =
-				(accumulator & 0x800000 ? 0x1000000 : 0x800000) - accumulator;
+			reg24 delta_accumulator = (accumulator & 0x800000 ? 0x1000000 : 0x800000) - accumulator;
 
-			cycle_count delta_t_next = delta_accumulator/freq;
-			if (delta_accumulator%freq) {
+			cycle_count delta_t_next = delta_accumulator / freq;
+			if (delta_accumulator % freq) {
 				++delta_t_next;
 			}
 
@@ -1382,18 +1357,17 @@ void SID::updateClock(cycle_count delta_t) {
 
 	// Clock filter.
 	filter.updateClock(delta_t,
-		voice[0].output(), voice[1].output(), voice[2].output());
+	                   voice[0].output(), voice[1].output(), voice[2].output());
 
 	// Clock external filter.
 	extfilt.updateClock(delta_t, filter.output());
 }
 
-
 /**
  * SID clocking with audio sampling.
  * Fixpoint arithmetics is used.
  */
-int SID::updateClock(cycle_count& delta_t, short* buf, int n, int interleave) {
+int SID::updateClock(cycle_count &delta_t, short *buf, int n, int interleave) {
 	int s = 0;
 
 	for (;;) {
@@ -1408,7 +1382,7 @@ int SID::updateClock(cycle_count& delta_t, short* buf, int n, int interleave) {
 		updateClock(delta_t_sample);
 		delta_t -= delta_t_sample;
 		sample_offset = (next_sample_offset & FIXP_MASK) - (1 << (FIXP_SHIFT - 1));
-		buf[s++*interleave] = output();
+		buf[s++ * interleave] = output();
 	}
 
 	updateClock(delta_t);
@@ -1444,9 +1418,9 @@ MusicDevices C64MusicPlugin::getDevices() const {
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(C64)
-	//REGISTER_PLUGIN_DYNAMIC(C64, PLUGIN_TYPE_MUSIC, C64MusicPlugin);
+//REGISTER_PLUGIN_DYNAMIC(C64, PLUGIN_TYPE_MUSIC, C64MusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(C64, PLUGIN_TYPE_MUSIC, C64MusicPlugin);
+REGISTER_PLUGIN_STATIC(C64, PLUGIN_TYPE_MUSIC, C64MusicPlugin);
 //#endif
 
 #endif

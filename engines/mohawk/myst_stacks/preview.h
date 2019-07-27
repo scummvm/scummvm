@@ -23,8 +23,8 @@
 #ifndef MYST_SCRIPTS_PREVIEW_H
 #define MYST_SCRIPTS_PREVIEW_H
 
-#include "mohawk/sound.h"
 #include "mohawk/myst_stacks/myst.h"
+#include "mohawk/sound.h"
 
 #include "common/scummsys.h"
 #include "common/util.h"
@@ -37,40 +37,40 @@ namespace MystStacks {
 
 #define DECLARE_OPCODE(x) void x(uint16 var, const ArgumentsArray &args)
 
-class Preview : public Myst {
-public:
-	explicit Preview(MohawkEngine_Myst *vm);
-	~Preview() override;
+	class Preview : public Myst {
+	public:
+		explicit Preview(MohawkEngine_Myst *vm);
+		~Preview() override;
 
-	void disablePersistentScripts() override;
-	void runPersistentScripts() override;
+		void disablePersistentScripts() override;
+		void runPersistentScripts() override;
 
-private:
-	void setupOpcodes();
+	private:
+		void setupOpcodes();
 
-	DECLARE_OPCODE(o_fadeToBlack);
-	DECLARE_OPCODE(o_fadeFromBlack);
-	DECLARE_OPCODE(o_stayHere);
-	DECLARE_OPCODE(o_speechStop);
+		DECLARE_OPCODE(o_fadeToBlack);
+		DECLARE_OPCODE(o_fadeFromBlack);
+		DECLARE_OPCODE(o_stayHere);
+		DECLARE_OPCODE(o_speechStop);
 
-	DECLARE_OPCODE(o_libraryBookcaseTransformDemo_init);
-	DECLARE_OPCODE(o_speech_init);
-	DECLARE_OPCODE(o_library_init);
+		DECLARE_OPCODE(o_libraryBookcaseTransformDemo_init);
+		DECLARE_OPCODE(o_speech_init);
+		DECLARE_OPCODE(o_library_init);
 
-	uint16 _libraryState; // 4
-	MystAreaImageSwitch *_library; // 32
+		uint16 _libraryState; // 4
+		MystAreaImageSwitch *_library; // 32
 
-	bool _speechRunning;
-	uint _speechStep;
-	CueList _cueList;
-	int16 _currentCue;
-	uint32 _speechNextTime; // 6
+		bool _speechRunning;
+		uint _speechStep;
+		CueList _cueList;
+		int16 _currentCue;
+		uint32 _speechNextTime; // 6
 
-	void speech_run();
-	void speechUpdateCue();
+		void speech_run();
+		void speechUpdateCue();
 
-	void libraryBookcaseTransform_run() override;
-};
+		void libraryBookcaseTransform_run() override;
+	};
 
 } // End of namespace MystStacks
 } // End of namespace Mohawk

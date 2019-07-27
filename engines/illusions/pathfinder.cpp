@@ -20,14 +20,14 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/pathfinder.h"
 #include "camera.h"
+#include "illusions/illusions.h"
 
 namespace Illusions {
 
 PointArray *PathFinder::findPath(Camera *camera, Common::Point sourcePt, Common::Point destPt,
-	PointArray *walkPoints, PathLines *walkRects, WidthHeight bgDimensions) {
+                                 PointArray *walkPoints, PathLines *walkRects, WidthHeight bgDimensions) {
 	Common::Point cameraPt = camera->getScreenOffset();
 	_screenRect.p0 = cameraPt;
 	_screenRect.p1.x = cameraPt.x + 320; //TODO fix me get screen dimensions here.
@@ -52,7 +52,7 @@ PointArray *PathFinder::findPathInternal(Common::Point sourcePt, Common::Point d
 			line.p1 = destPt;
 		}
 
-		_pathBytes = (byte*)calloc(1, _walkPoints->size());
+		_pathBytes = (byte *)calloc(1, _walkPoints->size());
 
 		bool done = false;
 		while (!done) {
@@ -272,10 +272,7 @@ void PathFinder::clipLineToBg(Common::Point &destPt, WidthHeight &rectDimensions
 
 void PathFinder::findDeltaPt(Common::Point pt, Common::Point &outDeltaPt) {
 	static const struct { int16 x, y; } kDeltaPoints[] = {
-		{ 0, -4}, {0, 4}, {-4, 0}, { 4,  0}, {-3, -3}, {3, 3}, {-3, 3}, { 3, -3},
-		{-2, -4}, {2, 4}, {-2, 4}, { 2, -4}, {-4, -2}, {4, 2}, {-4, 2}, { 4, -2},
-		{-1, -4}, {1, 4}, {-1, 4}, { 1, -4}, {-4, -1}, {4, 1}, {-4, 1}, { 4, -1},
-		{-2, -3}, {2, 3}, {-2, 3}, { 2, -3}, {-3, -2}, {3, 2}, {-3, 2}, { 3, -2}
+		{ 0, -4 }, { 0, 4 }, { -4, 0 }, { 4, 0 }, { -3, -3 }, { 3, 3 }, { -3, 3 }, { 3, -3 }, { -2, -4 }, { 2, 4 }, { -2, 4 }, { 2, -4 }, { -4, -2 }, { 4, 2 }, { -4, 2 }, { 4, -2 }, { -1, -4 }, { 1, 4 }, { -1, 4 }, { 1, -4 }, { -4, -1 }, { 4, 1 }, { -4, 1 }, { 4, -1 }, { -2, -3 }, { 2, 3 }, { -2, 3 }, { 2, -3 }, { -3, -2 }, { 3, 2 }, { -3, 2 }, { 3, -2 }
 	};
 	Common::Point testPt;
 	for (uint i = 0; i < 32; ++i) {
@@ -292,8 +289,7 @@ void PathFinder::findDeltaPt(Common::Point pt, Common::Point &outDeltaPt) {
  * returns true if line is contained within rect.
  */
 bool PathFinder::isLineWithinRectangle(PathLine &line, PathLine &rect) {
-	return line.p0.x <= rect.p1.x && line.p1.x >= rect.p0.x &&
-		line.p0.y <= rect.p1.y && line.p1.y >= rect.p0.y;
+	return line.p0.x <= rect.p1.x && line.p1.x >= rect.p0.x && line.p0.y <= rect.p1.y && line.p1.y >= rect.p0.y;
 }
 
 /**
@@ -334,10 +330,7 @@ int PathFinder::calcLineStatus(PathLine &sourceLine, PathLine &destRect, Common:
 	int delta2 = sourceDeltaY * destDeltaX - sourceDeltaX * destDeltaY;
 	int delta3 = sourceDeltaX * sdDeltaY - sourceDeltaY * sdDeltaX;
 
-	if ((delta2 <= 0 && (delta1 > 0 || delta2 > delta1)) ||
-		(delta2 > 0 && (delta1 < 0 || delta2 < delta1)) ||
-		(delta2 <= 0 && (delta3 > 0 || delta2 > delta3)) ||
-		(delta2 > 0 && (delta3 < 0 || delta2 < delta3)))
+	if ((delta2 <= 0 && (delta1 > 0 || delta2 > delta1)) || (delta2 > 0 && (delta1 < 0 || delta2 < delta1)) || (delta2 <= 0 && (delta3 > 0 || delta2 > delta3)) || (delta2 > 0 && (delta3 < 0 || delta2 < delta3)))
 		return 3;
 
 	if (!outPoint)

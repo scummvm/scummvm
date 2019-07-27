@@ -23,15 +23,16 @@
 #ifndef GLK_SELECTION_H
 #define GLK_SELECTION_H
 
-#include "glk/glk_types.h"
-#include "glk/utils.h"
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/ustr.h"
+#include "glk/glk_types.h"
+#include "glk/utils.h"
 
 namespace Glk {
 
-enum ClipSource { PRIMARY = 0, CLIPBOARD = 1 };
+enum ClipSource { PRIMARY = 0,
+	                CLIPBOARD = 1 };
 
 class Window;
 
@@ -41,6 +42,7 @@ class Window;
 class Clipboard {
 private:
 	Common::U32String _text;
+
 public:
 	/**
 	 * Makes a copy of selected text in preparation for the user copying it
@@ -68,11 +70,13 @@ private:
 	 * Clear the links data
 	 */
 	void clear();
+
 public:
 	size_t _hor, _ver;
 	uint **_links;
 	Rect _select;
 	Point _last;
+
 public:
 	/**
 	 * Constructor

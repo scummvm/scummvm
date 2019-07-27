@@ -22,9 +22,9 @@
 
 #ifdef ENABLE_EOB
 
-#include "kyra/engine/eobcommon.h"
-#include "kyra/resource/resource.h"
-#include "kyra/sound/sound.h"
+#	include "kyra/engine/eobcommon.h"
+#	include "kyra/resource/resource.h"
+#	include "kyra/sound/sound.h"
 
 namespace Kyra {
 
@@ -424,7 +424,6 @@ void EoBCoreEngine::printFullItemName(Item item) {
 			tmpString = nameUnid;
 			break;
 		}
-
 
 		if (tstr3) {
 			if (!tstr2) {

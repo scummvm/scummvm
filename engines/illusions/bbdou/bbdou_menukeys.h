@@ -23,9 +23,9 @@
 #ifndef ILLUSIONS_BBDOU_BBDOU_MENUKEYS_H
 #define ILLUSIONS_BBDOU_BBDOU_MENUKEYS_H
 
+#include "common/array.h"
 #include "illusions/specialcode.h"
 #include "illusions/thread.h"
-#include "common/array.h"
 
 namespace Illusions {
 
@@ -42,6 +42,7 @@ public:
 	~BBDOUMenuKeys();
 	void addMenuKey(uint bitMask, uint32 threadId);
 	void update();
+
 protected:
 	typedef Common::Array<MenuKey> MenuKeys;
 	IllusionsEngine_BBDOU *_vm;

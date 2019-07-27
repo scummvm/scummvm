@@ -22,14 +22,13 @@
 
 #include "base/plugins.h"
 
-#include "engines/advancedDetector.h"
 #include "common/file.h"
+#include "engines/advancedDetector.h"
 
 #include "graphics/surface.h"
 
 #include "fullpipe/fullpipe.h"
 #include "fullpipe/gameloader.h"
-
 
 namespace Fullpipe {
 
@@ -48,8 +47,8 @@ Common::Language FullpipeEngine::getLanguage() const {
 }
 
 static const PlainGameDescriptor fullpipeGames[] = {
-	{"fullpipe", "Full Pipe"},
-	{0, 0}
+	{ "fullpipe", "Full Pipe" },
+	{ 0, 0 }
 };
 
 namespace Fullpipe {
@@ -58,69 +57,63 @@ static const ADGameDescription gameDescriptions[] = {
 
 	// Full Pipe Russian version
 	{
-		"fullpipe",
-		0,
-		AD_ENTRY1s("4620.sc2", "a1a8f3ed731b0dfea43beaa3016fdc71", 554),
-		Common::RU_RUS,
-		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
-	},
+	  "fullpipe",
+	  0,
+	  AD_ENTRY1s("4620.sc2", "a1a8f3ed731b0dfea43beaa3016fdc71", 554),
+	  Common::RU_RUS,
+	  Common::kPlatformWindows,
+	  ADGF_DROPPLATFORM,
+	  GUIO1(GUIO_NONE) },
 
 	// Full Pipe German version
 	{
-		"fullpipe",
-		0,
-		AD_ENTRY1s("4620.sc2", "e4f24ffe4dc84cafc648b951e66c1fb3", 554),
-		Common::DE_DEU,
-		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
-	},
+	  "fullpipe",
+	  0,
+	  AD_ENTRY1s("4620.sc2", "e4f24ffe4dc84cafc648b951e66c1fb3", 554),
+	  Common::DE_DEU,
+	  Common::kPlatformWindows,
+	  ADGF_DROPPLATFORM,
+	  GUIO1(GUIO_NONE) },
 
 	// Full Pipe Estonian version
 	{
-		"fullpipe",
-		0,
-		AD_ENTRY1s("4620.sc2", "571f6b4b68b02003e35bc12c1a1d3fe3", 466),
-		Common::ET_EST,
-		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
-	},
+	  "fullpipe",
+	  0,
+	  AD_ENTRY1s("4620.sc2", "571f6b4b68b02003e35bc12c1a1d3fe3", 466),
+	  Common::ET_EST,
+	  Common::kPlatformWindows,
+	  ADGF_DROPPLATFORM,
+	  GUIO1(GUIO_NONE) },
 
 	// Full Pipe English version
 	{
-		"fullpipe",
-		0,
-		AD_ENTRY1s("4620.sc2", "bffea807345fece14089768fc141af83", 510),
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
-	},
+	  "fullpipe",
+	  0,
+	  AD_ENTRY1s("4620.sc2", "bffea807345fece14089768fc141af83", 510),
+	  Common::EN_ANY,
+	  Common::kPlatformWindows,
+	  ADGF_DROPPLATFORM,
+	  GUIO1(GUIO_NONE) },
 
 	// Full Pipe Russian Demo version
 	{
-		"fullpipe",
-		0,
-		AD_ENTRY1s("4620.sc2", "a0c71b47fc35a5e163fcd8d0972639bb", 70),
-		Common::RU_RUS,
-		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_DEMO,
-		GUIO1(GUIO_NONE)
-	},
+	  "fullpipe",
+	  0,
+	  AD_ENTRY1s("4620.sc2", "a0c71b47fc35a5e163fcd8d0972639bb", 70),
+	  Common::RU_RUS,
+	  Common::kPlatformWindows,
+	  ADGF_DROPPLATFORM | ADGF_DEMO,
+	  GUIO1(GUIO_NONE) },
 
 	// Full Pipe German Demo version
 	{
-		"fullpipe",
-		0,
-		AD_ENTRY1s("4620.sc2", "e5e98df537e56b39c33ae1d5c90976fe", 510),
-		Common::DE_DEU,
-		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_DEMO,
-		GUIO1(GUIO_NONE)
-	},
+	  "fullpipe",
+	  0,
+	  AD_ENTRY1s("4620.sc2", "e5e98df537e56b39c33ae1d5c90976fe", 510),
+	  Common::DE_DEU,
+	  Common::kPlatformWindows,
+	  ADGF_DROPPLATFORM | ADGF_DEMO,
+	  GUIO1(GUIO_NONE) },
 
 	AD_TABLE_END_MARKER
 };
@@ -129,7 +122,8 @@ static const ADGameDescription gameDescriptions[] = {
 
 class FullpipeMetaEngine : public AdvancedMetaEngine {
 public:
-	FullpipeMetaEngine() : AdvancedMetaEngine(Fullpipe::gameDescriptions, sizeof(ADGameDescription), fullpipeGames) {
+	FullpipeMetaEngine()
+	  : AdvancedMetaEngine(Fullpipe::gameDescriptions, sizeof(ADGameDescription), fullpipeGames) {
 		_singleId = "fullpipe";
 	}
 
@@ -150,22 +144,11 @@ public:
 };
 
 bool FullpipeMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) || (f == kSupportsDeleteSave) || (f == kSavesSupportMetaInfo) || (f == kSavesSupportThumbnail) || (f == kSavesSupportCreationDate) || (f == kSavesSupportPlayTime) || (f == kSupportsLoadingDuringStartup) || (f == kSimpleSavesNames);
 }
 
 bool Fullpipe::FullpipeEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
 SaveStateList FullpipeMetaEngine::listSaves(const char *target) const {
@@ -210,7 +193,7 @@ void FullpipeMetaEngine::removeSaveState(const char *target, int slot) const {
 
 SaveStateDescriptor FullpipeMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::ScopedPtr<Common::InSaveFile> f(g_system->getSavefileManager()->openForLoading(
-		Fullpipe::getSavegameFile(slot)));
+	  Fullpipe::getSavegameFile(slot)));
 
 	if (f) {
 		Fullpipe::FullpipeSavegameHeader header;
@@ -240,7 +223,7 @@ bool FullpipeMetaEngine::createInstance(OSystem *syst, Engine **engine, const AD
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(FULLPIPE)
-	REGISTER_PLUGIN_DYNAMIC(FULLPIPE, PLUGIN_TYPE_ENGINE, FullpipeMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(FULLPIPE, PLUGIN_TYPE_ENGINE, FullpipeMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(FULLPIPE, PLUGIN_TYPE_ENGINE, FullpipeMetaEngine);
+REGISTER_PLUGIN_STATIC(FULLPIPE, PLUGIN_TYPE_ENGINE, FullpipeMetaEngine);
 #endif

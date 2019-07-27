@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptSadik::AIScriptSadik(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptSadik::AIScriptSadik(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 	_flag = 0;
 	_nextSoundId = -1; // changed from original (0) to be more clear that this is an invalid sfx id
 	_var2 = 0;
@@ -50,10 +51,9 @@ void AIScriptSadik::Initialize() {
 }
 
 bool AIScriptSadik::Update() {
-	if ( Global_Variable_Query(kVariableChapter) == 2
-	 &&  Player_Query_Current_Scene() == kSceneBB09
-	 && !Game_Flag_Query(kFlagBB09SadikRun)
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 2
+	    && Player_Query_Current_Scene() == kSceneBB09
+	    && !Game_Flag_Query(kFlagBB09SadikRun)) {
 		Actor_Set_Goal_Number(kActorSadik, kGoalSadikRunFromBB09);
 		Actor_Set_Targetable(kActorSadik, true);
 		Game_Flag_Set(kFlagBB09SadikRun);
@@ -63,18 +63,16 @@ bool AIScriptSadik::Update() {
 
 	if (_nextSoundId != -1) { // changed from original (0) to be more clear that this is an invalid sfx id
 		Sound_Play(_nextSoundId, 100, 0, 0, 50);
-		_nextSoundId = -1;   // changed from original (0) to be more clear that this is an invalid sfx id
+		_nextSoundId = -1; // changed from original (0) to be more clear that this is an invalid sfx id
 	}
 
 	if (Global_Variable_Query(kVariableChapter) == 3
-	 && Actor_Query_Goal_Number(kActorSadik) < 200
-	) {
+	    && Actor_Query_Goal_Number(kActorSadik) < 200) {
 		Actor_Set_Goal_Number(kActorSadik, 200);
 	}
 
 	if (Global_Variable_Query(kVariableChapter) == 5
-	 && Actor_Query_Goal_Number(kActorSadik) < 400
-	) {
+	    && Actor_Query_Goal_Number(kActorSadik) < 400) {
 		Actor_Set_Goal_Number(kActorSadik, 400);
 	}
 
@@ -161,8 +159,7 @@ void AIScriptSadik::OtherAgentEnteredCombatMode(int otherActorId, int combatMode
 
 void AIScriptSadik::ShotAtAndMissed() {
 	if (Actor_Query_Goal_Number(kActorSadik) == 414
-	 || Actor_Query_Goal_Number(kActorSadik) == kGoalSadikKP06NeedsReactorCoreFromMcCoy
-	) {
+	    || Actor_Query_Goal_Number(kActorSadik) == kGoalSadikKP06NeedsReactorCoreFromMcCoy) {
 		Game_Flag_Set(kFlagMcCoyAttackedReplicants);
 		if (Actor_Query_Which_Set_In(kActorSadik) != kSetKP07) {
 			Actor_Set_Goal_Number(kActorSadik, 418);
@@ -215,8 +212,7 @@ bool AIScriptSadik::ShotAtAndHit() {
 	}
 
 	if (Actor_Query_Goal_Number(kActorSadik) == 414
-	 || Actor_Query_Goal_Number(kActorSadik) == kGoalSadikKP06NeedsReactorCoreFromMcCoy
-	) {
+	    || Actor_Query_Goal_Number(kActorSadik) == kGoalSadikKP06NeedsReactorCoreFromMcCoy) {
 		Game_Flag_Set(kFlagMcCoyAttackedReplicants);
 		if (Actor_Query_Which_Set_In(kActorSadik) != kSetKP07) {
 			Actor_Set_Goal_Number(kActorSadik, 418);
@@ -228,10 +224,8 @@ bool AIScriptSadik::ShotAtAndHit() {
 
 void AIScriptSadik::Retired(int byActorId) {
 	if ((Actor_Query_Goal_Number(kActorSadik) == 418
-	  || Actor_Query_Goal_Number(kActorSadik) == 450
-	 )
-	 && Actor_Query_Which_Set_In(kActorSadik) != kSetKP07
-	) {
+	     || Actor_Query_Goal_Number(kActorSadik) == 450)
+	    && Actor_Query_Which_Set_In(kActorSadik) != kSetKP07) {
 		Scene_Exits_Enable();
 	}
 
@@ -1056,8 +1050,7 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 
 	case 62:
 		if (Actor_Query_Goal_Number(kActorSadik) != kGoalSadikBB11KnockOutMcCoy
-		 && Actor_Query_Goal_Number(kActorSadik) != kGoalSadikBB11KickMcCoy
-		) {
+		    && Actor_Query_Goal_Number(kActorSadik) != kGoalSadikBB11KickMcCoy) {
 			_animationState = 31;
 			_animationFrame = 0;
 		} else {
@@ -1068,8 +1061,7 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 
 	case 63:
 		if (Actor_Query_Goal_Number(kActorSadik) != kGoalSadikBB11KnockOutMcCoy
-		 && Actor_Query_Goal_Number(kActorSadik) != kGoalSadikBB11KickMcCoy
-		) {
+		    && Actor_Query_Goal_Number(kActorSadik) != kGoalSadikBB11KickMcCoy) {
 			_animationState = 30;
 			_animationFrame = 2;
 		} else {
@@ -1082,17 +1074,17 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptSadik::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptSadik::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptSadik::ReachedMovementTrackWaypoint(int waypointId) {

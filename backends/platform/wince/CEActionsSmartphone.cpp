@@ -27,13 +27,13 @@
 
 #include "CEActionsSmartphone.h"
 #include "EventsBuffer.h"
-#include "gui/message.h"
 #include "common/config-manager.h"
 #include "gui/KeysDialog.h"
+#include "gui/message.h"
 
 #include "common/translation.h"
 
-#define     KEY_ALL_SKIP    3457
+#define KEY_ALL_SKIP 3457
 
 const String smartphoneActionNames[] = {
 	_s("Up"),
@@ -58,7 +58,6 @@ void CEActionsSmartphone::init() {
 	_instance = new CEActionsSmartphone();
 }
 
-
 String CEActionsSmartphone::actionName(GUI::ActionType action) {
 	return _(smartphoneActionNames[action]);
 }
@@ -76,14 +75,13 @@ int CEActionsSmartphone::version() {
 }
 
 CEActionsSmartphone::CEActionsSmartphone()
-	: GUI::Actions() {
+  : GUI::Actions() {
 	int i;
 
 	for (i = 0; i < SMARTPHONE_ACTION_LAST; i++) {
 		_action_mapping[i] = ACTIONS_SMARTPHONE_DEFAULT[i];
 		_action_enabled[i] = false;
 	}
-
 }
 
 void CEActionsSmartphone::initInstanceMain(OSystem *mainSystem) {
@@ -133,8 +131,7 @@ void CEActionsSmartphone::initInstanceGame() {
 	GUI_Actions::initInstanceGame();
 
 	// See if a right click mapping could be needed
-	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi || is_gob || is_tinsel ||
-	        is_samnmax || is_cine || is_touche || is_parallaction || is_drascula || is_cruise)
+	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi || is_gob || is_tinsel || is_samnmax || is_cine || is_touche || is_parallaction || is_drascula || is_cruise)
 		_right_click_needed = true;
 
 	// Initialize keys for different actions
@@ -165,9 +162,7 @@ void CEActionsSmartphone::initInstanceGame() {
 	}
 	// Skip
 	_action_enabled[SMARTPHONE_ACTION_SKIP] = true;
-	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_tinsel ||
-	        is_saga || is_kyra || is_touche || is_lure || is_feeble || is_drascula || is_tucker ||
-	        is_groovie || is_cruise || is_made)
+	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_tinsel || is_saga || is_kyra || is_touche || is_lure || is_feeble || is_drascula || is_tucker || is_groovie || is_cruise || is_made)
 		_key_action[SMARTPHONE_ACTION_SKIP].setKey(VK_ESCAPE);
 	else
 		_key_action[SMARTPHONE_ACTION_SKIP].setKey(KEY_ALL_SKIP);
@@ -194,7 +189,6 @@ void CEActionsSmartphone::initInstanceGame() {
 			ConfMan.flushToDisk();
 		}
 }
-
 
 CEActionsSmartphone::~CEActionsSmartphone() {
 }

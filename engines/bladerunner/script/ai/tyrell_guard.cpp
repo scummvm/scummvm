@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptTyrellGuard::AIScriptTyrellGuard(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptTyrellGuard::AIScriptTyrellGuard(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 	_frameDelta = 1;
 	_flag1 = false;
 }
@@ -177,8 +178,7 @@ bool AIScriptTyrellGuard::UpdateAnimation(int *animation, int *frame) {
 	case 3:
 		*animation = 558;
 		if (_animationFrame == 0
-		 && _flag1
-		) {
+		    && _flag1) {
 			*animation = 555;
 			_animationState = 0;
 		} else {
@@ -371,17 +371,17 @@ bool AIScriptTyrellGuard::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptTyrellGuard::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptTyrellGuard::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptTyrellGuard::ReachedMovementTrackWaypoint(int waypointId) {

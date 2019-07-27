@@ -4,7 +4,6 @@
 ** See Copyright Notice in lua.h
 */
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,34 +13,30 @@
 
 #include "lua.h"
 
+#include "common/textconsole.h"
 #include "lauxlib.h"
 #include "lualib.h"
-#include "common/textconsole.h"
 #include "scummvm_file.h"
 
-
-#define IO_INPUT	1
-#define IO_OUTPUT	2
-
+#define IO_INPUT 1
+#define IO_OUTPUT 2
 
 //static const char *const fnames[] = {"input", "output"};
 
-
-static int pushresult (lua_State *L, int i, const char *filename) {
-  int en = 0; /*errno;*/  // Currently hardcoded for ScumMVM, this may need to be changed
-  if (i) {
-    lua_pushboolean(L, 1);
-    return 1;
-  }
-  else {
-    lua_pushnil(L);
-    if (filename)
-      lua_pushfstring(L, "%s: %s", filename, "General error" /*strerror(en)*/);
-    else
-      lua_pushfstring(L, "%s", "General error" /*strerror(en)*/);
-    lua_pushinteger(L, en);
-    return 3;
-  }
+static int pushresult(lua_State *L, int i, const char *filename) {
+	int en = 0; /*errno;*/ // Currently hardcoded for ScumMVM, this may need to be changed
+	if (i) {
+		lua_pushboolean(L, 1);
+		return 1;
+	} else {
+		lua_pushnil(L);
+		if (filename)
+			lua_pushfstring(L, "%s: %s", filename, "General error" /*strerror(en)*/);
+		else
+			lua_pushfstring(L, "%s", "General error" /*strerror(en)*/);
+		lua_pushinteger(L, en);
+		return 3;
+	}
 }
 
 /*
@@ -51,12 +46,12 @@ static void fileerror (lua_State *L, int arg, const char *filename) {
 }
 */
 
-#define tofilep(L)	((FILE **)luaL_checkudata(L, 1, LUA_FILEHANDLE))
-#define tofileProxy(L)	((Sword25::Sword25FileProxy **)luaL_checkudata(L, 1, LUA_FILEHANDLE))
+#define tofilep(L) ((FILE **)luaL_checkudata(L, 1, LUA_FILEHANDLE))
+#define tofileProxy(L) ((Sword25::Sword25FileProxy **)luaL_checkudata(L, 1, LUA_FILEHANDLE))
 
-static int io_type (lua_State *L) {
+static int io_type(lua_State *L) {
 	return luaL_error(L, "%s", "LUA I/O has been removed in ScummVM");
-/*
+	/*
   void *ud;
   luaL_checkany(L, 1);
   ud = lua_touserdata(L, 1);
@@ -71,44 +66,41 @@ static int io_type (lua_State *L) {
 */
 }
 
-static Sword25::Sword25FileProxy *tofile (lua_State *L) {
-  Sword25::Sword25FileProxy **f = tofileProxy(L);
-  if (*f == NULL)
-    luaL_error(L, "attempt to use a closed file");
-  return *f;
+static Sword25::Sword25FileProxy *tofile(lua_State *L) {
+	Sword25::Sword25FileProxy **f = tofileProxy(L);
+	if (*f == NULL)
+		luaL_error(L, "attempt to use a closed file");
+	return *f;
 }
-
 
 /*
 ** When creating file handles, always creates a `closed' file handle
 ** before opening the actual file; so, if there is a memory error, the
 ** file is not left opened.
 */
-static Sword25::Sword25FileProxy **newfile (lua_State *L) {
+static Sword25::Sword25FileProxy **newfile(lua_State *L) {
 	Sword25::Sword25FileProxy **pf = (Sword25::Sword25FileProxy **)lua_newuserdata(L, sizeof(Sword25::Sword25FileProxy *));
-  *pf = NULL;  /* file handle is currently `closed' */
-  luaL_getmetatable(L, LUA_FILEHANDLE);
-  lua_setmetatable(L, -2);
-  return pf;
+	*pf = NULL; /* file handle is currently `closed' */
+	luaL_getmetatable(L, LUA_FILEHANDLE);
+	lua_setmetatable(L, -2);
+	return pf;
 }
-
 
 /*
 ** function to (not) close the standard files stdin, stdout, and stderr
 */
-static int io_noclose (lua_State *L) {
-  lua_pushnil(L);
-  lua_pushliteral(L, "cannot close standard file");
-  return 2;
+static int io_noclose(lua_State *L) {
+	lua_pushnil(L);
+	lua_pushliteral(L, "cannot close standard file");
+	return 2;
 }
-
 
 /*
 ** function to close 'popen' files
 */
-static int io_pclose (lua_State *L) {
+static int io_pclose(lua_State *L) {
 	error("LUA I/O has been removed in ScummVM");
-/*
+	/*
   FILE **p = tofilep(L);
   int ok = lua_pclose(L, *p);
   *p = NULL;
@@ -116,11 +108,10 @@ static int io_pclose (lua_State *L) {
   */
 }
 
-
 /*
 ** function to close regular files
 */
-static int io_fclose (lua_State *L) {
+static int io_fclose(lua_State *L) {
 	error("LUA I/O has been removed in ScummVM");
 	/*
   FILE **p = tofilep(L);
@@ -138,31 +129,29 @@ static int aux_close (lua_State *L) {
 }
 */
 
-static int io_close (lua_State *L) {
-  if (lua_isnone(L, 1))
-    lua_rawgeti(L, LUA_ENVIRONINDEX, IO_OUTPUT);
+static int io_close(lua_State *L) {
+	if (lua_isnone(L, 1))
+		lua_rawgeti(L, LUA_ENVIRONINDEX, IO_OUTPUT);
 
-  Sword25::Sword25FileProxy **f = tofileProxy(L);
-  delete *f;
-  *f = NULL;
+	Sword25::Sword25FileProxy **f = tofileProxy(L);
+	delete *f;
+	*f = NULL;
 
-  return 0;
+	return 0;
 }
 
+static int io_gc(lua_State *L) {
+	Sword25::Sword25FileProxy **f = tofileProxy(L);
+	// ignore closed files
+	if (*f != NULL)
+		delete *f;
 
-static int io_gc (lua_State *L) {
-  Sword25::Sword25FileProxy **f = tofileProxy(L);
-  // ignore closed files
-  if (*f != NULL)
-    delete *f;
-
-  return 0;
+	return 0;
 }
 
-
-static int io_tostring (lua_State *L) {
-  error("LUA I/O has been removed in ScummVM");
-  /*
+static int io_tostring(lua_State *L) {
+	error("LUA I/O has been removed in ScummVM");
+	/*
   FILE *f = *tofilep(L);
   if (f == NULL)
     lua_pushliteral(L, "file (closed)");
@@ -172,23 +161,21 @@ static int io_tostring (lua_State *L) {
   */
 }
 
-
-static int io_open (lua_State *L) {
-  const char *filename = luaL_checkstring(L, 1);
-  const char *mode = luaL_optstring(L, 2, "r");
-  Sword25::Sword25FileProxy **pf = newfile(L);
-  *pf = new Sword25::Sword25FileProxy(filename, mode);
-  return (*pf == NULL) ? pushresult(L, 0, filename) : 1;
+static int io_open(lua_State *L) {
+	const char *filename = luaL_checkstring(L, 1);
+	const char *mode = luaL_optstring(L, 2, "r");
+	Sword25::Sword25FileProxy **pf = newfile(L);
+	*pf = new Sword25::Sword25FileProxy(filename, mode);
+	return (*pf == NULL) ? pushresult(L, 0, filename) : 1;
 }
-
 
 /*
 ** this function has a separated environment, which defines the
 ** correct __close for 'popen' files
 */
-static int io_popen (lua_State *L) {
-  error("LUA I/O has been removed in ScummVM");
-/*
+static int io_popen(lua_State *L) {
+	error("LUA I/O has been removed in ScummVM");
+	/*
   const char *filename = luaL_checkstring(L, 1);
   const char *mode = luaL_optstring(L, 2, "r");
   FILE **pf = newfile(L);
@@ -197,9 +184,8 @@ static int io_popen (lua_State *L) {
   */
 }
 
-
-static int io_tmpfile (lua_State *L) {
-  return luaL_error(L, "%s", "LUA I/O error descriptions have been removed in ScummVM");
+static int io_tmpfile(lua_State *L) {
+	return luaL_error(L, "%s", "LUA I/O error descriptions have been removed in ScummVM");
 }
 
 /*
@@ -234,38 +220,33 @@ static int g_iofile (lua_State *L, int f, const char *mode) {
 }
 */
 
-static int io_input (lua_State *L) {
-  error("LUA I/O has been removed in ScummVM");
-//  return g_iofile(L, IO_INPUT, "r");
+static int io_input(lua_State *L) {
+	error("LUA I/O has been removed in ScummVM");
+	//  return g_iofile(L, IO_INPUT, "r");
 }
 
-
-static int io_output (lua_State *L) {
-  error("LUA I/O has been removed in ScummVM");
-//  return g_iofile(L, IO_OUTPUT, "w");
+static int io_output(lua_State *L) {
+	error("LUA I/O has been removed in ScummVM");
+	//  return g_iofile(L, IO_OUTPUT, "w");
 }
 
+static int io_readline(lua_State *L);
 
-static int io_readline (lua_State *L);
-
-
-static void aux_lines (lua_State *L, int idx, int toclose) {
-  lua_pushvalue(L, idx);
-  lua_pushboolean(L, toclose);  /* close/not close file when finished */
-  lua_pushcclosure(L, io_readline, 2);
+static void aux_lines(lua_State *L, int idx, int toclose) {
+	lua_pushvalue(L, idx);
+	lua_pushboolean(L, toclose); /* close/not close file when finished */
+	lua_pushcclosure(L, io_readline, 2);
 }
 
-
-static int f_lines (lua_State *L) {
-  tofile(L);  /* check that it's a valid file handle */
-  aux_lines(L, 1, 0);
-  return 1;
+static int f_lines(lua_State *L) {
+	tofile(L); /* check that it's a valid file handle */
+	aux_lines(L, 1, 0);
+	return 1;
 }
 
-
-static int io_lines (lua_State *L) {
-  error("LUA I/O has been removed in ScummVM");
-/*
+static int io_lines(lua_State *L) {
+	error("LUA I/O has been removed in ScummVM");
+	/*
   if (lua_isnoneornil(L, 1)) {  // no arguments?
     // will iterate over default input
     lua_rawgeti(L, LUA_ENVIRONINDEX, IO_INPUT);
@@ -282,7 +263,6 @@ static int io_lines (lua_State *L) {
   }
   */
 }
-
 
 /*
 ** {======================================================
@@ -396,21 +376,19 @@ static int g_read (lua_State *L, Sword25::Sword25FileProxy *f, int first) {
 }
 */
 
-static int io_read (lua_State *L) {
-  error("LUA I/O has been removed in ScummVM");
-//  return g_read(L, getiofile(L, IO_INPUT), 1);
+static int io_read(lua_State *L) {
+	error("LUA I/O has been removed in ScummVM");
+	//  return g_read(L, getiofile(L, IO_INPUT), 1);
 }
 
-
-static int f_read (lua_State *L) {
-  error("LUA I/O has been removed in ScummVM");
-//  return g_read(L, tofile(L), 2);
+static int f_read(lua_State *L) {
+	error("LUA I/O has been removed in ScummVM");
+	//  return g_read(L, tofile(L), 2);
 }
 
-
-static int io_readline (lua_State *L) {
-  error("LUA I/O has been removed in ScummVM");
-/*
+static int io_readline(lua_State *L) {
+	error("LUA I/O has been removed in ScummVM");
+	/*
   FILE *f = *(FILE **)lua_touserdata(L, lua_upvalueindex(1));
   int sucess;
   if (f == NULL)  // file is already closed?
@@ -432,43 +410,38 @@ static int io_readline (lua_State *L) {
 
 /* }====================================================== */
 
-
-static int g_write (lua_State *L, Sword25::Sword25FileProxy *f, int arg) {
-  int nargs = lua_gettop(L) - 1;
-  int status = 1;
-  for (; nargs--; arg++) {
-    if (lua_type(L, arg) == LUA_TNUMBER) {
-      // optimization: could be done exactly as for strings
-	  if (status) {
-        char buffer[22];
-		sprintf(buffer, LUA_NUMBER_FMT, lua_tonumber(L, arg));
-		status = f->write(buffer, strlen(buffer)) == strlen(buffer);
-	  }
+static int g_write(lua_State *L, Sword25::Sword25FileProxy *f, int arg) {
+	int nargs = lua_gettop(L) - 1;
+	int status = 1;
+	for (; nargs--; arg++) {
+		if (lua_type(L, arg) == LUA_TNUMBER) {
+			// optimization: could be done exactly as for strings
+			if (status) {
+				char buffer[22];
+				sprintf(buffer, LUA_NUMBER_FMT, lua_tonumber(L, arg));
+				status = f->write(buffer, strlen(buffer)) == strlen(buffer);
+			}
+		} else {
+			size_t l;
+			const char *s = luaL_checklstring(L, arg, &l);
+			status = status && (f->write(s, l) == l);
+		}
 	}
-    else {
-      size_t l;
-      const char *s = luaL_checklstring(L, arg, &l);
-      status = status && (f->write(s, l) == l);
-    }
-  }
-  return pushresult(L, status, NULL);
+	return pushresult(L, status, NULL);
 }
 
-
-static int io_write (lua_State *L) {
-  error("LUA I/O has been removed in ScummVM");
-//  return g_write(L, getiofile(L, IO_OUTPUT), 1);
+static int io_write(lua_State *L) {
+	error("LUA I/O has been removed in ScummVM");
+	//  return g_write(L, getiofile(L, IO_OUTPUT), 1);
 }
 
-
-static int f_write (lua_State *L) {
-  return g_write(L, tofile(L), 2);
+static int f_write(lua_State *L) {
+	return g_write(L, tofile(L), 2);
 }
 
-
-static int f_seek (lua_State *L) {
-  error("LUA I/O has been removed in ScummVM");
-  /*
+static int f_seek(lua_State *L) {
+	error("LUA I/O has been removed in ScummVM");
+	/*
   static const int mode[] = {SEEK_SET, SEEK_CUR, SEEK_END};
   static const char *const modenames[] = {"set", "cur", "end", NULL};
   FILE *f = tofile(L);
@@ -484,10 +457,9 @@ static int f_seek (lua_State *L) {
 */
 }
 
-
-static int f_setvbuf (lua_State *L) {
-  error("LUA I/O has been removed in ScummVM");
-  /*
+static int f_setvbuf(lua_State *L) {
+	error("LUA I/O has been removed in ScummVM");
+	/*
   static const int mode[] = {_IONBF, _IOFBF, _IOLBF};
   static const char *const modenames[] = {"no", "full", "line", NULL};
   FILE *f = tofile(L);
@@ -498,55 +470,49 @@ static int f_setvbuf (lua_State *L) {
   */
 }
 
-
-
-static int io_flush (lua_State *L) {
-  error("LUA I/O has been removed in ScummVM");
-//  return pushresult(L, fflush(getiofile(L, IO_OUTPUT)) == 0, NULL);
+static int io_flush(lua_State *L) {
+	error("LUA I/O has been removed in ScummVM");
+	//  return pushresult(L, fflush(getiofile(L, IO_OUTPUT)) == 0, NULL);
 }
 
-
-static int f_flush (lua_State *L) {
-  error("LUA I/O has been removed in ScummVM");
-//  return pushresult(L, fflush(tofile(L)) == 0, NULL);
+static int f_flush(lua_State *L) {
+	error("LUA I/O has been removed in ScummVM");
+	//  return pushresult(L, fflush(tofile(L)) == 0, NULL);
 }
-
 
 static const luaL_Reg iolib[] = {
-  {"close", io_close},
-  {"flush", io_flush},
-  {"input", io_input},
-  {"lines", io_lines},
-  {"open", io_open},
-  {"output", io_output},
-  {"popen", io_popen},
-  {"read", io_read},
-  {"tmpfile", io_tmpfile},
-  {"type", io_type},
-  {"write", io_write},
-  {NULL, NULL}
+	{ "close", io_close },
+	{ "flush", io_flush },
+	{ "input", io_input },
+	{ "lines", io_lines },
+	{ "open", io_open },
+	{ "output", io_output },
+	{ "popen", io_popen },
+	{ "read", io_read },
+	{ "tmpfile", io_tmpfile },
+	{ "type", io_type },
+	{ "write", io_write },
+	{ NULL, NULL }
 };
-
 
 static const luaL_Reg flib[] = {
-  {"close", io_close},
-  {"flush", f_flush},
-  {"lines", f_lines},
-  {"read", f_read},
-  {"seek", f_seek},
-  {"setvbuf", f_setvbuf},
-  {"write", f_write},
-  {"__gc", io_gc},
-  {"__tostring", io_tostring},
-  {NULL, NULL}
+	{ "close", io_close },
+	{ "flush", f_flush },
+	{ "lines", f_lines },
+	{ "read", f_read },
+	{ "seek", f_seek },
+	{ "setvbuf", f_setvbuf },
+	{ "write", f_write },
+	{ "__gc", io_gc },
+	{ "__tostring", io_tostring },
+	{ NULL, NULL }
 };
 
-
-static void createmeta (lua_State *L) {
-  luaL_newmetatable(L, LUA_FILEHANDLE);  /* create metatable for file handles */
-  lua_pushvalue(L, -1);  /* push metatable */
-  lua_setfield(L, -2, "__index");  /* metatable.__index = metatable */
-  luaL_register(L, NULL, flib);  /* file methods */
+static void createmeta(lua_State *L) {
+	luaL_newmetatable(L, LUA_FILEHANDLE); /* create metatable for file handles */
+	lua_pushvalue(L, -1); /* push metatable */
+	lua_setfield(L, -2, "__index"); /* metatable.__index = metatable */
+	luaL_register(L, NULL, flib); /* file methods */
 }
 
 /*
@@ -562,31 +528,30 @@ static void createstdfile (lua_State *L, FILE *f, int k, const char *fname) {
 }
 */
 
-static void newfenv (lua_State *L, lua_CFunction cls) {
-  lua_createtable(L, 0, 1);
-  lua_pushcfunction(L, cls);
-  lua_setfield(L, -2, "__close");
+static void newfenv(lua_State *L, lua_CFunction cls) {
+	lua_createtable(L, 0, 1);
+	lua_pushcfunction(L, cls);
+	lua_setfield(L, -2, "__close");
 }
 
-
-LUALIB_API int luaopen_io (lua_State *L) {
-  createmeta(L);
-  /* create (private) environment (with fields IO_INPUT, IO_OUTPUT, __close) */
-  newfenv(L, io_fclose);
-  lua_replace(L, LUA_ENVIRONINDEX);
-  /* open library */
-  luaL_register(L, LUA_IOLIBNAME, iolib);
-  /* create (and set) default files */
-  newfenv(L, io_noclose);  /* close function for default files */
-/*
+LUALIB_API int luaopen_io(lua_State *L) {
+	createmeta(L);
+	/* create (private) environment (with fields IO_INPUT, IO_OUTPUT, __close) */
+	newfenv(L, io_fclose);
+	lua_replace(L, LUA_ENVIRONINDEX);
+	/* open library */
+	luaL_register(L, LUA_IOLIBNAME, iolib);
+	/* create (and set) default files */
+	newfenv(L, io_noclose); /* close function for default files */
+	/*
   createstdfile(L, stdin, IO_INPUT, "stdin");
   createstdfile(L, stdout, IO_OUTPUT, "stdout");
   createstdfile(L, stderr, 0, "stderr");
 */
-  lua_pop(L, 1);  /* pop environment for default files */
-  lua_getfield(L, -1, "popen");
-  newfenv(L, io_pclose);  /* create environment for 'popen' */
-  lua_setfenv(L, -2);  /* set fenv for 'popen' */
-  lua_pop(L, 1);  /* pop 'popen' */
-  return 1;
+	lua_pop(L, 1); /* pop environment for default files */
+	lua_getfield(L, -1, "popen");
+	newfenv(L, io_pclose); /* create environment for 'popen' */
+	lua_setfenv(L, -2); /* set fenv for 'popen' */
+	lua_pop(L, 1); /* pop 'popen' */
+	return 1;
 }

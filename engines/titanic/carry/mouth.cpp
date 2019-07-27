@@ -26,12 +26,13 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMouth, CHeadPiece)
-	ON_MESSAGE(UseWithOtherMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(PETGainedObjectMsg)
+ON_MESSAGE(UseWithOtherMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(PETGainedObjectMsg)
 END_MESSAGE_MAP()
 
-CMouth::CMouth() : CHeadPiece() {
+CMouth::CMouth()
+  : CHeadPiece() {
 }
 
 void CMouth::save(SimpleFile *file, int indent) {

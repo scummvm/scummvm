@@ -35,7 +35,6 @@ class Mutex;
  */
 typedef OSystem::MutexRef MutexRef;
 
-
 /**
  * Auxillary class to (un)lock a mutex on the stack.
  */
@@ -45,12 +44,12 @@ class StackLock {
 
 	void lock();
 	void unlock();
+
 public:
 	explicit StackLock(MutexRef mutex, const char *mutexName = nullptr);
 	explicit StackLock(const Mutex &mutex, const char *mutexName = nullptr);
 	~StackLock();
 };
-
 
 /**
  * Wrapper class around the OSystem mutex functions.
@@ -67,7 +66,6 @@ public:
 	void lock();
 	void unlock();
 };
-
 
 } // End of namespace Common
 

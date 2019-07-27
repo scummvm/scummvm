@@ -22,14 +22,14 @@
 
 #ifdef ENABLE_HE
 
-#include "scumm/actor.h"
-#include "scumm/he/intern_he.h"
-#include "scumm/scumm.h"
-#include "scumm/util.h"
+#	include "scumm/actor.h"
+#	include "scumm/he/intern_he.h"
+#	include "scumm/scumm.h"
+#	include "scumm/util.h"
 
 namespace Scumm {
 
-#define OPCODE(i, x)	_opcodes[i]._OPCODE(ScummEngine_v71he, x)
+#	define OPCODE(i, x) _opcodes[i]._OPCODE(ScummEngine_v71he, x)
 
 void ScummEngine_v71he::setupOpcodes() {
 	ScummEngine_v70he::setupOpcodes();
@@ -85,28 +85,27 @@ byte *ScummEngine_v71he::heFindResource(uint32 tag, byte *searchin) {
 }
 
 byte *ScummEngine_v71he::findWrappedBlock(uint32 tag, byte *ptr, int state, bool errorFlag) {
-	if (READ_BE_UINT32(ptr) == MKTAG('M','U','L','T')) {
+	if (READ_BE_UINT32(ptr) == MKTAG('M', 'U', 'L', 'T')) {
 		byte *offs, *wrap;
 		uint32 size;
 
-		wrap = heFindResource(MKTAG('W','R','A','P'), ptr);
+		wrap = heFindResource(MKTAG('W', 'R', 'A', 'P'), ptr);
 		if (wrap == NULL)
 			return NULL;
 
-		offs = heFindResourceData(MKTAG('O','F','F','S'), wrap);
+		offs = heFindResourceData(MKTAG('O', 'F', 'F', 'S'), wrap);
 		if (offs == NULL)
 			return NULL;
 
 		size = getResourceDataSize(offs) / 4;
 		assert((uint32)state <= (uint32)size);
 
-
 		offs += READ_LE_UINT32(offs + state * sizeof(uint32));
 		offs = heFindResourceData(tag, offs - 8);
 		if (offs)
 			return offs;
 
-		offs = heFindResourceData(MKTAG('D','E','F','A'), ptr);
+		offs = heFindResourceData(MKTAG('D', 'E', 'F', 'A'), ptr);
 		if (offs == NULL)
 			return NULL;
 

@@ -49,9 +49,9 @@ struct FrozenStuffStruct {
 	Parallax *parallaxStuff;
 	int lightMapNumber, zBufferNumber;
 	SpeechStruct *speech;
-	StatusStuff  *frozenStatus;
+	StatusStuff *frozenStatus;
 	EventHandlers *currentEvents;
-	PersonaAnimation  *mouseCursorAnim;
+	PersonaAnimation *mouseCursorAnim;
 	int mouseCursorFrameNum;
 	int cameraX, cameraY, sceneWidth, sceneHeight;
 	float cameraZoom;

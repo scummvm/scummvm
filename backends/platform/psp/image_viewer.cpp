@@ -23,20 +23,20 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "common/scummsys.h"
-#include "common/str.h"
-#include "common/stream.h"
+#include "backends/platform/psp/image_viewer.h"
+#include "backends/platform/psp/display_client.h"
+#include "backends/platform/psp/display_manager.h"
+#include "backends/platform/psp/input.h"
+#include "backends/platform/psp/png_loader.h"
+#include "backends/platform/psp/thread.h"
 #include "common/archive.h"
 #include "common/events.h"
 #include "common/ptr.h"
-#include "gui/message.h"
+#include "common/scummsys.h"
+#include "common/str.h"
+#include "common/stream.h"
 #include "engines/engine.h"
-#include "backends/platform/psp/input.h"
-#include "backends/platform/psp/display_manager.h"
-#include "backends/platform/psp/display_client.h"
-#include "backends/platform/psp/image_viewer.h"
-#include "backends/platform/psp/png_loader.h"
-#include "backends/platform/psp/thread.h"
+#include "gui/message.h"
 
 static const char *imageName = "psp_image";
 #define PSP_SCREEN_HEIGHT 272
@@ -71,7 +71,7 @@ bool ImageViewer::load(int imageNum) {
 	// Load a PNG into our buffer and palette. Size it by the actual size of the image
 	PngLoader image(*file, *_buffer, *_palette, Buffer::kSizeBySourceSize);
 
-	PngLoader::Status status = image.allocate();	// allocate the buffers for the file
+	PngLoader::Status status = image.allocate(); // allocate the buffers for the file
 
 	char error[100];
 	if (status == PngLoader::BAD_FILE) {
@@ -94,9 +94,9 @@ bool ImageViewer::load(int imageNum) {
 	}
 
 	setConstantRendererOptions();
-	setFullScreenImageParams();		// prepare renderer for full screen view
+	setFullScreenImageParams(); // prepare renderer for full screen view
 
-	_imageNum = imageNum;			// now we can say we displayed this image
+	_imageNum = imageNum; // now we can say we displayed this image
 	_init = true;
 
 	return true;
@@ -135,13 +135,13 @@ void ImageViewer::setVisible(bool visible) {
 		return;
 
 	// from here on, we're making the loader visible
-	if (visible && g_engine) {	// we can only run the image viewer when there's an engine
+	if (visible && g_engine) { // we can only run the image viewer when there's an engine
 		g_engine->pauseEngine(true);
 
-		load(_imageNum ? _imageNum : 1); 	// load the 1st image or the current
+		load(_imageNum ? _imageNum : 1); // load the 1st image or the current
 	}
 
-	if (visible && _init) {	// we managed to load
+	if (visible && _init) { // we managed to load
 		_visible = true;
 		setViewerButtons(true);
 
@@ -150,8 +150,8 @@ void ImageViewer::setVisible(bool visible) {
 			dialog.runModal();
 		}
 
-		runLoop();	// only listen to viewer events
-	} else {	// we were asked to make invisible or failed to load
+		runLoop(); // only listen to viewer events
+	} else { // we were asked to make invisible or failed to load
 		_visible = false;
 		unload();
 		setViewerButtons(false);
@@ -178,18 +178,18 @@ void ImageViewer::setViewerButtons(bool active) {
 }
 
 void ImageViewer::loadNextImage() {
-	if (!load(_imageNum+1)) {		// try to load the next image
-		if (!load(_imageNum))		// we failed, so reload the current image
-			setVisible(false);		// just hide
+	if (!load(_imageNum + 1)) { // try to load the next image
+		if (!load(_imageNum)) // we failed, so reload the current image
+			setVisible(false); // just hide
 	}
 	setDirty();
 }
 
 void ImageViewer::loadLastImage() {
 	if (_imageNum - 1 > 0) {
-		if (!load(_imageNum-1))
+		if (!load(_imageNum - 1))
 			if (!load(_imageNum))
-				setVisible(false);	// we can't even show the old image so hide
+				setVisible(false); // we can't even show the old image so hide
 	}
 	setDirty();
 }
@@ -247,7 +247,7 @@ void ImageViewer::modifyZoom(bool up) {
 }
 
 void ImageViewer::setZoom(float value) {
-	if (value <= 0.0f)		// don't want 0 or negative zoom
+	if (value <= 0.0f) // don't want 0 or negative zoom
 		return;
 
 	_zoomFactor = value;

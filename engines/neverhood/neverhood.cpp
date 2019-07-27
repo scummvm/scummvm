@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/file.h"
 #include "common/config-manager.h"
+#include "common/file.h"
 #include "common/textconsole.h"
 
 #include "audio/mixer.h"
@@ -33,21 +33,24 @@
 
 #include "engines/util.h"
 
-#include "neverhood/neverhood.h"
 #include "neverhood/blbarchive.h"
 #include "neverhood/console.h"
 #include "neverhood/gamemodule.h"
 #include "neverhood/gamevars.h"
 #include "neverhood/graphics.h"
-#include "neverhood/resourceman.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/resource.h"
+#include "neverhood/resourceman.h"
 #include "neverhood/screen.h"
 #include "neverhood/sound.h"
 #include "neverhood/staticdata.h"
 
 namespace Neverhood {
 
-NeverhoodEngine::NeverhoodEngine(OSystem *syst, const NeverhoodGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc), _console(nullptr) {
+NeverhoodEngine::NeverhoodEngine(OSystem *syst, const NeverhoodGameDescription *gameDesc)
+  : Engine(syst)
+  , _gameDescription(gameDesc)
+  , _console(nullptr) {
 	// Setup mixer
 	if (!_mixer->isReady()) {
 		warning("Sound initialization failed.");
@@ -57,7 +60,6 @@ NeverhoodEngine::NeverhoodEngine(OSystem *syst, const NeverhoodGameDescription *
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	_rnd = new Common::RandomSource("neverhood");
-
 }
 
 NeverhoodEngine::~NeverhoodEngine() {

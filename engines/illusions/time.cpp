@@ -32,8 +32,7 @@ uint32 getCurrentTime() {
 bool isTimerExpired(uint32 startTime, uint32 endTime) {
 	uint32 currTime = getCurrentTime();
 	return !(
-		(startTime > endTime && (currTime <= endTime || currTime >= startTime)) ||
-		(startTime < endTime && currTime <= endTime && currTime >= startTime));
+	  (startTime > endTime && (currTime <= endTime || currTime >= startTime)) || (startTime < endTime && currTime <= endTime && currTime >= startTime));
 }
 
 uint32 getDurationElapsed(uint32 startTime, uint32 endTime) {

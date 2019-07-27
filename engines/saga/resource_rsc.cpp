@@ -22,12 +22,12 @@
 
 // RSC Resource file management module (SAGA 1, used in ITE)
 
-#include "saga/saga.h"
 #include "saga/resource.h"
+#include "saga/saga.h"
 
 namespace Saga {
 
-#define ID_MIDI     MKTAG('M','i','d','i')
+#define ID_MIDI MKTAG('M', 'i', 'd', 'i')
 
 bool ResourceContext_RSC::loadMacMIDI() {
 	// Sanity check
@@ -43,9 +43,9 @@ bool ResourceContext_RSC::loadMacMIDI() {
 	uint32 macMapOffset = _file.readUint32BE() + macResOffset;
 
 	_file.seek(macMapOffset + 22);
-	_file.readUint16BE();	// resAttr
+	_file.readUint16BE(); // resAttr
 	int16 typeOffset = _file.readUint16BE();
-	_file.readUint16BE();	// nameOffset
+	_file.readUint16BE(); // nameOffset
 	uint16 numTypes = _file.readUint16BE() + 1;
 
 	_file.seek(macMapOffset + typeOffset + 2);
@@ -61,9 +61,9 @@ bool ResourceContext_RSC::loadMacMIDI() {
 				// Jump to the header of the entry and read its fields
 				_file.seek(offset + macMapOffset + typeOffset + curMidi * 12);
 				uint16 midiID = _file.readUint16BE();
-				_file.readUint16BE();	// nameOffset
+				_file.readUint16BE(); // nameOffset
 				uint32 midiOffset = _file.readUint32BE() & 0xFFFFFF;
-				_file.readUint32BE();	// macResSize
+				_file.readUint32BE(); // macResSize
 
 				// Jump to the actual data and read the file size
 				_file.seek(macDataOffset + midiOffset);

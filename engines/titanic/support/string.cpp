@@ -20,18 +20,20 @@
  *
  */
 
-#include "common/algorithm.h"
 #include "titanic/support/string.h"
+#include "common/algorithm.h"
 
 namespace Titanic {
 
-CString::CString(char c, uint32 len) : Common::String() {
+CString::CString(char c, uint32 len)
+  : Common::String() {
 	ensureCapacity(len, false);
 	for (uint idx = 0; idx < len; ++idx)
 		(*this) += c;
 }
 
-CString::CString(int val) : Common::String() {
+CString::CString(int val)
+  : Common::String() {
 	*this = CString::format("%d", val);
 }
 
@@ -41,8 +43,7 @@ CString CString::left(uint count) const {
 
 CString CString::right(uint count) const {
 	uint strSize = size();
-	return (count > strSize) ? CString() :
-		CString(c_str() + strSize - count, c_str() + strSize);
+	return (count > strSize) ? CString() : CString(c_str() + strSize - count, c_str() + strSize);
 }
 
 CString CString::mid(uint start, uint count) const {

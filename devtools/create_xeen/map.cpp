@@ -20,17 +20,17 @@
  *
  */
 
- // Disable symbol overrides so that we can use system headers.
+// Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
 #ifdef main
-#undef main
+#	undef main
 #endif // main
 
-#include "file.h"
 #include "map.h"
+#include "file.h"
 
 #define MAP_WIDTH 16
 #define MAP_HEIGHT 16
@@ -47,12 +47,12 @@ const byte MAZE_255[MAP_HEIGHT][MAP_WIDTH] = {
 	{ 9, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 9 },
 	{ 9, 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 1, 9 },
 	{ 9, 1, 2, 3, 4, 4, 4, 4, 4, 4, 4, 4, 3, 2, 1, 9 },
-	{ 9, 1, 2, 3, 4,14,14,14,14,14,14, 4, 3, 2, 1, 9 },
-	{ 9, 1, 2, 3, 4,14, 6, 6, 6, 6,14, 4, 3, 2, 1, 9 },
-	{ 9, 1, 2, 3, 4,14, 6, 7, 7, 6,14, 4, 3, 2, 1, 9 },
-	{ 9, 1, 2, 3, 4,14, 6, 7, 7, 6,14, 4, 3, 2, 1, 9 },
-	{ 9, 1, 2, 3, 4,14, 6, 6, 6, 6,14, 4, 3, 2, 1, 9 },
-	{ 9, 1, 2, 3, 4,14,14,14,14,14,14, 4, 3, 2, 1, 9 },
+	{ 9, 1, 2, 3, 4, 14, 14, 14, 14, 14, 14, 4, 3, 2, 1, 9 },
+	{ 9, 1, 2, 3, 4, 14, 6, 6, 6, 6, 14, 4, 3, 2, 1, 9 },
+	{ 9, 1, 2, 3, 4, 14, 6, 7, 7, 6, 14, 4, 3, 2, 1, 9 },
+	{ 9, 1, 2, 3, 4, 14, 6, 7, 7, 6, 14, 4, 3, 2, 1, 9 },
+	{ 9, 1, 2, 3, 4, 14, 6, 6, 6, 6, 14, 4, 3, 2, 1, 9 },
+	{ 9, 1, 2, 3, 4, 14, 14, 14, 14, 14, 14, 4, 3, 2, 1, 9 },
 	{ 9, 1, 2, 3, 4, 4, 4, 4, 4, 4, 4, 4, 3, 2, 1, 9 },
 	{ 9, 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 1, 9 },
 	{ 9, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 9 },
@@ -96,22 +96,22 @@ void writeMaze(CCArchive &cc) {
 	for (int y = 0; y < MAP_HEIGHT; ++y)
 		f.write(MAZE_255[y], MAP_WIDTH);
 
-	f.writeWord(255);				// Maze number
+	f.writeWord(255); // Maze number
 	for (int idx = 0; idx < 4; ++idx)
-		f.writeWord(0);				// No surrounding mazes
-	f.writeWord(0);					// Maze flags 1
-	f.writeWord(FLAG_IS_OUTDOORS);	// Maze flags 2
+		f.writeWord(0); // No surrounding mazes
+	f.writeWord(0); // Maze flags 1
+	f.writeWord(FLAG_IS_OUTDOORS); // Maze flags 2
 	f.write(WALL_TYPES_255, 16);
 	f.write(SURFACE_TYPES_255, 16);
-	f.writeByte(0);					// Floor type (unused)
-	f.writeByte(7);					// Run position X
-	f.writeByte(0, 8);				// Difficulties
-	f.writeByte(0);					// Run position Y
-	f.writeByte(0);					// Trap damage
-	f.writeByte(0);					// Wall kind
-	f.writeByte(0);					// Tavern tips
-	f.writeByte(0, MAP_WIDTH * MAP_HEIGHT / 8);	// Seen tiles
-	f.writeByte(0, MAP_WIDTH * MAP_HEIGHT / 8);	// Stepped on tiles
+	f.writeByte(0); // Floor type (unused)
+	f.writeByte(7); // Run position X
+	f.writeByte(0, 8); // Difficulties
+	f.writeByte(0); // Run position Y
+	f.writeByte(0); // Trap damage
+	f.writeByte(0); // Wall kind
+	f.writeByte(0); // Tavern tips
+	f.writeByte(0, MAP_WIDTH * MAP_HEIGHT / 8); // Seen tiles
+	f.writeByte(0, MAP_WIDTH * MAP_HEIGHT / 8); // Stepped on tiles
 
 	cc.add("mazex255.dat", f);
 }
@@ -137,23 +137,23 @@ void writeMazeEvents(CCArchive &cc) {
 
 	// Mirror events
 	const byte MIRROR_EVENTS[32] = {
-		6,	7, 0, 2, 0,	40,		1,				// Play VOC: "Where to?"
-		9,	7, 0, 2, 1, 21,		0, 3, 0, 0,		// Get destination
-		5,	7, 0, 2, 2, 18,						// Exit
-		8,	7, 0, 2, 3, 7,		0, 0, 0			// Teleport and exit
+		6, 7, 0, 2, 0, 40, 1, // Play VOC: "Where to?"
+		9, 7, 0, 2, 1, 21, 0, 3, 0, 0, // Get destination
+		5, 7, 0, 2, 2, 18, // Exit
+		8, 7, 0, 2, 3, 7, 0, 0, 0 // Teleport and exit
 	};
 	f.write(MIRROR_EVENTS, 32);
 
 	// Bench 1 events
 	const byte BENCH1_EVENTS[32] = {
-		10,  7, 8, 0, 0,  5,	1, 2, 3, 1, 2,	// NPC
-		14,	7, 8, 0, 1, 20,		34, 10000 % 256, 10000 / 256, 0, 0, 0, 0, 0, 0, // Give gold
-		5,	7, 8, 0, 2, 18						// Exit
+		10, 7, 8, 0, 0, 5, 1, 2, 3, 1, 2, // NPC
+		14, 7, 8, 0, 1, 20, 34, 10000 % 256, 10000 / 256, 0, 0, 0, 0, 0, 0, // Give gold
+		5, 7, 8, 0, 2, 18 // Exit
 	};
 	const byte BENCH2_EVENTS[30] = {
-		10,  8, 8, 0, 0,  5,	1, 3, 3, 1, 2,	// NPC
-		14,	8, 8, 0, 1, 20,		35, 1000 % 256, 1000 / 256, 0, 0, 0, 0,	// Give gems
-		5,	8, 8, 0, 2, 18						// Exit
+		10, 8, 8, 0, 0, 5, 1, 3, 3, 1, 2, // NPC
+		14, 8, 8, 0, 1, 20, 35, 1000 % 256, 1000 / 256, 0, 0, 0, 0, // Give gems
+		5, 8, 8, 0, 2, 18 // Exit
 	};
 	f.write(BENCH1_EVENTS, 32);
 	f.write(BENCH2_EVENTS, 30);
@@ -180,12 +180,12 @@ void writeMazeText(CCArchive &cc) {
  */
 void writeMonstersObjects(CCArchive &cc) {
 	Common::MemFile f;
-	f.writeByte(8);			// Object sprites
+	f.writeByte(8); // Object sprites
 	f.writeByte(2);
 	f.writeByte(0xff, 14);
 
-	f.writeByte(0xff, 16);	// Monster sprites
-	f.writeByte(0xff, 16);	// Wall item sprites
+	f.writeByte(0xff, 16); // Monster sprites
+	f.writeByte(0xff, 16); // Wall item sprites
 
 	for (int idx = 0; idx < 6; ++idx) {
 		switch (idx) {

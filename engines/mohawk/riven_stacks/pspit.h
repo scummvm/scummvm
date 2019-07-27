@@ -28,30 +28,30 @@
 namespace Mohawk {
 namespace RivenStacks {
 
-/**
+	/**
  * Prison Island
  */
-class PSpit : public DomeSpit {
-public:
-	PSpit(MohawkEngine_Riven *vm);
+	class PSpit : public DomeSpit {
+	public:
+		PSpit(MohawkEngine_Riven *vm);
 
-	// RivenStack API
-	virtual void installCardTimer() override;
+		// RivenStack API
+		virtual void installCardTimer() override;
 
-	// External commands - Prison Elevator
-	void xpisland990_elevcombo(const ArgumentArray &args);	// Param1: button
+		// External commands - Prison Elevator
+		void xpisland990_elevcombo(const ArgumentArray &args); // Param1: button
 
-	// External commands - Dome
-	void xpscpbtn(const ArgumentArray &args);
-	void xpisland290_domecheck(const ArgumentArray &args);
-	void xpisland25_opencard(const ArgumentArray &args);
-	void xpisland25_resetsliders(const ArgumentArray &args);
-	void xpisland25_slidermd(const ArgumentArray &args);
-	void xpisland25_slidermw(const ArgumentArray &args);
+		// External commands - Dome
+		void xpscpbtn(const ArgumentArray &args);
+		void xpisland290_domecheck(const ArgumentArray &args);
+		void xpisland25_opencard(const ArgumentArray &args);
+		void xpisland25_resetsliders(const ArgumentArray &args);
+		void xpisland25_slidermd(const ArgumentArray &args);
+		void xpisland25_slidermw(const ArgumentArray &args);
 
-	// Timer callbacks
-	void catherineIdleTimer();
-};
+		// Timer callbacks
+		void catherineIdleTimer();
+	};
 
 } // End of namespace RivenStacks
 } // End of namespace Mohawk

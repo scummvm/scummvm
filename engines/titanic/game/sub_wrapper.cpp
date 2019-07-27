@@ -25,8 +25,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CSUBWrapper, CGameObject)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(SignalObject)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(SignalObject)
 END_MESSAGE_MAP()
 
 void CSUBWrapper::save(SimpleFile *file, int indent) {

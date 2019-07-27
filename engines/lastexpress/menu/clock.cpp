@@ -33,7 +33,12 @@
 
 namespace LastExpress {
 
-Clock::Clock(LastExpressEngine *engine) : _engine(engine), _frameMinutes(NULL), _frameHour(NULL), _frameSun(NULL), _frameDate(NULL) {
+Clock::Clock(LastExpressEngine *engine)
+  : _engine(engine)
+  , _frameMinutes(NULL)
+  , _frameHour(NULL)
+  , _frameSun(NULL)
+  , _frameDate(NULL) {
 	_frameMinutes = new SequenceFrame(loadSequence("eggmin.seq"), 0, true);
 	_frameHour = new SequenceFrame(loadSequence("egghour.seq"), 0, true);
 	_frameSun = new SequenceFrame(loadSequence("sun.seq"), 0, true);

@@ -23,12 +23,12 @@
 #ifndef TOLTECS_TOLTECS_H
 #define TOLTECS_TOLTECS_H
 
-#include "common/scummsys.h"
 #include "common/endian.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/keyboard.h"
 #include "common/random.h"
+#include "common/scummsys.h"
 #include "common/textconsole.h"
 
 #include "engines/engine.h"
@@ -97,7 +97,7 @@ class ToltecsEngine : public ::Engine {
 
 protected:
 	Common::Error run();
-//	void shutdown();
+	//	void shutdown();
 
 public:
 	ToltecsEngine(OSystem *syst, const ToltecsGameDescription *gameDesc);
@@ -109,7 +109,7 @@ public:
 	const ToltecsGameDescription *_gameDescription;
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
-	const Common::String& getTargetName() const { return _targetName; }
+	const Common::String &getTargetName() const { return _targetName; }
 	void syncSoundSettings();
 
 	GUI::Debugger *getDebugger() { return _console; }
@@ -141,12 +141,12 @@ public:
 	void walk(byte *walkData);
 
 	int16 findRectAtPoint(byte *rectData, int16 x, int16 y, int16 index, int16 itemSize,
-		byte *rectDataEnd);
+	                      byte *rectDataEnd);
 
 	int _cfgVoicesVolume, _cfgMusicVolume, _cfgSoundFXVolume;
 	bool _cfgText, _cfgVoices;
-public:
 
+public:
 	AnimationPlayer *_anim;
 	ArchiveReader *_arc;
 	Console *_console;
@@ -226,7 +226,6 @@ public:
 	static Common::String getSavegameFilename(const Common::String &target, int num);
 
 	WARN_UNUSED_RESULT static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail = true);
-
 };
 
 } // End of namespace Toltecs

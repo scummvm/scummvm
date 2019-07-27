@@ -33,11 +33,15 @@ class CEmptyNutBowl : public CGameObject {
 	bool ReplaceBowlAndNutsMsg(CReplaceBowlAndNutsMsg *msg);
 	bool NutPuzzleMsg(CNutPuzzleMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+
 public:
 	bool _flag;
+
 public:
 	CLASSDEF;
-	CEmptyNutBowl() : CGameObject(), _flag(true) {}
+	CEmptyNutBowl()
+	  : CGameObject()
+	  , _flag(true) {}
 
 	/**
 	 * Save the data for the class to file

@@ -20,9 +20,9 @@
  *
  */
 
+#include "parallaction/walk.h"
 #include "parallaction/exec.h"
 #include "parallaction/parallaction.h"
-#include "parallaction/walk.h"
 
 namespace Parallaction {
 
@@ -41,17 +41,17 @@ struct WalkFrames {
 };
 
 WalkFrames _char20WalkFrames_NS = {
-	{  0,  7, 14, 17 },
-	{  1,  8, 15, 18 },
-	{  6,  6,  2,  2 },
-	{  2,  2,  4,  4 }
+	{ 0, 7, 14, 17 },
+	{ 1, 8, 15, 18 },
+	{ 6, 6, 2, 2 },
+	{ 2, 2, 4, 4 }
 };
 
 WalkFrames _char24WalkFrames_NS = {
-	{  0,  9, 18, 21 },
-	{  1, 10, 19, 22 },
-	{  8,  8,  2,  2 },
-	{  2,  2,  4,  4 }
+	{ 0, 9, 18, 21 },
+	{ 1, 10, 19, 22 },
+	{ 8, 8, 2, 2 },
+	{ 2, 2, 4, 4 }
 };
 
 static int getPathWidth() {
@@ -80,7 +80,8 @@ static bool isPathClear(uint16 x, uint16 y) {
 
 // adjusts position towards nearest walkable point
 void PathWalker_NS::correctPathPoint(Common::Point &to) {
-	if (isPathClear(to.x, to.y)) return;
+	if (isPathClear(to.x, to.y))
+		return;
 
 	int maxX = getPathWidth();
 	int maxY = getPathHeight();
@@ -112,22 +113,19 @@ void PathWalker_NS::correctPathPoint(Common::Point &to) {
 	int16 close = (closeX >= closeY) ? closeY : closeX;
 	if (close == right) {
 		to.x += right;
-	} else
-	if (close == left) {
+	} else if (close == left) {
 		to.x -= left;
-	} else
-	if (close == top) {
+	} else if (close == top) {
 		to.y -= top;
-	} else
-	if (close == bottom) {
+	} else if (close == bottom) {
 		to.y += bottom;
 	}
 }
 
-uint32 PathWalker_NS::buildSubPath(const Common::Point& pos, const Common::Point& stop) {
+uint32 PathWalker_NS::buildSubPath(const Common::Point &pos, const Common::Point &stop) {
 	uint32 v28 = 0;
 	uint32 v2C = 0;
-	uint32 v34 = pos.sqrDist(stop);				// square distance from current position and target
+	uint32 v34 = pos.sqrDist(stop); // square distance from current position and target
 	uint32 v30 = v34;
 
 	_subPath.clear();
@@ -156,7 +154,8 @@ uint32 PathWalker_NS::buildSubPath(const Common::Point& pos, const Common::Point
 			locNode++;
 		}
 
-		if (nearest == _vm->_location._walkPoints.end()) break;
+		if (nearest == _vm->_location._walkPoints.end())
+			break;
 
 		v20 = *nearest;
 		v34 = v30 = v20.sqrDist(stop);
@@ -213,7 +212,7 @@ void PathWalker_NS::buildPath(AnimationPtr a, uint16 x, uint16 y) {
 //	0 : Point not reachable
 //	1 : Point reachable in a straight line
 //	other values: square distance to target (point not reachable in a straight line)
-uint16 PathWalker_NS::walkFunc1(const Common::Point &to, Common::Point& node) {
+uint16 PathWalker_NS::walkFunc1(const Common::Point &to, Common::Point &node) {
 	Common::Point arg(to);
 
 	Common::Point v4;
@@ -225,10 +224,14 @@ uint16 PathWalker_NS::walkFunc1(const Common::Point &to, Common::Point& node) {
 
 	while (foot != arg) {
 
-		if (foot.x < to.x && isPathClear(foot.x + 1, foot.y)) foot.x++;
-		if (foot.x > to.x && isPathClear(foot.x - 1, foot.y)) foot.x--;
-		if (foot.y < to.y && isPathClear(foot.x, foot.y + 1)) foot.y++;
-		if (foot.y > to.y && isPathClear(foot.x, foot.y - 1)) foot.y--;
+		if (foot.x < to.x && isPathClear(foot.x + 1, foot.y))
+			foot.x++;
+		if (foot.x > to.x && isPathClear(foot.x - 1, foot.y))
+			foot.x--;
+		if (foot.y < to.y && isPathClear(foot.x, foot.y + 1))
+			foot.y++;
+		if (foot.y > to.y && isPathClear(foot.x, foot.y - 1))
+			foot.y--;
 
 		if (foot == v8 && foot != arg) {
 			// foot couldn't move and still away from target
@@ -237,10 +240,14 @@ uint16 PathWalker_NS::walkFunc1(const Common::Point &to, Common::Point& node) {
 
 			while (foot != arg) {
 
-				if (foot.x < to.x && !isPathClear(foot.x + 1, foot.y)) foot.x++;
-				if (foot.x > to.x && !isPathClear(foot.x - 1, foot.y)) foot.x--;
-				if (foot.y < to.y && !isPathClear(foot.x, foot.y + 1)) foot.y++;
-				if (foot.y > to.y && !isPathClear(foot.x, foot.y - 1)) foot.y--;
+				if (foot.x < to.x && !isPathClear(foot.x + 1, foot.y))
+					foot.x++;
+				if (foot.x > to.x && !isPathClear(foot.x - 1, foot.y))
+					foot.x--;
+				if (foot.y < to.y && !isPathClear(foot.x, foot.y + 1))
+					foot.y++;
+				if (foot.y > to.y && !isPathClear(foot.x, foot.y - 1))
+					foot.y--;
 
 				if (foot == v8 && foot != arg)
 					return 0;
@@ -259,7 +266,7 @@ uint16 PathWalker_NS::walkFunc1(const Common::Point &to, Common::Point& node) {
 	return 1;
 }
 
-void PathWalker_NS::clipMove(Common::Point& pos, const Common::Point& to) {
+void PathWalker_NS::clipMove(Common::Point &pos, const Common::Point &to) {
 	if ((pos.x < to.x) && (pos.x < getPathWidth()) && isPathClear(pos.x + 2, pos.y)) {
 		pos.x = (pos.x + 2 < to.x) ? pos.x + 2 : to.x;
 	}
@@ -296,8 +303,7 @@ void PathWalker_NS::checkDoor(const Common::Point &foot) {
 		_vm->_cmdExec->run(z->_commands, z);
 		_vm->clearLocationFlags(kFlagsEnter);
 		_vm->_zoneTrap = z;
-	} else
-	if (_vm->_zoneTrap) {
+	} else if (_vm->_zoneTrap) {
 		_vm->setLocationFlags(kFlagsExit);
 		_vm->_cmdExec->run(_vm->_zoneTrap->_commands, _vm->_zoneTrap);
 		_vm->clearLocationFlags(kFlagsExit);
@@ -349,7 +355,7 @@ void PathWalker_NS::walk() {
 		if (newPos == curPos) {
 			debugC(1, kDebugWalk, "walk was blocked by an unforeseen obstacle");
 			finalizeWalk();
-			targetPos = newPos;	// when walking is interrupted, targetPos must be hacked so that a still frame can be selected
+			targetPos = newPos; // when walking is interrupted, targetPos must be hacked so that a still frame can be selected
 		}
 	}
 
@@ -362,7 +368,7 @@ void PathWalker_NS::walk() {
 	updateDirection(curPos, targetPos);
 }
 
-void PathWalker_NS::updateDirection(const Common::Point& pos, const Common::Point& to) {
+void PathWalker_NS::updateDirection(const Common::Point &pos, const Common::Point &to) {
 	Common::Point dist(to.x - pos.x, to.y - pos.y);
 	WalkFrames *frames = (_a->getFrameNum() == 20) ? &_char20WalkFrames_NS : &_char24WalkFrames_NS;
 
@@ -382,7 +388,10 @@ void PathWalker_NS::updateDirection(const Common::Point& pos, const Common::Poin
 	_a->setF(frames->firstWalkFrame[_direction] + (_step / frames->frameRepeat[_direction]) % frames->numWalkFrames[_direction]);
 }
 
-PathWalker_NS::PathWalker_NS(Parallaction *vm) : _direction(WALK_DOWN), _step(0), _vm(vm) {
+PathWalker_NS::PathWalker_NS(Parallaction *vm)
+  : _direction(WALK_DOWN)
+  , _step(0)
+  , _vm(vm) {
 }
 
 bool PathWalker_BR::directPathExists(const Common::Point &from, const Common::Point &to) {
@@ -390,10 +399,14 @@ bool PathWalker_BR::directPathExists(const Common::Point &from, const Common::Po
 	Common::Point p(copy);
 
 	while (p != to) {
-		if (p.x < to.x && isPathClear(p.x + 1, p.y)) p.x++;
-		if (p.x > to.x && isPathClear(p.x - 1, p.y)) p.x--;
-		if (p.y < to.y && isPathClear(p.x, p.y + 1)) p.y++;
-		if (p.y > to.y && isPathClear(p.x, p.y - 1)) p.y--;
+		if (p.x < to.x && isPathClear(p.x + 1, p.y))
+			p.x++;
+		if (p.x > to.x && isPathClear(p.x - 1, p.y))
+			p.x--;
+		if (p.y < to.y && isPathClear(p.x, p.y + 1))
+			p.y++;
+		if (p.y > to.y && isPathClear(p.x, p.y - 1))
+			p.y--;
 
 		if (p == copy && p != to)
 			return false;
@@ -425,7 +438,7 @@ void PathWalker_BR::setFollowerPath(AnimationPtr a, uint16 x, uint16 y) {
 void PathWalker_BR::stopFollower() {
 	if (_follower._active) {
 		uint32 frame = _follower._a->getF();
-		_follower._a->setF((frame/9) * 9);
+		_follower._a->setF((frame / 9) * 9);
 	}
 	_follower._a.reset();
 	_follower._active = false;
@@ -473,7 +486,7 @@ void PathWalker_BR::buildPath(State &s, uint16 x, uint16 y) {
 
 	PointList::iterator b = z1->u._pathLists[id].begin();
 	PointList::iterator e = z1->u._pathLists[id].end();
-	for ( ; b != e; ++b) {
+	for (; b != e; ++b) {
 		s._walkPath.push_front(*b);
 	}
 	s._walkPath.push_back(dest);
@@ -494,7 +507,7 @@ void PathWalker_BR::finalizeWalk(State &s) {
 		// TODO: implement working follower. Must find out a location in which the code is
 		// used and which is stable enough.
 		if (_follower._active) {
-			_vm->_location._followerStartPosition = z->u._doorStartPos2_br;	// foot pos
+			_vm->_location._followerStartPosition = z->u._doorStartPos2_br; // foot pos
 			_vm->_location._followerStartFrame = z->u._doorStartFrame2_br;
 		} else {
 			_vm->_location._followerStartPosition.x = -1000;
@@ -517,7 +530,7 @@ void PathWalker_BR::finalizeWalk(State &s) {
 	_ch._a->setFoot(foot);
 #endif
 
-	s._a->setF(s._dirFrame);	// temporary solution
+	s._a->setF(s._dirFrame); // temporary solution
 
 	s._active = false;
 }
@@ -536,16 +549,14 @@ void PathWalker_BR::walk() {
 
 	int32 dx = 0, dy = 0;
 	if (foot.x > pos.x + 600) {
-		dx = 78*4;
-	} else
-	if (foot.x < pos.x + 40) {
-		dx = -78*4;
+		dx = 78 * 4;
+	} else if (foot.x < pos.x + 40) {
+		dx = -78 * 4;
 	}
 
 	if (foot.y > pos.y + 350) {
 		dy = 100;
-	} else
-	if (foot.y < pos.y + 80) {
+	} else if (foot.y < pos.y + 80) {
 		dy = -100;
 	}
 
@@ -588,7 +599,7 @@ void PathWalker_BR::doWalk(State &s) {
 		if (s._walkDelay == 0 && !s._a->_scriptName.empty()) {
 			// stop script and reset
 			s._a->_flags &= ~kFlagsActing;
-//			_vm->_programExec->resetProgram(s._a->_scriptName);
+			//			_vm->_programExec->resetProgram(s._a->_scriptName);
 		}
 		return;
 	}
@@ -621,8 +632,10 @@ void PathWalker_BR::doWalk(State &s) {
 	when navigating the balloon near the borders of the screen, where the calculated step is
 	forcibly small because of clipping). Since the "floating" script (part1/scripts/mongolo.scr)
 	uses increments of 3 for both x and y, we tweak the calculated steps accordingly here. */
-	if (xStep == 3) xStep--;
-	if (yStep == 3) yStep--;
+	if (xStep == 3)
+		xStep--;
+	if (yStep == 3)
+		yStep--;
 
 	debugC(9, kDebugWalk, "calculated step: (%i, %i)", xStep, yStep);
 
@@ -639,7 +652,7 @@ void PathWalker_BR::doWalk(State &s) {
 	s._dirFrame = 0;
 	Common::Point newpos(s._startFoot), delta;
 
-	assert (!s._walkPath.empty());
+	assert(!s._walkPath.empty());
 	Common::Point p(*s._walkPath.begin());
 
 	if (s._startFoot.y < p.y && (s._startFoot.y + yStep) < maxY && isPathClear(s._startFoot.x, s._startFoot.y + yStep)) {
@@ -652,8 +665,7 @@ void PathWalker_BR::doWalk(State &s) {
 			newpos.y = p.y;
 		}
 		s._dirFrame = 9;
-	} else
-	if (s._startFoot.y > p.y && (s._startFoot.y - yStep) > minY && isPathClear(s._startFoot.x, s._startFoot.y - yStep)) {
+	} else if (s._startFoot.y > p.y && (s._startFoot.y - yStep) > minY && isPathClear(s._startFoot.x, s._startFoot.y - yStep)) {
 		if (s._startFoot.y - yStep >= p.y) {
 			s._stillWalkingTowardsNode = true;
 			delta.y = yStep;
@@ -675,10 +687,9 @@ void PathWalker_BR::doWalk(State &s) {
 			newpos.x = p.x;
 		}
 		if (delta.y < delta.x) {
-			s._dirFrame = 18;	// right
+			s._dirFrame = 18; // right
 		}
-	} else
-	if (s._startFoot.x > p.x && (s._startFoot.x - xStep) > minX && isPathClear(s._startFoot.x - xStep, s._startFoot.y)) {
+	} else if (s._startFoot.x > p.x && (s._startFoot.x - xStep) > minX && isPathClear(s._startFoot.x - xStep, s._startFoot.y)) {
 		if (s._startFoot.x - xStep >= p.x) {
 			s._stillWalkingTowardsNode = true;
 			delta.x = xStep;
@@ -688,7 +699,7 @@ void PathWalker_BR::doWalk(State &s) {
 			newpos.x = p.x;
 		}
 		if (delta.y < delta.x) {
-			s._dirFrame = 27;	// left
+			s._dirFrame = 27; // left
 		}
 	}
 
@@ -714,7 +725,8 @@ void PathWalker_BR::doWalk(State &s) {
 	}
 }
 
-PathWalker_BR::PathWalker_BR(Parallaction *vm) : _vm(vm) {
+PathWalker_BR::PathWalker_BR(Parallaction *vm)
+  : _vm(vm) {
 	_character._active = false;
 	_character._step = 0;
 	_follower._active = false;

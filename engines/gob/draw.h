@@ -27,34 +27,38 @@
 
 namespace Gob {
 
-#define RENDERFLAG_NOINVALIDATE      0x0001
-#define RENDERFLAG_CAPTUREPUSH       0x0002
-#define RENDERFLAG_COLLISIONS        0x0004
-#define RENDERFLAG_CAPTUREPOP        0x0008
-#define RENDERFLAG_USEDELTAS         0x0010
-#define RENDERFLAG_BORDERHOTSPOTS    0x0040
-#define RENDERFLAG_HASWINDOWS        0x0080
+#define RENDERFLAG_NOINVALIDATE 0x0001
+#define RENDERFLAG_CAPTUREPUSH 0x0002
+#define RENDERFLAG_COLLISIONS 0x0004
+#define RENDERFLAG_CAPTUREPOP 0x0008
+#define RENDERFLAG_USEDELTAS 0x0010
+#define RENDERFLAG_BORDERHOTSPOTS 0x0040
+#define RENDERFLAG_HASWINDOWS 0x0080
 #define RENDERFLAG_NOBLITINVALIDATED 0x0200
-#define RENDERFLAG_NOSUBTITLES       0x0400
-#define RENDERFLAG_FROMSPLIT         0x0800
-#define RENDERFLAG_DOUBLECOORDS      0x1000
+#define RENDERFLAG_NOSUBTITLES 0x0400
+#define RENDERFLAG_FROMSPLIT 0x0800
+#define RENDERFLAG_DOUBLECOORDS 0x1000
 
 class Draw {
 public:
-	static const int kSpriteCount    = 100;
-	static const int kFontCount      =  16;
-	static const int kFrontSurface   =  20;
-	static const int kBackSurface    =  21;
-	static const int kAnimSurface    =  22;
-	static const int kCursorSurface  =  23;
-	static const int kCaptureSurface =  30;
+	static const int kSpriteCount = 100;
+	static const int kFontCount = 16;
+	static const int kFrontSurface = 20;
+	static const int kBackSurface = 21;
+	static const int kAnimSurface = 22;
+	static const int kCursorSurface = 23;
+	static const int kCaptureSurface = 30;
 
 	struct FontToSprite {
 		int8 sprite;
 		int8 base;
 		int8 width;
 		int8 height;
-		FontToSprite() : sprite(0), base(0), width(0), height(0) {}
+		FontToSprite()
+		  : sprite(0)
+		  , base(0)
+		  , width(0)
+		  , height(0) {}
 	};
 
 	struct fascinWin {
@@ -175,7 +179,6 @@ public:
 	int16 _winVarArrayLimitsX;
 	int16 _winVarArrayLimitsY;
 
-
 	void invalidateRect(int16 left, int16 top, int16 right, int16 bottom);
 	void blitInvalidated();
 	void setPalette();
@@ -194,8 +197,8 @@ public:
 	}
 	int stringLength(const char *str, uint16 fontIndex);
 	void printTextCentered(int16 id, int16 left, int16 top, int16 right,
-			int16 bottom, const char *str, int16 fontIndex, int16 color);
-	void oPlaytoons_sub_F_1B( uint16 id, int16 left, int16 top, int16 right, int16 bottom, char *paramStr, int16 var3, int16 var4, int16 shortId);
+	                       int16 bottom, const char *str, int16 fontIndex, int16 color);
+	void oPlaytoons_sub_F_1B(uint16 id, int16 left, int16 top, int16 right, int16 bottom, char *paramStr, int16 var3, int16 var4, int16 shortId);
 
 	int32 getSpriteRectSize(int16 index);
 	void forceBlit(bool backwards = false);
@@ -260,7 +263,7 @@ private:
 	void fixLittleRedStrings();
 };
 
-class Draw_Bargon: public Draw_v2 {
+class Draw_Bargon : public Draw_v2 {
 public:
 	virtual void initScreen();
 
@@ -268,7 +271,7 @@ public:
 	virtual ~Draw_Bargon() {}
 };
 
-class Draw_Fascination: public Draw_v2 {
+class Draw_Fascination : public Draw_v2 {
 public:
 	Draw_Fascination(GobEngine *vm);
 	virtual ~Draw_Fascination() {}
@@ -289,10 +292,9 @@ public:
 	virtual void moveWin(int16 id);
 	virtual bool overlapWin(int16 idWin1, int16 idWin2);
 	virtual void closeAllWin();
-
 };
 
-class Draw_Playtoons: public Draw_v2 {
+class Draw_Playtoons : public Draw_v2 {
 public:
 	Draw_Playtoons(GobEngine *vm);
 	virtual ~Draw_Playtoons() {}
@@ -301,17 +303,17 @@ public:
 
 // Draw operations
 
-#define DRAW_BLITSURF	0
-#define DRAW_PUTPIXEL	1
-#define DRAW_FILLRECT	2
-#define DRAW_DRAWLINE	3
-#define DRAW_INVALIDATE	4
-#define DRAW_LOADSPRITE	5
-#define DRAW_PRINTTEXT	6
+#define DRAW_BLITSURF 0
+#define DRAW_PUTPIXEL 1
+#define DRAW_FILLRECT 2
+#define DRAW_DRAWLINE 3
+#define DRAW_INVALIDATE 4
+#define DRAW_LOADSPRITE 5
+#define DRAW_PRINTTEXT 6
 #define DRAW_DRAWBAR 7
-#define DRAW_CLEARRECT	8
+#define DRAW_CLEARRECT 8
 #define DRAW_FILLRECTABS 9
-#define DRAW_DRAWLETTER	10
+#define DRAW_DRAWLETTER 10
 
 } // End of namespace Gob
 

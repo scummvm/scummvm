@@ -22,21 +22,23 @@
 
 #include "common/endian.h"
 
-#include "gob/gob.h"
-#include "gob/inter.h"
-#include "gob/global.h"
-#include "gob/util.h"
 #include "gob/draw.h"
-#include "gob/game.h"
 #include "gob/expression.h"
-#include "gob/script.h"
+#include "gob/game.h"
+#include "gob/global.h"
+#include "gob/gob.h"
 #include "gob/hotspots.h"
+#include "gob/inter.h"
 #include "gob/scenery.h"
+#include "gob/script.h"
 #include "gob/sound/sound.h"
+#include "gob/util.h"
 
 namespace Gob {
 
-Inter::Inter(GobEngine *vm) : _vm(vm), _varStack(600) {
+Inter::Inter(GobEngine *vm)
+  : _vm(vm)
+  , _varStack(600) {
 	_terminate = 0;
 	_break = false;
 
@@ -79,7 +81,7 @@ void Inter::executeOpcodeDraw(byte i) {
 
 void Inter::executeOpcodeFunc(byte i, byte j, OpFuncParams &params) {
 	debugC(1, kDebugFuncOp, "opcodeFunc %d.%d [0x%X.0x%X] (%s)",
-			i, j, i, j, getDescOpcodeFunc(i, j));
+	       i, j, i, j, getDescOpcodeFunc(i, j));
 
 	int n = i * 16 + j;
 	if ((i <= 4) && (j <= 15) && _opcodesFunc[n].proc && _opcodesFunc[n].proc->isValid())
@@ -90,7 +92,7 @@ void Inter::executeOpcodeFunc(byte i, byte j, OpFuncParams &params) {
 
 void Inter::executeOpcodeGob(int i, OpGobParams &params) {
 	debugC(1, kDebugGobOp, "opcodeGoblin %d [0x%X] (%s)",
-			i, i, getDescOpcodeGob(i));
+	       i, i, getDescOpcodeGob(i));
 
 	OpcodeEntry<OpcodeGob> *op = 0;
 
@@ -167,7 +169,7 @@ void Inter::storeMouse() {
 
 	WRITE_VAR(2, x);
 	WRITE_VAR(3, y);
-	WRITE_VAR(4, (uint32) _vm->_game->_mouseButtons);
+	WRITE_VAR(4, (uint32)_vm->_game->_mouseButtons);
 }
 
 void Inter::storeKey(int16 key) {
@@ -176,20 +178,20 @@ void Inter::storeKey(int16 key) {
 	storeMouse();
 	WRITE_VAR(1, _vm->_sound->blasterPlayingSound());
 
-	if      (key == kKeyUp)
-		key =    kShortKeyUp;
+	if (key == kKeyUp)
+		key = kShortKeyUp;
 	else if (key == kKeyDown)
-		key =    kShortKeyDown;
+		key = kShortKeyDown;
 	else if (key == kKeyRight)
-		key =    kShortKeyRight;
+		key = kShortKeyRight;
 	else if (key == kKeyLeft)
-		key =    kShortKeyLeft;
+		key = kShortKeyLeft;
 	else if (key == kKeyEscape)
-		key =    kShortKeyEscape;
+		key = kShortKeyEscape;
 	else if (key == kKeyBackspace)
-		key =    kShortKeyBackspace;
+		key = kShortKeyBackspace;
 	else if (key == kKeyDelete)
-		key =    kShortKeyDelete;
+		key = kShortKeyDelete;
 	else if ((key & 0xFF) != 0)
 		key &= 0xFF;
 
@@ -248,10 +250,7 @@ void Inter::funcBlock(int16 retFlag) {
 		// WORKAROUND:
 		// The EGA, Mac and Windows versions of gob1 doesn't add a delay after
 		// showing images between levels. We manually add it here.
-		if ((_vm->getGameType() == kGameTypeGob1) &&
-		   (  _vm->isEGA() ||
-		     (_vm->getPlatform() == Common::kPlatformMacintosh) ||
-		     (_vm->getPlatform() == Common::kPlatformWindows))) {
+		if ((_vm->getGameType() == kGameTypeGob1) && (_vm->isEGA() || (_vm->getPlatform() == Common::kPlatformMacintosh) || (_vm->getPlatform() == Common::kPlatformWindows))) {
 
 			int addr = _vm->_game->_script->pos();
 
@@ -274,12 +273,12 @@ void Inter::funcBlock(int16 retFlag) {
 		// of Fascination have a too short delay between the storage room and the lab.
 		// We manually add it here.
 		if ((_vm->getGameType() == kGameTypeFascination) && _vm->isCurrentTot("PLANQUE.tot")) {
-				int addr = _vm->_game->_script->pos();
-				if ((startaddr == 0x0202 && addr == 0x0330) || // Before Lab, Amiga & Atari, English
-				    (startaddr == 0x023D && addr == 0x032D) || // Before Lab, PC floppy, German
-				    (startaddr == 0x02C2 && addr == 0x03C2)) { // Before Lab, PC floppy, Hebrew
-					warning("Fascination - Adding delay");
-					_vm->_util->longDelay(3000);
+			int addr = _vm->_game->_script->pos();
+			if ((startaddr == 0x0202 && addr == 0x0330) || // Before Lab, Amiga & Atari, English
+			    (startaddr == 0x023D && addr == 0x032D) || // Before Lab, PC floppy, German
+			    (startaddr == 0x02C2 && addr == 0x03C2)) { // Before Lab, PC floppy, Hebrew
+				warning("Fascination - Adding delay");
+				_vm->_util->longDelay(3000);
 			}
 		} // End of workaround
 
@@ -335,8 +334,7 @@ void Inter::funcBlock(int16 retFlag) {
 void Inter::callSub(int16 retFlag) {
 	byte block;
 
-	while (!_vm->shouldQuit() && !_vm->_game->_script->isFinished() &&
-			(_vm->_game->_script->pos() != 0)) {
+	while (!_vm->shouldQuit() && !_vm->_game->_script->isFinished() && (_vm->_game->_script->pos() != 0)) {
 
 		block = _vm->_game->_script->peekByte();
 		if (block == 1)
@@ -393,7 +391,7 @@ void Inter::storeValue(uint32 value) {
 
 void Inter::storeString(uint16 index, uint16 type, const char *value) {
 	uint32 maxLength = _vm->_global->_inter_animDataSize * 4 - 1;
-	char  *str       = GET_VARO_STR(index);
+	char *str = GET_VARO_STR(index);
 
 	switch (type) {
 	case TYPE_VAR_STR:
@@ -464,7 +462,7 @@ void Inter::handleBusyWait() {
 			_vm->_util->longDelay(1);
 
 	_lastBusyWait = now;
-	_noBusyWait   = false;
+	_noBusyWait = false;
 }
 
 } // End of namespace Gob

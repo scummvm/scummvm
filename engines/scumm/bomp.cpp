@@ -20,12 +20,10 @@
  *
  */
 
-
-#include "scumm/scumm.h"
-#include "scumm/akos.h"
 #include "scumm/bomp.h"
+#include "scumm/akos.h"
+#include "scumm/scumm.h"
 #include "scumm/util.h"
-
 
 namespace Scumm {
 
@@ -37,8 +35,6 @@ static void bompApplyShadow0(const byte *shadowPalette, const byte *line_buffer,
 static void bompApplyShadow1(const byte *shadowPalette, const byte *line_buffer, byte *dst, int32 size, byte transparency);
 static void bompApplyShadow3(const byte *shadowPalette, const byte *line_buffer, byte *dst, int32 size, byte transparency);
 static void bompApplyActorPalette(uint16 *actorPalette, byte *line_buffer, int32 size);
-
-
 
 void decompressBomp(byte *dst, const byte *src, int w, int h) {
 	assert(w > 0);
@@ -109,7 +105,7 @@ void bompApplyMask(byte *line_buffer, byte *mask, byte maskbit, int32 size, byte
 			}
 			line_buffer++;
 			maskbit >>= 1;
-		} while	(maskbit);
+		} while (maskbit);
 		mask++;
 		maskbit = 128;
 	}

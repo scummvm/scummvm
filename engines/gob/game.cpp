@@ -23,33 +23,34 @@
 #include "common/endian.h"
 #include "common/str.h"
 
-#include "gob/gob.h"
+#include "gob/dataio.h"
+#include "gob/draw.h"
 #include "gob/game.h"
 #include "gob/global.h"
-#include "gob/dataio.h"
-#include "gob/variables.h"
-#include "gob/script.h"
-#include "gob/resources.h"
+#include "gob/gob.h"
 #include "gob/hotspots.h"
 #include "gob/inter.h"
-#include "gob/draw.h"
 #include "gob/mult.h"
+#include "gob/resources.h"
 #include "gob/scenery.h"
-#include "gob/videoplayer.h"
+#include "gob/script.h"
 #include "gob/sound/sound.h"
+#include "gob/variables.h"
+#include "gob/videoplayer.h"
 
 namespace Gob {
 
-Environments::Environments(GobEngine *vm) : _vm(vm) {
+Environments::Environments(GobEngine *vm)
+  : _vm(vm) {
 	for (uint i = 0; i < kEnvironmentCount; i++) {
 		Environment &e = _environments[i];
-		Media       &m = _media[i];
+		Media &m = _media[i];
 
 		e.cursorHotspotX = 0;
 		e.cursorHotspotY = 0;
-		e.variables      = 0;
-		e.script         = 0;
-		e.resources      = 0;
+		e.variables = 0;
+		e.script = 0;
+		e.resources = 0;
 
 		for (int j = 0; j < 17; j++)
 			m.fonts[j] = 0;
@@ -105,10 +106,10 @@ void Environments::set(uint8 env) {
 
 	e.cursorHotspotX = _vm->_draw->_cursorHotspotXVar;
 	e.cursorHotspotY = _vm->_draw->_cursorHotspotYVar;
-	e.script         = _vm->_game->_script;
-	e.resources      = _vm->_game->_resources;
-	e.variables      = _vm->_inter->_variables;
-	e.totFile        = _vm->_game->_curTotFile;
+	e.script = _vm->_game->_script;
+	e.resources = _vm->_game->_resources;
+	e.variables = _vm->_inter->_variables;
+	e.totFile = _vm->_game->_curTotFile;
 }
 
 void Environments::get(uint8 env) const {
@@ -119,10 +120,10 @@ void Environments::get(uint8 env) const {
 
 	_vm->_draw->_cursorHotspotXVar = e.cursorHotspotX;
 	_vm->_draw->_cursorHotspotYVar = e.cursorHotspotY;
-	_vm->_game->_script            = e.script;
-	_vm->_game->_resources         = e.resources;
-	_vm->_inter->_variables        = e.variables;
-	_vm->_game->_curTotFile        = e.totFile;
+	_vm->_game->_script = e.script;
+	_vm->_game->_resources = e.resources;
+	_vm->_inter->_variables = e.variables;
+	_vm->_game->_curTotFile = e.totFile;
 }
 
 const Common::String &Environments::getTotFile(uint8 env) const {
@@ -133,7 +134,7 @@ const Common::String &Environments::getTotFile(uint8 env) const {
 
 bool Environments::has(Variables *variables, uint8 startEnv, int16 except) const {
 	for (uint i = startEnv; i < kEnvironmentCount; i++) {
-		if ((except >= 0) && (((uint16) except) == i))
+		if ((except >= 0) && (((uint16)except) == i))
 			continue;
 
 		if (_environments[i].variables == variables)
@@ -145,7 +146,7 @@ bool Environments::has(Variables *variables, uint8 startEnv, int16 except) const
 
 bool Environments::has(Script *script, uint8 startEnv, int16 except) const {
 	for (uint i = startEnv; i < kEnvironmentCount; i++) {
-		if ((except >= 0) && (((uint16) except) == i))
+		if ((except >= 0) && (((uint16)except) == i))
 			continue;
 
 		if (_environments[i].script == script)
@@ -157,7 +158,7 @@ bool Environments::has(Script *script, uint8 startEnv, int16 except) const {
 
 bool Environments::has(Resources *resources, uint8 startEnv, int16 except) const {
 	for (uint i = startEnv; i < kEnvironmentCount; i++) {
-		if ((except >= 0) && (((uint16) except) == i))
+		if ((except >= 0) && (((uint16)except) == i))
 			continue;
 
 		if (_environments[i].resources == resources)
@@ -244,16 +245,16 @@ bool Environments::getMedia(uint8 env) {
 	for (int i = 0; i < n; i++) {
 		delete _vm->_draw->_fonts[i];
 		_vm->_draw->_fonts[i] = m.fonts[i];
-		m.fonts[i]= 0;
+		m.fonts[i] = 0;
 	}
 
 	return true;
 }
 
-
-TotFunctions::TotFunctions(GobEngine *vm) : _vm(vm) {
+TotFunctions::TotFunctions(GobEngine *vm)
+  : _vm(vm) {
 	for (uint8 i = 0; i < kTotCount; i++) {
-		_tots[i].script    = 0;
+		_tots[i].script = 0;
 		_tots[i].resources = 0;
 	}
 }
@@ -264,7 +265,7 @@ TotFunctions::~TotFunctions() {
 }
 
 bool TotFunctions::loadTot(Tot &tot, const Common::String &file) {
-	tot.script    = new Script(_vm);
+	tot.script = new Script(_vm);
 	tot.resources = new Resources(_vm);
 
 	if (!tot.script->load(file) || !tot.resources->load(file)) {
@@ -279,7 +280,7 @@ void TotFunctions::freeTot(Tot &tot) {
 	delete tot.script;
 	delete tot.resources;
 
-	tot.script    = 0;
+	tot.script = 0;
 	tot.resources = 0;
 
 	tot.file.clear();
@@ -322,7 +323,7 @@ bool TotFunctions::loadIDE(Tot &tot) {
 		}
 
 		debugC(5, kDebugGameFlow, "Function 0x%02X: \"%s\"", function.type,
-				function.name.c_str());
+		       function.name.c_str());
 		tot.functions.push_back(function);
 	}
 
@@ -392,7 +393,7 @@ bool TotFunctions::unload(const Common::String &totFile) {
 }
 
 bool TotFunctions::call(const Common::String &totFile,
-		const Common::String &function) const {
+                        const Common::String &function) const {
 
 	int index = find(totFile);
 	if (index < 0) {
@@ -413,7 +414,7 @@ bool TotFunctions::call(const Common::String &totFile,
 
 	if (offset == 0) {
 		warning("TotFunctions::call(): No such function \"%s\" in \"%s\"",
-				function.c_str(), totFile.c_str());
+		        function.c_str(), totFile.c_str());
 		return false;
 	}
 
@@ -431,25 +432,27 @@ bool TotFunctions::call(const Common::String &totFile, uint16 offset) const {
 }
 
 bool TotFunctions::call(const Tot &tot, uint16 offset) const {
-	Script        *script     = _vm->_game->_script;
-	Resources     *resources  = _vm->_game->_resources;
+	Script *script = _vm->_game->_script;
+	Resources *resources = _vm->_game->_resources;
 	Common::String curtotFile = _vm->_game->_curTotFile;
 
-	_vm->_game->_script     = tot.script;
-	_vm->_game->_resources  = tot.resources;
+	_vm->_game->_script = tot.script;
+	_vm->_game->_resources = tot.resources;
 	_vm->_game->_curTotFile = tot.file;
 
 	_vm->_game->playTot(offset);
 
-	_vm->_game->_script     = script;
-	_vm->_game->_resources  = resources;
+	_vm->_game->_script = script;
+	_vm->_game->_resources = resources;
 	_vm->_game->_curTotFile = curtotFile;
 
 	return true;
 }
 
-
-Game::Game(GobEngine *vm) : _vm(vm), _environments(_vm), _totFunctions(_vm) {
+Game::Game(GobEngine *vm)
+  : _vm(vm)
+  , _environments(_vm)
+  , _totFunctions(_vm) {
 	_captureCount = 0;
 
 	_startTimeKey = 0;
@@ -460,7 +463,7 @@ Game::Game(GobEngine *vm) : _vm(vm), _environments(_vm), _totFunctions(_vm) {
 	_noScroll = true;
 	_preventScroll = false;
 
-	_wantScroll  = false;
+	_wantScroll = false;
 	_wantScrollX = 0;
 	_wantScrollY = 0;
 
@@ -469,9 +472,9 @@ Game::Game(GobEngine *vm) : _vm(vm), _environments(_vm), _totFunctions(_vm) {
 	_numEnvironments = 0;
 	_curEnvironment = 0;
 
-	_script    = new Script(_vm);
+	_script = new Script(_vm);
 	_resources = new Resources(_vm);
-	_hotspots  = new Hotspots(_vm);
+	_hotspots = new Hotspots(_vm);
 }
 
 Game::~Game() {
@@ -489,7 +492,7 @@ void Game::prepareStart() {
 
 	_vm->_draw->initScreen();
 	_vm->_draw->_frontSurface->fillRect(0, 0,
-	_vm->_video->_surfWidth - 1, _vm->_video->_surfHeight - 1, 1);
+	                                    _vm->_video->_surfWidth - 1, _vm->_video->_surfHeight - 1, 1);
 
 	_vm->_util->setMousePos(152, 92);
 	_vm->_draw->_cursorX = _vm->_global->_inter_mouseX = 152;
@@ -514,8 +517,8 @@ void Game::prepareStart() {
 }
 
 void Game::playTot(int16 function) {
-	int16 *oldNestLevel      = _vm->_inter->_nestLevel;
-	int16 *oldBreakFrom      = _vm->_inter->_breakFromLevel;
+	int16 *oldNestLevel = _vm->_inter->_nestLevel;
+	int16 *oldBreakFrom = _vm->_inter->_breakFromLevel;
 	int16 *oldCaptureCounter = _vm->_scenery->_pCaptureCounter;
 
 	_script->push();
@@ -523,8 +526,8 @@ void Game::playTot(int16 function) {
 	int16 captureCounter = 0;
 	int16 breakFrom;
 	int16 nestLevel;
-	_vm->_inter->_nestLevel         = &nestLevel;
-	_vm->_inter->_breakFromLevel    = &breakFrom;
+	_vm->_inter->_nestLevel = &nestLevel;
+	_vm->_inter->_breakFromLevel = &breakFrom;
 	_vm->_scenery->_pCaptureCounter = &captureCounter;
 
 	Common::String oldTotFile;
@@ -554,7 +557,7 @@ void Game::playTot(int16 function) {
 				_vm->_mult->zeroMultData();
 
 				_vm->_draw->_spritesArray[Draw::kFrontSurface] = _vm->_draw->_frontSurface;
-				_vm->_draw->_spritesArray[Draw::kBackSurface ] = _vm->_draw->_backSurface;
+				_vm->_draw->_spritesArray[Draw::kBackSurface] = _vm->_draw->_backSurface;
 				_vm->_draw->_cursorSpritesBack = _vm->_draw->_cursorSprites;
 			} else
 				_vm->_inter->initControlVars(0);
@@ -623,8 +626,7 @@ void Game::playTot(int16 function) {
 				for (int i = 0; i < Sound::kSoundsCount; i++) {
 					SoundDesc *sound = _vm->_sound->sampleGetBySlot(i);
 
-					if (sound &&
-					   ((sound->getType() == SOUND_SND) || (sound->getType() == SOUND_WAV)))
+					if (sound && ((sound->getType() == SOUND_SND) || (sound->getType() == SOUND_WAV)))
 						_vm->_sound->sampleFree(sound);
 				}
 			}
@@ -635,7 +637,6 @@ void Game::playTot(int16 function) {
 				break;
 
 			_curTotFile = _totToLoad;
-
 		}
 	} else {
 		_vm->_inter->initControlVars(0);
@@ -654,8 +655,8 @@ void Game::playTot(int16 function) {
 
 	_curTotFile = oldTotFile;
 
-	_vm->_inter->_nestLevel         = oldNestLevel;
-	_vm->_inter->_breakFromLevel    = oldBreakFrom;
+	_vm->_inter->_nestLevel = oldNestLevel;
+	_vm->_inter->_breakFromLevel = oldBreakFrom;
 	_vm->_scenery->_pCaptureCounter = oldCaptureCounter;
 
 	_script->pop();
@@ -701,10 +702,8 @@ void Game::capturePop(char doDraw) {
 	if (doDraw) {
 		_vm->_draw->_destSpriteX = _captureStack[_captureCount].left;
 		_vm->_draw->_destSpriteY = _captureStack[_captureCount].top;
-		_vm->_draw->_spriteRight =
-		    _captureStack[_captureCount].width();
-		_vm->_draw->_spriteBottom =
-		    _captureStack[_captureCount].height();
+		_vm->_draw->_spriteRight = _captureStack[_captureCount].width();
+		_vm->_draw->_spriteBottom = _captureStack[_captureCount].height();
 
 		_vm->_draw->_transparency = 0;
 		_vm->_draw->_sourceSurface = Draw::kCaptureSurface + _captureCount;
@@ -724,7 +723,7 @@ void Game::freeSoundSlot(int16 slot) {
 }
 
 void Game::wantScroll(int16 x, int16 y) {
-	_wantScroll  = true;
+	_wantScroll = true;
 	_wantScrollX = x;
 	_wantScrollY = y;
 }
@@ -752,36 +751,34 @@ void Game::evaluateScroll() {
 		_vm->_video->dirtyRectsAll();
 	}
 
-	int16 cursorRight  = _wantScrollX + _vm->_draw->_cursorWidth;
-	int16 screenRight  = _vm->_draw->_scrollOffsetX + _vm->_width;
+	int16 cursorRight = _wantScrollX + _vm->_draw->_cursorWidth;
+	int16 screenRight = _vm->_draw->_scrollOffsetX + _vm->_width;
 	int16 cursorBottom = _wantScrollY + _vm->_draw->_cursorHeight;
 	int16 screenBottom = _vm->_draw->_scrollOffsetY + _vm->_height;
 
-	if ((cursorRight >= _vm->_width) &&
-			(screenRight < _vm->_video->_surfWidth)) {
+	if ((cursorRight >= _vm->_width) && (screenRight < _vm->_video->_surfWidth)) {
 		uint16 off;
 
 		off = MIN(_vm->_draw->_cursorWidth,
-				(int16) (_vm->_video->_surfWidth - screenRight));
+		          (int16)(_vm->_video->_surfWidth - screenRight));
 		off = MAX(off / 2, 1);
 
 		_vm->_draw->_scrollOffsetX += off;
 		_vm->_video->dirtyRectsAll();
 
 		_vm->_util->setMousePos(_vm->_width - _vm->_draw->_cursorWidth, _wantScrollY);
-	} else if ((cursorBottom >= (_vm->_height - _vm->_video->_splitHeight2)) &&
-			(screenBottom < _vm->_video->_surfHeight)) {
+	} else if ((cursorBottom >= (_vm->_height - _vm->_video->_splitHeight2)) && (screenBottom < _vm->_video->_surfHeight)) {
 		uint16 off;
 
 		off = MIN(_vm->_draw->_cursorHeight,
-				(int16) (_vm->_video->_surfHeight - screenBottom));
+		          (int16)(_vm->_video->_surfHeight - screenBottom));
 		off = MAX(off / 2, 1);
 
 		_vm->_draw->_scrollOffsetY += off;
 		_vm->_video->dirtyRectsAll();
 
 		_vm->_util->setMousePos(_wantScrollX,
-				_vm->_height - _vm->_video->_splitHeight2 - _vm->_draw->_cursorHeight);
+		                        _vm->_height - _vm->_video->_splitHeight2 - _vm->_draw->_cursorHeight);
 	}
 
 	_vm->_util->setScrollOffset();
@@ -790,23 +787,21 @@ void Game::evaluateScroll() {
 }
 
 int16 Game::checkKeys(int16 *pMouseX, int16 *pMouseY,
-		MouseButtons *pButtons, char handleMouse) {
+                      MouseButtons *pButtons, char handleMouse) {
 
 	_vm->_util->processInput(true);
 
-	if (_vm->_mult->_multData && _vm->_inter->_variables &&
-			(VAR(58) != 0)) {
+	if (_vm->_mult->_multData && _vm->_inter->_variables && (VAR(58) != 0)) {
 		if (_vm->_mult->_multData->frameStart != (int)VAR(58) - 1)
 			_vm->_mult->_multData->frameStart++;
 		else
 			_vm->_mult->_multData->frameStart = 0;
 
 		_vm->_mult->playMult(_vm->_mult->_multData->frameStart + VAR(57),
-				_vm->_mult->_multData->frameStart + VAR(57), 1, handleMouse);
+		                     _vm->_mult->_multData->frameStart + VAR(57), 1, handleMouse);
 	}
 
-	if ((_vm->_inter->_soundEndTimeKey != 0) &&
-	    (_vm->_util->getTimeKey() >= _vm->_inter->_soundEndTimeKey)) {
+	if ((_vm->_inter->_soundEndTimeKey != 0) && (_vm->_util->getTimeKey() >= _vm->_inter->_soundEndTimeKey)) {
 		_vm->_sound->blasterStop(_vm->_inter->_soundStopVal);
 		_vm->_inter->_soundEndTimeKey = 0;
 	}
@@ -917,8 +912,7 @@ void Game::switchTotSub(int16 index, int16 function) {
 
 	// WORKAROUND: Some versions don't make the MOVEMENT menu item unselectable
 	// in the dreamland screen, resulting in a crash when it's clicked.
-	if ((_vm->getGameType() == kGameTypeGob2) && (index == -1) && (function == 7) &&
-	     _environments.getTotFile(newPos).equalsIgnoreCase("gob06.tot"))
+	if ((_vm->getGameType() == kGameTypeGob2) && (index == -1) && (function == 7) && _environments.getTotFile(newPos).equalsIgnoreCase("gob06.tot"))
 		return;
 
 	curBackupPos = _curEnvironment;
@@ -987,7 +981,7 @@ bool Game::loadFunctions(const Common::String &tot, uint16 flags) {
 }
 
 bool Game::callFunction(const Common::String &tot, const Common::String &function,
-		int16 param) {
+                        int16 param) {
 
 	if (param != 0) {
 		warning("Game::callFunction(): param != 0 (%d)", param);
@@ -995,7 +989,7 @@ bool Game::callFunction(const Common::String &tot, const Common::String &functio
 	}
 
 	debugC(4, kDebugGameFlow, "Calling function \"%s\":\"%s\"",
-			tot.c_str(), function.c_str());
+	       tot.c_str(), function.c_str());
 
 	uint16 offset = atoi(function.c_str());
 	if (offset != 0)

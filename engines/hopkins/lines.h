@@ -99,10 +99,16 @@ struct RouteItem {
 	int16 _y;
 	Directions _dir;
 	bool isValid() const { return _x != -1 || _y != -1; }
-	void invalidate() { _x = _y = -1; _dir = DIR_NONE; }
-	void set(int16 X, int16 Y, Directions dir) { _x = X; _y = Y; _dir = dir; }
+	void invalidate() {
+		_x = _y = -1;
+		_dir = DIR_NONE;
+	}
+	void set(int16 X, int16 Y, Directions dir) {
+		_x = X;
+		_y = Y;
+		_dir = dir;
+	}
 };
-
 
 class LinesManager {
 private:
@@ -113,7 +119,7 @@ private:
 	int _pathFindingMaxDepth;
 	SmoothItem _smoothRoute[4000];
 	Directions _smoothMoveDirection;
-	LigneZoneItem _zoneLine[MAX_LINES+1];
+	LigneZoneItem _zoneLine[MAX_LINES + 1];
 	SegmentItem _segment[101];
 	int _currentSegmentId;
 	int _maxLineIdx;

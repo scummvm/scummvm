@@ -195,36 +195,47 @@
 
 #define PORTABLE_SNPRINTF_VERSION_MAJOR 2
 #define PORTABLE_SNPRINTF_VERSION_MINOR 2
-#include <sys/types.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
 #include <assert.h>
 #include <errno.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
 #ifdef isdigit
-#undef isdigit
+#	undef isdigit
 #endif
 #define isdigit(c) ((c) >= '0' && (c) <= '9')
 
 #ifndef breakeven_point
-#  define breakeven_point   6	/* some reasonable one-size-fits-all value */
+#	define breakeven_point 6 /* some reasonable one-size-fits-all value */
 #endif
 
-#define fast_memcpy(d,s,n) \
-{ size_t nn = (size_t)(n); \
-    if (nn >= breakeven_point) memcpy((d), (s), nn); \
-    else if (nn > 0) { /* proc call overhead is worth only for large strings*/\
-	char *dd; const char *ss; \
-for (ss=(s), dd=(d); nn>0; nn--) *dd++ = *ss++; } }
+#define fast_memcpy(d, s, n)                                                   \
+	{                                                                            \
+		size_t nn = (size_t)(n);                                                   \
+		if (nn >= breakeven_point)                                                 \
+			memcpy((d), (s), nn);                                                    \
+		else if (nn > 0) { /* proc call overhead is worth only for large strings*/ \
+			char *dd;                                                                \
+			const char *ss;                                                          \
+			for (ss = (s), dd = (d); nn > 0; nn--)                                   \
+				*dd++ = *ss++;                                                         \
+		}                                                                          \
+	}
 
-#define fast_memset(d,c,n) \
-{ size_t nn = (size_t)(n); \
-    if (nn >= breakeven_point) memset((d), (int)(c), nn); \
-    else if (nn > 0) { /* proc call overhead is worth only for large strings*/\
-	char *dd; const int cc=(int)(c); \
-for (dd=(d); nn>0; nn--) *dd++ = cc; } }
-
+#define fast_memset(d, c, n)                                                   \
+	{                                                                            \
+		size_t nn = (size_t)(n);                                                   \
+		if (nn >= breakeven_point)                                                 \
+			memset((d), (int)(c), nn);                                               \
+		else if (nn > 0) { /* proc call overhead is worth only for large strings*/ \
+			char *dd;                                                                \
+			const int cc = (int)(c);                                                 \
+			for (dd = (d); nn > 0; nn--)                                             \
+				*dd++ = cc;                                                            \
+		}                                                                          \
+	}
 
 /* declarations */
 
@@ -241,7 +252,8 @@ int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
 	* that str can be NULL and str_m can be 0.
 	* This is more useful than the old:  if (str_m < 1) return -1; */
 
-	if (!p) p = "";
+	if (!p)
+		p = "";
 	while (*p) {
 		if (*p != '%') {
 			/* if (str_l < str_m) str[str_l++] = *p++;    -- this would be sufficient */
@@ -262,11 +274,11 @@ int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
 			int alternate_form = 0, force_sign = 0;
 			int space_for_positive = 1; /* If both the ' ' and '+' flags appear,
 			the ' ' flag should be ignored. */
-			char length_modifier = '\0';            /* allowed values: \0, h, l, L */
-			char tmp[32];/* temporary buffer for simple numeric->string conversion */
+			char length_modifier = '\0'; /* allowed values: \0, h, l, L */
+			char tmp[32]; /* temporary buffer for simple numeric->string conversion */
 
-			const char *str_arg;      /* string address in case of string argument */
-			size_t str_arg_l;         /* natural field width of arg without padding
+			const char *str_arg; /* string address in case of string argument */
+			size_t str_arg_l; /* natural field width of arg without padding
 									  and sign */
 			unsigned char uchar_arg;
 			/* unsigned char argument value - only defined for c conversion.
@@ -283,13 +295,12 @@ int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
 			char fmt_spec = '\0';
 			/* current conversion specifier character */
 
-			str_arg = credits;/* just to make compiler happy (defined but not used)*/
+			str_arg = credits; /* just to make compiler happy (defined but not used)*/
 			str_arg = NULL;
 			starting_p = p;
-			p++;  /* skip '%' */
+			p++; /* skip '%' */
 			/* parse flags */
-			while (*p == '0' || *p == '-' || *p == '+' ||
-			       *p == ' ' || *p == '#' || *p == '\'') {
+			while (*p == '0' || *p == '-' || *p == '+' || *p == ' ' || *p == '#' || *p == '\'') {
 				switch (*p) {
 				case '0':
 					zero_padding = 1;
@@ -320,13 +331,18 @@ int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
 				int j;
 				p++;
 				j = va_arg(ap, int);
-				if (j >= 0) min_field_width = j;
-				else { min_field_width = -j; justify_left = 1; }
+				if (j >= 0)
+					min_field_width = j;
+				else {
+					min_field_width = -j;
+					justify_left = 1;
+				}
 			} else if (isdigit((int)(*p))) {
 				/* size_t could be wider than unsigned int;
 				    make sure we treat argument like common implementations do */
 				unsigned int uj = *p++ - '0';
-				while (isdigit((int)(*p))) uj = 10 * uj + (unsigned int)(*p++ - '0');
+				while (isdigit((int)(*p)))
+					uj = 10 * uj + (unsigned int)(*p++ - '0');
 				min_field_width = uj;
 			}
 			/* parse precision */
@@ -336,7 +352,8 @@ int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
 				if (*p == '*') {
 					int j = va_arg(ap, int);
 					p++;
-					if (j >= 0) precision = j;
+					if (j >= 0)
+						precision = j;
 					else {
 						precision_specified = 0;
 						precision = 0;
@@ -351,7 +368,8 @@ int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
 					/* size_t could be wider than unsigned int;
 					    make sure we treat argument like common implementations do */
 					unsigned int uj = *p++ - '0';
-					while (isdigit((int)(*p))) uj = 10 * uj + (unsigned int)(*p++ - '0');
+					while (isdigit((int)(*p)))
+						uj = 10 * uj + (unsigned int)(*p++ - '0');
 					precision = uj;
 				}
 			}
@@ -359,11 +377,11 @@ int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
 			if (*p == 'h' || *p == 'l') {
 				length_modifier = *p;
 				p++;
-				if (length_modifier == 'l' && *p == 'l') {   /* double l = long long */
+				if (length_modifier == 'l' && *p == 'l') { /* double l = long long */
 #ifdef SNPRINTF_LONGLONG_SUPPORT
-					length_modifier = '2';                  /* double l encoded as '2' */
+					length_modifier = '2'; /* double l encoded as '2' */
 #else
-					length_modifier = 'l';                 /* treat it as a single 'l' */
+					length_modifier = 'l'; /* treat it as a single 'l' */
 #endif
 					p++;
 				}
@@ -394,11 +412,11 @@ int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
 			case '%': /* % behaves similar to 's' regarding flags and field widths */
 			case 'c': /* c behaves similar to 's' regarding flags and field widths */
 			case 's':
-				length_modifier = '\0';          /* wint_t and wchar_t not supported */
+				length_modifier = '\0'; /* wint_t and wchar_t not supported */
 				/* the result of zero padding flag with non-numeric conversion specifier*/
 				/* is undefined. Solaris and HPUX 10 does zero padding in this case,    */
 				/* Digital Unix and Linux does not. */
-				zero_padding = 0;    /* turn zero padding off for string conversions */
+				zero_padding = 0; /* turn zero padding off for string conversions */
 				str_arg_l = 1;
 				switch (fmt_spec) {
 				case '%':
@@ -406,20 +424,23 @@ int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
 					break;
 				case 'c': {
 					int j = va_arg(ap, int);
-					uchar_arg = (unsigned char) j;   /* standard demands unsigned char */
-					str_arg = (const char *) & uchar_arg;
+					uchar_arg = (unsigned char)j; /* standard demands unsigned char */
+					str_arg = (const char *)&uchar_arg;
 					break;
 				}
 				case 's':
 					str_arg = va_arg(ap, const char *);
-					if (!str_arg) str_arg_l = 0;
+					if (!str_arg)
+						str_arg_l = 0;
 					/* make sure not to address string beyond the specified precision !!! */
-					else if (!precision_specified) str_arg_l = strlen(str_arg);
+					else if (!precision_specified)
+						str_arg_l = strlen(str_arg);
 					/* truncate string if necessary as requested by precision */
-					else if (precision == 0) str_arg_l = 0;
+					else if (precision == 0)
+						str_arg_l = 0;
 					else {
 						/* memchr on HP does not like n > 2^31  !!! */
-						const char *q = (const char*) memchr(str_arg, '\0',
+						const char *q = (const char *)memchr(str_arg, '\0',
 						                                     precision <= 0x7fffffff ? precision : 0x7fffffff);
 						str_arg_l = !q ? precision : (q - str_arg);
 					}
@@ -471,8 +492,9 @@ int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
 					    */
 					length_modifier = '\0';
 					ptr_arg = va_arg(ap, void *);
-					if (ptr_arg != NULL) arg_sign = 1;
-				} else if (fmt_spec == 'd') {  /* signed */
+					if (ptr_arg != NULL)
+						arg_sign = 1;
+				} else if (fmt_spec == 'd') { /* signed */
 					switch (length_modifier) {
 					case '\0':
 					case 'h':
@@ -482,37 +504,46 @@ int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
 						* to int before passing them to a function.
 						    */
 						int_arg = va_arg(ap, int);
-						if (int_arg > 0) arg_sign =  1;
-						else if (int_arg < 0) arg_sign = -1;
+						if (int_arg > 0)
+							arg_sign = 1;
+						else if (int_arg < 0)
+							arg_sign = -1;
 						break;
 					case 'l':
 						long_arg = va_arg(ap, long int);
-						if (long_arg > 0) arg_sign =  1;
-						else if (long_arg < 0) arg_sign = -1;
+						if (long_arg > 0)
+							arg_sign = 1;
+						else if (long_arg < 0)
+							arg_sign = -1;
 						break;
 #ifdef SNPRINTF_LONGLONG_SUPPORT
 					case '2':
 						long_long_arg = va_arg(ap, long long int);
-						if (long_long_arg > 0) arg_sign =  1;
-						else if (long_long_arg < 0) arg_sign = -1;
+						if (long_long_arg > 0)
+							arg_sign = 1;
+						else if (long_long_arg < 0)
+							arg_sign = -1;
 						break;
 #endif
 					}
-				} else {  /* unsigned */
+				} else { /* unsigned */
 					switch (length_modifier) {
 					case '\0':
 					case 'h':
 						uint_arg = va_arg(ap, unsigned int);
-						if (uint_arg) arg_sign = 1;
+						if (uint_arg)
+							arg_sign = 1;
 						break;
 					case 'l':
 						ulong_arg = va_arg(ap, unsigned long int);
-						if (ulong_arg) arg_sign = 1;
+						if (ulong_arg)
+							arg_sign = 1;
 						break;
 #ifdef SNPRINTF_LONGLONG_SUPPORT
 					case '2':
 						ulong_long_arg = va_arg(ap, unsigned long long int);
-						if (ulong_long_arg) arg_sign = 1;
+						if (ulong_long_arg)
+							arg_sign = 1;
 						break;
 #endif
 					}
@@ -524,33 +555,42 @@ int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
 				*   the '0' flag should be ignored. This is so with Solaris 2.6,
 				*   Digital UNIX 4.0, HPUX 10, Linux, FreeBSD, NetBSD; but not with Perl.
 				*/
-				if (precision_specified) zero_padding = 0;
+				if (precision_specified)
+					zero_padding = 0;
 				if (fmt_spec == 'd') {
 					if (force_sign && arg_sign >= 0)
 						tmp[str_arg_l++] = space_for_positive ? ' ' : '+';
 					/* leave negative numbers for sprintf to handle,
 					to avoid handling tricky cases like (short int)(-32768) */
 				} else if (alternate_form) {
-					if (arg_sign != 0 && (fmt_spec == 'x' || fmt_spec == 'X'))
-						{ tmp[str_arg_l++] = '0'; tmp[str_arg_l++] = fmt_spec; }
+					if (arg_sign != 0 && (fmt_spec == 'x' || fmt_spec == 'X')) {
+						tmp[str_arg_l++] = '0';
+						tmp[str_arg_l++] = fmt_spec;
+					}
 					/* alternate form should have no effect for p conversion, but ... */
 				}
 				zero_padding_insertion_ind = str_arg_l;
-				if (!precision_specified) precision = 1;   /* default precision is 1 */
-				if (precision == 0 && arg_sign == 0
-				   ) {
+				if (!precision_specified)
+					precision = 1; /* default precision is 1 */
+				if (precision == 0 && arg_sign == 0) {
 					/* converted to null string */
 					/* When zero value is formatted with an explicit precision 0,
 					the resulting formatted string is empty (d, i, u, o, x, X, p).   */
 				} else {
 					char f[5];
 					int f_l = 0;
-					f[f_l++] = '%';    /* construct a simple format string for sprintf */
-					if (!length_modifier) { } else if (length_modifier == '2') { f[f_l++] = 'l'; f[f_l++] = 'l'; } else f[f_l++] = length_modifier;
+					f[f_l++] = '%'; /* construct a simple format string for sprintf */
+					if (!length_modifier) {
+					} else if (length_modifier == '2') {
+						f[f_l++] = 'l';
+						f[f_l++] = 'l';
+					} else
+						f[f_l++] = length_modifier;
 					f[f_l++] = fmt_spec;
 					f[f_l++] = '\0';
-					if (fmt_spec == 'p') str_arg_l += sprintf(tmp + str_arg_l, f, ptr_arg);
-					else if (fmt_spec == 'd') {  /* signed */
+					if (fmt_spec == 'p')
+						str_arg_l += sprintf(tmp + str_arg_l, f, ptr_arg);
+					else if (fmt_spec == 'd') { /* signed */
 						switch (length_modifier) {
 						case '\0':
 						case 'h':
@@ -565,7 +605,7 @@ int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
 							break;
 #endif
 						}
-					} else {  /* unsigned */
+					} else { /* unsigned */
 						switch (length_modifier) {
 						case '\0':
 						case 'h':
@@ -583,24 +623,19 @@ int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
 					}
 					/* include the optional minus sign and possible "0x"
 					in the region before the zero padding insertion point */
-					if (zero_padding_insertion_ind < str_arg_l &&
-					        tmp[zero_padding_insertion_ind] == '-') {
+					if (zero_padding_insertion_ind < str_arg_l && tmp[zero_padding_insertion_ind] == '-') {
 						zero_padding_insertion_ind++;
 					}
-					if (zero_padding_insertion_ind + 1 < str_arg_l &&
-					        tmp[zero_padding_insertion_ind]   == '0' &&
-					        (tmp[zero_padding_insertion_ind+1] == 'x' ||
-					         tmp[zero_padding_insertion_ind+1] == 'X')) {
+					if (zero_padding_insertion_ind + 1 < str_arg_l && tmp[zero_padding_insertion_ind] == '0' && (tmp[zero_padding_insertion_ind + 1] == 'x' || tmp[zero_padding_insertion_ind + 1] == 'X')) {
 						zero_padding_insertion_ind += 2;
 					}
 				}
 				{
 					size_t num_of_digits = str_arg_l - zero_padding_insertion_ind;
 					if (alternate_form && fmt_spec == 'o'
-					        /* unless zero is already the first character */
-					        && !(zero_padding_insertion_ind < str_arg_l
-					             && tmp[zero_padding_insertion_ind] == '0')
-					   ) {        /* assure leading zero for alternate-form octal numbers */
+					    /* unless zero is already the first character */
+					    && !(zero_padding_insertion_ind < str_arg_l
+					         && tmp[zero_padding_insertion_ind] == '0')) { /* assure leading zero for alternate-form octal numbers */
 						if (!precision_specified || precision < num_of_digits + 1) {
 							/* precision is increased to force the first character to be zero,
 							except if a zero value is formatted with an explicit precision
@@ -616,26 +651,29 @@ int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
 				/* zero padding to specified minimal field width? */
 				if (!justify_left && zero_padding) {
 					int n = min_field_width - (str_arg_l + number_of_zeros_to_pad);
-					if (n > 0) number_of_zeros_to_pad += n;
+					if (n > 0)
+						number_of_zeros_to_pad += n;
 				}
 				break;
 			}
 			default: /* unrecognized conversion specifier, keep format string as-is*/
-				zero_padding = 0;  /* turn zero padding off for non-numeric convers. */
+				zero_padding = 0; /* turn zero padding off for non-numeric convers. */
 				justify_left = 1;
-				min_field_width = 0;                /* reset flags */
+				min_field_width = 0; /* reset flags */
 				/* discard the unrecognized conversion, just keep *
 				* the unrecognized conversion character          */
 				str_arg = p;
 				str_arg_l = 0;
-				if (*p) str_arg_l++;  /* include invalid conversion specifier unchanged
+				if (*p)
+					str_arg_l++; /* include invalid conversion specifier unchanged
 		  if not at end-of-string */
 				break;
 			}
-			if (*p) p++;      /* step over the just processed conversion specifier */
+			if (*p)
+				p++; /* step over the just processed conversion specifier */
 			/* insert padding to the left as requested by min_field_width;
 			this does not include the zero padding in case of numerical conversions*/
-			if (!justify_left) {                /* left padding with blank or zero */
+			if (!justify_left) { /* left padding with blank or zero */
 				int n = min_field_width - (str_arg_l + number_of_zeros_to_pad);
 				if (n > 0) {
 					if (str_l < str_m) {
@@ -685,7 +723,7 @@ int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
 				}
 			}
 			/* insert right padding */
-			if (justify_left) {          /* right blank padding to the field width */
+			if (justify_left) { /* right blank padding to the field width */
 				int n = min_field_width - (str_arg_l + number_of_zeros_to_pad);
 				if (n > 0) {
 					if (str_l < str_m) {
@@ -700,7 +738,7 @@ int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
 	if (str_m > 0) { /* make sure the string is null-terminated
 				   even at the expense of overwriting the last character
 	  (shouldn't happen, but just in case) */
-		str[str_l <= str_m-1 ? str_l : str_m-1] = '\0';
+		str[str_l <= str_m - 1 ? str_l : str_m - 1] = '\0';
 	}
 	/* Return the number of characters formatted (excluding trailing null
 	 * character), that is, the number of characters that would have been
@@ -712,7 +750,7 @@ int symbian_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap) {
 	 * Both XSH5 and ISO C99 (at least the draft) are silent on this issue.
 	 * Should errno be set to EOVERFLOW and EOF returned in this case???
 	 */
-	return (int) str_l;
+	return (int)str_l;
 }
 
 int symbian_snprintf(char *text, size_t maxlen, const char *fmt, ...) {

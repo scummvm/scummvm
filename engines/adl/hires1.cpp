@@ -20,78 +20,78 @@
  *
  */
 
-#include "common/system.h"
 #include "common/debug.h"
 #include "common/error.h"
 #include "common/file.h"
-#include "common/stream.h"
 #include "common/ptr.h"
+#include "common/stream.h"
+#include "common/system.h"
 
 #include "adl/adl.h"
-#include "adl/graphics.h"
 #include "adl/display_a2.h"
+#include "adl/graphics.h"
 
 namespace Adl {
 
-#define IDS_HR1_EXE_0    "AUTO LOAD OBJ"
-#define IDS_HR1_EXE_1    "ADVENTURE"
+#define IDS_HR1_EXE_0 "AUTO LOAD OBJ"
+#define IDS_HR1_EXE_1 "ADVENTURE"
 #define IDS_HR1_MESSAGES "MESSAGES"
 
-#define IDI_HR1_NUM_ROOMS         41
-#define IDI_HR1_NUM_PICS          97
-#define IDI_HR1_NUM_VARS          20
-#define IDI_HR1_NUM_ITEM_OFFSETS  21
-#define IDI_HR1_NUM_MESSAGES     168
+#define IDI_HR1_NUM_ROOMS 41
+#define IDI_HR1_NUM_PICS 97
+#define IDI_HR1_NUM_VARS 20
+#define IDI_HR1_NUM_ITEM_OFFSETS 21
+#define IDI_HR1_NUM_MESSAGES 168
 
 // Messages used outside of scripts
-#define IDI_HR1_MSG_CANT_GO_THERE      137
-#define IDI_HR1_MSG_DONT_UNDERSTAND     37
-#define IDI_HR1_MSG_ITEM_DOESNT_MOVE   151
-#define IDI_HR1_MSG_ITEM_NOT_HERE      152
+#define IDI_HR1_MSG_CANT_GO_THERE 137
+#define IDI_HR1_MSG_DONT_UNDERSTAND 37
+#define IDI_HR1_MSG_ITEM_DOESNT_MOVE 151
+#define IDI_HR1_MSG_ITEM_NOT_HERE 152
 #define IDI_HR1_MSG_THANKS_FOR_PLAYING 140
-#define IDI_HR1_MSG_DONT_HAVE_IT       127
-#define IDI_HR1_MSG_GETTING_DARK         7
+#define IDI_HR1_MSG_DONT_HAVE_IT 127
+#define IDI_HR1_MSG_GETTING_DARK 7
 
-#define IDI_HR1_OFS_STR_ENTER_COMMAND   0x5bbc
-#define IDI_HR1_OFS_STR_VERB_ERROR      0x5b4f
-#define IDI_HR1_OFS_STR_NOUN_ERROR      0x5b8e
-#define IDI_HR1_OFS_STR_PLAY_AGAIN      0x5f1e
-#define IDI_HR1_OFS_STR_CANT_GO_THERE   0x6c0a
-#define IDI_HR1_OFS_STR_DONT_HAVE_IT    0x6c31
+#define IDI_HR1_OFS_STR_ENTER_COMMAND 0x5bbc
+#define IDI_HR1_OFS_STR_VERB_ERROR 0x5b4f
+#define IDI_HR1_OFS_STR_NOUN_ERROR 0x5b8e
+#define IDI_HR1_OFS_STR_PLAY_AGAIN 0x5f1e
+#define IDI_HR1_OFS_STR_CANT_GO_THERE 0x6c0a
+#define IDI_HR1_OFS_STR_DONT_HAVE_IT 0x6c31
 #define IDI_HR1_OFS_STR_DONT_UNDERSTAND 0x6c51
-#define IDI_HR1_OFS_STR_GETTING_DARK    0x6c7c
-#define IDI_HR1_OFS_STR_PRESS_RETURN    0x5f68
-#define IDI_HR1_OFS_STR_LINE_FEEDS      0x59d4
+#define IDI_HR1_OFS_STR_GETTING_DARK 0x6c7c
+#define IDI_HR1_OFS_STR_PRESS_RETURN 0x5f68
+#define IDI_HR1_OFS_STR_LINE_FEEDS 0x59d4
 
-#define IDI_HR1_OFS_PD_TEXT_0    0x005d
-#define IDI_HR1_OFS_PD_TEXT_1    0x012b
-#define IDI_HR1_OFS_PD_TEXT_2    0x016d
-#define IDI_HR1_OFS_PD_TEXT_3    0x0259
+#define IDI_HR1_OFS_PD_TEXT_0 0x005d
+#define IDI_HR1_OFS_PD_TEXT_1 0x012b
+#define IDI_HR1_OFS_PD_TEXT_2 0x016d
+#define IDI_HR1_OFS_PD_TEXT_3 0x0259
 
-#define IDI_HR1_OFS_INTRO_TEXT   0x0066
+#define IDI_HR1_OFS_INTRO_TEXT 0x0066
 #define IDI_HR1_OFS_GAME_OR_HELP 0x000f
 
-#define IDI_HR1_OFS_LOGO_0       0x1003
+#define IDI_HR1_OFS_LOGO_0 0x1003
 
-#define IDI_HR1_OFS_ITEMS        0x0100
-#define IDI_HR1_OFS_ROOMS        0x050a
-#define IDI_HR1_OFS_PICS         0x4b03
-#define IDI_HR1_OFS_CMDS_0       0x3c00
-#define IDI_HR1_OFS_CMDS_1       0x3d00
-#define IDI_HR1_OFS_MSGS         0x4d00
+#define IDI_HR1_OFS_ITEMS 0x0100
+#define IDI_HR1_OFS_ROOMS 0x050a
+#define IDI_HR1_OFS_PICS 0x4b03
+#define IDI_HR1_OFS_CMDS_0 0x3c00
+#define IDI_HR1_OFS_CMDS_1 0x3d00
+#define IDI_HR1_OFS_MSGS 0x4d00
 
 #define IDI_HR1_OFS_ITEM_OFFSETS 0x68ff
-#define IDI_HR1_OFS_SHAPES       0x4f00
+#define IDI_HR1_OFS_SHAPES 0x4f00
 
-#define IDI_HR1_OFS_VERBS        0x3800
-#define IDI_HR1_OFS_NOUNS        0x0f00
+#define IDI_HR1_OFS_VERBS 0x3800
+#define IDI_HR1_OFS_NOUNS 0x0f00
 
 class HiRes1Engine : public AdlEngine {
 public:
-	HiRes1Engine(OSystem *syst, const AdlGameDescription *gd) :
-			AdlEngine(syst, gd),
-			_files(nullptr),
-			_messageDelay(true) { }
+	HiRes1Engine(OSystem *syst, const AdlGameDescription *gd)
+	  : AdlEngine(syst, gd)
+	  , _files(nullptr)
+	  , _messageDelay(true) {}
 	~HiRes1Engine() { delete _files; }
 
 private:

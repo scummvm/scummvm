@@ -3,7 +3,7 @@
 #include "common/memstream.h"
 
 class MemoryReadStreamEndianTestSuite : public CxxTest::TestSuite {
-	public:
+public:
 	void test_seek_set() {
 		byte contents[] = { 'a', 'b', '\n', '\n', 'c', '\n' };
 		Common::MemoryReadStreamEndian ms(contents, sizeof(contents), false);

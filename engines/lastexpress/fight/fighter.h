@@ -36,22 +36,22 @@ class SequenceFrame;
 class Fighter {
 public:
 	enum FightAction {
-		kFightActionNone       = 0,
-		kFightAction1          = 1,
-		kFightAction2          = 2,
-		kFightAction3          = 3,
-		kFightAction4          = 4,
-		kFightAction5          = 5,
-		kFightAction101        = 101,
+		kFightActionNone = 0,
+		kFightAction1 = 1,
+		kFightAction2 = 2,
+		kFightAction3 = 3,
+		kFightAction4 = 4,
+		kFightAction5 = 5,
+		kFightAction101 = 101,
 		kFightActionResetFrame = 102,
-		kFightAction103        = 103,
-		kFightActionWin        = 104,
-		kFightActionLost       = 105,
-		kFightAction128        = 128,
-		kFightAction129        = 129,
-		kFightAction130        = 130,
-		kFightAction131        = 131,
-		kFightAction132        = 132
+		kFightAction103 = 103,
+		kFightActionWin = 104,
+		kFightActionLost = 105,
+		kFightAction128 = 128,
+		kFightAction129 = 129,
+		kFightAction130 = 130,
+		kFightAction131 = 131,
+		kFightAction132 = 132
 	};
 
 	enum FightSequenceType {
@@ -81,19 +81,19 @@ public:
 	uint32 getField34() { return _field_34; }
 
 protected:
-	LastExpressEngine         *_engine;
-	Fight                     *_fight;
-	Fighter                   *_opponent;
-	Sequence                  *_sequence;
-	SequenceFrame             *_frame;
-	uint32                     _sequenceIndex;
-	Common::Array<Sequence *>  _sequences;
-	uint32                     _frameIndex;
-	uint32                     _field_24;
-	FightAction                _action;
-	uint32                     _sequenceIndex2;
-	int32                      _countdown;  // countdown before loosing ?
-	uint32                     _field_34;
+	LastExpressEngine *_engine;
+	Fight *_fight;
+	Fighter *_opponent;
+	Sequence *_sequence;
+	SequenceFrame *_frame;
+	uint32 _sequenceIndex;
+	Common::Array<Sequence *> _sequences;
+	uint32 _frameIndex;
+	uint32 _field_24;
+	FightAction _action;
+	uint32 _sequenceIndex2;
+	int32 _countdown; // countdown before loosing ?
+	uint32 _field_34;
 
 	// Drawing and processing
 	void draw();
@@ -105,7 +105,8 @@ protected:
 
 class Opponent : public Fighter {
 public:
-	Opponent(LastExpressEngine *engine) : Fighter(engine) {
+	Opponent(LastExpressEngine *engine)
+	  : Fighter(engine) {
 		_field_38 = 0;
 	}
 

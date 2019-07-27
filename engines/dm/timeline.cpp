@@ -26,73 +26,74 @@
 */
 
 #include "dm/timeline.h"
-#include "dm/dungeonman.h"
 #include "dm/champion.h"
-#include "dm/inventory.h"
-#include "dm/group.h"
-#include "dm/projexpl.h"
-#include "dm/movesens.h"
-#include "dm/text.h"
+#include "dm/dungeonman.h"
 #include "dm/eventman.h"
+#include "dm/group.h"
+#include "dm/inventory.h"
+#include "dm/movesens.h"
 #include "dm/objectman.h"
+#include "dm/projexpl.h"
 #include "dm/sounds.h"
-
+#include "dm/text.h"
 
 namespace DM {
 
 void Timeline::initConstants() {
-	static signed char actionDefense[44] = { // @ G0495_ac_Graphic560_ActionDefense
-		0,   /* N */
-		36,  /* BLOCK */
-		0,   /* CHOP */
-		0,   /* X */
-		-4,  /* BLOW HORN */
+	static signed char actionDefense[44] = {
+		// @ G0495_ac_Graphic560_ActionDefense
+		0, /* N */
+		36, /* BLOCK */
+		0, /* CHOP */
+		0, /* X */
+		-4, /* BLOW HORN */
 		-10, /* FLIP */
 		-10, /* PUNCH */
-		-5,  /* KICK */
-		4,   /* WAR CRY */
+		-5, /* KICK */
+		4, /* WAR CRY */
 		-20, /* STAB */
 		-15, /* CLIMB DOWN */
 		-10, /* FREEZE LIFE */
-		16,  /* HIT */
-		5,   /* SWING */
+		16, /* HIT */
+		5, /* SWING */
 		-15, /* STAB */
 		-17, /* THRUST */
-		-5,  /* JAB */
-		29,  /* PARRY */
-		10,  /* HACK */
+		-5, /* JAB */
+		29, /* PARRY */
+		10, /* HACK */
 		-10, /* BERZERK */
-		-7,  /* FIREBALL */
-		-7,  /* DISPELL */
-		-7,  /* CONFUSE */
-		-7,  /* LIGHTNING */
-		-7,  /* DISRUPT */
-		-5,  /* MELEE */
+		-7, /* FIREBALL */
+		-7, /* DISPELL */
+		-7, /* CONFUSE */
+		-7, /* LIGHTNING */
+		-7, /* DISRUPT */
+		-5, /* MELEE */
 		-15, /* X */
-		-9,  /* INVOKE */
-		4,   /* SLASH */
-		0,   /* CLEAVE */
-		0,   /* BASH */
-		5,   /* STUN */
+		-9, /* INVOKE */
+		4, /* SLASH */
+		0, /* CLEAVE */
+		0, /* BASH */
+		5, /* STUN */
 		-15, /* SHOOT */
-		-7,  /* SPELLSHIELD */
-		-7,  /* FIRESHIELD */
-		8,   /* FLUXCAGE */
+		-7, /* SPELLSHIELD */
+		-7, /* FIRESHIELD */
+		8, /* FLUXCAGE */
 		-20, /* HEAL */
-		-5,  /* CALM */
-		0,   /* LIGHT */
+		-5, /* CALM */
+		0, /* LIGHT */
 		-15, /* WINDOW */
-		-7,  /* SPIT */
-		-4,  /* BRANDISH */
-		0,   /* THROW */
-		8    /* FUSE */
+		-7, /* SPIT */
+		-4, /* BRANDISH */
+		0, /* THROW */
+		8 /* FUSE */
 	};
 
 	for (int i = 0; i < 44; i++)
 		_actionDefense[i] = actionDefense[i];
 }
 
-Timeline::Timeline(DMEngine *vm) : _vm(vm) {
+Timeline::Timeline(DMEngine *vm)
+  : _vm(vm) {
 	_eventMaxCount = 0;
 	_events = nullptr;
 	_eventCount = 0;
@@ -175,9 +176,7 @@ void Timeline::fixChronology(uint16 timelineIndex) {
 bool Timeline::isEventABeforeB(TimelineEvent *eventA, TimelineEvent *eventB) {
 	bool simultaneousFl = (_vm->filterTime(eventA->_mapTime) == _vm->filterTime(eventB->_mapTime));
 
-	return (_vm->filterTime(eventA->_mapTime) < _vm->filterTime(eventB->_mapTime)) ||
-		(simultaneousFl && (eventA->getTypePriority() > eventB->getTypePriority())) ||
-		(simultaneousFl && (eventA->getTypePriority() == eventB->getTypePriority()) && (eventA <= eventB));
+	return (_vm->filterTime(eventA->_mapTime) < _vm->filterTime(eventB->_mapTime)) || (simultaneousFl && (eventA->getTypePriority() > eventB->getTypePriority())) || (simultaneousFl && (eventA->getTypePriority() == eventB->getTypePriority()) && (eventA <= eventB));
 }
 
 uint16 Timeline::getIndex(uint16 eventIndex) {
@@ -355,8 +354,7 @@ void Timeline::processTimeline() {
 				uint16 championIndex = newEvent._priority;
 				_vm->_championMan->_champions[championIndex = newEvent._priority]._poisonEventCount--;
 				_vm->_championMan->championPoison(championIndex, newEvent._Bu._attack);
-				}
-				break;
+			} break;
 			case kDMEventTypeViAltarRebirth:
 				processEventViAltarRebirth(curEvent);
 				break;
@@ -396,7 +394,7 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 		Door *curDoor = (Door *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
 		bool verticalDoorFl = curDoor->opensVertically();
 		if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (mapX == _vm->_dungeonMan->_partyMapX)
-		 && (mapY == _vm->_dungeonMan->_partyMapY) && (doorState != kDMDoorStateOpen)) {
+		    && (mapY == _vm->_dungeonMan->_partyMapY) && (doorState != kDMDoorStateOpen)) {
 			if (_vm->_championMan->_partyChampionCount > 0) {
 				curSquare->setDoorState(kDMDoorStateOpen);
 
@@ -419,7 +417,7 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 					_vm->_groupMan->processEvents29to41(mapX, mapY, kDMEventTypeCreateReactionDangerOnSquare, 0);
 
 				int16 nextState = doorState - 1;
-				doorState = (doorState == kDMDoorStateOpen) ? kDMDoorStateOpen : (DoorState) nextState;
+				doorState = (doorState == kDMDoorStateOpen) ? kDMDoorStateOpen : (DoorState)nextState;
 				curSquare->setDoorState(doorState);
 				_vm->_sound->requestPlay(kDMSoundIndexWoodenThudAttackTrolinAntmanStoneGolem, mapX, mapY, kDMSoundModePlayIfPrioritized);
 				event->_mapTime++;
@@ -436,7 +434,7 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 
 	int16 nextDoorEffect = doorState + 1;
 	int16 prevDoorEffect = doorState - 1;
-	doorState = (DoorState) ((sensorEffect == kDMSensorEffectSet) ? prevDoorEffect : nextDoorEffect);
+	doorState = (DoorState)((sensorEffect == kDMSensorEffectSet) ? prevDoorEffect : nextDoorEffect);
 	curSquare->setDoorState(doorState);
 	_vm->_sound->requestPlay(kDMSoundIndexDoorRattle, mapX, mapY, kDMSoundModePlayIfPrioritized);
 
@@ -510,7 +508,7 @@ void Timeline::processEventSquarePit(TimelineEvent *event) {
 
 void Timeline::moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 	if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex)
-	 && (mapX == _vm->_dungeonMan->_partyMapX) && (mapY == _vm->_dungeonMan->_partyMapY)) {
+	    && (mapX == _vm->_dungeonMan->_partyMapX) && (mapY == _vm->_dungeonMan->_partyMapY)) {
 		_vm->_moveSens->getMoveResult(_vm->_thingParty, mapX, mapY, mapX, mapY);
 		_vm->_championMan->drawChangedObjectIcons();
 	}
@@ -650,9 +648,7 @@ void Timeline::triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event) {
 	int16 sensorData = sensor->getData();
 	int16 kineticEnergy = sensor->getActionKineticEnergy();
 	int16 stepEnergy = sensor->getActionStepEnergy();
-	bool launchSingleProjectile = (sensorType == kDMSensorWallSingleProjLauncherNewObj) ||
-		(sensorType == kDMSensorWallSingleProjLauncherExplosion) ||
-		(sensorType == kDMSensorWallSingleProjLauncherSquareObj);
+	bool launchSingleProjectile = (sensorType == kDMSensorWallSingleProjLauncherNewObj) || (sensorType == kDMSensorWallSingleProjLauncherExplosion) || (sensorType == kDMSensorWallSingleProjLauncherSquareObj);
 
 	Thing firstProjectileAssociatedThing;
 	Thing secondProjectileAssociatedThing;
@@ -861,7 +857,7 @@ void Timeline::processEventMoveWeaponFromQuiverToSlot(uint16 champIndex, uint16 
 bool Timeline::hasWeaponMovedSlot(int16 champIndex, Champion *champ, uint16 sourceSlotIndex, int16 destSlotIndex) {
 	if (Thing(champ->_slots[sourceSlotIndex]).getType() == kDMThingTypeWeapon) {
 		_vm->_championMan->addObjectInSlot((ChampionIndex)champIndex, _vm->_championMan->getObjectRemovedFromSlot(champIndex, sourceSlotIndex),
-			(ChampionSlot)destSlotIndex);
+		                                   (ChampionSlot)destSlotIndex);
 		return true;
 	}
 	return false;
@@ -927,7 +923,7 @@ void Timeline::processEventViAltarRebirth(TimelineEvent *event) {
 	case 2:
 		_vm->_projexpl->createExplosion(_vm->_thingExplRebirthStep1, 0, mapX, mapY, cell);
 		event->_mapTime += 5;
-T0255002:
+	T0255002:
 		rebirthStep--;
 		event->_Cu.A._effect = rebirthStep;
 		addEventGetEventIndex(event);
@@ -949,8 +945,7 @@ T0255002:
 			}
 			curThing = _vm->_dungeonMan->getNextThing(curThing);
 		}
-		}
-		break;
+	} break;
 	case 0:
 		_vm->_championMan->viAltarRebirth(event->_priority);
 	}

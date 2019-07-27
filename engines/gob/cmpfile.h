@@ -23,12 +23,12 @@
 #ifndef GOB_CMPFILE_H
 #define GOB_CMPFILE_H
 
-#include "common/system.h"
 #include "common/array.h"
+#include "common/system.h"
 
 namespace Common {
-	class String;
-	class SeekableReadStream;
+class String;
+class SeekableReadStream;
 }
 
 namespace Gob {
@@ -59,7 +59,7 @@ public:
 
 	bool getCoordinates(uint16 sprite, uint16 &left, uint16 &top, uint16 &right, uint16 &bottom) const;
 
-	uint16 getWidth (uint16 sprite) const;
+	uint16 getWidth(uint16 sprite) const;
 	uint16 getHeight(uint16 sprite) const;
 
 	void getMaxSize(uint16 &width, uint16 &height) const;

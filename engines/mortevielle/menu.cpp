@@ -38,14 +38,14 @@
 namespace Mortevielle {
 
 const byte menuConstants[8][4] = {
-	{ 7, 37, 23,  8},
-	{19, 33, 23,  7},
-	{31, 89, 10, 21},
-	{43, 25, 11,  5},
-	{55, 37,  5,  8},
-	{64, 13, 11,  2},
-	{62, 42, 13,  9},
-	{62, 46, 13, 10}
+	{ 7, 37, 23, 8 },
+	{ 19, 33, 23, 7 },
+	{ 31, 89, 10, 21 },
+	{ 43, 25, 11, 5 },
+	{ 55, 37, 5, 8 },
+	{ 64, 13, 11, 2 },
+	{ 62, 42, 13, 9 },
+	{ 62, 46, 13, 10 }
 };
 
 Menu::Menu(MortevielleEngine *vm) {
@@ -81,7 +81,7 @@ Menu::Menu(MortevielleEngine *vm) {
 void Menu::readVerbNums(Common::File &f, int dataSize) {
 	// Figure out what language Id is needed
 	byte desiredLanguageId;
-	switch(_vm->getLanguage()) {
+	switch (_vm->getLanguage()) {
 	case Common::EN_ANY:
 		desiredLanguageId = MORTDAT_LANG_ENGLISH;
 		break;
@@ -107,68 +107,68 @@ void Menu::readVerbNums(Common::File &f, int dataSize) {
 	}
 
 	assert(dataSize == 52);
-	_opcodeAttach  = f.readUint16LE();
-	_opcodeWait    = f.readUint16LE();
-	_opcodeForce   = f.readUint16LE();
-	_opcodeSleep   = f.readUint16LE();
-	_opcodeListen  = f.readUint16LE();
-	_opcodeEnter   = f.readUint16LE();
-	_opcodeClose   = f.readUint16LE();
-	_opcodeSearch  = f.readUint16LE();
-	_opcodeKnock   = f.readUint16LE();
+	_opcodeAttach = f.readUint16LE();
+	_opcodeWait = f.readUint16LE();
+	_opcodeForce = f.readUint16LE();
+	_opcodeSleep = f.readUint16LE();
+	_opcodeListen = f.readUint16LE();
+	_opcodeEnter = f.readUint16LE();
+	_opcodeClose = f.readUint16LE();
+	_opcodeSearch = f.readUint16LE();
+	_opcodeKnock = f.readUint16LE();
 	_opcodeScratch = f.readUint16LE();
-	_opcodeRead    = f.readUint16LE();
-	_opcodeEat     = f.readUint16LE();
-	_opcodePlace   = f.readUint16LE();
-	_opcodeOpen    = f.readUint16LE();
-	_opcodeTake    = f.readUint16LE();
-	_opcodeLook    = f.readUint16LE();
-	_opcodeSmell   = f.readUint16LE();
-	_opcodeSound   = f.readUint16LE();
-	_opcodeLeave   = f.readUint16LE();
-	_opcodeLift    = f.readUint16LE();
-	_opcodeTurn    = f.readUint16LE();
-	_opcodeSHide   = f.readUint16LE();
+	_opcodeRead = f.readUint16LE();
+	_opcodeEat = f.readUint16LE();
+	_opcodePlace = f.readUint16LE();
+	_opcodeOpen = f.readUint16LE();
+	_opcodeTake = f.readUint16LE();
+	_opcodeLook = f.readUint16LE();
+	_opcodeSmell = f.readUint16LE();
+	_opcodeSound = f.readUint16LE();
+	_opcodeLeave = f.readUint16LE();
+	_opcodeLift = f.readUint16LE();
+	_opcodeTurn = f.readUint16LE();
+	_opcodeSHide = f.readUint16LE();
 	_opcodeSSearch = f.readUint16LE();
-	_opcodeSRead   = f.readUint16LE();
-	_opcodeSPut    = f.readUint16LE();
-	_opcodeSLook   = f.readUint16LE();
+	_opcodeSRead = f.readUint16LE();
+	_opcodeSPut = f.readUint16LE();
+	_opcodeSLook = f.readUint16LE();
 
-	_actionMenu[0]._menuId    = OPCODE_NONE   >> 8;
-	_actionMenu[0]._actionId  = OPCODE_NONE   & 0xFF;
+	_actionMenu[0]._menuId = OPCODE_NONE >> 8;
+	_actionMenu[0]._actionId = OPCODE_NONE & 0xFF;
 
-	_actionMenu[1]._menuId    = _opcodeSHide  >> 8;
-	_actionMenu[1]._actionId  = _opcodeSHide  & 0xFF;
+	_actionMenu[1]._menuId = _opcodeSHide >> 8;
+	_actionMenu[1]._actionId = _opcodeSHide & 0xFF;
 
-	_actionMenu[2]._menuId    = _opcodeAttach >> 8;
-	_actionMenu[2]._actionId  = _opcodeAttach & 0xFF;
+	_actionMenu[2]._menuId = _opcodeAttach >> 8;
+	_actionMenu[2]._actionId = _opcodeAttach & 0xFF;
 
-	_actionMenu[3]._menuId    = _opcodeForce  >> 8;
-	_actionMenu[3]._actionId  = _opcodeForce  & 0xFF;
+	_actionMenu[3]._menuId = _opcodeForce >> 8;
+	_actionMenu[3]._actionId = _opcodeForce & 0xFF;
 
-	_actionMenu[4]._menuId    = _opcodeSleep  >> 8;
-	_actionMenu[4]._actionId  = _opcodeSleep  & 0xFF;
+	_actionMenu[4]._menuId = _opcodeSleep >> 8;
+	_actionMenu[4]._actionId = _opcodeSleep & 0xFF;
 
-	_actionMenu[5]._menuId    = _opcodeEnter  >> 8;
-	_actionMenu[5]._actionId  = _opcodeEnter  & 0xFF;
+	_actionMenu[5]._menuId = _opcodeEnter >> 8;
+	_actionMenu[5]._actionId = _opcodeEnter & 0xFF;
 
-	_actionMenu[6]._menuId    = _opcodeClose  >> 8;
-	_actionMenu[6]._actionId  = _opcodeClose  & 0xFF;
+	_actionMenu[6]._menuId = _opcodeClose >> 8;
+	_actionMenu[6]._actionId = _opcodeClose & 0xFF;
 
-	_actionMenu[7]._menuId    = _opcodeKnock  >> 8;
-	_actionMenu[7]._actionId  = _opcodeKnock  & 0xFF;
+	_actionMenu[7]._menuId = _opcodeKnock >> 8;
+	_actionMenu[7]._actionId = _opcodeKnock & 0xFF;
 
-	_actionMenu[8]._menuId    = _opcodeEat    >> 8;
-	_actionMenu[8]._actionId  = _opcodeEat    & 0xFF;
+	_actionMenu[8]._menuId = _opcodeEat >> 8;
+	_actionMenu[8]._actionId = _opcodeEat & 0xFF;
 
-	_actionMenu[9]._menuId    = _opcodePlace  >> 8;
-	_actionMenu[9]._actionId  = _opcodePlace  & 0xFF;
+	_actionMenu[9]._menuId = _opcodePlace >> 8;
+	_actionMenu[9]._actionId = _opcodePlace & 0xFF;
 
-	_actionMenu[10]._menuId   = _opcodeOpen   >> 8;
-	_actionMenu[10]._actionId = _opcodeOpen   & 0xFF;
+	_actionMenu[10]._menuId = _opcodeOpen >> 8;
+	_actionMenu[10]._actionId = _opcodeOpen & 0xFF;
 
-	_actionMenu[11]._menuId   = _opcodeLeave  >> 8;
-	_actionMenu[11]._actionId = _opcodeLeave  & 0xFF;
+	_actionMenu[11]._menuId = _opcodeLeave >> 8;
+	_actionMenu[11]._actionId = _opcodeLeave & 0xFF;
 }
 
 /**
@@ -198,8 +198,7 @@ void Menu::setText(MenuItem item, Common::String name) {
 			s += ' ';
 
 		_moveStringArray[item._actionId] = s;
-		}
-		break;
+	} break;
 	case MENU_ACTION: {
 		// If the first character isn't '*' or ' ' then it's missing a heading space
 		char c = s[0];
@@ -210,8 +209,7 @@ void Menu::setText(MenuItem item, Common::String name) {
 			s += ' ';
 
 		_actionStringArray[item._actionId] = s;
-		}
-		break;
+	} break;
 	case MENU_SELF: {
 		// If the first character isn't '*' or ' ' then it's missing a heading space
 		char c = s[0];
@@ -222,8 +220,7 @@ void Menu::setText(MenuItem item, Common::String name) {
 			s += ' ';
 
 		_selfStringArray[item._actionId] = s;
-		}
-		break;
+	} break;
 	case MENU_DISCUSS:
 		_discussStringArray[item._actionId] = s;
 		break;
@@ -320,13 +317,13 @@ void Menu::displayMenu() {
 
 	int col = 28 * kResolutionScaler;
 	for (int charNum = 0; charNum < 6; charNum++) {
-	// One character after the other
+		// One character after the other
 		int idx = 0;
 		for (int y = 1; y < 9; ++y) {
-		// One column after the other
+			// One column after the other
 			int x = col;
 			for (int k = 0; k < 3; ++k) {
-			// One line after the other
+				// One line after the other
 				uint msk = 0x80;
 				for (int pt = 0; pt <= 7; ++pt) {
 					if ((_charArr[charNum][idx] & msk) != 0) {
@@ -485,8 +482,7 @@ void Menu::menuDown(int ii) {
 			s += ' ';
 			s += (char)(48 + i);
 			_vm->_screenSurface->drawString(s, 4);
-			}
-			break;
+		} break;
 		case 8:
 			if (i == 1)
 				_vm->_screenSurface->drawString(_vm->getEngineString(S_RESTART), 4);
@@ -550,13 +546,13 @@ void Menu::updateMenu() {
 		else
 			_vm->_prevPos = curPos;
 
-		bool tes =  (curPos.y < 11)
-		   && ((curPos.x >= (28 * kResolutionScaler) && curPos.x <= (28 * kResolutionScaler + 24))
-		   ||  (curPos.x >= (76 * kResolutionScaler) && curPos.x <= (76 * kResolutionScaler + 24))
-		   || ((curPos.x > 124 * kResolutionScaler) && (curPos.x < 124 * kResolutionScaler + 24))
-		   || ((curPos.x > 172 * kResolutionScaler) && (curPos.x < 172 * kResolutionScaler + 24))
-		   || ((curPos.x > 220 * kResolutionScaler) && (curPos.x < 220 * kResolutionScaler + 24))
-		   || ((curPos.x > 268 * kResolutionScaler) && (curPos.x < 268 * kResolutionScaler + 24)));
+		bool tes = (curPos.y < 11)
+		  && ((curPos.x >= (28 * kResolutionScaler) && curPos.x <= (28 * kResolutionScaler + 24))
+		      || (curPos.x >= (76 * kResolutionScaler) && curPos.x <= (76 * kResolutionScaler + 24))
+		      || ((curPos.x > 124 * kResolutionScaler) && (curPos.x < 124 * kResolutionScaler + 24))
+		      || ((curPos.x > 172 * kResolutionScaler) && (curPos.x < 172 * kResolutionScaler + 24))
+		      || ((curPos.x > 220 * kResolutionScaler) && (curPos.x < 220 * kResolutionScaler + 24))
+		      || ((curPos.x > 268 * kResolutionScaler) && (curPos.x < 268 * kResolutionScaler + 24)));
 		if (tes) {
 			int ix;
 
@@ -584,7 +580,7 @@ void Menu::updateMenu() {
 			if ((curPos.y > 11) && (_multiTitle))
 				util(curPos);
 		}
-	} else {       // There was a click
+	} else { // There was a click
 		if ((_msg3 == MENU_FILE) && (_msg4 != OPCODE_NONE)) {
 			// Another menu to be _displayed
 			_vm->setMouseClick(false);
@@ -621,7 +617,7 @@ void Menu::initMenu() {
 		else {
 			// Figure out what language Id is needed
 			byte desiredLanguageId;
-			switch(_vm->getLanguage()) {
+			switch (_vm->getLanguage()) {
 			case Common::EN_ANY:
 				desiredLanguageId = MORTDAT_LANG_ENGLISH;
 				break;
@@ -642,7 +638,7 @@ void Menu::initMenu() {
 			f.read(fileId, 4);
 			// Do not display warnings here. They would already have been displayed in MortevielleEngine::loadMortDat().
 			if (strncmp(fileId, "MORT", 4) == 0 && f.readByte() >= MORT_DAT_REQUIRED_VERSION) {
-				f.readByte();		// Minor version
+				f.readByte(); // Minor version
 				// Loop to load resources from the data file
 				while (f.pos() < f.size()) {
 					// Get the Id and size of the next resource
@@ -750,15 +746,15 @@ void Menu::setSearchMenu() {
 		disableMenuItem(_actionMenu[i]);
 
 	MenuItem miSound;
-	miSound._menuId   = _opcodeSound >> 8;
+	miSound._menuId = _opcodeSound >> 8;
 	miSound._actionId = _opcodeSound & 0xFF;
 
 	MenuItem miLift;
-	miLift._menuId   = _opcodeLift >> 8;
+	miLift._menuId = _opcodeLift >> 8;
 	miLift._actionId = _opcodeLift & 0xFF;
 
 	setText(miSound, _vm->getEngineString(S_SUITE));
-	setText(miLift,  _vm->getEngineString(S_STOP));
+	setText(miLift, _vm->getEngineString(S_STOP));
 }
 
 /**
@@ -771,15 +767,15 @@ void Menu::unsetSearchMenu() {
 		enableMenuItem(_actionMenu[i]);
 
 	MenuItem miSound;
-	miSound._menuId   = _opcodeSound >> 8;
+	miSound._menuId = _opcodeSound >> 8;
 	miSound._actionId = _opcodeSound & 0xFF;
 
 	MenuItem miLift;
-	miLift._menuId   = _opcodeLift >> 8;
+	miLift._menuId = _opcodeLift >> 8;
 	miLift._actionId = _opcodeLift & 0xFF;
 
 	setText(miSound, _vm->getEngineString(S_PROBE));
-	setText(miLift,  _vm->getEngineString(S_RAISE));
+	setText(miLift, _vm->getEngineString(S_RAISE));
 }
 
 /**

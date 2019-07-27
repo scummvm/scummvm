@@ -23,9 +23,9 @@
 #include "titanic/pet_control/pet_real_life.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/pet_control/pet_load.h"
+#include "titanic/pet_control/pet_quit.h"
 #include "titanic/pet_control/pet_save.h"
 #include "titanic/pet_control/pet_sound.h"
-#include "titanic/pet_control/pet_quit.h"
 
 namespace Titanic {
 

@@ -36,34 +36,34 @@ void SceneScriptHC04::InitializeScene() {
 	Actor_Put_In_Set(kActorIsabella, kSetHC01_HC02_HC03_HC04);
 	Actor_Set_At_XYZ(kActorIsabella, -210.0f, 0.0f, -445.0f, 250);
 
-	Scene_Exit_Add_2D_Exit(0, 539,  51, 639, 309, 0);
-	Scene_Exit_Add_2D_Exit(1,   0, 456, 639, 479, 2);
+	Scene_Exit_Add_2D_Exit(0, 539, 51, 639, 309, 0);
+	Scene_Exit_Add_2D_Exit(1, 0, 456, 639, 479, 2);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 50, 50, 0);
 	Ambient_Sounds_Add_Looping_Sound(kSfxMAMASNG1, 16, 16, 0);
-	Ambient_Sounds_Add_Looping_Sound(kSfxROTIS2,   40, 40, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_0480R, 5, 70, 14, 16, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_0540R, 5, 70, 14, 16, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_0560R, 5, 70, 14, 16, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_0870R, 5, 70, 14, 16, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_0900R, 5, 70, 14, 16, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_0940R, 5, 70, 14, 16, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_1070R, 5, 70, 14, 16, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_1080R, 5, 70, 14, 16, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_1160R, 5, 70, 14, 16, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBARSFX1,  3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxROTIS2, 40, 40, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0480R, 5, 70, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0540R, 5, 70, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0560R, 5, 70, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0870R, 5, 70, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0900R, 5, 70, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0940R, 5, 70, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_1070R, 5, 70, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_1080R, 5, 70, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_1160R, 5, 70, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBARSFX1, 3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
 #if BLADERUNNER_ORIGINAL_BUGS
-	Ambient_Sounds_Add_Sound(kSfxBARSFX1,  3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBARSFX1, 3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
 #endif // BLADERUNNER_ORIGINAL_BUGS
-	Ambient_Sounds_Add_Sound(kSfxBARSFX3,  3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBARSFX4,  3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBARSFX5,  3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBARSFX6,  3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBARSFX7,  3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxCLINK1,   3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxCLINK2,   3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxCLINK3,   3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxCLINK4,   3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBARSFX3, 3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBARSFX4, 3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBARSFX5, 3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBARSFX6, 3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBARSFX7, 3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxCLINK1, 3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxCLINK2, 3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxCLINK3, 3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxCLINK4, 3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagHC02toHC04)) {
 		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
@@ -162,8 +162,7 @@ void SceneScriptHC04::DialogueQueueFlushed(int a1) {
 void SceneScriptHC04::dialogueWithIsabella() {
 	Dialogue_Menu_Clear_List();
 	if (Actor_Clue_Query(kActorMcCoy, kClueKingstonKitchenBox2)
-	 || Actor_Clue_Query(kActorMcCoy, kClueKingstonKitchenBox1)
-	) {
+	    || Actor_Clue_Query(kActorMcCoy, kClueKingstonKitchenBox1)) {
 		if (Actor_Clue_Query(kActorMcCoy, kClueBombingSuspect)) {
 			DM_Add_To_List_Never_Repeat_Once_Selected(340, 5, 6, 5); // SADIK PHOTO
 		} else if (Actor_Clue_Query(kActorMcCoy, kClueTyrellSecurityPhoto)) {
@@ -171,9 +170,8 @@ void SceneScriptHC04::dialogueWithIsabella() {
 		}
 		DM_Add_To_List_Never_Repeat_Once_Selected(360, 6, 4, 3); // MARCUS EISENDULLER
 	}
-	if ( Actor_Clue_Query(kActorMcCoy, kClueCheese)
-	 && !Actor_Clue_Query(kActorMcCoy, kClueSpecialIngredient)
-	) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueCheese)
+	    && !Actor_Clue_Query(kActorMcCoy, kClueSpecialIngredient)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(370, 3, 4, 7); // CHEESE
 	}
 	if (Actor_Clue_Query(kActorMcCoy, kClueSpecialIngredient)) {

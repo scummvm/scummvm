@@ -20,8 +20,8 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/resources/scriptresource.h"
+#include "illusions/illusions.h"
 
 namespace Illusions {
 
@@ -34,14 +34,14 @@ void ScriptResourceLoader::load(Resource *resource) {
 }
 
 bool ScriptResourceLoader::isFlag(int flag) {
-	return
-		flag == kRlfLoadFile;
+	return flag == kRlfLoadFile;
 }
 
 // Properties
 
 Properties::Properties()
-	: _count(0), _properties(0) {
+  : _count(0)
+  , _properties(0) {
 }
 
 void Properties::init(uint count, byte *properties) {
@@ -100,7 +100,8 @@ void Properties::getProperyPos(uint32 propertyId, uint &index, byte &mask) {
 // BlockCounters
 
 BlockCounters::BlockCounters()
-	: _count(0), _blockCounters(0) {
+  : _count(0)
+  , _blockCounters(0) {
 }
 
 void BlockCounters::init(uint count, byte *blockCounters) {
@@ -159,13 +160,14 @@ void TriggerCause::load(Common::SeekableReadStream &stream) {
 	_codeOffs = stream.readUint32LE();
 
 	debug(2, "TriggerCause::load() _verbId: %08X; _objectId2: %08X; _codeOffs: %08X",
-		_verbId, _objectId2, _codeOffs);
+	      _verbId, _objectId2, _codeOffs);
 }
 
 // TriggerObject
 
 TriggerObject::TriggerObject()
-	: _causesCount(0), _causes(0) {
+  : _causesCount(0)
+  , _causes(0) {
 }
 
 TriggerObject::~TriggerObject() {
@@ -177,7 +179,7 @@ void TriggerObject::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_causesCount = stream.readUint16LE();
 	stream.skip(2); // Skip padding
 	debug(2, "TriggerObject::load() _objectId: %08X; _causesCount: %d",
-		_objectId, _causesCount);
+	      _objectId, _causesCount);
 	_causes = new TriggerCause[_causesCount];
 	for (uint i = 0; i < _causesCount; ++i) {
 		_causes[i].load(stream);
@@ -187,8 +189,7 @@ void TriggerObject::load(byte *dataStart, Common::SeekableReadStream &stream) {
 bool TriggerObject::findTriggerCause(uint32 verbId, uint32 objectId2, uint32 &codeOffs) {
 	if ((verbId & 0xFFFF0000) == 0) {
 		for (uint i = 0; i < _causesCount; ++i) {
-			if ((verbId == 7 && ((_causes[i]._verbId == 7 && _causes[i]._objectId2 == objectId2) || _causes[i]._verbId == 8)) ||
-				(verbId != 7 && verbId == _causes[i]._verbId)) {
+			if ((verbId == 7 && ((_causes[i]._verbId == 7 && _causes[i]._objectId2 == objectId2) || _causes[i]._verbId == 8)) || (verbId != 7 && verbId == _causes[i]._verbId)) {
 				codeOffs = _causes[i]._codeOffs;
 				return true;
 			}
@@ -213,8 +214,10 @@ void TriggerObject::fixupSceneInfosDuckman() {
 // SceneInfo
 
 SceneInfo::SceneInfo()
-	: _triggerObjectsCount(0), _triggerObjects(0),
-	_resourcesCount(0), _resources(0) {
+  : _triggerObjectsCount(0)
+  , _triggerObjects(0)
+  , _resourcesCount(0)
+  , _resources(0) {
 }
 
 SceneInfo::~SceneInfo() {
@@ -230,7 +233,7 @@ void SceneInfo::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_triggerObjectsCount = stream.readUint16LE();
 	_resourcesCount = stream.readUint16LE();
 	debug(2, "\nSceneInfo::load() _id: %d; _unk: %d; _name: [%s]",
-		_id, _unk, debugW2I(_name));
+	      _id, _unk, debugW2I(_name));
 	uint32 triggerObjectsListOffs = stream.readUint32LE();
 	if (_resourcesCount > 0) {
 		_resources = new uint32[_resourcesCount];
@@ -278,7 +281,8 @@ void SceneInfo::fixupSceneInfosDuckman() {
 // ScriptResource
 
 ScriptResource::ScriptResource()
-	: _codeOffsets(0), _objectMap(0) {
+  : _codeOffsets(0)
+  , _objectMap(0) {
 }
 
 ScriptResource::~ScriptResource() {
@@ -314,7 +318,7 @@ void ScriptResource::load(Resource *resource) {
 	_codeCount = stream.readUint16LE();
 	_sceneInfosCount = stream.readUint16LE();
 	if (resource->_gameId == kGameIdDuckman)
-		stream.readUint16LE();//Unused?
+		stream.readUint16LE(); //Unused?
 
 	// Read item offsets
 	uint32 propertiesOffs = stream.readUint32LE();
@@ -324,9 +328,9 @@ void ScriptResource::load(Resource *resource) {
 	uint32 codeTblOffs = stream.readUint32LE();
 
 	debug(2, "ScriptResource::load() propertiesCount: %d; blockCountersCount: %d; _codeCount: %d; _sceneInfosCount: %d; _objectMapCount: %d",
-		propertiesCount, blockCountersCount, _codeCount, _sceneInfosCount, _objectMapCount);
+	      propertiesCount, blockCountersCount, _codeCount, _sceneInfosCount, _objectMapCount);
 	debug(2, "ScriptResource::load() propertiesOffs: %08X; blockCountersOffs: %08X; codeTblOffs: %08X; objectMapOffs: %08X",
-		propertiesOffs, blockCountersOffs, codeTblOffs, objectMapOffs);
+	      propertiesOffs, blockCountersOffs, codeTblOffs, objectMapOffs);
 	// Init properties
 	_properties.init(propertiesCount, _data + propertiesOffs);
 
@@ -366,7 +370,6 @@ void ScriptResource::load(Resource *resource) {
 
 	if (resource->_gameId == kGameIdDuckman)
 		fixupSceneInfosDuckman();
-
 }
 
 byte *ScriptResource::getThreadCode(uint32 threadId) {
@@ -396,7 +399,7 @@ void ScriptResource::fixupSceneInfosDuckman() {
 // ScriptInstance
 
 ScriptInstance::ScriptInstance(IllusionsEngine *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 }
 
 void ScriptInstance::load(Resource *resource) {

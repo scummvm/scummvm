@@ -23,9 +23,9 @@
 #ifndef ACCESS_SOUND_H
 #define ACCESS_SOUND_H
 
-#include "common/scummsys.h"
 #include "access/files.h"
 #include "audio/midiplayer.h"
+#include "common/scummsys.h"
 
 #define MAX_SOUNDS 20
 
@@ -42,8 +42,14 @@ struct SoundEntry {
 	Resource *_res;
 	int _priority;
 
-	SoundEntry() { _res = nullptr; _priority = 0; }
-	SoundEntry(Resource *res, int priority) { _res = res; _priority = priority; }
+	SoundEntry() {
+		_res = nullptr;
+		_priority = 0;
+	}
+	SoundEntry(Resource *res, int priority) {
+		_res = res;
+		_priority = priority;
+	}
 };
 
 class SoundManager {
@@ -51,9 +57,14 @@ class SoundManager {
 		Audio::AudioStream *_stream;
 		int _soundId;
 
-		QueuedSound() : _stream(nullptr), _soundId(-1) {}
-		QueuedSound(Audio::AudioStream *stream, int soundId) : _stream(stream), _soundId(soundId) {}
+		QueuedSound()
+		  : _stream(nullptr)
+		  , _soundId(-1) {}
+		QueuedSound(Audio::AudioStream *stream, int soundId)
+		  : _stream(stream)
+		  , _soundId(soundId) {}
 	};
+
 private:
 	AccessEngine *_vm;
 	Audio::Mixer *_mixer;
@@ -65,9 +76,11 @@ private:
 	void playSound(Resource *res, int priority, bool loop, int soundIndex = -1);
 
 	bool isSoundQueued(int soundId) const;
+
 public:
 	Common::Array<SoundEntry> _soundTable;
 	bool _playingSound;
+
 public:
 	SoundManager(AccessEngine *vm, Audio::Mixer *mixer);
 	~SoundManager();

@@ -25,25 +25,25 @@
 
 #include "common/array.h"
 #include "common/events.h"
+#include "common/file.h"
 #include "common/random.h"
 #include "common/scummsys.h"
 #include "engines/engine.h"
-#include "common/file.h"
 
 #include "supernova/console.h"
 #include "supernova/graphics.h"
+#include "supernova/imageid.h"
 #include "supernova/msn_def.h"
 #include "supernova/rooms.h"
 #include "supernova/sound.h"
-#include "supernova/imageid.h"
 
 namespace Common {
-	class MemoryReadWriteStream;
+class MemoryReadWriteStream;
 }
 
 namespace Supernova {
 
-#define SAVEGAME_HEADER MKTAG('M','S','N','1')
+#define SAVEGAME_HEADER MKTAG('M', 'S', 'N', '1')
 #define SAVEGAME_VERSION 9
 
 #define SUPERNOVA_DAT "supernova.dat"
@@ -79,10 +79,10 @@ public:
 	Common::StringArray _gameStrings;
 	Common::String _nullString;
 	int _sleepAuoSaveVersion;
-	Common::MemoryReadWriteStream* _sleepAutoSave;
+	Common::MemoryReadWriteStream *_sleepAutoSave;
 
 	uint _delay;
-	int  _textSpeed;
+	int _textSpeed;
 
 	Common::Error loadGameStrings();
 	void init();
@@ -114,7 +114,7 @@ public:
 	void renderMessage(const char *text, MessagePosition position = kMessageNormal);
 	void renderMessage(const Common::String &text, MessagePosition position = kMessageNormal);
 	void renderMessage(StringId stringId, MessagePosition position = kMessageNormal,
-					   Common::String var1 = "", Common::String var2 = "");
+	                   Common::String var1 = "", Common::String var2 = "");
 	void removeMessage();
 	void renderText(const uint16 character);
 	void renderText(const char *text);

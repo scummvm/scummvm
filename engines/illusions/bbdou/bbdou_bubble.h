@@ -23,8 +23,8 @@
 #ifndef ILLUSIONS_BBDOU_BBDOU_BUBBLE_H
 #define ILLUSIONS_BBDOU_BBDOU_BUBBLE_H
 
-#include "illusions/specialcode.h"
 #include "common/rect.h"
+#include "illusions/specialcode.h"
 
 namespace Illusions {
 
@@ -41,7 +41,8 @@ struct BubbleStyle {
 	uint32 _namedPointIds[32];
 	uint32 _objectId;
 	Common::Point _position;
-	BubbleStyle() : _count(0) {}
+	BubbleStyle()
+	  : _count(0) {}
 };
 
 struct BubbleIcon {
@@ -57,12 +58,13 @@ public:
 	~BbdouBubble();
 	void init();
 	void addBubbleStyle(uint32 showSequenceId, uint32 hideSequenceId, uint32 progResKeywordId,
-		uint32 namedPointId, int16 count, uint32 *namedPointIds);
+	                    uint32 namedPointId, int16 count, uint32 *namedPointIds);
 	void show();
 	void hide();
 	void selectBubbleStyle(int16 minCount, Common::Point sourcePt, Common::Point destPt, uint32 progResKeywordId);
 	uint32 addBubbleIcon(uint positionIndex, uint32 sequenceId);
 	void calcBubbleTrail(Common::Point &sourcePt, Common::Point &destPt);
+
 protected:
 	IllusionsEngine_BBDOU *_vm;
 	BbdouSpecialCode *_bbdou;

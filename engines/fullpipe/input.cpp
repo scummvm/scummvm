@@ -22,14 +22,14 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objects.h"
-#include "fullpipe/input.h"
-#include "fullpipe/gfx.h"
-#include "fullpipe/scene.h"
-#include "fullpipe/gameloader.h"
-#include "fullpipe/statics.h"
-#include "fullpipe/interaction.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/gameloader.h"
+#include "fullpipe/gfx.h"
+#include "fullpipe/input.h"
+#include "fullpipe/interaction.h"
+#include "fullpipe/objects.h"
+#include "fullpipe/scene.h"
+#include "fullpipe/statics.h"
 
 namespace Fullpipe {
 
@@ -103,7 +103,7 @@ void InputController::drawCursor(int x, int y) {
 
 	if (_cursorItemPicture)
 		_cursorItemPicture->draw(_cursorBounds.left + _cursorsArray[_cursorIndex]->itemPictureOffsX,
-								 _cursorBounds.top + _cursorsArray[_cursorIndex]->itemPictureOffsY, 0, 0);
+		                         _cursorBounds.top + _cursorsArray[_cursorIndex]->itemPictureOffsY, 0, 0);
 }
 
 void InputController::setCursor(int cursorId) {
@@ -154,20 +154,20 @@ void FullpipeEngine::defHandleKeyDown(int key) {
 
 	if (!input_cheats[_currentCheat][_currentCheatPos]) {
 		switch (_currentCheat) {
-		case 0:								// HELP
+		case 0: // HELP
 			winArcade();
 			break;
-		case 1:								// STUFF
+		case 1: // STUFF
 			getAllInventory();
 			break;
-		case 2:								// FASTER
+		case 2: // FASTER
 			_normalSpeed = !_normalSpeed;
 			break;
-		case 3:								// OHWAIT
+		case 3: // OHWAIT
 			_gamePaused = true;
 			_flgGameIsRunning = false;
 			break;
-		case 4:								// MUSOFF
+		case 4: // MUSOFF
 			if (_musicAllowed & 2)
 				setMusicAllowed(_musicAllowed & 0xFFFFFFFD);
 			else
@@ -187,7 +187,6 @@ void FullpipeEngine::winArcade() {
 	ex->_excFlags |= 3;
 
 	ex->postMessage();
-
 }
 
 void FullpipeEngine::updateCursorCommon() {

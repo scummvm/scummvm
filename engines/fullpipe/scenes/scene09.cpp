@@ -22,16 +22,16 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
@@ -46,7 +46,7 @@ void scene09_setupGrit(Scene *sc) {
 	if (g_vars->scene09_grit->_statics->_staticsId == ST_GRT9_GRIT) {
 		if (!getGameLoaderInventory()->getCountItemsWithId(ANI_INV_COIN)) {
 			if (g_fp->getObjectState(sO_CoinSlot_1) == g_fp->getObjectEnumState(sO_CoinSlot_1, sO_Empty)
-				&& (g_vars->swallowedEgg1->_value.intValue == ANI_INV_EGGBOOT || g_vars->swallowedEgg2->_value.intValue == ANI_INV_EGGBOOT || g_vars->swallowedEgg3->_value.intValue == ANI_INV_EGGBOOT)) {
+			    && (g_vars->swallowedEgg1->_value.intValue == ANI_INV_EGGBOOT || g_vars->swallowedEgg2->_value.intValue == ANI_INV_EGGBOOT || g_vars->swallowedEgg3->_value.intValue == ANI_INV_EGGBOOT)) {
 				Scene *oldsc = g_fp->_currentScene;
 				g_fp->_currentScene = sc;
 				g_vars->scene09_grit->changeStatics2(ST_GRT9_NORM);
@@ -379,7 +379,7 @@ void sceneHandler09_checkHangerCollide() {
 
 				// Check 2 pixels to compensate cord width
 				hit = g_vars->scene09_hangers[i]->ani->isPixelHitAtPos(x1, y1)
-							&& g_vars->scene09_hangers[i]->ani->isPixelHitAtPos(x1 + 10, y1);
+				  && g_vars->scene09_hangers[i]->ani->isPixelHitAtPos(x1 + 10, y1);
 
 				if (hit) {
 					sceneHandler09_ballExplode(b);
@@ -469,45 +469,44 @@ int sceneHandler09(ExCommand *cmd) {
 		}
 		break;
 
-	case 33:
-		{
-			int res = 0;
+	case 33: {
+		int res = 0;
 
-			if (g_fp->_aniMan2) {
-				int x = g_fp->_aniMan2->_ox;
+		if (g_fp->_aniMan2) {
+			int x = g_fp->_aniMan2->_ox;
 
-				g_vars->scene09_dudeY = g_fp->_aniMan2->_oy;
+			g_vars->scene09_dudeY = g_fp->_aniMan2->_oy;
 
-				if (x < g_fp->_sceneRect.left + 200)
-					g_fp->_currentScene->_x = x - g_fp->_sceneRect.left - 300;
+			if (x < g_fp->_sceneRect.left + 200)
+				g_fp->_currentScene->_x = x - g_fp->_sceneRect.left - 300;
 
-				if (x > g_fp->_sceneRect.right - 200)
-					g_fp->_currentScene->_x = x - g_fp->_sceneRect.right + 300;
+			if (x > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = x - g_fp->_sceneRect.right + 300;
 
-				res = 1;
+			res = 1;
 
-				g_fp->sceneAutoScrolling();
-			} else {
-				if (g_fp->_aniMan->_movement && g_fp->_aniMan->_movement->_id != MV_MAN9_SHOOT)
-					g_fp->_aniMan2 = g_fp->_aniMan;
-			}
-
-			sceneHandler09_cycleHangers();
-			sceneHandler09_limitHangerPhase();
-			sceneHandler09_checkHangerCollide();
-
-			if (g_vars->scene09_interactingHanger >= 0)
-				sceneHandler09_hangerStartCycle();
-
-			g_fp->_behaviorManager->updateBehaviors();
-
-			g_fp->startSceneTrack();
-
-			return res;
+			g_fp->sceneAutoScrolling();
+		} else {
+			if (g_fp->_aniMan->_movement && g_fp->_aniMan->_movement->_id != MV_MAN9_SHOOT)
+				g_fp->_aniMan2 = g_fp->_aniMan;
 		}
 
+		sceneHandler09_cycleHangers();
+		sceneHandler09_limitHangerPhase();
+		sceneHandler09_checkHangerCollide();
+
+		if (g_vars->scene09_interactingHanger >= 0)
+			sceneHandler09_hangerStartCycle();
+
+		g_fp->_behaviorManager->updateBehaviors();
+
+		g_fp->startSceneTrack();
+
+		return res;
+	}
+
 	case 30:
-		if (g_vars->scene09_interactingHanger >= 0)  {
+		if (g_vars->scene09_interactingHanger >= 0) {
 			if (ABS(g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->phase) < 15) {
 				g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->ani->_callback2 = 0; // Really NULL
 				g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->ani->changeStatics2(ST_VSN_NORMAL);
@@ -518,69 +517,68 @@ int sceneHandler09(ExCommand *cmd) {
 
 		break;
 
-	case 29:
-		{
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y);
+	case 29: {
+		StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y);
 
-			if (ani) {
-				if (ani->_id == ANI_PLEVATEL) {
-					sceneHandler09_spitterClick();
-					break;
-				}
+		if (ani) {
+			if (ani->_id == ANI_PLEVATEL) {
+				sceneHandler09_spitterClick();
+				break;
+			}
 
-				if (ani->_id == ANI_VISUNCHIK) {
-					debugC(2, kDebugSceneLogic, "scene09: VISUNCHIK");
+			if (ani->_id == ANI_VISUNCHIK) {
+				debugC(2, kDebugSceneLogic, "scene09: VISUNCHIK");
 
-					if (g_vars->scene09_numMovingHangers > 0) {
-						int hng = 0;
+				if (g_vars->scene09_numMovingHangers > 0) {
+					int hng = 0;
 
-						while (g_vars->scene09_hangers[hng]->ani != ani) {
-							++hng;
+					while (g_vars->scene09_hangers[hng]->ani != ani) {
+						++hng;
 
-							if (hng >= g_vars->scene09_numMovingHangers)
-								break;
-						}
-
-						g_vars->scene09_interactingHanger = hng;
-						g_vars->scene09_intHangerPhase = g_vars->scene09_hangers[hng]->phase;
-						g_vars->scene09_intHangerMaxPhase = g_vars->scene09_hangers[hng]->phase;
-
-						g_vars->scene09_clickY = cmd->_y;
-
-						if (!g_vars->scene09_hangers[hng]->ani->_movement || g_vars->scene09_hangers[hng]->ani->_movement->_id != MV_VSN_CYCLE2) {
-							g_vars->scene09_hangers[hng]->ani->changeStatics2(ST_VSN_NORMAL);
-							g_vars->scene09_hangers[hng]->ani->startAnim(MV_VSN_CYCLE2, 0, -1);
-							g_vars->scene09_hangers[hng]->ani->_callback2 = scene09_visCallback;
-						}
-
-						ExCommand *ex = new ExCommand(0, 35, SND_9_018, 0, 0, 0, 1, 0, 0, 0);
-
-						ex->_z = 1;
-						ex->_excFlags |= 2;
-						ex->postMessage();
+						if (hng >= g_vars->scene09_numMovingHangers)
+							break;
 					}
 
-					break;
+					g_vars->scene09_interactingHanger = hng;
+					g_vars->scene09_intHangerPhase = g_vars->scene09_hangers[hng]->phase;
+					g_vars->scene09_intHangerMaxPhase = g_vars->scene09_hangers[hng]->phase;
+
+					g_vars->scene09_clickY = cmd->_y;
+
+					if (!g_vars->scene09_hangers[hng]->ani->_movement || g_vars->scene09_hangers[hng]->ani->_movement->_id != MV_VSN_CYCLE2) {
+						g_vars->scene09_hangers[hng]->ani->changeStatics2(ST_VSN_NORMAL);
+						g_vars->scene09_hangers[hng]->ani->startAnim(MV_VSN_CYCLE2, 0, -1);
+						g_vars->scene09_hangers[hng]->ani->_callback2 = scene09_visCallback;
+					}
+
+					ExCommand *ex = new ExCommand(0, 35, SND_9_018, 0, 0, 0, 1, 0, 0, 0);
+
+					ex->_z = 1;
+					ex->_excFlags |= 2;
+					ex->postMessage();
 				}
+
+				break;
 			}
-
-			if (g_vars->scene09_dudeIsOnLadder && g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC9_LADDER_R
-				&& !cmd->_param && !g_fp->_aniMan->_movement) {
-				handleObjectInteraction(g_fp->_aniMan, g_fp->_currentScene->getPictureObjectById(PIC_SC9_LADDER_R, 0), 0);
-			}
-
-			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
-				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
-
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
-					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1) || (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0))
-						g_fp->processArcade(cmd);
-				}
-			}
-
-			break;
 		}
+
+		if (g_vars->scene09_dudeIsOnLadder && g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC9_LADDER_R
+		    && !cmd->_param && !g_fp->_aniMan->_movement) {
+			handleObjectInteraction(g_fp->_aniMan, g_fp->_currentScene->getPictureObjectById(PIC_SC9_LADDER_R, 0), 0);
+		}
+
+		if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
+			int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
+
+			if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
+				if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1) || (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0))
+					g_fp->processArcade(cmd);
+			}
+		}
+
+		break;
+	}
 	}
 
 	return 0;

@@ -56,13 +56,14 @@ namespace LastExpress {
 #define EVENT_TICKS_BEETWEEN_SAVEGAMES 450
 #define GAME_TICKS_BEETWEEN_SAVEGAMES 2700
 
-Logic::Logic(LastExpressEngine *engine) : _engine(engine) {
-	_action   = new Action(engine);
-	_beetle   = new Beetle(engine);
+Logic::Logic(LastExpressEngine *engine)
+  : _engine(engine) {
+	_action = new Action(engine);
+	_beetle = new Beetle(engine);
 	_entities = new Entities(engine);
-	_fight    = new Fight(engine);
+	_fight = new Fight(engine);
 	_saveload = new SaveLoad(engine);
-	_state    = new State(engine);
+	_state = new State(engine);
 
 	// Flags
 	_flagActionPerformed = false;
@@ -129,15 +130,15 @@ void Logic::eventMouse(const Common::Event &ev) {
 
 	// Handle whistle case
 	if (getInventory()->getSelectedItem() == kItemWhistle
-	 && !getProgress().isEggOpen
-	 && !getEntities()->isPlayerPosition(kCarGreenSleeping, 59)
-	 && !getEntities()->isPlayerPosition(kCarGreenSleeping, 76)
-	 && !getInventory()->isPortraitHighlighted()
-	 && !getInventory()->isOpened()
-	 && !getInventory()->isEggHighlighted()
-	 && !getInventory()->isMagnifierInUse()) {
+	    && !getProgress().isEggOpen
+	    && !getEntities()->isPlayerPosition(kCarGreenSleeping, 59)
+	    && !getEntities()->isPlayerPosition(kCarGreenSleeping, 76)
+	    && !getInventory()->isPortraitHighlighted()
+	    && !getInventory()->isOpened()
+	    && !getInventory()->isEggHighlighted()
+	    && !getInventory()->isMagnifierInUse()) {
 
-		 // Update cursor
+		// Update cursor
 		_engine->getCursor()->setStyle(getInventory()->get(kItemWhistle)->cursor);
 
 		// Check if clicked
@@ -162,13 +163,13 @@ void Logic::eventMouse(const Common::Event &ev) {
 
 	// Handle match case
 	if (getInventory()->getSelectedItem() == kItemMatch
-	 && (getEntities()->isPlayerInCar(kCarGreenSleeping) || getEntities()->isPlayerInCar(kCarRedSleeping))
-	 && getProgress().jacket == kJacketGreen
-	 && !getInventory()->isPortraitHighlighted()
-	 && !getInventory()->isOpened()
-	 && !getInventory()->isEggHighlighted()
-	 && !getInventory()->isMagnifierInUse()
-	 && (getInventory()->get(kItem2)->location == kObjectLocationNone || getEntityData(kEntityPlayer)->car != kCarRedSleeping || getEntityData(kEntityPlayer)->entityPosition != kPosition_2300)) {
+	    && (getEntities()->isPlayerInCar(kCarGreenSleeping) || getEntities()->isPlayerInCar(kCarRedSleeping))
+	    && getProgress().jacket == kJacketGreen
+	    && !getInventory()->isPortraitHighlighted()
+	    && !getInventory()->isOpened()
+	    && !getInventory()->isEggHighlighted()
+	    && !getInventory()->isMagnifierInUse()
+	    && (getInventory()->get(kItem2)->location == kObjectLocationNone || getEntityData(kEntityPlayer)->car != kCarRedSleeping || getEntityData(kEntityPlayer)->entityPosition != kPosition_2300)) {
 
 		// Update cursor
 		_engine->getCursor()->setStyle(getInventory()->get(kItemMatch)->cursor);
@@ -191,10 +192,10 @@ void Logic::eventMouse(const Common::Event &ev) {
 	// Handle entity item case
 	EntityIndex entityIndex = getEntities()->canInteractWith(ev.mouse);
 	if (entityIndex
-	 && !getInventory()->isPortraitHighlighted()
-	 && !getInventory()->isOpened()
-	 && !getInventory()->isEggHighlighted()
-	 && !getInventory()->isMagnifierInUse()) {
+	    && !getInventory()->isPortraitHighlighted()
+	    && !getInventory()->isOpened()
+	    && !getInventory()->isEggHighlighted()
+	    && !getInventory()->isMagnifierInUse()) {
 
 		InventoryItem item = getEntityData(entityIndex)->inventoryItem;
 		if (getInventory()->hasItem((InventoryItem)(item & kItemToggleHigh))) {
@@ -227,8 +228,8 @@ void Logic::eventMouse(const Common::Event &ev) {
 		_engine->getCursor()->setStyle(kCursorMagnifier);
 
 		if (getInventory()->isPortraitHighlighted()
-		 || getInventory()->isOpened()
-		 || getInventory()->isEggHighlighted())
+		    || getInventory()->isOpened()
+		    || getInventory()->isEggHighlighted())
 			_engine->getCursor()->setStyle(kCursorNormal);
 
 		return;
@@ -252,10 +253,10 @@ void Logic::eventMouse(const Common::Event &ev) {
 		Scene *hotspotScene = getScenes()->get((*it)->scene);
 
 		if (!getEntities()->getPosition(hotspotScene->car, hotspotScene->position)
-		 || (*it)->cursor == kCursorTurnRight
-		 || (*it)->cursor == kCursorTurnLeft) {
-			 location = (*it)->location;
-			 hotspot = *it;
+		    || (*it)->cursor == kCursorTurnRight
+		    || (*it)->cursor == kCursorTurnLeft) {
+			location = (*it)->location;
+			hotspot = *it;
 		}
 	}
 
@@ -334,7 +335,7 @@ void Logic::eventTick(const Common::Event &) {
 		Scene *scene = getScenes()->get(getState()->scene);
 
 		if (getScenes()->checkCurrentPosition(true)
-		&& !getEntities()->getPosition(scene->car, scene->position)) {
+		    && !getEntities()->getPosition(scene->car, scene->position)) {
 
 			// Process hotspot
 			SceneHotspot *hotspot = scene->getHotspot();
@@ -449,7 +450,7 @@ void Logic::gameOver(SavegameType type, uint32 value, SceneIndex sceneIndex, boo
 void Logic::switchChapter() const {
 	getSoundQueue()->stopAll();
 
-	switch(getState()->progress.chapter) {
+	switch (getState()->progress.chapter) {
 	default:
 		break;
 
@@ -511,45 +512,45 @@ void Logic::updateCursor(bool) const { /* the cursor is always updated, even whe
 	bool interact = false;
 
 	if (getInventory()->getSelectedItem() != kItemWhistle
-	 || getProgress().isEggOpen
-	 || getEntities()->isPlayerPosition(kCarGreenSleeping, 59)
-	 || getEntities()->isPlayerPosition(kCarGreenSleeping, 76)
-	 || getInventory()->isPortraitHighlighted()
-	 || getInventory()->isOpened()
-	 || getInventory()->isEggHighlighted()
-	 || getInventory()->isMagnifierInUse()) {
+	    || getProgress().isEggOpen
+	    || getEntities()->isPlayerPosition(kCarGreenSleeping, 59)
+	    || getEntities()->isPlayerPosition(kCarGreenSleeping, 76)
+	    || getInventory()->isPortraitHighlighted()
+	    || getInventory()->isOpened()
+	    || getInventory()->isEggHighlighted()
+	    || getInventory()->isMagnifierInUse()) {
 
 		if (getInventory()->getSelectedItem() != kItemMatch
-		 || (!getEntities()->isPlayerInCar(kCarGreenSleeping) && !getEntities()->isPlayerInCar(kCarRedSleeping))
-		 || getProgress().jacket != kJacketGreen
-		 || getInventory()->isPortraitHighlighted()
-		 || getInventory()->isOpened()
-		 || getInventory()->isEggHighlighted()
-		 || getInventory()->isMagnifierInUse()
-		 || (getInventory()->get(kItem2)->location
-		  && getEntityData(kEntityPlayer)->car == kCarRedSleeping
-		  && getEntityData(kEntityPlayer)->entityPosition == kPosition_2300)) {
+		    || (!getEntities()->isPlayerInCar(kCarGreenSleeping) && !getEntities()->isPlayerInCar(kCarRedSleeping))
+		    || getProgress().jacket != kJacketGreen
+		    || getInventory()->isPortraitHighlighted()
+		    || getInventory()->isOpened()
+		    || getInventory()->isEggHighlighted()
+		    || getInventory()->isMagnifierInUse()
+		    || (getInventory()->get(kItem2)->location
+		        && getEntityData(kEntityPlayer)->car == kCarRedSleeping
+		        && getEntityData(kEntityPlayer)->entityPosition == kPosition_2300)) {
 
 			EntityIndex entity = getEntities()->canInteractWith(getCoords());
 			if (entity
-			 && !getInventory()->isPortraitHighlighted()
-			 && !getInventory()->isOpened()
-			 && !getInventory()->isEggHighlighted()
-			 && !getInventory()->isMagnifierInUse()) {
-				 if (getInventory()->hasItem((InventoryItem)(getEntityData(entity)->inventoryItem & kItemToggleHigh))) {
-					 interact = true;
-					 style = getInventory()->get((InventoryItem)(getEntityData(entity)->inventoryItem & kItemToggleHigh))->cursor;
-				 } else if ((int)getEntityData(entity)->inventoryItem == kItemInvalid) {
-					 interact = true;
-					 style = kCursorTalk2;
-				 }
+			    && !getInventory()->isPortraitHighlighted()
+			    && !getInventory()->isOpened()
+			    && !getInventory()->isEggHighlighted()
+			    && !getInventory()->isMagnifierInUse()) {
+				if (getInventory()->hasItem((InventoryItem)(getEntityData(entity)->inventoryItem & kItemToggleHigh))) {
+					interact = true;
+					style = getInventory()->get((InventoryItem)(getEntityData(entity)->inventoryItem & kItemToggleHigh))->cursor;
+				} else if ((int)getEntityData(entity)->inventoryItem == kItemInvalid) {
+					interact = true;
+					style = kCursorTalk2;
+				}
 			}
 
 			if (!interact
-			 && !getInventory()->isPortraitHighlighted()
-			 && !getInventory()->isOpened()
-			 && !getInventory()->isEggHighlighted()
-			 && !getInventory()->isMagnifierInUse()) {
+			    && !getInventory()->isPortraitHighlighted()
+			    && !getInventory()->isOpened()
+			    && !getInventory()->isEggHighlighted()
+			    && !getInventory()->isMagnifierInUse()) {
 				int location = 0;
 				SceneHotspot *hotspot = NULL;
 				Scene *scene = getScenes()->get(getState()->scene);
@@ -561,8 +562,8 @@ void Logic::updateCursor(bool) const { /* the cursor is always updated, even whe
 							Scene *hotspotScene = getScenes()->get((*i)->scene);
 
 							if (!getEntities()->getPosition(hotspotScene->car, hotspotScene->position)
-							 || (*i)->cursor == kCursorTurnRight
-							 || (*i)->cursor == kCursorTurnLeft) {
+							    || (*i)->cursor == kCursorTurnRight
+							    || (*i)->cursor == kCursorTurnLeft) {
 								hotspot = *i;
 								location = (*i)->location;
 							}
@@ -594,8 +595,8 @@ void Logic::redrawCursor() const {
 		_engine->getCursor()->setStyle(kCursorMagnifier);
 
 	if (getInventory()->isPortraitHighlighted()
-	 || getInventory()->isOpened()
-	 || getInventory()->isEggHighlighted())
+	    || getInventory()->isOpened()
+	    || getInventory()->isEggHighlighted())
 		_engine->getCursor()->setStyle(kCursorNormal);
 }
 

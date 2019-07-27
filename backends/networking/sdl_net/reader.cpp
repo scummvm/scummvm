@@ -120,13 +120,15 @@ bool Reader::readAndHandleFirstHeaders() {
 
 bool Reader::readBlockHeadersIntoStream(Common::WriteStream *stream) {
 	Common::String boundary = "\r\n\r\n";
-	if (_window == nullptr) makeWindow(boundary.size());
+	if (_window == nullptr)
+		makeWindow(boundary.size());
 
 	while (readOneByteInStream(stream, boundary)) {
 		if (!bytesLeft())
 			return false;
 	}
-	if (stream) stream->flush();
+	if (stream)
+		stream->flush();
 
 	freeWindow();
 	_state = RS_READING_CONTENT;
@@ -134,18 +136,18 @@ bool Reader::readBlockHeadersIntoStream(Common::WriteStream *stream) {
 }
 
 namespace {
-void readFromThatUntilLineEnd(const char *cstr, Common::String needle, Common::String &result) {
-	const char *position = strstr(cstr, needle.c_str());
+	void readFromThatUntilLineEnd(const char *cstr, Common::String needle, Common::String &result) {
+		const char *position = strstr(cstr, needle.c_str());
 
-	if (position) {
-		char c;
-		for (const char *i = position + needle.size(); c = *i, c != 0; ++i) {
-			if (c == '\n' || c == '\r')
-				break;
-			result += c;
+		if (position) {
+			char c;
+			for (const char *i = position + needle.size(); c = *i, c != 0; ++i) {
+				if (c == '\n' || c == '\r')
+					break;
+				result += c;
+			}
 		}
 	}
-}
 }
 
 void Reader::handleFirstHeaders(Common::MemoryReadWriteStream *headersStream) {
@@ -213,7 +215,8 @@ void Reader::parseFirstLine(const Common::String &headersToParse) {
 		}
 	}
 
-	if (bad) _isBadRequest = true;
+	if (bad)
+		_isBadRequest = true;
 }
 
 void Reader::parsePathQueryAndAnchor(Common::String pathToParse) {
@@ -317,17 +320,17 @@ void Reader::freeWindow() {
 }
 
 namespace {
-bool windowEqualsString(const byte *window, uint32 windowSize, const Common::String &boundary) {
-	if (boundary.size() != windowSize)
-		return false;
-
-	for (uint32 i = 0; i < windowSize; ++i) {
-		if (window[i] != boundary[i])
+	bool windowEqualsString(const byte *window, uint32 windowSize, const Common::String &boundary) {
+		if (boundary.size() != windowSize)
 			return false;
-	}
 
-	return true;
-}
+		for (uint32 i = 0; i < windowSize; ++i) {
+			if (window[i] != boundary[i])
+				return false;
+		}
+
+		return true;
+	}
 }
 
 bool Reader::readOneByteInStream(Common::WriteStream *stream, const Common::String &boundary) {

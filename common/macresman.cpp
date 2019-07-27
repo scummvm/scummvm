@@ -20,19 +20,19 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "common/macresman.h"
+#include "common/archive.h"
 #include "common/debug.h"
-#include "common/util.h"
 #include "common/file.h"
 #include "common/fs.h"
-#include "common/macresman.h"
 #include "common/md5.h"
+#include "common/scummsys.h"
 #include "common/substream.h"
 #include "common/textconsole.h"
-#include "common/archive.h"
+#include "common/util.h"
 
 #ifdef MACOSX
-#include "common/config-manager.h"
+#	include "common/config-manager.h"
 #endif
 
 namespace Common {
@@ -67,9 +67,12 @@ void MacResManager::close() {
 		delete[] _resLists[i];
 	}
 
-	delete[] _resLists; _resLists = nullptr;
-	delete[] _resTypes; _resTypes = nullptr;
-	delete _stream; _stream = nullptr;
+	delete[] _resLists;
+	_resLists = nullptr;
+	delete[] _resTypes;
+	_resTypes = nullptr;
+	delete _stream;
+	_stream = nullptr;
 	_resMap.numTypes = 0;
 }
 
@@ -97,7 +100,6 @@ String MacResManager::computeResForkMD5AsString(uint32 length) const {
 	uint32 dataOffset = _stream->readUint32BE() + _resForkOffset;
 	/* uint32 mapOffset = */ _stream->readUint32BE();
 	uint32 dataLength = _stream->readUint32BE();
-
 
 	SeekableSubReadStream resForkStream(_stream, dataOffset, dataOffset + dataLength);
 	return computeStreamMD5AsString(resForkStream, MIN<uint32>(length, _resForkSize));
@@ -363,8 +365,7 @@ bool MacResManager::isMacBinary(SeekableReadStream &stream) {
 
 	stream.read(infoHeader, MBI_INFOHDR);
 
-	if (infoHeader[MBI_ZERO1] == 0 && infoHeader[MBI_ZERO2] == 0 &&
-		infoHeader[MBI_ZERO3] == 0 && infoHeader[MBI_NAMELEN] <= MAXNAMELEN) {
+	if (infoHeader[MBI_ZERO1] == 0 && infoHeader[MBI_ZERO2] == 0 && infoHeader[MBI_ZERO3] == 0 && infoHeader[MBI_NAMELEN] <= MAXNAMELEN) {
 
 		// Pull out fork lengths
 		uint32 dataSize = READ_BE_UINT32(infoHeader + MBI_DFLEN);
@@ -392,9 +393,9 @@ bool MacResManager::isRawFork(SeekableReadStream &stream) {
 	const uint32 dataLength = stream.readUint32BE();
 	const uint32 mapLength = stream.readUint32BE();
 
-	return    !stream.eos() && !stream.err()
-	       && dataOffset < (uint32)stream.size() && dataOffset + dataLength <= (uint32)stream.size()
-	       && mapOffset < (uint32)stream.size() && mapOffset + mapLength <= (uint32)stream.size();
+	return !stream.eos() && !stream.err()
+	  && dataOffset < (uint32)stream.size() && dataOffset + dataLength <= (uint32)stream.size()
+	  && mapOffset < (uint32)stream.size() && mapOffset + mapLength <= (uint32)stream.size();
 }
 
 bool MacResManager::loadFromMacBinary(SeekableReadStream &stream) {
@@ -402,8 +403,7 @@ bool MacResManager::loadFromMacBinary(SeekableReadStream &stream) {
 	stream.read(infoHeader, MBI_INFOHDR);
 
 	// Maybe we have MacBinary?
-	if (infoHeader[MBI_ZERO1] == 0 && infoHeader[MBI_ZERO2] == 0 &&
-		infoHeader[MBI_ZERO3] == 0 && infoHeader[MBI_NAMELEN] <= MAXNAMELEN) {
+	if (infoHeader[MBI_ZERO1] == 0 && infoHeader[MBI_ZERO2] == 0 && infoHeader[MBI_ZERO3] == 0 && infoHeader[MBI_NAMELEN] <= MAXNAMELEN) {
 
 		// Pull out fork lengths
 		uint32 dataSize = READ_BE_UINT32(infoHeader + MBI_DFLEN);
@@ -445,15 +445,14 @@ bool MacResManager::load(SeekableReadStream &stream) {
 	_mapLength = stream.readUint32BE();
 
 	// do sanity check
-	if (stream.eos() || _dataOffset >= (uint32)stream.size() || _mapOffset >= (uint32)stream.size() ||
-			_dataLength + _mapLength  > (uint32)stream.size()) {
+	if (stream.eos() || _dataOffset >= (uint32)stream.size() || _mapOffset >= (uint32)stream.size() || _dataLength + _mapLength > (uint32)stream.size()) {
 		_resForkOffset = -1;
 		_mode = kResForkNone;
 		return false;
 	}
 
 	debug(7, "got header: data %d [%d] map %d [%d]",
-		_dataOffset, _dataLength, _mapOffset, _mapLength);
+	      _dataOffset, _dataLength, _mapOffset, _mapLength);
 
 	_stream = &stream;
 
@@ -624,7 +623,7 @@ void MacResManager::readMap() {
 		_resTypes[i].offset = _stream->readUint16BE();
 		_resTypes[i].items++;
 
-		debug(8, "resType: <%s> items: %d offset: %d (0x%x)", tag2str(_resTypes[i].id), _resTypes[i].items,  _resTypes[i].offset, _resTypes[i].offset);
+		debug(8, "resType: <%s> items: %d offset: %d (0x%x)", tag2str(_resTypes[i].id), _resTypes[i].items, _resTypes[i].offset, _resTypes[i].offset);
 	}
 
 	_resLists = new ResPtr[_resMap.numTypes];

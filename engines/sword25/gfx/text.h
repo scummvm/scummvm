@@ -32,9 +32,9 @@
 #ifndef SWORD25_TEXT_H
 #define SWORD25_TEXT_H
 
-#include "sword25/kernel/common.h"
 #include "common/rect.h"
 #include "sword25/gfx/renderobject.h"
+#include "sword25/kernel/common.h"
 
 namespace Sword25 {
 
@@ -132,8 +132,8 @@ public:
 		return _autoWrapThreshold;
 	}
 
-	virtual bool  persist(OutputPersistenceBlock &writer);
-	virtual bool  unpersist(InputPersistenceBlock &reader);
+	virtual bool persist(OutputPersistenceBlock &writer);
+	virtual bool unpersist(InputPersistenceBlock &reader);
 
 protected:
 	virtual bool doRender(RectangleList *updateRects);

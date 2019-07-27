@@ -54,6 +54,7 @@ public:
 	void stop();
 	void setVolume(int16 volume);
 	void setPan(int16 pan);
+
 protected:
 	NeverhoodEngine *_vm;
 	int16 _soundIndex;
@@ -69,6 +70,7 @@ public:
 	void play(int16 fadeVolumeStep);
 	void stop(int16 fadeVolumeStep);
 	void setVolume(int16 volume);
+
 protected:
 	NeverhoodEngine *_vm;
 	int16 _musicIndex;
@@ -84,6 +86,7 @@ public:
 	void update();
 	uint32 getGroupNameHash() const { return _groupNameHash; }
 	uint32 getFileHash() const { return _fileHash; }
+
 protected:
 	NeverhoodEngine *_vm;
 	uint32 _groupNameHash;
@@ -98,11 +101,11 @@ protected:
 class SoundItem {
 public:
 	SoundItem(NeverhoodEngine *vm, uint32 groupNameHash, uint32 soundFileHash,
-		bool playOnceAfterRandomCountdown, int16 minCountdown, int16 maxCountdown,
-		bool playOnceAfterCountdown, int16 initialCountdown, bool playLooping, int16 currCountdown);
+	          bool playOnceAfterRandomCountdown, int16 minCountdown, int16 maxCountdown,
+	          bool playOnceAfterCountdown, int16 initialCountdown, bool playLooping, int16 currCountdown);
 	~SoundItem();
 	void setSoundParams(bool playOnceAfterRandomCountdown, int16 minCountdown, int16 maxCountdown,
-		int16 firstMinCountdown, int16 firstMaxCountdown);
+	                    int16 firstMinCountdown, int16 firstMaxCountdown);
 	void playSoundLooping();
 	void stopSound();
 	void setVolume(int volume);
@@ -111,6 +114,7 @@ public:
 	uint32 getGroupNameHash() const { return _groupNameHash; }
 	uint32 getFileHash() const { return _fileHash; }
 	int16 getCurrCountdown() const { return _currCountdown; }
+
 protected:
 	NeverhoodEngine *_vm;
 	uint32 _groupNameHash;
@@ -144,9 +148,9 @@ public:
 	void addSoundList(uint32 groupNameHash, const uint32 *soundFileHashList);
 	void deleteSound(uint32 soundFileHash);
 	void setSoundParams(uint32 soundFileHash, bool playOnceAfterRandomCountdown,
-		int16 minCountdown, int16 maxCountdown, int16 firstMinCountdown, int16 firstMaxCountdown);
+	                    int16 minCountdown, int16 maxCountdown, int16 firstMinCountdown, int16 firstMaxCountdown);
 	void setSoundListParams(const uint32 *soundFileHashList, bool playOnceAfterRandomCountdown,
-		int16 minCountdown, int16 maxCountdown, int16 firstMinCountdown, int16 firstMaxCountdown);
+	                        int16 minCountdown, int16 maxCountdown, int16 firstMinCountdown, int16 firstMaxCountdown);
 	void playSoundLooping(uint32 soundFileHash);
 	void stopSound(uint32 soundFileHash);
 	void setSoundVolume(uint32 soundFileHash, int volume);
@@ -173,15 +177,14 @@ protected:
 	int16 _initialCountdown3;
 	bool _playOnceAfterCountdown3;
 
-	Common::Array<MusicItem*> _musicItems;
-	Common::Array<SoundItem*> _soundItems;
+	Common::Array<MusicItem *> _musicItems;
+	Common::Array<SoundItem *> _soundItems;
 
 	MusicItem *getMusicItemByHash(uint32 musicFileHash);
 	SoundItem *getSoundItemByHash(uint32 soundFileHash);
 	int16 addMusicItem(MusicItem *musicItem);
 	int16 addSoundItem(SoundItem *soundItem);
 	void deleteSoundByIndex(int index);
-
 };
 
 class NeverhoodAudioStream : public Audio::AudioStream {
@@ -189,9 +192,10 @@ public:
 	NeverhoodAudioStream(int rate, byte shiftValue, bool isLooping, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream);
 	~NeverhoodAudioStream();
 	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const  { return _isStereo; }
+	bool isStereo() const { return _isStereo; }
 	bool endOfData() const { return _endOfData; }
 	int getRate() const { return _rate; }
+
 private:
 	const int _rate;
 	const bool _isLooping;
@@ -221,6 +225,7 @@ public:
 	void playSound(bool looping);
 	void stopSound();
 	bool isPlaying();
+
 protected:
 	NeverhoodEngine *_vm;
 	uint32 _fileHash;
@@ -247,6 +252,7 @@ public:
 	bool canRestart() const { return _canRestart; }
 	bool isTerminated() const { return _terminate; }
 	uint32 getFileHash() const { return _fileHash; }
+
 protected:
 	NeverhoodEngine *_vm;
 	uint32 _fileHash;
@@ -283,11 +289,10 @@ public:
 protected:
 	NeverhoodEngine *_vm;
 
-	Common::Array<AudioResourceManMusicItem*> _musicItems;
-	Common::Array<AudioResourceManSoundItem*> _soundItems;
+	Common::Array<AudioResourceManMusicItem *> _musicItems;
+	Common::Array<AudioResourceManSoundItem *> _soundItems;
 
 	int16 addSoundItem(AudioResourceManSoundItem *soundItem);
-
 };
 
 } // End of namespace Neverhood

@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptHanoi::AIScriptHanoi(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptHanoi::AIScriptHanoi(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 	_var1 = 0;
 	_flag1 = 0;
 	_var3 = 0;
@@ -51,23 +52,20 @@ bool AIScriptHanoi::Update() {
 	}
 
 	if (Global_Variable_Query(kVariableChapter) == 3
-	 && Actor_Query_Goal_Number(kActorHanoi) < kGoalHanoiDefault
-	) {
+	    && Actor_Query_Goal_Number(kActorHanoi) < kGoalHanoiDefault) {
 		Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiNR03GoToDefaultPosition);
 	}
 
 	if (Player_Query_Current_Scene() != kSceneNR03
-	 && Actor_Query_Goal_Number(kActorHanoi) == kGoalHanoiNR08Left
-	) {
+	    && Actor_Query_Goal_Number(kActorHanoi) == kGoalHanoiNR08Left) {
 		Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiNR03GoToDefaultPosition);
 	}
 
 	if (Player_Query_Current_Scene() == kSceneNR03
-	 && Actor_Query_Goal_Number(kActorHanoi) != kGoalHanoiNR03StartGuarding
-	 && Actor_Query_Goal_Number(kActorHanoi) != kGoalHanoiNR08WatchShow
-	 && Actor_Query_Goal_Number(kActorHanoi) != kGoalHanoiNR08Leave
-	 && Actor_Query_Goal_Number(kActorHanoi) != kGoalHanoiNR08Left
-	) {
+	    && Actor_Query_Goal_Number(kActorHanoi) != kGoalHanoiNR03StartGuarding
+	    && Actor_Query_Goal_Number(kActorHanoi) != kGoalHanoiNR08WatchShow
+	    && Actor_Query_Goal_Number(kActorHanoi) != kGoalHanoiNR08Leave
+	    && Actor_Query_Goal_Number(kActorHanoi) != kGoalHanoiNR08Left) {
 		// McCoy close to table swivel
 		if (Actor_Query_Inch_Distance_From_Waypoint(kActorMcCoy, 364) < 420) {
 			if (Actor_Query_Goal_Number(kActorHanoi) == kGoalHanoiNR03GoToDefaultPosition) {
@@ -88,9 +86,8 @@ bool AIScriptHanoi::Update() {
 
 		// McCoy close to dancer
 		if (Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorHysteriaPatron1) < 120
-		 && Actor_Query_Which_Set_In(kActorHanoi) == kSetNR03
-		 && Actor_Query_Goal_Number(kActorHanoi) != kGoalHanoiNR03GoToDancer
-		) {
+		    && Actor_Query_Which_Set_In(kActorHanoi) == kSetNR03
+		    && Actor_Query_Goal_Number(kActorHanoi) != kGoalHanoiNR03GoToDancer) {
 			Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiNR03GoToDancer);
 		}
 	}
@@ -156,8 +153,7 @@ void AIScriptHanoi::ReceivedClue(int clueId, int fromActorId) {
 
 void AIScriptHanoi::ClickedByPlayer() {
 	if (Actor_Query_Goal_Number(kActorHanoi) == kGoalHanoiNR08WatchShow
-	 || Actor_Query_Goal_Number(kActorHanoi) == kGoalHanoiNR08Leave
-	) {
+	    || Actor_Query_Goal_Number(kActorHanoi) == kGoalHanoiNR08Leave) {
 		Actor_Face_Actor(kActorMcCoy, kActorHanoi, true);
 		Actor_Says(kActorMcCoy, 8915, 11);
 
@@ -181,9 +177,8 @@ void AIScriptHanoi::OtherAgentExitedThisScene(int otherActorId) {
 
 void AIScriptHanoi::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
 	if (Player_Query_Current_Scene() == kSceneNR03
-	 && otherActorId == kActorMcCoy
-	 && combatMode
-	) {
+	    && otherActorId == kActorMcCoy
+	    && combatMode) {
 		Player_Set_Combat_Mode(false);
 		Player_Loses_Control();
 		Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiThrowOutMcCoy);
@@ -228,8 +223,7 @@ bool AIScriptHanoi::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalHanoiNR07TalkToMcCoy:
 		if (Actor_Query_Which_Set_In(kActorMcCoy) == kSetNR07
-		 && Actor_Query_In_Set(kActorDektora, kSetNR07)
-		) {
+		    && Actor_Query_In_Set(kActorDektora, kSetNR07)) {
 			Player_Loses_Control();
 			Actor_Put_In_Set(kActorHanoi, kSetNR07);
 			Actor_Set_At_XYZ(kActorHanoi, -102.0f, -73.5f, -233.0f, 0);
@@ -374,16 +368,14 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 			}
 
 			if (_animationFrame == 5
-			 || _animationFrame == 15
-			 || _animationFrame == 11
-			 || _animationFrame == 0
-			) {
+			    || _animationFrame == 15
+			    || _animationFrame == 11
+			    || _animationFrame == 0) {
 				_var3 = Random_Query(5, 12);
 			}
 
 			if (_animationFrame >= 10
-			 && _animationFrame <= 13
-			) {
+			    && _animationFrame <= 13) {
 				_var3 = Random_Query(0, 1);
 			}
 
@@ -405,8 +397,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 			}
 
 			if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(*animation) - 1
-			 || _animationFrame <= 0
-			) {
+			    || _animationFrame <= 0) {
 				_animationFrame = 0;
 				_animationState = _animationStateNext;
 				*animation = _animationNext;
@@ -467,7 +458,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 6:
-		*animation = 345;  // Sadik is used in this animation, but he is well hidden
+		*animation = 345; // Sadik is used in this animation, but he is well hidden
 		_animationFrame++;
 		if (_animationFrame > 26) {
 			Actor_Change_Animation_Mode(kActorHanoi, kAnimationModeIdle);
@@ -562,7 +553,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 	case 14:
 		*animation = 650;
 		if (_animationFrame == 0
-		 && _var1 // this is never set so it's always 0
+		    && _var1 // this is never set so it's always 0
 		) {
 			_animationState = 0;
 		} else {
@@ -645,8 +636,7 @@ bool AIScriptHanoi::ChangeAnimationMode(int mode) {
 	switch (mode) {
 	case kAnimationModeIdle:
 		if (_animationState == 2
-		 || _animationState == 3
-		) {
+		    || _animationState == 3) {
 			_animationState = 3;
 		} else {
 			_animationState = 0;
@@ -724,8 +714,7 @@ bool AIScriptHanoi::ChangeAnimationMode(int mode) {
 
 	case 23:
 		if (_animationState != 3
-		 && _animationState != 4
-		) {
+		    && _animationState != 4) {
 			Actor_Set_Invisible(kActorMcCoy, true);
 			_animationState = 2;
 			_animationFrame = 0;
@@ -755,17 +744,17 @@ bool AIScriptHanoi::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptHanoi::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptHanoi::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptHanoi::ReachedMovementTrackWaypoint(int waypointId) {

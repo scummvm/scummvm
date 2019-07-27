@@ -23,9 +23,9 @@
 #ifndef VIDEO_FLICDECODER_H
 #define VIDEO_FLICDECODER_H
 
-#include "video/video_decoder.h"
 #include "common/list.h"
 #include "common/rect.h"
+#include "video/video_decoder.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -77,7 +77,10 @@ protected:
 		uint32 getNextFrameStartTime() const { return _nextFrameStartTime; }
 		virtual const Graphics::Surface *decodeNextFrame();
 		virtual void handleFrame();
-		const byte *getPalette() const { _dirtyPalette = false; return _palette; }
+		const byte *getPalette() const {
+			_dirtyPalette = false;
+			return _palette;
+		}
 		bool hasDirtyPalette() const { return _dirtyPalette; }
 
 		const Common::List<Common::Rect> *getDirtyRects() const { return &_dirtyRects; }

@@ -25,33 +25,33 @@
 
 #ifdef WIN32
 
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <shellapi.h>
-#if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
+#	define WIN32_LEAN_AND_MEAN
+#	include <shellapi.h>
+#	include <windows.h>
+#	if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
 // required for SHGFP_TYPE_CURRENT in shlobj.h
-#define _WIN32_IE 0x500
-#endif
-#include <shlobj.h>
+#		define _WIN32_IE 0x500
+#	endif
+#	include <shlobj.h>
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "common/error.h"
-#include "common/textconsole.h"
+#	include "common/config-manager.h"
+#	include "common/error.h"
+#	include "common/scummsys.h"
+#	include "common/textconsole.h"
 
-#include "backends/audiocd/win32/win32-audiocd.h"
-#include "backends/platform/sdl/win32/win32.h"
-#include "backends/platform/sdl/win32/win32-window.h"
-#include "backends/platform/sdl/win32/win32_wrapper.h"
-#include "backends/saves/windows/windows-saves.h"
-#include "backends/fs/windows/windows-fs-factory.h"
-#include "backends/taskbar/win32/win32-taskbar.h"
-#include "backends/updates/win32/win32-updates.h"
-#include "backends/dialogs/win32/win32-dialogs.h"
+#	include "backends/audiocd/win32/win32-audiocd.h"
+#	include "backends/dialogs/win32/win32-dialogs.h"
+#	include "backends/fs/windows/windows-fs-factory.h"
+#	include "backends/platform/sdl/win32/win32-window.h"
+#	include "backends/platform/sdl/win32/win32.h"
+#	include "backends/platform/sdl/win32/win32_wrapper.h"
+#	include "backends/saves/windows/windows-saves.h"
+#	include "backends/taskbar/win32/win32-taskbar.h"
+#	include "backends/updates/win32/win32-updates.h"
 
-#include "common/memstream.h"
+#	include "common/memstream.h"
 
-#define DEFAULT_CONFIG_FILE "scummvm.ini"
+#	define DEFAULT_CONFIG_FILE "scummvm.ini"
 
 void OSystem_Win32::init() {
 	// Initialize File System Factory
@@ -60,15 +60,15 @@ void OSystem_Win32::init() {
 	// Create Win32 specific window
 	_window = new SdlWindow_Win32();
 
-#if defined(USE_TASKBAR)
+#	if defined(USE_TASKBAR)
 	// Initialize taskbar manager
-	_taskbarManager = new Win32TaskbarManager((SdlWindow_Win32*)_window);
-#endif
+	_taskbarManager = new Win32TaskbarManager((SdlWindow_Win32 *)_window);
+#	endif
 
-#if defined(USE_SYSDIALOGS)
+#	if defined(USE_SYSDIALOGS)
 	// Initialize dialog manager
-	_dialogManager = new Win32DialogManager((SdlWindow_Win32*)_window);
-#endif
+	_dialogManager = new Win32DialogManager((SdlWindow_Win32 *)_window);
+#	endif
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();
@@ -82,7 +82,7 @@ WORD GetCurrentSubsystem() {
 	// Conveniently, since it's for our own process, it's always the correct bitness.
 	// IMAGE_NT_HEADERS has to be found using a byte offset from the EXEHeader,
 	// which requires the ugly cast.
-	PIMAGE_NT_HEADERS PEHeader = (PIMAGE_NT_HEADERS)(((char*)EXEHeader) + EXEHeader->e_lfanew);
+	PIMAGE_NT_HEADERS PEHeader = (PIMAGE_NT_HEADERS)(((char *)EXEHeader) + EXEHeader->e_lfanew);
 	assert(PEHeader->Signature == IMAGE_NT_SIGNATURE);
 	return PEHeader->OptionalHeader.Subsystem;
 }
@@ -95,9 +95,9 @@ void OSystem_Win32::initBackend() {
 	// Enable or disable the window console window
 	if (ConfMan.getBool("console")) {
 		if (AllocConsole()) {
-			freopen("CONIN$","r",stdin);
-			freopen("CONOUT$","w",stdout);
-			freopen("CONOUT$","w",stderr);
+			freopen("CONIN$", "r", stdin);
+			freopen("CONOUT$", "w", stdout);
+			freopen("CONOUT$", "w", stderr);
 		}
 		SetConsoleTitle("ScummVM Status Window");
 	} else {
@@ -108,24 +108,23 @@ void OSystem_Win32::initBackend() {
 	if (_savefileManager == 0)
 		_savefileManager = new WindowsSaveFileManager();
 
-#if defined(USE_SPARKLE)
+#	if defined(USE_SPARKLE)
 	// Initialize updates manager
 	_updateManager = new Win32UpdateManager();
-#endif
+#	endif
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::initBackend();
 }
 
-
 bool OSystem_Win32::hasFeature(Feature f) {
 	if (f == kFeatureDisplayLogFile || f == kFeatureOpenUrl)
 		return true;
 
-#ifdef USE_SYSDIALOGS
+#	ifdef USE_SYSDIALOGS
 	if (f == kFeatureSystemBrowserDialog)
 		return true;
-#endif
+#	endif
 
 	return OSystem_SDL::hasFeature(f);
 }
@@ -147,7 +146,7 @@ bool OSystem_Win32::displayLogFile() {
 	memset(&startupInfo, 0, sizeof(startupInfo));
 	startupInfo.cb = sizeof(startupInfo);
 
-	char cmdLine[MAX_PATH * 2];  // CreateProcess may change the contents of cmdLine
+	char cmdLine[MAX_PATH * 2]; // CreateProcess may change the contents of cmdLine
 	sprintf(cmdLine, "rundll32 shell32.dll,OpenAs_RunDLL %s", _logFilePath.c_str());
 	BOOL result = CreateProcess(NULL,
 	                            cmdLine,
@@ -169,10 +168,10 @@ bool OSystem_Win32::displayLogFile() {
 }
 
 bool OSystem_Win32::openUrl(const Common::String &url) {
-	HINSTANCE result = ShellExecute(getHwnd(), NULL, /*(wchar_t*)nativeFilePath.utf16()*/url.c_str(), NULL, NULL, SW_SHOWNORMAL);
+	HINSTANCE result = ShellExecute(getHwnd(), NULL, /*(wchar_t*)nativeFilePath.utf16()*/ url.c_str(), NULL, NULL, SW_SHOWNORMAL);
 	// ShellExecute returns a value greater than 32 if successful
 	if ((intptr_t)result <= 32) {
-		warning("ShellExecute failed: error = %p", (void*)result);
+		warning("ShellExecute failed: error = %p", (void *)result);
 		return false;
 	}
 	return true;
@@ -181,28 +180,27 @@ bool OSystem_Win32::openUrl(const Common::String &url) {
 void OSystem_Win32::logMessage(LogMessageType::Type type, const char *message) {
 	OSystem_SDL::logMessage(type, message);
 
-#if defined( USE_WINDBG )
+#	if defined(USE_WINDBG)
 	OutputDebugString(message);
-#endif
+#	endif
 }
 
 Common::String OSystem_Win32::getSystemLanguage() const {
-#if defined(USE_DETECTLANG) && defined(USE_TRANSLATION)
+#	if defined(USE_DETECTLANG) && defined(USE_TRANSLATION)
 	// We can not use "setlocale" (at least not for MSVC builds), since it
 	// will return locales like: "English_USA.1252", thus we need a special
 	// way to determine the locale string for Win32.
 	char langName[9];
 	char ctryName[9];
 
-	if (GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SISO639LANGNAME, langName, sizeof(langName)) != 0 &&
-		GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SISO3166CTRYNAME, ctryName, sizeof(ctryName)) != 0) {
+	if (GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SISO639LANGNAME, langName, sizeof(langName)) != 0 && GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SISO3166CTRYNAME, ctryName, sizeof(ctryName)) != 0) {
 		Common::String localeName = langName;
 		localeName += "_";
 		localeName += ctryName;
 
 		return localeName;
 	}
-#endif // USE_DETECTLANG
+#	endif // USE_DETECTLANG
 	// Falback to SDL implementation
 	return OSystem_SDL::getSystemLanguage();
 }
@@ -296,7 +294,7 @@ Common::WriteStream *OSystem_Win32::createLogFile() {
 		Common::FSNode file(logFile);
 		Common::WriteStream *stream = file.createWriteStream();
 		if (stream)
-			_logFilePath= logFile;
+			_logFilePath = logFile;
 
 		return stream;
 	} else {
@@ -309,6 +307,7 @@ namespace {
 
 class Win32ResourceArchive : public Common::Archive {
 	friend BOOL CALLBACK EnumResNameProc(HMODULE hModule, LPCTSTR lpszType, LPTSTR lpszName, LONG_PTR lParam);
+
 public:
 	Win32ResourceArchive();
 
@@ -316,6 +315,7 @@ public:
 	virtual int listMembers(Common::ArchiveMemberList &list) const;
 	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
 	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+
 private:
 	typedef Common::List<Common::String> FilenameList;
 

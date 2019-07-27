@@ -26,11 +26,14 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPETSentinal, CGameObject)
-	ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(EnterViewMsg)
 END_MESSAGE_MAP()
 
-CPETSentinal::CPETSentinal() : CGameObject(), _elevatorNum(0),
-		_wellEntry(0), _resetHighlight(0) {
+CPETSentinal::CPETSentinal()
+  : CGameObject()
+  , _elevatorNum(0)
+  , _wellEntry(0)
+  , _resetHighlight(0) {
 }
 
 void CPETSentinal::save(SimpleFile *file, int indent) {

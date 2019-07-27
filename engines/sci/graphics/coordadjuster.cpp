@@ -22,18 +22,18 @@
 
 #include "common/util.h"
 
-#include "sci/sci.h"
 #include "sci/engine/kernel.h"
-#include "sci/engine/state.h"
 #include "sci/engine/selector.h"
+#include "sci/engine/state.h"
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/screen.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
 GfxCoordAdjuster16::GfxCoordAdjuster16(GfxPorts *ports)
-	: _ports(ports) {
+  : _ports(ports) {
 }
 
 GfxCoordAdjuster16::~GfxCoordAdjuster16() {

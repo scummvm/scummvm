@@ -24,12 +24,12 @@
 #define BACKENDS_ABSTRACT_FS_H
 
 #include "common/array.h"
-#include "common/str.h"
 #include "common/fs.h"
+#include "common/str.h"
 
 class AbstractFSNode;
 
-typedef Common::Array<AbstractFSNode *>	AbstractFSList;
+typedef Common::Array<AbstractFSNode *> AbstractFSList;
 
 /**
  * Abstract file system node. Private subclasses implement the actual
@@ -173,7 +173,6 @@ public:
 	 */
 	virtual bool isWritable() const = 0;
 
-
 	/**
 	 * Creates a SeekableReadStream instance corresponding to the file
 	 * referred by this node. This assumes that the node actually refers
@@ -201,7 +200,5 @@ public:
 	*/
 	virtual bool create(bool isDirectoryFlag) = 0;
 };
-
-
 
 #endif //BACKENDS_ABSTRACT_FS_H

@@ -136,7 +136,7 @@ void ManholeEgaSoundDecompressor::update3() {
 void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCount, SoundEnergyArray *soundEnergyArray, SoundDecoderData *soundDecoderData) {
 
 	int16 prevSample, workSample;
-	byte* soundBuffer;
+	byte *soundBuffer;
 	byte deltaSoundBuffer[1024];
 	int16 soundBuffer2[16];
 	byte deltaType, type;
@@ -149,9 +149,9 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 	SoundEnergyItem soundEnergyItem;
 
 	const int modeValues[3][4] = {
-		{ 2, 8, 0x01, 1},
-		{ 4, 4, 0x03, 2},
-		{16, 2, 0x0F, 4}
+		{ 2, 8, 0x01, 1 },
+		{ 4, 4, 0x03, 2 },
+		{ 16, 2, 0x0F, 4 }
 	};
 
 	soundEnergyItem.position = 0;
@@ -240,7 +240,6 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 		default:
 			delete[] soundBuffer;
 			return;
-
 		}
 
 		if (deltaType > 0) {

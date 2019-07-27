@@ -52,7 +52,6 @@ private:
 
 class Music : public MusicPlayer {
 public:
-
 	Music(ArchiveReader *arc);
 	~Music() {}
 

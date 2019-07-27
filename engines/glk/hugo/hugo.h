@@ -34,278 +34,280 @@
 namespace Glk {
 namespace Hugo {
 
-/**
+	/**
  * Hugo game interpreter
  */
-class Hugo : public GlkAPI, public HTokens, public StringFunctions {
-private:
-	int _savegameSlot;
-	winid_t mainwin, currentwin;
-	winid_t secondwin, auxwin;
-	bool runtime_warnings;
-	int dbnest;
+	class Hugo : public GlkAPI, public HTokens, public StringFunctions {
+	private:
+		int _savegameSlot;
+		winid_t mainwin, currentwin;
+		winid_t secondwin, auxwin;
+		bool runtime_warnings;
+		int dbnest;
 
-	/**
+		/**
 	 * address_scale refers to the factor by which addresses are multiplied to
 	 * get the "real" address.  In this way, a 16-bit integer can reference
 	 * 64K * 16 = 1024K of memory.
 	 */
-	int address_scale;
+		int address_scale;
 
-	// heexpr
-	int eval[MAX_EVAL_ELEMENTS];		///< expression components
-	int evalcount;						///< # of expr. components
-	int var[MAXLOCALS + MAXGLOBALS];	///< variables
-	int incdec;							///< value is being incremented/dec.
-	char getaddress;					///< true when finding &routine
-	char inexpr;						///< true when in expression
-	char inobj;							///< true when in object compound
-	int last_precedence;
+		// heexpr
+		int eval[MAX_EVAL_ELEMENTS]; ///< expression components
+		int evalcount; ///< # of expr. components
+		int var[MAXLOCALS + MAXGLOBALS]; ///< variables
+		int incdec; ///< value is being incremented/dec.
+		char getaddress; ///< true when finding &routine
+		char inexpr; ///< true when in expression
+		char inobj; ///< true when in object compound
+		int last_precedence;
 
-	// hemedia
-	schanid_t mchannel;
-	schanid_t schannel;
-	long resids[2][MAXRES];
-	int numres[2];
+		// hemedia
+		schanid_t mchannel;
+		schanid_t schannel;
+		long resids[2][MAXRES];
+		int numres[2];
 
-	// hemisc
-	char gamefile[255];
-	int game_version;
-	int object_size;
-	Common::SeekableReadStream *game;
-	HUGO_FILE script;
-	HUGO_FILE playback;
-	HUGO_FILE record;
-	HUGO_FILE io; char ioblock; char ioerror;
+		// hemisc
+		char gamefile[255];
+		int game_version;
+		int object_size;
+		Common::SeekableReadStream *game;
+		HUGO_FILE script;
+		HUGO_FILE playback;
+		HUGO_FILE record;
+		HUGO_FILE io;
+		char ioblock;
+		char ioerror;
 
-	char id[3];
-	char serial[9];
-	unsigned int codestart;
-	unsigned int objtable;
-	unsigned int eventtable;
-	unsigned int proptable;
-	unsigned int arraytable;
-	unsigned int dicttable;
-	unsigned int syntable;
-	unsigned int initaddr;
-	unsigned int mainaddr;
-	unsigned int parseaddr;
-	unsigned int parseerroraddr;
-	unsigned int findobjectaddr;
-	unsigned int endgameaddr;
-	unsigned int speaktoaddr;
-	unsigned int performaddr;
-	int objects;
-	int events;
-	int dictcount;
-	int syncount;
-	char context_command[MAX_CONTEXT_COMMANDS][64];
-	int context_commands;
-	unsigned char *mem;
-	bool loaded_in_memory;
-	unsigned int defseg;
-	unsigned int gameseg;
-	long codeptr;
-	long codeend;
-	char pbuffer[MAXBUFFER * 2 + 1];
-	int currentpos;
-	int currentline;
-	int full;
-	signed char def_fcolor, def_bgcolor, def_slfcolor, def_slbgcolor;
-	signed char fcolor, bgcolor, icolor, default_bgcolor;
-	int currentfont;
-	char capital;
-	unsigned int textto;
-	int SCREENWIDTH, SCREENHEIGHT;
-	int physical_windowwidth, physical_windowheight,
-		physical_windowtop, physical_windowleft,
-		physical_windowbottom, physical_windowright;
-	int inwindow;
-	int charwidth, lineheight, FIXEDCHARWIDTH, FIXEDLINEHEIGHT;
-	int current_text_x, current_text_y;
-	bool skipping_more;
-	int undostack[MAXUNDO][5];
-	int undoptr;
-	int undoturn;
-	char undoinvalid;
-	char undorecord;
+		char id[3];
+		char serial[9];
+		unsigned int codestart;
+		unsigned int objtable;
+		unsigned int eventtable;
+		unsigned int proptable;
+		unsigned int arraytable;
+		unsigned int dicttable;
+		unsigned int syntable;
+		unsigned int initaddr;
+		unsigned int mainaddr;
+		unsigned int parseaddr;
+		unsigned int parseerroraddr;
+		unsigned int findobjectaddr;
+		unsigned int endgameaddr;
+		unsigned int speaktoaddr;
+		unsigned int performaddr;
+		int objects;
+		int events;
+		int dictcount;
+		int syncount;
+		char context_command[MAX_CONTEXT_COMMANDS][64];
+		int context_commands;
+		unsigned char *mem;
+		bool loaded_in_memory;
+		unsigned int defseg;
+		unsigned int gameseg;
+		long codeptr;
+		long codeend;
+		char pbuffer[MAXBUFFER * 2 + 1];
+		int currentpos;
+		int currentline;
+		int full;
+		signed char def_fcolor, def_bgcolor, def_slfcolor, def_slbgcolor;
+		signed char fcolor, bgcolor, icolor, default_bgcolor;
+		int currentfont;
+		char capital;
+		unsigned int textto;
+		int SCREENWIDTH, SCREENHEIGHT;
+		int physical_windowwidth, physical_windowheight,
+		  physical_windowtop, physical_windowleft,
+		  physical_windowbottom, physical_windowright;
+		int inwindow;
+		int charwidth, lineheight, FIXEDCHARWIDTH, FIXEDLINEHEIGHT;
+		int current_text_x, current_text_y;
+		bool skipping_more;
+		int undostack[MAXUNDO][5];
+		int undoptr;
+		int undoturn;
+		char undoinvalid;
+		char undorecord;
 
-	bool in_valid_window;
-	int glk_fcolor, glk_bgcolor;
-	int mainwin_bgcolor;
-	int glk_current_font;
-	bool just_cleared_screen;
-	int secondwin_bottom;
+		bool in_valid_window;
+		int glk_fcolor, glk_bgcolor;
+		int mainwin_bgcolor;
+		int glk_current_font;
+		bool just_cleared_screen;
+		int secondwin_bottom;
 
-	// heobject
-	int display_object;				///< i.e., non-existent (yet)
-	char display_needs_repaint;		///< for display object
-	int display_pointer_x, display_pointer_y;
+		// heobject
+		int display_object; ///< i.e., non-existent (yet)
+		char display_needs_repaint; ///< for display object
+		int display_pointer_x, display_pointer_y;
 
-	// heparse
-	char buffer[MAXBUFFER + MAXWORDS];
-	char errbuf[MAXBUFFER + 1];				///< last invalid input
-	char line[1025];						///< line buffer
+		// heparse
+		char buffer[MAXBUFFER + MAXWORDS];
+		char errbuf[MAXBUFFER + 1]; ///< last invalid input
+		char line[1025]; ///< line buffer
 
-	int words;								///< parsed word count
-	char *word[MAXWORDS + 1];				///< breakdown into words
-	unsigned int wd[MAXWORDS + 1];			///<     "      "   dict. entries
-	unsigned int parsed_number;				///< needed for numbers in input
+		int words; ///< parsed word count
+		char *word[MAXWORDS + 1]; ///< breakdown into words
+		unsigned int wd[MAXWORDS + 1]; ///<     "      "   dict. entries
+		unsigned int parsed_number; ///< needed for numbers in input
 
-	signed char remaining;					///< multiple commands in input
-	char parseerr[MAXBUFFER + 1];			///< for passing to RunPrint, etc.
-	char parsestr[MAXBUFFER + 1];			///< for passing quoted string
-	char xverb;								///< flag; 0 = regular verb
-	char starts_with_verb;					///< input line; 0 = no verb word
-	unsigned int grammaraddr;				///< address in grammar
-	char *obj_parselist;					///< objects with noun/adjective
-	int domain, odomain;					///< of object(s)
-	int objlist[MAXOBJLIST];				///< for objects of verb
-	char objcount;							///< of objlist
-	char parse_allflag;						///< for "all" in MatchObject
-	pobject_structure pobjlist[MAXPOBJECTS];	///< for possible objects
-	int pobjcount;							///< of pobjlist
-	int pobj;								///< last remaining suspect
-	int obj_match_state;					///< see MatchCommand() for details
-	char objword_cache[MAXWORDS];			///< for MatchWord() xobject, etc.
-	char object_is_number;					///< number used in player command
-	unsigned int objgrammar;				///< for 2nd pass
-	int objstart;							///<  "   "   "
-	int objfinish;							///<  "   "   "
-	bool addflag;							///< true if adding to objlist[]
-	int speaking;							///< if command is addressed to obj.
+		signed char remaining; ///< multiple commands in input
+		char parseerr[MAXBUFFER + 1]; ///< for passing to RunPrint, etc.
+		char parsestr[MAXBUFFER + 1]; ///< for passing quoted string
+		char xverb; ///< flag; 0 = regular verb
+		char starts_with_verb; ///< input line; 0 = no verb word
+		unsigned int grammaraddr; ///< address in grammar
+		char *obj_parselist; ///< objects with noun/adjective
+		int domain, odomain; ///< of object(s)
+		int objlist[MAXOBJLIST]; ///< for objects of verb
+		char objcount; ///< of objlist
+		char parse_allflag; ///< for "all" in MatchObject
+		pobject_structure pobjlist[MAXPOBJECTS]; ///< for possible objects
+		int pobjcount; ///< of pobjlist
+		int pobj; ///< last remaining suspect
+		int obj_match_state; ///< see MatchCommand() for details
+		char objword_cache[MAXWORDS]; ///< for MatchWord() xobject, etc.
+		char object_is_number; ///< number used in player command
+		unsigned int objgrammar; ///< for 2nd pass
+		int objstart; ///<  "   "   "
+		int objfinish; ///<  "   "   "
+		bool addflag; ///< true if adding to objlist[]
+		int speaking; ///< if command is addressed to obj.
 
-	char oops[MAXBUFFER + 1];				///< illegal word
-	int oopscount;							///< # of corrections in a row
+		char oops[MAXBUFFER + 1]; ///< illegal word
+		int oopscount; ///< # of corrections in a row
 
-	char parse_called_twice;
-	char reparse_everything;
-	char punc_string[64];					///< punctuation string
-	byte full_buffer;
+		char parse_called_twice;
+		char reparse_everything;
+		char punc_string[64]; ///< punctuation string
+		byte full_buffer;
 
-	/**
+		/**
 	 * to MatchObject()
 	 * Necessary for proper disambiguation when addressing a character;
 	 * i.e., when 'held' doesn't refer to held by the player, etc.
 	 */
-	char recursive_call;
-	int parse_location;						///< usually var[location]
+		char recursive_call;
+		int parse_location; ///< usually var[location]
 
-	// heres
-	HUGO_FILE resource_file;
-	int extra_param;
-	char loaded_filename[MAX_RES_PATH];
-	char loaded_resname[MAX_RES_PATH];
-	char resource_type;
+		// heres
+		HUGO_FILE resource_file;
+		int extra_param;
+		char loaded_filename[MAX_RES_PATH];
+		char loaded_resname[MAX_RES_PATH];
+		char resource_type;
 
-	// herun
-	int passlocal[MAXLOCALS];		///< locals passed to routine
-	int arguments_passed;			///< when calling routine
-	int ret;						///< return value and returning flag
-	char retflag;
-	bool during_player_input;
-	char override_full;
-	bool game_reset;				///< for restore, undo, etc.
+		// herun
+		int passlocal[MAXLOCALS]; ///< locals passed to routine
+		int arguments_passed; ///< when calling routine
+		int ret; ///< return value and returning flag
+		char retflag;
+		bool during_player_input;
+		char override_full;
+		bool game_reset; ///< for restore, undo, etc.
 
-	CODE_BLOCK code_block[MAXSTACKDEPTH];
-	int stack_depth;
-	int tail_recursion;
-	long tail_recursion_addr;
+		CODE_BLOCK code_block[MAXSTACKDEPTH];
+		int stack_depth;
+		int tail_recursion;
+		long tail_recursion_addr;
 
-	// Used by RunWindow for setting current window dimensions:
-	int last_window_top, last_window_bottom, last_window_left, last_window_right;
-	int lowest_windowbottom,				///< in text lines
-		physical_lowest_windowbottom;		///< in pixels or text lines
-	bool just_left_window;
+		// Used by RunWindow for setting current window dimensions:
+		int last_window_top, last_window_bottom, last_window_left, last_window_right;
+		int lowest_windowbottom, ///< in text lines
+		  physical_lowest_windowbottom; ///< in pixels or text lines
+		bool just_left_window;
 
-	// heset
-	char game_title[MAX_GAME_TITLE];
-	char arrexpr;							///< true when assigning array
-	char multiprop;							///< true in multiple prop. assign.
-	int set_value;
+		// heset
+		char game_title[MAX_GAME_TITLE];
+		char arrexpr; ///< true when assigning array
+		char multiprop; ///< true in multiple prop. assign.
+		int set_value;
 
-#if defined (DEBUGGER)
-	char debug_line[MAX_DEBUG_LINE];
-	bool debug_eval;
-	bool debug_eval_error;
-	bool debugger_step_over;
-	bool debugger_finish;
-	bool debugger_run;
-	bool debugger_interrupt;
-	bool debugger_skip;
-	bool runtime_error;
-	uint currentroutine;
-	bool complex_prop_breakpoint;
-	bool trace_complex_prop_routine;
-	char *objectname[MAX_OBJECT];
-	char *propertyname[MAX_PROPERTY];
-	CALL call[MAXCALLS];
-	int routines;
-	int properties;
-	WINDOW window[9];
-	int codeline[9][100];
-	char localname[9][100];
-	int current_locals;
-	long this_codeptr;
-	int debug_workspace;
-	int attributes;
-	int original_dictcount;
-	int buffered_code_lines;
-	bool debugger_has_stepped_back;
-	bool debugger_step_back;
-	int debugger_collapsing;
-	int runaway_counter;
-	int history_count;
-	int active_screen;
-	int step_nest;
-	BREAKPOINT breakpoint[MAXBREAKPOINTS];
-	BREAKPOINT watch[MAXBREAKPOINTS];
-	int code_history[MAX_CODE_HISTORY];
-	int dbnest_history[MAX_CODE_HISTORY];
-	int history_last;
+#if defined(DEBUGGER)
+		char debug_line[MAX_DEBUG_LINE];
+		bool debug_eval;
+		bool debug_eval_error;
+		bool debugger_step_over;
+		bool debugger_finish;
+		bool debugger_run;
+		bool debugger_interrupt;
+		bool debugger_skip;
+		bool runtime_error;
+		uint currentroutine;
+		bool complex_prop_breakpoint;
+		bool trace_complex_prop_routine;
+		char *objectname[MAX_OBJECT];
+		char *propertyname[MAX_PROPERTY];
+		CALL call[MAXCALLS];
+		int routines;
+		int properties;
+		WINDOW window[9];
+		int codeline[9][100];
+		char localname[9][100];
+		int current_locals;
+		long this_codeptr;
+		int debug_workspace;
+		int attributes;
+		int original_dictcount;
+		int buffered_code_lines;
+		bool debugger_has_stepped_back;
+		bool debugger_step_back;
+		int debugger_collapsing;
+		int runaway_counter;
+		int history_count;
+		int active_screen;
+		int step_nest;
+		BREAKPOINT breakpoint[MAXBREAKPOINTS];
+		BREAKPOINT watch[MAXBREAKPOINTS];
+		int code_history[MAX_CODE_HISTORY];
+		int dbnest_history[MAX_CODE_HISTORY];
+		int history_last;
 #endif
-private:
-	/**
+	private:
+		/**
 	 * \defgroup heexpr
 	 * @{
 	 */
 
-	 /**
+		/**
 	  * The new-and-improved expression evaluator.  Evaluates the current expression
 	  * (or sub-expression therein) beginning at eval[p].
 	  */
-	int EvalExpr(int p);
+		int EvalExpr(int p);
 
-	/**
+		/**
 	 * Called by GetValue(); does the actual dirty work of returning a value from a
 	 * simple data type.
 	 */
-	int GetVal();
+		int GetVal();
 
-	/**
+		/**
 	 * Does any reckoning for more sophisticated constructions.
 	 */
-	int GetValue();
+		int GetValue();
 
-	/**
+		/**
 	 * Actually performs the increment given below by IsIncrement.
 	 */
-	int Increment(int a, char inctype);
+		int Increment(int a, char inctype);
 
-	/**
+		/**
 	 * If an increment/decrement is next up (i.e. ++, --, or +=, *=, etc.),
 	 * then sets incdec equal to the increment/decrement and repositions codeptr.
 	 * Returns the token number of the operation, if any.
 	 */
-	char IsIncrement(long addr);
+		char IsIncrement(long addr);
 
-	/**
+		/**
 	 *  Returns the precedence ranking of the operator represented by token[t].
 	 * The lower the return value, the higher the rank in terms of processing order.
 	 */
-	int Precedence(int t);
+		int Precedence(int t);
 
-	/**
+		/**
 	 * Reads the current expression from the current code position into eval[],
 	 * using the following key:
 	 *
@@ -316,94 +318,94 @@ private:
 	 * reading an expression.  If <inexpr> is 1, we're in an expression; if 2, we may have
 	 * to step back one code position if encountering a closing parentheses.
 	 */
-	void SetupExpr();
+		void SetupExpr();
 
-	/**
+		/**
 	 * Cuts off straggling components of eval[] after an expression or sub-expression
 	 * has been successfully evaluated.
 	 */
-	void TrimExpr(int ptr);
+		void TrimExpr(int ptr);
 
-	/**@}*/
+		/**@}*/
 
-	/**
+		/**
 	 * \defgroup heglk
 	 * @{
 	 */
 
-	 /**
+		/**
 	  * Does whatever has to be done to initially set up the display
 	  */
-	void hugo_init_screen();
+		void hugo_init_screen();
 
-	/**
+		/**
 	 * Does whatever has to be done to clean up the display pre-termination
 	 */
-	void hugo_cleanup_screen() {
-		// No implementation
-	}
+		void hugo_cleanup_screen() {
+			// No implementation
+		}
 
-	void hugo_closefiles() {
-		// Glk closes all files on exit
-	}
+		void hugo_closefiles() {
+			// Glk closes all files on exit
+		}
 
-	int hugo_getkey() const {
-		// Not needed here--single-character events are handled solely by hugo_waitforkey(), below
-		return 0;
-	}
+		int hugo_getkey() const {
+			// Not needed here--single-character events are handled solely by hugo_waitforkey(), below
+			return 0;
+		}
 
-	/**
+		/**
 	 * Gets a line of input from the keyboard, storing it in <buffer>.
 	 */
-	void hugo_getline(const char *prmpt);
+		void hugo_getline(const char *prmpt);
 
-	/**
+		/**
 	 * Provided to be replaced by multitasking systems where cycling while waiting
 	 * for a keystroke may not be such a hot idea.
 	 */
-	int hugo_waitforkey();
+		int hugo_waitforkey();
 
-	/**
+		/**
 	 * Returns true if a keypress is waiting to be retrieved.
 	 */
-	int hugo_iskeywaiting();
+		int hugo_iskeywaiting();
 
-	/**
+		/**
 	 * Waits for 1/n seconds.  Returns false if waiting is unsupported.
 	 */
-	int hugo_timewait(int n);
+		int hugo_timewait(int n);
 
-	/**
+		/**
 	 * Clears everything on the screen, moving the cursor to the top-left corner of the screen
 	 */
-	void hugo_clearfullscreen();
+		void hugo_clearfullscreen();
 
-	/**
+		/**
 	 * Clears the currently defined window, moving the cursor to the top-left corner of the window
 	 */
-	void hugo_clearwindow();
+		void hugo_clearwindow();
 
-	/**
+		/**
 	 * This function does whatever is necessary to set the system up for a standard text display
 	 */
-	void hugo_settextmode();
+		void hugo_settextmode();
 
-	void hugo_settextwindow(int left, int top, int right, int bottom);
+		void hugo_settextwindow(int left, int top, int right, int bottom);
 
-	/**
+		/**
 	 * Specially accommodated in GetProp() While the engine thinks that the linelength is 0x7fff,
 	this tells things like the display object the actual length.  (Defined as ACTUAL_LINELENGTH)
 	*/
-	int heglk_get_linelength();
+		int heglk_get_linelength();
 
-	/**
+		/**
 	 * Similar to heglk_get_linelength().  (Defined as ACTUAL_SCREENHEIGHT)
 	 */
-	int heglk_get_screenheight();
+		int heglk_get_screenheight();
 
-	void hugo_settextpos(int x, int y);
+		void hugo_settextpos(int x, int y);
 
-	/**
+		/**
 	 * Essentially the same as printf() without formatting, since printf() generally doesn't take
 	 * into account color setting, font changes, windowing, etc.
 	 *
@@ -412,166 +414,166 @@ private:
 	 * Upon hitting the right edge of the screen, the printing position wraps to the start
 	 * of the next line.
 	 */
-	void hugo_print(const char *a);
+		void hugo_print(const char *a);
 
-	/**
+		/**
 	 * Scroll the text window
 	 */
-	void hugo_scrollwindowup() {
-		// No implementation. Glk takes care of it
-	}
+		void hugo_scrollwindowup() {
+			// No implementation. Glk takes care of it
+		}
 
-	/**
+		/**
 	 * Set the font
 	 * @param f		The <f> argument is a mask containing any or none of:
 	 *				BOLD_FONT, UNDERLINE_FONT, ITALIC_FONT, PROP_FONT.
 	 */
-	void hugo_font(int f);
+		void hugo_font(int f);
 
-	/**
+		/**
 	 * Set the foreground (print) color
 	 */
-	void hugo_settextcolor(int c);
+		void hugo_settextcolor(int c);
 
-	/**
+		/**
 	 * Set the background color
 	 */
-	void hugo_setbackcolor(int c);
+		void hugo_setbackcolor(int c);
 
-	/**
+		/**
 	 * Color-setting functions should always pass the color through hugo_color()
 	 * in order to properly set default fore/background colors
 	 */
-	int hugo_color(int c);
+		int hugo_color(int c);
 
-	/**
+		/**
 	 * Get the width of a character
 	 * @remarks		As given here, this function works only for non-proportional printing.
 	 * For proportional printing, hugo_charwidth() should return the width of the supplied
 	 * character in the current font and style.
 	*/
-	int hugo_charwidth(char a) const;
+		int hugo_charwidth(char a) const;
 
-	/**
+		/**
 	 * Return the width of a string
 	 */
-	int hugo_textwidth(const char *a) const;
+		int hugo_textwidth(const char *a) const;
 
-	/**
+		/**
 	 * Return the length of a string
 	 */
-	int hugo_strlen(const char *a) const;
+		int hugo_strlen(const char *a) const;
 
-	void hugo_setgametitle(const char *t);
+		void hugo_setgametitle(const char *t);
 
-	int hugo_hasvideo() const;
+		int hugo_hasvideo() const;
 
-	int hugo_playvideo(HUGO_FILE infile, long reslength, char loop_flag, char background, int volume);
+		int hugo_playvideo(HUGO_FILE infile, long reslength, char loop_flag, char background, int volume);
 
-	void hugo_stopvideo();
+		void hugo_stopvideo();
 
-	/**@}*/
+		/**@}*/
 
-	/**
+		/**
 	 * \defgroup hemisc
 	 * @{
 	 */
 
-	/**
+		/**
 	 * The all-purpose printing routine that takes care of word-wrapping.
 	 */
-	void AP(const char *a);
+		void AP(const char *a);
 
-	/**
+		/**
 	 * Used whenever a routine is called, assumes the routine address and begins
 	 * with the arguments (if any).
 	 */
-	int CallRoutine(unsigned int addr);
+		int CallRoutine(unsigned int addr);
 
-	/**
+		/**
 	 * Adds a command to the context command list.  A zero value (i.e., an empty string)
 	 * resets the list.
 	 */
-	void ContextCommand();
+		void ContextCommand();
 
-	/**
+		/**
 	 * Dynamically creates a new dictionary entry.
 	 */
-	unsigned int Dict();
+		unsigned int Dict();
 
-	/**
+		/**
 	 * Generates a fatal error
 	 */
-	void FatalError(int n);
+		void FatalError(int n);
 
-	void FileIO();
+		void FileIO();
 
-	void Flushpbuffer();
+		void Flushpbuffer();
 
-	void GetCommand();
+		void GetCommand();
 
-	/**
+		/**
 	 * From any address <addr>; the segment must be defined prior to calling the function.
 	 */
-	char *GetString(long addr);
+		char *GetString(long addr);
 
-	/**
+		/**
 	 * Get text block from position <textaddr> in the text bank.  If the game was not fully loaded
 	 * in memory, i.e., if loaded_in_memory is not true, the block is read from disk.
 	 */
-	char *GetText(long textaddr);
+		char *GetText(long textaddr);
 
-	/**
+		/**
 	 * From the dictionary table.
 	 */
-	char *GetWord(unsigned int w);
+		char *GetWord(unsigned int w);
 
-	void HandleTailRecursion(long addr);
+		void HandleTailRecursion(long addr);
 
-	void InitGame();
+		void InitGame();
 
-	void LoadGame();
+		void LoadGame();
 
-	/**
+		/**
 	 * Must be called before running every new routine, i.e. before calling RunRoutine().
 	 * Unfortunately, the current locals must be saved in a temp array prior to calling.
 	 * The argument n gives the number of arguments passed.
 	 */
-	void PassLocals(int n);
+		void PassLocals(int n);
 
-	inline unsigned char Peek(long a) {
-		return MEM(defseg * 16L + a);
-	}
+		inline unsigned char Peek(long a) {
+			return MEM(defseg * 16L + a);
+		}
 
-	inline unsigned int PeekWord(long a) {
-		return (unsigned char)MEM(defseg * 16L + a) + (unsigned char)MEM(defseg * 16L + a + 1) * 256;
-	}
+		inline unsigned int PeekWord(long a) {
+			return (unsigned char)MEM(defseg * 16L + a) + (unsigned char)MEM(defseg * 16L + a + 1) * 256;
+		}
 
-	inline void Poke(unsigned int a, unsigned char v) {
-		SETMEM(defseg * 16L + a, v);
-	}
+		inline void Poke(unsigned int a, unsigned char v) {
+			SETMEM(defseg * 16L + a, v);
+		}
 
-	inline void PokeWord(unsigned int a, unsigned int v) {
-		SETMEM(defseg * 16L + a, (char)(v % 256));
-		SETMEM(defseg * 16L + a + 1, (char)(v / 256));
-	}
+		inline void PokeWord(unsigned int a, unsigned int v) {
+			SETMEM(defseg * 16L + a, (char)(v % 256));
+			SETMEM(defseg * 16L + a + 1, (char)(v / 256));
+		}
 
-	/**
+		/**
 	 * Returns <a> as a hex-number string in XXXXXX format.
 	 */
-	static const char *PrintHex(long a);
+		static const char *PrintHex(long a);
 
-	/**
+		/**
 	 * Print to client display taking into account cursor relocation,
 	 * font changes, color setting, and window scrolling.
 	 */
-	void Printout(char *a, int no_scrollback_linebreak);
+		void Printout(char *a, int no_scrollback_linebreak);
 
-	void PromptMore();
+		void PromptMore();
 
-	int RecordCommands();
+		int RecordCommands();
 
-	/**
+		/**
 	 * Formats:
 	 *
 	 * end of turn:    (0, undoturn, 0, 0, 0)
@@ -583,17 +585,17 @@ private:
 	 * dict:           (DICT_T, entry length, 0, 0, 0)
 	 * word setting:   (WORD_T, word number, new word, 0, 0)
 	 */
-	void SaveUndo(int a, int b, int c, int d, int e);
+		void SaveUndo(int a, int b, int c, int d, int e);
 
-	/**
+		/**
 	 * Properly sets up the code_block structure for the current stack depth depending
 	 * on if this is a called block (RUNROUTINE_BLOCK) or otherwise.
 	 */
-	void SetStackFrame(int depth, int type, long brk, long returnaddr);
+		void SetStackFrame(int depth, int type, long brk, long returnaddr);
 
-	void SetupDisplay();
+		void SetupDisplay();
 
-	/**
+		/**
 	 * The method is passed <a> as the string and <*i> as the position in the string.
 	 * The character(s) at a[*i], a[*(i+1)], etc. are converted into a single Latin-1
 	 * (i.e., greater than 127) character value.
@@ -622,156 +624,156 @@ private:
 	 * Note that the return value is a single character--which will be either unchanged
 	 * or a Latin-1 character value.
 	 */
-	char SpecialChar(const char *a, int *i);
+		char SpecialChar(const char *a, int *i);
 
-	int Undo();
+		int Undo();
 
-	/**@}*/
+		/**@}*/
 
-	/**
+		/**
 	 * \defgroup hemedia
 	 * @{
 	 */
 
-	int loadres(HUGO_FILE infile, int reslen, int type);
+		int loadres(HUGO_FILE infile, int reslen, int type);
 
-	int hugo_hasgraphics();
+		int hugo_hasgraphics();
 
-	int hugo_displaypicture(HUGO_FILE infile, long reslen);
+		int hugo_displaypicture(HUGO_FILE infile, long reslen);
 
-	void initsound();
+		void initsound();
 
-	void initmusic();
+		void initmusic();
 
-	int hugo_playmusic(HUGO_FILE infile, long reslen, char loop_flag);
+		int hugo_playmusic(HUGO_FILE infile, long reslen, char loop_flag);
 
-	void hugo_musicvolume(int vol);
+		void hugo_musicvolume(int vol);
 
-	void hugo_stopmusic();
+		void hugo_stopmusic();
 
-	int hugo_playsample(HUGO_FILE infile, long reslen, char loop_flag);
+		int hugo_playsample(HUGO_FILE infile, long reslen, char loop_flag);
 
-	void hugo_samplevolume(int vol);
+		void hugo_samplevolume(int vol);
 
-	void hugo_stopsample();
+		void hugo_stopsample();
 
-	/**@}*/
+		/**@}*/
 
-	/**
+		/**
 	 * \defgroup heobject - Object/property/attribute management functions
 	 * @{
 	 */
-	int Child(int obj);
+		int Child(int obj);
 
-	int Children(int obj);
+		int Children(int obj);
 
-	int Elder(int obj);
+		int Elder(int obj);
 
-	/**
+		/**
 	 * Returns one of four sets of 32 attributes.
 	 */
-	unsigned long GetAttributes(int obj, int attribute_set);
+		unsigned long GetAttributes(int obj, int attribute_set);
 
-	/**
+		/**
 	 * Returns the value of '<obj>.<p> #<n>'  If <s> is true, the self global
 	 * is not set to <obj> in order to facilitate <obj>..<p> calls.
 	 */
-	int GetProp(int obj, int p, int n, char s);
+		int GetProp(int obj, int p, int n, char s);
 
-	/**
+		/**
 	 * Returns the value of the last object above <obj> in the tree before object 0.
 	 */
-	int GrandParent(int obj);
+		int GrandParent(int obj);
 
-	void MoveObj(int obj, int p);
+		void MoveObj(int obj, int p);
 
-	const char *Name(int obj);
+		const char *Name(int obj);
 
-	int Parent(int obj);
+		int Parent(int obj);
 
-	/**
+		/**
 	 * Returns address of <obj>.<p> (with <offset> provided for additive properties--
 	 * i.e. subsequent calls with the same <obj> and <p>.
 	 */
-	unsigned int PropAddr(int obj, int p, unsigned int offset);
+		unsigned int PropAddr(int obj, int p, unsigned int offset);
 
-	/**
+		/**
 	 * Writes (puts) one of four sets of 32 attributes.
 	 */
-	void PutAttributes(int obj, unsigned long a, int attribute_set);
+		void PutAttributes(int obj, unsigned long a, int attribute_set);
 
-	/**
+		/**
 	 * Set an attribute
 	 * c = 1 for set, 0 for clear
 	 */
-	void SetAttribute(int obj, int attr, int c);
+		void SetAttribute(int obj, int attr, int c);
 
-	int Sibling(int obj);
+		int Sibling(int obj);
 
-	int TestAttribute(int obj, int attr, int nattr);
+		int TestAttribute(int obj, int attr, int nattr);
 
-	int Youngest(int obj);
+		int Youngest(int obj);
 
-	/**@}*/
+		/**@}*/
 
-	/**
+		/**
 	 * \defgroup heparse
 	 * @{
 	 */
 
-	void AddAllObjects(int loc);
+		void AddAllObjects(int loc);
 
-	/**
+		/**
 	 * Adds the object <obj> to objlist[], making all related adjustments.
 	 */
-	void AddObj(int obj);
+		void AddObj(int obj);
 
-	/**
+		/**
 	 * Adds <obj> as a contender to the possible object list, noting that it was referred
 	 * to as either a noun or an adjective.
 	 */
-	void AddPossibleObject(int obj, char type, unsigned int w);
+		void AddPossibleObject(int obj, char type, unsigned int w);
 
-	/**
+		/**
 	 * Move the address in the grammar table past the current token.
 	 */
-	void AdvanceGrammar();
+		void AdvanceGrammar();
 
-	/**
+		/**
 	 * For when it's only necessary to know if word[wn] is an object word for any object,
 	 * not a particular object.  Returns 1 for an object word or -1 for a non-object word.
 	 */
-	int AnyObjWord(int wn);
+		int AnyObjWord(int wn);
 
-	/**
+		/**
 	 * The non_grammar argument is true when called from a non-grammar function such as RunEvents().
 	 */
-	int Available(int obj, char non_grammar);
+		int Available(int obj, char non_grammar);
 
-	void CallLibraryParse();
+		void CallLibraryParse();
 
-	/**
+		/**
 	 * Takes into account the preset domain for checking an object's presence;
 	 * <domain> is 0, -1, or an object number..
 	 */
-	int DomainObj(int obj);
+		int DomainObj(int obj);
 
-	/**
+		/**
 	 * Returns the dictionary address of <a>.
 	 */
-	unsigned int FindWord(const char *a);
+		unsigned int FindWord(const char *a);
 
-	/**
+		/**
 	 * Checks to see if <obj> is in objlist[].
 	 */
-	int InList(int obj);
+		int InList(int obj);
 
-	/**
+		/**
 	 * Deletes word[a].
 	 */
-	void KillWord(int a);
+		void KillWord(int a);
 
-	/**
+		/**
 	 * Here, briefly, is how MatchCommand() works:
 	 *
 	 * 1.  Match the verb.
@@ -804,9 +806,9 @@ private:
 	 *
 	 * obj_match_state = 5  - matching first word/name, i.e., "Bob, <do something>"
 	 */
-	int MatchCommand();
+		int MatchCommand();
 
-	/**
+		/**
 	 * The argument is the word number we're starting matching on.
 	 *
 	 * NOTE:  recusive_call is set to 0 if this is the first call. MatchObject() sets it to 1
@@ -814,84 +816,84 @@ private:
 	 *
 	 * Return true on a recursive call to allow parsing to continue.
 	 */
-	bool MatchObject(int *wordnum);
+		bool MatchObject(int *wordnum);
 
-	int MatchWord(int *wordnum);
+		int MatchWord(int *wordnum);
 
-	/**
+		/**
 	 * Returns true if the specified object has the specified word as an adjective or noun
 	 * (as specified by type).
 	 */
-	int ObjWordType(int obj, unsigned int w, int type);
+		int ObjWordType(int obj, unsigned int w, int type);
 
-	/**
+		/**
 	 * Returns <adjective> if the word at dictionary address <w> is an adjective of <obj>,
 	 * or <noun> if it is a noun.
 	 */
-	int ObjWord(int obj, unsigned int w);
+		int ObjWord(int obj, unsigned int w);
 
-	/**
+		/**
 	 * Turns word[] into dictionary addresses stored in wd[].  Takes care of fingering illegal
 	 * (unknown) words and doing alterations such as compounds, removals, and synonyms.
 	 */
-	int Parse();
+		int Parse();
 
-	void ParseError(int e, int a);
+		void ParseError(int e, int a);
 
-	/**
+		/**
 	 * Deletes wd[a].
 	 */
-	void RemoveWord(int a);
+		void RemoveWord(int a);
 
-	/**
+		/**
 	 * Call FindObject(0, 0) to reset library's disambiguation mechanism.
 	 */
-	void ResetFindObject();
+		void ResetFindObject();
 
-	/**
+		/**
 	 * Splits <buffer> into the word[] array.  Also does nifty things such as turning time
 	 * values such as hh:mm into a single number (representing minutes from midnight).
 	 */
-	void SeparateWords();
+		void SeparateWords();
 
-	/**
+		/**
 	 * Removes object <obj> from objlist[], making all related adjustments.
 	 */
-	void SubtractObj(int obj);
+		void SubtractObj(int obj);
 
-	/**
+		/**
 	 * Removes <obj> as a possible contender for object disambiguation.
 	 */
-	void SubtractPossibleObject(int obj);
+		void SubtractPossibleObject(int obj);
 
-	/**
+		/**
 	 * Called by MatchObject() to see if <obj> is available, and add it to or subtract
 	 * it from objlist[] accordingly.
 	 */
-	void TryObj(int obj);
+		void TryObj(int obj);
 
-	/**
+		/**
 	 * Checks first of all to see if an object is available, then checks if it meets
 	 * all the qualifications demanded by the grammar syntax.
 	 */
-	int ValidObj(int obj);
+		int ValidObj(int obj);
 
-	/**@}*/
+		/**@}*/
 
-	/**
+		/**
 	 * \defgroup heres
 	 * @{
 	 */
 
-	void DisplayPicture();
+		void DisplayPicture();
 
-	void PlayMusic();
+		void PlayMusic();
 
-	void PlaySample();
+		void PlaySample();
 
-	void PlayVideo();
+		void PlayVideo();
 
-	/**
+		/**
 	 * Assumes that filename/resname contain a resourcefile name and a resource name.
 	 * If resname is "", filename contains the path of the resource on disk.
 	 * Returns the length of the resource if if the named resource is found.
@@ -903,46 +905,46 @@ private:
 	 * and on-disk resources in (if not the given directory) "source" or "resource" (where these are the
 	 * environment variables "HUGO_...", not actual on-disk directories).
 	 */
-	long FindResource(char *filename, char *resname);
+		long FindResource(char *filename, char *resname);
 
-	/**
+		/**
 	 * Processes resourcefile/filename (and resource, if applicable).
 	 * Returns 0 if a valid 0 parameter is passed as in "music 0" or "sound 0".
 	 */
-	int GetResourceParameters(char *filename, char *resname, int restype);
+		int GetResourceParameters(char *filename, char *resname, int restype);
 
-	/**@}*/
+		/**@}*/
 
-	/**
+		/**
 	* \defgroup herun
 	* @{
 	*/
 
-	void RunDo();
+		void RunDo();
 
-	void RunEvents();
+		void RunEvents();
 
-	void playGame();
+		void playGame();
 
-	void RunIf(char override);
+		void RunIf(char override);
 
-	void RunInput();
+		void RunInput();
 
-	/**
+		/**
 	 * (All the debugger range-checking is important because invalid memory writes due
 	 * to invalid object location calculations are a good way to crash the system.)
 	 */
-	void RunMove();
+		void RunMove();
 
-	void RunPrint();
+		void RunPrint();
 
-	int RunRestart();
+		int RunRestart();
 
-	int RestoreGameData();
+		int RestoreGameData();
 
-	int RunRestore();
+		int RunRestore();
 
-	/**
+		/**
 	 * This is the main loop for running each line of code in sequence;
 	 * the main switch statement is based on the first token in each line.
 	 * 
@@ -970,237 +972,237 @@ private:
 	 * to RunRoutine(). The call_block structure array and stack_depth variable are the
 	 * navigation guides.
 	 */
-	void RunRoutine(long addr);
+		void RunRoutine(long addr);
 
-	int RunSave();
+		int RunSave();
 
-	int RunScriptSet();
+		int RunScriptSet();
 
-	/**
+		/**
 	 * As in 'x = string(<array>, "<string>"[, maxlen]'.
 	 */
-	int RunString();
+		int RunString();
 
-	int RunSystem();
+		int RunSystem();
 
-	void SaveWindowData(SAVED_WINDOW_DATA *spw);
+		void SaveWindowData(SAVED_WINDOW_DATA *spw);
 
-	void RestoreWindowData(SAVED_WINDOW_DATA *spw);
+		void RestoreWindowData(SAVED_WINDOW_DATA *spw);
 
-	void RunWindow();
+		void RunWindow();
 
-	/**@}*/
+		/**@}*/
 
-	/**
+		/**
 	 * \defgroup heglk
 	 * @{
 	 */
 
-	/**
+		/**
 	 * If gotvalue is passed as -1, then no value has already been as the (potential) object, etc.
 	 * comprising the first part of the object.property, for example, to be set.
 	 */
-	void RunSet(int gotvalue);
+		void RunSet(int gotvalue);
 
-	unsigned int GetAnonymousFunction(long addr);
+		unsigned int GetAnonymousFunction(long addr);
 
-	int SetCompound(int t);
+		int SetCompound(int t);
 
-	/**@}*/
+		/**@}*/
 
-	/**
+		/**
 	* \defgroup Miscellaneous
 	* @{
 	*/
 
-	int hugo_fseek(Common::SeekableReadStream *s, long int offset, int whence) {
-		return !s->seek(offset, whence);
-	}
-	int hugo_fseek(strid_t s, long int offset, int whence) {
-		Common::SeekableReadStream *rs = *s;
-		return hugo_fseek(rs, offset, whence);
-	}
-
-	int hugo_fgetc(Common::SeekableReadStream *s) {
-		return s->readByte();
-	}
-	int hugo_fgetc(strid_t s) {
-		Common::SeekableReadStream *ws = *s;
-		return hugo_fgetc(ws);
-	}
-
-	int hugo_fputc(int c, Common::WriteStream *s) {
-		s->writeByte(c);
-		return s->err() ? EOF : 0;
-	}
-	int hugo_fputc(int c, strid_t s) {
-		Common::WriteStream *ws = *s;
-		return hugo_fputc(c, ws);
-	}
-
-	char *hugo_fgets(char *buf, int max, Common::SeekableReadStream *s) {
-		char *ptr = buf;
-		char c;
-		while (s->pos() < s->size() && --max > 0) {
-			c = hugo_fgetc(s);
-			if (c == '\n' || c == '\0')
-				break;
-			*ptr++ = c;
+		int hugo_fseek(Common::SeekableReadStream *s, long int offset, int whence) {
+			return !s->seek(offset, whence);
 		}
-		*ptr++ = '\0';
-		return buf;
-	}
-	char *hugo_fgets(char *buf, int max, strid_t s) {
-		Common::SeekableReadStream *rs = *s;
-		return hugo_fgets(buf, max, rs);
-	}
+		int hugo_fseek(strid_t s, long int offset, int whence) {
+			Common::SeekableReadStream *rs = *s;
+			return hugo_fseek(rs, offset, whence);
+		}
 
-	size_t hugo_fread(void *ptr, size_t size, size_t count, Common::SeekableReadStream *s) {
-		return s->read(ptr, size * count);
-	}
-	size_t hugo_fread(void *ptr, size_t size, size_t count, strid_t s) {
-		Common::SeekableReadStream *rs = *s;
-		return hugo_fread(ptr, size, count, rs);
-	}
+		int hugo_fgetc(Common::SeekableReadStream *s) {
+			return s->readByte();
+		}
+		int hugo_fgetc(strid_t s) {
+			Common::SeekableReadStream *ws = *s;
+			return hugo_fgetc(ws);
+		}
 
-	int hugo_fprintf(Common::WriteStream *s, const char *fmt, ...) {
-		va_list va;
-		va_start(va, fmt);
-		Common::String text = Common::String::vformat(fmt, va);
-		va_end(va);
+		int hugo_fputc(int c, Common::WriteStream *s) {
+			s->writeByte(c);
+			return s->err() ? EOF : 0;
+		}
+		int hugo_fputc(int c, strid_t s) {
+			Common::WriteStream *ws = *s;
+			return hugo_fputc(c, ws);
+		}
 
-		s->write(text.c_str(), text.size());
-		return s->err() ? -1 : 0;
-	}
-	int hugo_fprintf(strid_t s, const char *fmt, ...) {
-		va_list va;
-		va_start(va, fmt);
-		Common::String text = Common::String::vformat(fmt, va);
-		va_end(va);
+		char *hugo_fgets(char *buf, int max, Common::SeekableReadStream *s) {
+			char *ptr = buf;
+			char c;
+			while (s->pos() < s->size() && --max > 0) {
+				c = hugo_fgetc(s);
+				if (c == '\n' || c == '\0')
+					break;
+				*ptr++ = c;
+			}
+			*ptr++ = '\0';
+			return buf;
+		}
+		char *hugo_fgets(char *buf, int max, strid_t s) {
+			Common::SeekableReadStream *rs = *s;
+			return hugo_fgets(buf, max, rs);
+		}
 
-		Common::WriteStream *str = *s;
-		str->write(text.c_str(), text.size());
-		return str->err() ? -1 : 0;
-	}
+		size_t hugo_fread(void *ptr, size_t size, size_t count, Common::SeekableReadStream *s) {
+			return s->read(ptr, size * count);
+		}
+		size_t hugo_fread(void *ptr, size_t size, size_t count, strid_t s) {
+			Common::SeekableReadStream *rs = *s;
+			return hugo_fread(ptr, size, count, rs);
+		}
 
-	int hugo_fputs(const char *str, Common::WriteStream *s) {
-		return s->write(str, strlen(str)) == strlen(str) ? 0 : -1;
-	}
-	int hugo_fputs(const char *str, strid_t s) {
-		Common::WriteStream *ws = *s;
-		return hugo_fputs(str, ws);
-	}
+		int hugo_fprintf(Common::WriteStream *s, const char *fmt, ...) {
+			va_list va;
+			va_start(va, fmt);
+			Common::String text = Common::String::vformat(fmt, va);
+			va_end(va);
 
-	bool hugo_ferror(Common::SeekableReadStream *s) const {
-		return s->err();
-	}
-	bool hugo_ferror(strid_t s) const {
-		Common::SeekableReadStream *rs = *s;
-		return hugo_ferror(rs);
-	}
+			s->write(text.c_str(), text.size());
+			return s->err() ? -1 : 0;
+		}
+		int hugo_fprintf(strid_t s, const char *fmt, ...) {
+			va_list va;
+			va_start(va, fmt);
+			Common::String text = Common::String::vformat(fmt, va);
+			va_end(va);
 
-	long hugo_ftell(Common::SeekableReadStream *s) {
-		return s->pos();
-	}
-	long hugo_ftell(strid_t s) {
-		Common::SeekableReadStream *rs = *s;
-		return hugo_ftell(rs);
-	}
+			Common::WriteStream *str = *s;
+			str->write(text.c_str(), text.size());
+			return str->err() ? -1 : 0;
+		}
 
-	int hugo_fclose(strid_t f) {
-		delete f;
-		return 0;
-	}
+		int hugo_fputs(const char *str, Common::WriteStream *s) {
+			return s->write(str, strlen(str)) == strlen(str) ? 0 : -1;
+		}
+		int hugo_fputs(const char *str, strid_t s) {
+			Common::WriteStream *ws = *s;
+			return hugo_fputs(str, ws);
+		}
 
-	void hugo_exit(const char *msg) {
-		error("%s", line);
-	}
+		bool hugo_ferror(Common::SeekableReadStream *s) const {
+			return s->err();
+		}
+		bool hugo_ferror(strid_t s) const {
+			Common::SeekableReadStream *rs = *s;
+			return hugo_ferror(rs);
+		}
 
-	uint hugo_rand() {
-		return _random.getRandomNumber(0xffffff);
-	}
+		long hugo_ftell(Common::SeekableReadStream *s) {
+			return s->pos();
+		}
+		long hugo_ftell(strid_t s) {
+			Common::SeekableReadStream *rs = *s;
+			return hugo_ftell(rs);
+		}
 
-	char *itoa(int value, char *str, int base) {
-		assert(base == 10);
-		sprintf(str, "%d", value);
-		return str;
-	}
+		int hugo_fclose(strid_t f) {
+			delete f;
+			return 0;
+		}
 
-	/**@}*/
-private:
-	/**
+		void hugo_exit(const char *msg) {
+			error("%s", line);
+		}
+
+		uint hugo_rand() {
+			return _random.getRandomNumber(0xffffff);
+		}
+
+		char *itoa(int value, char *str, int base) {
+			assert(base == 10);
+			sprintf(str, "%d", value);
+			return str;
+		}
+
+		/**@}*/
+	private:
+		/**
 	 * Allocate memory block
 	 */
-	void *hugo_blockalloc(size_t num) { return malloc(num); }
+		void *hugo_blockalloc(size_t num) { return malloc(num); }
 
-	void hugo_blockfree(void *block) { free(block); }
+		void hugo_blockfree(void *block) { free(block); }
 
-#if defined (DEBUGGER)
-	int CheckinRange(uint v1, uint v2, const char *v3) { return 1; }
+#if defined(DEBUGGER)
+		int CheckinRange(uint v1, uint v2, const char *v3) { return 1; }
 
-	/**
+		/**
 	* Shorthand since many of these object functions may call CheckinRange() if the debugger
 	* is running and runtime_warnings is set.
 	*/
-	int CheckObjectRange(int obj);
+		int CheckObjectRange(int obj);
 
-	void DebugRunRoutine(long addr) { RunRoutine(addr); }
+		void DebugRunRoutine(long addr) { RunRoutine(addr); }
 
-	void RuntimeWarning(const char *msg) {}
+		void RuntimeWarning(const char *msg) {}
 
-	void DebugMessageBox(const char *title, const char *msg) {}
+		void DebugMessageBox(const char *title, const char *msg) {}
 
-	bool IsBreakpoint(long loc) const { return false; }
+		bool IsBreakpoint(long loc) const { return false; }
 
-	const char *RoutineName(long loc) { return "Routine"; }
+		const char *RoutineName(long loc) { return "Routine"; }
 
-	void AddStringtoCodeWindow(const char *str) {}
+		void AddStringtoCodeWindow(const char *str) {}
 
-	void SwitchtoDebugger() {}
+		void SwitchtoDebugger() {}
 
-	void Debugger() {}
-	
-	void UpdateDebugScreen() {}
+		void Debugger() {}
 
-	void SwitchtoGame() {}
+		void UpdateDebugScreen() {}
 
-	void DebuggerFatal(DEBUGGER_ERROR err) { error("Debugger error"); }
+		void SwitchtoGame() {}
 
-	void AddLinetoCodeWindow(int lineNum) {}
+		void DebuggerFatal(DEBUGGER_ERROR err) { error("Debugger error"); }
 
-	void RecoverLastGood() {}
+		void AddLinetoCodeWindow(int lineNum) {}
 
-	void SetupWatchEval(int num) {}
+		void RecoverLastGood() {}
 
-	bool EvalWatch() { return false; }
+		void SetupWatchEval(int num) {}
+
+		bool EvalWatch() { return false; }
 #endif
-public:
-	/**
+	public:
+		/**
 	 * Constructor
 	 */
-	Hugo(OSystem *syst, const GlkGameDescription &gameDesc);
+		Hugo(OSystem *syst, const GlkGameDescription &gameDesc);
 
-	/**
+		/**
 	 * Run the game
 	 */
-	void runGame();
+		void runGame();
 
-	/**
+		/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override { return INTERPRETER_HUGO; }
+		virtual InterpreterType getInterpreterType() const override { return INTERPRETER_HUGO; }
 
-	/**
+		/**
 	 * Load a savegame from the passed Quetzal file chunk stream
 	 */
-	virtual Common::Error readSaveData(Common::SeekableReadStream *rs) override;
+		virtual Common::Error readSaveData(Common::SeekableReadStream *rs) override;
 
-	/**
+		/**
 	 * Save the game. The passed write stream represents access to the UMem chunk
 	 * in the Quetzal save file that will be created
 	 */
-	virtual Common::Error writeGameData(Common::WriteStream *ws) override;
-};
+		virtual Common::Error writeGameData(Common::WriteStream *ws) override;
+	};
 
 } // End of namespace Hugo
 } // End of namespace Glk

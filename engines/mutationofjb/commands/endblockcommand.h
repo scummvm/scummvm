@@ -23,9 +23,9 @@
 #ifndef MUTATIONOFJB_ENDBLOCKCOMMAND_H
 #define MUTATIONOFJB_ENDBLOCKCOMMAND_H
 
-#include "mutationofjb/commands/command.h"
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
+#include "mutationofjb/commands/command.h"
 
 namespace MutationOfJB {
 
@@ -33,11 +33,15 @@ struct ActionInfo;
 
 class EndBlockCommandParser : public CommandParser {
 public:
-	EndBlockCommandParser() : _elseFound(false), _hashFound(false), _ifTag(0) {}
+	EndBlockCommandParser()
+	  : _elseFound(false)
+	  , _hashFound(false)
+	  , _ifTag(0) {}
 
 	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser) override;
 	virtual void finish(ScriptParseContext &parseCtx) override;
+
 private:
 	bool _elseFound;
 	bool _hashFound;
@@ -61,12 +65,14 @@ private:
 
 class EndBlockCommand : public Command {
 public:
-	EndBlockCommand() : _nextCmd(nullptr) {}
+	EndBlockCommand()
+	  : _nextCmd(nullptr) {}
 	static bool ParseFunc(const Common::String &line, ScriptParseContext &parseContext, Command *&command);
 
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Command *next() const override;
 	virtual Common::String debugString() const;
+
 private:
 	Command *_nextCmd;
 };

@@ -24,11 +24,11 @@
 #define TOON_RESOURCE_H
 
 #include "common/array.h"
-#include "common/str.h"
 #include "common/file.h"
+#include "common/str.h"
 #include "common/stream.h"
 
-#define MAX_CACHE_SIZE	(4 * 1024 * 1024)
+#define MAX_CACHE_SIZE (4 * 1024 * 1024)
 
 namespace Toon {
 
@@ -59,7 +59,10 @@ class ToonEngine;
 
 class CacheEntry {
 public:
-	CacheEntry() : _age(0), _size(0), _data(0) {}
+	CacheEntry()
+	  : _age(0)
+	  , _size(0)
+	  , _data(0) {}
 	~CacheEntry() {
 		free(_data);
 	}

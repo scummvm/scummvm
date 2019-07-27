@@ -31,7 +31,8 @@ namespace Scumm {
  */
 class LogicHEbaseball2001 : public LogicHE {
 public:
-	LogicHEbaseball2001(ScummEngine_v90he *vm) : LogicHE(vm) {}
+	LogicHEbaseball2001(ScummEngine_v90he *vm)
+	  : LogicHE(vm) {}
 
 	int versionID();
 	int32 dispatch(int op, int numArgs, int32 *args);

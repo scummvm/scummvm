@@ -39,7 +39,8 @@ MacCursor::~MacCursor() {
 }
 
 void MacCursor::clear() {
-	delete[] _surface; _surface = 0;
+	delete[] _surface;
+	_surface = 0;
 	memset(_palette, 0, 256 * 3);
 }
 
@@ -134,7 +135,7 @@ bool MacCursor::readFromCRSR(Common::SeekableReadStream &stream, bool forceMonoc
 	stream.readUint32BE(); // reserved
 
 	// Pixel data for cursor
-	int iconDataSize =  iconRowBytes * (iconBounds[3] - iconBounds[1]);
+	int iconDataSize = iconRowBytes * (iconBounds[3] - iconBounds[1]);
 	byte *iconData = new byte[iconDataSize];
 
 	if (!iconData)
@@ -156,13 +157,13 @@ bool MacCursor::readFromCRSR(Common::SeekableReadStream &stream, bool forceMonoc
 	}
 
 	int pixelsPerByte = (iconBounds[2] - iconBounds[0]) / iconRowBytes;
-	int bpp           = 8 / pixelsPerByte;
+	int bpp = 8 / pixelsPerByte;
 
 	// build a mask to make sure the pixels are properly shifted out
 	int bitmask = 0;
 	for (int m = 0; m < bpp; m++) {
 		bitmask <<= 1;
-		bitmask  |= 1;
+		bitmask |= 1;
 	}
 
 	// Extract pixels from bytes

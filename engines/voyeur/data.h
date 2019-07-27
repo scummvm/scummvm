@@ -39,8 +39,13 @@ enum VoyeurEventType {
 	EVTYPE_COMPUTER = 4
 };
 
-enum EventFlag { EVTFLAG_TIME_DISABLED = 1, EVTFLAG_2 = 2, EVTFLAG_8 = 8, EVTFLAG_RECORDING = 0x10,
-	EVTFLAG_40 = 0x40, EVTFLAG_VICTIM_PRESET = 0x80, EVTFLAG_100 = 0x100 };
+enum EventFlag { EVTFLAG_TIME_DISABLED = 1,
+	               EVTFLAG_2 = 2,
+	               EVTFLAG_8 = 8,
+	               EVTFLAG_RECORDING = 0x10,
+	               EVTFLAG_40 = 0x40,
+	               EVTFLAG_VICTIM_PRESET = 0x80,
+	               EVTFLAG_100 = 0x100 };
 
 struct VoyeurEvent {
 	int _hour;
@@ -61,11 +66,11 @@ class VoyeurEngne;
  * Encapsulates a list of the time expired ranges that hotspots in the mansion
  * view are enabled for in a given time period.
  */
-template<int SLOTS>
+template <int SLOTS>
 class HotspotTimes {
 public:
-	int _min[SLOTS][20];	// Min time expired
-	int _max[SLOTS][20];	// Max time expired
+	int _min[SLOTS][20]; // Min time expired
+	int _max[SLOTS][20]; // Max time expired
 
 	HotspotTimes() {
 		reset();
@@ -100,8 +105,7 @@ public:
 	 * min and max at the given hotspot and slot indexes
 	 */
 	bool isInRange(int slotIndex, int hotspotIndex, int v) const {
-		return _min[slotIndex][hotspotIndex] <= v &&
-			v < _max[slotIndex][hotspotIndex];
+		return _min[slotIndex][hotspotIndex] <= v && v < _max[slotIndex][hotspotIndex];
 	}
 };
 
@@ -165,7 +169,7 @@ public:
 	 * Add an event to the list of game events that have occurred
 	 */
 	void addEvent(int hour, int minute, VoyeurEventType type, int audioVideoId,
-		int on, int off, int dead);
+	              int on, int off, int dead);
 
 	/**
 	 * Adds the start of a video event happening

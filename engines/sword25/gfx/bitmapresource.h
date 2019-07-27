@@ -32,16 +32,17 @@
 #ifndef SWORD25_BITMAP_RESOURCE_H
 #define SWORD25_BITMAP_RESOURCE_H
 
+#include "sword25/gfx/image/image.h"
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/resource.h"
-#include "sword25/gfx/image/image.h"
 
 namespace Sword25 {
 
 class BitmapResource : public Resource {
 public:
-	BitmapResource(const Common::String &filename, Image *pImage) :
-					_pImage(pImage), Resource(filename, Resource::TYPE_BITMAP) {}
+	BitmapResource(const Common::String &filename, Image *pImage)
+	  : _pImage(pImage)
+	  , Resource(filename, Resource::TYPE_BITMAP) {}
 	virtual ~BitmapResource() { delete _pImage; }
 
 	/**
@@ -108,7 +109,7 @@ public:
 	          Common::Rect *pSrcPartRect = NULL,
 	          uint color = BS_ARGB(255, 255, 255, 255),
 	          int width = -1, int height = -1,
-			  RectangleList *updateRects = 0) {
+	          RectangleList *updateRects = 0) {
 		assert(_pImage);
 		return _pImage->blit(posX, posY, flipping, pSrcPartRect, color, width, height, updateRects);
 	}

@@ -20,8 +20,8 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/resources/soundresource.h"
+#include "illusions/illusions.h"
 #include "illusions/sound.h"
 
 namespace Illusions {
@@ -35,9 +35,9 @@ void SoundGroupResourceLoader::load(Resource *resource) {
 }
 
 bool SoundGroupResourceLoader::isFlag(int flag) {
-	return
-		flag == kRlfLoadFile/* ||
-		flag == kRlfFreeDataAfterLoad*/;
+	return flag == kRlfLoadFile /* ||
+		flag == kRlfFreeDataAfterLoad*/
+	  ;
 }
 
 // SoundEffect
@@ -50,13 +50,13 @@ void SoundEffect::load(Common::SeekableReadStream &stream) {
 	_frequency = stream.readUint16LE();
 	stream.skip(32 + 4); // Skip name
 	debug(1, "SoundEffect::load() _soundEffectId: %08X, _looping: %d, _field6: %d, _volume: %d, _frequency: %d",
-		_soundEffectId, _looping, _field6, _volume, _frequency);
+	      _soundEffectId, _looping, _field6, _volume, _frequency);
 }
 
 // SoundGroupResource
 
 SoundGroupResource::SoundGroupResource()
-	: _soundEffects(0) {
+  : _soundEffects(0) {
 }
 
 SoundGroupResource::~SoundGroupResource() {
@@ -76,13 +76,13 @@ void SoundGroupResource::load(byte *data, uint32 dataSize) {
 	for (uint i = 0; i < _soundEffectsCount; ++i) {
 		_soundEffects[i].load(stream);
 	}
-
 }
 
 // SoundGroupInstance
 
 SoundGroupInstance::SoundGroupInstance(IllusionsEngine *vm)
-	: _vm(vm), _soundGroupResource(0) {
+  : _vm(vm)
+  , _soundGroupResource(0) {
 }
 
 void SoundGroupInstance::load(Resource *resource) {

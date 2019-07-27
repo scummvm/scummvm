@@ -32,7 +32,7 @@
 class SdlEventSource;
 
 #if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
-#define USE_OSD	1
+#	define USE_OSD 1
 #endif
 
 /**

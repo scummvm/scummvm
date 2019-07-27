@@ -21,26 +21,6 @@
  */
 
 #include "titanic/titanic.h"
-#include "titanic/carry/hose.h"
-#include "titanic/core/saveable_object.h"
-#include "titanic/debugger.h"
-#include "titanic/events.h"
-#include "titanic/game_manager.h"
-#include "titanic/game/get_lift_eye2.h"
-#include "titanic/game/television.h"
-#include "titanic/game/parrot/parrot_lobby_object.h"
-#include "titanic/game/sgt/sgt_navigation.h"
-#include "titanic/game/sgt/sgt_state_room.h"
-#include "titanic/main_game_window.h"
-#include "titanic/moves/enter_exit_first_class_state.h"
-#include "titanic/moves/enter_exit_sec_class_mini_lift.h"
-#include "titanic/moves/exit_pellerator.h"
-#include "titanic/pet_control/pet_control.h"
-#include "titanic/sound/music_room.h"
-#include "titanic/sound/music_room_instrument.h"
-#include "titanic/support/files_manager.h"
-#include "titanic/support/simple_file.h"
-#include "titanic/true_talk/tt_npc_script.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -51,6 +31,26 @@
 #include "graphics/scaler.h"
 #include "graphics/screen.h"
 #include "gui/saveload.h"
+#include "titanic/carry/hose.h"
+#include "titanic/core/saveable_object.h"
+#include "titanic/debugger.h"
+#include "titanic/events.h"
+#include "titanic/game/get_lift_eye2.h"
+#include "titanic/game/parrot/parrot_lobby_object.h"
+#include "titanic/game/sgt/sgt_navigation.h"
+#include "titanic/game/sgt/sgt_state_room.h"
+#include "titanic/game/television.h"
+#include "titanic/game_manager.h"
+#include "titanic/main_game_window.h"
+#include "titanic/moves/enter_exit_first_class_state.h"
+#include "titanic/moves/enter_exit_sec_class_mini_lift.h"
+#include "titanic/moves/exit_pellerator.h"
+#include "titanic/pet_control/pet_control.h"
+#include "titanic/sound/music_room.h"
+#include "titanic/sound/music_room_instrument.h"
+#include "titanic/support/files_manager.h"
+#include "titanic/support/simple_file.h"
+#include "titanic/true_talk/tt_npc_script.h"
 
 namespace Titanic {
 
@@ -58,7 +58,9 @@ TitanicEngine *g_vm;
 Common::Language g_language;
 
 TitanicEngine::TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc)
-		: _gameDescription(gameDesc), Engine(syst), _randomSource("Titanic") {
+  : _gameDescription(gameDesc)
+  , Engine(syst)
+  , _randomSource("Titanic") {
 	g_vm = this;
 	g_language = getLanguage();
 	_debugger = nullptr;
@@ -221,8 +223,7 @@ bool TitanicEngine::canSaveGameStateCurrently() {
 	if (!gameManager)
 		return false;
 
-	return gameManager->_gameState._petActive &&
-		canLoadGameStateCurrently();
+	return gameManager->_gameState._petActive && canLoadGameStateCurrently();
 }
 
 Common::Error TitanicEngine::loadGameState(int slot) {
@@ -246,7 +247,7 @@ CString TitanicEngine::generateSaveName(int slot) {
 CString TitanicEngine::getSavegameName(int slot) {
 	// Try and open up the savegame for access
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(
-		generateSaveName(slot));
+	  generateSaveName(slot));
 
 	if (in) {
 		// Read in the savegame header data
@@ -275,7 +276,6 @@ void TitanicEngine::syncSoundSettings() {
 		}
 	}
 }
-
 
 void TitanicEngine::showScummVMSaveDialog() {
 	if (!canSaveGameStateCurrently())

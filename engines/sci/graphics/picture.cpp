@@ -24,20 +24,26 @@
 #include "common/stack.h"
 #include "common/system.h"
 
-#include "sci/sci.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/screen.h"
-#include "sci/graphics/palette.h"
 #include "sci/graphics/coordadjuster.h"
-#include "sci/graphics/ports.h"
+#include "sci/graphics/palette.h"
 #include "sci/graphics/picture.h"
+#include "sci/graphics/ports.h"
+#include "sci/graphics/screen.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
 //#define DEBUG_PICTURE_DRAW
 
 GfxPicture::GfxPicture(ResourceManager *resMan, GfxCoordAdjuster16 *coordAdjuster, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize)
-	: _resMan(resMan), _coordAdjuster(coordAdjuster), _ports(ports), _screen(screen), _palette(palette), _resourceId(resourceId), _EGAdrawingVisualize(EGAdrawingVisualize) {
+  : _resMan(resMan)
+  , _coordAdjuster(coordAdjuster)
+  , _ports(ports)
+  , _screen(screen)
+  , _palette(palette)
+  , _resourceId(resourceId)
+  , _EGAdrawingVisualize(EGAdrawingVisualize) {
 	assert(resourceId != -1);
 	initData(resourceId);
 }
@@ -176,7 +182,7 @@ void GfxPicture::drawCelData(const SciSpan<const byte> &inbuffer, int headerPos,
 	// We will unpack cel-data into a temporary buffer and then plot it to screen
 	//  That needs to be done cause a mirrored picture may be requested
 	pixelCount = width * height;
-	Common::SpanOwner<SciSpan<byte> > celBitmap;
+	Common::SpanOwner<SciSpan<byte>> celBitmap;
 	celBitmap->allocate(pixelCount, _resource->name());
 
 	if (compression) {
@@ -398,8 +404,8 @@ const char *picExOpcodeNamesVGA[] = {
 #endif
 
 #define PIC_EGAPALETTE_COUNT 4
-#define PIC_EGAPALETTE_SIZE  40
-#define PIC_EGAPALETTE_TOTALSIZE PIC_EGAPALETTE_COUNT*PIC_EGAPALETTE_SIZE
+#define PIC_EGAPALETTE_SIZE 40
+#define PIC_EGAPALETTE_TOTALSIZE PIC_EGAPALETTE_COUNT *PIC_EGAPALETTE_SIZE
 #define PIC_EGAPRIORITY_SIZE PIC_EGAPALETTE_SIZE
 
 static const byte vector_defaultEGApalette[PIC_EGAPALETTE_SIZE] = {
@@ -423,8 +429,8 @@ void GfxPicture::drawVectorData(const SciSpan<const byte> &data) {
 	byte pic_color = _screen->getColorDefaultVectorData();
 	byte pic_priority = 255, pic_control = 255;
 	int16 x = 0, y = 0, oldx, oldy;
-	byte EGApalettes[PIC_EGAPALETTE_TOTALSIZE] = {0};
-	byte EGApriority[PIC_EGAPRIORITY_SIZE] = {0};
+	byte EGApalettes[PIC_EGAPALETTE_TOTALSIZE] = { 0 };
+	byte EGApriority[PIC_EGAPRIORITY_SIZE] = { 0 };
 	bool isEGA = false;
 	uint curPos = 0;
 	uint16 size;
@@ -501,7 +507,8 @@ void GfxPicture::drawVectorData(const SciSpan<const byte> &data) {
 		case PIC_OP_SHORT_LINES: // short line
 			vectorGetAbsCoords(data, curPos, x, y);
 			while (vectorIsNonOpcode(data[curPos])) {
-				oldx = x; oldy = y;
+				oldx = x;
+				oldy = y;
 				vectorGetRelCoords(data, curPos, x, y);
 				Common::Point startPoint(oldx, oldy);
 				Common::Point endPoint(x, y);
@@ -521,7 +528,8 @@ void GfxPicture::drawVectorData(const SciSpan<const byte> &data) {
 				}
 			}
 			while (vectorIsNonOpcode(data[curPos])) {
-				oldx = x; oldy = y;
+				oldx = x;
+				oldy = y;
 				vectorGetRelCoordsMed(data, curPos, x, y);
 				Common::Point startPoint(oldx, oldy);
 				Common::Point endPoint(x, y);
@@ -532,7 +540,8 @@ void GfxPicture::drawVectorData(const SciSpan<const byte> &data) {
 		case PIC_OP_LONG_LINES: // long line
 			vectorGetAbsCoords(data, curPos, x, y);
 			while (vectorIsNonOpcode(data[curPos])) {
-				oldx = x; oldy = y;
+				oldx = x;
+				oldy = y;
 				vectorGetAbsCoords(data, curPos, x, y);
 				Common::Point startPoint(oldx, oldy);
 				Common::Point endPoint(x, y);
@@ -563,7 +572,7 @@ void GfxPicture::drawVectorData(const SciSpan<const byte> &data) {
 					case 35:
 					case 381:
 					case 376:
-					//case 390:	// in the blacklisted NRS patch 1.2 (bug #3615060)
+						//case 390:	// in the blacklisted NRS patch 1.2 (bug #3615060)
 						return;
 					default:
 						break;
@@ -644,7 +653,8 @@ void GfxPicture::drawVectorData(const SciSpan<const byte> &data) {
 					break;
 				case PIC_OPX_EGA_EMBEDDED_VIEW:
 					vectorGetAbsCoordsNoMirror(data, curPos, x, y);
-					size = data.getUint16LEAt(curPos); curPos += 2;
+					size = data.getUint16LEAt(curPos);
+					curPos += 2;
 					// hardcoded in SSCI, 16 for SCI1early excluding Space Quest 4, 0 for anything else
 					//  fixes sq4 pictures 546+547 (Vohaul's head and Roger Jr trapped). Bug #5250
 					//  fixes sq4 picture 631 (SQ1 view from cockpit). Bug 5249
@@ -687,14 +697,17 @@ void GfxPicture::drawVectorData(const SciSpan<const byte> &data) {
 						curPos += 256 + 4; // Skip over mapping and timestamp
 						for (i = 0; i < 256; i++) {
 							palette.colors[i].used = data[curPos++];
-							palette.colors[i].r = data[curPos++]; palette.colors[i].g = data[curPos++]; palette.colors[i].b = data[curPos++];
+							palette.colors[i].r = data[curPos++];
+							palette.colors[i].g = data[curPos++];
+							palette.colors[i].b = data[curPos++];
 						}
 						_palette->set(&palette, true);
 					}
 					break;
 				case PIC_OPX_VGA_EMBEDDED_VIEW: // draw cel
 					vectorGetAbsCoordsNoMirror(data, curPos, x, y);
-					size = data.getUint16LEAt(curPos); curPos += 2;
+					size = data.getUint16LEAt(curPos);
+					curPos += 2;
 					if (getSciVersion() <= SCI_VERSION_1_EARLY) {
 						// During SCI1Early sierra always used 0 as priority for cels inside picture resources
 						//  fixes Space Quest 4 orange ship lifting off (bug #6446)
@@ -760,7 +773,8 @@ void GfxPicture::vectorGetAbsCoords(const SciSpan<const byte> &data, uint &curPo
 	byte pixel = data[curPos++];
 	x = data[curPos++] + ((pixel & 0xF0) << 4);
 	y = data[curPos++] + ((pixel & 0x0F) << 8);
-	if (_mirroredFlag) x = 319 - x;
+	if (_mirroredFlag)
+		x = 319 - x;
 }
 
 void GfxPicture::vectorGetAbsCoordsNoMirror(const SciSpan<const byte> &data, uint &curPos, int16 &x, int16 &y) {
@@ -936,17 +950,17 @@ static const byte vectorPatternCircles[8][30] = {
 	{ 0x38, 0xF8, 0xF3, 0xDF, 0x7F, 0xFF, 0xFD, 0xF7, 0x9F, 0x3F, 0x38 },
 	{ 0x70, 0xC0, 0x1F, 0xFE, 0xE3, 0x3F, 0xFF, 0xF7, 0x7F, 0xFF, 0xE7, 0x3F, 0xFE, 0xC3, 0x1F, 0xF8, 0x00 },
 	{ 0xF0, 0x01, 0xFF, 0xE1, 0xFF, 0xF8, 0x3F, 0xFF, 0xDF, 0xFF, 0xF7, 0xFF, 0xFD, 0x7F, 0xFF, 0x9F, 0xFF,
-		0xE3, 0xFF, 0xF0, 0x1F, 0xF0, 0x01 },
+	  0xE3, 0xFF, 0xF0, 0x1F, 0xF0, 0x01 },
 	{ 0xE0, 0x03, 0xF8, 0x0F, 0xFC, 0x1F, 0xFE, 0x3F, 0xFE, 0x3F, 0xFF, 0x7F, 0xFF, 0x7F, 0xFF, 0x7F, 0xFF,
-		0x7F, 0xFF, 0x7F, 0xFE, 0x3F, 0xFE, 0x3F, 0xFC, 0x1F, 0xF8, 0x0F, 0xE0, 0x03 }
-//  { 0x01 };
-//	{ 0x03, 0x03, 0x03 },
-//	{ 0x02, 0x07, 0x07, 0x07, 0x02 },
-//	{ 0x06, 0x06, 0x0F, 0x0F, 0x0F, 0x06, 0x06 },
-//	{ 0x04, 0x0E, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x0E, 0x04 },
-//	{ 0x0C, 0x1E, 0x1E, 0x1E, 0x3F, 0x3F, 0x3F, 0x1E, 0x1E, 0x1E, 0x0C },
-//	{ 0x1C, 0x3E, 0x3E, 0x3E, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x3E, 0x3E, 0x3E, 0x1C },
-//	{ 0x18, 0x3C, 0x7E, 0x7E, 0x7E, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7E, 0x7E, 0x7E, 0x3C, 0x18 }
+	  0x7F, 0xFF, 0x7F, 0xFE, 0x3F, 0xFE, 0x3F, 0xFC, 0x1F, 0xF8, 0x0F, 0xE0, 0x03 }
+	//  { 0x01 };
+	//	{ 0x03, 0x03, 0x03 },
+	//	{ 0x02, 0x07, 0x07, 0x07, 0x02 },
+	//	{ 0x06, 0x06, 0x0F, 0x0F, 0x0F, 0x06, 0x06 },
+	//	{ 0x04, 0x0E, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x0E, 0x04 },
+	//	{ 0x0C, 0x1E, 0x1E, 0x1E, 0x3F, 0x3F, 0x3F, 0x1E, 0x1E, 0x1E, 0x0C },
+	//	{ 0x1C, 0x3E, 0x3E, 0x3E, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x3E, 0x3E, 0x3E, 0x1C },
+	//	{ 0x18, 0x3C, 0x7E, 0x7E, 0x7E, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7E, 0x7E, 0x7E, 0x3C, 0x18 }
 };
 
 // TODO: perhaps this is a better way to set the s_patternTextures array below?
@@ -968,71 +982,71 @@ static const byte patternTextures[32 * 2] = {
 // This table is bitwise upwards (from bit0 to bit7), sierras original table went down the bits (bit7 to bit0)
 //  this was done to simplify things, so we can just run through the table w/o worrying too much about clipping
 static const bool vectorPatternTextures[32 * 8 * 2] = {
-	false, false,  true, false, false, false, false, false, // 0x04
-	 true, false, false,  true, false,  true, false, false, // 0x29
-	false, false, false, false, false, false,  true, false, // 0x40
-	false, false,  true, false, false,  true, false, false, // 0x24
-	 true, false, false,  true, false, false, false, false, // 0x09
-	 true, false, false, false, false, false,  true, false, // 0x41
-	 true, false,  true, false, false,  true, false, false, // 0x25
-	 true, false,  true, false, false, false,  true, false, // 0x45
-	 true, false, false, false, false, false,  true, false, // 0x41
-	false, false, false, false,  true, false, false,  true, // 0x90
-	false, false, false, false,  true, false,  true, false, // 0x50
-	false, false,  true, false, false, false,  true, false, // 0x44
-	false, false, false,  true, false, false,  true, false, // 0x48
-	false, false, false,  true, false, false, false, false, // 0x08
-	false,  true, false, false, false, false,  true, false, // 0x42
-	false, false, false,  true, false,  true, false, false, // 0x28
-	 true, false, false,  true, false, false, false,  true, // 0x89
-	false,  true, false, false,  true, false,  true, false, // 0x52
-	 true, false, false,  true, false, false, false,  true, // 0x89
-	false, false, false,  true, false, false, false,  true, // 0x88
-	false, false, false, false,  true, false, false, false, // 0x10
-	false, false, false,  true, false, false,  true, false, // 0x48
-	false, false,  true, false, false,  true, false,  true, // 0xA4
-	false, false, false,  true, false, false, false, false, // 0x08
-	false, false,  true, false, false, false,  true, false, // 0x44
-	 true, false,  true, false,  true, false, false, false, // 0x15
-	false, false, false,  true, false,  true, false, false, // 0x28
-	false, false,  true, false, false,  true, false, false, // 0x24
+	false, false, true, false, false, false, false, false, // 0x04
+	true, false, false, true, false, true, false, false, // 0x29
+	false, false, false, false, false, false, true, false, // 0x40
+	false, false, true, false, false, true, false, false, // 0x24
+	true, false, false, true, false, false, false, false, // 0x09
+	true, false, false, false, false, false, true, false, // 0x41
+	true, false, true, false, false, true, false, false, // 0x25
+	true, false, true, false, false, false, true, false, // 0x45
+	true, false, false, false, false, false, true, false, // 0x41
+	false, false, false, false, true, false, false, true, // 0x90
+	false, false, false, false, true, false, true, false, // 0x50
+	false, false, true, false, false, false, true, false, // 0x44
+	false, false, false, true, false, false, true, false, // 0x48
+	false, false, false, true, false, false, false, false, // 0x08
+	false, true, false, false, false, false, true, false, // 0x42
+	false, false, false, true, false, true, false, false, // 0x28
+	true, false, false, true, false, false, false, true, // 0x89
+	false, true, false, false, true, false, true, false, // 0x52
+	true, false, false, true, false, false, false, true, // 0x89
+	false, false, false, true, false, false, false, true, // 0x88
+	false, false, false, false, true, false, false, false, // 0x10
+	false, false, false, true, false, false, true, false, // 0x48
+	false, false, true, false, false, true, false, true, // 0xA4
+	false, false, false, true, false, false, false, false, // 0x08
+	false, false, true, false, false, false, true, false, // 0x44
+	true, false, true, false, true, false, false, false, // 0x15
+	false, false, false, true, false, true, false, false, // 0x28
+	false, false, true, false, false, true, false, false, // 0x24
 	false, false, false, false, false, false, false, false, // 0x00
-	false,  true, false,  true, false, false, false, false, // 0x0A
-	false, false,  true, false, false,  true, false, false, // 0x24
-	false, false, false, false, false,  true, false,        // 0x20 (last bit is not mentioned cause original interpreter also ignores that bit)
+	false, true, false, true, false, false, false, false, // 0x0A
+	false, false, true, false, false, true, false, false, // 0x24
+	false, false, false, false, false, true, false, // 0x20 (last bit is not mentioned cause original interpreter also ignores that bit)
 	// Now the table is actually duplicated, so we won't need to wrap around
-	false, false,  true, false, false, false, false, false, // 0x04
-	 true, false, false,  true, false,  true, false, false, // 0x29
-	false, false, false, false, false, false,  true, false, // 0x40
-	false, false,  true, false, false,  true, false, false, // 0x24
-	 true, false, false,  true, false, false, false, false, // 0x09
-	 true, false, false, false, false, false,  true, false, // 0x41
-	 true, false,  true, false, false,  true, false, false, // 0x25
-	 true, false,  true, false, false, false,  true, false, // 0x45
-	 true, false, false, false, false, false,  true, false, // 0x41
-	false, false, false, false,  true, false, false,  true, // 0x90
-	false, false, false, false,  true, false,  true, false, // 0x50
-	false, false,  true, false, false, false,  true, false, // 0x44
-	false, false, false,  true, false, false,  true, false, // 0x48
-	false, false, false,  true, false, false, false, false, // 0x08
-	false,  true, false, false, false, false,  true, false, // 0x42
-	false, false, false,  true, false,  true, false, false, // 0x28
-	 true, false, false,  true, false, false, false,  true, // 0x89
-	false,  true, false, false,  true, false,  true, false, // 0x52
-	 true, false, false,  true, false, false, false,  true, // 0x89
-	false, false, false,  true, false, false, false,  true, // 0x88
-	false, false, false, false,  true, false, false, false, // 0x10
-	false, false, false,  true, false, false,  true, false, // 0x48
-	false, false,  true, false, false,  true, false,  true, // 0xA4
-	false, false, false,  true, false, false, false, false, // 0x08
-	false, false,  true, false, false, false,  true, false, // 0x44
-	 true, false,  true, false,  true, false, false, false, // 0x15
-	false, false, false,  true, false,  true, false, false, // 0x28
-	false, false,  true, false, false,  true, false, false, // 0x24
+	false, false, true, false, false, false, false, false, // 0x04
+	true, false, false, true, false, true, false, false, // 0x29
+	false, false, false, false, false, false, true, false, // 0x40
+	false, false, true, false, false, true, false, false, // 0x24
+	true, false, false, true, false, false, false, false, // 0x09
+	true, false, false, false, false, false, true, false, // 0x41
+	true, false, true, false, false, true, false, false, // 0x25
+	true, false, true, false, false, false, true, false, // 0x45
+	true, false, false, false, false, false, true, false, // 0x41
+	false, false, false, false, true, false, false, true, // 0x90
+	false, false, false, false, true, false, true, false, // 0x50
+	false, false, true, false, false, false, true, false, // 0x44
+	false, false, false, true, false, false, true, false, // 0x48
+	false, false, false, true, false, false, false, false, // 0x08
+	false, true, false, false, false, false, true, false, // 0x42
+	false, false, false, true, false, true, false, false, // 0x28
+	true, false, false, true, false, false, false, true, // 0x89
+	false, true, false, false, true, false, true, false, // 0x52
+	true, false, false, true, false, false, false, true, // 0x89
+	false, false, false, true, false, false, false, true, // 0x88
+	false, false, false, false, true, false, false, false, // 0x10
+	false, false, false, true, false, false, true, false, // 0x48
+	false, false, true, false, false, true, false, true, // 0xA4
+	false, false, false, true, false, false, false, false, // 0x08
+	false, false, true, false, false, false, true, false, // 0x44
+	true, false, true, false, true, false, false, false, // 0x15
+	false, false, false, true, false, true, false, false, // 0x28
+	false, false, true, false, false, true, false, false, // 0x24
 	false, false, false, false, false, false, false, false, // 0x00
-	false,  true, false,  true, false, false, false, false, // 0x0A
-	false, false,  true, false, false,  true, false, false, // 0x24
-	false, false, false, false, false,  true, false,        // 0x20 (last bit is not mentioned cause original interpreter also ignores that bit)
+	false, true, false, true, false, false, false, false, // 0x0A
+	false, false, true, false, false, true, false, false, // 0x24
+	false, false, false, false, false, true, false, // 0x20 (last bit is not mentioned cause original interpreter also ignores that bit)
 };
 
 // Bit offsets into pattern_textures
@@ -1137,11 +1151,17 @@ void GfxPicture::vectorPattern(int16 x, int16 y, byte color, byte priority, byte
 	Common::Rect rect;
 
 	// We need to adjust the given coordinates, because the ones given us do not define upper left but somewhat middle
-	y -= size; if (y < 0) y = 0;
-	x -= size; if (x < 0) x = 0;
+	y -= size;
+	if (y < 0)
+		y = 0;
+	x -= size;
+	if (x < 0)
+		x = 0;
 
-	rect.top = y; rect.left = x;
-	rect.setHeight((size*2)+1); rect.setWidth((size*2)+2);
+	rect.top = y;
+	rect.left = x;
+	rect.setHeight((size * 2) + 1);
+	rect.setWidth((size * 2) + 2);
 	_ports->offsetRect(rect);
 	rect.clip(_screen->getScriptWidth(), _screen->getScriptHeight());
 

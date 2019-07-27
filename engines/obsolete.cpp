@@ -24,7 +24,6 @@
 
 #include "common/config-manager.h"
 
-
 namespace Engines {
 
 void upgradeTargetIfNecessary(const ObsoleteGameID *obsoleteList) {
@@ -56,10 +55,9 @@ void upgradeTargetIfNecessary(const ObsoleteGameID *obsoleteList) {
 }
 
 PlainGameDescriptor findGameID(
-	const char *gameid,
-	const PlainGameDescriptor *gameids,
-	const ObsoleteGameID *obsoleteList
-	) {
+  const char *gameid,
+  const PlainGameDescriptor *gameids,
+  const ObsoleteGameID *obsoleteList) {
 	// First search the list of supported gameids for a match.
 	const PlainGameDescriptor *g = findPlainGameDescriptor(gameid, gameids);
 	if (g)

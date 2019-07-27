@@ -28,22 +28,23 @@
  */
 
 #include "common/debug.h"
-#include "common/system.h"
 #include "common/random.h"
+#include "common/system.h"
 
-#include "hugo/hugo.h"
-#include "hugo/game.h"
-#include "hugo/object.h"
 #include "hugo/display.h"
 #include "hugo/file.h"
-#include "hugo/route.h"
-#include "hugo/util.h"
+#include "hugo/game.h"
+#include "hugo/hugo.h"
+#include "hugo/object.h"
 #include "hugo/parser.h"
+#include "hugo/route.h"
 #include "hugo/schedule.h"
+#include "hugo/util.h"
 
 namespace Hugo {
 
-ObjectHandler_v1w::ObjectHandler_v1w(HugoEngine *vm) : ObjectHandler_v3d(vm) {
+ObjectHandler_v1w::ObjectHandler_v1w(HugoEngine *vm)
+  : ObjectHandler_v3d(vm) {
 }
 
 ObjectHandler_v1w::~ObjectHandler_v1w() {
@@ -59,8 +60,8 @@ void ObjectHandler_v1w::updateImages() {
 	debugC(5, kDebugObject, "updateImages");
 
 	// Initialize the index array to visible objects in current screen
-	int  objNumb = 0;
-	byte objindex[kMaxObjNumb];                     // Array of indeces to objects
+	int objNumb = 0;
+	byte objindex[kMaxObjNumb]; // Array of indeces to objects
 
 	for (int i = 0; i < _numObj; i++) {
 		Object *obj = &_objects[i];
@@ -84,20 +85,20 @@ void ObjectHandler_v1w::updateImages() {
 				_vm->_screen->displayFrame(obj->_x, obj->_y, obj->_currImagePtr, obj->_priority == kPriorityOverOverlay);
 				break;
 			case kCycleForward:
-				if (obj->_frameTimer)                // Not time to see next frame yet
+				if (obj->_frameTimer) // Not time to see next frame yet
 					_vm->_screen->displayFrame(obj->_x, obj->_y, obj->_currImagePtr, obj->_priority == kPriorityOverOverlay);
 				else
 					_vm->_screen->displayFrame(obj->_x, obj->_y, obj->_currImagePtr->_nextSeqPtr, obj->_priority == kPriorityOverOverlay);
 				break;
 			case kCycleBackward: {
 				Seq *seqPtr = obj->_currImagePtr;
-				if (!obj->_frameTimer) {             // Show next frame
+				if (!obj->_frameTimer) { // Show next frame
 					while (seqPtr->_nextSeqPtr != obj->_currImagePtr)
 						seqPtr = seqPtr->_nextSeqPtr;
 				}
 				_vm->_screen->displayFrame(obj->_x, obj->_y, seqPtr, obj->_priority == kPriorityOverOverlay);
 				break;
-				}
+			}
 			default:
 				break;
 			}
@@ -147,7 +148,7 @@ void ObjectHandler_v1w::updateImages() {
 						obj->_frameTimer = obj->_frameInterval;
 						for (int j = 0; j < obj->_seqNumb; j++) {
 							if (obj->_currImagePtr == obj->_seqList[j]._seqPtr) {
-								if (obj->_cycleNumb){ // Decr cycleNumb if Non-continous
+								if (obj->_cycleNumb) { // Decr cycleNumb if Non-continous
 									if (!--obj->_cycleNumb)
 										obj->_cycling = kCycleNotCycling;
 								}
@@ -156,7 +157,7 @@ void ObjectHandler_v1w::updateImages() {
 					}
 				}
 				break;
-				}
+			}
 			default:
 				break;
 			}
@@ -180,14 +181,14 @@ void ObjectHandler_v1w::moveObjects() {
 	// and store all (visible) object baselines into the boundary file.
 	// Don't store foreground or background objects
 	for (int i = 0; i < _numObj; i++) {
-		Object *obj = &_objects[i];               // Get pointer to object
-		Seq *currImage = obj->_currImagePtr;       // Get ptr to current image
+		Object *obj = &_objects[i]; // Get pointer to object
+		Seq *currImage = obj->_currImagePtr; // Get ptr to current image
 		if (obj->_screenIndex == *_vm->_screenPtr) {
 			switch (obj->_pathType) {
 			case kPathChase:
 			case kPathChase2: {
-				int8 radius = obj->_radius;          // Default to object's radius
-				if (radius < 0)                     // If radius infinity, use closer value
+				int8 radius = obj->_radius; // Default to object's radius
+				if (radius < 0) // If radius infinity, use closer value
 					radius = kStepDx;
 
 				// Allowable motion wrt boundary
@@ -205,7 +206,7 @@ void ObjectHandler_v1w::moveObjects() {
 				// Set first image in sequence (if multi-seq object)
 				switch (obj->_seqNumb) {
 				case 4:
-					if (!obj->_vx) {                 // Got 4 directions
+					if (!obj->_vx) { // Got 4 directions
 						if (obj->_vx != obj->_oldvx) { // vx just stopped
 							if (dy >= 0)
 								obj->_currImagePtr = obj->_seqList[SEQ_DOWN]._seqPtr;
@@ -221,8 +222,8 @@ void ObjectHandler_v1w::moveObjects() {
 					break;
 				case 3:
 				case 2:
-					if (obj->_vx != obj->_oldvx) {    // vx just stopped
-						if (dx > 0)                 // Left & right only
+					if (obj->_vx != obj->_oldvx) { // vx just stopped
+						if (dx > 0) // Left & right only
 							obj->_currImagePtr = obj->_seqList[SEQ_RIGHT]._seqPtr;
 						else
 							obj->_currImagePtr = obj->_seqList[SEQ_LEFT]._seqPtr;
@@ -234,16 +235,16 @@ void ObjectHandler_v1w::moveObjects() {
 					obj->_cycling = kCycleForward;
 				} else {
 					obj->_cycling = kCycleNotCycling;
-					boundaryCollision(obj);         // Must have got hero!
+					boundaryCollision(obj); // Must have got hero!
 				}
 				obj->_oldvx = obj->_vx;
 				obj->_oldvy = obj->_vy;
-				currImage = obj->_currImagePtr;      // Get (new) ptr to current image
+				currImage = obj->_currImagePtr; // Get (new) ptr to current image
 				break;
-				}
+			}
 			case kPathWander2:
 			case kPathWander:
-				if (!_vm->_rnd->getRandomNumber(3 * _vm->_normalTPS)) {       // Kick on random interval
+				if (!_vm->_rnd->getRandomNumber(3 * _vm->_normalTPS)) { // Kick on random interval
 					obj->_vx = _vm->_rnd->getRandomNumber(obj->_vxPath << 1) - obj->_vxPath;
 					obj->_vy = _vm->_rnd->getRandomNumber(obj->_vyPath << 1) - obj->_vyPath;
 
@@ -265,13 +266,12 @@ void ObjectHandler_v1w::moveObjects() {
 					}
 					obj->_oldvx = obj->_vx;
 					obj->_oldvy = obj->_vy;
-					currImage = obj->_currImagePtr;  // Get (new) ptr to current image
+					currImage = obj->_currImagePtr; // Get (new) ptr to current image
 				}
 				if (obj->_vx || obj->_vy)
 					obj->_cycling = kCycleForward;
 				break;
-			default:
-				; // Really, nothing
+			default:; // Really, nothing
 			}
 			// Store boundaries
 			if ((obj->_cycling > kCycleAlmostInvisible) && (obj->_priority == kPriorityFloating))
@@ -281,21 +281,21 @@ void ObjectHandler_v1w::moveObjects() {
 
 	// Move objects, allowing for boundaries
 	for (int i = 0; i < _numObj; i++) {
-		Object *obj = &_objects[i];                         // Get pointer to object
+		Object *obj = &_objects[i]; // Get pointer to object
 		if ((obj->_screenIndex == *_vm->_screenPtr) && (obj->_vx || obj->_vy)) {
 			// Only process if it's moving
 
 			// Do object movement.  Delta_x,y return allowed movement in x,y
 			// to move as close to a boundary as possible without crossing it.
-			Seq *currImage = obj->_currImagePtr;   // Get ptr to current image
+			Seq *currImage = obj->_currImagePtr; // Get ptr to current image
 			// object coordinates
-			int x1 = obj->_x + currImage->_x1;        // Left edge of object
-			int x2 = obj->_x + currImage->_x2;        // Right edge
-			int y1 = obj->_y + currImage->_y1;        // Top edge
-			int y2 = obj->_y + currImage->_y2;        // Bottom edge
+			int x1 = obj->_x + currImage->_x1; // Left edge of object
+			int x2 = obj->_x + currImage->_x2; // Right edge
+			int y1 = obj->_y + currImage->_y1; // Top edge
+			int y2 = obj->_y + currImage->_y2; // Bottom edge
 
 			if ((obj->_cycling > kCycleAlmostInvisible) && (obj->_priority == kPriorityFloating))
-				clearBoundary(x1, x2, y2);          // Clear our own boundary
+				clearBoundary(x1, x2, y2); // Clear our own boundary
 
 			// Allowable motion wrt boundary
 			int dx = deltaX(x1, x2, obj->_vx, y2);
@@ -313,9 +313,9 @@ void ObjectHandler_v1w::moveObjects() {
 			}
 
 			if ((obj->_cycling > kCycleAlmostInvisible) && (obj->_priority == kPriorityFloating))
-				storeBoundary(x1, x2, y2);          // Re-store our own boundary
+				storeBoundary(x1, x2, y2); // Re-store our own boundary
 
-			obj->_x += dx;                           // Update object position
+			obj->_x += dx; // Update object position
 			obj->_y += dy;
 
 			// Don't let object go outside screen
@@ -335,20 +335,20 @@ void ObjectHandler_v1w::moveObjects() {
 
 	// Clear all object baselines from the boundary file.
 	for (int i = 0; i < _numObj; i++) {
-		Object *obj = &_objects[i];               // Get pointer to object
-		Seq *currImage = obj->_currImagePtr;       // Get ptr to current image
+		Object *obj = &_objects[i]; // Get pointer to object
+		Seq *currImage = obj->_currImagePtr; // Get ptr to current image
 		if ((obj->_screenIndex == *_vm->_screenPtr) && (obj->_cycling > kCycleAlmostInvisible) && (obj->_priority == kPriorityFloating))
 			clearBoundary(obj->_oldx + currImage->_x1, obj->_oldx + currImage->_x2, obj->_oldy + currImage->_y2);
 	}
 
 	// If maze mode is enabled, do special maze processing
 	if (_vm->_maze._enabledFl) {
-		Seq *currImage = _vm->_hero->_currImagePtr;    // Get ptr to current image
+		Seq *currImage = _vm->_hero->_currImagePtr; // Get ptr to current image
 		// hero coordinates
-		int x1 = _vm->_hero->_x + currImage->_x1;         // Left edge of object
-		int x2 = _vm->_hero->_x + currImage->_x2;         // Right edge
-		int y1 = _vm->_hero->_y + currImage->_y1;         // Top edge
-		int y2 = _vm->_hero->_y + currImage->_y2;         // Bottom edge
+		int x1 = _vm->_hero->_x + currImage->_x1; // Left edge of object
+		int x2 = _vm->_hero->_x + currImage->_x2; // Right edge
+		int y1 = _vm->_hero->_y + currImage->_y1; // Top edge
+		int y2 = _vm->_hero->_y + currImage->_y2; // Bottom edge
 
 		_vm->_scheduler->processMaze(x1, x2, y1, y2);
 	}

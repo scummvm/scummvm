@@ -20,11 +20,11 @@
  *
  */
 
-#include "common/file.h"
-#include "common/util.h"
-#include "common/fs.h"
 #include "common/debug.h"
+#include "common/file.h"
+#include "common/fs.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
 #include "agi/wagparser.h"
 
@@ -43,15 +43,16 @@ WagProperty::WagProperty(const WagProperty &other) {
 }
 
 WagProperty &WagProperty::operator=(const WagProperty &other) {
-	if (&other != this) deepCopy(other); // Don't do self-assignment
+	if (&other != this)
+		deepCopy(other); // Don't do self-assignment
 	return *this;
 }
 
 void WagProperty::deepCopy(const WagProperty &other) {
-	_readOk   = other._readOk;
+	_readOk = other._readOk;
 	_propCode = other._propCode;
 	_propType = other._propType;
-	_propNum  = other._propNum;
+	_propNum = other._propNum;
 	_propSize = other._propSize;
 
 	deleteData(); // Delete old data (If any) and set _propData to NULL
@@ -63,9 +64,9 @@ void WagProperty::deepCopy(const WagProperty &other) {
 
 bool WagProperty::read(Common::SeekableReadStream &stream) {
 	// First read the property's header
-	_propCode = (enum WagPropertyCode) stream.readByte();
-	_propType = (enum WagPropertyType) stream.readByte();
-	_propNum  = stream.readByte();
+	_propCode = (enum WagPropertyCode)stream.readByte();
+	_propType = (enum WagPropertyType)stream.readByte();
+	_propNum = stream.readByte();
 	_propSize = stream.readUint16LE();
 
 	if (stream.eos() || stream.err()) { // Check that we got the whole header
@@ -89,10 +90,10 @@ void WagProperty::clear() {
 }
 
 void WagProperty::setDefaults() {
-	_readOk   = false;
+	_readOk = false;
 	_propCode = PC_UNDEFINED;
 	_propType = PT_UNDEFINED;
-	_propNum  = 0;
+	_propNum = 0;
 	_propSize = 0;
 	_propData = NULL;
 }
@@ -102,8 +103,8 @@ void WagProperty::deleteData() {
 	_propData = NULL;
 }
 
-WagFileParser::WagFileParser() :
-	_parsedOk(false) {
+WagFileParser::WagFileParser()
+  : _parsedOk(false) {
 }
 
 WagFileParser::~WagFileParser() {
@@ -111,9 +112,9 @@ WagFileParser::~WagFileParser() {
 
 bool WagFileParser::checkAgiVersionProperty(const WagProperty &version) const {
 	if (version.getCode() == WagProperty::PC_INTVERSION && // Must be AGI interpreter version property
-	        version.getSize() >= 3 && // Need at least three characters for a version number like "X.Y"
-	        Common::isDigit(version.getData()[0]) && // And the first character must be a digit
-	        (version.getData()[1] == ',' || version.getData()[1] == '.')) { // And the second a comma or a period
+	    version.getSize() >= 3 && // Need at least three characters for a version number like "X.Y"
+	    Common::isDigit(version.getData()[0]) && // And the first character must be a digit
+	    (version.getData()[1] == ',' || version.getData()[1] == '.')) { // And the second a comma or a period
 
 		for (int i = 2; i < version.getSize(); i++) // And the rest must all be digits
 			if (!Common::isDigit(version.getData()[i]))
@@ -135,7 +136,7 @@ uint16 WagFileParser::convertToAgiVersionNumber(const WagProperty &version) {
 		// (i.e. the part after the decimal point) and put them in order to the third, second
 		// and the first nibble of the version number. Just to clarify version.getSize() - 2
 		// is the number of digits after the decimal point.
-		int32 digitCount = MIN<int32>(3, ((int32) version.getSize()) - 2); // How many digits left to convert
+		int32 digitCount = MIN<int32>(3, ((int32)version.getSize()) - 2); // How many digits left to convert
 		for (int i = 0; i < digitCount; i++)
 			agiVerNum |= ((uint16)(version.getData()[version.getSize() - digitCount + i] - '0')) << ((2 - i) * 4);
 
@@ -163,8 +164,7 @@ bool WagFileParser::checkWagVersion(Common::SeekableReadStream &stream) {
 		// Check that the WinAGI version string is one of the two version strings
 		// WinAGI 1.1.21 recognizes as acceptable in the end of a *.wag file.
 		// Note that they are all of length 16 and are padded with spaces to be that long.
-		return scumm_stricmp(str, "WINAGI v1.0     ") == 0 ||
-		       scumm_stricmp(str, "1.0 BETA        ") == 0;
+		return scumm_stricmp(str, "WINAGI v1.0     ") == 0 || scumm_stricmp(str, "1.0 BETA        ") == 0;
 	} else { // Stream is too small to contain the WinAGI version string
 		debug(3, "WagFileParser::checkWagVersion: Stream is too small to contain a valid WAG file");
 		return false;
@@ -182,7 +182,8 @@ bool WagFileParser::parse(const Common::FSNode &node) {
 		if (checkWagVersion(*stream)) { // Check that WinAGI version string is valid
 			// It seems we've got a valid *.wag file so let's parse its properties from the start.
 			stream->seek(0); // Rewind the stream
-			if (!_propList.empty()) _propList.clear(); // Clear out old properties (If any)
+			if (!_propList.empty())
+				_propList.clear(); // Clear out old properties (If any)
 
 			do { // Parse the properties
 				if (property.read(*stream)) { // Read the property and check it was read ok
@@ -210,7 +211,8 @@ bool WagFileParser::parse(const Common::FSNode &node) {
 
 const WagProperty *WagFileParser::getProperty(const WagProperty::WagPropertyCode code) const {
 	for (PropertyList::const_iterator iter = _propList.begin(); iter != _propList.end(); ++iter)
-		if (iter->getCode() == code) return iter;
+		if (iter->getCode() == code)
+			return iter;
 	return NULL;
 }
 

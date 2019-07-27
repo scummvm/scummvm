@@ -20,11 +20,11 @@
  *
  */
 
-#include "common/rect.h"
 #include "common/events.h"
+#include "common/rect.h"
 
-#include "gui/gui-manager.h"
 #include "gui/dialog.h"
+#include "gui/gui-manager.h"
 #include "gui/widget.h"
 
 namespace GUI {
@@ -39,9 +39,13 @@ namespace GUI {
  */
 
 Dialog::Dialog(int x, int y, int w, int h)
-	: GuiObject(x, y, w, h),
-	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _tickleWidget(0), _visible(false),
-	_backgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
+  : GuiObject(x, y, w, h)
+  , _mouseWidget(0)
+  , _focusedWidget(0)
+  , _dragWidget(0)
+  , _tickleWidget(0)
+  , _visible(false)
+  , _backgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
 	// Some dialogs like LauncherDialog use internally a fixed size, even though
 	// their widgets rely on the layout to be initialized correctly by the theme.
 	// Thus we need to catch screen changes here too. If we do not do that, it
@@ -53,9 +57,13 @@ Dialog::Dialog(int x, int y, int w, int h)
 }
 
 Dialog::Dialog(const Common::String &name)
-	: GuiObject(name),
-	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _tickleWidget(0), _visible(false),
-	_backgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
+  : GuiObject(name)
+  , _mouseWidget(0)
+  , _focusedWidget(0)
+  , _dragWidget(0)
+  , _tickleWidget(0)
+  , _visible(false)
+  , _backgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
 
 	// It may happen that we have 3x scaler in launcher (960xY) and then 640x480
 	// game will be forced to 1x. At this stage GUI will not be aware of
@@ -209,7 +217,7 @@ void Dialog::handleMouseUp(int x, int y, int button, int clickCount) {
 		//w = _focusedWidget;
 
 		// Lose focus on mouseup unless the widget requested to retain the focus
-		if (! (_focusedWidget->getFlags() & WIDGET_RETAIN_FOCUS )) {
+		if (!(_focusedWidget->getFlags() & WIDGET_RETAIN_FOCUS)) {
 			releaseFocus();
 		}
 	}
@@ -356,7 +364,7 @@ void Dialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	}
 }
 
-void Dialog::handleOtherEvent(Common::Event evt) { }
+void Dialog::handleOtherEvent(Common::Event evt) {}
 
 /*
  * Determine the widget at location (x,y) if any. Assumes the coordinates are

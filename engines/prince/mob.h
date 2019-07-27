@@ -23,8 +23,8 @@
 #ifndef PRINCE_MOB_H
 #define PRINCE_MOB_H
 
-#include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 #include "common/stream.h"
 
@@ -34,8 +34,14 @@ namespace Prince {
 
 class Mob {
 public:
-
-	Mob() : _name(""), _examText(""), _visible(false), _type(0), _mask(0), _examDirection(kDirL), _useDirection(kDirL) {}
+	Mob()
+	  : _name("")
+	  , _examText("")
+	  , _visible(false)
+	  , _type(0)
+	  , _mask(0)
+	  , _examDirection(kDirL)
+	  , _useDirection(kDirL) {}
 
 	bool loadFromStream(Common::SeekableReadStream &stream);
 

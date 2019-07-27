@@ -33,11 +33,6 @@
 #include "pegasus/hotspot.h"
 #include "pegasus/input.h"
 #include "pegasus/movie.h"
-#include "pegasus/notification.h"
-#include "pegasus/sound.h"
-#include "pegasus/timers.h"
-#include "pegasus/transition.h"
-#include "pegasus/util.h"
 #include "pegasus/neighborhood/door.h"
 #include "pegasus/neighborhood/exit.h"
 #include "pegasus/neighborhood/extra.h"
@@ -46,6 +41,11 @@
 #include "pegasus/neighborhood/turn.h"
 #include "pegasus/neighborhood/view.h"
 #include "pegasus/neighborhood/zoom.h"
+#include "pegasus/notification.h"
+#include "pegasus/sound.h"
+#include "pegasus/timers.h"
+#include "pegasus/transition.h"
+#include "pegasus/util.h"
 
 namespace Pegasus {
 
@@ -110,8 +110,8 @@ protected:
 typedef Common::Queue<QueueRequest> NeighborhoodActionQueue;
 
 class Neighborhood : public IDObject, public NotificationReceiver, public InputHandler, public Idler {
-friend class CaldoriaBomb;
-friend class StriderCallBack;
+	friend class CaldoriaBomb;
+	friend class StriderCallBack;
 
 public:
 	Neighborhood(InputHandler *nextHandler, PegasusEngine *vm, const Common::String &resName, NeighborhoodID id);
@@ -216,11 +216,11 @@ public:
 	virtual void shieldOff() {}
 
 	virtual void loadLoopSound1(const Common::String &, const uint16 volume = 0x100,
-			const TimeValue fadeOut = kDefaultLoopFadeOut, const TimeValue fadeIn = kDefaultLoopFadeIn,
-			const TimeScale fadeScale = kDefaultLoopFadeScale);
+	                            const TimeValue fadeOut = kDefaultLoopFadeOut, const TimeValue fadeIn = kDefaultLoopFadeIn,
+	                            const TimeScale fadeScale = kDefaultLoopFadeScale);
 	virtual void loadLoopSound2(const Common::String &, const uint16 volume = 0x100,
-			const TimeValue fadeOut = kDefaultLoopFadeOut, const TimeValue fadeIn = kDefaultLoopFadeIn,
-			const TimeScale fadeScale = kDefaultLoopFadeScale);
+	                            const TimeValue fadeOut = kDefaultLoopFadeOut, const TimeValue fadeIn = kDefaultLoopFadeIn,
+	                            const TimeScale fadeScale = kDefaultLoopFadeScale);
 	bool loop1Loaded(const Common::String &soundName) { return _loop1SoundString == soundName; }
 	bool loop2Loaded(const Common::String &soundName) { return _loop2SoundString == soundName; }
 	void startLoop1Fader(const FaderMoveSpec &);
@@ -251,6 +251,7 @@ public:
 	virtual void pickedUpItem(Item *) {}
 
 	virtual void handleInput(const Input &, const Hotspot *);
+
 protected:
 	PegasusEngine *_vm;
 	Common::String _resName;
@@ -288,7 +289,7 @@ protected:
 	virtual void startSpotOnceOnly(TimeValue, TimeValue);
 
 	virtual void startMovieSequence(const TimeValue, const TimeValue, NotificationFlags,
-  			bool loopSequence, const InputBits interruptionFilter, const TimeValue strideStop = 0xffffffff);
+	                                bool loopSequence, const InputBits interruptionFilter, const TimeValue strideStop = 0xffffffff);
 
 	virtual void createNeighborhoodSpots();
 
@@ -309,8 +310,8 @@ protected:
 	// Misc.
 	virtual int16 getStaticCompassAngle(const RoomID, const DirectionConstant dir);
 	virtual void getExitCompassMove(const ExitTable::Entry &, FaderMoveSpec &);
-	virtual void getZoomCompassMove(const ZoomTable::Entry &, FaderMoveSpec&);
-	virtual void getExtraCompassMove(const ExtraTable::Entry &, FaderMoveSpec&);
+	virtual void getZoomCompassMove(const ZoomTable::Entry &, FaderMoveSpec &);
+	virtual void getExtraCompassMove(const ExtraTable::Entry &, FaderMoveSpec &);
 
 	virtual void setUpAIRules();
 	virtual void setHotspotFlags(const HotSpotID, const HotSpotFlags);

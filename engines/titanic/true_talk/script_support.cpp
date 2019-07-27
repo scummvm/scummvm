@@ -38,8 +38,10 @@ int TTnpcScriptResponse::size() const {
 /*------------------------------------------------------------------------*/
 
 TTscriptRange::TTscriptRange(uint id, const Common::Array<uint> &values,
-		bool isRandom, bool isSequential) :
-		_id(id), _nextP(nullptr), _priorIndex(0) {
+                             bool isRandom, bool isSequential)
+  : _id(id)
+  , _nextP(nullptr)
+  , _priorIndex(0) {
 	_mode = SF_NONE;
 	if (isRandom)
 		_mode = SF_RANDOM;
@@ -51,7 +53,6 @@ TTscriptRange::TTscriptRange(uint id, const Common::Array<uint> &values,
 }
 
 /*------------------------------------------------------------------------*/
-
 
 bool TTsentenceEntry::load(Common::SeekableReadStream *s) {
 	if (s->pos() >= s->size())
@@ -88,7 +89,8 @@ void TTsentenceEntries::load(const CString &resName) {
 
 /*------------------------------------------------------------------------*/
 
-TTscriptMapping::TTscriptMapping() : _id(0) {
+TTscriptMapping::TTscriptMapping()
+  : _id(0) {
 	Common::fill(&_values[0], &_values[8], 0);
 }
 
@@ -153,7 +155,7 @@ void TThandleQuoteEntries::load(const char *name) {
 	while (r->pos() < r->size()) {
 		TThandleQuoteEntry qe;
 		qe._tag1 = r->readUint32LE();
-		qe._tag2= r->readUint32LE();
+		qe._tag2 = r->readUint32LE();
 		qe._index = r->readUint32LE();
 
 		push_back(qe);

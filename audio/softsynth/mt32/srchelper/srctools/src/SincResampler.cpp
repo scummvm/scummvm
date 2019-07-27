@@ -17,7 +17,7 @@
 #include <cmath>
 
 #ifdef SRCTOOLS_SINC_RESAMPLER_DEBUG_LOG
-#include <iostream>
+#	include <iostream>
 #endif
 
 #include "../include/SincResampler.h"
@@ -46,7 +46,8 @@ void Utils::computeResampleFactors(unsigned int &upsampleFactor, double &downsam
 		} else {
 			downsampleFactor = downsampleFactorInt;
 		}
-		if (upsampleFactor <= maxUpsampleFactor) return;
+		if (upsampleFactor <= maxUpsampleFactor)
+			return;
 	} else {
 		// Try to recover rational resample ratio by brute force
 		double inputToOutputRatio = inputFrequency / outputFrequency;
@@ -91,7 +92,8 @@ double KaizerWindow::bessel(const double x) {
 	for (unsigned int i = 1;; ++i) {
 		f *= (0.5 * x / i);
 		double f2 = f * f;
-		if (f2 <= sum * EPS) break;
+		if (f2 <= sum * EPS)
+			break;
 		sum += f2;
 	}
 	return 1.0 + sum;

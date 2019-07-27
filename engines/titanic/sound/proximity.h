@@ -28,7 +28,9 @@
 
 namespace Titanic {
 
-enum PositioningMode { POSMODE_NONE = 0, POSMODE_POLAR = 1, POSMODE_VECTOR = 2 };
+enum PositioningMode { POSMODE_NONE = 0,
+	                     POSMODE_POLAR = 1,
+	                     POSMODE_VECTOR = 2 };
 
 class TTtalker;
 
@@ -59,6 +61,7 @@ public:
 	TTtalker *_talker;
 	uint _soundDuration;
 	Audio::Mixer::SoundType _soundType;
+
 public:
 	CProximity();
 	CProximity(Audio::Mixer::SoundType soundType, int volume = 100);

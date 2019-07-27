@@ -44,13 +44,14 @@ struct OpCall {
 	uint32 readUint32();
 };
 
-typedef Common::Functor2<ScriptThread*, OpCall&, void> ScriptOpcode;
+typedef Common::Functor2<ScriptThread *, OpCall &, void> ScriptOpcode;
 
 class ScriptOpcodes {
 public:
 	ScriptOpcodes(IllusionsEngine *vm);
 	virtual ~ScriptOpcodes();
 	void execOpcode(ScriptThread *scriptThread, OpCall &opCall);
+
 protected:
 	IllusionsEngine *_vm;
 	ScriptOpcode *_opcodes[256];
@@ -61,9 +62,15 @@ protected:
 
 // Convenience macros
 #define ARG_SKIP(x) opCall.skip(x);
-#define ARG_BYTE(name) byte name = opCall.readByte(); debug(5, "ARG_BYTE(" #name " = %d)", name);
-#define ARG_INT16(name) int16 name = opCall.readSint16(); debug(5, "ARG_INT16(" #name " = %d)", name);
-#define ARG_UINT32(name) uint32 name = opCall.readUint32(); debug(5, "ARG_UINT32(" #name " = %08X)", name);
+#define ARG_BYTE(name)           \
+	byte name = opCall.readByte(); \
+	debug(5, "ARG_BYTE(" #name " = %d)", name);
+#define ARG_INT16(name)             \
+	int16 name = opCall.readSint16(); \
+	debug(5, "ARG_INT16(" #name " = %d)", name);
+#define ARG_UINT32(name)             \
+	uint32 name = opCall.readUint32(); \
+	debug(5, "ARG_UINT32(" #name " = %08X)", name);
 
 } // End of namespace Illusions
 

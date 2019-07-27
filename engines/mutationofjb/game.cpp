@@ -39,14 +39,14 @@
 namespace MutationOfJB {
 
 Game::Game(MutationOfJBEngine *vm)
-	: _vm(vm),
-	  _randomSource("mutationofjb"),
-	  _delayedLocalScript(nullptr),
-	  _runDelayedScriptStartup(false),
-	  _gui(*this, _vm->getScreen()),
-	  _scriptExecCtx(*this),
-	  _taskManager(*this),
-	  _assets(*this) {
+  : _vm(vm)
+  , _randomSource("mutationofjb")
+  , _delayedLocalScript(nullptr)
+  , _runDelayedScriptStartup(false)
+  , _gui(*this, _vm->getScreen())
+  , _scriptExecCtx(*this)
+  , _taskManager(*this)
+  , _assets(*this) {
 
 	_gameData = new GameData;
 	loadGameData(false);
@@ -212,14 +212,14 @@ uint8 Game::colorFromString(const char *colorStr) {
 		const char *str;
 		uint8 color;
 	} colors[] = {
-		{"white", WHITE},
-		{"darkgray", DARKGRAY},
-		{"lightgray", LIGHTGRAY},
-		{"green", GREEN},
-		{"orange", ORANGE},
-		{"darkblue", DARKBLUE},
-		{"lightblue", LIGHTBLUE},
-		{"brown", BROWN}
+		{ "white", WHITE },
+		{ "darkgray", DARKGRAY },
+		{ "lightgray", LIGHTGRAY },
+		{ "green", GREEN },
+		{ "orange", ORANGE },
+		{ "darkblue", DARKBLUE },
+		{ "lightblue", LIGHTBLUE },
+		{ "brown", BROWN }
 	};
 
 	for (int i = 0; i < ARRAYSIZE(colors); ++i) {

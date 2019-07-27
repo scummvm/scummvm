@@ -20,20 +20,22 @@
  *
  */
 
+#include "xeen/dialogs/dialogs_party.h"
+#include "xeen/character.h"
 #include "xeen/dialogs/dialogs_char_info.h"
 #include "xeen/dialogs/dialogs_create_char.h"
-#include "xeen/dialogs/dialogs_party.h"
 #include "xeen/dialogs/dialogs_input.h"
 #include "xeen/dialogs/dialogs_query.h"
-#include "xeen/character.h"
 #include "xeen/events.h"
 #include "xeen/party.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {
 
-PartyDialog::PartyDialog(XeenEngine *vm) : ButtonContainer(vm),
-		PartyDrawer(vm), _vm(vm) {
+PartyDialog::PartyDialog(XeenEngine *vm)
+  : ButtonContainer(vm)
+  , PartyDrawer(vm)
+  , _vm(vm) {
 	initDrawStructs();
 }
 
@@ -164,8 +166,7 @@ void PartyDialog::execute() {
 					// Check if the selected character is already in the party
 					uint idx = 0;
 					for (; idx < party._activeParty.size(); ++idx) {
-						if (_charList[_buttonValue - 7 + startingChar] ==
-							party._activeParty[idx]._rosterId)
+						if (_charList[_buttonValue - 7 + startingChar] == party._activeParty[idx]._rosterId)
 							break;
 					}
 
@@ -176,9 +177,8 @@ void PartyDialog::execute() {
 							ErrorScroll::show(_vm, Res.YOUR_PARTY_IS_FULL);
 						} else {
 							// Add the character to the active party
-							party._activeParty.push_back(party._roster[
-								_charList[_buttonValue - 7 + startingChar]]);
-								startingCharChanged(startingChar);
+							party._activeParty.push_back(party._roster[_charList[_buttonValue - 7 + startingChar]]);
+							startingCharChanged(startingChar);
 						}
 					}
 				}
@@ -241,7 +241,7 @@ void PartyDialog::execute() {
 							ErrorScroll::show(_vm, Res.HAS_SLAYER_SWORD);
 						} else {
 							Common::String msg = Common::String::format(Res.SURE_TO_DELETE_CHAR,
-								c._name.c_str(), Res.CLASS_NAMES[c._class]);
+							                                            c._name.c_str(), Res.CLASS_NAMES[c._class]);
 							if (Confirm::show(_vm, msg)) {
 								// If the character is in the party, remove it
 								for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
@@ -329,14 +329,12 @@ void PartyDialog::setupFaces(int firstDisplayChar, bool updateFlag) {
 	addButton(Common::Rect(59, 59, 91, 91), Common::KEYCODE_3);
 	addButton(Common::Rect(117, 59, 151, 91), Common::KEYCODE_4);
 
-
 	for (posIndex = 0; posIndex < 4; ++posIndex) {
-		charId = (firstDisplayChar + posIndex) >= (int)_charList.size() ? -1 :
-			_charList[firstDisplayChar + posIndex];
+		charId = (firstDisplayChar + posIndex) >= (int)_charList.size() ? -1 : _charList[firstDisplayChar + posIndex];
 		bool isInParty = party.isInParty(charId);
 
 		if (charId == -1) {
-			while ((int)_buttons.size() >(7 + posIndex))
+			while ((int)_buttons.size() > (7 + posIndex))
 				_buttons.remove_at(_buttons.size() - 1);
 			break;
 		}
@@ -357,16 +355,14 @@ void PartyDialog::setupFaces(int firstDisplayChar, bool updateFlag) {
 		if ((firstDisplayChar + posIndex) >= (int)_charList.size())
 			_faceDrawStructs[posIndex]._sprites = nullptr;
 		else
-			_faceDrawStructs[posIndex]._sprites = party._roster[
-				_charList[firstDisplayChar + posIndex]]._faceSprites;
+			_faceDrawStructs[posIndex]._sprites = party._roster[_charList[firstDisplayChar + posIndex]]._faceSprites;
 	}
 
 	_partyDetails = Common::String::format(Res.PARTY_DETAILS,
-		charNames[0].c_str(), charRaces[0].c_str(), charSex[0].c_str(), charClasses[0].c_str(),
-		charNames[1].c_str(), charRaces[1].c_str(), charSex[1].c_str(), charClasses[1].c_str(),
-		charNames[2].c_str(), charRaces[2].c_str(), charSex[2].c_str(), charClasses[2].c_str(),
-		charNames[3].c_str(), charRaces[3].c_str(), charSex[3].c_str(), charClasses[3].c_str()
-		);
+	                                       charNames[0].c_str(), charRaces[0].c_str(), charSex[0].c_str(), charClasses[0].c_str(),
+	                                       charNames[1].c_str(), charRaces[1].c_str(), charSex[1].c_str(), charClasses[1].c_str(),
+	                                       charNames[2].c_str(), charRaces[2].c_str(), charSex[2].c_str(), charClasses[2].c_str(),
+	                                       charNames[3].c_str(), charRaces[3].c_str(), charSex[3].c_str(), charClasses[3].c_str());
 }
 
 void PartyDialog::startingCharChanged(int firstDisplayChar) {
@@ -399,13 +395,13 @@ int PartyDialog::selectCharacter(bool isDelete, int firstDisplayChar) {
 	w.setBounds(Common::Rect(50, isDelete ? 112 : 76, 266, isDelete ? 148 : 112));
 	w.open();
 	w.writeString(Common::String::format(Res.REMOVE_OR_DELETE_WHICH,
-		Res.REMOVE_DELETE[isDelete ? 1 : 0]));
+	                                     Res.REMOVE_DELETE[isDelete ? 1 : 0]));
 	iconSprites.draw(w, 0, Common::Point(225, isDelete ? 120 : 84));
 	w.update();
 
 	saveButtons();
 	addButton(Common::Rect(225, isDelete ? 120 : 84, 249, isDelete ? 140 : 104),
-		Common::KEYCODE_ESCAPE, &iconSprites);
+	          Common::KEYCODE_ESCAPE, &iconSprites);
 	addButton(Common::Rect(16, 16, 48, 48), Common::KEYCODE_1);
 	addButton(Common::Rect(117, 16, 149, 48), Common::KEYCODE_2);
 	addButton(Common::Rect(16, 59, 48, 91), Common::KEYCODE_3);

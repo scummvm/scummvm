@@ -3,13 +3,13 @@
 
 #include "audio/decoders/raw.h"
 
-#include "common/stream.h"
 #include "common/endian.h"
+#include "common/stream.h"
 
-#include <math.h>
 #include <limits>
+#include <math.h>
 
-template<typename T>
+template <typename T>
 static T *createSine(const int sampleRate, const int time) {
 	T *sine = (T *)malloc(sizeof(T) * time * sampleRate);
 
@@ -23,7 +23,7 @@ static T *createSine(const int sampleRate, const int time) {
 	return sine;
 }
 
-template<typename T>
+template <typename T>
 static Audio::SeekableAudioStream *createSineStream(const int sampleRate, const int time, int16 **comp, bool le, bool isStereo) {
 	T *sine = createSine<T>(sampleRate, time * (isStereo ? 2 : 1));
 
@@ -57,10 +57,10 @@ static Audio::SeekableAudioStream *createSineStream(const int sampleRate, const 
 	Audio::SeekableAudioStream *s = 0;
 	Common::SeekableReadStream *sD = new Common::MemoryReadStream((const byte *)sine, sizeof(T) * samples, DisposeAfterUse::YES);
 	s = Audio::makeRawStream(sD, sampleRate,
-	                             (is16Bits ? Audio::FLAG_16BITS : 0)
-	                             | (isUnsigned ? Audio::FLAG_UNSIGNED : 0)
-	                             | (le ? Audio::FLAG_LITTLE_ENDIAN : 0)
-	                             | (isStereo ? Audio::FLAG_STEREO : 0));
+	                         (is16Bits ? Audio::FLAG_16BITS : 0)
+	                           | (isUnsigned ? Audio::FLAG_UNSIGNED : 0)
+	                           | (le ? Audio::FLAG_LITTLE_ENDIAN : 0)
+	                           | (isStereo ? Audio::FLAG_STEREO : 0));
 
 	return s;
 }

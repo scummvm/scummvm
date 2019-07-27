@@ -30,104 +30,111 @@ namespace Gob {
 
 namespace Geisha {
 
-Meter::Meter(int16 x, int16 y, int16 width, int16 height, uint8 frontColor,
-             uint8 backColor, int32 maxValue, Direction direction) :
-	_x(x), _y(y), _width(width), _height(height), _frontColor(frontColor),
-	_backColor(backColor), _value(0), _maxValue(maxValue), _direction(direction),
-	_needUpdate(true), _surface(0) {
+	Meter::Meter(int16 x, int16 y, int16 width, int16 height, uint8 frontColor,
+	             uint8 backColor, int32 maxValue, Direction direction)
+	  : _x(x)
+	  , _y(y)
+	  , _width(width)
+	  , _height(height)
+	  , _frontColor(frontColor)
+	  , _backColor(backColor)
+	  , _value(0)
+	  , _maxValue(maxValue)
+	  , _direction(direction)
+	  , _needUpdate(true)
+	  , _surface(0) {
+	}
 
-}
+	Meter::~Meter() {
+		delete _surface;
+	}
 
-Meter::~Meter() {
-	delete _surface;
-}
+	int32 Meter::getMaxValue() const {
+		return _maxValue;
+	}
 
-int32 Meter::getMaxValue() const {
-	return _maxValue;
-}
+	int32 Meter::getValue() const {
+		return _value;
+	}
 
-int32 Meter::getValue() const {
-	return _value;
-}
+	void Meter::setValue(int32 value) {
+		value = CLIP<int32>(value, 0, _maxValue);
+		if (_value == value)
+			return;
 
-void Meter::setValue(int32 value) {
-	value = CLIP<int32>(value, 0, _maxValue);
-	if (_value == value)
-		return;
-
-	_value = value;
-	_needUpdate = true;
-}
-
-void Meter::setMaxValue() {
-	setValue(_maxValue);
-}
-
-int32 Meter::increase(int32 n) {
-	if (n < 0)
-		return decrease(-n);
-
-	int32 overflow = MAX<int32>(0, (_value + n) - _maxValue);
-
-	int32 value = CLIP<int32>(_value + n, 0, _maxValue);
-	if (_value == value)
-		return overflow;
-
-	_value = value;
-	_needUpdate = true;
-
-	return overflow;
-}
-
-int32 Meter::decrease(int32 n) {
-	if (n < 0)
-		return increase(-n);
-
-	int32 underflow = -MIN<int32>(0, _value - n);
-
-	int32 value = CLIP<int32>(_value - n, 0, _maxValue);
-	if (_value == value)
-		return underflow;
-
-	_value = value;
-	_needUpdate = true;
-
-	return underflow;
-}
-
-void Meter::draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom) {
-	if (!_surface) {
-		_surface = new Surface(_width, _height, dest.getBPP());
+		_value = value;
 		_needUpdate = true;
 	}
 
-	update();
+	void Meter::setMaxValue() {
+		setValue(_maxValue);
+	}
 
-	left   = CLIP<int16>(_x              , 0, dest.getWidth () - 1);
-	top    = CLIP<int16>(_y              , 0, dest.getHeight() - 1);
-	right  = CLIP<int16>(_x + _width  - 1, 0, dest.getWidth () - 1);
-	bottom = CLIP<int16>(_y + _height - 1, 0, dest.getHeight() - 1);
+	int32 Meter::increase(int32 n) {
+		if (n < 0)
+			return decrease(-n);
 
-	dest.blit(*_surface, left - _x, top - _y, _width, _height, left, top);
-}
+		int32 overflow = MAX<int32>(0, (_value + n) - _maxValue);
 
-void Meter::update() {
-	if (!_needUpdate)
-		return;
+		int32 value = CLIP<int32>(_value + n, 0, _maxValue);
+		if (_value == value)
+			return overflow;
 
-	_needUpdate = false;
+		_value = value;
+		_needUpdate = true;
 
-	_surface->fill(_backColor);
+		return overflow;
+	}
 
-	int32 n = (int32)floor((((float) _width) / _maxValue * _value) + 0.5);
-	if (n <= 0)
-		return;
+	int32 Meter::decrease(int32 n) {
+		if (n < 0)
+			return increase(-n);
 
-	if (_direction == kFillToLeft)
-		_surface->fillRect(_width - n, 0, _width - 1, _height - 1, _frontColor);
-	else
-		_surface->fillRect(0         , 0, n - 1, _height - 1, _frontColor);
-}
+		int32 underflow = -MIN<int32>(0, _value - n);
+
+		int32 value = CLIP<int32>(_value - n, 0, _maxValue);
+		if (_value == value)
+			return underflow;
+
+		_value = value;
+		_needUpdate = true;
+
+		return underflow;
+	}
+
+	void Meter::draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom) {
+		if (!_surface) {
+			_surface = new Surface(_width, _height, dest.getBPP());
+			_needUpdate = true;
+		}
+
+		update();
+
+		left = CLIP<int16>(_x, 0, dest.getWidth() - 1);
+		top = CLIP<int16>(_y, 0, dest.getHeight() - 1);
+		right = CLIP<int16>(_x + _width - 1, 0, dest.getWidth() - 1);
+		bottom = CLIP<int16>(_y + _height - 1, 0, dest.getHeight() - 1);
+
+		dest.blit(*_surface, left - _x, top - _y, _width, _height, left, top);
+	}
+
+	void Meter::update() {
+		if (!_needUpdate)
+			return;
+
+		_needUpdate = false;
+
+		_surface->fill(_backColor);
+
+		int32 n = (int32)floor((((float)_width) / _maxValue * _value) + 0.5);
+		if (n <= 0)
+			return;
+
+		if (_direction == kFillToLeft)
+			_surface->fillRect(_width - n, 0, _width - 1, _height - 1, _frontColor);
+		else
+			_surface->fillRect(0, 0, n - 1, _height - 1, _frontColor);
+	}
 
 } // End of namespace Geisha
 

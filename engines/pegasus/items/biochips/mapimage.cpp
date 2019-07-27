@@ -23,9 +23,9 @@
  *
  */
 
+#include "pegasus/items/biochips/mapimage.h"
 #include "pegasus/gamestate.h"
 #include "pegasus/pegasus.h"
-#include "pegasus/items/biochips/mapimage.h"
 
 namespace Pegasus {
 
@@ -33,21 +33,16 @@ namespace Pegasus {
 #define INDEX_TO_FLAG(index) ((index) << 2)
 
 #define ROOM_TO_INDEX(room) \
-	(((room) >= kMars35 && (room) <= kMars39) ? ((room) - kMars35) : \
-		(((room) == kMars60) ? (kMars39 - kMars35 + 1) : \
-			((room) - kMarsMaze004 + kMars39 - kMars35 + 2)))
+	(((room) >= kMars35 && (room) <= kMars39) ? ((room)-kMars35) : (((room) == kMars60) ? (kMars39 - kMars35 + 1) : ((room)-kMarsMaze004 + kMars39 - kMars35 + 2)))
 
 #define INDEX_TO_ROOM(index) \
-	(((index) <= ROOM_TO_INDEX(kMars39)) ? \
-	(((index) - ROOM_TO_INDEX(kMars35)) + kMars35) : \
-		((index) <= ROOM_TO_INDEX(kMars60,)) ? kMars60 : \
-			((((index) - ROOM_TO_INDEX(kMarsMaze004))) + kMarsMaze004))
+	(((index) <= ROOM_TO_INDEX(kMars39)) ? (((index)-ROOM_TO_INDEX(kMars35)) + kMars35) : ((index) <= ROOM_TO_INDEX(kMars60, )) ? kMars60 : ((((index)-ROOM_TO_INDEX(kMarsMaze004))) + kMarsMaze004))
 
 #define ROOM_TO_FLAG(room, dir) (INDEX_TO_FLAG(ROOM_TO_INDEX(room)) | (dir))
 
 #define FLAG_TO_ROOM(flag) (INDEX_TO_ROOM(FLAG_TO_INDEX(flag)))
 
-#define FLAG_TO_DIRECTION(flag) ((flag) & 3)
+#define FLAG_TO_DIRECTION(flag) ((flag)&3)
 
 static const int kGearRoomFlagLow = ROOM_TO_FLAG(kMars35, kNorth);
 static const int kGearRoomFlagHigh = ROOM_TO_FLAG(kMars39, kWest);
@@ -74,12 +69,12 @@ static const uint16 kMapOfMazePICTID = 906;
 static const uint16 kMapOfGearRoomPICTID = 907;
 
 static const int s_mapCoords[MapImage::kNumMappingRooms][2] = {
-	/* kMars35 */      { 0, 0 },
-	/* kMars36 */      { 1, 0 },
-	/* kMars37 */      { 2, 0 },
-	/* kMars38 */      { 3, 0 },
-	/* kMars39 */      { 4, 0 },
-	/* kMars60 */      { 19, 9 },
+	/* kMars35 */ { 0, 0 },
+	/* kMars36 */ { 1, 0 },
+	/* kMars37 */ { 2, 0 },
+	/* kMars38 */ { 3, 0 },
+	/* kMars39 */ { 4, 0 },
+	/* kMars60 */ { 19, 9 },
 	/* kMarsMaze004 */ { 18, 9 },
 	/* kMarsMaze005 */ { 18, 10 },
 	/* kMarsMaze006 */ { 17, 10 },
@@ -247,7 +242,8 @@ static const int s_mapCoords[MapImage::kNumMappingRooms][2] = {
 	/* kMarsMaze200 */ { 0, 4 }
 };
 
-MapImage::MapImage() : DisplayElement(kNoDisplayElement) {
+MapImage::MapImage()
+  : DisplayElement(kNoDisplayElement) {
 	_whichArea = kMapNoArea;
 	setBounds(kAIMiddleAreaLeft, kAIMiddleAreaTop, kAIMiddleAreaLeft + kAIMiddleAreaWidth, kAIMiddleAreaTop + kAIMiddleAreaHeight);
 	setDisplayOrder(kAIMiddleAreaOrder + 10);

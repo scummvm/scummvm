@@ -29,7 +29,6 @@
 #include "supernova/graphics.h"
 #include "supernova/sound.h"
 
-
 namespace Common {
 class MemoryReadStream;
 }

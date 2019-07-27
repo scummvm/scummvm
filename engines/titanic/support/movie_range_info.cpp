@@ -21,19 +21,23 @@
  */
 
 #include "titanic/support/movie_range_info.h"
-#include "titanic/support/movie_clip.h"
 #include "titanic/core/game_object.h"
+#include "titanic/support/movie_clip.h"
 
 namespace Titanic {
 
-CMovieRangeInfo::CMovieRangeInfo() : ListItem(), _startFrame(0), _endFrame(0) {
+CMovieRangeInfo::CMovieRangeInfo()
+  : ListItem()
+  , _startFrame(0)
+  , _endFrame(0) {
 }
 
 CMovieRangeInfo::~CMovieRangeInfo() {
 	_events.destroyContents();
 }
 
-CMovieRangeInfo::CMovieRangeInfo(const CMovieRangeInfo *src) : ListItem() {
+CMovieRangeInfo::CMovieRangeInfo(const CMovieRangeInfo *src)
+  : ListItem() {
 	_startFrame = src->_startFrame;
 	_endFrame = src->_endFrame;
 	_initialFrame = src->_initialFrame;
@@ -42,7 +46,7 @@ CMovieRangeInfo::CMovieRangeInfo(const CMovieRangeInfo *src) : ListItem() {
 
 	// Duplicate the events list
 	for (CMovieEventList::const_iterator i = _events.begin();
-			i != _events.end(); ++i) {
+	     i != _events.end(); ++i) {
 		_events.push_back(new CMovieEvent(*i));
 	}
 }

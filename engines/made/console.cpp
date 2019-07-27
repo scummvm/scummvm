@@ -25,7 +25,9 @@
 
 namespace Made {
 
-MadeConsole::MadeConsole(MadeEngine *vm) : GUI::Debugger(), _vm(vm) {
+MadeConsole::MadeConsole(MadeEngine *vm)
+  : GUI::Debugger()
+  , _vm(vm) {
 	assert(_vm);
 }
 

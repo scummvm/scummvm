@@ -34,13 +34,16 @@
 #define CHANNEL_COUNT 9
 
 namespace OPL {
-	class OPL;
+class OPL;
 }
 
 namespace Xeen {
 
 enum MusicCommand {
-	STOP_SONG = 0, RESTART_SONG = 1, SET_VOLUME = 0x100, GET_STATUS = 0xFFE0
+	STOP_SONG = 0,
+	RESTART_SONG = 1,
+	SET_VOLUME = 0x100,
+	GET_STATUS = 0xFFE0
 };
 
 class SoundDriver;
@@ -55,9 +58,12 @@ protected:
 	struct Subroutine {
 		const byte *_returnP;
 		const byte *_jumpP;
-		Subroutine() : _returnP(nullptr), _jumpP(nullptr) {}
-		Subroutine(const byte *returnP, const byte *endP) :
-			_returnP(returnP), _jumpP(endP) {}
+		Subroutine()
+		  : _returnP(nullptr)
+		  , _jumpP(nullptr) {}
+		Subroutine(const byte *returnP, const byte *endP)
+		  : _returnP(returnP)
+		  , _jumpP(endP) {}
 	};
 	struct Channel {
 		bool _changeFrequency;
@@ -68,12 +74,21 @@ protected:
 		byte _totalLevel;
 		bool _isFx;
 		uint _frequency;
-		Channel() : _changeFrequency(false), _freqCtr(0), _freqCtrChange(0),
-			_freqChange(0), _volume(0), _totalLevel(0), _frequency(0), _isFx(false) {}
+		Channel()
+		  : _changeFrequency(false)
+		  , _freqCtr(0)
+		  , _freqCtrChange(0)
+		  , _freqChange(0)
+		  , _volume(0)
+		  , _totalLevel(0)
+		  , _frequency(0)
+		  , _isFx(false) {}
 	};
+
 private:
 	static const CommandFn FX_COMMANDS[16];
 	static const CommandFn MUSIC_COMMANDS[16];
+
 private:
 	Common::Stack<Subroutine> _musSubroutines, _fxSubroutines;
 	int _musCountdownTimer;
@@ -82,6 +97,7 @@ private:
 	const byte *_fxStartPtr;
 	const byte *_musStartPtr;
 	uint _frameCtr;
+
 private:
 	/**
 	 * Executes the next command
@@ -89,11 +105,13 @@ private:
 	 * @returns		If true, execution of commands for the current timer call stops
 	 */
 	bool command(const byte *&srcP);
+
 protected:
 	Common::Array<Channel> _channels;
 	bool _exclude7;
 	bool _musicPlaying;
 	bool _fxPlaying;
+
 protected:
 	/**
 	 * Executes a series of commands until instructed to stop
@@ -141,6 +159,7 @@ protected:
 	 * Does a reset of any sound effect
 	 */
 	virtual void resetFX() = 0;
+
 public:
 	/**
 	 * Constructor

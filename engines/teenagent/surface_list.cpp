@@ -21,13 +21,15 @@
  */
 
 #include "teenagent/surface_list.h"
-#include "teenagent/surface.h"
 #include "teenagent/objects.h"
+#include "teenagent/surface.h"
 #include "teenagent/teenagent.h"
 
 namespace TeenAgent {
 
-SurfaceList::SurfaceList() : surfaces(NULL), surfacesCount(0) {}
+SurfaceList::SurfaceList()
+  : surfaces(NULL)
+  , surfacesCount(0) {}
 
 SurfaceList::~SurfaceList() {
 	free();

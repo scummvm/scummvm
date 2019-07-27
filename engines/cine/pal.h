@@ -182,7 +182,7 @@ private:
 
 private:
 	Graphics::PixelFormat _format; ///< The used source color format
-	Common::Array<Color> _colors;  ///< The actual palette data
+	Common::Array<Color> _colors; ///< The actual palette data
 };
 
 } // End of namespace Cine

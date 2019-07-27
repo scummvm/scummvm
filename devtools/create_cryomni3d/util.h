@@ -23,13 +23,13 @@
 #ifndef UTIL_H
 #define UTIL_H
 
-#include "common/scummsys.h"
 #include "common/endian.h"
+#include "common/scummsys.h"
 #include "common/util.h"
 
 #ifdef WIN32
-#include <io.h>
-#include <process.h>
+#	include <io.h>
+#	include <process.h>
 #endif
 
 #define PADDING_ALIGNMENT 16

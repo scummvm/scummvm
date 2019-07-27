@@ -20,13 +20,13 @@
  *
  */
 
-#include "common/util.h"
 #include "sherlock/objects.h"
+#include "common/util.h"
 #include "sherlock/people.h"
-#include "sherlock/scene.h"
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/scalpel/scalpel_map.h"
 #include "sherlock/scalpel/scalpel_people.h"
+#include "sherlock/scene.h"
 #include "sherlock/tattoo/tattoo.h"
 
 namespace Sherlock {
@@ -39,11 +39,11 @@ namespace Sherlock {
 #define CLEAR_DIST_X 5
 #define CLEAR_DIST_Y 0
 
-#define ADJUST_COORD(COORD) \
-	if (COORD.x != -1) \
+#define ADJUST_COORD(COORD)          \
+	if (COORD.x != -1)                 \
 		COORD.x *= FIXED_INT_MULTIPLIER; \
-	if (COORD.y != -1) \
-		COORD.y *= FIXED_INT_MULTIPLIER
+	if (COORD.y != -1)                 \
+	COORD.y *= FIXED_INT_MULTIPLIER
 
 SherlockEngine *BaseObject::_vm;
 bool BaseObject::_countCAnimFrames;
@@ -94,8 +94,7 @@ bool BaseObject::hasAborts() const {
 	bool startChecking = !seqNum || _type == CHARACTER;
 
 	uint idx = 0;
-	do
-	{
+	do {
 		// Get the Frame value
 		int v = _sequences[idx++];
 
@@ -117,19 +116,26 @@ bool BaseObject::hasAborts() const {
 
 			seqNum--;
 			// See if we're at the correct Talk Sequence Number
-			if (!(seqNum & 127))
-			{
+			if (!(seqNum & 127)) {
 				// Correct Sequence, Start Checking Now
 				startChecking = true;
 			}
 		} else {
 			// Move ahead any extra because of special control codes
 			switch (v) {
-			case 0:				idx++; break;
+			case 0:
+				idx++;
+				break;
 			case MOVE_CODE:
-			case TELEPORT_CODE:	idx += 4; break;
-			case CALL_TALK_CODE:idx += 8; break;
-			case HIDE_CODE:		idx += 2; break;
+			case TELEPORT_CODE:
+				idx += 4;
+				break;
+			case CALL_TALK_CODE:
+				idx += 8;
+				break;
+			case HIDE_CODE:
+				idx += 2;
+				break;
 			}
 		}
 	} while (idx < _seqSize);
@@ -189,7 +195,7 @@ void BaseObject::checkObject() {
 					setObjTalkSequence(_talkSeq);
 				else
 					setObjSequence(0, false);
-			} else  if (v >= GOTO_CODE) {
+			} else if (v >= GOTO_CODE) {
 				// Goto code found
 				v -= GOTO_CODE;
 				_seqCounter2 = _seqCounter;
@@ -287,7 +293,7 @@ void BaseObject::checkObject() {
 						--_frameNumber;
 					} else {
 						byte *p = &_sequences[_frameNumber];
-						v -= SEQ_TO_CODE;	// # from 1-32
+						v -= SEQ_TO_CODE; // # from 1-32
 						_seqTo = v;
 						*p = *(p - 1);
 
@@ -307,7 +313,7 @@ void BaseObject::checkObject() {
 				} else if (IS_ROSE_TATTOO && v == 10) {
 					// Set delta for objects
 					_delta = Common::Point(READ_LE_UINT16(&_sequences[_frameNumber + 1]),
-						READ_LE_UINT16(&_sequences[_frameNumber + 3]));
+					                       READ_LE_UINT16(&_sequences[_frameNumber + 3]));
 					_noShapeSize = Common::Point(0, 0);
 					_frameNumber += 4;
 
@@ -315,7 +321,7 @@ void BaseObject::checkObject() {
 					// Set delta for objects
 					Common::Point pt(_sequences[_frameNumber + 1], _sequences[_frameNumber + 2]);
 					if (pt.x > 128)
-						pt.x = (pt.x - 128) *  -1;
+						pt.x = (pt.x - 128) * -1;
 					else
 						pt.x--;
 
@@ -355,7 +361,7 @@ bool BaseObject::checkEndOfSequence() {
 
 		if (_frameNumber < 0 || _frameNumber >= (checkFrame - 1)) {
 			_frameNumber = START_FRAME;
-		}  else {
+		} else {
 			// Determine next sequence to use
 			int seq = _sequences[_frameNumber + 1];
 
@@ -704,12 +710,12 @@ void Sprite::checkSprite() {
 
 		if (obj._type == NO_SHAPE) {
 			objBounds = Common::Rect(obj._position.x, obj._position.y,
-				obj._position.x + obj._noShapeSize.x + 1, obj._position.y + obj._noShapeSize.y + 1);
+			                         obj._position.x + obj._noShapeSize.x + 1, obj._position.y + obj._noShapeSize.y + 1);
 		} else {
 			int xp = obj._position.x + obj._imageFrame->_offset.x;
 			int yp = obj._position.y + obj._imageFrame->_offset.y;
 			objBounds = Common::Rect(xp, yp,
-				xp + obj._imageFrame->_frame.w + 1, yp + obj._imageFrame->_frame.h + 1);
+			                         xp + obj._imageFrame->_frame.w + 1, yp + obj._imageFrame->_frame.h + 1);
 		}
 
 		if (objBounds.contains(pt)) {
@@ -824,8 +830,7 @@ void Sprite::checkSprite() {
 									walkPos.x = objBounds.left - CLEAR_DIST_X;
 							}
 
-							walkPos.y = (_delta.y >= 0) ? objBounds.top - CLEAR_DIST_Y :
-								objBounds.bottom + CLEAR_DIST_Y;
+							walkPos.y = (_delta.y >= 0) ? objBounds.top - CLEAR_DIST_Y : objBounds.bottom + CLEAR_DIST_Y;
 						} else {
 							// Impact occurred due to horizontal movement
 							if (_delta.y > 0)
@@ -842,8 +847,7 @@ void Sprite::checkSprite() {
 									walkPos.y = objBounds.top - CLEAR_DIST_Y;
 							}
 
-							walkPos.x = (_delta.x >= 0) ? objBounds.left - CLEAR_DIST_X :
-								objBounds.right + CLEAR_DIST_X;
+							walkPos.x = (_delta.x >= 0) ? objBounds.left - CLEAR_DIST_X : objBounds.right + CLEAR_DIST_X;
 						}
 
 						walkPos.x += people[HOLMES]._imageFrame->_frame.w / 2;
@@ -878,7 +882,7 @@ void WalkSequence::load(Common::SeekableReadStream &s) {
 	_horizFlip = s.readByte() != 0;
 
 	_sequences.resize(s.readUint16LE());
-	s.skip(4);		// Skip over pointer field of structure
+	s.skip(4); // Skip over pointer field of structure
 
 	s.read(&_sequences[0], _sequences.size());
 }
@@ -922,7 +926,8 @@ void ActionType::load(Common::SeekableReadStream &s) {
 
 /*----------------------------------------------------------------*/
 
-UseType::UseType(): ActionType() {
+UseType::UseType()
+  : ActionType() {
 }
 
 void UseType::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
@@ -978,7 +983,8 @@ void UseType::synchronize(Serializer &s) {
 
 /*----------------------------------------------------------------*/
 
-Object::Object(): BaseObject() {
+Object::Object()
+  : BaseObject() {
 	_sequenceOffset = 0;
 	_pickup = 0;
 	_defaultCommand = 0;
@@ -1065,7 +1071,7 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 
 		// WORKAROUND: Fix German version using hatpin/pin in pillow in Pratt's loft
 		if (_use[1]._target == "Nadel" && _use[1]._verb == "Untersuche"
-				&& _use[2]._target == "Nadel" && _use[2]._verb == "Untersuche")
+		    && _use[2]._target == "Nadel" && _use[2]._verb == "Untersuche")
 			_use[1]._target = "Alte Nadel";
 
 		_quickDraw = s.readByte();
@@ -1260,8 +1266,7 @@ void Object::setObjTalkSequence(int seq) {
 			--seq;
 
 			// See if we're at the correct Talk Sequence Number
-			if (!(seq & 127))
-			{
+			if (!(seq & 127)) {
 				// Correct Sequence, Start Talking Here
 				if (_seqTo != 0)
 					_sequences[_frameNumber] = _seqTo;
@@ -1276,11 +1281,19 @@ void Object::setObjTalkSequence(int seq) {
 		} else {
 			// Move ahead any extra because of special control codes
 			switch (f) {
-			case 0: idx++; break;
+			case 0:
+				idx++;
+				break;
 			case MOVE_CODE:
-			case TELEPORT_CODE: idx += 4; break;
-			case CALL_TALK_CODE: idx += 8; break;
-			case HIDE_CODE: idx += 2; break;
+			case TELEPORT_CODE:
+				idx += 4;
+				break;
+			case CALL_TALK_CODE:
+				idx += 8;
+				break;
+			case HIDE_CODE:
+				idx += 2;
+				break;
 			}
 		}
 
@@ -1391,7 +1404,7 @@ int Object::pickUpObject(FixedTextActionId fixedTextActionId) {
 		if ((_pickup & 0x80) == 0) {
 			// Play an animation
 			if (pickup > 80) {
-				takeFlag = false;		// Don't pick it up
+				takeFlag = false; // Don't pick it up
 				scene.startCAnim(pickup - 81, 1);
 				if (_pickupFlag)
 					_vm->setFlags(_pickupFlag);
@@ -1461,12 +1474,12 @@ const Common::Rect Object::getNewBounds() const {
 
 const Common::Rect Object::getNoShapeBounds() const {
 	return Common::Rect(_position.x, _position.y,
-		_position.x + _noShapeSize.x, _position.y + _noShapeSize.y);
+	                    _position.x + _noShapeSize.x, _position.y + _noShapeSize.y);
 }
 
 const Common::Rect Object::getOldBounds() const {
 	return Common::Rect(_oldPosition.x, _oldPosition.y,
-		_oldPosition.x + _oldSize.x, _oldPosition.y + _oldSize.y);
+	                    _oldPosition.x + _oldSize.x, _oldPosition.y + _oldSize.y);
 }
 
 /*----------------------------------------------------------------*/

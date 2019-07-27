@@ -20,9 +20,9 @@
  *
  */
 
-#include "sherlock/sherlock.h"
 #include "sherlock/fixed_text.h"
 #include "sherlock/scalpel/scalpel_fixed_text.h"
+#include "sherlock/sherlock.h"
 #include "sherlock/tattoo/tattoo_fixed_text.h"
 
 namespace Sherlock {
@@ -169,7 +169,7 @@ static const char *const fixedJournalTextES[] = {
 	"Despu\202s %s dijo, "
 };
 
-FixedText::FixedText(SherlockEngine *vm)  {
+FixedText::FixedText(SherlockEngine *vm) {
 	_vm = vm;
 
 	// Figure out which fixed texts to use

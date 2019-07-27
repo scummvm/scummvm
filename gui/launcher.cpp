@@ -26,35 +26,35 @@
 #include "common/events.h"
 #include "common/fs.h"
 #include "common/gui_options.h"
-#include "common/util.h"
 #include "common/system.h"
 #include "common/translation.h"
+#include "common/util.h"
 
 #include "gui/about.h"
 #include "gui/browser.h"
 #include "gui/chooser.h"
 #include "gui/editgamedialog.h"
+#include "gui/gui-manager.h"
 #include "gui/launcher.h"
 #include "gui/massadd.h"
 #include "gui/message.h"
-#include "gui/gui-manager.h"
 #include "gui/options.h"
 #ifdef ENABLE_EVENTRECORDER
-#include "gui/onscreendialog.h"
-#include "gui/recorderdialog.h"
-#include "gui/EventRecorder.h"
+#	include "gui/EventRecorder.h"
+#	include "gui/onscreendialog.h"
+#	include "gui/recorderdialog.h"
 #endif
+#include "gui/ThemeEval.h"
 #include "gui/saveload.h"
 #include "gui/unknown-game-dialog.h"
 #include "gui/widgets/edittext.h"
 #include "gui/widgets/list.h"
-#include "gui/widgets/tab.h"
 #include "gui/widgets/popup.h"
-#include "gui/ThemeEval.h"
+#include "gui/widgets/tab.h"
 
 #include "graphics/cursorman.h"
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
-#include "backends/cloud/cloudmanager.h"
+#	include "backends/cloud/cloudmanager.h"
 #endif
 
 using Common::ConfigManager;
@@ -92,7 +92,7 @@ enum {
 #pragma mark -
 
 LauncherDialog::LauncherDialog()
-	: Dialog(0, 0, 320, 200) {
+  : Dialog(0, 0, 320, 200) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundMain;
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
@@ -142,27 +142,19 @@ void LauncherDialog::build() {
 	new ButtonWidget(this, "Launcher.QuitButton", _("~Q~uit"), _("Quit ScummVM"), kQuitCmd);
 	new ButtonWidget(this, "Launcher.AboutButton", _("A~b~out..."), _("About ScummVM"), kAboutCmd);
 	new ButtonWidget(this, "Launcher.OptionsButton", _("~O~ptions..."), _("Change global ScummVM options"), kOptionsCmd);
-	_startButton =
-		new ButtonWidget(this, "Launcher.StartButton", _("~S~tart"), _("Start selected game"), kStartCmd);
+	_startButton = new ButtonWidget(this, "Launcher.StartButton", _("~S~tart"), _("Start selected game"), kStartCmd);
 
-	_loadButton =
-		new ButtonWidget(this, "Launcher.LoadGameButton", _("~L~oad..."), _("Load saved game for selected game"), kLoadGameCmd);
+	_loadButton = new ButtonWidget(this, "Launcher.LoadGameButton", _("~L~oad..."), _("Load saved game for selected game"), kLoadGameCmd);
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	if (g_system->getOverlayWidth() > 320) {
-		_addButton =
-			new ButtonWidget(this, "Launcher.AddGameButton", _("~A~dd Game..."), _("Hold Shift for Mass Add"), kAddGameCmd);
-		_editButton =
-			new ButtonWidget(this, "Launcher.EditGameButton", _("~E~dit Game..."), _("Change game options"), kEditGameCmd);
-		_removeButton =
-			new ButtonWidget(this, "Launcher.RemoveGameButton", _("~R~emove Game"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
+		_addButton = new ButtonWidget(this, "Launcher.AddGameButton", _("~A~dd Game..."), _("Hold Shift for Mass Add"), kAddGameCmd);
+		_editButton = new ButtonWidget(this, "Launcher.EditGameButton", _("~E~dit Game..."), _("Change game options"), kEditGameCmd);
+		_removeButton = new ButtonWidget(this, "Launcher.RemoveGameButton", _("~R~emove Game"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
 	} else {
-		_addButton =
-		new ButtonWidget(this, "Launcher.AddGameButton", _c("~A~dd Game...", "lowres"), _("Hold Shift for Mass Add"), kAddGameCmd);
-		_editButton =
-		new ButtonWidget(this, "Launcher.EditGameButton", _c("~E~dit Game...", "lowres"), _("Change game options"), kEditGameCmd);
-		_removeButton =
-		new ButtonWidget(this, "Launcher.RemoveGameButton", _c("~R~emove Game", "lowres"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
+		_addButton = new ButtonWidget(this, "Launcher.AddGameButton", _c("~A~dd Game...", "lowres"), _("Hold Shift for Mass Add"), kAddGameCmd);
+		_editButton = new ButtonWidget(this, "Launcher.EditGameButton", _c("~E~dit Game...", "lowres"), _("Change game options"), kEditGameCmd);
+		_removeButton = new ButtonWidget(this, "Launcher.RemoveGameButton", _c("~R~emove Game", "lowres"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
 	}
 
 	// Search box
@@ -203,7 +195,7 @@ void LauncherDialog::build() {
 
 void LauncherDialog::clean() {
 	while (_firstWidget) {
-		Widget* w = _firstWidget;
+		Widget *w = _firstWidget;
 		removeWidget(w);
 		// This is called from rebuild() which may result from handleCommand being called by
 		// a child widget sendCommand call. In such a case sendCommand is still being executed
@@ -305,7 +297,7 @@ void LauncherDialog::updateListing() {
 	const int oldSel = _list->getSelected();
 	_list->setList(l, &colors);
 	if (oldSel < (int)l.size())
-		_list->setSelected(oldSel);	// Restore the old selection
+		_list->setSelected(oldSel); // Restore the old selection
 	else if (oldSel != -1)
 		// Select the last entry if the list has been reduced
 		_list->setSelected(_list->getList().size() - 1);
@@ -323,7 +315,8 @@ void LauncherDialog::addGame() {
 
 	if (massAdd) {
 		MessageDialog alert(_("Do you really want to run the mass game detector? "
-							  "This could potentially add a huge number of games."), _("Yes"), _("No"));
+		                      "This could potentially add a huge number of games."),
+		                    _("Yes"), _("No"));
 		if (alert.runModal() == GUI::kMessageOK && _browser->runModal() > 0) {
 			MassAddDialog massAddDlg(_browser->getResult());
 
@@ -452,8 +445,8 @@ void LauncherDialog::loadGameButtonPressed(int item) {
 void LauncherDialog::recordGame(int item) {
 	RecorderDialog recorderDialog;
 	MessageDialog alert(_("Do you want to load saved game?"),
-		_("Yes"), _("No"));
-	switch(recorderDialog.runModal(_domains[item])) {
+	                    _("Yes"), _("No"));
+	switch (recorderDialog.runModal(_domains[item])) {
 	case RecorderDialog::kRecordDialogClose:
 		break;
 	case RecorderDialog::kRecordDialogPlayback:
@@ -491,8 +484,7 @@ void LauncherDialog::loadGame(int item) {
 
 	if (plugin) {
 		const MetaEngine &metaEngine = plugin->get<MetaEngine>();
-		if (metaEngine.hasFeature(MetaEngine::kSupportsListSaves) &&
-			metaEngine.hasFeature(MetaEngine::kSupportsLoadingDuringStartup)) {
+		if (metaEngine.hasFeature(MetaEngine::kSupportsListSaves) && metaEngine.hasFeature(MetaEngine::kSupportsLoadingDuringStartup)) {
 			int slot = _loadDialog->runModalWithPluginAndTarget(plugin, target);
 			if (slot >= 0) {
 				ConfMan.setActiveDomain(_domains[item]);
@@ -500,8 +492,7 @@ void LauncherDialog::loadGame(int item) {
 				close();
 			}
 		} else {
-			MessageDialog dialog
-				(_("This game does not support loading games from the launcher."), _("OK"));
+			MessageDialog dialog(_("This game does not support loading games from the launcher."), _("OK"));
 			dialog.runModal();
 		}
 	} else {
@@ -629,7 +620,6 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 			// User aborted, remove the the new domain again
 			ConfMan.removeGameDomain(domain);
 		}
-
 	}
 
 	return true;
@@ -654,13 +644,11 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kOptionsCmd: {
 		GlobalOptionsDialog options(this);
 		options.runModal();
-		}
-		break;
+	} break;
 	case kAboutCmd: {
 		AboutDialog about;
 		about.runModal();
-		}
-		break;
+	} break;
 	case kStartCmd:
 	case kListItemActivatedCmd:
 	case kListItemDoubleClickedCmd:
@@ -731,15 +719,12 @@ void LauncherDialog::switchButtonsText(ButtonWidget *button, const char *normalT
 	const bool lowRes = g_system->getOverlayWidth() <= 320;
 
 	const char *newAddButtonLabel = shiftPressed
-		? (lowRes ? _c(shiftedText, "lowres") : _(shiftedText))
-		: (lowRes ? _c(normalText, "lowres") : _(normalText));
+	  ? (lowRes ? _c(shiftedText, "lowres") : _(shiftedText))
+	  : (lowRes ? _c(normalText, "lowres") : _(normalText));
 
 	if (button->getLabel() != newAddButtonLabel)
 		button->setLabel(newAddButtonLabel);
 }
-
-
-
 
 void LauncherDialog::reflowLayout() {
 #ifndef DISABLE_FANCY_THEMES

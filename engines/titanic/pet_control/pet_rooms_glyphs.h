@@ -23,15 +23,17 @@
 #ifndef TITANIC_PET_ROOMS_GLYPHS_H
 #define TITANIC_PET_ROOMS_GLYPHS_H
 
-#include "titanic/pet_control/pet_glyphs.h"
 #include "titanic/game_location.h"
+#include "titanic/pet_control/pet_glyphs.h"
 
 namespace Titanic {
 
 class SimpleFile;
 
 enum RoomGlyphMode {
-	RGM_UNASSIGNED = 0, RGM_ASSIGNED_ROOM = 1, RGM_PREV_ASSIGNED_ROOM = 2
+	RGM_UNASSIGNED = 0,
+	RGM_ASSIGNED_ROOM = 1,
+	RGM_PREV_ASSIGNED_ROOM = 2
 };
 
 class CPetRoomsGlyph : public CPetGlyph {
@@ -47,6 +49,7 @@ private:
 	CGameObject *_chevRightOffDim;
 	CGameObject *_chevRightOnLit;
 	CGameObject *_chevRightOffLit;
+
 private:
 	/**
 	 * Find the selected button under the given point, based on the buttons
@@ -58,6 +61,7 @@ private:
 	 * Draws the objects
 	 */
 	void drawObjects(uint flags, const Point &pt, CScreenManager *screenManager);
+
 public:
 	CPetRoomsGlyph();
 	CPetRoomsGlyph(uint flags);

@@ -62,7 +62,6 @@ void MicroTileArray::addRect(Common::Rect r) {
 			updateBoundingBox(_tiles[xc + yc * _tilesW], ix0, iy0, ix1, iy1);
 		}
 	}
-
 }
 
 void MicroTileArray::clear() {
@@ -129,15 +128,11 @@ RectangleList *MicroTileArray::getRectangles() {
 			y0 = (y * TileSize) + TileY0(boundingBox);
 			y1 = (y * TileSize) + TileY1(boundingBox);
 
-			if (TileX1(boundingBox) == TileSize - 1 && x != _tilesW - 1) {	// check if the tile continues
+			if (TileX1(boundingBox) == TileSize - 1 && x != _tilesW - 1) { // check if the tile continues
 				while (!finish) {
 					++x;
 					++i;
-					if (x == _tilesW || i >= _tilesW * _tilesH ||
-						TileY0(_tiles[i]) != TileY0(boundingBox) ||
-						TileY1(_tiles[i]) != TileY1(boundingBox) ||
-						TileX0(_tiles[i]) != 0)
-					{
+					if (x == _tilesW || i >= _tilesW * _tilesH || TileY0(_tiles[i]) != TileY0(boundingBox) || TileY1(_tiles[i]) != TileY1(boundingBox) || TileX0(_tiles[i]) != 0) {
 						--x;
 						--i;
 						finish = 1;

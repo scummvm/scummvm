@@ -38,6 +38,7 @@ public:
 	void renderMultiLineText(int16 x, int16 y, const Common::String &origText, int32 mode);
 	void setFontColorByCharacter(int32 characterId);
 	void setFontColor(int32 fontColor1, int32 fontColor2, int32 fontColor3);
+
 protected:
 	Animation *_currentFont;
 	ToonEngine *_vm;

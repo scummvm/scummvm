@@ -28,33 +28,56 @@
 namespace Neverhood {
 
 static const KlaymenIdleTableItem klaymenIdleTable1[] = {
-	{1, kIdlePickEar},
-	{1, kIdleSpinHead},
-	{1, kIdleArms},
-	{1, kIdleChest},
-	{1, kIdleHeadOff}
+	{ 1, kIdlePickEar },
+	{ 1, kIdleSpinHead },
+	{ 1, kIdleArms },
+	{ 1, kIdleChest },
+	{ 1, kIdleHeadOff }
 };
 
 static const KlaymenIdleTableItem klaymenIdleTable2[] = {
-	{1, kIdlePickEar},
-	{1, kIdleSpinHead},
-	{1, kIdleChest},
-	{1, kIdleHeadOff}
+	{ 1, kIdlePickEar },
+	{ 1, kIdleSpinHead },
+	{ 1, kIdleChest },
+	{ 1, kIdleHeadOff }
 };
 
 static const KlaymenIdleTableItem klaymenIdleTable3[] = {
-	{1, kIdleTeleporterHands},
-	{1, kIdleTeleporterHands2}
+	{ 1, kIdleTeleporterHands },
+	{ 1, kIdleTeleporterHands2 }
 };
 
 // Klaymen
 
 Klaymen::Klaymen(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRectArray *clipRects)
-	: AnimatedSprite(vm, 1000), _idleCounterMax(0), _idleCounter(0), _isMoveObjectRequested(false), _blinkCounterMax(0),
-	_isWalkingOpenDoorNotified(false), _spitOutCountdown(0), _tapesToInsert(0), _keysToInsert(0), _busyStatus(0), _acceptInput(true),
-	_attachedSprite(NULL), _isWalking(false), _actionStatus(1), _parentScene(parentScene), _isSneaking(false), _isLargeStep(false),
-	_doYHitIncr(false), _isLeverDown(false), _isSittingInTeleporter(false), _actionStatusChanged(false), _ladderStatus(0), _pathPoints(NULL), _soundFlag(false),
-	_idleTableNum(0), _otherSprite(NULL), _moveObjectCountdown(0), _walkResumeFrameIncr(0) {
+  : AnimatedSprite(vm, 1000)
+  , _idleCounterMax(0)
+  , _idleCounter(0)
+  , _isMoveObjectRequested(false)
+  , _blinkCounterMax(0)
+  , _isWalkingOpenDoorNotified(false)
+  , _spitOutCountdown(0)
+  , _tapesToInsert(0)
+  , _keysToInsert(0)
+  , _busyStatus(0)
+  , _acceptInput(true)
+  , _attachedSprite(NULL)
+  , _isWalking(false)
+  , _actionStatus(1)
+  , _parentScene(parentScene)
+  , _isSneaking(false)
+  , _isLargeStep(false)
+  , _doYHitIncr(false)
+  , _isLeverDown(false)
+  , _isSittingInTeleporter(false)
+  , _actionStatusChanged(false)
+  , _ladderStatus(0)
+  , _pathPoints(NULL)
+  , _soundFlag(false)
+  , _idleTableNum(0)
+  , _otherSprite(NULL)
+  , _moveObjectCountdown(0)
+  , _walkResumeFrameIncr(0) {
 
 	createSurface(1000, 320, 200);
 	_x = x;
@@ -516,7 +539,7 @@ uint32 Klaymen::hmLowLevel(int messageNum, const MessageParam &param, Entity *se
 		messageResult = _acceptInput;
 		break;
 	case 0x1014:
-		_attachedSprite = (Sprite*)(param.asEntity());
+		_attachedSprite = (Sprite *)(param.asEntity());
 		break;
 	case NM_SCENE_LEAVE:
 		gotoNextStateExt();
@@ -585,7 +608,6 @@ uint32 Klaymen::hmStartAction(int messageNum, const MessageParam &param, Entity 
 	}
 	return messageResult;
 }
-
 
 void Klaymen::startWalkToX(int16 x, bool walkExt) {
 	int16 xdiff = ABS(x - _x);
@@ -661,7 +683,6 @@ void Klaymen::suAction() {
 	}
 
 	updateBounds();
-
 }
 
 void Klaymen::suSneaking() {
@@ -708,7 +729,6 @@ void Klaymen::suSneaking() {
 		}
 		updateBounds();
 	}
-
 }
 
 void Klaymen::stSneak() {
@@ -856,11 +876,7 @@ void Klaymen::suWalkingTestExit() {
 
 	_deltaX = 0;
 
-	if (xdiff == 0 ||
-		(_actionStatus != 2 && _actionStatus != 3 && xdiff <= 42 && _currFrameIndex >= 5 && _currFrameIndex <= 11) ||
-		(_actionStatus != 2 && _actionStatus != 3 && xdiff <= 10 && (_currFrameIndex >= 12 || _currFrameIndex <= 4)) ||
-		(_actionStatus == 3 && xdiff < 30) ||
-		(_actionStatus == 3 && xdiff < 150 && _currFrameIndex >= 6)) {
+	if (xdiff == 0 || (_actionStatus != 2 && _actionStatus != 3 && xdiff <= 42 && _currFrameIndex >= 5 && _currFrameIndex <= 11) || (_actionStatus != 2 && _actionStatus != 3 && xdiff <= 10 && (_currFrameIndex >= 12 || _currFrameIndex <= 4)) || (_actionStatus == 3 && xdiff < 30) || (_actionStatus == 3 && xdiff < 150 && _currFrameIndex >= 6)) {
 		sendMessage(this, NM_SCENE_LEAVE, 0);
 	} else {
 		HitRect *hitRectPrev = _parentScene->findHitRectAtPos(_x, _y);
@@ -887,7 +903,6 @@ void Klaymen::suWalkingTestExit() {
 		}
 		updateBounds();
 	}
-
 }
 
 uint32 Klaymen::hmLever(int messageNum, const MessageParam &param, Entity *sender) {
@@ -937,7 +952,6 @@ uint32 Klaymen::hmPickUpObject(int messageNum, const MessageParam &param, Entity
 		break;
 	}
 	return messageResult;
-
 }
 
 void Klaymen::stPressButton() {
@@ -2418,13 +2432,13 @@ uint32 Klaymen::hmStandIdleSpecial(int messageNum, const MessageParam &param, En
 	switch (messageNum) {
 	case 0x4811:
 		playSound(0, 0x5252A0E4);
-		setDoDeltaX(((Sprite*)sender)->isDoDeltaX() ? 1 : 0);
+		setDoDeltaX(((Sprite *)sender)->isDoDeltaX() ? 1 : 0);
 		if (_doDeltaX) {
-			_x = ((Sprite*)sender)->getX() - 75;
+			_x = ((Sprite *)sender)->getX() - 75;
 		} else {
-			_x = ((Sprite*)sender)->getX() + 75;
+			_x = ((Sprite *)sender)->getX() + 75;
 		}
-		_y = ((Sprite*)sender)->getY() - 200;
+		_y = ((Sprite *)sender)->getY() - 200;
 		if (param.asInteger() == 0) {
 			stSpitOutFall0();
 		} else if (param.asInteger() == 1) {

@@ -21,12 +21,12 @@
  */
 
 #include "lure/animseq.h"
+#include "common/endian.h"
 #include "lure/decode.h"
 #include "lure/events.h"
 #include "lure/lure.h"
 #include "lure/palette.h"
 #include "lure/sound.h"
-#include "common/endian.h"
 
 namespace Lure {
 
@@ -52,11 +52,11 @@ AnimAbortType AnimationSequence::delay(uint32 milliseconds) {
 			} else if (events.type() == Common::EVENT_MAINMENU) {
 				return ABORT_NONE;
 			}
-
 		}
 
 		uint32 delayAmount = delayCtr - g_system->getMillis();
-		if (delayAmount > 10) delayAmount = 10;
+		if (delayAmount > 10)
+			delayAmount = 10;
 		g_system->delayMillis(delayAmount);
 	}
 	return ABORT_NONE;
@@ -75,8 +75,7 @@ void AnimationSequence::egaDecodeFrame(byte *&pPixels) {
 
 	// Loop through the list of same/changed pixel ranges
 	int len = *pPixels++;
-	int offset = MENUBAR_Y_SIZE * FULL_SCREEN_WIDTH *
-		EGA_NUM_LAYERS / EGA_PIXELS_PER_BYTE;
+	int offset = MENUBAR_Y_SIZE * FULL_SCREEN_WIDTH * EGA_NUM_LAYERS / EGA_PIXELS_PER_BYTE;
 	while ((offset += len) < FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT / 2) {
 
 		int repeatLen = *pPixels++;
@@ -116,7 +115,7 @@ void AnimationSequence::vgaDecodeFrame(byte *&pPixels, byte *&pLines) {
 
 	while (screenPos < SCREEN_SIZE) {
 		// Get line length
-		len = (uint16) *pLines++;
+		len = (uint16)*pLines++;
 		if (len == 0) {
 			len = READ_LE_UINT16(pLines);
 			pLines += 2;
@@ -129,7 +128,7 @@ void AnimationSequence::vgaDecodeFrame(byte *&pPixels, byte *&pLines) {
 		pPixels += len;
 
 		// Get the offset inc amount
-		len = (uint16) *pLines++;
+		len = (uint16)*pLines++;
 		if (len == 0) {
 			len = READ_LE_UINT16(pLines);
 			pLines += 2;
@@ -140,9 +139,12 @@ void AnimationSequence::vgaDecodeFrame(byte *&pPixels, byte *&pLines) {
 	}
 }
 
-AnimationSequence::AnimationSequence(uint16 screenId, Palette &palette,  bool fadeIn, int frameDelay,
-					 const AnimSoundSequence *soundList): _screenId(screenId), _palette(palette),
-					 _frameDelay(frameDelay), _soundList(soundList) {
+AnimationSequence::AnimationSequence(uint16 screenId, Palette &palette, bool fadeIn, int frameDelay,
+                                     const AnimSoundSequence *soundList)
+  : _screenId(screenId)
+  , _palette(palette)
+  , _frameDelay(frameDelay)
+  , _soundList(soundList) {
 	Screen &screen = Screen::getReference();
 	PictureDecoder decoder;
 	Disk &d = Disk::getReference();
@@ -165,16 +167,14 @@ AnimationSequence::AnimationSequence(uint16 screenId, Palette &palette,  bool fa
 		// Load the screen - each four bytes contain the four planes
 		// worth of data for 8 sequential pixels
 		byte *pSrc = _decodedData->data();
-		byte *pDest = screen.screen().data().data() +
-			(FULL_SCREEN_WIDTH * MENUBAR_Y_SIZE);
+		byte *pDest = screen.screen().data().data() + (FULL_SCREEN_WIDTH * MENUBAR_Y_SIZE);
 
-		for (int ctr = 0; ctr < FULL_SCREEN_WIDTH * (FULL_SCREEN_HEIGHT -
-				MENUBAR_Y_SIZE) / 8; ++ctr, pDest += EGA_PIXELS_PER_BYTE) {
+		for (int ctr = 0; ctr < FULL_SCREEN_WIDTH * (FULL_SCREEN_HEIGHT - MENUBAR_Y_SIZE) / 8; ++ctr, pDest += EGA_PIXELS_PER_BYTE) {
 			for (int planeCtr = 0; planeCtr < EGA_NUM_LAYERS; ++planeCtr, ++pSrc) {
 				byte v = *pSrc;
 				for (int bitCtr = 0; bitCtr < 8; ++bitCtr, v <<= 1) {
 					if ((v & 0x80) != 0)
-					*(pDest + bitCtr) |= 1 << planeCtr;
+						*(pDest + bitCtr) |= 1 << planeCtr;
 				}
 			}
 		}
@@ -198,8 +198,10 @@ AnimationSequence::AnimationSequence(uint16 screenId, Palette &palette,  bool fa
 		screen.update();
 
 		// Set the palette
-		if (fadeIn)	screen.paletteFadeIn(&_palette);
-		else screen.setPalette(&_palette, 0, _palette.numEntries());
+		if (fadeIn)
+			screen.paletteFadeIn(&_palette);
+		else
+			screen.setPalette(&_palette, 0, _palette.numEntries());
 
 		// Set up frame pointers
 		_pPixels = _decodedData->data() + SCREEN_SIZE;
@@ -233,13 +235,14 @@ AnimAbortType AnimationSequence::show() {
 	while (_pPixels < _pPixelsEnd) {
 		if ((soundFrame != NULL) && (frameCtr == 0))
 			Sound.musicInterface_Play(
-				Sound.isRoland() ? soundFrame->rolandSoundId : soundFrame->adlibSoundId,
-				soundFrame->channelNum);
+			  Sound.isRoland() ? soundFrame->rolandSoundId : soundFrame->adlibSoundId,
+			  soundFrame->channelNum);
 
 		if (_isEGA)
 			egaDecodeFrame(_pPixels);
 		else {
-			if (_pLines >= _pLinesEnd) break;
+			if (_pLines >= _pLinesEnd)
+				break;
 			vgaDecodeFrame(_pPixels, _pLines);
 		}
 
@@ -247,12 +250,14 @@ AnimAbortType AnimationSequence::show() {
 		screen.update();
 
 		result = delay(_frameDelay * 1000 / 50);
-		if (result != ABORT_NONE) return result;
+		if (result != ABORT_NONE)
+			return result;
 
 		if ((soundFrame != NULL) && (++frameCtr == soundFrame->numFrames)) {
 			frameCtr = 0;
 			++soundFrame;
-			if (soundFrame->numFrames == 0) soundFrame = NULL;
+			if (soundFrame->numFrames == 0)
+				soundFrame = NULL;
 		}
 	}
 
@@ -261,12 +266,14 @@ AnimAbortType AnimationSequence::show() {
 
 bool AnimationSequence::step() {
 	Screen &screen = Screen::getReference();
-	if (_pPixels >= _pPixelsEnd) return false;
+	if (_pPixels >= _pPixelsEnd)
+		return false;
 
 	if (_isEGA)
 		egaDecodeFrame(_pPixels);
 	else {
-		if (_pLines >= _pLinesEnd) return false;
+		if (_pLines >= _pLinesEnd)
+			return false;
 		vgaDecodeFrame(_pPixels, _pLines);
 	}
 

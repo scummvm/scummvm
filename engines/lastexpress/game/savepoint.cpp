@@ -30,7 +30,8 @@
 
 namespace LastExpress {
 
-SavePoints::SavePoints(LastExpressEngine *engine) : _engine(engine) {
+SavePoints::SavePoints(LastExpressEngine *engine)
+  : _engine(engine) {
 	for (int i = 0; i < 40; i++)
 		_callbacks[i] = NULL;
 }

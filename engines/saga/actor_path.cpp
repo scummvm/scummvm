@@ -29,24 +29,24 @@
 namespace Saga {
 
 static const PathDirectionData pathDirectionLUT[8][3] = {
-	{ { 0,  0, -1 }, { 7, -1, -1 }, { 4,  1, -1 } },
-	{ { 1,  1,  0 }, { 4,  1, -1 }, { 5,  1,  1 } },
-	{ { 2,  0,  1 }, { 5,  1,  1 }, { 6, -1,  1 } },
-	{ { 3, -1,  0 }, { 6, -1,  1 }, { 7, -1, -1 } },
-	{ { 0,  0, -1 }, { 1,  1,  0 }, { 4,  1, -1 } },
-	{ { 1,  1,  0 }, { 2,  0,  1 }, { 5,  1,  1 } },
-	{ { 2,  0,  1 }, { 3, -1,  0 }, { 6, -1,  1 } },
-	{ { 3, -1,  0 }, { 0,  0, -1 }, { 7, -1, -1 } }
+	{ { 0, 0, -1 }, { 7, -1, -1 }, { 4, 1, -1 } },
+	{ { 1, 1, 0 }, { 4, 1, -1 }, { 5, 1, 1 } },
+	{ { 2, 0, 1 }, { 5, 1, 1 }, { 6, -1, 1 } },
+	{ { 3, -1, 0 }, { 6, -1, 1 }, { 7, -1, -1 } },
+	{ { 0, 0, -1 }, { 1, 1, 0 }, { 4, 1, -1 } },
+	{ { 1, 1, 0 }, { 2, 0, 1 }, { 5, 1, 1 } },
+	{ { 2, 0, 1 }, { 3, -1, 0 }, { 6, -1, 1 } },
+	{ { 3, -1, 0 }, { 0, 0, -1 }, { 7, -1, -1 } }
 };
 
 static const int pathDirectionLUT2[8][2] = {
-	{  0, -1 },
-	{  1,  0 },
-	{  0,  1 },
-	{ -1,  0 },
-	{  1, -1 },
-	{  1,  1 },
-	{ -1,  1 },
+	{ 0, -1 },
+	{ 1, 0 },
+	{ 0, 1 },
+	{ -1, 0 },
+	{ 1, -1 },
+	{ 1, 1 },
+	{ -1, 1 },
 	{ -1, -1 }
 };
 
@@ -74,7 +74,6 @@ inline void calcDeltaS(const Point &point1, const Point &point2, Point &delta, P
 			delta.x = -delta.x;
 		}
 	}
-
 
 	delta.y = point2.y - point1.y;
 	if (delta.y == 0) {
@@ -294,7 +293,7 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 		setPathCell(fromPoint, kDirUp);
 
 #ifdef ACTOR_DEBUG
-		addDebugPoint(fromPoint, 24+36);
+		addDebugPoint(fromPoint, 24 + 36);
 #endif
 	}
 
@@ -322,7 +321,8 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 #endif
 			PathDirectionData tmp = {
 				samplePathDirection->direction,
-				nextPoint.x, nextPoint.y };
+				nextPoint.x, nextPoint.y
+			};
 			pathDirectionQueue.push_back(tmp);
 			++pointCounter;
 			if (nextPoint == toPoint) {
@@ -487,7 +487,6 @@ void Actor::nodeToPath() {
 	}
 	_pathListIndex--;
 	_pathNodeList.back().link = _pathListIndex;
-
 }
 
 void Actor::removeNodes() {

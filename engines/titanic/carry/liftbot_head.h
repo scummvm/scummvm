@@ -32,8 +32,10 @@ class CLiftbotHead : public CCarry {
 	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
 	bool UseWithCharMsg(CUseWithCharMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+
 private:
 	bool _flag;
+
 public:
 	CLASSDEF;
 	CLiftbotHead();

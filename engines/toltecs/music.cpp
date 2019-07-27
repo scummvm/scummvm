@@ -24,13 +24,15 @@
 #include "audio/miles.h"
 #include "common/textconsole.h"
 
-#include "toltecs/toltecs.h"
 #include "toltecs/music.h"
 #include "toltecs/resource.h"
+#include "toltecs/toltecs.h"
 
 namespace Toltecs {
 
-MusicPlayer::MusicPlayer(bool isGM) : _isGM(isGM), _buffer(NULL) {
+MusicPlayer::MusicPlayer(bool isGM)
+  : _isGM(isGM)
+  , _buffer(NULL) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	MusicType musicType = MidiDriver::getMusicType(dev);
 
@@ -120,7 +122,9 @@ void MusicPlayer::stopAndClear() {
 	_buffer = NULL;
 }
 
-Music::Music(ArchiveReader *arc) : MusicPlayer(true), _arc(arc) {
+Music::Music(ArchiveReader *arc)
+  : MusicPlayer(true)
+  , _arc(arc) {
 	_sequenceResIndex = -1;
 }
 
@@ -134,7 +138,7 @@ void Music::playSequence(int16 sequenceResIndex) {
 	_arc->closeResource();
 
 	if (!memcmp(data, "FORM", 4))
-		playMIDI(data, resourceSize, true);	// music tracks are always looping
+		playMIDI(data, resourceSize, true); // music tracks are always looping
 	else
 		// Sanity check: this should never occur
 		error("playSequence: resource %d isn't XMIDI", sequenceResIndex);

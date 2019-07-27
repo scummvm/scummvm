@@ -20,8 +20,8 @@
  *
  */
 
-#include "gnap/gnap.h"
 #include "gnap/resource.h"
+#include "gnap/gnap.h"
 
 namespace Gnap {
 

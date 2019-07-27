@@ -30,20 +30,20 @@
 namespace Glk {
 namespace Alan3 {
 
-/* DATA */
-struct game_state;
-typedef struct game_state GameState;
+	/* DATA */
+	struct game_state;
+	typedef struct game_state GameState;
 
-/* FUNCTIONS */
-extern bool anySavedState(void);
-extern void initStateStack(void);
-extern void rememberGameState(void);
-extern void forgetGameState(void);
-extern void rememberCommands(void);
-extern void recallGameState(void);
-extern char *recreatePlayerCommand(void);
-extern void terminateStateStack(void);
-extern void deallocateGameState(GameState *gameState);
+	/* FUNCTIONS */
+	extern bool anySavedState(void);
+	extern void initStateStack(void);
+	extern void rememberGameState(void);
+	extern void forgetGameState(void);
+	extern void rememberCommands(void);
+	extern void recallGameState(void);
+	extern char *recreatePlayerCommand(void);
+	extern void terminateStateStack(void);
+	extern void deallocateGameState(GameState *gameState);
 
 } // End of namespace Alan3
 } // End of namespace Glk

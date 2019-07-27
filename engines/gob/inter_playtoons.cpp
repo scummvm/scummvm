@@ -26,37 +26,38 @@
 
 #include "gui/message.h"
 
-#include "gob/gob.h"
-#include "gob/inter.h"
-#include "gob/global.h"
-#include "gob/util.h"
 #include "gob/dataio.h"
 #include "gob/draw.h"
-#include "gob/game.h"
 #include "gob/expression.h"
-#include "gob/script.h"
+#include "gob/game.h"
+#include "gob/global.h"
+#include "gob/gob.h"
 #include "gob/hotspots.h"
+#include "gob/inter.h"
 #include "gob/palanim.h"
+#include "gob/save/saveload.h"
 #include "gob/scenery.h"
+#include "gob/script.h"
+#include "gob/util.h"
 #include "gob/video.h"
 #include "gob/videoplayer.h"
-#include "gob/save/saveload.h"
 
 namespace Gob {
 
 #define OPCODEVER Inter_Playtoons
-#define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
-#define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
-#define OPCODEGOB(i, x)   _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
+#define OPCODEDRAW(i, x) _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
+#define OPCODEFUNC(i, x) _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
+#define OPCODEGOB(i, x) _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 
-Inter_Playtoons::Inter_Playtoons(GobEngine *vm) : Inter_v6(vm) {
+Inter_Playtoons::Inter_Playtoons(GobEngine *vm)
+  : Inter_v6(vm) {
 }
 
 void Inter_Playtoons::setupOpcodesDraw() {
 	Inter_v6::setupOpcodesDraw();
 
-// In the code, the Draw codes 0x00 to 0x06 and 0x13 are replaced by an engrish
-// error message. As it's useless, they are simply cleared.
+	// In the code, the Draw codes 0x00 to 0x06 and 0x13 are replaced by an engrish
+	// error message. As it's useless, they are simply cleared.
 	CLEAROPCODEDRAW(0x00);
 	CLEAROPCODEDRAW(0x01);
 	CLEAROPCODEDRAW(0x02);
@@ -114,17 +115,16 @@ void Inter_Playtoons::oPlaytoons_printText(OpFuncParams &params) {
 		_vm->_draw->_transparency = 1;
 	}
 
-// colMod is read from conf file (_off_=xxx).
-// in Playtoons, it's not present in the conf file, thus always equal to the default value (0).
-// Maybe used in ADIs...
-//	if (!_vm->_draw->_transparency)
-//		_vm->_draw->_backColor += colMod;
-//	_vm->_draw->_frontColor += colMod;
+	// colMod is read from conf file (_off_=xxx).
+	// in Playtoons, it's not present in the conf file, thus always equal to the default value (0).
+	// Maybe used in ADIs...
+	//	if (!_vm->_draw->_transparency)
+	//		_vm->_draw->_backColor += colMod;
+	//	_vm->_draw->_frontColor += colMod;
 
 	oldTransparency = _vm->_draw->_transparency;
 	do {
-		for (i = 0; (_vm->_game->_script->peekChar() != '.') &&
-				(_vm->_game->_script->peekByte() != 200); i++) {
+		for (i = 0; (_vm->_game->_script->peekChar() != '.') && (_vm->_game->_script->peekByte() != 200); i++) {
 			buf[i] = _vm->_game->_script->readChar();
 		}
 
@@ -134,26 +134,26 @@ void Inter_Playtoons::oPlaytoons_printText(OpFuncParams &params) {
 			case TYPE_VAR_INT8:
 			case TYPE_ARRAY_INT8:
 				sprintf(buf + i, "%d",
-						(int8) READ_VARO_UINT8(_vm->_game->_script->readVarIndex()));
+				        (int8)READ_VARO_UINT8(_vm->_game->_script->readVarIndex()));
 				break;
 
 			case TYPE_VAR_INT16:
 			case TYPE_VAR_INT32_AS_INT16:
 			case TYPE_ARRAY_INT16:
 				sprintf(buf + i, "%d",
-						(int16) READ_VARO_UINT16(_vm->_game->_script->readVarIndex()));
+				        (int16)READ_VARO_UINT16(_vm->_game->_script->readVarIndex()));
 				break;
 
 			case TYPE_VAR_INT32:
 			case TYPE_ARRAY_INT32:
 				sprintf(buf + i, "%d",
-						(int32)VAR_OFFSET(_vm->_game->_script->readVarIndex()));
+				        (int32)VAR_OFFSET(_vm->_game->_script->readVarIndex()));
 				break;
 
 			case TYPE_VAR_STR:
 			case TYPE_ARRAY_STR:
 				sprintf(buf + i, "%s",
-						GET_VARO_STR(_vm->_game->_script->readVarIndex()));
+				        GET_VARO_STR(_vm->_game->_script->readVarIndex()));
 				break;
 			}
 			_vm->_game->_script->skip(1);
@@ -193,7 +193,7 @@ void Inter_Playtoons::oPlaytoons_putPixel(OpFuncParams &params) {
 	//unk_var is always set to 0 in Playtoons
 	_vm->_draw->_frontColor = _vm->_game->_script->getResultInt() & 0xFFFF; // + unk_var;
 
-	_vm->_draw->_pattern = _vm->_game->_script->getResultInt()>>16;
+	_vm->_draw->_pattern = _vm->_game->_script->getResultInt() >> 16;
 
 	_vm->_draw->spriteOperation(DRAW_PUTPIXEL);
 }
@@ -212,7 +212,7 @@ void Inter_Playtoons::oPlaytoons_checkData(OpFuncParams &params) {
 
 	uint16 varOff = _vm->_game->_script->readVarIndex();
 
-	int32 size   = -1;
+	int32 size = -1;
 	int16 handle = 1;
 	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file.c_str());
 	if (mode == SaveLoad::kSaveModeNone) {
@@ -229,22 +229,22 @@ void Inter_Playtoons::oPlaytoons_checkData(OpFuncParams &params) {
 		handle = -1;
 
 	debugC(2, kDebugFileIO, "Requested size of file \"%s\": %d",
-			file.c_str(), size);
+	       file.c_str(), size);
 
 	WRITE_VAR_OFFSET(varOff, handle);
-	WRITE_VAR(16, (uint32) size);
+	WRITE_VAR(16, (uint32)size);
 }
 
 void Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 	Common::String file = getFile(_vm->_game->_script->evalString());
 
 	uint16 dataVar = _vm->_game->_script->readVarIndex();
-	int32  size    = _vm->_game->_script->readValExpr();
-	int32  offset  = _vm->_game->_script->evalInt();
-	int32  retSize = 0;
+	int32 size = _vm->_game->_script->readValExpr();
+	int32 offset = _vm->_game->_script->evalInt();
+	int32 retSize = 0;
 
 	debugC(2, kDebugFileIO, "Read from file \"%s\" (%d, %d bytes at %d)",
-			file.c_str(), dataVar, size, offset);
+	       file.c_str(), dataVar, size, offset);
 
 	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file.c_str());
 	if (mode == SaveLoad::kSaveModeSave) {
@@ -286,7 +286,7 @@ void Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 	_vm->_draw->animateCursor(4);
 	if (offset > stream->size()) {
 		warning("oPlaytoons_readData: File \"%s\", Offset (%d) > file size (%d)",
-				file.c_str(), offset, stream->size());
+		        file.c_str(), offset, stream->size());
 		delete stream;
 		return;
 	}
@@ -324,7 +324,7 @@ void Inter_Playtoons::oPlaytoons_loadMultObject() {
 	*obj.pPosX = _vm->_game->_script->readValExpr();
 	*obj.pPosY = _vm->_game->_script->readValExpr();
 
-	byte *multData = (byte *) &objAnim;
+	byte *multData = (byte *)&objAnim;
 	for (int i = 0; i < 11; i++) {
 		if (_vm->_game->_script->peekByte() != 99)
 			multData[i] = _vm->_game->_script->readValExpr();
@@ -357,7 +357,7 @@ void Inter_Playtoons::oPlaytoons_getObjAnimSize() {
 	if (objIndex == -2) {
 		bool doBreak = false;
 		for (int i = 0; i < 3; i++)
-			storeValue(readVar[i], types[i], (uint32) -1);
+			storeValue(readVar[i], types[i], (uint32)-1);
 
 		for (int i = readValue(readVar[3], types[3]); i < _vm->_mult->_objCount; i++) {
 			if (_vm->_mult->_objects[i].pAnimData->isStatic != 0)
@@ -366,7 +366,7 @@ void Inter_Playtoons::oPlaytoons_getObjAnimSize() {
 			byte *data = (byte *)_vm->_mult->_objects[i].pAnimData;
 
 			for (int j = 1; j < 39; j += 2) {
-				int32 value1 = READ_VARO_UINT32(readVar[3] +  j      * 4);
+				int32 value1 = READ_VARO_UINT32(readVar[3] + j * 4);
 				int32 value2 = READ_VARO_UINT32(readVar[3] + (j + 1) * 4);
 				if (value1 == -1) {
 					doBreak = true;
@@ -380,7 +380,6 @@ void Inter_Playtoons::oPlaytoons_getObjAnimSize() {
 					if ((int8)data[-value1] == value2)
 						break;
 				}
-
 			}
 
 			if (doBreak) {
@@ -394,19 +393,19 @@ void Inter_Playtoons::oPlaytoons_getObjAnimSize() {
 
 	if ((objIndex < 0) || (objIndex >= _vm->_mult->_objCount)) {
 		warning("oPlaytoons_getObjAnimSize(): objIndex = %d (%d)", objIndex, _vm->_mult->_objCount);
-		_vm->_scenery->_toRedrawLeft   = 0;
-		_vm->_scenery->_toRedrawTop    = 0;
-		_vm->_scenery->_toRedrawRight  = 0;
+		_vm->_scenery->_toRedrawLeft = 0;
+		_vm->_scenery->_toRedrawTop = 0;
+		_vm->_scenery->_toRedrawRight = 0;
 		_vm->_scenery->_toRedrawBottom = 0;
 	} else {
 		animData = *(_vm->_mult->_objects[objIndex].pAnimData);
 		if (animData.isStatic == 0)
 			_vm->_scenery->updateAnim(animData.layer, animData.frame,
-					animData.animation, 0, *(_vm->_mult->_objects[objIndex].pPosX),
-					*(_vm->_mult->_objects[objIndex].pPosY), 0);
+			                          animData.animation, 0, *(_vm->_mult->_objects[objIndex].pPosX),
+			                          *(_vm->_mult->_objects[objIndex].pPosY), 0);
 
 		_vm->_scenery->_toRedrawLeft = MAX<int16>(_vm->_scenery->_toRedrawLeft, 0);
-		_vm->_scenery->_toRedrawTop  = MAX<int16>(_vm->_scenery->_toRedrawTop , 0);
+		_vm->_scenery->_toRedrawTop = MAX<int16>(_vm->_scenery->_toRedrawTop, 0);
 	}
 
 	WRITE_VAR_OFFSET(readVar[0], _vm->_scenery->_toRedrawLeft);
@@ -450,7 +449,7 @@ void Inter_Playtoons::oPlaytoons_openItk() {
 Common::String Inter_Playtoons::getFile(const char *path) {
 	const char *orig = path;
 
-	if      (!strncmp(path, "@:\\", 3))
+	if (!strncmp(path, "@:\\", 3))
 		path += 3;
 	else if (!strncmp(path, "<ME>", 4))
 		path += 4;
@@ -467,13 +466,14 @@ Common::String Inter_Playtoons::getFile(const char *path) {
 
 	if (orig != path)
 		debugC(2, kDebugFileIO, "Inter_Playtoons::getFile(): Evaluating path"
-				"\"%s\" to \"%s\"", orig, path);
+		                        "\"%s\" to \"%s\"",
+		       orig, path);
 
 	return path;
 }
 
 bool Inter_Playtoons::readSprite(Common::String file, int32 dataVar,
-		int32 size, int32 offset) {
+                                 int32 size, int32 offset) {
 
 	// WORKAROUND: Adibou copies TEMP.CSA to TEMP01.CSA, which isn't yet implemented
 	if (file.equalsIgnoreCase("TEMP01.CSA"))
@@ -504,7 +504,7 @@ bool Inter_Playtoons::readSprite(Common::String file, int32 dataVar,
 	}
 
 	int32 spriteSize = sprite->getWidth() * sprite->getHeight();
-	int32 dataSize   = stream->size();
+	int32 dataSize = stream->size();
 
 	if (palette)
 		dataSize -= 768;

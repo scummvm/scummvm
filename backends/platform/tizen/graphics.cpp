@@ -23,19 +23,19 @@
 #include "graphics/fontman.h"
 
 #include "backends/platform/tizen/form.h"
-#include "backends/platform/tizen/system.h"
 #include "backends/platform/tizen/graphics.h"
+#include "backends/platform/tizen/system.h"
 
 //
 // TizenGraphicsManager
 //
-TizenGraphicsManager::TizenGraphicsManager(TizenAppForm *appForm) :
-	_appForm(appForm),
-	_eglDisplay(EGL_DEFAULT_DISPLAY),
-	_eglSurface(EGL_NO_SURFACE),
-	_eglConfig(NULL),
-	_eglContext(EGL_NO_CONTEXT),
-	_initState(true) {
+TizenGraphicsManager::TizenGraphicsManager(TizenAppForm *appForm)
+  : _appForm(appForm)
+  , _eglDisplay(EGL_DEFAULT_DISPLAY)
+  , _eglSurface(EGL_NO_SURFACE)
+  , _eglConfig(NULL)
+  , _eglContext(EGL_NO_CONTEXT)
+  , _initState(true) {
 	assert(appForm != NULL);
 }
 
@@ -103,9 +103,7 @@ Common::List<Graphics::PixelFormat> TizenGraphicsManager::getSupportedFormats() 
 }
 
 bool TizenGraphicsManager::hasFeature(OSystem::Feature f) {
-	bool result =
-			(f == OSystem::kFeatureVirtualKeyboard ||
-			OpenGLGraphicsManager::hasFeature(f));
+	bool result = (f == OSystem::kFeatureVirtualKeyboard || OpenGLGraphicsManager::hasFeature(f));
 	return result;
 }
 
@@ -136,9 +134,9 @@ bool TizenGraphicsManager::loadEgl() {
 
 	EGLint numConfigs = 1;
 	EGLint eglConfigList[] = {
-		EGL_RED_SIZE,	5,
+		EGL_RED_SIZE, 5,
 		EGL_GREEN_SIZE, 6,
-		EGL_BLUE_SIZE,	5,
+		EGL_BLUE_SIZE, 5,
 		EGL_ALPHA_SIZE, 0,
 		EGL_DEPTH_SIZE, 8,
 		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
@@ -153,20 +151,18 @@ bool TizenGraphicsManager::loadEgl() {
 
 	eglBindAPI(EGL_OPENGL_ES_API);
 
-	_eglDisplay = eglGetDisplay((EGLNativeDisplayType) EGL_DEFAULT_DISPLAY);
+	_eglDisplay = eglGetDisplay((EGLNativeDisplayType)EGL_DEFAULT_DISPLAY);
 	if (EGL_NO_DISPLAY == _eglDisplay) {
 		systemError("eglGetDisplay() failed");
 		return false;
 	}
 
-	if (EGL_FALSE == eglInitialize(_eglDisplay, NULL, NULL) ||
-			EGL_SUCCESS != eglGetError()) {
+	if (EGL_FALSE == eglInitialize(_eglDisplay, NULL, NULL) || EGL_SUCCESS != eglGetError()) {
 		systemError("eglInitialize() failed");
 		return false;
 	}
 
-	if (EGL_FALSE == eglChooseConfig(_eglDisplay, eglConfigList, &_eglConfig, 1, &numConfigs) ||
-			EGL_SUCCESS != eglGetError()) {
+	if (EGL_FALSE == eglChooseConfig(_eglDisplay, eglConfigList, &_eglConfig, 1, &numConfigs) || EGL_SUCCESS != eglGetError()) {
 		systemError("eglChooseConfig() failed");
 		return false;
 	}
@@ -183,14 +179,12 @@ bool TizenGraphicsManager::loadEgl() {
 	}
 
 	_eglContext = eglCreateContext(_eglDisplay, _eglConfig, EGL_NO_CONTEXT, eglContextList);
-	if (EGL_NO_CONTEXT == _eglContext ||
-			EGL_SUCCESS != eglGetError()) {
+	if (EGL_NO_CONTEXT == _eglContext || EGL_SUCCESS != eglGetError()) {
 		systemError("eglCreateContext() failed");
 		return false;
 	}
 
-	if (false == eglMakeCurrent(_eglDisplay, _eglSurface, _eglSurface, _eglContext) ||
-			EGL_SUCCESS != eglGetError()) {
+	if (false == eglMakeCurrent(_eglDisplay, _eglSurface, _eglSurface, _eglContext) || EGL_SUCCESS != eglGetError()) {
 		systemError("eglMakeCurrent() failed");
 		return false;
 	}

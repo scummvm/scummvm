@@ -58,7 +58,8 @@ int ControlPanel::execute() {
 
 		drawButtons(&w);
 		w.writeString(text);
-		w.writeString("\xB""000\t000\x1");
+		w.writeString("\xB"
+		              "000\t000\x1");
 		w.update();
 
 		events.updateGameCounter();
@@ -201,22 +202,25 @@ Common::String ControlPanel::getButtonText() {
 	_btnMusicText = sound._musicOn ? Res.ON : Res.OFF;
 
 	return Common::String::format(Res.CONTROL_PANEL_BUTTONS,
-		_btnSoundText.c_str(), _btnMusicText.c_str());
+	                              _btnSoundText.c_str(), _btnMusicText.c_str());
 }
 
 Common::String ControlPanel::getTimeText() const {
 	TimeDate td;
 	g_system->getTimeAndDate(td);
 	Common::String timeStr = Common::String::format("%d:%.2d:%.2d%c",
-		td.tm_hour == 0 || td.tm_hour == 12 ? 12 : (td.tm_hour % 12),
-		td.tm_min, td.tm_sec, (td.tm_hour >= 12) ? 'p' : 'c');
+	                                                td.tm_hour == 0 || td.tm_hour == 12 ? 12 : (td.tm_hour % 12),
+	                                                td.tm_min, td.tm_sec, (td.tm_hour >= 12) ? 'p' : 'c');
 
 	uint32 playtime = g_vm->_events->playTime() / GAME_FRAME_RATE;
 	Common::String playtimeStr = Common::String::format("%d:%.2d:%.2d",
-		playtime / 3600, (playtime / 60) % 60, playtime % 60);
+	                                                    playtime / 3600, (playtime / 60) % 60, playtime % 60);
 	return Common::String::format(
-		"\x2\x3l\xB""000\t000\x4""160%s\x3r\xB""000\t000%s\x1",
-		timeStr.c_str(), playtimeStr.c_str());
+	  "\x2\x3l\xB"
+	  "000\t000\x4"
+	  "160%s\x3r\xB"
+	  "000\t000%s\x1",
+	  timeStr.c_str(), playtimeStr.c_str());
 }
 
 } // End of namespace Xeen

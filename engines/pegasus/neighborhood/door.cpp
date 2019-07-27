@@ -44,8 +44,8 @@ void DoorTable::loadFromStream(Common::SeekableReadStream *stream) {
 		_entries[i].flags = stream->readByte();
 		stream->readByte(); // alignment
 		debug(0, "Door[%d]: %d %d %d %d %d %d", i, _entries[i].room, _entries[i].direction,
-				_entries[i].altCode, _entries[i].movieStart, _entries[i].movieEnd,
-				_entries[i].flags);
+		      _entries[i].altCode, _entries[i].movieStart, _entries[i].movieEnd,
+		      _entries[i].flags);
 	}
 }
 

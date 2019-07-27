@@ -22,19 +22,19 @@
 
 // Intro sequence scene procedures
 
-#include "saga/saga.h"
 #include "saga/gfx.h"
+#include "saga/saga.h"
 
 #include "saga/animation.h"
 #include "saga/events.h"
 #include "saga/font.h"
 #include "saga/itedata.h"
-#include "saga/sndres.h"
-#include "saga/palanim.h"
 #include "saga/music.h"
+#include "saga/palanim.h"
+#include "saga/sndres.h"
 
-#include "saga/scene.h"
 #include "saga/resource.h"
+#include "saga/scene.h"
 
 namespace Saga {
 
@@ -70,21 +70,21 @@ namespace Saga {
 #define MUSIC_TITLE_THEME 10
 
 LoadSceneParams ITE_IntroList[] = {
-	{RID_ITE_INTRO_ANIM_SCENE, kLoadByResourceId, Scene::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
-	{RID_ITE_CAVE_SCENE_1, kLoadByResourceId, Scene::SC_ITEIntroCave1Proc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
-	{RID_ITE_CAVE_SCENE_2, kLoadByResourceId, Scene::SC_ITEIntroCave2Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
-	{RID_ITE_CAVE_SCENE_3, kLoadByResourceId, Scene::SC_ITEIntroCave3Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
-	{RID_ITE_CAVE_SCENE_4, kLoadByResourceId, Scene::SC_ITEIntroCave4Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
-	{RID_ITE_VALLEY_SCENE, kLoadByResourceId, Scene::SC_ITEIntroValleyProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
-	{RID_ITE_TREEHOUSE_SCENE, kLoadByResourceId, Scene::SC_ITEIntroTreeHouseProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
-	{RID_ITE_FAIREPATH_SCENE, kLoadByResourceId, Scene::SC_ITEIntroFairePathProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
-	{RID_ITE_FAIRETENT_SCENE, kLoadByResourceId, Scene::SC_ITEIntroFaireTentProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE}
+	{ RID_ITE_INTRO_ANIM_SCENE, kLoadByResourceId, Scene::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE },
+	{ RID_ITE_CAVE_SCENE_1, kLoadByResourceId, Scene::SC_ITEIntroCave1Proc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE },
+	{ RID_ITE_CAVE_SCENE_2, kLoadByResourceId, Scene::SC_ITEIntroCave2Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE },
+	{ RID_ITE_CAVE_SCENE_3, kLoadByResourceId, Scene::SC_ITEIntroCave3Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE },
+	{ RID_ITE_CAVE_SCENE_4, kLoadByResourceId, Scene::SC_ITEIntroCave4Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE },
+	{ RID_ITE_VALLEY_SCENE, kLoadByResourceId, Scene::SC_ITEIntroValleyProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE },
+	{ RID_ITE_TREEHOUSE_SCENE, kLoadByResourceId, Scene::SC_ITEIntroTreeHouseProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE },
+	{ RID_ITE_FAIREPATH_SCENE, kLoadByResourceId, Scene::SC_ITEIntroFairePathProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE },
+	{ RID_ITE_FAIRETENT_SCENE, kLoadByResourceId, Scene::SC_ITEIntroFaireTentProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE }
 };
 
 LoadSceneParams ITE_DOS_Demo_IntroList[] = {
-	{RID_ITE_INTRO_ANIM_SCENE_DOS_DEMO, kLoadByResourceId, Scene::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
-	{RID_ITE_CAVE_SCENE_DOS_DEMO, kLoadByResourceId, Scene::SC_ITEIntroCaveDemoProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
-	{RID_ITE_VALLEY_SCENE_DOS_DEMO, kLoadByResourceId, Scene::SC_ITEIntroValleyProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{ RID_ITE_INTRO_ANIM_SCENE_DOS_DEMO, kLoadByResourceId, Scene::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE },
+	{ RID_ITE_CAVE_SCENE_DOS_DEMO, kLoadByResourceId, Scene::SC_ITEIntroCaveDemoProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE },
+	{ RID_ITE_VALLEY_SCENE_DOS_DEMO, kLoadByResourceId, Scene::SC_ITEIntroValleyProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE },
 };
 
 int Scene::ITEStartProc() {
@@ -186,8 +186,8 @@ EventColumns *Scene::queueIntroDialogue(EventColumns *eventColumns, int n_dialog
 EventColumns *Scene::queueCredits(int delta_time, int duration, int n_credits, const IntroCredit credits[]) {
 	int game;
 	Common::Language lang;
-	bool hasWyrmkeepCredits = (Common::File::exists("credit3n.dlt") ||	// PC
-							   Common::File::exists("credit3m.dlt"));	// Mac
+	bool hasWyrmkeepCredits = (Common::File::exists("credit3n.dlt") || // PC
+	                           Common::File::exists("credit3m.dlt")); // Mac
 
 	// The assumption here is that all WyrmKeep versions have the same
 	// credits, regardless of which operating system they're for.
@@ -313,12 +313,12 @@ int Scene::ITEIntroAnimProc(int param) {
 	EventColumns *eventColumns;
 	bool isMac = _vm->getPlatform() == Common::kPlatformMacintosh;
 	bool isMultiCD = _vm->getPlatform() == Common::kPlatformUnknown;
-	bool hasWyrmkeepCredits = (Common::File::exists("credit3n.dlt") ||	// PC
-							   Common::File::exists("credit3m.dlt"));	// Mac
+	bool hasWyrmkeepCredits = (Common::File::exists("credit3n.dlt") || // PC
+	                           Common::File::exists("credit3m.dlt")); // Mac
 	bool isDemo = Common::File::exists("scriptsd.rsc");
 
 	switch (param) {
-	case SCENE_BEGIN:{
+	case SCENE_BEGIN: {
 		// Background for intro scene is the first frame of the
 		// intro animation; display it and set the palette
 		event.type = kEvTOneshot;
@@ -343,7 +343,7 @@ int Scene::ITEIntroAnimProc(int param) {
 			lastAnim = isMac ? 4 : 5;
 
 		for (int i = 0; i < lastAnim; i++)
-			_vm->_anim->link(i, i+1);
+			_vm->_anim->link(i, i + 1);
 
 		_vm->_anim->setFlag(lastAnim, ANIM_FLAG_ENDSCENE);
 
@@ -359,8 +359,7 @@ int Scene::ITEIntroAnimProc(int param) {
 
 		// Queue intro music playback
 		_vm->_events->chainMusic(eventColumns, MUSIC_INTRO, true);
-		}
-		break;
+	} break;
 	case SCENE_END:
 		break;
 	default:

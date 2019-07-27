@@ -35,7 +35,9 @@ private:
 	EditTextWidget *_notesEdit;
 	EditTextWidget *_nameEdit;
 	EditTextWidget *_authorEdit;
-	EditRecordDialog() : Dialog("EditRecordDialog") {};
+	EditRecordDialog()
+	  : Dialog("EditRecordDialog") {};
+
 public:
 	EditRecordDialog(const Common::String author, const Common::String name, const Common::String notes);
 	~EditRecordDialog();
@@ -51,6 +53,6 @@ public:
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 };
 
-}// End of namespace GUI
+} // End of namespace GUI
 
 #endif

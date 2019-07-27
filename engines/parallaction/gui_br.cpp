@@ -35,7 +35,7 @@ protected:
 	Common::String _slideName;
 	uint32 _timeOut;
 	Common::String _nextState;
-	uint32	_startTime;
+	uint32 _startTime;
 	Palette blackPal;
 	Palette pal;
 
@@ -43,11 +43,15 @@ protected:
 	int _fadeSteps;
 
 public:
-	SplashInputState_BR(Parallaction *vm, const Common::String &name, MenuInputHelper *helper) : MenuInputState(name, helper), _vm(vm),
-			_timeOut(0), _startTime(0), _fadeSteps(0) {
+	SplashInputState_BR(Parallaction *vm, const Common::String &name, MenuInputHelper *helper)
+	  : MenuInputState(name, helper)
+	  , _vm(vm)
+	  , _timeOut(0)
+	  , _startTime(0)
+	  , _fadeSteps(0) {
 	}
 
-	virtual MenuInputState* run() {
+	virtual MenuInputState *run() {
 		if (_fadeSteps > 0) {
 			pal.fadeTo(blackPal, 1);
 			_vm->_gfx->setPalette(pal);
@@ -80,7 +84,8 @@ public:
 class SplashInputState0_BR : public SplashInputState_BR {
 
 public:
-	SplashInputState0_BR(Parallaction_br *vm, MenuInputHelper *helper) : SplashInputState_BR(vm, "intro0", helper)  {
+	SplashInputState0_BR(Parallaction_br *vm, MenuInputHelper *helper)
+	  : SplashInputState_BR(vm, "intro0", helper) {
 		_slideName = "dyna";
 		_timeOut = 600;
 		_nextState = "intro1";
@@ -90,13 +95,13 @@ public:
 class SplashInputState1_BR : public SplashInputState_BR {
 
 public:
-	SplashInputState1_BR(Parallaction_br *vm, MenuInputHelper *helper) : SplashInputState_BR(vm, "intro1", helper) {
+	SplashInputState1_BR(Parallaction_br *vm, MenuInputHelper *helper)
+	  : SplashInputState_BR(vm, "intro1", helper) {
 		_slideName = "core";
 		_timeOut = 600;
 		_nextState = "mainmenu";
 	}
 };
-
 
 struct LocationPart {
 	int part;
@@ -106,13 +111,13 @@ struct LocationPart {
 class MainMenuInputState_BR : public MenuInputState {
 	Parallaction_br *_vm;
 
-	#define MENUITEMS_X			250
-	#define MENUITEMS_Y			200
+#define MENUITEMS_X 250
+#define MENUITEMS_Y 200
 
-	#define MENUITEM_WIDTH		200
-	#define MENUITEM_HEIGHT		20
+#define MENUITEM_WIDTH 200
+#define MENUITEM_HEIGHT 20
 
-	Frames* renderMenuItem(const char *text) {
+	Frames *renderMenuItem(const char *text) {
 		// this builds a surface containing two copies of the text.
 		// one is in normal color, the other is inverted.
 		// the two 'frames' are used to display selected/unselected menu items
@@ -152,7 +157,7 @@ class MainMenuInputState_BR : public MenuInputState {
 		kMenuQuit = 6
 	};
 
-	#define NUM_MENULINES	7
+#define NUM_MENULINES 7
 	GfxObj *_lines[NUM_MENULINES];
 
 	static const char *_menuStringsAmiga[NUM_MENULINES];
@@ -181,7 +186,7 @@ class MainMenuInputState_BR : public MenuInputState {
 		Common::Point p;
 		_vm->_input->getCursorPos(p);
 
-		if ((p.x > MENUITEMS_X) && (p.x < (MENUITEMS_X+MENUITEM_WIDTH)) && (p.y > MENUITEMS_Y)) {
+		if ((p.x > MENUITEMS_X) && (p.x < (MENUITEMS_X + MENUITEM_WIDTH)) && (p.y > MENUITEMS_Y)) {
 			_selection = (p.y - MENUITEMS_Y) / MENUITEM_HEIGHT;
 
 			if (!(_selection < _availItems))
@@ -195,8 +200,10 @@ class MainMenuInputState_BR : public MenuInputState {
 	}
 
 public:
-	MainMenuInputState_BR(Parallaction_br *vm, MenuInputHelper *helper) : MenuInputState("mainmenu", helper), _vm(vm)  {
-	    memset(_lines, 0, sizeof(_lines));
+	MainMenuInputState_BR(Parallaction_br *vm, MenuInputHelper *helper)
+	  : MenuInputState("mainmenu", helper)
+	  , _vm(vm) {
+		memset(_lines, 0, sizeof(_lines));
 
 		_menuStrings = 0;
 		_options = 0;
@@ -208,7 +215,7 @@ public:
 		cleanup();
 	}
 
-	virtual MenuInputState* run() {
+	virtual MenuInputState *run() {
 		int event = _vm->_input->getLastButtonEvent();
 		if (!((event == kMouseLeftUp) && _selection >= 0)) {
 			redrawMenu();
@@ -232,7 +239,6 @@ public:
 		default:
 			_vm->_nextPart = _firstLocation[selection].part;
 			_vm->scheduleLocationSwitch(_firstLocation[selection].location);
-
 		}
 
 		_vm->_system->showMouse(false);
@@ -273,7 +279,6 @@ public:
 		_vm->_input->setArrowCursor();
 		_vm->_input->setMouseState(MOUSE_ENABLED_SHOW);
 	}
-
 };
 
 LocationPart MainMenuInputState_BR::_firstLocation[] = {
@@ -283,7 +288,6 @@ LocationPart MainMenuInputState_BR::_firstLocation[] = {
 	{ 3, "bolscoi" },
 	{ 4, "treno" }
 };
-
 
 const char *MainMenuInputState_BR::_menuStringsAmiga[NUM_MENULINES] = {
 	"See the introduction",
@@ -341,7 +345,6 @@ void Parallaction_br::startGui(bool showSplash) {
 	_input->_inputMode = Input::kInputModeMenu;
 }
 
-
 class IngameMenuInputState_BR : public MenuInputState {
 	Parallaction_br *_vm;
 	GfxObj *_menuObj, *_mscMenuObj, *_sfxMenuObj;
@@ -356,8 +359,7 @@ class IngameMenuInputState_BR : public MenuInputState {
 		int frame;
 		if (status == 0) {
 			frame = 1;
-		} else
-		if (status == 1) {
+		} else if (status == 1) {
 			frame = 0;
 		} else {
 			frame = 2;
@@ -367,7 +369,9 @@ class IngameMenuInputState_BR : public MenuInputState {
 	}
 
 public:
-	IngameMenuInputState_BR(Parallaction_br *vm, MenuInputHelper *helper) : MenuInputState("ingamemenu", helper), _vm(vm) {
+	IngameMenuInputState_BR(Parallaction_br *vm, MenuInputHelper *helper)
+	  : MenuInputState("ingamemenu", helper)
+	  , _vm(vm) {
 		Frames *menuFrames = _vm->_disk->loadFrames("request.win");
 		assert(menuFrames);
 		_menuObj = new GfxObj(kGfxObjTypeMenu, menuFrames, "ingamemenu");
@@ -410,12 +414,12 @@ public:
 		bool close = false;
 
 		switch (cell) {
-		case 4:	// resume
+		case 4: // resume
 		case -1: // invalid cell
 			close = true;
 			break;
 
-		case 0:	// toggle music
+		case 0: // toggle music
 			if (_mscStatus != -1) {
 				_vm->enableMusic(!_mscStatus);
 				_mscStatus = _vm->getMusicStatus();
@@ -423,7 +427,7 @@ public:
 			}
 			break;
 
-		case 1:	// toggle sfx
+		case 1: // toggle sfx
 			if (_sfxStatus != -1) {
 				_vm->enableSfx(!_sfxStatus);
 				_sfxStatus = _vm->getSfxStatus();
@@ -431,17 +435,17 @@ public:
 			}
 			break;
 
-		case 2:	// save
+		case 2: // save
 			warning("Saving is not supported yet");
 			_vm->_saveLoad->saveGame();
 			break;
 
-		case 3:	// load
+		case 3: // load
 			warning("Loading is not supported yet");
 			close = _vm->_saveLoad->loadGame();
 			break;
 
-		case 5:	// quit
+		case 5: // quit
 			return _helper->getState("quitdialog");
 		}
 
@@ -476,7 +480,9 @@ class QuitDialogInputState_BR : public MenuInputState {
 	GfxObj *_obj;
 
 public:
-	QuitDialogInputState_BR(Parallaction_br *vm, MenuInputHelper *helper) : MenuInputState("quitdialog", helper), _vm(vm) {
+	QuitDialogInputState_BR(Parallaction_br *vm, MenuInputHelper *helper)
+	  : MenuInputState("quitdialog", helper)
+	  , _vm(vm) {
 		_font = _vm->_dialogueFont;
 
 		const char *question = "Do you really want to quit ?";
@@ -492,15 +498,15 @@ public:
 		Graphics::Surface *surf = new Graphics::Surface;
 		surf->create(w, 110, Graphics::PixelFormat::createFormatCLUT8());
 		surf->fillRect(Common::Rect(0, 0, w, 110), 12);
-		surf->fillRect(Common::Rect(10, 10, w-10, 100), 15);
+		surf->fillRect(Common::Rect(10, 10, w - 10, 100), 15);
 
 		_font->setColor(0);
-		int x = (w - questionW)/2;
+		int x = (w - questionW) / 2;
 		int y = 13;
 		_font->drawString((byte *)surf->getBasePtr(x, y), surf->pitch, question);
-		x = (w - optionW)/2;
-		y = 13 + _font->height()*2;
-		_font->drawString((byte *)surf->getBasePtr(x,y), surf->pitch, option);
+		x = (w - optionW) / 2;
+		y = 13 + _font->height() * 2;
+		_font->drawString((byte *)surf->getBasePtr(x, y), surf->pitch, option);
 
 		_obj = new GfxObj(kGfxObjTypeMenu, new SurfaceToFrames(surf), "quitdialog");
 		assert(_obj);
@@ -520,8 +526,7 @@ public:
 		if (key == 'y' || key == 'Y') {
 			_vm->quitGame();
 			return 0;
-		} else
-		if (key == 'n' || key == 'N') {
+		} else if (key == 'n' || key == 'N') {
 			// NOTE: when the quit dialog is hidden, the in-game menu is
 			// deleted for a frame, and then redrawn. This is because the
 			// current implementation of graphic 'items' doesn't allow
@@ -533,15 +538,13 @@ public:
 		return this;
 	}
 
-
 	void enter() {
-	//	setPaletteEntry(1, 0, 0, 0);	// text color
-	//	setPaletteEntry(15, 255, 255, 255);	// background color
+		//	setPaletteEntry(1, 0, 0, 0);	// text color
+		//	setPaletteEntry(15, 255, 255, 255);	// background color
 		int id = _vm->_gfx->setItem(_obj, _x, _y, 0);
 		_vm->_gfx->setItemFrame(id, 0);
 	}
 };
-
 
 void Parallaction_br::startIngameMenu() {
 	_menuHelper = new MenuInputHelper;
@@ -553,7 +556,5 @@ void Parallaction_br::startIngameMenu() {
 
 	_input->_inputMode = Input::kInputModeMenu;
 }
-
-
 
 } // namespace Parallaction

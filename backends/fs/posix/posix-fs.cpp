@@ -24,39 +24,38 @@
 
 // Re-enable some forbidden symbols to avoid clashes with stat.h and unistd.h.
 // Also with clock() in sys/time.h in some Mac OS X SDKs.
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
-#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
-#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
-#define FORBIDDEN_SYMBOL_EXCEPTION_getenv
-#define FORBIDDEN_SYMBOL_EXCEPTION_exit		//Needed for IRIX's unistd.h
-#define FORBIDDEN_SYMBOL_EXCEPTION_random
-#define FORBIDDEN_SYMBOL_EXCEPTION_srandom
+#	define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+#	define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
+#	define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
+#	define FORBIDDEN_SYMBOL_EXCEPTION_getenv
+#	define FORBIDDEN_SYMBOL_EXCEPTION_exit //Needed for IRIX's unistd.h
+#	define FORBIDDEN_SYMBOL_EXCEPTION_random
+#	define FORBIDDEN_SYMBOL_EXCEPTION_srandom
 
-#include "backends/fs/posix/posix-fs.h"
-#include "backends/fs/stdiostream.h"
-#include "common/algorithm.h"
+#	include "backends/fs/posix/posix-fs.h"
+#	include "backends/fs/stdiostream.h"
+#	include "common/algorithm.h"
 
-#include <sys/param.h>
-#include <sys/stat.h>
-#ifdef MACOSX
-#include <sys/types.h>
-#endif
-#ifdef PSP2
-#include "backends/fs/psp2/psp2-dirent.h"
-#define mkdir sceIoMkdir
-#else
-#include <dirent.h>
-#endif
-#include <stdio.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <unistd.h>
+#	include <sys/param.h>
+#	include <sys/stat.h>
+#	ifdef MACOSX
+#		include <sys/types.h>
+#	endif
+#	ifdef PSP2
+#		include "backends/fs/psp2/psp2-dirent.h"
+#		define mkdir sceIoMkdir
+#	else
+#		include <dirent.h>
+#	endif
+#	include <errno.h>
+#	include <fcntl.h>
+#	include <stdio.h>
+#	include <unistd.h>
 
-#ifdef __OS2__
-#define INCL_DOS
-#include <os2.h>
-#endif
-
+#	ifdef __OS2__
+#		define INCL_DOS
+#		include <os2.h>
+#	endif
 
 bool POSIXFilesystemNode::exists() const {
 	return access(_path.c_str(), F_OK) == 0;
@@ -80,7 +79,7 @@ void POSIXFilesystemNode::setFlags() {
 POSIXFilesystemNode::POSIXFilesystemNode(const Common::String &p) {
 	assert(p.size() > 0);
 
-#ifdef PSP2
+#	ifdef PSP2
 	if (p == "/") {
 		_isDirectory = true;
 		_isValid = false;
@@ -88,7 +87,7 @@ POSIXFilesystemNode::POSIXFilesystemNode(const Common::String &p) {
 		_displayName = p;
 		return;
 	}
-#endif
+#	endif
 
 	// Expand "~/" to the value of the HOME env variable
 	if (p.hasPrefix("~/") || p == "~") {
@@ -103,13 +102,13 @@ POSIXFilesystemNode::POSIXFilesystemNode(const Common::String &p) {
 		_path = p;
 	}
 
-#ifdef __OS2__
+#	ifdef __OS2__
 	// On OS/2, 'X:/' is a root of drive X, so we should not remove that last
 	// slash.
 	if (!(_path.size() == 3 && _path.hasSuffix(":/")))
-#endif
-	// Normalize the path (that is, remove unneeded slashes etc.)
-	_path = Common::normalizePath(_path, '/');
+#	endif
+		// Normalize the path (that is, remove unneeded slashes etc.)
+		_path = Common::normalizePath(_path, '/');
 	_displayName = Common::lastPathComponent(_path, '/');
 
 	// TODO: should we turn relative paths into absolute ones?
@@ -119,14 +118,14 @@ POSIXFilesystemNode::POSIXFilesystemNode(const Common::String &p) {
 	//
 	// An alternative approach would be to change getParent() to work correctly
 	// if "_path" is the empty string.
-#if 0
+#	if 0
 	if (!_path.hasPrefix("/")) {
 		char buf[MAXPATHLEN+1];
 		getcwd(buf, MAXPATHLEN);
 		strcat(buf, "/");
 		_path = buf + _path;
 	}
-#endif
+#	endif
 	// TODO: Should we enforce that the path is absolute at this point?
 	//assert(_path.hasPrefix("/"));
 
@@ -153,7 +152,7 @@ AbstractFSNode *POSIXFilesystemNode::getChild(const Common::String &n) const {
 bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
 	assert(_isDirectory);
 
-#ifdef __OS2__
+#	ifdef __OS2__
 	if (_path == "/") {
 		// Special case for the root dir: List all DOS drives
 		ULONG ulDrvNum;
@@ -166,7 +165,7 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 				char drive_root[] = "A:/";
 				drive_root[0] += i;
 
-                POSIXFilesystemNode *entry = new POSIXFilesystemNode();
+				POSIXFilesystemNode *entry = new POSIXFilesystemNode();
 				entry->_isDirectory = true;
 				entry->_isValid = true;
 				entry->_path = drive_root;
@@ -179,8 +178,8 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 
 		return true;
 	}
-#endif
-#ifdef PSP2
+#	endif
+#	ifdef PSP2
 	if (_path == "/") {
 		POSIXFilesystemNode *entry1 = new POSIXFilesystemNode("ux0:");
 		myList.push_back(entry1);
@@ -188,7 +187,7 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 		myList.push_back(entry2);
 		return true;
 	}
-#endif
+#	endif
 
 	DIR *dirp = opendir(_path.c_str());
 	struct dirent *dp;
@@ -214,7 +213,7 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 			entry._path += '/';
 		entry._path += entry._displayName;
 
-#if defined(SYSTEM_NOT_SUPPORTING_D_TYPE)
+#	if defined(SYSTEM_NOT_SUPPORTING_D_TYPE)
 		/* TODO: d_type is not part of POSIX, so it might not be supported
 		 * on some of our targets. For those systems where it isn't supported,
 		 * add this #elif case, which tries to use stat() instead.
@@ -223,7 +222,7 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 		 * directories.
 		 */
 		entry.setFlags();
-#else
+#	else
 		if (dp->d_type == DT_UNKNOWN) {
 			// Fall back to stat()
 			entry.setFlags();
@@ -239,7 +238,7 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 				entry._isDirectory = (dp->d_type == DT_DIR);
 			}
 		}
-#endif
+#	endif
 
 		// Skip files that are invalid for some reason (e.g. because we couldn't
 		// properly stat them).
@@ -247,8 +246,7 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 			continue;
 
 		// Honor the chosen mode
-		if ((mode == Common::FSNode::kListFilesOnly && entry._isDirectory) ||
-			(mode == Common::FSNode::kListDirectoriesOnly && !entry._isDirectory))
+		if ((mode == Common::FSNode::kListFilesOnly && entry._isDirectory) || (mode == Common::FSNode::kListDirectoriesOnly && !entry._isDirectory))
 			continue;
 
 		myList.push_back(new POSIXFilesystemNode(entry));
@@ -260,24 +258,24 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 
 AbstractFSNode *POSIXFilesystemNode::getParent() const {
 	if (_path == "/")
-		return 0;	// The filesystem root has no parent
+		return 0; // The filesystem root has no parent
 
-#ifdef __OS2__
+#	ifdef __OS2__
 	if (_path.size() == 3 && _path.hasSuffix(":/"))
 		// This is a root directory of a drive
-		return makeNode("/");   // return a virtual root for a list of drives
-#endif
-#ifdef PSP2
+		return makeNode("/"); // return a virtual root for a list of drives
+#	endif
+#	ifdef PSP2
 	if (_path.hasSuffix(":"))
 		return makeNode("/");
-#endif
+#	endif
 
 	const char *start = _path.c_str();
 	const char *end = start + _path.size();
 
 	// Strip of the last component. We make use of the fact that at this
 	// point, _path is guaranteed to be normalized
-	while (end > start && *(end-1) != '/')
+	while (end > start && *(end - 1) != '/')
 		end--;
 
 	if (end == start) {
@@ -316,12 +314,13 @@ bool POSIXFilesystemNode::create(bool isDirectoryFlag) {
 	if (success) {
 		setFlags();
 		if (_isValid) {
-			if (_isDirectory != isDirectoryFlag) warning("failed to create %s: got %s", isDirectoryFlag ? "directory" : "file", _isDirectory ? "directory" : "file");
+			if (_isDirectory != isDirectoryFlag)
+				warning("failed to create %s: got %s", isDirectoryFlag ? "directory" : "file", _isDirectory ? "directory" : "file");
 			return _isDirectory == isDirectoryFlag;
 		}
 
 		warning("POSIXFilesystemNode: %s() was a success, but stat indicates there is no such %s",
-			isDirectoryFlag ? "mkdir" : "creat", isDirectoryFlag ? "directory" : "file");
+		        isDirectoryFlag ? "mkdir" : "creat", isDirectoryFlag ? "directory" : "file");
 		return false;
 	}
 

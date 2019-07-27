@@ -57,9 +57,11 @@ class CMouseCursor {
 		Graphics::ManagedSurface *_surface;
 		Common::Point _centroid;
 
-		CursorEntry() : _surface(nullptr) {}
+		CursorEntry()
+		  : _surface(nullptr) {}
 		~CursorEntry();
 	};
+
 private:
 	CScreenManager *_screenManager;
 	CursorId _cursorId;
@@ -77,8 +79,10 @@ private:
 	 * Load the images for each cursor
 	 */
 	void loadCursorImages();
+
 public:
 	bool _inputEnabled;
+
 public:
 	CMouseCursor(CScreenManager *screenManager);
 	~CMouseCursor();
@@ -147,7 +151,6 @@ public:
 	 */
 	void setPosition(const Point &pt, double duration);
 };
-
 
 } // End of namespace Titanic
 

@@ -21,10 +21,10 @@
  */
 
 #if !defined(DISABLE_DEFAULT_EVENTMANAGER)
-#define BACKEND_EVENTS_PSP2_H
+#	define BACKEND_EVENTS_PSP2_H
 
-#include "backends/events/sdl/sdl-events.h"
-#include <psp2/touch.h>
+#	include "backends/events/sdl/sdl-events.h"
+#	include <psp2/touch.h>
 
 /**
  * SDL Events manager for the PSP2.
@@ -33,10 +33,11 @@ class PSP2EventSource : public SdlEventSource {
 public:
 	PSP2EventSource();
 	bool pollEvent(Common::Event &event) override;
+
 protected:
 	void preprocessEvents(SDL_Event *event) override;
-private:
 
+private:
 	enum {
 		MAX_NUM_FINGERS = 3, // number of fingers to track per panel
 		MAX_TAP_TIME = 250, // taps longer than this will not result in mouse click events

@@ -26,28 +26,25 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/platform_osystem.h"
-#include "engines/wintermute/base/base_file_manager.h"
-#include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_string_table.h"
 #include "common/str.h"
+#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/platform_osystem.h"
 
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-BaseStringTable::BaseStringTable(BaseGame *inGame) : BaseClass(inGame) {
-
+BaseStringTable::BaseStringTable(BaseGame *inGame)
+  : BaseClass(inGame) {
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 BaseStringTable::~BaseStringTable() {
 	// delete strings
 	_strings.clear();
-
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseStringTable::addString(const char *key, const char *val, bool reportDuplicities) {
@@ -139,7 +136,7 @@ void BaseStringTable::expand(char **str) const {
 	}
 
 	delete[] key;
-	delete[] *str;
+	delete[] * str;
 	*str = newStr;
 
 	if (strlen(*str) > 0 && *str[0] == '/') {
@@ -149,13 +146,12 @@ void BaseStringTable::expand(char **str) const {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseStringTable::expand(Common::String &str) const {
-	char *tmp = new char[str.size()+1];
+	char *tmp = new char[str.size() + 1];
 	strcpy(tmp, str.c_str());
 	expand(&tmp);
 	str = tmp;
 	delete[] tmp;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 const char *BaseStringTable::expandStatic(const char *string) const {
@@ -191,7 +187,6 @@ const char *BaseStringTable::expandStatic(const char *string) const {
 		return newStr;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseStringTable::loadFile(const char *filename, bool clearOld) {

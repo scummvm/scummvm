@@ -24,22 +24,22 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/memstream.h"
 #include "common/str.h"
 #include "common/substream.h"
 #include "common/textconsole.h"
-#include "common/memstream.h"
 #include "common/unzip.h"
 
-#include "draci/sound.h"
 #include "draci/draci.h"
 #include "draci/game.h"
+#include "draci/sound.h"
 
 #include "audio/audiostream.h"
-#include "audio/mixer.h"
-#include "audio/decoders/raw.h"
-#include "audio/decoders/mp3.h"
-#include "audio/decoders/vorbis.h"
 #include "audio/decoders/flac.h"
+#include "audio/decoders/mp3.h"
+#include "audio/decoders/raw.h"
+#include "audio/decoders/vorbis.h"
+#include "audio/mixer.h"
 
 namespace Draci {
 
@@ -68,7 +68,7 @@ void LegacySoundArchive::openArchive(const char *path) {
 
 	uint totalLength = _f->readUint32LE();
 
-	const uint kMaxSamples = 4095;	// The no-sound file is exactly 16K bytes long, so don't fail on short reads
+	const uint kMaxSamples = 4095; // The no-sound file is exactly 16K bytes long, so don't fail on short reads
 	uint *sampleStarts = (uint *)malloc(kMaxSamples * sizeof(uint));
 	if (!sampleStarts)
 		error("[LegacySoundArchive::openArchive] Cannot allocate buffer for no-sound file");
@@ -80,24 +80,23 @@ void LegacySoundArchive::openArchive(const char *path) {
 	// Fill the sample table
 	for (_sampleCount = 0; _sampleCount < kMaxSamples - 1; ++_sampleCount) {
 		int length = sampleStarts[_sampleCount + 1] - sampleStarts[_sampleCount];
-		if (length <= 0 && sampleStarts[_sampleCount] >= totalLength)	// heuristics to detect the last sample
+		if (length <= 0 && sampleStarts[_sampleCount] >= totalLength) // heuristics to detect the last sample
 			break;
 	}
 	if (_sampleCount > 0) {
 		debugC(1, kDraciArchiverDebugLevel, "Archive info: %d samples, %d total length",
-			_sampleCount, totalLength);
+		       _sampleCount, totalLength);
 		_samples = new SoundSample[_sampleCount];
 		for (uint i = 0; i < _sampleCount; ++i) {
 			_samples[i]._offset = sampleStarts[i];
-			_samples[i]._length = sampleStarts[i+1] - sampleStarts[i];
-			_samples[i]._frequency = 0;	// set in getSample()
+			_samples[i]._length = sampleStarts[i + 1] - sampleStarts[i];
+			_samples[i]._frequency = 0; // set in getSample()
 		}
-		if (_samples[_sampleCount-1]._offset + _samples[_sampleCount-1]._length != totalLength &&
-		    _samples[_sampleCount-1]._offset + _samples[_sampleCount-1]._length - _samples[0]._offset != totalLength) {
+		if (_samples[_sampleCount - 1]._offset + _samples[_sampleCount - 1]._length != totalLength && _samples[_sampleCount - 1]._offset + _samples[_sampleCount - 1]._length - _samples[0]._offset != totalLength) {
 			// WORKAROUND: the stored length is stored with the header for sounds and without the header for dubbing.  Crazy.
 			debugC(1, kDraciArchiverDebugLevel, "Broken sound archive: %d != %d",
-				_samples[_sampleCount-1]._offset + _samples[_sampleCount-1]._length,
-				totalLength);
+			       _samples[_sampleCount - 1]._offset + _samples[_sampleCount - 1]._length,
+			       totalLength);
 			closeArchive();
 
 			free(sampleStarts);
@@ -156,7 +155,7 @@ SoundSample *LegacySoundArchive::getSample(int i, uint freq) {
 	}
 
 	debugCN(2, kDraciArchiverDebugLevel, "Accessing sample %d from archive %s... ",
-		i, _path);
+	        i, _path);
 
 	// Check if file has already been opened and return that
 	if (_samples[i]._data) {
@@ -179,7 +178,7 @@ SoundSample *LegacySoundArchive::getSample(int i, uint freq) {
 		_f->read(_samples[i]._data, _samples[i]._length);
 
 		debugC(2, kDraciArchiverDebugLevel, "Read sample %d from archive %s",
-			i, _path);
+		       i, _path);
 	}
 	_samples[i]._frequency = freq ? freq : _defaultFreq;
 
@@ -234,7 +233,7 @@ SoundSample *ZipSoundArchive::getSample(int i, uint freq) {
 		return NULL;
 	}
 	debugCN(2, kDraciArchiverDebugLevel, "Accessing sample %d.%s from archive %s (format %d@%d, capacity %d): ",
-		i, _extension, _path, static_cast<int> (_format), _defaultFreq, _sampleCount);
+	        i, _extension, _path, static_cast<int>(_format), _defaultFreq, _sampleCount);
 	if (freq != 0 && (_format != RAW && _format != RAW80)) {
 		error("Cannot resample a sound in compressed format");
 		return NULL;
@@ -249,7 +248,7 @@ SoundSample *ZipSoundArchive::getSample(int i, uint freq) {
 	sample._frequency = freq ? freq : _defaultFreq;
 	sample._format = _format;
 	// Read in the file (without the file header)
-	Common::String filename = Common::String::format("%d.%s", i+1, _extension);
+	Common::String filename = Common::String::format("%d.%s", i + 1, _extension);
 	sample._stream = _archive->createReadStreamForMember(filename);
 	if (!sample._stream) {
 		debugC(2, kDraciArchiverDebugLevel, "Doesn't exist");
@@ -263,8 +262,12 @@ SoundSample *ZipSoundArchive::getSample(int i, uint freq) {
 	}
 }
 
-Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer), _muteSound(false), _muteVoice(false),
-	_showSubtitles(true), _talkSpeed(kStandardSpeed) {
+Sound::Sound(Audio::Mixer *mixer)
+  : _mixer(mixer)
+  , _muteSound(false)
+  , _muteVoice(false)
+  , _showSubtitles(true)
+  , _talkSpeed(kStandardSpeed) {
 
 	for (int i = 0; i < SOUND_HANDLES; i++)
 		_handles[i].type = kFreeHandle;
@@ -289,11 +292,11 @@ SndHandle *Sound::getHandle() {
 
 	error("Sound::getHandle(): Too many sound handles");
 
-	return NULL;	// for compilers that don't support NORETURN
+	return NULL; // for compilers that don't support NORETURN
 }
 
 uint Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffer, int volume,
-				sndHandleType handleType, bool loop) {
+                            sndHandleType handleType, bool loop) {
 	if (!buffer._stream && !buffer._data) {
 		warning("Empty stream");
 		return 0;
@@ -312,10 +315,10 @@ uint Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffe
 	const int skip = buffer._format == RAW80 ? 80 : 0;
 	if (buffer._stream) {
 		stream = new Common::SeekableSubReadStream(
-			buffer._stream, skip, buffer._stream->size() /* end */, DisposeAfterUse::NO);
+		  buffer._stream, skip, buffer._stream->size() /* end */, DisposeAfterUse::NO);
 	} else {
 		stream = new Common::MemoryReadStream(
-			buffer._data + skip, buffer._length - skip /* length */, DisposeAfterUse::NO);
+		  buffer._data + skip, buffer._length - skip /* length */, DisposeAfterUse::NO);
 	}
 
 	Audio::SeekableAudioStream *reader = NULL;
@@ -340,14 +343,13 @@ uint Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffe
 		break;
 #endif
 	default:
-		error("Unsupported compression format %d", static_cast<int> (buffer._format));
+		error("Unsupported compression format %d", static_cast<int>(buffer._format));
 		delete stream;
 		return 0;
 	}
 
 	const uint length = reader->getLength().msecs();
-	const Audio::Mixer::SoundType soundType = (handleType == kVoiceHandle) ?
-				Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
+	const Audio::Mixer::SoundType soundType = (handleType == kVoiceHandle) ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
 	Audio::AudioStream *audio_stream = Audio::makeLoopingAudioStream(reader, loop ? 0 : 1);
 	_mixer->playStream(soundType, handle, audio_stream, -1, volume);
 	return length;

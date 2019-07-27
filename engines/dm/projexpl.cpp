@@ -27,15 +27,16 @@
 
 #include "dm/projexpl.h"
 #include "dm/dungeonman.h"
-#include "dm/timeline.h"
 #include "dm/group.h"
-#include "dm/objectman.h"
 #include "dm/movesens.h"
+#include "dm/objectman.h"
 #include "dm/sounds.h"
+#include "dm/timeline.h"
 
 namespace DM {
 
-ProjExpl::ProjExpl(DMEngine *vm) : _vm(vm) {
+ProjExpl::ProjExpl(DMEngine *vm)
+  : _vm(vm) {
 	_creatureDamageOutcome = 0;
 	_secondaryDirToOrFromParty = 0;
 	_lastCreatureAttackTime = -200;
@@ -85,7 +86,7 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 		Group *projectileAssociatedGroup = (Group *)_vm->_dungeonMan->getThingData(projectileAssociatedThing);
 		PotionType potionType = ((Potion *)projectileAssociatedGroup)->getType();
 		if ((potionType == kDMPotionTypeVen) || (potionType == kDMPotionTypeFulBomb)) {
-			explosionThing = (potionType == kDMPotionTypeVen) ? _vm->_thingExplPoisonCloud: _vm->_thingExplFireBall;
+			explosionThing = (potionType == kDMPotionTypeVen) ? _vm->_thingExplPoisonCloud : _vm->_thingExplFireBall;
 			removePotion = true;
 			potionPower = ((Potion *)projectileAssociatedGroup)->getPower();
 			potion = (Potion *)projectileAssociatedGroup;
@@ -136,19 +137,17 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 				int16 iconIndex = _vm->_objectMan->getIconIndex(projectileAssociatedThing);
 
 				if ((projectileThingData->_attack > _vm->getRandomNumber(128))
-				&& getFlag(associatedAllowedSlots, kDMMaskPouchPassAndThroughDoors)
-				&& (   (projectileAssociatedThingType != kDMThingTypeJunk)
-					|| (iconIndex < kDMIconIndiceJunkIronKey)
-					|| (iconIndex > kDMIconIndiceJunkMasterKey)
-					)) {
+				    && getFlag(associatedAllowedSlots, kDMMaskPouchPassAndThroughDoors)
+				    && ((projectileAssociatedThingType != kDMThingTypeJunk)
+				        || (iconIndex < kDMIconIndiceJunkIronKey)
+				        || (iconIndex > kDMIconIndiceJunkMasterKey))) {
 					return false;
 				}
 			}
 		}
 		attack = getProjectileImpactAttack(projectileThingData, projectileAssociatedThing) + 1;
 		_vm->_groupMan->groupIsDoorDestoryedByAttack(projectileTargetMapX, projectileTargetMapY, attack + _vm->getRandomNumber(attack), false, 0);
-		}
-		break;
+	} break;
 	case kDMElementTypeChampion:
 		championIndex = _vm->_championMan->getIndexInCell(cell);
 		if (championIndex < 0)
@@ -181,21 +180,20 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 
 			_creatureDamageOutcome = outcome;
 			if (!createExplosionOnImpact && (outcome == kDMKillOutcomeNoCreaturesInGroup)
-			&& (projectileAssociatedThingType == kDMThingTypeWeapon)
-			&& getFlag(curCreatureInfo->_attributes, kDMCreatureMaskKeepThrownSharpWeapon)) {
+			    && (projectileAssociatedThingType == kDMThingTypeWeapon)
+			    && getFlag(curCreatureInfo->_attributes, kDMCreatureMaskKeepThrownSharpWeapon)) {
 				Weapon *weapon = (Weapon *)_vm->_dungeonMan->getThingData(projectileAssociatedThing);
 				WeaponType weaponType = weapon->getType();
 				if ((weaponType == kDMWeaponDagger) || (weaponType == kDMWeaponArrow)
-				|| (weaponType == kDMWeaponSlayer) || (weaponType == kDMWeaponPoisonDart)
-				|| (weaponType == kDMWeaponThrowingStar))
+				    || (weaponType == kDMWeaponSlayer) || (weaponType == kDMWeaponPoisonDart)
+				    || (weaponType == kDMWeaponThrowingStar))
 					curGroupSlot = &curGroup->_slot;
 			}
 		}
-		}
-		break;
+	} break;
 	}
 	if (championAttack && _projectilePoisonAttack && _vm->getRandomNumber(2)
-	&& _vm->_championMan->addPendingDamageAndWounds_getDamage(championIndex, attack, kDMWoundHead | kDMWoundTorso, _projectileAttackType))
+	    && _vm->_championMan->addPendingDamageAndWounds_getDamage(championIndex, attack, kDMWoundHead | kDMWoundTorso, _projectileAttackType))
 		_vm->_championMan->championPoison(championIndex, _projectilePoisonAttack);
 
 	if (createExplosionOnImpact || removePotion) {
@@ -339,7 +337,6 @@ void ProjExpl::createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo,
 
 						if ((attack -= _vm->getRandomNumber((creatureFireResistance << 1) + 1)) > 0)
 							_creatureDamageOutcome = _vm->_groupMan->getDamageAllCreaturesOutcome(creatureGroup, projectileMapX, projectileMapY, attack, true);
-
 					}
 				}
 			}
@@ -351,9 +348,8 @@ int16 ProjExpl::projectileGetImpactCount(int16 impactType, int16 mapX, int16 map
 	int16 impactCount = 0;
 	_creatureDamageOutcome = kDMKillOutcomeNoCreaturesInGroup;
 
-	for (Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY); curThing != _vm->_thingEndOfList; ) {
-		if (((curThing).getType() == kDMThingTypeProjectile) && ((curThing).getCell() == cell) &&
-			hasProjectileImpactOccurred(impactType, mapX, mapY, cell, curThing)) {
+	for (Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY); curThing != _vm->_thingEndOfList;) {
+		if (((curThing).getType() == kDMThingTypeProjectile) && ((curThing).getCell() == cell) && hasProjectileImpactOccurred(impactType, mapX, mapY, cell, curThing)) {
 			projectileDeleteEvent(curThing);
 			impactCount++;
 			if ((impactType == kDMElementTypeCreature) && (_creatureDamageOutcome == kDMKillOutcomeAllCreaturesInGroup))
@@ -395,7 +391,7 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 	TimelineEvent firstEvent = *event;
 	TimelineEvent *curEvent = &firstEvent;
 	Thing projectileThingNewCell = Thing(curEvent->_Bu._slot);
-	Thing projectileThing  = projectileThingNewCell;
+	Thing projectileThing = projectileThingNewCell;
 	Projectile *projectile = (Projectile *)_vm->_dungeonMan->getThingData(projectileThing);
 	int16 destinationMapX = curEvent->_Cu._projectile.getMapX();
 	int16 destinationMapY = curEvent->_Cu._projectile.getMapY();
@@ -433,9 +429,7 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 		destinationMapY += _vm->_dirIntoStepCountNorth[projectileDirection];
 		Square destSquare = _vm->_dungeonMan->getSquare(destinationMapX, destinationMapY);
 		ElementType destSquareType = destSquare.getType();
-		if ((destSquareType == kDMElementTypeWall) ||
-			((destSquareType == kDMElementTypeFakeWall) && !getFlag(destSquare.toByte(), (kDMSquareMaskFakeWallImaginary | kDMSquareMaskFakeWallOpen))) ||
-			((destSquareType == kDMElementTypeStairs) && (Square(_vm->_dungeonMan->_currMapData[sourceMapX][sourceMapY]).getType() == kDMElementTypeStairs))) {
+		if ((destSquareType == kDMElementTypeWall) || ((destSquareType == kDMElementTypeFakeWall) && !getFlag(destSquare.toByte(), (kDMSquareMaskFakeWallImaginary | kDMSquareMaskFakeWallOpen))) || ((destSquareType == kDMElementTypeStairs) && (Square(_vm->_dungeonMan->_currMapData[sourceMapX][sourceMapY]).getType() == kDMElementTypeStairs))) {
 			if (hasProjectileImpactOccurred(destSquare.getType(), sourceMapX, sourceMapY, projectileNewCell, projectileThingNewCell)) {
 				return;
 			}
@@ -540,9 +534,9 @@ void ProjExpl::processEvent25(TimelineEvent *event) {
 		if (explosionOnPartySquare)
 			_vm->_championMan->getDamagedChampionCount(attack, kDMWoundNone, kDMAttackTypeNormal);
 		else if ((groupThing != _vm->_thingEndOfList)
-			&& (attack = _vm->_groupMan->groupGetResistanceAdjustedPoisonAttack(creatureType, attack))
-			&& (_vm->_groupMan->getDamageAllCreaturesOutcome(group, mapX, mapY, attack, true) != kDMKillOutcomeAllCreaturesInGroup)
-			&& (attack > 2)) {
+		         && (attack = _vm->_groupMan->groupGetResistanceAdjustedPoisonAttack(creatureType, attack))
+		         && (_vm->_groupMan->getDamageAllCreaturesOutcome(group, mapX, mapY, attack, true) != kDMKillOutcomeAllCreaturesInGroup)
+		         && (attack > 2)) {
 			_vm->_groupMan->processEvents29to41(mapX, mapY, kDMEventTypeCreateReactionDangerOnSquare, 0);
 		}
 		if (explosion->getAttack() >= 6) {

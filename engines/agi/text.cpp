@@ -20,16 +20,16 @@
  *
  */
 
-#include "common/config-manager.h"
+#include "agi/text.h"
 #include "agi/agi.h"
-#include "agi/sprite.h"     // for commit_both()
 #include "agi/graphics.h"
 #include "agi/keyboard.h"
-#include "agi/text.h"
+#include "agi/sprite.h" // for commit_both()
 #include "agi/systemui.h"
 #include "agi/words.h"
+#include "common/config-manager.h"
 #ifdef __DS__
-#include "wordcompletion.h"
+#	include "wordcompletion.h"
 #endif
 
 namespace Agi {
@@ -122,7 +122,7 @@ void TextMgr::charPos_Set(int16 row, int16 column) {
 }
 
 void TextMgr::charPos_Set(TextPos_Struct *posPtr) {
-	_textPos.row    = posPtr->row;
+	_textPos.row = posPtr->row;
 	_textPos.column = posPtr->column;
 }
 
@@ -132,7 +132,7 @@ void TextMgr::charPos_Get(int16 &row, int16 &column) {
 }
 
 void TextMgr::charPos_Get(TextPos_Struct *posPtr) {
-	posPtr->row    = _textPos.row;
+	posPtr->row = _textPos.row;
 	posPtr->column = _textPos.column;
 }
 
@@ -242,7 +242,7 @@ byte TextMgr::calculateTextBackground(byte background) {
 
 void TextMgr::display(int16 textNr, int16 textRow, int16 textColumn) {
 	const char *logicTextPtr = NULL;
-	char *processedTextPtr   = NULL;
+	char *processedTextPtr = NULL;
 
 	charPos_Push();
 	charPos_Set(textRow, textColumn);
@@ -279,7 +279,7 @@ void TextMgr::displayTextInsideWindow(const char *textPtr, int16 windowRow, int1
 
 void TextMgr::displayText(const char *textPtr, bool disabledLook) {
 	const char *curTextPtr = textPtr;
-	byte  curCharacter = 0;
+	byte curCharacter = 0;
 
 	while (1) {
 		curCharacter = *curTextPtr;
@@ -451,7 +451,7 @@ void TextMgr::drawMessageBox(const char *textPtr, int16 forcedHeight, int16 want
 	int16 calculatedHeight = 0;
 
 	processedTextPtr = stringWordWrap(processedTextPtr, maxWidth, &calculatedWidth, &calculatedHeight);
-	_messageState.textSize_Width  = calculatedWidth;
+	_messageState.textSize_Width = calculatedWidth;
 	_messageState.textSize_Height = calculatedHeight;
 
 	_messageState.printed_Height = _messageState.textSize_Height;
@@ -922,8 +922,8 @@ void TextMgr::stringKeyPress(uint16 newKey) {
 	inputEditOn();
 
 	switch (newKey) {
-	case 0x3:       // ctrl-c
-	case 0x18: {    // ctrl-x
+	case 0x3: // ctrl-c
+	case 0x18: { // ctrl-x
 		// clear string
 		while (_inputStringCursorPos) {
 			_inputStringCursorPos--;
@@ -1022,7 +1022,7 @@ char *TextMgr::stringWordWrap(const char *originalText, int16 maxWidth, int16 *c
 	int16 wordLen = 0;
 	int16 curReadPos = 0;
 	int16 curWritePos = 0;
-	byte  wordEndChar = 0;
+	byte wordEndChar = 0;
 
 	//memset(resultWrappedBuffer, 0, sizeof(resultWrappedBuffer)); for debugging
 
@@ -1071,7 +1071,8 @@ char *TextMgr::stringWordWrap(const char *originalText, int16 maxWidth, int16 *c
 			resultWrappedBuffer[curWritePos++] = 0x0A;
 			if (lineWidth > boxWidth)
 				boxWidth = lineWidth;
-			boxHeight++; lineWidth = 0;
+			boxHeight++;
+			lineWidth = 0;
 			lineWidthLeft = maxWidth;
 
 			// Reached absolute maximum? -> exit now
@@ -1092,7 +1093,8 @@ char *TextMgr::stringWordWrap(const char *originalText, int16 maxWidth, int16 *c
 			resultWrappedBuffer[curWritePos++] = 0x0A;
 			if (lineWidth > boxWidth)
 				boxWidth = lineWidth;
-			boxHeight++; lineWidth = 0;
+			boxHeight++;
+			lineWidth = 0;
 			lineWidthLeft = maxWidth;
 
 			// Reached absolute maximum? -> exit now

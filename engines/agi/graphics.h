@@ -27,24 +27,24 @@
 
 namespace Agi {
 
-#define SCRIPT_WIDTH    160
-#define SCRIPT_HEIGHT   168
-#define VISUAL_WIDTH    160
-#define VISUAL_HEIGHT   200
-#define DISPLAY_DEFAULT_WIDTH   320
-#define DISPLAY_DEFAULT_HEIGHT  200
+#define SCRIPT_WIDTH 160
+#define SCRIPT_HEIGHT 168
+#define VISUAL_WIDTH 160
+#define VISUAL_HEIGHT 200
+#define DISPLAY_DEFAULT_WIDTH 320
+#define DISPLAY_DEFAULT_HEIGHT 200
 
 enum GfxScreenUpscaledMode {
 	DISPLAY_UPSCALED_DISABLED = 0,
-	DISPLAY_UPSCALED_640x400  = 1
+	DISPLAY_UPSCALED_640x400 = 1
 };
 
 class AgiEngine;
 
 enum GfxScreenMasks {
-	GFX_SCREEN_MASK_VISUAL      = 1,
-	GFX_SCREEN_MASK_PRIORITY    = 2,
-	GFX_SCREEN_MASK_ALL         = GFX_SCREEN_MASK_VISUAL | GFX_SCREEN_MASK_PRIORITY
+	GFX_SCREEN_MASK_VISUAL = 1,
+	GFX_SCREEN_MASK_PRIORITY = 2,
+	GFX_SCREEN_MASK_ALL = GFX_SCREEN_MASK_VISUAL | GFX_SCREEN_MASK_PRIORITY
 };
 
 struct MouseCursorData {
@@ -115,10 +115,10 @@ private:
 	uint _displayPixels;
 
 	byte *_activeScreen;
-	byte *_gameScreen;     // 160x168 - screen, where the actual game content is drawn to (actual graphics, not including status line, prompt, etc.)
+	byte *_gameScreen; // 160x168 - screen, where the actual game content is drawn to (actual graphics, not including status line, prompt, etc.)
 	byte *_priorityScreen; // 160x168 - screen contains priority information of the game screen
 	// the term "visual screen" is effectively the display screen, but at 160x200 resolution. Used for coordinate translation
-	byte *_displayScreen;  // 320x200 or 640x400 - screen, that the game is rendered to and which is then copied to framebuffer
+	byte *_displayScreen; // 320x200 or 640x400 - screen, that the game is rendered to and which is then copied to framebuffer
 
 	uint16 _displayScreenWidth;
 	uint16 _displayScreenHeight;
@@ -135,7 +135,7 @@ private:
 	 */
 	GfxScreenUpscaledMode _upscaledHires;
 
-	bool  _priorityTableSet;
+	bool _priorityTableSet;
 	uint8 _priorityTable[SCRIPT_HEIGHT]; /**< priority table */
 
 	MouseCursorData _mouseCursor;
@@ -192,6 +192,7 @@ public:
 	void drawBox(int16 x, int16 y, int16 width, int16 height, byte backgroundColor, byte lineColor);
 	void drawDisplayRect(int16 x, int16 y, int16 width, int16 height, byte color, bool copyToScreen = true);
 	void drawDisplayRect(int16 x, int16 adjX, int16 y, int16 adjY, int16 width, int16 adjWidth, int16 height, int16 adjHeight, byte color, bool copyToScreen = true);
+
 private:
 	void drawDisplayRectEGA(int16 x, int16 y, int16 width, int16 height, byte color);
 	void drawDisplayRectCGA(int16 x, int16 y, int16 width, int16 height, byte color);

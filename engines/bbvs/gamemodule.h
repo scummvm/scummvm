@@ -110,7 +110,11 @@ struct Animation {
 	Common::Rect *frameRects1;
 	Common::Rect *frameRects2;
 	Animation()
-		: frameCount(0), frameSpriteIndices(0), frameTicks(0), frameRects1(0), frameRects2(0) {
+	  : frameCount(0)
+	  , frameSpriteIndices(0)
+	  , frameTicks(0)
+	  , frameRects1(0)
+	  , frameRects2(0) {
 	}
 	~Animation() {
 		delete[] frameSpriteIndices;
@@ -180,7 +184,6 @@ public:
 	Animation *getAnimation(int index);
 
 protected:
-
 	int _bgSpriteCount;
 	int *_bgSpriteIndices;
 	int16 *_bgSpritePriorities;
@@ -243,7 +246,6 @@ protected:
 	void loadDialogItemSpriteIndices(Common::SeekableReadStream &s);
 	void loadSceneSounds(Common::SeekableReadStream &s);
 	void loadPreloadSounds(Common::SeekableReadStream &s);
-
 };
 
 } // End of namespace Bbvs

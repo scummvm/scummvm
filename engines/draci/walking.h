@@ -34,8 +34,15 @@ typedef Common::Array<Common::Point> WalkingPath;
 
 class WalkingMap {
 public:
-	WalkingMap() : _realWidth(0), _realHeight(0), _deltaX(1), _deltaY(1),
-		_mapWidth(0), _mapHeight(0), _byteWidth(0), _data(NULL) { }
+	WalkingMap()
+	  : _realWidth(0)
+	  , _realHeight(0)
+	  , _deltaX(1)
+	  , _deltaY(1)
+	  , _mapWidth(0)
+	  , _mapHeight(0)
+	  , _byteWidth(0)
+	  , _data(NULL) {}
 
 	void load(const byte *data, uint length);
 
@@ -46,7 +53,7 @@ public:
 	Common::Point findNearestWalkable(int x, int y) const;
 
 	bool findShortestPath(Common::Point p1, Common::Point p2, WalkingPath *path) const;
-	void obliquePath(const WalkingPath& path, WalkingPath *obliquedPath);
+	void obliquePath(const WalkingPath &path, WalkingPath *obliquedPath);
 	Sprite *newOverlayFromPath(const WalkingPath &path, byte color) const;
 	Common::Point getDelta() const { return Common::Point(_deltaX, _deltaY); }
 
@@ -76,8 +83,12 @@ private:
  * Enumerates the directions the dragon can look into when arrived.
  */
 enum SightDirection {
-	kDirectionLast, kDirectionMouse, kDirectionUnknown,
-	kDirectionRight, kDirectionLeft, kDirectionIntelligent
+	kDirectionLast,
+	kDirectionMouse,
+	kDirectionUnknown,
+	kDirectionRight,
+	kDirectionLeft,
+	kDirectionIntelligent
 };
 
 /**
@@ -85,15 +96,30 @@ enum SightDirection {
   */
 enum Movement {
 	kMoveUndefined = -1,
-	kMoveDown, kMoveUp, kMoveRight, kMoveLeft,
+	kMoveDown,
+	kMoveUp,
+	kMoveRight,
+	kMoveLeft,
 
 	kFirstTurning,
-	kMoveRightDown = kFirstTurning, kMoveRightUp, kMoveLeftDown, kMoveLeftUp,
-	kMoveDownRight, kMoveUpRight, kMoveDownLeft, kMoveUpLeft,
-	kMoveLeftRight, kMoveRightLeft, kMoveUpStopLeft, kMoveUpStopRight,
+	kMoveRightDown = kFirstTurning,
+	kMoveRightUp,
+	kMoveLeftDown,
+	kMoveLeftUp,
+	kMoveDownRight,
+	kMoveUpRight,
+	kMoveDownLeft,
+	kMoveUpLeft,
+	kMoveLeftRight,
+	kMoveRightLeft,
+	kMoveUpStopLeft,
+	kMoveUpStopRight,
 	kLastTurning = kMoveUpStopRight,
 
-	kSpeakRight, kSpeakLeft, kStopRight, kStopLeft,
+	kSpeakRight,
+	kSpeakLeft,
+	kStopRight,
+	kStopLeft,
 
 	kFirstTemporaryAnimation
 };
@@ -103,7 +129,8 @@ struct GPL2Program;
 
 class WalkingState {
 public:
-	explicit WalkingState(DraciEngine *vm) : _vm(vm) {
+	explicit WalkingState(DraciEngine *vm)
+	  : _vm(vm) {
 		_dir = kDirectionLast;
 		_startingDirection = kMoveUndefined;
 		_segment = 0;
@@ -120,9 +147,9 @@ public:
 
 	void stopWalking();
 	void startWalking(const Common::Point &p1, const Common::Point &p2,
-		const Common::Point &mouse, SightDirection dir,
-		const Common::Point &delta, const WalkingPath& path);
-	const WalkingPath& getPath() const { return _path; }
+	                  const Common::Point &mouse, SightDirection dir,
+	                  const Common::Point &delta, const WalkingPath &path);
+	const WalkingPath &getPath() const { return _path; }
 
 	void setCallback(const GPL2Program *program, uint16 offset);
 	void callback();
@@ -155,7 +182,7 @@ private:
 	SightDirection _dir;
 	Movement _startingDirection;
 
-	uint _segment;		// Index of the path vertex we are currently going to / rotation on
+	uint _segment; // Index of the path vertex we are currently going to / rotation on
 	int _lastAnimPhase;
 	bool _turningFinished;
 

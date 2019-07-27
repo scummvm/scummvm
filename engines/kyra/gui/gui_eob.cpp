@@ -22,17 +22,17 @@
 
 #ifdef ENABLE_EOB
 
-#include "kyra/engine/eobcommon.h"
-#include "kyra/gui/gui_eob.h"
-#include "kyra/script/script_eob.h"
-#include "kyra/text/text_rpg.h"
-#include "kyra/engine/timer.h"
-#include "kyra/engine/util.h"
+#	include "kyra/gui/gui_eob.h"
+#	include "kyra/engine/eobcommon.h"
+#	include "kyra/engine/timer.h"
+#	include "kyra/engine/util.h"
+#	include "kyra/script/script_eob.h"
+#	include "kyra/text/text_rpg.h"
 
-#include "backends/keymapper/keymapper.h"
-#include "common/system.h"
-#include "common/savefile.h"
-#include "graphics/scaler.h"
+#	include "backends/keymapper/keymapper.h"
+#	include "common/savefile.h"
+#	include "common/system.h"
+#	include "graphics/scaler.h"
 
 namespace Kyra {
 
@@ -105,7 +105,7 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 		int y2 = charPortraitPosY[index >> 1];
 		Screen::FontId cf = _screen->setFont(Screen::FID_6_FNT);
 
-		_screen->copyRegion(176, 168, x2 , y2, 64, 24, 2, 2, Screen::CR_NO_P_CHECK);
+		_screen->copyRegion(176, 168, x2, y2, 64, 24, 2, 2, Screen::CR_NO_P_CHECK);
 		_screen->copyRegion(240, 168, x2, y2 + 24, 64, 26, 2, 2, Screen::CR_NO_P_CHECK);
 		int cp = _screen->setCurPage(2);
 
@@ -390,7 +390,6 @@ void EoBCoreEngine::gui_drawHitpoints(int index) {
 
 		if (!_currentControlMode)
 			_screen->printText(_characterGuiStringsHp[0], x - 13, y - 1, guiSettings()->colors.guiColorBlack, 0);
-
 
 		gui_drawHorizontalBarGraph(x, y, w, h, bgCur, bgMax, col, guiSettings()->colors.barGraph);
 
@@ -809,7 +808,7 @@ int EoBCoreEngine::clickedCamp(Button *button) {
 	}
 
 	_screen->copyPage(0, 7);
-	
+
 	// Create a thumbnail from the screen for a possible savegame.
 	// This ensures that all special rendering (EGA dithering, 16bit rendering, Japanese font rendering) will be visible on the thumbnail.
 	::createThumbnailFromScreen(&_thumbNail);
@@ -1403,11 +1402,14 @@ void EoBCoreEngine::gui_processInventorySlotClick(int slot) {
 	}
 }
 
-GUI_EoB::GUI_EoB(EoBCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
-	_menuStringsPrefsTemp = new char*[4];
+GUI_EoB::GUI_EoB(EoBCoreEngine *vm)
+  : GUI(vm)
+  , _vm(vm)
+  , _screen(vm->_screen) {
+	_menuStringsPrefsTemp = new char *[4];
 	memset(_menuStringsPrefsTemp, 0, 4 * sizeof(char *));
 
-	_saveSlotStringsTemp = new char*[6];
+	_saveSlotStringsTemp = new char *[6];
 	for (int i = 0; i < 6; i++) {
 		_saveSlotStringsTemp[i] = new char[26];
 		memset(_saveSlotStringsTemp[i], 0, 26);
@@ -2021,7 +2023,7 @@ int GUI_EoB::simpleMenu_process(int sd, const char *const *strings, void *b, int
 
 	if (newItem != currentItem) {
 		_screen->printText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], x, y + currentItem * lineH, (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : _vm->guiSettings()->colors.guiColorWhite, 0);
-		_screen->printText(strings[simpleMenu_getMenuItem(newItem,  menuItemsMask, itemOffset)], x, y + newItem * lineH , _vm->guiSettings()->colors.guiColorLightRed, 0);
+		_screen->printText(strings[simpleMenu_getMenuItem(newItem, menuItemsMask, itemOffset)], x, y + newItem * lineH, _vm->guiSettings()->colors.guiColorLightRed, 0);
 		_screen->updateScreen();
 	}
 
@@ -2316,7 +2318,7 @@ bool GUI_EoB::runLoadMenu(int x, int y, bool fromMainMenu) {
 
 	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
 		updateSaveSlotsList(_vm->_targetName);
-		
+
 		_vm->useMainMenuGUISettings(fromMainMenu);
 		int slot = selectSaveSlotDialogue(x, y, 1);
 		_vm->useMainMenuGUISettings(false);
@@ -2382,7 +2384,7 @@ bool GUI_EoB::confirmDialogue2(int dim, int id, int deflt) {
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_y]) {
 			newHighlight = 0;
 			runLoop = false;
-		}  else if (inputFlag == 199 || inputFlag == 201) {
+		} else if (inputFlag == 199 || inputFlag == 201) {
 			if (_vm->posWithinRect(p.x, p.y, x[0], y, x[0] + 32, y + 14)) {
 				newHighlight = 0;
 				runLoop = false;
@@ -2488,7 +2490,6 @@ void GUI_EoB::messageDialogue2(int dim, int id, int buttonTextCol) {
 	drawMenuButtonBox(x, y, w, 14, false, false);
 	_screen->printShadedText(_vm->_menuOkString, x + 4, y + 3, buttonTextCol, 0, _vm->guiSettings()->colors.guiColorBlack);
 	_screen->updateScreen();
-
 }
 
 void GUI_EoB::updateBoxFrameHighLight(int box) {
@@ -2522,10 +2523,10 @@ void GUI_EoB::updateBoxFrameHighLight(int box) {
 }
 
 int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColor1, int textColor2, int cursorColor) {
-#ifdef ENABLE_KEYMAPPER
+#	ifdef ENABLE_KEYMAPPER
 	Common::Keymapper *const keymapper = _vm->getEventManager()->getKeymapper();
 	keymapper->pushKeymap(Common::kGlobalKeymapName);
-#endif
+#	endif
 
 	uint8 cursorState = 1;
 	char sufx[3] = " \0";
@@ -2601,7 +2602,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 		}
 
 		if (_keyPressed.keycode == Common::KEYCODE_BACKSPACE) {
-			if (pos > 0 && pos < len ) {
+			if (pos > 0 && pos < len) {
 				for (int i = pos; i < len; i++) {
 					if (bytesPerChar == 2 && dest[i * bytesPerChar] & 0x80) {
 						dest[(i - 1) * bytesPerChar] = dest[i * bytesPerChar];
@@ -2679,7 +2680,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 
 		_screen->copyRegion(0, 191, (x - 1) << 3, y, (destMaxLen + 2) << 3, 9, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->printShadedText(dest, x << 3, y, textColor1, textColor2, _vm->guiSettings()->colors.guiColorBlack);
-		
+
 		if (_vm->_flags.platform == Common::kPlatformFMTowns) {
 			if (pos < len) {
 				sufx[0] = dest[pos * bytesPerChar];
@@ -2687,7 +2688,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 			} else {
 				sufx[0] = 32;
 				sufx[1] = 0;
-			}			
+			}
 		} else {
 			sufx[0] = (pos < len) ? dest[pos] : 32;
 		}
@@ -2700,9 +2701,9 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 
 	} while (_keyPressed.keycode != Common::KEYCODE_RETURN && _keyPressed.keycode != Common::KEYCODE_ESCAPE && !_vm->shouldQuit());
 
-#ifdef ENABLE_KEYMAPPER
+#	ifdef ENABLE_KEYMAPPER
 	keymapper->popKeymap(Common::kGlobalKeymapName);
-#endif
+#	endif
 
 	return _keyPressed.keycode == Common::KEYCODE_ESCAPE ? -1 : len;
 }
@@ -2732,7 +2733,8 @@ int GUI_EoB::checkKatakanaSelection() {
 				_screen->printShadedText(_csjis, x & ~7, y & ~15, _vm->guiSettings()->colors.guiColorLightRed, 0, _vm->guiSettings()->colors.guiColorBlack);
 			}
 
-			x = 288; y = 168;
+			x = 288;
+			y = 168;
 		}
 	}
 
@@ -2826,7 +2828,7 @@ Common::String GUI_EoB::transferTargetMenu(Common::Array<Common::String> &target
 	}
 
 	_savegameListSize = targets.size();
-	_savegameList = new char*[_savegameListSize];
+	_savegameList = new char *[_savegameListSize];
 	memset(_savegameList, 0, _savegameListSize * sizeof(char *));
 
 	Common::StringArray::iterator ii = targets.begin();
@@ -2938,7 +2940,7 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 				_screen->fillRect(fx - 2, fy, fx + 160, fy + 8, _vm->guiSettings()->colors.fill);
 				if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
 					TimeDate td;
-					_vm->_system->getTimeAndDate(td);					
+					_vm->_system->getTimeAndDate(td);
 					Common::strlcpy(_saveSlotStringsTemp[slot], Common::String::format(_vm->_saveNamePatterns[_vm->_currentLevel * 2 + _vm->_currentSub], td.tm_mon + 1, td.tm_mday, td.tm_hour, td.tm_min).c_str(), 25);
 					in = strlen(_saveSlotStringsTemp[slot]);
 					of = _vm->screen()->setFont(Screen::FID_6_FNT);
@@ -3376,7 +3378,6 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 	delete[] lh;
 }
 
-
 void GUI_EoB::scribeScrollDialogue() {
 	int16 *scrollInvSlot = new int16[32];
 	int16 *scrollCharacter = new int16[32];
@@ -3471,7 +3472,7 @@ void GUI_EoB::scribeScrollDialogue() {
 						}
 					}
 
-					if (inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP5])  {
+					if (inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP5]) {
 						int t = menuItems[newHighLight] - 1;
 						Item scItem = _vm->_characters[scrollCharacter[t]].inventory[scrollInvSlot[t] - 1];
 						c->mageSpellsAvailableFlags |= (1 << t);
@@ -3885,7 +3886,7 @@ int GUI_EoB::selectCharacterDialogue(int id) {
 	}
 
 	static const uint16 selX[] = { 184, 256, 184, 256, 184, 256 };
-	static const uint8 selY[] = { 2, 2, 54, 54, 106, 106};
+	static const uint8 selY[] = { 2, 2, 54, 54, 106, 106 };
 
 	for (int i = 0; i < 6; i++) {
 		if (found[i] != -1 || !_vm->testCharacter(i, 1))
@@ -4147,7 +4148,7 @@ void GUI_EoB::drawSaveSlotButton(int slot, int redrawBox, int textCol) {
 	int w = 167;
 	char slotString[26];
 	Common::strlcpy(slotString, slot < 6 ? _saveSlotStringsTemp[slot] : _vm->_saveLoadStrings[0], _vm->gameFlags().platform == Common::kPlatformFMTowns ? 25 : 20);
-	
+
 	if (slot >= 6) {
 		x = _saveSlotX + 118;
 		y = _saveSlotY + 126;
@@ -4191,7 +4192,7 @@ void GUI_EoB::memorizePrayMenuPrintString(int spellId, int bookPageIndex, int sp
 		else
 			_screen->printShadedText(s.c_str(), 8, y, highLight ? _vm->guiSettings()->colors.guiColorLightRed : col1, _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.guiColorBlack);
 	} else {
-		_screen->fillRect(6, y, 168, y + 8,  _vm->guiSettings()->colors.fill);
+		_screen->fillRect(6, y, 168, y + 8, _vm->guiSettings()->colors.fill);
 	}
 
 	_screen->set16bitShadingLevel(0);
@@ -4206,7 +4207,7 @@ void GUI_EoB::updateOptionsStrings() {
 	Common::strlcpy(_menuStringsPrefsTemp[0], Common::String::format(_vm->_menuStringsPrefs[0], _vm->_menuStringsOnOff[_vm->_configMusic ? 0 : 1]).c_str(), strlen(_vm->_menuStringsPrefs[0]) + 8);
 	Common::strlcpy(_menuStringsPrefsTemp[1], Common::String::format(_vm->_menuStringsPrefs[1], _vm->_menuStringsOnOff[_vm->_configSounds ? 0 : 1]).c_str(), strlen(_vm->_menuStringsPrefs[1]) + 8);
 	Common::strlcpy(_menuStringsPrefsTemp[2], Common::String::format(_vm->_menuStringsPrefs[2], _vm->_menuStringsOnOff[_vm->_configHpBarGraphs ? 0 : 1]).c_str(), strlen(_vm->_menuStringsPrefs[2]) + 8);
-	Common::strlcpy(_menuStringsPrefsTemp[3], Common::String::format(_vm->_menuStringsPrefs[3], _vm->gameFlags().platform == Common::kPlatformFMTowns ?	_vm->_2431Strings[_vm->_config2431 ? 0 : 1] : _vm->_menuStringsOnOff[_vm->_configMouse ? 0 : 1]).c_str(), strlen(_vm->_menuStringsPrefs[3]) + 8);
+	Common::strlcpy(_menuStringsPrefsTemp[3], Common::String::format(_vm->_menuStringsPrefs[3], _vm->gameFlags().platform == Common::kPlatformFMTowns ? _vm->_2431Strings[_vm->_config2431 ? 0 : 1] : _vm->_menuStringsOnOff[_vm->_configMouse ? 0 : 1]).c_str(), strlen(_vm->_menuStringsPrefs[3]) + 8);
 }
 
 const char *GUI_EoB::getMenuString(int id) {
@@ -4214,7 +4215,7 @@ const char *GUI_EoB::getMenuString(int id) {
 
 	if (id >= 69)
 		return _vm->_menuStringsTransfer[id - 69];
-	else  if (id == 68)
+	else if (id == 68)
 		return _vm->_transferStringsScummVM[0];
 	else if (id == 67)
 		return _vm->_menuStringsDefeat[0];

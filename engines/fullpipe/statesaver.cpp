@@ -122,7 +122,7 @@ bool GameLoader::writeSavegame(Scene *sc, const char *fname, const Common::Strin
 	saveFile->writeUint32LE(header.encSize);
 
 	debugC(3, kDebugLoading, "version: %d magic: %s updateCounter: %d unkField: %d encSize: %d, pos: %d",
-			header.version, header.magic, header.updateCounter, header.unkField, header.encSize, saveFile->pos());
+	       header.version, header.magic, header.updateCounter, header.unkField, header.encSize, saveFile->pos());
 
 	saveFile->write(stream.getData(), stream.size());
 
@@ -147,7 +147,7 @@ bool GameLoader::writeSavegame(Scene *sc, const char *fname, const Common::Strin
 	saveFile->writeUint32LE(header2.playtime);
 
 	// Added in save version 2
-	Common::String desc(description.c_str(), MIN(255u, description.size()));	// Restrict description size
+	Common::String desc(description.c_str(), MIN(255u, description.size())); // Restrict description size
 	saveFile->writeByte(desc.size());
 	saveFile->writeString(desc);
 
@@ -155,7 +155,7 @@ bool GameLoader::writeSavegame(Scene *sc, const char *fname, const Common::Strin
 
 	Graphics::saveThumbnail(*saveFile); // FIXME. Render proper screen
 
-	saveFile->writeUint32LE(headerPos);	// Store where the header starts
+	saveFile->writeUint32LE(headerPos); // Store where the header starts
 
 	saveFile->finalize();
 
@@ -164,7 +164,6 @@ bool GameLoader::writeSavegame(Scene *sc, const char *fname, const Common::Strin
 
 	return true;
 }
-
 
 void PicAniInfo::save(MfcArchive &file) {
 	debugC(5, kDebugLoading, "PicAniInfo::save()");
@@ -190,7 +189,7 @@ void PicAniInfo::print() {
 	debug("type: %d objectId: %d field_6: %d field_8: %d", type, objectId, field_6, field_8);
 	debug("sceneId: %d field_E: %d ox: %d oy: %d priority: %d", sceneId, field_E, ox, oy, priority);
 	debug("staticsId: %d movementId: %d dynamicPhaseIndex: %d flags: %x field_24: %d someDynamicPhaseIndex: %d",
-			staticsId, movementId, dynamicPhaseIndex, flags, field_24, someDynamicPhaseIndex);
+	      staticsId, movementId, dynamicPhaseIndex, flags, field_24, someDynamicPhaseIndex);
 }
 
 void GameVar::save(MfcArchive &file) {

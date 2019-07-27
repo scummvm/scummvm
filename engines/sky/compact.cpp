@@ -20,25 +20,24 @@
  *
  */
 
-
+#include "sky/compact.h"
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
-#include "sky/compact.h"
 #include "gui/message.h"
-#include <stddef.h>	// for ptrdiff_t
+#include <stddef.h> // for ptrdiff_t
 
 namespace Sky {
 
-#define	SKY_CPT_SIZE	419427
+#define SKY_CPT_SIZE 419427
 
-#define OFFS(type,item) ((uint32)(((ptrdiff_t)(&((type *)42)->item))-42))
-#define MK32(type,item) OFFS(type, item),0,0,0
-#define MK16(type,item) OFFS(type, item),0
+#define OFFS(type, item) ((uint32)(((ptrdiff_t)(&((type *)42)->item)) - 42))
+#define MK32(type, item) OFFS(type, item), 0, 0, 0
+#define MK16(type, item) OFFS(type, item), 0
 #define MK32_A5(type, item) MK32(type, item[0]), MK32(type, item[1]), \
-	MK32(type, item[2]), MK32(type, item[3]), MK32(type, item[4])
+	                          MK32(type, item[2]), MK32(type, item[3]), MK32(type, item[4])
 
 static const uint32 compactOffsets[] = {
 	MK16(Compact, logic),
@@ -120,17 +119,17 @@ static const uint32 turnTableOffsets[] = {
 	MK32_A5(TurnTable, turnTableTalk),
 };
 
-#define COMPACT_SIZE (sizeof(compactOffsets)/sizeof(uint32))
-#define MEGASET_SIZE (sizeof(megaSetOffsets)/sizeof(uint32))
-#define TURNTABLE_SIZE (sizeof(turnTableOffsets)/sizeof(uint32))
+#define COMPACT_SIZE (sizeof(compactOffsets) / sizeof(uint32))
+#define MEGASET_SIZE (sizeof(megaSetOffsets) / sizeof(uint32))
+#define TURNTABLE_SIZE (sizeof(turnTableOffsets) / sizeof(uint32))
 
 SkyCompact::SkyCompact() {
 	_cptFile = new Common::File();
 	Common::String filename = "sky.cpt";
 	if (!_cptFile->open(filename.c_str())) {
-                Common::String msg = Common::String::format(_("Unable to locate the '%s' engine data file."), filename.c_str());
-                GUIErrorMessage(msg);
-                error("%s", msg.c_str());
+		Common::String msg = Common::String::format(_("Unable to locate the '%s' engine data file."), filename.c_str());
+		GUIErrorMessage(msg);
+		error("%s", msg.c_str());
 	}
 
 	uint16 fileVersion = _cptFile->readUint16LE();
@@ -145,18 +144,18 @@ SkyCompact::SkyCompact() {
 
 	// set the necessary data structs up...
 	_numDataLists = _cptFile->readUint16LE();
-	_cptNames	  = (char***)malloc(_numDataLists * sizeof(char**));
-	_dataListLen  = (uint16 *)malloc(_numDataLists * sizeof(uint16));
-	_cptSizes	  = (uint16 **)malloc(_numDataLists * sizeof(uint16 *));
-	_cptTypes	  = (uint16 **)malloc(_numDataLists * sizeof(uint16 *));
-	_compacts	  = (Compact***)malloc(_numDataLists * sizeof(Compact**));
+	_cptNames = (char ***)malloc(_numDataLists * sizeof(char **));
+	_dataListLen = (uint16 *)malloc(_numDataLists * sizeof(uint16));
+	_cptSizes = (uint16 **)malloc(_numDataLists * sizeof(uint16 *));
+	_cptTypes = (uint16 **)malloc(_numDataLists * sizeof(uint16 *));
+	_compacts = (Compact ***)malloc(_numDataLists * sizeof(Compact **));
 
 	for (int i = 0; i < _numDataLists; i++) {
 		_dataListLen[i] = _cptFile->readUint16LE();
-		_cptNames[i] = (char**)malloc(_dataListLen[i] * sizeof(char *));
+		_cptNames[i] = (char **)malloc(_dataListLen[i] * sizeof(char *));
 		_cptSizes[i] = (uint16 *)malloc(_dataListLen[i] * sizeof(uint16));
 		_cptTypes[i] = (uint16 *)malloc(_dataListLen[i] * sizeof(uint16));
-		_compacts[i] = (Compact**)malloc(_dataListLen[i] * sizeof(Compact *));
+		_compacts[i] = (Compact **)malloc(_dataListLen[i] * sizeof(Compact *));
 	}
 
 	uint32 rawSize = _cptFile->readUint32LE() * sizeof(uint16);
@@ -267,7 +266,7 @@ SkyCompact::~SkyCompact() {
 #define SCUMMVM_BROKEN_TALK_INDEX 158
 void SkyCompact::checkAndFixOfficerBluntError() {
 	// Retrieve the table with the animation ids to use for talking
-	uint16 *talkTable = (uint16*)fetchCpt(CPT_TALK_TABLE_LIST);
+	uint16 *talkTable = (uint16 *)fetchCpt(CPT_TALK_TABLE_LIST);
 	if (talkTable[SCUMMVM_BROKEN_TALK_INDEX] == ID_SC31_GUARD_TALK) {
 		debug(1, "SKY.CPT with Officer Blunt bug encountered, fixing talk gfx.");
 		talkTable[SCUMMVM_BROKEN_TALK_INDEX] = ID_SC31_GUARD_TALK2;
@@ -294,7 +293,7 @@ Compact *SkyCompact::fetchCptInfo(uint16 cptId, uint16 *elems, uint16 *type, cha
 	if (elems)
 		*elems = _cptSizes[cptId >> 12][cptId & 0xFFF];
 	if (type)
-		*type  = _cptTypes[cptId >> 12][cptId & 0xFFF];
+		*type = _cptTypes[cptId >> 12][cptId & 0xFFF];
 	if (name) {
 		if (_cptNames[cptId >> 12][cptId & 0xFFF] != NULL)
 			strcpy(name, _cptNames[cptId >> 12][cptId & 0xFFF]);
@@ -382,9 +381,9 @@ MegaSet *SkyCompact::getMegaSet(Compact *cpt) {
 		return &cpt->megaSet0;
 	case NEXT_MEGA_SET:
 		return &cpt->megaSet1;
-	case NEXT_MEGA_SET*2:
+	case NEXT_MEGA_SET * 2:
 		return &cpt->megaSet2;
-	case NEXT_MEGA_SET*3:
+	case NEXT_MEGA_SET * 3:
 		return &cpt->megaSet3;
 	default:
 		error("Invalid MegaSet (%d)", cpt->megaSet);
@@ -425,11 +424,11 @@ uint16 *SkyCompact::getTurnTable(Compact *cpt, uint16 dir) {
 
 void *SkyCompact::getCompactElem(Compact *cpt, uint16 off) {
 	if (off < COMPACT_SIZE)
-		return((uint8 *)cpt + compactOffsets[off]);
+		return ((uint8 *)cpt + compactOffsets[off]);
 	off -= COMPACT_SIZE;
 
 	if (off < MEGASET_SIZE)
-		return((uint8 *)&(cpt->megaSet0) + megaSetOffsets[off]);
+		return ((uint8 *)&(cpt->megaSet0) + megaSetOffsets[off]);
 
 	off -= MEGASET_SIZE;
 	if (off < TURNTABLE_SIZE)
@@ -437,7 +436,7 @@ void *SkyCompact::getCompactElem(Compact *cpt, uint16 off) {
 
 	off -= TURNTABLE_SIZE;
 	if (off < MEGASET_SIZE)
-		return((uint8 *)&(cpt->megaSet1) + megaSetOffsets[off]);
+		return ((uint8 *)&(cpt->megaSet1) + megaSetOffsets[off]);
 
 	off -= MEGASET_SIZE;
 	if (off < TURNTABLE_SIZE)
@@ -445,7 +444,7 @@ void *SkyCompact::getCompactElem(Compact *cpt, uint16 off) {
 
 	off -= TURNTABLE_SIZE;
 	if (off < MEGASET_SIZE)
-		return((uint8 *)&(cpt->megaSet2) + megaSetOffsets[off]);
+		return ((uint8 *)&(cpt->megaSet2) + megaSetOffsets[off]);
 
 	off -= MEGASET_SIZE;
 	if (off < TURNTABLE_SIZE)
@@ -453,7 +452,7 @@ void *SkyCompact::getCompactElem(Compact *cpt, uint16 off) {
 
 	off -= TURNTABLE_SIZE;
 	if (off < MEGASET_SIZE)
-		return((uint8 *)&(cpt->megaSet3) + megaSetOffsets[off]);
+		return ((uint8 *)&(cpt->megaSet3) + megaSetOffsets[off]);
 
 	off -= MEGASET_SIZE;
 	if (off < TURNTABLE_SIZE)

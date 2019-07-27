@@ -20,13 +20,15 @@
  *
  */
 
-#include "common/coroutines.h"
 #include "cryo/debugger.h"
+#include "common/coroutines.h"
 #include "cryo/cryo.h"
 
 namespace Cryo {
 
-Debugger::Debugger(CryoEngine *vm) : GUI::Debugger(), _vm(vm) {
+Debugger::Debugger(CryoEngine *vm)
+  : GUI::Debugger()
+  , _vm(vm) {
 	registerCmd("showHotspots", WRAP_METHOD(Debugger, Cmd_ShowHotspots));
 	registerCmd("fullInventory", WRAP_METHOD(Debugger, Cmd_FullInventory));
 }

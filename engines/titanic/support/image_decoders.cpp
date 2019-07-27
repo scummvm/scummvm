@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/system.h"
 #include "titanic/support/image_decoders.h"
+#include "common/system.h"
 
 namespace Titanic {
 
@@ -37,7 +37,7 @@ void CJPEGDecode::decode(OSVideoSurface &surface, const CString &name) {
 
 	// Resize the surface if necessary
 	if (!surface.hasSurface() || surface.getWidth() != srcSurf->w
-			|| surface.getHeight() != srcSurf->h)
+	    || surface.getHeight() != srcSurf->h)
 		surface.recreate(srcSurf->w, srcSurf->h, 16);
 
 	// Copy the decoded surface
@@ -45,8 +45,7 @@ void CJPEGDecode::decode(OSVideoSurface &surface, const CString &name) {
 
 	assert(srcSurf->format == surface._rawSurface->format);
 
-	Common::copy((const byte *)srcSurf->getPixels(), (const byte *)srcSurf->getPixels() +
-		surface.getPitch() * surface.getHeight(), (byte *)surface._rawSurface->getPixels());
+	Common::copy((const byte *)srcSurf->getPixels(), (const byte *)srcSurf->getPixels() + surface.getPitch() * surface.getHeight(), (byte *)surface._rawSurface->getPixels());
 
 	surface.unlock();
 }
@@ -64,15 +63,14 @@ void CTargaDecode::decode(OSVideoSurface &surface, const CString &name) {
 
 	// Resize the surface if necessary
 	if (!surface.hasSurface() || surface.getWidth() != srcSurf->w
-			|| surface.getHeight() != srcSurf->h)
+	    || surface.getHeight() != srcSurf->h)
 		surface.recreate(srcSurf->w, srcSurf->h, 16);
 
 	// Convert the decoded surface to the correct pixel format, and then copy it over
 	surface.lock();
 	Graphics::Surface *convertedSurface = srcSurf->convertTo(surface._rawSurface->format);
 
-	Common::copy((byte *)convertedSurface->getPixels(), (byte *)convertedSurface->getPixels() +
-		surface.getPitch() * surface.getHeight(), (byte *)surface._rawSurface->getPixels());
+	Common::copy((byte *)convertedSurface->getPixels(), (byte *)convertedSurface->getPixels() + surface.getPitch() * surface.getHeight(), (byte *)surface._rawSurface->getPixels());
 
 	convertedSurface->free();
 	delete convertedSurface;

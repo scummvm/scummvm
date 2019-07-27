@@ -21,14 +21,14 @@
  */
 
 #include "gui/storagewizarddialog.h"
+#include "backends/cloud/cloudmanager.h"
 #include "gui/gui-manager.h"
 #include "gui/message.h"
 #include "gui/widget.h"
 #include "gui/widgets/edittext.h"
 #include "gui/widgets/scrollcontainer.h"
-#include "backends/cloud/cloudmanager.h"
 #ifdef USE_SDL_NET
-#include "backends/networking/sdl_net/localwebserver.h"
+#	include "backends/networking/sdl_net/localwebserver.h"
 #endif
 #include "common/translation.h"
 
@@ -42,8 +42,10 @@ enum {
 	kStorageWizardContainerReflowCmd = 'SWCr'
 };
 
-StorageWizardDialog::StorageWizardDialog(uint32 storageId):
-	Dialog("GlobalOptions_Cloud_ConnectionWizard"), _storageId(storageId), _close(false) {
+StorageWizardDialog::StorageWizardDialog(uint32 storageId)
+  : Dialog("GlobalOptions_Cloud_ConnectionWizard")
+  , _storageId(storageId)
+  , _close(false) {
 #ifdef USE_SDL_NET
 	_stopServerOnClose = false;
 #endif
@@ -61,7 +63,7 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 	_returnLine1 = new StaticTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.ReturnLine1", _("Obtain the code from the storage, enter it"));
 	_returnLine2 = new StaticTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.ReturnLine2", _("in the following field and press 'Connect':"));
 	for (uint32 i = 0; i < CODE_FIELDS; ++i)
-		_codeWidget[i] = new EditTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.CodeBox" + Common::String::format("%d", i+1), "", 0, kCodeBoxCmd);
+		_codeWidget[i] = new EditTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.CodeBox" + Common::String::format("%d", i + 1), "", 0, kCodeBoxCmd);
 	_messageWidget = new StaticTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.MessageLine", "");
 
 	// Buttons
@@ -215,15 +217,16 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		if (g_system->hasTextInClipboard()) {
 			Common::String message = g_system->getTextFromClipboard();
 			for (uint32 i = 0; i < CODE_FIELDS; ++i) {
-				if (message.empty()) break;
+				if (message.empty())
+					break;
 				Common::String subcode = "";
 				for (uint32 j = 0; j < message.size(); ++j) {
 					if (message[j] == ' ') {
-						message.erase(0, j+1);
+						message.erase(0, j + 1);
 						break;
 					}
 					subcode += message[j];
-					if (j+1 == message.size()) {
+					if (j + 1 == message.size()) {
 						message = "";
 						break;
 					}
@@ -277,11 +280,16 @@ void StorageWizardDialog::handleTickle() {
 
 void StorageWizardDialog::containerWidgetsReflow() {
 	// contents
-	if (_headlineWidget) _headlineWidget->setVisible(true);
-	if (_navigateLineWidget) _navigateLineWidget->setVisible(true);
-	if (_urlLineWidget) _urlLineWidget->setVisible(true);
-	if (_returnLine1) _returnLine1->setVisible(true);
-	if (_returnLine2) _returnLine2->setVisible(true);
+	if (_headlineWidget)
+		_headlineWidget->setVisible(true);
+	if (_navigateLineWidget)
+		_navigateLineWidget->setVisible(true);
+	if (_urlLineWidget)
+		_urlLineWidget->setVisible(true);
+	if (_returnLine1)
+		_returnLine1->setVisible(true);
+	if (_returnLine2)
+		_returnLine2->setVisible(true);
 
 	bool showFields = (!Cloud::CloudManager::couldUseLocalServer());
 	for (uint32 i = 0; i < CODE_FIELDS; ++i)
@@ -302,7 +310,8 @@ void StorageWizardDialog::containerWidgetsReflow() {
 	}
 
 	// bottom row
-	if (_cancelWidget) _cancelWidget->setVisible(true);
+	if (_cancelWidget)
+		_cancelWidget->setVisible(true);
 	if (_connectWidget) {
 		_connectWidget->setVisible(showFields);
 	}
@@ -344,7 +353,7 @@ bool StorageWizardDialog::correctChecksum(Common::String s) {
 		return false; //no last char
 	int providedChecksum = decodeHashchar(s.lastChar());
 	int calculatedChecksum = 0x2A; //any initial value would do, but it must equal to the one used on the page where these checksums were generated
-	for (uint32 i = 0; i < s.size()-1; ++i) {
+	for (uint32 i = 0; i < s.size() - 1; ++i) {
 		calculatedChecksum = calculatedChecksum ^ s[i];
 	}
 	return providedChecksum == (calculatedChecksum % 64);

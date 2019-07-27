@@ -26,12 +26,12 @@
  */
 
 #include "cge2/sound.h"
-#include "common/memstream.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
 #include "cge2/cge2.h"
+#include "common/memstream.h"
 
 namespace CGE2 {
 
@@ -44,7 +44,8 @@ DataCk::~DataCk() {
 	free(_buf);
 }
 
-Sound::Sound(CGE2Engine *vm) : _vm(vm) {
+Sound::Sound(CGE2Engine *vm)
+  : _vm(vm) {
 	_audioStream = nullptr;
 	_soundRepeatCount = 1;
 	open();
@@ -87,7 +88,7 @@ void Sound::play(Audio::Mixer::SoundType soundType, DataCk *wav, int pan) {
 void Sound::sndDigiStart(SmpInfo *PSmpInfo, Audio::Mixer::SoundType soundType) {
 	// Create an audio stream wrapper for sound
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(PSmpInfo->_saddr,
-		PSmpInfo->_slen, DisposeAfterUse::NO);
+	                                                                PSmpInfo->_slen, DisposeAfterUse::NO);
 	_audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 
 	// Decide which handle to use
@@ -105,7 +106,7 @@ void Sound::sndDigiStart(SmpInfo *PSmpInfo, Audio::Mixer::SoundType soundType) {
 
 	// Start the new sound
 	_vm->_mixer->playStream(soundType, handle,
-		Audio::makeLoopingAudioStream(_audioStream, (uint)PSmpInfo->_counter));
+	                        Audio::makeLoopingAudioStream(_audioStream, (uint)PSmpInfo->_counter));
 
 	// CGE pan:
 	// 8 = Center
@@ -130,7 +131,9 @@ void Sound::sndDigiStop(Audio::SoundHandle &handle) {
 		_vm->_mixer->stopHandle(handle);
 }
 
-Fx::Fx(CGE2Engine *vm, int size) : _current(nullptr), _vm(vm) {
+Fx::Fx(CGE2Engine *vm, int size)
+  : _current(nullptr)
+  , _vm(vm) {
 }
 
 Fx::~Fx() {
@@ -175,7 +178,8 @@ DataCk *Fx::loadWave(EncryptedStream *file) {
 	return new DataCk(data, file->size());
 }
 
-MusicPlayer::MusicPlayer(CGE2Engine *vm) : _vm(vm) {
+MusicPlayer::MusicPlayer(CGE2Engine *vm)
+  : _vm(vm) {
 	_data = nullptr;
 	_isGM = false;
 

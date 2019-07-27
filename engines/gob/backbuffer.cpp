@@ -27,7 +27,9 @@
 
 namespace Gob {
 
-BackBuffer::BackBuffer() : _background(0), _saved(false) {
+BackBuffer::BackBuffer()
+  : _background(0)
+  , _saved(false) {
 }
 
 BackBuffer::~BackBuffer() {
@@ -61,17 +63,17 @@ bool BackBuffer::saveScreen(const Surface &dest, int16 &left, int16 &top, int16 
 	if (!_background)
 		return false;
 
-	const int16 width  = MIN<int16>(right  - left + 1, _background->getWidth ());
-	const int16 height = MIN<int16>(bottom - top  + 1, _background->getHeight());
+	const int16 width = MIN<int16>(right - left + 1, _background->getWidth());
+	const int16 height = MIN<int16>(bottom - top + 1, _background->getHeight());
 	if ((width <= 0) || (height <= 0))
 		return false;
 
-	right  = left + width  - 1;
-	bottom = top  + height - 1;
+	right = left + width - 1;
+	bottom = top + height - 1;
 
-	_saveLeft   = left;
-	_saveTop    = top;
-	_saveRight  = right;
+	_saveLeft = left;
+	_saveTop = top;
+	_saveRight = right;
 	_saveBottom = bottom;
 
 	_background->blit(dest, _saveLeft, _saveTop, _saveRight, _saveBottom, 0, 0);
@@ -85,9 +87,9 @@ bool BackBuffer::restoreScreen(Surface &dest, int16 &left, int16 &top, int16 &ri
 	if (!_saved)
 		return false;
 
-	left   = _saveLeft;
-	top    = _saveTop;
-	right  = _saveRight;
+	left = _saveLeft;
+	top = _saveTop;
+	right = _saveRight;
 	bottom = _saveBottom;
 
 	dest.blit(*_background, 0, 0, right - left, bottom - top, left, top);

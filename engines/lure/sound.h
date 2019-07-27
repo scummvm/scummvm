@@ -23,13 +23,13 @@
 #ifndef LURE_SOUND_H
 #define LURE_SOUND_H
 
-#include "lure/luredefs.h"
 #include "lure/disk.h"
+#include "lure/luredefs.h"
 #include "lure/memory.h"
 
 #include "common/mutex.h"
-#include "common/singleton.h"
 #include "common/ptr.h"
+#include "common/singleton.h"
 
 #include "audio/mididrv.h"
 
@@ -45,7 +45,7 @@ struct ChannelEntry {
 	uint8 volume;
 };
 
-class MidiMusic: public MidiDriver_BASE {
+class MidiMusic : public MidiDriver_BASE {
 private:
 	uint8 _soundNumber;
 	uint8 _channelNumber;
@@ -67,7 +67,7 @@ private:
 
 public:
 	MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
-		 uint8 channelNum, uint8 soundNum, bool isMus, uint8 numChannels, void *soundData, uint32 size);
+	          uint8 channelNum, uint8 soundNum, bool isMus, uint8 numChannels, void *soundData, uint32 size);
 	~MidiMusic();
 	void setVolume(int volume);
 	int getVolume() const { return _volume; }
@@ -99,12 +99,12 @@ private:
 	MemoryBlock *_soundData;
 	uint8 _soundsTotal;
 	int _numDescs;
-	SoundDescResource *soundDescs() { return (SoundDescResource *) _descs->data(); }
+	SoundDescResource *soundDescs() { return (SoundDescResource *)_descs->data(); }
 	MidiDriver *_driver;
-	typedef Common::List<Common::SharedPtr<SoundDescResource> > SoundList;
+	typedef Common::List<Common::SharedPtr<SoundDescResource>> SoundList;
 	typedef SoundList::iterator SoundListIterator;
 	SoundList _activeSounds;
-	typedef Common::List<Common::SharedPtr<MidiMusic> > MusicList;
+	typedef Common::List<Common::SharedPtr<MidiMusic>> MusicList;
 	typedef MusicList::iterator MusicListIterator;
 	MusicList _playingSounds;
 	ChannelEntry _channelsInner[NUM_CHANNELS];

@@ -25,18 +25,17 @@
 
 namespace Glk {
 namespace TADS {
-namespace TADS2 {
+	namespace TADS2 {
 
-void lstadv(uchar **lstp, uint *sizp)
-{
-	uint siz;
+		void lstadv(uchar **lstp, uint *sizp) {
+			uint siz;
 
-	siz = datsiz(**lstp, (*lstp) + 1) + 1;
-	assert(siz <= *sizp);
-	*lstp += siz;
-	*sizp -= siz;
-}
+			siz = datsiz(**lstp, (*lstp) + 1) + 1;
+			assert(siz <= *sizp);
+			*lstp += siz;
+			*sizp -= siz;
+		}
 
-} // End of namespace TADS2
+	} // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk

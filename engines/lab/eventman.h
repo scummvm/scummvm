@@ -57,7 +57,7 @@ private:
 	Common::KeyState _keyPressed;
 
 public:
-	EventManager (LabEngine *vm);
+	EventManager(LabEngine *vm);
 
 	IntuiMessage *getMsg();
 

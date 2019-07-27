@@ -20,6 +20,6 @@
 #include "disc_io.h"
 
 // export interface
-extern LPIO_INTERFACE MMCF_GetInterface(void) ;
+extern LPIO_INTERFACE MMCF_GetInterface(void);
 
-#endif	// define IO_MMCF_H
+#endif // define IO_MMCF_H

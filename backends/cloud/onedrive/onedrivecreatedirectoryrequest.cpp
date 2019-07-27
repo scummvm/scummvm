@@ -33,118 +33,122 @@ namespace OneDrive {
 
 #define ONEDRIVE_API_SPECIAL_APPROOT "https://api.onedrive.com/v1.0/drive/special/approot"
 
-OneDriveCreateDirectoryRequest::OneDriveCreateDirectoryRequest(OneDriveStorage *storage, Common::String path, Storage::BoolCallback cb, Networking::ErrorCallback ecb):
-	Networking::Request(nullptr, ecb), _storage(storage), _path(path), _boolCallback(cb),
-	_workingRequest(nullptr), _ignoreCallback(false) {
-	start();
-}
+	OneDriveCreateDirectoryRequest::OneDriveCreateDirectoryRequest(OneDriveStorage *storage, Common::String path, Storage::BoolCallback cb, Networking::ErrorCallback ecb)
+	  : Networking::Request(nullptr, ecb)
+	  , _storage(storage)
+	  , _path(path)
+	  , _boolCallback(cb)
+	  , _workingRequest(nullptr)
+	  , _ignoreCallback(false) {
+		start();
+	}
 
-OneDriveCreateDirectoryRequest::~OneDriveCreateDirectoryRequest() {
-	_ignoreCallback = true;
-	if (_workingRequest)
-		_workingRequest->finish();
-	delete _boolCallback;
-}
+	OneDriveCreateDirectoryRequest::~OneDriveCreateDirectoryRequest() {
+		_ignoreCallback = true;
+		if (_workingRequest)
+			_workingRequest->finish();
+		delete _boolCallback;
+	}
 
-void OneDriveCreateDirectoryRequest::start() {
-	_ignoreCallback = true;
-	if (_workingRequest)
-		_workingRequest->finish();
-	_ignoreCallback = false;
+	void OneDriveCreateDirectoryRequest::start() {
+		_ignoreCallback = true;
+		if (_workingRequest)
+			_workingRequest->finish();
+		_ignoreCallback = false;
 
-	Common::String name = _path, parent = _path;
-	if (name.size() != 0) {
-		uint32 i = name.size() - 1;
-		while (true) {
-			parent.deleteLastChar();
-			if (name[i] == '/' || name[i] == '\\') {
-				name.erase(0, i + 1);
-				break;
+		Common::String name = _path, parent = _path;
+		if (name.size() != 0) {
+			uint32 i = name.size() - 1;
+			while (true) {
+				parent.deleteLastChar();
+				if (name[i] == '/' || name[i] == '\\') {
+					name.erase(0, i + 1);
+					break;
+				}
+				if (i == 0)
+					break;
+				--i;
 			}
-			if (i == 0)
-				break;
-			--i;
 		}
+
+		Common::String url = ONEDRIVE_API_SPECIAL_APPROOT;
+		if (parent != "")
+			url += ":/" + ConnMan.urlEncode(parent) + ":";
+		url += "/children";
+		Networking::JsonCallback innerCallback = new Common::Callback<OneDriveCreateDirectoryRequest, Networking::JsonResponse>(this, &OneDriveCreateDirectoryRequest::responseCallback);
+		Networking::ErrorCallback errorResponseCallback = new Common::Callback<OneDriveCreateDirectoryRequest, Networking::ErrorResponse>(this, &OneDriveCreateDirectoryRequest::errorCallback);
+		Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(_storage, innerCallback, errorResponseCallback, url.c_str());
+		request->addHeader("Authorization: Bearer " + _storage->accessToken());
+		request->addHeader("Content-Type: application/json");
+
+		Common::JSONObject jsonRequestParameters;
+		jsonRequestParameters.setVal("name", new Common::JSONValue(name));
+		jsonRequestParameters.setVal("folder", new Common::JSONValue(Common::JSONObject()));
+		Common::JSONValue value(jsonRequestParameters);
+		request->addPostField(Common::JSON::stringify(&value));
+
+		_workingRequest = ConnMan.addRequest(request);
 	}
 
-	Common::String url = ONEDRIVE_API_SPECIAL_APPROOT;
-	if (parent != "")
-		url += ":/" + ConnMan.urlEncode(parent) + ":";
-	url += "/children";
-	Networking::JsonCallback innerCallback = new Common::Callback<OneDriveCreateDirectoryRequest, Networking::JsonResponse>(this, &OneDriveCreateDirectoryRequest::responseCallback);
-	Networking::ErrorCallback errorResponseCallback = new Common::Callback<OneDriveCreateDirectoryRequest, Networking::ErrorResponse>(this, &OneDriveCreateDirectoryRequest::errorCallback);
-	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(_storage, innerCallback, errorResponseCallback, url.c_str());
-	request->addHeader("Authorization: Bearer " + _storage->accessToken());
-	request->addHeader("Content-Type: application/json");
+	void OneDriveCreateDirectoryRequest::responseCallback(Networking::JsonResponse response) {
+		Common::JSONValue *json = response.value;
+		_workingRequest = nullptr;
+		if (_ignoreCallback) {
+			delete json;
+			return;
+		}
+		if (response.request)
+			_date = response.request->date();
 
-	Common::JSONObject jsonRequestParameters;
-	jsonRequestParameters.setVal("name", new Common::JSONValue(name));
-	jsonRequestParameters.setVal("folder", new Common::JSONValue(Common::JSONObject()));
-	Common::JSONValue value(jsonRequestParameters);
-	request->addPostField(Common::JSON::stringify(&value));
+		Networking::ErrorResponse error(this);
+		Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
+		if (rq && rq->getNetworkReadStream())
+			error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 
-	_workingRequest = ConnMan.addRequest(request);
-}
+		if (json == nullptr) {
+			error.response = "Failed to parse JSON, null passed!";
+			finishError(error);
+			return;
+		}
 
-void OneDriveCreateDirectoryRequest::responseCallback(Networking::JsonResponse response) {
-	Common::JSONValue *json = response.value;
-	_workingRequest = nullptr;
-	if (_ignoreCallback) {
+		if (!json->isObject()) {
+			error.response = "Passed JSON is not an object!";
+			finishError(error);
+			delete json;
+			return;
+		}
+
+		Common::JSONObject info = json->asObject();
+		if (info.contains("id")) {
+			finishCreation(true);
+		} else {
+			error.response = json->stringify(true);
+			finishError(error);
+		}
+
 		delete json;
-		return;
-	}
-	if (response.request)
-		_date = response.request->date();
-
-	Networking::ErrorResponse error(this);
-	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
-	if (rq && rq->getNetworkReadStream())
-		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
-
-	if (json == nullptr) {
-		error.response = "Failed to parse JSON, null passed!";
-		finishError(error);
-		return;
 	}
 
-	if (!json->isObject()) {
-		error.response = "Passed JSON is not an object!";
-		finishError(error);
-		delete json;
-		return;
-	}
-
-	Common::JSONObject info = json->asObject();
-	if (info.contains("id")) {
-		finishCreation(true);
-	} else {
-		error.response = json->stringify(true);
+	void OneDriveCreateDirectoryRequest::errorCallback(Networking::ErrorResponse error) {
+		_workingRequest = nullptr;
+		if (_ignoreCallback)
+			return;
+		if (error.request)
+			_date = error.request->date();
 		finishError(error);
 	}
 
-	delete json;
-}
+	void OneDriveCreateDirectoryRequest::handle() {}
 
-void OneDriveCreateDirectoryRequest::errorCallback(Networking::ErrorResponse error) {
-	_workingRequest = nullptr;
-	if (_ignoreCallback)
-		return;
-	if (error.request)
-		_date = error.request->date();
-	finishError(error);
-}
+	void OneDriveCreateDirectoryRequest::restart() { start(); }
 
-void OneDriveCreateDirectoryRequest::handle() {}
+	Common::String OneDriveCreateDirectoryRequest::date() const { return _date; }
 
-void OneDriveCreateDirectoryRequest::restart() { start(); }
-
-Common::String OneDriveCreateDirectoryRequest::date() const { return _date; }
-
-void OneDriveCreateDirectoryRequest::finishCreation(bool success) {
-	Request::finishSuccess();
-	if (_boolCallback)
-		(*_boolCallback)(Storage::BoolResponse(this, success));
-}
+	void OneDriveCreateDirectoryRequest::finishCreation(bool success) {
+		Request::finishSuccess();
+		if (_boolCallback)
+			(*_boolCallback)(Storage::BoolResponse(this, success));
+	}
 
 } // End of namespace OneDrive
 } // End of namespace Cloud

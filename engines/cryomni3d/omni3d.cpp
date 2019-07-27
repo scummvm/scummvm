@@ -34,7 +34,7 @@ void Omni3DManager::init(double hfov) {
 
 	double oppositeSide = tan(hfov / 2.) / (4. / 3.);
 	double vf = atan2(oppositeSide, 1.);
-	_vfov = (M_PI_2 - vf - (13. / 180.*M_PI)) * 10. / 9.;
+	_vfov = (M_PI_2 - vf - (13. / 180. * M_PI)) * 10. / 9.;
 
 	double warpVfov = 155. / 180. * M_PI;
 	double hypV = 768. / 2. / sin(warpVfov / 2.);
@@ -129,10 +129,10 @@ void Omni3DManager::updateImageCoords() {
 		return;
 	}
 
-	if (_alpha >= 2.*M_PI) {
-		_alpha -= 2.*M_PI;
+	if (_alpha >= 2. * M_PI) {
+		_alpha -= 2. * M_PI;
 	} else if (_alpha < 0) {
-		_alpha += 2.*M_PI;
+		_alpha += 2. * M_PI;
 	}
 	if (_beta > 0.9 * _vfov) {
 		_beta = 0.9 * _vfov;
@@ -158,8 +158,8 @@ void Omni3DManager::updateImageCoords() {
 			k += 2;
 			_imageCoords[k + 0] = (int)(tmp + v17);
 			_imageCoords[k + offset + 0] = (int)(tmp - v17);
-			_imageCoords[k + 1] = (int) v18;
-			_imageCoords[k + offset + 1] = (int) v18;
+			_imageCoords[k + 1] = (int)v18;
+			_imageCoords[k + offset + 1] = (int)v18;
 
 			offset -= 4;
 		}
@@ -167,8 +167,8 @@ void Omni3DManager::updateImageCoords() {
 		double v19 = atan2(_oppositeV[j], v25);
 
 		k += 2;
-		_imageCoords[k + 0] = (int)((2048.*65536.) - (_alpha - v19) * _helperValue);
-		_imageCoords[k + 1] = (int)((384.*65536.) - _squaresCoords[i][j] * v26);
+		_imageCoords[k + 0] = (int)((2048. * 65536.) - (_alpha - v19) * _helperValue);
+		_imageCoords[k + 1] = (int)((384. * 65536.) - _squaresCoords[i][j] * v26);
 
 		k += 40;
 	}
@@ -193,8 +193,8 @@ const Graphics::Surface *Omni3DManager::getSurface() {
 
 		for (uint i = 0; i < 30; i++) {
 			for (uint j = 0; j < 40; j++) {
-				int x1  = (_imageCoords[off + 2] - _imageCoords[off + 0]) >> 4;
-				int y1  = (_imageCoords[off + 3] - _imageCoords[off + 1]) >> 4;
+				int x1 = (_imageCoords[off + 2] - _imageCoords[off + 0]) >> 4;
+				int y1 = (_imageCoords[off + 3] - _imageCoords[off + 1]) >> 4;
 				int x1_ = (_imageCoords[off + 82 + 2] - _imageCoords[off + 82 + 0]) >> 4;
 				int y1_ = (_imageCoords[off + 82 + 3] - _imageCoords[off + 82 + 1]) >> 4;
 
@@ -203,8 +203,8 @@ const Graphics::Surface *Omni3DManager::getSurface() {
 
 				y1 >>= 5;
 
-				int dx2  = (_imageCoords[off + 82 + 0] - _imageCoords[off + 0]) >> 4;
-				int dy2  = (_imageCoords[off + 82 + 1] - _imageCoords[off + 1]) >> 9;
+				int dx2 = (_imageCoords[off + 82 + 0] - _imageCoords[off + 0]) >> 4;
+				int dy2 = (_imageCoords[off + 82 + 1] - _imageCoords[off + 1]) >> 9;
 				int x2 = (((_imageCoords[off + 0] >> 0) * 2) + dx2) >> 1;
 				int y2 = (((_imageCoords[off + 1] >> 5) * 2) + dy2) >> 1;
 
@@ -259,15 +259,10 @@ Common::Point Omni3DManager::mapMouseCoords(const Common::Point &mouse) {
 
 	uint off = 82 * squareY + 2 * squareX;
 
-	pt.x = ((_imageCoords[off + 2] +
-	         smallY * ((_imageCoords[off + 84] - _imageCoords[off + 2]) >> 4) +
-	         (smallX * smallY) * ((_imageCoords[off + 86] - _imageCoords[off + 84]) >> 8) +
-	         (smallX * (16 - smallY)) * ((_imageCoords[off + 4] - _imageCoords[off + 2]) >> 8))
-	        & 0x07ff0000) >> 16;
-	pt.y = (_imageCoords[off + 3] +
-	        smallY * ((_imageCoords[off + 85] - _imageCoords[off + 3]) >> 4) +
-	        (smallX * smallY) * ((_imageCoords[off + 87] - _imageCoords[off + 85]) >> 8) +
-	        (smallX * (16 - smallY)) * ((_imageCoords[off + 5] - _imageCoords[off + 3]) >> 8)) >> 16;
+	pt.x = ((_imageCoords[off + 2] + smallY * ((_imageCoords[off + 84] - _imageCoords[off + 2]) >> 4) + (smallX * smallY) * ((_imageCoords[off + 86] - _imageCoords[off + 84]) >> 8) + (smallX * (16 - smallY)) * ((_imageCoords[off + 4] - _imageCoords[off + 2]) >> 8))
+	        & 0x07ff0000)
+	  >> 16;
+	pt.y = (_imageCoords[off + 3] + smallY * ((_imageCoords[off + 85] - _imageCoords[off + 3]) >> 4) + (smallX * smallY) * ((_imageCoords[off + 87] - _imageCoords[off + 85]) >> 8) + (smallX * (16 - smallY)) * ((_imageCoords[off + 5] - _imageCoords[off + 3]) >> 8)) >> 16;
 
 	return pt;
 }

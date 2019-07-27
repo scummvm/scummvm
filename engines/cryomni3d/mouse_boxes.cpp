@@ -75,9 +75,7 @@ Common::Point MouseBoxes::getBoxOrigin(int box_id) const {
 bool MouseBoxes::hitTest(int box_id, const Common::Point &pt) {
 	const MouseBox &box = _boxes[box_id];
 
-	return (box.left != -1) &&
-	       (pt.x > box.left && pt.x < box.right &&
-	        pt.y > box.top && pt.y < box.bottom);
+	return (box.left != -1) && (pt.x > box.left && pt.x < box.right && pt.y > box.top && pt.y < box.bottom);
 }
 
 void MouseBoxes::display(int box_id, const FontManager &font_manager) {

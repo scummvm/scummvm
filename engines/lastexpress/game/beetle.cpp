@@ -32,7 +32,9 @@
 
 namespace LastExpress {
 
-Beetle::Beetle(LastExpressEngine *engine) : _engine(engine), _data(NULL) {}
+Beetle::Beetle(LastExpressEngine *engine)
+  : _engine(engine)
+  , _data(NULL) {}
 
 Beetle::~Beetle() {
 	SAFE_DELETE(_data);
@@ -43,7 +45,7 @@ Beetle::~Beetle() {
 
 void Beetle::load() {
 	// Only load in chapter 2 & 3
-	if (getProgress().chapter != kChapter2 &&  getProgress().chapter != kChapter3)
+	if (getProgress().chapter != kChapter2 && getProgress().chapter != kChapter3)
 		return;
 
 	// Already loaded
@@ -59,32 +61,32 @@ void Beetle::load() {
 	_data = new BeetleData();
 
 	// Load sequences
-	_data->sequences.push_back(loadSequence("BW000.seq"));        // 0
+	_data->sequences.push_back(loadSequence("BW000.seq")); // 0
 	_data->sequences.push_back(loadSequence("BT000045.seq"));
 	_data->sequences.push_back(loadSequence("BT045000.seq"));
 	_data->sequences.push_back(loadSequence("BW045.seq"));
 	_data->sequences.push_back(loadSequence("BT045090.seq"));
-	_data->sequences.push_back(loadSequence("BT090045.seq"));     // 5
+	_data->sequences.push_back(loadSequence("BT090045.seq")); // 5
 	_data->sequences.push_back(loadSequence("BW090.seq"));
 	_data->sequences.push_back(loadSequence("BT090135.seq"));
 	_data->sequences.push_back(loadSequence("BT135090.seq"));
 	_data->sequences.push_back(loadSequence("BW135.seq"));
-	_data->sequences.push_back(loadSequence("BT135180.seq"));     // 10
+	_data->sequences.push_back(loadSequence("BT135180.seq")); // 10
 	_data->sequences.push_back(loadSequence("BT180135.seq"));
 	_data->sequences.push_back(loadSequence("BW180.seq"));
 	_data->sequences.push_back(loadSequence("BT180225.seq"));
 	_data->sequences.push_back(loadSequence("BT225180.seq"));
-	_data->sequences.push_back(loadSequence("BW225.seq"));        // 15
+	_data->sequences.push_back(loadSequence("BW225.seq")); // 15
 	_data->sequences.push_back(loadSequence("BT225270.seq"));
 	_data->sequences.push_back(loadSequence("BT270225.seq"));
 	_data->sequences.push_back(loadSequence("BW270.seq"));
 	_data->sequences.push_back(loadSequence("BT270315.seq"));
-	_data->sequences.push_back(loadSequence("BT315270.seq"));     // 20
+	_data->sequences.push_back(loadSequence("BT315270.seq")); // 20
 	_data->sequences.push_back(loadSequence("BW315.seq"));
 	_data->sequences.push_back(loadSequence("BT315000.seq"));
 	_data->sequences.push_back(loadSequence("BT000315.seq"));
 	_data->sequences.push_back(loadSequence("BA135.seq"));
-	_data->sequences.push_back(loadSequence("BL045.seq"));        // 25
+	_data->sequences.push_back(loadSequence("BL045.seq")); // 25
 	_data->sequences.push_back(loadSequence("BL000.seq"));
 	_data->sequences.push_back(loadSequence("BL315.seq"));
 	_data->sequences.push_back(loadSequence("BL180.seq"));
@@ -133,9 +135,9 @@ bool Beetle::catchBeetle() {
 		error("[Beetle::catchBeetle] Sequences have not been loaded");
 
 	if (getInventory()->getSelectedItem() == kItemMatchBox
-	 && getInventory()->hasItem(kItemMatch)
-	 && ABS((int16)(getCoords().x - _data->coordX)) < 10
-	 && ABS((int16)(getCoords().y - _data->coordY)) < 10) {
+	    && getInventory()->hasItem(kItemMatch)
+	    && ABS((int16)(getCoords().x - _data->coordX)) < 10
+	    && ABS((int16)(getCoords().y - _data->coordY)) < 10) {
 		return true;
 	}
 
@@ -171,8 +173,8 @@ void Beetle::update() {
 
 	if (getInventory()->get(kItemBeetle)->location == kObjectLocation3) {
 		if ((!_data->field_DD && rnd(10) < 1)
-		  || (_data->field_DD && rnd(30) < 1)
-		  || rnd(100) < 1) {
+		    || (_data->field_DD && rnd(30) < 1)
+		    || rnd(100) < 1) {
 
 			_data->field_DD++;
 			if (_data->field_DD > 3)
@@ -392,7 +394,7 @@ void Beetle::move() {
 	if (deltaX >= 0) {
 		if (deltaY > 0) {
 			if (100 * deltaY - 241 * deltaX <= 0) {
-				if (100 * deltaY  - 41 * deltaX <= 0)
+				if (100 * deltaY - 41 * deltaX <= 0)
 					index = 18;
 				else
 					index = 15;
@@ -441,7 +443,7 @@ update_data:
 		return;
 	}
 
-	_data->coordOffset = _data->coordOffset + (int16)(4 * rnd(100)/100 + _data->field_D9);
+	_data->coordOffset = _data->coordOffset + (int16)(4 * rnd(100) / 100 + _data->field_D9);
 	_data->field_D5 = 0;
 }
 

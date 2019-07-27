@@ -46,14 +46,14 @@
  */
 
 #include "common/file.h"
-#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macmenu.h"
+#include "graphics/macgui/macwindowmanager.h"
 
-#include "wage/wage.h"
 #include "wage/entities.h"
 #include "wage/script.h"
 #include "wage/sound.h"
+#include "wage/wage.h"
 #include "wage/world.h"
 
 namespace Wage {
@@ -105,7 +105,6 @@ World::~World() {
 	delete _saveBeforeQuitMessage;
 	delete _saveBeforeCloseMessage;
 	delete _revertMessage;
-
 }
 
 bool World::loadWorld(Common::MacResManager *resMan) {
@@ -127,17 +126,17 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	delete res;
 #endif
 
-	if ((resArray = resMan->getResIDArray(MKTAG('G','C','O','D'))).size() == 0)
+	if ((resArray = resMan->getResIDArray(MKTAG('G', 'C', 'O', 'D'))).size() == 0)
 		return false;
 
 	// Load global script
-	res = resMan->getResource(MKTAG('G','C','O','D'), resArray[0]);
+	res = resMan->getResource(MKTAG('G', 'C', 'O', 'D'), resArray[0]);
 	_globalScript = new Script(res, -1, _engine);
 
 	// TODO: read creator
 
 	// Load main configuration
-	if ((resArray = resMan->getResIDArray(MKTAG('V','E','R','S'))).size() == 0)
+	if ((resArray = resMan->getResIDArray(MKTAG('V', 'E', 'R', 'S'))).size() == 0)
 		return false;
 
 	_name = resMan->getBaseFileName();
@@ -148,7 +147,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	if (!resArray.empty()) {
 		debug(3, "Loading version info");
 
-		res = resMan->getResource(MKTAG('V','E','R','S'), resArray[0]);
+		res = resMan->getResource(MKTAG('V', 'E', 'R', 'S'), resArray[0]);
 
 		_signature = res->readSint32LE();
 		res->skip(6);
@@ -200,18 +199,18 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	}
 
 	// Load scenes
-	resArray = resMan->getResIDArray(MKTAG('A','S','C','N'));
+	resArray = resMan->getResIDArray(MKTAG('A', 'S', 'C', 'N'));
 	debug(3, "Loading %d scenes", resArray.size());
 
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
-		res = resMan->getResource(MKTAG('A','S','C','N'), *iter);
-		Scene *scene = new Scene(resMan->getResName(MKTAG('A','S','C','N'), *iter), res);
+		res = resMan->getResource(MKTAG('A', 'S', 'C', 'N'), *iter);
+		Scene *scene = new Scene(resMan->getResName(MKTAG('A', 'S', 'C', 'N'), *iter), res);
 
-		res = resMan->getResource(MKTAG('A','C','O','D'), *iter);
+		res = resMan->getResource(MKTAG('A', 'C', 'O', 'D'), *iter);
 		if (res != NULL)
 			scene->_script = new Script(res, *iter, _engine);
 
-		res = resMan->getResource(MKTAG('A','T','X','T'), *iter);
+		res = resMan->getResource(MKTAG('A', 'T', 'X', 'T'), *iter);
 		if (res != NULL) {
 			scene->_textBounds = readRect(res);
 			int fontType = res->readUint16BE();
@@ -235,21 +234,21 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	}
 
 	// Load Objects
-	resArray = resMan->getResIDArray(MKTAG('A','O','B','J'));
+	resArray = resMan->getResIDArray(MKTAG('A', 'O', 'B', 'J'));
 	debug(3, "Loading %d objects", resArray.size());
 
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
-		res = resMan->getResource(MKTAG('A','O','B','J'), *iter);
-		addObj(new Obj(resMan->getResName(MKTAG('A','O','B','J'), *iter), res, *iter));
+		res = resMan->getResource(MKTAG('A', 'O', 'B', 'J'), *iter);
+		addObj(new Obj(resMan->getResName(MKTAG('A', 'O', 'B', 'J'), *iter), res, *iter));
 	}
 
 	// Load Characters
-	resArray = resMan->getResIDArray(MKTAG('A','C','H','R'));
+	resArray = resMan->getResIDArray(MKTAG('A', 'C', 'H', 'R'));
 	debug(3, "Loading %d characters", resArray.size());
 
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
-		res = resMan->getResource(MKTAG('A','C','H','R'), *iter);
-		Chr *chr = new Chr(resMan->getResName(MKTAG('A','C','H','R'), *iter), res);
+		res = resMan->getResource(MKTAG('A', 'C', 'H', 'R'), *iter);
+		Chr *chr = new Chr(resMan->getResName(MKTAG('A', 'C', 'H', 'R'), *iter), res);
 		chr->_resourceId = *iter;
 		addChr(chr);
 
@@ -270,14 +269,13 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		_player = _orderedChrs[0];
 	}
 
-
 	// Load Sounds
-	resArray = resMan->getResIDArray(MKTAG('A','S','N','D'));
+	resArray = resMan->getResIDArray(MKTAG('A', 'S', 'N', 'D'));
 	debug(3, "Loading %d sounds", resArray.size());
 
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
-		res = resMan->getResource(MKTAG('A','S','N','D'), *iter);
-		addSound(new Sound(resMan->getResName(MKTAG('A','S','N','D'), *iter), res));
+		res = resMan->getResource(MKTAG('A', 'S', 'N', 'D'), *iter);
+		addSound(new Sound(resMan->getResName(MKTAG('A', 'S', 'N', 'D'), *iter), res));
 	}
 
 	if (!_soundLibrary1.empty()) {
@@ -288,7 +286,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	}
 
 	// Load Patterns
-	res = resMan->getResource(MKTAG('P','A','T','#'), 900);
+	res = resMan->getResource(MKTAG('P', 'A', 'T', '#'), 900);
 	if (res != NULL) {
 		int count = res->readUint16BE();
 		debug(3, "Loading %d patterns", count);
@@ -303,7 +301,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		delete res;
 	} else {
 		/* Enchanted Scepters did not use the PAT# resource for the textures. */
-		res = resMan->getResource(MKTAG('C','O','D','E'), 1);
+		res = resMan->getResource(MKTAG('C', 'O', 'D', 'E'), 1);
 		if (res != NULL) {
 			res->skip(0x55ac);
 			for (int i = 0; i < 29; i++) {
@@ -316,7 +314,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		delete res;
 	}
 
-	res = resMan->getResource(MKTAG('M','E','N','U'), 2001);
+	res = resMan->getResource(MKTAG('M', 'E', 'N', 'U'), 2001);
 	if (res != NULL) {
 		Common::StringArray *menu = Graphics::MacMenu::readMenuFromResource(res);
 		_aboutMenuItemName.clear();
@@ -328,7 +326,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		delete menu;
 		delete res;
 	}
-	res = resMan->getResource(MKTAG('M','E','N','U'), 2004);
+	res = resMan->getResource(MKTAG('M', 'E', 'N', 'U'), 2004);
 	if (res != NULL) {
 		Common::StringArray *menu = Graphics::MacMenu::readMenuFromResource(res);
 		_commandsMenuName = menu->operator[](0);
@@ -336,7 +334,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		delete menu;
 		delete res;
 	}
-	res = resMan->getResource(MKTAG('M','E','N','U'), 2005);
+	res = resMan->getResource(MKTAG('M', 'E', 'N', 'U'), 2005);
 	if (res != NULL) {
 		Common::StringArray *menu = Graphics::MacMenu::readMenuFromResource(res);
 		_weaponsMenuName = menu->operator[](0);
@@ -375,15 +373,15 @@ void World::loadExternalSounds(Common::String fname) {
 	Common::SeekableReadStream *res;
 	Common::MacResIDArray::const_iterator iter;
 
-	resArray = resMan.getResIDArray(MKTAG('A','S','N','D'));
+	resArray = resMan.getResIDArray(MKTAG('A', 'S', 'N', 'D'));
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
-		res = resMan.getResource(MKTAG('A','S','N','D'), *iter);
-		addSound(new Sound(resMan.getResName(MKTAG('A','S','N','D'), *iter), res));
+		res = resMan.getResource(MKTAG('A', 'S', 'N', 'D'), *iter);
+		addSound(new Sound(resMan.getResName(MKTAG('A', 'S', 'N', 'D'), *iter), res));
 	}
 }
 
 Common::String *World::loadStringFromDITL(Common::MacResManager *resMan, int resourceId, int itemIndex) {
-	Common::SeekableReadStream *res = resMan->getResource(MKTAG('D','I','T','L'), resourceId);
+	Common::SeekableReadStream *res = resMan->getResource(MKTAG('D', 'I', 'T', 'L'), resourceId);
 	if (res) {
 		int itemCount = res->readSint16BE();
 		for (int i = 0; i <= itemCount; i++) {

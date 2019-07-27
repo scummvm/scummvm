@@ -26,26 +26,27 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_sub_frame.h"
 #include "engines/wintermute/base/base_active_rect.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
-#include "engines/wintermute/base/gfx/base_surface.h"
-#include "engines/wintermute/base/base_surface_storage.h"
-#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_parser.h"
+#include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
-#include "graphics/transform_tools.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 #include "graphics/transform_struct.h"
+#include "graphics/transform_tools.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseSubFrame, false)
 
 //////////////////////////////////////////////////////////////////////////
-BaseSubFrame::BaseSubFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
+BaseSubFrame::BaseSubFrame(BaseGame *inGame)
+  : BaseScriptable(inGame, true) {
 	_surface = nullptr;
 	_hotspotX = Graphics::kDefaultHotspotX;
 	_hotspotY = Graphics::kDefaultHotspotY;
@@ -69,7 +70,6 @@ BaseSubFrame::BaseSubFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
 	_mirrorX = _mirrorY = false;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 BaseSubFrame::~BaseSubFrame() {
 	if (_surface) {
@@ -78,7 +78,6 @@ BaseSubFrame::~BaseSubFrame() {
 	delete[] _surfaceFilename;
 	_surfaceFilename = nullptr;
 }
-
 
 TOKEN_DEF_START
 TOKEN_DEF(IMAGE)
@@ -229,7 +228,7 @@ void BaseSubFrame::setRect(Rect32 rect) {
 	_rect = rect;
 }
 
-const char* BaseSubFrame::getSurfaceFilename() {
+const char *BaseSubFrame::getSurfaceFilename() {
 	return _surfaceFilename;
 }
 
@@ -247,9 +246,9 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 
 	if (registerOwner != nullptr && !_decoration) {
 		if (zoomX == Graphics::kDefaultZoomX && zoomY == Graphics::kDefaultZoomY) {
-			BaseEngine::getRenderer()->addRectToList(new BaseActiveRect(_gameRef,  registerOwner, this, x - _hotspotX + getRect().left, y  - _hotspotY + getRect().top, getRect().right - getRect().left, getRect().bottom - getRect().top, zoomX, zoomY, precise));
+			BaseEngine::getRenderer()->addRectToList(new BaseActiveRect(_gameRef, registerOwner, this, x - _hotspotX + getRect().left, y - _hotspotY + getRect().top, getRect().right - getRect().left, getRect().bottom - getRect().top, zoomX, zoomY, precise));
 		} else {
-			BaseEngine::getRenderer()->addRectToList(new BaseActiveRect(_gameRef,  registerOwner, this, (int)(x - (_hotspotX + getRect().left) * (zoomX / 100)), (int)(y - (_hotspotY + getRect().top) * (zoomY / 100)), (int)((getRect().right - getRect().left) * (zoomX / 100)), (int)((getRect().bottom - getRect().top) * (zoomY / 100)), zoomX, zoomY, precise));
+			BaseEngine::getRenderer()->addRectToList(new BaseActiveRect(_gameRef, registerOwner, this, (int)(x - (_hotspotX + getRect().left) * (zoomX / 100)), (int)(y - (_hotspotY + getRect().top) * (zoomY / 100)), (int)((getRect().right - getRect().left) * (zoomX / 100)), (int)((getRect().bottom - getRect().top) * (zoomY / 100)), zoomX, zoomY, precise));
 		}
 	}
 	if (_gameRef->getSuspendedRendering()) {
@@ -285,7 +284,6 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 	return res;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float scaleY) {
 	if (!rect) {
@@ -296,12 +294,11 @@ bool BaseSubFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, flo
 	float ratioY = scaleY / 100.0f;
 
 	rect->setRect((int)(x - _hotspotX * ratioX),
-				  (int)(y - _hotspotY * ratioY),
-				  (int)(x - _hotspotX * ratioX + (getRect().right - getRect().left) * ratioX),
-				  (int)(y - _hotspotY * ratioY + (getRect().bottom - getRect().top) * ratioY));
+	              (int)(y - _hotspotY * ratioY),
+	              (int)(x - _hotspotX * ratioX + (getRect().right - getRect().left) * ratioX),
+	              (int)(y - _hotspotY * ratioY + (getRect().bottom - getRect().top) * ratioY));
 	return true;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::saveAsText(BaseDynamicBuffer *buffer, int indent, bool complete) {
@@ -361,14 +358,12 @@ bool BaseSubFrame::saveAsText(BaseDynamicBuffer *buffer, int indent, bool comple
 
 	BaseClass::saveAsText(buffer, indent + 2);
 
-
 	if (complete) {
 		buffer->putTextIndent(indent, "}\n\n");
 	}
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseSubFrame::setDefaultRect() {
@@ -379,7 +374,6 @@ void BaseSubFrame::setDefaultRect() {
 		_rect.setEmpty();
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::persist(BasePersistenceManager *persistMgr) {
@@ -410,7 +404,6 @@ bool BaseSubFrame::persist(BasePersistenceManager *persistMgr) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
@@ -460,7 +453,6 @@ bool BaseSubFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 		return BaseScriptable::scCallMethod(script, stack, thisStack, name);
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 ScValue *BaseSubFrame::scGetProperty(const Common::String &name) {
@@ -553,7 +545,6 @@ ScValue *BaseSubFrame::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
@@ -623,12 +614,10 @@ bool BaseSubFrame::scSetProperty(const char *name, ScValue *value) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 const char *BaseSubFrame::scToString() {
 	return "[subframe]";
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::setSurface(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
@@ -657,7 +646,6 @@ bool BaseSubFrame::setSurface(const Common::String &filename, bool defaultCK, by
 		return STATUS_FAILED;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::setSurfaceSimple() {

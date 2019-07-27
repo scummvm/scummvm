@@ -47,7 +47,6 @@ bool PlayAnimationCommandParser::parse(const Common::String &line, ScriptParseCo
 	return true;
 }
 
-
 Command::ExecuteResult PlayAnimationCommand::execute(ScriptExecutionContext &scriptExecCtx) {
 	scriptExecCtx.getGame().getRoom().drawFrames(_fromFrame - 1, _toFrame - 1);
 
@@ -55,7 +54,7 @@ Command::ExecuteResult PlayAnimationCommand::execute(ScriptExecutionContext &scr
 }
 
 Common::String PlayAnimationCommand::debugString() const {
-	return Common::String::format("PLAYROOMANIM %u %u", (unsigned int) _fromFrame, (unsigned int) _toFrame);
+	return Common::String::format("PLAYROOMANIM %u %u", (unsigned int)_fromFrame, (unsigned int)_toFrame);
 }
 
 }

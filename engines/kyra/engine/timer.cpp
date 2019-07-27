@@ -27,34 +27,37 @@
 namespace Kyra {
 
 namespace {
-struct TimerResync : public Common::UnaryFunction<TimerEntry&, void> {
-	uint32 _tickLength, _curTime;
-	TimerResync(KyraEngine_v1 *vm, uint32 curTime) : _tickLength(vm->tickLength()), _curTime(curTime) {}
+	struct TimerResync : public Common::UnaryFunction<TimerEntry &, void> {
+		uint32 _tickLength, _curTime;
+		TimerResync(KyraEngine_v1 *vm, uint32 curTime)
+		  : _tickLength(vm->tickLength())
+		  , _curTime(curTime) {}
 
-	void operator()(TimerEntry &entry) const {
-		if (entry.lastUpdate < 0) {
-			if ((uint32)(ABS(entry.lastUpdate)) >= entry.countdown * _tickLength)
-				entry.nextRun = 0;
-			else
-				entry.nextRun = _curTime + entry.lastUpdate + entry.countdown * _tickLength;
-		} else {
-			uint32 nextRun = entry.lastUpdate + entry.countdown * _tickLength;
-			if (_curTime < nextRun)
-				nextRun = 0;
-			entry.nextRun = nextRun;
+		void operator()(TimerEntry &entry) const {
+			if (entry.lastUpdate < 0) {
+				if ((uint32)(ABS(entry.lastUpdate)) >= entry.countdown * _tickLength)
+					entry.nextRun = 0;
+				else
+					entry.nextRun = _curTime + entry.lastUpdate + entry.countdown * _tickLength;
+			} else {
+				uint32 nextRun = entry.lastUpdate + entry.countdown * _tickLength;
+				if (_curTime < nextRun)
+					nextRun = 0;
+				entry.nextRun = nextRun;
+			}
 		}
-	}
-};
+	};
 
-struct TimerEqual : public Common::UnaryFunction<const TimerEntry&, bool> {
-	uint8 _id;
+	struct TimerEqual : public Common::UnaryFunction<const TimerEntry &, bool> {
+		uint8 _id;
 
-	TimerEqual(uint8 id) : _id(id) {}
+		TimerEqual(uint8 id)
+		  : _id(id) {}
 
-	bool operator()(const TimerEntry &entry) const {
-		return entry.id == _id;
-	}
-};
+		bool operator()(const TimerEntry &entry) const {
+			return entry.id == _id;
+		}
+	};
 } // end of anonymous namespace
 
 void TimerManager::pause(bool p) {
@@ -132,7 +135,7 @@ void TimerManager::update() {
 void TimerManager::resync() {
 	const uint32 curTime = _isPaused ? _pauseStart : _system->getMillis();
 
-	_nextRun = 0;	// force rerun
+	_nextRun = 0; // force rerun
 	Common::for_each(_timers.begin(), _timers.end(), TimerResync(_vm, curTime));
 }
 

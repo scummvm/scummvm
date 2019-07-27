@@ -26,7 +26,8 @@
 
 namespace Gob {
 
-Goblin_v3::Goblin_v3(GobEngine *vm) : Goblin_v2(vm) {
+Goblin_v3::Goblin_v3(GobEngine *vm)
+  : Goblin_v2(vm) {
 }
 
 bool Goblin_v3::isMovement(int8 state) {
@@ -107,7 +108,7 @@ void Goblin_v3::advMovement(Mult::Mult_Object *obj, int8 state) {
 }
 
 void Goblin_v3::placeObject(Gob_Object *objDesc, char animated,
-		int16 index, int16 x, int16 y, int16 state) {
+                            int16 index, int16 x, int16 y, int16 state) {
 
 	Mult::Mult_Object &obj = _vm->_mult->_objects[index];
 	Mult::Mult_AnimData &objAnim = *(obj.pAnimData);
@@ -127,7 +128,6 @@ void Goblin_v3::placeObject(Gob_Object *objDesc, char animated,
 	}
 
 	Goblin_v2::placeObject(objDesc, animated, index, x, y, state);
-
 }
 
 } // End of namespace Gob

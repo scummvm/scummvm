@@ -23,7 +23,6 @@
 #ifndef KYRA_SOUND_INTERN_H
 #define KYRA_SOUND_INTERN_H
 
-
 #include "kyra/sound/sound.h"
 #include "kyra/sound/sound_adlib.h"
 
@@ -79,6 +78,7 @@ public:
 	virtual void beginFadeOut();
 
 	virtual void pause(bool paused);
+
 private:
 	static void onTimer(void *data);
 
@@ -95,7 +95,7 @@ private:
 	MidiParser *_music;
 	MidiParser *_sfx[3];
 
-	const SoundResourceInfo_PC *res() const {return _resInfo[_currentResourceSet]; }
+	const SoundResourceInfo_PC *res() const { return _resInfo[_currentResourceSet]; }
 	SoundResourceInfo_PC *_resInfo[3];
 	int _currentResourceSet;
 
@@ -155,7 +155,7 @@ private:
 
 	bool _cdaPlaying;
 
-	const SoundResourceInfo_Towns *res() const {return _resInfo[_currentResourceSet]; }
+	const SoundResourceInfo_Towns *res() const { return _resInfo[_currentResourceSet]; }
 	SoundResourceInfo_Towns *_resInfo[3];
 	int _currentResourceSet;
 
@@ -194,7 +194,7 @@ private:
 	uint8 *_sfxTrackData;
 	TownsPC98_AudioDriver *_driver;
 
-	const char *resPattern() {return _resInfo[_currentResourceSet]->c_str(); }
+	const char *resPattern() { return _resInfo[_currentResourceSet]->c_str(); }
 	Common::String *_resInfo[3];
 	int _currentResourceSet;
 };
@@ -233,7 +233,7 @@ private:
 	uint8 *_sfxTrackData;
 	TownsPC98_AudioDriver *_driver;
 
-	const SoundResourceInfo_TownsPC98V2 *res() const {return _resInfo[_currentResourceSet]; }
+	const SoundResourceInfo_TownsPC98V2 *res() const { return _resInfo[_currentResourceSet]; }
 	SoundResourceInfo_TownsPC98V2 *_resInfo[3];
 	int _currentResourceSet;
 };
@@ -258,6 +258,7 @@ public:
 	// AudioStream interface
 	bool isStereo() const { return false; }
 	int getRate() const { return _rate; }
+
 private:
 	Common::Mutex _mutex;
 	Audio::PCSpeaker *_speaker;
@@ -340,7 +341,10 @@ public:
 protected:
 	Audio::MaxTrax *_driver;
 	Audio::SoundHandle _musicHandle;
-	enum FileType { kFileNone = -1, kFileIntro = 0, kFileGame = 1, kFileFinal = 2 } _fileLoaded;
+	enum FileType { kFileNone = -1,
+		              kFileIntro = 0,
+		              kFileGame = 1,
+		              kFileFinal = 2 } _fileLoaded;
 
 	const AmigaSfxTable *_tableSfxIntro;
 	int _tableSfxIntro_Size;
@@ -408,7 +412,7 @@ private:
 };
 
 class AudioMaster2;
-class SoundAmiga_EoB: public Sound {
+class SoundAmiga_EoB : public Sound {
 public:
 	SoundAmiga_EoB(KyraEngine_v1 *vm, Audio::Mixer *mixer);
 	virtual ~SoundAmiga_EoB();

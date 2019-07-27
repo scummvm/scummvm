@@ -27,12 +27,12 @@
 
 #if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER)
 
-#include <stddef.h>
+#	include <stddef.h>
 
-#include "backends/plugins/elf/elf32.h"
-#include "backends/plugins/dynamic-plugin.h"
+#	include "backends/plugins/dynamic-plugin.h"
+#	include "backends/plugins/elf/elf32.h"
 
-#include "common/stream.h"
+#	include "common/stream.h"
 
 /**
  * DLObject

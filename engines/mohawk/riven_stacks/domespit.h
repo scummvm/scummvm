@@ -28,29 +28,29 @@
 namespace Mohawk {
 namespace RivenStacks {
 
-class DomeSpit : public RivenStack {
-public:
-	DomeSpit(MohawkEngine_Riven *vm, uint16 id, const char *sliderBmpName, const char *sliderBgBmpName);
+	class DomeSpit : public RivenStack {
+	public:
+		DomeSpit(MohawkEngine_Riven *vm, uint16 id, const char *sliderBmpName, const char *sliderBgBmpName);
 
-	uint32 getDomeSliderState() const;
-	void setDomeSliderState(uint32 sliderState);
+		uint32 getDomeSliderState() const;
+		void setDomeSliderState(uint32 sliderState);
 
-protected:
-	void runDomeCheck();
-	void runDomeButtonMovie();
-	void resetDomeSliders(uint16 startHotspot);
-	void checkDomeSliders();
-	void checkSliderCursorChange(uint16 startHotspot);
-	void dragDomeSlider(uint16 startHotspot);
-	void drawDomeSliders(uint16 startHotspot);
-	int16 getSliderSlotClosestToPos(uint16 startHotspot, const Common::Point &pos) const;
-	bool isSliderAtSlot(int16 slot) const;
-	Common::String buildCardResourceName(const Common::String &name) const;
+	protected:
+		void runDomeCheck();
+		void runDomeButtonMovie();
+		void resetDomeSliders(uint16 startHotspot);
+		void checkDomeSliders();
+		void checkSliderCursorChange(uint16 startHotspot);
+		void dragDomeSlider(uint16 startHotspot);
+		void drawDomeSliders(uint16 startHotspot);
+		int16 getSliderSlotClosestToPos(uint16 startHotspot, const Common::Point &pos) const;
+		bool isSliderAtSlot(int16 slot) const;
+		Common::String buildCardResourceName(const Common::String &name) const;
 
-	uint32 _sliderState;
-	Common::String _sliderBmpName;
-	Common::String _sliderBgBmpName;
-};
+		uint32 _sliderState;
+		Common::String _sliderBmpName;
+		Common::String _sliderBgBmpName;
+	};
 
 } // End of namespace RivenStacks
 } // End of namespace Mohawk

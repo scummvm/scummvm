@@ -20,21 +20,21 @@
  *
  */
 
-#include "common/rational.h"        // for Rational, operator*
-#include "common/system.h"          // for OSystem, g_system
-#include "common/memstream.h"
-#include "graphics/cursorman.h"     // for CursorMan
-#include "graphics/maccursor.h"
-#include "sci/graphics/celobj32.h"  // for CelObjView, CelInfo32, Ratio
 #include "sci/graphics/cursor32.h"
-#include "sci/graphics/frameout.h"  // for GfxFrameout
+#include "common/memstream.h"
+#include "common/rational.h" // for Rational, operator*
+#include "common/system.h" // for OSystem, g_system
+#include "graphics/cursorman.h" // for CursorMan
+#include "graphics/maccursor.h"
+#include "sci/graphics/celobj32.h" // for CelObjView, CelInfo32, Ratio
+#include "sci/graphics/frameout.h" // for GfxFrameout
 
 namespace Sci {
 
-GfxCursor32::GfxCursor32() :
-	_hideCount(0),
-	_position(0, 0),
-	_needsPaint(false) {
+GfxCursor32::GfxCursor32()
+  : _hideCount(0)
+  , _position(0, 0)
+  , _needsPaint(false) {
 }
 
 void GfxCursor32::init(const Buffer &outputBuffer) {
@@ -243,7 +243,7 @@ void GfxCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const 
 		delete macCursor;
 	} else
 #endif
-	if (viewId != -1) {
+	  if (viewId != -1) {
 		CelObjView view(viewId, loopNo, celNo);
 
 		_hotSpot = view._origin;
@@ -262,9 +262,7 @@ void GfxCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const 
 		//      threshold size because inventory items usually have a
 		//      high-resolution cursor representation.
 		bool pixelDouble = false;
-		if (g_sci->_gfxFrameout->isHiRes() &&
-			(g_sci->getGameId() == GID_GK1 ||
-			(g_sci->getGameId() == GID_PQ4 && _width <= 22 && _height <= 22))) {
+		if (g_sci->_gfxFrameout->isHiRes() && (g_sci->getGameId() == GID_GK1 || (g_sci->getGameId() == GID_PQ4 && _width <= 22 && _height <= 22))) {
 
 			_width *= 2;
 			_height *= 2;

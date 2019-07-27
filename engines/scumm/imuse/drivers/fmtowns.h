@@ -23,17 +23,17 @@
 #ifndef IMUSE_DRV_FMTOWNS_H
 #define IMUSE_DRV_FMTOWNS_H
 
-#include "audio/softsynth/fmtowns_pc98/towns_audio.h"
 #include "audio/mididrv.h"
-
+#include "audio/softsynth/fmtowns_pc98/towns_audio.h"
 
 class TownsMidiOutputChannel;
 class TownsMidiInputChannel;
 class TownsMidiChanState;
 
 class MidiDriver_TOWNS : public MidiDriver, public TownsAudioInterfacePluginDriver {
-friend class TownsMidiInputChannel;
-friend class TownsMidiOutputChannel;
+	friend class TownsMidiInputChannel;
+	friend class TownsMidiOutputChannel;
+
 public:
 	MidiDriver_TOWNS(Audio::Mixer *mixer);
 	~MidiDriver_TOWNS();

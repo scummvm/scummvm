@@ -29,10 +29,10 @@
 #ifndef WINTERMUTE_BASE_SOUND_H
 #define WINTERMUTE_BASE_SOUND_H
 
-#include "engines/wintermute/base/base.h"
-#include "engines/wintermute/dctypes.h"    // Added by ClassView
-#include "engines/wintermute/persistent.h"
 #include "audio/mixer.h"
+#include "engines/wintermute/base/base.h"
+#include "engines/wintermute/dctypes.h" // Added by ClassView
+#include "engines/wintermute/persistent.h"
 
 namespace Wintermute {
 
@@ -63,6 +63,7 @@ public:
 	virtual ~BaseSound();
 
 	bool applyFX(TSFXType type = SFX_NONE, float param1 = 0, float param2 = 0, float param3 = 0, float param4 = 0);
+
 private:
 	Common::String _soundFilename;
 	bool _soundStreamed;

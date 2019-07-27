@@ -26,10 +26,11 @@ namespace BladeRunner {
 enum kGenericWalkerBStates {
 	kGenericWalkerBStatesIdle = 0,
 	kGenericWalkerBStatesWalk = 1,
-	kGenericWalkerBStatesDie  = 2
+	kGenericWalkerBStatesDie = 2
 };
 
-AIScriptGenericWalkerB::AIScriptGenericWalkerB(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptGenericWalkerB::AIScriptGenericWalkerB(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 	isInside = false;
 	deltaX = 0.0f;
 	deltaZ = 0.0f;
@@ -47,16 +48,16 @@ void AIScriptGenericWalkerB::Initialize() {
 
 bool AIScriptGenericWalkerB::Update() {
 	switch (Actor_Query_Goal_Number(kActorGenwalkerB)) {
-		case kGoalGenwalkerDefault:
-			if (prepareWalker()) {
-				return true;
-			}
-			break;
-		case kGoalGenwalkerMoving:
-			if (deltaX != 0.0f || deltaZ != 0.0f) {
-				movingUpdate();
-			}
-			break;
+	case kGoalGenwalkerDefault:
+		if (prepareWalker()) {
+			return true;
+		}
+		break;
+	case kGoalGenwalkerMoving:
+		if (deltaX != 0.0f || deltaZ != 0.0f) {
+			movingUpdate();
+		}
+		break;
 	}
 	return false;
 }
@@ -65,7 +66,7 @@ void AIScriptGenericWalkerB::TimerExpired(int timer) {
 	if (timer == kActorTimerAIScriptCustomTask2) {
 		AI_Countdown_Timer_Reset(kActorGenwalkerB, kActorTimerAIScriptCustomTask2);
 		Game_Flag_Reset(kFlagGenericWalkerWaiting);
-		return;// true;
+		return; // true;
 	}
 	//return false;
 }
@@ -233,8 +234,7 @@ bool AIScriptGenericWalkerB::UpdateAnimation(int *animation, int *frame) {
 	case kGenericWalkerBStatesDie:
 		*animation = 874;
 		++_animationFrame;
-		if (++_animationFrame >= Slice_Animation_Query_Number_Of_Frames(874))
-		{
+		if (++_animationFrame >= Slice_Animation_Query_Number_Of_Frames(874)) {
 			_animationFrame = 0;
 			Actor_Set_Goal_Number(kActorGenwalkerB, kGoalGenwalkerDefault);
 			_animationState = kGenericWalkerBStatesIdle;
@@ -262,17 +262,17 @@ bool AIScriptGenericWalkerB::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptGenericWalkerB::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptGenericWalkerB::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptGenericWalkerB::ReachedMovementTrackWaypoint(int waypointId) {

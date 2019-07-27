@@ -21,18 +21,18 @@
  */
 
 #include "mohawk/livingbooks.h"
-#include "mohawk/resource.h"
 #include "mohawk/cursors.h"
+#include "mohawk/resource.h"
 #include "mohawk/video.h"
 
+#include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "common/events.h"
 #include "common/fs.h"
-#include "common/archive.h"
-#include "common/textconsole.h"
-#include "common/system.h"
 #include "common/memstream.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 
 #include "graphics/palette.h"
 
@@ -76,7 +76,8 @@ Common::Rect MohawkEngine_LivingBooks::readRect(Common::ReadStreamEndian *stream
 	return rect;
 }
 
-LBPage::LBPage(MohawkEngine_LivingBooks *vm) : _vm(vm) {
+LBPage::LBPage(MohawkEngine_LivingBooks *vm)
+  : _vm(vm) {
 	_code = NULL;
 	_mhk = NULL;
 
@@ -132,7 +133,8 @@ LBPage::~LBPage() {
 	delete _mhk;
 }
 
-MohawkEngine_LivingBooks::MohawkEngine_LivingBooks(OSystem *syst, const MohawkGameDescription *gamedesc) : MohawkEngine(syst, gamedesc) {
+MohawkEngine_LivingBooks::MohawkEngine_LivingBooks(OSystem *syst, const MohawkGameDescription *gamedesc)
+  : MohawkEngine(syst, gamedesc) {
 	_needsUpdate = false;
 	_needsRedraw = false;
 	_screenWidth = _screenHeight = 0;
@@ -868,7 +870,7 @@ Common::String MohawkEngine_LivingBooks::getStringFromConfig(const Common::Strin
 	Common::String tmp = removeQuotesFromString(x, leftover);
 	if (!leftover.empty())
 		warning("while parsing config key '%s' from section '%s', string '%s' was left after '%s'",
-			key.c_str(), section.c_str(), leftover.c_str(), tmp.c_str());
+		        key.c_str(), section.c_str(), leftover.c_str(), tmp.c_str());
 	return tmp;
 }
 
@@ -961,7 +963,7 @@ Archive *MohawkEngine_LivingBooks::createArchive() const {
 
 bool MohawkEngine_LivingBooks::isPreMohawk() const {
 	return getGameType() == GType_LIVINGBOOKSV1
-		|| (getGameType() == GType_LIVINGBOOKSV2 && getPlatform() == Common::kPlatformMacintosh);
+	  || (getGameType() == GType_LIVINGBOOKSV2 && getPlatform() == Common::kPlatformMacintosh);
 }
 
 void MohawkEngine_LivingBooks::addNotifyEvent(NotifyEvent event) {
@@ -1407,7 +1409,7 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 		switch (event.param) {
 		case 1:
 			debug(2, "kLBNotifyChangeMode:, mode %d, page %d.%d",
-				event.newMode, event.newPage, event.newSubpage);
+			      event.newMode, event.newPage, event.newSubpage);
 			// TODO: what is entry.newUnknown?
 			if (!event.newMode)
 				event.newMode = _curMode;
@@ -1416,7 +1418,7 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 					if (event.newSubpage != 0 || !loadPage((LBMode)event.newMode, event.newPage, 1))
 						if (event.newSubpage != 1 || !loadPage((LBMode)event.newMode, event.newPage, 0))
 							error("kLBNotifyChangeMode failed to move to mode %d, page %d.%d",
-								event.newMode, event.newPage, event.newSubpage);
+							      event.newMode, event.newPage, event.newSubpage);
 			}
 			break;
 		case 3:
@@ -1451,7 +1453,9 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 	}
 }
 
-LBAnimationNode::LBAnimationNode(MohawkEngine_LivingBooks *vm, LBAnimation *parent, uint16 scriptResourceId) : _vm(vm), _parent(parent) {
+LBAnimationNode::LBAnimationNode(MohawkEngine_LivingBooks *vm, LBAnimation *parent, uint16 scriptResourceId)
+  : _vm(vm)
+  , _parent(parent) {
 	loadScript(scriptResourceId);
 }
 
@@ -1540,8 +1544,7 @@ NodeState LBAnimationNode::update(bool seeking) {
 		case kLBAnimOpPlaySound:
 		case kLBAnimOpWaitForSound:
 		case kLBAnimOpReleaseSound:
-		case kLBAnimOpResetSound:
-			{
+		case kLBAnimOpResetSound: {
 			uint16 soundResourceId = READ_BE_UINT16(entry.data);
 
 			if (!soundResourceId) {
@@ -1587,12 +1590,10 @@ NodeState LBAnimationNode::update(bool seeking) {
 				_vm->_sound->stopSound(soundResourceId);
 				break;
 			}
-			}
-			break;
+		} break;
 
 		case kLBAnimOpSetTempo:
-		case kLBAnimOpSetTempoDiv:
-			{
+		case kLBAnimOpSetTempoDiv: {
 			assert(entry.size == 2);
 			uint16 tempo = (int16)READ_BE_UINT16(entry.data);
 
@@ -1608,16 +1609,14 @@ NodeState LBAnimationNode::update(bool seeking) {
 				_parent->setTempo(1000 / tempo);
 			}
 
-			}
-			break;
+		} break;
 
 		case kLBAnimOpWait:
 			assert(entry.size == 0);
 			debug(5, "6: Wait()");
 			return kLBNodeRunning;
 
-		case kLBAnimOpMoveTo:
-			{
+		case kLBAnimOpMoveTo: {
 			assert(entry.size == 4);
 			int16 x = (int16)READ_BE_UINT16(entry.data);
 			int16 y = (int16)READ_BE_UINT16(entry.data + 2);
@@ -1626,21 +1625,17 @@ NodeState LBAnimationNode::update(bool seeking) {
 			_xPos = x;
 			_yPos = y;
 			_vm->_needsRedraw = true;
-			}
-			break;
+		} break;
 
-		case kLBAnimOpDrawMode:
-			{
+		case kLBAnimOpDrawMode: {
 			assert(entry.size == 2);
 			uint16 mode = (int16)READ_BE_UINT16(entry.data);
 			debug(4, "9: DrawMode(%d)", mode);
 
 			// TODO
-			}
-			break;
+		} break;
 
-		case kLBAnimOpSetCel:
-			{
+		case kLBAnimOpSetCel: {
 			assert(entry.size == 2);
 			uint16 cel = (int16)READ_BE_UINT16(entry.data);
 			debug(4, "7: SetCel(%d)", cel);
@@ -1649,11 +1644,9 @@ NodeState LBAnimationNode::update(bool seeking) {
 			if (_currentCel > _parent->getNumResources())
 				error("SetCel set current cel to %d, but we only have %d cels", _currentCel, _parent->getNumResources());
 			_vm->_needsRedraw = true;
-			}
-			break;
+		} break;
 
-		case kLBAnimOpNotify:
-			{
+		case kLBAnimOpNotify: {
 			assert(entry.size == 2);
 			uint16 data = (int16)READ_BE_UINT16(entry.data);
 
@@ -1662,11 +1655,9 @@ NodeState LBAnimationNode::update(bool seeking) {
 
 			debug(4, "2: Notify(%d)", data);
 			_vm->notifyAll(data, _parent->getParentId());
-			}
-			break;
+		} break;
 
-		case kLBAnimOpSleepUntil:
-			{
+		case kLBAnimOpSleepUntil: {
 			assert(entry.size == 4);
 			uint32 frame = READ_BE_UINT32(entry.data);
 			debug(4, "8: SleepUntil(%d)", frame);
@@ -1676,18 +1667,15 @@ NodeState LBAnimationNode::update(bool seeking) {
 				_currentEntry--;
 				return kLBNodeRunning;
 			}
-			}
-			break;
+		} break;
 
-		case kLBAnimOpDelay:
-			{
+		case kLBAnimOpDelay: {
 			assert(entry.size == 4);
 			uint32 delay = READ_BE_UINT32(entry.data);
 			debug(4, "f: Delay(%d)", delay);
 			_delay = delay;
 			return kLBNodeRunning;
-			}
-			break;
+		} break;
 
 		default:
 			error("Unknown opcode id %02x (size %d)", entry.opcode, entry.size);
@@ -1714,7 +1702,9 @@ bool LBAnimationNode::transparentAt(int x, int y) {
 	return _vm->_gfx->imageIsTransparentAt(resourceId, true, x - _xPos, y - _yPos);
 }
 
-LBAnimation::LBAnimation(MohawkEngine_LivingBooks *vm, LBAnimationItem *parent, uint16 resourceId) : _vm(vm), _parent(parent) {
+LBAnimation::LBAnimation(MohawkEngine_LivingBooks *vm, LBAnimationItem *parent, uint16 resourceId)
+  : _vm(vm)
+  , _parent(parent) {
 	Common::SeekableSubReadStreamEndian *aniStream = _vm->wrapStreamEndian(ID_ANI, resourceId);
 
 	if (aniStream->size() != 30)
@@ -1755,7 +1745,7 @@ LBAnimation::LBAnimation(MohawkEngine_LivingBooks *vm, LBAnimationItem *parent, 
 	uint32 scriptResourceLength = sprStream->readUint32();
 	debug(5, "SPR# stream: %d front, %d background", numFrontNodes, numBackNodes);
 	debug(5, "Shape ID %d (offset 0x%04x), script ID %d (offset 0x%04x, length %d)", shapeResourceID, shapeResourceOffset,
-		scriptResourceID, scriptResourceOffset, scriptResourceLength);
+	      scriptResourceID, scriptResourceOffset, scriptResourceLength);
 
 	Common::Array<uint16> scriptIDs;
 	for (uint16 i = 0; i < numFrontNodes; i++) {
@@ -1769,7 +1759,7 @@ LBAnimation::LBAnimation(MohawkEngine_LivingBooks *vm, LBAnimationItem *parent, 
 		debug(6, "Front node %d: script ID %d", i, scriptID);
 		if (unknown1 != 0 || unknown2 != 0 || unknown3 != 0 || unknown4 != 0 || unknown5 != 0)
 			error("Anim node %d had non-zero unknowns %08x, %08x, %08x, %08x, %08x",
-				i, unknown1, unknown2, unknown3, unknown4, unknown5);
+			      i, unknown1, unknown2, unknown3, unknown4, unknown5);
 	}
 
 	if (numBackNodes)
@@ -2022,7 +2012,10 @@ LBScriptEntry::~LBScriptEntry() {
 		delete subentries[i];
 }
 
-LBItem::LBItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : _vm(vm), _page(page), _rect(rect) {
+LBItem::LBItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect)
+  : _vm(vm)
+  , _page(page)
+  , _rect(rect) {
 	if (_vm->getGameType() == GType_LIVINGBOOKSV1 || _vm->getGameType() == GType_LIVINGBOOKSV2)
 		_phase = kLBPhaseInit;
 	else
@@ -2090,7 +2083,7 @@ void LBItem::readFrom(Common::SeekableSubReadStreamEndian *stream) {
 
 		if ((uint)stream->pos() != oldPos + 4 + (uint)dataSize)
 			error("Failed to read correct number of bytes (off by %d) for data type %04x (size %d)",
-				(int)stream->pos() - (int)(oldPos + 4 + (uint)dataSize), dataType, dataSize);
+			      (int)stream->pos() - (int)(oldPos + 4 + (uint)dataSize), dataType, dataSize);
 
 		if (stream->pos() > endPos)
 			error("Read off the end (at %d) of data (ends at %d)", stream->pos(), endPos);
@@ -2115,7 +2108,7 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Memor
 	entry->opcode = stream->readUint16();
 	entry->param = stream->readUint16();
 	debug(4, "Script entry: type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x",
-			entry->type, entry->event, entry->opcode, entry->param);
+	      entry->type, entry->event, entry->opcode, entry->param);
 	size -= 6;
 
 	// TODO: read as bytes, if this is correct (but beware endianism)
@@ -2146,7 +2139,7 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Memor
 
 		uint16 targetingType = entry->argc;
 		if (targetingType == kTargetTypeExpression || targetingType == kTargetTypeCode
-			|| targetingType == kTargetTypeName) {
+		    || targetingType == kTargetTypeName) {
 			entry->targetingType = targetingType;
 
 			// FIXME
@@ -2219,19 +2212,17 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Memor
 			entry->newPage = stream->readUint16();
 			entry->newSubpage = stream->readUint16();
 			debug(4, "kLBNotifyChangeMode: unknown %04x, mode %d, page %d.%d",
-				entry->newUnknown, entry->newMode, entry->newPage, entry->newSubpage);
+			      entry->newUnknown, entry->newMode, entry->newPage, entry->newSubpage);
 			size -= 8;
 			break;
-		case 3:
-			{
+		case 3: {
 			Common::String newCursor = _vm->readString(stream);
 			entry->newCursor = newCursor;
 			if (size < newCursor.size() + 1)
 				error("failed to read newCursor in notify entry");
 			size -= newCursor.size() + 1;
 			debug(4, "kLBNotifyChangeMode: new cursor '%s'", newCursor.c_str());
-			}
-			break;
+		} break;
 		default:
 			// the original engine also does something when param==2 (but not a notify)
 			error("unknown v2 kLBNotifyChangeMode type %d", entry->param);
@@ -2259,7 +2250,7 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Memor
 			uint commandSize = command.size() + 1;
 			if (commandSize > entry->dataLen)
 				error("failed to read command in script entry: dataLen %d, command '%s' (%d chars)",
-					 entry->dataLen, command.c_str(), commandSize);
+				      entry->dataLen, command.c_str(), commandSize);
 			entry->dataLen = commandSize;
 			entry->data = new byte[commandSize];
 			memcpy(entry->data, command.c_str(), commandSize);
@@ -2278,7 +2269,7 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Memor
 		entry->matchFrom = stream->readUint16();
 		entry->matchNotify = stream->readUint16();
 		debug(4, "kLBEventNotified: matches %04x (from %04x)",
-			entry->matchNotify, entry->matchFrom);
+		      entry->matchNotify, entry->matchFrom);
 		size -= 4;
 	}
 
@@ -2286,7 +2277,7 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Memor
 		// TODO: subentries may be aligned, so this check is a bit too relaxed
 		if (size != expectedEndSize && size != expectedEndSize + 1)
 			error("expected %d bytes left at end of subentry, but had %d",
-				expectedEndSize, size);
+			      expectedEndSize, size);
 		return entry;
 	}
 
@@ -2320,7 +2311,7 @@ LBScriptEntry *LBItem::parseScriptEntry(uint16 type, uint16 &size, Common::Memor
 		size--;
 	} else if (size)
 		error("failed to read script entry correctly (%d bytes left): type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x",
-			size, entry->type, entry->event, entry->opcode, entry->param);
+		      size, entry->type, entry->event, entry->opcode, entry->param);
 
 	return entry;
 }
@@ -2337,8 +2328,7 @@ void LBItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *
 		_scriptEntries.push_back(parseScriptEntry(type, size, stream));
 		break;
 
-	case kLBSetPlayInfo:
-		{
+	case kLBSetPlayInfo: {
 		if (size != 20)
 			error("kLBSetPlayInfo had wrong size (%d)", size);
 
@@ -2356,12 +2346,11 @@ void LBItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *
 		_soundMode = stream->readUint16();
 
 		debug(2, "kLBSetPlayInfo: loop mode %d (%d to %d), timing mode %d (%d to %d), reloc (%d, %d), control mode %04x, sound mode %04x",
-			_loopMode, _delayMin, _delayMax,
-			_timingMode, _periodMin, _periodMax,
-			_relocPoint.x, _relocPoint.y,
-			_controlMode, _soundMode);
-		}
-		break;
+		      _loopMode, _delayMin, _delayMax,
+		      _timingMode, _periodMin, _periodMax,
+		      _relocPoint.x, _relocPoint.y,
+		      _controlMode, _soundMode);
+	} break;
 
 	case kLBSetPlayPhase:
 		if (size != 2)
@@ -2370,8 +2359,7 @@ void LBItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *
 		debug(2, "kLBSetPlayPhase: %d", _phase);
 		break;
 
-	case kLBSetKeyNotify:
-		{
+	case kLBSetKeyNotify: {
 		// FIXME: variable-size notifies, targets
 		if (size != 18)
 			error("0x6f had wrong size (%d)", size);
@@ -2385,19 +2373,16 @@ void LBItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *
 		uint u8 = stream->readUint16();
 		uint u9 = stream->readUint16();
 		warning("ignoring kLBSetKeyNotify: item %s, key code %02x (modifier mask %d, char %d, repeat %d), event %04x, opcode %04x, param %04x, unknowns %04x, %04x, %04x, %04x",
-			_desc.c_str(), key.code, key.modifiers, key.char_, key.repeats, event, opcode, param, u6, u7, u8, u9);
-		}
-		break;
+		        _desc.c_str(), key.code, key.modifiers, key.char_, key.repeats, event, opcode, param, u6, u7, u8, u9);
+	} break;
 
-	case kLBCommand:
-		{
-			Common::String command = _vm->readString(stream);
-			if (size != command.size() + 1)
-				error("failed to read command string");
+	case kLBCommand: {
+		Common::String command = _vm->readString(stream);
+		if (size != command.size() + 1)
+			error("failed to read command string");
 
-			runCommand(command);
-		}
-		break;
+		runCommand(command);
+	} break;
 
 	case kLBSetNotVisible:
 		assert(size == 0);
@@ -2419,8 +2404,7 @@ void LBItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *
 		_isAmbient = true;
 		break;
 
-	case kLBSetKeyEvent:
-		{
+	case kLBSetKeyEvent: {
 		// FIXME: targets
 		if (size != 10)
 			error("kLBSetKeyEvent had wrong size (%d)", size);
@@ -2431,42 +2415,33 @@ void LBItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *
 		uint16 event = stream->readUint16();
 		// FIXME: this is scripting stuff: what to run when key is pressed
 		warning("ignoring kLBSetKeyEvent: item %s, key code %02x (modifier mask %d, char %d, repeat %d) unknown %04x, target %d, event %04x",
-			_desc.c_str(), key.code, key.modifiers, key.char_, key.repeats, u3, target, event);
-		}
-		break;
+		        _desc.c_str(), key.code, key.modifiers, key.char_, key.repeats, u3, target, event);
+	} break;
 
-	case kLBSetHitTest:
-		{
+	case kLBSetHitTest: {
 		assert(size == 2);
 		uint val = stream->readUint16();
 		_doHitTest = (bool)val;
 		debug(2, "kLBSetHitTest (on %s): value %04x", _desc.c_str(), val);
-		}
-		break;
+	} break;
 
-	case kLBSetRolloverData:
-		{
+	case kLBSetRolloverData: {
 		assert(size == 2);
 		uint16 flag = stream->readUint16();
 		warning("ignoring kLBSetRolloverData: item %s, flag %d", _desc.c_str(), flag);
-		}
-		break;
+	} break;
 
-	case kLBSetParent:
-		{
+	case kLBSetParent: {
 		assert(size == 2);
 		uint16 parent = stream->readUint16();
 		warning("ignoring kLBSetParent: item %s, parent id %d", _desc.c_str(), parent);
-		}
-		break;
+	} break;
 
-	case kLBUnknown194:
-		{
+	case kLBUnknown194: {
 		assert(size == 4);
 		uint offset = stream->readUint32();
 		_page->_code->runCode(this, offset);
-		}
-		break;
+	} break;
 
 	default:
 		error("Unknown message %04x (size 0x%04x)", type, size);
@@ -2781,7 +2756,7 @@ void LBItem::runScript(uint event, uint16 data, uint16 from) {
 
 		if (entry->type == kLBNotifyScript) {
 			debug(2, "Notify: event 0x%04x, opcode 0x%04x, param 0x%04x",
-				entry->event, entry->opcode, entry->param);
+			      entry->event, entry->opcode, entry->param);
 
 			if (entry->opcode == kLBNotifyGUIAction)
 				_vm->addNotifyEvent(NotifyEvent(entry->opcode, _itemId));
@@ -2810,56 +2785,56 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 	if (!count)
 		count = 1;
 
-	if (entry->opcode != kLBOpRunSubentries) switch (entry->param) {
-	case 0xfffe:
-		// Run once (disable self after run).
-		entry->state = 0xffff;
-		break;
-	case 0xffff:
-		break;
-	case 0:
-	case 1:
-	case 2:
-		start = entry->state;
-		entry->state++;
-		if (entry->state >= count) {
-			switch (entry->param) {
-			case 0:
-				// Disable..
-				entry->state = 0xffff;
-				return 0;
-			case 1:
-				// Stay at the end.
-				entry->state = count - 1;
-				break;
-			case 2:
-				// Loop.
-				entry->state = 0;
-				break;
+	if (entry->opcode != kLBOpRunSubentries)
+		switch (entry->param) {
+		case 0xfffe:
+			// Run once (disable self after run).
+			entry->state = 0xffff;
+			break;
+		case 0xffff:
+			break;
+		case 0:
+		case 1:
+		case 2:
+			start = entry->state;
+			entry->state++;
+			if (entry->state >= count) {
+				switch (entry->param) {
+				case 0:
+					// Disable..
+					entry->state = 0xffff;
+					return 0;
+				case 1:
+					// Stay at the end.
+					entry->state = count - 1;
+					break;
+				case 2:
+					// Loop.
+					entry->state = 0;
+					break;
+				}
 			}
+			count = 1;
+			break;
+		case 3:
+			// Pick random target.
+			start = _vm->_rnd->getRandomNumberRng(0, count);
+			count = 1;
+			break;
+		default:
+			warning("Weird param for script entry (type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x)",
+			        entry->type, entry->event, entry->opcode, entry->param);
 		}
-		count = 1;
-		break;
-	case 3:
-		// Pick random target.
-		start = _vm->_rnd->getRandomNumberRng(0, count);
-		count = 1;
-		break;
-	default:
-		warning("Weird param for script entry (type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x)",
-			entry->type, entry->event, entry->opcode, entry->param);
-	}
 
 	for (uint n = start; n < count; n++) {
 		LBItem *target;
 
 		debug(2, "Script run: type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x",
-			entry->type, entry->event, entry->opcode, entry->param);
+		      entry->type, entry->event, entry->opcode, entry->param);
 
 		if (entry->argc) {
 			switch (entry->targetingType) {
-			case kTargetTypeExpression:
-				{
+			case kTargetTypeExpression: {
 				// FIXME: this should be EVALUATED
 				LBValue &tgt = _vm->_variables[entry->targets[n]];
 				switch (tgt.type) {
@@ -2879,7 +2854,7 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 					warning("Target '%s' (by expression) resulted in unknown type, skipping", entry->targets[n].c_str());
 					continue;
 				}
-				}
+			}
 				if (!target) {
 					debug(2, "Target '%s' (by expression) doesn't exist, skipping", entry->targets[n].c_str());
 					continue;
@@ -2925,7 +2900,7 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 		switch (entry->opcode) {
 		case kLBOpNone:
 			warning("ignoring kLBOpNone (event 0x%04x, param 0x%04x, target '%s')",
-					entry->event, entry->param, target->_desc.c_str());
+			        entry->event, entry->param, target->_desc.c_str());
 			break;
 
 		case kLBOpXShow:
@@ -2993,7 +2968,7 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 		case kLBOpUnmute:
 			// FIXME
 			warning("ignoring kLBOpMute/Unmute (event 0x%04x, param 0x%04x, target '%s')",
-				entry->event, entry->param, target->_desc.c_str());
+			        entry->event, entry->param, target->_desc.c_str());
 			break;
 
 		case kLBOpLoad:
@@ -3003,7 +2978,7 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 		case kLBOpPreload:
 			// FIXME
 			warning("ignoring kLBOpPreload (event 0x%04x, param 0x%04x, target '%s')",
-				entry->event, entry->param, target->_desc.c_str());
+			        entry->event, entry->param, target->_desc.c_str());
 			break;
 
 		case kLBOpUnload:
@@ -3014,27 +2989,27 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 		case kLBOpSeekToNext:
 			// FIXME
 			warning("ignoring kLBOpSeekToPrev/Next (event 0x%04x, param 0x%04x, target '%s')",
-				entry->event, entry->param, target->_desc.c_str());
+			        entry->event, entry->param, target->_desc.c_str());
 			break;
 
 		case kLBOpDragBegin:
 		case kLBOpDragEnd:
 			// FIXME
 			warning("ignoring kLBOpDragBegin/End (event 0x%04x, param 0x%04x, target '%s')",
-				entry->event, entry->param, target->_desc.c_str());
+			        entry->event, entry->param, target->_desc.c_str());
 			break;
 
 		case kLBOpScriptDisable:
 		case kLBOpScriptEnable:
 			// FIXME
 			warning("ignoring kLBOpScriptDisable/Enable (event 0x%04x, param 0x%04x, target '%s')",
-				entry->event, entry->param, target->_desc.c_str());
+			        entry->event, entry->param, target->_desc.c_str());
 			break;
 
 		case kLBOpUnknown1C:
 			// FIXME
 			warning("ignoring kLBOpUnknown1C (event 0x%04x, param 0x%04x, target '%s')",
-				entry->event, entry->param, target->_desc.c_str());
+			        entry->event, entry->param, target->_desc.c_str());
 			break;
 
 		case kLBOpSendExpression:
@@ -3071,16 +3046,15 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 
 		case kLBOpJumpUnlessExpression:
 		case kLBOpBreakExpression:
-		case kLBOpJumpToExpression:
-			{
+		case kLBOpJumpToExpression: {
 			LBValue r = _page->_code->runCode(this, entry->offset);
 			// FIXME
 			return r.integer;
-			}
+		}
 
 		default:
 			error("Unknown script opcode (type 0x%04x, event 0x%04x, opcode 0x%04x, param 0x%04x, target '%s')",
-				entry->type, entry->event, entry->opcode, entry->param, target->_desc.c_str());
+			      entry->type, entry->event, entry->opcode, entry->param, target->_desc.c_str());
 		}
 	}
 
@@ -3116,7 +3090,8 @@ bool LBItem::checkCondition(const Common::String &condition) {
 	return result.toInt();
 }
 
-LBSoundItem::LBSoundItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
+LBSoundItem::LBSoundItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect)
+  : LBItem(vm, page, rect) {
 	debug(3, "new LBSoundItem");
 	_running = false;
 }
@@ -3166,15 +3141,15 @@ LBItem *LBSoundItem::createClone() {
 	return new LBSoundItem(_vm, _page, _rect);
 }
 
-LBGroupItem::LBGroupItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
+LBGroupItem::LBGroupItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect)
+  : LBItem(vm, page, rect) {
 	debug(3, "new LBGroupItem");
 	_starting = false;
 }
 
 void LBGroupItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *stream) {
 	switch (type) {
-	case kLBGroupData:
-		{
+	case kLBGroupData: {
 		_groupEntries.clear();
 		uint16 count = stream->readUint16();
 		debug(3, "Group data: %d entries", count);
@@ -3190,8 +3165,7 @@ void LBGroupItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEnd
 			_groupEntries.push_back(entry);
 			debug(3, "group entry: id %d, type %d", entry.entryId, entry.entryType);
 		}
-		}
-		break;
+	} break;
 
 	default:
 		LBItem::readData(type, size, stream);
@@ -3319,7 +3293,8 @@ LBItem *LBGroupItem::createClone() {
 	return new LBGroupItem(_vm, _page, _rect);
 }
 
-LBPaletteItem::LBPaletteItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
+LBPaletteItem::LBPaletteItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect)
+  : LBItem(vm, page, rect) {
 	debug(3, "new LBPaletteItem");
 
 	_fadeInStart = 0;
@@ -3332,8 +3307,7 @@ LBPaletteItem::~LBPaletteItem() {
 
 void LBPaletteItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *stream) {
 	switch (type) {
-	case kLBPaletteXData:
-		{
+	case kLBPaletteXData: {
 		assert(size >= 8);
 		_fadeInPeriod = stream->readUint16();
 		_fadeInStep = stream->readUint16();
@@ -3348,13 +3322,12 @@ void LBPaletteItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamE
 		// might want to just discard them here, at load time.
 		_palette = new byte[_drawCount * 3];
 		for (uint i = 0; i < _drawCount; i++) {
-			_palette[i*3 + 0] = stream->readByte();
-			_palette[i*3 + 1] = stream->readByte();
-			_palette[i*3 + 2] = stream->readByte();
+			_palette[i * 3 + 0] = stream->readByte();
+			_palette[i * 3 + 1] = stream->readByte();
+			_palette[i * 3 + 2] = stream->readByte();
 			stream->readByte();
 		}
-		}
-		break;
+	} break;
 
 	default:
 		LBItem::readData(type, size, stream);
@@ -3408,7 +3381,8 @@ LBItem *LBPaletteItem::createClone() {
 	error("can't clone LBPaletteItem");
 }
 
-LBLiveTextItem::LBLiveTextItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
+LBLiveTextItem::LBLiveTextItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect)
+  : LBItem(vm, page, rect) {
 	_currentPhrase = 0xFFFF;
 	_currentWord = 0xFFFF;
 	debug(3, "new LBLiveTextItem");
@@ -3416,8 +3390,7 @@ LBLiveTextItem::LBLiveTextItem(MohawkEngine_LivingBooks *vm, LBPage *page, Commo
 
 void LBLiveTextItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *stream) {
 	switch (type) {
-	case kLBLiveTextData:
-		{
+	case kLBLiveTextData: {
 		stream->read(_backgroundColor, 4); // unused?
 		stream->read(_foregroundColor, 4);
 		stream->read(_highlightColor, 4);
@@ -3427,9 +3400,9 @@ void LBLiveTextItem::readData(uint16 type, uint16 size, Common::MemoryReadStream
 
 		debug(3, "LiveText has %d words in %d phrases, palette index 0x%04x", wordCount, phraseCount, _paletteIndex);
 		debug(3, "LiveText colors: background %02x%02x%02x%02x, foreground %02x%02x%02x%02x, highlight %02x%02x%02x%02x",
-			_backgroundColor[0], _backgroundColor[1], _backgroundColor[2], _backgroundColor[3],
-			_foregroundColor[0], _foregroundColor[1], _foregroundColor[2], _foregroundColor[3],
-			_highlightColor[0], _highlightColor[1], _highlightColor[2], _highlightColor[3]);
+		      _backgroundColor[0], _backgroundColor[1], _backgroundColor[2], _backgroundColor[3],
+		      _foregroundColor[0], _foregroundColor[1], _foregroundColor[2], _foregroundColor[3],
+		      _highlightColor[0], _highlightColor[1], _highlightColor[2], _highlightColor[3]);
 
 		if (size != 18 + 14 * wordCount + 18 * phraseCount)
 			error("Bad Live Text data size (got %d, wanted %d words and %d phrases)", size, wordCount, phraseCount);
@@ -3442,7 +3415,7 @@ void LBLiveTextItem::readData(uint16 type, uint16 size, Common::MemoryReadStream
 			word.itemType = stream->readUint16();
 			word.itemId = stream->readUint16();
 			debug(4, "Word: (%d, %d) to (%d, %d), sound %d, item %d (type %d)",
-				word.bounds.left, word.bounds.top, word.bounds.right, word.bounds.bottom, word.soundId, word.itemId, word.itemType);
+			      word.bounds.left, word.bounds.top, word.bounds.right, word.bounds.bottom, word.soundId, word.itemId, word.itemType);
 			_words.push_back(word);
 		}
 
@@ -3469,12 +3442,11 @@ void LBLiveTextItem::readData(uint16 type, uint16 size, Common::MemoryReadStream
 				error("Unexpected unknowns %08x/%04x in LiveText word", unknown1, unknown2);
 
 			debug(4, "Phrase: start %d, count %d, start at %d (from %d), end at %d (from %d)",
-				phrase.wordStart, phrase.wordCount, phrase.highlightStart, phrase.startId, phrase.highlightEnd, phrase.endId);
+			      phrase.wordStart, phrase.wordCount, phrase.highlightStart, phrase.startId, phrase.highlightEnd, phrase.endId);
 
 			_phrases.push_back(phrase);
 		}
-		}
-		break;
+	} break;
 
 	default:
 		LBItem::readData(type, size, stream);
@@ -3557,7 +3529,7 @@ void LBLiveTextItem::draw() {
 	uint wordCount = _phrases[_currentPhrase].wordCount;
 	if (wordStart + wordCount > _words.size())
 		error("phrase %d was invalid (%d words, from %d, out of only %d total)",
-			_currentPhrase, wordCount, wordStart, _words.size());
+		      _currentPhrase, wordCount, wordStart, _words.size());
 
 	uint yPos = 0;
 	for (uint i = 0; i < wordStart + wordCount; i++) {
@@ -3569,7 +3541,7 @@ void LBLiveTextItem::draw() {
 
 void LBLiveTextItem::drawWord(uint word, uint yPos) {
 	Common::Rect srcRect(0, yPos, _words[word].bounds.right - _words[word].bounds.left,
-		yPos + _words[word].bounds.bottom - _words[word].bounds.top);
+	                     yPos + _words[word].bounds.bottom - _words[word].bounds.top);
 	Common::Rect dstRect = _words[word].bounds;
 	dstRect.translate(_rect.left, _rect.top);
 	_vm->_gfx->copyAnimImageSectionToScreen(_resourceId, srcRect, dstRect);
@@ -3664,21 +3636,20 @@ LBItem *LBLiveTextItem::createClone() {
 	error("can't clone LBLiveTextItem");
 }
 
-LBPictureItem::LBPictureItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
+LBPictureItem::LBPictureItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect)
+  : LBItem(vm, page, rect) {
 	debug(3, "new LBPictureItem");
 }
 
 void LBPictureItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *stream) {
 	switch (type) {
-	case kLBSetDrawMode:
-		{
+	case kLBSetDrawMode: {
 		assert(size == 2);
 		// TODO: this probably sets whether points are always contained (0x10)
 		// or whether the bitmap contents are checked (00, or anything else?)
 		uint16 val = stream->readUint16();
 		debug(2, "LBPictureItem: kLBSetDrawMode: %04x", val);
-		}
-		break;
+	} break;
 
 	default:
 		LBItem::readData(type, size, stream);
@@ -3713,7 +3684,8 @@ LBItem *LBPictureItem::createClone() {
 	return new LBPictureItem(_vm, _page, _rect);
 }
 
-LBAnimationItem::LBAnimationItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
+LBAnimationItem::LBAnimationItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect)
+  : LBItem(vm, page, rect) {
 	_anim = NULL;
 	_running = false;
 	debug(3, "new LBAnimationItem");
@@ -3824,7 +3796,8 @@ LBItem *LBAnimationItem::createClone() {
 	return item;
 }
 
-LBMovieItem::LBMovieItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
+LBMovieItem::LBMovieItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect)
+  : LBItem(vm, page, rect) {
 	debug(3, "new LBMovieItem");
 }
 
@@ -3861,7 +3834,8 @@ LBItem *LBMovieItem::createClone() {
 	return new LBMovieItem(_vm, _page, _rect);
 }
 
-LBMiniGameItem::LBMiniGameItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
+LBMiniGameItem::LBMiniGameItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect)
+  : LBItem(vm, page, rect) {
 	debug(3, "new LBMiniGameItem");
 }
 
@@ -3879,7 +3853,7 @@ bool LBMiniGameItem::togglePlaying(bool playing, bool restart) {
 
 	// Figure out what minigame we have and bring us back to a page where
 	// the player can continue
-	if (_desc == "Kitch")     // Green Eggs and Ham: Kitchen minigame
+	if (_desc == "Kitch") // Green Eggs and Ham: Kitchen minigame
 		destPage = 4;
 	else if (_desc == "Eggs") // Green Eggs and Ham: Eggs minigame
 		destPage = 5;
@@ -3918,7 +3892,8 @@ LBItem *LBMiniGameItem::createClone() {
 	error("can't clone LBMiniGameItem");
 }
 
-LBProxyItem::LBProxyItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : LBItem(vm, page, rect) {
+LBProxyItem::LBProxyItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect)
+  : LBItem(vm, page, rect) {
 	debug(3, "new LBProxyItem");
 
 	_page = NULL;

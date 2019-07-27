@@ -24,19 +24,19 @@
 
 #include "zvision/scripting/effects/ttytext_effect.h"
 
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
 #include "zvision/text/text.h"
+#include "zvision/zvision.h"
 
-#include "common/stream.h"
 #include "common/file.h"
+#include "common/stream.h"
 
 namespace ZVision {
 
-ttyTextNode::ttyTextNode(ZVision *engine, uint32 key, const Common::String &file, const Common::Rect &r, int32 delay) :
-	ScriptingEffect(engine, key, SCRIPTING_EFFECT_TTYTXT),
-	_fnt(engine) {
+ttyTextNode::ttyTextNode(ZVision *engine, uint32 key, const Common::String &file, const Common::Rect &r, int32 delay)
+  : ScriptingEffect(engine, key, SCRIPTING_EFFECT_TTYTXT)
+  , _fnt(engine) {
 	_delay = delay;
 	_r = r;
 	_txtpos = 0;
@@ -112,7 +112,7 @@ bool ttyTextNode::process(uint32 deltaTimeInMillis) {
 
 					while (i < _txtbuf.size() && _txtbuf[i] != ' ' && _txtbuf[i] != '<') {
 
-						int8 chsz   = getUtf8CharSize(_txtbuf[i]);
+						int8 chsz = getUtf8CharSize(_txtbuf[i]);
 						uint16 uchr = readUtf8Char(_txtbuf.c_str() + _txtpos);
 
 						width += _fnt.getCharWidth(uchr);

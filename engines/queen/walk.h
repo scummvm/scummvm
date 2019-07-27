@@ -63,7 +63,6 @@ class QueenEngine;
 
 class Walk {
 public:
-
 	Walk(QueenEngine *vm);
 
 	int16 moveJoe(int direction, int16 endx, int16 endy, bool inCutaway);
@@ -77,7 +76,6 @@ public:
 	};
 
 private:
-
 	void animateJoePrepare();
 	void animateJoe();
 
@@ -107,7 +105,6 @@ private:
 
 	/// compute path (and populates _walkData) from current position to the new one
 	bool calc(uint16 oldPos, uint16 newPos, int16 oldx, int16 oldy, int16 x, int16 y);
-
 
 	/// areas for current room
 	const Area *_roomArea;

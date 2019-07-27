@@ -23,17 +23,18 @@
  *
  */
 
+#include "pegasus/items/biochips/pegasuschip.h"
 #include "pegasus/energymonitor.h"
 #include "pegasus/gamestate.h"
-#include "pegasus/pegasus.h"
-#include "pegasus/items/biochips/pegasuschip.h"
 #include "pegasus/neighborhood/tsa/fulltsa.h"
 #include "pegasus/neighborhood/tsa/tinytsa.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
-PegasusChip::PegasusChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
-		BiochipItem(id, neighborhood, room, direction), _recallSpot(kPegasusRecallSpotID) {
+PegasusChip::PegasusChip(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction)
+  : BiochipItem(id, neighborhood, room, direction)
+  , _recallSpot(kPegasusRecallSpotID) {
 	_recallSpot.setArea(Common::Rect(kAIMiddleAreaLeft + 116, kAIMiddleAreaTop + 63, kAIMiddleAreaLeft + 184, kAIMiddleAreaTop + 91));
 	_recallSpot.setHotspotFlags(kPegasusBiochipSpotFlag);
 	g_allHotspots.push_back(&_recallSpot);

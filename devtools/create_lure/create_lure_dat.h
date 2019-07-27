@@ -68,7 +68,7 @@
 
 #define SOUND_DESCS_SIZE 265
 
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 // FIXME: Add PACKED_STRUCT to all structs which actually need packing,
 // for increased portability
@@ -77,8 +77,8 @@
 // the link complains about an unresolved external token Common.String.__dtor
 
 struct Rect {
-	int16 top, left;		///< The point at the top left of the rectangle (part of the rect).
-	int16 bottom, right;	///< The point at the bottom right of the rectangle (not part of the rect).
+	int16 top, left; ///< The point at the top left of the rectangle (part of the rect).
+	int16 bottom, right; ///< The point at the bottom right of the rectangle (not part of the rect).
 };
 
 struct FileEntry {
@@ -327,7 +327,6 @@ struct RoomExitIndexedHotspotResource {
 	uint16 hotspotId;
 };
 
-
 #define ROOM_EXIT_COORDINATES_NUM_ENTRIES 6
 #define ROOM_EXIT_COORDINATES_ENTRY_NUM_ROOMS 52
 
@@ -341,17 +340,18 @@ struct RoomExitCoordinateEntryOutputResource {
 	RoomExitCoordinateResource entries[ROOM_EXIT_COORDINATES_NUM_ENTRIES];
 };
 
-
-enum CurrentAction {NO_ACTION, START_WALKING, DISPATCH_ACTION, EXEC_HOTSPOT_SCRIPT,
-	PROCESSING_PATH, WALKING};
+enum CurrentAction { NO_ACTION,
+	                   START_WALKING,
+	                   DISPATCH_ACTION,
+	                   EXEC_HOTSPOT_SCRIPT,
+	                   PROCESSING_PATH,
+	                   WALKING };
 
 extern void read_action_sequence(byte *&data, uint16 &totalSize);
 
 extern uint16 get_sequence_index(uint16 offset, int supportIndex = -1);
 
-#include "common/pack-end.h"	// END STRUCT PACKING
-
-
+#include "common/pack-end.h" // END STRUCT PACKING
 
 enum AccessMode {
 	kFileReadMode = 1,
@@ -361,6 +361,7 @@ enum AccessMode {
 class File {
 private:
 	FILE *f;
+
 public:
 	bool open(const char *filename, AccessMode mode = kFileReadMode) {
 		f = fopen(filename, (mode == kFileReadMode) ? "rb" : "wb");

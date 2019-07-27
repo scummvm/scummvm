@@ -20,12 +20,12 @@
  *
  */
 
-#include "graphics/cursorman.h"
 #include "gnap/gnap.h"
 #include "gnap/datarchive.h"
 #include "gnap/gamesys.h"
 #include "gnap/resource.h"
 #include "gnap/sound.h"
+#include "graphics/cursorman.h"
 
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -69,7 +69,6 @@ static const char *kCursorNames[] = {
 	"WAIT_CURSOR"
 };
 
-
 static const int kCursorSpriteIds[30] = {
 	0x005, 0x008, 0x00A, 0x004, 0x009, 0x003,
 	0x006, 0x007, 0x00D, 0x00F, 0x00B, 0x00C,
@@ -88,8 +87,9 @@ static const char *kSceneNames[] = {
 	"can2", "drive", "tung", "puss", "space", "phone", "can3"
 };
 
-GnapEngine::GnapEngine(OSystem *syst, const ADGameDescription *gd) :
-	Engine(syst), _gameDescription(gd) {
+GnapEngine::GnapEngine(OSystem *syst, const ADGameDescription *gd)
+  : Engine(syst)
+  , _gameDescription(gd) {
 
 	DebugMan.addDebugChannel(kDebugBasic, "basic", "Basic debug level");
 
@@ -290,26 +290,26 @@ void GnapEngine::updateEvents() {
 			break;
 		case Common::EVENT_KEYUP:
 			_keyDownState[event.kbd.keycode] = false;
-  			break;
+			break;
 		case Common::EVENT_MOUSEMOVE:
-  			_mousePos = event.mouse;
-  			break;
+			_mousePos = event.mouse;
+			break;
 		case Common::EVENT_LBUTTONUP:
-  			_mouseButtonState._left = false;
-  			break;
+			_mouseButtonState._left = false;
+			break;
 		case Common::EVENT_LBUTTONDOWN:
 			_leftClickMouseX = event.mouse.x;
 			_leftClickMouseY = event.mouse.y;
 			_mouseButtonState._left = true;
 			_mouseClickState._left = true;
-  			break;
+			break;
 		case Common::EVENT_RBUTTONUP:
 			_mouseButtonState._right = false;
-  			break;
+			break;
 		case Common::EVENT_RBUTTONDOWN:
-  			_mouseButtonState._right = true;
-  			_mouseClickState._right = true;
-  			break;
+			_mouseButtonState._right = true;
+			_mouseClickState._right = true;
+			break;
 		case Common::EVENT_QUIT:
 			quitGame();
 			break;
@@ -344,12 +344,12 @@ void GnapEngine::gameUpdateTick() {
 }
 
 void GnapEngine::saveTimers() {
-	for (int i = 0; i < kMaxTimers; ++i )
+	for (int i = 0; i < kMaxTimers; ++i)
 		_savedTimers[i] = _timers[i];
 }
 
 void GnapEngine::restoreTimers() {
-	for (int i = 0; i < kMaxTimers; ++i )
+	for (int i = 0; i < kMaxTimers; ++i)
 		_timers[i] = _savedTimers[i];
 }
 
@@ -436,7 +436,7 @@ void GnapEngine::delayTicksCursor(int val) {
 }
 
 void GnapEngine::setHotspot(int index, int16 x1, int16 y1, int16 x2, int16 y2, uint16 flags,
-	int16 walkX, int16 walkY) {
+                            int16 walkX, int16 walkY) {
 	_hotspots[index]._rect = Common::Rect(x1, y1, x2, y2);
 	_hotspots[index]._flags = flags;
 	_hotspotsWalkPos[index] = Common::Point(walkX, walkY);
@@ -489,8 +489,7 @@ void GnapEngine::updateCursorByHotspot() {
 			setCursor(kDisabledCursors[_verbCursor]);
 	}
 	// Update platypus hotspot
-	_hotspots[0]._rect = Common::Rect(_gridMinX + 75 * _plat->_pos.x - 30, _gridMinY + 48 * _plat->_pos.y - 100
-									, _gridMinX + 75 * _plat->_pos.x + 30, _gridMinY + 48 * _plat->_pos.y);
+	_hotspots[0]._rect = Common::Rect(_gridMinX + 75 * _plat->_pos.x - 30, _gridMinY + 48 * _plat->_pos.y - 100, _gridMinX + 75 * _plat->_pos.x + 30, _gridMinY + 48 * _plat->_pos.y);
 }
 
 int GnapEngine::getClickedHotspotId() {
@@ -548,7 +547,7 @@ void GnapEngine::setCursor(int cursorIndex) {
 		if (cursorGroup) {
 			Graphics::Cursor *cursor = cursorGroup->cursors[0].cursor;
 			CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(),
-				cursor->getHotspotX(), cursor->getHotspotY(), cursor->getKeyColor());
+			                        cursor->getHotspotX(), cursor->getHotspotY(), cursor->getKeyColor());
 			CursorMan.replaceCursorPalette(cursor->getPalette(), 0, 256);
 			delete cursorGroup;
 		}
@@ -576,9 +575,9 @@ void GnapEngine::setGrabCursorSprite(int index) {
 void GnapEngine::createGrabCursorSprite(int spriteId) {
 	_grabCursorSprite = _gameSys->createSurface(spriteId);
 	_gameSys->insertSpriteDrawItem(_grabCursorSprite,
-		_mousePos.x - (_grabCursorSprite->w / 2),
-		_mousePos.y - (_grabCursorSprite->h / 2),
-		300);
+	                               _mousePos.x - (_grabCursorSprite->w / 2),
+	                               _mousePos.y - (_grabCursorSprite->h / 2),
+	                               300);
 	delayTicks(5);
 }
 
@@ -599,7 +598,7 @@ void GnapEngine::updateGrabCursorSprite(int x, int y) {
 			_currGrabCursorX = newGrabCursorX;
 			_currGrabCursorY = newGrabCursorY;
 			Common::Rect rect(newGrabCursorX, newGrabCursorY,
-				newGrabCursorX + _grabCursorSprite->w, newGrabCursorY + _grabCursorSprite->h);
+			                  newGrabCursorX + _grabCursorSprite->w, newGrabCursorY + _grabCursorSprite->h);
 			_gameSys->invalidateGrabCursorSprite(300, rect, _grabCursorSprite, _grabCursorSprite);
 		}
 	}
@@ -654,7 +653,7 @@ void GnapEngine::showFullScreenSprite(int resourceId) {
 	setGrabCursorSprite(-1);
 	addFullScreenSprite(resourceId, 256);
 	while (!_mouseClickState._left && !isKeyStatus1(Common::KEYCODE_ESCAPE)
-		&& !isKeyStatus1(Common::KEYCODE_SPACE) && !isKeyStatus1(Common::KEYCODE_RETURN) && !_gameDone) {
+	       && !isKeyStatus1(Common::KEYCODE_SPACE) && !isKeyStatus1(Common::KEYCODE_RETURN) && !_gameDone) {
 		gameUpdateTick();
 	}
 	_mouseClickState._left = false;
@@ -861,14 +860,12 @@ void GnapEngine::initScene() {
 		_gameSys->setBackgroundSurface(_backgroundSurface, 0, 500, 1, 1000);
 	}
 
-	if (_currentSceneNum != 0 && _currentSceneNum != 16 && _currentSceneNum != 47 &&
-		_currentSceneNum != 48 && _currentSceneNum != 54) {
+	if (_currentSceneNum != 0 && _currentSceneNum != 16 && _currentSceneNum != 47 && _currentSceneNum != 48 && _currentSceneNum != 54) {
 		_gameSys->drawBitmap(backgroundId);
 	}
 
 	if ((_cursorValue == 4 && isFlag(kGFGnapControlsToyUFO)) || _currentSceneNum == 41)
 		playSound(makeRid(1, 0x8F6), true);
-
 }
 
 void GnapEngine::endSceneInit() {
@@ -881,9 +878,7 @@ void GnapEngine::afterScene() {
 	if (_gameDone)
 		return;
 
-	if (_newCursorValue == _cursorValue && _newSceneNum != 0 && _newSceneNum != 16 &&
-		_newSceneNum != 47 && _newSceneNum != 48 && _newSceneNum != 54 && _newSceneNum != 49 &&
-		_newSceneNum != 50 && _newSceneNum != 51 && _newSceneNum != 52)
+	if (_newCursorValue == _cursorValue && _newSceneNum != 0 && _newSceneNum != 16 && _newSceneNum != 47 && _newSceneNum != 48 && _newSceneNum != 54 && _newSceneNum != 49 && _newSceneNum != 50 && _newSceneNum != 51 && _newSceneNum != 52)
 		_newGrabCursorSpriteIndex = _grabCursorSpriteIndex;
 	else
 		_newGrabCursorSpriteIndex = -1;
@@ -909,7 +904,6 @@ void GnapEngine::afterScene() {
 
 	_mouseClickState._left = false;
 	_mouseClickState._right = false;
-
 }
 
 void GnapEngine::checkGameKeys() {
@@ -1077,8 +1071,8 @@ void GnapEngine::playSequences(int fullScreenSpriteId, int sequenceId1, int sequ
 	setGrabCursorSprite(-1);
 	_gameSys->setAnimation(sequenceId2, _gnap->_id, 0);
 	_gameSys->insertSequence(sequenceId2, _gnap->_id,
-		makeRid(_gnap->_sequenceDatNum, _gnap->_sequenceId), _gnap->_id,
-		kSeqSyncWait, 0, 15 * (5 * _gnap->_pos.x - 25), 48 * (_gnap->_pos.y - 8));
+	                         makeRid(_gnap->_sequenceDatNum, _gnap->_sequenceId), _gnap->_id,
+	                         kSeqSyncWait, 0, 15 * (5 * _gnap->_pos.x - 25), 48 * (_gnap->_pos.y - 8));
 	_gnap->_sequenceId = sequenceId2;
 	_gnap->_sequenceDatNum = 0;
 	while (_gameSys->getAnimationStatus(0) != 2 && !_gameDone)
@@ -1091,8 +1085,8 @@ void GnapEngine::playSequences(int fullScreenSpriteId, int sequenceId1, int sequ
 		gameUpdateTick();
 	_gameSys->setAnimation(sequenceId3, _gnap->_id, 0);
 	_gameSys->insertSequence(sequenceId3, _gnap->_id,
-		makeRid(_gnap->_sequenceDatNum, _gnap->_sequenceId), _gnap->_id,
-		kSeqSyncWait, 0, 15 * (5 * _gnap->_pos.x - 25), 48 * (_gnap->_pos.y - 8));
+	                         makeRid(_gnap->_sequenceDatNum, _gnap->_sequenceId), _gnap->_id,
+	                         kSeqSyncWait, 0, 15 * (5 * _gnap->_pos.x - 25), 48 * (_gnap->_pos.y - 8));
 	removeFullScreenSprite();
 	showCursor();
 	_gnap->_sequenceId = sequenceId3;
@@ -1119,8 +1113,7 @@ int GnapEngine::toyUfoGetSequenceId() {
 }
 
 bool GnapEngine::toyUfoCheckTimer() {
-	if (!isFlag(kGFGnapControlsToyUFO) || isFlag(kGFUnk18) || _timers[9] ||
-		_toyUfoSequenceId == 0x870 || _toyUfoSequenceId == 0x871 || _toyUfoSequenceId == 0x872 || _toyUfoSequenceId == 0x873)
+	if (!isFlag(kGFGnapControlsToyUFO) || isFlag(kGFUnk18) || _timers[9] || _toyUfoSequenceId == 0x870 || _toyUfoSequenceId == 0x871 || _toyUfoSequenceId == 0x872 || _toyUfoSequenceId == 0x873)
 		return false;
 	_sceneDone = true;
 	_newSceneNum = 41;
@@ -1202,15 +1195,15 @@ void GnapEngine::toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY,
 		flyNodes[0]._sequenceId = seqId;
 		flyNodes[0]._id = 0;
 		_gameSys->insertSequence(seqId | 0x10000, 0,
-			_toyUfoSequenceId | 0x10000, _toyUfoId,
-			kSeqSyncWait, 0, flyNodes[0]._gridX1 - 365, flyNodes[0]._gridY1 - 128);
+		                         _toyUfoSequenceId | 0x10000, _toyUfoId,
+		                         kSeqSyncWait, 0, flyNodes[0]._gridX1 - 365, flyNodes[0]._gridY1 - 128);
 		for (i = 1; i < nodesCount; ++i) {
 			flyNodes[i]._sequenceId = seqId + (i % 8);
 			flyNodes[i]._id = i;
 			_gameSys->insertSequence(flyNodes[i]._sequenceId | 0x10000, flyNodes[i]._id,
-				flyNodes[i - 1]._sequenceId | 0x10000, flyNodes[i - 1]._id,
-				kSeqSyncWait, 0,
-				flyNodes[i]._gridX1 - 365, flyNodes[i]._gridY1 - 128);
+			                         flyNodes[i - 1]._sequenceId | 0x10000, flyNodes[i - 1]._id,
+			                         kSeqSyncWait, 0,
+			                         flyNodes[i]._gridX1 - 365, flyNodes[i]._gridY1 - 128);
 		}
 
 		_toyUfoSequenceId = flyNodes[nodesCount - 1]._sequenceId;
@@ -1218,7 +1211,6 @@ void GnapEngine::toyUfoFlyTo(int destX, int destY, int minX, int maxX, int minY,
 
 		if (animationIndex >= 0)
 			_gameSys->setAnimation(_toyUfoSequenceId | 0x10000, _toyUfoId, animationIndex);
-
 	}
 }
 

@@ -32,15 +32,17 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CStarControl, CGameObject)
-	ON_MESSAGE(MouseMoveMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(KeyCharMsg)
-	ON_MESSAGE(FrameMsg)
-	ON_MESSAGE(MovementMsg)
+ON_MESSAGE(MouseMoveMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(KeyCharMsg)
+ON_MESSAGE(FrameMsg)
+ON_MESSAGE(MovementMsg)
 END_MESSAGE_MAP()
 
-CStarControl::CStarControl() : _enabled(false), _petControl(nullptr),
-		_starRect(20, 10, 620, 350) {
+CStarControl::CStarControl()
+  : _enabled(false)
+  , _petControl(nullptr)
+  , _starRect(20, 10, 620, 350) {
 	CStarCamera::init();
 }
 
@@ -84,8 +86,7 @@ void CStarControl::draw(CScreenManager *screenManager) {
 
 bool CStarControl::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (_visible && _starRect.contains(msg->_mousePos)) {
-		_view.MouseButtonDownMsg(0, Point(msg->_mousePos.x - 20,
-			msg->_mousePos.y - 10));
+		_view.MouseButtonDownMsg(0, Point(msg->_mousePos.x - 20, msg->_mousePos.y - 10));
 		return true;
 	} else {
 		return false;
@@ -94,8 +95,7 @@ bool CStarControl::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 bool CStarControl::MouseMoveMsg(CMouseMoveMsg *msg) {
 	if (_visible && _starRect.contains(msg->_mousePos)) {
-		_view.MouseMoveMsg(0, Point(msg->_mousePos.x - 20,
-			msg->_mousePos.y - 10));
+		_view.MouseMoveMsg(0, Point(msg->_mousePos.x - 20, msg->_mousePos.y - 10));
 		makeDirty();
 		return true;
 	} else {

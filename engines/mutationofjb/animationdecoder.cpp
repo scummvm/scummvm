@@ -21,18 +21,28 @@
  */
 
 #include "mutationofjb/animationdecoder.h"
+#include "common/debug.h"
 #include "mutationofjb/encryptedfile.h"
 #include "mutationofjb/util.h"
-#include "common/debug.h"
 
 namespace MutationOfJB {
 
-AnimationDecoder::AnimationDecoder(const Common::String &fileName) : _fileName(fileName), _fromFrame(-1), _toFrame(-1), _threshold(0xFF) {
+AnimationDecoder::AnimationDecoder(const Common::String &fileName)
+  : _fileName(fileName)
+  , _fromFrame(-1)
+  , _toFrame(-1)
+  , _threshold(0xFF) {
 	_surface.create(IMAGE_WIDTH, IMAGE_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 	_owningSurface = true;
 }
 
-AnimationDecoder::AnimationDecoder(const Common::String &fileName, const Graphics::Surface &outSurface) : _fileName(fileName), _surface(outSurface), _owningSurface(false), _fromFrame(-1), _toFrame(-1), _threshold(0xFF) {}
+AnimationDecoder::AnimationDecoder(const Common::String &fileName, const Graphics::Surface &outSurface)
+  : _fileName(fileName)
+  , _surface(outSurface)
+  , _owningSurface(false)
+  , _fromFrame(-1)
+  , _toFrame(-1)
+  , _threshold(0xFF) {}
 
 bool AnimationDecoder::decode(AnimationDecoderCallback *callback) {
 	EncryptedFile file;
@@ -228,7 +238,6 @@ void AnimationDecoder::loadDiffFrame(EncryptedFile &file, uint32) {
 				imageData += no;
 				lineOffset += no;
 			}
-
 		}
 	}
 }

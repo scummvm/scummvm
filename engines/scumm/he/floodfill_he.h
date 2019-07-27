@@ -21,9 +21,9 @@
  */
 
 #if !defined(SCUMM_HE_FLOODFILL_HE_H) && defined(ENABLE_HE)
-#define SCUMM_HE_FLOODFILL_HE_H
+#	define SCUMM_HE_FLOODFILL_HE_H
 
-#include "common/rect.h"
+#	include "common/rect.h"
 
 namespace Scumm {
 

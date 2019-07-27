@@ -29,54 +29,56 @@
 namespace Glk {
 namespace AdvSys {
 
-/**
+	/**
  * AdvSys game interpreter
  */
-class AdvSys : public VM {
-private:
-	/**
+	class AdvSys : public VM {
+	private:
+		/**
 	 * Engine initialization
 	 */
-	bool initialize();
+		bool initialize();
 
-	/**
+		/**
 	 * Engine cleanup
 	 */
-	void deinitialize();
+		void deinitialize();
 
-	/**
+		/**
 	 * Handle a single action
 	 */
-	bool singleAction();
-public:
-	/**
+		bool singleAction();
+
+	public:
+		/**
 	 * Constructor
 	 */
-	AdvSys(OSystem *syst, const GlkGameDescription &gameDesc) : VM(syst, gameDesc) {}
+		AdvSys(OSystem *syst, const GlkGameDescription &gameDesc)
+		  : VM(syst, gameDesc) {}
 
-	/**
+		/**
 	 * Run the game
 	 */
-	virtual void runGame() override;
+		virtual void runGame() override;
 
-	/**
+		/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override {
-		return INTERPRETER_ADVSYS;
-	}
+		virtual InterpreterType getInterpreterType() const override {
+			return INTERPRETER_ADVSYS;
+		}
 
-	/**
+		/**
 	 * Load a savegame from the passed Quetzal file chunk stream
 	 */
-	virtual Common::Error readSaveData(Common::SeekableReadStream *rs) override;
+		virtual Common::Error readSaveData(Common::SeekableReadStream *rs) override;
 
-	/**
+		/**
 	 * Save the game. The passed write stream represents access to the UMem chunk
 	 * in the Quetzal save file that will be created
 	 */
-	virtual Common::Error writeGameData(Common::WriteStream *ws) override;
-};
+		virtual Common::Error writeGameData(Common::WriteStream *ws) override;
+	};
 
 } // End of namespace AdvSys
 } // End of namespace Glk

@@ -18,7 +18,6 @@ static const HoFSequence kLoLSeqplaySeqDataDOSDemoSeq[11] = {
 	{ 0x0002, "", "scene1.cps", 3, 1, 0xFFFF, 0xFFFF, 0x0000, 0x0001, 0x0014, 0, 0, 0x012C }
 };
 
-
 static const HoFSequenceProvider kLoLSeqplaySeqDataDOSDemoProvider = { ARRAYSIZE(kLoLSeqplaySeqDataDOSDemoSeq), kLoLSeqplaySeqDataDOSDemoSeq, 0, NULL };
 
 static const char *const kLoLSeqplaySfxFilesDOSDemo[18] = {
@@ -51,4 +50,3 @@ static const char *const kLoLSeqplayIntroTracksDOSDemo[3] = {
 };
 
 static const StringListProvider kLoLSeqplayIntroTracksDOSDemoProvider = { ARRAYSIZE(kLoLSeqplayIntroTracksDOSDemo), kLoLSeqplayIntroTracksDOSDemo };
-

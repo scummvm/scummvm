@@ -22,19 +22,19 @@
 
 #if defined(MAEMO)
 
-#include "backends/platform/maemo/maemo.h"
-#include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
+#	include "base/main.h"
+#	include "backends/platform/maemo/maemo.h"
+#	include "backends/plugins/sdl/sdl-provider.h"
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 	g_system = new Maemo::OSystem_SDL_Maemo();
 	assert(g_system);
 
 	((Maemo::OSystem_SDL_Maemo *)g_system)->init();
 
-#ifdef DYNAMIC_MODULES
+#	ifdef DYNAMIC_MODULES
 	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
-#endif
+#	endif
 
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);

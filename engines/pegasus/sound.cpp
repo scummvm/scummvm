@@ -46,7 +46,8 @@ Sound::~Sound() {
 
 void Sound::disposeSound() {
 	stopSound();
-	delete _stream; _stream = 0;
+	delete _stream;
+	_stream = 0;
 }
 
 void Sound::initFromAIFFFile(const Common::String &fileName) {

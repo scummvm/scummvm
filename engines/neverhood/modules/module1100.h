@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE1100_H
 #define NEVERHOOD_MODULES_MODULE1100_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -33,6 +33,7 @@ class Module1100 : public Module {
 public:
 	Module1100(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module1100();
+
 protected:
 	int _sceneNum;
 	int _countdown;
@@ -47,6 +48,7 @@ class SsScene1105SymbolDie;
 class Scene1105 : public Scene {
 public:
 	Scene1105(NeverhoodEngine *vm, Module *parentModule);
+
 protected:
 	int _countdown;
 	int _backgroundIndex;
@@ -75,6 +77,7 @@ protected:
 class Scene1109 : public Scene {
 public:
 	Scene1109(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	Sprite *_sprite1;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);

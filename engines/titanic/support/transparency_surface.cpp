@@ -27,7 +27,8 @@
 namespace Titanic {
 
 CTransparencySurface::CTransparencySurface(const Graphics::Surface *surface,
-		TransparencyMode transMode) : _surface(surface) {
+                                           TransparencyMode transMode)
+  : _surface(surface) {
 	_pitch = 0;
 	_runLength = 0;
 	_flag = false;

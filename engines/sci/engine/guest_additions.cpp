@@ -20,23 +20,23 @@
  *
  */
 
+#include "sci/engine/guest_additions.h"
 #include "audio/mixer.h"
 #include "common/config-manager.h"
 #include "common/gui_options.h"
 #include "common/savefile.h"
 #include "sci/engine/features.h"
-#include "sci/engine/guest_additions.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/savegame.h"
 #include "sci/engine/state.h"
 #include "sci/engine/vm.h"
 #ifdef ENABLE_SCI32
-#include "common/translation.h"
-#include "gui/saveload.h"
-#include "sci/graphics/frameout.h"
+#	include "common/translation.h"
+#	include "gui/saveload.h"
+#	include "sci/graphics/frameout.h"
 #endif
-#include "sci/sound/music.h"
 #include "sci/sci.h"
+#include "sci/sound/music.h"
 
 namespace Sci {
 
@@ -47,18 +47,21 @@ enum {
 
 enum {
 	kMessageTypeSubtitles = 1,
-	kMessageTypeSpeech    = 2
+	kMessageTypeSpeech = 2
 };
 
-GuestAdditions::GuestAdditions(EngineState *state, GameFeatures *features, Kernel *kernel) :
-	_state(state),
-	_features(features),
-	_kernel(kernel),
-	_segMan(state->_segMan),
+GuestAdditions::GuestAdditions(EngineState *state, GameFeatures *features, Kernel *kernel)
+  : _state(state)
+  , _features(features)
+  , _kernel(kernel)
+  , _segMan(state->_segMan)
+  ,
 #ifdef ENABLE_SCI32
-	_restoring(false),
+  _restoring(false)
+  ,
 #endif
-	_messageTypeSynced(false) {}
+  _messageTypeSynced(false) {
+}
 
 #pragma mark -
 
@@ -95,8 +98,7 @@ bool GuestAdditions::shouldSyncAudioToScummVM() const {
 		const ExecStack &call = *it;
 		const Common::String objName = _segMan->getObjectName(call.sendp);
 
-		if (getSciVersion() < SCI_VERSION_2 && (objName == "TheMenuBar" ||
-												objName == "MenuBar")) {
+		if (getSciVersion() < SCI_VERSION_2 && (objName == "TheMenuBar" || objName == "MenuBar")) {
 			// SCI16 with menu bar
 			return true;
 		} else if (objName == "volumeSlider") {
@@ -109,35 +111,25 @@ bool GuestAdditions::shouldSyncAudioToScummVM() const {
 		} else if (gameId == GID_LSL6 && objName == "menuBar") {
 			return true;
 #ifdef ENABLE_SCI32
-		} else if ((gameId == GID_GK1 || gameId == GID_SQ6) && (objName == "musicBar" ||
-																objName == "soundBar")) {
+		} else if ((gameId == GID_GK1 || gameId == GID_SQ6) && (objName == "musicBar" || objName == "soundBar")) {
 			return true;
 		} else if (gameId == GID_GK2 && objName == "soundSlider") {
 			return true;
-		} else if (gameId == GID_KQ7 && (objName == "volumeUp" ||
-										 objName == "volumeDown")) {
+		} else if (gameId == GID_KQ7 && (objName == "volumeUp" || objName == "volumeDown")) {
 			return true;
-		} else if (gameId == GID_LSL6HIRES && (objName == "hiResMenu" ||
-											   objName == "volumeDial")) {
+		} else if (gameId == GID_LSL6HIRES && (objName == "hiResMenu" || objName == "volumeDial")) {
 			return true;
-		} else if ((gameId == GID_LSL7 || gameId == GID_TORIN) && (objName == "oMusicScroll" ||
-																   objName == "oSFXScroll" ||
-																   objName == "oAudioScroll")) {
+		} else if ((gameId == GID_LSL7 || gameId == GID_TORIN) && (objName == "oMusicScroll" || objName == "oSFXScroll" || objName == "oAudioScroll")) {
 			return true;
 		} else if (gameId == GID_MOTHERGOOSEHIRES && objName == "MgButtonBar") {
 			return true;
-		} else if (gameId == GID_PHANTASMAGORIA && (objName == "midiVolDown" ||
-													objName == "midiVolUp" ||
-													objName == "dacVolDown" ||
-													objName == "dacVolUp")) {
+		} else if (gameId == GID_PHANTASMAGORIA && (objName == "midiVolDown" || objName == "midiVolUp" || objName == "dacVolDown" || objName == "dacVolUp")) {
 			return true;
 		} else if (gameId == GID_PHANTASMAGORIA2 && objName == "foo2") {
 			return true;
-		} else if (gameId == GID_PQ4 && (objName == "increaseVolume" ||
-										 objName == "decreaseVolume")) {
+		} else if (gameId == GID_PQ4 && (objName == "increaseVolume" || objName == "decreaseVolume")) {
 			return true;
-		} else if (gameId == GID_PQSWAT && (objName == "volumeDownButn" ||
-											objName == "volumeUpButn")) {
+		} else if (gameId == GID_PQSWAT && (objName == "volumeDownButn" || objName == "volumeUpButn")) {
 			return true;
 		} else if (gameId == GID_SHIVERS && objName == "spVolume") {
 			return true;
@@ -243,13 +235,11 @@ void GuestAdditions::instantiateScriptHook(Script &script, const bool ignoreDela
 	// If there is a delayed restore, we still want to patch the script so
 	// that the automatic return of the game ID works, but we do not want to
 	// patch the scripts that get restored
-	if (ConfMan.getBool("originalsaveload") &&
-		(ignoreDelayedRestore || _state->_delayedRestoreGameId == -1)) {
+	if (ConfMan.getBool("originalsaveload") && (ignoreDelayedRestore || _state->_delayedRestoreGameId == -1)) {
 		return;
 	}
 
-	if ((g_sci->getGameId() == GID_LSL7 || g_sci->getGameId() == GID_TORIN) &&
-		script.getScriptNumber() == 64866) {
+	if ((g_sci->getGameId() == GID_LSL7 || g_sci->getGameId() == GID_TORIN) && script.getScriptNumber() == 64866) {
 
 		patchGameSaveRestoreTorin(script);
 	} else if (g_sci->getGameId() == GID_PHANTASMAGORIA2 && script.getScriptNumber() == 64978) {
@@ -329,12 +319,12 @@ void GuestAdditions::patchGameSaveRestore() const {
 }
 
 static const byte kSaveRestorePatch[] = {
-	0x39, 0x03,        // pushi 03
-	0x76,              // push0
-	0x38, 0xff, 0xff,  // pushi -1
-	0x76,              // push0
-	0x43, 0xff, 0x06,  // callk kRestoreGame/kSaveGame (will get changed afterwards)
-	0x48               // ret
+	0x39, 0x03, // pushi 03
+	0x76, // push0
+	0x38, 0xff, 0xff, // pushi -1
+	0x76, // push0
+	0x43, 0xff, 0x06, // callk kRestoreGame/kSaveGame (will get changed afterwards)
+	0x48 // ret
 };
 
 static void patchKSaveRestore(SegManager *segMan, reg_t methodAddress, byte id) {
@@ -348,7 +338,7 @@ void GuestAdditions::patchGameSaveRestoreSCI16() const {
 	const Object *gameObject = _segMan->getObject(g_sci->getGameObject());
 	const Object *gameSuperObject = _segMan->getObject(gameObject->getSuperClassSelector());
 	if (!gameSuperObject)
-		gameSuperObject = gameObject;	// happens in KQ5CD, when loading saved games before r54510
+		gameSuperObject = gameObject; // happens in KQ5CD, when loading saved games before r54510
 	byte kernelIdRestore = 0;
 	byte kernelIdSave = 0;
 
@@ -380,10 +370,10 @@ void GuestAdditions::patchGameSaveRestoreSCI16() const {
 		uint16 selectorId = gameSuperObject->getFuncSelector(methodNr);
 		Common::String methodName = _kernel->getSelectorName(selectorId);
 		if (methodName == "restore") {
-				patchKSaveRestore(_segMan, gameSuperObject->getFunction(methodNr), kernelIdRestore);
+			patchKSaveRestore(_segMan, gameSuperObject->getFunction(methodNr), kernelIdRestore);
 		} else if (methodName == "save") {
-			if (g_sci->getGameId() != GID_FAIRYTALES) {	// Fairy Tales saves automatically without a dialog
-					patchKSaveRestore(_segMan, gameSuperObject->getFunction(methodNr), kernelIdSave);
+			if (g_sci->getGameId() != GID_FAIRYTALES) { // Fairy Tales saves automatically without a dialog
+				patchKSaveRestore(_segMan, gameSuperObject->getFunction(methodNr), kernelIdSave);
 			}
 		}
 	}
@@ -399,8 +389,8 @@ void GuestAdditions::patchGameSaveRestoreSCI16() const {
 		uint16 selectorId = patchObjectSave->getFuncSelector(methodNr);
 		Common::String methodName = _kernel->getSelectorName(selectorId);
 		if (methodName == "save") {
-			if (g_sci->getGameId() != GID_FAIRYTALES) {	// Fairy Tales saves automatically without a dialog
-					patchKSaveRestore(_segMan, patchObjectSave->getFunction(methodNr), kernelIdSave);
+			if (g_sci->getGameId() != GID_FAIRYTALES) { // Fairy Tales saves automatically without a dialog
+				patchKSaveRestore(_segMan, patchObjectSave->getFunction(methodNr), kernelIdSave);
 			}
 			break;
 		}
@@ -409,10 +399,10 @@ void GuestAdditions::patchGameSaveRestoreSCI16() const {
 
 #ifdef ENABLE_SCI32
 static const byte SRDialogPatch[] = {
-	0x76,                                 // push0
-	0x59, 0x01,                           // &rest 1
+	0x76, // push0
+	0x59, 0x01, // &rest 1
 	0x43, kScummVMSaveLoadId, 0x00, 0x00, // callk kScummVMSaveLoad, 0
-	0x48                                  // ret
+	0x48 // ret
 };
 
 void GuestAdditions::patchGameSaveRestoreSCI32(Script &script) const {
@@ -420,15 +410,15 @@ void GuestAdditions::patchGameSaveRestoreSCI32(Script &script) const {
 }
 
 static const byte SRTorinPatch[] = {
-	0x38, 0xFF, 0xFF,                     // pushi new
-	0x76,                                 // push0
-	0x51, 0x0f,                           // class Str
-	0x4a, 0x04, 0x00,                     // send 4
-	0xa3, 0x01,                           // sal 1
-	0x76,                                 // push0
-	0x59, 0x01,                           // &rest 1
+	0x38, 0xFF, 0xFF, // pushi new
+	0x76, // push0
+	0x51, 0x0f, // class Str
+	0x4a, 0x04, 0x00, // send 4
+	0xa3, 0x01, // sal 1
+	0x76, // push0
+	0x59, 0x01, // &rest 1
 	0x43, kScummVMSaveLoadId, 0x00, 0x00, // callk kScummVMSaveLoad, 0
-	0x48                                  // ret
+	0x48 // ret
 };
 
 void GuestAdditions::patchGameSaveRestoreTorin(Script &script) const {
@@ -468,10 +458,10 @@ void GuestAdditions::patchGameSaveRestorePhant2(Script &script) const {
 }
 
 static const byte RamaSRDialogPatch[] = {
-	0x78,                                 // push1
-	0x7c,                                 // pushSelf
+	0x78, // push1
+	0x7c, // pushSelf
 	0x43, kScummVMSaveLoadId, 0x02, 0x00, // callk kScummVMSaveLoad, 0
-	0x48                                  // ret
+	0x48 // ret
 };
 
 static const int RamaSRDialogUint16Offsets[] = { 4 };
@@ -956,8 +946,7 @@ void GuestAdditions::syncMessageTypeToScummVMUsingShiversStrategy(const int inde
 }
 
 void GuestAdditions::syncMessageTypeToScummVMUsingLSL6HiresStrategy(const reg_t sendObj, Selector &selector, reg_t *argp) {
-	if (_state->variables[VAR_GLOBAL][kGlobalVarLSL6HiresGameFlags] == sendObj &&
-		(selector == SELECTOR(clear) || selector == SELECTOR(set))) {
+	if (_state->variables[VAR_GLOBAL][kGlobalVarLSL6HiresGameFlags] == sendObj && (selector == SELECTOR(clear) || selector == SELECTOR(set))) {
 
 		if (argp[1].toUint16() == kLSL6HiresSubtitleFlag) {
 			if (_messageTypeSynced) {
@@ -1013,8 +1002,8 @@ void GuestAdditions::syncMasterVolumeToScummVM(const int16 masterVolume) const {
 }
 
 #ifdef ENABLE_SCI32
-#pragma mark -
-#pragma mark Globals volume sync
+#	pragma mark -
+#	pragma mark Globals volume sync
 
 void GuestAdditions::syncAudioVolumeGlobalsFromScummVM() const {
 	// On muting: Setting the music volume to zero when mute is enabled is done
@@ -1054,13 +1043,13 @@ void GuestAdditions::syncAudioVolumeGlobalsFromScummVM() const {
 
 	case GID_PHANTASMAGORIA: {
 		reg_t &musicGlobal = _state->variables[VAR_GLOBAL][kGlobalVarPhant1MusicVolume];
-		reg_t &dacGlobal   = _state->variables[VAR_GLOBAL][kGlobalVarPhant1DACVolume];
+		reg_t &dacGlobal = _state->variables[VAR_GLOBAL][kGlobalVarPhant1DACVolume];
 
 		const int16 oldMusicVolume = musicGlobal.toSint16();
-		const int16 oldDacVolume   = dacGlobal.toSint16();
+		const int16 oldDacVolume = dacGlobal.toSint16();
 
 		const int16 musicVolume = (ConfMan.getInt("music_volume") + 1) * MUSIC_MASTERVOLUME_MAX / Audio::Mixer::kMaxMixerVolume;
-		const int16 dacVolume   = (ConfMan.getInt("sfx_volume") + 1)   * Audio32::kMaxVolume / Audio::Mixer::kMaxMixerVolume;
+		const int16 dacVolume = (ConfMan.getInt("sfx_volume") + 1) * Audio32::kMaxVolume / Audio::Mixer::kMaxMixerVolume;
 
 		g_sci->_soundCmd->setMasterVolume(ConfMan.getBool("mute") ? 0 : musicVolume);
 
@@ -1086,8 +1075,8 @@ void GuestAdditions::syncAudioVolumeGlobalsFromScummVM() const {
 
 	case GID_LSL7:
 	case GID_TORIN: {
-		const int16 musicVolume  = (ConfMan.getInt("music_volume") + 1)  * 100 / Audio::Mixer::kMaxMixerVolume;
-		const int16 sfxVolume    = (ConfMan.getInt("sfx_volume") + 1)    * 100 / Audio::Mixer::kMaxMixerVolume;
+		const int16 musicVolume = (ConfMan.getInt("music_volume") + 1) * 100 / Audio::Mixer::kMaxMixerVolume;
+		const int16 sfxVolume = (ConfMan.getInt("sfx_volume") + 1) * 100 / Audio::Mixer::kMaxMixerVolume;
 		const int16 speechVolume = (ConfMan.getInt("speech_volume") + 1) * 100 / Audio::Mixer::kMaxMixerVolume;
 		syncTorinVolumeFromScummVM(musicVolume, sfxVolume, speechVolume);
 		syncTorinUI(musicVolume, sfxVolume, speechVolume);
@@ -1100,9 +1089,7 @@ void GuestAdditions::syncAudioVolumeGlobalsFromScummVM() const {
 }
 
 void GuestAdditions::syncGK1StartupVolumeFromScummVM(const int index, const reg_t value) const {
-	if (index == kGlobalVarGK1Music1 || index == kGlobalVarGK1Music2 ||
-		index == kGlobalVarGK1DAC1 || index == kGlobalVarGK1DAC2 ||
-		index == kGlobalVarGK1DAC3) {
+	if (index == kGlobalVarGK1Music1 || index == kGlobalVarGK1Music2 || index == kGlobalVarGK1DAC1 || index == kGlobalVarGK1DAC2 || index == kGlobalVarGK1DAC3) {
 
 		int16 volume;
 		Selector selector;
@@ -1208,8 +1195,8 @@ void GuestAdditions::syncRamaVolumeFromScummVM(const int16 musicVolume) const {
 }
 
 void GuestAdditions::syncTorinVolumeFromScummVM(const int16 musicVolume, const int16 sfxVolume, const int16 speechVolume) const {
-	_state->variables[VAR_GLOBAL][kGlobalVarTorinMusicVolume]  = make_reg(0, musicVolume);
-	_state->variables[VAR_GLOBAL][kGlobalVarTorinSFXVolume]    = make_reg(0, sfxVolume);
+	_state->variables[VAR_GLOBAL][kGlobalVarTorinMusicVolume] = make_reg(0, musicVolume);
+	_state->variables[VAR_GLOBAL][kGlobalVarTorinSFXVolume] = make_reg(0, sfxVolume);
 	_state->variables[VAR_GLOBAL][kGlobalVarTorinSpeechVolume] = make_reg(0, speechVolume);
 
 	// Calling `reSyncVol` on all sounds is necessary to propagate the
@@ -1286,9 +1273,7 @@ void GuestAdditions::syncAudioVolumeGlobalsToScummVM(const int index, const reg_
 
 	case GID_LSL7:
 	case GID_TORIN:
-		if (index == kGlobalVarTorinMusicVolume ||
-			index == kGlobalVarTorinSFXVolume ||
-			index == kGlobalVarTorinSpeechVolume) {
+		if (index == kGlobalVarTorinMusicVolume || index == kGlobalVarTorinSFXVolume || index == kGlobalVarTorinSpeechVolume) {
 
 			const int16 volume = value.toSint16() * Audio::Mixer::kMaxMixerVolume / 100;
 
@@ -1327,8 +1312,8 @@ void GuestAdditions::syncGK1AudioVolumeToScummVM(const reg_t soundObj, int16 vol
 	}
 }
 
-#pragma mark -
-#pragma mark Audio UI sync
+#	pragma mark -
+#	pragma mark Audio UI sync
 
 void GuestAdditions::syncInGameUI(const int16 musicVolume, const int16 sfxVolume) const {
 	if (_state->abortScriptProcessing != kAbortNone) {
@@ -1373,7 +1358,7 @@ void GuestAdditions::syncInGameUI(const int16 musicVolume, const int16 sfxVolume
 
 void GuestAdditions::syncGK1UI() const {
 	const reg_t bars[] = { _segMan->findObjectByName("musicBar"),
-						   _segMan->findObjectByName("soundBar") };
+		                     _segMan->findObjectByName("soundBar") };
 
 	for (int i = 0; i < ARRAYSIZE(bars); ++i) {
 		const reg_t barId = bars[i];
@@ -1555,7 +1540,7 @@ void GuestAdditions::syncShivers1UI(const int16 dacVolume) const {
 
 void GuestAdditions::syncSQ6UI() const {
 	const reg_t bars[] = { _segMan->findObjectByName("musicBar"),
-						   _segMan->findObjectByName("soundBar") };
+		                     _segMan->findObjectByName("soundBar") };
 	for (int i = 0; i < ARRAYSIZE(bars); ++i) {
 		const reg_t barId = bars[i];
 		if (!barId.isNull()) {
@@ -1566,8 +1551,8 @@ void GuestAdditions::syncSQ6UI() const {
 
 void GuestAdditions::syncTorinUI(const int16 musicVolume, const int16 sfxVolume, const int16 speechVolume) const {
 	const reg_t sliders[] = { _segMan->findObjectByName("oMusicScroll"),
-							  _segMan->findObjectByName("oSFXScroll"),
-							  _segMan->findObjectByName("oAudioScroll") };
+		                        _segMan->findObjectByName("oSFXScroll"),
+		                        _segMan->findObjectByName("oAudioScroll") };
 	const int16 values[] = { musicVolume, sfxVolume, speechVolume };
 	for (int i = 0; i < ARRAYSIZE(sliders); ++i) {
 		const reg_t sliderId = sliders[i];
@@ -1578,8 +1563,8 @@ void GuestAdditions::syncTorinUI(const int16 musicVolume, const int16 sfxVolume,
 	}
 }
 
-#pragma mark -
-#pragma mark Talk speed sync
+#	pragma mark -
+#	pragma mark Talk speed sync
 
 void GuestAdditions::syncTextSpeedFromScummVM() const {
 	const int16 textSpeed = 8 - (ConfMan.getInt("talkspeed") + 1) * 8 / 255;

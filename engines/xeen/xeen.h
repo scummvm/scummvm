@@ -23,11 +23,11 @@
 #ifndef XEEN_XEEN_H
 #define XEEN_XEEN_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
 #include "common/error.h"
 #include "common/random.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
+#include "common/system.h"
 #include "common/util.h"
 #include "engines/engine.h"
 #include "xeen/combat.h"
@@ -69,10 +69,10 @@ enum {
 };
 
 enum XeenDebugChannels {
-	kDebugPath      = 1 << 0,
-	kDebugScripts	= 1 << 1,
-	kDebugGraphics	= 1 << 2,
-	kDebugSound     = 1 << 3
+	kDebugPath = 1 << 0,
+	kDebugScripts = 1 << 1,
+	kDebugGraphics = 1 << 2,
+	kDebugSound = 1 << 3
 };
 
 enum Mode {
@@ -114,11 +114,15 @@ class XeenEngine : public Engine {
 		bool _showItemCosts;
 		bool _durableArmor;
 
-		ExtendedOptions() : _showItemCosts(false), _durableArmor(false) {}
+		ExtendedOptions()
+		  : _showItemCosts(false)
+		  , _durableArmor(false) {}
 	};
+
 private:
 	const XeenGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+
 private:
 	/**
 	 * Initializes all the engine sub-objects
@@ -154,8 +158,10 @@ private:
 	 * Shows a please wait dialog
 	 */
 	void pleaseWait();
+
 protected:
 	int _loadSaveSlot;
+
 protected:
 	/**
 	 * Show the starting sequence/intro
@@ -176,6 +182,7 @@ protected:
 	 * Death cutscene
 	 */
 	virtual void death() = 0;
+
 public:
 	Combat *_combat;
 	Debugger *_debugger;
@@ -201,6 +208,7 @@ public:
 	bool _gameWon[3];
 	uint _finalScore;
 	ExtendedOptions _extOptions;
+
 public:
 	XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
 	virtual ~XeenEngine();

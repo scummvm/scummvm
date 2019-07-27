@@ -24,19 +24,19 @@
 
 #if defined(GPH_DEVICE)
 
-#include "backends/graphics/gph/gph-graphics.h"
-#include "backends/events/gph/gph-events.h"
-#include "graphics/scaler/aspect.h"
-#include "common/mutex.h"
-#include "common/textconsole.h"
+#	include "backends/events/gph/gph-events.h"
+#	include "backends/graphics/gph/gph-graphics.h"
+#	include "common/mutex.h"
+#	include "common/textconsole.h"
+#	include "graphics/scaler/aspect.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
-	{"1x", "Standard", GFX_NORMAL},
-	{0, 0, 0}
+	{ "1x", "Standard", GFX_NORMAL },
+	{ 0, 0, 0 }
 };
 
 GPHGraphicsManager::GPHGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
-	: SurfaceSdlGraphicsManager(sdlEventSource, window) {
+  : SurfaceSdlGraphicsManager(sdlEventSource, window) {
 }
 
 const OSystem::GraphicsMode *GPHGraphicsManager::getSupportedGraphicsModes() const {
@@ -93,7 +93,7 @@ void GPHGraphicsManager::setGraphicsModeIntern() {
 void GPHGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	assert(_transactionMode == kTransactionActive);
 
-#ifdef USE_RGB_COLOR
+#	ifdef USE_RGB_COLOR
 	// Avoid redundant format changes
 	Graphics::PixelFormat newFormat;
 	if (!format)
@@ -108,8 +108,7 @@ void GPHGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *f
 		_transactionDetails.formatChanged = true;
 		_screenFormat = newFormat;
 	}
-#endif
-
+#	endif
 
 	// Avoid redundant res changes
 	if ((int)w == _videoMode.screenWidth && (int)h == _videoMode.screenHeight)
@@ -225,15 +224,14 @@ void GPHGraphicsManager::internUpdateScreen() {
 	ScalerProc *scalerProc;
 	int scale1;
 
-#if defined(DEBUG)
+#	if defined(DEBUG)
 	assert(_hwScreen != NULL);
 	assert(_hwScreen->map->sw_data != NULL);
-#endif
+#	endif
 
 	// If the shake position changed, fill the dirty area with blackness
-	if (_currentShakePos != _newShakePos ||
-	        (_cursorNeedsRedraw && _mouseBackup.y <= _currentShakePos)) {
-		SDL_Rect blackrect = {0, 0, _videoMode.screenWidth *_videoMode.scaleFactor, _newShakePos *_videoMode.scaleFactor};
+	if (_currentShakePos != _newShakePos || (_cursorNeedsRedraw && _mouseBackup.y <= _currentShakePos)) {
+		SDL_Rect blackrect = { 0, 0, _videoMode.screenWidth * _videoMode.scaleFactor, _newShakePos * _videoMode.scaleFactor };
 
 		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
@@ -279,9 +277,9 @@ void GPHGraphicsManager::internUpdateScreen() {
 	if (_cursorNeedsRedraw)
 		undrawMouse();
 
-#ifdef USE_OSD
+#	ifdef USE_OSD
 	updateOSD();
-#endif
+#	endif
 
 	// Force a full redraw if requested
 	if (_forceRedraw) {
@@ -304,8 +302,8 @@ void GPHGraphicsManager::internUpdateScreen() {
 
 		for (r = _dirtyRectList; r != lastRect; ++r) {
 			dst = *r;
-			dst.x++;    // Shift rect by one since 2xSai needs to access the data around
-			dst.y++;    // any pixel to scale it, and we want to avoid mem access crashes.
+			dst.x++; // Shift rect by one since 2xSai needs to access the data around
+			dst.y++; // any pixel to scale it, and we want to avoid mem access crashes.
 
 			if (SDL_BlitSurface(origSurf, r, srcSurf, &dst) != 0)
 				error("SDL_BlitSurface failed: %s", SDL_GetError());
@@ -373,11 +371,10 @@ void GPHGraphicsManager::internUpdateScreen() {
 			r->x = dst_x;
 			r->y = dst_y;
 
-
-#ifdef USE_SCALERS
+#	ifdef USE_SCALERS
 			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible)
-				r->h = stretch200To240((uint8 *) _hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1, _videoMode.filtering);
-#endif
+				r->h = stretch200To240((uint8 *)_hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1, _videoMode.filtering);
+#	endif
 		}
 		SDL_UnlockSurface(srcSurf);
 		SDL_UnlockSurface(_hwScreen);
@@ -391,9 +388,9 @@ void GPHGraphicsManager::internUpdateScreen() {
 
 		drawMouse();
 
-#ifdef USE_OSD
+#	ifdef USE_OSD
 		drawOSD();
-#endif
+#	endif
 
 		// Finally, blit all our changes to the screen
 		SDL_UpdateRects(_hwScreen, _numDirtyRects, _dirtyRectList);
@@ -459,9 +456,7 @@ bool GPHGraphicsManager::loadGFXMode() {
 }
 
 bool GPHGraphicsManager::hasFeature(OSystem::Feature f) const {
-	return
-	    (f == OSystem::kFeatureAspectRatioCorrection) ||
-	    (f == OSystem::kFeatureCursorPalette);
+	return (f == OSystem::kFeatureAspectRatioCorrection) || (f == OSystem::kFeatureCursorPalette);
 }
 
 void GPHGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {

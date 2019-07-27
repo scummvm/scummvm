@@ -27,15 +27,14 @@
 
 #include "CEActionsPocket.h"
 #include "EventsBuffer.h"
-#include "gui/message.h"
 #include "common/config-manager.h"
 #include "gui/KeysDialog.h"
+#include "gui/message.h"
 
 #include "common/translation.h"
 
-
 #ifdef _WIN32_WCE
-#define     KEY_ALL_SKIP    3457
+#	define KEY_ALL_SKIP 3457
 #endif
 
 const Common::String pocketActionNames[] = {
@@ -64,7 +63,6 @@ void CEActionsPocket::init() {
 	_instance = new CEActionsPocket(ConfMan.get("gameid"));
 }
 
-
 Common::String CEActionsPocket::actionName(GUI::ActionType action) {
 	return _(pocketActionNames[action]);
 }
@@ -81,8 +79,8 @@ int CEActionsPocket::version() {
 	return POCKET_ACTION_VERSION;
 }
 
-CEActionsPocket::CEActionsPocket(const Common::String &gameid) :
-	GUI::Actions() {
+CEActionsPocket::CEActionsPocket(const Common::String &gameid)
+  : GUI::Actions() {
 	int i;
 
 	_right_click_needed = false;
@@ -142,8 +140,7 @@ void CEActionsPocket::initInstanceGame() {
 	GUI_Actions::initInstanceGame();
 
 	// See if a right click mapping could be needed
-	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi || is_gob || is_tinsel ||
-	        is_samnmax || is_cine || is_touche || is_parallaction || is_drascula || is_cruise)
+	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi || is_gob || is_tinsel || is_samnmax || is_cine || is_touche || is_parallaction || is_drascula || is_cruise)
 		_right_click_needed = true;
 
 	// See if a "hide toolbar" mapping could be needed
@@ -184,8 +181,7 @@ void CEActionsPocket::initInstanceGame() {
 	// Skip
 	if (!is_cine && !is_parallaction && !is_groovie && !is_cruise && !is_made)
 		_action_enabled[POCKET_ACTION_SKIP] = true;
-	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_tinsel ||
-	        is_saga || is_kyra || is_touche || is_lure || is_feeble || is_drascula || is_tucker)
+	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_tinsel || is_saga || is_kyra || is_touche || is_lure || is_feeble || is_drascula || is_tucker)
 		_key_action[POCKET_ACTION_SKIP].setKey(VK_ESCAPE);
 	else
 		_key_action[POCKET_ACTION_SKIP].setKey(KEY_ALL_SKIP);
@@ -228,7 +224,6 @@ void CEActionsPocket::initInstanceGame() {
 			ConfMan.flushToDisk();
 		}
 }
-
 
 CEActionsPocket::~CEActionsPocket() {
 }
@@ -355,7 +350,6 @@ bool CEActionsPocket::needsHideToolbarMapping() {
 	else
 		return (_action_mapping[POCKET_ACTION_HIDE] == 0);
 }
-
 
 bool CEActionsPocket::needsZoomMapping() {
 	if (!_zoom_needed)

@@ -20,13 +20,13 @@
  *
  */
 
-#include "pink/pink.h"
-#include "pink/utils.h"
+#include "pink/objects/actors/supporting_actor.h"
 #include "pink/constants.h"
 #include "pink/cursor_mgr.h"
-#include "pink/objects/inventory.h"
 #include "pink/objects/actions/action.h"
-#include "pink/objects/actors/supporting_actor.h"
+#include "pink/objects/inventory.h"
+#include "pink/pink.h"
+#include "pink/utils.h"
 
 namespace Pink {
 
@@ -40,7 +40,7 @@ void SupportingActor::deserialize(Archive &archive) {
 
 void SupportingActor::toConsole() {
 	debugC(6, kPinkDebugLoadingObjects, "SupportingActor: _name = %s, _location=%s, _pdaLink=%s, _cursor=%s",
-		  _name.c_str(), _location.c_str(), _pdaLink.c_str(), _cursor.c_str());
+	       _name.c_str(), _location.c_str(), _pdaLink.c_str(), _cursor.c_str());
 	for (uint i = 0; i < _actions.size(); ++i) {
 		_actions[i]->toConsole();
 	}

@@ -21,6 +21,9 @@
  */
 
 #include "titanic/star_control/star_view.h"
+#include "titanic/core/game_object.h"
+#include "titanic/messages/pet_messages.h"
+#include "titanic/pet_control/pet_control.h"
 #include "titanic/star_control/camera_mover.h"
 #include "titanic/star_control/error_code.h"
 #include "titanic/star_control/fvector.h"
@@ -28,16 +31,19 @@
 #include "titanic/star_control/star_field.h"
 #include "titanic/support/screen_manager.h"
 #include "titanic/support/simple_file.h"
-#include "titanic/core/game_object.h"
-#include "titanic/messages/pet_messages.h"
-#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
-CStarView::CStarView() : _camera((const CNavigationInfo *)nullptr), _owner(nullptr),
-		_starField(nullptr), _videoSurface(nullptr), _hasReference(0),
-		_photoSurface(nullptr), _homePhotoMask(nullptr),
-		_field218(false), _showingPhoto(false) {
+CStarView::CStarView()
+  : _camera((const CNavigationInfo *)nullptr)
+  , _owner(nullptr)
+  , _starField(nullptr)
+  , _videoSurface(nullptr)
+  , _hasReference(0)
+  , _photoSurface(nullptr)
+  , _homePhotoMask(nullptr)
+  , _field218(false)
+  , _showingPhoto(false) {
 	CNavigationInfo data = { 0, 0, 100000.0, 0, 20.0, 1.0, 1.0, 1.0 };
 
 	_camera.proc3(&data);
@@ -123,8 +129,8 @@ void CStarView::draw(CScreenManager *screenManager) {
 bool CStarView::MouseButtonDownMsg(int flags, const Point &pt) {
 	if (_starField) {
 		return _starField->mouseButtonDown(
-			_showingPhoto ? _photoSurface : _videoSurface,
-			&_camera, flags, pt);
+		  _showingPhoto ? _photoSurface : _videoSurface,
+		  &_camera, flags, pt);
 	}
 
 	return false;
@@ -143,8 +149,8 @@ bool CStarView::MouseMoveMsg(int unused, const Point &pt) {
 			if (distance >= threshold) {
 				distance -= threshold;
 
-				FPoint angle(tempPt._x * -2.0 * distance / threshold, 
-					tempPt._y * -2.0 * distance / threshold);
+				FPoint angle(tempPt._x * -2.0 * distance / threshold,
+				             tempPt._y * -2.0 * distance / threshold);
 				_camera.setViewportAngle(angle);
 				return true;
 			}
@@ -504,7 +510,7 @@ void CStarView::getRandomPhotoViewpoint(FVector &pos, FVector &orientation) {
 }
 
 void CStarView::resizeSurface(CScreenManager *scrManager, int width, int height,
-		CVideoSurface **surface) {
+                              CVideoSurface **surface) {
 	if (!surface)
 		// Surface pointer must be provided
 		return;

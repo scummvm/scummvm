@@ -26,8 +26,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CEnterExitMiniLift, CSGTNavigation)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(EnterViewMsg)
 END_MESSAGE_MAP()
 
 void CEnterExitMiniLift::save(SimpleFile *file, int indent) {

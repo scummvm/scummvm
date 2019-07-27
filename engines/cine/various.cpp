@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/events.h"
@@ -31,11 +30,11 @@
 
 #include "gui/saveload.h"
 
+#include "cine/bg_list.h"
 #include "cine/cine.h"
 #include "cine/main_loop.h"
 #include "cine/object.h"
 #include "cine/sound.h"
-#include "cine/bg_list.h"
 #include "cine/various.h"
 
 namespace Cine {
@@ -104,7 +103,7 @@ byte isInPause = 0;
  * Bit off = mouse button up
  */
 enum MouseButtonState {
-	kLeftMouseButton  = (1 << 0),
+	kLeftMouseButton = (1 << 0),
 	kRightMouseButton = (1 << 1)
 };
 
@@ -165,9 +164,9 @@ void moveUsingKeyboard(int x, int y) {
 }
 
 void stopMusicAfterFadeOut() {
-//	if (g_sfxPlayer->_fadeOutCounter != 0 && g_sfxPlayer->_fadeOutCounter < 100) {
-//		g_sfxPlayer->stop();
-//	}
+	//	if (g_sfxPlayer->_fadeOutCounter != 0 && g_sfxPlayer->_fadeOutCounter < 100) {
+	//		g_sfxPlayer->stop();
+	//	}
 }
 
 void runObjectScript(int16 entryIdx) {
@@ -354,8 +353,7 @@ int CineEngine::scummVMSaveLoadDialog(bool isSave) {
 			// create our own description for the saved game, the user didnt enter it
 			desc = dialog->createDefaultSaveDescription(slot);
 		}
-	}
-	else {
+	} else {
 		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 		slot = dialog->runModalWithCurrentTarget();
 	}
@@ -530,10 +528,10 @@ void CineEngine::makeSystemMenu() {
 }
 
 void drawMessageBox(int16 x, int16 y, int16 width, int16 currentY, int16 offset, int16 color, byte *page) {
-	gfxDrawLine(x + offset, y + offset, x + width - offset, y + offset, color, page);   // top
+	gfxDrawLine(x + offset, y + offset, x + width - offset, y + offset, color, page); // top
 	gfxDrawLine(x + offset, currentY + 4 - offset, x + width - offset, currentY + 4 - offset, color, page); // bottom
-	gfxDrawLine(x + offset, y + offset, x + offset, currentY + 4 - offset, color, page);    // left
-	gfxDrawLine(x + width - offset, y + offset, x + width - offset, currentY + 4 - offset, color, page);    // right
+	gfxDrawLine(x + offset, y + offset, x + offset, currentY + 4 - offset, color, page); // left
+	gfxDrawLine(x + width - offset, y + offset, x + width - offset, currentY + 4 - offset, color, page); // right
 }
 
 void drawDoubleMessageBox(int16 x, int16 y, int16 width, int16 currentY, int16 color, byte *page) {
@@ -866,9 +864,9 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 			menu->setSelection(currentSelection);
 			renderer->drawFrame();
 
-//			if (needMouseSave) {
-//				gfxRedrawMouseCursor();
-//			}
+			//			if (needMouseSave) {
+			//				gfxRedrawMouseCursor();
+			//			}
 		}
 
 	} while (!var_A && !g_cine->shouldQuit());
@@ -1358,7 +1356,7 @@ void hideMouse() {
 void removeExtention(char *dest, const char *source) {
 	strcpy(dest, source);
 
-	byte *ptr = (byte *) strchr(dest, '.');
+	byte *ptr = (byte *)strchr(dest, '.');
 
 	if (ptr) {
 		*ptr = 0;
@@ -1433,7 +1431,7 @@ void modifySeqListElement(uint16 objIdx, int16 var4Test, int16 param1, int16 par
 	// Find a suitable list element and modify it
 	for (Common::List<SeqListElement>::iterator it = g_cine->_seqList.begin(); it != g_cine->_seqList.end(); ++it) {
 		if (it->objIdx == objIdx && it->var4 == var4Test) {
-			it->varC  = param1;
+			it->varC = param1;
 			it->var18 = param2;
 			it->var1A = param3;
 			it->var10 = it->var12 = param4;
@@ -1595,7 +1593,7 @@ void resetGfxEntityEntry(uint16 objIdx) {
 void processSeqListElement(SeqListElement &element) {
 	int16 x = g_cine->_objectTable[element.objIdx].x;
 	int16 y = g_cine->_objectTable[element.objIdx].y;
-	const int8 *ptr1 = (const int8 *) g_cine->_animDataTable[element.frame].data();
+	const int8 *ptr1 = (const int8 *)g_cine->_animDataTable[element.frame].data();
 	int16 var_10;
 	int16 var_4;
 	int16 var_2;
@@ -1667,14 +1665,15 @@ void processSeqListElement(SeqListElement &element) {
 		var_4 = -1;
 
 		if ((element.var16 == 1
-			&& !addAni(3, element.objIdx, ptr1, element, 0, &var_4)) || (element.var16 == 2 && !addAni(2, element.objIdx, ptr1, element, 0, &var_4))) {
+		     && !addAni(3, element.objIdx, ptr1, element, 0, &var_4))
+		    || (element.var16 == 2 && !addAni(2, element.objIdx, ptr1, element, 0, &var_4))) {
 			if (element.varC == 255) {
 				g_cine->_globalVars[VAR_MOUSE_Y_POS] = 0;
 			}
 		}
 
 		if ((element.var14 == 1
-			&& !addAni(0, element.objIdx, ptr1, element, 1, &var_2))) {
+		     && !addAni(0, element.objIdx, ptr1, element, 1, &var_2))) {
 			if (element.varC == 255) {
 				g_cine->_globalVars[VAR_MOUSE_X_POS] = 0;
 
@@ -1702,10 +1701,8 @@ void processSeqListElement(SeqListElement &element) {
 				}
 
 				addAni(element.var1C + 3, element.objIdx, ptr1, element, 1, &var_2);
-
 			}
 		}
-
 	}
 }
 
@@ -1720,7 +1717,6 @@ void processSeqList() {
 		processSeqListElement(*it);
 	}
 }
-
 
 bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxLength, int y) {
 	int len = strlen(messagePtr);
@@ -1797,10 +1793,7 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 			}
 			break;
 		default:
-			if (((keycode >= 'a') && (keycode <= 'z')) ||
-				((keycode >= '0') && (keycode <= '9')) ||
-				((keycode >= 'A') && (keycode <= 'Z')) ||
-				(keycode == ' ')) {
+			if (((keycode >= 'a') && (keycode <= 'z')) || ((keycode >= '0') && (keycode <= '9')) || ((keycode >= 'A') && (keycode <= 'Z')) || (keycode == ' ')) {
 				if (inputLength < stringMaxLength - 1) {
 					ch[0] = keycode;
 					if (inputPos != 1) {

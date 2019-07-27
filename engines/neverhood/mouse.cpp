@@ -26,13 +26,14 @@
 namespace Neverhood {
 
 Mouse::Mouse(NeverhoodEngine *vm, uint32 fileHash, const NRect &mouseRect)
-	: StaticSprite(vm, 2000), _mouseType(kMouseType433),
-	_mouseCursorResource(vm), _frameNum(0) {
+  : StaticSprite(vm, 2000)
+  , _mouseType(kMouseType433)
+  , _mouseCursorResource(vm)
+  , _frameNum(0) {
 
 	_mouseRect = mouseRect;
 	init(fileHash);
-	if (_x >= _mouseRect.x1 && _x <= _mouseRect.x2 &&
-		_y >= _mouseRect.y1 && _y <= _mouseRect.y2) {
+	if (_x >= _mouseRect.x1 && _x <= _mouseRect.x2 && _y >= _mouseRect.y1 && _y <= _mouseRect.y2) {
 		_mouseCursorResource.setCursorNum(1);
 	} else {
 		_mouseCursorResource.setCursorNum(4);
@@ -41,8 +42,12 @@ Mouse::Mouse(NeverhoodEngine *vm, uint32 fileHash, const NRect &mouseRect)
 }
 
 Mouse::Mouse(NeverhoodEngine *vm, uint32 fileHash, int16 x1, int16 x2)
-	: StaticSprite(vm, 2000), _mouseType(kMouseType435),
-	_mouseCursorResource(vm), _frameNum(0), _x1(x1), _x2(x2) {
+  : StaticSprite(vm, 2000)
+  , _mouseType(kMouseType435)
+  , _mouseCursorResource(vm)
+  , _frameNum(0)
+  , _x1(x1)
+  , _x2(x2) {
 
 	init(fileHash);
 	if (_x <= _x1) {
@@ -56,8 +61,11 @@ Mouse::Mouse(NeverhoodEngine *vm, uint32 fileHash, int16 x1, int16 x2)
 }
 
 Mouse::Mouse(NeverhoodEngine *vm, uint32 fileHash, int type)
-	: StaticSprite(vm, 2000), _mouseType(kMouseTypeNavigation),
-	_mouseCursorResource(vm), _type(type), _frameNum(0) {
+  : StaticSprite(vm, 2000)
+  , _mouseType(kMouseTypeNavigation)
+  , _mouseCursorResource(vm)
+  , _type(type)
+  , _frameNum(0) {
 
 	init(fileHash);
 	_mouseCursorResource.setCursorNum(0);
@@ -183,17 +191,15 @@ void Mouse::updateCursor() {
 		_drawOffset = _mouseCursorResource.getRect();
 		_surface->drawMouseCursorResource(_mouseCursorResource, _frameNum / 2);
 		Graphics::Surface *cursorSurface = _surface->getSurface();
-		CursorMan.replaceCursor((const byte*)cursorSurface->getPixels(),
-			cursorSurface->w, cursorSurface->h, -_drawOffset.x, -_drawOffset.y, 0);
+		CursorMan.replaceCursor((const byte *)cursorSurface->getPixels(),
+		                        cursorSurface->w, cursorSurface->h, -_drawOffset.x, -_drawOffset.y, 0);
 	}
-
 }
 
 void Mouse::updateCursorNum() {
 	switch (_mouseType) {
 	case kMouseType433:
-		if (_x >= _mouseRect.x1 && _x <= _mouseRect.x2 &&
-			_y >= _mouseRect.y1 && _y <= _mouseRect.y2) {
+		if (_x >= _mouseRect.x1 && _x <= _mouseRect.x2 && _y >= _mouseRect.y1 && _y <= _mouseRect.y2) {
 			_mouseCursorResource.setCursorNum(1);
 		} else {
 			_mouseCursorResource.setCursorNum(4);
@@ -250,7 +256,6 @@ void Mouse::updateCursorNum() {
 		}
 		break;
 	}
-
 }
 
 } // End of namespace Neverhood

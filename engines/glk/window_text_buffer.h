@@ -23,12 +23,12 @@
 #ifndef GLK_WINDOW_TEXT_BUFFER_H
 #define GLK_WINDOW_TEXT_BUFFER_H
 
-#include "glk/windows.h"
-#include "glk/picture.h"
-#include "glk/speech.h"
-#include "glk/conf.h"
 #include "common/array.h"
 #include "common/ustr.h"
+#include "glk/conf.h"
+#include "glk/picture.h"
+#include "glk/speech.h"
+#include "glk/windows.h"
 
 namespace Glk {
 
@@ -54,8 +54,10 @@ class TextBufferWindow : public Window, Speech {
 		TextBufferRow();
 	};
 	typedef Common::Array<TextBufferRow> TextBufferRows;
+
 private:
 	PropFontInfo &_font;
+
 private:
 	void reflow();
 	void touchScroll();
@@ -92,6 +94,7 @@ private:
 	void scrollOneLine(bool forced);
 	void scrollResize();
 	int calcWidth(const uint32 *chars, const Attributes *attrs, int startchar, int numchars, int spw);
+
 public:
 	int _width, _height;
 	int _spaced;
@@ -100,9 +103,9 @@ public:
 	TextBufferRows _lines;
 	int _scrollBack;
 
-	int _numChars;        ///< number of chars in last line: lines[0]
-	uint32 *_chars;       ///< alias to lines[0].chars
-	Attributes *_attrs;   ///< alias to lines[0].attrs
+	int _numChars; ///< number of chars in last line: lines[0]
+	uint32 *_chars; ///< alias to lines[0].chars
+	Attributes *_attrs; ///< alias to lines[0].attrs
 
 	///< adjust margins temporarily for images
 	int _ladjw;
@@ -121,7 +124,7 @@ public:
 	int _scrollMax;
 
 	// for line input
-	void *_inBuf;        ///< unsigned char* for latin1, uint* for unicode
+	void *_inBuf; ///< unsigned char* for latin1, uint* for unicode
 	int _inMax;
 	long _inFence;
 	long _inCurs;
@@ -137,6 +140,7 @@ public:
 	// for copy selection
 	uint32 *_copyBuf;
 	int _copyPos;
+
 public:
 	/**
 	 * Constructor

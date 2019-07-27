@@ -26,24 +26,24 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/dcgf.h"
+#include "engines/wintermute/base/base_persistence_manager.h"
+#include "common/memstream.h"
+#include "common/savefile.h"
+#include "common/str.h"
+#include "common/system.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/base_engine.h"
-#include "engines/wintermute/base/base_persistence_manager.h"
-#include "engines/wintermute/platform_osystem.h"
-#include "engines/wintermute/math/vector2.h"
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/save_thumb_helper.h"
 #include "engines/wintermute/base/sound/base_sound.h"
-#include "graphics/transparent_surface.h"
+#include "engines/wintermute/dcgf.h"
+#include "engines/wintermute/math/vector2.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/wintermute.h"
 #include "graphics/scaler.h"
+#include "graphics/transparent_surface.h"
 #include "image/bmp.h"
-#include "common/memstream.h"
-#include "common/str.h"
-#include "common/system.h"
-#include "common/savefile.h"
 
 namespace Wintermute {
 
@@ -53,7 +53,7 @@ namespace Wintermute {
 // In case anyone tries to load original savegames, or for that matter
 // in case we ever want to attempt to support original savegames, we
 // avoid those numbers, and use this instead:
-#define SAVE_MAGIC_3    0x12564154
+#define SAVE_MAGIC_3 0x12564154
 
 //////////////////////////////////////////////////////////////////////////
 BasePersistenceManager::BasePersistenceManager(const Common::String &savePrefix, bool deleteSingleton) {
@@ -75,7 +75,7 @@ BasePersistenceManager::BasePersistenceManager(const Common::String &savePrefix,
 	_scummVMThumbSize = 0;
 
 	_savedDescription = nullptr;
-//	_savedTimestamp = 0;
+	//	_savedTimestamp = 0;
 	_savedVerMajor = _savedVerMinor = _savedVerBuild = 0;
 	_savedExtMajor = _savedExtMinor = 0;
 
@@ -100,14 +100,12 @@ BasePersistenceManager::BasePersistenceManager(const Common::String &savePrefix,
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 BasePersistenceManager::~BasePersistenceManager() {
 	cleanup();
 	if (_deleteSingleton && BaseEngine::instance().getGameRef() == nullptr)
 		BaseEngine::destroy();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BasePersistenceManager::cleanup() {
@@ -119,7 +117,7 @@ void BasePersistenceManager::cleanup() {
 
 	delete[] _savedDescription;
 	_savedDescription = nullptr; // ref to buffer
-//	_savedTimestamp = 0;
+	//	_savedTimestamp = 0;
 	_savedVerMajor = _savedVerMinor = _savedVerBuild = 0;
 	_savedExtMajor = _savedExtMinor = 0;
 
@@ -290,15 +288,13 @@ bool BasePersistenceManager::initSave(const Common::String &desc) {
 			putDWORD(0);
 		}
 
-
 		// in any case, destroy the cached thumbnail once used
 		delete _gameRef->_cachedThumbnail;
 		_gameRef->_cachedThumbnail = nullptr;
 
-		uint32 dataOffset = _offset +
-		                    sizeof(uint32) + // data offset
-		                    sizeof(uint32) + strlen(desc.c_str()) + 1 + // description
-		                    sizeof(uint32); // timestamp
+		uint32 dataOffset = _offset + sizeof(uint32) + // data offset
+		  sizeof(uint32) + strlen(desc.c_str()) + 1 + // description
+		  sizeof(uint32); // timestamp
 
 		putDWORD(dataOffset);
 		putString(desc.c_str());
@@ -388,10 +384,7 @@ bool BasePersistenceManager::initLoad(const Common::String &filename) {
 	}
 
 	// if save is newer version than we are, fail
-	if (_savedVerMajor >  DCGF_VER_MAJOR ||
-	        (_savedVerMajor == DCGF_VER_MAJOR && _savedVerMinor >  DCGF_VER_MINOR) ||
-	        (_savedVerMajor == DCGF_VER_MAJOR && _savedVerMinor == DCGF_VER_MINOR && _savedVerBuild > DCGF_VER_BUILD)
-	   ) {
+	if (_savedVerMajor > DCGF_VER_MAJOR || (_savedVerMajor == DCGF_VER_MAJOR && _savedVerMinor > DCGF_VER_MINOR) || (_savedVerMajor == DCGF_VER_MAJOR && _savedVerMinor == DCGF_VER_MINOR && _savedVerBuild > DCGF_VER_BUILD)) {
 
 		debugC(kWintermuteDebugSaveGame, "ERROR: Saved game version is newer than current game");
 		debugC(kWintermuteDebugSaveGame, "ERROR: Expected %d.%d.%d got %d.%d.%d", DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, _savedVerMajor, _savedVerMinor, _savedVerBuild);
@@ -400,20 +393,15 @@ bool BasePersistenceManager::initLoad(const Common::String &filename) {
 	}
 
 	// if save is older than the minimal version we support
-	if (_savedVerMajor <  SAVEGAME_VER_MAJOR ||
-	        (_savedVerMajor == SAVEGAME_VER_MAJOR && _savedVerMinor <  SAVEGAME_VER_MINOR) ||
-	        (_savedVerMajor == SAVEGAME_VER_MAJOR && _savedVerMinor == SAVEGAME_VER_MINOR && _savedVerBuild < SAVEGAME_VER_BUILD)
-	   ) {
+	if (_savedVerMajor < SAVEGAME_VER_MAJOR || (_savedVerMajor == SAVEGAME_VER_MAJOR && _savedVerMinor < SAVEGAME_VER_MINOR) || (_savedVerMajor == SAVEGAME_VER_MAJOR && _savedVerMinor == SAVEGAME_VER_MINOR && _savedVerBuild < SAVEGAME_VER_BUILD)) {
 		debugC(kWintermuteDebugSaveGame, "ERROR: Saved game is too old and cannot be used by this version of game engine");
 		debugC(kWintermuteDebugSaveGame, "ERROR: Expected %d.%d.%d got %d.%d.%d", DCGF_VER_MAJOR, DCGF_VER_MINOR, DCGF_VER_BUILD, _savedVerMajor, _savedVerMinor, _savedVerBuild);
 		cleanup();
 		return STATUS_FAILED;
-
 	}
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BasePersistenceManager::saveFile(const Common::String &filename) {
@@ -431,7 +419,6 @@ bool BasePersistenceManager::saveFile(const Common::String &filename) {
 	delete file;
 	return retVal;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BasePersistenceManager::putBytes(byte *buffer, uint32 size) {
@@ -456,13 +443,11 @@ void BasePersistenceManager::putDWORD(uint32 val) {
 	_saveStream->writeUint32LE(val);
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 uint32 BasePersistenceManager::getDWORD() {
 	uint32 ret = _loadStream->readUint32LE();
 	return ret;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BasePersistenceManager::putString(const char *val) {
@@ -485,7 +470,7 @@ Common::String BasePersistenceManager::getStringObj() {
 char *BasePersistenceManager::getString() {
 	uint32 len = _loadStream->readUint32LE();
 
-	if (checkVersion(1,2,2)) {
+	if (checkVersion(1, 2, 2)) {
 		// Version 1.2.2 and above: len == strlen() + 1, NULL has len == 0
 
 		if (len == 0)
@@ -511,7 +496,6 @@ char *BasePersistenceManager::getString() {
 
 		return ret;
 	}
-
 }
 
 bool BasePersistenceManager::putTimeDate(const TimeDate &t) {
@@ -603,7 +587,6 @@ bool BasePersistenceManager::transferBool(const char *name, bool *val) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 // int
 bool BasePersistenceManager::transferSint32(const char *name, int32 *val) {
@@ -621,7 +604,6 @@ bool BasePersistenceManager::transferSint32(const char *name, int32 *val) {
 		return STATUS_OK;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // DWORD
@@ -641,7 +623,6 @@ bool BasePersistenceManager::transferUint32(const char *name, uint32 *val) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 // float
 bool BasePersistenceManager::transferFloat(const char *name, float *val) {
@@ -660,7 +641,6 @@ bool BasePersistenceManager::transferFloat(const char *name, float *val) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 // double
 bool BasePersistenceManager::transferDouble(const char *name, double *val) {
@@ -678,7 +658,6 @@ bool BasePersistenceManager::transferDouble(const char *name, double *val) {
 		return STATUS_OK;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // char*
@@ -754,7 +733,6 @@ bool BasePersistenceManager::transferByte(const char *name, byte *val) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 // RECT
 bool BasePersistenceManager::transferRect32(const char *name, Rect32 *val) {
@@ -779,7 +757,6 @@ bool BasePersistenceManager::transferRect32(const char *name, Rect32 *val) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 // POINT
 bool BasePersistenceManager::transferPoint32(const char *name, Point32 *val) {
@@ -800,7 +777,6 @@ bool BasePersistenceManager::transferPoint32(const char *name, Point32 *val) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 // Vector2
 bool BasePersistenceManager::transferVector2(const char *name, Vector2 *val) {
@@ -820,7 +796,6 @@ bool BasePersistenceManager::transferVector2(const char *name, Vector2 *val) {
 		return STATUS_OK;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // generic pointer
@@ -853,10 +828,7 @@ bool BasePersistenceManager::checkVersion(byte verMajor, byte verMinor, byte ver
 	}
 
 	// it's ok if we are same or newer than the saved game
-	if (verMajor >  _savedVerMajor ||
-	        (verMajor == _savedVerMajor && verMinor >  _savedVerMinor) ||
-	        (verMajor == _savedVerMajor && verMinor == _savedVerMinor && verBuild > _savedVerBuild)
-	   ) {
+	if (verMajor > _savedVerMajor || (verMajor == _savedVerMajor && verMinor > _savedVerMinor) || (verMajor == _savedVerMajor && verMinor == _savedVerMinor && verBuild > _savedVerBuild)) {
 		return false;
 	}
 

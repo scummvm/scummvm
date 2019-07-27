@@ -22,211 +22,187 @@
 
 namespace CryOmni3D {
 
-#define GUI_OPTIONS_VERSAILLES                   GUIO3(GUIO_NOMIDI, GUIO_NOSFX, GUIO_NOASPECT)
+#define GUI_OPTIONS_VERSAILLES GUIO3(GUIO_NOMIDI, GUIO_NOSFX, GUIO_NOASPECT)
 
 static const CryOmni3DGameDescription gameDescriptions[] = {
 	// Versailles 1685
 	// French Windows 95 from hybrid Win95/DOS CD
 	// From lePhilousophe
 	{
-		{
-			"versailles",
-			"",
-			AD_ENTRY1s("VERSAILL.EXE", "3775004b96f056716ce615b458b1f394", 372736),
-			Common::FR_FRA,
-			Common::kPlatformWindows,
-			ADGF_TESTING,
-			GUI_OPTIONS_VERSAILLES
-		},
-		GType_VERSAILLES,
-		GF_VERSAILLES_NUMERICFONTS | GF_VERSAILLES_AUDIOPADDING,
+	  { "versailles",
+	    "",
+	    AD_ENTRY1s("VERSAILL.EXE", "3775004b96f056716ce615b458b1f394", 372736),
+	    Common::FR_FRA,
+	    Common::kPlatformWindows,
+	    ADGF_TESTING,
+	    GUI_OPTIONS_VERSAILLES },
+	  GType_VERSAILLES,
+	  GF_VERSAILLES_NUMERICFONTS | GF_VERSAILLES_AUDIOPADDING,
 	},
 
 	// Versailles 1685
 	// French Windows 95 compressed from hybrid Win95/DOS CD
 	// From lePhilousophe
 	{
-		{
-			"versailles",
-			"",
-			AD_ENTRY1s("PROGRAM.Z", "a07b5d86af5f3a8883ba97db2bade87d", 293223),
-			Common::FR_FRA,
-			Common::kPlatformWindows,
-			ADGF_TESTING,
-			GUI_OPTIONS_VERSAILLES
-		},
-		GType_VERSAILLES,
-		GF_VERSAILLES_NUMERICFONTS | GF_VERSAILLES_AUDIOPADDING,
+	  { "versailles",
+	    "",
+	    AD_ENTRY1s("PROGRAM.Z", "a07b5d86af5f3a8883ba97db2bade87d", 293223),
+	    Common::FR_FRA,
+	    Common::kPlatformWindows,
+	    ADGF_TESTING,
+	    GUI_OPTIONS_VERSAILLES },
+	  GType_VERSAILLES,
+	  GF_VERSAILLES_NUMERICFONTS | GF_VERSAILLES_AUDIOPADDING,
 	},
 
 	// Versailles 1685
 	// French DOS from hybrid Win95/DOS CD
 	// From lePhilousophe
 	{
-		{
-			"versailles",
-			"",
-			AD_ENTRY1s("VERSAILL.PGM", "1c992f034f43418a5da2e8ebd0b92620", 630431),
-			Common::FR_FRA,
-			Common::kPlatformDOS,
-			ADGF_TESTING,
-			GUI_OPTIONS_VERSAILLES
-		},
-		GType_VERSAILLES,
-		GF_VERSAILLES_NUMERICFONTS | GF_VERSAILLES_AUDIOPADDING,
+	  { "versailles",
+	    "",
+	    AD_ENTRY1s("VERSAILL.PGM", "1c992f034f43418a5da2e8ebd0b92620", 630431),
+	    Common::FR_FRA,
+	    Common::kPlatformDOS,
+	    ADGF_TESTING,
+	    GUI_OPTIONS_VERSAILLES },
+	  GType_VERSAILLES,
+	  GF_VERSAILLES_NUMERICFONTS | GF_VERSAILLES_AUDIOPADDING,
 	},
 
 	// Versailles 1685
 	// French Macintosh
 	// From criezy
 	{
-		{
-			"versailles",
-			"",
-			AD_ENTRY1s("Versailles", "f81935517b1bbb58acf70f25efa5c7f3", 375868),
-			Common::FR_FRA,
-			Common::kPlatformMacintosh,
-			ADGF_TESTING,
-			GUI_OPTIONS_VERSAILLES
-		},
-		GType_VERSAILLES,
-		GF_VERSAILLES_AUDIOPADDING,
+	  { "versailles",
+	    "",
+	    AD_ENTRY1s("Versailles", "f81935517b1bbb58acf70f25efa5c7f3", 375868),
+	    Common::FR_FRA,
+	    Common::kPlatformMacintosh,
+	    ADGF_TESTING,
+	    GUI_OPTIONS_VERSAILLES },
+	  GType_VERSAILLES,
+	  GF_VERSAILLES_AUDIOPADDING,
 	},
 
 	// Versailles 1685
 	// English Windows from Mac/Win hybrid CD
 	// From lePhilousophe
 	{
-		{
-			"versailles",
-			"",
-			AD_ENTRY1s("Versaill.exe", "5c3c10ec821b8d96016041ab649af8c7", 377856),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_TESTING,
-			GUI_OPTIONS_VERSAILLES
-		},
-		GType_VERSAILLES,
-		GF_VERSAILLES_NUMERICFONTS,
+	  { "versailles",
+	    "",
+	    AD_ENTRY1s("Versaill.exe", "5c3c10ec821b8d96016041ab649af8c7", 377856),
+	    Common::EN_ANY,
+	    Common::kPlatformWindows,
+	    ADGF_TESTING,
+	    GUI_OPTIONS_VERSAILLES },
+	  GType_VERSAILLES,
+	  GF_VERSAILLES_NUMERICFONTS,
 	},
 
 	// Versailles 1685
 	// English Macintosh from Mac/Win hybrid CD
 	// From lePhilousophe
 	{
-		{
-			"versailles",
-			"",
-			AD_ENTRY1s("Versailles", "7fa3cb6a3c18f6b4ba6be85dcd433cff", 366199),
-			Common::EN_ANY,
-			Common::kPlatformMacintosh,
-			ADGF_TESTING,
-			GUI_OPTIONS_VERSAILLES
-		},
-		GType_VERSAILLES,
-		GF_VERSAILLES_NUMERICFONTS,
+	  { "versailles",
+	    "",
+	    AD_ENTRY1s("Versailles", "7fa3cb6a3c18f6b4ba6be85dcd433cff", 366199),
+	    Common::EN_ANY,
+	    Common::kPlatformMacintosh,
+	    ADGF_TESTING,
+	    GUI_OPTIONS_VERSAILLES },
+	  GType_VERSAILLES,
+	  GF_VERSAILLES_NUMERICFONTS,
 	},
 
 	// Versailles 1685
 	// English DOS
 	// From lePhilousophe
 	{
-		{
-			"versailles",
-			"",
-			AD_ENTRY1s("VERSAILL.PGM", "1c992f034f43418a5da2e8ebd0b92620", 598639),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_TESTING,
-			GUI_OPTIONS_VERSAILLES
-		},
-		GType_VERSAILLES,
-		GF_VERSAILLES_AUDIOPADDING,
+	  { "versailles",
+	    "",
+	    AD_ENTRY1s("VERSAILL.PGM", "1c992f034f43418a5da2e8ebd0b92620", 598639),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_TESTING,
+	    GUI_OPTIONS_VERSAILLES },
+	  GType_VERSAILLES,
+	  GF_VERSAILLES_AUDIOPADDING,
 	},
 
 	// Versailles 1685
 	// Italian DOS
 	// From lePhilousophe
 	{
-		{
-			"versailles",
-			"",
-			AD_ENTRY1s("VERSAILL.PGM", "1c992f034f43418a5da2e8ebd0b92620", 603023),
-			Common::IT_ITA,
-			Common::kPlatformDOS,
-			ADGF_TESTING,
-			GUI_OPTIONS_VERSAILLES
-		},
-		GType_VERSAILLES,
-		GF_VERSAILLES_AUDIOPADDING,
+	  { "versailles",
+	    "",
+	    AD_ENTRY1s("VERSAILL.PGM", "1c992f034f43418a5da2e8ebd0b92620", 603023),
+	    Common::IT_ITA,
+	    Common::kPlatformDOS,
+	    ADGF_TESTING,
+	    GUI_OPTIONS_VERSAILLES },
+	  GType_VERSAILLES,
+	  GF_VERSAILLES_AUDIOPADDING,
 	},
 
 	// Versailles 1685
 	// German Macintosh
 	// From lePhilousophe
 	{
-		{
-			"versailles",
-			"",
-			AD_ENTRY1s("Versailles", "f1aa0603e7f71404f936e4189b4c5b2b", 348614),
-			Common::DE_DEU,
-			Common::kPlatformMacintosh,
-			ADGF_TESTING,
-			GUI_OPTIONS_VERSAILLES
-		},
-		GType_VERSAILLES,
-		GF_VERSAILLES_AUDIOPADDING,
+	  { "versailles",
+	    "",
+	    AD_ENTRY1s("Versailles", "f1aa0603e7f71404f936e4189b4c5b2b", 348614),
+	    Common::DE_DEU,
+	    Common::kPlatformMacintosh,
+	    ADGF_TESTING,
+	    GUI_OPTIONS_VERSAILLES },
+	  GType_VERSAILLES,
+	  GF_VERSAILLES_AUDIOPADDING,
 	},
 
 	// Versailles 1685
 	// Spanish Windows 95 from hybrid Win95/DOS CD
 	// From lePhilousophe
 	{
-		{
-			"versailles",
-			"",
-			AD_ENTRY1s("VERSAILL.EXE", "78d90d656ec3b76f158721d38bc68083", 346112),
-			Common::ES_ESP,
-			Common::kPlatformWindows,
-			ADGF_TESTING,
-			GUI_OPTIONS_VERSAILLES
-		},
-		GType_VERSAILLES,
-		GF_VERSAILLES_NUMERICFONTS | GF_VERSAILLES_AUDIOPADDING,
+	  { "versailles",
+	    "",
+	    AD_ENTRY1s("VERSAILL.EXE", "78d90d656ec3b76f158721d38bc68083", 346112),
+	    Common::ES_ESP,
+	    Common::kPlatformWindows,
+	    ADGF_TESTING,
+	    GUI_OPTIONS_VERSAILLES },
+	  GType_VERSAILLES,
+	  GF_VERSAILLES_NUMERICFONTS | GF_VERSAILLES_AUDIOPADDING,
 	},
 
 	// Versailles 1685
 	// Spanish Windows 95 compressed from hybrid Win95/DOS CD
 	// From lePhilousophe
 	{
-		{
-			"versailles",
-			"",
-			AD_ENTRY1s("PROGRAM.Z", "9e7c0c3125124010d45dde9dc62744ef", 346112),
-			Common::ES_ESP,
-			Common::kPlatformWindows,
-			ADGF_TESTING,
-			GUI_OPTIONS_VERSAILLES
-		},
-		GType_VERSAILLES,
-		GF_VERSAILLES_NUMERICFONTS | GF_VERSAILLES_AUDIOPADDING,
+	  { "versailles",
+	    "",
+	    AD_ENTRY1s("PROGRAM.Z", "9e7c0c3125124010d45dde9dc62744ef", 346112),
+	    Common::ES_ESP,
+	    Common::kPlatformWindows,
+	    ADGF_TESTING,
+	    GUI_OPTIONS_VERSAILLES },
+	  GType_VERSAILLES,
+	  GF_VERSAILLES_NUMERICFONTS | GF_VERSAILLES_AUDIOPADDING,
 	},
 
 	// Versailles 1685
 	// Spanish DOS from hybrid Win95/DOS CD
 	// From lePhilousophe
 	{
-		{
-			"versailles",
-			"",
-			AD_ENTRY1s("VERSAILL.PGM", "1c992f034f43418a5da2e8ebd0b92620", 715887),
-			Common::ES_ESP,
-			Common::kPlatformDOS,
-			ADGF_TESTING,
-			GUI_OPTIONS_VERSAILLES
-		},
-		GType_VERSAILLES,
-		GF_VERSAILLES_NUMERICFONTS | GF_VERSAILLES_AUDIOPADDING,
+	  { "versailles",
+	    "",
+	    AD_ENTRY1s("VERSAILL.PGM", "1c992f034f43418a5da2e8ebd0b92620", 715887),
+	    Common::ES_ESP,
+	    Common::kPlatformDOS,
+	    ADGF_TESTING,
+	    GUI_OPTIONS_VERSAILLES },
+	  GType_VERSAILLES,
+	  GF_VERSAILLES_NUMERICFONTS | GF_VERSAILLES_AUDIOPADDING,
 	},
 
 	{ AD_TABLE_END_MARKER, 0, 0 }
@@ -238,24 +214,22 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 
 static const CryOmni3DGameDescription fallbackDescs[] = {
 	{
-		{
-			"versailles",
-			"unknown",
-			AD_ENTRY1(0, 0),
-			Common::UNK_LANG,
-			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
-			GUI_OPTIONS_VERSAILLES
-		},
-		GType_VERSAILLES,
-		0,
+	  { "versailles",
+	    "unknown",
+	    AD_ENTRY1(0, 0),
+	    Common::UNK_LANG,
+	    Common::kPlatformWindows,
+	    ADGF_UNSTABLE,
+	    GUI_OPTIONS_VERSAILLES },
+	  GType_VERSAILLES,
+	  0,
 	},
 };
 
 static const ADFileBasedFallback fileBased[] = {
-	{ &fallbackDescs[0].desc,  { "VERSAILL.EXE", 0 } },
-	{ &fallbackDescs[0].desc,  { "VERSAILL.PGM", 0 } },
-	{ &fallbackDescs[0].desc,  { "Versailles", 0 } },
+	{ &fallbackDescs[0].desc, { "VERSAILL.EXE", 0 } },
+	{ &fallbackDescs[0].desc, { "VERSAILL.PGM", 0 } },
+	{ &fallbackDescs[0].desc, { "Versailles", 0 } },
 	{ 0, { 0 } }
 };
 

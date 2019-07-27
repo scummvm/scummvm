@@ -26,7 +26,7 @@
 namespace Neverhood {
 
 Module2000::Module2000(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule) {
+  : Module(vm, parentModule) {
 
 	if (which < 0)
 		createScene(_vm->gameState().sceneNum, -1);
@@ -34,7 +34,6 @@ Module2000::Module2000(NeverhoodEngine *vm, Module *parentModule, int which)
 		createScene(0, 1);
 	else if (which == 1)
 		createScene(0, 3);
-
 }
 
 Module2000::~Module2000() {
@@ -94,7 +93,7 @@ void Module2000::updateScene() {
 // Scene2001
 
 Scene2001::Scene2001(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule) {
+  : Scene(vm, parentModule) {
 
 	Sprite *tempSprite;
 
@@ -138,7 +137,6 @@ Scene2001::Scene2001(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	_klaymen->setClipRect(tempSprite->getDrawRect().x, 0, 640, 480);
-
 }
 
 uint32 Scene2001::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {

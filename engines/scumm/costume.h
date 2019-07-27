@@ -39,10 +39,18 @@ public:
 	byte _format;
 	bool _mirror;
 
-	ClassicCostumeLoader(ScummEngine *vm) :
-		BaseCostumeLoader(vm),
-		_id(-1), _baseptr(0), _animCmds(0), _dataOffsets(0), _palette(0),
-		_frameOffsets(0), _numColors(0), _numAnim(0), _format(0), _mirror(false) {}
+	ClassicCostumeLoader(ScummEngine *vm)
+	  : BaseCostumeLoader(vm)
+	  , _id(-1)
+	  , _baseptr(0)
+	  , _animCmds(0)
+	  , _dataOffsets(0)
+	  , _palette(0)
+	  , _frameOffsets(0)
+	  , _numColors(0)
+	  , _numAnim(0)
+	  , _format(0)
+	  , _mirror(false) {}
 
 	void loadCostume(int id);
 	void costumeDecodeData(Actor *a, int frame, uint usemask);
@@ -59,7 +67,8 @@ public:
 	const byte *_dataOffsets;
 	byte _numAnim;
 
-	NESCostumeLoader(ScummEngine *vm) : BaseCostumeLoader(vm) {}
+	NESCostumeLoader(ScummEngine *vm)
+	  : BaseCostumeLoader(vm) {}
 	void loadCostume(int id);
 	void costumeDecodeData(Actor *a, int frame, uint usemask);
 	byte increaseAnims(Actor *a);
@@ -70,7 +79,8 @@ protected:
 
 class V0CostumeLoader : public ClassicCostumeLoader {
 public:
-	V0CostumeLoader(ScummEngine *vm) : ClassicCostumeLoader(vm) {}
+	V0CostumeLoader(ScummEngine *vm)
+	  : ClassicCostumeLoader(vm) {}
 	void loadCostume(int id);
 	void costumeDecodeData(Actor *a, int frame, uint usemask);
 	byte increaseAnims(Actor *a);
@@ -84,12 +94,14 @@ class ClassicCostumeRenderer : public BaseCostumeRenderer {
 protected:
 	ClassicCostumeLoader _loaded;
 
-	byte _scaleIndexX;						/* must wrap at 256 */
+	byte _scaleIndexX; /* must wrap at 256 */
 	byte _scaleIndexY;
 	uint16 _palette[32];
 
 public:
-	ClassicCostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm) {}
+	ClassicCostumeRenderer(ScummEngine *vm)
+	  : BaseCostumeRenderer(vm)
+	  , _loaded(vm) {}
 
 	void setPalette(uint16 *palette);
 	void setFacing(const Actor *a);
@@ -113,7 +125,9 @@ protected:
 	NESCostumeLoader _loaded;
 
 public:
-	NESCostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm) {}
+	NESCostumeRenderer(ScummEngine *vm)
+	  : BaseCostumeRenderer(vm)
+	  , _loaded(vm) {}
 
 	void setPalette(uint16 *palette);
 	void setFacing(const Actor *a);
@@ -126,7 +140,8 @@ protected:
 #ifdef USE_RGB_COLOR
 class PCEngineCostumeRenderer : public ClassicCostumeRenderer {
 public:
-	PCEngineCostumeRenderer(ScummEngine *vm) : ClassicCostumeRenderer(vm) {}
+	PCEngineCostumeRenderer(ScummEngine *vm)
+	  : ClassicCostumeRenderer(vm) {}
 
 	void setPalette(uint16 *palette);
 };
@@ -137,7 +152,9 @@ protected:
 	V0CostumeLoader _loaded;
 
 public:
-	V0CostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm) {}
+	V0CostumeRenderer(ScummEngine *vm)
+	  : BaseCostumeRenderer(vm)
+	  , _loaded(vm) {}
 
 	void setPalette(uint16 *palette) {}
 	void setFacing(const Actor *a) {}

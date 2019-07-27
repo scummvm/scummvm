@@ -29,7 +29,7 @@
 
 namespace Kyra {
 
-#define TimerV2(x) new Common::Functor1Mem<int, void, EoBCoreEngine>(this, &EoBCoreEngine::x)
+#	define TimerV2(x) new Common::Functor1Mem<int, void, EoBCoreEngine>(this, &EoBCoreEngine::x)
 
 void EoBCoreEngine::setupTimers() {
 	_timer->addTimer(0, TimerV2(timerProcessCharacterExchange), 9, false);
@@ -193,10 +193,10 @@ void EoBCoreEngine::advanceTimers(uint32 millis) {
 		for (int ii = 0; ii < 10; ii++) {
 			if (c->timers[ii] > ct) {
 				uint32 chrt = c->timers[ii] - ct;
-                c->timers[ii] = chrt > millis ? ct + chrt - millis : 1;
+				c->timers[ii] = chrt > millis ? ct + chrt - millis : 1;
 			} else if (c->timers[ii]) {
-                c->timers[ii] = 1;
-            }
+				c->timers[ii] = 1;
+			}
 		}
 	}
 
@@ -212,9 +212,9 @@ void EoBCoreEngine::advanceTimers(uint32 millis) {
 				_scriptTimers[i].next = chrt > millis ? ct + chrt - millis : 1;
 				debugC(3, kDebugLevelTimer, "EoBCoreEngine::advanceTimers()      - CTIME: %08d   SCRIPT TIMER[%02d].NEXT: %08d", ct, i, _scriptTimers[i].next);
 			} else if (_scriptTimers[i].next) {
-                _scriptTimers[i].next = 1;
+				_scriptTimers[i].next = 1;
 				debugC(3, kDebugLevelTimer, "EoBCoreEngine::advanceTimers()      - CTIME: %08d   SCRIPT TIMER[%02d].NEXT: %08d", ct, i, _scriptTimers[i].next);
-            }			
+			}
 		}
 	}
 
@@ -225,8 +225,8 @@ void EoBCoreEngine::advanceTimers(uint32 millis) {
 			uint32 chrt = _wallsOfForce[i].duration - ct;
 			_wallsOfForce[i].duration = chrt > millis ? ct + chrt - millis : 1;
 		} else {
-            _wallsOfForce[i].duration = 1;
-        }
+			_wallsOfForce[i].duration = 1;
+		}
 	}
 }
 
@@ -288,7 +288,7 @@ void EoBCoreEngine::timerProcessMonsters(int timerNum) {
 void EoBCoreEngine::timerSpecialCharacterUpdate(int timerNum) {
 	int charIndex = timerNum & 0x0F;
 	EoBCharacter *c = &_characters[charIndex];
-	uint32 ctime =  _system->getMillis();
+	uint32 ctime = _system->getMillis();
 
 	for (int i = 0; i < 10; i++) {
 		if (!c->timers[i])

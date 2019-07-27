@@ -25,17 +25,17 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit
 
 #include "Gs2dScreen.h"
-#include <kernel.h>
-#include <malloc.h>
-#include <string.h>
-#include <assert.h>
-#include <fileio.h>
-#include <math.h>
 #include "DmaPipe.h"
 #include "GsDefs.h"
-#include "graphics/surface.h"
-#include "graphics/colormasks.h"
 #include "backends/platform/ps2/ps2debug.h"
+#include "graphics/colormasks.h"
+#include "graphics/surface.h"
+#include <assert.h>
+#include <fileio.h>
+#include <kernel.h>
+#include <malloc.h>
+#include <math.h>
+#include <string.h>
 
 extern void *_gp;
 
@@ -78,12 +78,12 @@ static ps2_mode_t ps2_mode[] = {
 	{ 656, 576, 0, 704, 0x53, 1312, 2, 0, 78 /*314*/, 45 }, /* PAL : redux @ center'd */
 
 	/* #4/#5 : HDTV */
-	{ 1280,  720, 0, 1280, 0x52, 1280, 1, 0, 76 /*302*/, 24 },
+	{ 1280, 720, 0, 1280, 0x52, 1280, 1, 0, 76 /*302*/, 24 },
 	{ 1920, 1080, 1, 1920, 0x51, 1920, 1, 0, 60 /*236*/ /*238*/, 40 },
 
 	/* #6/#7/#8 : VESA 4:3 @ 60Hz */
-	{ 640, 480, 0,  640, 0x1A, 1280, 2, 0, 70 /*276*/, 34 },
-	{ 800, 600, 0,  832, 0x2B, 1600, 2, 0, 105 /*420*/, 26 },
+	{ 640, 480, 0, 640, 0x1A, 1280, 2, 0, 70 /*276*/, 34 },
+	{ 800, 600, 0, 832, 0x2B, 1600, 2, 0, 105 /*420*/, 26 },
 	{ 1024, 768, 0, 1024, 0x3B, 2048, 2, 0, 144 /*580*/, 34 }
 };
 
@@ -117,7 +117,7 @@ void runAnimThread(Gs2dScreen *param);
 
 int vblankStartHandler(int cause) {
 	// start of VBlank period
-	if (g_VblankCmd) {                // is there a new image waiting?
+	if (g_VblankCmd) { // is there a new image waiting?
 		GS_DISPFB1 = g_VblankCmd; // show it.
 		g_VblankCmd = 0;
 		iSignalSema(g_VblankSema);
@@ -127,8 +127,8 @@ int vblankStartHandler(int cause) {
 
 int dmacHandler(int channel) {
 	if (g_DmacCmd && (channel == 2)) { // GS DMA transfer finished,
-		g_VblankCmd = g_DmacCmd;   // we want to show the image
-		g_DmacCmd = 0;             // when the next vblank occurs
+		g_VblankCmd = g_DmacCmd; // we want to show the image
+		g_DmacCmd = 0; // when the next vblank occurs
 		iSignalSema(g_DmacSema);
 	}
 	return 0;
@@ -157,8 +157,8 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height) {
 	assert((g_VblankSema >= 0) && (g_DmacSema >= 0) && (_screenSema >= 0) && (g_AnimSema >= 0));
 
 	_vblankStartId = AddIntcHandler(INT_VBLANK_START, vblankStartHandler, 0);
-	_vblankEndId   = AddIntcHandler(INT_VBLANK_END, vblankEndHandler, 0);
-	_dmacId        = AddDmacHandler(2, dmacHandler, 0);
+	_vblankEndId = AddIntcHandler(INT_VBLANK_END, vblankEndHandler, 0);
+	_dmacId = AddDmacHandler(2, dmacHandler, 0);
 
 	_dmaPipe = new DmaPipe(0x2000);
 
@@ -187,7 +187,7 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height) {
 	int fd = fioOpen("rom0:ROMVER", O_RDONLY);
 	fioRead(fd, &romver, 8);
 	fioClose(fd);
-	biosver=atoi(romver);
+	biosver = atoi(romver);
 	printf("ROMVER = %s\n", romver);
 	printf("ver = %d\n", atoi(romver));
 
@@ -197,11 +197,9 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height) {
 
 			if (strcmp("ntsc", tvname) == 0) {
 				_tvMode = 2;
-			}
-			else if (strcmp("pal", tvname) == 0) {
+			} else if (strcmp("pal", tvname) == 0) {
 				_tvMode = 1;
-			}
-			else
+			} else
 				_tvMode = 0;
 		}
 
@@ -223,20 +221,18 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height) {
 			if (_gfxMode == 4 || _gfxMode == 5) {
 				printf("Not enough video mem: using EDTV (3)\n");
 				_gfxMode = 3;
-			}
-			else
-			if (_gfxMode == 7 || _gfxMode == 8) {
+			} else if (_gfxMode == 7 || _gfxMode == 8) {
 				printf("Not enough video mem: using VGA (6)\n");
 				_gfxMode = 6;
 			}
 
-			if (_gfxMode < 1 || _gfxMode > 8) _gfxMode = 2;
-			else
-			if (_gfxMode == 4 || _gfxMode == 5) _tvMode = TV_HDTV;
-			else
-			if (_gfxMode > 5) _tvMode = TV_VESA;
-		}
-		else
+			if (_gfxMode < 1 || _gfxMode > 8)
+				_gfxMode = 2;
+			else if (_gfxMode == 4 || _gfxMode == 5)
+				_tvMode = TV_HDTV;
+			else if (_gfxMode > 5)
+				_tvMode = TV_VESA;
+		} else
 			_gfxMode = 2;
 	}
 
@@ -244,14 +240,11 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height) {
 	mode = _gfxMode;
 	if (_tvMode == TV_NTSC) {
 		mode = (mode * 2) - 1;
-	}
-	else if (_tvMode == TV_PAL) {
+	} else if (_tvMode == TV_PAL) {
 		mode = (mode * 2);
-	}
-	else if (_tvMode == TV_HDTV) {
+	} else if (_tvMode == TV_HDTV) {
 		mode += 3;
-	}
-	else /* VESA */ {
+	} else /* VESA */ {
 		_tvMode = TV_VESA;
 		mode += 3;
 	}
@@ -260,16 +253,16 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height) {
 	switch (_tvMode) {
 	case TV_NTSC:
 		printf("Setting up TV mode: NTSC\n");
-	break;
+		break;
 	case TV_PAL:
 		printf("Setting up TV mode: PAL\n");
-	break;
+		break;
 	case TV_HDTV:
 		printf("Setting up TV mode: HDTV\n");
-	break;
+		break;
 	case TV_VESA:
 		printf("Setting up TV mode: VESA\n");
-	break;
+		break;
 	}
 
 	_tvWidth = ps2_mode[mode].w;
@@ -290,18 +283,18 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height) {
 	_texCoords[1].u = SCALE(_width);
 	_texCoords[1].v = SCALE(_height);
 
-	uint32 tvFrameSize = _tvPitch * _tvHeight * 4;  // 32 bits per pixel
+	uint32 tvFrameSize = _tvPitch * _tvHeight * 4; // 32 bits per pixel
 
 	// setup frame buffer pointers
 	_frameBufPtr[0] = 0;
 	_frameBufPtr[1] = tvFrameSize;
 	_clutPtrs[SCREEN] = tvFrameSize * 2;
-	_clutPtrs[MOUSE]  = _clutPtrs[SCREEN] + 0x1000; // the cluts in PSMCT32 take up half a memory page each
-	_clutPtrs[TEXT]   = _clutPtrs[SCREEN] + 0x2000;
-	_texPtrs[SCREEN]  = _clutPtrs[SCREEN] + 0x3000;
-	_texPtrs[TEXT]    = 0;                          // these buffers are stored in the alpha gaps of the frame buffers
-	_texPtrs[MOUSE]	  = 128 * 256 * 4;
-	_texPtrs[PRINTF]  = _texPtrs[MOUSE] + M_SIZE * M_SIZE * 4;
+	_clutPtrs[MOUSE] = _clutPtrs[SCREEN] + 0x1000; // the cluts in PSMCT32 take up half a memory page each
+	_clutPtrs[TEXT] = _clutPtrs[SCREEN] + 0x2000;
+	_texPtrs[SCREEN] = _clutPtrs[SCREEN] + 0x3000;
+	_texPtrs[TEXT] = 0; // these buffers are stored in the alpha gaps of the frame buffers
+	_texPtrs[MOUSE] = 128 * 256 * 4;
+	_texPtrs[PRINTF] = _texPtrs[MOUSE] + M_SIZE * M_SIZE * 4;
 
 	_showOverlay = false;
 	_showMouse = false;
@@ -325,36 +318,34 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height) {
 
 	// setup hardware now.
 	GS_CSR = CSR_RESET; // Reset GS
-	asm ("sync.p");
+	asm("sync.p");
 	GS_CSR = 0;
 	GsPutIMR(0x7F00);
 
-
 	if (biosver < 220 && ps2_mode[mode].mode == 0x53) { // EDTV PAL : mode not in BIOS < 2.20
-	                                                    // no worries... we work in magic ;-)
+		// no worries... we work in magic ;-)
 		/* 720x576p */
-		asm ("di");
-		asm ("sync.l; sync.p");
+		asm("di");
+		asm("sync.l; sync.p");
 		GS_PMODE = 0;
-		asm ("sync.l; sync.p");
+		asm("sync.l; sync.p");
 		GS_SMODE1 = 0x1742890504;
-		asm ("sync.l; sync.p");
+		asm("sync.l; sync.p");
 		GS_SMODE2 = 0;
 		GS_SYNCH1 = 0x402E02003C827;
-		asm ("sync.l; sync.p");
+		asm("sync.l; sync.p");
 		GS_SYNCH2 = 0x19CA67;
-		asm ("sync.l; sync.p");
+		asm("sync.l; sync.p");
 		GS_SYNCV = 0xA9000002700005;
-		asm ("sync.l; sync.p");
+		asm("sync.l; sync.p");
 		GS_SRFSH = 4;
-		asm ("sync.l; sync.p");
+		asm("sync.l; sync.p");
 		GS_SMODE1 = 0x1742880504;
-		asm ("sync.l; sync.p");
-		asm ("sync.l; sync.p");
+		asm("sync.l; sync.p");
+		asm("sync.l; sync.p");
 		GS_SMODE2 = 0;
 		asm("ei");
-	}
-	else { // BIOS
+	} else { // BIOS
 		SetGsCrt(ps2_mode[mode].interlaced, ps2_mode[mode].mode, 0); // ps2_mode[mode].interlaced);
 	}
 
@@ -379,21 +370,21 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height) {
 
 	createAnimTextures();
 
-	// create animation thread
-	#ifdef __NEW_PS2SDK__
+// create animation thread
+#ifdef __NEW_PS2SDK__
 	ee_thread_t animThread;
 	ee_thread_status_t thisThread;
-	#else
+#else
 	ee_thread_t animThread, thisThread;
-	#endif
+#endif
 	ReferThreadStatus(GetThreadId(), &thisThread);
 
 	_animStack = memalign(64, ANIM_STACK_SIZE);
 	animThread.initial_priority = thisThread.current_priority - 3;
-	animThread.stack      = _animStack;
+	animThread.stack = _animStack;
 	animThread.stack_size = ANIM_STACK_SIZE;
-	animThread.func       = (void *)runAnimThread;
-	animThread.gp_reg     = &_gp;
+	animThread.func = (void *)runAnimThread;
+	animThread.gp_reg = &_gp;
 
 	_animTid = CreateThread(&animThread);
 	assert(_animTid >= 0);
@@ -402,11 +393,11 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height) {
 
 void Gs2dScreen::quit(void) {
 	_systemQuit = true;
-	#ifdef __NEW_PS2SDK__
+#ifdef __NEW_PS2SDK__
 	ee_thread_status_t statAnim;
-	#else
+#else
 	ee_thread_t statAnim;
-	#endif
+#endif
 	do { // wait until thread called ExitThread()
 		SignalSema(g_AnimSema);
 		ReferThreadStatus(_animTid, &statAnim);
@@ -414,7 +405,8 @@ void Gs2dScreen::quit(void) {
 	DeleteThread(_animTid);
 	free(_animStack);
 	_dmaPipe->waitForDma(); // wait for dmac and vblank for the last time
-	while (g_DmacCmd || g_VblankCmd);
+	while (g_DmacCmd || g_VblankCmd)
+		;
 
 	sioprintf("kill handlers\n");
 	DisableIntc(INT_VBLANK_START);
@@ -442,9 +434,9 @@ void Gs2dScreen::createAnimTextures(void) {
 			destPos++;
 		}
 		if (!(i & 1))
-			_dmaPipe->uploadTex( vramDest, 128, 0, 0, GS_PSMT4HH, buf, 128, 16);
+			_dmaPipe->uploadTex(vramDest, 128, 0, 0, GS_PSMT4HH, buf, 128, 16);
 		else {
-			_dmaPipe->uploadTex( vramDest, 128, 0, 0, GS_PSMT4HL, buf, 128, 16);
+			_dmaPipe->uploadTex(vramDest, 128, 0, 0, GS_PSMT4HL, buf, 128, 16);
 			vramDest += 128 * 16 * 4;
 		}
 		_dmaPipe->flush();
@@ -565,8 +557,8 @@ void Gs2dScreen::grabPalette(uint8 *pal, uint8 start, uint16 num) const {
 		src = (src & 0xE7) | ((src & 0x8) << 1) | ((src & 0x10) >> 1);
 
 		uint32 color = _clut[src];
-		pal[0] = (color >>  0) & 0xFF;
-		pal[1] = (color >>  8) & 0xFF;
+		pal[0] = (color >> 0) & 0xFF;
+		pal[1] = (color >> 8) & 0xFF;
 		pal[2] = (color >> 16) & 0xFF;
 		pal += 3;
 	}
@@ -643,7 +635,7 @@ void Gs2dScreen::updateScreen(void) {
 		}
 #endif
 
-		WaitSema(g_DmacSema);	// wait for dma transfer, if there's one running
+		WaitSema(g_DmacSema); // wait for dma transfer, if there's one running
 		WaitSema(g_VblankSema); // wait if there's already an image waiting for vblank
 
 		g_DmacCmd = GS_SET_DISPFB(_frameBufPtr[_curDrawBuf], _tvPitch, GS_PSMCT24); // put it here for dmac/vblank handler
@@ -709,8 +701,10 @@ void Gs2dScreen::copyOverlayRect(const byte *buf, uint16 pitch, uint16 x, uint16
 	// warning("pitch=%d _width=%d - x=%d y=%d w=%d h=%d",
 	//	pitch, _width, x, y, w, h);
 
-	if (x >= 65535) x=0;
-	if (y >= 65535) y=0;
+	if (x >= 65535)
+		x = 0;
+	if (y >= 65535)
+		y = 0;
 
 	_overlayChanged = true;
 	uint16 *dest = _overlayBuf + y * _width + x;
@@ -760,7 +754,7 @@ void Gs2dScreen::setMouseOverlay(const uint8 *buf, uint16 width, uint16 height, 
 	for (int cnt = 0; cnt < height; cnt++)
 		memcpy(bufCopy + cnt * M_SIZE, buf + cnt * width, width);
 
-	_dmaPipe->uploadTex( _texPtrs[MOUSE], M_SIZE, 0, 0, GS_PSMT8H, bufCopy, M_SIZE, M_SIZE);
+	_dmaPipe->uploadTex(_texPtrs[MOUSE], M_SIZE, 0, 0, GS_PSMT8H, bufCopy, M_SIZE, M_SIZE);
 	_dmaPipe->flush();
 	_dmaPipe->waitForDma(); // make sure all data has been transferred when we free bufCopy
 	free(bufCopy);
@@ -799,13 +793,12 @@ void Gs2dScreen::wantAnim(bool runIt) {
 void Gs2dScreen::playAnim(void) {
 	// animate zeros and ones while game accesses memory card, etc.
 	g_RunAnim = false;
-	float yPos   = 0.0;
+	float yPos = 0.0;
 	uint8 texSta = 0;
 	float scrlSpeed = (_tvMode == TV_PAL) ? (_tvHeight / (SCRL_TIME * 50.0)) : (_tvHeight / (SCRL_TIME * 60.0));
 	uint8 texMax = (_tvHeight / LINE_SPACE) + (ORG_Y / LINE_SPACE);
 	TexVertex texNodes[4] = {
-		{ SCALE(1),   SCALE(1) }, { SCALE(1),   SCALE(14) },
-		{ SCALE(128), SCALE(1) }, { SCALE(128), SCALE(14) }
+		{ SCALE(1), SCALE(1) }, { SCALE(1), SCALE(14) }, { SCALE(128), SCALE(1) }, { SCALE(128), SCALE(14) }
 	};
 	float angleStep = ((2 * M_PI) / _tvHeight);
 
@@ -818,7 +811,7 @@ void Gs2dScreen::playAnim(void) {
 			break;
 
 		if (PollSema(_screenSema) > 0) { // make sure no thread is currently drawing
-			WaitSema(g_DmacSema);   // dma transfers have to be finished
+			WaitSema(g_DmacSema); // dma transfers have to be finished
 			WaitSema(g_VblankSema); // wait for image, if there is one...
 
 			// redraw the engine's last frame
@@ -887,7 +880,7 @@ void Gs2dScreen::playAnim(void) {
 					_dmaPipe->setTex(texPtr, 128, 7, 4, GS_PSMT4HH, _clutPtrs[TEXT], 0, 64, GS_PSMCT32);
 
 				_dmaPipe->textureRect(nodes + 0, nodes + 1, nodes + 2, nodes + 3,
-					texNodes + 0, texNodes + 1, texNodes + 2, texNodes + 3, GS_RGBA(0x80, 0x80, 0x80, 0x80));
+				                      texNodes + 0, texNodes + 1, texNodes + 2, texNodes + 3, GS_RGBA(0x80, 0x80, 0x80, 0x80));
 
 				drawY += LINE_SPACE;
 			}
@@ -929,15 +922,15 @@ const uint16 Gs2dScreen::_binaryPattern[16] = {
 };
 
 const uint32 Gs2dScreen::_binaryClut[16] __attribute__((aligned(64))) = {
-	GS_RGBA(   0,    0,    0, 0x40),
-	GS_RGBA(  50,   50,   50, 0x40),
-	GS_RGBA( 204,  204, 0xFF, 0x40),
-	GS_RGBA( 140,  140, 0xFF, 0x40),
+	GS_RGBA(0, 0, 0, 0x40),
+	GS_RGBA(50, 50, 50, 0x40),
+	GS_RGBA(204, 204, 0xFF, 0x40),
+	GS_RGBA(140, 140, 0xFF, 0x40),
 
-	GS_RGBA(   0,    0,    0, 0x80), // scrPrintf: transparent
-	GS_RGBA(   0,    0,    0, 0x20), // scrPrintf: semitransparent
-	GS_RGBA(0xC0, 0xC0, 0xC0,    0), // scrPrintf: red
-	GS_RGBA(0x16, 0x16, 0xF0,    0), // scrPrintf: blue
+	GS_RGBA(0, 0, 0, 0x80), // scrPrintf: transparent
+	GS_RGBA(0, 0, 0, 0x20), // scrPrintf: semitransparent
+	GS_RGBA(0xC0, 0xC0, 0xC0, 0), // scrPrintf: red
+	GS_RGBA(0x16, 0x16, 0xF0, 0), // scrPrintf: blue
 
 	GS_RGBA(0xFF, 0xFF, 0xFF, 0x80), GS_RGBA(0xFF, 0xFF, 0xFF, 0x80), // unused
 	GS_RGBA(0xFF, 0xFF, 0xFF, 0x80), GS_RGBA(0xFF, 0xFF, 0xFF, 0x80),

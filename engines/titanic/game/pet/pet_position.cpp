@@ -27,9 +27,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPETPosition, CGameObject)
-	ON_MESSAGE(EnterRoomMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(LeaveViewMsg)
 END_MESSAGE_MAP()
 
 void CPETPosition::save(SimpleFile *file, int indent) {
@@ -133,7 +133,7 @@ bool CPETPosition::EnterViewMsg(CEnterViewMsg *msg) {
 	} else if (compareRoomNameTo("SecClassLittleLift")) {
 		if (pet && viewStr == "Node 1.N")
 			pet->resetRoomsHighlight();
-	} else  if (compareRoomNameTo("SGTLittleLift")) {
+	} else if (compareRoomNameTo("SGTLittleLift")) {
 		if (pet && viewStr == "Node 1.N")
 			pet->resetRoomsHighlight();
 	} else if (compareRoomNameTo("SgtLobby")) {
@@ -259,6 +259,5 @@ bool CPETPosition::LeaveViewMsg(CLeaveViewMsg *msg) {
 
 	return true;
 }
-
 
 } // End of namespace Titanic

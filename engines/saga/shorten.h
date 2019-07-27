@@ -26,10 +26,10 @@
 
 #else
 
-#ifndef SOUND_SHORTEN_H
-#define SOUND_SHORTEN_H
+#	ifndef SOUND_SHORTEN_H
+#		define SOUND_SHORTEN_H
 
-#include "common/scummsys.h"
+#		include "common/scummsys.h"
 
 namespace Audio {
 class AudioStream;
@@ -59,6 +59,6 @@ Audio::AudioStream *makeShortenStream(Common::ReadStream &stream);
 
 } // End of namespace Audio
 
-#endif
+#	endif
 
 #endif // engine and dynamic plugins guard

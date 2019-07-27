@@ -20,18 +20,17 @@
  *
  */
 
-
-#include "engines/engine.h"
 #include "scumm/players/player_v3a.h"
+#include "engines/engine.h"
 #include "scumm/scumm.h"
 
 namespace Scumm {
 
 static const uint16 note_freqs[4][12] = {
-	{0x06B0, 0x0650, 0x05F4, 0x05A0, 0x054C, 0x0500, 0x04B8, 0x0474, 0x0434, 0x03F8, 0x03C0, 0x0388},
-	{0x0358, 0x0328, 0x02FA, 0x02D0, 0x02A6, 0x0280, 0x025C, 0x023A, 0x021A, 0x01FC, 0x01E0, 0x01C4},
-	{0x01AC, 0x0194, 0x017D, 0x0168, 0x0153, 0x0140, 0x012E, 0x011D, 0x010D, 0x00FE, 0x00F0, 0x00E2},
-	{0x00D6, 0x00CA, 0x00BE, 0x00B4, 0x00A9, 0x00A0, 0x0097, 0x008E, 0x0086, 0x007F, 0x00F0, 0x00E2}
+	{ 0x06B0, 0x0650, 0x05F4, 0x05A0, 0x054C, 0x0500, 0x04B8, 0x0474, 0x0434, 0x03F8, 0x03C0, 0x0388 },
+	{ 0x0358, 0x0328, 0x02FA, 0x02D0, 0x02A6, 0x0280, 0x025C, 0x023A, 0x021A, 0x01FC, 0x01E0, 0x01C4 },
+	{ 0x01AC, 0x0194, 0x017D, 0x0168, 0x0153, 0x0140, 0x012E, 0x011D, 0x010D, 0x00FE, 0x00F0, 0x00E2 },
+	{ 0x00D6, 0x00CA, 0x00BE, 0x00B4, 0x00A9, 0x00A0, 0x0097, 0x008E, 0x0086, 0x007F, 0x00F0, 0x00E2 }
 };
 
 Player_V3A::Player_V3A(ScummEngine *scumm, Audio::Mixer *mixer) {
@@ -74,11 +73,11 @@ Player_V3A::~Player_V3A() {
 	}
 }
 
-void Player_V3A::setMusicVolume (int vol) {
+void Player_V3A::setMusicVolume(int vol) {
 	_mod->setMusicVolume(vol);
 }
 
-int Player_V3A::getMusChan (int id) const {
+int Player_V3A::getMusChan(int id) const {
 	int i;
 	for (i = 0; i < V3A_MAXMUS; i++) {
 		if (_mus[i].id == id)
@@ -91,7 +90,7 @@ int Player_V3A::getMusChan (int id) const {
 	}
 	return i;
 }
-int Player_V3A::getSfxChan (int id) const {
+int Player_V3A::getSfxChan(int id) const {
 	int i;
 	for (i = 0; i < V3A_MAXSFX; i++) {
 		if (_sfx[i].id == id)
@@ -127,7 +126,7 @@ void Player_V3A::stopAllSounds() {
 
 void Player_V3A::stopSound(int nr) {
 	int i;
-	if (nr == 0) {	// Amiga Loom does this near the end, when Chaos casts SILENCE on Hetchel
+	if (nr == 0) { // Amiga Loom does this near the end, when Chaos casts SILENCE on Hetchel
 		stopAllSounds();
 		return;
 	}
@@ -183,14 +182,16 @@ void Player_V3A::startSound(int nr) {
 				_wavetable[i]->_ilen[j] = len = READ_BE_UINT16(ptr + offset + 2);
 				if (len) {
 					_wavetable[i]->_idat[j] = (char *)malloc(len);
-					memcpy(_wavetable[i]->_idat[j],ptr + off,len);
-				} else	_wavetable[i]->_idat[j] = NULL;
+					memcpy(_wavetable[i]->_idat[j], ptr + off, len);
+				} else
+					_wavetable[i]->_idat[j] = NULL;
 				off = READ_BE_UINT16(ptr + offset + 4);
 				_wavetable[i]->_llen[j] = len = READ_BE_UINT16(ptr + offset + 6);
 				if (len) {
 					_wavetable[i]->_ldat[j] = (char *)malloc(len);
-					memcpy(_wavetable[i]->_ldat[j],ptr + off,len);
-				} else	_wavetable[i]->_ldat[j] = NULL;
+					memcpy(_wavetable[i]->_ldat[j], ptr + off, len);
+				} else
+					_wavetable[i]->_ldat[j] = NULL;
 				_wavetable[i]->_oct[j] = READ_BE_UINT16(ptr + offset + 8);
 				offset += 10;
 			}
@@ -207,7 +208,7 @@ void Player_V3A::startSound(int nr) {
 	}
 
 	if (getSoundStatus(nr))
-		stopSound(nr);	// if a sound is playing, restart it
+		stopSound(nr); // if a sound is playing, restart it
 
 	if (data[26]) {
 		if (_curSong)
@@ -221,7 +222,7 @@ void Player_V3A::startSound(int nr) {
 		int size = READ_BE_UINT16(data + 12);
 		int rate = 3579545 / READ_BE_UINT16(data + 20);
 		char *sound = (char *)malloc(size);
-		int vol = (data[24] << 1) | (data[24] >> 5);	// if I boost this to 0-255, it gets too loud and starts to clip
+		int vol = (data[24] << 1) | (data[24] >> 5); // if I boost this to 0-255, it gets too loud and starts to clip
 		memcpy(sound, data + READ_BE_UINT16(data + 8), size);
 		int loopStart = 0, loopEnd = 0;
 		int loopcount = data[27];
@@ -268,8 +269,8 @@ void Player_V3A::playMusic() {
 				uint16 oldrate = _sfx[i].rate >> 16;
 				_sfx[i].rate += _sfx[i].delta;
 				if (_sfx[i].rate < (55 << 16))
-					_sfx[i].rate = 55 << 16;	// at rates below 55, frequency
-				uint16 newrate = _sfx[i].rate >> 16;	// exceeds 65536, which is bad
+					_sfx[i].rate = 55 << 16; // at rates below 55, frequency
+				uint16 newrate = _sfx[i].rate >> 16; // exceeds 65536, which is bad
 				if (oldrate != newrate)
 					_mod->setChannelFreq(_sfx[i].id | 0x100, 3579545 / newrate);
 			}
@@ -301,14 +302,15 @@ void Player_V3A::playMusic() {
 				if (_songDelay < _mus[i].dur)
 					_songDelay = _mus[i].dur;
 			}
-			if (inst == 0xFB)	// it's a looped song, restart it afterwards
+			if (inst == 0xFB) // it's a looped song, restart it afterwards
 				_songPtr = 0x1C;
-			else	_songPtr = 0;	// otherwise, terminate it
+			else
+				_songPtr = 0; // otherwise, terminate it
 			break;
 		}
 		inst &= 0xF;
 		pit = _songData[_songPtr++];
-		vol = _songData[_songPtr++] & 0x7F;	// if I boost this to 0-255, it gets too loud and starts to clip
+		vol = _songData[_songPtr++] & 0x7F; // if I boost this to 0-255, it gets too loud and starts to clip
 		dur = _songData[_songPtr++];
 		if (pit == 0) {
 			_songDelay = dur;
@@ -338,7 +340,7 @@ void Player_V3A::playMusic() {
 		_mus[i].id = i + 1;
 		_mus[i].dur = dur + 1;
 		_mod->startChannel(_mus[i].id, data, _wavetable[inst]->_ilen[oct] + _wavetable[inst]->_llen[oct], rate, vol,
-			_wavetable[inst]->_ilen[oct], _wavetable[inst]->_ilen[oct] + _wavetable[inst]->_llen[oct]);
+		                   _wavetable[inst]->_ilen[oct], _wavetable[inst]->_ilen[oct] + _wavetable[inst]->_llen[oct]);
 	}
 }
 

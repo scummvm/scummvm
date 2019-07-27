@@ -21,16 +21,16 @@
  */
 
 #include "illusions/duckman/illusions_duckman.h"
-#include "illusions/duckman/duckman_dialog.h"
-#include "illusions/duckman/duckman_specialcode.h"
-#include "illusions/duckman/gamestate_duckman.h"
-#include "illusions/duckman/menusystem_duckman.h"
-#include "illusions/duckman/scriptopcodes_duckman.h"
-#include "illusions/duckman/duckman_videoplayer.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
 #include "illusions/cursor.h"
 #include "illusions/dictionary.h"
+#include "illusions/duckman/duckman_dialog.h"
+#include "illusions/duckman/duckman_specialcode.h"
+#include "illusions/duckman/duckman_videoplayer.h"
+#include "illusions/duckman/gamestate_duckman.h"
+#include "illusions/duckman/menusystem_duckman.h"
+#include "illusions/duckman/scriptopcodes_duckman.h"
 #include "illusions/gamresourcereader.h"
 #include "illusions/graphics.h"
 #include "illusions/input.h"
@@ -77,7 +77,7 @@ namespace Illusions {
 // IllusionsEngine_Duckman
 
 IllusionsEngine_Duckman::IllusionsEngine_Duckman(OSystem *syst, const IllusionsGameDescription *gd)
-	: IllusionsEngine(syst, gd) {
+  : IllusionsEngine(syst, gd) {
 }
 
 Common::Error IllusionsEngine_Duckman::run() {
@@ -240,39 +240,35 @@ Common::Error IllusionsEngine_Duckman::run() {
 }
 
 bool IllusionsEngine_Duckman::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
 void IllusionsEngine_Duckman::initInput() {
 	_input->setInputEvent(kEventLeftClick, 0x01)
-		.addMouseButton(MOUSE_LEFT_BUTTON)
-		.addKey(Common::KEYCODE_RETURN);
+	  .addMouseButton(MOUSE_LEFT_BUTTON)
+	  .addKey(Common::KEYCODE_RETURN);
 	_input->setInputEvent(kEventRightClick, 0x02)
-		.addMouseButton(MOUSE_RIGHT_BUTTON)
-		.addKey(Common::KEYCODE_BACKSPACE);
+	  .addMouseButton(MOUSE_RIGHT_BUTTON)
+	  .addKey(Common::KEYCODE_BACKSPACE);
 	// 0x04 is unused
 	_input->setInputEvent(kEventInventory, 0x08)
-		.addKey(Common::KEYCODE_TAB);
+	  .addKey(Common::KEYCODE_TAB);
 	_input->setInputEvent(kEventAbort, 0x10)
-		.addKey(Common::KEYCODE_ESCAPE);
+	  .addKey(Common::KEYCODE_ESCAPE);
 	_input->setInputEvent(kEventSkip, 0x20)
-		.addMouseButton(MOUSE_LEFT_BUTTON)
-		.addKey(Common::KEYCODE_SPACE);
+	  .addMouseButton(MOUSE_LEFT_BUTTON)
+	  .addKey(Common::KEYCODE_SPACE);
 	_input->setInputEvent(kEventUp, 0x40)
-		.addKey(Common::KEYCODE_UP);
+	  .addKey(Common::KEYCODE_UP);
 	_input->setInputEvent(kEventDown, 0x80)
-		.addMouseButton(MOUSE_RIGHT_BUTTON)
-		.addKey(Common::KEYCODE_DOWN);
+	  .addMouseButton(MOUSE_RIGHT_BUTTON)
+	  .addKey(Common::KEYCODE_DOWN);
 	_input->setInputEvent(kEventF1, 0x100)
-		.addKey(Common::KEYCODE_F1);
+	  .addKey(Common::KEYCODE_F1);
 }
 
 #define UPDATEFUNCTION(priority, sceneId, callback) \
-	_updateFunctions->add(priority, sceneId, new Common::Functor1Mem<uint, int, IllusionsEngine_Duckman> \
-		(this, &IllusionsEngine_Duckman::callback));
+	_updateFunctions->add(priority, sceneId, new Common::Functor1Mem<uint, int, IllusionsEngine_Duckman>(this, &IllusionsEngine_Duckman::callback));
 
 void IllusionsEngine_Duckman::initUpdateFunctions() {
 	UPDATEFUNCTION(25, 0, updateVideoPlayer);
@@ -309,8 +305,7 @@ void IllusionsEngine_Duckman::startScreenShaker(uint pointsCount, uint32 duratio
 	_screenShaker->_nextTime = duration + getCurrentTime();
 	_screenShaker->_points = points;
 	_screenShaker->_notifyThreadId = threadId;
-	_updateFunctions->add(71, getCurrentScene(), new Common::Functor1Mem<uint, int, IllusionsEngine_Duckman>
-		(this, &IllusionsEngine_Duckman::updateScreenShaker));
+	_updateFunctions->add(71, getCurrentScene(), new Common::Functor1Mem<uint, int, IllusionsEngine_Duckman>(this, &IllusionsEngine_Duckman::updateScreenShaker));
 }
 
 void IllusionsEngine_Duckman::stopScreenShaker() {
@@ -453,9 +448,7 @@ void IllusionsEngine_Duckman::notifyThreadId(uint32 &threadId) {
 }
 
 bool IllusionsEngine_Duckman::testMainActorFastWalk(Control *control) {
-	return
-		control->_objectId == _scriptResource->getMainActorObjectId() &&
-		_input->pollEvent(kEventSkip);
+	return control->_objectId == _scriptResource->getMainActorObjectId() && _input->pollEvent(kEventSkip);
 }
 
 bool IllusionsEngine_Duckman::testMainActorCollision(Control *control) {
@@ -489,20 +482,20 @@ Control *IllusionsEngine_Duckman::getObjectControl(uint32 objectId) {
 }
 
 static const uint8 kPointConversionTable[] = {
-		0, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
-		35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
-		35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
-		35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
-		35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
-		35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
-		35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
-		35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 1, 2, 3,
-		4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 35,
-		35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
-		35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
-		35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
-		35, 35, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,
-		33, 34
+	0, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
+	35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
+	35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
+	35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
+	35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
+	35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
+	35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
+	35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 1, 2, 3,
+	4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 35,
+	35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
+	35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
+	35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
+	35, 35, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,
+	33, 34
 };
 Common::Point IllusionsEngine_Duckman::getNamedPointPosition(uint32 namedPointId) {
 	Common::Point pt;
@@ -517,47 +510,75 @@ Common::Point IllusionsEngine_Duckman::getNamedPointPosition(uint32 namedPointId
 		}
 	} else {
 		debug(1, "getNamedPointPosition(%02d)", kPointConversionTable[namedPointId - 0x00070001]);
-		switch(kPointConversionTable[namedPointId - 0x00070001]) {
-			case 0 : return Common::Point(160, 100);
-			case 1 : return currPan;
-			case 2 : return Common::Point(currPan.x - 160, currPan.y);
-			case 3 : return Common::Point(currPan.x + 160, currPan.y);
-			case 4 : return Common::Point(currPan.x, currPan.y - 100);
-			case 5 : return Common::Point(currPan.x, currPan.y + 100);
-			case 6 : return Common::Point(currPan.x - 160, currPan.y - 100);
-			case 7 : return Common::Point((uint16)(currPan.x + 160), currPan.y - 100);
-			case 8 : return Common::Point(currPan.x - 160, currPan.y + 100);
-			case 9 : return Common::Point(currPan.x + 160, currPan.y + 100);
-			/* TODO implement these
+		switch (kPointConversionTable[namedPointId - 0x00070001]) {
+		case 0:
+			return Common::Point(160, 100);
+		case 1:
+			return currPan;
+		case 2:
+			return Common::Point(currPan.x - 160, currPan.y);
+		case 3:
+			return Common::Point(currPan.x + 160, currPan.y);
+		case 4:
+			return Common::Point(currPan.x, currPan.y - 100);
+		case 5:
+			return Common::Point(currPan.x, currPan.y + 100);
+		case 6:
+			return Common::Point(currPan.x - 160, currPan.y - 100);
+		case 7:
+			return Common::Point((uint16)(currPan.x + 160), currPan.y - 100);
+		case 8:
+			return Common::Point(currPan.x - 160, currPan.y + 100);
+		case 9:
+			return Common::Point(currPan.x + 160, currPan.y + 100);
+		/* TODO implement these
 			case 10 : return Common::Point(0, 0);
 			case 11 : return Common::Point(0, 0);
 			case 12 : return Common::Point(0, 0);
 			case 13 : return Common::Point(0, 0);
 			case 14 : return Common::Point(0, 0);
 			*/
-			case 15 : return Common::Point(0, 0);
-			/* TODO implement these
+		case 15:
+			return Common::Point(0, 0);
+		/* TODO implement these
 			case 16 : return Common::Point(0, 0);
 			case 17 : return Common::Point(0, 0);
 			case 18 : return Common::Point(0, 0);
 			 */
-			case 19 : return Common::Point(0, 0);
-			case 20 : return Common::Point(320, 0);
-			case 21 : return Common::Point(640, 0);
-			case 22 : return Common::Point(960, 0);
-			case 23 : return Common::Point(0, 200);
-			case 24 : return Common::Point(320, 200);
-			case 25 : return Common::Point(640, 200);
-			case 26 : return Common::Point(960, 200);
-			case 27 : return Common::Point(0, 400);
-			case 28 : return Common::Point(320, 400);
-			case 29 : return Common::Point(640, 400);
-			case 30 : return Common::Point(960, 400);
-			case 31 : return Common::Point(0, 600);
-			case 32 : return Common::Point(320, 0);
-			case 33 : return Common::Point(640, 0);
-			case 34 : return Common::Point(960, 0);
-			default : break;
+		case 19:
+			return Common::Point(0, 0);
+		case 20:
+			return Common::Point(320, 0);
+		case 21:
+			return Common::Point(640, 0);
+		case 22:
+			return Common::Point(960, 0);
+		case 23:
+			return Common::Point(0, 200);
+		case 24:
+			return Common::Point(320, 200);
+		case 25:
+			return Common::Point(640, 200);
+		case 26:
+			return Common::Point(960, 200);
+		case 27:
+			return Common::Point(0, 400);
+		case 28:
+			return Common::Point(320, 400);
+		case 29:
+			return Common::Point(640, 400);
+		case 30:
+			return Common::Point(960, 400);
+		case 31:
+			return Common::Point(0, 600);
+		case 32:
+			return Common::Point(320, 0);
+		case 33:
+			return Common::Point(640, 0);
+		case 34:
+			return Common::Point(960, 0);
+		default:
+			break;
 		}
 		error("getNamedPointPosition(%02d) UNKNOWN", kPointConversionTable[namedPointId - 0x00070001]);
 		return Common::Point(0, 0);
@@ -584,8 +605,7 @@ bool IllusionsEngine_Duckman::isCursorObject(uint32 actorTypeId, uint32 objectId
 }
 
 void IllusionsEngine_Duckman::setCursorControlRoutine(Control *control) {
-	control->_actor->setControlRoutine(new Common::Functor2Mem<Control*, uint32, void, IllusionsEngine_Duckman>
-		(this, &IllusionsEngine_Duckman::cursorControlRoutine));
+	control->_actor->setControlRoutine(new Common::Functor2Mem<Control *, uint32, void, IllusionsEngine_Duckman>(this, &IllusionsEngine_Duckman::cursorControlRoutine));
 }
 
 void IllusionsEngine_Duckman::placeCursorControl(Control *control, uint32 sequenceId) {
@@ -666,19 +686,19 @@ void IllusionsEngine_Duckman::initCursor() {
 
 void IllusionsEngine_Duckman::setCursorActorIndex(int actorIndex, int a, int b) {
 	static int kCursorMap[13][2][2] = {
-		{{ 1,  2}, { 0,  0}},
-		{{ 3,  4}, { 0,  0}},
-		{{ 5,  6}, {13, 14}},
-		{{ 7,  8}, { 0,  0}},
-		{{ 9, 10}, { 0,  0}},
-		{{11, 12}, { 0,  0}},
-		{{ 1,  2}, { 0,  0}},
-		{{ 0,  0}, { 0,  0}},
-		{{ 0,  0}, { 0,  0}},
-		{{15, 16}, { 0,  0}},
-		{{17, 18}, { 0,  0}},
-		{{19, 20}, { 0,  0}},
-		{{21, 22}, { 0,  0}}
+		{ { 1, 2 }, { 0, 0 } },
+		{ { 3, 4 }, { 0, 0 } },
+		{ { 5, 6 }, { 13, 14 } },
+		{ { 7, 8 }, { 0, 0 } },
+		{ { 9, 10 }, { 0, 0 } },
+		{ { 11, 12 }, { 0, 0 } },
+		{ { 1, 2 }, { 0, 0 } },
+		{ { 0, 0 }, { 0, 0 } },
+		{ { 0, 0 }, { 0, 0 } },
+		{ { 15, 16 }, { 0, 0 } },
+		{ { 17, 18 }, { 0, 0 } },
+		{ { 19, 20 }, { 0, 0 } },
+		{ { 21, 22 }, { 0, 0 } }
 	};
 	_cursor._control->_actor->_actorIndex = kCursorMap[actorIndex - 1][b][a - 1];
 }
@@ -824,23 +844,23 @@ uint32 IllusionsEngine_Duckman::startAbortableThread(byte *scriptCodeIp1, byte *
 	debug(2, "Starting abortable thread %08X", tempThreadId);
 	uint32 scriptThreadId = startTempScriptThread(scriptCodeIp1, tempThreadId, 0, 0, 0);
 	AbortableThread *abortableThread = new AbortableThread(this, tempThreadId, callingThreadId, 0,
-		scriptThreadId, scriptCodeIp2);
+	                                                       scriptThreadId, scriptCodeIp2);
 	_threads->startThread(abortableThread);
 	return tempThreadId;
 }
 
 uint32 IllusionsEngine_Duckman::startTalkThread(uint32 objectId, uint32 talkId, uint32 sequenceId1,
-	uint32 sequenceId2, uint32 callingThreadId) {
+                                                uint32 sequenceId2, uint32 callingThreadId) {
 	debug(2, "Starting talk thread");
 	uint32 tempThreadId = newTempThreadId();
 	TalkThread_Duckman *talkThread = new TalkThread_Duckman(this, tempThreadId, callingThreadId, 0,
-		objectId, talkId, sequenceId1, sequenceId2);
+	                                                        objectId, talkId, sequenceId1, sequenceId2);
 	_threads->startThread(talkThread);
 	return tempThreadId;
 }
 
 uint32 IllusionsEngine_Duckman::startTempScriptThread(byte *scriptCodeIp, uint32 callingThreadId,
-	uint32 value8, uint32 valueC, uint32 value10) {
+                                                      uint32 value8, uint32 valueC, uint32 value10) {
 	uint32 tempThreadId = newTempThreadId();
 	debug(2, "Starting temp script thread %08X", tempThreadId);
 	newScriptThread(tempThreadId, callingThreadId, 0, scriptCodeIp);
@@ -856,16 +876,16 @@ void IllusionsEngine_Duckman::resumeFromSavegame(uint32 callingThreadId) {
 }
 
 void IllusionsEngine_Duckman::newScriptThread(uint32 threadId, uint32 callingThreadId, uint notifyFlags,
-	byte *scriptCodeIp) {
+                                              byte *scriptCodeIp) {
 	ScriptThread *scriptThread = new ScriptThread(this, threadId, callingThreadId, notifyFlags,
-		scriptCodeIp, 0, 0, 0);
+	                                              scriptCodeIp, 0, 0, 0);
 	_threads->startThread(scriptThread);
 }
 
 uint32 IllusionsEngine_Duckman::newTimerThread(uint32 duration, uint32 callingThreadId, bool isAbortable) {
 	uint32 tempThreadId = newTempThreadId();
 	TimerThread *timerThread = new TimerThread(this, tempThreadId, callingThreadId, 0,
-		duration, isAbortable);
+	                                           duration, isAbortable);
 	_threads->startThread(timerThread);
 	return tempThreadId;
 }
@@ -1126,7 +1146,6 @@ void IllusionsEngine_Duckman::updateGameState2() {
 			runTriggerCause(2, 0, _scriptResource->getMainActorObjectId());
 		}
 	}
-
 }
 
 void IllusionsEngine_Duckman::playSoundEffect(int index) {
@@ -1194,14 +1213,10 @@ void IllusionsEngine_Duckman::playSoundEffect(int index) {
 
 bool IllusionsEngine_Duckman::getTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &outThreadId) {
 	SceneInfo *sceneInfo = _scriptResource->getSceneInfo(getCurrentScene() & 0xFFFF);
-	bool found =
-		sceneInfo->findTriggerCause(verbId, objectId2, objectId, outThreadId) ||
-		sceneInfo->findTriggerCause(verbId, objectId2, 0x40001, outThreadId);
+	bool found = sceneInfo->findTriggerCause(verbId, objectId2, objectId, outThreadId) || sceneInfo->findTriggerCause(verbId, objectId2, 0x40001, outThreadId);
 	if (!found) {
 		sceneInfo = _scriptResource->getSceneInfo(3);
-		found =
-			sceneInfo->findTriggerCause(verbId, objectId2, objectId, outThreadId) ||
-			sceneInfo->findTriggerCause(verbId, objectId2, 0x40001, outThreadId);
+		found = sceneInfo->findTriggerCause(verbId, objectId2, objectId, outThreadId) || sceneInfo->findTriggerCause(verbId, objectId2, 0x40001, outThreadId);
 	}
 	return found;
 }
@@ -1218,7 +1233,7 @@ uint32 IllusionsEngine_Duckman::runTriggerCause(uint32 verbId, uint32 objectId2,
 	uint32 tempThreadId = newTempThreadId();
 	debug(1, "Starting cause thread %08X with triggerThreadId %08X", tempThreadId, triggerThreadId);
 	CauseThread_Duckman *causeThread = new CauseThread_Duckman(this, tempThreadId, 0, 0,
-		triggerThreadId);
+	                                                           triggerThreadId);
 	_threads->startThread(causeThread);
 
 	return tempThreadId;

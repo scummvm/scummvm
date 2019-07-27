@@ -92,6 +92,7 @@ public:
 	 * @param ticks   fadeout time
 	 */
 	void beginFadeOut(int channel, int ticks);
+
 private:
 	KyraEngine_MR *_vm;
 	Audio::Mixer *_mixer;
@@ -107,8 +108,8 @@ private:
 	struct AudioCodecs {
 		const char *fileext;
 		Audio::SeekableAudioStream *(*streamFunc)(
-			Common::SeekableReadStream *stream,
-			DisposeAfterUse::Flag disposeAfterUse);
+		  Common::SeekableReadStream *stream,
+		  DisposeAfterUse::Flag disposeAfterUse);
 	};
 
 	static const AudioCodecs _supportedCodecs[];

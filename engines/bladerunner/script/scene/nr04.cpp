@@ -31,16 +31,16 @@ void SceneScriptNR04::InitializeScene() {
 
 	Scene_Exit_Add_2D_Exit(0, 498, 126, 560, 238, 0);
 
-	Scene_2D_Region_Add(0,  0, 259,  61, 479);
-	Scene_2D_Region_Add(1, 62, 327,  92, 479);
+	Scene_2D_Region_Add(0, 0, 259, 61, 479);
+	Scene_2D_Region_Add(1, 62, 327, 92, 479);
 	Scene_2D_Region_Add(2, 93, 343, 239, 479);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxAPRTFAN1, 16, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxRUMLOOP1, 16, 0, 1);
-	Ambient_Sounds_Add_Sound(kSfxCLINK1,   3, 60, 9, 9, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxCLINK2,   3, 60, 9, 9, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxCLINK3,   3, 60, 9, 9, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxCLINK4,   3, 60, 9, 9, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxCLINK1, 3, 60, 9, 9, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxCLINK2, 3, 60, 9, 9, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxCLINK3, 3, 60, 9, 9, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxCLINK4, 3, 60, 9, 9, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfx67_0480R, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfx67_0540R, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfx67_0560R, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
@@ -68,8 +68,7 @@ void SceneScriptNR04::SceneLoaded() {
 
 bool SceneScriptNR04::MouseClick(int x, int y) {
 	if (Actor_Query_Animation_Mode(kActorMcCoy) == 85
-	 || Actor_Query_Animation_Mode(kActorMcCoy) == 29
-	) {
+	    || Actor_Query_Animation_Mode(kActorMcCoy) == 29) {
 		return true;
 	}
 
@@ -82,11 +81,10 @@ bool SceneScriptNR04::MouseClick(int x, int y) {
 
 bool SceneScriptNR04::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("B.TV01", objectName)
-	 || Object_Query_Click("B.TV02", objectName)
-	 || Object_Query_Click("B.TV03", objectName)
-	 || Object_Query_Click("B.TV05", objectName)
-	 || Object_Query_Click("DESK", objectName)
-	) {
+	    || Object_Query_Click("B.TV02", objectName)
+	    || Object_Query_Click("B.TV03", objectName)
+	    || Object_Query_Click("B.TV05", objectName)
+	    || Object_Query_Click("DESK", objectName)) {
 		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 546, 0, true, false)) {
 			if (Object_Query_Click("DESK", objectName)) {
 				Actor_Face_Object(kActorMcCoy, "DESK", true);
@@ -113,10 +111,9 @@ bool SceneScriptNR04::ClickedOn3DObject(const char *objectName, bool a2) {
 		return false;
 	}
 
-	if ( Object_Query_Click("TORUS01", objectName)
-	 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, 18.56f, 0.0f, 38.86f, 0, true, false, false)
-	 && !Game_Flag_Query(kFlagNR04DiscFound)
-	) {
+	if (Object_Query_Click("TORUS01", objectName)
+	    && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, 18.56f, 0.0f, 38.86f, 0, true, false, false)
+	    && !Game_Flag_Query(kFlagNR04DiscFound)) {
 		Unclickable_Object("TORUS01");
 		Scene_Exits_Disable();
 		Player_Loses_Control();
@@ -135,8 +132,7 @@ bool SceneScriptNR04::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool SceneScriptNR04::ClickedOnActor(int actorId) {
 	if (actorId == kActorEarlyQ
-	 && Game_Flag_Query(kFlagNR04EarlyQStungByScorpions)
-	) {
+	    && Game_Flag_Query(kFlagNR04EarlyQStungByScorpions)) {
 		Actor_Voice_Over(1640, kActorVoiceOver);
 		Actor_Voice_Over(1650, kActorVoiceOver);
 		Actor_Voice_Over(1660, kActorVoiceOver);
@@ -166,20 +162,17 @@ bool SceneScriptNR04::ClickedOnExit(int exitId) {
 
 bool SceneScriptNR04::ClickedOn2DRegion(int region) {
 	if ((region == 0
-	  || region == 1
-	  || region == 2
-	 )
-	 &&  Actor_Query_Which_Set_In(kActorEarlyQ) != kSetNR04
-	 &&  Actor_Query_Animation_Mode(kActorMcCoy) != kAnimationModeSit
-	) {
+	     || region == 1
+	     || region == 2)
+	    && Actor_Query_Which_Set_In(kActorEarlyQ) != kSetNR04
+	    && Actor_Query_Animation_Mode(kActorMcCoy) != kAnimationModeSit) {
 		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 445, 0, true, false)) {
 			Actor_Face_Heading(kActorMcCoy, 49, false);
 			Actor_Change_Animation_Mode(kActorMcCoy, 85);
 			Delay(2500);
 
 			if (!Game_Flag_Query(kFlagNR04EarlyQStungByScorpions)
-			&&  Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)
-			) {
+			    && Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)) {
 				Player_Loses_Control();
 				Actor_Voice_Over(4180, kActorVoiceOver);
 				Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
@@ -195,15 +188,13 @@ bool SceneScriptNR04::ClickedOn2DRegion(int region) {
 }
 
 void SceneScriptNR04::SceneFrameAdvanced(int frame) {
-	if ( frame == 1
-	 && !Music_Is_Playing()
-	) {
+	if (frame == 1
+	    && !Music_Is_Playing()) {
 		playNextMusic();
 	}
 
 	if (frame > 60
-	 && frame < 120
-	) {
+	    && frame < 120) {
 		druggedEffect(frame);
 	} else if (frame == 120) {
 		Set_Fade_Color(1.0f, 1.0f, 1.0f);
@@ -371,7 +362,8 @@ void SceneScriptNR04::druggedEffect(int frame) {
 		0.7f, 0.7f, 0.0f,
 		0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 1.0f,
-		0.5f, 0.0f, 0.8f};
+		0.5f, 0.0f, 0.8f
+	};
 
 	float v3 = (frame - 60) * 0.1f;
 	float v4 = (frame % 10) * 0.1f;

@@ -33,11 +33,15 @@ class CMissiveOMatButton : public CEditControl {
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool VisibleMsg(CVisibleMsg *msg);
 	bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
+
 public:
 	MissiveOMatAction _buttonId;
+
 public:
 	CLASSDEF;
-	CMissiveOMatButton() : CEditControl(), _buttonId(MESSAGE_SHOW) {}
+	CMissiveOMatButton()
+	  : CEditControl()
+	  , _buttonId(MESSAGE_SHOW) {}
 
 	/**
 	 * Save the data for the class to file

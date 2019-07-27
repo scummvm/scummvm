@@ -46,6 +46,7 @@ public:
 	virtual uint8 process(uint16 aktTime);
 	virtual void updateVolume(uint16 pVolume);
 	virtual bool isActive();
+
 private:
 	const byte *_instMap;
 	const byte *_veloTab;
@@ -62,20 +63,20 @@ private:
 	void setupInstrument(uint8 opcode);
 	void setupChannelVolume(uint8 volume);
 	//-                          Streamfunctions from Command90hTable
-	void com90_caseNoteOff();        // 0
-	void com90_stopChannel();        // 1
-	void com90_setupInstrument();    // 2
-	uint8 com90_updateTempo();       // 3
+	void com90_caseNoteOff(); // 0
+	void com90_stopChannel(); // 1
+	void com90_setupInstrument(); // 2
+	uint8 com90_updateTempo(); // 3
 	//void com90_dummy();            // 4
-	void com90_getPitch();           // 5
-	void com90_getChannelVolume();   // 6
+	void com90_getPitch(); // 5
+	void com90_getChannelVolume(); // 6
 	//void com90_skipTremoVibro();   // 7
-	void com90_loopMusic();        // 8
-	void com90_keyOff();             // 9
+	void com90_loopMusic(); // 8
+	void com90_keyOff(); // 9
 	//void com90_error();            // 10
 	void com90_getChannelPanValue(); // 11
-	void com90_setLoopPoint();     // 12
-	void com90_getChannelControl();     // 13
+	void com90_setLoopPoint(); // 12
+	void com90_getChannelControl(); // 13
 };
 
 } // End of namespace Sky

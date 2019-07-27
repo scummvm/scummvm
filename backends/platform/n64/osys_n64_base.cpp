@@ -26,12 +26,12 @@
 
 #include <malloc.h> // Required for memalign
 
-#include "osys_n64.h"
-#include "pakfs_save_manager.h"
-#include "framfs_save_manager.h"
 #include "backends/fs/n64/n64-fs-factory.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
+#include "framfs_save_manager.h"
+#include "osys_n64.h"
+#include "pakfs_save_manager.h"
 
 typedef unsigned long long uint64;
 
@@ -40,12 +40,12 @@ extern uint8 _romfs; // Defined by linker (used to calculate position of romfs i
 inline uint16 colRGB888toBGR555(byte r, byte g, byte b);
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
-	{ "320x240 (PAL) fix overscan", "340x240 PAL",  OVERS_PAL_340X240   },
-	{ "320x240 (PAL) overscan", "320x240 PAL",  NORM_PAL_320X240   },
-	{ "320x240 (MPAL) fix overscan", "340x240 MPAL", OVERS_MPAL_340X240  },
-	{ "320x240 (MPAL) overscan", "320x240 MPAL", NORM_MPAL_320X240  },
+	{ "320x240 (PAL) fix overscan", "340x240 PAL", OVERS_PAL_340X240 },
+	{ "320x240 (PAL) overscan", "320x240 PAL", NORM_PAL_320X240 },
+	{ "320x240 (MPAL) fix overscan", "340x240 MPAL", OVERS_MPAL_340X240 },
+	{ "320x240 (MPAL) overscan", "320x240 MPAL", NORM_MPAL_320X240 },
 	{ "340x240 (NTSC) fix overscan", "340x240 NTSC", OVERS_NTSC_340X240 },
-	{ "320x240 (NTSC) overscan", "320x240 NTSC", NORM_NTSC_320X240  },
+	{ "320x240 (NTSC) overscan", "320x240 NTSC", NORM_NTSC_320X240 },
 	{ 0, 0, 0 }
 };
 
@@ -132,7 +132,7 @@ OSystem_N64::OSystem_N64() {
 
 	_mouseVisible = false;
 
-	_mouseX = _overlayWidth  / 2;
+	_mouseX = _overlayWidth / 2;
 	_mouseY = _overlayHeight / 2;
 	_tempMouseX = _mouseX;
 	_tempMouseY = _mouseY;
@@ -215,10 +215,9 @@ bool OSystem_N64::getFeatureState(Feature f) {
 	return false;
 }
 
-const OSystem::GraphicsMode* OSystem_N64::getSupportedGraphicsModes() const {
+const OSystem::GraphicsMode *OSystem_N64::getSupportedGraphicsModes() const {
 	return s_supportedGraphicsModes;
 }
-
 
 int OSystem_N64::getDefaultGraphicsMode() const {
 	return OVERS_NTSC_340X240;
@@ -385,8 +384,8 @@ void OSystem_N64::rebuildOffscreenGameBuffer(void) {
 			four_col_hi = 0;
 			four_col_hi |= (uint64)_screenPalette[((four_col_pal >> 24) & 0xFF)] << 48;
 			four_col_hi |= (uint64)_screenPalette[((four_col_pal >> 16) & 0xFF)] << 32;
-			four_col_hi |= (uint64)_screenPalette[((four_col_pal >>  8) & 0xFF)] << 16;
-			four_col_hi |= (uint64)_screenPalette[((four_col_pal >>  0) & 0xFF)] <<  0;
+			four_col_hi |= (uint64)_screenPalette[((four_col_pal >> 8) & 0xFF)] << 16;
+			four_col_hi |= (uint64)_screenPalette[((four_col_pal >> 0) & 0xFF)] << 0;
 
 			// Save the converted pixels into hicolor buffer
 			*(uint64 *)((_offscreen_hic) + (h * _screenWidth) + w) = four_col_hi;
@@ -409,7 +408,7 @@ void OSystem_N64::rebuildOffscreenMouseBuffer(void) {
 }
 
 void OSystem_N64::grabPalette(byte *colors, uint start, uint num) const {
-#ifdef N64_EXTREME_MEMORY_SAVING  // This way loses precisions
+#ifdef N64_EXTREME_MEMORY_SAVING // This way loses precisions
 	uint32 i;
 	uint16 color;
 
@@ -475,7 +474,7 @@ void OSystem_N64::copyRectToScreen(const void *buf, int pitch, int x, int y, int
 		for (int hor = 0; hor < w; hor++) {
 			if (dst_pal[hor] != src[hor]) {
 				uint16 color = _screenPalette[src[hor]];
-				dst_hicol[hor] = color;  // Save image converted to 16-bit
+				dst_hicol[hor] = color; // Save image converted to 16-bit
 				dst_pal[hor] = src[hor]; // Save palettized display
 			}
 		}
@@ -506,7 +505,8 @@ void OSystem_N64::updateScreen() {
 	// Done here because this gets called regularly
 	refillAudioBuffers();
 
-	if (!_dirtyOffscreen && !_dirtyPalette) return; // The offscreen is clean
+	if (!_dirtyOffscreen && !_dirtyPalette)
+		return; // The offscreen is clean
 
 	uint8 skip_lines = (_screenHeight - _gameHeight) / 4;
 	uint8 skip_pixels = (_screenWidth - _gameWidth) / 2; // Center horizontally the image
@@ -516,7 +516,8 @@ void OSystem_N64::updateScreen() {
 		rebuildOffscreenGameBuffer();
 
 	// Obtain the framebuffer
-	while (!(_dc = lockDisplay()));
+	while (!(_dc = lockDisplay()))
+		;
 
 	uint16 *overlay_framebuffer = (uint16 *)_dc->conf.framebuffer; // Current screen framebuffer
 	uint16 *game_framebuffer = overlay_framebuffer + (_frameBufferWidth * skip_lines * 2); // Skip some lines to center the image vertically
@@ -618,8 +619,10 @@ void OSystem_N64::unlockScreen() {
 void OSystem_N64::setShakePos(int shakeOffset) {
 
 	// If a rumble pak is plugged in and screen shakes, rumble!
-	if (shakeOffset && _controllerHasRumble) rumblePakEnable(1, _controllerPort);
-	else if (!shakeOffset && _controllerHasRumble) rumblePakEnable(0, _controllerPort);
+	if (shakeOffset && _controllerHasRumble)
+		rumblePakEnable(1, _controllerPort);
+	else if (!shakeOffset && _controllerHasRumble)
+		rumblePakEnable(0, _controllerPort);
 
 	_shakeOffset = shakeOffset;
 	_dirtyOffscreen = true;
@@ -718,7 +721,6 @@ void OSystem_N64::copyRectToOverlay(const void *buf, int pitch, int x, int y, in
 	if (w <= 0 || h <= 0)
 		return;
 
-
 	uint16 *dst = _overlayBuffer + (y * _overlayWidth + x);
 
 	if (_overlayWidth == (uint16)w && (uint16)pitch == _overlayWidth * sizeof(uint16)) {
@@ -743,7 +745,6 @@ int16 OSystem_N64::getOverlayHeight() {
 int16 OSystem_N64::getOverlayWidth() {
 	return _overlayWidth;
 }
-
 
 bool OSystem_N64::showMouse(bool visible) {
 	bool last = _mouseVisible;
@@ -774,7 +775,8 @@ void OSystem_N64::warpMouse(int x, int y) {
 }
 
 void OSystem_N64::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
-	if (!w || !h) return;
+	if (!w || !h)
+		return;
 
 	_mouseHotspotX = hotspotX;
 	_mouseHotspotY = hotspotY;
@@ -860,11 +862,11 @@ void OSystem_N64::getTimeAndDate(TimeDate &t) const {
 
 	uint32 now = getMilliTick();
 
-	t.tm_sec  = (now / 1000) % 60;
-	t.tm_min  = ((now / 1000) / 60) % 60;
+	t.tm_sec = (now / 1000) % 60;
+	t.tm_min = ((now / 1000) / 60) % 60;
 	t.tm_hour = (((now / 1000) / 60) / 60) % 24;
 	t.tm_mday = 1;
-	t.tm_mon  = 0;
+	t.tm_mon = 0;
 	t.tm_year = 110;
 	t.tm_wday = 0;
 
@@ -884,7 +886,7 @@ void OSystem_N64::logMessage(LogMessageType::Type type, const char *message) {
 }
 
 void OSystem_N64::setTimerCallback(TimerProc callback, int interval) {
-	assert (interval > 0);
+	assert(interval > 0);
 
 	if (callback != NULL) {
 		_timerCallbackTimer = interval;

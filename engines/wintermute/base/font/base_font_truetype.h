@@ -29,12 +29,12 @@
 #ifndef WINTERMUTE_BASE_FONTTT_H
 #define WINTERMUTE_BASE_FONTTT_H
 
-#include "engines/wintermute/base/font/base_font_storage.h"
-#include "engines/wintermute/base/font/base_font.h"
-#include "engines/wintermute/base/gfx/base_surface.h"
 #include "common/rect.h"
-#include "graphics/surface.h"
+#include "engines/wintermute/base/font/base_font.h"
+#include "engines/wintermute/base/font/base_font_storage.h"
+#include "engines/wintermute/base/gfx/base_surface.h"
 #include "graphics/font.h"
+#include "graphics/surface.h"
 
 #define NUM_CACHED_TEXTS 30
 
@@ -56,7 +56,8 @@ private:
 		bool _marked;
 		uint32 _lastUsed;
 
-		BaseCachedTTFontText() : _text() {
+		BaseCachedTTFontText()
+		  : _text() {
 			//_text = L"";
 			_width = _maxHeight = _maxLength = -1;
 			_align = TAL_LEFT;
@@ -145,7 +146,6 @@ private:
 
 	BaseArray<BaseTTFontLayer *> _layers;
 	void clearCache();
-
 };
 
 } // End of namespace Wintermute

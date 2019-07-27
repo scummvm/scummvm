@@ -29,8 +29,12 @@ namespace Titanic {
 const uint LATENCY = 100;
 const uint CHANNELS_COUNT = 16;
 
-CSoundManager::CSoundManager() : _musicPercent(75.0), _speechPercent(75.0),
-	_masterPercent(75.0), _parrotPercent(75.0), _handleCtr(1) {
+CSoundManager::CSoundManager()
+  : _musicPercent(75.0)
+  , _speechPercent(75.0)
+  , _masterPercent(75.0)
+  , _parrotPercent(75.0)
+  , _handleCtr(1) {
 }
 
 uint CSoundManager::getModeVolume(VolumeMode mode) {
@@ -103,8 +107,11 @@ void QSoundManager::Slot::clear() {
 
 /*------------------------------------------------------------------------*/
 
-QSoundManager::QSoundManager(Audio::Mixer *mixer) : CSoundManager(), QMixer(mixer),
-		_field18(0), _field1C(0) {
+QSoundManager::QSoundManager(Audio::Mixer *mixer)
+  : CSoundManager()
+  , QMixer(mixer)
+  , _field18(0)
+  , _field1C(0) {
 	_slots.resize(48);
 	Common::fill(&_channelsVolume[0], &_channelsVolume[16], 0);
 	Common::fill(&_channelsMode[0], &_channelsMode[16], 0);
@@ -317,7 +324,7 @@ void QSoundManager::setPolarPosition(int handle, double range, double azimuth, d
 		if (slot._handle == handle) {
 			qsWaveMixSetPanRate(slot._channel, QMIX_USEONCE, panRate);
 			qsWaveMixSetPolarPosition(slot._channel, QMIX_USEONCE,
-				QSPOLAR(azimuth, range, elevation));
+			                          QSPOLAR(azimuth, range, elevation));
 			break;
 		}
 	}
@@ -366,7 +373,7 @@ void QSoundManager::setParrotPercent(double percent) {
 }
 
 void QSoundManager::setListenerPosition(double posX, double posY, double posZ,
-		double directionX, double directionY, double directionZ, bool stopSounds) {
+                                        double directionX, double directionY, double directionZ, bool stopSounds) {
 	if (stopSounds) {
 		// Stop any running sounds
 		for (uint idx = 0; idx < _slots.size(); ++idx) {
@@ -377,7 +384,7 @@ void QSoundManager::setListenerPosition(double posX, double posY, double posZ,
 
 	qsWaveMixSetListenerPosition(QSVECTOR(posX, posY, posZ));
 	qsWaveMixSetListenerOrientation(QSVECTOR(directionX, directionY, directionZ),
-		QSVECTOR(0.0, 0.0, -1.0));
+	                                QSVECTOR(0.0, 0.0, -1.0));
 }
 
 int QSoundManager::playWave(CWaveFile *waveFile, int iChannel, uint flags, CProximity &prox) {

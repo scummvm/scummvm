@@ -20,18 +20,18 @@
  *
  */
 
+#include "mads/sprites.h"
 #include "common/scummsys.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
 #include "mads/mads.h"
-#include "mads/screen.h"
 #include "mads/msurface.h"
-#include "mads/sprites.h"
+#include "mads/screen.h"
 
 namespace MADS {
 
 enum {
-	kEndOfLine   = 0,
+	kEndOfLine = 0,
 	kEndOfSprite = 1,
 	kMarker = 2
 };
@@ -43,7 +43,10 @@ public:
 	int depth;
 	int index;
 
-	DepthEntry(int depthAmt, int indexVal) { depth = depthAmt; index = indexVal; }
+	DepthEntry(int depthAmt, int indexVal) {
+		depth = depthAmt;
+		index = indexVal;
+	}
 };
 
 bool sortHelper(const DepthEntry &entry1, const DepthEntry &entry2) {
@@ -54,13 +57,16 @@ typedef Common::List<DepthEntry> DepthList;
 
 /*------------------------------------------------------------------------*/
 
-MSprite::MSprite() : MSurface() {
+MSprite::MSprite()
+  : MSurface() {
 	_transparencyIndex = TRANSPARENT_COLOR_INDEX;
 }
 
 MSprite::MSprite(Common::SeekableReadStream *source, const Common::Array<RGB6> &palette,
-		const Common::Rect &bounds): MSurface(), _transparencyIndex(TRANSPARENT_COLOR_INDEX),
-	  _offset(Common::Point(bounds.left, bounds.top)) {
+                 const Common::Rect &bounds)
+  : MSurface()
+  , _transparencyIndex(TRANSPARENT_COLOR_INDEX)
+  , _offset(Common::Point(bounds.left, bounds.top)) {
 	// Load the sprite data
 	create(bounds.width(), bounds.height());
 	loadSprite(source, palette);
@@ -70,7 +76,7 @@ MSprite::~MSprite() {
 }
 
 void MSprite::loadSprite(Common::SeekableReadStream *source,
-		const Common::Array<RGB6> &palette) {
+                         const Common::Array<RGB6> &palette) {
 	byte *outp, *lineStart;
 	bool newLine = false;
 
@@ -159,9 +165,7 @@ SpriteSlot::SpriteSlot(SpriteFlags type, int seqIndex) {
 }
 
 bool SpriteSlot::operator==(const SpriteSlotSubset &other) const {
-	return (_spritesIndex == other._spritesIndex) && (_frameNumber == other._frameNumber) &&
-		(_position == other._position) && (_depth == other._depth) &&
-		(_scale == other._scale);
+	return (_spritesIndex == other._spritesIndex) && (_frameNumber == other._frameNumber) && (_position == other._position) && (_depth == other._depth) && (_scale == other._scale);
 }
 
 void SpriteSlot::copy(const SpriteSlotSubset &other) {
@@ -174,7 +178,8 @@ void SpriteSlot::copy(const SpriteSlotSubset &other) {
 
 /*------------------------------------------------------------------------*/
 
-SpriteSlots::SpriteSlots(MADSEngine *vm) : _vm(vm) {
+SpriteSlots::SpriteSlots(MADSEngine *vm)
+  : _vm(vm) {
 	SpriteSlot::_vm = vm;
 }
 
@@ -260,7 +265,7 @@ void SpriteSlots::drawBackground() {
 					scene._backgroundSurface.transBlitFrom(*frame, pt, frame->getTransparencyIndex());
 				} else if (scene._depthStyle == 0) {
 					scene._backgroundSurface.copyFrom(*frame, pt, spriteSlot._depth, &scene._depthSurface,
-						-1, false, frame->getTransparencyIndex());
+					                                  -1, false, frame->getTransparencyIndex());
 				} else {
 					scene._backgroundSurface.transBlitFrom(*frame, pt, frame->getTransparencyIndex());
 				}
@@ -320,7 +325,7 @@ void SpriteSlots::drawSprites(MSurface *s) {
 		if ((slot._scale < 100) && (slot._scale != -1)) {
 			// Scaled drawing
 			s->copyFrom(*sprite, slot._position, slot._depth, &scene._depthSurface,
-				slot._scale, flipped, sprite->getTransparencyIndex());
+			            slot._scale, flipped, sprite->getTransparencyIndex());
 		} else {
 			int xp, yp;
 
@@ -335,7 +340,7 @@ void SpriteSlots::drawSprites(MSurface *s) {
 			if (slot._depth > 1) {
 				// Draw the frame with depth processing
 				s->copyFrom(*sprite, Common::Point(xp, yp), slot._depth, &scene._depthSurface,
-					-1, flipped, sprite->getTransparencyIndex());
+				            -1, flipped, sprite->getTransparencyIndex());
 			} else {
 				BaseSurface *spr = sprite;
 				if (flipped) {
@@ -415,8 +420,7 @@ void SpriteSets::remove(int idx) {
 }
 
 SpriteAsset *&SpriteSets::operator[](int idx) {
-	return (idx == SPRITE_SLOTS_MAX_SIZE) ? _uiSprites :
-		Common::Array<SpriteAsset *>::operator[](idx);
+	return (idx == SPRITE_SLOTS_MAX_SIZE) ? _uiSprites : Common::Array<SpriteAsset *>::operator[](idx);
 }
 
 } // End of namespace MADS

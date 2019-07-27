@@ -20,12 +20,12 @@
  *
  */
 
-#include "scumm/scumm_v4.h"
 #include "scumm/object.h"
+#include "scumm/scumm_v4.h"
 
 namespace Scumm {
 
-#define OPCODE(i, x)	_opcodes[i]._OPCODE(ScummEngine_v4, x)
+#define OPCODE(i, x) _opcodes[i]._OPCODE(ScummEngine_v4, x)
 
 void ScummEngine_v4::setupOpcodes() {
 	ScummEngine_v5::setupOpcodes();
@@ -75,8 +75,7 @@ void ScummEngine_v4::o4_ifState() {
 	// though you're not supposed to. However if you escape WITHOUT getting
 	// caught, you get 0 IQ points (supposed to get 25 IQ points)."
 	// This workaround is meant to address that.
-	if (_game.id == GID_INDY3 && a == 367 &&
-	    vm.slot[_currentScript].number == 363 && _currentRoom == 25) {
+	if (_game.id == GID_INDY3 && a == 367 && vm.slot[_currentScript].number == 363 && _currentRoom == 25) {
 		b = 0;
 	}
 
@@ -100,7 +99,7 @@ void ScummEngine_v4::o4_pickupObject() {
 	if (getObjectIndex(obj) == -1)
 		return;
 
-	if (whereIsObject(obj) == WIO_INVENTORY)	// Don't take an object twice
+	if (whereIsObject(obj) == WIO_INVENTORY) // Don't take an object twice
 		return;
 
 	// debug(0, "adding %d from %d to inventoryOld", obj, _currentRoom);
@@ -218,7 +217,7 @@ void ScummEngine_v4::loadVars() {
 
 			int slot;
 			int slotSize;
-			byte* slotContent;
+			byte *slotContent;
 			int savegameId;
 			bool avail_saves[100];
 
@@ -409,10 +408,10 @@ void ScummEngine_v4::o4_saveLoadGame() {
 			char name[32];
 			if (_game.version <= 2) {
 				// use generic name
-				sprintf(name, "Game %c", 'A'+slot-1);
+				sprintf(name, "Game %c", 'A' + slot - 1);
 			} else {
 				// use name entered by the user
-				char* ptr;
+				char *ptr;
 				int firstSlot = (_game.id == GID_LOOM) ? STRINGID_SAVENAME1_LOOM : STRINGID_SAVENAME1;
 				ptr = (char *)getStringAddress(slot + firstSlot - 1);
 				Common::strlcpy(name, ptr, sizeof(name));
@@ -427,7 +426,7 @@ void ScummEngine_v4::o4_saveLoadGame() {
 		}
 		break;
 	case 0xC0: // test if save exists
-		{
+	{
 		Common::InSaveFile *file;
 		bool avail_saves[100];
 
@@ -438,8 +437,7 @@ void ScummEngine_v4::o4_saveLoadGame() {
 			delete file;
 		} else
 			result = 7; // save file does not exist
-		}
-		break;
+	} break;
 	default:
 		error("o4_saveLoadGame: unknown subopcode %d", _opcode);
 	}

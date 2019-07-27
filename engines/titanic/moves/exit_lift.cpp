@@ -26,10 +26,12 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CExitLift, CGameObject)
-	ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseButtonDownMsg)
 END_MESSAGE_MAP()
 
-CExitLift::CExitLift() : CGameObject(), _viewName("NULL") {
+CExitLift::CExitLift()
+  : CGameObject()
+  , _viewName("NULL") {
 }
 
 void CExitLift::save(SimpleFile *file, int indent) {

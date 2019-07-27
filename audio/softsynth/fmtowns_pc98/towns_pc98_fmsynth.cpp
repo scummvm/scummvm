@@ -102,13 +102,36 @@ protected:
 };
 
 TownsPC98_FmSynthOperator::TownsPC98_FmSynthOperator(const uint32 timerbase, const uint32 rtt,
-		const uint8 *rateTable, const uint8 *shiftTable, const uint8 *attackDecayTable,
-		const uint32 *frqTable, const uint32 *sineTable, const int32 *tlevelOut, const int32 *detuneTable) :
-	_rtt(rtt), _rateTbl(rateTable), _rshiftTbl(shiftTable), _adTbl(attackDecayTable), _fTbl(frqTable),
-	_sinTbl(sineTable), _tLvlTbl(tlevelOut), _detnTbl(detuneTable), _tickLength(timerbase * 2),
-	_specifiedAttackRate(0), _specifiedDecayRate(0), _specifiedReleaseRate(0), _envelopeShapeSpecs(0), _specifiedSustainRate(0),
-	_sustainLevel(0), _phase(0), _shapeState(0), _shapeScale(0), _state(kEnvReady), _holdKey(false), _timer(0), _keyScale1(0),
-	_keyScale2(0), _freqTemp(0), _currentLevel(1023), _ampMod(false), _tickCount(0), _phaseIncrement(0) {
+                                                     const uint8 *rateTable, const uint8 *shiftTable, const uint8 *attackDecayTable,
+                                                     const uint32 *frqTable, const uint32 *sineTable, const int32 *tlevelOut, const int32 *detuneTable)
+  : _rtt(rtt)
+  , _rateTbl(rateTable)
+  , _rshiftTbl(shiftTable)
+  , _adTbl(attackDecayTable)
+  , _fTbl(frqTable)
+  , _sinTbl(sineTable)
+  , _tLvlTbl(tlevelOut)
+  , _detnTbl(detuneTable)
+  , _tickLength(timerbase * 2)
+  , _specifiedAttackRate(0)
+  , _specifiedDecayRate(0)
+  , _specifiedReleaseRate(0)
+  , _envelopeShapeSpecs(0)
+  , _specifiedSustainRate(0)
+  , _sustainLevel(0)
+  , _phase(0)
+  , _shapeState(0)
+  , _shapeScale(0)
+  , _state(kEnvReady)
+  , _holdKey(false)
+  , _timer(0)
+  , _keyScale1(0)
+  , _keyScale2(0)
+  , _freqTemp(0)
+  , _currentLevel(1023)
+  , _ampMod(false)
+  , _tickCount(0)
+  , _phaseIncrement(0) {
 
 	fs_a.rate = fs_a.shift = fs_d.rate = fs_d.shift = fs_s.rate = fs_s.shift = fs_r.rate = fs_r.shift = 0;
 
@@ -255,7 +278,7 @@ void TownsPC98_FmSynthOperator::generateOutput(int32 phasebuf, int32 *feed, int3
 		}
 	}
 
-	uint32 lvlout = _totalLevel + ((uint32) _currentLevel ^ (_state != kEnvReleasing ? ((_shapeScale * (_shapeState & 4)) >> 3) * 1023 : 0));
+	uint32 lvlout = _totalLevel + ((uint32)_currentLevel ^ (_state != kEnvReleasing ? ((_shapeScale * (_shapeState & 4)) >> 3) * 1023 : 0));
 	_shapeState ^= (((_shapeState & 0x40) >> 2) | ((_shapeState & 2) << 1));
 
 	int32 outp = 0;
@@ -272,8 +295,7 @@ void TownsPC98_FmSynthOperator::generateOutput(int32 phasebuf, int32 *feed, int3
 	}
 
 	if (lvlout < 832) {
-		uint32 index = (lvlout << 3) + _sinTbl[(((int32)((_phase & 0xffff0000)
-		                                        + phaseShift)) >> 16) & 0x3ff];
+		uint32 index = (lvlout << 3) + _sinTbl[(((int32)((_phase & 0xffff0000) + phaseShift)) >> 16) & 0x3ff];
 		*i = ((index < 6656) ? _tLvlTbl[index] : 0);
 	} else {
 		*i = 0;
@@ -511,11 +533,35 @@ private:
 };
 #endif // DISABLE_PC98_RHYTHM_CHANNEL
 
-TownsPC98_FmSynthSquareSineSource::TownsPC98_FmSynthSquareSineSource(const uint32 timerbase, const uint32 rtt) : _tlTable(0),
-	_rtt(rtt), _tleTable(0), _updateRequest(-1), _tickLength(timerbase * 27), _ready(0), _reg(0), _rand(1), _outN(1),
-	_nTick(0), _evpUpdateCnt(0), _evpTimer(0x1f), _pReslt(0x1f), _attack(0), _cont(false), _evpUpdate(true),
-	_timer(0), _noiseGenerator(0), _chanEnable(0), _envH(0), _envL(0), _flags(0), _evpSwap(0), _volumeT(0x60),
-	_volMaskA(0), _volMaskB(0), _volumeA(Audio::Mixer::kMaxMixerVolume), _volumeB(Audio::Mixer::kMaxMixerVolume) {
+TownsPC98_FmSynthSquareSineSource::TownsPC98_FmSynthSquareSineSource(const uint32 timerbase, const uint32 rtt)
+  : _tlTable(0)
+  , _rtt(rtt)
+  , _tleTable(0)
+  , _updateRequest(-1)
+  , _tickLength(timerbase * 27)
+  , _ready(0)
+  , _reg(0)
+  , _rand(1)
+  , _outN(1)
+  , _nTick(0)
+  , _evpUpdateCnt(0)
+  , _evpTimer(0x1f)
+  , _pReslt(0x1f)
+  , _attack(0)
+  , _cont(false)
+  , _evpUpdate(true)
+  , _timer(0)
+  , _noiseGenerator(0)
+  , _chanEnable(0)
+  , _envH(0)
+  , _envL(0)
+  , _flags(0)
+  , _evpSwap(0)
+  , _volumeT(0x60)
+  , _volMaskA(0)
+  , _volMaskB(0)
+  , _volumeA(Audio::Mixer::kMaxMixerVolume)
+  , _volumeB(Audio::Mixer::kMaxMixerVolume) {
 
 	memset(_channels, 0, sizeof(_channels));
 	memset(_updateRequestBuf, 0, sizeof(_updateRequestBuf));
@@ -562,19 +608,19 @@ void TownsPC98_FmSynthSquareSineSource::init(const int *rsTable, const int *rseT
 		b = 1.0f / rsTable[i];
 		a = 1.0f / d + b + 1.0f / 1000.0f;
 		float v = (b / a) * 32767.0f;
-		_tlTable[i] = (int32) v;
+		_tlTable[i] = (int32)v;
 
 		b = 1.0f / rseTable[i];
 		a = 1.0f / d + b + 1.0f / 1000.0f;
 		v = (b / a) * 32767.0f;
-		_tleTable[i] = (int32) v;
+		_tleTable[i] = (int32)v;
 	}
 
 	for (int i = 16; i < 32; i++) {
 		b = 1.0f / rseTable[i];
 		a = 1.0f / d + b + 1.0f / 1000.0f;
 		float v = (b / a) * 32767.0f;
-		_tleTable[i] = (int32) v;
+		_tleTable[i] = (int32)v;
 	}
 
 	_ready = true;
@@ -717,7 +763,7 @@ void TownsPC98_FmSynthSquareSineSource::updateRegs() {
 
 		if (a == 13) {
 			_attack = (_flags & 4) ? 0x1F : 0;
-			_cont = (_flags & 8) ? (_flags & 1) ^ 1: false;
+			_cont = (_flags & 8) ? (_flags & 1) ^ 1 : false;
 			_evpSwap = (_flags & 8) ? _flags & 2 : _attack;
 			_evpTimer = 0x1F;
 			_evpUpdate = true;
@@ -728,9 +774,16 @@ void TownsPC98_FmSynthSquareSineSource::updateRegs() {
 }
 
 #ifndef DISABLE_PC98_RHYTHM_CHANNEL
-TownsPC98_FmSynthPercussionSource::TownsPC98_FmSynthPercussionSource(const uint32 timerbase, const uint32 rtt) :
-	_rtt(rtt), _tickLength(timerbase * 2), _timer(0), _totalLevel(0), _volMaskA(0), _volMaskB(0),
-	_volumeA(Audio::Mixer::kMaxMixerVolume), _volumeB(Audio::Mixer::kMaxMixerVolume), _ready(false) {
+TownsPC98_FmSynthPercussionSource::TownsPC98_FmSynthPercussionSource(const uint32 timerbase, const uint32 rtt)
+  : _rtt(rtt)
+  , _tickLength(timerbase * 2)
+  , _timer(0)
+  , _totalLevel(0)
+  , _volMaskA(0)
+  , _volMaskB(0)
+  , _volumeA(Audio::Mixer::kMaxMixerVolume)
+  , _volumeB(Audio::Mixer::kMaxMixerVolume)
+  , _ready(false) {
 
 	memset(_rhChan, 0, sizeof(RhtChannel) * 6);
 	_reg = new uint8 *[40];
@@ -849,7 +902,7 @@ void TownsPC98_FmSynthPercussionSource::writeReg(uint8 address, uint8 value) {
 		l &= 7;
 		if (h == 1) {
 			// set start offset
-			_rhChan[l].start  = _rhChan[l].data + ((_rhChan[l].startPosH << 8 | _rhChan[l].startPosL) << 8);
+			_rhChan[l].start = _rhChan[l].data + ((_rhChan[l].startPosH << 8 | _rhChan[l].startPosL) << 8);
 		} else if (h == 2) {
 			// set end offset
 			_rhChan[l].end = _rhChan[l].data + ((_rhChan[l].endPosH << 8 | _rhChan[l].endPosL) << 8) + 255;
@@ -934,17 +987,33 @@ void TownsPC98_FmSynthPercussionSource::advanceInput(RhtChannel *ins) {
 }
 #endif // DISABLE_PC98_RHYTHM_CHANNEL
 
-TownsPC98_FmSynth::TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type, bool externalMutexHandling) :
-	_mixer(mixer),
-	_chanInternal(0), _ssg(0),
+TownsPC98_FmSynth::TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type, bool externalMutexHandling)
+  : _mixer(mixer)
+  , _chanInternal(0)
+  , _ssg(0)
+  ,
 #ifndef DISABLE_PC98_RHYTHM_CHANNEL
-	_prc(0),
+  _prc(0)
+  ,
 #endif
-	_numChan(type == kType26 ? 3 : 6), _numSSG(type == kTypeTowns ? 0 : 3),
-	_hasPercussion(type == kType86 ? true : false),
-	_oprRates(0), _oprRateshift(0), _oprAttackDecay(0), _oprFrq(0), _oprSinTbl(0), _oprLevelOut(0), _oprDetune(0),
-	 _rtt(type == kTypeTowns ? 0x514767 : 0x5B8D80), _baserate(55125.0f / (float)mixer->getOutputRate()),
-	_volMaskA(0), _volMaskB(0), _volumeA(255), _volumeB(255), _externalMutex(externalMutexHandling), _ready(false) {
+  _numChan(type == kType26 ? 3 : 6)
+  , _numSSG(type == kTypeTowns ? 0 : 3)
+  , _hasPercussion(type == kType86 ? true : false)
+  , _oprRates(0)
+  , _oprRateshift(0)
+  , _oprAttackDecay(0)
+  , _oprFrq(0)
+  , _oprSinTbl(0)
+  , _oprLevelOut(0)
+  , _oprDetune(0)
+  , _rtt(type == kTypeTowns ? 0x514767 : 0x5B8D80)
+  , _baserate(55125.0f / (float)mixer->getOutputRate())
+  , _volMaskA(0)
+  , _volMaskB(0)
+  , _volumeA(255)
+  , _volumeB(255)
+  , _externalMutex(externalMutexHandling)
+  , _ready(false) {
 
 	memset(&_timers[0], 0, sizeof(ChipTimer));
 	memset(&_timers[1], 0, sizeof(ChipTimer));
@@ -1122,7 +1191,7 @@ void TownsPC98_FmSynth::writeReg(uint8 part, uint8 regAddress, uint8 value) {
 					spc = 1;
 				}
 
-				_timers[0].smpPerCb = (int32) spc;
+				_timers[0].smpPerCb = (int32)spc;
 				_timers[0].smpPerCbRem = (uint32)((spc - (float)_timers[0].smpPerCb) * 1000000.0f);
 				_timers[0].smpTillCb = _timers[0].smpPerCb;
 				_timers[0].smpTillCbRem = _timers[0].smpPerCbRem;
@@ -1138,7 +1207,7 @@ void TownsPC98_FmSynth::writeReg(uint8 part, uint8 regAddress, uint8 value) {
 					spc = 1;
 				}
 
-				_timers[1].smpPerCb = (int32) spc;
+				_timers[1].smpPerCb = (int32)spc;
 				_timers[1].smpPerCbRem = (uint32)((spc - (float)_timers[1].smpPerCb) * 1000000.0f);
 				_timers[1].smpTillCb = _timers[1].smpPerCb;
 				_timers[1].smpTillCbRem = _timers[1].smpPerCbRem;
@@ -1334,9 +1403,9 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 
 		for (int i = 0; i < render; ++i) {
 			int32 l = CLIP<int32>(tmp[i << 1], -32767, 32767);
-			buffer[i << 1] = (int16) l;
+			buffer[i << 1] = (int16)l;
 			int32 r = CLIP<int32>(tmp[(i << 1) + 1], -32767, 32767);
-			buffer[(i << 1) + 1] = (int16) r;
+			buffer[(i << 1) + 1] = (int16)r;
 		}
 
 		buffer += (render << 1);
@@ -1411,7 +1480,7 @@ void TownsPC98_FmSynth::generateTables() {
 	for (int i = 0; i < 40; i += 4)
 		WRITE_BE_UINT32(dst + i, 0x00081018);
 	dst += 40;
-	for (uint8 i = 0; i < 16; i ++) {
+	for (uint8 i = 0; i < 16; i++) {
 		uint8 v = (i < 12) ? i : 12;
 		*dst++ = ((4 + v) << 3);
 	}
@@ -1450,11 +1519,11 @@ void TownsPC98_FmSynth::generateTables() {
 	_oprLevelOut = new int32[0x1a00];
 	for (int i = 0; i < 256; i++) {
 		double val = floor(65536.0 / pow(2.0, 0.00390625 * (double)(1 + i)));
-		int32 val_int = ((int32) val) >> 4;
+		int32 val_int = ((int32)val) >> 4;
 		_oprLevelOut[i << 1] = (val_int & 1) ? ((val_int >> 1) + 1) << 2 : (val_int >> 1) << 2;
 		_oprLevelOut[(i << 1) + 1] = -_oprLevelOut[i << 1];
 		for (int ii = 1; ii < 13; ++ii) {
-			_oprLevelOut[(i << 1) + (ii << 9)] =  _oprLevelOut[i << 1] >> ii;
+			_oprLevelOut[(i << 1) + (ii << 9)] = _oprLevelOut[i << 1] >> ii;
 			_oprLevelOut[(i << 1) + (ii << 9) + 1] = -_oprLevelOut[(i << 1) + (ii << 9)];
 		}
 	}
@@ -1483,11 +1552,11 @@ void TownsPC98_FmSynth::nextTick(int32 *buffer, uint32 bufferSize) {
 
 		if (_chanInternal[i].updateEnvelopeParameters) {
 			_chanInternal[i].updateEnvelopeParameters = false;
-			for (int ii = 0; ii < 4 ; ii++)
+			for (int ii = 0; ii < 4; ii++)
 				o[ii]->updatePhaseIncrement();
 		}
 
-		for (uint32 ii = 0; ii < bufferSize ; ii++) {
+		for (uint32 ii = 0; ii < bufferSize; ii++) {
 			int32 phbuf1, phbuf2, output;
 			phbuf1 = phbuf2 = output = 0;
 

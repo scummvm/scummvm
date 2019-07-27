@@ -43,7 +43,7 @@ namespace Video {
 #define DC_HUFF_VAL(b, n, p) (((b) << 16) | ((n) << 8) | (p))
 #define GET_DC_BITS(x) ((x) >> 16)
 #define GET_DC_NEG(x) ((int)(((x) >> 8) & 0xff))
-#define GET_DC_POS(x) ((int)((x) & 0xff))
+#define GET_DC_POS(x) ((int)((x)&0xff))
 
 static const uint32 s_huffmanDCChromaCodes[DC_CODE_COUNT] = {
 	254, 126, 62, 30, 14, 6, 2, 1, 0
@@ -72,7 +72,7 @@ static const uint32 s_huffmanDCSymbols[DC_CODE_COUNT] = {
 
 #define AC_CODE_COUNT 113
 #define AC_HUFF_VAL(z, a) ((z << 8) | a)
-#define ESCAPE_CODE  ((uint32)-1) // arbitrary, just so we can tell what code it is
+#define ESCAPE_CODE ((uint32)-1) // arbitrary, just so we can tell what code it is
 #define END_OF_BLOCK ((uint32)-2) // arbitrary, just so we can tell what code it is
 #define GET_AC_ZERO_RUN(code) (code >> 8)
 #define GET_AC_COEFFICIENT(code) ((int)(code & 0xff))
@@ -147,7 +147,9 @@ static const uint32 s_huffmanACSymbols[AC_CODE_COUNT] = {
 	END_OF_BLOCK
 };
 
-PSXStreamDecoder::PSXStreamDecoder(CDSpeed speed, uint32 frameCount) : _speed(speed), _frameCount(frameCount) {
+PSXStreamDecoder::PSXStreamDecoder(CDSpeed speed, uint32 frameCount)
+  : _speed(speed)
+  , _frameCount(frameCount) {
 	_stream = 0;
 	_videoTrack = 0;
 	_audioTrack = 0;
@@ -159,10 +161,10 @@ PSXStreamDecoder::~PSXStreamDecoder() {
 
 #define RAW_CD_SECTOR_SIZE 2352
 
-#define CDXA_TYPE_MASK     0x0E
-#define CDXA_TYPE_DATA     0x08
-#define CDXA_TYPE_AUDIO    0x04
-#define CDXA_TYPE_VIDEO    0x02
+#define CDXA_TYPE_MASK 0x0E
+#define CDXA_TYPE_DATA 0x08
+#define CDXA_TYPE_AUDIO 0x04
+#define CDXA_TYPE_VIDEO 0x02
 
 bool PSXStreamDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
@@ -183,8 +185,8 @@ void PSXStreamDecoder::close() {
 	_stream = 0;
 }
 
-#define VIDEO_DATA_CHUNK_SIZE   2016
-#define VIDEO_DATA_HEADER_SIZE  56
+#define VIDEO_DATA_CHUNK_SIZE 2016
+#define VIDEO_DATA_HEADER_SIZE 56
 
 void PSXStreamDecoder::readNextPacket() {
 	Common::SeekableReadStream *sector = 0;
@@ -280,7 +282,7 @@ bool PSXStreamDecoder::useAudioSync() const {
 	return false;
 }
 
-static const byte s_syncHeader[12] = { 0x00, 0xff ,0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00 };
+static const byte s_syncHeader[12] = { 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00 };
 
 Common::SeekableReadStream *PSXStreamDecoder::readSector() {
 	assert(_stream);
@@ -296,19 +298,19 @@ Common::SeekableReadStream *PSXStreamDecoder::readSector() {
 }
 
 // Ha! It's palindromic!
-#define AUDIO_DATA_CHUNK_SIZE   2304
+#define AUDIO_DATA_CHUNK_SIZE 2304
 #define AUDIO_DATA_SAMPLE_COUNT 4032
 
 static const int s_xaTable[5][2] = {
-   {   0,   0 },
-   {  60,   0 },
-   { 115, -52 },
-   {  98, -55 },
-   { 122, -60 }
+	{ 0, 0 },
+	{ 60, 0 },
+	{ 115, -52 },
+	{ 98, -55 },
+	{ 122, -60 }
 };
 
-PSXStreamDecoder::PSXAudioTrack::PSXAudioTrack(Common::SeekableReadStream *sector, Audio::Mixer::SoundType soundType) :
-		AudioTrack(soundType) {
+PSXStreamDecoder::PSXAudioTrack::PSXAudioTrack(Common::SeekableReadStream *sector, Audio::Mixer::SoundType soundType)
+  : AudioTrack(soundType) {
 	assert(sector);
 	_endOfTrack = false;
 
@@ -420,8 +422,9 @@ Audio::AudioStream *PSXStreamDecoder::PSXAudioTrack::getAudioStream() const {
 	return _audStream;
 }
 
-
-PSXStreamDecoder::PSXVideoTrack::PSXVideoTrack(Common::SeekableReadStream *firstSector, CDSpeed speed, int frameCount) : _nextFrameStartTime(0, speed), _frameCount(frameCount) {
+PSXStreamDecoder::PSXVideoTrack::PSXVideoTrack(Common::SeekableReadStream *firstSector, CDSpeed speed, int frameCount)
+  : _nextFrameStartTime(0, speed)
+  , _frameCount(frameCount) {
 	assert(firstSector);
 
 	firstSector->seek(40);
@@ -513,10 +516,10 @@ void PSXStreamDecoder::PSXVideoTrack::decodeMacroBlock(Common::BitStreamMemory16
 
 // Standard JPEG/MPEG zig zag table
 static const byte s_zigZagTable[8 * 8] = {
-	 0,  1,  5,  6, 14, 15, 27, 28,
-	 2,  4,  7, 13, 16, 26, 29, 42,
-	 3,  8, 12, 17, 25, 30, 41, 43,
-	 9, 11, 18, 24, 31, 40, 44, 53,
+	0, 1, 5, 6, 14, 15, 27, 28,
+	2, 4, 7, 13, 16, 26, 29, 42,
+	3, 8, 12, 17, 25, 30, 41, 43,
+	9, 11, 18, 24, 31, 40, 44, 53,
 	10, 19, 23, 32, 39, 45, 52, 54,
 	20, 22, 33, 38, 46, 51, 55, 60,
 	21, 34, 37, 47, 50, 56, 59, 61,
@@ -525,7 +528,7 @@ static const byte s_zigZagTable[8 * 8] = {
 
 // One byte different from the standard MPEG-1 table
 static const byte s_quantizationTable[8 * 8] = {
-	 2, 16, 19, 22, 26, 27, 29, 34,
+	2, 16, 19, 22, 26, 27, 29, 34,
 	16, 16, 22, 24, 27, 29, 34, 37,
 	19, 22, 26, 27, 29, 34, 34, 38,
 	22, 22, 26, 27, 29, 34, 37, 40,
@@ -572,8 +575,8 @@ int PSXStreamDecoder::PSXVideoTrack::readDC(Common::BitStreamMemory16LEMSB *bits
 }
 
 #define BLOCK_OVERFLOW_CHECK() \
-	if (count > 63) \
-		error("PSXStreamDecoder::readAC(): Too many coefficients")
+	if (count > 63)              \
+	error("PSXStreamDecoder::readAC(): Too many coefficients")
 
 void PSXStreamDecoder::PSXVideoTrack::readAC(Common::BitStreamMemory16LEMSB *bits, int *block) {
 	// Clear the block first
@@ -622,14 +625,14 @@ int PSXStreamDecoder::PSXVideoTrack::readSignedCoefficient(Common::BitStreamMemo
 // _idct8x8[x][y] = cos(((2 * x + 1) * y) * (M_PI / 16.0)) * 0.5;
 // _idct8x8[x][y] /= sqrt(2.0) if y == 0
 static const double s_idct8x8[8][8] = {
-	{ 0.353553390593274,  0.490392640201615,  0.461939766255643,  0.415734806151273,  0.353553390593274,  0.277785116509801,  0.191341716182545,  0.097545161008064 },
-	{ 0.353553390593274,  0.415734806151273,  0.191341716182545, -0.097545161008064, -0.353553390593274, -0.490392640201615, -0.461939766255643, -0.277785116509801 },
-	{ 0.353553390593274,  0.277785116509801, -0.191341716182545, -0.490392640201615, -0.353553390593274,  0.097545161008064,  0.461939766255643,  0.415734806151273 },
-	{ 0.353553390593274,  0.097545161008064, -0.461939766255643, -0.277785116509801,  0.353553390593274,  0.415734806151273, -0.191341716182545, -0.490392640201615 },
-	{ 0.353553390593274, -0.097545161008064, -0.461939766255643,  0.277785116509801,  0.353553390593274, -0.415734806151273, -0.191341716182545,  0.490392640201615 },
-	{ 0.353553390593274, -0.277785116509801, -0.191341716182545,  0.490392640201615, -0.353553390593273, -0.097545161008064,  0.461939766255643, -0.415734806151273 },
-	{ 0.353553390593274, -0.415734806151273,  0.191341716182545,  0.097545161008064, -0.353553390593274,  0.490392640201615, -0.461939766255643,  0.277785116509801 },
-	{ 0.353553390593274, -0.490392640201615,  0.461939766255643, -0.415734806151273,  0.353553390593273, -0.277785116509801,  0.191341716182545, -0.097545161008064 }
+	{ 0.353553390593274, 0.490392640201615, 0.461939766255643, 0.415734806151273, 0.353553390593274, 0.277785116509801, 0.191341716182545, 0.097545161008064 },
+	{ 0.353553390593274, 0.415734806151273, 0.191341716182545, -0.097545161008064, -0.353553390593274, -0.490392640201615, -0.461939766255643, -0.277785116509801 },
+	{ 0.353553390593274, 0.277785116509801, -0.191341716182545, -0.490392640201615, -0.353553390593274, 0.097545161008064, 0.461939766255643, 0.415734806151273 },
+	{ 0.353553390593274, 0.097545161008064, -0.461939766255643, -0.277785116509801, 0.353553390593274, 0.415734806151273, -0.191341716182545, -0.490392640201615 },
+	{ 0.353553390593274, -0.097545161008064, -0.461939766255643, 0.277785116509801, 0.353553390593274, -0.415734806151273, -0.191341716182545, 0.490392640201615 },
+	{ 0.353553390593274, -0.277785116509801, -0.191341716182545, 0.490392640201615, -0.353553390593273, -0.097545161008064, 0.461939766255643, -0.415734806151273 },
+	{ 0.353553390593274, -0.415734806151273, 0.191341716182545, 0.097545161008064, -0.353553390593274, 0.490392640201615, -0.461939766255643, 0.277785116509801 },
+	{ 0.353553390593274, -0.490392640201615, 0.461939766255643, -0.415734806151273, 0.353553390593273, -0.277785116509801, 0.191341716182545, -0.097545161008064 }
 };
 
 void PSXStreamDecoder::PSXVideoTrack::idct(float *dequantData, float *result) {
@@ -643,13 +646,13 @@ void PSXStreamDecoder::PSXVideoTrack::idct(float *dequantData, float *result) {
 	for (int y = 0; y < 8; y++) {
 		for (int x = 0; x < 8; x++) {
 			tmp[y + x * 8] = dequantData[0] * s_idct8x8[x][0]
-							+ dequantData[1] * s_idct8x8[x][1]
-							+ dequantData[2] * s_idct8x8[x][2]
-							+ dequantData[3] * s_idct8x8[x][3]
-							+ dequantData[4] * s_idct8x8[x][4]
-							+ dequantData[5] * s_idct8x8[x][5]
-							+ dequantData[6] * s_idct8x8[x][6]
-							+ dequantData[7] * s_idct8x8[x][7];
+			  + dequantData[1] * s_idct8x8[x][1]
+			  + dequantData[2] * s_idct8x8[x][2]
+			  + dequantData[3] * s_idct8x8[x][3]
+			  + dequantData[4] * s_idct8x8[x][4]
+			  + dequantData[5] * s_idct8x8[x][5]
+			  + dequantData[6] * s_idct8x8[x][6]
+			  + dequantData[7] * s_idct8x8[x][7];
 		}
 
 		dequantData += 8;
@@ -660,13 +663,13 @@ void PSXStreamDecoder::PSXVideoTrack::idct(float *dequantData, float *result) {
 		const float *u = tmp + x * 8;
 		for (int y = 0; y < 8; y++) {
 			result[y * 8 + x] = u[0] * s_idct8x8[y][0]
-								+ u[1] * s_idct8x8[y][1]
-								+ u[2] * s_idct8x8[y][2]
-								+ u[3] * s_idct8x8[y][3]
-								+ u[4] * s_idct8x8[y][4]
-								+ u[5] * s_idct8x8[y][5]
-								+ u[6] * s_idct8x8[y][6]
-								+ u[7] * s_idct8x8[y][7];
+			  + u[1] * s_idct8x8[y][1]
+			  + u[2] * s_idct8x8[y][2]
+			  + u[3] * s_idct8x8[y][3]
+			  + u[4] * s_idct8x8[y][4]
+			  + u[5] * s_idct8x8[y][5]
+			  + u[6] * s_idct8x8[y][6]
+			  + u[7] * s_idct8x8[y][7];
 		}
 	}
 }
@@ -695,6 +698,5 @@ void PSXStreamDecoder::PSXVideoTrack::decodeBlock(Common::BitStreamMemory16LEMSB
 			*dst++ = (int)CLIP<float>(idctData[y * 8 + x], -128.0f, 127.0f) + 128;
 	}
 }
-
 
 } // End of namespace Video

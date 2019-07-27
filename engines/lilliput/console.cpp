@@ -25,7 +25,9 @@
 
 namespace Lilliput {
 
-LilliputConsole::LilliputConsole(LilliputEngine *vm) : GUI::Debugger(), _vm(vm) {
+LilliputConsole::LilliputConsole(LilliputEngine *vm)
+  : GUI::Debugger()
+  , _vm(vm) {
 }
 
 LilliputConsole::~LilliputConsole() {

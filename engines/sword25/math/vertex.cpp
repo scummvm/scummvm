@@ -31,8 +31,8 @@
 
 #include "sword25/math/vertex.h"
 
-#include "sword25/util/lua/lua.h"
 #include "sword25/util/lua/lauxlib.h"
+#include "sword25/util/lua/lua.h"
 
 namespace Sword25 {
 
@@ -47,14 +47,16 @@ Vertex &Vertex::luaVertexToVertex(lua_State *L, int stackIndex, Vertex &vertex) 
 	// Read X Component
 	lua_pushstring(L, "X");
 	lua_gettable(L, stackIndex);
-	if (!lua_isnumber(L, -1)) luaL_argcheck(L, 0, stackIndex, "the X component has to be a number");
+	if (!lua_isnumber(L, -1))
+		luaL_argcheck(L, 0, stackIndex, "the X component has to be a number");
 	vertex.x = static_cast<int>(lua_tonumber(L, -1));
 	lua_pop(L, 1);
 
 	// Read Y Component
 	lua_pushstring(L, "Y");
 	lua_gettable(L, stackIndex);
-	if (!lua_isnumber(L, -1)) luaL_argcheck(L, 0, stackIndex, "the Y component has to be a number");
+	if (!lua_isnumber(L, -1))
+		luaL_argcheck(L, 0, stackIndex, "the Y component has to be a number");
 	vertex.y = static_cast<int>(lua_tonumber(L, -1));
 	lua_pop(L, 1);
 

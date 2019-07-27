@@ -29,15 +29,18 @@ namespace Xeen {
 
 class XeenEngine;
 
-class MapDialog: public ButtonContainer {
+class MapDialog : public ButtonContainer {
 private:
 	int _animFrame;
 	SpriteResource _globalSprites;
 	Common::Point _pt, _arrowPt;
 	bool _frameEndFlag;
+
 private:
-	MapDialog(XeenEngine *vm) : ButtonContainer(vm),
-		_animFrame(0), _frameEndFlag(false) {}
+	MapDialog(XeenEngine *vm)
+	  : ButtonContainer(vm)
+	  , _animFrame(0)
+	  , _frameEndFlag(false) {}
 
 	/**
 	 * Draws the map contents when outdoors
@@ -53,6 +56,7 @@ private:
 	 * Handles the display of the dialog
 	 */
 	void execute();
+
 public:
 	static void show(XeenEngine *vm);
 };

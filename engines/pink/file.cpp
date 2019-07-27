@@ -42,9 +42,10 @@ void ResourceDescription::load(Common::File &file) {
 }
 
 OrbFile::OrbFile()
-	: File(), _timestamp(0),
-	  _tableSize(0),
-	  _table(nullptr) {}
+  : File()
+  , _timestamp(0)
+  , _tableSize(0)
+  , _table(nullptr) {}
 
 OrbFile::~OrbFile() {
 	delete[] _table;

@@ -26,9 +26,9 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "engines/wintermute/base/scriptables/script_ext_date.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
-#include "engines/wintermute/base/scriptables/script_ext_date.h"
 
 namespace Wintermute {
 
@@ -39,7 +39,8 @@ BaseScriptable *makeSXDate(BaseGame *inGame, ScStack *stack) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-SXDate::SXDate(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
+SXDate::SXDate(BaseGame *inGame, ScStack *stack)
+  : BaseScriptable(inGame) {
 	stack->correctParams(6);
 
 	memset(&_tm, 0, sizeof(_tm));
@@ -57,10 +58,8 @@ SXDate::SXDate(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 SXDate::~SXDate() {
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -70,7 +69,6 @@ const char *SXDate::scToString() {
 	return _strRep.c_str();
 	//return asctime(&_tm);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
@@ -131,7 +129,6 @@ bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-
 	//////////////////////////////////////////////////////////////////////////
 	// SetYear
 	//////////////////////////////////////////////////////////////////////////
@@ -187,7 +184,6 @@ bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
-
 	//////////////////////////////////////////////////////////////////////////
 	// SetCurrentTime
 	//////////////////////////////////////////////////////////////////////////
@@ -200,7 +196,6 @@ bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_FAILED;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 ScValue *SXDate::scGetProperty(const Common::String &name) {
@@ -217,7 +212,6 @@ ScValue *SXDate::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool SXDate::scSetProperty(const char *name, ScValue *value) {
 	/*
@@ -229,9 +223,9 @@ bool SXDate::scSetProperty(const char *name, ScValue *value) {
 	    return STATUS_OK;
 	}
 
-	else*/ return STATUS_FAILED;
+	else*/
+	return STATUS_FAILED;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool SXDate::persist(BasePersistenceManager *persistMgr) {

@@ -20,8 +20,8 @@
  *
  */
 
-#include "teenagent/animation.h"
 #include "common/rect.h"
+#include "teenagent/animation.h"
 
 namespace Common {
 class RandomSource;

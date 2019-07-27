@@ -20,28 +20,27 @@
  *
  */
 
-#include "gob/save/saveload.h"
-#include "gob/save/saveconverter.h"
 #include "gob/global.h"
 #include "gob/inter.h"
+#include "gob/save/saveconverter.h"
+#include "gob/save/saveload.h"
 
 namespace Gob {
 
 SaveLoad_Inca2::SaveFile SaveLoad_Inca2::_saveFiles[] = {
-	{"speak.inf", kSaveModeExists, 0, 0}, // Exists = speech enabled
-	{"voice.inf", kSaveModeSave  , 0, 0}, // Contains the language of the voices
-	{"intro.$$$", kSaveModeSave  , 0, "temporary sprite"},
-	{  "cat.inf", kSaveModeSave  , 0, "savegame"},
-	{  "ima.inf", kSaveModeSave  , 0, "screenshot"},
+	{ "speak.inf", kSaveModeExists, 0, 0 }, // Exists = speech enabled
+	{ "voice.inf", kSaveModeSave, 0, 0 }, // Contains the language of the voices
+	{ "intro.$$$", kSaveModeSave, 0, "temporary sprite" },
+	{ "cat.inf", kSaveModeSave, 0, "savegame" },
+	{ "ima.inf", kSaveModeSave, 0, "screenshot" },
 };
 
-
-SaveLoad_Inca2::GameHandler::File::File(GobEngine *vm, const char *base) :
-	SlotFileIndexed(vm, SaveLoad_Inca2::kSlotCount, base, "s") {
+SaveLoad_Inca2::GameHandler::File::File(GobEngine *vm, const char *base)
+  : SlotFileIndexed(vm, SaveLoad_Inca2::kSlotCount, base, "s") {
 }
 
-SaveLoad_Inca2::GameHandler::File::File(const File &file) :
-	SlotFileIndexed(file._vm, file._slotCount, file._base, file._ext) {
+SaveLoad_Inca2::GameHandler::File::File(const File &file)
+  : SlotFileIndexed(file._vm, file._slotCount, file._base, file._ext) {
 }
 
 SaveLoad_Inca2::GameHandler::File::~File() {
@@ -60,9 +59,8 @@ int SaveLoad_Inca2::GameHandler::File::getSlotRemainder(int32 offset) const {
 	return 0;
 }
 
-
-SaveLoad_Inca2::GameHandler::GameHandler(GobEngine *vm, const char *target) :
-	SaveHandler(vm) {
+SaveLoad_Inca2::GameHandler::GameHandler(GobEngine *vm, const char *target)
+  : SaveHandler(vm) {
 
 	_slotFile = new File(vm, target);
 
@@ -89,17 +87,17 @@ int32 SaveLoad_Inca2::GameHandler::getSize() {
 }
 
 bool SaveLoad_Inca2::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
-	if (((uint32) offset) < kPropsSize) {
+	if (((uint32)offset) < kPropsSize) {
 		// Global properties, like joker usage
 
 		debugC(3, kDebugSaveLoad, "Loading global properties");
 
-		if (((uint32) (offset + size)) > kPropsSize) {
+		if (((uint32)(offset + size)) > kPropsSize) {
 			warning("Wrong global properties list size (%d, %d)", size, offset);
 			return false;
 		}
 
-		if (((uint32) (offset + size)) >= kPropsSize)
+		if (((uint32)(offset + size)) >= kPropsSize)
 			buildIndex();
 
 		_vm->_inter->_variables->copyFrom(dataVar, _props + offset, size);
@@ -116,7 +114,7 @@ bool SaveLoad_Inca2::GameHandler::load(int16 dataVar, int32 size, int32 offset) 
 		if (!createReader(slot))
 			return true;
 
-		SavePartInfo info(0, (uint32) _vm->getGameType(), 0, _vm->getEndianness(), 1);
+		SavePartInfo info(0, (uint32)_vm->getGameType(), 0, _vm->getEndianness(), 1);
 		SavePartVars vars(_vm, 1);
 
 		if (!_reader->readPart(0, &info))
@@ -135,12 +133,12 @@ bool SaveLoad_Inca2::GameHandler::load(int16 dataVar, int32 size, int32 offset) 
 }
 
 bool SaveLoad_Inca2::GameHandler::save(int16 dataVar, int32 size, int32 offset) {
-	if (((uint32) offset) < kPropsSize) {
+	if (((uint32)offset) < kPropsSize) {
 		// Global properties, like joker usage
 
 		debugC(3, kDebugSaveLoad, "Saving global properties");
 
-		if (((uint32) (offset + size)) > kPropsSize) {
+		if (((uint32)(offset + size)) > kPropsSize) {
 			warning("Wrong global properties list size (%d, %d)", size, offset);
 			return false;
 		}
@@ -160,7 +158,7 @@ bool SaveLoad_Inca2::GameHandler::save(int16 dataVar, int32 size, int32 offset) 
 		if (!createWriter(slot))
 			return false;
 
-		SavePartInfo info(0, (uint32) _vm->getGameType(), 0, _vm->getEndianness(), 1);
+		SavePartInfo info(0, (uint32)_vm->getGameType(), 0, _vm->getEndianness(), 1);
 		SavePartVars vars(_vm, 1);
 
 		// Write the save point number
@@ -177,7 +175,7 @@ bool SaveLoad_Inca2::GameHandler::save(int16 dataVar, int32 size, int32 offset) 
 }
 
 bool SaveLoad_Inca2::GameHandler::saveScreenshot(int slot,
-		const SavePartSprite *screenshot) {
+                                                 const SavePartSprite *screenshot) {
 
 	if (!createWriter(slot))
 		return false;
@@ -186,7 +184,7 @@ bool SaveLoad_Inca2::GameHandler::saveScreenshot(int slot,
 }
 
 bool SaveLoad_Inca2::GameHandler::loadScreenshot(int slot,
-		SavePartSprite *screenshot) {
+                                                 SavePartSprite *screenshot) {
 
 	if (!createReader(slot))
 		return false;
@@ -203,7 +201,7 @@ bool SaveLoad_Inca2::GameHandler::createReader(int slot) {
 	if (slot < 0)
 		return (_reader != 0);
 
-	if (!_reader || (_reader->getSlot() != ((uint32) slot))) {
+	if (!_reader || (_reader->getSlot() != ((uint32)slot))) {
 		Common::String slotFile = _slotFile->build(slot);
 
 		if (slotFile.empty())
@@ -228,7 +226,7 @@ bool SaveLoad_Inca2::GameHandler::createWriter(int slot) {
 	if (slot < 0)
 		return (_writer != 0);
 
-	if (!_writer || (_writer->getSlot() != ((uint32) slot))) {
+	if (!_writer || (_writer->getSlot() != ((uint32)slot))) {
 		Common::String slotFile = _slotFile->build(slot);
 
 		if (slotFile.empty())
@@ -241,9 +239,8 @@ bool SaveLoad_Inca2::GameHandler::createWriter(int slot) {
 	return true;
 }
 
-
-SaveLoad_Inca2::ScreenshotHandler::File::File(const SaveLoad_Inca2::GameHandler::File &file) : SaveLoad_Inca2::GameHandler::File(file) {
-
+SaveLoad_Inca2::ScreenshotHandler::File::File(const SaveLoad_Inca2::GameHandler::File &file)
+  : SaveLoad_Inca2::GameHandler::File(file) {
 }
 
 SaveLoad_Inca2::ScreenshotHandler::File::~File() {
@@ -272,9 +269,9 @@ void SaveLoad_Inca2::ScreenshotHandler::File::buildScreenshotIndex(byte *buffer)
 	}
 }
 
-
 SaveLoad_Inca2::ScreenshotHandler::ScreenshotHandler(GobEngine *vm,
-		GameHandler *gameHandler) : TempSpriteHandler(vm) {
+                                                     GameHandler *gameHandler)
+  : TempSpriteHandler(vm) {
 
 	assert(gameHandler);
 
@@ -315,7 +312,7 @@ bool SaveLoad_Inca2::ScreenshotHandler::load(int16 dataVar, int32 size, int32 of
 
 		if ((slot >= kSlotCount) || (slotRem != 0)) {
 			warning("Invalid screenshot loading procedure (%d, %d, %d, %d, %d)",
-					dataVar, size, offset, slot, slotRem);
+			        dataVar, size, offset, slot, slotRem);
 			return false;
 		}
 
@@ -344,7 +341,7 @@ bool SaveLoad_Inca2::ScreenshotHandler::save(int16 dataVar, int32 size, int32 of
 
 		if ((slot >= kSlotCount) || (slotRem != 0)) {
 			warning("Invalid screenshot saving procedure (%d, %d, %d, %d, %d)",
-					dataVar, size, offset, slot, slotRem);
+			        dataVar, size, offset, slot, slotRem);
 			return false;
 		}
 
@@ -357,8 +354,8 @@ bool SaveLoad_Inca2::ScreenshotHandler::save(int16 dataVar, int32 size, int32 of
 	return true;
 }
 
-
-SaveLoad_Inca2::VoiceHandler::VoiceHandler(GobEngine *vm) : SaveHandler(vm) {
+SaveLoad_Inca2::VoiceHandler::VoiceHandler(GobEngine *vm)
+  : SaveHandler(vm) {
 }
 
 SaveLoad_Inca2::VoiceHandler::~VoiceHandler() {
@@ -382,11 +379,11 @@ bool SaveLoad_Inca2::VoiceHandler::save(int16 dataVar, int32 size, int32 offset)
 	return false;
 }
 
-
-SaveLoad_Inca2::SaveLoad_Inca2(GobEngine *vm, const char *targetName) : SaveLoad(vm) {
-	_voiceHandler      = new VoiceHandler(vm);
+SaveLoad_Inca2::SaveLoad_Inca2(GobEngine *vm, const char *targetName)
+  : SaveLoad(vm) {
+	_voiceHandler = new VoiceHandler(vm);
 	_tempSpriteHandler = new TempSpriteHandler(vm);
-	_gameHandler       = new GameHandler(vm, targetName);
+	_gameHandler = new GameHandler(vm, targetName);
 	_screenshotHandler = new ScreenshotHandler(vm, _gameHandler);
 
 	_saveFiles[1].handler = _voiceHandler;

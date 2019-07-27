@@ -273,12 +273,12 @@ struct ProgramConversationData {
 };
 
 enum {
-	kDebugEngine   = 1 << 0,
+	kDebugEngine = 1 << 0,
 	kDebugGraphics = 1 << 1,
 	kDebugResource = 1 << 2,
-	kDebugOpcodes  = 1 << 3,
-	kDebugMenu     = 1 << 4,
-	kDebugCharset  = 1 << 5
+	kDebugOpcodes = 1 << 3,
+	kDebugMenu = 1 << 4,
+	kDebugCharset = 1 << 5
 };
 
 enum ResourceType {
@@ -301,7 +301,7 @@ enum TalkMode {
 
 enum ScriptFlag {
 	kScriptStopped = 1 << 0,
-	kScriptPaused  = 1 << 1
+	kScriptPaused = 1 << 1
 };
 
 enum SaveLoadMode {
@@ -393,8 +393,8 @@ enum MenuMode {
 
 enum ButtonFlags {
 	kButtonBorder = 1 << 0,
-	kButtonText   = 1 << 1,
-	kButtonArrow  = 1 << 2
+	kButtonText = 1 << 1,
+	kButtonArrow = 1 << 2
 };
 
 struct Button {
@@ -434,15 +434,13 @@ struct MenuData {
 	const Button *findButtonUnderCursor(int cursorX, int cursorY) const {
 		for (uint i = 0; i < buttonsCount; ++i) {
 			const Button *button = &buttonsTable[i];
-			if (cursorX >= button->x && cursorX < button->x + button->w &&
-				cursorY >= button->y && cursorY < button->y + button->h) {
-					return button;
+			if (cursorX >= button->x && cursorX < button->x + button->w && cursorY >= button->y && cursorY < button->y + button->h) {
+				return button;
 			}
 		}
 		return 0;
 	}
 };
-
 
 void readGameStateDescription(Common::ReadStream *f, char *description, int len);
 Common::String generateGameStateFileName(const char *target, int slot, bool prefixOnly = false);
@@ -450,9 +448,8 @@ int getGameStateFileSlot(const char *filename);
 
 class MidiPlayer;
 
-class ToucheEngine: public Engine {
+class ToucheEngine : public Engine {
 public:
-
 	enum {
 		NUM_FLAGS = 2000,
 		NUM_KEYCHARS = 32,
@@ -478,7 +475,6 @@ public:
 	GUI::Debugger *getDebugger() { return _console; }
 
 protected:
-
 	void restart();
 	void readConfigurationSettings();
 	void writeConfigurationSettings();
@@ -743,9 +739,11 @@ protected:
 	Audio::SoundHandle _musicHandle;
 
 	void initMusic();
+
 public: // To allow access from console
 	void startMusic(int num);
 	void stopMusic();
+
 protected:
 	int getMusicVolume();
 	void setMusicVolume(int volume);

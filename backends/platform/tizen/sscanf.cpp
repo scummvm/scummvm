@@ -20,11 +20,11 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
 #include <ctype.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 //
 // simple sscanf replacement to match scummvm usage patterns
@@ -47,7 +47,7 @@ bool scanInt(const char **in, va_list *ap, int max) {
 		(*in)++;
 	}
 
-	int *arg = va_arg(*ap, int*);
+	int *arg = va_arg(*ap, int *);
 	char *end;
 	long n = strtol(*in, &end, 10);
 	if (negate) {
@@ -65,7 +65,7 @@ bool scanInt(const char **in, va_list *ap, int max) {
 }
 
 bool scanHex(const char **in, va_list *ap) {
-	unsigned *arg = va_arg(*ap, unsigned*);
+	unsigned *arg = va_arg(*ap, unsigned *);
 	char *end;
 	long n = strtol(*in, &end, 16);
 	if (end == *in) {
@@ -73,12 +73,12 @@ bool scanHex(const char **in, va_list *ap) {
 	}
 
 	*in = end;
-	*arg = (unsigned) n;
+	*arg = (unsigned)n;
 	return false;
 }
 
 bool scanString(const char **in, va_list *ap) {
-	char *arg = va_arg(*ap, char*);
+	char *arg = va_arg(*ap, char *);
 	while (**in && **in != ' ' && **in != '\n' && **in != '\t') {
 		*arg = **in;
 		arg++;
@@ -90,7 +90,7 @@ bool scanString(const char **in, va_list *ap) {
 }
 
 bool scanStringUntil(const char **in, va_list *ap, char c_end) {
-	char *arg = va_arg(*ap, char*);
+	char *arg = va_arg(*ap, char *);
 	while (**in && **in != c_end) {
 		*arg = **in;
 		arg++;
@@ -102,7 +102,7 @@ bool scanStringUntil(const char **in, va_list *ap, char c_end) {
 }
 
 bool scanChar(const char **in, va_list *ap) {
-	char *arg = va_arg(*ap, char*);
+	char *arg = va_arg(*ap, char *);
 	if (**in) {
 		*arg = **in;
 		(*in)++;
@@ -147,7 +147,7 @@ extern "C" int simple_sscanf(const char *input, const char *format, ...) {
 					err = true;
 				} else {
 					format++;
-					if (*format && *(format+1) == ']') {
+					if (*format && *(format + 1) == ']') {
 						err = scanStringUntil(&next, &ap, *format);
 						format += 2;
 					} else {
@@ -177,7 +177,7 @@ extern "C" int simple_sscanf(const char *input, const char *format, ...) {
 
 #if defined(TEST)
 int main(int argc, char *pArgv[]) {
-	int x,y,xx,yy,h;
+	int x, y, xx, yy, h;
 	char buffer[100];
 	unsigned u;
 	char c;
@@ -185,24 +185,27 @@ int main(int argc, char *pArgv[]) {
 	char *b = buffer;
 
 	if (simple_sscanf("BBX 00009 -1 +10 000",
-										"BBX %d %d %d %d",
-										&x, &y, &xx, &yy) != 4) {
+	                  "BBX %d %d %d %d",
+	                  &x, &y, &xx, &yy)
+	    != 4) {
 		printf("Failed\n");
 	} else {
 		printf("Success %d %d %d %d\n", x, y, xx, yy);
 	}
 
 	if (simple_sscanf("CAT 123x-10 0x100h 123456.AUD $ ",
-										"CAT %dx%d %xh %06u.AUD %c",
-										&x, &y, &h, &u, &c) != 5) {
+	                  "CAT %dx%d %xh %06u.AUD %c",
+	                  &x, &y, &h, &u, &c)
+	    != 5) {
 		printf("Failed\n");
 	} else {
 		printf("Success %d %d %d %d '%c' \n", x, y, h, u, c);
 	}
 
 	if (simple_sscanf("COPYRIGHT \"Copyright (c) 1984, 1987 Foo Systems Incorporated",
-										"COPYRIGHT \"%[^\"]",
-										b) != 1) {
+	                  "COPYRIGHT \"%[^\"]",
+	                  b)
+	    != 1) {
 		printf("Failed\n");
 	} else {
 		printf("Success %s\n", buffer);

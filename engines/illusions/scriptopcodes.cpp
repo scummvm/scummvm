@@ -20,8 +20,8 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/scriptopcodes.h"
+#include "illusions/illusions.h"
 #include "illusions/threads/scriptthread.h"
 
 namespace Illusions {
@@ -51,7 +51,7 @@ uint32 OpCall::readUint32() {
 // ScriptOpcodes
 
 ScriptOpcodes::ScriptOpcodes(IllusionsEngine *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 	initOpcodes();
 }
 

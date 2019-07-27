@@ -21,11 +21,11 @@
  */
 
 #include "titanic/continue_save_dialog.h"
-#include "titanic/support/movie_manager.h"
-#include "titanic/titanic.h"
 #include "common/error.h"
 #include "common/str-array.h"
 #include "graphics/screen.h"
+#include "titanic/support/movie_manager.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -104,7 +104,7 @@ void CContinueSaveDialog::render() {
 	screen.clear();
 	screen.blitFrom(_backdrop, Common::Point(48, 22));
 	CScreenManager::_screenManagerPtr->setSurfaceBounds(SURFACE_PRIMARY,
-		Rect(48, 22, 48 + _backdrop.w, 22 + _backdrop.h));
+	                                                    Rect(48, 22, 48 + _backdrop.w, 22 + _backdrop.h));
 
 	if (_evilTwinShown)
 		screen.blitFrom(_evilTwin, Common::Point(78, 59));
@@ -185,8 +185,7 @@ void CContinueSaveDialog::mouseMove(const Point &mousePos) {
 void CContinueSaveDialog::leftButtonDown(const Point &mousePos) {
 	Rect eye1(188, 190, 192, 195), eye2(209, 192, 213, 197);
 
-	if (g_vm->_events->isSpecialPressed(MK_SHIFT) &&
-			(eye1.contains(mousePos) || eye2.contains(mousePos))) {
+	if (g_vm->_events->isSpecialPressed(MK_SHIFT) && (eye1.contains(mousePos) || eye2.contains(mousePos))) {
 		// Show the Easter Egg "Evil Twin"
 		_evilTwinShown = true;
 		render();
@@ -211,8 +210,7 @@ void CContinueSaveDialog::leftButtonUp(const Point &mousePos) {
 	if (restoreRect.contains(mousePos)) {
 		// Flag to exit dialog and load highlighted slot. If no slot was
 		// selected explicitly, then fall back on loading the first slot
-		_selectedSlot = (_highlightedSlot == -999) ? _saves[0]._slot :
-			_saves[_highlightedSlot]._slot;
+		_selectedSlot = (_highlightedSlot == -999) ? _saves[0]._slot : _saves[_highlightedSlot]._slot;
 	} else if (startRect.contains(mousePos)) {
 		// Start a new game
 		_selectedSlot = -1;

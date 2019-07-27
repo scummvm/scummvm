@@ -20,12 +20,12 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "xeen/xeen.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
+#include "common/scummsys.h"
 #include "engines/util.h"
-#include "xeen/xeen.h"
 #include "xeen/files.h"
 #include "xeen/resources.h"
 
@@ -34,7 +34,9 @@ namespace Xeen {
 XeenEngine *g_vm = nullptr;
 
 XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
-		: Engine(syst), _gameDescription(gameDesc), _randomSource("Xeen") {
+  : Engine(syst)
+  , _gameDescription(gameDesc)
+  , _randomSource("Xeen") {
 	// Set up debug channels
 	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
 	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
@@ -198,7 +200,7 @@ bool XeenEngine::canLoadGameStateCurrently() {
 
 bool XeenEngine::canSaveGameStateCurrently() {
 	return _mode != MODE_COMBAT && _mode != MODE_STARTUP && _mode != MODE_SCRIPT_IN_PROGRESS
-		&& (_map->mazeData()._mazeFlags & RESTRICTION_SAVE) == 0;
+	  && (_map->mazeData()._mazeFlags & RESTRICTION_SAVE) == 0;
 }
 
 void XeenEngine::playGame() {
@@ -234,7 +236,7 @@ void XeenEngine::play() {
 
 	_interface->startup();
 	if (_mode == MODE_STARTUP) {
-//		_screen->fadeOut();
+		//		_screen->fadeOut();
 	}
 
 	(*_windows)[0].update();
@@ -289,18 +291,15 @@ void XeenEngine::gameLoop() {
 }
 
 Common::String XeenEngine::printMil(uint value) {
-	return (value >= 1000000) ? Common::String::format("%u mil", value / 1000000) :
-		Common::String::format("%u", value);
+	return (value >= 1000000) ? Common::String::format("%u mil", value / 1000000) : Common::String::format("%u", value);
 }
 
 Common::String XeenEngine::printK(uint value) {
-	return (value > 9999) ? Common::String::format("%uk", value / 1000) :
-		Common::String::format("%u", value);
+	return (value > 9999) ? Common::String::format("%uk", value / 1000) : Common::String::format("%u", value);
 }
 
 Common::String XeenEngine::printK2(uint value) {
-	return (value > 999) ? Common::String::format("%uk", value / 1000) :
-		Common::String::format("%u", value);
+	return (value > 999) ? Common::String::format("%uk", value / 1000) : Common::String::format("%u", value);
 }
 
 void XeenEngine::syncSoundSettings() {

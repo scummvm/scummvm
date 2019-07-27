@@ -2,17 +2,16 @@
 
 #include "common/str.h"
 
-class StringTestSuite : public CxxTest::TestSuite
-{
-	public:
+class StringTestSuite : public CxxTest::TestSuite {
+public:
 	void test_constructors() {
 		Common::String str("test-string");
 		TS_ASSERT_EQUALS(str, "test-string");
-		str = Common::String(str.c_str()+5, 3);
+		str = Common::String(str.c_str() + 5, 3);
 		TS_ASSERT_EQUALS(str, "str");
 		str = "test-string";
 		TS_ASSERT_EQUALS(str, "test-string");
-		str = Common::String(str.c_str()+5, str.c_str()+8);
+		str = Common::String(str.c_str() + 5, str.c_str() + 8);
 		TS_ASSERT_EQUALS(str, "str");
 	}
 
@@ -77,11 +76,13 @@ class StringTestSuite : public CxxTest::TestSuite
 		foo3 += 'X';
 		TS_ASSERT_EQUALS(foo1, "foo");
 		TS_ASSERT_EQUALS(foo2, "foo");
-		TS_ASSERT_EQUALS(foo3, "foo""X");
+		TS_ASSERT_EQUALS(foo3, "foo"
+		                       "X");
 		foo2 = 'x';
 		TS_ASSERT_EQUALS(foo1, "foo");
 		TS_ASSERT_EQUALS(foo2, "x");
-		TS_ASSERT_EQUALS(foo3, "foo""X");
+		TS_ASSERT_EQUALS(foo3, "foo"
+		                       "X");
 	}
 
 	void test_refCount2() {
@@ -92,11 +93,13 @@ class StringTestSuite : public CxxTest::TestSuite
 		foo3 += 'X';
 		TS_ASSERT_EQUALS(foo1, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
 		TS_ASSERT_EQUALS(foo2, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
-		TS_ASSERT_EQUALS(foo3, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd""X");
+		TS_ASSERT_EQUALS(foo3, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd"
+		                       "X");
 		foo2 = 'x';
 		TS_ASSERT_EQUALS(foo1, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
 		TS_ASSERT_EQUALS(foo2, "x");
-		TS_ASSERT_EQUALS(foo3, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd""X");
+		TS_ASSERT_EQUALS(foo3, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd"
+		                       "X");
 	}
 
 	void test_refCount3() {
@@ -106,11 +109,13 @@ class StringTestSuite : public CxxTest::TestSuite
 		foo3 += "0123456789abcdefghijk";
 		TS_ASSERT_EQUALS(foo1, foo2);
 		TS_ASSERT_EQUALS(foo2, "0123456789abcdefghijk");
-		TS_ASSERT_EQUALS(foo3, "0123456789abcdefghijk""0123456789abcdefghijk");
+		TS_ASSERT_EQUALS(foo3, "0123456789abcdefghijk"
+		                       "0123456789abcdefghijk");
 		foo2 = 'x';
 		TS_ASSERT_EQUALS(foo1, "0123456789abcdefghijk");
 		TS_ASSERT_EQUALS(foo2, "x");
-		TS_ASSERT_EQUALS(foo3, "0123456789abcdefghijk""0123456789abcdefghijk");
+		TS_ASSERT_EQUALS(foo3, "0123456789abcdefghijk"
+		                       "0123456789abcdefghijk");
 	}
 
 	void test_refCount4() {
@@ -120,11 +125,13 @@ class StringTestSuite : public CxxTest::TestSuite
 		foo3 += "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd";
 		TS_ASSERT_EQUALS(foo1, foo2);
 		TS_ASSERT_EQUALS(foo2, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
-		TS_ASSERT_EQUALS(foo3, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd""fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
+		TS_ASSERT_EQUALS(foo3, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd"
+		                       "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
 		foo2 = 'x';
 		TS_ASSERT_EQUALS(foo1, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
 		TS_ASSERT_EQUALS(foo2, "x");
-		TS_ASSERT_EQUALS(foo3, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd""fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
+		TS_ASSERT_EQUALS(foo3, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd"
+		                       "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
 	}
 
 	void test_refCount5() {
@@ -163,30 +170,36 @@ class StringTestSuite : public CxxTest::TestSuite
 		// "foo3" and "foo4" will be using allocated storage from construction on.
 		Common::String foo3("12345678901234567890123456789012");
 		foo3 += foo3.c_str();
-		TS_ASSERT_EQUALS(foo3, "12345678901234567890123456789012""12345678901234567890123456789012");
+		TS_ASSERT_EQUALS(foo3, "12345678901234567890123456789012"
+		                       "12345678901234567890123456789012");
 
 		Common::String foo4("12345678901234567890123456789012");
 		foo4 += foo4;
-		TS_ASSERT_EQUALS(foo4, "12345678901234567890123456789012""12345678901234567890123456789012");
+		TS_ASSERT_EQUALS(foo4, "12345678901234567890123456789012"
+		                       "12345678901234567890123456789012");
 
 		// Based on our current Common::String implementation "foo5" and "foo6" will first use the internal storage,
 		// and on "operator +=" they will change to allocated memory.
 		Common::String foo5("123456789012");
 		foo5 += foo5.c_str();
-		TS_ASSERT_EQUALS(foo5, "123456789012""123456789012");
+		TS_ASSERT_EQUALS(foo5, "123456789012"
+		                       "123456789012");
 
 		Common::String foo6("123456789012");
 		foo6 += foo6;
-		TS_ASSERT_EQUALS(foo6, "123456789012""123456789012");
+		TS_ASSERT_EQUALS(foo6, "123456789012"
+		                       "123456789012");
 
 		// "foo7" and "foo8" will purely operate on internal storage.
 		Common::String foo7("1234");
 		foo7 += foo7.c_str();
-		TS_ASSERT_EQUALS(foo7, "1234""1234");
+		TS_ASSERT_EQUALS(foo7, "1234"
+		                       "1234");
 
 		Common::String foo8("1234");
 		foo8 += foo8;
-		TS_ASSERT_EQUALS(foo8, "1234""1234");
+		TS_ASSERT_EQUALS(foo8, "1234"
+		                       "1234");
 
 		Common::String foo9("123456789012345678901234567889012");
 		foo9 = foo9.c_str();
@@ -317,31 +330,31 @@ class StringTestSuite : public CxxTest::TestSuite
 	}
 
 	void test_matchString() {
-		TS_ASSERT(Common::matchString("",  "*"));
-		TS_ASSERT(Common::matchString("a",  "*"));
-		TS_ASSERT(Common::matchString("monkey.s01",  "*"));
+		TS_ASSERT(Common::matchString("", "*"));
+		TS_ASSERT(Common::matchString("a", "*"));
+		TS_ASSERT(Common::matchString("monkey.s01", "*"));
 
-		TS_ASSERT(!Common::matchString("",  "?"));
-		TS_ASSERT(Common::matchString("a",  "?"));
-		TS_ASSERT(!Common::matchString("monkey.s01",  "?"));
+		TS_ASSERT(!Common::matchString("", "?"));
+		TS_ASSERT(Common::matchString("a", "?"));
+		TS_ASSERT(!Common::matchString("monkey.s01", "?"));
 
-		TS_ASSERT(Common::matchString("monkey.s01",  "monkey.s??"));
-		TS_ASSERT(Common::matchString("monkey.s99",  "monkey.s??"));
+		TS_ASSERT(Common::matchString("monkey.s01", "monkey.s??"));
+		TS_ASSERT(Common::matchString("monkey.s99", "monkey.s??"));
 		TS_ASSERT(!Common::matchString("monkey.s101", "monkey.s??"));
 
-		TS_ASSERT(Common::matchString("monkey.s01",  "monkey.s?1"));
-		TS_ASSERT(!Common::matchString("monkey.s99",  "monkey.s?1"));
+		TS_ASSERT(Common::matchString("monkey.s01", "monkey.s?1"));
+		TS_ASSERT(!Common::matchString("monkey.s99", "monkey.s?1"));
 		TS_ASSERT(!Common::matchString("monkey.s101", "monkey.s?1"));
 
-		TS_ASSERT(Common::matchString("monkey.s01",  "monkey.s*"));
-		TS_ASSERT(Common::matchString("monkey.s99",  "monkey.s*"));
+		TS_ASSERT(Common::matchString("monkey.s01", "monkey.s*"));
+		TS_ASSERT(Common::matchString("monkey.s99", "monkey.s*"));
 		TS_ASSERT(Common::matchString("monkey.s101", "monkey.s*"));
 
-		TS_ASSERT(Common::matchString("monkey.s01",  "monkey.s*1"));
-		TS_ASSERT(!Common::matchString("monkey.s99",  "monkey.s*1"));
+		TS_ASSERT(Common::matchString("monkey.s01", "monkey.s*1"));
+		TS_ASSERT(!Common::matchString("monkey.s99", "monkey.s*1"));
 		TS_ASSERT(Common::matchString("monkey.s101", "monkey.s*1"));
 
-		TS_ASSERT(Common::matchString("monkey.s01",  "monkey.s##"));
+		TS_ASSERT(Common::matchString("monkey.s01", "monkey.s##"));
 		TS_ASSERT(!Common::matchString("monkey.s01", "monkey.###"));
 
 		TS_ASSERT(Common::matchString("monkey.s0#", "monkey.s0\\#"));
@@ -353,10 +366,10 @@ class StringTestSuite : public CxxTest::TestSuite
 	}
 
 	void test_string_printf() {
-		TS_ASSERT_EQUALS( Common::String::format(" "), " " );
-		TS_ASSERT_EQUALS( Common::String::format("%s", "test"), "test" );
-		TS_ASSERT_EQUALS( Common::String::format("%s.s%.02d", "monkey", 1), "monkey.s01" );
-		TS_ASSERT_EQUALS( Common::String::format("Some %s to make this string longer than the default built-in %s %d", "text", "capacity", 123456), "Some text to make this string longer than the default built-in capacity 123456" );
+		TS_ASSERT_EQUALS(Common::String::format(" "), " ");
+		TS_ASSERT_EQUALS(Common::String::format("%s", "test"), "test");
+		TS_ASSERT_EQUALS(Common::String::format("%s.s%.02d", "monkey", 1), "monkey.s01");
+		TS_ASSERT_EQUALS(Common::String::format("Some %s to make this string longer than the default built-in %s %d", "text", "capacity", 123456), "Some text to make this string longer than the default built-in capacity 123456");
 
 		Common::String s = Common::String::format("%s%X", "test", 1234);
 		TS_ASSERT_EQUALS(s, "test4D2");
@@ -364,7 +377,7 @@ class StringTestSuite : public CxxTest::TestSuite
 	}
 
 	void test_strlcpy() {
-		static const char * const testString = "1234567890";
+		static const char *const testString = "1234567890";
 
 		char test1[4];
 		TS_ASSERT_EQUALS(Common::strlcpy(test1, testString, 4), strlen(testString));
@@ -386,9 +399,9 @@ class StringTestSuite : public CxxTest::TestSuite
 	}
 
 	void test_strlcat() {
-		static const char * const initialString = "123";
-		static const char * const appendString = "4567890";
-		static const char * const resultString = "1234567890";
+		static const char *const initialString = "123";
+		static const char *const appendString = "4567890";
+		static const char *const resultString = "1234567890";
 
 		char test1[4];
 		TS_ASSERT_EQUALS(Common::strlcpy(test1, initialString, 4), strlen(initialString));
@@ -417,7 +430,7 @@ class StringTestSuite : public CxxTest::TestSuite
 	}
 
 	void test_strnlen() {
-		static const char * const testString = "123";
+		static const char *const testString = "123";
 		TS_ASSERT_EQUALS(Common::strnlen(testString, 0), 0u);
 		TS_ASSERT_EQUALS(Common::strnlen(testString, 1), 1u);
 		TS_ASSERT_EQUALS(Common::strnlen(testString, 2), 2u);
@@ -531,21 +544,21 @@ class StringTestSuite : public CxxTest::TestSuite
 		testString.replace(5, 9, Common::String("Displaced ristretto string"), 10, 10);
 		TS_ASSERT_EQUALS(testString, Common::String("Good ristretto coffee friends"));
 
-        // -----------------------
-        // Deep copy compliance
-        // -----------------------
+		// -----------------------
+		// Deep copy compliance
+		// -----------------------
 
-        // Makes a deep copy without changing the length of the original
-        Common::String s1 = "TestTestTestTestTestTestTestTestTestTestTest";
-        Common::String s2(s1);
-        TS_ASSERT_EQUALS(s1, "TestTestTestTestTestTestTestTestTestTestTest");
-        TS_ASSERT_EQUALS(s2, "TestTestTestTestTestTestTestTestTestTestTest");
-        s1.replace(0, 4, "TEST");
-        TS_ASSERT_EQUALS(s1, "TESTTestTestTestTestTestTestTestTestTestTest");
-        TS_ASSERT_EQUALS(s2, "TestTestTestTestTestTestTestTestTestTestTest");
+		// Makes a deep copy without changing the length of the original
+		Common::String s1 = "TestTestTestTestTestTestTestTestTestTestTest";
+		Common::String s2(s1);
+		TS_ASSERT_EQUALS(s1, "TestTestTestTestTestTestTestTestTestTestTest");
+		TS_ASSERT_EQUALS(s2, "TestTestTestTestTestTestTestTestTestTestTest");
+		s1.replace(0, 4, "TEST");
+		TS_ASSERT_EQUALS(s1, "TESTTestTestTestTestTestTestTestTestTestTest");
+		TS_ASSERT_EQUALS(s2, "TestTestTestTestTestTestTestTestTestTestTest");
 
-        // Makes a deep copy when we shorten the string
-    	Common::String s3 = "TestTestTestTestTestTestTestTestTestTestTest";
+		// Makes a deep copy when we shorten the string
+		Common::String s3 = "TestTestTestTestTestTestTestTestTestTestTest";
 		Common::String s4(s3);
 		s3.replace(0, 32, "");
 		TS_ASSERT_EQUALS(s3, "TestTestTest");

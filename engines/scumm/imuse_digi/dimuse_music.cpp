@@ -20,11 +20,10 @@
  *
  */
 
-
 #include "common/scummsys.h"
-#include "scumm/scumm.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse_digi/dimuse_tables.h"
+#include "scumm/scumm.h"
 
 namespace Scumm {
 
@@ -104,8 +103,7 @@ void IMuseDigital::setDigMusicSequence(int seqId) {
 		return;
 
 	if (num != 0) {
-		if (_curMusicSeq && ((_digSeqMusicTable[_curMusicSeq].transitionType == 4)
-				|| (_digSeqMusicTable[_curMusicSeq].transitionType == 6))) {
+		if (_curMusicSeq && ((_digSeqMusicTable[_curMusicSeq].transitionType == 4) || (_digSeqMusicTable[_curMusicSeq].transitionType == 6))) {
 			_nextSeqToPlay = num;
 			return;
 		} else {
@@ -183,8 +181,7 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 		}
 		if (table->transitionType == 4)
 			_stopingSequence = 1;
-		if ((!sequence) && (table->attribPos != 0) &&
-				(table->attribPos == _digStateMusicTable[_curMusicState].attribPos)) {
+		if ((!sequence) && (table->attribPos != 0) && (table->attribPos == _digStateMusicTable[_curMusicState].attribPos)) {
 			fadeOutMusicAndStartNew(108, table->filename, table->soundId);
 		} else {
 			fadeOutMusic(108);
@@ -251,8 +248,7 @@ void IMuseDigital::setComiMusicSequence(int seqId) {
 		return;
 
 	if (num != 0) {
-		if (_curMusicSeq && ((_comiSeqMusicTable[_curMusicSeq].transitionType == 4)
-				|| (_comiSeqMusicTable[_curMusicSeq].transitionType == 6))) {
+		if (_curMusicSeq && ((_comiSeqMusicTable[_curMusicSeq].transitionType == 4) || (_comiSeqMusicTable[_curMusicSeq].transitionType == 6))) {
 			_nextSeqToPlay = num;
 			return;
 		} else {
@@ -326,14 +322,16 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 			startMusic(table->filename, table->soundId, table->hookId, 127);
 			return;
 		}
-		if ((!sequence) && (table->attribPos != 0) &&
-				(table->attribPos == _comiStateMusicTable[_curMusicState].attribPos)) {
+		if ((!sequence) && (table->attribPos != 0) && (table->attribPos == _comiStateMusicTable[_curMusicState].attribPos)) {
 			fadeOutMusicAndStartNew(table->fadeOutDelay, table->filename, table->soundId);
 		} else if (table->transitionType == 12) {
 			TriggerParams trigger;
-			strcpy(trigger.marker, "exit"); trigger.fadeOutDelay = table->fadeOutDelay;
-			strcpy(trigger.filename, table->filename); trigger.soundId = table->soundId;
-			trigger.hookId = table->hookId; trigger.volume = 127;
+			strcpy(trigger.marker, "exit");
+			trigger.fadeOutDelay = table->fadeOutDelay;
+			strcpy(trigger.filename, table->filename);
+			trigger.soundId = table->soundId;
+			trigger.hookId = table->hookId;
+			trigger.volume = 127;
 			setTrigger(&trigger);
 		} else {
 			fadeOutMusic(table->fadeOutDelay);
@@ -435,16 +433,13 @@ void IMuseDigital::playFtMusic(const char *songName, int opcode, int volume) {
 		break;
 	case 1:
 	case 2:
-	case 3:
-		{
-			int soundId = getSoundIdByName(songName);
-			if (soundId != -1) {
-				startMusic(soundId, volume);
-			}
+	case 3: {
+		int soundId = getSoundIdByName(songName);
+		if (soundId != -1) {
+			startMusic(soundId, volume);
 		}
-		break;
+	} break;
 	}
 }
-
 
 } // End of namespace Scumm

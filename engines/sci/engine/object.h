@@ -27,8 +27,8 @@
 #include "common/serializer.h"
 #include "common/textconsole.h"
 
-#include "sci/sci.h"			// for the SCI versions
-#include "sci/engine/vm_types.h"	// for reg_t
+#include "sci/engine/vm_types.h" // for reg_t
+#include "sci/sci.h" // for the SCI versions
 #include "sci/util.h"
 
 namespace Sci {
@@ -37,13 +37,13 @@ class SegManager;
 class Script;
 
 enum infoSelectorFlags {
-	kInfoFlagClone        = 0x0001,
+	kInfoFlagClone = 0x0001,
 #ifdef ENABLE_SCI32
 	/**
 	 * When set, indicates to game scripts that a screen
 	 * item can be updated.
 	 */
-	kInfoFlagViewVisible  = 0x0008,
+	kInfoFlagViewVisible = 0x0008,
 
 	/**
 	 * When set, the VM object has an associated ScreenItem in
@@ -51,7 +51,7 @@ enum infoSelectorFlags {
 	 */
 	kInfoFlagViewInserted = 0x0010,
 #endif
-	kInfoFlagClass        = 0x8000
+	kInfoFlagClass = 0x8000
 };
 
 enum ObjectOffsets {
@@ -69,18 +69,18 @@ enum ObjectOffsets {
 
 class Object : public Common::Serializable {
 public:
-	Object() :
-		_name(NULL_REG),
-		_offset(getSciVersion() < SCI_VERSION_1_1 ? 0 : 5),
-		_isFreed(false),
-		_baseObj(),
-		_baseVars(),
-		_methodCount(0)
+	Object()
+	  : _name(NULL_REG)
+	  , _offset(getSciVersion() < SCI_VERSION_1_1 ? 0 : 5)
+	  , _isFreed(false)
+	  , _baseObj()
+	  , _baseVars()
+	  , _methodCount(0)
 #ifdef ENABLE_SCI32
-		,
-		_propertyOffsetsSci3()
+	  , _propertyOffsetsSci3()
 #endif
-		{}
+	{
+	}
 
 	Object &operator=(const Object &other) {
 		_name = other._name;
@@ -370,12 +370,11 @@ private:
 	reg_t _pos; /**< Object offset within its script; for clones, this is their base */
 #ifdef ENABLE_SCI32
 	reg_t _superClassPosSci3; /**< reg_t pointing to superclass for SCI3 */
-	reg_t _speciesSelectorSci3;	/**< reg_t containing species "selector" for SCI3 */
+	reg_t _speciesSelectorSci3; /**< reg_t containing species "selector" for SCI3 */
 	reg_t _infoSelectorSci3; /**< reg_t containing info "selector" for SCI3 */
 	Common::Array<bool> _mustSetViewVisible; /** cached bit of info to make lookup fast, SCI3 only */
 #endif
 };
-
 
 } // End of namespace Sci
 

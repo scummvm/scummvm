@@ -26,9 +26,9 @@
 #include "common/stream.h"
 
 #include "graphics/managed_surface.h"
-#include "graphics/transparent_surface.h"
 #include "graphics/nine_patch.h"
 #include "graphics/palette.h"
+#include "graphics/transparent_surface.h"
 
 #include "graphics/macgui/macwindowborder.h"
 
@@ -38,27 +38,27 @@ class MacWindowManager;
 class MacWindowBorder;
 
 namespace MacWindowConstants {
-enum WindowType {
-	kWindowUnknown,
-	kWindowWindow,
-	kWindowMenu
-};
+	enum WindowType {
+		kWindowUnknown,
+		kWindowWindow,
+		kWindowMenu
+	};
 
-enum {
-	kBorderWidth = 17
-};
+	enum {
+		kBorderWidth = 17
+	};
 
-enum WindowClick {
-	kBorderNone = 0,
-	kBorderScrollUp,
-	kBorderScrollDown,
-	kBorderScrollLeft,
-	kBorderScrollRight,
-	kBorderCloseButton,
-	kBorderInner,
-	kBorderBorder,
-	kBorderResizeButton
-};
+	enum WindowClick {
+		kBorderNone = 0,
+		kBorderScrollUp,
+		kBorderScrollDown,
+		kBorderScrollLeft,
+		kBorderScrollRight,
+		kBorderCloseButton,
+		kBorderInner,
+		kBorderBorder,
+		kBorderResizeButton
+	};
 }
 using namespace MacWindowConstants;
 
@@ -148,7 +148,10 @@ public:
 	 *					- The event to be processed.
 	 *					- Any additional required data (e.g. the engine's GUI).
 	 */
-	void setCallback(bool (*callback)(WindowClick, Common::Event &, void *), void *data) { _callback = callback; _dataPtr = data; }
+	void setCallback(bool (*callback)(WindowClick, Common::Event &, void *), void *data) {
+		_callback = callback;
+		_dataPtr = data;
+	}
 
 protected:
 	int _id;
@@ -332,8 +335,6 @@ private:
 
 	Common::String _title;
 };
-
-
 
 } // End of namespace Graphics
 

@@ -26,7 +26,9 @@
 
 namespace CGE2 {
 
-CGE2Console::CGE2Console(CGE2Engine *vm) : _vm(vm), GUI::Debugger() {
+CGE2Console::CGE2Console(CGE2Engine *vm)
+  : _vm(vm)
+  , GUI::Debugger() {
 	registerCmd("do_carpet_workaround", WRAP_METHOD(CGE2Console, doCarpetWorkaround));
 }
 

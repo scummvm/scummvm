@@ -26,25 +26,26 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "engines/wintermute/ad/ad_sentence.h"
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/ad/ad_scene.h"
-#include "engines/wintermute/ad/ad_sentence.h"
 #include "engines/wintermute/ad/ad_talk_def.h"
 #include "engines/wintermute/ad/ad_talk_node.h"
-#include "engines/wintermute/utils/path_util.h"
+#include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_sprite.h"
-#include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/font/base_font.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/sound/base_sound.h"
+#include "engines/wintermute/utils/path_util.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdSentence, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdSentence::AdSentence(BaseGame *inGame) : BaseClass(inGame) {
+AdSentence::AdSentence(BaseGame *inGame)
+  : BaseClass(inGame) {
 	_text = nullptr;
 	_stances = nullptr;
 	_tempStance = nullptr;
@@ -70,7 +71,6 @@ AdSentence::AdSentence(BaseGame *inGame) : BaseClass(inGame) {
 	_freezable = true;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 AdSentence::~AdSentence() {
 	delete _sound;
@@ -89,7 +89,6 @@ AdSentence::~AdSentence() {
 	_font = nullptr; // ref only
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void AdSentence::setText(const char *text) {
 	if (_text) {
@@ -100,7 +99,6 @@ void AdSentence::setText(const char *text) {
 		strcpy(_text, text);
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void AdSentence::setStances(const char *stances) {
@@ -117,19 +115,16 @@ void AdSentence::setStances(const char *stances) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 char *AdSentence::getCurrentStance() {
 	return getStance(_currentStance);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 char *AdSentence::getNextStance() {
 	_currentStance++;
 	return getStance(_currentStance);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 char *AdSentence::getStance(int stance) {
@@ -183,14 +178,13 @@ char *AdSentence::getStance(int stance) {
 		curr--;
 	}
 
-	_tempStance = new char [curr - start + 1];
+	_tempStance = new char[curr - start + 1];
 	if (_tempStance) {
 		Common::strlcpy(_tempStance, start, curr - start + 1);
 	}
 
 	return _tempStance;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSentence::display() {
@@ -212,7 +206,6 @@ bool AdSentence::display() {
 			y = y - ((AdGame *)_gameRef)->_scene->getOffsetTop();
 		}
 
-
 		x = MAX<int32>(x, 0);
 		x = MIN(x, _gameRef->_renderer->getWidth() - _width);
 		y = MAX<int32>(y, 0);
@@ -222,7 +215,6 @@ bool AdSentence::display() {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void AdSentence::setSound(BaseSound *sound) {
@@ -234,7 +226,6 @@ void AdSentence::setSound(BaseSound *sound) {
 	_soundStarted = false;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdSentence::finish() {
 	if (_sound) {
@@ -242,7 +233,6 @@ bool AdSentence::finish() {
 	}
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSentence::persist(BasePersistenceManager *persistMgr) {
@@ -270,7 +260,6 @@ bool AdSentence::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdSentence::setupTalkFile(const char *soundFilename) {
 	delete _talkDef;
@@ -281,14 +270,13 @@ bool AdSentence::setupTalkFile(const char *soundFilename) {
 		return STATUS_OK;
 	}
 
-
 	AnsiString path = PathUtil::getDirectoryName(soundFilename);
 	AnsiString name = PathUtil::getFileNameWithoutExtension(soundFilename);
 
 	AnsiString talkDefFileName = PathUtil::combine(path, name + ".talk");
 
 	if (!BaseFileManager::getEngineInstance()->hasFile(talkDefFileName)) {
-		return STATUS_OK;    // no talk def file found
+		return STATUS_OK; // no talk def file found
 	}
 
 	_talkDef = new AdTalkDef(_gameRef);
@@ -301,7 +289,6 @@ bool AdSentence::setupTalkFile(const char *soundFilename) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSentence::update(TDirection dir) {
@@ -334,7 +321,6 @@ bool AdSentence::update(TDirection dir) {
 			}
 		}
 	}
-
 
 	// no talk node, try to use default sprite instead (if any)
 	if (!talkNodeFound) {

@@ -22,11 +22,11 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "file.h"
-#include "str.h"
 #include "winexe_pe.h"
 #include "common/array.h"
 #include "common/endian.h"
+#include "file.h"
+#include "str.h"
 
 namespace Common {
 
@@ -41,7 +41,8 @@ PEResources::~PEResources() {
 void PEResources::clear() {
 	_sections.clear();
 	_resources.clear();
-	delete _exe; _exe = 0;
+	delete _exe;
+	_exe = 0;
 }
 
 bool PEResources::loadFromEXE(const String &fileName) {
@@ -76,7 +77,7 @@ bool PEResources::loadFromEXE(File *stream) {
 
 	stream->seek(peOffset);
 
-	if (stream->readUint32BE() != MKTAG('P','E',0,0))
+	if (stream->readUint32BE() != MKTAG('P', 'E', 0, 0))
 		return false;
 
 	stream->skip(2);

@@ -23,8 +23,8 @@
 #ifndef GRAPHICS_PALETTE_H
 #define GRAPHICS_PALETTE_H
 
-#include "common/scummsys.h"
 #include "common/noncopyable.h"
+#include "common/scummsys.h"
 
 /**
  * The PaletteManager is part of the OSystem backend API and responsible

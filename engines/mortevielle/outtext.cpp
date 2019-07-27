@@ -25,10 +25,10 @@
  * Copyright (c) 1987-1989 Lankhor
  */
 
-#include "mortevielle/mortevielle.h"
-#include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
 #include "mortevielle/graphics.h"
+#include "mortevielle/mortevielle.h"
+#include "mortevielle/mouse.h"
 
 #include "common/file.h"
 #include "common/str.h"
@@ -244,9 +244,9 @@ void TextHandler::taffich() {
 				m = 2032;
 		}
 
-		if ( ((a > 69) && (a < 80)) || (a == 30) || (a == 31) || (a == 144) || (a == 147) || (a == 149) )
+		if (((a > 69) && (a < 80)) || (a == 30) || (a == 31) || (a == 144) || (a == 147) || (a == 149))
 			m = 2030;
-		else if ( ((a < 27) && ( ((_vm->_maff > 69) && (!_vm->_coreVar._alreadyEnteredManor)) || (_vm->_maff > 99) )) || ((_vm->_maff > 29) && (_vm->_maff < 33)) )
+		else if (((a < 27) && (((_vm->_maff > 69) && (!_vm->_coreVar._alreadyEnteredManor)) || (_vm->_maff > 99))) || ((_vm->_maff > 29) && (_vm->_maff < 33)))
 			m = 2033;
 
 		_vm->displayInterScreenMessage(m);
@@ -325,7 +325,7 @@ void TextHandler::taffich() {
 			_vm->displayAloneText();
 		else if (!_vm->_outsideOnlyFl)
 			_vm->getPresence(_vm->_coreVar._currPlace);
-		_vm->_savedBitIndex =  0;
+		_vm->_savedBitIndex = 0;
 	}
 }
 

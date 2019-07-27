@@ -24,8 +24,8 @@
 #include "common/savefile.h"
 #include "common/textconsole.h"
 
-#include "cine/cine.h"
 #include "cine/bg_list.h"
+#include "cine/cine.h"
 #include "cine/saveload.h"
 #include "cine/sound.h"
 #include "cine/various.h"
@@ -35,7 +35,6 @@ namespace Cine {
 int16 currentDisk;
 int16 saveVar2;
 
-
 bool writeChunkHeader(Common::OutSaveFile &out, const ChunkHeader &header) {
 	out.writeUint32BE(header.id);
 	out.writeUint32BE(header.version);
@@ -44,9 +43,9 @@ bool writeChunkHeader(Common::OutSaveFile &out, const ChunkHeader &header) {
 }
 
 bool loadChunkHeader(Common::SeekableReadStream &in, ChunkHeader &header) {
-	header.id      = in.readUint32BE();
+	header.id = in.readUint32BE();
 	header.version = in.readUint32BE();
-	header.size    = in.readUint32BE();
+	header.size = in.readUint32BE();
 	return !(in.eos() || in.err());
 }
 
@@ -85,7 +84,7 @@ enum CineSaveGameFormat detectSaveGameFormat(Common::SeekableReadStream &fHandle
 	static const uint animEntriesCount = 255;
 	static const uint oldAnimEntrySize = 23;
 	static const uint newAnimEntrySize = 30;
-	static const uint animEntrySizeChoices[] = {oldAnimEntrySize, newAnimEntrySize};
+	static const uint animEntrySizeChoices[] = { oldAnimEntrySize, newAnimEntrySize };
 	Common::Array<uint> animEntrySizeMatches;
 
 	// Try to walk through the savefile using different animDataTable entry sizes
@@ -297,20 +296,20 @@ bool loadSeqList(Common::SeekableReadStream &in) {
 	uint size = in.readUint16BE();
 	SeqListElement tmp;
 	for (uint i = 0; i < size; i++) {
-		tmp.var4   = in.readSint16BE();
+		tmp.var4 = in.readSint16BE();
 		tmp.objIdx = in.readUint16BE();
-		tmp.var8   = in.readSint16BE();
-		tmp.frame  = in.readSint16BE();
-		tmp.varC   = in.readSint16BE();
-		tmp.varE   = in.readSint16BE();
-		tmp.var10  = in.readSint16BE();
-		tmp.var12  = in.readSint16BE();
-		tmp.var14  = in.readSint16BE();
-		tmp.var16  = in.readSint16BE();
-		tmp.var18  = in.readSint16BE();
-		tmp.var1A  = in.readSint16BE();
-		tmp.var1C  = in.readSint16BE();
-		tmp.var1E  = in.readSint16BE();
+		tmp.var8 = in.readSint16BE();
+		tmp.frame = in.readSint16BE();
+		tmp.varC = in.readSint16BE();
+		tmp.varE = in.readSint16BE();
+		tmp.var10 = in.readSint16BE();
+		tmp.var12 = in.readSint16BE();
+		tmp.var14 = in.readSint16BE();
+		tmp.var16 = in.readSint16BE();
+		tmp.var18 = in.readSint16BE();
+		tmp.var1A = in.readSint16BE();
+		tmp.var1C = in.readSint16BE();
+		tmp.var1E = in.readSint16BE();
 		g_cine->_seqList.push_back(tmp);
 	}
 	return !(in.eos() || in.err());
@@ -589,17 +588,17 @@ bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
 	// TODO: Use the loaded value (Is music playing? (Uint16BE, Boolean)).
 	in.readUint16BE();
 
-	renderer->_cmdY      = in.readUint16BE();
+	renderer->_cmdY = in.readUint16BE();
 	in.readUint16BE(); // Some unknown variable that seems to always be zero
-	allowPlayerInput     = in.readUint16BE();
-	playerCommand        = in.readUint16BE();
-	commandVar1          = in.readUint16BE();
+	allowPlayerInput = in.readUint16BE();
+	playerCommand = in.readUint16BE();
+	commandVar1 = in.readUint16BE();
 	isDrawCommandEnabled = in.readUint16BE();
-	var5                 = in.readUint16BE();
-	var4                 = in.readUint16BE();
-	var3                 = in.readUint16BE();
-	var2                 = in.readUint16BE();
-	commandVar2          = in.readUint16BE();
+	var5 = in.readUint16BE();
+	var4 = in.readUint16BE();
+	var3 = in.readUint16BE();
+	var2 = in.readUint16BE();
+	commandVar2 = in.readUint16BE();
 	renderer->_messageBg = in.readUint16BE();
 
 	// TODO: Use the loaded value (adBgVar1 (Uint16BE)).

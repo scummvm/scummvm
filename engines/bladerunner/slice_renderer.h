@@ -24,9 +24,9 @@
 #define BLADERUNNER_SLICE_RENDERER_H
 
 #include "bladerunner/color.h"
+#include "bladerunner/matrix.h"
 #include "bladerunner/vector.h"
 #include "bladerunner/view.h"
-#include "bladerunner/matrix.h"
 
 #include "common/rect.h"
 
@@ -46,32 +46,32 @@ class SetEffects;
 class SliceRenderer {
 	BladeRunnerEngine *_vm;
 
-	int       _animation;
-	int       _frame;
-	Vector3   _position;
-	float     _facing;
-	float     _scale;
+	int _animation;
+	int _frame;
+	Vector3 _position;
+	float _facing;
+	float _scale;
 
 	ScreenEffects *_screenEffects;
-	View          *_view;
-	Lights        *_lights;
-	SetEffects    *_setEffects;
+	View *_view;
+	Lights *_lights;
+	SetEffects *_setEffects;
 
 	void *_sliceFramePtr;
 
 	// Animation frame data
 	Vector2 _frameScale;
-	float   _frameBottomZ;
+	float _frameBottomZ;
 	Vector2 _framePos;
-	float   _frameSliceHeight;
-	uint32  _framePaletteIndex;
-	uint32  _frameSliceCount;
+	float _frameSliceHeight;
+	uint32 _framePaletteIndex;
+	uint32 _frameSliceCount;
 
-	Matrix3x2    _mvpMatrix;
-	Vector3      _startScreenVector;
-	Vector3      _endScreenVector;
-	float        _startSlice;
-	float        _endSlice;
+	Matrix3x2 _mvpMatrix;
+	Vector3 _startScreenVector;
+	Vector3 _endScreenVector;
+	float _startSlice;
+	float _endSlice;
 	Common::Rect _screenRectangle;
 
 	int _m11lookup[256];
@@ -121,13 +121,13 @@ private:
 
 class SliceRendererLights {
 	Lights *_lights;
-	Color   _cacheColor[20];
-	float   _cacheCounter[20];
-	float   _cacheStart[20];
-	int     _cacheRecalculation;
+	Color _cacheColor[20];
+	float _cacheCounter[20];
+	float _cacheStart[20];
+	int _cacheRecalculation;
 
 public:
-	Color   _finalColor;
+	Color _finalColor;
 
 public:
 	SliceRendererLights(Lights *lights);

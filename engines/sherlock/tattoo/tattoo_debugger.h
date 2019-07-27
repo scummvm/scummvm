@@ -31,14 +31,14 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-class TattooDebugger : public Debugger {
-public:
-	TattooDebugger(SherlockEngine *vm);
-	virtual ~TattooDebugger() {}
-};
+	class TattooDebugger : public Debugger {
+	public:
+		TattooDebugger(SherlockEngine *vm);
+		virtual ~TattooDebugger() {}
+	};
 
 } // End of namespace Tattoo
 
 } // End of namespace Sherlock
 
-#endif	/* SHERLOCK_TATTOO_DEBUGGER_H */
+#endif /* SHERLOCK_TATTOO_DEBUGGER_H */

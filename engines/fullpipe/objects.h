@@ -32,13 +32,13 @@ class MessageQueue;
 class SceneTagList;
 
 class GameProject : public CObject {
- public:
+public:
 	int _field_4;
 	Common::String _headerFilename;
 	Common::ScopedPtr<SceneTagList> _sceneTagList;
 	int _field_10;
 
- public:
+public:
 	GameProject();
 	virtual bool load(MfcArchive &file);
 };
@@ -75,7 +75,7 @@ union VarValue {
 };
 
 class GameVar : public CObject {
- public:
+public:
 	GameVar *_nextVarObj;
 	GameVar *_prevVarObj;
 	GameVar *_parentVarObj;
@@ -85,7 +85,7 @@ class GameVar : public CObject {
 	VarValue _value;
 	int _varType;
 
- public:
+public:
 	GameVar();
 	virtual ~GameVar();
 

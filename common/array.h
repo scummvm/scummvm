@@ -23,10 +23,10 @@
 #ifndef COMMON_ARRAY_H
 #define COMMON_ARRAY_H
 
-#include "common/scummsys.h"
 #include "common/algorithm.h"
-#include "common/textconsole.h" // For error()
 #include "common/memory.h"
+#include "common/scummsys.h"
+#include "common/textconsole.h" // For error()
 
 namespace Common {
 
@@ -41,7 +41,7 @@ namespace Common {
  * The container class closest to this in the C++ standard library is
  * std::vector. However, there are some differences.
  */
-template<class T>
+template <class T>
 class Array {
 public:
 	typedef T *iterator;
@@ -57,13 +57,17 @@ protected:
 	T *_storage;
 
 public:
-	Array() : _capacity(0), _size(0), _storage(nullptr) {}
+	Array()
+	  : _capacity(0)
+	  , _size(0)
+	  , _storage(nullptr) {}
 
 	/**
 	 * Constructs an array with `count` default-inserted instances of T. No
 	 * copies are made.
 	 */
-	explicit Array(size_type count) : _size(count) {
+	explicit Array(size_type count)
+	  : _size(count) {
 		allocCapacity(count);
 		for (size_type i = 0; i < count; ++i)
 			new ((void *)&_storage[i]) T();
@@ -72,12 +76,16 @@ public:
 	/**
 	 * Constructs an array with `count` copies of elements with value `value`.
 	 */
-	Array(size_type count, const T &value) : _size(count) {
+	Array(size_type count, const T &value)
+	  : _size(count) {
 		allocCapacity(count);
 		uninitialized_fill_n(_storage, count, value);
 	}
 
-	Array(const Array<T> &array) : _capacity(array._size), _size(array._size), _storage(nullptr) {
+	Array(const Array<T> &array)
+	  : _capacity(array._size)
+	  , _size(array._size)
+	  , _storage(nullptr) {
 		if (array._storage) {
 			allocCapacity(_size);
 			uninitialized_copy(array._storage, array._storage + _size, _storage);
@@ -87,7 +95,7 @@ public:
 	/**
 	 * Construct an array by copying data from a regular array.
 	 */
-	template<class T2>
+	template <class T2>
 	Array(const T2 *array, size_type n) {
 		_size = n;
 		allocCapacity(n);
@@ -149,15 +157,14 @@ public:
 	/** Returns a reference to the last element of the array. */
 	T &back() {
 		assert(_size > 0);
-		return _storage[_size-1];
+		return _storage[_size - 1];
 	}
 
 	/** Returns a reference to the last element of the array. */
 	const T &back() const {
 		assert(_size > 0);
-		return _storage[_size-1];
+		return _storage[_size - 1];
 	}
-
 
 	void insert_at(size_type idx, const T &element) {
 		assert(idx <= _size);
@@ -249,11 +256,11 @@ public:
 		return !(*this == other);
 	}
 
-	iterator       begin() {
+	iterator begin() {
 		return _storage;
 	}
 
-	iterator       end() {
+	iterator end() {
 		return _storage + _size;
 	}
 
@@ -386,13 +393,12 @@ protected:
 		}
 		return pos;
 	}
-
 };
 
 /**
  * Double linked list with sorted nodes.
  */
-template<class T>
+template <class T>
 class SortedArray : public Array<T> {
 public:
 	typedef T *iterator;

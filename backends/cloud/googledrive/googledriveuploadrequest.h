@@ -30,39 +30,39 @@
 
 namespace Cloud {
 namespace GoogleDrive {
-class GoogleDriveStorage;
+	class GoogleDriveStorage;
 
-class GoogleDriveUploadRequest: public Networking::Request {
-	GoogleDriveStorage *_storage;
-	Common::String _savePath;
-	Common::SeekableReadStream *_contentsStream;
-	Storage::UploadCallback _uploadCallback;
-	Request *_workingRequest;
-	bool _ignoreCallback;
-	Common::String _resolvedId, _parentId;
-	Common::String _uploadUrl;
-	uint64 _serverReceivedBytes;
+	class GoogleDriveUploadRequest : public Networking::Request {
+		GoogleDriveStorage *_storage;
+		Common::String _savePath;
+		Common::SeekableReadStream *_contentsStream;
+		Storage::UploadCallback _uploadCallback;
+		Request *_workingRequest;
+		bool _ignoreCallback;
+		Common::String _resolvedId, _parentId;
+		Common::String _uploadUrl;
+		uint64 _serverReceivedBytes;
 
-	void start();
-	void resolveId();
-	void idResolvedCallback(Storage::UploadResponse response);
-	void idResolveFailedCallback(Networking::ErrorResponse error);
-	void startUpload();
-	void startUploadCallback(Networking::JsonResponse response);
-	void startUploadErrorCallback(Networking::ErrorResponse error);
-	void uploadNextPart();
-	void partUploadedCallback(Networking::JsonResponse response);
-	void partUploadedErrorCallback(Networking::ErrorResponse error);
-	bool handleHttp308(const Networking::NetworkReadStream *stream);
-	void finishUpload(StorageFile status);
+		void start();
+		void resolveId();
+		void idResolvedCallback(Storage::UploadResponse response);
+		void idResolveFailedCallback(Networking::ErrorResponse error);
+		void startUpload();
+		void startUploadCallback(Networking::JsonResponse response);
+		void startUploadErrorCallback(Networking::ErrorResponse error);
+		void uploadNextPart();
+		void partUploadedCallback(Networking::JsonResponse response);
+		void partUploadedErrorCallback(Networking::ErrorResponse error);
+		bool handleHttp308(const Networking::NetworkReadStream *stream);
+		void finishUpload(StorageFile status);
 
-public:
-	GoogleDriveUploadRequest(GoogleDriveStorage *storage, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb);
-	virtual ~GoogleDriveUploadRequest();
+	public:
+		GoogleDriveUploadRequest(GoogleDriveStorage *storage, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb);
+		virtual ~GoogleDriveUploadRequest();
 
-	virtual void handle();
-	virtual void restart();
-};
+		virtual void handle();
+		virtual void restart();
+	};
 
 } // End of namespace GoogleDrive
 } // End of namespace Cloud

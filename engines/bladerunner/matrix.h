@@ -34,11 +34,19 @@ public:
 	Matrix3x2();
 	Matrix3x2(float d[6]);
 	Matrix3x2(
-		float m00, float m01, float m02,
-		float m10, float m11, float m12);
+	  float m00, float m01, float m02,
+	  float m10, float m11, float m12);
 
-	      float &operator()(int r, int c)       { assert(r >= 0 && r < 2); assert(c >= 0 && c < 3); return _m[r][c]; }
-	const float &operator()(int r, int c) const { assert(r >= 0 && r < 2); assert(c >= 0 && c < 3); return _m[r][c]; }
+	float &operator()(int r, int c) {
+		assert(r >= 0 && r < 2);
+		assert(c >= 0 && c < 3);
+		return _m[r][c];
+	}
+	const float &operator()(int r, int c) const {
+		assert(r >= 0 && r < 2);
+		assert(c >= 0 && c < 3);
+		return _m[r][c];
+	}
 };
 
 inline Matrix3x2 operator*(const Matrix3x2 &a, const Matrix3x2 &b) {
@@ -79,12 +87,20 @@ public:
 	Matrix4x3();
 	Matrix4x3(float d[12]);
 	Matrix4x3(
-		float m00, float m01, float m02, float m03,
-		float m10, float m11, float m12, float m13,
-		float m20, float m21, float m22, float m23);
+	  float m00, float m01, float m02, float m03,
+	  float m10, float m11, float m12, float m13,
+	  float m20, float m21, float m22, float m23);
 
-	      float &operator()(int r, int c)       { assert(r >= 0 && r < 3); assert(c >= 0 && c < 4); return _m[r][c]; }
-	const float &operator()(int r, int c) const { assert(r >= 0 && r < 3); assert(c >= 0 && c < 4); return _m[r][c]; }
+	float &operator()(int r, int c) {
+		assert(r >= 0 && r < 3);
+		assert(c >= 0 && c < 4);
+		return _m[r][c];
+	}
+	const float &operator()(int r, int c) const {
+		assert(r >= 0 && r < 3);
+		assert(c >= 0 && c < 4);
+		return _m[r][c];
+	}
 
 	void unknown();
 };
@@ -95,7 +111,7 @@ Matrix4x3 rotationMatrixX(float angle);
 inline Matrix4x3 operator*(const Matrix4x3 &a, const Matrix4x3 &b) {
 	Matrix4x3 t;
 
-	for (int i = 0; i !=3; ++i) {
+	for (int i = 0; i != 3; ++i) {
 		t(i, 0) = a(i, 0) * b(0, 0) + a(i, 1) * b(1, 0) + a(i, 2) * b(2, 0);
 		t(i, 1) = a(i, 0) * b(0, 1) + a(i, 1) * b(1, 1) + a(i, 2) * b(2, 1);
 		t(i, 2) = a(i, 0) * b(0, 2) + a(i, 1) * b(1, 2) + a(i, 2) * b(2, 2);

@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "titanic/pet_control/pet_section.h"
+#include "common/textconsole.h"
 #include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
@@ -84,9 +84,12 @@ const uint *CPetSection::getColorTable(int tableNum) {
 	}
 
 	switch (tableNum) {
-	case 1: return PALETTE1;
-	case 2: return PALETTE2;
-	default: return PALETTE3;
+	case 1:
+		return PALETTE1;
+	case 2:
+		return PALETTE2;
+	default:
+		return PALETTE3;
 	}
 }
 

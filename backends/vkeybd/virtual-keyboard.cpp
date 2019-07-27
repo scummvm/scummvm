@@ -24,23 +24,23 @@
 
 #ifdef ENABLE_VKEYBD
 
-#include "backends/vkeybd/virtual-keyboard.h"
+#	include "backends/vkeybd/virtual-keyboard.h"
 
-#include "backends/vkeybd/virtual-keyboard-gui.h"
-#include "backends/vkeybd/virtual-keyboard-parser.h"
-#include "backends/vkeybd/keycode-descriptions.h"
-#include "common/config-manager.h"
-#include "common/textconsole.h"
-#include "common/unzip.h"
+#	include "backends/vkeybd/keycode-descriptions.h"
+#	include "backends/vkeybd/virtual-keyboard-gui.h"
+#	include "backends/vkeybd/virtual-keyboard-parser.h"
+#	include "common/config-manager.h"
+#	include "common/textconsole.h"
+#	include "common/unzip.h"
 
-#define KEY_START_CHAR ('[')
-#define KEY_END_CHAR (']')
+#	define KEY_START_CHAR ('[')
+#	define KEY_END_CHAR (']')
 
 namespace Common {
 
-VirtualKeyboard::VirtualKeyboard() :
-		_currentMode(nullptr),
-		_fileArchive(nullptr, DisposeAfterUse::NO) {
+VirtualKeyboard::VirtualKeyboard()
+  : _currentMode(nullptr)
+  , _fileArchive(nullptr, DisposeAfterUse::NO) {
 	assert(g_system);
 	_system = g_system;
 
@@ -295,20 +295,24 @@ void VirtualKeyboard::KeyPressQueue::insertKey(KeyState key) {
 	clearFlags();
 
 	String keyStr;
-	if (key.flags & KBD_CTRL) keyStr += "Ctrl+";
-	if (key.flags & KBD_ALT) keyStr += "Alt+";
+	if (key.flags & KBD_CTRL)
+		keyStr += "Ctrl+";
+	if (key.flags & KBD_ALT)
+		keyStr += "Alt+";
 
 	if (key.ascii >= 32 && key.ascii <= 255) {
 		if (key.flags & KBD_SHIFT && (key.ascii < 65 || key.ascii > 90))
 			keyStr += "Shift+";
 		keyStr += (char)key.ascii;
 	} else {
-		if (key.flags & KBD_SHIFT) keyStr += "Shift+";
+		if (key.flags & KBD_SHIFT)
+			keyStr += "Shift+";
 		if (key.keycode >= 0 && key.keycode < keycodeDescTableSize)
 			keyStr += keycodeDescTable[key.keycode];
 	}
 
-	if (keyStr.empty()) keyStr += "???";
+	if (keyStr.empty())
+		keyStr += "???";
 
 	_keysStr.insertChar(KEY_START_CHAR, _strPos++);
 	const char *k = keyStr.c_str();

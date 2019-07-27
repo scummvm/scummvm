@@ -26,14 +26,14 @@
 // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
 #ifdef main
-#undef main
+#	undef main
 #endif // main
 
+#include "create_cryomni3d_dat.h"
+#include "util.h"
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
-#include "util.h"
-#include "create_cryomni3d_dat.h"
 
 struct Parts {
 	size_t (*writeHeader)(FILE *f, uint32 offset, uint32 size);
@@ -42,12 +42,13 @@ struct Parts {
 	uint32 size;
 };
 
-#define DEFINE_GAME_PLATFORM_LANG_FUNCS(game, platform, lang) \
-    size_t write ## game ## _ ## platform ## _ ## lang ## Header(FILE *f, \
-                                   uint32 offset, uint32 size); \
-    size_t write ## game ## _ ## platform ## _ ## lang ## Data(FILE *f);
-#define GAME_PLATFORM_LANG_PART(game, platform, lang) { write ## game ## _ ## platform ## _ ## lang ## Header, \
-    write ## game ## _ ## platform ## _ ## lang ## Data, 0, 0 }
+#define DEFINE_GAME_PLATFORM_LANG_FUNCS(game, platform, lang)                   \
+	size_t write##game##_##platform##_##lang##Header(FILE *f,                     \
+	                                                 uint32 offset, uint32 size); \
+	size_t write##game##_##platform##_##lang##Data(FILE *f);
+#define GAME_PLATFORM_LANG_PART(game, platform, lang) \
+	{ write##game##_##platform##_##lang##Header,        \
+		write##game##_##platform##_##lang##Data, 0, 0 }
 
 DEFINE_GAME_PLATFORM_LANG_FUNCS(Versailles, ALL, FR)
 DEFINE_GAME_PLATFORM_LANG_FUNCS(Versailles, ALL, DE)

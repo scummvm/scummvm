@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptInsectDealer::AIScriptInsectDealer(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptInsectDealer::AIScriptInsectDealer(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 	_flag1 = false;
 	_state = 0;
 	_frameDelta = 0;
@@ -51,8 +52,7 @@ void AIScriptInsectDealer::Initialize() {
 
 bool AIScriptInsectDealer::Update() {
 	if (Global_Variable_Query(kVariableChapter) == 5
-	 && Actor_Query_Goal_Number(kActorInsectDealer) < 400
-	)
+	    && Actor_Query_Goal_Number(kActorInsectDealer) < 400)
 		Actor_Set_Goal_Number(kActorInsectDealer, 400);
 
 	return false;
@@ -314,17 +314,17 @@ bool AIScriptInsectDealer::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptInsectDealer::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptInsectDealer::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptInsectDealer::ReachedMovementTrackWaypoint(int waypointId) {

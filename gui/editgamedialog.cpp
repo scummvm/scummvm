@@ -24,24 +24,24 @@
 
 #include "common/config-manager.h"
 #include "common/gui_options.h"
-#include "common/translation.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "gui/browser.h"
 #include "gui/gui-manager.h"
 #include "gui/message.h"
 #ifdef ENABLE_EVENTRECORDER
-#include "gui/onscreendialog.h"
-#include "gui/recorderdialog.h"
-#include "gui/EventRecorder.h"
+#	include "gui/EventRecorder.h"
+#	include "gui/onscreendialog.h"
+#	include "gui/recorderdialog.h"
 #endif
 #include "gui/widgets/edittext.h"
-#include "gui/widgets/tab.h"
 #include "gui/widgets/popup.h"
 #include "gui/widgets/scrollcontainer.h"
+#include "gui/widgets/tab.h"
 
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
-#include "backends/cloud/cloudmanager.h"
+#	include "backends/cloud/cloudmanager.h"
 #endif
 
 using Common::ConfigManager;
@@ -86,7 +86,7 @@ enum {
 class DomainEditTextWidget : public EditTextWidget {
 public:
 	DomainEditTextWidget(GuiObject *boss, const String &name, const String &text, const char *tooltip = 0)
-		: EditTextWidget(boss, name, text, tooltip) {}
+	  : EditTextWidget(boss, name, text, tooltip) {}
 
 protected:
 	bool tryInsertChar(byte c, int pos) {
@@ -99,7 +99,7 @@ protected:
 };
 
 EditGameDialog::EditGameDialog(const String &domain)
-	: OptionsDialog(domain, "GameOptions") {
+  : OptionsDialog(domain, "GameOptions") {
 	// Retrieve all game specific options.
 	const Plugin *plugin = nullptr;
 	// To allow for game domains without a gameid.
@@ -323,34 +323,22 @@ void EditGameDialog::open() {
 
 	// En-/disable dialog items depending on whether overrides are active or not.
 
-	e = ConfMan.hasKey("gfx_mode", _domain) ||
-		ConfMan.hasKey("render_mode", _domain) ||
-		ConfMan.hasKey("fullscreen", _domain) ||
-		ConfMan.hasKey("aspect_ratio", _domain);
+	e = ConfMan.hasKey("gfx_mode", _domain) || ConfMan.hasKey("render_mode", _domain) || ConfMan.hasKey("fullscreen", _domain) || ConfMan.hasKey("aspect_ratio", _domain);
 	_globalGraphicsOverride->setState(e);
 
-	e = ConfMan.hasKey("music_driver", _domain) ||
-		ConfMan.hasKey("output_rate", _domain) ||
-		ConfMan.hasKey("opl_driver", _domain) ||
-		ConfMan.hasKey("subtitles", _domain) ||
-		ConfMan.hasKey("talkspeed", _domain);
+	e = ConfMan.hasKey("music_driver", _domain) || ConfMan.hasKey("output_rate", _domain) || ConfMan.hasKey("opl_driver", _domain) || ConfMan.hasKey("subtitles", _domain) || ConfMan.hasKey("talkspeed", _domain);
 	_globalAudioOverride->setState(e);
 
-	e = ConfMan.hasKey("music_volume", _domain) ||
-		ConfMan.hasKey("sfx_volume", _domain) ||
-		ConfMan.hasKey("speech_volume", _domain);
+	e = ConfMan.hasKey("music_volume", _domain) || ConfMan.hasKey("sfx_volume", _domain) || ConfMan.hasKey("speech_volume", _domain);
 	_globalVolumeOverride->setState(e);
 
 	if (!_guioptions.contains(GUIO_NOMIDI)) {
-		e = ConfMan.hasKey("soundfont", _domain) ||
-			ConfMan.hasKey("multi_midi", _domain) ||
-			ConfMan.hasKey("midi_gain", _domain);
+		e = ConfMan.hasKey("soundfont", _domain) || ConfMan.hasKey("multi_midi", _domain) || ConfMan.hasKey("midi_gain", _domain);
 		_globalMIDIOverride->setState(e);
 	}
 
 	if (!_guioptions.contains(GUIO_NOMIDI)) {
-		e = ConfMan.hasKey("native_mt32", _domain) ||
-			ConfMan.hasKey("enable_gs", _domain);
+		e = ConfMan.hasKey("native_mt32", _domain) || ConfMan.hasKey("enable_gs", _domain);
 		_globalMT32Override->setState(e);
 	}
 
@@ -457,8 +445,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		setVolumeSettingsState(data != 0);
 		g_gui.scheduleTopDialogRedraw();
 		break;
-	case kCmdChooseSoundFontCmd:
-	{
+	case kCmdChooseSoundFontCmd: {
 		BrowserDialog browser(_("Select SoundFont"), false);
 
 		if (browser.runModal() > 0) {
@@ -477,8 +464,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 
 	// Change path for the game
-	case kCmdGameBrowser:
-	{
+	case kCmdGameBrowser: {
 		BrowserDialog browser(_("Select directory with game data"), true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
@@ -496,8 +482,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 
 	// Change path for extra game data (eg, using sword cutscenes when playing via CD)
-	case kCmdExtraBrowser:
-	{
+	case kCmdExtraBrowser: {
 		BrowserDialog browser(_("Select additional game directory"), true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
@@ -509,8 +494,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	}
 	// Change path for stored save game (perm and temp) data
-	case kCmdSaveBrowser:
-	{
+	case kCmdSaveBrowser: {
 		BrowserDialog browser(_("Select directory for saved games"), true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
@@ -534,15 +518,14 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		_savePathWidget->setLabel(_("Default"));
 		break;
 
-	case kOKCmd:
-	{
+	case kOKCmd: {
 		// Write back changes made to config object
 		String newDomain(_domainWidget->getEditString());
 		if (newDomain != _domain) {
 			if (newDomain.empty()
-				|| newDomain.hasPrefix("_")
-				|| newDomain == ConfigManager::kApplicationDomain
-				|| ConfMan.hasGameDomain(newDomain)) {
+			    || newDomain.hasPrefix("_")
+			    || newDomain == ConfigManager::kApplicationDomain
+			    || ConfMan.hasGameDomain(newDomain)) {
 				MessageDialog alert(_("This game ID is already taken. Please choose another one."));
 				alert.runModal();
 				return;

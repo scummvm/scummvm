@@ -21,13 +21,13 @@
  */
 
 #include "sherlock/scene.h"
-#include "sherlock/sherlock.h"
-#include "sherlock/screen.h"
+#include "sherlock/scalpel/3do/scalpel_3do_screen.h"
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/scalpel/scalpel_people.h"
 #include "sherlock/scalpel/scalpel_scene.h"
 #include "sherlock/scalpel/scalpel_screen.h"
-#include "sherlock/scalpel/3do/scalpel_3do_screen.h"
+#include "sherlock/screen.h"
+#include "sherlock/sherlock.h"
 #include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
@@ -64,7 +64,6 @@ void BgFileHeader::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 		_fadeStyle = s.readByte();
 	} else {
 		_fill = s.readUint16LE();
-
 	}
 }
 
@@ -207,7 +206,8 @@ Scene *Scene::init(SherlockEngine *vm) {
 		return new Tattoo::TattooScene(vm);
 }
 
-Scene::Scene(SherlockEngine *vm): _vm(vm) {
+Scene::Scene(SherlockEngine *vm)
+  : _vm(vm) {
 	_sceneStats = new bool *[SCENES_COUNT];
 	_sceneStats[0] = new bool[SCENES_COUNT * (MAX_BGSHAPES + 1)];
 	Common::fill(&_sceneStats[0][0], &_sceneStats[0][SCENES_COUNT * (MAX_BGSHAPES + 1)], false);
@@ -262,7 +262,7 @@ void Scene::selectScene() {
 	}
 
 	people[HOLMES]._walkDest = Common::Point(people[HOLMES]._position.x / FIXED_INT_MULTIPLIER,
-		people[HOLMES]._position.y / FIXED_INT_MULTIPLIER);
+	                                         people[HOLMES]._position.y / FIXED_INT_MULTIPLIER);
 
 	_restoreFlag = true;
 	events.clearEvents();
@@ -464,9 +464,7 @@ bool Scene::loadScene(const Common::String &filename) {
 				_images[idx + 1]._maxFrames = bgInfo[idx]._maxFrames;
 
 				// Read in the image data
-				Common::SeekableReadStream *imageStream = _compressed ?
-					res.decompress(*rrmStream, bgInfo[idx]._filesize) :
-					rrmStream->readStream(bgInfo[idx]._filesize);
+				Common::SeekableReadStream *imageStream = _compressed ? res.decompress(*rrmStream, bgInfo[idx]._filesize) : rrmStream->readStream(bgInfo[idx]._filesize);
 
 				_images[idx + 1]._images = new ImageFile(*imageStream);
 
@@ -476,8 +474,7 @@ bool Scene::loadScene(const Common::String &filename) {
 			// Set up the bgShapes
 			for (int idx = 0; idx < bgHeader._numStructs; ++idx) {
 				_bgShapes[idx]._images = _images[_bgShapes[idx]._misc]._images;
-				_bgShapes[idx]._imageFrame = !_bgShapes[idx]._images ? (ImageFrame *)nullptr :
-					&(*_bgShapes[idx]._images)[0];
+				_bgShapes[idx]._imageFrame = !_bgShapes[idx]._images ? (ImageFrame *)nullptr : &(*_bgShapes[idx]._images)[0];
 
 				_bgShapes[idx]._examine = Common::String(&_descText[_bgShapes[idx]._descOffset]);
 				_bgShapes[idx]._sequences = &_sequenceBuffer[_bgShapes[idx]._sequenceOffset];
@@ -494,15 +491,13 @@ bool Scene::loadScene(const Common::String &filename) {
 			_cAnim.clear();
 			if (bgHeader._numcAnimations) {
 				int animSize = IS_SERRATED_SCALPEL ? 65 : 47;
-				Common::SeekableReadStream *cAnimStream = _compressed ?
-					res.decompress(*rrmStream, animSize * bgHeader._numcAnimations) :
-					rrmStream->readStream(animSize * bgHeader._numcAnimations);
+				Common::SeekableReadStream *cAnimStream = _compressed ? res.decompress(*rrmStream, animSize * bgHeader._numcAnimations) : rrmStream->readStream(animSize * bgHeader._numcAnimations);
 
 				// Load cAnim offset table as well
 				uint32 *cAnimOffsetTablePtr = new uint32[bgHeader._numcAnimations];
 				uint32 *cAnimOffsetPtr = cAnimOffsetTablePtr;
 				memset(cAnimOffsetTablePtr, 0, bgHeader._numcAnimations * sizeof(uint32));
- 				if (IS_SERRATED_SCALPEL) {
+				if (IS_SERRATED_SCALPEL) {
 					// Save current stream offset
 					int32 curOffset = rrmStream->pos();
 					rrmStream->seek(44); // Seek to cAnim-Offset-Table
@@ -528,12 +523,9 @@ bool Scene::loadScene(const Common::String &filename) {
 				delete[] cAnimOffsetTablePtr;
 			}
 
-
-
 			// Read in the room bounding areas
 			int size = rrmStream->readUint16LE();
-			Common::SeekableReadStream *boundsStream = !_compressed ? rrmStream :
-				res.decompress(*rrmStream, size);
+			Common::SeekableReadStream *boundsStream = !_compressed ? rrmStream : res.decompress(*rrmStream, size);
 
 			_zones.resize(size / 10);
 			for (uint idx = 0; idx < _zones.size(); ++idx) {
@@ -541,7 +533,7 @@ bool Scene::loadScene(const Common::String &filename) {
 				_zones[idx].top = boundsStream->readSint16LE();
 				_zones[idx].setWidth(boundsStream->readSint16LE() + 1);
 				_zones[idx].setHeight(boundsStream->readSint16LE() + 1);
-				boundsStream->skip(2);	// Skip unused scene number field
+				boundsStream->skip(2); // Skip unused scene number field
 			}
 
 			if (_compressed)
@@ -554,7 +546,6 @@ bool Scene::loadScene(const Common::String &filename) {
 			// Load the walk directory and walk data
 			assert(_zones.size() < MAX_ZONES);
 
-
 			for (uint idx1 = 0; idx1 < _zones.size(); ++idx1) {
 				Common::fill(&_walkDirectory[idx1][0], &_walkDirectory[idx1][MAX_ZONES], 0);
 				for (uint idx2 = 0; idx2 < _zones.size(); ++idx2)
@@ -563,8 +554,7 @@ bool Scene::loadScene(const Common::String &filename) {
 
 			// Read in the walk data
 			size = rrmStream->readUint16LE();
-			Common::SeekableReadStream *walkStream = !_compressed ? rrmStream->readStream(size) :
-				res.decompress(*rrmStream, size);
+			Common::SeekableReadStream *walkStream = !_compressed ? rrmStream->readStream(size) : res.decompress(*rrmStream, size);
 
 			// Translate the file offsets of the walk directory to indexes in the loaded walk data
 			for (uint idx1 = 0; idx1 < _zones.size(); ++idx1) {
@@ -640,8 +630,7 @@ bool Scene::loadScene(const Common::String &filename) {
 				Common::copy(screen._cMap, screen._cMap + PALETTE_SIZE, screen._sMap);
 
 				// Read in the background
-				Common::SeekableReadStream *bgStream = !_compressed ? rrmStream :
-					res.decompress(*rrmStream, SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT);
+				Common::SeekableReadStream *bgStream = !_compressed ? rrmStream : res.decompress(*rrmStream, SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT);
 
 				bgStream->read(screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT);
 
@@ -677,36 +666,36 @@ bool Scene::loadScene(const Common::String &filename) {
 		uint16 header3DO_numAnimations = roomStream->readUint16BE();
 		roomStream->skip(6);
 
-		uint32 header3DO_bgInfo_offset        = roomStream->readUint32BE() + 0x80;
-		uint32 header3DO_bgInfo_size          = roomStream->readUint32BE();
-		uint32 header3DO_bgShapes_offset      = roomStream->readUint32BE() + 0x80;
-		uint32 header3DO_bgShapes_size        = roomStream->readUint32BE();
-		uint32 header3DO_descriptions_offset  = roomStream->readUint32BE() + 0x80;
-		uint32 header3DO_descriptions_size    = roomStream->readUint32BE();
-		uint32 header3DO_sequence_offset      = roomStream->readUint32BE() + 0x80;
-		uint32 header3DO_sequence_size        = roomStream->readUint32BE();
-		uint32 header3DO_cAnim_offset         = roomStream->readUint32BE() + 0x80;
-		uint32 header3DO_cAnim_size           = roomStream->readUint32BE();
-		uint32 header3DO_roomBounding_offset  = roomStream->readUint32BE() + 0x80;
-		uint32 header3DO_roomBounding_size    = roomStream->readUint32BE();
+		uint32 header3DO_bgInfo_offset = roomStream->readUint32BE() + 0x80;
+		uint32 header3DO_bgInfo_size = roomStream->readUint32BE();
+		uint32 header3DO_bgShapes_offset = roomStream->readUint32BE() + 0x80;
+		uint32 header3DO_bgShapes_size = roomStream->readUint32BE();
+		uint32 header3DO_descriptions_offset = roomStream->readUint32BE() + 0x80;
+		uint32 header3DO_descriptions_size = roomStream->readUint32BE();
+		uint32 header3DO_sequence_offset = roomStream->readUint32BE() + 0x80;
+		uint32 header3DO_sequence_size = roomStream->readUint32BE();
+		uint32 header3DO_cAnim_offset = roomStream->readUint32BE() + 0x80;
+		uint32 header3DO_cAnim_size = roomStream->readUint32BE();
+		uint32 header3DO_roomBounding_offset = roomStream->readUint32BE() + 0x80;
+		uint32 header3DO_roomBounding_size = roomStream->readUint32BE();
 		uint32 header3DO_walkDirectory_offset = roomStream->readUint32BE() + 0x80;
-		uint32 header3DO_walkDirectory_size   = roomStream->readUint32BE();
-		uint32 header3DO_walkData_offset      = roomStream->readUint32BE() + 0x80;
-		uint32 header3DO_walkData_size        = roomStream->readUint32BE();
-		uint32 header3DO_exits_offset         = roomStream->readUint32BE() + 0x80;
-		uint32 header3DO_exits_size           = roomStream->readUint32BE();
-		uint32 header3DO_entranceData_offset  = roomStream->readUint32BE() + 0x80;
-		uint32 header3DO_entranceData_size    = roomStream->readUint32BE();
-		uint32 header3DO_soundList_offset     = roomStream->readUint32BE() + 0x80;
-		uint32 header3DO_soundList_size       = roomStream->readUint32BE();
+		uint32 header3DO_walkDirectory_size = roomStream->readUint32BE();
+		uint32 header3DO_walkData_offset = roomStream->readUint32BE() + 0x80;
+		uint32 header3DO_walkData_size = roomStream->readUint32BE();
+		uint32 header3DO_exits_offset = roomStream->readUint32BE() + 0x80;
+		uint32 header3DO_exits_size = roomStream->readUint32BE();
+		uint32 header3DO_entranceData_offset = roomStream->readUint32BE() + 0x80;
+		uint32 header3DO_entranceData_size = roomStream->readUint32BE();
+		uint32 header3DO_soundList_offset = roomStream->readUint32BE() + 0x80;
+		uint32 header3DO_soundList_size = roomStream->readUint32BE();
 		//uint32 header3DO_unknown_offset       = roomStream->readUint32BE() + 0x80;
 		//uint32 header3DO_unknown_size         = roomStream->readUint32BE();
 		roomStream->skip(8); // Skip over unknown offset+size
 		uint32 header3DO_bgGraphicData_offset = roomStream->readUint32BE() + 0x80;
-		uint32 header3DO_bgGraphicData_size   = roomStream->readUint32BE();
+		uint32 header3DO_bgGraphicData_size = roomStream->readUint32BE();
 
 		// Calculate amount of entries
-		int32 header3DO_soundList_count       = header3DO_soundList_size / 9;
+		int32 header3DO_soundList_count = header3DO_soundList_size / 9;
 
 		_invGraphicItems = header3DO_numImages + 1;
 
@@ -816,8 +805,7 @@ bool Scene::loadScene(const Common::String &filename) {
 		// === BGSHAPES === Set up the bgShapes
 		for (int idx = 0; idx < header3DO_numStructs; ++idx) {
 			_bgShapes[idx]._images = _images[_bgShapes[idx]._misc]._images;
-			_bgShapes[idx]._imageFrame = !_bgShapes[idx]._images ? (ImageFrame *)nullptr :
-				&(*_bgShapes[idx]._images)[0];
+			_bgShapes[idx]._imageFrame = !_bgShapes[idx]._images ? (ImageFrame *)nullptr : &(*_bgShapes[idx]._images)[0];
 
 			_bgShapes[idx]._examine = Common::String(&_descText[_bgShapes[idx]._descOffset]);
 			_bgShapes[idx]._sequences = &_sequenceBuffer[_bgShapes[idx]._sequenceOffset];
@@ -897,8 +885,7 @@ bool Scene::loadScene(const Common::String &filename) {
 		roomStream->seek(header3DO_walkData_offset);
 
 		// Read in the walk data
-		Common::SeekableReadStream *walkStream = !_compressed ? roomStream->readStream(header3DO_walkData_size) :
-			res.decompress(*roomStream, header3DO_walkData_size);
+		Common::SeekableReadStream *walkStream = !_compressed ? roomStream->readStream(header3DO_walkData_size) : res.decompress(*roomStream, header3DO_walkData_size);
 
 		// Translate the file offsets of the walk directory to indexes in the loaded walk data
 		for (uint idx1 = 0; idx1 < _zones.size(); ++idx1) {
@@ -969,9 +956,9 @@ bool Scene::loadScene(const Common::String &filename) {
 		uint16 *roomBackgroundDataPtr = NULL;
 		uint16 *pixelSourcePtr = NULL;
 		uint16 *pixelDestPtr = (uint16 *)screen._backBuffer1.getPixels();
-		uint16  curPixel = 0;
-		uint32  roomBackgroundStreamSize = roomBackgroundStream.size();
-		uint32  expectedBackgroundSize   = totalPixelCount * 2;
+		uint16 curPixel = 0;
+		uint32 roomBackgroundStreamSize = roomBackgroundStream.size();
+		uint32 expectedBackgroundSize = totalPixelCount * 2;
 
 		// Verify file size of background file
 		if (expectedBackgroundSize != roomBackgroundStreamSize)
@@ -986,9 +973,9 @@ bool Scene::loadScene(const Common::String &filename) {
 		for (int pixels = 0; pixels < totalPixelCount; pixels++) {
 			curPixel = READ_BE_UINT16(pixelSourcePtr++);
 
-			byte curPixelRed   = (curPixel >> 10) & 0x1F;
+			byte curPixelRed = (curPixel >> 10) & 0x1F;
 			byte curPixelGreen = (curPixel >> 5) & 0x1F;
-			byte curPixelBlue  = curPixel & 0x1F;
+			byte curPixelBlue = curPixel & 0x1F;
 			*pixelDestPtr = ((curPixelRed << 11) | (curPixelGreen << 6) | (curPixelBlue));
 			pixelDestPtr++;
 		}
@@ -1024,8 +1011,7 @@ bool Scene::loadScene(const Common::String &filename) {
 
 		// Check for TURNOFF objects
 		for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
-			if (_bgShapes[idx]._type != HIDDEN && (_bgShapes[idx]._flags & TURNOFF_OBJ) &&
-					_bgShapes[idx]._type != INVALID)
+			if (_bgShapes[idx]._type != HIDDEN && (_bgShapes[idx]._flags & TURNOFF_OBJ) && _bgShapes[idx]._type != INVALID)
 				_bgShapes[idx].toggleHidden();
 			if (_bgShapes[idx]._type == HIDE_SHAPE)
 				// Hiding isn't needed, since objects aren't drawn yet
@@ -1092,7 +1078,7 @@ void Scene::saveSceneStatus() {
 	for (int idx = 0; idx < count; ++idx) {
 		Object &obj = _bgShapes[idx];
 		_sceneStats[_currentScene][idx] = obj._type == HIDDEN || obj._type == REMOVE
-			|| obj._type == HIDE_SHAPE || obj._type == INVALID;
+		  || obj._type == HIDE_SHAPE || obj._type == INVALID;
 	}
 
 	// Flag scene as having been visited
@@ -1255,9 +1241,7 @@ void Scene::transitionToScene() {
 				bottomRight = topLeft + obj._noShapeSize;
 			}
 
-			if (Common::Rect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y).contains(
-					Common::Point(people[HOLMES]._position.x / FIXED_INT_MULTIPLIER,
-					people[HOLMES]._position.y / FIXED_INT_MULTIPLIER))) {
+			if (Common::Rect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y).contains(Common::Point(people[HOLMES]._position.x / FIXED_INT_MULTIPLIER, people[HOLMES]._position.y / FIXED_INT_MULTIPLIER))) {
 				// Current point is already inside box - impact occurred on
 				// a previous call. So simply do nothing except talk until the
 				// player is clear of the box
@@ -1409,8 +1393,7 @@ void Scene::checkBgShapes() {
 		Object &obj = _bgShapes[idx];
 		if (obj._type == ACTIVE_BG_SHAPE || (IS_SERRATED_SCALPEL && obj._type == STATIC_BG_SHAPE)) {
 			if ((obj._flags & 5) == 1) {
-				obj._misc = (pt.y < (obj._position.y + obj.frameHeight() - 1)) ?
-					NORMAL_FORWARD : NORMAL_BEHIND;
+				obj._misc = (pt.y < (obj._position.y + obj.frameHeight() - 1)) ? NORMAL_FORWARD : NORMAL_BEHIND;
 			} else if (!(obj._flags & OBJ_BEHIND)) {
 				obj._misc = BEHIND;
 			} else if (obj._flags & OBJ_FORWARD) {

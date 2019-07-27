@@ -21,9 +21,9 @@
  */
 
 #include "lure/fights.h"
-#include "lure/luredefs.h"
 #include "lure/game.h"
 #include "lure/lure.h"
+#include "lure/luredefs.h"
 #include "lure/res.h"
 #include "lure/room.h"
 #include "lure/sound.h"
@@ -32,16 +32,17 @@ namespace Lure {
 
 // Three records containing initial states for player, pig, and Skorl
 const FighterRecord initialFighterList[3] = {
-	{0x23C, 0x440, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0},
-	{0, 0x441, 0x1092, 0, 3, 0, 0, 0, 0xB94, 8, 0xA34, 0x8D4, 0xD06, 0,
-	0, 0, 0, 0, 0xDDC, PLAYER_ID},
-	{0, 0x446, 0x1092, 0, 3, 0, 0, 0, 0xB94, 8, 0xA34, 0x8D4, 0xD06, 0,
-	0, 0, 0, 0, 0xDDC, PLAYER_ID}
+	{ 0x23C, 0x440, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0 },
+	{ 0, 0x441, 0x1092, 0, 3, 0, 0, 0, 0xB94, 8, 0xA34, 0x8D4, 0xD06, 0,
+	  0, 0, 0, 0, 0xDDC, PLAYER_ID },
+	{ 0, 0x446, 0x1092, 0, 3, 0, 0, 0, 0xB94, 8, 0xA34, 0x8D4, 0xD06, 0,
+	  0, 0, 0, 0, 0xDDC, PLAYER_ID }
 };
 
 FightsManager *int_fights = NULL;
 
-FightsManager::FightsManager() : _rnd(LureEngine::getReference().rnd()) {
+FightsManager::FightsManager()
+  : _rnd(LureEngine::getReference().rnd()) {
 	int_fights = this;
 	_fightData = NULL;
 	_mouseFlags = 0;
@@ -59,9 +60,12 @@ FightsManager &FightsManager::getReference() {
 }
 
 FighterRecord &FightsManager::getDetails(uint16 hotspotId) {
-	if (hotspotId == PLAYER_ID) return _fighterList[0];
-	else if (hotspotId == PIG_ID) return _fighterList[1];
-	else if (hotspotId == SKORL_FIGHTER_ID) return _fighterList[2];
+	if (hotspotId == PLAYER_ID)
+		return _fighterList[0];
+	else if (hotspotId == PIG_ID)
+		return _fighterList[1];
+	else if (hotspotId == SKORL_FIGHTER_ID)
+		return _fighterList[2];
 	error("Unknown NPC %d attempted to fight", hotspotId);
 }
 
@@ -169,8 +173,8 @@ void FightsManager::reset() {
 	_fighterList[2] = initialFighterList[2];
 }
 
-const CursorType moveList[] = {CURSOR_LEFT_ARROW, CURSOR_FIGHT_UPPER,
-	CURSOR_FIGHT_MIDDLE, CURSOR_FIGHT_LOWER, CURSOR_RIGHT_ARROW};
+const CursorType moveList[] = { CURSOR_LEFT_ARROW, CURSOR_FIGHT_UPPER,
+	                              CURSOR_FIGHT_MIDDLE, CURSOR_FIGHT_LOWER, CURSOR_RIGHT_ARROW };
 
 struct KeyMapping {
 	Common::KeyCode keycode;
@@ -178,10 +182,8 @@ struct KeyMapping {
 };
 
 const KeyMapping keyList[] = {
-	{Common::KEYCODE_LEFT, 10}, {Common::KEYCODE_RIGHT, 14},
-	{Common::KEYCODE_KP7, 11}, {Common::KEYCODE_KP4, 12}, {Common::KEYCODE_KP1, 13},
-	{Common::KEYCODE_KP9, 6},  {Common::KEYCODE_KP6, 7},  {Common::KEYCODE_KP3, 8},
-	{Common::KEYCODE_INVALID, 0}};
+	{ Common::KEYCODE_LEFT, 10 }, { Common::KEYCODE_RIGHT, 14 }, { Common::KEYCODE_KP7, 11 }, { Common::KEYCODE_KP4, 12 }, { Common::KEYCODE_KP1, 13 }, { Common::KEYCODE_KP9, 6 }, { Common::KEYCODE_KP6, 7 }, { Common::KEYCODE_KP3, 8 }, { Common::KEYCODE_INVALID, 0 }
+};
 
 void FightsManager::checkEvents() {
 	LureEngine &engine = LureEngine::getReference();
@@ -211,8 +213,7 @@ void FightsManager::checkEvents() {
 			default:
 				// Scan through the mapping list for a move for the keypress
 				const KeyMapping *keyPtr = &keyList[0];
-				while ((keyPtr->keycode != Common::KEYCODE_INVALID) &&
-					(keyPtr->keycode != events.event().kbd.keycode))
+				while ((keyPtr->keycode != Common::KEYCODE_INVALID) && (keyPtr->keycode != events.event().kbd.keycode))
 					++keyPtr;
 				if (keyPtr->keycode != Common::KEYCODE_INVALID) {
 					moveNumber = keyPtr->moveNumber;
@@ -236,17 +237,17 @@ void FightsManager::checkEvents() {
 			else
 				mouse.setCursorNum(CURSOR_FIGHT_LOWER);
 
-		} else if ((events.type() == Common::EVENT_LBUTTONDOWN) ||
-				(events.type() == Common::EVENT_RBUTTONDOWN) ||
-				(events.type() == Common::EVENT_LBUTTONUP) ||
-				(events.type() == Common::EVENT_RBUTTONUP)) {
+		} else if ((events.type() == Common::EVENT_LBUTTONDOWN) || (events.type() == Common::EVENT_RBUTTONDOWN) || (events.type() == Common::EVENT_LBUTTONUP) || (events.type() == Common::EVENT_RBUTTONUP)) {
 			_mouseFlags = 0;
-			if (events.type() == Common::EVENT_LBUTTONDOWN) ++_mouseFlags;
-			if (events.type() == Common::EVENT_RBUTTONDOWN) _mouseFlags += 2;
+			if (events.type() == Common::EVENT_LBUTTONDOWN)
+				++_mouseFlags;
+			if (events.type() == Common::EVENT_RBUTTONDOWN)
+				_mouseFlags += 2;
 		}
 	}
 
-	if (_keyDown == KS_KEYDOWN_2) return;
+	if (_keyDown == KS_KEYDOWN_2)
+		return;
 
 	// Get the correct base index for the move
 	while ((moveNumber < 5) && (moveList[moveNumber] != mouse.getCursorNum()))
@@ -267,7 +268,7 @@ void FightsManager::checkEvents() {
 
 	if (rec.fwmove_number >= 5)
 		debugC(ERROR_INTERMEDIATE, kLureDebugFights,
-			"Player fight move number=%d", rec.fwmove_number);
+		       "Player fight move number=%d", rec.fwmove_number);
 }
 
 void FightsManager::fighterAnimHandler(Hotspot &h) {
@@ -300,7 +301,7 @@ void FightsManager::fighterAnimHandler(Hotspot &h) {
 			seqNum = getFighterMove(fighter, fighter.fwattack_table);
 		} else {
 			v = getWord(offset + 2);
-			seqNum  = getFighterMove(fighter, fighter.fwdefend_table);
+			seqNum = getFighterMove(fighter, fighter.fwdefend_table);
 
 			if (seqNum == 0)
 				seqNum = getFighterMove(fighter, fighter.fwattack_table);
@@ -333,8 +334,8 @@ void FightsManager::fightHandler(Hotspot &h, uint16 moveOffset) {
 			moveOffset = getWord(FIGHT_PLAYER_MOVE_TABLE + (fighter.fwmove_number << 1));
 
 			debugC(ERROR_DETAILED, kLureDebugFights,
-				"Hotspot %xh fight move=%d, new offset=%xh",
-				h.hotspotId(), fighter.fwmove_number, moveOffset);
+			       "Hotspot %xh fight move=%d, new offset=%xh",
+			       h.hotspotId(), fighter.fwmove_number, moveOffset);
 
 			if (moveOffset == 0)
 				return;
@@ -345,8 +346,8 @@ void FightsManager::fightHandler(Hotspot &h, uint16 moveOffset) {
 
 		uint16 moveValue = getWord(moveOffset);
 		debugC(ERROR_DETAILED, kLureDebugFights,
-			"Hotspot %xh script offset=%xh value=%xh",
-			h.hotspotId(), moveOffset, moveValue);
+		       "Hotspot %xh script offset=%xh value=%xh",
+		       h.hotspotId(), moveOffset, moveValue);
 		moveOffset += sizeof(uint16);
 
 		if ((moveValue & 0x8000) == 0) {
@@ -356,8 +357,10 @@ void FightsManager::fightHandler(Hotspot &h, uint16 moveOffset) {
 			// Set the new fighter position
 			int16 newX, newY;
 			newX = h.x() + (int16)getWord(moveOffset);
-			if (newX < 32) newX = 32;
-			if (newX > 240) newX = 240;
+			if (newX < 32)
+				newX = 32;
+			if (newX > 240)
+				newX = 240;
 			newY = h.y() + (int16)getWord(moveOffset + 2);
 			h.setPosition(newX, newY);
 
@@ -396,8 +399,7 @@ void FightsManager::fightHandler(Hotspot &h, uint16 moveOffset) {
 						fighter.fwtrue_x = h.x();
 						fighter.fwtrue_y = h.y();
 
-						uint16 frameNum = (fighter.fwwalk_roll == 7) ? 0 :
-							fighter.fwwalk_roll + 1;
+						uint16 frameNum = (fighter.fwwalk_roll == 7) ? 0 : fighter.fwwalk_roll + 1;
 						fighter.fwwalk_roll = frameNum;
 						fighter.fwseq_ad = moveOffset;
 						h.setFrameNumber(frameNum);
@@ -421,8 +423,7 @@ void FightsManager::fightHandler(Hotspot &h, uint16 moveOffset) {
 					fighter.fwtrue_x = h.x();
 					fighter.fwtrue_y = h.y();
 
-					fighter.fwwalk_roll = (fighter.fwwalk_roll == 0) ? 7 :
-						fighter.fwwalk_roll - 1;
+					fighter.fwwalk_roll = (fighter.fwwalk_roll == 0) ? 7 : fighter.fwwalk_roll - 1;
 					fighter.fwseq_ad = moveOffset;
 					h.setFrameNumber(fighter.fwwalk_roll);
 					return;

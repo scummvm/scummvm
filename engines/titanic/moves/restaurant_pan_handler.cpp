@@ -25,8 +25,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CRestaurantPanHandler, CMovePlayerTo)
-	ON_MESSAGE(ArmPickedUpFromTableMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(ArmPickedUpFromTableMsg)
+ON_MESSAGE(MouseButtonDownMsg)
 END_MESSAGE_MAP()
 
 bool CRestaurantPanHandler::_armPickedUp;

@@ -23,10 +23,10 @@
 #ifndef GNAP_GAMESYS_H
 #define GNAP_GAMESYS_H
 
-#include "gnap/gnap.h"
-#include "gnap/resource.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "gnap/gnap.h"
+#include "gnap/resource.h"
 #include "graphics/surface.h"
 
 namespace Gnap {
@@ -40,12 +40,12 @@ const int kMaxGfxItems = 50;
 const int kMaxAnimations = 12;
 
 enum {
-	kSeqNone		= 0x00,
-	kSeqScale		= 0x01, // Enable scaling
-	kSeqLoop		= 0x02, // Loop
-	kSeqUnk			= 0x04,	// Unknown
-	kSeqSyncWait	= 0x08,	// Start if other sequence is done
-	kSeqSyncExists	= 0x20	// Start if other sequence exists
+	kSeqNone = 0x00,
+	kSeqScale = 0x01, // Enable scaling
+	kSeqLoop = 0x02, // Loop
+	kSeqUnk = 0x04, // Unknown
+	kSeqSyncWait = 0x08, // Start if other sequence is done
+	kSeqSyncExists = 0x20 // Start if other sequence exists
 };
 
 struct Sequence {
@@ -128,6 +128,7 @@ public:
 	int getSpriteHeightById(int resourceId);
 	Graphics::Surface *loadBitmap(int resourceId);
 	void drawBitmap(int resourceId);
+
 public:
 	GnapEngine *_vm;
 
@@ -169,7 +170,6 @@ public:
 	int32 _gameSysClock, _lastUpdateClock;
 	bool _animationsDone;
 
-
 	Graphics::Surface *_backgroundSurface;
 	Graphics::Surface *_frontSurface;
 	Common::Rect _screenRect;
@@ -184,11 +184,11 @@ public:
 	void restoreBackgroundRect(const Common::Rect &rect);
 
 	void blitSurface32(Graphics::Surface *destSurface, int x, int y, Graphics::Surface *sourceSurface,
-		Common::Rect &sourceRect, bool transparent);
+	                   Common::Rect &sourceRect, bool transparent);
 	void blitSprite32(Graphics::Surface *destSurface, int x, int y, byte *sourcePixels,
-		int sourceWidth, Common::Rect &sourceRect, uint32 *sourcePalette, bool transparent);
+	                  int sourceWidth, Common::Rect &sourceRect, uint32 *sourcePalette, bool transparent);
 	void blitSpriteScaled32(Graphics::Surface *destSurface, Common::Rect &frameRect,
-		Common::Rect &destRect, byte *sourcePixels, int sourceWidth, Common::Rect &sourceRect, uint32 *sourcePalette);
+	                        Common::Rect &destRect, byte *sourcePixels, int sourceWidth, Common::Rect &sourceRect, uint32 *sourcePalette);
 
 	void seqDrawStaticFrame(Graphics::Surface *surface, SequenceFrame &frame, Common::Rect *subRect);
 	void seqDrawSpriteFrame(SpriteResource *spriteResource, SequenceFrame &frame, Common::Rect *subRect);
@@ -203,7 +203,6 @@ public:
 	void fatUpdateFrame();
 	void fatUpdate();
 	void updatePlaySounds();
-
 };
 
 bool intersectRect(Common::Rect &intersectingRect, const Common::Rect &r1, const Common::Rect &r2);

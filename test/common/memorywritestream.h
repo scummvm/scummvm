@@ -3,7 +3,7 @@
 #include "common/memstream.h"
 
 class MemoryWriteStreamTestSuite : public CxxTest::TestSuite {
-	public:
+public:
 	void test_err() {
 		byte temp = 0;
 

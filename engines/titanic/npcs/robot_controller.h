@@ -31,8 +31,10 @@ class CRobotController : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool SummonBotMsg(CSummonBotMsg *msg);
 	bool SummonBotQueryMsg(CSummonBotQueryMsg *msg);
+
 protected:
 	CString _robotName;
+
 public:
 	CLASSDEF;
 	CRobotController();

@@ -23,25 +23,25 @@
 #if defined(WIN32)
 
 // Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#	define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "backends/fs/windows/windows-fs.h"
-#include "backends/fs/stdiostream.h"
+#	include "backends/fs/windows/windows-fs.h"
+#	include "backends/fs/stdiostream.h"
 
 // F_OK, R_OK and W_OK are not defined under MSVC, so we define them here
 // For more information on the modes used by MSVC, check:
 // http://msdn2.microsoft.com/en-us/library/1w06ktdy(VS.80).aspx
-#ifndef F_OK
-#define F_OK 0
-#endif
+#	ifndef F_OK
+#		define F_OK 0
+#	endif
 
-#ifndef R_OK
-#define R_OK 4
-#endif
+#	ifndef R_OK
+#		define R_OK 4
+#	endif
 
-#ifndef W_OK
-#define W_OK 2
-#endif
+#	ifndef W_OK
+#		define W_OK 2
+#	endif
 
 bool WindowsFilesystemNode::exists() const {
 	return _access(_path.c_str(), F_OK) == 0;
@@ -55,7 +55,7 @@ bool WindowsFilesystemNode::isWritable() const {
 	return _access(_path.c_str(), W_OK) == 0;
 }
 
-void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const char *base, bool hidden, WIN32_FIND_DATA* find_data) {
+void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const char *base, bool hidden, WIN32_FIND_DATA *find_data) {
 	WindowsFilesystemNode entry;
 	char *asciiName = toAscii(find_data->cFileName);
 	bool isDirectory;
@@ -70,8 +70,7 @@ void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const c
 
 	isDirectory = (find_data->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ? true : false);
 
-	if ((!isDirectory && mode == Common::FSNode::kListDirectoriesOnly) ||
-		(isDirectory && mode == Common::FSNode::kListFilesOnly))
+	if ((!isDirectory && mode == Common::FSNode::kListDirectoriesOnly) || (isDirectory && mode == Common::FSNode::kListFilesOnly))
 		return;
 
 	entry._isDirectory = isDirectory;
@@ -86,40 +85,40 @@ void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const c
 	list.push_back(new WindowsFilesystemNode(entry));
 }
 
-char* WindowsFilesystemNode::toAscii(TCHAR *str) {
-#ifndef UNICODE
+char *WindowsFilesystemNode::toAscii(TCHAR *str) {
+#	ifndef UNICODE
 	return (char *)str;
-#else
+#	else
 	static char asciiString[MAX_PATH];
 	WideCharToMultiByte(CP_ACP, 0, str, _tcslen(str) + 1, asciiString, sizeof(asciiString), NULL, NULL);
 	return asciiString;
-#endif
+#	endif
 }
 
-const TCHAR* WindowsFilesystemNode::toUnicode(const char *str) {
-#ifndef UNICODE
+const TCHAR *WindowsFilesystemNode::toUnicode(const char *str) {
+#	ifndef UNICODE
 	return (const TCHAR *)str;
-#else
+#	else
 	static TCHAR unicodeString[MAX_PATH];
 	MultiByteToWideChar(CP_ACP, 0, str, strlen(str) + 1, unicodeString, sizeof(unicodeString) / sizeof(TCHAR));
 	return unicodeString;
-#endif
+#	endif
 }
 
 WindowsFilesystemNode::WindowsFilesystemNode() {
 	_isDirectory = true;
-#ifndef _WIN32_WCE
+#	ifndef _WIN32_WCE
 	// Create a virtual root directory for standard Windows system
 	_isValid = false;
 	_path = "";
 	_isPseudoRoot = true;
-#else
+#	else
 	_displayName = "Root";
 	// No need to create a pseudo root directory on Windows CE
 	_isValid = true;
 	_path = "\\";
 	_isPseudoRoot = false;
-#endif
+#	endif
 }
 
 WindowsFilesystemNode::WindowsFilesystemNode(const Common::String &p, const bool currentDir) {
@@ -169,28 +168,27 @@ bool WindowsFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 	assert(_isDirectory);
 
 	if (_isPseudoRoot) {
-#ifndef _WIN32_WCE
+#	ifndef _WIN32_WCE
 		// Drives enumeration
 		TCHAR drive_buffer[100];
 		GetLogicalDriveStrings(sizeof(drive_buffer) / sizeof(TCHAR), drive_buffer);
 
 		for (TCHAR *current_drive = drive_buffer; *current_drive;
-			current_drive += _tcslen(current_drive) + 1) {
-				WindowsFilesystemNode entry;
-				char drive_name[2];
+		     current_drive += _tcslen(current_drive) + 1) {
+			WindowsFilesystemNode entry;
+			char drive_name[2];
 
-				drive_name[0] = toAscii(current_drive)[0];
-				drive_name[1] = '\0';
-				entry._displayName = drive_name;
-				entry._isDirectory = true;
-				entry._isValid = true;
-				entry._isPseudoRoot = false;
-				entry._path = toAscii(current_drive);
-				myList.push_back(new WindowsFilesystemNode(entry));
+			drive_name[0] = toAscii(current_drive)[0];
+			drive_name[1] = '\0';
+			entry._displayName = drive_name;
+			entry._isDirectory = true;
+			entry._isValid = true;
+			entry._isPseudoRoot = false;
+			entry._path = toAscii(current_drive);
+			myList.push_back(new WindowsFilesystemNode(entry));
 		}
-#endif
-	}
-	else {
+#	endif
+	} else {
 		// Files enumeration
 		WIN32_FIND_DATA desc;
 		HANDLE handle;
@@ -250,7 +248,7 @@ bool WindowsFilesystemNode::create(bool isDirectoryFlag) {
 	if (isDirectoryFlag) {
 		success = CreateDirectory(toUnicode(_path.c_str()), NULL) != 0;
 	} else {
-		success = CreateFile(toUnicode(_path.c_str()), GENERIC_READ|GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL) != INVALID_HANDLE_VALUE;
+		success = CreateFile(toUnicode(_path.c_str()), GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL) != INVALID_HANDLE_VALUE;
 	}
 
 	if (success) {
@@ -264,12 +262,13 @@ bool WindowsFilesystemNode::create(bool isDirectoryFlag) {
 				_path += '\\';
 			}
 
-			if (_isDirectory != isDirectoryFlag) warning("failed to create %s: got %s", isDirectoryFlag ? "directory" : "file", _isDirectory ? "directory" : "file");
+			if (_isDirectory != isDirectoryFlag)
+				warning("failed to create %s: got %s", isDirectoryFlag ? "directory" : "file", _isDirectory ? "directory" : "file");
 			return _isDirectory == isDirectoryFlag;
 		}
 
 		warning("WindowsFilesystemNode: Create%s() was a success, but GetFileAttributes() indicates there is no such %s",
-			    isDirectoryFlag ? "Directory" : "File", isDirectoryFlag ? "directory" : "file");
+		        isDirectoryFlag ? "Directory" : "File", isDirectoryFlag ? "directory" : "file");
 		return false;
 	}
 

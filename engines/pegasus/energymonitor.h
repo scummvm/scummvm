@@ -55,9 +55,9 @@ protected:
 // Max is two hours
 static const uint32 kMaxJMPEnergy = 7200;
 
-static const uint32 kCasualEnergy = kMaxJMPEnergy * 100 / 100;      // 100%
-static const uint32 kWorriedEnergy = kMaxJMPEnergy * 50 / 100;      // 50%
-static const uint32 kNervousEnergy = kMaxJMPEnergy * 25 / 100;      // 25%
+static const uint32 kCasualEnergy = kMaxJMPEnergy * 100 / 100; // 100%
+static const uint32 kWorriedEnergy = kMaxJMPEnergy * 50 / 100; // 50%
+static const uint32 kNervousEnergy = kMaxJMPEnergy * 25 / 100; // 25%
 static const uint32 kPanicStrickenEnergy = kMaxJMPEnergy * 5 / 100; // 5%
 
 static const uint32 kFullEnergy = kCasualEnergy;

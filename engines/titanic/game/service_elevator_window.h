@@ -32,11 +32,13 @@ class CServiceElevatorWindow : public CBackground {
 	bool ServiceElevatorFloorChangeMsg(CServiceElevatorFloorChangeMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
+
 public:
 	int _destFloor;
 	bool _notifyFlag;
 	bool _isIndicator;
 	bool _intoSpace;
+
 public:
 	CLASSDEF;
 	CServiceElevatorWindow();

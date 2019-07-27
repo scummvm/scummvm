@@ -24,246 +24,265 @@
 #define MADS_DIALOGS_NEBULAR_H
 
 #include "common/scummsys.h"
-#include "mads/game.h"
 #include "mads/dialogs.h"
+#include "mads/game.h"
 
 namespace MADS {
 
 namespace Nebular {
 
-enum CapitalizationMode { kUppercase = 0, kLowercase = 1, kUpperAndLower = 2 };
+	enum CapitalizationMode { kUppercase = 0,
+		                        kLowercase = 1,
+		                        kUpperAndLower = 2 };
 
-class DialogsNebular : public Dialogs {
-	friend class Dialogs;
-private:
-	int _dialogWidth;
-	CapitalizationMode _capitalizationMode;
+	class DialogsNebular : public Dialogs {
+		friend class Dialogs;
 
-	DialogsNebular(MADSEngine *vm): Dialogs(vm), _capitalizationMode(kUppercase), _dialogWidth(0) {}
+	private:
+		int _dialogWidth;
+		CapitalizationMode _capitalizationMode;
 
-	virtual Common::String getVocab(int vocabId);
+		DialogsNebular(MADSEngine *vm)
+		  : Dialogs(vm)
+		  , _capitalizationMode(kUppercase)
+		  , _dialogWidth(0) {}
 
-	bool textNoun(Common::String &dest, int nounId, const Common::String &source);
+		virtual Common::String getVocab(int vocabId);
 
-	bool commandCheck(const char *idStr, Common::String &valStr, const Common::String &command);
+		bool textNoun(Common::String &dest, int nounId, const Common::String &source);
 
-	void showScummVMSaveDialog();
-	void showScummVMRestoreDialog();
+		bool commandCheck(const char *idStr, Common::String &valStr, const Common::String &command);
 
-public:
-	virtual void showDialog();
+		void showScummVMSaveDialog();
+		void showScummVMRestoreDialog();
 
-	virtual void showItem(int objectId, int messageId, int speech = -1);
+	public:
+		virtual void showDialog();
 
-	virtual bool show(int messageId, int objectId = -1);
-};
+		virtual void showItem(int objectId, int messageId, int speech = -1);
 
-struct HOGANUS {
-	int _bookId;
-	int _pageNum;
-	int _lineNum;
-	int _wordNum;
-	Common::String _word;
-};
+		virtual bool show(int messageId, int objectId = -1);
+	};
 
-class CopyProtectionDialog : public TextDialog {
-private:
-	HOGANUS _hogEntry;
-	Common::String _textInput;
+	struct HOGANUS {
+		int _bookId;
+		int _pageNum;
+		int _lineNum;
+		int _wordNum;
+		Common::String _word;
+	};
 
-	/**
+	class CopyProtectionDialog : public TextDialog {
+	private:
+		HOGANUS _hogEntry;
+		Common::String _textInput;
+
+		/**
 	 * Get a random copy protection entry from the HOGANUS resource
 	 */
-	bool getHogAnusEntry(HOGANUS &entry);
-public:
-	/**
+		bool getHogAnusEntry(HOGANUS &entry);
+
+	public:
+		/**
 	 * Constructor
 	 */
-	CopyProtectionDialog(MADSEngine *vm, bool priorAnswerWrong);
+		CopyProtectionDialog(MADSEngine *vm, bool priorAnswerWrong);
 
-	/**
+		/**
 	 * Show the dialog
 	 */
-	virtual void show();
+		virtual void show();
 
-	bool isCorrectAnswer();
-};
-
-class PictureDialog : public TextDialog {
-private:
-	int _objectId;
-	bool _cyclingActive;
-	byte _palette[PALETTE_SIZE];
-	uint32 _palFlags[PALETTE_COUNT];
-	RGBList _rgbList;
-protected:
-	virtual void save();
-
-	virtual void restore();
-public:
-	PictureDialog(MADSEngine *vm, const Common::Point &pos, int maxChars, int objectId);
-
-	virtual ~PictureDialog();
-};
-
-enum DialogTextAlign { ALIGN_NONE = 0, ALIGN_CENTER = -1, ALIGN_AT_CENTER = -2, ALIGN_RIGHT = -3 };
-
-enum DialogState { DLGSTATE_UNSELECTED = 0, DLGSTATE_SELECTED = 1, DLGSTATE_FOCUSED = 2 };
-
-class GameDialog: public FullScreenDialog {
-	struct DialogLine {
-		bool _active;
-		DialogState _state;
-		Common::Point _pos;
-		int _textDisplayIndex;
-		Common::String _msg;
-		Font *_font;
-		int _widthAdjust;
-
-		DialogLine();
-		DialogLine(const Common::String &s);
+		bool isCorrectAnswer();
 	};
-protected:
-	Common::Array<DialogLine> _lines;
-	int _tempLine;
-	bool _movedFlag;
-	bool _redrawFlag;
-	int _selectedLine;
-	bool _dirFlag;
-	int _menuSpritesIndex;
-	int _lineIndex;
-	int _textLineCount;
 
-	/**
+	class PictureDialog : public TextDialog {
+	private:
+		int _objectId;
+		bool _cyclingActive;
+		byte _palette[PALETTE_SIZE];
+		uint32 _palFlags[PALETTE_COUNT];
+		RGBList _rgbList;
+
+	protected:
+		virtual void save();
+
+		virtual void restore();
+
+	public:
+		PictureDialog(MADSEngine *vm, const Common::Point &pos, int maxChars, int objectId);
+
+		virtual ~PictureDialog();
+	};
+
+	enum DialogTextAlign { ALIGN_NONE = 0,
+		                     ALIGN_CENTER = -1,
+		                     ALIGN_AT_CENTER = -2,
+		                     ALIGN_RIGHT = -3 };
+
+	enum DialogState { DLGSTATE_UNSELECTED = 0,
+		                 DLGSTATE_SELECTED = 1,
+		                 DLGSTATE_FOCUSED = 2 };
+
+	class GameDialog : public FullScreenDialog {
+		struct DialogLine {
+			bool _active;
+			DialogState _state;
+			Common::Point _pos;
+			int _textDisplayIndex;
+			Common::String _msg;
+			Font *_font;
+			int _widthAdjust;
+
+			DialogLine();
+			DialogLine(const Common::String &s);
+		};
+
+	protected:
+		Common::Array<DialogLine> _lines;
+		int _tempLine;
+		bool _movedFlag;
+		bool _redrawFlag;
+		int _selectedLine;
+		bool _dirFlag;
+		int _menuSpritesIndex;
+		int _lineIndex;
+		int _textLineCount;
+
+		/**
 	 * Display the dialog
 	 */
-	virtual void display();
+		virtual void display();
 
-	/**
+		/**
 	 * Reset the lines list for the dialog
 	 */
-	void clearLines();
+		void clearLines();
 
-	/**
+		/**
 	 * Setup lines to be clickable
 	 */
-	void setClickableLines();
+		void setClickableLines();
 
-	/**
+		/**
 	 * Add a quote to the lines list
 	 */
-	void addQuote(int id1, int id2, DialogTextAlign align, const Common::Point &pt, Font *font = nullptr);
+		void addQuote(int id1, int id2, DialogTextAlign align, const Common::Point &pt, Font *font = nullptr);
 
-	/**
+		/**
 	 * Adds a line to the lines list
 	 */
-	void addLine(const Common::String &msg, DialogTextAlign align, const Common::Point &pt, Font *font = nullptr);
+		void addLine(const Common::String &msg, DialogTextAlign align, const Common::Point &pt, Font *font = nullptr);
 
-	/**
+		/**
 	 * Initializes variables
 	 */
-	void initVars();
+		void initVars();
 
-	/**
+		/**
 	 * Sets the display for the screen background behind the dialog
 	 */
-	void setFrame(int frameNumber, int depth);
+		void setFrame(int frameNumber, int depth);
 
-	/**
+		/**
 	 * Choose the background to display for the dialog
 	 */
-	void chooseBackground();
+		void chooseBackground();
 
-	/**
+		/**
 	 * Handle events whilst the dialog is active
 	 */
-	void handleEvents();
+		void handleEvents();
 
-	/**
+		/**
 	 * Refresh the display of the dialog's text
 	 */
-	void refreshText();
-public:
-	/**
+		void refreshText();
+
+	public:
+		/**
 	 * Constructor
 	 */
-	GameDialog(MADSEngine *vm);
+		GameDialog(MADSEngine *vm);
 
-	/**
+		/**
 	 * Destructor
 	 */
-	virtual ~GameDialog();
+		virtual ~GameDialog();
 
-	/**
+		/**
 	 * Show the dialog
 	 */
-	virtual void show();
-};
+		virtual void show();
+	};
 
-class DifficultyDialog : public GameDialog {
-private:
-	/**
+	class DifficultyDialog : public GameDialog {
+	private:
+		/**
 	 * Set the lines for the dialog
 	 */
-	void setLines();
-public:
-	DifficultyDialog(MADSEngine *vm);
+		void setLines();
 
-	/**
+	public:
+		DifficultyDialog(MADSEngine *vm);
+
+		/**
 	 * Display the dialog
 	 */
-	virtual void display();
+		virtual void display();
 
-	/**
+		/**
 	* Show the dialog
 	*/
-	virtual void show();
-};
+		virtual void show();
+	};
 
-class GameMenuDialog : public GameDialog {
-private:
-	/**
+	class GameMenuDialog : public GameDialog {
+	private:
+		/**
 	 * Set the lines for the dialog
 	 */
-	void setLines();
-public:
-	GameMenuDialog(MADSEngine *vm);
+		void setLines();
 
-	/**
+	public:
+		GameMenuDialog(MADSEngine *vm);
+
+		/**
 	* Display the dialog
 	*/
-	virtual void display();
+		virtual void display();
 
-	/**
+		/**
 	* Show the dialog
 	*/
-	virtual void show();
-};
+		virtual void show();
+	};
 
-class OptionsDialog : public GameDialog {
-private:
-	/**
+	class OptionsDialog : public GameDialog {
+	private:
+		/**
 	 * Set the lines for the dialog
 	 */
-	void setLines();
+		void setLines();
 
-	/**
+		/**
 	 * Gets the quote to be shown for an option
 	 */
-	int getOptionQuote(int option);
-public:
-	OptionsDialog(MADSEngine *vm);
+		int getOptionQuote(int option);
 
-	/**
+	public:
+		OptionsDialog(MADSEngine *vm);
+
+		/**
 	* Display the dialog
 	*/
-	virtual void display();
+		virtual void display();
 
-	/**
+		/**
 	* Show the dialog
 	*/
-	virtual void show();
-};
+		virtual void show();
+	};
 
 } // End of namespace Nebular
 

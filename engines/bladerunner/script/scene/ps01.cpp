@@ -25,10 +25,10 @@
 namespace BladeRunner {
 
 enum kPS01Loops {
-	kPS01LoopInshot   = 0,
-	kPS01LoopMainLoop  = 1,
-	kPS01LoopDoorAnim  = 3,
-	kPS01LoopOutshot  = 4,
+	kPS01LoopInshot = 0,
+	kPS01LoopMainLoop = 1,
+	kPS01LoopDoorAnim = 3,
+	kPS01LoopOutshot = 4,
 	kPS01LoopNoSpinner = 5
 };
 
@@ -39,8 +39,8 @@ void SceneScriptPS01::InitializeScene() {
 		Scene_Exit_Add_2D_Exit(1, 344, 288, 584, 384, 2);
 	}
 	Ambient_Sounds_Add_Looping_Sound(kSfxRAIN10, 100, 1, 1);
-	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSPIN3A,  60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B, 60, 180, 16, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN3A, 60, 180, 16, 25, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 60, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
@@ -195,35 +195,33 @@ bool SceneScriptPS01::ClickedOn2DRegion(int region) {
 
 void SceneScriptPS01::SceneFrameAdvanced(int frame) {
 	if (frame == 71
-	 || frame == 188
-	) {
+	    || frame == 188) {
 		Sound_Play(kSfxSPINOPN4, 100, 40, 0, 50);
 	}
 
 	if (frame == 108
-	 || frame == 228
-	) {
+	    || frame == 228) {
 		Sound_Play(kSfxSPINCLS1, 100, 40, 0, 50);
 	}
 
 	if (frame == 1) {
-		Sound_Play(kSfxCARDOWN3,  40, 0, 0, 50);
+		Sound_Play(kSfxCARDOWN3, 40, 0, 0, 50);
 	}
 
 	if (frame == 76) {
-		Sound_Play(kSfxSERVOD1,   50, 0, 0, 50);
+		Sound_Play(kSfxSERVOD1, 50, 0, 0, 50);
 	}
 
 	if (frame == 192) {
-		Sound_Play(kSfxSERVOU1,   50, 0, 0, 50);
+		Sound_Play(kSfxSERVOU1, 50, 0, 0, 50);
 	}
 
 	if (frame == 59) {
-		Sound_Play(kSfxMTLHIT1,   15, 0, 0, 50);
+		Sound_Play(kSfxMTLHIT1, 15, 0, 0, 50);
 	}
 
 	if (frame == 275) {
-		Sound_Play(kSfxCARUP3,    40, 0, 0, 50);
+		Sound_Play(kSfxCARUP3, 40, 0, 0, 50);
 	}
 
 	if (!Game_Flag_Query(kFlagArrivedFromSpinner2)) {
@@ -290,17 +288,17 @@ void SceneScriptPS01::PlayerWalkedIn() {
 			Actor_Clue_Acquire(kActorMcCoy, kClueDispatchHitAndRun, false, kActorDispatcher);
 			ADQ_Add(kActorDispatcher, 80, kAnimationModeTalk);
 			if (Game_Flag_Query(kFlagRC01PoliceDone)) {
-				ADQ_Add(kActorOfficerLeary, 340, kAnimationModeTalk);  // sector 3 - go ahead
+				ADQ_Add(kActorOfficerLeary, 340, kAnimationModeTalk); // sector 3 - go ahead
 			} else {
-				ADQ_Add(kActorOfficerGrayford, 360, kAnimationModeTalk);  // sector 3 - go ahead
+				ADQ_Add(kActorOfficerGrayford, 360, kAnimationModeTalk); // sector 3 - go ahead
 			}
 			ADQ_Add(kActorDispatcher, 90, kAnimationModeTalk);
 			ADQ_Add(kActorDispatcher, 100, kAnimationModeTalk);
 			ADQ_Add(kActorDispatcher, 110, kAnimationModeTalk);
 			if (Game_Flag_Query(kFlagRC01PoliceDone)) {
-				ADQ_Add(kActorOfficerLeary, 350, kAnimationModeTalk);  // sector 3 - responding code 3
+				ADQ_Add(kActorOfficerLeary, 350, kAnimationModeTalk); // sector 3 - responding code 3
 			} else {
-				ADQ_Add(kActorOfficerGrayford, 370, kAnimationModeTalk);  // sector 3 - responding code 3
+				ADQ_Add(kActorOfficerGrayford, 370, kAnimationModeTalk); // sector 3 - responding code 3
 			}
 			ADQ_Add_Pause(1000);
 			ADQ_Add(kActorDispatcher, 120, kAnimationModeTalk);
@@ -331,7 +329,7 @@ void SceneScriptPS01::PlayerWalkedOut() {
 			// Acts 2, 3 - should still use a spinner fly-through transition
 			if (!Game_Flag_Query(kFlagMcCoyInTyrellBuilding)) {
 				// don't play an extra outtake when going to Tyrell Building
-				Outtake_Play(kOuttakeInside2,  true, -1); // available in Acts 1, 2, 3
+				Outtake_Play(kOuttakeInside2, true, -1); // available in Acts 1, 2, 3
 				Outtake_Play(kOuttakeTowards3, true, -1); // available in Acts 1, 2, 3
 			}
 		}

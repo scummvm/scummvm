@@ -31,10 +31,10 @@
 namespace Glk {
 namespace Alan2 {
 
-extern void startDecoding(void);
-extern int decodeChar(void);
-extern void *pushDecode(void);
-extern void popDecode(void *info);
+	extern void startDecoding(void);
+	extern int decodeChar(void);
+	extern void *pushDecode(void);
+	extern void popDecode(void *info);
 
 } // End of namespace Alan2
 } // End of namespace Glk

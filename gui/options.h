@@ -25,20 +25,20 @@
 
 #include "engines/metaengine.h"
 
-#include "gui/dialog.h"
-#include "common/str.h"
 #include "audio/mididrv.h"
+#include "common/str.h"
+#include "gui/dialog.h"
 
 #ifdef GUI_ENABLE_KEYSDIALOG
-#include "gui/KeysDialog.h"
+#	include "gui/KeysDialog.h"
 #endif
 
 #ifdef USE_FLUIDSYNTH
-#include "gui/fluidsynth-dialog.h"
+#	include "gui/fluidsynth-dialog.h"
 #endif
 
 #ifdef USE_LIBCURL
-#include "backends/cloud/storage.h"
+#	include "backends/cloud/storage.h"
 #endif
 
 namespace GUI {
@@ -70,7 +70,7 @@ public:
 	virtual void apply();
 	void close();
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-	const Common::String& getDomain() const { return _domain; }
+	const Common::String &getDomain() const { return _domain; }
 
 	virtual void reflowLayout();
 
@@ -85,7 +85,6 @@ protected:
 	virtual void build();
 	virtual void clean();
 	void rebuild();
-
 
 	void addControlControls(GuiObject *boss, const Common::String &prefix);
 	void addGraphicControls(GuiObject *boss, const Common::String &prefix);
@@ -117,7 +116,6 @@ protected:
 	int _pathsTabId;
 
 private:
-
 	//
 	// Control controls
 	//
@@ -236,7 +234,6 @@ protected:
 	CheckboxWidgetList _engineCheckboxes;
 };
 
-
 class GlobalOptionsDialog : public OptionsDialog {
 public:
 	GlobalOptionsDialog(LauncherDialog *launcher);
@@ -262,11 +259,11 @@ protected:
 	FluidSynthSettingsDialog *_fluidSynthSettingsDialog;
 #endif
 	StaticTextWidget *_savePath;
-	ButtonWidget	 *_savePathClearButton;
+	ButtonWidget *_savePathClearButton;
 	StaticTextWidget *_themePath;
-	ButtonWidget	 *_themePathClearButton;
+	ButtonWidget *_themePathClearButton;
 	StaticTextWidget *_extraPath;
-	ButtonWidget	 *_extraPathClearButton;
+	ButtonWidget *_extraPathClearButton;
 #ifdef DYNAMIC_MODULES
 	StaticTextWidget *_pluginsPath;
 #endif
@@ -283,7 +280,6 @@ protected:
 	PopUpWidget *_guiLanguagePopUp;
 	CheckboxWidget *_guiLanguageUseGameLanguageCheckbox;
 	CheckboxWidget *_useSystemDialogsCheckbox;
-
 
 #ifdef USE_UPDATES
 	StaticTextWidget *_updatesPopUpDesc;
@@ -303,29 +299,29 @@ protected:
 	StaticTextWidget *_storageUsedSpace;
 	StaticTextWidget *_storageLastSyncDesc;
 	StaticTextWidget *_storageLastSync;
-	ButtonWidget	 *_storageConnectButton;
-	ButtonWidget	 *_storageRefreshButton;
-	ButtonWidget	 *_storageDownloadButton;
-	ButtonWidget	 *_runServerButton;
+	ButtonWidget *_storageConnectButton;
+	ButtonWidget *_storageRefreshButton;
+	ButtonWidget *_storageDownloadButton;
+	ButtonWidget *_runServerButton;
 	StaticTextWidget *_serverInfoLabel;
-	ButtonWidget	 *_rootPathButton;
+	ButtonWidget *_rootPathButton;
 	StaticTextWidget *_rootPath;
-	ButtonWidget	 *_rootPathClearButton;
+	ButtonWidget *_rootPathClearButton;
 	StaticTextWidget *_serverPortDesc;
 	EditTextWidget *_serverPort;
-	ButtonWidget	 *_serverPortClearButton;
+	ButtonWidget *_serverPortClearButton;
 	bool _redrawCloudTab;
-#ifdef USE_SDL_NET
+#	ifdef USE_SDL_NET
 	bool _serverWasRunning;
-#endif
+#	endif
 
 	void setupCloudTab();
 
-#ifdef USE_LIBCURL
+#	ifdef USE_LIBCURL
 	void storageInfoCallback(Cloud::Storage::StorageInfoResponse response);
 	void storageListDirectoryCallback(Cloud::Storage::ListDirectoryResponse response);
 	void storageErrorCallback(Networking::ErrorResponse response);
-#endif
+#	endif
 #endif // USE_CLOUD
 };
 

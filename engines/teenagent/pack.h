@@ -20,20 +20,21 @@
  *
  */
 
-
 #ifndef TEENAGENT_PACK_H
 #define TEENAGENT_PACK_H
 
-#include "common/file.h"
 #include "common/array.h"
+#include "common/file.h"
 
 namespace TeenAgent {
 
 class Pack {
 protected:
 	uint32 _fileCount;
+
 public:
-	Pack(): _fileCount(0) {}
+	Pack()
+	  : _fileCount(0) {}
 	virtual ~Pack() {}
 	virtual bool open(const Common::String &filename) = 0;
 	virtual void close() = 0;
@@ -85,8 +86,12 @@ class MemoryPack : public Pack {
 	struct Chunk {
 		byte *data;
 		uint32 size;
-		inline Chunk(): data(0), size(0) {}
-		inline Chunk(const Chunk &c) : data(c.data), size(c.size) { c.reset(); }
+		inline Chunk()
+		  : data(0)
+		  , size(0) {}
+		inline Chunk(const Chunk &c)
+		  : data(c.data)
+		  , size(c.size) { c.reset(); }
 		inline Chunk &operator=(const Chunk &c) {
 			data = c.data;
 			size = c.size;

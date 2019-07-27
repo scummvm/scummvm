@@ -21,20 +21,26 @@
  */
 
 #include "titanic/true_talk/script_handler.h"
+#include "titanic/titanic.h"
 #include "titanic/true_talk/title_engine.h"
 #include "titanic/true_talk/tt_concept.h"
 #include "titanic/true_talk/tt_parser.h"
 #include "titanic/true_talk/tt_sentence.h"
 #include "titanic/true_talk/tt_word.h"
-#include "titanic/titanic.h"
 
 namespace Titanic {
 
 /*------------------------------------------------------------------------*/
 
-CScriptHandler::CScriptHandler(CTitleEngine *owner, int val1, VocabMode vocabMode) :
-		_owner(owner), _script(owner->_script), _parser(this), _inputCtr(0), _concept1P(nullptr),
-		_concept2P(nullptr), _concept3P(nullptr), _concept4P(nullptr) {
+CScriptHandler::CScriptHandler(CTitleEngine *owner, int val1, VocabMode vocabMode)
+  : _owner(owner)
+  , _script(owner->_script)
+  , _parser(this)
+  , _inputCtr(0)
+  , _concept1P(nullptr)
+  , _concept2P(nullptr)
+  , _concept3P(nullptr)
+  , _concept4P(nullptr) {
 	g_vm->_scriptHandler = this;
 	g_vm->_script = _script;
 	g_vm->_exeResources.reset(this, val1, vocabMode);
@@ -75,7 +81,7 @@ ScriptChangedResult CScriptHandler::scriptChanged(TTroomScript *roomScript, TTnp
 }
 
 int CScriptHandler::processInput(TTroomScript *roomScript, TTnpcScript *npcScript,
-		const TTstring &line) {
+                                 const TTstring &line) {
 	if (!roomScript || !line.isValid())
 		return SS_5;
 

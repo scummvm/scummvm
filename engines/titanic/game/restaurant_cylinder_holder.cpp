@@ -25,18 +25,23 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CRestaurantCylinderHolder, CDropTarget)
-	ON_MESSAGE(EjectCylinderMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(QueryCylinderHolderMsg)
-	ON_MESSAGE(QueryCylinderNameMsg)
-	ON_MESSAGE(MouseDragStartMsg)
-	ON_MESSAGE(DropObjectMsg)
+ON_MESSAGE(EjectCylinderMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(QueryCylinderHolderMsg)
+ON_MESSAGE(QueryCylinderNameMsg)
+ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(DropObjectMsg)
 END_MESSAGE_MAP()
 
-CRestaurantCylinderHolder::CRestaurantCylinderHolder() : CDropTarget(),
-	_isOpen(false), _field11C(0), _field12C(0), _field130(0),
-	_ejectSoundName("z#61.wav"), _defaultCursorId(CURSOR_ARROW) {
+CRestaurantCylinderHolder::CRestaurantCylinderHolder()
+  : CDropTarget()
+  , _isOpen(false)
+  , _field11C(0)
+  , _field12C(0)
+  , _field130(0)
+  , _ejectSoundName("z#61.wav")
+  , _defaultCursorId(CURSOR_ARROW) {
 }
 
 void CRestaurantCylinderHolder::save(SimpleFile *file, int indent) {
@@ -71,11 +76,11 @@ bool CRestaurantCylinderHolder::EjectCylinderMsg(CEjectCylinderMsg *msg) {
 
 	if (_isOpen) {
 		playClip(hasCylinder ? "CloseHolder_Full" : "CloseHolder_Empty",
-			MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+		         MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		_dropEnabled = true;
 	} else {
 		playClip(hasCylinder ? "OpenHolder_Full" : "OpenHolder_Empty",
-			MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+		         MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 	}
 
 	playSound(_ejectSoundName, 50);

@@ -26,9 +26,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CToilet, CSGTStateRoom)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(TurnOff)
-	ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(TurnOff)
+ON_MESSAGE(MovieEndMsg)
 END_MESSAGE_MAP()
 
 void CToilet::save(SimpleFile *file, int indent) {
@@ -43,8 +43,8 @@ void CToilet::load(SimpleFile *file) {
 
 bool CToilet::TurnOn(CTurnOn *msg) {
 	if (CSGTStateRoom::_statics->_toilet == "Closed"
-			&& CSGTStateRoom::_statics->_washstand == "Open"
-			&& CSGTStateRoom::_statics->_armchair == "Closed") {
+	    && CSGTStateRoom::_statics->_washstand == "Open"
+	    && CSGTStateRoom::_statics->_armchair == "Closed") {
 		setVisible(true);
 		CSGTStateRoom::_statics->_toilet = "Open";
 

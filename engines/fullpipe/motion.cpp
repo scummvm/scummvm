@@ -22,10 +22,10 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/utils.h"
-#include "fullpipe/statics.h"
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
+#include "fullpipe/statics.h"
+#include "fullpipe/utils.h"
 
 namespace Fullpipe {
 
@@ -43,7 +43,7 @@ void MotionController::enableLinks(const char *linkName, bool enable) {
 
 	MctlCompound *obj = static_cast<MctlCompound *>(this);
 
-	for (uint i = 0;  i < obj->getMotionControllerCount(); i++) {
+	for (uint i = 0; i < obj->getMotionControllerCount(); i++) {
 		MotionController *con = obj->getMotionController(i);
 
 		if (con->_objtype == kObjTypeMovGraph) {
@@ -71,7 +71,7 @@ MovGraphLink *MotionController::getLinkByName(const char *name) {
 	if (_objtype == kObjTypeMctlCompound) {
 		MctlCompound *obj = static_cast<MctlCompound *>(this);
 
-		for (uint i = 0;  i < obj->getMotionControllerCount(); i++) {
+		for (uint i = 0; i < obj->getMotionControllerCount(); i++) {
 			MotionController *con = obj->getMotionController(i);
 
 			if (con->_objtype == kObjTypeMovGraph) {
@@ -636,7 +636,6 @@ MessageQueue *MctlLadder::makeQueue(StaticANIObject *ani, int xpos, int ypos, in
 		return mq;
 	}
 
-
 	mkQueue.ani = ani;
 
 	if (staticsId)
@@ -943,8 +942,7 @@ MessageQueue *MovGraph::startMove(StaticANIObject *ani, int xpos, int ypos, int 
 
 		ExCommand *ex = mq->getExCommandByIndex(0);
 
-		if ((ex->_messageKind != 1 && ex->_messageKind != 20) || ex->_messageNum != ani->_movement->_id ||
-			(ex->_z >= 1 && ex->_z <= ani->_movement->_currDynamicPhaseIndex)) {
+		if ((ex->_messageKind != 1 && ex->_messageKind != 20) || ex->_messageNum != ani->_movement->_id || (ex->_z >= 1 && ex->_z <= ani->_movement->_currDynamicPhaseIndex)) {
 			mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
 
 			ex = new ExCommand(ani->_id, 21, 0, 0, 0, 0, 1, 0, 0, 0);
@@ -1077,9 +1075,7 @@ MessageQueue *MovGraph::makeQueue(StaticANIObject *subj, int xpos, int ypos, int
 
 					ExCommand *ex = mq->getExCommandByIndex(0);
 
-					if ((ex->_messageKind != 1 && ex->_messageKind != 20) ||
-						ex->_messageNum != subj->_movement->_id ||
-						(ex->_z >= 1 && ex->_z <= subj->_movement->_currDynamicPhaseIndex))
+					if ((ex->_messageKind != 1 && ex->_messageKind != 20) || ex->_messageNum != subj->_movement->_id || (ex->_z >= 1 && ex->_z <= subj->_movement->_currDynamicPhaseIndex))
 						subj->playIdle();
 				}
 			}
@@ -1191,8 +1187,7 @@ MessageQueue *MovGraph::makeWholeQueue(StaticANIObject *ani, MovArr *movarr, int
 
 	for (int i = 0; i < movarr->_movStepCount; i++) {
 		while (i < movarr->_movStepCount - 1) {
-			if (movarr->_movSteps[i    ]->link->_dwordArray1[movarr->_movSteps[i - 1]->sfield_0 + _field_44] !=
-				movarr->_movSteps[i + 1]->link->_dwordArray1[movarr->_movSteps[i    ]->sfield_0 + _field_44])
+			if (movarr->_movSteps[i]->link->_dwordArray1[movarr->_movSteps[i - 1]->sfield_0 + _field_44] != movarr->_movSteps[i + 1]->link->_dwordArray1[movarr->_movSteps[i]->sfield_0 + _field_44])
 				break;
 			i++;
 		}
@@ -1384,7 +1379,7 @@ bool MovGraph::getNearestPoint(int unusedArg, Common::Point *p, MovArr *movarr) 
 	for (LinkList::iterator i = _links.begin(); i != _links.end(); ++i) {
 		MovGraphLink *lnk = static_cast<MovGraphLink *>(*i);
 
-		if ((lnk->_flags & 0x10000000) && !(lnk->_flags & 0x20000000) ) {
+		if ((lnk->_flags & 0x10000000) && !(lnk->_flags & 0x20000000)) {
 			double dx1 = lnk->_graphSrc->_x - p->x;
 			double dy1 = lnk->_graphSrc->_y - p->y;
 			double dx2 = lnk->_graphDst->_x - p->x;
@@ -1462,9 +1457,7 @@ Common::Array<MovArr *> *MovGraph::getHitPoints(int x, int y, int *arrSize, int 
 				movarr = new MovArr;
 
 				movarr->_link = lnk;
-				movarr->_dist = ((double)(lnk->_graphSrc->_y - lnk->_graphDst->_y) * (double)(lnk->_graphSrc->_y - point.y) +
-								 (double)(lnk->_graphDst->_x - lnk->_graphSrc->_x) * (double)(point.x - lnk->_graphSrc->_x)) /
-					lnk->_length / lnk->_length;
+				movarr->_dist = ((double)(lnk->_graphSrc->_y - lnk->_graphDst->_y) * (double)(lnk->_graphSrc->_y - point.y) + (double)(lnk->_graphDst->_x - lnk->_graphSrc->_x) * (double)(point.x - lnk->_graphSrc->_x)) / lnk->_length / lnk->_length;
 				movarr->_point = point;
 
 				arr->push_back(movarr);
@@ -1491,9 +1484,7 @@ Common::Array<MovArr *> *MovGraph::getHitPoints(int x, int y, int *arrSize, int 
 					} else {
 						movarr = new MovArr;
 						movarr->_link = lnk;
-						movarr->_dist = ((double)(lnk->_graphSrc->_y - lnk->_graphDst->_y) * (double)(lnk->_graphSrc->_y - y) +
-										 (double)(lnk->_graphDst->_x - lnk->_graphSrc->_x) * (double)(x - lnk->_graphSrc->_x)) /
-							lnk->_length / lnk->_length;
+						movarr->_dist = ((double)(lnk->_graphSrc->_y - lnk->_graphDst->_y) * (double)(lnk->_graphSrc->_y - y) + (double)(lnk->_graphDst->_x - lnk->_graphSrc->_x) * (double)(x - lnk->_graphSrc->_x)) / lnk->_length / lnk->_length;
 						movarr->_point.x = x;
 						movarr->_point.y = y;
 
@@ -1674,8 +1665,8 @@ int MctlGraph::getDirByStatics(int idx, int staticsId) {
 int MctlGraph::getDirByMovement(int idx, int movId) {
 	for (int i = 0; i < 4; i++)
 		if (_items2[idx]._subItems[i]._walk[0]._movementId == movId
-		 || _items2[idx]._subItems[i]._walk[1]._movementId == movId
-		 || _items2[idx]._subItems[i]._walk[2]._movementId == movId)
+		    || _items2[idx]._subItems[i]._walk[1]._movementId == movId
+		    || _items2[idx]._subItems[i]._walk[2]._movementId == movId)
 			return i;
 
 	return -1;
@@ -1742,7 +1733,7 @@ bool MctlGraph::fillData(StaticANIObject *obj, MctlAni &item) {
 		for (int act = 0; act < 3; act++) {
 			int idx = 0;
 
-			switch(act) {
+			switch (act) {
 			case 0:
 				idx = varD->getSubVarAsInt("Start");
 				break;
@@ -1769,7 +1760,7 @@ bool MctlGraph::fillData(StaticANIObject *obj, MctlAni &item) {
 		for (int act = 0; act < 4; act++) {
 			int idx = 0;
 
-			switch(act) {
+			switch (act) {
 			case 0:
 				idx = varD->getSubVarAsInt("TurnR");
 				break;
@@ -1799,7 +1790,7 @@ bool MctlGraph::fillData(StaticANIObject *obj, MctlAni &item) {
 		for (int act = 0; act < 4; act++) {
 			int idx = 0;
 
-			switch(act) {
+			switch (act) {
 			case 0:
 				idx = varD->getSubVarAsInt("TurnSR");
 				break;
@@ -1828,7 +1819,6 @@ bool MctlGraph::fillData(StaticANIObject *obj, MctlAni &item) {
 
 		item._subItems[dir]._staticsId1 = item._subItems[dir]._walk[0]._mov->_staticsObj1->_staticsId;
 		item._subItems[dir]._staticsId2 = item._subItems[dir]._walk[0]._mov->_staticsObj2->_staticsId;
-
 	}
 	return true;
 }
@@ -1976,12 +1966,12 @@ MessageQueue *MctlGraph::makeWholeQueue(MctlMQ &mctlMQ) {
 				mg2i = &_items2[mctlMQ.index]._subItems[mctlMQ.items[i].subIndex]._turn[mctlMQ.items[i + 1].subIndex];
 			}
 			if (i < numItems - 2
-				|| (mctlMQ.items[i].x == mctlMQ.items[i + 1].x
-					&& mctlMQ.items[i].y == mctlMQ.items[i + 1].y)
-				 || mctlMQ.items[i].x == -1
-				 || mctlMQ.items[i].y == -1
-				 || mctlMQ.items[i + 1].x == -1
-				 || mctlMQ.items[i + 1].y == -1) {
+			    || (mctlMQ.items[i].x == mctlMQ.items[i + 1].x
+			        && mctlMQ.items[i].y == mctlMQ.items[i + 1].y)
+			    || mctlMQ.items[i].x == -1
+			    || mctlMQ.items[i].y == -1
+			    || mctlMQ.items[i + 1].x == -1
+			    || mctlMQ.items[i + 1].y == -1) {
 
 				ExCommand *ex = new ExCommand(_items2[mctlMQ.index]._objectId, 1, mg2i->_movementId, 0, 0, 0, 1, 0, 0, 0);
 
@@ -2029,10 +2019,10 @@ MessageQueue *MctlGraph::makeWholeQueue(MctlMQ &mctlMQ) {
 			movinfo.distance2 = mctlMQ.items[i + 2].distance;
 
 			if (i < numItems - 4
-				&& mctlMQ.items[i + 2].subIndex != 10
-				&& mctlMQ.items[i + 3].subIndex != 10
-				&& mctlMQ.items[i + 2].subIndex != mctlMQ.items[i + 3].subIndex
-				&& mctlMQ.items[i + 4].subIndex == 10) {
+			    && mctlMQ.items[i + 2].subIndex != 10
+			    && mctlMQ.items[i + 3].subIndex != 10
+			    && mctlMQ.items[i + 2].subIndex != mctlMQ.items[i + 3].subIndex
+			    && mctlMQ.items[i + 4].subIndex == 10) {
 
 				MG2I *m = &_items2[mctlMQ.index]._subItems[mctlMQ.items[i + 2].subIndex]._turn[mctlMQ.items[i + 3].subIndex];
 
@@ -2045,9 +2035,9 @@ MessageQueue *MctlGraph::makeWholeQueue(MctlMQ &mctlMQ) {
 				}
 
 			} else if (i < numItems - 3
-				&& mctlMQ.items[i + 2].subIndex != 10
-				&& mctlMQ.items[i + 3].subIndex != 10
-				&& mctlMQ.items[i + 2].subIndex != mctlMQ.items[i + 3].subIndex) {
+			           && mctlMQ.items[i + 2].subIndex != 10
+			           && mctlMQ.items[i + 3].subIndex != 10
+			           && mctlMQ.items[i + 2].subIndex != mctlMQ.items[i + 3].subIndex) {
 
 				MG2I *m = &_items2[mctlMQ.index]._subItems[mctlMQ.items[i + 2].subIndex]._turnS[mctlMQ.items[i + 3].subIndex];
 				movinfo.pt2.x -= m->_mx;
@@ -2352,8 +2342,8 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 			ExCommand *ex = mq->getExCommandByIndex(0);
 
 			if (ex && (ex->_messageKind == 1 || ex->_messageKind == 20)
-					&& picAniInfo.movementId == ex->_messageNum
-					&& picAniInfo.someDynamicPhaseIndex == ex->_z) {
+			    && picAniInfo.movementId == ex->_messageNum
+			    && picAniInfo.someDynamicPhaseIndex == ex->_z) {
 				mq->deleteExCommandByIndex(0, 1);
 			} else {
 				ex = new ExCommand(picAniInfo.objectId, 5, ex->_messageNum, obj->_ox, obj->_oy, 0, 1, 0, 0, 0);
@@ -2442,7 +2432,7 @@ int MctlGraph::getLinkDir(MovGraphLinkList *linkList, int idx, Common::Rect *rec
 		}
 	}
 
- LABEL_7:
+LABEL_7:
 	if (rect) {
 		rect->left = node3->_x;
 		rect->top = node3->_y;
@@ -2565,16 +2555,16 @@ MessageQueue *MctlGraph::makeLineQueue(MctlMQ *info) {
 
 	if (info->flags & 2) {
 		ex = new ExCommand(
-							_items2[info->index]._objectId,
-							5,
-							_items2[info->index]._subItems[info->subIndex]._walk[1]._movementId,
-							info->pt1.x,
-							info->pt1.y,
-							0,
-							1,
-							0,
-							0,
-							0);
+		  _items2[info->index]._objectId,
+		  5,
+		  _items2[info->index]._subItems[info->subIndex]._walk[1]._movementId,
+		  info->pt1.x,
+		  info->pt1.y,
+		  0,
+		  1,
+		  0,
+		  0,
+		  0);
 
 		ex->_z = info->distance1;
 
@@ -2583,16 +2573,16 @@ MessageQueue *MctlGraph::makeLineQueue(MctlMQ *info) {
 		ex->_excFlags |= 2;
 	} else {
 		ex = new ExCommand(
-							 _items2[info->index]._objectId,
-							 5,
-							 _items2[info->index]._subItems[info->subIndex]._walk[0]._movementId,
-							 info->pt1.x,
-							 info->pt1.y,
-							 0,
-							 1,
-							 0,
-							 0,
-							 0);
+		  _items2[info->index]._objectId,
+		  5,
+		  _items2[info->index]._subItems[info->subIndex]._walk[0]._movementId,
+		  info->pt1.x,
+		  info->pt1.y,
+		  0,
+		  1,
+		  0,
+		  0,
+		  0);
 
 		ex->_z = info->distance1;
 
@@ -2602,13 +2592,13 @@ MessageQueue *MctlGraph::makeLineQueue(MctlMQ *info) {
 		mq->addExCommandToEnd(ex);
 
 		ex = _aniHandler.createCommand(
-								  _items2[info->index]._subItems[info->subIndex]._walk[0]._mov,
-								  _items2[info->index]._objectId,
-								  x1,
-								  y1,
-								  x2,
-								  y2,
-								  -1);
+		  _items2[info->index]._subItems[info->subIndex]._walk[0]._mov,
+		  _items2[info->index]._objectId,
+		  x1,
+		  y1,
+		  x2,
+		  y2,
+		  -1);
 		ex->_parId = mq->_id;
 		ex->_param = _items2[info->index]._obj->_odelay;
 	}
@@ -2624,13 +2614,13 @@ MessageQueue *MctlGraph::makeLineQueue(MctlMQ *info) {
 			par = -1;
 
 		ex = _aniHandler.createCommand(
-								  _items2[info->index]._subItems[info->subIndex]._walk[1]._mov,
-								  _items2[info->index]._objectId,
-								  x1,
-								  y1,
-								  x2,
-								  y2,
-								  par);
+		  _items2[info->index]._subItems[info->subIndex]._walk[1]._mov,
+		  _items2[info->index]._objectId,
+		  x1,
+		  y1,
+		  x2,
+		  y2,
+		  par);
 		ex->_parId = mq->_id;
 		ex->_param = _items2[info->index]._obj->_odelay;
 		mq->addExCommandToEnd(ex);
@@ -2638,13 +2628,13 @@ MessageQueue *MctlGraph::makeLineQueue(MctlMQ *info) {
 
 	if (!(info->flags & 4)) {
 		ex = _aniHandler.createCommand(
-								  _items2[info->index]._subItems[info->subIndex]._walk[2]._mov,
-								  _items2[info->index]._objectId,
-								  x1,
-								  y1,
-								  x2,
-								  y2,
-								  -1);
+		  _items2[info->index]._subItems[info->subIndex]._walk[2]._mov,
+		  _items2[info->index]._objectId,
+		  x1,
+		  y1,
+		  x2,
+		  y2,
+		  -1);
 		ex->_parId = mq->_id;
 		ex->_param = _items2[info->index]._obj->_odelay;
 
@@ -2857,7 +2847,6 @@ MovGraphLink::~MovGraphLink() {
 	_dwordArray2.clear();
 }
 
-
 bool MovGraphLink::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "MovGraphLink::load()");
 
@@ -3029,7 +3018,6 @@ Common::Rect ReactPolygonal::getBBox() {
 
 	return _bbox;
 }
-
 
 bool MovGraphReact::pointInRegion(int x, int y) {
 	if (_points.size() < 3) {

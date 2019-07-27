@@ -24,19 +24,19 @@
 
 #include "zvision/scripting/controls/slot_control.h"
 
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/zvision.h"
 
 #include "common/stream.h"
 
 namespace ZVision {
 
 SlotControl::SlotControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)
-	: Control(engine, key, CONTROL_SLOT),
-	  _cursor(CursorIndex_Active),
-	  _distanceId('0') {
+  : Control(engine, key, CONTROL_SLOT)
+  , _cursor(CursorIndex_Active)
+  , _distanceId('0') {
 
 	_renderedItem = 0;
 	_bkg = NULL;

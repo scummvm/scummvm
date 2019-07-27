@@ -20,9 +20,9 @@
  *
  */
 
+#include "neverhood/modules/module2400.h"
 #include "neverhood/modules/module1000_sprites.h"
 #include "neverhood/modules/module1200_sprites.h"
-#include "neverhood/modules/module2400.h"
 #include "neverhood/modules/module2100_sprites.h"
 #include "neverhood/modules/module2200_sprites.h"
 #include "neverhood/modules/module2400_sprites.h"
@@ -31,7 +31,7 @@
 namespace Neverhood {
 
 Module2400::Module2400(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule) {
+  : Module(vm, parentModule) {
 
 	_vm->_soundMan->addMusic(0x202D1010, 0xB110382D);
 
@@ -39,7 +39,6 @@ Module2400::Module2400(NeverhoodEngine *vm, Module *parentModule, int which)
 		createScene(_vm->gameState().sceneNum, -1);
 	else
 		createScene(0, 0);
-
 }
 
 Module2400::~Module2400() {
@@ -152,8 +151,7 @@ void Module2400::updateScene() {
 }
 
 static const NPoint kScene2401Points[] = {
-	{384, 389}, {406, 389}, {429, 389},
-	{453, 389}, {477, 389}
+	{ 384, 389 }, { 406, 389 }, { 429, 389 }, { 453, 389 }, { 477, 389 }
 };
 
 static const uint32 kScene2401FileHashes1[] = {
@@ -177,8 +175,12 @@ static const NRect kScene2401Rects[] = {
 };
 
 Scene2401::Scene2401(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _countdown1(0), _countdown2(0), _unkFlag(false),
-	_soundToggle(false), _asWaterSpitIndex(0) {
+  : Scene(vm, parentModule)
+  , _countdown1(0)
+  , _countdown2(0)
+  , _unkFlag(false)
+  , _soundToggle(false)
+  , _asWaterSpitIndex(0) {
 
 	_vm->gameModule()->initWaterPipesPuzzle();
 
@@ -229,7 +231,6 @@ Scene2401::Scene2401(NeverhoodEngine *vm, Module *parentModule, int which)
 		setMessageList(0x004B2F78);
 		_asDoor = insertSprite<AsScene2401Door>(false);
 	}
-
 }
 
 void Scene2401::update() {
@@ -272,7 +273,6 @@ void Scene2401::update() {
 		sendMessage(_asFlowingWater, 0x2003, 0);
 
 	Scene::update();
-
 }
 
 uint32 Scene2401::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -356,7 +356,9 @@ static const uint32 kScene2402FileHashes[] = {
 };
 
 Scene2402::Scene2402(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _countdown(0), _soundToggle(false) {
+  : Scene(vm, parentModule)
+  , _countdown(0)
+  , _soundToggle(false) {
 
 	Sprite *tempSprite;
 
@@ -391,12 +393,11 @@ Scene2402::Scene2402(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	tempSprite = insertStaticSprite(0x081A60A8, 1100);
-	_ssDoorFrame = (StaticSprite*)insertStaticSprite(0x406C0AE0, 1100);
+	_ssDoorFrame = (StaticSprite *)insertStaticSprite(0x406C0AE0, 1100);
 	_klaymen->setClipRect(_ssDoorFrame->getDrawRect().x, 0, 639, tempSprite->getDrawRect().y2());
 	_asDoor = insertSprite<AsScene2402Door>(this, which == 0);
 	insertSprite<AsScene2402TV>(_klaymen);
 	insertStaticSprite(0x3A01A020, 200);
-
 }
 
 Scene2402::~Scene2402() {
@@ -458,7 +459,7 @@ void Scene2402::playPipeSound(uint32 fileHash) {
 }
 
 Scene2403::Scene2403(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule) {
+  : Scene(vm, parentModule) {
 
 	Sprite *tempSprite1, *tempSprite2, *tempSprite3;
 
@@ -551,7 +552,7 @@ uint32 Scene2403::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene2406::Scene2406(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule) {
+  : Scene(vm, parentModule) {
 
 	Sprite *tempSprite1, *tempSprite2;
 
@@ -626,7 +627,6 @@ Scene2406::Scene2406(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	tempSprite2 = insertSprite<AsScene1002KlaymenLadderHands>(_klaymen);
 	tempSprite2->setClipRect(_clipRects[1]);
-
 }
 
 uint32 Scene2406::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {

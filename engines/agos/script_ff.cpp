@@ -20,20 +20,18 @@
  *
  */
 
-
-
 #ifdef ENABLE_AGOS2
 
-#include "common/system.h"
+#	include "common/system.h"
 
-#include "agos/animation.h"
-#include "agos/agos.h"
-#include "agos/intern.h"
-#include "agos/sound.h"
+#	include "agos/agos.h"
+#	include "agos/animation.h"
+#	include "agos/intern.h"
+#	include "agos/sound.h"
 
 namespace AGOS {
 
-#define OPCODE(x)	_OPCODE(AGOSEngine_Feeble, x)
+#	define OPCODE(x) _OPCODE(AGOSEngine_Feeble, x)
 
 void AGOSEngine_Feeble::setupOpcodes() {
 	static const OpcodeEntryFeeble opcodes[] = {
@@ -295,7 +293,7 @@ void AGOSEngine_Feeble::setupOpcodes() {
 
 void AGOSEngine_Feeble::executeOpcode(int opcode) {
 	OpcodeProcFeeble op = _opcodesFeeble[opcode].proc;
-	(this->*op) ();
+	(this->*op)();
 }
 
 void AGOSEngine_Feeble::setLoyaltyRating(byte rating) {
@@ -549,26 +547,9 @@ void AGOSEngine_Feeble::off_checkPaths() {
 	count = _variableArray2[38];
 	for (i = 0; i < count; i++) {
 		uint8 val = pathVal1[2];
-		if (val == _variableArray2[50] ||
-			val == _variableArray2[51] ||
-			val == _variableArray2[201] ||
-			val == _variableArray2[203] ||
-			val == _variableArray2[205] ||
-			val == _variableArray2[207] ||
-			val == _variableArray2[209] ||
-			val == _variableArray2[211] ||
-			val == _variableArray2[213] ||
-			val == _variableArray2[215] ||
-			val == _variableArray2[219] ||
-			val == _variableArray2[220] ||
-			val == _variableArray2[221] ||
-			val == _variableArray2[222] ||
-			val == _variableArray2[223] ||
-			val == _variableArray2[224] ||
-			val == _variableArray2[225] ||
-			val == _variableArray2[226]) {
-				result = true;
-				break;
+		if (val == _variableArray2[50] || val == _variableArray2[51] || val == _variableArray2[201] || val == _variableArray2[203] || val == _variableArray2[205] || val == _variableArray2[207] || val == _variableArray2[209] || val == _variableArray2[211] || val == _variableArray2[213] || val == _variableArray2[215] || val == _variableArray2[219] || val == _variableArray2[220] || val == _variableArray2[221] || val == _variableArray2[222] || val == _variableArray2[223] || val == _variableArray2[224] || val == _variableArray2[225] || val == _variableArray2[226]) {
+			result = true;
+			break;
 		}
 		pathVal1 += 4;
 	}

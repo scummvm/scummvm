@@ -35,4 +35,4 @@ struct WMEGameDescription {
 
 }
 
-#endif  /* WINTERMUTE_GAME_DESCRIPTION_H_ */
+#endif /* WINTERMUTE_GAME_DESCRIPTION_H_ */

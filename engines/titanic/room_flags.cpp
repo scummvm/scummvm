@@ -21,8 +21,8 @@
  */
 
 #include "titanic/room_flags.h"
-#include "titanic/titanic.h"
 #include "titanic/support/strings.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -182,7 +182,7 @@ CString CRoomFlags::getRoomDesc() const {
 		case 0xCC971:
 			return str[THE_EMBARKATION_LOBBY];
 		case 0xF34DB:
-			return  str[THE_MUSIC_ROOM];
+			return str[THE_MUSIC_ROOM];
 		default:
 			break;
 		}
@@ -485,9 +485,7 @@ bool CRoomFlags::compareLocation(uint flags1, uint flags2) {
 	CRoomFlags f1(flags1);
 	CRoomFlags f2(flags2);
 
-	return f1.getElevatorNum() == f2.getElevatorNum() &&
-		f1.getFloorNum() == f2.getFloorNum() &&
-		f1.getRoomNum() == f2.getRoomNum();
+	return f1.getElevatorNum() == f2.getElevatorNum() && f1.getFloorNum() == f2.getFloorNum() && f1.getRoomNum() == f2.getRoomNum();
 }
 
 bool CRoomFlags::isTitania(uint flags1, uint flags2) {

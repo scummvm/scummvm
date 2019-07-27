@@ -25,9 +25,9 @@
 
 #include "common/array.h"
 #include "common/fs.h"
-#include "common/str.h"
 #include "common/singleton.h"
 #include "common/str-array.h"
+#include "common/str.h"
 
 #ifdef USE_TRANSLATION
 
@@ -44,8 +44,12 @@ struct TLanguage {
 	const char *name;
 	int id;
 
-	TLanguage() : name(nullptr), id(0) {}
-	TLanguage(const char *n, int i) : name(n), id(i) {}
+	TLanguage()
+	  : name(nullptr)
+	  , id(0) {}
+	TLanguage(const char *n, int i)
+	  : name(n)
+	  , id(i) {}
 };
 
 bool operator<(const TLanguage &l, const TLanguage &r);
@@ -229,15 +233,15 @@ private:
 
 } // End of namespace Common
 
-#define TransMan Common::TranslationManager::instance()
+#	define TransMan Common::TranslationManager::instance()
 
-#define _(str) TransMan.getTranslation(str)
-#define _c(str, context) TransMan.getTranslation(str, context)
+#	define _(str) TransMan.getTranslation(str)
+#	define _c(str, context) TransMan.getTranslation(str, context)
 
 #else // !USE_TRANSLATION
 
-#define _(str) str
-#define _c(str, context) str
+#	define _(str) str
+#	define _c(str, context) str
 
 #endif // USE_TRANSLATION
 

@@ -31,11 +31,15 @@ class CMaitreDLegs : public CMaitreDProdReceptor {
 	DECLARE_MESSAGE_MAP;
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool AnimateMaitreDMsg(CAnimateMaitreDMsg *msg);
+
 private:
 	bool _flag;
+
 public:
 	CLASSDEF;
-	CMaitreDLegs() : CMaitreDProdReceptor(), _flag(true) {}
+	CMaitreDLegs()
+	  : CMaitreDProdReceptor()
+	  , _flag(true) {}
 
 	/**
 	 * Save the data for the class to file

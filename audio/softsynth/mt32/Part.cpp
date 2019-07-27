@@ -38,7 +38,8 @@ static const Bit8u PartialMixStruct[13] = {
 	1, 3, 3, 2, 2, 2, 2
 };
 
-RhythmPart::RhythmPart(Synth *useSynth, unsigned int usePartNum): Part(useSynth, usePartNum) {
+RhythmPart::RhythmPart(Synth *useSynth, unsigned int usePartNum)
+  : Part(useSynth, usePartNum) {
 	strcpy(name, "Rhythm");
 	rhythmTemp = &synth->mt32ram.rhythmTemp[0];
 	refresh();
@@ -215,7 +216,7 @@ void RhythmPart::setProgram(unsigned int patchNum) {
 	synth->printDebug("%s: Attempt to set program (%d) on rhythm is invalid", name, patchNum);
 }
 #else
-void RhythmPart::setProgram(unsigned int) { }
+void RhythmPart::setProgram(unsigned int) {}
 #endif
 
 void Part::setProgram(unsigned int patchNum) {
@@ -405,12 +406,12 @@ void RhythmPart::noteOn(unsigned int midiKey, unsigned int velocity) {
 	}
 #if MT32EMU_MONITOR_INSTRUMENTS > 0
 	synth->printDebug("%s (%s): Start poly (drum %d, timbre %d): midiKey %u, key %u, velo %u, mod %u, exp %u, bend %u", name, currentInstr, drumNum, absTimbreNum, midiKey, key, velocity, modulation, expression, pitchBend);
-#if MT32EMU_MONITOR_INSTRUMENTS > 1
+#	if MT32EMU_MONITOR_INSTRUMENTS > 1
 	// According to info from Mok, keyShift does not appear to affect anything on rhythm part on LAPC-I, but may do on MT-32 - needs investigation
 	synth->printDebug(" Patch: (timbreGroup %u), (timbreNum %u), (keyShift %u), fineTune %u, benderRange %u, assignMode %u, (reverbSwitch %u)", patchTemp->patch.timbreGroup, patchTemp->patch.timbreNum, patchTemp->patch.keyShift, patchTemp->patch.fineTune, patchTemp->patch.benderRange, patchTemp->patch.assignMode, patchTemp->patch.reverbSwitch);
 	synth->printDebug(" PatchTemp: outputLevel %u, (panpot %u)", patchTemp->outputLevel, patchTemp->panpot);
 	synth->printDebug(" RhythmTemp: timbre %u, outputLevel %u, panpot %u, reverbSwitch %u", rhythmTemp[drumNum].timbre, rhythmTemp[drumNum].outputLevel, rhythmTemp[drumNum].panpot, rhythmTemp[drumNum].reverbSwitch);
-#endif
+#	endif
 #endif
 	playPoly(drumCache[drumNum], &rhythmTemp[drumNum], midiKey, key, velocity);
 }
@@ -422,10 +423,10 @@ void Part::noteOn(unsigned int midiKey, unsigned int velocity) {
 	}
 #if MT32EMU_MONITOR_INSTRUMENTS > 0
 	synth->printDebug("%s (%s): Start poly: midiKey %u, key %u, velo %u, mod %u, exp %u, bend %u", name, currentInstr, midiKey, key, velocity, modulation, expression, pitchBend);
-#if MT32EMU_MONITOR_INSTRUMENTS > 1
+#	if MT32EMU_MONITOR_INSTRUMENTS > 1
 	synth->printDebug(" Patch: timbreGroup %u, timbreNum %u, keyShift %u, fineTune %u, benderRange %u, assignMode %u, reverbSwitch %u", patchTemp->patch.timbreGroup, patchTemp->patch.timbreNum, patchTemp->patch.keyShift, patchTemp->patch.fineTune, patchTemp->patch.benderRange, patchTemp->patch.assignMode, patchTemp->patch.reverbSwitch);
 	synth->printDebug(" PatchTemp: outputLevel %u, panpot %u", patchTemp->outputLevel, patchTemp->panpot);
-#endif
+#	endif
 #endif
 	playPoly(patchCache, NULL, midiKey, key, velocity);
 }
@@ -473,7 +474,8 @@ void Part::playPoly(const PatchCache cache[4], const MemParams::RhythmTemp *rhyt
 	if ((patchTemp->patch.assignMode & 2) == 0) {
 		// Single-assign mode
 		abortFirstPoly(key);
-		if (synth->isAbortingPoly()) return;
+		if (synth->isAbortingPoly())
+			return;
 	}
 
 	if (!synth->partialManager->freePartials(needPartials, partNum)) {
@@ -483,7 +485,8 @@ void Part::playPoly(const PatchCache cache[4], const MemParams::RhythmTemp *rhyt
 #endif
 		return;
 	}
-	if (synth->isAbortingPoly()) return;
+	if (synth->isAbortingPoly())
+		return;
 
 	Poly *poly = synth->partialManager->assignPolyToPart(this);
 	if (poly == NULL) {
@@ -609,7 +612,9 @@ void Part::partialDeactivated(Poly *poly) {
 	}
 }
 
-PolyList::PolyList() : firstPoly(NULL), lastPoly(NULL) {}
+PolyList::PolyList()
+  : firstPoly(NULL)
+  , lastPoly(NULL) {}
 
 bool PolyList::isEmpty() const {
 #ifdef MT32EMU_POLY_LIST_DEBUG
@@ -677,7 +682,7 @@ Poly *PolyList::takeFirst() {
 	return oldFirst;
 }
 
-void PolyList::remove(Poly * const polyToRemove) {
+void PolyList::remove(Poly *const polyToRemove) {
 	if (polyToRemove == firstPoly) {
 		takeFirst();
 		return;

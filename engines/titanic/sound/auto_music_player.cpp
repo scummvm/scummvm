@@ -25,11 +25,12 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CAutoMusicPlayer, CAutoMusicPlayerBase)
-	ON_MESSAGE(EnterRoomMsg)
-	ON_MESSAGE(LeaveRoomMsg)
+ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(LeaveRoomMsg)
 END_MESSAGE_MAP()
 
-CAutoMusicPlayer::CAutoMusicPlayer() : CAutoMusicPlayerBase() {
+CAutoMusicPlayer::CAutoMusicPlayer()
+  : CAutoMusicPlayerBase() {
 }
 
 void CAutoMusicPlayer::save(SimpleFile *file, int indent) {

@@ -28,9 +28,22 @@
 
 namespace Glk {
 
-enum FACES { MONOR, MONOB, MONOI, MONOZ, PROPR, PROPB, PROPI, PROPZ, CUSTOM, CUSTOM2 };
-enum TYPES { MONOF, PROPF };
-enum STYLES { FONTR, FONTB, FONTI, FONTZ };
+enum FACES { MONOR,
+	           MONOB,
+	           MONOI,
+	           MONOZ,
+	           PROPR,
+	           PROPB,
+	           PROPI,
+	           PROPZ,
+	           CUSTOM,
+	           CUSTOM2 };
+enum TYPES { MONOF,
+	           PROPF };
+enum STYLES { FONTR,
+	            FONTB,
+	            FONTI,
+	            FONTZ };
 
 /**
  * Font configuration info
@@ -39,6 +52,7 @@ struct FontInfo {
 public:
 	static uint _caretColor, _caretSave;
 	static int _caretShape;
+
 public:
 	double _size;
 	double _aspect;
@@ -57,7 +71,6 @@ public:
 	 * Constructor
 	 */
 	FontInfo();
-
 
 	/**
 	 * Draws the text input caret at the given position

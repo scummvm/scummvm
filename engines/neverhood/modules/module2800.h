@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE2800_H
 #define NEVERHOOD_MODULES_MODULE2800_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -35,6 +35,7 @@ class Module2800 : public Module {
 public:
 	Module2800(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module2800();
+
 protected:
 	int _sceneNum;
 	uint32 _currentMusicFileHash;
@@ -48,6 +49,7 @@ class Scene2801 : public Scene {
 public:
 	Scene2801(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Scene2801();
+
 protected:
 	Sprite *_asTape;
 	uint32 _paletteHash;
@@ -58,6 +60,7 @@ class Scene2802 : public Scene {
 public:
 	Scene2802(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Scene2802();
+
 protected:
 	SmackerPlayer *_smackerPlayer;
 	uint _currRadioMusicIndex;
@@ -75,6 +78,7 @@ class AsScene2803LightCord;
 class Scene2803 : public Scene {
 public:
 	Scene2803(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	StaticSprite *_asTestTubeOne;
 	StaticSprite *_asTestTubeTwo;
@@ -106,6 +110,7 @@ protected:
 class Scene2803Small : public Scene {
 public:
 	Scene2803Small(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	int _paletteArea;
 	Sprite *_sprite1;
@@ -134,6 +139,7 @@ class Scene2804 : public Scene {
 public:
 	Scene2804(NeverhoodEngine *vm, Module *parentModule, int which);
 	bool isWorking() const { return _isWorking; }
+
 protected:
 	int _countdown1;
 	int _countdown2;
@@ -154,6 +160,7 @@ protected:
 class Scene2805 : public Scene {
 public:
 	Scene2805(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	Sprite *_sprite1;
 	Sprite *_sprite2;
@@ -163,6 +170,7 @@ protected:
 class Scene2806 : public Scene {
 public:
 	Scene2806(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	NPointArray *_pointList;
 	int _pointIndex;
@@ -180,6 +188,7 @@ protected:
 class Scene2807 : public Scene {
 public:
 	Scene2807(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -190,6 +199,7 @@ class AsScene2808TestTube;
 class Scene2808 : public Scene {
 public:
 	Scene2808(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	int _countdown;
 	int _testTubeSetNum;
@@ -206,6 +216,7 @@ protected:
 class Scene2809 : public Scene {
 public:
 	Scene2809(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	NPointArray *_pointList;
 	int _pointIndex;
@@ -224,6 +235,7 @@ class Scene2810 : public Scene {
 public:
 	Scene2810(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Scene2810();
+
 protected:
 	Sprite *_sprite1;
 	Sprite *_sprite2;
@@ -242,6 +254,7 @@ protected:
 class Scene2812 : public Scene {
 public:
 	Scene2812(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	Sprite *_asWinch;
 	Sprite *_asTrapDoor;
@@ -265,6 +278,7 @@ protected:
 class Scene2822 : public Scene {
 public:
 	Scene2822(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	Sprite *_ssButton;
 	int _scrollIndex;

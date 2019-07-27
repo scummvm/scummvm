@@ -23,8 +23,8 @@
 #ifndef TOUCHE_MIDI_H
 #define TOUCHE_MIDI_H
 
-#include "common/util.h"
 #include "common/mutex.h"
+#include "common/util.h"
 
 #include "audio/midiplayer.h"
 

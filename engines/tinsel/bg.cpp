@@ -30,11 +30,11 @@
 #include "tinsel/handle.h"
 #include "tinsel/multiobj.h"
 #include "tinsel/object.h"
-#include "tinsel/pcode.h"		// CONTROL_STARTOFF
+#include "tinsel/pcode.h" // CONTROL_STARTOFF
 #include "tinsel/pid.h"
 #include "tinsel/sched.h"
-#include "tinsel/timers.h"		// For ONE_SECOND constant
-#include "tinsel/tinlib.h"		// For Control()
+#include "tinsel/timers.h" // For ONE_SECOND constant
+#include "tinsel/tinlib.h" // For Control()
 #include "tinsel/tinsel.h"
 
 #include "common/textconsole.h"
@@ -44,14 +44,14 @@ namespace Tinsel {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
-#define MAX_BG	10
+#define MAX_BG 10
 
 // FIXME: Avoid non-const global vars
-static SCNHANDLE g_hBgPal = 0;	// Background's palette
+static SCNHANDLE g_hBgPal = 0; // Background's palette
 static POBJECT g_pBG[MAX_BG];
-static ANIM	g_thisAnim[MAX_BG];	// used by BGmainProcess()
+static ANIM g_thisAnim[MAX_BG]; // used by BGmainProcess()
 static int g_BGspeed = 0;
-static SCNHANDLE g_hBackground = 0;	// Current scene handle - stored in case of Save_Scene()
+static SCNHANDLE g_hBackground = 0; // Current scene handle - stored in case of Save_Scene()
 static bool g_bDoFadeIn = false;
 static int g_bgReels;
 
@@ -80,10 +80,10 @@ void SetDoFadeIn(bool tf) {
  * Called before scene change.
  */
 void DropBackground() {
-	g_pBG[0] = NULL;	// No background
+	g_pBG[0] = NULL; // No background
 
 	if (!TinselV2)
-		g_hBgPal = 0;	// No background palette
+		g_hBgPal = 0; // No background palette
 }
 
 /**
@@ -139,7 +139,7 @@ static void BGmainProcess(CORO_PARAM, const void *param) {
 			int i;
 			for (i = 0; i < g_bgReels; i++) {
 				// Get the MULTI_INIT structure
-				pmi = (PMULTI_INIT) LockMem(FROM_32(pFilm->reels[i].mobj));
+				pmi = (PMULTI_INIT)LockMem(FROM_32(pFilm->reels[i].mobj));
 
 				// Initialize and insert the object, and initialize its script.
 				g_pBG[i] = MultiInitObject(pmi);
@@ -148,7 +148,7 @@ static void BGmainProcess(CORO_PARAM, const void *param) {
 				InitStepAnimScript(&g_thisAnim[i], g_pBG[i], FROM_32(pFilm->reels[i].script), g_BGspeed);
 
 				if (i > 0)
-					g_pBG[i-1]->pSlave = g_pBG[i];
+					g_pBG[i - 1]->pSlave = g_pBG[i];
 			}
 		}
 
@@ -193,8 +193,8 @@ static void BGmainProcess(CORO_PARAM, const void *param) {
 static void BGotherProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
-		OBJECT *pObj;
-		ANIM anim;
+	OBJECT *pObj;
+	ANIM anim;
 	CORO_END_CONTEXT(_ctx);
 
 	const FREEL *pReel = (const FREEL *)param;
@@ -245,7 +245,7 @@ void StartupBackground(CORO_PARAM, SCNHANDLE hFilm) {
 	const FILM *pfilm;
 	IMAGE *pim;
 
-	g_hBackground = hFilm;		// Save handle in case of Save_Scene()
+	g_hBackground = hFilm; // Save handle in case of Save_Scene()
 
 	pim = GetImageFromFilm(hFilm, 0, NULL, NULL, &pfilm);
 

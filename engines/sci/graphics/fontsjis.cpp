@@ -20,16 +20,17 @@
  *
  */
 
-#include "sci/sci.h"
-#include "sci/engine/state.h"
-#include "sci/graphics/screen.h"
-#include "sci/graphics/font.h"
 #include "sci/graphics/fontsjis.h"
+#include "sci/engine/state.h"
+#include "sci/graphics/font.h"
+#include "sci/graphics/screen.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
 GfxFontSjis::GfxFontSjis(GfxScreen *screen, GuiResourceId resourceId)
-	: _resourceId(resourceId), _screen(screen) {
+  : _resourceId(resourceId)
+  , _screen(screen) {
 	assert(resourceId != -1);
 
 	if (!_screen->getUpscaledHires())
@@ -62,7 +63,6 @@ byte GfxFontSjis::getHeight() {
 
 byte GfxFontSjis::getCharWidth(uint16 chr) {
 	return _commonFont->getCharWidth(chr) >> 1;
-
 }
 void GfxFontSjis::draw(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput) {
 	// TODO: Check, if character fits on screen - if it doesn't we need to skip it

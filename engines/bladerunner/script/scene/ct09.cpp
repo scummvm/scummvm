@@ -26,15 +26,15 @@ namespace BladeRunner {
 
 void SceneScriptCT09::InitializeScene() {
 	if (Game_Flag_Query(kFlagCT10toCT09)) {
-		Setup_Scene_Information(160.0f,   349.0f, 587.0f, 490);
+		Setup_Scene_Information(160.0f, 349.0f, 587.0f, 490);
 	} else if (Game_Flag_Query(kFlagCT08toCT09)) {
 		Setup_Scene_Information(235.0f, 3348.52f, 599.0f, 800);
 	} else {
-		Setup_Scene_Information(107.0f,  348.52f, 927.0f, 200);
+		Setup_Scene_Information(107.0f, 348.52f, 927.0f, 200);
 	}
 
 	Scene_Exit_Add_2D_Exit(0, 321, 164, 345, 309, 1);
-	Scene_Exit_Add_2D_Exit(1,   0,   0,  15, 479, 3);
+	Scene_Exit_Add_2D_Exit(1, 0, 0, 15, 479, 3);
 	Scene_Exit_Add_2D_Exit(2, 198, 177, 263, 311, 0);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxFLORBUZZ, 28, 0, 1);
@@ -73,8 +73,7 @@ bool SceneScriptCT09::ClickedOn3DObject(const char *objectName, bool a2) {
 bool SceneScriptCT09::ClickedOnActor(int actorId) {
 	if (actorId == kActorDeskClerk) {
 		if (Actor_Query_Goal_Number(kActorDeskClerk) == kGoalDeskClerkDefault
-		 && Actor_Query_Which_Set_In(kActorLeon) != kSetCT09
-		) {
+		    && Actor_Query_Which_Set_In(kActorLeon) != kSetCT09) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 270.0f, 348.52f, 846.0f, 12, true, false, false)) {
 				Player_Loses_Control();
 				Actor_Face_Actor(kActorMcCoy, kActorDeskClerk, true);
@@ -149,12 +148,11 @@ bool SceneScriptCT09::ClickedOn2DRegion(int region) {
 
 void SceneScriptCT09::SceneFrameAdvanced(int frame) {
 	if (frame == 6
-	 || frame == 12
-	 || frame == 19
-	 || frame == 25
-	 || frame == 46
-	 || frame == 59
-	) {
+	    || frame == 12
+	    || frame == 19
+	    || frame == 25
+	    || frame == 46
+	    || frame == 59) {
 		Sound_Play(kSfxNEON7, Random_Query(47, 47), 70, 70, 50);
 	}
 }
@@ -165,9 +163,8 @@ void SceneScriptCT09::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 void SceneScriptCT09::PlayerWalkedIn() {
 	bool leonScene = false;
 
-	if ( Global_Variable_Query(kVariableChapter) == 3
-	 && !Game_Flag_Query(kFlagCT09Entered)
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 3
+	    && !Game_Flag_Query(kFlagCT09Entered)) {
 		Game_Flag_Set(kFlagCT09Entered);
 		Actor_Set_Goal_Number(kActorLeon, kGoalLeonHoldingDeskClerk);
 		leonScene = true;
@@ -220,9 +217,8 @@ void SceneScriptCT09::PlayerWalkedOut() {
 void SceneScriptCT09::DialogueQueueFlushed(int a1) {
 	Actor_Force_Stop_Walking(kActorMcCoy);
 
-	if ( Actor_Query_Goal_Number(kActorLeon) == kGoalLeonHoldingDeskClerk
-	 && !Game_Flag_Query(kFlagCT09LeonInterrupted)
-	) {
+	if (Actor_Query_Goal_Number(kActorLeon) == kGoalLeonHoldingDeskClerk
+	    && !Game_Flag_Query(kFlagCT09LeonInterrupted)) {
 		Player_Loses_Control();
 		Actor_Set_Goal_Number(kActorLeon, kGoalLeonReleaseDeskClerk);
 		//return true;

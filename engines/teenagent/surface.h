@@ -37,7 +37,8 @@ public:
 	Surface();
 	~Surface();
 
-	enum Type {kTypeOns, kTypeLan};
+	enum Type { kTypeOns,
+		          kTypeLan };
 
 	void load(Common::SeekableReadStream &, Type type);
 	Common::Rect render(Graphics::Surface *surface, int dx = 0, int dy = 0, bool mirror = false, Common::Rect srcRect = Common::Rect(), uint zoom = 256) const;

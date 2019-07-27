@@ -29,14 +29,14 @@ namespace Testbed {
 
 namespace EventTests {
 
-// Helper functions for Event tests
-char keystrokeToChar();
-Common::Rect drawFinishZone();
-// will contain function declarations for Event tests
-TestExitStatus mouseEvents();
-TestExitStatus kbdEvents();
-TestExitStatus showMainMenu();
-// add more here
+	// Helper functions for Event tests
+	char keystrokeToChar();
+	Common::Rect drawFinishZone();
+	// will contain function declarations for Event tests
+	TestExitStatus mouseEvents();
+	TestExitStatus kbdEvents();
+	TestExitStatus showMainMenu();
+	// add more here
 
 } // End of namespace EventTests
 

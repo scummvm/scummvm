@@ -20,16 +20,16 @@
  *
  */
 
-#include "sci/sci.h"
-#include "sci/resource.h"
-#include "sci/engine/seg_manager.h"
-#include "sci/engine/script.h"
-#include "sci/engine/state.h"
-#include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
+#include "sci/engine/script.h"
+#include "sci/engine/seg_manager.h"
+#include "sci/engine/selector.h"
+#include "sci/engine/state.h"
+#include "sci/resource.h"
+#include "sci/sci.h"
 #ifdef ENABLE_SCI32
-#include "sci/engine/features.h"
-#include "sci/sound/audio32.h"
+#	include "sci/engine/features.h"
+#	include "sci/sound/audio32.h"
 #endif
 
 #include "common/file.h"
@@ -101,8 +101,7 @@ reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 	}
 #endif
 
-	if (getSciVersion() == SCI_VERSION_1_1 &&
-		(type == kResourceTypeAudio36 || type == kResourceTypeSync36)) {
+	if (getSciVersion() == SCI_VERSION_1_1 && (type == kResourceTypeAudio36 || type == kResourceTypeSync36)) {
 		return s->r_acc;
 	}
 
@@ -125,7 +124,7 @@ reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 				g_sci->getResMan()->unlockResource(which);
 			else {
 				if (id.getType() == kResourceTypeInvalid)
-				  warning("[resMan] Attempt to unlock resource %i of invalid type %i", id.getNumber(), argv[0].toUint16());
+					warning("[resMan] Attempt to unlock resource %i of invalid type %i", id.getNumber(), argv[0].toUint16());
 				else
 					// Happens in CD games (e.g. LSL6CD) with the message
 					// resource. It isn't fatal, and it's usually caused
@@ -239,7 +238,7 @@ reg_t kDisposeClone(EngineState *s, int argc, reg_t *argv) {
 
 	if (!object) {
 		error("Attempt to dispose non-class/object at %04x:%04x",
-		         PRINT_REG(obj));
+		      PRINT_REG(obj));
 		return s->r_acc;
 	}
 
@@ -278,7 +277,8 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 		// it will most certainly fail with OOB access.
 		if (argc == 2)
 			error("Script 0x%x does not have a dispatch table and export %d "
-					"was requested from it", script, index);
+			      "was requested from it",
+			      script, index);
 		return NULL_REG;
 	}
 
@@ -293,8 +293,7 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 	// is used for timing during the intro, and in the problematic version it's
 	// initialized to 0, whereas it's 6 in other versions. Thus, we assign it
 	// to 6 here, fixing the speed of the introduction. Refer to bug #3102071.
-	if (g_sci->getGameId() == GID_PQ2 && script == 200 &&
-		s->variables[VAR_GLOBAL][kGlobalVarSpeed].isNull()) {
+	if (g_sci->getGameId() == GID_PQ2 && script == 200 && s->variables[VAR_GLOBAL][kGlobalVarSpeed].isNull()) {
 		s->variables[VAR_GLOBAL][kGlobalVarSpeed] = make_reg(0, 6);
 	}
 

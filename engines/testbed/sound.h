@@ -40,13 +40,13 @@ public:
 
 namespace SoundSubsystem {
 
-// Helper functions for SoundSubsystem tests
+	// Helper functions for SoundSubsystem tests
 
-// will contain function declarations for SoundSubsystem tests
-TestExitStatus playBeeps();
-TestExitStatus mixSounds();
-TestExitStatus audiocdOutput();
-TestExitStatus sampleRates();
+	// will contain function declarations for SoundSubsystem tests
+	TestExitStatus playBeeps();
+	TestExitStatus mixSounds();
+	TestExitStatus audiocdOutput();
+	TestExitStatus sampleRates();
 }
 
 class SoundSubsystemTestSuite : public Testsuite {

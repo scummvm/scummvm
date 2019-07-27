@@ -26,9 +26,7 @@
 #include "common/str.h"
 #include "common/translation.h"
 
-
 namespace Common {
-
 
 const RenderModeDescription g_renderModes[] = {
 	// I18N: Hercules is graphics card name
@@ -44,7 +42,7 @@ const RenderModeDescription g_renderModes[] = {
 	{ "2gs", "Apple IIgs", kRenderApple2GS },
 	{ "atari", "Atari ST", kRenderAtariST },
 	{ "macintosh", "Macintosh", kRenderMacintosh },
-	{nullptr, nullptr, kRenderDefault}
+	{ nullptr, nullptr, kRenderDefault }
 };
 
 struct RenderGUIOMapping {
@@ -56,17 +54,17 @@ struct RenderGUIOMapping {
 // could be used to indicate "any" mode when passed to renderMode2GUIO (if
 // we wanted to merge allRenderModesGUIOs back into)
 static const RenderGUIOMapping s_renderGUIOMapping[] = {
-	{ kRenderHercG,     GUIO_RENDERHERCGREEN },
-	{ kRenderHercA,     GUIO_RENDERHERCAMBER },
-	{ kRenderCGA,       GUIO_RENDERCGA },
-	{ kRenderEGA,       GUIO_RENDEREGA },
-	{ kRenderVGA,       GUIO_RENDERVGA },
-	{ kRenderAmiga,     GUIO_RENDERAMIGA },
-	{ kRenderFMTowns,   GUIO_RENDERFMTOWNS },
-	{ kRenderPC9821,    GUIO_RENDERPC9821 },
-	{ kRenderPC9801,    GUIO_RENDERPC9801 },
-	{ kRenderApple2GS,  GUIO_RENDERAPPLE2GS },
-	{ kRenderAtariST,   GUIO_RENDERATARIST },
+	{ kRenderHercG, GUIO_RENDERHERCGREEN },
+	{ kRenderHercA, GUIO_RENDERHERCAMBER },
+	{ kRenderCGA, GUIO_RENDERCGA },
+	{ kRenderEGA, GUIO_RENDEREGA },
+	{ kRenderVGA, GUIO_RENDERVGA },
+	{ kRenderAmiga, GUIO_RENDERAMIGA },
+	{ kRenderFMTowns, GUIO_RENDERFMTOWNS },
+	{ kRenderPC9821, GUIO_RENDERPC9821 },
+	{ kRenderPC9801, GUIO_RENDERPC9801 },
+	{ kRenderApple2GS, GUIO_RENDERAPPLE2GS },
+	{ kRenderAtariST, GUIO_RENDERATARIST },
 	{ kRenderMacintosh, GUIO_RENDERMACINTOSH }
 };
 

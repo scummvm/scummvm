@@ -51,14 +51,12 @@ bool SceneScriptPS06::ClickedOn3DObject(const char *objectName, bool a2) {
 		return true;
 	}
 	if (Object_Query_Click("E.SCREEN03", objectName)
-	 || Object_Query_Click("E.MONITOR3", objectName)
-	) {
+	    || Object_Query_Click("E.MONITOR3", objectName)) {
 		Actor_Says(kActorAnsweringMachine, 330, kAnimationModeTalk); // uploading clues
 		if (Actor_Clue_Query(kActorMcCoy, kClueCar)
-		 && !Actor_Clue_Query(kActorMcCoy, kClueCarRegistration1)
-		 && !Actor_Clue_Query(kActorMcCoy, kClueCarRegistration2)
-		 && !Actor_Clue_Query(kActorMcCoy, kClueCarRegistration3)
-		) {
+		    && !Actor_Clue_Query(kActorMcCoy, kClueCarRegistration1)
+		    && !Actor_Clue_Query(kActorMcCoy, kClueCarRegistration2)
+		    && !Actor_Clue_Query(kActorMcCoy, kClueCarRegistration3)) {
 			Delay(2000);
 			Actor_Voice_Over(3780, kActorVoiceOver);
 			Actor_Voice_Over(3790, kActorVoiceOver);
@@ -87,23 +85,23 @@ bool SceneScriptPS06::ClickedOn3DObject(const char *objectName, bool a2) {
 		} else {
 			bool transferedClues = Actor_Clues_Transfer_New_To_Mainframe(kActorMcCoy);
 			if (_vm->_cutContent && !transferedClues) {
-				Actor_Says(kActorAnsweringMachine, 370,  kAnimationModeTalk); // no clues transfered
+				Actor_Says(kActorAnsweringMachine, 370, kAnimationModeTalk); // no clues transfered
 			} else {
 				Ambient_Sounds_Play_Sound(kSfxDATALOAD, 50, 0, 0, 99);
 				Delay(2000);
 			}
-			Actor_Says(kActorAnsweringMachine, 340,  kAnimationModeTalk);     // downloading clues
+			Actor_Says(kActorAnsweringMachine, 340, kAnimationModeTalk); // downloading clues
 			transferedClues = Actor_Clues_Transfer_New_From_Mainframe(kActorMcCoy);
 			if (_vm->_cutContent && !transferedClues) {
-				Actor_Says(kActorAnsweringMachine, 370,  kAnimationModeTalk); // no clues transfered
+				Actor_Says(kActorAnsweringMachine, 370, kAnimationModeTalk); // no clues transfered
 			} else {
 				Ambient_Sounds_Play_Sound(kSfxDATALOAD, 50, 0, 0, 99);
 				Delay(2000);
 			}
 			Ambient_Sounds_Play_Sound(kSfxBEEPNEAT, 80, 0, 0, 99);
-			Actor_Says(kActorAnsweringMachine, 350, kAnimationModeTalk);          // db transfer complete
+			Actor_Says(kActorAnsweringMachine, 350, kAnimationModeTalk); // db transfer complete
 			if (_vm->_cutContent && transferedClues) {
-				Actor_Says(kActorAnsweringMachine, 360, kAnimationModeTalk);      // new clues added
+				Actor_Says(kActorAnsweringMachine, 360, kAnimationModeTalk); // new clues added
 			}
 			return true;
 		}

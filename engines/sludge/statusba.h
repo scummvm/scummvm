@@ -58,8 +58,8 @@ bool loadStatusBars(Common::SeekableReadStream *stream);
 void saveStatusBars(Common::WriteStream *stream);
 
 // For freezing
-void restoreBarStuff(StatusStuff  *here);
-StatusStuff  *copyStatusBarStuff(StatusStuff  *here);
+void restoreBarStuff(StatusStuff *here);
+StatusStuff *copyStatusBarStuff(StatusStuff *here);
 
 } // End of namespace Sludge
 

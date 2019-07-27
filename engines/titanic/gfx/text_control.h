@@ -63,6 +63,7 @@ private:
 	bool _hasBorder;
 	int _scrollTop;
 	CTextCursor *_textCursor;
+
 private:
 	void setupArrays(int count);
 
@@ -94,6 +95,7 @@ private:
 	 * Get the page height for paging up and down
 	 */
 	int getPageHeight(CScreenManager *screenManager);
+
 public:
 	CTextControl(uint count = 10);
 

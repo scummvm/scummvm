@@ -23,21 +23,21 @@
 #ifndef SCI_ENGINE_KERNEL_H
 #define SCI_ENGINE_KERNEL_H
 
-#include "common/scummsys.h"
 #include "common/debug.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/str-array.h"
 
 #include "sci/engine/selector.h"
-#include "sci/engine/vm_types.h"	// for reg_t
 #include "sci/engine/vm.h"
+#include "sci/engine/vm_types.h" // for reg_t
 
 namespace Sci {
 
-struct Node;	// from segment.h
-struct List;	// from segment.h
-struct SelectorCache;	// from selector.h
-struct SciWorkaroundEntry;	// from workarounds.h
+struct Node; // from segment.h
+struct List; // from segment.h
+struct SelectorCache; // from selector.h
+struct SciWorkaroundEntry; // from workarounds.h
 
 /**
  * @defgroup VocabularyResources	Vocabulary resources in SCI
@@ -99,28 +99,28 @@ struct SciWorkaroundEntry;	// from workarounds.h
 // ---- Kernel signatures -----------------------------------------------------
 
 enum {
-	kScummVMWaitId     = 0xe0,
+	kScummVMWaitId = 0xe0,
 	kScummVMSaveLoadId = 0xe1
 };
 
 // internal kernel signature data
 enum {
-	SIG_TYPE_NULL          =  0x01, // may be 0:0       [0]
-	SIG_TYPE_INTEGER       =  0x02, // may be 0:*       [i], automatically also allows null
-	SIG_TYPE_UNINITIALIZED =  0x04, // may be FFFF:*    -> not allowable, only used for comparison
-	SIG_TYPE_OBJECT        =  0x08, // may be object    [o]
-	SIG_TYPE_REFERENCE     =  0x10, // may be reference [r]
-	SIG_TYPE_LIST          =  0x20, // may be list      [l]
-	SIG_TYPE_NODE          =  0x40, // may be node      [n]
-	SIG_TYPE_ERROR         =  0x80, // happens, when there is a identification error - only used for comparison
-	SIG_IS_INVALID         = 0x100, // ptr is invalid   [!] -> invalid offset
-	SIG_IS_OPTIONAL        = 0x200, // is optional
-	SIG_NEEDS_MORE         = 0x400, // needs at least one additional parameter following
-	SIG_MORE_MAY_FOLLOW    = 0x800  // may have more parameters of the same type following
+	SIG_TYPE_NULL = 0x01, // may be 0:0       [0]
+	SIG_TYPE_INTEGER = 0x02, // may be 0:*       [i], automatically also allows null
+	SIG_TYPE_UNINITIALIZED = 0x04, // may be FFFF:*    -> not allowable, only used for comparison
+	SIG_TYPE_OBJECT = 0x08, // may be object    [o]
+	SIG_TYPE_REFERENCE = 0x10, // may be reference [r]
+	SIG_TYPE_LIST = 0x20, // may be list      [l]
+	SIG_TYPE_NODE = 0x40, // may be node      [n]
+	SIG_TYPE_ERROR = 0x80, // happens, when there is a identification error - only used for comparison
+	SIG_IS_INVALID = 0x100, // ptr is invalid   [!] -> invalid offset
+	SIG_IS_OPTIONAL = 0x200, // is optional
+	SIG_NEEDS_MORE = 0x400, // needs at least one additional parameter following
+	SIG_MORE_MAY_FOLLOW = 0x800 // may have more parameters of the same type following
 };
 
 // this does not include SIG_TYPE_UNINITIALIZED, because we can not allow uninitialized values anywhere
-#define SIG_MAYBE_ANY    (SIG_TYPE_NULL | SIG_TYPE_INTEGER | SIG_TYPE_OBJECT | SIG_TYPE_REFERENCE | SIG_TYPE_LIST | SIG_TYPE_NODE)
+#define SIG_MAYBE_ANY (SIG_TYPE_NULL | SIG_TYPE_INTEGER | SIG_TYPE_OBJECT | SIG_TYPE_REFERENCE | SIG_TYPE_LIST | SIG_TYPE_NODE)
 
 // ----------------------------------------------------------------------------
 
@@ -644,10 +644,10 @@ reg_t kDeleteLine(EngineState *s, int argc, reg_t *argv);
 
 reg_t kWinDLL(EngineState *s, int argc, reg_t *argv);
 
-#ifdef ENABLE_SCI32_MAC
+#	ifdef ENABLE_SCI32_MAC
 // Phantasmagoria Mac Special Kernel Function
 reg_t kDoSoundPhantasmagoriaMac(EngineState *s, int argc, reg_t *argv);
-#endif
+#	endif
 
 // SCI3 Kernel functions
 reg_t kPlayDuck(EngineState *s, int argc, reg_t *argv);

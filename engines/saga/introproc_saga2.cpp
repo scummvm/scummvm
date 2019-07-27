@@ -24,17 +24,17 @@
 
 // "Dinotopia" and "Faery Tale Adventure II: Halls of the Dead" Intro sequence scene procedures
 
-#include "saga/saga.h"
-#include "saga/scene.h"
-#include "saga/gfx.h"
+#	include "saga/gfx.h"
+#	include "saga/saga.h"
+#	include "saga/scene.h"
 
-#include "common/events.h"
-#include "common/keyboard.h"
-#include "common/system.h"
-#include "common/textconsole.h"
-#include "graphics/palette.h"
-#include "graphics/surface.h"
-#include "video/smk_decoder.h"
+#	include "common/events.h"
+#	include "common/keyboard.h"
+#	include "common/system.h"
+#	include "common/textconsole.h"
+#	include "graphics/palette.h"
+#	include "graphics/surface.h"
+#	include "video/smk_decoder.h"
 
 namespace Saga {
 

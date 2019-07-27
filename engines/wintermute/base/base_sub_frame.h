@@ -29,7 +29,6 @@
 #ifndef WINTERMUTE_BASE_SUBFRAME_H
 #define WINTERMUTE_BASE_SUBFRAME_H
 
-
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/base/base_scriptable.h"
 #include "graphics/transform_struct.h"
@@ -55,7 +54,7 @@ public:
 	bool loadBuffer(char *buffer, int lifeTime, bool keepLoaded);
 	bool draw(int x, int y, BaseObject *registerOwner = nullptr, float zoomX = 100, float zoomY = 100, bool precise = true, uint32 alpha = 0xFFFFFFFF, float rotate = 0.0f, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL);
 	bool getBoundingRect(Rect32 *rect, int x, int y, float scaleX = 100, float scaleY = 100);
-	const char* getSurfaceFilename();
+	const char *getSurfaceFilename();
 
 	int32 _hotspotX;
 	int32 _hotspotY;
@@ -64,10 +63,12 @@ public:
 	// Thus we don't need to load the actual graphics before the rect is actually needed.
 	Rect32 getRect();
 	void setRect(Rect32 rect);
+
 private:
 	bool _wantsDefaultRect;
 	Rect32 _rect;
 	char *_surfaceFilename;
+
 public:
 	bool _cKDefault;
 	byte _cKRed;
@@ -87,7 +88,6 @@ public:
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 	Common::String debuggerToString() const override;
-
 };
 
 } // End of namespace Wintermute

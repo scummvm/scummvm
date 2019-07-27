@@ -32,26 +32,26 @@
 #include "base/main.h"
 
 #if defined(USE_NULL_DRIVER)
-#include "backends/saves/default/default-saves.h"
-#include "backends/timer/default/default-timer.h"
-#include "backends/events/default/default-events.h"
-#include "backends/mutex/null/null-mutex.h"
-#include "backends/graphics/null/null-graphics.h"
-#include "audio/mixer_intern.h"
-#include "common/scummsys.h"
+#	include "audio/mixer_intern.h"
+#	include "backends/events/default/default-events.h"
+#	include "backends/graphics/null/null-graphics.h"
+#	include "backends/mutex/null/null-mutex.h"
+#	include "backends/saves/default/default-saves.h"
+#	include "backends/timer/default/default-timer.h"
+#	include "common/scummsys.h"
 
 /*
  * Include header files needed for the getFilesystemFactory() method.
  */
-#if defined(__amigaos4__)
-	#include "backends/fs/amigaos4/amigaos4-fs-factory.h"
-#elif defined(POSIX)
-	#include "backends/fs/posix/posix-fs-factory.h"
-#elif defined(RISCOS)
-	#include "backends/fs/riscos/riscos-fs-factory.h"
-#elif defined(WIN32)
-	#include "backends/fs/windows/windows-fs-factory.h"
-#endif
+#	if defined(__amigaos4__)
+#		include "backends/fs/amigaos4/amigaos4-fs-factory.h"
+#	elif defined(POSIX)
+#		include "backends/fs/posix/posix-fs-factory.h"
+#	elif defined(RISCOS)
+#		include "backends/fs/riscos/riscos-fs-factory.h"
+#	elif defined(WIN32)
+#		include "backends/fs/windows/windows-fs-factory.h"
+#	endif
 
 class OSystem_NULL : public ModularBackend, Common::EventSource {
 public:
@@ -71,17 +71,17 @@ public:
 };
 
 OSystem_NULL::OSystem_NULL() {
-	#if defined(__amigaos4__)
-		_fsFactory = new AmigaOSFilesystemFactory();
-	#elif defined(POSIX)
-		_fsFactory = new POSIXFilesystemFactory();
-	#elif defined(RISCOS)
-		_fsFactory = new RISCOSFilesystemFactory();
-	#elif defined(WIN32)
-		_fsFactory = new WindowsFilesystemFactory();
-	#else
-		#error Unknown and unsupported FS backend
-	#endif
+#	if defined(__amigaos4__)
+	_fsFactory = new AmigaOSFilesystemFactory();
+#	elif defined(POSIX)
+	_fsFactory = new POSIXFilesystemFactory();
+#	elif defined(RISCOS)
+	_fsFactory = new RISCOSFilesystemFactory();
+#	elif defined(WIN32)
+	_fsFactory = new WindowsFilesystemFactory();
+#	else
+#		error Unknown and unsupported FS backend
+#	endif
 }
 
 OSystem_NULL::~OSystem_NULL() {

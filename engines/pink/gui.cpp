@@ -20,12 +20,12 @@
  *
  */
 
-#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macmenu.h"
+#include "graphics/macgui/macwindowmanager.h"
 
-#include "pink/pink.h"
 #include "pink/director.h"
 #include "pink/objects/actors/lead_actor.h"
+#include "pink/pink.h"
 
 namespace Pink {
 

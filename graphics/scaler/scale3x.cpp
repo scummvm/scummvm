@@ -39,7 +39,7 @@
 /***************************************************************************/
 /* Scale3x C implementation */
 
-static inline void scale3x_8_def_border(scale3x_uint8* __restrict__ dst, const scale3x_uint8* __restrict__ src0, const scale3x_uint8* __restrict__ src1, const scale3x_uint8* __restrict__ src2, unsigned count) {
+static inline void scale3x_8_def_border(scale3x_uint8 *__restrict__ dst, const scale3x_uint8 *__restrict__ src0, const scale3x_uint8 *__restrict__ src1, const scale3x_uint8 *__restrict__ src2, unsigned count) {
 	/* central pixels */
 	while (count) {
 		if (src0[0] != src2[0] && src1[-1] != src1[1]) {
@@ -60,7 +60,7 @@ static inline void scale3x_8_def_border(scale3x_uint8* __restrict__ dst, const s
 	}
 }
 
-static inline void scale3x_8_def_center(scale3x_uint8* __restrict__ dst, const scale3x_uint8* __restrict__ src0, const scale3x_uint8* __restrict__ src1, const scale3x_uint8* __restrict__ src2, unsigned count) {
+static inline void scale3x_8_def_center(scale3x_uint8 *__restrict__ dst, const scale3x_uint8 *__restrict__ src0, const scale3x_uint8 *__restrict__ src1, const scale3x_uint8 *__restrict__ src2, unsigned count) {
 	/* central pixels */
 	while (count) {
 		if (src0[0] != src2[0] && src1[-1] != src1[1]) {
@@ -81,7 +81,7 @@ static inline void scale3x_8_def_center(scale3x_uint8* __restrict__ dst, const s
 	}
 }
 
-static inline void scale3x_16_def_border(scale3x_uint16* __restrict__ dst, const scale3x_uint16* __restrict__ src0, const scale3x_uint16* __restrict__ src1, const scale3x_uint16* __restrict__ src2, unsigned count) {
+static inline void scale3x_16_def_border(scale3x_uint16 *__restrict__ dst, const scale3x_uint16 *__restrict__ src0, const scale3x_uint16 *__restrict__ src1, const scale3x_uint16 *__restrict__ src2, unsigned count) {
 	/* central pixels */
 	while (count) {
 		if (src0[0] != src2[0] && src1[-1] != src1[1]) {
@@ -102,7 +102,7 @@ static inline void scale3x_16_def_border(scale3x_uint16* __restrict__ dst, const
 	}
 }
 
-static inline void scale3x_16_def_center(scale3x_uint16* __restrict__ dst, const scale3x_uint16* __restrict__ src0, const scale3x_uint16* __restrict__ src1, const scale3x_uint16* __restrict__ src2, unsigned count) {
+static inline void scale3x_16_def_center(scale3x_uint16 *__restrict__ dst, const scale3x_uint16 *__restrict__ src0, const scale3x_uint16 *__restrict__ src1, const scale3x_uint16 *__restrict__ src2, unsigned count) {
 	/* central pixels */
 	while (count) {
 		if (src0[0] != src2[0] && src1[-1] != src1[1]) {
@@ -123,7 +123,7 @@ static inline void scale3x_16_def_center(scale3x_uint16* __restrict__ dst, const
 	}
 }
 
-static inline void scale3x_32_def_border(scale3x_uint32* __restrict__ dst, const scale3x_uint32* __restrict__ src0, const scale3x_uint32* __restrict__ src1, const scale3x_uint32* __restrict__ src2, unsigned count) {
+static inline void scale3x_32_def_border(scale3x_uint32 *__restrict__ dst, const scale3x_uint32 *__restrict__ src0, const scale3x_uint32 *__restrict__ src1, const scale3x_uint32 *__restrict__ src2, unsigned count) {
 	/* central pixels */
 	while (count) {
 		if (src0[0] != src2[0] && src1[-1] != src1[1]) {
@@ -144,7 +144,7 @@ static inline void scale3x_32_def_border(scale3x_uint32* __restrict__ dst, const
 	}
 }
 
-static inline void scale3x_32_def_center(scale3x_uint32* __restrict__ dst, const scale3x_uint32* __restrict__ src0, const scale3x_uint32* __restrict__ src1, const scale3x_uint32* __restrict__ src2, unsigned count) {
+static inline void scale3x_32_def_center(scale3x_uint32 *__restrict__ dst, const scale3x_uint32 *__restrict__ src0, const scale3x_uint32 *__restrict__ src1, const scale3x_uint32 *__restrict__ src2, unsigned count) {
 	/* central pixels */
 	while (count) {
 		if (src0[0] != src2[0] && src1[-1] != src1[1]) {
@@ -179,7 +179,7 @@ static inline void scale3x_32_def_center(scale3x_uint32* __restrict__ dst, const
  * @param dst1 Second destination row, triple length in pixels.
  * @param dst2 Third destination row, triple length in pixels.
  */
-void scale3x_8_def(scale3x_uint8* dst0, scale3x_uint8* dst1, scale3x_uint8* dst2, const scale3x_uint8* src0, const scale3x_uint8* src1, const scale3x_uint8* src2, unsigned count) {
+void scale3x_8_def(scale3x_uint8 *dst0, scale3x_uint8 *dst1, scale3x_uint8 *dst2, const scale3x_uint8 *src0, const scale3x_uint8 *src1, const scale3x_uint8 *src2, unsigned count) {
 	scale3x_8_def_border(dst0, src0, src1, src2, count);
 	scale3x_8_def_center(dst1, src0, src1, src2, count);
 	scale3x_8_def_border(dst2, src2, src1, src0, count);
@@ -197,7 +197,7 @@ void scale3x_8_def(scale3x_uint8* dst0, scale3x_uint8* dst1, scale3x_uint8* dst2
  * @param dst1 Second destination row, triple length in pixels.
  * @param dst2 Third destination row, triple length in pixels.
  */
-void scale3x_16_def(scale3x_uint16* dst0, scale3x_uint16* dst1, scale3x_uint16* dst2, const scale3x_uint16* src0, const scale3x_uint16* src1, const scale3x_uint16* src2, unsigned count) {
+void scale3x_16_def(scale3x_uint16 *dst0, scale3x_uint16 *dst1, scale3x_uint16 *dst2, const scale3x_uint16 *src0, const scale3x_uint16 *src1, const scale3x_uint16 *src2, unsigned count) {
 	scale3x_16_def_border(dst0, src0, src1, src2, count);
 	scale3x_16_def_center(dst1, src0, src1, src2, count);
 	scale3x_16_def_border(dst2, src2, src1, src0, count);
@@ -215,7 +215,7 @@ void scale3x_16_def(scale3x_uint16* dst0, scale3x_uint16* dst1, scale3x_uint16* 
  * @param dst1 Second destination row, triple length in pixels.
  * @param dst2 Third destination row, triple length in pixels.
  */
-void scale3x_32_def(scale3x_uint32* dst0, scale3x_uint32* dst1, scale3x_uint32* dst2, const scale3x_uint32* src0, const scale3x_uint32* src1, const scale3x_uint32* src2, unsigned count) {
+void scale3x_32_def(scale3x_uint32 *dst0, scale3x_uint32 *dst1, scale3x_uint32 *dst2, const scale3x_uint32 *src0, const scale3x_uint32 *src1, const scale3x_uint32 *src2, unsigned count) {
 	scale3x_32_def_border(dst0, src0, src1, src2, count);
 	scale3x_32_def_center(dst1, src0, src1, src2, count);
 	scale3x_32_def_border(dst2, src2, src1, src0, count);

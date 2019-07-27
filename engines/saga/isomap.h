@@ -54,39 +54,39 @@ namespace Saga {
 #define SAGA_SCROLL_LIMIT_Y1 8
 #define SAGA_SCROLL_LIMIT_Y2 32
 
-#define SAGA_DRAGON_SEARCH_CENTER     24
-#define SAGA_DRAGON_SEARCH_DIAMETER   (SAGA_DRAGON_SEARCH_CENTER * 2)
+#define SAGA_DRAGON_SEARCH_CENTER 24
+#define SAGA_DRAGON_SEARCH_DIAMETER (SAGA_DRAGON_SEARCH_CENTER * 2)
 
-#define SAGA_SEARCH_CENTER     15
-#define SAGA_SEARCH_DIAMETER   (SAGA_SEARCH_CENTER * 2)
+#define SAGA_SEARCH_CENTER 15
+#define SAGA_SEARCH_DIAMETER (SAGA_SEARCH_CENTER * 2)
 #define SAGA_SEARCH_QUEUE_SIZE 128
-#define SAGA_IMPASSABLE                              ((1 << kTerrBlock) | (1 << kTerrWater))
+#define SAGA_IMPASSABLE ((1 << kTerrBlock) | (1 << kTerrWater))
 
-#define SAGA_STRAIGHT_NORMAL_COST			4
-#define SAGA_DIAG_NORMAL_COST				6
+#define SAGA_STRAIGHT_NORMAL_COST 4
+#define SAGA_DIAG_NORMAL_COST 6
 
-#define SAGA_STRAIGHT_EASY_COST				2
-#define SAGA_DIAG_EASY_COST					3
+#define SAGA_STRAIGHT_EASY_COST 2
+#define SAGA_DIAG_EASY_COST 3
 
-#define SAGA_STRAIGHT_HARD_COST				9
-#define SAGA_DIAG_HARD_COST					10
-#define SAGA_MAX_PATH_DIRECTIONS			256
+#define SAGA_STRAIGHT_HARD_COST 9
+#define SAGA_DIAG_HARD_COST 10
+#define SAGA_MAX_PATH_DIRECTIONS 256
 
 enum TerrainTypes {
-	kTerrNone	= 0,
-	kTerrPath	= 1,
-	kTerrRough	= 2,
-	kTerrBlock	= 3,
-	kTerrWater	= 4,
-	kTerrLast	= 5
+	kTerrNone = 0,
+	kTerrPath = 1,
+	kTerrRough = 2,
+	kTerrBlock = 3,
+	kTerrWater = 4,
+	kTerrLast = 5
 };
 
 enum TileMapEdgeType {
-	kEdgeTypeBlack	= 0,
-	kEdgeTypeFill0	= 1,
-	kEdgeTypeFill1	= 2,
-	kEdgeTypeRpt	= 3,
-	kEdgeTypeWrap	= 4
+	kEdgeTypeBlack = 0,
+	kEdgeTypeFill0 = 1,
+	kEdgeTypeFill1 = 2,
+	kEdgeTypeRpt = 3,
+	kEdgeTypeWrap = 4
 };
 
 struct IsoTileData {
@@ -143,10 +143,6 @@ struct MultiTileEntryData {
 	byte currentState;
 };
 
-
-
-
-
 class IsoMap {
 public:
 	IsoMap(SagaEngine *vm);
@@ -167,10 +163,10 @@ public:
 	}
 	void screenPointToTileCoords(const Point &position, Location &location);
 	void placeOnTileMap(const Location &start, Location &result, int16 distance, uint16 direction);
-	void findDragonTilePath(ActorData* actor, const Location &start, const Location &end, uint16 initialDirection);
+	void findDragonTilePath(ActorData *actor, const Location &start, const Location &end, uint16 initialDirection);
 	bool findNearestChasm(int16 &u0, int16 &v0, uint16 &direction);
-	void findTilePath(ActorData* actor, const Location &start, const Location &end);
-	bool nextTileTarget(ActorData* actor);
+	void findTilePath(ActorData *actor, const Location &start, const Location &end);
+	bool nextTileTarget(ActorData *actor);
 	void setTileDoorState(int doorNumber, int doorState);
 	Point getMapPosition() { return _mapPosition; }
 	void setMapPosition(int x, int y);
@@ -208,7 +204,6 @@ private:
 	void testPossibleDirections(int16 u, int16 v, uint16 terraComp[8], int skipCenter);
 	IsoTileData *getTile(int16 u, int16 v, int16 z);
 
-
 	ByteArray _tileData;
 	Common::Array<IsoTileData> _tilesTable;
 
@@ -222,24 +217,24 @@ private:
 
 	Point _mapPosition;
 
-// path finding stuff
+	// path finding stuff
 	uint16 _platformHeight;
 
 	struct DragonPathCell {
-		uint8 visited:1,direction:3;
+		uint8 visited : 1, direction : 3;
 	};
 	struct DragonTilePoint {
 		int8 u, v;
-		uint8 direction:4;
+		uint8 direction : 4;
 	};
 	struct PathCell {
-		uint16 visited:1,direction:3,cost:12;
+		uint16 visited : 1, direction : 3, cost : 12;
 	};
 
 public:
 	struct TilePoint {
 		int8 u, v;
-		uint16 direction:4,cost:12;
+		uint16 direction : 4, cost : 12;
 	};
 
 private:
@@ -273,7 +268,6 @@ private:
 	SearchArray _searchArray;
 	DragonSearchArray _dragonSearchArray;
 	byte _pathDirections[SAGA_MAX_PATH_DIRECTIONS];
-
 
 	int _viewDiff;
 	Point _viewScroll;

@@ -23,10 +23,10 @@
 #ifndef TOON_SCRIPT_H
 #define TOON_SCRIPT_H
 
-#include "common/stream.h"
 #include "common/array.h"
 #include "common/func.h"
 #include "common/iff_container.h"
+#include "common/stream.h"
 
 // Based on Kyra script interpretor
 namespace Toon {
@@ -57,20 +57,21 @@ struct EMCState {
 	int16 retValue;
 	uint16 bp;
 	uint16 sp;
-	int16 regs[30];           // VM registers
-	int16 stack[kStackSize];  // VM stack
+	int16 regs[30]; // VM registers
+	int16 stack[kStackSize]; // VM stack
 	bool running;
 };
 
-#define stackPos(x) (state->stack[state->sp+x])
-#define stackPosString(x) ((const char *)&state->dataPtr->text[READ_BE_UINT16(&state->dataPtr->text[stackPos(x)<<1])])
+#define stackPos(x) (state->stack[state->sp + x])
+#define stackPosString(x) ((const char *)&state->dataPtr->text[READ_BE_UINT16(&state->dataPtr->text[stackPos(x) << 1])])
 
 class Resource;
 class ToonEngine;
 
 class IFFParser : public Common::IFFParser {
 public:
-	IFFParser(Common::ReadStream &input) : Common::IFFParser(&input) {
+	IFFParser(Common::ReadStream &input)
+	  : Common::IFFParser(&input) {
 		// It seems Westwood missunderstood the 'size' field of the FORM chunk.
 		//
 		// For EMC scripts (type EMC2) it's filesize instead of filesize - 8,
@@ -84,9 +85,9 @@ public:
 		// Both lead to some problems in our IFF parser, either reading after the end
 		// of file or producing a "Chunk overread" error message. To work around this
 		// we need to adjust the size field properly.
-		if (_formType == MKTAG('E','M','C','2'))
+		if (_formType == MKTAG('E', 'M', 'C', '2'))
 			_formChunk.size -= 8;
-		else if (_formType == MKTAG('A','V','F','S'))
+		else if (_formType == MKTAG('A', 'V', 'F', 'S'))
 			_formChunk.size += 4;
 	}
 };
@@ -108,6 +109,7 @@ public:
 	bool isValid(EMCState *script);
 
 	bool run(EMCState *script);
+
 protected:
 	ToonEngine *_vm;
 	int16 _parameter;
@@ -124,6 +126,7 @@ protected:
 	};
 
 	const OpcodeEntry *_opcodes;
+
 private:
 	void op_jmp(EMCState *);
 	void op_setRetValue(EMCState *);

@@ -32,7 +32,7 @@ public:
 	MidiOutput(OSystem *system, MidiDriver *output, bool isMT32, bool defaultMT32);
 	~MidiOutput();
 
-	void setSourceVolume(int source, int volume, bool apply=false);
+	void setSourceVolume(int source, int volume, bool apply = false);
 
 	void initSource(int source);
 	void deinitSource(int source);
@@ -48,7 +48,6 @@ public:
 	// TODO: Get rid of the following two methods
 	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { _output->setTimerCallback(timerParam, timerProc); }
 	uint32 getBaseTempo() { return _output->getBaseTempo(); }
-
 
 private:
 	void sendIntern(const byte event, const byte channel, byte param1, const byte param2);

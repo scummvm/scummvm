@@ -22,7 +22,7 @@
 
 #if defined(POSIX)
 
-#include "backends/fs/chroot/chroot-fs.h"
+#	include "backends/fs/chroot/chroot-fs.h"
 
 ChRootFilesystemNode::ChRootFilesystemNode(const Common::String &root, POSIXFilesystemNode *node) {
 	_root = Common::normalizePath(root, '/');
@@ -80,15 +80,16 @@ bool ChRootFilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool
 		return false;
 	}
 
-	for (AbstractFSList::iterator i=tmp.begin(); i!=tmp.end(); ++i) {
-		list.push_back(new ChRootFilesystemNode(_root, (POSIXFilesystemNode *) *i));
+	for (AbstractFSList::iterator i = tmp.begin(); i != tmp.end(); ++i) {
+		list.push_back(new ChRootFilesystemNode(_root, (POSIXFilesystemNode *)*i));
 	}
 
 	return true;
 }
 
 AbstractFSNode *ChRootFilesystemNode::getParent() const {
-	if (getPath() == "/") return 0;
+	if (getPath() == "/")
+		return 0;
 	return new ChRootFilesystemNode(_root, (POSIXFilesystemNode *)_realNode->getParent());
 }
 

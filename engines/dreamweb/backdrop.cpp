@@ -171,19 +171,19 @@ static bool addLength(const MapFlag *mapFlags) {
 
 void DreamWebEngine::getDimension(uint8 *mapXstart, uint8 *mapYstart, uint8 *mapXsize, uint8 *mapYsize) {
 	uint8 yStart = 0;
-	while (! addAlong(_mapFlags + 11 * yStart))
+	while (!addAlong(_mapFlags + 11 * yStart))
 		++yStart;
 
 	uint8 xStart = 0;
-	while (! addLength(_mapFlags + xStart))
+	while (!addLength(_mapFlags + xStart))
 		++xStart;
 
 	uint8 yEnd = 10;
-	while (! addAlong(_mapFlags + 11 * (yEnd - 1)))
+	while (!addAlong(_mapFlags + 11 * (yEnd - 1)))
 		--yEnd;
 
 	uint8 xEnd = 11;
-	while (! addLength(_mapFlags + (xEnd - 1)))
+	while (!addLength(_mapFlags + (xEnd - 1)))
 		--xEnd;
 
 	*mapXstart = xStart;

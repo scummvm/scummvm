@@ -21,24 +21,30 @@
  */
 
 #include "titanic/events.h"
-#include "titanic/debugger.h"
-#include "titanic/game_manager.h"
-#include "titanic/main_game_window.h"
-#include "titanic/star_control/star_control.h"
-#include "titanic/titanic.h"
 #include "common/events.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/screen.h"
+#include "titanic/debugger.h"
+#include "titanic/game_manager.h"
+#include "titanic/main_game_window.h"
+#include "titanic/star_control/star_control.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
-Events::Events(TitanicEngine *vm): _vm(vm), _frameCounter(1),
-		_totalFrames(0), _priorFrameTime(0), _specialButtons(0) {
+Events::Events(TitanicEngine *vm)
+  : _vm(vm)
+  , _frameCounter(1)
+  , _totalFrames(0)
+  , _priorFrameTime(0)
+  , _specialButtons(0) {
 }
 
-#define MOVE_CHECK if (moved) eventTarget()->mouseMove(_mousePos)
+#define MOVE_CHECK \
+	if (moved)       \
+	eventTarget()->mouseMove(_mousePos)
 
 void Events::pollEvents() {
 	checkForNextFrameCounter();
@@ -123,7 +129,7 @@ void Events::pollEventsAndWait() {
 		CViewItem *view = gameManager->getView();
 		if (view->getFullViewName() == "Bridge.Node 4.N") {
 			CStarControl *starControl = dynamic_cast<CStarControl *>(
-				view->findChildInstanceOf(CStarControl::_type));
+			  view->findChildInstanceOf(CStarControl::_type));
 			if (starControl && starControl->_visible)
 				starControl->updateCamera();
 		}

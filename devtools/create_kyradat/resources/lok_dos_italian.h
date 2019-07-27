@@ -7,29 +7,39 @@ static const char *const k1IntroStringsDOSItalian[50] = {
 	"Malcolm!",
 	"Ieri ho saputo della tua fuga.",
 	"E ti aspettavo prima di adesso.",
-	"Perch""\x82"" affrettarmi?",
+	"Perch"
+	"\x82"
+	" affrettarmi?",
 	"Sono io che governo questa terra!",
 	"La tua gracile maledizione non mi ha trattenuto affatto.",
 	"Quindi, uccidimi adesso!",
-	"Mi ""\x8A"" rimasta poca magia.",
+	"Mi "
+	"\x8A"
+	" rimasta poca magia.",
 	"Intendo danneggiarti, non ho dubbi...",
 	"...Adesso tu sei di pietra...",
 	"...tuttavia, lascio i tuoi occhi.",
 	"Non ho versato alcuna lacrima per Kyrandia...",
 	"Ma non posso negarti le tue.",
-	"Malcolm il buffone si ""\x8A"" liberato!",
+	"Malcolm il buffone si "
+	"\x8A"
+	" liberato!",
 	"Adesso ha il controllo della GemmaKyra...",
 	"...fonte di tutta la magia in Kyrandia!",
 	"",
 	"Come osi farMi lo sgambetto?",
 	"Ma niente, qualcosa di speciale per te...",
 	"Un malocchio spassoso!",
-	"Dar""\x95"" un giusto avvertimento.",
+	"Dar"
+	"\x95"
+	" un giusto avvertimento.",
 	"Non saltare su QUELL'albero!",
 	"Non salire su QUELL'albero piccolo scoiattolo!",
 	"Bo!",
 	"E' divertente in questo modo...",
-	"...non ""\x8A"" vero?",
+	"...non "
+	"\x8A"
+	" vero?",
 	"Ah ah ah...",
 	"Non sono fantastiche le dita?",
 	"E' meraviglioso essere vivo!",
@@ -43,11 +53,17 @@ static const char *const k1IntroStringsDOSItalian[50] = {
 	"Come mia prima Proclamazione Reale...",
 	"Nomino i sandali la calzatura ufficiale di Kyrandia!",
 	"Ben fatto, Brandon!",
-	"La Terra non versa pi""\x97"" lacrime...",
+	"La Terra non versa pi"
+	"\x97"
+	" lacrime...",
 	"E i tuoi amici sono stati recuperati!",
 	"Caro Brynn...",
-	"Malcolm si ""\x8A"" liberato!",
-	"Presto mi verr""\x85"" a cercare.",
+	"Malcolm si "
+	"\x8A"
+	" liberato!",
+	"Presto mi verr"
+	"\x85"
+	" a cercare.",
 	"Per favore aiuta Brandon..."
 };
 
@@ -192,19 +208,27 @@ static const char *const k1NoDropStringsDOSItalian[2] = {
 static const StringListProvider k1NoDropStringsDOSItalianProvider = { ARRAYSIZE(k1NoDropStringsDOSItalian), k1NoDropStringsDOSItalian };
 
 static const char *const k1PutDownStringDOSItalian[1] = {
-	"Forse prima sarebbe meglio che mettessi gi""\x97"" questo."
+	"Forse prima sarebbe meglio che mettessi gi"
+	"\x97"
+	" questo."
 };
 
 static const StringListProvider k1PutDownStringDOSItalianProvider = { ARRAYSIZE(k1PutDownStringDOSItalian), k1PutDownStringDOSItalian };
 
 static const char *const k1WaitAmuletStringDOSItalian[1] = {
-	"Suppongo che dovr""\x95"" aspettare che il mio Amuleto riacquisti il suo potere."
+	"Suppongo che dovr"
+	"\x95"
+	" aspettare che il mio Amuleto riacquisti il suo potere."
 };
 
 static const StringListProvider k1WaitAmuletStringDOSItalianProvider = { ARRAYSIZE(k1WaitAmuletStringDOSItalian), k1WaitAmuletStringDOSItalian };
 
 static const char *const k1BlackJewelStringDOSItalian[1] = {
-	"E' un gioiello, ma perch""\x82"" ""\x8A"" nero?"
+	"E' un gioiello, ma perch"
+	"\x82"
+	" "
+	"\x8A"
+	" nero?"
 };
 
 static const StringListProvider k1BlackJewelStringDOSItalianProvider = { ARRAYSIZE(k1BlackJewelStringDOSItalian), k1BlackJewelStringDOSItalian };
@@ -240,28 +264,42 @@ static const StringListProvider k1FluteStringsDOSItalianProvider = { ARRAYSIZE(k
 
 static const char *const k1WispJewelStringsDOSItalian[3] = {
 	"Non mi sento effettivamente in grado di farlo, per adesso.",
-	"Probabilmente dovrei metter gi""\x97"" il mio",
+	"Probabilmente dovrei metter gi"
+	"\x97"
+	" il mio",
 	", per prima cosa."
 };
 
 static const StringListProvider k1WispJewelStringsDOSItalianProvider = { ARRAYSIZE(k1WispJewelStringsDOSItalian), k1WispJewelStringsDOSItalian };
 
 static const char *const k1MagicJewelStringsDOSItalian[1] = {
-	"Questo mi ""\x8A"" sembrato strano."
+	"Questo mi "
+	"\x8A"
+	" sembrato strano."
 };
 
 static const StringListProvider k1MagicJewelStringsDOSItalianProvider = { ARRAYSIZE(k1MagicJewelStringsDOSItalian), k1MagicJewelStringsDOSItalian };
 
 static const char *const k1FlaskFullStringDOSItalian[1] = {
-	"Questa bottiglietta ""\x8A"" gi""\x85"" piena."
+	"Questa bottiglietta "
+	"\x8A"
+	" gi"
+	"\x85"
+	" piena."
 };
 
 static const StringListProvider k1FlaskFullStringDOSItalianProvider = { ARRAYSIZE(k1FlaskFullStringDOSItalian), k1FlaskFullStringDOSItalian };
 
 static const char *const k1FullFlaskStringDOSItalian[4] = {
-	"Adesso la bottiglietta ""\x8A"" riempita\rcon acqua fresca e gasata.",
-	"Adesso la bottiglietta ""\x8A"" riempita\rcon acqua salata.",
-	"Adesso la bottiglietta ""\x8A"" riempita\rcon acqua minerale.",
+	"Adesso la bottiglietta "
+	"\x8A"
+	" riempita\rcon acqua fresca e gasata.",
+	"Adesso la bottiglietta "
+	"\x8A"
+	" riempita\rcon acqua salata.",
+	"Adesso la bottiglietta "
+	"\x8A"
+	" riempita\rcon acqua minerale.",
 	"Acqua magica."
 };
 
@@ -336,9 +374,32 @@ static const char *const k1GUIStringsDOSItalian[60] = {
 	"spento",
 	"Si",
 	"No",
-	"_""\x0F""T+k""\x0F""T+q""\x0F""T+y""\x0F""T+""\x80\x0F""T+""\x8D\x0F""T+""\x99\x0F""T+""\xA1\x0F""T+""\xA8\x0F""T+Velocit""\x85"" di movimento",
-	"Velocit""\x85"" del testo",
-	"Musica ""\x8A",
+	"_"
+	"\x0F"
+	"T+k"
+	"\x0F"
+	"T+q"
+	"\x0F"
+	"T+y"
+	"\x0F"
+	"T+"
+	"\x80\x0F"
+	"T+"
+	"\x8D\x0F"
+	"T+"
+	"\x99\x0F"
+	"T+"
+	"\xA1\x0F"
+	"T+"
+	"\xA8\x0F"
+	"T+Velocit"
+	"\x85"
+	" di movimento",
+	"Velocit"
+	"\x85"
+	" del testo",
+	"Musica "
+	"\x8A",
 	"Suoni sono"
 };
 
@@ -363,4 +424,3 @@ static const char *const k1ConfigStringsDOSItalian[9] = {
 };
 
 static const StringListProvider k1ConfigStringsDOSItalianProvider = { ARRAYSIZE(k1ConfigStringsDOSItalian), k1ConfigStringsDOSItalian };
-

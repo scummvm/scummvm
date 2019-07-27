@@ -31,17 +31,17 @@
 #include "dm/dm.h"
 
 namespace DM {
-	class Champion;
-	class Sensor;
+class Champion;
+class Sensor;
 
 /* Event types */
 enum TimelineEventType {
-/* Used when a creature in a group was damaged or killed by a Poison Cloud or by a closing door or if Lord Chaos is surrounded by = 3, Fluxcages */
+	/* Used when a creature in a group was damaged or killed by a Poison Cloud or by a closing door or if Lord Chaos is surrounded by = 3, Fluxcages */
 	kDMEventTypeCreateReactionDangerOnSquare = -3, // @ CM3_EVENT_CREATE_REACTION_EVENT_29_DANGER_ON_SQUARE
-/* Used when a projectile impacts with a creature in a group */
+	/* Used when a projectile impacts with a creature in a group */
 	kDMEventTypeCreateReactionHitByProjectile = -2, // @ CM2_EVENT_CREATE_REACTION_EVENT_30_HIT_BY_PROJECTILE
-/* Used when the party bumps into a group or performs a melee attack */
-	kDMEventTypeCreateReactionPartyIsAdjacent = -1,  // @ CM1_EVENT_CREATE_REACTION_EVENT_31_PARTY_IS_ADJACENT
+	/* Used when the party bumps into a group or performs a melee attack */
+	kDMEventTypeCreateReactionPartyIsAdjacent = -1, // @ CM1_EVENT_CREATE_REACTION_EVENT_31_PARTY_IS_ADJACENT
 	kDMEventTypeNone = 0, // @ C00_EVENT_NONE
 	kDMEventTypeDoorAnimation = 1, // @ C01_EVENT_DOOR_ANIMATION
 	kDMEventTypeDoorDestruction = 2, // @ C02_EVENT_DOOR_DESTRUCTION
@@ -62,8 +62,8 @@ enum TimelineEventType {
 	kDMEventTypeGroupReacionHitByProjectile = 30, // @ C30_EVENT_GROUP_REACTION_HIT_BY_PROJECTILE
 	kDMEventTypeGroupReactionPartyIsAdjecent = 31, // @ C31_EVENT_GROUP_REACTION_PARTY_IS_ADJACENT
 	kDMEventTypeUpdateAspectGroup = 32, // @ C32_EVENT_UPDATE_ASPECT_GROUP
-/* Events = 33,-36 and = 38,-41 are used for individual creatures only while the group is attacking the party */
-	kDMEventTypeUpdateAspectCreature0 = 33,  // @ C33_EVENT_UPDATE_ASPECT_CREATURE_0
+	/* Events = 33,-36 and = 38,-41 are used for individual creatures only while the group is attacking the party */
+	kDMEventTypeUpdateAspectCreature0 = 33, // @ C33_EVENT_UPDATE_ASPECT_CREATURE_0
 	kDMEventTypeUpdateAspectCreature1 = 34, // @ C34_EVENT_UPDATE_ASPECT_CREATURE_1
 	kDMEventTypeUpdateAspectCreature2 = 35, // @ C35_EVENT_UPDATE_ASPECT_CREATURE_2
 	kDMEventTypeUpdateAspectCreature3 = 36, // @ C36_EVENT_UPDATE_ASPECT_CREATURE_3
@@ -72,10 +72,10 @@ enum TimelineEventType {
 	kDMEventTypeUpdateBehavior1 = 39, // @ C39_EVENT_UPDATE_BEHAVIOR_CREATURE_1
 	kDMEventTypeUpdateBehavior2 = 40, // @ C40_EVENT_UPDATE_BEHAVIOR_CREATURE_2
 	kDMEventTypeUpdateBehavior3 = 41, // @ C41_EVENT_UPDATE_BEHAVIOR_CREATURE_3
-/* Projectiles created by a champion (by casting a spell, shooting a weapon or throwing an object) or by a creature (by casting a spell) ignore impacts during their first movement otherwise an impact would always occur immediately as these projectiles are created on the champion or creature square */
+	/* Projectiles created by a champion (by casting a spell, shooting a weapon or throwing an object) or by a creature (by casting a spell) ignore impacts during their first movement otherwise an impact would always occur immediately as these projectiles are created on the champion or creature square */
 	kDMEventTypeMoveProjectileIgnoreImpacts = 48, // @ C48_EVENT_MOVE_PROJECTILE_IGNORE_IMPACTS
-/* Projectiles created by projectile launcher sensors never ignore impacts as well as all other projectiles after their first movement */
-	kDMEventTypeMoveProjectile = 49,  // @ C49_EVENT_MOVE_PROJECTILE
+	/* Projectiles created by projectile launcher sensors never ignore impacts as well as all other projectiles after their first movement */
+	kDMEventTypeMoveProjectile = 49, // @ C49_EVENT_MOVE_PROJECTILE
 	kDMEventTypeWatchdoge = 53, // @ C53_EVENT_WATCHDOG
 	kDMEventTypeMoveGroupSilent = 60, // @ C60_EVENT_MOVE_GROUP_SILENT
 	kDMEventTypeMoveGroupAudible = 61, // @ C61_EVENT_MOVE_GROUP_AUDIBLE
@@ -92,10 +92,10 @@ enum TimelineEventType {
 	kDMEventTypeMagicMap0 = 80, // @ C80_EVENT_MAGIC_MAP
 	kDMEventTypeMagicMap1 = 81, // @ C81_EVENT_MAGIC_MAP
 	kDMEventTypeMagicMap2 = 82, // @ C82_EVENT_MAGIC_MAP
-	kDMEventTypeMagicMap3 = 83  // @ C83_EVENT_MAGIC_MAP
+	kDMEventTypeMagicMap3 = 83 // @ C83_EVENT_MAGIC_MAP
 };
 
-#define kDMMaskGeneratedCreatureCount 0x0007	// @ MASK0x0007_GENERATED_CREATURE_COUNT
+#define kDMMaskGeneratedCreatureCount 0x0007 // @ MASK0x0007_GENERATED_CREATURE_COUNT
 #define kDMMaskRandomizeGeneratedCreatureCount 0x0008 // @ MASK0x0008_RANDOMIZE_GENERATED_CREATURE_COUNT
 
 class TimelineEvent {
@@ -130,6 +130,7 @@ public:
 
 		class {
 			uint16 _backing;
+
 		public:
 			uint16 getMapX() { return _backing & 0x1F; }
 			uint16 getMapY() { return (_backing >> 5) & 0x1F; }
@@ -151,6 +152,7 @@ public:
 
 class Timeline {
 	DMEngine *_vm;
+
 public:
 	uint16 _eventMaxCount; // @ G0369_ui_EventMaximumCount
 	TimelineEvent *_events; // @ G0370_ps_Events
@@ -161,7 +163,7 @@ public:
 	explicit Timeline(DMEngine *vm);
 	~Timeline();
 	void initTimeline(); // @ F0233_TIMELINE_Initialize
-	void deleteEvent(uint16 eventIndex);// @ F0237_TIMELINE_DeleteEvent
+	void deleteEvent(uint16 eventIndex); // @ F0237_TIMELINE_DeleteEvent
 	void fixChronology(uint16 timelineIndex); // @ F0236_TIMELINE_FixChronology
 	bool isEventABeforeB(TimelineEvent *eventA, TimelineEvent *eventB); // @ F0234_TIMELINE_IsEventABeforeEventB
 	uint16 getIndex(uint16 eventIndex); // @ F0235_TIMELINE_GetIndex
@@ -182,9 +184,9 @@ public:
 	void processEventsMoveGroup(TimelineEvent *event); // @ F0252_TIMELINE_ProcessEvents60to61_MoveGroup
 	void procesEventEnableGroupGenerator(TimelineEvent *event); // @ F0246_TIMELINE_ProcessEvent65_EnableGroupGenerator
 	void processEventEnableChampionAction(uint16 champIndex); // @ F0253_TIMELINE_ProcessEvent11Part1_EnableChampionAction
-	void processEventMoveWeaponFromQuiverToSlot(uint16 champIndex, uint16 slotIndex);// @ F0259_TIMELINE_ProcessEvent11Part2_MoveWeaponFromQuiverToSlot
+	void processEventMoveWeaponFromQuiverToSlot(uint16 champIndex, uint16 slotIndex); // @ F0259_TIMELINE_ProcessEvent11Part2_MoveWeaponFromQuiverToSlot
 	bool hasWeaponMovedSlot(int16 champIndex, Champion *champ,
-										 uint16 sourceSlotIndex, int16 destSlotIndex); // @ F0258_TIMELINE_HasWeaponMovedToSlot
+	                        uint16 sourceSlotIndex, int16 destSlotIndex); // @ F0258_TIMELINE_HasWeaponMovedToSlot
 	void processEventHideDamageReceived(uint16 champIndex); // @ F0254_TIMELINE_ProcessEvent12_HideDamageReceived
 	void processEventLight(TimelineEvent *event); // @ F0257_TIMELINE_ProcessEvent70_Light
 	void refreshAllChampionStatusBoxes(); // @ F0260_TIMELINE_RefreshAllChampionStatusBoxes

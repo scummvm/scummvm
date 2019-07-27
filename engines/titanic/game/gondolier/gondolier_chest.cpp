@@ -25,9 +25,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CGondolierChest, CGondolierBase)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(MouseDragStartMsg)
 END_MESSAGE_MAP()
 
 void CGondolierChest::save(SimpleFile *file, int indent) {

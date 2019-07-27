@@ -24,13 +24,13 @@
 #include "common/system.h"
 #include "graphics/thumbnail.h"
 
-#include "saga/saga.h"
 #include "saga/actor.h"
 #include "saga/events.h"
 #include "saga/interface.h"
 #include "saga/isomap.h"
 #include "saga/music.h"
 #include "saga/render.h"
+#include "saga/saga.h"
 #include "saga/scene.h"
 #include "saga/script.h"
 
@@ -39,10 +39,10 @@
 namespace Saga {
 
 static SaveFileData emptySlot = {
-	 "", 0
+	"", 0
 };
 
-char* SagaEngine::calcSaveFileName(uint slotNumber) {
+char *SagaEngine::calcSaveFileName(uint slotNumber) {
 	static char name[MAX_FILE_NAME];
 	sprintf(name, "%s.s%02u", _targetName.c_str(), slotNumber);
 	return name;
@@ -131,10 +131,10 @@ void SagaEngine::fillSaveList() {
 
 	_saveFilesCount = 0;
 
-	for (Common::StringArray::iterator file = filenames.begin(); file != filenames.end(); ++file){
+	for (Common::StringArray::iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		//Obtain the last 2 digits of the filename, since they correspond to the save slot
-		slot[0] = file->c_str()[file->size()-2];
-		slot[1] = file->c_str()[file->size()-1];
+		slot[0] = file->c_str()[file->size() - 2];
+		slot[1] = file->c_str()[file->size() - 1];
 		slot[2] = 0;
 
 		slotNumber = atoi(slot);
@@ -146,7 +146,7 @@ void SagaEngine::fillSaveList() {
 				_saveHeader.version = in->readUint32LE();
 				in->read(_saveHeader.name, sizeof(_saveHeader.name));
 
-				if (_saveHeader.type != MKTAG('S','A','G','A')) {
+				if (_saveHeader.type != MKTAG('S', 'A', 'G', 'A')) {
 					warning("SagaEngine::load wrong save %s format", name);
 					i++;
 					continue;
@@ -170,7 +170,7 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 		return;
 	}
 
-	_saveHeader.type = MKTAG('S','A','G','A');
+	_saveHeader.type = MKTAG('S', 'A', 'G', 'A');
 	_saveHeader.size = 0;
 	_saveHeader.version = CURRENT_SAGA_VER;
 	// Note that IHNM has a smaller save title size than ITE
@@ -216,7 +216,7 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 #ifdef ENABLE_IHNM
 	if (getGameId() == GID_IHNM) {
 		out->writeSint32LE(_scene->currentChapterNumber());
-		out->writeSint32LE(0);	// obsolete, was used for the protagonist
+		out->writeSint32LE(0); // obsolete, was used for the protagonist
 		out->writeSint32LE(_scene->getCurrentMusicTrack());
 		out->writeSint32LE(_scene->getCurrentMusicRepeat());
 	}
@@ -285,7 +285,7 @@ void SagaEngine::load(const char *fileName) {
 	if (_saveHeader.version < 4)
 		warning("This savegame is not endian-safe. There may be problems");
 
-	if (_saveHeader.type != MKTAG('S','A','G','A')) {
+	if (_saveHeader.type != MKTAG('S', 'A', 'G', 'A')) {
 		error("SagaEngine::load wrong save game format");
 	}
 
@@ -298,7 +298,7 @@ void SagaEngine::load(const char *fileName) {
 		// We don't need the thumbnail here, so just read it and discard it
 		Graphics::skipThumbnail(*in);
 
-		in->readUint32BE();	// save date
+		in->readUint32BE(); // save date
 		in->readUint16BE(); // save time
 
 		if (_saveHeader.version >= 8) {
@@ -316,7 +316,7 @@ void SagaEngine::load(const char *fileName) {
 	if (getGameId() == GID_IHNM) {
 		int currentChapter = _scene->currentChapterNumber();
 		_scene->setChapterNumber(in->readSint32LE());
-		in->skip(4);	// obsolete, was used for setting the protagonist
+		in->skip(4); // obsolete, was used for setting the protagonist
 		if (_scene->currentChapterNumber() != currentChapter)
 			_scene->changeScene(-2, 0, kTransitionFade, _scene->currentChapterNumber());
 		_scene->setCurrentMusicTrack(in->readSint32LE());

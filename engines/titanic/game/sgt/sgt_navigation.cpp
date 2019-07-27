@@ -26,9 +26,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CSGTNavigation, CGameObject)
-	ON_MESSAGE(StatusChangeMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(EnterViewMsg)
 END_MESSAGE_MAP()
 
 CSGTNavigationStatics *CSGTNavigation::_statics;

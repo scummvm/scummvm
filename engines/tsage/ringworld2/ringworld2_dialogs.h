@@ -23,69 +23,72 @@
 #ifndef TSAGE_RINGWORLD2_DIALOGS_H
 #define TSAGE_RINGWORLD2_DIALOGS_H
 
+#include "common/list.h"
+#include "common/rect.h"
+#include "common/system.h"
 #include "tsage/core.h"
 #include "tsage/dialogs.h"
 #include "tsage/events.h"
 #include "tsage/graphics.h"
-#include "common/list.h"
-#include "common/rect.h"
-#include "common/system.h"
 
 namespace TsAGE {
 
 namespace Ringworld2 {
 
-using namespace TsAGE;
+	using namespace TsAGE;
 
-class RightClickDialog : public GfxDialog {
-private:
-	GfxSurface _surface;
-	Visage _btnImages;
-	Common::Point _btnList[6];
+	class RightClickDialog : public GfxDialog {
+	private:
+		GfxSurface _surface;
+		Visage _btnImages;
+		Common::Point _btnList[6];
 
-	Rect _rectList1[5];
-	Rect _rectList2[5];
-	Rect _rectList3[5];
-	Rect _rectList4[5];
+		Rect _rectList1[5];
+		Rect _rectList2[5];
+		Rect _rectList3[5];
+		Rect _rectList4[5];
 
-	int _highlightedAction;
-	int _selectedAction;
-	CursorType _previousCursor;
-public:
-	RightClickDialog();
-	~RightClickDialog();
+		int _highlightedAction;
+		int _selectedAction;
+		CursorType _previousCursor;
 
-	virtual void draw();
-	virtual bool process(Event &event);
-	int execute();
-};
+	public:
+		RightClickDialog();
+		~RightClickDialog();
 
-class CharacterDialog: public GfxDialog {
-private:
-	GfxMessage _msgTitle;
-	GfxButton _btnQuinn, _btnMiranda, _btnSeeker;
-	GfxButton _btnCancel;
-public:
-	CharacterDialog();
-	virtual ~CharacterDialog() {}
+		virtual void draw();
+		virtual bool process(Event &event);
+		int execute();
+	};
 
-	static void show();
-};
+	class CharacterDialog : public GfxDialog {
+	private:
+		GfxMessage _msgTitle;
+		GfxButton _btnQuinn, _btnMiranda, _btnSeeker;
+		GfxButton _btnCancel;
 
-class HelpDialog: public GfxDialog {
-private:
-	GfxMessage _msgTitle, _msgVersion;
-	GfxButton _btnList[7];
-	GfxMessage _btnDescription[7];
-	GfxButton _btnResume;
-public:
-	HelpDialog();
-	virtual ~HelpDialog() {}
+	public:
+		CharacterDialog();
+		virtual ~CharacterDialog() {}
 
-	static void show();
+		static void show();
+	};
 
-	virtual bool handleKeypress(Event &event, GfxButton *&btn);
-};
+	class HelpDialog : public GfxDialog {
+	private:
+		GfxMessage _msgTitle, _msgVersion;
+		GfxButton _btnList[7];
+		GfxMessage _btnDescription[7];
+		GfxButton _btnResume;
+
+	public:
+		HelpDialog();
+		virtual ~HelpDialog() {}
+
+		static void show();
+
+		virtual bool handleKeypress(Event &event, GfxButton *&btn);
+	};
 
 } // End of namespace Ringworld2
 

@@ -45,16 +45,16 @@
  *
  */
 
-#include "common/system.h"
 #include "common/events.h"
+#include "common/system.h"
 
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
 
-#include "wage/wage.h"
 #include "wage/design.h"
-#include "wage/gui.h"
 #include "wage/dialog.h"
+#include "wage/gui.h"
+#include "wage/wage.h"
 
 namespace Wage {
 
@@ -62,8 +62,11 @@ enum {
 	kDialogHeight = 113
 };
 
-Dialog::Dialog(Gui *gui, int width, const char *text, DialogButtonArray *buttons, uint defaultButton) :
-		_gui(gui), _text(text), _buttons(buttons), _defaultButton(defaultButton) {
+Dialog::Dialog(Gui *gui, int width, const char *text, DialogButtonArray *buttons, uint defaultButton)
+  : _gui(gui)
+  , _text(text)
+  , _buttons(buttons)
+  , _defaultButton(defaultButton) {
 	assert(_gui->_engine);
 	assert(_gui->_engine->_world);
 
@@ -117,7 +120,7 @@ void Dialog::paint() {
 
 		if ((int)i == _pressedButton && _mouseOverPressedButton) {
 			Common::Rect bb(button->bounds.left + 5, button->bounds.top + 5,
-				button->bounds.right - 5, button->bounds.bottom - 5);
+			                button->bounds.right - 5, button->bounds.bottom - 5);
 
 			Design::drawFilledRect(&_gui->_screen, bb, kColorBlack, _gui->_wm.getPatterns(), kPatternSolid);
 
@@ -133,7 +136,7 @@ void Dialog::paint() {
 	}
 
 	g_system->copyRectToScreen(_gui->_screen.getBasePtr(_bbox.left, _bbox.top), _gui->_screen.pitch,
-			_bbox.left, _bbox.top, _bbox.width() + 1, _bbox.height() + 1);
+	                           _bbox.left, _bbox.top, _bbox.width() + 1, _bbox.height() + 1);
 
 	_needsRedraw = false;
 }
@@ -142,7 +145,7 @@ void Dialog::drawOutline(Common::Rect &bounds, int *spec, int speclen) {
 	for (int i = 0; i < speclen; i++)
 		if (spec[i] != 0)
 			Design::drawRect(&_gui->_screen, bounds.left + i, bounds.top + i, bounds.right - i, bounds.bottom - i,
-						1, kColorBlack, _gui->_wm.getPatterns(), kPatternSolid);
+			                 1, kColorBlack, _gui->_wm.getPatterns(), kPatternSolid);
 }
 
 int Dialog::run() {

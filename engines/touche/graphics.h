@@ -29,7 +29,6 @@ namespace Touche {
 
 class Graphics {
 public:
-
 	enum {
 		kTransparent = 1 << 0
 	};
@@ -46,7 +45,6 @@ public:
 	static void copyMask(uint8 *dst, int dstPitch, int dstX, int dstY, const uint8 *src, int srcPitch, int srcX, int srcY, int w, int h, uint8 fillColor);
 
 private:
-
 	/* font data for english version */
 	static const uint16 _engFontOffs[];
 	static const int _engFontSize;

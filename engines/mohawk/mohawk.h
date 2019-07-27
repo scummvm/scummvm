@@ -23,8 +23,8 @@
 #ifndef MOHAWK_MOHAWK_H
 #define MOHAWK_MOHAWK_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 
 #include "engines/engine.h"
 
@@ -58,12 +58,12 @@ enum MohawkGameType {
 };
 
 enum MohawkGameFeatures {
-	GF_ME             = (1 << 0), // Myst Masterpiece Edition
-	GF_25TH           = (1 << 1), // Myst and Riven 25th Anniversary
-	GF_DVD            = (1 << 2),
-	GF_DEMO           = (1 << 3),
-	GF_LB_10          = (1 << 4), // very early Living Books 1.0 games
-	GF_LANGUAGE_FILES = (1 << 5)  // Myst and Riven versions using language override files
+	GF_ME = (1 << 0), // Myst Masterpiece Edition
+	GF_25TH = (1 << 1), // Myst and Riven 25th Anniversary
+	GF_DVD = (1 << 2),
+	GF_DEMO = (1 << 3),
+	GF_LB_10 = (1 << 4), // very early Living Books 1.0 games
+	GF_LANGUAGE_FILES = (1 << 5) // Myst and Riven versions using language override files
 };
 
 struct MohawkGameDescription;

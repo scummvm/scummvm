@@ -46,9 +46,9 @@ namespace Chewy {
 
 Resource::Resource(Common::String filename) {
 	const uint32 headerGeneric = MKTAG('N', 'G', 'S', '\0');
-	const uint32 headerTxtDec  = MKTAG('T', 'C', 'F', '\0');
-	const uint32 headerTxtEnc  = MKTAG('T', 'C', 'F', '\1');
-	const uint32 headerSprite  = MKTAG('T', 'A', 'F', '\0');
+	const uint32 headerTxtDec = MKTAG('T', 'C', 'F', '\0');
+	const uint32 headerTxtEnc = MKTAG('T', 'C', 'F', '\1');
+	const uint32 headerSprite = MKTAG('T', 'A', 'F', '\0');
 
 	filename.toLowercase();
 	_stream.open(filename);
@@ -129,12 +129,12 @@ void Resource::initSprite(Common::String filename) {
 
 	_resType = kResourceTAF;
 	_encrypted = false;
-	/*screenMode = */_stream.readUint16LE();
+	/*screenMode = */ _stream.readUint16LE();
 	_chunkCount = _stream.readUint16LE();
-	_stream.skip(4);		// total size of all sprites
-	_stream.skip(3 * 256);	// palette
+	_stream.skip(4); // total size of all sprites
+	_stream.skip(3 * 256); // palette
 	nextSpriteOffset = _stream.readUint32LE();
-	_stream.skip(2 + 1);	// correction table, padding
+	_stream.skip(2 + 1); // correction table, padding
 	if ((int32)nextSpriteOffset != _stream.pos())
 		error("Invalid sprite resource - %s", filename.c_str());
 
@@ -144,10 +144,10 @@ void Resource::initSprite(Common::String filename) {
 		cur.pos = _stream.pos();
 		cur.type = kResourceTAF;
 
-		_stream.skip(2 + 2 + 2);	// compression flag, width, height
+		_stream.skip(2 + 2 + 2); // compression flag, width, height
 		nextSpriteOffset = _stream.readUint32LE();
 		uint32 spriteImageOffset = _stream.readUint32LE();
-		_stream.skip(1);	// padding
+		_stream.skip(1); // padding
 
 		if ((int32)spriteImageOffset != _stream.pos())
 			error("Invalid sprite resource - %s", filename.c_str());
@@ -194,7 +194,7 @@ TAFChunk *SpriteResource::getSprite(uint num) {
 	taf->compressionFlag = _stream.readUint16LE();
 	taf->width = _stream.readUint16LE();
 	taf->height = _stream.readUint16LE();
-	_stream.skip(4 + 4 + 1);	// nextSpriteOffset, spriteImageOffset, padding
+	_stream.skip(4 + 4 + 1); // nextSpriteOffset, spriteImageOffset, padding
 
 	taf->data = new byte[taf->width * taf->height];
 
@@ -294,12 +294,12 @@ VideoChunk *VideoResource::getVideoHeader(uint num) {
 	if (_stream.readUint32BE() != MKTAG('C', 'F', 'O', '\0'))
 		error("Corrupt video resource");
 
-	vid->size = _stream.readUint32LE();	// always 0
+	vid->size = _stream.readUint32LE(); // always 0
 	vid->frameCount = _stream.readUint16LE();
 	vid->width = _stream.readUint16LE();
 	vid->height = _stream.readUint16LE();
 	vid->frameDelay = _stream.readUint32LE();
-	vid->firstFrameOffset = _stream.readUint32LE();	// always 22
+	vid->firstFrameOffset = _stream.readUint32LE(); // always 22
 
 	return vid;
 }

@@ -23,14 +23,16 @@
 #ifndef TITANIC_PET_ELEMENT_H
 #define TITANIC_PET_ELEMENT_H
 
-#include "titanic/support/simple_file.h"
-#include "titanic/support/string.h"
 #include "titanic/core/link_item.h"
 #include "titanic/messages/mouse_messages.h"
+#include "titanic/support/simple_file.h"
+#include "titanic/support/string.h"
 
 namespace Titanic {
 
-enum PetElementMode { MODE_UNSELECTED = 0, MODE_SELECTED = 1, MODE_FOCUSED = 2 };
+enum PetElementMode { MODE_UNSELECTED = 0,
+	                    MODE_SELECTED = 1,
+	                    MODE_FOCUSED = 2 };
 
 class CGameObject;
 class CPetControl;
@@ -39,6 +41,7 @@ class CPetElement {
 protected:
 	Rect _bounds;
 	PetElementMode _mode;
+
 public:
 	CPetElement();
 	virtual ~CPetElement() {}
@@ -47,7 +50,7 @@ public:
 	 * Sets up the element
 	 */
 	virtual void setup(PetElementMode mode, const CString &name,
-		CPetControl *petControl) {}
+	                   CPetControl *petControl) {}
 
 	/**
 	 * Reset the element

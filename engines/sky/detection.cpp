@@ -26,19 +26,18 @@
 #include "base/plugins.h"
 
 #include "common/config-manager.h"
-#include "engines/advancedDetector.h"
-#include "engines/metaengine.h"
-#include "common/system.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/savefile.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "engines/advancedDetector.h"
+#include "engines/metaengine.h"
 
 #include "engines/metaengine.h"
 
-static const PlainGameDescriptor skySetting =
-	{"sky", "Beneath a Steel Sky" };
+static const PlainGameDescriptor skySetting = { "sky", "Beneath a Steel Sky" };
 
 static const ExtraGuiOption skyExtraGuiOption = {
 	_s("Floppy intro"),
@@ -57,9 +56,9 @@ struct SkyVersion {
 
 // TODO: Would be nice if Disk::determineGameVersion() used this table, too.
 static const SkyVersion skyVersions[] = {
-	{  232, -1, "floppy demo", 272, GUIO1(GUIO_NOSPEECH) }, // German
-	{  243, -1, "pc gamer demo", 109, GUIO1(GUIO_NOSPEECH) },
-	{  247, -1, "floppy demo", 267, GUIO1(GUIO_NOSPEECH) }, // English
+	{ 232, -1, "floppy demo", 272, GUIO1(GUIO_NOSPEECH) }, // German
+	{ 243, -1, "pc gamer demo", 109, GUIO1(GUIO_NOSPEECH) },
+	{ 247, -1, "floppy demo", 267, GUIO1(GUIO_NOSPEECH) }, // English
 	{ 1404, -1, "floppy", 288, GUIO1(GUIO_NOSPEECH) },
 	{ 1413, -1, "floppy", 303, GUIO1(GUIO_NOSPEECH) },
 	{ 1445, 8830435, "floppy", 348, GUIO1(GUIO_NOSPEECH) },
@@ -97,17 +96,11 @@ const char *SkyMetaEngine::getOriginalCopyright() const {
 }
 
 bool SkyMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave);
+	return (f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup) || (f == kSupportsDeleteSave);
 }
 
 bool Sky::SkyEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
 PlainGameList SkyMetaEngine::getSupportedGames() const {
@@ -175,8 +168,7 @@ DetectedGames SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
 		// English to match the recorded voices better.
 		const SkyVersion *sv = skyVersions;
 		while (sv->dinnerTableEntries) {
-			if (dinnerTableEntries == sv->dinnerTableEntries &&
-				(sv->dataDiskSize == dataDiskSize || sv->dataDiskSize == -1)) {
+			if (dinnerTableEntries == sv->dinnerTableEntries && (sv->dataDiskSize == dataDiskSize || sv->dataDiskSize == -1)) {
 				break;
 			}
 			++sv;
@@ -209,12 +201,12 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 
 	// Load the descriptions
 	Common::StringArray savenames;
-	savenames.resize(MAX_SAVE_GAMES+1);
+	savenames.resize(MAX_SAVE_GAMES + 1);
 
 	Common::InSaveFile *inf;
 	inf = saveFileMan->openForLoading("SKY-VM.SAV");
 	if (inf != NULL) {
-		char *tmpBuf =  new char[MAX_SAVE_GAMES * MAX_TEXT_LEN];
+		char *tmpBuf = new char[MAX_SAVE_GAMES * MAX_TEXT_LEN];
 		char *tmpPtr = tmpBuf;
 		inf->read(tmpBuf, MAX_SAVE_GAMES * MAX_TEXT_LEN);
 		for (int i = 0; i < MAX_SAVE_GAMES; ++i) {
@@ -242,7 +234,7 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 		int slotNum = atoi(ext.c_str());
 		Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 		if (in) {
-			saveList.push_back(SaveStateDescriptor(slotNum+1, savenames[slotNum]));
+			saveList.push_back(SaveStateDescriptor(slotNum + 1, savenames[slotNum]));
 			delete in;
 		}
 	}
@@ -255,21 +247,21 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 int SkyMetaEngine::getMaximumSaveSlot() const { return MAX_SAVE_GAMES; }
 
 void SkyMetaEngine::removeSaveState(const char *target, int slot) const {
-	if (slot == 0)	// do not delete the auto save
+	if (slot == 0) // do not delete the auto save
 		return;
 
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	char fName[20];
-	sprintf(fName,"SKY-VM.%03d", slot - 1);
+	sprintf(fName, "SKY-VM.%03d", slot - 1);
 	saveFileMan->removeSavefile(fName);
 
 	// Load current save game descriptions
 	Common::StringArray savenames;
-	savenames.resize(MAX_SAVE_GAMES+1);
+	savenames.resize(MAX_SAVE_GAMES + 1);
 	Common::InSaveFile *inf;
 	inf = saveFileMan->openForLoading("SKY-VM.SAV");
 	if (inf != NULL) {
-		char *tmpBuf =  new char[MAX_SAVE_GAMES * MAX_TEXT_LEN];
+		char *tmpBuf = new char[MAX_SAVE_GAMES * MAX_TEXT_LEN];
 		char *tmpPtr = tmpBuf;
 		inf->read(tmpBuf, MAX_SAVE_GAMES * MAX_TEXT_LEN);
 		for (int i = 0; i < MAX_SAVE_GAMES; ++i) {
@@ -302,9 +294,9 @@ void SkyMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SKY)
-	REGISTER_PLUGIN_DYNAMIC(SKY, PLUGIN_TYPE_ENGINE, SkyMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(SKY, PLUGIN_TYPE_ENGINE, SkyMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(SKY, PLUGIN_TYPE_ENGINE, SkyMetaEngine);
+REGISTER_PLUGIN_STATIC(SKY, PLUGIN_TYPE_ENGINE, SkyMetaEngine);
 #endif
 
 namespace Sky {
@@ -315,7 +307,7 @@ Common::Error SkyEngine::loadGameState(int slot) {
 
 Common::Error SkyEngine::saveGameState(int slot, const Common::String &desc) {
 	if (slot == 0)
-		return Common::kWritePermissionDenied;	// we can't overwrite the auto save
+		return Common::kWritePermissionDenied; // we can't overwrite the auto save
 
 	// Set the save slot and save the game
 	_skyControl->_selectedGame = slot - 1;
@@ -324,7 +316,7 @@ Common::Error SkyEngine::saveGameState(int slot, const Common::String &desc) {
 
 	// Load current save game descriptions
 	Common::StringArray saveGameTexts;
-	saveGameTexts.resize(MAX_SAVE_GAMES+1);
+	saveGameTexts.resize(MAX_SAVE_GAMES + 1);
 	_skyControl->loadDescriptions(saveGameTexts);
 
 	// Update the save game description at the given slot

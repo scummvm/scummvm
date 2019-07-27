@@ -20,14 +20,14 @@
  *
  */
 
+#include "sci/sound/decoders/sol.h"
 #include "audio/audiostream.h"
-#include "audio/rate.h"
 #include "audio/decoders/raw.h"
+#include "audio/rate.h"
 #include "common/substream.h"
 #include "common/util.h"
-#include "sci/sci.h"
-#include "sci/sound/decoders/sol.h"
 #include "sci/resource.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
@@ -134,25 +134,26 @@ static void deDPCM8Stereo(int16 *out, Common::ReadStream &audioStream, uint32 nu
 	}
 }
 
-# pragma mark -
+#pragma mark -
 
-template<bool STEREO, bool S16BIT, bool OLDDPCM8>
-SOLStream<STEREO, S16BIT, OLDDPCM8>::SOLStream(Common::SeekableReadStream *stream, const DisposeAfterUse::Flag disposeAfterUse, const uint16 sampleRate, const int32 rawDataSize) :
-	_stream(stream, disposeAfterUse),
-	_sampleRate(sampleRate),
-	// SSCI aligns the size of SOL data to 32 bits
-	_rawDataSize(rawDataSize & ~3) {
-		if (S16BIT) {
-			_dpcmCarry16.l = _dpcmCarry16.r = 0;
-		} else {
-			_dpcmCarry8.l = _dpcmCarry8.r = 0x80;
-		}
-
-		const uint8 compressionRatio = 2;
-		const uint8 numChannels = STEREO ? 2 : 1;
-		const uint8 bytesPerSample = S16BIT ? 2 : 1;
-		_length = ((uint64)_rawDataSize * compressionRatio * 1000) / (_sampleRate * numChannels * bytesPerSample);
+template <bool STEREO, bool S16BIT, bool OLDDPCM8>
+SOLStream<STEREO, S16BIT, OLDDPCM8>::SOLStream(Common::SeekableReadStream *stream, const DisposeAfterUse::Flag disposeAfterUse, const uint16 sampleRate, const int32 rawDataSize)
+  : _stream(stream, disposeAfterUse)
+  , _sampleRate(sampleRate)
+  ,
+  // SSCI aligns the size of SOL data to 32 bits
+  _rawDataSize(rawDataSize & ~3) {
+	if (S16BIT) {
+		_dpcmCarry16.l = _dpcmCarry16.r = 0;
+	} else {
+		_dpcmCarry8.l = _dpcmCarry8.r = 0x80;
 	}
+
+	const uint8 compressionRatio = 2;
+	const uint8 numChannels = STEREO ? 2 : 1;
+	const uint8 bytesPerSample = S16BIT ? 2 : 1;
+	_length = ((uint64)_rawDataSize * compressionRatio * 1000) / (_sampleRate * numChannels * bytesPerSample);
+}
 
 template <bool STEREO, bool S16BIT, bool OLDDPCM8>
 bool SOLStream<STEREO, S16BIT, OLDDPCM8>::seek(const Audio::Timestamp &where) {

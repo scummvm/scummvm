@@ -42,28 +42,28 @@ class Scene {
 
 	BladeRunnerEngine *_vm;
 
-	int         _setId;
-	int         _sceneId;
-	VQAPlayer  *_vqaPlayer;
+	int _setId;
+	int _sceneId;
+	VQAPlayer *_vqaPlayer;
 
-	int         _defaultLoop;
-	bool        _defaultLoopSet;
-	bool        _defaultLoopPreloadedSet;
-	int         _specialLoopMode;
-	int         _specialLoop;
+	int _defaultLoop;
+	bool _defaultLoopSet;
+	bool _defaultLoopPreloadedSet;
+	int _specialLoopMode;
+	int _specialLoop;
 	// int         _introFinished;
-	int         _nextSetId;
-	int         _nextSceneId;
-	int         _frame;
+	int _nextSetId;
+	int _nextSceneId;
+	int _frame;
 
-	Vector3     _actorStartPosition;
-	int         _actorStartFacing;
-	bool        _playerWalkedIn;
+	Vector3 _actorStartPosition;
+	int _actorStartFacing;
+	bool _playerWalkedIn;
 
 public:
-	Set        *_set;
-	Regions    *_regions;
-	Regions    *_exits;
+	Set *_set;
+	Regions *_regions;
+	Regions *_exits;
 
 public:
 	Scene(BladeRunnerEngine *vm);
@@ -71,7 +71,7 @@ public:
 
 	bool open(int setId, int sceneId, bool isLoadingGame);
 	bool close(bool isLoadingGame);
-	int  advanceFrame(bool useTime = true);
+	int advanceFrame(bool useTime = true);
 	void resume(bool isLoadingGame = false);
 	void startDefaultLoop();
 	void setActorStart(Vector3 position, int facing);
@@ -82,7 +82,11 @@ public:
 	int getSetId() const { return _setId; }
 	int getSceneId() const { return _sceneId; }
 
-	bool didPlayerWalkIn() { bool r = _playerWalkedIn; _playerWalkedIn = false; return r; }
+	bool didPlayerWalkIn() {
+		bool r = _playerWalkedIn;
+		_playerWalkedIn = false;
+		return r;
+	}
 
 	int findObject(const Common::String &objectName);
 	bool objectSetHotMouse(int objectId);

@@ -21,19 +21,32 @@
  */
 
 #include "scumm/players/player_v2cms.h"
-#include "scumm/scumm.h"
 #include "audio/mixer.h"
 #include "audio/softsynth/cms.h"
+#include "scumm/scumm.h"
 
 namespace Scumm {
 
 Player_V2CMS::Player_V2CMS(ScummEngine *scumm, Audio::Mixer *mixer)
-	: Player_V2Base(scumm, mixer, true), _cmsVoicesBase(), _cmsVoices(),
-	  _cmsChips(), _midiDelay(0), _octaveMask(0), _looping(0), _tempo(0),
-	  _tempoSum(0), _midiData(0), _midiSongBegin(0), _musicTimer(0),
-	  _musicTimerTicks(0), _voiceTimer(0), _loadedMidiSong(0),
-	  _outputTableReady(0), _midiChannel(), _midiChannelUse(),
-	  _lastMidiCommand(0) {
+  : Player_V2Base(scumm, mixer, true)
+  , _cmsVoicesBase()
+  , _cmsVoices()
+  , _cmsChips()
+  , _midiDelay(0)
+  , _octaveMask(0)
+  , _looping(0)
+  , _tempo(0)
+  , _tempoSum(0)
+  , _midiData(0)
+  , _midiSongBegin(0)
+  , _musicTimer(0)
+  , _musicTimerTicks(0)
+  , _voiceTimer(0)
+  , _loadedMidiSong(0)
+  , _outputTableReady(0)
+  , _midiChannel()
+  , _midiChannelUse()
+  , _lastMidiCommand(0) {
 	setMusicVolume(255);
 
 	memset(_sfxFreq, 0xFF, sizeof(_sfxFreq));
@@ -69,8 +82,8 @@ Player_V2CMS::Player_V2CMS(ScummEngine *scumm, Audio::Mixer *mixer)
 	_cmsEmu = new CMSEmulator(_sampleRate);
 	for (int i = 0, cmsPort = 0x220; i < 2; cmsPort += 2, ++i) {
 		for (int off = 0; off < 13; ++off) {
-			_cmsEmu->portWrite(cmsPort+1, _cmsInitData[off*2]);
-			_cmsEmu->portWrite(cmsPort, _cmsInitData[off*2+1]);
+			_cmsEmu->portWrite(cmsPort + 1, _cmsInitData[off * 2]);
+			_cmsEmu->portWrite(cmsPort, _cmsInitData[off * 2 + 1]);
 		}
 	}
 
@@ -140,7 +153,7 @@ void Player_V2CMS::startSound(int nr) {
 		loadMidiData(data, nr);
 	} else {
 		int cprio = _current_data ? *(_current_data + _header_len) : 0;
-		int prio  = *(data + _header_len);
+		int prio = *(data + _header_len);
 		int nprio = _next_data ? *(_next_data + _header_len) : 0;
 
 		int restartable = *(data + _header_len + 1);
@@ -148,10 +161,10 @@ void Player_V2CMS::startSound(int nr) {
 		if (!_current_nr || cprio <= prio) {
 			int tnr = _current_nr;
 			int tprio = cprio;
-			byte *tdata  = _current_data;
+			byte *tdata = _current_data;
 
 			chainSound(nr, data);
-			nr   = tnr;
+			nr = tnr;
 			prio = tprio;
 			data = tdata;
 			restartable = data ? *(data + _header_len + 1) : 0;
@@ -164,9 +177,9 @@ void Player_V2CMS::startSound(int nr) {
 		}
 
 		if (nr != _current_nr
-			&& restartable
-			&& (!_next_nr
-			|| nprio <= prio)) {
+		    && restartable
+		    && (!_next_nr
+		        || nprio <= prio)) {
 
 			_next_nr = nr;
 			_next_data = data;
@@ -232,7 +245,7 @@ void Player_V2CMS::loadMidiData(byte *data, int sound) {
 	}
 
 	_midiDelay = 0;
-	memset(_cmsChips, 0, sizeof(MusicChip)*2);
+	memset(_cmsChips, 0, sizeof(MusicChip) * 2);
 	_midiData = data + 151;
 	_midiSongBegin = _midiData + data[9];
 
@@ -469,8 +482,8 @@ void Player_V2CMS::processVibrato(Voice2 *channel) {
 void Player_V2CMS::offAllChannels() {
 	for (int cmsPort = 0x220, i = 0; i < 2; cmsPort += 2, ++i) {
 		for (int off = 1; off <= 10; ++off) {
-			_cmsEmu->portWrite(cmsPort+1, _cmsInitData[off*2]);
-			_cmsEmu->portWrite(cmsPort, _cmsInitData[off*2+1]);
+			_cmsEmu->portWrite(cmsPort + 1, _cmsInitData[off * 2]);
+			_cmsEmu->portWrite(cmsPort, _cmsInitData[off * 2 + 1]);
 		}
 	}
 }
@@ -689,88 +702,56 @@ void Player_V2CMS::playMusicChips(const MusicChip *table) {
 
 	do {
 		cmsPort += 2;
-		_cmsEmu->portWrite(cmsPort+1, 0);
+		_cmsEmu->portWrite(cmsPort + 1, 0);
 		_cmsEmu->portWrite(cmsPort, table->ampl[0]);
-		_cmsEmu->portWrite(cmsPort+1, 1);
+		_cmsEmu->portWrite(cmsPort + 1, 1);
 		_cmsEmu->portWrite(cmsPort, table->ampl[1]);
-		_cmsEmu->portWrite(cmsPort+1, 2);
+		_cmsEmu->portWrite(cmsPort + 1, 2);
 		_cmsEmu->portWrite(cmsPort, table->ampl[2]);
-		_cmsEmu->portWrite(cmsPort+1, 3);
+		_cmsEmu->portWrite(cmsPort + 1, 3);
 		_cmsEmu->portWrite(cmsPort, table->ampl[3]);
-		_cmsEmu->portWrite(cmsPort+1, 8);
+		_cmsEmu->portWrite(cmsPort + 1, 8);
 		_cmsEmu->portWrite(cmsPort, table->freq[0]);
-		_cmsEmu->portWrite(cmsPort+1, 9);
+		_cmsEmu->portWrite(cmsPort + 1, 9);
 		_cmsEmu->portWrite(cmsPort, table->freq[1]);
-		_cmsEmu->portWrite(cmsPort+1, 10);
+		_cmsEmu->portWrite(cmsPort + 1, 10);
 		_cmsEmu->portWrite(cmsPort, table->freq[2]);
-		_cmsEmu->portWrite(cmsPort+1, 11);
+		_cmsEmu->portWrite(cmsPort + 1, 11);
 		_cmsEmu->portWrite(cmsPort, table->freq[3]);
-		_cmsEmu->portWrite(cmsPort+1, 0x10);
+		_cmsEmu->portWrite(cmsPort + 1, 0x10);
 		_cmsEmu->portWrite(cmsPort, table->octave[0]);
-		_cmsEmu->portWrite(cmsPort+1, 0x11);
+		_cmsEmu->portWrite(cmsPort + 1, 0x11);
 		_cmsEmu->portWrite(cmsPort, table->octave[1]);
-		_cmsEmu->portWrite(cmsPort+1, 0x14);
+		_cmsEmu->portWrite(cmsPort + 1, 0x14);
 		_cmsEmu->portWrite(cmsPort, 0x3F);
-		_cmsEmu->portWrite(cmsPort+1, 0x15);
+		_cmsEmu->portWrite(cmsPort + 1, 0x15);
 		_cmsEmu->portWrite(cmsPort, 0x00);
 		++table;
 	} while ((cmsPort & 2) == 0);
 }
 
 const Player_V2CMS::MidiNote Player_V2CMS::_midiNotes[132] = {
-	{   3,  0 }, {  31,  0 }, {  58,  0 }, {  83,  0 },
-	{ 107,  0 }, { 130,  0 }, { 151,  0 }, { 172,  0 },
-	{ 191,  0 }, { 209,  0 }, { 226,  0 }, { 242,  0 },
-	{   3,  1 }, {  31,  1 }, {  58,  1 }, {  83,  1 },
-	{ 107,  1 }, { 130,  1 }, { 151,  1 }, { 172,  1 },
-	{ 191,  1 }, { 209,  1 }, { 226,  1 }, { 242,  1 },
-	{   3,  2 }, {  31,  2 }, {  58,  2 }, {  83,  2 },
-	{ 107,  2 }, { 130,  2 }, { 151,  2 }, { 172,  2 },
-	{ 191,  2 }, { 209,  2 }, { 226,  2 }, { 242,  2 },
-	{   3,  3 }, {  31,  3 }, {  58,  3 }, {  83,  3 },
-	{ 107,  3 }, { 130,  3 }, { 151,  3 }, { 172,  3 },
-	{ 191,  3 }, { 209,  3 }, { 226,  3 }, { 242,  3 },
-	{   3,  4 }, {  31,  4 }, {  58,  4 }, {  83,  4 },
-	{ 107,  4 }, { 130,  4 }, { 151,  4 }, { 172,  4 },
-	{ 191,  4 }, { 209,  4 }, { 226,  4 }, { 242,  4 },
-	{   3,  5 }, {  31,  5 }, {  58,  5 }, {  83,  5 },
-	{ 107,  5 }, { 130,  5 }, { 151,  5 }, { 172,  5 },
-	{ 191,  5 }, { 209,  5 }, { 226,  5 }, { 242,  5 },
-	{   3,  6 }, {  31,  6 }, {  58,  6 }, {  83,  6 },
-	{ 107,  6 }, { 130,  6 }, { 151,  6 }, { 172,  6 },
-	{ 191,  6 }, { 209,  6 }, { 226,  6 }, { 242,  6 },
-	{   3,  7 }, {  31,  7 }, {  58,  7 }, {  83,  7 },
-	{ 107,  7 }, { 130,  7 }, { 151,  7 }, { 172,  7 },
-	{ 191,  7 }, { 209,  7 }, { 226,  7 }, { 242,  7 },
-	{   3,  8 }, {  31,  8 }, {  58,  8 }, {  83,  8 },
-	{ 107,  8 }, { 130,  8 }, { 151,  8 }, { 172,  8 },
-	{ 191,  8 }, { 209,  8 }, { 226,  8 }, { 242,  8 },
-	{   3,  9 }, {  31,  9 }, {  58,  9 }, {  83,  9 },
-	{ 107,  9 }, { 130,  9 }, { 151,  9 }, { 172,  9 },
-	{ 191,  9 }, { 209,  9 }, { 226,  9 }, { 242,  9 },
-	{   3, 10 }, {  31, 10 }, {  58, 10 }, {  83, 10 },
-	{ 107, 10 }, { 130, 10 }, { 151, 10 }, { 172, 10 },
-	{ 191, 10 }, { 209, 10 }, { 226, 10 }, { 242, 10 }
+	{ 3, 0 }, { 31, 0 }, { 58, 0 }, { 83, 0 }, { 107, 0 }, { 130, 0 }, { 151, 0 }, { 172, 0 }, { 191, 0 }, { 209, 0 }, { 226, 0 }, { 242, 0 }, { 3, 1 }, { 31, 1 }, { 58, 1 }, { 83, 1 }, { 107, 1 }, { 130, 1 }, { 151, 1 }, { 172, 1 }, { 191, 1 }, { 209, 1 }, { 226, 1 }, { 242, 1 }, { 3, 2 }, { 31, 2 }, { 58, 2 }, { 83, 2 }, { 107, 2 }, { 130, 2 }, { 151, 2 }, { 172, 2 }, { 191, 2 }, { 209, 2 }, { 226, 2 }, { 242, 2 }, { 3, 3 }, { 31, 3 }, { 58, 3 }, { 83, 3 }, { 107, 3 }, { 130, 3 }, { 151, 3 }, { 172, 3 }, { 191, 3 }, { 209, 3 }, { 226, 3 }, { 242, 3 }, { 3, 4 }, { 31, 4 }, { 58, 4 }, { 83, 4 }, { 107, 4 }, { 130, 4 }, { 151, 4 }, { 172, 4 }, { 191, 4 }, { 209, 4 }, { 226, 4 }, { 242, 4 }, { 3, 5 }, { 31, 5 }, { 58, 5 }, { 83, 5 }, { 107, 5 }, { 130, 5 }, { 151, 5 }, { 172, 5 }, { 191, 5 }, { 209, 5 }, { 226, 5 }, { 242, 5 }, { 3, 6 }, { 31, 6 }, { 58, 6 }, { 83, 6 }, { 107, 6 }, { 130, 6 }, { 151, 6 }, { 172, 6 }, { 191, 6 }, { 209, 6 }, { 226, 6 }, { 242, 6 }, { 3, 7 }, { 31, 7 }, { 58, 7 }, { 83, 7 }, { 107, 7 }, { 130, 7 }, { 151, 7 }, { 172, 7 }, { 191, 7 }, { 209, 7 }, { 226, 7 }, { 242, 7 }, { 3, 8 }, { 31, 8 }, { 58, 8 }, { 83, 8 }, { 107, 8 }, { 130, 8 }, { 151, 8 }, { 172, 8 }, { 191, 8 }, { 209, 8 }, { 226, 8 }, { 242, 8 }, { 3, 9 }, { 31, 9 }, { 58, 9 }, { 83, 9 }, { 107, 9 }, { 130, 9 }, { 151, 9 }, { 172, 9 }, { 191, 9 }, { 209, 9 }, { 226, 9 }, { 242, 9 }, { 3, 10 }, { 31, 10 }, { 58, 10 }, { 83, 10 }, { 107, 10 }, { 130, 10 }, { 151, 10 }, { 172, 10 }, { 191, 10 }, { 209, 10 }, { 226, 10 }, { 242, 10 }
 };
 
 const byte Player_V2CMS::_attackRate[16] = {
-	  0,   2,   4,   7,  14,  26,  48,  82,
+	0, 2, 4, 7, 14, 26, 48, 82,
 	128, 144, 160, 176, 192, 208, 224, 255
 };
 
 const byte Player_V2CMS::_decayRate[16] = {
-	  0,   1,   2,   3,   4,   6,  12,  24,
-	 48,  96, 192, 215, 255, 255, 255, 255
+	0, 1, 2, 3, 4, 6, 12, 24,
+	48, 96, 192, 215, 255, 255, 255, 255
 };
 
 const byte Player_V2CMS::_sustainRate[16] = {
-	255, 180, 128,  96,  80,  64,  56,  48,
-	 42,  36,  32,  28,  24,  20,  16,   0
+	255, 180, 128, 96, 80, 64, 56, 48,
+	42, 36, 32, 28, 24, 20, 16, 0
 };
 
 const byte Player_V2CMS::_releaseRate[16] = {
-	  0,   1,   2,   4,   6,   9,  14,  22,
-	 36,  56,  80, 100, 120, 140, 160, 255
+	0, 1, 2, 4, 6, 9, 14, 22,
+	36, 56, 80, 100, 120, 140, 160, 255
 };
 
 const byte Player_V2CMS::_volumeTable[16] = {

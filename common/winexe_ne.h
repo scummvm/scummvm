@@ -29,7 +29,8 @@
 
 namespace Common {
 
-template<class T> class Array;
+template <class T>
+class Array;
 class SeekableReadStream;
 
 /**
@@ -69,14 +70,14 @@ private:
 		WinResourceID type; ///< Type of the resource.
 
 		uint32 offset; ///< Offset within the EXE.
-		uint32 size;   ///< Size of the data.
+		uint32 size; ///< Size of the data.
 
 		uint16 flags;
 		uint16 handle;
 		uint16 usage;
 	};
 
-	SeekableReadStream *_exe;        ///< Current file.
+	SeekableReadStream *_exe; ///< Current file.
 
 	/** All resources. */
 	List<Resource> _resources;

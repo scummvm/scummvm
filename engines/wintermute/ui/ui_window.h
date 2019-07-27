@@ -29,9 +29,8 @@
 #ifndef WINTERMUTE_UIWINDOW_H
 #define WINTERMUTE_UIWINDOW_H
 
-
-#include "engines/wintermute/ui/ui_object.h"
 #include "common/events.h"
+#include "engines/wintermute/ui/ui_object.h"
 
 namespace Wintermute {
 

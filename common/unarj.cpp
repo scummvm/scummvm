@@ -24,14 +24,14 @@
 // This file is heavily based on the arj code available under the GPL
 // from http://arj.sourceforge.net/ , version 3.10.22 .
 
-#include "common/scummsys.h"
-#include "common/archive.h"
-#include "common/debug.h"
 #include "common/unarj.h"
+#include "common/archive.h"
+#include "common/bufferedstream.h"
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/hash-str.h"
 #include "common/memstream.h"
-#include "common/bufferedstream.h"
+#include "common/scummsys.h"
 #include "common/textconsole.h"
 
 namespace Common {
@@ -46,16 +46,16 @@ namespace Common {
 #define ARJ_THRESHOLD 3
 #define ARJ_DICSIZ 26624
 #define ARJ_FDICSIZ ARJ_DICSIZ
-#define ARJ_MAXDICBIT   16
-#define ARJ_MAXMATCH   256
+#define ARJ_MAXDICBIT 16
+#define ARJ_MAXMATCH 256
 #define ARJ_NC (ARJ_UCHAR_MAX + ARJ_MAXMATCH + 2 - ARJ_THRESHOLD)
 #define ARJ_NP (ARJ_MAXDICBIT + 1)
 #define ARJ_NT (ARJ_CODE_BIT + 3)
 
 #if ARJ_NT > ARJ_NP
-#define ARJ_NPT ARJ_NT
+#	define ARJ_NPT ARJ_NT
 #else
-#define ARJ_NPT ARJ_NP
+#	define ARJ_NPT ARJ_NP
 #endif
 
 #define ARJ_CTABLESIZE 4096
@@ -82,8 +82,8 @@ struct ArjHeader {
 	uint16 entryPos;
 	uint16 fileMode;
 	uint16 hostData;
-	char   filename[ARJ_FILENAME_MAX];
-	char   comment[ARJ_COMMENT_MAX];
+	char filename[ARJ_FILENAME_MAX];
+	char comment[ARJ_COMMENT_MAX];
 
 	uint32 headerCrc;
 };
@@ -114,7 +114,7 @@ public:
 	ReadStream *_compressed;
 	MemoryWriteStream *_outstream;
 
-//protected:
+	//protected:
 	uint16 _bitbuf;
 	uint16 _bytebuf;
 	int32 _compsize;
@@ -123,7 +123,6 @@ public:
 	void init_getbits();
 	void fillbuf(int n);
 	uint16 getbits(int n);
-
 
 	void make_table(int nchar, byte *bitlen, int tablebits, uint16 *table, int tablesize);
 	void read_pt_len(int nn, int nbit, int i_special);
@@ -135,34 +134,34 @@ public:
 	int16 decode_len(void);
 
 private:
-	byte  _ntext[ARJ_FDICSIZ];
+	byte _ntext[ARJ_FDICSIZ];
 
 	uint16 _left[2 * ARJ_NC - 1];
 	uint16 _right[2 * ARJ_NC - 1];
-	byte  _c_len[ARJ_NC];
-	byte  _pt_len[ARJ_NPT];
+	byte _c_len[ARJ_NC];
+	byte _pt_len[ARJ_NPT];
 
 	uint16 _c_table[ARJ_CTABLESIZE];
 	uint16 _pt_table[ARJ_PTABLESIZE];
 	uint16 _blocksize;
 };
 
-#define HEADER_ID     0xEA60
-#define HEADER_ID_HI    0xEA
-#define HEADER_ID_LO    0x60
+#define HEADER_ID 0xEA60
+#define HEADER_ID_HI 0xEA
+#define HEADER_ID_LO 0x60
 
-#define FIRST_HDR_SIZE    30
-#define HEADERSIZE_MAX   (FIRST_HDR_SIZE + 10 + ARJ_FILENAME_MAX + ARJ_COMMENT_MAX)
-#define CRC_MASK        0xFFFFFFFFL
-#define HSLIMIT_ARJ		524288L
+#define FIRST_HDR_SIZE 30
+#define HEADERSIZE_MAX (FIRST_HDR_SIZE + 10 + ARJ_FILENAME_MAX + ARJ_COMMENT_MAX)
+#define CRC_MASK 0xFFFFFFFFL
+#define HSLIMIT_ARJ 524288L
 
-#define CBIT		 9
-#define PBIT		 5
-#define TBIT		 5
+#define CBIT 9
+#define PBIT 5
+#define TBIT 5
 
 // Source for CRC32::init, CRC32::checksum : crc32.c
 class CRC32 {
-	static uint32 	_table[256];
+	static uint32 _table[256];
 	static bool _initialized;
 
 private:
@@ -256,7 +255,7 @@ ArjHeader *readHeader(SeekableReadStream &stream) {
 
 	header.headerSize = stream.readUint16LE();
 	if (header.headerSize == 0)
-		return nullptr;			// end of archive
+		return nullptr; // end of archive
 	if (header.headerSize > HEADERSIZE_MAX) {
 		warning("ArjFile::readHeader(): Bad header");
 
@@ -332,7 +331,7 @@ void ArjDecoder::fillbuf(int n) {
 		_bitcount = 8;
 	}
 	_bitcount -= n;
-	_bitbuf = ( _bitbuf << n) | (_bytebuf >> (8-n));
+	_bitbuf = (_bitbuf << n) | (_bytebuf >> (8 - n));
 	_bytebuf <<= n;
 }
 
@@ -362,7 +361,7 @@ void ArjDecoder::make_table(int nchar, byte *bitlen, int tablebits, uint16 *tabl
 	start[1] = 0;
 	for (i = 1; i <= 16; i++)
 		start[i + 1] = start[i] + (count[i] << (16 - i));
-	if (start[17] != (uint16) (1 << 16))
+	if (start[17] != (uint16)(1 << 16))
 		error("ArjDecoder::make_table(): bad file data");
 
 	jutbits = 16 - tablebits;
@@ -376,7 +375,7 @@ void ArjDecoder::make_table(int nchar, byte *bitlen, int tablebits, uint16 *tabl
 	}
 
 	i = start[tablebits + 1] >> jutbits;
-	if (i != (uint16) (1 << 16)) {
+	if (i != (uint16)(1 << 16)) {
 		k = 1 << tablebits;
 		while (i != k)
 			table[i++] = 0;
@@ -493,8 +492,7 @@ void ArjDecoder::read_c_len() {
 				}
 				while (--c >= 0)
 					_c_len[i++] = 0;
-			}
-			else
+			} else
 				_c_len[i++] = (byte)(c - 2);
 		}
 		while (i < ARJ_NC)
@@ -572,7 +570,7 @@ void ArjDecoder::decode(int32 origsize) {
 
 	while (count > 0) {
 		if ((c = decode_c()) <= ARJ_UCHAR_MAX) {
-			_ntext[r] = (byte) c;
+			_ntext[r] = (byte)c;
 			count--;
 			if (++r >= ARJ_DICSIZ) {
 				r = 0;
@@ -691,7 +689,7 @@ void ArjDecoder::decode_f(int32 origsize) {
 
 #pragma mark ArjArchive implementation
 
-typedef HashMap<String, ArjHeader*, IgnoreCase_Hash, IgnoreCase_EqualTo> ArjHeadersMap;
+typedef HashMap<String, ArjHeader *, IgnoreCase_Hash, IgnoreCase_EqualTo> ArjHeadersMap;
 
 class ArjArchive : public Archive {
 	ArjHeadersMap _headers;
@@ -708,7 +706,8 @@ public:
 	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
 };
 
-ArjArchive::ArjArchive(const String &filename) : _arjFilename(filename) {
+ArjArchive::ArjArchive(const String &filename)
+  : _arjFilename(filename) {
 	File arjFile;
 
 	if (!arjFile.open(_arjFilename)) {
@@ -741,7 +740,7 @@ ArjArchive::ArjArchive(const String &filename) : _arjFilename(filename) {
 ArjArchive::~ArjArchive() {
 	debug(0, "ArjArchive Destructor Called");
 	ArjHeadersMap::iterator it = _headers.begin();
-	for ( ; it != _headers.end(); ++it) {
+	for (; it != _headers.end(); ++it) {
 		delete it->_value;
 	}
 }
@@ -754,7 +753,7 @@ int ArjArchive::listMembers(ArchiveMemberList &list) const {
 	int matches = 0;
 
 	ArjHeadersMap::const_iterator it = _headers.begin();
-	for ( ; it != _headers.end(); ++it) {
+	for (; it != _headers.end(); ++it) {
 		list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(it->_value->filename, this)));
 		matches++;
 	}

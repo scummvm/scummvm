@@ -24,7 +24,7 @@
 #define KYRA_EOBCOMMON_H
 
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
-#include "kyra/engine/kyra_rpg.h"
+#	include "kyra/engine/kyra_rpg.h"
 #endif // (ENABLE_EOB || ENABLE_LOL)
 
 #ifdef ENABLE_EOB
@@ -240,13 +240,14 @@ struct EoBMenuButtonDef {
 class EoBInfProcessor;
 
 class EoBCoreEngine : public KyraRpgEngine {
-friend class TextDisplayer_rpg;
-friend class GUI_EoB;
-friend class Debugger_EoB;
-friend class EoBInfProcessor;
-friend class DarkmoonSequenceHelper;
-friend class CharacterGenerator;
-friend class TransferPartyWiz;
+	friend class TextDisplayer_rpg;
+	friend class GUI_EoB;
+	friend class Debugger_EoB;
+	friend class EoBInfProcessor;
+	friend class DarkmoonSequenceHelper;
+	friend class CharacterGenerator;
+	friend class TransferPartyWiz;
+
 public:
 	EoBCoreEngine(OSystem *system, const GameFlags &flags);
 	virtual ~EoBCoreEngine();
@@ -354,7 +355,7 @@ protected:
 	void timerUpdateMonsterIdleAnim(int timerNum);
 
 	uint8 getClock2Timer(int index) { return index < _numClock2Timers ? _clock2Timers[index] : 0; }
-	uint8 getNumClock2Timers()  { return _numClock2Timers; }
+	uint8 getNumClock2Timers() { return _numClock2Timers; }
 
 	static const uint8 _clock2Timers[];
 	static const uint8 _numClock2Timers;
@@ -1177,7 +1178,7 @@ protected:
 
 	// sound
 	void snd_playSong(int id);
-	void snd_playSoundEffect(int id, int volume=0xFF);
+	void snd_playSoundEffect(int id, int volume = 0xFF);
 	void snd_stopSound();
 	void snd_fadeOut(int del = 160);
 	virtual void snd_loadAmigaSounds(int level, int sub) = 0;

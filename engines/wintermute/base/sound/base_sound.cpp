@@ -28,14 +28,15 @@
 
 #include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/sound/base_sound_manager.h"
 #include "engines/wintermute/base/sound/base_sound_buffer.h"
+#include "engines/wintermute/base/sound/base_sound_manager.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseSound, false)
 
-BaseSound::BaseSound(BaseGame *inGame) : BaseClass(inGame) {
+BaseSound::BaseSound(BaseGame *inGame)
+  : BaseClass(inGame) {
 	_sound = nullptr;
 	_soundFilename = "";
 

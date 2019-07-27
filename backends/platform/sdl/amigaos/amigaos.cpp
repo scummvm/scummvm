@@ -24,8 +24,8 @@
 
 #ifdef __amigaos4__
 
-#include "backends/platform/sdl/amigaos/amigaos.h"
-#include "backends/fs/amigaos4/amigaos4-fs-factory.h"
+#	include "backends/fs/amigaos4/amigaos4-fs-factory.h"
+#	include "backends/platform/sdl/amigaos/amigaos.h"
 
 void OSystem_AmigaOS::init() {
 	// Initialze File System Factory

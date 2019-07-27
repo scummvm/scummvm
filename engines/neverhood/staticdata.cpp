@@ -28,17 +28,17 @@ StaticData::StaticData() {
 }
 
 StaticData::~StaticData() {
-	for (Common::HashMap<uint32, HitRectList*>::iterator i = _hitRectLists.begin(); i != _hitRectLists.end(); ++i)
+	for (Common::HashMap<uint32, HitRectList *>::iterator i = _hitRectLists.begin(); i != _hitRectLists.end(); ++i)
 		delete i->_value;
-	for (Common::HashMap<uint32, RectList*>::iterator i = _rectLists.begin(); i != _rectLists.end(); ++i)
+	for (Common::HashMap<uint32, RectList *>::iterator i = _rectLists.begin(); i != _rectLists.end(); ++i)
 		delete i->_value;
-	for (Common::HashMap<uint32, MessageList*>::iterator i = _messageLists.begin(); i != _messageLists.end(); ++i)
+	for (Common::HashMap<uint32, MessageList *>::iterator i = _messageLists.begin(); i != _messageLists.end(); ++i)
 		delete i->_value;
-	for (Common::HashMap<uint32, NavigationList*>::iterator i = _navigationLists.begin(); i != _navigationLists.end(); ++i)
+	for (Common::HashMap<uint32, NavigationList *>::iterator i = _navigationLists.begin(); i != _navigationLists.end(); ++i)
 		delete i->_value;
-	for (Common::HashMap<uint32, HallOfRecordsInfo*>::iterator i = _hallOfRecordsInfoItems.begin(); i != _hallOfRecordsInfoItems.end(); ++i)
+	for (Common::HashMap<uint32, HallOfRecordsInfo *>::iterator i = _hallOfRecordsInfoItems.begin(); i != _hallOfRecordsInfoItems.end(); ++i)
 		delete i->_value;
-	for (Common::HashMap<uint32, TrackInfo*>::iterator i = _trackInfoItems.begin(); i != _trackInfoItems.end(); ++i)
+	for (Common::HashMap<uint32, TrackInfo *>::iterator i = _trackInfoItems.begin(); i != _trackInfoItems.end(); ++i)
 		delete i->_value;
 }
 
@@ -74,14 +74,14 @@ void StaticData::load(const char *filename) {
 		// can erroneously skip these potion drinking animations. We insert
 		// another message at the end of these lists to prevent player input
 		// till the animations are finished
-		if (id == 0x004AF0C8 || id == 0x004B5BD0) {	// wrong potion message lists
+		if (id == 0x004AF0C8 || id == 0x004B5BD0) { // wrong potion message lists
 			MessageItem messageItem;
-			messageItem.messageNum = 0x4004;	// set Klaymen's state to idle
+			messageItem.messageNum = 0x4004; // set Klaymen's state to idle
 			messageItem.messageValue = 0;
 			messageList->push_back(messageItem);
 		}
 
-		if(_messageLists.contains(id)) {
+		if (_messageLists.contains(id)) {
 			warning("Duplicate id %d in _messageLists - freeing older entry", id);
 			delete _messageLists[id];
 		}
@@ -116,7 +116,7 @@ void StaticData::load(const char *filename) {
 			rectList->push_back(rectItem);
 		}
 
-		if(_rectLists.contains(id)) {
+		if (_rectLists.contains(id)) {
 			warning("Duplicate id %d in _rectLists - freeing older entry", id);
 			delete _rectLists[id];
 		}
@@ -141,7 +141,7 @@ void StaticData::load(const char *filename) {
 			hitRectList->push_back(hitRect);
 		}
 
-		if(_hitRectLists.contains(id)) {
+		if (_hitRectLists.contains(id)) {
 			warning("Duplicate id %d in _hitRectLists - freeing older entry", id);
 			delete _hitRectLists[id];
 		}
@@ -168,7 +168,7 @@ void StaticData::load(const char *filename) {
 			navigationList->push_back(navigationItem);
 		}
 
-		if(_navigationLists.contains(id)) {
+		if (_navigationLists.contains(id)) {
 			warning("Duplicate id %d in _navigationLists - freeing older entry", id);
 			delete _navigationLists[id];
 		}
@@ -189,7 +189,7 @@ void StaticData::load(const char *filename) {
 		hallOfRecordsInfo->xPosIndex = fd.readByte();
 		hallOfRecordsInfo->count = fd.readByte();
 
-		if(_hallOfRecordsInfoItems.contains(id)) {
+		if (_hallOfRecordsInfoItems.contains(id)) {
 			warning("Duplicate id %d in _hallOfRecordsInfoItems - freeing older entry", id);
 			delete _hallOfRecordsInfoItems[id];
 		}
@@ -214,14 +214,13 @@ void StaticData::load(const char *filename) {
 		trackInfo->which1 = fd.readUint16LE();
 		trackInfo->which2 = fd.readUint16LE();
 
-		if(_trackInfoItems.contains(id)) {
+		if (_trackInfoItems.contains(id)) {
 			warning("Duplicate id %d in _trackInfoItems - freeing older entry", id);
 			delete _trackInfoItems[id];
 		}
 
 		_trackInfoItems[id] = trackInfo;
 	}
-
 }
 
 HitRectList *StaticData::getHitRectList(uint32 id) {

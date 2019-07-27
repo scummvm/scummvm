@@ -21,23 +21,23 @@
  * Should really be called "moving actors.c"
  */
 
+#include "tinsel/rince.h"
 #include "tinsel/actors.h"
 #include "tinsel/anim.h"
 #include "tinsel/background.h"
 #include "tinsel/config.h"
+#include "tinsel/dialogs.h"
 #include "tinsel/dw.h"
 #include "tinsel/film.h"
 #include "tinsel/handle.h"
-#include "tinsel/dialogs.h"
 #include "tinsel/mareels.h"
 #include "tinsel/move.h"
-#include "tinsel/multiobj.h"	// multi-part object defintions etc.
+#include "tinsel/multiobj.h" // multi-part object defintions etc.
 #include "tinsel/object.h"
 #include "tinsel/pcode.h"
 #include "tinsel/pid.h"
 #include "tinsel/play.h"
 #include "tinsel/polygons.h"
-#include "tinsel/rince.h"
 #include "tinsel/sched.h"
 #include "tinsel/sysvar.h"
 #include "tinsel/timers.h"
@@ -51,7 +51,7 @@ namespace Tinsel {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
-static MOVER g_Movers[MAX_MOVERS];	// FIXME: Avoid non-const global vars
+static MOVER g_Movers[MAX_MOVERS]; // FIXME: Avoid non-const global vars
 
 //----------------- FUNCTIONS ----------------------------
 
@@ -79,16 +79,16 @@ static void CheckBrightness(PMOVER pMover) {
 		// otherwise do it iteratively
 
 		if (pMover->brightness == BOGUS_BRIGHTNESS)
-			pMover->brightness = brightness;	// all the way
+			pMover->brightness = brightness; // all the way
 		else if (brightness > pMover->brightness)
-			pMover->brightness++;			// ramp up
+			pMover->brightness++; // ramp up
 		else
-			pMover->brightness--;			// ramp down
+			pMover->brightness--; // ramp down
 
 		DimPartPalette(BgPal(),
-				pMover->startColor,
-				pMover->paletteLength,
-				pMover->brightness);
+		               pMover->startColor,
+		               pMover->paletteLength,
+		               pMover->brightness);
 	}
 }
 
@@ -360,20 +360,20 @@ static void InitMover(PMOVER pMover) {
 	pMover->Tline = 0;
 
 	if (pMover->direction != FORWARD && pMover->direction != AWAY
-			&& pMover->direction != LEFTREEL && pMover->direction != RIGHTREEL)
+	    && pMover->direction != LEFTREEL && pMover->direction != RIGHTREEL)
 		pMover->direction = FORWARD;
 
 	if (pMover->scale < 0 || pMover->scale > TOTAL_SCALES)
 		pMover->scale = 1;
 
-	pMover->brightness = BOGUS_BRIGHTNESS;	// Force initial setup
+	pMover->brightness = BOGUS_BRIGHTNESS; // Force initial setup
 
 	pMover->bNoPath = false;
 	pMover->bIgPath = false;
-	pMover->bHidden = false;	// 20/2/95
+	pMover->bHidden = false; // 20/2/95
 	pMover->bStop = false;
 
-	pMover->walkNumber= 0;
+	pMover->walkNumber = 0;
 	pMover->stepCount = 0;
 
 	pMover->bWalkReel = false;
@@ -395,13 +395,12 @@ void DropMovers() {
 		InitMover(&g_Movers[i]);
 }
 
-
 /**
  * Reposition a moving actor.
  */
 void PositionMover(PMOVER pMover, int x, int y) {
-	int	z;
-	int	node;
+	int z;
+	int node;
 	HPOLYGON hPath;
 
 	assert(pMover); // Moving null moving actor
@@ -431,7 +430,7 @@ void PositionMover(PMOVER pMover, int x, int y) {
 	} else {
 		pMover->bNoPath = true;
 
-		pMover->hFnpath = NOPOLY;	// Ain't in one
+		pMover->hFnpath = NOPOLY; // Ain't in one
 		pMover->npstatus = NOT_IN;
 
 		// Ensure legal reel and scale
@@ -570,7 +569,7 @@ void AlterMover(PMOVER pMover, SCNHANDLE film, AR_FUNCTION fn) {
 #ifdef DEBUG
 			assert(StepAnimScript(&pMover->actorAnim) != ScriptFinished); // Actor reel has finished!
 #else
-			StepAnimScript(&pMover->actorAnim);	// 04/01/95
+			StepAnimScript(&pMover->actorAnim); // 04/01/95
 #endif
 		}
 
@@ -613,7 +612,7 @@ void SetMoverStanding(PMOVER pMover) {
  * Get actor to adopt its appropriate walking reel.
  */
 void SetMoverWalkReel(PMOVER pMover, DIRECTION reel, int scale, bool force) {
-	SCNHANDLE	whichReel;
+	SCNHANDLE whichReel;
 	const FILM *pfilm;
 
 	// Kill off any play that may be going on for this actor
@@ -631,12 +630,12 @@ void SetMoverWalkReel(PMOVER pMover, DIRECTION reel, int scale, bool force) {
 		// If scale change and both are regular scales
 		// and there's a scaling reel in the right direction
 		if (pMover->scale != scale
-				&& scale <= NUM_MAINSCALES && pMover->scale <= NUM_MAINSCALES
-				&& (whichReel = ScalingReel(pMover->actorID, pMover->scale, scale, reel)) != 0) {
-//			error("Cripes");
-			;	// Use what is now in 'whichReel'
+		    && scale <= NUM_MAINSCALES && pMover->scale <= NUM_MAINSCALES
+		    && (whichReel = ScalingReel(pMover->actorID, pMover->scale, scale, reel)) != 0) {
+			//			error("Cripes");
+			; // Use what is now in 'whichReel'
 		} else {
-			whichReel = pMover->walkReels[scale-1][reel];
+			whichReel = pMover->walkReels[scale - 1][reel];
 			assert(whichReel); // no reel
 		}
 
@@ -659,8 +658,8 @@ void SetMoverWalkReel(PMOVER pMover, DIRECTION reel, int scale, bool force) {
  */
 static void InitialPathChecks(PMOVER pMover, int xpos, int ypos) {
 	HPOLYGON hPath;
-	int	node;
-	int	z;
+	int node;
+	int z;
 
 	pMover->objX = xpos;
 	pMover->objY = ypos;
@@ -696,7 +695,6 @@ static void MoverProcessHelper(int X, int Y, int id, PMOVER pMover) {
 	const FRAME *pFrame;
 	IMAGE *pim;
 
-
 	assert(BgPal()); // Can't start actor without a background palette
 	assert(pMover->walkReels[0][FORWARD]); // Starting actor process without walk reels
 
@@ -706,16 +704,16 @@ static void MoverProcessHelper(int X, int Y, int id, PMOVER pMover) {
 	pfilm = (const FILM *)LockMem(pMover->walkReels[0][FORWARD]);
 	pmi = (const MULTI_INIT *)LockMem(FROM_32(pfilm->reels[0].mobj));
 
-//---
+	//---
 	pFrame = (const FRAME *)LockMem(FROM_32(pmi->hMulFrame));
 
 	// get pointer to image
-	pim = (IMAGE *)LockMem(READ_32(pFrame));	// handle to image
+	pim = (IMAGE *)LockMem(READ_32(pFrame)); // handle to image
 	pim->hImgPal = TO_32(BgPal());
-//---
+	//---
 	pMover->actorObj = MultiInitObject(pmi);
 
-/**/	assert(pMover->actorID == id);
+	/**/ assert(pMover->actorID == id);
 	pMover->actorID = id;
 
 	// add it to display list
@@ -736,10 +734,10 @@ static void MoverProcessHelper(int X, int Y, int id, PMOVER pMover) {
 	// Make him the right size
 	SetMoverStanding(pMover);
 
-//**** if added 18/11/94, am
+	//**** if added 18/11/94, am
 	if (X != MAGICX && Y != MAGICY) {
-		HideMover(pMover, 0);		// Allows a play to come in before this appears
-		pMover->bHidden = false;	// ...but don't stay hidden
+		HideMover(pMover, 0); // Allows a play to come in before this appears
+		pMover->bHidden = false; // ...but don't stay hidden
 	}
 
 	pMover->bActive = true;
@@ -761,15 +759,14 @@ void T1MoverProcess(CORO_PARAM, const void *param) {
 		if (pActor->bSpecReel) {
 			if (!pActor->bHidden)
 #ifdef DEBUG
-			assert(StepAnimScript(&pActor->actorAnim) != ScriptFinished); // Actor reel has finished!
+				assert(StepAnimScript(&pActor->actorAnim) != ScriptFinished); // Actor reel has finished!
 #else
-			StepAnimScript(&pActor->actorAnim);
+				StepAnimScript(&pActor->actorAnim);
 #endif
 		} else
 			DoMoveActor(pActor);
 
-		CORO_SLEEP(1);		// allow rescheduling
-
+		CORO_SLEEP(1); // allow rescheduling
 	}
 
 	CORO_END_CODE;
@@ -801,7 +798,7 @@ void T2MoverProcess(CORO_PARAM, const void *param) {
 	InitMover(pMover);
 	InitialPathChecks(pMover, rpos->X, rpos->Y);
 
-	pFilm = (FILM *)LockMem(pMover->walkReels[i][FORWARD]);	// Any old reel
+	pFilm = (FILM *)LockMem(pMover->walkReels[i][FORWARD]); // Any old reel
 	pmi = (PMULTI_INIT)LockMem(FROM_32(pFilm->reels[0].mobj));
 
 	// Poke in the background palette
@@ -813,9 +810,9 @@ void T2MoverProcess(CORO_PARAM, const void *param) {
 	pMover->bActive = true;
 
 	// add it to display list
-	MultiInsertObject( GetPlayfieldList(FIELD_WORLD), pMover->actorObj );
+	MultiInsertObject(GetPlayfieldList(FIELD_WORLD), pMover->actorObj);
 
-	InitStepAnimScript(&pMover->actorAnim, pMover->actorObj, pFilm->reels[0].script, ONE_SECOND/pFilm->frate);
+	InitStepAnimScript(&pMover->actorAnim, pMover->actorObj, pFilm->reels[0].script, ONE_SECOND / pFilm->frate);
 	pMover->stepCount = 0;
 
 	MultiSetAniXY(pMover->actorObj, pMover->objX, pMover->objY);
@@ -829,8 +826,8 @@ void T2MoverProcess(CORO_PARAM, const void *param) {
 	// Make him the right size
 	SetMoverStanding(pMover);
 
-	HideMover(pMover);		// Allows a play to come in before this appears
-	pMover->bHidden = false;	// ...but don't stay hidden
+	HideMover(pMover); // Allows a play to come in before this appears
+	pMover->bHidden = false; // ...but don't stay hidden
 
 	for (;;) {
 		if (pMover->bSpecReel) {
@@ -868,10 +865,10 @@ void MoverProcessCreate(int X, int Y, int id, PMOVER pMover) {
  * Check for moving actor collision.
  */
 PMOVER InMoverBlock(PMOVER pMover, int x, int y) {
-	int	caX;		// Calling actor's pos'n
-	int	caL, caR;	// Calling actor's left and right
-	int	taX, taY;	// Test actor's pos'n
-	int	taL, taR;	// Test actor's left and right
+	int caX; // Calling actor's pos'n
+	int caL, caR; // Calling actor's left and right
+	int taX, taY; // Test actor's pos'n
+	int taL, taR; // Test actor's left and right
 
 	caX = pMover->objX;
 	if (pMover->hFnpath != NOPOLY || GetNoBlocking())
@@ -881,9 +878,7 @@ PMOVER InMoverBlock(PMOVER pMover, int x, int y) {
 	caR = GetMoverRight(pMover) + x - caX;
 
 	for (int i = 0; i < MAX_MOVERS; i++) {
-		if (pMover == &g_Movers[i] ||
-				(TinselV2 && (g_Movers[i].actorObj == NULL)) ||
-				(!TinselV2 && !g_Movers[i].bActive))
+		if (pMover == &g_Movers[i] || (TinselV2 && (g_Movers[i].actorObj == NULL)) || (!TinselV2 && !g_Movers[i].bActive))
 			continue;
 
 		// At around the same height?
@@ -891,7 +886,7 @@ PMOVER InMoverBlock(PMOVER pMover, int x, int y) {
 		if (g_Movers[i].hFnpath != NOPOLY)
 			continue;
 
-		if (ABS(y - taY) > 2)	// 2 was 8
+		if (ABS(y - taY) > 2) // 2 was 8
 			continue;
 
 		// To the left?
@@ -915,10 +910,10 @@ PMOVER InMoverBlock(PMOVER pMover, int x, int y) {
 void SaveMovers(SAVED_MOVER *sMoverInfo) {
 	for (int i = 0; i < MAX_MOVERS; i++) {
 		sMoverInfo[i].bActive = !TinselV2 ? g_Movers[i].bActive : g_Movers[i].actorObj != NULL;
-		sMoverInfo[i].actorID	= g_Movers[i].actorID;
-		sMoverInfo[i].objX	= g_Movers[i].objX;
-		sMoverInfo[i].objY	= g_Movers[i].objY;
-		sMoverInfo[i].hLastfilm	= g_Movers[i].hLastFilm;
+		sMoverInfo[i].actorID = g_Movers[i].actorID;
+		sMoverInfo[i].objX = g_Movers[i].objX;
+		sMoverInfo[i].objY = g_Movers[i].objY;
+		sMoverInfo[i].hLastfilm = g_Movers[i].hLastFilm;
 
 		if (TinselV2) {
 			sMoverInfo[i].bHidden = g_Movers[i].bHidden;
@@ -943,7 +938,6 @@ void RestoreAuxScales(SAVED_MOVER *sMoverInfo) {
 		memcpy(g_Movers[i].talkReels, sMoverInfo[i].talkReels, TOTAL_SCALES * 4 * sizeof(SCNHANDLE));
 	}
 }
-
 
 PMOVER NextMover(PMOVER pMover) {
 	int next;

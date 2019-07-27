@@ -20,21 +20,23 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "common/events.h"
+#include "common/scummsys.h"
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
-#include "sherlock/sherlock.h"
 #include "sherlock/events.h"
+#include "sherlock/sherlock.h"
 #include "sherlock/surface.h"
 #include "sherlock/tattoo/tattoo.h"
 
 namespace Sherlock {
 
-enum ButtonFlag { LEFT_BUTTON = 1, RIGHT_BUTTON = 2 };
+enum ButtonFlag { LEFT_BUTTON = 1,
+	                RIGHT_BUTTON = 2 };
 
-Events::Events(SherlockEngine *vm): _vm(vm) {
+Events::Events(SherlockEngine *vm)
+  : _vm(vm) {
 	_cursorImages = nullptr;
 	_cursorId = INVALID_CURSOR;
 	_frameCounter = 1;
@@ -230,7 +232,7 @@ void Events::pollEvents() {
 			_mouseButtons &= ~RIGHT_BUTTON;
 			return;
 		default:
- 			break;
+			break;
 		}
 	}
 }
@@ -252,7 +254,7 @@ void Events::warpMouse(const Common::Point &pt) {
 void Events::warpMouse() {
 	Screen &screen = *_vm->_screen;
 	warpMouse(Common::Point(screen._currentScroll.x + SHERLOCK_SCREEN_WIDTH / 2,
-		screen._currentScroll.y + SHERLOCK_SCREEN_HEIGHT / 2));
+	                        screen._currentScroll.y + SHERLOCK_SCREEN_HEIGHT / 2));
 }
 
 Common::Point Events::mousePos() const {

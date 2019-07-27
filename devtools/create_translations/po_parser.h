@@ -23,7 +23,6 @@
 #ifndef PO_PARSER_H
 #define PO_PARSER_H
 
-
 /**
  * List of english messages.
  */
@@ -52,9 +51,10 @@ struct PoMessageEntry {
 	char *msgid;
 	char *msgctxt;
 
-	PoMessageEntry(const char *translation, const char *message, const char *context = NULL) :
-		msgstr(NULL), msgid(NULL), msgctxt(NULL)
-	{
+	PoMessageEntry(const char *translation, const char *message, const char *context = NULL)
+	  : msgstr(NULL)
+	  , msgid(NULL)
+	  , msgctxt(NULL) {
 		if (translation != NULL && *translation != '\0') {
 			msgstr = new char[1 + strlen(translation)];
 			strcpy(msgstr, translation);
@@ -102,7 +102,6 @@ private:
 	int _size;
 	int _allocated;
 };
-
 
 PoMessageEntryList *parsePoFile(const char *file, PoMessageList &);
 char *stripLine(char *);

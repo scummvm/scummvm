@@ -18,9 +18,9 @@
 #ifndef MT32EMU_TVA_H
 #define MT32EMU_TVA_H
 
-#include "globals.h"
-#include "Types.h"
 #include "Structures.h"
+#include "Types.h"
+#include "globals.h"
 
 namespace MT32Emu {
 
@@ -61,9 +61,9 @@ enum {
 
 class TVA {
 private:
-	const Partial * const partial;
+	const Partial *const partial;
 	LA32Ramp *ampRamp;
-	const MemParams::System * const system;
+	const MemParams::System *const system;
 
 	const Part *part;
 	const TimbreParam::PartialParam *partialParam;

@@ -23,9 +23,9 @@
 #ifndef SCI_MIDIPARSER_H
 #define SCI_MIDIPARSER_H
 
+#include "audio/midiparser.h"
 #include "sci/resource.h"
 #include "sci/sound/music.h"
-#include "audio/midiparser.h"
 
 /*
  Sound drivers info: (from driver cmd0)
@@ -103,7 +103,7 @@ protected:
 	bool _mainThreadCalled;
 
 	SciVersion _soundVersion;
-	Common::SpanOwner<SciSpan<const byte> > _mixedData;
+	Common::SpanOwner<SciSpan<const byte>> _mixedData;
 	SoundResource::Track *_track;
 	MusicEntry *_pSnd;
 	uint32 _loopTick;
@@ -128,7 +128,6 @@ protected:
 	};
 
 	ChannelState _channelState[16];
-
 };
 
 } // End of namespace Sci

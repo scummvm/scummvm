@@ -23,24 +23,26 @@
 
 #include "common/config-manager.h"
 #include "common/events.h"
-#include "common/random.h"
 #include "common/keyboard.h"
+#include "common/random.h"
 
 #include "graphics/cursorman.h"
-#include "graphics/surface.h"
 #include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 #include "graphics/wincursor.h"
 
 #include "engines/util.h"
 
 #include "composer/composer.h"
+#include "composer/console.h"
 #include "composer/graphics.h"
 #include "composer/resource.h"
-#include "composer/console.h"
 
 namespace Composer {
 
-ComposerEngine::ComposerEngine(OSystem *syst, const ComposerGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+ComposerEngine::ComposerEngine(OSystem *syst, const ComposerGameDescription *gameDesc)
+  : Engine(syst)
+  , _gameDescription(gameDesc) {
 	_rnd = new Common::RandomSource("composer");
 	_audioStream = NULL;
 	_currSoundPriority = 0;
@@ -106,7 +108,7 @@ Common::Error ComposerEngine::run() {
 
 	Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
 	CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(),
-		cursor->getHotspotY(), cursor->getKeyColor());
+	                        cursor->getHotspotY(), cursor->getKeyColor());
 	CursorMan.replaceCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());
 	delete cursor;
 
@@ -640,12 +642,12 @@ bool Button::contains(const Common::Point &pos) const {
 		if (!_rect.contains(pos))
 			return false;
 		{
-		int16 a = _rect.width() / 2;
-		int16 b = _rect.height() / 2;
-		if (!a || !b)
-			return false;
-		Common::Point adjustedPos = pos - Common::Point(_rect.left + a, _rect.top + b);
-		return ((adjustedPos.x*adjustedPos.x)/(a*a) + (adjustedPos.y*adjustedPos.y)/(b*b) < 1);
+			int16 a = _rect.width() / 2;
+			int16 b = _rect.height() / 2;
+			if (!a || !b)
+				return false;
+			Common::Point adjustedPos = pos - Common::Point(_rect.left + a, _rect.top + b);
+			return ((adjustedPos.x * adjustedPos.x) / (a * a) + (adjustedPos.y * adjustedPos.y) / (b * b) < 1);
 		}
 	case kButtonSprites:
 		return false;

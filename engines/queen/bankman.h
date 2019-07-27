@@ -32,7 +32,6 @@ class Resource;
 
 class BankManager {
 public:
-
 	BankManager(Resource *res);
 	~BankManager();
 
@@ -58,13 +57,12 @@ public:
 	void eraseFrames(bool joe);
 
 	enum {
-		MAX_BANK_SIZE     = 110,
+		MAX_BANK_SIZE = 110,
 		MAX_FRAMES_NUMBER = 256,
-		MAX_BANKS_NUMBER  =  18
+		MAX_BANKS_NUMBER = 18
 	};
 
 private:
-
 	struct PackedBank {
 		uint32 indexes[MAX_BANK_SIZE];
 		uint8 *data;
@@ -74,7 +72,7 @@ private:
 	//! unpacked bob frames
 	BobFrame _frames[MAX_FRAMES_NUMBER];
 
-	 //! banked bob frames
+	//! banked bob frames
 	PackedBank _banks[MAX_BANKS_NUMBER];
 
 	Resource *_res;

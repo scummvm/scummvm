@@ -22,16 +22,16 @@
 
 #include "gui/filebrowser-dialog.h"
 
-#include "common/system.h"
 #include "common/algorithm.h"
 #include "common/savefile.h"
 #include "common/str-array.h"
+#include "common/system.h"
 
 #include "common/translation.h"
 
-#include "gui/widgets/list.h"
 #include "gui/gui-manager.h"
 #include "gui/message.h"
+#include "gui/widgets/list.h"
 
 namespace GUI {
 
@@ -40,14 +40,15 @@ enum {
 };
 
 FileBrowserDialog::FileBrowserDialog(const char *title, const char *fileExtension, int mode)
-	: Dialog("FileBrowser"), _mode(mode), _fileExt(fileExtension) {
+  : Dialog("FileBrowser")
+  , _mode(mode)
+  , _fileExt(fileExtension) {
 
 	_fileMask = "*.";
 	_fileMask += fileExtension;
 	_fileList = NULL;
 
-	new StaticTextWidget(this, "FileBrowser.Headline", title ? title :
-					mode == kFBModeLoad ? _("Choose file for loading") : _("Enter filename for saving"));
+	new StaticTextWidget(this, "FileBrowser.Headline", title ? title : mode == kFBModeLoad ? _("Choose file for loading") : _("Enter filename for saving"));
 
 	_fileName = new EditTextWidget(this, "FileBrowser.Filename", "");
 
@@ -114,7 +115,6 @@ void FileBrowserDialog::normalieFileName() {
 
 	_fileName->setEditString(filename + "." + _fileExt);
 }
-
 
 bool FileBrowserDialog::isProceedSave() {
 	bool matched = false;

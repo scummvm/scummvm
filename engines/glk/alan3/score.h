@@ -28,8 +28,8 @@
 namespace Glk {
 namespace Alan3 {
 
-/* DATA */
-extern Aword *scores;
+	/* DATA */
+	extern Aword *scores;
 
 } // End of namespace Alan3
 } // End of namespace Glk

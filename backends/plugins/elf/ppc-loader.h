@@ -27,7 +27,7 @@
 
 #if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(PPC_TARGET)
 
-#include "backends/plugins/elf/elf-loader.h"
+#	include "backends/plugins/elf/elf-loader.h"
 
 class PPCDLObject : public DLObject {
 protected:

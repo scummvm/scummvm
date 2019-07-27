@@ -57,7 +57,7 @@ void linearInterp(const float x1, const float y1, const float z1, const Point3D 
 }
 
 void linearInterp(const float x1, const float y1, const float z1, const float x2, const float y2, const float z2,
-		const float t, Point3D &pt3) {
+                  const float t, Point3D &pt3) {
 	pt3.x = x1 + (x2 - x1) * t;
 	pt3.y = y1 + (y2 - y1) * t;
 	pt3.z = z1 + (z2 - z1) * t;

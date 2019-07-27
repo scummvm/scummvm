@@ -31,6 +31,7 @@ namespace Titanic {
 
 class CPlaceHolderItem : public CNamedItem {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	CString _string1;
 	Point _pos1;
@@ -43,6 +44,7 @@ public:
 	int _field68;
 	CMovieClipList _clips;
 	int _field7C;
+
 public:
 	CLASSDEF;
 	CPlaceHolderItem();

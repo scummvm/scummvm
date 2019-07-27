@@ -31,28 +31,28 @@
 namespace Cloud {
 namespace Dropbox {
 
-class DropboxUploadRequest: public Networking::Request {
-	Common::String _token;
-	Common::String _savePath;
-	Common::SeekableReadStream *_contentsStream;
-	Storage::UploadCallback _uploadCallback;
-	Request *_workingRequest;
-	bool _ignoreCallback;
-	Common::String _sessionId;
+	class DropboxUploadRequest : public Networking::Request {
+		Common::String _token;
+		Common::String _savePath;
+		Common::SeekableReadStream *_contentsStream;
+		Storage::UploadCallback _uploadCallback;
+		Request *_workingRequest;
+		bool _ignoreCallback;
+		Common::String _sessionId;
 
-	void start();
-	void uploadNextPart();
-	void partUploadedCallback(Networking::JsonResponse response);
-	void partUploadedErrorCallback(Networking::ErrorResponse error);
-	void finishUpload(StorageFile status);
+		void start();
+		void uploadNextPart();
+		void partUploadedCallback(Networking::JsonResponse response);
+		void partUploadedErrorCallback(Networking::ErrorResponse error);
+		void finishUpload(StorageFile status);
 
-public:
-	DropboxUploadRequest(Common::String token, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb);
-	virtual ~DropboxUploadRequest();
+	public:
+		DropboxUploadRequest(Common::String token, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb);
+		virtual ~DropboxUploadRequest();
 
-	virtual void handle();
-	virtual void restart();
-};
+		virtual void handle();
+		virtual void restart();
+	};
 
 } // End of namespace Dropbox
 } // End of namespace Cloud

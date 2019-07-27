@@ -33,6 +33,7 @@ class CDeskchair : public CSGTStateRoom {
 	bool TurnOff(CTurnOff *msg);
 	bool ActMsg(CActMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
+
 public:
 	CLASSDEF;
 

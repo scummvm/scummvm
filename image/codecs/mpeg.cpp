@@ -31,7 +31,8 @@
 
 namespace Image {
 
-MPEGDecoder::MPEGDecoder() : Codec() {
+MPEGDecoder::MPEGDecoder()
+  : Codec() {
 	_pixelFormat = g_system->getScreenFormat();
 	_surface = 0;
 
@@ -83,7 +84,6 @@ bool MPEGDecoder::decodePacket(Common::SeekableReadStream &packet, uint32 &frame
 				framePeriod += sequence->frame_period;
 				if (picture->nb_fields > 2) {
 					framePeriod += (sequence->frame_period / 2);
-
 				}
 
 				if (!dst) {
@@ -97,8 +97,8 @@ bool MPEGDecoder::decodePacket(Common::SeekableReadStream &packet, uint32 &frame
 				}
 
 				YUVToRGBMan.convert420(dst, Graphics::YUVToRGBManager::kScaleITU, _mpegInfo->display_fbuf->buf[0],
-						_mpegInfo->display_fbuf->buf[1], _mpegInfo->display_fbuf->buf[2], sequence->picture_width,
-						sequence->picture_height, sequence->width, sequence->chroma_width);
+				                       _mpegInfo->display_fbuf->buf[1], _mpegInfo->display_fbuf->buf[2], sequence->picture_width,
+				                       sequence->picture_height, sequence->width, sequence->chroma_width);
 			}
 			break;
 		default:

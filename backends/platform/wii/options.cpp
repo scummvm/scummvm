@@ -21,20 +21,20 @@
  */
 
 #include <errno.h>
-#include <network.h>
 #include <gxflux/gfx.h>
+#include <network.h>
 
+#include "backends/fs/wii/wii-fs-factory.h"
 #include "common/config-manager.h"
 #include "gui/dialog.h"
-#include "backends/fs/wii/wii-fs-factory.h"
 
 #include "common/translation.h"
 
 #include "options.h"
 
-WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
-	Dialog((640 - 400) / 2, (480 - 340) / 2, 400, 340),
-	_doubleStrike(doubleStrike) {
+WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike)
+  : Dialog((640 - 400) / 2, (480 - 340) / 2, 400, 340)
+  , _doubleStrike(doubleStrike) {
 
 	if (_doubleStrike) {
 		_strUnderscanX = "wii_video_ds_underscan_x";
@@ -51,19 +51,19 @@ WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
 	_tabVideo = _tab->addTab(_("Video"));
 
 	new StaticTextWidget(_tab, 16, 16, 128, 16,
-						 _("Current video mode:"), Graphics::kTextAlignRight);
+	                     _("Current video mode:"), Graphics::kTextAlignRight);
 	new StaticTextWidget(_tab, 160, 16, 128, 16,
-						 _doubleStrike ? _("Double-strike") : _("Default"),
-							Graphics::kTextAlignLeft);
+	                     _doubleStrike ? _("Double-strike") : _("Default"),
+	                     Graphics::kTextAlignLeft);
 
 	new StaticTextWidget(_tab, 16, 48, 128, 16,
-						 _("Horizontal underscan:"), Graphics::kTextAlignRight);
+	                     _("Horizontal underscan:"), Graphics::kTextAlignRight);
 	_sliderUnderscanX = new SliderWidget(_tab, 160, 47, 128, 18, 0, 'x');
 	_sliderUnderscanX->setMinValue(0);
 	_sliderUnderscanX->setMaxValue(32);
 
 	new StaticTextWidget(_tab, 16, 80, 128, 16,
-						 _("Vertical underscan:"), Graphics::kTextAlignRight);
+	                     _("Vertical underscan:"), Graphics::kTextAlignRight);
 	_sliderUnderscanY = new SliderWidget(_tab, 160, 79, 128, 18, 0, 'y');
 	_sliderUnderscanY->setMinValue(0);
 	_sliderUnderscanY->setMaxValue(32);
@@ -71,13 +71,13 @@ WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
 	_tabInput = _tab->addTab(_("Input"));
 
 	new StaticTextWidget(_tab, 16, 16, 128, 16,
-						 _("GC Pad sensitivity:"), Graphics::kTextAlignRight);
+	                     _("GC Pad sensitivity:"), Graphics::kTextAlignRight);
 	_sliderPadSensitivity = new SliderWidget(_tab, 160, 15, 128, 18, 0, 'x');
 	_sliderPadSensitivity->setMinValue(0);
 	_sliderPadSensitivity->setMaxValue(64);
 
 	new StaticTextWidget(_tab, 16, 44, 128, 16,
-						 _("GC Pad acceleration:"), Graphics::kTextAlignRight);
+	                     _("GC Pad acceleration:"), Graphics::kTextAlignRight);
 	_sliderPadAcceleration = new SliderWidget(_tab, 160, 43, 128, 18, 0, 'y');
 	_sliderPadAcceleration->setMinValue(0);
 	_sliderPadAcceleration->setMaxValue(8);
@@ -86,9 +86,9 @@ WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
 	_tabDVD = _tab->addTab(_("DVD"));
 
 	new StaticTextWidget(_tab, 16, 16, 64, 16,
-						 _("Status:"), Graphics::kTextAlignRight);
+	                     _("Status:"), Graphics::kTextAlignRight);
 	_textDVDStatus = new StaticTextWidget(_tab, 96, 16, 272, 16, _("Unknown"),
-											Graphics::kTextAlignLeft);
+	                                      Graphics::kTextAlignLeft);
 
 	new ButtonWidget(_tab, 16, 48, 108, 24, _("Mount DVD"), 0, 'mdvd');
 	new ButtonWidget(_tab, 140, 48, 108, 24, _("Unmount DVD"), 0, 'udvd');
@@ -98,24 +98,24 @@ WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
 	_tabSMB = _tab->addTab(_("SMB"));
 
 	new StaticTextWidget(_tab, 16, 16, 64, 16,
-						 _("Status:"), Graphics::kTextAlignRight);
+	                     _("Status:"), Graphics::kTextAlignRight);
 	_textSMBStatus = new StaticTextWidget(_tab, 96, 16, 272, 16, _("Unknown"),
-											Graphics::kTextAlignLeft);
+	                                      Graphics::kTextAlignLeft);
 
 	new StaticTextWidget(_tab, 16, 52, 64, 16,
-						 _("Server:"), Graphics::kTextAlignRight);
+	                     _("Server:"), Graphics::kTextAlignRight);
 	_editSMBServer = new EditTextWidget(_tab, 96, 48, _w - 96 - 32, 24, "");
 
 	new StaticTextWidget(_tab, 16, 92, 64, 16,
-						 _("Share:"), Graphics::kTextAlignRight);
+	                     _("Share:"), Graphics::kTextAlignRight);
 	_editSMBShare = new EditTextWidget(_tab, 96, 88, _w - 96 - 32, 24, "");
 
 	new StaticTextWidget(_tab, 16, 132, 64, 16,
-						 _("Username:"), Graphics::kTextAlignRight);
+	                     _("Username:"), Graphics::kTextAlignRight);
 	_editSMBUsername = new EditTextWidget(_tab, 96, 128, _w - 96 - 32, 24, "");
 
 	new StaticTextWidget(_tab, 16, 172, 64, 16,
-						 _("Password:"), Graphics::kTextAlignRight);
+	                     _("Password:"), Graphics::kTextAlignRight);
 	_editSMBPassword = new EditTextWidget(_tab, 96, 168, _w - 96 - 32, 24, "");
 
 	new ButtonWidget(_tab, 16, 208, 108, 24, _("Init network"), 0, 'net');
@@ -195,14 +195,14 @@ void WiiOptionsDialog::handleTickle() {
 }
 
 void WiiOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd,
-										uint32 data) {
+                                     uint32 data) {
 	WiiFilesystemFactory &fsf = WiiFilesystemFactory::instance();
 
 	switch (cmd) {
 	case 'x':
 	case 'y':
 		gfx_set_underscan(_sliderUnderscanX->getValue(),
-							_sliderUnderscanY->getValue());
+		                  _sliderUnderscanY->getValue());
 		break;
 
 	case 'k':
@@ -232,9 +232,9 @@ void WiiOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd,
 
 	case 'msmb':
 		fsf.setSMBLoginData(_editSMBServer->getEditString(),
-							_editSMBShare->getEditString(),
-							_editSMBUsername->getEditString(),
-							_editSMBPassword->getEditString());
+		                    _editSMBShare->getEditString(),
+		                    _editSMBUsername->getEditString(),
+		                    _editSMBPassword->getEditString());
 		fsf.mount(WiiFilesystemFactory::kSMB);
 		break;
 
@@ -251,66 +251,66 @@ void WiiOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd,
 
 void WiiOptionsDialog::revert() {
 	gfx_set_underscan(ConfMan.getInt(_strUnderscanX,
-									Common::ConfigManager::kApplicationDomain),
-						ConfMan.getInt(_strUnderscanY,
-									Common::ConfigManager::kApplicationDomain));
+	                                 Common::ConfigManager::kApplicationDomain),
+	                  ConfMan.getInt(_strUnderscanY,
+	                                 Common::ConfigManager::kApplicationDomain));
 }
 
 void WiiOptionsDialog::load() {
 	int i;
 
 	i = ConfMan.getInt(_strUnderscanX,
-							Common::ConfigManager::kApplicationDomain);
+	                   Common::ConfigManager::kApplicationDomain);
 	_sliderUnderscanX->setValue(i);
 
 	i = ConfMan.getInt(_strUnderscanY,
-							Common::ConfigManager::kApplicationDomain);
+	                   Common::ConfigManager::kApplicationDomain);
 	_sliderUnderscanY->setValue(i);
 
 	i = ConfMan.getInt("wii_pad_sensitivity",
-							Common::ConfigManager::kApplicationDomain);
+	                   Common::ConfigManager::kApplicationDomain);
 	_sliderPadSensitivity->setValue(i);
 
 	i = ConfMan.getInt("wii_pad_acceleration",
-							Common::ConfigManager::kApplicationDomain);
+	                   Common::ConfigManager::kApplicationDomain);
 	_sliderPadAcceleration->setValue(i);
 
 #ifdef USE_WII_SMB
 	_editSMBServer->setEditString(ConfMan.get("wii_smb_server",
-									Common::ConfigManager::kApplicationDomain));
+	                                          Common::ConfigManager::kApplicationDomain));
 	_editSMBShare->setEditString(ConfMan.get("wii_smb_share",
-									Common::ConfigManager::kApplicationDomain));
+	                                         Common::ConfigManager::kApplicationDomain));
 	_editSMBUsername->setEditString(ConfMan.get("wii_smb_username",
-									Common::ConfigManager::kApplicationDomain));
+	                                            Common::ConfigManager::kApplicationDomain));
 	_editSMBPassword->setEditString(ConfMan.get("wii_smb_password",
-									Common::ConfigManager::kApplicationDomain));
+	                                            Common::ConfigManager::kApplicationDomain));
 #endif
 }
 
 void WiiOptionsDialog::save() {
 	ConfMan.setInt(_strUnderscanX,
-					_sliderUnderscanX->getValue(),
-					Common::ConfigManager::kApplicationDomain);
+	               _sliderUnderscanX->getValue(),
+	               Common::ConfigManager::kApplicationDomain);
 	ConfMan.setInt(_strUnderscanY,
-					_sliderUnderscanY->getValue(),
-					Common::ConfigManager::kApplicationDomain);
+	               _sliderUnderscanY->getValue(),
+	               Common::ConfigManager::kApplicationDomain);
 
 	ConfMan.setInt("wii_pad_sensitivity",
-					_sliderPadSensitivity->getValue(),
-					Common::ConfigManager::kApplicationDomain);
+	               _sliderPadSensitivity->getValue(),
+	               Common::ConfigManager::kApplicationDomain);
 	ConfMan.setInt("wii_pad_acceleration",
-					_sliderPadAcceleration->getValue(),
-					Common::ConfigManager::kApplicationDomain);
+	               _sliderPadAcceleration->getValue(),
+	               Common::ConfigManager::kApplicationDomain);
 
 #ifdef USE_WII_SMB
 	ConfMan.set("wii_smb_server", _editSMBServer->getEditString(),
-				Common::ConfigManager::kApplicationDomain);
+	            Common::ConfigManager::kApplicationDomain);
 	ConfMan.set("wii_smb_share", _editSMBShare->getEditString(),
-				Common::ConfigManager::kApplicationDomain);
+	            Common::ConfigManager::kApplicationDomain);
 	ConfMan.set("wii_smb_username", _editSMBUsername->getEditString(),
-				Common::ConfigManager::kApplicationDomain);
+	            Common::ConfigManager::kApplicationDomain);
 	ConfMan.set("wii_smb_password", _editSMBPassword->getEditString(),
-				Common::ConfigManager::kApplicationDomain);
+	            Common::ConfigManager::kApplicationDomain);
 #endif
 
 	ConfMan.flushToDisk();

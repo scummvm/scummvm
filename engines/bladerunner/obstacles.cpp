@@ -35,15 +35,15 @@
 #define DISABLE_PATHFINDING 0
 #define USE_PATHFINDING_EXPERIMENTAL_FIX_2 0 // Alternate Fix: Allows polygons merged on one point
 
-#define WITHIN_TOLERANCE(a, b) (((a) - 0.009) < (b) && ((a) + 0.009) > (b))
+#define WITHIN_TOLERANCE(a, b) (((a)-0.009) < (b) && ((a) + 0.009) > (b))
 
 namespace BladeRunner {
 
 Obstacles::Obstacles(BladeRunnerEngine *vm) {
 	_vm = vm;
-	_polygons       = new Polygon[kPolygonCount];
+	_polygons = new Polygon[kPolygonCount];
 	_polygonsBackup = new Polygon[kPolygonCount];
-	_path           = new Vector2[kVertexCount];
+	_path = new Vector2[kVertexCount];
 	clear();
 }
 
@@ -88,10 +88,14 @@ bool Obstacles::lineLineIntersection(LineSegment a, LineSegment b, Vector2 *inte
 	assert(a.start.x == a.end.x || a.start.y == a.end.y);
 	assert(b.start.x == b.end.x || b.start.y == b.end.y);
 
-	if (a.start.x > a.end.x) SWAP(a.start.x, a.end.x);
-	if (a.start.y > a.end.y) SWAP(a.start.y, a.end.y);
-	if (b.start.x > b.end.x) SWAP(b.start.x, b.end.x);
-	if (b.start.y > b.end.y) SWAP(b.start.y, b.end.y);
+	if (a.start.x > a.end.x)
+		SWAP(a.start.x, a.end.x);
+	if (a.start.y > a.end.y)
+		SWAP(a.start.y, a.end.y);
+	if (b.start.x > b.end.x)
+		SWAP(b.start.x, b.end.x);
+	if (b.start.y > b.end.y)
+		SWAP(b.start.y, b.end.y);
 
 	if (a.start.x == a.end.x && b.start.y == b.end.y && IN_RANGE(a.start.x, b.start.x, b.end.x) && IN_RANGE(b.start.y, a.start.y, a.end.y)) {
 		// A is vertical, B is horizontal
@@ -115,21 +119,20 @@ bool Obstacles::linePolygonIntersection(LineSegment lineA, VertexType lineAType,
 	for (int i = 0; i != polyB->verticeCount; ++i) {
 		LineSegment lineB;
 		lineB.start = polyB->vertices[i];
-		lineB.end   = polyB->vertices[(i+1) % polyB->verticeCount];
+		lineB.end = polyB->vertices[(i + 1) % polyB->verticeCount];
 
 		VertexType lineBType = polyB->vertexType[i];
 
 		Vector2 newIntersectionPoint;
 
 		if (lineLineIntersection(lineA, lineB, &newIntersectionPoint)) {
-			if ((lineAType == TOP_RIGHT    && lineBType == TOP_LEFT)
-			 || (lineAType == BOTTOM_RIGHT && lineBType == TOP_RIGHT)
-			 || (lineAType == BOTTOM_LEFT  && lineBType == BOTTOM_RIGHT)
-			 || (lineAType == TOP_LEFT     && lineBType == BOTTOM_LEFT)
-			) {
-				if ( (pathLengthSinceLastIntersection > 2)
-					|| ( (!(WITHIN_TOLERANCE(lineB.end.x, intersectionPoint->x) && WITHIN_TOLERANCE(lineB.end.y, intersectionPoint->y)))
-					&& (newIntersectionPoint != *intersectionPoint) )) {
+			if ((lineAType == TOP_RIGHT && lineBType == TOP_LEFT)
+			    || (lineAType == BOTTOM_RIGHT && lineBType == TOP_RIGHT)
+			    || (lineAType == BOTTOM_LEFT && lineBType == BOTTOM_RIGHT)
+			    || (lineAType == TOP_LEFT && lineBType == BOTTOM_LEFT)) {
+				if ((pathLengthSinceLastIntersection > 2)
+				    || ((!(WITHIN_TOLERANCE(lineB.end.x, intersectionPoint->x) && WITHIN_TOLERANCE(lineB.end.y, intersectionPoint->y)))
+				        && (newIntersectionPoint != *intersectionPoint))) {
 					float newIntersectionDistance = getLength(lineA.start.x, lineA.start.y, newIntersectionPoint.x, newIntersectionPoint.y);
 					if (!hasIntersection || newIntersectionDistance < nearestIntersectionDistance) {
 						hasIntersection = true;
@@ -199,8 +202,8 @@ bool Obstacles::mergePolygons(Polygon &polyA, Polygon &polyB) {
 	while (!flagDone) {
 		VertexType polyPrimaryType;
 
-		polyLine.start  = flagDidFindIntersection ? intersectionPoint : polyPrimary->vertices[vertIndex];
-		polyLine.end    = polyPrimary->vertices[(vertIndex + 1) % polyPrimary->verticeCount];
+		polyLine.start = flagDidFindIntersection ? intersectionPoint : polyPrimary->vertices[vertIndex];
+		polyLine.end = polyPrimary->vertices[(vertIndex + 1) % polyPrimary->verticeCount];
 
 		// TODO(madmoose): How does this work when adding a new intersection point?
 		polyPrimaryType = polyPrimary->vertexType[vertIndex];
@@ -301,10 +304,10 @@ restart:
 		}
 
 		if (polyA.verticeCount == 0) {
-				continue;
+			continue;
 		}
 
-		for (int j = i+1; j < kPolygonCount; ++j) {
+		for (int j = i + 1; j < kPolygonCount; ++j) {
 			Polygon &polyB = _polygons[j];
 			if (!polyB.isPresent) {
 				continue;
@@ -350,7 +353,7 @@ bool Obstacles::findNextWaypoint(const Vector3 &from, const Vector3 &to, Vector3
 #else
 
 bool Obstacles::findNextWaypoint(const Vector3 &from, const Vector3 &to, Vector3 *next) {
-	static int  recursionLevel = 0;
+	static int recursionLevel = 0;
 	static bool polygonVisited[kPolygonCount];
 
 	if (++recursionLevel == 1) {
@@ -360,12 +363,12 @@ bool Obstacles::findNextWaypoint(const Vector3 &from, const Vector3 &to, Vector3
 		}
 	}
 
-	int     polyIndex = -1;
-	int     polyNearVertIndex = -1;
-	float   polyNearDist = 0.0f;
+	int polyIndex = -1;
+	int polyNearVertIndex = -1;
+	float polyNearDist = 0.0f;
 	Vector2 polyNearPos;
-	int     polyFarVertIndex = -1;
-	float   polyFarDist = 0.0f;
+	int polyFarVertIndex = -1;
+	float polyFarDist = 0.0f;
 	Vector2 polyFarPos;
 
 	for (int i = 0; i != kPolygonCount; ++i) {
@@ -374,16 +377,16 @@ bool Obstacles::findNextWaypoint(const Vector3 &from, const Vector3 &to, Vector3
 			continue;
 		}
 
-		int     nearVertIndex;
-		float   nearDist;
+		int nearVertIndex;
+		float nearDist;
 		Vector2 nearPos;
 
 		if (!findIntersectionNearest(i, from.xz(), to.xz(), &nearVertIndex, &nearDist, &nearPos)) {
 			continue;
 		}
 
-		int     farVertIndex;
-		float   farDist;
+		int farVertIndex;
+		float farDist;
 		Vector2 farPos;
 
 		int hasFar = findIntersectionFarthest(i, from.xz(), to.xz(), &farVertIndex, &farDist, &farPos);
@@ -459,11 +462,10 @@ bool Obstacles::findNextWaypoint(const Vector3 &from, const Vector3 &to, Vector3
 #endif
 
 bool Obstacles::findIntersectionNearest(int polygonIndex, Vector2 from, Vector2 to,
-                                        int *outVertexIndex, float *outDistance, Vector2 *out) const
-{
-	float   minDistance = 0.0f;
+                                        int *outVertexIndex, float *outDistance, Vector2 *out) const {
+	float minDistance = 0.0f;
 	Vector2 minIntersection;
-	int     minVertexIndex = -1;
+	int minVertexIndex = -1;
 
 	bool hasDistance = false;
 
@@ -483,19 +485,18 @@ bool Obstacles::findIntersectionNearest(int polygonIndex, Vector2 from, Vector2 
 		}
 	}
 
-	*outDistance    = minDistance;
+	*outDistance = minDistance;
 	*outVertexIndex = minVertexIndex;
-	*out            = minIntersection;
+	*out = minIntersection;
 
 	return minVertexIndex != -1;
 }
 
 bool Obstacles::findIntersectionFarthest(int polygonIndex, Vector2 from, Vector2 to,
-                                         int *outVertexIndex, float *outDistance, Vector2 *out) const
-{
-	float   maxDistance = 0.0f;
+                                         int *outVertexIndex, float *outDistance, Vector2 *out) const {
+	float maxDistance = 0.0f;
 	Vector2 maxIntersection;
-	int     maxVertexIndex = -1;
+	int maxVertexIndex = -1;
 
 	bool hasDistance = false;
 
@@ -515,9 +516,9 @@ bool Obstacles::findIntersectionFarthest(int polygonIndex, Vector2 from, Vector2
 		}
 	}
 
-	*outDistance    = maxDistance;
+	*outDistance = maxDistance;
 	*outVertexIndex = maxVertexIndex;
-	*out            = maxIntersection;
+	*out = maxIntersection;
 
 	return maxVertexIndex != -1;
 }
@@ -526,11 +527,10 @@ float Obstacles::pathTotalDistance(const Vector2 *path, int pathSize, Vector2 fr
 	// Yes, 'to' and 'from' are ignored.
 	float totalDistance = 0.0f;
 	for (int i = 0; i != pathSize - 1; ++i) {
-		totalDistance += distance(path[i], path[i+1]);
+		totalDistance += distance(path[i], path[i + 1]);
 	}
 	return totalDistance;
 }
-
 
 bool Obstacles::findPolygonVerticeByXZ(int *polygonIndex, int *verticeIndex, int *verticeCount, float x, float z) const {
 	*polygonIndex = -1;
@@ -559,9 +559,9 @@ bool Obstacles::findPolygonVerticeByXZWithinTolerance(float x, float z, int *pol
 	*polygonIndex = -1;
 	*verticeIndex = -1;
 
-//	for (int i = 0; i != kPolygonCount; ++i) {
+	//	for (int i = 0; i != kPolygonCount; ++i) {
 	for (int countUp = 0, i = startSearchFromPolygonIdx; countUp != kPolygonCount; ++countUp, ++i) {
-		i = i  % kPolygonCount;	// we want to circle around to go through all polygons
+		i = i % kPolygonCount; // we want to circle around to go through all polygons
 		if (!_polygons[i].isPresent || _polygons[i].verticeCount == 0) {
 			continue;
 		}
@@ -665,28 +665,36 @@ int Obstacles::buildPositivePath(int polyIndex, int vertStartIndex, Vector2 star
 
 bool Obstacles::verticesCanIntersect(int lineType0, int lineType1, float x0, float y0, float x1, float y1) const {
 	if (lineType0 == TOP_LEFT && lineType1 == TOP_RIGHT) {
-		if (x0 > x1 && y0 < y1) return true;
+		if (x0 > x1 && y0 < y1)
+			return true;
 	}
 	if (lineType0 == TOP_RIGHT && lineType1 == BOTTOM_RIGHT) {
-		if (x0 > x1 && y0 > y1) return true;
+		if (x0 > x1 && y0 > y1)
+			return true;
 	}
 	if (lineType0 == BOTTOM_RIGHT && lineType1 == BOTTOM_LEFT) {
-		if (x0 < x1 && y0 > y1) return true;
+		if (x0 < x1 && y0 > y1)
+			return true;
 	}
 	if (lineType0 == BOTTOM_LEFT && lineType1 == TOP_LEFT) {
-		if (x0 < x1 && y0 < y1) return true;
+		if (x0 < x1 && y0 < y1)
+			return true;
 	}
 	if (lineType0 == TOP_RIGHT && lineType1 == TOP_LEFT) {
-		if (x0 > x1 || y0 < y1) return true;
+		if (x0 > x1 || y0 < y1)
+			return true;
 	}
 	if (lineType0 == BOTTOM_RIGHT && lineType1 == TOP_RIGHT) {
-		if (x0 > x1 || y0 > y1) return true;
+		if (x0 > x1 || y0 > y1)
+			return true;
 	}
 	if (lineType0 == BOTTOM_LEFT && lineType1 == BOTTOM_RIGHT) {
-		if (x0 < x1 || y0 > y1) return true;
+		if (x0 < x1 || y0 > y1)
+			return true;
 	}
 	if (lineType0 == TOP_LEFT && lineType1 == BOTTOM_LEFT) {
-		if (x0 < x1 || y0 < y1) return true;
+		if (x0 < x1 || y0 < y1)
+			return true;
 	}
 	return false;
 }
@@ -705,7 +713,7 @@ bool Obstacles::findFarthestAvailablePathVertex(Vector2 *path, int pathSize, Vec
 	if (startOnPolygon) {
 		int vertexIndexStartPrev = (vertexIndexStart - 1 + _polygons[polygonIndexStart].verticeCount) % _polygons[polygonIndexStart].verticeCount;
 
-		vertexTypeStart     = _polygons[polygonIndexStart].vertexType[vertexIndexStart];
+		vertexTypeStart = _polygons[polygonIndexStart].vertexType[vertexIndexStart];
 		vertexTypeStartPrev = _polygons[polygonIndexStart].vertexType[vertexIndexStartPrev];
 	}
 
@@ -719,7 +727,7 @@ bool Obstacles::findFarthestAvailablePathVertex(Vector2 *path, int pathSize, Vec
 		//start and current path vertices are on same polygon and are next to each other
 		if (pathVertexOnPolygon && polygonIndexStart == polygonIndexPath) {
 			int vertexIndexStartPrev = (vertexIndexStart - 1 + _polygons[polygonIndexPath].verticeCount) % _polygons[polygonIndexPath].verticeCount;
-			int vertexIndexStartNext = (vertexIndexStart + 1                                           ) % _polygons[polygonIndexPath].verticeCount;
+			int vertexIndexStartNext = (vertexIndexStart + 1) % _polygons[polygonIndexPath].verticeCount;
 
 			if (vertexIndexPath == vertexIndexStartNext || vertexIndexPath == vertexIndexStartPrev || vertexIndexPath == vertexIndexStart) {
 				foundVertexNeighbor = true;
@@ -751,11 +759,10 @@ bool Obstacles::findFarthestAvailablePathVertex(Vector2 *path, int pathSize, Vec
 
 				// intersection has to be at end of one of these points (either on this polygon or on the path or at start)
 				if (!(
-					(WITHIN_TOLERANCE(intersection.x, start.x)                                   && WITHIN_TOLERANCE(intersection.y, start.z)                                  )
-				 || (WITHIN_TOLERANCE(intersection.x, path[pathVertexIdx].x)                     && WITHIN_TOLERANCE(intersection.y, path[pathVertexIdx].y)                    )
-				 || (WITHIN_TOLERANCE(intersection.x, polygon->vertices[polygonVertexIdx].x)     && WITHIN_TOLERANCE(intersection.y, polygon->vertices[polygonVertexIdx].y)    )
-				 || (WITHIN_TOLERANCE(intersection.x, polygon->vertices[polygonVertexNextIdx].x) && WITHIN_TOLERANCE(intersection.y, polygon->vertices[polygonVertexNextIdx].y))
-				)) {
+				      (WITHIN_TOLERANCE(intersection.x, start.x) && WITHIN_TOLERANCE(intersection.y, start.z))
+				      || (WITHIN_TOLERANCE(intersection.x, path[pathVertexIdx].x) && WITHIN_TOLERANCE(intersection.y, path[pathVertexIdx].y))
+				      || (WITHIN_TOLERANCE(intersection.x, polygon->vertices[polygonVertexIdx].x) && WITHIN_TOLERANCE(intersection.y, polygon->vertices[polygonVertexIdx].y))
+				      || (WITHIN_TOLERANCE(intersection.x, polygon->vertices[polygonVertexNextIdx].x) && WITHIN_TOLERANCE(intersection.y, polygon->vertices[polygonVertexNextIdx].y)))) {
 					pathVertexAvailable = false;
 					break;
 				}
@@ -775,13 +782,12 @@ bool Obstacles::findFarthestAvailablePathVertex(Vector2 *path, int pathSize, Vec
 						break;
 					}
 
-					if ((currentPolygonIdx == polygonIndexPath  && vertexIndexIntersection == vertexIndexPath)
-					|| (currentPolygonIdx == polygonIndexStart && vertexIndexIntersection == vertexIndexStart)
-					) {
+					if ((currentPolygonIdx == polygonIndexPath && vertexIndexIntersection == vertexIndexPath)
+					    || (currentPolygonIdx == polygonIndexStart && vertexIndexIntersection == vertexIndexStart)) {
 						continue;
 					}
 
-					int vertexIndexIntersectionprev = (vertexIndexIntersection - 1 + _polygons[polygonIndexIntersection].verticeCount ) % _polygons[polygonIndexIntersection].verticeCount;
+					int vertexIndexIntersectionprev = (vertexIndexIntersection - 1 + _polygons[polygonIndexIntersection].verticeCount) % _polygons[polygonIndexIntersection].verticeCount;
 					if (verticesCanIntersect(_polygons[polygonIndexIntersection].vertexType[vertexIndexIntersectionprev], _polygons[polygonIndexIntersection].vertexType[vertexIndexIntersection], intersection.x, intersection.y, path[pathVertexIdx].x, path[pathVertexIdx].y)) {
 						pathVertexAvailable = false;
 						break;
@@ -789,8 +795,7 @@ bool Obstacles::findFarthestAvailablePathVertex(Vector2 *path, int pathSize, Vec
 				} else {
 					bool startIntersectionWithinTolerance = false;
 					if (WITHIN_TOLERANCE(intersection.x, start.x)
-					 && WITHIN_TOLERANCE(intersection.y, start.z)
-					) {
+					    && WITHIN_TOLERANCE(intersection.y, start.z)) {
 						startIntersectionWithinTolerance = true;
 					}
 
@@ -800,12 +805,11 @@ bool Obstacles::findFarthestAvailablePathVertex(Vector2 *path, int pathSize, Vec
 							break;
 						}
 
-						int polygonVertexType =  polygon->vertexType[polygonVertexIdx];
-						if ((polygonVertexType == TOP_LEFT     && intersection.y < path[pathVertexIdx].y)
-						|| (polygonVertexType == TOP_RIGHT    && intersection.x > path[pathVertexIdx].x)
-						|| (polygonVertexType == BOTTOM_RIGHT && intersection.y > path[pathVertexIdx].y)
-						|| (polygonVertexType == BOTTOM_LEFT  && intersection.x < path[pathVertexIdx].x)
-						) {
+						int polygonVertexType = polygon->vertexType[polygonVertexIdx];
+						if ((polygonVertexType == TOP_LEFT && intersection.y < path[pathVertexIdx].y)
+						    || (polygonVertexType == TOP_RIGHT && intersection.x > path[pathVertexIdx].x)
+						    || (polygonVertexType == BOTTOM_RIGHT && intersection.y > path[pathVertexIdx].y)
+						    || (polygonVertexType == BOTTOM_LEFT && intersection.x < path[pathVertexIdx].x)) {
 							pathVertexAvailable = false;
 							break;
 						}
@@ -938,17 +942,15 @@ void Obstacles::draw() {
 		}
 
 		Vector3 p0 = _vm->_view->calculateScreenPosition(Vector3(
-			_polygons[i].vertices[_polygons[i].verticeCount - 1].x,
-			y,
-			_polygons[i].vertices[_polygons[i].verticeCount - 1].y
-		));
+		  _polygons[i].vertices[_polygons[i].verticeCount - 1].x,
+		  y,
+		  _polygons[i].vertices[_polygons[i].verticeCount - 1].y));
 
 		for (int j = 0; j != _polygons[i].verticeCount; ++j) {
 			Vector3 p1 = _vm->_view->calculateScreenPosition(Vector3(
-				_polygons[i].vertices[j].x,
-				y,
-				_polygons[i].vertices[j].y
-			));
+			  _polygons[i].vertices[j].x,
+			  y,
+			  _polygons[i].vertices[j].y));
 
 			_vm->_surfaceFront.drawLine(p0.x, p0.y, p1.x, p1.y, _vm->_surfaceFront.format.RGBToColor(255, 255, 255));
 
@@ -960,9 +962,9 @@ void Obstacles::draw() {
 	{
 		Vector3 playerPos = _vm->_playerActor->getXYZ();
 		Vector3 p0 = _vm->_view->calculateScreenPosition(playerPos + Vector3(-12.0f, 0.0f, -12.0f));
-		Vector3 p1 = _vm->_view->calculateScreenPosition(playerPos + Vector3( 12.0f, 0.0f, -12.0f));
-		Vector3 p2 = _vm->_view->calculateScreenPosition(playerPos + Vector3( 12.0f, 0.0f,  12.0f));
-		Vector3 p3 = _vm->_view->calculateScreenPosition(playerPos + Vector3(-12.0f, 0.0f,  12.0f));
+		Vector3 p1 = _vm->_view->calculateScreenPosition(playerPos + Vector3(12.0f, 0.0f, -12.0f));
+		Vector3 p2 = _vm->_view->calculateScreenPosition(playerPos + Vector3(12.0f, 0.0f, 12.0f));
+		Vector3 p3 = _vm->_view->calculateScreenPosition(playerPos + Vector3(-12.0f, 0.0f, 12.0f));
 
 		_vm->_surfaceFront.drawLine(p0.x, p0.y, p1.x, p1.y, _vm->_surfaceFront.format.RGBToColor(255, 0, 0));
 		_vm->_surfaceFront.drawLine(p1.x, p1.y, p2.x, p2.y, _vm->_surfaceFront.format.RGBToColor(255, 0, 0));
@@ -981,8 +983,6 @@ void Obstacles::draw() {
 	{
 		//TODO
 	}
-
-
 }
 
 } // End of namespace BladeRunner

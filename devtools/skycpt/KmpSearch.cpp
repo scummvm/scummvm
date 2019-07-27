@@ -20,8 +20,8 @@
  *
  */
 
-#include "stdafx.h"
 #include "KmpSearch.h"
+#include "stdafx.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

@@ -27,15 +27,14 @@
 
 #include "common/savefile.h"
 
-#include "saga/sprite.h"
+#include "saga/font.h"
 #include "saga/itedata.h"
 #include "saga/saga.h"
-#include "saga/font.h"
+#include "saga/sprite.h"
 
 namespace Saga {
 
 class HitZone;
-
 
 //#define ACTOR_DEBUG 1 //only for actor pathfinding debug!
 
@@ -51,12 +50,12 @@ class HitZone;
 
 #define ACTOR_CLIMB_SPEED 8
 
-#define ACTOR_COLLISION_WIDTH       32
-#define ACTOR_COLLISION_HEIGHT       8
+#define ACTOR_COLLISION_WIDTH 32
+#define ACTOR_COLLISION_HEIGHT 8
 
-#define ACTOR_DIRECTIONS_COUNT	4	// for ActorFrameSequence
+#define ACTOR_DIRECTIONS_COUNT 4 // for ActorFrameSequence
 
-#define ACTOR_SPEECH_STRING_MAX 16	// speech const
+#define ACTOR_SPEECH_STRING_MAX 16 // speech const
 #define ACTOR_SPEECH_ACTORS_MAX 8
 
 #define ACTOR_DRAGON_TURN_MOVES 4
@@ -94,7 +93,7 @@ enum ActorActions {
 };
 
 enum ActorFrameIds {
-//ITE
+	//ITE
 	kFrameITEStand = 0,
 	kFrameITEWalk = 1,
 	kFrameITESpeak = 2,
@@ -103,7 +102,7 @@ enum ActorFrameIds {
 	kFrameITEWait = 5,
 	kFrameITEPickUp = 6,
 	kFrameITELook = 7,
-//IHNM
+	//IHNM
 	kFrameIHNMStand = 0,
 	kFrameIHNMSpeak = 1,
 	kFrameIHNMWait = 2,
@@ -131,14 +130,14 @@ enum ActorFrameTypes {
 
 // Lookup table to convert 8 cardinal directions to 4
 static const int actorDirectionsLUT[8] = {
-	kDirectionUp,       // kDirUp
-	kDirectionRight,    // kDirUpRight
-	kDirectionRight,    // kDirRight
-	kDirectionRight,    // kDirDownRight
-	kDirectionDown,     // kDirDown
-	kDirectionLeft,     // kDirDownLeft
-	kDirectionLeft,     // kDirLeft
-	kDirectionLeft      // kDirUpLeft
+	kDirectionUp, // kDirUp
+	kDirectionRight, // kDirUpRight
+	kDirectionRight, // kDirRight
+	kDirectionRight, // kDirDownRight
+	kDirectionDown, // kDirDown
+	kDirectionLeft, // kDirDownLeft
+	kDirectionLeft, // kDirLeft
+	kDirectionLeft // kDirUpLeft
 };
 
 enum ActorFlagsEx {
@@ -163,19 +162,19 @@ enum PathCellType {
 };
 
 enum DragonMoveTypes {
-	kDragonMoveUpLeft			=	0,
-	kDragonMoveUpRight			=	1,
-	kDragonMoveDownLeft			=	2,
-	kDragonMoveDownRight		=	3,
-	kDragonMoveUpLeft_Left		=	4,
-	kDragonMoveUpLeft_Right		=	5,
-	kDragonMoveUpRight_Left		=	6,
-	kDragonMoveUpRight_Right	=	7,
-	kDragonMoveDownLeft_Left	=	8,
-	kDragonMoveDownLeft_Right	=	9,
-	kDragonMoveDownRight_Left	=	10,
-	kDragonMoveDownRight_Right	=	11,
-	kDragonMoveInvalid			=	12
+	kDragonMoveUpLeft = 0,
+	kDragonMoveUpRight = 1,
+	kDragonMoveDownLeft = 2,
+	kDragonMoveDownRight = 3,
+	kDragonMoveUpLeft_Left = 4,
+	kDragonMoveUpLeft_Right = 5,
+	kDragonMoveUpRight_Left = 6,
+	kDragonMoveUpRight_Right = 7,
+	kDragonMoveDownLeft_Left = 8,
+	kDragonMoveDownLeft_Right = 9,
+	kDragonMoveDownRight_Left = 10,
+	kDragonMoveDownRight_Right = 11,
+	kDragonMoveInvalid = 12
 };
 
 struct PathDirectionData {
@@ -198,9 +197,9 @@ typedef Common::Array<ActorFrameSequence> ActorFrameSequences;
 uint pathLine(PointList &pointList, uint idx, const Point &point1, const Point &point2);
 
 struct Location {
-	int32 x;					// logical coordinates
-	int32 y;					//
-	int32 z;					//
+	int32 x; // logical coordinates
+	int32 y; //
+	int32 z; //
 	Location() {
 		x = y = z = 0;
 	}
@@ -278,26 +277,25 @@ struct Location {
 		debug(debuglevel, "%s %d, %d, %d", loc, x, y, z);
 	}
 #endif
-
 };
 
 class CommonObjectData {
 public:
-//constant
-	int32 _index;					// index in local array
-	uint16 _id;						// object id
-	int32 _scriptEntrypointNumber;	// script entrypoint number
+	//constant
+	int32 _index; // index in local array
+	uint16 _id; // object id
+	int32 _scriptEntrypointNumber; // script entrypoint number
 
-//variables
-	uint16 _flags;				// initial flags
-	int32 _nameIndex;			// index in name string list
-	int32 _sceneNumber;			// scene
-	int32 _spriteListResourceId;	// sprite list resource id
+	//variables
+	uint16 _flags; // initial flags
+	int32 _nameIndex; // index in name string list
+	int32 _sceneNumber; // scene
+	int32 _spriteListResourceId; // sprite list resource id
 
-	Location _location;			// logical coordinates
-	Point _screenPosition;		// screen coordinates
-	int32 _screenDepth;			//
-	int32 _screenScale;			//
+	Location _location; // logical coordinates
+	Point _screenPosition; // screen coordinates
+	int32 _screenDepth; //
+	int32 _screenScale; //
 
 	void saveState(Common::OutSaveFile *out) {
 		out->writeUint16LE(_flags);
@@ -341,7 +339,7 @@ typedef CommonObjectData *CommonObjectDataPointer;
 
 typedef Common::List<CommonObjectDataPointer> CommonObjectOrderList;
 
-class ObjectData: public CommonObjectData {
+class ObjectData : public CommonObjectData {
 public:
 	//constant
 	uint16 _interactBits;
@@ -353,23 +351,23 @@ public:
 
 typedef Common::Array<ObjectData> ObjectDataArray;
 
-class ActorData: public CommonObjectData {
+class ActorData : public CommonObjectData {
 public:
 	//constant
-	SpriteList _spriteList;		// sprite list data
+	SpriteList _spriteList; // sprite list data
 
-	ActorFrameSequences *_frames;	// Actor's frames
-	ActorFrameSequences _framesContainer;	// Actor's frames
-	int _frameListResourceId;	// Actor's frame list resource id
+	ActorFrameSequences *_frames; // Actor's frames
+	ActorFrameSequences _framesContainer; // Actor's frames
+	int _frameListResourceId; // Actor's frame list resource id
 
-	byte _speechColor;			// Actor dialogue color
+	byte _speechColor; // Actor dialogue color
 	//
 	bool _inScene;
 
 	//variables
-	uint16 _actorFlags;			// dynamic flags
-	int32 _currentAction;			// ActorActions type
-	int32 _facingDirection;		// orientation
+	uint16 _actorFlags; // dynamic flags
+	int32 _currentAction; // ActorActions type
+	int32 _facingDirection; // orientation
 	int32 _actionDirection;
 	int32 _actionCycle;
 	uint16 _targetObject;
@@ -388,7 +386,7 @@ public:
 	uint8 _dragonStepCycle;
 	uint8 _dragonMoveType;
 
-	int32 _frameNumber;			// current frame number
+	int32 _frameNumber; // current frame number
 
 	ByteArray _tileDirections;
 
@@ -417,9 +415,8 @@ public:
 typedef Common::Array<ActorData> ActorDataArray;
 
 struct ProtagStateData {
-	ActorFrameSequences _frames;	// Actor's frames
+	ActorFrameSequences _frames; // Actor's frames
 };
-
 
 struct SpeechData {
 	int speechColor[ACTOR_SPEECH_ACTORS_MAX];
@@ -449,14 +446,14 @@ struct SpeechData {
 	}
 };
 
-typedef int (*CompareFunction) (const CommonObjectDataPointer& a, const CommonObjectDataPointer& b);
+typedef int (*CompareFunction)(const CommonObjectDataPointer &a, const CommonObjectDataPointer &b);
 
 class Actor {
 	friend class IsoMap;
 	friend class SagaEngine;
 	friend class Puzzle;
-public:
 
+public:
 	Actor(SagaEngine *vm);
 	~Actor();
 
@@ -469,7 +466,7 @@ public:
 	uint16 actorIndexToId(int index) { return (index == 0) ? ID_PROTAG : objectIndexToId(kGameObjectActor, index); }
 	ActorData *getActor(uint16 actorId);
 
-// clarification: Obj - means game object, such Hat, Spoon etc,  Object - means Actor,Obj,HitZone,StepZone
+	// clarification: Obj - means game object, such Hat, Spoon etc,  Object - means Actor,Obj,HitZone,StepZone
 
 	bool validObjId(uint16 id) { return (id >= objectIndexToId(kGameObjectObject, 0)) && (id < objectIndexToId(kGameObjectObject, _objs.size())); }
 	int objIdToIndex(uint16 id) { return objectIdToIndex(id); }
@@ -495,7 +492,7 @@ public:
 
 	void direct(int msec);
 	void drawActors();
-	void updateActorsScene(int actorsEntrance);			// calls from scene loading to update Actors info
+	void updateActorsScene(int actorsEntrance); // calls from scene loading to update Actors info
 
 	void drawSpeech();
 
@@ -514,7 +511,7 @@ public:
 
 	void realLocation(Location &location, uint16 objectId, uint16 walkFlags);
 
-//	speech
+	//	speech
 	void actorSpeech(uint16 actorId, const char **strings, int stringsCount, int sampleResourceId, int speechFlags);
 	void nonActorSpeech(const Common::Rect &box, const char **strings, int stringsCount, int sampleResourceId, int speechFlags);
 	void simulSpeech(const char *string, uint16 *actorIds, int actorIdsCount, int speechFlags, int sampleResourceId);
@@ -539,18 +536,19 @@ public:
 	int getProtagState() { return _protagState; }
 
 	void loadActorList(int protagonistIdx, int actorCount, int actorsResourceID,
-				  int protagStatesCount, int protagStatesResourceID);
+	                   int protagStatesCount, int protagStatesResourceID);
 	void loadObjList(int objectCount, int objectsResourceID);
 
 protected:
 	friend class Script;
 	void loadActorResources(ActorData *actor);
 	void loadFrameList(int frameListResourceId, ActorFrameSequences &frames);
+
 private:
 	void stepZoneAction(ActorData *actor, const HitZone *hitZone, bool exit, bool stopped);
 	void loadActorSpriteList(ActorData *actor);
 
-	void drawOrderListAdd(const CommonObjectDataPointer& element, CompareFunction compareFunction);
+	void drawOrderListAdd(const CommonObjectDataPointer &element, CompareFunction compareFunction);
 	void createDrawOrderList();
 	bool calcScreenPosition(CommonObjectData *commonObjectData);
 	bool getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber, SpriteList *&spriteList);
@@ -560,8 +558,7 @@ private:
 	void handleSpeech(int msec);
 	void handleActions(int msec, bool setup);
 	bool validPathCellPoint(const Point &testPoint) {
-		return !((testPoint.x < 0) || (testPoint.x >= _xCellCount) ||
-			(testPoint.y < 0) || (testPoint.y >= _yCellCount));
+		return !((testPoint.x < 0) || (testPoint.x >= _xCellCount) || (testPoint.y < 0) || (testPoint.y >= _yCellCount));
 	}
 	void setPathCell(const Point &testPoint, int8 value) {
 #ifdef ACTOR_DEBUG
@@ -590,9 +587,8 @@ private:
 	bool validFollowerLocation(const Location &location);
 	void moveDragon(ActorData *actor);
 
-
 protected:
-//constants
+	//constants
 	ActorDataArray _actors;
 
 	ObjectDataArray _objs;
@@ -603,7 +599,7 @@ protected:
 	int _lastTickMsec;
 	CommonObjectOrderList _drawOrderList;
 
-//variables
+	//variables
 public:
 	ActorData *_centerActor;
 	ActorData *_protagonist;
@@ -622,14 +618,19 @@ protected:
 private:
 	Common::Array<ProtagStateData> _protagStates;
 
-//path stuff
+	//path stuff
 	struct PathNode {
 		Point point;
 		int link;
 
-		PathNode() : link(0) {}
-		PathNode(const Point &p) : point(p), link(0) {}
-		PathNode(const Point &p, int l) : point(p), link(l) {}
+		PathNode()
+		  : link(0) {}
+		PathNode(const Point &p)
+		  : point(p)
+		  , link(0) {}
+		PathNode(const Point &p, int l)
+		  : point(p)
+		  , link(l) {}
 	};
 	typedef Common::Array<PathNode> PathNodeList;
 
@@ -648,17 +649,20 @@ private:
 
 public:
 #ifdef ACTOR_DEBUG
-#ifndef SAGA_DEBUG
-	#error You must also define SAGA_DEBUG
-#endif
-//path debug - use with care
+#	ifndef SAGA_DEBUG
+#		error You must also define SAGA_DEBUG
+#	endif
+	//path debug - use with care
 	struct DebugPoint {
 		Point point;
 		byte color;
 
-		DebugPoint() : color(0) {}
+		DebugPoint()
+		  : color(0) {}
 
-		DebugPoint(const Point &p, byte c): point(p), color(c) {}
+		DebugPoint(const Point &p, byte c)
+		  : point(p)
+		  , color(c) {}
 	};
 
 	Common::Array<DebugPoint> _debugPoints;

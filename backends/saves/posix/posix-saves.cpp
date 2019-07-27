@@ -20,10 +20,9 @@
  *
  */
 
-
 // Re-enable some forbidden symbols to avoid clashes with stat.h and unistd.h.
 // Also with clock() in sys/time.h in some Mac OS X SDKs.
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h	//On IRIX, sys/stat.h includes sys/time.h
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h //On IRIX, sys/stat.h includes sys/time.h
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 #define FORBIDDEN_SYMBOL_EXCEPTION_getenv
 
@@ -31,29 +30,29 @@
 
 #if defined(POSIX) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 
-#include "backends/saves/posix/posix-saves.h"
-#include "backends/fs/posix/posix-fs.h"
+#	include "backends/fs/posix/posix-fs.h"
+#	include "backends/saves/posix/posix-saves.h"
 
-#include "common/config-manager.h"
-#include "common/savefile.h"
-#include "common/textconsole.h"
+#	include "common/config-manager.h"
+#	include "common/savefile.h"
+#	include "common/textconsole.h"
 
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-#include <sys/stat.h>
+#	include <errno.h>
+#	include <stdio.h>
+#	include <string.h>
+#	include <sys/stat.h>
 
 POSIXSaveFileManager::POSIXSaveFileManager() {
 	// Register default savepath.
-#if defined(SAMSUNGTV)
+#	if defined(SAMSUNGTV)
 	ConfMan.registerDefault("savepath", "/mtd_wiselink/scummvm savegames");
-#elif defined(NINTENDO_SWITCH)
+#	elif defined(NINTENDO_SWITCH)
 	Posix::assureDirectoryExists("./saves", nullptr);
 	ConfMan.registerDefault("savepath", "./saves");
-#else
+#	else
 	Common::String savePath;
 
-#if defined(MACOSX)
+#		if defined(MACOSX)
 	const char *home = getenv("HOME");
 	if (home && *home && strlen(home) < MAXPATHLEN) {
 		savePath = home;
@@ -62,7 +61,7 @@ POSIXSaveFileManager::POSIXSaveFileManager() {
 		ConfMan.registerDefault("savepath", savePath);
 	}
 
-#else
+#		else
 	const char *envVar;
 
 	// Previously we placed our default savepath in HOME. If the directory
@@ -108,7 +107,7 @@ POSIXSaveFileManager::POSIXSaveFileManager() {
 	if (!savePath.empty() && savePath.size() < MAXPATHLEN) {
 		ConfMan.registerDefault("savepath", savePath);
 	}
-#endif
+#		endif
 
 	// The user can override the savepath with the SCUMMVM_SAVEPATH
 	// environment variable. This is weaker than a --savepath on the
@@ -130,7 +129,7 @@ POSIXSaveFileManager::POSIXSaveFileManager() {
 			}
 		}
 	}
-#endif
+#	endif
 }
 
 void POSIXSaveFileManager::checkPath(const Common::FSNode &dir) {
@@ -146,13 +145,13 @@ void POSIXSaveFileManager::checkPath(const Common::FSNode &dir) {
 		// to create the dir (ENOENT case).
 		switch (errno) {
 		case EACCES:
-			setError(Common::kWritePermissionDenied, "Search or write permission denied: "+path);
+			setError(Common::kWritePermissionDenied, "Search or write permission denied: " + path);
 			break;
 		case ELOOP:
-			setError(Common::kUnknownError, "Too many symbolic links encountered while traversing the path: "+path);
+			setError(Common::kUnknownError, "Too many symbolic links encountered while traversing the path: " + path);
 			break;
 		case ENAMETOOLONG:
-			setError(Common::kUnknownError, "The path name is too long: "+path);
+			setError(Common::kUnknownError, "The path name is too long: " + path);
 			break;
 		case ENOENT:
 			if (mkdir(path.c_str(), 0755) != 0) {
@@ -163,37 +162,37 @@ void POSIXSaveFileManager::checkPath(const Common::FSNode &dir) {
 
 				switch (errno) {
 				case EACCES:
-					setError(Common::kWritePermissionDenied, "Search or write permission denied: "+path);
+					setError(Common::kWritePermissionDenied, "Search or write permission denied: " + path);
 					break;
 				case EMLINK:
-					setError(Common::kUnknownError, "The link count of the parent directory would exceed {LINK_MAX}: "+path);
+					setError(Common::kUnknownError, "The link count of the parent directory would exceed {LINK_MAX}: " + path);
 					break;
 				case ELOOP:
-					setError(Common::kUnknownError, "Too many symbolic links encountered while traversing the path: "+path);
+					setError(Common::kUnknownError, "Too many symbolic links encountered while traversing the path: " + path);
 					break;
 				case ENAMETOOLONG:
-					setError(Common::kUnknownError, "The path name is too long: "+path);
+					setError(Common::kUnknownError, "The path name is too long: " + path);
 					break;
 				case ENOENT:
-					setError(Common::kPathDoesNotExist, "A component of the path does not exist, or the path is an empty string: "+path);
+					setError(Common::kPathDoesNotExist, "A component of the path does not exist, or the path is an empty string: " + path);
 					break;
 				case ENOTDIR:
-					setError(Common::kPathDoesNotExist, "A component of the path prefix is not a directory: "+path);
+					setError(Common::kPathDoesNotExist, "A component of the path prefix is not a directory: " + path);
 					break;
 				case EROFS:
-					setError(Common::kWritePermissionDenied, "The parent directory resides on a read-only file system:"+path);
+					setError(Common::kWritePermissionDenied, "The parent directory resides on a read-only file system:" + path);
 					break;
 				}
 			}
 			break;
 		case ENOTDIR:
-			setError(Common::kPathDoesNotExist, "A component of the path prefix is not a directory: "+path);
+			setError(Common::kPathDoesNotExist, "A component of the path prefix is not a directory: " + path);
 			break;
 		}
 	} else {
 		// So stat() succeeded. But is the path actually pointing to a directory?
 		if (!S_ISDIR(sb.st_mode)) {
-			setError(Common::kPathDoesNotExist, "The given savepath is not a directory: "+path);
+			setError(Common::kPathDoesNotExist, "The given savepath is not a directory: " + path);
 		}
 	}
 }

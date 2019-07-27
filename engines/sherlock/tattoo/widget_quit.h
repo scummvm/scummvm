@@ -32,23 +32,24 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-class WidgetQuit: public WidgetBase {
-private:
-	int _select, _oldSelect;
-public:
-	WidgetQuit(SherlockEngine *vm);
-	virtual ~WidgetQuit() {}
+	class WidgetQuit : public WidgetBase {
+	private:
+		int _select, _oldSelect;
 
-	/**
+	public:
+		WidgetQuit(SherlockEngine *vm);
+		virtual ~WidgetQuit() {}
+
+		/**
 	 * Prompt the user whether to quit
 	 */
-	void show();
+		void show();
 
-	/**
+		/**
 	 * Handle event processing
 	 */
-	virtual void handleEvents();
-};
+		virtual void handleEvents();
+	};
 
 } // End of namespace Tattoo
 

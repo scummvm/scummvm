@@ -32,11 +32,18 @@ int CVideoSurface::_videoSurfaceCounter = 0;
 byte CVideoSurface::_palette1[32][32];
 byte CVideoSurface::_palette2[32][32];
 
-CVideoSurface::CVideoSurface(CScreenManager *screenManager) :
-		_screenManager(screenManager), _rawSurface(nullptr), _movie(nullptr),
-		_pendingLoad(false), _flipVertically(false), _fastBlitFlag(false),
-		_transparencySurface(nullptr), _transparencyMode(TRANS_DEFAULT),
-		_freeTransparencySurface(DisposeAfterUse::NO), _hasFrame(true), _lockCount(0) {
+CVideoSurface::CVideoSurface(CScreenManager *screenManager)
+  : _screenManager(screenManager)
+  , _rawSurface(nullptr)
+  , _movie(nullptr)
+  , _pendingLoad(false)
+  , _flipVertically(false)
+  , _fastBlitFlag(false)
+  , _transparencySurface(nullptr)
+  , _transparencyMode(TRANS_DEFAULT)
+  , _freeTransparencySurface(DisposeAfterUse::NO)
+  , _hasFrame(true)
+  , _lockCount(0) {
 	_videoSurfaceNum = _videoSurfaceCounter++;
 }
 
@@ -84,7 +91,7 @@ void CVideoSurface::blitFrom(const Point &destPos, const Graphics::Surface *src)
 }
 
 void CVideoSurface::clipBounds(Rect &srcRect, Rect &destRect,
-		CVideoSurface *srcSurface, const Rect *subRect, const Point *destPos) {
+                               CVideoSurface *srcSurface, const Rect *subRect, const Point *destPos) {
 	// Figure out initial source rect and dest rect, based on whether
 	// specific subRect and/or destPos have been passed
 	if (destPos) {
@@ -142,7 +149,7 @@ void CVideoSurface::clipBounds(Rect &srcRect, Rect &destRect,
 
 	// Validate that the resulting rects are valid
 	if (destRect.left >= destRect.right || destRect.top >= destRect.bottom
-		|| srcRect.left >= srcRect.right || srcRect.top >= srcRect.bottom)
+	    || srcRect.left >= srcRect.right || srcRect.top >= srcRect.bottom)
 		error("Invalid rect");
 }
 
@@ -188,7 +195,7 @@ void CVideoSurface::flippedBlitRect(const Rect &srcRect, const Rect &destRect, C
 			}
 
 			destSurface->transBlitFrom(flippedArea,
-				Common::Point(destRect.left, destRect.top), transColor);
+			                           Common::Point(destRect.left, destRect.top), transColor);
 
 			src->unlock();
 		}
@@ -208,10 +215,9 @@ void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVi
 			Graphics::Surface destArea = destSurface->getSubArea(destRect);
 
 			const uint16 *srcPtr = (const uint16 *)srcSurface->getBasePtr(
-				srcRect.left, flipFlag ? srcRect.top : srcRect.bottom - 1);
+			  srcRect.left, flipFlag ? srcRect.top : srcRect.bottom - 1);
 			uint16 *destPtr = (uint16 *)destArea.getBasePtr(0, destArea.h - 1);
-			bool isAlpha = src->_transparencyMode == TRANS_ALPHA0 ||
-				src->_transparencyMode == TRANS_ALPHA255;
+			bool isAlpha = src->_transparencyMode == TRANS_ALPHA0 || src->_transparencyMode == TRANS_ALPHA255;
 
 			CTransparencySurface transSurface(src->getTransparencySurface(), src->_transparencyMode);
 
@@ -234,8 +240,7 @@ void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVi
 				}
 
 				// Move to next line
-				srcPtr = flipFlag ? srcPtr + (src->getPitch() / 2) :
-					srcPtr - (src->getPitch() / 2);
+				srcPtr = flipFlag ? srcPtr + (src->getPitch() / 2) : srcPtr - (src->getPitch() / 2);
 				destPtr -= destArea.pitch / 2;
 			}
 
@@ -263,7 +268,7 @@ bool CVideoSurface::hasFrame() {
 
 #define RGB_SHIFT 3
 void CVideoSurface::copyPixel(uint16 *destP, const uint16 *srcP, byte alpha,
-		const Graphics::PixelFormat &srcFormat, bool isAlpha) {
+                              const Graphics::PixelFormat &srcFormat, bool isAlpha) {
 	const Graphics::PixelFormat destFormat = _ddSurface->getFormat();
 	alpha &= 0xff;
 	assert(alpha < 32);
@@ -291,18 +296,18 @@ void CVideoSurface::copyPixel(uint16 *destP, const uint16 *srcP, byte alpha,
 	b2 = _palette1[alpha][b2];
 
 	*destP = destFormat.RGBToColor((r + r2) << RGB_SHIFT,
-		(g + g2) << RGB_SHIFT, (b + b2) << RGB_SHIFT);
+	                               (g + g2) << RGB_SHIFT, (b + b2) << RGB_SHIFT);
 }
 
 /*------------------------------------------------------------------------*/
 
-OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, DirectDrawSurface *surface) :
-		CVideoSurface(screenManager) {
+OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, DirectDrawSurface *surface)
+  : CVideoSurface(screenManager) {
 	_ddSurface = surface;
 }
 
-OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, const CResourceKey &key, bool pendingLoad) :
-		CVideoSurface(screenManager) {
+OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, const CResourceKey &key, bool pendingLoad)
+  : CVideoSurface(screenManager) {
 	_ddSurface = nullptr;
 	_pendingLoad = pendingLoad;
 
@@ -336,7 +341,6 @@ void OSVideoSurface::loadTarga(const CResourceKey &key) {
 		shiftColors();
 
 	_resourceKey = key;
-
 }
 
 void OSVideoSurface::loadJPEG(const CResourceKey &key) {
@@ -433,8 +437,7 @@ void OSVideoSurface::recreate(int width, int height, int bpp) {
 }
 
 void OSVideoSurface::resize(int width, int height, int bpp) {
-	if (!_ddSurface || _ddSurface->getWidth() != width ||
-			_ddSurface->getHeight() != height)
+	if (!_ddSurface || _ddSurface->getWidth() != width || _ddSurface->getHeight() != height)
 		recreate(width, height, bpp);
 }
 

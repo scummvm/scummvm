@@ -23,8 +23,8 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "common/memstream.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 #include "startrek/lzss.h"
@@ -82,4 +82,3 @@ Common::SeekableReadStream *decodeLZSS(Common::SeekableReadStream *indata, uint3
 }
 
 } // End of namespace StarTrek
-

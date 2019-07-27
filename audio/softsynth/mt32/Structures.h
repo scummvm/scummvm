@@ -18,20 +18,20 @@
 #ifndef MT32EMU_STRUCTURES_H
 #define MT32EMU_STRUCTURES_H
 
-#include "globals.h"
 #include "Types.h"
+#include "globals.h"
 
 namespace MT32Emu {
 
 // MT32EMU_MEMADDR() converts from sysex-padded, MT32EMU_SYSEXMEMADDR converts to it
 // Roland provides documentation using the sysex-padded addresses, so we tend to use that in code and output
-#define MT32EMU_MEMADDR(x) ((((x) & 0x7f0000) >> 2) | (((x) & 0x7f00) >> 1) | ((x) & 0x7f))
-#define MT32EMU_SYSEXMEMADDR(x) ((((x) & 0x1FC000) << 2) | (((x) & 0x3F80) << 1) | ((x) & 0x7f))
+#define MT32EMU_MEMADDR(x) ((((x)&0x7f0000) >> 2) | (((x)&0x7f00) >> 1) | ((x)&0x7f))
+#define MT32EMU_SYSEXMEMADDR(x) ((((x)&0x1FC000) << 2) | (((x)&0x3F80) << 1) | ((x)&0x7f))
 
 #ifdef _MSC_VER
-#define  MT32EMU_ALIGN_PACKED __declspec(align(1))
+#	define MT32EMU_ALIGN_PACKED __declspec(align(1))
 #else
-#define MT32EMU_ALIGN_PACKED __attribute__((packed))
+#	define MT32EMU_ALIGN_PACKED __attribute__((packed))
 #endif
 
 // The following structures represent the MT-32's memory
@@ -39,26 +39,26 @@ namespace MT32Emu {
 // we keep this packed so that we can copy data into the various
 // banks directly
 #if defined(_MSC_VER) || defined(__MINGW32__)
-#pragma pack(push, 1)
+#	pragma pack(push, 1)
 #else
-#pragma pack(1)
+#	pragma pack(1)
 #endif
 
 struct TimbreParam {
 	struct CommonParam {
 		char name[10];
-		Bit8u partialStructure12;  // 1 & 2  0-12 (1-13)
-		Bit8u partialStructure34;  // 3 & 4  0-12 (1-13)
-		Bit8u partialMute;  // 0-15 (0000-1111)
+		Bit8u partialStructure12; // 1 & 2  0-12 (1-13)
+		Bit8u partialStructure34; // 3 & 4  0-12 (1-13)
+		Bit8u partialMute; // 0-15 (0000-1111)
 		Bit8u noSustain; // ENV MODE 0-1 (Normal, No sustain)
 	} MT32EMU_ALIGN_PACKED common;
 
 	struct PartialParam {
 		struct WGParam {
-			Bit8u pitchCoarse;  // 0-96 (C1,C#1-C9)
-			Bit8u pitchFine;  // 0-100 (-50 to +50 (cents - confirmed by Mok))
-			Bit8u pitchKeyfollow;  // 0-16 (-1, -1/2, -1/4, 0, 1/8, 1/4, 3/8, 1/2, 5/8, 3/4, 7/8, 1, 5/4, 3/2, 2, s1, s2)
-			Bit8u pitchBenderEnabled;  // 0-1 (OFF, ON)
+			Bit8u pitchCoarse; // 0-96 (C1,C#1-C9)
+			Bit8u pitchFine; // 0-100 (-50 to +50 (cents - confirmed by Mok))
+			Bit8u pitchKeyfollow; // 0-16 (-1, -1/2, -1/4, 0, 1/8, 1/4, 3/8, 1/2, 5/8, 3/4, 7/8, 1, 5/4, 3/2, 2, s1, s2)
+			Bit8u pitchBenderEnabled; // 0-1 (OFF, ON)
 			Bit8u waveform; // MT-32: 0-1 (SQU/SAW); LAPC-I: WG WAVEFORM/PCM BANK 0 - 3 (SQU/1, SAW/1, SQU/2, SAW/2)
 			Bit8u pcmWave; // 0-127 (1-128)
 			Bit8u pulseWidth; // 0-100
@@ -114,8 +114,8 @@ struct PatchParam {
 	Bit8u keyShift; // KEY SHIFT 0-48 (-24 - +24 semitones)
 	Bit8u fineTune; // FINE TUNE 0-100 (-50 - +50 cents)
 	Bit8u benderRange; // BENDER RANGE 0-24
-	Bit8u assignMode;  // ASSIGN MODE 0-3 (POLY1, POLY2, POLY3, POLY4)
-	Bit8u reverbSwitch;  // REVERB SWITCH 0-1 (OFF,ON)
+	Bit8u assignMode; // ASSIGN MODE 0-3 (POLY1, POLY2, POLY3, POLY4)
+	Bit8u reverbSwitch; // REVERB SWITCH 0-1 (OFF,ON)
 	Bit8u dummy; // (DUMMY)
 } MT32EMU_ALIGN_PACKED;
 
@@ -144,7 +144,7 @@ struct MemParams {
 		Bit8u timbre; // TIMBRE  0-94 (M1-M64,R1-30,OFF); LAPC-I: 0-127 (M01-M64,R01-R63)
 		Bit8u outputLevel; // OUTPUT LEVEL 0-100
 		Bit8u panpot; // PANPOT 0-14 (R-L)
-		Bit8u reverbSwitch;  // REVERB SWITCH 0-1 (OFF,ON)
+		Bit8u reverbSwitch; // REVERB SWITCH 0-1 (OFF,ON)
 	} MT32EMU_ALIGN_PACKED rhythmTemp[85];
 
 	TimbreParam timbreTemp[8];
@@ -178,9 +178,9 @@ struct SoundGroup {
 } MT32EMU_ALIGN_PACKED;
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
-#pragma pack(pop)
+#	pragma pack(pop)
 #else
-#pragma pack()
+#	pragma pack()
 #endif
 
 struct ControlROMFeatureSet {

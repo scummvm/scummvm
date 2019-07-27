@@ -23,17 +23,17 @@
 #ifndef TIZEN_GRAPHICS_H
 #define TIZEN_GRAPHICS_H
 
+#include <FApp.h>
 #include <FBase.h>
 #include <FGraphics.h>
-#include <FApp.h>
 #include <FGraphicsOpengl.h>
 #include <FSystem.h>
 #include <FUi.h>
 
-#include "config.h"
 #include "backends/graphics/opengl/opengl-graphics.h"
-#include "graphics/font.h"
 #include "backends/platform/tizen/form.h"
+#include "config.h"
+#include "graphics/font.h"
 
 using namespace Tizen::Graphics;
 using namespace Tizen::Graphics::Opengl;
@@ -72,7 +72,7 @@ private:
 	TizenAppForm *_appForm;
 	EGLDisplay _eglDisplay;
 	EGLSurface _eglSurface;
-	EGLConfig	 _eglConfig;
+	EGLConfig _eglConfig;
 	EGLContext _eglContext;
 	bool _initState;
 };

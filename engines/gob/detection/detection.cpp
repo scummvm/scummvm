@@ -24,8 +24,8 @@
 #include "engines/advancedDetector.h"
 #include "engines/obsolete.h"
 
-#include "gob/gob.h"
 #include "gob/dataio.h"
+#include "gob/gob.h"
 
 #include "gob/detection/tables.h"
 
@@ -52,10 +52,10 @@ private:
 	static const Gob::GOBGameDescription *detectOnceUponATime(const Common::FSList &fslist);
 };
 
-GobMetaEngine::GobMetaEngine() :
-	AdvancedMetaEngine(Gob::gameDescriptions, sizeof(Gob::GOBGameDescription), gobGames) {
+GobMetaEngine::GobMetaEngine()
+  : AdvancedMetaEngine(Gob::gameDescriptions, sizeof(Gob::GOBGameDescription), gobGames) {
 
-	_singleId   = "gob";
+	_singleId = "gob";
 	_guiOptions = GUIO1(GUIO_NOLAUNCHLOAD);
 }
 
@@ -88,41 +88,21 @@ const Gob::GOBGameDescription *GobMetaEngine::detectOnceUponATime(const Common::
 
 	// Open the archives
 	Gob::DataIO dataIO;
-	if (!dataIO.openArchive("stk1.stk", true) ||
-	    !dataIO.openArchive("stk2.stk", true) ||
-	    !dataIO.openArchive("stk3.stk", true)) {
+	if (!dataIO.openArchive("stk1.stk", true) || !dataIO.openArchive("stk2.stk", true) || !dataIO.openArchive("stk3.stk", true)) {
 
 		SearchMan.clear();
 		return 0;
 	}
 
-	Gob::OnceUponATime gameType         = Gob::kOnceUponATimeInvalid;
+	Gob::OnceUponATime gameType = Gob::kOnceUponATimeInvalid;
 	Gob::OnceUponATimePlatform platform = Gob::kOnceUponATimePlatformInvalid;
 
 	// If these animal files are present, it's Abracadabra
-	if (dataIO.hasFile("arai.anm") &&
-	    dataIO.hasFile("crab.anm") &&
-	    dataIO.hasFile("crap.anm") &&
-	    dataIO.hasFile("drag.anm") &&
-	    dataIO.hasFile("guep.anm") &&
-	    dataIO.hasFile("loup.anm") &&
-	    dataIO.hasFile("mous.anm") &&
-	    dataIO.hasFile("rhin.anm") &&
-	    dataIO.hasFile("saut.anm") &&
-	    dataIO.hasFile("scor.anm"))
+	if (dataIO.hasFile("arai.anm") && dataIO.hasFile("crab.anm") && dataIO.hasFile("crap.anm") && dataIO.hasFile("drag.anm") && dataIO.hasFile("guep.anm") && dataIO.hasFile("loup.anm") && dataIO.hasFile("mous.anm") && dataIO.hasFile("rhin.anm") && dataIO.hasFile("saut.anm") && dataIO.hasFile("scor.anm"))
 		gameType = Gob::kOnceUponATimeAbracadabra;
 
 	// If these animal files are present, it's Baba Yaga
-	if (dataIO.hasFile("abei.anm") &&
-	    dataIO.hasFile("arai.anm") &&
-	    dataIO.hasFile("drag.anm") &&
-	    dataIO.hasFile("fauc.anm") &&
-	    dataIO.hasFile("gren.anm") &&
-	    dataIO.hasFile("rena.anm") &&
-	    dataIO.hasFile("sang.anm") &&
-	    dataIO.hasFile("serp.anm") &&
-	    dataIO.hasFile("tort.anm") &&
-	    dataIO.hasFile("vaut.anm"))
+	if (dataIO.hasFile("abei.anm") && dataIO.hasFile("arai.anm") && dataIO.hasFile("drag.anm") && dataIO.hasFile("fauc.anm") && dataIO.hasFile("gren.anm") && dataIO.hasFile("rena.anm") && dataIO.hasFile("sang.anm") && dataIO.hasFile("serp.anm") && dataIO.hasFile("tort.anm") && dataIO.hasFile("vaut.anm"))
 		gameType = Gob::kOnceUponATimeBabaYaga;
 
 	// Detect the platform by endianness and existence of a MOD file
@@ -131,7 +111,7 @@ const Gob::GOBGameDescription *GobMetaEngine::detectOnceUponATime(const Common::
 		byte data[6];
 
 		if (villeDEC->read(data, 6) == 6) {
-			if        (!memcmp(data, "\000\000\000\001\000\007", 6)) {
+			if (!memcmp(data, "\000\000\000\001\000\007", 6)) {
 				// Big endian -> Amiga or Atari ST
 
 				if (dataIO.hasFile("mod.babayaga"))
@@ -171,8 +151,7 @@ bool GobMetaEngine::hasFeature(MetaEngineFeature f) const {
 }
 
 bool Gob::GobEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL);
+	return (f == kSupportsRTL);
 }
 
 Common::Error GobMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
@@ -189,11 +168,10 @@ bool GobMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 	return gd != 0;
 }
 
-
 #if PLUGIN_ENABLED_DYNAMIC(GOB)
-	REGISTER_PLUGIN_DYNAMIC(GOB, PLUGIN_TYPE_ENGINE, GobMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(GOB, PLUGIN_TYPE_ENGINE, GobMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(GOB, PLUGIN_TYPE_ENGINE, GobMetaEngine);
+REGISTER_PLUGIN_STATIC(GOB, PLUGIN_TYPE_ENGINE, GobMetaEngine);
 #endif
 
 namespace Gob {

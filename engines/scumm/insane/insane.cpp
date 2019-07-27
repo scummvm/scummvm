@@ -20,8 +20,6 @@
  *
  */
 
-
-
 #include "engines/engine.h"
 
 #include "common/system.h"
@@ -35,8 +33,8 @@
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
 
-#include "scumm/smush/smush_player.h"
 #include "scumm/smush/smush_font.h"
+#include "scumm/smush/smush_player.h"
 
 #include "scumm/insane/insane.h"
 
@@ -45,9 +43,8 @@
 
 namespace Scumm {
 
-static const int actorAnimationData[21] = {20, 21, 22, 23, 24, 25, 26, 13, 14, 15, 16, 17,
-	18, 19, 6, 7, 8, 9, 10, 11, 12};
-
+static const int actorAnimationData[21] = { 20, 21, 22, 23, 24, 25, 26, 13, 14, 15, 16, 17,
+	                                          18, 19, 6, 7, 8, 9, 10, 11, 12 };
 
 Insane::Insane(ScummEngine_v7 *scumm) {
 	_vm = scumm;
@@ -184,31 +181,30 @@ void Insane::initvars() {
 	for (i = 0; i < 0x80; i++)
 		_iactBits[i] = 0;
 
-
 	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
 		init_enemyStruct(EN_ROTT1, EN_ROTT1, 0, 0, 60, 0, INV_MACE, 63, "endcrshr.san",
-						 25, 15, 16, 26, 13, 3);
+		                 25, 15, 16, 26, 13, 3);
 	} else {
 		init_enemyStruct(EN_ROTT1, EN_ROTT1, 0, 0, 160, 0, INV_MACE, 90, "wr2_rott.san",
-						 26, 16, 17, 27, 11, 3);
+		                 26, 16, 17, 27, 11, 3);
 	}
 
 	init_enemyStruct(EN_ROTT2, EN_ROTT2, 1, 0, 250, 0, INV_2X4, 90, "wr2_rott.san",
-					 28, 16, 17, 42, 11, 3);
+	                 28, 16, 17, 42, 11, 3);
 	init_enemyStruct(EN_ROTT3, EN_ROTT3, 2, 0, 120, 0, INV_HAND, 90, "wr2_rott.san",
-					 15, 16, 17, 43, 11, 3);
+	                 15, 16, 17, 43, 11, 3);
 	init_enemyStruct(EN_VULTF1, EN_VULTF1, 3, 0, 60, 0, INV_HAND, 91, "wr2_vltp.san",
-					 29, 33, 32, 37, 12, 4);
+	                 29, 33, 32, 37, 12, 4);
 	init_enemyStruct(EN_VULTM1, EN_VULTM1, 4, 0, 100, 0, INV_CHAIN, 91, "wr2_vltc.san",
-					 30, 33, 32, 36, 12, 4);
+	                 30, 33, 32, 36, 12, 4);
 	init_enemyStruct(EN_VULTF2, EN_VULTF2, 5, 0, 250, 0, INV_CHAINSAW, 91, "wr2_vlts.san",
-					 31, 33, 32, 35, 12, 4);
+	                 31, 33, 32, 35, 12, 4);
 	init_enemyStruct(EN_VULTM2, EN_VULTM2, 6, 0, 900, 0, INV_BOOT, 91, "wr2_rott.san",
-					 34, 33, 32, 45, 16, 4);
+	                 34, 33, 32, 45, 16, 4);
 	init_enemyStruct(EN_CAVEFISH, EN_CAVEFISH, 7, 0, 60, 0, INV_DUST, 92, "wr2_cave.san",
-					 39, 0, 0, 41, 13, 2);
+	                 39, 0, 0, 41, 13, 2);
 	init_enemyStruct(EN_TORQUE, EN_TORQUE, 8, 0, 900, 0, INV_HAND, 93, "wr2_vltp.san",
-					 57, 0, 0, 37, 12, 1);
+	                 57, 0, 0, 37, 12, 1);
 
 	init_fluConfStruct(1, 1, &_smush_minedrivFlu, "minedriv.san", 235, 1300);
 	init_fluConfStruct(2, 1, &_smush_minedrivFlu, "minedriv.san", 355, 1300);
@@ -227,106 +223,106 @@ void Insane::initvars() {
 	init_fluConfStruct(19, 6, &_smush_toranchFlu, "toranch.san", 115, 530);
 	init_fluConfStruct(20, 6, &_smush_toranchFlu, "toranch.san", 115, 530);
 
-	init_scenePropStruct(  0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
-	init_scenePropStruct(  1,  0, 1, 128, 2001, 0, 0, 0, 0, 56, 2);
-	init_scenePropStruct(  2,  0, 0, 125, 1002, 0, 0, 0, 0, 35, 3);
-	init_scenePropStruct(  3,  0, 1, 129, 2002, 0, 0, 0, 0, 23, 4);
-	init_scenePropStruct(  4,  0, 1, 130, 2003, 0, 0, 0, 0, 40, 5);
-	init_scenePropStruct(  5,  0, 0, 126, 1005, 0, 0, 0, 0, 46, 6);
-	init_scenePropStruct(  6,  0, 1, 131, 2004, 0, 0, 0, 0, 39, 7);
-	init_scenePropStruct(  7,  0, 1, 132, 2005, 0, 0, 0, 0, 45, 8);
-	init_scenePropStruct(  8,  0, 1, 133, 2006, 0, 0, 0, 0, 14, 9);
-	init_scenePropStruct(  9,  0, 0, 127, 1009, 0, 0, 0, 0, 15, 10);
-	init_scenePropStruct( 10,  0, 1, 134, 501, 0, 0, 0, 0, 25, 11);
-	init_scenePropStruct( 11,  0, 1, 135, 502, 0, 0, 0, 0, 15, 0);
-	init_scenePropStruct( 12,  1, -1, 0, 0, 0xFF, 0xFF, 0xFF, 0, 0, 1);
-	init_scenePropStruct( 13,  1, 0, 291, 135, 0xFF, 0xFF, 0xFF, 0, 25, 0);
-	init_scenePropStruct( 14,  2, -1, 0, 0, 0xFC, 0, 0xFC, 0, 0, 1);
-	init_scenePropStruct( 15,  2, 1, 277, 17, 0xFC, 0, 0xFC, 0, 56, 2);
-	init_scenePropStruct( 16,  2, 0, 288, 18, 0xFF, 0xFF, 0xFF, 0, 56, 3);
-	init_scenePropStruct( 17,  2, 1, 278, 19, 0xFC, 0, 0xFC, 0, 56, 0);
-	init_scenePropStruct( 18,  3, -1, 0, 0, 0xFC, 0, 0xFC, 0, 0, 1);
-	init_scenePropStruct( 19,  3, 1, 282, 23, 0xFC, 0, 0xFC, 0, 56, 0);
-	init_scenePropStruct( 20,  4, -1, 0, 0, 0xFC, 0, 0xFC, 0, 0, 1);
-	init_scenePropStruct( 21,  4, 1, 283, 24, 0xFC, 0, 0xFC, 0, 56, 0);
-	init_scenePropStruct( 22,  5, -1, 0, 0, 0xFC, 0, 0xFC, 0, 0, 1);
-	init_scenePropStruct( 23,  5, 1, 284, 25, 0xFC, 0, 0xFC, 0, 56, 0);
-	init_scenePropStruct( 24,  6, -1, 0, 0, 0xFC, 0, 0xFC, 0, 0, 1);
-	init_scenePropStruct( 25,  6, 1, 285, 26, 0xFC, 0, 0xFC, 0, 56, 0);
-	init_scenePropStruct( 26,  7, -1, 0, 0, 0xFC, 0, 0xFC, 0, 0, 1);
-	init_scenePropStruct( 27,  7, 1, 286, 27, 0xFC, 0, 0xFC, 0, 56, 0);
-	init_scenePropStruct( 28,  8, -1, 0, 0, 0xFC, 0, 0xFC, 0, 0, 1);
-	init_scenePropStruct( 29,  8, 1, 287, 28, 0xFC, 0, 0xFC, 0, 56, 0);
-	init_scenePropStruct( 30,  9, -1, 0, 0, 0xFC, 0, 0, 0, 0, 1);
-	init_scenePropStruct( 31,  9, 1, 261, 1, 0xFC, 0, 0, 0, 40, 2);
-	init_scenePropStruct( 32,  9, 1, 262, 2, 0xFC, 0, 0, 0, 40, 3);
-	init_scenePropStruct( 33,  9, 1, 263, 3, 0xFC, 0, 0, 0, 40, 0);
-	init_scenePropStruct( 34, 10, -1, 0, 0, 0xFC, 0, 0, 0, 0, 1);
-	init_scenePropStruct( 35, 10, 1, 263, 3, 0xFC, 0, 0, 0, 30, 0);
-	init_scenePropStruct( 36, 11, -1, 0, 0, 0xFC, 0, 0, 0, 0, 1);
-	init_scenePropStruct( 37, 11, 1, 264, 4, 0xFC, 0, 0, 0, 30, 0);
-	init_scenePropStruct( 38, 12, -1, 0, 0, 0xFC, 0, 0, 0, 0, 1);
-	init_scenePropStruct( 39, 12, 1, 265, 5, 0xFC, 0, 0, 0, 30, 0);
-	init_scenePropStruct( 40, 13, -1, 0, 0, 0xFC, 0, 0, 0, 0, 1);
-	init_scenePropStruct( 41, 13, 1, 266, 6, 0xFC, 0, 0, 0, 30, 0);
-	init_scenePropStruct( 42, 14, -1, 0, 0, 0xFC, 0, 0, 0, 0, 1);
-	init_scenePropStruct( 43, 14, 1, 267, 7, 0xFC, 0, 0, 0, 30, 0);
-	init_scenePropStruct( 44, 15, -1, 0, 0, 0xFC, 0, 0, 0, 0, 1);
-	init_scenePropStruct( 45, 15, 1, 268, 8, 0xFC, 0, 0, 0, 30, 0);
-	init_scenePropStruct( 46, 16, -1, 0, 0, 0xFC, 0, 0, 0, 0, 1);
-	init_scenePropStruct( 47, 16, 1, 274, 14, 0xFC, 0, 0, 0, 30, 0);
-	init_scenePropStruct( 48, 17, -1, 0, 0, 0xFC, 0, 0, 0, 0, 1);
-	init_scenePropStruct( 49, 17, 1, 270, 10, 0xFC, 0, 0, 0, 30, 0);
-	init_scenePropStruct( 50, 18, -1, 0, 0, 0xFC, 0xFC, 0x54, 0, 0, 1);
-	init_scenePropStruct( 51, 18, 0, 289, 45, 0xFF, 0xFF, 0xFF, 0, 40, 2);
-	init_scenePropStruct( 52, 18, 1, 177, 49, 0xFC, 0xFC, 0x54, 0, 40, 3);
-	init_scenePropStruct( 53, 18, 1, 178, 50, 0xFC, 0xFC, 0x54, 0, 40, 4);
-	init_scenePropStruct( 54, 18, 0, 290, 47, 0xFF, 0xFF, 0xFF, 0, 40, 0);
-	init_scenePropStruct( 55, 19, -1, 0, 0, 0xFC, 0xFC, 0x54, 0, 0, 1);
-	init_scenePropStruct( 56, 19, 1, 179, 51, 0xFC, 0xFC, 0x54, 0, 40, 0);
-	init_scenePropStruct( 57, 20, -1, 0, 0, 0xFC, 0xFC, 0x54, 0, 0, 1);
-	init_scenePropStruct( 58, 20, 1, 183, 55, 0xFC, 0xFC, 0x54, 0, 40, 0);
-	init_scenePropStruct( 59, 21, -1, 0, 0, 0xFC, 0xFC, 0x54, 0, 0, 1);
-	init_scenePropStruct( 60, 21, 1, 184, 56, 0xFC, 0xFC, 0x54, 0, 40, 0);
-	init_scenePropStruct( 61, 22, -1, 0, 0, 0xFC, 0xFC, 0x54, 0, 0, 1);
-	init_scenePropStruct( 62, 22, 1, 186, 58, 0xFC, 0xFC, 0x54, 0, 40, 0);
-	init_scenePropStruct( 63, 23, -1, 0, 0, 0xFC, 0xFC, 0x54, 0, 0, 1);
-	init_scenePropStruct( 64, 23, 1, 191, 63, 0xFC, 0xFC, 0x54, 0, 40, 0);
-	init_scenePropStruct( 65, 24, -1, 0, 0, 0xFC, 0xFC, 0x54, 0, 0, 1);
-	init_scenePropStruct( 66, 24, 1, 192, 64, 0xFC, 0xFC, 0x54, 0, 40, 0);
-	init_scenePropStruct( 67, 25, -1, 0, 0, 0xBC, 0x78, 0x48, 0, 0, 1);
-	init_scenePropStruct( 68, 25, 1, 220, 93, 0xBC, 0x78, 0x48, 0, 40, 2);
-	init_scenePropStruct( 69, 25, 1, 221, 94, 0xBC, 0x78, 0x48, 0, 40, 3);
-	init_scenePropStruct( 70, 25, 1, 222, 95, 0xBC, 0x78, 0x48, 0, 40, 0);
-	init_scenePropStruct( 71, 26, -1, 0, 0, 0xBC, 0x78, 0x48, 0, 0, 1);
-	init_scenePropStruct( 72, 26, 1, 223, 96, 0xBC, 0x78, 0x48, 0, 40, 0);
-	init_scenePropStruct( 73, 27, -1, 0, 0, 0xBC, 0x78, 0x48, 0, 0, 1);
-	init_scenePropStruct( 74, 27, 1, 224, 97, 0xBC, 0x78, 0x48, 0, 40, 0);
-	init_scenePropStruct( 75, 28, -1, 0, 0, 0xBC, 0x78, 0x48, 0, 0, 1);
-	init_scenePropStruct( 76, 28, 1, 225, 98, 0xBC, 0x78, 0x48, 0, 40, 0);
-	init_scenePropStruct( 77, 29, -1, 0, 0, 0xBC, 0x78, 0x48, 0, 0, 1);
-	init_scenePropStruct( 78, 29, 1, 226, 99, 0xBC, 0x78, 0x48, 0, 40, 0);
-	init_scenePropStruct( 79, 30, -1, 0, 0, 0xBC, 0x78, 0x48, 0, 0, 1);
-	init_scenePropStruct( 80, 30, 1, 228, 101, 0xBC, 0x78, 0x48, 0, 40, 0);
-	init_scenePropStruct( 81, 31, -1, 0, 0, 0xBC, 0x78, 0x48, 0, 0, 1);
-	init_scenePropStruct( 82, 31, 1, 229, 102, 0xBC, 0x78, 0x48, 0, 40, 0);
-	init_scenePropStruct( 83, 32, -1, 0, 0, 0xA8, 0xA8, 0xA8, 0, 0, 1);
-	init_scenePropStruct( 84, 32, 1, 233, 106, 0xA8, 0xA8, 0xA8, 0, 40, 2);
-	init_scenePropStruct( 85, 32, 1, 234, 107, 0xA8, 0xA8, 0xA8, 0, 40, 0);
-	init_scenePropStruct( 86, 33, -1, 0, 0, 0xA8, 0xA8, 0xA8, 0, 0, 1);
-	init_scenePropStruct( 87, 33, 1, 241, 114, 0xA8, 0xA8, 0xA8, 0, 40, 2);
-	init_scenePropStruct( 88, 33, 1, 242, 115, 0xA8, 0xA8, 0xA8, 0, 40, 0);
-	init_scenePropStruct( 89, 34, -1, 0, 0, 0xA8, 0xA8, 0xA8, 0, 0, 1);
-	init_scenePropStruct( 90, 34, 1, 237, 110, 0xA8, 0xA8, 0xA8, 0, 40, 2);
-	init_scenePropStruct( 91, 34, 1, 238, 111, 0xA8, 0xA8, 0xA8, 0, 40, 3);
-	init_scenePropStruct( 92, 34, 1, 239, 112, 0xA8, 0xA8, 0xA8, 0, 40, 0);
-	init_scenePropStruct( 93, 35, -1, 0, 0, 0xA8, 0xA8, 0xA8, 0, 0, 1);
-	init_scenePropStruct( 94, 35, 1, 258, 131, 0xA8, 0xA8, 0xA8, 0, 40, 0);
-	init_scenePropStruct( 95, 36, -1, 0, 0, 0xA8, 0xA8, 0xA8, 0, 0, 1);
-	init_scenePropStruct( 96, 36, 1, 260, 133, 0xA8, 0xA8, 0xA8, 0, 40, 0);
-	init_scenePropStruct( 97, 37, -1, 0, 0, 0xA8, 0xA8, 0xA8, 0, 0, 1);
-	init_scenePropStruct( 98, 37, 1, 252, 125, 0xA8, 0xA8, 0xA8, 0, 40, 0);
-	init_scenePropStruct( 99, 38, -1, 0, 0, 0xA8, 0xA8, 0xA8, 0, 0, 1);
+	init_scenePropStruct(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+	init_scenePropStruct(1, 0, 1, 128, 2001, 0, 0, 0, 0, 56, 2);
+	init_scenePropStruct(2, 0, 0, 125, 1002, 0, 0, 0, 0, 35, 3);
+	init_scenePropStruct(3, 0, 1, 129, 2002, 0, 0, 0, 0, 23, 4);
+	init_scenePropStruct(4, 0, 1, 130, 2003, 0, 0, 0, 0, 40, 5);
+	init_scenePropStruct(5, 0, 0, 126, 1005, 0, 0, 0, 0, 46, 6);
+	init_scenePropStruct(6, 0, 1, 131, 2004, 0, 0, 0, 0, 39, 7);
+	init_scenePropStruct(7, 0, 1, 132, 2005, 0, 0, 0, 0, 45, 8);
+	init_scenePropStruct(8, 0, 1, 133, 2006, 0, 0, 0, 0, 14, 9);
+	init_scenePropStruct(9, 0, 0, 127, 1009, 0, 0, 0, 0, 15, 10);
+	init_scenePropStruct(10, 0, 1, 134, 501, 0, 0, 0, 0, 25, 11);
+	init_scenePropStruct(11, 0, 1, 135, 502, 0, 0, 0, 0, 15, 0);
+	init_scenePropStruct(12, 1, -1, 0, 0, 0xFF, 0xFF, 0xFF, 0, 0, 1);
+	init_scenePropStruct(13, 1, 0, 291, 135, 0xFF, 0xFF, 0xFF, 0, 25, 0);
+	init_scenePropStruct(14, 2, -1, 0, 0, 0xFC, 0, 0xFC, 0, 0, 1);
+	init_scenePropStruct(15, 2, 1, 277, 17, 0xFC, 0, 0xFC, 0, 56, 2);
+	init_scenePropStruct(16, 2, 0, 288, 18, 0xFF, 0xFF, 0xFF, 0, 56, 3);
+	init_scenePropStruct(17, 2, 1, 278, 19, 0xFC, 0, 0xFC, 0, 56, 0);
+	init_scenePropStruct(18, 3, -1, 0, 0, 0xFC, 0, 0xFC, 0, 0, 1);
+	init_scenePropStruct(19, 3, 1, 282, 23, 0xFC, 0, 0xFC, 0, 56, 0);
+	init_scenePropStruct(20, 4, -1, 0, 0, 0xFC, 0, 0xFC, 0, 0, 1);
+	init_scenePropStruct(21, 4, 1, 283, 24, 0xFC, 0, 0xFC, 0, 56, 0);
+	init_scenePropStruct(22, 5, -1, 0, 0, 0xFC, 0, 0xFC, 0, 0, 1);
+	init_scenePropStruct(23, 5, 1, 284, 25, 0xFC, 0, 0xFC, 0, 56, 0);
+	init_scenePropStruct(24, 6, -1, 0, 0, 0xFC, 0, 0xFC, 0, 0, 1);
+	init_scenePropStruct(25, 6, 1, 285, 26, 0xFC, 0, 0xFC, 0, 56, 0);
+	init_scenePropStruct(26, 7, -1, 0, 0, 0xFC, 0, 0xFC, 0, 0, 1);
+	init_scenePropStruct(27, 7, 1, 286, 27, 0xFC, 0, 0xFC, 0, 56, 0);
+	init_scenePropStruct(28, 8, -1, 0, 0, 0xFC, 0, 0xFC, 0, 0, 1);
+	init_scenePropStruct(29, 8, 1, 287, 28, 0xFC, 0, 0xFC, 0, 56, 0);
+	init_scenePropStruct(30, 9, -1, 0, 0, 0xFC, 0, 0, 0, 0, 1);
+	init_scenePropStruct(31, 9, 1, 261, 1, 0xFC, 0, 0, 0, 40, 2);
+	init_scenePropStruct(32, 9, 1, 262, 2, 0xFC, 0, 0, 0, 40, 3);
+	init_scenePropStruct(33, 9, 1, 263, 3, 0xFC, 0, 0, 0, 40, 0);
+	init_scenePropStruct(34, 10, -1, 0, 0, 0xFC, 0, 0, 0, 0, 1);
+	init_scenePropStruct(35, 10, 1, 263, 3, 0xFC, 0, 0, 0, 30, 0);
+	init_scenePropStruct(36, 11, -1, 0, 0, 0xFC, 0, 0, 0, 0, 1);
+	init_scenePropStruct(37, 11, 1, 264, 4, 0xFC, 0, 0, 0, 30, 0);
+	init_scenePropStruct(38, 12, -1, 0, 0, 0xFC, 0, 0, 0, 0, 1);
+	init_scenePropStruct(39, 12, 1, 265, 5, 0xFC, 0, 0, 0, 30, 0);
+	init_scenePropStruct(40, 13, -1, 0, 0, 0xFC, 0, 0, 0, 0, 1);
+	init_scenePropStruct(41, 13, 1, 266, 6, 0xFC, 0, 0, 0, 30, 0);
+	init_scenePropStruct(42, 14, -1, 0, 0, 0xFC, 0, 0, 0, 0, 1);
+	init_scenePropStruct(43, 14, 1, 267, 7, 0xFC, 0, 0, 0, 30, 0);
+	init_scenePropStruct(44, 15, -1, 0, 0, 0xFC, 0, 0, 0, 0, 1);
+	init_scenePropStruct(45, 15, 1, 268, 8, 0xFC, 0, 0, 0, 30, 0);
+	init_scenePropStruct(46, 16, -1, 0, 0, 0xFC, 0, 0, 0, 0, 1);
+	init_scenePropStruct(47, 16, 1, 274, 14, 0xFC, 0, 0, 0, 30, 0);
+	init_scenePropStruct(48, 17, -1, 0, 0, 0xFC, 0, 0, 0, 0, 1);
+	init_scenePropStruct(49, 17, 1, 270, 10, 0xFC, 0, 0, 0, 30, 0);
+	init_scenePropStruct(50, 18, -1, 0, 0, 0xFC, 0xFC, 0x54, 0, 0, 1);
+	init_scenePropStruct(51, 18, 0, 289, 45, 0xFF, 0xFF, 0xFF, 0, 40, 2);
+	init_scenePropStruct(52, 18, 1, 177, 49, 0xFC, 0xFC, 0x54, 0, 40, 3);
+	init_scenePropStruct(53, 18, 1, 178, 50, 0xFC, 0xFC, 0x54, 0, 40, 4);
+	init_scenePropStruct(54, 18, 0, 290, 47, 0xFF, 0xFF, 0xFF, 0, 40, 0);
+	init_scenePropStruct(55, 19, -1, 0, 0, 0xFC, 0xFC, 0x54, 0, 0, 1);
+	init_scenePropStruct(56, 19, 1, 179, 51, 0xFC, 0xFC, 0x54, 0, 40, 0);
+	init_scenePropStruct(57, 20, -1, 0, 0, 0xFC, 0xFC, 0x54, 0, 0, 1);
+	init_scenePropStruct(58, 20, 1, 183, 55, 0xFC, 0xFC, 0x54, 0, 40, 0);
+	init_scenePropStruct(59, 21, -1, 0, 0, 0xFC, 0xFC, 0x54, 0, 0, 1);
+	init_scenePropStruct(60, 21, 1, 184, 56, 0xFC, 0xFC, 0x54, 0, 40, 0);
+	init_scenePropStruct(61, 22, -1, 0, 0, 0xFC, 0xFC, 0x54, 0, 0, 1);
+	init_scenePropStruct(62, 22, 1, 186, 58, 0xFC, 0xFC, 0x54, 0, 40, 0);
+	init_scenePropStruct(63, 23, -1, 0, 0, 0xFC, 0xFC, 0x54, 0, 0, 1);
+	init_scenePropStruct(64, 23, 1, 191, 63, 0xFC, 0xFC, 0x54, 0, 40, 0);
+	init_scenePropStruct(65, 24, -1, 0, 0, 0xFC, 0xFC, 0x54, 0, 0, 1);
+	init_scenePropStruct(66, 24, 1, 192, 64, 0xFC, 0xFC, 0x54, 0, 40, 0);
+	init_scenePropStruct(67, 25, -1, 0, 0, 0xBC, 0x78, 0x48, 0, 0, 1);
+	init_scenePropStruct(68, 25, 1, 220, 93, 0xBC, 0x78, 0x48, 0, 40, 2);
+	init_scenePropStruct(69, 25, 1, 221, 94, 0xBC, 0x78, 0x48, 0, 40, 3);
+	init_scenePropStruct(70, 25, 1, 222, 95, 0xBC, 0x78, 0x48, 0, 40, 0);
+	init_scenePropStruct(71, 26, -1, 0, 0, 0xBC, 0x78, 0x48, 0, 0, 1);
+	init_scenePropStruct(72, 26, 1, 223, 96, 0xBC, 0x78, 0x48, 0, 40, 0);
+	init_scenePropStruct(73, 27, -1, 0, 0, 0xBC, 0x78, 0x48, 0, 0, 1);
+	init_scenePropStruct(74, 27, 1, 224, 97, 0xBC, 0x78, 0x48, 0, 40, 0);
+	init_scenePropStruct(75, 28, -1, 0, 0, 0xBC, 0x78, 0x48, 0, 0, 1);
+	init_scenePropStruct(76, 28, 1, 225, 98, 0xBC, 0x78, 0x48, 0, 40, 0);
+	init_scenePropStruct(77, 29, -1, 0, 0, 0xBC, 0x78, 0x48, 0, 0, 1);
+	init_scenePropStruct(78, 29, 1, 226, 99, 0xBC, 0x78, 0x48, 0, 40, 0);
+	init_scenePropStruct(79, 30, -1, 0, 0, 0xBC, 0x78, 0x48, 0, 0, 1);
+	init_scenePropStruct(80, 30, 1, 228, 101, 0xBC, 0x78, 0x48, 0, 40, 0);
+	init_scenePropStruct(81, 31, -1, 0, 0, 0xBC, 0x78, 0x48, 0, 0, 1);
+	init_scenePropStruct(82, 31, 1, 229, 102, 0xBC, 0x78, 0x48, 0, 40, 0);
+	init_scenePropStruct(83, 32, -1, 0, 0, 0xA8, 0xA8, 0xA8, 0, 0, 1);
+	init_scenePropStruct(84, 32, 1, 233, 106, 0xA8, 0xA8, 0xA8, 0, 40, 2);
+	init_scenePropStruct(85, 32, 1, 234, 107, 0xA8, 0xA8, 0xA8, 0, 40, 0);
+	init_scenePropStruct(86, 33, -1, 0, 0, 0xA8, 0xA8, 0xA8, 0, 0, 1);
+	init_scenePropStruct(87, 33, 1, 241, 114, 0xA8, 0xA8, 0xA8, 0, 40, 2);
+	init_scenePropStruct(88, 33, 1, 242, 115, 0xA8, 0xA8, 0xA8, 0, 40, 0);
+	init_scenePropStruct(89, 34, -1, 0, 0, 0xA8, 0xA8, 0xA8, 0, 0, 1);
+	init_scenePropStruct(90, 34, 1, 237, 110, 0xA8, 0xA8, 0xA8, 0, 40, 2);
+	init_scenePropStruct(91, 34, 1, 238, 111, 0xA8, 0xA8, 0xA8, 0, 40, 3);
+	init_scenePropStruct(92, 34, 1, 239, 112, 0xA8, 0xA8, 0xA8, 0, 40, 0);
+	init_scenePropStruct(93, 35, -1, 0, 0, 0xA8, 0xA8, 0xA8, 0, 0, 1);
+	init_scenePropStruct(94, 35, 1, 258, 131, 0xA8, 0xA8, 0xA8, 0, 40, 0);
+	init_scenePropStruct(95, 36, -1, 0, 0, 0xA8, 0xA8, 0xA8, 0, 0, 1);
+	init_scenePropStruct(96, 36, 1, 260, 133, 0xA8, 0xA8, 0xA8, 0, 40, 0);
+	init_scenePropStruct(97, 37, -1, 0, 0, 0xA8, 0xA8, 0xA8, 0, 0, 1);
+	init_scenePropStruct(98, 37, 1, 252, 125, 0xA8, 0xA8, 0xA8, 0, 40, 0);
+	init_scenePropStruct(99, 38, -1, 0, 0, 0xA8, 0xA8, 0xA8, 0, 0, 1);
 	init_scenePropStruct(100, 38, 1, 254, 127, 0xA8, 0xA8, 0xA8, 0, 40, 0);
 	init_scenePropStruct(101, 39, -1, 0, 0, 0xA8, 0xA8, 0xA8, 0, 0, 1);
 	init_scenePropStruct(102, 39, 1, 236, 109, 0xA8, 0xA8, 0xA8, 0, 40, 0);
@@ -406,8 +402,8 @@ void Insane::initvars() {
 	_actor[0].enemyHandler = EN_BEN;
 	init_actStruct(0, 0, 11, 1, 1, 0, 0, 0);
 	init_actStruct(0, 1, 12, 1, 1, 0, 0, 0);
-	init_actStruct(0, 2, 1,  1, 1, 0, 0, 0);
-	init_actStruct(0, 3, 1,  1, 1, 0, 0, 0);
+	init_actStruct(0, 2, 1, 1, 1, 0, 0, 0);
+	init_actStruct(0, 3, 1, 1, 1, 0, 0, 0);
 
 	_actor[1].damage = 0;
 	_actor[1].maxdamage = -1;
@@ -455,7 +451,7 @@ void Insane::initvars() {
 }
 
 void Insane::init_actStruct(int actornum, int actnum, int32 actorval, byte state,
-								  int32 room, int32 animTilt, int32 tilt, int32 frame) {
+                            int32 room, int32 animTilt, int32 tilt, int32 frame) {
 	_actor[actornum].act[actnum].actor = actorval;
 	_actor[actornum].act[actnum].state = state;
 	_actor[actornum].act[actnum].room = room;
@@ -465,10 +461,10 @@ void Insane::init_actStruct(int actornum, int actnum, int32 actorval, byte state
 }
 
 void Insane::init_enemyStruct(int n, int32 handler, int32 initializer,
-								   int16 occurences, int32 maxdamage, int32 isEmpty,
-								   int32 weapon, int32 sound, const char *filename,
-								   int32 costume4, int32 costume6, int32 costume5,
-								   int16 costumevar, int32 maxframe, int32 apprAnim) {
+                              int16 occurences, int32 maxdamage, int32 isEmpty,
+                              int32 weapon, int32 sound, const char *filename,
+                              int32 costume4, int32 costume6, int32 costume5,
+                              int16 costumevar, int32 maxframe, int32 apprAnim) {
 	assert(strlen(filename) < 20);
 
 	_enemy[n].handler = handler;
@@ -488,7 +484,7 @@ void Insane::init_enemyStruct(int n, int32 handler, int32 initializer,
 }
 
 void Insane::init_fluConfStruct(int n, int sceneId, byte **fluPtr,
-					const char *filenamePtr, int startFrame, int numFrames) {
+                                const char *filenamePtr, int startFrame, int numFrames) {
 	_fluConf[n].sceneId = sceneId;
 	_fluConf[n].fluPtr = fluPtr;
 	_fluConf[n].filenamePtr = filenamePtr;
@@ -497,8 +493,8 @@ void Insane::init_fluConfStruct(int n, int sceneId, byte **fluPtr,
 }
 
 void Insane::init_scenePropStruct(int32 n, int32 n1, int32 actornum, int32 sound, int32 trsId,
-					  byte r, byte g, byte b, int32 counter, int32 maxCounter,
-					  int32 index) {
+                                  byte r, byte g, byte b, int32 counter, int32 maxCounter,
+                                  int32 index) {
 	_sceneProp[n].actor = actornum; // main actor number, -1 if not applicable
 	_sceneProp[n].sound = sound;
 	_sceneProp[n].trsId = trsId;
@@ -513,7 +509,7 @@ void Insane::init_scenePropStruct(int32 n, int32 n1, int32 actornum, int32 sound
 void Insane::setBenAnimation(int32 actornum, int anim) {
 	if (anim <= 12)
 		smlayer_setActorFacing(actornum, 1,
-			  actorAnimationData[_actor[actornum].weaponClass * 7 + anim - 6], 180);
+		                       actorAnimationData[_actor[actornum].weaponClass * 7 + anim - 6], 180);
 }
 
 void Insane::setEnemyAnimation(int32 actornum, int anim) {
@@ -524,7 +520,7 @@ void Insane::setEnemyAnimation(int32 actornum, int anim) {
 
 	if (anim <= 12)
 		smlayer_setActorFacing(actornum, 1,
-			  actorAnimationData[_actor[actornum].weaponClass * 7 + anim - 6] + d, 180);
+		                       actorAnimationData[_actor[actornum].weaponClass * 7 + anim - 6] + d, 180);
 }
 
 int32 Insane::processMouse() {
@@ -610,7 +606,7 @@ void Insane::readFileToMem(const char *name, byte **buf) {
 }
 
 void Insane::startVideo(const char *filename, int num, int argC, int frameRate,
-						 int doMainLoop, byte *fluPtr, int32 startFrame) {
+                        int doMainLoop, byte *fluPtr, int32 startFrame) {
 	int32 offset = 0;
 
 	_smush_curFrame = 0;
@@ -691,13 +687,13 @@ void Insane::readState() { // PATCH
 		// overwrite
 		if (_enemy[EN_VULTM2].isEmpty != readArray(7)) {
 			warning("Wrong INSANE parameters for EN_VULTM2 (%d %d)",
-				  _enemy[EN_VULTM2].isEmpty, readArray(7));
+			        _enemy[EN_VULTM2].isEmpty, readArray(7));
 			_enemy[EN_VULTM2].isEmpty = readArray(7);
 		}
 
 		if (_enemy[EN_VULTF2].isEmpty != (_actor[0].inventory[INV_CHAINSAW] != 0)) {
 			warning("Wrong INSANE parameters for EN_VULTF2 (%d %d)",
-				  _enemy[EN_VULTF2].isEmpty, _actor[0].inventory[INV_CHAINSAW]);
+			        _enemy[EN_VULTF2].isEmpty, _actor[0].inventory[INV_CHAINSAW]);
 			_enemy[EN_VULTF2].isEmpty = (_actor[0].inventory[INV_CHAINSAW] != 0);
 		}
 
@@ -804,17 +800,17 @@ void Insane::switchSceneIfNeeded() {
 }
 
 void Insane::prepareScenePropScene(int32 scenePropNum, bool arg_4, bool arg_8) {
-	static const int scenePropIdx[58] = {0,  12,  14,  18,  20,  22,  24,  26,  28,  30,  34,
-	 36,  38,  40,  42,  44,  46,  48,  50,  55,  57,  59,  61,  63,  65,  67,  71,
-	 73,  75,  77,  79,  81,  83,  85,  89,  93,  95,  97,  99, 101, 103, 105, 107,
-	 109, 111, 113, 115, 117, 119, 121, 123, 125, 127, 129, 131, 133, 135, 137};
+	static const int scenePropIdx[58] = { 0, 12, 14, 18, 20, 22, 24, 26, 28, 30, 34,
+		                                    36, 38, 40, 42, 44, 46, 48, 50, 55, 57, 59, 61, 63, 65, 67, 71,
+		                                    73, 75, 77, 79, 81, 83, 85, 89, 93, 95, 97, 99, 101, 103, 105, 107,
+		                                    109, 111, 113, 115, 117, 119, 121, 123, 125, 127, 129, 131, 133, 135, 137 };
 
 	int tmp, idx = scenePropIdx[scenePropNum];
 
 	debugC(DEBUG_INSANE, "Insane::prepareScenePropScene(%d, %d, %d)", scenePropNum, arg_4, arg_8);
 
 	if (((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) || !loadScenePropSounds(idx))
-			return;
+		return;
 
 	_actor[0].defunct = arg_4;
 	_actor[1].defunct = arg_8;
@@ -850,22 +846,22 @@ int Insane::smush_changeState(int state) {
 }
 
 void Insane::queueSceneSwitch(int32 sceneId, byte *fluPtr, const char *filename,
-							  int32 arg_C, int32 arg_10, int32 startFrame, int32 numFrames) {
+                              int32 arg_C, int32 arg_10, int32 startFrame, int32 numFrames) {
 	int32 tmp;
 
 	debugC(DEBUG_INSANE, "queueSceneSwitch(%d, *, %s, %d, %d, %d, %d)", sceneId, filename, arg_C, arg_10,
-		  startFrame, numFrames);
+	       startFrame, numFrames);
 	if (_needSceneSwitch || _sceneData1Loaded)
 		return;
 
 	if (fluPtr) {
-		tmp = ((int)startFrame/30+1)*30;
+		tmp = ((int)startFrame / 30 + 1) * 30;
 		if (tmp >= numFrames)
 			tmp = 0;
 
-		smush_setupSanWithFlu(filename, arg_C|32, -1, -1, 0, fluPtr, tmp);
+		smush_setupSanWithFlu(filename, arg_C | 32, -1, -1, 0, fluPtr, tmp);
 	} else {
-		smush_setupSanFromStart(filename, arg_C|32, -1, -1, 0);
+		smush_setupSanFromStart(filename, arg_C | 32, -1, -1, 0);
 	}
 	_needSceneSwitch = true;
 	_temp2SceneId = sceneId;
@@ -883,7 +879,7 @@ void Insane::smush_rewindCurrentSan(int arg_0, int arg_4, int arg_8) {
 }
 
 int32 Insane::weaponMaxRange(int32 actornum) {
-	static const int map[8] = {135, 125, 130, 125, 120, 104, 104, 104};
+	static const int map[8] = { 135, 125, 130, 125, 120, 104, 104, 104 };
 
 	if (_actor[actornum].weapon == -1)
 		return 104;
@@ -892,7 +888,7 @@ int32 Insane::weaponMaxRange(int32 actornum) {
 }
 
 int32 Insane::weaponMinRange(int32 actornum) {
-	static const int map[8] = {80, 40, 80, 40, 80, 80, 40, 50};
+	static const int map[8] = { 80, 40, 80, 40, 80, 80, 40, 50 };
 
 	if (_actor[actornum].weapon == -1)
 		return 40;
@@ -901,7 +897,7 @@ int32 Insane::weaponMinRange(int32 actornum) {
 }
 
 int32 Insane::weaponDamage(int32 actornum) {
-	static const int map[8] = {20, 300, 25, 40, 15, 10, 10, 5};
+	static const int map[8] = { 20, 300, 25, 40, 15, 10, 10, 5 };
 
 	if (_actor[actornum].weapon == -1)
 		return 10;
@@ -940,7 +936,7 @@ void Insane::reinitActors() {
 }
 
 int Insane::calcTilt(int speed) {
-	static const int tilt[7] = {-5, -4, -2, 0, 2, 4, 5};
+	static const int tilt[7] = { -5, -4, -2, 0, 2, 4, 5 };
 	if (speed + 3 > 6)
 		return 0;
 
@@ -950,7 +946,7 @@ int Insane::calcTilt(int speed) {
 bool Insane::actor1StateFlags(int state) {
 	// This is compressed table. It contains indexes where state
 	// changes. I.e. 0-33: true, 34-38: false 39-72: true, etc.
-	static const int spans[] = {0, 34, 39, 73, 89, 90, 92, 93, 99, 100, 117};
+	static const int spans[] = { 0, 34, 39, 73, 89, 90, 92, 93, 99, 100, 117 };
 	bool retvalue = 0;
 	unsigned int i;
 
@@ -966,8 +962,7 @@ void Insane::escapeKeyHandler() {
 	struct fluConf *flu;
 
 	// The Macintosh demo has just one scene
-	if (((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformMacintosh)) ||
-		!_insaneIsRunning) {
+	if (((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformMacintosh)) || !_insaneIsRunning) {
 		smush_setToFinish();
 		return;
 	}
@@ -995,7 +990,7 @@ void Insane::escapeKeyHandler() {
 			queueSceneSwitch(4, 0, "tovista.san", 64, 0, 0, 0);
 		else
 			queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
-							 flu->startFrame, flu->numFrames);
+			                 flu->startFrame, flu->numFrames);
 		break;
 	case 3:
 		queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0, _continueFrame, 1300);
@@ -1049,7 +1044,7 @@ void Insane::escapeKeyHandler() {
 			queueSceneSwitch(1, 0, "minedriv.san", 64, 0, 0, 0);
 		else
 			queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
-						 flu->startFrame, flu->numFrames);
+			                 flu->startFrame, flu->numFrames);
 		break;
 	case 7:
 		flu = &_fluConf[0 + _iactSceneId2];
@@ -1057,7 +1052,7 @@ void Insane::escapeKeyHandler() {
 			queueSceneSwitch(1, 0, "minedriv.san", 64, 0, 0, 0);
 		else
 			queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
-						 flu->startFrame, flu->numFrames);
+			                 flu->startFrame, flu->numFrames);
 		break;
 	case 23:
 		_actor[0].damage = 0;
@@ -1105,7 +1100,7 @@ void Insane::escapeKeyHandler() {
 }
 
 bool Insane::actor0StateFlags1(int state) {
-	static const int spans[] = {0, 2, 34, 35, 39, 69, 98, 100, 117};
+	static const int spans[] = { 0, 2, 34, 35, 39, 69, 98, 100, 117 };
 	bool retvalue = 1;
 	unsigned int i;
 
@@ -1118,14 +1113,14 @@ bool Insane::actor0StateFlags1(int state) {
 }
 
 bool Insane::actor0StateFlags2(int state) {
-	static const int spans[] = {0, 10, 14, 34, 39, 73, 75, 79, 81, 90, 93, 94,
-		 98, 100, 117, 133, 136, 153, 158, 200, 202, 209, 212, 213, 217,
-		 219, 236, 256, 259, 272, 277, 311, 312, 315, 317, 328, 331, 332,
-		 336, 338, 355, 379, 382, 391, 396, 440, 441, 447, 450, 451, 455,
-		 457, 474, 502, 505, 510, 515, 549, 553, 566, 569, 570, 574, 576,
-		 593, 601, 604, 629, 634, 680, 682, 685, 688, 689, 693, 695, 712,
-		 716, 718, 748, 753, 787, 788, 804, 807, 808, 812, 814, 831, 863,
-		 866, 867, 872, 920, 922, 923, 926, 927, 931, 933, 950};
+	static const int spans[] = { 0, 10, 14, 34, 39, 73, 75, 79, 81, 90, 93, 94,
+		                           98, 100, 117, 133, 136, 153, 158, 200, 202, 209, 212, 213, 217,
+		                           219, 236, 256, 259, 272, 277, 311, 312, 315, 317, 328, 331, 332,
+		                           336, 338, 355, 379, 382, 391, 396, 440, 441, 447, 450, 451, 455,
+		                           457, 474, 502, 505, 510, 515, 549, 553, 566, 569, 570, 574, 576,
+		                           593, 601, 604, 629, 634, 680, 682, 685, 688, 689, 693, 695, 712,
+		                           716, 718, 748, 753, 787, 788, 804, 807, 808, 812, 814, 831, 863,
+		                           866, 867, 872, 920, 922, 923, 926, 927, 931, 933, 950 };
 	bool retvalue = 1;
 	unsigned int i;
 
@@ -1246,8 +1241,8 @@ void Insane::smlayer_soundSetPriority(int32 soundId, int32 priority) {
 }
 
 void Insane::smlayer_drawSomething(byte *renderBitmap, int32 codecparam,
-			   int32 x, int32 y, int32 arg_10, NutRenderer *nutfile,
-			   int32 c, int32 arg_1C, int32 arg_20) {
+                                   int32 x, int32 y, int32 arg_10, NutRenderer *nutfile,
+                                   int32 c, int32 arg_1C, int32 arg_20) {
 	nutfile->drawFrame(renderBitmap, c, x, y);
 }
 
@@ -1258,8 +1253,8 @@ void Insane::smlayer_overrideDrawActorAt(byte *arg_0, byte arg_4, byte arg_8) {
 }
 
 void Insane::smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecparam,
-					   int32 pos_x, int32 pos_y, int32 arg_14, int32 arg_18,
-					   int32 flags, const char *formatString, const char *strng) {
+                                   int32 pos_x, int32 pos_y, int32 arg_14, int32 arg_18,
+                                   int32 flags, const char *formatString, const char *strng) {
 	SmushFont *sf = _player->getFont(0);
 	int color = 1;
 	int32 top = 0;
@@ -1277,19 +1272,15 @@ void Insane::smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecp
 
 	while (str[0] == '^') {
 		switch (str[1]) {
-		case 'f':
-			{
-				int id = str[3] - '0';
-				str += 4;
-				sf = _player->getFont(id);
-			}
-			break;
-		case 'c':
-			{
-				color = str[4] - '0' + 10 *(str[3] - '0');
-				str += 5;
-			}
-			break;
+		case 'f': {
+			int id = str[3] - '0';
+			str += 4;
+			sf = _player->getFont(id);
+		} break;
+		case 'c': {
+			color = str[4] - '0' + 10 * (str[3] - '0');
+			str += 5;
+		} break;
 		default:
 			error("invalid escape code in text string");
 		}
@@ -1316,7 +1307,7 @@ void Insane::smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecp
 	default:
 		error("Insane::smlayer_showStatusMsg. Not handled flags: %d", flags);
 	}
-	free (string);
+	free(string);
 }
 
 void Insane::procSKIP(int32 subSize, Common::SeekableReadStream &b) {
@@ -1342,19 +1333,19 @@ void Insane::procSKIP(int32 subSize, Common::SeekableReadStream &b) {
 }
 
 bool Insane::isBitSet(int n) {
-	assert (n < 0x80);
+	assert(n < 0x80);
 
 	return (_iactBits[n] != 0);
 }
 
 void Insane::setBit(int n) {
-	assert (n < 0x80);
+	assert(n < 0x80);
 
 	_iactBits[n] = 1;
 }
 
 void Insane::clearBit(int n) {
-	assert (n < 0x80);
+	assert(n < 0x80);
 
 	_iactBits[n] = 0;
 }
@@ -1403,7 +1394,7 @@ bool Insane::smlayer_actorNeedRedraw(int actornum, int actnum) {
 	return a->_needRedraw;
 }
 
-int32 Insane::readArray (int item) {
+int32 Insane::readArray(int item) {
 	return _vm->readArray(_numberArray, 0, item);
 }
 
@@ -1412,27 +1403,27 @@ void Insane::writeArray(int item, int value) {
 }
 
 int32 Insane::smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32 step1,
-								   int32 step2, int32 setupsan1, byte *fluPtr,
-								   int32 numFrames) {
+                                    int32 step2, int32 setupsan1, byte *fluPtr,
+                                    int32 numFrames) {
 	byte *tmp = fluPtr;
 	int32 offset;
 
 	debugC(DEBUG_INSANE, "smush_setupSanWithFlu(%s, %d, %d, %d, %d, %p, %d)", filename, setupsan2,
-		  step1, step2, setupsan1, (void *)fluPtr, numFrames);
+	       step1, step2, setupsan1, (void *)fluPtr, numFrames);
 
 	_smush_setupsan1 = setupsan1;
 
 	/* skip FLUP marker */
-	if (READ_BE_UINT32(fluPtr) == MKTAG('F','L','U','P'))
+	if (READ_BE_UINT32(fluPtr) == MKTAG('F', 'L', 'U', 'P'))
 		tmp += 8;
 
 	_smush_setupsan2 = setupsan2;
 
 	if (tmp[2] <= 1) {
 		/* 0x300 -- palette, 0x8 -- header */
-		offset = READ_LE_UINT32(tmp + 0x308 + numFrames*4);
+		offset = READ_LE_UINT32(tmp + 0x308 + numFrames * 4);
 		smush_setupSanFile(filename, offset, numFrames);
-		memcpy(_smush_earlyFluContents, tmp+2, 0x306);
+		memcpy(_smush_earlyFluContents, tmp + 2, 0x306);
 		_smush_earlyFluContents[0x30e] = 0;
 		_smush_earlyFluContents[0x30f] = 0;
 		_smush_earlyFluContents[0x310] = 0;
@@ -1440,9 +1431,9 @@ int32 Insane::smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32
 		_smush_earlyFluContents[0x306] = 0;
 		_smush_earlyFluContents[0x307] = 0;
 	} else {
-		offset = READ_LE_UINT32(tmp + 0x31c + numFrames*4);
+		offset = READ_LE_UINT32(tmp + 0x31c + numFrames * 4);
 		smush_setupSanFile(filename, offset, numFrames);
-		memcpy(_smush_earlyFluContents, tmp+2, 0x31a);
+		memcpy(_smush_earlyFluContents, tmp + 2, 0x31a);
 	}
 	_smush_isSanFileSetup = 1;
 	_smush_setupsan4 = 1;
@@ -1454,7 +1445,7 @@ int32 Insane::smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32
 }
 
 void Insane::smush_setupSanFromStart(const char *filename, int32 setupsan2, int32 step1,
-									 int32 step2, int32 setupsan1) {
+                                     int32 step2, int32 setupsan1) {
 	debugC(DEBUG_INSANE, "Insane::smush_setupFromStart(%s)", filename);
 	_smush_setupsan1 = setupsan1;
 	_smush_setupsan2 = setupsan2;

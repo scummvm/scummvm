@@ -21,30 +21,30 @@
  */
 
 #ifndef COMMON_CPP11_COMPAT_H
-#define COMMON_CPP11_COMPAT_H
+#	define COMMON_CPP11_COMPAT_H
 
-#if __cplusplus >= 201103L
-#error "c++11-compat.h included when C++11 is available"
-#endif
+#	if __cplusplus >= 201103L
+#		error "c++11-compat.h included when C++11 is available"
+#	endif
 
 //
 // Custom nullptr replacement. This is not type safe as the real C++11 nullptr
 // though.
 //
-#if !defined(nullptr)  // XCode 5.0.1 has __cplusplus=199711 but defines this
+#	if !defined(nullptr) // XCode 5.0.1 has __cplusplus=199711 but defines this
 // MSVC 2010 and newer fully support nullptr: http://msdn.microsoft.com/en-us/library/hh567368.aspx
-#if !defined(_MSC_VER) || _MSC_VER < 1600
-#define nullptr 0
-#endif
-#endif
+#		if !defined(_MSC_VER) || _MSC_VER < 1600
+#			define nullptr 0
+#		endif
+#	endif
 
 //
 // Replacement for the override keyword. This allows compilation of code
 // which uses it, but does not feature any semantic.
 //
 // MSVC 2012 and newer fully support override: http://msdn.microsoft.com/en-us/library/hh567368.aspx
-#if !defined(_MSC_VER) || _MSC_VER < 1700
-#define override
-#endif
+#	if !defined(_MSC_VER) || _MSC_VER < 1700
+#		define override
+#	endif
 
 #endif

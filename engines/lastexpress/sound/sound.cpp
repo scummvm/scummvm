@@ -42,29 +42,29 @@ namespace LastExpress {
 // Letters & messages
 static const char *const messages[24] = {
 	"",
-	"TXT1001",  // 1
+	"TXT1001", // 1
 	"TXT1001A", // 2
-	"TXT1011",  // 3
-	"TXT1012",  // 4
-	"TXT1013",  // 5
-	"TXT1014",  // 6
-	"TXT1020",  // 7
-	"TXT1030",  // 8
+	"TXT1011", // 3
+	"TXT1012", // 4
+	"TXT1013", // 5
+	"TXT1014", // 6
+	"TXT1020", // 7
+	"TXT1030", // 8
 	"END1009B", // 50
-	"END1046",  // 51
-	"END1047",  // 52
-	"END1112",  // 53
+	"END1046", // 51
+	"END1047", // 52
+	"END1112", // 53
 	"END1112A", // 54
-	"END1503",  // 55
+	"END1503", // 55
 	"END1505A", // 56
 	"END1505B", // 57
-	"END1610",  // 58
+	"END1610", // 58
 	"END1612A", // 59
 	"END1612C", // 61
 	"END1612D", // 62
 	"ENDALRM1", // 63
 	"ENDALRM2", // 64
-	"ENDALRM3"  // 65
+	"ENDALRM3" // 65
 };
 
 static const char *const cities[17] = {
@@ -103,16 +103,17 @@ static const SoundFlag soundFlags[32] = {
 	kVolume12,
 	kVolume11, kVolume11,
 	kVolume10, kVolume10,
-	kVolume9,  kVolume9,
-	kVolume8,  kVolume8,
-	kVolume7,  kVolume7, kVolume7,
-	kVolume6,  kVolume6, kVolume6,
-	kVolume5,  kVolume5, kVolume5, kVolume5,
-	kVolume4,  kVolume4, kVolume4, kVolume4,
-	kVolume3,  kVolume3, kVolume3, kVolume3, kVolume3
+	kVolume9, kVolume9,
+	kVolume8, kVolume8,
+	kVolume7, kVolume7, kVolume7,
+	kVolume6, kVolume6, kVolume6,
+	kVolume5, kVolume5, kVolume5, kVolume5,
+	kVolume4, kVolume4, kVolume4, kVolume4,
+	kVolume3, kVolume3, kVolume3, kVolume3, kVolume3
 };
 
-SoundManager::SoundManager(LastExpressEngine *engine) : _engine(engine) {
+SoundManager::SoundManager(LastExpressEngine *engine)
+  : _engine(engine) {
 	_ambientSoundDuration = 0;
 
 	_queue = new SoundQueue(engine);
@@ -199,7 +200,7 @@ void SoundManager::playSoundEvent(EntityIndex entity, byte action, byte activate
 			_ambientVolumeChangeDelayMS = activateDelay * 1000 / 15;
 		}
 		break;
-		}
+	}
 
 	case 37:
 		_ambientScheduledVolume = kVolume7;
@@ -411,7 +412,7 @@ const char *SoundManager::getDialogName(EntityIndex entity) const {
 			return "XANN4";
 
 		if (getEvent(kEventAnnaGiveScarf) || getEvent(kEventAnnaGiveScarfDiner) || getEvent(kEventAnnaGiveScarfSalon)
-		 || getEvent(kEventAnnaGiveScarfMonogram) || getEvent(kEventAnnaGiveScarfDinerMonogram) || getEvent(kEventAnnaGiveScarfSalonMonogram))
+		    || getEvent(kEventAnnaGiveScarfMonogram) || getEvent(kEventAnnaGiveScarfDinerMonogram) || getEvent(kEventAnnaGiveScarfSalonMonogram))
 			return "XANN3";
 
 		if (getEvent(kEventDinerMindJoin))
@@ -437,7 +438,7 @@ const char *SoundManager::getDialogName(EntityIndex entity) const {
 			return "XAUG4";
 
 		if (getEvent(kEventDinerAugust) || getEvent(kEventDinerAugustAlexeiBackground) || getEvent(kEventMeetAugustTylerCompartment)
-		 || getEvent(kEventMeetAugustTylerCompartmentBed) || getEvent(kEventMeetAugustHisCompartment) || getEvent(kEventMeetAugustHisCompartmentBed))
+		    || getEvent(kEventMeetAugustTylerCompartmentBed) || getEvent(kEventMeetAugustHisCompartment) || getEvent(kEventMeetAugustHisCompartmentBed))
 			return "XAUG3";
 
 		if (getEvent(kEventAugustPresentAnnaFirstIntroduction))
@@ -580,8 +581,8 @@ const char *SoundManager::getDialogName(EntityIndex entity) const {
 			return "XFRA3";
 
 		if (getProgress().field_A0
-		 || getEvent(kEventFrancoisWhistle) || getEvent(kEventFrancoisWhistleD)
-		 || getEvent(kEventFrancoisWhistleNight) || getEvent(kEventFrancoisWhistleNightD))
+		    || getEvent(kEventFrancoisWhistle) || getEvent(kEventFrancoisWhistleD)
+		    || getEvent(kEventFrancoisWhistleNight) || getEvent(kEventFrancoisWhistleNightD))
 			return "XFRA2";
 
 		if (getState()->time > kTimeParisEpernay) // Between Paris and Epernay
@@ -703,20 +704,21 @@ void SoundManager::readText(int id) {
 //////////////////////////////////////////////////////////////////////////
 void SoundManager::playWarningCompartment(EntityIndex entity, ObjectIndex compartment) {
 
-#define PLAY_WARNING(index, sound1, sound2, sound3, sound4, sound5, sound6) { \
-	if (_lastWarning[index] + 450 >= getState()->timeTicks) { \
-		if (rnd(2)) \
-			playSound(kEntityMertens, sound1, kVolumeFull); \
-		else \
-			playSound(kEntityMertens, rnd(2) ? sound2 : sound3, kVolumeFull); \
-	} else { \
-		if (rnd(2)) \
-			playSound(kEntityMertens, sound4, kVolumeFull); \
-		else \
-			playSound(kEntityMertens, rnd(2) ? sound5 : sound6, kVolumeFull); \
-	} \
-	_lastWarning[index] = getState()->timeTicks; \
-}
+#define PLAY_WARNING(index, sound1, sound2, sound3, sound4, sound5, sound6) \
+	{                                                                         \
+		if (_lastWarning[index] + 450 >= getState()->timeTicks) {               \
+			if (rnd(2))                                                           \
+				playSound(kEntityMertens, sound1, kVolumeFull);                     \
+			else                                                                  \
+				playSound(kEntityMertens, rnd(2) ? sound2 : sound3, kVolumeFull);   \
+		} else {                                                                \
+			if (rnd(2))                                                           \
+				playSound(kEntityMertens, sound4, kVolumeFull);                     \
+			else                                                                  \
+				playSound(kEntityMertens, rnd(2) ? sound5 : sound6, kVolumeFull);   \
+		}                                                                       \
+		_lastWarning[index] = getState()->timeTicks;                            \
+	}
 
 	if (entity != kEntityMertens && entity != kEntityCoudert)
 		return;
@@ -772,112 +774,112 @@ void SoundManager::playWarningCompartment(EntityIndex entity, ObjectIndex compar
 	//////////////////////////////////////////////////////////////////////////
 	// Coudert
 	switch (compartment) {
-		default:
+	default:
+		break;
+
+	case kObjectCompartmentA:
+		if (_lastWarning[4] + 450 >= getState()->timeTicks) {
+			getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1500" : "Jac1500A", kVolumeFull);
 			break;
+		}
 
-		case kObjectCompartmentA:
-			if (_lastWarning[4] + 450 >= getState()->timeTicks) {
-				getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1500" : "Jac1500A", kVolumeFull);
-				break;
-			}
+		getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1508" : "Jac1508A", kVolumeFull);
+		break;
 
-			getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1508" : "Jac1508A", kVolumeFull);
+	case kObjectCompartmentB:
+		if (_lastWarning[5] + 450 >= getState()->timeTicks) {
+			getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1500" : "Jac1500A", kVolumeFull);
 			break;
+		}
 
-		case kObjectCompartmentB:
-			if (_lastWarning[5] + 450 >= getState()->timeTicks) {
-				getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1500" : "Jac1500A", kVolumeFull);
-				break;
-			}
+		if (getProgress().field_40 || (getState()->time > kTimeCityLinz && getState()->time < kTime2133000))
+			getSound()->playSound(kEntityCoudert, "Jac1507A", kVolumeFull);
+		else
+			getSound()->playSound(kEntityCoudert, "Jac1507", kVolumeFull);
+		break;
 
-			if (getProgress().field_40 || (getState()->time > kTimeCityLinz && getState()->time < kTime2133000))
-				getSound()->playSound(kEntityCoudert, "Jac1507A", kVolumeFull);
-			else
-				getSound()->playSound(kEntityCoudert, "Jac1507", kVolumeFull);
+	case kObjectCompartmentC:
+		if (_lastWarning[6] + 450 >= getState()->timeTicks) {
+			getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1500" : "Jac1500A", kVolumeFull);
 			break;
+		}
 
-		case kObjectCompartmentC:
-			if (_lastWarning[6] + 450 >= getState()->timeTicks) {
-				getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1500" : "Jac1500A", kVolumeFull);
-				break;
-			}
+		if (getProgress().chapter < kChapter3)
+			getSound()->playSound(kEntityCoudert, "Jac1506", kVolumeFull);
+		else
+			getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1506A" : "Jac1506B", kVolumeFull);
+		break;
 
-			if (getProgress().chapter < kChapter3)
-				getSound()->playSound(kEntityCoudert, "Jac1506", kVolumeFull);
-			else
-				getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1506A" : "Jac1506B", kVolumeFull);
+	case kObjectCompartmentD:
+		if (_lastWarning[7] + 450 >= getState()->timeTicks) {
+			getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1500" : "Jac1500A", kVolumeFull);
 			break;
+		}
 
-		case kObjectCompartmentD:
-			if (_lastWarning[7] + 450 >= getState()->timeTicks) {
-				getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1500" : "Jac1500A", kVolumeFull);
-				break;
-			}
+		getSound()->playSound(kEntityCoudert, "Jac1505", kVolumeFull);
+		break;
 
-			getSound()->playSound(kEntityCoudert, "Jac1505", kVolumeFull);
+	case kObjectCompartmentE:
+		if (_lastWarning[8] + 450 >= getState()->timeTicks) {
+			getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1500" : "Jac1500A", kVolumeFull);
 			break;
+		}
 
-		case kObjectCompartmentE:
-			if (_lastWarning[8] + 450 >= getState()->timeTicks) {
-				getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1500" : "Jac1500A", kVolumeFull);
-				break;
-			}
-
-			if (getProgress().field_40 || (getState()->time > kTime2115000 && getState()->time < kTime2133000)) {
-				getSound()->playSound(kEntityCoudert, "Jac1504B", kVolumeFull);
-				break;
-			}
-
-			if (getEntities()->isInsideCompartment(kEntityRebecca, kCarRedSleeping, kPosition_4840))
-				getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1500" : "Jac1500A", kVolumeFull);
-			else
-				getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1504" : "Jac1504A", kVolumeFull);
+		if (getProgress().field_40 || (getState()->time > kTime2115000 && getState()->time < kTime2133000)) {
+			getSound()->playSound(kEntityCoudert, "Jac1504B", kVolumeFull);
 			break;
+		}
 
-		case kObjectCompartmentF:
-			if (_lastWarning[9] + 450 >= getState()->timeTicks) {
-				getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1500" : "Jac1500A", kVolumeFull);
-				break;
-			}
+		if (getEntities()->isInsideCompartment(kEntityRebecca, kCarRedSleeping, kPosition_4840))
+			getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1500" : "Jac1500A", kVolumeFull);
+		else
+			getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1504" : "Jac1504A", kVolumeFull);
+		break;
 
-			if (getProgress().field_40 || (getState()->time > kTime2083500 && getState()->time < kTime2133000)) {
-				getSound()->playSound(kEntityCoudert, "Jac1503B", kVolumeFull);
-				break;
-			}
-
-			if (rnd(2) || getEntities()->isInsideCompartment(kEntityAnna, kCarRedSleeping, kPosition_4070))
-				getSound()->playSound(kEntityCoudert, "Jac1503A", kVolumeFull);
-			else
-				getSound()->playSound(kEntityCoudert, "Jac1503", kVolumeFull);
+	case kObjectCompartmentF:
+		if (_lastWarning[9] + 450 >= getState()->timeTicks) {
+			getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1500" : "Jac1500A", kVolumeFull);
 			break;
+		}
 
-		case kObjectCompartmentG:
-			if (_lastWarning[10] + 450 >= getState()->timeTicks) {
-				getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1500" : "Jac1500A", kVolumeFull);
-				break;
-			}
-
-			// BUG: the original game got isInsideCompartment() inverted
-			// Jac1502A is "the serbian gentleman is not in, monsier",
-			// Jac1502 is a generic response,
-			// so Coudert only says "Milos is not in" when Milos is actually in.
-			if (rnd(2) || getEntities()->isInsideCompartment(kEntityMilos, kCarRedSleeping, kPosition_3050))
-				getSound()->playSound(kEntityCoudert, "Jac1502", kVolumeFull);
-			else
-				getSound()->playSound(kEntityCoudert, "Jac1502A", kVolumeFull);
+		if (getProgress().field_40 || (getState()->time > kTime2083500 && getState()->time < kTime2133000)) {
+			getSound()->playSound(kEntityCoudert, "Jac1503B", kVolumeFull);
 			break;
+		}
 
-		case kObjectCompartmentH:
-			if (_lastWarning[11] + 450 >= getState()->timeTicks) {
-				getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1500" : "Jac1500A", kVolumeFull);
-				break;
-			}
+		if (rnd(2) || getEntities()->isInsideCompartment(kEntityAnna, kCarRedSleeping, kPosition_4070))
+			getSound()->playSound(kEntityCoudert, "Jac1503A", kVolumeFull);
+		else
+			getSound()->playSound(kEntityCoudert, "Jac1503", kVolumeFull);
+		break;
 
-			if (getEntities()->isInsideCompartment(kEntityIvo, kCarRedSleeping, kPosition_2740))
-				getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1500" : "Jac1500A", kVolumeFull);
-			else
-				getSound()->playSound(kEntityCoudert, "Jac1501", kVolumeFull);
+	case kObjectCompartmentG:
+		if (_lastWarning[10] + 450 >= getState()->timeTicks) {
+			getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1500" : "Jac1500A", kVolumeFull);
 			break;
+		}
+
+		// BUG: the original game got isInsideCompartment() inverted
+		// Jac1502A is "the serbian gentleman is not in, monsier",
+		// Jac1502 is a generic response,
+		// so Coudert only says "Milos is not in" when Milos is actually in.
+		if (rnd(2) || getEntities()->isInsideCompartment(kEntityMilos, kCarRedSleeping, kPosition_3050))
+			getSound()->playSound(kEntityCoudert, "Jac1502", kVolumeFull);
+		else
+			getSound()->playSound(kEntityCoudert, "Jac1502A", kVolumeFull);
+		break;
+
+	case kObjectCompartmentH:
+		if (_lastWarning[11] + 450 >= getState()->timeTicks) {
+			getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1500" : "Jac1500A", kVolumeFull);
+			break;
+		}
+
+		if (getEntities()->isInsideCompartment(kEntityIvo, kCarRedSleeping, kPosition_2740))
+			getSound()->playSound(kEntityCoudert, rnd(2) ? "Jac1500" : "Jac1500A", kVolumeFull);
+		else
+			getSound()->playSound(kEntityCoudert, "Jac1501", kVolumeFull);
+		break;
 	}
 
 	// Update ticks (Compartments A - H are indexes 4 - 11)
@@ -906,7 +908,7 @@ void SoundManager::excuseMe(EntityIndex entity, EntityIndex entity2, SoundFlag f
 		break;
 
 	case kEntityAugust:
-		switch(rnd(4)) {
+		switch (rnd(4)) {
 		default:
 			break;
 
@@ -933,7 +935,7 @@ void SoundManager::excuseMe(EntityIndex entity, EntityIndex entity2, SoundFlag f
 			playSound(kEntityPlayer, (rnd(2) ? "CON1111" : "CON1111A"), flag);
 		} else {
 			if (entity2 != kEntityPlayer || getProgress().jacket != kJacketGreen || !rnd(2)) {
-				switch(rnd(3)) {
+				switch (rnd(3)) {
 				default:
 					break;
 
@@ -964,7 +966,7 @@ void SoundManager::excuseMe(EntityIndex entity, EntityIndex entity2, SoundFlag f
 			playSound(kEntityPlayer, "JAC1111D", flag);
 		} else {
 			if (entity2 != kEntityPlayer || getProgress().jacket != kJacketGreen || !rnd(2)) {
-				switch(rnd(4)) {
+				switch (rnd(4)) {
 				default:
 					break;
 
@@ -996,7 +998,7 @@ void SoundManager::excuseMe(EntityIndex entity, EntityIndex entity2, SoundFlag f
 
 	case kEntityWaiter1:
 	case kEntityWaiter2:
-		switch(rnd(3)) {
+		switch (rnd(3)) {
 		default:
 			break;
 
@@ -1034,7 +1036,7 @@ void SoundManager::excuseMe(EntityIndex entity, EntityIndex entity2, SoundFlag f
 		if (Entities::isFemale(entity2)) {
 			playSound(kEntityPlayer, "ABB3002C", flag);
 		} else {
-			switch(rnd(3)) {
+			switch (rnd(3)) {
 			default:
 				break;
 
@@ -1054,7 +1056,7 @@ void SoundManager::excuseMe(EntityIndex entity, EntityIndex entity2, SoundFlag f
 		break;
 
 	case kEntityVesna:
-		switch(rnd(3)) {
+		switch (rnd(3)) {
 		default:
 			break;
 
@@ -1078,7 +1080,7 @@ void SoundManager::excuseMe(EntityIndex entity, EntityIndex entity2, SoundFlag f
 
 	case kEntityFrancois:
 	case kEntityMmeBoutarel:
-		switch(rnd(4)) {
+		switch (rnd(4)) {
 		default:
 			break;
 
@@ -1111,7 +1113,7 @@ void SoundManager::excuseMe(EntityIndex entity, EntityIndex entity2, SoundFlag f
 		break;
 
 	case kEntitySophie: {
-		switch(rnd(3)) {
+		switch (rnd(3)) {
 		default:
 			break;
 
@@ -1153,7 +1155,7 @@ void SoundManager::excuseMe(EntityIndex entity, EntityIndex entity2, SoundFlag f
 }
 
 void SoundManager::excuseMeCath() {
-	switch(rnd(3)) {
+	switch (rnd(3)) {
 	default:
 		playSound(kEntityPlayer, "CAT1126B");
 		break;
@@ -1169,7 +1171,7 @@ void SoundManager::excuseMeCath() {
 }
 
 const char *SoundManager::justCheckingCath() const {
-	switch(rnd(4)) {
+	switch (rnd(4)) {
 	default:
 		break;
 
@@ -1190,7 +1192,7 @@ const char *SoundManager::justCheckingCath() const {
 }
 
 const char *SoundManager::wrongDoorCath() const {
-	switch(rnd(5)) {
+	switch (rnd(5)) {
 	default:
 		break;
 
@@ -1214,7 +1216,7 @@ const char *SoundManager::wrongDoorCath() const {
 }
 
 const char *SoundManager::justAMinuteCath() const {
-	switch(rnd(3)) {
+	switch (rnd(3)) {
 	default:
 		break;
 
@@ -1225,7 +1227,7 @@ const char *SoundManager::justAMinuteCath() const {
 		return "CAT1521";
 
 	case 2:
-		return "CAT1125";    // ?? is this a bug in the original?
+		return "CAT1125"; // ?? is this a bug in the original?
 	}
 
 	return "CAT1520";
@@ -1251,8 +1253,8 @@ SoundFlag SoundManager::getSoundFlag(EntityIndex entity) const {
 
 	if (getEntityData(kEntityPlayer)->location == kLocationOutsideTrain) {
 		if (getEntityData(kEntityPlayer)->car != kCarKronos
-		&& !getEntities()->isOutsideAlexeiWindow()
-		&& !getEntities()->isOutsideAnnaWindow())
+		    && !getEntities()->isOutsideAlexeiWindow()
+		    && !getEntities()->isOutsideAnnaWindow())
 			return kVolumeNone;
 
 		return (SoundFlag)(ret / 6);
@@ -1273,7 +1275,7 @@ SoundFlag SoundManager::getSoundFlag(EntityIndex entity) const {
 			ret = (SoundFlag)(ret / 2);
 
 		if (getEntityData(kEntityPlayer)->location == kLocationInsideCompartment
-		&& (getEntityData(entity)->location != kLocationInsideCompartment || !getEntities()->isDistanceBetweenEntities(kEntityPlayer, entity, 400)))
+		    && (getEntityData(entity)->location != kLocationInsideCompartment || !getEntities()->isDistanceBetweenEntities(kEntityPlayer, entity, 400)))
 			ret = (SoundFlag)(ret / 2);
 		break;
 
@@ -1295,9 +1297,9 @@ void SoundManager::playAmbientSound(int param) {
 	SoundEntry *entry = _queue->getEntry(kSoundTagAmbient);
 
 	static const EntityPosition positions[8] = { kPosition_8200, kPosition_7500,
-	                                             kPosition_6470, kPosition_5790,
-	                                             kPosition_4840, kPosition_4070,
-	                                             kPosition_3050, kPosition_2740 };
+		                                           kPosition_6470, kPosition_5790,
+		                                           kPosition_4840, kPosition_4070,
+		                                           kPosition_3050, kPosition_2740 };
 
 	byte numLoops[8];
 	numLoops[1] = 4;

@@ -20,7 +20,7 @@
  *
  */
 
- // Console module header file
+// Console module header file
 
 #ifndef SCI_CONSOLE_H
 #define SCI_CONSOLE_H
@@ -34,7 +34,7 @@ class SciEngine;
 struct List;
 
 reg_t disassemble(EngineState *s, reg_t pos, const Object *obj, bool printBWTag, bool printBytecode);
-bool isJumpOpcode(EngineState *s, reg_t pos, reg_t& jumpOffset);
+bool isJumpOpcode(EngineState *s, reg_t pos, reg_t &jumpOffset);
 
 class Console : public GUI::Debugger {
 public:
@@ -48,7 +48,7 @@ private:
 	// General
 	bool cmdHelp(int argc, const char **argv);
 	// Kernel
-//	bool cmdClasses(int argc, const char **argv);	// TODO
+	//	bool cmdClasses(int argc, const char **argv);	// TODO
 	bool cmdOpcodes(int argc, const char **argv);
 	bool cmdSelector(int argc, const char **argv);
 	bool cmdSelectors(int argc, const char **argv);

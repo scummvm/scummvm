@@ -20,18 +20,18 @@
  *
  */
 
+#include "titanic/core/project_item.h"
+#include "common/file.h"
+#include "common/savefile.h"
+#include "graphics/scaler.h"
+#include "graphics/thumbnail.h"
 #include "titanic/core/dont_save_file_item.h"
 #include "titanic/core/node_item.h"
-#include "titanic/core/project_item.h"
 #include "titanic/core/view_item.h"
 #include "titanic/events.h"
 #include "titanic/game_manager.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/titanic.h"
-#include "common/file.h"
-#include "common/savefile.h"
-#include "graphics/scaler.h"
-#include "graphics/thumbnail.h"
 
 namespace Titanic {
 
@@ -72,8 +72,11 @@ void CFileListItem::load(SimpleFile *file) {
 
 /*------------------------------------------------------------------------*/
 
-CProjectItem::CProjectItem() : _nextRoomNumber(0), _nextMessageNumber(0),
-		_nextObjectNumber(0), _gameManager(nullptr) {
+CProjectItem::CProjectItem()
+  : _nextRoomNumber(0)
+  , _nextMessageNumber(0)
+  , _nextObjectNumber(0)
+  , _gameManager(nullptr) {
 }
 
 void CProjectItem::save(SimpleFile *file, int indent) {
@@ -178,7 +181,7 @@ void CProjectItem::loadGame(int slotId) {
 	// Open either an existing savegame slot or the new game template
 	if (slotId >= 0) {
 		Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
-			g_vm->generateSaveName(slotId));
+		  g_vm->generateSaveName(slotId));
 		file.open(saveFile);
 	} else {
 		Common::File *newFile = new Common::File();
@@ -222,7 +225,7 @@ void CProjectItem::loadGame(int slotId) {
 void CProjectItem::saveGame(int slotId, const CString &desc) {
 	CompressedFile file;
 	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(
-		g_vm->generateSaveName(slotId), false);
+	  g_vm->generateSaveName(slotId), false);
 	file.open(saveFile);
 
 	// Signal the game is being saved
@@ -265,8 +268,7 @@ CProjectItem *CProjectItem::loadData(SimpleFile *file) {
 			// Move along, nothing needed
 		} else if (entryString == "UP") {
 			// Move up
-			if (parent == nullptr ||
-				(parent = parent->getParent()) == nullptr)
+			if (parent == nullptr || (parent = parent->getParent()) == nullptr)
 				break;
 		} else if (entryString == "DOWN") {
 			// Move down
@@ -397,9 +399,9 @@ CRoomItem *CProjectItem::findNextRoom(CRoomItem *priorRoom) const {
 
 CTreeItem *CProjectItem::findSiblingChildInstanceOf(ClassDef *classDef, CTreeItem *startItem) const {
 	for (CTreeItem *treeItem = startItem->getParent()->getNextSibling();
-			treeItem; treeItem = treeItem->getNextSibling()) {
+	     treeItem; treeItem = treeItem->getNextSibling()) {
 		for (CTreeItem *childItem = treeItem->getFirstChild();
-				childItem; childItem = childItem->getNextSibling()) {
+		     childItem; childItem = childItem->getNextSibling()) {
 			if (childItem->isInstanceOf(classDef))
 				return childItem;
 		}
@@ -443,9 +445,9 @@ CViewItem *CProjectItem::findView(int roomNumber, int nodeNumber, int viewNumber
 	CNodeItem *nodeItem = nullptr;
 
 	CNodeItem *nItem = dynamic_cast<CNodeItem *>(
-		roomItem->findChildInstanceOf(CNodeItem::_type));
+	  roomItem->findChildInstanceOf(CNodeItem::_type));
 	for (; nItem && !nodeItem; nItem = dynamic_cast<CNodeItem *>(
-			findNextInstanceOf(CNodeItem::_type, nItem))) {
+	                             findNextInstanceOf(CNodeItem::_type, nItem))) {
 		if (nItem->_nodeNumber == nodeNumber)
 			nodeItem = nItem;
 	}
@@ -454,9 +456,9 @@ CViewItem *CProjectItem::findView(int roomNumber, int nodeNumber, int viewNumber
 
 	// Scan for the specified view within the node
 	CViewItem *viewItem = dynamic_cast<CViewItem *>(
-		nodeItem->findChildInstanceOf(CViewItem::_type));
+	  nodeItem->findChildInstanceOf(CViewItem::_type));
 	for (; viewItem; viewItem = dynamic_cast<CViewItem *>(
-			findNextInstanceOf(CViewItem::_type, viewItem))) {
+	                   findNextInstanceOf(CViewItem::_type, viewItem))) {
 		if (viewItem->_viewNumber == viewNumber)
 			return viewItem;
 	}
@@ -472,7 +474,7 @@ SaveStateList CProjectItem::getSavegameList(const Common::String &target) {
 	TitanicSavegameHeader header;
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());   // Sort to get the files in numerical order
+	sort(filenames.begin(), filenames.end()); // Sort to get the files in numerical order
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -516,7 +518,8 @@ WARN_UNUSED_RESULT bool CProjectItem::readSavegameHeader(SimpleFile *file, Titan
 	// Read in the string
 	header._saveName.clear();
 	char ch;
-	while ((ch = (char)file->readByte()) != '\0') header._saveName += ch;
+	while ((ch = (char)file->readByte()) != '\0')
+		header._saveName += ch;
 
 	// Get the thumbnail
 	if (!Graphics::loadThumbnail(*file, header._thumbnail, skipThumbnail))
@@ -574,15 +577,13 @@ CViewItem *CProjectItem::parseView(const CString &viewString) {
 
 	if (firstIndex == -1) {
 		roomName = viewString;
-	}
-	else {
+	} else {
 		roomName = viewString.left(firstIndex);
 
 		if (lastIndex > firstIndex) {
 			nodeName = viewString.mid(firstIndex + 1, lastIndex - firstIndex - 1);
 			viewName = viewString.mid(lastIndex + 1);
-		}
-		else {
+		} else {
 			nodeName = viewString.mid(firstIndex + 1);
 		}
 	}
@@ -599,8 +600,9 @@ CViewItem *CProjectItem::parseView(const CString &viewString) {
 		if (room->getName().compareToIgnoreCase(roomName)) {
 			// Scan for the correct room
 			for (room = project->findFirstRoom();
-			room && room->getName().compareToIgnoreCase(roomName);
-				room = project->findNextRoom(room));
+			     room && room->getName().compareToIgnoreCase(roomName);
+			     room = project->findNextRoom(room))
+				;
 		}
 	}
 	if (!room)
@@ -647,6 +649,5 @@ bool CProjectItem::changeView(const CString &viewName, const CString &clipName) 
 	gameManager->_gameState.changeView(newView, clip);
 	return true;
 }
-
 
 } // End of namespace Titanic

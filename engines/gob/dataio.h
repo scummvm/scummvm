@@ -23,11 +23,11 @@
 #ifndef GOB_DATAIO_H
 #define GOB_DATAIO_H
 
-#include "common/endian.h"
-#include "common/str.h"
-#include "common/hashmap.h"
 #include "common/array.h"
+#include "common/endian.h"
 #include "common/file.h"
+#include "common/hashmap.h"
+#include "common/str.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -70,7 +70,7 @@ private:
 		Common::String name;
 		uint32 size;
 		uint32 offset;
-		uint8  compression;
+		uint8 compression;
 
 		Archive *archive;
 
@@ -82,7 +82,7 @@ private:
 
 	struct Archive {
 		Common::String name;
-		Common::File   file;
+		Common::File file;
 
 		FileMap files;
 
@@ -104,7 +104,7 @@ private:
 	static uint32 getSizeChunks(Common::SeekableReadStream &src);
 
 	static void unpackChunks(Common::SeekableReadStream &src, byte *dest, uint32 size);
-	static void unpackChunk (Common::SeekableReadStream &src, byte *dest, uint32 size);
+	static void unpackChunk(Common::SeekableReadStream &src, byte *dest, uint32 size);
 };
 
 } // End of namespace Gob

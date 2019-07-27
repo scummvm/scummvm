@@ -29,10 +29,10 @@
  *
  */
 
-#include "sword25/kernel/kernel.h"
-#include "sword25/kernel/inputpersistenceblock.h"
-#include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/math/walkregion.h"
+#include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/math/line.h"
 
 namespace Sword25 {
@@ -43,8 +43,8 @@ WalkRegion::WalkRegion() {
 	_type = RT_WALKREGION;
 }
 
-WalkRegion::WalkRegion(InputPersistenceBlock &reader, uint handle) :
-	Region(reader, handle) {
+WalkRegion::WalkRegion(InputPersistenceBlock &reader, uint handle)
+  : Region(reader, handle) {
 	_type = RT_WALKREGION;
 	unpersist(reader);
 }
@@ -54,7 +54,8 @@ WalkRegion::~WalkRegion() {
 
 bool WalkRegion::init(const Polygon &contour, const Common::Array<Polygon> *pHoles) {
 	// Default initialisation of the region
-	if (!Region::init(contour, pHoles)) return false;
+	if (!Region::init(contour, pHoles))
+		return false;
 
 	// Prepare structures for pathfinding
 	initNodeVector();
@@ -73,7 +74,8 @@ bool WalkRegion::queryPath(Vertex startPoint, Vertex endPoint, BS_Path &path) {
 
 	// Ensure that the start and finish are valid and find new start points if either
 	// are outside the polygon
-	if (!checkAndPrepareStartAndEnd(startPoint, endPoint)) return false;
+	if (!checkAndPrepareStartAndEnd(startPoint, endPoint))
+		return false;
 
 	// If between the start and point a line of sight exists, then it can be returned.
 	if (isLineOfSight(startPoint, endPoint)) {
@@ -90,10 +92,13 @@ struct DijkstraNode {
 	typedef Container::iterator Iter;
 	typedef Container::const_iterator ConstIter;
 
-	DijkstraNode() : parentIter(), cost(Infinity), chosen(false) {}
-	ConstIter   parentIter;
-	int         cost;
-	bool        chosen;
+	DijkstraNode()
+	  : parentIter()
+	  , cost(Infinity)
+	  , chosen(false) {}
+	ConstIter parentIter;
+	int cost;
+	bool chosen;
 };
 
 static void initDijkstraNodes(DijkstraNode::Container &dijkstraNodes, const Region &region,
@@ -104,9 +109,10 @@ static void initDijkstraNodes(DijkstraNode::Container &dijkstraNodes, const Regi
 	// Initialize all the nodes which are visible from the starting node
 	DijkstraNode::Iter dijkstraIter = dijkstraNodes.begin();
 	for (Common::Array<Vertex>::const_iterator nodesIter = nodes.begin();
-	        nodesIter != nodes.end(); nodesIter++, dijkstraIter++) {
+	     nodesIter != nodes.end(); nodesIter++, dijkstraIter++) {
 		(*dijkstraIter).parentIter = dijkstraNodes.end();
-		if (region.isLineOfSight(*nodesIter, start))(*dijkstraIter).cost = (*nodesIter).distance(start);
+		if (region.isLineOfSight(*nodesIter, start))
+			(*dijkstraIter).cost = (*nodesIter).distance(start);
 	}
 	assert(dijkstraIter == dijkstraNodes.end());
 }
@@ -126,7 +132,7 @@ static DijkstraNode::Iter chooseClosestNode(DijkstraNode::Container &nodes) {
 }
 
 static void relaxNodes(DijkstraNode::Container &nodes,
-                       const Common::Array< Common::Array<int> > &visibilityMatrix,
+                       const Common::Array<Common::Array<int>> &visibilityMatrix,
                        const DijkstraNode::ConstIter &curNodeIter) {
 	// All the successors of the current node that have not been chosen will be
 	// inserted into the boundary node list, and the cost will be updated if
@@ -159,7 +165,7 @@ static void relaxEndPoint(const Vertex &curNodePos,
 	}
 }
 
-template<class T>
+template <class T>
 void reverseArray(Common::Array<T> &arr) {
 	const uint size = arr.size();
 	if (size < 2)
@@ -248,7 +254,7 @@ void WalkRegion::initNodeVector() {
 
 void WalkRegion::computeVisibilityMatrix() {
 	// Initialize visibility matrix
-	_visibilityMatrix = Common::Array< Common::Array <int> >();
+	_visibilityMatrix = Common::Array<Common::Array<int>>();
 	for (uint idx = 0; idx < _nodes.size(); ++idx) {
 		Common::Array<int> arr;
 		for (uint idx2 = 0; idx2 < _nodes.size(); ++idx2)
@@ -259,7 +265,7 @@ void WalkRegion::computeVisibilityMatrix() {
 
 	// Calculate visibility been vertecies
 	for (uint j = 0; j < _nodes.size(); ++j) {
-		for (uint i = j; i < _nodes.size(); ++i)   {
+		for (uint i = j; i < _nodes.size(); ++i) {
 			if (isLineOfSight(_nodes[i], _nodes[j])) {
 				// There is a line of sight, so save the distance between the two
 				int distance = _nodes[i].distance(_nodes[j]);
@@ -281,8 +287,8 @@ bool WalkRegion::checkAndPrepareStartAndEnd(Vertex &start, Vertex &end) const {
 		// Check to make sure the point is really in the region. If not, stop with an error
 		if (!isPointInRegion(newStart)) {
 			error("Constructed startpoint ((%d,%d) from (%d,%d)) is not inside the region.",
-			               newStart.x, newStart.y,
-			               start.x, start.y);
+			      newStart.x, newStart.y,
+			      start.x, start.y);
 			return false;
 		}
 
@@ -297,8 +303,8 @@ bool WalkRegion::checkAndPrepareStartAndEnd(Vertex &start, Vertex &end) const {
 		// Make sure that the determined point is really within the region
 		if (!isPointInRegion(newEnd)) {
 			error("Constructed endpoint ((%d,%d) from (%d,%d)) is not inside the region.",
-			               newEnd.x, newEnd.y,
-			               end.x, end.y);
+			      newEnd.x, newEnd.y,
+			      end.x, end.y);
 			return false;
 		}
 
@@ -338,7 +344,7 @@ bool WalkRegion::persist(OutputPersistenceBlock &writer) {
 
 	// Persist the visibility matrix
 	writer.write((uint32)_visibilityMatrix.size());
-	Common::Array< Common::Array<int> >::const_iterator rowIter = _visibilityMatrix.begin();
+	Common::Array<Common::Array<int>>::const_iterator rowIter = _visibilityMatrix.begin();
 	while (rowIter != _visibilityMatrix.end()) {
 		writer.write((uint32)rowIter->size());
 		Common::Array<int>::const_iterator colIter = rowIter->begin();
@@ -376,7 +382,7 @@ bool WalkRegion::unpersist(InputPersistenceBlock &reader) {
 	reader.read(rowCount);
 	_visibilityMatrix.clear();
 	_visibilityMatrix.resize(rowCount);
-	Common::Array< Common::Array<int> >::iterator rowIter = _visibilityMatrix.begin();
+	Common::Array<Common::Array<int>>::iterator rowIter = _visibilityMatrix.begin();
 	while (rowIter != _visibilityMatrix.end()) {
 		uint32 colCount;
 		reader.read(colCount);

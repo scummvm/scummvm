@@ -26,18 +26,18 @@
 /* Header file for main unit of ARUN Alan System interpreter */
 
 #include "common/stream.h"
-#include "glk/alan3/types.h"
 #include "glk/alan3/acode.h"
+#include "glk/alan3/types.h"
 
 namespace Glk {
 namespace Alan3 {
 
-extern Common::SeekableReadStream *codfil;
+	extern Common::SeekableReadStream *codfil;
 
-extern VerbEntry *vrbs;     // Verb table pointer
+	extern VerbEntry *vrbs; // Verb table pointer
 
-extern void run();
-extern void usage();
+	extern void run();
+	extern void usage();
 
 } // End of namespace Alan3
 } // End of namespace Glk

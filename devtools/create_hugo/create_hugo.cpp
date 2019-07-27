@@ -28,15 +28,15 @@
 // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
 #ifdef main
-#undef main
+#	undef main
 #endif // main
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "common/scummsys.h"
 #include "common/events.h"
+#include "common/scummsys.h"
 
 #include "enums.h"
 
@@ -44,11 +44,11 @@
 #include "staticdata.h"
 #include "staticdisplay.h"
 #include "staticengine.h"
+#include "staticfont.h"
 #include "staticintro.h"
 #include "staticmouse.h"
 #include "staticparser.h"
 #include "staticutil.h"
-#include "staticfont.h"
 
 static void writeByte(FILE *fp, uint8 b) {
 	fwrite(&b, 1, 1, fp);
@@ -446,7 +446,7 @@ int main(int argc, char *argv[]) {
 	for (int j = 0; j < nbrElem; j++) {
 		nbrSubElem = 1;
 		for (int k = 0; backgroundList_1w[j][k].verbIndex != 0; k++)
-			nbrSubElem ++;
+			nbrSubElem++;
 		writeBackgroundArray(outFile, backgroundList_1w[j], nbrSubElem);
 	}
 
@@ -456,7 +456,7 @@ int main(int argc, char *argv[]) {
 	for (int j = 0; j < nbrElem; j++) {
 		nbrSubElem = 1;
 		for (int k = 0; backgroundList_2w[j][k].verbIndex != 0; k++)
-			nbrSubElem ++;
+			nbrSubElem++;
 		writeBackgroundArray(outFile, backgroundList_2w[j], nbrSubElem);
 	}
 
@@ -466,7 +466,7 @@ int main(int argc, char *argv[]) {
 	for (int j = 0; j < nbrElem; j++) {
 		nbrSubElem = 1;
 		for (int k = 0; backgroundList_3w[j][k].verbIndex != 0; k++)
-			nbrSubElem ++;
+			nbrSubElem++;
 		writeBackgroundArray(outFile, backgroundList_3w[j], nbrSubElem);
 	}
 
@@ -476,7 +476,7 @@ int main(int argc, char *argv[]) {
 	for (int j = 0; j < nbrElem; j++) {
 		nbrSubElem = 1;
 		for (int k = 0; backgroundList_1d[j][k].verbIndex != 0; k++)
-			nbrSubElem ++;
+			nbrSubElem++;
 		writeBackgroundArray(outFile, backgroundList_1d[j], nbrSubElem);
 	}
 
@@ -486,7 +486,7 @@ int main(int argc, char *argv[]) {
 	for (int j = 0; j < nbrElem; j++) {
 		nbrSubElem = 1;
 		for (int k = 0; backgroundList_2d[j][k].verbIndex != 0; k++)
-			nbrSubElem ++;
+			nbrSubElem++;
 		writeBackgroundArray(outFile, backgroundList_2d[j], nbrSubElem);
 	}
 
@@ -496,7 +496,7 @@ int main(int argc, char *argv[]) {
 	for (int j = 0; j < nbrElem; j++) {
 		nbrSubElem = 1;
 		for (int k = 0; backgroundList_3d[j][k].verbIndex != 0; k++)
-			nbrSubElem ++;
+			nbrSubElem++;
 		writeBackgroundArray(outFile, backgroundList_3d[j], nbrSubElem);
 	}
 
@@ -642,7 +642,7 @@ int main(int argc, char *argv[]) {
 	writeUint16BE(outFile, LASTOBJ_1w);
 	writeUint16BE(outFile, LASTOBJ_2w);
 	writeUint16BE(outFile, LASTOBJ_3w);
-	writeUint16BE(outFile, LASTOBJ_1d);   //(not set in original, as Hugo1 DOS doesn't use a DAT file to pack the screens)
+	writeUint16BE(outFile, LASTOBJ_1d); //(not set in original, as Hugo1 DOS doesn't use a DAT file to pack the screens)
 	writeUint16BE(outFile, LASTOBJ_2d);
 	writeUint16BE(outFile, LASTOBJ_3d);
 
@@ -815,7 +815,7 @@ int main(int argc, char *argv[]) {
 	writeUint16BE(outFile, LASTOBJ_2w);
 	writeUint16BE(outFile, NUM_PICS_3w);
 
-	writeUint16BE(outFile, NUM_PICS_1d);   //(not set in original, as Hugo1 DOS doesn't use a DAT file to pack the screens)
+	writeUint16BE(outFile, NUM_PICS_1d); //(not set in original, as Hugo1 DOS doesn't use a DAT file to pack the screens)
 	writeUint16BE(outFile, LASTOBJ_2d);
 	writeUint16BE(outFile, NUM_PICS_3d);
 
@@ -858,7 +858,7 @@ int main(int argc, char *argv[]) {
 	//bitmap images for menu
 	writeUint16BE(outFile, 18);
 
-	FILE* src_file;
+	FILE *src_file;
 	char buf[2];
 	src_file = fopen("btn_1.bmp", "rb");
 	if (src_file == NULL) {
@@ -866,7 +866,7 @@ int main(int argc, char *argv[]) {
 		fclose(outFile);
 		return -1;
 	}
-	fseek(src_file , 0 , SEEK_END);
+	fseek(src_file, 0, SEEK_END);
 	nbrElem = ftell(src_file);
 	writeUint16BE(outFile, nbrElem);
 	rewind(src_file);
@@ -882,7 +882,7 @@ int main(int argc, char *argv[]) {
 		fclose(outFile);
 		return -1;
 	}
-	fseek(src_file , 0 , SEEK_END);
+	fseek(src_file, 0, SEEK_END);
 	nbrElem = ftell(src_file);
 	writeUint16BE(outFile, nbrElem);
 	rewind(src_file);
@@ -898,7 +898,7 @@ int main(int argc, char *argv[]) {
 		fclose(outFile);
 		return -1;
 	}
-	fseek(src_file , 0 , SEEK_END);
+	fseek(src_file, 0, SEEK_END);
 	nbrElem = ftell(src_file);
 	writeUint16BE(outFile, nbrElem);
 	rewind(src_file);
@@ -914,7 +914,7 @@ int main(int argc, char *argv[]) {
 		fclose(outFile);
 		return -1;
 	}
-	fseek(src_file , 0 , SEEK_END);
+	fseek(src_file, 0, SEEK_END);
 	nbrElem = ftell(src_file);
 	writeUint16BE(outFile, nbrElem);
 	rewind(src_file);
@@ -930,7 +930,7 @@ int main(int argc, char *argv[]) {
 		fclose(outFile);
 		return -1;
 	}
-	fseek(src_file , 0 , SEEK_END);
+	fseek(src_file, 0, SEEK_END);
 	nbrElem = ftell(src_file);
 	writeUint16BE(outFile, nbrElem);
 	rewind(src_file);
@@ -946,7 +946,7 @@ int main(int argc, char *argv[]) {
 		fclose(outFile);
 		return -1;
 	}
-	fseek(src_file , 0 , SEEK_END);
+	fseek(src_file, 0, SEEK_END);
 	nbrElem = ftell(src_file);
 	writeUint16BE(outFile, nbrElem);
 	rewind(src_file);
@@ -962,7 +962,7 @@ int main(int argc, char *argv[]) {
 		fclose(outFile);
 		return -1;
 	}
-	fseek(src_file , 0 , SEEK_END);
+	fseek(src_file, 0, SEEK_END);
 	nbrElem = ftell(src_file);
 	writeUint16BE(outFile, nbrElem);
 	rewind(src_file);
@@ -978,7 +978,7 @@ int main(int argc, char *argv[]) {
 		fclose(outFile);
 		return -1;
 	}
-	fseek(src_file , 0 , SEEK_END);
+	fseek(src_file, 0, SEEK_END);
 	nbrElem = ftell(src_file);
 	writeUint16BE(outFile, nbrElem);
 	rewind(src_file);
@@ -994,7 +994,7 @@ int main(int argc, char *argv[]) {
 		fclose(outFile);
 		return -1;
 	}
-	fseek(src_file , 0 , SEEK_END);
+	fseek(src_file, 0, SEEK_END);
 	nbrElem = ftell(src_file);
 	writeUint16BE(outFile, nbrElem);
 	rewind(src_file);
@@ -1010,7 +1010,7 @@ int main(int argc, char *argv[]) {
 		fclose(outFile);
 		return -1;
 	}
-	fseek(src_file , 0 , SEEK_END);
+	fseek(src_file, 0, SEEK_END);
 	nbrElem = ftell(src_file);
 	writeUint16BE(outFile, nbrElem);
 	rewind(src_file);
@@ -1026,7 +1026,7 @@ int main(int argc, char *argv[]) {
 		fclose(outFile);
 		return -1;
 	}
-	fseek(src_file , 0 , SEEK_END);
+	fseek(src_file, 0, SEEK_END);
 	nbrElem = ftell(src_file);
 	writeUint16BE(outFile, nbrElem);
 	rewind(src_file);
@@ -1042,7 +1042,7 @@ int main(int argc, char *argv[]) {
 		fclose(outFile);
 		return -1;
 	}
-	fseek(src_file , 0 , SEEK_END);
+	fseek(src_file, 0, SEEK_END);
 	nbrElem = ftell(src_file);
 	writeUint16BE(outFile, nbrElem);
 	rewind(src_file);
@@ -1058,7 +1058,7 @@ int main(int argc, char *argv[]) {
 		fclose(outFile);
 		return -1;
 	}
-	fseek(src_file , 0 , SEEK_END);
+	fseek(src_file, 0, SEEK_END);
 	nbrElem = ftell(src_file);
 	writeUint16BE(outFile, nbrElem);
 	rewind(src_file);
@@ -1074,7 +1074,7 @@ int main(int argc, char *argv[]) {
 		fclose(outFile);
 		return -1;
 	}
-	fseek(src_file , 0 , SEEK_END);
+	fseek(src_file, 0, SEEK_END);
 	nbrElem = ftell(src_file);
 	writeUint16BE(outFile, nbrElem);
 	rewind(src_file);
@@ -1090,7 +1090,7 @@ int main(int argc, char *argv[]) {
 		fclose(outFile);
 		return -1;
 	}
-	fseek(src_file , 0 , SEEK_END);
+	fseek(src_file, 0, SEEK_END);
 	nbrElem = ftell(src_file);
 	writeUint16BE(outFile, nbrElem);
 	rewind(src_file);
@@ -1106,7 +1106,7 @@ int main(int argc, char *argv[]) {
 		fclose(outFile);
 		return -1;
 	}
-	fseek(src_file , 0 , SEEK_END);
+	fseek(src_file, 0, SEEK_END);
 	nbrElem = ftell(src_file);
 	writeUint16BE(outFile, nbrElem);
 	rewind(src_file);
@@ -1122,7 +1122,7 @@ int main(int argc, char *argv[]) {
 		fclose(outFile);
 		return -1;
 	}
-	fseek(src_file , 0 , SEEK_END);
+	fseek(src_file, 0, SEEK_END);
 	nbrElem = ftell(src_file);
 	writeUint16BE(outFile, nbrElem);
 	rewind(src_file);
@@ -1138,7 +1138,7 @@ int main(int argc, char *argv[]) {
 		fclose(outFile);
 		return -1;
 	}
-	fseek(src_file , 0 , SEEK_END);
+	fseek(src_file, 0, SEEK_END);
 	nbrElem = ftell(src_file);
 	writeUint16BE(outFile, nbrElem);
 	rewind(src_file);
@@ -1249,7 +1249,7 @@ void writeCmdArray(FILE *outFile, const cmd *cmdList[], int nbrElem) {
 	for (int i = 0; i < nbrElem; i++) {
 		nbrSubElem = 1;
 		for (int j = 0; cmdList[i][j].verbIndex != 0; j++)
-			nbrSubElem ++;
+			nbrSubElem++;
 		writeUint16BE(outFile, nbrSubElem);
 		for (int j = 0; j < nbrSubElem; j++) {
 			writeUint16BE(outFile, cmdList[i][j].verbIndex);
@@ -1274,7 +1274,7 @@ void writeScreenActs(FILE *outFile, const uint16 *screenActs[], int nbrElem) {
 		else {
 			nbrSubElem = 1;
 			for (int j = 0; screenActs[i][j] != 0; j++)
-				nbrSubElem ++;
+				nbrSubElem++;
 			writeUint16BE(outFile, nbrSubElem);
 			for (int j = 0; j < nbrSubElem; j++)
 				writeUint16BE(outFile, screenActs[i][j]);
@@ -1294,7 +1294,7 @@ void writeObjectArray(FILE *outFile, const object_t objects[], int nbrElem) {
 		else {
 			nbrSubElem = 1;
 			for (int j = 0; objects[i].stateDataIndex[j] != 0; j++)
-				nbrSubElem ++;
+				nbrSubElem++;
 			writeUint16BE(outFile, nbrSubElem);
 			for (int j = 0; j < nbrSubElem; j++)
 				writeUint16BE(outFile, objects[i].stateDataIndex[j]);
@@ -1304,10 +1304,10 @@ void writeObjectArray(FILE *outFile, const object_t objects[], int nbrElem) {
 		writeSint16BE(outFile, objects[i].vyPath);
 		writeUint16BE(outFile, objects[i].actIndex);
 		writeByte(outFile, objects[i].seqNumb);
-// curr_seq_p is skipped: always equal to zero during initialization
+		// curr_seq_p is skipped: always equal to zero during initialization
 		for (int j = 0; j < objects[i].seqNumb; j++)
 			writeUint16BE(outFile, objects[i].seqList[j].imageNbr);
-// seq_list[].seq_p is always null during initialization, thus skipped
+		// seq_list[].seq_p is always null during initialization, thus skipped
 		writeByte(outFile, objects[i].cycling);
 		writeByte(outFile, objects[i].cycleNumb);
 		writeByte(outFile, objects[i].frameInterval);
@@ -1347,277 +1347,277 @@ void writeActListArray(FILE *outFile, const actList actListArr[], int nbrElem) {
 			;
 		writeUint16BE(outFile, nbrSubElem);
 		for (int j = 0; j < nbrSubElem; j++) {
-			subElemType = ((act *) actListArr[i][j])->a0.actType;
+			subElemType = ((act *)actListArr[i][j])->a0.actType;
 			writeByte(outFile, subElemType);
 			switch (subElemType) {
 			case ANULL: // -1
 				break;
-			case ASCHEDULE:          // 0
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a0.timer);
-				writeUint16BE(outFile, ((act *) actListArr[i][j])->a0.actIndex);
+			case ASCHEDULE: // 0
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a0.timer);
+				writeUint16BE(outFile, ((act *)actListArr[i][j])->a0.actIndex);
 				break;
-			case START_OBJ:          // 1
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a1.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a1.objNumb);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a1.cycleNumb);
-				writeByte(outFile, ((act *) actListArr[i][j])->a1.cycle);
+			case START_OBJ: // 1
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a1.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a1.objNumb);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a1.cycleNumb);
+				writeByte(outFile, ((act *)actListArr[i][j])->a1.cycle);
 				break;
-			case INIT_OBJXY:         // 2
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a2.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a2.objNumb);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a2.x);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a2.y);
+			case INIT_OBJXY: // 2
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a2.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a2.objNumb);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a2.x);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a2.y);
 				break;
-			case PROMPT:             // 3
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a3.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a3.promptIndex);
-				for (nbrCpt = 0; ((act *) actListArr[i][j])->a3.responsePtr[nbrCpt] != -1; nbrCpt++)
+			case PROMPT: // 3
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a3.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a3.promptIndex);
+				for (nbrCpt = 0; ((act *)actListArr[i][j])->a3.responsePtr[nbrCpt] != -1; nbrCpt++)
 					;
 				nbrCpt++;
 				writeUint16BE(outFile, nbrCpt);
 				for (int k = 0; k < nbrCpt; k++)
-					writeSint16BE(outFile, ((act *) actListArr[i][j])->a3.responsePtr[k]);
-				writeUint16BE(outFile, ((act *) actListArr[i][j])->a3.actPassIndex);
-				writeUint16BE(outFile, ((act *) actListArr[i][j])->a3.actFailIndex);
-				writeByte(outFile, (((act *) actListArr[i][j])->a3.encoded) ? 1 : 0);
+					writeSint16BE(outFile, ((act *)actListArr[i][j])->a3.responsePtr[k]);
+				writeUint16BE(outFile, ((act *)actListArr[i][j])->a3.actPassIndex);
+				writeUint16BE(outFile, ((act *)actListArr[i][j])->a3.actFailIndex);
+				writeByte(outFile, (((act *)actListArr[i][j])->a3.encoded) ? 1 : 0);
 				break;
-			case BKGD_COLOR:         // 4
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a4.timer);
-				writeUint32BE(outFile, ((act *) actListArr[i][j])->a4.newBkgColor);
+			case BKGD_COLOR: // 4
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a4.timer);
+				writeUint32BE(outFile, ((act *)actListArr[i][j])->a4.newBkgColor);
 				break;
-			case INIT_OBJVXY:        // 5
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a5.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a5.objNumb);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a5.vx);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a5.vy);
+			case INIT_OBJVXY: // 5
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a5.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a5.objNumb);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a5.vx);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a5.vy);
 				break;
-			case INIT_CARRY:         // 6
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a6.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a6.objNumb);
-				writeByte(outFile, (((act *) actListArr[i][j])->a6.carriedFl) ? 1 : 0);
+			case INIT_CARRY: // 6
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a6.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a6.objNumb);
+				writeByte(outFile, (((act *)actListArr[i][j])->a6.carriedFl) ? 1 : 0);
 				break;
-			case INIT_HF_COORD:      // 7
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a7.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a7.objNumb);
+			case INIT_HF_COORD: // 7
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a7.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a7.objNumb);
 				break;
-			case NEW_SCREEN:         // 8
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a8.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a8.screenIndex);
+			case NEW_SCREEN: // 8
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a8.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a8.screenIndex);
 				break;
-			case INIT_OBJSTATE:      // 9
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a9.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a9.objNumb);
-				writeByte(outFile, ((act *) actListArr[i][j])->a9.newState);
+			case INIT_OBJSTATE: // 9
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a9.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a9.objNumb);
+				writeByte(outFile, ((act *)actListArr[i][j])->a9.newState);
 				break;
-			case INIT_PATH:          // 10
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a10.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a10.objNumb);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a10.newPathType);
-				writeByte(outFile, ((act *) actListArr[i][j])->a10.vxPath);
-				writeByte(outFile, ((act *) actListArr[i][j])->a10.vyPath);
+			case INIT_PATH: // 10
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a10.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a10.objNumb);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a10.newPathType);
+				writeByte(outFile, ((act *)actListArr[i][j])->a10.vxPath);
+				writeByte(outFile, ((act *)actListArr[i][j])->a10.vyPath);
 				break;
-			case COND_R:             // 11
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a11.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a11.objNumb);
-				writeByte(outFile, ((act *) actListArr[i][j])->a11.stateReq);
-				writeUint16BE(outFile, ((act *) actListArr[i][j])->a11.actPassIndex);
-				writeUint16BE(outFile, ((act *) actListArr[i][j])->a11.actFailIndex);
+			case COND_R: // 11
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a11.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a11.objNumb);
+				writeByte(outFile, ((act *)actListArr[i][j])->a11.stateReq);
+				writeUint16BE(outFile, ((act *)actListArr[i][j])->a11.actPassIndex);
+				writeUint16BE(outFile, ((act *)actListArr[i][j])->a11.actFailIndex);
 				break;
-			case TEXT:               // 12
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a12.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a12.stringIndex);
+			case TEXT: // 12
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a12.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a12.stringIndex);
 				break;
-			case SWAP_IMAGES:        // 13
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a13.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a13.obj1);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a13.obj2);
+			case SWAP_IMAGES: // 13
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a13.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a13.obj1);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a13.obj2);
 				break;
-			case COND_SCR:           // 14
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a14.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a14.objNumb);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a14.screenReq);
-				writeUint16BE(outFile, ((act *) actListArr[i][j])->a14.actPassIndex);
-				writeUint16BE(outFile, ((act *) actListArr[i][j])->a14.actFailIndex);
+			case COND_SCR: // 14
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a14.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a14.objNumb);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a14.screenReq);
+				writeUint16BE(outFile, ((act *)actListArr[i][j])->a14.actPassIndex);
+				writeUint16BE(outFile, ((act *)actListArr[i][j])->a14.actFailIndex);
 				break;
-			case AUTOPILOT:          // 15
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a15.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a15.obj1);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a15.obj2);
-				writeByte(outFile, ((act *) actListArr[i][j])->a15.vx);
-				writeByte(outFile, ((act *) actListArr[i][j])->a15.vy);
+			case AUTOPILOT: // 15
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a15.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a15.obj1);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a15.obj2);
+				writeByte(outFile, ((act *)actListArr[i][j])->a15.vx);
+				writeByte(outFile, ((act *)actListArr[i][j])->a15.vy);
 				break;
-			case INIT_OBJ_SEQ:       // 16
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a16.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a16.objNumb);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a16.seqIndex);
+			case INIT_OBJ_SEQ: // 16
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a16.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a16.objNumb);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a16.seqIndex);
 				break;
-			case SET_STATE_BITS:     // 17
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a17.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a17.objNumb);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a17.stateMask);
+			case SET_STATE_BITS: // 17
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a17.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a17.objNumb);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a17.stateMask);
 				break;
-			case CLEAR_STATE_BITS:   // 18
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a18.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a18.objNumb);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a18.stateMask);
+			case CLEAR_STATE_BITS: // 18
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a18.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a18.objNumb);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a18.stateMask);
 				break;
-			case TEST_STATE_BITS:    // 19
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a19.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a19.objNumb);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a19.stateMask);
-				writeUint16BE(outFile, ((act *) actListArr[i][j])->a19.actPassIndex);
-				writeUint16BE(outFile, ((act *) actListArr[i][j])->a19.actFailIndex);
+			case TEST_STATE_BITS: // 19
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a19.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a19.objNumb);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a19.stateMask);
+				writeUint16BE(outFile, ((act *)actListArr[i][j])->a19.actPassIndex);
+				writeUint16BE(outFile, ((act *)actListArr[i][j])->a19.actFailIndex);
 				break;
-			case DEL_EVENTS:         // 20
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a20.timer);
-				writeByte(outFile, ((act *) actListArr[i][j])->a20.actTypeDel);
+			case DEL_EVENTS: // 20
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a20.timer);
+				writeByte(outFile, ((act *)actListArr[i][j])->a20.actTypeDel);
 				break;
-			case GAMEOVER:           // 21
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a21.timer);
+			case GAMEOVER: // 21
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a21.timer);
 				break;
-			case INIT_HH_COORD:      // 22
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a22.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a22.objNumb);
+			case INIT_HH_COORD: // 22
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a22.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a22.objNumb);
 				break;
-			case EXIT:               // 23
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a23.timer);
+			case EXIT: // 23
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a23.timer);
 				break;
-			case BONUS:              // 24
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a24.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a24.pointIndex);
+			case BONUS: // 24
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a24.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a24.pointIndex);
 				break;
-			case COND_BOX:           // 25
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a25.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a25.objNumb);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a25.x1);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a25.y1);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a25.x2);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a25.y2);
-				writeUint16BE(outFile, ((act *) actListArr[i][j])->a25.actPassIndex);
-				writeUint16BE(outFile, ((act *) actListArr[i][j])->a25.actFailIndex);
+			case COND_BOX: // 25
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a25.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a25.objNumb);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a25.x1);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a25.y1);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a25.x2);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a25.y2);
+				writeUint16BE(outFile, ((act *)actListArr[i][j])->a25.actPassIndex);
+				writeUint16BE(outFile, ((act *)actListArr[i][j])->a25.actFailIndex);
 				break;
-			case SOUND:              // 26
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a26.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a26.soundIndex);
+			case SOUND: // 26
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a26.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a26.soundIndex);
 				break;
-			case ADD_SCORE:          // 27
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a27.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a27.objNumb);
+			case ADD_SCORE: // 27
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a27.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a27.objNumb);
 				break;
-			case SUB_SCORE:          // 28
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a28.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a28.objNumb);
+			case SUB_SCORE: // 28
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a28.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a28.objNumb);
 				break;
-			case COND_CARRY:         // 29
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a29.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a29.objNumb);
-				writeUint16BE(outFile, ((act *) actListArr[i][j])->a29.actPassIndex);
-				writeUint16BE(outFile, ((act *) actListArr[i][j])->a29.actFailIndex);
+			case COND_CARRY: // 29
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a29.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a29.objNumb);
+				writeUint16BE(outFile, ((act *)actListArr[i][j])->a29.actPassIndex);
+				writeUint16BE(outFile, ((act *)actListArr[i][j])->a29.actFailIndex);
 				break;
-			case INIT_MAZE:          // 30
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a30.timer);
-				writeByte(outFile, ((act *) actListArr[i][j])->a30.mazeSize);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a30.x1);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a30.y1);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a30.x2);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a30.y2);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a30.x3);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a30.x4);
-				writeByte(outFile, ((act *) actListArr[i][j])->a30.firstScreenIndex);
+			case INIT_MAZE: // 30
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a30.timer);
+				writeByte(outFile, ((act *)actListArr[i][j])->a30.mazeSize);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a30.x1);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a30.y1);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a30.x2);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a30.y2);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a30.x3);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a30.x4);
+				writeByte(outFile, ((act *)actListArr[i][j])->a30.firstScreenIndex);
 				break;
-			case EXIT_MAZE:          // 31
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a31.timer);
+			case EXIT_MAZE: // 31
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a31.timer);
 				break;
-			case INIT_PRIORITY:      // 32
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a32.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a32.objNumb);
-				writeByte(outFile, ((act *) actListArr[i][j])->a32.priority);
+			case INIT_PRIORITY: // 32
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a32.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a32.objNumb);
+				writeByte(outFile, ((act *)actListArr[i][j])->a32.priority);
 				break;
-			case INIT_SCREEN:        // 33
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a33.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a33.objNumb);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a33.screenIndex);
+			case INIT_SCREEN: // 33
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a33.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a33.objNumb);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a33.screenIndex);
 				break;
-			case AGSCHEDULE:         // 34
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a34.timer);
-				writeUint16BE(outFile, ((act *) actListArr[i][j])->a34.actIndex);
+			case AGSCHEDULE: // 34
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a34.timer);
+				writeUint16BE(outFile, ((act *)actListArr[i][j])->a34.actIndex);
 				break;
-			case REMAPPAL:           // 35
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a35.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a35.oldColorIndex);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a35.newColorIndex);
+			case REMAPPAL: // 35
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a35.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a35.oldColorIndex);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a35.newColorIndex);
 				break;
-			case COND_NOUN:          // 36
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a36.timer);
-				writeUint16BE(outFile, ((act *) actListArr[i][j])->a36.nounIndex);
-				writeUint16BE(outFile, ((act *) actListArr[i][j])->a36.actPassIndex);
-				writeUint16BE(outFile, ((act *) actListArr[i][j])->a36.actFailIndex);
+			case COND_NOUN: // 36
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a36.timer);
+				writeUint16BE(outFile, ((act *)actListArr[i][j])->a36.nounIndex);
+				writeUint16BE(outFile, ((act *)actListArr[i][j])->a36.actPassIndex);
+				writeUint16BE(outFile, ((act *)actListArr[i][j])->a36.actFailIndex);
 				break;
-			case SCREEN_STATE:       // 37
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a37.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a37.screenIndex);
-				writeByte(outFile, ((act *) actListArr[i][j])->a37.newState);
+			case SCREEN_STATE: // 37
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a37.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a37.screenIndex);
+				writeByte(outFile, ((act *)actListArr[i][j])->a37.newState);
 				break;
-			case INIT_LIPS:          // 38
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a38.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a38.lipsObjNumb);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a38.objNumb);
-				writeByte(outFile, ((act *) actListArr[i][j])->a38.dxLips);
-				writeByte(outFile, ((act *) actListArr[i][j])->a38.dyLips);
+			case INIT_LIPS: // 38
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a38.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a38.lipsObjNumb);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a38.objNumb);
+				writeByte(outFile, ((act *)actListArr[i][j])->a38.dxLips);
+				writeByte(outFile, ((act *)actListArr[i][j])->a38.dyLips);
 				break;
-			case INIT_STORY_MODE:    // 39
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a39.timer);
-				writeByte(outFile, (((act *) actListArr[i][j])->a39.storyModeFl) ? 1 : 0);
+			case INIT_STORY_MODE: // 39
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a39.timer);
+				writeByte(outFile, (((act *)actListArr[i][j])->a39.storyModeFl) ? 1 : 0);
 				break;
-			case WARN:               // 40
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a40.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a40.stringIndex);
+			case WARN: // 40
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a40.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a40.stringIndex);
 				break;
-			case COND_BONUS:         // 41
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a41.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a41.BonusIndex);
-				writeUint16BE(outFile, ((act *) actListArr[i][j])->a41.actPassIndex);
-				writeUint16BE(outFile, ((act *) actListArr[i][j])->a41.actFailIndex);
+			case COND_BONUS: // 41
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a41.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a41.BonusIndex);
+				writeUint16BE(outFile, ((act *)actListArr[i][j])->a41.actPassIndex);
+				writeUint16BE(outFile, ((act *)actListArr[i][j])->a41.actFailIndex);
 				break;
-			case TEXT_TAKE:          // 42
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a42.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a42.objNumb);
+			case TEXT_TAKE: // 42
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a42.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a42.objNumb);
 				break;
-			case YESNO:              // 43
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a43.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a43.prompt);
-				writeUint16BE(outFile, ((act *) actListArr[i][j])->a43.actYesIndex);
-				writeUint16BE(outFile, ((act *) actListArr[i][j])->a43.actNoIndex);
+			case YESNO: // 43
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a43.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a43.prompt);
+				writeUint16BE(outFile, ((act *)actListArr[i][j])->a43.actYesIndex);
+				writeUint16BE(outFile, ((act *)actListArr[i][j])->a43.actNoIndex);
 				break;
-			case STOP_ROUTE:         // 44
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a44.timer);
+			case STOP_ROUTE: // 44
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a44.timer);
 				break;
-			case COND_ROUTE:         // 45
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a45.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a45.routeIndex);
-				writeUint16BE(outFile, ((act *) actListArr[i][j])->a45.actPassIndex);
-				writeUint16BE(outFile, ((act *) actListArr[i][j])->a45.actFailIndex);
+			case COND_ROUTE: // 45
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a45.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a45.routeIndex);
+				writeUint16BE(outFile, ((act *)actListArr[i][j])->a45.actPassIndex);
+				writeUint16BE(outFile, ((act *)actListArr[i][j])->a45.actFailIndex);
 				break;
-			case INIT_JUMPEXIT:      // 46
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a46.timer);
-				writeByte(outFile, (((act *) actListArr[i][j])->a46.jumpExitFl) ? 1 : 0);
+			case INIT_JUMPEXIT: // 46
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a46.timer);
+				writeByte(outFile, (((act *)actListArr[i][j])->a46.jumpExitFl) ? 1 : 0);
 				break;
-			case INIT_VIEW:          // 47
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a47.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a47.objNumb);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a47.viewx);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a47.viewy);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a47.direction);
+			case INIT_VIEW: // 47
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a47.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a47.objNumb);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a47.viewx);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a47.viewy);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a47.direction);
 				break;
-			case INIT_OBJ_FRAME:     // 48
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a48.timer);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a48.objNumb);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a48.seqIndex);
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a48.frameIndex);
+			case INIT_OBJ_FRAME: // 48
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a48.timer);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a48.objNumb);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a48.seqIndex);
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a48.frameIndex);
 				break;
-			case OLD_SONG:           // 49, Added by Strangerke for DOS versions
-				writeSint16BE(outFile, ((act *) actListArr[i][j])->a49.timer);
-				writeUint16BE(outFile, ((act *) actListArr[i][j])->a49.songIndex);
+			case OLD_SONG: // 49, Added by Strangerke for DOS versions
+				writeSint16BE(outFile, ((act *)actListArr[i][j])->a49.timer);
+				writeUint16BE(outFile, ((act *)actListArr[i][j])->a49.songIndex);
 				break;
 			default:
 				printf("Unknown action %d", subElemType);

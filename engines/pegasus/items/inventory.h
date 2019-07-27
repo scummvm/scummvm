@@ -26,8 +26,8 @@
 #ifndef PEGASUS_ITEMS_INVENTORY_H
 #define PEGASUS_ITEMS_INVENTORY_H
 
-#include "pegasus/types.h"
 #include "pegasus/items/itemlist.h"
+#include "pegasus/types.h"
 
 namespace Pegasus {
 

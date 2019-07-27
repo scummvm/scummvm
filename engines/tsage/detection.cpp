@@ -21,8 +21,8 @@
  */
 
 #include "common/config-manager.h"
-#include "common/system.h"
 #include "common/savefile.h"
+#include "common/system.h"
 
 #include "engines/advancedDetector.h"
 
@@ -74,7 +74,8 @@ enum {
 
 class TSageMetaEngine : public AdvancedMetaEngine {
 public:
-	TSageMetaEngine() : AdvancedMetaEngine(TsAGE::gameDescriptions, sizeof(TsAGE::tSageGameDescription), tSageGameTitles) {
+	TSageMetaEngine()
+	  : AdvancedMetaEngine(TsAGE::gameDescriptions, sizeof(TsAGE::tSageGameDescription), tSageGameTitles) {
 		_singleId = "tsage";
 	}
 
@@ -154,7 +155,7 @@ public:
 
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
 		Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(
-			generateGameStateFileName(target, slot));
+		  generateGameStateFileName(target, slot));
 
 		if (f) {
 			TsAGE::tSageSavegameHeader header;
@@ -180,7 +181,7 @@ public:
 };
 
 #if PLUGIN_ENABLED_DYNAMIC(TSAGE)
-	REGISTER_PLUGIN_DYNAMIC(TSAGE, PLUGIN_TYPE_ENGINE, TSageMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(TSAGE, PLUGIN_TYPE_ENGINE, TSageMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(TSAGE, PLUGIN_TYPE_ENGINE, TSageMetaEngine);
+REGISTER_PLUGIN_STATIC(TSAGE, PLUGIN_TYPE_ENGINE, TSageMetaEngine);
 #endif

@@ -20,19 +20,20 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/screentext.h"
+#include "engines/util.h"
+#include "graphics/palette.h"
 #include "illusions/dictionary.h"
+#include "illusions/illusions.h"
 #include "illusions/resources/fontresource.h"
 #include "illusions/screen.h"
 #include "illusions/textdrawer.h"
-#include "engines/util.h"
-#include "graphics/palette.h"
 
 namespace Illusions {
 
 ScreenText::ScreenText(IllusionsEngine *vm)
-	: _vm(vm), _surface(0) {
+  : _vm(vm)
+  , _surface(0) {
 }
 
 ScreenText::~ScreenText() {
@@ -84,7 +85,7 @@ void ScreenText::clipTextInfoPosition(Common::Point &position) {
 }
 
 bool ScreenText::refreshScreenText(FontResource *font, WidthHeight dimensions, Common::Point offsPt,
-	uint16 *text, uint textFlags, uint16 backgroundColor, uint16 borderColor, uint16 *&outTextPtr) {
+                                   uint16 *text, uint textFlags, uint16 backgroundColor, uint16 borderColor, uint16 *&outTextPtr) {
 	TextDrawer textDrawer;
 	bool done = textDrawer.wrapText(font, text, &dimensions, offsPt, textFlags, outTextPtr);
 	if (textFlags & TEXT_FLAG_BORDER_DECORATION) {
@@ -110,7 +111,7 @@ bool ScreenText::refreshScreenText(FontResource *font, WidthHeight dimensions, C
 }
 
 bool ScreenText::insertText(uint16 *text, uint32 fontId, WidthHeight dimensions, Common::Point offsPt, uint flags,
-	uint16 backgroundColor, uint16 borderColor, byte colorR, byte colorG, byte colorB, uint16 *&outTextPtr) {
+                            uint16 backgroundColor, uint16 borderColor, byte colorR, byte colorG, byte colorB, uint16 *&outTextPtr) {
 
 	if (!_screenTexts.empty()) {
 		ScreenTextEntry *screenText = _screenTexts.back();
@@ -140,8 +141,8 @@ bool ScreenText::insertText(uint16 *text, uint32 fontId, WidthHeight dimensions,
 
 	FontResource *font = _vm->_dict->findFont(screenText->_info._fontId);
 	bool done = refreshScreenText(font, screenText->_info._dimensions, screenText->_info._offsPt,
-		text, screenText->_info._flags, screenText->_info._backgroundColor, screenText->_info._borderColor,
-		outTextPtr);
+	                              text, screenText->_info._flags, screenText->_info._backgroundColor, screenText->_info._borderColor,
+	                              outTextPtr);
 	_vm->_screenPalette->setPaletteEntry(font->getColorIndex(), screenText->_info._colorR, screenText->_info._colorG, screenText->_info._colorB);
 
 	uint16 *textPart = screenText->_text;
@@ -174,13 +175,12 @@ void ScreenText::removeText() {
 			uint16 *outTextPtr;
 			FontResource *font = _vm->_dict->findFont(screenText->_info._fontId);
 			refreshScreenText(font, screenText->_info._dimensions, screenText->_info._offsPt,
-				screenText->_text, screenText->_info._flags, screenText->_info._backgroundColor, screenText->_info._borderColor,
-				outTextPtr);
+			                  screenText->_text, screenText->_info._flags, screenText->_info._backgroundColor, screenText->_info._borderColor,
+			                  outTextPtr);
 			_vm->_screenPalette->setPaletteEntry(font->getColorIndex(), screenText->_info._colorR, screenText->_info._colorG, screenText->_info._colorB);
 			setTextInfoPosition(screenText->_info._position);
 		}
 	}
-
 }
 
 void ScreenText::clearText() {
@@ -194,7 +194,6 @@ void ScreenText::clearText() {
 	ScreenTextEntry *screenText = new ScreenTextEntry();
 	screenText->_info._fontId = 0;
 	_screenTexts.push_back(screenText);
-
 }
 
 void ScreenText::freeTextSurface() {

@@ -23,9 +23,9 @@
 #ifndef ILLUSIONS_CAMERA_H
 #define ILLUSIONS_CAMERA_H
 
-#include "illusions/graphics.h"
 #include "common/rect.h"
 #include "common/stack.h"
+#include "illusions/graphics.h"
 
 namespace Illusions {
 
@@ -88,6 +88,7 @@ public:
 	void setActiveState(CameraState &state);
 	void getActiveState(CameraState &state);
 	void refreshPan(BackgroundInstance *backgroundItem, WidthHeight &dimensions);
+
 protected:
 	IllusionsEngine *_vm;
 	CameraState _activeState;

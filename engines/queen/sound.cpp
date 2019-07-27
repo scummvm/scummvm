@@ -20,18 +20,17 @@
  *
  */
 
-
 #include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
 
-#include "queen/sound.h"
 #include "queen/input.h"
 #include "queen/logic.h"
 #include "queen/music.h"
 #include "queen/queen.h"
 #include "queen/resource.h"
+#include "queen/sound.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/flac.h"
@@ -40,8 +39,8 @@
 #include "audio/decoders/vorbis.h"
 #include "audio/mods/rjp1.h"
 
-#define	SB_HEADER_SIZE_V104 110
-#define	SB_HEADER_SIZE_V110 122
+#define SB_HEADER_SIZE_V104 110
+#define SB_HEADER_SIZE_V110 122
 
 namespace Queen {
 
@@ -97,7 +96,9 @@ public:
 
 class SilentSound : public PCSound {
 public:
-	SilentSound(Audio::Mixer *mixer, QueenEngine *vm) : PCSound(mixer, vm) {}
+	SilentSound(Audio::Mixer *mixer, QueenEngine *vm)
+	  : PCSound(mixer, vm) {}
+
 protected:
 	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
 		// Do nothing
@@ -106,7 +107,9 @@ protected:
 
 class SBSound : public PCSound {
 public:
-	SBSound(Audio::Mixer *mixer, QueenEngine *vm) : PCSound(mixer, vm) {}
+	SBSound(Audio::Mixer *mixer, QueenEngine *vm)
+	  : PCSound(mixer, vm) {}
+
 protected:
 	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle);
 };
@@ -114,7 +117,9 @@ protected:
 #ifdef USE_MAD
 class MP3Sound : public PCSound {
 public:
-	MP3Sound(Audio::Mixer *mixer, QueenEngine *vm) : PCSound(mixer, vm) {}
+	MP3Sound(Audio::Mixer *mixer, QueenEngine *vm)
+	  : PCSound(mixer, vm) {}
+
 protected:
 	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
 		Common::SeekableReadStream *tmp = f->readStream(size);
@@ -127,7 +132,9 @@ protected:
 #ifdef USE_VORBIS
 class OGGSound : public PCSound {
 public:
-	OGGSound(Audio::Mixer *mixer, QueenEngine *vm) : PCSound(mixer, vm) {}
+	OGGSound(Audio::Mixer *mixer, QueenEngine *vm)
+	  : PCSound(mixer, vm) {}
+
 protected:
 	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
 		Common::SeekableReadStream *tmp = f->readStream(size);
@@ -140,7 +147,9 @@ protected:
 #ifdef USE_FLAC
 class FLACSound : public PCSound {
 public:
-	FLACSound(Audio::Mixer *mixer, QueenEngine *vm) : PCSound(mixer, vm) {}
+	FLACSound(Audio::Mixer *mixer, QueenEngine *vm)
+	  : PCSound(mixer, vm) {}
+
 protected:
 	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
 		Common::SeekableReadStream *tmp = f->readStream(size);
@@ -150,9 +159,15 @@ protected:
 };
 #endif // #ifdef USE_FLAC
 
-Sound::Sound(Audio::Mixer *mixer, QueenEngine *vm) :
-	_mixer(mixer), _vm(vm), _sfxToggle(true), _speechToggle(true), _musicToggle(true),
-	_speechSfxExists(false), _lastOverride(0), _musicVolume(0) {
+Sound::Sound(Audio::Mixer *mixer, QueenEngine *vm)
+  : _mixer(mixer)
+  , _vm(vm)
+  , _sfxToggle(true)
+  , _speechToggle(true)
+  , _musicToggle(true)
+  , _speechSfxExists(false)
+  , _lastOverride(0)
+  , _musicVolume(0) {
 }
 
 Sound *Sound::makeSoundInstance(Audio::Mixer *mixer, QueenEngine *vm, uint8 compression) {
@@ -199,15 +214,17 @@ void Sound::setVolume(int vol) {
 }
 
 void Sound::saveState(byte *&ptr) {
-	WRITE_BE_UINT16(ptr, _lastOverride); ptr += 2;
+	WRITE_BE_UINT16(ptr, _lastOverride);
+	ptr += 2;
 }
 
 void Sound::loadState(uint32 ver, byte *&ptr) {
-	_lastOverride = (int16)READ_BE_INT16(ptr); ptr += 2;
+	_lastOverride = (int16)READ_BE_INT16(ptr);
+	ptr += 2;
 }
 
 PCSound::PCSound(Audio::Mixer *mixer, QueenEngine *vm)
-	: Sound(mixer, vm) {
+  : Sound(mixer, vm) {
 
 	_music = new MidiMusic(vm);
 }
@@ -249,10 +266,10 @@ void PCSound::playSong(int16 songNum) {
 	int overrideCmd = (_vm->resource()->isDemo()) ? _songDemo[songNum - 1].overrideCmd : _song[songNum - 1].overrideCmd;
 	switch (overrideCmd) {
 	// Override all songs
-	case  1:
+	case 1:
 		break;
 	// Alter song settings (such as volume) and exit
-	case  2:
+	case 2:
 		_music->toggleVChange();
 	default:
 		return;
@@ -336,7 +353,10 @@ void SBSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *so
 }
 
 AmigaSound::AmigaSound(Audio::Mixer *mixer, QueenEngine *vm)
-	: Sound(mixer, vm), _fanfareRestore(0), _fanfareCount(0), _fluteCount(0) {
+  : Sound(mixer, vm)
+  , _fanfareRestore(0)
+  , _fanfareCount(0)
+  , _fluteCount(0) {
 }
 
 void AmigaSound::playSfx(uint16 sfx) {
@@ -747,7 +767,7 @@ bool AmigaSound::playSpecialSfx(int16 sfx) {
 	case 153: // altar slides
 		playSound("85SSSSSS");
 		break;
-	case 166 : // pull lever
+	case 166: // pull lever
 		playSound("1008SSSS");
 		break;
 	case 182: // zap Frank

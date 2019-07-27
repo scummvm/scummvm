@@ -112,8 +112,10 @@ static const StringListProvider kEoB2ChargenEnterGameStringsAmigaEnglishProvider
 static const char *const kEoB2PryDoorStringsAmigaEnglish[8] = {
 	"\r",
 	"You are not capable of forcing the door.\r",
-	"\x06\x04""You force the door.\r",
-	"\x06\x06""You try to force the door but fail.\r",
+	"\x06\x04"
+	"You force the door.\r",
+	"\x06\x06"
+	"You try to force the door but fail.\r",
 	"You can't put that item there.\r",
 	"The item is too large to fit.\r",
 	"No one is able to pry this door open.\r",
@@ -457,13 +459,15 @@ static const char *const kEoB2MenuStringsRest2AmigaEnglish[5] = {
 static const StringListProvider kEoB2MenuStringsRest2AmigaEnglishProvider = { ARRAYSIZE(kEoB2MenuStringsRest2AmigaEnglish), kEoB2MenuStringsRest2AmigaEnglish };
 
 static const char *const kEoB2MenuStringsRest3AmigaEnglish[1] = {
-	"\x06\x06""You do not feel it is safe to rest here."
+	"\x06\x06"
+	"You do not feel it is safe to rest here."
 };
 
 static const StringListProvider kEoB2MenuStringsRest3AmigaEnglishProvider = { ARRAYSIZE(kEoB2MenuStringsRest3AmigaEnglish), kEoB2MenuStringsRest3AmigaEnglish };
 
 static const char *const kEoB2MenuStringsRest4AmigaEnglish[1] = {
-	"\x06\x06""You can't rest here, monsters are near."
+	"\x06\x06"
+	"You can't rest here, monsters are near."
 };
 
 static const StringListProvider kEoB2MenuStringsRest4AmigaEnglishProvider = { ARRAYSIZE(kEoB2MenuStringsRest4AmigaEnglish), kEoB2MenuStringsRest4AmigaEnglish };
@@ -550,13 +554,15 @@ static const char *const kEoB2CharStatusStrings7AmigaEnglish[1] = {
 static const StringListProvider kEoB2CharStatusStrings7AmigaEnglishProvider = { ARRAYSIZE(kEoB2CharStatusStrings7AmigaEnglish), kEoB2CharStatusStrings7AmigaEnglish };
 
 static const char *const kEoB2CharStatusStrings82AmigaEnglish[1] = {
-	"\x06\x06""%s feels the effects of poison!\r"
+	"\x06\x06"
+	"%s feels the effects of poison!\r"
 };
 
 static const StringListProvider kEoB2CharStatusStrings82AmigaEnglishProvider = { ARRAYSIZE(kEoB2CharStatusStrings82AmigaEnglish), kEoB2CharStatusStrings82AmigaEnglish };
 
 static const char *const kEoB2CharStatusStrings9AmigaEnglish[1] = {
-	"\x06\x04""%s is no longer paralyzed!\r"
+	"\x06\x04"
+	"%s is no longer paralyzed!\r"
 };
 
 static const StringListProvider kEoB2CharStatusStrings9AmigaEnglishProvider = { ARRAYSIZE(kEoB2CharStatusStrings9AmigaEnglish), kEoB2CharStatusStrings9AmigaEnglish };
@@ -568,13 +574,17 @@ static const char *const kEoB2CharStatusStrings12AmigaEnglish[1] = {
 static const StringListProvider kEoB2CharStatusStrings12AmigaEnglishProvider = { ARRAYSIZE(kEoB2CharStatusStrings12AmigaEnglish), kEoB2CharStatusStrings12AmigaEnglish };
 
 static const char *const kEoB2CharStatusStrings132AmigaEnglish[1] = {
-	"\x06\x06""%s is %s!\r"
+	"\x06\x06"
+	"%s is %s!\r"
 };
 
 static const StringListProvider kEoB2CharStatusStrings132AmigaEnglishProvider = { ARRAYSIZE(kEoB2CharStatusStrings132AmigaEnglish), kEoB2CharStatusStrings132AmigaEnglish };
 
 static const char *const kEoB2LevelGainStringsAmigaEnglish[1] = {
-	"\x06\x01""%s has gained a level.""\x06\x0f""\r"
+	"\x06\x01"
+	"%s has gained a level."
+	"\x06\x0f"
+	"\r"
 };
 
 static const StringListProvider kEoB2LevelGainStringsAmigaEnglishProvider = { ARRAYSIZE(kEoB2LevelGainStringsAmigaEnglish), kEoB2LevelGainStringsAmigaEnglish };
@@ -749,8 +759,10 @@ static const StringListProvider kEoB2MagicStrings1AmigaEnglishProvider = { ARRAY
 static const char *const kEoB2MagicStrings2AmigaEnglish[5] = {
 	"The spell fails!\r",
 	"%s has been disintegrated!\r",
-	"\x06\x06""The party has been hit by a death spell!\r",
-	"\x06\x06""%s has been hit by cause serious wounds.\r",
+	"\x06\x06"
+	"The party has been hit by a death spell!\r",
+	"\x06\x06"
+	"%s has been hit by cause serious wounds.\r",
 	"PETRIFIED"
 };
 
@@ -1052,4 +1064,3 @@ static const char *const kEoB2HornStringsAmigaEnglish[4] = {
 };
 
 static const StringListProvider kEoB2HornStringsAmigaEnglishProvider = { ARRAYSIZE(kEoB2HornStringsAmigaEnglish), kEoB2HornStringsAmigaEnglish };
-

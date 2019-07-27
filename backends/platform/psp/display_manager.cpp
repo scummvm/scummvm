@@ -22,27 +22,27 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <pspgu.h>
 #include <pspdisplay.h>
+#include <pspgu.h>
 #include <pspthreadman.h>
 
-#include "common/scummsys.h"
 #include "backends/base-backend.h"
-#include "backends/platform/psp/psppixelformat.h"
-#include "backends/platform/psp/display_client.h"
-#include "backends/platform/psp/default_display_client.h"
 #include "backends/platform/psp/cursor.h"
-#include "backends/platform/psp/pspkeyboard.h"
+#include "backends/platform/psp/default_display_client.h"
+#include "backends/platform/psp/display_client.h"
 #include "backends/platform/psp/image_viewer.h"
+#include "backends/platform/psp/pspkeyboard.h"
+#include "backends/platform/psp/psppixelformat.h"
+#include "common/scummsys.h"
 
 #include "common/config-manager.h"
 
-#define USE_DISPLAY_CALLBACK	// to use callback for finishing the render
+#define USE_DISPLAY_CALLBACK // to use callback for finishing the render
 #include "backends/platform/psp/display_manager.h"
 
 #define PSP_BUFFER_WIDTH (512)
-#define	PSP_SCREEN_WIDTH	480
-#define	PSP_SCREEN_HEIGHT	272
+#define PSP_SCREEN_WIDTH 480
+#define PSP_SCREEN_HEIGHT 272
 #define PSP_FRAME_SIZE (PSP_BUFFER_WIDTH * PSP_SCREEN_HEIGHT)
 
 //#define ENABLE_RENDER_MEASURE /* how long it takes to render a frame */
@@ -58,9 +58,8 @@ const OSystem::GraphicsMode DisplayManager::_supportedModes[] = {
 	{ "Original Resolution", "Original Resolution", ORIGINAL_RESOLUTION },
 	{ "Fit to Screen", "Fit to Screen", FIT_TO_SCREEN },
 	{ "Stretch to Screen", "Stretch to Screen", STRETCH_TO_SCREEN },
-	{0, 0, 0}
+	{ 0, 0, 0 }
 };
-
 
 // Class VramAllocator -----------------------------------
 
@@ -72,7 +71,6 @@ DECLARE_SINGLETON(VramAllocator);
 //#define __PSP_DEBUG_PRINT__
 
 #include "backends/platform/psp/trace.h"
-
 
 void *VramAllocator::allocate(int32 size, bool smallAllocation /* = false */) {
 	DEBUG_ENTER_FUNC();
@@ -110,7 +108,7 @@ void *VramAllocator::allocate(int32 size, bool smallAllocation /* = false */) {
 // Deallocate a block from VRAM
 void VramAllocator::deallocate(void *address) {
 	DEBUG_ENTER_FUNC();
-	address = (byte *)CACHED(address);	// Make sure all addresses are the same
+	address = (byte *)CACHED(address); // Make sure all addresses are the same
 
 	Common::List<Allocation>::iterator i;
 
@@ -126,7 +124,6 @@ void VramAllocator::deallocate(void *address) {
 
 	PSP_DEBUG_PRINT("Address[%p] not allocated.\n", address);
 }
-
 
 // Class MasterGuRenderer ----------------------------------------------
 
@@ -149,32 +146,31 @@ void MasterGuRenderer::threadFunction() {
 
 	PSP_DEBUG_PRINT("created callback. Going to sleep\n");
 
-	sceKernelSleepThreadCB();	// sleep until we get a callback
+	sceKernelSleepThreadCB(); // sleep until we get a callback
 }
 
 // Sleep on the render mutex if the rendering thread hasn't finished its work
 //
 void MasterGuRenderer::sleepUntilRenderFinished() {
 	if (!isRenderFinished()) {
-		_renderSema.take();   // sleep on the semaphore
+		_renderSema.take(); // sleep on the semaphore
 		_renderSema.give();
 		PSP_DEBUG_PRINT("slept on the rendering semaphore\n");
 	}
 }
-
 
 // This callback is called when the render is finished. It swaps the buffers
 int MasterGuRenderer::guCallback(int, int, void *__this) {
 
 	MasterGuRenderer *_this = (MasterGuRenderer *)__this;
 
-	sceGuSync(0, 0);				// make sure we wait for GU to finish
-	sceDisplayWaitVblankStartCB();	// wait for v-blank without eating main thread cycles
-	sceGuSwapBuffers();				// swap the back and front buffers
+	sceGuSync(0, 0); // make sure we wait for GU to finish
+	sceDisplayWaitVblankStartCB(); // wait for v-blank without eating main thread cycles
+	sceGuSwapBuffers(); // swap the back and front buffers
 
-	_this->_renderFinished = true;	// Only this thread can set the variable to true
+	_this->_renderFinished = true; // Only this thread can set the variable to true
 
-	_this->_renderSema.give(); 		// Release render semaphore
+	_this->_renderSema.give(); // Release render semaphore
 	return 0;
 }
 
@@ -189,8 +185,8 @@ void MasterGuRenderer::guInit() {
 	sceGuOffset(2048 - (PSP_SCREEN_WIDTH / 2), 2048 - (PSP_SCREEN_HEIGHT / 2));
 	sceGuViewport(2048, 2048, PSP_SCREEN_WIDTH, PSP_SCREEN_HEIGHT);
 	sceGuDepthRange(0xC350, 0x2710);
-	sceGuDisable(GU_DEPTH_TEST);	// We'll use depth buffer area
-	sceGuDepthMask(GU_TRUE);		// Prevent writes to depth buffer
+	sceGuDisable(GU_DEPTH_TEST); // We'll use depth buffer area
+	sceGuDepthMask(GU_TRUE); // Prevent writes to depth buffer
 	sceGuScissor(0, 0, PSP_SCREEN_WIDTH, PSP_SCREEN_HEIGHT);
 	sceGuEnable(GU_SCISSOR_TEST);
 	sceGuFrontFace(GU_CW);
@@ -230,9 +226,9 @@ inline void MasterGuRenderer::guPreRender() {
 	DEBUG_ENTER_FUNC();
 
 #ifdef USE_DISPLAY_CALLBACK
-	_renderSema.take(); 		// Take the semaphore to prevent writes
-								// to the palette/screen before we're done
-	_renderFinished = false;	// set to synchronize with callback thread
+	_renderSema.take(); // Take the semaphore to prevent writes
+	  // to the palette/screen before we're done
+	_renderFinished = false; // set to synchronize with callback thread
 #endif
 
 #ifdef ENABLE_RENDER_MEASURE
@@ -250,7 +246,7 @@ inline void MasterGuRenderer::guPreRender() {
 	sceGuTexFilter(GU_LINEAR, GU_LINEAR);
 
 	sceGuTexFunc(GU_TFX_REPLACE, GU_TCC_RGBA); // Also good enough for all purposes
-	sceGuAlphaFunc(GU_GREATER, 0, 0xFF);	   // Also good enough for all purposes
+	sceGuAlphaFunc(GU_GREATER, 0, 0xFF); // Also good enough for all purposes
 }
 
 inline void MasterGuRenderer::guPostRender() {
@@ -261,14 +257,14 @@ inline void MasterGuRenderer::guPostRender() {
 	if (_callbackId < 0)
 		PSP_ERROR("bad callbackId[%d]\n", _callbackId);
 	else
-		sceKernelNotifyCallback(_callbackId, 0);	// notify the callback. Nothing extra to pass
+		sceKernelNotifyCallback(_callbackId, 0); // notify the callback. Nothing extra to pass
 #else
 	sceGuSync(0, 0);
 
-#ifdef ENABLE_RENDER_MEASURE
+#	ifdef ENABLE_RENDER_MEASURE
 	uint32 now = g_system->getMillis();
 	PSP_INFO_PRINT("Render took %d milliseconds\n", now - _lastRenderTime);
-#endif /* ENABLE_RENDER_MEASURE */
+#	endif /* ENABLE_RENDER_MEASURE */
 
 	sceDisplayWaitVblankStart();
 	sceGuSwapBuffers();
@@ -280,7 +276,6 @@ void MasterGuRenderer::guShutDown() {
 	sceGuTerm();
 }
 
-
 // Class DisplayManager -----------------------------------------------------
 
 DisplayManager::~DisplayManager() {
@@ -290,14 +285,14 @@ DisplayManager::~DisplayManager() {
 void DisplayManager::init() {
 	DEBUG_ENTER_FUNC();
 
-	_displayParams.outputBitsPerPixel = 32;	// can be changed to produce 16-bit output
+	_displayParams.outputBitsPerPixel = 32; // can be changed to produce 16-bit output
 
 	GuRenderer::setDisplayManager(this);
 	_screen->init();
 	_overlay->init();
 	_cursor->init();
 
-	_masterGuRenderer.guInit();				// start up the renderer
+	_masterGuRenderer.guInit(); // start up the renderer
 #ifdef USE_DISPLAY_CALLBACK
 	_masterGuRenderer.setupCallbackThread();
 #endif
@@ -360,31 +355,29 @@ void DisplayManager::calculateScaleParams() {
 	switch (_graphicsMode) {
 	case ORIGINAL_RESOLUTION:
 		// check if we can fit the original resolution inside the screen
-		if ((_displayParams.screenSource.width <= PSP_SCREEN_WIDTH) &&
-			(_displayParams.screenSource.height <= PSP_SCREEN_HEIGHT)) {
-			_displayParams.screenOutput.width =  _displayParams.screenSource.width;
-			_displayParams.screenOutput.height =  _displayParams.screenSource.height;
+		if ((_displayParams.screenSource.width <= PSP_SCREEN_WIDTH) && (_displayParams.screenSource.height <= PSP_SCREEN_HEIGHT)) {
+			_displayParams.screenOutput.width = _displayParams.screenSource.width;
+			_displayParams.screenOutput.height = _displayParams.screenSource.height;
 			break;
 		}
 		// else revert to fit to screen
 	case FIT_TO_SCREEN: { // maximize the height while keeping aspect ratio
-			float aspectRatio;
+		float aspectRatio;
 
-			if (ConfMan.getBool("aspect_ratio")) {
-				aspectRatio = 4.0f / 3.0f;
-			} else {
-				aspectRatio = (float)_displayParams.screenSource.width / (float)_displayParams.screenSource.height;
-			}
-
-			_displayParams.screenOutput.height = PSP_SCREEN_HEIGHT; // always full height
-			_displayParams.screenOutput.width = (uint32)(PSP_SCREEN_HEIGHT * aspectRatio);
-
-			if (_displayParams.screenOutput.width > PSP_SCREEN_WIDTH) { // shrink if wider than screen
-				_displayParams.screenOutput.height = (uint32)(((float)PSP_SCREEN_HEIGHT * (float)PSP_SCREEN_WIDTH) / (float)_displayParams.screenOutput.width); 
-				_displayParams.screenOutput.width = PSP_SCREEN_WIDTH;
-			}
+		if (ConfMan.getBool("aspect_ratio")) {
+			aspectRatio = 4.0f / 3.0f;
+		} else {
+			aspectRatio = (float)_displayParams.screenSource.width / (float)_displayParams.screenSource.height;
 		}
-		break;
+
+		_displayParams.screenOutput.height = PSP_SCREEN_HEIGHT; // always full height
+		_displayParams.screenOutput.width = (uint32)(PSP_SCREEN_HEIGHT * aspectRatio);
+
+		if (_displayParams.screenOutput.width > PSP_SCREEN_WIDTH) { // shrink if wider than screen
+			_displayParams.screenOutput.height = (uint32)(((float)PSP_SCREEN_HEIGHT * (float)PSP_SCREEN_WIDTH) / (float)_displayParams.screenOutput.width);
+			_displayParams.screenOutput.width = PSP_SCREEN_WIDTH;
+		}
+	} break;
 	case STRETCH_TO_SCREEN: // we simply stretch to the whole screen
 		_displayParams.screenOutput.width = PSP_SCREEN_WIDTH;
 		_displayParams.screenOutput.height = PSP_SCREEN_HEIGHT;
@@ -396,7 +389,6 @@ void DisplayManager::calculateScaleParams() {
 	// calculate scale factors for X and Y
 	_displayParams.scaleX = ((float)_displayParams.screenOutput.width) / _displayParams.screenSource.width;
 	_displayParams.scaleY = ((float)_displayParams.screenOutput.height) / _displayParams.screenSource.height;
-
 }
 
 void DisplayManager::waitUntilRenderFinished() {
@@ -412,36 +404,31 @@ bool DisplayManager::renderAll() {
 #ifdef USE_DISPLAY_CALLBACK
 	if (!_masterGuRenderer.isRenderFinished()) {
 		PSP_DEBUG_PRINT("Callback render not finished.\n");
-		return false;	// didn't render
+		return false; // didn't render
 	}
 #endif /* USE_DISPLAY_CALLBACK */
 
 	// This is cheaper than checking time, so we do it first
 	// Any one of these being dirty causes everything to draw
-	if (!_screen->isDirty() &&
-		!_overlay->isDirty() &&
-		!_cursor->isDirty() &&
-		!_keyboard->isDirty() &&
-		!_imageViewer->isDirty()) {
+	if (!_screen->isDirty() && !_overlay->isDirty() && !_cursor->isDirty() && !_keyboard->isDirty() && !_imageViewer->isDirty()) {
 		PSP_DEBUG_PRINT("Nothing dirty\n");
-		return true;	// nothing to render
+		return true; // nothing to render
 	}
 
 	if (!isTimeToUpdate())
-		return false;	// didn't render
+		return false; // didn't render
 
 	PSP_DEBUG_PRINT("dirty: screen[%s], overlay[%s], cursor[%s], keyboard[%s], imageViewer[%s]\n",
 	                _screen->isDirty() ? "true" : "false",
 	                _overlay->isDirty() ? "true" : "false",
 	                _cursor->isDirty() ? "true" : "false",
 	                _keyboard->isDirty() ? "true" : "false",
-					_imageViewer->isDirty() ? "true" : "false"
-	               );
+	                _imageViewer->isDirty() ? "true" : "false");
 
-	_masterGuRenderer.guPreRender();	// Set up rendering
+	_masterGuRenderer.guPreRender(); // Set up rendering
 
 	_screen->render();
-	_screen->setClean();				// clean out dirty bit
+	_screen->setClean(); // clean out dirty bit
 
 	if (_imageViewer->isVisible())
 		_imageViewer->render();
@@ -461,7 +448,7 @@ bool DisplayManager::renderAll() {
 
 	_masterGuRenderer.guPostRender();
 
-	return true;	// rendered successfully
+	return true; // rendered successfully
 }
 
 inline bool DisplayManager::isTimeToUpdate() {

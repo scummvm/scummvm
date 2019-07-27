@@ -35,8 +35,8 @@
 #include "backends/networking/sdl_net/handlers/uploadfilehandler.h"
 #include "common/hash-str.h"
 #include "common/mutex.h"
-#include "common/singleton.h"
 #include "common/scummsys.h"
+#include "common/singleton.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -61,7 +61,7 @@ class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	Client _client[MAX_CONNECTIONS];
 	uint32 _clients;
 	bool _timerStarted, _stopOnIdle, _minimalMode;
-	Common::HashMap<Common::String, BaseHandler*> _pathHandlers;
+	Common::HashMap<Common::String, BaseHandler *> _pathHandlers;
 	BaseHandler *_defaultHandler;
 	IndexPageHandler _indexPageHandler;
 	FilesPageHandler _filesPageHandler;
@@ -108,7 +108,7 @@ public:
 };
 
 /** Shortcut for accessing the local webserver. */
-#define LocalServer     Networking::LocalWebserver::instance()
+#define LocalServer Networking::LocalWebserver::instance()
 
 } // End of namespace Networking
 

@@ -23,8 +23,8 @@
 #ifndef COMMON_LOCALIZATION_H
 #define COMMON_LOCALIZATION_H
 
-#include "common/language.h"
 #include "common/keyboard.h"
+#include "common/language.h"
 
 namespace Common {
 

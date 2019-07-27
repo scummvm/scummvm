@@ -25,20 +25,21 @@
 #include "mohawk/cstime_game.h"
 #include "mohawk/cstime_ui.h"
 #include "mohawk/cstime_view.h"
-#include "mohawk/resource.h"
 #include "mohawk/cursors.h"
+#include "mohawk/resource.h"
 #include "mohawk/video.h"
 
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "common/events.h"
 #include "common/fs.h"
-#include "common/textconsole.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 namespace Mohawk {
 
-MohawkEngine_CSTime::MohawkEngine_CSTime(OSystem *syst, const MohawkGameDescription *gamedesc) : MohawkEngine(syst, gamedesc) {
+MohawkEngine_CSTime::MohawkEngine_CSTime(OSystem *syst, const MohawkGameDescription *gamedesc)
+  : MohawkEngine(syst, gamedesc) {
 	_rnd = new Common::RandomSource("cstime");
 
 	// If the user just copied the CD contents, the fonts are in a subdirectory.
@@ -446,8 +447,7 @@ void MohawkEngine_CSTime::triggerEvent(CSTimeEvent &event) {
 		_state = kCSTStateNewScene;
 		break;
 
-	case kCSTimeEventCharStartFlapping:
-		{
+	case kCSTimeEventCharStartFlapping: {
 		CSTimeChar *chr = _case->getCurrScene()->getChar(event.param1);
 		if (!chr->_unknown2) {
 			_case->getCurrScene()->_activeChar->_flappingState = 0;
@@ -470,8 +470,7 @@ void MohawkEngine_CSTime::triggerEvent(CSTimeEvent &event) {
 
 		newEvent.type = kCSTimeEventUnknown69;
 		insertEventAtFront(newEvent);
-		}
-		break;
+	} break;
 
 	case kCSTimeEventDropItemInInventory:
 		_interface->dropItemInInventory(event.param2);
@@ -507,9 +506,9 @@ void MohawkEngine_CSTime::triggerEvent(CSTimeEvent &event) {
 			break;
 		}
 		{
-		uint32 flags = kFeatureSortStatic | kFeatureNewNoLoop | kFeatureNewDisableOnReset;
-		_case->getCurrScene()->_objectFeatures[event.param2] = _view->installViewFeature(_case->getCurrScene()->getSceneId() + event.param2, flags, NULL);
-		// FIXME: a mess of priority stuff
+			uint32 flags = kFeatureSortStatic | kFeatureNewNoLoop | kFeatureNewDisableOnReset;
+			_case->getCurrScene()->_objectFeatures[event.param2] = _view->installViewFeature(_case->getCurrScene()->getSceneId() + event.param2, flags, NULL);
+			// FIXME: a mess of priority stuff
 		}
 		break;
 

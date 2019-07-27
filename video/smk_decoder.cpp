@@ -26,16 +26,16 @@
 
 #include "video/smk_decoder.h"
 
-#include "common/endian.h"
-#include "common/util.h"
-#include "common/stream.h"
 #include "common/bitstream.h"
+#include "common/endian.h"
+#include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
 #include "audio/audiostream.h"
-#include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "audio/mixer.h"
 
 namespace Video {
 
@@ -56,6 +56,7 @@ public:
 	SmallHuffmanTree(Common::BitStreamMemory8LSB &bs);
 
 	uint16 getCode(Common::BitStreamMemory8LSB &bs);
+
 private:
 	enum {
 		SMK_NODE = 0x8000
@@ -73,7 +74,8 @@ private:
 };
 
 SmallHuffmanTree::SmallHuffmanTree(Common::BitStreamMemory8LSB &bs)
-	: _treeSize(0), _bs(bs) {
+  : _treeSize(0)
+  , _bs(bs) {
 	uint32 bit = _bs.getBit();
 	assert(bit);
 
@@ -114,7 +116,7 @@ uint16 SmallHuffmanTree::decodeTree(uint32 prefix, int length) {
 
 	uint16 r2 = decodeTree(prefix | (1 << length), length + 1);
 
-	return r1+r2+1;
+	return r1 + r2 + 1;
 }
 
 uint16 SmallHuffmanTree::getCode(Common::BitStreamMemory8LSB &bs) {
@@ -143,6 +145,7 @@ public:
 
 	void reset();
 	uint32 getCode(Common::BitStreamMemory8LSB &bs);
+
 private:
 	enum {
 		SMK_NODE = 0x80000000
@@ -150,9 +153,9 @@ private:
 
 	uint32 decodeTree(uint32 prefix, int length);
 
-	uint32  _treeSize;
+	uint32 _treeSize;
 	uint32 *_tree;
-	uint32  _last[3];
+	uint32 _last[3];
 
 	uint32 _prefixtree[256];
 	byte _prefixlength[256];
@@ -165,7 +168,7 @@ private:
 };
 
 BigHuffmanTree::BigHuffmanTree(Common::BitStreamMemory8LSB &bs, int allocSize)
-	: _bs(bs) {
+  : _bs(bs) {
 	uint32 bit = _bs.getBit();
 	if (!bit) {
 		_tree = new uint32[1];
@@ -252,7 +255,7 @@ uint32 BigHuffmanTree::decodeTree(uint32 prefix, int length) {
 	_tree[t] = SMK_NODE | r1;
 
 	uint32 r2 = decodeTree(prefix | (1 << length), length + 1);
-	return r1+r2+1;
+	return r1 + r2 + 1;
 }
 
 uint32 BigHuffmanTree::getCode(Common::BitStreamMemory8LSB &bs) {
@@ -382,7 +385,7 @@ bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 	for (i = 0; i < frameCount; ++i)
 		_frameTypes[i] = _fileStream->readByte();
 
-	byte *huffmanTrees = (byte *) malloc(_header.treesSize);
+	byte *huffmanTrees = (byte *)malloc(_header.treesSize);
 	_fileStream->read(huffmanTrees, _header.treesSize);
 
 	Common::BitStreamMemory8LSB bs(new Common::BitStreamMemoryStream(huffmanTrees, _header.treesSize, DisposeAfterUse::YES), DisposeAfterUse::YES);
@@ -442,20 +445,20 @@ void SmackerDecoder::readNextPacket() {
 			continue;
 
 		chunkSize = _fileStream->readUint32LE();
-		chunkSize -= 4;    // subtract the first 4 bytes (chunk size)
+		chunkSize -= 4; // subtract the first 4 bytes (chunk size)
 
 		if (_header.audioInfo[i].compression == kCompressionNone) {
 			dataSizeUnpacked = chunkSize;
 		} else {
 			dataSizeUnpacked = _fileStream->readUint32LE();
-			chunkSize -= 4;    // subtract the next 4 bytes (unpacked data size)
+			chunkSize -= 4; // subtract the next 4 bytes (unpacked data size)
 		}
 
 		handleAudioTrack(i, chunkSize, dataSizeUnpacked);
 	}
 
 	uint32 frameSize = _frameSizes[videoTrack->getCurFrame()] & ~3;
-//	uint32 remainder =  _frameSizes[videoTrack->getCurFrame()] & 3;
+	//	uint32 remainder =  _frameSizes[videoTrack->getCurFrame()] & 3;
 
 	if (_fileStream->pos() - startPos > frameSize)
 		error("Smacker actual frame size exceeds recorded frame size");
@@ -571,7 +574,7 @@ void SmackerDecoder::SmackerVideoTrack::decodeFrame(Common::BitStreamMemory8LSB 
 	uint bw = getWidth() / 4;
 	uint bh = getHeight() / doubleY / 4;
 	uint stride = getWidth();
-	uint block = 0, blocks = bw*bh;
+	uint block = 0, blocks = bw * bh;
 
 	byte *out;
 	uint type, run, j, mode;
@@ -606,7 +609,7 @@ void SmackerDecoder::SmackerVideoTrack::decodeFrame(Common::BitStreamMemory8LSB 
 			break;
 		case SMK_BLOCK_FULL:
 			// Smacker v2 has one mode, Smacker v4 has three
-			if (_signature == MKTAG('S','M','K','2')) {
+			if (_signature == MKTAG('S', 'M', 'K', '2')) {
 				mode = 0;
 			} else {
 				// 00 - mode 0
@@ -623,58 +626,58 @@ void SmackerDecoder::SmackerVideoTrack::decodeFrame(Common::BitStreamMemory8LSB 
 			while (run-- && block < blocks) {
 				out = (byte *)_surface->getPixels() + (block / bw) * (stride * 4 * doubleY) + (block % bw) * 4;
 				switch (mode) {
-					case 0:
-						for (i = 0; i < 4; ++i) {
-							p1 = _FullTree->getCode(bs);
-							p2 = _FullTree->getCode(bs);
-							for (j = 0; j < doubleY; ++j) {
-								out[2] = p1 & 0xff;
-								out[3] = p1 >> 8;
-								out[0] = p2 & 0xff;
-								out[1] = p2 >> 8;
-								out += stride;
-							}
-						}
-						break;
-					case 1:
+				case 0:
+					for (i = 0; i < 4; ++i) {
 						p1 = _FullTree->getCode(bs);
-						out[0] = out[1] = p1 & 0xFF;
-						out[2] = out[3] = p1 >> 8;
-						out += stride;
-						out[0] = out[1] = p1 & 0xFF;
-						out[2] = out[3] = p1 >> 8;
-						out += stride;
 						p2 = _FullTree->getCode(bs);
-						out[0] = out[1] = p2 & 0xFF;
-						out[2] = out[3] = p2 >> 8;
-						out += stride;
-						out[0] = out[1] = p2 & 0xFF;
-						out[2] = out[3] = p2 >> 8;
-						out += stride;
-						break;
-					case 2:
-						for (i = 0; i < 2; i++) {
-							// We first get p2 and then p1
-							// Check ffmpeg thread "[PATCH] Smacker video decoder bug fix"
-							// http://article.gmane.org/gmane.comp.video.ffmpeg.devel/78768
-							p2 = _FullTree->getCode(bs);
-							p1 = _FullTree->getCode(bs);
-							for (j = 0; j < doubleY; ++j) {
-								out[0] = p1 & 0xff;
-								out[1] = p1 >> 8;
-								out[2] = p2 & 0xff;
-								out[3] = p2 >> 8;
-								out += stride;
-							}
-							for (j = 0; j < doubleY; ++j) {
-								out[0] = p1 & 0xff;
-								out[1] = p1 >> 8;
-								out[2] = p2 & 0xff;
-								out[3] = p2 >> 8;
-								out += stride;
-							}
+						for (j = 0; j < doubleY; ++j) {
+							out[2] = p1 & 0xff;
+							out[3] = p1 >> 8;
+							out[0] = p2 & 0xff;
+							out[1] = p2 >> 8;
+							out += stride;
 						}
-						break;
+					}
+					break;
+				case 1:
+					p1 = _FullTree->getCode(bs);
+					out[0] = out[1] = p1 & 0xFF;
+					out[2] = out[3] = p1 >> 8;
+					out += stride;
+					out[0] = out[1] = p1 & 0xFF;
+					out[2] = out[3] = p1 >> 8;
+					out += stride;
+					p2 = _FullTree->getCode(bs);
+					out[0] = out[1] = p2 & 0xFF;
+					out[2] = out[3] = p2 >> 8;
+					out += stride;
+					out[0] = out[1] = p2 & 0xFF;
+					out[2] = out[3] = p2 >> 8;
+					out += stride;
+					break;
+				case 2:
+					for (i = 0; i < 2; i++) {
+						// We first get p2 and then p1
+						// Check ffmpeg thread "[PATCH] Smacker video decoder bug fix"
+						// http://article.gmane.org/gmane.comp.video.ffmpeg.devel/78768
+						p2 = _FullTree->getCode(bs);
+						p1 = _FullTree->getCode(bs);
+						for (j = 0; j < doubleY; ++j) {
+							out[0] = p1 & 0xff;
+							out[1] = p1 >> 8;
+							out[2] = p2 & 0xff;
+							out[3] = p2 >> 8;
+							out += stride;
+						}
+						for (j = 0; j < doubleY; ++j) {
+							out[0] = p1 & 0xff;
+							out[1] = p1 >> 8;
+							out[2] = p2 & 0xff;
+							out[3] = p2 >> 8;
+							out += stride;
+						}
+					}
+					break;
 				}
 				++block;
 			}
@@ -717,11 +720,11 @@ void SmackerDecoder::SmackerVideoTrack::unpackPalette(Common::SeekableReadStream
 	byte b0;
 	while (sz < 256) {
 		b0 = *p++;
-		if (b0 & 0x80) {               // if top bit is 1 (0x80 = 10000000)
-			sz += (b0 & 0x7f) + 1;     // get lower 7 bits + 1 (0x7f = 01111111)
+		if (b0 & 0x80) { // if top bit is 1 (0x80 = 10000000)
+			sz += (b0 & 0x7f) + 1; // get lower 7 bits + 1 (0x7f = 01111111)
 			pal += 3 * ((b0 & 0x7f) + 1);
-		} else if (b0 & 0x40) {        // if top 2 bits are 01 (0x40 = 01000000)
-			byte c = (b0 & 0x3f) + 1;  // get lower 6 bits + 1 (0x3f = 00111111)
+		} else if (b0 & 0x40) { // if top 2 bits are 01 (0x40 = 01000000)
+			byte c = (b0 & 0x3f) + 1; // get lower 6 bits + 1 (0x3f = 00111111)
 			uint s = 3 * *p++;
 			sz += c;
 
@@ -731,7 +734,7 @@ void SmackerDecoder::SmackerVideoTrack::unpackPalette(Common::SeekableReadStream
 				*pal++ = oldPalette[s + 2];
 				s += 3;
 			}
-		} else {                       // top 2 bits are 00
+		} else { // top 2 bits are 00
 			sz++;
 			// get the lower 6 bits for each component (0x3f = 00111111)
 			byte r = b0 & 0x3f;
@@ -752,9 +755,9 @@ void SmackerDecoder::SmackerVideoTrack::unpackPalette(Common::SeekableReadStream
 	_dirtyPalette = true;
 }
 
-SmackerDecoder::SmackerAudioTrack::SmackerAudioTrack(const AudioInfo &audioInfo, Audio::Mixer::SoundType soundType) :
-		AudioTrack(soundType),
-		_audioInfo(audioInfo) {
+SmackerDecoder::SmackerAudioTrack::SmackerAudioTrack(const AudioInfo &audioInfo, Audio::Mixer::SoundType soundType)
+  : AudioTrack(soundType)
+  , _audioInfo(audioInfo) {
 	_audioStream = Audio::makeQueuingAudioStream(_audioInfo.sampleRate, _audioInfo.isStereo);
 }
 
@@ -829,7 +832,7 @@ void SmackerDecoder::SmackerAudioTrack::queueCompressedBuffer(byte *buffer, uint
 		// (the exact opposite to the base values)
 		if (!is16Bits) {
 			for (int k = 0; k < (isStereo ? 2 : 1); k++) {
-				int8 delta = (int8) ((int16) audioTrees[k]->getCode(audioBS));
+				int8 delta = (int8)((int16)audioTrees[k]->getCode(audioBS));
 				bases[k] = (bases[k] + delta) & 0xFF;
 				*curPointer++ = bases[k] ^ 0x80;
 				curPos++;
@@ -838,14 +841,13 @@ void SmackerDecoder::SmackerAudioTrack::queueCompressedBuffer(byte *buffer, uint
 			for (int k = 0; k < (isStereo ? 2 : 1); k++) {
 				byte lo = audioTrees[k * 2]->getCode(audioBS);
 				byte hi = audioTrees[k * 2 + 1]->getCode(audioBS);
-				bases[k] += (int16) (lo | (hi << 8));
+				bases[k] += (int16)(lo | (hi << 8));
 
 				WRITE_BE_UINT16(curPointer, bases[k]);
 				curPointer += 2;
 				curPos += 2;
 			}
 		}
-
 	}
 
 	for (int k = 0; k < numBytes; k++)

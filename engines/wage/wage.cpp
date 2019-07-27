@@ -54,16 +54,18 @@
 #include "engines/engine.h"
 #include "engines/util.h"
 
-#include "wage/wage.h"
+#include "wage/dialog.h"
 #include "wage/entities.h"
 #include "wage/gui.h"
-#include "wage/dialog.h"
 #include "wage/script.h"
+#include "wage/wage.h"
 #include "wage/world.h"
 
 namespace Wage {
 
-WageEngine::WageEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst), _gameDescription(desc) {
+WageEngine::WageEngine(OSystem *syst, const ADGameDescription *desc)
+  : Engine(syst)
+  , _gameDescription(desc) {
 	_rnd = new Common::RandomSource("wage");
 
 	_aim = -1;
@@ -170,20 +172,20 @@ void WageEngine::processEvents() {
 		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_RETURN: {
-					_inputText = _gui->_consoleWindow->getInput();
-					Common::String inp = _inputText + '\n';
+				_inputText = _gui->_consoleWindow->getInput();
+				Common::String inp = _inputText + '\n';
 
-					_gui->appendText(inp.c_str());
+				_gui->appendText(inp.c_str());
 
-					_gui->_consoleWindow->clearInput();
+				_gui->_consoleWindow->clearInput();
 
-					if (_inputText.empty())
-						break;
-
-					processTurn(&_inputText, NULL);
-					_gui->disableUndo();
+				if (_inputText.empty())
 					break;
-				}
+
+				processTurn(&_inputText, NULL);
+				_gui->disableUndo();
+				break;
+			}
 			default:
 				if (event.kbd.ascii == '~') {
 					_debugger->attach();
@@ -320,7 +322,7 @@ void WageEngine::performInitialSetup() {
 	_gui->_consoleWindow->setDimensions(*_world->_player->_currentScene->_textBounds);
 }
 
-void WageEngine::wearObjs(Chr* chr) {
+void WageEngine::wearObjs(Chr *chr) {
 	if (chr != nullptr)
 		chr->wearObjs();
 }
@@ -351,9 +353,7 @@ void WageEngine::onMove(Designed *what, Designed *from, Designed *to) {
 		return;
 	}
 
-	if (from == currentScene || to == currentScene ||
-			(what->_classType == CHR && ((Chr *)what)->_currentScene == currentScene) ||
-			(what->_classType == OBJ && ((Obj *)what)->_currentScene == currentScene))
+	if (from == currentScene || to == currentScene || (what->_classType == CHR && ((Chr *)what)->_currentScene == currentScene) || (what->_classType == OBJ && ((Obj *)what)->_currentScene == currentScene))
 		_gui->setSceneDirty();
 
 	if ((from == player || to == player) && !_temporarilyHidden)
@@ -511,6 +511,5 @@ void WageEngine::processTurn(Common::String *textInput, Designed *clickInput) {
 
 	_inputText.clear();
 }
-
 
 } // End of namespace Wage

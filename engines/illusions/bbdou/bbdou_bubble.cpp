@@ -20,9 +20,9 @@
  *
  */
 
-#include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/bbdou/bbdou_bubble.h"
 #include "illusions/actor.h"
+#include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/camera.h"
 #include "illusions/dictionary.h"
 #include "illusions/input.h"
@@ -30,7 +30,8 @@
 namespace Illusions {
 
 BbdouBubble::BbdouBubble(IllusionsEngine_BBDOU *vm, BbdouSpecialCode *bbdou)
-	: _vm(vm), _bbdou(bbdou) {
+  : _vm(vm)
+  , _bbdou(bbdou) {
 }
 
 BbdouBubble::~BbdouBubble() {
@@ -82,11 +83,10 @@ void BbdouBubble::init() {
 	_sourcePt.y = 0;
 	_destPt.x = 0;
 	_destPt.y = 0;
-
 }
 
 void BbdouBubble::addBubbleStyle(uint32 showSequenceId, uint32 hideSequenceId, uint32 progResKeywordId,
-	uint32 namedPointId, int16 count, uint32 *namedPointIds) {
+                                 uint32 namedPointId, int16 count, uint32 *namedPointIds) {
 	BubbleStyle style;
 	style._showSequenceId = showSequenceId;
 	style._hideSequenceId = hideSequenceId;
@@ -103,7 +103,7 @@ void BbdouBubble::addBubbleStyle(uint32 showSequenceId, uint32 hideSequenceId, u
 }
 
 void BbdouBubble::show() {
-	
+
 	if (_showingBubbleStyle) {
 		hide();
 	}
@@ -127,7 +127,6 @@ void BbdouBubble::show() {
 			iconControl->startSequenceActor(_icons[i]._sequenceId, 2, 0);
 		}
 	}
-
 }
 
 void BbdouBubble::hide() {
@@ -156,8 +155,7 @@ void BbdouBubble::selectBubbleStyle(int16 minCount, Common::Point sourcePt, Comm
 	int16 maxCount = 32;
 	for (uint i = 0; i < _bubbleStyles.size(); ++i) {
 		BubbleStyle *style = &_bubbleStyles[i];
-		if (style->_count < maxCount && style->_count >= minCount &&
-			(progResKeywordId == 0 || progResKeywordId == style->_progResKeywordId)) {
+		if (style->_count < maxCount && style->_count >= minCount && (progResKeywordId == 0 || progResKeywordId == style->_progResKeywordId)) {
 			maxCount = style->_count;
 			_currBubbleStyle = style;
 		}
@@ -193,7 +191,7 @@ void BbdouBubble::calcBubbleTrail(Common::Point &sourcePt, Common::Point &destPt
 		0x00060042, 0x00060043, 0x00060044, 0x00060045, 0x00060046,
 		0x00060047, 0x00060048, 0x00060049, 0x0006004A, 0x0006004B
 	};
-	static const int kIndexTbl[kSequenceIdsCount] = {4, 0, 8, 2, 6, 5, 1, 9, 3, 7};
+	static const int kIndexTbl[kSequenceIdsCount] = { 4, 0, 8, 2, 6, 5, 1, 9, 3, 7 };
 
 	int sequenceCounters[kSequenceIdsCount];
 	bool swapY;
@@ -271,8 +269,8 @@ void BbdouBubble::calcBubbleTrail(Common::Point &sourcePt, Common::Point &destPt
 		angleIncr -= angleStep;
 
 		Common::Point newPoint(
-			centerX + _vm->getRandom(8) - 2 + (int)(cos(currentAngle) * radius),
-			centerY + _vm->getRandom(8) - 2 - (int)(sin(currentAngle) * radius));
+		  centerX + _vm->getRandom(8) - 2 + (int)(cos(currentAngle) * radius),
+		  centerY + _vm->getRandom(8) - 2 - (int)(sin(currentAngle) * radius));
 
 		Control *trailControl = _vm->_dict->getObjectControl(_trailObjectIds[i]);
 
@@ -286,9 +284,7 @@ void BbdouBubble::calcBubbleTrail(Common::Point &sourcePt, Common::Point &destPt
 				break;
 			}
 		}
-
 	}
-
 }
 
 } // End of namespace Illusions

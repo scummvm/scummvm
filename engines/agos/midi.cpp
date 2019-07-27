@@ -22,14 +22,14 @@
 
 #include "common/config-manager.h"
 #include "common/file.h"
-#include "common/textconsole.h"
 #include "common/memstream.h"
+#include "common/textconsole.h"
 
 #include "agos/agos.h"
 #include "agos/midi.h"
 
-#include "agos/drivers/accolade/mididriver.h"
 #include "agos/drivers/accolade/adlib.h"
+#include "agos/drivers/accolade/mididriver.h"
 #include "agos/drivers/accolade/mt32.h"
 #include "agos/drivers/simon1/adlib.h"
 // Miles Audio for Simon 2
@@ -41,7 +41,6 @@
 #include "gui/message.h"
 
 namespace AGOS {
-
 
 // MidiParser_S1D is not considered part of the standard
 // MidiParser suite, but we still try to mask its details
@@ -140,10 +139,10 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 			if (!ConfMan.getBool("native_mt32")) {
 				// Not a real MT32 / no MUNT
 				::GUI::MessageDialog dialog(("You appear to be using a General MIDI device,\n"
-											"but your game only supports Roland MT32 MIDI.\n"
-											"We try to map the Roland MT32 instruments to\n"
-											"General MIDI ones. It is still possible that\n"
-											"some tracks sound incorrect."));
+				                             "but your game only supports Roland MT32 MIDI.\n"
+				                             "We try to map the Roland MT32 instruments to\n"
+				                             "General MIDI ones. It is still possible that\n"
+				                             "some tracks sound incorrect."));
 				dialog.runModal();
 			}
 			// Switch to MT32 driver in any case
@@ -161,7 +160,7 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 		switch (musicType) {
 		case MT_ADLIB:
 			_driver = MidiDriver_Accolade_AdLib_create(accoladeDriverFilename);
-			
+
 			break;
 		case MT_MT32:
 			_driver = MidiDriver_Accolade_MT32_create(accoladeDriverFilename);
@@ -437,7 +436,7 @@ void MidiPlayer::startTrack(int track) {
 		}
 
 		MidiParser *parser = MidiParser::createParser_SMF();
-		parser->property (MidiParser::mpMalformedPitchBends, 1);
+		parser->property(MidiParser::mpMalformedPitchBends, 1);
 		parser->setMidiDriver(this);
 		parser->setTimerRate(_driver->getBaseTempo());
 		if (!parser->loadMusic(_music.songs[track], _music.song_sizes[track])) {
@@ -478,7 +477,7 @@ void MidiPlayer::pause(bool b) {
 	Common::StackLock lock(_mutex);
 	// if using the driver Accolade_AdLib call setVolume() to turn off\on the volume on all channels
 	if (musicType == MT_ADLIB && _musicMode == kMusicModeAccolade) {
-		static_cast <MidiDriver_Accolade_AdLib*> (_driver)->setVolume(_paused ? 0 : 128);
+		static_cast<MidiDriver_Accolade_AdLib *>(_driver)->setVolume(_paused ? 0 : 128);
 	}
 	for (int i = 0; i < 16; ++i) {
 		if (_music.channel[i])
@@ -490,13 +489,13 @@ void MidiPlayer::pause(bool b) {
 
 void MidiPlayer::setVolume(int musicVol, int sfxVol) {
 	musicVol = CLIP(musicVol, 0, 255);
-	sfxVol   = CLIP(sfxVol,   0, 255);
+	sfxVol = CLIP(sfxVol, 0, 255);
 
 	if (_musicVolume == musicVol && _sfxVolume == sfxVol)
 		return;
 
 	_musicVolume = musicVol;
-	_sfxVolume   = sfxVol;
+	_sfxVolume = sfxVol;
 
 	// Now tell all the channels this.
 	Common::StackLock lock(_mutex);
@@ -806,16 +805,16 @@ void MidiPlayer::loadS1D(Common::File *in, bool sfx) {
 //     * compressed file count
 Common::SeekableReadStream *MidiPlayer::simon2SetupExtractFile(const Common::String &requestedFileName) {
 	Common::File *setupBundleStream = new Common::File();
-	uint32        bundleSize = 0;
-	uint32        bundleBytesLeft = 0;
-	byte          bundleHeader[MIDI_SETUP_BUNDLE_HEADER_SIZE];
-	byte          bundleFileHeader[MIDI_SETUP_BUNDLE_FILEHEADER_SIZE];
-	uint16        bundleFileCount = 0;
-	uint16        bundleFileNr = 0;
+	uint32 bundleSize = 0;
+	uint32 bundleBytesLeft = 0;
+	byte bundleHeader[MIDI_SETUP_BUNDLE_HEADER_SIZE];
+	byte bundleFileHeader[MIDI_SETUP_BUNDLE_FILEHEADER_SIZE];
+	uint16 bundleFileCount = 0;
+	uint16 bundleFileNr = 0;
 
 	Common::String fileName;
-	uint32         fileCompressedSize = 0;
-	byte          *fileCompressedDataPtr = nullptr;
+	uint32 fileCompressedSize = 0;
+	byte *fileCompressedDataPtr = nullptr;
 
 	Common::SeekableReadStream *extractedStream = nullptr;
 

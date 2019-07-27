@@ -40,6 +40,7 @@ class SaveLoadCloudSyncProgressDialog : public Dialog { //protected?
 	StaticTextWidget *_label, *_percentLabel;
 	SliderWidget *_progressBar;
 	bool _close;
+
 public:
 	SaveLoadCloudSyncProgressDialog(bool canRunInBackground);
 	virtual ~SaveLoadCloudSyncProgressDialog();
@@ -56,7 +57,7 @@ public:
 // probably not able to handle the grid chooser anyway, so disabling it
 // for them is a good start.
 #ifdef DISABLE_FANCY_THEMES
-#define DISABLE_SAVELOADCHOOSER_GRID
+#	define DISABLE_SAVELOADCHOOSER_GRID
 #endif // DISABLE_FANCY_THEMES
 
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
@@ -110,16 +111,16 @@ protected:
 	*/
 	virtual void listSaves();
 
-	const bool				_saveMode;
-	const MetaEngine		*_metaEngine;
-	bool					_delSupport;
-	bool					_metaInfoSupport;
-	bool					_thumbnailSupport;
-	bool					_saveDateSupport;
-	bool					_playTimeSupport;
-	Common::String			_target;
+	const bool _saveMode;
+	const MetaEngine *_metaEngine;
+	bool _delSupport;
+	bool _metaInfoSupport;
+	bool _thumbnailSupport;
+	bool _saveDateSupport;
+	bool _playTimeSupport;
+	Common::String _target;
 	bool _dialogWasShown;
-	SaveStateList			_saveList;
+	SaveStateList _saveList;
 
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	ButtonWidget *_listButton;
@@ -133,6 +134,7 @@ protected:
 class SaveLoadChooserSimple : public SaveLoadChooserDialog {
 	typedef Common::String String;
 	typedef Common::Array<Common::String> StringArray;
+
 public:
 	SaveLoadChooserSimple(const String &title, const String &buttonLabel, bool saveMode);
 
@@ -148,21 +150,23 @@ public:
 
 	virtual void open();
 	virtual void close();
+
 protected:
 	virtual void updateSaveList();
+
 private:
 	virtual int runIntern();
 
-	ListWidget		*_list;
-	ButtonWidget	*_chooseButton;
-	ButtonWidget	*_deleteButton;
-	GraphicsWidget	*_gfxWidget;
-	ContainerWidget	*_container;
-	StaticTextWidget	*_date;
-	StaticTextWidget	*_time;
-	StaticTextWidget	*_playtime;
+	ListWidget *_list;
+	ButtonWidget *_chooseButton;
+	ButtonWidget *_deleteButton;
+	GraphicsWidget *_gfxWidget;
+	ContainerWidget *_container;
+	StaticTextWidget *_date;
+	StaticTextWidget *_time;
+	StaticTextWidget *_playtime;
 
-	String					_resultString;
+	String _resultString;
 
 	void updateSelection(bool redraw);
 };
@@ -181,8 +185,10 @@ public:
 	void setTargetSlot(int slot) { _targetSlot = slot; }
 
 	virtual void open();
+
 protected:
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+
 private:
 	int _targetSlot;
 	StaticTextWidget *_title;
@@ -203,10 +209,12 @@ public:
 	virtual SaveLoadChooserType getType() const { return kSaveLoadDialogGrid; }
 
 	virtual void close();
+
 protected:
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void handleMouseWheel(int x, int y, int direction);
 	virtual void updateSaveList();
+
 private:
 	virtual int runIntern();
 
@@ -227,11 +235,17 @@ private:
 	bool selectDescription();
 
 	struct SlotButton {
-		SlotButton() : container(0), button(0), description(0) {}
-		SlotButton(ContainerWidget *c, PicButtonWidget *b, StaticTextWidget *d) : container(c), button(b), description(d) {}
+		SlotButton()
+		  : container(0)
+		  , button(0)
+		  , description(0) {}
+		SlotButton(ContainerWidget *c, PicButtonWidget *b, StaticTextWidget *d)
+		  : container(c)
+		  , button(b)
+		  , description(d) {}
 
-		ContainerWidget  *container;
-		PicButtonWidget  *button;
+		ContainerWidget *container;
+		PicButtonWidget *button;
 		StaticTextWidget *description;
 
 		void setVisible(bool state) {

@@ -74,7 +74,9 @@ enum {
 
 EnergyMonitor *g_energyMonitor = 0;
 
-EnergyMonitor::EnergyMonitor() : IdlerAnimation(kEnergyBarID), _energyLight(kWarningLightID) {
+EnergyMonitor::EnergyMonitor()
+  : IdlerAnimation(kEnergyBarID)
+  , _energyLight(kWarningLightID) {
 	PegasusEngine *vm = (PegasusEngine *)g_engine;
 
 	_stage = kStageNoStage;

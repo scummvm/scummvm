@@ -26,15 +26,13 @@
 // BUILD_DISPLAY.CPP	like the old spr_engi but slightly more aptly named
 // ---------------------------------------------------------------------------
 
-
-#include "common/system.h"
 #include "common/events.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 
-#include "sword2/sword2.h"
+#include "sword2/console.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"
-#include "sword2/console.h"
 #include "sword2/logic.h"
 #include "sword2/maketext.h"
 #include "sword2/mouse.h"
@@ -42,6 +40,7 @@
 #include "sword2/resman.h"
 #include "sword2/screen.h"
 #include "sword2/sound.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
@@ -86,7 +85,7 @@ Screen::Screen(Sword2Engine *vm, int16 width, int16 height) {
 	_largestLayerArea = 0;
 	_largestSpriteArea = 0;
 
-	strcpy(_largestLayerInfo,  "largest layer:  none registered");
+	strcpy(_largestLayerInfo, "largest layer:  none registered");
 	strcpy(_largestSpriteInfo, "largest sprite: none registered");
 
 	_fadeStatus = RDFADE_NONE;
@@ -309,9 +308,9 @@ void Screen::buildDisplay() {
 		renderParallax(_vm->fetchBackgroundLayer(file), 2);
 
 		// sprites & layers
-		drawBackFrames();	// background sprites
-		drawSortFrames(file);	// sorted sprites & layers
-		drawForeFrames();	// foreground sprites
+		drawBackFrames(); // background sprites
+		drawSortFrames(file); // sorted sprites & layers
+		drawForeFrames(); // foreground sprites
 
 		// first foreground parallax + related anims
 
@@ -342,7 +341,6 @@ void Screen::buildDisplay() {
 	} while (!endRenderCycle());
 
 	_vm->_resman->closeResource(_thisScreen.background_layer_id);
-
 }
 
 /**
@@ -386,7 +384,7 @@ void Screen::displayMsg(byte *text, int time) {
 	spriteInfo.h = frame.height;
 	spriteInfo.scale = 0;
 	spriteInfo.scaledWidth = 0;
-	spriteInfo.scaledHeight	= 0;
+	spriteInfo.scaledHeight = 0;
 	spriteInfo.type = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION | RDSPR_TRANS;
 	spriteInfo.blend = 0;
 	spriteInfo.data = text_spr + FrameHeader::size();
@@ -537,9 +535,9 @@ void Screen::processLayer(byte *file, uint32 layer_number) {
 	if (current_layer_area > _largestLayerArea) {
 		_largestLayerArea = current_layer_area;
 		sprintf(_largestLayerInfo,
-			"largest layer:  %s layer(%d) is %dx%d",
-			_vm->_resman->fetchName(_thisScreen.background_layer_id),
-			layer_number, layer_head.width, layer_head.height);
+		        "largest layer:  %s layer(%d) is %dx%d",
+		        _vm->_resman->fetchName(_thisScreen.background_layer_id),
+		        layer_number, layer_head.width, layer_head.height);
 	}
 
 	uint32 rv = drawSprite(&spriteInfo);
@@ -551,10 +549,7 @@ void Screen::processImage(BuildUnit *build_unit) {
 
 	// We have some problematic animation frames in PSX demo (looks like there is missing data),
 	// so we just skip them.
-	if ( (Sword2Engine::isPsx() &&  _vm->_logic->readVar(DEMO)) &&
-		 ((build_unit->anim_resource == 369 && build_unit->anim_pc == 0) ||
-		 (build_unit->anim_resource == 296 && build_unit->anim_pc == 5)  ||
-		 (build_unit->anim_resource == 534 && build_unit->anim_pc == 13)) )
+	if ((Sword2Engine::isPsx() && _vm->_logic->readVar(DEMO)) && ((build_unit->anim_resource == 369 && build_unit->anim_pc == 0) || (build_unit->anim_resource == 296 && build_unit->anim_pc == 5) || (build_unit->anim_resource == 534 && build_unit->anim_pc == 13)))
 		return;
 
 	byte *file = _vm->_resman->openResource(build_unit->anim_resource);
@@ -625,7 +620,7 @@ void Screen::processImage(BuildUnit *build_unit) {
 	spriteInfo.h = frame_head.height;
 	spriteInfo.scale = build_unit->scale;
 	spriteInfo.scaledWidth = build_unit->scaled_width;
-	spriteInfo.scaledHeight	= build_unit->scaled_height;
+	spriteInfo.scaledHeight = build_unit->scaled_height;
 	spriteInfo.type = spriteType;
 	spriteInfo.blend = anim_head.blend;
 	// points to just after frame header, ie. start of sprite data
@@ -639,11 +634,11 @@ void Screen::processImage(BuildUnit *build_unit) {
 	if (current_sprite_area > _largestSpriteArea) {
 		_largestSpriteArea = current_sprite_area;
 		sprintf(_largestSpriteInfo,
-			"largest sprite: %s frame(%d) is %dx%d",
-			_vm->_resman->fetchName(build_unit->anim_resource),
-			build_unit->anim_pc,
-			frame_head.width,
-			frame_head.height);
+		        "largest sprite: %s frame(%d) is %dx%d",
+		        _vm->_resman->fetchName(build_unit->anim_resource),
+		        build_unit->anim_pc,
+		        frame_head.width,
+		        frame_head.height);
 	}
 
 	if (_vm->_logic->readVar(SYSTEM_TESTING_ANIMS)) { // see anims.cpp
@@ -671,9 +666,9 @@ void Screen::processImage(BuildUnit *build_unit) {
 	uint32 rv = drawSprite(&spriteInfo);
 	if (rv) {
 		error("Driver Error %.8x with sprite %s (%d, %d) in processImage",
-			rv,
-			_vm->_resman->fetchName(build_unit->anim_resource),
-			build_unit->anim_resource, build_unit->anim_pc);
+		      rv,
+		      _vm->_resman->fetchName(build_unit->anim_resource),
+		      build_unit->anim_resource, build_unit->anim_pc);
 	}
 
 	// release the anim resource
@@ -775,7 +770,6 @@ void Screen::registerFrame(byte *ob_mouse, byte *ob_graph, byte *ob_mega, BuildU
 	if (ob_mouse) {
 		// passed a mouse structure, so add to the _mouseList
 		_vm->_mouse->registerMouse(ob_mouse, build_unit);
-
 	}
 
 	_vm->_resman->closeResource(obGraph.getAnimResource());
@@ -1281,14 +1275,14 @@ void Screen::splashScreen() {
 // Following functions are used to manage screen cache for psx version.
 
 void Screen::setPsxScrCache(byte *psxScrCache, uint8 level) {
-		if (level < 3) {
-			if (psxScrCache)
-				_psxCacheEnabled[level] = true;
-			else
-				_psxCacheEnabled[level] = false;
+	if (level < 3) {
+		if (psxScrCache)
+			_psxCacheEnabled[level] = true;
+		else
+			_psxCacheEnabled[level] = false;
 
-			_psxScrCache[level] = psxScrCache;
-		}
+		_psxScrCache[level] = psxScrCache;
+	}
 }
 
 byte *Screen::getPsxScrCache(uint8 level) {

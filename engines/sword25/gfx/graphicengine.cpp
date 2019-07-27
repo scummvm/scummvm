@@ -31,47 +31,46 @@
 
 #include "common/system.h"
 
-#include "sword25/sword25.h"	// for kDebugScript
-#include "sword25/gfx/bitmapresource.h"
 #include "sword25/gfx/animationresource.h"
+#include "sword25/gfx/bitmapresource.h"
 #include "sword25/gfx/fontresource.h"
-#include "sword25/gfx/panel.h"
-#include "sword25/gfx/renderobjectmanager.h"
-#include "sword25/gfx/screenshot.h"
 #include "sword25/gfx/image/renderedimage.h"
 #include "sword25/gfx/image/swimage.h"
 #include "sword25/gfx/image/vectorimage.h"
-#include "sword25/package/packagemanager.h"
+#include "sword25/gfx/panel.h"
+#include "sword25/gfx/renderobjectmanager.h"
+#include "sword25/gfx/screenshot.h"
 #include "sword25/kernel/inputpersistenceblock.h"
 #include "sword25/kernel/outputpersistenceblock.h"
-
+#include "sword25/package/packagemanager.h"
+#include "sword25/sword25.h" // for kDebugScript
 
 #include "sword25/gfx/graphicengine.h"
 
 #include "sword25/fmv/movieplayer.h"
 
-#include "sword25/util/lua/lua.h"
 #include "sword25/util/lua/lauxlib.h"
+#include "sword25/util/lua/lua.h"
 enum {
 	BIT_DEPTH = 32,
 	BACKBUFFER_COUNT = 1
 };
 
-
 namespace Sword25 {
 
-static const uint FRAMETIME_SAMPLE_COUNT = 5;       // Frame duration is averaged over FRAMETIME_SAMPLE_COUNT frames
+static const uint FRAMETIME_SAMPLE_COUNT = 5; // Frame duration is averaged over FRAMETIME_SAMPLE_COUNT frames
 
-GraphicEngine::GraphicEngine(Kernel *pKernel) :
-	_width(0),
-	_height(0),
-	_bitDepth(0),
-	_lastTimeStamp((uint) -1), // force reset of _UpdateLastFrameDuration() on first call
-	_lastFrameDuration(0),
-	_timerActive(true),
-	_frameTimeSampleSlot(0),
-	_thumbnail(NULL),
-	ResourceService(pKernel) {
+GraphicEngine::GraphicEngine(Kernel *pKernel)
+  : _width(0)
+  , _height(0)
+  , _bitDepth(0)
+  , _lastTimeStamp((uint)-1)
+  , // force reset of _UpdateLastFrameDuration() on first call
+  _lastFrameDuration(0)
+  , _timerActive(true)
+  , _frameTimeSampleSlot(0)
+  , _thumbnail(NULL)
+  , ResourceService(pKernel) {
 	_frameTimeSamples.resize(FRAMETIME_SAMPLE_COUNT);
 
 	if (!registerScriptBindings())
@@ -213,7 +212,6 @@ bool GraphicEngine::fill(const Common::Rect *fillRectPtr, uint color) {
 				outo += _backSurface.pitch;
 			}
 		}
-
 	}
 
 	return true;
@@ -247,8 +245,7 @@ Resource *GraphicEngine::loadResource(const Common::String &filename) {
 	}
 
 	// Load sprite image. Savegame thumbnails are also loaded here.
-	if (filename.hasSuffix(".png") || filename.hasSuffix(".b25s") ||
-		filename.hasPrefix("/saves")) {
+	if (filename.hasSuffix(".png") || filename.hasSuffix(".b25s") || filename.hasPrefix("/saves")) {
 		bool result = false;
 		RenderedImage *pImage = new RenderedImage(filename, result);
 		if (!result) {
@@ -264,7 +261,6 @@ Resource *GraphicEngine::loadResource(const Common::String &filename) {
 
 		return pResource;
 	}
-
 
 	// Load vector graphics
 	if (filename.hasSuffix(".swf")) {
@@ -331,15 +327,10 @@ Resource *GraphicEngine::loadResource(const Common::String &filename) {
 // -----------------------------------------------------------------------------
 
 bool GraphicEngine::canLoadResource(const Common::String &filename) {
-	return filename.hasSuffix(".png") ||
-		filename.hasSuffix("_ani.xml") ||
-		filename.hasSuffix("_fnt.xml") ||
-		filename.hasSuffix(".swf") ||
-		filename.hasSuffix(".b25s") ||
-		filename.hasPrefix("/saves");
+	return filename.hasSuffix(".png") || filename.hasSuffix("_ani.xml") || filename.hasSuffix("_fnt.xml") || filename.hasSuffix(".swf") || filename.hasSuffix(".b25s") || filename.hasPrefix("/saves");
 }
 
-void  GraphicEngine::updateLastFrameDuration() {
+void GraphicEngine::updateLastFrameDuration() {
 	// Record current time
 	const uint currentTime = Kernel::getInstance()->getMilliTicks();
 
@@ -374,9 +365,9 @@ bool GraphicEngine::saveThumbnailScreenshot(const Common::String &filename) {
 void GraphicEngine::ARGBColorToLuaColor(lua_State *L, uint color) {
 	lua_Number components[4] = {
 		(lua_Number)((color >> 16) & 0xff), // Red
-		(lua_Number)((color >>  8) & 0xff), // Green
-		(lua_Number)( color        & 0xff), // Blue
-		(lua_Number)( color >> 24),         // Alpha
+		(lua_Number)((color >> 8) & 0xff), // Green
+		(lua_Number)(color & 0xff), // Blue
+		(lua_Number)(color >> 24), // Alpha
 	};
 
 	lua_newtable(L);

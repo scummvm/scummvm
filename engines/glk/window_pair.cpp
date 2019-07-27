@@ -27,14 +27,16 @@
 
 namespace Glk {
 
-PairWindow::PairWindow(Windows *windows, uint method, Window *key, uint size) :
-	Window(windows, 0),
-	_dir(method & winmethod_DirMask),
-	_division(method & winmethod_DivisionMask),
-	_wBorder((method & winmethod_BorderMask) == winmethod_Border),
-	_vertical(_dir == winmethod_Left || _dir == winmethod_Right),
-	_backward(_dir == winmethod_Left || _dir == winmethod_Above),
-	_key(key), _size(size), _keyDamage(0) {
+PairWindow::PairWindow(Windows *windows, uint method, Window *key, uint size)
+  : Window(windows, 0)
+  , _dir(method & winmethod_DirMask)
+  , _division(method & winmethod_DivisionMask)
+  , _wBorder((method & winmethod_BorderMask) == winmethod_Border)
+  , _vertical(_dir == winmethod_Left || _dir == winmethod_Right)
+  , _backward(_dir == winmethod_Left || _dir == winmethod_Above)
+  , _key(key)
+  , _size(size)
+  , _keyDamage(0) {
 	_type = wintype_Pair;
 }
 
@@ -149,25 +151,25 @@ void PairWindow::redraw() {
 	Window::redraw();
 
 	for (int ctr = 0, idx = (_backward ? (int)_children.size() - 1 : 0); ctr < (int)_children.size();
-		++ctr, idx += (_backward ? -1 : 1)) {
+	     ++ctr, idx += (_backward ? -1 : 1)) {
 		_children[idx]->redraw();
 	}
 
 	Window *child = !_backward ? _children.front() : _children.back();
 	Rect box(child->_bbox.left, child->_yAdj ? child->_bbox.top - child->_yAdj : child->_bbox.top,
-			 child->_bbox.right, child->_bbox.bottom);
+	         child->_bbox.right, child->_bbox.bottom);
 
 	if (_vertical) {
 		int xBord = _wBorder ? g_conf->_wBorderX : 0;
 		int xPad = (g_conf->_wPaddingX - xBord) / 2;
 
 		g_vm->_screen->fillRect(Rect(box.right + xPad, box.top, box.right + xPad + xBord, box.bottom),
-								g_conf->_borderColor);
+		                        g_conf->_borderColor);
 	} else {
 		int yBord = _wBorder ? g_conf->_wBorderY : 0;
 		int yPad = (g_conf->_wPaddingY - yBord) / 2;
 		g_vm->_screen->fillRect(Rect(box.left, box.bottom + yPad, box.right, box.bottom + yPad + yBord),
-								g_conf->_borderColor);
+		                        g_conf->_borderColor);
 	}
 }
 
@@ -228,7 +230,7 @@ void PairWindow::setArrangement(uint method, uint size, Window *keyWin) {
 	}
 
 	if (keyWin && dynamic_cast<BlankWindow *>(keyWin)
-			&& (method & winmethod_DivisionMask) == winmethod_Fixed) {
+	    && (method & winmethod_DivisionMask) == winmethod_Fixed) {
 		warning("setArrangement: a Blank window cannot have a fixed size");
 		return;
 	}
@@ -255,7 +257,7 @@ void PairWindow::click(const Point &newPos) {
 	// Note in case windows are partially overlapping, we want the top-most window to get the click.
 	// WHich is why we recurse in the opposite of the rendering direction (as the _backward flag) indicates
 	for (int ctr = 0, idx = (!_backward ? (int)_children.size() - 1 : 0); ctr < (int)_children.size();
-		++ctr, idx += (!_backward ? -1 : 1)) {
+	     ++ctr, idx += (!_backward ? -1 : 1)) {
 		Window *w = _children[idx];
 		if (w->_bbox.contains(newPos))
 			w->click(newPos);

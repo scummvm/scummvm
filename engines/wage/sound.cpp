@@ -46,21 +46,22 @@
  */
 
 #include "audio/audiostream.h"
-#include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "audio/mixer.h"
 #include "common/stream.h"
 #include "common/system.h"
 
-#include "wage/wage.h"
 #include "wage/entities.h"
 #include "wage/sound.h"
+#include "wage/wage.h"
 #include "wage/world.h"
 
 namespace Wage {
 
-static const int8 deltas[] = { 0,-49,-36,-25,-16,-9,-4,-1,0,1,4,9,16,25,36,49 };
+static const int8 deltas[] = { 0, -49, -36, -25, -16, -9, -4, -1, 0, 1, 4, 9, 16, 25, 36, 49 };
 
-Sound::Sound(Common::String name, Common::SeekableReadStream *data) : _name(name) {
+Sound::Sound(Common::String name, Common::SeekableReadStream *data)
+  : _name(name) {
 	_size = data->size() - 20;
 	_data = (byte *)calloc(2 * _size, 1);
 
@@ -93,7 +94,7 @@ void WageEngine::playSound(Common::String soundName) {
 	Audio::AudioStream *stream = Audio::makeRawStream(s->_data, s->_size, 11000, Audio::FLAG_UNSIGNED);
 
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, stream,
-		-1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+	                   -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 
 	while (_mixer->isSoundHandleActive(_soundHandle) && !_shouldQuit) {
 		Common::Event event;
@@ -117,7 +118,7 @@ void WageEngine::playSound(Common::String soundName) {
 void WageEngine::updateSoundTimerForScene(Scene *scene, bool firstTime) {
 	//warning("STUB: WageEngine::updateSoundTimerForScene()");
 	if (_world->_player->_currentScene != scene)
-			return;
+		return;
 
 	if (scene->_soundFrequency > 0 && !scene->_soundName.empty()) {
 		Common::String soundName(scene->_soundName);
@@ -130,7 +131,7 @@ void WageEngine::updateSoundTimerForScene(Scene *scene, bool firstTime) {
 		}
 
 		warning("STUB: updateSoundTimerForScene: sound: '%s', %s", soundName.c_str(),
-				scene->_soundType == Scene::PERIODIC ? "PERIODIC" : "RANDOM");
+		        scene->_soundType == Scene::PERIODIC ? "PERIODIC" : "RANDOM");
 
 #if 0
 		soundTimer = new Timer();
@@ -150,8 +151,6 @@ void WageEngine::updateSoundTimerForScene(Scene *scene, bool firstTime) {
 		}
 #endif
 	}
-
 }
-
 
 } // End of namespace Wage

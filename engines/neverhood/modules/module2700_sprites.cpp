@@ -25,20 +25,20 @@
 namespace Neverhood {
 
 static const NPoint kCarShadowOffsets[] = {
-	{-63,  3}, {-48, 40}, {-33, 58},
-	{  0, 65}, { 40, 53}, { 56, 27},
-	{ 63,  0}, {-30, 26}, {  0, 30},
-	{ 26, 25}
+	{ -63, 3 }, { -48, 40 }, { -33, 58 }, { 0, 65 }, { 40, 53 }, { 56, 27 }, { 63, 0 }, { -30, 26 }, { 0, 30 }, { 26, 25 }
 };
 
 SsCommonTrackShadowBackground::SsCommonTrackShadowBackground(NeverhoodEngine *vm, uint32 fileHash)
-	: StaticSprite(vm, 0) {
+  : StaticSprite(vm, 0) {
 
 	loadSprite(fileHash, kSLFDefDrawOffset | kSLFDefPosition, 0);
 }
 
 AsCommonCarShadow::AsCommonCarShadow(NeverhoodEngine *vm, AnimatedSprite *asCar, BaseSurface *shadowSurface, uint index)
-	: AnimatedSprite(vm, 1100), _asCar(asCar), _index(index), _animFileHash(0) {
+  : AnimatedSprite(vm, 1100)
+  , _asCar(asCar)
+  , _index(index)
+  , _animFileHash(0) {
 
 	SetUpdateHandler(&AsCommonCarShadow::update);
 	createShadowSurface(shadowSurface, 211, 147, 100);
@@ -53,10 +53,7 @@ void AsCommonCarShadow::update() {
 void AsCommonCarShadow::updateShadow() {
 	if (_asCar->getFrameIndex() != _currFrameIndex || _asCar->getCurrAnimFileHash() != _animFileHash) {
 		uint32 fileHash = _asCar->getCurrAnimFileHash();
-		if (fileHash == 0x35698F78 || fileHash == 0x192ADD30 || fileHash == 0x9C220DA4 ||
-			fileHash == 0x9966B138 || fileHash == 0xB579A77C || fileHash == 0xA86A9538 ||
-			fileHash == 0xD4220027 || fileHash == 0xD00A1364 || fileHash == 0xD4AA03A4 ||
-			fileHash == 0xF46A0324) {
+		if (fileHash == 0x35698F78 || fileHash == 0x192ADD30 || fileHash == 0x9C220DA4 || fileHash == 0x9966B138 || fileHash == 0xB579A77C || fileHash == 0xA86A9538 || fileHash == 0xD4220027 || fileHash == 0xD00A1364 || fileHash == 0xD4AA03A4 || fileHash == 0xF46A0324) {
 			startAnimation(fileHash, _asCar->getFrameIndex(), -1);
 			_newStickFrameIndex = _asCar->getFrameIndex();
 		}
@@ -72,7 +69,9 @@ void AsCommonCarShadow::updateShadow() {
 }
 
 AsCommonCarConnectorShadow::AsCommonCarConnectorShadow(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, uint index)
-	: AnimatedSprite(vm, 1100), _asCar(asCar), _index(index) {
+  : AnimatedSprite(vm, 1100)
+  , _asCar(asCar)
+  , _index(index) {
 
 	SetUpdateHandler(&AsCommonCarConnectorShadow::update);
 	createShadowSurface1(shadowSurface, 0x60281C10, 150);
@@ -87,7 +86,8 @@ void AsCommonCarConnectorShadow::update() {
 }
 
 AsCommonCarTrackShadow::AsCommonCarTrackShadow(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, int16 frameIndex)
-	: AnimatedSprite(vm, 1100), _asCar(asCar) {
+  : AnimatedSprite(vm, 1100)
+  , _asCar(asCar) {
 
 	SetUpdateHandler(&AsCommonCarTrackShadow::update);
 	createShadowSurface1(shadowSurface, 0x0759129C, 100);
@@ -102,7 +102,7 @@ void AsCommonCarTrackShadow::update() {
 }
 
 KmScene2732::KmScene2732(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+  : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }

@@ -20,22 +20,22 @@
  *
  */
 
-#include "sherlock/sherlock.h"
 #include "sherlock/sound.h"
-#include "common/config-manager.h"
 #include "audio/audiostream.h"
-#include "common/algorithm.h"
-#include "audio/mixer.h"
-#include "audio/decoders/raw.h"
 #include "audio/decoders/aiff.h"
+#include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
+#include "audio/mixer.h"
+#include "common/algorithm.h"
+#include "common/config-manager.h"
+#include "sherlock/sherlock.h"
 
 namespace Sherlock {
 
 static const int8 creativeADPCM_ScaleMap[64] = {
-	0,  1,  2,  3,  4,  5,  6,  7,  0,  -1,  -2,  -3,  -4,  -5,  -6,  -7,
-	1,  3,  5,  7,  9, 11, 13, 15, -1,  -3,  -5,  -7,  -9, -11, -13, -15,
-	2,  6, 10, 14, 18, 22, 26, 30, -2,  -6, -10, -14, -18, -22, -26, -30,
+	0, 1, 2, 3, 4, 5, 6, 7, 0, -1, -2, -3, -4, -5, -6, -7,
+	1, 3, 5, 7, 9, 11, 13, 15, -1, -3, -5, -7, -9, -11, -13, -15,
+	2, 6, 10, 14, 18, 22, 26, 30, -2, -6, -10, -14, -18, -22, -26, -30,
 	4, 12, 20, 28, 36, 44, 52, 60, -4, -12, -20, -28, -36, -44, -52, -60
 };
 
@@ -46,13 +46,15 @@ static const uint8 creativeADPCM_AdjustMap[64] = {
 	240, 0, 0, 0, 0, 16, 16, 16,
 	240, 0, 0, 0, 0, 16, 16, 16,
 	240, 0, 0, 0, 0, 16, 16, 16,
-	240, 0, 0, 0, 0,  0,  0,  0,
-	240, 0, 0, 0, 0,  0,  0,  0
+	240, 0, 0, 0, 0, 0, 0, 0,
+	240, 0, 0, 0, 0, 0, 0, 0
 };
 
 /*----------------------------------------------------------------*/
 
-Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
+Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer)
+  : _vm(vm)
+  , _mixer(mixer) {
 	_digitized = false;
 	_voices = 0;
 	_soundPlaying = false;
@@ -261,7 +263,7 @@ void Sound::playSpeech(const Common::String &name) {
 		// Figure out which speech library to use
 		Common::String libraryName = Common::String::format("speech%02d.lib", scene._currentScene);
 		if ((!scumm_strnicmp(name.c_str(), "SLVE12S", 7)) || (!scumm_strnicmp(name.c_str(), "WATS12X", 7))
-				|| (!scumm_strnicmp(name.c_str(), "HOLM12X", 7)))
+		    || (!scumm_strnicmp(name.c_str(), "HOLM12X", 7)))
 			libraryName = "SPEECH12.LIB";
 
 		// If the speech library file doesn't even exist, then we can't play anything
@@ -288,7 +290,7 @@ bool Sound::isSpeechPlaying() {
 }
 
 bool Sound::playSoundResource(const Common::String &name, const Common::String &libFilename,
-		Audio::Mixer::SoundType soundType, Audio::SoundHandle &handle) {
+                              Audio::Mixer::SoundType soundType, Audio::SoundHandle &handle) {
 	Resources &res = *_vm->_res;
 	Common::SeekableReadStream *stream = libFilename.empty() ? res.load(name) : res.load(name, libFilename, true);
 	if (!stream)
@@ -338,4 +340,3 @@ bool Sound::playSoundResource(const Common::String &name, const Common::String &
 }
 
 } // End of namespace Sherlock
-

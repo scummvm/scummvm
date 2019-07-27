@@ -26,13 +26,13 @@ namespace BladeRunner {
 
 void SceneScriptHF03::InitializeScene() {
 	if (Game_Flag_Query(kFlagHF02toHF03)) {
-		Setup_Scene_Information( 479.0f, 47.76f,  -496.0f, 600);
+		Setup_Scene_Information(479.0f, 47.76f, -496.0f, 600);
 	} else {
 		Setup_Scene_Information(185.62f, 47.76f, -867.42f, 300);
 	}
 
-	Scene_Exit_Add_2D_Exit(0,   0,   0,  30, 479, 3);
-	Scene_Exit_Add_2D_Exit(1, 589,   0, 639, 479, 1);
+	Scene_Exit_Add_2D_Exit(0, 0, 0, 30, 479, 3);
+	Scene_Exit_Add_2D_Exit(1, 589, 0, 639, 479, 1);
 	Scene_Exit_Add_2D_Exit(2, 323, 110, 380, 166, 0);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxARCBED1, 50, 0, 1);
@@ -103,8 +103,7 @@ void SceneScriptHF03::dialogueWithLucy() {
 			Actor_Says(kActorMcCoy, 1655, 15);
 			Actor_Modify_Friendliness_To_Other(kActorLucy, kActorMcCoy, Random_Query(9, 10));
 			if (Actor_Query_Friendliness_To_Other(kActorLucy, kActorMcCoy) > 59
-			 && Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsNone
-			) {
+			    && Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsNone) {
 				Global_Variable_Set(kVariableAffectionTowards, kAffectionTowardsLucy);
 				Actor_Says(kActorLucy, 940, 14);
 				Actor_Says(kActorMcCoy, 6780, 11);
@@ -161,12 +160,10 @@ void SceneScriptHF03::dialogueWithLucy() {
 
 bool SceneScriptHF03::ClickedOnActor(int actorId) {
 	if (actorId == kActorLucy
-	 && Actor_Query_Goal_Number(kActorLucy) == kGoalLucyGoToHF03
-	 ) {
+	    && Actor_Query_Goal_Number(kActorLucy) == kGoalLucyGoToHF03) {
 		if (Game_Flag_Query(kFlagLucyIsReplicant)
-		 ? !Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 377, 0, true, false)
-		 : !Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 378, 0, true, false)
-		) {
+		      ? !Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 377, 0, true, false)
+		      : !Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 378, 0, true, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorLucy, true);
 			if (!Game_Flag_Query(kFlagHF03LucyTalk)) {
 				Game_Flag_Set(kFlagHF03LucyTalk);

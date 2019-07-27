@@ -22,25 +22,27 @@
 
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "common/system.h"
 #include "common/savefile.h"
+#include "common/system.h"
 #include "common/translation.h"
 
 #include "engines/util.h"
 
-#include "lure/luredefs.h"
-#include "lure/surface.h"
-#include "lure/lure.h"
-#include "lure/intro.h"
 #include "lure/game.h"
+#include "lure/intro.h"
+#include "lure/lure.h"
+#include "lure/luredefs.h"
 #include "lure/sound.h"
+#include "lure/surface.h"
 
 namespace Lure {
 
 static LureEngine *int_engine = NULL;
 
 LureEngine::LureEngine(OSystem *system, const LureGameDescription *gameDesc)
-	: Engine(system), _gameDescription(gameDesc), _rnd("lure") {
+  : Engine(system)
+  , _gameDescription(gameDesc)
+  , _rnd("lure") {
 
 	DebugMan.addDebugChannel(kLureDebugScripts, "scripts", "Scripts debugging");
 	DebugMan.addDebugChannel(kLureDebugAnimations, "animations", "Animations debugging");
@@ -74,8 +76,8 @@ Common::Error LureEngine::init() {
 		return Common::kUnknownError;
 	} else if ((version.vMajor != LURE_DAT_MAJOR) || (version.vMinor != LURE_DAT_MINOR)) {
 		GUIErrorMessageFormat(_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
-			SUPPORT_FILENAME, LURE_DAT_MAJOR, LURE_DAT_MINOR,
-			version.vMajor, version.vMinor);
+		                      SUPPORT_FILENAME, LURE_DAT_MAJOR, LURE_DAT_MINOR,
+		                      version.vMajor, version.vMinor);
 		return Common::kUnknownError;
 	}
 
@@ -187,7 +189,7 @@ const char *LureEngine::generateSaveName(int slotNumber) {
 
 bool LureEngine::saveGame(uint8 slotNumber, Common::String &caption) {
 	Common::WriteStream *f = this->_saveFileMan->openForSaving(
-		generateSaveName(slotNumber));
+	  generateSaveName(slotNumber));
 	if (f == NULL)
 		return false;
 
@@ -211,7 +213,7 @@ bool LureEngine::saveGame(uint8 slotNumber, Common::String &caption) {
 
 bool LureEngine::loadGame(uint8 slotNumber) {
 	Common::ReadStream *f = this->_saveFileMan->openForLoading(
-		generateSaveName(slotNumber));
+	  generateSaveName(slotNumber));
 	if (f == NULL)
 		return false;
 
@@ -260,8 +262,9 @@ void LureEngine::syncSoundSettings() {
 
 Common::String *LureEngine::detectSave(int slotNumber) {
 	Common::ReadStream *f = this->_saveFileMan->openForLoading(
-		generateSaveName(slotNumber));
-	if (f == NULL) return NULL;
+	  generateSaveName(slotNumber));
+	if (f == NULL)
+		return NULL;
 	Common::String *result = NULL;
 
 	// Check for header
@@ -276,7 +279,8 @@ Common::String *LureEngine::detectSave(int slotNumber) {
 			char saveName[MAX_DESC_SIZE];
 			char *p = saveName;
 			int decCtr = MAX_DESC_SIZE - 1;
-			while ((decCtr > 0) && ((*p++ = f->readByte()) != 0)) --decCtr;
+			while ((decCtr > 0) && ((*p++ = f->readByte()) != 0))
+				--decCtr;
 			*p = '\0';
 			result = new Common::String(saveName);
 		}
@@ -297,9 +301,9 @@ Common::String getSaveName(Common::InSaveFile *in) {
 		in->readByte();
 		char *p = saveName;
 		int decCtr = MAX_DESC_SIZE - 1;
-		while ((decCtr > 0) && ((*p++ = in->readByte()) != 0)) --decCtr;
+		while ((decCtr > 0) && ((*p++ = in->readByte()) != 0))
+			--decCtr;
 		*p = '\0';
-
 	}
 
 	return Common::String(saveName);

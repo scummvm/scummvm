@@ -26,9 +26,6 @@
 
 // Functions for moving megas about the place & also for keeping tabs on them
 
-
-
-#include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"
 #include "sword2/interpreter.h"
@@ -36,6 +33,7 @@
 #include "sword2/resman.h"
 #include "sword2/router.h"
 #include "sword2/screen.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
@@ -52,8 +50,8 @@ void Router::setStandbyCoords(int16 x, int16 y, uint8 dir) {
  */
 
 // Used in whatTarget(); not valid for all megas
-#define	diagonalx 36
-#define	diagonaly 8
+#define diagonalx 36
+#define diagonaly 8
 
 int Router::whatTarget(int startX, int startY, int destX, int destY) {
 	int deltaX = destX - startX;

@@ -35,7 +35,8 @@ namespace Titanic {
  * For starview it should be white
  * For skyview it should be pink
  */
-enum StarColor { WHITE = 0, PINK = 2 };
+enum StarColor { WHITE = 0,
+	               PINK = 2 };
 
 /**
  * Implements the viewport functionality for viewing the star field in
@@ -54,18 +55,21 @@ private:
 	FPose _rawPose;
 	FPoint _center;
 	bool _poseUpToDate;
+
 private:
 	void reset();
+
 public:
 	FVector _position;
 	double _field10;
 	double _field14;
-	StarColor _starColor;	// Used in CBaseStars::draw
-	double _valArray[2];	// has value 0.0 or 30.0
+	StarColor _starColor; // Used in CBaseStars::draw
+	double _valArray[2]; // has value 0.0 or 30.0
 	double _isZero;
-	double _pixel1OffSetX;	// Used in CBaseStars::draw3 and CBaseStars::draw4 has value 0.0 or 28000.0
-	double _pixel2OffSetX;	// Used in CBaseStars::draw3 and CBaseStars::draw4 has value 0.0 or -28000.0
+	double _pixel1OffSetX; // Used in CBaseStars::draw3 and CBaseStars::draw4 has value 0.0 or 28000.0
+	double _pixel2OffSetX; // Used in CBaseStars::draw3 and CBaseStars::draw4 has value 0.0 or -28000.0
 	FVector _centerVector;
+
 public:
 	CViewport();
 	CViewport(CViewport *src);

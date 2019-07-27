@@ -26,11 +26,12 @@ namespace BladeRunner {
 enum kGenericWalkerAStates {
 	kGenericWalkerAStatesIdle = 0,
 	kGenericWalkerAStatesWalk = 1,
-	kGenericWalkerAStatesDie  = 2,
-	kGenericWalkerAStatesGun  = 3
+	kGenericWalkerAStatesDie = 2,
+	kGenericWalkerAStatesGun = 3
 };
 
-AIScriptGenericWalkerA::AIScriptGenericWalkerA(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptGenericWalkerA::AIScriptGenericWalkerA(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 	isInside = false;
 	deltaX = 0.0f;
 	deltaZ = 0.0f;
@@ -50,25 +51,24 @@ bool AIScriptGenericWalkerA::Update() {
 #if !BLADERUNNER_ORIGINAL_BUGS
 	// extra check for possible fix of Bullet Bob's gun missing
 	if (Player_Query_Current_Set() == kSetRC04
-	    && Actor_Query_Goal_Number(kActorGenwalkerA) != kGoalGenwalkerABulletBobsTrackGun
-	) {
+	    && Actor_Query_Goal_Number(kActorGenwalkerA) != kGoalGenwalkerABulletBobsTrackGun) {
 		Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerABulletBobsTrackGun);
 	}
 #endif // !BLADERUNNER_ORIGINAL_BUGS
 	switch (Actor_Query_Goal_Number(kActorGenwalkerA)) {
-		case kGoalGenwalkerDefault:
-			if (prepareWalker()) {
-				return true;
-			}
-			break;
-		case kGoalGenwalkerMoving:
-			if (deltaX != 0.0f || deltaZ != 0.0f) {
-				movingUpdate();
-			}
-			break;
-		case kGoalGenwalkerABulletBobsTrackGun: // Automatic gun at Bullet Bob
-			Actor_Face_Actor(kActorGenwalkerA, kActorMcCoy, true);
-			break;
+	case kGoalGenwalkerDefault:
+		if (prepareWalker()) {
+			return true;
+		}
+		break;
+	case kGoalGenwalkerMoving:
+		if (deltaX != 0.0f || deltaZ != 0.0f) {
+			movingUpdate();
+		}
+		break;
+	case kGoalGenwalkerABulletBobsTrackGun: // Automatic gun at Bullet Bob
+		Actor_Face_Actor(kActorGenwalkerA, kActorMcCoy, true);
+		break;
 	}
 	return false;
 }
@@ -77,7 +77,7 @@ void AIScriptGenericWalkerA::TimerExpired(int timer) {
 	if (timer == kActorTimerAIScriptCustomTask2) {
 		AI_Countdown_Timer_Reset(kActorGenwalkerA, kActorTimerAIScriptCustomTask2);
 		Game_Flag_Reset(kFlagGenericWalkerWaiting);
-		return;// true;
+		return; // true;
 	}
 	//return false;
 }
@@ -86,8 +86,7 @@ void AIScriptGenericWalkerA::CompletedMovementTrack() {
 #if !BLADERUNNER_ORIGINAL_BUGS
 	// extra check for possible fix of Bullet Bob's gun missing
 	if (Player_Query_Current_Set() == kSetRC04
-	    && Actor_Query_Goal_Number(kActorGenwalkerA) != kGoalGenwalkerABulletBobsTrackGun
-	) {
+	    && Actor_Query_Goal_Number(kActorGenwalkerA) != kGoalGenwalkerABulletBobsTrackGun) {
 		Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerABulletBobsTrackGun);
 		return;
 	}
@@ -112,7 +111,7 @@ void AIScriptGenericWalkerA::ReceivedClue(int clueId, int fromActorId) {
 void AIScriptGenericWalkerA::ClickedByPlayer() {
 	Actor_Face_Actor(kActorMcCoy, kActorGenwalkerA, true);
 	if (Actor_Query_Goal_Number(kActorGenwalkerA) == kGoalGenwalkerABulletBobsTrackGun) {
-		Actor_Says(kActorMcCoy, 5290, 18);   // kActorGenwalkerA here is actually the tracking gun in Bullet Bob's
+		Actor_Says(kActorMcCoy, 5290, 18); // kActorGenwalkerA here is actually the tracking gun in Bullet Bob's
 	} else {
 		switch (Random_Query(1, 10)) {
 		case 1:
@@ -269,8 +268,7 @@ bool AIScriptGenericWalkerA::UpdateAnimation(int *animation, int *frame) {
 	case kGenericWalkerAStatesDie:
 		*animation = 874;
 		++_animationFrame;
-		if (++_animationFrame >= Slice_Animation_Query_Number_Of_Frames(874))
-		{
+		if (++_animationFrame >= Slice_Animation_Query_Number_Of_Frames(874)) {
 			_animationFrame = 0;
 			Actor_Set_Goal_Number(kActorGenwalkerA, kGoalGenwalkerDefault);
 			_animationState = kGenericWalkerAStatesIdle;
@@ -309,17 +307,17 @@ bool AIScriptGenericWalkerA::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptGenericWalkerA::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptGenericWalkerA::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptGenericWalkerA::ReachedMovementTrackWaypoint(int waypointId) {

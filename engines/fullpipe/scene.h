@@ -31,7 +31,7 @@ namespace Fullpipe {
 class MessageQueue;
 
 class Scene : public Background {
- public:
+public:
 	/** list items are owned */
 	Common::Array<StaticANIObject *> _staticANIObjectList1;
 
@@ -45,7 +45,7 @@ class Scene : public Background {
 	int _field_BC;
 	Common::ScopedPtr<NGIArchive> _libHandle;
 
-  public:
+public:
 	Scene();
 	virtual ~Scene();
 
@@ -84,25 +84,25 @@ class Scene : public Background {
 
 	void stopAllSounds();
 
-  private:
+private:
 #if 0
 	static bool compareObjPriority(const void *p1, const void *p2);
 	void objectList_sortByPriority(Common::Array<StaticANIObject *> &list, bool skipFirst = false);
 	void objectList_sortByPriority(Common::Array<PictureObject *> &list, bool skipFirst = false);
 #else
-	template<typename T>
-	void objectList_sortByPriority(Common::Array<T*> &list, uint startIndex = 0);
+	template <typename T>
+	void objectList_sortByPriority(Common::Array<T *> &list, uint startIndex = 0);
 #endif
 };
 
 class SceneTag : public CObject {
- public:
+public:
 	Common::String _tag;
 	/** owned, but cannot use ScopedPtr because this object must be copyable */
 	Scene *_scene;
 	int16 _sceneId;
 
- public:
+public:
 	SceneTag();
 	virtual ~SceneTag();
 
@@ -111,7 +111,7 @@ class SceneTag : public CObject {
 };
 
 class SceneTagList : public Common::List<SceneTag>, public CObject {
- public:
+public:
 	virtual bool load(MfcArchive &file);
 };
 

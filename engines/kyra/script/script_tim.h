@@ -169,7 +169,10 @@ public:
 	TimAnimator *animator() { return _animator; }
 
 	void setLangData(const char *filename);
-	void clearLangData() { delete[] _langData; _langData = 0; }
+	void clearLangData() {
+		delete[] _langData;
+		_langData = 0;
+	}
 
 	const char *getCTableEntry(uint idx) const;
 
@@ -177,7 +180,10 @@ public:
 	bool finished() const { return _finished; }
 
 	int exec(TIM *tim, bool loop);
-	void stopCurFunc() { if (_currentTim) cmd_stopCurFunc(0); }
+	void stopCurFunc() {
+		if (_currentTim)
+			cmd_stopCurFunc(0);
+	}
 	void stopAllFuncs(TIM *tim);
 
 	void refreshTimersAfterPause(uint32 elapsedTime);
@@ -254,9 +260,9 @@ protected:
 	int cmd_initFuncNow(const uint16 *param);
 	int cmd_stopFuncNow(const uint16 *param);
 #define cmd_return(n, v) \
-	int cmd_return_##n(const uint16 *){ return v; }
-	cmd_return( 1,  1)
-	cmd_return(n1, -1)
+	int cmd_return_##n(const uint16 *) { return v; }
+	cmd_return(1, 1)
+	  cmd_return(n1, -1)
 #undef cmd_return
 };
 

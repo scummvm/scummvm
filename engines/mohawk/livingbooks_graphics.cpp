@@ -20,9 +20,9 @@
  *
  */
 
-#include "mohawk/resource.h"
-#include "mohawk/livingbooks.h"
 #include "mohawk/livingbooks_graphics.h"
+#include "mohawk/livingbooks.h"
+#include "mohawk/resource.h"
 
 #include "common/substream.h"
 #include "common/system.h"
@@ -31,7 +31,9 @@
 
 namespace Mohawk {
 
-LBGraphics::LBGraphics(MohawkEngine_LivingBooks *vm, uint16 width, uint16 height) : GraphicsManager(), _vm(vm) {
+LBGraphics::LBGraphics(MohawkEngine_LivingBooks *vm, uint16 width, uint16 height)
+  : GraphicsManager()
+  , _vm(vm) {
 	_bmpDecoder = _vm->isPreMohawk() ? new LivingBooksBitmap_v1() : new MohawkBitmap();
 
 	initGraphics(width, height);

@@ -23,9 +23,9 @@
 #ifndef MUTATIONOFJB_TASK_H
 #define MUTATIONOFJB_TASK_H
 
-#include "common/scummsys.h"
-#include "common/ptr.h"
 #include "common/array.h"
+#include "common/ptr.h"
+#include "common/scummsys.h"
 
 namespace MutationOfJB {
 
@@ -42,13 +42,15 @@ public:
 		FINISHED
 	};
 
-	Task() : _taskManager(nullptr), _state(IDLE) {}
+	Task()
+	  : _taskManager(nullptr)
+	  , _state(IDLE) {}
 	virtual ~Task() {}
 
 	virtual void start() = 0;
 	virtual void update() = 0;
 	virtual void stop() {
-		assert(false);    // Assert by default - stopping might not be safe for all tasks.
+		assert(false); // Assert by default - stopping might not be safe for all tasks.
 	}
 
 	void setTaskManager(TaskManager *taskMan) {
@@ -74,7 +76,7 @@ private:
 };
 
 typedef Common::SharedPtr<Task> TaskPtr;
-typedef Common::Array<Common::SharedPtr<Task> > TaskPtrs;
+typedef Common::Array<Common::SharedPtr<Task>> TaskPtrs;
 
 }
 

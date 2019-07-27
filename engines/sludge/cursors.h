@@ -38,9 +38,9 @@ public:
 	void kill();
 
 	// cursor
-	void pickAnimCursor(struct PersonaAnimation  *pp);
+	void pickAnimCursor(struct PersonaAnimation *pp);
 	void displayCursor();
-	void pasteCursor(int x, int y, struct PersonaAnimation  *c);
+	void pasteCursor(int x, int y, struct PersonaAnimation *c);
 
 	// freeze
 	void freeze(FrozenStuffStruct *frozenStuff);

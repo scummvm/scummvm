@@ -34,66 +34,65 @@
 namespace StarTrek {
 
 extern const RoomAction sins4ActionList[] = {
-	{ {ACTION_TICK, 1, 0, 0}, &Room::sins4Tick1 },
+	{ { ACTION_TICK, 1, 0, 0 }, &Room::sins4Tick1 },
 
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_PANEL,      0}, &Room::sins4UseSTricorderOnPanel },
-	{ {ACTION_USE, OBJECT_SPOCK,    HOTSPOT_PANEL,      0}, &Room::sins4UseSpockOnPanel },
-	{ {ACTION_USE, OBJECT_IPHASERK, HOTSPOT_NORTH_DOOR, 0}, &Room::sins4UsePhaserOnNorthDoor },
-	{ {ACTION_USE, OBJECT_IPHASERS, HOTSPOT_NORTH_DOOR, 0}, &Room::sins4UsePhaserOnNorthDoor },
-	{ {ACTION_USE, OBJECT_IPHASERK, HOTSPOT_PANEL,      0}, &Room::sins4UsePhaserOnPanel },
-	{ {ACTION_USE, OBJECT_IPHASERS, HOTSPOT_PANEL,      0}, &Room::sins4UsePhaserOnPanel },
+	{ { ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_PANEL, 0 }, &Room::sins4UseSTricorderOnPanel },
+	{ { ACTION_USE, OBJECT_SPOCK, HOTSPOT_PANEL, 0 }, &Room::sins4UseSpockOnPanel },
+	{ { ACTION_USE, OBJECT_IPHASERK, HOTSPOT_NORTH_DOOR, 0 }, &Room::sins4UsePhaserOnNorthDoor },
+	{ { ACTION_USE, OBJECT_IPHASERS, HOTSPOT_NORTH_DOOR, 0 }, &Room::sins4UsePhaserOnNorthDoor },
+	{ { ACTION_USE, OBJECT_IPHASERK, HOTSPOT_PANEL, 0 }, &Room::sins4UsePhaserOnPanel },
+	{ { ACTION_USE, OBJECT_IPHASERS, HOTSPOT_PANEL, 0 }, &Room::sins4UsePhaserOnPanel },
 
-	{ {ACTION_USE, OBJECT_IIDCARD,  HOTSPOT_PANEL,      0}, &Room::sins4UseIDCardOnPanel },
-	{ {ACTION_DONE_WALK, 2,                          0, 0}, &Room::sins4KirkReachedPanel },
-	{ {ACTION_DONE_ANIM, 5,                          0, 0}, &Room::sins4KirkPutCardInPanel },
-	{ {ACTION_USE, OBJECT_IS8ROCKS, HOTSPOT_PANEL,      0}, &Room::sins4UseRockOnPanel },
-	{ {ACTION_DONE_WALK, 3,                          0, 0}, &Room::sins4KirkReachedPanelWithRock },
-	{ {ACTION_DONE_ANIM, 4,                          0, 0}, &Room::sins4KirkUsedRockOnPanel },
+	{ { ACTION_USE, OBJECT_IIDCARD, HOTSPOT_PANEL, 0 }, &Room::sins4UseIDCardOnPanel },
+	{ { ACTION_DONE_WALK, 2, 0, 0 }, &Room::sins4KirkReachedPanel },
+	{ { ACTION_DONE_ANIM, 5, 0, 0 }, &Room::sins4KirkPutCardInPanel },
+	{ { ACTION_USE, OBJECT_IS8ROCKS, HOTSPOT_PANEL, 0 }, &Room::sins4UseRockOnPanel },
+	{ { ACTION_DONE_WALK, 3, 0, 0 }, &Room::sins4KirkReachedPanelWithRock },
+	{ { ACTION_DONE_ANIM, 4, 0, 0 }, &Room::sins4KirkUsedRockOnPanel },
 
-	{ {ACTION_LOOK, HOTSPOT_WEST_DOOR,  0, 0}, &Room::sins4LookAtWestDoor },
-	{ {ACTION_LOOK, HOTSPOT_EAST_DOOR,  0, 0}, &Room::sins4LookAtEastDoor },
-	{ {ACTION_LOOK, 0xff,               0, 0}, &Room::sins4LookAnywhere },
-	{ {ACTION_LOOK, HOTSPOT_PANEL,      0, 0}, &Room::sins4LookAtPanel },
-	{ {ACTION_TICK, 40,                 0, 0}, &Room::sins4Tick40 },
-	{ {ACTION_LOOK, OBJECT_KIRK,        0, 0}, &Room::sins4LookAtKirk },
-	{ {ACTION_LOOK, OBJECT_SPOCK,       0, 0}, &Room::sins4LookAtSpock },
-	{ {ACTION_LOOK, OBJECT_MCCOY,       0, 0}, &Room::sins4LookAtMccoy },
-	{ {ACTION_LOOK, OBJECT_REDSHIRT,    0, 0}, &Room::sins4LookAtRedshirt },
-	{ {ACTION_LOOK, HOTSPOT_LIGHT,      0, 0}, &Room::sins4LookAtLight },
-	{ {ACTION_LOOK, HOTSPOT_BEAM,       0, 0}, &Room::sins4LookAtBeam },
-	{ {ACTION_LOOK, OBJECT_NORTH_DOOR,  0, 0}, &Room::sins4LookAtOpenNorthDoor },
-	{ {ACTION_LOOK, HOTSPOT_NORTH_DOOR, 0, 0}, &Room::sins4LookAtClosedNorthDoor },
-	{ {ACTION_TALK, OBJECT_KIRK,        0, 0}, &Room::sins4TalkToKirk },
-	{ {ACTION_TALK, OBJECT_SPOCK,       0, 0}, &Room::sins4TalkToSpock },
-	{ {ACTION_TALK, OBJECT_MCCOY,       0, 0}, &Room::sins4TalkToMccoy },
-	{ {ACTION_TALK, OBJECT_REDSHIRT,    0, 0}, &Room::sins4TalkToRedshirt },
+	{ { ACTION_LOOK, HOTSPOT_WEST_DOOR, 0, 0 }, &Room::sins4LookAtWestDoor },
+	{ { ACTION_LOOK, HOTSPOT_EAST_DOOR, 0, 0 }, &Room::sins4LookAtEastDoor },
+	{ { ACTION_LOOK, 0xff, 0, 0 }, &Room::sins4LookAnywhere },
+	{ { ACTION_LOOK, HOTSPOT_PANEL, 0, 0 }, &Room::sins4LookAtPanel },
+	{ { ACTION_TICK, 40, 0, 0 }, &Room::sins4Tick40 },
+	{ { ACTION_LOOK, OBJECT_KIRK, 0, 0 }, &Room::sins4LookAtKirk },
+	{ { ACTION_LOOK, OBJECT_SPOCK, 0, 0 }, &Room::sins4LookAtSpock },
+	{ { ACTION_LOOK, OBJECT_MCCOY, 0, 0 }, &Room::sins4LookAtMccoy },
+	{ { ACTION_LOOK, OBJECT_REDSHIRT, 0, 0 }, &Room::sins4LookAtRedshirt },
+	{ { ACTION_LOOK, HOTSPOT_LIGHT, 0, 0 }, &Room::sins4LookAtLight },
+	{ { ACTION_LOOK, HOTSPOT_BEAM, 0, 0 }, &Room::sins4LookAtBeam },
+	{ { ACTION_LOOK, OBJECT_NORTH_DOOR, 0, 0 }, &Room::sins4LookAtOpenNorthDoor },
+	{ { ACTION_LOOK, HOTSPOT_NORTH_DOOR, 0, 0 }, &Room::sins4LookAtClosedNorthDoor },
+	{ { ACTION_TALK, OBJECT_KIRK, 0, 0 }, &Room::sins4TalkToKirk },
+	{ { ACTION_TALK, OBJECT_SPOCK, 0, 0 }, &Room::sins4TalkToSpock },
+	{ { ACTION_TALK, OBJECT_MCCOY, 0, 0 }, &Room::sins4TalkToMccoy },
+	{ { ACTION_TALK, OBJECT_REDSHIRT, 0, 0 }, &Room::sins4TalkToRedshirt },
 
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_NORTH_DOOR, 0}, &Room::sins4UseSTricorderOnNorthDoor },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff,               0}, &Room::sins4UseSTricorderAnywhere },
-	{ {ACTION_USE, OBJECT_ICOMM,    0xff,               0}, &Room::sins4UseCommunicator },
-	{ {ACTION_USE, OBJECT_MCCOY,    HOTSPOT_NORTH_DOOR, 0}, &Room::sins4UseMccoyOnNorthDoor },
-	{ {ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_NORTH_DOOR, 0}, &Room::sins4UseRedshirtOnNorthDoor },
-	{ {ACTION_USE, OBJECT_SPOCK,    HOTSPOT_NORTH_DOOR, 0}, &Room::sins4UseSpockOnNorthDoor },
-	{ {ACTION_USE, OBJECT_MCCOY,    HOTSPOT_PANEL,      0}, &Room::sins4UseMccoyOnPanel },
-	{ {ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_PANEL,      0}, &Room::sins4UseRedshirtOnPanel },
+	{ { ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_NORTH_DOOR, 0 }, &Room::sins4UseSTricorderOnNorthDoor },
+	{ { ACTION_USE, OBJECT_ISTRICOR, 0xff, 0 }, &Room::sins4UseSTricorderAnywhere },
+	{ { ACTION_USE, OBJECT_ICOMM, 0xff, 0 }, &Room::sins4UseCommunicator },
+	{ { ACTION_USE, OBJECT_MCCOY, HOTSPOT_NORTH_DOOR, 0 }, &Room::sins4UseMccoyOnNorthDoor },
+	{ { ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_NORTH_DOOR, 0 }, &Room::sins4UseRedshirtOnNorthDoor },
+	{ { ACTION_USE, OBJECT_SPOCK, HOTSPOT_NORTH_DOOR, 0 }, &Room::sins4UseSpockOnNorthDoor },
+	{ { ACTION_USE, OBJECT_MCCOY, HOTSPOT_PANEL, 0 }, &Room::sins4UseMccoyOnPanel },
+	{ { ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_PANEL, 0 }, &Room::sins4UseRedshirtOnPanel },
 
-	{ {ACTION_WALK, HOTSPOT_NORTH_DOOR, 0, 0}, &Room::sins4WalkToNorthDoor },
-	{ {ACTION_WALK, OBJECT_NORTH_DOOR,  0, 0}, &Room::sins4WalkToNorthDoor },
-	{ {ACTION_WALK, HOTSPOT_WEST_DOOR, 0, 0}, &Room::sins4WalkToWestDoor },
-	{ {ACTION_WALK, HOTSPOT_EAST_DOOR, 0, 0}, &Room::sins4WalkToEastDoor },
+	{ { ACTION_WALK, HOTSPOT_NORTH_DOOR, 0, 0 }, &Room::sins4WalkToNorthDoor },
+	{ { ACTION_WALK, OBJECT_NORTH_DOOR, 0, 0 }, &Room::sins4WalkToNorthDoor },
+	{ { ACTION_WALK, HOTSPOT_WEST_DOOR, 0, 0 }, &Room::sins4WalkToWestDoor },
+	{ { ACTION_WALK, HOTSPOT_EAST_DOOR, 0, 0 }, &Room::sins4WalkToEastDoor },
 
-	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_KIRK,     0}, &Room::sins4UseMedkitOnCrewman },
-	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_SPOCK,    0}, &Room::sins4UseMedkitOnCrewman },
-	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_MCCOY,    0}, &Room::sins4UseMedkitOnCrewman },
-	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_REDSHIRT, 0}, &Room::sins4UseMedkitOnCrewman },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK,     0}, &Room::sins4UseMTricorderOnCrewman },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPOCK,    0}, &Room::sins4UseMTricorderOnCrewman },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY,    0}, &Room::sins4UseMTricorderOnCrewman },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0}, &Room::sins4UseMTricorderOnCrewman },
+	{ { ACTION_USE, OBJECT_IMEDKIT, OBJECT_KIRK, 0 }, &Room::sins4UseMedkitOnCrewman },
+	{ { ACTION_USE, OBJECT_IMEDKIT, OBJECT_SPOCK, 0 }, &Room::sins4UseMedkitOnCrewman },
+	{ { ACTION_USE, OBJECT_IMEDKIT, OBJECT_MCCOY, 0 }, &Room::sins4UseMedkitOnCrewman },
+	{ { ACTION_USE, OBJECT_IMEDKIT, OBJECT_REDSHIRT, 0 }, &Room::sins4UseMedkitOnCrewman },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK, 0 }, &Room::sins4UseMTricorderOnCrewman },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPOCK, 0 }, &Room::sins4UseMTricorderOnCrewman },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY, 0 }, &Room::sins4UseMTricorderOnCrewman },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0 }, &Room::sins4UseMTricorderOnCrewman },
 };
 
 extern const int sins4NumActions = ARRAYSIZE(sins4ActionList);
-
 
 void Room::sins4Tick1() {
 	playVoc("SIN4LOOP");
@@ -199,13 +198,13 @@ void Room::sins4Tick40() {
 	if (!_awayMission->sins.enteredRoom4FirstTime) {
 		_awayMission->disableInput = false;
 		showText(TX_SPEAKER_UHURA, TX_SIN4U088);
-		showText(TX_SPEAKER_KIRK,  TX_SIN4_007);
+		showText(TX_SPEAKER_KIRK, TX_SIN4_007);
 		showText(TX_SPEAKER_UHURA, TX_SIN4U103);
 		showText(TX_SPEAKER_SPOCK, TX_SIN4_025);
-		showText(TX_SPEAKER_KIRK,  TX_SIN4_003);
+		showText(TX_SPEAKER_KIRK, TX_SIN4_003);
 		showText(TX_SPEAKER_UHURA, TX_SIN4U107);
 		showText(TX_SPEAKER_UHURA, TX_SIN4U105);
-		showText(TX_SPEAKER_KIRK,  TX_SIN4_005);
+		showText(TX_SPEAKER_KIRK, TX_SIN4_005);
 		_awayMission->sins.enteredRoom4FirstTime = true;
 	}
 }
@@ -243,9 +242,9 @@ void Room::sins4LookAtClosedNorthDoor() {
 }
 
 void Room::sins4TalkToKirk() {
-	showText(TX_SPEAKER_KIRK,  TX_SIN4_001);
+	showText(TX_SPEAKER_KIRK, TX_SIN4_001);
 	showText(TX_SPEAKER_SPOCK, TX_SIN4_028);
-	showText(TX_SPEAKER_KIRK,  TX_SIN4_004);
+	showText(TX_SPEAKER_KIRK, TX_SIN4_004);
 }
 
 void Room::sins4TalkToSpock() {
@@ -265,7 +264,7 @@ void Room::sins4TalkToRedshirt() {
 void Room::sins4UseSTricorderOnNorthDoor() {
 	spockScan(DIR_N, TX_SIN4_027);
 	showText(TX_SPEAKER_MOSHER, TX_SIN4_032);
-	showText(TX_SPEAKER_SPOCK,  TX_SIN4_026);
+	showText(TX_SPEAKER_SPOCK, TX_SIN4_026);
 }
 
 void Room::sins4UseSTricorderAnywhere() {
@@ -280,9 +279,9 @@ void Room::sins4UseSTricorderAnywhere() {
 void Room::sins4UseCommunicator() {
 	if (!_awayMission->sins.enteredRoom3FirstTime) {
 		showText(TX_SPEAKER_UHURA, TX_SIN4U100);
-		showText(TX_SPEAKER_KIRK,  TX_SIN4_006);
+		showText(TX_SPEAKER_KIRK, TX_SIN4_006);
 		showText(TX_SPEAKER_UHURA, TX_SIN4U83B);
-		showText(TX_SPEAKER_KIRK,  TX_SIN4_002);
+		showText(TX_SPEAKER_KIRK, TX_SIN4_002);
 	} else
 		showText(TX_SPEAKER_UHURA, TX_SIN4U073);
 }

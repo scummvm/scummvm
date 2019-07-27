@@ -22,27 +22,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef	SWORD2_SAVELOAD_H
-#define	SWORD2_SAVELOAD_H
+#ifndef SWORD2_SAVELOAD_H
+#define SWORD2_SAVELOAD_H
 
 namespace Sword2 {
 
-#define	SAVE_DESCRIPTION_LEN	64
+#define SAVE_DESCRIPTION_LEN 64
 
 // Save & Restore error codes
 
 enum {
-	SR_OK,			// No worries
-	SR_ERR_FILEOPEN,	// Can't open file - Couldn't create file for
-				// saving, or couldn't find file for loading.
-	SR_ERR_INCOMPATIBLE,	// (Restore) Incompatible savegame data.
-				// Savegame file is obsolete. (Won't happen
-				// after development stops)
-	SR_ERR_READFAIL,	// (Restore) Failed on reading savegame file -
-				// Something screwed up during the read
-	SR_ERR_WRITEFAIL	// (Save) Failed on writing savegame file -
-				// Something screwed up during the write -
-				// could be hard-drive full..?
+	SR_OK, // No worries
+	SR_ERR_FILEOPEN, // Can't open file - Couldn't create file for
+	// saving, or couldn't find file for loading.
+	SR_ERR_INCOMPATIBLE, // (Restore) Incompatible savegame data.
+	// Savegame file is obsolete. (Won't happen
+	// after development stops)
+	SR_ERR_READFAIL, // (Restore) Failed on reading savegame file -
+	// Something screwed up during the read
+	SR_ERR_WRITEFAIL // (Save) Failed on writing savegame file -
+	// Something screwed up during the write -
+	// could be hard-drive full..?
 };
 
 } // End of namespace Sword2

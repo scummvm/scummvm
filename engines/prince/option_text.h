@@ -25,9 +25,12 @@ namespace Prince {
 // PL - Mazovia coding
 const char invOptionsTextPL[5][18] = {
 	"Obejrzyj",
-	"U\xa7""yj",
-	"Otw\xa2""rz/Pchnij",
-	"Zamknij/Poci\x86""gnij",
+	"U\xa7"
+	"yj",
+	"Otw\xa2"
+	"rz/Pchnij",
+	"Zamknij/Poci\x86"
+	"gnij",
 	"Daj"
 };
 
@@ -35,9 +38,12 @@ const char optionsTextPL[7][18] = {
 	"Podejd\xa6",
 	"Obejrzyj",
 	"Zabierz",
-	"U\xa7""yj",
-	"Otw\xa2""rz/Pchnij",
-	"Zamknij/Poci\x86""gnij",
+	"U\xa7"
+	"yj",
+	"Otw\xa2"
+	"rz/Pchnij",
+	"Zamknij/Poci\x86"
+	"gnij",
 	"Porozmawiaj"
 };
 
@@ -48,8 +54,11 @@ const char optionsTextPL[7][18] = {
 char invOptionsTextDE[5][17] = {
 	"Anschauen",
 	"Benutzen",
-	"\x84""ffnen/Sto\x7f""en",
-	"Schlie\x7f""en/Ziehen",
+	"\x84"
+	"ffnen/Sto\x7f"
+	"en",
+	"Schlie\x7f"
+	"en/Ziehen",
 	"Geben"
 };
 
@@ -58,8 +67,11 @@ const char optionsTextDE[7][17] = {
 	"Anschauen",
 	"Wegnehmen",
 	"Benutzen",
-	"\x84""ffnen/Sto\x7f""en",
-	"Schlie\x7f""en/Ziehen",
+	"\x84"
+	"ffnen/Sto\x7f"
+	"en",
+	"Schlie\x7f"
+	"en/Ziehen",
 	"Ansprechen"
 };
 
@@ -86,7 +98,9 @@ const char *optionsTextEN[] = {
 const char *invOptionsTextRU[] = {
 	"Cvjnhtnm",
 	"Bcgjkmp.",
-	"Jnrhsnm/""\x83""bnm ",
+	"Jnrhsnm/"
+	"\x83"
+	"bnm ",
 	"Pfrhsnm/Nzyenm  ",
 	"Lfnm "
 };
@@ -96,7 +110,9 @@ const char *optionsTextRU[] = {
 	"Jcvjnhtnm",
 	"Dpznm ",
 	"Bcgjkmp.",
-	"Jnrhsnm/""\x83""bnm ",
+	"Jnrhsnm/"
+	"\x83"
+	"bnm ",
 	"Pfrhsnm/Nzyenm  ",
 	"Ujdjhbnm  "
 };

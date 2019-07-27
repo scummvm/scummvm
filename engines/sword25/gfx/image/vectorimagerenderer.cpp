@@ -38,9 +38,9 @@
  *
  */
 
+#include "graphics/colormasks.h"
 #include "sword25/gfx/image/art.h"
 #include "sword25/gfx/image/vectorimage.h"
-#include "graphics/colormasks.h"
 
 namespace Sword25 {
 
@@ -51,7 +51,7 @@ void art_rgb_fill_run1(byte *buf, byte r, byte g, byte b, int n) {
 		memset(buf, g, n + n + n + n);
 	} else {
 		uint32 *alt = (uint32 *)buf;
-		uint32 color = Graphics::ARGBToColor<Graphics::ColorMasks<8888> >(r, g, b, 0xff);
+		uint32 color = Graphics::ARGBToColor<Graphics::ColorMasks<8888>>(r, g, b, 0xff);
 
 		for (i = 0; i < n; i++)
 			*alt++ = color;
@@ -150,8 +150,8 @@ static void art_rgb_svp_alpha_callback1(void *callback_data, int y,
 }
 
 static void art_rgb_svp_alpha_opaque_callback1(void *callback_data, int y,
-        int start,
-        ArtSVPRenderAAStep *steps, int n_steps) {
+                                               int start,
+                                               ArtSVPRenderAAStep *steps, int n_steps) {
 	ArtRgbSVPAlphaData *data = (ArtRgbSVPAlphaData *)callback_data;
 	byte *linebuf;
 	int run_x0, run_x1;
@@ -229,7 +229,7 @@ void art_rgb_svp_alpha1(const ArtSVP *svp,
 	int i;
 	int a, da;
 
-	Graphics::colorToARGB<Graphics::ColorMasks<8888> >(color, alpha, r, g, b);
+	Graphics::colorToARGB<Graphics::ColorMasks<8888>>(color, alpha, r, g, b);
 
 	data.r = r;
 	data.g = g;
@@ -312,8 +312,7 @@ ArtVpath *art_vpath_reverse(ArtVpath *a) {
 			it.code = ART_MOVETO_OPEN;
 			state = 1;
 		}
-		if (a[len - i - 1].code == ART_MOVETO ||
-		        a[len - i - 1].code == ART_MOVETO_OPEN) {
+		if (a[len - i - 1].code == ART_MOVETO || a[len - i - 1].code == ART_MOVETO_OPEN) {
 			state = 0;
 		}
 		dest[i] = it;
@@ -357,7 +356,7 @@ void drawBez(ArtBpath *bez1, ArtBpath *bez2, byte *buffer, int width, int height
 	// HACK: Some frames have green bounding boxes drawn.
 	// Perhaps they were used by original game artist Umriss
 	// We skip them just like the original
-	if (bez2 == 0 && color == Graphics::ARGBToColor<Graphics::ColorMasks<8888> >(0xff, 0x00, 0xff, 0x00)) {
+	if (bez2 == 0 && color == Graphics::ARGBToColor<Graphics::ColorMasks<8888>>(0xff, 0x00, 0xff, 0x00)) {
 		return;
 	}
 
@@ -401,8 +400,8 @@ void drawBez(ArtBpath *bez1, ArtBpath *bez2, byte *buffer, int width, int height
 }
 
 void VectorImage::render(int width, int height) {
-	double scaleX = (width == - 1) ? 1 : static_cast<double>(width) / static_cast<double>(getWidth());
-	double scaleY = (height == - 1) ? 1 : static_cast<double>(height) / static_cast<double>(getHeight());
+	double scaleX = (width == -1) ? 1 : static_cast<double>(width) / static_cast<double>(getWidth());
+	double scaleY = (height == -1) ? 1 : static_cast<double>(height) / static_cast<double>(getHeight());
 
 	debug(3, "VectorImage::render(%d, %d) %s", width, height, _fname.c_str());
 
@@ -470,6 +469,5 @@ void VectorImage::render(int width, int height) {
 		}
 	}
 }
-
 
 } // End of namespace Sword25

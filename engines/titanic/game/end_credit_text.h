@@ -32,11 +32,15 @@ class CEndCreditText : public CGameObject {
 	bool ActMsg(CActMsg *msg);
 	bool FrameMsg(CFrameMsg *msg);
 	bool TimerMsg(CTimerMsg *msg);
+
 private:
 	bool _flag;
+
 public:
 	CLASSDEF;
-	CEndCreditText() : CGameObject(), _flag(false) {}
+	CEndCreditText()
+	  : CGameObject()
+	  , _flag(false) {}
 
 	/**
 	 * Save the data for the class to file

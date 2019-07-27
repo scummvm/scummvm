@@ -26,6 +26,8 @@
  * And there's still a bit of tidying and commenting to do yet.
  */
 
+#include "tinsel/dialogs.h"
+#include "common/serializer.h"
 #include "tinsel/actors.h"
 #include "tinsel/anim.h"
 #include "tinsel/background.h"
@@ -38,7 +40,6 @@
 #include "tinsel/graphics.h"
 #include "tinsel/handle.h"
 #include "tinsel/heapmem.h"
-#include "tinsel/dialogs.h"
 #include "tinsel/multiobj.h"
 #include "tinsel/music.h"
 #include "tinsel/palette.h"
@@ -49,14 +50,13 @@
 #include "tinsel/savescn.h"
 #include "tinsel/sched.h"
 #include "tinsel/scn.h"
-#include "common/serializer.h"
 #include "tinsel/sound.h"
 #include "tinsel/strres.h"
 #include "tinsel/sysvar.h"
 #include "tinsel/text.h"
-#include "tinsel/timers.h"		// For ONE_SECOND constant
+#include "tinsel/timers.h" // For ONE_SECOND constant
 #include "tinsel/tinlib.h"
-#include "tinsel/tinsel.h"		// For engine access
+#include "tinsel/tinsel.h" // For engine access
 #include "tinsel/token.h"
 
 #include "common/textconsole.h"
@@ -65,37 +65,41 @@ namespace Tinsel {
 
 //----------------- LOCAL DEFINES --------------------
 
-#define HOPPER_FILENAME		"hopper"
+#define HOPPER_FILENAME "hopper"
 
-#define INV_PICKUP	PLR_SLEFT		// Local names
-#define INV_LOOK	PLR_SRIGHT		//	for button events
-#define INV_ACTION	PLR_DLEFT		//
+#define INV_PICKUP PLR_SLEFT // Local names
+#define INV_LOOK PLR_SRIGHT //	for button events
+#define INV_ACTION PLR_DLEFT //
 // For SlideSlider() and similar
 enum SSFN {
-	S_START, S_SLIDE, S_END, S_TIMEUP, S_TIMEDN
+	S_START,
+	S_SLIDE,
+	S_END,
+	S_TIMEUP,
+	S_TIMEDN
 };
 
 /** attribute values - may become bit field if further attributes are added */
 enum {
-	IO_ONLYINV1	= 0x01,
-	IO_ONLYINV2	= 0x02,
-	IO_DROPCODE	= 0x04
+	IO_ONLYINV1 = 0x01,
+	IO_ONLYINV2 = 0x02,
+	IO_DROPCODE = 0x04
 };
 
 //-----------------------
 // Moveable window translucent rectangle position limits
 enum {
-	MAXLEFT		= 315,		//
-	MINRIGHT	= 3,		// These values keep 2 pixcells
-	MINTOP		= -13,		// of header on the screen.
-	MAXTOP		= 195		//
+	MAXLEFT = 315, //
+	MINRIGHT = 3, // These values keep 2 pixcells
+	MINTOP = -13, // of header on the screen.
+	MAXTOP = 195 //
 };
 
 //-----------------------
 // Indices into hWinParts's reels
 
 enum PARTS_INDEX {
-	IX_SLIDE = 0,		// Slider
+	IX_SLIDE = 0, // Slider
 	IX_V26 = 1,
 	IX_V52 = 2,
 	IX_V78 = 3,
@@ -110,58 +114,58 @@ enum PARTS_INDEX {
 	IX_H182 = 12,
 	IX_H208 = 13,
 	IX_H234 = 14,
-	IX_TL = 15,		// Top left corner
-	IX_TR = 16,		// Top right corner
-	IX_BL = 17,		// Bottom left corner
-	IX_BR = 18,		// Bottom right corner
+	IX_TL = 15, // Top left corner
+	IX_TR = 16, // Top right corner
+	IX_BL = 17, // Bottom left corner
+	IX_BR = 18, // Bottom right corner
 
 	IX1_H25 = 19,
 	IX1_V11 = 20,
-	IX1_RTL = 21,		// Re-sizing top left corner
-	IX1_RTR = 22,		// Re-sizing top right corner
-	IX1_RBR = 23,		// Re-sizing bottom right corner
-	IX1_CURLR = 24,		// }
-	IX1_CURUD = 25,		// }
-	IX1_CURDU = 26,		// } Custom cursors
-	IX1_CURDD = 27,		// }
-	IX1_CURUP = 28,		// }
-	IX1_CURDOWN = 29,	// }
-	IX1_MDGROOVE = 30,	// 'Mixing desk' slider background
-	IX1_MDSLIDER= 34,	// 'Mixing desk' slider
-	IX1_BLANK1 = 35,		//
-	IX1_BLANK2 = 36,		//
-	IX1_BLANK3 = 37,		//
-	IX1_CIRCLE1 = 38,	//
-	IX1_CIRCLE2 = 39,	//
-	IX1_CROSS1 = 40,		//
-	IX1_CROSS2 = 41,		//
-	IX1_CROSS3 = 42,		//
-	IX1_QUIT1 = 43,	//
-	IX1_QUIT2 = 44,	//
-	IX1_QUIT3 = 45,	//
-	IX1_TICK1 = 46,		//
-	IX1_TICK2 = 47,		//
-	IX1_TICK3 = 48,		//
-	IX1_NTR = 49,		// New top right corner
+	IX1_RTL = 21, // Re-sizing top left corner
+	IX1_RTR = 22, // Re-sizing top right corner
+	IX1_RBR = 23, // Re-sizing bottom right corner
+	IX1_CURLR = 24, // }
+	IX1_CURUD = 25, // }
+	IX1_CURDU = 26, // } Custom cursors
+	IX1_CURDD = 27, // }
+	IX1_CURUP = 28, // }
+	IX1_CURDOWN = 29, // }
+	IX1_MDGROOVE = 30, // 'Mixing desk' slider background
+	IX1_MDSLIDER = 34, // 'Mixing desk' slider
+	IX1_BLANK1 = 35, //
+	IX1_BLANK2 = 36, //
+	IX1_BLANK3 = 37, //
+	IX1_CIRCLE1 = 38, //
+	IX1_CIRCLE2 = 39, //
+	IX1_CROSS1 = 40, //
+	IX1_CROSS2 = 41, //
+	IX1_CROSS3 = 42, //
+	IX1_QUIT1 = 43, //
+	IX1_QUIT2 = 44, //
+	IX1_QUIT3 = 45, //
+	IX1_TICK1 = 46, //
+	IX1_TICK2 = 47, //
+	IX1_TICK3 = 48, //
+	IX1_NTR = 49, // New top right corner
 
-	IX2_RTL = 19,			// Re-sizing top left corner
-	IX2_RTR = 20,			// Re-sizing top right corner
-	IX2_RBR = 21,			// Re-sizing bottom right corner
-	IX2_CURLR = 22,		// }
-	IX2_CURUD = 23,		// }
-	IX2_CURDU = 24,		// } Custom cursors
-	IX2_CURDD = 25,		// }
-	IX2_MDGROOVE = 26,	// 'Mixing desk' slider background
-	IX2_MDSLIDER = 27,	// 'Mixing desk' slider
-	IX2_CIRCLE1 = 28,	//
-	IX2_CIRCLE2 = 29,	//
-	IX2_CROSS1 = 30,	//
-	IX2_CROSS2 = 31,	//
-	IX2_CROSS3 = 32,	//
-	IX2_TICK1 = 33,		//
-	IX2_TICK2 = 34,		//
-	IX2_TICK3 = 35,		//
-	IX2_NTR = 36,		// New top right corner
+	IX2_RTL = 19, // Re-sizing top left corner
+	IX2_RTR = 20, // Re-sizing top right corner
+	IX2_RBR = 21, // Re-sizing bottom right corner
+	IX2_CURLR = 22, // }
+	IX2_CURUD = 23, // }
+	IX2_CURDU = 24, // } Custom cursors
+	IX2_CURDD = 25, // }
+	IX2_MDGROOVE = 26, // 'Mixing desk' slider background
+	IX2_MDSLIDER = 27, // 'Mixing desk' slider
+	IX2_CIRCLE1 = 28, //
+	IX2_CIRCLE2 = 29, //
+	IX2_CROSS1 = 30, //
+	IX2_CROSS2 = 31, //
+	IX2_CROSS3 = 32, //
+	IX2_TICK1 = 33, //
+	IX2_TICK2 = 34, //
+	IX2_TICK3 = 35, //
+	IX2_NTR = 36, // New top right corner
 	IX2_TR4 = 37,
 	IX2_LEFT1 = 38,
 	IX2_LEFT2 = 39,
@@ -173,103 +177,100 @@ enum PARTS_INDEX {
 };
 
 // The following defines select the correct constant depending on Tinsel version
-#define IX_CROSS1	(TinselV2 ? IX2_CROSS1 :	IX1_CROSS1)
-#define IX_CURDD	(TinselV2 ? IX2_CURDD :		IX1_CURDD)
-#define IX_CURDU	(TinselV2 ? IX2_CURDU :		IX1_CURDU)
-#define IX_CURLR	(TinselV2 ? IX2_CURLR :		IX1_CURLR)
-#define IX_CURUD	(TinselV2 ? IX2_CURUD :		IX1_CURUD)
-#define IX_CURUL	(TinselV2 ? IX2_CURUL :		IX1_CURUL)
-#define IX_MDGROOVE	(TinselV2 ? IX2_MDGROOVE :	IX1_MDGROOVE)
-#define IX_MDSLIDER	(TinselV2 ? IX2_MDSLIDER :	IX1_MDSLIDER)
-#define IX_NTR		(TinselV2 ? IX2_NTR :		IX1_NTR)
-#define IX_RBR		(TinselV2 ? IX2_RBR :		IX1_RBR)
-#define IX_RTL		(TinselV2 ? IX2_RTL :		IX1_RTL)
-#define IX_RTR		(TinselV2 ? IX2_RTR :		IX1_RTR)
-#define IX_TICK1	(TinselV2 ? IX2_TICK1 :		IX1_TICK1)
+#define IX_CROSS1 (TinselV2 ? IX2_CROSS1 : IX1_CROSS1)
+#define IX_CURDD (TinselV2 ? IX2_CURDD : IX1_CURDD)
+#define IX_CURDU (TinselV2 ? IX2_CURDU : IX1_CURDU)
+#define IX_CURLR (TinselV2 ? IX2_CURLR : IX1_CURLR)
+#define IX_CURUD (TinselV2 ? IX2_CURUD : IX1_CURUD)
+#define IX_CURUL (TinselV2 ? IX2_CURUL : IX1_CURUL)
+#define IX_MDGROOVE (TinselV2 ? IX2_MDGROOVE : IX1_MDGROOVE)
+#define IX_MDSLIDER (TinselV2 ? IX2_MDSLIDER : IX1_MDSLIDER)
+#define IX_NTR (TinselV2 ? IX2_NTR : IX1_NTR)
+#define IX_RBR (TinselV2 ? IX2_RBR : IX1_RBR)
+#define IX_RTL (TinselV2 ? IX2_RTL : IX1_RTL)
+#define IX_RTR (TinselV2 ? IX2_RTR : IX1_RTR)
+#define IX_TICK1 (TinselV2 ? IX2_TICK1 : IX1_TICK1)
 
-
-
-#define NORMGRAPH	0
-#define DOWNGRAPH	1
-#define HIGRAPH		2
+#define NORMGRAPH 0
+#define DOWNGRAPH 1
+#define HIGRAPH 2
 //-----------------------
-#define FIX_UK		0
-#define FIX_FR		1
-#define FIX_GR		2
-#define FIX_IT		3
-#define FIX_SP		4
-#define FIX_USA		5
-#define HOPEDFORFREELS	6	// Expected flag reels
+#define FIX_UK 0
+#define FIX_FR 1
+#define FIX_GR 2
+#define FIX_IT 3
+#define FIX_SP 4
+#define FIX_USA 5
+#define HOPEDFORFREELS 6 // Expected flag reels
 //-----------------------
 
-#define MAX_ININV	(TinselV2 ? 160 : 150)		// Max in an inventory
-#define MAX_ININV_TOT	160
-#define MAX_PERMICONS	10	// Max permanent conversation icons
+#define MAX_ININV (TinselV2 ? 160 : 150) // Max in an inventory
+#define MAX_ININV_TOT 160
+#define MAX_PERMICONS 10 // Max permanent conversation icons
 
-#define MAXHICONS	10	// Max dimensions of
-#define MAXVICONS	6	// an inventory window
+#define MAXHICONS 10 // Max dimensions of
+#define MAXVICONS 6 // an inventory window
 
-#define ITEM_WIDTH	(TinselV2 ? 50 : 25)	// Dimensions of an icon
-#define ITEM_HEIGHT	(TinselV2 ? 50 : 25)	//
-#define I_SEPARATION	(TinselV2 ? 2 : 1)	// Item separation
+#define ITEM_WIDTH (TinselV2 ? 50 : 25) // Dimensions of an icon
+#define ITEM_HEIGHT (TinselV2 ? 50 : 25) //
+#define I_SEPARATION (TinselV2 ? 2 : 1) // Item separation
 
-#define NM_TOFF		11	// Title text Y offset from top
-#define NM_TBT		(TinselV2 ? 4 : 0)		// Y, title box top
-#define NM_TBB		33
-#define NM_LSX		(TinselV2 ? 4 : 0)		// X, left side
-#define NM_BSY		(TinselV2 ? -9 : - M_TH + 1)
-#define NM_RSX		(TinselV2 ? -9 : - M_SW + 1)
-#define NM_SBL		(-27)
-#define NM_SLH		(TinselV2 ? 11 : 5)	// Slider height
-#define NM_SLX			(-11)	// Slider X offset (from right)
+#define NM_TOFF 11 // Title text Y offset from top
+#define NM_TBT (TinselV2 ? 4 : 0) // Y, title box top
+#define NM_TBB 33
+#define NM_LSX (TinselV2 ? 4 : 0) // X, left side
+#define NM_BSY (TinselV2 ? -9 : -M_TH + 1)
+#define NM_RSX (TinselV2 ? -9 : -M_SW + 1)
+#define NM_SBL (-27)
+#define NM_SLH (TinselV2 ? 11 : 5) // Slider height
+#define NM_SLX (-11) // Slider X offset (from right)
 
-#define NM_BG_POS_X (TinselV2 ? 9 : 1)		// }
-#define NM_BG_POS_Y (TinselV2 ? 9 : 1)		// } Offset of translucent rectangle
-#define NM_BG_SIZ_X (TinselV2 ? -18 : -3)	// }
-#define NM_BG_SIZ_Y (TinselV2 ? -18 : -3)	// } How much larger it is than edges
+#define NM_BG_POS_X (TinselV2 ? 9 : 1) // }
+#define NM_BG_POS_Y (TinselV2 ? 9 : 1) // } Offset of translucent rectangle
+#define NM_BG_SIZ_X (TinselV2 ? -18 : -3) // }
+#define NM_BG_SIZ_Y (TinselV2 ? -18 : -3) // } How much larger it is than edges
 
-#define NM_RS_T_INSET		3
-#define NM_RS_B_INSET		4
-#define NM_RS_L_INSET		3
-#define NM_RS_R_INSET		4
-#define NM_RS_THICKNESS		5
-#define NM_MOVE_AREA_B_Y	30
-#define NM_SLIDE_INSET		(TinselV2 ? 18 : 9)	// X offset (from right) of left of scroll region
-#define NM_SLIDE_THICKNESS	(TinselV2 ? 13 : 7)		// thickness of scroll region
-#define NM_UP_ARROW_TOP		34	// Y offset of top of up arrow
-#define NM_UP_ARROW_BOTTOM	49	// Y offset of bottom of up arrow
-#define NM_DN_ARROW_TOP		22	// Y offset (from bottom) of top of down arrow
-#define NM_DN_ARROW_BOTTOM	5	// Y offset (from bottom) of bottom of down arrow
+#define NM_RS_T_INSET 3
+#define NM_RS_B_INSET 4
+#define NM_RS_L_INSET 3
+#define NM_RS_R_INSET 4
+#define NM_RS_THICKNESS 5
+#define NM_MOVE_AREA_B_Y 30
+#define NM_SLIDE_INSET (TinselV2 ? 18 : 9) // X offset (from right) of left of scroll region
+#define NM_SLIDE_THICKNESS (TinselV2 ? 13 : 7) // thickness of scroll region
+#define NM_UP_ARROW_TOP 34 // Y offset of top of up arrow
+#define NM_UP_ARROW_BOTTOM 49 // Y offset of bottom of up arrow
+#define NM_DN_ARROW_TOP 22 // Y offset (from bottom) of top of down arrow
+#define NM_DN_ARROW_BOTTOM 5 // Y offset (from bottom) of bottom of down arrow
 
-#define MD_YBUTTOP	(TinselV2 ? 2 : 9)
-#define MD_YBUTBOT	(TinselV2 ? 16 : 0)
-#define MD_XLBUTL	(TinselV2 ? 4 : 1)
-#define MD_XLBUTR	(TinselV2 ? 26 : 10)
-#define MD_XRBUTL	(TinselV2 ? 173 : 105)
-#define MD_XRBUTR	(TinselV2 ? 195 : 114)
-#define ROTX1 60	// Rotate button's offsets from the center
+#define MD_YBUTTOP (TinselV2 ? 2 : 9)
+#define MD_YBUTBOT (TinselV2 ? 16 : 0)
+#define MD_XLBUTL (TinselV2 ? 4 : 1)
+#define MD_XLBUTR (TinselV2 ? 26 : 10)
+#define MD_XRBUTL (TinselV2 ? 173 : 105)
+#define MD_XRBUTR (TinselV2 ? 195 : 114)
+#define ROTX1 60 // Rotate button's offsets from the center
 
 // Number of objects that makes up an empty window
-#define MAX_WCOMP	21		// 4 corners + (3+3) sides + (2+2) extra sides
-					// + Bground + title + slider
-					// + more Needed for save game window
+#define MAX_WCOMP 21 // 4 corners + (3+3) sides + (2+2) extra sides
+// + Bground + title + slider
+// + more Needed for save game window
 
-#define MAX_ICONS	MAXHICONS*MAXVICONS
+#define MAX_ICONS MAXHICONS *MAXVICONS
 
 #define MAX_NAME_RIGHT (TinselV2 ? 417 : 213)
 
-#define SLIDE_RANGE	(TinselV2 ? 120 : 81)
-#define SLIDE_MINX	(TinselV2 ? 25 : 8)
-#define SLIDE_MAXX	(TinselV2 ? 25 + 120 : 8 + 81)
+#define SLIDE_RANGE (TinselV2 ? 120 : 81)
+#define SLIDE_MINX (TinselV2 ? 25 : 8)
+#define SLIDE_MAXX (TinselV2 ? 25 + 120 : 8 + 81)
 
-#define MDTEXT_YOFF	(TinselV2 ? -1 : 6)
-#define MDTEXT_XOFF	-4
-#define TOG2_YOFF	-22
-#define ROT_YOFF	48
+#define MDTEXT_YOFF (TinselV2 ? -1 : 6)
+#define MDTEXT_XOFF -4
+#define TOG2_YOFF -22
+#define ROT_YOFF 48
 #define TYOFF (TinselV2 ? 4 : 0)
 #define FLAGX (-5)
 #define FLAGY 4
-
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
@@ -277,142 +278,154 @@ enum PARTS_INDEX {
 
 // Save game name editing cursor
 
-#define CURSOR_CHAR	'_'
-char sCursor[2]	= { CURSOR_CHAR, 0 };
+#define CURSOR_CHAR '_'
+char sCursor[2] = { CURSOR_CHAR, 0 };
 static const int hFillers[MAXHICONS] = {
-	IX_H26,			// 2 icons wide
-	IX_H52,			// 3
-	IX_H78,			// 4
-	IX_H104,		// 5
-	IX_H130,		// 6
-	IX_H156,		// 7
-	IX_H182,		// 8
-	IX_H208,		// 9
-	IX_H234			// 10 icons wide
+	IX_H26, // 2 icons wide
+	IX_H52, // 3
+	IX_H78, // 4
+	IX_H104, // 5
+	IX_H130, // 6
+	IX_H156, // 7
+	IX_H182, // 8
+	IX_H208, // 9
+	IX_H234 // 10 icons wide
 };
 static const int vFillers[MAXVICONS] = {
-	IX_V26,			// 2 icons high
-	IX_V52,			// 3
-	IX_V78,			// 4
-	IX_V104,		// 5
-	IX_V130			// 6 icons high
+	IX_V26, // 2 icons high
+	IX_V52, // 3
+	IX_V78, // 4
+	IX_V104, // 5
+	IX_V130 // 6 icons high
 };
-
 
 //----- Permanent data (set once) -----
 
-static SCNHANDLE g_hWinParts = 0;	// Window members and cursors' graphic data
-static SCNHANDLE g_flagFilm = 0;	// Window members and cursors' graphic data
+static SCNHANDLE g_hWinParts = 0; // Window members and cursors' graphic data
+static SCNHANDLE g_flagFilm = 0; // Window members and cursors' graphic data
 static SCNHANDLE g_configStrings[20];
 
-static INV_OBJECT *g_invObjects = NULL;	// Inventory objects' data
-static int g_numObjects = 0;				// Number of inventory objects
+static INV_OBJECT *g_invObjects = NULL; // Inventory objects' data
+static int g_numObjects = 0; // Number of inventory objects
 static SCNHANDLE *g_invFilms = NULL;
 static bool g_bNoLanguage = false;
 static DIRECTION g_initialDirection;
 
 //----- Permanent data (updated, valid while inventory closed) -----
 
-static enum {NO_INV, IDLE_INV, ACTIVE_INV, BOGUS_INV} g_InventoryState;
+static enum { NO_INV,
+	            IDLE_INV,
+	            ACTIVE_INV,
+	            BOGUS_INV } g_InventoryState;
 
-static int g_heldItem = INV_NOICON;	// Current held item
+static int g_heldItem = INV_NOICON; // Current held item
 
 static SCNHANDLE g_heldFilm;
 
 struct INV_DEF {
 
-	int MinHicons;		// }
-	int MinVicons;		// } Dimension limits
-	int MaxHicons;		// }
-	int MaxVicons;		// }
+	int MinHicons; // }
+	int MinVicons; // } Dimension limits
+	int MaxHicons; // }
+	int MaxVicons; // }
 
-	int NoofHicons;		// }
-	int NoofVicons;		// } Current dimentsions
+	int NoofHicons; // }
+	int NoofVicons; // } Current dimentsions
 
-	int contents[160];	// Contained items
-	int NoofItems;			// Current number of held items
+	int contents[160]; // Contained items
+	int NoofItems; // Current number of held items
 
-	int FirstDisp;		// Index to first item currently displayed
+	int FirstDisp; // Index to first item currently displayed
 
-	int inventoryX;		// } Display position
-	int inventoryY;		// }
-	int otherX;		// } Display position
-	int otherY;		// }
+	int inventoryX; // } Display position
+	int inventoryY; // }
+	int otherX; // } Display position
+	int otherY; // }
 
-	int MaxInvObj;		// Max. allowed contents
+	int MaxInvObj; // Max. allowed contents
 
-	SCNHANDLE hInvTitle;	// Window heading
+	SCNHANDLE hInvTitle; // Window heading
 
-	bool resizable;		// Re-sizable window?
-	bool bMoveable;		// Moveable window?
+	bool resizable; // Re-sizable window?
+	bool bMoveable; // Moveable window?
 
-	int sNoofHicons;	// }
-	int sNoofVicons;	// } Current dimensions
+	int sNoofHicons; // }
+	int sNoofVicons; // } Current dimensions
 
-	bool bMax;		// Maximised last time open?
-
+	bool bMax; // Maximised last time open?
 };
 
-static INV_DEF g_InvD[NUM_INV];		// Conversation + 2 inventories + ...
-
+static INV_DEF g_InvD[NUM_INV]; // Conversation + 2 inventories + ...
 
 // Permanent contents of conversation inventory
-static int g_permIcons[MAX_PERMICONS];	// Basic items i.e. permanent contents
-static int g_numPermIcons = 0;			// - copy to conv. inventory at pop-up time
+static int g_permIcons[MAX_PERMICONS]; // Basic items i.e. permanent contents
+static int g_numPermIcons = 0; // - copy to conv. inventory at pop-up time
 static int g_numEndIcons = 0;
 
 //----- Data pertinant to current active inventory -----
 
-static int g_ino = 0;		// Which inventory is currently active
+static int g_ino = 0; // Which inventory is currently active
 
 static bool g_InventoryHidden = false;
 static bool g_InventoryMaximised = false;
 
-static enum {	ID_NONE, ID_MOVE, ID_SLIDE,
-		ID_BOTTOM, ID_TOP, ID_LEFT, ID_RIGHT,
-		ID_TLEFT, ID_TRIGHT, ID_BLEFT, ID_BRIGHT,
-		ID_CSLIDE, ID_MDCONT } g_InvDragging;
+static enum { ID_NONE,
+	            ID_MOVE,
+	            ID_SLIDE,
+	            ID_BOTTOM,
+	            ID_TOP,
+	            ID_LEFT,
+	            ID_RIGHT,
+	            ID_TLEFT,
+	            ID_TRIGHT,
+	            ID_BLEFT,
+	            ID_BRIGHT,
+	            ID_CSLIDE,
+	            ID_MDCONT } g_InvDragging;
 
-static int g_SuppH = 0;		// 'Linear' element of
-static int g_SuppV = 0;		// dimensions during re-sizing
+static int g_SuppH = 0; // 'Linear' element of
+static int g_SuppV = 0; // dimensions during re-sizing
 
-static int g_Ychange = 0;		//
-static int g_Ycompensate = 0;		// All to do with re-sizing.
-static int g_Xchange = 0;		//
-static int g_Xcompensate = 0;		//
+static int g_Ychange = 0; //
+static int g_Ycompensate = 0; // All to do with re-sizing.
+static int g_Xchange = 0; //
+static int g_Xcompensate = 0; //
 
-static bool g_ItemsChanged = 0;	// When set, causes items to be re-drawn
+static bool g_ItemsChanged = 0; // When set, causes items to be re-drawn
 
 static bool g_bReOpenMenu = 0;
 
-static int g_TL = 0, g_TR = 0, g_BL = 0, g_BR = 0;	// Used during window construction
-static int g_TLwidth = 0, g_TLheight = 0;	//
-static int g_TRwidth = 0;		//
-static int g_BLheight = 0;		//
+static int g_TL = 0, g_TR = 0, g_BL = 0, g_BR = 0; // Used during window construction
+static int g_TLwidth = 0, g_TLheight = 0; //
+static int g_TRwidth = 0; //
+static int g_BLheight = 0; //
 
 static LANGUAGE g_displayedLanguage;
 
-static OBJECT	*g_objArray[MAX_WCOMP];	// Current display objects (window)
-static OBJECT	*g_iconArray[MAX_ICONS];	// Current display objects (icons)
-static ANIM		g_iconAnims[MAX_ICONS];
-static OBJECT	*g_DobjArray[MAX_WCOMP];	// Current display objects (re-sizing window)
+static OBJECT *g_objArray[MAX_WCOMP]; // Current display objects (window)
+static OBJECT *g_iconArray[MAX_ICONS]; // Current display objects (icons)
+static ANIM g_iconAnims[MAX_ICONS];
+static OBJECT *g_DobjArray[MAX_WCOMP]; // Current display objects (re-sizing window)
 
-static OBJECT *g_RectObject = 0, *g_SlideObject = 0;	// Current display objects, for reference
-					// objects are in objArray.
+static OBJECT *g_RectObject = 0, *g_SlideObject = 0; // Current display objects, for reference
+  // objects are in objArray.
 
-static int g_sliderYpos = 0;			// For positioning the slider
-static int g_sliderYmax = 0, g_sliderYmin = 0;	//
+static int g_sliderYpos = 0; // For positioning the slider
+static int g_sliderYmax = 0, g_sliderYmin = 0; //
 
-#define sliderRange	(g_sliderYmax - g_sliderYmin)
+#define sliderRange (g_sliderYmax - g_sliderYmin)
 
 // Also to do with the slider
-static struct { int n; int y; } g_slideStuff[MAX_ININV_TOT+1];
+static struct {
+	int n;
+	int y;
+} g_slideStuff[MAX_ININV_TOT + 1];
 
 #define MAXSLIDES 4
 struct MDSLIDES {
-	int	num;
-	OBJECT	*obj;
-	int	min, max;
+	int num;
+	OBJECT *obj;
+	int min, max;
 };
 static MDSLIDES g_mdSlides[MAXSLIDES];
 static int g_numMdSlides = 0;
@@ -424,31 +437,31 @@ static int g_GlitterIndex = 0;
 // - (sometimes) Passed to inventory icon code via OtherObject()
 static int g_thisIcon = 0;
 
-static CONV_PARAM g_thisConvFn;				// Top, 'Middle' or Bottom
-static HPOLYGON g_thisConvPoly = 0;			// Conversation code is in a polygon code block
-static int g_thisConvActor;					// ...or an actor's code block.
-static int g_pointedIcon = INV_NOICON;		// used by InvLabels - icon pointed to on last call
-static volatile int g_PointedWaitCount = 0;	// used by ObjectProcess - fix the 'repeated pressing bug'
-static int g_sX = 0;							// used by SlideMSlider() - current x-coordinate
-static int g_lX = 0;							// used by SlideMSlider() - last x-coordinate
+static CONV_PARAM g_thisConvFn; // Top, 'Middle' or Bottom
+static HPOLYGON g_thisConvPoly = 0; // Conversation code is in a polygon code block
+static int g_thisConvActor; // ...or an actor's code block.
+static int g_pointedIcon = INV_NOICON; // used by InvLabels - icon pointed to on last call
+static volatile int g_PointedWaitCount = 0; // used by ObjectProcess - fix the 'repeated pressing bug'
+static int g_sX = 0; // used by SlideMSlider() - current x-coordinate
+static int g_lX = 0; // used by SlideMSlider() - last x-coordinate
 
-static bool g_bMoveOnUnHide;	// Set before start of conversation
-				// - causes conversation to be started in a sensible place
+static bool g_bMoveOnUnHide; // Set before start of conversation
+  // - causes conversation to be started in a sensible place
 
 //----- Data pertinant to configure (incl. load/save game) -----
 
-#define COL_MAINBOX	TBLUE1		// Base blue color
-#define COL_BOX		TBLUE1
-#define COL_HILIGHT	TBLUE4
+#define COL_MAINBOX TBLUE1 // Base blue color
+#define COL_BOX TBLUE1
+#define COL_HILIGHT TBLUE4
 
 #ifdef JAPAN
-#define BOX_HEIGHT	17
-#define EDIT_BOX1_WIDTH	149
+#	define BOX_HEIGHT 17
+#	define EDIT_BOX1_WIDTH 149
 #else
-#define BOX_HEIGHT	13
-#define EDIT_BOX1_WIDTH	145
+#	define BOX_HEIGHT 13
+#	define EDIT_BOX1_WIDTH 145
 #endif
-#define EDIT_BOX2_WIDTH	166
+#define EDIT_BOX2_WIDTH 166
 
 #define T2_EDIT_BOX1_WIDTH 290
 #define T2_EDIT_BOX2_WIDTH 322
@@ -456,27 +469,27 @@ static bool g_bMoveOnUnHide;	// Set before start of conversation
 
 //----- Data pertinant to scene hoppers ------------------------
 
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 struct HOPPER {
-	uint32		hScene;
-	SCNHANDLE	hSceneDesc;
-	uint32		numEntries;
-	uint32		entryIndex;
+	uint32 hScene;
+	SCNHANDLE hSceneDesc;
+	uint32 numEntries;
+	uint32 entryIndex;
 } PACKED_STRUCT;
 typedef HOPPER *PHOPPER;
 
 struct HOPENTRY {
-	uint32	eNumber;	// entrance number
-	SCNHANDLE hDesc;	// handle to entrance description
-	uint32	flags;
+	uint32 eNumber; // entrance number
+	SCNHANDLE hDesc; // handle to entrance description
+	uint32 flags;
 } PACKED_STRUCT;
 typedef HOPENTRY *PHOPENTRY;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h" // END STRUCT PACKING
 
-static PHOPPER		g_pHopper;
-static PHOPENTRY	g_pEntries;
+static PHOPPER g_pHopper;
+static PHOPENTRY g_pEntries;
 static int g_numScenes;
 
 static int g_numEntries;
@@ -488,19 +501,17 @@ static bool g_bRemember;
 
 //--------------------------------------------------------------
 
-
-
 enum BTYPE {
-	RGROUP,		///< Radio button group - 1 is selectable at a time. Action on double click
-	ARSBUT,		///< Action if a radio button is selected
-	AABUT,		///< Action always
-	AATBUT,		///< Action always, text box
+	RGROUP, ///< Radio button group - 1 is selectable at a time. Action on double click
+	ARSBUT, ///< Action if a radio button is selected
+	AABUT, ///< Action always
+	AATBUT, ///< Action always, text box
 	ARSGBUT,
-	AAGBUT,		///< Action always, graphic button
-	SLIDER,		///< Not a button at all
-	TOGGLE,		///< Discworld 1 toggle
-	TOGGLE1,	///< Discworld 2 toggle type 1
-	TOGGLE2,	///< Discworld 2 toggle type 2
+	AAGBUT, ///< Action always, graphic button
+	SLIDER, ///< Not a button at all
+	TOGGLE, ///< Discworld 1 toggle
+	TOGGLE1, ///< Discworld 2 toggle type 1
+	TOGGLE2, ///< Discworld 2 toggle type 2
 	DCTEST,
 	FLIP,
 	FRGROUP,
@@ -526,127 +537,132 @@ enum BFUNC {
 	INITGAME,
 	MUSICVOL,
 
-	HOPPER2,		// Call up Scene Hopper 2
+	HOPPER2, // Call up Scene Hopper 2
 	BF_CHANGESCENE,
 
 	CLANG,
 	RLANG
 #ifdef MAC_OPTIONS
-	, MASTERVOL, SAMPVOL
+	,
+	MASTERVOL,
+	SAMPVOL
 #endif
 };
 
-#define NO_HEADING		((SCNHANDLE)-1)
-#define USE_POINTER		(-1)
-#define SIX_LOAD_OPTION		0
-#define SIX_SAVE_OPTION		1
-#define SIX_RESTART_OPTION	2
-#define SIX_SOUND_OPTION	3
-#define SIX_CONTROL_OPTION	4
+#define NO_HEADING ((SCNHANDLE)-1)
+#define USE_POINTER (-1)
+#define SIX_LOAD_OPTION 0
+#define SIX_SAVE_OPTION 1
+#define SIX_RESTART_OPTION 2
+#define SIX_SOUND_OPTION 3
+#define SIX_CONTROL_OPTION 4
 #ifndef JAPAN
-#define SIX_SUBTITLES_OPTION	5
+#	define SIX_SUBTITLES_OPTION 5
 #endif
-#define SIX_QUIT_OPTION		6
-#define SIX_RESUME_OPTION	7
-#define SIX_LOAD_HEADING	8
-#define SIX_SAVE_HEADING	9
-#define SIX_RESTART_HEADING	10
-#define SIX_MVOL_SLIDER		11
-#define SIX_SVOL_SLIDER		12
-#define SIX_VVOL_SLIDER		13
-#define SIX_DCLICK_SLIDER	14
-#define SIX_DCLICK_TEST		15
-#define SIX_SWAP_TOGGLE		16
-#define SIX_TSPEED_SLIDER	17
-#define SIX_STITLE_TOGGLE	18
-#define SIX_QUIT_HEADING	19
+#define SIX_QUIT_OPTION 6
+#define SIX_RESUME_OPTION 7
+#define SIX_LOAD_HEADING 8
+#define SIX_SAVE_HEADING 9
+#define SIX_RESTART_HEADING 10
+#define SIX_MVOL_SLIDER 11
+#define SIX_SVOL_SLIDER 12
+#define SIX_VVOL_SLIDER 13
+#define SIX_DCLICK_SLIDER 14
+#define SIX_DCLICK_TEST 15
+#define SIX_SWAP_TOGGLE 16
+#define SIX_TSPEED_SLIDER 17
+#define SIX_STITLE_TOGGLE 18
+#define SIX_QUIT_HEADING 19
 
-enum TM {TM_POINTER, TM_INDEX, TM_STRINGNUM, TM_NONE};
+enum TM { TM_POINTER,
+	        TM_INDEX,
+	        TM_STRINGNUM,
+	        TM_NONE };
 
 struct CONFBOX {
-	BTYPE	boxType;
-	BFUNC	boxFunc;
-	TM		textMethod;
+	BTYPE boxType;
+	BFUNC boxFunc;
+	TM textMethod;
 
-	char	*boxText;
-	int	ixText;
-	int	xpos;
-	int	ypos;
-	int	w;		// Doubles as max value for SLIDERs
-	int	h;		// Doubles as iteration size for SLIDERs
-	int	*ival;
-	int	bi;		// Base index for AAGBUTs
+	char *boxText;
+	int ixText;
+	int xpos;
+	int ypos;
+	int w; // Doubles as max value for SLIDERs
+	int h; // Doubles as iteration size for SLIDERs
+	int *ival;
+	int bi; // Base index for AAGBUTs
 };
 
 struct CONFINIT {
-	int	h;
-	int	v;
-	int	x;
-	int	y;
+	int h;
+	int v;
+	int x;
+	int y;
 	bool bExtraWin;
 	CONFBOX *Box;
-	int	NumBoxes;
-	uint32	ixHeading;
+	int NumBoxes;
+	uint32 ixHeading;
 };
 
-#define BW	44	// Width of crosses and ticks etc. buttons
-#define BH	41	// Height of crosses and ticks etc. buttons
+#define BW 44 // Width of crosses and ticks etc. buttons
+#define BH 41 // Height of crosses and ticks etc. buttons
 
 /*-------------------------------------------------------------*\
 | This is the main menu (that comes up when you hit F1 on a PC)	|
 \*-------------------------------------------------------------*/
 
 #ifdef JAPAN
-#define FBY	11	// y-offset of first button
-#define FBX	13	// x-offset of first button
+#	define FBY 11 // y-offset of first button
+#	define FBX 13 // x-offset of first button
 #else
-#define FBY	20	// y-offset of first button
-#define FBX	15	// x-offset of first button
+#	define FBY 20 // y-offset of first button
+#	define FBX 15 // x-offset of first button
 #endif
 
-#define OPTX	33
-#define OPTY	30
-#define BOX_V_SEP	7
+#define OPTX 33
+#define OPTY 30
+#define BOX_V_SEP 7
 
-#define BOXX	56	// X-position of text boxes
-#define BOXY	50	// Y-position of text boxes
-#define T2_OPTX	33
-#define T2_OPTY	36
-#define T2_BOX_V_SEP	12
-#define T2_BOX_V2_SEP	6
+#define BOXX 56 // X-position of text boxes
+#define BOXY 50 // Y-position of text boxes
+#define T2_OPTX 33
+#define T2_OPTY 36
+#define T2_BOX_V_SEP 12
+#define T2_BOX_V2_SEP 6
 
 static CONFBOX t1OptionBox[] = {
 
- { AATBUT, OPENLOAD, TM_NONE, NULL, SIX_LOAD_OPTION,	FBX, FBY,			EDIT_BOX1_WIDTH, BOX_HEIGHT, NULL, 0 },
- { AATBUT, OPENSAVE, TM_NONE, NULL, SIX_SAVE_OPTION,	FBX, FBY + (BOX_HEIGHT + 2),	EDIT_BOX1_WIDTH, BOX_HEIGHT, NULL, 0 },
- { AATBUT, OPENREST, TM_NONE, NULL, SIX_RESTART_OPTION,	FBX, FBY + 2*(BOX_HEIGHT + 2),	EDIT_BOX1_WIDTH, BOX_HEIGHT, NULL, 0 },
- { AATBUT, OPENSOUND, TM_NONE, NULL, SIX_SOUND_OPTION,	FBX, FBY + 3*(BOX_HEIGHT + 2),	EDIT_BOX1_WIDTH, BOX_HEIGHT, NULL, 0 },
- { AATBUT, OPENCONT, TM_NONE, NULL, SIX_CONTROL_OPTION,	FBX, FBY + 4*(BOX_HEIGHT + 2),	EDIT_BOX1_WIDTH, BOX_HEIGHT, NULL, 0 },
+	{ AATBUT, OPENLOAD, TM_NONE, NULL, SIX_LOAD_OPTION, FBX, FBY, EDIT_BOX1_WIDTH, BOX_HEIGHT, NULL, 0 },
+	{ AATBUT, OPENSAVE, TM_NONE, NULL, SIX_SAVE_OPTION, FBX, FBY + (BOX_HEIGHT + 2), EDIT_BOX1_WIDTH, BOX_HEIGHT, NULL, 0 },
+	{ AATBUT, OPENREST, TM_NONE, NULL, SIX_RESTART_OPTION, FBX, FBY + 2 * (BOX_HEIGHT + 2), EDIT_BOX1_WIDTH, BOX_HEIGHT, NULL, 0 },
+	{ AATBUT, OPENSOUND, TM_NONE, NULL, SIX_SOUND_OPTION, FBX, FBY + 3 * (BOX_HEIGHT + 2), EDIT_BOX1_WIDTH, BOX_HEIGHT, NULL, 0 },
+	{ AATBUT, OPENCONT, TM_NONE, NULL, SIX_CONTROL_OPTION, FBX, FBY + 4 * (BOX_HEIGHT + 2), EDIT_BOX1_WIDTH, BOX_HEIGHT, NULL, 0 },
 #ifdef JAPAN
-// TODO: If in JAPAN mode, simply disable the subtitles button?
- { AATBUT, OPENQUIT, NULL, SIX_QUIT_OPTION,	FBX, FBY + 5*(BOX_HEIGHT + 2),	EDIT_BOX1_WIDTH, BOX_HEIGHT, NULL, 0 },
- { AATBUT, CLOSEWIN, NULL, SIX_RESUME_OPTION,	FBX, FBY + 6*(BOX_HEIGHT + 2),	EDIT_BOX1_WIDTH, BOX_HEIGHT, NULL, 0 }
+	// TODO: If in JAPAN mode, simply disable the subtitles button?
+	{ AATBUT, OPENQUIT, NULL, SIX_QUIT_OPTION, FBX, FBY + 5 * (BOX_HEIGHT + 2), EDIT_BOX1_WIDTH, BOX_HEIGHT, NULL, 0 },
+	{ AATBUT, CLOSEWIN, NULL, SIX_RESUME_OPTION, FBX, FBY + 6 * (BOX_HEIGHT + 2), EDIT_BOX1_WIDTH, BOX_HEIGHT, NULL, 0 }
 #else
- { AATBUT, OPENSUBT, TM_NONE, NULL, SIX_SUBTITLES_OPTION,FBX, FBY + 5*(BOX_HEIGHT + 2),	EDIT_BOX1_WIDTH, BOX_HEIGHT, NULL, 0 },
- { AATBUT, OPENQUIT, TM_NONE, NULL, SIX_QUIT_OPTION,	FBX, FBY + 6*(BOX_HEIGHT + 2),	EDIT_BOX1_WIDTH, BOX_HEIGHT, NULL, 0 },
- { AATBUT, CLOSEWIN, TM_NONE, NULL, SIX_RESUME_OPTION,	FBX, FBY + 7*(BOX_HEIGHT + 2),	EDIT_BOX1_WIDTH, BOX_HEIGHT, NULL, 0 }
+	{ AATBUT, OPENSUBT, TM_NONE, NULL, SIX_SUBTITLES_OPTION, FBX, FBY + 5 * (BOX_HEIGHT + 2), EDIT_BOX1_WIDTH, BOX_HEIGHT, NULL, 0 },
+	{ AATBUT, OPENQUIT, TM_NONE, NULL, SIX_QUIT_OPTION, FBX, FBY + 6 * (BOX_HEIGHT + 2), EDIT_BOX1_WIDTH, BOX_HEIGHT, NULL, 0 },
+	{ AATBUT, CLOSEWIN, TM_NONE, NULL, SIX_RESUME_OPTION, FBX, FBY + 7 * (BOX_HEIGHT + 2), EDIT_BOX1_WIDTH, BOX_HEIGHT, NULL, 0 }
 #endif
 
 };
 
-static CONFINIT t1ciOption	= { 6, 5, 72, 23, false, t1OptionBox,	ARRAYSIZE(t1OptionBox),	NO_HEADING };
+static CONFINIT t1ciOption = { 6, 5, 72, 23, false, t1OptionBox, ARRAYSIZE(t1OptionBox), NO_HEADING };
 
 static CONFBOX t2OptionBox[] = {
 
- { AATBUT, OPENLOAD, TM_INDEX, NULL, SS_LOAD_OPTION,	T2_OPTX, T2_OPTY,									T2_EDIT_BOX1_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
- { AATBUT, OPENSAVE, TM_INDEX, NULL, SS_SAVE_OPTION,	T2_OPTX, T2_OPTY + (T2_BOX_HEIGHT + T2_BOX_V_SEP),	T2_EDIT_BOX1_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
- { AATBUT, OPENREST, TM_INDEX, NULL, SS_RESTART_OPTION,	T2_OPTX, T2_OPTY + 2*(T2_BOX_HEIGHT + T2_BOX_V_SEP),	T2_EDIT_BOX1_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
- { AATBUT, OPENSOUND, TM_INDEX, NULL, SS_SOUND_OPTION,	T2_OPTX, T2_OPTY + 3*(T2_BOX_HEIGHT + T2_BOX_V_SEP),	T2_EDIT_BOX1_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
- { AATBUT, OPENQUIT, TM_INDEX, NULL, SS_QUIT_OPTION,	T2_OPTX, T2_OPTY + 4*(T2_BOX_HEIGHT + T2_BOX_V_SEP),	T2_EDIT_BOX1_WIDTH, T2_BOX_HEIGHT, NULL, 0 }
+	{ AATBUT, OPENLOAD, TM_INDEX, NULL, SS_LOAD_OPTION, T2_OPTX, T2_OPTY, T2_EDIT_BOX1_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ AATBUT, OPENSAVE, TM_INDEX, NULL, SS_SAVE_OPTION, T2_OPTX, T2_OPTY + (T2_BOX_HEIGHT + T2_BOX_V_SEP), T2_EDIT_BOX1_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ AATBUT, OPENREST, TM_INDEX, NULL, SS_RESTART_OPTION, T2_OPTX, T2_OPTY + 2 * (T2_BOX_HEIGHT + T2_BOX_V_SEP), T2_EDIT_BOX1_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ AATBUT, OPENSOUND, TM_INDEX, NULL, SS_SOUND_OPTION, T2_OPTX, T2_OPTY + 3 * (T2_BOX_HEIGHT + T2_BOX_V_SEP), T2_EDIT_BOX1_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ AATBUT, OPENQUIT, TM_INDEX, NULL, SS_QUIT_OPTION, T2_OPTX, T2_OPTY + 4 * (T2_BOX_HEIGHT + T2_BOX_V_SEP), T2_EDIT_BOX1_WIDTH, T2_BOX_HEIGHT, NULL, 0 }
 
 };
 
-static CONFINIT t2ciOption = { 6, 4, 144, 60, false, t2OptionBox, sizeof(t2OptionBox)/sizeof(CONFBOX), NO_HEADING };
+static CONFINIT t2ciOption = { 6, 4, 144, 60, false, t2OptionBox, sizeof(t2OptionBox) / sizeof(CONFBOX), NO_HEADING };
 
 #define ciOption (TinselV2 ? t2ciOption : t1ciOption)
 #define optionBox (TinselV2 ? t2OptionBox : t1OptionBox)
@@ -655,84 +671,83 @@ static CONFINIT t2ciOption = { 6, 4, 144, 60, false, t2OptionBox, sizeof(t2Optio
 | These are the load and save game menus.			|
 \*-------------------------------------------------------------*/
 
-#define NUM_RGROUP_BOXES	9
+#define NUM_RGROUP_BOXES 9
 
 #ifdef JAPAN
-#define NUM_RGROUP_BOXES	7	// number of visible slots
-#define SY		32	// y-position of first slot
+#	define NUM_RGROUP_BOXES 7 // number of visible slots
+#	define SY 32 // y-position of first slot
 #else
-#define NUM_RGROUP_BOXES	9	// number of visible slots
-#define SY		31	// y-position of first slot
+#	define NUM_RGROUP_BOXES 9 // number of visible slots
+#	define SY 31 // y-position of first slot
 #endif
 
-static CONFBOX t1LoadBox[NUM_RGROUP_BOXES+2] = {
-	{ RGROUP, LOADGAME, TM_NONE, NULL, USE_POINTER, 28, SY,				EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, LOADGAME, TM_NONE, NULL, USE_POINTER, 28, SY + (BOX_HEIGHT + 2),	EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, LOADGAME, TM_NONE, NULL, USE_POINTER, 28, SY + 2*(BOX_HEIGHT + 2),	EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, LOADGAME, TM_NONE, NULL, USE_POINTER, 28, SY + 3*(BOX_HEIGHT + 2),	EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, LOADGAME, TM_NONE, NULL, USE_POINTER, 28, SY + 4*(BOX_HEIGHT + 2),	EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, LOADGAME, TM_NONE, NULL, USE_POINTER, 28, SY + 5*(BOX_HEIGHT + 2),	EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, LOADGAME, TM_NONE, NULL, USE_POINTER, 28, SY + 6*(BOX_HEIGHT + 2),	EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
+static CONFBOX t1LoadBox[NUM_RGROUP_BOXES + 2] = {
+	{ RGROUP, LOADGAME, TM_NONE, NULL, USE_POINTER, 28, SY, EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, LOADGAME, TM_NONE, NULL, USE_POINTER, 28, SY + (BOX_HEIGHT + 2), EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, LOADGAME, TM_NONE, NULL, USE_POINTER, 28, SY + 2 * (BOX_HEIGHT + 2), EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, LOADGAME, TM_NONE, NULL, USE_POINTER, 28, SY + 3 * (BOX_HEIGHT + 2), EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, LOADGAME, TM_NONE, NULL, USE_POINTER, 28, SY + 4 * (BOX_HEIGHT + 2), EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, LOADGAME, TM_NONE, NULL, USE_POINTER, 28, SY + 5 * (BOX_HEIGHT + 2), EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, LOADGAME, TM_NONE, NULL, USE_POINTER, 28, SY + 6 * (BOX_HEIGHT + 2), EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
 #ifndef JAPAN
-	{ RGROUP, LOADGAME, TM_NONE, NULL, USE_POINTER, 28, SY + 7*(BOX_HEIGHT + 2),	EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, LOADGAME, TM_NONE, NULL, USE_POINTER, 28, SY + 8*(BOX_HEIGHT + 2),	EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, LOADGAME, TM_NONE, NULL, USE_POINTER, 28, SY + 7 * (BOX_HEIGHT + 2), EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, LOADGAME, TM_NONE, NULL, USE_POINTER, 28, SY + 8 * (BOX_HEIGHT + 2), EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
 #endif
-	{ ARSGBUT, LOADGAME, TM_NONE, NULL, USE_POINTER, 230, 44,	23, 19, NULL, IX1_TICK1 },
-	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, USE_POINTER, 230, 44+47,	23, 19, NULL, IX1_CROSS1 }
+	{ ARSGBUT, LOADGAME, TM_NONE, NULL, USE_POINTER, 230, 44, 23, 19, NULL, IX1_TICK1 },
+	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, USE_POINTER, 230, 44 + 47, 23, 19, NULL, IX1_CROSS1 }
 };
 
 static CONFBOX t2LoadBox[] = {
-	{ RGROUP, LOADGAME, TM_POINTER, NULL, 0, BOXX, BOXY,				T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, LOADGAME, TM_POINTER, NULL, 0, BOXX, BOXY + (T2_BOX_HEIGHT + T2_BOX_V2_SEP),	T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, LOADGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 2*(T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, LOADGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 3*(T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, LOADGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 4*(T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, LOADGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 5*(T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, LOADGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 6*(T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, LOADGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 7*(T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, LOADGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 8*(T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, LOADGAME, TM_POINTER, NULL, 0, BOXX, BOXY, T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, LOADGAME, TM_POINTER, NULL, 0, BOXX, BOXY + (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, LOADGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 2 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, LOADGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 3 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, LOADGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 4 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, LOADGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 5 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, LOADGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 6 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, LOADGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 7 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, LOADGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 8 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
 
-	{ ARSGBUT, LOADGAME, TM_NONE, NULL, 0, 460, 100,	BW, BH, NULL, IX2_TICK1 },
-	{ AAGBUT, CLOSEWIN,  TM_NONE, NULL, 0, 460, 100+100,	BW, BH, NULL, IX2_CROSS1 }
+	{ ARSGBUT, LOADGAME, TM_NONE, NULL, 0, 460, 100, BW, BH, NULL, IX2_TICK1 },
+	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, 0, 460, 100 + 100, BW, BH, NULL, IX2_CROSS1 }
 };
 
-static CONFINIT t1ciLoad	= { 10, 6, 20, 16, true, t1LoadBox,	ARRAYSIZE(t1LoadBox), SIX_LOAD_HEADING };
-static CONFINIT t2ciLoad	= { 10, 6, 40, 16, true, t2LoadBox, sizeof(t2LoadBox)/sizeof(CONFBOX), SS_LOAD_HEADING };
+static CONFINIT t1ciLoad = { 10, 6, 20, 16, true, t1LoadBox, ARRAYSIZE(t1LoadBox), SIX_LOAD_HEADING };
+static CONFINIT t2ciLoad = { 10, 6, 40, 16, true, t2LoadBox, sizeof(t2LoadBox) / sizeof(CONFBOX), SS_LOAD_HEADING };
 
-
-static CONFBOX t1SaveBox[NUM_RGROUP_BOXES+2] = {
-	{ RGROUP, SAVEGAME, TM_NONE, NULL, USE_POINTER, 28,	SY,			EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, SAVEGAME, TM_NONE, NULL, USE_POINTER, 28,	SY + (BOX_HEIGHT + 2),	EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, SAVEGAME, TM_NONE, NULL, USE_POINTER, 28,	SY + 2*(BOX_HEIGHT + 2),EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, SAVEGAME, TM_NONE, NULL, USE_POINTER, 28,	SY + 3*(BOX_HEIGHT + 2),EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, SAVEGAME, TM_NONE, NULL, USE_POINTER, 28,	SY + 4*(BOX_HEIGHT + 2),EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, SAVEGAME, TM_NONE, NULL, USE_POINTER, 28,	SY + 5*(BOX_HEIGHT + 2),EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, SAVEGAME, TM_NONE, NULL, USE_POINTER, 28,	SY + 6*(BOX_HEIGHT + 2),EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
+static CONFBOX t1SaveBox[NUM_RGROUP_BOXES + 2] = {
+	{ RGROUP, SAVEGAME, TM_NONE, NULL, USE_POINTER, 28, SY, EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, SAVEGAME, TM_NONE, NULL, USE_POINTER, 28, SY + (BOX_HEIGHT + 2), EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, SAVEGAME, TM_NONE, NULL, USE_POINTER, 28, SY + 2 * (BOX_HEIGHT + 2), EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, SAVEGAME, TM_NONE, NULL, USE_POINTER, 28, SY + 3 * (BOX_HEIGHT + 2), EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, SAVEGAME, TM_NONE, NULL, USE_POINTER, 28, SY + 4 * (BOX_HEIGHT + 2), EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, SAVEGAME, TM_NONE, NULL, USE_POINTER, 28, SY + 5 * (BOX_HEIGHT + 2), EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, SAVEGAME, TM_NONE, NULL, USE_POINTER, 28, SY + 6 * (BOX_HEIGHT + 2), EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
 #ifndef JAPAN
-	{ RGROUP, SAVEGAME, TM_NONE, NULL, USE_POINTER, 28,	SY + 7*(BOX_HEIGHT + 2),EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, SAVEGAME, TM_NONE, NULL, USE_POINTER, 28,	SY + 8*(BOX_HEIGHT + 2),EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, SAVEGAME, TM_NONE, NULL, USE_POINTER, 28, SY + 7 * (BOX_HEIGHT + 2), EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, SAVEGAME, TM_NONE, NULL, USE_POINTER, 28, SY + 8 * (BOX_HEIGHT + 2), EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
 #endif
-	{ ARSGBUT, SAVEGAME, TM_NONE, NULL,USE_POINTER, 230, 44,	23, 19, NULL, IX1_TICK1 },
-	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, USE_POINTER, 230, 44+47,	23, 19, NULL, IX1_CROSS1 }
+	{ ARSGBUT, SAVEGAME, TM_NONE, NULL, USE_POINTER, 230, 44, 23, 19, NULL, IX1_TICK1 },
+	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, USE_POINTER, 230, 44 + 47, 23, 19, NULL, IX1_CROSS1 }
 };
 
 static CONFBOX t2SaveBox[] = {
- { RGROUP, SAVEGAME, TM_POINTER, NULL, 0, BOXX, BOXY,				T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
- { RGROUP, SAVEGAME, TM_POINTER, NULL, 0, BOXX, BOXY + (T2_BOX_HEIGHT + T2_BOX_V2_SEP),	T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
- { RGROUP, SAVEGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 2*(T2_BOX_HEIGHT + T2_BOX_V2_SEP),	T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
- { RGROUP, SAVEGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 3*(T2_BOX_HEIGHT + T2_BOX_V2_SEP),	T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
- { RGROUP, SAVEGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 4*(T2_BOX_HEIGHT + T2_BOX_V2_SEP),	T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
- { RGROUP, SAVEGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 5*(T2_BOX_HEIGHT + T2_BOX_V2_SEP),	T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
- { RGROUP, SAVEGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 6*(T2_BOX_HEIGHT + T2_BOX_V2_SEP),	T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
- { RGROUP, SAVEGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 7*(T2_BOX_HEIGHT + T2_BOX_V2_SEP),	T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
- { RGROUP, SAVEGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 8*(T2_BOX_HEIGHT + T2_BOX_V2_SEP),	T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, SAVEGAME, TM_POINTER, NULL, 0, BOXX, BOXY, T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, SAVEGAME, TM_POINTER, NULL, 0, BOXX, BOXY + (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, SAVEGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 2 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, SAVEGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 3 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, SAVEGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 4 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, SAVEGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 5 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, SAVEGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 6 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, SAVEGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 7 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, SAVEGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 8 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
 
- { ARSGBUT, SAVEGAME, TM_NONE, NULL, 0, 460, 100,	BW, BH, NULL, IX2_TICK1 },
- { AAGBUT, CLOSEWIN,  TM_NONE, NULL, 0, 460, 100+100,	BW, BH, NULL, IX2_CROSS1 }
+	{ ARSGBUT, SAVEGAME, TM_NONE, NULL, 0, 460, 100, BW, BH, NULL, IX2_TICK1 },
+	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, 0, 460, 100 + 100, BW, BH, NULL, IX2_CROSS1 }
 };
 
-static CONFINIT t1ciSave	= { 10, 6, 20, 16, true, t1SaveBox,	ARRAYSIZE(t1SaveBox),	SIX_SAVE_HEADING };
-static CONFINIT t2ciSave	= { 10, 6, 40, 16, true, t2SaveBox, sizeof(t2SaveBox)/sizeof(CONFBOX), SS_SAVE_HEADING };
+static CONFINIT t1ciSave = { 10, 6, 20, 16, true, t1SaveBox, ARRAYSIZE(t1SaveBox), SIX_SAVE_HEADING };
+static CONFINIT t2ciSave = { 10, 6, 40, 16, true, t2SaveBox, sizeof(t2SaveBox) / sizeof(CONFBOX), SS_SAVE_HEADING };
 
 #define ciLoad (TinselV2 ? t2ciLoad : t1ciLoad)
 #define loadBox (TinselV2 ? t2LoadBox : t1LoadBox)
@@ -745,31 +760,31 @@ static CONFINIT t2ciSave	= { 10, 6, 40, 16, true, t2SaveBox, sizeof(t2SaveBox)/s
 
 static CONFBOX t1RestartBox[] = {
 #ifdef JAPAN
-	{ AAGBUT, INITGAME, TM_NONE, NULL, USE_POINTER, 96, 44,	23, 19, NULL, IX_TICK1 },
-	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, USE_POINTER, 56, 44,	23, 19, NULL, IX_CROSS1 }
+	{ AAGBUT, INITGAME, TM_NONE, NULL, USE_POINTER, 96, 44, 23, 19, NULL, IX_TICK1 },
+	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, USE_POINTER, 56, 44, 23, 19, NULL, IX_CROSS1 }
 #else
-	{ AAGBUT, INITGAME, TM_NONE, NULL, USE_POINTER, 70, 28,	23, 19, NULL, IX1_TICK1 },
-	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, USE_POINTER, 30, 28,	23, 19, NULL, IX1_CROSS1 }
+	{ AAGBUT, INITGAME, TM_NONE, NULL, USE_POINTER, 70, 28, 23, 19, NULL, IX1_TICK1 },
+	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, USE_POINTER, 30, 28, 23, 19, NULL, IX1_CROSS1 }
 #endif
 };
 
 static CONFBOX t1RestartBoxPSX[] = {
-	{ AAGBUT, INITGAME, TM_NONE, NULL, USE_POINTER, 122, 48,	23, 19, NULL, IX1_TICK1 },
-	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, USE_POINTER, 82, 48,	23, 19, NULL, IX1_CROSS1 }
+	{ AAGBUT, INITGAME, TM_NONE, NULL, USE_POINTER, 122, 48, 23, 19, NULL, IX1_TICK1 },
+	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, USE_POINTER, 82, 48, 23, 19, NULL, IX1_CROSS1 }
 };
 
 static CONFBOX t2RestartBox[] = {
 	{ AAGBUT, INITGAME, TM_NONE, NULL, 0, 140, 78, BW, BH, NULL, IX2_TICK1 },
-	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, 0, 60, 78,  BW, BH, NULL, IX2_CROSS1 }
+	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, 0, 60, 78, BW, BH, NULL, IX2_CROSS1 }
 };
 
 #ifdef JAPAN
-static CONFINIT t1ciRestart	= { 6, 2, 72, 53, false, t1RestartBox,	ARRAYSIZE(t1RestartBox),	SIX_RESTART_HEADING };
+static CONFINIT t1ciRestart = { 6, 2, 72, 53, false, t1RestartBox, ARRAYSIZE(t1RestartBox), SIX_RESTART_HEADING };
 #else
-static CONFINIT t1ciRestart	= { 4, 2, 98, 53, false, t1RestartBox,	ARRAYSIZE(t1RestartBox),	SIX_RESTART_HEADING };
+static CONFINIT t1ciRestart = { 4, 2, 98, 53, false, t1RestartBox, ARRAYSIZE(t1RestartBox), SIX_RESTART_HEADING };
 #endif
-static CONFINIT t1ciRestartPSX	= { 8, 2, 46, 53, false, t1RestartBoxPSX,	ARRAYSIZE(t1RestartBoxPSX),	SIX_RESTART_HEADING };
-static CONFINIT t2ciRestart	= { 4, 2, 196, 53, false, t2RestartBox, sizeof(t2RestartBox)/sizeof(CONFBOX), SS_RESTART_HEADING };
+static CONFINIT t1ciRestartPSX = { 8, 2, 46, 53, false, t1RestartBoxPSX, ARRAYSIZE(t1RestartBoxPSX), SIX_RESTART_HEADING };
+static CONFINIT t2ciRestart = { 4, 2, 196, 53, false, t2RestartBox, sizeof(t2RestartBox) / sizeof(CONFBOX), SS_RESTART_HEADING };
 
 #define ciRestart (TinselV2 ? t2ciRestart : (TinselV1PSX ? t1ciRestartPSX : t1ciRestart))
 
@@ -779,23 +794,23 @@ static CONFINIT t2ciRestart	= { 4, 2, 196, 53, false, t2RestartBox, sizeof(t2Res
 \*-------------------------------------------------------------*/
 
 static CONFBOX t1SoundBox[] = {
-	{ SLIDER, MUSICVOL, TM_NONE, NULL, SIX_MVOL_SLIDER,	142, 25,	Audio::Mixer::kMaxChannelVolume, 2, 0 /*&_vm->_config->_musicVolume*/, 0 },
-	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_SVOL_SLIDER,	142, 25+40,	Audio::Mixer::kMaxChannelVolume, 2, 0 /*&_vm->_config->_soundVolume*/, 0 },
-	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_VVOL_SLIDER,	142, 25+2*40,	Audio::Mixer::kMaxChannelVolume, 2, 0 /*&_vm->_config->_voiceVolume*/, 0 }
+	{ SLIDER, MUSICVOL, TM_NONE, NULL, SIX_MVOL_SLIDER, 142, 25, Audio::Mixer::kMaxChannelVolume, 2, 0 /*&_vm->_config->_musicVolume*/, 0 },
+	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_SVOL_SLIDER, 142, 25 + 40, Audio::Mixer::kMaxChannelVolume, 2, 0 /*&_vm->_config->_soundVolume*/, 0 },
+	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_VVOL_SLIDER, 142, 25 + 2 * 40, Audio::Mixer::kMaxChannelVolume, 2, 0 /*&_vm->_config->_voiceVolume*/, 0 }
 };
 
 static CONFBOX t2SoundBox[] = {
-	{ SLIDER, MUSICVOL, TM_INDEX, NULL, SS_MVOL_SLIDER, 280, 50,      Audio::Mixer::kMaxChannelVolume, 2, 0 /*&_vm->_config->_musicVolume*/, 0 },
-	{ SLIDER, NOFUNC, TM_INDEX, NULL, SS_SVOL_SLIDER,   280, 50+30,   Audio::Mixer::kMaxChannelVolume, 2, 0 /*&_vm->_config->_soundVolume*/, 0 },
-	{ SLIDER, NOFUNC, TM_INDEX, NULL, SS_VVOL_SLIDER,   280, 50+2*30, Audio::Mixer::kMaxChannelVolume, 2, 0 /*&_vm->_config->_voiceVolume*/, 0 },
+	{ SLIDER, MUSICVOL, TM_INDEX, NULL, SS_MVOL_SLIDER, 280, 50, Audio::Mixer::kMaxChannelVolume, 2, 0 /*&_vm->_config->_musicVolume*/, 0 },
+	{ SLIDER, NOFUNC, TM_INDEX, NULL, SS_SVOL_SLIDER, 280, 50 + 30, Audio::Mixer::kMaxChannelVolume, 2, 0 /*&_vm->_config->_soundVolume*/, 0 },
+	{ SLIDER, NOFUNC, TM_INDEX, NULL, SS_VVOL_SLIDER, 280, 50 + 2 * 30, Audio::Mixer::kMaxChannelVolume, 2, 0 /*&_vm->_config->_voiceVolume*/, 0 },
 
 	{ SLIDER, NOFUNC, TM_INDEX, NULL, SS_TSPEED_SLIDER, 280, 160, 100, 2, 0 /*&_vm->_config->_textSpeed*/, 0 },
 	{ TOGGLE2, NOFUNC, TM_INDEX, NULL, SS_STITLE_TOGGLE, 100, 220, BW, BH, 0 /*&_vm->_config->_useSubtitles*/, 0 },
-	{ ROTATE, NOFUNC, TM_INDEX, NULL, SS_LANGUAGE_SELECT, 320,220, BW, BH, NULL, 0 }
+	{ ROTATE, NOFUNC, TM_INDEX, NULL, SS_LANGUAGE_SELECT, 320, 220, BW, BH, NULL, 0 }
 };
 
-static CONFINIT t1ciSound	= { 10, 5, 20, 16, false, t1SoundBox, ARRAYSIZE(t1SoundBox), NO_HEADING };
-static CONFINIT t2ciSound = { 10, 5, 40, 16, false, t2SoundBox, sizeof(t2SoundBox)/sizeof(CONFBOX), SS_SOUND_HEADING };
+static CONFINIT t1ciSound = { 10, 5, 20, 16, false, t1SoundBox, ARRAYSIZE(t1SoundBox), NO_HEADING };
+static CONFINIT t2ciSound = { 10, 5, 40, 16, false, t2SoundBox, sizeof(t2SoundBox) / sizeof(CONFBOX), SS_SOUND_HEADING };
 
 #define ciSound (TinselV2 ? t2ciSound : t1ciSound)
 
@@ -803,69 +818,67 @@ static CONFINIT t2ciSound = { 10, 5, 40, 16, false, t2SoundBox, sizeof(t2SoundBo
 | This is the (mouse) control 'menu'.				|
 \*-------------------------------------------------------------*/
 
-static int bFlipped;	// looks like this is just so the code has something to alter!
+static int bFlipped; // looks like this is just so the code has something to alter!
 
 static CONFBOX controlBox[] = {
-	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_DCLICK_SLIDER,	142, 25,	3*DOUBLE_CLICK_TIME, 1, 0 /*&_vm->_config->_dclickSpeed*/, 0 },
-	{ FLIP, NOFUNC, TM_NONE, NULL, SIX_DCLICK_TEST,		142, 25+30,	23, 19, &bFlipped, IX1_CIRCLE1 },
+	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_DCLICK_SLIDER, 142, 25, 3 * DOUBLE_CLICK_TIME, 1, 0 /*&_vm->_config->_dclickSpeed*/, 0 },
+	{ FLIP, NOFUNC, TM_NONE, NULL, SIX_DCLICK_TEST, 142, 25 + 30, 23, 19, &bFlipped, IX1_CIRCLE1 },
 #ifdef JAPAN
-	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_SWAP_TOGGLE,	205, 25+70,	23, 19, 0 /*&_vm->_config->_swapButtons*/, 0 }
+	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_SWAP_TOGGLE, 205, 25 + 70, 23, 19, 0 /*&_vm->_config->_swapButtons*/, 0 }
 #else
-	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_SWAP_TOGGLE,	155, 25+70,	23, 19, 0 /*&_vm->_config->_swapButtons*/, 0 }
+	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_SWAP_TOGGLE, 155, 25 + 70, 23, 19, 0 /*&_vm->_config->_swapButtons*/, 0 }
 #endif
 };
 
-static CONFINIT ciControl	= { 10, 5, 20, 16, false, controlBox,	ARRAYSIZE(controlBox),	NO_HEADING };
+static CONFINIT ciControl = { 10, 5, 20, 16, false, controlBox, ARRAYSIZE(controlBox), NO_HEADING };
 
 /*-------------------------------------------------------------*\
 | This is the subtitles 'menu'.					|
 \*-------------------------------------------------------------*/
 
 static CONFBOX subtitlesBox[] = {
-	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_TSPEED_SLIDER,	142, 20,	100, 2, 0 /*&_vm->_config->_textSpeed*/, 0 },
-	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_STITLE_TOGGLE,	142, 20+40,	23, 19, 0 /*&_vm->_config->_useSubtitles*/, 0 },
+	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_TSPEED_SLIDER, 142, 20, 100, 2, 0 /*&_vm->_config->_textSpeed*/, 0 },
+	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_STITLE_TOGGLE, 142, 20 + 40, 23, 19, 0 /*&_vm->_config->_useSubtitles*/, 0 },
 };
 
 static CONFBOX subtitlesBox3Flags[] = {
-	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	15, 118,	56, 32, NULL, FIX_FR },
-	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	85, 118,	56, 32, NULL, FIX_GR },
-	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	155, 118,	56, 32, NULL, FIX_SP },
+	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER, 15, 118, 56, 32, NULL, FIX_FR },
+	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER, 85, 118, 56, 32, NULL, FIX_GR },
+	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER, 155, 118, 56, 32, NULL, FIX_SP },
 
-	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_TSPEED_SLIDER,	142, 20,	100, 2, 0 /*&_vm->_config->_textSpeed*/, 0 },
-	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_STITLE_TOGGLE,	142, 20+40,	23, 19, 0 /*&_vm->_config->_useSubtitles*/, 0 },
+	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_TSPEED_SLIDER, 142, 20, 100, 2, 0 /*&_vm->_config->_textSpeed*/, 0 },
+	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_STITLE_TOGGLE, 142, 20 + 40, 23, 19, 0 /*&_vm->_config->_useSubtitles*/, 0 },
 
-	{ ARSGBUT, CLANG, TM_NONE, NULL, USE_POINTER,	230, 110,	23, 19, NULL, IX1_TICK1 },
-	{ AAGBUT, RLANG, TM_NONE, NULL, USE_POINTER,	230, 140,	23, 19, NULL, IX1_CROSS1 }
+	{ ARSGBUT, CLANG, TM_NONE, NULL, USE_POINTER, 230, 110, 23, 19, NULL, IX1_TICK1 },
+	{ AAGBUT, RLANG, TM_NONE, NULL, USE_POINTER, 230, 140, 23, 19, NULL, IX1_CROSS1 }
 };
 
 static CONFBOX subtitlesBox4Flags[] = {
-	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	20, 100,	56, 32, NULL, FIX_FR },
-	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	108, 100,	56, 32, NULL, FIX_GR },
-	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	64, 137,	56, 32, NULL, FIX_IT },
-	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	152, 137,	56, 32, NULL, FIX_SP },
+	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER, 20, 100, 56, 32, NULL, FIX_FR },
+	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER, 108, 100, 56, 32, NULL, FIX_GR },
+	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER, 64, 137, 56, 32, NULL, FIX_IT },
+	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER, 152, 137, 56, 32, NULL, FIX_SP },
 
-	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_TSPEED_SLIDER,	142, 20,	100, 2, 0 /*&_vm->_config->_textSpeed*/, 0 },
-	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_STITLE_TOGGLE,	142, 20+40,	23, 19, 0 /*&_vm->_config->_useSubtitles*/, 0 },
+	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_TSPEED_SLIDER, 142, 20, 100, 2, 0 /*&_vm->_config->_textSpeed*/, 0 },
+	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_STITLE_TOGGLE, 142, 20 + 40, 23, 19, 0 /*&_vm->_config->_useSubtitles*/, 0 },
 
-	{ ARSGBUT, CLANG, TM_NONE, NULL, USE_POINTER,	230, 110,	23, 19, NULL, IX1_TICK1 },
-	{ AAGBUT, RLANG, TM_NONE, NULL, USE_POINTER,	230, 140,	23, 19, NULL, IX1_CROSS1 }
+	{ ARSGBUT, CLANG, TM_NONE, NULL, USE_POINTER, 230, 110, 23, 19, NULL, IX1_TICK1 },
+	{ AAGBUT, RLANG, TM_NONE, NULL, USE_POINTER, 230, 140, 23, 19, NULL, IX1_CROSS1 }
 };
 
+static CONFBOX subtitlesBox5Flags[] = {
+	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER, 15, 100, 56, 32, NULL, FIX_UK },
+	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER, 85, 100, 56, 32, NULL, FIX_FR },
+	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER, 155, 100, 56, 32, NULL, FIX_GR },
+	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER, 50, 137, 56, 32, NULL, FIX_IT },
+	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER, 120, 137, 56, 32, NULL, FIX_SP },
 
-static CONFBOX subtitlesBox5Flags[] =	{
-	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	15, 100,	56, 32, NULL, FIX_UK },
-	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	85, 100,	56, 32, NULL, FIX_FR },
-	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	155, 100,	56, 32, NULL, FIX_GR },
-	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	50, 137,	56, 32, NULL, FIX_IT },
-	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	120, 137,	56, 32, NULL, FIX_SP },
+	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_TSPEED_SLIDER, 142, 20, 100, 2, 0 /*&_vm->_config->_textSpeed*/, 0 },
+	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_STITLE_TOGGLE, 142, 20 + 40, 23, 19, 0 /*&_vm->_config->_useSubtitles*/, 0 },
 
-	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_TSPEED_SLIDER,	142, 20,	100, 2, 0 /*&_vm->_config->_textSpeed*/, 0 },
-	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_STITLE_TOGGLE,	142, 20+40,	23, 19, 0 /*&_vm->_config->_useSubtitles*/, 0 },
-
-	{ ARSGBUT, CLANG, TM_NONE, NULL, USE_POINTER,	230, 110,	23, 19, NULL, IX1_TICK1 },
-	{ AAGBUT, RLANG, TM_NONE, NULL, USE_POINTER,	230, 140,	23, 19, NULL, IX1_CROSS1 }
+	{ ARSGBUT, CLANG, TM_NONE, NULL, USE_POINTER, 230, 110, 23, 19, NULL, IX1_TICK1 },
+	{ AAGBUT, RLANG, TM_NONE, NULL, USE_POINTER, 230, 140, 23, 19, NULL, IX1_CROSS1 }
 };
-
 
 /*-------------------------------------------------------------*\
 | This is the quit confirmation 'menu'.				|
@@ -873,21 +886,21 @@ static CONFBOX subtitlesBox5Flags[] =	{
 
 static CONFBOX t1QuitBox[] = {
 #ifdef JAPAN
- { AAGBUT, IQUITGAME, TM_NONE, NULL, USE_POINTER,70, 44,	23, 19, NULL, IX_TICK1 },
- { AAGBUT, CLOSEWIN, TM_NONE, NULL, USE_POINTER,	30, 44,	23, 19, NULL, IX_CROSS1 }
+	{ AAGBUT, IQUITGAME, TM_NONE, NULL, USE_POINTER, 70, 44, 23, 19, NULL, IX_TICK1 },
+	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, USE_POINTER, 30, 44, 23, 19, NULL, IX_CROSS1 }
 #else
- { AAGBUT, IQUITGAME, TM_NONE, NULL, USE_POINTER,70, 28,	23, 19, NULL, IX1_TICK1 },
- { AAGBUT, CLOSEWIN, TM_NONE, NULL, USE_POINTER,	30, 28,	23, 19, NULL, IX1_CROSS1 }
+	{ AAGBUT, IQUITGAME, TM_NONE, NULL, USE_POINTER, 70, 28, 23, 19, NULL, IX1_TICK1 },
+	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, USE_POINTER, 30, 28, 23, 19, NULL, IX1_CROSS1 }
 #endif
 };
 
 static CONFBOX t2QuitBox[] = {
-	{ AAGBUT, IQUITGAME, TM_NONE, NULL, 0,140, 78, BW, BH, NULL, IX2_TICK1 },
-	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, 0, 60, 78,  BW, BH, NULL, IX2_CROSS1 }
+	{ AAGBUT, IQUITGAME, TM_NONE, NULL, 0, 140, 78, BW, BH, NULL, IX2_TICK1 },
+	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, 0, 60, 78, BW, BH, NULL, IX2_CROSS1 }
 };
 
-static CONFINIT t1ciQuit	= { 4, 2, 98, 53, false, t1QuitBox,	ARRAYSIZE(t1QuitBox),	SIX_QUIT_HEADING };
-static CONFINIT t2ciQuit	= { 4, 2, 196, 53, false, t2QuitBox, sizeof(t2QuitBox)/sizeof(CONFBOX), SS_QUIT_HEADING };
+static CONFINIT t1ciQuit = { 4, 2, 98, 53, false, t1QuitBox, ARRAYSIZE(t1QuitBox), SIX_QUIT_HEADING };
+static CONFINIT t2ciQuit = { 4, 2, 196, 53, false, t2QuitBox, sizeof(t2QuitBox) / sizeof(CONFBOX), SS_QUIT_HEADING };
 
 #define quitBox (TinselV2 ? t2QuitBox : t1QuitBox)
 #define ciQuit (TinselV2 ? t2ciQuit : t1ciQuit)
@@ -897,15 +910,15 @@ static CONFINIT t2ciQuit	= { 4, 2, 196, 53, false, t2QuitBox, sizeof(t2QuitBox)/
 \***************************************************************************/
 
 static CONFBOX hopperBox1[] = {
-	{ RGROUP, HOPPER2, TM_STRINGNUM, NULL, 0, BOXX, BOXY,									 T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, HOPPER2, TM_STRINGNUM, NULL, 0, BOXX, BOXY + (T2_BOX_HEIGHT + T2_BOX_V2_SEP),	 T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, HOPPER2, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 2*(T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, HOPPER2, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 3*(T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, HOPPER2, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 4*(T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, HOPPER2, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 5*(T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, HOPPER2, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 6*(T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, HOPPER2, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 7*(T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, HOPPER2, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 8*(T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, HOPPER2, TM_STRINGNUM, NULL, 0, BOXX, BOXY, T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, HOPPER2, TM_STRINGNUM, NULL, 0, BOXX, BOXY + (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, HOPPER2, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 2 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, HOPPER2, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 3 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, HOPPER2, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 4 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, HOPPER2, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 5 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, HOPPER2, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 6 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, HOPPER2, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 7 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, HOPPER2, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 8 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
 
 	{ ARSGBUT, HOPPER2, TM_NONE, NULL, 0, 460, 100, BW, BH, NULL, IX2_TICK1 },
 	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, 0, 460, 100 + 100, BW, BH, NULL, IX2_CROSS1 }
@@ -914,89 +927,85 @@ static CONFBOX hopperBox1[] = {
 static CONFINIT ciHopper1 = { 10, 6, 40, 16, true, hopperBox1, sizeof(hopperBox1) / sizeof(CONFBOX), SS_HOPPER1 };
 
 static CONFBOX hopperBox2[] = {
-	{ RGROUP, BF_CHANGESCENE, TM_STRINGNUM, NULL, 0, BOXX, BOXY,				T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, BF_CHANGESCENE, TM_STRINGNUM, NULL, 0, BOXX, BOXY + (T2_BOX_HEIGHT + T2_BOX_V2_SEP),	 T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, BF_CHANGESCENE, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 2*(T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, BF_CHANGESCENE, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 3*(T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, BF_CHANGESCENE, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 4*(T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, BF_CHANGESCENE, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 5*(T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, BF_CHANGESCENE, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 6*(T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, BF_CHANGESCENE, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 7*(T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
-	{ RGROUP, BF_CHANGESCENE, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 8*(T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, BF_CHANGESCENE, TM_STRINGNUM, NULL, 0, BOXX, BOXY, T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, BF_CHANGESCENE, TM_STRINGNUM, NULL, 0, BOXX, BOXY + (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, BF_CHANGESCENE, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 2 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, BF_CHANGESCENE, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 3 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, BF_CHANGESCENE, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 4 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, BF_CHANGESCENE, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 5 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, BF_CHANGESCENE, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 6 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, BF_CHANGESCENE, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 7 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
+	{ RGROUP, BF_CHANGESCENE, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 8 * (T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
 
-	{ ARSGBUT, BF_CHANGESCENE, TM_NONE, NULL, 0, 460, 50,  BW, BH, NULL, IX2_TICK1 },
+	{ ARSGBUT, BF_CHANGESCENE, TM_NONE, NULL, 0, 460, 50, BW, BH, NULL, IX2_TICK1 },
 	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, 0, 460, 200, BW, BH, NULL, IX2_CROSS1 }
 };
 
-static CONFINIT ciHopper2 = { 10, 6, 40, 16, true, hopperBox2, sizeof(hopperBox2)/sizeof(CONFBOX), NO_HEADING };
-
+static CONFINIT ciHopper2 = { 10, 6, 40, 16, true, hopperBox2, sizeof(hopperBox2) / sizeof(CONFBOX), NO_HEADING };
 
 /***************************************************************************\
 |****************************    Top Window    *****************************|
 \***************************************************************************/
 static CONFBOX topwinBox[] = {
- { NOTHING, NOFUNC, TM_NONE, NULL, USE_POINTER, 0, 0, 0, 0, NULL, 0 }
+	{ NOTHING, NOFUNC, TM_NONE, NULL, USE_POINTER, 0, 0, 0, 0, NULL, 0 }
 };
 
+static CONFINIT ciSubtitles = { 10, 3, 20, 16, false, subtitlesBox, ARRAYSIZE(subtitlesBox), NO_HEADING };
 
-static CONFINIT ciSubtitles	= { 10, 3, 20, 16, false, subtitlesBox,	ARRAYSIZE(subtitlesBox),	NO_HEADING };
-
-static CONFINIT ciTopWin	= { 6, 5, 72, 23, false, topwinBox,	0,					NO_HEADING };
+static CONFINIT ciTopWin = { 6, 5, 72, 23, false, topwinBox, 0, NO_HEADING };
 
 #define NOBOX (-1)
 
 // Conf window globals
 static struct {
 	CONFBOX *box;
-	int	NumBoxes;
+	int NumBoxes;
 	bool bExtraWin;
 	uint32 ixHeading;
 	bool editableRgroup;
 
-	int	selBox;
-	int	pointBox;	// Box pointed to on last call
-	int	modifier;
-	int	extraBase;
-	int	numSaved;
+	int selBox;
+	int pointBox; // Box pointed to on last call
+	int modifier;
+	int extraBase;
+	int numSaved;
 } cd = {
 	NULL, 0, false, 0, false,
 	NOBOX, NOBOX, 0, 0, 0
 };
 
 // For editing save game names
-static char g_sedit[SG_DESC_LEN+2];
+static char g_sedit[SG_DESC_LEN + 2];
 
-#define HL1	0	// Hilight that moves with the cursor
-#define HL2	1	// Hilight on selected RGROUP box
-#define HL3	2	// Text on selected RGROUP box
-#define NUMHL	3
-
+#define HL1 0 // Hilight that moves with the cursor
+#define HL2 1 // Hilight on selected RGROUP box
+#define HL3 2 // Text on selected RGROUP box
+#define NUMHL 3
 
 // Data for button press/toggle effects
 static struct {
 	bool bButAnim;
 	CONFBOX *box;
-	bool press;		// true = button press; false = button toggle
+	bool press; // true = button press; false = button toggle
 } g_buttonEffect = { false, 0, false };
-
 
 //----- LOCAL FORWARD REFERENCES -----
 
 enum {
-	IB_NONE			= -1,	//
-	IB_UP			= -2,	// negative numbers returned
-	IB_DOWN			= -3,	// by WhichMenuBox()
-	IB_SLIDE		= -4,	//
-	IB_SLIDE_UP		= -5,	//
-	IB_SLIDE_DOWN	= -6	//
+	IB_NONE = -1, //
+	IB_UP = -2, // negative numbers returned
+	IB_DOWN = -3, // by WhichMenuBox()
+	IB_SLIDE = -4, //
+	IB_SLIDE_UP = -5, //
+	IB_SLIDE_DOWN = -6 //
 };
 
 enum {
-	HI_BIT		= ((uint)MIN_INT >> 1),	// The next to top bit
-	IS_LEFT		= HI_BIT,
-	IS_SLIDER	= (IS_LEFT >> 1),
-	IS_RIGHT	= (IS_SLIDER >> 1),
-	IS_MASK		= (IS_LEFT | IS_SLIDER | IS_RIGHT)
+	HI_BIT = ((uint)MIN_INT >> 1), // The next to top bit
+	IS_LEFT = HI_BIT,
+	IS_SLIDER = (IS_LEFT >> 1),
+	IS_RIGHT = (IS_SLIDER >> 1),
+	IS_MASK = (IS_LEFT | IS_SLIDER | IS_RIGHT)
 };
 
 static int WhichMenuBox(int curX, int curY, bool bSlides);
@@ -1011,34 +1020,33 @@ static bool RePosition();
 /*-------------------------------------------------------------------------*/
 /***	Magic numbers	***/
 
-#define M_SW	5	// Side width
-#define M_TH	5	// Top height
+#define M_SW 5 // Side width
+#define M_TH 5 // Top height
 #ifdef JAPAN
-#define M_TOFF	6	// Title text Y offset from top
-#define M_TBB	20	// Title box bottom Y offset
+#	define M_TOFF 6 // Title text Y offset from top
+#	define M_TBB 20 // Title box bottom Y offset
 #else
-#define M_TOFF	4	// Title text Y offset from top
-#define M_TBB	14	// Title box bottom Y offset
+#	define M_TOFF 4 // Title text Y offset from top
+#	define M_TBB 14 // Title box bottom Y offset
 #endif
-#define M_SBL	26	// Scroll bar left X offset
-#define M_SH	5	// Slider height (*)
-#define M_SW	5	// Slider width (*)
-#define M_SXOFF	9	// Slider X offset from right-hand side
+#define M_SBL 26 // Scroll bar left X offset
+#define M_SH 5 // Slider height (*)
+#define M_SW 5 // Slider width (*)
+#define M_SXOFF 9 // Slider X offset from right-hand side
 #ifdef JAPAN
-#define M_IUT	22	// Y offset of top of up arrow
-#define M_IUB	30	// Y offset of bottom of up arrow
+#	define M_IUT 22 // Y offset of top of up arrow
+#	define M_IUB 30 // Y offset of bottom of up arrow
 #else
-#define M_IUT	16	// Y offset of top of up arrow
-#define M_IUB	24	// Y offset of bottom of up arrow
+#	define M_IUT 16 // Y offset of top of up arrow
+#	define M_IUB 24 // Y offset of bottom of up arrow
 #endif
-#define M_IDT	10	// Y offset (from bottom) of top of down arrow
-#define M_IDB	3	// Y offset (from bottom) of bottom of down arrow
+#define M_IDT 10 // Y offset (from bottom) of top of down arrow
+#define M_IDB 3 // Y offset (from bottom) of bottom of down arrow
 
-#define START_ICONX	(TinselV2 ? 12 : (M_SW+1))			// } Relative offset of first icon
-#define START_ICONY	(TinselV2 ? 40 : (M_TBB+M_TH+1))	// } within the inventory window
+#define START_ICONX (TinselV2 ? 12 : (M_SW + 1)) // } Relative offset of first icon
+#define START_ICONY (TinselV2 ? 40 : (M_TBB + M_TH + 1)) // } within the inventory window
 
 /*-------------------------------------------------------------------------*/
-
 
 static bool LanguageChange() {
 	LANGUAGE nLang = _vm->_config->_language;
@@ -1124,7 +1132,7 @@ static void FreeSceneHopper() {
 }
 
 static void FirstScene(int first) {
-	int	i;
+	int i;
 
 	assert(g_numScenes && g_pHopper);
 
@@ -1164,7 +1172,7 @@ static void SetChosenScene() {
 }
 
 static void FirstEntry(int first) {
-	int	i;
+	int i;
 
 	g_InvD[INV_MENU].hInvTitle = FROM_32(g_pChosenScene->hSceneDesc);
 
@@ -1172,8 +1180,8 @@ static void FirstEntry(int first) {
 	g_numEntries = FROM_32(g_pChosenScene->numEntries);
 
 	// Force first to a sensible value
-	if (first > g_numEntries-NUM_RGROUP_BOXES)
-		first = g_numEntries-NUM_RGROUP_BOXES;
+	if (first > g_numEntries - NUM_RGROUP_BOXES)
+		first = g_numEntries - NUM_RGROUP_BOXES;
 	if (first < 0)
 		first = 0;
 
@@ -1200,8 +1208,7 @@ static void HopAction() {
 	if (FROM_32(pEntry->flags) & fCall) {
 		SaveScene(Common::nullContext);
 		NewScene(Common::nullContext, g_pChosenScene->hScene, pEntry->eNumber, TRANS_FADE);
-	}
-	else if (FROM_32(pEntry->flags) & fHook)
+	} else if (FROM_32(pEntry->flags) & fHook)
 		HookScene(hScene, eNumber, TRANS_FADE);
 	else
 		NewScene(Common::nullContext, hScene, eNumber, TRANS_CUT);
@@ -1295,26 +1302,26 @@ static int GetObjectIndex(int id) {
  * The actual position is not important for the uses that this is put to.
  */
 extern int InventoryPos(int num) {
-	int	i;
+	int i;
 
-	for (i = 0; i < g_InvD[INV_1].NoofItems; i++)	// First inventory
+	for (i = 0; i < g_InvD[INV_1].NoofItems; i++) // First inventory
 		if (g_InvD[INV_1].contents[i] == num)
 			return i;
 
-	for (i = 0; i < g_InvD[INV_2].NoofItems; i++)	// Second inventory
+	for (i = 0; i < g_InvD[INV_2].NoofItems; i++) // Second inventory
 		if (g_InvD[INV_2].contents[i] == num)
 			return i;
 
 	if (g_heldItem == num)
-		return INV_HELDNOTIN;	// Held, but not in either inventory
+		return INV_HELDNOTIN; // Held, but not in either inventory
 
-	return INV_NOICON;		// Not held, not in either inventory
+	return INV_NOICON; // Not held, not in either inventory
 }
 
 extern bool IsInInventory(int object, int invnum) {
 	assert(invnum == INV_1 || invnum == INV_2);
 
-	for (int i = 0; i < g_InvD[invnum].NoofItems; i++)	// First inventory
+	for (int i = 0; i < g_InvD[invnum].NoofItems; i++) // First inventory
 		if (g_InvD[invnum].contents[i] == object)
 			return true;
 
@@ -1337,7 +1344,7 @@ extern void InventoryIconCursor(bool bNewItem) {
 	if (g_heldItem != INV_NOICON) {
 		if (TinselV2) {
 			if (bNewItem) {
-				int	objIndex = GetObjectIndex(g_heldItem);
+				int objIndex = GetObjectIndex(g_heldItem);
 				g_heldFilm = g_invFilms[objIndex];
 			}
 			SetAuxCursor(g_heldFilm);
@@ -1362,16 +1369,15 @@ extern int WhichInventoryOpen() {
 		return g_ino;
 }
 
-
 /**************************************************************************/
 /************** Running inventory item's Glitter code *********************/
 /**************************************************************************/
 
 struct OP_INIT {
 	INV_OBJECT *pinvo;
-	TINSEL_EVENT	event;
-	PLR_EVENT	bev;
-	int	myEscape;
+	TINSEL_EVENT event;
+	PLR_EVENT bev;
+	int myEscape;
 };
 
 /**
@@ -1380,8 +1386,8 @@ struct OP_INIT {
 static void ObjectProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
-		INT_CONTEXT *pic;
-		int	ThisPointedWait;			//	Fix the 'repeated pressing bug'
+	INT_CONTEXT *pic;
+	int ThisPointedWait; //	Fix the 'repeated pressing bug'
 	CORO_END_CONTEXT(_ctx);
 
 	// get the stuff copied to process when it was created
@@ -1393,14 +1399,14 @@ static void ObjectProcess(CORO_PARAM, const void *param) {
 		CORO_INVOKE_1(AllowDclick, to->bev);
 
 	_ctx->pic = InitInterpretContext(GS_INVENTORY, to->pinvo->hScript, to->event, NOPOLY, 0, to->pinvo,
-		to->myEscape);
+	                                 to->myEscape);
 	CORO_INVOKE_1(Interpret, _ctx->pic);
 
 	if (to->event == POINTED) {
 		_ctx->ThisPointedWait = ++g_PointedWaitCount;
 		while (1) {
 			CORO_SLEEP(1);
-			int	x, y;
+			int x, y;
 			GetCursorXY(&x, &y, false);
 			if (InvItemId(x, y) != to->pinvo->id)
 				break;
@@ -1433,14 +1439,15 @@ static void InvTinselEvent(INV_OBJECT *pinvo, TINSEL_EVENT event, PLR_EVENT be, 
 extern void ObjectEvent(CORO_PARAM, int objId, TINSEL_EVENT event, bool bWait, int myEscape, bool *result) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
-		Common::PROCESS		*pProc;
-		INV_OBJECT	*pInvo;
-		OP_INIT		op;
+	Common::PROCESS *pProc;
+	INV_OBJECT *pInvo;
+	OP_INIT op;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (result) *result = false;
+	if (result)
+		*result = false;
 	_ctx->pInvo = GetInvObject(objId);
 	if (!_ctx->pInvo->hScript)
 		return;
@@ -1468,7 +1475,7 @@ extern void ObjectEvent(CORO_PARAM, int objId, TINSEL_EVENT event, bool bWait, i
  * Point Box[] text pointers to appropriate file descriptions.
  */
 static void FirstFile(int first) {
-	int	i, j;
+	int i, j;
 
 	i = getList();
 
@@ -1501,9 +1508,9 @@ static void FirstFile(int first) {
 static void InvSaveGame() {
 	if (cd.selBox != NOBOX) {
 #ifndef JAPAN
-		g_sedit[strlen(g_sedit)-1] = 0;	// Don't include the cursor!
+		g_sedit[strlen(g_sedit) - 1] = 0; // Don't include the cursor!
 #endif
-		SaveGame(ListEntry(cd.selBox-cd.modifier+cd.extraBase, LE_NAME), g_sedit);
+		SaveGame(ListEntry(cd.selBox - cd.modifier + cd.extraBase, LE_NAME), g_sedit);
 	}
 }
 
@@ -1511,9 +1518,9 @@ static void InvSaveGame() {
  * Load the selected saved game.
  */
 static void InvLoadGame() {
-	int	rGame;
+	int rGame;
 
-	if (cd.selBox != NOBOX && (cd.selBox+cd.extraBase < cd.numSaved)) {
+	if (cd.selBox != NOBOX && (cd.selBox + cd.extraBase < cd.numSaved)) {
 		rGame = cd.selBox;
 		cd.selBox = NOBOX;
 		if (g_iconArray[HL3] != NULL) {
@@ -1528,7 +1535,7 @@ static void InvLoadGame() {
 			MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), g_iconArray[HL1]);
 			g_iconArray[HL1] = NULL;
 		}
-		RestoreGame(rGame+cd.extraBase);
+		RestoreGame(rGame + cd.extraBase);
 	}
 }
 
@@ -1538,12 +1545,12 @@ static void InvLoadGame() {
  */
 #ifndef JAPAN
 static bool UpdateString(const Common::KeyState &kbd) {
-	int	cpos;
+	int cpos;
 
 	if (!cd.editableRgroup)
 		return false;
 
-	cpos = strlen(g_sedit)-1;
+	cpos = strlen(g_sedit) - 1;
 
 	if (kbd.ascii == 0)
 		return false;
@@ -1555,14 +1562,14 @@ static bool UpdateString(const Common::KeyState &kbd) {
 		cpos--;
 		g_sedit[cpos] = CURSOR_CHAR;
 		return true;
-//	} else if (isalnum(c) || c == ',' || c == '.' || c == '\'' || (c == ' ' && cpos != 0)) {
+		//	} else if (isalnum(c) || c == ',' || c == '.' || c == '\'' || (c == ' ' && cpos != 0)) {
 	} else if (IsCharImage(GetTagFontHandle(), kbd.ascii) || (kbd.ascii == ' ' && cpos != 0)) {
 		if (cpos == SG_DESC_LEN)
 			return false;
 		g_sedit[cpos] = kbd.ascii;
 		cpos++;
 		g_sedit[cpos] = CURSOR_CHAR;
-		g_sedit[cpos+1] = 0;
+		g_sedit[cpos + 1] = 0;
 		return true;
 	}
 	return false;
@@ -1573,18 +1580,15 @@ static bool UpdateString(const Common::KeyState &kbd) {
  * Keystrokes get sent here when load/save screen is up.
  */
 static bool InvKeyIn(const Common::KeyState &kbd) {
-	if (kbd.keycode == Common::KEYCODE_PAGEUP ||
-	    kbd.keycode == Common::KEYCODE_PAGEDOWN ||
-	    kbd.keycode == Common::KEYCODE_HOME ||
-	    kbd.keycode == Common::KEYCODE_END)
-		return true;	// Key needs processing
+	if (kbd.keycode == Common::KEYCODE_PAGEUP || kbd.keycode == Common::KEYCODE_PAGEDOWN || kbd.keycode == Common::KEYCODE_HOME || kbd.keycode == Common::KEYCODE_END)
+		return true; // Key needs processing
 
 	if (kbd.keycode == 0 && kbd.ascii == 0) {
 		;
 	} else if (kbd.keycode == Common::KEYCODE_RETURN) {
-		return true;	// Key needs processing
+		return true; // Key needs processing
 	} else if (kbd.keycode == Common::KEYCODE_ESCAPE) {
-		return true;	// Key needs processing
+		return true; // Key needs processing
 	} else {
 #ifndef JAPAN
 		if (UpdateString(kbd)) {
@@ -1597,18 +1601,18 @@ static bool InvKeyIn(const Common::KeyState &kbd) {
 				g_iconArray[HL3] = NULL;
 			}
 			g_iconArray[HL3] = ObjectTextOut(
-				GetPlayfieldList(FIELD_STATUS), g_sedit, 0,
-				g_InvD[g_ino].inventoryX + cd.box[cd.selBox].xpos + 2,
-				g_InvD[g_ino].inventoryY + cd.box[cd.selBox].ypos + TYOFF,
-				GetTagFontHandle(), 0);
+			  GetPlayfieldList(FIELD_STATUS), g_sedit, 0,
+			  g_InvD[g_ino].inventoryX + cd.box[cd.selBox].xpos + 2,
+			  g_InvD[g_ino].inventoryY + cd.box[cd.selBox].ypos + TYOFF,
+			  GetTagFontHandle(), 0);
 			if (MultiRightmost(g_iconArray[HL3]) > MAX_NAME_RIGHT) {
 				MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), g_iconArray[HL3]);
 				UpdateString(Common::KeyState(Common::KEYCODE_BACKSPACE));
 				g_iconArray[HL3] = ObjectTextOut(
-					GetPlayfieldList(FIELD_STATUS), g_sedit, 0,
-					g_InvD[g_ino].inventoryX + cd.box[cd.selBox].xpos + 2,
-					g_InvD[g_ino].inventoryY + cd.box[cd.selBox].ypos + TYOFF,
-					GetTagFontHandle(), 0);
+				  GetPlayfieldList(FIELD_STATUS), g_sedit, 0,
+				  g_InvD[g_ino].inventoryX + cd.box[cd.selBox].xpos + 2,
+				  g_InvD[g_ino].inventoryY + cd.box[cd.selBox].ypos + TYOFF,
+				  GetTagFontHandle(), 0);
 			}
 			MultiSetZPosition(g_iconArray[HL3], Z_INV_ITEXT + 2);
 		}
@@ -1623,8 +1627,8 @@ static bool InvKeyIn(const Common::KeyState &kbd) {
  */
 static void Select(int i, bool force) {
 #ifdef JAPAN
-	time_t		secs_now;
-	struct tm	*time_now;
+	time_t secs_now;
+	struct tm *time_now;
 #endif
 
 	i &= ~IS_MASK;
@@ -1648,15 +1652,15 @@ static void Select(int i, bool force) {
 	switch (cd.box[i].boxType) {
 	case RGROUP:
 		g_iconArray[HL2] = RectangleObject(BgPal(),
-			(TinselV2 ? HighlightColor() : COL_HILIGHT), cd.box[i].w, cd.box[i].h);
+		                                   (TinselV2 ? HighlightColor() : COL_HILIGHT), cd.box[i].w, cd.box[i].h);
 		MultiInsertObject(GetPlayfieldList(FIELD_STATUS), g_iconArray[HL2]);
 		MultiSetAniXY(g_iconArray[HL2],
-		g_InvD[g_ino].inventoryX + cd.box[i].xpos,
-		g_InvD[g_ino].inventoryY + cd.box[i].ypos);
+		              g_InvD[g_ino].inventoryX + cd.box[i].xpos,
+		              g_InvD[g_ino].inventoryY + cd.box[i].ypos);
 
 		// Z-position of box, and add edit text if appropriate
 		if (cd.editableRgroup) {
-			MultiSetZPosition(g_iconArray[HL2], Z_INV_ITEXT+1);
+			MultiSetZPosition(g_iconArray[HL2], Z_INV_ITEXT + 1);
 
 			if (TinselV2) {
 				assert(cd.box[i].textMethod == TM_POINTER);
@@ -1671,22 +1675,22 @@ static void Select(int i, bool force) {
 #else
 			// Current description with cursor appended
 			if (cd.box[i].boxText != NULL) {
-				Common::strlcpy(g_sedit, cd.box[i].boxText, SG_DESC_LEN+2);
-				Common::strlcat(g_sedit, sCursor, SG_DESC_LEN+2);
+				Common::strlcpy(g_sedit, cd.box[i].boxText, SG_DESC_LEN + 2);
+				Common::strlcat(g_sedit, sCursor, SG_DESC_LEN + 2);
 			} else {
-				Common::strlcpy(g_sedit, sCursor, SG_DESC_LEN+2);
+				Common::strlcpy(g_sedit, sCursor, SG_DESC_LEN + 2);
 			}
 #endif
 
 			g_iconArray[HL3] = ObjectTextOut(
-				GetPlayfieldList(FIELD_STATUS), g_sedit, 0,
-				g_InvD[g_ino].inventoryX + cd.box[i].xpos + 2,
+			  GetPlayfieldList(FIELD_STATUS), g_sedit, 0,
+			  g_InvD[g_ino].inventoryX + cd.box[i].xpos + 2,
 #ifdef JAPAN
-				g_InvD[g_ino].inventoryY + cd.box[i].ypos + 2,
+			  g_InvD[g_ino].inventoryY + cd.box[i].ypos + 2,
 #else
-				g_InvD[g_ino].inventoryY + cd.box[i].ypos + TYOFF,
+			  g_InvD[g_ino].inventoryY + cd.box[i].ypos + TYOFF,
 #endif
-				GetTagFontHandle(), 0);
+			  GetTagFontHandle(), 0);
 			MultiSetZPosition(g_iconArray[HL3], Z_INV_ITEXT + 2);
 		} else {
 			MultiSetZPosition(g_iconArray[HL2], Z_INV_ICONS + 1);
@@ -1697,12 +1701,12 @@ static void Select(int i, bool force) {
 		break;
 
 	case FRGROUP:
-		g_iconArray[HL2] = RectangleObject(BgPal(), COL_HILIGHT, cd.box[i].w+6, cd.box[i].h+6);
+		g_iconArray[HL2] = RectangleObject(BgPal(), COL_HILIGHT, cd.box[i].w + 6, cd.box[i].h + 6);
 		MultiInsertObject(GetPlayfieldList(FIELD_STATUS), g_iconArray[HL2]);
 		MultiSetAniXY(g_iconArray[HL2],
-		g_InvD[g_ino].inventoryX + cd.box[i].xpos - 2,
-		g_InvD[g_ino].inventoryY + cd.box[i].ypos - 2);
-		MultiSetZPosition(g_iconArray[HL2], Z_INV_BRECT+1);
+		              g_InvD[g_ino].inventoryX + cd.box[i].xpos - 2,
+		              g_InvD[g_ino].inventoryY + cd.box[i].ypos - 2);
+		MultiSetZPosition(g_iconArray[HL2], Z_INV_BRECT + 1);
 
 		break;
 
@@ -1710,7 +1714,6 @@ static void Select(int i, bool force) {
 		break;
 	}
 }
-
 
 /**************************************************************************/
 /***/
@@ -1721,8 +1724,8 @@ static void Select(int i, bool force) {
  */
 extern void DropItem(int item) {
 	if (g_heldItem == item) {
-		g_heldItem = INV_NOICON;		// Item not held
-		DelAuxCursor();			// no longer aux cursor
+		g_heldItem = INV_NOICON; // Item not held
+		DelAuxCursor(); // no longer aux cursor
 	}
 
 	// Redraw contents - held item was not displayed as a content.
@@ -1750,7 +1753,7 @@ extern void AddToInventory(int invno, int icon, bool hold) {
 
 	// Validate trying to add to a legal inventory
 	assert(invno == INV_1 || invno == INV_2 || invno == INV_CONV
-		|| invno == INV_OPEN || (invno == INV_DEFAULT && TinselV2));
+	       || invno == INV_OPEN || (invno == INV_DEFAULT && TinselV2));
 
 	if (invno == INV_OPEN) {
 		assert(g_InventoryState == ACTIVE_INV && (g_ino == INV_1 || g_ino == INV_2)); // addopeninv() with inventry not open
@@ -1799,8 +1802,8 @@ extern void AddToInventory(int invno, int icon, bool hold) {
 					}
 
 					// For conversation, insert before end icons
-					memmove(&g_InvD[INV_CONV].contents[i-nei+1],
-						&g_InvD[INV_CONV].contents[i-nei], nei * sizeof(int));
+					memmove(&g_InvD[INV_CONV].contents[i - nei + 1],
+					        &g_InvD[INV_CONV].contents[i - nei], nei * sizeof(int));
 					g_InvD[INV_CONV].contents[i - nei] = icon;
 					g_InvD[INV_CONV].NoofItems++;
 					g_InvD[INV_CONV].NoofHicons = g_InvD[INV_CONV].NoofItems;
@@ -1810,8 +1813,8 @@ extern void AddToInventory(int invno, int icon, bool hold) {
 				} else {
 					// For conversation, insert before last icon
 					// which will always be the goodbye icon
-					g_InvD[invno].contents[g_InvD[invno].NoofItems] = g_InvD[invno].contents[g_InvD[invno].NoofItems-1];
-					g_InvD[invno].contents[g_InvD[invno].NoofItems-1] = icon;
+					g_InvD[invno].contents[g_InvD[invno].NoofItems] = g_InvD[invno].contents[g_InvD[invno].NoofItems - 1];
+					g_InvD[invno].contents[g_InvD[invno].NoofItems - 1] = icon;
 					g_InvD[invno].NoofItems++;
 				}
 			} else {
@@ -1823,8 +1826,8 @@ extern void AddToInventory(int invno, int icon, bool hold) {
 			// as delinv may well have been called
 			if (g_GlitterIndex < g_InvD[invno].NoofItems) {
 				memmove(&g_InvD[invno].contents[g_GlitterIndex + 1],
-					&g_InvD[invno].contents[g_GlitterIndex],
-					(g_InvD[invno].NoofItems - g_GlitterIndex) * sizeof(int));
+				        &g_InvD[invno].contents[g_GlitterIndex],
+				        (g_InvD[invno].NoofItems - g_GlitterIndex) * sizeof(int));
 				g_InvD[invno].contents[g_GlitterIndex] = icon;
 			} else {
 				g_InvD[invno].contents[g_InvD[invno].NoofItems] = icon;
@@ -1857,9 +1860,9 @@ extern bool RemFromInventory(int invno, int icon) {
 	}
 
 	if (i == g_InvD[invno].NoofItems)
-		return false;			// Item wasn't there
+		return false; // Item wasn't there
 	else {
-		memmove(&g_InvD[invno].contents[i], &g_InvD[invno].contents[i+1], (g_InvD[invno].NoofItems-i)*sizeof(int));
+		memmove(&g_InvD[invno].contents[i], &g_InvD[invno].contents[i + 1], (g_InvD[invno].NoofItems - i) * sizeof(int));
 		g_InvD[invno].NoofItems--;
 
 		if (TinselV2 && invno == INV_CONV) {
@@ -1870,7 +1873,7 @@ extern bool RemFromInventory(int invno, int icon) {
 		}
 
 		g_ItemsChanged = true;
-		return true;			// Item removed
+		return true; // Item removed
 	}
 }
 
@@ -1883,7 +1886,7 @@ extern void HoldItem(int item, bool bKeepFilm) {
 	if (g_heldItem != item) {
 		if (TinselV2 && (g_heldItem != NOOBJECT)) {
 			// No longer holding previous item
-			DelAuxCursor();	 // no longer aux cursor
+			DelAuxCursor(); // no longer aux cursor
 
 			// If old held object is not in an inventory, and
 			// has a default, stick it in its default inventory.
@@ -1901,11 +1904,11 @@ extern void HoldItem(int item, bool bKeepFilm) {
 
 		} else if (!TinselV2) {
 			if (item == INV_NOICON && g_heldItem != INV_NOICON)
-				DelAuxCursor();			// no longer aux cursor
+				DelAuxCursor(); // no longer aux cursor
 
 			if (item != INV_NOICON) {
 				invObj = GetInvObject(item);
-				SetAuxCursor(invObj->hIconFilm);	// and is aux. cursor
+				SetAuxCursor(invObj->hIconFilm); // and is aux. cursor
 			}
 
 			// WORKAROUND: If a held item is being removed that's not in either inventory (i.e. it was picked up
@@ -1914,7 +1917,7 @@ extern void HoldItem(int item, bool bKeepFilm) {
 				AddToInventory(INV_1, g_heldItem);
 		}
 
-		g_heldItem = item;			// Item held
+		g_heldItem = item; // Item held
 
 		if (TinselV2) {
 			InventoryIconCursor(!bKeepFilm);
@@ -1933,19 +1936,31 @@ extern void HoldItem(int item, bool bKeepFilm) {
 /***/
 /**************************************************************************/
 
-enum {	I_NOTIN, I_HEADER, I_BODY,
-	I_TLEFT, I_TRIGHT, I_BLEFT, I_BRIGHT,
-	I_TOP, I_BOTTOM, I_LEFT, I_RIGHT,
-	I_UP, I_SLIDE_UP, I_SLIDE, I_SLIDE_DOWN, I_DOWN,
-	I_ENDCHANGE
+enum { I_NOTIN,
+	     I_HEADER,
+	     I_BODY,
+	     I_TLEFT,
+	     I_TRIGHT,
+	     I_BLEFT,
+	     I_BRIGHT,
+	     I_TOP,
+	     I_BOTTOM,
+	     I_LEFT,
+	     I_RIGHT,
+	     I_UP,
+	     I_SLIDE_UP,
+	     I_SLIDE,
+	     I_SLIDE_DOWN,
+	     I_DOWN,
+	     I_ENDCHANGE
 };
 
-#define EXTRA	1	// This was introduced when we decided to increase
-			// the active area of the borders for re-sizing.
+#define EXTRA 1 // This was introduced when we decided to increase
+// the active area of the borders for re-sizing.
 
 /*---------------------------------*/
-#define LeftX	g_InvD[g_ino].inventoryX
-#define TopY	g_InvD[g_ino].inventoryY
+#define LeftX g_InvD[g_ino].inventoryX
+#define TopY g_InvD[g_ino].inventoryY
 /*---------------------------------*/
 
 /**
@@ -1969,28 +1984,28 @@ static int InvArea(int x, int y) {
 		if (y > BottomY - NM_RS_THICKNESS) {
 			// Below top of bottom line?
 			if (x <= LeftX + NM_RS_THICKNESS)
-				return I_BLEFT;		// Bottom left corner
+				return I_BLEFT; // Bottom left corner
 			else if (x > RightX - NM_RS_THICKNESS)
-				return I_BRIGHT;	// Bottom right corner
+				return I_BRIGHT; // Bottom right corner
 			else
-				return I_BOTTOM;	// Just plain bottom
+				return I_BOTTOM; // Just plain bottom
 		}
 
 		// The top line
 		if (y <= TopY + NM_RS_THICKNESS) {
 			// Above bottom of top line?
 			if (x <= LeftX + NM_RS_THICKNESS)
-				return I_TLEFT;		// Top left corner
+				return I_TLEFT; // Top left corner
 			else if (x > RightX - NM_RS_THICKNESS)
-				return I_TRIGHT;	// Top right corner
+				return I_TRIGHT; // Top right corner
 			else
-				return I_TOP;		// Just plain top
+				return I_TOP; // Just plain top
 		}
 
 		// Sides
-		if (x <= LeftX + NM_RS_THICKNESS)	// Left of right of left side?
+		if (x <= LeftX + NM_RS_THICKNESS) // Left of right of left side?
 			return I_LEFT;
-		else if (x > RightX - NM_RS_THICKNESS)	// Right of left of right side?
+		else if (x > RightX - NM_RS_THICKNESS) // Right of left of right side?
 			return I_RIGHT;
 
 		// In the move area?
@@ -2023,33 +2038,33 @@ static int InvArea(int x, int y) {
 
 		// Outside the whole rectangle?
 		if (x <= LeftX - EXTRA || x > RightX + EXTRA
-		|| y <= TopY - EXTRA || y > BottomY + EXTRA)
+		    || y <= TopY - EXTRA || y > BottomY + EXTRA)
 			return I_NOTIN;
 
 		// The bottom line
-		if (y > BottomY - 2 - EXTRA) {		// Below top of bottom line?
+		if (y > BottomY - 2 - EXTRA) { // Below top of bottom line?
 			if (x <= LeftX + 2 + EXTRA)
-				return I_BLEFT;		// Bottom left corner
+				return I_BLEFT; // Bottom left corner
 			else if (x > RightX - 2 - EXTRA)
-				return I_BRIGHT;	// Bottom right corner
+				return I_BRIGHT; // Bottom right corner
 			else
-				return I_BOTTOM;	// Just plain bottom
+				return I_BOTTOM; // Just plain bottom
 		}
 
 		// The top line
-		if (y <= TopY + 2 + EXTRA) {		// Above bottom of top line?
+		if (y <= TopY + 2 + EXTRA) { // Above bottom of top line?
 			if (x <= LeftX + 2 + EXTRA)
-				return I_TLEFT;		// Top left corner
+				return I_TLEFT; // Top left corner
 			else if (x > RightX - 2 - EXTRA)
-				return I_TRIGHT;	// Top right corner
+				return I_TRIGHT; // Top right corner
 			else
-				return I_TOP;		// Just plain top
+				return I_TOP; // Just plain top
 		}
 
 		// Sides
-		if (x <= LeftX + 2 + EXTRA)		// Left of right of left side?
+		if (x <= LeftX + 2 + EXTRA) // Left of right of left side?
 			return I_LEFT;
-		else if (x > RightX - 2 - EXTRA)		// Right of left of right side?
+		else if (x > RightX - 2 - EXTRA) // Right of left of right side?
 			return I_RIGHT;
 
 		// From here down still needs fixing up properly
@@ -2057,8 +2072,7 @@ static int InvArea(int x, int y) {
 		 * In the move area?
 		 */
 		if (g_ino != INV_CONF
-		&& x >= LeftX + M_SW - 2 && x <= RightX - M_SW + 3 &&
-		   y >= TopY + M_TH - 2  && y < TopY + M_TBB + 2)
+		    && x >= LeftX + M_SW - 2 && x <= RightX - M_SW + 3 && y >= TopY + M_TH - 2 && y < TopY + M_TBB + 2)
 			return I_HEADER;
 
 		/*
@@ -2104,10 +2118,9 @@ extern int InvItem(int *x, int *y, bool update) {
 		ileft = IconsX;
 
 		for (col = 0; col < g_InvD[g_ino].NoofHicons; col++, item++) {
-			if (*x >= ileft && *x < ileft + ITEM_WIDTH &&
-			   *y >= itop  && *y < itop + ITEM_HEIGHT) {
+			if (*x >= ileft && *x < ileft + ITEM_WIDTH && *y >= itop && *y < itop + ITEM_HEIGHT) {
 				if (update) {
-					*x = ileft + ITEM_WIDTH/2;
+					*x = ileft + ITEM_WIDTH / 2;
 					*y = itop /*+ ITEM_HEIGHT/4*/;
 				}
 				return item;
@@ -2147,8 +2160,7 @@ int InvItemId(int x, int y) {
 		ileft = IconsX;
 
 		for (col = 0; col < g_InvD[g_ino].NoofHicons; col++, item++) {
-			if (x >= ileft && x < ileft + ITEM_WIDTH &&
-			   y >= itop  && y < itop + ITEM_HEIGHT) {
+			if (x >= ileft && x < ileft + ITEM_WIDTH && y >= itop && y < itop + ITEM_HEIGHT) {
 				return g_InvD[g_ino].contents[item];
 			}
 
@@ -2166,7 +2178,7 @@ static int WhichMenuBox(int curX, int curY, bool bSlides) {
 	if (bSlides) {
 		for (int i = 0; i < g_numMdSlides; i++) {
 			if (curY > MultiHighest(g_mdSlides[i].obj) && curY < MultiLowest(g_mdSlides[i].obj)
-			&& curX > MultiLeftmost(g_mdSlides[i].obj) && curX < MultiRightmost(g_mdSlides[i].obj))
+			    && curX > MultiLeftmost(g_mdSlides[i].obj) && curX < MultiRightmost(g_mdSlides[i].obj))
 				return g_mdSlides[i].num | IS_SLIDER;
 		}
 	}
@@ -2178,10 +2190,10 @@ static int WhichMenuBox(int curX, int curY, bool bSlides) {
 		switch (cd.box[i].boxType) {
 		case SLIDER:
 			if (bSlides) {
-				if (curY >= cd.box[i].ypos+MD_YBUTTOP && curY < cd.box[i].ypos+MD_YBUTBOT) {
-					if (curX >= cd.box[i].xpos+MD_XLBUTL && curX < cd.box[i].xpos+MD_XLBUTR)
+				if (curY >= cd.box[i].ypos + MD_YBUTTOP && curY < cd.box[i].ypos + MD_YBUTBOT) {
+					if (curX >= cd.box[i].xpos + MD_XLBUTL && curX < cd.box[i].xpos + MD_XLBUTR)
 						return i | IS_LEFT;
-					if (curX >= cd.box[i].xpos+MD_XRBUTL && curX < cd.box[i].xpos+MD_XRBUTR)
+					if (curX >= cd.box[i].xpos + MD_XRBUTL && curX < cd.box[i].xpos + MD_XRBUTR)
 						return i | IS_RIGHT;
 				}
 			}
@@ -2194,7 +2206,7 @@ static int WhichMenuBox(int curX, int curY, bool bSlides) {
 		case TOGGLE2:
 		case FLIP:
 			if (curY > cd.box[i].ypos && curY < cd.box[i].ypos + cd.box[i].h
-			&& curX > cd.box[i].xpos && curX < cd.box[i].xpos + cd.box[i].w)
+			    && curX > cd.box[i].xpos && curX < cd.box[i].xpos + cd.box[i].w)
 				return i;
 			break;
 
@@ -2204,12 +2216,12 @@ static int WhichMenuBox(int curX, int curY, bool bSlides) {
 
 			if (curY > cd.box[i].ypos && curY < cd.box[i].ypos + cd.box[i].h) {
 				// Left one?
-				if (curX > cd.box[i].xpos-ROTX1 && curX < cd.box[i].xpos-ROTX1 + cd.box[i].w) {
+				if (curX > cd.box[i].xpos - ROTX1 && curX < cd.box[i].xpos - ROTX1 + cd.box[i].w) {
 					cd.box[i].bi = IX2_LEFT1;
 					return i;
 				}
 				// Right one?
-				if (curX > cd.box[i].xpos+ROTX1 && curX < cd.box[i].xpos+ROTX1 + cd.box[i].w) {
+				if (curX > cd.box[i].xpos + ROTX1 && curX < cd.box[i].xpos + ROTX1 + cd.box[i].w) {
 					cd.box[i].bi = IX2_RIGHT1;
 					return i;
 				}
@@ -2219,7 +2231,7 @@ static int WhichMenuBox(int curX, int curY, bool bSlides) {
 		default:
 			// 'Normal' box
 			if (curY >= cd.box[i].ypos && curY < cd.box[i].ypos + cd.box[i].h
-			&& curX >= cd.box[i].xpos && curX < cd.box[i].xpos + cd.box[i].w)
+			    && curX >= cd.box[i].xpos && curX < cd.box[i].xpos + cd.box[i].w)
 				return i;
 			break;
 		}
@@ -2227,9 +2239,7 @@ static int WhichMenuBox(int curX, int curY, bool bSlides) {
 
 	// Slider on extra window
 	if (cd.bExtraWin) {
-		const Common::Rect r = TinselV2 ?
-			Common::Rect(411, 46, 425, 339) :
-			Common::Rect(20 + 181, 24 + 2, 20 + 181 + 8, 24 + 139 + 5);
+		const Common::Rect r = TinselV2 ? Common::Rect(411, 46, 425, 339) : Common::Rect(20 + 181, 24 + 2, 20 + 181 + 8, 24 + 139 + 5);
 
 		if (r.contains(curX, curY)) {
 
@@ -2253,14 +2263,14 @@ static int WhichMenuBox(int curX, int curY, bool bSlides) {
 /***/
 /**************************************************************************/
 
-#define ROTX1 60	// Rotate button's offsets from the center
+#define ROTX1 60 // Rotate button's offsets from the center
 
 /**
  * InvBoxes
  */
 static void InvBoxes(bool InBody, int curX, int curY) {
-	static int rotateIndex = -1;	// FIXME: Avoid non-const global vars
-	int	index;			// Box pointed to on this call
+	static int rotateIndex = -1; // FIXME: Avoid non-const global vars
+	int index; // Box pointed to on this call
 	const FILM *pfilm;
 
 	// Find out which icon is currently pointed to
@@ -2287,29 +2297,24 @@ static void InvBoxes(bool InBody, int curX, int curY) {
 			g_iconArray[HL1] = NULL;
 		}
 		if ((cd.box[cd.pointBox].boxType == ARSBUT && cd.selBox != NOBOX) ||
-///* I don't agree */ cd.box[cd.pointBox].boxType == RGROUP ||
-		    cd.box[cd.pointBox].boxType == AATBUT ||
-		    cd.box[cd.pointBox].boxType == AABUT) {
+		    ///* I don't agree */ cd.box[cd.pointBox].boxType == RGROUP ||
+		    cd.box[cd.pointBox].boxType == AATBUT || cd.box[cd.pointBox].boxType == AABUT) {
 			g_iconArray[HL1] = RectangleObject(BgPal(),
-				(TinselV2 ? HighlightColor() : COL_HILIGHT),
-				cd.box[cd.pointBox].w, cd.box[cd.pointBox].h);
+			                                   (TinselV2 ? HighlightColor() : COL_HILIGHT),
+			                                   cd.box[cd.pointBox].w, cd.box[cd.pointBox].h);
 			MultiInsertObject(GetPlayfieldList(FIELD_STATUS), g_iconArray[HL1]);
 			MultiSetAniXY(g_iconArray[HL1],
-				g_InvD[g_ino].inventoryX + cd.box[cd.pointBox].xpos,
-				g_InvD[g_ino].inventoryY + cd.box[cd.pointBox].ypos);
-			MultiSetZPosition(g_iconArray[HL1], Z_INV_ICONS+1);
-		} else if (cd.box[cd.pointBox].boxType == AAGBUT ||
-				cd.box[cd.pointBox].boxType == ARSGBUT ||
-				cd.box[cd.pointBox].boxType == TOGGLE ||
-				cd.box[cd.pointBox].boxType == TOGGLE1 ||
-				cd.box[cd.pointBox].boxType == TOGGLE2) {
+			              g_InvD[g_ino].inventoryX + cd.box[cd.pointBox].xpos,
+			              g_InvD[g_ino].inventoryY + cd.box[cd.pointBox].ypos);
+			MultiSetZPosition(g_iconArray[HL1], Z_INV_ICONS + 1);
+		} else if (cd.box[cd.pointBox].boxType == AAGBUT || cd.box[cd.pointBox].boxType == ARSGBUT || cd.box[cd.pointBox].boxType == TOGGLE || cd.box[cd.pointBox].boxType == TOGGLE1 || cd.box[cd.pointBox].boxType == TOGGLE2) {
 			pfilm = (const FILM *)LockMem(g_hWinParts);
 
-			g_iconArray[HL1] = AddObject(&pfilm->reels[cd.box[cd.pointBox].bi+HIGRAPH], -1);
+			g_iconArray[HL1] = AddObject(&pfilm->reels[cd.box[cd.pointBox].bi + HIGRAPH], -1);
 			MultiSetAniXY(g_iconArray[HL1],
-				g_InvD[g_ino].inventoryX + cd.box[cd.pointBox].xpos,
-				g_InvD[g_ino].inventoryY + cd.box[cd.pointBox].ypos);
-			MultiSetZPosition(g_iconArray[HL1], Z_INV_ICONS+1);
+			              g_InvD[g_ino].inventoryX + cd.box[cd.pointBox].xpos,
+			              g_InvD[g_ino].inventoryY + cd.box[cd.pointBox].ypos);
+			MultiSetZPosition(g_iconArray[HL1], Z_INV_ICONS + 1);
 		} else if (cd.box[cd.pointBox].boxType == ROTATE) {
 			if (g_bNoLanguage)
 				return;
@@ -2318,16 +2323,16 @@ static void InvBoxes(bool InBody, int curX, int curY) {
 
 			rotateIndex = cd.box[cd.pointBox].bi;
 			if (rotateIndex == IX2_LEFT1) {
-				g_iconArray[HL1] = AddObject(&pfilm->reels[IX2_LEFT2], -1 );
+				g_iconArray[HL1] = AddObject(&pfilm->reels[IX2_LEFT2], -1);
 				MultiSetAniXY(g_iconArray[HL1],
-					g_InvD[g_ino].inventoryX + cd.box[cd.pointBox].xpos - ROTX1,
-					g_InvD[g_ino].inventoryY + cd.box[cd.pointBox].ypos);
-				MultiSetZPosition(g_iconArray[HL1], Z_INV_ICONS+1);
+				              g_InvD[g_ino].inventoryX + cd.box[cd.pointBox].xpos - ROTX1,
+				              g_InvD[g_ino].inventoryY + cd.box[cd.pointBox].ypos);
+				MultiSetZPosition(g_iconArray[HL1], Z_INV_ICONS + 1);
 			} else if (rotateIndex == IX2_RIGHT1) {
 				g_iconArray[HL1] = AddObject(&pfilm->reels[IX2_RIGHT2], -1);
 				MultiSetAniXY(g_iconArray[HL1],
-					g_InvD[g_ino].inventoryX + cd.box[cd.pointBox].xpos + ROTX1,
-					g_InvD[g_ino].inventoryY + cd.box[cd.pointBox].ypos);
+				              g_InvD[g_ino].inventoryX + cd.box[cd.pointBox].xpos + ROTX1,
+				              g_InvD[g_ino].inventoryY + cd.box[cd.pointBox].ypos);
 				MultiSetZPosition(g_iconArray[HL1], Z_INV_ICONS + 1);
 			}
 		}
@@ -2349,9 +2354,9 @@ static void ButtonPress(CORO_PARAM, CONFBOX *box) {
 	if (g_iconArray[HL1] != NULL)
 		MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), g_iconArray[HL1]);
 	pfilm = (const FILM *)LockMem(g_hWinParts);
-	g_iconArray[HL1] = AddObject(&pfilm->reels[box->bi+NORMGRAPH], -1);
+	g_iconArray[HL1] = AddObject(&pfilm->reels[box->bi + NORMGRAPH], -1);
 	MultiSetAniXY(g_iconArray[HL1], g_InvD[g_ino].inventoryX + box->xpos, g_InvD[g_ino].inventoryY + box->ypos);
-	MultiSetZPosition(g_iconArray[HL1], Z_INV_ICONS+1);
+	MultiSetZPosition(g_iconArray[HL1], Z_INV_ICONS + 1);
 
 	// Hold normal image for 1 frame
 	CORO_SLEEP(1);
@@ -2361,9 +2366,9 @@ static void ButtonPress(CORO_PARAM, CONFBOX *box) {
 	// Replace normal image with depresses image
 	pfilm = (const FILM *)LockMem(g_hWinParts);
 	MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), g_iconArray[HL1]);
-	g_iconArray[HL1] = AddObject(&pfilm->reels[box->bi+DOWNGRAPH], -1);
+	g_iconArray[HL1] = AddObject(&pfilm->reels[box->bi + DOWNGRAPH], -1);
 	MultiSetAniXY(g_iconArray[HL1], g_InvD[g_ino].inventoryX + box->xpos, g_InvD[g_ino].inventoryY + box->ypos);
-	MultiSetZPosition(g_iconArray[HL1], Z_INV_ICONS+1);
+	MultiSetZPosition(g_iconArray[HL1], Z_INV_ICONS + 1);
 
 	// Hold depressed image for 2 frames
 	CORO_SLEEP(2);
@@ -2373,9 +2378,9 @@ static void ButtonPress(CORO_PARAM, CONFBOX *box) {
 	// Replace depressed image with normal image
 	pfilm = (const FILM *)LockMem(g_hWinParts);
 	MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), g_iconArray[HL1]);
-	g_iconArray[HL1] = AddObject(&pfilm->reels[box->bi+NORMGRAPH], -1);
+	g_iconArray[HL1] = AddObject(&pfilm->reels[box->bi + NORMGRAPH], -1);
 	MultiSetAniXY(g_iconArray[HL1], g_InvD[g_ino].inventoryX + box->xpos, g_InvD[g_ino].inventoryY + box->ypos);
-	MultiSetZPosition(g_iconArray[HL1], Z_INV_ICONS+1);
+	MultiSetZPosition(g_iconArray[HL1], Z_INV_ICONS + 1);
 
 	CORO_SLEEP(1);
 
@@ -2391,7 +2396,7 @@ static void ButtonToggle(CORO_PARAM, CONFBOX *box) {
 	const FILM *pfilm;
 
 	assert((box->boxType == TOGGLE) || (box->boxType == TOGGLE1)
-		|| (box->boxType == TOGGLE2));
+	       || (box->boxType == TOGGLE2));
 
 	// Remove hilight image
 	if (g_iconArray[HL1] != NULL) {
@@ -2406,9 +2411,9 @@ static void ButtonToggle(CORO_PARAM, CONFBOX *box) {
 
 	// Add depressed image
 	pfilm = (const FILM *)LockMem(g_hWinParts);
-	g_iconArray[HL1] = AddObject(&pfilm->reels[box->bi+DOWNGRAPH], -1);
+	g_iconArray[HL1] = AddObject(&pfilm->reels[box->bi + DOWNGRAPH], -1);
 	MultiSetAniXY(g_iconArray[HL1], g_InvD[g_ino].inventoryX + box->xpos, g_InvD[g_ino].inventoryY + box->ypos);
-	MultiSetZPosition(g_iconArray[HL1], Z_INV_ICONS+1);
+	MultiSetZPosition(g_iconArray[HL1], Z_INV_ICONS + 1);
 
 	// Hold depressed image for 1 frame
 	CORO_SLEEP(1);
@@ -2416,7 +2421,7 @@ static void ButtonToggle(CORO_PARAM, CONFBOX *box) {
 		return;
 
 	// Toggle state
-	(*box->ival) = *(box->ival) ^ 1;	// XOR with true
+	(*box->ival) = *(box->ival) ^ 1; // XOR with true
 	box->bi = *(box->ival) ? IX_TICK1 : IX_CROSS1;
 	AddBoxes(false);
 	// Keep highlight (e.g. flag)
@@ -2427,9 +2432,9 @@ static void ButtonToggle(CORO_PARAM, CONFBOX *box) {
 	pfilm = (const FILM *)LockMem(g_hWinParts);
 	if (g_iconArray[HL1] != NULL)
 		MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), g_iconArray[HL1]);
-	g_iconArray[HL1] = AddObject(&pfilm->reels[box->bi+DOWNGRAPH], -1);
+	g_iconArray[HL1] = AddObject(&pfilm->reels[box->bi + DOWNGRAPH], -1);
 	MultiSetAniXY(g_iconArray[HL1], g_InvD[g_ino].inventoryX + box->xpos, g_InvD[g_ino].inventoryY + box->ypos);
-	MultiSetZPosition(g_iconArray[HL1], Z_INV_ICONS+1);
+	MultiSetZPosition(g_iconArray[HL1], Z_INV_ICONS + 1);
 
 	// Hold new depressed image for 1 frame
 	CORO_SLEEP(1);
@@ -2449,9 +2454,9 @@ static void ButtonToggle(CORO_PARAM, CONFBOX *box) {
 	pfilm = (const FILM *)LockMem(g_hWinParts);
 	if (g_iconArray[HL1] != NULL)
 		MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), g_iconArray[HL1]);
-	g_iconArray[HL1] = AddObject(&pfilm->reels[box->bi+HIGRAPH], -1);
+	g_iconArray[HL1] = AddObject(&pfilm->reels[box->bi + HIGRAPH], -1);
 	MultiSetAniXY(g_iconArray[HL1], g_InvD[g_ino].inventoryX + box->xpos, g_InvD[g_ino].inventoryY + box->ypos);
-	MultiSetZPosition(g_iconArray[HL1], Z_INV_ICONS+1);
+	MultiSetZPosition(g_iconArray[HL1], Z_INV_ICONS + 1);
 
 	CORO_END_CODE;
 }
@@ -2460,7 +2465,7 @@ static void ButtonToggle(CORO_PARAM, CONFBOX *box) {
  * Monitors for POINTED event for inventory icons.
  */
 static void InvLabels(bool InBody, int aniX, int aniY) {
-	int	index;				// Icon pointed to on this call
+	int index; // Icon pointed to on this call
 	INV_OBJECT *invObj;
 
 	// Find out which icon is currently pointed to
@@ -2510,7 +2515,7 @@ static void AdjustTop() {
 	if (!g_SlideObject)
 		return;
 
-	rowsWanted = (g_InvD[g_ino].NoofItems - g_InvD[g_ino].FirstDisp + g_InvD[g_ino].NoofHicons-1) / g_InvD[g_ino].NoofHicons;
+	rowsWanted = (g_InvD[g_ino].NoofItems - g_InvD[g_ino].FirstDisp + g_InvD[g_ino].NoofHicons - 1) / g_InvD[g_ino].NoofHicons;
 
 	while (rowsWanted < g_InvD[g_ino].NoofVicons) {
 		if (g_InvD[g_ino].FirstDisp) {
@@ -2521,7 +2526,7 @@ static void AdjustTop() {
 		} else
 			break;
 	}
-	tMissing = g_InvD[g_ino].FirstDisp ? (g_InvD[g_ino].FirstDisp + g_InvD[g_ino].NoofHicons-1)/g_InvD[g_ino].NoofHicons : 0;
+	tMissing = g_InvD[g_ino].FirstDisp ? (g_InvD[g_ino].FirstDisp + g_InvD[g_ino].NoofHicons - 1) / g_InvD[g_ino].NoofHicons : 0;
 	bMissing = (rowsWanted > g_InvD[g_ino].NoofVicons) ? rowsWanted - g_InvD[g_ino].NoofVicons : 0;
 
 	nMissing = tMissing + bMissing;
@@ -2532,15 +2537,15 @@ static void AdjustTop() {
 	else if (!bMissing)
 		nsliderYpos = g_sliderYmax;
 	else {
-		nsliderYpos = tMissing*slideRange/nMissing;
+		nsliderYpos = tMissing * slideRange / nMissing;
 		nsliderYpos += g_sliderYmin;
 	}
 
 	if (nMissing) {
-		n = g_InvD[g_ino].FirstDisp - tMissing*g_InvD[g_ino].NoofHicons;
+		n = g_InvD[g_ino].FirstDisp - tMissing * g_InvD[g_ino].NoofHicons;
 		for (i = 0; i <= nMissing; i++, n += g_InvD[g_ino].NoofHicons) {
 			g_slideStuff[i].n = n;
-			g_slideStuff[i].y = (i*slideRange/nMissing) + g_sliderYmin;
+			g_slideStuff[i].y = (i * slideRange / nMissing) + g_sliderYmin;
 		}
 		if (g_slideStuff[0].n < 0)
 			g_slideStuff[0].n = 0;
@@ -2562,10 +2567,10 @@ static void AdjustTop() {
  * Insert an inventory icon object onto the display list.
  */
 static OBJECT *AddInvObject(int num, const FREEL **pfreel, const FILM **pfilm) {
-	INV_OBJECT *invObj;		// Icon data
-	const MULTI_INIT *pmi;		// Its INIT structure - from the reel
-	IMAGE *pim;		// ... you get the picture
-	OBJECT *pPlayObj;	// The object we insert
+	INV_OBJECT *invObj; // Icon data
+	const MULTI_INIT *pmi; // Its INIT structure - from the reel
+	IMAGE *pim; // ... you get the picture
+	OBJECT *pPlayObj; // The object we insert
 
 	invObj = GetInvObject(num);
 
@@ -2586,24 +2591,24 @@ static OBJECT *AddInvObject(int num, const FREEL **pfreel, const FILM **pfilm) {
  * Create display objects for the displayed icons in an inventory window.
  */
 static void FillInInventory() {
-	int	Index;		// Index into contents[]
-	int	n = 0;		// index into iconArray[]
-	int	xpos, ypos;
-	int	row, col;
+	int Index; // Index into contents[]
+	int n = 0; // index into iconArray[]
+	int xpos, ypos;
+	int row, col;
 	const FREEL *pfr;
 	const FILM *pfilm;
 
 	DumpIconArray();
 
 	if (g_InvDragging != ID_SLIDE)
-		AdjustTop();		// Set up slideStuff[]
+		AdjustTop(); // Set up slideStuff[]
 
-	Index = g_InvD[g_ino].FirstDisp;	// Start from first displayed object
+	Index = g_InvD[g_ino].FirstDisp; // Start from first displayed object
 	n = 0;
-	ypos = START_ICONY;		// Y-offset of first display row
+	ypos = START_ICONY; // Y-offset of first display row
 
-	for (row = 0; row < g_InvD[g_ino].NoofVicons; row++,	ypos += ITEM_HEIGHT + 1) {
-		xpos = START_ICONX;		// X-offset of first display column
+	for (row = 0; row < g_InvD[g_ino].NoofVicons; row++, ypos += ITEM_HEIGHT + 1) {
+		xpos = START_ICONX; // X-offset of first display column
 
 		for (col = 0; col < g_InvD[g_ino].NoofHicons; col++) {
 			if (Index >= g_InvD[g_ino].NoofItems)
@@ -2611,7 +2616,7 @@ static void FillInInventory() {
 			else if (g_InvD[g_ino].contents[Index] != g_heldItem) {
 				// Create a display object and position it
 				g_iconArray[n] = AddInvObject(g_InvD[g_ino].contents[Index], &pfr, &pfilm);
-				MultiSetAniXY(g_iconArray[n], g_InvD[g_ino].inventoryX + xpos , g_InvD[g_ino].inventoryY + ypos);
+				MultiSetAniXY(g_iconArray[n], g_InvD[g_ino].inventoryX + xpos, g_InvD[g_ino].inventoryY + ypos);
 				MultiSetZPosition(g_iconArray[n], Z_INV_ICONS);
 
 				InitStepAnimScript(&g_iconAnims[n], g_iconArray[n], FROM_32(pfr->script), ONE_SECOND / FROM_32(pfilm->frate));
@@ -2619,12 +2624,13 @@ static void FillInInventory() {
 				n++;
 			}
 			Index++;
-			xpos += ITEM_WIDTH + 1;	// X-offset of next display column
+			xpos += ITEM_WIDTH + 1; // X-offset of next display column
 		}
 	}
 }
 
-enum {FROM_HANDLE, FROM_STRING};
+enum { FROM_HANDLE,
+	     FROM_STRING };
 
 /**
  * Set up a rectangle as the background to the inventory window.
@@ -2641,7 +2647,7 @@ static void AddBackground(OBJECT **rect, OBJECT **title, int extraH, int extraV,
 	// add it to display list and position it
 	MultiInsertObject(GetPlayfieldList(FIELD_STATUS), *rect);
 	MultiSetAniXY(*rect, g_InvD[g_ino].inventoryX + NM_BG_POS_X,
-		g_InvD[g_ino].inventoryY + NM_BG_POS_Y);
+	              g_InvD[g_ino].inventoryY + NM_BG_POS_Y);
 	MultiSetZPosition(*rect, Z_INV_BRECT);
 
 	if (title == NULL)
@@ -2651,15 +2657,15 @@ static void AddBackground(OBJECT **rect, OBJECT **title, int extraH, int extraV,
 	if (textFrom == FROM_HANDLE) {
 		LoadStringRes(g_InvD[g_ino].hInvTitle, TextBufferAddr(), TBUFSZ);
 		*title = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(), 0,
-					g_InvD[g_ino].inventoryX + width/2, g_InvD[g_ino].inventoryY + M_TOFF,
-					GetTagFontHandle(), TXT_CENTER);
+		                       g_InvD[g_ino].inventoryX + width / 2, g_InvD[g_ino].inventoryY + M_TOFF,
+		                       GetTagFontHandle(), TXT_CENTER);
 		assert(*title); // Inventory title string produced NULL text
 		MultiSetZPosition(*title, Z_INV_HTEXT);
 	} else if (textFrom == FROM_STRING && cd.ixHeading != NO_HEADING) {
 		LoadStringRes(g_configStrings[cd.ixHeading], TextBufferAddr(), TBUFSZ);
 		*title = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(), 0,
-					g_InvD[g_ino].inventoryX + width/2, g_InvD[g_ino].inventoryY + M_TOFF,
-					GetTagFontHandle(), TXT_CENTER);
+		                       g_InvD[g_ino].inventoryX + width / 2, g_InvD[g_ino].inventoryY + M_TOFF,
+		                       GetTagFontHandle(), TXT_CENTER);
 		assert(*title); // Inventory title string produced NULL text
 		MultiSetZPosition(*title, Z_INV_HTEXT);
 	}
@@ -2682,19 +2688,18 @@ static void AddTitle(POBJECT *title, int extraH) {
 	if (g_InvD[g_ino].hInvTitle != (SCNHANDLE)NO_HEADING) {
 		LoadStringRes(g_InvD[g_ino].hInvTitle, TextBufferAddr(), TBUFSZ);
 		*title = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(), 0,
-					g_InvD[g_ino].inventoryX + (width/2)+NM_BG_POS_X, g_InvD[g_ino].inventoryY + NM_TOFF,
-					GetTagFontHandle(), TXT_CENTER, 0);
+		                       g_InvD[g_ino].inventoryX + (width / 2) + NM_BG_POS_X, g_InvD[g_ino].inventoryY + NM_TOFF,
+		                       GetTagFontHandle(), TXT_CENTER, 0);
 		assert(*title);
 		MultiSetZPosition(*title, Z_INV_HTEXT);
 	}
 }
 
-
 /**
  * Insert a part of the inventory window frame onto the display list.
  */
 static OBJECT *AddObject(const FREEL *pfreel, int num) {
-	const MULTI_INIT *pmi;	// Get the MULTI_INIT structure
+	const MULTI_INIT *pmi; // Get the MULTI_INIT structure
 	IMAGE *pim;
 	OBJECT *pPlayObj;
 
@@ -2729,7 +2734,7 @@ static OBJECT *AddObject(const FREEL *pfreel, int num) {
 static void AddSlider(OBJECT **slide, const FILM *pfilm) {
 	g_SlideObject = *slide = AddObject(&pfilm->reels[IX_SLIDE], -1);
 	MultiSetAniXY(*slide, MultiRightmost(g_RectObject) + (TinselV2 ? NM_SLX : -M_SXOFF + 2),
-		g_InvD[g_ino].inventoryY + g_sliderYpos);
+	              g_InvD[g_ino].inventoryY + g_sliderYpos);
 	MultiSetZPosition(*slide, Z_INV_MFRAME);
 }
 
@@ -2737,10 +2742,10 @@ static void AddSlider(OBJECT **slide, const FILM *pfilm) {
  * Display a box with some text in it.
  */
 static void AddBox(int *pi, const int i) {
-	int x	= g_InvD[g_ino].inventoryX + cd.box[i].xpos;
-	int y	= g_InvD[g_ino].inventoryY + cd.box[i].ypos;
+	int x = g_InvD[g_ino].inventoryX + cd.box[i].xpos;
+	int y = g_InvD[g_ino].inventoryY + cd.box[i].ypos;
 	int *pival = cd.box[i].ival;
-	int	xdisp;
+	int xdisp;
 	const FILM *pFilm;
 
 	switch (cd.box[i].boxType) {
@@ -2751,30 +2756,29 @@ static void AddBox(int *pi, const int i) {
 
 		// Give us a box
 		g_iconArray[*pi] = RectangleObject(BgPal(), TinselV2 ? BoxColor() : COL_BOX,
-			cd.box[i].w, cd.box[i].h);
+		                                   cd.box[i].w, cd.box[i].h);
 		MultiInsertObject(GetPlayfieldList(FIELD_STATUS), g_iconArray[*pi]);
 		MultiSetAniXY(g_iconArray[*pi], x, y);
 		MultiSetZPosition(g_iconArray[*pi], Z_INV_BRECT + 1);
 		*pi += 1;
 
 		// Stick in the text
-		if ((cd.box[i].textMethod == TM_POINTER) ||
-				(!TinselV2 && (cd.box[i].ixText == USE_POINTER))) {
+		if ((cd.box[i].textMethod == TM_POINTER) || (!TinselV2 && (cd.box[i].ixText == USE_POINTER))) {
 			if (cd.box[i].boxText != NULL) {
 				if (cd.box[i].boxType == RGROUP) {
 					g_iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), cd.box[i].boxText, 0,
 #ifdef JAPAN
-							x + 2, y+2, GetTagFontHandle(), 0);
+					                                 x + 2, y + 2, GetTagFontHandle(), 0);
 #else
-							x + 2, y + TYOFF, GetTagFontHandle(), 0);
+					                                 x + 2, y + TYOFF, GetTagFontHandle(), 0);
 #endif
 				} else {
 					g_iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), cd.box[i].boxText, 0,
 #ifdef JAPAN
-// Note: it never seems to go here!
-							x + cd.box[i].w/2, y+2, GetTagFontHandle(), TXT_CENTER);
+					                                 // Note: it never seems to go here!
+					                                 x + cd.box[i].w / 2, y + 2, GetTagFontHandle(), TXT_CENTER);
 #else
-							x + cd.box[i].w / 2, y + TYOFF, GetTagFontHandle(), TXT_CENTER);
+					                                 x + cd.box[i].w / 2, y + TYOFF, GetTagFontHandle(), TXT_CENTER);
 #endif
 				}
 
@@ -2796,14 +2800,14 @@ static void AddBox(int *pi, const int i) {
 
 			if (TinselV2 && (cd.box[i].boxType == RGROUP))
 				g_iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
-						0, x + 2, y + TYOFF, GetTagFontHandle(), 0, 0);
+				                                 0, x + 2, y + TYOFF, GetTagFontHandle(), 0, 0);
 			else
 				g_iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
-					TextBufferAddr(), 0,
+				                                 TextBufferAddr(), 0,
 #ifdef JAPAN
-					x + cd.box[i].w/2, y+2, GetTagFontHandle(), TXT_CENTER);
+				                                 x + cd.box[i].w / 2, y + 2, GetTagFontHandle(), TXT_CENTER);
 #else
-					x + cd.box[i].w / 2, y + TYOFF, GetTagFontHandle(), TXT_CENTER);
+				                                 x + cd.box[i].w / 2, y + TYOFF, GetTagFontHandle(), TXT_CENTER);
 #endif
 			MultiSetZPosition(g_iconArray[*pi], Z_INV_ITEXT);
 			*pi += 1;
@@ -2831,7 +2835,7 @@ static void AddBox(int *pi, const int i) {
 
 		g_iconArray[*pi] = AddObject(&pFilm->reels[cd.box[i].bi], -1);
 		MultiSetAniXY(g_iconArray[*pi], x, y);
-		MultiSetZPosition(g_iconArray[*pi], Z_INV_BRECT+2);
+		MultiSetZPosition(g_iconArray[*pi], Z_INV_BRECT + 2);
 		*pi += 1;
 
 		break;
@@ -2842,9 +2846,9 @@ static void AddBox(int *pi, const int i) {
 		if (*pival)
 			g_iconArray[*pi] = AddObject(&pFilm->reels[cd.box[i].bi], -1);
 		else
-			g_iconArray[*pi] = AddObject(&pFilm->reels[cd.box[i].bi+1], -1);
+			g_iconArray[*pi] = AddObject(&pFilm->reels[cd.box[i].bi + 1], -1);
 		MultiSetAniXY(g_iconArray[*pi], x, y);
-		MultiSetZPosition(g_iconArray[*pi], Z_INV_BRECT+1);
+		MultiSetZPosition(g_iconArray[*pi], Z_INV_BRECT + 1);
 		*pi += 1;
 
 		// Stick in the text
@@ -2856,7 +2860,7 @@ static void AddBox(int *pi, const int i) {
 			LoadStringRes(g_configStrings[cd.box[i].ixText], TextBufferAddr(), TBUFSZ);
 		}
 		g_iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
-			TextBufferAddr(), 0, x + MDTEXT_XOFF, y + MDTEXT_YOFF, GetTagFontHandle(), TXT_RIGHT);
+		                                 TextBufferAddr(), 0, x + MDTEXT_XOFF, y + MDTEXT_YOFF, GetTagFontHandle(), TXT_RIGHT);
 		MultiSetZPosition(g_iconArray[*pi], Z_INV_ITEXT);
 		*pi += 1;
 		break;
@@ -2869,7 +2873,7 @@ static void AddBox(int *pi, const int i) {
 		cd.box[i].bi = *pival ? IX_TICK1 : IX_CROSS1;
 		g_iconArray[*pi] = AddObject(&pFilm->reels[cd.box[i].bi + NORMGRAPH], -1);
 		MultiSetAniXY(g_iconArray[*pi], x, y);
-		MultiSetZPosition(g_iconArray[*pi], Z_INV_BRECT+1);
+		MultiSetZPosition(g_iconArray[*pi], Z_INV_BRECT + 1);
 		*pi += 1;
 
 		// Stick in the text
@@ -2883,12 +2887,12 @@ static void AddBox(int *pi, const int i) {
 
 		if (cd.box[i].boxType == TOGGLE2) {
 			g_iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
-				TextBufferAddr(), 0, x + cd.box[i].w / 2, y + TOG2_YOFF,
-				GetTagFontHandle(), TXT_CENTER, 0);
+			                                 TextBufferAddr(), 0, x + cd.box[i].w / 2, y + TOG2_YOFF,
+			                                 GetTagFontHandle(), TXT_CENTER, 0);
 		} else {
 			g_iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
-				TextBufferAddr(), 0, x + MDTEXT_XOFF, y + MDTEXT_YOFF,
-				GetTagFontHandle(), TXT_RIGHT, 0);
+			                                 TextBufferAddr(), 0, x + MDTEXT_XOFF, y + MDTEXT_YOFF,
+			                                 GetTagFontHandle(), TXT_RIGHT, 0);
 		}
 
 		MultiSetZPosition(g_iconArray[*pi], Z_INV_ITEXT);
@@ -2897,14 +2901,14 @@ static void AddBox(int *pi, const int i) {
 
 	case SLIDER:
 		pFilm = (const FILM *)LockMem(g_hWinParts);
-		xdisp = SLIDE_RANGE*(*pival)/cd.box[i].w;
+		xdisp = SLIDE_RANGE * (*pival) / cd.box[i].w;
 
 		g_iconArray[*pi] = AddObject(&pFilm->reels[IX_MDGROOVE], -1);
 		MultiSetAniXY(g_iconArray[*pi], x, y);
 		MultiSetZPosition(g_iconArray[*pi], Z_MDGROOVE);
 		*pi += 1;
 		g_iconArray[*pi] = AddObject(&pFilm->reels[IX_MDSLIDER], -1);
-		MultiSetAniXY(g_iconArray[*pi], x+SLIDE_MINX+xdisp, y);
+		MultiSetAniXY(g_iconArray[*pi], x + SLIDE_MINX + xdisp, y);
 		MultiSetZPosition(g_iconArray[*pi], Z_MDSLIDER);
 		assert(g_numMdSlides < MAXSLIDES);
 		g_mdSlides[g_numMdSlides].num = i;
@@ -2922,7 +2926,7 @@ static void AddBox(int *pi, const int i) {
 			LoadStringRes(g_configStrings[cd.box[i].ixText], TextBufferAddr(), TBUFSZ);
 		}
 		g_iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
-			TextBufferAddr(), 0, x+MDTEXT_XOFF, y+MDTEXT_YOFF, GetTagFontHandle(), TXT_RIGHT);
+		                                 TextBufferAddr(), 0, x + MDTEXT_XOFF, y + MDTEXT_YOFF, GetTagFontHandle(), TXT_RIGHT);
 		MultiSetZPosition(g_iconArray[*pi], Z_INV_ITEXT);
 		*pi += 1;
 		break;
@@ -2933,12 +2937,12 @@ static void AddBox(int *pi, const int i) {
 		// Left one
 		if (!g_bNoLanguage) {
 			g_iconArray[*pi] = AddObject(&pFilm->reels[IX2_LEFT1], -1);
-			MultiSetAniXY(g_iconArray[*pi], x-ROTX1, y);
+			MultiSetAniXY(g_iconArray[*pi], x - ROTX1, y);
 			MultiSetZPosition(g_iconArray[*pi], Z_INV_BRECT + 1);
 			*pi += 1;
 
 			// Right one
-			g_iconArray[*pi] = AddObject( &pFilm->reels[IX2_RIGHT1], -1);
+			g_iconArray[*pi] = AddObject(&pFilm->reels[IX2_RIGHT1], -1);
 			MultiSetAniXY(g_iconArray[*pi], x + ROTX1, y);
 			MultiSetZPosition(g_iconArray[*pi], Z_INV_BRECT + 1);
 			*pi += 1;
@@ -2947,8 +2951,8 @@ static void AddBox(int *pi, const int i) {
 			assert(cd.box[i].textMethod == TM_INDEX);
 			LoadStringRes(SysString(cd.box[i].ixText), TextBufferAddr(), TBUFSZ);
 			g_iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS),
-				TextBufferAddr(), 0, x + cd.box[i].w / 2, y + TOG2_YOFF,
-				GetTagFontHandle(), TXT_CENTER, 0);
+			                                 TextBufferAddr(), 0, x + cd.box[i].w / 2, y + TOG2_YOFF,
+			                                 GetTagFontHandle(), TXT_CENTER, 0);
 			MultiSetZPosition(g_iconArray[*pi], Z_INV_ITEXT);
 			*pi += 1;
 		}
@@ -2959,7 +2963,7 @@ static void AddBox(int *pi, const int i) {
 
 		LoadStringRes(LanguageDesc(g_displayedLanguage), TextBufferAddr(), TBUFSZ);
 		g_iconArray[*pi] = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), TextBufferAddr(), 0,
-				x + cd.box[i].w / 2, y + ROT_YOFF, GetTagFontHandle(), TXT_CENTER, 0);
+		                                 x + cd.box[i].w / 2, y + ROT_YOFF, GetTagFontHandle(), TXT_CENTER, 0);
 		MultiSetZPosition(g_iconArray[*pi], Z_INV_ITEXT);
 		*pi += 1;
 
@@ -2977,7 +2981,7 @@ static void AddBox(int *pi, const int i) {
  * Display some boxes.
  */
 static void AddBoxes(bool bPosnSlide) {
-	int	objCount = NUMHL;	// Object count - allow for HL1, HL2 etc.
+	int objCount = NUMHL; // Object count - allow for HL1, HL2 etc.
 
 	DumpIconArray();
 	g_numMdSlides = 0;
@@ -2988,25 +2992,23 @@ static void AddBoxes(bool bPosnSlide) {
 
 	if (cd.bExtraWin) {
 		if (bPosnSlide && !TinselV2)
-			g_sliderYpos = g_sliderYmin + (cd.extraBase*(g_sliderYmax-g_sliderYmin))/(MAX_SAVED_FILES-NUM_RGROUP_BOXES);
+			g_sliderYpos = g_sliderYmin + (cd.extraBase * (g_sliderYmax - g_sliderYmin)) / (MAX_SAVED_FILES - NUM_RGROUP_BOXES);
 		else if (bPosnSlide) {
 			// Tinsel 2 bPosnSlide code
 			int lastY = g_sliderYpos;
 
 			if (cd.box == loadBox || cd.box == saveBox)
-				g_sliderYpos = g_sliderYmin + (cd.extraBase * (sliderRange)) /
-				(MAX_SAVED_FILES - NUM_RGROUP_BOXES);
+				g_sliderYpos = g_sliderYmin + (cd.extraBase * (sliderRange)) / (MAX_SAVED_FILES - NUM_RGROUP_BOXES);
 			else if (cd.box == hopperBox1) {
 				if (g_numScenes <= NUM_RGROUP_BOXES)
 					g_sliderYpos = g_sliderYmin;
 				else
-					g_sliderYpos = g_sliderYmin + (cd.extraBase*(sliderRange))/(g_numScenes-NUM_RGROUP_BOXES);
+					g_sliderYpos = g_sliderYmin + (cd.extraBase * (sliderRange)) / (g_numScenes - NUM_RGROUP_BOXES);
 			} else if (cd.box == hopperBox2) {
 				if (g_numEntries <= NUM_RGROUP_BOXES)
 					g_sliderYpos = g_sliderYmin;
 				else
-					g_sliderYpos = g_sliderYmin + (cd.extraBase * (sliderRange)) /
-					(g_numEntries-NUM_RGROUP_BOXES);
+					g_sliderYpos = g_sliderYmin + (cd.extraBase * (sliderRange)) / (g_numEntries - NUM_RGROUP_BOXES);
 			}
 
 			MultiMoveRelXY(g_SlideObject, 0, g_sliderYpos - lastY);
@@ -3032,7 +3034,7 @@ static void AddEWSlider(OBJECT **slide, const FILM *pfilm) {
  * AddExtraWindow
  */
 static int AddExtraWindow(int x, int y, OBJECT **retObj) {
-	int	n = 0;
+	int n = 0;
 	const FILM *pfilm;
 
 	// Get the frame's data
@@ -3042,46 +3044,45 @@ static int AddExtraWindow(int x, int y, OBJECT **retObj) {
 	y += TinselV2 ? 38 : 24;
 
 	// Draw the four corners
-	retObj[n] = AddObject(&pfilm->reels[IX_RTL], -1);	// Top left
+	retObj[n] = AddObject(&pfilm->reels[IX_RTL], -1); // Top left
 	MultiSetAniXY(retObj[n], x, y);
 	MultiSetZPosition(retObj[n], Z_INV_MFRAME);
 	n++;
-	retObj[n] = AddObject(&pfilm->reels[IX_NTR], -1);	// Top right
+	retObj[n] = AddObject(&pfilm->reels[IX_NTR], -1); // Top right
 	MultiSetAniXY(retObj[n], x + (TinselV2 ? g_TLwidth + 312 : 152), y);
 	MultiSetZPosition(retObj[n], Z_INV_MFRAME);
 	n++;
-	retObj[n] = AddObject(&pfilm->reels[IX_BL], -1);	// Bottom left
+	retObj[n] = AddObject(&pfilm->reels[IX_BL], -1); // Bottom left
 	MultiSetAniXY(retObj[n], x, y + (TinselV2 ? g_TLheight + 208 : 124));
 	MultiSetZPosition(retObj[n], Z_INV_MFRAME);
 	n++;
-	retObj[n] = AddObject(&pfilm->reels[IX_BR], -1);	// Bottom right
+	retObj[n] = AddObject(&pfilm->reels[IX_BR], -1); // Bottom right
 	MultiSetAniXY(retObj[n], x + (TinselV2 ? g_TLwidth + 312 : 152),
-		y + (TinselV2 ? g_TLheight + 208 : 124));
+	              y + (TinselV2 ? g_TLheight + 208 : 124));
 	MultiSetZPosition(retObj[n], Z_INV_MFRAME);
 	n++;
 
 	// Draw the edges
-	retObj[n] = AddObject(&pfilm->reels[IX_H156], -1);	// Top
+	retObj[n] = AddObject(&pfilm->reels[IX_H156], -1); // Top
 	MultiSetAniXY(retObj[n], x + (TinselV2 ? g_TLwidth : 6), y + NM_TBT);
 	MultiSetZPosition(retObj[n], Z_INV_MFRAME);
 	n++;
-	retObj[n] = AddObject(&pfilm->reels[IX_H156], -1);	// Bottom
-	MultiSetAniXY(retObj[n], x + (TinselV2 ? g_TLwidth : 6), y +
-		(TinselV2 ? g_TLheight + 208 + g_BLheight + NM_BSY : 143));
+	retObj[n] = AddObject(&pfilm->reels[IX_H156], -1); // Bottom
+	MultiSetAniXY(retObj[n], x + (TinselV2 ? g_TLwidth : 6), y + (TinselV2 ? g_TLheight + 208 + g_BLheight + NM_BSY : 143));
 	MultiSetZPosition(retObj[n], Z_INV_MFRAME);
 	n++;
-	retObj[n] = AddObject(&pfilm->reels[IX_V104], -1);	// Left
+	retObj[n] = AddObject(&pfilm->reels[IX_V104], -1); // Left
 	MultiSetAniXY(retObj[n], x + NM_LSX, y + (TinselV2 ? g_TLheight : 20));
 	MultiSetZPosition(retObj[n], Z_INV_MFRAME);
 	n++;
-	retObj[n] = AddObject(&pfilm->reels[IX_V104], -1);	// Right 1
+	retObj[n] = AddObject(&pfilm->reels[IX_V104], -1); // Right 1
 	MultiSetAniXY(retObj[n], x + (TinselV2 ? g_TLwidth + 312 + g_TRwidth + NM_RSX : 179),
-		y + (TinselV2 ? g_TLheight : 20));
+	              y + (TinselV2 ? g_TLheight : 20));
 	MultiSetZPosition(retObj[n], Z_INV_MFRAME);
 	n++;
-	retObj[n] = AddObject(&pfilm->reels[IX_V104], -1);	// Right 2
+	retObj[n] = AddObject(&pfilm->reels[IX_V104], -1); // Right 2
 	MultiSetAniXY(retObj[n], x + (TinselV2 ? g_TLwidth + 312 + g_TRwidth + NM_SBL : 188),
-		y + (TinselV2 ? g_TLheight : 20));
+	              y + (TinselV2 ? g_TLheight : 20));
 	MultiSetZPosition(retObj[n], Z_INV_MFRAME);
 	n++;
 
@@ -3089,10 +3090,10 @@ static int AddExtraWindow(int x, int y, OBJECT **retObj) {
 		g_sliderYpos = g_sliderYmin = y + 27;
 		g_sliderYmax = y + 273;
 
-		retObj[n++] = g_SlideObject = AddObject( &pfilm->reels[IX_SLIDE], -1);
+		retObj[n++] = g_SlideObject = AddObject(&pfilm->reels[IX_SLIDE], -1);
 		MultiSetAniXY(g_SlideObject,
-			x + g_TLwidth + 320 + g_TRwidth - NM_BG_POS_X + NM_BG_SIZ_X - 2,
-			g_sliderYpos);
+		              x + g_TLwidth + 320 + g_TRwidth - NM_BG_POS_X + NM_BG_SIZ_X - 2,
+		              g_sliderYpos);
 		MultiSetZPosition(g_SlideObject, Z_INV_MFRAME);
 	} else {
 		g_sliderYpos = g_sliderYmin = y + 9;
@@ -3103,28 +3104,29 @@ static int AddExtraWindow(int x, int y, OBJECT **retObj) {
 	return n;
 }
 
-
-enum InventoryType { EMPTY, FULL, CONF };
+enum InventoryType { EMPTY,
+	                   FULL,
+	                   CONF };
 
 /**
  * Construct an inventory window - either a standard one, with
  * background, slider and icons, or a re-sizing window.
  */
 static void ConstructInventory(InventoryType filling) {
-	int	eH, eV;		// Extra width and height
-	int	n = 0;		// Index into object array
-	int	zpos;		// Z-position of frame
-	int	invX = g_InvD[g_ino].inventoryX;
-	int	invY = g_InvD[g_ino].inventoryY;
+	int eH, eV; // Extra width and height
+	int n = 0; // Index into object array
+	int zpos; // Z-position of frame
+	int invX = g_InvD[g_ino].inventoryX;
+	int invY = g_InvD[g_ino].inventoryY;
 	OBJECT **retObj;
 	const FILM *pfilm;
 
 	// Select the object array to use
 	if (filling == FULL || filling == CONF) {
-		retObj = g_objArray;		// Standard window
+		retObj = g_objArray; // Standard window
 		zpos = Z_INV_MFRAME;
 	} else {
-		retObj = g_DobjArray;		// Re-sizing window
+		retObj = g_DobjArray; // Re-sizing window
 		zpos = Z_INV_RFRAME;
 	}
 
@@ -3150,8 +3152,8 @@ static void ConstructInventory(InventoryType filling) {
 	}
 
 	// Extra width and height
-	eH = (g_InvD[g_ino].NoofHicons - 1) * (ITEM_WIDTH+I_SEPARATION) + g_SuppH;
-	eV = (g_InvD[g_ino].NoofVicons - 1) * (ITEM_HEIGHT+I_SEPARATION) + g_SuppV;
+	eH = (g_InvD[g_ino].NoofHicons - 1) * (ITEM_WIDTH + I_SEPARATION) + g_SuppH;
+	eV = (g_InvD[g_ino].NoofVicons - 1) * (ITEM_HEIGHT + I_SEPARATION) + g_SuppV;
 
 	// Which window frame corners to use
 	if (TinselV2 && (g_ino == INV_CONV)) {
@@ -3192,7 +3194,7 @@ static void ConstructInventory(InventoryType filling) {
 	// Draw extra Top and bottom parts
 	if (g_InvD[g_ino].NoofHicons > 1) {
 		// Top side
-		retObj[n] = AddObject(&pfilm->reels[hFillers[g_InvD[g_ino].NoofHicons-2]], -1);
+		retObj[n] = AddObject(&pfilm->reels[hFillers[g_InvD[g_ino].NoofHicons - 2]], -1);
 		MultiSetAniXY(retObj[n], invX + g_TLwidth, invY + NM_TBT);
 		MultiSetZPosition(retObj[n], zpos);
 		n++;
@@ -3200,12 +3202,12 @@ static void ConstructInventory(InventoryType filling) {
 		// Bottom of header box
 		if (filling == FULL) {
 			if (TinselV2) {
-				retObj[n] = AddObject(&pfilm->reels[hFillers[g_InvD[g_ino].NoofHicons-2]], -1);
+				retObj[n] = AddObject(&pfilm->reels[hFillers[g_InvD[g_ino].NoofHicons - 2]], -1);
 				MultiSetAniXY(retObj[n], invX + g_TLwidth, invY + NM_TBB);
 				MultiSetZPosition(retObj[n], zpos);
 				n++;
 			} else {
-				retObj[n] = AddObject(&pfilm->reels[hFillers[g_InvD[g_ino].NoofHicons-2]], -1);
+				retObj[n] = AddObject(&pfilm->reels[hFillers[g_InvD[g_ino].NoofHicons - 2]], -1);
 				MultiSetAniXY(retObj[n], invX + g_TLwidth, invY + M_TBB + 1);
 				MultiSetZPosition(retObj[n], zpos);
 				n++;
@@ -3226,7 +3228,7 @@ static void ConstructInventory(InventoryType filling) {
 		}
 
 		// Bottom side
-		retObj[n] = AddObject(&pfilm->reels[hFillers[g_InvD[g_ino].NoofHicons-2]], -1);
+		retObj[n] = AddObject(&pfilm->reels[hFillers[g_InvD[g_ino].NoofHicons - 2]], -1);
 		MultiSetAniXY(retObj[n], invX + g_TLwidth, invY + g_TLheight + eV + g_BLheight + NM_BSY);
 
 		MultiSetZPosition(retObj[n], zpos);
@@ -3234,7 +3236,7 @@ static void ConstructInventory(InventoryType filling) {
 	}
 	if (g_SuppH) {
 		int offx = g_TLwidth + eH - (TinselV2 ? ITEM_WIDTH + I_SEPARATION : 26);
-		if (offx < g_TLwidth)	// Not too far!
+		if (offx < g_TLwidth) // Not too far!
 			offx = g_TLwidth;
 
 		// Top side extra
@@ -3254,14 +3256,14 @@ static void ConstructInventory(InventoryType filling) {
 	// Draw extra side parts
 	if (g_InvD[g_ino].NoofVicons > 1) {
 		// Left side
-		retObj[n] = AddObject(&pfilm->reels[vFillers[g_InvD[g_ino].NoofVicons-2]], -1);
+		retObj[n] = AddObject(&pfilm->reels[vFillers[g_InvD[g_ino].NoofVicons - 2]], -1);
 		MultiSetAniXY(retObj[n], invX + NM_LSX, invY + g_TLheight);
 		MultiSetZPosition(retObj[n], zpos);
 		n++;
 
 		// Left side of scroll bar
 		if (filling == FULL && g_ino != INV_CONV) {
-			retObj[n] = AddObject(&pfilm->reels[vFillers[g_InvD[g_ino].NoofVicons-2]], -1);
+			retObj[n] = AddObject(&pfilm->reels[vFillers[g_InvD[g_ino].NoofVicons - 2]], -1);
 			if (TinselV2)
 				MultiSetAniXY(retObj[n], invX + g_TLwidth + eH + g_TRwidth + NM_SBL, invY + g_TLheight);
 			else
@@ -3271,7 +3273,7 @@ static void ConstructInventory(InventoryType filling) {
 		}
 
 		// Right side
-		retObj[n] = AddObject(&pfilm->reels[vFillers[g_InvD[g_ino].NoofVicons-2]], -1);
+		retObj[n] = AddObject(&pfilm->reels[vFillers[g_InvD[g_ino].NoofVicons - 2]], -1);
 		MultiSetAniXY(retObj[n], invX + g_TLwidth + eH + g_TRwidth + NM_RSX, invY + g_TLheight);
 		MultiSetZPosition(retObj[n], zpos);
 		n++;
@@ -3317,12 +3319,12 @@ static void ConstructInventory(InventoryType filling) {
 			if (TinselV2) {
 				// !!!!! MAGIC NUMBER ALERT !!!!!
 				// Make sure it's big enough for the heading
-				if (MultiLeftmost(retObj[n-1]) < g_InvD[INV_CONV].inventoryX + 10) {
+				if (MultiLeftmost(retObj[n - 1]) < g_InvD[INV_CONV].inventoryX + 10) {
 					g_InvD[INV_CONV].NoofHicons++;
 					ConstructInventory(FULL);
 				}
 			}
-		} else if (g_InvD[g_ino].NoofItems > g_InvD[g_ino].NoofHicons*g_InvD[g_ino].NoofVicons) {
+		} else if (g_InvD[g_ino].NoofItems > g_InvD[g_ino].NoofHicons * g_InvD[g_ino].NoofVicons) {
 			g_sliderYmin = g_TLheight - (TinselV2 ? 1 : 2);
 			g_sliderYmax = g_TLheight + eV + (TinselV2 ? 12 : 10);
 			AddSlider(&retObj[n++], pfilm);
@@ -3353,15 +3355,14 @@ static void ConstructInventory(InventoryType filling) {
 	}
 }
 
-
 /**
  * Call this when drawing a 'FULL', movable inventory. Checks that the
  * position of the Translucent object is within limits. If it isn't,
  * adjusts the x/y position of the current inventory and returns true.
  */
 static bool RePosition() {
-	int	p;
-	bool	bMoveitMoveit = false;
+	int p;
+	bool bMoveitMoveit = false;
 
 	assert(g_RectObject); // no recangle object!
 
@@ -3370,13 +3371,13 @@ static bool RePosition() {
 	if (p > MAXLEFT) {
 		// Too far to the right
 		g_InvD[g_ino].inventoryX += MAXLEFT - p;
-		bMoveitMoveit = true;			// I like to....
+		bMoveitMoveit = true; // I like to....
 	} else {
 		// Too far to the left?
 		p = MultiRightmost(g_RectObject);
 		if (p < MINRIGHT) {
 			g_InvD[g_ino].inventoryX += MINRIGHT - p;
-			bMoveitMoveit = true;		// I like to....
+			bMoveitMoveit = true; // I like to....
 		}
 	}
 
@@ -3385,11 +3386,11 @@ static bool RePosition() {
 	if (p < MINTOP) {
 		// Too high
 		g_InvD[g_ino].inventoryY += MINTOP - p;
-		bMoveitMoveit = true;			// I like to....
+		bMoveitMoveit = true; // I like to....
 	} else if (p > MAXTOP) {
 		// Too low
 		g_InvD[g_ino].inventoryY += MAXTOP - p;
-		bMoveitMoveit = true;			// I like to....
+		bMoveitMoveit = true; // I like to....
 	}
 
 	return bMoveitMoveit;
@@ -3416,17 +3417,25 @@ static void AlterCursor(int num) {
 	SetTempCursor(FROM_32(pfreel->script));
 }
 
-enum InvCursorFN {IC_AREA, IC_DROP};
+enum InvCursorFN { IC_AREA,
+	                 IC_DROP };
 
 /**
  * InvCursor
  */
 static void InvCursor(InvCursorFN fn, int CurX, int CurY) {
-	static enum { IC_NORMAL, IC_DR, IC_UR, IC_TB, IC_LR,
-		IC_INV, IC_UP, IC_DN } ICursor = IC_NORMAL;	// FIXME: Avoid non-const global vars
+	static enum { IC_NORMAL,
+		            IC_DR,
+		            IC_UR,
+		            IC_TB,
+		            IC_LR,
+		            IC_INV,
+		            IC_UP,
+		            IC_DN } ICursor
+	  = IC_NORMAL; // FIXME: Avoid non-const global vars
 
-	int	area;		// The part of the window the cursor is over
-	bool	restoreMain = false;
+	int area; // The part of the window the cursor is over
+	bool restoreMain = false;
 
 	// If currently dragging, don't be messing about with the cursor shape
 	if (g_InvDragging != ID_NONE)
@@ -3519,16 +3528,11 @@ static void InvCursor(InvCursorFN fn, int CurX, int CurY) {
 	}
 }
 
-
-
-
 /*-------------------------------------------------------------------------*/
-
 
 /**************************************************************************/
 /******************** Conversation specific functions *********************/
 /**************************************************************************/
-
 
 extern void ConvAction(int index) {
 	assert(g_ino == INV_CONV); // not conv. window!
@@ -3539,14 +3543,14 @@ extern void ConvAction(int index) {
 		return;
 
 	case INV_CLOSEICON:
-		g_thisIcon = -1;	// Postamble
+		g_thisIcon = -1; // Postamble
 		break;
 
 	case INV_OPENICON:
 		// Store the direction the lead character is facing in when the conversation starts
 		if (TinselV2)
 			g_initialDirection = GetMoverDirection(pMover);
-		g_thisIcon = -2;	// Preamble
+		g_thisIcon = -2; // Preamble
 		break;
 
 	default:
@@ -3570,7 +3574,6 @@ extern void ConvAction(int index) {
 		else
 			ActorEvent(Common::nullContext, g_thisConvActor, CONVERSE, false, 0);
 	}
-
 }
 
 /**
@@ -3588,7 +3591,7 @@ extern void SetConvDetails(CONV_PARAM fn, HPOLYGON hPoly, int ano) {
 	g_bMoveOnUnHide = true;
 
 	// Get the Actor Tag's or Tagged Actor's label for the conversation window title
-	if (hPoly != NOPOLY)	{
+	if (hPoly != NOPOLY) {
 		int x, y;
 		GetTagTag(hPoly, &g_InvD[INV_CONV].hInvTitle, &x, &y);
 	} else {
@@ -3621,10 +3624,10 @@ extern void PermaConvIcon(int icon, bool bEnd) {
 				g_numEndIcons++;
 		} else {
 			// Insert before end icons
-			memmove(&g_permIcons[g_numPermIcons-g_numEndIcons+1],
-				&g_permIcons[g_numPermIcons-g_numEndIcons],
-				g_numEndIcons * sizeof(int));
-			g_permIcons[g_numPermIcons-g_numEndIcons] = icon;
+			memmove(&g_permIcons[g_numPermIcons - g_numEndIcons + 1],
+			        &g_permIcons[g_numPermIcons - g_numEndIcons],
+			        g_numEndIcons * sizeof(int));
+			g_permIcons[g_numPermIcons - g_numEndIcons] = icon;
 			g_numPermIcons++;
 		}
 	}
@@ -3688,7 +3691,7 @@ extern void HideConversation(bool bHide) {
 				// Don't flash if items changed. If they have, will be redrawn anyway.
 				if (TinselV2 || !g_ItemsChanged) {
 					for (i = 0; i < MAX_ICONS && g_iconArray[i]; i++) {
-						MultiAdjustXY(g_iconArray[i], -2*SCREEN_WIDTH, 0);
+						MultiAdjustXY(g_iconArray[i], -2 * SCREEN_WIDTH, 0);
 					}
 				}
 			}
@@ -3764,15 +3767,13 @@ extern void HideConversation(bool bHide) {
 					x = 0;
 
 				if (g_thisConvFn == CONV_DEF && MultiHighest(g_RectObject) < SysVar(SV_CONV_MINY)
-						&& g_thisConvActor) {
+				    && g_thisConvActor) {
 					int Loffset, Toffset;
 
 					PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
-					y = GetActorBottom(g_thisConvActor) - MultiHighest(g_RectObject) +
-						SysVar(SV_CONV_BELOW_Y);
+					y = GetActorBottom(g_thisConvActor) - MultiHighest(g_RectObject) + SysVar(SV_CONV_BELOW_Y);
 					y -= Toffset;
-				}
-				else
+				} else
 					y = 0;
 
 				if (x || y) {
@@ -3811,7 +3812,6 @@ extern bool ConvIsHidden() {
 	return g_InventoryHidden;
 }
 
-
 /**************************************************************************/
 /******************* Open and closing functions ***************************/
 /**************************************************************************/
@@ -3821,44 +3821,44 @@ extern bool ConvIsHidden() {
  */
 extern void PopUpInventory(int invno) {
 	assert(invno == INV_1 || invno == INV_2 || invno == INV_CONV
-		|| invno == INV_CONF || invno == INV_MENU); // Trying to open illegal inventory
+	       || invno == INV_CONF || invno == INV_MENU); // Trying to open illegal inventory
 
 	if (g_InventoryState == IDLE_INV) {
-		g_bReOpenMenu = false;	// Better safe than sorry...
+		g_bReOpenMenu = false; // Better safe than sorry...
 
-		DisableTags();		// Tags disabled during inventory
+		DisableTags(); // Tags disabled during inventory
 		if (TinselV2)
-			DisablePointing();	// Pointing disabled during inventory
+			DisablePointing(); // Pointing disabled during inventory
 
-		if (invno == INV_CONV) {	// Conversation window?
+		if (invno == INV_CONV) { // Conversation window?
 			if (TinselV2)
 				// Quiet please..
 				_vm->_pcmMusic->dim(false);
 
 			// Start conversation with permanent contents
-			memset(g_InvD[INV_CONV].contents, 0, MAX_ININV*sizeof(int));
-			memcpy(g_InvD[INV_CONV].contents, g_permIcons, g_numPermIcons*sizeof(int));
+			memset(g_InvD[INV_CONV].contents, 0, MAX_ININV * sizeof(int));
+			memcpy(g_InvD[INV_CONV].contents, g_permIcons, g_numPermIcons * sizeof(int));
 			g_InvD[INV_CONV].NoofItems = g_numPermIcons;
 			if (TinselV2)
 				g_InvD[INV_CONV].NoofHicons = g_numPermIcons;
 			else
 				g_thisIcon = 0;
-		} else if (invno == INV_CONF) {	// Configuration window?
+		} else if (invno == INV_CONF) { // Configuration window?
 			cd.selBox = NOBOX;
 			cd.pointBox = NOBOX;
 		}
 
-		g_ino = invno;			// The open inventory
+		g_ino = invno; // The open inventory
 
-		g_ItemsChanged = false;		// Nothing changed
-		g_InvDragging = ID_NONE;		// Not dragging
-		g_InventoryState = ACTIVE_INV;	// Inventory actiive
-		g_InventoryHidden = false;	// Not hidden
+		g_ItemsChanged = false; // Nothing changed
+		g_InvDragging = ID_NONE; // Not dragging
+		g_InventoryState = ACTIVE_INV; // Inventory actiive
+		g_InventoryHidden = false; // Not hidden
 		g_InventoryMaximised = g_InvD[g_ino].bMax;
-		if (invno != INV_CONF)	// Configuration window?
-			ConstructInventory(FULL);	// Draw it up
+		if (invno != INV_CONF) // Configuration window?
+			ConstructInventory(FULL); // Draw it up
 		else {
-			ConstructInventory(CONF);	// Draw it up
+			ConstructInventory(CONF); // Draw it up
 		}
 	}
 }
@@ -3903,7 +3903,7 @@ extern void OpenMenu(CONFTYPE menuType) {
 		break;
 
 	case SAVE_MENU:
-		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);	// Show VK when saving a game
+		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true); // Show VK when saving a game
 		if (!TinselV2)
 			SetCursorScreenXY(262, 91);
 		SetMenuGlobals(&ciSave);
@@ -4009,17 +4009,16 @@ extern void OpenMenu(CONFTYPE menuType) {
 #if 1
 		// FIXME: Hack to setup CONFBOX pointer to data in the global Config object
 		ciSubtitles.Box[hackOffset].ival = &_vm->_config->_textSpeed;
-		ciSubtitles.Box[hackOffset+1].ival = &_vm->_config->_useSubtitles;
+		ciSubtitles.Box[hackOffset + 1].ival = &_vm->_config->_useSubtitles;
 #endif
 
 		SetMenuGlobals(&ciSubtitles);
-		}
-		break;
+	} break;
 
 	case TOP_WINDOW:
 		SetMenuGlobals(&ciTopWin);
 		g_ino = INV_CONF;
-		ConstructInventory(CONF);	// Draw it up
+		ConstructInventory(CONF); // Draw it up
 		g_InventoryState = BOGUS_INV;
 		return;
 
@@ -4028,13 +4027,13 @@ extern void OpenMenu(CONFTYPE menuType) {
 	}
 
 	if (g_heldItem != INV_NOICON)
-		DelAuxCursor();			// no longer aux cursor
+		DelAuxCursor(); // no longer aux cursor
 
 	PopUpInventory(INV_CONF);
 
 	// Make initial box selections if appropriate
 	if (menuType == SAVE_MENU || menuType == LOAD_MENU
-			|| menuType == HOPPER_MENU1 || menuType == HOPPER_MENU2)
+	    || menuType == HOPPER_MENU1 || menuType == HOPPER_MENU2)
 		Select(0, false);
 	else if (menuType == SUBTITLES_MENU) {
 		if (_vm->getFeatures() & GF_USE_3FLAGS) {
@@ -4046,7 +4045,7 @@ extern void OpenMenu(CONFTYPE menuType) {
 			else
 				Select(2, false);
 		} else if (_vm->getFeatures() & GF_USE_4FLAGS) {
-			Select(_vm->_config->_language-1, false);
+			Select(_vm->_config->_language - 1, false);
 		} else if (_vm->getFeatures() & GF_USE_5FLAGS) {
 			Select(_vm->_config->_language, false);
 		}
@@ -4094,7 +4093,7 @@ extern void KillInventory() {
 		if (g_ino == INV_CONV)
 			_vm->_pcmMusic->unDim(false);
 
-	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);	// Hide VK after save dialog closes
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false); // Hide VK after save dialog closes
 }
 
 extern void CloseInventory() {
@@ -4115,8 +4114,6 @@ extern void CloseInventory() {
 	RestoreMainCursor();
 }
 
-
-
 /**************************************************************************/
 /************************ The inventory process ***************************/
 /**************************************************************************/
@@ -4135,14 +4132,14 @@ extern void InventoryProcess(CORO_PARAM, const void *) {
 		g_bNoLanguage = true;
 
 	while (1) {
-		CORO_SLEEP(1);		// allow scheduling
+		CORO_SLEEP(1); // allow scheduling
 
 		if (g_objArray[0] != NULL) {
 			if (g_ItemsChanged && g_ino != INV_CONF && !g_InventoryHidden) {
 				FillInInventory();
 
 				// Needed when clicking on scroll bar.
-				int	curX, curY;
+				int curX, curY;
 				GetCursorXY(&curX, &curY, false);
 				InvCursor(IC_AREA, curX, curY);
 
@@ -4220,12 +4217,12 @@ extern void InventoryProcess(CORO_PARAM, const void *) {
 					KillInventory();
 					OpenMenu(CONTROLS_MENU);
 					break;
-	#ifndef JAPAN
+#ifndef JAPAN
 				case OPENSUBT:
 					KillInventory();
 					OpenMenu(SUBTITLES_MENU);
 					break;
-	#endif
+#endif
 				case OPENQUIT:
 					KillInventory();
 					OpenMenu(QUIT_MENU);
@@ -4258,7 +4255,6 @@ extern void InventoryProcess(CORO_PARAM, const void *) {
 
 			g_buttonEffect.bButAnim = false;
 		}
-
 	}
 	CORO_END_CODE;
 }
@@ -4274,7 +4270,7 @@ extern void InventoryProcess(CORO_PARAM, const void *) {
 static int NearestSlideY(int fity) {
 	int nearDist = 1000;
 	int thisDist;
-	int nearI = 0;	// Index of nearest fit
+	int nearI = 0; // Index of nearest fit
 	int i = 0;
 
 	do {
@@ -4292,7 +4288,7 @@ static int NearestSlideY(int fity) {
  * y-movement during such a drag.
  */
 static void SlideSlider(int y, SSFN fn) {
-	static int newY = 0, lasti = 0;	// FIXME: Avoid non-const global vars
+	static int newY = 0, lasti = 0; // FIXME: Avoid non-const global vars
 	int gotoY, ati;
 
 	// Only do this if there's a slider
@@ -4300,20 +4296,20 @@ static void SlideSlider(int y, SSFN fn) {
 		return;
 
 	switch (fn) {
-	case S_START:			// Start of a drag on the slider
+	case S_START: // Start of a drag on the slider
 		newY = g_sliderYpos;
 		lasti = NearestSlideY(g_sliderYpos);
 		break;
 
-	case S_SLIDE:			// Y-movement during drag
-		newY = newY + y;		// New y-position
+	case S_SLIDE: // Y-movement during drag
+		newY = newY + y; // New y-position
 
 		if (newY < g_sliderYmin)
-			gotoY = g_sliderYmin;	// Above top limit
+			gotoY = g_sliderYmin; // Above top limit
 		else if (newY > g_sliderYmax)
-			gotoY = g_sliderYmax;	// Below bottom limit
+			gotoY = g_sliderYmax; // Below bottom limit
 		else
-			gotoY = newY;		// Hunky-Dory
+			gotoY = newY; // Hunky-Dory
 
 		// Move slider to new position
 		MultiMoveRelXY(g_SlideObject, 0, gotoY - g_sliderYpos);
@@ -4329,7 +4325,7 @@ static void SlideSlider(int y, SSFN fn) {
 		}
 		break;
 
-	case S_END:			// End of a drag on the slider
+	case S_END: // End of a drag on the slider
 		// Draw icons from new start icon
 		ati = NearestSlideY(g_sliderYpos);
 		g_InvD[g_ino].FirstDisp = g_slideStuff[ati].n;
@@ -4346,28 +4342,28 @@ static void SlideSlider(int y, SSFN fn) {
  * y-movement during such a drag.
  */
 static void SlideCSlider(int y, SSFN fn) {
-	static int newY = 0;	// FIXME: Avoid non-const global vars
-	int	gotoY;
-	int	fc;
+	static int newY = 0; // FIXME: Avoid non-const global vars
+	int gotoY;
+	int fc;
 
 	// Only do this if there's a slider
 	if (!g_SlideObject)
 		return;
 
 	switch (fn) {
-	case S_START:			// Start of a drag on the slider
+	case S_START: // Start of a drag on the slider
 		newY = g_sliderYpos;
 		break;
 
-	case S_SLIDE:			// Y-movement during drag
-		newY = newY + y;		// New y-position
+	case S_SLIDE: // Y-movement during drag
+		newY = newY + y; // New y-position
 
 		if (newY < g_sliderYmin)
-			gotoY = g_sliderYmin;	// Above top limit
+			gotoY = g_sliderYmin; // Above top limit
 		else if (newY > g_sliderYmax)
-			gotoY = g_sliderYmax;	// Below bottom limit
+			gotoY = g_sliderYmax; // Below bottom limit
 		else
-			gotoY = newY;		// Hunky-Dory
+			gotoY = newY; // Hunky-Dory
 
 		// Move slider to new position
 		if (TinselV2)
@@ -4377,8 +4373,7 @@ static void SlideCSlider(int y, SSFN fn) {
 		fc = cd.extraBase;
 
 		if ((cd.box == saveBox || cd.box == loadBox))
-			FirstFile((g_sliderYpos - g_sliderYmin) * (MAX_SAVED_FILES - NUM_RGROUP_BOXES) /
-				(g_sliderYmax - g_sliderYmin));
+			FirstFile((g_sliderYpos - g_sliderYmin) * (MAX_SAVED_FILES - NUM_RGROUP_BOXES) / (g_sliderYmax - g_sliderYmin));
 		else if (cd.box == hopperBox1)
 			FirstScene((g_sliderYpos - g_sliderYmin) * (g_numScenes - NUM_RGROUP_BOXES) / sliderRange);
 		else if (cd.box == hopperBox2)
@@ -4394,13 +4389,13 @@ static void SlideCSlider(int y, SSFN fn) {
 			if (cd.selBox < 0)
 				cd.selBox = 0;
 			else if (cd.selBox >= NUM_RGROUP_BOXES)
-				cd.selBox = NUM_RGROUP_BOXES-1;
+				cd.selBox = NUM_RGROUP_BOXES - 1;
 
 			Select(cd.selBox, true);
 		}
 		break;
 
-	case S_END:			// End of a drag on the slider
+	case S_END: // End of a drag on the slider
 		break;
 
 	default:
@@ -4413,7 +4408,7 @@ static void SlideCSlider(int y, SSFN fn) {
  * and upon x-movement during such a drag.
  */
 static void SlideMSlider(int x, SSFN fn) {
-	static int newX = 0;	// FIXME: Avoid non-const global vars
+	static int newX = 0; // FIXME: Avoid non-const global vars
 	int gotoX;
 	int index, i;
 
@@ -4430,31 +4425,31 @@ static void SlideMSlider(int x, SSFN fn) {
 	assert(i < g_numMdSlides);
 
 	switch (fn) {
-	case S_START:			// Start of a drag on the slider
+	case S_START: // Start of a drag on the slider
 		// can use index as a throw-away value
 		GetAniPosition(g_mdSlides[i].obj, &newX, &index);
 		g_lX = g_sX = newX;
 		break;
 
-	case S_SLIDE:			// X-movement during drag
+	case S_SLIDE: // X-movement during drag
 		if (x == 0)
 			return;
 
-		newX = newX + x;	// New x-position
+		newX = newX + x; // New x-position
 
 		if (newX < g_mdSlides[i].min)
-			gotoX = g_mdSlides[i].min;	// Below bottom limit
+			gotoX = g_mdSlides[i].min; // Below bottom limit
 		else if (newX > g_mdSlides[i].max)
-			gotoX = g_mdSlides[i].max;	// Above top limit
+			gotoX = g_mdSlides[i].max; // Above top limit
 		else
-			gotoX = newX;		// Hunky-Dory
+			gotoX = newX; // Hunky-Dory
 
 		// Move slider to new position
 		MultiMoveRelXY(g_mdSlides[i].obj, gotoX - g_sX, 0);
 		g_sX = gotoX;
 
 		if (g_lX != g_sX) {
-			*cd.box[index].ival = (g_sX - g_mdSlides[i].min)*cd.box[index].w/SLIDE_RANGE;
+			*cd.box[index].ival = (g_sX - g_mdSlides[i].min) * cd.box[index].w / SLIDE_RANGE;
 			if (cd.box[index].boxFunc == MUSICVOL)
 				SetMidiVolume(*cd.box[index].ival);
 #ifdef MAC_OPTIONS
@@ -4470,8 +4465,8 @@ static void SlideMSlider(int x, SSFN fn) {
 
 	case S_TIMEUP:
 	case S_TIMEDN:
-		gotoX = SLIDE_RANGE*(*cd.box[index].ival)/cd.box[index].w;
-		MultiSetAniX(g_mdSlides[i].obj, g_mdSlides[i].min+gotoX);
+		gotoX = SLIDE_RANGE * (*cd.box[index].ival) / cd.box[index].w;
+		MultiSetAniX(g_mdSlides[i].obj, g_mdSlides[i].min + gotoX);
 
 		if (cd.box[index].boxFunc == MUSICVOL)
 			SetMidiVolume(*cd.box[index].ival);
@@ -4484,8 +4479,8 @@ static void SlideMSlider(int x, SSFN fn) {
 #endif
 		break;
 
-	case S_END:			// End of a drag on the slider
-		AddBoxes(false);	// Might change position slightly
+	case S_END: // End of a drag on the slider
+		AddBoxes(false); // Might change position slightly
 		if (g_ino == INV_CONF && cd.box == subtitlesBox)
 			Select(_vm->_config->_language, false);
 		break;
@@ -4502,11 +4497,11 @@ static void GettingTaller() {
 			g_InvD[g_ino].inventoryY += g_SuppV;
 		g_SuppV = 0;
 	}
-	while (g_Ychange > (ITEM_HEIGHT+1) && g_InvD[g_ino].NoofVicons < g_InvD[g_ino].MaxVicons) {
-		g_Ychange -= (ITEM_HEIGHT+1);
+	while (g_Ychange > (ITEM_HEIGHT + 1) && g_InvD[g_ino].NoofVicons < g_InvD[g_ino].MaxVicons) {
+		g_Ychange -= (ITEM_HEIGHT + 1);
 		g_InvD[g_ino].NoofVicons++;
 		if (g_Ycompensate == 'T')
-			g_InvD[g_ino].inventoryY -= (ITEM_HEIGHT+1);
+			g_InvD[g_ino].inventoryY -= (ITEM_HEIGHT + 1);
 	}
 	if (g_InvD[g_ino].NoofVicons < g_InvD[g_ino].MaxVicons) {
 		g_SuppV = g_Ychange;
@@ -4524,21 +4519,21 @@ static void GettingShorter() {
 	int StartUv = g_SuppV;
 
 	if (g_SuppV) {
-		g_Ychange += (g_SuppV - (ITEM_HEIGHT+1));
+		g_Ychange += (g_SuppV - (ITEM_HEIGHT + 1));
 		g_InvD[g_ino].NoofVicons++;
 		g_SuppV = 0;
 	}
-	while (g_Ychange < -(ITEM_HEIGHT+1) && g_InvD[g_ino].NoofVicons > g_InvD[g_ino].MinVicons) {
-		g_Ychange += (ITEM_HEIGHT+1);
+	while (g_Ychange < -(ITEM_HEIGHT + 1) && g_InvD[g_ino].NoofVicons > g_InvD[g_ino].MinVicons) {
+		g_Ychange += (ITEM_HEIGHT + 1);
 		g_InvD[g_ino].NoofVicons--;
 	}
 	if (g_InvD[g_ino].NoofVicons > g_InvD[g_ino].MinVicons && g_Ychange) {
-		g_SuppV = (ITEM_HEIGHT+1) + g_Ychange;
+		g_SuppV = (ITEM_HEIGHT + 1) + g_Ychange;
 		g_InvD[g_ino].NoofVicons--;
 		g_Ychange = 0;
 	}
 	if (g_Ycompensate == 'T')
-		g_InvD[g_ino].inventoryY += (ITEM_HEIGHT+1)*(StartNvi - g_InvD[g_ino].NoofVicons) - (g_SuppV - StartUv);
+		g_InvD[g_ino].inventoryY += (ITEM_HEIGHT + 1) * (StartNvi - g_InvD[g_ino].NoofVicons) - (g_SuppV - StartUv);
 }
 
 /**
@@ -4552,8 +4547,8 @@ static void GettingWider() {
 		g_Xchange += g_SuppH;
 		g_SuppH = 0;
 	}
-	while (g_Xchange > (ITEM_WIDTH+1) && g_InvD[g_ino].NoofHicons < g_InvD[g_ino].MaxHicons) {
-		g_Xchange -= (ITEM_WIDTH+1);
+	while (g_Xchange > (ITEM_WIDTH + 1) && g_InvD[g_ino].NoofHicons < g_InvD[g_ino].MaxHicons) {
+		g_Xchange -= (ITEM_WIDTH + 1);
 		g_InvD[g_ino].NoofHicons++;
 	}
 	if (g_InvD[g_ino].NoofHicons < g_InvD[g_ino].MaxHicons) {
@@ -4561,7 +4556,7 @@ static void GettingWider() {
 		g_Xchange = 0;
 	}
 	if (g_Xcompensate == 'L')
-		g_InvD[g_ino].inventoryX += (ITEM_WIDTH+1)*(StartNhi - g_InvD[g_ino].NoofHicons) - (g_SuppH - StartUh);
+		g_InvD[g_ino].inventoryX += (ITEM_WIDTH + 1) * (StartNhi - g_InvD[g_ino].NoofHicons) - (g_SuppH - StartUh);
 }
 
 /**
@@ -4572,23 +4567,22 @@ static void GettingNarrower() {
 	int StartUh = g_SuppH;
 
 	if (g_SuppH) {
-		g_Xchange += (g_SuppH - (ITEM_WIDTH+1));
+		g_Xchange += (g_SuppH - (ITEM_WIDTH + 1));
 		g_InvD[g_ino].NoofHicons++;
 		g_SuppH = 0;
 	}
-	while (g_Xchange < -(ITEM_WIDTH+1) && g_InvD[g_ino].NoofHicons > g_InvD[g_ino].MinHicons) {
-		g_Xchange += (ITEM_WIDTH+1);
+	while (g_Xchange < -(ITEM_WIDTH + 1) && g_InvD[g_ino].NoofHicons > g_InvD[g_ino].MinHicons) {
+		g_Xchange += (ITEM_WIDTH + 1);
 		g_InvD[g_ino].NoofHicons--;
 	}
 	if (g_InvD[g_ino].NoofHicons > g_InvD[g_ino].MinHicons && g_Xchange) {
-		g_SuppH = (ITEM_WIDTH+1) + g_Xchange;
+		g_SuppH = (ITEM_WIDTH + 1) + g_Xchange;
 		g_InvD[g_ino].NoofHicons--;
 		g_Xchange = 0;
 	}
 	if (g_Xcompensate == 'L')
-		g_InvD[g_ino].inventoryX += (ITEM_WIDTH+1)*(StartNhi - g_InvD[g_ino].NoofHicons) - (g_SuppH - StartUh);
+		g_InvD[g_ino].inventoryX += (ITEM_WIDTH + 1) * (StartNhi - g_InvD[g_ino].NoofHicons) - (g_SuppH - StartUh);
 }
-
 
 /**
  * Called from Xmovement()/Ymovement() during re-sizing.
@@ -4620,7 +4614,7 @@ extern void Xmovement(int x) {
 		switch (g_InvDragging) {
 		case ID_MOVE:
 			GetAniPosition(g_objArray[0], &g_InvD[g_ino].inventoryX, &aniY);
-			g_InvD[g_ino].inventoryX +=x;
+			g_InvD[g_ino].inventoryX += x;
 			MultiSetAniX(g_objArray[0], g_InvD[g_ino].inventoryX);
 			for (i = 1; i < MAX_WCOMP && g_objArray[i]; i++)
 				MultiMoveRelXY(g_objArray[i], x, 0);
@@ -4668,7 +4662,7 @@ extern void Ymovement(int y) {
 		switch (g_InvDragging) {
 		case ID_MOVE:
 			GetAniPosition(g_objArray[0], &aniX, &g_InvD[g_ino].inventoryY);
-			g_InvD[g_ino].inventoryY +=y;
+			g_InvD[g_ino].inventoryY += y;
 			MultiSetAniY(g_objArray[0], g_InvD[g_ino].inventoryY);
 			for (i = 1; i < MAX_WCOMP && g_objArray[i]; i++)
 				MultiMoveRelXY(g_objArray[i], 0, y);
@@ -4713,7 +4707,7 @@ extern void Ymovement(int y) {
  * Called when a drag is commencing.
  */
 static void InvDragStart() {
-	int curX, curY;		// cursor's animation position
+	int curX, curY; // cursor's animation position
 
 	GetCursorXY(&curX, &curY, false);
 
@@ -4721,7 +4715,7 @@ static void InvDragStart() {
 	 * Do something different for Save/Restore screens
 	 */
 	if (g_ino == INV_CONF) {
-		int	whichbox;
+		int whichbox;
 
 		whichbox = WhichMenuBox(curX, curY, true);
 
@@ -4729,7 +4723,7 @@ static void InvDragStart() {
 			g_InvDragging = ID_CSLIDE;
 			SlideCSlider(0, S_START);
 		} else if (whichbox > 0 && (whichbox & IS_MASK)) {
-			g_InvDragging = ID_MDCONT;	// Mixing desk control
+			g_InvDragging = ID_MDCONT; // Mixing desk control
 			cd.selBox = whichbox;
 			SlideMSlider(0, S_START);
 		}
@@ -4829,7 +4823,7 @@ static void InvDragStart() {
  * Called when a drag is over.
  */
 static void InvDragEnd() {
-	int curX, curY;		// cursor's animation position
+	int curX, curY; // cursor's animation position
 
 	GetCursorXY(&curX, &curY, false);
 
@@ -4837,11 +4831,11 @@ static void InvDragEnd() {
 		if (g_InvDragging == ID_SLIDE) {
 			SlideSlider(0, S_END);
 		} else if (g_InvDragging == ID_CSLIDE) {
-			;	// No action
+			; // No action
 		} else if (g_InvDragging == ID_MDCONT) {
 			SlideMSlider(0, S_END);
 		} else if (g_InvDragging == ID_MOVE) {
-			;	// No action
+			; // No action
 		} else {
 			// Were re-sizing. Redraw the whole thing.
 			DumpDobjArray();
@@ -4863,7 +4857,7 @@ static void InvDragEnd() {
 	// Cursor could well now be inappropriate
 	InvCursor(IC_AREA, curX, curY);
 
-	g_Xchange = g_Ychange = 0;		// Probably no need, but does no harm!
+	g_Xchange = g_Ychange = 0; // Probably no need, but does no harm!
 }
 
 static bool MenuDown(int lines) {
@@ -4940,10 +4934,10 @@ static void InventoryDown() {
 	// This code is a copy of the IB_SLIDE_DOWN case in InvWalkTo
 	// TODO: So share this duplicate code
 	if (g_InvD[g_ino].NoofVicons == 1)
-		if (g_InvD[g_ino].FirstDisp + g_InvD[g_ino].NoofHicons*g_InvD[g_ino].NoofVicons < g_InvD[g_ino].NoofItems)
+		if (g_InvD[g_ino].FirstDisp + g_InvD[g_ino].NoofHicons * g_InvD[g_ino].NoofVicons < g_InvD[g_ino].NoofItems)
 			g_InvD[g_ino].FirstDisp += g_InvD[g_ino].NoofHicons;
 	for (int i = 1; i < g_InvD[g_ino].NoofVicons; i++) {
-		if (g_InvD[g_ino].FirstDisp + g_InvD[g_ino].NoofHicons*g_InvD[g_ino].NoofVicons < g_InvD[g_ino].NoofItems)
+		if (g_InvD[g_ino].FirstDisp + g_InvD[g_ino].NoofHicons * g_InvD[g_ino].NoofVicons < g_InvD[g_ino].NoofItems)
 			g_InvD[g_ino].FirstDisp += g_InvD[g_ino].NoofHicons;
 	}
 	g_ItemsChanged = true;
@@ -4974,7 +4968,7 @@ static void MenuAction(int i, bool dbl) {
 		switch (cd.box[i].boxType) {
 		case FLIP:
 			if (dbl) {
-				*(cd.box[i].ival) ^= 1;	// XOR with true
+				*(cd.box[i].ival) ^= 1; // XOR with true
 				AddBoxes(false);
 			}
 			break;
@@ -5051,7 +5045,7 @@ static void ConfActionSpecial(int i) {
 	switch (i) {
 	case IB_NONE:
 		break;
-	case IB_UP:	// Scroll up
+	case IB_UP: // Scroll up
 		if (cd.extraBase > 0) {
 			if ((cd.box == loadBox) || (cd.box == saveBox))
 				FirstFile(cd.extraBase - 1);
@@ -5066,7 +5060,7 @@ static void ConfActionSpecial(int i) {
 			Select(cd.selBox, true);
 		}
 		break;
-	case IB_DOWN:	// Scroll down
+	case IB_DOWN: // Scroll down
 		if ((cd.box == loadBox) || (cd.box == saveBox)) {
 			if (cd.extraBase < MAX_SAVED_FILES - NUM_RGROUP_BOXES) {
 				FirstFile(cd.extraBase + 1);
@@ -5107,8 +5101,8 @@ static void ConfActionSpecial(int i) {
 
 static void InvPutDown(int index) {
 	int aniX, aniY;
-			// index is the drop position
-	int hiIndex;	// Current position of held item (if in)
+	// index is the drop position
+	int hiIndex; // Current position of held item (if in)
 
 	// Find where the held item is positioned in this inventory (if it is)
 	for (hiIndex = 0; hiIndex < g_InvD[g_ino].NoofItems; hiIndex++)
@@ -5117,13 +5111,13 @@ static void InvPutDown(int index) {
 
 	// If drop position would leave a gap, move it up
 	if (index >= g_InvD[g_ino].NoofItems) {
-		if (hiIndex == g_InvD[g_ino].NoofItems)	// Not in, add it
+		if (hiIndex == g_InvD[g_ino].NoofItems) // Not in, add it
 			index = g_InvD[g_ino].NoofItems;
 		else
 			index = g_InvD[g_ino].NoofItems - 1;
 	}
 
-	if (hiIndex == g_InvD[g_ino].NoofItems) {	// Not in, add it
+	if (hiIndex == g_InvD[g_ino].NoofItems) { // Not in, add it
 		if (g_InvD[g_ino].NoofItems < g_InvD[g_ino].MaxInvObj) {
 			g_InvD[g_ino].NoofItems++;
 
@@ -5138,10 +5132,10 @@ static void InvPutDown(int index) {
 
 	// Position it in the inventory
 	if (index < hiIndex) {
-		memmove(&g_InvD[g_ino].contents[index + 1], &g_InvD[g_ino].contents[index], (hiIndex-index)*sizeof(int));
+		memmove(&g_InvD[g_ino].contents[index + 1], &g_InvD[g_ino].contents[index], (hiIndex - index) * sizeof(int));
 		g_InvD[g_ino].contents[index] = g_heldItem;
 	} else if (index > hiIndex) {
-		memmove(&g_InvD[g_ino].contents[hiIndex], &g_InvD[g_ino].contents[hiIndex+1], (index-hiIndex)*sizeof(int));
+		memmove(&g_InvD[g_ino].contents[hiIndex], &g_InvD[g_ino].contents[hiIndex + 1], (index - hiIndex) * sizeof(int));
 		g_InvD[g_ino].contents[index] = g_heldItem;
 	} else {
 		g_InvD[g_ino].contents[index] = g_heldItem;
@@ -5163,7 +5157,7 @@ static void InvPdProcess(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CODE(_ctx);
 
 	GetToken(TOKEN_LEFT_BUT);
-	CORO_SLEEP(_vm->_config->_dclickSpeed+1);
+	CORO_SLEEP(_vm->_config->_dclickSpeed + 1);
 	FreeToken(TOKEN_LEFT_BUT);
 
 	// get the stuff copied to process when it was created
@@ -5182,8 +5176,7 @@ static void InvPickup(int index) {
 		return;
 
 	// If not holding anything
-	if (g_heldItem == INV_NOICON && g_InvD[g_ino].contents[index] &&
-			(!TinselV2 || g_InvD[g_ino].contents[index] != g_heldItem)) {
+	if (g_heldItem == INV_NOICON && g_InvD[g_ino].contents[index] && (!TinselV2 || g_InvD[g_ino].contents[index] != g_heldItem)) {
 		// Pick-up
 		invObj = GetInvObject(g_InvD[g_ino].contents[index]);
 		g_thisIcon = g_InvD[g_ino].contents[index];
@@ -5201,7 +5194,7 @@ static void InvPickup(int index) {
 			InvTinselEvent(invObj, PUTDOWN, INV_PICKUP, index);
 
 		else if (!(invObj->attribute & IO_ONLYINV1 && g_ino != INV_1)
-				&& !(invObj->attribute & IO_ONLYINV2 && g_ino != INV_2)) {
+		         && !(invObj->attribute & IO_ONLYINV2 && g_ino != INV_2)) {
 			if (TinselV2)
 				InvPutDown(index);
 			else
@@ -5244,17 +5237,17 @@ static void InvWalkTo(const Common::Point &coOrds) {
 
 	case I_SLIDE_DOWN:
 		if (g_InvD[g_ino].NoofVicons == 1)
-			if (g_InvD[g_ino].FirstDisp + g_InvD[g_ino].NoofHicons*g_InvD[g_ino].NoofVicons < g_InvD[g_ino].NoofItems)
+			if (g_InvD[g_ino].FirstDisp + g_InvD[g_ino].NoofHicons * g_InvD[g_ino].NoofVicons < g_InvD[g_ino].NoofItems)
 				g_InvD[g_ino].FirstDisp += g_InvD[g_ino].NoofHicons;
 		for (i = 1; i < g_InvD[g_ino].NoofVicons; i++) {
-			if (g_InvD[g_ino].FirstDisp + g_InvD[g_ino].NoofHicons*g_InvD[g_ino].NoofVicons < g_InvD[g_ino].NoofItems)
+			if (g_InvD[g_ino].FirstDisp + g_InvD[g_ino].NoofHicons * g_InvD[g_ino].NoofVicons < g_InvD[g_ino].NoofItems)
 				g_InvD[g_ino].FirstDisp += g_InvD[g_ino].NoofHicons;
 		}
 		g_ItemsChanged = true;
 		break;
 
 	case I_DOWN:
-		if (g_InvD[g_ino].FirstDisp + g_InvD[g_ino].NoofHicons*g_InvD[g_ino].NoofVicons < g_InvD[g_ino].NoofItems) {
+		if (g_InvD[g_ino].FirstDisp + g_InvD[g_ino].NoofHicons * g_InvD[g_ino].NoofVicons < g_InvD[g_ino].NoofItems) {
 			g_InvD[g_ino].FirstDisp += g_InvD[g_ino].NoofHicons;
 			g_ItemsChanged = true;
 		}
@@ -5270,16 +5263,15 @@ static void InvWalkTo(const Common::Point &coOrds) {
 
 			// To cater for drop in dead space between icons,
 			// look 1 pixel right, then 1 down, then 1 right and down.
-			if (i == INV_NOICON && g_heldItem != INV_NOICON &&
-					(g_ino == INV_1 || g_ino == INV_2)) {
-				pt.x += 1;				// 1 to the right
+			if (i == INV_NOICON && g_heldItem != INV_NOICON && (g_ino == INV_1 || g_ino == INV_2)) {
+				pt.x += 1; // 1 to the right
 				i = InvItem(pt, false);
 				if (i == INV_NOICON) {
-					pt.x -= 1;			// 1 down
+					pt.x -= 1; // 1 down
 					pt.y += 1;
 					i = InvItem(pt, false);
 					if (i == INV_NOICON) {
-						pt.x += 1;		// 1 down-right
+						pt.x += 1; // 1 down-right
 						i = InvItem(pt, false);
 					}
 				}
@@ -5324,7 +5316,7 @@ static void InvAction() {
 		}
 		break;
 
-	case I_HEADER:	// Maximise/unmaximise inventory
+	case I_HEADER: // Maximise/unmaximise inventory
 		if (!g_InvD[g_ino].resizable)
 			break;
 
@@ -5367,13 +5359,12 @@ static void InvAction() {
 		g_ItemsChanged = true;
 		break;
 	case I_DOWN:
-		if (g_InvD[g_ino].FirstDisp + g_InvD[g_ino].NoofHicons*g_InvD[g_ino].NoofVicons < g_InvD[g_ino].NoofItems) {
+		if (g_InvD[g_ino].FirstDisp + g_InvD[g_ino].NoofHicons * g_InvD[g_ino].NoofVicons < g_InvD[g_ino].NoofItems) {
 			g_InvD[g_ino].FirstDisp += g_InvD[g_ino].NoofHicons;
 			g_ItemsChanged = true;
 		}
 		break;
 	}
-
 }
 
 static void InvLook(const Common::Point &coOrds) {
@@ -5401,7 +5392,6 @@ static void InvLook(const Common::Point &coOrds) {
 	}
 }
 
-
 /**************************************************************************/
 /********************* Incoming events ************************************/
 /**************************************************************************/
@@ -5418,28 +5408,28 @@ extern void EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 		}
 		break;
 
-	case PLR_WALKTO:		// PLR_SLEFT
+	case PLR_WALKTO: // PLR_SLEFT
 		InvWalkTo(coOrds);
 		break;
 
-	case INV_LOOK:			// PLR_SRIGHT
+	case INV_LOOK: // PLR_SRIGHT
 		if (MenuActive())
 			InvWalkTo(coOrds);
 		else
 			InvLook(coOrds);
 		break;
 
-	case PLR_ACTION:		// PLR_DLEFT
+	case PLR_ACTION: // PLR_DLEFT
 		if (g_InvDragging != ID_MDCONT)
 			InvDragEnd();
 		InvAction();
 		break;
 
-	case PLR_DRAG1_START:		// Left drag start
+	case PLR_DRAG1_START: // Left drag start
 		InvDragStart();
 		break;
 
-	case PLR_DRAG1_END:		// Left drag end
+	case PLR_DRAG1_END: // Left drag end
 		InvDragEnd();
 		break;
 
@@ -5519,11 +5509,11 @@ extern void EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 		if (g_ino == INV_MENU) {
 			// Load or Save screen
 			if (cd.box == loadBox || cd.box == saveBox)
-				FirstFile(MAX_SAVED_FILES);	// Will get reduced to appropriate value
+				FirstFile(MAX_SAVED_FILES); // Will get reduced to appropriate value
 			else if (cd.box == hopperBox1)
-				FirstScene(g_numScenes);		// Will get reduced to appropriate value
+				FirstScene(g_numScenes); // Will get reduced to appropriate value
 			else if (cd.box == hopperBox2)
-				FirstEntry(g_numEntries);		// Will get reduced to appropriate value
+				FirstEntry(g_numEntries); // Will get reduced to appropriate value
 			else
 				break;
 
@@ -5532,7 +5522,7 @@ extern void EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 			Select(cd.selBox, true);
 		} else {
 			// Inventory window
-			g_InvD[g_ino].FirstDisp = g_InvD[g_ino].NoofItems - g_InvD[g_ino].NoofHicons*g_InvD[g_ino].NoofVicons;
+			g_InvD[g_ino].FirstDisp = g_InvD[g_ino].NoofItems - g_InvD[g_ino].NoofHicons * g_InvD[g_ino].NoofVicons;
 			if (g_InvD[g_ino].FirstDisp < 0)
 				g_InvD[g_ino].FirstDisp = 0;
 			g_ItemsChanged = true;
@@ -5608,7 +5598,7 @@ extern void syncInvInfo(Common::Serializer &s) {
 // Note: the SCHANDLE type here has been changed to a void*
 extern void RegisterIcons(void *cptr, int num) {
 	g_numObjects = num;
-	g_invObjects = (INV_OBJECT *) cptr;
+	g_invObjects = (INV_OBJECT *)cptr;
 
 	if (TinselV0) {
 		// In Tinsel 0, the INV_OBJECT structure doesn't have an attributes field, so we
@@ -5634,7 +5624,6 @@ extern void RegisterIcons(void *cptr, int num) {
 				error(NO_MEM, "inventory scripts");
 			memset(g_invFilms, 0, g_numObjects * sizeof(SCNHANDLE));
 		}
-
 
 		// Add defined permanent conversation icons
 		// and store all the films separately
@@ -5695,16 +5684,16 @@ extern void setConfigStrings(SCNHANDLE *tp) {
  * - Declare the heading text and dimensions etc.
  */
 extern void idec_inv(int num, SCNHANDLE text, int MaxContents,
-		int MinWidth, int MinHeight,
-		int StartWidth, int StartHeight,
-		int MaxWidth, int MaxHeight,
-		int startx, int starty, bool moveable) {
+                     int MinWidth, int MinHeight,
+                     int StartWidth, int StartHeight,
+                     int MaxWidth, int MaxHeight,
+                     int startx, int starty, bool moveable) {
 	if (MaxWidth > MAXHICONS)
-		MaxWidth = MAXHICONS;		// Max window width
+		MaxWidth = MAXHICONS; // Max window width
 	if (MaxHeight > MAXVICONS)
-		MaxHeight = MAXVICONS;		// Max window height
+		MaxHeight = MAXVICONS; // Max window height
 	if (MaxContents > MAX_ININV)
-		MaxContents = MAX_ININV;	// Max contents
+		MaxContents = MAX_ININV; // Max contents
 
 	if (StartWidth > MaxWidth)
 		StartWidth = MaxWidth;
@@ -5748,12 +5737,12 @@ extern void idec_inv(int num, SCNHANDLE text, int MaxContents,
  * - Declare the heading text and dimensions etc.
  */
 extern void idec_convw(SCNHANDLE text, int MaxContents,
-		int MinWidth, int MinHeight,
-		int StartWidth, int StartHeight,
-		int MaxWidth, int MaxHeight) {
+                       int MinWidth, int MinHeight,
+                       int StartWidth, int StartHeight,
+                       int MaxWidth, int MaxHeight) {
 	idec_inv(INV_CONV, text, MaxContents, MinWidth, MinHeight,
-			StartWidth, StartHeight, MaxWidth, MaxHeight,
-			20, 8, true);
+	         StartWidth, StartHeight, MaxWidth, MaxHeight,
+	         20, 8, true);
 }
 
 /**
@@ -5761,12 +5750,12 @@ extern void idec_convw(SCNHANDLE text, int MaxContents,
  * - Declare the heading text and dimensions etc.
  */
 extern void idec_inv1(SCNHANDLE text, int MaxContents,
-		int MinWidth, int MinHeight,
-		int StartWidth, int StartHeight,
-		int MaxWidth, int MaxHeight) {
+                      int MinWidth, int MinHeight,
+                      int StartWidth, int StartHeight,
+                      int MaxWidth, int MaxHeight) {
 	idec_inv(INV_1, text, MaxContents, MinWidth, MinHeight,
-			StartWidth, StartHeight, MaxWidth, MaxHeight,
-			100, 100, true);
+	         StartWidth, StartHeight, MaxWidth, MaxHeight,
+	         100, 100, true);
 }
 
 /**
@@ -5774,12 +5763,12 @@ extern void idec_inv1(SCNHANDLE text, int MaxContents,
  * - Declare the heading text and dimensions etc.
  */
 extern void idec_inv2(SCNHANDLE text, int MaxContents,
-		int MinWidth, int MinHeight,
-		int StartWidth, int StartHeight,
-		int MaxWidth, int MaxHeight) {
+                      int MinWidth, int MinHeight,
+                      int StartWidth, int StartHeight,
+                      int MaxWidth, int MaxHeight) {
 	idec_inv(INV_2, text, MaxContents, MinWidth, MinHeight,
-			StartWidth, StartHeight, MaxWidth, MaxHeight,
-			100, 100, true);
+	         StartWidth, StartHeight, MaxWidth, MaxHeight,
+	         100, 100, true);
 }
 
 /**
@@ -5799,7 +5788,7 @@ extern void InvSetLimit(int invno, int MaxContents) {
 	assert(MaxContents >= g_InvD[invno].NoofItems); // can't reduce maximum contents below current contents
 
 	if (MaxContents > MAX_ININV)
-		MaxContents = MAX_ININV;	// Max contents
+		MaxContents = MAX_ININV; // Max contents
 
 	g_InvD[invno].MaxInvObj = MaxContents;
 }
@@ -5808,7 +5797,7 @@ extern void InvSetLimit(int invno, int MaxContents) {
  * Called from Glitter function 'SetInvSize()'
  */
 extern void InvSetSize(int invno, int MinWidth, int MinHeight,
-		int StartWidth, int StartHeight, int MaxWidth, int MaxHeight) {
+                       int StartWidth, int StartHeight, int MaxWidth, int MaxHeight) {
 	assert(invno == INV_1 || invno == INV_2); // only INV_1 and INV_2 supported
 
 	if (StartWidth > MaxWidth)

@@ -28,7 +28,7 @@
 #include "audio/mixer.h"
 
 namespace OPL {
-	class OPL;
+class OPL;
 }
 
 namespace Gob {
@@ -39,7 +39,7 @@ public:
 	AdLib(int callbackFrequency);
 	virtual ~AdLib();
 
-	bool isPlaying() const;    ///< Are we currently playing?
+	bool isPlaying() const; ///< Are we currently playing?
 	int32 getRepeating() const; ///< Return number of times left to loop.
 
 	/** Set the loop counter.
@@ -56,63 +56,61 @@ public:
 
 protected:
 	enum kVoice {
-		kVoiceMelody0   =  0,
-		kVoiceMelody1   =  1,
-		kVoiceMelody2   =  2,
-		kVoiceMelody3   =  3,
-		kVoiceMelody4   =  4,
-		kVoiceMelody5   =  5,
-		kVoiceMelody6   =  6, // Only available in melody mode.
-		kVoiceMelody7   =  7, // Only available in melody mode.
-		kVoiceMelody8   =  8, // Only available in melody mode.
-		kVoiceBaseDrum  =  6, // Only available in percussion mode.
-		kVoiceSnareDrum =  7, // Only available in percussion mode.
-		kVoiceTom       =  8, // Only available in percussion mode.
-		kVoiceCymbal    =  9, // Only available in percussion mode.
-		kVoiceHihat     = 10  // Only available in percussion mode.
+		kVoiceMelody0 = 0,
+		kVoiceMelody1 = 1,
+		kVoiceMelody2 = 2,
+		kVoiceMelody3 = 3,
+		kVoiceMelody4 = 4,
+		kVoiceMelody5 = 5,
+		kVoiceMelody6 = 6, // Only available in melody mode.
+		kVoiceMelody7 = 7, // Only available in melody mode.
+		kVoiceMelody8 = 8, // Only available in melody mode.
+		kVoiceBaseDrum = 6, // Only available in percussion mode.
+		kVoiceSnareDrum = 7, // Only available in percussion mode.
+		kVoiceTom = 8, // Only available in percussion mode.
+		kVoiceCymbal = 9, // Only available in percussion mode.
+		kVoiceHihat = 10 // Only available in percussion mode.
 	};
 
 	/** Operator parameters. */
 	enum kParam {
-		kParamKeyScaleLevel =  0,
-		kParamFreqMulti     =  1,
-		kParamFeedback      =  2,
-		kParamAttack        =  3,
-		kParamSustain       =  4,
-		kParamSustaining    =  5,
-		kParamDecay         =  6,
-		kParamRelease       =  7,
-		kParamLevel         =  8,
-		kParamAM            =  9,
-		kParamVib           = 10,
-		kParamKeyScaleRate  = 11,
-		kParamFM            = 12,
-		kParamWaveSelect    = 13
+		kParamKeyScaleLevel = 0,
+		kParamFreqMulti = 1,
+		kParamFeedback = 2,
+		kParamAttack = 3,
+		kParamSustain = 4,
+		kParamSustaining = 5,
+		kParamDecay = 6,
+		kParamRelease = 7,
+		kParamLevel = 8,
+		kParamAM = 9,
+		kParamVib = 10,
+		kParamKeyScaleRate = 11,
+		kParamFM = 12,
+		kParamWaveSelect = 13
 	};
 
-	static const int kOperatorCount  = 18; ///< Number of operators.
-	static const int kParamCount     = 14; ///< Number of operator parameters.
+	static const int kOperatorCount = 18; ///< Number of operators.
+	static const int kParamCount = 14; ///< Number of operator parameters.
 	static const int kPitchStepCount = 25; ///< Number of pitch bend steps in a half tone.
-	static const int kOctaveCount    =  8; ///< Number of octaves we can play.
-	static const int kHalfToneCount  = 12; ///< Number of half tones in an octave.
+	static const int kOctaveCount = 8; ///< Number of octaves we can play.
+	static const int kHalfToneCount = 12; ///< Number of half tones in an octave.
 
 	static const int kOperatorsPerVoice = 2; ///< Number of operators per voice.
 
-	static const int kMelodyVoiceCount     =  9; ///< Number of melody voices.
-	static const int kPercussionVoiceCount =  5; ///< Number of percussion voices.
-	static const int kMaxVoiceCount        = 11; ///< Max number of voices.
+	static const int kMelodyVoiceCount = 9; ///< Number of melody voices.
+	static const int kPercussionVoiceCount = 5; ///< Number of percussion voices.
+	static const int kMaxVoiceCount = 11; ///< Max number of voices.
 
 	/** Number of notes we can play. */
 	static const int kNoteCount = kHalfToneCount * kOctaveCount;
 
 	static const int kMaxVolume = 0x007F;
-	static const int kMaxPitch  = 0x3FFF;
-	static const int kMidPitch  = 0x2000;
+	static const int kMaxPitch = 0x3FFF;
+	static const int kMidPitch = 0x2000;
 
 	static const int kStandardMidC = 60; ///< A mid C in standard MIDI.
-	static const int kOPLMidC      = 48; ///< A mid C for the OPL.
-
-
+	static const int kOPLMidC = 48; ///< A mid C for the OPL.
 
 	/** Write a value into an OPL register. */
 	void writeOPL(byte reg, byte val);
@@ -206,23 +204,22 @@ protected:
 private:
 	static const uint8 kVolumeTable[Audio::Mixer::kMaxMixerVolume + 1];
 
-	static const uint8 kOperatorType  [kOperatorCount];
+	static const uint8 kOperatorType[kOperatorCount];
 	static const uint8 kOperatorOffset[kOperatorCount];
-	static const uint8 kOperatorVoice [kOperatorCount];
+	static const uint8 kOperatorVoice[kOperatorCount];
 
-	static const uint8 kVoiceMelodyOperator    [kOperatorsPerVoice][kMelodyVoiceCount];
+	static const uint8 kVoiceMelodyOperator[kOperatorsPerVoice][kMelodyVoiceCount];
 	static const uint8 kVoicePercussionOperator[kOperatorsPerVoice][kPercussionVoiceCount];
 
 	static const byte kPercussionMasks[kPercussionVoiceCount];
 
-	static const uint16 kPianoParams    [kOperatorsPerVoice][kParamCount];
-	static const uint16 kBaseDrumParams [kOperatorsPerVoice][kParamCount];
+	static const uint16 kPianoParams[kOperatorsPerVoice][kParamCount];
+	static const uint16 kBaseDrumParams[kOperatorsPerVoice][kParamCount];
 
 	static const uint16 kSnareDrumParams[kParamCount];
-	static const uint16 kTomParams      [kParamCount];
-	static const uint16 kCymbalParams   [kParamCount];
-	static const uint16 kHihatParams    [kParamCount];
-
+	static const uint16 kTomParams[kParamCount];
+	static const uint16 kCymbalParams[kParamCount];
+	static const uint16 kHihatParams[kParamCount];
 
 	OPL::OPL *_opl;
 
@@ -247,21 +244,20 @@ private:
 	bool _percussionMode;
 	byte _percussionBits;
 
-	uint8  _pitchRange;
+	uint8 _pitchRange;
 	uint16 _pitchRangeStep;
 
 	uint8 _voiceNote[kMaxVoiceCount]; // Last note of each voice
-	uint8 _voiceOn  [kMaxVoiceCount]; // Whether each voice is currently on
+	uint8 _voiceOn[kMaxVoiceCount]; // Whether each voice is currently on
 
 	uint8 _operatorVolume[kOperatorCount]; // Volume of each operator
 
 	byte _operatorParams[kOperatorCount][kParamCount]; // All operator parameters
 
-	uint16  _freqs[kPitchStepCount][kHalfToneCount];
+	uint16 _freqs[kPitchStepCount][kHalfToneCount];
 	uint16 *_freqPtr[kMaxVoiceCount];
 
 	int _halfToneOffset[kMaxVoiceCount];
-
 
 	void createOPL();
 	void initOPL();

@@ -33,9 +33,11 @@ class CPortHole : public CGameObject {
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
+
 private:
 	bool _open;
 	CString _closeSoundName, _openSoundName;
+
 public:
 	CLASSDEF;
 	CPortHole();

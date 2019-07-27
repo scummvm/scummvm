@@ -1,6 +1,6 @@
-#include <cxxtest/TestSuite.h>
-#include "common/util.h"
 #include "common/tokenizer.h"
+#include "common/util.h"
+#include <cxxtest/TestSuite.h>
 
 class TokenizerTestSuite : public CxxTest::TestSuite {
 public:
@@ -8,7 +8,7 @@ public:
 
 		// test normal behavior
 		Common::StringTokenizer strTokenizer("Now, this is a test!", " ,!");
-		Common::String tokenArray[] = {"Now", "this", "is", "a", "test"};
+		Common::String tokenArray[] = { "Now", "this", "is", "a", "test" };
 
 		for (int i = 0; i < ARRAYSIZE(tokenArray); ++i) {
 			// make sure nextToken works correctly
@@ -53,5 +53,4 @@ public:
 		strTokenizer.nextToken(); //test
 		TS_ASSERT(strTokenizer.empty());
 	}
-
 };

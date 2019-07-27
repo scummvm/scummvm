@@ -23,8 +23,8 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit
 
 #include "common/textconsole.h"
-#include "common/system.h"
 #include "common/str.h"
+#include "common/system.h"
 
 namespace Common {
 
@@ -40,9 +40,7 @@ void setErrorHandler(ErrorHandler handler) {
 	s_errorHandler = handler;
 }
 
-
 } // End of namespace Common
-
 
 #ifndef DISABLE_TEXT_CONSOLE
 
@@ -77,7 +75,6 @@ void NORETURN_PRE error(const char *s, ...) {
 	vsnprintf(buf_input, STRINGBUFLEN, s, va);
 	va_end(va);
 
-
 	// Next, give the active engine (if any) a chance to augment the message
 	if (Common::s_errorOutputFormatter) {
 		(*Common::s_errorOutputFormatter)(buf_output, buf_input, STRINGBUFLEN);
@@ -104,7 +101,8 @@ void NORETURN_PRE error(const char *s, ...) {
 
 #if defined(SAMSUNGTV)
 	// FIXME
-	for (;;) {}
+	for (;;) {
+	}
 #else
 	exit(1);
 #endif

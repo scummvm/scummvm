@@ -87,7 +87,8 @@ Common::JSONObject ListAjaxHandler::listDirectory(Common::String path) {
 	// fill the content
 	for (Common::FSList::iterator i = _nodeContent.begin(); i != _nodeContent.end(); ++i) {
 		Common::String name = i->getDisplayName();
-		if (i->isDirectory()) name += "/";
+		if (i->isDirectory())
+			name += "/";
 
 		Common::String filePath = i->getPath();
 		if (filePath.hasPrefix(prefixToRemove))

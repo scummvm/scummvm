@@ -21,9 +21,9 @@
  */
 
 #include "gmchannel.h"
-#include "common/util.h"
-#include "common/textconsole.h"
 #include "audio/mididrv.h"
+#include "common/textconsole.h"
+#include "common/util.h"
 
 namespace Sky {
 
@@ -94,24 +94,44 @@ uint8 GmChannel::process(uint16 aktTime) {
 	while ((_channelData.nextEventTime < 0) && (_channelData.channelActive)) {
 		opcode = _musicData[_channelData.eventDataPtr];
 		_channelData.eventDataPtr++;
-		if (opcode&0x80) {
+		if (opcode & 0x80) {
 			if (opcode == 0xFF) {
 				// dummy opcode
 			} else if (opcode >= 0x90) {
-				switch (opcode&0xF) {
-				case 0: com90_caseNoteOff(); break;
-				case 1: com90_stopChannel(); break;
-				case 2: com90_setupInstrument(); break;
+				switch (opcode & 0xF) {
+				case 0:
+					com90_caseNoteOff();
+					break;
+				case 1:
+					com90_stopChannel();
+					break;
+				case 2:
+					com90_setupInstrument();
+					break;
 				case 3:
 					returnVal = com90_updateTempo();
 					break;
-				case 5: com90_getPitch(); break;
-				case 6: com90_getChannelVolume(); break;
-				case 8: com90_loopMusic(); break;
-				case 9: com90_keyOff(); break;
-				case 11: com90_getChannelPanValue(); break;
-				case 12: com90_setLoopPoint(); break;
-				case 13: com90_getChannelControl(); break;
+				case 5:
+					com90_getPitch();
+					break;
+				case 6:
+					com90_getChannelVolume();
+					break;
+				case 8:
+					com90_loopMusic();
+					break;
+				case 9:
+					com90_keyOff();
+					break;
+				case 11:
+					com90_getChannelPanValue();
+					break;
+				case 12:
+					com90_setLoopPoint();
+					break;
+				case 13:
+					com90_getChannelControl();
+					break;
 
 				default:
 					error("GmChannel: Unknown music opcode 0x%02X", opcode);
@@ -119,7 +139,7 @@ uint8 GmChannel::process(uint16 aktTime) {
 				}
 			} else {
 				// new midi channel assignment
-				_channelData.midiChannelNumber = opcode&0xF;
+				_channelData.midiChannelNumber = opcode & 0xF;
 			}
 		} else {
 			_channelData.note = opcode;

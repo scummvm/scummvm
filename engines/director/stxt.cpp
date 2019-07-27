@@ -60,18 +60,18 @@ Stxt::Stxt(Common::SeekableSubReadStreamEndian &textStream) {
 		_palinfo3 = textStream.readUint16();
 
 		debugC(3, kDebugText, "Stxt init: formattingCount: %u, formatStartOffset: %d, height: %d ascent: %d, fontId: %d, textSlant: %d padding: 0x%02x",
-			   formattingCount, formatStartOffset, height, ascent, _fontId, _textSlant, padding);
+		       formattingCount, formatStartOffset, height, ascent, _fontId, _textSlant, padding);
 
 		debugC(3, kDebugText, "        fontSize: %d, p0: %x p1: %x p2: %x", _fontSize, _palinfo1, _palinfo2, _palinfo3);
 
-		assert(prevPos <= formatStartOffset);  // If this is triggered, we have to implement sorting
+		assert(prevPos <= formatStartOffset); // If this is triggered, we have to implement sorting
 
 		while (prevPos != formatStartOffset) {
 			char f = text.firstChar();
 			_ftext += text.firstChar();
 			text.deleteChar(0);
 
-			if (f == '\001')    // Insert two \001s as a replacement
+			if (f == '\001') // Insert two \001s as a replacement
 				_ftext += '\001';
 
 			prevPos++;
@@ -82,12 +82,12 @@ Stxt::Stxt(Common::SeekableSubReadStreamEndian &textStream) {
 		debugCN(4, kDebugText, "*");
 
 		_ftext += Common::String::format("\001\015%c%c%c%c%c%c%c%c%c%c%c",
-										 (_fontId >> 8) & 0xff, _fontId & 0xff,
-										 _textSlant & 0xff,
-										 (_fontSize >> 8) & 0xff, _fontSize & 0xff,
-										 (_palinfo1 >> 8) & 0xff, _palinfo1 & 0xff,
-										 (_palinfo2 >> 8) & 0xff, _palinfo2 & 0xff,
-										 (_palinfo3 >> 8) & 0xff, _palinfo3 & 0xff);
+		                                 (_fontId >> 8) & 0xff, _fontId & 0xff,
+		                                 _textSlant & 0xff,
+		                                 (_fontSize >> 8) & 0xff, _fontSize & 0xff,
+		                                 (_palinfo1 >> 8) & 0xff, _palinfo1 & 0xff,
+		                                 (_palinfo2 >> 8) & 0xff, _palinfo2 & 0xff,
+		                                 (_palinfo3 >> 8) & 0xff, _palinfo3 & 0xff);
 
 		formattingCount--;
 	}

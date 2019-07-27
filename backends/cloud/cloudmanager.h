@@ -23,13 +23,13 @@
 #ifndef CLOUD_CLOUDMANAGER_H
 #define CLOUD_CLOUDMANAGER_H
 
-#include "backends/cloud/storage.h"
 #include "backends/cloud/cloudicon.h"
+#include "backends/cloud/storage.h"
 
 #include "common/array.h"
+#include "common/events.h"
 #include "common/singleton.h"
 #include "common/str-array.h"
-#include "common/events.h"
 
 namespace GUI {
 
@@ -287,7 +287,7 @@ public:
 };
 
 /** Shortcut for accessing the connection manager. */
-#define CloudMan        Cloud::CloudManager::instance()
+#define CloudMan Cloud::CloudManager::instance()
 
 } // End of namespace Cloud
 

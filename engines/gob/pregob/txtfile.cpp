@@ -49,11 +49,11 @@ void TXTFile::load(Common::SeekableReadStream &txt, Format format) {
 	while (!txt.eos()) {
 		Line line;
 
-		line.text  =                                              getStr(txt);
-		line.x     = (format >= kFormatStringPosition)          ? getInt(txt) : 0;
-		line.y     = (format >= kFormatStringPosition)          ? getInt(txt) : 0;
-		line.color = (format >= kFormatStringPositionColor)     ? getInt(txt) : 0;
-		line.font  = (format >= kFormatStringPositionColorFont) ? getInt(txt) : 0;
+		line.text = getStr(txt);
+		line.x = (format >= kFormatStringPosition) ? getInt(txt) : 0;
+		line.y = (format >= kFormatStringPosition) ? getInt(txt) : 0;
+		line.color = (format >= kFormatStringPositionColor) ? getInt(txt) : 0;
+		line.font = (format >= kFormatStringPositionColorFont) ? getInt(txt) : 0;
 
 		_lines.push_back(line);
 	}
@@ -63,7 +63,7 @@ void TXTFile::load(Common::SeekableReadStream &txt, Format format) {
 }
 
 bool TXTFile::draw(Surface &surface, int16 &left, int16 &top, int16 &right, int16 &bottom,
-                   const Font * const *fonts, uint fontCount, int color) {
+                   const Font *const *fonts, uint fontCount, int color) {
 
 	trashBuffer();
 
@@ -84,7 +84,7 @@ bool TXTFile::draw(Surface &surface, int16 &left, int16 &top, int16 &right, int1
 }
 
 bool TXTFile::draw(uint line, Surface &surface, int16 &left, int16 &top, int16 &right, int16 &bottom,
-                   const Font * const *fonts, uint fontCount, int color) {
+                   const Font *const *fonts, uint fontCount, int color) {
 
 	trashBuffer();
 
@@ -101,13 +101,13 @@ bool TXTFile::draw(uint line, Surface &surface, int16 &left, int16 &top, int16 &
 	return true;
 }
 
-bool TXTFile::draw(Surface &surface, const Font * const *fonts, uint fontCount, int color) {
+bool TXTFile::draw(Surface &surface, const Font *const *fonts, uint fontCount, int color) {
 	int16 left, top, right, bottom;
 
 	return draw(surface, left, top, right, bottom, fonts, fontCount, color);
 }
 
-bool TXTFile::draw(uint line, Surface &surface, const Font * const *fonts, uint fontCount, int color) {
+bool TXTFile::draw(uint line, Surface &surface, const Font *const *fonts, uint fontCount, int color) {
 	int16 left, top, right, bottom;
 
 	return draw(line, surface, left, top, right, bottom, fonts, fontCount, color);
@@ -118,22 +118,22 @@ bool TXTFile::clear(Surface &surface, int16 &left, int16 &top, int16 &right, int
 }
 
 bool TXTFile::getArea(int16 &left, int16 &top, int16 &right, int16 &bottom,
-                      const Font * const *fonts, uint fontCount) const {
+                      const Font *const *fonts, uint fontCount) const {
 
 	bool hasLine = false;
 
-	left   = 0x7FFF;
-	top    = 0x7FFF;
-	right  = 0x0000;
+	left = 0x7FFF;
+	top = 0x7FFF;
+	right = 0x0000;
 	bottom = 0x0000;
 
 	for (uint i = 0; i < _lines.size(); i++) {
 		int16 lLeft, lTop, lRight, lBottom;
 
 		if (getArea(i, lLeft, lTop, lRight, lBottom, fonts, fontCount)) {
-			left   = MIN(left  , lLeft  );
-			top    = MIN(top   , lTop   );
-			right  = MAX(right , lRight );
+			left = MIN(left, lLeft);
+			top = MIN(top, lTop);
+			right = MAX(right, lRight);
 			bottom = MAX(bottom, lBottom);
 
 			hasLine = true;
@@ -144,18 +144,17 @@ bool TXTFile::getArea(int16 &left, int16 &top, int16 &right, int16 &bottom,
 }
 
 bool TXTFile::getArea(uint line, int16 &left, int16 &top, int16 &right, int16 &bottom,
-                      const Font * const *fonts, uint fontCount) const {
-
+                      const Font *const *fonts, uint fontCount) const {
 
 	if ((line >= _lines.size()) || (_lines[line].font >= fontCount))
 		return false;
 
 	const Line &l = _lines[line];
 
-	left   = l.x;
-	top    = l.y;
-	right  = l.x + l.text.size() * fonts[l.font]->getCharWidth()  - 1;
-	bottom = l.y +                 fonts[l.font]->getCharHeight() - 1;
+	left = l.x;
+	top = l.y;
+	right = l.x + l.text.size() * fonts[l.font]->getCharWidth() - 1;
+	bottom = l.y + fonts[l.font]->getCharHeight() - 1;
 
 	return true;
 }
@@ -190,7 +189,7 @@ Common::String TXTFile::getStr(Common::SeekableReadStream &txt) {
 	Common::String cleanString;
 
 	for (uint i = 0; i < string.size(); i++) {
-		if      (string[i] == '#')
+		if (string[i] == '#')
 			cleanString += ' ';
 		else if ((unsigned char)string[i] >= ' ')
 			cleanString += string[i];

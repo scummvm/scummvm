@@ -29,7 +29,6 @@
 #ifndef WINTERMUTE_BASE_VIEWPORT_H
 #define WINTERMUTE_BASE_VIEWPORT_H
 
-
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/persistent.h"
@@ -49,6 +48,7 @@ public:
 	BaseViewport(BaseGame *inGame = nullptr);
 	virtual ~BaseViewport();
 	virtual Common::String debuggerToString() const;
+
 private:
 	Rect32 _rect;
 };

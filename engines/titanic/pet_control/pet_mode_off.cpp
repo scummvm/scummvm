@@ -26,7 +26,8 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CPetModeOff, CToggleSwitch);
 
-CPetModeOff::CPetModeOff() : CToggleSwitch() {
+CPetModeOff::CPetModeOff()
+  : CToggleSwitch() {
 }
 
 void CPetModeOff::save(SimpleFile *file, int indent) {

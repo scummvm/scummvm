@@ -21,7 +21,7 @@
  */
 
 #include "titanic/true_talk/tt_scripts.h"
-#include "titanic/true_talk/title_engine.h"
+#include "titanic/translation.h"
 #include "titanic/true_talk/barbot_script.h"
 #include "titanic/true_talk/bellbot_script.h"
 #include "titanic/true_talk/deskbot_script.h"
@@ -30,7 +30,7 @@
 #include "titanic/true_talk/maitred_script.h"
 #include "titanic/true_talk/parrot_script.h"
 #include "titanic/true_talk/succubus_script.h"
-#include "titanic/translation.h"
+#include "titanic/true_talk/title_engine.h"
 
 namespace Titanic {
 

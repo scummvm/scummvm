@@ -30,10 +30,12 @@ namespace Titanic {
 class CTurnOnPlaySound : public CTurnOnObject {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+
 private:
 	CString _soundName;
 	int _soundVolume;
 	int _soundVal3;
+
 public:
 	CLASSDEF;
 	CTurnOnPlaySound();

@@ -20,24 +20,24 @@
  *
  */
 
-#include "sci/sci.h"
-#include "sci/engine/state.h"
-#include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
+#include "sci/engine/selector.h"
+#include "sci/engine/state.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/screen.h"
+#include "sci/sci.h"
 #ifdef ENABLE_SCI32
-#include "sci/graphics/paint32.h"
-#include "sci/graphics/palette32.h"
-#include "sci/graphics/plane32.h"
-#include "sci/graphics/frameout.h"
+#	include "sci/graphics/frameout.h"
+#	include "sci/graphics/paint32.h"
+#	include "sci/graphics/palette32.h"
+#	include "sci/graphics/plane32.h"
 #endif
 
 #include "common/debug-channels.h"
 #include "common/list.h"
-#include "common/system.h"
 #include "common/math.h"
+#include "common/system.h"
 
 //#define DEBUG_MERGEPOLY
 
@@ -78,25 +78,31 @@ enum {
 
 // Floating point struct
 struct FloatPoint {
-	FloatPoint() : x(0), y(0) {}
-	FloatPoint(float x_, float y_) : x(x_), y(y_) {}
-	FloatPoint(Common::Point p) : x(p.x), y(p.y) {}
+	FloatPoint()
+	  : x(0)
+	  , y(0) {}
+	FloatPoint(float x_, float y_)
+	  : x(x_)
+	  , y(y_) {}
+	FloatPoint(Common::Point p)
+	  : x(p.x)
+	  , y(p.y) {}
 
 	Common::Point toPoint() {
 		return Common::Point((int16)(x + 0.5), (int16)(y + 0.5));
 	}
 
 	float operator*(const FloatPoint &p) const {
-		return x*p.x + y*p.y;
+		return x * p.x + y * p.y;
 	}
 	FloatPoint operator*(float l) const {
-		return FloatPoint(l*x, l*y);
+		return FloatPoint(l * x, l * y);
 	}
 	FloatPoint operator-(const FloatPoint &p) const {
-		return FloatPoint(x-p.x, y-p.y);
+		return FloatPoint(x - p.x, y - p.y);
 	}
 	float norm() const {
-		return x*x+y*y;
+		return x * x + y * y;
 	}
 
 	float x, y;
@@ -107,8 +113,8 @@ struct Vertex {
 	Common::Point v;
 
 	// Vertex circular list entry
-	Vertex *_next;	// next element
-	Vertex *_prev;	// previous element
+	Vertex *_next; // next element
+	Vertex *_prev; // previous element
 
 	// A* cost variables
 	uint32 costF;
@@ -118,13 +124,14 @@ struct Vertex {
 	Vertex *path_prev;
 
 public:
-	Vertex(const Common::Point &p) : v(p) {
+	Vertex(const Common::Point &p)
+	  : v(p) {
 		costG = HUGE_DISTANCE;
 		path_prev = NULL;
 	}
 };
 
-class VertexList: public Common::List<Vertex *> {
+class VertexList : public Common::List<Vertex *> {
 public:
 	bool contains(Vertex *v) {
 		for (iterator it = begin(); it != end(); ++it) {
@@ -137,22 +144,22 @@ public:
 
 /* Circular list definitions. */
 
-#define CLIST_FOREACH(var, head)					\
-	for ((var) = (head)->first();					\
-		(var);							\
-		(var) = ((var)->_next == (head)->first() ?	\
-		    NULL : (var)->_next))
+#define CLIST_FOREACH(var, head) \
+	for ((var) = (head)->first();  \
+	     (var);                    \
+	     (var) = ((var)->_next == (head)->first() ? NULL : (var)->_next))
 
 /* Circular list access methods. */
-#define CLIST_NEXT(elm)		((elm)->_next)
-#define CLIST_PREV(elm)		((elm)->_prev)
+#define CLIST_NEXT(elm) ((elm)->_next)
+#define CLIST_PREV(elm) ((elm)->_prev)
 
 class CircularVertexList {
 public:
 	Vertex *_head;
 
 public:
-	CircularVertexList() : _head(0) {}
+	CircularVertexList()
+	  : _head(0) {}
 
 	Vertex *first() const {
 		return _head;
@@ -201,7 +208,7 @@ public:
 		int n = 0;
 		Vertex *v;
 		CLIST_FOREACH(v, this)
-			++n;
+		++n;
 		return n;
 	}
 
@@ -228,7 +235,8 @@ struct Polygon {
 	CircularVertexList vertices;
 
 public:
-	Polygon(int t) : type(t) {
+	Polygon(int t)
+	  : type(t) {
 	}
 
 	~Polygon() {
@@ -263,7 +271,9 @@ struct PathfindingState {
 	// Screen size
 	int _width, _height;
 
-	PathfindingState(int width, int height) : _width(width), _height(height) {
+	PathfindingState(int width, int height)
+	  : _width(width)
+	  , _height(height) {
 		vertex_start = NULL;
 		vertex_end = NULL;
 		vertex_index = NULL;
@@ -291,7 +301,7 @@ struct PathfindingState {
 static Common::Point readPoint(SegmentRef list_r, int offset) {
 	Common::Point point;
 
-	if (list_r.isRaw) {	// dynmem blocks are raw
+	if (list_r.isRaw) { // dynmem blocks are raw
 		point.x = (int16)READ_SCIENDIAN_UINT16(list_r.raw + offset * POLY_POINT_SIZE);
 		point.y = (int16)READ_SCIENDIAN_UINT16(list_r.raw + offset * POLY_POINT_SIZE + 2);
 	} else {
@@ -303,7 +313,7 @@ static Common::Point readPoint(SegmentRef list_r, int offset) {
 }
 
 static void writePoint(SegmentRef ref, int offset, const Common::Point &point) {
-	if (ref.isRaw) {	// dynmem blocks are raw
+	if (ref.isRaw) { // dynmem blocks are raw
 		WRITE_SCIENDIAN_UINT16(ref.raw + offset * POLY_POINT_SIZE, point.x);
 		WRITE_SCIENDIAN_UINT16(ref.raw + offset * POLY_POINT_SIZE + 2, point.y);
 	} else {
@@ -319,18 +329,18 @@ static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int ty
 	// Red : Barred access
 	// Yellow: Contained access
 	int poly_colors[4] = { 0, 0, 0, 0 };
-	
+
 	if (getSciVersion() <= SCI_VERSION_1_1) {
-		poly_colors[0] = g_sci->_gfxPalette16->kernelFindColor(0, 255, 0);		// green
-		poly_colors[1] = g_sci->_gfxPalette16->kernelFindColor(0, 0, 255);		// blue
-		poly_colors[2] = g_sci->_gfxPalette16->kernelFindColor(255, 0, 0);		// red
-		poly_colors[3] = g_sci->_gfxPalette16->kernelFindColor(255, 255, 0);	// yellow
+		poly_colors[0] = g_sci->_gfxPalette16->kernelFindColor(0, 255, 0); // green
+		poly_colors[1] = g_sci->_gfxPalette16->kernelFindColor(0, 0, 255); // blue
+		poly_colors[2] = g_sci->_gfxPalette16->kernelFindColor(255, 0, 0); // red
+		poly_colors[3] = g_sci->_gfxPalette16->kernelFindColor(255, 255, 0); // yellow
 #ifdef ENABLE_SCI32
 	} else {
-		poly_colors[0] = g_sci->_gfxPalette32->matchColor(0, 255, 0);			// green
-		poly_colors[1] = g_sci->_gfxPalette32->matchColor(0, 0, 255);			// blue
-		poly_colors[2] = g_sci->_gfxPalette32->matchColor(255, 0, 0);			// red
-		poly_colors[3] = g_sci->_gfxPalette32->matchColor(255, 255, 0);			// yellow	
+		poly_colors[0] = g_sci->_gfxPalette32->matchColor(0, 255, 0); // green
+		poly_colors[1] = g_sci->_gfxPalette32->matchColor(0, 0, 255); // blue
+		poly_colors[2] = g_sci->_gfxPalette32->matchColor(255, 0, 0); // red
+		poly_colors[3] = g_sci->_gfxPalette32->matchColor(255, 255, 0); // yellow
 #endif
 	}
 
@@ -360,12 +370,12 @@ static void draw_point(EngineState *s, Common::Point p, int start, int width, in
 	int point_colors[2] = { 0, 0 };
 
 	if (getSciVersion() <= SCI_VERSION_1_1) {
-		point_colors[0] = g_sci->_gfxPalette16->kernelFindColor(0, 255, 0);	// green
-		point_colors[1] = g_sci->_gfxPalette16->kernelFindColor(0, 0, 255);	// blue
+		point_colors[0] = g_sci->_gfxPalette16->kernelFindColor(0, 255, 0); // green
+		point_colors[1] = g_sci->_gfxPalette16->kernelFindColor(0, 0, 255); // blue
 #ifdef ENABLE_SCI32
 	} else {
-		point_colors[0] = g_sci->_gfxPalette32->matchColor(0, 255, 0);		// green
-		point_colors[1] = g_sci->_gfxPalette32->matchColor(0, 0, 255);		// blue
+		point_colors[0] = g_sci->_gfxPalette32->matchColor(0, 255, 0); // green
+		point_colors[1] = g_sci->_gfxPalette32->matchColor(0, 0, 255); // blue
 #endif
 	}
 
@@ -662,7 +672,7 @@ static void fix_vertex_order(Polygon *polygon) {
 	// anti-clockwise. When the area is negative the vertices are ordered
 	// clockwise
 	if (((area > 0) && (polygon->type == POLY_CONTAINED_ACCESS))
-	        || ((area < 0) && (polygon->type != POLY_CONTAINED_ACCESS))) {
+	    || ((area < 0) && (polygon->type != POLY_CONTAINED_ACCESS))) {
 
 		polygon->vertices.reverse();
 	}
@@ -757,8 +767,8 @@ bool PathfindingState::pointOnScreenBorder(const Common::Point &p) {
  */
 bool PathfindingState::edgeOnScreenBorder(const Common::Point &p, const Common::Point &q) {
 	return ((p.x == 0 && q.x == 0) || (p.y == 0 && q.y == 0)
-			|| ((p.x == _width - 1) && (q.x == _width - 1))
-			|| ((p.y == _height - 1) && (q.y == _height - 1)));
+	        || ((p.x == _width - 1) && (q.x == _width - 1))
+	        || ((p.y == _height - 1) && (q.y == _height - 1)));
 }
 
 /**
@@ -861,8 +871,7 @@ static int intersection(const Common::Point &a, const Common::Point &b, const Ve
 	const Common::Point &c = vertex->v;
 	const Common::Point &d = CLIST_NEXT(vertex)->v;
 
-	denom = a.x * (float)(d.y - c.y) + b.x * (float)(c.y - d.y) +
-	        d.x * (float)(b.y - a.y) + c.x * (float)(a.y - b.y);
+	denom = a.x * (float)(d.y - c.y) + b.x * (float)(c.y - d.y) + d.x * (float)(b.y - a.y) + c.x * (float)(a.y - b.y);
 
 	if (denom == 0.0)
 		// Segments are parallel, no intersection
@@ -958,9 +967,9 @@ static bool nearbyPolygon(const Common::Point &point, Polygon *polygon) {
 	assert(polygon->type == POLY_CONTAINED_ACCESS);
 
 	return ((contained(Common::Point(point.x, point.y + 1), polygon) != CONT_INSIDE)
-			|| (contained(Common::Point(point.x, point.y - 1), polygon) != CONT_INSIDE)
-			|| (contained(Common::Point(point.x + 1, point.y), polygon) != CONT_INSIDE)
-			|| (contained(Common::Point(point.x - 1, point.y), polygon) != CONT_INSIDE));
+	        || (contained(Common::Point(point.x, point.y - 1), polygon) != CONT_INSIDE)
+	        || (contained(Common::Point(point.x + 1, point.y), polygon) != CONT_INSIDE)
+	        || (contained(Common::Point(point.x - 1, point.y), polygon) != CONT_INSIDE));
 }
 
 /**
@@ -1178,8 +1187,8 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	// Make sure that we have enough points
 	if (pointList.maxSize < size * POLY_POINT_SIZE) {
 		warning("convert_polygon: Not enough memory allocated for polygon points. "
-				"Expected %d, got %d. Skipping polygon",
-				size * POLY_POINT_SIZE, pointList.maxSize);
+		        "Expected %d, got %d. Skipping polygon",
+		        size * POLY_POINT_SIZE, pointList.maxSize);
 		return NULL;
 	}
 
@@ -1189,7 +1198,7 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	// Polygon has 17 points but size is set to 19
 	if ((size == 19) && g_sci->getGameId() == GID_LSL1) {
 		if ((s->currentRoomNumber() == 350)
-		&& (readPoint(pointList, 18) == Common::Point(108, 137))) {
+		    && (readPoint(pointList, 18) == Common::Point(108, 137))) {
 			debug(1, "Applying fix for broken polygon in lsl1sci, room 350");
 			size = 17;
 		}
@@ -1330,7 +1339,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 	delete new_end;
 
 	// Allocate and build vertex index
-	pf_s->vertex_index = (Vertex**)malloc(sizeof(Vertex *) * (count + 2));
+	pf_s->vertex_index = (Vertex **)malloc(sizeof(Vertex *) * (count + 2));
 
 	count = 0;
 
@@ -1381,7 +1390,7 @@ static void AStar(PathfindingState *s) {
 			}
 		}
 
-		assert(vertex_min != 0);	// the vertex cost should never be bigger than HUGE_DISTANCE
+		assert(vertex_min != 0); // the vertex cost should never be bigger than HUGE_DISTANCE
 
 		// Check if we are done
 		if (vertex_min == s->vertex_end)
@@ -1417,20 +1426,20 @@ static void AStar(PathfindingState *s) {
 			// algorithm matches better what SSCI is doing, we exempt certain rooms where
 			// the check fails.
 			bool penaltyWorkaround =
-				// QFG1VGA room 81 - Hero gets stuck when walking to the SE corner (bug #6140).
-				(g_sci->getGameId() == GID_QFG1VGA && g_sci->getEngineState()->currentRoomNumber() == 81) ||
+			  // QFG1VGA room 81 - Hero gets stuck when walking to the SE corner (bug #6140).
+			  (g_sci->getGameId() == GID_QFG1VGA && g_sci->getEngineState()->currentRoomNumber() == 81) ||
 #ifdef ENABLE_SCI32
-				// QFG4 room 563 - Hero zig-zags into the room (bug #10858).
-				// Entering from the south (564) off-screen behind an obstacle, hero
-				// fails to turn at a point on the screen edge, passes the poly's corner,
-				// then approaches the destination from deeper in the room.
-				(g_sci->getGameId() == GID_QFG4 && g_sci->getEngineState()->currentRoomNumber() == 563) ||
+			  // QFG4 room 563 - Hero zig-zags into the room (bug #10858).
+			  // Entering from the south (564) off-screen behind an obstacle, hero
+			  // fails to turn at a point on the screen edge, passes the poly's corner,
+			  // then approaches the destination from deeper in the room.
+			  (g_sci->getGameId() == GID_QFG4 && g_sci->getEngineState()->currentRoomNumber() == 563) ||
 
-				// QFG4 room 580 - Hero zig-zags into the room (bug #10870).
-				// Entering from the south (581) off-screen behind an obstacle, as above.
-				(g_sci->getGameId() == GID_QFG4 && g_sci->getEngineState()->currentRoomNumber() == 580) ||
+			  // QFG4 room 580 - Hero zig-zags into the room (bug #10870).
+			  // Entering from the south (581) off-screen behind an obstacle, as above.
+			  (g_sci->getGameId() == GID_QFG4 && g_sci->getEngineState()->currentRoomNumber() == 580) ||
 #endif
-				false;
+			  false;
 
 			if (s->pointOnScreenBorder(vertex->v) && !penaltyWorkaround)
 				new_dist += 10000;
@@ -1547,7 +1556,7 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 
 	switch (argc) {
 
-	case 3 : {
+	case 3: {
 		reg_t retval;
 		Polygon *polygon = convert_polygon(s, argv[2]);
 
@@ -1561,9 +1570,9 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 		delete polygon;
 		return retval;
 	}
-	case 6 :
-	case 7 :
-	case 8 : {
+	case 6:
+	case 7:
+	case 8: {
 		Common::Point end = Common::Point(argv[2].toSint16(), argv[3].toSint16());
 		reg_t poly_list, output;
 		int width, height, opt = 1;
@@ -1751,7 +1760,7 @@ reg_t kIntersections(EngineState *s, int argc, reg_t *argv) {
 	pSourceX &= 0x1ff;
 
 	debugCN(kDebugLevelAvoidPath, "%s: (%i, %i)[%i]",
-		(doneIndex == startIndex ? "Polygon" : "Polyline"), pSourceX, pSourceY, curIndex);
+	        (doneIndex == startIndex ? "Polygon" : "Polyline"), pSourceX, pSourceY, curIndex);
 
 	curIndex += stepSize;
 	uint16 outCount = 0;
@@ -1762,7 +1771,7 @@ reg_t kIntersections(EngineState *s, int argc, reg_t *argv) {
 
 		if (DebugMan.isDebugChannelEnabled(kDebugLevelAvoidPath)) {
 			draw_line(s, Common::Point(pSourceX, pSourceY),
-				Common::Point(pDestX, pDestY), 2, 320, 190);
+			          Common::Point(pDestX, pDestY), 2, 320, 190);
 			debugN(-1, " (%i, %i)[%i]", pDestX, pDestY, curIndex);
 		}
 
@@ -1829,7 +1838,7 @@ reg_t kIntersections(EngineState *s, int argc, reg_t *argv) {
 			// If intersection point lies on both the query line segment and the poly
 			// line segment, add it to the output
 			if (PointInRect(Common::Point(intersectionX, intersectionY), pSourceX, pSourceY, pDestX, pDestY)
-				&& PointInRect(Common::Point(intersectionX, intersectionY), qSourceX, qSourceY, qDestX, qDestY)) {
+			    && PointInRect(Common::Point(intersectionX, intersectionY), qSourceX, qSourceY, qDestX, qDestY)) {
 				outBuf[outCount * 3] = make_reg(0, intersectionX);
 				outBuf[outCount * 3 + 1] = make_reg(0, intersectionY);
 				outBuf[outCount * 3 + 2] = make_reg(0, curIndex);
@@ -1881,15 +1890,15 @@ reg_t kIntersections(EngineState *s, int argc, reg_t *argv) {
 // Compute square of the distance of p to the segment a-b.
 static float pointSegDistance(const Common::Point &a, const Common::Point &b,
                               const Common::Point &p) {
-	FloatPoint ba(b-a);
-	FloatPoint pa(p-a);
-	FloatPoint bp(b-p);
+	FloatPoint ba(b - a);
+	FloatPoint pa(p - a);
+	FloatPoint bp(b - p);
 
 	// Check if the projection of p on the line a-b lies between a and b
 	if (ba * pa >= 0.0F && ba * bp >= 0.0F) {
 		// If yes, return the (squared) distance of p to the line a-b:
 		// translate a to origin, project p and subtract
-		float linedist = (ba*((ba*pa)/(ba*ba)) - pa).norm();
+		float linedist = (ba * ((ba * pa) / (ba * ba)) - pa).norm();
 
 		return linedist;
 	} else {
@@ -1899,7 +1908,7 @@ static float pointSegDistance(const Common::Point &a, const Common::Point &b,
 		// distance to a:
 		float adist = pa.norm();
 		// distance to b:
-		float bdist = FloatPoint(p-b).norm();
+		float bdist = FloatPoint(p - b).norm();
 
 		return MIN(adist, bdist);
 	}
@@ -1946,7 +1955,8 @@ static bool segSegIntersect(const Vertex *v1, const Vertex *v2, Common::Point &i
 
 	int len_dc = c.sqrDist(d);
 
-	if (!len_dc) error("zero length edge in polygon");
+	if (!len_dc)
+		error("zero length edge in polygon");
 
 	if (pointSegDistance(c, d, a) <= 2.0F) {
 		intp = a;
@@ -1982,9 +1992,11 @@ static int intersectDir(const Vertex *v1, const Vertex *v2) {
 // Direction of edge in degrees from pos. x-axis, between -180 and 180
 static int edgeDir(const Vertex *v) {
 	Common::Point p = v->_next->v - v->v;
-	int deg = Common::rad2deg<float,int>((float)atan2((double)p.y, (double)p.x));
-	if (deg < -180) deg += 360;
-	if (deg > 180) deg -= 360;
+	int deg = Common::rad2deg<float, int>((float)atan2((double)p.y, (double)p.x));
+	if (deg < -180)
+		deg += 360;
+	if (deg > 180)
+		deg -= 360;
 	return deg;
 }
 
@@ -2018,7 +2030,6 @@ struct Patch {
 
 	bool disabled; // If true, this Patch was made superfluous by another Patch
 };
-
 
 // Check if the given vertex on the work polygon is bypassed by this patch.
 static bool isVertexCovered(const Patch &p, uint32 wi) {
@@ -2059,7 +2070,6 @@ static bool isPatchCovered(const Patch &p1, const Patch &p2) {
 	if (p1.indexw1 > p1.indexw2 && (p2.indexw1 > p1.indexw1 || p2.indexw1 < p1.indexw2))
 		return true;
 
-
 	//            /         *          v       (outside)
 	//  ---p1w1--11----p2w2-2---p1w2--12----
 	//            ^         *          \       (inside)
@@ -2079,13 +2089,11 @@ static bool isPatchCovered(const Patch &p1, const Patch &p2) {
 	if (p2.indexw1 > p2.indexw2 && (p1.indexw2 > p2.indexw1 || p1.indexw2 < p2.indexw2))
 		return false;
 
-
 	// The above checks covered the cases where one patch covers the other and
 	// the intersections of the patches are on different edges.
 
 	// So, if we passed the above checks, we have to check the order of
 	// intersections on edges.
-
 
 	if (p1.indexw1 != p1.indexw2) {
 
@@ -2108,7 +2116,6 @@ static bool isPatchCovered(const Patch &p1, const Patch &p2) {
 
 	// p1w1 == p1w2
 	// Also, p1w1/p1w2 isn't strictly between p2
-
 
 	//            v   /             *      (outside)
 	//  ---p1w1--12--11-------p2w1-21----
@@ -2210,8 +2217,10 @@ bool mergeSinglePolygon(Polygon &work, const Polygon &polygon) {
 				int newAngle = edgeDir(polyv2);
 
 				int relAngle = newAngle - baseAngle;
-				if (relAngle > 180) relAngle -= 360;
-				if (relAngle < -180) relAngle += 360;
+				if (relAngle > 180)
+					relAngle -= 360;
+				if (relAngle < -180)
+					relAngle += 360;
 
 				angle += relAngle;
 				baseAngle = newAngle;
@@ -2231,17 +2240,14 @@ bool mergeSinglePolygon(Polygon &work, const Polygon &polygon) {
 #endif
 						break; // found re-entry point
 					}
-
 				}
 
 				if (intersects)
 					break;
-
 			}
 
 			if (!intersects || angle < 0)
 				continue;
-
 
 			if (patchCount >= 8)
 				error("kMergePoly: Too many patches");
@@ -2288,17 +2294,15 @@ bool mergeSinglePolygon(Polygon &work, const Polygon &polygon) {
 
 			if (patchCount > 1) {
 				// check if this patch makes other patches superfluous
-				for (int i = 0; i < patchCount-1; ++i)
+				for (int i = 0; i < patchCount - 1; ++i)
 					if (isPatchCovered(newPatch, patchList[i]))
 						patchList[i].disabled = true;
 			}
 		}
 	}
 
-
 	if (patchCount == 0)
 		return false; // nothing changed
-
 
 	// Determine merged work by doing a walk over the edges
 	// of work, crossing over to polygon when encountering a patch.
@@ -2310,7 +2314,8 @@ bool mergeSinglePolygon(Polygon &work, const Polygon &polygon) {
 
 		bool covered = false;
 		for (int p = 0; p < patchCount; ++p) {
-			if (patchList[p].disabled) continue;
+			if (patchList[p].disabled)
+				continue;
 			if (isVertexCovered(patchList[p], wi)) {
 				covered = true;
 				break;
@@ -2322,7 +2327,6 @@ bool mergeSinglePolygon(Polygon &work, const Polygon &polygon) {
 			output.vertices.insertAtEnd(new Vertex(workv->v));
 		}
 
-
 		// CHECKME: Why is this the correct order in which to process
 		// the patches? (What if two of them start on this line segment
 		// in the opposite order?)
@@ -2330,8 +2334,10 @@ bool mergeSinglePolygon(Polygon &work, const Polygon &polygon) {
 		for (int p = 0; p < patchCount; ++p) {
 
 			const Patch &patch = patchList[p];
-			if (patch.disabled) continue;
-			if (patch.indexw1 != wi) continue;
+			if (patch.disabled)
+				continue;
+			if (patch.indexw1 != wi)
+				continue;
 			if (patch.intersection1 != workv->v) {
 				// Add intersection point to output
 				output.vertices.insertAtEnd(new Vertex(patch.intersection1));
@@ -2355,13 +2361,11 @@ bool mergeSinglePolygon(Polygon &work, const Polygon &polygon) {
 	if (output.vertices._head->v == output.vertices._head->_prev->v)
 		output.vertices.remove(output.vertices._head->_prev);
 
-
 	// Slight hack: swap vertex lists of output and work polygons.
 	SWAP(output.vertices._head, work.vertices._head);
 
 	return true;
 }
-
 
 /**
  * This is a quite rare kernel function. An example of when it's called
@@ -2456,9 +2460,8 @@ reg_t kMergePoly(EngineState *s, int argc, reg_t *argv) {
 		node = s->_segMan->lookupNode(node->succ);
 	}
 
-
 	// Allocate output array
-	reg_t output = allocateOutputArray(s->_segMan, work.vertices.size()+1);
+	reg_t output = allocateOutputArray(s->_segMan, work.vertices.size() + 1);
 	SegmentRef arrayRef = s->_segMan->dereference(output);
 
 	// Copy work.vertices into arrayRef

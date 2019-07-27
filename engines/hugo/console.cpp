@@ -29,13 +29,15 @@
 
 namespace Hugo {
 
-HugoConsole::HugoConsole(HugoEngine *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("listscreens",   WRAP_METHOD(HugoConsole, Cmd_listScreens));
-	registerCmd("listobjects",   WRAP_METHOD(HugoConsole, Cmd_listObjects));
-	registerCmd("getobject",     WRAP_METHOD(HugoConsole, Cmd_getObject));
+HugoConsole::HugoConsole(HugoEngine *vm)
+  : GUI::Debugger()
+  , _vm(vm) {
+	registerCmd("listscreens", WRAP_METHOD(HugoConsole, Cmd_listScreens));
+	registerCmd("listobjects", WRAP_METHOD(HugoConsole, Cmd_listObjects));
+	registerCmd("getobject", WRAP_METHOD(HugoConsole, Cmd_getObject));
 	registerCmd("getallobjects", WRAP_METHOD(HugoConsole, Cmd_getAllObjects));
-	registerCmd("gotoscreen",    WRAP_METHOD(HugoConsole, Cmd_gotoScreen));
-	registerCmd("Boundaries",    WRAP_METHOD(HugoConsole, Cmd_boundaries));
+	registerCmd("gotoscreen", WRAP_METHOD(HugoConsole, Cmd_gotoScreen));
+	registerCmd("Boundaries", WRAP_METHOD(HugoConsole, Cmd_boundaries));
 }
 
 HugoConsole::~HugoConsole() {
@@ -61,7 +63,7 @@ static int strToInt(const char *s) {
  * This command loads up the specified screen number
  */
 bool HugoConsole::Cmd_gotoScreen(int argc, const char **argv) {
-	if ((argc != 2) || (strToInt(argv[1]) > _vm->_numScreens)){
+	if ((argc != 2) || (strToInt(argv[1]) > _vm->_numScreens)) {
 		debugPrintf("Usage: %s <screen number>\n", argv[0]);
 		return true;
 	}

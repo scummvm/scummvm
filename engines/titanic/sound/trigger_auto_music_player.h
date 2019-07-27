@@ -30,8 +30,10 @@ namespace Titanic {
 class CTriggerAutoMusicPlayer : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool TriggerAutoMusicPlayerMsg(CTriggerAutoMusicPlayerMsg *msg);
+
 protected:
 	CString _roomName;
+
 public:
 	CLASSDEF;
 

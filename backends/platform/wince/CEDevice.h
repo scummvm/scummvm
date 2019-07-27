@@ -26,8 +26,8 @@
 #include <windows.h>
 
 #include "common/scummsys.h"
-#include "common/system.h"
 #include "common/str.h"
+#include "common/system.h"
 
 class CEDevice {
 public:

@@ -29,19 +29,16 @@ namespace Titanic {
 
 FVector FVector::swapComponents() const {
 	return FVector(
-		(ABS(_x - _y) < 0.00001 && ABS(_y - _z) < 0.00001 &&
-			ABS(_x - _z) < 0.00001) ? -_y : _y,
-		_z,
-		_x
-	);
+	  (ABS(_x - _y) < 0.00001 && ABS(_y - _z) < 0.00001 && ABS(_x - _z) < 0.00001) ? -_y : _y,
+	  _z,
+	  _x);
 }
 
 FVector FVector::crossProduct(const FVector &src) const {
 	return FVector(
-		src._z * _y - _z * src._y,
-		src._x * _z - _x * src._z,
-		src._y * _x - _y * src._x
-	);
+	  src._z * _y - _z * src._y,
+	  src._x * _z - _x * src._z,
+	  src._y * _x - _y * src._x);
 }
 
 void FVector::rotVectAxisY(float angleDeg) {
@@ -54,9 +51,9 @@ void FVector::rotVectAxisY(float angleDeg) {
 	_z = z;
 }
 
-bool FVector::normalize(float & hyp) {
+bool FVector::normalize(float &hyp) {
 	hyp = sqrt(_x * _x + _y * _y + _z * _z);
-	if (hyp==0) {
+	if (hyp == 0) {
 		return false;
 	}
 
@@ -89,9 +86,9 @@ FVector FVector::getAnglesAsVect() const {
 		assert(dest._x);
 	}
 
-	dest._y = acos(vector._y);	// radian distance/angle that this vector's y component is from the +y axis,
-								// result is restricted to [0,pi]
-	dest._z = atan2(vector._x,vector._z); // result is restricted to [-pi,pi]
+	dest._y = acos(vector._y); // radian distance/angle that this vector's y component is from the +y axis,
+	  // result is restricted to [0,pi]
+	dest._z = atan2(vector._x, vector._z); // result is restricted to [-pi,pi]
 
 	return dest;
 }

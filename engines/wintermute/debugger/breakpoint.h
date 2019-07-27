@@ -36,6 +36,7 @@ class Breakpoint {
 	bool _enabled;
 	ScriptMonitor *_monitor;
 	void hit(DebuggableScript *script);
+
 public:
 	Breakpoint(const Common::String &filename, uint line, ScriptMonitor *monitor);
 	/**
@@ -43,7 +44,7 @@ public:
 	 * in the context of script, and, if it is enabled and filename & line match,
 	 * the attached ScriptMonitor is notified.
 	 */
-	void evaluate(DebuggableScript* script);
+	void evaluate(DebuggableScript *script);
 	Common::String getFilename() const;
 	int getLine() const;
 	int getHits() const;

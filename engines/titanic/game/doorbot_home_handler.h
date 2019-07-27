@@ -30,6 +30,7 @@ namespace Titanic {
 class CDoorbotHomeHandler : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool EnterViewMsg(CEnterViewMsg *msg);
+
 public:
 	CLASSDEF;
 	CDoorbotHomeHandler();

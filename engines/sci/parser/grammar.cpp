@@ -25,10 +25,10 @@
  * that grammar, writing an appropriate node tree if successful.
  */
 
-#include "sci/parser/vocabulary.h"
-#include "sci/console.h"
 #include "common/array.h"
 #include "common/textconsole.h"
+#include "sci/console.h"
+#include "sci/parser/vocabulary.h"
 
 namespace Sci {
 
@@ -41,13 +41,13 @@ namespace Sci {
 #define TOKEN_NON_NT (TOKEN_OPAREN | TOKEN_TERMINAL_CLASS | TOKEN_TERMINAL_GROUP | TOKEN_STUFFING_LEAF | TOKEN_STUFFING_WORD)
 #define TOKEN_TERMINAL (TOKEN_TERMINAL_CLASS | TOKEN_TERMINAL_GROUP)
 
-static int _allocd_rules = 0;	// FIXME: Avoid non-const global vars
+static int _allocd_rules = 0; // FIXME: Avoid non-const global vars
 
 struct ParseRule {
 	int _id; /**< non-terminal ID */
 	uint _firstSpecial; /**< first terminal or non-terminal */
 	uint _numSpecials; /**< number of terminals and non-terminals */
-	Common::Array<int> _data;	/**< actual data */
+	Common::Array<int> _data; /**< actual data */
 
 	~ParseRule() {
 		assert(_allocd_rules > 0);
@@ -56,13 +56,9 @@ struct ParseRule {
 
 	// FIXME remove this one again?
 	bool operator==(const ParseRule &other) const {
-		return _id == other._id &&
-			_firstSpecial == other._firstSpecial &&
-			_numSpecials == other._numSpecials &&
-			_data == other._data;
+		return _id == other._id && _firstSpecial == other._firstSpecial && _numSpecials == other._numSpecials && _data == other._data;
 	}
 };
-
 
 struct ParseRuleList {
 	int terminal; /**< Terminal character this rule matches against or 0 for a non-terminal rule */
@@ -71,7 +67,9 @@ struct ParseRuleList {
 
 	void print() const;
 
-	ParseRuleList(ParseRule *r) : rule(r), next(0) {
+	ParseRuleList(ParseRule *r)
+	  : rule(r)
+	  , next(0) {
 		int term = rule->_data[rule->_firstSpecial];
 		terminal = ((term & TOKEN_TERMINAL) ? term : 0);
 	}
@@ -81,7 +79,6 @@ struct ParseRuleList {
 		delete next;
 	}
 };
-
 
 static void vocab_print_rule(ParseRule *rule) {
 	int wspace = 0;
@@ -166,7 +163,7 @@ static ParseRule *_vinsert(ParseRule *turkey, ParseRule *stuffing) {
 
 	if (firstnt < turkey->_data.size() - 1)
 		Common::copy(turkey->_data.begin() + firstnt + 1, turkey->_data.end(),
-				rule->_data.begin() + firstnt + stuffing->_data.size());
+		             rule->_data.begin() + firstnt + stuffing->_data.size());
 
 	return rule;
 }
@@ -240,8 +237,7 @@ static ParseRule *_vsatisfy_rule(ParseRule *rule, const ResultWordList &input) {
 	// 'matches'. 'match' replaces the special in the rule, and 'matches' gets
 	// inserted after it.
 	for (iter = input.begin(); iter != input.end(); ++iter)
-		if (((dep & TOKEN_TERMINAL_CLASS) && ((dep & 0xffff) & iter->_class)) ||
-			((dep & TOKEN_TERMINAL_GROUP) && ((dep & 0xffff) & iter->_group))) {
+		if (((dep & TOKEN_TERMINAL_CLASS) && ((dep & 0xffff) & iter->_class)) || ((dep & TOKEN_TERMINAL_GROUP) && ((dep & 0xffff) & iter->_group))) {
 			if (count == 0)
 				match = TOKEN_STUFFING_WORD | iter->_group;
 			else
@@ -254,7 +250,7 @@ static ParseRule *_vsatisfy_rule(ParseRule *rule, const ResultWordList &input) {
 		++_allocd_rules;
 		retval->_data[rule->_firstSpecial] = match;
 		if (count > 1)
-			retval->_data.insert_at(rule->_firstSpecial+1, matches);
+			retval->_data.insert_at(rule->_firstSpecial + 1, matches);
 		retval->_numSpecials--;
 		retval->_firstSpecial = 0;
 
@@ -290,13 +286,13 @@ static ParseRuleList *_vocab_add_rule(ParseRuleList *list, ParseRule *rule) {
 
 	if (list) {
 		const int term = new_elem->terminal;
-/*		if (term < list->terminal) {
+		/*		if (term < list->terminal) {
 			new_elem->next = list;
 			return new_elem;
 		} else {*/
 		ParseRuleList *seeker = list;
 
-		while (seeker->next/* && seeker->next->terminal <= term*/) {
+		while (seeker->next /* && seeker->next->terminal <= term*/) {
 			if (seeker->next->terminal == term) {
 				if (*(seeker->next->rule) == *rule) {
 					delete new_elem; // NB: This also deletes 'rule'
@@ -499,7 +495,6 @@ static int _vbpt_terminate_word(ParseTreeNode *nodes, int *pos, int base, int va
 	nodes[base].right = 0;
 	return *pos;
 }
-
 
 static int _vbpt_write_subexpression(ParseTreeNode *nodes, int *pos, ParseRule *rule, uint rulepos, int writepos) {
 	uint token;

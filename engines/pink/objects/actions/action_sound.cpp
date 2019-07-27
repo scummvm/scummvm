@@ -23,12 +23,12 @@
 #include "common/debug.h"
 
 #include "pink/archive.h"
-#include "pink/pink.h"
 #include "pink/director.h"
-#include "pink/sound.h"
 #include "pink/objects/actions/action_sound.h"
 #include "pink/objects/actors/actor.h"
 #include "pink/objects/pages/game_page.h"
+#include "pink/pink.h"
+#include "pink/sound.h"
 
 namespace Pink {
 
@@ -47,11 +47,12 @@ void ActionSound::deserialize(Archive &archive) {
 
 void ActionSound::toConsole() {
 	debugC(6, kPinkDebugLoadingObjects, "\tActionSound: _name = %s, _fileName = %s, _volume = %u, _isLoop = %u,"
-				  " _isBackground = %u", _name.c_str(), _fileName.c_str(), _volume, _isLoop, _isBackground);
+	                                    " _isBackground = %u",
+	       _name.c_str(), _fileName.c_str(), _volume, _isLoop, _isBackground);
 }
 
 void ActionSound::start() {
-	Audio::Mixer::SoundType soundType =  _isBackground ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
+	Audio::Mixer::SoundType soundType = _isBackground ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
 
 	Page *page = _actor->getPage();
 	if (!_isLoop) {

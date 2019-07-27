@@ -84,7 +84,7 @@ typedef byte TurnDirection;
 // Meant to be room in low 16 bits and direction in high 16 bits.
 typedef uint32 RoomViewID;
 
-#define MakeRoomView(room, direction) (((RoomViewID) (room)) | (((RoomViewID) (direction)) << 16))
+#define MakeRoomView(room, direction) (((RoomViewID)(room)) | (((RoomViewID)(direction)) << 16))
 
 typedef uint32 ExtraID;
 
@@ -118,9 +118,9 @@ typedef int32 AIConditionID;
 
 enum EnergyStage {
 	kStageNoStage,
-	kStageCasual,       // more than 50% energy
-	kStageWorried,      // more than 25% energy
-	kStageNervous,      // more than 5% energy
+	kStageCasual, // more than 50% energy
+	kStageWorried, // more than 25% energy
+	kStageNervous, // more than 5% energy
 	kStagePanicStricken // less than 5% energy
 };
 

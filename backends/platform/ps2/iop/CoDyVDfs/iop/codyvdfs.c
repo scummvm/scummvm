@@ -20,23 +20,23 @@
  *
  */
 
-#include <types.h>
 #include <defs.h>
 #include <irx.h>
 #include <sys/stat.h>
+#include <types.h>
 
+#include <iomanX.h>
 #include <stdio.h>
 #include <sysclib.h>
 #include <sysmem.h>
 #include <thbase.h>
-#include <iomanX.h>
 
-#include <io_common.h>
 #include <errno.h>
+#include <io_common.h>
 
-#include "fiofs.h"
-#include "codyvdfs.h"
 #include "../common/codyvdirx.h"
+#include "codyvdfs.h"
+#include "fiofs.h"
 
 #define DBG_PRINTF printf
 
@@ -115,7 +115,7 @@ ISODirectoryRecord *findEntryInCache(const char *name, int nameLen) {
 				if ((nameLen == entry->len_fi) && (strnicmp(name, entry->name, entry->len_fi) == 0))
 					return entry;
 			}
-			entry = (ISODirectoryRecord *)( (uint8 *)entry + entry->len_dr );
+			entry = (ISODirectoryRecord *)((uint8 *)entry + entry->len_dr);
 		}
 	}
 	return NULL;
@@ -172,7 +172,6 @@ int checkDiscReady(int retries) {
 	return -1;
 }
 
-
 int initDisc(void) {
 	int type, sector, discType;
 	ISOPvd *pvd;
@@ -185,7 +184,7 @@ int initDisc(void) {
 		return -1;
 	}
 
-	do {	// wait until drive detected disc type
+	do { // wait until drive detected disc type
 		type = CdGetDiskType();
 		if (DISC_NOT_READY(type))
 			DelayThread(10 * 1000);
@@ -204,15 +203,15 @@ int initDisc(void) {
 
 	discType = DISC_DVD;
 	switch (type) {
-		case CdDiskCDPS1:
-		case CdDiskCDDAPS1:
-		case CdDiskCDPS2:
-		case CdDiskCDDAPS2:
-		case CdDiskCDDA:
-			discType = DISC_MODE2;
-			rmode.datapattern = CdSect2340;
-		default:
-			break;
+	case CdDiskCDPS1:
+	case CdDiskCDDAPS1:
+	case CdDiskCDPS2:
+	case CdDiskCDDAPS2:
+	case CdDiskCDDA:
+		discType = DISC_MODE2;
+		rmode.datapattern = CdSect2340;
+	default:
+		break;
 	}
 
 	for (sector = 16; sector < 32; sector++) {
@@ -222,19 +221,19 @@ int initDisc(void) {
 				pvd = (ISOPvd *)cacheBuf;
 			else {
 				switch (cacheBuf[3]) {
-					case 1:
-						discType = DISC_MODE1;
-						printf("Disc: Mode1\n");
-						pvd = (ISOPvd *)(cacheBuf + 4);
-						break;
-					case 2:
-						discType = DISC_MODE2;
-						printf("Disc: Mode2\n");
-						pvd = (ISOPvd *)(cacheBuf + 12);
-						break;
-					default:
-						DBG_PRINTF("Unknown Sector Type %02X\n", cacheBuf[3]);
-						return -1;
+				case 1:
+					discType = DISC_MODE1;
+					printf("Disc: Mode1\n");
+					pvd = (ISOPvd *)(cacheBuf + 4);
+					break;
+				case 2:
+					discType = DISC_MODE2;
+					printf("Disc: Mode2\n");
+					pvd = (ISOPvd *)(cacheBuf + 12);
+					break;
+				default:
+					DBG_PRINTF("Unknown Sector Type %02X\n", cacheBuf[3]);
+					return -1;
 				}
 			}
 			rmode.datapattern = CdSect2048;
@@ -290,23 +289,23 @@ int cd_init(iop_device_t *dev) {
 }
 
 iop_device_ops_t FS_ops = {
-	(void *) cd_init,
-	(void *) cd_dummy,
-	(void *) cd_dummy,
-	(void *) cd_open,
-	(void *) cd_close,
-	(void *) cd_read,
-	(void *) cd_dummy,
-	(void *) cd_lseek,
-	(void *) cd_dummy,
-	(void *) cd_dummy,
-	(void *) cd_dummy,
-	(void *) cd_dummy,
-	(void *) cd_dopen,
-	(void *) cd_dclose,
-	(void *) cd_dread,
-	(void *) cd_dummy,
-	(void *) cd_dummy,
+	(void *)cd_init,
+	(void *)cd_dummy,
+	(void *)cd_dummy,
+	(void *)cd_open,
+	(void *)cd_close,
+	(void *)cd_read,
+	(void *)cd_dummy,
+	(void *)cd_lseek,
+	(void *)cd_dummy,
+	(void *)cd_dummy,
+	(void *)cd_dummy,
+	(void *)cd_dummy,
+	(void *)cd_dopen,
+	(void *)cd_dclose,
+	(void *)cd_dread,
+	(void *)cd_dummy,
+	(void *)cd_dummy,
 };
 
 #define FS_NAME "cdfs"
@@ -329,7 +328,7 @@ int _start(void) {
 
 	initRpc();
 	initFio();
-	return(0);
+	return (0);
 }
 
 int strnicmp(const char *s1, const char *s2, int n) {

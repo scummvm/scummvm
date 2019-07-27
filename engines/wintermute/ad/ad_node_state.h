@@ -44,6 +44,7 @@ public:
 	AdNodeState(BaseGame *inGame);
 	virtual ~AdNodeState();
 	const char *getName() const { return _name; }
+
 private:
 	char *_name;
 	char *_caption[7];
@@ -52,7 +53,6 @@ private:
 	uint32 _alphaColor;
 	char *_filename;
 	char *_cursor;
-
 };
 
 } // End of namespace Wintermute

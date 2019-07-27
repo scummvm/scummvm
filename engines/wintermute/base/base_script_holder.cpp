@@ -26,33 +26,32 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/base/base_script_holder.h"
-#include "engines/wintermute/base/base_parser.h"
+#include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/base/base_engine.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
-#include "engines/wintermute/base/scriptables/script_engine.h"
+#include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/scriptables/script.h"
+#include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseScriptHolder, false)
 
 //////////////////////////////////////////////////////////////////////
-BaseScriptHolder::BaseScriptHolder(BaseGame *inGame) : BaseScriptable(inGame) {
+BaseScriptHolder::BaseScriptHolder(BaseGame *inGame)
+  : BaseScriptable(inGame) {
 	setName("<unnamed>");
 	_ready = false;
 	_freezable = true;
 	_filename = nullptr;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 BaseScriptHolder::~BaseScriptHolder() {
 	cleanup();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseScriptHolder::cleanup() {
@@ -77,12 +76,11 @@ void BaseScriptHolder::setFilename(const char *filename) {
 	if (filename == nullptr) {
 		return;
 	}
-	_filename = new char [strlen(filename) + 1];
+	_filename = new char[strlen(filename) + 1];
 	if (_filename != nullptr) {
 		strcpy(_filename, filename);
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseScriptHolder::applyEvent(const char *eventName, bool unbreakable) {
@@ -106,12 +104,10 @@ bool BaseScriptHolder::applyEvent(const char *eventName, bool unbreakable) {
 	return ret;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseScriptHolder::listen(BaseScriptHolder *param1, uint32 param2) {
 	return STATUS_FAILED;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
@@ -218,7 +214,6 @@ bool BaseScriptHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *t
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *BaseScriptHolder::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
@@ -250,7 +245,6 @@ ScValue *BaseScriptHolder::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseScriptHolder::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
@@ -264,7 +258,6 @@ bool BaseScriptHolder::scSetProperty(const char *name, ScValue *value) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 const char *BaseScriptHolder::scToString() {
 	return "[script_holder]";
@@ -274,7 +267,6 @@ const char *BaseScriptHolder::scToString() {
 bool BaseScriptHolder::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return BaseClass::saveAsText(buffer, indent);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseScriptHolder::persist(BasePersistenceManager *persistMgr) {
@@ -296,7 +288,6 @@ bool BaseScriptHolder::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseScriptHolder::addScript(const char *filename) {
 	for (uint32 i = 0; i < _scripts.size(); i++) {
@@ -308,14 +299,14 @@ bool BaseScriptHolder::addScript(const char *filename) {
 		}
 	}
 
-	ScScript *scr =  _gameRef->_scEngine->runScript(filename, this);
+	ScScript *scr = _gameRef->_scEngine->runScript(filename, this);
 	if (!scr) {
 		if (_gameRef->_editorForceScripts) {
 			// editor hack
 #if EXTENDED_DEBUGGER_ENABLED
-			scr = new DebuggableScript(_gameRef,  _gameRef->_scEngine);
+			scr = new DebuggableScript(_gameRef, _gameRef->_scEngine);
 #else
-			scr = new ScScript(_gameRef,  _gameRef->_scEngine);
+			scr = new ScScript(_gameRef, _gameRef->_scEngine);
 #endif
 			scr->_filename = new char[strlen(filename) + 1];
 			strcpy(scr->_filename, filename);
@@ -333,7 +324,6 @@ bool BaseScriptHolder::addScript(const char *filename) {
 		return STATUS_OK;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseScriptHolder::removeScript(ScScript *script) {
@@ -356,7 +346,6 @@ bool BaseScriptHolder::canHandleEvent(const char *EventName) const {
 	return false;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseScriptHolder::canHandleMethod(const char *MethodName) const {
 	for (uint32 i = 0; i < _scripts.size(); i++) {
@@ -366,7 +355,6 @@ bool BaseScriptHolder::canHandleMethod(const char *MethodName) const {
 	}
 	return false;
 }
-
 
 TOKEN_DEF_START
 TOKEN_DEF(PROPERTY)
@@ -418,7 +406,6 @@ bool BaseScriptHolder::parseProperty(char *buffer, bool complete) {
 			}
 			break;
 		}
-
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		delete[] propName;
@@ -437,7 +424,6 @@ bool BaseScriptHolder::parseProperty(char *buffer, bool complete) {
 		return STATUS_FAILED;
 	}
 
-
 	ScValue *val = new ScValue(_gameRef);
 	val->setString(propValue);
 	scSetProperty(propName, val);
@@ -451,29 +437,26 @@ bool BaseScriptHolder::parseProperty(char *buffer, bool complete) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void BaseScriptHolder::makeFreezable(bool freezable) {
 	_freezable = freezable;
 	for (uint32 i = 0; i < _scripts.size(); i++) {
 		_scripts[i]->_freezable = freezable;
 	}
-
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 ScScript *BaseScriptHolder::invokeMethodThread(const char *methodName) {
 	for (int i = _scripts.size() - 1; i >= 0; i--) {
 		if (_scripts[i]->canHandleMethod(methodName)) {
 #if EXTENDED_DEBUGGER_ENABLED
-			DebuggableScEngine* debuggableEngine;
-			debuggableEngine = dynamic_cast<DebuggableScEngine*>(_scripts[i]->_engine);
+			DebuggableScEngine *debuggableEngine;
+			debuggableEngine = dynamic_cast<DebuggableScEngine *>(_scripts[i]->_engine);
 			// TODO: Not pretty
 			assert(debuggableEngine);
-			ScScript *thread = new DebuggableScript(_gameRef,  debuggableEngine);
+			ScScript *thread = new DebuggableScript(_gameRef, debuggableEngine);
 #else
-			ScScript *thread = new ScScript(_gameRef,  _scripts[i]->_engine);
+			ScScript *thread = new ScScript(_gameRef, _scripts[i]->_engine);
 #endif
 			if (thread) {
 				bool ret = thread->createMethodThread(_scripts[i], methodName);
@@ -489,7 +472,6 @@ ScScript *BaseScriptHolder::invokeMethodThread(const char *methodName) {
 	return nullptr;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void BaseScriptHolder::scDebuggerDesc(char *buf, int bufSize) {
 	strcpy(buf, scToString());
@@ -502,7 +484,6 @@ void BaseScriptHolder::scDebuggerDesc(char *buf, int bufSize) {
 		strcat(buf, _filename);
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // IWmeObject

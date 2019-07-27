@@ -23,105 +23,115 @@
 #ifndef SHERLOCK_SCALPEL_JOURNAL_H
 #define SHERLOCK_SCALPEL_JOURNAL_H
 
-#include "sherlock/journal.h"
-#include "sherlock/saveload.h"
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/str-array.h"
 #include "common/stream.h"
+#include "sherlock/journal.h"
+#include "sherlock/saveload.h"
 
 namespace Sherlock {
 
 namespace Scalpel {
 
-enum JournalButton {
-	BTN_NONE, BTN_EXIT, BTN_BACK10, BTN_UP, BTN_DOWN, BTN_AHEAD110, BTN_SEARCH,
-	BTN_FIRST_PAGE, BTN_LAST_PAGE, BTN_PRINT_TEXT
-};
+	enum JournalButton {
+		BTN_NONE,
+		BTN_EXIT,
+		BTN_BACK10,
+		BTN_UP,
+		BTN_DOWN,
+		BTN_AHEAD110,
+		BTN_SEARCH,
+		BTN_FIRST_PAGE,
+		BTN_LAST_PAGE,
+		BTN_PRINT_TEXT
+	};
 
-class ScalpelJournal: public Journal {
-public:
-	Common::String _fixedTextWatsonsJournal;
-	Common::String _fixedTextExit;
-	Common::String _fixedTextBack10;
-	Common::String _fixedTextUp;
-	Common::String _fixedTextDown;
-	Common::String _fixedTextAhead10;
-	Common::String _fixedTextSearch;
-	Common::String _fixedTextFirstPage;
-	Common::String _fixedTextLastPage;
-	Common::String _fixedTextPrintText;
+	class ScalpelJournal : public Journal {
+	public:
+		Common::String _fixedTextWatsonsJournal;
+		Common::String _fixedTextExit;
+		Common::String _fixedTextBack10;
+		Common::String _fixedTextUp;
+		Common::String _fixedTextDown;
+		Common::String _fixedTextAhead10;
+		Common::String _fixedTextSearch;
+		Common::String _fixedTextFirstPage;
+		Common::String _fixedTextLastPage;
+		Common::String _fixedTextPrintText;
 
-	byte _hotkeyExit;
-	byte _hotkeyBack10;
-	byte _hotkeyUp;
-	byte _hotkeyDown;
-	byte _hotkeyAhead10;
-	byte _hotkeySearch;
-	byte _hotkeyFirstPage;
-	byte _hotkeyLastPage;
-	byte _hotkeyPrintText;
+		byte _hotkeyExit;
+		byte _hotkeyBack10;
+		byte _hotkeyUp;
+		byte _hotkeyDown;
+		byte _hotkeyAhead10;
+		byte _hotkeySearch;
+		byte _hotkeyFirstPage;
+		byte _hotkeyLastPage;
+		byte _hotkeyPrintText;
 
-	Common::String _fixedTextSearchExit;
-	Common::String _fixedTextSearchBackward;
-	Common::String _fixedTextSearchForward;
-	Common::String _fixedTextSearchNotFound;
+		Common::String _fixedTextSearchExit;
+		Common::String _fixedTextSearchBackward;
+		Common::String _fixedTextSearchForward;
+		Common::String _fixedTextSearchNotFound;
 
-	byte _hotkeySearchExit;
-	byte _hotkeySearchBackward;
-	byte _hotkeySearchForward;
+		byte _hotkeySearchExit;
+		byte _hotkeySearchBackward;
+		byte _hotkeySearchForward;
 
-private:
-	/**
+	private:
+		/**
 	 * Load the list of journal locations
 	 */
-	void loadLocations();
+		void loadLocations();
 
-	/**
+		/**
 	 * Display the arrows that can be used to scroll up and down pages
 	 */
-	void doArrows();
+		void doArrows();
 
-	/**
+		/**
 	 * Show the search submenu and allow the player to enter a search string
 	 */
-	int getSearchString(bool printError);
+		int getSearchString(bool printError);
 
-	/**
+		/**
 	 * Returns the button, if any, that is under the specified position
 	 */
-	JournalButton getHighlightedButton(const Common::Point &pt);
-public:
-	ScalpelJournal(SherlockEngine *vm);
-	virtual ~ScalpelJournal() {}
+		JournalButton getHighlightedButton(const Common::Point &pt);
 
-	/**
+	public:
+		ScalpelJournal(SherlockEngine *vm);
+		virtual ~ScalpelJournal() {}
+
+		/**
 	 * Display the journal
 	 */
-	void drawInterface();
+		void drawInterface();
 
-	/**
+		/**
 	 * Handle events whilst the journal is being displayed
 	 */
-	bool handleEvents(int key);
-public:
-	/**
+		bool handleEvents(int key);
+
+	public:
+		/**
 	 * Draw the journal background, frame, and interface buttons
 	 */
-	virtual void drawFrame();
+		virtual void drawFrame();
 
-	/**
+		/**
 	 * Reset viewing position to the start of the journal
 	 */
-	virtual void resetPosition();
+		virtual void resetPosition();
 
-	/**
+		/**
 	 * Records statements that are said, in the order which they are said. The player
 	 * can then read the journal to review them
 	 */
-	virtual void record(int converseNum, int statementNum, bool replyOnly = false);
-};
+		virtual void record(int converseNum, int statementNum, bool replyOnly = false);
+	};
 
 } // End of namespace Scalpel
 

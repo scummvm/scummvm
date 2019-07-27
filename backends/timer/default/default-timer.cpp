@@ -20,23 +20,29 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "backends/timer/default/default-timer.h"
-#include "common/util.h"
+#include "common/scummsys.h"
 #include "common/system.h"
+#include "common/util.h"
 
 struct TimerSlot {
 	Common::TimerManager::TimerProc callback;
 	void *refCon;
 	Common::String id;
-	uint32 interval;	// in microseconds
+	uint32 interval; // in microseconds
 
-	uint32 nextFireTime;	// in milliseconds
-	uint32 nextFireTimeMicro;	// microseconds part of nextFire
+	uint32 nextFireTime; // in milliseconds
+	uint32 nextFireTimeMicro; // microseconds part of nextFire
 
 	TimerSlot *next;
 
-	TimerSlot() : callback(nullptr), refCon(nullptr), interval(0), nextFireTime(0), nextFireTimeMicro(0), next(nullptr) {}
+	TimerSlot()
+	  : callback(nullptr)
+	  , refCon(nullptr)
+	  , interval(0)
+	  , nextFireTime(0)
+	  , nextFireTimeMicro(0)
+	  , next(nullptr) {}
 };
 
 void insertPrioQueue(TimerSlot *head, TimerSlot *newSlot) {
@@ -60,9 +66,8 @@ void insertPrioQueue(TimerSlot *head, TimerSlot *newSlot) {
 	}
 }
 
-
-DefaultTimerManager::DefaultTimerManager() :
-	_head(0) {
+DefaultTimerManager::DefaultTimerManager()
+  : _head(0) {
 
 	_head = new TimerSlot();
 }

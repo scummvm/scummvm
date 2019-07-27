@@ -22,17 +22,17 @@
 
 #ifdef WEBOS
 
-#include "common/scummsys.h"
-#include "common/system.h"
-#include "common/str.h"
-#include "common/translation.h"
+#	include "common/scummsys.h"
+#	include "common/str.h"
+#	include "common/system.h"
+#	include "common/translation.h"
 
-#include "backends/events/webossdl/webossdl-events.h"
-#include "gui/message.h"
-#include "engines/engine.h"
+#	include "backends/events/webossdl/webossdl-events.h"
+#	include "engines/engine.h"
+#	include "gui/message.h"
 
 // PDL.h provided by the official Palm WebOS PDK.
-#include <PDL.h>
+#	include <PDL.h>
 
 /**
  * WebOS devices only have a Shift key and a CTRL key. There is also an Alt
@@ -44,7 +44,7 @@
  * @param event The ScummVM event to setup.
  */
 void WebOSSdlEventSource::SDLModToOSystemKeyFlags(SDLMod mod,
-		Common::Event &event) {
+                                                  Common::Event &event) {
 	event.kbd.flags = 0;
 
 	if (mod & KMOD_SHIFT)
@@ -77,7 +77,7 @@ bool WebOSSdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	// gesture tap AFTER the backward gesture event and not BEFORE (Like
 	// WebOS 2).
 	if (ev.key.keysym.sym == 27 || ev.key.keysym.sym == 229) {
-		 _gestureDown = false;
+		_gestureDown = false;
 	}
 
 	// handle virtual keyboard dismiss key
@@ -133,7 +133,7 @@ bool WebOSSdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
  * @return True if event was processed, false if not.
  */
 bool WebOSSdlEventSource::handleMouseButtonDown(SDL_Event &ev,
-		Common::Event &event) {
+                                                Common::Event &event) {
 	_dragDiffX[ev.button.which] = 0;
 	_dragDiffY[ev.button.which] = 0;
 	_fingerDown[ev.button.which] = true;
@@ -192,7 +192,7 @@ bool WebOSSdlEventSource::handleMouseButtonDown(SDL_Event &ev,
  * @return True if event was processed, false if not.
  */
 bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev,
-		Common::Event &event) {
+                                              Common::Event &event) {
 	// Only react if the finger hasn't been virtually lifted already
 	if (_fingerDown[ev.button.which]) {
 		// No matter what, if it's the first finger that's lifted when
@@ -207,8 +207,7 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev,
 		} else {
 			// If it was the first finger and the click hasn't been
 			// canceled, it's a click.
-			if (ev.button.which == 0 && _doClick &&
-					!_fingerDown[1] && !_fingerDown[2]) {
+			if (ev.button.which == 0 && _doClick && !_fingerDown[1] && !_fingerDown[2]) {
 				event.type = Common::EVENT_LBUTTONUP;
 				processMouseEvent(event, _curX, _curY);
 				// update KbdMouse
@@ -218,8 +217,7 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev,
 				event.type = Common::EVENT_LBUTTONDOWN;
 				if (_queuedDragTime > 0)
 					_queuedDragTime = 0;
-			} else if (ev.button.which == 1 &&
-					_fingerDown[0] && _fingerDown[1] && !_fingerDown[2]) {
+			} else if (ev.button.which == 1 && _fingerDown[0] && _fingerDown[1] && !_fingerDown[2]) {
 				// If the first finger's down and the second taps, it's a
 				// right mouse click.
 				event.type = Common::EVENT_RBUTTONDOWN;
@@ -228,8 +226,7 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev,
 				_km.x = _curX * MULTIPLIER;
 				_km.y = _curY * MULTIPLIER;
 				_queuedRUpTime = g_system->getMillis() + QUEUED_RUP_DELAY;
-			} else if (ev.button.which == 2 &&
-					_fingerDown[0] && _fingerDown[1]) {
+			} else if (ev.button.which == 2 && _fingerDown[0] && _fingerDown[1]) {
 				// If two fingers are down and a third taps, it's a middle
 				// click -- but lift the second finger so it doesn't register
 				// as a right click.
@@ -257,7 +254,7 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev,
  * @return True if event was processed, false if not.
  */
 bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev,
-		Common::Event &event) {
+                                            Common::Event &event) {
 	if (_fingerDown[ev.motion.which]) {
 		_dragDiffX[ev.motion.which] += ev.motion.xrel;
 		_dragDiffY[ev.motion.which] += ev.motion.yrel;
@@ -266,8 +263,7 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev,
 		case 0:
 			// If our dragDiff goes too many pixels in either direction,
 			// kill the future click and any queued drag event.
-			if (_doClick && (ABS(_dragDiffX[0]) > MOUSE_DEADZONE_PIXELS ||
-					ABS(_dragDiffY[0]) > MOUSE_DEADZONE_PIXELS)) {
+			if (_doClick && (ABS(_dragDiffX[0]) > MOUSE_DEADZONE_PIXELS || ABS(_dragDiffY[0]) > MOUSE_DEADZONE_PIXELS)) {
 				_doClick = false;
 				if (_queuedDragTime > 0)
 					_queuedDragTime = 0;
@@ -293,8 +289,7 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev,
 			// Check for a two-finger swipe
 			if (_fingerDown[0] && !_fingerDown[2]) {
 				// Check for a vertical swipe
-				if (ABS(_dragDiffY[0]) > _swipeDistY &&
-						ABS(_dragDiffY[1]) > _swipeDistY) {
+				if (ABS(_dragDiffY[0]) > _swipeDistY && ABS(_dragDiffY[1]) > _swipeDistY) {
 					// Virtually lift fingers to prevent repeat triggers
 					_fingerDown[0] = _fingerDown[1] = false;
 					if (_dragDiffY[0] < 0 && _dragDiffY[1] < 0) {
@@ -312,8 +307,7 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev,
 					return true;
 				}
 				// Check for a horizontal swipe
-				if (ABS(_dragDiffX[0]) > _swipeDistX &&
-						ABS(_dragDiffX[1]) > _swipeDistX) {
+				if (ABS(_dragDiffX[0]) > _swipeDistX && ABS(_dragDiffX[1]) > _swipeDistX) {
 					// Virtually lift fingers to prevent repeat triggers
 					_fingerDown[0] = _fingerDown[1] = false;
 					if (_dragDiffX[0] < 0 && _dragDiffX[1] < 0) {
@@ -322,8 +316,7 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev,
 						event.kbd.flags = 0;
 						event.kbd.keycode = Common::KEYCODE_ESCAPE;
 						event.kbd.ascii = Common::ASCII_ESCAPE;
-						_queuedEscapeUpTime = g_system->getMillis() +
-							QUEUED_KEY_DELAY;
+						_queuedEscapeUpTime = g_system->getMillis() + QUEUED_KEY_DELAY;
 					} else if (_dragDiffX[0] > 0 && _dragDiffX[1] > 0) {
 						// A swipe right toggles trackpad mode
 						_trackpadMode = !_trackpadMode;
@@ -335,8 +328,7 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev,
 						dialogMsg += (_trackpadMode ? _("ON") : _("OFF"));
 						dialogMsg += ".\n";
 						// I18N: Instructions to toggle Trackpad mode.
-						dialogMsg +=
-							_("Swipe two fingers to the right to toggle.");
+						dialogMsg += _("Swipe two fingers to the right to toggle.");
 						GUI::TimedMessageDialog dialog(dialogMsg, 1500);
 						dialog.runModal();
 					}
@@ -348,9 +340,7 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev,
 			// Check for a three-finger swipe
 			if (_fingerDown[0] && _fingerDown[1]) {
 				// Swipe to the right toggles Auto-drag
-				if (_dragDiffX[0] > _swipeDistX &&
-						_dragDiffX[1] > _swipeDistX &&
-						_dragDiffX[2] > _swipeDistX) {
+				if (_dragDiffX[0] > _swipeDistX && _dragDiffX[1] > _swipeDistX && _dragDiffX[2] > _swipeDistX) {
 					// Virtually lift fingers to prevent repeat triggers
 					_fingerDown[0] = _fingerDown[1] = _fingerDown[2] = false;
 					// Toggle Auto-drag mode
@@ -363,13 +353,11 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev,
 					dialogMsg += ".\n";
 					// I18N: Instructions to toggle auto-drag.
 					dialogMsg += _(
-						"Swipe three fingers to the right to toggle.");
+					  "Swipe three fingers to the right to toggle.");
 					GUI::TimedMessageDialog dialog(dialogMsg, 1500);
 					dialog.runModal();
 					return true;
-				} else if (_dragDiffY[0] > _swipeDistY &&
-						_dragDiffY[1] > _swipeDistY &&
-						_dragDiffY[2] > _swipeDistY ) {
+				} else if (_dragDiffY[0] > _swipeDistY && _dragDiffY[1] > _swipeDistY && _dragDiffY[2] > _swipeDistY) {
 					// Swipe down to emulate spacebar (pause)
 					// Virtually lift fingers to prevent repeat triggers
 					_fingerDown[0] = _fingerDown[1] = _fingerDown[2] = false;
@@ -378,8 +366,7 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev,
 					event.kbd.flags = 0;
 					event.kbd.keycode = Common::KEYCODE_SPACE;
 					event.kbd.ascii = Common::ASCII_SPACE;
-					_queuedSpaceUpTime = g_system->getMillis() +
-						QUEUED_KEY_DELAY;
+					_queuedSpaceUpTime = g_system->getMillis() + QUEUED_KEY_DELAY;
 				}
 			}
 		}

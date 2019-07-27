@@ -23,13 +23,13 @@
 #ifndef VOYEUR_ANIMATION_H
 #define VOYEUR_ANIMATION_H
 
-#include "video/video_decoder.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "common/array.h"
 #include "common/list.h"
 #include "common/rect.h"
 #include "common/stream.h"
+#include "video/video_decoder.h"
 #include "voyeur/files.h"
 
 namespace Audio {
@@ -72,9 +72,9 @@ private:
 		bool isValid() const;
 
 	private:
-		uint32 _form;      // Unused variable
-		uint32 _dataSize;  // Unused variable
-		int _method;       // Unused variable
+		uint32 _form; // Unused variable
+		uint32 _dataSize; // Unused variable
+		int _method; // Unused variable
 		int _defSoundSize;
 	};
 
@@ -83,18 +83,20 @@ private:
 		int _offset;
 		int _size;
 
-		SoundFrame(int  offset, int size);
+		SoundFrame(int offset, int size);
 	};
 
 	class RL2AudioTrack : public AudioTrack {
 	private:
 		const RL2FileHeader &_header;
 		Audio::QueuingAudioStream *_audStream;
+
 	protected:
 		Audio::AudioStream *getAudioStream() const;
+
 	public:
 		RL2AudioTrack(const RL2FileHeader &header, Common::SeekableReadStream *stream,
-			Audio::Mixer::SoundType soundType);
+		              Audio::Mixer::SoundType soundType);
 		~RL2AudioTrack();
 
 		int numQueuedStreams() const { return _audStream->numQueuedStreams(); }
@@ -107,7 +109,7 @@ private:
 	class RL2VideoTrack : public FixedRateVideoTrack {
 	public:
 		RL2VideoTrack(const RL2FileHeader &header, RL2AudioTrack *audioTrack,
-			Common::SeekableReadStream *stream);
+		              Common::SeekableReadStream *stream);
 		~RL2VideoTrack();
 
 		uint16 getWidth() const;
@@ -118,7 +120,10 @@ private:
 		int getCurFrame() const { return _curFrame; }
 		int getFrameCount() const { return _header._numFrames; }
 		const Graphics::Surface *decodeNextFrame();
-		const byte *getPalette() const { _dirtyPalette = false; return _header._palette; }
+		const byte *getPalette() const {
+			_dirtyPalette = false;
+			return _header._palette;
+		}
 		int getPaletteCount() const { return _header._colorCount; }
 		bool hasDirtyPalette() const { return _dirtyPalette; }
 		const Common::List<Common::Rect> *getDirtyRects() const { return &_dirtyRects; }
@@ -128,6 +133,7 @@ private:
 		virtual Common::Rational getFrameRate() const { return _header.getFrameRate(); }
 		virtual bool isSeekable() const { return true; }
 		virtual bool seek(const Audio::Timestamp &time);
+
 	private:
 		Common::SeekableReadStream *_fileStream;
 		const RL2FileHeader &_header;

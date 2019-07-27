@@ -111,14 +111,12 @@ void DreamWebEngine::checkDest(const RoomPaths *roomsPaths) {
 	const uint8 tmp = _mansPath << 4;
 	uint8 destination = _destination;
 	for (uint i = 0; i < 24; ++i) {
-		if ((segments[i].b0 & 0xf0) == tmp &&
-		    (segments[i].b0 & 0x0f) == _destination) {
+		if ((segments[i].b0 & 0xf0) == tmp && (segments[i].b0 & 0x0f) == _destination) {
 			_destination = segments[i].b1 & 0x0f;
 			return;
 		}
 
-		if (((segments[i].b0 & 0x0f) << 4) == tmp &&
-		    ((segments[i].b0 & 0xf0) >> 4) == _destination) {
+		if (((segments[i].b0 & 0x0f) << 4) == tmp && ((segments[i].b0 & 0xf0) >> 4) == _destination) {
 			destination = segments[i].b1 & 0x0f;
 		}
 	}
@@ -265,7 +263,6 @@ void DreamWebEngine::workoutFrames() {
 	int lineStartY = (int16)_lineStartY;
 	int lineEndX = (int16)_lineEndX;
 	int lineEndY = (int16)_lineEndY;
-
 
 	diffx = ABS(lineStartX - lineEndX);
 	diffy = ABS(lineStartY - lineEndY);

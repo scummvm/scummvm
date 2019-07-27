@@ -149,14 +149,12 @@ protected:
 	typedef Common::Functor2<uint16, const ArgumentsArray &, void> OpcodeProcMyst;
 
 #define REGISTER_OPCODE(op, cls, method) \
-		registerOpcode( \
-			op, #method, new Common::Functor2Mem<uint16, const ArgumentsArray &, void, cls>(this, &cls::method) \
-		)
+	registerOpcode(                        \
+	  op, #method, new Common::Functor2Mem<uint16, const ArgumentsArray &, void, cls>(this, &cls::method))
 
 #define OVERRIDE_OPCODE(op, cls, method) \
-		overrideOpcode( \
-			op, #method, new Common::Functor2Mem<uint16, const ArgumentsArray &, void, cls>(this, &cls::method) \
-		)
+	overrideOpcode(                        \
+	  op, #method, new Common::Functor2Mem<uint16, const ArgumentsArray &, void, cls>(this, &cls::method))
 
 	void registerOpcode(uint16 op, const char *name, OpcodeProcMyst *command);
 	void overrideOpcode(uint16 op, const char *name, OpcodeProcMyst *command);
@@ -172,12 +170,15 @@ protected:
 
 	void setupCommonOpcodes();
 
-	template<class T>
+	template <class T>
 	T *getInvokingResource() const;
 
 private:
 	struct MystOpcode {
-		MystOpcode(uint16 o, OpcodeProcMyst *p, const char *d) : op(o), proc(p), desc(d) {}
+		MystOpcode(uint16 o, OpcodeProcMyst *p, const char *d)
+		  : op(o)
+		  , proc(p)
+		  , desc(d) {}
 
 		uint16 op;
 		Common::SharedPtr<OpcodeProcMyst> proc;
@@ -194,7 +195,7 @@ private:
 	Common::String describeCommand(const MystOpcode &command, uint16 var, const ArgumentsArray &args);
 };
 
-template<class T>
+template <class T>
 T *MystScriptParser::getInvokingResource() const {
 	T *resource = dynamic_cast<T *>(_invokingResource);
 

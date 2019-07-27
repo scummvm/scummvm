@@ -28,29 +28,29 @@
 namespace Glk {
 namespace Alan3 {
 
-/* TYPES */
-struct CurVars {
-	int syntax,
-	    verb,
-	    location,
-	    actor,
-	    instance,
-	    tick,
-	    score,
-	    visits,
-	    sourceLine,
-	    sourceFile;
-	bool meta;
+	/* TYPES */
+	struct CurVars {
+		int syntax,
+		  verb,
+		  location,
+		  actor,
+		  instance,
+		  tick,
+		  score,
+		  visits,
+		  sourceLine,
+		  sourceFile;
+		bool meta;
 
-	/**
+		/**
 	 * Save/load data from save file
 	 */
-	void synchronize(Common::Serializer &s);
-};
+		void synchronize(Common::Serializer &s);
+	};
 
-/* DATA */
-extern CurVars current;
-extern bool gameStateChanged;
+	/* DATA */
+	extern CurVars current;
+	extern bool gameStateChanged;
 
 } // End of namespace Alan3
 } // End of namespace Glk

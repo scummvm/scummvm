@@ -191,5 +191,4 @@ Common::SeekableReadStream *Container::getItem(uint32 id) {
 	return res;
 }
 
-
 } // End of namespace MacVenture

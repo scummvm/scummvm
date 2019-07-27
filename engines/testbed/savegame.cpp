@@ -129,7 +129,7 @@ TestExitStatus SaveGametests::testListingSavefile() {
 	saveFileMan->clearError();
 
 	// create some savefiles
-	const char *savefileName[] = {"tBedSavefileToList.0", "tBedSavefileToList.1", "tBedSavefileToList.2"};
+	const char *savefileName[] = { "tBedSavefileToList.0", "tBedSavefileToList.1", "tBedSavefileToList.2" };
 	writeDataToFile("tBedSavefileToList.0", "Save me!");
 	writeDataToFile("tBedSavefileToList.1", "Save me!");
 	writeDataToFile("tBedSavefileToList.2", "Save me!");

@@ -36,6 +36,7 @@ class RedReader {
 public:
 	Common::SeekableReadStream *load(const char *redFilename, const char *filename);
 	static Common::SeekableReadStream *loadFromRed(const char *redFilename, const char *filename);
+
 private:
 	struct FileEntry {
 		uint32 compSize, origSize;
@@ -63,6 +64,7 @@ public:
 	LzhDecompressor();
 	~LzhDecompressor();
 	int decompress(Common::SeekableReadStream &source, byte *dest, uint32 compSize, uint32 origSize);
+
 private:
 	Common::SeekableReadStream *_source;
 	uint32 _compSize, _blockPos;
@@ -100,7 +102,6 @@ private:
 	void make_code(int n, byte len[], uint16 code[]);
 	void make_table(uint nchar, byte bitlen[], uint tablebits, uint16 table[]);
 	int make_tree(int nparm, uint16 freqparm[], byte lenparm[], uint16 codeparm[]);
-
 };
 
 } // End of namespace Made

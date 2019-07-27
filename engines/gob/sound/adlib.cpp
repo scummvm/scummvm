@@ -20,10 +20,10 @@
  *
  */
 
-#include "common/util.h"
-#include "common/textconsole.h"
-#include "common/debug.h"
 #include "common/config-manager.h"
+#include "common/debug.h"
+#include "common/textconsole.h"
+#include "common/util.h"
 
 #include "audio/fmopl.h"
 
@@ -32,10 +32,9 @@
 
 namespace Gob {
 
-static const int kPitchTom        = 24;
-static const int kPitchTomToSnare =  7;
-static const int kPitchSnareDrum  = kPitchTom + kPitchTomToSnare;
-
+static const int kPitchTom = 24;
+static const int kPitchTomToSnare = 7;
+static const int kPitchSnareDrum = kPitchTom + kPitchTomToSnare;
 
 // Attenuation map for GUI volume slider
 // Note: no volume control in the original engine
@@ -49,14 +48,14 @@ const uint8 AdLib::kVolumeTable[Audio::Mixer::kMaxMixerVolume + 1] = {
 	19, 19, 18, 18, 18, 18, 18, 18, 17, 17, 17, 17, 17, 16, 16, 16,
 	16, 16, 16, 15, 15, 15, 15, 15, 15, 14, 14, 14, 14, 14, 14, 13,
 	13, 13, 13, 13, 13, 13, 12, 12, 12, 12, 12, 12, 12, 11, 11, 11,
-	11, 11, 11, 11, 11, 10, 10, 10, 10, 10, 10, 10, 10,  9,  9,  9,
-	 9,  9,  9,  9,  9,  8,  8,  8,  8,  8,  8,  8,  8,  8,  7,  7,
-	 7,  7,  7,  7,  7,  7,  7,  6,  6,  6,  6,  6,  6,  6,  6,  6,
-	 6,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  4,  4,  4,  4,  4,
-	 4,  4,  4,  4,  4,  4,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,
-	 3,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  1,  1,  1,
-	 1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,  0,
-	 0
+	11, 11, 11, 11, 11, 10, 10, 10, 10, 10, 10, 10, 10, 9, 9, 9,
+	9, 9, 9, 9, 9, 8, 8, 8, 8, 8, 8, 8, 8, 8, 7, 7,
+	7, 7, 7, 7, 7, 7, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6,
+	6, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4,
+	4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+	3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0,
+	0
 };
 
 // Is the operator a modulator (0) or a carrier (1)?
@@ -68,55 +67,78 @@ const uint8 AdLib::kOperatorType[kOperatorCount] = {
 
 // Operator number to register offset on the OPL
 const uint8 AdLib::kOperatorOffset[kOperatorCount] = {
-	 0,  1,  2,  3,  4,  5,
-	 8,  9, 10, 11, 12, 13,
+	0, 1, 2, 3, 4, 5,
+	8, 9, 10, 11, 12, 13,
 	16, 17, 18, 19, 20, 21
 };
 
 // For each operator, the voice it belongs to
 const uint8 AdLib::kOperatorVoice[kOperatorCount] = {
-	0, 1, 2,
-	0, 1, 2,
-	3, 4, 5,
-	3, 4, 5,
-	6, 7, 8,
-	6, 7, 8,
+	0,
+	1,
+	2,
+	0,
+	1,
+	2,
+	3,
+	4,
+	5,
+	3,
+	4,
+	5,
+	6,
+	7,
+	8,
+	6,
+	7,
+	8,
 };
 
 // Voice to operator set, for the 9 melodyvoices (only 6 useable in percussion mode)
 const uint8 AdLib::kVoiceMelodyOperator[kOperatorsPerVoice][kMelodyVoiceCount] = {
-	{0, 1, 2, 6,  7,  8, 12, 13, 14},
-	{3, 4, 5, 9, 10, 11, 15, 16, 17}
+	{ 0, 1, 2, 6, 7, 8, 12, 13, 14 },
+	{ 3, 4, 5, 9, 10, 11, 15, 16, 17 }
 };
 
 // Voice to operator set, for the 5 percussion voices (only useable in percussion mode)
 const uint8 AdLib::kVoicePercussionOperator[kOperatorsPerVoice][kPercussionVoiceCount] = {
-	{12, 16, 14, 17, 13},
-	{15,  0,  0,  0,  0}
+	{ 12, 16, 14, 17, 13 },
+	{ 15, 0, 0, 0, 0 }
 };
 
 // Mask bits to set each percussion instrument on/off
-const byte AdLib::kPercussionMasks[kPercussionVoiceCount] = {0x10, 0x08, 0x04, 0x02, 0x01};
+const byte AdLib::kPercussionMasks[kPercussionVoiceCount] = { 0x10, 0x08, 0x04, 0x02, 0x01 };
 
 // Default instrument presets
-const uint16 AdLib::kPianoParams   [kOperatorsPerVoice][kParamCount] = {
-	{ 1,  1,  3, 15,  5,  0,  1,  3, 15,  0,  0,  0,  1,  0},
-	{ 0,  1,  1, 15,  7,  0,  2,  4,  0,  0,  0,  1,  0,  0}  };
+const uint16 AdLib::kPianoParams[kOperatorsPerVoice][kParamCount] = {
+	{ 1, 1, 3, 15, 5, 0, 1, 3, 15, 0, 0, 0, 1, 0 },
+	{ 0, 1, 1, 15, 7, 0, 2, 4, 0, 0, 0, 1, 0, 0 }
+};
 const uint16 AdLib::kBaseDrumParams[kOperatorsPerVoice][kParamCount] = {
-	{ 0,  0,  0, 10,  4,  0,  8, 12, 11,  0,  0,  0,  1,  0 },
-	{ 0,  0,  0, 13,  4,  0,  6, 15,  0,  0,  0,  0,  1,  0 } };
+	{ 0, 0, 0, 10, 4, 0, 8, 12, 11, 0, 0, 0, 1, 0 },
+	{ 0, 0, 0, 13, 4, 0, 6, 15, 0, 0, 0, 0, 1, 0 }
+};
 const uint16 AdLib::kSnareDrumParams[kParamCount] = {
-	  0, 12,  0, 15, 11,  0,  8,  5,  0,  0,  0,  0,  0,  0   };
-const uint16 AdLib::kTomParams      [kParamCount] = {
-	  0,  4,  0, 15, 11,  0,  7,  5,  0,  0,  0,  0,  0,  0   };
-const uint16 AdLib::kCymbalParams   [kParamCount] = {
-	  0,  1,  0, 15, 11,  0,  5,  5,  0,  0,  0,  0,  0,  0   };
-const uint16 AdLib::kHihatParams    [kParamCount] = {
-	  0,  1,  0, 15, 11,  0,  7,  5,  0,  0,  0,  0,  0,  0   };
+	0, 12, 0, 15, 11, 0, 8, 5, 0, 0, 0, 0, 0, 0
+};
+const uint16 AdLib::kTomParams[kParamCount] = {
+	0, 4, 0, 15, 11, 0, 7, 5, 0, 0, 0, 0, 0, 0
+};
+const uint16 AdLib::kCymbalParams[kParamCount] = {
+	0, 1, 0, 15, 11, 0, 5, 5, 0, 0, 0, 0, 0, 0
+};
+const uint16 AdLib::kHihatParams[kParamCount] = {
+	0, 1, 0, 15, 11, 0, 7, 5, 0, 0, 0, 0, 0, 0
+};
 
-
-AdLib::AdLib(int callbackFreq) : _opl(0),
-	_toPoll(0), _repCount(0), _first(true), _playing(false), _ended(true), _volume(0) {
+AdLib::AdLib(int callbackFreq)
+  : _opl(0)
+  , _toPoll(0)
+  , _repCount(0)
+  , _first(true)
+  , _playing(false)
+  , _ended(true)
+  , _volume(0) {
 
 	initFreqs();
 
@@ -186,7 +208,7 @@ void AdLib::onTimer() {
 
 		// Poll more music
 		_toPoll = pollMusic(_first);
-		_first  = false;
+		_first = false;
 	}
 
 	// Song ended, loop if requested
@@ -198,8 +220,8 @@ void AdLib::onTimer() {
 			if (_repCount > 0)
 				_repCount--;
 
-			_first  = true;
-			_ended  = false;
+			_first = true;
+			_ended = false;
 
 			reset();
 			rewind();
@@ -228,8 +250,8 @@ void AdLib::startPlay() {
 	Common::StackLock slock(_mutex);
 
 	_playing = true;
-	_ended   = false;
-	_first   = true;
+	_ended = false;
+	_first = true;
 
 	reset();
 	rewind();
@@ -274,13 +296,13 @@ void AdLib::end(bool killRepeat) {
 void AdLib::initOPL() {
 	_tremoloDepth = false;
 	_vibratoDepth = false;
-	_keySplit     = false;
+	_keySplit = false;
 
 	_enableWaveSelect = true;
 
 	for (int i = 0; i < kMaxVoiceCount; i++) {
 		_voiceNote[i] = 0;
-		_voiceOn  [i] = 0;
+		_voiceOn[i] = 0;
 	}
 
 	/* NOTE: We used to completely reset the OPL here, via _opl->reset(). However,
@@ -299,7 +321,7 @@ void AdLib::initOPL() {
 	setVibratoDepth(false);
 	setKeySplit(false);
 
-	for(int i = 0; i < kMelodyVoiceCount; i++)
+	for (int i = 0; i < kMelodyVoiceCount; i++)
 		voiceOff(i);
 
 	setPitchRange(1);
@@ -339,7 +361,7 @@ void AdLib::enableWaveSelect(bool enable) {
 }
 
 void AdLib::setPitchRange(uint8 range) {
-	_pitchRange     = CLIP<uint8>(range, 0, 12);
+	_pitchRange = CLIP<uint8>(range, 0, 12);
 	_pitchRangeStep = _pitchRange * kPitchStepCount;
 }
 
@@ -364,7 +386,7 @@ void AdLib::setKeySplit(bool keySplit) {
 void AdLib::setVoiceTimbre(uint8 voice, const uint16 *params) {
 	const uint16 *params0 = params;
 	const uint16 *params1 = params + kParamCount - 1;
-	const uint16 *waves   = params + 2 * (kParamCount - 1);
+	const uint16 *waves = params + 2 * (kParamCount - 1);
 
 	const int voicePerc = voice - kVoiceBaseDrum;
 
@@ -387,7 +409,7 @@ void AdLib::setVoiceVolume(uint8 voice, uint8 volume) {
 	const int voicePerc = voice - kVoiceBaseDrum;
 
 	if (!isPercussionMode() || (voice < kVoiceBaseDrum))
-		oper = kVoiceMelodyOperator[1][ voice];
+		oper = kVoiceMelodyOperator[1][voice];
 	else
 		oper = kVoicePercussionOperator[voice == kVoiceBaseDrum ? 1 : 0][voicePerc];
 
@@ -408,10 +430,10 @@ void AdLib::noteOn(uint8 voice, uint8 note) {
 
 	if (isPercussionMode() && (voice >= kVoiceBaseDrum)) {
 
-		if        (voice == kVoiceBaseDrum) {
-			setFreq(kVoiceBaseDrum , note                   , false);
+		if (voice == kVoiceBaseDrum) {
+			setFreq(kVoiceBaseDrum, note, false);
 		} else if (voice == kVoiceTom) {
-			setFreq(kVoiceTom      , note                   , false);
+			setFreq(kVoiceTom, note, false);
 			setFreq(kVoiceSnareDrum, note + kPitchTomToSnare, false);
 		}
 
@@ -485,11 +507,11 @@ void AdLib::writeSustainRelease(uint8 oper) {
 void AdLib::writeTremoloVibratoSustainingKeyScaleRateFreqMulti(uint8 oper) {
 	uint8 value = 0;
 
-	value |= _operatorParams[oper][kParamAM]           ? 0x80 : 0;
-	value |= _operatorParams[oper][kParamVib]          ? 0x40 : 0;
-	value |= _operatorParams[oper][kParamSustaining]   ? 0x20 : 0;
+	value |= _operatorParams[oper][kParamAM] ? 0x80 : 0;
+	value |= _operatorParams[oper][kParamVib] ? 0x40 : 0;
+	value |= _operatorParams[oper][kParamSustaining] ? 0x20 : 0;
 	value |= _operatorParams[oper][kParamKeyScaleRate] ? 0x10 : 0;
-	value |= _operatorParams[oper][kParamFreqMulti]    & 0x0F;
+	value |= _operatorParams[oper][kParamFreqMulti] & 0x0F;
 
 	writeOPL(0x20 + kOperatorOffset[oper], value);
 }
@@ -497,8 +519,8 @@ void AdLib::writeTremoloVibratoSustainingKeyScaleRateFreqMulti(uint8 oper) {
 void AdLib::writeTremoloVibratoDepthPercMode() {
 	uint8 value = 0;
 
-	value |= _tremoloDepth       ? 0x80 : 0;
-	value |= _vibratoDepth       ? 0x40 : 0;
+	value |= _tremoloDepth ? 0x80 : 0;
+	value |= _vibratoDepth ? 0x40 : 0;
 	value |= isPercussionMode() ? 0x20 : 0;
 	value |= _percussionBits;
 
@@ -510,7 +532,7 @@ void AdLib::writeWaveSelect(uint8 oper) {
 	if (_enableWaveSelect)
 		wave = _operatorParams[oper][kParamWaveSelect] & 0x03;
 
-	writeOPL(0xE0 + kOperatorOffset[ oper], wave);
+	writeOPL(0xE0 + kOperatorOffset[oper], wave);
 }
 
 void AdLib::writeAllParams(uint8 oper) {
@@ -529,17 +551,17 @@ void AdLib::initOperatorParams() {
 		setOperatorParams(i, kPianoParams[kOperatorType[i]], kPianoParams[kOperatorType[i]][kParamCount - 1]);
 
 	if (isPercussionMode()) {
-		setOperatorParams(12, kBaseDrumParams [0], kBaseDrumParams [0][kParamCount - 1]);
-		setOperatorParams(15, kBaseDrumParams [1], kBaseDrumParams [1][kParamCount - 1]);
-		setOperatorParams(16, kSnareDrumParams   , kSnareDrumParams   [kParamCount - 1]);
-		setOperatorParams(14, kTomParams         , kTomParams         [kParamCount - 1]);
-		setOperatorParams(17, kCymbalParams      , kCymbalParams      [kParamCount - 1]);
-		setOperatorParams(13, kHihatParams       , kHihatParams       [kParamCount - 1]);
+		setOperatorParams(12, kBaseDrumParams[0], kBaseDrumParams[0][kParamCount - 1]);
+		setOperatorParams(15, kBaseDrumParams[1], kBaseDrumParams[1][kParamCount - 1]);
+		setOperatorParams(16, kSnareDrumParams, kSnareDrumParams[kParamCount - 1]);
+		setOperatorParams(14, kTomParams, kTomParams[kParamCount - 1]);
+		setOperatorParams(17, kCymbalParams, kCymbalParams[kParamCount - 1]);
+		setOperatorParams(13, kHihatParams, kHihatParams[kParamCount - 1]);
 	}
 }
 
 void AdLib::initOperatorVolumes() {
-	for(int i = 0; i < kOperatorCount; i++)
+	for (int i = 0; i < kOperatorCount; i++)
 		_operatorVolume[i] = kMaxVolume;
 }
 
@@ -562,7 +584,7 @@ void AdLib::voiceOff(uint8 voice) {
 int32 AdLib::calcFreq(int32 deltaDemiToneNum, int32 deltaDemiToneDenom) {
 	int32 freq = 0;
 
-	freq  = ((deltaDemiToneDenom * 100) + 6 * deltaDemiToneNum) * 52088;
+	freq = ((deltaDemiToneDenom * 100) + 6 * deltaDemiToneNum) * 52088;
 	freq /= deltaDemiToneDenom * 2500;
 
 	return (freq * 147456) / 111875;
@@ -591,15 +613,15 @@ void AdLib::initFreqs() {
 
 void AdLib::resetFreqs() {
 	for (int i = 0; i < kMaxVoiceCount; i++) {
-		_freqPtr       [i] = _freqs[0];
+		_freqPtr[i] = _freqs[0];
 		_halfToneOffset[i] = 0;
 	}
 }
 
 void AdLib::changePitch(uint8 voice, uint16 pitchBend) {
 
-	int full   = 0;
-	int frac   = 0;
+	int full = 0;
+	int frac = 0;
 	int amount = ((pitchBend - kMidPitch) * _pitchRangeStep) / kMidPitch;
 
 	if (amount >= 0) {
@@ -617,15 +639,14 @@ void AdLib::changePitch(uint8 voice, uint16 pitchBend) {
 		frac = (amount - kPitchStepCount + 1) % kPitchStepCount;
 		if (frac)
 			frac = kPitchStepCount - frac;
-
 	}
 
 	_halfToneOffset[voice] = full;
-	_freqPtr       [voice] = _freqs[frac];
+	_freqPtr[voice] = _freqs[frac];
 }
 
 void AdLib::setFreq(uint8 voice, uint16 note, bool on) {
-	_voiceOn  [voice] = on;
+	_voiceOn[voice] = on;
 	_voiceNote[voice] = note;
 
 	note = CLIP<int>(note + _halfToneOffset[voice], 0, kNoteCount - 1);
@@ -654,7 +675,7 @@ void AdLib::syncVolume() {
 	_volume = (mute ? 0 : ConfMan.getInt("music_volume"));
 
 	if (_playing) {
-		for(int i = 0; i < kOperatorCount; i++)
+		for (int i = 0; i < kOperatorCount; i++)
 			writeKeyScaleLevelVolume(i);
 	}
 }

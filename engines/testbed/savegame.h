@@ -29,16 +29,16 @@ namespace Testbed {
 
 namespace SaveGametests {
 
-// Helper functions for SaveGame tests
-bool writeDataToFile(const char *fileName, const char *msg);
-bool readAndVerifyData(const char *fileName, const char *expected);
-// will contain function declarations for SaveGame tests
-TestExitStatus testSaveLoadState();
-TestExitStatus testRemovingSavefile();
-TestExitStatus testRenamingSavefile();
-TestExitStatus testListingSavefile();
-TestExitStatus testErrorMessages();
-// add more here
+	// Helper functions for SaveGame tests
+	bool writeDataToFile(const char *fileName, const char *msg);
+	bool readAndVerifyData(const char *fileName, const char *expected);
+	// will contain function declarations for SaveGame tests
+	TestExitStatus testSaveLoadState();
+	TestExitStatus testRemovingSavefile();
+	TestExitStatus testRenamingSavefile();
+	TestExitStatus testListingSavefile();
+	TestExitStatus testErrorMessages();
+	// add more here
 
 } // End of namespace SaveGametests
 

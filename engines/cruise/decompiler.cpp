@@ -26,8 +26,8 @@ namespace Cruise {
 
 #ifdef DUMP_SCRIPT
 
-#define numMaxLignes 100000
-#define lineMaxSize 10000
+#	define numMaxLignes 100000
+#	define lineMaxSize 10000
 
 int currentLineType = 0;
 
@@ -49,7 +49,7 @@ char *currentDecompScript;
 scriptInstanceStruct dummy;
 scriptInstanceStruct *currentDecompScriptPtr = &dummy;
 
-uint8 *getDataFromData3(ovlData3Struct * ptr, int param);
+uint8 *getDataFromData3(ovlData3Struct *ptr, int param);
 
 opcodeTypeFunction decompOpcodeTypeTable[64];
 
@@ -59,10 +59,10 @@ unsigned long int currentOffset;
 
 unsigned long int dumpIdx = 0;
 
-FILE *fHandle = NULL;	// FIXME: Use Common::DumpFile instead of FILE
+FILE *fHandle = NULL; // FIXME: Use Common::DumpFile instead of FILE
 
-#define DECOMPILER_STACK_DEPTH 100
-#define DECOMPILER_STACK_ENTRY_SIZE 5000
+#	define DECOMPILER_STACK_DEPTH 100
+#	define DECOMPILER_STACK_ENTRY_SIZE 5000
 
 char tempbuffer[5000];
 
@@ -83,8 +83,7 @@ uint8 *getStringNameFromIdx(uint16 stringTypeIdx, char *offset) {
 	switch (stringTypeIdx & 7) {
 	case 2: {
 		sprintf(stringName, "\"%s\"",
-		        currentScript->dataPtr +
-		        currentScript->offsetToSubData3 + atoi(offset));
+		        currentScript->dataPtr + currentScript->offsetToSubData3 + atoi(offset));
 		break;
 	}
 	case 5: {
@@ -111,8 +110,7 @@ char *resolveMessage(char *messageIdxString) {
 	if (strcmp(buffer, messageIdxString)) {
 		return messageIdxString;
 	} else {
-		return currentDecompOvl->stringTable[atoi(messageIdxString)].
-		       string;
+		return currentDecompOvl->stringTable[atoi(messageIdxString)].string;
 	}
 }
 
@@ -131,38 +129,29 @@ void pushDecomp(char *string, ...) {
 void resolveDecompShort(char *buffer) {
 	ovlData3Struct *data3Ptr = currentScript;
 
-	importScriptStruct *importEntry =
-	    (importScriptStruct *)(data3Ptr->dataPtr +
-	                           data3Ptr->offsetToImportData);
+	importScriptStruct *importEntry = (importScriptStruct *)(data3Ptr->dataPtr + data3Ptr->offsetToImportData);
 
 	for (int i = 0; i < data3Ptr->numRelocGlob; i++) {
 		switch (importEntry->type) {
-		case 20:	// script
+		case 20: // script
 		case 30:
 		case 40:
 		case 50: {
-			if (importEntry->offset == currentDecompScriptPtr->var4 - 3) {	// param1
+			if (importEntry->offset == currentDecompScriptPtr->var4 - 3) { // param1
 				sprintf(buffer,
-				        data3Ptr->dataPtr +
-				        data3Ptr->
-				        offsetToImportName +
-				        importEntry->offsetToName);
+				        data3Ptr->dataPtr + data3Ptr->offsetToImportName + importEntry->offsetToName);
 				return;
 			}
-			if (importEntry->offset == currentDecompScriptPtr->var4 - 6) {	// param2
+			if (importEntry->offset == currentDecompScriptPtr->var4 - 6) { // param2
 				sprintf(buffer, "linkedIdx");
 				return;
 			}
 			break;
 		}
 		default: {
-			if (importEntry->offset ==
-			        currentDecompScriptPtr->var4 - 4) {
+			if (importEntry->offset == currentDecompScriptPtr->var4 - 4) {
 				sprintf(buffer,
-				        data3Ptr->dataPtr +
-				        data3Ptr->
-				        offsetToImportName +
-				        importEntry->offsetToName);
+				        data3Ptr->dataPtr + data3Ptr->offsetToImportName + importEntry->offsetToName);
 				return;
 			}
 		}
@@ -171,26 +160,19 @@ void resolveDecompShort(char *buffer) {
 	}
 
 	buffer[0] = 0;
-
 }
 
 void resolveDecompChar(char *buffer) {
 	ovlData3Struct *data3Ptr = currentScript;
 
-	importScriptStruct *importEntry =
-	    (importScriptStruct *)(data3Ptr->dataPtr +
-	                           data3Ptr->offsetToImportData);
+	importScriptStruct *importEntry = (importScriptStruct *)(data3Ptr->dataPtr + data3Ptr->offsetToImportData);
 
 	for (int i = 0; i < data3Ptr->numRelocGlob; i++) {
 		switch (importEntry->type) {
 		default: {
-			if (importEntry->offset ==
-			        currentDecompScriptPtr->var4 - 2) {
+			if (importEntry->offset == currentDecompScriptPtr->var4 - 2) {
 				sprintf(buffer,
-				        data3Ptr->dataPtr +
-				        data3Ptr->
-				        offsetToImportName +
-				        importEntry->offsetToName);
+				        data3Ptr->dataPtr + data3Ptr->offsetToImportName + importEntry->offsetToName);
 				return;
 			}
 		}
@@ -199,7 +181,6 @@ void resolveDecompChar(char *buffer) {
 	}
 
 	buffer[0] = 0;
-
 }
 
 char *popDecomp() {
@@ -271,8 +252,7 @@ void addDecomp(char *string, ...) {
 	 *
 	 * fprintf(fHandle,"\n"); */
 
-	struct decompileLineStruct *pLineStruct =
-				    &decompileLineTable[positionInDecompileLineTable++];
+	struct decompileLineStruct *pLineStruct = &decompileLineTable[positionInDecompileLineTable++];
 
 	pLineStruct->lineOffset = currentLineIdx;
 	pLineStruct->indent = 0;
@@ -303,8 +283,7 @@ void resolveVarName(char *ovlIdxString, int varType, char *varIdxString,
 	strcpy(outputName, "");
 
 	if (varType == 2) {
-		strcpy(outputName, getStringNameFromIdx(varType,
-		                                        varIdxString));
+		strcpy(outputName, getStringNameFromIdx(varType, varIdxString));
 		return;
 	}
 	if (varType == 1) {
@@ -315,18 +294,14 @@ void resolveVarName(char *ovlIdxString, int varType, char *varIdxString,
 	if (!strcmp(ovlIdxString, "0")) {
 		for (int i = 0; i < currentDecompOvl->numSymbGlob; i++) {
 			if (varIdx == currentDecompOvl->arraySymbGlob[i].idx) {
-				if (((currentDecompOvl->arraySymbGlob[i].var4 & 0xF0) == 0) && varType != 0x20) {	// var
+				if (((currentDecompOvl->arraySymbGlob[i].var4 & 0xF0) == 0) && varType != 0x20) { // var
 					strcpy(outputName,
-					       currentDecompOvl->arrayNameSymbGlob +
-					       currentDecompOvl->arraySymbGlob[i].
-					       offsetToName);
+					       currentDecompOvl->arrayNameSymbGlob + currentDecompOvl->arraySymbGlob[i].offsetToName);
 					return;
 				}
-				if ((currentDecompOvl->arraySymbGlob[i].var4) == 20 && varType == 0x20) {	// script
+				if ((currentDecompOvl->arraySymbGlob[i].var4) == 20 && varType == 0x20) { // script
 					strcpy(outputName,
-					       currentDecompOvl->arrayNameSymbGlob +
-					       currentDecompOvl->arraySymbGlob[i].
-					       offsetToName);
+					       currentDecompOvl->arrayNameSymbGlob + currentDecompOvl->arraySymbGlob[i].offsetToName);
 					return;
 				}
 			}
@@ -403,14 +378,14 @@ int decompLoadVar() {
 	}
 	default: {
 		debug("Unsupported type %d in opcodeType0",
-		       currentScriptOpcodeType);
+		      currentScriptOpcodeType);
 		failed = 1;
 	}
 	}
 }
 
 int decompSaveVar() {
-//      int var = popVar();
+	//      int var = popVar();
 
 	switch (currentScriptOpcodeType) {
 	case 0: {
@@ -477,7 +452,7 @@ int decompSaveVar() {
 	}
 	default: {
 		debug("Unsupported type %d in opcodeType1",
-		       currentScriptOpcodeType);
+		      currentScriptOpcodeType);
 		failed = 1;
 	}
 	}
@@ -515,14 +490,14 @@ int decompOpcodeType2() {
 			           decompSaveOpcodeVar);
 		} else {
 			debug("Unsupported type %d in opcodeType2",
-			       byte1 & 7);
+			      byte1 & 7);
 			failed = 1;
 		}
 		break;
 	}
 	default: {
 		debug("Unsupported type %d in opcodeType2",
-		       currentScriptOpcodeType);
+		      currentScriptOpcodeType);
 		failed = 1;
 	}
 	}
@@ -646,7 +621,6 @@ int decompTest() {
 		addDecomp("goto %d", offset + oldOffset);
 		break;
 	}
-
 	}
 
 	return 0;
@@ -740,7 +714,7 @@ int decompFunction() {
 
 		pushDecomp(tempbuffer);
 		break;
-		}
+	}
 
 	case 0x7: {
 		char *var1 = popDecomp();
@@ -750,7 +724,7 @@ int decompFunction() {
 		sprintf(tempbuffer, "Op_InitializeState(ovl:%s,dataIdx:%s,%s)", ovlStr, objIdxStr, var1);
 		pushDecomp(tempbuffer);
 		break;
-		}
+	}
 
 	case 0x8:
 		sprintf(tempbuffer, "Op_RemoveCell(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
@@ -798,7 +772,7 @@ int decompFunction() {
 
 	case 0x13:
 		sprintf(tempbuffer, "Op_AddMessage(%s,\"%s\",%s,%s,%s,%s)", popDecomp(),
-			resolveMessage(popDecomp()), popDecomp(),  popDecomp(), popDecomp(), popDecomp());
+		        resolveMessage(popDecomp()), popDecomp(), popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
@@ -813,7 +787,7 @@ int decompFunction() {
 
 	case 0x16:
 		sprintf(tempbuffer, "Op_FreezeCell(%s,%s,%s,%s,%s,%s)", popDecomp(), popDecomp(),
-			popDecomp(), popDecomp(), popDecomp(), popDecomp());
+		        popDecomp(), popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
@@ -824,7 +798,7 @@ int decompFunction() {
 
 	case 0x18:
 		sprintf(tempbuffer, "Op_AddAnimation(%s,%s,%s,%s,%s,%s,%s)", popDecomp(), popDecomp(),
-			popDecomp(), popDecomp(), popDecomp(), popDecomp(), popDecomp());
+		        popDecomp(), popDecomp(), popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
@@ -840,7 +814,7 @@ int decompFunction() {
 
 	case 0x1E:
 		sprintf(tempbuffer, "Op_TrackAnim(%s,%s,%s,%s,%s,%s)", popDecomp(), popDecomp(),
-			popDecomp(), popDecomp(), popDecomp(), popDecomp());
+		        popDecomp(), popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
@@ -861,7 +835,7 @@ int decompFunction() {
 
 	case 0x24:
 		sprintf(tempbuffer, "Op_SetStringColors(%s,%s,%s,%s)", popDecomp(), popDecomp(),
-			popDecomp(), popDecomp());
+		        popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
@@ -1222,7 +1196,7 @@ int decompFunction() {
 	}
 	}
 
-//    pushDecomp("functionDummyPush");
+	//    pushDecomp("functionDummyPush");
 
 	return (0);
 }
@@ -1247,8 +1221,7 @@ void generateIndentation() {
 			int destLine;
 			int destLineIdx;
 
-			gotoStatement =
-			    strstr(decompileLineTable[i].line, "goto");
+			gotoStatement = strstr(decompileLineTable[i].line, "goto");
 			assert(gotoStatement);
 			gotoStatement = strchr(gotoStatement, ' ') + 1;
 
@@ -1269,8 +1242,7 @@ void generateIndentation() {
 					decompileLineTable[j].indent++;
 				}
 
-				if (strstr(decompileLineTable[destLineIdx - 1].line, "goto") ==
-				        decompileLineTable[destLineIdx - 1].line) {
+				if (strstr(decompileLineTable[destLineIdx - 1].line, "goto") == decompileLineTable[destLineIdx - 1].line) {
 					//decompileLineTable[destLineIdx-1].pendingElse = 1;
 				}
 			}
@@ -1307,9 +1279,9 @@ void dumpScript(uint8 *ovlName, ovlDataStruct *ovlData, int idx) {
 
 	// return;
 
-//      scriptDataPtrTable[1] = *(char**)(ptr+0x6);
-	scriptDataPtrTable[2] = getDataFromData3(currentScript, 1);	// strings
-	scriptDataPtrTable[5] = ovlData->data4Ptr;	// free strings
+	//      scriptDataPtrTable[1] = *(char**)(ptr+0x6);
+	scriptDataPtrTable[2] = getDataFromData3(currentScript, 1); // strings
+	scriptDataPtrTable[5] = ovlData->data4Ptr; // free strings
 	scriptDataPtrTable[6] = ovlData->ptr8;
 
 	stop = 0;
@@ -1343,7 +1315,7 @@ void dumpScript(uint8 *ovlName, ovlDataStruct *ovlData, int idx) {
 
 		if (!decompOpcodeTypeTable[(opcodeType & 0xFB) >> 3]) {
 			debug("Unsupported opcode type %d in decomp",
-			       (opcodeType & 0xFB) >> 3);
+			      (opcodeType & 0xFB) >> 3);
 			return;
 		}
 

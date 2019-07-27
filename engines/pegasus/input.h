@@ -115,170 +115,64 @@ enum {
 };
 
 enum {
-	kAllUpBits =	(kButtonUp << kUpButtonShift) |
-					(kButtonUp << kLeftButtonShift) |
-					(kButtonUp << kDownButtonShift) |
-					(kButtonUp << kRightButtonShift) |
-					(kButtonUp << kLeftFireButtonShift) |
-					(kButtonUp << kRightFireButtonShift) |
-					(kButtonUp << kOneButtonShift) |
-					(kButtonUp << kTwoButtonShift) |
-					(kButtonUp << kThreeButtonShift) |
-					(kButtonUp << kFourButtonShift) |
-					(kButtonUp << kMod1ButtonShift) |
-					(kButtonUp << kMod2ButtonShift) |
-					(kButtonUp << kMod3ButtonShift),
-	kDirectionBits =	(kButtonDownMask << kUpButtonShift) |
-						(kButtonDownMask << kLeftButtonShift) |
-						(kButtonDownMask << kDownButtonShift) |
-						(kButtonDownMask << kRightButtonShift),
-	kButtonBits =	(kButtonDownMask << kLeftFireButtonShift) |
-					(kButtonDownMask << kRightFireButtonShift) |
-					(kButtonDownMask << kOneButtonShift) |
-					(kButtonDownMask << kTwoButtonShift) |
-					(kButtonDownMask << kThreeButtonShift) |
-					(kButtonDownMask << kFourButtonShift) |
-					(kButtonDownMask << kMod1ButtonShift) |
-					(kButtonDownMask << kMod2ButtonShift) |
-					(kButtonDownMask << kMod3ButtonShift),
+	kAllUpBits = (kButtonUp << kUpButtonShift) | (kButtonUp << kLeftButtonShift) | (kButtonUp << kDownButtonShift) | (kButtonUp << kRightButtonShift) | (kButtonUp << kLeftFireButtonShift) | (kButtonUp << kRightFireButtonShift) | (kButtonUp << kOneButtonShift) | (kButtonUp << kTwoButtonShift) | (kButtonUp << kThreeButtonShift) | (kButtonUp << kFourButtonShift) | (kButtonUp << kMod1ButtonShift) | (kButtonUp << kMod2ButtonShift) | (kButtonUp << kMod3ButtonShift),
+	kDirectionBits = (kButtonDownMask << kUpButtonShift) | (kButtonDownMask << kLeftButtonShift) | (kButtonDownMask << kDownButtonShift) | (kButtonDownMask << kRightButtonShift),
+	kButtonBits = (kButtonDownMask << kLeftFireButtonShift) | (kButtonDownMask << kRightFireButtonShift) | (kButtonDownMask << kOneButtonShift) | (kButtonDownMask << kTwoButtonShift) | (kButtonDownMask << kThreeButtonShift) | (kButtonDownMask << kFourButtonShift) | (kButtonDownMask << kMod1ButtonShift) | (kButtonDownMask << kMod2ButtonShift) | (kButtonDownMask << kMod3ButtonShift),
 	kAllButtonDownBits = kDirectionBits | kButtonBits,
-	kAllAutoBits =	(kAutoButtonMask << kUpButtonShift) |
-					(kAutoButtonMask << kLeftButtonShift) |
-					(kAutoButtonMask << kDownButtonShift) |
-					(kAutoButtonMask << kRightButtonShift) |
-					(kAutoButtonMask << kLeftFireButtonShift) |
-					(kAutoButtonMask << kRightFireButtonShift) |
-					(kAutoButtonMask << kOneButtonShift) |
-					(kAutoButtonMask << kTwoButtonShift) |
-					(kAutoButtonMask << kThreeButtonShift) |
-					(kAutoButtonMask << kFourButtonShift) |
-					(kAutoButtonMask << kMod1ButtonShift) |
-					(kAutoButtonMask << kMod2ButtonShift) |
-					(kAutoButtonMask << kMod3ButtonShift),
+	kAllAutoBits = (kAutoButtonMask << kUpButtonShift) | (kAutoButtonMask << kLeftButtonShift) | (kAutoButtonMask << kDownButtonShift) | (kAutoButtonMask << kRightButtonShift) | (kAutoButtonMask << kLeftFireButtonShift) | (kAutoButtonMask << kRightFireButtonShift) | (kAutoButtonMask << kOneButtonShift) | (kAutoButtonMask << kTwoButtonShift) | (kAutoButtonMask << kThreeButtonShift) | (kAutoButtonMask << kFourButtonShift) | (kAutoButtonMask << kMod1ButtonShift) | (kAutoButtonMask << kMod2ButtonShift) | (kAutoButtonMask << kMod3ButtonShift),
 
-	kFilterUpButton =			kButtonDownMask << kUpButtonShift,
-	kFilterUpAuto =				kAutoButtonMask << kUpButtonShift,
-	kFilterUpButtonAny =		kFilterUpButton | kFilterUpAuto,
-	kFilterLeftButton =			kButtonDownMask << kLeftButtonShift,
-	kFilterLeftAuto =			kAutoButtonMask << kLeftButtonShift,
-	kFilterLeftButtonAny =		kFilterLeftButton | kFilterLeftAuto,
-	kFilterDownButton =			kButtonDownMask << kDownButtonShift,
-	kFilterDownAuto =			kAutoButtonMask << kDownButtonShift,
-	kFilterDownButtonAny =		kFilterDownButton | kFilterDownAuto,
-	kFilterRightButton =		kButtonDownMask << kRightButtonShift,
-	kFilterRightAuto =			kAutoButtonMask << kRightButtonShift,
-	kFilterRightButtonAny =		kFilterRightButton | kFilterRightAuto,
-	kFilterLeftFireButton =		kButtonDownMask << kLeftFireButtonShift,
-	kFilterLeftFireAuto =		kAutoButtonMask << kLeftFireButtonShift,
-	kFilterLeftFireButtonAny =	kFilterLeftFireButton | kFilterLeftFireAuto,
-	kFilterRightFireButton =	kButtonDownMask << kRightFireButtonShift,
-	kFilterRightFireAuto =		kAutoButtonMask << kRightFireButtonShift,
-	kFilterRightFireButtonAny =	kFilterRightFireButton | kFilterRightFireAuto,
-	kFilterOneButton =			kButtonDownMask << kOneButtonShift,
-	kFilterOneAuto =			kAutoButtonMask << kOneButtonShift,
-	kFilterOneButtonAny =		kFilterOneButton | kFilterOneAuto,
-	kFilterTwoButton =			kButtonDownMask << kTwoButtonShift,
-	kFilterTwoAuto =			kAutoButtonMask << kTwoButtonShift,
-	kFilterTwoButtonAny =		kFilterTwoButton | kFilterTwoAuto,
-	kFilterThreeButton =		kButtonDownMask << kThreeButtonShift,
-	kFilterThreeAuto =			kAutoButtonMask << kThreeButtonShift,
-	kFilterThreeButtonAny =		kFilterThreeButton | kFilterThreeAuto,
-	kFilterFourButton =			kButtonDownMask << kFourButtonShift,
-	kFilterFourAuto =			kAutoButtonMask << kFourButtonShift,
-	kFilterFourButtonAny =		kFilterFourButton | kFilterFourAuto,
-	kFilterMod1Button =			kButtonDownMask << kMod1ButtonShift,
-	kFilterMod1Auto =			kAutoButtonMask << kMod1ButtonShift,
-	kFilterMod1ButtonAny =		kFilterMod1Button | kFilterMod1Auto,
-	kFilterMod2Button =			kButtonDownMask << kMod2ButtonShift,
-	kFilterMod2Auto =			kAutoButtonMask << kMod2ButtonShift,
-	kFilterMod2ButtonAny =		kFilterMod2Button | kFilterMod2Auto,
-	kFilterMod3Button =			kButtonDownMask << kMod3ButtonShift,
-	kFilterMod3Auto =			kAutoButtonMask << kMod3ButtonShift,
-	kFilterMod3ButtonAny =		kFilterMod3Button | kFilterMod3Auto,
+	kFilterUpButton = kButtonDownMask << kUpButtonShift,
+	kFilterUpAuto = kAutoButtonMask << kUpButtonShift,
+	kFilterUpButtonAny = kFilterUpButton | kFilterUpAuto,
+	kFilterLeftButton = kButtonDownMask << kLeftButtonShift,
+	kFilterLeftAuto = kAutoButtonMask << kLeftButtonShift,
+	kFilterLeftButtonAny = kFilterLeftButton | kFilterLeftAuto,
+	kFilterDownButton = kButtonDownMask << kDownButtonShift,
+	kFilterDownAuto = kAutoButtonMask << kDownButtonShift,
+	kFilterDownButtonAny = kFilterDownButton | kFilterDownAuto,
+	kFilterRightButton = kButtonDownMask << kRightButtonShift,
+	kFilterRightAuto = kAutoButtonMask << kRightButtonShift,
+	kFilterRightButtonAny = kFilterRightButton | kFilterRightAuto,
+	kFilterLeftFireButton = kButtonDownMask << kLeftFireButtonShift,
+	kFilterLeftFireAuto = kAutoButtonMask << kLeftFireButtonShift,
+	kFilterLeftFireButtonAny = kFilterLeftFireButton | kFilterLeftFireAuto,
+	kFilterRightFireButton = kButtonDownMask << kRightFireButtonShift,
+	kFilterRightFireAuto = kAutoButtonMask << kRightFireButtonShift,
+	kFilterRightFireButtonAny = kFilterRightFireButton | kFilterRightFireAuto,
+	kFilterOneButton = kButtonDownMask << kOneButtonShift,
+	kFilterOneAuto = kAutoButtonMask << kOneButtonShift,
+	kFilterOneButtonAny = kFilterOneButton | kFilterOneAuto,
+	kFilterTwoButton = kButtonDownMask << kTwoButtonShift,
+	kFilterTwoAuto = kAutoButtonMask << kTwoButtonShift,
+	kFilterTwoButtonAny = kFilterTwoButton | kFilterTwoAuto,
+	kFilterThreeButton = kButtonDownMask << kThreeButtonShift,
+	kFilterThreeAuto = kAutoButtonMask << kThreeButtonShift,
+	kFilterThreeButtonAny = kFilterThreeButton | kFilterThreeAuto,
+	kFilterFourButton = kButtonDownMask << kFourButtonShift,
+	kFilterFourAuto = kAutoButtonMask << kFourButtonShift,
+	kFilterFourButtonAny = kFilterFourButton | kFilterFourAuto,
+	kFilterMod1Button = kButtonDownMask << kMod1ButtonShift,
+	kFilterMod1Auto = kAutoButtonMask << kMod1ButtonShift,
+	kFilterMod1ButtonAny = kFilterMod1Button | kFilterMod1Auto,
+	kFilterMod2Button = kButtonDownMask << kMod2ButtonShift,
+	kFilterMod2Auto = kAutoButtonMask << kMod2ButtonShift,
+	kFilterMod2ButtonAny = kFilterMod2Button | kFilterMod2Auto,
+	kFilterMod3Button = kButtonDownMask << kMod3ButtonShift,
+	kFilterMod3Auto = kAutoButtonMask << kMod3ButtonShift,
+	kFilterMod3ButtonAny = kFilterMod3Button | kFilterMod3Auto,
 
-	kFilterNoInput =			0,
-	kFilterAllInput =			kFilterUpButton |
-								kFilterUpAuto |
-								kFilterLeftButton |
-								kFilterLeftAuto |
-								kFilterDownButton |
-								kFilterDownAuto |
-								kFilterRightButton |
-								kFilterRightAuto |
-								kFilterLeftFireButton |
-								kFilterLeftFireAuto |
-								kFilterRightFireButton |
-								kFilterRightFireAuto |
-								kFilterOneButton |
-								kFilterOneAuto |
-								kFilterTwoButton |
-								kFilterTwoAuto |
-								kFilterThreeButton |
-								kFilterThreeAuto |
-								kFilterFourButton |
-								kFilterFourAuto |
-								kFilterMod1Button |
-								kFilterMod1Auto |
-								kFilterMod2Button |
-								kFilterMod2Auto |
-								kFilterMod3Button |
-								kFilterMod3Auto,
+	kFilterNoInput = 0,
+	kFilterAllInput = kFilterUpButton | kFilterUpAuto | kFilterLeftButton | kFilterLeftAuto | kFilterDownButton | kFilterDownAuto | kFilterRightButton | kFilterRightAuto | kFilterLeftFireButton | kFilterLeftFireAuto | kFilterRightFireButton | kFilterRightFireAuto | kFilterOneButton | kFilterOneAuto | kFilterTwoButton | kFilterTwoAuto | kFilterThreeButton | kFilterThreeAuto | kFilterFourButton | kFilterFourAuto | kFilterMod1Button | kFilterMod1Auto | kFilterMod2Button | kFilterMod2Auto | kFilterMod3Button | kFilterMod3Auto,
 
-	kFilterAllDirections =		kFilterUpButton |
-								kFilterUpAuto |
-								kFilterLeftButton |
-								kFilterLeftAuto |
-								kFilterDownButton |
-								kFilterDownAuto |
-								kFilterRightButton |
-								kFilterRightAuto,
+	kFilterAllDirections = kFilterUpButton | kFilterUpAuto | kFilterLeftButton | kFilterLeftAuto | kFilterDownButton | kFilterDownAuto | kFilterRightButton | kFilterRightAuto,
 
-	kFilterButtons =			kFilterOneButton |
-								kFilterOneAuto |
-								kFilterTwoButton |
-								kFilterTwoAuto |
-								kFilterThreeButton |
-								kFilterThreeAuto |
-								kFilterFourButton |
-								kFilterFourAuto,
+	kFilterButtons = kFilterOneButton | kFilterOneAuto | kFilterTwoButton | kFilterTwoAuto | kFilterThreeButton | kFilterThreeAuto | kFilterFourButton | kFilterFourAuto,
 
-	kFilterFireButtons =		kFilterLeftFireButton |
-								kFilterLeftFireAuto |
-								kFilterRightFireButton |
-								kFilterRightFireAuto,
+	kFilterFireButtons = kFilterLeftFireButton | kFilterLeftFireAuto | kFilterRightFireButton | kFilterRightFireAuto,
 
-	kFilterAllButtons =			kFilterLeftFireButton |
-								kFilterLeftFireAuto |
-								kFilterRightFireButton |
-								kFilterRightFireAuto |
-								kFilterOneButton |
-								kFilterOneAuto |
-								kFilterTwoButton |
-								kFilterTwoAuto |
-								kFilterThreeButton |
-								kFilterThreeAuto |
-								kFilterFourButton |
-								kFilterFourAuto |
-								kFilterMod1Button |
-								kFilterMod1Auto |
-								kFilterMod2Button |
-								kFilterMod2Auto |
-								kFilterMod3Button |
-								kFilterMod3Auto,
+	kFilterAllButtons = kFilterLeftFireButton | kFilterLeftFireAuto | kFilterRightFireButton | kFilterRightFireAuto | kFilterOneButton | kFilterOneAuto | kFilterTwoButton | kFilterTwoAuto | kFilterThreeButton | kFilterThreeAuto | kFilterFourButton | kFilterFourAuto | kFilterMod1Button | kFilterMod1Auto | kFilterMod2Button | kFilterMod2Auto | kFilterMod3Button | kFilterMod3Auto,
 
-	kFilterAllInputNoAuto =		kFilterUpButton |
-								kFilterLeftButton |
-								kFilterDownButton |
-								kFilterRightButton |
-								kFilterLeftFireButton |
-								kFilterRightFireButton |
-								kFilterOneButton |
-								kFilterTwoButton |
-								kFilterThreeButton |
-								kFilterFourButton |
-								kFilterMod1Button |
-								kFilterMod2Button |
-								kFilterMod3Button
+	kFilterAllInputNoAuto = kFilterUpButton | kFilterLeftButton | kFilterDownButton | kFilterRightButton | kFilterLeftFireButton | kFilterRightFireButton | kFilterOneButton | kFilterTwoButton | kFilterThreeButton | kFilterFourButton | kFilterMod1Button | kFilterMod2Button | kFilterMod3Button
 };
 
 static const InputBits kHintInterruption = kFilterAllInputNoAuto;
@@ -304,9 +198,9 @@ static const InputBits kOpticalInterruption = kFilterAllInputNoAuto;
 */
 
 class Input {
-friend int operator==(const Input &, const Input &);
-friend int operator!=(const Input &, const Input &);
-friend class InputDeviceManager;
+	friend int operator==(const Input &, const Input &);
+	friend int operator!=(const Input &, const Input &);
+	friend class InputDeviceManager;
 
 public:
 	Input() { clearInput(); }
@@ -335,7 +229,7 @@ public:
 	bool rightFireButtonAutoDown() const { return (_inputState & (kButtonStateBits << kRightFireButtonShift)) == (kButtonAutoDown << kRightFireButtonShift); }
 	bool rightFireButtonAnyDown() const { return (_inputState & (kButtonAutoDown << kRightFireButtonShift)) != 0; }
 
-	bool oneButtonDown() const { return	(_inputState & (kButtonStateBits << kOneButtonShift)) == (kButtonDown << kOneButtonShift); }
+	bool oneButtonDown() const { return (_inputState & (kButtonStateBits << kOneButtonShift)) == (kButtonDown << kOneButtonShift); }
 	bool oneButtonAutoDown() const { return (_inputState & (kButtonStateBits << kOneButtonShift)) == (kButtonAutoDown << kOneButtonShift); }
 	bool oneButtonAnyDown() const { return (_inputState & (kButtonAutoDown << kOneButtonShift)) != 0; }
 
@@ -397,15 +291,15 @@ protected:
 
 class InputHandler {
 public:
-	static InputHandler *setInputHandler(InputHandler*);
+	static InputHandler *setInputHandler(InputHandler *);
 	static InputHandler *getCurrentHandler() { return _inputHandler; }
 	static void pollForInput();
-	static void getInput(Input&, Hotspot*&);
-	static void readInputDevice(Input&);
+	static void getInput(Input &, Hotspot *&);
+	static void readInputDevice(Input &);
 	static void invalHotspots() { _invalHotspots = true; }
 	static InputBits getCurrentFilter() { return _lastFilter; }
 
-	InputHandler(InputHandler*);
+	InputHandler(InputHandler *);
 	virtual ~InputHandler();
 
 	virtual void setNextHandler(InputHandler *nextHandler) { _nextHandler = nextHandler; }
@@ -439,7 +333,6 @@ protected:
 	bool _allowInput;
 };
 
-
 /*
 
 	Tracker implements "dragging". A Tracker can receive a startTracking message,
@@ -453,7 +346,9 @@ protected:
 
 class Tracker : public InputHandler {
 public:
-	Tracker() : InputHandler(0), _savedHandler(nullptr) {}
+	Tracker()
+	  : InputHandler(0)
+	  , _savedHandler(nullptr) {}
 	virtual ~Tracker() {}
 
 	virtual void handleInput(const Input &, const Hotspot *);

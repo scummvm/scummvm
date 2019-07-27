@@ -78,7 +78,8 @@ protected:
 
 class Slide : public Transition {
 public:
-	Slide(const DisplayElementID id) : Transition(id) {}
+	Slide(const DisplayElementID id)
+	  : Transition(id) {}
 	virtual ~Slide() {}
 
 	virtual void setSlideDirection(SlideDirection dir) { _direction = dir; }
@@ -96,7 +97,8 @@ protected:
 
 class Push : public Slide {
 public:
-	Push(const DisplayElementID id) : Slide(id) {}
+	Push(const DisplayElementID id)
+	  : Slide(id) {}
 	virtual ~Push() {}
 
 protected:

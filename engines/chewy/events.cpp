@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/system.h"
 #include "common/events.h"
+#include "common/system.h"
 
 #include "chewy/chewy.h"
 #include "chewy/console.h"
@@ -32,8 +32,9 @@
 
 namespace Chewy {
 
-Events::Events(ChewyEngine *vm, Console *console) :
-	_vm(vm), _console(console) {
+Events::Events(ChewyEngine *vm, Console *console)
+  : _vm(vm)
+  , _console(console) {
 
 	_eventManager = g_system->getEventManager();
 }

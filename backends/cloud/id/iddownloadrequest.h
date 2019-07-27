@@ -30,31 +30,32 @@
 namespace Cloud {
 namespace Id {
 
-class IdStorage;
+	class IdStorage;
 
-class IdDownloadRequest: public Networking::Request {
-	Common::String _requestedFile, _requestedLocalFile;
-	IdStorage *_storage;
-	Storage::BoolCallback _boolCallback;
-	Request *_workingRequest;
-	bool _ignoreCallback;
+	class IdDownloadRequest : public Networking::Request {
+		Common::String _requestedFile, _requestedLocalFile;
+		IdStorage *_storage;
+		Storage::BoolCallback _boolCallback;
+		Request *_workingRequest;
+		bool _ignoreCallback;
 
-	void start();
-	void idResolvedCallback(Storage::UploadResponse response);
-	void idResolveFailedCallback(Networking::ErrorResponse error);
-	void downloadCallback(Storage::BoolResponse response);
-	void downloadErrorCallback(Networking::ErrorResponse error);
-	void finishDownload(bool success);
-public:
-	IdDownloadRequest(IdStorage *storage, Common::String remotePath, Common::String localPath, Storage::BoolCallback cb, Networking::ErrorCallback ecb);
-	virtual ~IdDownloadRequest();
+		void start();
+		void idResolvedCallback(Storage::UploadResponse response);
+		void idResolveFailedCallback(Networking::ErrorResponse error);
+		void downloadCallback(Storage::BoolResponse response);
+		void downloadErrorCallback(Networking::ErrorResponse error);
+		void finishDownload(bool success);
 
-	virtual void handle();
-	virtual void restart();
+	public:
+		IdDownloadRequest(IdStorage *storage, Common::String remotePath, Common::String localPath, Storage::BoolCallback cb, Networking::ErrorCallback ecb);
+		virtual ~IdDownloadRequest();
 
-	/** Returns a number in range [0, 1], where 1 is "complete". */
-	double getProgress() const;
-};
+		virtual void handle();
+		virtual void restart();
+
+		/** Returns a number in range [0, 1], where 1 is "complete". */
+		double getProgress() const;
+	};
 
 } // End of namespace Id
 } // End of namespace Cloud

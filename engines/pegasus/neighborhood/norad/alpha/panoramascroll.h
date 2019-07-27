@@ -43,7 +43,7 @@ public:
 	bool isPanoramaOpen() { return _panorama.isPanoramaOpen(); }
 	void getPanoramaBounds(Common::Rect &) const;
 
-	void setBounds(const Common::Rect&);
+	void setBounds(const Common::Rect &);
 
 	void draw(const Common::Rect &);
 

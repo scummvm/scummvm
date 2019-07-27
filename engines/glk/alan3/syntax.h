@@ -23,21 +23,20 @@
 #ifndef GLK_ALAN3_SYNTAX
 #define GLK_ALAN3_SYNTAX
 
-#include "glk/alan3/types.h"
 #include "glk/alan3/jumps.h"
 #include "glk/alan3/memory.h"
+#include "glk/alan3/types.h"
 
 namespace Glk {
 namespace Alan3 {
 
-/* DATA */
-extern SyntaxEntry *stxs;   /* Syntax table pointer */
+	/* DATA */
+	extern SyntaxEntry *stxs; /* Syntax table pointer */
 
-
-/* FUNCTIONS */
-extern ElementEntry *elementTreeOf(SyntaxEntry *stx);
-extern char *parameterNameInSyntax(int syntaxNumber, int parameterNumber);
-extern SyntaxEntry *findSyntaxTreeForVerb(CONTEXT, int verbCode);
+	/* FUNCTIONS */
+	extern ElementEntry *elementTreeOf(SyntaxEntry *stx);
+	extern char *parameterNameInSyntax(int syntaxNumber, int parameterNumber);
+	extern SyntaxEntry *findSyntaxTreeForVerb(CONTEXT, int verbCode);
 
 } // End of namespace Alan3
 } // End of namespace Glk

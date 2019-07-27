@@ -20,12 +20,11 @@
  *
  */
 
-
-#include "common/endian.h"
 #include "common/config-manager.h"
+#include "common/endian.h"
 #include "common/events.h"
-#include "common/system.h"
 #include "common/savefile.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 
 #include "gui/message.h"
@@ -33,15 +32,14 @@
 #include "sky/control.h"
 #include "sky/disk.h"
 #include "sky/logic.h"
-#include "sky/music/musicbase.h"
 #include "sky/mouse.h"
+#include "sky/music/musicbase.h"
 #include "sky/screen.h"
 #include "sky/sky.h"
 #include "sky/skydefs.h"
 #include "sky/sound.h"
 #include "sky/struc.h"
 #include "sky/text.h"
-#include "sky/compact.h"
 
 #define ANIM_DELAY 20
 #define CLICK_DELAY 150
@@ -78,7 +76,8 @@ void ConResource::drawToScreen(bool doMask) {
 	if (doMask) {
 		for (uint16 cnty = 0; cnty < _spriteData->s_height; cnty++) {
 			for (uint16 cntx = 0; cntx < _spriteData->s_width; cntx++) {
-				if (spriteData[cntx]) screenPos[cntx] = spriteData[cntx];
+				if (spriteData[cntx])
+					screenPos[cntx] = spriteData[cntx];
 			}
 			screenPos += GAME_SCREEN_WIDTH;
 			spriteData += _spriteData->s_width;
@@ -93,11 +92,11 @@ void ConResource::drawToScreen(bool doMask) {
 	_system->copyRectToScreen(updatePos, GAME_SCREEN_WIDTH, _x, _y, _spriteData->s_width, _spriteData->s_height);
 }
 
-TextResource::TextResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, uint16 pX, uint16 pY, uint32 pText, uint8 pOnClick, OSystem *system, uint8 *screen) :
-	ConResource(pSpData, pNSprites, pCurSprite, pX, pY, pText, pOnClick, system, screen) {
-		_oldScreen = (uint8 *)malloc(PAN_CHAR_HEIGHT * 3 * PAN_LINE_WIDTH);
-		_oldY = 0;
-		_oldX = GAME_SCREEN_WIDTH;
+TextResource::TextResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, uint16 pX, uint16 pY, uint32 pText, uint8 pOnClick, OSystem *system, uint8 *screen)
+  : ConResource(pSpData, pNSprites, pCurSprite, pX, pY, pText, pOnClick, system, screen) {
+	_oldScreen = (uint8 *)malloc(PAN_CHAR_HEIGHT * 3 * PAN_LINE_WIDTH);
+	_oldY = 0;
+	_oldX = GAME_SCREEN_WIDTH;
 }
 
 TextResource::~TextResource() {
@@ -106,7 +105,7 @@ TextResource::~TextResource() {
 
 void TextResource::flushForRedraw() {
 	if (_oldX < GAME_SCREEN_WIDTH) {
-		uint16 cpWidth = (PAN_LINE_WIDTH > (GAME_SCREEN_WIDTH - _oldX))?(GAME_SCREEN_WIDTH - _oldX):(PAN_LINE_WIDTH);
+		uint16 cpWidth = (PAN_LINE_WIDTH > (GAME_SCREEN_WIDTH - _oldX)) ? (GAME_SCREEN_WIDTH - _oldX) : (PAN_LINE_WIDTH);
 		for (uint8 cnty = 0; cnty < PAN_CHAR_HEIGHT; cnty++)
 			memcpy(_screen + (cnty + _oldY) * GAME_SCREEN_WIDTH + _oldX, _oldScreen + cnty * PAN_LINE_WIDTH, cpWidth);
 	}
@@ -119,11 +118,11 @@ void TextResource::drawToScreen(bool doMask) {
 	if ((_oldX == _x) && (_oldY == _y) && (_spriteData))
 		return;
 	if (_oldX < GAME_SCREEN_WIDTH) {
-		cpWidth = (PAN_LINE_WIDTH > (GAME_SCREEN_WIDTH - _oldX))?(GAME_SCREEN_WIDTH - _oldX):(PAN_LINE_WIDTH);
+		cpWidth = (PAN_LINE_WIDTH > (GAME_SCREEN_WIDTH - _oldX)) ? (GAME_SCREEN_WIDTH - _oldX) : (PAN_LINE_WIDTH);
 		if (_spriteData && (cpWidth > _spriteData->s_width))
 			cpWidth = _spriteData->s_width;
 		if (_spriteData)
-			cpHeight = (_spriteData->s_height > (GAME_SCREEN_HEIGHT - _oldY))?(GAME_SCREEN_HEIGHT - _oldY):(_spriteData->s_height);
+			cpHeight = (_spriteData->s_height > (GAME_SCREEN_HEIGHT - _oldY)) ? (GAME_SCREEN_HEIGHT - _oldY) : (_spriteData->s_height);
 		else
 			cpHeight = PAN_CHAR_HEIGHT;
 		for (cnty = 0; cnty < cpHeight; cnty++)
@@ -136,10 +135,10 @@ void TextResource::drawToScreen(bool doMask) {
 	}
 	_oldX = _x;
 	_oldY = _y;
-	cpWidth = (PAN_LINE_WIDTH > (GAME_SCREEN_WIDTH - _x))?(GAME_SCREEN_WIDTH - _x):(PAN_LINE_WIDTH);
+	cpWidth = (PAN_LINE_WIDTH > (GAME_SCREEN_WIDTH - _x)) ? (GAME_SCREEN_WIDTH - _x) : (PAN_LINE_WIDTH);
 	if (cpWidth > _spriteData->s_width)
 		cpWidth = _spriteData->s_width;
-	cpHeight = (_spriteData->s_height > (GAME_SCREEN_HEIGHT - _y))?(GAME_SCREEN_HEIGHT - _y):(_spriteData->s_height);
+	cpHeight = (_spriteData->s_height > (GAME_SCREEN_HEIGHT - _y)) ? (GAME_SCREEN_HEIGHT - _y) : (_spriteData->s_height);
 
 	uint8 *screenPos = _screen + _y * GAME_SCREEN_WIDTH + _x;
 	uint8 *copyDest = _oldScreen;
@@ -147,7 +146,8 @@ void TextResource::drawToScreen(bool doMask) {
 	for (cnty = 0; cnty < cpHeight; cnty++) {
 		memcpy(copyDest, screenPos, cpWidth);
 		for (cntx = 0; cntx < cpWidth; cntx++)
-			if (copySrc[cntx]) screenPos[cntx] = copySrc[cntx];
+			if (copySrc[cntx])
+				screenPos[cntx] = copySrc[cntx];
 		copySrc += _spriteData->s_width;
 		copyDest += PAN_LINE_WIDTH;
 		screenPos += GAME_SCREEN_WIDTH;
@@ -210,7 +210,8 @@ Control::Control(Common::SaveFileManager *saveFileMan, Screen *screen, Disk *dis
 }
 
 ConResource *Control::createResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, int16 pX, int16 pY, uint32 pText, uint8 pOnClick, uint8 panelType) {
-	if (pText) pText += 0x7000;
+	if (pText)
+		pText += 0x7000;
 	if (panelType == MAINPANEL) {
 		pX += MPNL_X;
 		pY += MPNL_Y;
@@ -223,24 +224,41 @@ ConResource *Control::createResource(void *pSpData, uint32 pNSprites, uint32 pCu
 
 void Control::removePanel() {
 	free(_screenBuf);
-	free(_sprites.controlPanel);	free(_sprites.button);
-	free(_sprites.buttonDown);		free(_sprites.savePanel);
-	free(_sprites.yesNo);			free(_sprites.slide);
-	free(_sprites.slide2);			free(_sprites.slode);
-	free(_sprites.slode2);			free(_sprites.musicBodge);
-	delete _controlPanel;			delete _exitButton;
+	free(_sprites.controlPanel);
+	free(_sprites.button);
+	free(_sprites.buttonDown);
+	free(_sprites.savePanel);
+	free(_sprites.yesNo);
+	free(_sprites.slide);
+	free(_sprites.slide2);
+	free(_sprites.slode);
+	free(_sprites.slode2);
+	free(_sprites.musicBodge);
+	delete _controlPanel;
+	delete _exitButton;
 	_controlPanel = NULL;
-	delete _slide;				delete _slide2;
-	delete _slode;				delete _restorePanButton;
-	delete _savePanel;			delete _saveButton;
-	delete _downFastButton;			delete _downSlowButton;
-	delete _upFastButton;			delete _upSlowButton;
-	delete _quitButton;			delete _autoSaveButton;
-	delete _savePanButton;			delete _dosPanButton;
-	delete _restartPanButton;		delete _fxPanButton;
-	delete _musicPanButton;			delete _bodge;
-	delete _yesNo;				delete _text;
-	delete _statusBar;			delete _restoreButton;
+	delete _slide;
+	delete _slide2;
+	delete _slode;
+	delete _restorePanButton;
+	delete _savePanel;
+	delete _saveButton;
+	delete _downFastButton;
+	delete _downSlowButton;
+	delete _upFastButton;
+	delete _upSlowButton;
+	delete _quitButton;
+	delete _autoSaveButton;
+	delete _savePanButton;
+	delete _dosPanButton;
+	delete _restartPanButton;
+	delete _fxPanButton;
+	delete _musicPanButton;
+	delete _bodge;
+	delete _yesNo;
+	delete _text;
+	delete _statusBar;
+	delete _restoreButton;
 
 	if (_textSprite) {
 		free(_textSprite);
@@ -256,39 +274,39 @@ void Control::initPanel() {
 	uint16 spdY = (SkyEngine::_systemVars.gameSpeed - 2) / SPEED_MULTIPLY;
 	spdY += MPNL_Y + 83; // speed slider's initial position
 
-	_sprites.controlPanel	= _skyDisk->loadFile(60500);
-	_sprites.button			= _skyDisk->loadFile(60501);
-	_sprites.buttonDown		= _skyDisk->loadFile(60502);
-	_sprites.savePanel		= _skyDisk->loadFile(60503);
-	_sprites.yesNo			= _skyDisk->loadFile(60504);
-	_sprites.slide			= _skyDisk->loadFile(60505);
-	_sprites.slode			= _skyDisk->loadFile(60506);
-	_sprites.slode2			= _skyDisk->loadFile(60507);
-	_sprites.slide2			= _skyDisk->loadFile(60508);
+	_sprites.controlPanel = _skyDisk->loadFile(60500);
+	_sprites.button = _skyDisk->loadFile(60501);
+	_sprites.buttonDown = _skyDisk->loadFile(60502);
+	_sprites.savePanel = _skyDisk->loadFile(60503);
+	_sprites.yesNo = _skyDisk->loadFile(60504);
+	_sprites.slide = _skyDisk->loadFile(60505);
+	_sprites.slode = _skyDisk->loadFile(60506);
+	_sprites.slode2 = _skyDisk->loadFile(60507);
+	_sprites.slide2 = _skyDisk->loadFile(60508);
 	if (SkyEngine::_systemVars.gameVersion < 368)
 		_sprites.musicBodge = NULL;
 	else
 		_sprites.musicBodge = _skyDisk->loadFile(60509);
 
 	//Main control panel:                                            X    Y Text       OnClick
-	_controlPanel     = createResource(_sprites.controlPanel, 1, 0,  0,   0,  0,      DO_NOTHING, MAINPANEL);
-	_exitButton       = createResource(      _sprites.button, 3, 0, 16, 125, 50,            EXIT, MAINPANEL);
-	_slide            = createResource(      _sprites.slide2, 1, 0, 19,spdY, 95,     SPEED_SLIDE, MAINPANEL);
-	_slide2           = createResource(      _sprites.slide2, 1, 0, 19,volY, 14,     MUSIC_SLIDE, MAINPANEL);
-	_slode            = createResource(      _sprites.slode2, 1, 0,  9,  49,  0,      DO_NOTHING, MAINPANEL);
-	_restorePanButton = createResource(      _sprites.button, 3, 0, 58,  19, 51, REST_GAME_PANEL, MAINPANEL);
-	_savePanButton    = createResource(      _sprites.button, 3, 0, 58,  39, 48, SAVE_GAME_PANEL, MAINPANEL);
-	_dosPanButton     = createResource(      _sprites.button, 3, 0, 58,  59, 93,     QUIT_TO_DOS, MAINPANEL);
-	_restartPanButton = createResource(      _sprites.button, 3, 0, 58,  79, 94,         RESTART, MAINPANEL);
-	_fxPanButton      = createResource(      _sprites.button, 3, 0, 58,  99, 90,       TOGGLE_FX, MAINPANEL);
+	_controlPanel = createResource(_sprites.controlPanel, 1, 0, 0, 0, 0, DO_NOTHING, MAINPANEL);
+	_exitButton = createResource(_sprites.button, 3, 0, 16, 125, 50, EXIT, MAINPANEL);
+	_slide = createResource(_sprites.slide2, 1, 0, 19, spdY, 95, SPEED_SLIDE, MAINPANEL);
+	_slide2 = createResource(_sprites.slide2, 1, 0, 19, volY, 14, MUSIC_SLIDE, MAINPANEL);
+	_slode = createResource(_sprites.slode2, 1, 0, 9, 49, 0, DO_NOTHING, MAINPANEL);
+	_restorePanButton = createResource(_sprites.button, 3, 0, 58, 19, 51, REST_GAME_PANEL, MAINPANEL);
+	_savePanButton = createResource(_sprites.button, 3, 0, 58, 39, 48, SAVE_GAME_PANEL, MAINPANEL);
+	_dosPanButton = createResource(_sprites.button, 3, 0, 58, 59, 93, QUIT_TO_DOS, MAINPANEL);
+	_restartPanButton = createResource(_sprites.button, 3, 0, 58, 79, 94, RESTART, MAINPANEL);
+	_fxPanButton = createResource(_sprites.button, 3, 0, 58, 99, 90, TOGGLE_FX, MAINPANEL);
 
 	if (SkyEngine::isCDVersion()) { // CD Version: Toggle text/speech
-		_musicPanButton = createResource(    _sprites.button, 3, 0, 58, 119, 52,     TOGGLE_TEXT, MAINPANEL);
-	} else {                       // disk version: toggle music on/off
-		_musicPanButton = createResource(    _sprites.button, 3, 0, 58, 119, 91,       TOGGLE_MS, MAINPANEL);
+		_musicPanButton = createResource(_sprites.button, 3, 0, 58, 119, 52, TOGGLE_TEXT, MAINPANEL);
+	} else { // disk version: toggle music on/off
+		_musicPanButton = createResource(_sprites.button, 3, 0, 58, 119, 91, TOGGLE_MS, MAINPANEL);
 	}
-	_bodge            = createResource(  _sprites.musicBodge, 2, 1, 98, 115,  0,      DO_NOTHING, MAINPANEL);
-	_yesNo            = createResource(       _sprites.yesNo, 1, 0, -2,  40,  0,      DO_NOTHING, MAINPANEL);
+	_bodge = createResource(_sprites.musicBodge, 2, 1, 98, 115, 0, DO_NOTHING, MAINPANEL);
+	_yesNo = createResource(_sprites.yesNo, 1, 0, -2, 40, 0, DO_NOTHING, MAINPANEL);
 
 	_text = new TextResource(NULL, 1, 0, 15, 137, 0, DO_NOTHING, _system, _screenBuf);
 	_controlPanLookList[0] = _exitButton;
@@ -302,15 +320,15 @@ void Control::initPanel() {
 	_controlPanLookList[8] = _slide2;
 
 	// save/restore panel
-	_savePanel      = createResource( _sprites.savePanel, 1, 0,   0,   0,  0,      DO_NOTHING, SAVEPANEL);
-	_saveButton     = createResource(    _sprites.button, 3, 0,  29, 129, 48,     SAVE_A_GAME, SAVEPANEL);
-	_downFastButton = createResource(_sprites.buttonDown, 1, 0, 212, 114,  0, SHIFT_DOWN_FAST, SAVEPANEL);
-	_downSlowButton = createResource(_sprites.buttonDown, 1, 0, 212, 104,  0, SHIFT_DOWN_SLOW, SAVEPANEL);
-	_upFastButton   = createResource(_sprites.buttonDown, 1, 0, 212,  10,  0,   SHIFT_UP_FAST, SAVEPANEL);
-	_upSlowButton   = createResource(_sprites.buttonDown, 1, 0, 212,  21,  0,   SHIFT_UP_SLOW, SAVEPANEL);
-	_quitButton     = createResource(    _sprites.button, 3, 0,  72, 129, 49,       SP_CANCEL, SAVEPANEL);
-	_restoreButton  = createResource(    _sprites.button, 3, 0,  29, 129, 51,  RESTORE_A_GAME, SAVEPANEL);
-	_autoSaveButton = createResource(    _sprites.button, 3, 0, 115, 129, 0x8FFF,    RESTORE_AUTO, SAVEPANEL);
+	_savePanel = createResource(_sprites.savePanel, 1, 0, 0, 0, 0, DO_NOTHING, SAVEPANEL);
+	_saveButton = createResource(_sprites.button, 3, 0, 29, 129, 48, SAVE_A_GAME, SAVEPANEL);
+	_downFastButton = createResource(_sprites.buttonDown, 1, 0, 212, 114, 0, SHIFT_DOWN_FAST, SAVEPANEL);
+	_downSlowButton = createResource(_sprites.buttonDown, 1, 0, 212, 104, 0, SHIFT_DOWN_SLOW, SAVEPANEL);
+	_upFastButton = createResource(_sprites.buttonDown, 1, 0, 212, 10, 0, SHIFT_UP_FAST, SAVEPANEL);
+	_upSlowButton = createResource(_sprites.buttonDown, 1, 0, 212, 21, 0, SHIFT_UP_SLOW, SAVEPANEL);
+	_quitButton = createResource(_sprites.button, 3, 0, 72, 129, 49, SP_CANCEL, SAVEPANEL);
+	_restoreButton = createResource(_sprites.button, 3, 0, 29, 129, 51, RESTORE_A_GAME, SAVEPANEL);
+	_autoSaveButton = createResource(_sprites.button, 3, 0, 115, 129, 0x8FFF, RESTORE_AUTO, SAVEPANEL);
 
 	_savePanLookList[0] = _saveButton;
 	_restorePanLookList[0] = _restoreButton;
@@ -385,7 +403,7 @@ void Control::drawCross(uint16 x, uint16 y) {
 }
 
 void Control::animClick(ConResource *pButton) {
-	if (pButton->_curSprite != pButton->_numSprites -1) {
+	if (pButton->_curSprite != pButton->_numSprites - 1) {
 		pButton->_curSprite++;
 		_text->flushForRedraw();
 		pButton->drawToScreen(NO_MASK);
@@ -469,13 +487,11 @@ void Control::doControlPanel() {
 		_skyScreen->setPalette(60510);
 
 	// Set initial button lights
-	_fxPanButton->_curSprite =
-		(SkyEngine::_systemVars.systemFlags & SF_FX_OFF ? 0 : 2);
+	_fxPanButton->_curSprite = (SkyEngine::_systemVars.systemFlags & SF_FX_OFF ? 0 : 2);
 
 	// music button only available in floppy version
 	if (!SkyEngine::isCDVersion())
-		_musicPanButton->_curSprite =
-			(SkyEngine::_systemVars.systemFlags & SF_MUS_OFF ? 0 : 2);
+		_musicPanButton->_curSprite = (SkyEngine::_systemVars.systemFlags & SF_MUS_OFF ? 0 : 2);
 
 	drawMainPanel();
 
@@ -511,8 +527,7 @@ void Control::doControlPanel() {
 					_text->flushForRedraw();
 					drawMainPanel();
 					_text->drawToScreen(WITH_MASK);
-					if ((clickRes == QUIT_PANEL) || (clickRes == GAME_SAVED) ||
-						(clickRes == GAME_RESTORED))
+					if ((clickRes == QUIT_PANEL) || (clickRes == GAME_SAVED) || (clickRes == GAME_RESTORED))
 						quitPanel = true;
 				}
 				_mouseClicked = false;
@@ -609,7 +624,7 @@ uint16 Control::handleClick(ConResource *pButton) {
 			Engine::quitGame();
 		return 0;
 	default:
-		error("Control::handleClick: unknown routine: %X",pButton->_onClick);
+		error("Control::handleClick: unknown routine: %X", pButton->_onClick);
 	}
 }
 
@@ -629,7 +644,7 @@ bool Control::getYesNo(char *text) {
 	} else
 		dlgTextDat = NULL;
 
-	TextResource *dlgText = new TextResource(dlgTextDat, 1, 0, MPNL_X+2, textY, 0, DO_NOTHING, _system, _screenBuf);
+	TextResource *dlgText = new TextResource(dlgTextDat, 1, 0, MPNL_X + 2, textY, 0, DO_NOTHING, _system, _screenBuf);
 	dlgText->drawToScreen(WITH_MASK);
 
 	while (!quitPanel) {
@@ -680,16 +695,20 @@ uint16 Control::doMusicSlide() {
 			return 0;
 		mouse = _system->getEventManager()->getMousePos();
 		int newY = ofsY + mouse.y;
-		if (newY < 59) newY = 59;
-		if (newY > 91) newY = 91;
+		if (newY < 59)
+			newY = 59;
+		if (newY > 91)
+			newY = 91;
 		if (newY != _slide2->_y) {
 			_slode->drawToScreen(NO_MASK);
 			_slide2->setXY(_slide2->_x, (uint16)newY);
 			_slide2->drawToScreen(WITH_MASK);
 			_slide->drawToScreen(WITH_MASK);
 			volume = (newY - 59) * 4;
-			if (volume >= 128) volume = 0;
-			else volume = 127 - volume;
+			if (volume >= 128)
+				volume = 0;
+			else
+				volume = 127 - volume;
 			_skyMusic->setVolume(volume);
 		}
 		buttonControl(_slide2);
@@ -711,9 +730,12 @@ uint16 Control::doSpeedSlide() {
 			return SPEED_CHANGED;
 		mouse = _system->getEventManager()->getMousePos();
 		int newY = ofsY + mouse.y;
-		if (newY < MPNL_Y + 93) newY = MPNL_Y + 93;
-		if (newY > MPNL_Y + 104) newY = MPNL_Y + 104;
-		if ((newY == 110) || (newY == 108)) newY = 109;
+		if (newY < MPNL_Y + 93)
+			newY = MPNL_Y + 93;
+		if (newY > MPNL_Y + 104)
+			newY = MPNL_Y + 104;
+		if ((newY == 110) || (newY == 108))
+			newY = 109;
 		if (newY != _slide->_y) {
 			_slode->drawToScreen(NO_MASK);
 			_slide->setXY(_slide->_x, (uint16)newY);
@@ -917,7 +939,8 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 			quitPanel = true;
 			_mouseClicked = false;
 			_keyPressed.reset();
-		} if (allowSave && _keyPressed.keycode) {
+		}
+		if (allowSave && _keyPressed.keycode) {
 			handleKeyPress(_keyPressed, saveGameTexts[_selectedGame]);
 			refreshNames = true;
 			_keyPressed.reset();
@@ -970,11 +993,10 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 			}
 
 		if (_mouseClicked) {
-			if ((mouse.x >= GAME_NAME_X) && (mouse.x <= GAME_NAME_X + PAN_LINE_WIDTH) &&
-				(mouse.y >= GAME_NAME_Y) && (mouse.y <= GAME_NAME_Y + PAN_CHAR_HEIGHT * MAX_ON_SCREEN)) {
+			if ((mouse.x >= GAME_NAME_X) && (mouse.x <= GAME_NAME_X + PAN_LINE_WIDTH) && (mouse.y >= GAME_NAME_Y) && (mouse.y <= GAME_NAME_Y + PAN_CHAR_HEIGHT * MAX_ON_SCREEN)) {
 
-					_selectedGame = (mouse.y - GAME_NAME_Y) / PAN_CHAR_HEIGHT + _firstText;
-					refreshNames = true;
+				_selectedGame = (mouse.y - GAME_NAME_Y) / PAN_CHAR_HEIGHT + _firstText;
+				refreshNames = true;
 			}
 		}
 		if (!haveButton)
@@ -1067,7 +1089,7 @@ void Control::loadDescriptions(Common::StringArray &savenames) {
 	Common::InSaveFile *inf;
 	inf = _saveFileMan->openForLoading("SKY-VM.SAV");
 	if (inf != NULL) {
-		char *tmpBuf =  new char[MAX_SAVE_GAMES * MAX_TEXT_LEN];
+		char *tmpBuf = new char[MAX_SAVE_GAMES * MAX_TEXT_LEN];
 		char *tmpPtr = tmpBuf;
 		inf->read(tmpBuf, MAX_SAVE_GAMES * MAX_TEXT_LEN);
 		for (int i = 0; i < MAX_SAVE_GAMES; ++i) {
@@ -1084,9 +1106,7 @@ bool Control::loadSaveAllowed() {
 		return false; // texts get lost during load/save, so don't allow it during choosing
 	if (Logic::_scriptVariables[SCREEN] >= 101)
 		return false; // same problem with LINC terminals
-	if ((Logic::_scriptVariables[SCREEN] >= 82) &&
-		(Logic::_scriptVariables[SCREEN] != 85) &&
-		(Logic::_scriptVariables[SCREEN] < 90))
+	if ((Logic::_scriptVariables[SCREEN] >= 82) && (Logic::_scriptVariables[SCREEN] != 85) && (Logic::_scriptVariables[SCREEN] < 90))
 		return false; // don't allow saving in final rooms
 
 	return true;
@@ -1135,13 +1155,12 @@ void Control::doAutoSave() {
 
 	if (res != GAME_SAVED)
 		displayMessage(0, "Unable to perform autosave to '%s'. (%s)", fName, _saveFileMan->popErrorDesc().c_str());
-
 }
 
 uint16 Control::saveGameToFile(bool fromControlPanel, const char *filename) {
 	char fName[20];
 	if (!filename) {
-		sprintf(fName,"SKY-VM.%03d", _selectedGame);
+		sprintf(fName, "SKY-VM.%03d", _selectedGame);
 		filename = fName;
 	}
 
@@ -1170,8 +1189,16 @@ uint16 Control::saveGameToFile(bool fromControlPanel, const char *filename) {
 	return (writeRes == fSize) ? GAME_SAVED : NO_DISK_SPACE;
 }
 
-#define STOSD(ptr, val) { *(uint32 *)(ptr) = TO_LE_32(val); (ptr) += 4; }
-#define STOSW(ptr, val) { *(uint16 *)(ptr) = TO_LE_16(val); (ptr) += 2; }
+#define STOSD(ptr, val)               \
+	{                                   \
+		*(uint32 *)(ptr) = TO_LE_32(val); \
+		(ptr) += 4;                       \
+	}
+#define STOSW(ptr, val)               \
+	{                                   \
+		*(uint16 *)(ptr) = TO_LE_16(val); \
+		(ptr) += 2;                       \
+	}
 
 uint32 Control::prepareSaveData(uint8 *destBuf) {
 	uint32 cnt;
@@ -1208,8 +1235,16 @@ uint32 Control::prepareSaveData(uint8 *destBuf) {
 #undef STOSD
 #undef STOSW
 
-#define LODSD(strPtr, val) { val = READ_LE_UINT32(strPtr); (strPtr) += 4; }
-#define LODSW(strPtr, val) { val = READ_LE_UINT16(strPtr); (strPtr) += 2; }
+#define LODSD(strPtr, val)        \
+	{                               \
+		val = READ_LE_UINT32(strPtr); \
+		(strPtr) += 4;                \
+	}
+#define LODSW(strPtr, val)        \
+	{                               \
+		val = READ_LE_UINT16(strPtr); \
+		(strPtr) += 2;                \
+	}
 
 void Control::importOldMegaSet(uint8 **srcPos, MegaSet *mega) {
 	LODSW(*srcPos, mega->gridWidth);
@@ -1218,7 +1253,7 @@ void Control::importOldMegaSet(uint8 **srcPos, MegaSet *mega) {
 	LODSW(*srcPos, mega->lastChr);
 }
 
-void Control::importOldCompact(Compact* destCpt, uint8 **srcPos, uint16 numElems, uint16 type, char *name) {
+void Control::importOldCompact(Compact *destCpt, uint8 **srcPos, uint16 numElems, uint16 type, char *name) {
 	uint16 saveType;
 	LODSW(*srcPos, saveType);
 	if ((saveType & (SAVE_EXT | SAVE_TURNP)) && (numElems < 54))
@@ -1348,9 +1383,9 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 	if (gameVersion != SkyEngine::_systemVars.gameVersion) {
 		if ((!SkyEngine::isCDVersion()) || (gameVersion < 365)) { // cd versions are compatible
 			displayMessage(NULL, "This saved game was created by\n"
-				"Beneath a Steel Sky v0.0%03d\n"
-				"It cannot be loaded by this version (v0.0%3d)",
-				gameVersion, SkyEngine::_systemVars.gameVersion);
+			                     "Beneath a Steel Sky v0.0%03d\n"
+			                     "It cannot be loaded by this version (v0.0%3d)",
+			               gameVersion, SkyEngine::_systemVars.gameVersion);
 			return RESTORE_FAILED;
 		}
 	}
@@ -1379,7 +1414,7 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 			for (uint16 elemCnt = 0; elemCnt < numElems; elemCnt++)
 				LODSW(srcPos, rawCpt[elemCnt]);
 		}
-	} else {	// import old savegame revision
+	} else { // import old savegame revision
 		for (cnt = 0; cnt < (uint32)(_skyCompact->_numSaveIds - 2); cnt++) {
 			uint16 numElems;
 			uint16 type;
@@ -1406,7 +1441,7 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 		_skyCompact->fetchCpt(cnt)->status = 0;
 
 	if (srcPos - srcBuf != (int32)size)
-		error("Restore failed! Savegame data = %lu bytes. Expected size: %d", (long)(srcPos-srcBuf), size);
+		error("Restore failed! Savegame data = %lu bytes. Expected size: %d", (long)(srcPos - srcBuf), size);
 
 	_skyDisk->refreshFilesList(reloadList);
 	SkyEngine::_systemVars.currentMusic = (uint16)music;
@@ -1418,7 +1453,6 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 	return GAME_RESTORED;
 }
 
-
 uint16 Control::restoreGameFromFile(bool autoSave) {
 	char fName[20];
 	if (autoSave) {
@@ -1427,7 +1461,7 @@ uint16 Control::restoreGameFromFile(bool autoSave) {
 		else
 			sprintf(fName, "SKY-VM%03d.ASD", SkyEngine::_systemVars.gameVersion);
 	} else
-		sprintf(fName,"SKY-VM.%03d", _selectedGame);
+		sprintf(fName, "SKY-VM.%03d", _selectedGame);
 
 	Common::InSaveFile *inf;
 	inf = _saveFileMan->openForLoading(fName);
@@ -1436,11 +1470,12 @@ uint16 Control::restoreGameFromFile(bool autoSave) {
 	}
 
 	uint32 infSize = inf->readUint32LE();
-	if (infSize < 4) infSize = 4;
+	if (infSize < 4)
+		infSize = 4;
 	uint8 *saveData = (uint8 *)malloc(infSize);
 	*(uint32 *)saveData = TO_LE_32(infSize);
 
-	if (inf->read(saveData+4, infSize-4) != infSize-4) {
+	if (inf->read(saveData + 4, infSize - 4) != infSize - 4) {
 		displayMessage(NULL, "Can't read from file '%s'", fName);
 		free(saveData);
 		delete inf;
@@ -1559,7 +1594,8 @@ void Control::delay(unsigned int amount) {
 		if (this_delay > amount)
 			this_delay = amount;
 
-		if (this_delay > 0)	_system->delayMillis(this_delay);
+		if (this_delay > 0)
+			_system->delayMillis(this_delay);
 
 		cur = _system->getMillis();
 	} while (cur < start + amount);

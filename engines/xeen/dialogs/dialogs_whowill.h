@@ -29,9 +29,11 @@ namespace Xeen {
 
 class WhoWill : public ButtonContainer {
 private:
-	WhoWill(XeenEngine *vm) : ButtonContainer(vm) {}
+	WhoWill(XeenEngine *vm)
+	  : ButtonContainer(vm) {}
 
 	int execute(int message, int action, bool type);
+
 public:
 	static int show(XeenEngine *vm, int message, int action, bool type);
 };

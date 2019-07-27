@@ -32,11 +32,15 @@ class CBarShelfVisCentre : public CPlaceHolder {
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool TimerMsg(CTimerMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
+
 private:
 	bool _flag;
+
 public:
 	CLASSDEF;
-	CBarShelfVisCentre() : CPlaceHolder(), _flag(false) {}
+	CBarShelfVisCentre()
+	  : CPlaceHolder()
+	  , _flag(false) {}
 
 	/**
 	 * Save the data for the class to file

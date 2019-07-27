@@ -33,10 +33,12 @@ class CHeadSmashLever : public CBackground {
 	bool ActMsg(CActMsg *msg);
 	bool FrameMsg(CFrameMsg *msg);
 	bool LoadSuccessMsg(CLoadSuccessMsg *msg);
+
 public:
 	bool _enabled;
 	bool _fieldE4;
 	uint _ticks;
+
 public:
 	CLASSDEF;
 	CHeadSmashLever();

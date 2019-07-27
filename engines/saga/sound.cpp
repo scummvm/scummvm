@@ -30,8 +30,9 @@
 
 namespace Saga {
 
-Sound::Sound(SagaEngine *vm, Audio::Mixer *mixer) :
-	_vm(vm), _mixer(mixer) {
+Sound::Sound(SagaEngine *vm, Audio::Mixer *mixer)
+  : _vm(vm)
+  , _mixer(mixer) {
 
 	for (int i = 0; i < SOUND_HANDLES; i++)
 		_handles[i].type = kFreeHandle;
@@ -55,14 +56,13 @@ SndHandle *Sound::getHandle() {
 
 	error("Sound::getHandle(): Too many sound handles");
 
-	return NULL;	// for compilers that don't support NORETURN
+	return NULL; // for compilers that don't support NORETURN
 }
 
 void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundBuffer &buffer, int volume,
-				sndHandleType handleType, bool loop) {
+                            sndHandleType handleType, bool loop) {
 
-	Audio::Mixer::SoundType soundType = (handleType == kVoiceHandle) ?
-				Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
+	Audio::Mixer::SoundType soundType = (handleType == kVoiceHandle) ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
 
 	if (buffer.stream)
 		_mixer->playStream(soundType, handle, Audio::makeLoopingAudioStream(buffer.stream, loop ? 0 : 1), -1, volume);

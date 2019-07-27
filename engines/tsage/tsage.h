@@ -27,12 +27,10 @@
 #include "gui/debugger.h"
 
 #include "tsage/core.h"
-#include "tsage/resources.h"
 #include "tsage/debugger.h"
 #include "tsage/events.h"
 #include "tsage/graphics.h"
 #include "tsage/resources.h"
-
 
 namespace TsAGE {
 
@@ -62,6 +60,7 @@ struct tSageGameDescription;
 class TSageEngine : public Engine {
 private:
 	const tSageGameDescription *_gameDescription;
+
 public:
 	TSageEngine(OSystem *system, const tSageGameDescription *gameDesc);
 	~TSageEngine();

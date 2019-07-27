@@ -26,8 +26,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPETSounds, CGameObject)
-	ON_MESSAGE(PETPlaySoundMsg)
-	ON_MESSAGE(LoadSuccessMsg)
+ON_MESSAGE(PETPlaySoundMsg)
+ON_MESSAGE(LoadSuccessMsg)
 END_MESSAGE_MAP()
 
 void CPETSounds::save(SimpleFile *file, int indent) {

@@ -23,30 +23,32 @@
 #include "titanic/npcs/bellbot.h"
 #include "titanic/carry/carry.h"
 #include "titanic/core/room_item.h"
-#include "titanic/pet_control/pet_control.h"
 #include "titanic/game_manager.h"
+#include "titanic/pet_control/pet_control.h"
 #include "titanic/translation.h"
 
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CBellBot, CTrueTalkNPC)
-	ON_MESSAGE(OnSummonBotMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(Use)
-	ON_MESSAGE(DismissBotMsg)
-	ON_MESSAGE(TrueTalkTriggerActionMsg)
-	ON_MESSAGE(MovieFrameMsg)
-	ON_MESSAGE(PutBotBackInHisBoxMsg)
-	ON_MESSAGE(NPCPlayIdleAnimationMsg)
-	ON_MESSAGE(NPCPlayTalkingAnimationMsg)
-	ON_MESSAGE(TimerMsg)
-	ON_MESSAGE(TrueTalkGetStateValueMsg)
-	ON_MESSAGE(TrueTalkNotifySpeechEndedMsg)
+ON_MESSAGE(OnSummonBotMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(Use)
+ON_MESSAGE(DismissBotMsg)
+ON_MESSAGE(TrueTalkTriggerActionMsg)
+ON_MESSAGE(MovieFrameMsg)
+ON_MESSAGE(PutBotBackInHisBoxMsg)
+ON_MESSAGE(NPCPlayIdleAnimationMsg)
+ON_MESSAGE(NPCPlayTalkingAnimationMsg)
+ON_MESSAGE(TimerMsg)
+ON_MESSAGE(TrueTalkGetStateValueMsg)
+ON_MESSAGE(TrueTalkNotifySpeechEndedMsg)
 END_MESSAGE_MAP()
 
-CBellBot::CBellBot() : CTrueTalkNPC(), _field108(0) {
+CBellBot::CBellBot()
+  : CTrueTalkNPC()
+  , _field108(0) {
 }
 
 void CBellBot::save(SimpleFile *file, int indent) {
@@ -73,7 +75,7 @@ bool CBellBot::OnSummonBotMsg(COnSummonBotMsg *msg) {
 			const char *_deSound;
 		};
 		static const RoomWave ROOM_WAVES[8] = {
-			{ "EmbLobby",  "z#193.wav", "z#723.wav" },
+			{ "EmbLobby", "z#193.wav", "z#723.wav" },
 			{ "PromenadeDeck", "z#191.wav", "z#721.wav" },
 			{ "Arboretum", "z#195.wav", "z#725.wav" },
 			{ "Frozen Arboretum", "z#195.wav", "z#725.wav" },
@@ -110,7 +112,7 @@ bool CBellBot::EnterViewMsg(CEnterViewMsg *msg) {
 	// can leave it in the view. Detect this and properly remove him when
 	// the player returns to that view
 	if (!hasActiveMovie() && msg->_newView == getParent()
-			&& getPetControl()->canSummonBot("BellBot"))
+	    && getPetControl()->canSummonBot("BellBot"))
 		petMoveToHiddenRoom();
 
 	return true;
@@ -218,7 +220,7 @@ bool CBellBot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 
 bool CBellBot::MovieFrameMsg(CMovieFrameMsg *msg) {
 	if (clipExistsByStart("Walk Off", msg->_frameNumber)
-			|| clipExistsByStart("Walk On", msg->_frameNumber)) {
+	    || clipExistsByStart("Walk On", msg->_frameNumber)) {
 		setPosition(Point(20, 10));
 	}
 

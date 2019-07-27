@@ -26,8 +26,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMaitreDLeftArm, CArm)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseDragStartMsg)
 END_MESSAGE_MAP()
 
 void CMaitreDLeftArm::save(SimpleFile *file, int indent) {

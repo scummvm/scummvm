@@ -23,12 +23,12 @@
 #ifndef COMMON_RECORDERFILE_H
 #define COMMON_RECORDERFILE_H
 
-#include "common/scummsys.h"
-#include "common/events.h"
-#include "common/mutex.h"
-#include "common/memstream.h"
 #include "common/config-manager.h"
+#include "common/events.h"
+#include "common/memstream.h"
+#include "common/mutex.h"
 #include "common/savefile.h"
+#include "common/scummsys.h"
 
 //capacity of records buffer
 #define kMaxBufferedRecords 10000
@@ -45,8 +45,6 @@ struct RecorderEvent : Event {
 	RecorderEventType recordedtype;
 	uint32 time;
 };
-
-
 
 class PlaybackFile {
 	typedef HashMap<String, uint32, IgnoreCase_Hash, IgnoreCase_EqualTo> RandomSeedsDictionary;
@@ -68,32 +66,33 @@ class PlaybackFile {
 		kFileStateError
 	};
 	enum FileTag {
-		kFormatIdTag = MKTAG('P','B','C','K'),
-		kVersionTag = MKTAG('V','E','R','S'),
-		kHeaderSectionTag = MKTAG('H','E','A','D'),
-		kHashSectionTag = MKTAG('H','A','S','H'),
-		kRandomSectionTag = MKTAG('R','A','N','D'),
-		kEventTag = MKTAG('E','V','N','T'),
-		kScreenShotTag = MKTAG('B','M','H','T'),
-		kSettingsSectionTag = MKTAG('S','E','T','T'),
-		kAuthorTag = MKTAG('H','A','U','T'),
-		kCommentsTag = MKTAG('H','C','M','T'),
-		kNameTag = MKTAG('H','N','A','M'),
-		kHashRecordTag = MKTAG('H','R','C','D'),
-		kRandomRecordTag = MKTAG('R','R','C','D'),
-		kSettingsRecordTag = MKTAG('S','R','E','C'),
-		kSettingsRecordKeyTag = MKTAG('S','K','E','Y'),
-		kSettingsRecordValueTag = MKTAG('S','V','A','L'),
-		kSaveTag = MKTAG('S','A','V','E'),
-		kSaveRecordTag = MKTAG('R','S','A','V'),
-		kSaveRecordNameTag = MKTAG('S','N','A','M'),
-		kSaveRecordBufferTag = MKTAG('S','B','U','F'),
-		kMD5Tag = MKTAG('M','D','5',' ')
+		kFormatIdTag = MKTAG('P', 'B', 'C', 'K'),
+		kVersionTag = MKTAG('V', 'E', 'R', 'S'),
+		kHeaderSectionTag = MKTAG('H', 'E', 'A', 'D'),
+		kHashSectionTag = MKTAG('H', 'A', 'S', 'H'),
+		kRandomSectionTag = MKTAG('R', 'A', 'N', 'D'),
+		kEventTag = MKTAG('E', 'V', 'N', 'T'),
+		kScreenShotTag = MKTAG('B', 'M', 'H', 'T'),
+		kSettingsSectionTag = MKTAG('S', 'E', 'T', 'T'),
+		kAuthorTag = MKTAG('H', 'A', 'U', 'T'),
+		kCommentsTag = MKTAG('H', 'C', 'M', 'T'),
+		kNameTag = MKTAG('H', 'N', 'A', 'M'),
+		kHashRecordTag = MKTAG('H', 'R', 'C', 'D'),
+		kRandomRecordTag = MKTAG('R', 'R', 'C', 'D'),
+		kSettingsRecordTag = MKTAG('S', 'R', 'E', 'C'),
+		kSettingsRecordKeyTag = MKTAG('S', 'K', 'E', 'Y'),
+		kSettingsRecordValueTag = MKTAG('S', 'V', 'A', 'L'),
+		kSaveTag = MKTAG('S', 'A', 'V', 'E'),
+		kSaveRecordTag = MKTAG('R', 'S', 'A', 'V'),
+		kSaveRecordNameTag = MKTAG('S', 'N', 'A', 'M'),
+		kSaveRecordBufferTag = MKTAG('S', 'B', 'U', 'F'),
+		kMD5Tag = MKTAG('M', 'D', '5', ' ')
 	};
 	struct ChunkHeader {
 		FileTag id;
 		uint32 len;
 	};
+
 public:
 	struct SaveFileBuffer {
 		byte *buffer;
@@ -125,9 +124,10 @@ public:
 	int getScreensCount();
 
 	bool isEventsBufferEmpty();
-	PlaybackFileHeader &getHeader() {return _header;}
+	PlaybackFileHeader &getHeader() { return _header; }
 	void updateHeader();
 	void addSaveFile(const String &fileName, InSaveFile *saveStream);
+
 private:
 	WriteStream *_recordFile;
 	WriteStream *_writeStream;
@@ -170,7 +170,7 @@ private:
 	void readHashMap(ChunkHeader chunk);
 
 	bool skipToNextScreenshot();
-	void readEvent(RecorderEvent& event);
+	void readEvent(RecorderEvent &event);
 	void readEventsToBuffer(uint32 size);
 	bool grabScreenAndComputeMD5(Graphics::Surface &screen, uint8 md5[16]);
 };

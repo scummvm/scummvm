@@ -42,8 +42,7 @@ bool Chapters::enterChapter(int chapter) {
 	if (_vm->_cutContent) {
 		for (int chi = 1; chi < 4; ++chi) {
 			if (!_vm->isArchiveOpen(Common::String::format("%d.TLK", chi))
-			    && !_vm->openArchive(Common::String::format("%d.TLK", chi))
-			) {
+			    && !_vm->openArchive(Common::String::format("%d.TLK", chi))) {
 				return false;
 			}
 		}

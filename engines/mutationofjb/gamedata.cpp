@@ -281,7 +281,7 @@ Door *Scene::getDoor(uint8 doorId) {
 }
 
 Object *Scene::getObject(uint8 objectId, bool ignoreNo) {
-	if (objectId == 0 || objectId > getNoObjects(ignoreNo))  {
+	if (objectId == 0 || objectId > getNoObjects(ignoreNo)) {
 		warning("Object %d does not exist", objectId);
 		return nullptr;
 	}
@@ -381,14 +381,13 @@ bool Scene::isConvItemExhausted(uint8 context, uint8 convItemIndex, uint8 convGr
 	return false;
 }
 
-
 GameData::GameData()
-	: _currentScene(0),
-	  _lastScene(0),
-	  _partB(false),
-	  _inventory(),
-	  _currentAPK("piggy.apk"),
-	  _color(WHITE) {}
+  : _currentScene(0)
+  , _lastScene(0)
+  , _partB(false)
+  , _inventory()
+  , _currentAPK("piggy.apk")
+  , _color(WHITE) {}
 
 Scene *GameData::getScene(uint8 sceneId) {
 	if (sceneId == 0 || sceneId > ARRAYSIZE(_scenes)) {

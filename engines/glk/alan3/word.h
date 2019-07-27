@@ -26,29 +26,26 @@
 namespace Glk {
 namespace Alan3 {
 
-typedef struct WordEntry {
-	int code;         /* The dictionary index for that word */
-	char *start;          /* Where does it start */
-	char *end;            /* .. and end */
-} Word;
+	typedef struct WordEntry {
+		int code; /* The dictionary index for that word */
+		char *start; /* Where does it start */
+		char *end; /* .. and end */
+	} Word;
 
+	/* DATA */
 
-/* DATA */
+	extern Word *playerWords; /* List of Parsed Word */
+	extern int currentWordIndex; /* and an index into it */
+	extern int firstWord;
+	extern int lastWord;
 
-extern Word *playerWords;   /* List of Parsed Word */
-extern int currentWordIndex;        /* and an index into it */
-extern int firstWord;
-extern int lastWord;
+	extern int verbWord;
+	extern int verbWordCode;
 
-extern int verbWord;
-extern int verbWordCode;
-
-
-
-/* FUNCTIONS */
-extern void ensureSpaceForPlayerWords(int count);
-extern char *playerWordsAsCommandString(void);
-extern void clearWordList(Word *list);
+	/* FUNCTIONS */
+	extern void ensureSpaceForPlayerWords(int count);
+	extern char *playerWordsAsCommandString(void);
+	extern void clearWordList(Word *list);
 
 } // End of namespace Alan3
 } // End of namespace Glk

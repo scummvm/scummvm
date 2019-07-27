@@ -35,10 +35,10 @@
 #ifndef SWORD2_SOUND_H
 #define SWORD2_SOUND_H
 
-#include "common/file.h"
-#include "common/mutex.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "common/file.h"
+#include "common/mutex.h"
 
 // Max number of sound fx
 #define MAXMUS 2
@@ -64,28 +64,28 @@ enum {
 
 enum {
 	// These three types correspond to types set by the scripts
-	FX_SPOT		= 0,
-	FX_LOOP		= 1,
-	FX_RANDOM	= 2,
+	FX_SPOT = 0,
+	FX_LOOP = 1,
+	FX_RANDOM = 2,
 
 	// These are used for FX queue bookkeeping
-	FX_SPOT2	= 3,
-	FX_LOOPING	= 4
+	FX_SPOT2 = 3,
+	FX_LOOPING = 4
 };
 
 // Sound defines
 
 enum {
-	RDSE_SAMPLEFINISHED		= 0,
-	RDSE_SAMPLEPLAYING		= 1,
-	RDSE_FXTOCLEAR			= 0,		// Unused
-	RDSE_FXCACHED			= 1,		// Unused
-	RDSE_FXSPOT			= 0,
-	RDSE_FXLOOP			= 1,
-	RDSE_FXLEADIN			= 2,
-	RDSE_FXLEADOUT			= 3,
-	RDSE_QUIET			= 1,
-	RDSE_SPEAKING			= 0
+	RDSE_SAMPLEFINISHED = 0,
+	RDSE_SAMPLEPLAYING = 1,
+	RDSE_FXTOCLEAR = 0, // Unused
+	RDSE_FXCACHED = 1, // Unused
+	RDSE_FXSPOT = 0,
+	RDSE_FXLOOP = 1,
+	RDSE_FXLEADIN = 2,
+	RDSE_FXLEADOUT = 3,
+	RDSE_QUIET = 1,
+	RDSE_SPEAKING = 0
 };
 
 class CLUInputStream : public Audio::AudioStream {
@@ -113,9 +113,9 @@ public:
 
 	int readBuffer(int16 *buffer, const int numSamples);
 
-	bool endOfData() const	{ return eosIntern(); }
-	bool isStereo() const	{ return false; }
-	int getRate() const	{ return 22050; }
+	bool endOfData() const { return eosIntern(); }
+	bool isStereo() const { return false; }
+	int getRate() const { return 22050; }
 };
 
 struct SoundFileHandle {
@@ -157,17 +157,17 @@ public:
 
 	int readBuffer(int16 *buffer, const int numSamples);
 
-	bool endOfData() const	{ return eosIntern(); }
-	bool isStereo() const	{ return _decoder->isStereo(); }
-	int getRate() const	{ return _decoder->getRate(); }
+	bool endOfData() const { return eosIntern(); }
+	bool isStereo() const { return _decoder->isStereo(); }
+	int getRate() const { return _decoder->getRate(); }
 
-	int getCD()		{ return _cd; }
+	int getCD() { return _cd; }
 
 	void fadeUp();
 	void fadeDown();
 
-	bool isReady()		{ return _decoder != NULL; }
-	int32 isFading()	{ return _fading; }
+	bool isReady() { return _decoder != NULL; }
+	int32 isFading() { return _fading; }
 
 	bool readyToRemove();
 	int32 getTimeRemaining();
@@ -184,14 +184,14 @@ private:
 	Audio::SoundHandle _leadOutHandle;
 
 	struct FxQueueEntry {
-		Audio::SoundHandle handle;	// sound handle
-		uint32 resource;		// resource id of sample
-		byte *data;			// pointer to WAV data
-		uint32 len;			// WAV data length
-		uint16 delay;			// cycles to wait before playing (or 'random chance' if FX_RANDOM)
-		uint8 volume;			// sound volume
-		int8 pan;			// sound panning
-		uint8 type;			// FX_SPOT, FX_RANDOM, FX_LOOP
+		Audio::SoundHandle handle; // sound handle
+		uint32 resource; // resource id of sample
+		byte *data; // pointer to WAV data
+		uint32 len; // WAV data length
+		uint16 delay; // cycles to wait before playing (or 'random chance' if FX_RANDOM)
+		uint8 volume; // sound volume
+		int8 pan; // sound panning
+		uint8 type; // FX_SPOT, FX_RANDOM, FX_LOOP
 	};
 
 	FxQueueEntry _fxQueue[FXQ_LENGTH];

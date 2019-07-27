@@ -27,14 +27,19 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CParrotNutEater, CGameObject)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(ReplaceBowlAndNutsMsg)
-	ON_MESSAGE(NutPuzzleMsg)
-	ON_MESSAGE(MovieFrameMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(ReplaceBowlAndNutsMsg)
+ON_MESSAGE(NutPuzzleMsg)
+ON_MESSAGE(MovieFrameMsg)
 END_MESSAGE_MAP()
 
-CParrotNutEater::CParrotNutEater() : CGameObject(), _fieldBC(0),
-		_fieldC0(69), _fieldC4(132), _fieldC8(0), _fieldCC(68) {
+CParrotNutEater::CParrotNutEater()
+  : CGameObject()
+  , _fieldBC(0)
+  , _fieldC0(69)
+  , _fieldC4(132)
+  , _fieldC8(0)
+  , _fieldCC(68) {
 }
 
 void CParrotNutEater::save(SimpleFile *file, int indent) {

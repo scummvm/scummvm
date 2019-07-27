@@ -34,6 +34,7 @@ private:
 	TTsentenceEntries _entries2;
 	TTupdateStateArray _states;
 	TTmapEntryArray _preResponses;
+
 private:
 	/**
 	 * Adjust a given dial number by a given delta amount
@@ -53,9 +54,10 @@ private:
 	 * Add a response and optionally set the state
 	 */
 	int setResponse(int dialogueId, int state = -1);
+
 public:
 	BarbotScript(int val1, const char *charClass, int v2,
-		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7);
+	             const char *charName, int v3, int val2, int v4, int v5, int v6, int v7);
 
 	/**
 	 * Chooses and adds a conversation response based on a specified tag Id.
@@ -73,7 +75,7 @@ public:
 	virtual ScriptChangedResult scriptChanged(const TTroomScript *roomScript, uint id);
 
 	virtual int handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
-		uint tag1, uint tag2, uint remainder);
+	                        uint tag1, uint tag2, uint remainder);
 
 	/**
 	 * Returns true if the NPC's dial region affects quote responses

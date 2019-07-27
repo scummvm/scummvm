@@ -20,7 +20,7 @@
  *
  */
 
-#include "ToolbarHandler.h"
-#include "Panel.h"
 #include "ItemSwitch.h"
+#include "Panel.h"
 #include "PanelKeyboard.h"
+#include "ToolbarHandler.h"

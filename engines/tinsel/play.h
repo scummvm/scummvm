@@ -21,7 +21,7 @@
  * Plays films within a scene, takes into account the actor in each 'column'.
  */
 
-#ifndef TINSEL_PLAY_H	// prevent multiple includes
+#ifndef TINSEL_PLAY_H // prevent multiple includes
 #define TINSEL_PLAY_H
 
 #include "common/coroutines.h"
@@ -30,22 +30,22 @@
 
 namespace Tinsel {
 
-#define MAX_SOUNDREELS	5
+#define MAX_SOUNDREELS 5
 
 struct SOUNDREELS {
-	SCNHANDLE hFilm;	// The 'film'
-	int	column;		// Column number
-	int	actorCol;
+	SCNHANDLE hFilm; // The 'film'
+	int column; // Column number
+	int actorCol;
 };
 typedef SOUNDREELS *PSOUNDREELS;
 
 void PlayFilm(CORO_PARAM, SCNHANDLE film, int x, int y, int actorid, bool splay, bool sfact, bool escOn,
-			int myescEvent, bool bTop);
+              int myescEvent, bool bTop);
 
 void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int myescEvent, bool bTop);
 
 void PlayFilmc(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay, bool sfact,
-			bool escOn, int myescEvent, bool bTop);
+               bool escOn, int myescEvent, bool bTop);
 
 void RestoreActorReels(SCNHANDLE hFilm, short reelnum, short z, int x, int y);
 void RestoreActorReels(SCNHANDLE hFilm, int actor, int x, int y);

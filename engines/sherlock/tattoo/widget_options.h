@@ -32,35 +32,38 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-enum OptionRenderMode { OP_ALL = 0, OP_CONTENTS = 1, OP_NAMES = 2};
+	enum OptionRenderMode { OP_ALL = 0,
+		                      OP_CONTENTS = 1,
+		                      OP_NAMES = 2 };
 
-/**
+	/**
  * Handles displaying the options dialog
  */
-class WidgetOptions : public WidgetBase {
-private:
-	int _midiSliderX, _digiSliderX;
-	int _selector, _oldSelector;
-	Common::Point _centerPos;
+	class WidgetOptions : public WidgetBase {
+	private:
+		int _midiSliderX, _digiSliderX;
+		int _selector, _oldSelector;
+		Common::Point _centerPos;
 
-	/**
+		/**
 	 * Render the contents of the dialog onto the widget's surface
 	 */
-	void render(OptionRenderMode mode = OP_ALL);
-public:
-	WidgetOptions(SherlockEngine *vm);
-	virtual ~WidgetOptions() {}
+		void render(OptionRenderMode mode = OP_ALL);
 
-	/**
+	public:
+		WidgetOptions(SherlockEngine *vm);
+		virtual ~WidgetOptions() {}
+
+		/**
 	 * Load and then display the options dialog
 	 */
-	void load();
+		void load();
 
-	/**
+		/**
 	 * Handle event processing
 	 */
-	virtual void handleEvents();
-};
+		virtual void handleEvents();
+	};
 
 } // End of namespace Tattoo
 

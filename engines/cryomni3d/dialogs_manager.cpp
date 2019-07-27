@@ -58,7 +58,8 @@ void DialogsManager::populateLabels() {
 	const char *labelsP = strstr(_gtoBuffer, "LABELS=");
 	if (labelsP) {
 		labelsP += sizeof("LABELS=") - 1;
-		for (; *labelsP == ' '; labelsP++) { }
+		for (; *labelsP == ' '; labelsP++) {
+		}
 		numLabels = atoi(labelsP);
 	} else {
 		numLabels = 0;
@@ -80,10 +81,8 @@ const char *DialogsManager::findLabel(const char *label, const char **realLabel)
 	uint labelLen = 0;
 	/* Truncate input label */
 	for (const char *labelP = label;
-	        *labelP != '\0' &&
-	        *labelP != ' ' &&
-	        *labelP != '.' &&
-	        *labelP != '\r'; labelP++, labelLen++) { }
+	     *labelP != '\0' && *labelP != ' ' && *labelP != '.' && *labelP != '\r'; labelP++, labelLen++) {
+	}
 
 	Common::Array<const char *>::const_iterator labelsIt;
 	for (labelsIt = _labels.begin(); labelsIt != _labels.end(); labelsIt++) {
@@ -109,7 +108,8 @@ Common::String DialogsManager::getLabelSound(const char *label) const {
 	}
 
 	const char *labelEnd;
-	for (labelEnd = label; *labelEnd >= '0' && *labelEnd <= 'Z'; labelEnd++) { }
+	for (labelEnd = label; *labelEnd >= '0' && *labelEnd <= 'Z'; labelEnd++) {
+	}
 
 	return Common::String(label, labelEnd);
 }
@@ -130,7 +130,8 @@ const char *DialogsManager::findSequence(const char *sequence) const {
 	}
 
 	/* Find next label */
-	for (; lineP != nullptr && *lineP != ':'; lineP = nextLine(lineP)) { }
+	for (; lineP != nullptr && *lineP != ':'; lineP = nextLine(lineP)) {
+	}
 
 	/* Return the label name without it's ':' */
 	return nextChar(lineP);
@@ -145,7 +146,8 @@ Common::String DialogsManager::findVideo(const char *data) const {
 	// Video name is without the extension
 	const char *end = data;
 
-	for (; data >= _gtoBuffer && *data != '\r'; data--) { }
+	for (; data >= _gtoBuffer && *data != '\r'; data--) {
+	}
 	data++;
 
 	if (data < _gtoBuffer || *data == '.') {
@@ -164,7 +166,8 @@ Common::String DialogsManager::getText(const char *text) const {
 	}
 
 	const char *end;
-	for (end = text; end < _gtoEnd && *end != '>'; end++) { }
+	for (end = text; end < _gtoEnd && *end != '>'; end++) {
+	}
 
 	if (end == _gtoEnd) {
 		return Common::String();
@@ -175,14 +178,14 @@ Common::String DialogsManager::getText(const char *text) const {
 
 void DialogsManager::reinitVariables() {
 	for (Common::Array<DialogVariable>::iterator it = _dialogsVariables.begin();
-	        it != _dialogsVariables.end(); it++) {
+	     it != _dialogsVariables.end(); it++) {
 		it->value = 'N';
 	}
 }
 
 const DialogsManager::DialogVariable &DialogsManager::find(const Common::String &name) const {
 	for (Common::Array<DialogVariable>::const_iterator it = _dialogsVariables.begin();
-	        it != _dialogsVariables.end(); it++) {
+	     it != _dialogsVariables.end(); it++) {
 		if (it->name == name) {
 			return *it;
 		}
@@ -192,7 +195,7 @@ const DialogsManager::DialogVariable &DialogsManager::find(const Common::String 
 
 DialogsManager::DialogVariable &DialogsManager::find(const Common::String &name) {
 	for (Common::Array<DialogVariable>::iterator it = _dialogsVariables.begin();
-	        it != _dialogsVariables.end(); it++) {
+	     it != _dialogsVariables.end(); it++) {
 		if (it->name == name) {
 			return *it;
 		}
@@ -201,7 +204,8 @@ DialogsManager::DialogVariable &DialogsManager::find(const Common::String &name)
 }
 
 const char *DialogsManager::nextLine(const char *currentPtr) const {
-	for (; currentPtr < _gtoEnd && *currentPtr != '\r'; currentPtr++) { }
+	for (; currentPtr < _gtoEnd && *currentPtr != '\r'; currentPtr++) {
+	}
 
 	/* Go after the \r */
 	return nextChar(currentPtr);
@@ -275,8 +279,7 @@ bool DialogsManager::play(const Common::String &sequence, bool &slowStop) {
 			video = findVideo(text);
 			Common::String properText = getText(text);
 			Common::String sound = getLabelSound(label);
-			Common::HashMap<Common::String, SubtitlesSettings>::const_iterator settingsIt =
-			    _subtitlesSettings.find(video);
+			Common::HashMap<Common::String, SubtitlesSettings>::const_iterator settingsIt = _subtitlesSettings.find(video);
 			if (settingsIt == _subtitlesSettings.end()) {
 				settingsIt = _subtitlesSettings.find("default");
 			}
@@ -289,13 +292,14 @@ bool DialogsManager::play(const Common::String &sequence, bool &slowStop) {
 		}
 		gotoList = executeAfterPlayAndBuildGotoList(actions);
 		Common::StringArray questions;
-		bool endOfConversationFound = false;;
+		bool endOfConversationFound = false;
+		;
 		if (_ignoreNoEndOfConversation) {
 			// Don't check if there is an end, so, there is one
 			endOfConversationFound = true;
 		}
 		for (Common::Array<DialogsManager::Goto>::iterator it = gotoList.begin(); it != gotoList.end();
-		        it++) {
+		     it++) {
 			if (!endOfConversationFound && it->label.hasPrefix("JOU")) {
 				// No need to get the real label here, we just need to know if the question ends up
 				if (!executePlayerQuestion(it->text, true)) {
@@ -305,7 +309,8 @@ bool DialogsManager::play(const Common::String &sequence, bool &slowStop) {
 			assert(it->text);
 			const char *questionStart = it->text + 1;
 			const char *questionEnd = questionStart;
-			for (; *questionEnd != '>'; questionEnd++) { }
+			for (; *questionEnd != '>'; questionEnd++) {
+			}
 			questions.push_back(Common::String(questionStart, questionEnd));
 		}
 		uint eocInserted = uint(-1);
@@ -336,7 +341,8 @@ bool DialogsManager::play(const Common::String &sequence, bool &slowStop) {
 			// Display a simple message
 			const char *messageStart = gotoList[0].text + 1;
 			const char *messageEnd = messageStart;
-			for (; *messageEnd != '>'; messageEnd++) { }
+			for (; *messageEnd != '>'; messageEnd++) {
+			}
 			displayMessage(Common::String(messageStart, messageEnd));
 			break;
 		} else {
@@ -349,7 +355,7 @@ bool DialogsManager::play(const Common::String &sequence, bool &slowStop) {
 }
 
 Common::Array<DialogsManager::Goto> DialogsManager::executeAfterPlayAndBuildGotoList(
-    const char *actions) {
+  const char *actions) {
 	Common::Array<DialogsManager::Goto> gotos;
 
 	for (; actions && *actions != ':'; actions = nextLine(actions)) {
@@ -374,7 +380,8 @@ void DialogsManager::buildGotoGoto(const char *gotoLine, Common::Array<Goto> &go
 	gotoLine = gotoLine + 5;
 	while (true) {
 		const char *labelEnd = gotoLine;
-		for (labelEnd = gotoLine; *labelEnd >= '0' && *labelEnd <= 'Z'; labelEnd++) { }
+		for (labelEnd = gotoLine; *labelEnd >= '0' && *labelEnd <= 'Z'; labelEnd++) {
+		}
 		label = Common::String(gotoLine, labelEnd);
 
 		if (label == "REM") {
@@ -392,7 +399,8 @@ void DialogsManager::buildGotoGoto(const char *gotoLine, Common::Array<Goto> &go
 				debug("Problem with GOTO.WAV: '%s'", gotoLine);
 			}
 		}
-		for (; *labelEnd == ' ' || *labelEnd == ','; labelEnd++) { }
+		for (; *labelEnd == ' ' || *labelEnd == ','; labelEnd++) {
+		}
 
 		if (*labelEnd == '\r') {
 			break;
@@ -411,16 +419,19 @@ bool DialogsManager::buildGotoIf(const char *ifLine, Common::Array<Goto> &gotos)
 		const char *endVar = ifLine;
 		const char *equalPos;
 		// Find next '='
-		for (; *endVar != '='; endVar++) { }
+		for (; *endVar != '='; endVar++) {
+		}
 		equalPos = endVar;
 		// Strip spaces at the end
 		endVar--;
-		for (; *endVar == ' '; endVar--) { }
+		for (; *endVar == ' '; endVar--) {
+		}
 		endVar++;
 		Common::String variable(ifLine, endVar);
 
 		const char *testValue = equalPos + 1;
-		for (; *testValue == ' ' || *testValue == '\t'; testValue++) { }
+		for (; *testValue == ' ' || *testValue == '\t'; testValue++) {
+		}
 
 		byte value = (*this)[variable];
 
@@ -430,7 +441,8 @@ bool DialogsManager::buildGotoIf(const char *ifLine, Common::Array<Goto> &gotos)
 		}
 
 		ifLine = testValue + 1;
-		for (; *ifLine == ' ' || *ifLine == '\t'; ifLine++) { }
+		for (; *ifLine == ' ' || *ifLine == '\t'; ifLine++) {
+		}
 
 		if (!strncmp(ifLine, "AND IF ", 7)) {
 			ifLine += 7;
@@ -461,11 +473,13 @@ void DialogsManager::executeLet(const char *letLine) {
 	const char *endVar = letLine;
 	const char *equalPos;
 	// Find next '='
-	for (; *endVar != '='; endVar++) { }
+	for (; *endVar != '='; endVar++) {
+	}
 	equalPos = endVar;
 	// Strip spaces at the end
 	endVar--;
-	for (; *endVar == ' '; endVar--) { }
+	for (; *endVar == ' '; endVar--) {
+	}
 	endVar++;
 	Common::String variable(letLine, endVar);
 
@@ -477,7 +491,8 @@ void DialogsManager::executeShow(const char *showLine) {
 
 	const char *endShow = showLine;
 	// Find next ')' and include it
-	for (; *endShow != ')'; endShow++) { }
+	for (; *endShow != ')'; endShow++) {
+	}
 	endShow++;
 
 	Common::String show(showLine, endShow);
@@ -486,7 +501,7 @@ void DialogsManager::executeShow(const char *showLine) {
 }
 
 const char *DialogsManager::executePlayerQuestion(const char *text, bool dryRun,
-        const char **realLabel) {
+                                                  const char **realLabel) {
 	// Go after the text
 	const char *actions = nextLine(text);
 
@@ -517,16 +532,19 @@ const char *DialogsManager::parseIf(const char *ifLine) {
 		const char *endVar = ifLine;
 		const char *equalPos;
 		// Find next '='
-		for (; *endVar != '='; endVar++) { }
+		for (; *endVar != '='; endVar++) {
+		}
 		equalPos = endVar;
 		// Strip spaces at the end
 		endVar--;
-		for (; *endVar == ' '; endVar--) { }
+		for (; *endVar == ' '; endVar--) {
+		}
 		endVar++;
 		Common::String variable(ifLine, endVar);
 
 		const char *testValue = equalPos + 1;
-		for (; *testValue == ' ' || *testValue == '\t'; testValue++) { }
+		for (; *testValue == ' ' || *testValue == '\t'; testValue++) {
+		}
 
 		byte value = (*this)[variable];
 
@@ -536,7 +554,8 @@ const char *DialogsManager::parseIf(const char *ifLine) {
 		}
 
 		ifLine = testValue + 1;
-		for (; *ifLine == ' ' || *ifLine == '\t'; ifLine++) { }
+		for (; *ifLine == ' ' || *ifLine == '\t'; ifLine++) {
+		}
 
 		if (!strncmp(ifLine, "AND IF ", 7)) {
 			ifLine += 7;
@@ -551,7 +570,7 @@ const char *DialogsManager::parseIf(const char *ifLine) {
 }
 
 void DialogsManager::registerSubtitlesSettings(const Common::String &videoName,
-        const SubtitlesSettings &settings) {
+                                               const SubtitlesSettings &settings) {
 	_subtitlesSettings[videoName] = settings;
 }
 

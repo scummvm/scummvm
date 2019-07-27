@@ -23,10 +23,10 @@
 #ifndef NEVERHOOD_MENUMODULE_H
 #define NEVERHOOD_MENUMODULE_H
 
-#include "common/str.h"
 #include "common/str-array.h"
-#include "neverhood/neverhood.h"
+#include "common/str.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -47,6 +47,7 @@ public:
 	void setSavegameInfo(const Common::String &description, uint index, bool newSavegame);
 	void setDeletegameInfo(uint index);
 	void refreshSaveGameList();
+
 protected:
 	int _sceneNum;
 	byte *_savedPaletteData;
@@ -68,6 +69,7 @@ protected:
 class MenuButton : public StaticSprite {
 public:
 	MenuButton(NeverhoodEngine *vm, Scene *parentScene, uint buttonIndex, uint32 fileHash, const NRect &collisionBounds);
+
 protected:
 	Scene *_parentScene;
 	int _countdown;
@@ -79,6 +81,7 @@ protected:
 class MainMenu : public Scene {
 public:
 	MainMenu(NeverhoodEngine *vm, Module *parentModule);
+
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -87,6 +90,7 @@ class CreditsScene : public Scene {
 public:
 	CreditsScene(NeverhoodEngine *vm, Module *parentModule, bool canAbort);
 	virtual ~CreditsScene();
+
 protected:
 	int _screenIndex;
 	int _countdown;
@@ -104,7 +108,7 @@ class GameStateMenu;
 class Widget : public StaticSprite {
 public:
 	Widget(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
-		int baseObjectPriority, int baseSurfacePriority);
+	       int baseObjectPriority, int baseSurfacePriority);
 	virtual void onClick();
 	virtual void setPosition(int16 x, int16 y);
 	virtual void refreshPosition();
@@ -113,6 +117,7 @@ public:
 	virtual int16 getHeight();
 	virtual void enterWidget();
 	virtual void exitWidget();
+
 protected:
 	GameStateMenu *_parentScene;
 	int _baseObjectPriority;
@@ -124,8 +129,8 @@ protected:
 class TextLabelWidget : public Widget {
 public:
 	TextLabelWidget(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
-		int baseObjectPriority, int baseSurfacePriority,
-		const byte *string, int stringLen, BaseSurface *drawSurface, int16 tx, int16 ty, FontSurface *fontSurface);
+	                int baseObjectPriority, int baseSurfacePriority,
+	                const byte *string, int stringLen, BaseSurface *drawSurface, int16 tx, int16 ty, FontSurface *fontSurface);
 	virtual void initialize();
 	virtual int16 getWidth();
 	virtual int16 getHeight();
@@ -133,6 +138,7 @@ public:
 	void clear();
 	void setString(const byte *string, int stringLen);
 	FontSurface *getFontSurface() const { return _fontSurface; }
+
 protected:
 	BaseSurface *_drawSurface;
 	int16 _tx, _ty;
@@ -144,7 +150,7 @@ protected:
 class TextEditWidget : public Widget {
 public:
 	TextEditWidget(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
-		int maxStringLength, FontSurface *fontSurface, uint32 fileHash, const NRect &rect);
+	               int maxStringLength, FontSurface *fontSurface, uint32 fileHash, const NRect &rect);
 	~TextEditWidget();
 	virtual void onClick();
 	virtual void initialize();
@@ -153,7 +159,7 @@ public:
 	void setCursor(uint32 cursorFileHash, int16 cursorWidth, int16 cursorHeight);
 	void drawCursor();
 	void updateString();
-	Common::String& getString();
+	Common::String &getString();
 	void setString(const Common::String &string);
 	void handleAsciiKey(char ch);
 	void handleKeyDown(Common::KeyCode keyCode);
@@ -161,6 +167,7 @@ public:
 	void setReadOnly(bool value) { _readOnly = value; }
 	bool isReadOnly() const { return _readOnly; }
 	bool isModified() const { return _modified; }
+
 protected:
 	NRect _rect;
 	uint32 _fileHash;
@@ -183,7 +190,7 @@ protected:
 class SavegameListBox : public Widget {
 public:
 	SavegameListBox(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
-		SavegameList *savegameList, FontSurface *fontSurface, uint32 bgFileHash, const NRect &rect);
+	                SavegameList *savegameList, FontSurface *fontSurface, uint32 bgFileHash, const NRect &rect);
 	virtual void onClick();
 	virtual void initialize();
 	void buildItems();
@@ -194,11 +201,12 @@ public:
 	void pageUp();
 	void pageDown();
 	uint getCurrIndex() const { return _currIndex; }
+
 protected:
 	const NRect _rect;
 	uint32 _bgFileHash;
 	int _maxStringLength;
-	Common::Array<TextLabelWidget*> _textLabelItems;
+	Common::Array<TextLabelWidget *> _textLabelItems;
 	int _firstVisibleItem;
 	int _lastVisibleItem;
 	SavegameList *_savegameList;
@@ -210,17 +218,18 @@ protected:
 class GameStateMenu : public Scene {
 public:
 	GameStateMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList,
-		const uint32 *buttonFileHashes, const NRect *buttonCollisionBounds,
-		uint32 backgroundFileHash, uint32 fontFileHash,
-		uint32 mouseFileHash, const NRect *mouseRect,
-		uint32 listBoxBackgroundFileHash, int16 listBoxX, int16 listBoxY, const NRect &listBoxRect,
-		uint32 textEditBackgroundFileHash, uint32 textEditCursorFileHash, int16 textEditX, int16 textEditY, const NRect &textEditRect,
-		uint32 textFileHash1, uint32 textFileHash2);
+	              const uint32 *buttonFileHashes, const NRect *buttonCollisionBounds,
+	              uint32 backgroundFileHash, uint32 fontFileHash,
+	              uint32 mouseFileHash, const NRect *mouseRect,
+	              uint32 listBoxBackgroundFileHash, int16 listBoxX, int16 listBoxY, const NRect &listBoxRect,
+	              uint32 textEditBackgroundFileHash, uint32 textEditCursorFileHash, int16 textEditX, int16 textEditY, const NRect &textEditRect,
+	              uint32 textFileHash1, uint32 textFileHash2);
 	virtual ~GameStateMenu();
 	NPoint getMousePos();
 	virtual void setCurrWidget(Widget *newWidget);
 	virtual Widget *getCurrWidget() { return _currWidget; }
 	virtual void refreshDescriptionEdit();
+
 protected:
 	Widget *_currWidget;
 	SavegameList *_savegameList;
@@ -236,6 +245,7 @@ protected:
 class SaveGameMenu : public GameStateMenu {
 public:
 	SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList);
+
 protected:
 	virtual void performAction();
 };
@@ -243,6 +253,7 @@ protected:
 class LoadGameMenu : public GameStateMenu {
 public:
 	LoadGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList);
+
 protected:
 	virtual void performAction();
 };
@@ -250,6 +261,7 @@ protected:
 class DeleteGameMenu : public GameStateMenu {
 public:
 	DeleteGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList);
+
 protected:
 	virtual void performAction();
 };
@@ -257,6 +269,7 @@ protected:
 class QueryOverwriteMenu : public Scene {
 public:
 	QueryOverwriteMenu(NeverhoodEngine *vm, Module *parentModule, const Common::String &description);
+
 protected:
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);

@@ -22,12 +22,12 @@
 
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 
-#include "kyra/engine/kyra_rpg.h"
-#include "kyra/resource/resource.h"
-#include "kyra/engine/timer.h"
-#include "kyra/sound/sound.h"
+#	include "kyra/engine/kyra_rpg.h"
+#	include "kyra/engine/timer.h"
+#	include "kyra/resource/resource.h"
+#	include "kyra/sound/sound.h"
 
-#include "common/system.h"
+#	include "common/system.h"
 
 namespace Kyra {
 
@@ -352,7 +352,7 @@ uint16 KyraRpgEngine::calcNewBlockPosition(uint16 curBlock, uint16 direction) {
 void KyraRpgEngine::drawVcnBlocks() {
 	uint8 *d = _sceneWindowBuffer;
 	uint16 *bdb = _blockDrawingBuffer;
-	
+
 	for (int y = 0; y < 15; y++) {
 		for (int x = 0; x < 22; x++) {
 			bool horizontalFlip = false;
@@ -433,7 +433,7 @@ void KyraRpgEngine::vcnDraw_fw_4bit(uint8 *&dst, const uint8 *&src) {
 		uint8 bl = *src++;
 		*dst++ = _vcnColTable[((bl >> 4) + _wllVcnOffset2) | _vcnShiftVal];
 		*dst++ = _vcnColTable[((bl & 0x0F) + _wllVcnOffset2) | _vcnShiftVal];
-	}		
+	}
 }
 
 void KyraRpgEngine::vcnDraw_bw_4bit(uint8 *&dst, const uint8 *&src) {
@@ -495,7 +495,7 @@ void KyraRpgEngine::vcnDraw_bw_trans_4bit(uint8 *&dst, const uint8 *&src) {
 void KyraRpgEngine::vcnDraw_fw_hiCol(uint8 *&dst, const uint8 *&src) {
 	const uint16 *hiColorPal = screen()->get16bitPalette();
 	for (int blockX = 0; blockX < 8; blockX++) {
-		*(uint16*)dst = hiColorPal[*src++];
+		*(uint16 *)dst = hiColorPal[*src++];
 		dst += 2;
 	}
 }
@@ -504,7 +504,7 @@ void KyraRpgEngine::vcnDraw_bw_hiCol(uint8 *&dst, const uint8 *&src) {
 	src += 7;
 	const uint16 *hiColorPal = screen()->get16bitPalette();
 	for (int blockX = 0; blockX < 4 * _vcnBpp; blockX++) {
-		*(uint16*)dst = hiColorPal[*src--];
+		*(uint16 *)dst = hiColorPal[*src--];
 		dst += 2;
 	}
 	src += 9;
@@ -515,7 +515,7 @@ void KyraRpgEngine::vcnDraw_fw_trans_hiCol(uint8 *&dst, const uint8 *&src) {
 	for (int blockX = 0; blockX < _vcnSrcBitsPerPixel; blockX++) {
 		uint8 bl = *src++;
 		if (bl)
-			*(uint16*)dst = hiColorPal[bl];
+			*(uint16 *)dst = hiColorPal[bl];
 		dst += 2;
 	}
 }
@@ -526,7 +526,7 @@ void KyraRpgEngine::vcnDraw_bw_trans_hiCol(uint8 *&dst, const uint8 *&src) {
 	for (int blockX = 0; blockX < _vcnSrcBitsPerPixel; blockX++) {
 		uint8 bl = *src--;
 		if (bl)
-			*(uint16*)dst = hiColorPal[bl];
+			*(uint16 *)dst = hiColorPal[bl];
 		dst += 2;
 	}
 	src += 9;
@@ -577,7 +577,6 @@ void KyraRpgEngine::vcnDraw_bw_trans_Amiga(uint8 *&dst, const uint8 *&src) {
 	}
 	src += 5;
 }
-
 
 int KyraRpgEngine::clickedWallShape(uint16 block, uint16 direction) {
 	uint8 v = _wllShapeMap[_levelBlockProperties[block].walls[direction]];
@@ -630,7 +629,7 @@ void KyraRpgEngine::processDoorSwitch(uint16 block, int openClose) {
 	if (block == _currentBlock)
 		return;
 
-	if ((_flags.gameID == GI_LOL && (_levelBlockProperties[block].assignedObjects & 0x8000)) || (_flags.gameID != GI_LOL  && (_levelBlockProperties[block].flags & 7)))
+	if ((_flags.gameID == GI_LOL && (_levelBlockProperties[block].assignedObjects & 0x8000)) || (_flags.gameID != GI_LOL && (_levelBlockProperties[block].flags & 7)))
 		return;
 
 	if (openClose == 0) {

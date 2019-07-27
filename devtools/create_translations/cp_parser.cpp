@@ -27,7 +27,8 @@
 #include <fstream>
 #include <stdio.h>
 
-Codepage::Codepage(const std::string &name, const uint32 *mapping) : _name(name) {
+Codepage::Codepage(const std::string &name, const uint32 *mapping)
+  : _name(name) {
 	if (!mapping) {
 		// Default to a ISO-8859-1 mapping
 		for (unsigned int i = 0; i < 256; ++i)

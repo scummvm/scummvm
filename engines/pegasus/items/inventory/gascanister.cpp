@@ -23,13 +23,13 @@
  *
  */
 
-#include "pegasus/ai/ai_area.h"
 #include "pegasus/items/inventory/gascanister.h"
+#include "pegasus/ai/ai_area.h"
 
 namespace Pegasus {
 
-GasCanister::GasCanister(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
-		InventoryItem(id, neighborhood, room, direction) {
+GasCanister::GasCanister(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction)
+  : InventoryItem(id, neighborhood, room, direction) {
 }
 
 void GasCanister::select() {

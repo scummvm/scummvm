@@ -57,7 +57,7 @@ void DreamWebEngine::fillRyan() {
 }
 
 bool DreamWebEngine::isItWorn(const DynObject *object) {
-	return (object->objId[0] == 'W'-'A') && (object->objId[1] == 'E'-'A');
+	return (object->objId[0] == 'W' - 'A') && (object->objId[1] == 'E' - 'A');
 }
 
 void DreamWebEngine::wornError() {
@@ -74,8 +74,8 @@ void DreamWebEngine::wornError() {
 }
 
 void DreamWebEngine::makeWorn(DynObject *object) {
-	object->objId[0] = 'W'-'A';
-	object->objId[1] = 'E'-'A';
+	object->objId[0] = 'W' - 'A';
+	object->objId[1] = 'E' - 'A';
 }
 
 void DreamWebEngine::obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
@@ -156,13 +156,13 @@ void DreamWebEngine::examineOb(bool examineAgain) {
 		switch (_invOpen) {
 		case 0: {
 			RectWithCallback examList[] = {
-				{ 273,320,157,198,&DreamWebEngine::getBackFromOb },
-				{ 260,300,0,44,&DreamWebEngine::useObject },
-				{ 210,254,0,44,&DreamWebEngine::selectOpenOb },
-				{ 144,176,64,96,&DreamWebEngine::setPickup },
-				{ 0,50,50,200,&DreamWebEngine::examineInventory },
-				{ 0,320,0,200,&DreamWebEngine::blank },
-				{ 0xFFFF,0,0,0,0 }
+				{ 273, 320, 157, 198, &DreamWebEngine::getBackFromOb },
+				{ 260, 300, 0, 44, &DreamWebEngine::useObject },
+				{ 210, 254, 0, 44, &DreamWebEngine::selectOpenOb },
+				{ 144, 176, 64, 96, &DreamWebEngine::setPickup },
+				{ 0, 50, 50, 200, &DreamWebEngine::examineInventory },
+				{ 0, 320, 0, 200, &DreamWebEngine::blank },
+				{ 0xFFFF, 0, 0, 0, 0 }
 			};
 			checkCoords(examList);
 			break;
@@ -170,24 +170,24 @@ void DreamWebEngine::examineOb(bool examineAgain) {
 		case 1: {
 			// Note: This table contains the non-constant _openChangeSize!
 			RectWithCallback invList1[] = {
-				{ 273,320,157,198,&DreamWebEngine::getBackFromOb },
-				{ 255,294,0,24,&DreamWebEngine::dropObject },
-				{ kInventx+167,kInventx+167+(18*3),kInventy-18,kInventy-2,&DreamWebEngine::incRyanPage },
-				{ kInventx,_openChangeSize,kInventy+100,kInventy+100+kItempicsize,&DreamWebEngine::useOpened },
-				{ kInventx,kInventx+(5*kItempicsize),kInventy,kInventy+(2*kItempicsize),&DreamWebEngine::inToInv },
-				{ 0,320,0,200,&DreamWebEngine::blank },
-				{ 0xFFFF,0,0,0,0 }
+				{ 273, 320, 157, 198, &DreamWebEngine::getBackFromOb },
+				{ 255, 294, 0, 24, &DreamWebEngine::dropObject },
+				{ kInventx + 167, kInventx + 167 + (18 * 3), kInventy - 18, kInventy - 2, &DreamWebEngine::incRyanPage },
+				{ kInventx, _openChangeSize, kInventy + 100, kInventy + 100 + kItempicsize, &DreamWebEngine::useOpened },
+				{ kInventx, kInventx + (5 * kItempicsize), kInventy, kInventy + (2 * kItempicsize), &DreamWebEngine::inToInv },
+				{ 0, 320, 0, 200, &DreamWebEngine::blank },
+				{ 0xFFFF, 0, 0, 0, 0 }
 			};
 			checkCoords(invList1);
 			break;
 		}
 		default: {
 			RectWithCallback withList1[] = {
-				{ 273,320,157,198,&DreamWebEngine::getBackFromOb },
-				{ kInventx+167,kInventx+167+(18*3),kInventy-18,kInventy-2,&DreamWebEngine::incRyanPage },
-				{ kInventx,kInventx+(5*kItempicsize), kInventy,kInventy+(2*kItempicsize),&DreamWebEngine::selectOb },
-				{ 0,320,0,200,&DreamWebEngine::blank },
-				{ 0xFFFF,0,0,0,0 }
+				{ 273, 320, 157, 198, &DreamWebEngine::getBackFromOb },
+				{ kInventx + 167, kInventx + 167 + (18 * 3), kInventy - 18, kInventy - 2, &DreamWebEngine::incRyanPage },
+				{ kInventx, kInventx + (5 * kItempicsize), kInventy, kInventy + (2 * kItempicsize), &DreamWebEngine::selectOb },
+				{ 0, 320, 0, 200, &DreamWebEngine::blank },
+				{ 0xFFFF, 0, 0, 0, 0 }
 			};
 			checkCoords(withList1);
 			break;
@@ -224,7 +224,6 @@ void DreamWebEngine::inventory() {
 		return;
 	if (!(_mouseButton & 1)) // only on left mouse button
 		return;
-
 
 	_timeCount = 0;
 	_pointerMode = 0;
@@ -294,9 +293,9 @@ void DreamWebEngine::openOb() {
 
 	copyName(_openedType, _openedOb, commandLine);
 
-	printMessage(kInventx, kInventy+86, 62, 240, false);
+	printMessage(kInventx, kInventy + 86, 62, 240, false);
 
-	printDirect(commandLine, _lastXPos + 5, kInventy+86, 220, false);
+	printDirect(commandLine, _lastXPos + 5, kInventy + 86, 220, false);
 
 	fillOpen();
 	_openChangeSize = getOpenedSlotCount() * kItempicsize + kInventx;
@@ -323,8 +322,7 @@ void DreamWebEngine::identifyOb() {
 	_pointersPath = findPathOfPoint(x, y);
 	_pointerFirstPath = findFirstPath(x, y);
 
-	if (checkIfEx(x, y) || checkIfFree(x, y) ||
-		checkIfPerson(x, y) || checkIfSet(x, y))
+	if (checkIfEx(x, y) || checkIfFree(x, y) || checkIfPerson(x, y) || checkIfSet(x, y))
 		return; // finishidentify
 
 	x = (_mouseX - _mapAdX) & 0xFF;
@@ -356,7 +354,7 @@ void DreamWebEngine::selectOb() {
 	}
 
 	_withObject = objectId._index;
-	_withType   = objectId._type;
+	_withType = objectId._type;
 
 	if (objectId != _oldSubject || _commandType != 221) {
 		if (objectId == _oldSubject)
@@ -438,19 +436,19 @@ void DreamWebEngine::deleteExFrame(uint8 frameNum) {
 	// Adjust all frame pointers pointing into the shifted data
 	for (unsigned int i = 0; i < kNumexobjects; ++i) {
 		if (_exData[i].mapad[0] != 0xff) {
-			frame = &_exFrames._frames[3*i+0];
+			frame = &_exFrames._frames[3 * i + 0];
 			if (frame->ptr() >= startOff) {
 				frame->setPtr(frame->ptr() - frameSize);
-				assert(frame->ptr() + frame->width*frame->height <= _vars._exFramePos);
+				assert(frame->ptr() + frame->width * frame->height <= _vars._exFramePos);
 			} else {
-				assert(frame->ptr() + frame->width*frame->height <= startOff);
+				assert(frame->ptr() + frame->width * frame->height <= startOff);
 			}
-			frame = &_exFrames._frames[3*i+1];
+			frame = &_exFrames._frames[3 * i + 1];
 			if (frame->ptr() >= startOff) {
 				frame->setPtr(frame->ptr() - frameSize);
-				assert(frame->ptr() + frame->width*frame->height <= _vars._exFramePos);
+				assert(frame->ptr() + frame->width * frame->height <= _vars._exFramePos);
 			} else {
-				assert(frame->ptr() + frame->width*frame->height <= startOff);
+				assert(frame->ptr() + frame->width * frame->height <= startOff);
 			}
 		}
 	}
@@ -483,8 +481,8 @@ void DreamWebEngine::deleteExObject(uint8 index) {
 
 	memset(obj, 0xFF, sizeof(DynObject));
 
-	deleteExFrame(3*index);
-	deleteExFrame(3*index + 1);
+	deleteExFrame(3 * index);
+	deleteExFrame(3 * index + 1);
 
 	deleteExText(index);
 
@@ -778,7 +776,7 @@ void DreamWebEngine::selectOpenOb() {
 void DreamWebEngine::reExFromInv() {
 	ObjectRef objectId = findInvPos();
 	_commandType = objectId._type;
-	_command     = objectId._index;
+	_command = objectId._index;
 	_examAgain = 1;
 	_pointerMode = 0;
 }
@@ -825,7 +823,7 @@ void DreamWebEngine::swapWithInv() {
 
 void DreamWebEngine::useOpened() {
 	if (_openedOb == 255)
-		return;	// cannot use opened object
+		return; // cannot use opened object
 
 	if (!_pickUp) {
 		outOfOpen();
@@ -863,8 +861,7 @@ void DreamWebEngine::useOpened() {
 
 	delPointer();
 
-	if (_itemFrame == _openedOb &&
-		_objectType == _openedType) {
+	if (_itemFrame == _openedOb && _objectType == _openedType) {
 		errorMessage1();
 		return;
 	}
@@ -957,8 +954,7 @@ void DreamWebEngine::swapWithOpen() {
 
 	delPointer();
 
-	if (_itemFrame == _openedOb &&
-		_objectType == _openedType) {
+	if (_itemFrame == _openedOb && _objectType == _openedType) {
 		errorMessage1();
 		return;
 	}
@@ -970,7 +966,7 @@ void DreamWebEngine::swapWithOpen() {
 	byte prevFrame = _itemFrame;
 	ObjectRef objectId = findOpenPos();
 	_objectType = objectId._type;
-	_itemFrame  = objectId._index;
+	_itemFrame = objectId._index;
 
 	if (_objectType != kExObjectType) {
 		assert(objectId._type == kFreeObjectType);
@@ -1139,9 +1135,7 @@ void DreamWebEngine::emergencyPurge(uint8 from) {
 	}
 	const uint16 textBytesNeeded = strlen(_freeDesc.getString(from)) + 1;
 
-	while (_vars._exFramePos + frameBytesNeeded > kExframeslen ||
-		   _vars._exTextPos + textBytesNeeded > kExtextlen)
-	{
+	while (_vars._exFramePos + frameBytesNeeded > kExframeslen || _vars._exTextPos + textBytesNeeded > kExtextlen) {
 		purgeAnItem();
 		debug(2, "Ex memory after purging: frames %d/%d, text %d/%d", _vars._exFramePos, kExframeslen, _vars._exTextPos, kExtextlen);
 	}
@@ -1150,11 +1144,8 @@ void DreamWebEngine::emergencyPurge(uint8 from) {
 void DreamWebEngine::purgeAnItem() {
 	const DynObject *extraObjects = _exData;
 
-
 	for (uint i = 0; i < kNumexobjects; ++i) {
-		if (extraObjects[i].mapad[0] == 0 &&
-		    (extraObjects[i].objId[0] == 255 || extraObjects[i].objId[0] == 2) &&
-			extraObjects[i].initialLocation != _realLocation) {
+		if (extraObjects[i].mapad[0] == 0 && (extraObjects[i].objId[0] == 255 || extraObjects[i].objId[0] == 2) && extraObjects[i].initialLocation != _realLocation) {
 			debug(1, "Purging ex object %d", i);
 			deleteExObject(i);
 			return;

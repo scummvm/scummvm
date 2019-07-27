@@ -31,18 +31,18 @@ namespace BladeRunner {
 
 class UICheckBox : public UIComponent {
 	UIComponentCallback *_valueChangedCallback;
-	void                *_callbackData;
+	void *_callbackData;
 
-	int                  _style;
-	int                  _isEnabled;
-	Common::Rect         _rect;
-	uint32               _frame;
-	int                  _isPressed;
-	uint32               _timeLast;
-	int                  _hasFocus;
+	int _style;
+	int _isEnabled;
+	Common::Rect _rect;
+	uint32 _frame;
+	int _isPressed;
+	uint32 _timeLast;
+	int _hasFocus;
 
 public:
-	bool                 _isChecked;
+	bool _isChecked;
 
 	UICheckBox(BladeRunnerEngine *vm, UIComponentCallback *valueChangedCallback, void *callbackData, Common::Rect rect, int style, bool isChecked);
 

@@ -44,32 +44,32 @@
 */
 
 #include "glk/alan3/acode.h"
-#include "glk/alan3/types.h"
 #include "glk/alan3/params.h"
+#include "glk/alan3/types.h"
 
 namespace Glk {
 namespace Alan3 {
 
-/* Types: */
-struct ParameterPosition {
-	bool endOfList;
-	bool explicitMultiple;
-	bool all;
-	bool them;
-	bool checked;
-	Aword flags;
-	Parameter *parameters;
-	Parameter *exceptions;
-};
+	/* Types: */
+	struct ParameterPosition {
+		bool endOfList;
+		bool explicitMultiple;
+		bool all;
+		bool them;
+		bool checked;
+		Aword flags;
+		Parameter *parameters;
+		Parameter *exceptions;
+	};
 
-/* Functions: */
-extern void deallocateParameterPositions(ParameterPosition *parameterPositions);
-extern void uncheckAllParameterPositions(ParameterPosition parameterPositions[]);
-extern void copyParameterPositions(ParameterPosition originalParameterPositions[], ParameterPosition parameterPositions[]);
-extern bool equalParameterPositions(ParameterPosition parameterPositions1[], ParameterPosition parameterPositions2[]);
-extern int findMultipleParameterPosition(ParameterPosition parameterPositions[]);
-extern void markExplicitMultiple(ParameterPosition parameterPositions[], Parameter parameters[]);
-extern void convertPositionsToParameters(ParameterPosition parameterPositions[], Parameter parameters[]);
+	/* Functions: */
+	extern void deallocateParameterPositions(ParameterPosition *parameterPositions);
+	extern void uncheckAllParameterPositions(ParameterPosition parameterPositions[]);
+	extern void copyParameterPositions(ParameterPosition originalParameterPositions[], ParameterPosition parameterPositions[]);
+	extern bool equalParameterPositions(ParameterPosition parameterPositions1[], ParameterPosition parameterPositions2[]);
+	extern int findMultipleParameterPosition(ParameterPosition parameterPositions[]);
+	extern void markExplicitMultiple(ParameterPosition parameterPositions[], Parameter parameters[]);
+	extern void convertPositionsToParameters(ParameterPosition parameterPositions[], Parameter parameters[]);
 
 } // End of namespace Alan3
 } // End of namespace Glk

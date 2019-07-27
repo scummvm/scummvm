@@ -32,8 +32,8 @@
 #ifndef SWORD25_STATIC_BITMAP_H
 #define SWORD25_STATIC_BITMAP_H
 
-#include "sword25/kernel/common.h"
 #include "sword25/gfx/bitmap.h"
+#include "sword25/kernel/common.h"
 
 namespace Sword25 {
 

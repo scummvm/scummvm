@@ -57,9 +57,9 @@ void View::setFovX(float fovX) {
 
 void View::calculateSliceViewMatrix() {
 	Matrix4x3 mRotation = rotationMatrixX(float(M_PI) / 2.0f);
-	Matrix4x3 mInvert(-1.0f,  0.0f, 0.0f, 0.0f,
-	                   0.0f, -1.0f, 0.0f, 0.0f,
-	                   0.0f,  0.0f, 1.0f, 0.0f);
+	Matrix4x3 mInvert(-1.0f, 0.0f, 0.0f, 0.0f,
+	                  0.0f, -1.0f, 0.0f, 0.0f,
+	                  0.0f, 0.0f, 1.0f, 0.0f);
 	_sliceViewMatrix = mInvert * (_frameViewMatrix * mRotation);
 }
 
@@ -74,10 +74,9 @@ void View::calculateCameraPosition() {
 Vector3 View::calculateScreenPosition(Vector3 worldPosition) {
 	Vector3 viewPosition = _frameViewMatrix * worldPosition;
 	return Vector3(
-		_viewportPosition.x - ((viewPosition.x / ABS(viewPosition.z)) * ABS(_viewportPosition.z)),
-		_viewportPosition.y - ((viewPosition.y / ABS(viewPosition.z)) * ABS(_viewportPosition.z)),
-		viewPosition.z
-	);
+	  _viewportPosition.x - ((viewPosition.x / ABS(viewPosition.z)) * ABS(_viewportPosition.z)),
+	  _viewportPosition.y - ((viewPosition.y / ABS(viewPosition.z)) * ABS(_viewportPosition.z)),
+	  viewPosition.z);
 }
 
 } // End of namespace BladeRunner

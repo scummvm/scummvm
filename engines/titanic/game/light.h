@@ -38,6 +38,7 @@ class CLight : public CBackground {
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool ActMsg(CActMsg *msg);
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
+
 private:
 	int _unused1;
 	bool _topRight;
@@ -47,6 +48,7 @@ private:
 	int _unused2;
 	int _unused3;
 	bool _eyePresent;
+
 public:
 	CLASSDEF;
 	CLight();

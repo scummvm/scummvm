@@ -38,7 +38,6 @@ class QueuingAudioStream;
 
 namespace Tinsel {
 
-
 class BMVPlayer {
 
 	bool bOldAudio;
@@ -92,8 +91,8 @@ class BMVPlayer {
 	int blobsInBuffer;
 
 	struct {
-		POBJECT	pText;
-		int	dieFrame;
+		POBJECT pText;
+		int dieFrame;
 	} texts[2];
 
 	COLORREF talkColor;
@@ -117,6 +116,7 @@ class BMVPlayer {
 	Audio::SoundHandle _audioHandle;
 
 	int nextMaintain;
+
 public:
 	BMVPlayer();
 
@@ -152,7 +152,6 @@ private:
 	bool DoBMVFrame();
 	bool DoSoundFrame();
 };
-
 
 } // End of namespace Tinsel
 

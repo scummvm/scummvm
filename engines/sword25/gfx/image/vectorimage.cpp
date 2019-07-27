@@ -33,8 +33,8 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "sword25/gfx/image/art.h"
 #include "sword25/gfx/image/vectorimage.h"
+#include "sword25/gfx/image/art.h"
 #include "sword25/gfx/image/renderedimage.h"
 
 #include "graphics/colormasks.h"
@@ -57,9 +57,10 @@ namespace Sword25 {
 
 class VectorImage::SWFBitStream {
 public:
-	SWFBitStream(const byte *pData, uint dataSize) :
-		m_Pos(pData), m_End(pData + dataSize), m_WordMask(0)
-	{}
+	SWFBitStream(const byte *pData, uint dataSize)
+	  : m_Pos(pData)
+	  , m_End(pData + dataSize)
+	  , m_WordMask(0) {}
 
 	inline uint32 getBits(uint bitCount) {
 		if (bitCount == 0 || bitCount > 32) {
@@ -139,83 +140,86 @@ public:
 	}
 
 private:
-	const byte    *m_Pos;
-	const byte    *m_End;
+	const byte *m_Pos;
+	const byte *m_End;
 
 	byte m_Word;
 	uint m_WordMask;
 };
-
 
 // -----------------------------------------------------------------------------
 // Constants and utility functions
 // -----------------------------------------------------------------------------
 
 namespace {
-// -----------------------------------------------------------------------------
-// Constants
-// -----------------------------------------------------------------------------
+	// -----------------------------------------------------------------------------
+	// Constants
+	// -----------------------------------------------------------------------------
 
-const uint32 MAX_ACCEPTED_FLASH_VERSION = 3;   // The maximum flash file version that is accepted by the loader
+	const uint32 MAX_ACCEPTED_FLASH_VERSION = 3; // The maximum flash file version that is accepted by the loader
 
+	// -----------------------------------------------------------------------------
+	// Converts SWF rectangle data in a bit stream in Common::Rect objects
+	// -----------------------------------------------------------------------------
 
-// -----------------------------------------------------------------------------
-// Converts SWF rectangle data in a bit stream in Common::Rect objects
-// -----------------------------------------------------------------------------
+	Common::Rect flashRectToBSRect(VectorImage::SWFBitStream &bs) {
+		bs.flushByte();
 
-Common::Rect flashRectToBSRect(VectorImage::SWFBitStream &bs) {
-	bs.flushByte();
+		// Determines how many bits of the single components are encoded
+		uint32 bitsPerValue = bs.getBits(5);
 
-	// Determines how many bits of the single components are encoded
-	uint32 bitsPerValue = bs.getBits(5);
+		// Readout the single components
+		int32 xMin = bs.getSignedBits(bitsPerValue);
+		int32 xMax = bs.getSignedBits(bitsPerValue);
+		int32 yMin = bs.getSignedBits(bitsPerValue);
+		int32 yMax = bs.getSignedBits(bitsPerValue);
 
-	// Readout the single components
-	int32 xMin = bs.getSignedBits(bitsPerValue);
-	int32 xMax = bs.getSignedBits(bitsPerValue);
-	int32 yMin = bs.getSignedBits(bitsPerValue);
-	int32 yMax = bs.getSignedBits(bitsPerValue);
-
-	return Common::Rect(xMin, yMin, xMax + 1, yMax + 1);
-}
-
-// -----------------------------------------------------------------------------
-// Calculate the bounding box of a BS_VectorImageElement
-// -----------------------------------------------------------------------------
-
-Common::Rect CalculateBoundingBox(const VectorImageElement &vectorImageElement) {
-	double x0 = 0.0, y0 = 0.0, x1 = 0.0, y1 = 0.0;
-
-	for (int j = vectorImageElement.getPathCount() - 1; j >= 0; j--) {
-		ArtBpath *bez = vectorImageElement.getPathInfo(j).getVec();
-		ArtVpath *vec = art_bez_path_to_vec(bez, 0.5);
-
-		if (vec[0].code == ART_END) {
-			free(vec);
-			continue;
-		} else {
-			x0 = x1 = vec[0].x;
-			y0 = y1 = vec[0].y;
-			for (int i = 1; vec[i].code != ART_END; i++) {
-				if (vec[i].x < x0) x0 = vec[i].x;
-				if (vec[i].x > x1) x1 = vec[i].x;
-				if (vec[i].y < y0) y0 = vec[i].y;
-				if (vec[i].y > y1) y1 = vec[i].y;
-			}
-		}
-		free(vec);
+		return Common::Rect(xMin, yMin, xMax + 1, yMax + 1);
 	}
 
-	return Common::Rect(static_cast<int>(x0), static_cast<int>(y0), static_cast<int>(x1) + 1, static_cast<int>(y1) + 1);
-}
+	// -----------------------------------------------------------------------------
+	// Calculate the bounding box of a BS_VectorImageElement
+	// -----------------------------------------------------------------------------
+
+	Common::Rect CalculateBoundingBox(const VectorImageElement &vectorImageElement) {
+		double x0 = 0.0, y0 = 0.0, x1 = 0.0, y1 = 0.0;
+
+		for (int j = vectorImageElement.getPathCount() - 1; j >= 0; j--) {
+			ArtBpath *bez = vectorImageElement.getPathInfo(j).getVec();
+			ArtVpath *vec = art_bez_path_to_vec(bez, 0.5);
+
+			if (vec[0].code == ART_END) {
+				free(vec);
+				continue;
+			} else {
+				x0 = x1 = vec[0].x;
+				y0 = y1 = vec[0].y;
+				for (int i = 1; vec[i].code != ART_END; i++) {
+					if (vec[i].x < x0)
+						x0 = vec[i].x;
+					if (vec[i].x > x1)
+						x1 = vec[i].x;
+					if (vec[i].y < y0)
+						y0 = vec[i].y;
+					if (vec[i].y > y1)
+						y1 = vec[i].y;
+				}
+			}
+			free(vec);
+		}
+
+		return Common::Rect(static_cast<int>(x0), static_cast<int>(y0), static_cast<int>(x1) + 1, static_cast<int>(y1) + 1);
+	}
 
 }
-
 
 // -----------------------------------------------------------------------------
 // Construction
 // -----------------------------------------------------------------------------
 
-VectorImage::VectorImage(const byte *pFileData, uint fileSize, bool &success, const Common::String &fname) : _pixelData(0), _fname(fname) {
+VectorImage::VectorImage(const byte *pFileData, uint fileSize, bool &success, const Common::String &fname)
+  : _pixelData(0)
+  , _fname(fname) {
 	success = false;
 	_bgColor = 0;
 
@@ -228,9 +232,7 @@ VectorImage::VectorImage(const byte *pFileData, uint fileSize, bool &success, co
 	signature[0] = bs.getByte();
 	signature[1] = bs.getByte();
 	signature[2] = bs.getByte();
-	if (signature[0] != 'F' ||
-	        signature[1] != 'W' ||
-	        signature[2] != 'S') {
+	if (signature[0] != 'F' || signature[1] != 'W' || signature[2] != 'S') {
 		error("File is not a valid SWF-file");
 		return;
 	}
@@ -291,7 +293,7 @@ VectorImage::VectorImage(const byte *pFileData, uint fileSize, bool &success, co
 				r = bs.getByte();
 				g = bs.getByte();
 				b = bs.getByte();
-				_bgColor = Graphics::ARGBToColor<Graphics::ColorMasks<8888> >(0xff, r, g, b);
+				_bgColor = Graphics::ARGBToColor<Graphics::ColorMasks<8888>>(0xff, r, g, b);
 			}
 			break;
 		default:
@@ -314,7 +316,6 @@ VectorImage::~VectorImage() {
 
 	free(_pixelData);
 }
-
 
 ArtBpath *ensureBezStorage(ArtBpath *bez, int nodes, int *allocated) {
 	if (*allocated <= nodes) {
@@ -345,7 +346,7 @@ ArtBpath *VectorImage::storeBez(ArtBpath *bez, int lineStyle, int fillStyle0, in
 }
 
 bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
-	/*uint32 shapeID = */bs.getUInt16();
+	/*uint32 shapeID = */ bs.getUInt16();
 
 	// readout bounding box
 	_boundingBox = flashRectToBSRect(bs);
@@ -461,7 +462,7 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 				double newX = controlX + anchorDeltaX;
 				double newY = controlY + anchorDeltaY;
 
-#define WEIGHT (2.0/3.0)
+#define WEIGHT (2.0 / 3.0)
 
 				bezNodes++;
 				bez = ensureBezStorage(bez, bezNodes, &bezAllocated);
@@ -518,7 +519,6 @@ bool VectorImage::parseDefineShape(uint shapeType, SWFBitStream &bs) {
 	return true;
 }
 
-
 // -----------------------------------------------------------------------------
 
 bool VectorImage::parseStyles(uint shapeType, SWFBitStream &bs, uint &numFillBits, uint &numLineBits) {
@@ -546,7 +546,7 @@ bool VectorImage::parseStyles(uint shapeType, SWFBitStream &bs, uint &numFillBit
 		if (shapeType == 3)
 			a = bs.getByte();
 
-		color = Graphics::ARGBToColor<Graphics::ColorMasks<8888> >(a, r, g, b);
+		color = Graphics::ARGBToColor<Graphics::ColorMasks<8888>>(a, r, g, b);
 
 		if (type != 0)
 			return false;
@@ -575,7 +575,7 @@ bool VectorImage::parseStyles(uint shapeType, SWFBitStream &bs, uint &numFillBit
 		if (shapeType == 3)
 			a = bs.getByte();
 
-		color = Graphics::ARGBToColor<Graphics::ColorMasks<8888> >(a, r, g, b);
+		color = Graphics::ARGBToColor<Graphics::ColorMasks<8888>>(a, r, g, b);
 
 		_elements.back()._lineStyles.push_back(VectorImageElement::LineStyleType(width, color));
 	}
@@ -587,14 +587,12 @@ bool VectorImage::parseStyles(uint shapeType, SWFBitStream &bs, uint &numFillBit
 	return true;
 }
 
-
 // -----------------------------------------------------------------------------
 
 bool VectorImage::fill(const Common::Rect *pFillRect, uint color) {
 	error("Fill() is not supported.");
 	return false;
 }
-
 
 // -----------------------------------------------------------------------------
 
@@ -615,10 +613,10 @@ bool VectorImage::blit(int posX, int posY,
                        Common::Rect *pPartRect,
                        uint color,
                        int width, int height,
-					   RectangleList *updateRects) {
+                       RectangleList *updateRects) {
 	static VectorImage *oldThis = 0;
-	static int              oldWidth = -2;
-	static int              oldHeight = -2;
+	static int oldWidth = -2;
+	static int oldHeight = -2;
 
 	// If width or height to 0, nothing needs to be shown.
 	if (width == 0 || height == 0)

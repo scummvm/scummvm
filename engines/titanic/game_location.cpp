@@ -21,10 +21,10 @@
  */
 
 #include "titanic/game_location.h"
-#include "titanic/game_manager.h"
-#include "titanic/game_state.h"
 #include "titanic/core/game_object.h"
 #include "titanic/core/project_item.h"
+#include "titanic/game_manager.h"
+#include "titanic/game_state.h"
 
 namespace Titanic {
 
@@ -32,9 +32,12 @@ namespace Titanic {
 #define STARTING_NODE 1
 #define STARTING_VIEW 4
 
-CGameLocation::CGameLocation(CGameState *owner) : _gameState(owner),
-	_view(nullptr), _roomNumber(STARTING_ROOM),
-	_nodeNumber(STARTING_NODE), _viewNumber(STARTING_VIEW) {
+CGameLocation::CGameLocation(CGameState *owner)
+  : _gameState(owner)
+  , _view(nullptr)
+  , _roomNumber(STARTING_ROOM)
+  , _nodeNumber(STARTING_NODE)
+  , _viewNumber(STARTING_VIEW) {
 }
 
 void CGameLocation::save(SimpleFile *file) const {
@@ -53,7 +56,7 @@ void CGameLocation::load(SimpleFile *file) {
 void CGameLocation::setView(CViewItem *view) {
 	if (_view) {
 		for (CTreeItem *treeItem = _view; treeItem;
-				treeItem = treeItem->scan(_view)) {
+		     treeItem = treeItem->scan(_view)) {
 			CGameObject *obj = dynamic_cast<CGameObject *>(treeItem);
 			if (obj)
 				obj->stopMovie();
@@ -78,7 +81,7 @@ CViewItem *CGameLocation::getView() {
 		if (!_view) {
 			// Fallback if view not found
 			_view = gm->_project->findView(STARTING_ROOM,
-				STARTING_NODE, STARTING_VIEW);
+			                               STARTING_NODE, STARTING_VIEW);
 
 			if (!_view) {
 				// Fallback for the fallback

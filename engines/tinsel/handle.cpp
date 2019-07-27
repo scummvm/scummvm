@@ -29,11 +29,11 @@
 #include "tinsel/drives.h"
 #include "tinsel/dw.h"
 #include "tinsel/handle.h"
-#include "tinsel/heapmem.h"			// heap memory manager
-#include "tinsel/scn.h"		// for the DW1 Mac resource handler
-#include "tinsel/timers.h"	// for DwGetCurrentTime()
-#include "tinsel/tinsel.h"
+#include "tinsel/heapmem.h" // heap memory manager
 #include "tinsel/scene.h"
+#include "tinsel/scn.h" // for the DW1 Mac resource handler
+#include "tinsel/timers.h" // for DwGetCurrentTime()
+#include "tinsel/tinsel.h"
 
 namespace Tinsel {
 
@@ -43,27 +43,25 @@ namespace Tinsel {
 static uint32 s_lockedScene = 0;
 #endif
 
-
 //----------------- LOCAL DEFINES --------------------
 
 struct MEMHANDLE {
-	char szName[12];	///< file name of graphics file
-	int32 filesize;		///< file size and flags
-	MEM_NODE *_node;	///< memory node for the graphics
+	char szName[12]; ///< file name of graphics file
+	int32 filesize; ///< file size and flags
+	MEM_NODE *_node; ///< memory node for the graphics
 	uint32 flags2;
 };
 
-
 /** memory allocation flags - stored in the top bits of the filesize field */
 enum {
-	fPreload	= 0x01000000L,	///< preload memory
-	fDiscard	= 0x02000000L,	///< discard memory
-	fSound		= 0x04000000L,	///< sound data
-	fGraphic	= 0x08000000L,	///< graphic data
-	fCompressed	= 0x10000000L,	///< compressed data
-	fLoaded		= 0x20000000L	///< set when file data has been loaded
+	fPreload = 0x01000000L, ///< preload memory
+	fDiscard = 0x02000000L, ///< discard memory
+	fSound = 0x04000000L, ///< sound data
+	fGraphic = 0x08000000L, ///< graphic data
+	fCompressed = 0x10000000L, ///< compressed data
+	fLoaded = 0x20000000L ///< set when file data has been loaded
 };
-#define	FSIZE_MASK	0x00FFFFFFL	///< mask to isolate the filesize
+#define FSIZE_MASK 0x00FFFFFFL ///< mask to isolate the filesize
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
@@ -84,7 +82,7 @@ static char g_szCdPlayFile[100];
 
 //----------------- FORWARD REFERENCES --------------------
 
-static void LoadFile(MEMHANDLE *pH);	// load a memory block as a file
+static void LoadFile(MEMHANDLE *pH); // load a memory block as a file
 
 /**
  * Loads the graphics handle table index file and preloads all the
@@ -139,10 +137,10 @@ void SetupHandleTable() {
 
 			// close the file
 			f.close();
-		} else {	// index file is corrupt
+		} else { // index file is corrupt
 			error(FILE_IS_CORRUPT, indexFileName);
 		}
-	} else {	// cannot find the index file
+	} else { // cannot find the index file
 		error(CANNOT_FIND_FILE, indexFileName);
 	}
 
@@ -198,7 +196,7 @@ void LoadCDGraphData(MEMHANDLE *pH) {
 	// read the data
 	uint bytes;
 	byte *addr;
-	int	retries = 0;
+	int retries = 0;
 
 	assert(!(pH->filesize & fCompressed));
 
@@ -217,7 +215,7 @@ void LoadCDGraphData(MEMHANDLE *pH) {
 	bytes = g_cdGraphStream->read(addr, (g_cdTopHandle - g_cdBaseHandle) & OFFSETMASK);
 
 	// New code to try and handle CD read failures 24/2/97
-	while (bytes != ((g_cdTopHandle - g_cdBaseHandle) & OFFSETMASK) && retries++ < MAX_READ_RETRIES)	{
+	while (bytes != ((g_cdTopHandle - g_cdBaseHandle) & OFFSETMASK) && retries++ < MAX_READ_RETRIES) {
 		// Try again
 		g_cdGraphStream->seek(g_cdBaseHandle & OFFSETMASK, SEEK_SET);
 		bytes = g_cdGraphStream->read(addr, (g_cdTopHandle - g_cdBaseHandle) & OFFSETMASK);
@@ -230,7 +228,7 @@ void LoadCDGraphData(MEMHANDLE *pH) {
 	pH->filesize |= fLoaded;
 
 	// clear the loading flag
-//	pH->filesize &= ~fLoading;
+	//	pH->filesize &= ~fLoading;
 
 	if (bytes != ((g_cdTopHandle - g_cdBaseHandle) & OFFSETMASK))
 		// file is corrupt
@@ -264,7 +262,6 @@ void SetCdPlaySceneDetails(int fileNum, const char *fileName) {
 void SetCdPlayHandle(int fileNum) {
 	g_cdPlayHandle = fileNum;
 }
-
 
 /**
  * Loads a memory block as a file.
@@ -321,9 +318,9 @@ void LoadFile(MEMHANDLE *pH) {
  * @param offset			Handle and offset to data
  */
 byte *LockMem(SCNHANDLE offset) {
-	uint32 handle = offset >> SCNHANDLE_SHIFT;	// calc memory handle to use
+	uint32 handle = offset >> SCNHANDLE_SHIFT; // calc memory handle to use
 	//debug("Locking offset of type %d (%x), offset %d, handle %d", (offset & HANDLEMASK) >> SCNHANDLE_SHIFT, (offset & HANDLEMASK) >> SCNHANDLE_SHIFT, offset & OFFSETMASK, handle);
-	MEMHANDLE *pH;			// points to table entry
+	MEMHANDLE *pH; // points to table entry
 
 	// range check the memory handle
 	assert(handle < g_numHandles);
@@ -382,8 +379,8 @@ byte *LockMem(SCNHANDLE offset) {
  */
 void LockScene(SCNHANDLE offset) {
 
-	uint32 handle = offset >> SCNHANDLE_SHIFT;	// calc memory handle to use
-	MEMHANDLE *pH;					// points to table entry
+	uint32 handle = offset >> SCNHANDLE_SHIFT; // calc memory handle to use
+	MEMHANDLE *pH; // points to table entry
 
 #ifdef DEBUG
 	assert(0 == s_lockedScene); // Trying to lock more than one scene
@@ -413,8 +410,8 @@ void LockScene(SCNHANDLE offset) {
  */
 void UnlockScene(SCNHANDLE offset) {
 
-	uint32 handle = offset >> SCNHANDLE_SHIFT;	// calc memory handle to use
-	MEMHANDLE *pH;					// points to table entry
+	uint32 handle = offset >> SCNHANDLE_SHIFT; // calc memory handle to use
+	MEMHANDLE *pH; // points to table entry
 
 	// range check the memory handle
 	assert(handle < g_numHandles);
@@ -440,8 +437,8 @@ void UnlockScene(SCNHANDLE offset) {
  * @param offset			Handle and offset to data
  */
 bool ValidHandle(SCNHANDLE offset) {
-	uint32 handle = offset >> SCNHANDLE_SHIFT;	// calc memory handle to use
-	MEMHANDLE *pH;					// points to table entry
+	uint32 handle = offset >> SCNHANDLE_SHIFT; // calc memory handle to use
+	MEMHANDLE *pH; // points to table entry
 
 	// range check the memory handle
 	assert(handle < g_numHandles);
@@ -457,8 +454,8 @@ bool ValidHandle(SCNHANDLE offset) {
  * @param offset			Handle and offset to data
  */
 void TouchMem(SCNHANDLE offset) {
-	MEMHANDLE *pH;					// points to table entry
-	uint32 handle = offset >> SCNHANDLE_SHIFT;	// calc memory handle to use
+	MEMHANDLE *pH; // points to table entry
+	uint32 handle = offset >> SCNHANDLE_SHIFT; // calc memory handle to use
 
 	if (offset != 0) {
 		pH = g_handleTable + handle;
@@ -474,7 +471,7 @@ void TouchMem(SCNHANDLE offset) {
  * @param offset			Handle and offset to data
  */
 bool IsCdPlayHandle(SCNHANDLE offset) {
-	uint32 handle = offset >> SCNHANDLE_SHIFT;	// calc memory handle to use
+	uint32 handle = offset >> SCNHANDLE_SHIFT; // calc memory handle to use
 
 	// range check the memory handle
 	assert(handle < g_numHandles);
@@ -486,7 +483,7 @@ bool IsCdPlayHandle(SCNHANDLE offset) {
  * Returns the CD for a given scene handle
  */
 int CdNumber(SCNHANDLE offset) {
-	uint handle = offset >> SCNHANDLE_SHIFT;	// calc memory handle to use
+	uint handle = offset >> SCNHANDLE_SHIFT; // calc memory handle to use
 
 	// range check the memory handle
 	assert(handle < g_numHandles);

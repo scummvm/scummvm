@@ -146,7 +146,7 @@ const Game lolGames[] = {
 
 } // end of anonymous namespace
 
-const Game * const gameDescs[] = {
+const Game *const gameDescs[] = {
 	kyra1Games,
 	kyra2Games,
 	kyra3Games,
@@ -2982,7 +2982,7 @@ const int eob2PC98Need[] = {
 	kEoBBaseSoundFilesFinale,
 
 	-1
-}; 
+};
 
 const int eob2FMTownsNeed[] = {
 	kEoBBaseChargenStrings1,
@@ -3546,7 +3546,7 @@ const int eob2FMTownsNeed[] = {
 	kEoB2PcmSoundEffectsFinale,
 
 	-1
-}; 
+};
 
 struct GameNeed {
 	int game;

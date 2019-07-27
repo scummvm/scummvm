@@ -29,8 +29,8 @@
 #include "sludge/newfatal.h"
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
-#include "sludge/sprites.h"
 #include "sludge/sprbanks.h"
+#include "sludge/sprites.h"
 #include "sludge/zbuffer.h"
 
 namespace Sludge {
@@ -172,7 +172,7 @@ void GraphicsManager::display() {
 
 void GraphicsManager::clear() {
 	_renderSurface.fillRect(Common::Rect(0, 0, _backdropSurface.w, _backdropSurface.h),
-			_renderSurface.format.RGBToColor(0, 0, 0));
+	                        _renderSurface.format.RGBToColor(0, 0, 0));
 }
 
 bool GraphicsManager::loadParallax(uint16 v, uint16 fracX, uint16 fracY) {

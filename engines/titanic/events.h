@@ -23,8 +23,8 @@
 #ifndef TITANIC_EVENTS_H
 #define TITANIC_EVENTS_H
 
-#include "common/scummsys.h"
 #include "common/events.h"
+#include "common/scummsys.h"
 #include "common/stack.h"
 #include "support/rect.h"
 
@@ -35,7 +35,10 @@ namespace Titanic {
 #define DOUBLE_CLICK_TIME 100
 
 enum SpecialButtons {
-	MK_LBUTTON = 1, MK_RBUTTON = 2, MK_SHIFT = 4, MK_CONTROL = 8,
+	MK_LBUTTON = 1,
+	MK_RBUTTON = 2,
+	MK_SHIFT = 4,
+	MK_CONTROL = 8,
 	MK_MBUTTON = 0x10
 };
 
@@ -74,8 +77,10 @@ public:
 class CPressTarget : public CEventTarget {
 public:
 	bool _pressed;
+
 public:
-	CPressTarget() : _pressed(false) {}
+	CPressTarget()
+	  : _pressed(false) {}
 	virtual ~CPressTarget() {}
 	virtual void leftButtonDown(const Point &mousePos) { _pressed = true; }
 	virtual void middleButtonDown(const Point &mousePos) { _pressed = true; }
@@ -111,6 +116,7 @@ private:
 	 * Handles setting/resettings special buttons on key up/down
 	 */
 	void handleKbdSpecial(Common::KeyState keyState);
+
 public:
 	Events(TitanicEngine *vm);
 	~Events() {}

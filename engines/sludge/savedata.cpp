@@ -32,7 +32,7 @@
 
 namespace Sludge {
 
-const char CustomSaveHelper::UTF8_CHECKER[] = {'U', 'N', '\xef', '\xbf', '\xbd', 'L', 'O', '\xef', '\xbf', '\xbd', 'C', 'K', 'E', 'D', '\0'};
+const char CustomSaveHelper::UTF8_CHECKER[] = { 'U', 'N', '\xef', '\xbf', '\xbd', 'L', 'O', '\xef', '\xbf', '\xbd', 'C', 'K', 'E', 'D', '\0' };
 uint16 CustomSaveHelper::_saveEncoding = false;
 char CustomSaveHelper::_encode1 = 0;
 char CustomSaveHelper::_encode2 = 0;
@@ -88,7 +88,7 @@ char *CustomSaveHelper::readTextPlain(Common::SeekableReadStream *fp) {
 		if (bytes_read != stringSize && fp->err()) {
 			warning("Reading error in readTextPlain.");
 		}
-		fp->readByte();  // Skip the newline character
+		fp->readByte(); // Skip the newline character
 		reply[stringSize] = 0;
 	}
 
@@ -131,24 +131,23 @@ bool CustomSaveHelper::fileToStack(const Common::String &filename, StackHandler 
 			if (fp->eos())
 				break;
 			switch (i) {
-				case 0: {
-					Common::String g = readStringEncoded(fp);
-					stringVar.makeTextVar(g);
-				}
-					break;
+			case 0: {
+				Common::String g = readStringEncoded(fp);
+				stringVar.makeTextVar(g);
+			} break;
 
-				case 1:
-					stringVar.setVariable(SVT_INT, fp->readUint32LE());
-					break;
+			case 1:
+				stringVar.setVariable(SVT_INT, fp->readUint32LE());
+				break;
 
-				case 2:
-					stringVar.setVariable(SVT_INT, fp->readByte());
-					break;
+			case 2:
+				stringVar.setVariable(SVT_INT, fp->readByte());
+				break;
 
-				default:
-					fatal(LOAD_ERROR "Corrupt custom data file:", filename);
-					delete fp;
-					return false;
+			default:
+				fatal(LOAD_ERROR "Corrupt custom data file:", filename);
+				delete fp;
+				return false;
 			}
 		} else {
 			char *line = readTextPlain(fp);
@@ -181,7 +180,7 @@ bool CustomSaveHelper::stackToFile(const Common::String &filename, const Variabl
 		return fatal("Can't create file", filename);
 	}
 
-	VariableStack *hereWeAre = from.varData.theStack -> first;
+	VariableStack *hereWeAre = from.varData.theStack->first;
 
 	_encode1 = (byte)_saveEncoding & 255;
 	_encode2 = (byte)(_saveEncoding >> 8);
@@ -195,27 +194,27 @@ bool CustomSaveHelper::stackToFile(const Common::String &filename, const Variabl
 
 	while (hereWeAre) {
 		if (_saveEncoding) {
-			switch (hereWeAre -> thisVar.varType) {
-				case SVT_STRING:
-					fp->writeByte(_encode1);
-					writeStringEncoded(hereWeAre -> thisVar.varData.theString, fp);
-					break;
+			switch (hereWeAre->thisVar.varType) {
+			case SVT_STRING:
+				fp->writeByte(_encode1);
+				writeStringEncoded(hereWeAre->thisVar.varData.theString, fp);
+				break;
 
-				case SVT_INT:
-					// Small enough to be stored as a char
-					if (hereWeAre -> thisVar.varData.intValue >= 0 && hereWeAre -> thisVar.varData.intValue < 256) {
-						fp->writeByte(2 ^ _encode1);
-						fp->writeByte(hereWeAre -> thisVar.varData.intValue);
-					} else {
-						fp->writeByte(1 ^ _encode1);
-						fp->writeUint32LE(hereWeAre -> thisVar.varData.intValue);
-					}
-					break;
+			case SVT_INT:
+				// Small enough to be stored as a char
+				if (hereWeAre->thisVar.varData.intValue >= 0 && hereWeAre->thisVar.varData.intValue < 256) {
+					fp->writeByte(2 ^ _encode1);
+					fp->writeByte(hereWeAre->thisVar.varData.intValue);
+				} else {
+					fp->writeByte(1 ^ _encode1);
+					fp->writeUint32LE(hereWeAre->thisVar.varData.intValue);
+				}
+				break;
 
-				default:
-					fatal("Can't create an encoded custom data file containing anything other than numbers and strings", filename);
-					delete fp;
-					return false;
+			default:
+				fatal("Can't create an encoded custom data file containing anything other than numbers and strings", filename);
+				delete fp;
+				return false;
 			}
 		} else {
 			Common::String makeSureItsText = hereWeAre->thisVar.getTextFromAnyVar();
@@ -224,7 +223,7 @@ bool CustomSaveHelper::stackToFile(const Common::String &filename, const Variabl
 			fp->writeString((makeSureItsText + "\n").c_str());
 		}
 
-		hereWeAre = hereWeAre -> next;
+		hereWeAre = hereWeAre->next;
 	}
 
 	delete fp;

@@ -22,8 +22,8 @@
 
 #include "voyeur/files.h"
 #include "voyeur/screen.h"
-#include "voyeur/voyeur.h"
 #include "voyeur/staticres.h"
+#include "voyeur/voyeur.h"
 
 namespace Voyeur {
 
@@ -33,7 +33,8 @@ void ThreadResource::init() {
 	Common::fill(&_useCount[0], &_useCount[8], 0);
 }
 
-ThreadResource::ThreadResource(BoltFilesState &state, const byte *src):_vm(state._vm) {
+ThreadResource::ThreadResource(BoltFilesState &state, const byte *src)
+  : _vm(state._vm) {
 	_stateId = READ_LE_UINT16(&src[0]);
 	_stackId = READ_LE_UINT16(&src[0]);
 	_savedStateId = READ_LE_UINT16(&src[0]);
@@ -69,7 +70,7 @@ bool ThreadResource::loadAStack(int stackId) {
 			error("loadAStack() - Invalid stackId %d", stackId);
 
 		unloadAStack(_stackId);
-		if  (!_useCount[stackId]) {
+		if (!_useCount[stackId]) {
 			BoltEntry &boltEntry = _vm->_stampLibPtr->boltEntry(_vm->_controlPtr->_memberIds[stackId]);
 			if (!boltEntry._data)
 				return false;
@@ -345,7 +346,7 @@ void ThreadResource::parsePlayCommands() {
 	for (int parseIndex = 0; parseIndex < _parseCount; ++parseIndex) {
 		uint16 id = READ_LE_UINT16(dataP);
 		debugC(DEBUG_BASIC, kDebugScripts, "parsePlayCommands (%d of %d) - cmd #%d",
-			parseIndex + 1, _parseCount, id);
+		       parseIndex + 1, _parseCount, id);
 		dataP += 2;
 
 		switch (id) {
@@ -363,8 +364,7 @@ void ThreadResource::parsePlayCommands() {
 				_vm->_voy->_audioVisualStartTime = READ_LE_UINT16(dataP + 4);
 				_vm->_voy->_audioVisualDuration = READ_LE_UINT16(dataP + 6);
 
-				if (_vm->_voy->_RTVNum < _vm->_voy->_audioVisualStartTime ||
-						(_vm->_voy->_audioVisualStartTime + _vm->_voy->_audioVisualDuration)  < _vm->_voy->_RTVNum) {
+				if (_vm->_voy->_RTVNum < _vm->_voy->_audioVisualStartTime || (_vm->_voy->_audioVisualStartTime + _vm->_voy->_audioVisualDuration) < _vm->_voy->_RTVNum) {
 					_vm->_audioVideoId = -1;
 				} else {
 					_vm->_voy->_vocSecondsOffset = _vm->_voy->_RTVNum - _vm->_voy->_audioVisualStartTime;
@@ -394,8 +394,7 @@ void ThreadResource::parsePlayCommands() {
 				_vm->_voy->_audioVisualStartTime = READ_LE_UINT16(dataP + 4);
 				_vm->_voy->_audioVisualDuration = READ_LE_UINT16(dataP + 6);
 
-				if (_vm->_voy->_RTVNum < _vm->_voy->_audioVisualStartTime ||
-						(_vm->_voy->_audioVisualStartTime + _vm->_voy->_audioVisualDuration)  < _vm->_voy->_RTVNum) {
+				if (_vm->_voy->_RTVNum < _vm->_voy->_audioVisualStartTime || (_vm->_voy->_audioVisualStartTime + _vm->_voy->_audioVisualDuration) < _vm->_voy->_RTVNum) {
 					_vm->_audioVideoId = -1;
 				} else {
 					_vm->_voy->_vocSecondsOffset = _vm->_voy->_RTVNum - _vm->_voy->_audioVisualStartTime;
@@ -474,8 +473,7 @@ void ThreadResource::parsePlayCommands() {
 					Common::String file = Common::String::format("news%d.voc", i + 1);
 					_vm->_soundManager->startVOCPlay(file);
 
-					while (!_vm->shouldQuit() && !_vm->_eventsManager->_mouseClicked &&
-							_vm->_soundManager->getVOCStatus()) {
+					while (!_vm->shouldQuit() && !_vm->_eventsManager->_mouseClicked && _vm->_soundManager->getVOCStatus()) {
 						_vm->_eventsManager->delayClick(1);
 						_vm->_eventsManager->getMouseInfo();
 					}
@@ -550,7 +548,7 @@ void ThreadResource::parsePlayCommands() {
 
 		case 8:
 			// Load the audio event scene hotspot times data
- 			v2 = READ_LE_UINT16(dataP);
+			v2 = READ_LE_UINT16(dataP);
 			v3 = READ_LE_UINT16(dataP + 2) - 1;
 
 			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2) {
@@ -864,7 +862,8 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 			if (cardPerform2(card, id)) {
 				card += subId;
 				card = cardPerform(card);
-				while (*card++ != 61) {}
+				while (*card++ != 61) {
+				}
 			} else {
 				card += subId;
 				while (*card != 61 && *card != 29)
@@ -959,7 +958,8 @@ int ThreadResource::doApt() {
 	_vm->_currentVocId = 151;
 	_vm->_voy->_viewBounds = _vm->_bVoy->boltEntry(_vm->_playStampGroupId)._rectResource;
 	Common::Array<RectEntry> &hotspots = _vm->_bVoy->boltEntry(
-		_vm->_playStampGroupId + 1)._rectResource->_entries;
+	                                                 _vm->_playStampGroupId + 1)
+	                                       ._rectResource->_entries;
 	_vm->_eventsManager->getMouseInfo();
 
 	// Very first time apartment is shown, start the phone message
@@ -1042,10 +1042,9 @@ int ThreadResource::doApt() {
 						hotspotId = 5;
 
 					// Draw the text description for the highlighted hotspot
-					pic = _vm->_bVoy->boltEntry(_vm->_playStampGroupId +
-						hotspotId + 6)._picResource;
+					pic = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + hotspotId + 6)._picResource;
 					_vm->_screen->sDrawPic(pic, _vm->_screen->_vPort,
-						Common::Point(106, 200));
+					                       Common::Point(106, 200));
 				}
 
 				break;
@@ -1176,8 +1175,7 @@ void ThreadResource::doRoom() {
 			if (hotspotId == -1) {
 				vm._eventsManager->setCursorColor(128, 0);
 				vm._eventsManager->setCursor(crosshairsCursor);
-			} else if (hotspotId != 999 || voy._RTVNum < voy._computerTimeMin ||
-					(voy._computerTimeMax - 2) < voy._RTVNum) {
+			} else if (hotspotId != 999 || voy._RTVNum < voy._computerTimeMin || (voy._computerTimeMax - 2) < voy._RTVNum) {
 				vm._eventsManager->setCursorColor(128, 1);
 				vm._eventsManager->setCursor(magnifierCursor);
 			} else {
@@ -1236,9 +1234,11 @@ void ThreadResource::doRoom() {
 			// reloaded it, and reloaded the cursors
 
 			vm._screen->_backColors = vm._bVoy->boltEntry(
-				vm._playStampGroupId + 1)._cMapResource;
+			                                    vm._playStampGroupId + 1)
+			                            ._cMapResource;
 			vm._screen->_backgroundPage = vm._bVoy->boltEntry(
-				vm._playStampGroupId)._picResource;
+			                                        vm._playStampGroupId)
+			                                ._picResource;
 
 			vm._screen->_vPort->setupViewPort();
 			vm._screen->_backColors->startFade();
@@ -1316,7 +1316,7 @@ int ThreadResource::doInterface() {
 		_vm->_voy->_RTVNum = _vm->_voy->_RTVLimit - 1;
 
 	if (_vm->_voy->_transitionId < 15 && _vm->_debugger->_isTimeActive
-		&& (_vm->_voy->_RTVLimit - 3) < _vm->_voy->_RTVNum) {
+	    && (_vm->_voy->_RTVLimit - 3) < _vm->_voy->_RTVNum) {
 		_vm->_voy->_RTVNum = _vm->_voy->_RTVLimit;
 		_vm->makeViewFinder();
 
@@ -1343,7 +1343,8 @@ int ThreadResource::doInterface() {
 	_vm->initIFace();
 
 	Common::Array<RectEntry> *hotspots = &_vm->_bVoy->boltEntry(
-		_vm->_playStampGroupId + 1)._rectResource->_entries;
+	                                                  _vm->_playStampGroupId + 1)
+	                                        ._rectResource->_entries;
 	_vm->_currentVocId = 151 - _vm->getRandomNumber(5);
 	_vm->_voy->_vocSecondsOffset = _vm->getRandomNumber(29);
 
@@ -1366,7 +1367,7 @@ int ThreadResource::doInterface() {
 	// Main loop
 	int regionIndex = 0;
 	Common::Rect mansionViewBounds(MANSION_VIEW_X, MANSION_VIEW_Y,
-		MANSION_VIEW_X + MANSION_VIEW_WIDTH, MANSION_VIEW_Y + MANSION_VIEW_HEIGHT);
+	                               MANSION_VIEW_X + MANSION_VIEW_WIDTH, MANSION_VIEW_Y + MANSION_VIEW_HEIGHT);
 
 	do {
 		_vm->_voyeurArea = AREA_INTERFACE;
@@ -1387,8 +1388,7 @@ int ThreadResource::doInterface() {
 		if (!mansionViewBounds.contains(pt))
 			pt = Common::Point(-1, -1);
 		else
-			pt = _vm->_mansionViewPos +
-				Common::Point(pt.x - MANSION_VIEW_X, pt.y - MANSION_VIEW_Y);
+			pt = _vm->_mansionViewPos + Common::Point(pt.x - MANSION_VIEW_X, pt.y - MANSION_VIEW_Y);
 		regionIndex = -1;
 
 		for (uint hotspotIdx = 0; hotspotIdx < hotspots->size(); ++hotspotIdx) {
@@ -1426,20 +1426,20 @@ int ThreadResource::doInterface() {
 		// Regularly update the time display
 		if (_vm->_voy->_RTANum & 2) {
 			_vm->_screen->drawANumber(_vm->_screen->_vPort,
-				_vm->_gameMinute / 10, Common::Point(190, 25));
+			                          _vm->_gameMinute / 10, Common::Point(190, 25));
 			_vm->_screen->drawANumber(_vm->_screen->_vPort,
-				_vm->_gameMinute % 10, Common::Point(201, 25));
+			                          _vm->_gameMinute % 10, Common::Point(201, 25));
 
 			if (_vm->_voy->_RTANum & 4) {
 				int v = _vm->_gameHour / 10;
 				_vm->_screen->drawANumber(_vm->_screen->_vPort,
-					v == 0 ? 10 : v, Common::Point(161, 25));
+				                          v == 0 ? 10 : v, Common::Point(161, 25));
 				_vm->_screen->drawANumber(_vm->_screen->_vPort,
-					_vm->_gameHour % 10, Common::Point(172, 25));
+				                          _vm->_gameHour % 10, Common::Point(172, 25));
 
 				pic = _vm->_bVoy->boltEntry(_vm->_voy->_isAM ? 272 : 273)._picResource;
 				_vm->_screen->sDrawPic(pic, _vm->_screen->_vPort,
-					Common::Point(215, 27));
+				                       Common::Point(215, 27));
 			}
 		}
 
@@ -1447,8 +1447,7 @@ int ThreadResource::doInterface() {
 		_vm->flipPageAndWait();
 
 		pt = _vm->_eventsManager->getMousePos();
-		if ((_vm->_voy->_RTVNum >= _vm->_voy->_RTVLimit) || ((_vm->_voy->_eventFlags & EVTFLAG_VICTIM_PRESET) &&
-				_vm->_eventsManager->_rightClick && (pt.x == 0))) {
+		if ((_vm->_voy->_RTVNum >= _vm->_voy->_RTVLimit) || ((_vm->_voy->_eventFlags & EVTFLAG_VICTIM_PRESET) && _vm->_eventsManager->_rightClick && (pt.x == 0))) {
 			// Time to transition to the next time period
 			_vm->_eventsManager->getMouseInfo();
 
@@ -1476,8 +1475,7 @@ int ThreadResource::doInterface() {
 				_vm->_eventsManager->_intPtr._flashTimer = 0;
 			}
 		}
-	} while (!_vm->_eventsManager->_rightClick && !_vm->shouldQuit() &&
-		(!_vm->_eventsManager->_leftClick || regionIndex == -1));
+	} while (!_vm->_eventsManager->_rightClick && !_vm->shouldQuit() && (!_vm->_eventsManager->_leftClick || regionIndex == -1));
 
 	_vm->_eventsManager->hideCursor();
 	_vm->_voy->_eventFlags |= EVTFLAG_TIME_DISABLED;
@@ -1489,8 +1487,7 @@ int ThreadResource::doInterface() {
 }
 
 bool ThreadResource::checkMansionScroll() {
-	Common::Point pt = _vm->_eventsManager->getMousePos() -
-		Common::Point(MANSION_VIEW_X, MANSION_VIEW_Y);
+	Common::Point pt = _vm->_eventsManager->getMousePos() - Common::Point(MANSION_VIEW_X, MANSION_VIEW_Y);
 	Common::Point &viewPos = _vm->_mansionViewPos;
 	bool result = false;
 
@@ -1499,8 +1496,7 @@ bool ThreadResource::checkMansionScroll() {
 		viewPos.x = MAX(viewPos.x - MANSION_SCROLL_INC_X, 0);
 		result = true;
 	}
-	if  (pt.x >= (MANSION_VIEW_WIDTH - MANSION_SCROLL_AREA_X) &&
-			pt.x < MANSION_VIEW_WIDTH && viewPos.x < MANSION_MAX_X) {
+	if (pt.x >= (MANSION_VIEW_WIDTH - MANSION_SCROLL_AREA_X) && pt.x < MANSION_VIEW_WIDTH && viewPos.x < MANSION_MAX_X) {
 		viewPos.x = MIN(viewPos.x + MANSION_SCROLL_INC_X, MANSION_MAX_X);
 		result = true;
 	}
@@ -1508,8 +1504,7 @@ bool ThreadResource::checkMansionScroll() {
 		viewPos.y = MAX(viewPos.y - MANSION_SCROLL_INC_Y, 0);
 		result = true;
 	}
-	if  (pt.y >= (MANSION_VIEW_HEIGHT - MANSION_SCROLL_AREA_Y) &&
-			pt.y < MANSION_VIEW_HEIGHT && viewPos.y < MANSION_MAX_Y) {
+	if (pt.y >= (MANSION_VIEW_HEIGHT - MANSION_SCROLL_AREA_Y) && pt.y < MANSION_VIEW_HEIGHT && viewPos.y < MANSION_MAX_Y) {
 		viewPos.y = MIN(viewPos.y + MANSION_SCROLL_INC_Y, MANSION_MAX_Y);
 		result = true;
 	}
@@ -1600,22 +1595,24 @@ void ThreadResource::loadTheApt() {
 	if (_vm->_voy->_aptLoadMode == 143)
 		_vm->_voy->_aptLoadMode = -1;
 
-	if (_vm->_voy->_aptLoadMode  != -1) {
+	if (_vm->_voy->_aptLoadMode != -1) {
 		if (_vm->_loadGameSlot != -1)
 			doAptAnim(1);
 
 		_vm->_bVoy->getBoltGroup(_vm->_playStampGroupId);
 		_vm->_voy->_aptLoadMode = -1;
 		_vm->_screen->_backgroundPage = _vm->_bVoy->boltEntry(
-			_vm->_playStampGroupId + 5)._picResource;
+		                                            _vm->_playStampGroupId + 5)
+		                                  ._picResource;
 		_vm->_screen->_vPort->setupViewPort(
-			_vm->_screen->_backgroundPage);
+		  _vm->_screen->_backgroundPage);
 	} else {
 		_vm->_bVoy->getBoltGroup(_vm->_playStampGroupId);
 		_vm->_screen->_backgroundPage = _vm->_bVoy->boltEntry(
-			_vm->_playStampGroupId + 5)._picResource;
+		                                            _vm->_playStampGroupId + 5)
+		                                  ._picResource;
 		_vm->_screen->_vPort->setupViewPort(
-			_vm->_screen->_backgroundPage);
+		  _vm->_screen->_backgroundPage);
 	}
 
 	CMapResource *pal = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + 4)._cMapResource;

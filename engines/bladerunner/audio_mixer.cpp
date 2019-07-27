@@ -75,7 +75,7 @@ int AudioMixer::play(Audio::Mixer::SoundType type, Audio::RewindableAudioStream 
 	return playInChannel(channel, type, stream, priority, loop, volume, pan, endCallback, callbackData);
 }
 
-int AudioMixer::playMusic(Audio::RewindableAudioStream *stream, int volume, void(*endCallback)(int, void *), void *callbackData) {
+int AudioMixer::playMusic(Audio::RewindableAudioStream *stream, int volume, void (*endCallback)(int, void *), void *callbackData) {
 	Common::StackLock lock(_mutex);
 
 	return playInChannel(kMusicChannel, Audio::Mixer::kMusicSoundType, stream, 100, false, volume, 0, endCallback, callbackData);
@@ -97,7 +97,7 @@ void AudioMixer::stop(int channel, uint32 time) {
 	}
 }
 
-int AudioMixer::playInChannel(int channel, Audio::Mixer::SoundType type, Audio::RewindableAudioStream *stream, int priority, bool loop, int volume, int pan, void(*endCallback)(int, void *), void *callbackData) {
+int AudioMixer::playInChannel(int channel, Audio::Mixer::SoundType type, Audio::RewindableAudioStream *stream, int priority, bool loop, int volume, int pan, void (*endCallback)(int, void *), void *callbackData) {
 	_channels[channel].isPresent = true;
 	_channels[channel].stream = stream;
 	_channels[channel].priority = priority;
@@ -118,12 +118,12 @@ int AudioMixer::playInChannel(int channel, Audio::Mixer::SoundType type, Audio::
 	}
 
 	_vm->_mixer->playStream(
-		type,
-		&_channels[channel].handle,
-		audioStream,
-		-1,
-		volume * 255 / 100,
-		pan * 127 / 100);
+	  type,
+	  &_channels[channel].handle,
+	  audioStream,
+	  -1,
+	  volume * 255 / 100,
+	  pan * 127 / 100);
 
 	return channel;
 }

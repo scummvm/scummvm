@@ -25,26 +25,25 @@
  * Copyright (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon
  */
 
+#include "cge2/events.h"
+#include "cge2/hero.h"
+#include "cge2/snail.h"
+#include "cge2/text.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "graphics/thumbnail.h"
-#include "graphics/surface.h"
 #include "graphics/palette.h"
 #include "graphics/scaler.h"
-#include "cge2/events.h"
-#include "cge2/snail.h"
-#include "cge2/hero.h"
-#include "cge2/text.h"
+#include "graphics/surface.h"
+#include "graphics/thumbnail.h"
 
 namespace CGE2 {
 
 #define kSavegameCheckSum (1997 + _now + _sex + kWorldHeight)
-#define kBadSVG           99
+#define kBadSVG 99
 
 bool CGE2Engine::canSaveGameStateCurrently() {
-	return (_gamePhase == kPhaseInGame) && _mouse->_active &&
-		_commandHandler->idle() && (_soundStat._wait == nullptr);
+	return (_gamePhase == kPhaseInGame) && _mouse->_active && _commandHandler->idle() && (_soundStat._wait == nullptr);
 }
 
 Common::Error CGE2Engine::saveGameState(int slot, const Common::String &desc) {
@@ -181,15 +180,15 @@ void CGE2Engine::writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &h
 }
 
 WARN_UNUSED_RESULT bool CGE2Engine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail) {
-	header.version     = 0;
+	header.version = 0;
 	header.saveName.clear();
-	header.thumbnail   = nullptr;
-	header.saveYear    = 0;
-	header.saveMonth   = 0;
-	header.saveDay     = 0;
-	header.saveHour    = 0;
+	header.thumbnail = nullptr;
+	header.saveYear = 0;
+	header.saveMonth = 0;
+	header.saveDay = 0;
+	header.saveHour = 0;
 	header.saveMinutes = 0;
-	header.playTime    = 0;
+	header.playTime = 0;
 
 	// Get the savegame version
 	header.version = in->readByte();
@@ -207,16 +206,15 @@ WARN_UNUSED_RESULT bool CGE2Engine::readSavegameHeader(Common::InSaveFile *in, S
 	}
 
 	// Read in save date/time
-	header.saveYear    = in->readSint16LE();
-	header.saveMonth   = in->readSint16LE();
-	header.saveDay     = in->readSint16LE();
-	header.saveHour    = in->readSint16LE();
+	header.saveYear = in->readSint16LE();
+	header.saveMonth = in->readSint16LE();
+	header.saveDay = in->readSint16LE();
+	header.saveHour = in->readSint16LE();
 	header.saveMinutes = in->readSint16LE();
 
 	if (header.version >= 2) {
 		header.playTime = in->readUint32LE();
 	}
-
 
 	return true;
 }

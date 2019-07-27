@@ -23,8 +23,8 @@
 #ifndef GOB_SAVE_SAVEHANDLER_H
 #define GOB_SAVE_SAVEHANDLER_H
 
-#include "common/savefile.h"
 #include "common/array.h"
+#include "common/savefile.h"
 
 #include "engines/gob/video.h" // for SurfacePtr
 
@@ -63,7 +63,7 @@ protected:
 class SlotFileIndexed : public SlotFile {
 public:
 	SlotFileIndexed(GobEngine *vm, uint32 slotCount, const Common::String &base,
-			const Common::String &extStub);
+	                const Common::String &extStub);
 	~SlotFileIndexed();
 
 	/** Build the save file name. */
@@ -77,7 +77,7 @@ public:
 
 	/** Creates an index in buffer. */
 	virtual void buildIndex(byte *buffer, SavePartInfo &info,
-			SaveConverter *converter = 0, bool setLongest = false) const;
+	                        SaveConverter *converter = 0, bool setLongest = false) const;
 
 	virtual bool exists(int slot) const;
 	virtual Common::InSaveFile *openRead(int slot) const;

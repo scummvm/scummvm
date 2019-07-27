@@ -23,13 +23,13 @@
 #include "xeen/interface.h"
 #include "xeen/dialogs/dialogs_char_info.h"
 #include "xeen/dialogs/dialogs_control_panel.h"
-#include "xeen/dialogs/dialogs_message.h"
-#include "xeen/dialogs/dialogs_quick_fight.h"
 #include "xeen/dialogs/dialogs_info.h"
 #include "xeen/dialogs/dialogs_items.h"
 #include "xeen/dialogs/dialogs_map.h"
+#include "xeen/dialogs/dialogs_message.h"
 #include "xeen/dialogs/dialogs_query.h"
 #include "xeen/dialogs/dialogs_quests.h"
+#include "xeen/dialogs/dialogs_quick_fight.h"
 #include "xeen/dialogs/dialogs_quick_ref.h"
 #include "xeen/dialogs/dialogs_spells.h"
 #include "xeen/resources.h"
@@ -40,10 +40,13 @@
 namespace Xeen {
 
 enum {
-	SCENE_WINDOW = 11, SCENE_WIDTH = 216, SCENE_HEIGHT = 132
+	SCENE_WINDOW = 11,
+	SCENE_WIDTH = 216,
+	SCENE_HEIGHT = 132
 };
 
-PartyDrawer::PartyDrawer(XeenEngine *vm): _vm(vm) {
+PartyDrawer::PartyDrawer(XeenEngine *vm)
+  : _vm(vm) {
 	_restoreSprites.load("restorex.icn");
 	_hpSprites.load("hpbars.icn");
 	_dseFace.load("dse.fac");
@@ -109,7 +112,7 @@ void PartyDrawer::highlightChar(int charId) {
 		// Handle deselecting any previusly selected char
 		if (_hiliteChar != HILIGHT_CHAR_NONE) {
 			res._globalSprites.draw(0, 9 + _hiliteChar,
-				Common::Point(Res.CHAR_FACES_X[_hiliteChar] - 1, 149));
+			                        Common::Point(Res.CHAR_FACES_X[_hiliteChar] - 1, 149));
 		}
 
 		// Highlight new character
@@ -131,7 +134,7 @@ void PartyDrawer::unhighlightChar() {
 
 	if (_hiliteChar != HILIGHT_CHAR_NONE) {
 		res._globalSprites.draw(0, _hiliteChar + 9,
-			Common::Point(Res.CHAR_FACES_X[_hiliteChar] - 1, 149));
+		                        Common::Point(Res.CHAR_FACES_X[_hiliteChar] - 1, 149));
 		_hiliteChar = HILIGHT_CHAR_NONE;
 		windows[33].update();
 	}
@@ -143,8 +146,11 @@ void PartyDrawer::resetHighlight() {
 
 /*------------------------------------------------------------------------*/
 
-Interface::Interface(XeenEngine *vm) : ButtonContainer(vm), InterfaceScene(vm),
-		PartyDrawer(vm), _vm(vm) {
+Interface::Interface(XeenEngine *vm)
+  : ButtonContainer(vm)
+  , InterfaceScene(vm)
+  , PartyDrawer(vm)
+  , _vm(vm) {
 	_buttonsLoaded = false;
 	_obscurity = OBSCURITY_NONE;
 	_steppingFX = 0;
@@ -222,24 +228,24 @@ void Interface::setMainButtons(IconsMode mode) {
 	_iconsMode = mode;
 	SpriteResource *spr = mode == ICONS_COMBAT ? &_combatIcons : &_stdIcons;
 
-	addButton(Common::Rect(235,  75, 259,  95),  Common::KEYCODE_s, spr);
-	addButton(Common::Rect(260,  75, 284,  95),  Common::KEYCODE_c, spr);
-	addButton(Common::Rect(286,  75, 310,  95),  Common::KEYCODE_r, spr);
-	addButton(Common::Rect(235,  96, 259, 116),  Common::KEYCODE_b, spr);
-	addButton(Common::Rect(260,  96, 284, 116),  Common::KEYCODE_d, spr);
-	addButton(Common::Rect(286,  96, 310, 116),  Common::KEYCODE_v, spr);
-	addButton(Common::Rect(235, 117, 259, 137),  Common::KEYCODE_m, spr);
-	addButton(Common::Rect(260, 117, 284, 137),  Common::KEYCODE_i, spr);
-	addButton(Common::Rect(286, 117, 310, 137),  Common::KEYCODE_q, spr);
+	addButton(Common::Rect(235, 75, 259, 95), Common::KEYCODE_s, spr);
+	addButton(Common::Rect(260, 75, 284, 95), Common::KEYCODE_c, spr);
+	addButton(Common::Rect(286, 75, 310, 95), Common::KEYCODE_r, spr);
+	addButton(Common::Rect(235, 96, 259, 116), Common::KEYCODE_b, spr);
+	addButton(Common::Rect(260, 96, 284, 116), Common::KEYCODE_d, spr);
+	addButton(Common::Rect(286, 96, 310, 116), Common::KEYCODE_v, spr);
+	addButton(Common::Rect(235, 117, 259, 137), Common::KEYCODE_m, spr);
+	addButton(Common::Rect(260, 117, 284, 137), Common::KEYCODE_i, spr);
+	addButton(Common::Rect(286, 117, 310, 137), Common::KEYCODE_q, spr);
 	addButton(Common::Rect(109, 137, 122, 147), Common::KEYCODE_TAB, spr);
 	addButton(Common::Rect(235, 148, 259, 168), Common::KEYCODE_LEFT, spr);
 	addButton(Common::Rect(260, 148, 284, 168), Common::KEYCODE_UP, spr);
 	addButton(Common::Rect(286, 148, 310, 168), Common::KEYCODE_RIGHT, spr);
-	addButton(Common::Rect(235, 169, 259, 189), (Common::KBD_CTRL << 16) |Common::KEYCODE_LEFT, spr);
+	addButton(Common::Rect(235, 169, 259, 189), (Common::KBD_CTRL << 16) | Common::KEYCODE_LEFT, spr);
 	addButton(Common::Rect(260, 169, 284, 189), Common::KEYCODE_DOWN, spr);
 	addButton(Common::Rect(286, 169, 310, 189), (Common::KBD_CTRL << 16) | Common::KEYCODE_RIGHT, spr);
-	addButton(Common::Rect(236,  11, 308,  69),  Common::KEYCODE_EQUALS);
-	addButton(Common::Rect(239,  27, 312,  37),  Common::KEYCODE_1);
+	addButton(Common::Rect(236, 11, 308, 69), Common::KEYCODE_EQUALS);
+	addButton(Common::Rect(239, 27, 312, 37), Common::KEYCODE_1);
 	addButton(Common::Rect(239, 37, 312, 47), Common::KEYCODE_2);
 	addButton(Common::Rect(239, 47, 312, 57), Common::KEYCODE_3);
 	addPartyButtons(_vm);
@@ -283,7 +289,7 @@ void Interface::perform() {
 
 	if (_buttonValue == Common::KEYCODE_SPACE) {
 		int lookupId = map.mazeLookup(party._mazePosition,
-			Res.WALL_SHIFTS[party._mazeDirection][2]);
+		                              Res.WALL_SHIFTS[party._mazeDirection][2]);
 
 		bool eventsFlag = true;
 		switch (lookupId) {
@@ -497,7 +503,7 @@ void Interface::perform() {
 		chargeStep();
 
 		if (map.getCell(2) < map.mazeData()._difficulties._wallNoPass
-				&& !map._isOutdoors) {
+		    && !map._isOutdoors) {
 			switch (party._mazeDirection) {
 			case DIR_NORTH:
 				++party._mazePosition.y;
@@ -567,9 +573,9 @@ void Interface::perform() {
 			}
 
 			if (combat._attackMonsters[0] != -1 || combat._attackMonsters[1] != -1
-					|| combat._attackMonsters[2] != -1) {
+			    || combat._attackMonsters[2] != -1) {
 				if ((_vm->_mode == MODE_INTERACTIVE || _vm->_mode == MODE_SLEEPING)
-						&& !combat._monstersAttacking && !_charsShooting) {
+				    && !combat._monstersAttacking && !_charsShooting) {
 					doCombat();
 				}
 			}
@@ -913,12 +919,10 @@ bool Interface::checkMoveDirection(int key) {
 	Direction dir = party._mazeDirection;
 	switch (key) {
 	case (Common::KBD_CTRL << 16) | Common::KEYCODE_LEFT:
-		party._mazeDirection = (party._mazeDirection == DIR_NORTH) ? DIR_WEST :
-			(Direction)(party._mazeDirection - 1);
+		party._mazeDirection = (party._mazeDirection == DIR_NORTH) ? DIR_WEST : (Direction)(party._mazeDirection - 1);
 		break;
 	case (Common::KBD_CTRL << 16) | Common::KEYCODE_RIGHT:
-		party._mazeDirection = (party._mazeDirection == DIR_WEST) ? DIR_NORTH :
-			(Direction)(party._mazeDirection + 1);
+		party._mazeDirection = (party._mazeDirection == DIR_WEST) ? DIR_NORTH : (Direction)(party._mazeDirection + 1);
 		break;
 	case Common::KEYCODE_DOWN:
 		party._mazeDirection = (Direction)((int)party._mazeDirection ^ 2);
@@ -969,7 +973,7 @@ bool Interface::checkMoveDirection(int key) {
 		case 9:
 		case 10:
 		case 12:
-			check:
+		check:
 			if (party.checkSkill(MOUNTAINEER))
 				return true;
 
@@ -989,8 +993,7 @@ bool Interface::checkMoveDirection(int key) {
 			sound.playFX(46);
 			return false;
 		} else {
-			if (startSurfaceId != SURFTYPE_SWAMP || party.checkSkill(SWIMMING) ||
-					party._walkOnWaterActive) {
+			if (startSurfaceId != SURFTYPE_SWAMP || party.checkSkill(SWIMMING) || party._walkOnWaterActive) {
 				if (_buttonValue == Common::KEYCODE_UP && _wo[107]) {
 					_openDoor = true;
 					sound.playFX(47);
@@ -1015,7 +1018,7 @@ void Interface::rest() {
 	map.cellFlagLookup(party._mazePosition);
 
 	if ((map._currentCantRest || (map.mazeData()._mazeFlags & RESTRICTION_REST))
-			&& _vm->_mode != MODE_INTERACTIVE2) {
+	    && _vm->_mode != MODE_INTERACTIVE2) {
 		ErrorScroll::show(_vm, Res.TOO_DANGEROUS_TO_REST, WT_NONFREEZED_WAIT);
 	} else {
 		// Check whether any character is in danger of dying
@@ -1098,9 +1101,7 @@ void Interface::rest() {
 		doStepCode();
 		draw3d(true);
 
-		ErrorScroll::show(_vm, Common::String::format(Res.REST_COMPLETE,
-			starving ? Res.PARTY_IS_STARVING : Res.HIT_SPELL_POINTS_RESTORED,
-			foodConsumed));
+		ErrorScroll::show(_vm, Common::String::format(Res.REST_COMPLETE, starving ? Res.PARTY_IS_STARVING : Res.HIT_SPELL_POINTS_RESTORED, foodConsumed));
 		party.checkPartyDead();
 	}
 }
@@ -1122,8 +1123,7 @@ void Interface::bash(const Common::Point &pt, Direction direction) {
 		Character &c = party._activeParty[charIdx];
 		Condition condition = c.worstCondition();
 
-		if (!(condition == ASLEEP || (condition >= PARALYZED &&
-				condition <= ERADICATED))) {
+		if (!(condition == ASLEEP || (condition >= PARALYZED && condition <= ERADICATED))) {
 			if (charNum1) {
 				charNum2 = charIdx + 1;
 				break;
@@ -1135,18 +1135,19 @@ void Interface::bash(const Common::Point &pt, Direction direction) {
 
 	party._activeParty[charNum1 - 1].subtractHitPoints(2);
 	_charPowSprites.draw(windows[0], 0,
-		Common::Point(Res.CHAR_FACES_X[charNum1 - 1], 150));
+	                     Common::Point(Res.CHAR_FACES_X[charNum1 - 1], 150));
 	windows[0].update();
 
 	if (charNum2) {
 		party._activeParty[charNum2 - 1].subtractHitPoints(2);
 		_charPowSprites.draw(windows[0], 0,
-			Common::Point(Res.CHAR_FACES_X[charNum2 - 1], 150));
+		                     Common::Point(Res.CHAR_FACES_X[charNum2 - 1], 150));
 		windows[0].update();
 	}
 
 	int cell = map.mazeLookup(Common::Point(pt.x + Res.SCREEN_POSITIONING_X[direction][7],
-		pt.y + Res.SCREEN_POSITIONING_Y[direction][7]), 0, 0xffff);
+	                                        pt.y + Res.SCREEN_POSITIONING_Y[direction][7]),
+	                          0, 0xffff);
 	if (cell != INVALID_CELL) {
 		int v = map.getCell(2);
 
@@ -1160,13 +1161,11 @@ void Interface::bash(const Common::Point &pt, Direction direction) {
 		} else if (v == 15) {
 			++_wo[287];
 		} else {
-			int might = party._activeParty[charNum1 - 1].getStat(MIGHT) +
-				_vm->getRandomNumber(1, 30);
+			int might = party._activeParty[charNum1 - 1].getStat(MIGHT) + _vm->getRandomNumber(1, 30);
 			if (charNum2)
 				might += party._activeParty[charNum2 - 1].getStat(MIGHT);
 
-			int bashThreshold = (v == 9) ? map.mazeData()._difficulties._bashGrate :
-				map.mazeData()._difficulties._bashWall;
+			int bashThreshold = (v == 9) ? map.mazeData()._difficulties._bashGrate : map.mazeData()._difficulties._bashWall;
 			if (might >= bashThreshold) {
 				// Remove the wall on the current cell, and the reverse wall
 				// on the cell we're bashing through to
@@ -1210,8 +1209,7 @@ void Interface::draw3d(bool updateFlag, bool pauseFlag) {
 	_flipUIFrame = (_flipUIFrame + 1) % 4;
 	if (_flipUIFrame == 0)
 		_flipWater = !_flipWater;
-	if (_tillMove && (_vm->_mode == MODE_INTERACTIVE || _vm->_mode == MODE_COMBAT) &&
-		!combat._monstersAttacking && combat._moveMonsters) {
+	if (_tillMove && (_vm->_mode == MODE_INTERACTIVE || _vm->_mode == MODE_COMBAT) && !combat._monstersAttacking && combat._moveMonsters) {
 		if (--_tillMove == 0)
 			combat.moveMonsters();
 	}
@@ -1245,9 +1243,8 @@ void Interface::draw3d(bool updateFlag, bool pauseFlag) {
 	}
 
 	if (combat._attackMonsters[0] != -1 || combat._attackMonsters[1] != -1
-			|| combat._attackMonsters[2] != -1) {
-		if ((_vm->_mode == MODE_INTERACTIVE || _vm->_mode == MODE_SLEEPING) &&
-				!combat._monstersAttacking && !_charsShooting && combat._moveMonsters) {
+	    || combat._attackMonsters[2] != -1) {
+		if ((_vm->_mode == MODE_INTERACTIVE || _vm->_mode == MODE_SLEEPING) && !combat._monstersAttacking && !_charsShooting && combat._moveMonsters) {
 			doCombat();
 			if (scripts._eventSkipped)
 				scripts.checkEvents();
@@ -1272,15 +1269,15 @@ void Interface::handleFalling() {
 	// Update character faces and start scream
 	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
 		party._activeParty[idx]._faceSprites->draw(0, 4,
-			Common::Point(Res.CHAR_FACES_X[idx], 150));
+		                                           Common::Point(Res.CHAR_FACES_X[idx], 150));
 	}
 
 	windows[33].update();
 	sound.playFX(11);
 	sound.playSound("scream.voc");
 
-	// Fall down to the ground
-	#define YINDEX (SCENE_HEIGHT / 2)
+// Fall down to the ground
+#define YINDEX (SCENE_HEIGHT / 2)
 	const int Y_LIST[] = {
 		SCENE_HEIGHT, SCENE_HEIGHT - 5, SCENE_HEIGHT, SCENE_HEIGHT - 3, SCENE_HEIGHT
 	};
@@ -1354,19 +1351,19 @@ void Interface::assembleBorder() {
 	// Draw the animating bat character on the left screen edge to indicate
 	// that the party is being levitated
 	_borderSprites.draw(windows[0], _vm->_party->_levitateCount ? _levitateUIFrame + 16 : 16,
-		Common::Point(0, 82));
+	                    Common::Point(0, 82));
 	_levitateUIFrame = (_levitateUIFrame + 1) % 12;
 
 	// Draw UI element to indicate whether can spot hidden doors
 	_borderSprites.draw(0,
-		(_thinWall && _vm->_party->checkSkill(SPOT_DOORS)) ? _spotDoorsUIFrame + 28 : 28,
-		Common::Point(194, 91));
+	                    (_thinWall && _vm->_party->checkSkill(SPOT_DOORS)) ? _spotDoorsUIFrame + 28 : 28,
+	                    Common::Point(194, 91));
 	_spotDoorsUIFrame = (_spotDoorsUIFrame + 1) % 12;
 
 	// Draw UI element to indicate whether can sense danger
 	_borderSprites.draw(0,
-		(combat._dangerPresent && _vm->_party->checkSkill(DANGER_SENSE)) ? _spotDoorsUIFrame + 40 : 40,
-		Common::Point(107, 9));
+	                    (combat._dangerPresent && _vm->_party->checkSkill(DANGER_SENSE)) ? _spotDoorsUIFrame + 40 : 40,
+	                    Common::Point(107, 9));
 	_dangerSenseUIFrame = (_dangerSenseUIFrame + 1) % 12;
 
 	// Handle the face UI elements for indicating clairvoyance status
@@ -1389,29 +1386,29 @@ void Interface::assembleBorder() {
 
 	_borderSprites.draw(0, _face1UIFrame, Common::Point(0, 32));
 	_borderSprites.draw(0,
-		windows[10]._enabled || windows[2]._enabled ? 52 : _face2UIFrame,
-		Common::Point(215, 32));
+	                    windows[10]._enabled || windows[2]._enabled ? 52 : _face2UIFrame,
+	                    Common::Point(215, 32));
 
 	// Draw resistence indicators
 	if (!windows[10]._enabled && !windows[2]._enabled
-		&& !windows[38]._enabled) {
+	    && !windows[38]._enabled) {
 		_fecpSprites.draw(0, _vm->_party->_fireResistence ? 1 : 0,
-			Common::Point(2, 2));
+		                  Common::Point(2, 2));
 		_fecpSprites.draw(0, _vm->_party->_electricityResistence ? 3 : 2,
-			Common::Point(219, 2));
+		                  Common::Point(219, 2));
 		_fecpSprites.draw(0, _vm->_party->_coldResistence ? 5 : 4,
-			Common::Point(2, 134));
+		                  Common::Point(2, 134));
 		_fecpSprites.draw(0, _vm->_party->_poisonResistence ? 7 : 6,
-			Common::Point(219, 134));
+		                  Common::Point(219, 134));
 	} else {
 		_fecpSprites.draw(0, _vm->_party->_fireResistence ? 9 : 8,
-			Common::Point(8, 8));
+		                  Common::Point(8, 8));
 		_fecpSprites.draw(0, _vm->_party->_electricityResistence ? 11 : 10,
-			Common::Point(219, 8));
+		                  Common::Point(219, 8));
 		_fecpSprites.draw(0, _vm->_party->_coldResistence ? 13 : 12,
-			Common::Point(8, 134));
+		                  Common::Point(8, 134));
 		_fecpSprites.draw(0, _vm->_party->_poisonResistence ? 15 : 14,
-			Common::Point(219, 134));
+		                  Common::Point(219, 134));
 	}
 
 	// Draw UI element for blessed
@@ -1425,7 +1422,7 @@ void Interface::assembleBorder() {
 	if (_vm->_party->_powerShield) {
 		_powerShieldUIFrame = (_powerShieldUIFrame + 1) % 4;
 		_blessSprites.draw(0, _powerShieldUIFrame + 4,
-			Common::Point(55, 137));
+		                   Common::Point(55, 137));
 	}
 
 	// Draw UI element for holy bonus
@@ -1443,7 +1440,9 @@ void Interface::assembleBorder() {
 	// Draw direction character if direction sense is active
 	if (_vm->_party->checkSkill(DIRECTION_SENSE) && !_vm->_noDirectionSense) {
 		const char *dirText = Res.DIRECTION_TEXT_UPPER[_vm->_party->_mazeDirection];
-		Common::String msg = Common::String::format("\x2\f08\x3""c\v139\t116%c\fd\x1", *dirText);
+		Common::String msg = Common::String::format("\x2\f08\x3"
+		                                            "c\v139\t116%c\fd\x1",
+		                                            *dirText);
 		windows[0].writeString(msg);
 	}
 
@@ -1520,7 +1519,7 @@ void Interface::doCombat() {
 			// Write out the description of the monsters being battled
 			w.writeString(combat.getMonsterDescriptions());
 			_combatIcons.draw(0, 32, Common::Point(233, combat._attackDurationCtr * 10 + 27),
-				SPRFLAG_800, 0);
+			                  SPRFLAG_800, 0);
 			w.update();
 
 			// Wait for keypress
@@ -1654,11 +1653,9 @@ void Interface::doCombat() {
 			case Common::KEYCODE_RIGHT:
 				// Rotate party direction left or right
 				if (_buttonValue == Common::KEYCODE_LEFT) {
-					party._mazeDirection = (party._mazeDirection == DIR_NORTH) ?
-						DIR_WEST : (Direction)((int)party._mazeDirection - 1);
+					party._mazeDirection = (party._mazeDirection == DIR_NORTH) ? DIR_WEST : (Direction)((int)party._mazeDirection - 1);
 				} else {
-					party._mazeDirection = (party._mazeDirection == DIR_WEST) ?
-					DIR_NORTH : (Direction)((int)party._mazeDirection + 1);
+					party._mazeDirection = (party._mazeDirection == DIR_WEST) ? DIR_NORTH : (Direction)((int)party._mazeDirection + 1);
 				}
 
 				_flipSky ^= 1;
@@ -1670,7 +1667,7 @@ void Interface::doCombat() {
 
 			// Handling for if the combat turn is complete
 			if (combat.allHaveGone()) {
-new_round:
+			new_round:
 				Common::fill(&combat._charsGone[0], &combat._charsGone[PARTY_AND_MONSTERS], false);
 				combat.clearBlocked();
 				combat.setSpeedTable();
@@ -1693,12 +1690,12 @@ new_round:
 			}
 
 			if (combat._attackMonsters[0] == -1 && combat._attackMonsters[1] == -1
-					&& combat._attackMonsters[2] == -1) {
+			    && combat._attackMonsters[2] == -1) {
 				party.changeTime(1);
 				draw3d(true);
 
 				if (combat._attackMonsters[0] == -1 && combat._attackMonsters[1] == -1
-						&& combat._attackMonsters[2] == -1)
+				    && combat._attackMonsters[2] == -1)
 					break;
 			}
 
@@ -1706,8 +1703,7 @@ new_round:
 		}
 
 		_vm->_mode = MODE_INTERACTIVE;
-		if (combat._partyRan && (combat._attackMonsters[0] != -1 ||
-				combat._attackMonsters[1] != -1 || combat._attackMonsters[2] != -1)) {
+		if (combat._partyRan && (combat._attackMonsters[0] != -1 || combat._attackMonsters[1] != -1 || combat._attackMonsters[2] != -1)) {
 			party.checkPartyDead();
 			if (!party._dead) {
 				party.moveToRunLocation();
@@ -1719,7 +1715,7 @@ new_round:
 				}
 			}
 		}
-exit:
+	exit:
 		w.close();
 		events.clearEvents();
 
@@ -1750,8 +1746,7 @@ exit:
 			sound.playFX(51);
 			map._loadCcNum = _vm->getGameID() != GType_WorldOfXeen ? 1 : 0;
 			map.load(_vm->getGameID() == GType_WorldOfXeen ? 28 : 29);
-			party._mazeDirection = _vm->getGameID() == GType_WorldOfXeen ?
-				DIR_EAST : DIR_SOUTH;
+			party._mazeDirection = _vm->getGameID() == GType_WorldOfXeen ? DIR_EAST : DIR_SOUTH;
 		}
 	}
 
@@ -1764,8 +1759,7 @@ void Interface::nextChar() {
 
 	if (combat.allHaveGone())
 		return;
-	if ((combat._attackMonsters[0] == -1 && combat._attackMonsters[1] == -1 &&
-		combat._attackMonsters[2] == -1) || combat._combatParty.size() == 0) {
+	if ((combat._attackMonsters[0] == -1 && combat._attackMonsters[1] == -1 && combat._attackMonsters[2] == -1) || combat._combatParty.size() == 0) {
 		_vm->_mode = MODE_INTERACTIVE;
 		return;
 	}
@@ -1866,14 +1860,13 @@ void Interface::spellFX(Character *c) {
 
 	for (int frameNum = 0; frameNum < 4; ++frameNum) {
 		events.updateGameCounter();
-		_spellFxSprites.draw(0, frameNum, Common::Point(
-			Res.CHAR_FACES_X[charIndex], 150));
+		_spellFxSprites.draw(0, frameNum, Common::Point(Res.CHAR_FACES_X[charIndex], 150));
 
 		if (!windows[SCENE_WINDOW]._enabled)
 			draw3d(false);
 
 		windows[0].update();
-		events.wait(windows[SCENE_WINDOW]._enabled ? 2 : 1,false);
+		events.wait(windows[SCENE_WINDOW]._enabled ? 2 : 1, false);
 	}
 
 	drawParty(true);

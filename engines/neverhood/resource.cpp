@@ -20,9 +20,9 @@
  *
  */
 
+#include "neverhood/resource.h"
 #include "common/algorithm.h"
 #include "common/memstream.h"
-#include "neverhood/resource.h"
 #include "neverhood/resourceman.h"
 
 namespace Neverhood {
@@ -30,7 +30,8 @@ namespace Neverhood {
 // SpriteResource
 
 SpriteResource::SpriteResource(NeverhoodEngine *vm)
-	 : _vm(vm), _pixels(NULL) {
+  : _vm(vm)
+  , _pixels(NULL) {
 }
 
 SpriteResource::~SpriteResource() {
@@ -39,7 +40,7 @@ SpriteResource::~SpriteResource() {
 
 void SpriteResource::draw(Graphics::Surface *destSurface, bool flipX, bool flipY) {
 	if (_pixels) {
-		byte *dest = (byte*)destSurface->getPixels();
+		byte *dest = (byte *)destSurface->getPixels();
 		const int destPitch = destSurface->pitch;
 		if (_rle)
 			unpackSpriteRle(_pixels, _dimensions.width, _dimensions.height, dest, destPitch, flipX, flipY);
@@ -70,7 +71,8 @@ void SpriteResource::unload() {
 // PaletteResource
 
 PaletteResource::PaletteResource(NeverhoodEngine *vm)
-	: _vm(vm), _palette(NULL) {
+  : _vm(vm)
+  , _palette(NULL) {
 }
 
 PaletteResource::~PaletteResource() {
@@ -81,14 +83,12 @@ bool PaletteResource::load(uint32 fileHash) {
 	debug(2, "PaletteResource::load(%08X)", fileHash);
 	unload();
 	_vm->_res->queryResource(fileHash, _resourceHandle);
-	if (_resourceHandle.isValid() &&
-		(_resourceHandle.type() == kResTypeBitmap || _resourceHandle.type() == kResTypePalette)) {
+	if (_resourceHandle.isValid() && (_resourceHandle.type() == kResTypeBitmap || _resourceHandle.type() == kResTypePalette)) {
 		_vm->_res->loadResource(_resourceHandle, _vm->applyResourceFixes());
 		_palette = _resourceHandle.data();
 		// Check if the palette is stored in a bitmap
 		if (_resourceHandle.type() == kResTypeBitmap)
 			parseBitmapResource(_palette, NULL, NULL, NULL, &_palette, NULL);
-
 	}
 	return _palette != NULL;
 }
@@ -106,8 +106,16 @@ void PaletteResource::copyPalette(byte *destPalette) {
 // AnimResource
 
 AnimResource::AnimResource(NeverhoodEngine *vm)
-	: _vm(vm), _width(0), _height(0), _currSpriteData(NULL), _fileHash(0), _paletteData(NULL),
-	_spriteData(NULL), _replEnabled(false), _replOldColor(0), _replNewColor(0) {
+  : _vm(vm)
+  , _width(0)
+  , _height(0)
+  , _currSpriteData(NULL)
+  , _fileHash(0)
+  , _paletteData(NULL)
+  , _spriteData(NULL)
+  , _replEnabled(false)
+  , _replOldColor(0)
+  , _replNewColor(0) {
 }
 
 AnimResource::~AnimResource() {
@@ -116,7 +124,7 @@ AnimResource::~AnimResource() {
 
 void AnimResource::draw(uint frameIndex, Graphics::Surface *destSurface, bool flipX, bool flipY) {
 	const AnimFrameInfo frameInfo = _frames[frameIndex];
-	byte *dest = (byte*)destSurface->getPixels();
+	byte *dest = (byte *)destSurface->getPixels();
 	const int destPitch = destSurface->pitch;
 	_currSpriteData = _spriteData + frameInfo.spriteDataOffs;
 	_width = frameInfo.drawOffset.width;
@@ -195,11 +203,11 @@ bool AnimResource::load(uint32 fileHash) {
 		frameInfo.collisionBoundsOffset.height = READ_LE_UINT16(frameList + 24);
 		frameInfo.spriteDataOffs = READ_LE_UINT32(frameList + 28);
 		debug(8, "frameHash = %08X; counter = %d; rect = (%d,%d,%d,%d); deltaX = %d; deltaY = %d; collisionBoundsOffset = (%d,%d,%d,%d); spriteDataOffs = %08X",
-			frameInfo.frameHash, frameInfo.counter,
-			frameInfo.drawOffset.x, frameInfo.drawOffset.y, frameInfo.drawOffset.width, frameInfo.drawOffset.height,
-			frameInfo.deltaX, frameInfo.deltaY,
-			frameInfo.collisionBoundsOffset.x, frameInfo.collisionBoundsOffset.y, frameInfo.collisionBoundsOffset.width, frameInfo.collisionBoundsOffset.height,
-			frameInfo.spriteDataOffs);
+		      frameInfo.frameHash, frameInfo.counter,
+		      frameInfo.drawOffset.x, frameInfo.drawOffset.y, frameInfo.drawOffset.width, frameInfo.drawOffset.height,
+		      frameInfo.deltaX, frameInfo.deltaY,
+		      frameInfo.collisionBoundsOffset.x, frameInfo.collisionBoundsOffset.y, frameInfo.collisionBoundsOffset.width, frameInfo.collisionBoundsOffset.height,
+		      frameInfo.spriteDataOffs);
 		frameList += 32;
 		_frames.push_back(frameInfo);
 	}
@@ -207,7 +215,6 @@ bool AnimResource::load(uint32 fileHash) {
 	_fileHash = fileHash;
 
 	return true;
-
 }
 
 void AnimResource::unload() {
@@ -255,7 +262,9 @@ NDimensions AnimResource::loadSpriteDimensions(uint32 fileHash) {
 // MouseCursorResource
 
 MouseCursorResource::MouseCursorResource(NeverhoodEngine *vm)
-	: _cursorSprite(vm), _cursorNum(4), _currFileHash(0) {
+  : _cursorSprite(vm)
+  , _cursorNum(4)
+  , _currFileHash(0) {
 
 	_rect.width = 32;
 	_rect.height = 32;
@@ -263,8 +272,7 @@ MouseCursorResource::MouseCursorResource(NeverhoodEngine *vm)
 
 void MouseCursorResource::load(uint32 fileHash) {
 	if (_currFileHash != fileHash) {
-		if (_cursorSprite.load(fileHash) && !_cursorSprite.isRle() &&
-			_cursorSprite.getDimensions().width == 96 && _cursorSprite.getDimensions().height == 224) {
+		if (_cursorSprite.load(fileHash) && !_cursorSprite.isRle() && _cursorSprite.getDimensions().width == 96 && _cursorSprite.getDimensions().height == 224) {
 			_currFileHash = fileHash;
 		} else {
 			unload();
@@ -278,15 +286,15 @@ void MouseCursorResource::unload() {
 	_cursorNum = 4;
 }
 
-NDrawRect& MouseCursorResource::getRect() {
+NDrawRect &MouseCursorResource::getRect() {
 	static const NPoint kCursorHotSpots[] = {
-		{-15, -5},
-		{-17, -25},
-		{-17, -30},
-		{-14, -1},
-		{-3, -7},
-		{-30, -18},
-		{-1, -18}
+		{ -15, -5 },
+		{ -17, -25 },
+		{ -17, -30 },
+		{ -14, -1 },
+		{ -3, -7 },
+		{ -30, -18 },
+		{ -1, -18 }
 	};
 	_rect.x = kCursorHotSpots[_cursorNum].x;
 	_rect.y = kCursorHotSpots[_cursorNum].y;
@@ -298,7 +306,7 @@ void MouseCursorResource::draw(int frameNum, Graphics::Surface *destSurface) {
 		const int sourcePitch = (_cursorSprite.getDimensions().width + 3) & 0xFFFC; // 4 byte alignment
 		const int destPitch = destSurface->pitch;
 		const byte *source = _cursorSprite.getPixels() + _cursorNum * (sourcePitch * 32) + frameNum * 32;
-		byte *dest = (byte*)destSurface->getPixels();
+		byte *dest = (byte *)destSurface->getPixels();
 		for (int16 yc = 0; yc < 32; yc++) {
 			memcpy(dest, source, 32);
 			source += sourcePitch;
@@ -310,8 +318,9 @@ void MouseCursorResource::draw(int frameNum, Graphics::Surface *destSurface) {
 // TextResource
 
 TextResource::TextResource(NeverhoodEngine *vm)
-	: _vm(vm), _textData(NULL), _count(0) {
-
+  : _vm(vm)
+  , _textData(NULL)
+  , _count(0) {
 }
 
 TextResource::~TextResource() {
@@ -336,15 +345,15 @@ void TextResource::unload() {
 }
 
 const char *TextResource::getString(uint index, const char *&textEnd) {
-	const char *textStart = (const char*)(_textData + 4 + _count * 4 + READ_LE_UINT32(_textData + (index + 1) * 4));
-	textEnd = (const char*)(_textData + 4 + _count * 4 + READ_LE_UINT32(_textData + (index + 2) * 4));
+	const char *textStart = (const char *)(_textData + 4 + _count * 4 + READ_LE_UINT32(_textData + (index + 1) * 4));
+	textEnd = (const char *)(_textData + 4 + _count * 4 + READ_LE_UINT32(_textData + (index + 2) * 4));
 	return textStart;
 }
 
 // DataResource
 
 DataResource::DataResource(NeverhoodEngine *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 }
 
 DataResource::~DataResource() {
@@ -377,119 +386,112 @@ void DataResource::load(uint32 fileHash) {
 			debug(2, "%03d nameHash = %08X; offset = %04X; type = %d", i, drDirectoryItem.nameHash, drDirectoryItem.offset, drDirectoryItem.type);
 			dataS.seek(itemStartOffs + drDirectoryItem.offset);
 			switch (drDirectoryItem.type) {
-			case 1:
-				{
-					debug(3, "NPoint");
+			case 1: {
+				debug(3, "NPoint");
+				NPoint point;
+				point.x = dataS.readUint16LE();
+				point.y = dataS.readUint16LE();
+				debug(3, "(%d, %d)", point.x, point.y);
+				drDirectoryItem.offset = _points.size();
+				_points.push_back(point);
+				break;
+			}
+			case 2: {
+				uint count = dataS.readUint16LE();
+				NPointArray *pointArray = new NPointArray();
+				debug(3, "NPointArray; count = %d", count);
+				for (uint j = 0; j < count; j++) {
 					NPoint point;
 					point.x = dataS.readUint16LE();
 					point.y = dataS.readUint16LE();
 					debug(3, "(%d, %d)", point.x, point.y);
-					drDirectoryItem.offset = _points.size();
-					_points.push_back(point);
-					break;
+					pointArray->push_back(point);
 				}
-			case 2:
-				{
-					uint count = dataS.readUint16LE();
-					NPointArray *pointArray = new NPointArray();
-					debug(3, "NPointArray; count = %d", count);
-					for (uint j = 0; j < count; j++) {
-						NPoint point;
-						point.x = dataS.readUint16LE();
-						point.y = dataS.readUint16LE();
-						debug(3, "(%d, %d)", point.x, point.y);
-						pointArray->push_back(point);
-					}
-					drDirectoryItem.offset = _pointArrays.size();
-					_pointArrays.push_back(pointArray);
-					break;
+				drDirectoryItem.offset = _pointArrays.size();
+				_pointArrays.push_back(pointArray);
+				break;
+			}
+			case 3: {
+				uint count = dataS.readUint16LE();
+				HitRectList *hitRectList = new HitRectList();
+				debug(3, "HitRectList; count = %d", count);
+				for (uint j = 0; j < count; j++) {
+					HitRect hitRect;
+					hitRect.rect.x1 = dataS.readUint16LE();
+					hitRect.rect.y1 = dataS.readUint16LE();
+					hitRect.rect.x2 = dataS.readUint16LE();
+					hitRect.rect.y2 = dataS.readUint16LE();
+					hitRect.type = dataS.readUint16LE() + 0x5001;
+					debug(3, "(%d, %d, %d, %d) -> %04d", hitRect.rect.x1, hitRect.rect.y1, hitRect.rect.x2, hitRect.rect.y2, hitRect.type);
+					hitRectList->push_back(hitRect);
 				}
-			case 3:
-				{
-					uint count = dataS.readUint16LE();
-					HitRectList *hitRectList = new HitRectList();
-					debug(3, "HitRectList; count = %d", count);
-					for (uint j = 0; j < count; j++) {
-						HitRect hitRect;
-						hitRect.rect.x1 = dataS.readUint16LE();
-						hitRect.rect.y1 = dataS.readUint16LE();
-						hitRect.rect.x2 = dataS.readUint16LE();
-						hitRect.rect.y2 = dataS.readUint16LE();
-						hitRect.type = dataS.readUint16LE() + 0x5001;
-						debug(3, "(%d, %d, %d, %d) -> %04d", hitRect.rect.x1, hitRect.rect.y1, hitRect.rect.x2, hitRect.rect.y2, hitRect.type);
-						hitRectList->push_back(hitRect);
-					}
-					drDirectoryItem.offset = _hitRectLists.size();
-					_hitRectLists.push_back(hitRectList);
-					break;
+				drDirectoryItem.offset = _hitRectLists.size();
+				_hitRectLists.push_back(hitRectList);
+				break;
+			}
+			case 4: {
+				uint count = dataS.readUint16LE();
+				MessageList *messageList = new MessageList();
+				debug(3, "MessageList; count = %d", count);
+				for (uint j = 0; j < count; j++) {
+					MessageItem messageItem;
+					messageItem.messageNum = dataS.readUint32LE();
+					messageItem.messageValue = dataS.readUint32LE();
+					debug(3, "(%08X, %08X)", messageItem.messageNum, messageItem.messageValue);
+					messageList->push_back(messageItem);
 				}
-			case 4:
-				{
-					uint count = dataS.readUint16LE();
-					MessageList *messageList = new MessageList();
-					debug(3, "MessageList; count = %d", count);
-					for (uint j = 0; j < count; j++) {
-						MessageItem messageItem;
-						messageItem.messageNum = dataS.readUint32LE();
-						messageItem.messageValue = dataS.readUint32LE();
-						debug(3, "(%08X, %08X)", messageItem.messageNum, messageItem.messageValue);
-						messageList->push_back(messageItem);
-					}
-					drDirectoryItem.offset = _messageLists.size();
-					_messageLists.push_back(messageList);
-					break;
+				drDirectoryItem.offset = _messageLists.size();
+				_messageLists.push_back(messageList);
+				break;
+			}
+			case 5: {
+				uint count = dataS.readUint16LE();
+				DRSubRectList *drSubRectList = new DRSubRectList();
+				debug(3, "SubRectList; count = %d", count);
+				for (uint j = 0; j < count; j++) {
+					DRSubRect drSubRect;
+					drSubRect.rect.x1 = dataS.readUint16LE();
+					drSubRect.rect.y1 = dataS.readUint16LE();
+					drSubRect.rect.x2 = dataS.readUint16LE();
+					drSubRect.rect.y2 = dataS.readUint16LE();
+					drSubRect.messageListHash = dataS.readUint32LE();
+					drSubRect.messageListItemIndex = dataS.readUint16LE();
+					debug(3, "(%d, %d, %d, %d) -> %08X (%d)", drSubRect.rect.x1, drSubRect.rect.y1, drSubRect.rect.x2, drSubRect.rect.y2, drSubRect.messageListHash, drSubRect.messageListItemIndex);
+					drSubRectList->push_back(drSubRect);
 				}
-			case 5:
-				{
-					uint count = dataS.readUint16LE();
-					DRSubRectList *drSubRectList = new DRSubRectList();
-					debug(3, "SubRectList; count = %d", count);
-					for (uint j = 0; j < count; j++) {
-						DRSubRect drSubRect;
-						drSubRect.rect.x1 = dataS.readUint16LE();
-						drSubRect.rect.y1 = dataS.readUint16LE();
-						drSubRect.rect.x2 = dataS.readUint16LE();
-						drSubRect.rect.y2 = dataS.readUint16LE();
-						drSubRect.messageListHash = dataS.readUint32LE();
-						drSubRect.messageListItemIndex = dataS.readUint16LE();
-						debug(3, "(%d, %d, %d, %d) -> %08X (%d)", drSubRect.rect.x1, drSubRect.rect.y1, drSubRect.rect.x2, drSubRect.rect.y2, drSubRect.messageListHash, drSubRect.messageListItemIndex);
-						drSubRectList->push_back(drSubRect);
-					}
-					drDirectoryItem.offset = _drSubRectLists.size();
-					_drSubRectLists.push_back(drSubRectList);
-					break;
+				drDirectoryItem.offset = _drSubRectLists.size();
+				_drSubRectLists.push_back(drSubRectList);
+				break;
+			}
+			case 6: {
+				DRRect drRect;
+				drRect.rect.x1 = dataS.readUint16LE();
+				drRect.rect.y1 = dataS.readUint16LE();
+				drRect.rect.x2 = dataS.readUint16LE();
+				drRect.rect.y2 = dataS.readUint16LE();
+				drRect.subRectIndex = dataS.readUint16LE();
+				debug(3, "(%d, %d, %d, %d) -> %d", drRect.rect.x1, drRect.rect.y1, drRect.rect.x2, drRect.rect.y2, drRect.subRectIndex);
+				drDirectoryItem.offset = _drRects.size();
+				_drRects.push_back(drRect);
+				break;
+			}
+			case 7: {
+				uint count = dataS.readUint16LE();
+				NRectArray *rectArray = new NRectArray();
+				debug(3, "NRectArray; count = %d", count);
+				for (uint j = 0; j < count; j++) {
+					NRect rect;
+					rect.x1 = dataS.readUint16LE();
+					rect.y1 = dataS.readUint16LE();
+					rect.x2 = dataS.readUint16LE();
+					rect.y2 = dataS.readUint16LE();
+					debug(3, "(%d, %d, %d, %d)", rect.x1, rect.y1, rect.x2, rect.y2);
+					rectArray->push_back(rect);
 				}
-			case 6:
-				{
-					DRRect drRect;
-					drRect.rect.x1 = dataS.readUint16LE();
-					drRect.rect.y1 = dataS.readUint16LE();
-					drRect.rect.x2 = dataS.readUint16LE();
-					drRect.rect.y2 = dataS.readUint16LE();
-					drRect.subRectIndex = dataS.readUint16LE();
-					debug(3, "(%d, %d, %d, %d) -> %d", drRect.rect.x1, drRect.rect.y1, drRect.rect.x2, drRect.rect.y2, drRect.subRectIndex);
-					drDirectoryItem.offset = _drRects.size();
-					_drRects.push_back(drRect);
-					break;
-				}
-			case 7:
-				{
-					uint count = dataS.readUint16LE();
-					NRectArray *rectArray = new NRectArray();
-					debug(3, "NRectArray; count = %d", count);
-					for (uint j = 0; j < count; j++) {
-						NRect rect;
-						rect.x1 = dataS.readUint16LE();
-						rect.y1 = dataS.readUint16LE();
-						rect.x2 = dataS.readUint16LE();
-						rect.y2 = dataS.readUint16LE();
-						debug(3, "(%d, %d, %d, %d)", rect.x1, rect.y1, rect.x2, rect.y2);
-						rectArray->push_back(rect);
-					}
-					drDirectoryItem.offset = _rectArrays.size();
-					_rectArrays.push_back(rectArray);
-					break;
-				}
+				drDirectoryItem.offset = _rectArrays.size();
+				_rectArrays.push_back(rectArray);
+				break;
+			}
 			}
 			_directory.push_back(drDirectoryItem);
 		}
@@ -499,20 +501,20 @@ void DataResource::load(uint32 fileHash) {
 void DataResource::unload() {
 	_directory.clear();
 	_points.clear();
-	for (Common::Array<NPointArray*>::iterator it = _pointArrays.begin(); it != _pointArrays.end(); ++it)
+	for (Common::Array<NPointArray *>::iterator it = _pointArrays.begin(); it != _pointArrays.end(); ++it)
 		delete (*it);
 	_pointArrays.clear();
-	for (Common::Array<NRectArray*>::iterator it = _rectArrays.begin(); it != _rectArrays.end(); ++it)
+	for (Common::Array<NRectArray *>::iterator it = _rectArrays.begin(); it != _rectArrays.end(); ++it)
 		delete (*it);
 	_rectArrays.clear();
-	for (Common::Array<HitRectList*>::iterator it = _hitRectLists.begin(); it != _hitRectLists.end(); ++it)
+	for (Common::Array<HitRectList *>::iterator it = _hitRectLists.begin(); it != _hitRectLists.end(); ++it)
 		delete (*it);
 	_hitRectLists.clear();
-	for (Common::Array<MessageList*>::iterator it = _messageLists.begin(); it != _messageLists.end(); ++it)
+	for (Common::Array<MessageList *>::iterator it = _messageLists.begin(); it != _messageLists.end(); ++it)
 		delete (*it);
 	_messageLists.clear();
 	_drRects.clear();
-	for (Common::Array<DRSubRectList*>::iterator it = _drSubRectLists.begin(); it != _drSubRectLists.end(); ++it)
+	for (Common::Array<DRSubRectList *>::iterator it = _drSubRectLists.begin(); it != _drSubRectLists.end(); ++it)
 		delete (*it);
 	_drSubRectLists.clear();
 	_vm->_res->unloadResource(_resourceHandle);
@@ -540,13 +542,11 @@ HitRectList *DataResource::getHitRectList() {
 
 MessageList *DataResource::getMessageListAtPos(int16 klaymenX, int16 klaymenY, int16 mouseX, int16 mouseY) {
 	for (uint i = 0; i < _drRects.size(); i++) {
-		if (klaymenX >= _drRects[i].rect.x1 && klaymenX <= _drRects[i].rect.x2 &&
-			klaymenY >= _drRects[i].rect.y1 && klaymenY <= _drRects[i].rect.y2) {
+		if (klaymenX >= _drRects[i].rect.x1 && klaymenX <= _drRects[i].rect.x2 && klaymenY >= _drRects[i].rect.y1 && klaymenY <= _drRects[i].rect.y2) {
 			DRSubRectList *drSubRectList = _drSubRectLists[_drRects[i].subRectIndex];
 			for (uint j = 0; j < drSubRectList->size(); j++) {
 				DRSubRect &subRect = (*drSubRectList)[j];
-				if (mouseX >= subRect.rect.x1 && mouseX <= subRect.rect.x2 &&
-					mouseY >= subRect.rect.y1 && mouseY <= subRect.rect.y2) {
+				if (mouseX >= subRect.rect.x1 && mouseX <= subRect.rect.x2 && mouseY >= subRect.rect.y1 && mouseY <= subRect.rect.y2) {
 					return _messageLists[subRect.messageListItemIndex];
 				}
 			}

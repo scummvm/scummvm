@@ -25,8 +25,8 @@
 
 #include "hopkins/globals.h"
 
-#include "common/scummsys.h"
 #include "common/endian.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 
 #define MAX_SPRITE 5
@@ -132,7 +132,10 @@ struct ListeItem {
 /**
  * Mode for SortItem records
  */
-enum SortMode { SORT_NONE = 0, SORT_BOB = 1, SORT_SPRITE = 2, SORT_HIDING = 3 };
+enum SortMode { SORT_NONE = 0,
+	              SORT_BOB = 1,
+	              SORT_SPRITE = 2,
+	              SORT_HIDING = 3 };
 
 /**
  * Structure to represent a pending display of either a Bob, Sprite, or Cache Item.
@@ -210,6 +213,7 @@ private:
 
 	void sceneSpecialIni();
 	void showActionAnimation(const byte *spriteData, const Common::String &actionStr, int speed, bool flipFl);
+
 public:
 	bool _disableFl;
 	bool _forestFl;
@@ -311,8 +315,8 @@ public:
 
 	void resetHomeRateCounter() { _homeRateCounter = 0; }
 	void resetOldFrameIndex() { _oldFrameIndex = -1; }
-	void resetOldDirection()  { _oldDirection = DIR_NONE; }
-	int getObjectWidth()  { return _objectWidth; }
+	void resetOldDirection() { _oldDirection = DIR_NONE; }
+	int getObjectWidth() { return _objectWidth; }
 	int getObjectHeight() { return _objectHeight; }
 
 	void showSpecialActionAnimationWithFlip(const byte *spriteData, const Common::String &animationSeq, int speed, bool flipFl);
@@ -326,9 +330,9 @@ public:
 	void setAndPlayAnim(int idx, int animIdx, int destPosi, bool animAction);
 
 	void sceneControl(const Common::String &backgroundFile, const Common::String &linkFile,
-		const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen);
+	                  const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen);
 	void sceneControl2(const Common::String &backgroundFile, const Common::String &linkFile,
-		const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen);
+	                   const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen);
 	void goHome();
 	void paradise();
 };

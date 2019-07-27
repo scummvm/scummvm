@@ -33,7 +33,8 @@
 
 namespace LastExpress {
 
-Background::Background() : _data(NULL) {
+Background::Background()
+  : _data(NULL) {
 	memset(&_header, 0, sizeof(BackgroundHeader));
 }
 
@@ -58,8 +59,8 @@ bool Background::load(Common::SeekableReadStream *stream) {
 	_header.greenSize = stream->readUint32LE();
 
 	debugC(3, kLastExpressDebugGraphics, "Background Info: (%d, %d) - (%d x %d) - (%d, %d, %d)",
-	                                    _header.posX, _header.posY, _header.width, _header.height,
-	                                    _header.redSize, _header.blueSize, _header.greenSize);
+	       _header.posX, _header.posY, _header.width, _header.height,
+	       _header.redSize, _header.blueSize, _header.greenSize);
 
 	// Load and decompress Background channel data
 	uint32 numPix = _header.width * _header.height;
@@ -93,7 +94,7 @@ Common::Rect Background::draw(Graphics::Surface *surface) {
 	for (uint16 y = 0; y < _header.height; y++) {
 		for (uint16 x = 0; x < _header.width; x++) {
 			surface->fillRect(Common::Rect((int16)(_header.posX + x), (int16)(_header.posY + y), (int16)(_header.posX + x + 1), (int16)(_header.posY + y + 1)), _data[i]);
-			i ++;
+			i++;
 		}
 	}
 

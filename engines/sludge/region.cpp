@@ -20,6 +20,7 @@
  *
  */
 
+#include "sludge/region.h"
 #include "sludge/allfiles.h"
 #include "sludge/backdrop.h"
 #include "sludge/event.h"
@@ -27,14 +28,12 @@
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
 #include "sludge/objtypes.h"
-#include "sludge/region.h"
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
 
 namespace Sludge {
 
-RegionManager::RegionManager(SludgeEngine *vm)
-{
+RegionManager::RegionManager(SludgeEngine *vm) {
 	_vm = vm;
 	_allScreenRegions = new ScreenRegionList;
 	_allScreenRegions->clear();
@@ -115,7 +114,7 @@ void RegionManager::kill() {
 }
 
 bool RegionManager::addScreenRegion(int x1, int y1, int x2, int y2, int sX, int sY, int di,
-		int objectNum) {
+                                    int objectNum) {
 	ScreenRegion *newRegion = new ScreenRegion;
 	if (!checkNew(newRegion))
 		return false;
@@ -128,7 +127,7 @@ bool RegionManager::addScreenRegion(int x1, int y1, int x2, int y2, int sX, int 
 	newRegion->sY = sY;
 	newRegion->thisType = g_sludge->_objMan->loadObjectType(objectNum);
 	_allScreenRegions->push_front(newRegion);
-	return (bool) (newRegion->thisType != nullptr);
+	return (bool)(newRegion->thisType != nullptr);
 }
 
 void RegionManager::updateOverRegion() {
@@ -136,9 +135,9 @@ void RegionManager::updateOverRegion() {
 	int cameraY = g_sludge->_gfxMan->getCamY();
 	for (ScreenRegionList::iterator it = _allScreenRegions->begin(); it != _allScreenRegions->end(); ++it) {
 		if ((g_sludge->_evtMan->mouseX() >= (*it)->x1 - cameraX)
-				&& (g_sludge->_evtMan->mouseY() >= (*it)->y1 - cameraY)
-				&& (g_sludge->_evtMan->mouseX() <= (*it)->x2 - cameraX)
-				&& (g_sludge->_evtMan->mouseY() <= (*it)->y2 - cameraY)) {
+		    && (g_sludge->_evtMan->mouseY() >= (*it)->y1 - cameraY)
+		    && (g_sludge->_evtMan->mouseX() <= (*it)->x2 - cameraX)
+		    && (g_sludge->_evtMan->mouseY() <= (*it)->y2 - cameraY)) {
 			_overRegion = (*it);
 			return;
 		}

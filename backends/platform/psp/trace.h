@@ -20,36 +20,39 @@
  *
  */
 
-
 // This section can only be included once
 #ifndef PSP_TRACE_H
-#define PSP_TRACE_H
+#	define PSP_TRACE_H
 
-#include "common/str.h"
+#	include "common/str.h"
 
-#define __PSP_PRINT_TO_FILE_AND_SCREEN__
+#	define __PSP_PRINT_TO_FILE_AND_SCREEN__
 
 /* Choose to print to file/screen/both */
-#ifdef __PSP_PRINT_TO_FILE__
-	#define __PSP_PRINT__(format,...)			PspDebugTrace(false, format, ## __VA_ARGS__)
-#elif defined(__PSP_PRINT_TO_FILE_AND_SCREEN__)
-	#define __PSP_PRINT__(format,...)			PspDebugTrace(true, format, ## __VA_ARGS__)
-#else /* default - print to screen */
-	#define __PSP_PRINT__(format,...)			fprintf(stderr, format, ## __VA_ARGS__)
-#endif /* PSP_PRINT_TO_FILE/SCREEN */
+#	ifdef __PSP_PRINT_TO_FILE__
+#		define __PSP_PRINT__(format, ...) PspDebugTrace(false, format, ##__VA_ARGS__)
+#	elif defined(__PSP_PRINT_TO_FILE_AND_SCREEN__)
+#		define __PSP_PRINT__(format, ...) PspDebugTrace(true, format, ##__VA_ARGS__)
+#	else /* default - print to screen */
+#		define __PSP_PRINT__(format, ...) fprintf(stderr, format, ##__VA_ARGS__)
+#	endif /* PSP_PRINT_TO_FILE/SCREEN */
 
 /* Error function - always print to file as well */
-#define PSP_ERROR(format,...)					PspDebugTrace(true, "Error in %s: " format, __PRETTY_FUNCTION__, ## __VA_ARGS__)
+#	define PSP_ERROR(format, ...) PspDebugTrace(true, "Error in %s: " format, __PRETTY_FUNCTION__, ##__VA_ARGS__)
 
 /* Do the indent */
-#define __PSP_INDENT__							for(int _i=psp_debug_indent; _i>0; _i--) \
-													__PSP_PRINT__( "   ")
+#	define __PSP_INDENT__                          \
+		for (int _i = psp_debug_indent; _i > 0; _i--) \
+		__PSP_PRINT__("   ")
 
 /* always print */
-#define PSP_INFO_PRINT(format,...)				__PSP_PRINT__(format, ## __VA_ARGS__)
+#	define PSP_INFO_PRINT(format, ...) __PSP_PRINT__(format, ##__VA_ARGS__)
 /* always print, with indent */
-#define PSP_INFO_PRINT_INDENT(format,...)		{ __PSP_INDENT__; \
-												__PSP_PRINT__(format, ## __VA_ARGS__); }
+#	define PSP_INFO_PRINT_INDENT(format, ...) \
+		{                                        \
+			__PSP_INDENT__;                        \
+			__PSP_PRINT__(format, ##__VA_ARGS__);  \
+		}
 
 void PspDebugTrace(bool alsoToScreen, const char *format, ...);
 void mipsBacktrace(uint32 levels, void **addresses);
@@ -60,13 +63,14 @@ extern int psp_debug_indent;
 //
 
 class PSPStackDebugFuncs {
-    Common::String _name;
+	Common::String _name;
 
 public:
-	PSPStackDebugFuncs(const char *name) : _name(name) {
+	PSPStackDebugFuncs(const char *name)
+	  : _name(name) {
 		PSP_INFO_PRINT_INDENT("++ %s\n", _name.c_str());
 		psp_debug_indent++;
-    }
+	}
 
 	~PSPStackDebugFuncs() {
 		psp_debug_indent--;
@@ -77,9 +81,6 @@ public:
 };
 
 #endif /* PSP_TRACE_H */
-
-
-
 
 // From here on, we allow multiple redefinitions
 
@@ -99,25 +100,28 @@ public:
 
 #ifdef __PSP_DEBUG_PRINT__
 /* printf with indents */
-#define PSP_DEBUG_PRINT_SAMELN(format,...)	__PSP_PRINT__(format, ## __VA_ARGS__)
-#define PSP_DEBUG_PRINT(format,...)			PSP_INFO_PRINT_INDENT(format, ## __VA_ARGS__)
-#define PSP_DEBUG_PRINT_FUNC(format,...)	{ __PSP_INDENT__; \
-												__PSP_PRINT__("In %s: " format, __PRETTY_FUNCTION__, ## __VA_ARGS__); }
-#define PSP_DEBUG_DO(x)						(x)
+#	define PSP_DEBUG_PRINT_SAMELN(format, ...) __PSP_PRINT__(format, ##__VA_ARGS__)
+#	define PSP_DEBUG_PRINT(format, ...) PSP_INFO_PRINT_INDENT(format, ##__VA_ARGS__)
+#	define PSP_DEBUG_PRINT_FUNC(format, ...)                                \
+		{                                                                      \
+			__PSP_INDENT__;                                                      \
+			__PSP_PRINT__("In %s: " format, __PRETTY_FUNCTION__, ##__VA_ARGS__); \
+		}
+#	define PSP_DEBUG_DO(x) (x)
 
-#else	/* no debug print */
-	#define PSP_DEBUG_PRINT_SAMELN(format,...)
-	#define PSP_DEBUG_PRINT(format,...)
-	#define PSP_DEBUG_PRINT_FUNC(format,...)
-	#define PSP_DEBUG_DO(x)
+#else /* no debug print */
+#	define PSP_DEBUG_PRINT_SAMELN(format, ...)
+#	define PSP_DEBUG_PRINT(format, ...)
+#	define PSP_DEBUG_PRINT_FUNC(format, ...)
+#	define PSP_DEBUG_DO(x)
 #endif /* __PSP_DEBUG_PRINT__ */
 
 /* We don't need anything but this line at the beginning of each function to debug function calls */
 /* Debugging function calls */
 #ifdef __PSP_DEBUG_FUNCS__
-	#define DEBUG_ENTER_FUNC()		volatile PSPStackDebugFuncs __foo(__PRETTY_FUNCTION__)
+#	define DEBUG_ENTER_FUNC() volatile PSPStackDebugFuncs __foo(__PRETTY_FUNCTION__)
 #else /* Don't debug function calls */
-	#define DEBUG_ENTER_FUNC()
+#	define DEBUG_ENTER_FUNC()
 #endif /* __PSP_DEBUG_FUNCS__ */
 
 // Undef the main defines for next time

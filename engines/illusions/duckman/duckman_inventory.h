@@ -30,8 +30,11 @@ namespace Illusions {
 struct DMInventorySlot {
 	Common::Point _position;
 	uint32 _objectId;
-	DMInventorySlot() : _objectId(0) {}
-	DMInventorySlot(int16 x, int16 y) : _objectId(0), _position(x, y) {}
+	DMInventorySlot()
+	  : _objectId(0) {}
+	DMInventorySlot(int16 x, int16 y)
+	  : _objectId(0)
+	  , _position(x, y) {}
 };
 
 struct DMInventoryItem {
@@ -43,6 +46,7 @@ class DuckmanInventory {
 public:
 	DuckmanInventory(IllusionsEngine_Duckman *vm);
 	~DuckmanInventory();
+
 public:
 	IllusionsEngine_Duckman *_vm;
 	Common::Array<DMInventorySlot> _inventorySlots;

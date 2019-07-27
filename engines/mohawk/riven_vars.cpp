@@ -23,8 +23,8 @@
 #include "common/str.h"
 
 #include "mohawk/riven.h"
-#include "mohawk/riven_stack.h"
 #include "mohawk/riven_graphics.h"
+#include "mohawk/riven_stack.h"
 
 namespace Mohawk {
 

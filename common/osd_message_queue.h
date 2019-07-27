@@ -24,10 +24,10 @@
 #define COMMON_OSD_MESSAGE_QUEUE_H
 
 #include "common/events.h"
+#include "common/mutex.h"
+#include "common/queue.h"
 #include "common/singleton.h"
 #include "common/str.h"
-#include "common/queue.h"
-#include "common/mutex.h"
 
 namespace Common {
 

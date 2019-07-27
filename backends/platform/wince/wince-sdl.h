@@ -23,22 +23,22 @@
 #ifndef WINCE_SDL_H
 #define WINCE_SDL_H
 
+#include "backends/platform/sdl/sdl.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "graphics/scaler.h"
-#include "backends/platform/sdl/sdl.h"
 
+#include "backends/platform/wince/CEDevice.h"
 #include "backends/platform/wince/CEgui/CEGUI.h"
 #include "backends/platform/wince/CEkeys/CEKeys.h"
-#include "backends/platform/wince/CEDevice.h"
 
-#include "backends/graphics/wincesdl/wincesdl-graphics.h"
 #include "backends/events/wincesdl/wincesdl-events.h"
-#include "backends/timer/default/default-timer.h"
 #include "backends/fs/windows/windows-fs-factory.h"
+#include "backends/graphics/wincesdl/wincesdl-graphics.h"
+#include "backends/timer/default/default-timer.h"
 
 // defines used for implementing the raw frame buffer access method (2003+)
-#define GETRAWFRAMEBUFFER   0x00020001
+#define GETRAWFRAMEBUFFER 0x00020001
 #define FORMAT_565 1
 #define FORMAT_555 2
 #define FORMAT_OTHER 3
@@ -70,7 +70,7 @@ public:
 	static void initScreenInfos();
 	static bool isOzone();
 
-	static bool _soundMaster;   // turn off sound after all calculations
+	static bool _soundMaster; // turn off sound after all calculations
 	// static since needed by the SDL callback
 
 protected:
@@ -80,12 +80,11 @@ protected:
 private:
 	void check_mappings();
 
-	bool _forcePanelInvisible;  // force panel visibility for some cases
+	bool _forcePanelInvisible; // force panel visibility for some cases
 
 	static int _platformScreenWidth;
 	static int _platformScreenHeight;
-	static bool _isOzone;       // true if running on Windows 2003 SE
-
+	static bool _isOzone; // true if running on Windows 2003 SE
 };
 
 #endif

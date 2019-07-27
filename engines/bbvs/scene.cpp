@@ -28,8 +28,8 @@
 namespace Bbvs {
 
 static const int kAfterVideoSceneNum[] = {
-	 0, 43, 23, 12,  4, 44,  2,
-	16,  4,  4,  4, 44, 12, 44
+	0, 43, 23, 12, 4, 44, 2,
+	16, 4, 4, 4, 44, 12, 44
 };
 
 void BbvsEngine::loadScene(int sceneNum) {
@@ -58,7 +58,6 @@ void BbvsEngine::loadScene(int sceneNum) {
 		_screen->drawDrawList(drawList, _spriteModule);
 		drawScreen();
 	}
-
 }
 
 void BbvsEngine::initScene(bool sounds) {
@@ -186,7 +185,6 @@ void BbvsEngine::initScene(bool sounds) {
 
 	if (sounds)
 		updateBackgroundSounds();
-
 }
 
 bool BbvsEngine::changeScene() {
@@ -221,7 +219,6 @@ bool BbvsEngine::changeScene() {
 	}
 
 	return true;
-
 }
 
 } // End of namespace Bbvs

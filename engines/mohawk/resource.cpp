@@ -24,8 +24,8 @@
 
 #include "common/debug.h"
 #include "common/substream.h"
-#include "common/util.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
 namespace Mohawk {
 
@@ -57,7 +57,8 @@ bool Archive::openFile(const Common::String &fileName) {
 
 void Archive::close() {
 	_types.clear();
-	delete _stream; _stream = nullptr;
+	delete _stream;
+	_stream = nullptr;
 }
 
 bool Archive::hasResource(uint32 tag, uint16 id) const {
@@ -439,7 +440,6 @@ bool LivingBooksArchive_v1::openStream(Common::SeekableReadStream *stream) {
 	_stream = stream;
 	return true;
 }
-
 
 // DOS Archive (v2) code
 // Partially based on the Prince of Persia Format Specifications

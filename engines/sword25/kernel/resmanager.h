@@ -32,9 +32,9 @@
 #ifndef SWORD25_RESOURCEMANAGER_H
 #define SWORD25_RESOURCEMANAGER_H
 
-#include "common/list.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
+#include "common/list.h"
 
 #include "sword25/kernel/common.h"
 
@@ -93,9 +93,8 @@ private:
 	 * Creates a new resource manager
 	 * Only the BS_Kernel class can generate copies this class. Thus, the constructor is private
 	 */
-	ResourceManager(Kernel *pKernel) :
-		_kernelPtr(pKernel)
-	{}
+	ResourceManager(Kernel *pKernel)
+	  : _kernelPtr(pKernel) {}
 	virtual ~ResourceManager();
 
 	/**

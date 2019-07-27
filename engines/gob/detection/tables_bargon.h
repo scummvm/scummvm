@@ -28,108 +28,114 @@
 // -- DOS VGA Floppy --
 
 {
-	{
-		"bargon",
-		"",
-		AD_ENTRY1("intro.stk", "da3c54be18ab73fbdb32db24624a9c23"),
-		UNK_LANG,
-		kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
+	{ "bargon",
+	  "",
+	  AD_ENTRY1("intro.stk", "da3c54be18ab73fbdb32db24624a9c23"),
+	  UNK_LANG,
+	  kPlatformDOS,
+	  ADGF_NO_FLAGS,
+	  GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
 	kGameTypeBargon,
 	kFeaturesNone,
-	0, 0, 0
+	0,
+	0,
+	0
 },
-{ // Supplied by cesardark in bug #1681649
-	{
-		"bargon",
-		"",
-		AD_ENTRY1s("intro.stk", "11103b304286c23945560b391fd37e7d", 3181890),
-		ES_ESP,
-		kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
-	kGameTypeBargon,
-	kFeaturesNone,
-	0, 0, 0
-},
-{ // Supplied by paul66 in bug #1692667
-	{
-		"bargon",
-		"",
-		AD_ENTRY1s("intro.stk", "da3c54be18ab73fbdb32db24624a9c23", 3181825),
-		DE_DEU,
-		kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
-	kGameTypeBargon,
-	kFeaturesNone,
-	0, 0, 0
-},
-{ // Supplied by kizkoool in bugreport #2089734
-	{
-		"bargon",
-		"",
-		AD_ENTRY1s("intro.stk", "00f6b4e2ee26e5c40b488e2df5adcf03", 3975580),
-		FR_FRA,
-		kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
-	kGameTypeBargon,
-	kFeaturesNone,
-	0, 0, 0
-},
-{ // Supplied by glorfindel in bugreport #1722142
-	{
-		"bargon",
-		"Fanmade",
-		AD_ENTRY1s("intro.stk", "da3c54be18ab73fbdb32db24624a9c23", 3181825),
-		IT_ITA,
-		kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
-	kGameTypeBargon,
-	kFeaturesNone,
-	0, 0, 0
-},
+  { // Supplied by cesardark in bug #1681649
+	  {
+	    "bargon",
+	    "",
+	    AD_ENTRY1s("intro.stk", "11103b304286c23945560b391fd37e7d", 3181890),
+	    ES_ESP,
+	    kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
+	  kGameTypeBargon,
+	  kFeaturesNone,
+	  0,
+	  0,
+	  0
+  },
+  { // Supplied by paul66 in bug #1692667
+	  {
+	    "bargon",
+	    "",
+	    AD_ENTRY1s("intro.stk", "da3c54be18ab73fbdb32db24624a9c23", 3181825),
+	    DE_DEU,
+	    kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
+	  kGameTypeBargon,
+	  kFeaturesNone,
+	  0,
+	  0,
+	  0
+  },
+  { // Supplied by kizkoool in bugreport #2089734
+	  {
+	    "bargon",
+	    "",
+	    AD_ENTRY1s("intro.stk", "00f6b4e2ee26e5c40b488e2df5adcf03", 3975580),
+	    FR_FRA,
+	    kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
+	  kGameTypeBargon,
+	  kFeaturesNone,
+	  0,
+	  0,
+	  0
+  },
+  { // Supplied by glorfindel in bugreport #1722142
+	  {
+	    "bargon",
+	    "Fanmade",
+	    AD_ENTRY1s("intro.stk", "da3c54be18ab73fbdb32db24624a9c23", 3181825),
+	    IT_ITA,
+	    kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
+	  kGameTypeBargon,
+	  kFeaturesNone,
+	  0,
+	  0,
+	  0
+  },
 
-// -- Amiga --
+  // -- Amiga --
 
-{ // Supplied by pwigren in bugreport #1764174
-	{
-		"bargon",
-		"",
-		AD_ENTRY1s("intro.stk", "569d679fe41d49972d34c9fce5930dda", 269825),
-		EN_ANY,
-		kPlatformAmiga,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
-	kGameTypeBargon,
-	kFeaturesNone,
-	0, 0, 0
-},
+  { // Supplied by pwigren in bugreport #1764174
+	  {
+	    "bargon",
+	    "",
+	    AD_ENTRY1s("intro.stk", "569d679fe41d49972d34c9fce5930dda", 269825),
+	    EN_ANY,
+	    kPlatformAmiga,
+	    ADGF_NO_FLAGS,
+	    GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
+	  kGameTypeBargon,
+	  kFeaturesNone,
+	  0,
+	  0,
+	  0
+  },
 
-// -- Atari ST --
+  // -- Atari ST --
 
-{ // Supplied by Trekky in the forums
-	{
-		"bargon",
-		"",
-		AD_ENTRY1s("intro.stk", "2f54b330d21f65b04b7c1f8cca76426c", 262109),
-		FR_FRA,
-		kPlatformAtariST,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
-	kGameTypeBargon,
-	kFeaturesNone,
-	0, 0, 0
-},
+  { // Supplied by Trekky in the forums
+	  {
+	    "bargon",
+	    "",
+	    AD_ENTRY1s("intro.stk", "2f54b330d21f65b04b7c1f8cca76426c", 262109),
+	    FR_FRA,
+	    kPlatformAtariST,
+	    ADGF_NO_FLAGS,
+	    GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
+	  kGameTypeBargon,
+	  kFeaturesNone,
+	  0,
+	  0,
+	  0
+  },
 
 #endif // GOB_DETECTION_TABLES_BARGON_H

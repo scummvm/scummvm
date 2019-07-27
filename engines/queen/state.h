@@ -28,7 +28,6 @@
 
 namespace Queen {
 
-
 enum StateTalk {
 	STATE_TALK_TALK,
 	STATE_TALK_MUTE
@@ -50,7 +49,6 @@ enum StateUse {
 	STATE_USE,
 	STATE_USE_ON
 };
-
 
 /*!
 	Each object/item in game has a state field.
@@ -99,14 +97,13 @@ struct State {
 	static Direction findDirection(uint16 state);
 	static StateTalk findTalk(uint16 state);
 	static StateGrab findGrab(uint16 state);
-	static StateOn   findOn(uint16 state);
-	static Verb      findDefaultVerb(uint16 state);
-	static StateUse  findUse(uint16 state);
+	static StateOn findOn(uint16 state);
+	static Verb findDefaultVerb(uint16 state);
+	static StateUse findUse(uint16 state);
 
 	static void alterOn(uint16 *objState, StateOn state);
 	static void alterDefaultVerb(uint16 *objState, Verb v);
 };
-
 
 } // End of namespace Queen
 

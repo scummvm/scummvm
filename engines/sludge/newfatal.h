@@ -22,14 +22,14 @@
 #ifndef SLUDGE_NEWFATAL_H
 #define SLUDGE_NEWFATAL_H
 
-#include "common/str.h"
 #include "common/singleton.h"
+#include "common/str.h"
 
 #include "sludge/errors.h"
 
 namespace Sludge {
 
-class FatalMsgManager : public Common::Singleton<Sludge::FatalMsgManager>{
+class FatalMsgManager : public Common::Singleton<Sludge::FatalMsgManager> {
 public:
 	FatalMsgManager();
 	~FatalMsgManager();

@@ -31,43 +31,53 @@
 namespace Glk {
 namespace Alan3 {
 
-/*----------------------------------------------------------------------*/
-static void executeCommand(CONTEXT, int verb, Parameter parameters[]) {
-	static AltInfo *altInfos = NULL; /* Need to survive lots of different exits...*/
-	int altIndex;
-	bool flag;
+	/*----------------------------------------------------------------------*/
+	static void executeCommand(CONTEXT, int verb, Parameter parameters[]) {
+		static AltInfo *altInfos = NULL; /* Need to survive lots of different exits...*/
+		int altIndex;
+		bool flag;
 
-	/* Did we leave anything behind last time... */
-	if (altInfos != NULL)
-		free(altInfos);
+		/* Did we leave anything behind last time... */
+		if (altInfos != NULL)
+			free(altInfos);
 
-	altInfos = findAllAlternatives(verb, parameters);
+		altInfos = findAllAlternatives(verb, parameters);
 
-	FUNC2(anyCheckFailed, flag, altInfos, EXECUTE_CHECK_BODY_ON_FAIL)
-	if (flag)
-		return;
+		FUNC2(anyCheckFailed, flag, altInfos, EXECUTE_CHECK_BODY_ON_FAIL)
+		if (flag)
+			return;
 
-	/* Check for anything to execute... */
-	if (!anythingToExecute(altInfos))
-		CALL1(error, M_CANT0)
+		/* Check for anything to execute... */
+		if (!anythingToExecute(altInfos))
+			CALL1(error, M_CANT0)
 
-	/* Now perform actions! First try any BEFORE or ONLY from inside out */
-	for (altIndex = lastAltInfoIndex(altInfos); altIndex >= 0; altIndex--) {
-		if (altInfos[altIndex].alt != 0) // TODO Can this ever be NULL? Why?
-			if (altInfos[altIndex].alt->qual == (Aword)Q_BEFORE
-			        || altInfos[altIndex].alt->qual == (Aword)Q_ONLY) {
-				FUNC1(executedOk, flag, &altInfos[altIndex])
-				if (!flag)
-					CALL0(abortPlayerCommand)
-				if (altInfos[altIndex].alt->qual == (Aword)Q_ONLY)
-					return;
+		/* Now perform actions! First try any BEFORE or ONLY from inside out */
+		for (altIndex = lastAltInfoIndex(altInfos); altIndex >= 0; altIndex--) {
+			if (altInfos[altIndex].alt != 0) // TODO Can this ever be NULL? Why?
+				if (altInfos[altIndex].alt->qual == (Aword)Q_BEFORE
+				    || altInfos[altIndex].alt->qual == (Aword)Q_ONLY) {
+					FUNC1(executedOk, flag, &altInfos[altIndex])
+					if (!flag)
+						CALL0(abortPlayerCommand)
+					if (altInfos[altIndex].alt->qual == (Aword)Q_ONLY)
+						return;
+				}
+		}
+
+		/* Then execute any not declared as AFTER, i.e. the default */
+		for (altIndex = 0; !altInfos[altIndex].end; altIndex++) {
+			if (altInfos[altIndex].alt != 0) {
+				if (altInfos[altIndex].alt->qual != (Aword)Q_AFTER) {
+					FUNC1(executedOk, flag, &altInfos[altIndex])
+					if (!flag)
+						CALL0(abortPlayerCommand)
+				}
 			}
-	}
+		}
 
-	/* Then execute any not declared as AFTER, i.e. the default */
-	for (altIndex = 0; !altInfos[altIndex].end; altIndex++) {
-		if (altInfos[altIndex].alt != 0) {
-			if (altInfos[altIndex].alt->qual != (Aword)Q_AFTER) {
+		/* Finally, the ones declared as AFTER */
+		for (altIndex = lastAltInfoIndex(altInfos); altIndex >= 0; altIndex--) {
+			if (altInfos[altIndex].alt != 0) {
 				FUNC1(executedOk, flag, &altInfos[altIndex])
 				if (!flag)
 					CALL0(abortPlayerCommand)
@@ -75,18 +85,7 @@ static void executeCommand(CONTEXT, int verb, Parameter parameters[]) {
 		}
 	}
 
-	/* Finally, the ones declared as AFTER */
-	for (altIndex = lastAltInfoIndex(altInfos); altIndex >= 0; altIndex--) {
-		if (altInfos[altIndex].alt != 0) {
-			FUNC1(executedOk, flag, &altInfos[altIndex])
-			if (!flag)
-				CALL0(abortPlayerCommand)
-		}
-	}
-}
-
-
-/*======================================================================
+	/*======================================================================
 
   action()
 
@@ -94,36 +93,36 @@ static void executeCommand(CONTEXT, int verb, Parameter parameters[]) {
   such as ALL, THEM or lists of objects.
 
 */
-void action(CONTEXT, int verb, Parameter parameters[], Parameter multipleMatches[]) {
-	int multiplePosition;
-	char marker[10];
+	void action(CONTEXT, int verb, Parameter parameters[], Parameter multipleMatches[]) {
+		int multiplePosition;
+		char marker[10];
 
-	multiplePosition = findMultiplePosition(parameters);
-	if (multiplePosition != -1) {
-		sprintf(marker, "($%d)", multiplePosition + 1); /* Prepare a printout with $1/2/3 */
-		for (int i = 0; !isEndOfArray(&multipleMatches[i]); i++) {
-			copyParameter(&parameters[multiplePosition], &multipleMatches[i]);
-			setGlobalParameters(parameters); /* Need to do this here since the marker use them */
-			output(marker);
+		multiplePosition = findMultiplePosition(parameters);
+		if (multiplePosition != -1) {
+			sprintf(marker, "($%d)", multiplePosition + 1); /* Prepare a printout with $1/2/3 */
+			for (int i = 0; !isEndOfArray(&multipleMatches[i]); i++) {
+				copyParameter(&parameters[multiplePosition], &multipleMatches[i]);
+				setGlobalParameters(parameters); /* Need to do this here since the marker use them */
+				output(marker);
 
-			// WARNING: The original did a temporary grabbing of the returnLabel setjmp point here.
-			// Which is why I manually check the context return instead of using the CALL macro
-			executeCommand(context, verb, parameters);
-			if (context._break && context._label.hasPrefix("return"))
-				context._break = false;
-			if (context._break)
-				return;
-			
-			if (multipleMatches[i + 1].instance != EOD)
-				para();
+				// WARNING: The original did a temporary grabbing of the returnLabel setjmp point here.
+				// Which is why I manually check the context return instead of using the CALL macro
+				executeCommand(context, verb, parameters);
+				if (context._break && context._label.hasPrefix("return"))
+					context._break = false;
+				if (context._break)
+					return;
+
+				if (multipleMatches[i + 1].instance != EOD)
+					para();
+			}
+
+			parameters[multiplePosition].instance = 0;
+		} else {
+			setGlobalParameters(parameters);
+			CALL2(executeCommand, verb, parameters)
 		}
-
-		parameters[multiplePosition].instance = 0;
-	} else {
-		setGlobalParameters(parameters);
-		CALL2(executeCommand, verb, parameters)
 	}
-}
 
 } // End of namespace Alan3
 } // End of namespace Glk

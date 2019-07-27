@@ -23,9 +23,9 @@
 #ifndef DRACI_DRACI_H
 #define DRACI_DRACI_H
 
-#include "engines/engine.h"
 #include "common/random.h"
 #include "draci/console.h"
+#include "engines/engine.h"
 
 struct ADGameDescription;
 
@@ -107,18 +107,19 @@ public:
 	Common::RandomSource _rnd;
 
 	int32 _pauseStartTime;
+
 private:
 	DraciConsole *_console;
 };
 
 enum {
-	kDraciGeneralDebugLevel   = 1 << 0,
-	kDraciBytecodeDebugLevel  = 1 << 1,
-	kDraciArchiverDebugLevel  = 1 << 2,
-	kDraciLogicDebugLevel     = 1 << 3,
+	kDraciGeneralDebugLevel = 1 << 0,
+	kDraciBytecodeDebugLevel = 1 << 1,
+	kDraciArchiverDebugLevel = 1 << 2,
+	kDraciLogicDebugLevel = 1 << 3,
 	kDraciAnimationDebugLevel = 1 << 4,
-	kDraciSoundDebugLevel     = 1 << 5,
-	kDraciWalkingDebugLevel   = 1 << 6
+	kDraciSoundDebugLevel = 1 << 5,
+	kDraciWalkingDebugLevel = 1 << 6
 };
 
 // Macro to simulate lround() for non-C99 compilers

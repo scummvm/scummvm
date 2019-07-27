@@ -20,17 +20,25 @@
  *
  */
 
-#include "common/debug.h"
 #include "audio/audiostream.h"
+#include "common/debug.h"
 
-#include "groovie/player.h"
 #include "groovie/groovie.h"
+#include "groovie/player.h"
 
 namespace Groovie {
 
-VideoPlayer::VideoPlayer(GroovieEngine *vm) :
-	_vm(vm), _syst(vm->_system), _file(NULL), _audioStream(NULL), _fps(0), _overrideSpeed(false), _flags(0),
-	_begunPlaying(false), _millisBetweenFrames(0), _lastFrameTime(0) {
+VideoPlayer::VideoPlayer(GroovieEngine *vm)
+  : _vm(vm)
+  , _syst(vm->_system)
+  , _file(NULL)
+  , _audioStream(NULL)
+  , _fps(0)
+  , _overrideSpeed(false)
+  , _flags(0)
+  , _begunPlaying(false)
+  , _millisBetweenFrames(0)
+  , _lastFrameTime(0) {
 }
 
 bool VideoPlayer::load(Common::SeekableReadStream *file, uint16 flags) {
@@ -97,7 +105,7 @@ void VideoPlayer::waitFrame() {
 		uint32 millisDiff = currTime - _lastFrameTime;
 		if (millisDiff < _millisBetweenFrames) {
 			debugC(7, kDebugVideo, "Groovie::Player: Delaying %d (currTime=%d, _lastFrameTime=%d, millisDiff=%d, _millisBetweenFrame=%d)",
-					_millisBetweenFrames - millisDiff, currTime, _lastFrameTime, millisDiff, _millisBetweenFrames);
+			       _millisBetweenFrames - millisDiff, currTime, _lastFrameTime, millisDiff, _millisBetweenFrames);
 			_syst->delayMillis(_millisBetweenFrames - millisDiff);
 			currTime = _syst->getMillis();
 			debugC(7, kDebugVideo, "Groovie::Player: Finished delay at %d", currTime);

@@ -23,17 +23,19 @@
 #ifndef SCI_SOUND_DECODERS_ROBOT_H
 #define SCI_SOUND_DECODERS_ROBOT_H
 
-#include "audio/audiostream.h"           // for AudioStream
-#include "audio/rate.h"                  // for st_sample_t
-#include "common/array.h"                // for Array
-#include "common/mutex.h"                // for StackLock, Mutex
-#include "common/rect.h"                 // for Point, Rect (ptr only)
-#include "common/scummsys.h"             // for int16, int32, byte, uint16
-#include "sci/engine/vm_types.h"         // for NULL_REG, reg_t
-#include "sci/graphics/helpers.h"        // for GuiResourceId
-#include "sci/graphics/screen_item32.h"  // for ScaleInfo, ScreenItem (ptr o...
+#include "audio/audiostream.h" // for AudioStream
+#include "audio/rate.h" // for st_sample_t
+#include "common/array.h" // for Array
+#include "common/mutex.h" // for StackLock, Mutex
+#include "common/rect.h" // for Point, Rect (ptr only)
+#include "common/scummsys.h" // for int16, int32, byte, uint16
+#include "sci/engine/vm_types.h" // for NULL_REG, reg_t
+#include "sci/graphics/helpers.h" // for GuiResourceId
+#include "sci/graphics/screen_item32.h" // for ScaleInfo, ScreenItem (ptr o...
 
-namespace Common { class SeekableSubReadStreamEndian; }
+namespace Common {
+class SeekableSubReadStreamEndian;
+}
 namespace Sci {
 class Plane;
 class SegManager;
@@ -272,7 +274,7 @@ public:
 		 * Multiplier for the size of a packet that is being expanded by writing
 		 * to every other byte of the target buffer.
 		 */
-		kEOSExpansion    = 2
+		kEOSExpansion = 2
 	};
 
 	/**
@@ -315,8 +317,10 @@ public:
 		 */
 		int position;
 
-		RobotAudioPacket(byte *data_, const int dataSize_, const int position_) :
-			data(data_), dataSize(dataSize_), position(position_) {}
+		RobotAudioPacket(byte *data_, const int dataSize_, const int position_)
+		  : data(data_)
+		  , dataSize(dataSize_)
+		  , position(position_) {}
 	};
 
 	RobotAudioStream(const int32 bufferSize);
@@ -477,9 +481,9 @@ public:
 	 */
 	enum RobotStatus {
 		kRobotStatusUninitialized = 0,
-		kRobotStatusPlaying       = 1,
-		kRobotStatusEnd           = 2,
-		kRobotStatusPaused        = 3
+		kRobotStatusPlaying = 1,
+		kRobotStatusEnd = 2,
+		kRobotStatusPaused = 3
 	};
 
 	enum {
@@ -493,40 +497,40 @@ private:
 		/**
 		 * Maximum number of on-screen screen items.
 		 */
-		kScreenItemListSize    = 10,
+		kScreenItemListSize = 10,
 
 		/**
 		 * Maximum number of queued audio blocks.
 		 */
-		kAudioListSize         = 10,
+		kAudioListSize = 10,
 
 		/**
 		 * Maximum number of samples used for frame timing.
 		 */
-		kDelayListSize         = 10,
+		kDelayListSize = 10,
 
 		/**
 		 * Maximum number of cues.
 		 */
-		kCueListSize           = 256,
+		kCueListSize = 256,
 
 		/**
 		 * Maximum number of 'fixed' cels that never change for the duration of
 		 * a robot.
 		 */
-		kFixedCelListSize      = 4,
+		kFixedCelListSize = 4,
 
 		/**
 		 * The size of a hunk palette in the Robot stream.
 		 */
-		kRawPaletteSize        = 1200,
+		kRawPaletteSize = 1200,
 
 		/**
 		 * The size of a frame of Robot data. This value was used to align the
 		 * first block of data after the main Robot header to the next CD
 		 * sector.
 		 */
-		kRobotFrameSize        = 2048,
+		kRobotFrameSize = 2048,
 
 		/**
 		 * The size of a block of zero-compressed audio. Used to fill audio when
@@ -539,18 +543,18 @@ private:
 		 * consists of the compressed size of the audio in the record, plus the
 		 * position of the audio in the compressed data stream.
 		 */
-		kAudioBlockHeaderSize  = 8,
+		kAudioBlockHeaderSize = 8,
 
 		/**
 		 * The size of a Robot cel header, in bytes.
 		 */
-		kCelHeaderSize         = 22,
+		kCelHeaderSize = 22,
 
 		/**
 		 * The maximum amount that the frame rate is allowed to drift from the
 		 * nominal frame rate in order to correct for AV drift or slow playback.
 		 */
-		kMaxFrameRateDrift     = 1
+		kMaxFrameRateDrift = 1
 	};
 
 	/**
@@ -855,10 +859,10 @@ private:
 	 * The status of the audio track of a Robot animation.
 	 */
 	enum RobotAudioStatus {
-		kRobotAudioReady    = 1,
-		kRobotAudioStopped  = 2,
-		kRobotAudioPlaying  = 3,
-		kRobotAudioPaused   = 4,
+		kRobotAudioReady = 1,
+		kRobotAudioStopped = 2,
+		kRobotAudioPlaying = 3,
+		kRobotAudioPaused = 4,
 		kRobotAudioStopping = 5
 	};
 
@@ -1154,7 +1158,7 @@ public:
 	 * Scales a vertically compressed cel to its original uncompressed
 	 * dimensions.
 	 */
-	void expandCel(byte *target, const byte* source, const int16 celWidth, const int16 celHeight) const;
+	void expandCel(byte *target, const byte *source, const int16 celWidth, const int16 celHeight) const;
 
 	int16 getPriority() const;
 
@@ -1166,7 +1170,7 @@ public:
 
 private:
 	enum CompressionType {
-		kCompressionLZS  = 0,
+		kCompressionLZS = 0,
 		kCompressionNone = 2
 	};
 
@@ -1178,7 +1182,7 @@ private:
 		 * The persistence level of Robot cels.
 		 */
 		enum CelHandleLifetime {
-			kNoCel         = 0,
+			kNoCel = 0,
 			kFrameLifetime = 1,
 			kRobotLifetime = 2
 		};
@@ -1199,7 +1203,10 @@ private:
 		 */
 		int area;
 
-		CelHandleInfo() : bitmapId(NULL_REG), status(kNoCel), area(0) {}
+		CelHandleInfo()
+		  : bitmapId(NULL_REG)
+		  , status(kNoCel)
+		  , area(0) {}
 	};
 
 	typedef Common::Array<ScreenItem *> RobotScreenItemList;

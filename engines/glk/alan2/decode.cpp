@@ -20,105 +20,101 @@
  *
  */
 
-#include "glk/alan2/main.h"
 #include "glk/alan2/decode.h"
+#include "glk/alan2/main.h"
 
 namespace Glk {
 namespace Alan2 {
 
-/* Bit output */
-static int decodeBuffer;    /* Bits to be input */
-static int bitsToGo;        /* Bits still in buffer */
-static int garbageBits;     /* Bits past EOD */
+	/* Bit output */
+	static int decodeBuffer; /* Bits to be input */
+	static int bitsToGo; /* Bits still in buffer */
+	static int garbageBits; /* Bits past EOD */
 
-static int inputBit() {
-	int bit;
+	static int inputBit() {
+		int bit;
 
-	if (!bitsToGo) {      /* More bits available ? */
-		decodeBuffer = txtfil->readByte(); /* No, so get more */
-		if ((uint)decodeBuffer == EOD) {
-			garbageBits++;
-			if (garbageBits > VALUEBITS - 2)
-				syserr("Error in encoded data file.");
-		} else
-			bitsToGo = 8;     /* Another Char, 8 new bits */
+		if (!bitsToGo) { /* More bits available ? */
+			decodeBuffer = txtfil->readByte(); /* No, so get more */
+			if ((uint)decodeBuffer == EOD) {
+				garbageBits++;
+				if (garbageBits > VALUEBITS - 2)
+					syserr("Error in encoded data file.");
+			} else
+				bitsToGo = 8; /* Another Char, 8 new bits */
+		}
+		bit = decodeBuffer & 1; /* Get next bit */
+		decodeBuffer = decodeBuffer >> 1; /* and remove it */
+		bitsToGo--;
+		return bit;
 	}
-	bit = decodeBuffer & 1;   /* Get next bit */
-	decodeBuffer = decodeBuffer >> 1; /* and remove it */
-	bitsToGo--;
-	return bit;
-}
 
+	/* Current state of decoding */
 
-/* Current state of decoding */
+	static CodeValue value; /* Currently seen code value */
+	static CodeValue low, high; /* Current code region */
 
-static CodeValue value;         /* Currently seen code value */
-static CodeValue low, high;     /* Current code region */
+	void startDecoding() {
+		int i;
 
+		bitsToGo = 0;
+		garbageBits = 0;
 
-void startDecoding() {
-	int i;
+		value = 0;
+		for (i = 0; i < VALUEBITS; i++)
+			value = 2 * value + inputBit();
+		low = 0;
+		high = TOPVALUE;
+	}
 
-	bitsToGo = 0;
-	garbageBits = 0;
+	int decodeChar() {
+		long range;
+		int f;
+		int symbol;
 
-	value = 0;
-	for (i = 0; i < VALUEBITS; i++)
-		value = 2 * value + inputBit();
-	low = 0;
-	high = TOPVALUE;
-}
+		range = (long)(high - low) + 1;
+		f = (((long)(value - low) + 1) * freq[0] - 1) / range;
 
-int decodeChar() {
-	long range;
-	int f;
-	int symbol;
-
-	range = (long)(high - low) + 1;
-	f = (((long)(value - low) + 1) * freq[0] - 1) / range;
-
-	/* Find the symbol */
-	for (symbol = 1; (int)freq[symbol] > f; symbol++);
-
-	high = low + range * freq[symbol - 1] / freq[0] - 1;
-	low = low + range * freq[symbol] / freq[0];
-
-	for (;;) {
-		if (high < HALF)
+		/* Find the symbol */
+		for (symbol = 1; (int)freq[symbol] > f; symbol++)
 			;
-		else if (low >= HALF) {
-			value = value - HALF;
-			low = low - HALF;
-			high = high - HALF;
-		} else if (low >= ONEQUARTER && high < THREEQUARTER) {
-			value = value - ONEQUARTER;
-			low = low - ONEQUARTER;
-			high = high - ONEQUARTER;
-		} else
-			break;
 
-		/* Scale up the range */
-		low = 2 * low;
-		high = 2 * high + 1;
-		value = 2 * value + inputBit();
+		high = low + range * freq[symbol - 1] / freq[0] - 1;
+		low = low + range * freq[symbol] / freq[0];
+
+		for (;;) {
+			if (high < HALF)
+				;
+			else if (low >= HALF) {
+				value = value - HALF;
+				low = low - HALF;
+				high = high - HALF;
+			} else if (low >= ONEQUARTER && high < THREEQUARTER) {
+				value = value - ONEQUARTER;
+				low = low - ONEQUARTER;
+				high = high - ONEQUARTER;
+			} else
+				break;
+
+			/* Scale up the range */
+			low = 2 * low;
+			high = 2 * high + 1;
+			value = 2 * value + inputBit();
+		}
+		return symbol - 1;
 	}
-	return symbol - 1;
-}
 
+	/* Structure for saved decode info */
+	typedef struct DecodeInfo {
+		long fpos;
+		int buffer;
+		int bits;
+		CodeValue value;
+		CodeValue high;
+		CodeValue low;
+	} DecodeInfo;
 
-
-/* Structure for saved decode info */
-typedef struct DecodeInfo {
-	long fpos;
-	int buffer;
-	int bits;
-	CodeValue value;
-	CodeValue high;
-	CodeValue low;
-} DecodeInfo;
-
-
-/*======================================================================
+	/*======================================================================
 
   pushDecode()
 
@@ -126,21 +122,20 @@ typedef struct DecodeInfo {
   restore and continue later.
 
  */
-void *pushDecode() {
-	DecodeInfo *info;
+	void *pushDecode() {
+		DecodeInfo *info;
 
-	info = (DecodeInfo *) allocate(sizeof(DecodeInfo));
-	info->fpos = txtfil->pos();
-	info->buffer = decodeBuffer;
-	info->bits = bitsToGo;
-	info->value = value;
-	info->high = high;
-	info->low = low;
-	return (info);
-}
+		info = (DecodeInfo *)allocate(sizeof(DecodeInfo));
+		info->fpos = txtfil->pos();
+		info->buffer = decodeBuffer;
+		info->bits = bitsToGo;
+		info->value = value;
+		info->high = high;
+		info->low = low;
+		return (info);
+	}
 
-
-/*======================================================================
+	/*======================================================================
 
   popDecode()
 
@@ -148,17 +143,17 @@ void *pushDecode() {
   continue after having decoded something else.
 
  */
-void popDecode(void *i) {
-	DecodeInfo *info = (DecodeInfo *) i;
-	fseek(txtfil, info->fpos, 0);
-	decodeBuffer = info->buffer;
-	bitsToGo = info->bits;
-	value = info->value;
-	high = info->high;
-	low = info->low;
+	void popDecode(void *i) {
+		DecodeInfo *info = (DecodeInfo *)i;
+		fseek(txtfil, info->fpos, 0);
+		decodeBuffer = info->buffer;
+		bitsToGo = info->bits;
+		value = info->value;
+		high = info->high;
+		low = info->low;
 
-	free(info);
-}
+		free(info);
+	}
 
 } // End of namespace Alan2
 } // End of namespace Glk

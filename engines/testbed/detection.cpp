@@ -20,8 +20,8 @@
  *
  */
 
-#include "engines/advancedDetector.h"
 #include "common/system.h"
+#include "engines/advancedDetector.h"
 
 #include "base/plugins.h"
 
@@ -33,21 +33,20 @@ static const PlainGameDescriptor testbed_setting[] = {
 };
 
 static const ADGameDescription testbedDescriptions[] = {
-	{
-		"testbed",
-		"",
-		AD_ENTRY1("TESTBED", 0),	// Game-data file for detection
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO0()
-	},
+	{ "testbed",
+	  "",
+	  AD_ENTRY1("TESTBED", 0), // Game-data file for detection
+	  Common::EN_ANY,
+	  Common::kPlatformDOS,
+	  ADGF_NO_FLAGS,
+	  GUIO0() },
 	AD_TABLE_END_MARKER
 };
 
 class TestbedMetaEngine : public AdvancedMetaEngine {
 public:
-	TestbedMetaEngine() : AdvancedMetaEngine(testbedDescriptions, sizeof(ADGameDescription), testbed_setting) {
+	TestbedMetaEngine()
+	  : AdvancedMetaEngine(testbedDescriptions, sizeof(ADGameDescription), testbed_setting) {
 		_md5Bytes = 512;
 		_singleId = "testbed";
 	}
@@ -65,11 +64,10 @@ public:
 		*engine = new Testbed::TestbedEngine(syst);
 		return true;
 	}
-
 };
 
 #if PLUGIN_ENABLED_DYNAMIC(TESTBED)
-	REGISTER_PLUGIN_DYNAMIC(TESTBED, PLUGIN_TYPE_ENGINE, TestbedMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(TESTBED, PLUGIN_TYPE_ENGINE, TestbedMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(TESTBED, PLUGIN_TYPE_ENGINE, TestbedMetaEngine);
+REGISTER_PLUGIN_STATIC(TESTBED, PLUGIN_TYPE_ENGINE, TestbedMetaEngine);
 #endif

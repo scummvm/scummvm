@@ -43,16 +43,18 @@ enum kMusicMode {
 struct MusicInfo {
 	MidiParser *parser;
 	byte *data;
-	byte num_songs;           // For Type 1 SMF resources
-	byte *songs[16];          // For Type 1 SMF resources
-	uint32 song_sizes[16];    // For Type 1 SMF resources
+	byte num_songs; // For Type 1 SMF resources
+	byte *songs[16]; // For Type 1 SMF resources
+	uint32 song_sizes[16]; // For Type 1 SMF resources
 
 	MidiChannel *channel[16]; // Dynamic remapping of channels to resolve conflicts
-	byte volume[16];          // Current channel volume
+	byte volume[16]; // Current channel volume
 
 	MusicInfo() { clear(); }
 	void clear() {
-		parser = 0; data = 0; num_songs = 0;
+		parser = 0;
+		data = 0;
+		num_songs = 0;
 		memset(songs, 0, sizeof(songs));
 		memset(song_sizes, 0, sizeof(song_sizes));
 		memset(channel, 0, sizeof(channel));
@@ -71,7 +73,7 @@ protected:
 	MusicInfo *_current; // Allows us to establish current context for operations.
 
 	// These are maintained for both music and SFX
-	byte _masterVolume;    // 0-255
+	byte _masterVolume; // 0-255
 	byte _musicVolume;
 	byte _sfxVolume;
 	bool _paused;
@@ -110,8 +112,8 @@ public:
 	void stop();
 	void pause(bool b);
 
-	int  getMusicVolume() const { return _musicVolume; }
-	int  getSFXVolume() const { return _sfxVolume; }
+	int getMusicVolume() const { return _musicVolume; }
+	int getSFXVolume() const { return _sfxVolume; }
 	void setVolume(int musicVol, int sfxVol);
 
 public:
@@ -124,7 +126,7 @@ public:
 private:
 	kMusicMode _musicMode;
 	MusicType musicType;
-	
+
 private:
 	Common::SeekableReadStream *simon2SetupExtractFile(const Common::String &requestedFileName);
 };

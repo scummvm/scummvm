@@ -34,32 +34,32 @@
 // for the PSP port
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#define	USERSPACE_ONLY	//don't use kernel mode features
+#define USERSPACE_ONLY //don't use kernel mode features
 
 #ifndef USERSPACE_ONLY
-#include <pspkernel.h>
-#include <pspdebug.h>
+#	include <pspdebug.h>
+#	include <pspkernel.h>
 #else
-#include <pspuser.h>
+#	include <pspuser.h>
 #endif
 
 #include <psppower.h>
 
-#include <common/system.h>
-#include <engines/engine.h>
-#include <base/main.h>
-#include <base/plugins.h>
 #include "backends/platform/psp/powerman.h"
 #include "backends/platform/psp/thread.h"
+#include <base/main.h>
+#include <base/plugins.h>
+#include <common/system.h>
+#include <engines/engine.h>
 
-#include "backends/plugins/psp/psp-provider.h"
-#include "backends/platform/psp/psppixelformat.h"
 #include "backends/platform/psp/osys_psp.h"
-#include "backends/platform/psp/tests.h"	/* for unit/speed tests */
+#include "backends/platform/psp/psppixelformat.h"
+#include "backends/platform/psp/tests.h" /* for unit/speed tests */
 #include "backends/platform/psp/trace.h"
+#include "backends/plugins/psp/psp-provider.h"
 
 #ifdef ENABLE_PROFILING
-	#include <pspprof.h>
+#	include <pspprof.h>
 #endif
 
 /**
@@ -80,8 +80,7 @@ PSP_MODULE_INFO("SCUMMVM-PSP", 0, 1, 1);
  * even though the module was started in kernelmode
  */
 PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
-PSP_HEAP_SIZE_KB(-128);	//Leave 128kb for thread stacks, etc.
-
+PSP_HEAP_SIZE_KB(-128); //Leave 128kb for thread stacks, etc.
 
 #ifndef USERSPACE_ONLY
 void MyExceptionHandler(PspDebugRegBlock *regs) {
@@ -96,15 +95,15 @@ void MyExceptionHandler(PspDebugRegBlock *regs) {
 	pspDebugScreenPrintf("Exception Details:\n");
 	pspDebugDumpException(regs);
 
-	while (1) ;
+	while (1)
+		;
 }
 
 /**
  * Function that is called from _init in kernelmode before the
  * main thread is started in usermode.
  */
-__attribute__((constructor))
-void loaderInit() {
+__attribute__((constructor)) void loaderInit() {
 	pspKernelSetKernelPC();
 	pspDebugInstallErrorHandler(MyExceptionHandler);
 }
@@ -122,7 +121,7 @@ int exit_callback(void) {
 }
 
 /* Function for handling suspend/resume */
-int power_callback(int , int powerinfo, void *) {
+int power_callback(int, int powerinfo, void *) {
 	if (powerinfo & PSP_POWER_CB_POWER_SWITCH || powerinfo & PSP_POWER_CB_SUSPENDING) {
 		PowerMan.suspend();
 	} else if (powerinfo & PSP_POWER_CB_RESUME_COMPLETE) {
@@ -167,7 +166,7 @@ int main(void) {
 	//change clock rate to 333mhz
 	scePowerSetClockFrequency(333, 333, 166);
 
-	PowerManager::instance();	// Setup power manager
+	PowerManager::instance(); // Setup power manager
 
 	SetupCallbacks();
 
@@ -185,14 +184,14 @@ int main(void) {
 #if defined(PSP_ENABLE_UNIT_TESTS) || defined(PSP_ENABLE_SPEED_TESTS)
 	PSP_INFO_PRINT("running tests\n");
 	psp_tests();
-	sceKernelSleepThread();	// that's it. That's all we're doing
+	sceKernelSleepThread(); // that's it. That's all we're doing
 #endif
 
 	int res = scummvm_main(argc, argv);
 
-	g_system->quit();	// TODO: Consider removing / replacing this!
+	g_system->quit(); // TODO: Consider removing / replacing this!
 
-	PowerManager::destroy();	// get rid of PowerManager
+	PowerManager::destroy(); // get rid of PowerManager
 
 	sceKernelSleepThread();
 

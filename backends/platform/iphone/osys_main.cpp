@@ -23,26 +23,25 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <unistd.h>
 #include <pthread.h>
+#include <unistd.h>
 
 #include <sys/time.h>
 
-#include "common/scummsys.h"
-#include "common/util.h"
-#include "common/rect.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/rect.h"
+#include "common/scummsys.h"
+#include "common/util.h"
 
 #include "base/main.h"
 
-#include "backends/saves/default/default-saves.h"
-#include "backends/timer/default/default-timer.h"
 #include "audio/mixer.h"
 #include "audio/mixer_intern.h"
+#include "backends/saves/default/default-saves.h"
+#include "backends/timer/default/default-timer.h"
 
 #include "backends/platform/iphone/osys_main.h"
-
 
 const OSystem::GraphicsMode OSystem_IPHONE::s_supportedGraphicsModes[] = {
 	{ "linear", "Linear filtering", kGraphicsModeLinear },
@@ -54,13 +53,26 @@ AQCallbackStruct OSystem_IPHONE::s_AudioQueue;
 SoundProc OSystem_IPHONE::s_soundCallback = NULL;
 void *OSystem_IPHONE::s_soundParam = NULL;
 
-OSystem_IPHONE::OSystem_IPHONE() :
-	_mixer(NULL), _lastMouseTap(0), _queuedEventTime(0),
-	_mouseNeedTextureUpdate(false), _secondaryTapped(false), _lastSecondaryTap(0),
-	_screenOrientation(kScreenOrientationFlippedLandscape), _mouseClickAndDragEnabled(false),
-	_gestureStartX(-1), _gestureStartY(-1), _fullScreenIsDirty(false), _fullScreenOverlayIsDirty(false),
-	_mouseDirty(false), _timeSuspended(0), _lastDragPosX(-1), _lastDragPosY(-1), _screenChangeCount(0),
-	_mouseCursorPaletteEnabled(false), _gfxTransactionError(kTransactionSuccess) {
+OSystem_IPHONE::OSystem_IPHONE()
+  : _mixer(NULL)
+  , _lastMouseTap(0)
+  , _queuedEventTime(0)
+  , _mouseNeedTextureUpdate(false)
+  , _secondaryTapped(false)
+  , _lastSecondaryTap(0)
+  , _screenOrientation(kScreenOrientationFlippedLandscape)
+  , _mouseClickAndDragEnabled(false)
+  , _gestureStartX(-1)
+  , _gestureStartY(-1)
+  , _fullScreenIsDirty(false)
+  , _fullScreenOverlayIsDirty(false)
+  , _mouseDirty(false)
+  , _timeSuspended(0)
+  , _lastDragPosX(-1)
+  , _lastDragPosY(-1)
+  , _screenChangeCount(0)
+  , _mouseCursorPaletteEnabled(false)
+  , _gfxTransactionError(kTransactionSuccess) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
 	_touchpadModeEnabled = !iPhone_isHighResDevice();
 	_fsFactory = new POSIXFilesystemFactory();
@@ -171,8 +183,7 @@ uint32 OSystem_IPHONE::getMillis(bool skipRecord) {
 
 	struct timeval currentTime;
 	gettimeofday(&currentTime, NULL);
-	return (uint32)(((currentTime.tv_sec - _startTime.tv_sec) * 1000) +
-	                ((currentTime.tv_usec - _startTime.tv_usec) / 1000)) - _timeSuspended;
+	return (uint32)(((currentTime.tv_sec - _startTime.tv_sec) * 1000) + ((currentTime.tv_usec - _startTime.tv_usec) / 1000)) - _timeSuspended;
 }
 
 void OSystem_IPHONE::delayMillis(uint msecs) {
@@ -185,7 +196,7 @@ OSystem::MutexRef OSystem_IPHONE::createMutex(void) {
 	pthread_mutexattr_init(&attr);
 	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
 
-	pthread_mutex_t *mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
+	pthread_mutex_t *mutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
 	if (pthread_mutex_init(mutex, &attr) != 0) {
 		printf("pthread_mutex_init() failed!\n");
 		free(mutex);
@@ -196,25 +207,24 @@ OSystem::MutexRef OSystem_IPHONE::createMutex(void) {
 }
 
 void OSystem_IPHONE::lockMutex(MutexRef mutex) {
-	if (pthread_mutex_lock((pthread_mutex_t *) mutex) != 0) {
+	if (pthread_mutex_lock((pthread_mutex_t *)mutex) != 0) {
 		printf("pthread_mutex_lock() failed!\n");
 	}
 }
 
 void OSystem_IPHONE::unlockMutex(MutexRef mutex) {
-	if (pthread_mutex_unlock((pthread_mutex_t *) mutex) != 0) {
+	if (pthread_mutex_unlock((pthread_mutex_t *)mutex) != 0) {
 		printf("pthread_mutex_unlock() failed!\n");
 	}
 }
 
 void OSystem_IPHONE::deleteMutex(MutexRef mutex) {
-	if (pthread_mutex_destroy((pthread_mutex_t *) mutex) != 0) {
+	if (pthread_mutex_destroy((pthread_mutex_t *)mutex) != 0) {
 		printf("pthread_mutex_destroy() failed!\n");
 	} else {
 		free(mutex);
 	}
 }
-
 
 void OSystem_IPHONE::setTimerCallback(TimerProc callback, int interval) {
 	//printf("setTimerCallback()\n");
@@ -319,5 +329,5 @@ void iphone_main(int argc, char *argv[]) {
 
 	// Invoke the actual ScummVM main entry point:
 	scummvm_main(argc, argv);
-	g_system->quit();       // TODO: Consider removing / replacing this!
+	g_system->quit(); // TODO: Consider removing / replacing this!
 }

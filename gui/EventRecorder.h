@@ -33,32 +33,30 @@
 
 #ifdef ENABLE_EVENTRECORDER
 
-#include "common/mutex.h"
-#include "common/array.h"
-#include "common/memstream.h"
-#include "backends/keymapper/keymapper.h"
-#include "backends/mixer/sdl/sdl-mixer.h"
-#include "common/hashmap.h"
-#include "common/hash-str.h"
-#include "backends/timer/sdl/sdl-timer.h"
-#include "common/config-manager.h"
-#include "common/recorderfile.h"
-#include "backends/saves/recorder/recorder-saves.h"
-#include "backends/mixer/nullmixer/nullsdl-mixer.h"
-#include "backends/saves/default/default-saves.h"
+#	include "backends/keymapper/keymapper.h"
+#	include "backends/mixer/nullmixer/nullsdl-mixer.h"
+#	include "backends/mixer/sdl/sdl-mixer.h"
+#	include "backends/saves/default/default-saves.h"
+#	include "backends/saves/recorder/recorder-saves.h"
+#	include "backends/timer/sdl/sdl-timer.h"
+#	include "common/array.h"
+#	include "common/config-manager.h"
+#	include "common/hash-str.h"
+#	include "common/hashmap.h"
+#	include "common/memstream.h"
+#	include "common/mutex.h"
+#	include "common/recorderfile.h"
 
-
-#define g_eventRec (GUI::EventRecorder::instance())
+#	define g_eventRec (GUI::EventRecorder::instance())
 
 namespace GUI {
-	class OnScreenDialog;
+class OnScreenDialog;
 }
 
 namespace GUI {
 class RandomSource;
 class SeekableReadStream;
 class WriteStream;
-
 
 /**
  * Our generic event recorder.
@@ -69,13 +67,14 @@ class EventRecorder : private Common::EventSource, public Common::Singleton<Even
 	friend class Common::Singleton<SingletonBaseType>;
 	EventRecorder();
 	~EventRecorder();
+
 public:
 	/** Specify operation mode of Event Recorder */
 	enum RecordMode {
-		kPassthrough = 0,		/**< kPassthrough, do nothing */
-		kRecorderRecord = 1,		/**< kRecorderRecord, do the recording */
-		kRecorderPlayback = 2,		/**< kRecorderPlayback, playback existing recording */
-		kRecorderPlaybackPause = 3	/**< kRecordetPlaybackPause, interal state when user pauses the playback */
+		kPassthrough = 0, /**< kPassthrough, do nothing */
+		kRecorderRecord = 1, /**< kRecorderRecord, do the recording */
+		kRecorderPlayback = 2, /**< kRecorderPlayback, playback existing recording */
+		kRecorderPlaybackPause = 3 /**< kRecordetPlaybackPause, interal state when user pauses the playback */
 	};
 
 	void init(Common::String recordFileName, RecordMode mode);
@@ -85,7 +84,7 @@ public:
 	void processMillis(uint32 &millis, bool skipRecord);
 	bool processAudio(uint32 &samples, bool paused);
 	void processGameDescription(const ADGameDescription *desc);
-	Common::SeekableReadStream *processSaveStream(const Common::String & fileName);
+	Common::SeekableReadStream *processSaveStream(const Common::String &fileName);
 
 	/** Hooks for intercepting into GUI processing, so required events could be shoot
 	 *  or filtered out */
@@ -104,7 +103,7 @@ public:
 	 *
 	 *  @see getNotes
 	 */
-	void setNotes(const Common::String &desc){
+	void setNotes(const Common::String &desc) {
 		_desc = desc;
 	}
 
@@ -149,7 +148,7 @@ public:
 	SdlMixerManager *getMixerManager();
 	DefaultTimerManager *getTimerManager();
 
-	void deleteRecord(const Common::String& fileName);
+	void deleteRecord(const Common::String &fileName);
 	bool checkForContinueGame();
 
 	void suspendRecording() {

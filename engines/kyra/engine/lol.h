@@ -22,16 +22,16 @@
 
 #ifdef ENABLE_LOL
 
-#ifndef KYRA_LOL_H
-#define KYRA_LOL_H
+#	ifndef KYRA_LOL_H
+#		define KYRA_LOL_H
 
-#include "kyra/engine/kyra_rpg.h"
-#include "kyra/script/script_tim.h"
-#include "kyra/script/script.h"
-#include "kyra/gui/gui_lol.h"
-#include "kyra/text/text_lol.h"
+#		include "kyra/engine/kyra_rpg.h"
+#		include "kyra/gui/gui_lol.h"
+#		include "kyra/script/script.h"
+#		include "kyra/script/script_tim.h"
+#		include "kyra/text/text_lol.h"
 
-#include "common/list.h"
+#		include "common/list.h"
 
 namespace Audio {
 class SeekableAudioStream;
@@ -258,12 +258,13 @@ struct MistOfDoomAnimData {
 };
 
 class LoLEngine : public KyraRpgEngine {
-friend class GUI_LoL;
-friend class TextDisplayer_LoL;
-friend class TIMInterpreter_LoL;
-friend class TimAnimator;
-friend class Debugger_LoL;
-friend class HistoryPlayer;
+	friend class GUI_LoL;
+	friend class TextDisplayer_LoL;
+	friend class TIMInterpreter_LoL;
+	friend class TimAnimator;
+	friend class Debugger_LoL;
+	friend class HistoryPlayer;
+
 public:
 	LoLEngine(OSystem *system, const GameFlags &flags);
 	virtual ~LoLEngine();
@@ -419,7 +420,7 @@ private:
 	void timerFadeMessageText(int timerNum);
 
 	uint8 getClock2Timer(int index) { return index < _numClock2Timers ? _clock2Timers[index] : 0; }
-	uint8 getNumClock2Timers()  { return _numClock2Timers; }
+	uint8 getNumClock2Timers() { return _numClock2Timers; }
 
 	static const uint8 _clock2Timers[];
 	static const uint8 _numClock2Timers;
@@ -809,7 +810,7 @@ private:
 
 	int _lastUsedStringBuffer;
 	char _stringBuffer[5][512]; // TODO: The original used a size of 512, it looks a bit large.
-	                            // Maybe we can someday reduce the size.
+	  // Maybe we can someday reduce the size.
 	char *getLangString(uint16 id);
 	uint8 *getTableEntry(uint8 *buffer, uint16 id);
 	void decodeSjis(const char *src, char *dst);
@@ -1319,6 +1320,7 @@ public:
 	~HistoryPlayer();
 
 	void play();
+
 private:
 	OSystem *_system;
 	LoLEngine *_vm;
@@ -1340,6 +1342,6 @@ private:
 
 } // End of namespace Kyra
 
-#endif
+#	endif
 
 #endif // ENABLE_LOL

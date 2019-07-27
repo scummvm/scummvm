@@ -38,10 +38,9 @@ void reportFileMissingError(const char *fileName);
 Common::String toUpperCP895(const Common::String &str);
 
 // Taken from ManagedSurface::clip.
-template<typename SurfaceType>
+template <typename SurfaceType>
 bool clipBounds(Common::Rect &srcBounds, Common::Rect &destBounds, SurfaceType &destSurf) {
-	if (destBounds.left >= destSurf.w || destBounds.top >= destSurf.h ||
-			destBounds.right <= 0 || destBounds.bottom <= 0)
+	if (destBounds.left >= destSurf.w || destBounds.top >= destSurf.h || destBounds.right <= 0 || destBounds.bottom <= 0)
 		return false;
 
 	// Clip the bounds if source is too big to fit into destination.
@@ -68,7 +67,7 @@ bool clipBounds(Common::Rect &srcBounds, Common::Rect &destBounds, SurfaceType &
 	return true;
 }
 
-template<typename BlitOp>
+template <typename BlitOp>
 void blit_if(const Graphics::Surface &src, const Common::Rect &srcRect, Graphics::Surface &dest, const Common::Point &destPos, BlitOp blitOp) {
 	Common::Rect srcBounds = srcRect;
 	Common::Rect destBounds(destPos.x, destPos.y, destPos.x + srcRect.width(), destPos.y + srcRect.height());
@@ -95,7 +94,7 @@ void blit_if(const Graphics::Surface &src, const Common::Rect &srcRect, Graphics
 	}
 }
 
-template<typename BlitOp>
+template <typename BlitOp>
 void blit_if(const Graphics::Surface &src, const Common::Rect &srcRect, Graphics::ManagedSurface &dest, const Common::Point &destPos, BlitOp blitOp) {
 	Common::Rect srcBounds = srcRect;
 	Common::Rect destBounds(destPos.x, destPos.y, destPos.x + srcRect.width(), destPos.y + srcRect.height());
@@ -110,12 +109,12 @@ void blit_if(const Graphics::Surface &src, const Common::Rect &srcRect, Graphics
 	blit_if(src, srcRect, destSurf, Common::Point(0, 0), blitOp);
 }
 
-template<typename BlitOp>
+template <typename BlitOp>
 void blit_if(const Graphics::Surface &src, Graphics::Surface &dest, const Common::Point &destPos, BlitOp blitOp) {
 	blit_if(src, Common::Rect(0, 0, src.w, src.h), dest, destPos, blitOp);
 }
 
-template<typename BlitOp>
+template <typename BlitOp>
 void blit_if(const Graphics::Surface &src, Graphics::ManagedSurface &dest, const Common::Point &destPos, BlitOp blitOp) {
 	blit_if(src, Common::Rect(0, 0, src.w, src.h), dest, destPos, blitOp);
 }

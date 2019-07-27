@@ -32,11 +32,13 @@ class CScraliontisTable : public CRestaurantPanHandler {
 	bool MouseMoveMsg(CMouseMoveMsg *msg);
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MaitreDDefeatedMsg(CMaitreDDefeatedMsg *msg);
+
 private:
 	bool _fieldE0;
 	int _counter;
 	uint _ticks;
 	bool _fieldEC;
+
 public:
 	CLASSDEF;
 	CScraliontisTable();

@@ -29,6 +29,7 @@ namespace Titanic {
 
 class CParcel : public CCarry {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	CLASSDEF;
 	CParcel();

@@ -22,17 +22,16 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
-
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
@@ -297,7 +296,7 @@ void sceneHandler16_drink() {
 
 void sceneHandler16_mugClick() {
 	if (abs(310 - g_fp->_aniMan->_ox) >= 1 || abs(449 - g_fp->_aniMan->_oy) >= 1
-		|| g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
+	    || g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
 		MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, 310, 449, 1, ST_MAN_RIGHT);
 
 		if (mq) {
@@ -393,7 +392,7 @@ int sceneHandler16(ExCommand *cmd) {
 	if (cmd->_messageKind != 17)
 		return 0;
 
-	switch(cmd->_messageNum) {
+	switch (cmd->_messageNum) {
 	case MSG_SC16_LAUGHSOUND:
 		sceneHandler16_laughSound();
 		break;
@@ -475,7 +474,6 @@ int sceneHandler16(ExCommand *cmd) {
 
 		g_fp->_behaviorManager->updateBehaviors();
 		g_fp->startSceneTrack();
-
 	}
 
 	return 0;

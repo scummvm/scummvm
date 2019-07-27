@@ -27,9 +27,9 @@
 namespace BladeRunner {
 
 MIXArchive::MIXArchive() {
-	_isTLK      = false;
+	_isTLK = false;
 	_entryCount = 0;
-	_size       = 0;
+	_size = 0;
 }
 
 MIXArchive::~MIXArchive() {
@@ -51,12 +51,11 @@ bool MIXArchive::open(const Common::String &filename) {
 	_isTLK = filename.hasSuffix(".TLK");
 
 	_entryCount = _fd.readUint16LE();
-	_size       = _fd.readUint32LE();
-
+	_size = _fd.readUint32LE();
 
 	_entries.resize(_entryCount);
 	for (uint16 i = 0; i != _entryCount; ++i) {
-		_entries[i].hash   = _fd.readUint32LE();
+		_entries[i].hash = _fd.readUint32LE();
 		_entries[i].offset = _fd.readUint32LE();
 		_entries[i].length = _fd.readUint32LE();
 
@@ -97,9 +96,9 @@ int32 MIXArchive::getHash(const Common::String &name) {
 	uint32 id = 0;
 	for (int i = 0; i < 12 && buffer[i]; i += 4) {
 		uint32 t = (uint32)buffer[i + 3] << 24
-		         | (uint32)buffer[i + 2] << 16
-		         | (uint32)buffer[i + 1] <<  8
-		         | (uint32)buffer[i + 0];
+		  | (uint32)buffer[i + 2] << 16
+		  | (uint32)buffer[i + 1] << 8
+		  | (uint32)buffer[i + 0];
 
 		id = ROL(id) + t;
 	}
@@ -113,13 +112,9 @@ static uint32 tlk_id(const Common::String &name) {
 	for (uint i = 0; i != name.size() && i < 12u; ++i)
 		buffer[i] = (char)toupper(name[i]);
 
-	int actor_id  =   10 * (buffer[0] - '0') +
-	                       (buffer[1] - '0');
+	int actor_id = 10 * (buffer[0] - '0') + (buffer[1] - '0');
 
-	int speech_id = 1000 * (buffer[3] - '0') +
-	                 100 * (buffer[4] - '0') +
-	                  10 * (buffer[5] - '0') +
-	                       (buffer[6] - '0');
+	int speech_id = 1000 * (buffer[3] - '0') + 100 * (buffer[4] - '0') + 10 * (buffer[5] - '0') + (buffer[6] - '0');
 
 	return 10000 * actor_id + speech_id;
 }
@@ -157,7 +152,7 @@ Common::SeekableReadStream *MIXArchive::createReadStreamForMember(const Common::
 	}
 
 	uint32 start = _entries[i].offset + 6 + 12 * _entryCount;
-	uint32 end   = _entries[i].length + start;
+	uint32 end = _entries[i].length + start;
 
 	return new Common::SafeSeekableSubReadStream(&_fd, start, end, DisposeAfterUse::NO);
 }

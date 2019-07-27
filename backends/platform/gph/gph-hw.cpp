@@ -32,24 +32,24 @@
 
 #include <fcntl.h>
 #include <signal.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <sys/mman.h>
 #include <sys/ioctl.h>
+#include <sys/mman.h>
 #include <sys/soundcard.h>
 #include <unistd.h>
 
 namespace WIZ_HW {
 
 enum {
-	VOLUME_NOCHG            = 0,
-	VOLUME_DOWN             = 1,
-	VOLUME_UP               = 2,
-	VOLUME_CHANGE_RATE      = 8,
-	VOLUME_MIN              = 0,
-	VOLUME_INITIAL          = 60,
-	VOLUME_MAX              = 100
+	VOLUME_NOCHG = 0,
+	VOLUME_DOWN = 1,
+	VOLUME_UP = 2,
+	VOLUME_CHANGE_RATE = 8,
+	VOLUME_MIN = 0,
+	VOLUME_INITIAL = 60,
+	VOLUME_MAX = 100
 };
 
 int volumeLevel = VOLUME_INITIAL;
@@ -62,15 +62,21 @@ void deviceDeinit() {
 
 void mixerMoveVolume(int direction) {
 	if (volumeLevel <= 10) {
-		if (direction == VOLUME_UP)   volumeLevel += VOLUME_CHANGE_RATE / 2;
-		if (direction == VOLUME_DOWN) volumeLevel -= VOLUME_CHANGE_RATE / 2;
+		if (direction == VOLUME_UP)
+			volumeLevel += VOLUME_CHANGE_RATE / 2;
+		if (direction == VOLUME_DOWN)
+			volumeLevel -= VOLUME_CHANGE_RATE / 2;
 	} else {
-		if (direction == VOLUME_UP)   volumeLevel += VOLUME_CHANGE_RATE;
-		if (direction == VOLUME_DOWN) volumeLevel -= VOLUME_CHANGE_RATE;
+		if (direction == VOLUME_UP)
+			volumeLevel += VOLUME_CHANGE_RATE;
+		if (direction == VOLUME_DOWN)
+			volumeLevel -= VOLUME_CHANGE_RATE;
 	}
 
-	if (volumeLevel < VOLUME_MIN) volumeLevel = VOLUME_MIN;
-	if (volumeLevel > VOLUME_MAX) volumeLevel = VOLUME_MAX;
+	if (volumeLevel < VOLUME_MIN)
+		volumeLevel = VOLUME_MIN;
+	if (volumeLevel > VOLUME_MAX)
+		volumeLevel = VOLUME_MAX;
 
 	unsigned long soundDev = open("/dev/mixer", O_RDWR);
 
@@ -87,9 +93,9 @@ namespace GPH {
 
 enum {
 	/* Touchscreen TapMode */
-	TAPMODE_LEFT        = 0,
-	TAPMODE_RIGHT       = 1,
-	TAPMODE_HOVER       = 2
+	TAPMODE_LEFT = 0,
+	TAPMODE_RIGHT = 1,
+	TAPMODE_HOVER = 2
 };
 
 int tapmodeLevel = TAPMODE_LEFT;

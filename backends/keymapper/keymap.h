@@ -27,21 +27,22 @@
 
 #ifdef ENABLE_KEYMAPPER
 
-#include "common/config-manager.h"
-#include "common/func.h"
-#include "common/hashmap.h"
-#include "common/keyboard.h"
-#include "common/list.h"
-#include "backends/keymapper/action.h"
-#include "backends/keymapper/hardware-input.h"
+#	include "backends/keymapper/action.h"
+#	include "backends/keymapper/hardware-input.h"
+#	include "common/config-manager.h"
+#	include "common/func.h"
+#	include "common/hashmap.h"
+#	include "common/keyboard.h"
+#	include "common/list.h"
 
 namespace Common {
 
 /**
  * Hash function for KeyState
  */
-template<> struct Hash<KeyState>
-	: public UnaryFunction<KeyState, uint> {
+template <>
+struct Hash<KeyState>
+  : public UnaryFunction<KeyState, uint> {
 
 	uint operator()(const KeyState &val) const {
 		return (uint)val.keycode | ((uint)val.flags << 24);
@@ -50,8 +51,9 @@ template<> struct Hash<KeyState>
 
 class Keymap {
 public:
-	Keymap(const String& name) : _name(name) {}
-	Keymap(const Keymap& km);
+	Keymap(const String &name)
+	  : _name(name) {}
+	Keymap(const Keymap &km);
 	~Keymap();
 
 public:
@@ -65,14 +67,14 @@ public:
 	/**
 	 * Get the list of all the Actions contained in this Keymap
 	 */
-	List<Action *>& getActions() { return _actions; }
+	List<Action *> &getActions() { return _actions; }
 
 	/**
 	 * Find the Action that a key is mapped to
 	 * @param key	the key that is mapped to the required Action
 	 * @return		a pointer to the Action or 0 if no
 	 */
-	Action *getMappedAction(const KeyState& ks) const;
+	Action *getMappedAction(const KeyState &ks) const;
 
 	/**
 	 * Find the Action that a generic input is mapped to
@@ -102,7 +104,7 @@ public:
 	 */
 	bool isComplete(const HardwareInputSet *hwInputs);
 
-	const String& getName() { return _name; }
+	const String &getName() { return _name; }
 
 private:
 	friend struct Action;
@@ -137,9 +139,7 @@ private:
 	HashMap<KeyState, Action *> _keymap;
 	HashMap<HardwareInputCode, Action *> _nonkeymap;
 	ConfigManager::Domain *_configDomain;
-
 };
-
 
 } // End of namespace Common
 

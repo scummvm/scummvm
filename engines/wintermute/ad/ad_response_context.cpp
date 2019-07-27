@@ -34,18 +34,17 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(AdResponseContext, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdResponseContext::AdResponseContext(BaseGame *inGame) : BaseClass(inGame) {
+AdResponseContext::AdResponseContext(BaseGame *inGame)
+  : BaseClass(inGame) {
 	_id = 0;
 	_context = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 AdResponseContext::~AdResponseContext() {
 	delete[] _context;
 	_context = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdResponseContext::persist(BasePersistenceManager *persistMgr) {
@@ -61,7 +60,7 @@ void AdResponseContext::setContext(const char *context) {
 	delete[] _context;
 	_context = nullptr;
 	if (context) {
-		_context = new char [strlen(context) + 1];
+		_context = new char[strlen(context) + 1];
 		if (_context) {
 			strcpy(_context, context);
 		}

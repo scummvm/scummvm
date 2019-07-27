@@ -80,14 +80,14 @@ void MadsPack::initialize(Common::SeekableReadStream *stream) {
 			break;
 
 		case COMPRESS_FAB: {
-				// Decompress the entry
-				_items[i]._data = new byte[_items[i]._size];
+			// Decompress the entry
+			_items[i]._data = new byte[_items[i]._size];
 
-				FabDecompressor fab;
-				fab.decompress(sourceData, _items[i]._compressedSize, _items[i]._data, _items[i]._size);
-				delete[] sourceData;
-				break;
-			}
+			FabDecompressor fab;
+			fab.decompress(sourceData, _items[i]._compressedSize, _items[i]._data, _items[i]._size);
+			delete[] sourceData;
+			break;
+		}
 
 		default:
 			error("Unknown compression type encountered");

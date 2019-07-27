@@ -29,20 +29,20 @@ static inline int OBJECT_V0(int id, byte type) {
 	assert(id < 256);
 	return (type << 8 | id);
 }
-#define OBJECT_V0_ID(obj)	(obj & 0xFF)
-#define OBJECT_V0_TYPE(obj)	((obj >> 8) & 0xFF)
+#define OBJECT_V0_ID(obj) (obj & 0xFF)
+#define OBJECT_V0_TYPE(obj) ((obj >> 8) & 0xFF)
 
 enum ObjectV0Type {
-	kObjectV0TypeFG = 0,    // foreground object
-	                        //   - with owner/state, might (but has not to) be pickupable
-	                        //     -> with entry in _objectOwner/StateTable
-	                        //     -> all objects in _inventory have this type
-	                        //   - image can be exchanged (background overlay)
-	kObjectV0TypeBG = 1,    // background object
-	                        //   - without owner/state, not pickupable  (room only)
-	                        //     -> without entry in _objectOwner/StateTable
-	                        //   - image cannot be exchanged (part of background image)
-	kObjectV0TypeActor = 2  // object is an actor
+	kObjectV0TypeFG = 0, // foreground object
+	//   - with owner/state, might (but has not to) be pickupable
+	//     -> with entry in _objectOwner/StateTable
+	//     -> all objects in _inventory have this type
+	//   - image can be exchanged (background overlay)
+	kObjectV0TypeBG = 1, // background object
+	//   - without owner/state, not pickupable  (room only)
+	//     -> without entry in _objectOwner/StateTable
+	//   - image cannot be exchanged (part of background image)
+	kObjectV0TypeActor = 2 // object is an actor
 };
 
 enum ObjectClass {
@@ -51,7 +51,7 @@ enum ObjectClass {
 	kObjectClassIgnoreBoxes = 22,
 	kObjectClassYFlip = 29,
 	kObjectClassXFlip = 30,
-	kObjectClassPlayer = 31,	// Actor is controlled by the player
+	kObjectClassPlayer = 31, // Actor is controlled by the player
 	kObjectClassUntouchable = 32
 };
 
@@ -86,7 +86,7 @@ struct ObjectData {
 	byte flags;
 };
 
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 struct RoomHeader {
 	union {
@@ -139,7 +139,6 @@ struct CodeHeader {
 			byte parent;
 			byte parentstate;
 		} v7;
-
 	};
 } PACKED_STRUCT;
 
@@ -177,14 +176,14 @@ struct ImageHeader { /* file format */
 		struct {
 			char name[32];
 			uint32 unk_1[2];
-			uint32 version;		// 801 in COMI, 800 in the COMI demo
+			uint32 version; // 801 in COMI, 800 in the COMI demo
 			uint32 image_count;
 			uint32 x_pos;
 			uint32 y_pos;
 			uint32 width;
 			uint32 height;
 			uint32 actordir;
-			uint32 flags;	// This field is missing in the COMI demo (version == 800) !
+			uint32 flags; // This field is missing in the COMI demo (version == 800) !
 			struct {
 				int32 x, y;
 			} hotspot[15];
@@ -192,7 +191,7 @@ struct ImageHeader { /* file format */
 	};
 } PACKED_STRUCT;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h" // END STRUCT PACKING
 
 struct FindObjectInRoom {
 	const CodeHeader *cdhd;
@@ -208,6 +207,5 @@ enum FindObjectWhat {
 };
 
 } // End of namespace Scumm
-
 
 #endif

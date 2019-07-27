@@ -31,19 +31,20 @@ FIRResampler::Constants::Constants(const unsigned int upsampleFactor, const doub
 	phaseIncrement = downsampleFactor;
 	unsigned int minDelayLineLength = static_cast<unsigned int>(ceil(double(kernelLength) / upsampleFactor));
 	unsigned int delayLineLength = 2;
-	while (delayLineLength < minDelayLineLength) delayLineLength <<= 1;
+	while (delayLineLength < minDelayLineLength)
+		delayLineLength <<= 1;
 	delayLineMask = delayLineLength - 1;
 	ringBuffer = new FloatSample[delayLineLength][FIR_INTERPOLATOR_CHANNEL_COUNT];
 	FloatSample *s = *ringBuffer;
 	FloatSample *e = ringBuffer[delayLineLength];
-	while (s < e) *(s++) = 0;
+	while (s < e)
+		*(s++) = 0;
 }
 
-FIRResampler::FIRResampler(const unsigned int upsampleFactor, const double downsampleFactor, const FIRCoefficient kernel[], const unsigned int kernelLength) :
-	constants(upsampleFactor, downsampleFactor, kernel, kernelLength),
-	ringBufferPosition(0),
-	phase(constants.numberOfPhases)
-{}
+FIRResampler::FIRResampler(const unsigned int upsampleFactor, const double downsampleFactor, const FIRCoefficient kernel[], const unsigned int kernelLength)
+  : constants(upsampleFactor, downsampleFactor, kernel, kernelLength)
+  , ringBufferPosition(0)
+  , phase(constants.numberOfPhases) {}
 
 FIRResampler::~FIRResampler() {
 	delete[] constants.ringBuffer;
@@ -53,7 +54,8 @@ FIRResampler::~FIRResampler() {
 void FIRResampler::process(const FloatSample *&inSamples, unsigned int &inLength, FloatSample *&outSamples, unsigned int &outLength) {
 	while (outLength > 0) {
 		while (needNextInSample()) {
-			if (inLength == 0) return;
+			if (inLength == 0)
+				return;
 			addInSamples(inSamples);
 			--inLength;
 		}

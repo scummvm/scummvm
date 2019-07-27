@@ -29,7 +29,6 @@
 #ifndef WINTERMUTE_UITEXT_H
 #define WINTERMUTE_UITEXT_H
 
-
 #include "engines/wintermute/ui/ui_object.h"
 
 namespace Wintermute {
@@ -39,6 +38,7 @@ private:
 	bool sizeToFit();
 	TTextAlign _textAlign;
 	TVerticalAlign _verticalAlign;
+
 public:
 	virtual bool display(int offsetX, int offsetY);
 	DECLARE_PERSISTENT(UIText, UIObject)

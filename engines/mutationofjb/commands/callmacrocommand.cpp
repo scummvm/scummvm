@@ -21,8 +21,8 @@
  */
 
 #include "mutationofjb/commands/callmacrocommand.h"
-#include "mutationofjb/script.h"
 #include "mutationofjb/game.h"
+#include "mutationofjb/script.h"
 
 /** @file
  * "_" <name>
@@ -50,7 +50,6 @@ void CallMacroCommandParser::transition(ScriptParseContext &, Command *oldComman
 
 	static_cast<CallMacroCommand *>(oldCommand)->setReturnCommand(newCommand);
 }
-
 
 void CallMacroCommand::setReturnCommand(Command *cmd) {
 	_returnCommand = cmd;
@@ -80,4 +79,3 @@ Common::String CallMacroCommand::debugString() const {
 }
 
 }
-

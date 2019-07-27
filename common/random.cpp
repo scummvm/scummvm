@@ -24,7 +24,6 @@
 #include "common/system.h"
 #include "gui/EventRecorder.h"
 
-
 namespace Common {
 
 RandomSource::RandomSource(const String &name) {

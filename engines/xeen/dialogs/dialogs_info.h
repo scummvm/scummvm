@@ -32,11 +32,13 @@ class InfoDialog : public ButtonContainer {
 private:
 	Common::StringArray _lines;
 
-	InfoDialog(XeenEngine *vm) : ButtonContainer(vm) {}
+	InfoDialog(XeenEngine *vm)
+	  : ButtonContainer(vm) {}
 
 	void execute();
 
 	void protectionText();
+
 public:
 	static void show(XeenEngine *vm);
 };

@@ -41,8 +41,10 @@ Video::AVIDecoder::AVIAudioTrack *ZorkAVIDecoder::createAudioTrack(Video::AVIDec
 	return new ZorkAVIAudioTrack(sHeader, wvInfo, getSoundType());
 }
 
-ZorkAVIDecoder::ZorkAVIAudioTrack::ZorkAVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType) :
-		Video::AVIDecoder::AVIAudioTrack(streamHeader, waveFormat, soundType), _queueStream(0), _decoder(waveFormat.channels == 2) {
+ZorkAVIDecoder::ZorkAVIAudioTrack::ZorkAVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType)
+  : Video::AVIDecoder::AVIAudioTrack(streamHeader, waveFormat, soundType)
+  , _queueStream(0)
+  , _decoder(waveFormat.channels == 2) {
 }
 
 void ZorkAVIDecoder::ZorkAVIAudioTrack::createAudioStream() {

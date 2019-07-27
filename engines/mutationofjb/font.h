@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_FONT_H
 #define MUTATIONOFJB_FONT_H
 
-#include "common/scummsys.h"
 #include "common/hashmap.h"
+#include "common/scummsys.h"
 #include "graphics/font.h"
 #include "graphics/managed_surface.h"
 #include "graphics/surface.h"
@@ -37,6 +37,7 @@ namespace MutationOfJB {
 
 class Font : public Graphics::Font {
 	friend class FontBlitOperation;
+
 public:
 	Font(const Common::String &fileName, int horizSpacing, int lineHeight);
 

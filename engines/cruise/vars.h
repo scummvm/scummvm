@@ -48,8 +48,8 @@ struct menuElementStruct {
 	menuElementSubStruct *ptrSub;
 };
 
-typedef int32(*opcodeTypeFunction)();
-typedef int16(*opcodeFunction)();
+typedef int32 (*opcodeTypeFunction)();
+typedef int16 (*opcodeFunction)();
 
 extern uint8 *_systemFNT;
 extern int16 fontFileIndex;
@@ -87,10 +87,10 @@ struct dataFileName {
 };
 
 struct setHeaderEntry {
-	int32 offset;		// offset ptr
+	int32 offset; // offset ptr
 	int16 width;
 	int16 height;
-	int16 type;		// resource type, ie. sprites 0,1,4,5 and 8
+	int16 type; // resource type, ie. sprites 0,1,4,5 and 8
 	int16 transparency;
 	int16 hotspotY;
 	int16 hotspotX;
@@ -108,16 +108,16 @@ struct fileEntry {
 	int32 offset;
 	int32 size;
 	int32 extSize;
-	int32 unk3;		// unused
+	int32 unk3; // unused
 };
 
 struct dataFileEntrySub {
 	uint8 *ptr;
-	int16 index;		// sprite index
+	int16 index; // sprite index
 	char name[13];
-	int16 transparency;	// sprite transparency
+	int16 transparency; // sprite transparency
 	uint8 *ptrMask;
-	uint8 resourceType;	// sprite and image type 2,4,8 , fnt = 7, spl = 6
+	uint8 resourceType; // sprite and image type 2,4,8 , fnt = 7, spl = 6
 	int16 compression;
 };
 
@@ -155,7 +155,7 @@ extern char nextOverlay[38];
 
 extern int16 currentActiveMenu;
 extern int16 autoMsg;
-extern menuElementSubStruct* linkedRelation;
+extern menuElementSubStruct *linkedRelation;
 extern bool userWait;
 extern int16 autoTrack;
 
@@ -232,28 +232,28 @@ extern int16 var47;
 extern int16 var48;
 extern int16 flagCt;
 
-extern uint8 newPal[NBCOLORS*3];
-extern uint8 workpal[NBCOLORS*3];
-extern uint8 palScreen[NBSCREENS][NBCOLORS*3];
+extern uint8 newPal[NBCOLORS * 3];
+extern uint8 workpal[NBCOLORS * 3];
+extern uint8 palScreen[NBSCREENS][NBCOLORS * 3];
 
 //extern systemStringsStruct systemStrings;
 
 extern char currentCtpName[40];
 
 extern int16 saveVar1;
-extern uint8 saveVar2[97];	// recheck size
+extern uint8 saveVar2[97]; // recheck size
 
-extern int16 numberOfWalkboxes;	// saveVar3
-extern int16 walkboxColor[15];	// saveVar4     // Type: 0x00 - non walkable, 0x01 - walkable, 0x02 - exit zone
-extern int16 walkboxState[15];	// saveVar5 // walkbox can change its type: 0x00 - not changeable, 0x01 - changeable
+extern int16 numberOfWalkboxes; // saveVar3
+extern int16 walkboxColor[15]; // saveVar4     // Type: 0x00 - non walkable, 0x01 - walkable, 0x02 - exit zone
+extern int16 walkboxState[15]; // saveVar5 // walkbox can change its type: 0x00 - not changeable, 0x01 - changeable
 // Assumption: To change the type: walkboxColor[i] -= walkboxChane[i] and vice versa
 extern uint8 lastAni[16];
 
 extern int32 loadFileVar1;
 
 extern int16 loadCtFromSave;
-extern int16 ctp_routeCoordCount;	// ctpVar2  // number of path-finding coordinates
-extern int16 ctp_routeCoords[20][2];	// ctpVar3      // path-finding coordinates array
+extern int16 ctp_routeCoordCount; // ctpVar2  // number of path-finding coordinates
+extern int16 ctp_routeCoords[20][2]; // ctpVar3      // path-finding coordinates array
 
 /* ctp_routeCoords:
 
@@ -261,7 +261,7 @@ extern int16 ctp_routeCoords[20][2];	// ctpVar3      // path-finding coordinates
 	coordinate information with x (2 bytes) and y (2 bytes)
 */
 
-extern int16 ctp_routes[20][10];	// path-finding line information
+extern int16 ctp_routes[20][10]; // path-finding line information
 
 /* ctp_routes:
 
@@ -273,9 +273,9 @@ extern int16 ctp_routes[20][10];	// path-finding line information
    for the 20 * i slice the root x,y is routeCoords[i], routeCoords[i+2]
    the unused rest of the slice if filled up with 0xFF
 */
-extern int16 ctp_walkboxTable[15][40];	// ctpVar5      // walkboxes coordinates and lines
+extern int16 ctp_walkboxTable[15][40]; // ctpVar5      // walkboxes coordinates and lines
 extern int16 walkboxColorIndex[16];
-extern int16 walkboxZoom[15];	// ctpVar7  // scaling information for walkboxes
+extern int16 walkboxZoom[15]; // ctpVar7  // scaling information for walkboxes
 extern int16 distanceTable[20][10];
 
 extern int16 flagSpeed;

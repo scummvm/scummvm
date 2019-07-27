@@ -20,26 +20,26 @@
  *
  */
 
-#include "common/system.h"
 #include "common/debug.h"
 #include "common/error.h"
 #include "common/file.h"
-#include "common/stream.h"
 #include "common/memstream.h"
+#include "common/stream.h"
+#include "common/system.h"
 
 #include "adl/adl_v5.h"
+#include "adl/disk.h"
 #include "adl/display_a2.h"
 #include "adl/graphics.h"
-#include "adl/disk.h"
 
 namespace Adl {
 
 class HiRes6Engine : public AdlEngine_v5 {
 public:
-	HiRes6Engine(OSystem *syst, const AdlGameDescription *gd) :
-			AdlEngine_v5(syst, gd),
-			_currVerb(0),
-			_currNoun(0) {
+	HiRes6Engine(OSystem *syst, const AdlGameDescription *gd)
+	  : AdlEngine_v5(syst, gd)
+	  , _currVerb(0)
+	  , _currNoun(0) {
 	}
 
 private:
@@ -157,7 +157,6 @@ bool HiRes6Engine::canSaveGameStateCurrently() {
 
 	return retval;
 }
-
 
 #define SECTORS_PER_TRACK 16
 #define BYTES_PER_SECTOR 256
@@ -360,7 +359,7 @@ Common::String HiRes6Engine::formatNounError(const Common::String &verb, const C
 
 	const char spaceChar = _display->asciiToNative(' ');
 
-	for (uint  i = 35; i > 31; --i)
+	for (uint i = 35; i > 31; --i)
 		err.setChar(spaceChar, i);
 
 	uint i = 24;

@@ -223,13 +223,13 @@ bool InputDeviceManager::notifyEvent(const Common::Event &event) {
 			break;
 		case Common::KEYCODE_s:
 			// We support meta where available and control elsewhere
-			if (event.kbd.flags & (Common::KBD_CTRL|Common::KBD_META))
+			if (event.kbd.flags & (Common::KBD_CTRL | Common::KBD_META))
 				((PegasusEngine *)g_engine)->requestSave();
 			break;
 		case Common::KEYCODE_o: // o for open (original)
 		case Common::KEYCODE_l: // l for load (ScummVM terminology)
 			// We support meta where available and control elsewhere
-			if (event.kbd.flags & (Common::KBD_CTRL|Common::KBD_META))
+			if (event.kbd.flags & (Common::KBD_CTRL | Common::KBD_META))
 				((PegasusEngine *)g_engine)->requestLoad();
 			break;
 		default:

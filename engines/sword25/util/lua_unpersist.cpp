@@ -43,7 +43,6 @@
  * for Mobile Lua (http://luaos.net/pages/mobile-lua.php)
  */
 
-
 #include "sword25/util/lua_persistence.h"
 
 #include "sword25/util/double_serialization.h"
@@ -51,11 +50,10 @@
 
 #include "common/stream.h"
 
-#include "lua/lobject.h"
-#include "lua/lstate.h"
 #include "lua/lgc.h"
+#include "lua/lobject.h"
 #include "lua/lopcodes.h"
-
+#include "lua/lstate.h"
 
 namespace Lua {
 
@@ -76,7 +74,6 @@ static void unpersistProto(UnSerializationInfo *info, int index);
 static void unpersistUpValue(UnSerializationInfo *info, int index);
 static void unpersistUserData(UnSerializationInfo *info, int index);
 static void unpersistPermanent(UnSerializationInfo *info, int index);
-
 
 void unpersistLua(lua_State *luaState, Common::ReadStream *readStream) {
 	UnSerializationInfo info;
@@ -177,10 +174,8 @@ static void unpersist(UnSerializationInfo *info) {
 			assert(0);
 		}
 
-
 		// >>>>> permTbl indexTbl ...... obj
-		assert(lua_type(info->luaState, -1) == type ||
-		       type == PERMANENT_TYPE ||
+		assert(lua_type(info->luaState, -1) == type || type == PERMANENT_TYPE ||
 		       // Remember, upvalues get a special dispensation, as described in boxUpValue
 		       (lua_type(info->luaState, -1) == LUA_TFUNCTION && type == LUA_TUPVAL));
 
@@ -293,7 +288,6 @@ static void unserializeLiteralTable(UnSerializationInfo *info, int index) {
 		// >>>>> permTbl indexTbl ...... tbl
 	}
 	// >>>>> permTbl indexTbl ...... tbl
-
 
 	while (1) {
 		// >>>>> permTbl indexTbl ...... tbl
@@ -436,7 +430,6 @@ void unpersistThread(UnSerializationInfo *info, int index) {
 
 	// Hereafter, stacks refer to L1
 
-
 	// Now, deserialize the CallInfo stack
 
 	uint32 numFrames = info->readStream->readUint32LE();
@@ -473,7 +466,6 @@ void unpersistThread(UnSerializationInfo *info, int index) {
 	L2->status = info->readStream->readByte();
 	uint32 stackbase = info->readStream->readUint32LE();
 	uint32 stacktop = info->readStream->readUint32LE();
-
 
 	L2->errfunc = info->readStream->readUint32LE();
 
@@ -586,12 +578,10 @@ void unpersistProto(UnSerializationInfo *info, int index) {
 	}
 	// >>>>> permTbl indexTbl ...... proto
 
-
 	// Read in code
 	p->sizecode = info->readStream->readSint32LE();
 	lua_reallocvector(info->luaState, p->code, 1, p->sizecode, Instruction);
 	info->readStream->read(p->code, sizeof(Instruction) * p->sizecode);
-
 
 	/* Read in upvalue names */
 	p->sizeupvalues = info->readStream->readSint32LE();
@@ -642,7 +632,6 @@ void unpersistProto(UnSerializationInfo *info, int index) {
 		lua_reallocvector(info->luaState, p->lineinfo, 0, p->sizelineinfo, int);
 		info->readStream->read(p->lineinfo, sizeof(int) * p->sizelineinfo);
 	}
-
 
 	/* Read in linedefined and lastlinedefined */
 	p->linedefined = info->readStream->readSint32LE();

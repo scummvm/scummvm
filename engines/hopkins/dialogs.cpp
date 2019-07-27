@@ -29,10 +29,10 @@
 #include "hopkins/hopkins.h"
 #include "hopkins/sound.h"
 
-#include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/scummsys.h"
 #include "common/util.h"
 
 namespace Hopkins {
@@ -263,8 +263,8 @@ void DialogsManager::showOptionsDialog() {
 			//if (mousePos.x >= _vm->_graphicsManager->ofscroll + 348 && mousePos.y > 248 && mousePos.x <= _vm->_graphicsManager->ofscroll + 394 && mousePos.y <= 273)
 			//	_vm->_globals->_speed = 2;
 
-			if (   mousePos.x < scrollOffset + 165 || mousePos.x > scrollOffset + 496
-				|| mousePos.y < 107 || mousePos.y > 318)
+			if (mousePos.x < scrollOffset + 165 || mousePos.x > scrollOffset + 496
+			    || mousePos.y < 107 || mousePos.y > 318)
 				doneFlag = true;
 		}
 
@@ -325,7 +325,7 @@ void DialogsManager::showOptionsDialog() {
 	} while (!doneFlag);
 
 	_vm->_graphicsMan->copySurface(_vm->_graphicsMan->_backBuffer, scrollOffset + 164,
-		107, 335, 215, _vm->_graphicsMan->_frontBuffer, scrollOffset + 164, 107);
+	                               107, 335, 215, _vm->_graphicsMan->_frontBuffer, scrollOffset + 164, 107);
 	_vm->_graphicsMan->addDirtyRect(scrollOffset + 164, 107, scrollOffset + 498, 320);
 
 	_vm->_globals->_optionDialogSpr = _vm->_globals->freeMemory(_vm->_globals->_optionDialogSpr);
@@ -400,7 +400,7 @@ void DialogsManager::showInventory() {
 				if (inventIdx && inventCount <= 29) {
 					byte *obj = _vm->_objectsMan->loadObjectFromFile(inventIdx, false);
 					_vm->_graphicsMan->restoreSurfaceRect(_vm->_graphicsMan->_frontBuffer, obj, _inventX + curPosX + 6,
-						curPosY + 120, _vm->_objectsMan->getObjectWidth(), _vm->_objectsMan->getObjectHeight());
+					                                      curPosY + 120, _vm->_objectsMan->getObjectWidth(), _vm->_objectsMan->getObjectHeight());
 					_vm->_globals->freeMemory(obj);
 				}
 				curPosX += 54;
@@ -511,7 +511,7 @@ void DialogsManager::inventAnim() {
 
 	if (_vm->_objectsMan->_eraseVisibleCounter && !_vm->_objectsMan->_visibleFl) {
 		_vm->_graphicsMan->copySurface(_vm->_graphicsMan->_backBuffer, _oldInventX, 27, 48, 38,
-			_vm->_graphicsMan->_frontBuffer, _oldInventX, 27);
+		                               _vm->_graphicsMan->_frontBuffer, _oldInventX, 27);
 		_vm->_graphicsMan->addDirtyRect(_oldInventX, 27, _oldInventX + 48, 65);
 		--_vm->_objectsMan->_eraseVisibleCounter;
 	}
@@ -520,7 +520,7 @@ void DialogsManager::inventAnim() {
 		if (_oldInventX <= 1)
 			_oldInventX = 2;
 		_vm->_graphicsMan->copySurface(_vm->_graphicsMan->_backBuffer, _oldInventX, 27, 48, 38,
-			_vm->_graphicsMan->_frontBuffer, _oldInventX, 27);
+		                               _vm->_graphicsMan->_frontBuffer, _oldInventX, 27);
 
 		_vm->_graphicsMan->addDirtyRect(_oldInventX, 27, _oldInventX + 48, 65);
 		int newOffset = _vm->_graphicsMan->_scrollOffset + 2;

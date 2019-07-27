@@ -20,22 +20,30 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "mads/scene.h"
-#include "mads/compression.h"
-#include "mads/mads.h"
+#include "common/scummsys.h"
 #include "mads/audio.h"
+#include "mads/compression.h"
 #include "mads/dragonsphere/dragonsphere_scenes.h"
+#include "mads/mads.h"
 #include "mads/nebular/nebular_scenes.h"
 #include "mads/phantom/phantom_scenes.h"
 
 namespace MADS {
 
 Scene::Scene(MADSEngine *vm)
-	: _vm(vm), _action(_vm), _depthSurface(),
-	  _dirtyAreas(_vm),  _dynamicHotspots(vm), _hotspots(vm),
-	  _kernelMessages(vm), _sequences(vm), _sprites(vm), _spriteSlots(vm),
-	  _textDisplay(vm), _userInterface(vm) {
+  : _vm(vm)
+  , _action(_vm)
+  , _depthSurface()
+  , _dirtyAreas(_vm)
+  , _dynamicHotspots(vm)
+  , _hotspots(vm)
+  , _kernelMessages(vm)
+  , _sequences(vm)
+  , _sprites(vm)
+  , _spriteSlots(vm)
+  , _textDisplay(vm)
+  , _userInterface(vm) {
 	_priorSceneId = 0;
 	_nextSceneId = 0;
 	_currentSceneId = 0;
@@ -119,7 +127,7 @@ void Scene::clearSequenceList() {
 void Scene::clearMessageList() {
 	_kernelMessages.clear();
 	_talkFont = FONT_CONVERSATION;
-	_textSpacing  = -1;
+	_textSpacing = -1;
 }
 
 void Scene::loadSceneLogic() {
@@ -162,7 +170,7 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 
 	_sceneInfo = SceneInfo::init(_vm);
 	_sceneInfo->load(_currentSceneId, _variant, Common::String(), flags,
-		_depthSurface, _backgroundSurface);
+	                 _depthSurface, _backgroundSurface);
 
 	// Initialize palette animation for the scene
 	initPaletteAnimation(_sceneInfo->_paletteCycles, false);
@@ -236,7 +244,7 @@ void Scene::loadVocab() {
 		InventoryObject &io = _vm->_game->_objects[objIndex];
 		addActiveVocab(io._descId);
 
-		for (int vocabIndex = 0; vocabIndex <io._vocabCount; ++vocabIndex) {
+		for (int vocabIndex = 0; vocabIndex < io._vocabCount; ++vocabIndex) {
 			addActiveVocab(io._vocabList[vocabIndex]._vocabId);
 		}
 	}
@@ -258,7 +266,8 @@ void Scene::loadVocabStrings() {
 
 	for (;;) {
 		char c = (char)f.readByte();
-		if (f.eos()) break;
+		if (f.eos())
+			break;
 
 		if (c == '\0') {
 			_vocabStrings.push_back(msg);
@@ -287,7 +296,7 @@ void Scene::initPaletteAnimation(Common::Array<PaletteCycle> &palCycles, bool an
 
 	// Save the initial starting palette
 	Common::copy(&_vm->_palette->_mainPalette[0], &_vm->_palette->_mainPalette[PALETTE_SIZE],
-		&_vm->_palette->_cyclingPalette[0]);
+	             &_vm->_palette->_cyclingPalette[0]);
 
 	// Calculate total
 	_totalCycleColors = 0;
@@ -363,7 +372,7 @@ void Scene::loop() {
 		_vm->_events->waitForNextFrame();
 
 		if (_vm->_dialogs->_pendingDialog != DIALOG_NONE && !_vm->_game->_trigger
-			&& _vm->_game->_player._stepEnabled)
+		    && _vm->_game->_player._stepEnabled)
 			_reloadSceneFlag = true;
 
 		if (_vm->_game->_winStatus)
@@ -386,13 +395,11 @@ void Scene::doFrame() {
 			_dynamicHotspots.refresh();
 
 		// Check all on-screen visual objects
-		_vm->_game->_screenObjects.check(player._stepEnabled && !player._needToWalk &&
-				!_vm->_game->_fx);
+		_vm->_game->_screenObjects.check(player._stepEnabled && !player._needToWalk && !_vm->_game->_fx);
 	}
 
 	_vm->_game->camUpdate();
-	if (_action._selectedAction && player._stepEnabled && !player._needToWalk &&
-			!_vm->_game->_trigger && !player._trigger) {
+	if (_action._selectedAction && player._stepEnabled && !player._needToWalk && !_vm->_game->_trigger && !player._trigger) {
 		_action.startAction();
 		if (_action._activeAction._verbId == Nebular::VERB_LOOK_AT) {
 			_action._activeAction._verbId = VERB_LOOK;
@@ -411,9 +418,7 @@ void Scene::doFrame() {
 		_frameStartTime = _vm->_events->getFrameCounter();
 
 	// Handle parser actions as well as game triggers
-	if ((_action._inProgress && !player._moving && !player._needToWalk &&
-			(player._facing == player._turnToFacing) && !_vm->_game->_trigger) ||
-			(_vm->_game->_trigger && (_vm->_game->_triggerMode == SEQUENCE_TRIGGER_PARSER))) {
+	if ((_action._inProgress && !player._moving && !player._needToWalk && (player._facing == player._turnToFacing) && !_vm->_game->_trigger) || (_vm->_game->_trigger && (_vm->_game->_triggerMode == SEQUENCE_TRIGGER_PARSER))) {
 		doAction();
 	}
 
@@ -431,8 +436,7 @@ void Scene::doFrame() {
 			// TODO: Handle Phantom/Dragonsphere animation list free
 		} else {
 			// Handle conversation updates if one is active
-			if (!_vm->_game->_trigger && _vm->_gameConv->active() &&
-				!_vm->_game->_camX._activeFl && !_vm->_game->_camY._activeFl)
+			if (!_vm->_game->_trigger && _vm->_gameConv->active() && !_vm->_game->_camX._activeFl && !_vm->_game->_camY._activeFl)
 				_vm->_gameConv->update(false);
 
 			// Update the player
@@ -455,7 +459,7 @@ void Scene::doFrame() {
 				Common::Point pt = _vm->_events->mousePos();
 				Common::String msg = Common::String::format("(%d,%d)", pt.x, pt.y);
 				mouseTextIndex = _kernelMessages.add(Common::Point(5, 5),
-					0x203, 0, 0, 1, msg);
+				                                     0x203, 0, 0, 1, msg);
 			}
 
 			if (!_vm->_game->_trigger) {
@@ -503,7 +507,7 @@ void Scene::doFrame() {
 		freeAnimation();
 }
 
-void  Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
+void Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 	// Draw any sprite backgrounds
 	_spriteSlots.drawBackground();
 
@@ -543,8 +547,7 @@ void  Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 }
 
 void Scene::doPreactions() {
-	if (_vm->_game->_screenObjects._inputMode == kInputBuildingSentences ||
-			_vm->_game->_screenObjects._inputMode == kInputLimitedSentences) {
+	if (_vm->_game->_screenObjects._inputMode == kInputBuildingSentences || _vm->_game->_screenObjects._inputMode == kInputLimitedSentences) {
 		_vm->_game->_triggerSetupMode = SEQUENCE_TRIGGER_PREPARE;
 		_action.checkAction();
 		_sceneLogic->preActions();
@@ -573,14 +576,12 @@ void Scene::doAction() {
 	if (_vm->_gameConv->active() || _vm->_game->_screenObjects._inputMode == kInputConversation) {
 		_action._inProgress = false;
 	} else {
-		if ((_action._inProgress || _vm->_game->_trigger) ||
-			(!flag && _action._savedFields._commandError == flag)) {
+		if ((_action._inProgress || _vm->_game->_trigger) || (!flag && _action._savedFields._commandError == flag)) {
 			_vm->_game->_sectionHandler->sectionPtr2();
 			flag = !_action._inProgress;
 		}
 
-		if ((_action._inProgress || _vm->_game->_trigger) &&
-				(!flag || _action._savedFields._commandError == flag)) {
+		if ((_action._inProgress || _vm->_game->_trigger) && (!flag || _action._savedFields._commandError == flag)) {
 			_vm->_game->doObjectAction();
 		}
 
@@ -604,8 +605,7 @@ void Scene::doAction() {
 	if (_vm->_game->_triggerMode == SEQUENCE_TRIGGER_PARSER)
 		_vm->_game->_trigger = 0;
 
-	if (_vm->_gameConv->active() && (_vm->_gameConv->currentMode() == CONVMODE_1 ||
-			_vm->_gameConv->currentMode() == CONVMODE_2))
+	if (_vm->_gameConv->active() && (_vm->_gameConv->currentMode() == CONVMODE_1 || _vm->_gameConv->currentMode() == CONVMODE_2))
 		_vm->_gameConv->update(true);
 }
 
@@ -648,7 +648,7 @@ int Scene::loadAnimation(const Common::String &resName, int trigger) {
 		if (!_animation[i]) {
 			_animation[i] = Animation::init(_vm, this);
 			_animation[i]->load(interfaceSurface, depthSurface, resName,
-				_vm->_dithering ? ANIMFLAG_DITHER : 0, nullptr, nullptr);
+			                    _vm->_dithering ? ANIMFLAG_DITHER : 0, nullptr, nullptr);
 			_animation[i]->startAnimation(trigger);
 
 			return i;
@@ -664,10 +664,8 @@ void Scene::updateCursor() {
 	Player &player = _vm->_game->_player;
 
 	CursorType cursorId = CURSOR_ARROW;
-	if (_action._interAwaiting == AWAITING_COMMAND && !_vm->_events->_rightMousePressed &&
-		_vm->_game->_screenObjects._category == CAT_HOTSPOT) {
-		int idx = _vm->_game->_screenObjects._selectedObject -
-			_userInterface._categoryIndexes[CAT_HOTSPOT - 1];
+	if (_action._interAwaiting == AWAITING_COMMAND && !_vm->_events->_rightMousePressed && _vm->_game->_screenObjects._category == CAT_HOTSPOT) {
+		int idx = _vm->_game->_screenObjects._selectedObject - _userInterface._categoryIndexes[CAT_HOTSPOT - 1];
 		assert(idx >= 0);
 
 		if (idx >= (int)_hotspots.size()) {
@@ -678,8 +676,7 @@ void Scene::updateCursor() {
 			_vm->_events->_newCursorId = _hotspots[idx]._cursor;
 		}
 
-		cursorId = _vm->_events->_newCursorId == CURSOR_NONE ?
-		CURSOR_ARROW : _vm->_events->_newCursorId;
+		cursorId = _vm->_events->_newCursorId == CURSOR_NONE ? CURSOR_ARROW : _vm->_events->_newCursorId;
 	}
 
 	if (!player._stepEnabled)
@@ -864,7 +861,7 @@ void Scene::playSpeech(int idx) {
 	_vm->_audio->playSound(idx - 1);
 }
 
-void Scene::sceneScale(int yFront, int maxScale, int yBack,  int minScale) {
+void Scene::sceneScale(int yFront, int maxScale, int yBack, int minScale) {
 	_sceneInfo->_yBandsEnd = yFront;
 	_sceneInfo->_maxScale = maxScale;
 	_sceneInfo->_yBandsStart = yBack;

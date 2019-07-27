@@ -30,7 +30,9 @@
 namespace Xeen {
 
 enum SpellDialogMode {
-	SPELLS_DIALOG_BUY = 0, SPELLS_DIALOG_SELECT = 1, SPELLS_DIALOG_INFO = 0x80
+	SPELLS_DIALOG_BUY = 0,
+	SPELLS_DIALOG_SELECT = 1,
+	SPELLS_DIALOG_INFO = 0x80
 };
 
 struct SpellEntry {
@@ -39,8 +41,11 @@ struct SpellEntry {
 	int _spellId;
 	int _color;
 
-	SpellEntry(const Common::String &name, int spellIndex, int spellId) :
-		_name(name), _spellIndex(spellIndex), _spellId(spellId), _color(9) {}
+	SpellEntry(const Common::String &name, int spellIndex, int spellId)
+	  : _name(name)
+	  , _spellIndex(spellIndex)
+	  , _spellId(spellId)
+	  , _color(9) {}
 };
 
 /**
@@ -56,7 +61,8 @@ private:
 	/**
 	 * Constructor
 	 */
-	SpellsDialog(XeenEngine *vm) : ButtonContainer(vm) {}
+	SpellsDialog(XeenEngine *vm)
+	  : ButtonContainer(vm) {}
 
 	/**
 	 * Executes the dialog
@@ -72,18 +78,20 @@ private:
 	 * Sets the spell text
 	 */
 	const char *setSpellText(Character *c, int isCasting);
+
 public:
 	/**
 	 * Show the spells list dialog
 	 */
 	static Character *show(XeenEngine *vm, ButtonContainer *priorDialog,
-		Character *c, SpellDialogMode mode);
+	                       Character *c, SpellDialogMode mode);
 };
 
 class CastSpell : public ButtonContainer {
 private:
 	SpriteResource _iconSprites;
 	int _oldMode;
+
 private:
 	CastSpell(XeenEngine *vm);
 	~CastSpell();
@@ -91,15 +99,18 @@ private:
 	int execute(Character *&c);
 
 	void loadButtons();
+
 public:
 	static int show(XeenEngine *vm);
 };
 
 class SpellOnWho : public ButtonContainer {
 private:
-	SpellOnWho(XeenEngine *vm) : ButtonContainer(vm) {}
+	SpellOnWho(XeenEngine *vm)
+	  : ButtonContainer(vm) {}
 
 	int execute(int spellId);
+
 public:
 	static Character *show(XeenEngine *vm, int spellId);
 };
@@ -108,20 +119,24 @@ class SelectElement : public ButtonContainer {
 private:
 	SpriteResource _iconSprites;
 
-	SelectElement(XeenEngine *vm) : ButtonContainer(vm) {}
+	SelectElement(XeenEngine *vm)
+	  : ButtonContainer(vm) {}
 
 	int execute(int spellId);
 
 	void loadButtons();
+
 public:
 	static int show(XeenEngine *vm, int spellId);
 };
 
 class NotWhileEngaged : public ButtonContainer {
 private:
-	NotWhileEngaged(XeenEngine *vm) : ButtonContainer(vm) {}
+	NotWhileEngaged(XeenEngine *vm)
+	  : ButtonContainer(vm) {}
 
 	void execute(int spellId);
+
 public:
 	static void show(XeenEngine *vm, int spellId);
 };
@@ -130,11 +145,13 @@ class LloydsBeacon : public ButtonContainer {
 private:
 	SpriteResource _iconSprites;
 
-	LloydsBeacon(XeenEngine *vm) : ButtonContainer(vm) {}
+	LloydsBeacon(XeenEngine *vm)
+	  : ButtonContainer(vm) {}
 
 	bool execute();
 
 	void loadButtons();
+
 public:
 	static bool show(XeenEngine *vm);
 };
@@ -143,36 +160,44 @@ class Teleport : public ButtonContainer {
 private:
 	SpriteResource _iconSprites;
 
-	Teleport(XeenEngine *vm) : ButtonContainer(vm) {}
+	Teleport(XeenEngine *vm)
+	  : ButtonContainer(vm) {}
 
 	int execute();
+
 public:
 	static int show(XeenEngine *vm);
 };
 
 class TownPortal : public ButtonContainer {
 private:
-	TownPortal(XeenEngine *vm) : ButtonContainer(vm) {}
+	TownPortal(XeenEngine *vm)
+	  : ButtonContainer(vm) {}
 
 	int execute();
+
 public:
 	static int show(XeenEngine *vm);
 };
 
 class IdentifyMonster : public ButtonContainer {
 private:
-	IdentifyMonster(XeenEngine *vm) : ButtonContainer(vm) {}
+	IdentifyMonster(XeenEngine *vm)
+	  : ButtonContainer(vm) {}
 
 	void execute();
+
 public:
 	static void show(XeenEngine *vm);
 };
 
 class DetectMonsters : public ButtonContainer {
 private:
-	DetectMonsters(XeenEngine *vm) : ButtonContainer(vm) {}
+	DetectMonsters(XeenEngine *vm)
+	  : ButtonContainer(vm) {}
 
 	void execute();
+
 public:
 	static void show(XeenEngine *vm);
 };

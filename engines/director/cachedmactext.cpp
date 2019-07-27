@@ -52,18 +52,20 @@ void CachedMacText::makeMacText() {
 CachedMacText::CachedMacText(TextCast *const textCast,
                              int version,
                              int defaultWidth,
-                             Graphics::MacWindowManager *const wm
-                            )
-	:
-	_surface(NULL), _macFont(NULL),
-	_macText(NULL), _width(defaultWidth), _dirty(true), _textCast(textCast),
-	_wm(wm) {
+                             Graphics::MacWindowManager *const wm)
+  : _surface(NULL)
+  , _macFont(NULL)
+  , _macText(NULL)
+  , _width(defaultWidth)
+  , _dirty(true)
+  , _textCast(textCast)
+  , _wm(wm) {
 	_macFont = new Graphics::MacFont(_textCast->fontId,
 	                                 _textCast->fontSize,
 	                                 _textCast->textSlant);
 	// TODO destroy me
 
-	if (_width == -1)  {
+	if (_width == -1) {
 		if (version >= 4) {
 			// This came from frame.cpp
 			_width = _textCast->initialRect.right;

@@ -37,13 +37,13 @@ struct Timestamp {
 typedef Timestamp glktimeval_t;
 
 struct TimeAndDate {
-	int year;     ///< full (four-digit) year
-	int month;    ///< 1-12, 1 is January
-	int day;      ///< 1-31
-	int weekday;  ///< 0-6, 0 is Sunday
-	int hour;     ///< 0-23
-	int minute;   ///< 0-59
-	int second;   ///< 0-59, maybe 60 during a leap second
+	int year; ///< full (four-digit) year
+	int month; ///< 1-12, 1 is January
+	int day; ///< 1-31
+	int weekday; ///< 0-6, 0 is Sunday
+	int hour; ///< 0-23
+	int minute; ///< 0-59
+	int second; ///< 0-59, maybe 60 during a leap second
 	int microsec; ///< 0-999999
 private:
 	/**
@@ -60,6 +60,7 @@ private:
 	 * Get time in seconds from the structure
 	 */
 	TimeSeconds getTime() const;
+
 public:
 	/**
 	 * Constructor

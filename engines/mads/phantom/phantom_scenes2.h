@@ -26,280 +26,282 @@
 #include "common/scummsys.h"
 #include "common/serializer.h"
 #include "mads/game.h"
-#include "mads/scene.h"
 #include "mads/phantom/phantom_scenes.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
 namespace Phantom {
 
-class Scene2xx : public PhantomScene {
-protected:
-	/**
+	class Scene2xx : public PhantomScene {
+	protected:
+		/**
 	 * Plays an appropriate sound when entering a scene
 	 */
-	void sceneEntrySound();
+		void sceneEntrySound();
 
-	/**
+		/**
 	 *Sets the AA file to use for the scene
 	 */
-	void setAAName();
+		void setAAName();
 
-	/**
+		/**
 	 * Updates the prefix used for getting player sprites for the scene
 	 */
-	void setPlayerSpritesPrefix();
-public:
-	Scene2xx(MADSEngine *vm) : PhantomScene(vm) {}
-};
+		void setPlayerSpritesPrefix();
 
-class Scene201 : public Scene2xx {
-private:
-	bool _anim0ActvFl;
-	bool _anim1ActvFl;
-	bool _needHoldFl;
-	int _sellerCount;
-	int _sellerStatus;
-	int _sellerFrame;
-	int _raoulFrame;
-	int _raoulStatus;
+	public:
+		Scene2xx(MADSEngine *vm)
+		  : PhantomScene(vm) {}
+	};
 
-	void handleSellerAnimation();
-	void handleRaoulAnimation();
-	void handleConversation();
+	class Scene201 : public Scene2xx {
+	private:
+		bool _anim0ActvFl;
+		bool _anim1ActvFl;
+		bool _needHoldFl;
+		int _sellerCount;
+		int _sellerStatus;
+		int _sellerFrame;
+		int _raoulFrame;
+		int _raoulStatus;
 
-public:
-	Scene201(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		void handleSellerAnimation();
+		void handleRaoulAnimation();
+		void handleConversation();
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene201(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene202 : public Scene2xx {
-private:
-	bool _ticketGivenFl;
-	bool _anim0ActvFl;
-	bool _anim1ActvFl;
-	bool _skipWalkFl;
-	int _chandeliersPosX[5];
-	int _chandeliersHotspotId[5];
-	int _conversationCount;
-	int _usherStatus;
-	int _usherFrame;
-	int _usherCount;
-	int _degasStatus;
-	int _degasFrame;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	void handleConversation1();
-	void handleConversation2();
-	void handleUsherAnimation();
-	void handleDegasAnimation();
-	void handleChandeliersPositions();
+	class Scene202 : public Scene2xx {
+	private:
+		bool _ticketGivenFl;
+		bool _anim0ActvFl;
+		bool _anim1ActvFl;
+		bool _skipWalkFl;
+		int _chandeliersPosX[5];
+		int _chandeliersHotspotId[5];
+		int _conversationCount;
+		int _usherStatus;
+		int _usherFrame;
+		int _usherCount;
+		int _degasStatus;
+		int _degasFrame;
 
-public:
-	Scene202(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		void handleConversation1();
+		void handleConversation2();
+		void handleUsherAnimation();
+		void handleDegasAnimation();
+		void handleChandeliersPositions();
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene202(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene203 : public Scene2xx {
-private:
-	bool _anim0ActvFl;
-	bool _anim1ActvFl;
-	bool _anim2ActvFl;
-	bool _anim3ActvFl;
-	bool _showNoteFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	int _brieStatus;
-	int _brieFrame;
-	int _brieCount;
-	int _raoulStatus;
-	int _raoulFrame;
-	int _raoulCount;
-	int _richardStatus;
-	int _richardFrame;
-	int _daaeStatus;
-	int _daaeFrame;
-	int _conversationCount;
+	class Scene203 : public Scene2xx {
+	private:
+		bool _anim0ActvFl;
+		bool _anim1ActvFl;
+		bool _anim2ActvFl;
+		bool _anim3ActvFl;
+		bool _showNoteFl;
 
-	void handleBrieConversation();
-	void handleRichardConversation();
-	void handleRichardAndDaaeConversation();
-	void handleBrieAnimation();
-	void handleRichardAnimation();
-	void handleRaoulAnimation();
-	void handleDaaeAnimation();
+		int _brieStatus;
+		int _brieFrame;
+		int _brieCount;
+		int _raoulStatus;
+		int _raoulFrame;
+		int _raoulCount;
+		int _richardStatus;
+		int _richardFrame;
+		int _daaeStatus;
+		int _daaeFrame;
+		int _conversationCount;
 
-public:
-	Scene203(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		void handleBrieConversation();
+		void handleRichardConversation();
+		void handleRichardAndDaaeConversation();
+		void handleBrieAnimation();
+		void handleRichardAnimation();
+		void handleRaoulAnimation();
+		void handleDaaeAnimation();
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene203(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene204 : public Scene2xx {
-private:
-	bool _anim0ActvFl;
-	bool _anim1ActvFl;
-	bool _anim2ActvFl;
-	bool _anim3ActvFl;
-	bool _raoulDown;
-	bool _florentGone;
-	bool _skip1Fl;
-	bool _skip2Fl;
-	bool _skip3Fl;
-	bool _endGameFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	int _brieStatus;
-	int _brieFrame;
-	int _florStatus;
-	int _florFrame;
-	int _raoulStatus;
-	int _raoulFrame;
-	int _raoulCount;
+	class Scene204 : public Scene2xx {
+	private:
+		bool _anim0ActvFl;
+		bool _anim1ActvFl;
+		bool _anim2ActvFl;
+		bool _anim3ActvFl;
+		bool _raoulDown;
+		bool _florentGone;
+		bool _skip1Fl;
+		bool _skip2Fl;
+		bool _skip3Fl;
+		bool _endGameFl;
 
-	void handleConversation();
-	void handleBrieAnimation();
-	void handleFlorAnimation();
-	void handleRaoulAnimation();
-	void handleEndAnimation();
+		int _brieStatus;
+		int _brieFrame;
+		int _florStatus;
+		int _florFrame;
+		int _raoulStatus;
+		int _raoulFrame;
+		int _raoulCount;
 
-public:
-	Scene204(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		void handleConversation();
+		void handleBrieAnimation();
+		void handleFlorAnimation();
+		void handleRaoulAnimation();
+		void handleEndAnimation();
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene204(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene205 : public Scene2xx {
-private:
-	bool _anim0ActvFl;
-	bool _anim1ActvFl;
-	bool _noConversationHold;
-	bool _giveTicketFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	int _richardFrame;
-	int _richardStatus;
-	int _richardCount;
-	int _giryFrame;
-	int _giryStatus;
-	int _giryCount;
-	int _conversationCounter;
-	int _lastRandom;
+	class Scene205 : public Scene2xx {
+	private:
+		bool _anim0ActvFl;
+		bool _anim1ActvFl;
+		bool _noConversationHold;
+		bool _giveTicketFl;
 
-	void handleConversation18();
-	void handleConversation10();
-	void handleConversation11();
-	void handleRichardAnimation();
-	void handleGiryAnimation();
+		int _richardFrame;
+		int _richardStatus;
+		int _richardCount;
+		int _giryFrame;
+		int _giryStatus;
+		int _giryCount;
+		int _conversationCounter;
+		int _lastRandom;
 
-public:
-	Scene205(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		void handleConversation18();
+		void handleConversation10();
+		void handleConversation11();
+		void handleRichardAnimation();
+		void handleGiryAnimation();
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene205(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene206 : public Scene2xx {
-private:
-	bool _anim0ActvFl;
-	bool _skip1Fl;
-	bool _skip2Fl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-public:
-	Scene206(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	class Scene206 : public Scene2xx {
+	private:
+		bool _anim0ActvFl;
+		bool _skip1Fl;
+		bool _skip2Fl;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene206(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene207 : public Scene2xx {
-private:
-	bool _skip1Fl;
-	bool _anim0ActvFl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-public:
-	Scene207(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+	class Scene207 : public Scene2xx {
+	private:
+		bool _skip1Fl;
+		bool _anim0ActvFl;
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene207(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene208 : public Scene2xx {
-private:
-	bool _skip1Fl;
-	bool _skip2Fl;
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	int _topLeftPeopleFrame;
-	int _topRightPeopleFrame;
-	int _middleLeftPeopleFrame;
-	int _centerPeopleFrame;
-	int _middleRightPeopleFrame;
-	int _bottomLeftPeopleFrame;
-	int _bottomMiddlePeopleFrame;
-	int _bottomRightPeopleFrame;
-	int _direction;
+	class Scene208 : public Scene2xx {
+	private:
+		bool _skip1Fl;
+		bool _skip2Fl;
 
-	void animateTopLeftPeople();
-	void animateTopRightPeople();
-	void animateMiddleLeftPeople();
-	void animateCenterPeople();
-	void animateMiddleRightPeople();
-	void animateBottomLeftPeople();
-	void animateBottomMiddlePeople();
-	void animateBottomRightPeople();
+		int _topLeftPeopleFrame;
+		int _topRightPeopleFrame;
+		int _middleLeftPeopleFrame;
+		int _centerPeopleFrame;
+		int _middleRightPeopleFrame;
+		int _bottomLeftPeopleFrame;
+		int _bottomMiddlePeopleFrame;
+		int _bottomRightPeopleFrame;
+		int _direction;
 
-public:
-	Scene208(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		void animateTopLeftPeople();
+		void animateTopRightPeople();
+		void animateMiddleLeftPeople();
+		void animateCenterPeople();
+		void animateMiddleRightPeople();
+		void animateBottomLeftPeople();
+		void animateBottomMiddlePeople();
+		void animateBottomRightPeople();
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	public:
+		Scene208(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
 
-class Scene250 : public Scene2xx {
-public:
-	Scene250(MADSEngine *vm);
-	virtual void synchronize(Common::Serializer &s);
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
-	virtual void setup();
-	virtual void enter();
-	virtual void step();
-	virtual void preActions();
-	virtual void actions();
-};
+	class Scene250 : public Scene2xx {
+	public:
+		Scene250(MADSEngine *vm);
+		virtual void synchronize(Common::Serializer &s);
+
+		virtual void setup();
+		virtual void enter();
+		virtual void step();
+		virtual void preActions();
+		virtual void actions();
+	};
 
 } // End of namespace Phantom
 } // End of namespace MADS

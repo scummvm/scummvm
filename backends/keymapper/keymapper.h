@@ -27,12 +27,12 @@
 
 #ifdef ENABLE_KEYMAPPER
 
-#include "common/events.h"
-#include "common/list.h"
-#include "common/hashmap.h"
-#include "common/stack.h"
-#include "backends/keymapper/hardware-input.h"
-#include "backends/keymapper/keymap.h"
+#	include "backends/keymapper/hardware-input.h"
+#	include "backends/keymapper/keymap.h"
+#	include "common/events.h"
+#	include "common/hashmap.h"
+#	include "common/list.h"
+#	include "common/stack.h"
 
 namespace Common {
 
@@ -41,18 +41,18 @@ const char *const kGlobalKeymapName = "global";
 
 class Keymapper : public Common::DefaultEventMapper {
 public:
-
 	struct MapRecord {
-		Keymap* keymap;
+		Keymap *keymap;
 		bool transparent;
 		bool global;
 	};
 
 	/* Nested class that represents a set of keymaps */
-	class Domain : public HashMap<String, Keymap*,
-				IgnoreCase_Hash, IgnoreCase_EqualTo>  {
+	class Domain : public HashMap<String, Keymap *,
+	                              IgnoreCase_Hash, IgnoreCase_EqualTo> {
 	public:
-		Domain() : _configDomain(0) {}
+		Domain()
+		  : _configDomain(0) {}
 		~Domain() {
 			deleteAllKeyMaps();
 		}
@@ -68,7 +68,7 @@ public:
 
 		void deleteAllKeyMaps();
 
-		Keymap *getKeymap(const String& name);
+		Keymap *getKeymap(const String &name);
 
 	private:
 		ConfigManager::Domain *_configDomain;
@@ -120,7 +120,7 @@ public:
 	 * @param name		name of the keymap to return
 	 * @param global	set to true if returned keymap is global, false if game
 	 */
-	Keymap *getKeymap(const String& name, bool *global = 0);
+	Keymap *getKeymap(const String &name, bool *global = 0);
 
 	/**
 	 * Push a new keymap to the top of the active stack, activating
@@ -130,7 +130,7 @@ public:
 	 *						stack if it cannot find a key in the new map
 	 * @return				true if successful
 	 */
-	bool pushKeymap(const String& name, bool transparent = false);
+	bool pushKeymap(const String &name, bool transparent = false);
 
 	/**
 	 * Pop the top keymap off the active stack.
@@ -148,20 +148,20 @@ public:
 	 * @param keyDown	true for key down, false for key up
 	 * @return			mapped events
 	 */
-	List<Event> mapKey(const KeyState& key, bool keyDown);
+	List<Event> mapKey(const KeyState &key, bool keyDown);
 	List<Event> mapNonKey(const HardwareInputCode code);
 
 	/**
 	 * @brief Map a key down event.
 	 * @see mapKey
 	 */
-	List<Event> mapKeyDown(const KeyState& key);
+	List<Event> mapKeyDown(const KeyState &key);
 
 	/**
 	 * @brief Map a key up event.
 	 * @see mapKey
 	 */
-	List<Event> mapKeyUp(const KeyState& key);
+	List<Event> mapKeyUp(const KeyState &key);
 
 	/**
 	 * Enable/disable the keymapper
@@ -189,19 +189,18 @@ public:
 	/**
 	 * Return a HardwareInput pointer for the given key state
 	 */
-	const HardwareInput *findHardwareInput(const KeyState& key);
+	const HardwareInput *findHardwareInput(const KeyState &key);
 
 	/**
 	 * Return a HardwareInput pointer for the given input code
 	 */
 	const HardwareInput *findHardwareInput(const HardwareInputCode code);
 
-	Domain& getGlobalDomain() { return _globalDomain; }
-	Domain& getGameDomain() { return _gameDomain; }
-	const Stack<MapRecord>& getActiveStack() const { return _activeMaps; }
+	Domain &getGlobalDomain() { return _globalDomain; }
+	Domain &getGameDomain() { return _gameDomain; }
+	const Stack<MapRecord> &getActiveStack() const { return _activeMaps; }
 
 private:
-
 	enum IncomingEventType {
 		kIncomingKeyDown,
 		kIncomingKeyUp,
@@ -217,7 +216,7 @@ private:
 
 	void pushKeymap(Keymap *newMap, bool transparent, bool global);
 
-	Action *getAction(const KeyState& key);
+	Action *getAction(const KeyState &key);
 	List<Event> executeAction(const Action *act, IncomingEventType incomingType = kIncomingNonKey);
 	EventType convertDownToUp(EventType eventType);
 	List<Event> remap(const Event &ev);
@@ -230,7 +229,6 @@ private:
 	Action *_actionToRemap;
 	Stack<MapRecord> _activeMaps;
 	HashMap<KeyState, Action *> _keysDown;
-
 };
 
 } // End of namespace Common

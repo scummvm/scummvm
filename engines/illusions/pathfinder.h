@@ -23,10 +23,10 @@
 #ifndef ILLUSIONS_PATHFINDER_H
 #define ILLUSIONS_PATHFINDER_H
 
-#include "illusions/graphics.h"
 #include "common/array.h"
 #include "common/list.h"
 #include "common/rect.h"
+#include "illusions/graphics.h"
 
 namespace Illusions {
 
@@ -40,7 +40,8 @@ typedef Common::Array<Common::Point> PointArray;
 class PathFinder {
 public:
 	PointArray *findPath(Camera *camera, Common::Point sourcePt, Common::Point destPt,
-		PointArray *walkPoints, PathLines *walkRects, WidthHeight bgDimensions);
+	                     PointArray *walkPoints, PathLines *walkRects, WidthHeight bgDimensions);
+
 protected:
 	PathLine _screenRect;
 	PointArray *_walkPoints;

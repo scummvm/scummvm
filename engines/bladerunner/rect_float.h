@@ -36,11 +36,15 @@ struct RectFloat {
 	float y1;
 
 	RectFloat()
-		: x0(0.0f), y0(0.0f), x1(0.0f), y1(0.0f)
-	{}
+	  : x0(0.0f)
+	  , y0(0.0f)
+	  , x1(0.0f)
+	  , y1(0.0f) {}
 	RectFloat(float x0_, float y0_, float x1_, float y1_)
-		: x0(x0_), y0(y0_), x1(x1_), y1(y1_)
-	{}
+	  : x0(x0_)
+	  , y0(y0_)
+	  , x1(x1_)
+	  , y1(y1_) {}
 
 	void expand(float d) {
 		x0 -= d;

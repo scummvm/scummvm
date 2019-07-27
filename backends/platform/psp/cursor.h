@@ -27,22 +27,30 @@
 
 class Cursor : public DefaultDisplayClient {
 private:
-	int	_hotspotX, _hotspotY;
+	int _hotspotX, _hotspotY;
 	uint32 _keyColor;
 	int _cursorTargetScale;
 	bool _useCursorPalette;
 	bool _hasCursorPalette;
-	uint32	_mouseLimitWidth;
-	uint32	_mouseLimitHeight;
-	int32	_x, _y;
-	Palette _screenPalette;			// separate palette for screen. default 'palette' is cursor palette.
+	uint32 _mouseLimitWidth;
+	uint32 _mouseLimitHeight;
+	int32 _x, _y;
+	Palette _screenPalette; // separate palette for screen. default 'palette' is cursor palette.
 
 	void updateRendererOffset();
 
 public:
-	Cursor() : _hotspotX(0), _hotspotY(0), _keyColor(0), _cursorTargetScale(0),
-			_useCursorPalette(false), _hasCursorPalette(false), _mouseLimitWidth(0),
-			_mouseLimitHeight(0), _x(0), _y(0) { }
+	Cursor()
+	  : _hotspotX(0)
+	  , _hotspotY(0)
+	  , _keyColor(0)
+	  , _cursorTargetScale(0)
+	  , _useCursorPalette(false)
+	  , _hasCursorPalette(false)
+	  , _mouseLimitWidth(0)
+	  , _mouseLimitHeight(0)
+	  , _x(0)
+	  , _y(0) {}
 	virtual ~Cursor() { deallocate(); }
 
 	void setKeyColor(uint32 color);
@@ -72,9 +80,9 @@ public:
 private:
 	void setSize(uint32 width, uint32 height);
 	void getPixelFormatsFromScummvmPixelFormat(const Graphics::PixelFormat *format,
-	        PSPPixelFormat::Type &bufferFormat,
-	        PSPPixelFormat::Type &paletteFormat,
-	        uint32 &numOfEntries);
+	                                           PSPPixelFormat::Type &bufferFormat,
+	                                           PSPPixelFormat::Type &paletteFormat,
+	                                           uint32 &numOfEntries);
 	void setRendererModePalettized(bool palettized);
 };
 

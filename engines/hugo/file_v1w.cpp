@@ -31,12 +31,13 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 
-#include "hugo/hugo.h"
 #include "hugo/file.h"
+#include "hugo/hugo.h"
 #include "hugo/util.h"
 
 namespace Hugo {
-FileManager_v1w::FileManager_v1w(HugoEngine *vm) : FileManager_v2w(vm) {
+FileManager_v1w::FileManager_v1w(HugoEngine *vm)
+  : FileManager_v2w(vm) {
 }
 
 FileManager_v1w::~FileManager_v1w() {
@@ -48,10 +49,10 @@ FileManager_v1w::~FileManager_v1w() {
 void FileManager_v1w::readOverlay(const int screenNum, ImagePtr image, OvlType overlayType) {
 	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
 
-	ImagePtr tmpImage = image;                      // temp ptr to overlay file
+	ImagePtr tmpImage = image; // temp ptr to overlay file
 	_sceneryArchive1.seek((uint32)screenNum * sizeof(SceneBlock), SEEK_SET);
 
-	SceneBlock sceneBlock;                          // Database header entry
+	SceneBlock sceneBlock; // Database header entry
 	sceneBlock._sceneOffset = _sceneryArchive1.readUint32LE();
 	sceneBlock._sceneLength = _sceneryArchive1.readUint32LE();
 	sceneBlock._boundaryOffset = _sceneryArchive1.readUint32LE();

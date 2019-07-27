@@ -56,8 +56,8 @@ private:
 		std::string filter;
 		std::string prefix;
 
-		bool operator<(const FileEntry& rhs) const {
-			return path.compare(rhs.path) == -1;   // Not exactly right for alphabetical order, but good enough
+		bool operator<(const FileEntry &rhs) const {
+			return path.compare(rhs.path) == -1; // Not exactly right for alphabetical order, but good enough
 		}
 	};
 	typedef std::list<FileEntry> FileEntries;

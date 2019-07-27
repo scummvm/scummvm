@@ -46,15 +46,19 @@ public:
 		return Rect(x, y, x + w, y + h);
 	}
 
-	Rect() : Common::Rect() {}
-	Rect(int16 w, int16 h) : Common::Rect(w, h) {}
-	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : Common::Rect(x1, y1, x2, y2) {}
+	Rect()
+	  : Common::Rect() {}
+	Rect(int16 w, int16 h)
+	  : Common::Rect(w, h) {}
+	Rect(int16 x1, int16 y1, int16 x2, int16 y2)
+	  : Common::Rect(x1, y1, x2, y2) {}
 };
 
 /**
  * Derived array class
  */
-template<class T>class Array : public Common::Array<T> {
+template <class T>
+class Array : public Common::Array<T> {
 public:
 	/**
 	 * Return the index in the array of a passed item

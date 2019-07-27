@@ -32,6 +32,7 @@ class CPickUpSpeechCentre : public CPickUp {
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+
 public:
 	CLASSDEF;
 

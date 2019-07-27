@@ -22,13 +22,13 @@
 
 #include "prince/prince.h"
 
+#include "prince/font.h"
 #include "prince/graphics.h"
 #include "prince/hero.h"
-#include "prince/script.h"
 #include "prince/mhwanh.h"
-#include "prince/variatxt.h"
 #include "prince/option_text.h"
-#include "prince/font.h"
+#include "prince/script.h"
+#include "prince/variatxt.h"
 
 namespace Prince {
 
@@ -221,7 +221,7 @@ void PrinceEngine::inventoryFlagChange(bool inventoryState) {
 void PrinceEngine::prepareInventoryToView() {
 	_invMobList.clear();
 	int invItem = _mainHero->_inventory.size();
-	_invLine =  invItem / 3;
+	_invLine = invItem / 3;
 	if (invItem % 3) {
 		_invLine++;
 	}
@@ -244,8 +244,8 @@ void PrinceEngine::prepareInventoryToView() {
 			if (item < _mainHero->_inventory.size()) {
 				int itemNr = _mainHero->_inventory[item];
 				tempMobItem._visible = 0;
-				tempMobItem._mask =  itemNr;
-				tempMobItem._rect = Common::Rect(currInvX + _picWindowX, currInvY, currInvX + _picWindowX + _invLineW  - 1, currInvY + _invLineH - 1);
+				tempMobItem._mask = itemNr;
+				tempMobItem._rect = Common::Rect(currInvX + _picWindowX, currInvY, currInvX + _picWindowX + _invLineW - 1, currInvY + _invLineH - 1);
 				tempMobItem._type = 0; // to work with checkMob()
 
 				tempMobItem._name = "";
@@ -337,7 +337,7 @@ void PrinceEngine::inventoryLeftMouseButton() {
 	}
 
 	if (_optionsFlag == 1) {
-		if (_selectedMob != -1)  {
+		if (_selectedMob != -1) {
 			if (_optionEnabled < _invOptionsNumber) {
 				_optionsFlag = 0;
 			} else {
@@ -522,7 +522,7 @@ void PrinceEngine::checkOptions() {
 				optionsColor = _optionsColor2;
 			}
 			Common::String optText;
-			switch(getLanguage()) {
+			switch (getLanguage()) {
 			case Common::PL_POL:
 				optText = optionsTextPL[i];
 				break;
@@ -574,7 +574,7 @@ void PrinceEngine::checkInvOptions() {
 				optionsColor = _optionsColor2;
 			}
 			Common::String invText;
-			switch(getLanguage()) {
+			switch (getLanguage()) {
 			case Common::PL_POL:
 				invText = invOptionsTextPL[i];
 				break;

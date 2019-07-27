@@ -26,10 +26,10 @@
  * Copyright (c) 1997-2003 Nayma Software
  */
 
-#include "common/scummsys.h"
-#include "graphics/surface.h"
-#include "engines/util.h"
 #include "tony/window.h"
+#include "common/scummsys.h"
+#include "engines/util.h"
+#include "graphics/surface.h"
 #include "tony/game.h"
 #include "tony/tony.h"
 
@@ -95,7 +95,7 @@ void RMWindow::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w,
 		}
 		g_system->copyRectToScreen(buf, pitch, x, y, w, h);
 	}
- }
+}
 
 /**
  * Close the window
@@ -119,8 +119,7 @@ void RMWindow::repaint() {
  * Wipes an area of the screen
  */
 void RMWindow::wipeEffect(Common::Rect &rcBoundEllipse) {
-	if ((rcBoundEllipse.left == 0) && (rcBoundEllipse.top == 0) &&
-	    (rcBoundEllipse.right == RM_SX) && (rcBoundEllipse.bottom == RM_SY)) {
+	if ((rcBoundEllipse.left == 0) && (rcBoundEllipse.top == 0) && (rcBoundEllipse.right == RM_SX) && (rcBoundEllipse.bottom == RM_SY)) {
 		// Full screen clear wanted, so use shortcut method
 		g_system->fillScreen(0);
 	} else {
@@ -204,8 +203,7 @@ void RMWindow::getNewFrameWipe(byte *lpBuf, Common::Rect &rcBoundEllipse) {
 	// The rectangle technically defines the area inside the ellipse, with the corners touching
 	// the ellipse boundary. Since we're currently simulating the ellipse using a plain circle,
 	// we need to calculate a necessary width using the hypotenuse of X/2 & Y/2
-	int x2y2 = (rcBoundEllipse.width() / 2) * (rcBoundEllipse.width() / 2) +
-	           (rcBoundEllipse.height() / 2) * (rcBoundEllipse.height() / 2);
+	int x2y2 = (rcBoundEllipse.width() / 2) * (rcBoundEllipse.width() / 2) + (rcBoundEllipse.height() / 2) * (rcBoundEllipse.height() / 2);
 	int radius = 0;
 	while ((radius * radius) < x2y2)
 		++radius;
@@ -328,8 +326,7 @@ void RMSnapshot::grabScreenshot(byte *lpBuf, int dezoom, uint16 *lpDestBuf) {
 				_rgb[k + 2] = (byte)(sommar * 8 / (dezoom * dezoom));
 
 				if (lpDestBuf != NULL)
-					lpDestBuf[k / 3] = ((int)_rgb[k + 0] >> 3) | (((int)_rgb[k + 1] >> 3) << 5) |
-					                   (((int)_rgb[k + 2] >> 3) << 10);
+					lpDestBuf[k / 3] = ((int)_rgb[k + 0] >> 3) | (((int)_rgb[k + 1] >> 3) << 5) | (((int)_rgb[k + 2] >> 3) << 10);
 
 				k += 3;
 			}

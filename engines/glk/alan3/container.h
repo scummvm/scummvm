@@ -23,22 +23,21 @@
 #ifndef GLK_ALAN3_CONTAINER
 #define GLK_ALAN3_CONTAINER
 
-#include "glk/alan3/types.h"
 #include "glk/alan3/acode.h"
 #include "glk/alan3/jumps.h"
+#include "glk/alan3/types.h"
 
 namespace Glk {
 namespace Alan3 {
 
-/* DATA */
-extern ContainerEntry *containers; /* Container table pointer */
+	/* DATA */
+	extern ContainerEntry *containers; /* Container table pointer */
 
-
-/* FUNCTIONS */
-extern int containerSize(int container, ATrans trans);
-extern bool passesContainerLimits(CONTEXT, Aint container, Aint addedInstance);
-extern void describeContainer(CONTEXT, int container);
-extern void list(CONTEXT, int cnt);
+	/* FUNCTIONS */
+	extern int containerSize(int container, ATrans trans);
+	extern bool passesContainerLimits(CONTEXT, Aint container, Aint addedInstance);
+	extern void describeContainer(CONTEXT, int container);
+	extern void list(CONTEXT, int cnt);
 
 } // End of namespace Alan3
 } // End of namespace Glk

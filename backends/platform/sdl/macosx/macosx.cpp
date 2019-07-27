@@ -27,25 +27,24 @@
 
 #ifdef MACOSX
 
-#include "backends/audiocd/macosx/macosx-audiocd.h"
-#include "backends/platform/sdl/macosx/appmenu_osx.h"
-#include "backends/platform/sdl/macosx/macosx.h"
-#include "backends/updates/macosx/macosx-updates.h"
-#include "backends/taskbar/macosx/macosx-taskbar.h"
-#include "backends/dialogs/macosx/macosx-dialogs.h"
-#include "backends/platform/sdl/macosx/macosx_wrapper.h"
+#	include "backends/audiocd/macosx/macosx-audiocd.h"
+#	include "backends/dialogs/macosx/macosx-dialogs.h"
+#	include "backends/platform/sdl/macosx/appmenu_osx.h"
+#	include "backends/platform/sdl/macosx/macosx.h"
+#	include "backends/platform/sdl/macosx/macosx_wrapper.h"
+#	include "backends/taskbar/macosx/macosx-taskbar.h"
+#	include "backends/updates/macosx/macosx-updates.h"
 
-#include "common/archive.h"
-#include "common/config-manager.h"
-#include "common/fs.h"
-#include "common/translation.h"
+#	include "common/archive.h"
+#	include "common/config-manager.h"
+#	include "common/fs.h"
+#	include "common/translation.h"
 
-#include "ApplicationServices/ApplicationServices.h"	// for LSOpenFSRef
-#include "CoreFoundation/CoreFoundation.h"	// for CF* stuff
+#	include "ApplicationServices/ApplicationServices.h" // for LSOpenFSRef
+#	include "CoreFoundation/CoreFoundation.h" // for CF* stuff
 
 OSystem_MacOSX::OSystem_MacOSX()
-	:
-	OSystem_POSIX("Library/Preferences/ScummVM Preferences") {
+  : OSystem_POSIX("Library/Preferences/ScummVM Preferences") {
 }
 
 OSystem_MacOSX::~OSystem_MacOSX() {
@@ -56,34 +55,34 @@ void OSystem_MacOSX::init() {
 	// Use an iconless window on OS X, as we use a nicer external icon there.
 	_window = new SdlIconlessWindow();
 
-#if defined(USE_TASKBAR)
+#	if defined(USE_TASKBAR)
 	// Initialize taskbar manager
 	_taskbarManager = new MacOSXTaskbarManager();
-#endif
+#	endif
 
-#if defined(USE_SYSDIALOGS)
+#	if defined(USE_SYSDIALOGS)
 	// Initialize dialog manager
 	_dialogManager = new MacOSXDialogManager();
-#endif
+#	endif
 
 	// Invoke parent implementation of this method
 	OSystem_POSIX::init();
 }
 
 void OSystem_MacOSX::initBackend() {
-#ifdef USE_TRANSLATION
+#	ifdef USE_TRANSLATION
 	// We need to initialize the translataion manager here for the following
 	// call to replaceApplicationMenuItems() work correctly
 	TransMan.setLanguage(ConfMan.get("gui_language").c_str());
-#endif // USE_TRANSLATION
+#	endif // USE_TRANSLATION
 
 	// Replace the SDL generated menu items with our own translated ones on Mac OS X
 	replaceApplicationMenuItems();
 
-#ifdef USE_SPARKLE
+#	ifdef USE_SPARKLE
 	// Initialize updates manager
 	_updateManager = new MacOSXUpdateManager();
-#endif
+#	endif
 
 	// Invoke parent implementation of this method
 	OSystem_POSIX::initBackend();
@@ -111,10 +110,10 @@ bool OSystem_MacOSX::hasFeature(Feature f) {
 	if (f == kFeatureDisplayLogFile || f == kFeatureClipboardSupport || f == kFeatureOpenUrl)
 		return true;
 
-#ifdef USE_SYSDIALOGS
+#	ifdef USE_SYSDIALOGS
 	if (f == kFeatureSystemBrowserDialog)
 		return true;
-#endif
+#	endif
 
 	return OSystem_POSIX::hasFeature(f);
 }
@@ -125,9 +124,9 @@ bool OSystem_MacOSX::displayLogFile() {
 	if (_logFilePath.empty())
 		return false;
 
-    CFURLRef url = CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault, (const UInt8 *)_logFilePath.c_str(), _logFilePath.size(), false);
-    OSStatus err = LSOpenCFURLRef(url, NULL);
-    CFRelease(url);
+	CFURLRef url = CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault, (const UInt8 *)_logFilePath.c_str(), _logFilePath.size(), false);
+	OSStatus err = LSOpenCFURLRef(url, NULL);
+	CFRelease(url);
 
 	return err != noErr;
 }
@@ -145,14 +144,14 @@ bool OSystem_MacOSX::setTextInClipboard(const Common::String &text) {
 }
 
 bool OSystem_MacOSX::openUrl(const Common::String &url) {
-	CFURLRef urlRef = CFURLCreateWithBytes (NULL, (UInt8*)url.c_str(), url.size(), kCFStringEncodingASCII, NULL);
+	CFURLRef urlRef = CFURLCreateWithBytes(NULL, (UInt8 *)url.c_str(), url.size(), kCFStringEncodingASCII, NULL);
 	OSStatus err = LSOpenCFURLRef(urlRef, NULL);
 	CFRelease(urlRef);
 	return err == noErr;
 }
 
 Common::String OSystem_MacOSX::getSystemLanguage() const {
-#if defined(USE_DETECTLANG) && defined(USE_TRANSLATION)
+#	if defined(USE_DETECTLANG) && defined(USE_TRANSLATION)
 	CFArrayRef availableLocalizations = CFBundleCopyBundleLocalizations(CFBundleGetMainBundle());
 	if (availableLocalizations) {
 		CFArrayRef preferredLocalizations = CFBundleCopyPreferredLocalizationsFromArray(availableLocalizations);
@@ -189,13 +188,12 @@ Common::String OSystem_MacOSX::getSystemLanguage() const {
 			}
 			CFRelease(preferredLocalizations);
 		}
-
 	}
 	// Falback to POSIX implementation
 	return OSystem_POSIX::getSystemLanguage();
-#else // USE_DETECTLANG
+#	else // USE_DETECTLANG
 	return OSystem_POSIX::getSystemLanguage();
-#endif // USE_DETECTLANG
+#	endif // USE_DETECTLANG
 }
 
 Common::String OSystem_MacOSX::getScreenshotsPath() {

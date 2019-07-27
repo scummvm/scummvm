@@ -19,20 +19,20 @@
 
 #include "internals.h"
 
-#include "Partial.h"
 #include "Part.h"
+#include "Partial.h"
 #include "PartialManager.h"
 #include "Poly.h"
 #include "Synth.h"
-#include "Tables.h"
 #include "TVA.h"
 #include "TVF.h"
 #include "TVP.h"
+#include "Tables.h"
 
 namespace MT32Emu {
 
-static const Bit8u PAN_NUMERATOR_MASTER[] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7};
-static const Bit8u PAN_NUMERATOR_SLAVE[]  = {0, 1, 2, 3, 4, 5, 6, 7, 7, 7, 7, 7, 7, 7, 7};
+static const Bit8u PAN_NUMERATOR_MASTER[] = { 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7 };
+static const Bit8u PAN_NUMERATOR_SLAVE[] = { 0, 1, 2, 3, 4, 5, 6, 7, 7, 7, 7, 7, 7, 7, 7 };
 
 // We assume the pan is applied using the same 13-bit multiplier circuit that is also used for ring modulation
 // because of the observed sample overflow, so the panSetting values are likely mapped in a similar way via a LUT.
@@ -51,9 +51,11 @@ static Bit32s getPANFactor(Bit32s panSetting) {
 	return PAN_FACTORS[panSetting];
 }
 
-Partial::Partial(Synth *useSynth, int usePartialIndex) :
-	synth(useSynth), partialIndex(usePartialIndex), sampleNum(0),
-	floatMode(useSynth->getSelectedRendererType() == RendererType_FLOAT) {
+Partial::Partial(Synth *useSynth, int usePartialIndex)
+  : synth(useSynth)
+  , partialIndex(usePartialIndex)
+  , sampleNum(0)
+  , floatMode(useSynth->getSelectedRendererType() == RendererType_FLOAT) {
 	// Initialisation of tva, tvp and tvf uses 'this' pointer
 	// and thus should not be in the initializer list to avoid a compiler warning
 	tva = new TVA(this, &ampRamp);
@@ -360,11 +362,13 @@ void Partial::produceAndMixSample(FloatSample *&leftBuf, FloatSample *&rightBuf,
 
 template <class Sample, class LA32PairImpl>
 bool Partial::doProduceOutput(Sample *leftBuf, Sample *rightBuf, Bit32u length, LA32PairImpl *la32PairImpl) {
-	if (!canProduceOutput()) return false;
+	if (!canProduceOutput())
+		return false;
 	alreadyOutputed = true;
 
 	for (sampleNum = 0; sampleNum < length; sampleNum++) {
-		if (!generateNextSample(la32PairImpl)) break;
+		if (!generateNextSample(la32PairImpl))
+			break;
 		produceAndMixSample(leftBuf, rightBuf, la32PairImpl);
 	}
 	sampleNum = 0;

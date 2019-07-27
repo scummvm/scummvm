@@ -23,10 +23,10 @@
 #ifndef MUTATIONOFJB_ROOM_H
 #define MUTATIONOFJB_ROOM_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
-#include "graphics/surface.h"
+#include "common/scummsys.h"
 #include "graphics/managed_surface.h"
+#include "graphics/surface.h"
 
 namespace Graphics {
 class Screen;
@@ -67,6 +67,7 @@ public:
 	void drawFrames(int fromFrame, int toFrame, const Common::Rect &area = Common::Rect(), uint8 threshold = 0xFF);
 	void initialDraw();
 	void redraw(bool useBackgroundBuffer = true);
+
 private:
 	Game *_game;
 	Graphics::Screen *_screen;

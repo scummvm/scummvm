@@ -30,9 +30,9 @@ namespace Common {
 /**
  * Partial specialization of the Hash functor to be able to use pointers as HashMap keys
  */
-template<typename T>
+template <typename T>
 struct Hash<T *> {
-	uint operator()(T * const &v) const {
+	uint operator()(T *const &v) const {
 		uint x = static_cast<uint>(reinterpret_cast<uintptr>(v));
 		return x + (x >> 3);
 	}

@@ -4,24 +4,36 @@ static const char *const k2SeqplayStringsDOSCDItalian[104] = {
 	"...ed albero dopo albero.",
 	"Kyrandia cessa di esistere!",
 	"I mistici Reali sono sconcertati.",
-	"Ogni libro ""\x8A"" stato consultato.",
+	"Ogni libro "
+	"\x8A"
+	" stato consultato.",
 	"Perfino Marko ed il suo nuovo aiutante sono stati invitati alla conferenza.",
 	"Fortunatamente, la Mano era ferrata in materia.",
-	"E finalmente un piano ""\x8A"" stato approvato.",
+	"E finalmente un piano "
+	"\x8A"
+	" stato approvato.",
 	"Bisogna recuperare un'Ancora di pietra",
 	"dal centro della terra.",
-	"Zanthia, la pi""\x97"" giovane trai Mistici, ""\x8A"" stata scelta per recuperare l'artefatto.",
+	"Zanthia, la pi"
+	"\x97"
+	" giovane trai Mistici, "
+	"\x8A"
+	" stata scelta per recuperare l'artefatto.",
 	"Grazie per aver giocato a Hand of Fate.",
 	"Questi mirtilli dovrebbero bastare ad aprire un portale per il centro della terra.",
 	"X",
 	"X",
 	"Hey! Hanno rubato tutto il mio equipaggiamento!",
 	"X",
-	"Se pensano che vada fin laggi""\x97"" a piedi, si sbagliano di grosso!",
+	"Se pensano che vada fin laggi"
+	"\x97"
+	" a piedi, si sbagliano di grosso!",
 	"X",
 	"X",
 	"Sbrigati Fauno!",
-	"Ragazzi, c'""\x8A"" mancato un pelo!",
+	"Ragazzi, c'"
+	"\x8A"
+	" mancato un pelo!",
 	"Puoi dirlo forte. Io ho chiuso con la caccia!",
 	"Ribbit.",
 	"Quante volte devo dirtelo? Sei un rospo.",
@@ -69,7 +81,8 @@ static const char *const k2SeqplayStringsDOSCDItalian[104] = {
 	"Frank Klepacki",
 	"Dwight Okahara",
 	"Pat Collins",
-	"Controllo Qualit""\x85",
+	"Controllo Qualit"
+	"\x85",
 	"Glenn Sperry",
 	"Michael Lightner",
 	"William Foster",
@@ -125,4 +138,3 @@ static const char *const k2SeqplayTlkFilesDOSCDItalian[14] = {
 };
 
 static const StringListProvider k2SeqplayTlkFilesDOSCDItalianProvider = { ARRAYSIZE(k2SeqplayTlkFilesDOSCDItalian), k2SeqplayTlkFilesDOSCDItalian };
-

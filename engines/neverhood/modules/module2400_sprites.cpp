@@ -35,7 +35,7 @@ static const uint32 kAsScene2401WaterSpitFileHashes1[] = {
 };
 
 AsScene2401WaterSpit::AsScene2401WaterSpit(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1200) {
+  : AnimatedSprite(vm, 1200) {
 
 	_x = 240;
 	_y = 447;
@@ -70,7 +70,8 @@ uint32 AsScene2401WaterSpit::handleMessage(int messageNum, const MessageParam &p
 }
 
 AsScene2401FlowingWater::AsScene2401FlowingWater(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1200), _isWaterFlowing(false) {
+  : AnimatedSprite(vm, 1200)
+  , _isWaterFlowing(false) {
 
 	_x = 88;
 	_y = 421;
@@ -113,7 +114,9 @@ uint32 AsScene2401FlowingWater::handleMessage(int messageNum, const MessageParam
 }
 
 AsScene2401WaterFlushing::AsScene2401WaterFlushing(NeverhoodEngine *vm, int16 x, int16 y)
-	: AnimatedSprite(vm, 1200), _countdown(0), _flushLoopCount(0) {
+  : AnimatedSprite(vm, 1200)
+  , _countdown(0)
+  , _flushLoopCount(0) {
 
 	_x = x;
 	_y = y;
@@ -156,7 +159,9 @@ uint32 AsScene2401WaterFlushing::handleMessage(int messageNum, const MessagePara
 }
 
 AsScene2401Door::AsScene2401Door(NeverhoodEngine *vm, bool isOpen)
-	: AnimatedSprite(vm, 1100), _countdown(0), _isOpen(isOpen) {
+  : AnimatedSprite(vm, 1100)
+  , _countdown(0)
+  , _isOpen(isOpen) {
 
 	_x = 320;
 	_y = 240;
@@ -217,7 +222,10 @@ void AsScene2401Door::stDoorOpenFinished() {
 }
 
 AsScene2402Door::AsScene2402Door(NeverhoodEngine *vm, Scene *parentScene, bool isOpen)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _isOpen(isOpen), _countdown(0) {
+  : AnimatedSprite(vm, 1100)
+  , _parentScene(parentScene)
+  , _isOpen(isOpen)
+  , _countdown(0) {
 
 	_x = 320;
 	_y = 240;
@@ -275,7 +283,10 @@ void AsScene2402Door::stDoorClosingFinished() {
 }
 
 AsScene2402TV::AsScene2402TV(NeverhoodEngine *vm, Klaymen *klaymen)
-	: AnimatedSprite(vm, 1100), _klaymen(klaymen), _countdown1(0), _countdown2(0) {
+  : AnimatedSprite(vm, 1100)
+  , _klaymen(klaymen)
+  , _countdown1(0)
+  , _countdown2(0) {
 
 	_x = 260;
 	_y = 210;
@@ -354,9 +365,13 @@ uint32 AsScene2402TV::hmJoke(int messageNum, const MessageParam &param, Entity *
 }
 
 KmScene2401::KmScene2401(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y),
-	_canSpitPipe(false), _contSpitPipe(false), _readyToSpit(false),
-	_spitPipeIndex(0), _spitDestPipeIndex(0), _spitContDestPipeIndex(0) {
+  : Klaymen(vm, parentScene, x, y)
+  , _canSpitPipe(false)
+  , _contSpitPipe(false)
+  , _readyToSpit(false)
+  , _spitPipeIndex(0)
+  , _spitDestPipeIndex(0)
+  , _spitContDestPipeIndex(0) {
 
 	// Empty
 }
@@ -496,7 +511,7 @@ void KmScene2401::stContSpitIntoPipe() {
 }
 
 KmScene2402::KmScene2402(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+  : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }
@@ -565,7 +580,7 @@ uint32 KmScene2402::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2403::KmScene2403(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+  : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }
@@ -649,7 +664,7 @@ uint32 KmScene2403::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2406::KmScene2406(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount)
-	: Klaymen(vm, parentScene, x, y) {
+  : Klaymen(vm, parentScene, x, y) {
 
 	_surface->setClipRects(clipRects, clipRectsCount);
 }

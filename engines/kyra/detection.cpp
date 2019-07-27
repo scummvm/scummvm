@@ -20,16 +20,16 @@
  *
  */
 
-#include "kyra/engine/kyra_lok.h"
-#include "kyra/engine/lol.h"
-#include "kyra/engine/kyra_hof.h"
-#include "kyra/engine/kyra_mr.h"
-#include "kyra/engine/eob.h"
 #include "kyra/engine/darkmoon.h"
+#include "kyra/engine/eob.h"
+#include "kyra/engine/kyra_hof.h"
+#include "kyra/engine/kyra_lok.h"
+#include "kyra/engine/kyra_mr.h"
+#include "kyra/engine/lol.h"
 
 #include "common/config-manager.h"
-#include "common/system.h"
 #include "common/savefile.h"
+#include "common/system.h"
 #include "common/translation.h"
 
 #include "engines/advancedDetector.h"
@@ -55,92 +55,67 @@ const ADExtraGuiOptionsMap gameGuiOptions[] = {
 	// Kyrandia 3 options
 
 	{
-		GAMEOPTION_KYRA3_AUDIENCE,
-		{
-			// I18N: Studio audience adds an applause and cheering sounds whenever
-			// Malcolm makes a joke.
-			_s("Studio audience"),
-			_s("Enable studio audience"),
-			"studio_audience",
-			true
-		}
-	},
+	  GAMEOPTION_KYRA3_AUDIENCE,
+	  { // I18N: Studio audience adds an applause and cheering sounds whenever
+	    // Malcolm makes a joke.
+	    _s("Studio audience"),
+	    _s("Enable studio audience"),
+	    "studio_audience",
+	    true } },
 
-	{
-		GAMEOPTION_KYRA3_SKIP,
-		{
-			// I18N: This option allows the user to skip text and cutscenes.
-			_s("Skip support"),
-			_s("Allow text and cutscenes to be skipped"),
-			"skip_support",
-			true
-		}
-	},
+	{ GAMEOPTION_KYRA3_SKIP,
+	  { // I18N: This option allows the user to skip text and cutscenes.
+	    _s("Skip support"),
+	    _s("Allow text and cutscenes to be skipped"),
+	    "skip_support",
+	    true } },
 
-	{
-		GAMEOPTION_KYRA3_HELIUM,
-		{
-			// I18N: Helium mode makes people sound like they've inhaled Helium.
-			_s("Helium mode"),
-			_s("Enable helium mode"),
-			"helium_mode",
-			false
-		}
-	},
+	{ GAMEOPTION_KYRA3_HELIUM,
+	  { // I18N: Helium mode makes people sound like they've inhaled Helium.
+	    _s("Helium mode"),
+	    _s("Enable helium mode"),
+	    "helium_mode",
+	    false } },
 
 #ifdef ENABLE_LOL
 	// LoL options
 
 	{
-		GAMEOPTION_LOL_SCROLLING,
-		{
-			// I18N: When enabled, this option makes scrolling smoother when
-			// changing from one screen to another.
-			_s("Smooth scrolling"),
-			_s("Enable smooth scrolling when walking"),
-			"smooth_scrolling",
-			true
-		}
-	},
+	  GAMEOPTION_LOL_SCROLLING,
+	  { // I18N: When enabled, this option makes scrolling smoother when
+	    // changing from one screen to another.
+	    _s("Smooth scrolling"),
+	    _s("Enable smooth scrolling when walking"),
+	    "smooth_scrolling",
+	    true } },
 
-	{
-		GAMEOPTION_LOL_CURSORS,
-		{
-			// I18N: When enabled, this option changes the cursor when it floats to the
-			// edge of the screen to a directional arrow. The player can then click to
-			// walk towards that direction.
-			_s("Floating cursors"),
-			_s("Enable floating cursors"),
-			"floating_cursors",
-			false
-		}
-	},
+	{ GAMEOPTION_LOL_CURSORS,
+	  { // I18N: When enabled, this option changes the cursor when it floats to the
+	    // edge of the screen to a directional arrow. The player can then click to
+	    // walk towards that direction.
+	    _s("Floating cursors"),
+	    _s("Enable floating cursors"),
+	    "floating_cursors",
+	    false } },
 #endif
 
 #ifdef ENABLE_EOB
 	// EoB options
 
 	{
-		GAMEOPTION_EOB_HPGRAPHS,
-		{
-			// I18N: HP stands for Hit Points
-			_s("HP bar graphs"),
-			_s("Enable hit point bar graphs"),
-			"hpbargraphs",
-			true
-		}
-	},
+	  GAMEOPTION_EOB_HPGRAPHS,
+	  { // I18N: HP stands for Hit Points
+	    _s("HP bar graphs"),
+	    _s("Enable hit point bar graphs"),
+	    "hpbargraphs",
+	    true } },
 
-	{
-		GAMEOPTION_EOB_MOUSESWAP,
-		{
-			// I18N: L/R stands for Left/Right
-			_s("Fight Button L/R Swap"),
-			_s("Left button to attack, right button to pick up items"),
-			"mousebtswap",
-			false
-		}
-	},
+	{ GAMEOPTION_EOB_MOUSESWAP,
+	  { // I18N: L/R stands for Left/Right
+	    _s("Fight Button L/R Swap"),
+	    _s("Left button to attack, right button to pick up items"),
+	    "mousebtswap",
+	    false } },
 
 #endif
 
@@ -151,7 +126,8 @@ const ADExtraGuiOptionsMap gameGuiOptions[] = {
 
 class KyraMetaEngine : public AdvancedMetaEngine {
 public:
-	KyraMetaEngine() : AdvancedMetaEngine(adGameDescs, sizeof(KYRAGameDescription), gameList, gameGuiOptions) {
+	KyraMetaEngine()
+	  : AdvancedMetaEngine(adGameDescs, sizeof(KYRAGameDescription), gameList, gameGuiOptions) {
 		_md5Bytes = 1024 * 1024;
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
@@ -168,7 +144,7 @@ public:
 #ifdef ENABLE_EOB
 		       "\nEye of the Beholder (C) TSR, Inc., (C) Strategic Simulations, Inc."
 #endif
-		       ;
+		  ;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const;
@@ -180,21 +156,11 @@ public:
 };
 
 bool KyraMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-	    (f == kSupportsListSaves) ||
-	    (f == kSupportsLoadingDuringStartup) ||
-	    (f == kSupportsDeleteSave) ||
-	    (f == kSavesSupportMetaInfo) ||
-	    (f == kSavesSupportThumbnail) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup) || (f == kSupportsDeleteSave) || (f == kSavesSupportMetaInfo) || (f == kSavesSupportThumbnail) || (f == kSimpleSavesNames);
 }
 
 bool Kyra::KyraEngine_v1::hasFeature(EngineFeature f) const {
-	return
-	    (f == kSupportsRTL) ||
-	    (f == kSupportsLoadingDuringRuntime) ||
-	    (f == kSupportsSavingDuringRuntime) ||
-	    (f == kSupportsSubtitleOptions);
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime) || (f == kSupportsSubtitleOptions);
 }
 
 bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -242,10 +208,10 @@ bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 		*engine = new Kyra::EoBEngine(syst, flags);
 		break;
 	case Kyra::GI_EOB2:
-		 if (Common::parseRenderMode(ConfMan.get("render_mode")) == Common::kRenderEGA)
-			 flags.useHiRes = true;
-		 if (platform == Common::kPlatformFMTowns && !flags.useHiColorMode)
-			 error("EOB II FM-TOWNS requires support of 16bit color modes which has not been activated in your ScummVM build (The 'USE_RGB_COLOR' define has not been set).");
+		if (Common::parseRenderMode(ConfMan.get("render_mode")) == Common::kRenderEGA)
+			flags.useHiRes = true;
+		if (platform == Common::kPlatformFMTowns && !flags.useHiColorMode)
+			error("EOB II FM-TOWNS requires support of 16bit color modes which has not been activated in your ScummVM build (The 'USE_RGB_COLOR' define has not been set).");
 		*engine = new Kyra::DarkMoonEngine(syst, flags);
 		break;
 #endif // ENABLE_EOB
@@ -347,7 +313,7 @@ SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int s
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(KYRA)
-	REGISTER_PLUGIN_DYNAMIC(KYRA, PLUGIN_TYPE_ENGINE, KyraMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(KYRA, PLUGIN_TYPE_ENGINE, KyraMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(KYRA, PLUGIN_TYPE_ENGINE, KyraMetaEngine);
+REGISTER_PLUGIN_STATIC(KYRA, PLUGIN_TYPE_ENGINE, KyraMetaEngine);
 #endif

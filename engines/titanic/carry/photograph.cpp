@@ -28,15 +28,18 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPhotograph, CCarry)
-	ON_MESSAGE(MouseDragStartMsg)
-	ON_MESSAGE(MouseDragEndMsg)
-	ON_MESSAGE(PETGainedObjectMsg)
-	ON_MESSAGE(ActMsg)
+ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(MouseDragEndMsg)
+ON_MESSAGE(PETGainedObjectMsg)
+ON_MESSAGE(ActMsg)
 END_MESSAGE_MAP()
 
 int CPhotograph::_v1;
 
-CPhotograph::CPhotograph() : CCarry(), _field12C(0), _field130(0) {
+CPhotograph::CPhotograph()
+  : CCarry()
+  , _field12C(0)
+  , _field130(0) {
 }
 
 void CPhotograph::save(SimpleFile *file, int indent) {

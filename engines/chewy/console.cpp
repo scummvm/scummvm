@@ -32,20 +32,22 @@
 
 namespace Chewy {
 
-Console::Console(ChewyEngine *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("dump",          WRAP_METHOD(Console, Cmd_Dump));
-	registerCmd("dump_bg",       WRAP_METHOD(Console, Cmd_DumpBg));
-	registerCmd("draw_image",    WRAP_METHOD(Console, Cmd_DrawImage));
-	registerCmd("draw_sprite",   WRAP_METHOD(Console, Cmd_DrawSprite));
-	registerCmd("play_sound",    WRAP_METHOD(Console, Cmd_PlaySound));
-	registerCmd("play_speech",   WRAP_METHOD(Console, Cmd_PlaySpeech));
-	registerCmd("play_music",    WRAP_METHOD(Console, Cmd_PlayMusic));
-	registerCmd("play_video",    WRAP_METHOD(Console, Cmd_PlayVideo));
-	registerCmd("video_info",    WRAP_METHOD(Console, Cmd_VideoInfo));
+Console::Console(ChewyEngine *vm)
+  : GUI::Debugger()
+  , _vm(vm) {
+	registerCmd("dump", WRAP_METHOD(Console, Cmd_Dump));
+	registerCmd("dump_bg", WRAP_METHOD(Console, Cmd_DumpBg));
+	registerCmd("draw_image", WRAP_METHOD(Console, Cmd_DrawImage));
+	registerCmd("draw_sprite", WRAP_METHOD(Console, Cmd_DrawSprite));
+	registerCmd("play_sound", WRAP_METHOD(Console, Cmd_PlaySound));
+	registerCmd("play_speech", WRAP_METHOD(Console, Cmd_PlaySpeech));
+	registerCmd("play_music", WRAP_METHOD(Console, Cmd_PlayMusic));
+	registerCmd("play_video", WRAP_METHOD(Console, Cmd_PlayVideo));
+	registerCmd("video_info", WRAP_METHOD(Console, Cmd_VideoInfo));
 	registerCmd("error_message", WRAP_METHOD(Console, Cmd_ErrorMessage));
-	registerCmd("dialog",        WRAP_METHOD(Console, Cmd_Dialog));
-	registerCmd("text",          WRAP_METHOD(Console, Cmd_Text));
-	registerCmd("scene",         WRAP_METHOD(Console, Cmd_Scene));
+	registerCmd("dialog", WRAP_METHOD(Console, Cmd_Dialog));
+	registerCmd("text", WRAP_METHOD(Console, Cmd_Text));
+	registerCmd("scene", WRAP_METHOD(Console, Cmd_Scene));
 }
 
 Console::~Console() {
@@ -103,7 +105,6 @@ bool Console::Cmd_DumpBg(int argc, const char **argv) {
 
 	return true;
 }
-
 
 bool Console::Cmd_DrawImage(int argc, const char **argv) {
 	if (argc < 3) {
@@ -223,7 +224,7 @@ bool Console::Cmd_Dialog(int argc, const char **argv) {
 	}
 
 	int dialogNum = atoi(argv[1]);
-	int entryNum  = atoi(argv[2]);
+	int entryNum = atoi(argv[2]);
 	uint cur = 0;
 	TextEntryList *d = _vm->_text->getDialog(dialogNum, entryNum);
 

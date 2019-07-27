@@ -28,8 +28,10 @@ namespace Titanic {
 class CErrorCode {
 private:
 	int _value;
+
 public:
-	CErrorCode() : _value(0) {}
+	CErrorCode()
+	  : _value(0) {}
 
 	/**
 	 * Sets the error code

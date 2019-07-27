@@ -23,7 +23,6 @@
 #ifndef SCUMM_IMUSE_DIGI_SNDMGR_H
 #define SCUMM_IMUSE_DIGI_SNDMGR_H
 
-
 #include "common/scummsys.h"
 
 namespace Audio {
@@ -42,7 +41,6 @@ class BundleDirCache;
 
 class ImuseDigiSndMgr {
 public:
-
 #define MAX_IMUSE_SOUNDS 16
 
 #define IMUSE_RESOURCE 1
@@ -54,45 +52,44 @@ public:
 
 private:
 	struct Region {
-		int32 offset;		// offset of region
-		int32 length;		// length of region
+		int32 offset; // offset of region
+		int32 length; // length of region
 	};
 
 	struct Jump {
-		int32 offset;		// jump offset position
-		int32 dest;			// jump to dest position
-		byte hookId;		// id of hook
-		int16 fadeDelay;	// fade delay in ms
+		int32 offset; // jump offset position
+		int32 dest; // jump to dest position
+		byte hookId; // id of hook
+		int16 fadeDelay; // fade delay in ms
 	};
 
 	struct Sync {
-		int32 size;			// size of sync
-		byte *ptr;			// pointer to sync
+		int32 size; // size of sync
+		byte *ptr; // pointer to sync
 	};
 
 	struct Marker {
-		int32 pos;			// position Markaer in sound data
-		int32 length;		// length of marker string
-		char *ptr;			// pointer to string
+		int32 pos; // position Markaer in sound data
+		int32 length; // length of marker string
+		char *ptr; // pointer to string
 	};
 
 public:
-
 	struct SoundDesc {
-		uint16 freq;		// frequency
-		byte channels;		// stereo or mono
-		byte bits;			// 8, 12, 16
+		uint16 freq; // frequency
+		byte channels; // stereo or mono
+		byte bits; // 8, 12, 16
 
-		int numJumps;		// number of Jumps
+		int numJumps; // number of Jumps
 		Region *region;
 
-		int numRegions;		// number of Regions
+		int numRegions; // number of Regions
 		Jump *jump;
 
-		int numSyncs;		// number of Syncs
+		int numSyncs; // number of Syncs
 		Sync *sync;
 
-		int numMarkers;		// number of Markers
+		int numMarkers; // number of Markers
 		Marker *marker;
 
 		bool endFlag;
@@ -112,7 +109,6 @@ public:
 	};
 
 private:
-
 	SoundDesc _sounds[MAX_IMUSE_SOUNDS];
 
 	bool checkForProperHandle(SoundDesc *soundDesc);
@@ -130,7 +126,6 @@ private:
 	void countElements(byte *ptr, int &numRegions, int &numJumps, int &numSyncs, int &numMarkers);
 
 public:
-
 	ImuseDigiSndMgr(ScummEngine *scumm);
 	~ImuseDigiSndMgr();
 

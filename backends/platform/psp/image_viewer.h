@@ -49,8 +49,8 @@ private:
 	bool _visible;
 	bool _dirty;
 	bool _init;
-	uint32 _imageNum;	// current image number
-	float _zoomFactor;	// how much we're zooming in/out on the image
+	uint32 _imageNum; // current image number
+	float _zoomFactor; // how much we're zooming in/out on the image
 	float _visibleHeight, _visibleWidth;
 	float _centerX, _centerY;
 	Event _movement;
@@ -71,24 +71,34 @@ private:
 
 	void setZoom(float value);
 	void setOffsetParams();
-	void modifyZoom(bool up);	// up or down
+	void modifyZoom(bool up); // up or down
 	void setVisible(bool visible);
 
 public:
-
-	ImageViewer() : _buffer(0), _palette(0), _visible(false),
-					_dirty(false), _init(false), _imageNum(0),
-					_zoomFactor(0.0f), _visibleHeight(0.0f), _visibleWidth(0.0f),
-					_centerX(0.0f), _centerY(0.0f), _movement(EVENT_MOVE_STOP),
-					_inputHandler(0), _displayManager(0) {}
-	~ImageViewer() { unload(); }	// deallocate images
+	ImageViewer()
+	  : _buffer(0)
+	  , _palette(0)
+	  , _visible(false)
+	  , _dirty(false)
+	  , _init(false)
+	  , _imageNum(0)
+	  , _zoomFactor(0.0f)
+	  , _visibleHeight(0.0f)
+	  , _visibleWidth(0.0f)
+	  , _centerX(0.0f)
+	  , _centerY(0.0f)
+	  , _movement(EVENT_MOVE_STOP)
+	  , _inputHandler(0)
+	  , _displayManager(0) {}
+	~ImageViewer() { unload(); } // deallocate images
 	bool load();
 	void render();
 	bool isVisible() { return _visible; }
 	bool isDirty() { return _dirty; }
 	void setDirty() { _dirty = true; }
-	void setClean() { if (!_visible) // otherwise we want to keep rendering
-							_dirty = false;
+	void setClean() {
+		if (!_visible) // otherwise we want to keep rendering
+			_dirty = false;
 	}
 	void resetOnEngineDone();
 

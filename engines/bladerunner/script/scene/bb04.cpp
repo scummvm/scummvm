@@ -28,38 +28,38 @@ namespace BladeRunner {
 
 void SceneScriptBB04::InitializeScene() {
 	if (Game_Flag_Query(kFlagBB03toBB04)) {
-		Setup_Scene_Information(-107.0f,  -26.6f, 397.0f,  29);
+		Setup_Scene_Information(-107.0f, -26.6f, 397.0f, 29);
 		Game_Flag_Reset(kFlagBB03toBB04);
 	} else {
-		Setup_Scene_Information( -15.0f, -25.17f,  45.0f, 691);
+		Setup_Scene_Information(-15.0f, -25.17f, 45.0f, 691);
 	}
 
 	Scene_Exit_Add_2D_Exit(0, 218, 102, 360, 254, 1);
-	Scene_Exit_Add_2D_Exit(1,   0, 334, 639, 479, 2);
+	Scene_Exit_Add_2D_Exit(1, 0, 334, 639, 479, 2);
 
-	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1,  20,    0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 40,    0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 20, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 40, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRUNOFF, 44, -100, 1);
-	Ambient_Sounds_Add_Sound(kSfxSCARY4,  2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY5,  2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY6,  2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY7,  2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN1,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN2,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN3,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBMOVE1, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBMOVE2, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBMOVE3, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHAUNT1,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHAUNT2,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxPSDOOR1, 5,  50, 17, 17, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxPSDOOR2, 5,  50, 17, 17, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY4, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY5, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY6, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY7, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN3, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE1, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE2, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE3, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHAUNT1, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHAUNT2, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPSDOOR1, 5, 50, 17, 17, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPSDOOR2, 5, 50, 17, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 5, 180, 25, 25, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 5, 180, 25, 25, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 5, 180, 25, 25, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSWEEP2,  5,  80, 20, 20, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSWEEP3,  5,  80, 20, 20, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSWEEP4,  5,  80, 20, 20, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP2, 5, 80, 20, 20, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP3, 5, 80, 20, 20, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP4, 5, 80, 20, 20, -100, 100, -101, -101, 0, 0);
 }
 
 void SceneScriptBB04::SceneLoaded() {
@@ -84,7 +84,7 @@ bool SceneScriptBB04::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptBB04::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -92.0f, -26.6f, 45.0f, 0,  true, false, false)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -92.0f, -26.6f, 45.0f, 0, true, false, false)) {
 			Player_Loses_Control();
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -15.0f, -25.17f, 45.0f, 0, false, false, false);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);

@@ -21,12 +21,12 @@
  */
 
 #include "sky/music/gmmusic.h"
-#include "sky/music/gmchannel.h"
-#include "sky/sky.h"
-#include "common/util.h"
+#include "audio/mididrv.h"
 #include "common/endian.h"
 #include "common/textconsole.h"
-#include "audio/mididrv.h"
+#include "common/util.h"
+#include "sky/music/gmchannel.h"
+#include "sky/sky.h"
 
 namespace Sky {
 
@@ -34,7 +34,8 @@ void GmMusic::passTimerFunc(void *param) {
 	((GmMusic *)param)->timerCall();
 }
 
-GmMusic::GmMusic(MidiDriver *pMidiDrv, Audio::Mixer *pMixer, Disk *pDisk) : MusicBase(pMixer, pDisk) {
+GmMusic::GmMusic(MidiDriver *pMidiDrv, Audio::Mixer *pMixer, Disk *pDisk)
+  : MusicBase(pMixer, pDisk) {
 	_driverFileBase = 60200;
 	_midiDrv = pMidiDrv;
 	int midiRes = _midiDrv->open();

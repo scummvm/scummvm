@@ -30,8 +30,8 @@
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
-#include "tucker/tucker.h"
 #include "tucker/graphics.h"
+#include "tucker/tucker.h"
 
 namespace Tucker {
 
@@ -487,7 +487,11 @@ bool TuckerEngine::handleSpecialObjectSelectionSequence() {
 }
 
 AnimationSequencePlayer::AnimationSequencePlayer(OSystem *system, Audio::Mixer *mixer, Common::EventManager *event, CompressedSound *sound, int num)
-	: _system(system), _mixer(mixer), _event(event), _compressedSound(sound), _seqNum(num) {
+  : _system(system)
+  , _mixer(mixer)
+  , _event(event)
+  , _compressedSound(sound)
+  , _seqNum(num) {
 	memset(_animationPalette, 0, sizeof(_animationPalette));
 	_soundSeqDataCount = 0;
 	_soundSeqDataIndex = 0;
@@ -517,15 +521,15 @@ void AnimationSequencePlayer::mainLoop() {
 		{ 13, 2, &AnimationSequencePlayer::loadIntroSeq13_14, &AnimationSequencePlayer::playIntroSeq13_14 },
 		{ 15, 2, &AnimationSequencePlayer::loadIntroSeq15_16, &AnimationSequencePlayer::playIntroSeq15_16 },
 		{ 27, 2, &AnimationSequencePlayer::loadIntroSeq27_28, &AnimationSequencePlayer::playIntroSeq27_28 },
-		{  1, 0, nullptr,                                     nullptr                                     }
+		{ 1, 0, nullptr, nullptr }
 	};
 	static const SequenceUpdateFunc _gameSeqUpdateFuncs[] = {
 		{ 17, 1, &AnimationSequencePlayer::loadIntroSeq17_18, &AnimationSequencePlayer::playIntroSeq17_18 },
 		{ 19, 1, &AnimationSequencePlayer::loadIntroSeq19_20, &AnimationSequencePlayer::playIntroSeq19_20 },
-		{  3, 2, &AnimationSequencePlayer::loadIntroSeq3_4,   &AnimationSequencePlayer::playIntroSeq3_4   },
-		{  9, 2, &AnimationSequencePlayer::loadIntroSeq9_10,  &AnimationSequencePlayer::playIntroSeq9_10  },
+		{ 3, 2, &AnimationSequencePlayer::loadIntroSeq3_4, &AnimationSequencePlayer::playIntroSeq3_4 },
+		{ 9, 2, &AnimationSequencePlayer::loadIntroSeq9_10, &AnimationSequencePlayer::playIntroSeq9_10 },
 		{ 21, 2, &AnimationSequencePlayer::loadIntroSeq21_22, &AnimationSequencePlayer::playIntroSeq21_22 },
-		{  1, 0, nullptr,                                     nullptr                                     }
+		{ 1, 0, nullptr, nullptr }
 	};
 	switch (_seqNum) {
 	case kFirstAnimationSequenceDemo:
@@ -624,7 +628,6 @@ Audio::RewindableAudioStream *AnimationSequencePlayer::loadSound(int index, Anim
 			stream = Audio::makeWAVStream(&f, DisposeAfterUse::NO);
 			break;
 		}
-
 	}
 	return stream;
 }
@@ -654,7 +657,7 @@ void AnimationSequencePlayer::updateSounds() {
 		case 1:
 			if ((s = loadSound(p->num, kAnimationSoundTypeWAV)) != nullptr) {
 				_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[p->index], Audio::makeLoopingAudioStream(s, 0),
-				                        -1, scaleMixerVolume(p->volume));
+				                   -1, scaleMixerVolume(p->volume));
 			}
 			break;
 		case 2:
@@ -696,7 +699,7 @@ void AnimationSequencePlayer::fadeInPalette() {
 	for (int step = 0; step < 64; ++step) {
 		if (fadeColors) {
 			fadeColors = false;
-			for (int i = 0; i < 3*256; ++i) {
+			for (int i = 0; i < 3 * 256; ++i) {
 				if (paletteBuffer[i] < _animationPalette[i]) {
 					const int color = paletteBuffer[i] + 4;
 					paletteBuffer[i] = MIN<int>(color, _animationPalette[i]);
@@ -712,12 +715,12 @@ void AnimationSequencePlayer::fadeInPalette() {
 
 void AnimationSequencePlayer::fadeOutPalette() {
 	uint8 paletteBuffer[256 * 3];
-	memcpy(paletteBuffer, _animationPalette, 3*256);
+	memcpy(paletteBuffer, _animationPalette, 3 * 256);
 	bool fadeColors = true;
 	for (int step = 0; step < 64; ++step) {
 		if (fadeColors) {
 			fadeColors = false;
-			for (int i = 0; i < 3*256; ++i) {
+			for (int i = 0; i < 3 * 256; ++i) {
 				if (paletteBuffer[i] > 0) {
 					const int color = paletteBuffer[i] - 4;
 					paletteBuffer[i] = MAX<int>(0, color);

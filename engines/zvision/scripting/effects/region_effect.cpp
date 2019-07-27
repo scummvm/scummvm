@@ -24,14 +24,14 @@
 
 #include "zvision/scripting/effects/region_effect.h"
 
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/zvision.h"
 
 namespace ZVision {
 
 RegionNode::RegionNode(ZVision *engine, uint32 key, GraphicsEffect *effect, uint32 delay)
-	: ScriptingEffect(engine, key, SCRIPTING_EFFECT_REGION) {
+  : ScriptingEffect(engine, key, SCRIPTING_EFFECT_REGION) {
 	_effect = effect;
 	_delay = delay;
 	_timeLeft = 0;

@@ -20,7 +20,6 @@
  *
  */
 
-
 #ifndef SCUMM_ACTOR_HE_H
 #define SCUMM_ACTOR_HE_H
 
@@ -46,7 +45,8 @@ struct AuxEntry {
 
 class ActorHE : public Actor {
 public:
-	ActorHE(ScummEngine *scumm, int id) : Actor(scumm, id) {}
+	ActorHE(ScummEngine *scumm, int id)
+	  : Actor(scumm, id) {}
 
 	virtual void initActor(int mode);
 
@@ -78,7 +78,6 @@ public:
 		int16 color;
 		byte sentence[128];
 	} _heTalkQueue[16];
-
 
 	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
 	virtual void setActorCostume(int c);

@@ -20,8 +20,8 @@
  *
  */
 
-#include "engines/engine.h"
 #include "scumm/players/player_apple2.h"
+#include "engines/engine.h"
 #include "scumm/scumm.h"
 
 namespace Scumm {
@@ -113,10 +113,10 @@ private:
 
 			int a = (interval >> 3) + count;
 			for (int y = a; y > 0; --y) {
-				_player->generateSamples(1292 - 5*interval);
+				_player->generateSamples(1292 - 5 * interval);
 				_player->speakerToggle();
 
-				_player->generateSamples(1287 - 5*interval);
+				_player->generateSamples(1287 - 5 * interval);
 				_player->speakerToggle();
 			}
 		}
@@ -161,7 +161,7 @@ private:
 			assert(count > 0); // 0 == 256?
 
 			for (int y = count; y > 0; --y) {
-				_player->generateSamples(1289 - 5*interval);
+				_player->generateSamples(1289 - 5 * interval);
 				_player->speakerToggle();
 			}
 		}
@@ -307,10 +307,10 @@ private:
 			interval = 256;
 
 		for (int i = count; i > 0; --i) {
-			_player->generateSamples(10 + 5*interval);
+			_player->generateSamples(10 + 5 * interval);
 			_player->speakerToggle();
 
-			_player->generateSamples(5 + 5*interval);
+			_player->generateSamples(5 + 5 * interval);
 			_player->speakerToggle();
 		}
 	}
@@ -355,7 +355,9 @@ const byte AppleII_SoundFunction5_Noise::_noiseTable[256] = {
  ************************************/
 
 Player_AppleII::Player_AppleII(ScummEngine *scumm, Audio::Mixer *mixer)
-	: _mixer(mixer), _vm(scumm), _soundFunc(0) {
+  : _mixer(mixer)
+  , _vm(scumm)
+  , _soundFunc(0) {
 	resetState();
 	setSampleRate(_mixer->getOutputRate());
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
@@ -415,7 +417,7 @@ void Player_AppleII::startSound(int nr) {
 	assert(_loop > 0);
 
 	debug(4, "startSound %d: type %d, loop %d",
-		  nr, _type, _loop);
+	      nr, _type, _loop);
 }
 
 bool Player_AppleII::updateSound() {
@@ -494,7 +496,7 @@ void Player_AppleII::generateSamples(int cycles) {
 void Player_AppleII::wait(int interval, int count /*y*/) {
 	assert(count > 0); // 0 == 256?
 	assert(interval > 0); // 0 == 256?
-	generateSamples(11 + count*(8 + 5 * interval));
+	generateSamples(11 + count * (8 + 5 * interval));
 }
 
 } // End of namespace Scumm

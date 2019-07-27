@@ -20,16 +20,15 @@
  *
  */
 
-
+#include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "common/events.h"
-#include "common/fs.h"
-#include "common/system.h"
-#include "common/archive.h"
 #include "common/debug.h"
 #include "common/error.h"
+#include "common/events.h"
+#include "common/fs.h"
 #include "common/keyboard.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 
 #include "audio/audiostream.h"
@@ -40,14 +39,17 @@
 #include "graphics/palette.h"
 #include "gui/debugger.h"
 
+#include "touche/graphics.h"
 #include "touche/midi.h"
 #include "touche/touche.h"
-#include "touche/graphics.h"
 
 namespace Touche {
 
 ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
-	: Engine(system), _midiPlayer(nullptr), _language(language), _rnd("touche") {
+  : Engine(system)
+  , _midiPlayer(nullptr)
+  , _language(language)
+  , _rnd("touche") {
 	_saveLoadCurrentPage = 0;
 	_saveLoadCurrentSlot = 0;
 	_hideInventoryTexts = false;
@@ -103,12 +105,12 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "database");
 
-	DebugMan.addDebugChannel(kDebugEngine,   "Engine",   "Engine debug level");
+	DebugMan.addDebugChannel(kDebugEngine, "Engine", "Engine debug level");
 	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
 	DebugMan.addDebugChannel(kDebugResource, "Resource", "Resource debug level");
-	DebugMan.addDebugChannel(kDebugOpcodes,  "Opcodes",  "Opcodes debug level");
-	DebugMan.addDebugChannel(kDebugMenu,     "Menu",     "Menu debug level");
-	DebugMan.addDebugChannel(kDebugCharset,  "Charset",   "Charset debug level");
+	DebugMan.addDebugChannel(kDebugOpcodes, "Opcodes", "Opcodes debug level");
+	DebugMan.addDebugChannel(kDebugMenu, "Menu", "Menu debug level");
+	DebugMan.addDebugChannel(kDebugCharset, "Charset", "Charset debug level");
 
 	_console = new ToucheConsole(this);
 
@@ -302,7 +304,7 @@ void ToucheEngine::restart() {
 	_currentRoomNum = 0;
 
 	_flagsTable[901] = 1;
-//	_flagsTable[902] = 1;
+	//	_flagsTable[902] = 1;
 	if (_language == Common::FR_FRA) {
 		_flagsTable[621] = 1;
 	}
@@ -799,9 +801,7 @@ void ToucheEngine::waitForKeyCharPosition(int keyChar) {
 			return;
 		}
 		KeyChar *nextKey = &_keyCharsTable[key->waitingKeyChar];
-		if (nextKey->currentAnim != key->waitingKeyCharPosTable[0] &&
-		    nextKey->pointsDataNum != key->waitingKeyCharPosTable[1] &&
-		    nextKey->walkDataNum != key->waitingKeyCharPosTable[2]) {
+		if (nextKey->currentAnim != key->waitingKeyCharPosTable[0] && nextKey->pointsDataNum != key->waitingKeyCharPosTable[1] && nextKey->walkDataNum != key->waitingKeyCharPosTable[2]) {
 			return;
 		}
 		key->flags &= ~kScriptPaused;
@@ -938,9 +938,9 @@ bool ToucheEngine::scrollRoom(int keyChar) {
 void ToucheEngine::drawIcon(int x, int y, int num) {
 	res_loadImage(num, _iconData);
 	Graphics::copyRect(_offscreenBuffer, kScreenWidth, x, y,
-	  _iconData, kIconWidth, 0, 0,
-	  kIconWidth, kIconHeight,
-	  Graphics::kTransparent);
+	                   _iconData, kIconWidth, 0, 0,
+	                   kIconWidth, kIconHeight,
+	                   Graphics::kTransparent);
 }
 
 void ToucheEngine::centerScreenToKeyChar(int keyChar) {
@@ -1060,7 +1060,7 @@ void ToucheEngine::moveKeyChar(uint8 *dst, int dstPitch, KeyChar *key) {
 	}
 	clippingRect.clip(_roomAreaRect);
 	SpriteData *spr = &_spritesTable[key->spriteNum];
-	int x1 =  30000, y1 =  30000;
+	int x1 = 30000, y1 = 30000;
 	int x2 = -30000, y2 = -30000;
 	int16 keyCharDirection = _flagsTable[266];
 	if (keyCharDirection == 0) {
@@ -1077,10 +1077,14 @@ void ToucheEngine::moveKeyChar(uint8 *dst, int dstPitch, KeyChar *key) {
 
 	uint8 *frameData;
 	uint8 *frameDataBase = getKeyCharFrameData(sequenceDataBase, key->currentAnim, facingDirection, key->currentAnimCounter, &frameData, key->sequenceDataOffset);
-	uint16 frameFlag = READ_LE_UINT16(frameData); frameData += 2;
-	uint16 walkDx = READ_LE_UINT16(frameData); frameData += 2;
-	uint16 walkDy = READ_LE_UINT16(frameData); frameData += 2;
-	uint16 walkDz = READ_LE_UINT16(frameData); frameData += 2;
+	uint16 frameFlag = READ_LE_UINT16(frameData);
+	frameData += 2;
+	uint16 walkDx = READ_LE_UINT16(frameData);
+	frameData += 2;
+	uint16 walkDy = READ_LE_UINT16(frameData);
+	frameData += 2;
+	uint16 walkDz = READ_LE_UINT16(frameData);
+	frameData += 2;
 
 	if (key->currentAnimSpeed <= 0) {
 		key->currentAnimSpeed = READ_LE_UINT16(frameData);
@@ -1105,12 +1109,14 @@ void ToucheEngine::moveKeyChar(uint8 *dst, int dstPitch, KeyChar *key) {
 	posY -= _flagsTable[615];
 	if (posZ == 160) { // draw sprite frames without rescaling
 		while (1) {
-			int dstX = (int16)READ_LE_UINT16(frameDataBase); frameDataBase += 2;
+			int dstX = (int16)READ_LE_UINT16(frameDataBase);
+			frameDataBase += 2;
 			if (dstX == 10000) {
 				_moveKeyCharRect = Common::Rect(x1, y1, x2 + spr->w, y2 + spr->h);
 				break;
 			}
-			int dstY = (int16)READ_LE_UINT16(frameDataBase); frameDataBase += 2;
+			int dstY = (int16)READ_LE_UINT16(frameDataBase);
+			frameDataBase += 2;
 
 			if (facingDirection == 3) {
 				dstX = -dstX - spr->w;
@@ -1122,8 +1128,9 @@ void ToucheEngine::moveKeyChar(uint8 *dst, int dstPitch, KeyChar *key) {
 			y1 = MIN(dstY, y1);
 			y2 = MAX(dstY, y2);
 
-			int frameDir = READ_LE_UINT16(frameDataBase); frameDataBase += 2;
-//			assert((frameDir & 0x4000) == 0); // hflipped
+			int frameDir = READ_LE_UINT16(frameDataBase);
+			frameDataBase += 2;
+			//			assert((frameDir & 0x4000) == 0); // hflipped
 			bool vflipped = (frameDir & 0x8000) != 0;
 
 			frameDir &= 0xFFF;
@@ -1179,15 +1186,18 @@ void ToucheEngine::moveKeyChar(uint8 *dst, int dstPitch, KeyChar *key) {
 		int clippingRect_y2 = clippingRect.bottom;
 		buildSpriteScalingTable(160, posZ);
 		while (1) {
-			int dstX = (int16)READ_LE_UINT16(frameDataBase); frameDataBase += 2;
+			int dstX = (int16)READ_LE_UINT16(frameDataBase);
+			frameDataBase += 2;
 			if (dstX == 10000) {
 				_moveKeyCharRect = Common::Rect(x1, y1, x2 + 1, y2 + 1);
 				break;
 			}
-			int dstY = (int16)READ_LE_UINT16(frameDataBase); frameDataBase += 2;
+			int dstY = (int16)READ_LE_UINT16(frameDataBase);
+			frameDataBase += 2;
 
-			int frameDir = READ_LE_UINT16(frameDataBase); frameDataBase += 2;
-//			assert((frameDir & 0x4000) == 0); // hflipped
+			int frameDir = READ_LE_UINT16(frameDataBase);
+			frameDataBase += 2;
+			//			assert((frameDir & 0x4000) == 0); // hflipped
 			bool vflipped = (frameDir & 0x8000) != 0;
 
 			frameDir &= 0xFFF;
@@ -1232,7 +1242,8 @@ void ToucheEngine::moveKeyChar(uint8 *dst, int dstPitch, KeyChar *key) {
 			uint8 *dstStart = dstCur;
 			int sprStartY = 0;
 			while (1) {
-				int sprCurY = *yScaledTable - dstY; ++yScaledTable;
+				int sprCurY = *yScaledTable - dstY;
+				++yScaledTable;
 				if (sprCurY >= spr->h) {
 					break;
 				}
@@ -1251,7 +1262,8 @@ void ToucheEngine::moveKeyChar(uint8 *dst, int dstPitch, KeyChar *key) {
 				}
 				if (facingDirection != 3) {
 					while (1) {
-						int spr_x1 = *scalingTable - dstX; ++scalingTable;
+						int spr_x1 = *scalingTable - dstX;
+						++scalingTable;
 						if (spr_x1 >= spr->w || spr_x2 >= clippingRect_x2) {
 							break;
 						}
@@ -1267,7 +1279,8 @@ void ToucheEngine::moveKeyChar(uint8 *dst, int dstPitch, KeyChar *key) {
 					x2 = MAX(x2, spr_x2);
 				} else {
 					while (1) {
-						int spr_x1 = dstX - *scalingTable; --scalingTable;
+						int spr_x1 = dstX - *scalingTable;
+						--scalingTable;
 						if (spr_x1 >= spr->w || spr_x2 < clippingRect_x1) {
 							break;
 						}
@@ -1437,7 +1450,7 @@ void ToucheEngine::buildSpriteScalingTable(int z1, int z2) {
 	for (int i = 0; i < z2; ++i) {
 		int value = scaleSum >> 8;
 		assert(i < 500);
-		_spriteScalingTable[500 + i] =  value;
+		_spriteScalingTable[500 + i] = value;
 		_spriteScalingTable[500 - i] = -value;
 		scaleSum += scaleInc;
 	}
@@ -1465,8 +1478,8 @@ void ToucheEngine::drawSpriteOnBackdrop(int num, int x, int y) {
 	assert(num >= 0 && num < NUM_SPRITES);
 	SpriteData *spr = &_spritesTable[num];
 	Graphics::copyRect(_backdropBuffer, _currentBitmapWidth, x, y,
-	  spr->ptr, spr->bitmapWidth, 0, 0,
-	  spr->bitmapWidth, spr->bitmapHeight);
+	                   spr->ptr, spr->bitmapWidth, 0, 0,
+	                   spr->bitmapWidth, spr->bitmapHeight);
 }
 
 void ToucheEngine::updateTalkFrames(int keyChar) {
@@ -2001,9 +2014,9 @@ void ToucheEngine::redrawBackground() {
 			}
 			if (area.clip(_roomAreaRect)) {
 				Graphics::copyRect(_offscreenBuffer, kScreenWidth, area.r.left, area.r.top,
-				  _backdropBuffer, _currentBitmapWidth, area.srcX, area.srcY,
-				  area.r.width(), area.r.height(),
-				  Graphics::kTransparent);
+				                   _backdropBuffer, _currentBitmapWidth, area.srcX, area.srcY,
+				                   area.r.width(), area.r.height(),
+				                   Graphics::kTransparent);
 				addToDirtyRect(area.r);
 			}
 		}
@@ -2041,14 +2054,14 @@ void ToucheEngine::updateRoomAreas(int num, int flags) {
 				area.r.left = 714;
 			}
 			Graphics::copyRect(_backdropBuffer, _currentBitmapWidth, area.r.left, area.r.top,
-			  _backdropBuffer, _currentBitmapWidth, area.srcX, area.srcY,
-			  area.r.width(), area.r.height(),
-			  Graphics::kTransparent);
+			                   _backdropBuffer, _currentBitmapWidth, area.srcX, area.srcY,
+			                   area.r.width(), area.r.height(),
+			                   Graphics::kTransparent);
 			if (flags != 0) {
 				debug(0, "updateRoomAreas(num=%d index=%d)", num, i);
 				redrawRoomRegion(i, true);
-//				area.r.translate(-_flagsTable[614], -_flagsTable[615]);
-//				addToDirtyRect(area.r);
+				//				area.r.translate(-_flagsTable[614], -_flagsTable[615]);
+				//				addToDirtyRect(area.r);
 			}
 		}
 	}
@@ -2109,9 +2122,9 @@ void ToucheEngine::redrawRoomRegion(int num, bool markForRedraw) {
 	area.r.translate(-_flagsTable[614], -_flagsTable[615]);
 	if (area.clip(_roomAreaRect)) {
 		Graphics::copyRect(_offscreenBuffer, kScreenWidth, area.r.left, area.r.top,
-		  _backdropBuffer, _currentBitmapWidth, area.srcX, area.srcY,
-		  area.r.width(), area.r.height(),
-		  Graphics::kTransparent);
+		                   _backdropBuffer, _currentBitmapWidth, area.srcX, area.srcY,
+		                   area.r.width(), area.r.height(),
+		                   Graphics::kTransparent);
 		if (markForRedraw) {
 			addToDirtyRect(area.r);
 		}
@@ -2148,19 +2161,19 @@ void ToucheEngine::initInventoryLists() {
 }
 
 void ToucheEngine::setupInventoryAreas() {
-	_inventoryAreasTable[kInventoryCharacter]    = Common::Rect(  0, 354,  50, 400);
-	_inventoryAreasTable[kInventoryMoneyDisplay] = Common::Rect( 66, 354, 124, 380);
-	_inventoryAreasTable[kInventoryGoldCoins]    = Common::Rect( 74, 380, 116, 398);
-	_inventoryAreasTable[kInventorySilverCoins]  = Common::Rect(116, 380, 158, 398);
-	_inventoryAreasTable[kInventoryMoney]        = Common::Rect(144, 354, 198, 380);
-	_inventoryAreasTable[kInventoryScroller1]    = Common::Rect(202, 354, 238, 396);
-	_inventoryAreasTable[kInventoryObject1]      = Common::Rect(242, 354, 300, 396);
-	_inventoryAreasTable[kInventoryObject2]      = Common::Rect(300, 354, 358, 396);
-	_inventoryAreasTable[kInventoryObject3]      = Common::Rect(358, 354, 416, 396);
-	_inventoryAreasTable[kInventoryObject4]      = Common::Rect(416, 354, 474, 396);
-	_inventoryAreasTable[kInventoryObject5]      = Common::Rect(474, 354, 532, 396);
-	_inventoryAreasTable[kInventoryObject6]      = Common::Rect(532, 354, 590, 396);
-	_inventoryAreasTable[kInventoryScroller2]    = Common::Rect(594, 354, 640, 395);
+	_inventoryAreasTable[kInventoryCharacter] = Common::Rect(0, 354, 50, 400);
+	_inventoryAreasTable[kInventoryMoneyDisplay] = Common::Rect(66, 354, 124, 380);
+	_inventoryAreasTable[kInventoryGoldCoins] = Common::Rect(74, 380, 116, 398);
+	_inventoryAreasTable[kInventorySilverCoins] = Common::Rect(116, 380, 158, 398);
+	_inventoryAreasTable[kInventoryMoney] = Common::Rect(144, 354, 198, 380);
+	_inventoryAreasTable[kInventoryScroller1] = Common::Rect(202, 354, 238, 396);
+	_inventoryAreasTable[kInventoryObject1] = Common::Rect(242, 354, 300, 396);
+	_inventoryAreasTable[kInventoryObject2] = Common::Rect(300, 354, 358, 396);
+	_inventoryAreasTable[kInventoryObject3] = Common::Rect(358, 354, 416, 396);
+	_inventoryAreasTable[kInventoryObject4] = Common::Rect(416, 354, 474, 396);
+	_inventoryAreasTable[kInventoryObject5] = Common::Rect(474, 354, 532, 396);
+	_inventoryAreasTable[kInventoryObject6] = Common::Rect(532, 354, 590, 396);
+	_inventoryAreasTable[kInventoryScroller2] = Common::Rect(594, 354, 640, 395);
 }
 
 void ToucheEngine::drawInventory(int index, int flag) {
@@ -2235,7 +2248,7 @@ void ToucheEngine::appendItemToInventoryList(int index) {
 void ToucheEngine::addItemToInventory(int inventory, int16 item) {
 	if (item == 0) {
 		packInventoryItems(inventory);
-	} else if (item == 1)  {
+	} else if (item == 1) {
 		_currentAmountOfMoney += _flagsTable[118];
 		drawAmountOfMoneyInInventory();
 	} else {
@@ -2421,9 +2434,7 @@ const char *ToucheEngine::formatTalkText(int *y, int *h, const char *text) {
 
 void ToucheEngine::addToTalkTable(int talkingKeyChar, int num, int otherKeyChar) {
 	if (_talkListEnd != _talkListCurrent) {
-		if (_talkTableLastTalkingKeyChar == talkingKeyChar &&
-			_talkTableLastOtherKeyChar == otherKeyChar &&
-			_talkTableLastStringNum == num) {
+		if (_talkTableLastTalkingKeyChar == talkingKeyChar && _talkTableLastOtherKeyChar == otherKeyChar && _talkTableLastStringNum == num) {
 			return;
 		}
 	}
@@ -3137,8 +3148,7 @@ void ToucheEngine::buildWalkPath(int dstPosX, int dstPosY, int keyChar) {
 						}
 					}
 				} else {
-					if (dstPosY > MIN(pts2->y, pts1->y) && dstPosY < MAX(pts2->y, pts1->y) &&
-						dstPosX > MIN(pts2->x, pts1->x) && dstPosX < MAX(pts2->x, pts1->x) ) {
+					if (dstPosY > MIN(pts2->y, pts1->y) && dstPosY < MAX(pts2->y, pts1->y) && dstPosX > MIN(pts2->x, pts1->x) && dstPosX < MAX(pts2->x, pts1->x)) {
 						distance = (dstPosX - pts1->x) * dy - (dstPosY - pts1->y) * dx;
 						distance /= (dx * dx + dy * dy);
 					}
@@ -3234,14 +3244,14 @@ void ToucheEngine::copyAnimationImage(int dstX, int dstY, int w, int h, const ui
 	if (copyRegion.clip(_screenRect)) {
 		if (fillColor != -1) {
 			Graphics::copyMask(_offscreenBuffer, kScreenWidth, copyRegion.r.left, copyRegion.r.top,
-			  src, kIconWidth, copyRegion.srcX, copyRegion.srcY,
-			  copyRegion.r.width(), copyRegion.r.height(),
-			  (uint8)fillColor);
+			                   src, kIconWidth, copyRegion.srcX, copyRegion.srcY,
+			                   copyRegion.r.width(), copyRegion.r.height(),
+			                   (uint8)fillColor);
 		} else {
 			Graphics::copyRect(_offscreenBuffer, kScreenWidth, copyRegion.r.left, copyRegion.r.top,
-			  src, kIconWidth, copyRegion.srcX, copyRegion.srcY,
-			  copyRegion.r.width(), copyRegion.r.height(),
-			  Graphics::kTransparent);
+			                   src, kIconWidth, copyRegion.srcX, copyRegion.srcY,
+			                   copyRegion.r.width(), copyRegion.r.height(),
+			                   Graphics::kTransparent);
 		}
 	}
 }
@@ -3380,7 +3390,7 @@ void ToucheEngine::updateEntireScreen() {
 }
 
 void ToucheEngine::updateDirtyScreenAreas() {
-//	_fullRedrawCounter = 1;
+	//	_fullRedrawCounter = 1;
 	if (_fullRedrawCounter != 0) {
 		updateEntireScreen();
 		--_fullRedrawCounter;
@@ -3417,7 +3427,7 @@ void ToucheEngine::initMusic() {
 	// Detect External Music Files
 	bool extMusic = true;
 	for (int num = 0; num < 26 && extMusic; num++) {
-		Common::String extMusicFilename = Common::String::format("track%02d", num+1);
+		Common::String extMusicFilename = Common::String::format("track%02d", num + 1);
 		Audio::SeekableAudioStream *musicStream = Audio::SeekableAudioStream::openStreamFile(extMusicFilename);
 		if (!musicStream)
 			extMusic = false;

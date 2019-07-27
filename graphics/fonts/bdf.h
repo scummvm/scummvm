@@ -77,6 +77,7 @@ public:
 	static bool cacheFontData(const BdfFont &font, const Common::String &filename);
 	static BdfFont *loadFromCache(Common::SeekableReadStream &stream);
 	static BdfFont *scaleFont(BdfFont *src, int newSize);
+
 private:
 	int mapToIndex(uint32 ch) const;
 
@@ -84,14 +85,14 @@ private:
 	const DisposeAfterUse::Flag _dispose;
 };
 
-#define DEFINE_FONT(n) \
-	const BdfFont *n = 0; \
-	void create_##n() { \
+#define DEFINE_FONT(n)                          \
+	const BdfFont *n = 0;                         \
+	void create_##n() {                           \
 		n = new BdfFont(desc, DisposeAfterUse::NO); \
 	}
 
 #define FORWARD_DECLARE_FONT(n) \
-	extern const BdfFont *n; \
+	extern const BdfFont *n;      \
 	extern void create_##n()
 
 #define INIT_FONT(n) \

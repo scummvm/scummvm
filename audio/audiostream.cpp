@@ -23,8 +23,8 @@
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/mutex.h"
-#include "common/textconsole.h"
 #include "common/queue.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 #include "audio/audiostream.h"
@@ -34,7 +34,6 @@
 #include "audio/decoders/raw.h"
 #include "audio/decoders/vorbis.h"
 #include "audio/mixer.h"
-
 
 namespace Audio {
 
@@ -50,18 +49,18 @@ struct StreamFileFormat {
 };
 
 static const StreamFileFormat STREAM_FILEFORMATS[] = {
-	/* decoderName,  fileExt, openStreamFunction */
+/* decoderName,  fileExt, openStreamFunction */
 #ifdef USE_FLAC
-	{ "FLAC",         ".flac", makeFLACStream },
-	{ "FLAC",         ".fla",  makeFLACStream },
+	{ "FLAC", ".flac", makeFLACStream },
+	{ "FLAC", ".fla", makeFLACStream },
 #endif
 #ifdef USE_VORBIS
-	{ "Ogg Vorbis",   ".ogg",  makeVorbisStream },
+	{ "Ogg Vorbis", ".ogg", makeVorbisStream },
 #endif
 #ifdef USE_MAD
-	{ "MPEG Layer 3", ".mp3",  makeMP3Stream },
+	{ "MPEG Layer 3", ".mp3", makeMP3Stream },
 #endif
-	{ "MPEG-4 Audio",   ".m4a",  makeQuickTimeStream },
+	{ "MPEG-4 Audio", ".m4a", makeQuickTimeStream },
 };
 
 SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &basename) {
@@ -88,11 +87,13 @@ SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &b
 }
 
 #pragma mark -
-#pragma mark --- LoopingAudioStream ---
+#pragma mark--- LoopingAudioStream ---
 #pragma mark -
 
 LoopingAudioStream::LoopingAudioStream(RewindableAudioStream *stream, uint loops, DisposeAfterUse::Flag disposeAfterUse)
-    : _parent(stream, disposeAfterUse), _loops(loops), _completeIterations(0) {
+  : _parent(stream, disposeAfterUse)
+  , _loops(loops)
+  , _completeIterations(0) {
 	assert(stream);
 
 	if (!stream->rewind()) {
@@ -167,7 +168,7 @@ AudioStream *makeLoopingAudioStream(SeekableAudioStream *stream, Timestamp start
 }
 
 #pragma mark -
-#pragma mark --- SubLoopingAudioStream ---
+#pragma mark--- SubLoopingAudioStream ---
 #pragma mark -
 
 SubLoopingAudioStream::SubLoopingAudioStream(SeekableAudioStream *stream,
@@ -175,11 +176,12 @@ SubLoopingAudioStream::SubLoopingAudioStream(SeekableAudioStream *stream,
                                              const Timestamp loopStart,
                                              const Timestamp loopEnd,
                                              DisposeAfterUse::Flag disposeAfterUse)
-    : _parent(stream, disposeAfterUse), _loops(loops),
-      _pos(0, getRate() * (isStereo() ? 2 : 1)),
-      _loopStart(convertTimeToStreamPos(loopStart, getRate(), isStereo())),
-      _loopEnd(convertTimeToStreamPos(loopEnd, getRate(), isStereo())),
-      _done(false) {
+  : _parent(stream, disposeAfterUse)
+  , _loops(loops)
+  , _pos(0, getRate() * (isStereo() ? 2 : 1))
+  , _loopStart(convertTimeToStreamPos(loopStart, getRate(), isStereo()))
+  , _loopEnd(convertTimeToStreamPos(loopEnd, getRate(), isStereo()))
+  , _done(false) {
 	assert(loopStart < loopEnd);
 
 	if (!_parent->rewind())
@@ -234,14 +236,14 @@ bool SubLoopingAudioStream::endOfStream() const {
 }
 
 #pragma mark -
-#pragma mark --- SubSeekableAudioStream ---
+#pragma mark--- SubSeekableAudioStream ---
 #pragma mark -
 
 SubSeekableAudioStream::SubSeekableAudioStream(SeekableAudioStream *parent, const Timestamp start, const Timestamp end, DisposeAfterUse::Flag disposeAfterUse)
-    : _parent(parent, disposeAfterUse),
-      _start(convertTimeToStreamPos(start, getRate(), isStereo())),
-      _pos(0, getRate() * (isStereo() ? 2 : 1)),
-      _length(convertTimeToStreamPos(end, getRate(), isStereo()) - _start) {
+  : _parent(parent, disposeAfterUse)
+  , _start(convertTimeToStreamPos(start, getRate(), isStereo()))
+  , _pos(0, getRate() * (isStereo() ? 2 : 1))
+  , _length(convertTimeToStreamPos(end, getRate(), isStereo()) - _start) {
 
 	assert(_length.totalNumberOfFrames() % (isStereo() ? 2 : 1) == 0);
 	_parent->seek(_start);
@@ -270,15 +272,13 @@ bool SubSeekableAudioStream::seek(const Timestamp &where) {
 }
 
 #pragma mark -
-#pragma mark --- Queueing audio stream ---
+#pragma mark--- Queueing audio stream ---
 #pragma mark -
-
 
 void QueuingAudioStream::queueBuffer(byte *data, uint32 size, DisposeAfterUse::Flag disposeAfterUse, byte flags) {
 	AudioStream *stream = makeRawStream(data, size, getRate(), flags, disposeAfterUse);
 	queueAudioStream(stream, DisposeAfterUse::YES);
 }
-
 
 class QueuingAudioStreamImpl : public QueuingAudioStream {
 private:
@@ -293,8 +293,8 @@ private:
 		AudioStream *_stream;
 		DisposeAfterUse::Flag _disposeAfterUse;
 		StreamHolder(AudioStream *stream, DisposeAfterUse::Flag disposeAfterUse)
-		    : _stream(stream),
-		      _disposeAfterUse(disposeAfterUse) {}
+		  : _stream(stream)
+		  , _disposeAfterUse(disposeAfterUse) {}
 	};
 
 	/**
@@ -325,7 +325,9 @@ private:
 
 public:
 	QueuingAudioStreamImpl(int rate, bool stereo)
-	    : _rate(rate), _stereo(stereo), _finished(false) {}
+	  : _rate(rate)
+	  , _stereo(stereo)
+	  , _finished(false) {}
 	~QueuingAudioStreamImpl();
 
 	// Implement the AudioStream API
@@ -432,9 +434,11 @@ Timestamp convertTimeToStreamPos(const Timestamp &where, int rate, bool isStereo
  */
 class LimitingAudioStream : public AudioStream {
 public:
-	LimitingAudioStream(AudioStream *parentStream, const Audio::Timestamp &length, DisposeAfterUse::Flag disposeAfterUse) :
-			_parentStream(parentStream), _samplesRead(0), _disposeAfterUse(disposeAfterUse),
-			_totalSamples(length.convertToFramerate(getRate()).totalNumberOfFrames() * getChannels()) {}
+	LimitingAudioStream(AudioStream *parentStream, const Audio::Timestamp &length, DisposeAfterUse::Flag disposeAfterUse)
+	  : _parentStream(parentStream)
+	  , _samplesRead(0)
+	  , _disposeAfterUse(disposeAfterUse)
+	  , _totalSamples(length.convertToFramerate(getRate()).totalNumberOfFrames() * getChannels()) {}
 
 	~LimitingAudioStream() {
 		if (_disposeAfterUse == DisposeAfterUse::YES)
@@ -472,10 +476,10 @@ AudioStream *makeLimitingAudioStream(AudioStream *parentStream, const Timestamp 
  */
 class NullAudioStream : public AudioStream {
 public:
-        bool isStereo() const { return false; }
-        int getRate() const;
-        int readBuffer(int16 *data, const int numSamples) { return 0; }
-        bool endOfData() const { return true; }
+	bool isStereo() const { return false; }
+	int getRate() const;
+	int readBuffer(int16 *data, const int numSamples) { return 0; }
+	bool endOfData() const { return true; }
 };
 
 int NullAudioStream::getRate() const {

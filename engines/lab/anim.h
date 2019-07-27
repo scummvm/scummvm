@@ -34,7 +34,7 @@
 namespace Lab {
 
 class LabEngine;
-#define CONTINUOUS      0xFFFF
+#define CONTINUOUS 0xFFFF
 
 struct DIFFHeader {
 	uint16 _width;
@@ -72,8 +72,8 @@ public:
 
 	char _diffPalette[256 * 3];
 	bool _waitForEffect; // Wait for each sound effect to finish before continuing.
-	bool _doBlack;       // Black the screen before new picture
-	bool _noPalChange;   // Don't change the palette.
+	bool _doBlack; // Black the screen before new picture
+	bool _noPalChange; // Don't change the palette.
 	byte *_scrollScreenBuffer;
 
 	/**
@@ -95,7 +95,7 @@ public:
 
 	uint16 getDIFFHeight();
 
-	bool isPlaying() const { return _isPlaying;  }
+	bool isPlaying() const { return _isPlaying; }
 };
 
 } // End of namespace Lab

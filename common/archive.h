@@ -23,16 +23,15 @@
 #ifndef COMMON_ARCHIVE_H
 #define COMMON_ARCHIVE_H
 
-#include "common/str.h"
 #include "common/list.h"
 #include "common/ptr.h"
 #include "common/singleton.h"
+#include "common/str.h"
 
 namespace Common {
 
 class FSNode;
 class SeekableReadStream;
-
 
 /**
  * ArchiveMember is an abstract interface to represent elements inside
@@ -44,7 +43,7 @@ class SeekableReadStream;
  */
 class ArchiveMember {
 public:
-	virtual ~ArchiveMember() { }
+	virtual ~ArchiveMember() {}
 	virtual SeekableReadStream *createReadStream() const = 0;
 	virtual String getName() const = 0;
 	virtual String getDisplayName() const { return getName(); }
@@ -73,12 +72,12 @@ class Archive;
 class GenericArchiveMember : public ArchiveMember {
 	const Archive *_parent;
 	const String _name;
+
 public:
 	GenericArchiveMember(const String &name, const Archive *parent);
 	String getName() const;
 	SeekableReadStream *createReadStream() const;
 };
-
 
 /**
  * Archive allows managing of member of arbitrary containers in a uniform
@@ -87,7 +86,7 @@ public:
  */
 class Archive {
 public:
-	virtual ~Archive() { }
+	virtual ~Archive() {}
 
 	/**
 	 * Check if a member with the given name is present in the Archive.
@@ -125,7 +124,6 @@ public:
 	virtual SeekableReadStream *createReadStreamForMember(const String &name) const = 0;
 };
 
-
 /**
  * SearchSet enables access to a group of Archives through the Archive interface.
  * Its intended usage is a situation in which there are no name clashes among names in the
@@ -135,12 +133,15 @@ public:
  */
 class SearchSet : public Archive {
 	struct Node {
-		int		_priority;
-		String	_name;
-		Archive	*_arc;
-		bool	_autoFree;
+		int _priority;
+		String _name;
+		Archive *_arc;
+		bool _autoFree;
 		Node(int priority, const String &name, Archive *arc, bool autoFree)
-			: _priority(priority), _name(name), _arc(arc), _autoFree(autoFree) {
+		  : _priority(priority)
+		  , _name(name)
+		  , _arc(arc)
+		  , _autoFree(autoFree) {
 		}
 	};
 	typedef List<Node> ArchiveNodeList;
@@ -150,7 +151,7 @@ class SearchSet : public Archive {
 	ArchiveNodeList::const_iterator find(const String &name) const;
 
 	// Add an archive keeping the list sorted by descending priority.
-	void insert(const Node& node);
+	void insert(const Node &node);
 
 public:
 	virtual ~SearchSet() { clear(); }
@@ -158,7 +159,7 @@ public:
 	/**
 	 * Add a new archive to the searchable set.
 	 */
-	void add(const String& name, Archive *arch, int priority = 0, bool autoFree = true);
+	void add(const String &name, Archive *arch, int priority = 0, bool autoFree = true);
 
 	/**
 	 * Create and add a FSDirectory by name
@@ -219,7 +220,7 @@ public:
 	/**
 	 * Remove an archive from the searchable set.
 	 */
-	void remove(const String& name);
+	void remove(const String &name);
 
 	/**
 	 * Check if a given archive name is already present.
@@ -234,7 +235,7 @@ public:
 	/**
 	 * Change the order of searches.
 	 */
-	void setPriority(const String& name, int priority);
+	void setPriority(const String &name, int priority);
 
 	virtual bool hasFile(const String &name) const;
 	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern) const;
@@ -249,10 +250,8 @@ public:
 	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
 };
 
-
 class SearchManager : public Singleton<SearchManager>, public SearchSet {
 public:
-
 	/**
 	 * Resets the search manager to the default list of search paths (system
 	 * specific dirs + current dir).
@@ -265,7 +264,7 @@ private:
 };
 
 /** Shortcut for accessing the search manager. */
-#define SearchMan		Common::SearchManager::instance()
+#define SearchMan Common::SearchManager::instance()
 
 } // namespace Common
 

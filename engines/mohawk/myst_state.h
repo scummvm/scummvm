@@ -23,8 +23,8 @@
 #ifndef MYST_SAVELOAD_H
 #define MYST_SAVELOAD_H
 
-#include "common/savefile.h"
 #include "common/file.h"
+#include "common/savefile.h"
 #include "common/str.h"
 
 #include "engines/savestate.h"
@@ -57,52 +57,52 @@ struct MystSaveMetadata {
 
 // Page being held
 enum HeldPage {
-	kNoPage              = 0,
-	kBlueLibraryPage     = 1,
-	kBlueSeleniticPage   = 2,
-	kBlueMechanicalPage  = 3,
-	kBlueStoneshipPage   = 4,
+	kNoPage = 0,
+	kBlueLibraryPage = 1,
+	kBlueSeleniticPage = 2,
+	kBlueMechanicalPage = 3,
+	kBlueStoneshipPage = 4,
 	kBlueChannelwoodPage = 5,
-	kBlueFirePlacePage   = 6,
-	kRedLibraryPage      = 7,
-	kRedSeleniticPage    = 8,
-	kRedMechanicalPage   = 9,
-	kRedStoneshipPage    = 10,
-	kRedChannelwoodPage  = 11,
-	kRedFirePlacePage    = 12,
-	kWhitePage           = 13
+	kBlueFirePlacePage = 6,
+	kRedLibraryPage = 7,
+	kRedSeleniticPage = 8,
+	kRedMechanicalPage = 9,
+	kRedStoneshipPage = 10,
+	kRedChannelwoodPage = 11,
+	kRedFirePlacePage = 12,
+	kWhitePage = 13
 };
 
 // Age the player is in
 enum ActiveAge {
-	kSelenitic     = 0,
-	kStoneship     = 1,
-	kMystLibrary   = 2,
-	kMechanical    = 3,
-	kChannelwood   = 4,
-	kIntro         = 5,
-	kDni           = 6,
-	kMystStart     = 7,
-	kCredits       = 8,
-	kSirrusEnding  = 9,
+	kSelenitic = 0,
+	kStoneship = 1,
+	kMystLibrary = 2,
+	kMechanical = 3,
+	kChannelwood = 4,
+	kIntro = 5,
+	kDni = 6,
+	kMystStart = 7,
+	kCredits = 8,
+	kSirrusEnding = 9,
 	kAchenarEnding = 10
 };
 
 // Various states that Atrus can be in when in Dni
 enum DniEnding {
-	kDniNotVisited    = 0, // Player hasn't been to Dni/K'veer yet
-	kAtrusWantsPage   = 1, // Player is in Dni with the white page
-	kAtrusLeaves      = 2, // Atrus leaves Dni after receiving the white page
-	kForgotPage       = 3, // Player has entered Dni without bringing the white page
-	kBooksDestroyed   = 4  // Atrus returns to Dni after previously leaving 
-						   // and destroying the books of his sons
+	kDniNotVisited = 0, // Player hasn't been to Dni/K'veer yet
+	kAtrusWantsPage = 1, // Player is in Dni with the white page
+	kAtrusLeaves = 2, // Atrus leaves Dni after receiving the white page
+	kForgotPage = 3, // Player has entered Dni without bringing the white page
+	kBooksDestroyed = 4 // Atrus returns to Dni after previously leaving
+	// and destroying the books of his sons
 };
 
 class MystGameState {
 public:
 	static const int kAutoSaveSlot;
 
-	MystGameState(MohawkEngine_Myst*, Common::SaveFileManager*);
+	MystGameState(MohawkEngine_Myst *, Common::SaveFileManager *);
 	~MystGameState();
 
 	static SaveStateDescriptor querySaveMetaInfos(int slot);

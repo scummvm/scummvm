@@ -49,6 +49,7 @@ public:
 	virtual bool action(int x, int y, bool pushed) = 0;
 	bool visible();
 	bool drawn();
+
 protected:
 	GUIElement(int x = 0, int y = 0, int width = 0, int height = 0);
 	bool checkInside(int x, int y);
@@ -57,6 +58,7 @@ protected:
 	int _x;
 	int _y;
 	bool _drawn;
+
 private:
 	int _width;
 	int _height;

@@ -26,12 +26,14 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CDrawer, CSGTStateRoom)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(TurnOff)
-	ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(TurnOff)
+ON_MESSAGE(MovieEndMsg)
 END_MESSAGE_MAP()
 
-CDrawer::CDrawer() : CSGTStateRoom(), _fieldF4(0) {
+CDrawer::CDrawer()
+  : CSGTStateRoom()
+  , _fieldF4(0) {
 }
 
 void CDrawer::save(SimpleFile *file, int indent) {

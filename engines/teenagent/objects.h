@@ -20,7 +20,6 @@
  *
  */
 
-
 #ifndef TEENAGENT_OBJECTS_H
 #define TEENAGENT_OBJECTS_H
 
@@ -31,14 +30,32 @@
 
 namespace TeenAgent {
 
-enum {kActorUp = 1, kActorRight = 2, kActorDown = 3, kActorLeft = 4 };
+enum { kActorUp = 1,
+	     kActorRight = 2,
+	     kActorDown = 3,
+	     kActorLeft = 4 };
 
 struct Rect {
 	int16 left, top, right, bottom;
 
-	inline Rect() : left(0), top(0), right(0), bottom(0), _base(NULL) {}
-	inline Rect(const Common::Rect &r) : left(r.left), top(r.top), right(r.right), bottom(r.bottom), _base(NULL) {}
-	inline Rect(uint16 l, uint16 t, uint16 r, uint16 b) : left(l), top(t), right(r), bottom(b), _base(NULL) {}
+	inline Rect()
+	  : left(0)
+	  , top(0)
+	  , right(0)
+	  , bottom(0)
+	  , _base(NULL) {}
+	inline Rect(const Common::Rect &r)
+	  : left(r.left)
+	  , top(r.top)
+	  , right(r.right)
+	  , bottom(r.bottom)
+	  , _base(NULL) {}
+	inline Rect(uint16 l, uint16 t, uint16 r, uint16 b)
+	  : left(l)
+	  , top(t)
+	  , right(r)
+	  , bottom(b)
+	  , _base(NULL) {}
 
 	inline bool in(const Common::Point &point) const {
 		return point.x >= left && point.x <= right && point.y >= top && point.y <= bottom;
@@ -165,7 +182,12 @@ struct Object {
 	//19
 	Common::String name, description;
 
-	Object(): _base(NULL) { id = 0; actorOrientation = 0; enabled = 0;  }
+	Object()
+	  : _base(NULL) {
+		id = 0;
+		actorOrientation = 0;
+		enabled = 0;
+	}
 	void dump(int level = 0) const;
 	void setName(const Common::String &newName);
 	void load(byte *addr);
@@ -182,7 +204,10 @@ struct InventoryObject {
 	byte animated;
 	Common::String name, description;
 
-	InventoryObject(): id(0), animated(0), _base(0) {}
+	InventoryObject()
+	  : id(0)
+	  , animated(0)
+	  , _base(0) {}
 	void load(byte *addr);
 
 protected:
@@ -205,7 +230,8 @@ struct Walkbox {
 	Rect rect;
 	byte sideHint[4];
 
-	Walkbox() : _base(NULL) { memset(this, 0, sizeof(Walkbox)); }
+	Walkbox()
+	  : _base(NULL) { memset(this, 0, sizeof(Walkbox)); }
 	void dump(int level = 0) const;
 	void load(byte *src);
 	void save() const;
@@ -222,7 +248,8 @@ struct FadeType {
 };
 
 //\todo move it to util.h?
-template<typename T> inline T SIGN(T x) { return (x > 0) ? 1 : ((x < 0) ? -1 : 0); }
+template <typename T>
+inline T SIGN(T x) { return (x > 0) ? 1 : ((x < 0) ? -1 : 0); }
 
 } // End of namespace TeenAgent
 

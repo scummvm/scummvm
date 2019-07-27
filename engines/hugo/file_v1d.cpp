@@ -31,14 +31,15 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 
-#include "hugo/hugo.h"
-#include "hugo/file.h"
 #include "hugo/display.h"
+#include "hugo/file.h"
+#include "hugo/hugo.h"
 #include "hugo/text.h"
 #include "hugo/util.h"
 
 namespace Hugo {
-FileManager_v1d::FileManager_v1d(HugoEngine *vm) : FileManager(vm) {
+FileManager_v1d::FileManager_v1d(HugoEngine *vm)
+  : FileManager(vm) {
 }
 
 FileManager_v1d::~FileManager_v1d() {
@@ -58,7 +59,7 @@ void FileManager_v1d::closeDatabaseFiles() {
 void FileManager_v1d::readOverlay(const int screenNum, ImagePtr image, const OvlType overlayType) {
 	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
 
-	const char *ovlExt[] = {".b", ".o", ".ob"};
+	const char *ovlExt[] = { ".b", ".o", ".ob" };
 	Common::String buf = Common::String(_vm->_text->getScreenNames(screenNum)) + Common::String(ovlExt[overlayType]);
 
 	if (!Common::File::exists(buf)) {
@@ -70,7 +71,7 @@ void FileManager_v1d::readOverlay(const int screenNum, ImagePtr image, const Ovl
 	if (!_sceneryArchive1.open(buf))
 		error("File not found: %s", buf.c_str());
 
-	ImagePtr tmpImage = image;                      // temp ptr to overlay file
+	ImagePtr tmpImage = image; // temp ptr to overlay file
 
 	_sceneryArchive1.read(tmpImage, kOvlSize);
 	_sceneryArchive1.close();
@@ -87,7 +88,7 @@ void FileManager_v1d::readBackground(const int screenIndex) {
 	if (!_sceneryArchive1.open(buf))
 		error("File not found: %s", buf.c_str());
 	// Read the image into dummy seq and static dib_a
-	Seq *dummySeq;                                // Image sequence structure for Read_pcx
+	Seq *dummySeq; // Image sequence structure for Read_pcx
 	dummySeq = readPCX(_sceneryArchive1, 0, _vm->_screen->getFrontBuffer(), true, _vm->_text->getScreenNames(screenIndex));
 	free(dummySeq);
 	_sceneryArchive1.close();
@@ -118,11 +119,11 @@ void FileManager_v1d::instructions() const {
 		wrkLine++;
 		do {
 			f.read(wrkLine, 1);
-		} while (*wrkLine++ != '#');                // '#' is EOP
-		wrkLine[-2] = '\0';                         // Remove EOP and previous CR
+		} while (*wrkLine++ != '#'); // '#' is EOP
+		wrkLine[-2] = '\0'; // Remove EOP and previous CR
 		Utils::notifyBox(line);
 		wrkLine = line;
-		f.read(readBuf, 2);                         // Remove CRLF after EOP
+		f.read(readBuf, 2); // Remove CRLF after EOP
 	}
 	f.close();
 }

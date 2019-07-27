@@ -23,8 +23,8 @@
 #ifndef ACCESS_VIDEO_MOVIE_DECODER_H
 #define ACCESS_VIDEO_MOVIE_DECODER_H
 
-#include "video/video_decoder.h"
 #include "audio/audiostream.h"
+#include "video/video_decoder.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -66,19 +66,19 @@ private:
 	bool streamSkipFullFrameCompressedFill();
 
 private:
-	int32 _streamSeekOffset;  /* current stream offset, pointing to not-yet-indexed stream position */
+	int32 _streamSeekOffset; /* current stream offset, pointing to not-yet-indexed stream position */
 	uint32 _streamVideoIndex; /* current stream index for video decoding */
 	uint32 _streamAudioIndex; /* current stream index for audio decoding */
 
 	struct IndexCacheEntry {
-		byte   chunkId;
+		byte chunkId;
 		int32 offset;
 	};
 
 	Common::Array<IndexCacheEntry> _indexCacheTable;
 
 private:
-	class StreamVideoTrack : public VideoTrack  {
+	class StreamVideoTrack : public VideoTrack {
 	public:
 		StreamVideoTrack(uint32 width, uint32 height, uint16 regularFrameDelay);
 		~StreamVideoTrack();
@@ -139,7 +139,7 @@ private:
 		int16 decodeSample(uint8 dataNibble);
 
 		uint16 _sampleRate;
-		bool   _stereo;
+		bool _stereo;
 	};
 
 	Common::SeekableReadStream *_stream;

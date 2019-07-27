@@ -20,18 +20,16 @@
  *
  */
 
-#include "common/events.h"
 #include "common/debug-channels.h"
+#include "common/events.h"
 #include "common/textconsole.h"
 #include "parallaction/exec.h"
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"
 
-
-
 namespace Parallaction {
 
-#define MAX_PASSWORD_LENGTH			 7
+#define MAX_PASSWORD_LENGTH 7
 /*
 #define QUESTION_BALLOON_X			140
 #define QUESTION_BALLOON_Y			10
@@ -42,48 +40,45 @@ namespace Parallaction {
 #define ANSWER_CHARACTER_Y			80
 */
 struct BalloonPositions {
-	Common::Point	_questionBalloon;
-	Common::Point	_questionChar;
+	Common::Point _questionBalloon;
+	Common::Point _questionChar;
 
-	Common::Point	_answerChar;
+	Common::Point _answerChar;
 };
-
-
-
 
 class DialogueManager {
 
-	Parallaction	*_vm;
-	Dialogue		*_dialogue;
+	Parallaction *_vm;
+	Dialogue *_dialogue;
 
-	bool			isNpc;
-	GfxObj			*_questioner;
-	GfxObj			*_answerer;
-	int				_faceId;
+	bool isNpc;
+	GfxObj *_questioner;
+	GfxObj *_answerer;
+	int _faceId;
 
-	Question		*_q;
+	Question *_q;
 
-	int			_answerId;
+	int _answerId;
 
-	int		_selection, _oldSelection;
+	int _selection, _oldSelection;
 
-	uint32			_mouseButtons;
-	Common::Point	_mousePos;
+	uint32 _mouseButtons;
+	Common::Point _mousePos;
 
 protected:
-	BalloonPositions	_ballonPos;
+	BalloonPositions _ballonPos;
 	struct VisibleAnswer {
-		Answer	*_a;
-		int		_index;		// index into Question::_answers[]
-		int		_balloon;
+		Answer *_a;
+		int _index; // index into Question::_answers[]
+		int _balloon;
 	} _visAnswers[5];
-	int			_numVisAnswers;
-	bool			_isKeyDown;
-	uint16			_downKey;
+	int _numVisAnswers;
+	bool _isKeyDown;
+	uint16 _downKey;
 
 protected:
-	Gfx				*_gfx;
-	BalloonManager  *_balloonMan;
+	Gfx *_gfx;
+	BalloonManager *_balloonMan;
 
 public:
 	DialogueManager(Parallaction *vm, ZonePtr z);
@@ -96,7 +91,7 @@ public:
 	}
 	void run();
 
-	ZonePtr			_z;
+	ZonePtr _z;
 	CommandList *_cmdList;
 
 protected:
@@ -129,7 +124,9 @@ protected:
 	void nextAnswer();
 };
 
-DialogueManager::DialogueManager(Parallaction *vm, ZonePtr z) : _vm(vm), _z(z) {
+DialogueManager::DialogueManager(Parallaction *vm, ZonePtr z)
+  : _vm(vm)
+  , _z(z) {
 	_gfx = _vm->_gfx;
 	_balloonMan = _vm->_balloonMan;
 
@@ -164,7 +161,6 @@ void DialogueManager::start() {
 	transitionToState(displayQuestion() ? RUN_QUESTION : NEXT_ANSWER);
 }
 
-
 DialogueManager::~DialogueManager() {
 	if (isNpc) {
 		delete _questioner;
@@ -187,16 +183,16 @@ void DialogueManager::transitionToState(DialogueState newState) {
 
 		if (DebugMan.isDebugChannelEnabled(kDebugDialogue) && gDebugLevel == 9) {
 			switch (newState) {
-				case RUN_QUESTION:
-					debug("  Q  : %s", _q->_text.c_str());
-					break;
-				case RUN_ANSWER:
-					for (int i = 0; i < _numVisAnswers; ++i) {
-						debug("  A%02i: %s", i, _visAnswers[i]._a->_text.c_str());
-					}
-					break;
-				default:
-					break;
+			case RUN_QUESTION:
+				debug("  Q  : %s", _q->_text.c_str());
+				break;
+			case RUN_ANSWER:
+				for (int i = 0; i < _numVisAnswers; ++i) {
+					debug("  A%02i: %s", i, _visAnswers[i]._a->_text.c_str());
+				}
+				break;
+			default:
+				break;
 			}
 		}
 	}
@@ -219,15 +215,13 @@ void DialogueManager::displayAnswers() {
 		id = _balloonMan->setDialogueBalloon(_visAnswers[i]._a->_text, 1, BalloonManager::kUnselectedColor);
 		assert(id >= 0);
 		_visAnswers[i]._balloon = id;
-
 	}
 
 	int mood = 0;
 	if (_numVisAnswers == 1) {
 		mood = _visAnswers[0]._a->speakerMood();
 		_balloonMan->setBalloonText(_visAnswers[0]._balloon, _visAnswers[0]._a->_text, BalloonManager::kNormalColor);
-	} else
-	if (_numVisAnswers > 1) {
+	} else if (_numVisAnswers > 1) {
 		mood = _visAnswers[0]._a->speakerMood();
 		_oldSelection = NO_ANSWER_SELECTED;
 		_selection = 0;
@@ -276,7 +270,8 @@ int16 DialogueManager::selectAnswerN() {
 }
 
 bool DialogueManager::displayQuestion() {
-	if (_q->textIsNull()) return false;
+	if (_q->textIsNull())
+		return false;
 
 	_balloonMan->setSingleBalloon(_q->_text, _ballonPos._questionBalloon.x, _ballonPos._questionBalloon.y, _q->balloonWinding(), BalloonManager::kNormalColor);
 	_faceId = _gfx->setItem(_questioner, _ballonPos._questionChar.x, _ballonPos._questionChar.y);
@@ -290,9 +285,7 @@ void DialogueManager::runQuestion() {
 		_gfx->freeDialogueObjects();
 		transitionToState(NEXT_ANSWER);
 	}
-
 }
-
 
 void DialogueManager::nextAnswer() {
 	if (_q->_answers[0] == NULL) {
@@ -340,7 +333,6 @@ void DialogueManager::nextQuestion() {
 	}
 }
 
-
 void DialogueManager::run() {
 
 	// cache event data
@@ -370,23 +362,17 @@ void DialogueManager::run() {
 
 	default:
 		error("unknown state in DialogueManager");
-
 	}
-
 }
-
-
 
 class DialogueManager_ns : public DialogueManager {
 protected:
 	Parallaction_ns *_vm;
-	bool			_passwordChanged;
-	bool			_askPassword;
+	bool _passwordChanged;
+	bool _askPassword;
 
 	bool checkPassword() {
-		return ((!scumm_stricmp(_vm->_char.getBaseName(), g_doughName) && _vm->_password.hasPrefix("1732461")) ||
-			   (!scumm_stricmp(_vm->_char.getBaseName(), g_donnaName) && _vm->_password.hasPrefix("1622")) ||
-			   (!scumm_stricmp(_vm->_char.getBaseName(), g_dinoName) && _vm->_password.hasPrefix("179")));
+		return ((!scumm_stricmp(_vm->_char.getBaseName(), g_doughName) && _vm->_password.hasPrefix("1732461")) || (!scumm_stricmp(_vm->_char.getBaseName(), g_donnaName) && _vm->_password.hasPrefix("1622")) || (!scumm_stricmp(_vm->_char.getBaseName(), g_dinoName) && _vm->_password.hasPrefix("179")));
 	}
 
 	void resetPassword() {
@@ -426,8 +412,11 @@ protected:
 	}
 
 public:
-	DialogueManager_ns(Parallaction_ns *vm, ZonePtr z) : DialogueManager(vm, z), _vm(vm),
-		_passwordChanged(false), _askPassword(false) {
+	DialogueManager_ns(Parallaction_ns *vm, ZonePtr z)
+	  : DialogueManager(vm, z)
+	  , _vm(vm)
+	  , _passwordChanged(false)
+	  , _askPassword(false) {
 		_ballonPos._questionBalloon = Common::Point(140, 10);
 		_ballonPos._questionChar = Common::Point(190, 80);
 		_ballonPos._answerChar = Common::Point(10, 80);
@@ -462,8 +451,7 @@ public:
 		int ans = NO_ANSWER_SELECTED;
 		if (_askPassword) {
 			ans = askPassword();
-		} else
-		if (_numVisAnswers == 1) {
+		} else if (_numVisAnswers == 1) {
 			ans = selectAnswer1();
 		} else {
 			ans = selectAnswerN();
@@ -476,7 +464,9 @@ class DialogueManager_br : public DialogueManager {
 	Parallaction_br *_vm;
 
 public:
-	DialogueManager_br(Parallaction_br *vm, ZonePtr z) : DialogueManager(vm, z), _vm(vm) {
+	DialogueManager_br(Parallaction_br *vm, ZonePtr z)
+	  : DialogueManager(vm, z)
+	  , _vm(vm) {
 		_ballonPos._questionBalloon = Common::Point(0, 0);
 		_ballonPos._questionChar = Common::Point(380, 80);
 		_ballonPos._answerChar = Common::Point(10, 80);
@@ -517,7 +507,6 @@ public:
 		return ans;
 	}
 };
-
 
 void Parallaction::enterDialogueMode(ZonePtr z) {
 	if (!z->u._speakDialogue) {

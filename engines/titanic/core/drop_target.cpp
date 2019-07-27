@@ -26,17 +26,24 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CDropTarget, CGameObject)
-	ON_MESSAGE(DropObjectMsg)
-	ON_MESSAGE(MouseDragStartMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(VisibleMsg)
-	ON_MESSAGE(DropZoneLostObjectMsg)
+ON_MESSAGE(DropObjectMsg)
+ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(VisibleMsg)
+ON_MESSAGE(DropZoneLostObjectMsg)
 END_MESSAGE_MAP()
 
-CDropTarget::CDropTarget() : CGameObject(), _itemFrame(0),
-		_itemMatchStartsWith(false), _hideItem(false), _dropEnabled(false), _dropFrame(0),
-		_dragFrame(0), _dragCursorId(CURSOR_ARROW), _dropCursorId(CURSOR_HAND),
-		_clipFlags(20) {
+CDropTarget::CDropTarget()
+  : CGameObject()
+  , _itemFrame(0)
+  , _itemMatchStartsWith(false)
+  , _hideItem(false)
+  , _dropEnabled(false)
+  , _dropFrame(0)
+  , _dragFrame(0)
+  , _dragCursorId(CURSOR_ARROW)
+  , _dropCursorId(CURSOR_HAND)
+  , _clipFlags(20) {
 }
 
 void CDropTarget::save(SimpleFile *file, int indent) {

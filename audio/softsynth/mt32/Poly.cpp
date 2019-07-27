@@ -19,9 +19,9 @@
 
 #include "internals.h"
 
-#include "Poly.h"
 #include "Part.h"
 #include "Partial.h"
+#include "Poly.h"
 #include "Synth.h"
 
 namespace MT32Emu {

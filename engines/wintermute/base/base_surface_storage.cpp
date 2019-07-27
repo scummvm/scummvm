@@ -27,29 +27,28 @@
  */
 
 #include "engines/wintermute/base/base_surface_storage.h"
-#include "engines/wintermute/base/gfx/base_surface.h"
-#include "engines/wintermute/base/gfx/base_renderer.h"
-#include "engines/wintermute/base/base_game.h"
+#include "common/str.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/platform_osystem.h"
-#include "common/str.h"
 
 namespace Wintermute {
 
 //IMPLEMENT_PERSISTENT(BaseSurfaceStorage, true);
 
 //////////////////////////////////////////////////////////////////////
-BaseSurfaceStorage::BaseSurfaceStorage(BaseGame *inGame) : BaseClass(inGame) {
+BaseSurfaceStorage::BaseSurfaceStorage(BaseGame *inGame)
+  : BaseClass(inGame) {
 	_lastCleanupTime = 0;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 BaseSurfaceStorage::~BaseSurfaceStorage() {
 	cleanup(true);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceStorage::cleanup(bool warn) {
@@ -63,7 +62,6 @@ bool BaseSurfaceStorage::cleanup(bool warn) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceStorage::initLoop() {
@@ -84,7 +82,6 @@ bool BaseSurfaceStorage::initLoop() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 bool BaseSurfaceStorage::removeSurface(BaseSurface *surface) {
 	for (uint32 i = 0; i < _surfaces.size(); i++) {
@@ -99,7 +96,6 @@ bool BaseSurfaceStorage::removeSurface(BaseSurface *surface) {
 	}
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 BaseSurface *BaseSurfaceStorage::addSurface(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
@@ -138,7 +134,6 @@ BaseSurface *BaseSurfaceStorage::addSurface(const Common::String &filename, bool
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////
 bool BaseSurfaceStorage::restoreAll() {
 	bool ret;
@@ -151,7 +146,6 @@ bool BaseSurfaceStorage::restoreAll() {
 	}
 	return STATUS_OK;
 }
-
 
 /*
 //////////////////////////////////////////////////////////////////////////
@@ -168,13 +162,11 @@ bool BaseSurfaceStorage::persist(BasePersistenceManager *persistMgr)
 }
 */
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceStorage::sortSurfaces() {
 	Common::sort(_surfaces.begin(), _surfaces.end(), surfaceSortCB);
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceStorage::surfaceSortCB(const BaseSurface *s1, const BaseSurface *s2) {
@@ -184,7 +176,6 @@ bool BaseSurfaceStorage::surfaceSortCB(const BaseSurface *s1, const BaseSurface 
 	} else if (s1->_lifeTime > 0 && s2->_lifeTime <= 0) {
 		return true;
 	}
-
 
 	// sort by validity
 	if (s1->_valid && !s2->_valid) {

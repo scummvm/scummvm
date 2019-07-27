@@ -23,298 +23,317 @@
 #ifndef XEEN_WORLDOFXEEN_WORLDOFXEEN_MENU_H
 #define XEEN_WORLDOFXEEN_WORLDOFXEEN_MENU_H
 
-#include "xeen/xeen.h"
-#include "xeen/dialogs/dialogs.h"
 #include "common/array.h"
+#include "xeen/dialogs/dialogs.h"
+#include "xeen/xeen.h"
 
 namespace Xeen {
 namespace WorldOfXeen {
 
-class MenuContainerDialog;
+	class MenuContainerDialog;
 
-class MainMenuContainer {
-private:
-	uint _animateCtr;
-	uint _frameCount;
-	Common::Array<SpriteResource> _backgroundSprites;
-	MenuContainerDialog *_dialog;
-protected:
-	/**
+	class MainMenuContainer {
+	private:
+		uint _animateCtr;
+		uint _frameCount;
+		Common::Array<SpriteResource> _backgroundSprites;
+		MenuContainerDialog *_dialog;
+
+	protected:
+		/**
 	 * Draws the main menu background
 	 */
-	void draw();
+		void draw();
 
-	/**
+		/**
 	 * Called when the menu screen is first shown
 	 */
-	virtual void display() = 0;
+		virtual void display() = 0;
 
-	/**
+		/**
 	 * Shows the main menu dialog
 	 */
-	virtual void showMenuDialog() = 0;
-public:
-	/**
+		virtual void showMenuDialog() = 0;
+
+	public:
+		/**
 	 * Show the main menu for the correct game
 	 */
-	static void show();
-public:
-	/**
+		static void show();
+
+	public:
+		/**
 	 * Constructor
 	 */
-	MainMenuContainer(const char *spritesName1, const char *spritesName2 = nullptr, const char *spritesName3 = nullptr);
+		MainMenuContainer(const char *spritesName1, const char *spritesName2 = nullptr, const char *spritesName3 = nullptr);
 
-	/**
+		/**
 	 * Destructor
 	 */
-	virtual ~MainMenuContainer();
+		virtual ~MainMenuContainer();
 
-	/**
+		/**
 	 * Execute the menu
 	 */
-	void execute();
+		void execute();
 
-	/**
+		/**
 	 * Sets the dialog being displayed in the menu
 	 */
-	void setOwner(MenuContainerDialog *dlalog) {
-		_dialog = dlalog;
-	}
-};
+		void setOwner(MenuContainerDialog *dlalog) {
+			_dialog = dlalog;
+		}
+	};
 
-class CloudsMainMenuContainer : public MainMenuContainer {
-protected:
-	/**
+	class CloudsMainMenuContainer : public MainMenuContainer {
+	protected:
+		/**
 	 * Called when the menu screen is first shown
 	 */
-	virtual void display();
+		virtual void display();
 
-	/**
+		/**
 	 * Shows the main menu dialog
 	 */
-	virtual void showMenuDialog();
-public:
-	CloudsMainMenuContainer();
-};
+		virtual void showMenuDialog();
 
-class DarkSideMainMenuContainer : public MainMenuContainer {
-private:
-	SpriteResource _background;
-protected:
-	/**
+	public:
+		CloudsMainMenuContainer();
+	};
+
+	class DarkSideMainMenuContainer : public MainMenuContainer {
+	private:
+		SpriteResource _background;
+
+	protected:
+		/**
 	 * Called when the menu screen is first shown
 	 */
-	virtual void display();
+		virtual void display();
 
-	/**
+		/**
 	* Shows the main menu dialog
 	*/
-	virtual void showMenuDialog();
-public:
-	DarkSideMainMenuContainer();
-};
+		virtual void showMenuDialog();
 
-class WorldOfXeenMainMenuContainer : public MainMenuContainer {
-protected:
-	/**
+	public:
+		DarkSideMainMenuContainer();
+	};
+
+	class WorldOfXeenMainMenuContainer : public MainMenuContainer {
+	protected:
+		/**
 	 * Called when the menu screen is first shown
 	 */
-	virtual void display();
+		virtual void display();
 
-	/**
+		/**
 	* Shows the main menu dialog
 	*/
-	virtual void showMenuDialog();
-public:
-	WorldOfXeenMainMenuContainer();
-};
+		virtual void showMenuDialog();
 
-class WorldOfXeenCDMainMenuContainer : public MainMenuContainer {
-protected:
-	/**
+	public:
+		WorldOfXeenMainMenuContainer();
+	};
+
+	class WorldOfXeenCDMainMenuContainer : public MainMenuContainer {
+	protected:
+		/**
 	 * Called when the menu screen is first shown
 	 */
-	virtual void display();
+		virtual void display();
 
-	/**
+		/**
 	* Shows the main menu dialog
 	*/
-	virtual void showMenuDialog();
-public:
-	WorldOfXeenCDMainMenuContainer();
-};
+		virtual void showMenuDialog();
 
-class MenuContainerDialog : public ButtonContainer {
-protected:
-	MainMenuContainer *_owner;
-public:
-	/**
+	public:
+		WorldOfXeenCDMainMenuContainer();
+	};
+
+	class MenuContainerDialog : public ButtonContainer {
+	protected:
+		MainMenuContainer *_owner;
+
+	public:
+		/**
 	 * Constructor
 	 */
-	MenuContainerDialog(MainMenuContainer *owner) : ButtonContainer(g_vm), _owner(owner) {}
+		MenuContainerDialog(MainMenuContainer *owner)
+		  : ButtonContainer(g_vm)
+		  , _owner(owner) {}
 
-	/**
+		/**
 	 * Destructor
 	 */
-	virtual ~MenuContainerDialog() {
-		_owner->setOwner(nullptr);
-	}
+		virtual ~MenuContainerDialog() {
+			_owner->setOwner(nullptr);
+		}
 
-	/**
+		/**
 	 * Draws the dialog
 	 */
-	virtual void draw() = 0;
+		virtual void draw() = 0;
 
-	/**
+		/**
 	 * Handles events
 	 */
-	virtual bool handleEvents() = 0;
-};
+		virtual bool handleEvents() = 0;
+	};
 
-class MainMenuDialog : public MenuContainerDialog {
-public:
-	/**
+	class MainMenuDialog : public MenuContainerDialog {
+	public:
+		/**
 	 * Constructor
 	 */
-	MainMenuDialog(MainMenuContainer *owner) : MenuContainerDialog(owner) {}
+		MainMenuDialog(MainMenuContainer *owner)
+		  : MenuContainerDialog(owner) {}
 
-	/**
+		/**
 	 * Destructor
 	 */
-	virtual ~MainMenuDialog() {}
+		virtual ~MainMenuDialog() {}
 
-	/**
+		/**
 	 * Draws the dialog
 	 */
-	virtual void draw() = 0;
+		virtual void draw() = 0;
 
-	/**
+		/**
 	 * Handles events
 	 */
-	virtual bool handleEvents();
+		virtual bool handleEvents();
+	};
 
-};
+	class CloudsMenuDialog : public MainMenuDialog {
+	private:
+		SpriteResource _buttonSprites;
 
-class CloudsMenuDialog : public MainMenuDialog {
-private:
-	SpriteResource _buttonSprites;
-private:
-	/**
+	private:
+		/**
 	 * Loads buttons for the dialog
 	 */
-	void loadButtons();
-public:
-	/**
+		void loadButtons();
+
+	public:
+		/**
 	 * Constructor
 	 */
-	CloudsMenuDialog(MainMenuContainer *owner);
+		CloudsMenuDialog(MainMenuContainer *owner);
 
-	/**
+		/**
 	 * Destructor
 	 */
-	virtual ~CloudsMenuDialog();
+		virtual ~CloudsMenuDialog();
 
-	/**
+		/**
 	 * Draws the dialog
 	 */
-	virtual void draw();
+		virtual void draw();
 
-	/**
+		/**
 	 * Handles events
 	 */
-	virtual bool handleEvents();
-};
+		virtual bool handleEvents();
+	};
 
-class DarkSideMenuDialog : public MainMenuDialog {
-private:
-	SpriteResource _buttonSprites;
-	bool _firstDraw;
-private:
-	/**
+	class DarkSideMenuDialog : public MainMenuDialog {
+	private:
+		SpriteResource _buttonSprites;
+		bool _firstDraw;
+
+	private:
+		/**
 	 * Loads buttons for the dialog
 	 */
-	void loadButtons();
-public:
-	/**
+		void loadButtons();
+
+	public:
+		/**
 	 * Constructor
 	 */
-	DarkSideMenuDialog(MainMenuContainer *owner);
+		DarkSideMenuDialog(MainMenuContainer *owner);
 
-	/**
+		/**
 	 * Destructor
 	 */
-	virtual ~DarkSideMenuDialog();
+		virtual ~DarkSideMenuDialog();
 
-	/**
+		/**
 	 * Draws the dialog
 	 */
-	virtual void draw();
+		virtual void draw();
 
-	/**
+		/**
 	 * Handles events
 	 */
-	virtual bool handleEvents();
-};
+		virtual bool handleEvents();
+	};
 
-class WorldMenuDialog : public MainMenuDialog {
-private:
-	SpriteResource _buttonSprites;
-private:
-	/**
+	class WorldMenuDialog : public MainMenuDialog {
+	private:
+		SpriteResource _buttonSprites;
+
+	private:
+		/**
 	* Loads buttons for the dialog
 	*/
-	void loadButtons();
-public:
-	/**
+		void loadButtons();
+
+	public:
+		/**
 	 * Constructor
 	 */
-	WorldMenuDialog(MainMenuContainer *owner);
+		WorldMenuDialog(MainMenuContainer *owner);
 
-	/**
+		/**
 	* Destructor
 	*/
-	virtual ~WorldMenuDialog();
+		virtual ~WorldMenuDialog();
 
-	/**
+		/**
 	 * Draws the dialog
 	 */
-	virtual void draw();
+		virtual void draw();
 
-	/**
+		/**
 	 * Handles events
 	 */
-	virtual bool handleEvents();
-};
+		virtual bool handleEvents();
+	};
 
-class OtherOptionsDialog : public MenuContainerDialog {
-private:
-	SpriteResource _buttonSprites;
-private:
-	/**
+	class OtherOptionsDialog : public MenuContainerDialog {
+	private:
+		SpriteResource _buttonSprites;
+
+	private:
+		/**
 	* Loads buttons for the dialog
 	*/
-	void loadButtons();
-public:
-	/**
+		void loadButtons();
+
+	public:
+		/**
 	 * Constructor
 	 */
-	OtherOptionsDialog(MainMenuContainer *owner);
+		OtherOptionsDialog(MainMenuContainer *owner);
 
-	/**
+		/**
 	 * Destructor
 	 */
-	virtual ~OtherOptionsDialog();
+		virtual ~OtherOptionsDialog();
 
-	/**
+		/**
 	 * Draws the dialog
 	 */
-	virtual void draw();
+		virtual void draw();
 
-	/**
+		/**
 	 * Handles events
 	 */
-	virtual bool handleEvents();
-};
+		virtual bool handleEvents();
+	};
 
 } // End of namespace WorldOfXeen
 } // End of namespace Xeen

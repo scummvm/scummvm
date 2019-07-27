@@ -33,10 +33,11 @@
 #include "bladerunner/mouse.h"
 #include "bladerunner/savefile.h"
 #include "bladerunner/scene.h"
-#include "bladerunner/shape.h"
 #include "bladerunner/script/kia_script.h"
 #include "bladerunner/settings.h"
+#include "bladerunner/shape.h"
 #include "bladerunner/slice_renderer.h"
+#include "bladerunner/subtitles.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/time.h"
 #include "bladerunner/ui/kia_log.h"
@@ -46,17 +47,16 @@
 #include "bladerunner/ui/kia_section_diagnostic.h"
 #include "bladerunner/ui/kia_section_help.h"
 #include "bladerunner/ui/kia_section_load.h"
-#include "bladerunner/ui/kia_section_settings.h"
 #include "bladerunner/ui/kia_section_pogo.h"
 #include "bladerunner/ui/kia_section_save.h"
+#include "bladerunner/ui/kia_section_settings.h"
 #include "bladerunner/ui/kia_section_suspects.h"
 #include "bladerunner/ui/kia_shapes.h"
 #include "bladerunner/ui/ui_image_picker.h"
 #include "bladerunner/vqa_player.h"
-#include "bladerunner/subtitles.h"
 
-#include "common/str.h"
 #include "common/keyboard.h"
+#include "common/str.h"
 
 namespace BladeRunner {
 
@@ -97,18 +97,18 @@ KIA::KIA(BladeRunnerEngine *vm) {
 		_buttons = new UIImagePicker(_vm, 22);
 	}
 
-	_crimesSection     = new KIASectionCrimes(_vm, _vm->_playerActor->_clues);
-	_suspectsSection   = new KIASectionSuspects(_vm, _vm->_playerActor->_clues);
-	_cluesSection      = new KIASectionClues(_vm, _vm->_playerActor->_clues);
-	_settingsSection   = new KIASectionSettings(_vm);
-	_helpSection       = new KIASectionHelp(_vm);
-	_saveSection       = new KIASectionSave(_vm);
-	_loadSection       = new KIASectionLoad(_vm);
+	_crimesSection = new KIASectionCrimes(_vm, _vm->_playerActor->_clues);
+	_suspectsSection = new KIASectionSuspects(_vm, _vm->_playerActor->_clues);
+	_cluesSection = new KIASectionClues(_vm, _vm->_playerActor->_clues);
+	_settingsSection = new KIASectionSettings(_vm);
+	_helpSection = new KIASectionHelp(_vm);
+	_saveSection = new KIASectionSave(_vm);
+	_loadSection = new KIASectionLoad(_vm);
 	_diagnosticSection = new KIASectionDiagnostic(_vm);
-	_pogoSection       = new KIASectionPogo(_vm);
+	_pogoSection = new KIASectionPogo(_vm);
 
 	for (int i = 0; i < kPlayerActorDialogueQueueCapacity; ++i) {
-		_playerActorDialogueQueue[i].actorId    = -1;
+		_playerActorDialogueQueue[i].actorId = -1;
 		_playerActorDialogueQueue[i].sentenceId = -1;
 	}
 }
@@ -218,7 +218,7 @@ void KIA::open(KIASections sectionId) {
 	}
 
 	if (sectionId == kKIASectionSettings || sectionId == kKIASectionHelp || sectionId == kKIASectionSave || sectionId == kKIASectionLoad) {
-		 _lastSectionIdOptions = _currentSectionId;
+		_lastSectionIdOptions = _currentSectionId;
 	}
 }
 
@@ -273,9 +273,9 @@ void KIA::tick() {
 			}
 		}
 
-		if ( _playerSliceModelId != -1 || _playerPhotographId != -1 || _playerImage.getPixels() != nullptr) {
+		if (_playerSliceModelId != -1 || _playerPhotographId != -1 || _playerImage.getPixels() != nullptr) {
 			if (_playerVqaFrame < 8) {
-				int newVqaFrame  = MIN<uint32>(timeDiffDiv48 + _playerVqaFrame, 8u);
+				int newVqaFrame = MIN<uint32>(timeDiffDiv48 + _playerVqaFrame, 8u);
 				if (_playerVqaFrame <= 0 && newVqaFrame > 0) {
 					_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxMECHAN1), 100, 70, 70, 50, 0);
 				}
@@ -324,7 +324,7 @@ void KIA::tick() {
 	_playerVqaPlayer->seekToFrame(_playerVqaFrame);
 	_playerVqaPlayer->update(true, true);
 
-	_playerSliceModelAngle += (float)(timeDiff) * 1.0f/400.0f;
+	_playerSliceModelAngle += (float)(timeDiff)*1.0f / 400.0f;
 	while (_playerSliceModelAngle >= 2 * M_PI) {
 		_playerSliceModelAngle -= (float)(2 * M_PI);
 	}
@@ -333,12 +333,12 @@ void KIA::tick() {
 		if (_playerSliceModelId != -1) {
 			_vm->_sliceRenderer->drawOnScreen(_playerSliceModelId, 0, 585, 80, _playerSliceModelAngle, 100.0, _vm->_surfaceFront);
 		} else if (_playerPhotographId != -1) {
-			int width  = _playerPhotograph->getWidth();
-			int height  = _playerPhotograph->getHeight();
+			int width = _playerPhotograph->getWidth();
+			int height = _playerPhotograph->getHeight();
 			_playerPhotograph->draw(_vm->_surfaceFront, 590 - width / 2, 80 - height / 2);
 		} else if (_playerImage.getPixels() != nullptr) {
 			_vm->_surfaceFront.fillRect(Common::Rect(549, 49, 631, 111), _vm->_surfaceFront.format.RGBToColor(255, 255, 255));
-			_vm->_surfaceFront.copyRectToSurface(_playerImage.getPixels(), _playerImage.pitch, 550, 50, _playerImage.w,  _playerImage.h);
+			_vm->_surfaceFront.copyRectToSurface(_playerImage.getPixels(), _playerImage.pitch, 550, 50, _playerImage.w, _playerImage.h);
 		}
 	}
 
@@ -744,16 +744,16 @@ void KIA::unload() {
 }
 
 void KIA::createButtons(int sectionId) {
-	Common::Rect kiaButton6(  66,  00, 122,  44);
-	Common::Rect kiaButton7( 191,  29, 233,  70);
-	Common::Rect kiaButton8( 234,  29, 278,  70);
-	Common::Rect kiaButton9( 278,  29, 321,  70);
-	Common::Rect kiaButton10(322,  29, 365,  70);
-	Common::Rect kiaButton11(366,  29, 410,  70);
+	Common::Rect kiaButton6(66, 00, 122, 44);
+	Common::Rect kiaButton7(191, 29, 233, 70);
+	Common::Rect kiaButton8(234, 29, 278, 70);
+	Common::Rect kiaButton9(278, 29, 321, 70);
+	Common::Rect kiaButton10(322, 29, 365, 70);
+	Common::Rect kiaButton11(366, 29, 410, 70);
 	Common::Rect kiaButton12(420, 286, 472, 328);
 	Common::Rect kiaButton13(334, 286, 386, 328);
-	Common::Rect kiaButton14(411,  29, 453,  70);
-	Common::Rect kiaButton15(264,   9, 304,  26);
+	Common::Rect kiaButton14(411, 29, 453, 70);
+	Common::Rect kiaButton15(264, 9, 304, 26);
 	Common::Rect kiaButton16(140, 406, 160, 479);
 	Common::Rect kiaButton17(161, 406, 180, 479);
 	Common::Rect kiaButton18(181, 406, 202, 479);
@@ -875,7 +875,7 @@ void KIA::createButtons(int sectionId) {
 		_buttons->defineImage(12, kiaButton12, _shapes->get(124), _shapes->get(124), _shapes->get(48), _vm->_textKIA->getText(42));
 
 		_buttons->defineImage(13, kiaButton13, _shapes->get(125), _shapes->get(125), _shapes->get(49), _vm->_textKIA->getText(29));
-			break;
+		break;
 	}
 
 	if (sectionId != kKIASectionQuit) {
@@ -1283,10 +1283,10 @@ void KIA::playTransitionSound(int transitionId) {
 	case 10:
 	case 11:
 	case 12:
-		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxPANEL1),  100, 0, 0, 50, 0);
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxPANEL1), 100, 0, 0, 50, 0);
 		break;
 	case 13:
-		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxPANEL2),  100, 0, 0, 50, 0);
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxPANEL2), 100, 0, 0, 50, 0);
 		break;
 	case 14:
 		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxPANOPEN), 100, 0, 0, 50, 0);
@@ -1389,9 +1389,9 @@ void KIA::playObjectDescription() {
 	case kModelAnimationGordosLighterHuman:
 		playActorDialogue(kActorMcCoy, 8850);
 		break;
-//	case kModelAnimationBadge: // This is never discovered in-game, and uses same model as Holden's badge
-//		playActorDialogue(kActorMcCoy, 8855); // Baker's Badge
-//		break;
+		//	case kModelAnimationBadge: // This is never discovered in-game, and uses same model as Holden's badge
+		//		playActorDialogue(kActorMcCoy, 8855); // Baker's Badge
+		//		break;
 	case kModelAnimationBadge:
 		playActorDialogue(kActorMcCoy, 8860);
 		break;
@@ -1423,25 +1423,25 @@ void KIA::playObjectDescription() {
 		playActorDialogue(kActorMcCoy, 8905);
 		break;
 	case kModelAnimationDNAEvidence01OutOf6:
-//		fall through
-//	case kModelAnimationDNAEvidence02OutOf6:
-//		fall through
+		//		fall through
+		//	case kModelAnimationDNAEvidence02OutOf6:
+		//		fall through
 	case kModelAnimationDNAEvidence03OutOf6:
-//		fall through
+		//		fall through
 	case kModelAnimationDNAEvidence04OutOf6:
-//		fall through
-//	case kModelAnimationDNAEvidence05OutOf6:
-//		fall through
+		//		fall through
+		//	case kModelAnimationDNAEvidence05OutOf6:
+		//		fall through
 	case kModelAnimationDNAEvidenceComplete:
-//		fall through
+		//		fall through
 	case kModelAnimationSpinnerKeys:
-//		fall through
+		//		fall through
 	case kModelAnimationBriefcase:
-//		fall through
+		//		fall through
 	case kModelAnimationCrystalsCigarette:
-//		fall through
+		//		fall through
 	case kModelAnimationVideoDisc:
-//		fall through
+		//		fall through
 	default:
 		playActorDialogue(kActorMcCoy, 8525);
 		break;

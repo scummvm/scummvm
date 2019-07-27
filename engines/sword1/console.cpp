@@ -21,17 +21,19 @@
  */
 
 #include "sword1/console.h"
-#include "sword1/sword1.h"
-#include "sword1/sound.h"
 #include "common/config-manager.h"
 #include "common/str.h"
+#include "sword1/sound.h"
+#include "sword1/sword1.h"
 
 namespace Sword1 {
 
-SwordConsole::SwordConsole(SwordEngine *vm) : GUI::Debugger(), _vm(vm) {
+SwordConsole::SwordConsole(SwordEngine *vm)
+  : GUI::Debugger()
+  , _vm(vm) {
 	assert(_vm);
 	if (scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1mac") == 0 || scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1macdemo") == 0)
-		registerCmd("speechEndianness",    WRAP_METHOD(SwordConsole, Cmd_SpeechEndianness));
+		registerCmd("speechEndianness", WRAP_METHOD(SwordConsole, Cmd_SpeechEndianness));
 }
 
 SwordConsole::~SwordConsole() {

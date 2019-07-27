@@ -23,8 +23,8 @@
 #ifndef MADS_MESSAGES_H
 #define MADS_MESSAGES_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 #include "mads/action.h"
 #include "mads/font.h"
 #include "mads/msurface.h"
@@ -37,9 +37,15 @@ namespace MADS {
 #define RANDOM_MESSAGE_SIZE 4
 
 enum KernelMessageFlags {
-	KMSG_QUOTED = 1, KMSG_PLAYER_TIMEOUT = 2, KMSG_SEQ_ENTRY = 4, KMSG_SCROLL = 8,
-	KMSG_RIGHT_ALIGN = 0x10, KMSG_CENTER_ALIGN = 0x20, KMSG_EXPIRE = 0x40,
-	KMSG_ACTIVE = 0x80, KMSG_ANIM = 0x100
+	KMSG_QUOTED = 1,
+	KMSG_PLAYER_TIMEOUT = 2,
+	KMSG_SEQ_ENTRY = 4,
+	KMSG_SCROLL = 8,
+	KMSG_RIGHT_ALIGN = 0x10,
+	KMSG_CENTER_ALIGN = 0x20,
+	KMSG_EXPIRE = 0x40,
+	KMSG_ACTIVE = 0x80,
+	KMSG_ANIM = 0x100
 };
 
 class MADSEngine;
@@ -79,6 +85,7 @@ public:
 	int _color;
 	int _duration;
 	int _scrollRate;
+
 public:
 	RandomMessages();
 
@@ -91,16 +98,18 @@ private:
 
 	Common::Array<int> _randomQuotes;
 	RandomMessages _randomMessages;
+
 public:
 	Common::Array<KernelMessage> _entries;
 	Font *_talkFont;
+
 public:
 	KernelMessages(MADSEngine *vm);
 	~KernelMessages();
 
 	void clear();
 	int add(const Common::Point &pt, uint fontColor, uint8 flags, int endTrigger,
-		uint32 timeout, const Common::String &msg);
+	        uint32 timeout, const Common::String &msg);
 	int addQuote(int quoteId, int endTrigger, uint32 timeout);
 	void scrollMessage(int msgIndex, int numTicks, bool quoted);
 	void setSeqIndex(int msgIndex, int seqIndex);
@@ -113,8 +122,8 @@ public:
 	void setQuoted(int msgIndex, int numTicks, bool quoted);
 
 	void initRandomMessages(int maxSimultaneousMessages,
-		const Common::Rect &bounds, int minYSpacing, int scrollRate,
-		int color, int duration, int quoteId, ...);
+	                        const Common::Rect &bounds, int minYSpacing, int scrollRate,
+	                        int color, int duration, int quoteId, ...);
 
 	/**
 	 * Handles expiring any active random messages as necessary
@@ -151,6 +160,7 @@ public:
 class TextDisplayList : public Common::Array<TextDisplay> {
 private:
 	MADSEngine *_vm;
+
 public:
 	TextDisplayList(MADSEngine *vm);
 

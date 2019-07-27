@@ -83,7 +83,7 @@ public:
 class Oki_ADPCMStream : public ADPCMStream {
 public:
 	Oki_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) { _decodedSampleCount = 0; }
+	  : ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) { _decodedSampleCount = 0; }
 
 	virtual bool endOfData() const { return (_stream->eos() || _stream->pos() >= _endpos) && (_decodedSampleCount == 0); }
 
@@ -103,7 +103,7 @@ protected:
 
 public:
 	Ima_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {}
+	  : ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {}
 
 	/**
 	 * This table is used by decodeIMA.
@@ -114,7 +114,7 @@ public:
 class DVI_ADPCMStream : public Ima_ADPCMStream {
 public:
 	DVI_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) { _decodedSampleCount = 0; }
+	  : Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) { _decodedSampleCount = 0; }
 
 	virtual bool endOfData() const { return (_stream->eos() || _stream->pos() >= _endpos) && (_decodedSampleCount == 0); }
 
@@ -142,7 +142,7 @@ protected:
 
 public:
 	Apple_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
+	  : Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
 		_chunkPos[0] = 0;
 		_chunkPos[1] = 0;
 		_streamPos[0] = 0;
@@ -150,13 +150,12 @@ public:
 	}
 
 	virtual int readBuffer(int16 *buffer, const int numSamples);
-
 };
 
 class MSIma_ADPCMStream : public Ima_ADPCMStream {
 public:
 	MSIma_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
+	  : Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
 
 		if (blockAlign == 0)
 			error("MSIma_ADPCMStream(): blockAlign isn't specified");
@@ -204,7 +203,7 @@ protected:
 
 public:
 	MS_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
+	  : ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
 		if (blockAlign == 0)
 			error("MS_ADPCMStream(): blockAlign isn't specified for MS ADPCM");
 		memset(&_status, 0, sizeof(_status));
@@ -231,7 +230,7 @@ private:
 class DK3_ADPCMStream : public Ima_ADPCMStream {
 public:
 	DK3_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
+	  : Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
 
 		// DK3 only works as a stereo stream
 		assert(channels == 2);

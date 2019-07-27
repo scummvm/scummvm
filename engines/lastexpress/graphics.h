@@ -51,15 +51,15 @@ public:
 	void clear(BackgroundType type, const Common::Rect &rect);
 
 	// FIXME this is there for animation until we change it to use the graphic surface here instead of its private ones.
-	Graphics::Surface _screen;      // Actual screen surface
+	Graphics::Surface _screen; // Actual screen surface
 
 	bool draw(Drawable *drawable, BackgroundType type, bool transition = false);
 
 private:
 	Graphics::Surface _backgroundA; // Background A
 	Graphics::Surface _backgroundC; // Background C
-	Graphics::Surface _overlay;     // Overlay
-	Graphics::Surface _inventory;   // Overlay
+	Graphics::Surface _overlay; // Overlay
+	Graphics::Surface _inventory; // Overlay
 
 	void mergePlanes();
 	void updateScreen();

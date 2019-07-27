@@ -20,10 +20,10 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "mads/mads.h"
-#include "mads/game.h"
 #include "mads/screen.h"
+#include "common/scummsys.h"
+#include "mads/game.h"
+#include "mads/mads.h"
 #include "mads/palette.h"
 #include "mads/user_interface.h"
 
@@ -107,7 +107,7 @@ void DirtyArea::setTextDisplay(const TextDisplay *textDisplay) {
 	_bounds.top = textDisplay->_bounds.top;
 
 	setArea(textDisplay->_bounds.width(), textDisplay->_bounds.height(),
-		MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
+	        MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
 }
 
 void DirtyArea::setUISlot(const UISlot *slot) {
@@ -210,7 +210,7 @@ void DirtyAreas::copy(BaseSurface *srcSurface, BaseSurface *destSurface, const C
 			continue;
 
 		Common::Rect bounds(srcBounds.left + posAdjust.x, srcBounds.top + posAdjust.y,
-			srcBounds.right + posAdjust.x, srcBounds.bottom + posAdjust.y);
+		                    srcBounds.right + posAdjust.x, srcBounds.bottom + posAdjust.y);
 		Common::Point destPos(srcBounds.left, srcBounds.top);
 
 		if ((*this)[i]._active && bounds.isValidRect()) {
@@ -220,7 +220,7 @@ void DirtyAreas::copy(BaseSurface *srcSurface, BaseSurface *destSurface, const C
 }
 
 void DirtyAreas::copyToScreen() {
-/*
+	/*
 	for (uint i = 0; i < size(); ++i) {
 		const Common::Rect &bounds = (*this)[i]._bounds;
 
@@ -251,7 +251,8 @@ ScreenObject::ScreenObject() {
 
 /*------------------------------------------------------------------------*/
 
-ScreenObjects::ScreenObjects(MADSEngine *vm) : _vm(vm) {
+ScreenObjects::ScreenObjects(MADSEngine *vm)
+  : _vm(vm) {
 	_objectY = -1;
 	_forceRescan = false;
 	_inputMode = kInputBuildingSentences;
@@ -287,7 +288,8 @@ void ScreenObjects::check(bool scanFlag) {
 		_vm->_events->_rightMousePressed = false;
 
 	if ((_vm->_events->_mouseMoved || userInterface._scrollbarActive
-			|| _v8332A || _forceRescan) && scanFlag) {
+	     || _v8332A || _forceRescan)
+	    && scanFlag) {
 		_category = CAT_NONE;
 		_selectedObject = scanBackwards(_vm->_events->currentPos(), SCREENMODE_VGA);
 		if (_selectedObject > 0) {
@@ -299,7 +301,7 @@ void ScreenObjects::check(bool scanFlag) {
 		// Handling for easy mouse
 		ScrCategory category = scene._userInterface._category;
 		if (_vm->_easyMouse && _vm->_events->_mouseButtons && category != _category
-			&& scene._userInterface._category != CAT_NONE) {
+		    && scene._userInterface._category != CAT_NONE) {
 			_released = true;
 			if (category >= CAT_COMMAND && category <= CAT_TALK_ENTRY) {
 				elementHighlighted();
@@ -318,9 +320,7 @@ void ScreenObjects::check(bool scanFlag) {
 			}
 		}
 
-		if (_vm->_events->_mouseButtons || (_vm->_easyMouse && scene._action._interAwaiting > AWAITING_COMMAND
-			&& scene._userInterface._category == CAT_INV_LIST) ||
-			(_vm->_easyMouse && scene._userInterface._category == CAT_HOTSPOT)) {
+		if (_vm->_events->_mouseButtons || (_vm->_easyMouse && scene._action._interAwaiting > AWAITING_COMMAND && scene._userInterface._category == CAT_INV_LIST) || (_vm->_easyMouse && scene._userInterface._category == CAT_HOTSPOT)) {
 			scene._action.checkActionAtMousePos();
 		}
 
@@ -344,12 +344,12 @@ void ScreenObjects::check(bool scanFlag) {
 	if (currentTicks >= _baseTime) {
 		// Check the user interface slots to see if there's any slots that need to be expired
 		UISlots &uiSlots = userInterface._uiSlots;
-		for (uint idx = 0; idx <  uiSlots.size(); ++idx) {
+		for (uint idx = 0; idx < uiSlots.size(); ++idx) {
 			UISlot &slot = uiSlots[idx];
 
 			if (slot._flags != IMG_REFRESH && slot._flags > IMG_UPDATE_ONLY
-				&& slot._segmentId != IMG_SPINNING_OBJECT)
-					slot._flags = IMG_ERASE;
+			    && slot._segmentId != IMG_SPINNING_OBJECT)
+				slot._flags = IMG_ERASE;
 		}
 
 		// Any background animation in the user interface
@@ -405,8 +405,7 @@ void ScreenObjects::elementHighlighted() {
 		indexEnd = 9;
 		varA = 5;
 		topIndex = 0;
-		idxP = !_vm->_events->_rightMousePressed ? &userInterface._highlightedCommandIndex :
-			&userInterface._selectedActionIndex;
+		idxP = !_vm->_events->_rightMousePressed ? &userInterface._highlightedCommandIndex : &userInterface._selectedActionIndex;
 
 		if (_vm->_events->_rightMousePressed && userInterface._selectedItemVocabIdx >= 0)
 			userInterface.updateSelection(CAT_INV_VOCAB, -1, &userInterface._selectedItemVocabIdx);
@@ -428,7 +427,7 @@ void ScreenObjects::elementHighlighted() {
 	case CAT_INV_VOCAB:
 		if (userInterface._selectedInvIndex >= 0) {
 			InventoryObject &invObject = _vm->_game->_objects.getItem(
-				userInterface._selectedInvIndex);
+			  userInterface._selectedInvIndex);
 			index = invObject._vocabCount;
 			indexEnd = index - 1;
 		} else {
@@ -480,8 +479,7 @@ void ScreenObjects::elementHighlighted() {
 	Common::Point currentPos = _vm->_events->currentPos();
 
 	for (int idx = 0; idx < index && newIndex < 0; ++idx) {
-		int scrObjIndex = (_category == CAT_HOTSPOT) ? catIndex - idx + index - 1 :
-			catIndex + idx;
+		int scrObjIndex = (_category == CAT_HOTSPOT) ? catIndex - idx + index - 1 : catIndex + idx;
 
 		ScreenObject &scrObject = (*this)[scrObjIndex];
 		if (!scrObject._active)
@@ -527,13 +525,11 @@ void ScreenObjects::elementHighlighted() {
 	action._pickedWord = newIndex;
 
 	if (_category == CAT_INV_LIST || _category == CAT_INV_ANIM) {
-		if (action._interAwaiting == AWAITING_COMMAND && newIndex >= 0 && _released &&
-				(!_vm->_events->_mouseReleased || !_vm->_easyMouse))
+		if (action._interAwaiting == AWAITING_COMMAND && newIndex >= 0 && _released && (!_vm->_events->_mouseReleased || !_vm->_easyMouse))
 			newIndex = -1;
 	}
 
-	if (_released && !_vm->_events->_rightMousePressed &&
-			(_vm->_events->_mouseReleased || !_vm->_easyMouse))
+	if (_released && !_vm->_events->_rightMousePressed && (_vm->_events->_mouseReleased || !_vm->_easyMouse))
 		newIndex = -1;
 
 	if (_category != CAT_HOTSPOT && _category != CAT_INV_ANIM)
@@ -555,7 +551,8 @@ void ScreenObjects::synchronize(Common::Serializer &s) {
 
 /*------------------------------------------------------------------------*/
 
-Screen::Screen(): BaseSurface() {
+Screen::Screen()
+  : BaseSurface() {
 	// Create the screen surface separately on another surface, since the screen
 	// surface will be subject to change as the clipping area is altered
 	_rawSurface.create(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT);
@@ -580,7 +577,7 @@ void Screen::update() {
 		g_system->copyRectToScreen(buf, this->pitch, 0, 0, this->pitch - offset, this->h);
 		if (offset > 0)
 			g_system->copyRectToScreen(getPixels(), this->pitch,
-				this->pitch - offset, 0, offset, this->h);
+			                           this->pitch - offset, 0, offset, this->h);
 		return;
 	}
 
@@ -606,7 +603,7 @@ void Screen::transition(ScreenTransition transitionType, bool surfaceFlag) {
 	Common::Rect clipBounds = getClipBounds();
 	clearDirtyRects();
 
- 	switch (transitionType) {
+	switch (transitionType) {
 	case kTransitionFadeIn:
 	case kTransitionFadeOutIn: {
 		Common::fill(&pal._colorValues[0], &pal._colorValues[3], 0);
@@ -640,8 +637,8 @@ void Screen::transition(ScreenTransition transitionType, bool surfaceFlag) {
 	case kTransitionPanLeftToRight:
 	case kTransitionPanRightToLeft:
 		panTransition(scene._backgroundSurface, pal._mainPalette,
-			transitionType - kTransitionPanLeftToRight,
-			Common::Point(0, 0), scene._posAdjust, THROUGH_BLACK2, true, 1);
+		              transitionType - kTransitionPanLeftToRight,
+		              Common::Point(0, 0), scene._posAdjust, THROUGH_BLACK2, true, 1);
 		break;
 
 	case kTransitionCircleIn1:
@@ -670,8 +667,8 @@ void Screen::transition(ScreenTransition transitionType, bool surfaceFlag) {
 }
 
 void Screen::panTransition(MSurface &newScreen, byte *palData, int entrySide,
-		const Common::Point &srcPos, const Common::Point &destPos,
-		ThroughBlack throughBlack, bool setPalette_, int numTicks) {
+                           const Common::Point &srcPos, const Common::Point &destPos,
+                           ThroughBlack throughBlack, bool setPalette_, int numTicks) {
 	EventsManager &events = *_vm->_events;
 	Palette &palette = *_vm->_palette;
 	Common::Point size;
@@ -679,7 +676,7 @@ void Screen::panTransition(MSurface &newScreen, byte *palData, int entrySide,
 	int startX = 0;
 	int deltaX;
 	int loopStart;
-//	uint32 baseTicks, currentTicks;
+	//	uint32 baseTicks, currentTicks;
 	byte paletteMap[256];
 
 	size.x = MIN(newScreen.w, (uint16)MADS_SCREEN_WIDTH);
@@ -699,11 +696,11 @@ void Screen::panTransition(MSurface &newScreen, byte *palData, int entrySide,
 	// TODO: Original uses a different frequency ticks counter. Need to
 	// confirm frequency and see whether we need to implement it, or
 	// if the current frame ticks can substitute for it
-//	baseTicks = events.getFrameCounter();
+	//	baseTicks = events.getFrameCounter();
 
 	y1 = 0;
 	y2 = size.y - 1;
-//	sizeY = y2 - y1 + 1;
+	//	sizeY = y2 - y1 + 1;
 
 	if (throughBlack == THROUGH_BLACK2)
 		swapForeground(palData, &paletteMap[0]);
@@ -714,16 +711,17 @@ void Screen::panTransition(MSurface &newScreen, byte *palData, int entrySide,
 		for (int xCtr = 0; xCtr < size.x; ++xCtr, xAt += deltaX) {
 			if (!loop) {
 				fillRect(Common::Rect(xAt + destPos.x, y1 + destPos.y,
-					xAt + destPos.x + 1, y2 + destPos.y), 0);
+				                      xAt + destPos.x + 1, y2 + destPos.y),
+				         0);
 			} else if (throughBlack == THROUGH_BLACK2) {
 				copyRectTranslate(newScreen, paletteMap,
-					Common::Point(xAt, destPos.y),
-					Common::Rect(srcPos.x + xAt, srcPos.y,
-					srcPos.x + xAt + 1, srcPos.y + size.y));
+				                  Common::Point(xAt, destPos.y),
+				                  Common::Rect(srcPos.x + xAt, srcPos.y,
+				                               srcPos.x + xAt + 1, srcPos.y + size.y));
 			} else {
 				newScreen.copyRectToSurface(*this, xAt, destPos.y,
-					Common::Rect(srcPos.x + xAt, srcPos.y,
-					srcPos.x + xAt + 1, srcPos.y + size.y));
+				                            Common::Rect(srcPos.x + xAt, srcPos.y,
+				                                         srcPos.x + xAt + 1, srcPos.y + size.y));
 			}
 
 			// Slight delay
@@ -770,7 +768,7 @@ void Screen::swapForeground(byte newPalette[PALETTE_SIZE], byte *paletteMap) {
 	resetClipBounds();
 
 	copyRectTranslate(*this, oldMap, Common::Point(0, 0),
-		Common::Rect(0, 0, MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT));
+	                  Common::Rect(0, 0, MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT));
 	palette.setFullPalette(oldPalette);
 
 	setClipBounds(oldClip);
@@ -782,7 +780,7 @@ void Screen::swapForeground(byte newPalette[PALETTE_SIZE], byte *paletteMap) {
  * respectively, with the two interleaved together. So the start
  */
 void Screen::swapPalette(const byte *palData, byte swapTable[PALETTE_COUNT],
-		bool foreground) {
+                         bool foreground) {
 	int start = foreground ? 1 : 0;
 	const byte *dynamicList = &palData[start * RGB_SIZE];
 	int staticStart = 1 - start;
@@ -798,7 +796,9 @@ void Screen::swapPalette(const byte *palData, byte swapTable[PALETTE_COUNT],
 	for (int idx = 0; idx < (PALETTE_COUNT / 2); ++idx) {
 		if (start >= PALETTE_START && start <= PALETTE_END) {
 			swapTable[start] = Palette::closestColor(dynamicList, staticList,
-				2 * RGB_SIZE, PALETTE_COUNT / 2) * 2 + staticStart;
+			                                         2 * RGB_SIZE, PALETTE_COUNT / 2)
+			    * 2
+			  + staticStart;
 		}
 
 		dynamicList += 2 * RGB_SIZE;

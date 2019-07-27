@@ -26,15 +26,15 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/scriptables/script_stack.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
-#include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/base/scriptables/script_ext_string.h"
-#include "engines/wintermute/base/scriptables/script_ext_array.h"
-#include "engines/wintermute/utils/string_util.h"
 #include "common/str.h"
 #include "common/tokenizer.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/scriptables/script_ext_array.h"
+#include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/utils/string_util.h"
+#include "engines/wintermute/utils/utils.h"
 
 namespace Wintermute {
 
@@ -45,7 +45,8 @@ BaseScriptable *makeSXString(BaseGame *inGame, ScStack *stack) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-SXString::SXString(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
+SXString::SXString(BaseGame *inGame, ScStack *stack)
+  : BaseScriptable(inGame) {
 	_string = nullptr;
 	_capacity = 0;
 
@@ -67,14 +68,12 @@ SXString::SXString(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 SXString::~SXString() {
 	if (_string) {
 		delete[] _string;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void SXString::setStringVal(const char *val) {
@@ -89,7 +88,6 @@ void SXString::setStringVal(const char *val) {
 	strcpy(_string, val);
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 const char *SXString::scToString() {
 	if (_string) {
@@ -99,12 +97,10 @@ const char *SXString::scToString() {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void SXString::scSetString(const char *val) {
 	setStringVal(val);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
@@ -114,7 +110,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	if (strcmp(name, "Substring") == 0) {
 		stack->correctParams(2);
 		int start = stack->pop()->getInt();
-		int end   = stack->pop()->getInt();
+		int end = stack->pop()->getInt();
 
 		if (end < start) {
 			BaseUtils::swap(&start, &end);
@@ -162,7 +158,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			len = strlen(_string) - start;
 		}
 
-//		try {
+		//		try {
 		WideString str;
 		if (_gameRef->_textEncoding == TEXT_UTF8) {
 			str = StringUtil::utf8ToWide(_string);
@@ -170,7 +166,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			str = StringUtil::ansiToWide(_string);
 		}
 
-//			WideString subStr = str.substr(start, len);
+		//			WideString subStr = str.substr(start, len);
 		WideString subStr(str.c_str() + start, len);
 
 		if (_gameRef->_textEncoding == TEXT_UTF8) {
@@ -178,9 +174,9 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		} else {
 			stack->pushString(StringUtil::wideToAnsi(subStr).c_str());
 		}
-//		} catch (std::exception &) {
-//			stack->pushNULL();
-//		}
+		//		} catch (std::exception &) {
+		//			stack->pushNULL();
+		//		}
 
 		return STATUS_OK;
 	}
@@ -279,7 +275,6 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			return STATUS_OK;
 		}
 
-
 		WideString str;
 		if (_gameRef->_textEncoding == TEXT_UTF8) {
 			str = StringUtil::utf8ToWide(_string);
@@ -297,11 +292,11 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		Common::Array<WideString> parts;
 
 		uint32 start = 0;
-		for(uint32 i = 0; i < str.size() + 1; i++) {
+		for (uint32 i = 0; i < str.size() + 1; i++) {
 			// The [] operator doesn't allow access to the zero code terminator
 			// (bug #6531)
 			uint32 ch = (i == str.size()) ? '\0' : str[i];
-			if (ch =='\0' || delims.contains(ch)) {
+			if (ch == '\0' || delims.contains(ch)) {
 				if (i != start) {
 					parts.push_back(WideString(str.c_str() + start, i - start));
 				} else {
@@ -315,9 +310,9 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			WideString &part = (*it);
 
 			if (_gameRef->_textEncoding == TEXT_UTF8) {
-				val = new ScValue(_gameRef,  StringUtil::wideToUtf8(part).c_str());
+				val = new ScValue(_gameRef, StringUtil::wideToUtf8(part).c_str());
 			} else {
-				val = new ScValue(_gameRef,  StringUtil::wideToAnsi(part).c_str());
+				val = new ScValue(_gameRef, StringUtil::wideToAnsi(part).c_str());
 			}
 
 			array->push(val);
@@ -331,7 +326,6 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_FAILED;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 ScValue *SXString::scGetProperty(const Common::String &name) {
@@ -368,7 +362,6 @@ ScValue *SXString::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool SXString::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
@@ -394,7 +387,6 @@ bool SXString::scSetProperty(const char *name, ScValue *value) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool SXString::persist(BasePersistenceManager *persistMgr) {
 
@@ -417,7 +409,6 @@ bool SXString::persist(BasePersistenceManager *persistMgr) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 int SXString::scCompare(BaseScriptable *val) {

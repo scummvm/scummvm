@@ -34,6 +34,7 @@ class CSUBGlass : public CGameObject {
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool SignalObject(CSignalObject *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
+
 private:
 	int _fieldBC;
 	int _startFrame;
@@ -41,6 +42,7 @@ private:
 	int _signalStartFrame;
 	int _signalEndFrame;
 	CString _target;
+
 public:
 	CLASSDEF;
 	CSUBGlass();

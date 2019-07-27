@@ -49,12 +49,12 @@ class SuspectDatabaseEntry {
 	int _actorId;
 	int _sex;
 
-	int   _moClues[kMOClueCount];
-	int   _whereaboutsClues[kWhereaboutsClueCount];
-	int   _replicantClues[kReplicantClueCount];
-	int   _nonReplicantClues[kNonReplicantClueCount];
-	int   _otherClues[kOtherClueCount];
-	int   _identityClues[kIdentityClueCount];
+	int _moClues[kMOClueCount];
+	int _whereaboutsClues[kWhereaboutsClueCount];
+	int _replicantClues[kReplicantClueCount];
+	int _nonReplicantClues[kNonReplicantClueCount];
+	int _otherClues[kOtherClueCount];
+	int _identityClues[kIdentityClueCount];
 	Photo _photoClues[kPhotoClueCount];
 
 	int _moClueCount;

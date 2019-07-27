@@ -35,7 +35,7 @@ public:
 	void test_front_back_push_pop() {
 		Common::Queue<int> container;
 
-		container.push( 42);
+		container.push(42);
 		container.push(-23);
 
 		TS_ASSERT_EQUALS(container.front(), 42);
@@ -44,11 +44,11 @@ public:
 		container.front() = -17;
 		container.back() = 163;
 		TS_ASSERT_EQUALS(container.front(), -17);
-		TS_ASSERT_EQUALS(container.back(),  163);
+		TS_ASSERT_EQUALS(container.back(), 163);
 
 		container.pop();
 		TS_ASSERT_EQUALS(container.front(), 163);
-		TS_ASSERT_EQUALS(container.back(),  163);
+		TS_ASSERT_EQUALS(container.back(), 163);
 	}
 
 	void test_assign() {
@@ -56,7 +56,7 @@ public:
 
 		for (int i = 0; i < 5; ++i) {
 			q1.push(i);
-			q2.push(4-i);
+			q2.push(4 - i);
 		}
 
 		Common::Queue<int> q3(q1);

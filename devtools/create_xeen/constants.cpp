@@ -20,175 +20,234 @@
  *
  */
 
- // Disable symbol overrides so that we can use system headers.
+// Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
 #ifdef main
-#undef main
+#	undef main
 #endif // main
 
-#include "file.h"
 #include "constants.h"
+#include "file.h"
 
 enum MagicSpell {
-	MS_AcidSpray = 0, MS_Awaken = 1, MS_BeastMaster = 2, MS_Bless = 3,
-	MS_Clairvoyance = 4, MS_ColdRay = 5, MS_CreateFood = 6,
-	MS_CureDisease = 7, MS_CureParalysis = 8, MS_CurePoison = 9,
-	MS_CureWounds = 10, MS_DancingSword = 11, MS_DayOfProtection = 12,
-	MS_DayOfSorcery = 13, MS_DeadlySwarm = 14, MS_DetectMonster = 15,
-	MS_DivineIntervention = 16, MS_DragonSleep = 17, MS_ElementalStorm = 18,
-	MS_EnchantItem = 19, MS_EnergyBlast = 20, MS_Etheralize = 21,
-	MS_FantasticFreeze = 22, MS_FieryFlail = 23, MS_FingerOfDeath = 24,
-	MS_Fireball = 25, MS_FirstAid = 26, MS_FlyingFist = 27,
-	MS_FrostBite = 28, MS_GolemStopper = 29, MS_Heroism = 30,
-	MS_HolyBonus = 31, MS_HolyWord = 32, MS_Hynotize = 33,
-	MS_IdentifyMonster = 34, MS_Implosion = 35, MS_Incinerate = 36,
-	MS_Inferno = 37, MS_InsectSpray = 38, MS_ItemToGold = 39,
-	MS_Jump = 40, MS_Levitate = 41, MS_Light = 42, MS_LightningBolt = 43,
-	MS_LloydsBeacon = 44, MS_MagicArrow = 45, MS_MassDistortion = 46,
-	MS_MegaVolts = 47, MS_MoonRay = 48, MS_NaturesCure = 49, MS_Pain = 50,
-	MS_PoisonVolley = 51, MS_PowerCure = 52, MS_PowerShield = 53,
-	MS_PrismaticLight = 54, MS_ProtFromElements = 55, MS_RaiseDead = 56,
-	MS_RechargeItem = 57, MS_Resurrection = 58, MS_Revitalize = 59,
-	MS_Shrapmetal = 60, MS_Sleep = 61, MS_Sparks = 62, MS_StarBurst = 63,
-	MS_StoneToFlesh = 64, MS_SunRay = 65, MS_SuperShelter = 66,
-	MS_SuppressDisease = 67, MS_SuppressPoison = 68, MS_Teleport = 69,
-	MS_TimeDistortion = 70, MS_TownPortal = 71, MS_ToxicCloud = 72,
-	MS_TurnUndead = 73, MS_WalkOnWater = 74, MS_WizardEye = 75,
+	MS_AcidSpray = 0,
+	MS_Awaken = 1,
+	MS_BeastMaster = 2,
+	MS_Bless = 3,
+	MS_Clairvoyance = 4,
+	MS_ColdRay = 5,
+	MS_CreateFood = 6,
+	MS_CureDisease = 7,
+	MS_CureParalysis = 8,
+	MS_CurePoison = 9,
+	MS_CureWounds = 10,
+	MS_DancingSword = 11,
+	MS_DayOfProtection = 12,
+	MS_DayOfSorcery = 13,
+	MS_DeadlySwarm = 14,
+	MS_DetectMonster = 15,
+	MS_DivineIntervention = 16,
+	MS_DragonSleep = 17,
+	MS_ElementalStorm = 18,
+	MS_EnchantItem = 19,
+	MS_EnergyBlast = 20,
+	MS_Etheralize = 21,
+	MS_FantasticFreeze = 22,
+	MS_FieryFlail = 23,
+	MS_FingerOfDeath = 24,
+	MS_Fireball = 25,
+	MS_FirstAid = 26,
+	MS_FlyingFist = 27,
+	MS_FrostBite = 28,
+	MS_GolemStopper = 29,
+	MS_Heroism = 30,
+	MS_HolyBonus = 31,
+	MS_HolyWord = 32,
+	MS_Hynotize = 33,
+	MS_IdentifyMonster = 34,
+	MS_Implosion = 35,
+	MS_Incinerate = 36,
+	MS_Inferno = 37,
+	MS_InsectSpray = 38,
+	MS_ItemToGold = 39,
+	MS_Jump = 40,
+	MS_Levitate = 41,
+	MS_Light = 42,
+	MS_LightningBolt = 43,
+	MS_LloydsBeacon = 44,
+	MS_MagicArrow = 45,
+	MS_MassDistortion = 46,
+	MS_MegaVolts = 47,
+	MS_MoonRay = 48,
+	MS_NaturesCure = 49,
+	MS_Pain = 50,
+	MS_PoisonVolley = 51,
+	MS_PowerCure = 52,
+	MS_PowerShield = 53,
+	MS_PrismaticLight = 54,
+	MS_ProtFromElements = 55,
+	MS_RaiseDead = 56,
+	MS_RechargeItem = 57,
+	MS_Resurrection = 58,
+	MS_Revitalize = 59,
+	MS_Shrapmetal = 60,
+	MS_Sleep = 61,
+	MS_Sparks = 62,
+	MS_StarBurst = 63,
+	MS_StoneToFlesh = 64,
+	MS_SunRay = 65,
+	MS_SuperShelter = 66,
+	MS_SuppressDisease = 67,
+	MS_SuppressPoison = 68,
+	MS_Teleport = 69,
+	MS_TimeDistortion = 70,
+	MS_TownPortal = 71,
+	MS_ToxicCloud = 72,
+	MS_TurnUndead = 73,
+	MS_WalkOnWater = 74,
+	MS_WizardEye = 75,
 	NO_SPELL = 76
 };
 
-const char *const CLOUDS_CREDITS = 
-	"\v012\t000\x3""c\f35Designed and Directed By:\n"
-	"\f17Jon Van Caneghem\x3l\n"
-	"\n"
-	"\t025\f35Programming:\n"
-	"\t035\f17Mark Caldwell\n"
-	"\t035Dave Hathaway\n"
-	"\n"
-	"\t025\f35Sound System & FX:\n"
-	"\t035\f17Todd Hendrix\n"
-	"\n"
-	"\t025\f35Music & Speech:\n"
-	"\t035\f17Tim Tully\n"
-	"\n"
-	"\t025\f35Writing:\n"
-	"\t035\f17Paul Rattner\n"
-	"\t035Debbie Murphy\n"
-	"\t035Jon Van Caneghem\v012\n"
-	"\n"
-	"\n"
-	"\t180\f35Graphics:\n"
-	"\t190\f17Louis Johnson\n"
-	"\t190Jonathan P. Gwyn\n"
-	"\t190Bonita Long-Hemsath\n"
-	"\t190Julia Ulano\n"
-	"\t190Ricardo Barrera\n"
-	"\n"
-	"\t180\f35Testing:\n"
-	"\t190\f17Benjamin Bent\n"
-	"\t190Mario Escamilla\n"
-	"\t190Richard Espy\n"
-	"\t190Scott McDaniel\n"
-	"\t190Clayton Retzer\n"
-	"\t190Michael Suarez\x3""c";
+const char *const CLOUDS_CREDITS = "\v012\t000\x3"
+                                   "c\f35Designed and Directed By:\n"
+                                   "\f17Jon Van Caneghem\x3l\n"
+                                   "\n"
+                                   "\t025\f35Programming:\n"
+                                   "\t035\f17Mark Caldwell\n"
+                                   "\t035Dave Hathaway\n"
+                                   "\n"
+                                   "\t025\f35Sound System & FX:\n"
+                                   "\t035\f17Todd Hendrix\n"
+                                   "\n"
+                                   "\t025\f35Music & Speech:\n"
+                                   "\t035\f17Tim Tully\n"
+                                   "\n"
+                                   "\t025\f35Writing:\n"
+                                   "\t035\f17Paul Rattner\n"
+                                   "\t035Debbie Murphy\n"
+                                   "\t035Jon Van Caneghem\v012\n"
+                                   "\n"
+                                   "\n"
+                                   "\t180\f35Graphics:\n"
+                                   "\t190\f17Louis Johnson\n"
+                                   "\t190Jonathan P. Gwyn\n"
+                                   "\t190Bonita Long-Hemsath\n"
+                                   "\t190Julia Ulano\n"
+                                   "\t190Ricardo Barrera\n"
+                                   "\n"
+                                   "\t180\f35Testing:\n"
+                                   "\t190\f17Benjamin Bent\n"
+                                   "\t190Mario Escamilla\n"
+                                   "\t190Richard Espy\n"
+                                   "\t190Scott McDaniel\n"
+                                   "\t190Clayton Retzer\n"
+                                   "\t190Michael Suarez\x3"
+                                   "c";
 
-const char *const DARK_SIDE_CREDITS =
-	"\v012\t000\x3""c\f35Designed and Directed By:\n"
-	"\f17Jon Van Caneghem\x3l\n"
-	"\n"
-	"\t025\f35Programming:\n"
-	"\t035\f17Mark Caldwell\n"
-	"\t035Dave Hathaway\n"
-	"\n"
-	"\t025\f35Sound System & FX:\n"
-	"\t035\f17Mike Heilemann\n"
-	"\n"
-	"\t025\f35Music & Speech:\n"
-	"\t035\f17Tim Tully\n"
-	"\n"
-	"\t025\f35Writing:\n"
-	"\t035\f17Paul Rattner\n"
-	"\t035Debbie Van Caneghem\n"
-	"\t035Jon Van Caneghem\v012\n"
-	"\n"
-	"\n"
-	"\t180\f35Graphics:\n"
-	"\t190\f17Jonathan P. Gwyn\n"
-	"\t190Bonita Long-Hemsath\n"
-	"\t190Julia Ulano\n"
-	"\t190Ricardo Barrera\n"
-	"\n"
-	"\t180\f35Testing:\n"
-	"\t190\f17Benjamin Bent\n"
-	"\t190Christian Dailey\n"
-	"\t190Mario Escamilla\n"
-	"\t190Marco Hunter\n"
-	"\t190Robert J. Lupo\n"
-	"\t190Clayton Retzer\n"
-	"\t190David Vela\x3""c";
-const char *const SWORDS_CREDITS1 =
-	"\v012\x3""c\f35Published By New World Computing, Inc.\f17\n"
-	"Developed By CATware, Inc.\x3l\n"
-	"\f01Design and Direction\t180Series Created by\n"
-	"\t020Bill Fawcett\t190John Van Caneghem\n"
-	"\n"
-	"\t010Story Contributions\t180Producer & Manual\n"
-	"\t020Ellen Guon\t190Dean Rettig\n"
-	"\n"
-	"\t010Programming & Ideas\t180Original Programming\n"
-	"\t020David Potter\t190Mark Caldwell\n"
-	"\t020Rod Retterath\t190Dave Hathaway\n"
-	"\n"
-	"\t010Manual Illustrations\t180Graphic Artists\n"
-	"\t020Todd Cameron Hamilton\t190Jonathan P. Gwyn\n"
-	"\t020James Clouse\t190Bonnie Long-Hemsath\n"
-	"\t190Julia Ulano\n"
-	"\t190Ricardo Barrera\n";
-const char *const SWORDS_CREDITS2 =
-	"\f05\v012\t000\x3l\n"
-	"\t100Sound Programming\n"
-	"\t110Todd Hendrix\n"
-	"\n"
-	"\t100Music\n"
-	"\t110Tim Tully\n"
-	"\t110Quality Assurance Manager\n"
-	"\t110Peter Ryu\n"
-	"\t100Testers\n"
-	"\t110Walter Johnson\n"
-	"\t110Bryan Farina\n"
-	"\t110David Baton\n"
-	"\t110Jack Nalls\n";
+const char *const DARK_SIDE_CREDITS = "\v012\t000\x3"
+                                      "c\f35Designed and Directed By:\n"
+                                      "\f17Jon Van Caneghem\x3l\n"
+                                      "\n"
+                                      "\t025\f35Programming:\n"
+                                      "\t035\f17Mark Caldwell\n"
+                                      "\t035Dave Hathaway\n"
+                                      "\n"
+                                      "\t025\f35Sound System & FX:\n"
+                                      "\t035\f17Mike Heilemann\n"
+                                      "\n"
+                                      "\t025\f35Music & Speech:\n"
+                                      "\t035\f17Tim Tully\n"
+                                      "\n"
+                                      "\t025\f35Writing:\n"
+                                      "\t035\f17Paul Rattner\n"
+                                      "\t035Debbie Van Caneghem\n"
+                                      "\t035Jon Van Caneghem\v012\n"
+                                      "\n"
+                                      "\n"
+                                      "\t180\f35Graphics:\n"
+                                      "\t190\f17Jonathan P. Gwyn\n"
+                                      "\t190Bonita Long-Hemsath\n"
+                                      "\t190Julia Ulano\n"
+                                      "\t190Ricardo Barrera\n"
+                                      "\n"
+                                      "\t180\f35Testing:\n"
+                                      "\t190\f17Benjamin Bent\n"
+                                      "\t190Christian Dailey\n"
+                                      "\t190Mario Escamilla\n"
+                                      "\t190Marco Hunter\n"
+                                      "\t190Robert J. Lupo\n"
+                                      "\t190Clayton Retzer\n"
+                                      "\t190David Vela\x3"
+                                      "c";
+const char *const SWORDS_CREDITS1 = "\v012\x3"
+                                    "c\f35Published By New World Computing, Inc.\f17\n"
+                                    "Developed By CATware, Inc.\x3l\n"
+                                    "\f01Design and Direction\t180Series Created by\n"
+                                    "\t020Bill Fawcett\t190John Van Caneghem\n"
+                                    "\n"
+                                    "\t010Story Contributions\t180Producer & Manual\n"
+                                    "\t020Ellen Guon\t190Dean Rettig\n"
+                                    "\n"
+                                    "\t010Programming & Ideas\t180Original Programming\n"
+                                    "\t020David Potter\t190Mark Caldwell\n"
+                                    "\t020Rod Retterath\t190Dave Hathaway\n"
+                                    "\n"
+                                    "\t010Manual Illustrations\t180Graphic Artists\n"
+                                    "\t020Todd Cameron Hamilton\t190Jonathan P. Gwyn\n"
+                                    "\t020James Clouse\t190Bonnie Long-Hemsath\n"
+                                    "\t190Julia Ulano\n"
+                                    "\t190Ricardo Barrera\n";
+const char *const SWORDS_CREDITS2 = "\f05\v012\t000\x3l\n"
+                                    "\t100Sound Programming\n"
+                                    "\t110Todd Hendrix\n"
+                                    "\n"
+                                    "\t100Music\n"
+                                    "\t110Tim Tully\n"
+                                    "\t110Quality Assurance Manager\n"
+                                    "\t110Peter Ryu\n"
+                                    "\t100Testers\n"
+                                    "\t110Walter Johnson\n"
+                                    "\t110Bryan Farina\n"
+                                    "\t110David Baton\n"
+                                    "\t110Jack Nalls\n";
 
-const char *const OPTIONS_MENU =
-	"\r\x1\x3""c\fdMight and Magic Options\n"
-	"%s of Xeen\x2\n"
-	"\v%.3dCopyright (c) %d NWC, Inc.\n"
-	"All Rights Reserved\x1";
+const char *const OPTIONS_MENU = "\r\x1\x3"
+                                 "c\fdMight and Magic Options\n"
+                                 "%s of Xeen\x2\n"
+                                 "\v%.3dCopyright (c) %d NWC, Inc.\n"
+                                 "All Rights Reserved\x1";
 const char *const GAME_NAMES[3] = { "Clouds", "Darkside", "World" };
 
 const char *const THE_PARTY_NEEDS_REST = "\v012The Party needs rest!";
 
-const char *const WHO_WILL = "\x3""c\v000\t000%s\n\n"
-	"Who will\n%s?\n\v055F1 - F%d";
+const char *const WHO_WILL = "\x3"
+                             "c\v000\t000%s\n\n"
+                             "Who will\n%s?\n\v055F1 - F%d";
 
-const char *const HOW_MUCH = "\x3""cHow Much\n\n";
+const char *const HOW_MUCH = "\x3"
+                             "cHow Much\n\n";
 
-const char *const WHATS_THE_PASSWORD = "\x3""cWhat's the Password?\n"
-	"\n"
-	"Please turn to page %u, go to\n"
-	"line %u, and type in word %u.\v067\t000Spaces are not counted as words or lines.  "
-	"Hyphenated words are treated as one word.  Any line that has any text is considered a line."
-	"\x3""c\v040\t000\n";
+const char *const WHATS_THE_PASSWORD = "\x3"
+                                       "cWhat's the Password?\n"
+                                       "\n"
+                                       "Please turn to page %u, go to\n"
+                                       "line %u, and type in word %u.\v067\t000Spaces are not counted as words or lines.  "
+                                       "Hyphenated words are treated as one word.  Any line that has any text is considered a line."
+                                       "\x3"
+                                       "c\v040\t000\n";
 
-const char *const PASSWORD_INCORRECT = "\x3""c\v040\n"
-	"\f32Incorrect!\fd";
+const char *const PASSWORD_INCORRECT = "\x3"
+                                       "c\v040\n"
+                                       "\f32Incorrect!\fd";
 
 const char *const IN_NO_CONDITION = "\v007%s is not in any condition to perform actions!";
 
-const char *const NOTHING_HERE = "\x3""c\v010Nothing here.";
+const char *const NOTHING_HERE = "\x3"
+                                 "c\v010Nothing here.";
 
 const char *const TERRAIN_TYPES[6] = {
 	"town", "cave", "towr", "cstl", "dung", "scfi"
@@ -219,125 +278,1345 @@ const char *const WHO_WILL_ACTIONS[4] = {
 };
 
 const byte SYMBOLS[20][64] = {
-	{ // 0
-		0x00, 0x00, 0xA8, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0x00, 0xA8, 0x9E, 0x9C, 0x9C, 0x9E, 0x9E, 0x9E,
-		0xAC, 0x9C, 0xA4, 0xAC, 0xAC, 0x9A, 0x9A, 0x9A, 0xAC, 0x9E, 0xAC, 0xA8, 0xA8, 0xA6, 0x97, 0x98,
-		0xAC, 0xA0, 0xAC, 0xAC, 0xA4, 0xA6, 0x98, 0x99, 0x00, 0xAC, 0xA0, 0xA0, 0xA8, 0xAC, 0x9A, 0x9A,
-		0x00, 0x00, 0xAC, 0xAC, 0xAC, 0xA4, 0x9B, 0x9A, 0x00, 0x00, 0x00, 0x00, 0xAC, 0xA0, 0x9B, 0x9B,
+	{
+	  // 0
+	  0x00,
+	  0x00,
+	  0xA8,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0x00,
+	  0xA8,
+	  0x9E,
+	  0x9C,
+	  0x9C,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0xAC,
+	  0x9C,
+	  0xA4,
+	  0xAC,
+	  0xAC,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0xAC,
+	  0x9E,
+	  0xAC,
+	  0xA8,
+	  0xA8,
+	  0xA6,
+	  0x97,
+	  0x98,
+	  0xAC,
+	  0xA0,
+	  0xAC,
+	  0xAC,
+	  0xA4,
+	  0xA6,
+	  0x98,
+	  0x99,
+	  0x00,
+	  0xAC,
+	  0xA0,
+	  0xA0,
+	  0xA8,
+	  0xAC,
+	  0x9A,
+	  0x9A,
+	  0x00,
+	  0x00,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xA4,
+	  0x9B,
+	  0x9A,
+	  0x00,
+	  0x00,
+	  0x00,
+	  0x00,
+	  0xAC,
+	  0xA0,
+	  0x9B,
+	  0x9B,
 	},
-	{ // 1
-		0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0x9E, 0x9E, 0x9E, 0x9E, 0x9E, 0x9E, 0x9E, 0x9E,
-		0x99, 0x9A, 0x9A, 0x99, 0x99, 0x99, 0x9A, 0x99, 0x98, 0x98, 0x98, 0x97, 0x97, 0x97, 0x97, 0x97,
-		0x99, 0x98, 0x98, 0x99, 0x98, 0x98, 0x99, 0x99, 0x9A, 0x9A, 0x9A, 0x9A, 0x9A, 0x9A, 0x9A, 0x9A,
-		0x9A, 0x9B, 0x9B, 0x9C, 0x9B, 0x9A, 0x9C, 0x9A, 0x9B, 0x9A, 0x99, 0x99, 0x99, 0x9A, 0x9A, 0x9B,
+	{
+	  // 1
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x99,
+	  0x9A,
+	  0x9A,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9A,
+	  0x99,
+	  0x98,
+	  0x98,
+	  0x98,
+	  0x97,
+	  0x97,
+	  0x97,
+	  0x97,
+	  0x97,
+	  0x99,
+	  0x98,
+	  0x98,
+	  0x99,
+	  0x98,
+	  0x98,
+	  0x99,
+	  0x99,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9B,
+	  0x9B,
+	  0x9C,
+	  0x9B,
+	  0x9A,
+	  0x9C,
+	  0x9A,
+	  0x9B,
+	  0x9A,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9A,
+	  0x9A,
+	  0x9B,
 	},
-	{ // 2
-		0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0x9E, 0x9E, 0x9E, 0x9E, 0x9E, 0x9E, 0x9E, 0x9E,
-		0x99, 0x9A, 0x9A, 0x9A, 0x9A, 0x9A, 0x9A, 0x99, 0x98, 0x98, 0x99, 0x98, 0x98, 0x97, 0x98, 0x98,
-		0x99, 0x98, 0x98, 0x98, 0x99, 0x99, 0x98, 0x99, 0x9A, 0x9A, 0x9A, 0x9A, 0x9A, 0x9A, 0x9A, 0x9A,
-		0x9B, 0x9B, 0x9C, 0x9C, 0x9B, 0x9B, 0x9B, 0x9B, 0x99, 0x9A, 0x9B, 0x9B, 0x9A, 0x9A, 0x99, 0x9A,
+	{
+	  // 2
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x99,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x99,
+	  0x98,
+	  0x98,
+	  0x99,
+	  0x98,
+	  0x98,
+	  0x97,
+	  0x98,
+	  0x98,
+	  0x99,
+	  0x98,
+	  0x98,
+	  0x98,
+	  0x99,
+	  0x99,
+	  0x98,
+	  0x99,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9B,
+	  0x9B,
+	  0x9C,
+	  0x9C,
+	  0x9B,
+	  0x9B,
+	  0x9B,
+	  0x9B,
+	  0x99,
+	  0x9A,
+	  0x9B,
+	  0x9B,
+	  0x9A,
+	  0x9A,
+	  0x99,
+	  0x9A,
 	},
-	{ // 3
-		0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0x9E, 0x9E, 0x9E, 0x9E, 0x9E, 0x9E, 0x9E, 0x9E,
-		0x99, 0x9A, 0x9A, 0x9A, 0x99, 0x99, 0x99, 0x9A, 0x98, 0x98, 0x97, 0x97, 0x98, 0x98, 0x98, 0x98,
-		0x99, 0x99, 0x98, 0x99, 0x98, 0x98, 0x99, 0x99, 0x9A, 0x9A, 0x9A, 0x9A, 0x9A, 0x9A, 0x9A, 0x9A,
-		0x9B, 0x9C, 0x9B, 0x9B, 0x9C, 0x9C, 0x9C, 0x9C, 0x9A, 0x9A, 0x9A, 0x9A, 0x9A, 0x99, 0x99, 0x9A,
+	{
+	  // 3
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x99,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9A,
+	  0x98,
+	  0x98,
+	  0x97,
+	  0x97,
+	  0x98,
+	  0x98,
+	  0x98,
+	  0x98,
+	  0x99,
+	  0x99,
+	  0x98,
+	  0x99,
+	  0x98,
+	  0x98,
+	  0x99,
+	  0x99,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9B,
+	  0x9C,
+	  0x9B,
+	  0x9B,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x99,
+	  0x99,
+	  0x9A,
 	},
-	{ // 4
-		0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0x9E, 0x9E, 0x9E, 0x9E, 0x9E, 0x9E, 0x9E, 0x9E,
-		0x9A, 0x9A, 0x9A, 0x99, 0x99, 0x99, 0x99, 0x9A, 0x97, 0x97, 0x97, 0x97, 0x97, 0x98, 0x98, 0x98,
-		0x99, 0x99, 0x98, 0x99, 0x99, 0x98, 0x98, 0x98, 0x9A, 0x9A, 0x9A, 0x9A, 0x9A, 0x9A, 0x9A, 0x9A,
-		0x9A, 0x9C, 0x9B, 0x9B, 0x9C, 0x9B, 0x9B, 0x9B, 0x9A, 0x99, 0x9B, 0x9B, 0x9A, 0x99, 0x9A, 0x9A,
+	{
+	  // 4
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9A,
+	  0x97,
+	  0x97,
+	  0x97,
+	  0x97,
+	  0x97,
+	  0x98,
+	  0x98,
+	  0x98,
+	  0x99,
+	  0x99,
+	  0x98,
+	  0x99,
+	  0x99,
+	  0x98,
+	  0x98,
+	  0x98,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9C,
+	  0x9B,
+	  0x9B,
+	  0x9C,
+	  0x9B,
+	  0x9B,
+	  0x9B,
+	  0x9A,
+	  0x99,
+	  0x9B,
+	  0x9B,
+	  0x9A,
+	  0x99,
+	  0x9A,
+	  0x9A,
 	},
-	{ // 5
-		0xA4, 0xA4, 0xA8, 0xA8, 0x00, 0x00, 0x00, 0x00, 0x9E, 0x9E, 0x9E, 0xA0, 0xA8, 0xAC, 0x00, 0x00,
-		0x9A, 0x9A, 0x9A, 0x9A, 0x9A, 0x9E, 0xAC, 0x00, 0x97, 0x97, 0x97, 0x98, 0x9C, 0x9C, 0xA0, 0xAC,
-		0x99, 0x98, 0x99, 0x99, 0x99, 0x9B, 0xA0, 0xAC, 0x9A, 0x9A, 0x9A, 0x9A, 0x9A, 0x9B, 0xA0, 0xAC,
-		0x9C, 0x9B, 0x9C, 0x9C, 0x9C, 0xA0, 0xAC, 0x00, 0x99, 0x9A, 0x9A, 0x9B, 0x9B, 0xA4, 0xAC, 0x00,
+	{
+	  // 5
+	  0xA4,
+	  0xA4,
+	  0xA8,
+	  0xA8,
+	  0x00,
+	  0x00,
+	  0x00,
+	  0x00,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0xA0,
+	  0xA8,
+	  0xAC,
+	  0x00,
+	  0x00,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9E,
+	  0xAC,
+	  0x00,
+	  0x97,
+	  0x97,
+	  0x97,
+	  0x98,
+	  0x9C,
+	  0x9C,
+	  0xA0,
+	  0xAC,
+	  0x99,
+	  0x98,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9B,
+	  0xA0,
+	  0xAC,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9A,
+	  0x9B,
+	  0xA0,
+	  0xAC,
+	  0x9C,
+	  0x9B,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0xA0,
+	  0xAC,
+	  0x00,
+	  0x99,
+	  0x9A,
+	  0x9A,
+	  0x9B,
+	  0x9B,
+	  0xA4,
+	  0xAC,
+	  0x00,
 	},
-	{ // 6
-		0x00, 0x00, 0x00, 0xAC, 0xA4, 0x9C, 0x99, 0x99, 0x00, 0x00, 0x00, 0xAC, 0xA0, 0x9C, 0x9B, 0x99,
-		0x00, 0x00, 0xAC, 0xA0, 0x9C, 0x99, 0x99, 0x99, 0x00, 0xAC, 0xA0, 0x9C, 0x99, 0x98, 0x99, 0x99,
-		0x00, 0xAC, 0xA0, 0x9C, 0x9C, 0xA0, 0x9C, 0x9A, 0x00, 0x00, 0xAC, 0xA4, 0xA0, 0x99, 0x99, 0x99,
-		0x00, 0xAC, 0xA0, 0x9C, 0x99, 0x99, 0x99, 0x99, 0x00, 0xAC, 0xA4, 0x9C, 0x99, 0x99, 0x99, 0x99,
+	{
+	  // 6
+	  0x00,
+	  0x00,
+	  0x00,
+	  0xAC,
+	  0xA4,
+	  0x9C,
+	  0x99,
+	  0x99,
+	  0x00,
+	  0x00,
+	  0x00,
+	  0xAC,
+	  0xA0,
+	  0x9C,
+	  0x9B,
+	  0x99,
+	  0x00,
+	  0x00,
+	  0xAC,
+	  0xA0,
+	  0x9C,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x00,
+	  0xAC,
+	  0xA0,
+	  0x9C,
+	  0x99,
+	  0x98,
+	  0x99,
+	  0x99,
+	  0x00,
+	  0xAC,
+	  0xA0,
+	  0x9C,
+	  0x9C,
+	  0xA0,
+	  0x9C,
+	  0x9A,
+	  0x00,
+	  0x00,
+	  0xAC,
+	  0xA4,
+	  0xA0,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x00,
+	  0xAC,
+	  0xA0,
+	  0x9C,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x00,
+	  0xAC,
+	  0xA4,
+	  0x9C,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
 	},
-	{ // 7
-		0xAC, 0xA0, 0x9C, 0x99, 0x99, 0x99, 0x99, 0x99, 0xAC, 0xA4, 0x9C, 0x99, 0x99, 0x99, 0x99, 0x99,
-		0x00, 0xAC, 0xA0, 0x9C, 0x99, 0x99, 0x99, 0x99, 0x00, 0x00, 0xAC, 0xA4, 0x9C, 0x9C, 0x99, 0x99,
-		0x00, 0x00, 0xAC, 0xA0, 0x9C, 0x99, 0x99, 0x99, 0x00, 0x00, 0x00, 0xAC, 0xA4, 0x9C, 0x99, 0x99,
-		0x00, 0x00, 0xAC, 0xA0, 0x9B, 0xA0, 0x9E, 0x9C, 0x00, 0xAC, 0xA4, 0x9C, 0x99, 0x9C, 0x99, 0x99,
+	{
+	  // 7
+	  0xAC,
+	  0xA0,
+	  0x9C,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0xAC,
+	  0xA4,
+	  0x9C,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x00,
+	  0xAC,
+	  0xA0,
+	  0x9C,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x00,
+	  0x00,
+	  0xAC,
+	  0xA4,
+	  0x9C,
+	  0x9C,
+	  0x99,
+	  0x99,
+	  0x00,
+	  0x00,
+	  0xAC,
+	  0xA0,
+	  0x9C,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x00,
+	  0x00,
+	  0x00,
+	  0xAC,
+	  0xA4,
+	  0x9C,
+	  0x99,
+	  0x99,
+	  0x00,
+	  0x00,
+	  0xAC,
+	  0xA0,
+	  0x9B,
+	  0xA0,
+	  0x9E,
+	  0x9C,
+	  0x00,
+	  0xAC,
+	  0xA4,
+	  0x9C,
+	  0x99,
+	  0x9C,
+	  0x99,
+	  0x99,
 	},
-	{ // 8
-		0x00, 0xAC, 0xA0, 0x9C, 0x99, 0x99, 0x9B, 0x99, 0xAC, 0xA4, 0x9C, 0x99, 0x99, 0x99, 0x99, 0x99,
-		0xAC, 0xA0, 0x9C, 0x99, 0x99, 0x99, 0x99, 0x99, 0xAC, 0xA4, 0x9C, 0x99, 0x99, 0x99, 0x99, 0x99,
-		0x00, 0xAC, 0xA4, 0x9C, 0x99, 0x99, 0x99, 0x99, 0xAC, 0xA0, 0x9C, 0x99, 0x99, 0x99, 0x99, 0x99,
-		0x00, 0xAC, 0xA0, 0x9C, 0x99, 0x99, 0x9C, 0x99, 0x00, 0xAC, 0xA4, 0x9C, 0x99, 0x9E, 0x9C, 0x99,
+	{
+	  // 8
+	  0x00,
+	  0xAC,
+	  0xA0,
+	  0x9C,
+	  0x99,
+	  0x99,
+	  0x9B,
+	  0x99,
+	  0xAC,
+	  0xA4,
+	  0x9C,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0xAC,
+	  0xA0,
+	  0x9C,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0xAC,
+	  0xA4,
+	  0x9C,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x00,
+	  0xAC,
+	  0xA4,
+	  0x9C,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0xAC,
+	  0xA0,
+	  0x9C,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x00,
+	  0xAC,
+	  0xA0,
+	  0x9C,
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0x99,
+	  0x00,
+	  0xAC,
+	  0xA4,
+	  0x9C,
+	  0x99,
+	  0x9E,
+	  0x9C,
+	  0x99,
 	},
-	{ // 9
-		0x00, 0x00, 0xAC, 0xA4, 0xA0, 0x9C, 0x99, 0x99, 0x00, 0xAC, 0xA0, 0x9C, 0x9C, 0xA0, 0x9C, 0x9A,
-		0xAC, 0xA4, 0x9C, 0x9A, 0x99, 0x99, 0x99, 0x99, 0xAC, 0xA0, 0x9C, 0x99, 0x99, 0x99, 0x99, 0x99,
-		0xAC, 0xA4, 0x9C, 0x99, 0x99, 0x99, 0x99, 0x99, 0x00, 0xAC, 0xA0, 0x9C, 0x99, 0x99, 0x99, 0x99,
-		0x00, 0xAC, 0xA4, 0x9C, 0x9A, 0x9C, 0x99, 0x99, 0x00, 0x00, 0xAC, 0xA0, 0x9C, 0x9A, 0x99, 0x99,
+	{
+	  // 9
+	  0x00,
+	  0x00,
+	  0xAC,
+	  0xA4,
+	  0xA0,
+	  0x9C,
+	  0x99,
+	  0x99,
+	  0x00,
+	  0xAC,
+	  0xA0,
+	  0x9C,
+	  0x9C,
+	  0xA0,
+	  0x9C,
+	  0x9A,
+	  0xAC,
+	  0xA4,
+	  0x9C,
+	  0x9A,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0xAC,
+	  0xA0,
+	  0x9C,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0xAC,
+	  0xA4,
+	  0x9C,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x00,
+	  0xAC,
+	  0xA0,
+	  0x9C,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x00,
+	  0xAC,
+	  0xA4,
+	  0x9C,
+	  0x9A,
+	  0x9C,
+	  0x99,
+	  0x99,
+	  0x00,
+	  0x00,
+	  0xAC,
+	  0xA0,
+	  0x9C,
+	  0x9A,
+	  0x99,
+	  0x99,
 	},
-	{ // 10
-		0x99, 0x99, 0x99, 0x9A, 0xA0, 0xAC, 0x00, 0x00, 0x99, 0x99, 0x99, 0x9C, 0xA0, 0xAC, 0x00, 0x00,
-		0x99, 0x99, 0x9C, 0x9E, 0xA4, 0xAC, 0x00, 0x00, 0x99, 0x99, 0x9C, 0x99, 0x9C, 0xA4, 0xAC, 0x00,
-		0x99, 0x99, 0x99, 0x99, 0x9C, 0xA0, 0xAC, 0x00, 0x99, 0x99, 0x99, 0x9C, 0xA0, 0xAC, 0x00, 0x00,
-		0x99, 0x99, 0x99, 0xA0, 0xA4, 0xAC, 0x00, 0x00, 0x9A, 0x9B, 0x9E, 0x9C, 0x9C, 0xA4, 0xAC, 0x00,
+	{
+	  // 10
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9A,
+	  0xA0,
+	  0xAC,
+	  0x00,
+	  0x00,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0xA0,
+	  0xAC,
+	  0x00,
+	  0x00,
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0x9E,
+	  0xA4,
+	  0xAC,
+	  0x00,
+	  0x00,
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0x99,
+	  0x9C,
+	  0xA4,
+	  0xAC,
+	  0x00,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0xA0,
+	  0xAC,
+	  0x00,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0xA0,
+	  0xAC,
+	  0x00,
+	  0x00,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0xA0,
+	  0xA4,
+	  0xAC,
+	  0x00,
+	  0x00,
+	  0x9A,
+	  0x9B,
+	  0x9E,
+	  0x9C,
+	  0x9C,
+	  0xA4,
+	  0xAC,
+	  0x00,
 	},
-	{ // 11
-		0x99, 0x99, 0x99, 0x99, 0x9C, 0xA0, 0xAC, 0x00, 0x99, 0x99, 0x99, 0x99, 0x99, 0x9C, 0x9E, 0xAC,
-		0x99, 0x99, 0x99, 0x99, 0x9C, 0xA0, 0xAC, 0x00, 0x99, 0x99, 0x99, 0x99, 0x9C, 0xA0, 0xAC, 0x00,
-		0x99, 0x99, 0x99, 0x99, 0x99, 0x9C, 0xA4, 0xAC, 0x99, 0x99, 0x99, 0x99, 0x99, 0x9C, 0xA0, 0xAC,
-		0x9C, 0x99, 0x99, 0x99, 0x9C, 0x9C, 0xA4, 0xAC, 0x99, 0x9E, 0x9E, 0x9C, 0x9C, 0xA0, 0xAC, 0x00,
+	{
+	  // 11
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0xA0,
+	  0xAC,
+	  0x00,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0x9E,
+	  0xAC,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0xA0,
+	  0xAC,
+	  0x00,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0xA0,
+	  0xAC,
+	  0x00,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0xA4,
+	  0xAC,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0xA0,
+	  0xAC,
+	  0x9C,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0x9C,
+	  0xA4,
+	  0xAC,
+	  0x99,
+	  0x9E,
+	  0x9E,
+	  0x9C,
+	  0x9C,
+	  0xA0,
+	  0xAC,
+	  0x00,
 	},
-	{ // 12
-		0x99, 0x99, 0x9C, 0xA0, 0xA4, 0xAC, 0x00, 0x00, 0x9B, 0x9C, 0x9E, 0x9C, 0x9C, 0xA4, 0xAC, 0x00,
-		0x99, 0x99, 0x99, 0x99, 0x99, 0xA0, 0xAC, 0x00, 0x99, 0x99, 0x99, 0x99, 0x99, 0x9C, 0xA0, 0xAC,
-		0x99, 0x99, 0x99, 0x99, 0x9C, 0x9C, 0xA4, 0xAC, 0x99, 0x99, 0x99, 0x9C, 0xA0, 0xA4, 0xAC, 0x00,
-		0x99, 0x99, 0x9C, 0x99, 0x99, 0x9C, 0xA0, 0xAC, 0x99, 0x99, 0x99, 0x99, 0x99, 0x9C, 0xA0, 0xAC,
+	{
+	  // 12
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0xA0,
+	  0xA4,
+	  0xAC,
+	  0x00,
+	  0x00,
+	  0x9B,
+	  0x9C,
+	  0x9E,
+	  0x9C,
+	  0x9C,
+	  0xA4,
+	  0xAC,
+	  0x00,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0xA0,
+	  0xAC,
+	  0x00,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0xA0,
+	  0xAC,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0x9C,
+	  0xA4,
+	  0xAC,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0xA0,
+	  0xA4,
+	  0xAC,
+	  0x00,
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0xA0,
+	  0xAC,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0xA0,
+	  0xAC,
 	},
-	{ // 13
-		0x99, 0x99, 0x99, 0x99, 0x9C, 0xA0, 0xAC, 0x00, 0x99, 0x99, 0x99, 0x9C, 0xA0, 0xAC, 0x00, 0x00,
-		0x99, 0x9B, 0x9C, 0xA0, 0xA4, 0xAC, 0x00, 0x00, 0x99, 0x99, 0x9A, 0x99, 0x9C, 0xA0, 0xAC, 0x00,
-		0x99, 0x99, 0x99, 0x99, 0x99, 0x9C, 0xA4, 0xAC, 0x99, 0x99, 0x99, 0x99, 0x99, 0x9C, 0xA0, 0xAC,
-		0x99, 0x99, 0x99, 0x99, 0x9A, 0x9C, 0xA4, 0xAC, 0x99, 0x99, 0x99, 0x9A, 0x9C, 0xA4, 0xAC, 0x00,
+	{
+	  // 13
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0xA0,
+	  0xAC,
+	  0x00,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0xA0,
+	  0xAC,
+	  0x00,
+	  0x00,
+	  0x99,
+	  0x9B,
+	  0x9C,
+	  0xA0,
+	  0xA4,
+	  0xAC,
+	  0x00,
+	  0x00,
+	  0x99,
+	  0x99,
+	  0x9A,
+	  0x99,
+	  0x9C,
+	  0xA0,
+	  0xAC,
+	  0x00,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0xA4,
+	  0xAC,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0xA0,
+	  0xAC,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9A,
+	  0x9C,
+	  0xA4,
+	  0xAC,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9A,
+	  0x9C,
+	  0xA4,
+	  0xAC,
+	  0x00,
 	},
-	{ // 14
-		0x00, 0x00, 0xAC, 0x9E, 0x9C, 0x9C, 0x9C, 0x9B, 0x00, 0xAC, 0x9C, 0xA0, 0x9E, 0xA4, 0xA4, 0xA4,
-		0xAC, 0x9C, 0xA4, 0xAC, 0xAC, 0xAC, 0x9C, 0x9E, 0xAC, 0xA0, 0xAC, 0xA8, 0x9E, 0xA8, 0xAC, 0x99,
-		0xAC, 0x9E, 0xAC, 0xA8, 0xAC, 0x9E, 0xA4, 0xAC, 0xAC, 0xA4, 0xA0, 0xAC, 0xAC, 0xA0, 0xA4, 0xAC,
-		0x00, 0xAC, 0xA4, 0xA0, 0xA0, 0xA4, 0xAC, 0xA4, 0x00, 0x00, 0xAC, 0xAC, 0xAC, 0xAC, 0xAC, 0xAC,
+	{
+	  // 14
+	  0x00,
+	  0x00,
+	  0xAC,
+	  0x9E,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9B,
+	  0x00,
+	  0xAC,
+	  0x9C,
+	  0xA0,
+	  0x9E,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xAC,
+	  0x9C,
+	  0xA4,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0x9C,
+	  0x9E,
+	  0xAC,
+	  0xA0,
+	  0xAC,
+	  0xA8,
+	  0x9E,
+	  0xA8,
+	  0xAC,
+	  0x99,
+	  0xAC,
+	  0x9E,
+	  0xAC,
+	  0xA8,
+	  0xAC,
+	  0x9E,
+	  0xA4,
+	  0xAC,
+	  0xAC,
+	  0xA4,
+	  0xA0,
+	  0xAC,
+	  0xAC,
+	  0xA0,
+	  0xA4,
+	  0xAC,
+	  0x00,
+	  0xAC,
+	  0xA4,
+	  0xA0,
+	  0xA0,
+	  0xA4,
+	  0xAC,
+	  0xA4,
+	  0x00,
+	  0x00,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
 	},
-	{ // 15
-		0x9C, 0x9C, 0x9C, 0x9B, 0x9C, 0x9C, 0x9C, 0x9B, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4,
-		0x9E, 0x9E, 0x9E, 0x9C, 0x9E, 0x9E, 0x9E, 0x9E, 0x99, 0x99, 0x99, 0x99, 0x99, 0x98, 0x99, 0x98,
-		0x9C, 0x9C, 0x9B, 0x9B, 0x9B, 0x9C, 0x9C, 0x9C, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0x9E, 0x9E, 0xA0,
-		0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xAC, 0xAC, 0xAC, 0xAC, 0xAC, 0xAC, 0xAC, 0xAC,
+	{
+	  // 15
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9B,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9B,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9C,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x98,
+	  0x99,
+	  0x98,
+	  0x9C,
+	  0x9C,
+	  0x9B,
+	  0x9B,
+	  0x9B,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0xA0,
+	  0xA0,
+	  0xA0,
+	  0xA0,
+	  0xA0,
+	  0x9E,
+	  0x9E,
+	  0xA0,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
 	},
-	{ // 16
-		0x9B, 0x9B, 0x9B, 0x9B, 0x9C, 0x9B, 0x9C, 0x9C, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4,
-		0x9C, 0x9C, 0x9C, 0x9C, 0x9C, 0x9C, 0x9C, 0x9E, 0x98, 0x98, 0x98, 0x98, 0x99, 0x99, 0x99, 0x99,
-		0x9C, 0x9B, 0x9C, 0x9C, 0x9C, 0x9C, 0x9C, 0x9C, 0xA0, 0xA0, 0xA0, 0x9E, 0xA0, 0x9E, 0x9E, 0xA0,
-		0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xAC, 0xAC, 0xAC, 0xAC, 0xAC, 0xAC, 0xAC, 0xAC,
+	{
+	  // 16
+	  0x9B,
+	  0x9B,
+	  0x9B,
+	  0x9B,
+	  0x9C,
+	  0x9B,
+	  0x9C,
+	  0x9C,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9E,
+	  0x98,
+	  0x98,
+	  0x98,
+	  0x98,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x99,
+	  0x9C,
+	  0x9B,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0xA0,
+	  0xA0,
+	  0xA0,
+	  0x9E,
+	  0xA0,
+	  0x9E,
+	  0x9E,
+	  0xA0,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
 	},
-	{ // 17
-		0x9C, 0x9C, 0x9C, 0x9B, 0x9B, 0x9B, 0x9C, 0x9B, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4,
-		0x9E, 0x9E, 0x9E, 0x9C, 0x9C, 0x9C, 0x9E, 0x9E, 0x98, 0x98, 0x98, 0x99, 0x9A, 0x9A, 0x99, 0x98,
-		0x9C, 0x9B, 0x9C, 0x9C, 0x9C, 0x9B, 0x9B, 0x9C, 0xA0, 0x9E, 0x9E, 0xA0, 0xA0, 0xA0, 0xA0, 0x9E,
-		0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xAC, 0xAC, 0xAC, 0xAC, 0xAC, 0xAC, 0xAC, 0xAC,
+	{
+	  // 17
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9B,
+	  0x9B,
+	  0x9B,
+	  0x9C,
+	  0x9B,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9E,
+	  0x9E,
+	  0x98,
+	  0x98,
+	  0x98,
+	  0x99,
+	  0x9A,
+	  0x9A,
+	  0x99,
+	  0x98,
+	  0x9C,
+	  0x9B,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9B,
+	  0x9B,
+	  0x9C,
+	  0xA0,
+	  0x9E,
+	  0x9E,
+	  0xA0,
+	  0xA0,
+	  0xA0,
+	  0xA0,
+	  0x9E,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
 	},
-	{ // 18
-		0x9B, 0x9B, 0x9C, 0x9C, 0x9C, 0x9B, 0x9B, 0x9B, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4,
-		0x9E, 0x9E, 0x9E, 0x9E, 0x9C, 0x9C, 0x9C, 0x9E, 0x98, 0x98, 0x98, 0x98, 0x9A, 0x9A, 0x98, 0x99,
-		0x9C, 0x9C, 0x9C, 0x9C, 0x9C, 0x9C, 0x9B, 0x9C, 0x9E, 0x9E, 0x9E, 0x9E, 0x9E, 0xA0, 0xA0, 0xA0,
-		0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xAC, 0xAC, 0xAC, 0xAC, 0xAC, 0xAC, 0xAC, 0xAC,
+	{
+	  // 18
+	  0x9B,
+	  0x9B,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9B,
+	  0x9B,
+	  0x9B,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9E,
+	  0x98,
+	  0x98,
+	  0x98,
+	  0x98,
+	  0x9A,
+	  0x9A,
+	  0x98,
+	  0x99,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9B,
+	  0x9C,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0x9E,
+	  0xA0,
+	  0xA0,
+	  0xA0,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
 	},
-	{ // 19
-		0x9C, 0x9B, 0x9C, 0x9C, 0xA0, 0xA4, 0xAC, 0x00, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xAC, 0x00, 0x00,
-		0x9E, 0x9E, 0x9C, 0x9C, 0x9E, 0xA0, 0xAC, 0x00, 0x99, 0x98, 0x98, 0x99, 0x9A, 0x9A, 0xA0, 0xAC,
-		0x9C, 0x9C, 0x9C, 0x9C, 0x9C, 0x9C, 0xA0, 0xAC, 0xA0, 0xA0, 0x9E, 0xA0, 0xA0, 0xA0, 0xA0, 0xAC,
-		0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0xAC, 0x00, 0xAC, 0xAC, 0xAC, 0xAC, 0xAC, 0xAC, 0x00, 0x00,
+	{
+	  // 19
+	  0x9C,
+	  0x9B,
+	  0x9C,
+	  0x9C,
+	  0xA0,
+	  0xA4,
+	  0xAC,
+	  0x00,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xAC,
+	  0x00,
+	  0x00,
+	  0x9E,
+	  0x9E,
+	  0x9C,
+	  0x9C,
+	  0x9E,
+	  0xA0,
+	  0xAC,
+	  0x00,
+	  0x99,
+	  0x98,
+	  0x98,
+	  0x99,
+	  0x9A,
+	  0x9A,
+	  0xA0,
+	  0xAC,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0x9C,
+	  0xA0,
+	  0xAC,
+	  0xA0,
+	  0xA0,
+	  0x9E,
+	  0xA0,
+	  0xA0,
+	  0xA0,
+	  0xA0,
+	  0xAC,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xA4,
+	  0xAC,
+	  0x00,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0xAC,
+	  0x00,
+	  0x00,
 	}
 };
 
@@ -479,28 +1758,79 @@ const char *const HOLY_BONUS = "\n\t020Holy Bonus\t095%+d";
 
 const char *const HEROISM = "\n\t020Heroism\t095%+d";
 
-const char *const IN_PARTY = "\014""15In Party\014""d";
+const char *const IN_PARTY = "\014"
+                             "15In Party\014"
+                             "d";
 
-const char *const PARTY_DETAILS = "\015\003l\002\014""00"
-	"\013""001""\011""035%s"
-	"\013""009""\011""035%s"
-	"\013""017""\011""035%s"
-	"\013""025""\011""035%s"
-	"\013""001""\011""136%s"
-	"\013""009""\011""136%s"
-	"\013""017""\011""136%s"
-	"\013""025""\011""136%s"
-	"\013""044""\011""035%s"
-	"\013""052""\011""035%s"
-	"\013""060""\011""035%s"
-	"\013""068""\011""035%s"
-	"\013""044""\011""136%s"
-	"\013""052""\011""136%s"
-	"\013""060""\011""136%s"
-	"\013""068""\011""136%s";
-const char *const PARTY_DIALOG_TEXT =
-	"%s\x2\x3""c\v106\t013Up\t048Down\t083\f37D\fdel\t118\f37R\fdem"
-	"\t153\f37C\fdreate\t188E\f37x\fdit\x1";
+const char *const PARTY_DETAILS = "\015\003l\002\014"
+                                  "00"
+                                  "\013"
+                                  "001"
+                                  "\011"
+                                  "035%s"
+                                  "\013"
+                                  "009"
+                                  "\011"
+                                  "035%s"
+                                  "\013"
+                                  "017"
+                                  "\011"
+                                  "035%s"
+                                  "\013"
+                                  "025"
+                                  "\011"
+                                  "035%s"
+                                  "\013"
+                                  "001"
+                                  "\011"
+                                  "136%s"
+                                  "\013"
+                                  "009"
+                                  "\011"
+                                  "136%s"
+                                  "\013"
+                                  "017"
+                                  "\011"
+                                  "136%s"
+                                  "\013"
+                                  "025"
+                                  "\011"
+                                  "136%s"
+                                  "\013"
+                                  "044"
+                                  "\011"
+                                  "035%s"
+                                  "\013"
+                                  "052"
+                                  "\011"
+                                  "035%s"
+                                  "\013"
+                                  "060"
+                                  "\011"
+                                  "035%s"
+                                  "\013"
+                                  "068"
+                                  "\011"
+                                  "035%s"
+                                  "\013"
+                                  "044"
+                                  "\011"
+                                  "136%s"
+                                  "\013"
+                                  "052"
+                                  "\011"
+                                  "136%s"
+                                  "\013"
+                                  "060"
+                                  "\011"
+                                  "136%s"
+                                  "\013"
+                                  "068"
+                                  "\011"
+                                  "136%s";
+const char *const PARTY_DIALOG_TEXT = "%s\x2\x3"
+                                      "c\v106\t013Up\t048Down\t083\f37D\fdel\t118\f37R\fdem"
+                                      "\t153\f37C\fdreate\t188E\f37x\fdit\x1";
 
 const int FACE_CONDITION_FRAMES[17] = {
 	2, 2, 2, 1, 1, 4, 4, 4, 3, 2, 4, 3, 3, 5, 6, 7, 0
@@ -515,111 +1845,104 @@ const char *const NO_ONE_TO_ADVENTURE_WITH = "You have no one to adventure with"
 const char *const YOUR_ROSTER_IS_FULL = "Your Roster is full!";
 
 const byte DARKNESS_XLAT[3][256] = {
-	{
-	0, 25, 26, 27, 28, 29, 30, 31, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	44, 45, 46, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	60, 61, 62, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	76, 77, 78, 79, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	92, 93, 94, 95, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	108, 109, 110, 111, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	124, 125, 126, 127, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	140, 141, 142, 143, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	168, 169, 170, 171, 172, 173, 174, 175, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	188, 189, 190, 191, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	204, 205, 206, 207, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	220, 221, 222, 223, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	236, 237, 238, 239, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	252, 253, 254, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	}, {
-	0, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	40, 41, 42, 43, 44, 45, 46, 47, 0, 0, 0, 0, 0, 0, 0, 0,
-	56, 57, 58, 59, 60, 61, 62, 63, 0, 0, 0, 0, 0, 0, 0, 0,
-	72, 73, 74, 75, 76, 77, 78, 79, 0, 0, 0, 0, 0, 0, 0, 0,
-	88, 89, 90, 91, 92, 93, 94, 95, 0, 0, 0, 0, 0, 0, 0, 0,
-	104, 105, 106, 107, 108, 109, 110, 111, 0, 0, 0, 0, 0, 0, 0, 0,
-	120, 121, 122, 123, 124, 125, 126, 127, 0, 0, 0, 0, 0, 0, 0, 0,
-	136, 137, 138, 139, 140, 141, 142, 143, 0, 0, 0, 0, 0, 0, 0, 0,
-	160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	184, 185, 186, 187, 188, 189, 190, 191, 0, 0, 0, 0, 0, 0, 0, 0,
-	200, 201, 202, 203, 204, 205, 206, 207, 0, 0, 0, 0, 0, 0, 0, 0,
-	216, 217, 218, 219, 220, 221, 222, 223, 0, 0, 0, 0, 0, 0, 0, 0,
-	232, 233, 234, 235, 236, 237, 238, 239, 0, 0, 0, 0, 0, 0, 0, 0,
-	248, 249, 250, 251, 252, 253, 254, 255, 0, 0, 0, 0, 0, 0, 0, 0
-	}, {
-	0, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
-	24, 25, 26, 27, 28, 29, 30, 31, 0, 0, 0, 0, 0, 0, 0, 0,
-	36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 0, 0, 0, 0,
-	52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 0, 0, 0, 0,
-	68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 0, 0, 0, 0,
-	84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 0, 0, 0, 0,
-	100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 0, 0, 0, 0,
-	116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 0, 0, 0, 0,
-	132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 0, 0, 0, 0,
-	152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167,
-	168, 169, 170, 171, 172, 173, 174, 175, 0, 0, 0, 0, 0, 0, 0, 0,
-	180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 0, 0, 0, 0,
-	196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 0, 0, 0, 0,
-	212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 0, 0, 0, 0,
-	228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 0, 0, 0, 0,
-	244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 0, 0, 0, 0
-	}
+	{ 0, 25, 26, 27, 28, 29, 30, 31, 0, 0, 0, 0, 0, 0, 0, 0,
+	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	  44, 45, 46, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	  60, 61, 62, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	  76, 77, 78, 79, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	  92, 93, 94, 95, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	  108, 109, 110, 111, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	  124, 125, 126, 127, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	  140, 141, 142, 143, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	  168, 169, 170, 171, 172, 173, 174, 175, 0, 0, 0, 0, 0, 0, 0, 0,
+	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	  188, 189, 190, 191, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	  204, 205, 206, 207, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	  220, 221, 222, 223, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	  236, 237, 238, 239, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	  252, 253, 254, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	  40, 41, 42, 43, 44, 45, 46, 47, 0, 0, 0, 0, 0, 0, 0, 0,
+	  56, 57, 58, 59, 60, 61, 62, 63, 0, 0, 0, 0, 0, 0, 0, 0,
+	  72, 73, 74, 75, 76, 77, 78, 79, 0, 0, 0, 0, 0, 0, 0, 0,
+	  88, 89, 90, 91, 92, 93, 94, 95, 0, 0, 0, 0, 0, 0, 0, 0,
+	  104, 105, 106, 107, 108, 109, 110, 111, 0, 0, 0, 0, 0, 0, 0, 0,
+	  120, 121, 122, 123, 124, 125, 126, 127, 0, 0, 0, 0, 0, 0, 0, 0,
+	  136, 137, 138, 139, 140, 141, 142, 143, 0, 0, 0, 0, 0, 0, 0, 0,
+	  160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175,
+	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	  184, 185, 186, 187, 188, 189, 190, 191, 0, 0, 0, 0, 0, 0, 0, 0,
+	  200, 201, 202, 203, 204, 205, 206, 207, 0, 0, 0, 0, 0, 0, 0, 0,
+	  216, 217, 218, 219, 220, 221, 222, 223, 0, 0, 0, 0, 0, 0, 0, 0,
+	  232, 233, 234, 235, 236, 237, 238, 239, 0, 0, 0, 0, 0, 0, 0, 0,
+	  248, 249, 250, 251, 252, 253, 254, 255, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+	  24, 25, 26, 27, 28, 29, 30, 31, 0, 0, 0, 0, 0, 0, 0, 0,
+	  36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 0, 0, 0, 0,
+	  52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 0, 0, 0, 0,
+	  68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 0, 0, 0, 0,
+	  84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 0, 0, 0, 0,
+	  100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 0, 0, 0, 0,
+	  116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 0, 0, 0, 0,
+	  132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 0, 0, 0, 0,
+	  152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167,
+	  168, 169, 170, 171, 172, 173, 174, 175, 0, 0, 0, 0, 0, 0, 0, 0,
+	  180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 0, 0, 0, 0,
+	  196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 0, 0, 0, 0,
+	  212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 0, 0, 0, 0,
+	  228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 0, 0, 0, 0,
+	  244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 0, 0, 0, 0 }
 };
 
-const char *const PLEASE_WAIT = "\014""d\003""c\011""000"
-	"\013""002Please Wait...";
+const char *const PLEASE_WAIT = "\014"
+                                "d\003"
+                                "c\011"
+                                "000"
+                                "\013"
+                                "002Please Wait...";
 
-const char *const OOPS = "\003""c\011""000\013""002Oops...";
+const char *const OOPS = "\003"
+                         "c\011"
+                         "000\013"
+                         "002Oops...";
 
 const int SCREEN_POSITIONING_X[4][48] = {
-	{
-	-1,  0,  0,  0,  1, -1,  0,  0,  0,  1, -2, -1,
-	-1,  0,  0,  0,  1,  1,  2, -4, -3, -3, -2, -2,
-	-1, -1,  0,  0,  0,  1,  1,  2,  2,  3,  3,  4,
-	-3, -2, -1,  0,  0,  1,  2,  3, -4,  4,  0,  0
-	}, {
-	 0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  2,  2,
-	 2,  2,  2,  2,  2,  2,  2,  3,  3,  3,  3,  3,
-	 3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,
-	 4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  1
-	}, {
-	 1,  0,  0,  0, -1,  1,  0,  0,  0, -1,  2,  1,
-	 1,  0,  0,  0, -1, -1, -2,  4,  3,  3,  2,  2,
-	 1,  1,  0,  0,  0, -1, -1, -2, -2, -3, -3, -4,
-	 3,  2,  1,  0,  0, -1, -2, -3,  4, -4,  0,  0
-	}, {
-	 0,  0,  0,  0,  0, -1, -1, -1, -1, -1, -2, -2,
-	-2, -2, -2, -2, -2, -2, -2, -3, -3, -3, -3, -3,
-	-3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3,
-	-4, -4, -4, -4, -4, -4, -4, -4, -4, -4,  0, -1
-	}
+	{ -1, 0, 0, 0, 1, -1, 0, 0, 0, 1, -2, -1,
+	  -1, 0, 0, 0, 1, 1, 2, -4, -3, -3, -2, -2,
+	  -1, -1, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4,
+	  -3, -2, -1, 0, 0, 1, 2, 3, -4, 4, 0, 0 },
+	{ 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2,
+	  2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3,
+	  3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+	  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 1 },
+	{ 1, 0, 0, 0, -1, 1, 0, 0, 0, -1, 2, 1,
+	  1, 0, 0, 0, -1, -1, -2, 4, 3, 3, 2, 2,
+	  1, 1, 0, 0, 0, -1, -1, -2, -2, -3, -3, -4,
+	  3, 2, 1, 0, 0, -1, -2, -3, 4, -4, 0, 0 },
+	{ 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -2, -2,
+	  -2, -2, -2, -2, -2, -2, -2, -3, -3, -3, -3, -3,
+	  -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3,
+	  -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, 0, -1 }
 };
 
 const int SCREEN_POSITIONING_Y[4][48] = {
-	{
-	 0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  2,  2,
-	 2,  2,  2,  2,  2,  2,  2,  3,  3,  3,  3,  3,
-	 3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,
-	 4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  1
-	}, {
-	 1,  0,  0,  0, -1,  1,  0,  0,  0, -1,  2,  1,
-	 1,  0,  0,  0, -1, -1, -2,  4,  3,  3,  2,  2,
-	 1,  1,  0,  0,  0, -1, -1, -2, -2, -3, -3, -4,
-	 3,  2,  1,  0,  0, -1, -2, -3,  4, -4,  0,  0
-	}, {
-	 0,  0,  0,  0,  0, -1, -1, -1, -1, -1, -2, -2,
-	-2, -2, -2, -2, -2, -2, -2, -3, -3, -3, -3, -3,
-	-3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3,
-	-4, -4, -4, -4, -4, -4, -4, -4, -4, -4,  0, -1
-	}, {
-	-1,  0,  0,  0,  1, -1,  0,  0,  0,  1, -2, -1,
-	-1,  0,  0,  0,  1,  1,  2, -4, -3, -3, -2, -2,
-	-1, -1,  0,  0,  0,  1,  1,  2,  2,  3,  3,  4,
-	-3, -2, -1,  0,  0,  1,  2,  3, -4,  4,  0,  0
-	}
+	{ 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2,
+	  2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3,
+	  3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+	  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 1 },
+	{ 1, 0, 0, 0, -1, 1, 0, 0, 0, -1, 2, 1,
+	  1, 0, 0, 0, -1, -1, -2, 4, 3, 3, 2, 2,
+	  1, 1, 0, 0, 0, -1, -1, -2, -2, -3, -3, -4,
+	  3, 2, 1, 0, 0, -1, -2, -3, 4, -4, 0, 0 },
+	{ 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -2, -2,
+	  -2, -2, -2, -2, -2, -2, -2, -3, -3, -3, -3, -3,
+	  -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3,
+	  -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, 0, -1 },
+	{ -1, 0, 0, 0, 1, -1, 0, 0, 0, 1, -2, -1,
+	  -1, 0, 0, 0, 1, 1, 2, -4, -3, -3, -2, -2,
+	  -1, -1, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4,
+	  -3, -2, -1, 0, 0, 1, 2, 3, -4, 4, 0, 0 }
 };
 
 const int MONSTER_GRID_BITMASK[12] = {
@@ -658,27 +1981,22 @@ const int DIRECTION_ANIM_POSITIONS[4][4] = {
 };
 
 const byte WALL_SHIFTS[4][48] = {
-	{
-		12, 0, 12, 8, 12, 12, 0, 12, 8, 12, 12, 0,
-		12, 0, 12, 8, 12, 8, 12, 12, 0, 12, 0, 12,
-		0, 12, 0, 12, 8, 12, 8, 12, 8, 12, 8, 12,
-		0, 0, 0, 0, 8, 8, 8, 8, 0, 0, 4, 4
-	}, {
-		8, 12, 8, 4, 8, 8, 12, 8, 4, 8, 8, 12,
-		8, 12, 8, 4, 8, 4, 8, 8, 12, 8, 12, 8,
-		12, 8, 12, 8, 4, 8, 4, 8, 4, 8, 4, 8,
-		12, 12, 12, 12, 4, 4, 4, 4, 0, 0, 0, 0
-	}, {
-		4, 8, 4, 0, 4, 4, 8, 4, 0, 4, 4, 8,
-		4, 8, 4, 0, 4, 0, 4, 4, 8, 4, 8, 4,
-		8, 4, 8, 4, 0, 4, 0, 4, 0, 4, 0, 4,
-		8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 12, 12
-	}, {
-		0, 4, 0, 12, 0, 0, 4, 0, 12, 0, 0, 4,
-		0, 4, 0, 12, 0, 12, 0, 0, 4, 0, 4, 0,
-		4, 0, 4, 0, 12, 0, 12, 0, 12, 0, 12, 0,
-		4, 4, 4, 4, 12, 12, 12, 12, 0, 0, 8, 8
-	}
+	{ 12, 0, 12, 8, 12, 12, 0, 12, 8, 12, 12, 0,
+	  12, 0, 12, 8, 12, 8, 12, 12, 0, 12, 0, 12,
+	  0, 12, 0, 12, 8, 12, 8, 12, 8, 12, 8, 12,
+	  0, 0, 0, 0, 8, 8, 8, 8, 0, 0, 4, 4 },
+	{ 8, 12, 8, 4, 8, 8, 12, 8, 4, 8, 8, 12,
+	  8, 12, 8, 4, 8, 4, 8, 8, 12, 8, 12, 8,
+	  12, 8, 12, 8, 4, 8, 4, 8, 4, 8, 4, 8,
+	  12, 12, 12, 12, 4, 4, 4, 4, 0, 0, 0, 0 },
+	{ 4, 8, 4, 0, 4, 4, 8, 4, 0, 4, 4, 8,
+	  4, 8, 4, 0, 4, 0, 4, 4, 8, 4, 8, 4,
+	  8, 4, 8, 4, 0, 4, 0, 4, 0, 4, 0, 4,
+	  8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 12, 12 },
+	{ 0, 4, 0, 12, 0, 0, 4, 0, 12, 0, 0, 4,
+	  0, 4, 0, 12, 0, 12, 0, 0, 4, 0, 4, 0,
+	  4, 0, 4, 0, 12, 0, 12, 0, 12, 0, 12, 0,
+	  4, 4, 4, 4, 12, 12, 12, 12, 0, 0, 8, 8 }
 };
 
 const int DRAW_NUMBERS[25] = {
@@ -689,11 +2007,7 @@ const int DRAW_NUMBERS[25] = {
 };
 
 const int DRAW_FRAMES[25][2] = {
-	{ 18, 24 }, { 19, 23 }, { 20, 22 }, { 24, 18 }, { 23, 19 }, { 22, 20 },
-	{ 21, 21 }, { 11, 17 }, { 12, 16 }, { 13, 15 }, { 17, 11 }, { 16, 12 },
-	{ 15, 13 }, { 14, 14 }, { 6, 10 }, { 7, 9 }, { 10, 6 }, { 9, 7 },
-	{ 8, 8 }, { 3, 5 }, { 5, 3 }, { 4, 4 }, { 0, 2 }, { 2, 0 },
-	{ 1, 1 }
+	{ 18, 24 }, { 19, 23 }, { 20, 22 }, { 24, 18 }, { 23, 19 }, { 22, 20 }, { 21, 21 }, { 11, 17 }, { 12, 16 }, { 13, 15 }, { 17, 11 }, { 16, 12 }, { 15, 13 }, { 14, 14 }, { 6, 10 }, { 7, 9 }, { 10, 6 }, { 9, 7 }, { 8, 8 }, { 3, 5 }, { 5, 3 }, { 4, 4 }, { 0, 2 }, { 2, 0 }, { 1, 1 }
 };
 
 const int COMBAT_FLOAT_X[8] = { -2, -1, 0, 1, 2, 1, 0, -1 };
@@ -719,22 +2033,18 @@ const int MONSTER_EFFECT_FLAGS[15][8] = {
 };
 
 const int SPELLS_ALLOWED[3][40] = {
-	{
-		0, 1, 2, 3, 5, 6, 7, 8, 9, 10,
-		12, 14, 16, 23, 26, 27, 28, 30, 31, 32,
-		33, 42, 46, 48, 49, 50, 52, 55, 56, 58,
-		59, 62, 64, 65, 67, 68, 71, 73, 74, 76
-	}, {
-		1, 4, 11, 13, 15, 17, 18, 19, 20, 21,
-		22, 24, 25, 29, 34, 35, 36, 37, 38, 39,
-		40, 41, 42, 43, 44, 45, 47, 51, 53, 54,
-		57, 60, 61, 63, 66, 69, 70, 72, 75, 76
-	}, {
-		0, 1, 2, 3, 4, 5, 7, 9, 10, 20,
-		25, 26, 27, 28, 30, 31, 34, 38, 40, 41,
-		42, 43, 44, 45, 49, 50, 52, 53, 55, 59,
-		60, 61, 62, 67, 68, 72, 73, 74, 75, 76
-	}
+	{ 0, 1, 2, 3, 5, 6, 7, 8, 9, 10,
+	  12, 14, 16, 23, 26, 27, 28, 30, 31, 32,
+	  33, 42, 46, 48, 49, 50, 52, 55, 56, 58,
+	  59, 62, 64, 65, 67, 68, 71, 73, 74, 76 },
+	{ 1, 4, 11, 13, 15, 17, 18, 19, 20, 21,
+	  22, 24, 25, 29, 34, 35, 36, 37, 38, 39,
+	  40, 41, 42, 43, 44, 45, 47, 51, 53, 54,
+	  57, 60, 61, 63, 66, 69, 70, 72, 75, 76 },
+	{ 0, 1, 2, 3, 4, 5, 7, 9, 10, 20,
+	  25, 26, 27, 28, 30, 31, 34, 38, 40, 41,
+	  42, 43, 44, 45, 49, 50, 52, 53, 55, 59,
+	  60, 61, 62, 67, 68, 72, 73, 74, 75, 76 }
 };
 
 const int BASE_HP_BY_CLASS[10] = { 10, 8, 7, 5, 4, 8, 7, 12, 6, 9 };
@@ -759,19 +2069,20 @@ const int STAT_BONUSES[24] = {
 const int ELEMENTAL_CATEGORIES[6] = { 8, 15, 20, 25, 33, 36 };
 
 const int ATTRIBUTE_CATEGORIES[10] = {
-	9, 17, 25, 33, 39, 45, 50, 56, 61, 72 };
+	9, 17, 25, 33, 39, 45, 50, 56, 61, 72
+};
 
 const int ATTRIBUTE_BONUSES[72] = {
-	2, 3, 5, 8, 12, 17, 23, 30, 38, 47,	// Might bonus
-	2, 3, 5, 8, 12, 17, 23, 30,			// INT bonus
-	2, 3, 5, 8, 12, 17, 23, 30,			// PER bonus
-	2, 3, 5, 8, 12, 17, 23, 30,			// SPD bonus
-	3, 5, 10, 15, 20, 30,				// ACC bonus
-	5, 10, 15, 20, 25, 30,				// LUC bonus
-	4, 6, 10, 20, 50,					// HP bonus
-	4, 8, 12, 16, 20, 25,				// SP bonus
-	2, 4, 6, 10, 16,					// AC bonus
-	4, 6, 8, 10, 12, 14, 16, 18, 20, 25	// Thievery bonus
+	2, 3, 5, 8, 12, 17, 23, 30, 38, 47, // Might bonus
+	2, 3, 5, 8, 12, 17, 23, 30, // INT bonus
+	2, 3, 5, 8, 12, 17, 23, 30, // PER bonus
+	2, 3, 5, 8, 12, 17, 23, 30, // SPD bonus
+	3, 5, 10, 15, 20, 30, // ACC bonus
+	5, 10, 15, 20, 25, 30, // LUC bonus
+	4, 6, 10, 20, 50, // HP bonus
+	4, 8, 12, 16, 20, 25, // SP bonus
+	2, 4, 6, 10, 16, // AC bonus
+	4, 6, 8, 10, 12, 14, 16, 18, 20, 25 // Thievery bonus
 };
 
 const int ELEMENTAL_RESISTENCES[37] = {
@@ -843,10 +2154,8 @@ const int MAKE_ITEM_ARR4[2][7][2] = {
 	{ { 0, 0 }, { 1, 4 }, { 2, 6 }, { 4, 7 }, { 6, 10 }, { 9, 13 }, { 13, 13 } }
 };
 
-
 const int MAKE_ITEM_ARR5[8][2] = {
-	{ 0, 0 }, { 1, 15 }, { 16, 30 }, { 31, 40 }, { 41, 50 },
-	{ 51, 60 }, { 61, 73 }, { 61, 73 }
+	{ 0, 0 }, { 1, 15 }, { 16, 30 }, { 31, 40 }, { 41, 50 }, { 51, 60 }, { 61, 73 }, { 61, 73 }
 };
 
 const int OUTDOOR_DRAWSTRUCT_INDEXES[44] = {
@@ -863,9 +2172,9 @@ const int TOWN_MAXES[2][11] = {
 
 const char *const TOWN_ACTION_MUSIC[2][7] = {
 	{ "bank.m", "smith.m", "guild.m", "tavern.m",
-	"temple.m", "grounds.m", "endgame.m" },
+	  "temple.m", "grounds.m", "endgame.m" },
 	{ "bank.m", "sf09.m", "guild.m", "tavern.m",
-	"temple.m", "smith.m", "endgame.m" }
+	  "temple.m", "smith.m", "endgame.m" }
 };
 
 const char *const TOWN_ACTION_SHAPES[7] = {
@@ -876,48 +2185,52 @@ const int TOWN_ACTION_FILES[2][7] = {
 	{ 3, 2, 4, 2, 4, 2, 1 }, { 5, 3, 7, 5, 4, 6, 1 }
 };
 
-const char *const BANK_TEXT = "\r\x2\x3""c\v122\t013"
-	"\f37D\fdep\t040\f37W\fdith\t067ESC"
-	"\x1\t000\v000Bank of Xeen\v015\n"
-	"Bank\x3l\n"
-	"Gold\x3r\t000%s\x3l\n"
-	"Gems\x3r\t000%s\x3""c\n"
-	"\n"
-	"Party\x3l\n"
-	"Gold\x3r\t000%s\x3l\n"
-	"Gems\x3r\t000%s";
+const char *const BANK_TEXT = "\r\x2\x3"
+                              "c\v122\t013"
+                              "\f37D\fdep\t040\f37W\fdith\t067ESC"
+                              "\x1\t000\v000Bank of Xeen\v015\n"
+                              "Bank\x3l\n"
+                              "Gold\x3r\t000%s\x3l\n"
+                              "Gems\x3r\t000%s\x3"
+                              "c\n"
+                              "\n"
+                              "Party\x3l\n"
+                              "Gold\x3r\t000%s\x3l\n"
+                              "Gems\x3r\t000%s";
 
-const char *const BLACKSMITH_TEXT = "\x1\r\x3""c\v000\t000"
-	"Store Options for\t039\v027%s\x3l\v046\n"
-	"\t011\f37B\fdrowse\n"
-	"\t000\v090Gold\x3r\t000%s"
-	"\x2\x3""c\v122\t040ESC\x1";
+const char *const BLACKSMITH_TEXT = "\x1\r\x3"
+                                    "c\v000\t000"
+                                    "Store Options for\t039\v027%s\x3l\v046\n"
+                                    "\t011\f37B\fdrowse\n"
+                                    "\t000\v090Gold\x3r\t000%s"
+                                    "\x2\x3"
+                                    "c\v122\t040ESC\x1";
 
-const char *const GUILD_NOT_MEMBER_TEXT =
-	"\n\nYou have to be a member to shop here.";
+const char *const GUILD_NOT_MEMBER_TEXT = "\n\nYou have to be a member to shop here.";
 
-const char *const GUILD_TEXT = "\x3""c\v027\t039%s"
-	"\x3l\v046\n"
-	"\t012\f37B\fduy Spells\n"
-	"\t012\f37S\fdpell Info";
+const char *const GUILD_TEXT = "\x3"
+                               "c\v027\t039%s"
+                               "\x3l\v046\n"
+                               "\t012\f37B\fduy Spells\n"
+                               "\t012\f37S\fdpell Info";
 
-const char *const TAVERN_TEXT =
-	"\r\x3""c\v000\t000Tavern Options for\t039"
-	"\v027%s%s\x3l\t000"
-	"\v090Gold\x3r\t000%s\x2\x3""c\v122"
-	"\t021\f37S\fdign in\t060ESC\x1";
+const char *const TAVERN_TEXT = "\r\x3"
+                                "c\v000\t000Tavern Options for\t039"
+                                "\v027%s%s\x3l\t000"
+                                "\v090Gold\x3r\t000%s\x2\x3"
+                                "c\v122"
+                                "\t021\f37S\fdign in\t060ESC\x1";
 
-const char *const FOOD_AND_DRINK =
-	"\x3l\t017\v046\f37D\fdrink\n"
-	"\t017\f37F\fdood\n"
-	"\t017\f37T\fdip\n"
-	"\t017\f37R\fdumors";
+const char *const FOOD_AND_DRINK = "\x3l\t017\v046\f37D\fdrink\n"
+                                   "\t017\f37F\fdood\n"
+                                   "\t017\f37T\fdip\n"
+                                   "\t017\f37R\fdumors";
 
 const char *const GOOD_STUFF = "\n"
-	"\n"
-	"Good Stuff\n"
-	"\n"
-	"Hit a key!";
+                               "\n"
+                               "Good Stuff\n"
+                               "\n"
+                               "Hit a key!";
 
 const char *const HAVE_A_DRINK = "\n\nHave a Drink\n\nHit a key!";
 
@@ -925,64 +2238,70 @@ const char *const YOURE_DRUNK = "\n\nYou're Drunk\n\nHit a key!";
 
 const int TAVERN_EXIT_LIST[2][6][5][2] = {
 	{
-		{ { 21, 17 }, { 0, 0 }, { 20, 3 }, { 0, 0 }, { 0, 0 } },
-		{ { 13, 4 }, { 0, 0 }, { 19, 9 }, { 0, 0 }, { 0, 0 } },
-		{ { 20, 10 }, { 12, 8 }, { 5, 26 }, { 3, 4 }, { 7, 5 } },
-		{ { 18, 4 }, { 0, 0 }, { 19, 16 }, { 0, 0 }, { 11, 12 } },
-		{ { 15, 21 }, { 0, 0 }, { 13, 21 }, { 0, 0 }, { 0, 0 } },
-		{ { 10, 8 }, { 0, 0 }, { 15, 12 }, { 0, 0 }, { 0, 0 } },
-	}, {
-		{ { 21, 17 }, { 0, 0 }, { 20, 3 }, { 0, 0 }, { 0, 0 } },
-		{ { 13, 4 }, { 0, 0 }, { 19, 9 }, { 0, 0 }, { 0, 0 } },
-		{ { 20, 10 }, { 12, 8 }, { 5, 26 }, { 3, 4 }, { 7, 5 } },
-		{ { 17, 24 }, { 14, 13 }, { 0, 0 }, { 0, 0 }, { 9, 4 } },
-		{ { 15, 21 }, { 0, 0 }, { 13, 21 }, { 0, 0 }, { 0, 0 } },
-		{ { 10, 8 }, { 0, 0 }, { 15, 12 }, { 0, 0 }, { 0, 0 } }
-	}
+	  { { 21, 17 }, { 0, 0 }, { 20, 3 }, { 0, 0 }, { 0, 0 } },
+	  { { 13, 4 }, { 0, 0 }, { 19, 9 }, { 0, 0 }, { 0, 0 } },
+	  { { 20, 10 }, { 12, 8 }, { 5, 26 }, { 3, 4 }, { 7, 5 } },
+	  { { 18, 4 }, { 0, 0 }, { 19, 16 }, { 0, 0 }, { 11, 12 } },
+	  { { 15, 21 }, { 0, 0 }, { 13, 21 }, { 0, 0 }, { 0, 0 } },
+	  { { 10, 8 }, { 0, 0 }, { 15, 12 }, { 0, 0 }, { 0, 0 } },
+	},
+	{ { { 21, 17 }, { 0, 0 }, { 20, 3 }, { 0, 0 }, { 0, 0 } },
+	  { { 13, 4 }, { 0, 0 }, { 19, 9 }, { 0, 0 }, { 0, 0 } },
+	  { { 20, 10 }, { 12, 8 }, { 5, 26 }, { 3, 4 }, { 7, 5 } },
+	  { { 17, 24 }, { 14, 13 }, { 0, 0 }, { 0, 0 }, { 9, 4 } },
+	  { { 15, 21 }, { 0, 0 }, { 13, 21 }, { 0, 0 }, { 0, 0 } },
+	  { { 10, 8 }, { 0, 0 }, { 15, 12 }, { 0, 0 }, { 0, 0 } } }
 };
 
-const char *const TEMPLE_TEXT =
-	"\r\x3""c\v000\t000Temple Options for"
-	"\t039\v027%s\x3l\t000\v046"
-	"\f37H\fdeal\x3r\t000%lu\x3l\n"
-	"\f37D\fdonation\x3r\t000%lu\x3l\n"
-	"\f37U\fdnCurse\x3r\t000%s"
-	"\x3l\t000\v090Gold\x3r\t000%s"
-	"\x2\x3""c\v122\t040ESC\x1";
+const char *const TEMPLE_TEXT = "\r\x3"
+                                "c\v000\t000Temple Options for"
+                                "\t039\v027%s\x3l\t000\v046"
+                                "\f37H\fdeal\x3r\t000%lu\x3l\n"
+                                "\f37D\fdonation\x3r\t000%lu\x3l\n"
+                                "\f37U\fdnCurse\x3r\t000%s"
+                                "\x3l\t000\v090Gold\x3r\t000%s"
+                                "\x2\x3"
+                                "c\v122\t040ESC\x1";
 
-const char *const EXPERIENCE_FOR_LEVEL =
-	"%s needs %lu experience for level %u.";
+const char *const EXPERIENCE_FOR_LEVEL = "%s needs %lu experience for level %u.";
 
 const char *const TRAINING_LEARNED_ALL = "%s has learned all we can teach!";
 
 const char *const ELIGIBLE_FOR_LEVEL = "%s is eligible for level %u.\x3l\n"
-	"\v081Cost\x3r\t000%u";
+                                       "\v081Cost\x3r\t000%u";
 
-const char *const TRAINING_TEXT =
-	"\r\x3""cTraining Options\n"
-	"\n"
-	"%s\x3l\v090\t000Gold\x3r\t000%s\x2\x3""c\v122\t021"
-	"\f37T\fdrain\t060ESC\x1";
+const char *const TRAINING_TEXT = "\r\x3"
+                                  "cTraining Options\n"
+                                  "\n"
+                                  "%s\x3l\v090\t000Gold\x3r\t000%s\x2\x3"
+                                  "c\v122\t021"
+                                  "\f37T\fdrain\t060ESC\x1";
 
-const char *const GOLD_GEMS =
-	"\x3""c\v000\t000%s\x3l\n"
-	"\n"
-	"Gold\x3r\t000%s\x3l\n"
-	"Gems\x3r\t000%s\x2\x3""c\v096\t013G\f37o\fdld\t040G\f37e\fdms\t067ESC\x1";
+const char *const GOLD_GEMS = "\x3"
+                              "c\v000\t000%s\x3l\n"
+                              "\n"
+                              "Gold\x3r\t000%s\x3l\n"
+                              "Gems\x3r\t000%s\x2\x3"
+                              "c\v096\t013G\f37o\fdld\t040G\f37e\fdms\t067ESC\x1";
 
-const char *const GOLD_GEMS_2 =
-	"\x3""c\v000\t000%s\x3l\n"
-	"\n"
-	"\x4""077Gold\x3r\t000%s\x3l\n"
-	"\x4""077Gems\x3r\t000%s\x3l\t000\v051\x4""077\n"
-	"\x4""077";
+const char *const GOLD_GEMS_2 = "\x3"
+                                "c\v000\t000%s\x3l\n"
+                                "\n"
+                                "\x4"
+                                "077Gold\x3r\t000%s\x3l\n"
+                                "\x4"
+                                "077Gems\x3r\t000%s\x3l\t000\v051\x4"
+                                "077\n"
+                                "\x4"
+                                "077";
 
 const char *const DEPOSIT_WITHDRAWL[2] = { "Deposit", "Withdrawl" };
 
-const char *const NOT_ENOUGH_X_IN_THE_Y =
-	"\x3""c\v012Not enough %s in the %s!\x3l";
+const char *const NOT_ENOUGH_X_IN_THE_Y = "\x3"
+                                          "c\v012Not enough %s in the %s!\x3l";
 
-const char *const NO_X_IN_THE_Y = "\x3""c\v012No %s in the %s!\x3l";
+const char *const NO_X_IN_THE_Y = "\x3"
+                                  "c\v012No %s in the %s!\x3l";
 
 const char *const STAT_NAMES[16] = {
 	"Might", "Intellect", "Personality", "Endurance", "Speed",
@@ -994,19 +2313,21 @@ const char *const CONSUMABLE_NAMES[4] = { "Gold", "Gems", "Food", "Condition" };
 
 const char *const WHERE_NAMES[2] = { "Party", "Bank" };
 
-const char *const AMOUNT = "\x3""c\t000\v051Amount\x3l\n";
+const char *const AMOUNT = "\x3"
+                           "c\t000\v051Amount\x3l\n";
 
 const char *const FOOD_PACKS_FULL = "\v007Your food packs are already full!";
 
-const char *const BUY_SPELLS =
-	"\x3""c\v027\t039%s\x3l\v046\n"
-	"\t012\f37B\fduy Spells\n"
-	"\t012\f37S\fdpell Info";
+const char *const BUY_SPELLS = "\x3"
+                               "c\v027\t039%s\x3l\v046\n"
+                               "\t012\f37B\fduy Spells\n"
+                               "\t012\f37S\fdpell Info";
 
-const char *const GUILD_OPTIONS =
-	"\r\f00\x3""c\v000\t000Guild Options for%s"
-	"\x3l\t000\v090Gold"
-	"\x3r\t000%s\x2\x3""c\v122\t040ESC\x1";
+const char *const GUILD_OPTIONS = "\r\f00\x3"
+                                  "c\v000\t000Guild Options for%s"
+                                  "\x3l\t000\v090Gold"
+                                  "\x3r\t000%s\x2\x3"
+                                  "c\v122\t040ESC\x1";
 
 const int MISC_SPELL_INDEX[74] = {
 	NO_SPELL, MS_Light, MS_Awaken, MS_MagicArrow,
@@ -1032,59 +2353,45 @@ const int MISC_SPELL_INDEX[74] = {
 
 const int SPELL_COSTS[77] = {
 	8, 1, 5, -2, 5, -2, 20, 10, 12, 8, 3,
-	- 3, 75, 40, 12, 6, 200, 10, 100, 30, -1, 30,
+	-3, 75, 40, 12, 6, 200, 10, 100, 30, -1, 30,
 	15, 25, 10, -2, 1, 2, 7, 20, -2, -2, 100,
 	15, 5, 100, 35, 75, 5, 20, 4, 5, 1, -2,
 	6, 2, 75, 40, 60, 6, 4, 25, -2, -2, 60,
-	- 1, 50, 15, 125, 2, -1, 3, -1, 200, 35, 150,
+	-1, 50, 15, 125, 2, -1, 3, -1, 200, 35, 150,
 	15, 5, 4, 10, 8, 30, 4, 5, 7, 5, 0
 };
 
 const int DARK_SPELL_RANGES[12][2] = {
-	{ 0, 20 }, { 16, 35 }, { 27, 37 }, { 29, 39 },
-	{ 0, 17 }, { 14, 34 }, { 26, 37 }, { 29, 39 },
-	{ 0, 20 }, { 16, 35 }, { 27, 37 }, { 29, 39 }
+	{ 0, 20 }, { 16, 35 }, { 27, 37 }, { 29, 39 }, { 0, 17 }, { 14, 34 }, { 26, 37 }, { 29, 39 }, { 0, 20 }, { 16, 35 }, { 27, 37 }, { 29, 39 }
 };
 
 const int SWORDS_SPELL_RANGES[12][2] = {
-	{ 0, 20 },{ 16, 35 },{ 27, 39 },{ 29, 39 },
-	{ 0, 17 },{ 14, 34 },{ 26, 39 },{ 29, 39 },
-	{ 0, 20 },{ 16, 35 },{ 27, 39 },{ 29, 39 }
+	{ 0, 20 }, { 16, 35 }, { 27, 39 }, { 29, 39 }, { 0, 17 }, { 14, 34 }, { 26, 39 }, { 29, 39 }, { 0, 20 }, { 16, 35 }, { 27, 39 }, { 29, 39 }
 };
 
 const int CLOUDS_GUILD_SPELLS[5][20] = {
-	{
-		1, 10, 20, 26, 27, 38, 40, 42, 45, 50,
-		55, 59, 60, 61, 62, 68, 72, 75, 77, 77
-	}, {
-		3, 4, 5, 14, 15, 25, 30, 31, 34, 41,
-		49, 51, 53, 67, 73, 75, -1, -1, -1, -1
-	}, {
-		4, 8, 9, 12, 13, 22, 23, 24, 28, 34,
-		41, 44, 52, 70, 73, 74, -1, -1, -1, -1
-	}, {
-		6, 7, 9, 11, 12, 13, 17, 21, 22, 24,
-		29, 36, 56, 58, 64, 71, -1, -1, -1, -1
-	}, {
-		6, 7, 9, 11, 12, 13, 18, 21, 29, 32,
-		36, 37, 46, 51, 56, 58, 69, -1, -1, -1
-	}
+	{ 1, 10, 20, 26, 27, 38, 40, 42, 45, 50,
+	  55, 59, 60, 61, 62, 68, 72, 75, 77, 77 },
+	{ 3, 4, 5, 14, 15, 25, 30, 31, 34, 41,
+	  49, 51, 53, 67, 73, 75, -1, -1, -1, -1 },
+	{ 4, 8, 9, 12, 13, 22, 23, 24, 28, 34,
+	  41, 44, 52, 70, 73, 74, -1, -1, -1, -1 },
+	{ 6, 7, 9, 11, 12, 13, 17, 21, 22, 24,
+	  29, 36, 56, 58, 64, 71, -1, -1, -1, -1 },
+	{ 6, 7, 9, 11, 12, 13, 18, 21, 29, 32,
+	  36, 37, 46, 51, 56, 58, 69, -1, -1, -1 }
 };
 
 const int DARK_SPELL_OFFSETS[3][39] = {
-	{
-		42, 1, 26, 59, 27, 10, 50, 68, 55, 62, 67, 73, 2,
-		5, 3, 31, 30, 52, 49, 28, 74, 0, 9, 7, 14, 8,
-		33, 6, 23, 71, 64, 56, 48, 46, 12, 32, 58, 65, 16
-	}, {
-		42, 1, 45, 61, 72, 40, 20, 60, 38, 41, 75, 34, 4,
-		43, 25, 53, 44, 15, 70, 17, 24, 69, 22, 66, 57, 11,
-		29, 39, 51, 21, 19, 36, 47, 13, 54, 37, 18, 35, 63
-	}, {
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
-		13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
-		26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38
-	}
+	{ 42, 1, 26, 59, 27, 10, 50, 68, 55, 62, 67, 73, 2,
+	  5, 3, 31, 30, 52, 49, 28, 74, 0, 9, 7, 14, 8,
+	  33, 6, 23, 71, 64, 56, 48, 46, 12, 32, 58, 65, 16 },
+	{ 42, 1, 45, 61, 72, 40, 20, 60, 38, 41, 75, 34, 4,
+	  43, 25, 53, 44, 15, 70, 17, 24, 69, 22, 66, 57, 11,
+	  29, 39, 51, 21, 19, 36, 47, 13, 54, 37, 18, 35, 63 },
+	{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+	  13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
+	  26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38 }
 };
 
 const int SPELL_GEM_COST[77] = {
@@ -1097,42 +2404,43 @@ const int SPELL_GEM_COST[77] = {
 const char *const NOT_A_SPELL_CASTER = "Not a spell caster...";
 
 const char *const SPELLS_LEARNED_ALL = "You have learned all we\n"
-	"\t010can teach you.";
+                                       "\t010can teach you.";
 
-const char *const SPELLS_FOR = "\r\fd%s\x2\x3""c\t000\v002Spells for %s";
+const char *const SPELLS_FOR = "\r\fd%s\x2\x3"
+                               "c\t000\v002Spells for %s";
 
-const char *const SPELL_LINES_0_TO_9 =
-	"\x2\x3l\v015\t0011\n2\n3\n4\n5\n6\n7\n8\n9\n0";
+const char *const SPELL_LINES_0_TO_9 = "\x2\x3l\v015\t0011\n2\n3\n4\n5\n6\n7\n8\n9\n0";
 
 const char *const SPELLS_DIALOG_SPELLS = "\x3l\v015"
-	"\t010\f%2u%s\fd\x3l\n"
-	"\t010\f%2u%s\fd\x3l\n"
-	"\t010\f%2u%s\fd\x3l\n"
-	"\t010\f%2u%s\fd\x3l\n"
-	"\t010\f%2u%s\fd\x3l\n"
-	"\t010\f%2u%s\fd\x3l\n"
-	"\t010\f%2u%s\fd\x3l\n"
-	"\t010\f%2u%s\fd\x3l\n"
-	"\t010\f%2u%s\fd\x3l\n"
-	"\t010\f%2u%s\fd\x3l"
-	"\t004\v110%s - %lu\x1";
+                                         "\t010\f%2u%s\fd\x3l\n"
+                                         "\t010\f%2u%s\fd\x3l\n"
+                                         "\t010\f%2u%s\fd\x3l\n"
+                                         "\t010\f%2u%s\fd\x3l\n"
+                                         "\t010\f%2u%s\fd\x3l\n"
+                                         "\t010\f%2u%s\fd\x3l\n"
+                                         "\t010\f%2u%s\fd\x3l\n"
+                                         "\t010\f%2u%s\fd\x3l\n"
+                                         "\t010\f%2u%s\fd\x3l\n"
+                                         "\t010\f%2u%s\fd\x3l"
+                                         "\t004\v110%s - %lu\x1";
 
 const char *const SPELL_PTS = "Spell Pts";
 
 const char *const GOLD = "Gold";
 
-const char *const SPELL_INFO =
-	"\x3""c\f09%s\fd\x3l\n"
-	"\n"
-	"%s\x3""c\t000\v100Press a Key!";
+const char *const SPELL_INFO = "\x3"
+                               "c\f09%s\fd\x3l\n"
+                               "\n"
+                               "%s\x3"
+                               "c\t000\v100Press a Key!";
 
-const char *const SPELL_PURCHASE =
-	"\x3l\v000\t000\fd%s  Do you wish to purchase "
-	"\f09%s\fd for %u?";
+const char *const SPELL_PURCHASE = "\x3l\v000\t000\fd%s  Do you wish to purchase "
+                                   "\f09%s\fd for %u?";
 
-const char *const MAP_TEXT =
-	"\x3""c\v000\t000%s\x3l\v139"
-	"\t000X = %d\x3r\t000Y = %d\x3""c\t000%s";
+const char *const MAP_TEXT = "\x3"
+                             "c\v000\t000%s\x3l\v139"
+                             "\t000X = %d\x3r\t000Y = %d\x3"
+                             "c\t000%s";
 
 const char *const LIGHT_COUNT_TEXT = "\x3l\n\n\t024Light\x3r\t124%d";
 
@@ -1150,14 +2458,14 @@ const char *const LEVITATE_TEXT = "%c%sLevitate%s";
 
 const char *const WALK_ON_WATER_TEXT = "%c%sWalk on Water";
 
-const char *const GAME_INFORMATION =
-	"\r\x3""c\t000\v001\f37%s of Xeen\fd\n"
-	"Game Information\n"
-	"\n"
-	"Today is \f37%ssday\fd\n"
-	"\n"
-	"\t032Time\t072Day\t112Year\n"
-	"\t032\f37%d:%02d%c\t072%u\t112%u\fd%s";
+const char *const GAME_INFORMATION = "\r\x3"
+                                     "c\t000\v001\f37%s of Xeen\fd\n"
+                                     "Game Information\n"
+                                     "\n"
+                                     "Today is \f37%ssday\fd\n"
+                                     "\n"
+                                     "\t032Time\t072Day\t112Year\n"
+                                     "\t032\f37%d:%02d%c\t072%u\t112%u\fd%s";
 
 const char *const WORLD_GAME_TEXT = "World";
 const char *const DARKSIDE_GAME_TEXT = "Darkside";
@@ -1168,42 +2476,45 @@ const char *const WEEK_DAY_STRINGS[10] = {
 	"Ten", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"
 };
 
-const char *const CHARACTER_DETAILS =
-	"\x3l\v041\t196%s\t000\v002%s : %s %s %s"
-	"\x3r\t053\v028\f%02u%u\fd\t103\f%02u%u\fd"
-	"\x3l\t131\f%02u%d\fd\t196\f15%lu\fd\x3r"
-	"\t053\v051\f%02u%u\fd\t103\f%02u%u\fd"
-	"\x3l\t131\f%02u%u\fd\t196\f15%lu\fd"
-	"\x3r\t053\v074\f%02u%u\fd\t103\f%02u%u\fd"
-	"\x3l\t131\f15%u\fd\t196\f15%lu\fd"
-	"\x3r\t053\v097\f%02u%u\fd\t103\f%02u%u\fd"
-	"\x3l\t131\f15%u\fd\t196\f15%u day%c\fd"
-	"\x3r\t053\v120\f%02u%u\fd\t103\f%02u%u\fd"
-	"\x3l\t131\f15%u\fd\t196\f%02u%s\fd"
-	"\t230%s%s%s%s\fd";
+const char *const CHARACTER_DETAILS = "\x3l\v041\t196%s\t000\v002%s : %s %s %s"
+                                      "\x3r\t053\v028\f%02u%u\fd\t103\f%02u%u\fd"
+                                      "\x3l\t131\f%02u%d\fd\t196\f15%lu\fd\x3r"
+                                      "\t053\v051\f%02u%u\fd\t103\f%02u%u\fd"
+                                      "\x3l\t131\f%02u%u\fd\t196\f15%lu\fd"
+                                      "\x3r\t053\v074\f%02u%u\fd\t103\f%02u%u\fd"
+                                      "\x3l\t131\f15%u\fd\t196\f15%lu\fd"
+                                      "\x3r\t053\v097\f%02u%u\fd\t103\f%02u%u\fd"
+                                      "\x3l\t131\f15%u\fd\t196\f15%u day%c\fd"
+                                      "\x3r\t053\v120\f%02u%u\fd\t103\f%02u%u\fd"
+                                      "\x3l\t131\f15%u\fd\t196\f%02u%s\fd"
+                                      "\t230%s%s%s%s\fd";
 
 const char *const PARTY_GOLD = "Party Gold";
 
 const char *const PLUS_14 = "\f14+";
 
-const char *const CHARACTER_TEMPLATE =
-	"\x1\f00\r\x3l\t029\v018Mgt\t080Acy\t131H.P.\t196Experience"
-	"\t029\v041Int\t080Lck\t131S.P.\t029\v064Per\t080Age"
-	"\t131Resis\t196Party Gems\t029\v087End\t080Lvl\t131Skills"
-	"\t196Party Food\t029\v110Spd\t080AC\t131Awrds\t196Condition\x3""c"
-	"\t290\v025\f37I\fdtem\t290\v057\f37Q"
-	"\fduick\t290\v089\f37E\fdxch\t290\v121Exit\x3l%s";
+const char *const CHARACTER_TEMPLATE = "\x1\f00\r\x3l\t029\v018Mgt\t080Acy\t131H.P.\t196Experience"
+                                       "\t029\v041Int\t080Lck\t131S.P.\t029\v064Per\t080Age"
+                                       "\t131Resis\t196Party Gems\t029\v087End\t080Lvl\t131Skills"
+                                       "\t196Party Food\t029\v110Spd\t080AC\t131Awrds\t196Condition\x3"
+                                       "c"
+                                       "\t290\v025\f37I\fdtem\t290\v057\f37Q"
+                                       "\fduick\t290\v089\f37E\fdxch\t290\v121Exit\x3l%s";
 
-const char *const EXCHANGING_IN_COMBAT = "\x3""c\v007\t000Exchanging in combat is not allowed!";
+const char *const EXCHANGING_IN_COMBAT = "\x3"
+                                         "c\v007\t000Exchanging in combat is not allowed!";
 
-const char *const CURRENT_MAXIMUM_RATING_TEXT = "\x2\x3""c%s\n"
-	"Current / Maximum\n"
-	"\x3r\t054%lu\x3l\t058/ %lu\n"
-	"\x3""cRating: %s";
+const char *const CURRENT_MAXIMUM_RATING_TEXT = "\x2\x3"
+                                                "c%s\n"
+                                                "Current / Maximum\n"
+                                                "\x3r\t054%lu\x3l\t058/ %lu\n"
+                                                "\x3"
+                                                "cRating: %s";
 
-const char *const CURRENT_MAXIMUM_TEXT = "\x2\x3""c%s\n"
-	"Current / Maximum\n"
-	"\x3r\t054%u\x3l\t058/ %u";
+const char *const CURRENT_MAXIMUM_TEXT = "\x2\x3"
+                                         "c%s\n"
+                                         "Current / Maximum\n"
+                                         "\x3r\t054%u\x3l\t058/ %u";
 
 const char *const RATING_TEXT[24] = {
 	"Nonexistant", "Very Poor", "Poor", "Very Low", "Low", "Average", "Good",
@@ -1212,68 +2523,72 @@ const char *const RATING_TEXT[24] = {
 	"Collosal", "Awesome", "Awe Inspiring", "Ultimate"
 };
 
-const char *const AGE_TEXT = "\x2\x3""c%s\n"
-	"Current / Natural\n"
-	"\x3r\t057%u\x3l\t061/ %u\n"
-	"\x3""cBorn: %u / %u\x1";
+const char *const AGE_TEXT = "\x2\x3"
+                             "c%s\n"
+                             "Current / Natural\n"
+                             "\x3r\t057%u\x3l\t061/ %u\n"
+                             "\x3"
+                             "cBorn: %u / %u\x1";
 
-const char *const LEVEL_TEXT =
-	"\x2\x3""c%s\n"
-	"Current / Maximum\n"
-	"\x3r\t054%u\x3l\t058/ %u\n"
-	"\x3""c%u Attack%s/Round\x1";
+const char *const LEVEL_TEXT = "\x2\x3"
+                               "c%s\n"
+                               "Current / Maximum\n"
+                               "\x3r\t054%u\x3l\t058/ %u\n"
+                               "\x3"
+                               "c%u Attack%s/Round\x1";
 
-const char *const RESISTENCES_TEXT =
-	"\x2\x3""c%s\x3l\n"
-	"\t020Fire\t100%u\n"
-	"\t020Cold\t100%u\n"
-	"\t020Electricity\t100%u\n"
-	"\t020Poison\t100%u\n"
-	"\t020Energy\t100%u\n"
-	"\t020Magic\t100%u";
+const char *const RESISTENCES_TEXT = "\x2\x3"
+                                     "c%s\x3l\n"
+                                     "\t020Fire\t100%u\n"
+                                     "\t020Cold\t100%u\n"
+                                     "\t020Electricity\t100%u\n"
+                                     "\t020Poison\t100%u\n"
+                                     "\t020Energy\t100%u\n"
+                                     "\t020Magic\t100%u";
 
 const char *const NONE = "\n\t020None";
 
-const char *const EXPERIENCE_TEXT = "\x2\x3""c%s\x3l\n"
-	"\t010Current:\t070%lu\n"
-	"\t010Next Level:\t070%s\x1";
+const char *const EXPERIENCE_TEXT = "\x2\x3"
+                                    "c%s\x3l\n"
+                                    "\t010Current:\t070%lu\n"
+                                    "\t010Next Level:\t070%s\x1";
 
 const char *const ELIGIBLE = "\f12Eligible\fd";
 
-const char *const IN_PARTY_IN_BANK =
-	"\x2\x3""cParty %s\n"
-	"%lu on hand\n"
-	"%lu in bank\x1\x3l";
+const char *const IN_PARTY_IN_BANK = "\x2\x3"
+                                     "cParty %s\n"
+                                     "%lu on hand\n"
+                                     "%lu in bank\x1\x3l";
 
-const char *const FOOD_TEXT =
-	"\x2\x3""cParty %s\n"
-	"%u on hand\n"
-   "Enough for %u day%s\x3l";
+const char *const FOOD_TEXT = "\x2\x3"
+                              "cParty %s\n"
+                              "%u on hand\n"
+                              "Enough for %u day%s\x3l";
 
 const char *const EXCHANGE_WITH_WHOM = "\t010\v005Exchange with whom?";
 
-const char *const QUICK_REF_LINE =
-	"\v%3d\t007%u)\t027%s\t110%c%c%c\x3r\t160\f%02u%u\fd"
-	"\x3l\t170\f%02u%d\fd\t208\f%02u%u\fd\t247\f"
-	"%02u%u\fd\t270\f%02u%c%c%c%c\fd";
+const char *const QUICK_REF_LINE = "\v%3d\t007%u)\t027%s\t110%c%c%c\x3r\t160\f%02u%u\fd"
+                                   "\x3l\t170\f%02u%d\fd\t208\f%02u%u\fd\t247\f"
+                                   "%02u%u\fd\t270\f%02u%c%c%c%c\fd";
 
-const char *const QUICK_REFERENCE =
-	"\r\x3""cQuick Reference Chart\v012\x3l"
-	"\t007#\t027Name\t110Cls\t140Lvl\t176H.P."
-	"\t212S.P.\t241A.C.\t270Cond"
-	"%s%s%s%s%s%s%s%s"
-	"\v110\t064\x3""cGold\t144Gems\t224Food\v119"
-	"\t064\f15%lu\t144%lu\t224%u day%s\fd";
+const char *const QUICK_REFERENCE = "\r\x3"
+                                    "cQuick Reference Chart\v012\x3l"
+                                    "\t007#\t027Name\t110Cls\t140Lvl\t176H.P."
+                                    "\t212S.P.\t241A.C.\t270Cond"
+                                    "%s%s%s%s%s%s%s%s"
+                                    "\v110\t064\x3"
+                                    "cGold\t144Gems\t224Food\v119"
+                                    "\t064\f15%lu\t144%lu\t224%u day%s\fd";
 
 const int BLACKSMITH_MAP_IDS[2][4] = { { 28, 30, 73, 49 }, { 29, 31, 37, 43 } };
 
-const char *const ITEMS_DIALOG_TEXT1 =
-	"\r\x2\x3""c\v021\t017\f37W\fdeap\t051\f37A\fdrmor\t085A"
-	"\f37c\fdces\t119\f37M\fdisc\t153%s\t187%s\t221%s"
-	"\t255%s\t289Exit";
-const char *const ITEMS_DIALOG_TEXT2 =
-	"\r\x2\x3""c\v021\t017\f37W\fdeap\t051\f37A\fdrmor\t085A"
-	"\f37c\fdces\t119\f37M\fdisc\t153\f37%s\t289Exit";
+const char *const ITEMS_DIALOG_TEXT1 = "\r\x2\x3"
+                                       "c\v021\t017\f37W\fdeap\t051\f37A\fdrmor\t085A"
+                                       "\f37c\fdces\t119\f37M\fdisc\t153%s\t187%s\t221%s"
+                                       "\t255%s\t289Exit";
+const char *const ITEMS_DIALOG_TEXT2 = "\r\x2\x3"
+                                       "c\v021\t017\f37W\fdeap\t051\f37A\fdrmor\t085A"
+                                       "\f37c\fdces\t119\f37M\fdisc\t153\f37%s\t289Exit";
 const char *const ITEMS_DIALOG_LINE1 = "\x3r\f%02u\t023%2d)\x3l\t028%s\n";
 const char *const ITEMS_DIALOG_LINE2 = "\x3r\f%02u\t023%2d)\x3l\t028%s\x3r\t000%lu\n";
 
@@ -1331,7 +2646,7 @@ const char *const SPECIAL_NAMES[74] = {
 	nullptr, "light", "awakening", "magic arrows", "first aid", "fists", "energy blasts", "sleeping",
 	"revitalization", "curing", "sparking", "shrapmetal", "insect repellent", "toxic clouds", "elemental protection",
 	"pain", "jumping", "beast control", "clairvoyance", "undead turning", "levitation", "wizard eyes", "blessing",
-	"monster identification",  "lightning", "holy bonuses", "power curing", "nature's cures", "beacons",
+	"monster identification", "lightning", "holy bonuses", "power curing", "nature's cures", "beacons",
 	"shielding", "heroism", "hypnotism", "water walking", "frost biting", "monster finding", "fireballs",
 	"cold rays", "antidotes", "acid spraying", "time distortion", "dragon sleep", "vaccination", "teleportation",
 	"death", "free movement", "golem stopping", "poison volleys", "deadly swarms", "shelter", "daily protection",
@@ -1454,7 +2769,7 @@ const char *QUEST_ITEM_NAMES_SWORDS[51] = {
 	"Holy Wheel", "Double Cross", "Sky Hook", "Sacred Cow", "Staff of the Mountain",
 	"Hard Rock", "Soft Rock", "Rock Candy", "Ivy Plant", "Spirit Gem", "Temple of Sun holy lamp oil",
 	"Noams Hammer", "Positive Orb", "Negative Orb", "FireBane Staff", "Diamond Edged Pick",
-	"Monga Melon", "Energy Disk", "Old XEEN Quest Item" 
+	"Monga Melon", "Energy Disk", "Old XEEN Quest Item"
 };
 
 const int WEAPON_BASE_COSTS[35] = {
@@ -1497,29 +2812,26 @@ const int ITEM_RESTRICTIONS[86] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-const char *const NOT_PROFICIENT =
-	"\t000\v007\x3""c%ss are not proficient with a %s!";
+const char *const NOT_PROFICIENT = "\t000\v007\x3"
+                                   "c%ss are not proficient with a %s!";
 
-const char *const NO_ITEMS_AVAILABLE = "\x3""c\n"
-	"\t000No items available.";
+const char *const NO_ITEMS_AVAILABLE = "\x3"
+                                       "c\n"
+                                       "\t000No items available.";
 
 const char *const CATEGORY_NAMES[4] = { "Weapons", "Armor", "Accessories", "Miscellaneous" };
 
-const char *const X_FOR_THE_Y =
-	"\x1\fd\r%s\v000\t000%s for %s the %s%s\v011\x2%s%s%s%s%s%s%s%s%s\x1\fd";
+const char *const X_FOR_THE_Y = "\x1\fd\r%s\v000\t000%s for %s the %s%s\v011\x2%s%s%s%s%s%s%s%s%s\x1\fd";
 
-const char *const X_FOR_Y =
-	"\x1\fd\r\x3l\v000\t000%s for %s\x3r\t000%s\x3l\v011\x2%s%s%s%s%s%s%s%s%s\x1\fd";
+const char *const X_FOR_Y = "\x1\fd\r\x3l\v000\t000%s for %s\x3r\t000%s\x3l\v011\x2%s%s%s%s%s%s%s%s%s\x1\fd";
 
-const char *const X_FOR_Y_GOLD =
-	"\x1\fd\r\x3l\v000\t000%s for %s\t150Gold - %lu%s\x3l\v011"
-	"\x2%s%s%s%s%s%s%s%s%s\x1\fd";
+const char *const X_FOR_Y_GOLD = "\x1\fd\r\x3l\v000\t000%s for %s\t150Gold - %lu%s\x3l\v011"
+                                 "\x2%s%s%s%s%s%s%s%s%s\x1\fd";
 
 const char *const FMT_CHARGES = "\x3rr\t000Charges\x3l";
 
-const char *const AVAILABLE_GOLD_COST =
-	"\x1\fd\r\x3l\v000\t000Available %s\t150Gold - %lu\x3r\t000Cost"
-	"\x3l\v011\x2%s%s%s%s%s%s%s%s%s\x1\fd";
+const char *const AVAILABLE_GOLD_COST = "\x1\fd\r\x3l\v000\t000Available %s\t150Gold - %lu\x3r\t000Cost"
+                                        "\x3l\v011\x2%s%s%s%s%s%s%s%s%s\x1\fd";
 
 const char *const CHARGES = "Charges";
 
@@ -1531,68 +2843,81 @@ const char *const ITEM_ACTIONS[7] = {
 const char *const WHICH_ITEM = "\t010\v005%s which item?";
 
 const char *const WHATS_YOUR_HURRY = "\v007What's your hurry?\n"
-	"Wait till you get out of here!";
+                                     "Wait till you get out of here!";
 
-const char *const USE_ITEM_IN_COMBAT =
-	"\v007To use an item in Combat, invoke the Use command on your turn!";
+const char *const USE_ITEM_IN_COMBAT = "\v007To use an item in Combat, invoke the Use command on your turn!";
 
-const char *const NO_SPECIAL_ABILITIES = "\v005\x3""c%s\fdhas no special abilities!";
+const char *const NO_SPECIAL_ABILITIES = "\v005\x3"
+                                         "c%s\fdhas no special abilities!";
 
-const char *const CANT_CAST_WHILE_ENGAGED = "\x3""c\v007Can't cast %s while engaged!";
+const char *const CANT_CAST_WHILE_ENGAGED = "\x3"
+                                            "c\v007Can't cast %s while engaged!";
 
-const char *const EQUIPPED_ALL_YOU_CAN = "\x3""c\v007You have equipped all the %ss you can!";
-const char *const REMOVE_X_TO_EQUIP_Y = "\x3""c\v007You must remove %sto equip %s\b!";
+const char *const EQUIPPED_ALL_YOU_CAN = "\x3"
+                                         "c\v007You have equipped all the %ss you can!";
+const char *const REMOVE_X_TO_EQUIP_Y = "\x3"
+                                        "c\v007You must remove %sto equip %s\b!";
 const char *const RING = "ring";
 const char *const MEDAL = "medal";
 
-const char *const CANNOT_REMOVE_CURSED_ITEM = "\x3""You cannot remove a cursed item!";
+const char *const CANNOT_REMOVE_CURSED_ITEM = "\x3"
+                                              "You cannot remove a cursed item!";
 
-const char *const CANNOT_DISCARD_CURSED_ITEM = "\3x""cYou cannot discard a cursed item!";
+const char *const CANNOT_DISCARD_CURSED_ITEM = "\3x"
+                                               "cYou cannot discard a cursed item!";
 
 const char *const PERMANENTLY_DISCARD = "\v000\t000\x3lPermanently discard %s\fd?";
 
-const char *const BACKPACK_IS_FULL = "\v005\x3""c\fd%s's backpack is full.";
+const char *const BACKPACK_IS_FULL = "\v005\x3"
+                                     "c\fd%s's backpack is full.";
 
 const char *const CATEGORY_BACKPACK_IS_FULL[4] = {
-	"\v010\t000\x3""c%s's weapons backpack is full.",
-	"\v010\t000\x3""c%s's armor backpack is full.",
-	"\v010\t000\x3""c%s's accessories backpack is full.",
-	"\v010\t000\x3""c%s's miscellaneous backpack is full."
+	"\v010\t000\x3"
+	"c%s's weapons backpack is full.",
+	"\v010\t000\x3"
+	"c%s's armor backpack is full.",
+	"\v010\t000\x3"
+	"c%s's accessories backpack is full.",
+	"\v010\t000\x3"
+	"c%s's miscellaneous backpack is full."
 };
 
 const char *const BUY_X_FOR_Y_GOLD = "\x3l\v000\t000\fdBuy %s\fd for %lu gold?";
 
 const char *const SELL_X_FOR_Y_GOLD = "\x3l\v000\t000\fdSell %s\fd for %lu gold?";
 
-const char *const NO_NEED_OF_THIS = "\v005\x3""c\fdWe have no need of this %s\f!";
+const char *const NO_NEED_OF_THIS = "\v005\x3"
+                                    "c\fdWe have no need of this %s\f!";
 
-const char *const NOT_RECHARGABLE = "\v012\x3""c\fdNot Rechargeable.  %s";
+const char *const NOT_RECHARGABLE = "\v012\x3"
+                                    "c\fdNot Rechargeable.  %s";
 
-const char *const NOT_ENCHANTABLE = "\v012\t000\x3""cNot Enchantable.  %s";
+const char *const NOT_ENCHANTABLE = "\v012\t000\x3"
+                                    "cNot Enchantable.  %s";
 
 const char *const SPELL_FAILED = "Spell Failed!";
 
-const char *const ITEM_NOT_BROKEN =  "\fdThat item is not broken!";
+const char *const ITEM_NOT_BROKEN = "\fdThat item is not broken!";
 
 const char *const FIX_IDENTIFY[2] = { "Fix", "Identify" };
 
 const char *const FIX_IDENTIFY_GOLD = "\x3l\v000\t000%s %s\fd for %lu gold?";
 
-const char *const IDENTIFY_ITEM_MSG = "\fd\v000\t000\x3""cIdentify Item\x3l\n"
-	"\n"
-	"\v012%s\fd\n"
-	"\n"
-	"%s";
+const char *const IDENTIFY_ITEM_MSG = "\fd\v000\t000\x3"
+                                      "cIdentify Item\x3l\n"
+                                      "\n"
+                                      "\v012%s\fd\n"
+                                      "\n"
+                                      "%s";
 
-const char *const ITEM_DETAILS =
-	"Proficient Classes\t132:\t140%s\n"
-	"to Hit Modifier\t132:\t140%s\n"
-	"Physical Damage\t132:\t140%s\n"
-	"Elemental Damage\t132:\t140%s\n"
-	"Elemental Resistance\t132:\t140%s\n"
-	"Armor Class Bonus\t132:\t140%s\n"
-	"Attribute Bonus\t132:\t140%s\n"
-	"Special Power\t132:\t140%s";
+const char *const ITEM_DETAILS = "Proficient Classes\t132:\t140%s\n"
+                                 "to Hit Modifier\t132:\t140%s\n"
+                                 "Physical Damage\t132:\t140%s\n"
+                                 "Elemental Damage\t132:\t140%s\n"
+                                 "Elemental Resistance\t132:\t140%s\n"
+                                 "Armor Class Bonus\t132:\t140%s\n"
+                                 "Attribute Bonus\t132:\t140%s\n"
+                                 "Special Power\t132:\t140%s";
 
 const char *const ALL = "All";
 const char *const FIELD_NONE = "None";
@@ -1601,58 +2926,59 @@ const char *const ELEMENTAL_XY_DAMAGE = "%+d %s Damage";
 const char *const ATTR_XY_BONUS = "%+d %s";
 const char *const EFFECTIVE_AGAINST = "x3 vs %s";
 
-const char *const QUESTS_DIALOG_TEXT =
-	"\r\x2\x3""c\v021\t017\f37I\fdtems\t085\f37Q\fduests\t153"
-	"\f37A\fduto Notes	221\f37U\fdp\t255\f37D\fdown"
-	"\t289Exit";
+const char *const QUESTS_DIALOG_TEXT = "\r\x2\x3"
+                                       "c\v021\t017\f37I\fdtems\t085\f37Q\fduests\t153"
+                                       "\f37A\fduto Notes	221\f37U\fdp\t255\f37D\fdown"
+                                       "\t289Exit";
 const char *const CLOUDS_OF_XEEN_LINE = "\b \b*-- \f04Clouds of Xeen\fd --";
 const char *const DARKSIDE_OF_XEEN_LINE = "\b \b*-- \f04Darkside of Xeen\fd --";
 const char *const SWORDS_OF_XEEN_LINE = "\b \b*-- \f04Swords of Xeen\fd --";
 
-const char *const NO_QUEST_ITEMS =
-	"\r\x3""c\v000	000Quest Items\x3l\x2\n"
-	"\n"
-	"\x3""cNo Quest Items";
-const char *const NO_CURRENT_QUESTS =
-	"\x3""c\v000\t000\n"
-	"\n"
-	"No Current Quests";
-const char *const NO_AUTO_NOTES = "\x3""cNo Auto Notes";
+const char *const NO_QUEST_ITEMS = "\r\x3"
+                                   "c\v000	000Quest Items\x3l\x2\n"
+                                   "\n"
+                                   "\x3"
+                                   "cNo Quest Items";
+const char *const NO_CURRENT_QUESTS = "\x3"
+                                      "c\v000\t000\n"
+                                      "\n"
+                                      "No Current Quests";
+const char *const NO_AUTO_NOTES = "\x3"
+                                  "cNo Auto Notes";
 
-const char *const QUEST_ITEMS_DATA =
-	"\r\x1\fd\x3""c\v000\t000Quest Items\x3l\x2\n"
-	"\f04 * \fd%s\n"
-	"\f04 * \fd%s\n"
-	"\f04 * \fd%s\n"
-	"\f04 * \fd%s\n"
-	"\f04 * \fd%s\n"
-	"\f04 * \fd%s\n"
-	"\f04 * \fd%s\n"
-	"\f04 * \fd%s\n"
-	"\f04 * \fd%s";
-const char *const CURRENT_QUESTS_DATA =
-	"\r\x1\fd\x3""c\t000\v000Current Quests\x3l\x2\n"
-	"%s\n"
-	"\n"
-	"%s\n"
-	"\n"
-	"%s";
-const char *const AUTO_NOTES_DATA =
-	"\r\x1\fd\x3""c\t000\v000Auto Notes\x3l\x2\n"
-	"%s\x3l\n"
-	"%s\x3l\n"
-	"%s\x3l\n"
-	"%s\x3l\n"
-	"%s\x3l\n"
-	"%s\x3l\n"
-	"%s\x3l\n"
-	"%s\x3l\n"
-	"%s\x3l";
+const char *const QUEST_ITEMS_DATA = "\r\x1\fd\x3"
+                                     "c\v000\t000Quest Items\x3l\x2\n"
+                                     "\f04 * \fd%s\n"
+                                     "\f04 * \fd%s\n"
+                                     "\f04 * \fd%s\n"
+                                     "\f04 * \fd%s\n"
+                                     "\f04 * \fd%s\n"
+                                     "\f04 * \fd%s\n"
+                                     "\f04 * \fd%s\n"
+                                     "\f04 * \fd%s\n"
+                                     "\f04 * \fd%s";
+const char *const CURRENT_QUESTS_DATA = "\r\x1\fd\x3"
+                                        "c\t000\v000Current Quests\x3l\x2\n"
+                                        "%s\n"
+                                        "\n"
+                                        "%s\n"
+                                        "\n"
+                                        "%s";
+const char *const AUTO_NOTES_DATA = "\r\x1\fd\x3"
+                                    "c\t000\v000Auto Notes\x3l\x2\n"
+                                    "%s\x3l\n"
+                                    "%s\x3l\n"
+                                    "%s\x3l\n"
+                                    "%s\x3l\n"
+                                    "%s\x3l\n"
+                                    "%s\x3l\n"
+                                    "%s\x3l\n"
+                                    "%s\x3l\n"
+                                    "%s\x3l";
 
-const char *const REST_COMPLETE =
-	"\v000\t0008 hours pass.  Rest complete.\n"
-	"%s\n"
-	"%d food consumed.";
+const char *const REST_COMPLETE = "\v000\t0008 hours pass.  Rest complete.\n"
+                                  "%s\n"
+                                  "%d food consumed.";
 const char *const PARTY_IS_STARVING = "\f07The Party is Starving!\fd";
 const char *const HIT_SPELL_POINTS_RESTORED = "Hit Pts and Spell Pts restored.";
 const char *const TOO_DANGEROUS_TO_REST = "Too dangerous to rest here!";
@@ -1668,32 +2994,30 @@ const char *const REMOVE_OR_DELETE_WHICH = "\x3l\t010\v005%s which character?";
 
 const char *const YOUR_PARTY_IS_FULL = "\v007Your party is full!";
 
-const char *const HAS_SLAYER_SWORD =
-	"\v000\t000This character has the Xeen Slayer Sword and cannot be deleted!";
-const char *const SURE_TO_DELETE_CHAR =
-	"Are you sure you want to delete %s the %s?";
+const char *const HAS_SLAYER_SWORD = "\v000\t000This character has the Xeen Slayer Sword and cannot be deleted!";
+const char *const SURE_TO_DELETE_CHAR = "Are you sure you want to delete %s the %s?";
 
-const char *const CREATE_CHAR_DETAILS =
-	"\f04\x3""c\x2\t144\v119\f37R\f04oll\t144\v149\f37C\f04reate"
-	"\t144\v179\f37ESC\f04\x3l\x1\t195\v021\f37M\f04gt"
-	"\t195\v045\f37I\f04nt\t195\v069\f37P\f04er\t195\v093\f37E\f04nd"
-	"\t195\v116\f37S\f04pd\t195\v140\f37A\f04cy\t195\v164\f37L\f04ck%s";
+const char *const CREATE_CHAR_DETAILS = "\f04\x3"
+                                        "c\x2\t144\v119\f37R\f04oll\t144\v149\f37C\f04reate"
+                                        "\t144\v179\f37ESC\f04\x3l\x1\t195\v021\f37M\f04gt"
+                                        "\t195\v045\f37I\f04nt\t195\v069\f37P\f04er\t195\v093\f37E\f04nd"
+                                        "\t195\v116\f37S\f04pd\t195\v140\f37A\f04cy\t195\v164\f37L\f04ck%s";
 
-const char *const NEW_CHAR_STATS =
-	"\f04\x3l\t022\v148Race\t055: %s\n"
-	"\t022Sex\t055: %s\n"
-	"\t022Class\t055:\n"
-	"\x3r\t215\v031%d\t215\v055%d\t215\v079%d\t215\v103%d\t215\v127%d"
-	"\t215\v151%d\t215\v175%d\x3l\t242\v020\f%.2dKnight\t242\v031\f%.2d"
-	"Paladin\t242\v042\f%.2dArcher\t242\v053\f%.2dCleric\t242\v064\f%.2d"
-	"Sorcerer\t242\v075\f%.2dRobber\t242\v086\f%.2dNinja\t242\v097\f%.2d"
-	"Barbarian\t242\v108\f%.2dDruid\t242\v119\f%.2dRanger\f04\x3""c"
-	"\t265\v142Skills\x3l\t223\v155%s\t223\v170%s%s";
+const char *const NEW_CHAR_STATS = "\f04\x3l\t022\v148Race\t055: %s\n"
+                                   "\t022Sex\t055: %s\n"
+                                   "\t022Class\t055:\n"
+                                   "\x3r\t215\v031%d\t215\v055%d\t215\v079%d\t215\v103%d\t215\v127%d"
+                                   "\t215\v151%d\t215\v175%d\x3l\t242\v020\f%.2dKnight\t242\v031\f%.2d"
+                                   "Paladin\t242\v042\f%.2dArcher\t242\v053\f%.2dCleric\t242\v064\f%.2d"
+                                   "Sorcerer\t242\v075\f%.2dRobber\t242\v086\f%.2dNinja\t242\v097\f%.2d"
+                                   "Barbarian\t242\v108\f%.2dDruid\t242\v119\f%.2dRanger\f04\x3"
+                                   "c"
+                                   "\t265\v142Skills\x3l\t223\v155%s\t223\v170%s%s";
 
-const char *const NAME_FOR_NEW_CHARACTER =
-	"\x3""cEnter a Name for this Character\n\n";
-const char *const SELECT_CLASS_BEFORE_SAVING =
-	"\v006\x3""cSelect a Class before saving.\x3l";
+const char *const NAME_FOR_NEW_CHARACTER = "\x3"
+                                           "cEnter a Name for this Character\n\n";
+const char *const SELECT_CLASS_BEFORE_SAVING = "\v006\x3"
+                                               "cSelect a Class before saving.\x3l";
 const char *const EXCHANGE_ATTR_WITH = "Exchange %s with...";
 
 const int NEW_CHAR_SKILLS[10] = { 1, 5, -1, -1, 4, 0, 0, -1, 6, 11 };
@@ -1720,96 +3044,114 @@ const int NEW_CHARACTER_SPELLS[10][4] = {
 	{ 20, 1, -1, -1 }
 };
 
-const char *const COMBAT_DETAILS = "\r\f00\x3""c\v000\t000\x2""Combat%s%s%s\x1";
+const char *const COMBAT_DETAILS = "\r\f00\x3"
+                                   "c\v000\t000\x2"
+                                   "Combat%s%s%s\x1";
 
-const char *NOT_ENOUGH_TO_CAST = "\x3""c\v010Not enough %s to Cast %s";
+const char *NOT_ENOUGH_TO_CAST = "\x3"
+                                 "c\v010Not enough %s to Cast %s";
 const char *SPELL_CAST_COMPONENTS[2] = { "Spell Points", "Gems" };
 
-const char *const CAST_SPELL_DETAILS =
-	"\r\x2\x3""c\v122\t013\f37C\fdast\t040\f37N\fdew"
-	"\t067ESC\x1\t000\v000\x3""cCast Spell\n"
-	"\n"
-	"%s\x3l\n"
-	"\n"
-	"Spell Ready:\x3""c\n"
-	"\n"
-	"\f09%s\fd\x2\x3l\n"
-	"\v082Cost\x3r\t000%u/%u\x3l\n"
-	"Cur SP\x3r\t000%u\x1";
+const char *const CAST_SPELL_DETAILS = "\r\x2\x3"
+                                       "c\v122\t013\f37C\fdast\t040\f37N\fdew"
+                                       "\t067ESC\x1\t000\v000\x3"
+                                       "cCast Spell\n"
+                                       "\n"
+                                       "%s\x3l\n"
+                                       "\n"
+                                       "Spell Ready:\x3"
+                                       "c\n"
+                                       "\n"
+                                       "\f09%s\fd\x2\x3l\n"
+                                       "\v082Cost\x3r\t000%u/%u\x3l\n"
+                                       "Cur SP\x3r\t000%u\x1";
 
-const char *const PARTY_FOUND =
-	"\x3""cThe Party Found:\n"
-	"\n"
-	"\x3r\t000%lu Gold\n"
-	"%lu Gems";
+const char *const PARTY_FOUND = "\x3"
+                                "cThe Party Found:\n"
+                                "\n"
+                                "\x3r\t000%lu Gold\n"
+                                "%lu Gems";
 
-const char *const BACKPACKS_FULL_PRESS_KEY =
-	"\v007\f12Warning!  BackPacks Full!\fd\n"
-	"Press a Key";
+const char *const BACKPACKS_FULL_PRESS_KEY = "\v007\f12Warning!  BackPacks Full!\fd\n"
+                                             "Press a Key";
 
-const char *const HIT_A_KEY = "\x3l\v120\t000\x4""077\x3""c\f37Hit a key\fd";
+const char *const HIT_A_KEY = "\x3l\v120\t000\x4"
+                              "077\x3"
+                              "c\f37Hit a key\fd";
 
-const char *const GIVE_TREASURE_FORMATTING =
-	"\x3l\v060\t000\x4""077\n"
-	"\x4""077\n"
-	"\x4""077\n"
-	"\x4""077\n"
-	"\x4""077\n"
-	"\x4""077";
+const char *const GIVE_TREASURE_FORMATTING = "\x3l\v060\t000\x4"
+                                             "077\n"
+                                             "\x4"
+                                             "077\n"
+                                             "\x4"
+                                             "077\n"
+                                             "\x4"
+                                             "077\n"
+                                             "\x4"
+                                             "077\n"
+                                             "\x4"
+                                             "077";
 
-const char *const X_FOUND_Y = "\v060\t000\x3""c%s found: %s";
+const char *const X_FOUND_Y = "\v060\t000\x3"
+                              "c%s found: %s";
 
-const char *const ON_WHO = "\x3""c\v009On Who?";
+const char *const ON_WHO = "\x3"
+                           "c\v009On Who?";
 
-const char *const WHICH_ELEMENT1 =
-	"\r\x3""c\x1Which Element?\x2\v034\t014\f15F\fdire\t044"
-	"\f15E\fdlec\t074\f15C\fdold\t104\f15A\fdcid\x1";
+const char *const WHICH_ELEMENT1 = "\r\x3"
+                                   "c\x1Which Element?\x2\v034\t014\f15F\fdire\t044"
+                                   "\f15E\fdlec\t074\f15C\fdold\t104\f15A\fdcid\x1";
 
-const char *const WHICH_ELEMENT2 =
-	"\r\x3""cWhich Element?\x2\v034\t014\f15F\fdire\t044"
-	"\f15E\fdlec\t074\f15C\fdold\t104\f15A\fdcid\x1";
+const char *const WHICH_ELEMENT2 = "\r\x3"
+                                   "cWhich Element?\x2\v034\t014\f15F\fdire\t044"
+                                   "\f15E\fdlec\t074\f15C\fdold\t104\f15A\fdcid\x1";
 
-const char *const DETECT_MONSTERS = "\x3""cDetect Monsters";
+const char *const DETECT_MONSTERS = "\x3"
+                                    "cDetect Monsters";
 
-const char *const LLOYDS_BEACON =
-	"\r\x3""c\v000\t000\x1Lloyd's Beacon\n"
-	"\n"
-	"Last Location\n"
-	"\n"
-	"%s\x3l\n"
-	"x = %d\x3r\t000y = %d\x3""c\x2\v122\t021\f15S\fdet\t060\f15R\fdeturn\x1";
+const char *const LLOYDS_BEACON = "\r\x3"
+                                  "c\v000\t000\x1Lloyd's Beacon\n"
+                                  "\n"
+                                  "Last Location\n"
+                                  "\n"
+                                  "%s\x3l\n"
+                                  "x = %d\x3r\t000y = %d\x3"
+                                  "c\x2\v122\t021\f15S\fdet\t060\f15R\fdeturn\x1";
 
-const char *const HOW_MANY_SQUARES = "\x3""cTeleport\nHow many squares %s (1-9)\n";
+const char *const HOW_MANY_SQUARES = "\x3"
+                                     "cTeleport\nHow many squares %s (1-9)\n";
 
-const char *const TOWN_PORTAL =
-	"\x3""cTown Portal\x3l\n"
-	"\n"
-	"\t0101. %s\n"
-	"\t0102. %s\n"
-	"\t0103. %s\n"
-	"\t0104. %s\n"
-	"\t0105. %s\x3""c\n"
-	"\n"
-	"To which Town (1-5)\n"
-	"\n";
+const char *const TOWN_PORTAL = "\x3"
+                                "cTown Portal\x3l\n"
+                                "\n"
+                                "\t0101. %s\n"
+                                "\t0102. %s\n"
+                                "\t0103. %s\n"
+                                "\t0104. %s\n"
+                                "\t0105. %s\x3"
+                                "c\n"
+                                "\n"
+                                "To which Town (1-5)\n"
+                                "\n";
 
-const char *const TOWN_PORTAL_SWORDS =
-	"\x3""cTown Portal\x3l\n"
-	"\n"
-	"\t0101. %s\n"
-	"\t0102. %s\n"
-	"\t0103. %s\x3""c\n"
-	"\n"
-	"To which Town (1-3)\n"
-	"\n";
+const char *const TOWN_PORTAL_SWORDS = "\x3"
+                                       "cTown Portal\x3l\n"
+                                       "\n"
+                                       "\t0101. %s\n"
+                                       "\t0102. %s\n"
+                                       "\t0103. %s\x3"
+                                       "c\n"
+                                       "\n"
+                                       "To which Town (1-3)\n"
+                                       "\n";
 
 const int TOWN_MAP_NUMBERS[3][5] = {
 	{ 28, 29, 30, 31, 32 }, { 29, 31, 33, 35, 37 }, { 53, 92, 63, 0, 0 }
 };
 
-const char *const MONSTER_DETAILS =
-	"\x3l\n"
-	"%s\x3""c\t100%s\t140%u\t180%u\x3r\t000%s";
+const char *const MONSTER_DETAILS = "\x3l\n"
+                                    "%s\x3"
+                                    "c\t100%s\t140%u\t180%u\x3r\t000%s";
 
 const char *const MONSTER_SPECIAL_ATTACKS[23] = {
 	"None", "Magic", "Fire", "Elec", "Cold", "Poison", "Energy", "Disease",
@@ -1817,24 +3159,25 @@ const char *const MONSTER_SPECIAL_ATTACKS[23] = {
 	"Uncons", "Confuse", "BrkWpn", "Weak", "Erad", "Age+5", "Dead", "Stone"
 };
 
-const char *const IDENTIFY_MONSTERS =
-	"Name\x3""c\t100HP\t140AC\t177#Atks\x3r\t000Special%s%s%s";
+const char *const IDENTIFY_MONSTERS = "Name\x3"
+                                      "c\t100HP\t140AC\t177#Atks\x3r\t000Special%s%s%s";
 
 const char *const EVENT_SAMPLES[6] = {
 	"ahh.voc", "whereto.voc", "gulp.voc", "null.voc", "scream.voc", "laff1.voc"
 };
 
-const char *const MOONS_NOT_ALIGNED =
-"\x3""c\v012\t000The moons are not aligned. Passage to the %s is unavailable";
+const char *const MOONS_NOT_ALIGNED = "\x3"
+                                      "c\v012\t000The moons are not aligned. Passage to the %s is unavailable";
 
-const char *const AWARDS_FOR =
-	"\r\x1\fd\x3""c\v000\t000Awards for %s the %s\x3l\x2\n"
-	"%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\x1";
+const char *const AWARDS_FOR = "\r\x1\fd\x3"
+                               "c\v000\t000Awards for %s the %s\x3l\x2\n"
+                               "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\x1";
 
-const char *const AWARDS_TEXT =
-	"\r\x2\x3""c\v021\t221\f37U\fdp\t255\f37D\fdown\t289Exit";
+const char *const AWARDS_TEXT = "\r\x2\x3"
+                                "c\v021\t221\f37U\fdp\t255\f37D\fdown\t289Exit";
 
-const char *const NO_AWARDS = "\x3""cNo Awards";
+const char *const NO_AWARDS = "\x3"
+                              "cNo Awards";
 
 const char *const WARZONE_BATTLE_MASTER = "The Warzone\n\t125Battle Master";
 
@@ -1844,35 +3187,36 @@ const char *const WARZONE_LEVEL = "What level of monsters? (1-10)\n";
 
 const char *const WARZONE_HOW_MANY = "How many monsters? (1-20)\n";
 
-const char *const PICKS_THE_LOCK = "\x3""c\v010%s picks the lock!\nPress any key.";
+const char *const PICKS_THE_LOCK = "\x3"
+                                   "c\v010%s picks the lock!\nPress any key.";
 
-const char *const UNABLE_TO_PICK_LOCK = "\x3""c\v010%s was unable to pick the lock!\nPress any key.";
+const char *const UNABLE_TO_PICK_LOCK = "\x3"
+                                        "c\v010%s was unable to pick the lock!\nPress any key.";
 
-const char *const CONTROL_PANEL_TEXT =
-	"\x1\f00\x3""c\v000\t000Control Panel\x3r"
-	"\v022\t045\f06L\fdoad:\t124\f06E\fdfx:"
-	"\v041\t045\f06S\fdave:\t124\f06M\fdusic:"
-	"\v060\t045\f06Q\fduit:"
-	"\v080\t084Mr \f06W\fdizard:%s\t000\x1";
-const char *const CONTROL_PANEL_BUTTONS =
-	"\x3""c\f11"
-	"\v022\t062load\t141%s"
-	"\v041\t062save\t141%s"
-	"\v060\t062exit"
-	"\v079\t102Help\fd";
+const char *const CONTROL_PANEL_TEXT = "\x1\f00\x3"
+                                       "c\v000\t000Control Panel\x3r"
+                                       "\v022\t045\f06L\fdoad:\t124\f06E\fdfx:"
+                                       "\v041\t045\f06S\fdave:\t124\f06M\fdusic:"
+                                       "\v060\t045\f06Q\fduit:"
+                                       "\v080\t084Mr \f06W\fdizard:%s\t000\x1";
+const char *const CONTROL_PANEL_BUTTONS = "\x3"
+                                          "c\f11"
+                                          "\v022\t062load\t141%s"
+                                          "\v041\t062save\t141%s"
+                                          "\v060\t062exit"
+                                          "\v079\t102Help\fd";
 const char *const ON = "\f15on\f11";
 const char *const OFF = "\f32off\f11";
 const char *const CONFIRM_QUIT = "Are you sure you want to quit?";
-const char *const MR_WIZARD =
-	"Are you sure you want Mr.Wizard's Help ?";
-const char *const NO_LOADING_IN_COMBAT =
-	"No Loading Allowed in Combat!";
-const char *const NO_SAVING_IN_COMBAT =
-	"No Saving Allowed in Combat!";
-const char *const QUICK_FIGHT_TEXT = "\r\fd\x3""c\v000\t000QuickFight Options\n\n"
-	"%s\x3l\n\n"
-	"Current\x3r\n"
-	"\t000%s\x2\x3""c\v122\t021\f37N\f04ext\t060Exit\x1";
+const char *const MR_WIZARD = "Are you sure you want Mr.Wizard's Help ?";
+const char *const NO_LOADING_IN_COMBAT = "No Loading Allowed in Combat!";
+const char *const NO_SAVING_IN_COMBAT = "No Saving Allowed in Combat!";
+const char *const QUICK_FIGHT_TEXT = "\r\fd\x3"
+                                     "c\v000\t000QuickFight Options\n\n"
+                                     "%s\x3l\n\n"
+                                     "Current\x3r\n"
+                                     "\t000%s\x2\x3"
+                                     "c\v122\t021\f37N\f04ext\t060Exit\x1";
 const char *const QUICK_FIGHT_OPTIONS[4] = { "Attack", "Cast", "Block", "Run" };
 
 const char *const WORLD_END_TEXT[9] = {
@@ -1890,36 +3234,35 @@ const char *const WORLD_END_TEXT[9] = {
 	"With the prophecy complete, the two sides of Xeen were united as one",
 };
 
-const char *const WORLD_CONGRATULATIONS =
-	"\x3""cCongratulations\n\n"
-	"Your Final Score is:\n\n"
-	"%010lu\n"
-	"\x3l\n"
-	"Please send this score to the Ancient's Headquarters where "
-	"you'll be added to the Hall of Legends!\n\n"
-	"Ancient's Headquarters\n"
-	"New World Computing, Inc.\n"
-	"P.O. Box 4302\n"
-	"Hollywood, CA 90078";
-const char *const WORLD_CONGRATULATIONS2 =
-	"\n\n\n\n\n\n"
-	"But wait... there's more!\n"
-	"\n\n"
-	"Include the message\n"
-	"\"%s\"\n"
-	"with your final score and receive a special bonus.";
-const char *const CLOUDS_CONGRATULATIONS1 =
-	"\f23\x3l"
-	"\v000\t000Please send this score to the Ancient's Headquarters "
-	"where you'll be added to the Hall of Legends!\f33\x3""c"
-	"\v070\t000Press a Key";
-const char *const CLOUDS_CONGRATULATIONS2 =
-	"\f23\x3l"
-	"\v000\t000Ancient's Headquarters\n"
-	"New World Computing, Inc.\n"
-	"P.O. Box 4302\n"
-	"Hollywood, CA 90078-4302\f33\x3""c"
-	"\v070\t000Press a Key";
+const char *const WORLD_CONGRATULATIONS = "\x3"
+                                          "cCongratulations\n\n"
+                                          "Your Final Score is:\n\n"
+                                          "%010lu\n"
+                                          "\x3l\n"
+                                          "Please send this score to the Ancient's Headquarters where "
+                                          "you'll be added to the Hall of Legends!\n\n"
+                                          "Ancient's Headquarters\n"
+                                          "New World Computing, Inc.\n"
+                                          "P.O. Box 4302\n"
+                                          "Hollywood, CA 90078";
+const char *const WORLD_CONGRATULATIONS2 = "\n\n\n\n\n\n"
+                                           "But wait... there's more!\n"
+                                           "\n\n"
+                                           "Include the message\n"
+                                           "\"%s\"\n"
+                                           "with your final score and receive a special bonus.";
+const char *const CLOUDS_CONGRATULATIONS1 = "\f23\x3l"
+                                            "\v000\t000Please send this score to the Ancient's Headquarters "
+                                            "where you'll be added to the Hall of Legends!\f33\x3"
+                                            "c"
+                                            "\v070\t000Press a Key";
+const char *const CLOUDS_CONGRATULATIONS2 = "\f23\x3l"
+                                            "\v000\t000Ancient's Headquarters\n"
+                                            "New World Computing, Inc.\n"
+                                            "P.O. Box 4302\n"
+                                            "Hollywood, CA 90078-4302\f33\x3"
+                                            "c"
+                                            "\v070\t000Press a Key";
 const char *const GOOBER[3] = {
 	"", "I am a Goober!", "I am a Super Goober!"
 };
@@ -1930,53 +3273,60 @@ const char *const MUSIC_FILES1[5] = {
 
 const char *const MUSIC_FILES2[6][7] = {
 	{ "outday1.m", "outday2.m", "outday4.m", "outnght1.m",
-	"outnght2.m", "outnght4.m", "daydesrt.m" },
+	  "outnght2.m", "outnght4.m", "daydesrt.m" },
 	{ "townday1.m", "twnwlk.m", "newbrigh.m", "twnnitea.m",
-	"twnniteb.m", "twnwlk.m", "townday1.m" },
+	  "twnniteb.m", "twnwlk.m", "townday1.m" },
 	{ "cavern1.m", "cavern2.m", "cavern3a.m", "cavern1.m",
-	"cavern2.m", "cavern3a.m", "cavern1.m" },
+	  "cavern2.m", "cavern3a.m", "cavern1.m" },
 	{ "dngon1.m", "dngon2.m", "dngon3.m", "dngon1.m",
-	"dngon2.m", "dngon3.m", "dngon1.m" },
+	  "dngon2.m", "dngon3.m", "dngon1.m" },
 	{ "cstl1rev.m", "cstl2rev.m", "cstl3rev.m", "cstl1rev.m",
-	"cstl2rev.m", "cstl3rev.m", "cstl1rev.m" },
+	  "cstl2rev.m", "cstl3rev.m", "cstl1rev.m" },
 	{ "sf05.m", "sf05.m", "sf05.m", "sf05.m", "sf05.m", "sf05.m", "sf05.m" }
 };
 
-const char *const DIFFICULTY_TEXT = "\v000\t000\x3""cSelect Game Preference";
-const char *const SAVE_OFF_LIMITS = "\x3""c\v002\t000The Gods of Game Restoration deem this area off limits!\n"
-	"Sorry, no saving in this maze.";
+const char *const DIFFICULTY_TEXT = "\v000\t000\x3"
+                                    "cSelect Game Preference";
+const char *const SAVE_OFF_LIMITS = "\x3"
+                                    "c\v002\t000The Gods of Game Restoration deem this area off limits!\n"
+                                    "Sorry, no saving in this maze.";
 
 const char *const CLOUDS_INTRO1 = "\f00\v082\t040\x3"
-	"cKing Burlock\v190\t040Peasants\v082\t247"
-	"Lord Xeen\v190\t258Xeen's Pet\v179\t150Crodo";
+                                  "cKing Burlock\v190\t040Peasants\v082\t247"
+                                  "Lord Xeen\v190\t258Xeen's Pet\v179\t150Crodo";
 
-const char *const DARKSIDE_ENDING1 = "\n\x3" "cCongratulations\n"
-	"\n"
-	"Your Final Score is:\n"
-	"\n"
-	"%010lu\n"
-	"\x3" "l\n"
-	"Please send this score to the Ancient's Headquarters "
-	"where you'll be added to the Hall of Legends!\n"
-	"\n"
-	"Ancient's Headquarters\n"
-	"New World Computing, Inc.\n"
-	"P.O. Box 4302\n"
-	"Hollywood, CA 90078";
+const char *const DARKSIDE_ENDING1 = "\n\x3"
+                                     "cCongratulations\n"
+                                     "\n"
+                                     "Your Final Score is:\n"
+                                     "\n"
+                                     "%010lu\n"
+                                     "\x3"
+                                     "l\n"
+                                     "Please send this score to the Ancient's Headquarters "
+                                     "where you'll be added to the Hall of Legends!\n"
+                                     "\n"
+                                     "Ancient's Headquarters\n"
+                                     "New World Computing, Inc.\n"
+                                     "P.O. Box 4302\n"
+                                     "Hollywood, CA 90078";
 
 const char *const DARKSIDE_ENDING2 = "\n"
-	"Adventurers,\n"
-	"\n"
-	"I will save your game in Castleview.\n"
-	"\n"
-	"The World of Xeen still needs you!\n"
-	"\n"
-	"Load your game afterwards and come visit me in the "
-	"Great Pyramid for further instructions";
+                                     "Adventurers,\n"
+                                     "\n"
+                                     "I will save your game in Castleview.\n"
+                                     "\n"
+                                     "The World of Xeen still needs you!\n"
+                                     "\n"
+                                     "Load your game afterwards and come visit me in the "
+                                     "Great Pyramid for further instructions";
 
-const char *const PHAROAH_ENDING_TEXT1 = "\fd\v001\t001%s\x3" "c\t000\v180Press a Key!\x3" "l";
-const char *const PHAROAH_ENDING_TEXT2 = "\f04\v000\t000%s\x3" "c\t000\v180Press a Key!\x3" "l\fd";
-
+const char *const PHAROAH_ENDING_TEXT1 = "\fd\v001\t001%s\x3"
+                                         "c\t000\v180Press a Key!\x3"
+                                         "l";
+const char *const PHAROAH_ENDING_TEXT2 = "\f04\v000\t000%s\x3"
+                                         "c\t000\v180Press a Key!\x3"
+                                         "l\fd";
 
 void writeConstants(CCArchive &cc) {
 	Common::MemFile file;

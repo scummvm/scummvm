@@ -22,17 +22,16 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
-
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
@@ -129,7 +128,7 @@ void sceneHandler32_spin(ExCommand *cmd) {
 	ExCommand *newex;
 
 	if ((g_vars->scene32_cactus->_movement && g_vars->scene32_cactus->_movement->_id == MV_CTS_DEFAULT)
-		|| g_vars->scene32_cactus->_statics->_staticsId == ST_CTS_GROWUP) {
+	    || g_vars->scene32_cactus->_statics->_staticsId == ST_CTS_GROWUP) {
 		for (int i = 0; i < 12; i++) {
 			newex = ex->createClone();
 			newex->_excFlags |= 2;
@@ -179,8 +178,8 @@ void sceneHandler32_trySit(ExCommand *cmd) {
 	ExCommand *ex = mq->getExCommandByIndex(0);
 
 	if (g_vars->scene32_cactusIsGrowing || g_vars->scene32_cactus->_movement
-		|| g_vars->scene32_cactus->_statics->_staticsId != ST_CTS_EMPTY
-		|| (g_vars->scene32_cactusCounter >= 0 && g_vars->scene32_cactusCounter <= 20)) {
+	    || g_vars->scene32_cactus->_statics->_staticsId != ST_CTS_EMPTY
+	    || (g_vars->scene32_cactusCounter >= 0 && g_vars->scene32_cactusCounter <= 20)) {
 		ex->_messageKind = 0;
 		ex->_excFlags |= 1;
 	} else {
@@ -313,7 +312,7 @@ int sceneHandler32(ExCommand *cmd) {
 		sceneHandler32_spin(cmd);
 		break;
 
-	case MSG_SC32_STARTFLAGLEFT :
+	case MSG_SC32_STARTFLAGLEFT:
 		sceneHandler32_startFlagLeft();
 		break;
 
@@ -392,7 +391,6 @@ int sceneHandler32(ExCommand *cmd) {
 			g_fp->_behaviorManager->updateBehaviors();
 
 			g_fp->startSceneTrack();
-
 		}
 		break;
 
@@ -415,7 +413,7 @@ int sceneHandler32(ExCommand *cmd) {
 
 			if (g_fp->_cursorId == PIC_CSR_GOFAR_R || g_fp->_cursorId == PIC_CSR_GOFAR_L) {
 				if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
-					|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0))
+				    || (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0))
 					g_fp->processArcade(cmd);
 			}
 			break;

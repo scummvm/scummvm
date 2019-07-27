@@ -22,23 +22,23 @@
 
 #ifdef ENABLE_HE
 
-#include "common/system.h"
+#	include "common/system.h"
 
-#include "scumm/actor.h"
-#include "scumm/charset.h"
-#include "scumm/dialogs.h"
-#include "scumm/he/animation_he.h"
-#include "scumm/he/intern_he.h"
-#include "scumm/object.h"
-#include "scumm/resource.h"
-#include "scumm/scumm.h"
-#include "scumm/he/sound_he.h"
-#include "scumm/he/sprite_he.h"
-#include "scumm/util.h"
+#	include "scumm/actor.h"
+#	include "scumm/charset.h"
+#	include "scumm/dialogs.h"
+#	include "scumm/he/animation_he.h"
+#	include "scumm/he/intern_he.h"
+#	include "scumm/he/sound_he.h"
+#	include "scumm/he/sprite_he.h"
+#	include "scumm/object.h"
+#	include "scumm/resource.h"
+#	include "scumm/scumm.h"
+#	include "scumm/util.h"
 
 namespace Scumm {
 
-#define OPCODE(i, x)	_opcodes[i]._OPCODE(ScummEngine_v100he, x)
+#	define OPCODE(i, x) _opcodes[i]._OPCODE(ScummEngine_v100he, x)
 
 void ScummEngine_v100he::setupOpcodes() {
 	/* 00 */
@@ -354,92 +354,92 @@ void ScummEngine_v100he::o100_actorOps() {
 	case 0:
 		// freddicove Ru Updated
 		// FIXME: check stack parameters
-		debug(0,"o100_actorOps: case 0 UNHANDLED");
+		debug(0, "o100_actorOps: case 0 UNHANDLED");
 		break;
-	case 3:			// SO_ANIMATION
+	case 3: // SO_ANIMATION
 		pop();
 		pop();
 		pop();
 		break;
-	case 4:			// SO_ANIMATION_SPEED
+	case 4: // SO_ANIMATION_SPEED
 		a->setAnimSpeed(pop());
 		break;
-	case 6:			// SO_AT
+	case 6: // SO_AT
 		j = pop();
 		i = pop();
 		a->putActor(i, j);
 		break;
-	case 8:			// SO_BACKGROUND_OFF
+	case 8: // SO_BACKGROUND_OFF
 		a->_drawToBackBuf = false;
 		a->_needRedraw = true;
 		a->_needBgReset = true;
 		break;
-	case 9:			// SO_BACKGROUND_ON
+	case 9: // SO_BACKGROUND_ON
 		a->drawActorToBackBuf(a->getPos().x, a->getPos().y);
 		break;
-	case 14:		// SO_CHARSET
+	case 14: // SO_CHARSET
 		a->_charset = pop();
 		break;
-	case 18:		// SO_CLIPPED
+	case 18: // SO_CLIPPED
 		a->_clipOverride.bottom = pop();
 		a->_clipOverride.right = pop();
 		a->_clipOverride.top = pop();
 		a->_clipOverride.left = pop();
 		adjustRect(a->_clipOverride);
 		break;
-	case 22:		// SO_CONDITION
+	case 22: // SO_CONDITION
 		k = getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < k; ++i) {
 			a->setUserCondition(args[i] & 0x7F, args[i] & 0x80);
 		}
 		break;
-	case 25:		// SO_COSTUME
+	case 25: // SO_COSTUME
 		a->setActorCostume(pop());
 		break;
-	case 27:		// SO_DEFAULT
+	case 27: // SO_DEFAULT
 		a->initActor(0);
 		break;
-	case 32:		// SO_ERASE
+	case 32: // SO_ERASE
 		k = pop();
 		a->setHEFlag(1, k);
 		break;
-	case 52:		// SO_ACTOR_NAME
+	case 52: // SO_ACTOR_NAME
 		copyScriptString(string, sizeof(string));
 		loadPtrToResource(rtActorName, a->_number, string);
 		break;
-	case 53:		// SO_ACTOR_NEW
+	case 53: // SO_ACTOR_NEW
 		a->initActor(2);
 		break;
-	case 57:		// SO_PALETTE
+	case 57: // SO_PALETTE
 		j = pop();
 		i = pop();
 		assertRange(0, i, 255, "palette slot");
 		a->remapActorPaletteColor(i, j);
 		a->_needRedraw = true;
 		break;
-	case 59:		// SO_PRIORITY
+	case 59: // SO_PRIORITY
 		a->_layer = pop();
 		a->_needRedraw = true;
 		break;
-	case 63:		// SO_ROOM_PALETTE
+	case 63: // SO_ROOM_PALETTE
 		a->_hePaletteNum = pop();
 		a->_needRedraw = true;
 		break;
-	case 65:		// SO_SCALE
+	case 65: // SO_SCALE
 		i = pop();
 		a->setScale(i, i);
 		break;
-	case 70:		// SO_SHADOW
+	case 70: // SO_SHADOW
 		a->_heXmapNum = pop();
 		a->_needRedraw = true;
 		break;
-	case 74:		// SO_STEP_DIST
+	case 74: // SO_STEP_DIST
 		j = pop();
 		i = pop();
 		a->setActorWalkSpeed(i, j);
 		break;
-	case 78:		// SO_TALKIE
-		{
+	case 78: // SO_TALKIE
+	{
 		copyScriptString(string, sizeof(string));
 		int slot = pop();
 
@@ -449,86 +449,85 @@ void ScummEngine_v100he::o100_actorOps() {
 		a->_heTalkQueue[slot].posX = a->_talkPosX;
 		a->_heTalkQueue[slot].posY = a->_talkPosY;
 		a->_heTalkQueue[slot].color = a->_talkColor;
-		}
-		break;
-	case 83:		// SO_ACTOR_VARIABLE
+	} break;
+	case 83: // SO_ACTOR_VARIABLE
 		i = pop();
 		a->setAnimVar(pop(), i);
 		break;
-	case 87:		// SO_ALWAYS_ZCLIP
+	case 87: // SO_ALWAYS_ZCLIP
 		a->_forceClip = pop();
 		break;
-	case 89:		// SO_NEVER_ZCLIP
+	case 89: // SO_NEVER_ZCLIP
 		a->_forceClip = 0;
 		break;
-	case 128:		// SO_ACTOR_DEFAULT_CLIPPED
+	case 128: // SO_ACTOR_DEFAULT_CLIPPED
 		_actorClipOverride.bottom = pop();
 		_actorClipOverride.right = pop();
 		_actorClipOverride.top = pop();
 		_actorClipOverride.left = pop();
 		adjustRect(_actorClipOverride);
 		break;
-	case 130:		// SO_SOUND
+	case 130: // SO_SOUND
 		k = getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < k; i++)
 			a->_sound[i] = args[i];
 		break;
-	case 131:		// SO_ACTOR_WIDTH
+	case 131: // SO_ACTOR_WIDTH
 		a->_width = pop();
 		break;
-	case 132:		// SO_ANIMATION_DEFAULT
+	case 132: // SO_ANIMATION_DEFAULT
 		a->_initFrame = 1;
 		a->_walkFrame = 2;
 		a->_standFrame = 3;
 		a->_talkStartFrame = 4;
 		a->_talkStopFrame = 5;
 		break;
-	case 133:		// SO_ELEVATION
+	case 133: // SO_ELEVATION
 		a->setElevation(pop());
 		break;
-	case 134:		// SO_FOLLOW_BOXES
+	case 134: // SO_FOLLOW_BOXES
 		a->_ignoreBoxes = 0;
 		a->_forceClip = 0;
 		if (a->isInCurrentRoom())
 			a->putActor();
 		break;
-	case 135:		// SO_IGNORE_BOXES
+	case 135: // SO_IGNORE_BOXES
 		a->_ignoreBoxes = 1;
 		a->_forceClip = 0;
 		if (a->isInCurrentRoom())
 			a->putActor();
 		break;
-	case 136:		// SO_ACTOR_IGNORE_TURNS_OFF
+	case 136: // SO_ACTOR_IGNORE_TURNS_OFF
 		a->_ignoreTurns = false;
 		break;
-	case 137:		// SO_ACTOR_IGNORE_TURNS_ON
+	case 137: // SO_ACTOR_IGNORE_TURNS_ON
 		a->_ignoreTurns = true;
 		break;
-	case 138:		// SO_INIT_ANIMATION
+	case 138: // SO_INIT_ANIMATION
 		a->_initFrame = pop();
 		break;
-	case 139:		// SO_STAND_ANIMATION
+	case 139: // SO_STAND_ANIMATION
 		a->_standFrame = pop();
 		break;
-	case 140:		// SO_TALK_ANIMATION
+	case 140: // SO_TALK_ANIMATION
 		a->_talkStopFrame = pop();
 		a->_talkStartFrame = pop();
 		break;
-	case 141:		// SO_TALK_COLOR
+	case 141: // SO_TALK_COLOR
 		a->_talkColor = pop();
 		break;
-	case 142:		// SO_TALK_CONDITION
+	case 142: // SO_TALK_CONDITION
 		k = pop();
 		if (k == 0)
 			k = _rnd.getRandomNumberRng(1, 10);
 		a->_heNoTalkAnimation = 1;
 		a->setTalkCondition(k);
 		break;
-	case 143:		// SO_TEXT_OFFSET
+	case 143: // SO_TEXT_OFFSET
 		a->_talkPosY = pop();
 		a->_talkPosX = pop();
 		break;
-	case 144:		// SO_WALK_ANIMATION
+	case 144: // SO_WALK_ANIMATION
 		a->_walkFrame = pop();
 		break;
 	default:
@@ -546,23 +545,23 @@ void ScummEngine_v100he::o100_arrayOps() {
 
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord();
-	debug(9,"o100_arrayOps: array %d case %d", array, subOp);
+	debug(9, "o100_arrayOps: array %d case %d", array, subOp);
 
 	switch (subOp) {
-	case 35:			// SO_FORMATTED_STRING
+	case 35: // SO_FORMATTED_STRING
 		decodeScriptString(string);
 		len = resStrLen(string);
 		data = defineArray(array, kStringArray, 0, 0, 0, len);
 		memcpy(data, string, len);
 		break;
-	case 77:			// SO_STRING
+	case 77: // SO_STRING
 		copyScriptString(string, sizeof(string));
 		len = resStrLen(string);
 		data = defineArray(array, kStringArray, 0, 0, 0, len);
 		memcpy(data, string, len);
 		break;
 
-	case 128:			// SO_ASSIGN_2DIM_LIST
+	case 128: // SO_ASSIGN_2DIM_LIST
 		len = getStackList(list, ARRAYSIZE(list));
 		id = readVar(array);
 		if (id == 0)
@@ -572,7 +571,7 @@ void ScummEngine_v100he::o100_arrayOps() {
 			writeArray(array, c, len, list[len]);
 		}
 		break;
-	case 129:			// SO_ASSIGN_INT_LIST
+	case 129: // SO_ASSIGN_INT_LIST
 		b = pop();
 		c = pop();
 		id = readVar(array);
@@ -583,7 +582,7 @@ void ScummEngine_v100he::o100_arrayOps() {
 			writeArray(array, 0, b + c, pop());
 		}
 		break;
-	case 130:			// SO_COMPLEX_ARRAY_ASSIGNMENT
+	case 130: // SO_COMPLEX_ARRAY_ASSIGNMENT
 		len = getStackList(list, ARRAYSIZE(list));
 		dim1end = pop();
 		dim1start = pop();
@@ -607,96 +606,95 @@ void ScummEngine_v100he::o100_arrayOps() {
 			dim2start++;
 		}
 		break;
-	case 131:			// SO_COMPLEX_ARRAY_COPY_OPERATION
-		{
-			int a2_dim1end = pop();
-			int a2_dim1start = pop();
-			int a2_dim2end = pop();
-			int a2_dim2start = pop();
-			int array2 = fetchScriptWord();
-			int a1_dim1end = pop();
-			int a1_dim1start = pop();
-			int a1_dim2end = pop();
-			int a1_dim2start = pop();
-			if (a1_dim1end - a1_dim1start != a2_dim1end - a2_dim1start || a2_dim2end - a2_dim2start != a1_dim2end - a1_dim2start) {
-				error("Source and dest ranges size are mismatched");
+	case 131: // SO_COMPLEX_ARRAY_COPY_OPERATION
+	{
+		int a2_dim1end = pop();
+		int a2_dim1start = pop();
+		int a2_dim2end = pop();
+		int a2_dim2start = pop();
+		int array2 = fetchScriptWord();
+		int a1_dim1end = pop();
+		int a1_dim1start = pop();
+		int a1_dim2end = pop();
+		int a1_dim2start = pop();
+		if (a1_dim1end - a1_dim1start != a2_dim1end - a2_dim1start || a2_dim2end - a2_dim2start != a1_dim2end - a1_dim2start) {
+			error("Source and dest ranges size are mismatched");
+		}
+		copyArray(array, a1_dim2start, a1_dim2end, a1_dim1start, a1_dim1end, array2, a2_dim2start, a2_dim2end, a2_dim1start, a2_dim1end);
+	} break;
+	case 132: // SO_COMPLEX_ARRAY_MATH_OPERATION
+	{
+		// Used by room 2 script 2180 in Moonbase Commander (modify-line-of-sight)
+		int array2 = fetchScriptWord();
+		int array1 = fetchScriptWord();
+		type = pop();
+		int a1_dim1end = pop();
+		int a1_dim1start = pop();
+		int a1_dim2end = pop();
+		int a1_dim2start = pop();
+		int a2_dim1end = pop();
+		int a2_dim1start = pop();
+		int a2_dim2end = pop();
+		int a2_dim2start = pop();
+		dim1end = pop();
+		dim1start = pop();
+		dim2end = pop();
+		dim2start = pop();
+
+		debug(0, "Complex: %d = %d[%d to %d][%d to %d] %c %d[%d to %d][%d to %d]", array,
+		      array1, a1_dim1start, a1_dim2end, a1_dim1start, a1_dim2end,
+		      " +-&|^"[type],
+		      array2, a2_dim1start, a2_dim2end, a2_dim1start, a2_dim2end);
+
+		int a12_num = a1_dim2end - a1_dim2start + 1;
+		int a11_num = a1_dim1end - a1_dim1start + 1;
+		int a22_num = a2_dim2end - a2_dim2start + 1;
+		int a21_num = a2_dim1end - a2_dim1start + 1;
+		int d12_num = dim2end - dim2start + 1;
+		int d11_num = dim1end - dim1start + 1;
+
+		id = readVar(array);
+		if (id == 0) {
+			defineArray(array, kDwordArray, dim2start, dim2end, dim1start, dim1end);
+		}
+		if (a12_num != a22_num || a12_num != d12_num || a11_num != a21_num || a11_num != d11_num) {
+			error("Operation size mismatch (%d vs %d)(%d vs %d)", a12_num, a22_num, a11_num, a21_num);
+		}
+
+		for (; a1_dim2start <= a1_dim2end; ++a1_dim2start, ++a2_dim2start, ++dim2start) {
+			int a2dim1 = a2_dim1start;
+			int a1dim1 = a1_dim1start;
+			int dim1 = dim1start;
+			for (; a1dim1 <= a1_dim1end; ++a1dim1, ++a2dim1, ++dim1) {
+				int val1 = readArray(array1, a1_dim2start, a1dim1);
+				int val2 = readArray(array2, a2_dim2start, a2dim1);
+				int res;
+
+				switch (type) {
+				case 1: // Addition
+					res = val2 + val1;
+					break;
+				case 2: // Subtraction
+					res = val2 - val1;
+					break;
+				case 3: // Binary AND
+					res = val2 & val1;
+					break;
+				case 4: // Binary OR
+					res = val2 | val1;
+					break;
+				case 5: // Binary XOR
+					res = val2 ^ val1;
+					break;
+				default:
+					error("o100_arrayOps: case 132 unknown type %d)", type);
+				}
+				writeArray(array, dim2start, dim1, res);
 			}
-			copyArray(array, a1_dim2start, a1_dim2end, a1_dim1start, a1_dim1end, array2, a2_dim2start, a2_dim2end, a2_dim1start, a2_dim1end);
 		}
 		break;
-	case 132:			// SO_COMPLEX_ARRAY_MATH_OPERATION
-		{
-			// Used by room 2 script 2180 in Moonbase Commander (modify-line-of-sight)
-			int array2 = fetchScriptWord();
-			int array1 = fetchScriptWord();
-			type = pop();
-			int a1_dim1end = pop();
-			int a1_dim1start = pop();
-			int a1_dim2end = pop();
-			int a1_dim2start = pop();
-			int a2_dim1end = pop();
-			int a2_dim1start = pop();
-			int a2_dim2end = pop();
-			int a2_dim2start = pop();
-			dim1end = pop();
-			dim1start = pop();
-			dim2end = pop();
-			dim2start = pop();
-
-			debug(0, "Complex: %d = %d[%d to %d][%d to %d] %c %d[%d to %d][%d to %d]", array,
-				array1, a1_dim1start, a1_dim2end, a1_dim1start, a1_dim2end,
-				" +-&|^"[type],
-				array2, a2_dim1start, a2_dim2end, a2_dim1start, a2_dim2end);
-
-			int a12_num = a1_dim2end - a1_dim2start + 1;
-			int a11_num = a1_dim1end - a1_dim1start + 1;
-			int a22_num = a2_dim2end - a2_dim2start + 1;
-			int a21_num = a2_dim1end - a2_dim1start + 1;
-			int d12_num = dim2end - dim2start + 1;
-			int d11_num = dim1end - dim1start + 1;
-
-			id = readVar(array);
-			if (id == 0) {
-				defineArray(array, kDwordArray, dim2start, dim2end, dim1start, dim1end);
-			}
-			if (a12_num != a22_num || a12_num != d12_num || a11_num != a21_num || a11_num != d11_num) {
-				error("Operation size mismatch (%d vs %d)(%d vs %d)", a12_num, a22_num, a11_num, a21_num);
-			}
-
-			for (; a1_dim2start <= a1_dim2end; ++a1_dim2start, ++a2_dim2start, ++dim2start) {
-				int a2dim1 = a2_dim1start;
-				int a1dim1 = a1_dim1start;
-				int dim1 = dim1start;
-				for (; a1dim1 <= a1_dim1end; ++a1dim1, ++a2dim1, ++dim1) {
-					int val1 = readArray(array1, a1_dim2start, a1dim1);
-					int val2 = readArray(array2, a2_dim2start, a2dim1);
-					int res;
-
-					switch (type) {
-					case 1: // Addition
-						res = val2 + val1;
-						break;
-					case 2: // Subtraction
-						res = val2 - val1;
-						break;
-					case 3: // Binary AND
-						res = val2 & val1;
-						break;
-					case 4: // Binary OR
-						res = val2 | val1;
-						break;
-					case 5: // Binary XOR
-						res = val2 ^ val1;
-						break;
-					default:
-						error("o100_arrayOps: case 132 unknown type %d)", type);
-					}
-					writeArray(array, dim2start, dim1, res);
-				}
-			}
-			break;
-		}
-	case 133:			// SO_RANGE_ARRAY_ASSIGNMENT
+	}
+	case 133: // SO_RANGE_ARRAY_ASSIGNMENT
 		b = pop();
 		c = pop();
 		dim1end = pop();
@@ -771,22 +769,22 @@ void ScummEngine_v100he::o100_dim2dimArray() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 41:		// SO_BIT_ARRAY
+	case 41: // SO_BIT_ARRAY
 		data = kBitArray;
 		break;
-	case 42:		// SO_INT_ARRAY
+	case 42: // SO_INT_ARRAY
 		data = kIntArray;
 		break;
 	case 43:
 		data = kDwordArray;
 		break;
-	case 44:		// SO_NIBBLE_ARRAY
+	case 44: // SO_NIBBLE_ARRAY
 		data = kNibbleArray;
 		break;
-	case 45:		// SO_BYTE_ARRAY
+	case 45: // SO_BYTE_ARRAY
 		data = kByteArray;
 		break;
-	case 77:		// SO_STRING_ARRAY
+	case 77: // SO_STRING_ARRAY
 		data = kStringArray;
 		break;
 	default:
@@ -804,25 +802,25 @@ void ScummEngine_v100he::o100_dimArray() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 41:		// SO_BIT_ARRAY
+	case 41: // SO_BIT_ARRAY
 		data = kBitArray;
 		break;
-	case 42:		// SO_INT_ARRAY
+	case 42: // SO_INT_ARRAY
 		data = kIntArray;
 		break;
 	case 43:
 		data = kDwordArray;
 		break;
-	case 44:		// SO_NIBBLE_ARRAY
+	case 44: // SO_NIBBLE_ARRAY
 		data = kNibbleArray;
 		break;
-	case 45:		// SO_BYTE_ARRAY
+	case 45: // SO_BYTE_ARRAY
 		data = kByteArray;
 		break;
-	case 77:		// SO_STRING_ARRAY
+	case 77: // SO_STRING_ARRAY
 		data = kStringArray;
 		break;
-	case 135:		// SO_UNDIM_ARRAY
+	case 135: // SO_UNDIM_ARRAY
 		nukeArray(fetchScriptWord());
 		return;
 	default:
@@ -1428,22 +1426,22 @@ void ScummEngine_v100he::o100_dim2dim2Array() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 41:		// SO_BIT_ARRAY
+	case 41: // SO_BIT_ARRAY
 		data = kBitArray;
 		break;
-	case 42:		// SO_INT_ARRAY
+	case 42: // SO_INT_ARRAY
 		data = kIntArray;
 		break;
 	case 43:
 		data = kDwordArray;
 		break;
-	case 44:		// SO_NIBBLE_ARRAY
+	case 44: // SO_NIBBLE_ARRAY
 		data = kNibbleArray;
 		break;
-	case 45:		// SO_BYTE_ARRAY
+	case 45: // SO_BYTE_ARRAY
 		data = kByteArray;
 		break;
-	case 77:		// SO_STRING_ARRAY
+	case 77: // SO_STRING_ARRAY
 		data = kStringArray;
 		break;
 	default:
@@ -1612,7 +1610,7 @@ void ScummEngine_v100he::o100_roomOps() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 63:		// SO_ROOM_PALETTE
+	case 63: // SO_ROOM_PALETTE
 		d = pop();
 		c = pop();
 		b = pop();
@@ -1620,13 +1618,13 @@ void ScummEngine_v100he::o100_roomOps() {
 		setPalColor(d, a, b, c);
 		break;
 
-	case 129:		// SO_OBJECT_ORDER
+	case 129: // SO_OBJECT_ORDER
 		b = pop();
 		a = pop();
 		swapObjects(a, b);
 		break;
 
-	case 130:		// SO_ROOM_COPY_PALETTE
+	case 130: // SO_ROOM_COPY_PALETTE
 		a = pop();
 		b = pop();
 		if (_game.features & GF_16BIT_COLOR)
@@ -1635,19 +1633,19 @@ void ScummEngine_v100he::o100_roomOps() {
 			copyPalColor(a, b);
 		break;
 
-	case 131:		// SO_ROOM_FADE
+	case 131: // SO_ROOM_FADE
 		// Defaults to 1 but doesn't use fade effects
 		a = pop();
 		break;
 
-	case 132:		// SO_ROOM_INTENSITY
+	case 132: // SO_ROOM_INTENSITY
 		c = pop();
 		b = pop();
 		a = pop();
 		darkenPalette(a, a, a, b, c);
 		break;
 
-	case 133:		// SO_RGB_ROOM_INTENSITY
+	case 133: // SO_RGB_ROOM_INTENSITY
 		e = pop();
 		d = pop();
 		c = pop();
@@ -1656,24 +1654,24 @@ void ScummEngine_v100he::o100_roomOps() {
 		darkenPalette(a, b, c, d, e);
 		break;
 
-	case 134:		// SO_ROOM_NEW_PALETTE
+	case 134: // SO_ROOM_NEW_PALETTE
 		a = pop();
 		setCurrentPalette(a);
 		break;
 
-	case 135:		// SO_ROOM_PALETTE_IN_ROOM
+	case 135: // SO_ROOM_PALETTE_IN_ROOM
 		b = pop();
 		a = pop();
 		setRoomPalette(a, b);
 		break;
 
-	case 136:		// SO_ROOM_SAVEGAME
+	case 136: // SO_ROOM_SAVEGAME
 		_saveTemporaryState = true;
 		_saveLoadSlot = pop();
 		_saveLoadFlag = pop();
 		break;
 
-	case 137:		// SO_ROOM_SAVEGAME_BY_NAME
+	case 137: // SO_ROOM_SAVEGAME_BY_NAME
 		byte buffer[256];
 
 		copyScriptString((byte *)buffer, sizeof(buffer));
@@ -1686,13 +1684,13 @@ void ScummEngine_v100he::o100_roomOps() {
 		_saveTemporaryState = true;
 		break;
 
-	case 138:		// SO_ROOM_SCREEN
+	case 138: // SO_ROOM_SCREEN
 		b = pop();
 		a = pop();
 		initScreens(a, _screenHeight);
 		break;
 
-	case 139:		// SO_ROOM_SCROLL
+	case 139: // SO_ROOM_SCROLL
 		b = pop();
 		a = pop();
 		if (a < (_screenWidth / 2))
@@ -1735,7 +1733,7 @@ void ScummEngine_v100he::o100_setSystemMessage() {
 		//_system->setWindowCaption((const char *)name);
 		break;
 	case 131: // Set Version
-		debug(1,"o100_setSystemMessage: (%d) %s", subOp, name);
+		debug(1, "o100_setSystemMessage: (%d) %s", subOp, name);
 		break;
 	default:
 		error("o100_setSystemMessage: default case %d", subOp);
@@ -1749,57 +1747,57 @@ void ScummEngine_v100he::o100_soundOps() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 6:		// SO_AT
+	case 6: // SO_AT
 		_heSndFlags |= HE_SND_OFFSET;
 		_heSndOffset = pop();
 		break;
-	case 47:	// SO_LOAD
+	case 47: // SO_LOAD
 		copyScriptString(filename, sizeof(filename));
 		_heSndSoundId = pop();
 		if (_heSndSoundId)
 			debug(0, "Load sound %d from file %s\n", _heSndSoundId, filename);
 		break;
-	case 55:	// SO_NOW
+	case 55: // SO_NOW
 		_heSndFlags |= HE_SND_QUICK_START;
 		break;
-	case 83:	// SO_VARIABLE
+	case 83: // SO_VARIABLE
 		value = pop();
 		var = pop();
 		_heSndSoundId = pop();
 		((SoundHE *)_sound)->setSoundVar(_heSndSoundId, var, value);
 		break;
-	case 92:	// SO_END
+	case 92: // SO_END
 		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndSoundFreq, _heSndPan, _heSndVol);
 		break;
-	case 128:	// SO_SOUND_ADD
+	case 128: // SO_SOUND_ADD
 		_heSndFlags |= HE_SND_APPEND;
 		break;
-	case 129:	// SO_SOUND_CHANNEL
+	case 129: // SO_SOUND_CHANNEL
 		_heSndChannel = pop();
 		break;
-	case 130:	// SO_SOUND_FREQUENCY
+	case 130: // SO_SOUND_FREQUENCY
 		_heSndFlags |= HE_SND_FREQUENCY;
 		_heSndSoundFreq = pop();
 		break;
-	case 131:	// SO_SOUND_LOOPING
+	case 131: // SO_SOUND_LOOPING
 		_heSndFlags |= HE_SND_LOOP;
 		break;
-	case 132:	// SO_SOUND_MODIFY
-	case 134:	// SO_SOUND_START
+	case 132: // SO_SOUND_MODIFY
+	case 134: // SO_SOUND_START
 		_heSndSoundId = pop();
 		_heSndOffset = 0;
 		_heSndSoundFreq = 11025;
 		_heSndChannel = VAR(VAR_SOUND_CHANNEL);
 		_heSndFlags = 0;
 		break;
-	case 133:	// SO_SOUND_PAN
+	case 133: // SO_SOUND_PAN
 		_heSndFlags |= HE_SND_PAN;
 		_heSndPan = pop();
 		break;
-	case 135:	// SO_SOUND_SOFT
+	case 135: // SO_SOUND_SOFT
 		_heSndFlags |= HE_SND_SOFT_SOUND;
 		break;
-	case 136:	// SO_SOUND_VOLUME
+	case 136: // SO_SOUND_VOLUME
 		_heSndFlags |= HE_SND_VOL;
 		_heSndVol = pop();
 		break;
@@ -2214,10 +2212,10 @@ void ScummEngine_v100he::o100_cursorCommand() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 0xE:		// SO_CHARSET_SET
+	case 0xE: // SO_CHARSET_SET
 		initCharset(pop());
 		break;
-	case 0xF:		// SO_CHARSET_COLOR
+	case 0xF: // SO_CHARSET_COLOR
 		getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < 16; i++)
 			_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)args[i];
@@ -2232,31 +2230,31 @@ void ScummEngine_v100he::o100_cursorCommand() {
 		a = pop();
 		_wiz->loadWizCursor(a, b);
 		break;
-	case 0x86:		// SO_CURSOR_ON Turn cursor on
+	case 0x86: // SO_CURSOR_ON Turn cursor on
 		_cursor.state = 1;
 		break;
-	case 0x87:		// SO_CURSOR_OFF Turn cursor off
+	case 0x87: // SO_CURSOR_OFF Turn cursor off
 		_cursor.state = 0;
 		break;
-	case 0x88:		// SO_CURSOR_SOFT_ON Turn soft cursor on
+	case 0x88: // SO_CURSOR_SOFT_ON Turn soft cursor on
 		_cursor.state++;
 		if (_cursor.state > 1)
 			error("o100_cursorCommand: Cursor state greater than 1 in script");
 		break;
 
-	case 0x89:		// SO_CURSOR_SOFT_OFF Turn soft cursor off
+	case 0x89: // SO_CURSOR_SOFT_OFF Turn soft cursor off
 		_cursor.state--;
 		break;
-	case 0x8B:		// SO_USERPUT_ON
+	case 0x8B: // SO_USERPUT_ON
 		_userPut = 1;
 		break;
-	case 0x8C:		// SO_USERPUT_OFF
+	case 0x8C: // SO_USERPUT_OFF
 		_userPut = 0;
 		break;
-	case 0x8D:		// SO_USERPUT_SOFT_ON
+	case 0x8D: // SO_USERPUT_SOFT_ON
 		_userPut++;
 		break;
-	case 0x8E:		// SO_USERPUT_SOFT_OFF
+	case 0x8E: // SO_USERPUT_SOFT_OFF
 		_userPut--;
 		break;
 	default:
@@ -2317,7 +2315,7 @@ void ScummEngine_v100he::o100_videoOps() {
 		error("o100_videoOps: unhandled case %d", subOp);
 	}
 
-	debug(1,"o100_videoOps stub (%d)", subOp);
+	debug(1, "o100_videoOps stub (%d)", subOp);
 }
 
 void ScummEngine_v100he::o100_wait() {
@@ -2328,22 +2326,22 @@ void ScummEngine_v100he::o100_wait() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 128:		// SO_WAIT_FOR_ACTOR Wait for actor
+	case 128: // SO_WAIT_FOR_ACTOR Wait for actor
 		offs = fetchScriptWordSigned();
 		actnum = pop();
 		a = derefActor(actnum, "o100_wait:168");
 		if (a->_moving)
 			break;
 		return;
-	case 129:		// SO_WAIT_FOR_CAMERA Wait for camera
+	case 129: // SO_WAIT_FOR_CAMERA Wait for camera
 		if (camera._cur.x / 8 != camera._dest.x / 8)
 			break;
 		return;
-	case 130:		// SO_WAIT_FOR_MESSAGE Wait for message
+	case 130: // SO_WAIT_FOR_MESSAGE Wait for message
 		if (VAR(VAR_HAVE_MSG))
 			break;
 		return;
-	case 131:		// SO_WAIT_FOR_SENTENCE
+	case 131: // SO_WAIT_FOR_SENTENCE
 		if (_sentenceNum) {
 			if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
 				return;
@@ -3025,19 +3023,19 @@ void ScummEngine_v100he::decodeParseString(int m, int n) {
 	byte b = fetchScriptByte();
 
 	switch (b) {
-	case 6:		// SO_AT
+	case 6: // SO_AT
 		_string[m].ypos = pop();
 		_string[m].xpos = pop();
 		_string[m].overhead = false;
 		break;
-	case 12:		// SO_CENTER
+	case 12: // SO_CENTER
 		_string[m].center = true;
 		_string[m].overhead = false;
 		break;
-	case 18:		// SO_CLIPPED
+	case 18: // SO_CLIPPED
 		_string[m].right = pop();
 		break;
-	case 20:		// SO_COLOR
+	case 20: // SO_COLOR
 		_string[m].color = pop();
 		break;
 	case 21:
@@ -3056,27 +3054,25 @@ void ScummEngine_v100he::decodeParseString(int m, int n) {
 		decodeScriptString(name, true);
 		printString(m, name);
 		break;
-	case 46:		// SO_LEFT
+	case 46: // SO_LEFT
 		_string[m].center = false;
 		_string[m].overhead = false;
 		break;
-	case 51:		// SO_MUMBLE
+	case 51: // SO_MUMBLE
 		_string[m].no_talk_anim = true;
 		break;
-	case 56:		// SO_OVERHEAD
+	case 56: // SO_OVERHEAD
 		_string[m].overhead = true;
 		_string[m].no_talk_anim = false;
 		break;
-	case 78:
-		{
+	case 78: {
 		byte *dataPtr = getResourceAddress(rtTalkie, pop());
-		byte *text = findWrappedBlock(MKTAG('T','E','X','T'), dataPtr, 0, 0);
+		byte *text = findWrappedBlock(MKTAG('T', 'E', 'X', 'T'), dataPtr, 0, 0);
 		size = getResourceDataSize(text);
 		memcpy(name, text, size);
 		printString(m, name);
-		}
-		break;
-	case 79:		// SO_TEXTSTRING
+	} break;
+	case 79: // SO_TEXTSTRING
 		printString(m, _scriptPointer);
 		_scriptPointer += resStrLen(_scriptPointer) + 1;
 		break;

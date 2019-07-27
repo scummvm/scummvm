@@ -21,8 +21,8 @@
  */
 
 #include "kyra/engine/kyra_mr.h"
-#include "kyra/resource/resource.h"
 #include "kyra/graphics/wsamovie.h"
+#include "kyra/resource/resource.h"
 
 #include "common/system.h"
 
@@ -71,7 +71,7 @@ void KyraEngine_MR::animSetupPaletteEntry(AnimObj *anim) {
 	int layer = _screen->getLayer(anim->xPos1, anim->yPos1) - 1;
 	int16 count = 0;
 	for (int i = 0; i < 3; ++i)
-		count += _sceneDatPalette[layer*3+i];
+		count += _sceneDatPalette[layer * 3 + i];
 	count /= 3;
 	count *= -1;
 	count = MAX<int16>(0, MIN<int16>(count, 10));
@@ -166,7 +166,7 @@ void KyraEngine_MR::refreshAnimObjects(int force) {
 			y = 186;
 
 		int width = curObject->width + curObject->width2 + 8;
-		int height = curObject->height + curObject->height2*2;
+		int height = curObject->height + curObject->height2 * 2;
 		if (width + x > 320)
 			width -= width + x - 322;
 
@@ -276,7 +276,7 @@ void KyraEngine_MR::updateCharacterAnim(int charId) {
 }
 
 void KyraEngine_MR::updateSceneAnim(int anim, int newFrame) {
-	AnimObj *animObject = &_animObjects[1+anim];
+	AnimObj *animObject = &_animObjects[1 + anim];
 	if (!animObject->enabled)
 		return;
 
@@ -313,7 +313,7 @@ void KyraEngine_MR::updateSceneAnim(int anim, int newFrame) {
 }
 
 void KyraEngine_MR::setupSceneAnimObject(int animId, uint16 flags, int x, int y, int x2, int y2, int w,
-										int h, int unk10, int specialSize, int unk14, int shape, const char *filename) {
+                                         int h, int unk10, int specialSize, int unk14, int shape, const char *filename) {
 	restorePage3();
 	SceneAnim &anim = _sceneAnims[animId];
 	anim.flags = flags;
@@ -354,7 +354,7 @@ void KyraEngine_MR::setupSceneAnimObject(int animId, uint16 flags, int x, int y,
 		}
 	}
 
-	AnimObj *obj = &_animObjects[1+animId];
+	AnimObj *obj = &_animObjects[1 + animId];
 	obj->enabled = true;
 	obj->needRefresh = true;
 
@@ -392,7 +392,7 @@ void KyraEngine_MR::setupSceneAnimObject(int animId, uint16 flags, int x, int y,
 }
 
 void KyraEngine_MR::removeSceneAnimObject(int anim, int refresh) {
-	AnimObj *obj = &_animObjects[anim+1];
+	AnimObj *obj = &_animObjects[anim + 1];
 	restorePage3();
 	obj->shapeIndex3 = 0xFFFF;
 	obj->animNum = 0xFFFF;
@@ -431,7 +431,7 @@ void KyraEngine_MR::resetCharacterAnimDim() {
 
 void KyraEngine_MR::showIdleAnim() {
 	if (_mainCharacter.sceneId == 20 || _mainCharacter.sceneId == 21
-			|| _mainCharacter.sceneId == 12 || _mainCharacter.sceneId == 11)
+	    || _mainCharacter.sceneId == 12 || _mainCharacter.sceneId == 11)
 		return;
 
 	if (_mainCharacter.animFrame == 87)
@@ -444,7 +444,7 @@ void KyraEngine_MR::showIdleAnim() {
 			"A", "R", "R", "FR", "FX", "FL", "L", "L"
 		};
 
-		Common::String filename = Common::String::format( "MI0%s%.02d.EMC", facingTable[_mainCharacter.facing], _characterShapeFile);
+		Common::String filename = Common::String::format("MI0%s%.02d.EMC", facingTable[_mainCharacter.facing], _characterShapeFile);
 
 		if (_res->exists(filename.c_str()))
 			runAnimationScript(filename.c_str(), 1, 1, 1, 1);

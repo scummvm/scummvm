@@ -25,7 +25,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CGondolierBase, CGameObject)
-	ON_MESSAGE(PuzzleSolvedMsg)
+ON_MESSAGE(PuzzleSolvedMsg)
 END_MESSAGE_MAP()
 
 bool CGondolierBase::_chestOpen;

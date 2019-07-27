@@ -76,14 +76,14 @@ enum AnimationConstants {
 
 /** Inventory related magical constants */
 enum InventoryConstants {
-  kInventoryItemWidth = 25,
-  kInventoryItemHeight = 25,
-  kInventoryColumns = 7,
-  kInventoryLines = 5,
-  kInventoryX = 70, ///< Used for positioning of the inventory sprite on the X axis
-  kInventoryY = 30, ///< Used for positioning of the inventory sprite on the Y axis
-  kInventorySlots = kInventoryLines * kInventoryColumns,
-  kStatusChangeTimeout = 500
+	kInventoryItemWidth = 25,
+	kInventoryItemHeight = 25,
+	kInventoryColumns = 7,
+	kInventoryLines = 5,
+	kInventoryX = 70, ///< Used for positioning of the inventory sprite on the X axis
+	kInventoryY = 30, ///< Used for positioning of the inventory sprite on the Y axis
+	kInventorySlots = kInventoryLines * kInventoryColumns,
+	kStatusChangeTimeout = 500
 };
 
 class GameObject {
@@ -172,18 +172,18 @@ public:
 };
 
 enum LoopStatus {
-	kStatusOrdinary,	// normal game-play: everything allowed
-	kStatusGate,		// during running init-scripts when entering a room: disable interactivity
-	kStatusInventory,	// inventory is open: cannot change the room or go to map
-	kStatusDialogue		// during a dialogue: cannot change the room, go to inventory
+	kStatusOrdinary, // normal game-play: everything allowed
+	kStatusGate, // during running init-scripts when entering a room: disable interactivity
+	kStatusInventory, // inventory is open: cannot change the room or go to map
+	kStatusDialogue // during a dialogue: cannot change the room, go to inventory
 };
 
 enum LoopSubstatus {
-	kOuterLoop,		// outer loop: everything is allowed
-	kInnerWhileTalk,	// playing a voice: inner loop will exit afterwards
-	kInnerWhileFade,	// fading a palette: inner loop will exit when done
-	kInnerDuringDialogue,	// selecting continuation block: inner block will exit afterwards
-	kInnerUntilExit		// other inner loop: either immediately exiting or waiting for an animation to end (whose callback ends the loop)
+	kOuterLoop, // outer loop: everything is allowed
+	kInnerWhileTalk, // playing a voice: inner loop will exit afterwards
+	kInnerWhileFade, // fading a palette: inner loop will exit when done
+	kInnerDuringDialogue, // selecting continuation block: inner block will exit afterwards
+	kInnerUntilExit // other inner loop: either immediately exiting or waiting for an animation to end (whose callback ends the loop)
 };
 
 class Game {
@@ -198,21 +198,21 @@ public:
 	// HACK: this is only for testing
 	int nextRoomNum() const {
 		int n = _currentRoom._roomNum;
-		n = n < 37 ? n+1 : n;
+		n = n < 37 ? n + 1 : n;
 		return n;
 	}
 
 	// HACK: same as above
 	int prevRoomNum() const {
 		int n = _currentRoom._roomNum;
-		n = n > 0 ? n-1 : n;
+		n = n > 0 ? n - 1 : n;
 		return n;
 	}
 
 	Common::Point findNearestWalkable(int x, int y) const { return _walkingMap.findNearestWalkable(x, y); }
 	void heroAnimationFinished() { _walkingState.heroAnimationFinished(); }
-	void stopWalking() { _walkingState.stopWalking(); }	// and clear callback
-	void walkHero(int x, int y, SightDirection dir);	// start walking and leave callback as is
+	void stopWalking() { _walkingState.stopWalking(); } // and clear callback
+	void walkHero(int x, int y, SightDirection dir); // start walking and leave callback as is
 	void setHeroPosition(const Common::Point &p);
 	const Common::Point &getHeroPosition() const { return _hero; }
 	const Common::Point &getHeroLoadingPosition() const { return _heroLoading; }
@@ -228,7 +228,7 @@ public:
 	int playHeroAnimation(int anim_index);
 
 	void loadOverlays();
-	void loadWalkingMap(int mapID);		// but leaves _currentRoom._mapID untouched
+	void loadWalkingMap(int mapID); // but leaves _currentRoom._mapID untouched
 	void switchWalkingAnimations(bool enabled);
 
 	uint getNumObjects() const { return _info._numObjects; }
@@ -246,7 +246,10 @@ public:
 	void setRoomNum(int num) { _currentRoom._roomNum = num; }
 	int getPreviousRoomNum() const { return _previousRoom; }
 	void rememberRoomNumAsPrevious() { _previousRoom = getRoomNum(); }
-	void scheduleEnteringRoomUsingGate(int room, int gate) { _newRoom = room; _newGate = gate; }
+	void scheduleEnteringRoomUsingGate(int room, int gate) {
+		_newRoom = room;
+		_newGate = gate;
+	}
 	void pushNewRoom();
 	void popNewRoom();
 
@@ -377,7 +380,7 @@ private:
 	int _newRoom;
 	int _newGate;
 	int _previousRoom;
-	int _pushedNewRoom;	// used in GPL programs
+	int _pushedNewRoom; // used in GPL programs
 	int _pushedNewGate;
 
 	uint *_dialogueOffsets;

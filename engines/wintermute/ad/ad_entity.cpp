@@ -26,12 +26,12 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-
 #include "engines/wintermute/ad/ad_entity.h"
+#include "common/str.h"
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/ad/ad_scene.h"
-#include "engines/wintermute/ad/ad_waypoint_group.h"
 #include "engines/wintermute/ad/ad_sentence.h"
+#include "engines/wintermute/ad/ad_waypoint_group.h"
 #include "engines/wintermute/base/base_active_rect.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
 #include "engines/wintermute/base/base_file_manager.h"
@@ -40,25 +40,25 @@
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_surface_storage.h"
-#include "engines/wintermute/base/font/base_font_storage.h"
 #include "engines/wintermute/base/font/base_font.h"
+#include "engines/wintermute/base/font/base_font_storage.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/particles/part_emitter.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/sound/base_sound.h"
-#include "engines/wintermute/video/video_theora_player.h"
-#include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/platform_osystem.h"
-#include "common/str.h"
+#include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/video/video_theora_player.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdEntity, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdEntity::AdEntity(BaseGame *inGame) : AdTalkHolder(inGame) {
+AdEntity::AdEntity(BaseGame *inGame)
+  : AdTalkHolder(inGame) {
 	_type = OBJECT_ENTITY;
 	_subtype = ENTITY_NORMAL;
 	_region = nullptr;
@@ -69,7 +69,6 @@ AdEntity::AdEntity(BaseGame *inGame) : AdTalkHolder(inGame) {
 
 	_theora = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 AdEntity::~AdEntity() {
@@ -114,12 +113,10 @@ bool AdEntity::loadFile(const char *filename) {
 		_gameRef->LOG(0, "Error parsing ENTITY file '%s'", filename);
 	}
 
-
 	delete[] buffer;
 
 	return ret;
 }
-
 
 TOKEN_DEF_START
 TOKEN_DEF(ENTITY)
@@ -252,8 +249,7 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 			} else {
 				_sprite = spr;
 			}
-		}
-		break;
+		} break;
 
 		case TOKEN_TALK: {
 			spr = new BaseSprite(_gameRef, this);
@@ -262,8 +258,7 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 			} else {
 				_talkSprites.add(spr);
 			}
-		}
-		break;
+		} break;
 
 		case TOKEN_TALK_SPECIAL: {
 			spr = new BaseSprite(_gameRef, this);
@@ -272,8 +267,7 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 			} else {
 				_talkSpritesEx.add(spr);
 			}
-		}
-		break;
+		} break;
 
 		case TOKEN_NAME:
 			setName(params);
@@ -300,16 +294,14 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 			parser.scanStr(params, "%d", &s);
 			_scale = (float)s;
 
-		}
-		break;
+		} break;
 
 		case TOKEN_RELATIVE_SCALE: {
 			int s;
 			parser.scanStr(params, "%d", &s);
 			_relativeScale = (float)s;
 
-		}
-		break;
+		} break;
 
 		case TOKEN_ROTABLE:
 		case TOKEN_ROTATABLE:
@@ -356,8 +348,7 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 				_region = rgn;
 				_gameRef->registerObject(_region);
 			}
-		}
-		break;
+		} break;
 
 		case TOKEN_BLOCKED_REGION: {
 			delete _blockRegion;
@@ -377,8 +368,7 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 				_currentBlockRegion = crgn;
 				_currentBlockRegion->mimic(_blockRegion);
 			}
-		}
-		break;
+		} break;
 
 		case TOKEN_WAYPOINTS: {
 			delete _wptGroup;
@@ -398,8 +388,7 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 				_currentWptGroup = cwpt;
 				_currentWptGroup->mimic(_wptGroup);
 			}
-		}
-		break;
+		} break;
 
 		case TOKEN_SCRIPT:
 			addScript(params);
@@ -426,8 +415,7 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 				_shadowable = false;
 				_subtype = ENTITY_SOUND;
 			}
-		}
-		break;
+		} break;
 
 		case TOKEN_SOUND:
 			playSFX(params, false, false);
@@ -487,8 +475,7 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 				i = DI_NONE;
 			}
 			_walkToDir = (TDirection)i;
-		}
-		break;
+		} break;
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
@@ -522,7 +509,6 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdEntity::display() {
 	if (_active) {
@@ -549,14 +535,13 @@ bool AdEntity::display() {
 			rotate = 0.0f;
 		}
 
-
 		bool reg = _registrable;
 		if (_ignoreItems && ((AdGame *)_gameRef)->_selectedItem) {
 			reg = false;
 		}
 
 		if (_region && (reg || _editorAlwaysRegister)) {
-			_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  _registerAlias, _region, _gameRef->_offsetX, _gameRef->_offsetY));
+			_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef, _registerAlias, _region, _gameRef->_offsetX, _gameRef->_offsetY));
 		}
 
 		displaySpriteAttachments(true);
@@ -577,11 +562,9 @@ bool AdEntity::display() {
 		if (_partEmitter) {
 			_partEmitter->display(_region);
 		}
-
 	}
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdEntity::update() {
@@ -645,12 +628,10 @@ bool AdEntity::update() {
 			_currentSprite = _tempSprite2;
 			((AdGame *)_gameRef)->addSentence(_sentence);
 		}
-	}
-	break;
+	} break;
 	default: // Silence unhandled enum-warning
 		break;
 	}
-
 
 	if (_currentSprite) {
 		_currentSprite->getCurrentFrame(_zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100);
@@ -682,7 +663,6 @@ bool AdEntity::update() {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
@@ -804,7 +784,6 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-
 	//////////////////////////////////////////////////////////////////////////
 	// CreateRegion
 	//////////////////////////////////////////////////////////////////////////
@@ -841,7 +820,6 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return AdTalkHolder::scCallMethod(script, stack, thisStack, name);
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 ScValue *AdEntity::scGetProperty(const Common::String &name) {
@@ -920,7 +898,6 @@ ScValue *AdEntity::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdEntity::scSetProperty(const char *name, ScValue *value) {
 
@@ -962,12 +939,10 @@ bool AdEntity::scSetProperty(const char *name, ScValue *value) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 const char *AdEntity::scToString() {
 	return "[entity object]";
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
@@ -1023,8 +998,7 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "SOUND_VOLUME=%d\n", _sFXVolume);
 	}
 
-
-	if (RGBCOLGetR(_alphaColor) != 0 || RGBCOLGetG(_alphaColor) != 0 ||  RGBCOLGetB(_alphaColor) != 0) {
+	if (RGBCOLGetR(_alphaColor) != 0 || RGBCOLGetG(_alphaColor) != 0 || RGBCOLGetB(_alphaColor) != 0) {
 		buffer->putTextIndent(indent + 2, "ALPHA_COLOR { %d,%d,%d }\n", RGBCOLGetR(_alphaColor), RGBCOLGetG(_alphaColor), RGBCOLGetB(_alphaColor));
 	}
 
@@ -1065,7 +1039,6 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 int32 AdEntity::getHeight() {
 	if (_region && !_sprite) {
@@ -1078,7 +1051,6 @@ int32 AdEntity::getHeight() {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void AdEntity::updatePosition() {
 	if (_region && !_sprite) {
@@ -1086,7 +1058,6 @@ void AdEntity::updatePosition() {
 		_posY = _region->_rect.bottom;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdEntity::persist(BasePersistenceManager *persistMgr) {
@@ -1107,7 +1078,6 @@ bool AdEntity::persist(BasePersistenceManager *persistMgr) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void AdEntity::setItem(const char *itemName) {

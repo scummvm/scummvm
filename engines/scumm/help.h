@@ -23,8 +23,8 @@
 #ifndef SCUMM_HELP_H
 #define SCUMM_HELP_H
 
-#include "common/str.h"
 #include "common/platform.h"
+#include "common/str.h"
 
 namespace Scumm {
 
@@ -37,7 +37,7 @@ protected:
 public:
 	static int numPages(byte gameId);
 	static void updateStrings(byte gameId, byte version, Common::Platform platform,
-			int page, String &title, String *&key, String *&dsc);
+	                          int page, String &title, String *&key, String *&dsc);
 };
 
 } // End of namespace Scumm

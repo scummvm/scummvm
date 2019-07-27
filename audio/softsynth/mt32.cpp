@@ -25,35 +25,35 @@
 
 #ifdef USE_MT32EMU
 
-#include "audio/softsynth/emumidi.h"
-#include "audio/musicplugin.h"
-#include "audio/mpu401.h"
+#	include "audio/mpu401.h"
+#	include "audio/musicplugin.h"
+#	include "audio/softsynth/emumidi.h"
 
-#include "common/config-manager.h"
-#include "common/debug.h"
-#include "common/error.h"
-#include "common/events.h"
-#include "common/file.h"
-#include "common/system.h"
-#include "common/util.h"
-#include "common/archive.h"
-#include "common/textconsole.h"
-#include "common/translation.h"
-#include "common/osd_message_queue.h"
+#	include "common/archive.h"
+#	include "common/config-manager.h"
+#	include "common/debug.h"
+#	include "common/error.h"
+#	include "common/events.h"
+#	include "common/file.h"
+#	include "common/osd_message_queue.h"
+#	include "common/system.h"
+#	include "common/textconsole.h"
+#	include "common/translation.h"
+#	include "common/util.h"
 
-#include "graphics/fontman.h"
-#include "graphics/surface.h"
-#include "graphics/pixelformat.h"
-#include "graphics/palette.h"
-#include "graphics/font.h"
+#	include "graphics/font.h"
+#	include "graphics/fontman.h"
+#	include "graphics/palette.h"
+#	include "graphics/pixelformat.h"
+#	include "graphics/surface.h"
 
-#include "gui/message.h"
+#	include "gui/message.h"
 
 // prevents load of unused FileStream API because it includes a standard library
 // include, per _sev
-#define MT32EMU_FILE_STREAM_H
+#	define MT32EMU_FILE_STREAM_H
 
-#include "audio/softsynth/mt32/c_interface/cpp_interface.h"
+#	include "audio/softsynth/mt32/c_interface/cpp_interface.h"
 
 namespace MT32Emu {
 
@@ -95,11 +95,11 @@ public:
 	virtual ~ScummVMReportHandler() {}
 };
 
-}	// end of namespace MT32Emu
+} // end of namespace MT32Emu
 
 class MidiChannel_MT32 : public MidiChannel_MPU401 {
-	void effectLevel(byte value) { }
-	void chorusLevel(byte value) { }
+	void effectLevel(byte value) {}
+	void chorusLevel(byte value) {}
 };
 
 class MidiDriver_MT32 : public MidiDriver_Emulated {
@@ -141,7 +141,8 @@ public:
 //
 ////////////////////////////////////////
 
-MidiDriver_MT32::MidiDriver_MT32(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer) {
+MidiDriver_MT32::MidiDriver_MT32(Audio::Mixer *mixer)
+  : MidiDriver_Emulated(mixer) {
 	_channelMask = 0xFFFF; // Permit all 16 channels by default
 	uint i;
 	for (i = 0; i < ARRAYSIZE(_midiChannels); ++i) {
@@ -164,9 +165,9 @@ int MidiDriver_MT32::open() {
 
 	if (screenFormat.bytesPerPixel == 1) {
 		const byte dummy_palette[] = {
-			0, 0, 0,		// background
-			0, 171, 0,	// border, font
-			171, 0, 0	// fill
+			0, 0, 0, // background
+			0, 171, 0, // border, font
+			171, 0, 0 // fill
 		};
 
 		g_system->getPaletteManager()->setPalette(dummy_palette, 0, 3);
@@ -316,7 +317,7 @@ MidiChannel *MidiDriver_MT32::getPercussionChannel() {
 
 // This code should be used when calling the timer callback from the mixer thread is undesirable.
 // Note that it results in less accurate timing.
-#if 0
+#	if 0
 class MidiEvent_MT32 {
 public:
 	MidiEvent_MT32 *_next;
@@ -426,8 +427,7 @@ void MidiDriver_ThreadedMT32::onTimer() {
 		delete event;
 	}
 }
-#endif
-
+#	endif
 
 // Plugin interface
 
@@ -453,10 +453,9 @@ MusicDevices MT32EmuMusicPlugin::getDevices() const {
 }
 
 bool MT32EmuMusicPlugin::checkDevice(MidiDriver::DeviceHandle) const {
-	if (!((Common::File::exists("MT32_CONTROL.ROM") && Common::File::exists("MT32_PCM.ROM")) ||
-		(Common::File::exists("CM32L_CONTROL.ROM") && Common::File::exists("CM32L_PCM.ROM")))) {
-			warning("The MT-32 emulator requires one of the two following file sets (not bundled with ScummVM):\n Either 'MT32_CONTROL.ROM' and 'MT32_PCM.ROM' or 'CM32L_CONTROL.ROM' and 'CM32L_PCM.ROM'");
-			return false;
+	if (!((Common::File::exists("MT32_CONTROL.ROM") && Common::File::exists("MT32_PCM.ROM")) || (Common::File::exists("CM32L_CONTROL.ROM") && Common::File::exists("CM32L_PCM.ROM")))) {
+		warning("The MT-32 emulator requires one of the two following file sets (not bundled with ScummVM):\n Either 'MT32_CONTROL.ROM' and 'MT32_PCM.ROM' or 'CM32L_CONTROL.ROM' and 'CM32L_PCM.ROM'");
+		return false;
 	}
 
 	return true;
@@ -469,9 +468,9 @@ Common::Error MT32EmuMusicPlugin::createInstance(MidiDriver **mididriver, MidiDr
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(MT32)
-	//REGISTER_PLUGIN_DYNAMIC(MT32, PLUGIN_TYPE_MUSIC, MT32EmuMusicPlugin);
+//REGISTER_PLUGIN_DYNAMIC(MT32, PLUGIN_TYPE_MUSIC, MT32EmuMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(MT32, PLUGIN_TYPE_MUSIC, MT32EmuMusicPlugin);
+REGISTER_PLUGIN_STATIC(MT32, PLUGIN_TYPE_MUSIC, MT32EmuMusicPlugin);
 //#endif
 
 #endif

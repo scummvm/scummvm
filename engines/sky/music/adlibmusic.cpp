@@ -20,13 +20,12 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "common/textconsole.h"
 
-#include "sky/music/adlibmusic.h"
-#include "sky/music/adlibchannel.h"
 #include "audio/fmopl.h"
+#include "sky/music/adlibchannel.h"
+#include "sky/music/adlibmusic.h"
 #include "sky/sky.h"
 
 namespace Audio {
@@ -35,7 +34,8 @@ class Mixer;
 
 namespace Sky {
 
-AdLibMusic::AdLibMusic(Audio::Mixer *pMixer, Disk *pDisk) : MusicBase(pMixer, pDisk) {
+AdLibMusic::AdLibMusic(Audio::Mixer *pMixer, Disk *pDisk)
+  : MusicBase(pMixer, pDisk) {
 	_driverFileBase = 60202;
 
 	_opl = OPL::Config::create();

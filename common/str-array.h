@@ -33,7 +33,6 @@ namespace Common {
  */
 typedef Array<String> StringArray;
 
-
 } // End of namespace Common
 
 #endif

@@ -27,8 +27,8 @@
 
 namespace Common {
 
-template<typename T> class List;
-
+template <typename T>
+class List;
 
 namespace ListInternal {
 	struct NodeBase {
@@ -36,27 +36,31 @@ namespace ListInternal {
 		NodeBase *_next;
 	};
 
-	template<typename T>
+	template <typename T>
 	struct Node : public NodeBase {
 		T _data;
 
-		Node(const T &x) : _data(x) {}
+		Node(const T &x)
+		  : _data(x) {}
 	};
 
-	template<typename T> struct ConstIterator;
+	template <typename T>
+	struct ConstIterator;
 
-	template<typename T>
+	template <typename T>
 	struct Iterator {
-		typedef Iterator<T>	Self;
-		typedef Node<T> *	NodePtr;
-		typedef T &			ValueRef;
-		typedef T *			ValuePtr;
-		typedef T			ValueType;
+		typedef Iterator<T> Self;
+		typedef Node<T> *NodePtr;
+		typedef T &ValueRef;
+		typedef T *ValuePtr;
+		typedef T ValueType;
 
 		NodeBase *_node;
 
-		Iterator() : _node(nullptr) {}
-		explicit Iterator(NodeBase *node) : _node(node) {}
+		Iterator()
+		  : _node(nullptr) {}
+		explicit Iterator(NodeBase *node)
+		  : _node(node) {}
 
 		// Prefix inc
 		Self &operator++() {
@@ -99,18 +103,21 @@ namespace ListInternal {
 		}
 	};
 
-	template<typename T>
+	template <typename T>
 	struct ConstIterator {
-		typedef ConstIterator<T>	Self;
-		typedef const Node<T> *	NodePtr;
-		typedef const T &		ValueRef;
-		typedef const T *		ValuePtr;
+		typedef ConstIterator<T> Self;
+		typedef const Node<T> *NodePtr;
+		typedef const T &ValueRef;
+		typedef const T *ValuePtr;
 
 		const NodeBase *_node;
 
-		ConstIterator() : _node(nullptr) {}
-		explicit ConstIterator(const NodeBase *node) : _node(node) {}
-		ConstIterator(const Iterator<T> &x) : _node(x._node) {}
+		ConstIterator()
+		  : _node(nullptr) {}
+		explicit ConstIterator(const NodeBase *node)
+		  : _node(node) {}
+		ConstIterator(const Iterator<T> &x)
+		  : _node(x._node) {}
 
 		// Prefix inc
 		Self &operator++() {
@@ -153,18 +160,16 @@ namespace ListInternal {
 		}
 	};
 
-
-	template<typename T>
-	bool operator==(const Iterator<T>& a, const ConstIterator<T>& b) {
+	template <typename T>
+	bool operator==(const Iterator<T> &a, const ConstIterator<T> &b) {
 		return a._node == b._node;
 	}
 
-	template<typename T>
-	bool operator!=(const Iterator<T>& a, const ConstIterator<T>& b) {
+	template <typename T>
+	bool operator!=(const Iterator<T> &a, const ConstIterator<T> &b) {
 		return a._node != b._node;
 	}
 }
-
 
 } // End of namespace Common
 

@@ -34,8 +34,10 @@ class CEye : public CHeadPiece {
 	bool ActMsg(CActMsg *msg);
 	bool PETGainedObjectMsg(CPETGainedObjectMsg *msg);
 	bool PassOnDragStartMsg(CPassOnDragStartMsg *msg);
+
 private:
 	bool _eyeFlag;
+
 public:
 	CLASSDEF;
 	CEye();

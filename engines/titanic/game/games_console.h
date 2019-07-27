@@ -31,11 +31,15 @@ class CGamesConsole : public CBackground {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
+
 public:
 	bool _active;
+
 public:
 	CLASSDEF;
-	CGamesConsole() : CBackground(), _active(false) {}
+	CGamesConsole()
+	  : CBackground()
+	  , _active(false) {}
 
 	/**
 	 * Save the data for the class to file

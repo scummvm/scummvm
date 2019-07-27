@@ -25,7 +25,8 @@
 
 namespace Titanic {
 
-CAudioBuffer::CAudioBuffer(int maxSize) : _finished(false) {
+CAudioBuffer::CAudioBuffer(int maxSize)
+  : _finished(false) {
 	reset();
 }
 

@@ -40,14 +40,14 @@
 namespace Glk {
 namespace Alan2 {
 
-extern void compact(ParamElem *a);
-extern int lstlen(ParamElem *a);
-extern Boolean inlst(ParamElem *l, Aword e);
-extern void lstcpy(ParamElem *a, ParamElem *b);
-extern void sublst(ParamElem *a, ParamElem *b);
-extern void mrglst(ParamElem *a, ParamElem *b);
-extern void isect(ParamElem *a, ParamElem *b);
-extern void cpyrefs(ParamElem *p, Aword *r);
+	extern void compact(ParamElem *a);
+	extern int lstlen(ParamElem *a);
+	extern Boolean inlst(ParamElem *l, Aword e);
+	extern void lstcpy(ParamElem *a, ParamElem *b);
+	extern void sublst(ParamElem *a, ParamElem *b);
+	extern void mrglst(ParamElem *a, ParamElem *b);
+	extern void isect(ParamElem *a, ParamElem *b);
+	extern void cpyrefs(ParamElem *p, Aword *r);
 
 } // End of namespace Alan2
 } // End of namespace Glk

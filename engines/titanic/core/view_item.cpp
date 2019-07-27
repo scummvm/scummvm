@@ -33,14 +33,15 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CViewItem, CNamedItem)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(MouseButtonUpMsg)
-	ON_MESSAGE(MouseDoubleClickMsg)
-	ON_MESSAGE(MouseMoveMsg)
-	ON_MESSAGE(MovementMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseButtonUpMsg)
+ON_MESSAGE(MouseDoubleClickMsg)
+ON_MESSAGE(MouseMoveMsg)
+ON_MESSAGE(MovementMsg)
 END_MESSAGE_MAP()
 
-CViewItem::CViewItem() : CNamedItem() {
+CViewItem::CViewItem()
+  : CNamedItem() {
 	Common::fill(&_buttonUpTargets[0], &_buttonUpTargets[4], (CTreeItem *)nullptr);
 	_field24 = 0;
 	_angle = 0.0;
@@ -167,7 +168,7 @@ void CViewItem::enterView(CViewItem *newView) {
 			}
 		}
 
-		// WORKAROUND: Do a dummy mouse movement, to allow for the correct cursor 
+		// WORKAROUND: Do a dummy mouse movement, to allow for the correct cursor
 		// to be set for the current position in the new view
 		CMouseMoveMsg moveMsg(g_vm->_events->getMousePos(), 0);
 		newView->MouseMoveMsg(&moveMsg);
@@ -176,7 +177,7 @@ void CViewItem::enterView(CViewItem *newView) {
 
 CLinkItem *CViewItem::findLink(CViewItem *newView) {
 	for (CTreeItem *treeItem = getFirstChild(); treeItem;
-			treeItem = treeItem->scan(this)) {
+	     treeItem = treeItem->scan(this)) {
 		CLinkItem *link = dynamic_cast<CLinkItem *>(treeItem);
 		if (link && link->connectsTo(newView))
 			return link;
@@ -193,7 +194,7 @@ bool CViewItem::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 				findNode()->findRoom();
 
 				CLinkItem *linkItem = dynamic_cast<CLinkItem *>(
-					findChildInstanceOf(CLinkItem::_type));
+				  findChildInstanceOf(CLinkItem::_type));
 				while (linkItem) {
 					if (linkItem->_bounds.contains(msg->_mousePos)) {
 						gm->_gameState.triggerLink(linkItem);
@@ -201,7 +202,7 @@ bool CViewItem::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 					}
 
 					linkItem = dynamic_cast<CLinkItem *>(
-						findNextInstanceOf(CLinkItem::_type, linkItem));
+					  findNextInstanceOf(CLinkItem::_type, linkItem));
 				}
 
 				handleMouseMsg(msg, false);
@@ -267,8 +268,7 @@ bool CViewItem::handleMouseMsg(CMouseMsg *msg, bool flag) {
 	for (CTreeItem *treeItem = scan(this); treeItem; treeItem = treeItem->scan(this)) {
 		CGameObject *gameObject = dynamic_cast<CGameObject *>(treeItem);
 		if (gameObject) {
-			if (gameObject->checkPoint(msg->_mousePos, false, true) &&
-					(!flag || !gameObject->_handleMouseFlag)) {
+			if (gameObject->checkPoint(msg->_mousePos, false, true) && (!flag || !gameObject->_handleMouseFlag)) {
 				if (gameObjects.size() < 256)
 					gameObjects.push_back(gameObject);
 			}
@@ -330,7 +330,7 @@ CString CViewItem::getFullViewName() const {
 	CRoomItem *room = node->findRoom();
 
 	return CString::format("%s.%s.%s", room->getName().c_str(),
-		node->getName().c_str(), getName().c_str());
+	                       node->getName().c_str(), getName().c_str());
 }
 
 CString CViewItem::getNodeViewName() const {
@@ -346,7 +346,7 @@ bool CViewItem::MovementMsg(CMovementMsg *msg) {
 
 	// First allow any child objects to handle it
 	for (CTreeItem *treeItem = getFirstChild(); treeItem;
-		treeItem = treeItem->scan(this)) {
+	     treeItem = treeItem->scan(this)) {
 		if (msg->execute(treeItem, nullptr, 0))
 			return true;
 	}
@@ -358,7 +358,7 @@ bool CViewItem::MovementMsg(CMovementMsg *msg) {
 		// Iterate through the view's contents to find a link or item
 		// with the appropriate movement action
 		for (CTreeItem *treeItem = getFirstChild(); treeItem;
-				treeItem = treeItem->scan(this)) {
+		     treeItem = treeItem->scan(this)) {
 			CLinkItem *link = dynamic_cast<CLinkItem *>(treeItem);
 			CGameObject *gameObj = dynamic_cast<CGameObject *>(treeItem);
 

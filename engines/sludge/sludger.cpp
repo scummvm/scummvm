@@ -28,10 +28,10 @@
 #include "sludge/builtin.h"
 #include "sludge/cursors.h"
 #include "sludge/event.h"
+#include "sludge/fileset.h"
+#include "sludge/floor.h"
 #include "sludge/fonttext.h"
 #include "sludge/freeze.h"
-#include "sludge/floor.h"
-#include "sludge/fileset.h"
 #include "sludge/function.h"
 #include "sludge/graphics.h"
 #include "sludge/imgloader.h"
@@ -46,8 +46,8 @@
 #include "sludge/sludger.h"
 #include "sludge/sound.h"
 #include "sludge/speech.h"
-#include "sludge/sprites.h"
 #include "sludge/sprbanks.h"
+#include "sludge/sprites.h"
 #include "sludge/statusba.h"
 #include "sludge/variable.h"
 #include "sludge/version.h"
@@ -74,7 +74,7 @@ extern VariableStack *noStack;
 extern bool allowAnyFilename;
 
 Common::File *openAndVerify(const Common::String &filename, char extra1, char extra2,
-		const char *er, int &fileVersion) {
+                            const char *er, int &fileVersion) {
 	Common::File *fp = new Common::File();
 	if (!fp->open(filename)) {
 		fatal("Can't open file", filename);
@@ -170,8 +170,8 @@ void killSludge() {
 
 	// global variables
 	numBIFNames = numUserFunc = 0;
-	delete []allUserFunc;
-	delete []allBIFNames;
+	delete[] allUserFunc;
+	delete[] allBIFNames;
 }
 
 bool initSludge(const Common::String &filename) {
@@ -219,7 +219,7 @@ bool initSludge(const Common::String &filename) {
 	debugC(2, kSludgeDebugDataLoad, "specialSettings : %i", specialSettings);
 	g_sludge->_timer.setDesiredFPS(1000 / fp->readByte());
 
-	readString(fp);  // Unused - was used for registration purposes.
+	readString(fp); // Unused - was used for registration purposes.
 
 	uint bytes_read = fp->read(&fileTime, sizeof(FILETIME));
 	if (bytes_read != sizeof(FILETIME) && fp->err()) {
@@ -256,7 +256,6 @@ bool initSludge(const Common::String &filename) {
 		Graphics::Surface gameIcon;
 		if (!ImgLoader::loadImage(fp, &gameIcon, false))
 			return false;
-
 	}
 
 	if (customIconLogo & 2) {
@@ -291,9 +290,9 @@ bool initSludge(const Common::String &filename) {
 
 void displayBase() {
 	g_sludge->_gfxMan->clear(); // Clear screen
-	g_sludge->_gfxMan->drawBackDrop();// Draw Backdrop
+	g_sludge->_gfxMan->drawBackDrop(); // Draw Backdrop
 	g_sludge->_gfxMan->drawZBuffer(g_sludge->_gfxMan->getCamX(), g_sludge->_gfxMan->getCamY(), false);
-	g_sludge->_peopleMan->drawPeople();// Then add any moving characters...
+	g_sludge->_peopleMan->drawPeople(); // Then add any moving characters...
 	g_sludge->_gfxMan->displaySpriteLayers();
 }
 

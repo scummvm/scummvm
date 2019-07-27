@@ -31,23 +31,23 @@
 
 #include "sword25/gfx/animationresource.h"
 
+#include "sword25/gfx/bitmapresource.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/resmanager.h" // for PRECACHE_RESOURCES
 #include "sword25/package/packagemanager.h"
-#include "sword25/gfx/bitmapresource.h"
 
 namespace Sword25 {
 
 enum {
 	DEFAULT_FPS = 10,
-	MIN_FPS     = 1,
-	MAX_FPS     = 200
+	MIN_FPS = 1,
+	MAX_FPS = 200
 };
 
-AnimationResource::AnimationResource(const Common::String &filename) :
-		Resource(filename, Resource::TYPE_ANIMATION),
-		Common::XMLParser(),
-		_valid(false) {
+AnimationResource::AnimationResource(const Common::String &filename)
+  : Resource(filename, Resource::TYPE_ANIMATION)
+  , Common::XMLParser()
+  , _valid(false) {
 	// Get a pointer to the package manager
 	_pPackage = Kernel::getInstance()->getPackage();
 	assert(_pPackage);
@@ -113,7 +113,7 @@ bool AnimationResource::parseBooleanKey(Common::String s, bool &result) {
 bool AnimationResource::parserCallback_animation(ParserNode *node) {
 	if (!parseIntegerKey(node->values["fps"], 1, &_FPS) || (_FPS < MIN_FPS) || (_FPS > MAX_FPS)) {
 		return parserError(Common::String::format("Illegal or missing fps attribute in <animation> tag in \"%s\". Assuming default (\"%d\").",
-		                 getFileName().c_str(), DEFAULT_FPS));
+		                                          getFileName().c_str(), DEFAULT_FPS));
 	}
 
 	// Loop type value
@@ -127,7 +127,7 @@ bool AnimationResource::parserCallback_animation(ParserNode *node) {
 		_animationType = Animation::AT_JOJO;
 	} else {
 		warning("Illegal type value (\"%s\") in <animation> tag in \"%s\". Assuming default (\"loop\").",
-				loopTypeString, getFileName().c_str());
+		        loopTypeString, getFileName().c_str());
 		_animationType = Animation::AT_LOOP;
 	}
 
@@ -149,7 +149,7 @@ bool AnimationResource::parserCallback_frame(ParserNode *node) {
 	frame.fileName = _pPackage->getAbsolutePath(fileString);
 	if (frame.fileName.empty()) {
 		error("Could not create absolute path for file specified in <frame> tag in \"%s\": \"%s\".",
-			getFileName().c_str(), fileString);
+		      getFileName().c_str(), fileString);
 		return false;
 	}
 
@@ -159,28 +159,27 @@ bool AnimationResource::parserCallback_frame(ParserNode *node) {
 
 	const char *hotspotxString = node->values["hotspotx"].c_str();
 	const char *hotspotyString = node->values["hotspoty"].c_str();
-	if ((!hotspotxString && hotspotyString) ||
-	        (hotspotxString && !hotspotyString))
+	if ((!hotspotxString && hotspotyString) || (hotspotxString && !hotspotyString))
 		warning("%s attribute occurred without %s attribute in <frame> tag in \"%s\". Assuming default (\"0\").",
-		                 hotspotxString ? "hotspotx" : "hotspoty",
-		                 !hotspotyString ? "hotspoty" : "hotspotx",
-		                 getFileName().c_str());
+		        hotspotxString ? "hotspotx" : "hotspoty",
+		        !hotspotyString ? "hotspoty" : "hotspotx",
+		        getFileName().c_str());
 
 	frame.hotspotX = 0;
 	if (hotspotxString && !parseIntegerKey(hotspotxString, 1, &frame.hotspotX))
 		warning("Illegal hotspotx value (\"%s\") in frame tag in \"%s\". Assuming default (\"%d\").",
-		                 hotspotxString, getFileName().c_str(), frame.hotspotX);
+		        hotspotxString, getFileName().c_str(), frame.hotspotX);
 
 	frame.hotspotY = 0;
 	if (hotspotyString && !parseIntegerKey(hotspotyString, 1, &frame.hotspotY))
 		warning("Illegal hotspoty value (\"%s\") in frame tag in \"%s\". Assuming default (\"%d\").",
-		                 hotspotyString, getFileName().c_str(), frame.hotspotY);
+		        hotspotyString, getFileName().c_str(), frame.hotspotY);
 
 	Common::String flipVString = node->values["flipv"];
 	if (!flipVString.empty()) {
 		if (!parseBooleanKey(flipVString, frame.flipV)) {
 			warning("Illegal flipv value (\"%s\") in <frame> tag in \"%s\". Assuming default (\"false\").",
-			                 flipVString.c_str(), getFileName().c_str());
+			        flipVString.c_str(), getFileName().c_str());
 			frame.flipV = false;
 		}
 	} else
@@ -190,7 +189,7 @@ bool AnimationResource::parserCallback_frame(ParserNode *node) {
 	if (!flipHString.empty()) {
 		if (!parseBooleanKey(flipHString, frame.flipH)) {
 			warning("Illegal fliph value (\"%s\") in <frame> tag in \"%s\". Assuming default (\"false\").",
-			                 flipHString.c_str(), getFileName().c_str());
+			        flipHString.c_str(), getFileName().c_str());
 			frame.flipH = false;
 		}
 	} else

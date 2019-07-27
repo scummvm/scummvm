@@ -31,34 +31,35 @@
 namespace Cloud {
 namespace OneDrive {
 
-class OneDriveStorage;
+	class OneDriveStorage;
 
-class OneDriveListDirectoryRequest: public Networking::Request {
-	Common::String _requestedPath;
-	bool _requestedRecursive;
-	OneDriveStorage *_storage;
-	Storage::ListDirectoryCallback _listDirectoryCallback;
-	Common::Array<StorageFile> _files;
-	Common::Array<Common::String> _directoriesQueue;
-	Common::String _currentDirectory;
-	Request *_workingRequest;
-	bool _ignoreCallback;
-	Common::String _date;
+	class OneDriveListDirectoryRequest : public Networking::Request {
+		Common::String _requestedPath;
+		bool _requestedRecursive;
+		OneDriveStorage *_storage;
+		Storage::ListDirectoryCallback _listDirectoryCallback;
+		Common::Array<StorageFile> _files;
+		Common::Array<Common::String> _directoriesQueue;
+		Common::String _currentDirectory;
+		Request *_workingRequest;
+		bool _ignoreCallback;
+		Common::String _date;
 
-	void start();
-	void listNextDirectory();
-	void listedDirectoryCallback(Networking::JsonResponse response);
-	void listedDirectoryErrorCallback(Networking::ErrorResponse error);
-	void makeRequest(Common::String url);
-	void finishListing(Common::Array<StorageFile> &files);
-public:
-	OneDriveListDirectoryRequest(OneDriveStorage *storage, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive = false);
-	virtual ~OneDriveListDirectoryRequest();
+		void start();
+		void listNextDirectory();
+		void listedDirectoryCallback(Networking::JsonResponse response);
+		void listedDirectoryErrorCallback(Networking::ErrorResponse error);
+		void makeRequest(Common::String url);
+		void finishListing(Common::Array<StorageFile> &files);
 
-	virtual void handle();
-	virtual void restart();
-	virtual Common::String date() const;
-};
+	public:
+		OneDriveListDirectoryRequest(OneDriveStorage *storage, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive = false);
+		virtual ~OneDriveListDirectoryRequest();
+
+		virtual void handle();
+		virtual void restart();
+		virtual Common::String date() const;
+	};
 
 } // End of namespace OneDrive
 } // End of namespace Cloud

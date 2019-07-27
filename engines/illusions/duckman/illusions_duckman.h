@@ -23,9 +23,9 @@
 #ifndef ILLUSIONS_ILLUSIONS_DUCKMAN_H
 #define ILLUSIONS_ILLUSIONS_DUCKMAN_H
 
-#include "illusions/illusions.h"
 #include "common/algorithm.h"
 #include "common/stack.h"
+#include "illusions/illusions.h"
 
 namespace Illusions {
 
@@ -79,11 +79,12 @@ struct OpCall;
 class IllusionsEngine_Duckman : public IllusionsEngine {
 public:
 	IllusionsEngine_Duckman(OSystem *syst, const IllusionsGameDescription *gd);
+
 protected:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
-public:
 
+public:
 	uint32 _prevSceneId;
 	uint32 _theSceneId;
 	uint32 _theThreadId;
@@ -158,13 +159,13 @@ public:
 	uint32 startTimerThread(uint32 duration, uint32 threadId);
 	uint32 startAbortableThread(byte *scriptCodeIp1, byte *scriptCodeIp2, uint32 callingThreadId);
 	uint32 startTalkThread(uint32 objectId, uint32 talkId, uint32 sequenceId1,
-		uint32 sequenceId2, uint32 callingThreadId);
+	                       uint32 sequenceId2, uint32 callingThreadId);
 	uint32 startTempScriptThread(byte *scriptCodeIp, uint32 callingThreadId,
-		uint32 value8, uint32 valueC, uint32 value10);
+	                             uint32 value8, uint32 valueC, uint32 value10);
 	void resumeFromSavegame(uint32 callingThreadId);
 
 	void newScriptThread(uint32 threadId, uint32 callingThreadId, uint notifyFlags,
-		byte *scriptCodeIp);
+	                     byte *scriptCodeIp);
 	uint32 newTimerThread(uint32 duration, uint32 callingThreadId, bool isAbortable);
 	uint32 newTempThreadId();
 
@@ -201,7 +202,6 @@ public:
 	bool loadSavegameFromScript(int16 slotNum, uint32 callingThreadId);
 	bool saveSavegameFromScript(int16 slotNum, uint32 callingThreadId);
 	void activateSavegame(uint32 callingThreadId);
-
 };
 
 } // End of namespace Illusions

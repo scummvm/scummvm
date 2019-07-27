@@ -22,11 +22,11 @@
 
 #include "mutationofjb/tasks/saytask.h"
 
-#include "mutationofjb/tasks/taskmanager.h"
 #include "mutationofjb/assets.h"
 #include "mutationofjb/game.h"
 #include "mutationofjb/gamedata.h"
 #include "mutationofjb/room.h"
+#include "mutationofjb/tasks/taskmanager.h"
 #include "mutationofjb/util.h"
 
 #include "graphics/managed_surface.h"
@@ -34,7 +34,10 @@
 
 namespace MutationOfJB {
 
-SayTask::SayTask(const Common::String &toSay, uint8 color) : _toSay(toSay), _color(color), _timer(50 * toSay.size()) {}
+SayTask::SayTask(const Common::String &toSay, uint8 color)
+  : _toSay(toSay)
+  , _color(color)
+  , _timer(50 * toSay.size()) {}
 
 void SayTask::start() {
 	Game &game = getTaskManager()->getGame();

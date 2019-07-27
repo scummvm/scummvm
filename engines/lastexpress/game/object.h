@@ -34,8 +34,7 @@ class LastExpressEngine;
 
 class Objects : Common::Serializable {
 public:
-
-	struct Object : Common::Serializable {                         // All fields should be saved as bytes
+	struct Object : Common::Serializable { // All fields should be saved as bytes
 		EntityIndex entity;
 		ObjectLocation status;
 		CursorStyle windowCursor;

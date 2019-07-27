@@ -21,23 +21,24 @@
  */
 
 #include "illusions/menusystem.h"
-#include "illusions/illusions.h"
+#include "common/config-manager.h"
+#include "common/translation.h"
+#include "gui/saveload.h"
 #include "illusions/dictionary.h"
+#include "illusions/illusions.h"
 #include "illusions/input.h"
 #include "illusions/screen.h"
 #include "illusions/screentext.h"
 #include "illusions/thread.h"
 #include "illusions/time.h"
-#include "common/config-manager.h"
-#include "common/translation.h"
-#include "gui/saveload.h"
 
 namespace Illusions {
 
 // MenuItem
 
 MenuItem::MenuItem(const Common::String text, BaseMenuAction *action)
-	: _text(text), _action(action) {
+  : _text(text)
+  , _action(action) {
 }
 
 MenuItem::~MenuItem() {
@@ -52,10 +53,14 @@ void MenuItem::executeAction(const Common::Point &point) {
 // BaseMenu
 
 BaseMenu::BaseMenu(BaseMenuSystem *menuSystem, uint32 fontId, byte backgroundColor, byte borderColor, byte textColor, byte fieldE,
-	uint defaultMenuItemIndex)
-	: _menuSystem(menuSystem), _fontId(fontId), _backgroundColor(backgroundColor), _borderColor(borderColor), _textColor(textColor), _fieldE(fieldE),
-	_defaultMenuItemIndex(defaultMenuItemIndex)
-{
+                   uint defaultMenuItemIndex)
+  : _menuSystem(menuSystem)
+  , _fontId(fontId)
+  , _backgroundColor(backgroundColor)
+  , _borderColor(borderColor)
+  , _textColor(textColor)
+  , _fieldE(fieldE)
+  , _defaultMenuItemIndex(defaultMenuItemIndex) {
 }
 
 BaseMenu::~BaseMenu() {
@@ -76,7 +81,7 @@ uint BaseMenu::getHeaderLinesCount() {
 	return _text.size();
 }
 
-const Common::String& BaseMenu::getHeaderLine(uint index) {
+const Common::String &BaseMenu::getHeaderLine(uint index) {
 	return _text[index];
 }
 
@@ -95,7 +100,9 @@ void BaseMenu::enterMenu() {
 // BaseMenuSystem
 
 BaseMenuSystem::BaseMenuSystem(IllusionsEngine *vm)
-	: _vm(vm), _isTimeOutEnabled(false), _menuChoiceOffset(0) {
+  : _vm(vm)
+  , _isTimeOutEnabled(false)
+  , _menuChoiceOffset(0) {
 }
 
 BaseMenuSystem::~BaseMenuSystem() {
@@ -111,7 +118,7 @@ void BaseMenuSystem::playSoundEffect14() {
 
 void BaseMenuSystem::selectMenuChoiceIndex(uint choiceIndex) {
 	debug(0, "choiceIndex: %d", choiceIndex);
-	debug(0, "_menuChoiceOffset: %p", (void*)_menuChoiceOffset);
+	debug(0, "_menuChoiceOffset: %p", (void *)_menuChoiceOffset);
 	if (choiceIndex > 0 && _menuChoiceOffset) {
 		*_menuChoiceOffset = _menuChoiceOffsets[choiceIndex - 1];
 		debug(0, "*_menuChoiceOffset: %04X", *_menuChoiceOffset);
@@ -207,8 +214,7 @@ bool BaseMenuSystem::calcMenuItemIndexAtPoint(Common::Point pt, uint &menuItemIn
 
 	uint index = _hoveredMenuItemIndex3 + (pt.y - rect._topLeft.y) / (rect._bottomRight.y - rect._topLeft.y);
 
-	if (pt.y < rect._topLeft.y || pt.x < rect._topLeft.x || pt.x > rect._bottomRight.x ||
-		index > _field54 || index > _hoveredMenuItemIndex3 + _menuItemCount - 1)
+	if (pt.y < rect._topLeft.y || pt.x < rect._topLeft.x || pt.x > rect._bottomRight.x || index > _field54 || index > _hoveredMenuItemIndex3 + _menuItemCount - 1)
 		return false;
 
 	menuItemIndex = index;
@@ -234,7 +240,6 @@ void BaseMenuSystem::activateMenu(BaseMenu *menu) {
 		_menuItemCount = menu->_field2C18;
 	else
 		_menuItemCount = v2;
-
 }
 
 void BaseMenuSystem::initActorHoverBackground() {
@@ -282,7 +287,7 @@ void BaseMenuSystem::updateActorHoverBackground() {
 	Control *v0 = _vm->getObjectControl(0x4013E);
 	WRect rect;
 	calcMenuItemRect(_hoveredMenuItemIndex2 - _hoveredMenuItemIndex3 + 1, rect);
-  	v0->setActorPosition(rect._topLeft);
+	v0->setActorPosition(rect._topLeft);
 }
 
 void BaseMenuSystem::hideActorHoverBackground() {
@@ -395,7 +400,6 @@ void BaseMenuSystem::handleClick(uint menuItemIndex, const Common::Point &mouseP
 
 	MenuItem *menuItem = _activeMenu->getMenuItem(menuItemIndex - 1);
 	menuItem->executeAction(mousePos);
-
 }
 
 uint BaseMenuSystem::drawMenuText(BaseMenu *menu) {
@@ -442,7 +446,7 @@ uint BaseMenuSystem::drawMenuText(BaseMenu *menu) {
 	uint16 *outTextPtr;
 	if (!_vm->_screenText->insertText(text, menu->_fontId, dimensions, textPt, flags, menu->_backgroundColor, menu->_borderColor, 0xFF, 0xFF, 0xFF, outTextPtr)) {
 		--lineCount;
-		for ( ; *outTextPtr; ++outTextPtr) {
+		for (; *outTextPtr; ++outTextPtr) {
 			if (*outTextPtr == 13)
 				--lineCount;
 		}
@@ -564,7 +568,6 @@ void BaseMenuSystem::updateTimeOut(bool resetTimeOut) {
 			selectMenuChoiceIndex(_timeOutMenuChoiceIndex);
 		}
 	}
-
 }
 
 void BaseMenuSystem::redrawMenuText(BaseMenu *menu) {
@@ -601,7 +604,8 @@ bool BaseMenuSystem::calcMenuItemTextPositionAtPoint(Common::Point pt, int &offs
 
 // MenuTextBuilder
 
-MenuTextBuilder::MenuTextBuilder() : _pos(0) {
+MenuTextBuilder::MenuTextBuilder()
+  : _pos(0) {
 }
 
 void MenuTextBuilder::appendString(const Common::String &value) {
@@ -621,13 +625,14 @@ void MenuTextBuilder::finalize() {
 // BaseMenuAction
 
 BaseMenuAction::BaseMenuAction(BaseMenuSystem *menuSystem)
-	: _menuSystem(menuSystem) {
+  : _menuSystem(menuSystem) {
 }
 
 // MenuActionEnterMenu
 
 MenuActionEnterMenu::MenuActionEnterMenu(BaseMenuSystem *menuSystem, int menuId)
-	: BaseMenuAction(menuSystem), _menuId(menuId) {
+  : BaseMenuAction(menuSystem)
+  , _menuId(menuId) {
 }
 
 void MenuActionEnterMenu::execute() {
@@ -637,7 +642,7 @@ void MenuActionEnterMenu::execute() {
 // MenuActionLeaveMenu
 
 MenuActionLeaveMenu::MenuActionLeaveMenu(BaseMenuSystem *menuSystem)
-	: BaseMenuAction(menuSystem) {
+  : BaseMenuAction(menuSystem) {
 }
 
 void MenuActionLeaveMenu::execute() {
@@ -647,7 +652,8 @@ void MenuActionLeaveMenu::execute() {
 // MenuActionReturnChoice
 
 MenuActionReturnChoice::MenuActionReturnChoice(BaseMenuSystem *menuSystem, uint choiceIndex)
-	: BaseMenuAction(menuSystem), _choiceIndex(choiceIndex) {
+  : BaseMenuAction(menuSystem)
+  , _choiceIndex(choiceIndex) {
 }
 
 void MenuActionReturnChoice::execute() {
@@ -658,7 +664,9 @@ void MenuActionReturnChoice::execute() {
 // MenuActionEnterQueryMenu
 
 MenuActionEnterQueryMenu::MenuActionEnterQueryMenu(BaseMenuSystem *menuSystem, int menuId, uint confirmationChoiceIndex)
-	: BaseMenuAction(menuSystem), _menuId(menuId), _confirmationChoiceIndex(confirmationChoiceIndex) {
+  : BaseMenuAction(menuSystem)
+  , _menuId(menuId)
+  , _confirmationChoiceIndex(confirmationChoiceIndex) {
 }
 
 void MenuActionEnterQueryMenu::execute() {
@@ -669,7 +677,8 @@ void MenuActionEnterQueryMenu::execute() {
 // MenuActionLoadGame
 
 MenuActionLoadGame::MenuActionLoadGame(BaseMenuSystem *menuSystem, uint choiceIndex)
-	: BaseMenuAction(menuSystem), _choiceIndex(choiceIndex) {
+  : BaseMenuAction(menuSystem)
+  , _choiceIndex(choiceIndex) {
 }
 
 void MenuActionLoadGame::execute() {
@@ -688,13 +697,13 @@ void MenuActionLoadGame::execute() {
 		_menuSystem->setSavegameSlotNum(slot);
 		_menuSystem->selectMenuChoiceIndex(_choiceIndex);
 	}
-
 }
 
 // MenuActionSaveGame
 
 MenuActionSaveGame::MenuActionSaveGame(BaseMenuSystem *menuSystem, uint choiceIndex)
-		: BaseMenuAction(menuSystem), _choiceIndex(choiceIndex) {
+  : BaseMenuAction(menuSystem)
+  , _choiceIndex(choiceIndex) {
 }
 
 void MenuActionSaveGame::execute() {

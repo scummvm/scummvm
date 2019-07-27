@@ -24,19 +24,23 @@
 
 #if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER)
 
-#include "backends/plugins/elf/memory-manager.h"
-#include "common/debug.h"
-#include "common/util.h"
-#include <malloc.h>
+#	include "backends/plugins/elf/memory-manager.h"
+#	include "common/debug.h"
+#	include "common/util.h"
+#	include <malloc.h>
 
 namespace Common {
 DECLARE_SINGLETON(ELFMemoryManager);
 }
 
-ELFMemoryManager::ELFMemoryManager() :
-	_heap(0), _heapSize(0), _heapAlign(0),
-	_trackAllocs(false), _measuredSize(0), _measuredAlign(0),
-	_bytesAllocated(0) {}
+ELFMemoryManager::ELFMemoryManager()
+  : _heap(0)
+  , _heapSize(0)
+  , _heapAlign(0)
+  , _trackAllocs(false)
+  , _measuredSize(0)
+  , _measuredAlign(0)
+  , _bytesAllocated(0) {}
 
 ELFMemoryManager::~ELFMemoryManager() {
 	free(_heap);
@@ -51,11 +55,11 @@ void ELFMemoryManager::trackPlugin(bool value) {
 
 	_trackAllocs = value;
 
-	if (_trackAllocs) {	// start measuring
+	if (_trackAllocs) { // start measuring
 		// start tracking allocations
 		_measuredAlign = 0;
 
-	} else {	// we're done measuring
+	} else { // we're done measuring
 		// get the total allocated size
 		uint32 measuredSize = _allocList.back().end() - _allocList.front().start;
 
@@ -63,7 +67,7 @@ void ELFMemoryManager::trackPlugin(bool value) {
 		_heapAlign = MAX(_heapAlign, _measuredAlign);
 
 		_allocList.clear();
-		_bytesAllocated = 0;	// reset
+		_bytesAllocated = 0; // reset
 
 		debug(2, "measured a plugin of size %d. Max size %d. Max align %d", measuredSize, _heapSize, _heapAlign);
 	}
@@ -79,15 +83,16 @@ void ELFMemoryManager::trackAlloc(uint32 align, uint32 size) {
 
 void ELFMemoryManager::allocateHeap() {
 	// The memory manager should only allocate once
-	assert (!_heap);
-	assert (_heapSize);
+	assert(!_heap);
+	assert(_heapSize);
 
 	// clear the list
 	_allocList.clear();
 	_bytesAllocated = 0;
 
 	debug(2, "ELFMemoryManager: allocating %d bytes aligned at %d as the \
-			plugin heap", _heapSize, _heapAlign);
+			plugin heap",
+	      _heapSize, _heapAlign);
 
 	// prepare the heap
 	if (_heapAlign)
@@ -136,7 +141,7 @@ void *ELFMemoryManager::allocateOnHeap(uint32 align, uint32 size) {
 		lastAddress = i->end();
 		// align to desired alignment
 		if (align) {
-			lastAddress = (byte *)( ((uint32)lastAddress + align - 1) & ~(align - 1) );
+			lastAddress = (byte *)(((uint32)lastAddress + align - 1) & ~(align - 1));
 		}
 	}
 
@@ -151,7 +156,7 @@ void *ELFMemoryManager::allocateOnHeap(uint32 align, uint32 size) {
 	_bytesAllocated += size;
 
 	debug(7, "ELFMemoryManager: allocated %d bytes at %p. Total %d bytes",
-		size, lastAddress, _bytesAllocated);
+	      size, lastAddress, _bytesAllocated);
 
 	return lastAddress;
 }
@@ -163,7 +168,7 @@ void ELFMemoryManager::deallocateFromHeap(void *ptr) {
 			_bytesAllocated -= (*i).size;
 
 			debug(7, "ELFMemoryManager: freed %d bytes at %p. Total %d bytes",
-				(*i).size, (*i).start, _bytesAllocated);
+			      (*i).size, (*i).start, _bytesAllocated);
 
 			_allocList.erase(i);
 			break;

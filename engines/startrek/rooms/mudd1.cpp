@@ -35,7 +35,7 @@
 #define HOTSPOT_BLUE_BUTTON 0x23
 #define HOTSPOT_YELLOW_BUTTON 0x24
 #define HOTSPOT_PURPLE_BUTTON 0x25
-#define HOTSPOT_WEST_DOOR  0x26
+#define HOTSPOT_WEST_DOOR 0x26
 #define HOTSPOT_NORTH_DOOR 0x27
 #define HOTSPOT_SOUTH_DOOR 0x28
 
@@ -64,10 +64,9 @@ void Room::mudd1Timer1Expired() {
 }
 
 void Room::mudd1UseCommunicator() {
-	showText(TX_SPEAKER_KIRK,  TX_MUD1_001);
+	showText(TX_SPEAKER_KIRK, TX_MUD1_001);
 	showText(TX_SPEAKER_UHURA, TX_STATICU1);
 }
-
 
 void Room::mudd1UseSpockOnBlueButton() { // Loads up the torpedo
 	if (!_awayMission->mudd.torpedoLoaded) {
@@ -104,7 +103,6 @@ void Room::mudd1CraneFinishedMoving() {
 		showText(TX_SPEAKER_SPOCK, TX_MUD1_016);
 }
 
-
 void Room::mudd1UseSpockOnYellowButton() { // Unloads the torpedo
 	if (_awayMission->mudd.torpedoLoaded) {
 		_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_E;
@@ -125,7 +123,6 @@ void Room::mudd1SpockPressedYellowButton() {
 	loadActorAnimC(OBJECT_CRANE_ANIMATION, "s4wbsb", -1, -1, &Room::mudd1CraneFinishedMoving);
 	_awayMission->mudd.torpedoLoaded = false;
 }
-
 
 void Room::mudd1UseSpockOnRedButton() {
 	if (_awayMission->mudd.torpedoLoaded) {
@@ -175,7 +172,7 @@ void Room::mudd1SpockPressedRedButton() {
 
 	case 1:
 		showText(TX_SPEAKER_KIRK, TX_MUD1_007);
-	// fall through
+		// fall through
 
 	case 2:
 		_awayMission->mudd.torpedoStatus = 1;
@@ -184,7 +181,6 @@ void Room::mudd1SpockPressedRedButton() {
 	}
 }
 
-
 void Room::mudd1GetTorpedo() {
 	showDescription(TX_MUD1N014);
 }
@@ -192,9 +188,9 @@ void Room::mudd1GetTorpedo() {
 void Room::mudd1UseSTricorderOnTorpedo() {
 	spockScan(DIR_W, TX_MUD1_025, false);
 	showText(TX_SPEAKER_BUCHERT, TX_MUD1_027);
-	showText(TX_SPEAKER_SPOCK,   TX_MUD1_020);
+	showText(TX_SPEAKER_SPOCK, TX_MUD1_020);
 	showText(TX_SPEAKER_BUCHERT, TX_MUD1_028);
-	showText(TX_SPEAKER_SPOCK,   TX_MUD1_024);
+	showText(TX_SPEAKER_SPOCK, TX_MUD1_024);
 }
 
 void Room::mudd1UseSTricorderOnTorpedoLauncher() {
@@ -264,14 +260,14 @@ void Room::mudd1LookAtYellowButton() {
 }
 
 void Room::mudd1TalkToKirk() {
-	showText(TX_SPEAKER_KIRK,  TX_MUD1_006);
+	showText(TX_SPEAKER_KIRK, TX_MUD1_006);
 	showText(TX_SPEAKER_MCCOY, TX_MUD1_013);
-	showText(TX_SPEAKER_KIRK,  TX_MUD1_005);
+	showText(TX_SPEAKER_KIRK, TX_MUD1_005);
 }
 
 void Room::mudd1TalkToSpock() {
 	showText(TX_SPEAKER_SPOCK, TX_MUD1_019);
-	showText(TX_SPEAKER_KIRK,  TX_MUD1_008);
+	showText(TX_SPEAKER_KIRK, TX_MUD1_008);
 }
 
 void Room::mudd1TalkToMccoy() {
@@ -280,7 +276,7 @@ void Room::mudd1TalkToMccoy() {
 
 void Room::mudd1TalkToRedshirt() {
 	showText(TX_SPEAKER_BUCHERT, TX_MUD1_026);
-	showText(TX_SPEAKER_KIRK,    TX_MUD1_009);
+	showText(TX_SPEAKER_KIRK, TX_MUD1_009);
 }
 
 void Room::mudd1WalkToSouthDoor() {

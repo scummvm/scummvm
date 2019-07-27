@@ -22,12 +22,12 @@
 
 #ifdef ENABLE_HE
 
-#include "common/system.h"
-#include "graphics/palette.h"
-#include "scumm/scumm.h"
-#include "scumm/he/intern_he.h"
-#include "scumm/resource.h"
-#include "scumm/util.h"
+#	include "common/system.h"
+#	include "graphics/palette.h"
+#	include "scumm/he/intern_he.h"
+#	include "scumm/resource.h"
+#	include "scumm/scumm.h"
+#	include "scumm/util.h"
 
 namespace Scumm {
 
@@ -108,9 +108,9 @@ int ScummEngine_v90he::getHEPaletteSimilarColor(int palSlot, int red, int green,
 int ScummEngine_v90he::getHEPalette16BitColorComponent(int component, int type) {
 	uint16 col;
 	if (type == 2) {
-		col = (((component & 0xFFFF) >>  0) & 0x1F) << 3;
+		col = (((component & 0xFFFF) >> 0) & 0x1F) << 3;
 	} else if (type == 1) {
-		col = (((component & 0xFFFF) >>  5) & 0x1F) << 3;
+		col = (((component & 0xFFFF) >> 5) & 0x1F) << 3;
 	} else {
 		col = (((component & 0xFFFF) >> 10) & 0x1F) << 3;
 	}
@@ -159,7 +159,8 @@ void ScummEngine_v90he::setHEPaletteFromPtr(int palSlot, const uint8 *palData) {
 			uint8 r = *pc++ = *palData++;
 			uint8 g = *pc++ = *palData++;
 			uint8 b = *pc++ = *palData++;
-			WRITE_LE_UINT16(pi, get16BitColor(r, g, b)); pi += 2;
+			WRITE_LE_UINT16(pi, get16BitColor(r, g, b));
+			pi += 2;
 		}
 	} else {
 		for (int i = 0; i < 256; ++i) {
@@ -190,7 +191,7 @@ void ScummEngine_v90he::setHEPaletteFromCostume(int palSlot, int resId) {
 	assertRange(1, palSlot, _numPalettes, "palette");
 	const uint8 *data = getResourceAddress(rtCostume, resId);
 	assert(data);
-	const uint8 *rgbs = findResourceData(MKTAG('R','G','B','S'), data);
+	const uint8 *rgbs = findResourceData(MKTAG('R', 'G', 'B', 'S'), data);
 	assert(rgbs);
 	setHEPaletteFromPtr(palSlot, rgbs);
 }
@@ -200,7 +201,7 @@ void ScummEngine_v90he::setHEPaletteFromImage(int palSlot, int resId, int state)
 	assertRange(1, palSlot, _numPalettes, "palette");
 	uint8 *data = getResourceAddress(rtImage, resId);
 	assert(data);
-	const uint8 *rgbs = findWrappedBlock(MKTAG('R','G','B','S'), data, state, 0);
+	const uint8 *rgbs = findWrappedBlock(MKTAG('R', 'G', 'B', 'S'), data, state, 0);
 	if (rgbs)
 		setHEPaletteFromPtr(palSlot, rgbs);
 }
@@ -210,7 +211,7 @@ void ScummEngine_v90he::setHEPaletteFromRoom(int palSlot, int resId, int state) 
 	assertRange(1, palSlot, _numPalettes, "palette");
 	const uint8 *data = getResourceAddress(rtRoom, resId);
 	assert(data);
-	const uint8 *pals = findResourceData(MKTAG('P','A','L','S'), data);
+	const uint8 *pals = findResourceData(MKTAG('P', 'A', 'L', 'S'), data);
 	assert(pals);
 	const uint8 *rgbs = findPalInPals(pals, state);
 	assert(rgbs);
@@ -244,8 +245,8 @@ void ScummEngine_v90he::copyHEPaletteColor(int palSlot, uint8 dstColor, uint16 s
 	uint8 *srcPal = _hePalettes + _hePaletteSlot + srcColor * 3;
 	if (_game.features & GF_16BIT_COLOR) {
 		dstPal[0] = (srcColor >> 10) << 3;
-		dstPal[1] = (srcColor >>  5) << 3;
-		dstPal[2] = (srcColor >>  0) << 3;
+		dstPal[1] = (srcColor >> 5) << 3;
+		dstPal[2] = (srcColor >> 0) << 3;
 		WRITE_LE_UINT16(_hePalettes + palSlot * _hePaletteSlot + 768 + dstColor * 2, srcColor);
 	} else {
 		memcpy(dstPal, srcPal, 3);
@@ -338,7 +339,7 @@ void ScummEngine_v99he::darkenPalette(int redScale, int greenScale, int blueScal
 void ScummEngine_v99he::copyPalColor(int dst, int src) {
 	byte *dp, *sp;
 
-	if ((uint) dst >= 256 || (uint) src >= 256)
+	if ((uint)dst >= 256 || (uint)src >= 256)
 		error("copyPalColor: invalid values, %d, %d", dst, src);
 
 	dp = &_hePalettes[_hePaletteSlot + dst * 3];

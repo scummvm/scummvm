@@ -20,35 +20,55 @@
  *
  */
 
+#include "backends/platform/ps2/irxboot.h"
+#include "backends/platform/ps2/ps2debug.h"
 #include <kernel.h>
+#include <loadfile.h>
+#include <malloc.h>
+#include <sifrpc.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sifrpc.h>
-#include <loadfile.h>
-#include <malloc.h>
-#include "backends/platform/ps2/irxboot.h"
-#include "backends/platform/ps2/ps2debug.h"
 
 #include "ps2temp.h"
 
-static const char hddArg[] = "-o" "\0" "8" "\0" "-n" "\0" "20";
-static const char pfsArg[] = "-m" "\0" "2" "\0" "-o" "\0" "32" "\0" "-n" "\0" "72"; // "\0" "-debug";
-static const char netArg[] = "192.168.1.20" "\0" "255.255.255.0" "\0" "192.168.1.1"; // TODO: set in ScummVM.ini
+static const char hddArg[] = "-o"
+                             "\0"
+                             "8"
+                             "\0"
+                             "-n"
+                             "\0"
+                             "20";
+static const char pfsArg[] = "-m"
+                             "\0"
+                             "2"
+                             "\0"
+                             "-o"
+                             "\0"
+                             "32"
+                             "\0"
+                             "-n"
+                             "\0"
+                             "72"; // "\0" "-debug";
+static const char netArg[] = "192.168.1.20"
+                             "\0"
+                             "255.255.255.0"
+                             "\0"
+                             "192.168.1.1"; // TODO: set in ScummVM.ini
 
 IrxFile irxCore[] = { // core modules
 	// Memory Card
-	{ "SIO2MAN",      BIOS, NOTHING, NULL, 0 },
-	{ "MCMAN",        BIOS, NOTHING, NULL, 0 },
-	{ "MCSERV",       BIOS, NOTHING, NULL, 0 },
+	{ "SIO2MAN", BIOS, NOTHING, NULL, 0 },
+	{ "MCMAN", BIOS, NOTHING, NULL, 0 },
+	{ "MCSERV", BIOS, NOTHING, NULL, 0 },
 	// Joypad
-	{ "PADMAN",       BIOS, NOTHING, NULL, 0 },
+	{ "PADMAN", BIOS, NOTHING, NULL, 0 },
 	// Sound
-	{ "LIBSD",        BIOS, NOTHING, NULL, 0 },
-	{ "SJPCM.IRX",    SYSTEM, NOTHING, NULL, 0 },
+	{ "LIBSD", BIOS, NOTHING, NULL, 0 },
+	{ "SJPCM.IRX", SYSTEM, NOTHING, NULL, 0 },
 	// Files I/O
-	{ "IOMANX.IRX",   SYSTEM, NOTHING, NULL, 0 },
-	{ "FILEXIO.IRX",  SYSTEM, NOTHING, NULL, 0 }
+	{ "IOMANX.IRX", SYSTEM, NOTHING, NULL, 0 },
+	{ "FILEXIO.IRX", SYSTEM, NOTHING, NULL, 0 }
 };
 
 IrxFile irxCdrom[] = { // cdrom modules
@@ -58,41 +78,40 @@ IrxFile irxCdrom[] = { // cdrom modules
 
 IrxFile irxUSB[] = { // USB mass
 	// USB drv & key
-	{ "USBD.IRX",     USB | OPTIONAL | DEPENDANCY, USB_DRIVER, NULL, 0 },
+	{ "USBD.IRX", USB | OPTIONAL | DEPENDANCY, USB_DRIVER, NULL, 0 },
 	{ "USB_MASS.IRX", USB | OPTIONAL, MASS_DRIVER, NULL, 0 }
 };
 
 IrxFile irxInput[] = { // USB input
 	// USB mouse & kbd
 	{ "PS2MOUSE.IRX", USB | OPTIONAL, MOUSE_DRIVER, NULL, 0 },
-	{ "RPCKBD.IRX",   USB | OPTIONAL, KBD_DRIVER, NULL, 0 }
+	{ "RPCKBD.IRX", USB | OPTIONAL, KBD_DRIVER, NULL, 0 }
 };
 
 IrxFile irxHDD[] = { // modules to support HDD
 	// hdd modules
 	{ "POWEROFF.IRX", HDD | OPTIONAL | NOT_HOST | DEPENDANCY, HDD_DRIVER, NULL, 0 },
-	{ "PS2DEV9.IRX",  HDD | OPTIONAL | NOT_HOST | DEPENDANCY, HDD_DRIVER, NULL, 0 },
-	{ "PS2ATAD.IRX",  HDD | OPTIONAL | DEPENDANCY, HDD_DRIVER, NULL, 0 },
-	{ "PS2HDD.IRX",   HDD | OPTIONAL | DEPENDANCY, HDD_DRIVER, hddArg, sizeof(hddArg) },
-	{ "PS2FS.IRX",    HDD | OPTIONAL | DEPENDANCY, HDD_DRIVER, pfsArg, sizeof(pfsArg) }
+	{ "PS2DEV9.IRX", HDD | OPTIONAL | NOT_HOST | DEPENDANCY, HDD_DRIVER, NULL, 0 },
+	{ "PS2ATAD.IRX", HDD | OPTIONAL | DEPENDANCY, HDD_DRIVER, NULL, 0 },
+	{ "PS2HDD.IRX", HDD | OPTIONAL | DEPENDANCY, HDD_DRIVER, hddArg, sizeof(hddArg) },
+	{ "PS2FS.IRX", HDD | OPTIONAL | DEPENDANCY, HDD_DRIVER, pfsArg, sizeof(pfsArg) }
 };
 
 IrxFile irxNet[] = { // modules to support NET
 	// net modules
-	{ "PS2IP.IRX",    NET | OPTIONAL | NOT_HOST | DEPENDANCY, NET_DRIVER, NULL, 0 },
-	{ "PS2SMAP.IRX",  NET | OPTIONAL | NOT_HOST | DEPENDANCY, NET_DRIVER, netArg, sizeof(netArg) },
-	{ "PS2HOST.IRX",  NET | OPTIONAL | NOT_HOST | DEPENDANCY, NET_DRIVER, NULL, 0 }
+	{ "PS2IP.IRX", NET | OPTIONAL | NOT_HOST | DEPENDANCY, NET_DRIVER, NULL, 0 },
+	{ "PS2SMAP.IRX", NET | OPTIONAL | NOT_HOST | DEPENDANCY, NET_DRIVER, netArg, sizeof(netArg) },
+	{ "PS2HOST.IRX", NET | OPTIONAL | NOT_HOST | DEPENDANCY, NET_DRIVER, NULL, 0 }
 };
 
 IrxFile *irxType[IRX_MAX] = { irxCore, irxCdrom, irxUSB, irxInput, irxHDD, irxNet };
 
 static const int numIrx[IRX_MAX] = { sizeof(irxCore) / sizeof(IrxFile),
-                                     sizeof(irxCdrom) / sizeof(IrxFile),
-                                     sizeof(irxUSB) / sizeof(IrxFile),
-                                     sizeof(irxInput) / sizeof(IrxFile),
-                                     sizeof(irxHDD) / sizeof(IrxFile),
-                                     sizeof(irxNet) / sizeof(IrxFile)
-};
+	                                   sizeof(irxCdrom) / sizeof(IrxFile),
+	                                   sizeof(irxUSB) / sizeof(IrxFile),
+	                                   sizeof(irxInput) / sizeof(IrxFile),
+	                                   sizeof(irxHDD) / sizeof(IrxFile),
+	                                   sizeof(irxNet) / sizeof(IrxFile) };
 
 PS2Device detectBootPath(const char *elfPath, char *bootPath) {
 

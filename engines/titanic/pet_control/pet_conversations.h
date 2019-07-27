@@ -23,9 +23,9 @@
 #ifndef TITANIC_PET_CONVERSATIONS_H
 #define TITANIC_PET_CONVERSATIONS_H
 
-#include "titanic/pet_control/pet_section.h"
 #include "titanic/gfx/text_control.h"
 #include "titanic/pet_control/pet_gfx_element.h"
+#include "titanic/pet_control/pet_section.h"
 #include "titanic/true_talk/true_talk_manager.h"
 
 namespace Titanic {
@@ -53,6 +53,7 @@ private:
 	bool _logChanged;
 	int _field418;
 	CString _npcName;
+
 private:
 	/**
 	 * Sets up the control
@@ -128,6 +129,7 @@ private:
 	 * Called when the dial for an NPC is being changed
 	 */
 	void npcDialChange(uint dialNum, uint oldLevel, uint newLevel);
+
 public:
 	CPetConversations();
 	virtual ~CPetConversations() {}

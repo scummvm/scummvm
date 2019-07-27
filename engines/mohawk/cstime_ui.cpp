@@ -20,15 +20,15 @@
  *
  */
 
-#include "mohawk/cstime_game.h"
 #include "mohawk/cstime_ui.h"
-#include "mohawk/cstime_view.h"
-#include "mohawk/resource.h"
 #include "common/algorithm.h" // find
 #include "common/events.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "graphics/fontman.h"
+#include "mohawk/cstime_game.h"
+#include "mohawk/cstime_view.h"
+#include "mohawk/resource.h"
 
 namespace Mohawk {
 
@@ -44,7 +44,8 @@ static Common::String readString(Common::SeekableReadStream *stream) {
 	return ret;
 }
 
-CSTimeInterface::CSTimeInterface(MohawkEngine_CSTime *vm) : _vm(vm) {
+CSTimeInterface::CSTimeInterface(MohawkEngine_CSTime *vm)
+  : _vm(vm) {
 	_sceneRect = Common::Rect(0, 0, 640, 340);
 	_uiRect = Common::Rect(0, 340, 640, 480);
 
@@ -859,7 +860,8 @@ void CSTimeInterface::dropItemInInventory(uint16 id) {
 	_inventoryDisplay->setState(kCSTimeInterfaceDroppedInventory);
 }
 
-CSTimeHelp::CSTimeHelp(MohawkEngine_CSTime *vm) : _vm(vm) {
+CSTimeHelp::CSTimeHelp(MohawkEngine_CSTime *vm)
+  : _vm(vm) {
 	_state = (uint)~0;
 	_currEntry = 0xffff;
 	_currHover = 0xffff;
@@ -930,7 +932,7 @@ void CSTimeHelp::cleanupAfterFlapping() {
 void CSTimeHelp::mouseDown(Common::Point &pos) {
 	for (uint i = 0; i < _qars.size(); i++) {
 		Common::Rect thisRect = _vm->getInterface()->_dialogTextRect;
-		thisRect.top += 1 + i*15;
+		thisRect.top += 1 + i * 15;
 		thisRect.bottom = thisRect.top + 15;
 		if (!thisRect.contains(pos))
 			continue;
@@ -946,7 +948,7 @@ void CSTimeHelp::mouseMove(Common::Point &pos) {
 
 	for (uint i = 0; i < _qars.size(); i++) {
 		Common::Rect thisRect = _vm->getInterface()->_dialogTextRect;
-		thisRect.top += 1 + i*15;
+		thisRect.top += 1 + i * 15;
 		thisRect.bottom = thisRect.top + 15;
 		if (!thisRect.contains(pos))
 			continue;
@@ -979,7 +981,7 @@ void CSTimeHelp::mouseUp(Common::Point &pos) {
 	}
 
 	Common::Rect thisRect = _vm->getInterface()->_dialogTextRect;
-	thisRect.top += 1 + _currEntry*15;
+	thisRect.top += 1 + _currEntry * 15;
 	thisRect.bottom = thisRect.top + 15;
 	if (!thisRect.contains(pos))
 		return;
@@ -1011,7 +1013,6 @@ void CSTimeHelp::unhighlightLine(uint line) {
 	_vm->getInterface()->displayDialogLine(5900 + text, line, askedAlready ? 13 : 32);
 }
 
-
 void CSTimeHelp::selectStrings() {
 	_qars.clear();
 	_vm->getCase()->selectHelpStrings();
@@ -1031,7 +1032,8 @@ bool CSTimeHelp::noHelperChanges() {
 	return false;
 }
 
-CSTimeInventoryDisplay::CSTimeInventoryDisplay(MohawkEngine_CSTime *vm, Common::Rect baseRect) : _vm(vm) {
+CSTimeInventoryDisplay::CSTimeInventoryDisplay(MohawkEngine_CSTime *vm, Common::Rect baseRect)
+  : _vm(vm) {
 	_state = 0;
 	_cuffsState = false;
 	_cuffsShape = 10;
@@ -1115,9 +1117,7 @@ void CSTimeInventoryDisplay::hide() {
 }
 
 void CSTimeInventoryDisplay::idle() {
-	if (_vm->getInterface()->getCarmenNote()->getState() ||
-		_vm->getCase()->getCurrConversation()->getState() != 0xffff ||
-		_vm->getInterface()->getHelp()->getState() != 0xffff) {
+	if (_vm->getInterface()->getCarmenNote()->getState() || _vm->getCase()->getCurrConversation()->getState() != 0xffff || _vm->getInterface()->getHelp()->getState() != 0xffff) {
 		if (_state == 4) {
 			// FIXME: check timeout!
 			hide();
@@ -1280,7 +1280,8 @@ bool CSTimeInventoryDisplay::isItemDisplayed(uint16 id) {
 	return false;
 }
 
-CSTimeBook::CSTimeBook(MohawkEngine_CSTime *vm) : _vm(vm) {
+CSTimeBook::CSTimeBook(MohawkEngine_CSTime *vm)
+  : _vm(vm) {
 	_state = 0;
 	_smallBookFeature = NULL;
 }
@@ -1296,7 +1297,8 @@ void CSTimeBook::drawSmallBook() {
 	}
 }
 
-CSTimeCarmenNote::CSTimeCarmenNote(MohawkEngine_CSTime *vm) : _vm(vm) {
+CSTimeCarmenNote::CSTimeCarmenNote(MohawkEngine_CSTime *vm)
+  : _vm(vm) {
 	_state = 0;
 	_feature = NULL;
 	clearPieces();
@@ -1404,7 +1406,8 @@ void CSTimeCarmenNote::closeNote() {
 	drawSmallNote();
 }
 
-CSTimeOptions::CSTimeOptions(MohawkEngine_CSTime *vm) : _vm(vm) {
+CSTimeOptions::CSTimeOptions(MohawkEngine_CSTime *vm)
+  : _vm(vm) {
 	_state = 0;
 }
 

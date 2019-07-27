@@ -32,13 +32,13 @@
 #include "bladerunner/game_info.h"
 #include "bladerunner/mouse.h"
 #include "bladerunner/scene.h"
-#include "bladerunner/shape.h"
 #include "bladerunner/script/esper_script.h"
+#include "bladerunner/shape.h"
+#include "bladerunner/subtitles.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/time.h"
 #include "bladerunner/ui/ui_image_picker.h"
 #include "bladerunner/vqa_player.h"
-#include "bladerunner/subtitles.h"
 
 #include "common/rect.h"
 #include "common/str.h"
@@ -50,18 +50,18 @@ ESPER::ESPER(BladeRunnerEngine *vm) {
 
 	_screen = Common::Rect(135, 123, 435, 387);
 
-	_isWaiting          = false;
-	_shapeButton        = nullptr;
-	_shapeThumbnail     = nullptr;
-	_regionSelectedAck  = false;
+	_isWaiting = false;
+	_shapeButton = nullptr;
+	_shapeThumbnail = nullptr;
+	_regionSelectedAck = false;
 	_isDrawingSelection = false;
 
-	_isOpen             = false;
-	_shapeButton        = nullptr;
-	_shapeThumbnail     = nullptr;
-	_vqaPlayerMain      = nullptr;
-	_vqaPlayerPhoto     = nullptr;
-	_script             = nullptr;
+	_isOpen = false;
+	_shapeButton = nullptr;
+	_shapeThumbnail = nullptr;
+	_vqaPlayerMain = nullptr;
+	_vqaPlayerPhoto = nullptr;
+	_script = nullptr;
 
 	reset();
 
@@ -147,7 +147,7 @@ void ESPER::close() {
 	if (_vqaPlayerMain) {
 		_vqaPlayerMain->close();
 		delete _vqaPlayerMain;
-		_vqaPlayerMain= nullptr;
+		_vqaPlayerMain = nullptr;
 	}
 
 	_vm->closeArchive("MODE.MIX");
@@ -236,7 +236,7 @@ void ESPER::tick() {
 	_vm->_system->delayMillis(10);
 
 	if (_statePhoto == kEsperPhotoStateVideoShow) {
-		if (_regionSelectedAck)	{
+		if (_regionSelectedAck) {
 			_regionSelectedAck = false;
 			_script->specialRegionSelected(_photoIdSelected, _regions[_regionSelected].regionId);
 		}
@@ -246,10 +246,10 @@ void ESPER::tick() {
 void ESPER::addPhoto(const char *name, int photoId, int shapeId) {
 	int i = findEmptyPhoto();
 	if (i >= 0) {
-		_photos[i].shapeId   = shapeId;
+		_photos[i].shapeId = shapeId;
 		_photos[i].isPresent = true;
-		_photos[i].photoId   = photoId;
-		_photos[i].name      = name;
+		_photos[i].photoId = photoId;
+		_photos[i].name = name;
 
 		assert((uint)shapeId < _shapesPhotos.size());
 
@@ -257,16 +257,15 @@ void ESPER::addPhoto(const char *name, int photoId, int shapeId) {
 		_shapesPhotos[shapeId]->open("ESPTHUMB.SHP", shapeId);
 
 		_buttons->defineImage(i,
-			Common::Rect(
-				100 * (i % 3) + _screen.left + 3,
-				 66 * (i / 3) + _screen.top  + 3,
-				100 * (i % 3) + _screen.left + 100 - 3,
-				 66 * (i / 3) + _screen.top  +  66 - 3
-			),
-			_shapesPhotos[shapeId],
-			_shapesPhotos[shapeId],
-			_shapesPhotos[shapeId],
-			nullptr);
+		                      Common::Rect(
+		                        100 * (i % 3) + _screen.left + 3,
+		                        66 * (i / 3) + _screen.top + 3,
+		                        100 * (i % 3) + _screen.left + 100 - 3,
+		                        66 * (i / 3) + _screen.top + 66 - 3),
+		                      _shapesPhotos[shapeId],
+		                      _shapesPhotos[shapeId],
+		                      _shapesPhotos[shapeId],
+		                      nullptr);
 	}
 	playSound(kSfxBR028_2A, 25);
 	wait(300);
@@ -276,12 +275,12 @@ void ESPER::addPhoto(const char *name, int photoId, int shapeId) {
 void ESPER::defineRegion(int regionId, Common::Rect inner, Common::Rect outer, Common::Rect selection, const char *name) {
 	int i = findEmptyRegion();
 	if (i >= 0) {
-		_regions[i].isPresent     = true;
-		_regions[i].regionId      = regionId;
-		_regions[i].rectInner     = inner;
-		_regions[i].rectOuter     = outer;
+		_regions[i].isPresent = true;
+		_regions[i].regionId = regionId;
+		_regions[i].rectInner = inner;
+		_regions[i].rectOuter = outer;
 		_regions[i].rectSelection = selection;
-		_regions[i].name          = name;
+		_regions[i].name = name;
 	}
 }
 
@@ -343,25 +342,25 @@ void ESPER::resetData() {
 		_shapeThumbnail = nullptr;
 	}
 
-	_viewport     = Common::Rect();
+	_viewport = Common::Rect();
 	_viewportNext = Common::Rect();
-	_selection    = Common::Rect(-1, -1, -1, -1);
+	_selection = Common::Rect(-1, -1, -1, -1);
 
 	_regionSelectedAck = false;
 
-	_mouseOverScroll    = -1;
+	_mouseOverScroll = -1;
 	_scrollingDirection = -1;
 
 	_selectionCrosshairX = -1;
 	_selectionCrosshairY = -1;
 
-	_stateMain  = kEsperMainStatePhoto;
+	_stateMain = kEsperMainStatePhoto;
 	_statePhoto = kEsperPhotoStateShow;
 
-	_isMouseDown        = false;
+	_isMouseDown = false;
 	_isDrawingSelection = false;
-	_flash              = false;
-	_isScrolling        = false;
+	_flash = false;
+	_isScrolling = false;
 
 	_timeScrollNextStart = 0u;
 
@@ -381,63 +380,63 @@ void ESPER::resetData() {
 void ESPER::resetPhotos() {
 	for (int i = 0; i < kPhotoCount; ++i) {
 		_photos[i].isPresent = false;
-		_photos[i].photoId   = -1;
+		_photos[i].photoId = -1;
 	}
 }
 
 void ESPER::resetRegions() {
 	for (int i = 0; i < kRegionCount; ++i) {
 		_regions[i].isPresent = false;
-		_regions[i].regionId  = -1;
+		_regions[i].regionId = -1;
 	}
 }
 
 void ESPER::resetViewport() {
-	_zoomHorizontal = (float)(_screen.width())  / (float)kPhotoWidth;
-	_zoomVertical   = (float)(_screen.height()) / (float)kPhotoHeight;
-	_zoom           = _zoomVertical;
-	_zoomMin        = _zoom;
+	_zoomHorizontal = (float)(_screen.width()) / (float)kPhotoWidth;
+	_zoomVertical = (float)(_screen.height()) / (float)kPhotoHeight;
+	_zoom = _zoomVertical;
+	_zoomMin = _zoom;
 
 	_timeZoomOutNextStart = 0u;
 
-	_viewportPositionX = kPhotoWidth  / 2;
+	_viewportPositionX = kPhotoWidth / 2;
 	_viewportPositionY = kPhotoHeight / 2;
 
 	updateViewport();
 
-	_screenHalfWidth  = _screen.width()  / 2;
+	_screenHalfWidth = _screen.width() / 2;
 	_screenHalfHeight = _screen.height() / 2;
 }
 
 void ESPER::resetSelectionRect() {
-	_selection           = _screen;
+	_selection = _screen;
 	_selectionCrosshairX = -1;
 	_selectionCrosshairY = -1;
 }
 
 void ESPER::resetSelectionBlinking() {
-	_selectionBlinkingCounter       = 0;
-	_selectionBlinkingStyle         = 0;
+	_selectionBlinkingCounter = 0;
+	_selectionBlinkingStyle = 0;
 	_timeSelectionBlinkingNextStart = 0u;
 }
 
 void ESPER::resetPhotoZooming() {
-	_zoomStep     = 0;
-	_timeZoomNextDiff  = 0u;
+	_zoomStep = 0;
+	_timeZoomNextDiff = 0u;
 	_timeZoomNextStart = 0u;
 }
 
 void ESPER::resetPhotoOpening() {
-	_photoOpeningWidth    = _screen.left + 1;
-	_photoOpeningHeight   = _screen.top  + 1;
-	_timePhotoOpeningNextDiff  = 0u;
+	_photoOpeningWidth = _screen.left + 1;
+	_photoOpeningHeight = _screen.top + 1;
+	_timePhotoOpeningNextDiff = 0u;
 	_timePhotoOpeningNextStart = 0u;
 }
 
 void ESPER::updateViewport() {
 	float halfWidth = (1.0f / 2.0f) * ((float)kPhotoWidth * (_zoomHorizontal / _zoom));
 
-	_viewport.left  = _viewportPositionX - halfWidth;
+	_viewport.left = _viewportPositionX - halfWidth;
 	_viewport.right = _viewportPositionX + halfWidth;
 
 	if (_viewport.left < 0) {
@@ -454,7 +453,7 @@ void ESPER::updateViewport() {
 
 	float halfHeight = 1.0f / 2.0f * ((float)kPhotoHeight * (_zoomVertical / _zoom));
 
-	_viewport.top    = _viewportPositionY - halfHeight;
+	_viewport.top = _viewportPositionY - halfHeight;
 	_viewport.bottom = _viewportPositionY + halfHeight;
 
 	if (_viewport.top < 0) {
@@ -469,11 +468,11 @@ void ESPER::updateViewport() {
 		_viewport.bottom = kPhotoHeight - 1;
 	}
 
-	_viewportWidth  = _viewport.right  + 1 - _viewport.left;
+	_viewportWidth = _viewport.right + 1 - _viewport.left;
 	_viewportHeight = _viewport.bottom + 1 - _viewport.top;
 
-	int centerX = (_viewport.left + _viewport.right ) / 2;
-	int centerY = (_viewport.top  + _viewport.bottom) / 2;
+	int centerX = (_viewport.left + _viewport.right) / 2;
+	int centerY = (_viewport.top + _viewport.bottom) / 2;
 
 	float range = _zoom / _zoomHorizontal * 1.0f;
 	if ((_viewportPositionX > centerX + range) || (_viewportPositionX < centerX - range)) {
@@ -528,8 +527,8 @@ void ESPER::setStatePhoto(EsperPhotoStates state) {
 void ESPER::wait(uint32 timeout) {
 	if (!_isWaiting) {
 		_isWaiting = true;
-//		int timeEnd = timeout + _vm->_time->current();
-		uint32  timeStart = _vm->_time->current();
+		//		int timeEnd = timeout + _vm->_time->current();
+		uint32 timeStart = _vm->_time->current();
 		// unsigned difference is intentional
 		while (_vm->_gameIsRunning && (_vm->_time->current() - timeStart < timeout)) {
 			_vm->gameTick();
@@ -541,13 +540,13 @@ void ESPER::wait(uint32 timeout) {
 void ESPER::playSound(int soundId, int volume) {
 	if (_soundId1 == -1) {
 		_soundId1 = soundId;
-		_volume1  = volume;
+		_volume1 = volume;
 	} else if (_soundId2 == -1) {
 		_soundId2 = soundId;
-		_volume2  = volume;
+		_volume2 = volume;
 	} else if (_soundId3 == -1) {
 		_soundId3 = soundId;
-		_volume3  = volume;
+		_volume3 = volume;
 	}
 }
 
@@ -581,23 +580,19 @@ void ESPER::draw(Graphics::Surface &surface) {
 				for (int i = 0; i < kRegionCount; ++i) {
 					if (_regions[i].isPresent) {
 						surface.frameRect(
-							Common::Rect(
-								viewportXToScreenX(_regions[i].rectInner.left),
-								viewportYToScreenY(_regions[i].rectInner.top),
-								viewportXToScreenX(_regions[i].rectInner.right),
-								viewportYToScreenY(_regions[i].rectInner.bottom)
-							),
-							surface.format.RGBToColor(248, 248, 0)
-						);
+						  Common::Rect(
+						    viewportXToScreenX(_regions[i].rectInner.left),
+						    viewportYToScreenY(_regions[i].rectInner.top),
+						    viewportXToScreenX(_regions[i].rectInner.right),
+						    viewportYToScreenY(_regions[i].rectInner.bottom)),
+						  surface.format.RGBToColor(248, 248, 0));
 						surface.frameRect(
-							Common::Rect(
-								viewportXToScreenX(_regions[i].rectOuter.left),
-								viewportYToScreenY(_regions[i].rectOuter.top),
-								viewportXToScreenX(_regions[i].rectOuter.right),
-								viewportYToScreenY(_regions[i].rectOuter.bottom)
-							),
-							surface.format.RGBToColor(248, 248, 0)
-						);
+						  Common::Rect(
+						    viewportXToScreenX(_regions[i].rectOuter.left),
+						    viewportYToScreenY(_regions[i].rectOuter.top),
+						    viewportXToScreenX(_regions[i].rectOuter.right),
+						    viewportYToScreenY(_regions[i].rectOuter.bottom)),
+						  surface.format.RGBToColor(248, 248, 0));
 					}
 				}
 			}
@@ -652,21 +647,21 @@ void ESPER::drawPhotoOpening(Graphics::Surface &surface) {
 	uint32 timeNow = _vm->_time->current();
 	// unsigned difference is intentional
 	if (timeNow - _timePhotoOpeningNextStart >= _timePhotoOpeningNextDiff) {
-		_photoOpeningWidth  = MIN(_photoOpeningWidth  + 8, _screen.right  - 1);
+		_photoOpeningWidth = MIN(_photoOpeningWidth + 8, _screen.right - 1);
 		_photoOpeningHeight = MIN(_photoOpeningHeight + 7, _screen.bottom - 1);
 
 		if (_photoOpeningWidth == _screen.right - 1 && _photoOpeningHeight == _screen.bottom - 1) {
 			needMoreZooming = false;
 		}
-		_timePhotoOpeningNextDiff  = 20u;
+		_timePhotoOpeningNextDiff = 20u;
 		_timePhotoOpeningNextStart = timeNow;
 	}
 	copyImageScale(&_surfacePhoto, _viewport, &surface, Common::Rect(_screen.left, _screen.top, _photoOpeningWidth, _photoOpeningHeight));
 
-	surface.hLine(_screen.left,           _photoOpeningHeight,     _screen.right  - 1, surface.format.RGBToColor(0, 248, 0));
-	surface.vLine(_photoOpeningWidth,     _screen.top,             _screen.bottom - 1, surface.format.RGBToColor(0, 248, 0));
-	surface.hLine(_screen.left,           _photoOpeningHeight - 1, _screen.right  - 1, surface.format.RGBToColor(0, 144, 0));
-	surface.vLine(_photoOpeningWidth - 1, _screen.top,             _screen.bottom - 1, surface.format.RGBToColor(0, 144, 0));
+	surface.hLine(_screen.left, _photoOpeningHeight, _screen.right - 1, surface.format.RGBToColor(0, 248, 0));
+	surface.vLine(_photoOpeningWidth, _screen.top, _screen.bottom - 1, surface.format.RGBToColor(0, 248, 0));
+	surface.hLine(_screen.left, _photoOpeningHeight - 1, _screen.right - 1, surface.format.RGBToColor(0, 144, 0));
+	surface.vLine(_photoOpeningWidth - 1, _screen.top, _screen.bottom - 1, surface.format.RGBToColor(0, 144, 0));
 
 	drawGrid(surface);
 
@@ -684,17 +679,17 @@ bool ESPER::drawSelectionZooming(Graphics::Surface &surface) {
 	// unsigned difference is intentional
 	if (timeNow - _timeSelectionZoomNextStart > 150u) {
 		zooming = true;
-		_selection.left   += _selectionDelta.left;
-		_selection.top    += _selectionDelta.top;
-		_selection.right  += _selectionDelta.right;
+		_selection.left += _selectionDelta.left;
+		_selection.top += _selectionDelta.top;
+		_selection.right += _selectionDelta.right;
 		_selection.bottom += _selectionDelta.bottom;
 		++_selectionZoomStep;
 		_timeSelectionZoomNextStart = timeNow;
 		if (_selectionZoomStep > kSelectionZoomSteps) {
 			needMoreZooming = false;
-			_selection.left   = _selectionTarget.left;
-			_selection.top    = _selectionTarget.top;
-			_selection.right  = _selectionTarget.right;
+			_selection.left = _selectionTarget.left;
+			_selection.top = _selectionTarget.top;
+			_selection.right = _selectionTarget.right;
 			_selection.bottom = _selectionTarget.bottom;
 		}
 	}
@@ -738,8 +733,8 @@ void ESPER::drawPhotoZooming(Graphics::Surface &surface) {
 
 		_viewportPositionXCurrent += _viewportPositionXDelta;
 		_viewportPositionYCurrent += _viewportPositionYDelta;
-		_viewportPositionX         = _viewportPositionXCurrent;
-		_viewportPositionY         = _viewportPositionYCurrent;
+		_viewportPositionX = _viewportPositionXCurrent;
+		_viewportPositionY = _viewportPositionYCurrent;
 
 		_zoom += _zoomDelta;
 		if (_zoomDelta > 0.0f) {
@@ -762,7 +757,7 @@ void ESPER::drawPhotoZooming(Graphics::Surface &surface) {
 			_viewportPositionY = _viewportPositionYTarget;
 		}
 		updateViewport();
-		_timeZoomNextDiff  = 300u;
+		_timeZoomNextDiff = 300u;
 		_timeZoomNextStart = timeNow;
 	}
 
@@ -785,9 +780,9 @@ void ESPER::drawPhotoZooming(Graphics::Surface &surface) {
 				_timeZoomNextDiff += 300u;
 			} else {
 				_regionSelectedAck = false;
-				_selection.left   = viewportXToScreenX(_regions[_regionSelected].rectInner.left);
-				_selection.right  = viewportXToScreenX(_regions[_regionSelected].rectInner.right);
-				_selection.top    = viewportYToScreenY(_regions[_regionSelected].rectInner.top);
+				_selection.left = viewportXToScreenX(_regions[_regionSelected].rectInner.left);
+				_selection.right = viewportXToScreenX(_regions[_regionSelected].rectInner.right);
+				_selection.top = viewportYToScreenY(_regions[_regionSelected].rectInner.top);
 				_selection.bottom = viewportYToScreenY(_regions[_regionSelected].rectInner.bottom);
 				prepareZoom();
 				resetPhotoZooming();
@@ -806,14 +801,14 @@ void ESPER::drawPhotoSharpening(Graphics::Surface &surface) {
 	bool needMoreSharpening = true;
 	// unsigned difference is intentional
 	if (timeNow - _timePhotoOpeningNextStart >= _timePhotoOpeningNextDiff) {
-		_photoOpeningWidth  = MIN(_photoOpeningWidth  + 8, _screen.right  - 1);
+		_photoOpeningWidth = MIN(_photoOpeningWidth + 8, _screen.right - 1);
 		_photoOpeningHeight = MIN(_photoOpeningHeight + 7, _screen.bottom - 1);
 
 		if (_photoOpeningWidth == _screen.right - 1 && _photoOpeningHeight == _screen.bottom - 1) {
 			needMoreSharpening = false;
 		}
 
-		_timePhotoOpeningNextDiff  = 50u;
+		_timePhotoOpeningNextDiff = 50u;
 		_timePhotoOpeningNextStart = timeNow;
 	}
 
@@ -825,13 +820,12 @@ void ESPER::drawPhotoSharpening(Graphics::Surface &surface) {
 		drawPhoto(surface);
 		copyImageScale(&_surfacePhoto, _viewport, &_surfaceViewport, Common::Rect(0, 0, _screen.width(), _screen.height()));
 		copyImageBlit(&_surfaceViewport, Common::Rect(0, 0, 0, 0), &surface, Common::Rect(_screen.left, _screen.top, _photoOpeningWidth, _photoOpeningHeight));
-
 	}
 	drawGrid(surface);
-	surface.hLine(_screen.left,           _photoOpeningHeight,     _screen.right  - 1, surface.format.RGBToColor(0, 248, 0));
-	surface.vLine(_photoOpeningWidth,     _screen.top,             _screen.bottom - 1, surface.format.RGBToColor(0, 248, 0));
-	surface.hLine(_screen.left,           _photoOpeningHeight - 1, _screen.right  - 1, surface.format.RGBToColor(0, 144, 0));
-	surface.vLine(_photoOpeningWidth - 1, _screen.top,             _screen.bottom - 1, surface.format.RGBToColor(0, 144, 0));
+	surface.hLine(_screen.left, _photoOpeningHeight, _screen.right - 1, surface.format.RGBToColor(0, 248, 0));
+	surface.vLine(_photoOpeningWidth, _screen.top, _screen.bottom - 1, surface.format.RGBToColor(0, 248, 0));
+	surface.hLine(_screen.left, _photoOpeningHeight - 1, _screen.right - 1, surface.format.RGBToColor(0, 144, 0));
+	surface.vLine(_photoOpeningWidth - 1, _screen.top, _screen.bottom - 1, surface.format.RGBToColor(0, 144, 0));
 	if (!needMoreSharpening) {
 		if (_regionSelectedAck && !_regions[_regionSelected].name.empty()) {
 			setStatePhoto(kEsperPhotoStateVideoShow);
@@ -883,7 +877,7 @@ void ESPER::drawVideoZooming(Graphics::Surface &surface) {
 			return;
 		}
 
-		_timeZoomNextDiff  = 0u;
+		_timeZoomNextDiff = 0u;
 		_timeZoomNextStart = 0u;
 	}
 
@@ -892,7 +886,7 @@ void ESPER::drawVideoZooming(Graphics::Surface &surface) {
 	uint32 timeNow = _vm->_time->current();
 	// unsigned difference is intentional
 	if (timeNow - _timeZoomNextStart > _timeZoomNextDiff) {
-		_timeZoomNextDiff  = 300u;
+		_timeZoomNextDiff = 300u;
 		_timeZoomNextStart = timeNow;
 		playSound(kSfxBR031_1P, 25);
 		flash = true;
@@ -920,7 +914,7 @@ void ESPER::drawVideoZoomOut(Graphics::Surface &surface) {
 	uint32 timeNow = _vm->_time->current();
 	// unsigned difference is intentional
 	if (timeNow - _timeZoomNextStart > _timeZoomNextDiff && _vqaLastFrame > 0) {
-		_timeZoomNextDiff  = 300u;
+		_timeZoomNextDiff = 300u;
 		_timeZoomNextStart = timeNow;
 		playSound(kSfxBR031_1P, 25);
 		_vqaPlayerPhoto->seekToFrame(_vqaLastFrame);
@@ -980,10 +974,10 @@ void ESPER::drawPhotoWithGrid(Graphics::Surface &surface) {
 }
 
 void ESPER::drawSelection(Graphics::Surface &surface, bool crosshair, int style) {
-	int left   = CLIP(_selection.left,   _screen.left, (int16)(_screen.right  - 1));
-	int top    = CLIP(_selection.top,    _screen.top,  (int16)(_screen.bottom - 1));
-	int right  = CLIP(_selection.right,  _screen.left, (int16)(_screen.right  - 1));
-	int bottom = CLIP(_selection.bottom, _screen.top,  (int16)(_screen.bottom - 1));
+	int left = CLIP(_selection.left, _screen.left, (int16)(_screen.right - 1));
+	int top = CLIP(_selection.top, _screen.top, (int16)(_screen.bottom - 1));
+	int right = CLIP(_selection.right, _screen.left, (int16)(_screen.right - 1));
+	int bottom = CLIP(_selection.bottom, _screen.top, (int16)(_screen.bottom - 1));
 
 	int color = surface.format.RGBToColor(0, 144, 0);
 	if (style) {
@@ -1031,8 +1025,8 @@ void ESPER::drawSelection(Graphics::Surface &surface, bool crosshair, int style)
 			}
 		}
 
-		surface.vLine(right,        _screen.top, _screen.bottom - 1, surface.format.RGBToColor(0, 248, 0));
-		surface.hLine(_screen.left, bottom,      _screen.right  - 1, surface.format.RGBToColor(0, 248, 0));
+		surface.vLine(right, _screen.top, _screen.bottom - 1, surface.format.RGBToColor(0, 248, 0));
+		surface.hLine(_screen.left, bottom, _screen.right - 1, surface.format.RGBToColor(0, 248, 0));
 	}
 }
 
@@ -1043,13 +1037,13 @@ void ESPER::drawVideoFrame(Graphics::Surface &surface) {
 
 void ESPER::drawTextCoords(Graphics::Surface &surface) {
 	if (_vm->_language == Common::RU_RUS) {
-		_vm->_mainFont->drawString(&surface, Common::String::format("gh %04.0f", _zoom / _zoomMin * 2.0f  ), 155, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
-		_vm->_mainFont->drawString(&surface, Common::String::format("dh %04d",   12 * _viewport.top  +  98), 260, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
-		_vm->_mainFont->drawString(&surface, Common::String::format("uh %04d",   12 * _viewport.left + 167), 364, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
+		_vm->_mainFont->drawString(&surface, Common::String::format("gh %04.0f", _zoom / _zoomMin * 2.0f), 155, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
+		_vm->_mainFont->drawString(&surface, Common::String::format("dh %04d", 12 * _viewport.top + 98), 260, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
+		_vm->_mainFont->drawString(&surface, Common::String::format("uh %04d", 12 * _viewport.left + 167), 364, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
 	} else {
-		_vm->_mainFont->drawString(&surface, Common::String::format("ZM %04.0f", _zoom / _zoomMin * 2.0f  ), 155, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
-		_vm->_mainFont->drawString(&surface, Common::String::format("NS %04d",   12 * _viewport.top  +  98), 260, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
-		_vm->_mainFont->drawString(&surface, Common::String::format("EW %04d",   12 * _viewport.left + 167), 364, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
+		_vm->_mainFont->drawString(&surface, Common::String::format("ZM %04.0f", _zoom / _zoomMin * 2.0f), 155, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
+		_vm->_mainFont->drawString(&surface, Common::String::format("NS %04d", 12 * _viewport.top + 98), 260, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
+		_vm->_mainFont->drawString(&surface, Common::String::format("EW %04d", 12 * _viewport.left + 167), 364, 364, surface.w, surface.format.RGBToColor(0, 0, 255));
 	}
 }
 
@@ -1065,21 +1059,21 @@ void ESPER::drawMouse(Graphics::Surface &surface) {
 	_mouseOverScroll = 4;
 	if (_stateMain == kEsperMainStatePhoto) {
 		if (_screen.contains(p)) {
-			if ((_statePhoto == kEsperPhotoStateShow) && ( _zoom != 2.0f)) {
+			if ((_statePhoto == kEsperPhotoStateShow) && (_zoom != 2.0f)) {
 				if (_isMouseDown) {
 					if (_isDrawingSelection) {
-						_selection.right  = p.x;
+						_selection.right = p.x;
 						_selection.bottom = p.y;
 					} else {
-						_selection.left   = p.x;
-						_selection.top    = p.y;
-						_selection.right  = p.x + 1;
+						_selection.left = p.x;
+						_selection.top = p.y;
+						_selection.right = p.x + 1;
 						_selection.bottom = p.y + 1;
 						_isDrawingSelection = true;
 					}
 				} else {
 					if (_isDrawingSelection) {
-						_selection.right  = p.x;
+						_selection.right = p.x;
 						_selection.bottom = p.y;
 
 						if (_selection.right < _selection.left) {
@@ -1100,10 +1094,10 @@ void ESPER::drawMouse(Graphics::Surface &surface) {
 					_isDrawingSelection = false;
 				}
 			}
-			surface.vLine(p.x,     p.y - 8, p.y - 1, surface.format.RGBToColor(0, 248, 0));
-			surface.vLine(p.x,     p.y + 8, p.y + 1, surface.format.RGBToColor(0, 248, 0));
-			surface.hLine(p.x - 8, p.y,     p.x - 1, surface.format.RGBToColor(0, 248, 0));
-			surface.hLine(p.x + 8, p.y,     p.x + 1, surface.format.RGBToColor(0, 248, 0));
+			surface.vLine(p.x, p.y - 8, p.y - 1, surface.format.RGBToColor(0, 248, 0));
+			surface.vLine(p.x, p.y + 8, p.y + 1, surface.format.RGBToColor(0, 248, 0));
+			surface.hLine(p.x - 8, p.y, p.x - 1, surface.format.RGBToColor(0, 248, 0));
+			surface.hLine(p.x + 8, p.y, p.x + 1, surface.format.RGBToColor(0, 248, 0));
 			_mouseOverScroll = -1;
 		} else if (p.x >= 85 && p.y >= 73 && p.x <= 484 && p.y <= 436) {
 			if (!_isDrawingSelection && _statePhoto != kEsperPhotoStateVideoShow && _zoom != 2.0f) {
@@ -1115,7 +1109,7 @@ void ESPER::drawMouse(Graphics::Surface &surface) {
 					_mouseOverScroll = 4;
 				} else if (_mouseOverScroll == 1 && this->_viewport.right == kPhotoWidth - 1) {
 					_mouseOverScroll = 4;
-				} else if (_mouseOverScroll == 2 && this->_viewport.bottom ==  kPhotoHeight - 1) {
+				} else if (_mouseOverScroll == 2 && this->_viewport.bottom == kPhotoHeight - 1) {
 					_mouseOverScroll = 4;
 				} else if (_mouseOverScroll == 3 && this->_viewport.left == 0) {
 					_mouseOverScroll = 4;
@@ -1151,10 +1145,10 @@ void ESPER::copyImageScale(Graphics::Surface *src, Common::Rect srcRect, Graphic
 		playSound(kSfxBR031_1P, 25);
 	}
 
-	int srcDstWidthRatio  = srcRect.width()  / dstRect.width();
-	int srcDstWidthRest   = srcRect.width()  % dstRect.width();
+	int srcDstWidthRatio = srcRect.width() / dstRect.width();
+	int srcDstWidthRest = srcRect.width() % dstRect.width();
 	int srcDstHeightRatio = srcRect.height() / dstRect.height();
-	int srcDstHeightRest  = srcRect.height() % dstRect.height();
+	int srcDstHeightRest = srcRect.height() % dstRect.height();
 
 	if (srcRect.width() > dstRect.width() && srcRect.height() > dstRect.height()) {
 		// reduce
@@ -1230,10 +1224,10 @@ void ESPER::copyImageBlur(Graphics::Surface *src, Common::Rect srcRect, Graphics
 		playSound(kSfxBR031_1P, 25);
 	}
 
-	int srcDstWidthRatio  = srcRect.width()  / dstRect.width();
-	int srcDstWidthRest   = srcRect.width()  % dstRect.width();
+	int srcDstWidthRatio = srcRect.width() / dstRect.width();
+	int srcDstWidthRest = srcRect.width() % dstRect.width();
 	int srcDstHeightRatio = srcRect.height() / dstRect.height();
-	int srcDstHeightRest  = srcRect.height() % dstRect.height();
+	int srcDstHeightRest = srcRect.height() % dstRect.height();
 
 	int skipStep = (blur - (int)blur) * 1000.0f;
 	if (srcRect.width() > dstRect.width() && srcRect.height() > dstRect.height()) {
@@ -1429,7 +1423,7 @@ void ESPER::selectPhoto(int photoId) {
 	uint photoSize = _surfacePhoto.w * _surfacePhoto.h * _surfacePhoto.format.bytesPerPixel;
 
 	s->skip(3); // not used, but there is compression type
-	uint width  = s->readUint32LE();
+	uint width = s->readUint32LE();
 	uint height = s->readUint32LE();
 	uint photoCompressedSize = s->size() - s->pos();
 	uint8 *photoCompressed = (uint8 *)_surfacePhoto.getPixels() + photoSize - photoCompressedSize;
@@ -1518,9 +1512,9 @@ void ESPER::zoomOutStop() {
 void ESPER::scrollingStart(int direction) {
 	scrollingStop();
 	if ((direction != 3 || _viewport.left > 0)
-	 && (direction != 0 || _viewport.top  > 0)
-	 && (direction != 1 || _viewport.right  != kPhotoWidth  - 1)
-	 && (direction != 2 || _viewport.bottom != kPhotoHeight - 1)) {
+	    && (direction != 0 || _viewport.top > 0)
+	    && (direction != 1 || _viewport.right != kPhotoWidth - 1)
+	    && (direction != 2 || _viewport.bottom != kPhotoHeight - 1)) {
 		_isScrolling = true;
 		_scrollingDirection = direction;
 	}
@@ -1538,32 +1532,33 @@ void ESPER::scrollUpdate() {
 	}
 
 	if (_viewport.left != _viewportNext.left) {
-		_viewport.left  = _viewportNext.left;
+		_viewport.left = _viewportNext.left;
 		_viewport.right = _viewportNext.right;
 
 		_viewportPositionX = (_viewportNext.left + _viewportNext.right) / 2;
 	}
 
 	if (_viewport.top != _viewportNext.top) {
-		_viewport.top    = _viewportNext.top;
+		_viewport.top = _viewportNext.top;
 		_viewport.bottom = _viewportNext.bottom;
 
 		_viewportPositionY = (_viewportNext.top + _viewportNext.bottom) / 2;
 	}
 }
 
-void ESPER::scrollLeft() {this->_flash = 1;
+void ESPER::scrollLeft() {
+	this->_flash = 1;
 	_flash = true;
 	setStatePhoto(kEsperPhotoStateScrolling);
 
-	_viewportNext.left  = _viewport.left  - 40;
+	_viewportNext.left = _viewport.left - 40;
 	_viewportNext.right = _viewport.right - 40;
 	if (_viewportNext.left < 0) {
 		_viewportNext.right -= _viewportNext.left;
-		_viewportNext.left   = 0;
+		_viewportNext.left = 0;
 		scrollingStop();
 	}
-	_viewportNext.top    = _viewport.top;
+	_viewportNext.top = _viewport.top;
 	_viewportNext.bottom = _viewport.bottom;
 }
 
@@ -1571,14 +1566,14 @@ void ESPER::scrollUp() {
 	_flash = true;
 	setStatePhoto(kEsperPhotoStateScrolling);
 
-	_viewportNext.top    = _viewport.top    - 40;
+	_viewportNext.top = _viewport.top - 40;
 	_viewportNext.bottom = _viewport.bottom - 40;
 	if (_viewportNext.top < 0) {
 		_viewportNext.bottom -= _viewportNext.top;
-		_viewportNext.top     = 0;
+		_viewportNext.top = 0;
 		scrollingStop();
 	}
-	_viewportNext.left  = _viewport.left;
+	_viewportNext.left = _viewport.left;
 	_viewportNext.right = _viewport.right;
 }
 
@@ -1587,9 +1582,9 @@ void ESPER::scrollRight() {
 		_flash = true;
 		setStatePhoto(kEsperPhotoStateScrolling);
 
-		_viewportNext.left   = _viewport.left  + 40;
-		_viewportNext.right  = _viewport.right + 40;
-		_viewportNext.top    = _viewport.top;
+		_viewportNext.left = _viewport.left + 40;
+		_viewportNext.right = _viewport.right + 40;
+		_viewportNext.top = _viewport.top;
 		_viewportNext.bottom = _viewport.bottom;
 
 		if (_viewportNext.right > kPhotoWidth - 1) {
@@ -1605,13 +1600,13 @@ void ESPER::scrollDown() {
 		_flash = true;
 		setStatePhoto(kEsperPhotoStateScrolling);
 
-		_viewportNext.top    = _viewport.top    + 40;
+		_viewportNext.top = _viewport.top + 40;
 		_viewportNext.bottom = _viewport.bottom + 40;
-		_viewportNext.left   = _viewport.left;
-		_viewportNext.right  = _viewport.right;
+		_viewportNext.left = _viewport.left;
+		_viewportNext.right = _viewport.right;
 
 		if (_viewportNext.bottom > kPhotoHeight - 1) {
-			_viewportNext.top   -= _viewportNext.bottom - (kPhotoHeight - 1);
+			_viewportNext.top -= _viewportNext.bottom - (kPhotoHeight - 1);
 			_viewportNext.bottom = kPhotoHeight - 1;
 			scrollingStop();
 		}
@@ -1630,21 +1625,21 @@ void ESPER::goBack() {
 }
 
 void ESPER::prepareZoom() {
-	_selectionZoomStep          = 0;
+	_selectionZoomStep = 0;
 	_timeSelectionZoomNextStart = 0u;
 
 	_selectionTarget = _selection;
 	resetSelectionRect();
-	_selectionDelta.left   = (_selectionTarget.left   - _selection.left)   / kSelectionZoomSteps;
-	_selectionDelta.top    = (_selectionTarget.top    - _selection.top)    / kSelectionZoomSteps;
-	_selectionDelta.right  = (_selectionTarget.right  - _selection.right)  / kSelectionZoomSteps;
+	_selectionDelta.left = (_selectionTarget.left - _selection.left) / kSelectionZoomSteps;
+	_selectionDelta.top = (_selectionTarget.top - _selection.top) / kSelectionZoomSteps;
+	_selectionDelta.right = (_selectionTarget.right - _selection.right) / kSelectionZoomSteps;
 	_selectionDelta.bottom = (_selectionTarget.bottom - _selection.bottom) / kSelectionZoomSteps;
 
 	Common::Rect rect = _selectionTarget;
 	if (_regionSelectedAck) {
-		rect.left   = viewportXToScreenX(_regions[_regionSelected].rectSelection.left);
-		rect.top    = viewportYToScreenY(_regions[_regionSelected].rectSelection.top);
-		rect.right  = viewportXToScreenX(_regions[_regionSelected].rectSelection.right);
+		rect.left = viewportXToScreenX(_regions[_regionSelected].rectSelection.left);
+		rect.top = viewportYToScreenY(_regions[_regionSelected].rectSelection.top);
+		rect.right = viewportXToScreenX(_regions[_regionSelected].rectSelection.right);
 		rect.bottom = viewportYToScreenY(_regions[_regionSelected].rectSelection.bottom);
 	}
 
@@ -1652,25 +1647,25 @@ void ESPER::prepareZoom() {
 	float ratio = (rect.width() + 1.0f) / (float)_screen.width();
 	if (ratio == 0.0f) {
 		_zoomTarget = ratio;
-		_zoomDelta  = 0.0f;
+		_zoomDelta = 0.0f;
 	} else {
 		_zoomTarget = CLIP(_zoom / ratio, _zoomMin, 2.0f);
-		_zoomSteps  = CLIP((int)(_zoomTarget / _zoom) - 1, 0, 5) + 5;
-		_zoomDelta  = (_zoomTarget - _zoom) / (float)_zoomSteps;
+		_zoomSteps = CLIP((int)(_zoomTarget / _zoom) - 1, 0, 5) + 5;
+		_zoomDelta = (_zoomTarget - _zoom) / (float)_zoomSteps;
 	}
 
 	_blur = 1.0f;
 
-	_viewportPositionXTarget  = _viewport.left + ((rect.left + rect.right) / 2 - _screen.left) * _viewport.width()  / _screen.width();
-	_viewportPositionYTarget  = _viewport.top +  ((rect.top + rect.bottom) / 2 - _screen.top ) * _viewport.height() / _screen.height();
-	_viewportPositionXDelta   = (_viewportPositionXTarget - _viewportPositionX) / (float)_zoomSteps;
-	_viewportPositionYDelta   = (_viewportPositionYTarget - _viewportPositionY) / (float)_zoomSteps;
+	_viewportPositionXTarget = _viewport.left + ((rect.left + rect.right) / 2 - _screen.left) * _viewport.width() / _screen.width();
+	_viewportPositionYTarget = _viewport.top + ((rect.top + rect.bottom) / 2 - _screen.top) * _viewport.height() / _screen.height();
+	_viewportPositionXDelta = (_viewportPositionXTarget - _viewportPositionX) / (float)_zoomSteps;
+	_viewportPositionYDelta = (_viewportPositionYTarget - _viewportPositionY) / (float)_zoomSteps;
 	_viewportPositionXCurrent = _viewportPositionX;
 	_viewportPositionYCurrent = _viewportPositionY;
 }
 
 void ESPER::updateSelection() {
-	int selectionWidth  = abs(_selection.right + 1 - _selection.left);
+	int selectionWidth = abs(_selection.right + 1 - _selection.left);
 	int selectionHeight = abs(_selection.bottom + 1 - _selection.top);
 
 	int photoSelectedWidth = _viewport.width() * selectionWidth / _screen.width();
@@ -1703,10 +1698,10 @@ void ESPER::updateSelection() {
 		selectionHeight = _screen.height();
 	}
 
-	int left   = _viewport.right  - (_screen.right - 1  - _selection.left) * _viewport.width()  / _screen.width();
-	int right  = _viewport.left   + (_selection.right   - _screen.left   ) * _viewport.width()  / _screen.width();
-	int top    = _viewport.bottom - (_screen.bottom - 1 - _selection.top ) * _viewport.height() / _screen.height();
-	int bottom = _viewport.top    + (_selection.bottom  - _screen.top    ) * _viewport.height() / _screen.height();
+	int left = _viewport.right - (_screen.right - 1 - _selection.left) * _viewport.width() / _screen.width();
+	int right = _viewport.left + (_selection.right - _screen.left) * _viewport.width() / _screen.width();
+	int top = _viewport.bottom - (_screen.bottom - 1 - _selection.top) * _viewport.height() / _screen.height();
+	int bottom = _viewport.top + (_selection.bottom - _screen.top) * _viewport.height() / _screen.height();
 
 	bool stop = false;
 	bool alternate = false;
@@ -1765,7 +1760,7 @@ void ESPER::updateSelection() {
 			}
 		} else {
 			++_selection.bottom;
-			if (_selection.bottom > _screen.bottom - 1)	{
+			if (_selection.bottom > _screen.bottom - 1) {
 				bottom = _viewport.top + (_selection.bottom - _screen.top) * _viewport.height() / _screen.height();
 				if (bottom > kPhotoHeight - 1) {
 					bottom = kPhotoHeight - 1;

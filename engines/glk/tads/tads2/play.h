@@ -29,17 +29,17 @@
 #include "glk/tads/tads2/lib.h"
 #include "glk/tads/tads2/object.h"
 #include "glk/tads/tads2/run.h"
-#include "glk/tads/tads2/vocabulary.h"
 #include "glk/tads/tads2/tokenizer.h"
+#include "glk/tads/tads2/vocabulary.h"
 
 namespace Glk {
 namespace TADS {
-namespace TADS2 {
+	namespace TADS2 {
 
-void plygo(runcxdef *run, voccxdef *voc,
-	tiocxdef *tio, objnum preinit, char *restore_fname);
+		void plygo(runcxdef *run, voccxdef *voc,
+		           tiocxdef *tio, objnum preinit, char *restore_fname);
 
-} // End of namespace TADS2
+	} // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk
 

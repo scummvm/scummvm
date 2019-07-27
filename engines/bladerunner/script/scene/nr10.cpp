@@ -30,24 +30,23 @@ void SceneScriptNR10::InitializeScene() {
 		Setup_Scene_Information(-136.78f, 2.84f, -234.43f, 320);
 	} else {
 		Game_Flag_Reset(kFlagNR11toNR10);
-		Setup_Scene_Information(  19.22f, 2.84f, -250.43f, 540);
+		Setup_Scene_Information(19.22f, 2.84f, -250.43f, 540);
 	}
 
 	Scene_Exit_Add_2D_Exit(0, 144, 163, 194, 318, 3);
-	Scene_Exit_Add_2D_Exit(1, 475,  95, 568, 230, 0);
+	Scene_Exit_Add_2D_Exit(1, 475, 95, 568, 230, 0);
 	if (_vm->_cutContent
 	    && !Game_Flag_Query(kFlagMcCoyCommentsOnOldProjector)
-	    && !Actor_Query_Is_In_Current_Set(kActorDektora)
-	) {
-		Scene_2D_Region_Add(0, 323,  86, 473, 320); // projector area 1
+	    && !Actor_Query_Is_In_Current_Set(kActorDektora)) {
+		Scene_2D_Region_Add(0, 323, 86, 473, 320); // projector area 1
 		Scene_2D_Region_Add(1, 280, 180, 323, 212); // projector area 2
 	}
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTDRONE1, 22, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED5,   33, 0, 1);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN1,  2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN2,  2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN3,  2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED5, 33, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN3, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxBBMOVE1, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxBBMOVE2, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxBBMOVE3, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
@@ -73,9 +72,8 @@ bool SceneScriptNR10::MouseClick(int x, int y) {
 
 bool SceneScriptNR10::ClickedOn3DObject(const char *objectName, bool combatMode) {
 	if (Object_Query_Click("BOX18", objectName)
-	 && combatMode
-	 && Game_Flag_Query(kFlagNR10McCoyBlinded)
-	) {
+	    && combatMode
+	    && Game_Flag_Query(kFlagNR10McCoyBlinded)) {
 		Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR11Hiding);
 		Game_Flag_Set(kFlagNR10CameraDestroyed);
 		Game_Flag_Reset(kFlagNR10McCoyBlinded);
@@ -89,7 +87,7 @@ bool SceneScriptNR10::ClickedOn3DObject(const char *objectName, bool combatMode)
 		Scene_Exits_Enable();
 		if (_vm->_cutContent && !Game_Flag_Query(kFlagMcCoyCommentsOnOldProjector)) {
 			// restore regions if McCoy has not commented on projector, when Dektora leaves
-			Scene_2D_Region_Add(0, 323,  86, 473, 320); // projector area 1
+			Scene_2D_Region_Add(0, 323, 86, 473, 320); // projector area 1
 			Scene_2D_Region_Add(1, 280, 180, 323, 212); // projector area 2
 		}
 		return true;
@@ -152,8 +150,7 @@ void SceneScriptNR10::SceneFrameAdvanced(int frame) {
 	}
 
 	if (frame == 61
-	 && Game_Flag_Query(kFlagNR10McCoyBlinded)
-	) {
+	    && Game_Flag_Query(kFlagNR10McCoyBlinded)) {
 		Game_Flag_Reset(kFlagNR10McCoyBlinded);
 		Player_Set_Combat_Mode(false);
 		Actor_Set_Invisible(kActorMcCoy, false);

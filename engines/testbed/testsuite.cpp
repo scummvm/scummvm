@@ -161,7 +161,7 @@ void Testsuite::clearScreen() {
 	int height = getDisplayRegionCoordinates().y;
 
 	// Don't clear test info display region
-	int size =  height * numBytesPerLine;
+	int size = height * numBytesPerLine;
 	byte *buffer = new byte[size];
 	memset(buffer, 0, size);
 	g_system->copyRectToScreen(buffer, numBytesPerLine, 0, 0, g_system->getWidth(), height);
@@ -249,7 +249,7 @@ void Testsuite::updateStats(const char *prefix, const char *info, uint testNum, 
 
 	// draw the boundary
 	memset(buffer, barColor, sizeof(byte) * wRect);
-	memset(buffer + (wRect * (lRect - 1)) , barColor, sizeof(byte) * wRect);
+	memset(buffer + (wRect * (lRect - 1)), barColor, sizeof(byte) * wRect);
 
 	for (int i = 0; i < lRect; i++) {
 		for (int j = 0; j < wRect; j++) {
@@ -274,7 +274,6 @@ bool Testsuite::enableTest(const Common::String &testName, bool toEnable) {
 	}
 	return false;
 }
-
 
 void Testsuite::execute() {
 	// Main Loop for a testsuite
@@ -309,7 +308,7 @@ void Testsuite::execute() {
 			logPrintf("Result: Passed\n");
 			_numTestsExecuted++;
 			_numTestsPassed++;
-		} else if (kTestSkipped == eStatus){
+		} else if (kTestSkipped == eStatus) {
 			logPrintf("Result: Skipped\n");
 			_numTestsSkipped++;
 		} else {

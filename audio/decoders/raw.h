@@ -28,7 +28,6 @@
 
 #include "common/list.h"
 
-
 namespace Common {
 class SeekableReadStream;
 }

@@ -24,67 +24,62 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "graphics/thumbnail.h"
 #include "engines/advancedDetector.h"
+#include "graphics/thumbnail.h"
 
 #include "supernova/supernova.h"
 
 static const PlainGameDescriptor supernovaGames[] = {
-	{"msn1", "Mission Supernova 1"},
-	{"msn2", "Mission Supernova 2"},
-	{nullptr, nullptr}
+	{ "msn1", "Mission Supernova 1" },
+	{ "msn2", "Mission Supernova 2" },
+	{ nullptr, nullptr }
 };
 
 namespace Supernova {
 static const ADGameDescription gameDescriptions[] = {
 	// Mission Supernova 1
 	{
-		"msn1",
-		nullptr,
-		AD_ENTRY1s("msn_data.000", "f64f16782a86211efa919fbae41e7568", 24163),
-		Common::DE_DEU,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
-	},
-	{
-		"msn1",
-		nullptr,
-		AD_ENTRY1s("msn_data.000", "f64f16782a86211efa919fbae41e7568", 24163),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
-	},
+	  "msn1",
+	  nullptr,
+	  AD_ENTRY1s("msn_data.000", "f64f16782a86211efa919fbae41e7568", 24163),
+	  Common::DE_DEU,
+	  Common::kPlatformDOS,
+	  ADGF_UNSTABLE,
+	  GUIO1(GUIO_NONE) },
+	{ "msn1",
+	  nullptr,
+	  AD_ENTRY1s("msn_data.000", "f64f16782a86211efa919fbae41e7568", 24163),
+	  Common::EN_ANY,
+	  Common::kPlatformDOS,
+	  ADGF_UNSTABLE,
+	  GUIO1(GUIO_NONE) },
 
 	// Mission Supernova 2
 	{
-		"msn2",
-		nullptr,
-		AD_ENTRY1s("ms2_data.000", "e595610cba4a6d24a763e428d05cc83f", 24805),
-		Common::DE_DEU,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
-	},
-	{
-		"msn2",
-		nullptr,
-		AD_ENTRY1s("ms2_data.000", "e595610cba4a6d24a763e428d05cc83f", 24805),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
-	},
+	  "msn2",
+	  nullptr,
+	  AD_ENTRY1s("ms2_data.000", "e595610cba4a6d24a763e428d05cc83f", 24805),
+	  Common::DE_DEU,
+	  Common::kPlatformDOS,
+	  ADGF_UNSTABLE,
+	  GUIO1(GUIO_NONE) },
+	{ "msn2",
+	  nullptr,
+	  AD_ENTRY1s("ms2_data.000", "e595610cba4a6d24a763e428d05cc83f", 24805),
+	  Common::EN_ANY,
+	  Common::kPlatformDOS,
+	  ADGF_UNSTABLE,
+	  GUIO1(GUIO_NONE) },
 
 	AD_TABLE_END_MARKER
 };
 }
 
-class SupernovaMetaEngine: public AdvancedMetaEngine {
+class SupernovaMetaEngine : public AdvancedMetaEngine {
 public:
-	SupernovaMetaEngine() : AdvancedMetaEngine(Supernova::gameDescriptions, sizeof(ADGameDescription), supernovaGames) {
-//		_singleId = "supernova";
+	SupernovaMetaEngine()
+	  : AdvancedMetaEngine(Supernova::gameDescriptions, sizeof(ADGameDescription), supernovaGames) {
+		//		_singleId = "supernova";
 	}
 
 	virtual const char *getName() const {
@@ -142,7 +137,7 @@ SaveStateList SupernovaMetaEngine::listSaves(const char *target) const {
 
 	SaveStateList saveFileList;
 	for (Common::StringArray::const_iterator file = filenames.begin();
-		 file != filenames.end(); ++file) {
+	     file != filenames.end(); ++file) {
 		int saveSlot = atoi(file->c_str() + file->size() - 3);
 		if (saveSlot >= 0 && saveSlot <= getMaximumSaveSlot()) {
 			Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(*file);
@@ -152,10 +147,10 @@ SaveStateList SupernovaMetaEngine::listSaves(const char *target) const {
 					byte saveVersion = savefile->readByte();
 					if (saveVersion <= SAVEGAME_VERSION) {
 						int saveFileDescSize = savefile->readSint16LE();
-						char* saveFileDesc = new char[saveFileDescSize];
+						char *saveFileDesc = new char[saveFileDescSize];
 						savefile->read(saveFileDesc, saveFileDescSize);
 						saveFileList.push_back(SaveStateDescriptor(saveSlot, saveFileDesc));
-						delete [] saveFileDesc;
+						delete[] saveFileDesc;
 					}
 				}
 				delete savefile;
@@ -183,16 +178,16 @@ SaveStateDescriptor SupernovaMetaEngine::querySaveMetaInfos(const char *target, 
 			return SaveStateDescriptor();
 		}
 		byte saveVersion = savefile->readByte();
-		if (saveVersion > SAVEGAME_VERSION){
+		if (saveVersion > SAVEGAME_VERSION) {
 			delete savefile;
 			return SaveStateDescriptor();
 		}
 
 		int descriptionSize = savefile->readSint16LE();
-		char* description = new char[descriptionSize];
+		char *description = new char[descriptionSize];
 		savefile->read(description, descriptionSize);
 		SaveStateDescriptor desc(slot, description);
-		delete [] description;
+		delete[] description;
 
 		uint32 saveDate = savefile->readUint32LE();
 		int day = (saveDate >> 24) & 0xFF;
@@ -205,7 +200,7 @@ SaveStateDescriptor SupernovaMetaEngine::querySaveMetaInfos(const char *target, 
 		int minutes = saveTime & 0xFF;
 		desc.setSaveTime(hour, minutes);
 
-		uint32 playTime =savefile->readUint32LE();
+		uint32 playTime = savefile->readUint32LE();
 		desc.setPlayTime(playTime * 1000);
 
 		if (Graphics::checkThumbnailHeader(*savefile)) {
@@ -224,7 +219,6 @@ SaveStateDescriptor SupernovaMetaEngine::querySaveMetaInfos(const char *target, 
 
 	return SaveStateDescriptor();
 }
-
 
 #if PLUGIN_ENABLED_DYNAMIC(SUPERNOVA)
 REGISTER_PLUGIN_DYNAMIC(SUPERNOVA, PLUGIN_TYPE_ENGINE, SupernovaMetaEngine);

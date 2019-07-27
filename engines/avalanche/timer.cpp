@@ -27,8 +27,8 @@
 
 /* Original name: TIMEOUT	The scheduling unit. */
 
-#include "avalanche/avalanche.h"
 #include "avalanche/timer.h"
+#include "avalanche/avalanche.h"
 
 namespace Avalanche {
 
@@ -75,16 +75,16 @@ void Timer::updateTimer() {
 
 		if (_times[i]._timeLeft == 0) {
 			switch (_times[i]._action) {
-			case kProcOpenDrawbridge :
+			case kProcOpenDrawbridge:
 				openDrawbridge();
 				break;
-			case kProcAvariciusTalks :
+			case kProcAvariciusTalks:
 				avariciusTalks();
 				break;
-			case kProcUrinate :
+			case kProcUrinate:
 				urinate();
 				break;
-			case kProcToilet :
+			case kProcToilet:
 				toilet();
 				break;
 			case kProcBang:
@@ -210,7 +210,6 @@ void Timer::loseTimer(byte which) {
 		if (_times[i]._reason == which)
 			_times[i]._timeLeft = 0; // Cancel this one!
 	}
-
 }
 
 void Timer::openDrawbridge() {
@@ -355,7 +354,6 @@ void Timer::afterTheShootemup() {
 	} else
 		_vm->incScore(gain);
 
-
 	_vm->_dialogs->displayScrollChain('Q', 70);
 }
 
@@ -363,16 +361,16 @@ void Timer::jacquesWakesUp() {
 	_vm->_jacquesState++;
 
 	switch (_vm->_jacquesState) { // Additional pictures.
-	case 1 :
+	case 1:
 		_vm->_background->draw(-1, -1, 0); // Eyes open.
 		_vm->_dialogs->displayScrollChain('Q', 45);
 		break;
-	case 2 : // Going through the door.
+	case 2: // Going through the door.
 		_vm->_background->draw(-1, -1, 1); // Not on the floor.
 		_vm->_background->draw(-1, -1, 2); // But going through the door.
 		_vm->_magics[5]._operation = kMagicNothing; // You can't wake him up now.
 		break;
-	case 3 :  // Gone through the door.
+	case 3: // Gone through the door.
 		_vm->_background->draw(-1, -1, 1); // Not on the floor, either.
 		_vm->_background->draw(-1, -1, 3); // He's gone... so the door's open.
 		_vm->setRoom(kPeopleJacques, kRoomNowhere); // Gone!
@@ -454,9 +452,9 @@ void Timer::jump() {
 		addTimer(1, kProcJump, kReasonJumping);
 
 	if ((_vm->_jumpStatus == 10) // You're at the highest point of your jump.
-			&& (_vm->_room == kRoomInsideCardiffCastle)
-			&& (_vm->_arrowInTheDoor == true)
-			&& (_vm->_animation->inField(2))) { // Beside the wall
+	    && (_vm->_room == kRoomInsideCardiffCastle)
+	    && (_vm->_arrowInTheDoor == true)
+	    && (_vm->_animation->inField(2))) { // Beside the wall
 		// Grab the arrow!
 		if (_vm->_carryNum >= kCarryLimit)
 			_vm->_dialogs->displayText("You fail to grab it, because your hands are full.");
@@ -517,14 +515,14 @@ void Timer::fallDownOubliette() {
 
 	AnimationType *avvy = _vm->_animation->_sprites[0];
 	avvy->_moveY++; // Increments dx/dy!
-	avvy->_y += avvy->_moveY;   // Dowwwn we go...
+	avvy->_y += avvy->_moveY; // Dowwwn we go...
 	addTimer(3, kProcFallDownOubliette, kReasonFallingDownOubliette);
 }
 
 void Timer::meetAvaroid() {
 	if (_vm->_metAvaroid) {
 		Common::String tmpStr = Common::String::format("You can't expect to be %cthat%c lucky twice in a row!",
-			kControlItalic, kControlRoman);
+		                                               kControlItalic, kControlRoman);
 		_vm->_dialogs->displayText(tmpStr);
 		_vm->gameOver();
 	} else {
@@ -597,7 +595,7 @@ void Timer::avalotReturns() {
  */
 void Timer::avvySitDown() {
 	AnimationType *avvy = _vm->_animation->_sprites[0];
-	if (avvy->_homing)    // Still walking.
+	if (avvy->_homing) // Still walking.
 		addTimer(1, kProcAvvySitDown, kReasonSittingDown);
 	else {
 		_vm->_background->draw(-1, -1, 2);
@@ -609,7 +607,7 @@ void Timer::avvySitDown() {
 
 void Timer::ghostRoomPhew() {
 	Common::String tmpStr = Common::String::format("%cPHEW!%c You're glad to get out of %cthere!",
-		kControlItalic, kControlRoman, kControlItalic);
+	                                               kControlItalic, kControlRoman, kControlItalic);
 	_vm->_dialogs->displayText(tmpStr);
 }
 
@@ -667,10 +665,10 @@ void Timer::avalotFalls() {
 		addTimer(3, kProcAvalotFalls, kReasonFallingOver);
 	} else {
 		Common::String toDisplay = Common::String::format("%c%c%c%c%c%c%c%c%c%c%c%c%cZ%c",
-			kControlNewLine, kControlNewLine, kControlNewLine, kControlNewLine,
-			kControlNewLine, kControlNewLine, kControlInsertSpaces, kControlInsertSpaces,
-			kControlInsertSpaces, kControlInsertSpaces, kControlInsertSpaces,
-			kControlInsertSpaces, kControlRegister, kControlIcon);
+		                                                  kControlNewLine, kControlNewLine, kControlNewLine, kControlNewLine,
+		                                                  kControlNewLine, kControlNewLine, kControlInsertSpaces, kControlInsertSpaces,
+		                                                  kControlInsertSpaces, kControlInsertSpaces, kControlInsertSpaces,
+		                                                  kControlInsertSpaces, kControlRegister, kControlIcon);
 		_vm->_dialogs->displayText(toDisplay);
 	}
 }

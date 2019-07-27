@@ -26,9 +26,9 @@ namespace BladeRunner {
 
 enum kHF05Loops {
 	kHF05LoopMainLoopNoSpinner = 0,
-	kHF05LoopMainLoopSpinner   = 2,
-	kHF05LoopArmAnimation      = 4,
-	kHF05LoopMainLoopHole      = 5
+	kHF05LoopMainLoopSpinner = 2,
+	kHF05LoopArmAnimation = 4,
+	kHF05LoopMainLoopHole = 5
 };
 
 void SceneScriptHF05::InitializeScene() {
@@ -44,7 +44,7 @@ void SceneScriptHF05::InitializeScene() {
 	if (Global_Variable_Query(kVariableChapter) > 3) {
 		Scene_Exit_Add_2D_Exit(1, 367, 298, 399, 349, 2);
 	}
-	Scene_Exit_Add_2D_Exit(2, 589,   0, 639, 479, 1);
+	Scene_Exit_Add_2D_Exit(2, 589, 0, 639, 479, 1);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 40, 1, 1);
 
@@ -80,17 +80,15 @@ bool SceneScriptHF05::ClickedOn3DObject(const char *objectName, bool a2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 95.0f, 40.63f, 308.0f, 0, true, false, false)) {
 			Actor_Face_Object(kActorMcCoy, "TOP CON", true);
 			if (Actor_Query_In_Set(kActorCrazylegs, kSetHF05)
-			 && Actor_Query_Goal_Number(kActorCrazylegs) != kGoalCrazyLegsShotAndHit
-			 && Actor_Query_Goal_Number(kActorCrazylegs) != kGoalCrazyLegsLeavesShowroom
-			) {
+			    && Actor_Query_Goal_Number(kActorCrazylegs) != kGoalCrazyLegsShotAndHit
+			    && Actor_Query_Goal_Number(kActorCrazylegs) != kGoalCrazyLegsLeavesShowroom) {
 				Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, true);
 				Actor_Says(kActorCrazylegs, 480, 13);
 				return true;
 			}
 
 			if (!Game_Flag_Query(kFlagHF01TalkToLovedOne)
-			 ||  Game_Flag_Query(kFlagHF05Hole)
-			) {
+			    || Game_Flag_Query(kFlagHF05Hole)) {
 				Actor_Change_Animation_Mode(kActorMcCoy, 23);
 				Sound_Play(kSfxELEBAD1, 100, 0, 0, 50);
 				return true;
@@ -115,7 +113,6 @@ bool SceneScriptHF05::ClickedOn3DObject(const char *objectName, bool a2) {
 			Actor_Change_Animation_Mode(kActorMcCoy, 23);
 			Scene_Loop_Set_Default(kHF05LoopMainLoopHole);
 			Scene_Loop_Start_Special(kSceneLoopModeOnce, kHF05LoopArmAnimation, true);
-
 
 			if (getCompanionActor() == kActorMcCoy) {
 				ADQ_Flush();
@@ -196,9 +193,8 @@ bool SceneScriptHF05::ClickedOnExit(int exitId) {
 			if (!Game_Flag_Query(kFlagHF05PoliceAttacked)) {
 				int affectionTowardsActor = getAffectionTowardsActor();
 				if (Game_Flag_Query(kFlagHF05PoliceArrived)
-				 && Game_Flag_Query(kFlagHF07Hole)
-				 && affectionTowardsActor != -1
-				) {
+				    && Game_Flag_Query(kFlagHF07Hole)
+				    && affectionTowardsActor != -1) {
 					Actor_Face_Actor(kActorMcCoy, affectionTowardsActor, true);
 					Actor_Says(kActorMcCoy, 1810, 16);
 				}
@@ -228,19 +224,19 @@ bool SceneScriptHF05::ClickedOn2DRegion(int region) {
 void SceneScriptHF05::SceneFrameAdvanced(int frame) {
 	switch (frame) {
 	case 126:
-		Sound_Play(kSfxMAGMOVE1, 90, -20,  70, 50);
+		Sound_Play(kSfxMAGMOVE1, 90, -20, 70, 50);
 		break;
 
 	case 152:
-		Sound_Play(kSfxDORSLID2, 90,   0,   0, 50);
+		Sound_Play(kSfxDORSLID2, 90, 0, 0, 50);
 		break;
 
 	case 156:
-		Sound_Play(kSfxLOWERN1,  47, 100, 100, 50);
+		Sound_Play(kSfxLOWERN1, 47, 100, 100, 50);
 		break;
 
 	case 161:
-		Sound_Play(kSfxDORSLID1, 90,   0,   0, 50);
+		Sound_Play(kSfxDORSLID1, 90, 0, 0, 50);
 		break;
 
 	case 176:
@@ -248,11 +244,11 @@ void SceneScriptHF05::SceneFrameAdvanced(int frame) {
 		break;
 
 	case 178:
-		Sound_Play(kSfxRAISEY1,  47, 100, 100, 50);
+		Sound_Play(kSfxRAISEY1, 47, 100, 100, 50);
 		break;
 
 	case 179:
-		Sound_Play(kSfxCAREXPL1, 90,   0,   0, 50);
+		Sound_Play(kSfxCAREXPL1, 90, 0, 0, 50);
 		Music_Play(kMusicBatl226M, 50, 0, 2, -1, 0, 0);
 		break;
 
@@ -265,7 +261,7 @@ void SceneScriptHF05::SceneFrameAdvanced(int frame) {
 		break;
 
 	case 243:
-		Sound_Play(kSfxLOWERY1,  40, -20, -20, 50);
+		Sound_Play(kSfxLOWERY1, 40, -20, -20, 50);
 		break;
 
 	case 261:
@@ -277,7 +273,7 @@ void SceneScriptHF05::SceneFrameAdvanced(int frame) {
 		break;
 
 	case 269:
-		Sound_Play(kSfxRAISEN1,  43, -20, -20, 50);
+		Sound_Play(kSfxRAISEN1, 43, -20, -20, 50);
 		break;
 	}
 	//return true;
@@ -285,8 +281,7 @@ void SceneScriptHF05::SceneFrameAdvanced(int frame) {
 
 void SceneScriptHF05::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
 	if (actorId == kActorOfficerLeary
-	 && newGoal == kGoalOfficerLearyPoliceAboutToAttackHF05
-	) {
+	    && newGoal == kGoalOfficerLearyPoliceAboutToAttackHF05) {
 		Game_Flag_Set(kFlagHF05PoliceAttacked);
 		policeAttack();
 	}
@@ -297,8 +292,7 @@ void SceneScriptHF05::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagHF01TalkToLovedOne)) {
 		int affectionTowardsActor = getAffectionTowardsActor();
 		if (Game_Flag_Query(kFlagHF01TalkToLovedOne)
-		 && affectionTowardsActor != -1
-		) {
+		    && affectionTowardsActor != -1) {
 			Actor_Put_In_Set(affectionTowardsActor, kSetHF05);
 			Actor_Force_Stop_Walking(affectionTowardsActor);
 			if (Game_Flag_Query(kFlagHF01toHF05)) {
@@ -316,17 +310,15 @@ void SceneScriptHF05::PlayerWalkedIn() {
 		if (Game_Flag_Query(kFlagHF05PoliceAttacked)) {
 			policeAttack();
 		} else if (Actor_Clue_Query(kActorMcCoy, kClueSpinnerKeys)
-		        || Game_Flag_Query(kFlagHF06SteelInterruption)
-		) {
-			if ( Game_Flag_Query(kFlagHF06SteelInterruption)
-			 && !Game_Flag_Query(kFlagHF05PoliceArrived)
-			) {
+		           || Game_Flag_Query(kFlagHF06SteelInterruption)) {
+			if (Game_Flag_Query(kFlagHF06SteelInterruption)
+			    && !Game_Flag_Query(kFlagHF05PoliceArrived)) {
 				Game_Flag_Set(kFlagHF05PoliceArrived);
 				Music_Play(kMusicBatl226M, 40, 0, 2, -1, 0, 0);
 				Actor_Says(kActorOfficerGrayford, 200, kAnimationModeTalk);
 				Actor_Says(kActorOfficerGrayford, 210, kAnimationModeTalk);
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyPoliceWait120SecondsToAttackHF05);
-				if (getCompanionActor() ==  kActorDektora) {
+				if (getCompanionActor() == kActorDektora) {
 					talkWithDektora();
 				} else if (getCompanionActor() == kActorLucy) {
 					talkWithLucy();
@@ -347,8 +339,7 @@ void SceneScriptHF05::PlayerWalkedIn() {
 			talkWithCrazyLegs1();
 			Game_Flag_Set(kFlagHF05CrazyLegsTalk1);
 		} else if (!Game_Flag_Query(kFlagHF05CrazyLegsTalk2)
-		        &&  Global_Variable_Query(kVariableChapter) == 3
-		) {
+		           && Global_Variable_Query(kVariableChapter) == 3) {
 			talkWithCrazyLegs2();
 			Game_Flag_Set(kFlagHF05CrazyLegsTalk2);
 		}
@@ -390,8 +381,7 @@ void SceneScriptHF05::talkWithCrazyLegs2() {
 void SceneScriptHF05::dialogueWithCrazylegs1() {
 	Dialogue_Menu_Clear_List();
 	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote) // cut feature? there is no way how to obtain this clue
-	 && Global_Variable_Query(kVariableChapter) == 3
-	) {
+	    && Global_Variable_Query(kVariableChapter) == 3) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1180, 3, 6, 7); // ADVERTISEMENT
 	}
 	if (Actor_Clue_Query(kActorMcCoy, kClueCrazylegsInterview1)) {
@@ -401,20 +391,16 @@ void SceneScriptHF05::dialogueWithCrazylegs1() {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1200, 5, 5, 3); // WOMAN'S PHOTO
 	}
 	if (Actor_Clue_Query(kActorMcCoy, kClueLucy)
-	 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyGone
-	) {
+	    && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyGone) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1210, 4, 6, 2); // LUCY'S PHOTO
 	}
 	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansResources) // cut feature? there is no way how to obtain this clue
-	 || (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote) // cut feature? there is no way how to obtain this clue either
-	  && Global_Variable_Query(kVariableChapter) == 3
-	 )
-	) {
+	    || (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote) // cut feature? there is no way how to obtain this clue either
+	        && Global_Variable_Query(kVariableChapter) == 3)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1220, -1, 2, 8); // GRIGORIAN
 	}
 	if (Actor_Clue_Query(kActorMcCoy, kClueCarRegistration1)
-	 || Actor_Clue_Query(kActorMcCoy, kClueCarRegistration3)
-	) {
+	    || Actor_Clue_Query(kActorMcCoy, kClueCarRegistration3)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1230, 4, 7, -1); // CAR REGISTRATION
 	}
 
@@ -538,7 +524,7 @@ void SceneScriptHF05::dialogueWithCrazylegs1() {
 void SceneScriptHF05::dialogueWithCrazylegs2() { // cut feature? it is impossible to trigger this dialog
 	Dialogue_Menu_Clear_List();
 	DM_Add_To_List_Never_Repeat_Once_Selected(1250, -1, -1, 10); // ARREST
-	DM_Add_To_List_Never_Repeat_Once_Selected(1260, 10,  5, -1); // WARNING
+	DM_Add_To_List_Never_Repeat_Once_Selected(1260, 10, 5, -1); // WARNING
 
 	Dialogue_Menu_Appear(320, 240);
 	int answer = Dialogue_Menu_Query_Input();
@@ -577,13 +563,11 @@ void SceneScriptHF05::dialogueWithCrazylegs2() { // cut feature? it is impossibl
 
 int SceneScriptHF05::getAffectionTowardsActor() {
 	if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsDektora
-	 && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraGone
-	) {
+	    && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraGone) {
 		return kActorDektora;
 	}
 	if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy
-	 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyGone
-	) {
+	    && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyGone) {
 		return kActorLucy;
 	}
 	return -1;
@@ -641,8 +625,7 @@ void SceneScriptHF05::talkWithLucy() {
 
 void SceneScriptHF05::talkWithCrazylegs3(int affectionTowardsActor) {
 	if (affectionTowardsActor != -1
-	 && Actor_Query_In_Set(kActorCrazylegs, kSetHF05)
-	) {
+	    && Actor_Query_In_Set(kActorCrazylegs, kSetHF05)) {
 		Async_Actor_Walk_To_Waypoint(affectionTowardsActor, 437, 36, false);
 		Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 437, 0, false, false);
 		Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, true);
@@ -674,7 +657,7 @@ void SceneScriptHF05::talkWithCrazylegs3(int affectionTowardsActor) {
 		} else {
 			Actor_Says(kActorLucy, 380, kAnimationModeTalk);
 		}
-		Actor_Says(kActorMcCoy, 1740, 14);    // You tell her we're headed South.
+		Actor_Says(kActorMcCoy, 1740, 14); // You tell her we're headed South.
 		Actor_Says(kActorCrazylegs, 120, 12); // Ten Four.
 		Actor_Set_Goal_Number(kActorCrazylegs, kGoalCrazyLegsLeavesShowroom);
 		if (affectionTowardsActor == kActorDektora) {
@@ -755,27 +738,25 @@ void SceneScriptHF05::talkWithCrazyLegs1() {
 
 void SceneScriptHF05::addAmbientSounds() {
 	Ambient_Sounds_Add_Sound(kSfxSIREN2, 20, 80, 20, 100, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Speech_Sound(kActorOfficerLeary,    250, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorOfficerLeary,    330, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorOfficerLeary,    340, 5, 90, 7, 10, -50, 50, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorOfficerLeary,    360, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorOfficerLeary, 250, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorOfficerLeary, 330, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorOfficerLeary, 340, 5, 90, 7, 10, -50, 50, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorOfficerLeary, 360, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorOfficerGrayford, 380, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorOfficerGrayford, 510, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorDispatcher,       80, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorDispatcher,      160, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorDispatcher,      280, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorDispatcher, 80, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorDispatcher, 160, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorDispatcher, 280, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
 }
 
 int SceneScriptHF05::getCompanionActor() {
 	if (Actor_Query_In_Set(kActorDektora, kSetHF05)
-	 && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraGone
-	) {
+	    && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraGone) {
 		return kActorDektora;
 	}
 
 	if (Actor_Query_In_Set(kActorLucy, kSetHF05)
-	 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyGone
-	) {
+	    && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyGone) {
 		return kActorLucy;
 	}
 

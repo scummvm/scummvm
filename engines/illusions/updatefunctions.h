@@ -29,8 +29,8 @@
 namespace Illusions {
 
 enum {
-	kUFNext      = 1,  // Run next update funtion
-	kUFTerminate = 2   // Terminate update function
+	kUFNext = 1, // Run next update funtion
+	kUFTerminate = 2 // Terminate update function
 };
 
 typedef Common::Functor1<uint, int> UpdateFunctionCallback;
@@ -41,7 +41,11 @@ public:
 	uint32 _sceneId;
 	uint _flags;
 	UpdateFunctionCallback *_callback;
-	UpdateFunction() : _priority(0), _sceneId(0), _flags(0), _callback(0) {}
+	UpdateFunction()
+	  : _priority(0)
+	  , _sceneId(0)
+	  , _flags(0)
+	  , _callback(0) {}
 	~UpdateFunction() { delete _callback; }
 	void terminate() { _flags |= 1; }
 	int run() { return (*_callback)(_flags); }
@@ -54,19 +58,21 @@ public:
 	void add(int priority, uint32 sceneId, UpdateFunctionCallback *callback);
 	void update();
 	void terminateByScene(uint32 sceneId);
+
 protected:
-	typedef Common::List<UpdateFunction*> UpdateFunctionList;
+	typedef Common::List<UpdateFunction *> UpdateFunctionList;
 	typedef UpdateFunctionList::iterator UpdateFunctionListIterator;
 
-	struct FindInsertionPosition : public Common::UnaryFunction<const UpdateFunction*, bool> {
+	struct FindInsertionPosition : public Common::UnaryFunction<const UpdateFunction *, bool> {
 		int _priority;
-		FindInsertionPosition(int priority) : _priority(priority) {}
+		FindInsertionPosition(int priority)
+		  : _priority(priority) {}
 		bool operator()(const UpdateFunction *updateFunction) const {
 			return updateFunction->_priority > _priority;
 		}
 	};
 
-	Common::List<UpdateFunction*> _updateFunctions;
+	Common::List<UpdateFunction *> _updateFunctions;
 	uint32 _lastTimerUpdateTime;
 };
 

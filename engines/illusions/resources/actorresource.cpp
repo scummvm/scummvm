@@ -20,10 +20,10 @@
  *
  */
 
-#include "illusions/actor.h"
-#include "illusions/illusions.h"
 #include "illusions/resources/actorresource.h"
+#include "illusions/actor.h"
 #include "illusions/dictionary.h"
+#include "illusions/illusions.h"
 
 namespace Illusions {
 
@@ -34,8 +34,7 @@ void ActorResourceLoader::load(Resource *resource) {
 }
 
 bool ActorResourceLoader::isFlag(int flag) {
-	return
-		flag == kRlfLoadFile;
+	return flag == kRlfLoadFile;
 }
 
 // Frame
@@ -49,7 +48,7 @@ void Frame::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_compressedPixels = dataStart + compressedPixelsOffs;
 	_pointsConfig = dataStart + pointsConfigOffs;
 	debug(5, "Frame::load() compressedPixelsOffs: %08X",
-		compressedPixelsOffs);
+	      compressedPixelsOffs);
 }
 
 // Sequence
@@ -60,7 +59,7 @@ void Sequence::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	uint32 sequenceCodeOffs = stream.readUint32LE();
 	_sequenceCode = dataStart + sequenceCodeOffs;
 	debug(5, "Sequence::load() _sequenceId: %08X; _unk4: %d; sequenceCodeOffs: %08X",
-		_sequenceId, _unk4, sequenceCodeOffs);
+	      _sequenceId, _unk4, sequenceCodeOffs);
 }
 
 // ActorType
@@ -89,11 +88,11 @@ void ActorType::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	stream.seek(namedPointsOffs);
 	_namedPoints.load(namedPointsCount, stream);
 	debug(5, "ActorType::load() _actorTypeId: %08X; _color(%d,%d,%d); _scale: %d; _priority: %d; _value1E: %d",
-		_actorTypeId, _color.r, _color.g, _color.b, _scale, _priority, _value1E);
+	      _actorTypeId, _color.r, _color.g, _color.b, _scale, _priority, _value1E);
 	debug(5, "ActorType::load() _pathWalkPointsIndex: %d; _scaleLayerIndex: %d; _pathWalkRectIndex: %d",
-		_pathWalkPointsIndex, _scaleLayerIndex, _pathWalkRectIndex);
+	      _pathWalkPointsIndex, _scaleLayerIndex, _pathWalkRectIndex);
 	debug(5, "ActorType::load() _priorityLayerIndex: %d; _regionLayerIndex: %d; _flags: %04X",
-		_priorityLayerIndex, _regionLayerIndex,_flags);
+	      _priorityLayerIndex, _regionLayerIndex, _flags);
 }
 
 // ActorResource
@@ -176,7 +175,7 @@ bool ActorResource::findNamedPoint(uint32 namedPointId, Common::Point &pt) {
 // ActorInstance
 
 ActorInstance::ActorInstance(IllusionsEngine *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 }
 
 void ActorInstance::load(Resource *resource) {
@@ -212,9 +211,9 @@ void ActorInstance::initActorTypes(int gameId) {
 		ActorType *actorType2 = _vm->_dict->findActorType(actorType->_actorTypeId);
 		if (actorType2) {
 			actorType->_surfInfo._dimensions._width = MAX(actorType->_surfInfo._dimensions._width,
-				actorType2->_surfInfo._dimensions._width);
+			                                              actorType2->_surfInfo._dimensions._width);
 			actorType->_surfInfo._dimensions._height = MAX(actorType->_surfInfo._dimensions._height,
-				actorType2->_surfInfo._dimensions._height);
+			                                               actorType2->_surfInfo._dimensions._height);
 			if (actorType->_color.r == 255 && actorType->_color.g == 255 && actorType->_color.b == 255)
 				actorType->_color = actorType2->_color;
 			if (actorType->_value1E == 0)
@@ -227,7 +226,7 @@ void ActorInstance::initActorTypes(int gameId) {
 		_vm->_dict->addSequence(sequence->_sequenceId, sequence);
 		if (gameId == kGameIdDuckman && sequence->_sequenceId == 0x60101) {
 			// TODO check that this is the correct location for this logic.
-			_vm->_controls->placeActor(0x50023, Common::Point(0,0), sequence->_sequenceId, 0x400d7, 0);
+			_vm->_controls->placeActor(0x50023, Common::Point(0, 0), sequence->_sequenceId, 0x400d7, 0);
 		}
 	}
 }
@@ -255,7 +254,7 @@ void ActorInstance::unregisterResources() {
 // ActorInstanceList
 
 ActorInstanceList::ActorInstanceList(IllusionsEngine *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 }
 
 ActorInstanceList::~ActorInstanceList() {

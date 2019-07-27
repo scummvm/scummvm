@@ -46,8 +46,8 @@
 #define SWORD25_SOUNDENGINE_H
 
 #include "sword25/kernel/common.h"
-#include "sword25/kernel/resservice.h"
 #include "sword25/kernel/persistable.h"
+#include "sword25/kernel/resservice.h"
 
 #include "audio/mixer.h"
 
@@ -76,7 +76,6 @@ struct SndHandle {
 
 	SndHandle();
 };
-
 
 class SoundEngine : public ResourceService, public Persistable {
 public:
@@ -245,8 +244,8 @@ public:
 	 */
 	float getSoundPanning(uint handle);
 
-	Resource    *loadResource(const Common::String &fileName);
-	bool         canLoadResource(const Common::String &fileName);
+	Resource *loadResource(const Common::String &fileName);
+	bool canLoadResource(const Common::String &fileName);
 
 	bool persist(OutputPersistenceBlock &writer);
 	bool unpersist(InputPersistenceBlock &reader);

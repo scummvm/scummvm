@@ -43,13 +43,13 @@ void SceneScriptPS05::InitializeScene() {
 	Scene_2D_Region_Add(0, 519, 107, 537, 122);
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
 	Ambient_Sounds_Add_Looping_Sound(kSfxRUMLOOP1, 50, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxLABAMB3,  80, 0, 1);
-	Ambient_Sounds_Add_Sound(kSfxPHONE1, 5, 50,  8,  8, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxPAGE1,  5, 20, 30, 30,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxPAGE2,  5, 20, 30, 30,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxPAGE3,  5, 20, 30, 30,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSWEEP3, 5, 20,  5,  9,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSWEEP4, 5, 20,  5,  9,  -70,  70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxLABAMB3, 80, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxPHONE1, 5, 50, 8, 8, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPAGE1, 5, 20, 30, 30, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPAGE2, 5, 20, 30, 30, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPAGE3, 5, 20, 30, 30, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP3, 5, 20, 5, 9, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP4, 5, 20, 5, 9, -70, 70, -101, -101, 0, 0);
 }
 
 void SceneScriptPS05::SceneLoaded() {
@@ -70,7 +70,6 @@ void SceneScriptPS05::SceneLoaded() {
 #else
 	Unclickable_Object("FIRE EXTINGISHER");
 #endif // BLADERUNNER_ORIGINAL_BUGS
-
 }
 
 bool SceneScriptPS05::MouseClick(int x, int y) {

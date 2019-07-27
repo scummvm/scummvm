@@ -23,8 +23,8 @@
 #ifndef COMMON_RATIONAL_H
 #define COMMON_RATIONAL_H
 
-#include "common/scummsys.h"
 #include "common/frac.h"
+#include "common/scummsys.h"
 
 namespace Common {
 

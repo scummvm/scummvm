@@ -27,7 +27,7 @@
 namespace Xeen {
 
 int Input::show(XeenEngine *vm, Window *window, Common::String &line,
-		uint maxLen, int maxWidth, bool isNumeric) {
+                uint maxLen, int maxWidth, bool isNumeric) {
 	Input *dlg = new Input(vm, window);
 	int result = dlg->getString(line, maxLen, maxWidth, isNumeric);
 	delete dlg;
@@ -37,7 +37,10 @@ int Input::show(XeenEngine *vm, Window *window, Common::String &line,
 
 int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNumeric) {
 	_vm->_noDirectionSense = true;
-	Common::String msg = Common::String::format("\x3""l\t000\x4%03d\x3""c", maxWidth);
+	Common::String msg = Common::String::format("\x3"
+	                                            "l\t000\x4%03d\x3"
+	                                            "c",
+	                                            maxWidth);
 	_window->writeString(msg);
 	_window->update();
 
@@ -47,12 +50,11 @@ int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNum
 
 		bool refresh = false;
 		if ((keyCode == Common::KEYCODE_BACKSPACE || keyCode == Common::KEYCODE_DELETE)
-				&& line.size() > 0) {
+		    && line.size() > 0) {
 			line.deleteLastChar();
 			refresh = true;
 		} else if (line.size() < maxLen && (line.size() > 0 || keyCode != Common::KEYCODE_SPACE)
-				&& ((isNumeric && keyState.ascii >= '0' && keyState.ascii <= '9') ||
-				   (!isNumeric && keyState.ascii >= ' ' && keyState.ascii <= (char)127))) {
+		           && ((isNumeric && keyState.ascii >= '0' && keyState.ascii <= '9') || (!isNumeric && keyState.ascii >= ' ' && keyState.ascii <= (char)127))) {
 			line += keyState.ascii;
 			refresh = true;
 		} else if (keyCode == Common::KEYCODE_RETURN || keyCode == Common::KEYCODE_KP_ENTER) {
@@ -63,7 +65,10 @@ int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNum
 		}
 
 		if (refresh) {
-			msg = Common::String::format("\x3""l\t000\x4%03d\x3""c%s", maxWidth, line.c_str());
+			msg = Common::String::format("\x3"
+			                             "l\t000\x4%03d\x3"
+			                             "c%s",
+			                             maxWidth, line.c_str());
 			_window->writeString(msg);
 			_window->update();
 		}
@@ -84,7 +89,7 @@ Common::KeyState Input::waitForKey(const Common::String &msg) {
 	intf._tillMove = 0;
 
 	bool flag = !_vm->_startupWindowActive && !windows[25]._enabled
-		&& _vm->_mode != MODE_FF && _vm->_mode != MODE_INTERACTIVE7;
+	  && _vm->_mode != MODE_FF && _vm->_mode != MODE_INTERACTIVE7;
 
 	PendingEvent pe;
 	while (!_vm->shouldExit()) {
@@ -126,11 +131,12 @@ void Input::animateCursor() {
 
 /*------------------------------------------------------------------------*/
 
-StringInput::StringInput(XeenEngine *vm): Input(vm, &(*vm->_windows)[6]) {
+StringInput::StringInput(XeenEngine *vm)
+  : Input(vm, &(*vm->_windows)[6]) {
 }
 
 int StringInput::show(XeenEngine *vm, bool type, const Common::String &msg1,
-		const Common::String &msg2, int opcode) {
+                      const Common::String &msg2, int opcode) {
 	StringInput *dlg = new StringInput(vm);
 	int result = dlg->execute(type, msg1, msg2, opcode);
 	delete dlg;
@@ -139,7 +145,7 @@ int StringInput::show(XeenEngine *vm, bool type, const Common::String &msg1,
 }
 
 int StringInput::execute(bool type, const Common::String &expected,
-		const Common::String &title, int opcode) {
+                         const Common::String &title, int opcode) {
 	FileManager &files = *_vm->_files;
 	Scripts &scripts = *_vm->_scripts;
 	Windows &windows = *_vm->_windows;
@@ -148,7 +154,9 @@ int StringInput::execute(bool type, const Common::String &expected,
 	int result = 0;
 
 	w.open();
-	w.writeString(Common::String::format("\r\x03""c%s\v024\t000", title.c_str()));
+	w.writeString(Common::String::format("\r\x03"
+	                                     "c%s\v024\t000",
+	                                     title.c_str()));
 	w.update();
 
 	Common::String line;
@@ -193,7 +201,8 @@ int StringInput::execute(bool type, const Common::String &expected,
 
 /*------------------------------------------------------------------------*/
 
-NumericInput::NumericInput(XeenEngine *vm, int window) : Input(vm, &(*vm->_windows)[window]) {
+NumericInput::NumericInput(XeenEngine *vm, int window)
+  : Input(vm, &(*vm->_windows)[window]) {
 }
 
 int NumericInput::show(XeenEngine *vm, int window, int maxLength, int maxWidth) {

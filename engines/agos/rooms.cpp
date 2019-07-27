@@ -20,8 +20,6 @@
  *
  */
 
-
-
 #include "common/file.h"
 #include "common/textconsole.h"
 
@@ -83,7 +81,7 @@ uint16 AGOSEngine::getExitOf(Item *item, uint16 d) {
 }
 
 void AGOSEngine::changeDoorState(SubRoom *r, uint16 d, uint16 n) {
-	uint16 mask=3;
+	uint16 mask = 3;
 	d <<= 1;
 	mask <<= d;
 	n <<= d;
@@ -197,17 +195,30 @@ void AGOSEngine_Elvira2::moveDirn(Item *i, uint x) {
 
 	p = derefItem(i->parent);
 	if (findChildOfType(p, kSuperRoomType)) {
-		n = getExitState(p, _superRoomNumber,x);
+		n = getExitState(p, _superRoomNumber, x);
 		if (n == 1) {
 			sr = (SubSuperRoom *)findChildOfType(p, kSuperRoomType);
 			switch (x) {
-			case 0: a = -(sr->roomX); break;
-			case 1: a = 1; break;
-			case 2: a = sr->roomX; break;
-			case 3: a = 0xFFFF; break;
-			case 4: a = -(sr->roomX * sr->roomY); break;
-			case 5: a = (sr->roomX * sr->roomY); break;
-			default: return;
+			case 0:
+				a = -(sr->roomX);
+				break;
+			case 1:
+				a = 1;
+				break;
+			case 2:
+				a = sr->roomX;
+				break;
+			case 3:
+				a = 0xFFFF;
+				break;
+			case 4:
+				a = -(sr->roomX * sr->roomY);
+				break;
+			case 5:
+				a = (sr->roomX * sr->roomY);
+				break;
+			default:
+				return;
 			}
 			_superRoomNumber += a;
 		}
@@ -232,7 +243,6 @@ void AGOSEngine::moveDirn(Item *i, uint x) {
 	p = derefItem(i->parent);
 	if (p == 0)
 		return;
-
 
 	d = getExitOf_e1(p, x);
 	if (d) {
@@ -374,13 +384,15 @@ bool AGOSEngine::loadRoomItems(uint16 room) {
 	if (_roomsListPtr) {
 		p = _roomsListPtr;
 		for (;;) {
-			minNum = READ_BE_UINT16(p); p += 2;
+			minNum = READ_BE_UINT16(p);
+			p += 2;
 			if (minNum == 0)
 				break;
 
-			maxNum = READ_BE_UINT16(p); p += 2;
+			maxNum = READ_BE_UINT16(p);
+			p += 2;
 
-			 for (uint16 z = minNum; z <= maxNum; z++) {
+			for (uint16 z = minNum; z <= maxNum; z++) {
 				uint16 itemNum = z + 2;
 				item = derefItem(itemNum);
 				_itemArrayPtr[itemNum] = 0;
@@ -404,11 +416,13 @@ bool AGOSEngine::loadRoomItems(uint16 room) {
 		_roomsListPtr = p;
 
 		for (;;) {
-			minNum = READ_BE_UINT16(p); p += 2;
+			minNum = READ_BE_UINT16(p);
+			p += 2;
 			if (minNum == 0)
 				break;
 
-			maxNum = READ_BE_UINT16(p); p += 2;
+			maxNum = READ_BE_UINT16(p);
+			p += 2;
 
 			if (room >= minNum && room <= maxNum) {
 				in.open(filename);
@@ -426,7 +440,7 @@ bool AGOSEngine::loadRoomItems(uint16 room) {
 					item->parent = 0;
 					item->child = 0;
 
-					 for (uint16 z = _itemArrayInited; z; z--) {
+					for (uint16 z = _itemArrayInited; z; z--) {
 						itemTmp = derefItem(z);
 
 						if (!itemTmp)
@@ -453,7 +467,6 @@ bool AGOSEngine::loadRoomItems(uint16 room) {
 					item->classFlags = _roomStates[num].classFlags;
 					SubRoom *subRoom = (SubRoom *)findChildOfType(item, kRoomType);
 					subRoom->roomExitStates = _roomStates[num].roomExitStates;
-
 				}
 				in.close();
 
@@ -462,7 +475,7 @@ bool AGOSEngine::loadRoomItems(uint16 room) {
 		}
 	}
 
-	debug(1,"loadRoomItems: didn't find %d", room);
+	debug(1, "loadRoomItems: didn't find %d", room);
 	return 0;
 }
 

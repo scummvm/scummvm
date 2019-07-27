@@ -22,10 +22,10 @@
 
 #include "backends/platform/symbian/src/SymbianActions.h"
 
-#include "gui/message.h"
-#include "scumm/scumm.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
+#include "gui/message.h"
+#include "scumm/scumm.h"
 
 #include <sdl.h>
 
@@ -57,20 +57,19 @@ const Common::String actionNames[] = {
 };
 
 #ifdef UIQ
-static const int ACTIONS_DEFAULT[ACTION_LAST] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_F1, SDLK_F2, SDLK_F5, SDLK_PAGEDOWN, '9', 0, 0, SDLK_PAGEUP, 0, 0, 0, 0, 0, 0, 0};
+static const int ACTIONS_DEFAULT[ACTION_LAST] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_F1, SDLK_F2, SDLK_F5, SDLK_PAGEDOWN, '9', 0, 0, SDLK_PAGEUP, 0, 0, 0, 0, 0, 0, 0 };
 #elif defined(S60)
-const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, 0, 0, '*', '#', '9', 0, 0, 0, 0, 0, 0, 0, '0', 0, 0};
+const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, 0, 0, '*', '#', '9', 0, 0, 0, 0, 0, 0, 0, '0', 0, 0 };
 #elif defined(S90)
-const int ACTIONS_DEFAULT[ACTION_LAST] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, 0, 0, SDLK_MENU, SDLK_ESCAPE, 0, 0 , 0, 0, 0, 0, 0, 0, 0, 0 ,0};
+const int ACTIONS_DEFAULT[ACTION_LAST] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, 0, 0, SDLK_MENU, SDLK_ESCAPE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 #else
-const int ACTIONS_DEFAULT[ACTION_LAST] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_F1, SDLK_F2, SDLK_MENU, SDLK_ESCAPE, 0, 0, 0, 0, 0, 0, 0, 0, '1', 0 ,0};
+const int ACTIONS_DEFAULT[ACTION_LAST] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_F1, SDLK_F2, SDLK_MENU, SDLK_ESCAPE, 0, 0, 0, 0, 0, 0, 0, 0, '1', 0, 0 };
 #endif
 
 // creator function according to Factory Pattern
 void SymbianActions::init() {
 	_instance = new SymbianActions();
 }
-
 
 Common::String SymbianActions::actionName(ActionType action) {
 	return _(actionNames[action]);
@@ -89,14 +88,13 @@ int SymbianActions::version() {
 }
 
 SymbianActions::SymbianActions()
- : Actions() {
+  : Actions() {
 	int i;
 
 	for (i = 0; i < ACTION_LAST; i++) {
 		_action_mapping[i] = ACTIONS_DEFAULT[i];
 		_action_enabled[i] = false;
 	}
-
 }
 
 void SymbianActions::initInstanceMain(OSystem *mainSystem) {
@@ -152,7 +150,7 @@ void SymbianActions::initInstanceGame() {
 	bool is_comi = (strncmp(gameid.c_str(), "comi", 4) == 0);
 	bool is_gob = (strncmp(gameid.c_str(), "gob", 3) == 0);
 	bool is_saga = (gameid == "saga");
-	bool is_kyra = (strncmp(gameid.c_str(), "kyra",4) == 0);
+	bool is_kyra = (strncmp(gameid.c_str(), "kyra", 4) == 0);
 	bool is_samnmax = (gameid == "samnmax");
 	bool is_cine = (gameid == "cine");
 	bool is_touche = (gameid == "touche");
@@ -160,7 +158,7 @@ void SymbianActions::initInstanceGame() {
 	bool is_parallaction = (gameid == "parallaction");
 	bool is_lure = (gameid == "lure");
 	bool is_feeble = (gameid == "feeble");
-	bool is_drascula = (strncmp(gameid.c_str(), "drascula",8) == 0);
+	bool is_drascula = (strncmp(gameid.c_str(), "drascula", 8) == 0);
 	bool is_tucker = (gameid == "tucker");
 	bool is_groovie = (gameid == "groovie");
 	bool is_tinsel = (gameid == "tinsel");
@@ -171,14 +169,12 @@ void SymbianActions::initInstanceGame() {
 
 	// Initialize keys for different actions
 	// Pause
-	if(is_cruise) {
+	if (is_cruise) {
 		_key_action[ACTION_PAUSE].setKey('P');
-	}
-	else {
+	} else {
 		_key_action[ACTION_PAUSE].setKey(' ');
 	}
 	_action_enabled[ACTION_PAUSE] = true;
-
 
 	// Save
 	if (is_simon || is_sword2 || is_gob || is_kyra || is_feeble || is_tucker || is_groovie)
@@ -208,8 +204,7 @@ void SymbianActions::initInstanceGame() {
 	// Skip text
 	if (!is_cine && !is_parallaction && !is_groovie && !is_cruise && !is_made)
 		_action_enabled[ACTION_SKIP_TEXT] = true;
-	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_tinsel ||
-			is_saga || is_kyra || is_touche || is_lure || is_feeble || is_drascula || is_tucker)
+	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_tinsel || is_saga || is_kyra || is_touche || is_lure || is_feeble || is_drascula || is_tucker)
 		_key_action[ACTION_SKIP_TEXT].setKey(Common::KEYCODE_ESCAPE, Common::KEYCODE_ESCAPE); // Escape key
 	else {
 		_key_action[ACTION_SKIP_TEXT].setKey(SDLK_PERIOD);
@@ -244,9 +239,7 @@ void SymbianActions::initInstanceGame() {
 	// Enable global menu
 	_action_enabled[ACTION_MAINMENU] = true;
 	_key_action[ACTION_MAINMENU].setKey(Common::ASCII_F5, Common::KEYCODE_F5, KMOD_CTRL);
-
 }
-
 
 SymbianActions::~SymbianActions() {
 }

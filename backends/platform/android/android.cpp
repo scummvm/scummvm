@@ -23,7 +23,7 @@
 #if defined(__ANDROID__)
 
 // Allow use of stuff in <time.h>
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+#	define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
 // Disable printf override in common/forbidden.h to avoid
 // clashes with log.h from the Android SDK.
@@ -37,50 +37,50 @@
 // (which then wouldn't be portable, though).
 // Anyway, for now we just disable the printf override globally
 // for the Android port
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+#	define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#include <sys/time.h>
-#include <sys/resource.h>
-#include <sys/system_properties.h>
-#include <time.h>
-#include <unistd.h>
+#	include <sys/resource.h>
+#	include <sys/system_properties.h>
+#	include <sys/time.h>
+#	include <time.h>
+#	include <unistd.h>
 
-#include "common/util.h"
-#include "common/textconsole.h"
-#include "common/rect.h"
-#include "common/queue.h"
-#include "common/mutex.h"
-#include "common/events.h"
-#include "common/config-manager.h"
+#	include "common/config-manager.h"
+#	include "common/events.h"
+#	include "common/mutex.h"
+#	include "common/queue.h"
+#	include "common/rect.h"
+#	include "common/textconsole.h"
+#	include "common/util.h"
 
-#include "backends/keymapper/keymapper.h"
-#include "backends/mutex/pthread/pthread-mutex.h"
-#include "backends/saves/default/default-saves.h"
-#include "backends/timer/default/default-timer.h"
+#	include "backends/keymapper/keymapper.h"
+#	include "backends/mutex/pthread/pthread-mutex.h"
+#	include "backends/saves/default/default-saves.h"
+#	include "backends/timer/default/default-timer.h"
 
-#include "backends/platform/android/jni.h"
-#include "backends/platform/android/android.h"
+#	include "backends/platform/android/android.h"
+#	include "backends/platform/android/jni.h"
 
 const char *android_log_tag = "ScummVM";
 
 // This replaces the bionic libc assert functions with something that
 // actually prints the assertion failure before aborting.
 extern "C" {
-	void __assert(const char *file, int line, const char *expr) {
-		__android_log_assert(expr, android_log_tag,
-								"Assertion failure: '%s' in %s:%d",
-								 expr, file, line);
-	}
-
-	void __assert2(const char *file, int line, const char *func,
-					const char *expr) {
-		__android_log_assert(expr, android_log_tag,
-								"Assertion failure: '%s' in %s:%d (%s)",
-								 expr, file, line, func);
-	}
+void __assert(const char *file, int line, const char *expr) {
+	__android_log_assert(expr, android_log_tag,
+	                     "Assertion failure: '%s' in %s:%d",
+	                     expr, file, line);
 }
 
-#ifdef ANDROID_DEBUG_GL
+void __assert2(const char *file, int line, const char *func,
+               const char *expr) {
+	__android_log_assert(expr, android_log_tag,
+	                     "Assertion failure: '%s' in %s:%d (%s)",
+	                     expr, file, line, func);
+}
+}
+
+#	ifdef ANDROID_DEBUG_GL
 static const char *getGlErrStr(GLenum error) {
 	switch (error) {
 	case GL_INVALID_ENUM:
@@ -109,60 +109,61 @@ void checkGlError(const char *expr, const char *file, int line) {
 	if (error != GL_NO_ERROR)
 		LOGE("GL ERROR: %s on %s (%s:%d)", getGlErrStr(error), expr, file, line);
 }
-#endif
+#	endif
 
-OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
-	_audio_sample_rate(audio_sample_rate),
-	_audio_buffer_size(audio_buffer_size),
-	_screen_changeid(0),
-	_egl_surface_width(0),
-	_egl_surface_height(0),
-	_htc_fail(true),
-	_force_redraw(false),
-	_game_texture(0),
-	_overlay_texture(0),
-	_mouse_texture(0),
-	_mouse_texture_palette(0),
-	_mouse_texture_rgb(0),
-	_mouse_hotspot(),
-	_mouse_keycolor(0),
-	_use_mouse_palette(false),
-	_graphicsMode(0),
-	_fullscreen(true),
-	_ar_correction(true),
-	_show_mouse(false),
-	_show_overlay(false),
-	_enable_zoning(false),
-	_mutexManager(0),
-	_mixer(0),
-	_shake_offset(0),
-	_queuedEventTime(0),
-	_event_queue_lock(0),
-	_touch_pt_down(),
-	_touch_pt_scroll(),
-	_touch_pt_dt(),
-	_eventScaleX(100),
-	_eventScaleY(100),
-	// TODO put these values in some option dlg?
-	_touchpad_mode(true),
-	_touchpad_scale(66),
-	_dpad_scale(4),
-	_fingersDown(0),
-	_trackball_scale(2),
-	_joystick_scale(10) {
+OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size)
+  : _audio_sample_rate(audio_sample_rate)
+  , _audio_buffer_size(audio_buffer_size)
+  , _screen_changeid(0)
+  , _egl_surface_width(0)
+  , _egl_surface_height(0)
+  , _htc_fail(true)
+  , _force_redraw(false)
+  , _game_texture(0)
+  , _overlay_texture(0)
+  , _mouse_texture(0)
+  , _mouse_texture_palette(0)
+  , _mouse_texture_rgb(0)
+  , _mouse_hotspot()
+  , _mouse_keycolor(0)
+  , _use_mouse_palette(false)
+  , _graphicsMode(0)
+  , _fullscreen(true)
+  , _ar_correction(true)
+  , _show_mouse(false)
+  , _show_overlay(false)
+  , _enable_zoning(false)
+  , _mutexManager(0)
+  , _mixer(0)
+  , _shake_offset(0)
+  , _queuedEventTime(0)
+  , _event_queue_lock(0)
+  , _touch_pt_down()
+  , _touch_pt_scroll()
+  , _touch_pt_dt()
+  , _eventScaleX(100)
+  , _eventScaleY(100)
+  ,
+  // TODO put these values in some option dlg?
+  _touchpad_mode(true)
+  , _touchpad_scale(66)
+  , _dpad_scale(4)
+  , _fingersDown(0)
+  , _trackball_scale(2)
+  , _joystick_scale(10) {
 
 	_fsFactory = new POSIXFilesystemFactory();
 
 	Common::String mf = getSystemProperty("ro.product.manufacturer");
 
 	LOGI("Running on: [%s] [%s] [%s] [%s] [%s] SDK:%s ABI:%s",
-			mf.c_str(),
-			getSystemProperty("ro.product.model").c_str(),
-			getSystemProperty("ro.product.brand").c_str(),
-			getSystemProperty("ro.build.fingerprint").c_str(),
-			getSystemProperty("ro.build.display.id").c_str(),
-			getSystemProperty("ro.build.version.sdk").c_str(),
-			getSystemProperty("ro.product.cpu.abi").c_str());
+	     mf.c_str(),
+	     getSystemProperty("ro.product.model").c_str(),
+	     getSystemProperty("ro.product.brand").c_str(),
+	     getSystemProperty("ro.build.fingerprint").c_str(),
+	     getSystemProperty("ro.build.display.id").c_str(),
+	     getSystemProperty("ro.build.version.sdk").c_str(),
+	     getSystemProperty("ro.product.cpu.abi").c_str());
 
 	mf.toLowercase();
 	/*_htc_fail = mf.contains("htc");
@@ -404,14 +405,7 @@ void OSystem_Android::initBackend() {
 }
 
 bool OSystem_Android::hasFeature(Feature f) {
-	return (f == kFeatureFullscreenMode ||
-			f == kFeatureAspectRatioCorrection ||
-			f == kFeatureCursorPalette ||
-			f == kFeatureVirtualKeyboard ||
-			f == kFeatureOverlaySupportsAlpha ||
-			f == kFeatureOpenUrl ||
-			f == kFeatureTouchpadMode ||
-			f == kFeatureClipboardSupport);
+	return (f == kFeatureFullscreenMode || f == kFeatureAspectRatioCorrection || f == kFeatureCursorPalette || f == kFeatureVirtualKeyboard || f == kFeatureOverlaySupportsAlpha || f == kFeatureOpenUrl || f == kFeatureTouchpadMode || f == kFeatureClipboardSupport);
 }
 
 void OSystem_Android::setFeatureState(Feature f, bool enable) {
@@ -466,8 +460,7 @@ uint32 OSystem_Android::getMillis(bool skipRecord) {
 
 	gettimeofday(&curTime, 0);
 
-	return (uint32)(((curTime.tv_sec - _startTime.tv_sec) * 1000) +
-			((curTime.tv_usec - _startTime.tv_usec) / 1000));
+	return (uint32)(((curTime.tv_sec - _startTime.tv_sec) * 1000) + ((curTime.tv_usec - _startTime.tv_usec) / 1000));
 }
 
 void OSystem_Android::delayMillis(uint msecs) {
@@ -551,14 +544,14 @@ void OSystem_Android::getTimeAndDate(TimeDate &td) const {
 }
 
 void OSystem_Android::addSysArchivesToSearchSet(Common::SearchSet &s,
-												int priority) {
+                                                int priority) {
 	ENTER("");
 
 	JNI::addSysArchivesToSearchSet(s, priority);
 }
 
 void OSystem_Android::logMessage(LogMessageType::Type type,
-									const char *message) {
+                                 const char *message) {
 	switch (type) {
 	case LogMessageType::kInfo:
 		__android_log_write(ANDROID_LOG_INFO, android_log_tag, message);
@@ -580,8 +573,8 @@ void OSystem_Android::logMessage(LogMessageType::Type type,
 
 Common::String OSystem_Android::getSystemLanguage() const {
 	return Common::String::format("%s_%s",
-							getSystemProperty("persist.sys.language").c_str(),
-							getSystemProperty("persist.sys.country").c_str());
+	                              getSystemProperty("persist.sys.language").c_str(),
+	                              getSystemProperty("persist.sys.country").c_str());
 }
 
 bool OSystem_Android::openUrl(const Common::String &url) {

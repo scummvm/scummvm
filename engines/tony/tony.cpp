@@ -20,15 +20,15 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "tony/tony.h"
 #include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/installshield_cab.h"
+#include "common/scummsys.h"
 #include "common/translation.h"
-#include "tony/tony.h"
 #include "tony/custom.h"
 #include "tony/debugger.h"
 #include "tony/game.h"
@@ -38,8 +38,10 @@ namespace Tony {
 
 TonyEngine *g_vm;
 
-TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Engine(syst),
-	_gameDescription(gameDesc), _randomSource("tony") {
+TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc)
+  : Engine(syst)
+  , _gameDescription(gameDesc)
+  , _randomSource("tony") {
 	g_vm = this;
 	_loadSlotNumber = -1;
 
@@ -202,7 +204,7 @@ bool TonyEngine::loadTonyDat() {
 	}
 
 	// Read header
-	char buf[4+1];
+	char buf[4 + 1];
 	in.read(buf, 4);
 	buf[4] = '\0';
 
@@ -218,8 +220,8 @@ bool TonyEngine::loadTonyDat() {
 
 	if ((majVer != TONY_DAT_VER_MAJ) || (minVer != TONY_DAT_VER_MIN)) {
 		msg = Common::String::format(
-			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
-			filename.c_str(), TONY_DAT_VER_MAJ, TONY_DAT_VER_MIN, majVer, minVer);
+		  _("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
+		  filename.c_str(), TONY_DAT_VER_MAJ, TONY_DAT_VER_MIN, majVer, minVer);
 		GUIErrorMessage(msg);
 		warning("%s", msg.c_str());
 
@@ -652,7 +654,6 @@ void TonyEngine::playProcess(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
 	Common::String fn;
 	CORO_END_CONTEXT(_ctx);
-
 
 	CORO_BEGIN_CODE(_ctx);
 

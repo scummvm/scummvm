@@ -31,7 +31,7 @@
 
 namespace Saga {
 
-#define COMMON_BUFFER_SIZE 1024   // Why 1024?
+#define COMMON_BUFFER_SIZE 1024 // Why 1024?
 
 #define SCRIPT_TBLENTRY_LEN 4
 
@@ -41,12 +41,12 @@ namespace Saga {
 #define IHNM_SCRIPT_FUNCTION_MAX 105
 
 enum AddressTypes {
-	kAddressCommon     = 0,	// offset from global variables
-	kAddressStatic     = 1,	// offset from global variables
-	kAddressModule     = 2,	// offset from start of module
-	kAddressStack      = 3,	// offset from stack
-	kAddressThread     = 4	// offset from thread structure
-/*	kAddressId         = 5,	// offset from const id object
+	kAddressCommon = 0, // offset from global variables
+	kAddressStatic = 1, // offset from global variables
+	kAddressModule = 2, // offset from start of module
+	kAddressStack = 3, // offset from stack
+	kAddressThread = 4 // offset from thread structure
+	/*	kAddressId         = 5,	// offset from const id object
 	kAddressIdIndirect = 6,	// offset from stack id object
 	kAddressIndex      = 7	// index from id*/
 };
@@ -80,44 +80,44 @@ enum ThreadVarTypes {
 
 enum ThreadFlags {
 	kTFlagNone = 0,
-	kTFlagWaiting = 1,	// wait for even denoted in waitType
+	kTFlagWaiting = 1, // wait for even denoted in waitType
 	kTFlagFinished = 2,
 	kTFlagAborted = 4,
-	kTFlagAsleep = kTFlagWaiting | kTFlagFinished | kTFlagAborted	// Combination of all flags which can halt a thread
+	kTFlagAsleep = kTFlagWaiting | kTFlagFinished | kTFlagAborted // Combination of all flags which can halt a thread
 };
 
 enum ThreadWaitTypes {
-	kWaitTypeNone = 0,			// waiting for nothing
-	kWaitTypeDelay = 1,			// waiting for a timer
-	kWaitTypeSpeech = 2,		// waiting for speech to finish
-	kWaitTypeDialogEnd = 3,		// waiting for my dialog to finish
-	kWaitTypeDialogBegin = 4,	// waiting for other dialog to finish
-	kWaitTypeWalk = 5,			// waiting to finish walking
-	kWaitTypeRequest = 6,		// a request is up
+	kWaitTypeNone = 0, // waiting for nothing
+	kWaitTypeDelay = 1, // waiting for a timer
+	kWaitTypeSpeech = 2, // waiting for speech to finish
+	kWaitTypeDialogEnd = 3, // waiting for my dialog to finish
+	kWaitTypeDialogBegin = 4, // waiting for other dialog to finish
+	kWaitTypeWalk = 5, // waiting to finish walking
+	kWaitTypeRequest = 6, // a request is up
 	kWaitTypePause = 7,
 	kWaitTypePlacard = 8,
 	kWaitTypeStatusTextInput = 9,
-	kWaitTypeWaitFrames = 10,   // IHNM. waiting for a frame count
-	kWaitTypeWakeUp = 11		// IHNM. wait until get waken up
+	kWaitTypeWaitFrames = 10, // IHNM. waiting for a frame count
+	kWaitTypeWakeUp = 11 // IHNM. wait until get waken up
 };
 
 enum CycleFlags {
-	kCyclePong    = 1 << 0,
-	kCycleOnce    = 1 << 1,
-	kCycleRandom  = 1 << 2,
+	kCyclePong = 1 << 0,
+	kCycleOnce = 1 << 1,
+	kCycleRandom = 1 << 2,
 	kCycleReverse = 1 << 3
 };
 
 enum WalkFlags {
 	kWalkBackPedal = 1 << 0,
-	kWalkAsync     = 1 << 1,
-	kWalkUseAngle  = 1 << 2,
-	kWalkFace      = 1 << 5
+	kWalkAsync = 1 << 1,
+	kWalkUseAngle = 1 << 2,
+	kWalkFace = 1 << 5
 };
 
 enum ReplyFlags {
-	kReplyOnce      = 1 << 0,
-	kReplySummary   = 1 << 1,
+	kReplyOnce = 1 << 0,
+	kReplySummary = 1 << 1,
 	kReplyCondition = 1 << 2
 };
 
@@ -129,14 +129,14 @@ struct EntryPoint {
 typedef Common::Array<uint16> VoiceLUT;
 
 struct ModuleData {
-	bool loaded;			// is it loaded or not?
+	bool loaded; // is it loaded or not?
 	int scriptResourceId;
 	int stringsResourceId;
 	int voicesResourceId;
 
-	ByteArray moduleBase;	// all base module
-	uint16 staticSize;				// size of static data
-	uint staticOffset;				// offset of static data begining in _commonBuffer
+	ByteArray moduleBase; // all base module
+	uint16 staticSize; // size of static data
+	uint staticOffset; // offset of static data begining in _commonBuffer
 	Common::Array<EntryPoint> entryPoints;
 
 	StringsTable strings;
@@ -150,7 +150,13 @@ struct ModuleData {
 		entryPoints.clear();
 	}
 
-	ModuleData() : loaded(false), scriptResourceId(0), stringsResourceId(0), voicesResourceId(0), staticSize(0), staticOffset(0) {
+	ModuleData()
+	  : loaded(false)
+	  , scriptResourceId(0)
+	  , stringsResourceId(0)
+	  , voicesResourceId(0)
+	  , staticSize(0)
+	  , staticOffset(0) {
 	}
 };
 
@@ -163,22 +169,22 @@ public:
 
 	uint16 _threadVars[kThreadVarMax];
 
-	byte *_moduleBase;					//
+	byte *_moduleBase; //
 	uint16 _moduleBaseSize;
 
-	byte *_commonBase;					//
-	byte *_staticBase;					//
-	VoiceLUT *_voiceLUT;				//
-	StringsTable *_strings;				//
+	byte *_commonBase; //
+	byte *_staticBase; //
+	VoiceLUT *_voiceLUT; //
+	StringsTable *_strings; //
 
-	int _flags;							// ThreadFlags
-	int _waitType;						// ThreadWaitTypes
+	int _flags; // ThreadFlags
+	int _waitType; // ThreadWaitTypes
 	uint _sleepTime;
-	void *_threadObj;					// which object we're handling
+	void *_threadObj; // which object we're handling
 
 	int16 _returnValue;
 
-	uint16 _instructionOffset;			// Instruction offset
+	uint16 _instructionOffset; // Instruction offset
 
 	int32 _frameWait;
 
@@ -226,8 +232,7 @@ public:
 		return _stackBuf[_stackTopIndex++];
 	}
 
-
-// wait stuff
+	// wait stuff
 	void wait(int waitType) {
 		_waitType = waitType;
 		_flags |= kTFlagWaiting;
@@ -268,7 +273,8 @@ typedef Common::List<ScriptThread> ScriptThreadList;
 
 #define SCRIPTOP_PARAMS ScriptThread *thread, Common::SeekableReadStream *scriptS, bool &stopParsing, bool &breakOut
 #define SCRIPTFUNC_PARAMS ScriptThread *thread, int nArgs, bool &disContinue
-#define OPCODE(x) {&Script::x, #x}
+#define OPCODE(x) \
+	{ &Script::x, #x }
 
 class Script {
 public:
@@ -285,9 +291,9 @@ public:
 	void setVerb(int verb);
 	int getCurrentVerb() const { return _currentVerb; }
 	void setPointerVerb();
-	void whichObject(const Point& mousePoint);
+	void whichObject(const Point &mousePoint);
 	void hitObject(bool leftButton);
-	void playfieldClick(const Point& mousePoint, bool leftButton);
+	void playfieldClick(const Point &mousePoint, bool leftButton);
 
 	void setLeftButtonVerb(int verb);
 	int getLeftButtonVerb() const { return _leftButtonVerb; }
@@ -356,7 +362,7 @@ protected:
 	ScriptThreadList _threadList;
 	ScriptThread *_conversingThread;
 
-//verb
+	//verb
 	bool _firstObjectSet;
 	bool _secondObjectNeeded;
 	uint16 _currentObject[2];
@@ -421,21 +427,21 @@ protected:
 	void opConstInt(SCRIPTOP_PARAMS);
 	void opStrLit(SCRIPTOP_PARAMS);
 	void opGetFlag(SCRIPTOP_PARAMS);
-	void opGetByte(SCRIPTOP_PARAMS);		// SAGA 2
+	void opGetByte(SCRIPTOP_PARAMS); // SAGA 2
 	void opGetInt(SCRIPTOP_PARAMS);
 	void opPutFlag(SCRIPTOP_PARAMS);
-	void opPutByte(SCRIPTOP_PARAMS);		// SAGA 2
+	void opPutByte(SCRIPTOP_PARAMS); // SAGA 2
 	void opPutInt(SCRIPTOP_PARAMS);
 	void opPutFlagV(SCRIPTOP_PARAMS);
 	void opPutByteV(SCRIPTOP_PARAMS);
 	void opPutIntV(SCRIPTOP_PARAMS);
-	void opCall(SCRIPTOP_PARAMS);			// SAGA 1
-	void opCallNear(SCRIPTOP_PARAMS);		// SAGA 2
-	void opCallFar(SCRIPTOP_PARAMS);		// SAGA 2
+	void opCall(SCRIPTOP_PARAMS); // SAGA 1
+	void opCallNear(SCRIPTOP_PARAMS); // SAGA 2
+	void opCallFar(SCRIPTOP_PARAMS); // SAGA 2
 	void opCcall(SCRIPTOP_PARAMS);
 	void opCcallV(SCRIPTOP_PARAMS);
-	void opCallMember(SCRIPTOP_PARAMS);		// SAGA 2
-	void opCallMemberV(SCRIPTOP_PARAMS);	// SAGA 2
+	void opCallMember(SCRIPTOP_PARAMS); // SAGA 2
+	void opCallMemberV(SCRIPTOP_PARAMS); // SAGA 2
 	void opEnter(SCRIPTOP_PARAMS);
 	void opReturn(SCRIPTOP_PARAMS);
 	void opReturnV(SCRIPTOP_PARAMS);

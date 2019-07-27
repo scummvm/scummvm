@@ -20,12 +20,13 @@
  *
  */
 
-#include "gob/gob.h"
 #include "gob/cheater.h"
+#include "gob/gob.h"
 
 namespace Gob {
 
-Cheater::Cheater(GobEngine *vm) : _vm(vm) {
+Cheater::Cheater(GobEngine *vm)
+  : _vm(vm) {
 }
 
 Cheater::~Cheater() {

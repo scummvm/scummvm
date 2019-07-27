@@ -20,18 +20,18 @@
  *
  */
 
-
 #include "kyra/gui/gui.h"
-#include "kyra/kyra_v1.h"
 #include "kyra/engine/util.h"
+#include "kyra/kyra_v1.h"
 
 #include "common/savefile.h"
 #include "common/system.h"
 
-
 namespace Kyra {
 
-GUI::GUI(KyraEngine_v1 *kyra) : _vm(kyra), _screen(kyra->screen()) {
+GUI::GUI(KyraEngine_v1 *kyra)
+  : _vm(kyra)
+  , _screen(kyra->screen()) {
 	_saveSlotsListUpdateNeeded = true;
 	_savegameListSize = 0;
 	_savegameList = 0;
@@ -109,7 +109,7 @@ void GUI::updateSaveSlotsList(Common::String targetName, bool force) {
 		KyraEngine_v1::SaveHeader header;
 		Common::InSaveFile *in;
 
-		_savegameList = new char*[_savegameListSize];
+		_savegameList = new char *[_savegameListSize];
 		memset(_savegameList, 0, _savegameListSize * sizeof(char *));
 
 		for (int i = 0; i < numSaves; i++) {

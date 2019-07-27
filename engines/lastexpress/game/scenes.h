@@ -74,7 +74,7 @@ public:
 
 	// Sequence queue
 	void drawFrames(bool refreshScreen);
-	void addToQueue(SequenceFrame * const frame);
+	void addToQueue(SequenceFrame *const frame);
 	void removeFromQueue(SequenceFrame *frame);
 	void removeAndRedraw(SequenceFrame **frame, bool doRedraw);
 	void resetQueue();
@@ -88,7 +88,7 @@ public:
 
 private:
 	LastExpressEngine *_engine;
-	SceneLoader       *_sceneLoader;     ///< Scene loader
+	SceneLoader *_sceneLoader; ///< Scene loader
 
 	// Flags
 	bool _flagNoEntity;

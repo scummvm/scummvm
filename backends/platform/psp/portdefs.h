@@ -29,27 +29,25 @@
 // configure rules, or it should be removed from the aforementioned
 // Makefile.
 
+#include <assert.h>
+#include <ctype.h>
+#include <malloc.h>
+#include <math.h>
+#include <new>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdarg.h>
-#include <malloc.h>
-#include <math.h>
 #include <time.h>
-#include <ctype.h>
-#include <assert.h>
-#include <new>
 
-#include <pspkernel.h>
+#include <pspctrl.h>
 #include <pspdebug.h>
 #include <pspdisplay.h>
-#include <pspctrl.h>
+#include <pspkernel.h>
 
 #include "trace.h"
 
-
 //#define	BREAKPOINT	asm("break\n")
-
 
 //#define printf  pspDebugScreenPrintf
 

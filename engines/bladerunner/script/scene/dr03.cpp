@@ -43,8 +43,8 @@ void SceneScriptDR03::InitializeScene() {
 	}
 
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxRESPRTR1,  7,  0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED3,   50,  0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRESPRTR1, 7, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED3, 50, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxBOILPOT2, 20, 70, 1);
 }
 
@@ -102,8 +102,7 @@ bool SceneScriptDR03::ClickedOnActor(int actorId) {
 		}
 
 		if (Game_Flag_Query(kFlagDR05JustExploded)
-		 && Game_Flag_Query(kFlagDR03ChewTalk1)
-		) {
+		    && Game_Flag_Query(kFlagDR03ChewTalk1)) {
 			Actor_Says(kActorMcCoy, 815, 18);
 			Actor_Says(kActorChew, 60, 14);
 			Actor_Says(kActorChew, 70, 14);
@@ -118,12 +117,10 @@ bool SceneScriptDR03::ClickedOnActor(int actorId) {
 		}
 
 		if ((Actor_Clue_Query(kActorMcCoy, kClueDNATyrell)
-		  || Actor_Clue_Query(kActorMcCoy, kClueAnsweringMachineMessage)
-		  || Actor_Clue_Query(kActorMcCoy, kClueEnvelope)
-		  || Actor_Clue_Query(kActorMcCoy, kClueChewInterview)
-		 )
-		 && Game_Flag_Query(kFlagDR03ChewTalkExplosion)
-		) {
+		     || Actor_Clue_Query(kActorMcCoy, kClueAnsweringMachineMessage)
+		     || Actor_Clue_Query(kActorMcCoy, kClueEnvelope)
+		     || Actor_Clue_Query(kActorMcCoy, kClueChewInterview))
+		    && Game_Flag_Query(kFlagDR03ChewTalkExplosion)) {
 			dialogueWithChew();
 		} else {
 			Actor_Says(kActorMcCoy, 810, 18);
@@ -157,20 +154,19 @@ bool SceneScriptDR03::ClickedOn2DRegion(int region) {
 
 void SceneScriptDR03::SceneFrameAdvanced(int frame) {
 	if (frame == 1
-	 || frame == 4
-	 || frame == 8
-	 || frame == 10
-	 || frame == 19
-	 || frame == 21
-	 || frame == 22
-	 || frame == 23
-	 || frame == 30
-	 || frame == 31
-	 || frame == 32
-	 || frame == 33
-	 || frame == 46
-	 || frame == 49
-	) {
+	    || frame == 4
+	    || frame == 8
+	    || frame == 10
+	    || frame == 19
+	    || frame == 21
+	    || frame == 22
+	    || frame == 23
+	    || frame == 30
+	    || frame == 31
+	    || frame == 32
+	    || frame == 33
+	    || frame == 46
+	    || frame == 49) {
 		if (Random_Query(0, 1)) {
 			Sound_Play(kSfxNEON7, Random_Query(20, 33), 80, 80, 50);
 		} else {
@@ -206,9 +202,8 @@ void SceneScriptDR03::DialogueQueueFlushed(int a1) {
 void SceneScriptDR03::dialogueWithChew() {
 	Dialogue_Menu_Clear_List();
 	if (Actor_Clue_Query(kActorMcCoy, kClueChewInterview)
-	 || Actor_Clue_Query(kActorMcCoy, kClueAnsweringMachineMessage)
-	 || Actor_Clue_Query(kActorMcCoy, kClueMorajiInterview)
-	) {
+	    || Actor_Clue_Query(kActorMcCoy, kClueAnsweringMachineMessage)
+	    || Actor_Clue_Query(kActorMcCoy, kClueMorajiInterview)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(650, 5, 5, 5); // TWINS
 	}
 	if (Actor_Clue_Query(kActorMcCoy, kClueChewInterview)) {

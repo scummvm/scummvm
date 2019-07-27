@@ -26,11 +26,11 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/ad/ad_sprite_set.h"
 #include "engines/wintermute/ad/ad_talk_node.h"
-#include "engines/wintermute/base/base_parser.h"
+#include "engines/wintermute/ad/ad_sprite_set.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/utils/utils.h"
 namespace Wintermute {
@@ -38,7 +38,8 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(AdTalkNode, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdTalkNode::AdTalkNode(BaseGame *inGame) : BaseClass(inGame) {
+AdTalkNode::AdTalkNode(BaseGame *inGame)
+  : BaseClass(inGame) {
 	_sprite = nullptr;
 	_spriteFilename = nullptr;
 	_spriteSet = nullptr;
@@ -49,7 +50,6 @@ AdTalkNode::AdTalkNode(BaseGame *inGame) : BaseClass(inGame) {
 	_playToEnd = false;
 	_preCache = false;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 AdTalkNode::~AdTalkNode() {
@@ -64,8 +64,6 @@ AdTalkNode::~AdTalkNode() {
 	_spriteSet = nullptr;
 	_comment = nullptr;
 }
-
-
 
 TOKEN_DEF_START
 TOKEN_DEF(ACTION)
@@ -126,8 +124,7 @@ bool AdTalkNode::loadBuffer(char *buffer, bool complete) {
 				_spriteSet = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
-		}
-		break;
+		} break;
 
 		case TOKEN_START_TIME:
 			parser.scanStr(params, "%d", &_startTime);
@@ -187,8 +184,6 @@ bool AdTalkNode::loadBuffer(char *buffer, bool complete) {
 	return STATUS_OK;
 }
 
-
-
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkNode::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferCharPtr(TMEMBER(_comment));
@@ -202,7 +197,6 @@ bool AdTalkNode::persist(BasePersistenceManager *persistMgr) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkNode::saveAsText(BaseDynamicBuffer *buffer, int indent) {
@@ -233,7 +227,6 @@ bool AdTalkNode::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkNode::loadSprite() {
 	if (_spriteFilename && !_sprite) {
@@ -259,7 +252,6 @@ bool AdTalkNode::loadSprite() {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkNode::isInTimeInterval(uint32 time, TDirection dir) {
 	if (time >= _startTime) {
@@ -278,7 +270,6 @@ bool AdTalkNode::isInTimeInterval(uint32 time, TDirection dir) {
 		return false;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 BaseSprite *AdTalkNode::getSprite(TDirection dir) {

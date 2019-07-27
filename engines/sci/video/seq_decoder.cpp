@@ -41,7 +41,8 @@ enum seqFrameTypes {
 	kSeqFrameDiff = 1
 };
 
-SEQDecoder::SEQDecoder(uint frameDelay) : _frameDelay(frameDelay) {
+SEQDecoder::SEQDecoder(uint frameDelay)
+  : _frameDelay(frameDelay) {
 }
 
 SEQDecoder::~SEQDecoder() {
@@ -141,14 +142,14 @@ const Graphics::Surface *SEQDecoder::SEQVideoTrack::decodeNextFrame() {
 	return _surface;
 }
 
-#define WRITE_TO_BUFFER(n) \
+#define WRITE_TO_BUFFER(n)                                                        \
 	if (writeRow * SEQ_SCREEN_WIDTH + writeCol + (n) > SEQ_SCREEN_WIDTH * height) { \
-		warning("SEQ player: writing out of bounds, aborting"); \
-		return false; \
-	} \
-	if (litPos + (n) > litSize) { \
-		warning("SEQ player: reading out of bounds, aborting"); \
-	} \
+		warning("SEQ player: writing out of bounds, aborting");                       \
+		return false;                                                                 \
+	}                                                                               \
+	if (litPos + (n) > litSize) {                                                   \
+		warning("SEQ player: reading out of bounds, aborting");                       \
+	}                                                                               \
 	memcpy(dest + writeRow * SEQ_SCREEN_WIDTH + writeCol, litData + litPos, n);
 
 bool SEQDecoder::SEQVideoTrack::decodeFrame(byte *rleData, int rleSize, byte *litData, int litSize, byte *dest, int left, int width, int height, int colorKey) {

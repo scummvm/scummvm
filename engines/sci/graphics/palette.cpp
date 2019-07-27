@@ -21,13 +21,12 @@
  */
 
 #include "common/file.h"
+#include "common/system.h"
 #include "common/timer.h"
 #include "common/util.h"
-#include "common/system.h"
 
 #include "graphics/palette.h"
 
-#include "sci/sci.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/maciconbar.h"
@@ -35,11 +34,13 @@
 #include "sci/graphics/remap.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/view.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
 GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen)
-	: _resMan(resMan), _screen(screen) {
+  : _resMan(resMan)
+  , _screen(screen) {
 	int16 color;
 
 	_sysPalette.timestamp = 0;
@@ -77,7 +78,7 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen)
 		// Note: Laura Bow 2 floppy uses the new palette format and is detected
 		//        as 8 bit color matching because of that.
 	} else {
-	    // SCI32
+		// SCI32
 		_useMerging = false;
 		_use16bitColorMatch = false; // not verified that SCI32 uses 8-bit color matching
 	}
@@ -99,7 +100,7 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen)
 		break;
 	case kViewVga:
 	case kViewVga11:
-			_totalScreenColors = 256;
+		_totalScreenColors = 256;
 		break;
 	default:
 		error("GfxPalette: Unknown view type");
@@ -161,7 +162,8 @@ void GfxPalette::createFromData(const SciSpan<const byte> &data, Palette *palett
 		// SCI0/SCI1 palette
 		palFormat = SCI_PAL_FORMAT_VARIABLE; // CONSTANT;
 		palOffset = 260;
-		palColorStart = 0; palColorCount = 256;
+		palColorStart = 0;
+		palColorCount = 256;
 		//memcpy(&paletteOut->mapping, data, 256);
 	} else {
 		// SCI1.1 palette
@@ -172,33 +174,33 @@ void GfxPalette::createFromData(const SciSpan<const byte> &data, Palette *palett
 	}
 
 	switch (palFormat) {
-		case SCI_PAL_FORMAT_CONSTANT:
-			// Check, if enough bytes left
-			if (data.size() < palOffset + (3 * palColorCount)) {
-				warning("GfxPalette::createFromData() - not enough bytes in resource, expected palette colors");
-				return;
-			}
+	case SCI_PAL_FORMAT_CONSTANT:
+		// Check, if enough bytes left
+		if (data.size() < palOffset + (3 * palColorCount)) {
+			warning("GfxPalette::createFromData() - not enough bytes in resource, expected palette colors");
+			return;
+		}
 
-			for (colorNo = palColorStart; colorNo < palColorStart + palColorCount; colorNo++) {
-				paletteOut->colors[colorNo].used = 1;
-				paletteOut->colors[colorNo].r = data[palOffset++];
-				paletteOut->colors[colorNo].g = data[palOffset++];
-				paletteOut->colors[colorNo].b = data[palOffset++];
-			}
-			break;
-		case SCI_PAL_FORMAT_VARIABLE:
-			if (data.size() < palOffset + (4 * palColorCount)) {
-				warning("GfxPalette::createFromData() - not enough bytes in resource, expected palette colors");
-				return;
-			}
+		for (colorNo = palColorStart; colorNo < palColorStart + palColorCount; colorNo++) {
+			paletteOut->colors[colorNo].used = 1;
+			paletteOut->colors[colorNo].r = data[palOffset++];
+			paletteOut->colors[colorNo].g = data[palOffset++];
+			paletteOut->colors[colorNo].b = data[palOffset++];
+		}
+		break;
+	case SCI_PAL_FORMAT_VARIABLE:
+		if (data.size() < palOffset + (4 * palColorCount)) {
+			warning("GfxPalette::createFromData() - not enough bytes in resource, expected palette colors");
+			return;
+		}
 
-			for (colorNo = palColorStart; colorNo < palColorStart + palColorCount; colorNo++) {
-				paletteOut->colors[colorNo].used = data[palOffset++];
-				paletteOut->colors[colorNo].r = data[palOffset++];
-				paletteOut->colors[colorNo].g = data[palOffset++];
-				paletteOut->colors[colorNo].b = data[palOffset++];
-			}
-			break;
+		for (colorNo = palColorStart; colorNo < palColorStart + palColorCount; colorNo++) {
+			paletteOut->colors[colorNo].used = data[palOffset++];
+			paletteOut->colors[colorNo].r = data[palOffset++];
+			paletteOut->colors[colorNo].g = data[palOffset++];
+			paletteOut->colors[colorNo].b = data[palOffset++];
+		}
+		break;
 	}
 }
 
@@ -263,30 +265,59 @@ static byte blendColors(byte c1, byte c2) {
 	// return (c1/2+c2/2)+((c1&1)+(c2&1))/2;
 
 	// gamma 2.2
-	double t = (pow(c1/255.0, 2.2/1.0) * 255.0) +
-	           (pow(c2/255.0, 2.2/1.0) * 255.0);
-	return (byte)(0.5 + (pow(0.5*t/255.0, 1.0/2.2) * 255.0));
+	double t = (pow(c1 / 255.0, 2.2 / 1.0) * 255.0) + (pow(c2 / 255.0, 2.2 / 1.0) * 255.0);
+	return (byte)(0.5 + (pow(0.5 * t / 255.0, 1.0 / 2.2) * 255.0));
 }
 
 void GfxPalette::setEGA() {
 	int curColor;
 	byte color1, color2;
 
-	_sysPalette.colors[1].r  = 0x000; _sysPalette.colors[1].g  = 0x000; _sysPalette.colors[1].b  = 0x0AA;
-	_sysPalette.colors[2].r  = 0x000; _sysPalette.colors[2].g  = 0x0AA; _sysPalette.colors[2].b  = 0x000;
-	_sysPalette.colors[3].r  = 0x000; _sysPalette.colors[3].g  = 0x0AA; _sysPalette.colors[3].b  = 0x0AA;
-	_sysPalette.colors[4].r  = 0x0AA; _sysPalette.colors[4].g  = 0x000; _sysPalette.colors[4].b  = 0x000;
-	_sysPalette.colors[5].r  = 0x0AA; _sysPalette.colors[5].g  = 0x000; _sysPalette.colors[5].b  = 0x0AA;
-	_sysPalette.colors[6].r  = 0x0AA; _sysPalette.colors[6].g  = 0x055; _sysPalette.colors[6].b  = 0x000;
-	_sysPalette.colors[7].r  = 0x0AA; _sysPalette.colors[7].g  = 0x0AA; _sysPalette.colors[7].b  = 0x0AA;
-	_sysPalette.colors[8].r  = 0x055; _sysPalette.colors[8].g  = 0x055; _sysPalette.colors[8].b  = 0x055;
-	_sysPalette.colors[9].r  = 0x055; _sysPalette.colors[9].g  = 0x055; _sysPalette.colors[9].b  = 0x0FF;
-	_sysPalette.colors[10].r = 0x055; _sysPalette.colors[10].g = 0x0FF; _sysPalette.colors[10].b = 0x055;
-	_sysPalette.colors[11].r = 0x055; _sysPalette.colors[11].g = 0x0FF; _sysPalette.colors[11].b = 0x0FF;
-	_sysPalette.colors[12].r = 0x0FF; _sysPalette.colors[12].g = 0x055; _sysPalette.colors[12].b = 0x055;
-	_sysPalette.colors[13].r = 0x0FF; _sysPalette.colors[13].g = 0x055; _sysPalette.colors[13].b = 0x0FF;
-	_sysPalette.colors[14].r = 0x0FF; _sysPalette.colors[14].g = 0x0FF; _sysPalette.colors[14].b = 0x055;
-	_sysPalette.colors[15].r = 0x0FF; _sysPalette.colors[15].g = 0x0FF; _sysPalette.colors[15].b = 0x0FF;
+	_sysPalette.colors[1].r = 0x000;
+	_sysPalette.colors[1].g = 0x000;
+	_sysPalette.colors[1].b = 0x0AA;
+	_sysPalette.colors[2].r = 0x000;
+	_sysPalette.colors[2].g = 0x0AA;
+	_sysPalette.colors[2].b = 0x000;
+	_sysPalette.colors[3].r = 0x000;
+	_sysPalette.colors[3].g = 0x0AA;
+	_sysPalette.colors[3].b = 0x0AA;
+	_sysPalette.colors[4].r = 0x0AA;
+	_sysPalette.colors[4].g = 0x000;
+	_sysPalette.colors[4].b = 0x000;
+	_sysPalette.colors[5].r = 0x0AA;
+	_sysPalette.colors[5].g = 0x000;
+	_sysPalette.colors[5].b = 0x0AA;
+	_sysPalette.colors[6].r = 0x0AA;
+	_sysPalette.colors[6].g = 0x055;
+	_sysPalette.colors[6].b = 0x000;
+	_sysPalette.colors[7].r = 0x0AA;
+	_sysPalette.colors[7].g = 0x0AA;
+	_sysPalette.colors[7].b = 0x0AA;
+	_sysPalette.colors[8].r = 0x055;
+	_sysPalette.colors[8].g = 0x055;
+	_sysPalette.colors[8].b = 0x055;
+	_sysPalette.colors[9].r = 0x055;
+	_sysPalette.colors[9].g = 0x055;
+	_sysPalette.colors[9].b = 0x0FF;
+	_sysPalette.colors[10].r = 0x055;
+	_sysPalette.colors[10].g = 0x0FF;
+	_sysPalette.colors[10].b = 0x055;
+	_sysPalette.colors[11].r = 0x055;
+	_sysPalette.colors[11].g = 0x0FF;
+	_sysPalette.colors[11].b = 0x0FF;
+	_sysPalette.colors[12].r = 0x0FF;
+	_sysPalette.colors[12].g = 0x055;
+	_sysPalette.colors[12].b = 0x055;
+	_sysPalette.colors[13].r = 0x0FF;
+	_sysPalette.colors[13].g = 0x055;
+	_sysPalette.colors[13].b = 0x0FF;
+	_sysPalette.colors[14].r = 0x0FF;
+	_sysPalette.colors[14].g = 0x0FF;
+	_sysPalette.colors[14].b = 0x055;
+	_sysPalette.colors[15].r = 0x0FF;
+	_sysPalette.colors[15].g = 0x0FF;
+	_sysPalette.colors[15].b = 0x0FF;
 	for (curColor = 0; curColor <= 15; curColor++) {
 		_sysPalette.colors[curColor].used = 1;
 	}
@@ -294,7 +325,8 @@ void GfxPalette::setEGA() {
 	//  finished pictures
 	for (curColor = 0x10; curColor <= 0xFE; curColor++) {
 		_sysPalette.colors[curColor].used = 1;
-		color1 = curColor & 0x0F; color2 = curColor >> 4;
+		color1 = curColor & 0x0F;
+		color2 = curColor >> 4;
 
 		_sysPalette.colors[curColor].r = blendColors(_sysPalette.colors[color1].r, _sysPalette.colors[color2].r);
 		_sysPalette.colors[curColor].g = blendColors(_sysPalette.colors[color1].g, _sysPalette.colors[color2].g);
@@ -339,9 +371,7 @@ bool GfxPalette::insert(Palette *newPalette, Palette *destPalette) {
 
 	for (int i = 1; i < 255; i++) {
 		if (newPalette->colors[i].used) {
-			if ((newPalette->colors[i].r != destPalette->colors[i].r) ||
-				(newPalette->colors[i].g != destPalette->colors[i].g) ||
-				(newPalette->colors[i].b != destPalette->colors[i].b)) {
+			if ((newPalette->colors[i].r != destPalette->colors[i].r) || (newPalette->colors[i].g != destPalette->colors[i].g) || (newPalette->colors[i].b != destPalette->colors[i].b)) {
 				destPalette->colors[i].r = newPalette->colors[i].r;
 				destPalette->colors[i].g = newPalette->colors[i].g;
 				destPalette->colors[i].b = newPalette->colors[i].b;
@@ -368,9 +398,7 @@ bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 		// forced palette merging or dest color is not used yet
 		if (force || (!_sysPalette.colors[i].used)) {
 			_sysPalette.colors[i].used = newPalette->colors[i].used;
-			if ((newPalette->colors[i].r != _sysPalette.colors[i].r) ||
-				(newPalette->colors[i].g != _sysPalette.colors[i].g) ||
-				(newPalette->colors[i].b != _sysPalette.colors[i].b)) {
+			if ((newPalette->colors[i].r != _sysPalette.colors[i].r) || (newPalette->colors[i].g != _sysPalette.colors[i].g) || (newPalette->colors[i].b != _sysPalette.colors[i].b)) {
 				_sysPalette.colors[i].r = newPalette->colors[i].r;
 				_sysPalette.colors[i].g = newPalette->colors[i].g;
 				_sysPalette.colors[i].b = newPalette->colors[i].b;
@@ -383,9 +411,7 @@ bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 		// is the same color already at the same position? -> match it directly w/o lookup
 		//  this fixes games like lsl1demo/sq5 where the same rgb color exists multiple times and where we would
 		//  otherwise match the wrong one (which would result into the pixels affected (or not) by palette changes)
-		if ((_sysPalette.colors[i].r == newPalette->colors[i].r) &&
-			(_sysPalette.colors[i].g == newPalette->colors[i].g) &&
-			(_sysPalette.colors[i].b == newPalette->colors[i].b)) {
+		if ((_sysPalette.colors[i].r == newPalette->colors[i].r) && (_sysPalette.colors[i].g == newPalette->colors[i].g) && (_sysPalette.colors[i].b == newPalette->colors[i].b)) {
 			newPalette->mapping[i] = i;
 			continue;
 		}
@@ -482,7 +508,7 @@ uint16 GfxPalette::matchColor(byte matchRed, byte matchGreen, byte matchBlue) {
 
 void GfxPalette::getSys(Palette *pal) {
 	if (pal != &_sysPalette)
-		memcpy(pal, &_sysPalette,sizeof(Palette));
+		memcpy(pal, &_sysPalette, sizeof(Palette));
 }
 
 void GfxPalette::setOnScreen() {
@@ -503,12 +529,12 @@ void GfxPalette::copySysPaletteToScreen() {
 	for (int16 i = 0; i < 256; i++) {
 		if (colorIsFromMacClut(i)) {
 			// If we've got a Mac CLUT, override the SCI palette with its non-black colors
-			bpal[i * 3    ] = convertMacGammaToSCIGamma(_macClut[i * 3    ]);
+			bpal[i * 3] = convertMacGammaToSCIGamma(_macClut[i * 3]);
 			bpal[i * 3 + 1] = convertMacGammaToSCIGamma(_macClut[i * 3 + 1]);
 			bpal[i * 3 + 2] = convertMacGammaToSCIGamma(_macClut[i * 3 + 2]);
 		} else if (_sysPalette.colors[i].used != 0) {
 			// Otherwise, copy to the screen
-			bpal[i * 3    ] = CLIP(_sysPalette.colors[i].r * _sysPalette.intensity[i] / 100, 0, 255);
+			bpal[i * 3] = CLIP(_sysPalette.colors[i].r * _sysPalette.intensity[i] / 100, 0, 255);
 			bpal[i * 3 + 1] = CLIP(_sysPalette.colors[i].g * _sysPalette.intensity[i] / 100, 0, 255);
 			bpal[i * 3 + 2] = CLIP(_sysPalette.colors[i].b * _sysPalette.intensity[i] / 100, 0, 255);
 		}
@@ -748,7 +774,7 @@ void GfxPalette::palVaryRemoveTimer() {
 }
 
 bool GfxPalette::kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks, uint16 stepStop, uint16 direction) {
-	if (_palVaryResourceId != -1)	// another palvary is taking place, return
+	if (_palVaryResourceId != -1) // another palvary is taking place, return
 		return false;
 
 	if (palVaryLoadTargetPalette(resourceId)) {
@@ -838,7 +864,7 @@ void GfxPalette::kernelPalVaryPause(bool pause) {
 void GfxPalette::kernelPalVaryDeinit() {
 	palVaryRemoveTimer();
 
-	_palVaryResourceId = -1;	// invalidate the target palette
+	_palVaryResourceId = -1; // invalidate the target palette
 }
 
 void GfxPalette::palVaryCallback(void *refCon) {
@@ -882,7 +908,7 @@ void GfxPalette::delayForPalVaryWorkaround() {
 			if (!_palVaryZeroTick)
 				break;
 		}
-		debugC(kDebugLevelGraphics, "Delayed kAnimate for kPalVary, %d times", i+1);
+		debugC(kDebugLevelGraphics, "Delayed kAnimate for kPalVary, %d times", i + 1);
 		if (_palVaryZeroTick)
 			warning("Delayed kAnimate for kPalVary timed out");
 	}
@@ -982,7 +1008,7 @@ void GfxPalette::loadMacIconBarPalette() {
 	if (!g_sci->hasMacIconBar())
 		return;
 
-	Common::SeekableReadStream *clutStream = g_sci->getMacExecutable()->getResource(MKTAG('c','l','u','t'), 150);
+	Common::SeekableReadStream *clutStream = g_sci->getMacExecutable()->getResource(MKTAG('c', 'l', 'u', 't'), 150);
 
 	if (!clutStream)
 		error("Could not find clut 150 for the Mac icon bar");
@@ -996,7 +1022,7 @@ void GfxPalette::loadMacIconBarPalette() {
 
 	for (uint16 i = 0; i < colorCount; i++) {
 		clutStream->readUint16BE();
-		_macClut[i * 3    ] = clutStream->readUint16BE() >> 8;
+		_macClut[i * 3] = clutStream->readUint16BE() >> 8;
 		_macClut[i * 3 + 1] = clutStream->readUint16BE() >> 8;
 		_macClut[i * 3 + 2] = clutStream->readUint16BE() >> 8;
 	}
@@ -1007,10 +1033,10 @@ void GfxPalette::loadMacIconBarPalette() {
 		memset(_macClut + 32 * 3, 0, (256 - 32) * 3);
 
 	// Force black/white
-	_macClut[0x00 * 3    ] = 0;
+	_macClut[0x00 * 3] = 0;
 	_macClut[0x00 * 3 + 1] = 0;
 	_macClut[0x00 * 3 + 2] = 0;
-	_macClut[0xff * 3    ] = 0xff;
+	_macClut[0xff * 3] = 0xff;
 	_macClut[0xff * 3 + 1] = 0xff;
 	_macClut[0xff * 3 + 2] = 0xff;
 

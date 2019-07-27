@@ -28,7 +28,7 @@
 namespace Glk {
 namespace Alan2 {
 
-extern Product alan;
+	extern Product alan;
 
 } // End of namespace Alan2
 } // End of namespace Glk

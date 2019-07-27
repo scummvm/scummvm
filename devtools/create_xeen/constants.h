@@ -23,8 +23,8 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-#include "common/scummsys.h"
 #include "cc.h"
+#include "common/scummsys.h"
 
 extern void writeConstants(CCArchive &cc);
 

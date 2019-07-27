@@ -25,15 +25,23 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CIdleSummoner, CGameObject)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(TimerMsg)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(LoadSuccessMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(TimerMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(LoadSuccessMsg)
 END_MESSAGE_MAP()
 
-CIdleSummoner::CIdleSummoner() : CGameObject(), _fieldBC(360000),
-		_fieldC0(60000), _fieldC4(360000), _fieldC8(60000),
-		_fieldCC(0), _fieldD0(0), _timerId(0), _oldNodesCtr(0), _ticks(0) {
+CIdleSummoner::CIdleSummoner()
+  : CGameObject()
+  , _fieldBC(360000)
+  , _fieldC0(60000)
+  , _fieldC4(360000)
+  , _fieldC8(60000)
+  , _fieldCC(0)
+  , _fieldD0(0)
+  , _timerId(0)
+  , _oldNodesCtr(0)
+  , _ticks(0) {
 }
 
 void CIdleSummoner::save(SimpleFile *file, int indent) {
@@ -75,7 +83,7 @@ bool CIdleSummoner::EnterViewMsg(CEnterViewMsg *msg) {
 bool CIdleSummoner::TimerMsg(CTimerMsg *msg) {
 	uint nodesCtr = getNodeChangedCtr();
 	if (msg->_actionVal == 1 && !petDoorOrBellbotPresent()
-			&& nodesCtr > 0 && nodesCtr != _oldNodesCtr) {
+	    && nodesCtr > 0 && nodesCtr != _oldNodesCtr) {
 
 		// They can only appear in the Top of the Well and the Embarkation Lobby
 		if (!compareRoomNameTo("TopOfWell") && !compareRoomNameTo("EmbLobby"))
@@ -85,8 +93,7 @@ bool CIdleSummoner::TimerMsg(CTimerMsg *msg) {
 		// when at the Embarkation SuccUBus, in front of the Deskbot's desk,
 		// or when in the Gondola, since it just looks weird
 		CString fullName = getFullViewName();
-		if (fullName == "EmbLobby.Node 2.W" || fullName == "EmbLobby.Node 4.E" ||
-				fullName == "TopOfWell.Node 29.N")
+		if (fullName == "EmbLobby.Node 2.W" || fullName == "EmbLobby.Node 4.E" || fullName == "TopOfWell.Node 29.N")
 			return true;
 
 		int region = talkGetDialRegion("BellBot", 1);

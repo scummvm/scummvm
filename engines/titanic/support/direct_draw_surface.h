@@ -23,8 +23,8 @@
 #ifndef TITANIC_DIRECT_DRAW_SURFACE_H
 #define TITANIC_DIRECT_DRAW_SURFACE_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 #include "graphics/managed_surface.h"
 #include "titanic/support/rect.h"
 
@@ -39,14 +39,19 @@ struct DDSurfaceDesc {
 	int _flags;
 	int _caps;
 
-	DDSurfaceDesc(int w, int h, int bpp) : _w(w), _h(h), _bpp(bpp),
-		_flags(0x1006), _caps(64) {}
+	DDSurfaceDesc(int w, int h, int bpp)
+	  : _w(w)
+	  , _h(h)
+	  , _bpp(bpp)
+	  , _flags(0x1006)
+	  , _caps(64) {}
 };
 
 class DirectDrawSurface {
 private:
 	Graphics::ManagedSurface *_surface;
 	DisposeAfterUse::Flag _disposeAfterUse;
+
 public:
 	DirectDrawSurface();
 	~DirectDrawSurface();

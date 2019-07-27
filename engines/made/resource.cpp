@@ -23,14 +23,14 @@
 #include "made/resource.h"
 #include "made/graphics.h"
 
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/memstream.h"
-#include "common/debug.h"
 
 #include "graphics/surface.h"
 
-#include "audio/decoders/raw.h"
 #include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
 
 namespace Made {
 
@@ -41,7 +41,9 @@ Resource::~Resource() {
 
 /* PictureResource */
 
-PictureResource::PictureResource() : _picture(NULL), _picturePalette(NULL) {
+PictureResource::PictureResource()
+  : _picture(NULL)
+  , _picturePalette(NULL) {
 	_hasPalette = false;
 	_paletteColorCount = 0;
 }
@@ -58,7 +60,7 @@ PictureResource::~PictureResource() {
 }
 
 void PictureResource::load(byte *source, int size) {
-	if (READ_BE_UINT32(source) == MKTAG('F','l','e','x')) {
+	if (READ_BE_UINT32(source) == MKTAG('F', 'l', 'e', 'x')) {
 		loadChunked(source, size);
 	} else {
 		loadRaw(source, size);
@@ -78,7 +80,7 @@ void PictureResource::loadRaw(byte *source, int size) {
 	uint16 pixelOffs = sourceS->readUint16LE();
 	uint16 maskOffs = sourceS->readUint16LE();
 	uint16 lineSize = sourceS->readUint16LE();
-	/*uint16 u = */sourceS->readUint16LE();
+	/*uint16 u = */ sourceS->readUint16LE();
 	uint16 width = sourceS->readUint16LE();
 	uint16 height = sourceS->readUint16LE();
 
@@ -101,7 +103,6 @@ void PictureResource::loadRaw(byte *source, int size) {
 	decompressImage(source, *_picture, cmdOffs, pixelOffs, maskOffs, lineSize, cmdFlags, pixelFlags, maskFlags);
 
 	delete sourceS;
-
 }
 
 void PictureResource::loadChunked(byte *source, int size) {
@@ -127,13 +128,13 @@ void PictureResource::loadChunked(byte *source, int size) {
 
 		debug(0, "chunkType = %08X; chunkSize = %d", chunkType, chunkSize);
 
-		if (chunkType == MKTAG('R','e','c','t')) {
+		if (chunkType == MKTAG('R', 'e', 'c', 't')) {
 			debug(0, "Rect");
 			sourceS->skip(4);
 			height = sourceS->readUint16BE();
 			width = sourceS->readUint16BE();
 			debug(0, "width = %d; height = %d", width, height);
-		} else if (chunkType == MKTAG('f','M','a','p')) {
+		} else if (chunkType == MKTAG('f', 'M', 'a', 'p')) {
 			debug(0, "fMap");
 			lineSize = sourceS->readUint16BE();
 			sourceS->skip(11);
@@ -141,21 +142,21 @@ void PictureResource::loadChunked(byte *source, int size) {
 			cmdOffs = sourceS->pos();
 			sourceS->skip(chunkSize - 14);
 			debug(0, "lineSize = %d; cmdFlags = %d; cmdOffs = %04X", lineSize, cmdFlags, cmdOffs);
-		} else if (chunkType == MKTAG('f','L','C','o')) {
+		} else if (chunkType == MKTAG('f', 'L', 'C', 'o')) {
 			debug(0, "fLCo");
 			sourceS->skip(9);
 			pixelFlags = sourceS->readByte();
 			pixelOffs = sourceS->pos();
 			sourceS->skip(chunkSize - 10);
 			debug(0, "pixelFlags = %d; pixelOffs = %04X", pixelFlags, pixelOffs);
-		} else if (chunkType == MKTAG('f','P','i','x')) {
+		} else if (chunkType == MKTAG('f', 'P', 'i', 'x')) {
 			debug(0, "fPix");
 			sourceS->skip(9);
 			maskFlags = sourceS->readByte();
 			maskOffs = sourceS->pos();
 			sourceS->skip(chunkSize - 10);
 			debug(0, "maskFlags = %d; maskOffs = %04X", maskFlags, maskOffs);
-		} else if (chunkType == MKTAG('f','G','C','o')) {
+		} else if (chunkType == MKTAG('f', 'G', 'C', 'o')) {
 			debug(0, "fGCo");
 			_hasPalette = true;
 			_paletteColorCount = chunkSize / 3;
@@ -164,7 +165,6 @@ void PictureResource::loadChunked(byte *source, int size) {
 		} else {
 			error("PictureResource::loadChunked() Invalid chunk %08X at %08X", chunkType, sourceS->pos());
 		}
-
 	}
 
 	if (!cmdOffs || !pixelOffs /*|| !maskOffs*/ || !lineSize || !width || !height) {
@@ -177,7 +177,6 @@ void PictureResource::loadChunked(byte *source, int size) {
 	decompressImage(source, *_picture, cmdOffs, pixelOffs, maskOffs, lineSize, cmdFlags, pixelFlags, maskFlags);
 
 	delete sourceS;
-
 }
 
 /* AnimationResource */
@@ -236,7 +235,6 @@ void AnimationResource::load(byte *source, int size) {
 		decompressImage(source + frameOffs, *frame, cmdOffs, pixelOffs, maskOffs, lineSize, 0, 0, 0, _flags & 1);
 
 		_frames.push_back(frame);
-
 	}
 
 	delete sourceS;
@@ -244,7 +242,9 @@ void AnimationResource::load(byte *source, int size) {
 
 /* SoundResource */
 
-SoundResource::SoundResource() : _soundSize(0), _soundData(NULL) {
+SoundResource::SoundResource()
+  : _soundSize(0)
+  , _soundData(NULL) {
 	_soundEnergyArray = nullptr;
 }
 
@@ -266,8 +266,7 @@ void SoundResource::load(byte *source, int size) {
 }
 
 Audio::AudioStream *SoundResource::getAudioStream(int soundRate, bool loop) {
-	Audio::RewindableAudioStream *stream =
-			Audio::makeRawStream(_soundData, _soundSize, soundRate, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
+	Audio::RewindableAudioStream *stream = Audio::makeRawStream(_soundData, _soundSize, soundRate, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
 
 	if (loop)
 		return Audio::makeLoopingAudioStream(stream, 0);
@@ -297,7 +296,7 @@ void MenuResource::load(byte *source, int size) {
 	uint16 count = sourceS->readUint16LE();
 	for (uint16 i = 0; i < count; i++) {
 		uint16 offs = sourceS->readUint16LE();
-		const char *string = (const char*)(source + offs);
+		const char *string = (const char *)(source + offs);
 		_strings.push_back(string);
 		debug(2, "%02d: %s\n", i, string);
 	}
@@ -313,7 +312,9 @@ const char *MenuResource::getString(uint index) const {
 
 /* FontResource */
 
-FontResource::FontResource() : _data(NULL), _size(0) {
+FontResource::FontResource()
+  : _data(NULL)
+  , _size(0) {
 }
 
 FontResource::~FontResource() {
@@ -364,7 +365,9 @@ byte *FontResource::getCharData(uint c) const {
 
 /* GenericResource */
 
-GenericResource::GenericResource() : _data(NULL), _size(0) {
+GenericResource::GenericResource()
+  : _data(NULL)
+  , _size(0) {
 }
 
 GenericResource::~GenericResource() {
@@ -431,7 +434,6 @@ void ResourceReader::open(const char *filename) {
 		_resSlots[resType] = resSlots;
 
 		_fd->seek(oldOffs);
-
 	}
 
 	_cacheCount = 0;

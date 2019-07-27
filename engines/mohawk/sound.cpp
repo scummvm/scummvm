@@ -22,17 +22,17 @@
 
 #include "common/debug.h"
 
-#include "audio/mididrv.h"
-#include "audio/midiparser.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/adpcm.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
+#include "audio/mididrv.h"
+#include "audio/midiparser.h"
 
 #include "mohawk/mohawk.h"
-#include "mohawk/sound.h"
 #include "mohawk/resource.h"
+#include "mohawk/sound.h"
 
 namespace Mohawk {
 
@@ -45,109 +45,109 @@ Audio::RewindableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *s
 	memset(&dataChunk, 0, sizeof(DataChunk));
 
 	if (stream->readUint32BE() != ID_MHWK) // MHWK tag again
-		error ("Could not find tag 'MHWK'");
+		error("Could not find tag 'MHWK'");
 
 	stream->readUint32BE(); // Skip size
 
 	if (stream->readUint32BE() != ID_WAVE)
-		error ("Could not find tag 'WAVE'");
+		error("Could not find tag 'WAVE'");
 
 	while (!dataChunk.audioData) {
 		tag = stream->readUint32BE();
 
 		switch (tag) {
-			case ID_ADPC:
-				debug(2, "Found Tag ADPC");
-				// ADPCM Sound Only
-				//
-				// This is useful for seeking in the stream, and is actually quite brilliant
-				// considering some of the other things Broderbund did with the engine.
-				// Only Riven and CSTime are known to use ADPCM audio and only CSTime
-				// actually requires this for seeking. On the other hand, it may be interesting
-				// to look at that one Riven sample that uses the cue points.
-				//
-				// Basically, the sample frame from the cue list is looked up here and then
-				// sets the starting sample and step index at the point specified. Quite
-				// an elegant/efficient system, really.
+		case ID_ADPC:
+			debug(2, "Found Tag ADPC");
+			// ADPCM Sound Only
+			//
+			// This is useful for seeking in the stream, and is actually quite brilliant
+			// considering some of the other things Broderbund did with the engine.
+			// Only Riven and CSTime are known to use ADPCM audio and only CSTime
+			// actually requires this for seeking. On the other hand, it may be interesting
+			// to look at that one Riven sample that uses the cue points.
+			//
+			// Basically, the sample frame from the cue list is looked up here and then
+			// sets the starting sample and step index at the point specified. Quite
+			// an elegant/efficient system, really.
 
-				adpcmStatus.size = stream->readUint32BE();
-				adpcmStatus.itemCount = stream->readUint16BE();
-				adpcmStatus.channels = stream->readUint16BE();
-				adpcmStatus.statusItems = new ADPCMStatus::StatusItem[adpcmStatus.itemCount];
+			adpcmStatus.size = stream->readUint32BE();
+			adpcmStatus.itemCount = stream->readUint16BE();
+			adpcmStatus.channels = stream->readUint16BE();
+			adpcmStatus.statusItems = new ADPCMStatus::StatusItem[adpcmStatus.itemCount];
 
-				assert(adpcmStatus.channels <= 2);
+			assert(adpcmStatus.channels <= 2);
 
-				for (uint16 i = 0; i < adpcmStatus.itemCount; i++) {
-					adpcmStatus.statusItems[i].sampleFrame = stream->readUint32BE();
+			for (uint16 i = 0; i < adpcmStatus.itemCount; i++) {
+				adpcmStatus.statusItems[i].sampleFrame = stream->readUint32BE();
 
-					for (uint16 j = 0; j < adpcmStatus.channels; j++) {
-						adpcmStatus.statusItems[i].channelStatus[j].last = stream->readSint16BE();
-						adpcmStatus.statusItems[i].channelStatus[j].stepIndex = stream->readUint16BE();
-					}
+				for (uint16 j = 0; j < adpcmStatus.channels; j++) {
+					adpcmStatus.statusItems[i].channelStatus[j].last = stream->readSint16BE();
+					adpcmStatus.statusItems[i].channelStatus[j].stepIndex = stream->readUint16BE();
 				}
+			}
 
-				// TODO: Actually use this chunk. For now, just delete the status items...
-				delete[] adpcmStatus.statusItems;
+			// TODO: Actually use this chunk. For now, just delete the status items...
+			delete[] adpcmStatus.statusItems;
+			break;
+		case ID_CUE:
+			debug(2, "Found Tag Cue#");
+			// Cues are used for animation sync. There are a couple in Myst and
+			// Riven but are not used there at all.
+
+			if (!cueList) {
+				uint32 size = stream->readUint32BE();
+				stream->skip(size);
 				break;
-			case ID_CUE:
-				debug(2, "Found Tag Cue#");
-				// Cues are used for animation sync. There are a couple in Myst and
-				// Riven but are not used there at all.
+			}
 
-				if (!cueList) {
-					uint32 size = stream->readUint32BE();
-					stream->skip(size);
-					break;
-				}
+			cueList->size = stream->readUint32BE();
+			cueList->pointCount = stream->readUint16BE();
 
-				cueList->size = stream->readUint32BE();
-				cueList->pointCount = stream->readUint16BE();
+			if (cueList->pointCount == 0)
+				debug(2, "Cue# chunk found with no points!");
+			else
+				debug(2, "Cue# chunk found with %d point(s)!", cueList->pointCount);
 
-				if (cueList->pointCount == 0)
-					debug(2, "Cue# chunk found with no points!");
-				else
-					debug(2, "Cue# chunk found with %d point(s)!", cueList->pointCount);
+			cueList->points.resize(cueList->pointCount);
+			for (uint16 i = 0; i < cueList->pointCount; i++) {
+				cueList->points[i].sampleFrame = stream->readUint32BE();
 
-				cueList->points.resize(cueList->pointCount);
-				for (uint16 i = 0; i < cueList->pointCount; i++) {
-					cueList->points[i].sampleFrame = stream->readUint32BE();
+				byte nameLength = stream->readByte();
+				cueList->points[i].name.clear();
+				for (byte j = 0; j < nameLength; j++)
+					cueList->points[i].name += stream->readByte();
 
-					byte nameLength = stream->readByte();
-					cueList->points[i].name.clear();
-					for (byte j = 0; j < nameLength; j++)
-						cueList->points[i].name += stream->readByte();
+				// Realign to an even boundary
+				if (!(nameLength & 1))
+					stream->readByte();
 
-					// Realign to an even boundary
-					if (!(nameLength & 1))
-						stream->readByte();
+				debug(3, "Cue# chunk point %d (frame %d): %s", i, cueList->points[i].sampleFrame, cueList->points[i].name.c_str());
+			}
+			break;
+		case ID_DATA:
+			debug(2, "Found Tag DATA");
+			// We subtract 20 from the actual chunk size, which is the total size
+			// of the chunk's header
+			dataSize = stream->readUint32BE() - 20;
+			dataChunk.sampleRate = stream->readUint16BE();
+			dataChunk.sampleCount = stream->readUint32BE();
+			dataChunk.bitsPerSample = stream->readByte();
+			dataChunk.channels = stream->readByte();
+			dataChunk.encoding = stream->readUint16BE();
+			dataChunk.loopCount = stream->readUint16BE();
+			dataChunk.loopStart = stream->readUint32BE();
+			dataChunk.loopEnd = stream->readUint32BE();
 
-					debug (3, "Cue# chunk point %d (frame %d): %s", i, cueList->points[i].sampleFrame, cueList->points[i].name.c_str());
-				}
-				break;
-			case ID_DATA:
-				debug(2, "Found Tag DATA");
-				// We subtract 20 from the actual chunk size, which is the total size
-				// of the chunk's header
-				dataSize = stream->readUint32BE() - 20;
-				dataChunk.sampleRate = stream->readUint16BE();
-				dataChunk.sampleCount = stream->readUint32BE();
-				dataChunk.bitsPerSample = stream->readByte();
-				dataChunk.channels = stream->readByte();
-				dataChunk.encoding = stream->readUint16BE();
-				dataChunk.loopCount = stream->readUint16BE();
-				dataChunk.loopStart = stream->readUint32BE();
-				dataChunk.loopEnd = stream->readUint32BE();
+			// NOTE: We currently ignore all of the loop parameters here. Myst uses the
+			// loopCount variable but the loopStart and loopEnd are always 0 and the size of
+			// the sample. Myst ME doesn't use the Mohawk Sound format and just standard WAVE
+			// files and therefore does not contain any of this metadata and we have to specify
+			// whether or not to loop elsewhere.
 
-				// NOTE: We currently ignore all of the loop parameters here. Myst uses the
-				// loopCount variable but the loopStart and loopEnd are always 0 and the size of
-				// the sample. Myst ME doesn't use the Mohawk Sound format and just standard WAVE
-				// files and therefore does not contain any of this metadata and we have to specify
-				// whether or not to loop elsewhere.
-
-				dataChunk.audioData = stream->readStream(dataSize);
-				break;
-			default:
-				error ("Unknown tag found in 'tWAV' chunk -- '%s'", tag2str(tag));
+			dataChunk.audioData = stream->readStream(dataSize);
+			break;
+		default:
+			error("Unknown tag found in 'tWAV' chunk -- '%s'", tag2str(tag));
 		}
 	}
 
@@ -176,17 +176,17 @@ Audio::RewindableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *s
 #ifdef USE_MAD
 		return Audio::makeMP3Stream(dataChunk.audioData, DisposeAfterUse::YES);
 #else
-		warning ("MAD library not included - unable to play MP2 audio");
+		warning("MAD library not included - unable to play MP2 audio");
 #endif
 	} else {
-		error ("Unknown Mohawk WAVE encoding %d", dataChunk.encoding);
+		error("Unknown Mohawk WAVE encoding %d", dataChunk.encoding);
 	}
 
 	return nullptr;
 }
 
-Sound::Sound(MohawkEngine* vm) :
-		_vm(vm) {
+Sound::Sound(MohawkEngine *vm)
+  : _vm(vm) {
 }
 
 Sound::~Sound() {
@@ -214,7 +214,7 @@ Audio::RewindableAudioStream *Sound::makeAudioStream(uint16 id, CueList *cueList
 }
 
 Audio::SoundHandle *Sound::playSound(uint16 id, byte volume, bool loop, CueList *cueList) {
-	debug (0, "Playing sound %d", id);
+	debug(0, "Playing sound %d", id);
 
 	Audio::RewindableAudioStream *rewindStream = makeAudioStream(id, cueList);
 

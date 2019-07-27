@@ -20,30 +20,31 @@
  *
  */
 
-
 #if !defined(ENABLE_EOB)
-#include "kyra/graphics/screen.h"
+#	include "kyra/graphics/screen.h"
 #endif
 
 #ifdef ENABLE_EOB
 
-#include "kyra/engine/eobcommon.h"
-#include "kyra/resource/resource.h"
-#include "kyra/engine/util.h"
+#	include "kyra/engine/eobcommon.h"
+#	include "kyra/engine/util.h"
+#	include "kyra/resource/resource.h"
 
-#include "common/system.h"
-#include "common/translation.h"
-#include "common/memstream.h"
+#	include "common/memstream.h"
+#	include "common/system.h"
+#	include "common/translation.h"
 
-#include "graphics/cursorman.h"
-#include "graphics/palette.h"
-#include "graphics/sjis.h"
+#	include "graphics/cursorman.h"
+#	include "graphics/palette.h"
+#	include "graphics/sjis.h"
 
-#include "gui/error.h"
+#	include "gui/error.h"
 
 namespace Kyra {
 
-Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, _screenDimTable, _screenDimTableCount), _cursorColorKey16Bit(0x8000) {
+Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system)
+  : Screen(vm, system, _screenDimTable, _screenDimTableCount)
+  , _cursorColorKey16Bit(0x8000) {
 	_dsBackgroundFading = false;
 	_dsShapeFadingLevel = 0;
 	_dsBackgroundFadingXOffs = 0;
@@ -86,7 +87,7 @@ bool Screen_EoB::init() {
 			_shpBuffer = new uint8[SCREEN_H * SCREEN_W];
 			_convertHiColorBuffer = new uint8[SCREEN_H * SCREEN_W];
 			enableHiColorMode(true);
-			
+
 			Graphics::FontSJIS *font = Graphics::FontSJIS::createFont(Common::kPlatformFMTowns);
 			if (!font)
 				error("Could not load any SJIS font, neither the original nor ScummVM's 'SJIS.FNT'");
@@ -145,10 +146,10 @@ void Screen_EoB::setMouseCursor(int x, int y, const byte *shape, const uint8 *ov
 	int bpp = _useHiColorScreen ? 2 : 1;
 
 	uint8 *cursor = new uint8[mouseW * scaleFactor * bpp * mouseH * scaleFactor];
-	
+
 	if (_bytesPerPixel == 2) {
 		for (int s = mouseW * scaleFactor * bpp * mouseH * scaleFactor; s; s -= 2)
-			*(uint16*)(cursor + s - 2) = colorKey;
+			*(uint16 *)(cursor + s - 2) = colorKey;
 	} else {
 		// We don't use fillRect here to make sure that the color key 0xFF doesn't get converted into EGA color
 		memset(cursor, colorKey, mouseW * scaleFactor * bpp * mouseH * scaleFactor);
@@ -165,7 +166,7 @@ void Screen_EoB::setMouseCursor(int x, int y, const byte *shape, const uint8 *ov
 	else
 		copyRegionToBuffer(6, 0, 0, mouseW, mouseH, cursor);
 
-	// Mouse cursor post processing for EOB II Amiga	
+	// Mouse cursor post processing for EOB II Amiga
 	if (_dualPaletteMode) {
 		int len = mouseW * mouseH;
 		while (--len > -1)
@@ -194,7 +195,7 @@ void Screen_EoB::setMouseCursor(int x, int y, const byte *shape, const uint8 *ov
 			}
 		}
 	}
-	
+
 	// Convert color key to 16 bit after drawing the mouse cursor.
 	// The cursor has been converted to 16 bit in scale2x().
 	colorKey = _16bitConversionPalette ? _16bitConversionPalette[colorKey] : colorKey;
@@ -267,24 +268,24 @@ void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int te
 
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
 		if (!s)
-			error("Screen_EoB::loadEoBBitmap(): Failed to load file '%s'", file);	
+			error("Screen_EoB::loadEoBBitmap(): Failed to load file '%s'", file);
 		s->read(_shpBuffer, s->size());
 		decodeSHP(_shpBuffer, destPage);
 
 	} else if (s) {
 		// This additional check is necessary since some localized versions of EOB II seem to contain invalid (size zero) cps files
-		if (s->size() == 0) {			
+		if (s->size() == 0) {
 			loadAlternative = true;
 
-		// This check is due to EOB II Amiga German. That version simply checks
-		// for certain file names which aren't actual CPS files. These files use
-		// a diffenrent format and compression type. I check the header size
-		// info to identify these.
+			// This check is due to EOB II Amiga German. That version simply checks
+			// for certain file names which aren't actual CPS files. These files use
+			// a diffenrent format and compression type. I check the header size
+			// info to identify these.
 		} else if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
 			// Tolerance for diffenrences up to 2 bytes is needed in some cases
 			if ((((s->readUint16LE()) + 5) & ~3) != (((s->size()) + 3) & ~3))
 				loadAlternative = true;
-		} 
+		}
 
 		if (!loadAlternative)
 			loadBitmap(tmp.c_str(), tempPage, destPage, _vm->gameFlags().platform == Common::kPlatformAmiga ? _palettes[0] : 0);
@@ -367,8 +368,8 @@ void Screen_EoB::convertPage(int srcPage, int dstPage, const uint8 *cgaMapping) 
 void Screen_EoB::setScreenPalette(const Palette &pal) {
 	if (_bytesPerPixel == 2) {
 		for (int i = 0; i < 4; i++)
-			createFadeTable16bit((const uint16*)(pal.getData()), &_16bitPalette[i * 256], 0, i * 85);
-	}else if (_useHiResEGADithering && pal.getNumColors() != 16) {
+			createFadeTable16bit((const uint16 *)(pal.getData()), &_16bitPalette[i * 256], 0, i * 85);
+	} else if (_useHiResEGADithering && pal.getNumColors() != 16) {
 		generateEGADitheringTable(pal);
 	} else if (_renderMode == Common::kRenderEGA && pal.getNumColors() == 16) {
 		_screenPalette->copy(pal);
@@ -614,7 +615,7 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 	int16 dX = x - (_dsX1 << 3);
 	int16 dY = y;
 	int16 dW = _dsX2 - _dsX1;
-	
+
 	uint8 pixelsPerByte = *src++;
 	uint16 dH = *src++;
 	uint16 width = (*src++) << 3;
@@ -631,7 +632,7 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 
 	int pixelStep = (flags & 1) ? -1 : 1;
 
-	if (pixelsPerByte < 2)  {
+	if (pixelsPerByte < 2) {
 		uint16 marginLeft = 0;
 		uint16 marginRight = 0;
 
@@ -689,7 +690,7 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 			addDirtyRect(rX, rY, rW, rH);
 
 		while (dH--) {
-			int16 xpos = (int16) marginLeft;
+			int16 xpos = (int16)marginLeft;
 
 			if (flags & 1) {
 				if (pixelsPerByte == 1) {
@@ -1101,7 +1102,7 @@ void Screen_EoB::drawExplosion(int scale, int radius, int numElements, int stepS
 				l = 1;
 				if (pxVal1 == _gfxCol && posWithinRect(px, py, rX1, rY1, rX2, rY2)) {
 					setPagePixel(0, px, py, pxVal2);
-					if (i % 5 == 0)  {
+					if (i % 5 == 0) {
 						updateScreen();
 						uint32 cur = _system->getMillis();
 						if (end > cur)
@@ -1237,7 +1238,7 @@ void Screen_EoB::drawVortex(int numElements, int radius, int stepSize, int, int 
 				i = 1;
 				if (tc1 == _gfxCol && !pixDelay[ii]) {
 					setPagePixel(0, px, py, tc2);
-					if (ii % 15 == 0)  {
+					if (ii % 15 == 0) {
 						updateScreen();
 						uint32 cur = _system->getMillis();
 						if (nextDelay > cur)
@@ -1514,7 +1515,7 @@ void Screen_EoB::shadeRect(int x1, int y1, int x2, int y2, int shadingLevel) {
 	if (_curPage == 0 || _curPage == 1)
 		addDirtyRect(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
 
-	uint16 *dst = (uint16*)(getPagePtr(_curPage) + y1 * SCREEN_W * _bytesPerPixel + x1 * _bytesPerPixel);
+	uint16 *dst = (uint16 *)(getPagePtr(_curPage) + y1 * SCREEN_W * _bytesPerPixel + x1 * _bytesPerPixel);
 
 	for (; y1 < y2; ++y1) {
 		uint16 *ptr = dst;
@@ -1605,7 +1606,7 @@ void Screen_EoB::loadSpecialAmigaCPS(const char *fileName, int destPage, bool is
 					cnt = decodeFrameAmiga_readBits(pos, val, chk, 8) + 1;
 					para2 = 12;
 				}
-					
+
 				code = decodeFrameAmiga_readBits(pos, val, chk, para2);
 				while (cnt--) {
 					dst--;
@@ -1621,7 +1622,7 @@ void Screen_EoB::loadSpecialAmigaCPS(const char *fileName, int destPage, bool is
 				*dst = dst[code & 0xFFFF];
 
 			} else {
-				para = 3;				
+				para = 3;
 			}
 		}
 
@@ -1671,10 +1672,10 @@ void Screen_EoB::updateDirtyRects() {
 	}
 
 	if (_dualPaletteMode && _forceFullUpdate) {
-		uint32 *pos = (uint32*)(_pagePtrs[0] + 120 * SCREEN_W);
+		uint32 *pos = (uint32 *)(_pagePtrs[0] + 120 * SCREEN_W);
 		uint16 h = 80 * (SCREEN_W >> 2);
 		while (h--)
-			*pos++ |= 0x20202020;		
+			*pos++ |= 0x20202020;
 		_system->copyRectToScreen(getCPagePtr(0), SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
 
 	} else if (_dualPaletteMode) {
@@ -1733,7 +1734,7 @@ void Screen_EoB::ditherRect(const uint8 *src, uint8 *dst, int dstPitch, int srcW
 
 void Screen_EoB::drawShapeSetPixel(uint8 *dst, uint8 col) {
 	if (_bytesPerPixel == 2) {
-		*(uint16*)dst = _16bitPalette[(_dsShapeFadingLevel << 8) + col];
+		*(uint16 *)dst = _16bitPalette[(_dsShapeFadingLevel << 8) + col];
 		return;
 	} else if ((!_isAmiga && _renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA) || _useHiResEGADithering) {
 		if (_dsBackgroundFading) {
@@ -1817,7 +1818,7 @@ void Screen_EoB::setPagePixel16bit(int pageNum, int x, int y, uint16 color) {
 	if (pageNum == 0 || pageNum == 1)
 		addDirtyRect(x, y, 1, 1);
 
-	((uint16*)_pagePtrs[pageNum])[y * SCREEN_W + x] = color;
+	((uint16 *)_pagePtrs[pageNum])[y * SCREEN_W + x] = color;
 }
 
 void Screen_EoB::generateEGADitheringTable(const Palette &pal) {
@@ -1914,7 +1915,8 @@ const uint8 Screen_EoB::_egaMatchTable[] = {
 uint16 *OldDOSFont::_cgaDitheringTable = 0;
 int OldDOSFont::_numRef = 0;
 
-OldDOSFont::OldDOSFont(Common::RenderMode mode) : _renderMode(mode) {
+OldDOSFont::OldDOSFont(Common::RenderMode mode)
+  : _renderMode(mode) {
 	_data = 0;
 	_width = _height = _numGlyphs = 0;
 	_bitmapOffsets = 0;
@@ -2104,13 +2106,13 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch, int bpp) const {
 
 					if (s & i) {
 						if (bpp == 2)
-							*(uint16*)dst = color1;
+							*(uint16 *)dst = color1;
 						else if (color1)
 							*dst = color1;
 					} else {
 						if (bpp == 2) {
 							if (color2 != 0xFFFF)
-								*(uint16*)dst = color2;
+								*(uint16 *)dst = color2;
 						} else if (color2) {
 							*dst = color2;
 						}
@@ -2137,7 +2139,17 @@ void OldDOSFont::unload() {
 	_bitmapOffsets = 0;
 }
 
-AmigaDOSFont::AmigaDOSFont(Resource *res, bool needsLocalizedFont) : _res(res), _needsLocalizedFont(needsLocalizedFont), _width(0), _height(0), _first(0), _last(0), _content(0), _numElements(0), _selectedElement(0), _maxPathLen(256) {
+AmigaDOSFont::AmigaDOSFont(Resource *res, bool needsLocalizedFont)
+  : _res(res)
+  , _needsLocalizedFont(needsLocalizedFont)
+  , _width(0)
+  , _height(0)
+  , _first(0)
+  , _last(0)
+  , _content(0)
+  , _numElements(0)
+  , _selectedElement(0)
+  , _maxPathLen(256) {
 	assert(_res);
 }
 
@@ -2145,7 +2157,7 @@ bool AmigaDOSFont::load(Common::SeekableReadStream &file) {
 	unload();
 
 	uint16 id = file.readUint16BE();
-	// We only support type 0x0f00, since this is the only type used for EOB 
+	// We only support type 0x0f00, since this is the only type used for EOB
 	if (id != 0x0f00)
 		return false;
 
@@ -2155,7 +2167,8 @@ bool AmigaDOSFont::load(Common::SeekableReadStream &file) {
 
 	for (int i = 0; i < _numElements; ++i) {
 		file.read(cfile, _maxPathLen);
-		_content[i].height = file.readUint16BE();;
+		_content[i].height = file.readUint16BE();
+		;
 		_content[i].style = file.readByte();
 		_content[i].flags = file.readByte();
 		_content[i].contentFile = cfile;
@@ -2179,7 +2192,7 @@ bool AmigaDOSFont::load(Common::SeekableReadStream &file) {
 			warning("Amiga DOS Font construction / scaling not implemented.");
 		}
 	}
-	
+
 	delete[] cfile;
 
 	selectMode(0);
@@ -2214,7 +2227,7 @@ void AmigaDOSFont::drawChar(uint16 c, byte *dst, int pitch, int) const {
 	int w = _content[_selectedElement].data->spacing ? _content[_selectedElement].data->spacing[c] : _content[_selectedElement].data->width;
 	int xbits = _content[_selectedElement].data->location[c * 2 + 1];
 	int h = _content[_selectedElement].data->height;
-	
+
 	uint16 bitPos = _content[_selectedElement].data->location[c * 2] & 0x0F;
 	uint16 mod = _content[_selectedElement].data->modulo;
 	const uint8 *data = _content[_selectedElement].data->bitmap + ((_content[_selectedElement].data->location[c * 2] >> 3) & ~1);
@@ -2224,7 +2237,7 @@ void AmigaDOSFont::drawChar(uint16 c, byte *dst, int pitch, int) const {
 		uint32 mask = 0x80000000;
 		uint32 bits = (READ_BE_UINT32(data) << bitPos) & xbt_mask;
 		data += mod;
-		
+
 		for (int x = 0; x < w; ++x) {
 			if (bits & mask) {
 				if (_colorMap[1])
@@ -2251,21 +2264,19 @@ void AmigaDOSFont::errorDialog(int index) {
 	// This will hopefully prevent unnecessary forum posts and bug reports.
 	if (index == 0) {
 		::GUI::displayErrorDialog(_(
-			"This AMIGA version requires the following font files:\n\nEOBF6.FONT\nEOBF6/6\nEOBF8.FONT\nEOBF8/8\n\n"
-			"If you used the orginal installer for the installation these files\nshould be located in the AmigaDOS system 'Fonts/' folder.\n"
-			"Please copy them into the EOB game data directory.\n"
-		));
-		
+		  "This AMIGA version requires the following font files:\n\nEOBF6.FONT\nEOBF6/6\nEOBF8.FONT\nEOBF8/8\n\n"
+		  "If you used the orginal installer for the installation these files\nshould be located in the AmigaDOS system 'Fonts/' folder.\n"
+		  "Please copy them into the EOB game data directory.\n"));
+
 		error("Failed to load font files.");
 	} else if (index == 1) {
 		::GUI::displayErrorDialog(_(
-			"This AMIGA version requires the following font files:\n\nEOBF6.FONT\nEOBF6/6\nEOBF8.FONT\nEOBF8/8\n\n"
-			"This is a localized (non-English) version of EOB II which uses language specific characters\n"
-			"contained only in the specific font files that came with your game. You cannot use the font\n"
-			"files from the English version or from any EOB I game which seems to be what you are doing.\n\n"
-			"The game will continue, but the language specific characters will not be displayed.\n"
-			"Please copy the correct font files into your EOB II game data directory.\n\n"
-		));
+		  "This AMIGA version requires the following font files:\n\nEOBF6.FONT\nEOBF6/6\nEOBF8.FONT\nEOBF8/8\n\n"
+		  "This is a localized (non-English) version of EOB II which uses language specific characters\n"
+		  "contained only in the specific font files that came with your game. You cannot use the font\n"
+		  "files from the English version or from any EOB I game which seems to be what you are doing.\n\n"
+		  "The game will continue, but the language specific characters will not be displayed.\n"
+		  "Please copy the correct font files into your EOB II game data directory.\n\n"));
 	}
 }
 
@@ -2339,13 +2350,13 @@ AmigaDOSFont::TextFont *AmigaDOSFont::loadContentFile(const Common::String fileN
 	fnt->modulo = str->readUint16();
 
 	offset = str->readUint32();
-	uint16 *loc = (uint16*) (offset ? buffer + offset - (curPos - hunkStartPos) : 0);
+	uint16 *loc = (uint16 *)(offset ? buffer + offset - (curPos - hunkStartPos) : 0);
 	for (int i = 0; i <= (fnt->lastChar - fnt->firstChar) * 2 + 1; ++i)
 		loc[i] = READ_BE_UINT16(&loc[i]);
 	fnt->location = loc;
 
 	offset = str->readUint32();
-	int16 *idat = offset ? (int16*)(buffer + offset - (curPos - hunkStartPos)) : 0;
+	int16 *idat = offset ? (int16 *)(buffer + offset - (curPos - hunkStartPos)) : 0;
 	if (idat) {
 		for (int i = 0; i <= (fnt->lastChar - fnt->firstChar) * 2 + 1; ++i)
 			idat[i] = (int16)READ_BE_UINT16(&idat[i]);
@@ -2356,12 +2367,12 @@ AmigaDOSFont::TextFont *AmigaDOSFont::loadContentFile(const Common::String fileN
 	// This warning will only show up if someone tries to use this code elsewhere. It cannot happen with EOB fonts.
 	if (offset)
 		warning("Trying to load an AmigaDOS font with kerning data. This is not implemented. Font Rendering will not be accurate.");
-	idat = offset ? (int16*)(buffer + offset - (curPos - hunkStartPos)) : 0;
+	idat = offset ? (int16 *)(buffer + offset - (curPos - hunkStartPos)) : 0;
 	if (idat) {
 		for (int i = 0; i <= (fnt->lastChar - fnt->firstChar) * 2 + 1; ++i)
 			idat[i] = (int16)READ_BE_UINT16(&idat[i]);
 	}
-	fnt->kerning = idat;	
+	fnt->kerning = idat;
 
 	fnt->data = buffer;
 
@@ -2382,7 +2393,8 @@ void AmigaDOSFont::selectMode(int mode) {
 	_last = _content[mode].data->lastChar;
 }
 
-SJISFontLarge::SJISFontLarge(Graphics::FontSJIS *font) : SJISFont(font, 0, false, false, false, 0) {
+SJISFontLarge::SJISFontLarge(Graphics::FontSJIS *font)
+  : SJISFont(font, 0, false, false, false, 0) {
 	_sjisWidth = _font->getMaxFontWidth();
 	_fontHeight = _font->getFontHeight();
 	_asciiWidth = _font->getCharWidth('a');
@@ -2392,7 +2404,10 @@ void SJISFontLarge::drawChar(uint16 c, byte *dst, int pitch, int) const {
 	_font->drawChar(dst, c, 320, 1, _colorMap[1], _colorMap[0], 320, 200);
 }
 
-SJISFont12x12::SJISFont12x12(const uint16 *searchTable) : _height(6), _width(6), _data(0) {
+SJISFont12x12::SJISFont12x12(const uint16 *searchTable)
+  : _height(6)
+  , _width(6)
+  , _data(0) {
 	assert(searchTable);
 	for (int i = 0; i < 148; i++)
 		_searchTable[searchTable[i]] = i + 1;
@@ -2423,7 +2438,7 @@ void SJISFont12x12::drawChar(uint16 c, byte *dst, int pitch, int) const {
 
 	const uint8 *src = _data + (offs - 1) * 24;
 	uint8 color1 = _colorMap[1];
-	
+
 	int bt = 0;
 	uint16 chr = 0;
 
@@ -2431,7 +2446,7 @@ void SJISFont12x12::drawChar(uint16 c, byte *dst, int pitch, int) const {
 		if (!bt) {
 			chr = *src++;
 			bt = 8;
-		}		
+		}
 		if (chr & 0x80)
 			*dst = color1;
 		dst++;

@@ -22,16 +22,16 @@
 
 #ifdef ENABLE_EOB
 
-#include "kyra/resource/resource.h"
-#include "kyra/script/script_eob.h"
+#	include "kyra/resource/resource.h"
+#	include "kyra/script/script_eob.h"
 
-#include "common/system.h"
-#include "common/savefile.h"
-#include "common/substream.h"
-#include "common/config-manager.h"
-#include "common/translation.h"
+#	include "common/config-manager.h"
+#	include "common/savefile.h"
+#	include "common/substream.h"
+#	include "common/system.h"
+#	include "common/translation.h"
 
-#include "gui/message.h"
+#	include "gui/message.h"
 
 namespace Kyra {
 
@@ -143,7 +143,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		_currentControlMode = in.readUint16BE();
 		_updateCharNum = in.readSint16BE();
 		_openBookSpellLevel = in.readSByte();
-		_openBookSpellSelectedItem  = in.readSByte();
+		_openBookSpellSelectedItem = in.readSByte();
 		_openBookSpellListOffset = in.readSByte();
 		_openBookChar = in.readByte();
 		_openBookType = in.readByte();
@@ -647,7 +647,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 		return desc;
 
 	Common::SeekableSubReadStream test(fs, 0, fs->size(), DisposeAfterUse::NO);
-	
+
 	// detect source platform
 	Common::Platform sourcePlatform = Common::kPlatformDOS;
 	test.seek(32);
@@ -661,12 +661,12 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 	test.seek(_flags.gameID == GI_EOB1 ? 61 : 47);
 	bool padding = !test.readByte();
 	test.seek(0);
-		
+
 	if (testStr >= 0 && testStr <= 25 && testChr >= 0 && testChr <= 25) {
 		if (testSJIS >= 0xE0 || (testSJIS > 0x80 && testSJIS < 0xA0))
 			sourcePlatform = Common::kPlatformFMTowns;
 	}
-	
+
 	if (padding && sourcePlatform == Common::kPlatformDOS && exp & 0xFF000000)
 		sourcePlatform = Common::kPlatformAmiga;
 
@@ -782,7 +782,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 	}
 	if (_flags.gameID == GI_EOB2)
 		in.skip(1);
-	
+
 	_inf->loadState(in, true);
 
 	loadItemDefs();
@@ -952,9 +952,9 @@ static uint32 encodeFrame4(const uint8 *src, uint8 *dst, uint32 insize) {
 		const uint8 *src3 = 0;
 		uint16 len = 1;
 
-		for (bool loop = true; loop; ) {
+		for (bool loop = true; loop;) {
 			uint16 count = 0;
-			uint16 scansize =  end - src - 1;
+			uint16 scansize = end - src - 1;
 			if (scansize > 64) {
 				if (src[0] == src[64]) {
 					for (uint16 i = 0; i < scansize && src[0] == src[i]; ++i)
@@ -1216,7 +1216,7 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 
 	if (_flags.gameID == GI_EOB2)
 		out->writeByte(0);
-	
+
 	_inf->saveState(out, true);
 
 	int numItems = (_flags.gameID == GI_EOB1) ? 500 : 600;
@@ -1244,8 +1244,8 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 	}
 
 	int numParts = (_flags.gameID == GI_EOB1) ? 12 : 17;
-	int partSize = (_flags.platform == Common::kPlatformFMTowns) ? 5030 :(_flags.gameID == GI_EOB1) ? 2040 : 2130;
-	
+	int partSize = (_flags.platform == Common::kPlatformFMTowns) ? 5030 : (_flags.gameID == GI_EOB1) ? 2040 : 2130;
+
 	uint8 *tempData = new uint8[5030];
 	uint8 *cmpData = new uint8[1200];
 
@@ -1286,7 +1286,7 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 			out->writeUint32BE(0);
 
 		for (int ii = 0; ii < 30; ii++) {
-			EoBMonsterInPlay *m = &((EoBMonsterInPlay*)l->monsters)[ii];
+			EoBMonsterInPlay *m = &((EoBMonsterInPlay *)l->monsters)[ii];
 			out->writeByte(m->type);
 			out->writeByte(m->unit);
 			if (_flags.platform == Common::kPlatformAmiga)
@@ -1340,7 +1340,7 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 			continue;
 
 		for (int ii = 0; ii < 5; ii++) {
-			WallOfForce *w= &((WallOfForce*)l->wallsOfForce)[ii];
+			WallOfForce *w = &((WallOfForce *)l->wallsOfForce)[ii];
 			if (_flags.platform == Common::kPlatformAmiga) {
 				out->writeUint16BE(w->block);
 				out->writeUint32BE(w->duration / _tickLength);
@@ -1393,7 +1393,7 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 
 void *EoBCoreEngine::generateMonsterTempData(LevelTempData *tmp) {
 	EoBMonsterInPlay *m = new EoBMonsterInPlay[30];
-	memcpy(m, _monsters,  sizeof(EoBMonsterInPlay) * 30);
+	memcpy(m, _monsters, sizeof(EoBMonsterInPlay) * 30);
 	return m;
 }
 
@@ -1408,7 +1408,7 @@ void EoBCoreEngine::releaseMonsterTempData(LevelTempData *tmp) {
 
 void *EoBCoreEngine::generateWallOfForceTempData(LevelTempData *tmp) {
 	WallOfForce *w = new WallOfForce[5];
-	memcpy(w, _wallsOfForce,  sizeof(WallOfForce) * 5);
+	memcpy(w, _wallsOfForce, sizeof(WallOfForce) * 5);
 	uint32 ct = _system->getMillis();
 	for (int i = 0; i < 5; i++)
 		w[i].duration = (w[i].duration > ct) ? w[i].duration - ct : _tickLength;
@@ -1416,7 +1416,7 @@ void *EoBCoreEngine::generateWallOfForceTempData(LevelTempData *tmp) {
 }
 
 void EoBCoreEngine::restoreWallOfForceTempData(LevelTempData *tmp) {
-	memcpy(_wallsOfForce, tmp->wallsOfForce,  sizeof(WallOfForce) * 5);
+	memcpy(_wallsOfForce, tmp->wallsOfForce, sizeof(WallOfForce) * 5);
 	uint32 ct = _system->getMillis();
 	for (int i = 0; i < 5; i++)
 		_wallsOfForce[i].duration += ct;

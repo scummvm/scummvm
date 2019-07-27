@@ -36,9 +36,11 @@ class CParrotNutBowlActor : public CGameObject {
 	bool ReplaceBowlAndNutsMsg(CReplaceBowlAndNutsMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
 	bool NutPuzzleMsg(CNutPuzzleMsg *msg);
+
 public:
 	bool _puzzleDone;
 	int _state;
+
 public:
 	CLASSDEF;
 	CParrotNutBowlActor();

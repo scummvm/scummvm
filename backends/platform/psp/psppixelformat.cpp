@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "backends/platform/psp/psppixelformat.h"
+#include "common/scummsys.h"
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging function calls */
 //#define __PSP_DEBUG_PRINT__	/* For debug printouts */
@@ -55,7 +55,7 @@ void PSPPixelFormat::set(Type type, bool swap /* = false */) {
 	case Type_None:
 		bitsPerPixel = 0;
 		break;
-	default:	// This is an error, but let's continue anyway
+	default: // This is an error, but let's continue anyway
 		PSP_ERROR("Unhandled value of pixel type[%d]\n", type);
 		bitsPerPixel = 16;
 		break;
@@ -67,26 +67,26 @@ void PSPPixelFormat::set(Type type, bool swap /* = false */) {
 // Convert from ScummVM general PixelFormat to our pixel format
 // For buffer and palette.
 void PSPPixelFormat::convertFromScummvmPixelFormat(const Graphics::PixelFormat *pf,
-        PSPPixelFormat::Type &bufferType,
-        PSPPixelFormat::Type &paletteType,
-        bool &swapRedBlue) {
-	swapRedBlue = false;	 // no red-blue swap by default
-	PSPPixelFormat::Type *target = 0;	// which one we'll be filling
+                                                   PSPPixelFormat::Type &bufferType,
+                                                   PSPPixelFormat::Type &paletteType,
+                                                   bool &swapRedBlue) {
+	swapRedBlue = false; // no red-blue swap by default
+	PSPPixelFormat::Type *target = 0; // which one we'll be filling
 
-	if (!pf) {	// Default, pf is NULL
+	if (!pf) { // Default, pf is NULL
 		bufferType = Type_Palette_8bit;
 		paletteType = Type_5551;
-	} else {	// We have a pf
+	} else { // We have a pf
 		if (pf->bytesPerPixel == 1) {
 			bufferType = Type_Palette_8bit;
-			target = &paletteType;	// The type describes the palette
+			target = &paletteType; // The type describes the palette
 		} else if (pf->bytesPerPixel == 2) {
 			paletteType = Type_None;
-			target = &bufferType;	// The type describes the buffer
+			target = &bufferType; // The type describes the buffer
 		} else {
 			PSP_ERROR("Unknown bpp[%u] in pixeltype. Reverting to 8bpp\n", pf->bytesPerPixel);
 			bufferType = Type_Palette_8bit;
-			target = &paletteType;	// The type describes the palette
+			target = &paletteType; // The type describes the palette
 		}
 
 		// Find out the exact type of the target
@@ -99,8 +99,7 @@ void PSPPixelFormat::convertFromScummvmPixelFormat(const Graphics::PixelFormat *
 			*target = Type_4444;
 		} else if (pf->gLoss == 0 && pf->gShift == 8) {
 			*target = Type_8888;
-		} else if ((pf->gLoss == 0 && pf->gShift == 0) ||
-		           (pf->gLoss == 8 && pf->gShift == 0)) {	// Default CLUT8 can have weird values
+		} else if ((pf->gLoss == 0 && pf->gShift == 0) || (pf->gLoss == 8 && pf->gShift == 0)) { // Default CLUT8 can have weird values
 			*target = Type_5551;
 		} else {
 			PSP_ERROR("Unknown Scummvm pixel format.\n");
@@ -110,7 +109,7 @@ void PSPPixelFormat::convertFromScummvmPixelFormat(const Graphics::PixelFormat *
 			*target = Type_Unknown;
 		}
 
-		if (pf->rShift != 0)	{// We allow backend swap of red and blue
+		if (pf->rShift != 0) { // We allow backend swap of red and blue
 			swapRedBlue = true;
 			PSP_DEBUG_PRINT("detected red/blue swap\n");
 		}

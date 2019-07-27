@@ -43,7 +43,8 @@ class PegasusEngine;
 class ScreenFader;
 
 class GraphicsManager {
-friend class Cursor;
+	friend class Cursor;
+
 public:
 	GraphicsManager(PegasusEngine *vm);
 	~GraphicsManager();

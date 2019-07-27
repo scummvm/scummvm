@@ -27,8 +27,8 @@
 
 /* SEQUENCE		The sequencer. */
 
-#include "avalanche/avalanche.h"
 #include "avalanche/sequence.h"
+#include "avalanche/avalanche.h"
 
 namespace Avalanche {
 

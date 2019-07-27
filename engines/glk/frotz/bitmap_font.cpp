@@ -25,64 +25,65 @@
 namespace Glk {
 namespace Frotz {
 
-BitmapFont::BitmapFont(const Graphics::Surface &src, const Common::Point &size,
-		uint srcWidth, uint srcHeight, unsigned char startingChar, bool isFixedWidth) :
-		_startingChar(startingChar), _size(size) {
-	assert(src.format.bytesPerPixel == 1);
-	assert((src.w % srcWidth) == 0);
-	assert((src.h % srcHeight) == 0);
+	BitmapFont::BitmapFont(const Graphics::Surface &src, const Common::Point &size,
+	                       uint srcWidth, uint srcHeight, unsigned char startingChar, bool isFixedWidth)
+	  : _startingChar(startingChar)
+	  , _size(size) {
+		assert(src.format.bytesPerPixel == 1);
+		assert((src.w % srcWidth) == 0);
+		assert((src.h % srcHeight) == 0);
 
-	// Set up a characters array
-	_chars.resize((src.w / srcWidth) * (src.h / srcHeight));
+		// Set up a characters array
+		_chars.resize((src.w / srcWidth) * (src.h / srcHeight));
 
-	// Iterate through loading characters
-	Common::Rect r(srcWidth, srcHeight);
-	int charsPerRow = src.w / srcWidth;
-	for (uint idx = 0; idx < _chars.size(); ++idx) {
-		r.moveTo((idx % charsPerRow) * srcWidth, (idx / charsPerRow) * srcHeight);
-		int srcCharWidth = isFixedWidth ? r.width() : getSourceCharacterWidth(idx, src, r);
-		int destCharWidth = (size.x * srcCharWidth + (srcWidth - 1)) / srcWidth;
-		Common::Rect charBounds(r.left, r.top, r.left + srcCharWidth, r.bottom);
+		// Iterate through loading characters
+		Common::Rect r(srcWidth, srcHeight);
+		int charsPerRow = src.w / srcWidth;
+		for (uint idx = 0; idx < _chars.size(); ++idx) {
+			r.moveTo((idx % charsPerRow) * srcWidth, (idx / charsPerRow) * srcHeight);
+			int srcCharWidth = isFixedWidth ? r.width() : getSourceCharacterWidth(idx, src, r);
+			int destCharWidth = (size.x * srcCharWidth + (srcWidth - 1)) / srcWidth;
+			Common::Rect charBounds(r.left, r.top, r.left + srcCharWidth, r.bottom);
 
-		_chars[idx].create(destCharWidth, size.y, src.format);
-		_chars[idx].transBlitFrom(src, charBounds, Common::Rect(0, 0, _chars[idx].w, _chars[idx].h));
-	}
-}
-
-void BitmapFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
-	const Graphics::ManagedSurface &c = _chars[chr - _startingChar];
-	for (int yCtr = 0; yCtr < c.h; ++yCtr) {
-		const byte *srcP = (const byte *)c.getBasePtr(0, yCtr);
-
-		for (int xCtr = 0; xCtr < c.w; ++xCtr, ++srcP) {
-			if (!*srcP)
-				dst->hLine(x + xCtr, y + yCtr, x + xCtr, color);
+			_chars[idx].create(destCharWidth, size.y, src.format);
+			_chars[idx].transBlitFrom(src, charBounds, Common::Rect(0, 0, _chars[idx].w, _chars[idx].h));
 		}
 	}
-}
 
-int BitmapFont::getSourceCharacterWidth(uint charIndex, const Graphics::Surface &src,
-		const Common::Rect &charBounds) {
-	if (charIndex == 0)
-		// The space character is treated as half the width of bounding area
-		return charBounds.width() / 2;
+	void BitmapFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
+		const Graphics::ManagedSurface &c = _chars[chr - _startingChar];
+		for (int yCtr = 0; yCtr < c.h; ++yCtr) {
+			const byte *srcP = (const byte *)c.getBasePtr(0, yCtr);
 
-	// Scan through the rows to find the right most pixel, getting the width from that
-	int maxWidth = 0, rowX;
-	for (int y = charBounds.top; y < charBounds.bottom; ++y) {
-		rowX = 0;
-		const byte *srcP = (const byte *)src.getBasePtr(charBounds.left, y);
-
-		for (int x = 0; x < charBounds.width(); ++x, ++srcP) {
-			if (!*srcP)
-				rowX = x;
+			for (int xCtr = 0; xCtr < c.w; ++xCtr, ++srcP) {
+				if (!*srcP)
+					dst->hLine(x + xCtr, y + yCtr, x + xCtr, color);
+			}
 		}
-
-		maxWidth = MAX(maxWidth, MIN(rowX + 2, (int)charBounds.width()));
 	}
 
-	return maxWidth;
-}
+	int BitmapFont::getSourceCharacterWidth(uint charIndex, const Graphics::Surface &src,
+	                                        const Common::Rect &charBounds) {
+		if (charIndex == 0)
+			// The space character is treated as half the width of bounding area
+			return charBounds.width() / 2;
+
+		// Scan through the rows to find the right most pixel, getting the width from that
+		int maxWidth = 0, rowX;
+		for (int y = charBounds.top; y < charBounds.bottom; ++y) {
+			rowX = 0;
+			const byte *srcP = (const byte *)src.getBasePtr(charBounds.left, y);
+
+			for (int x = 0; x < charBounds.width(); ++x, ++srcP) {
+				if (!*srcP)
+					rowX = x;
+			}
+
+			maxWidth = MAX(maxWidth, MIN(rowX + 2, (int)charBounds.width()));
+		}
+
+		return maxWidth;
+	}
 
 } // End of namespace Frotz
 } // End of namespace Glk

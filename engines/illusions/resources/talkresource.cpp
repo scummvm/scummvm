@@ -20,9 +20,9 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/resources/talkresource.h"
 #include "illusions/dictionary.h"
+#include "illusions/illusions.h"
 
 namespace Illusions {
 
@@ -33,8 +33,7 @@ void TalkResourceLoader::load(Resource *resource) {
 }
 
 bool TalkResourceLoader::isFlag(int flag) {
-	return
-		flag == kRlfLoadFile;
+	return flag == kRlfLoadFile;
 }
 
 // TalkEntry
@@ -49,13 +48,14 @@ void TalkEntry::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_tblPtr = dataStart + tblOffs;
 	_voiceName = dataStart + voiceNameOffs;
 	debug(0, "TalkEntry::load() _talkId: %08X; textOffs: %08X; tblOffs: %08X; voiceNameOffs: %08X",
-		_talkId, textOffs, tblOffs, voiceNameOffs);
+	      _talkId, textOffs, tblOffs, voiceNameOffs);
 }
 
 // TalkResource
 
 TalkResource::TalkResource()
-	: _talkEntriesCount(0), _talkEntries(0) {
+  : _talkEntriesCount(0)
+  , _talkEntries(0) {
 }
 
 TalkResource::~TalkResource() {
@@ -77,7 +77,8 @@ void TalkResource::load(byte *data, uint32 dataSize) {
 // TalkInstance
 
 TalkInstance::TalkInstance(IllusionsEngine *vm)
-	: _vm(vm), _pauseCtr(0) {
+  : _vm(vm)
+  , _pauseCtr(0) {
 }
 
 void TalkInstance::load(Resource *resource) {
@@ -124,7 +125,7 @@ void TalkInstance::unregisterResources() {
 // TalkInstanceList
 
 TalkInstanceList::TalkInstanceList(IllusionsEngine *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 }
 
 TalkInstanceList::~TalkInstanceList() {

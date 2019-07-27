@@ -30,18 +30,18 @@
 
 #include <nds.h>
 
-#include <bios.h>
-#include <arm7/touch.h>
-#include <arm7/clock.h>
+#include <NDS/scummvm_ipc.h>
 #include <arm7/audio.h>
-#include <system.h>
+#include <arm7/clock.h>
+#include <arm7/touch.h>
+#include <bios.h>
+#include <registers_alt.h> // Needed for SOUND_CR
 #include <stdlib.h>
 #include <string.h>
-#include <registers_alt.h> // Needed for SOUND_CR
-#include <NDS/scummvm_ipc.h>
+#include <system.h>
 //////////////////////////////////////////////////////////////////////
 #ifdef USE_DEBUGGER
-#include <dswifi7.h>
+#	include <dswifi7.h>
 #endif
 
 #include "cartreset_nolibfat.h"
@@ -50,12 +50,12 @@
 #define TOUCH_CAL_Y1 (*(vs16 *)0x027FFCDA)
 #define TOUCH_CAL_X2 (*(vs16 *)0x027FFCDE)
 #define TOUCH_CAL_Y2 (*(vs16 *)0x027FFCE0)
-#define SCREEN_WIDTH    256
-#define SCREEN_HEIGHT   192
-s32 TOUCH_WIDTH  = TOUCH_CAL_X2 - TOUCH_CAL_X1;
+#define SCREEN_WIDTH 256
+#define SCREEN_HEIGHT 192
+s32 TOUCH_WIDTH = TOUCH_CAL_X2 - TOUCH_CAL_X1;
 s32 TOUCH_HEIGHT = TOUCH_CAL_Y2 - TOUCH_CAL_Y1;
-s32 TOUCH_OFFSET_X = ( ((SCREEN_WIDTH  - 60) * TOUCH_CAL_X1) / TOUCH_WIDTH  ) - 28;
-s32 TOUCH_OFFSET_Y = ( ((SCREEN_HEIGHT - 60) * TOUCH_CAL_Y1) / TOUCH_HEIGHT ) - 28;
+s32 TOUCH_OFFSET_X = (((SCREEN_WIDTH - 60) * TOUCH_CAL_X1) / TOUCH_WIDTH) - 28;
+s32 TOUCH_OFFSET_Y = (((SCREEN_HEIGHT - 60) * TOUCH_CAL_Y1) / TOUCH_HEIGHT) - 28;
 
 vu8 *soundData;
 
@@ -96,7 +96,7 @@ s8 getFreeSoundChannel() {
 s8 getFreeSoundChannel() {
 	// return 0;
 	for (int i = 0; i < 16; i++) {
-		if ( (SCHANNEL_CR(i) & SCHANNEL_ENABLE) == 0 )
+		if ((SCHANNEL_CR(i) & SCHANNEL_ENABLE) == 0)
 			return i;
 	}
 	return -1;
@@ -121,13 +121,13 @@ void startSound(int sampleRate, const void *data, uint32 bytes, u8 channel = 0, 
 	// bytes += 4;
 
 	SCHANNEL_CR(channel) = 0;
-	SCHANNEL_TIMER(channel)  = SOUND_FREQ(sampleRate);
+	SCHANNEL_TIMER(channel) = SOUND_FREQ(sampleRate);
 	SCHANNEL_SOURCE(channel) = (uint32)data;
 	SCHANNEL_LENGTH(channel) = (bytes & 0x7FFFFFFF) >> 2;
 	SCHANNEL_REPEAT_POINT(channel) = 0;
 
 	SCHANNEL_CR(channel + 2) = 0;
-	SCHANNEL_TIMER(channel + 2)  = SOUND_FREQ(sampleRate);
+	SCHANNEL_TIMER(channel + 2) = SOUND_FREQ(sampleRate);
 	SCHANNEL_SOURCE(channel + 2) = (uint32)data;
 	SCHANNEL_LENGTH(channel + 2) = (bytes & 0x7FFFFFFF) >> 2;
 	SCHANNEL_REPEAT_POINT(channel + 2) = 0;
@@ -158,7 +158,7 @@ void startSound(int sampleRate, const void *data, uint32 bytes, u8 channel = 0, 
 		SCHANNEL_CR(channel + 1) = 0;
 		SCHANNEL_SOURCE(channel + 1) = (unsigned int)IPC->adpcm.buffer[0];
 		SCHANNEL_LENGTH(channel + 1) = ((bytes + 4) & 0x7FFFFFFF) >> 2;
-		SCHANNEL_TIMER(channel + 1)  = SOUND_FREQ(sampleRate);
+		SCHANNEL_TIMER(channel + 1) = SOUND_FREQ(sampleRate);
 		SCHANNEL_REPEAT_POINT(channel + 1) = 0;
 		SCHANNEL_CR(channel + 1) = flags;
 		temp = bytes;
@@ -176,7 +176,7 @@ void startSound(int sampleRate, const void *data, uint32 bytes, u8 channel = 0, 
 
 	soundData = (vu8 *)data;
 
-	SCHANNEL_CR(channel)     = flags;
+	SCHANNEL_CR(channel) = flags;
 	SCHANNEL_CR(channel + 2) = flags;
 
 	if (channel == 0) {
@@ -361,7 +361,7 @@ void InterruptTimer1() {
 
 	IPC->playingSection = playingSection;
 
-/*	for (int r = 0; r < 4; r++) {
+	/*	for (int r = 0; r < 4; r++) {
 		//if ((!soundFilled[r]) && (!IPC->fillNeeded[playingSection])) {
 			memcpy((void *) (soundBuffer + (r * 1024)), (void *) (arm9Buffer + (r * 1024)), 1024);
 
@@ -375,7 +375,8 @@ void InterruptTimer1() {
 }
 
 void InterruptTimer3() {
-	while (IPC->adpcm.semaphore); // Wait for buffer to become free if needed
+	while (IPC->adpcm.semaphore)
+		; // Wait for buffer to become free if needed
 	IPC->adpcm.semaphore = true; // Lock the buffer structure to prevent clashing with the ARM7
 
 	IPC->streamFillNeeded[IPC->streamPlayingSection] = true;
@@ -397,7 +398,7 @@ void InterruptTimer3() {
 // static int16 CNTRL_WIDTH  = TOUCH_CNTRL_X2 - (TOUCH_CNTRL_X1 - 8);
 // static int16 CNTRL_HEIGHT = TOUCH_CNTRL_Y2 - (TOUCH_CNTRL_Y1 - 8);
 
- void InterruptVBlank() {
+void InterruptVBlank() {
 	uint16 but = 0, x = 0, y = 0, xpx = 0, ypx = 0, z1 = 0, z2 = 0, batt = 0, aux = 0;
 	int t1 = 0, t2 = 0;
 	uint32 temp = 0;
@@ -422,8 +423,8 @@ void InterruptTimer3() {
 		// xpx = p.px;
 		// ypx = p.py;
 
-		xpx = ( ((SCREEN_WIDTH  - 60) * x) / TOUCH_WIDTH  ) - TOUCH_OFFSET_X;
-		ypx = ( ((SCREEN_HEIGHT - 60) * y) / TOUCH_HEIGHT ) - TOUCH_OFFSET_Y;
+		xpx = (((SCREEN_WIDTH - 60) * x) / TOUCH_WIDTH) - TOUCH_OFFSET_X;
+		ypx = (((SCREEN_HEIGHT - 60) * y) / TOUCH_HEIGHT) - TOUCH_OFFSET_Y;
 
 		// xpx = (IPC->touchX - (int16) TOUCH_CAL_X1) * CNTRL_WIDTH  / TOUCH_WIDTH  + (int16) (TOUCH_CNTRL_X1 - 8);
 		// ypx = (IPC->touchY - (int16) TOUCH_CAL_Y1) * CNTRL_HEIGHT / TOUCH_HEIGHT + (int16) (TOUCH_CNTRL_Y1 - 8);
@@ -438,7 +439,7 @@ void InterruptTimer3() {
 	}
 
 	batt = touchRead(TSC_MEASURE_BATTERY);
-	aux  = touchRead(TSC_MEASURE_AUX);
+	aux = touchRead(TSC_MEASURE_AUX);
 
 	// Read the time
 	rtcGetTime((uint8 *)ct);
@@ -449,15 +450,15 @@ void InterruptTimer3() {
 
 	// Update the IPC struct
 	IPC->heartbeat = heartbeat;
-	IPC->buttons   = but;
-	IPC->touchX    = x;
-	IPC->touchY    = y;
-	IPC->touchXpx  = xpx;
-	IPC->touchYpx  = ypx;
-	IPC->touchZ1   = z1;
-	IPC->touchZ2   = z2;
-	IPC->battery   = batt;
-	IPC->aux       = aux;
+	IPC->buttons = but;
+	IPC->touchX = x;
+	IPC->touchY = y;
+	IPC->touchXpx = xpx;
+	IPC->touchYpx = ypx;
+	IPC->touchZ1 = z1;
+	IPC->touchZ2 = z2;
+	IPC->battery = batt;
+	IPC->aux = aux;
 
 	for (u32 i = 0; i < sizeof(ct); i++) {
 		IPC->curtime[i] = ct[i];
@@ -527,7 +528,7 @@ void initDebugger() {
 	fifo_temp = REG_IPC_FIFO_RX; // give next value to wifi_init
 	Wifi_Init(fifo_temp);
 
-	irqSet(IRQ_FIFO_NOT_EMPTY,arm7_fifo); // set up fifo irq
+	irqSet(IRQ_FIFO_NOT_EMPTY, arm7_fifo); // set up fifo irq
 	irqEnable(IRQ_FIFO_NOT_EMPTY);
 	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_RECV_IRQ;
 
@@ -542,7 +543,7 @@ void reboot() {
 }
 #endif
 
-int main(int argc, char ** argv) {
+int main(int argc, char **argv) {
 #ifdef USE_DEBUGGER
 	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR;
 #endif

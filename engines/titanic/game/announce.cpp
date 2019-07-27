@@ -26,12 +26,16 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CAnnounce, CGameObject)
-	ON_MESSAGE(TimerMsg)
-	ON_MESSAGE(LeaveRoomMsg)
-	ON_MESSAGE(ActMsg)
+ON_MESSAGE(TimerMsg)
+ON_MESSAGE(LeaveRoomMsg)
+ON_MESSAGE(ActMsg)
 END_MESSAGE_MAP()
 
-CAnnounce::CAnnounce() : _nameIndex(0), _soundHandle(0), _notActivatedFlag(true), _enabled(false) {
+CAnnounce::CAnnounce()
+  : _nameIndex(0)
+  , _soundHandle(0)
+  , _notActivatedFlag(true)
+  , _enabled(false) {
 }
 
 void CAnnounce::save(SimpleFile *file, int indent) {
@@ -100,18 +104,18 @@ bool CAnnounce::TimerMsg(CTimerMsg *msg) {
 			_soundHandle = playSound(TRANSLATE("z#189.wav", "z#719.wav"), prox);
 			if (_nameIndex < 18) {
 				queueSound(TRANSLATE(WAVE_NAMES1_EN[_nameIndex], WAVE_NAMES1_DE[_nameIndex]),
-					_soundHandle, 100, 0, false, Audio::Mixer::kSpeechSoundType);
+				           _soundHandle, 100, 0, false, Audio::Mixer::kSpeechSoundType);
 				++_nameIndex;
 			} else {
 				queueSound(TRANSLATE(WAVE_NAMES1_EN[getRandomNumber(17)], WAVE_NAMES1_DE[getRandomNumber(17)]),
-					_soundHandle, 100, 0, false, Audio::Mixer::kSpeechSoundType);
+				           _soundHandle, 100, 0, false, Audio::Mixer::kSpeechSoundType);
 			}
 			break;
 
 		case 2:
 			_soundHandle = playSound(TRANSLATE("z#189.wav", "z#719.wav"), prox);
 			queueSound(TRANSLATE(WAVE_NAMES2_EN[getRandomNumber(29)], WAVE_NAMES2_DE[getRandomNumber(30)]),
-				_soundHandle, 100, 0, false, Audio::Mixer::kSpeechSoundType);
+			           _soundHandle, 100, 0, false, Audio::Mixer::kSpeechSoundType);
 			break;
 
 		default:

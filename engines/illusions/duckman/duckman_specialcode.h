@@ -23,9 +23,9 @@
 #ifndef ILLUSIONS_DUCKMAN_SPECIALCODE_H
 #define ILLUSIONS_DUCKMAN_SPECIALCODE_H
 
+#include "common/algorithm.h"
 #include "illusions/illusions.h"
 #include "illusions/specialcode.h"
-#include "common/algorithm.h"
 
 namespace Illusions {
 
@@ -34,7 +34,7 @@ class DuckmanCredits;
 class DuckmanInventory;
 class PropertyTimers;
 
-typedef Common::Functor1<OpCall&, void> SpecialCodeFunction;
+typedef Common::Functor1<OpCall &, void> SpecialCodeFunction;
 
 class DuckmanSpecialCode : public SpecialCode {
 public:
@@ -42,8 +42,9 @@ public:
 	~DuckmanSpecialCode();
 	virtual void init();
 	virtual void run(uint32 specialCodeId, OpCall &opCall);
+
 public:
-	typedef Common::HashMap<uint32, SpecialCodeFunction*> SpecialCodeMap;
+	typedef Common::HashMap<uint32, SpecialCodeFunction *> SpecialCodeMap;
 	typedef SpecialCodeMap::iterator SpecialCodeMapIterator;
 
 	IllusionsEngine_Duckman *_vm;
@@ -97,7 +98,6 @@ public:
 	char *readNextCreditsLine();
 	Common::Point getCreditsItemPosition(int index);
 	void charToWChar(char *text, uint16 *wtext, uint size);
-
 };
 
 } // End of namespace Illusions

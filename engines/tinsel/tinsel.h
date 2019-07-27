@@ -23,21 +23,21 @@
 #ifndef TINSEL_TINSEL_H
 #define TINSEL_TINSEL_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
 #include "common/error.h"
 #include "common/events.h"
 #include "common/keyboard.h"
 #include "common/random.h"
+#include "common/scummsys.h"
+#include "common/system.h"
 #include "common/util.h"
 
 #include "engines/engine.h"
 #include "gui/debugger.h"
 
 #include "tinsel/debugger.h"
+#include "tinsel/dw.h"
 #include "tinsel/graphics.h"
 #include "tinsel/sound.h"
-#include "tinsel/dw.h"
 
 /**
  * This is the namespace of the Tinsel engine.
@@ -67,14 +67,14 @@ enum TinselGameID {
 enum TinselGameFeatures {
 	GF_SCNFILES = 1 << 0,
 	GF_ENHANCED_AUDIO_SUPPORT = 1 << 1,
-	GF_ALT_MIDI = 1 << 2,		// Alternate sequence in midi.dat file
+	GF_ALT_MIDI = 1 << 2, // Alternate sequence in midi.dat file
 
 	// The GF_USE_?FLAGS values specify how many country flags are displayed
 	// in the subtitles options dialog.
 	// None of these defined -> 1 language, in ENGLISH.TXT
-	GF_USE_3FLAGS = 1 << 3,	// French, German, Spanish
-	GF_USE_4FLAGS = 1 << 4,	// French, German, Spanish, Italian
-	GF_USE_5FLAGS = 1 << 5	// All 5 flags
+	GF_USE_3FLAGS = 1 << 3, // French, German, Spanish
+	GF_USE_4FLAGS = 1 << 4, // French, German, Spanish, Italian
+	GF_USE_5FLAGS = 1 << 5 // All 5 flags
 };
 
 /**
@@ -108,22 +108,25 @@ enum {
 struct TinselGameDescription;
 
 enum TinselKeyDirection {
-	MSK_LEFT = 1, MSK_RIGHT = 2, MSK_UP = 4, MSK_DOWN = 8,
+	MSK_LEFT = 1,
+	MSK_RIGHT = 2,
+	MSK_UP = 4,
+	MSK_DOWN = 8,
 	MSK_DIRECTION = MSK_LEFT | MSK_RIGHT | MSK_UP | MSK_DOWN
 };
 
 typedef bool (*KEYFPTR)(const Common::KeyState &);
 
-#define	SCREEN_WIDTH	(_vm->screen().w)	// PC screen dimensions
-#define	SCREEN_HEIGHT	(_vm->screen().h)
-#define	SCRN_CENTER_X	((SCREEN_WIDTH  - 1) / 2)	// screen center x
-#define	SCRN_CENTER_Y	((SCREEN_HEIGHT - 1) / 2)	// screen center y
-#define UNUSED_LINES	48
-#define EXTRA_UNUSED_LINES	3
+#define SCREEN_WIDTH (_vm->screen().w) // PC screen dimensions
+#define SCREEN_HEIGHT (_vm->screen().h)
+#define SCRN_CENTER_X ((SCREEN_WIDTH - 1) / 2) // screen center x
+#define SCRN_CENTER_Y ((SCREEN_HEIGHT - 1) / 2) // screen center y
+#define UNUSED_LINES 48
+#define EXTRA_UNUSED_LINES 3
 //#define	SCREEN_BOX_HEIGHT1	(SCREEN_HEIGHT - UNUSED_LINES)
 //#define	SCREEN_BOX_HEIGHT2	(SCREEN_BOX_HEIGHT1 - EXTRA_UNUSED_LINES)
-#define	SCREEN_BOX_HEIGHT1	SCREEN_HEIGHT
-#define	SCREEN_BOX_HEIGHT2	SCREEN_HEIGHT
+#define SCREEN_BOX_HEIGHT1 SCREEN_HEIGHT
+#define SCREEN_BOX_HEIGHT2 SCREEN_HEIGHT
 
 #define GAME_FRAME_DELAY (1000 / ONE_SECOND)
 
@@ -139,7 +142,7 @@ typedef bool (*KEYFPTR)(const Common::KeyState &);
 #define READ_32(v) (TinselV1Mac ? READ_BE_UINT32(v) : READ_LE_UINT32(v))
 #define FROM_16(v) (TinselV1Mac ? FROM_BE_16(v) : FROM_LE_16(v))
 #define FROM_32(v) (TinselV1Mac ? FROM_BE_32(v) : FROM_LE_32(v))
-#define TO_32(v)   (TinselV1Mac ? TO_BE_32(v) : TO_LE_32(v))
+#define TO_32(v) (TinselV1Mac ? TO_BE_32(v) : TO_LE_32(v))
 
 // Global reference to the TinselEngine object
 extern TinselEngine *_vm;
@@ -159,7 +162,6 @@ class TinselEngine : public Engine {
 	static const char *const _textFiles[][3];
 
 protected:
-
 	// Engine APIs
 	virtual void initializePath(const Common::FSNode &gamePath);
 	virtual Common::Error run();
@@ -209,7 +211,6 @@ public:
 
 	/** Stack of pending keypresses. */
 	Common::List<Common::Event> _keypresses;
-
 
 	/** List of all clip rectangles. */
 	RectList _clipRects;

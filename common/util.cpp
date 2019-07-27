@@ -79,20 +79,14 @@ void hexdump(const byte *data, int len, int bytesPerLine, int startOffset) {
 	debugN("|\n");
 }
 
-
 #pragma mark -
 
-
 bool parseBool(const String &val, bool &valAsBool) {
-	if (val.equalsIgnoreCase("true") ||
-		val.equalsIgnoreCase("yes") ||
-		val.equals("1")) {
+	if (val.equalsIgnoreCase("true") || val.equalsIgnoreCase("yes") || val.equals("1")) {
 		valAsBool = true;
 		return true;
 	}
-	if (val.equalsIgnoreCase("false") ||
-		val.equalsIgnoreCase("no") ||
-		val.equals("0")) {
+	if (val.equalsIgnoreCase("false") || val.equalsIgnoreCase("no") || val.equals("0")) {
 		valAsBool = false;
 		return true;
 	}
@@ -100,13 +94,11 @@ bool parseBool(const String &val, bool &valAsBool) {
 	return false;
 }
 
-
 #pragma mark -
 
-
 #define ENSURE_ASCII_CHAR(c) \
-		if (c < 0 || c > 127) \
-			return false
+	if (c < 0 || c > 127)      \
+	return false
 
 bool isAlnum(int c) {
 	ENSURE_ASCII_CHAR(c);

@@ -22,9 +22,9 @@
 
 #include "bladerunner/vqa_player.h"
 
+#include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/time.h"
-#include "bladerunner/audio_player.h"
 
 #include "audio/decoders/raw.h"
 
@@ -70,7 +70,7 @@ bool VQAPlayer::open() {
 	} else {
 		_frameNext = 0;
 		// TODO? Removed as redundant
-//		setBeginAndEndFrame(0, _frameEnd, 0, kLoopSetModeJustStart, nullptr, nullptr);
+		//		setBeginAndEndFrame(0, _frameEnd, 0, kLoopSetModeJustStart, nullptr, nullptr);
 	}
 
 	return true;
@@ -162,8 +162,8 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics:
 		result = _frame;
 	}
 	return result; // Note: result here could be negative.
-	               // Negative valid value should only be -1, since there are various assertions
-	               // assert(frame >= -1) in overlay modes (elevator, scores, spinner)
+	  // Negative valid value should only be -1, since there are various assertions
+	  // assert(frame >= -1) in overlay modes (elevator, scores, spinner)
 }
 
 void VQAPlayer::updateZBuffer(ZBuffer *zbuffer) {
@@ -201,12 +201,11 @@ bool VQAPlayer::setLoop(int loop, int repeatsCount, int loopSetMode, void (*call
 }
 
 bool VQAPlayer::setBeginAndEndFrame(int begin, int end, int repeatsCount, int loopSetMode, void (*callback)(void *, int, int), void *callbackData) {
-	if ( begin >= getFrameCount()
+	if (begin >= getFrameCount()
 	    || end >= getFrameCount()
 	    || begin >= end
 	    || loopSetMode < 0
-	    || loopSetMode >= 3
-	) {
+	    || loopSetMode >= 3) {
 		warning("VQAPlayer::setBeginAndEndFrame - Invalid arguments for video");
 		return false; // VQA_DECODER_ERROR_BAD_INPUT case
 	}

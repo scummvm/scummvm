@@ -26,9 +26,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMaitreDBody, CMaitreDProdReceptor)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(AnimateMaitreDMsg)
-	ON_MESSAGE(ActMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(AnimateMaitreDMsg)
+ON_MESSAGE(ActMsg)
 END_MESSAGE_MAP()
 
 void CMaitreDBody::save(SimpleFile *file, int indent) {

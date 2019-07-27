@@ -31,9 +31,10 @@
 
 namespace BladeRunner {
 
-KIASectionHelp::KIASectionHelp(BladeRunnerEngine *vm) : KIASectionBase(vm) {
+KIASectionHelp::KIASectionHelp(BladeRunnerEngine *vm)
+  : KIASectionBase(vm) {
 	_uiContainer = new UIContainer(_vm);
-	_scrollBox   = new UIScrollBox(_vm, nullptr, this, 1024, 0, false, Common::Rect(135, 145, 461, 385), Common::Rect(506, 160, 506, 350));
+	_scrollBox = new UIScrollBox(_vm, nullptr, this, 1024, 0, false, Common::Rect(135, 145, 461, 385), Common::Rect(506, 160, 506, 350));
 
 	_uiContainer->add(_scrollBox);
 }

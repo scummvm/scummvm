@@ -23,7 +23,6 @@
 #ifndef DRASCULA_DRASCULA_H
 #define DRASCULA_DRASCULA_H
 
-#include "common/scummsys.h"
 #include "common/archive.h"
 #include "common/endian.h"
 #include "common/events.h"
@@ -33,6 +32,7 @@
 #include "common/ptr.h"
 #include "common/random.h"
 #include "common/savefile.h"
+#include "common/scummsys.h"
 #include "common/system.h"
 #include "common/util.h"
 
@@ -133,7 +133,7 @@ enum SSNFrames {
 	kFrameCmpOff = 2,
 	kFrameEndAnim = 3,
 	kFrameSetPal = 4,
-	kFrameMouseKey = 5,		// unused
+	kFrameMouseKey = 5, // unused
 	kFrameEmptyFrame = 6
 };
 
@@ -241,7 +241,7 @@ struct RoomUpdate {
 	int destY;
 	int width;
 	int height;
-	int type;	// 0 - background, 1 - rect
+	int type; // 0 - background, 1 - rect
 };
 
 struct ItemLocation {
@@ -252,7 +252,7 @@ struct ItemLocation {
 struct CharInfo {
 	byte inChar;
 	uint16 mappedChar;
-	byte charType;	// 0 - letters, 1 - signs, 2 - accented
+	byte charType; // 0 - letters, 1 - signs, 2 - accented
 };
 
 class ArchiveMan : public Common::SearchSet {
@@ -282,34 +282,33 @@ public:
 	void parseString(char *result);
 };
 
+#define NUM_SAVES 10
+#define NUM_FLAGS 50
+#define DIF_MASK 55
+#define OBJWIDTH 40
+#define OBJHEIGHT 25
 
-#define NUM_SAVES		10
-#define NUM_FLAGS		50
-#define DIF_MASK		55
-#define OBJWIDTH		40
-#define OBJHEIGHT		25
+#define DIF_MASK_HARE 72
+#define DIF_MASK_ABC 22
+#define CHAR_WIDTH 8
+#define CHAR_HEIGHT 6
 
-#define DIF_MASK_HARE	72
-#define DIF_MASK_ABC	22
-#define CHAR_WIDTH		8
-#define CHAR_HEIGHT		6
+#define TALK_HEIGHT 25
+#define TALK_WIDTH 23
+#define STEP_X 8
+#define STEP_Y 3
+#define CHARACTER_HEIGHT 70
+#define CHARACTER_WIDTH 43
+#define FEET_HEIGHT 12
 
-#define TALK_HEIGHT		25
-#define TALK_WIDTH		23
-#define STEP_X			8
-#define STEP_Y			3
-#define CHARACTER_HEIGHT	70
-#define CHARACTER_WIDTH		43
-#define FEET_HEIGHT		12
+#define CHAR_WIDTH_OPC 6
+#define CHAR_HEIGHT_OPC 5
+#define NO_DOOR 99
 
-#define CHAR_WIDTH_OPC	6
-#define CHAR_HEIGHT_OPC	5
-#define NO_DOOR			99
+#define COMPLETE_PAL 256
+#define HALF_PAL 128
 
-#define COMPLETE_PAL	256
-#define HALF_PAL		128
-
-#define KEYBUFSIZE		16
+#define KEYBUFSIZE 16
 
 static const int interf_x[] = { 1, 65, 129, 193, 1, 65, 129 };
 static const int interf_y[] = { 51, 51, 51, 51, 83, 83, 83 };
@@ -362,26 +361,30 @@ public:
 	void setDefaultPalette(DacPalette256 pal);
 	void setPalette(byte *PalBuf);
 	void copyBackground(int xorg, int yorg, int xdes, int ydes, int width,
-				int height, byte *src, byte *dest);
+	                    int height, byte *src, byte *dest);
 
 	void copyBackground() {
 		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
 	}
 
 	void copyRect(int xorg, int yorg, int xdes, int ydes, int width,
-				int height, byte *src, byte *dest);
+	              int height, byte *src, byte *dest);
 	void updateScreen() {
 		updateScreen(0, 0, 0, 0, 320, 200, screenSurface);
 	}
 	void updateScreen(int xorg, int yorg, int xdes, int ydes, int width, int height, byte *buffer);
 	int checkWrapX(int x) {
-		if (x < 0) x += 320;
-		if (x > 319) x -= 320;
+		if (x < 0)
+			x += 320;
+		if (x > 319)
+			x -= 320;
 		return x;
 	}
 	int checkWrapY(int y) {
-		if (y < 0) y += 200;
-		if (y > 199) y -= 200;
+		if (y < 0)
+			y += 200;
+		if (y > 199)
+			y -= 200;
 		return y;
 	}
 
@@ -400,7 +403,7 @@ public:
 	byte *drawSurface3;
 	byte *drawSurface2;
 	byte *tableSurface;
-	byte *extraSurface;	// not sure about this one, was "dir_hare_dch"
+	byte *extraSurface; // not sure about this one, was "dir_hare_dch"
 	byte *screenSurface;
 	byte *frontSurface;
 
@@ -495,7 +498,7 @@ public:
 	bool verify1();
 	bool verify2();
 	Common::KeyCode getScan();
-	void addKeyToBuffer(Common::KeyState& key);
+	void addKeyToBuffer(Common::KeyState &key);
 	void flushKeyBuffer();
 	void selectVerb(int);
 	int updateVolume(int prevVolume, int prevVolumeY);
@@ -523,7 +526,7 @@ public:
 	signed char adjustToVGA(signed char value);
 	void color_abc(int cl);
 	bool textFitsCentered(char *text, int x);
-	void centerText(const char *,int,int);
+	void centerText(const char *, int, int);
 	void playSound(int soundNum);
 	bool animate(const char *animation, int FPS);
 	void pause(int);
@@ -552,7 +555,7 @@ public:
 	void talk_vonBraun(int, int);
 	void talk_blind(int);
 	void talk_hacker(int);
-	void talk_generic(const char* said, const char* filename, int* faces, int faceCount, int* coords, byte* surface);
+	void talk_generic(const char *said, const char *filename, int *faces, int faceCount, int *coords, byte *surface);
 
 	void hiccup(int);
 	void finishSound();
@@ -617,7 +620,7 @@ public:
 	void playFile(const char *fname);
 
 	void grr();
-	void updateAnim(int y, int destX, int destY, int width, int height, int count, byte* src, int delayVal = 3, bool copyRectangle = false);
+	void updateAnim(int y, int destX, int destY, int width, int height, int count, byte *src, int delayVal = 3, bool copyRectangle = false);
 
 	bool room(int rN, int fl);
 	bool room_0(int);
@@ -661,54 +664,54 @@ public:
 
 	void asco();
 
-	void animation_1_1();		// Game introduction
-	void animation_2_1();		// John falls in love with BJ, who is then abducted by Drascula
-	void animation_3_1();		// John talks with the bartender to book a room
-	void animation_4_1();		// John talks with the pianist
+	void animation_1_1(); // Game introduction
+	void animation_2_1(); // John falls in love with BJ, who is then abducted by Drascula
+	void animation_3_1(); // John talks with the bartender to book a room
+	void animation_4_1(); // John talks with the pianist
 	//
-	void animation_2_2();		// John enters the chapel via the window
-	void animation_4_2();		// John talks with the blind man (closeup)
-	void animation_5_2();		// John breaks the chapel window with the pike
-	void animation_6_2();		// The blind man (closeup) thanks John for giving him money and hands him the sickle
-	void animation_7_2();		// John uses the sickle
-	void animation_11_2();		// The drunk man says "they're all dead, thanks *hic*"
-	void animation_12_2();		// Conversation screen - John talks to the pianist after BJ is abducted by Drascula
-	void animation_13_2();		// ???
-	void animation_14_2();		// The glass box falls from the ceiling
-	void animation_16_2();		// The drunk tells us about Von Braun
-	void animation_20_2();		// Von Braun tells John that he needs to have special skills to fight vampires
-	void animation_23_2();		// Von Braun tests John's reactions to scratching noises
-	void animation_24_2();		// Conversation screen - John talks with Von Braun
-	void animation_25_2();		// The glass box is lifted back to the ceiling
-	void animation_26_2();		// John gives the book to the pianist and gets his earplugs in return
-	void animation_27_2();		// Von Braun admits that John is ready to fight vampires and gives him his money back
-	void animation_29_2();		// Von Braun tells John what ingredients he needs for the brew
-	void animation_31_2();		// Von Braun obtains the items needed for the brew from John and creates it
-	void animation_34_2();		// John kicks an object
-	void animation_35_2();		// John jumps into the well
-	void animation_36_2();		// John asks the bartender about the pianist
+	void animation_2_2(); // John enters the chapel via the window
+	void animation_4_2(); // John talks with the blind man (closeup)
+	void animation_5_2(); // John breaks the chapel window with the pike
+	void animation_6_2(); // The blind man (closeup) thanks John for giving him money and hands him the sickle
+	void animation_7_2(); // John uses the sickle
+	void animation_11_2(); // The drunk man says "they're all dead, thanks *hic*"
+	void animation_12_2(); // Conversation screen - John talks to the pianist after BJ is abducted by Drascula
+	void animation_13_2(); // ???
+	void animation_14_2(); // The glass box falls from the ceiling
+	void animation_16_2(); // The drunk tells us about Von Braun
+	void animation_20_2(); // Von Braun tells John that he needs to have special skills to fight vampires
+	void animation_23_2(); // Von Braun tests John's reactions to scratching noises
+	void animation_24_2(); // Conversation screen - John talks with Von Braun
+	void animation_25_2(); // The glass box is lifted back to the ceiling
+	void animation_26_2(); // John gives the book to the pianist and gets his earplugs in return
+	void animation_27_2(); // Von Braun admits that John is ready to fight vampires and gives him his money back
+	void animation_29_2(); // Von Braun tells John what ingredients he needs for the brew
+	void animation_31_2(); // Von Braun obtains the items needed for the brew from John and creates it
+	void animation_34_2(); // John kicks an object
+	void animation_35_2(); // John jumps into the well
+	void animation_36_2(); // John asks the bartender about the pianist
 	//
-	void animation_2_3();		// John uses the cross with the Frankenstein-zombie ("yoda") and destroys him
-	void animation_6_3();		// Frankenstein is blocking John's path
+	void animation_2_3(); // John uses the cross with the Frankenstein-zombie ("yoda") and destroys him
+	void animation_6_3(); // Frankenstein is blocking John's path
 	//
-	void animation_castle();	// Chapter 4 start - Drascula's castle exterior, lightning strikes
-	void animation_1_4();		// Conversation screen - John talks with Igor
-	void animation_5_4();		// John enters Igor's room dressed as Drascula
-	void animation_6_4();		// Igor says that he's going for supper
-	void animation_7_4();		// John removes Drascula's disguise
-	void animation_8_4();		// Secret passage behind bookcase is revealed
+	void animation_castle(); // Chapter 4 start - Drascula's castle exterior, lightning strikes
+	void animation_1_4(); // Conversation screen - John talks with Igor
+	void animation_5_4(); // John enters Igor's room dressed as Drascula
+	void animation_6_4(); // Igor says that he's going for supper
+	void animation_7_4(); // John removes Drascula's disguise
+	void animation_8_4(); // Secret passage behind bookcase is revealed
 	//
-	void animation_1_5();		// John finds BJ
-	void animation_5_5();		// ???
-	void animation_12_5();		// Frankenstein comes to life
+	void animation_1_5(); // John finds BJ
+	void animation_5_5(); // ???
+	void animation_12_5(); // Frankenstein comes to life
 	void animation_12_5_frankenstein();
-	void animation_14_5();		// John finds out that an object is empty
+	void animation_14_5(); // John finds out that an object is empty
 	//
-	void animation_1_6();		// ???
-	void animation_5_6();		// John is tied to the table. Drascula and Igor lower the pendulum
-	void animation_6_6();		// John uses the pendulum to break free
-	void animation_9_6();		// Game ending - John uses the cross on Drascula and reads BJ's letter
-	void animation_19_6();		// Someone pops up from behind a door when trying to open it
+	void animation_1_6(); // ???
+	void animation_5_6(); // John is tied to the table. Drascula and Igor lower the pendulum
+	void animation_6_6(); // John uses the pendulum to break free
+	void animation_9_6(); // Game ending - John uses the cross on Drascula and reads BJ's letter
+	void animation_19_6(); // Someone pops up from behind a door when trying to open it
 
 	void update_1_pre();
 	void update_2();
@@ -787,9 +790,8 @@ private:
 	void freeTexts(char **ptr);
 
 protected:
-	RoomHandlers	*_roomHandlers;
+	RoomHandlers *_roomHandlers;
 };
-
 
 } // End of namespace Drascula
 

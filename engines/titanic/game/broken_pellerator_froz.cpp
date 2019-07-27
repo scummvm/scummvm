@@ -26,10 +26,10 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CBrokenPelleratorFroz, CBrokenPellBase)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(MovieEndMsg)
 END_MESSAGE_MAP()
 
 void CBrokenPelleratorFroz::save(SimpleFile *file, int indent) {

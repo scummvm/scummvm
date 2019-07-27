@@ -20,17 +20,15 @@
  *
  */
 
-
-
 #ifdef ENABLE_AGOS2
 
-#include "common/system.h"
+#	include "common/system.h"
 
-#include "agos/agos.h"
+#	include "agos/agos.h"
 
 namespace AGOS {
 
-#define OPCODE(x)	_OPCODE(AGOSEngine_PuzzlePack, x)
+#	define OPCODE(x) _OPCODE(AGOSEngine_PuzzlePack, x)
 
 void AGOSEngine_PuzzlePack::setupOpcodes() {
 	static const OpcodeEntryPuzzlePack opcodes[] = {
@@ -287,7 +285,7 @@ void AGOSEngine_PuzzlePack::setupOpcodes() {
 
 void AGOSEngine_PuzzlePack::executeOpcode(int opcode) {
 	OpcodeProcPuzzlePack op = _opcodesPuzzlePack[opcode].proc;
-	(this->*op) ();
+	(this->*op)();
 }
 
 // -----------------------------------------------------------------------
@@ -315,7 +313,7 @@ void AGOSEngine_PuzzlePack::opp_restoreOopsPosition() {
 			_variableArray[i] = _variableArray2[i];
 		}
 		i = _variableArray[999] * 100 + 11;
-		setWindowImage(4,i);
+		setWindowImage(4, i);
 		_gameTime += 10;
 		// Swampy adventures
 		if (!getBitFlag(110))

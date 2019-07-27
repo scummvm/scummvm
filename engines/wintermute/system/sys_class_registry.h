@@ -29,21 +29,23 @@
 #ifndef WINTERMUTE_SYSCLASSREGISTRY_H
 #define WINTERMUTE_SYSCLASSREGISTRY_H
 
-#include "engines/wintermute/wintypes.h"
+#include "common/func.h"
+#include "common/hash-str.h"
+#include "common/hashmap.h"
+#include "common/stream.h"
 #include "engines/wintermute/dctypes.h"
 #include "engines/wintermute/system/sys_class.h"
-#include "common/hashmap.h"
-#include "common/hash-str.h"
-#include "common/func.h"
-#include "common/stream.h"
+#include "engines/wintermute/wintypes.h"
 
 namespace Wintermute {
 class SystemClass;
 }
 
 namespace Common {
-template<typename T> struct Hash;
-template<> struct Hash<Wintermute::SystemClass *> : public UnaryFunction<Wintermute::SystemClass *, uint> {
+template <typename T>
+struct Hash;
+template <>
+struct Hash<Wintermute::SystemClass *> : public UnaryFunction<Wintermute::SystemClass *, uint> {
 	uint operator()(Wintermute::SystemClass *val) const {
 		return (uint)((size_t)val);
 	}
@@ -59,6 +61,7 @@ class SystemInstance;
 
 class SystemClassRegistry {
 	void unregisterClasses();
+
 public:
 	void registerClasses(); // persistent.cpp
 	static SystemClassRegistry *getInstance();
@@ -98,7 +101,6 @@ public:
 
 	typedef Common::HashMap<int, SystemInstance *> SavedInstanceMap;
 	SavedInstanceMap _savedInstanceMap;
-
 };
 
 } // End of namespace Wintermute

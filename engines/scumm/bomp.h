@@ -35,7 +35,6 @@ void decompressBomp(byte *dst, const byte *src, int w, int h);
 void bompDecodeLine(byte *dst, const byte *src, int size);
 void bompDecodeLineReverse(byte *dst, const byte *src, int size);
 
-
 /** Bomp graphics data */
 struct BompDrawData {
 	Graphics::Surface dst;

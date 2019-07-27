@@ -43,7 +43,7 @@ namespace Graphics {
  *
  * @see VectorRenderer
  */
-template<typename PixelType>
+template <typename PixelType>
 class VectorRendererSpec : public VectorRenderer {
 	typedef VectorRenderer Base;
 
@@ -77,8 +77,8 @@ public:
 		}
 	}
 	void drawString(const Graphics::Font *font, const Common::String &text,
-					const Common::Rect &area, Graphics::TextAlign alignH,
-					GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool elipsis, const Common::Rect &textDrawableArea = Common::Rect(0, 0, 0, 0));
+	                const Common::Rect &area, Graphics::TextAlign alignH,
+	                GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool elipsis, const Common::Rect &textDrawableArea = Common::Rect(0, 0, 0, 0));
 
 	void setFgColor(uint8 r, uint8 g, uint8 b) { _fgColor = _format.RGBToColor(r, g, b); }
 	void setBgColor(uint8 r, uint8 g, uint8 b) { _bgColor = _format.RGBToColor(r, g, b); }
@@ -96,15 +96,14 @@ public:
 	void blitKeyBitmap(const Graphics::Surface *source, const Common::Rect &r);
 	void blitKeyBitmapClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping);
 	void blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r,
-			GUI::ThemeEngine::AutoScaleMode autoscale = GUI::ThemeEngine::kAutoScaleNone,
-			Graphics::DrawStep::VectorAlignment xAlign = Graphics::DrawStep::kVectorAlignManual,
-			Graphics::DrawStep::VectorAlignment yAlign = Graphics::DrawStep::kVectorAlignManual,
-			int alpha = 255);
+	                     GUI::ThemeEngine::AutoScaleMode autoscale = GUI::ThemeEngine::kAutoScaleNone,
+	                     Graphics::DrawStep::VectorAlignment xAlign = Graphics::DrawStep::kVectorAlignManual,
+	                     Graphics::DrawStep::VectorAlignment yAlign = Graphics::DrawStep::kVectorAlignManual,
+	                     int alpha = 255);
 
 	void applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle);
 
 protected:
-
 	Common::Rect _clippingArea;
 
 	/**
@@ -165,7 +164,6 @@ protected:
 	 */
 	inline void blendPixelDestAlphaPtr(PixelType *ptr, PixelType color, uint8 alpha);
 
-
 	/**
 	 * PRIMITIVE DRAWING ALGORITHMS
 	 *
@@ -178,75 +176,75 @@ protected:
 	 * @see VectorRendererAA::drawCircleAlg
 	 */
 	virtual void drawLineAlg(int x1, int y1, int x2, int y2,
-	    uint dx, uint dy, PixelType color);
+	                         uint dx, uint dy, PixelType color);
 
 	virtual void drawLineAlgClip(int x1, int y1, int x2, int y2,
-		uint dx, uint dy, PixelType color);
+	                             uint dx, uint dy, PixelType color);
 
 	virtual void drawCircleAlg(int x, int y, int r,
-	    PixelType color, FillMode fill_m);
+	                           PixelType color, FillMode fill_m);
 
 	virtual void drawCircleAlgClip(int x, int y, int r,
-		PixelType color, FillMode fill_m);
+	                               PixelType color, FillMode fill_m);
 
 	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h,
-	    PixelType color, FillMode fill_m);
+	                                  PixelType color, FillMode fill_m);
 
 	virtual void drawRoundedSquareAlgClip(int x1, int y1, int r, int w, int h,
-		PixelType color, FillMode fill_m);
+	                                      PixelType color, FillMode fill_m);
 
 	virtual void drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h,
-	    PixelType color, FillMode fill_m, uint8 alpha_t, uint8 alpha_r, uint8 alpha_b, uint8 alpha_l);
+	                                        PixelType color, FillMode fill_m, uint8 alpha_t, uint8 alpha_r, uint8 alpha_b, uint8 alpha_l);
 
 	virtual void drawBorderRoundedSquareAlgClip(int x1, int y1, int r, int w, int h,
-		PixelType color, FillMode fill_m, uint8 alpha_t, uint8 alpha_r, uint8 alpha_b, uint8 alpha_l);
+	                                            PixelType color, FillMode fill_m, uint8 alpha_t, uint8 alpha_r, uint8 alpha_b, uint8 alpha_l);
 
 	virtual void drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h,
-	    PixelType color, FillMode fill_m);
+	                                          PixelType color, FillMode fill_m);
 
 	virtual void drawInteriorRoundedSquareAlgClip(int x1, int y1, int r, int w, int h,
-		PixelType color, FillMode fill_m);
+	                                              PixelType color, FillMode fill_m);
 
 	virtual void drawSquareAlg(int x, int y, int w, int h,
-	    PixelType color, FillMode fill_m);
+	                           PixelType color, FillMode fill_m);
 
 	virtual void drawSquareAlgClip(int x, int y, int w, int h,
-		PixelType color, FillMode fill_m);
+	                               PixelType color, FillMode fill_m);
 
 	virtual void drawTriangleVertAlg(int x, int y, int w, int h,
-	    bool inverted, PixelType color, FillMode fill_m);
+	                                 bool inverted, PixelType color, FillMode fill_m);
 
 	virtual void drawTriangleVertAlgClip(int x, int y, int w, int h,
-		bool inverted, PixelType color, FillMode fill_m);
+	                                     bool inverted, PixelType color, FillMode fill_m);
 
 	virtual void drawTriangleFast(int x, int y, int size,
-	    bool inverted, PixelType color, FillMode fill_m);
+	                              bool inverted, PixelType color, FillMode fill_m);
 
 	virtual void drawBevelSquareAlg(int x, int y, int w, int h,
-	    int bevel, PixelType top_color, PixelType bottom_color, bool fill);
+	                                int bevel, PixelType top_color, PixelType bottom_color, bool fill);
 
 	virtual void drawBevelSquareAlgClip(int x, int y, int w, int h,
-		int bevel, PixelType top_color, PixelType bottom_color, bool fill);
+	                                    int bevel, PixelType top_color, PixelType bottom_color, bool fill);
 
 	virtual void drawTabAlg(int x, int y, int w, int h, int r,
-	    PixelType color, VectorRenderer::FillMode fill_m,
-	    int baseLeft = 0, int baseRight = 0);
+	                        PixelType color, VectorRenderer::FillMode fill_m,
+	                        int baseLeft = 0, int baseRight = 0);
 
 	virtual void drawTabAlgClip(int x, int y, int w, int h, int r,
-		PixelType color, VectorRenderer::FillMode fill_m,
-		int baseLeft = 0, int baseRight = 0);
+	                            PixelType color, VectorRenderer::FillMode fill_m,
+	                            int baseLeft = 0, int baseRight = 0);
 
 	virtual void drawTabShadow(int x, int y, int w, int h, int r);
 
 	virtual void drawTabShadowClip(int x, int y, int w, int h, int r);
 
 	virtual void drawBevelTabAlg(int x, int y, int w, int h,
-	    int bevel, PixelType topColor, PixelType bottomColor,
-	    int baseLeft = 0, int baseRight = 0);
+	                             int bevel, PixelType topColor, PixelType bottomColor,
+	                             int baseLeft = 0, int baseRight = 0);
 
 	virtual void drawBevelTabAlgClip(int x, int y, int w, int h,
-		int bevel, PixelType topColor, PixelType bottomColor,
-		int baseLeft = 0, int baseRight = 0);
+	                                 int bevel, PixelType topColor, PixelType bottomColor,
+	                                 int baseLeft = 0, int baseRight = 0);
 
 	/**
 	 * SHADOW DRAWING ALGORITHMS
@@ -326,7 +324,6 @@ protected:
 	PixelType _bitmapAlphaColor;
 };
 
-
 #ifndef DISABLE_FANCY_THEMES
 /**
  * VectorRendererAA: Anti-Aliased Vector Renderer Class
@@ -340,11 +337,13 @@ protected:
  * @see VectorRenderer
  * @see VectorRendererSpec
  */
-template<typename PixelType>
+template <typename PixelType>
 class VectorRendererAA : public VectorRendererSpec<PixelType> {
 	typedef VectorRendererSpec<PixelType> Base;
+
 public:
-	VectorRendererAA(PixelFormat format) : VectorRendererSpec<PixelType>(format) {
+	VectorRendererAA(PixelFormat format)
+	  : VectorRendererSpec<PixelType>(format) {
 	}
 
 protected:
@@ -388,8 +387,8 @@ protected:
 	}
 
 	virtual void drawTabAlg(int x, int y, int w, int h, int r,
-	    PixelType color, VectorRenderer::FillMode fill_m,
-	    int baseLeft = 0, int baseRight = 0);
+	                        PixelType color, VectorRenderer::FillMode fill_m,
+	                        int baseLeft = 0, int baseRight = 0);
 };
 #endif
 

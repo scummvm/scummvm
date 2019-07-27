@@ -37,7 +37,8 @@ namespace LastExpress {
 //////////////////////////////////////////////////////////////////////////
 // Player
 //////////////////////////////////////////////////////////////////////////
-FighterPlayerMilos::FighterPlayerMilos(LastExpressEngine *engine) : Fighter(engine) {
+FighterPlayerMilos::FighterPlayerMilos(LastExpressEngine *engine)
+  : Fighter(engine) {
 	_sequences.push_back(loadSequence("2001cr.seq"));
 	_sequences.push_back(loadSequence("2001cdl.seq"));
 	_sequences.push_back(loadSequence("2001cdr.seq"));
@@ -125,11 +126,11 @@ void FighterPlayerMilos::update() {
 
 bool FighterPlayerMilos::canInteract(FightAction action) {
 	if (action != kFightAction128
-	 || _sequenceIndex != 1
-	 || !_frame
-	 || checkFrame(4)
-	 || _opponent->getSequenceIndex() != 1) {
-		 return Fighter::canInteract();
+	    || _sequenceIndex != 1
+	    || !_frame
+	    || checkFrame(4)
+	    || _opponent->getSequenceIndex() != 1) {
+		return Fighter::canInteract();
 	}
 
 	_engine->getCursor()->setStyle(kCursorHand);
@@ -140,7 +141,8 @@ bool FighterPlayerMilos::canInteract(FightAction action) {
 //////////////////////////////////////////////////////////////////////////
 // Opponent
 //////////////////////////////////////////////////////////////////////////
-FighterOpponentMilos::FighterOpponentMilos(LastExpressEngine *engine) : Opponent(engine) {
+FighterOpponentMilos::FighterOpponentMilos(LastExpressEngine *engine)
+  : Opponent(engine) {
 	_sequences.push_back(loadSequence("2001or.seq"));
 	_sequences.push_back(loadSequence("2001oal.seq"));
 	_sequences.push_back(loadSequence("2001oam.seq"));

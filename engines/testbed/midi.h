@@ -37,13 +37,13 @@ namespace Testbed {
 
 namespace MidiTests {
 
-// Helper functions for MIDI tests
-bool loadMusicInMemory(Common::WriteStream *ws);
-void waitForMusicToPlay(MidiParser *parser);
+	// Helper functions for MIDI tests
+	bool loadMusicInMemory(Common::WriteStream *ws);
+	void waitForMusicToPlay(MidiParser *parser);
 
-// will contain function declarations for MIDI tests
-// add more here
-TestExitStatus playMidiMusic();
+	// will contain function declarations for MIDI tests
+	// add more here
+	TestExitStatus playMidiMusic();
 
 } // End of namespace MIDItests
 
@@ -71,7 +71,6 @@ public:
 
 private:
 	bool _isMidiDataFound;
-
 };
 
 } // End of namespace Testbed

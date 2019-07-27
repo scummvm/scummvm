@@ -25,12 +25,16 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CCharacter, CGameObject)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(TurnOff)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(TurnOff)
 END_MESSAGE_MAP()
 
-CCharacter::CCharacter() : CGameObject(), _startFrame(0), _endFrame(0), _fieldC4(1) {
+CCharacter::CCharacter()
+  : CGameObject()
+  , _startFrame(0)
+  , _endFrame(0)
+  , _fieldC4(1) {
 }
 
 void CCharacter::save(SimpleFile *file, int indent) {

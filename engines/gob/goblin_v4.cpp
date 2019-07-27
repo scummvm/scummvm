@@ -20,17 +20,18 @@
  *
  */
 
+#include "gob/global.h"
 #include "gob/gob.h"
 #include "gob/goblin.h"
-#include "gob/global.h"
-#include "gob/mult.h"
-#include "gob/map.h"
-#include "gob/scenery.h"
 #include "gob/inter.h"
+#include "gob/map.h"
+#include "gob/mult.h"
+#include "gob/scenery.h"
 
 namespace Gob {
 
-Goblin_v4::Goblin_v4(GobEngine *vm) : Goblin_v3(vm) {
+Goblin_v4::Goblin_v4(GobEngine *vm)
+  : Goblin_v3(vm) {
 }
 
 void Goblin_v4::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 nextAct) {
@@ -101,8 +102,7 @@ void Goblin_v4::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 						if (obj->nearestWayPoint < obj->nearestDest)
 							obj->nearestWayPoint++;
 					} else {
-						if ((_vm->_map->checkDirectPath(obj, gobX, gobY, gobDestX, gobDestY) == 3) &&
-								(_vm->_map->getPass(gobDestX, gobDestY) != 0)) {
+						if ((_vm->_map->checkDirectPath(obj, gobX, gobY, gobDestX, gobDestY) == 3) && (_vm->_map->getPass(gobDestX, gobDestY) != 0)) {
 
 							const WayPoint &wayPoint = _vm->_map->getWayPoint(obj->nearestWayPoint);
 
@@ -136,16 +136,14 @@ void Goblin_v4::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 		switch (dir) {
 		case kDirNW:
 			animData->nextState = turnState(animData->state, kDirNW);
-			if ((_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10) &&
-					(animData->nextState == 1))
+			if ((_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10) && (animData->nextState == 1))
 				animData->nextState = 40;
 			if (_vm->_map->getPass(obj->goblinX - 1, obj->goblinY - 2) != 10)
 				animData->nextState = turnState(animData->state, kDirNW);
 			break;
 
 		case kDirN:
-			animData->nextState =
-				(animData->curLookDir == 2) ? 2 : turnState(animData->state, kDirN);
+			animData->nextState = (animData->curLookDir == 2) ? 2 : turnState(animData->state, kDirN);
 			if (_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10) {
 				if (_vm->_map->getPass(obj->goblinX - 1, obj->goblinY - 2) != 10) {
 					if (_vm->_map->getPass(obj->goblinX + 1, obj->goblinY - 2) == 10)
@@ -155,18 +153,15 @@ void Goblin_v4::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 				} else
 					animData->nextState = 40;
 			}
-			if ((_vm->_map->getPass(obj->goblinX, obj->goblinY) == 20) &&
-			    (animData->nextState == 2))
+			if ((_vm->_map->getPass(obj->goblinX, obj->goblinY) == 20) && (animData->nextState == 2))
 				animData->nextState = 38;
-			if ((_vm->_map->getPass(obj->goblinX, obj->goblinY) == 19) &&
-			   (animData->nextState == 2))
+			if ((_vm->_map->getPass(obj->goblinX, obj->goblinY) == 19) && (animData->nextState == 2))
 				animData->nextState = 26;
 			break;
 
 		case kDirNE:
 			animData->nextState = turnState(animData->state, kDirNE);
-			if ((_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10) &&
-			    (animData->nextState == 3))
+			if ((_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10) && (animData->nextState == 3))
 				animData->nextState = 42;
 			if (_vm->_map->getPass(obj->goblinX + 1, obj->goblinY - 2) != 10)
 				animData->nextState = turnState(animData->state, kDirNE);
@@ -182,16 +177,14 @@ void Goblin_v4::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 
 		case kDirSW:
 			animData->nextState = turnState(animData->state, kDirSW);
-			if ((_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10) &&
-			    (animData->nextState == 7))
+			if ((_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10) && (animData->nextState == 7))
 				animData->nextState = 41;
 			if (_vm->_map->getPass(obj->goblinX - 1, obj->goblinY) != 10)
 				animData->nextState = turnState(animData->state, kDirSW);
 			break;
 
 		case kDirS:
-			animData->nextState =
-				(animData->curLookDir == 6) ? 6 : turnState(animData->state, kDirS);
+			animData->nextState = (animData->curLookDir == 6) ? 6 : turnState(animData->state, kDirS);
 			if (_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10) {
 				if (_vm->_map->getPass(obj->goblinX - 1, obj->goblinY + 2) != 10) {
 					if (_vm->_map->getPass(obj->goblinX + 1, obj->goblinY + 2) == 10)
@@ -202,18 +195,15 @@ void Goblin_v4::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 					animData->nextState = 41;
 			}
 
-			if ((_vm->_map->getPass(obj->goblinX, obj->goblinY) == 20) &&
-			    (animData->nextState == 6))
+			if ((_vm->_map->getPass(obj->goblinX, obj->goblinY) == 20) && (animData->nextState == 6))
 				animData->nextState = 39;
-			if ((_vm->_map->getPass(obj->goblinX, obj->goblinY) == 19) &&
-			   (animData->nextState == 6))
+			if ((_vm->_map->getPass(obj->goblinX, obj->goblinY) == 19) && (animData->nextState == 6))
 				animData->nextState = 27;
 			break;
 
 		case kDirSE:
 			animData->nextState = turnState(animData->state, kDirSE);
-			if ((_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10) &&
-			    (animData->nextState == 5))
+			if ((_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10) && (animData->nextState == 5))
 				animData->nextState = 43;
 			if (_vm->_map->getPass(obj->goblinX + 1, obj->goblinY) != 10)
 				animData->nextState = turnState(animData->state, kDirSE);
@@ -280,8 +270,7 @@ void Goblin_v4::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 			break;
 
 		case kDirN:
-			animData->nextState =
-				(animData->curLookDir == 2) ? 2 : rotateState(animData->curLookDir, 2);
+			animData->nextState = (animData->curLookDir == 2) ? 2 : rotateState(animData->curLookDir, 2);
 			if (_vm->_map->getScreenWidth() == 640) {
 				if (_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10) {
 					if (_vm->_map->getPass(obj->goblinX - 1, obj->goblinY - 2) != 10) {
@@ -299,7 +288,7 @@ void Goblin_v4::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 			break;
 
 		case kDirNE:
-			animData->nextState =	3;
+			animData->nextState = 3;
 			if (_vm->_map->getScreenWidth() == 640) {
 				if (_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10)
 					animData->nextState = 42;
@@ -327,8 +316,7 @@ void Goblin_v4::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 			break;
 
 		case kDirS:
-			animData->nextState =
-				(animData->curLookDir == 6) ? 6 : rotateState(animData->curLookDir, 6);
+			animData->nextState = (animData->curLookDir == 6) ? 6 : rotateState(animData->curLookDir, 6);
 			if (_vm->_map->getScreenWidth() == 640) {
 				if (_vm->_map->getPass(obj->goblinX, obj->goblinY) == 20)
 					animData->nextState = 39;
@@ -380,7 +368,7 @@ void Goblin_v4::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 }
 
 void Goblin_v4::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
-		int16 nextAct, int16 framesCount) {
+                            int16 nextAct, int16 framesCount) {
 	Mult::Mult_AnimData *animData;
 	int16 gobX;
 	int16 gobY;
@@ -472,14 +460,12 @@ void Goblin_v4::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 		break;
 	}
 
-	if ((animData->newState != -1) && (animData->frame == framesCount) &&
-			(animData->newState != animData->state)) {
+	if ((animData->newState != -1) && (animData->frame == framesCount) && (animData->newState != animData->state)) {
 		animData->nextState = animData->newState;
 		animData->newState = -1;
 		animData->state = animData->nextState;
 
-		Scenery::AnimLayer *animLayer =
-			_vm->_scenery->getAnimLayer(animData->animation, animData->layer);
+		Scenery::AnimLayer *animLayer = _vm->_scenery->getAnimLayer(animData->animation, animData->layer);
 		*obj->pPosX += animLayer->animDeltaX;
 		*obj->pPosY += animLayer->animDeltaY;
 
@@ -506,11 +492,9 @@ void Goblin_v4::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 					animData->state = state;
 					_vm->_scenery->updateAnim(layer, 0, animation, 0, *obj->pPosX, *obj->pPosY, 0);
 					if (_vm->_map->hasBigTiles())
-						*obj->pPosY = ((gobY + 1) * _vm->_map->getTilesHeight()) -
-							(_vm->_scenery->_animBottom - _vm->_scenery->_animTop) - (gobY + 1) / 2;
+						*obj->pPosY = ((gobY + 1) * _vm->_map->getTilesHeight()) - (_vm->_scenery->_animBottom - _vm->_scenery->_animTop) - (gobY + 1) / 2;
 					else
-						*obj->pPosY = ((gobY + 1) * _vm->_map->getTilesHeight()) -
-							(_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
+						*obj->pPosY = ((gobY + 1) * _vm->_map->getTilesHeight()) - (_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
 					*obj->pPosX = gobX * _vm->_map->getTilesWidth();
 				}
 			}
@@ -531,11 +515,9 @@ void Goblin_v4::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 
 			_vm->_scenery->updateAnim(layer, 0, animation, 0, *obj->pPosX, *obj->pPosY, 0);
 			if (_vm->_map->hasBigTiles())
-				*obj->pPosY = ((gobY + 1) * _vm->_map->getTilesHeight()) -
-					(_vm->_scenery->_animBottom - _vm->_scenery->_animTop) - (gobY + 1) / 2;
+				*obj->pPosY = ((gobY + 1) * _vm->_map->getTilesHeight()) - (_vm->_scenery->_animBottom - _vm->_scenery->_animTop) - (gobY + 1) / 2;
 			else
-				*obj->pPosY = ((gobY + 1) * _vm->_map->getTilesHeight()) -
-					(_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
+				*obj->pPosY = ((gobY + 1) * _vm->_map->getTilesHeight()) - (_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
 			*obj->pPosX = gobX * _vm->_map->getTilesWidth();
 		}
 	}
@@ -543,14 +525,14 @@ void Goblin_v4::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 
 int16 Goblin_v4::turnState(int16 state, uint16 dir) {
 	static const int16 newStates[8][8] = {
-		{ 0,  1, 10, 10, 10, 31, 31,  7},
-		{ 0,  1,  2, 29, 29, 29,  8,  8},
-		{10,  1,  2,  3, 11, 11, 11, 10},
-		{29, 29,  2,  3,  4,  9,  9,  9},
-		{30, 11, 11,  3,  4,  5, 30, 30},
-		{28, 28,  9,  9,  4,  5,  6, 28},
-		{31, 31, 31, 30, 30,  5,  6,  7},
-		{ 0,  8,  8,  8, 28, 28,  6,  7}
+		{ 0, 1, 10, 10, 10, 31, 31, 7 },
+		{ 0, 1, 2, 29, 29, 29, 8, 8 },
+		{ 10, 1, 2, 3, 11, 11, 11, 10 },
+		{ 29, 29, 2, 3, 4, 9, 9, 9 },
+		{ 30, 11, 11, 3, 4, 5, 30, 30 },
+		{ 28, 28, 9, 9, 4, 5, 6, 28 },
+		{ 31, 31, 31, 30, 30, 5, 6, 7 },
+		{ 0, 8, 8, 8, 28, 28, 6, 7 }
 	};
 	int16 dx = state, cx = 0;
 

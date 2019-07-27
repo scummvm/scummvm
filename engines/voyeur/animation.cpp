@@ -21,13 +21,13 @@
  */
 
 #include "voyeur/animation.h"
-#include "voyeur/staticres.h"
-#include "voyeur/voyeur.h"
+#include "audio/decoders/raw.h"
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "common/system.h"
-#include "audio/decoders/raw.h"
 #include "graphics/surface.h"
+#include "voyeur/staticres.h"
+#include "voyeur/voyeur.h"
 
 namespace Voyeur {
 
@@ -49,7 +49,7 @@ RL2Decoder::~RL2Decoder() {
 
 bool RL2Decoder::loadVideo(int videoId) {
 	Common::String filename = Common::String::format("%s.rl2",
-		::Voyeur::SZ_FILENAMES[videoId * 2]);
+	                                                 ::Voyeur::SZ_FILENAMES[videoId * 2]);
 	return loadRL2File(filename, false);
 }
 
@@ -121,8 +121,7 @@ void RL2Decoder::readNextPacket() {
 	if (_soundFrameNumber == -1)
 		_soundFrameNumber = (frameNumber == -1) ? 0 : frameNumber;
 
-	while (audioTrack->numQueuedStreams() < SOUND_FRAMES_READAHEAD &&
-			(_soundFrameNumber < (int)_soundFrames.size())) {
+	while (audioTrack->numQueuedStreams() < SOUND_FRAMES_READAHEAD && (_soundFrameNumber < (int)_soundFrames.size())) {
 		_fileStream->seek(_soundFrames[_soundFrameNumber]._offset);
 		audioTrack->queueSound(_fileStream, _soundFrames[_soundFrameNumber]._size);
 		++_soundFrameNumber;
@@ -213,18 +212,19 @@ void RL2Decoder::RL2FileHeader::load(Common::SeekableReadStream *stream) {
 }
 
 bool RL2Decoder::RL2FileHeader::isValid() const {
-	return _signature == MKTAG('R','L','V','2') || _signature == MKTAG('R','L','V','3');
+	return _signature == MKTAG('R', 'L', 'V', '2') || _signature == MKTAG('R', 'L', 'V', '3');
 }
 
 Common::Rational RL2Decoder::RL2FileHeader::getFrameRate() const {
-	return (_soundRate > 0) ? Common::Rational(_rate, _defSoundSize) :
-		Common::Rational(11025, 1103);
+	return (_soundRate > 0) ? Common::Rational(_rate, _defSoundSize) : Common::Rational(11025, 1103);
 }
 
 /*------------------------------------------------------------------------*/
 
 RL2Decoder::RL2VideoTrack::RL2VideoTrack(const RL2FileHeader &header, RL2AudioTrack *audioTrack,
-		Common::SeekableReadStream *stream): _header(header), _fileStream(stream) {
+                                         Common::SeekableReadStream *stream)
+  : _header(header)
+  , _fileStream(stream) {
 
 	_frameOffsets = nullptr;
 
@@ -288,7 +288,7 @@ const Graphics::Surface *RL2Decoder::RL2VideoTrack::decodeNextFrame() {
 		rl2DecodeFrameWithoutTransparency(0);
 
 		Common::copy((byte *)_surface->getPixels(), (byte *)_surface->getPixels() + (320 * 200),
-			(byte *)_backSurface->getPixels());
+		             (byte *)_backSurface->getPixels());
 		_dirtyRects.push_back(Common::Rect(0, 0, _surface->w, _surface->h));
 		_initialFrame = false;
 	}
@@ -433,9 +433,9 @@ Graphics::Surface *RL2Decoder::RL2VideoTrack::getBackSurface() {
 
 /*------------------------------------------------------------------------*/
 
-RL2Decoder::RL2AudioTrack::RL2AudioTrack(const RL2FileHeader &header, Common::SeekableReadStream *stream, Audio::Mixer::SoundType soundType) :
-		AudioTrack(soundType),
-		_header(header) {
+RL2Decoder::RL2AudioTrack::RL2AudioTrack(const RL2FileHeader &header, Common::SeekableReadStream *stream, Audio::Mixer::SoundType soundType)
+  : AudioTrack(soundType)
+  , _header(header) {
 	// Create audio straem for the audio track
 	_audStream = Audio::makeQueuingAudioStream(_header._rate, _header._channels == 2);
 }
@@ -449,10 +449,11 @@ void RL2Decoder::RL2AudioTrack::queueSound(Common::SeekableReadStream *stream, i
 	byte *data = (byte *)malloc(size);
 	stream->read(data, size);
 	Common::MemoryReadStream *memoryStream = new Common::MemoryReadStream(data, size,
-		DisposeAfterUse::YES);
+	                                                                      DisposeAfterUse::YES);
 
 	_audStream->queueAudioStream(Audio::makeRawStream(memoryStream, _header._rate,
-		Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), DisposeAfterUse::YES);
+	                                                  Audio::FLAG_UNSIGNED, DisposeAfterUse::YES),
+	                             DisposeAfterUse::YES);
 }
 
 Audio::AudioStream *RL2Decoder::RL2AudioTrack::getAudioStream() const {
@@ -460,7 +461,7 @@ Audio::AudioStream *RL2Decoder::RL2AudioTrack::getAudioStream() const {
 }
 
 void RL2Decoder::play(VoyeurEngine *vm, int resourceOffset,
-		byte *frames, byte *imgPos) {
+                      byte *frames, byte *imgPos) {
 	vm->flipPageAndWait();
 	int paletteStart = getPaletteStart();
 	int paletteCount = getPaletteCount();
@@ -481,7 +482,7 @@ void RL2Decoder::play(VoyeurEngine *vm, int resourceOffset,
 				if (getCurFrame() >= READ_LE_UINT16(frames + picCtr * 4)) {
 					PictureResource *newPic = vm->_bVoy->boltEntry(0x302 + picCtr)._picResource;
 					Common::Point pt(READ_LE_UINT16(imgPos + 4 * picCtr) - 32,
-						READ_LE_UINT16(imgPos + 4 * picCtr + 2) - 20);
+					                 READ_LE_UINT16(imgPos + 4 * picCtr + 2) - 20);
 
 					vm->_screen->sDrawPic(newPic, &videoFrame, pt);
 					++picCtr;

@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_BITMAPVISIBILITYCOMMAND_H
 #define MUTATIONOFJB_BITMAPVISIBILITYCOMMAND_H
 
-#include "mutationofjb/commands/seqcommand.h"
 #include "common/str.h"
+#include "mutationofjb/commands/seqcommand.h"
 
 namespace MutationOfJB {
 
@@ -37,11 +37,15 @@ public:
 
 class BitmapVisibilityCommand : public SeqCommand {
 public:
-	BitmapVisibilityCommand(uint8 sceneId, uint8 bitmapId, bool visible) : _sceneId(sceneId), _bitmapId(bitmapId), _visible(visible) {}
+	BitmapVisibilityCommand(uint8 sceneId, uint8 bitmapId, bool visible)
+	  : _sceneId(sceneId)
+	  , _bitmapId(bitmapId)
+	  , _visible(visible) {}
 	const Common::String &getName() const;
 
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const override;
+
 private:
 	uint8 _sceneId;
 	uint8 _bitmapId;

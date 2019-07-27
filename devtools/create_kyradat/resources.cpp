@@ -90,23 +90,23 @@
 #include "resources/mr_dos_cd.h"
 
 // Eye of the Beholder
+#include "resources/eob1_amiga.h"
+#include "resources/eob1_amiga_english.h"
+#include "resources/eob1_amiga_german.h"
 #include "resources/eob1_dos.h"
 #include "resources/eob1_dos_english.h"
 #include "resources/eob1_dos_german.h"
 #include "resources/eob1_dos_italian.h"
-#include "resources/eob1_amiga.h"
-#include "resources/eob1_amiga_english.h"
-#include "resources/eob1_amiga_german.h"
 //#include "resources/eob1_pc98.h"
 //#include "resources/eob1_pc98_japanese.h"
 
 // Eye of the Beholder: The Legend of Darkmoon
-#include "resources/eob2_dos.h"
-#include "resources/eob2_dos_english.h"
-#include "resources/eob2_dos_german.h"
 #include "resources/eob2_amiga.h"
 #include "resources/eob2_amiga_english.h"
 #include "resources/eob2_amiga_german.h"
+#include "resources/eob2_dos.h"
+#include "resources/eob2_dos_english.h"
+#include "resources/eob2_dos_german.h"
 //#include "resources/eob2_pc98.h"
 //#include "resources/eob2_pc98_japanese.h"
 #include "resources/eob2_fmtowns.h"
@@ -2073,10 +2073,7 @@ static const ResourceProvider resourceProviders[] = {
 	{ kEoB2MonsterDustStrings, kEoB2, kPlatformDOS, kNoSpecial, DE_DEU, &kEoB2MonsterDustStringsDOSGermanProvider },
 	{ kEoB2KheldranStrings, kEoB2, kPlatformDOS, kNoSpecial, DE_DEU, &kEoB2KheldranStringsDOSGermanProvider },
 	{ kEoB2HornStrings, kEoB2, kPlatformDOS, kNoSpecial, DE_DEU, &kEoB2HornStringsDOSGermanProvider },
-	
-	
-	
-	
+
 	{ kEoBBaseChargenStrings1, kEoB2, kPlatformAmiga, kNoSpecial, EN_ANY, &kEoB2ChargenStrings1AmigaEnglishProvider },
 	{ kEoBBaseChargenStrings2, kEoB2, kPlatformAmiga, kNoSpecial, EN_ANY, &kEoB2ChargenStrings2AmigaEnglishProvider },
 	{ kEoBBaseChargenStartLevels, kEoB2, kPlatformAmiga, kNoSpecial, UNK_LANG, &kEoB2ChargenStartLevelsAmigaProvider },
@@ -2468,11 +2465,6 @@ static const ResourceProvider resourceProviders[] = {
 	{ kEoB2MonsterDustStrings, kEoB2, kPlatformAmiga, kNoSpecial, DE_DEU, &kEoB2MonsterDustStringsAmigaGermanProvider },
 	{ kEoB2KheldranStrings, kEoB2, kPlatformAmiga, kNoSpecial, DE_DEU, &kEoB2KheldranStringsAmigaGermanProvider },
 	{ kEoB2HornStrings, kEoB2, kPlatformAmiga, kNoSpecial, DE_DEU, &kEoB2HornStringsAmigaGermanProvider },
-
-
-
-
-
 
 	{ kEoBBaseChargenStrings1, kEoB2, kPlatformFMTowns, kNoSpecial, JA_JPN, &kEoB2ChargenStrings1FMTownsJapaneseProvider },
 	{ kEoBBaseChargenStrings2, kEoB2, kPlatformFMTowns, kNoSpecial, JA_JPN, &kEoB2ChargenStrings2FMTownsJapaneseProvider },

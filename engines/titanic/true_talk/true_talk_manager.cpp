@@ -26,7 +26,7 @@
 #include "titanic/npcs/true_talk_npc.h"
 #include "titanic/titanic.h"
 
-#define MKTAG_BE(a3,a2,a1,a0) ((uint32)((a3) | ((a2) << 8) | ((a1) << 16) | ((a0) << 24)))
+#define MKTAG_BE(a3, a2, a1, a0) ((uint32)((a3) | ((a2) << 8) | ((a1) << 16) | ((a0) << 24)))
 
 namespace Titanic {
 
@@ -45,9 +45,12 @@ CTrueTalkNPC *CTrueTalkManager::_currentNPC;
 
 /*------------------------------------------------------------------------*/
 
-CTrueTalkManager::CTrueTalkManager(CGameManager *owner) :
-		_gameManager(owner), _scripts(), _currentCharId(0),
-		_dialogueFile(nullptr), _dialogueId(0) {
+CTrueTalkManager::CTrueTalkManager(CGameManager *owner)
+  : _gameManager(owner)
+  , _scripts()
+  , _currentCharId(0)
+  , _dialogueFile(nullptr)
+  , _dialogueId(0) {
 	_titleEngine.setup(3, VOCAB_MODE_EN);
 	_quotes.load();
 	_quotesTree.load();
@@ -207,7 +210,7 @@ void CTrueTalkManager::preLoad() {
 }
 
 void CTrueTalkManager::removeCompleted() {
-	for (TTtalkerList::iterator i = _talkers.begin(); i != _talkers.end(); ) {
+	for (TTtalkerList::iterator i = _talkers.begin(); i != _talkers.end();) {
 		TTtalker *talker = *i;
 
 		if (talker->_done) {
@@ -370,13 +373,12 @@ CString CTrueTalkManager::readDialogueString() {
 
 		// Open a text entry from the dialogue file for access
 		DialogueResource *textRes = _dialogueFile->openTextEntry(
-			_titleEngine._indexes[idx] - _dialogueId);
+		  _titleEngine._indexes[idx] - _dialogueId);
 		if (!textRes)
 			continue;
 
 		size_t entrySize = textRes->size();
-		byte *tempBuffer = (entrySize < STRING_BUFFER_SIZE) ? buffer :
-			new byte[entrySize + 1];
+		byte *tempBuffer = (entrySize < STRING_BUFFER_SIZE) ? buffer : new byte[entrySize + 1];
 
 		_dialogueFile->read(textRes, tempBuffer, entrySize);
 		buffer[entrySize] = '\0';
@@ -406,7 +408,7 @@ uint CTrueTalkManager::readDialogueSpeech() {
 
 	for (uint idx = 0; idx < _titleEngine._indexes.size(); ++idx) {
 		CWaveFile *waveFile = _gameManager->_sound.getTrueTalkSound(
-			_dialogueFile, _titleEngine._indexes[idx] - _dialogueId);
+		  _dialogueFile, _titleEngine._indexes[idx] - _dialogueId);
 		if (waveFile) {
 			_speechDuration += waveFile->getDurationTicks();
 		}

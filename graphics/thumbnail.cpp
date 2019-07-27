@@ -21,99 +21,99 @@
  */
 
 #include "graphics/thumbnail.h"
-#include "graphics/scaler.h"
-#include "graphics/colormasks.h"
-#include "common/endian.h"
 #include "common/algorithm.h"
-#include "common/system.h"
+#include "common/endian.h"
 #include "common/stream.h"
+#include "common/system.h"
 #include "common/textconsole.h"
+#include "graphics/colormasks.h"
+#include "graphics/scaler.h"
 
 namespace Graphics {
 
 namespace {
 #define THMB_VERSION 2
 
-struct ThumbnailHeader {
-	uint32 type;
-	uint32 size;
-	byte version;
-	uint16 width, height;
-	PixelFormat format;
-};
+	struct ThumbnailHeader {
+		uint32 type;
+		uint32 size;
+		byte version;
+		uint16 width, height;
+		PixelFormat format;
+	};
 
-#define ThumbnailHeaderSize (4+4+1+2+2+(1+4+4))
+#define ThumbnailHeaderSize (4 + 4 + 1 + 2 + 2 + (1 + 4 + 4))
 
-enum HeaderState {
-	/// There is no header present
-	kHeaderNone,
-	/// The header present only has reliable values for version and size
-	kHeaderUnsupported,
-	/// The header is present and the version is supported
-	kHeaderPresent
-};
+	enum HeaderState {
+		/// There is no header present
+		kHeaderNone,
+		/// The header present only has reliable values for version and size
+		kHeaderUnsupported,
+		/// The header is present and the version is supported
+		kHeaderPresent
+	};
 
-HeaderState loadHeader(Common::SeekableReadStream &in, ThumbnailHeader &header, bool outputWarnings) {
-	header.type = in.readUint32BE();
-	// We also accept the bad 'BMHT' header here, for the sake of compatibility
-	// with some older savegames which were written incorrectly due to a bug in
-	// ScummVM which wrote the thumb header type incorrectly on LE systems.
-	if (header.type != MKTAG('T','H','M','B') && header.type != MKTAG('B','M','H','T')) {
-		if (outputWarnings)
-			warning("couldn't find thumbnail header type");
-		return kHeaderNone;
+	HeaderState loadHeader(Common::SeekableReadStream &in, ThumbnailHeader &header, bool outputWarnings) {
+		header.type = in.readUint32BE();
+		// We also accept the bad 'BMHT' header here, for the sake of compatibility
+		// with some older savegames which were written incorrectly due to a bug in
+		// ScummVM which wrote the thumb header type incorrectly on LE systems.
+		if (header.type != MKTAG('T', 'H', 'M', 'B') && header.type != MKTAG('B', 'M', 'H', 'T')) {
+			if (outputWarnings)
+				warning("couldn't find thumbnail header type");
+			return kHeaderNone;
+		}
+
+		header.size = in.readUint32BE();
+		header.version = in.readByte();
+
+		// Do a check whether any read errors had occurred. If so we cannot use the
+		// values obtained for size and version because they might be bad.
+		if (in.err() || in.eos()) {
+			// TODO: We fake that there is no header. This is actually not quite
+			// correct since we found the start of the header and then things
+			// started to break. Right no we leave detection of this to the client.
+			// Since this case is caused by broken files, the client code should
+			// catch it anyway... If there is a nicer solution here, we should
+			// implement it.
+			return kHeaderNone;
+		}
+
+		if (header.version > THMB_VERSION) {
+			if (outputWarnings)
+				warning("trying to load a newer thumbnail version: %d instead of %d", header.version, THMB_VERSION);
+			return kHeaderUnsupported;
+		}
+
+		header.width = in.readUint16BE();
+		header.height = in.readUint16BE();
+		header.format.bytesPerPixel = in.readByte();
+		// Starting from version 2 on we serialize the whole PixelFormat.
+		if (header.version >= 2) {
+			header.format.rLoss = in.readByte();
+			header.format.gLoss = in.readByte();
+			header.format.bLoss = in.readByte();
+			header.format.aLoss = in.readByte();
+
+			header.format.rShift = in.readByte();
+			header.format.gShift = in.readByte();
+			header.format.bShift = in.readByte();
+			header.format.aShift = in.readByte();
+		} else {
+			// Version 1 used a hardcoded RGB565.
+			header.format = createPixelFormat<565>();
+		}
+
+		if (in.err() || in.eos()) {
+			// When we reached this point we know that at least the size and
+			// version field was loaded successfully, thus we tell this header
+			// is not supported and silently hope that the client code is
+			// prepared to handle read errors.
+			return kHeaderUnsupported;
+		} else {
+			return kHeaderPresent;
+		}
 	}
-
-	header.size = in.readUint32BE();
-	header.version = in.readByte();
-
-	// Do a check whether any read errors had occurred. If so we cannot use the
-	// values obtained for size and version because they might be bad.
-	if (in.err() || in.eos()) {
-		// TODO: We fake that there is no header. This is actually not quite
-		// correct since we found the start of the header and then things
-		// started to break. Right no we leave detection of this to the client.
-		// Since this case is caused by broken files, the client code should
-		// catch it anyway... If there is a nicer solution here, we should
-		// implement it.
-		return kHeaderNone;
-	}
-
-	if (header.version > THMB_VERSION) {
-		if (outputWarnings)
-			warning("trying to load a newer thumbnail version: %d instead of %d", header.version, THMB_VERSION);
-		return kHeaderUnsupported;
-	}
-
-	header.width = in.readUint16BE();
-	header.height = in.readUint16BE();
-	header.format.bytesPerPixel = in.readByte();
-	// Starting from version 2 on we serialize the whole PixelFormat.
-	if (header.version >= 2) {
-		header.format.rLoss = in.readByte();
-		header.format.gLoss = in.readByte();
-		header.format.bLoss = in.readByte();
-		header.format.aLoss = in.readByte();
-
-		header.format.rShift = in.readByte();
-		header.format.gShift = in.readByte();
-		header.format.bShift = in.readByte();
-		header.format.aShift = in.readByte();
-	} else {
-		// Version 1 used a hardcoded RGB565.
-		header.format = createPixelFormat<565>();
-	}
-
-	if (in.err() || in.eos()) {
-		// When we reached this point we know that at least the size and
-		// version field was loaded successfully, thus we tell this header
-		// is not supported and silently hope that the client code is
-		// prepared to handle read errors.
-		return kHeaderUnsupported;
-	} else {
-		return kHeaderPresent;
-	}
-}
 } // end of anonymous namespace
 
 bool checkThumbnailHeader(Common::SeekableReadStream &in) {
@@ -186,14 +186,14 @@ bool loadThumbnail(Common::SeekableReadStream &in, Graphics::Surface *&thumbnail
 			for (uint x = 0; x < thumbnail->w; ++x) {
 				*pixels++ = in.readUint16BE();
 			}
-			} break;
+		} break;
 
 		case 4: {
 			uint32 *pixels = (uint32 *)thumbnail->getBasePtr(0, y);
 			for (uint x = 0; x < thumbnail->w; ++x) {
 				*pixels++ = in.readUint32BE();
 			}
-			} break;
+		} break;
 
 		default:
 			assert(0);
@@ -223,8 +223,8 @@ bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb) {
 	}
 
 	ThumbnailHeader header;
-	header.type = MKTAG('T','H','M','B');
-	header.size = ThumbnailHeaderSize + thumb.w*thumb.h*thumb.format.bytesPerPixel;
+	header.type = MKTAG('T', 'H', 'M', 'B');
+	header.size = ThumbnailHeaderSize + thumb.w * thumb.h * thumb.format.bytesPerPixel;
 	header.version = THMB_VERSION;
 	header.width = thumb.w;
 	header.height = thumb.h;
@@ -254,14 +254,14 @@ bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb) {
 			for (uint x = 0; x < thumb.w; ++x) {
 				out.writeUint16BE(*pixels++);
 			}
-			} break;
+		} break;
 
 		case 4: {
 			const uint32 *pixels = (const uint32 *)thumb.getBasePtr(0, y);
 			for (uint x = 0; x < thumb.w; ++x) {
 				out.writeUint32BE(*pixels++);
 			}
-			} break;
+		} break;
 
 		default:
 			assert(0);
@@ -270,7 +270,6 @@ bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb) {
 
 	return true;
 }
-
 
 /**
  * Returns an array indicating which pixels of a source image horizontally or vertically get

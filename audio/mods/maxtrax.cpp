@@ -20,11 +20,11 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/scummsys.h"
 #include "common/stream.h"
-#include "common/util.h"
-#include "common/debug.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
 #include "audio/mods/maxtrax.h"
 
@@ -33,8 +33,11 @@
 
 namespace {
 
-enum { K_VALUE = 0x9fd77, PREF_PERIOD = 0x8fd77, PERIOD_LIMIT = 0x6f73d };
-enum { NO_BEND = 64 << 7, MAX_BEND_RANGE = 24 };
+enum { K_VALUE = 0x9fd77,
+	     PREF_PERIOD = 0x8fd77,
+	     PERIOD_LIMIT = 0x6f73d };
+enum { NO_BEND = 64 << 7,
+	     MAX_BEND_RANGE = 24 };
 
 int32 precalcNote(byte baseNote, int16 tune, byte octave) {
 	return K_VALUE + 0x3C000 - ((baseNote << 14) + (tune << 11) / 3) / 3 - (octave << 16);
@@ -55,13 +58,13 @@ void nullFunc(int) {}
 // Function to calculate 2^x, where x is a fixedpoint number with 16 fraction bits
 // using exp would be more accurate and needs less space if mathlibrary is already linked
 // but this function should be faster and doesn't use floats
-#if 1
+#	if 1
 inline uint32 pow2Fixed(int32 val) {
 	static const uint16 tablePow2[] = {
-			0,   178,   356,   535,   714,   893,  1073,  1254,  1435,  1617,  1799,  1981,  2164,  2348,  2532,  2716,
-		 2902,  3087,  3273,  3460,  3647,  3834,  4022,  4211,  4400,  4590,  4780,  4971,  5162,  5353,  5546,  5738,
-		 5932,  6125,  6320,  6514,  6710,  6906,  7102,  7299,  7496,  7694,  7893,  8092,  8292,  8492,  8693,  8894,
-		 9096,  9298,  9501,  9704,  9908, 10113, 10318, 10524, 10730, 10937, 11144, 11352, 11560, 11769, 11979, 12189,
+		0, 178, 356, 535, 714, 893, 1073, 1254, 1435, 1617, 1799, 1981, 2164, 2348, 2532, 2716,
+		2902, 3087, 3273, 3460, 3647, 3834, 4022, 4211, 4400, 4590, 4780, 4971, 5162, 5353, 5546, 5738,
+		5932, 6125, 6320, 6514, 6710, 6906, 7102, 7299, 7496, 7694, 7893, 8092, 8292, 8492, 8693, 8894,
+		9096, 9298, 9501, 9704, 9908, 10113, 10318, 10524, 10730, 10937, 11144, 11352, 11560, 11769, 11979, 12189,
 		12400, 12611, 12823, 13036, 13249, 13462, 13676, 13891, 14106, 14322, 14539, 14756, 14974, 15192, 15411, 15630,
 		15850, 16071, 16292, 16514, 16737, 16960, 17183, 17408, 17633, 17858, 18084, 18311, 18538, 18766, 18995, 19224,
 		19454, 19684, 19915, 20147, 20379, 20612, 20846, 21080, 21315, 21550, 21786, 22023, 22260, 22498, 22737, 22977,
@@ -74,7 +77,7 @@ inline uint32 pow2Fixed(int32 val) {
 		49562, 49874, 50187, 50500, 50815, 51131, 51447, 51764, 52082, 52401, 52721, 53041, 53363, 53685, 54008, 54333,
 		54658, 54983, 55310, 55638, 55966, 56296, 56626, 56957, 57289, 57622, 57956, 58291, 58627, 58964, 59301, 59640,
 		59979, 60319, 60661, 61003, 61346, 61690, 62035, 62381, 62727, 63075, 63424, 63774, 64124, 64476, 64828, 65182,
-			0
+		0
 	};
 	const uint16 whole = val >> 16;
 	const uint8 index = (uint8)(val >> 8);
@@ -93,30 +96,30 @@ inline uint32 pow2Fixed(int32 val) {
 	} else if (val > 0) {
 		// overflow
 		exponent = 0xFFFFFFFF;
-	} else  {
+	} else {
 		// negative integer, test if >= -0.5
 		exponent = (val >= -0x8000) ? 1 : 0;
 	}
 	return exponent;
 }
-#else
+#	else
 inline uint32 pow2Fixed(int32 val) {
 	return (uint32)(expf((float)val * (float)(0.69314718055994530942 / (1 << 16))) + 0.5f);
 }
-#endif
+#	endif
 
 } // End of anonymous namespace
 
 namespace Audio {
 
 MaxTrax::MaxTrax(int rate, bool stereo, uint16 vBlankFreq, uint16 maxScores)
-	: Paula(stereo, rate, rate / vBlankFreq),
-	  _patch(),
-	  _scores(),
-	  _numScores() {
+  : Paula(stereo, rate, rate / vBlankFreq)
+  , _patch()
+  , _scores()
+  , _numScores() {
 	_playerCtx.maxScoreNum = maxScores;
 	_playerCtx.vBlankFreq = vBlankFreq;
-	_playerCtx.frameUnit = (uint16)((1000 << 8) /  vBlankFreq);
+	_playerCtx.frameUnit = (uint16)((1000 << 8) / vBlankFreq);
 	_playerCtx.scoreIndex = -1;
 	_playerCtx.volume = 0x40;
 
@@ -170,7 +173,7 @@ void MaxTrax::interrupt() {
 			// outPutEvent(*curEvent);
 			// debug("CurTime, EventDelta, NextDelta: %d, %d, %d", millis, eventDelta, eventDelta + curEvent[1].startTime );
 
-			if (cmd < 0x80) {	// Note
+			if (cmd < 0x80) { // Note
 				const int8 voiceIndex = noteOn(channel, cmd, (curEvent->parameter & 0xF0) >> 1, kPriorityScore);
 				if (voiceIndex >= 0)
 					_voiceCtx[voiceIndex].stopEventTime = MAX<int32>(0, (eventDelta + curEvent->stopTime) << 8);
@@ -178,29 +181,29 @@ void MaxTrax::interrupt() {
 			} else {
 				switch (cmd) {
 
-				case 0x80:	// TEMPO
+				case 0x80: // TEMPO
 					if ((_playerCtx.tickUnit >> 8) > curEvent->stopTime) {
 						_playerCtx.tickUnit = calcTempo(curEvent->parameter << 4, _playerCtx.vBlankFreq);
 						_playerCtx.tempoTime = 0;
 					} else {
 						_playerCtx.tempoStart = _playerCtx.tempo;
 						_playerCtx.tempoDelta = (curEvent->parameter << 4) - _playerCtx.tempoStart;
-						_playerCtx.tempoTime  = (curEvent->stopTime << 8);
+						_playerCtx.tempoTime = (curEvent->stopTime << 8);
 						_playerCtx.tempoTicks = 0;
 					}
 					break;
 
-				case 0xC0:	// PROGRAM
+				case 0xC0: // PROGRAM
 					channel.patch = &_patch[curEvent->stopTime & (kNumPatches - 1)];
 					break;
 
-				case 0xE0:	// BEND
+				case 0xE0: // BEND
 					channel.pitchBend = ((curEvent->stopTime & 0x7F00) >> 1) | (curEvent->stopTime & 0x7f);
 					channel.pitchReal = (((int32)channel.pitchBendRange * channel.pitchBend) >> 5) - (channel.pitchBendRange << 8);
 					channel.isAltered = true;
 					break;
 
-				case 0xFF:	// END
+				case 0xFF: // END
 					if (_playerCtx.musicLoop) {
 						curEvent = _scores[_playerCtx.scoreIndex].events;
 						eventDelta = curEvent->startTime - millis;
@@ -210,12 +213,12 @@ void MaxTrax::interrupt() {
 					// stop processing for this tick
 					goto endOfEventLoop;
 
-				case 0xA0: 	// SPECIAL
+				case 0xA0: // SPECIAL
 					switch (curEvent->stopTime >> 8) {
-					case 0x01:	// SPECIAL_SYNC
+					case 0x01: // SPECIAL_SYNC
 						_playerCtx.syncCallBack(curEvent->stopTime & 0xFF);
 						break;
-					case 0x02:	// SPECIAL_BEGINREP
+					case 0x02: // SPECIAL_BEGINREP
 						// we allow a depth of 4 loops
 						for (int i = 0; i < ARRAYSIZE(_playerCtx.repeatPoint); ++i) {
 							if (!_playerCtx.repeatPoint[i]) {
@@ -225,7 +228,7 @@ void MaxTrax::interrupt() {
 							}
 						}
 						break;
-					case 0x03:	// SPECIAL_ENDREP
+					case 0x03: // SPECIAL_ENDREP
 						for (int i = ARRAYSIZE(_playerCtx.repeatPoint) - 1; i >= 0; --i) {
 							if (_playerCtx.repeatPoint[i]) {
 								if (_playerCtx.repeatCount[i]--)
@@ -239,7 +242,7 @@ void MaxTrax::interrupt() {
 					}
 					break;
 
-				case 0xB0:	// CONTROL
+				case 0xB0: // CONTROL
 					controlCh(channel, (byte)(curEvent->stopTime >> 8), (byte)curEvent->stopTime);
 					break;
 
@@ -249,7 +252,7 @@ void MaxTrax::interrupt() {
 				}
 			}
 		}
-endOfEventLoop:
+	endOfEventLoop:
 		_playerCtx.nextEvent = curEvent;
 		_playerCtx.nextEventTime = eventDelta + millis;
 
@@ -279,7 +282,7 @@ endOfEventLoop:
 		case VoiceContext::kStatusSustain:
 			// we need to check if some voices have no sustainSample.
 			// in that case they are finished after the attackSample is done
-			if (voice.dmaOff && Paula::getChannelDmaCount((byte)i) >= voice.dmaOff ) {
+			if (voice.dmaOff && Paula::getChannelDmaCount((byte)i) >= voice.dmaOff) {
 				voice.dmaOff = 0;
 				voice.isBlocked = 0;
 				voice.priority = 0;
@@ -332,12 +335,12 @@ endOfEventLoop:
 		// Process Envelope
 		const uint16 envUnit = _playerCtx.frameUnit;
 		if (voice.envelope) {
-			if (voice.ticksLeft > envUnit) {	// envelope still active
-				voice.baseVolume = (uint16) MIN<int32>(MAX<int32>(0, voice.baseVolume + voice.incrVolume), 0x8000);
+			if (voice.ticksLeft > envUnit) { // envelope still active
+				voice.baseVolume = (uint16)MIN<int32>(MAX<int32>(0, voice.baseVolume + voice.incrVolume), 0x8000);
 				voice.ticksLeft -= envUnit;
 				// Update Volume and Period
 
-			} else {	// next or last Envelope
+			} else { // next or last Envelope
 				voice.baseVolume = voice.envelope->volume;
 				assert(voice.envelopeLeft > 0);
 				if (--voice.envelopeLeft) {
@@ -390,57 +393,57 @@ endOfEventLoop:
 	for (ChannelContext *c = _channelCtx; c != &_channelCtx[ARRAYSIZE(_channelCtx)]; ++c)
 		c->isAltered = false;
 
-#ifdef MAXTRAX_HAS_MODULATION
+#	ifdef MAXTRAX_HAS_MODULATION
 	// original player had _playerCtx.sineValue = _playerCtx.frameUnit >> 2
 	// this should fit the comments that modtime=1000 is one second ?
 	_playerCtx.sineValue += _playerCtx.frameUnit;
-#endif
+#	endif
 }
 
 void MaxTrax::controlCh(ChannelContext &channel, const byte command, const byte data) {
 	switch (command) {
-	case 0x01:	// modulation level MSB
+	case 0x01: // modulation level MSB
 		channel.modulation = data << 8;
 		break;
-	case 0x21:	// modulation level LSB
+	case 0x21: // modulation level LSB
 		channel.modulation = (channel.modulation & 0xFF00) | ((data * 2) & 0xFF);
 		break;
-	case 0x05:	// portamento time MSB
+	case 0x05: // portamento time MSB
 		channel.portamentoTime = data << 7;
 		break;
-	case 0x25:	// portamento time LSB
+	case 0x25: // portamento time LSB
 		channel.portamentoTime = (channel.portamentoTime & 0x3f80) | data;
 		break;
-	case 0x06:	// data entry MSB
+	case 0x06: // data entry MSB
 		if (channel.regParamNumber == 0) {
 			channel.pitchBendRange = (int8)MIN((uint8)MAX_BEND_RANGE, (uint8)data);
 			channel.pitchReal = (((int32)channel.pitchBendRange * channel.pitchBend) >> 5) - (channel.pitchBendRange << 8);
 			channel.isAltered = true;
 		}
 		break;
-	case 0x07:	// Main Volume MSB
+	case 0x07: // Main Volume MSB
 		channel.volume = (data == 0) ? 0 : data + 1;
 		channel.isAltered = true;
 		break;
-	case 0x0A:	// Pan
+	case 0x0A: // Pan
 		if (data > 0x40 || (data == 0x40 && ((&channel - _channelCtx) & 1) != 0))
 			channel.flags |= ChannelContext::kFlagRightChannel;
 		else
 			channel.flags &= ~ChannelContext::kFlagRightChannel;
 		break;
-	case 0x10:	// GPC as Modulation Time MSB
+	case 0x10: // GPC as Modulation Time MSB
 		channel.modulationTime = data << 7;
 		break;
-	case 0x30:	// GPC as Modulation Time LSB
+	case 0x30: // GPC as Modulation Time LSB
 		channel.modulationTime = (channel.modulationTime & 0x3f80) | data;
 		break;
-	case 0x11:	// GPC as Microtonal Set MSB
+	case 0x11: // GPC as Microtonal Set MSB
 		channel.microtonal = data << 8;
 		break;
-	case 0x31:	// GPC as Microtonal Set LSB
+	case 0x31: // GPC as Microtonal Set LSB
 		channel.microtonal = (channel.microtonal & 0xFF00) | ((data * 2) & 0xFF);
 		break;
-	case 0x40:	// Damper Pedal
+	case 0x40: // Damper Pedal
 		if ((data & 0x40) != 0)
 			channel.flags |= ChannelContext::kFlagDamper;
 		else {
@@ -454,38 +457,38 @@ void MaxTrax::controlCh(ChannelContext &channel, const byte command, const byte 
 			}
 		}
 		break;
-	case 0x41:	// Portamento off/on
+	case 0x41: // Portamento off/on
 		if ((data & 0x40) != 0)
 			channel.flags |= ChannelContext::kFlagPortamento;
 		else
 			channel.flags &= ~ChannelContext::kFlagPortamento;
 		break;
-	case 0x50:	// Microtonal off/on
+	case 0x50: // Microtonal off/on
 		if ((data & 0x40) != 0)
 			channel.flags |= ChannelContext::kFlagMicrotonal;
 		else
 			channel.flags &= ~ChannelContext::kFlagMicrotonal;
 		break;
-	case 0x51:	// Audio Filter off/on
+	case 0x51: // Audio Filter off/on
 		Paula::setAudioFilter(data > 0x40 || (data == 0x40 && _playerCtx.filterOn));
 		break;
-	case 0x65:	// RPN MSB
+	case 0x65: // RPN MSB
 		channel.regParamNumber = (data << 8) | (channel.regParamNumber & 0xFF);
 		break;
-	case 0x64:	// RPN LSB
+	case 0x64: // RPN LSB
 		channel.regParamNumber = (channel.regParamNumber & 0xFF00) | data;
 		break;
-	case 0x79:	// Reset All Controllers
+	case 0x79: // Reset All Controllers
 		resetChannel(channel, ((&channel - _channelCtx) & 1) != 0);
 		break;
-	case 0x7E:	// MONO mode
+	case 0x7E: // MONO mode
 		channel.flags |= ChannelContext::kFlagMono;
 		goto allNotesOff;
-	case 0x7F:	// POLY mode
+	case 0x7F: // POLY mode
 		channel.flags &= ~ChannelContext::kFlagMono;
 		// Fallthrough
-	case 0x7B:	// All Notes Off
-allNotesOff:
+	case 0x7B: // All Notes Off
+	allNotesOff:
 		for (int i = 0; i < ARRAYSIZE(_voiceCtx); ++i) {
 			if (_voiceCtx[i].channel == &channel) {
 				if ((channel.flags & ChannelContext::kFlagDamper) != 0)
@@ -495,7 +498,7 @@ allNotesOff:
 			}
 		}
 		break;
-	case 0x78:	// All Sounds Off
+	case 0x78: // All Sounds Off
 		for (int i = 0; i < ARRAYSIZE(_voiceCtx); ++i) {
 			if (_voiceCtx[i].channel == &channel)
 				killVoice((byte)i);
@@ -520,10 +523,10 @@ void MaxTrax::resetPlayer() {
 		_channelCtx[i].patch = (i < kNumChannels) ? &_patch[i] : 0;
 	}
 
-#ifdef MAXTRAX_HAS_MICROTONAL
+#	ifdef MAXTRAX_HAS_MICROTONAL
 	for (int i = 0; i < ARRAYSIZE(_microtonal); ++i)
 		_microtonal[i] = (int16)(i << 8);
-#endif
+#	endif
 }
 
 void MaxTrax::stopMusic() {
@@ -617,7 +620,7 @@ int8 MaxTrax::pickvoice(uint pick, int16 pri) {
 		const uint16 altVal = alternate->status << 8 | alternate->lastVolume;
 
 		if (voiceVal + voice->tieBreak > altVal
-			|| voice->isBlocked > alternate->isBlocked) {
+		    || voice->isBlocked > alternate->isBlocked) {
 
 			// this is somewhat different to the original player,
 			// but has a similar result
@@ -647,7 +650,7 @@ uint16 MaxTrax::calcNote(const VoiceContext &voice) {
 	const ChannelContext &channel = *voice.channel;
 	int16 bend = channel.pitchReal;
 
-#ifdef MAXTRAX_HAS_MICROTONAL
+#	ifdef MAXTRAX_HAS_MICROTONAL
 	if (voice.hasPortamento) {
 		if ((channel.flags & ChannelContext::kFlagMicrotonal) != 0)
 			bend += (int16)(((_microtonal[voice.endNote] - _microtonal[voice.baseNote]) * voice.portaTicks) >> 8) / channel.portamentoTime;
@@ -657,21 +660,21 @@ uint16 MaxTrax::calcNote(const VoiceContext &voice) {
 
 	if ((channel.flags & ChannelContext::kFlagMicrotonal) != 0)
 		bend += _microtonal[voice.baseNote];
-#else
+#	else
 	if (voice.hasPortamento)
 		bend += (int16)(((int8)(voice.endNote - voice.baseNote)) * voice.portaTicks) / channel.portamentoTime;
-#endif
+#	endif
 
-#ifdef MAXTRAX_HAS_MODULATION
+#	ifdef MAXTRAX_HAS_MODULATION
 	static const uint8 tableSine[] = {
-		  0,   5,  12,  18,  24,  30,  37,  43,  49,  55,  61,  67,  73,  79,  85,  91,
-		 97, 103, 108, 114, 120, 125, 131, 136, 141, 146, 151, 156, 161, 166, 171, 176,
+		0, 5, 12, 18, 24, 30, 37, 43, 49, 55, 61, 67, 73, 79, 85, 91,
+		97, 103, 108, 114, 120, 125, 131, 136, 141, 146, 151, 156, 161, 166, 171, 176,
 		180, 184, 189, 193, 197, 201, 205, 208, 212, 215, 219, 222, 225, 228, 230, 233,
 		236, 238, 240, 242, 244, 246, 247, 249, 250, 251, 252, 253, 254, 254, 255, 255,
 		255, 255, 255, 254, 254, 253, 252, 251, 250, 249, 247, 246, 244, 242, 240, 238,
 		236, 233, 230, 228, 225, 222, 219, 215, 212, 208, 205, 201, 197, 193, 189, 184,
 		180, 176, 171, 166, 161, 156, 151, 146, 141, 136, 131, 125, 120, 114, 108, 103,
-		 97,  91,  85,  79,  73,  67,  61,  55,  49,  43,  37,  30,  24,  18,  12,   5
+		97, 91, 85, 79, 73, 67, 61, 55, 49, 43, 37, 30, 24, 18, 12, 5
 	};
 	if (channel.modulation) {
 		if ((channel.flags & ChannelContext::kFlagModVolume) == 0) {
@@ -681,7 +684,7 @@ uint16 MaxTrax::calcNote(const VoiceContext &voice) {
 			bend = (sineByte < 0x80) ? bend + modVal : bend - modVal;
 		}
 	}
-#endif
+#	endif
 
 	// tone = voice.baseNote << 8 + microtonal
 	// bend = channelPitch + porta + modulation
@@ -692,10 +695,10 @@ uint16 MaxTrax::calcNote(const VoiceContext &voice) {
 }
 
 int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, uint16 pri) {
-#ifdef MAXTRAX_HAS_MICROTONAL
+#	ifdef MAXTRAX_HAS_MICROTONAL
 	if (channel.microtonal >= 0)
 		_microtonal[note % 127] = channel.microtonal;
-#endif
+#	endif
 
 	if (!volume)
 		return -1;
@@ -832,7 +835,7 @@ void MaxTrax::freePatches() {
 	memset(_patch, 0, sizeof(_patch));
 }
 
-void MaxTrax::setSignalCallback(void (*callback) (int)) {
+void MaxTrax::setSignalCallback(void (*callback)(int)) {
 	Common::StackLock lock(_mutex);
 	_playerCtx.syncCallBack = (callback == 0) ? nullFunc : callback;
 }
@@ -878,15 +881,15 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 
 	if (flags & (1 << 15)) {
 		debug(5, "Maxtrax: Song has microtonal");
-#ifdef MAXTRAX_HAS_MICROTONAL
+#	ifdef MAXTRAX_HAS_MICROTONAL
 		if (loadScores) {
 			for (int i = 0; i < ARRAYSIZE(_microtonal); ++i)
 				_microtonal[i] = musicData.readUint16BE();
 		} else
 			musicData.skip(128 * 2);
-#else
+#	else
 		musicData.skip(128 * 2);
-#endif
+#	endif
 	}
 
 	int scoresLoaded = 0;
@@ -990,22 +993,22 @@ allocError:
 	return false;
 }
 
-#if !defined(NDEBUG) && 0
+#	if !defined(NDEBUG) && 0
 void MaxTrax::outPutEvent(const Event &ev, int num) {
 	struct {
 		byte cmd;
 		const char *name;
 		const char *param;
 	} COMMANDS[] = {
-		{0x80, "TEMPO   ", "TEMPO, N/A      "},
-		{0xa0, "SPECIAL ", "CHAN, SPEC # | VAL"},
-		{0xb0, "CONTROL ", "CHAN, CTRL # | VAL"},
-		{0xc0, "PROGRAM ", "CHANNEL, PROG # "},
-		{0xe0, "BEND    ", "CHANNEL, BEND VALUE"},
-		{0xf0, "SYSEX   ", "TYPE, SIZE      "},
-		{0xf8, "REALTIME", "REALTIME, N/A   "},
-		{0xff, "END     ", "N/A, N/A        "},
-		{0xff, "NOTE    ", "VOL | CHAN, STOP"},
+		{ 0x80, "TEMPO   ", "TEMPO, N/A      " },
+		{ 0xa0, "SPECIAL ", "CHAN, SPEC # | VAL" },
+		{ 0xb0, "CONTROL ", "CHAN, CTRL # | VAL" },
+		{ 0xc0, "PROGRAM ", "CHANNEL, PROG # " },
+		{ 0xe0, "BEND    ", "CHANNEL, BEND VALUE" },
+		{ 0xf0, "SYSEX   ", "TYPE, SIZE      " },
+		{ 0xf8, "REALTIME", "REALTIME, N/A   " },
+		{ 0xff, "END     ", "N/A, N/A        " },
+		{ 0xff, "NOTE    ", "VOL | CHAN, STOP" },
 	};
 
 	int i = 0;
@@ -1027,10 +1030,10 @@ void MaxTrax::outPutScore(const Score &sc, int num) {
 		outPutEvent(sc.events[i], i);
 	debug("");
 }
-#else
+#	else
 void MaxTrax::outPutEvent(const Event &ev, int num) {}
 void MaxTrax::outPutScore(const Score &sc, int num) {}
-#endif	// #ifndef NDEBUG
+#	endif // #ifndef NDEBUG
 
 } // End of namespace Audio
 

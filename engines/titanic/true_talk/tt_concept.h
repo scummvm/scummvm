@@ -28,7 +28,9 @@
 
 namespace Titanic {
 
-enum ScriptType { ST_UNKNOWN_SCRIPT = 0, ST_ROOM_SCRIPT = 1, ST_NPC_SCRIPT = 2 };
+enum ScriptType { ST_UNKNOWN_SCRIPT = 0,
+	                ST_ROOM_SCRIPT = 1,
+	                ST_NPC_SCRIPT = 2 };
 
 class TTscriptBase;
 class TTword;
@@ -41,6 +43,7 @@ private:
 	int _field30;
 	bool _flag;
 	int _status;
+
 private:
 	/**
 	 * Sets the status of the concept
@@ -66,6 +69,7 @@ private:
 	 * Initialize inner data for the concept from a given source concept
 	 */
 	void initialize(TTconcept &src);
+
 public:
 	TTconcept *_nextP;
 	TTscriptBase *_scriptP;
@@ -75,6 +79,7 @@ public:
 	int _field20;
 	int _field34;
 	TTstring _string2;
+
 public:
 	TTconcept();
 	TTconcept(TTscriptBase *script, ScriptType scriptType);

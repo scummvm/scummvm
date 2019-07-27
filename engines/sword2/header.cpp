@@ -25,8 +25,8 @@
 #include "sword2/screen.h"
 #include "sword2/sword2.h"
 
-#include "common/memstream.h"
 #include "common/endian.h"
+#include "common/memstream.h"
 
 namespace Sword2 {
 

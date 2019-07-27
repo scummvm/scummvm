@@ -20,22 +20,26 @@
  *
  */
 
-
 #include "common/debug.h"
 
 #include "pink/director.h"
-#include "pink/pink.h"
-#include "pink/objects/inventory.h"
 #include "pink/objects/actions/action.h"
 #include "pink/objects/actors/lead_actor.h"
+#include "pink/objects/inventory.h"
 #include "pink/objects/pages/game_page.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
 InventoryMgr::InventoryMgr()
-	: _lead(nullptr), _window(nullptr), _itemActor(nullptr),
-	_rightArrow(nullptr), _leftArrow(nullptr), _item(nullptr),
-	_state(kIdle), _isClickedOnItem(false) {}
+  : _lead(nullptr)
+  , _window(nullptr)
+  , _itemActor(nullptr)
+  , _rightArrow(nullptr)
+  , _leftArrow(nullptr)
+  , _item(nullptr)
+  , _state(kIdle)
+  , _isClickedOnItem(false) {}
 
 void InventoryItem::deserialize(Archive &archive) {
 	NamedObject::deserialize(archive);

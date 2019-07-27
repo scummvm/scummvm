@@ -24,7 +24,9 @@
 
 namespace Kyra {
 
-MidiOutput::MidiOutput(OSystem *system, MidiDriver *output, bool isMT32, bool defaultMT32) : _system(system), _output(output) {
+MidiOutput::MidiOutput(OSystem *system, MidiDriver *output, bool isMT32, bool defaultMT32)
+  : _system(system)
+  , _output(output) {
 	_isMT32 = isMT32;
 	_defaultMT32 = defaultMT32;
 
@@ -33,9 +35,7 @@ MidiOutput::MidiOutput(OSystem *system, MidiDriver *output, bool isMT32, bool de
 		error("Couldn't open midi driver");
 
 	static const Controller defaultControllers[] = {
-		{ 0x07, 0x7F }, { 0x01, 0x00 }, { 0x0A, 0x40 },
-		{ 0x0B, 0x7F }, { 0x40, 0x00 }, { 0x72, 0x00 },
-		{ 0x6E, 0x00 }, { 0x6F, 0x00 }, { 0x70, 0x00 }
+		{ 0x07, 0x7F }, { 0x01, 0x00 }, { 0x0A, 0x40 }, { 0x0B, 0x7F }, { 0x40, 0x00 }, { 0x72, 0x00 }, { 0x6E, 0x00 }, { 0x6F, 0x00 }, { 0x70, 0x00 }
 	};
 
 	static const byte defaultPrograms[] = {
@@ -80,7 +80,6 @@ MidiOutput::MidiOutput(OSystem *system, MidiDriver *output, bool isMT32, bool de
 	}
 }
 
-
 MidiOutput::~MidiOutput() {
 	_output->close();
 	delete _output;
@@ -89,16 +88,14 @@ MidiOutput::~MidiOutput() {
 void MidiOutput::send(uint32 b) {
 	const byte event = b & 0xF0;
 	const byte channel = b & 0x0F;
-	byte param1 = (b >>  8) & 0xFF;
+	byte param1 = (b >> 8) & 0xFF;
 	byte param2 = (b >> 16) & 0xFF;
 
-	if (event == 0xE0) {							// Pitch-Wheel
-		_channels[channel].pitchWheel =
-		_sources[_curSource].channelPW[channel] = (param2 << 8) | param1;
-	} else if (event == 0xC0) {						// Program change
-		_channels[channel].program =
-		_sources[_curSource].channelProgram[channel] = param1;
-	} else if (event == 0xB0) {						// Controller change
+	if (event == 0xE0) { // Pitch-Wheel
+		_channels[channel].pitchWheel = _sources[_curSource].channelPW[channel] = (param2 << 8) | param1;
+	} else if (event == 0xC0) { // Program change
+		_channels[channel].program = _sources[_curSource].channelProgram[channel] = param1;
+	} else if (event == 0xB0) { // Controller change
 		for (int i = 0; i < 9; ++i) {
 			Controller &cont = _sources[_curSource].controllers[channel][i];
 			if (cont.controller == param1) {
@@ -109,37 +106,36 @@ void MidiOutput::send(uint32 b) {
 
 		if (param1 == 0x07) {
 			param2 = (param2 * _sources[_curSource].volume) >> 8;
-		} else if (param1 == 0x6E) {	// Lock Channel
-			if (param2 >= 0x40) {	// Lock Channel
+		} else if (param1 == 0x6E) { // Lock Channel
+			if (param2 >= 0x40) { // Lock Channel
 				int chan = lockChannel();
 				if (chan < 0)
 					chan = channel;
 				_sources[_curSource].channelMap[channel] = chan;
-			} else {				// Unlock Channel
+			} else { // Unlock Channel
 				stopNotesOnChannel(channel);
 				unlockChannel(_sources[_curSource].channelMap[channel]);
 				_sources[_curSource].channelMap[channel] = channel;
 			}
-		} else if (param1 == 0x6F) {	// Protect Channel
-			if (param2 >= 0x40) {	// Protect Channel
+		} else if (param1 == 0x6F) { // Protect Channel
+			if (param2 >= 0x40) { // Protect Channel
 				_channels[channel].flags |= kChannelProtected;
-			} else {				// Unprotect Channel
+			} else { // Unprotect Channel
 				_channels[channel].flags &= ~kChannelProtected;
 			}
-		} else if (param1 == 0x7B) {	// All notes off
+		} else if (param1 == 0x7B) { // All notes off
 			// FIXME: Since the XMIDI parsers sends this
 			// on track change, we simply ignore it.
 			return;
 		}
-	} else if (event == 0x90 || event == 0x80) {	// Note On/Off
+	} else if (event == 0x90 || event == 0x80) { // Note On/Off
 		if (!(_channels[channel].flags & kChannelLocked)) {
 			const bool remove = (event == 0x80) || (param2 == 0x00);
 			int note = -1;
 
 			for (int i = 0; i < 32; ++i) {
 				if (remove) {
-					if (_sources[_curSource].notes[i].channel == channel &&
-						_sources[_curSource].notes[i].note == param1) {
+					if (_sources[_curSource].notes[i].channel == channel && _sources[_curSource].notes[i].note == param1) {
 						note = i;
 						break;
 					}
@@ -219,7 +215,7 @@ void MidiOutput::sendSysEx(const byte p1, const byte p2, const byte p3, const by
 	checkSum = -checkSum;
 	checkSum &= 0x7F;
 
-	outBuffer[7+size] = checkSum;
+	outBuffer[7 + size] = checkSum;
 
 	sysEx(outBuffer, bufferSize);
 

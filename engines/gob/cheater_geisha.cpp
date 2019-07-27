@@ -22,8 +22,8 @@
 
 #include "gui/debugger.h"
 
-#include "gob/gob.h"
 #include "gob/cheater.h"
+#include "gob/gob.h"
 #include "gob/inter.h"
 
 #include "gob/minigames/geisha/diving.h"
@@ -31,9 +31,10 @@
 
 namespace Gob {
 
-Cheater_Geisha::Cheater_Geisha(GobEngine *vm, Geisha::Diving *diving, Geisha::Penetration *penetration) :
-	Cheater(vm), _diving(diving), _penetration(penetration) {
-
+Cheater_Geisha::Cheater_Geisha(GobEngine *vm, Geisha::Diving *diving, Geisha::Penetration *penetration)
+  : Cheater(vm)
+  , _diving(diving)
+  , _penetration(penetration) {
 }
 
 Cheater_Geisha::~Cheater_Geisha() {

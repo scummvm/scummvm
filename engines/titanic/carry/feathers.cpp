@@ -26,7 +26,8 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CFeathers, CCarry);
 
-CFeathers::CFeathers() : CCarry() {
+CFeathers::CFeathers()
+  : CCarry() {
 }
 
 void CFeathers::save(SimpleFile *file, int indent) {

@@ -22,14 +22,13 @@
 
 #include "gui/debugger.h"
 
-#include "supernova/supernova.h"
-#include "supernova/state.h"
 #include "supernova/console.h"
+#include "supernova/state.h"
+#include "supernova/supernova.h"
 
 namespace Supernova {
 
-Console::Console(SupernovaEngine *vm, GameManager *gm)
-{
+Console::Console(SupernovaEngine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 }

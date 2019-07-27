@@ -35,10 +35,10 @@ class SaveLoad {
 public:
 	/** How to handle the specific save. */
 	enum SaveMode {
-		kSaveModeNone,   ///< Don't handle it
+		kSaveModeNone, ///< Don't handle it
 		kSaveModeIgnore, ///< Ignore it
 		kSaveModeExists, ///< Just claim it exists
-		kSaveModeSave    ///< A normal save
+		kSaveModeSave ///< A normal save
 	};
 
 	/** The constructor.
@@ -80,8 +80,8 @@ public:
 	SaveMode getSaveMode(const char *fileName) const;
 
 protected:
-	static const uint32 kSlotCount =  7;
-	static const uint32 kSlotSize  = 44;
+	static const uint32 kSlotCount = 7;
+	static const uint32 kSlotSize = 44;
 
 	static const uint32 kSaveFileSize = kSlotCount * kSlotSize;
 
@@ -293,7 +293,7 @@ public:
 
 	enum ScreenshotType {
 		kScreenshotTypeGob3, ///< Goblins 3 type screenshot
-		kScreenshotTypeLost  ///< Lost in Time type screenshot
+		kScreenshotTypeLost ///< Lost in Time type screenshot
 	};
 
 	SaveLoad_v3(GobEngine *vm, const char *targetName, ScreenshotType sShotType);
@@ -313,9 +313,9 @@ protected:
 
 	/** Handles the save slots. */
 	class GameHandler : public SaveHandler {
-	friend class SaveLoad_v3::ScreenshotHandler;
-	public:
+		friend class SaveLoad_v3::ScreenshotHandler;
 
+	public:
 		GameHandler(GobEngine *vm, const char *target, bool usesScreenshots);
 		~GameHandler();
 
@@ -336,8 +336,8 @@ protected:
 			int getSlot(int32 offset) const;
 			int getSlotRemainder(int32 offset) const;
 		};
-	private:
 
+	private:
 		File *_slotFile;
 
 		bool _usesScreenshots;
@@ -356,7 +356,6 @@ protected:
 
 		bool createReader(int slot);
 		bool createWriter(int slot);
-
 	};
 
 	/** Handles the screenshots. */
@@ -374,7 +373,7 @@ protected:
 		class File : public SaveLoad_v3::GameHandler::File {
 		public:
 			File(const SaveLoad_v3::GameHandler::File &file,
-					uint32 shotSize, uint32 shotIndexSize);
+			     uint32 shotSize, uint32 shotIndexSize);
 			~File();
 
 			int getSlot(int32 offset) const;
@@ -415,7 +414,7 @@ protected:
 /** Save/Load class for Inca 2. */
 class SaveLoad_Inca2 : public SaveLoad {
 public:
-	static const uint32 kSlotCount =  40;
+	static const uint32 kSlotCount = 40;
 	static const uint32 kPropsSize = 500;
 
 	SaveLoad_Inca2(GobEngine *vm, const char *targetName);
@@ -446,9 +445,9 @@ protected:
 
 	/** Handles the save slots. */
 	class GameHandler : public SaveHandler {
-	friend class SaveLoad_Inca2::ScreenshotHandler;
-	public:
+		friend class SaveLoad_Inca2::ScreenshotHandler;
 
+	public:
 		GameHandler(GobEngine *vm, const char *target);
 		~GameHandler();
 
@@ -471,7 +470,6 @@ protected:
 		};
 
 	private:
-
 		File *_slotFile;
 
 		byte _props[kPropsSize];
@@ -516,9 +514,9 @@ protected:
 
 	static SaveFile _saveFiles[];
 
-	VoiceHandler      *_voiceHandler;
+	VoiceHandler *_voiceHandler;
 	TempSpriteHandler *_tempSpriteHandler;
-	GameHandler       *_gameHandler;
+	GameHandler *_gameHandler;
 	ScreenshotHandler *_screenshotHandler;
 
 	SaveHandler *getHandler(const char *fileName) const;
@@ -555,7 +553,8 @@ protected:
 
 	/** Handles the save slots. */
 	class GameHandler : public SaveHandler {
-	friend class SaveLoad_v4::ScreenPropsHandler;
+		friend class SaveLoad_v4::ScreenPropsHandler;
+
 	public:
 		GameHandler(GobEngine *vm, const char *target);
 		~GameHandler();
@@ -601,7 +600,8 @@ protected:
 	};
 
 	class CurScreenPropsHandler : public SaveHandler {
-	friend class SaveLoad_v4::ScreenPropsHandler;
+		friend class SaveLoad_v4::ScreenPropsHandler;
+
 	public:
 		CurScreenPropsHandler(GobEngine *vm);
 		~CurScreenPropsHandler();
@@ -617,7 +617,7 @@ protected:
 	class ScreenPropsHandler : public SaveHandler {
 	public:
 		ScreenPropsHandler(GobEngine *vm, uint32 slot,
-				CurScreenPropsHandler *curProps, GameHandler *gameHandler);
+		                   CurScreenPropsHandler *curProps, GameHandler *gameHandler);
 		~ScreenPropsHandler();
 
 		int32 getSize();
@@ -804,19 +804,19 @@ protected:
 
 	private:
 		uint8 _id;
-		int   _slot;
+		int _slot;
 
 		GameHandler *_game;
 	};
 
 	static SaveFile _saveFiles[];
 
-	SpriteHandler     *_spriteHandler;
-	GameHandler       *_gameHandler;
-	AutoHandler       *_autoHandler;
+	SpriteHandler *_spriteHandler;
+	GameHandler *_gameHandler;
+	AutoHandler *_autoHandler;
 	AutoSpriteHandler *_autoSpriteHandler;
-	TempHandler       *_tmpHandler[2];
-	ExtraHandler      *_extraHandler[120];
+	TempHandler *_tmpHandler[2];
+	ExtraHandler *_extraHandler[120];
 
 	SaveHandler *getHandler(const char *fileName) const;
 	const char *getDescription(const char *fileName) const;
@@ -890,7 +890,7 @@ protected:
 };
 
 /** Save/Load class for Playtoons. */
-class SaveLoad_v7: public SaveLoad {
+class SaveLoad_v7 : public SaveLoad {
 public:
 	static const uint32 kChildrenCount = 16;
 
@@ -910,11 +910,11 @@ protected:
 	static SaveFile _saveFiles[];
 
 	TempSpriteHandler *_faceHandler[kChildrenCount];
-	FakeFileHandler   *_childrenHandler;
-	FakeFileHandler   *_debilHandler;
-	FakeFileHandler   *_configHandler;
-	FakeFileHandler   *_addy4BaseHandler[2];
-	FakeFileHandler   *_addy4GrundschuleHandler[11];
+	FakeFileHandler *_childrenHandler;
+	FakeFileHandler *_debilHandler;
+	FakeFileHandler *_configHandler;
+	FakeFileHandler *_addy4BaseHandler[2];
+	FakeFileHandler *_addy4GrundschuleHandler[11];
 
 	SaveHandler *getHandler(const char *fileName) const;
 	const char *getDescription(const char *fileName) const;

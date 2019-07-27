@@ -31,7 +31,10 @@
 namespace CGE {
 
 Fly::Fly(CGEEngine *vm, Bitmap **shpl)
-	: Sprite(vm, shpl), _tx(0), _ty(0), _vm(vm) {
+  : Sprite(vm, shpl)
+  , _tx(0)
+  , _ty(0)
+  , _vm(vm) {
 	step(_vm->newRandom(2));
 	gotoxy(kFlyL + _vm->newRandom(kFlyR - kFlyL - _w), kFlyT + _vm->newRandom(kFlyB - kFlyT - _h));
 }

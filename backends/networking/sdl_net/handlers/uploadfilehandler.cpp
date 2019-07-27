@@ -21,9 +21,9 @@
  */
 
 #include "backends/networking/sdl_net/handlers/uploadfilehandler.h"
+#include "backends/fs/fs-factory.h"
 #include "backends/networking/sdl_net/handlerutils.h"
 #include "backends/networking/sdl_net/uploadfileclienthandler.h"
-#include "backends/fs/fs-factory.h"
 #include "common/system.h"
 #include "common/translation.h"
 

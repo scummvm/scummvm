@@ -22,17 +22,17 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
 #include "fullpipe/floaters.h"
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
@@ -61,7 +61,7 @@ void scene17_restoreState() {
 
 	g_vars->scene17_flyState = g_fp->getObjectState(sO_Fly_17);
 
-	if (g_vars->scene17_flyState <= 0 ) {
+	if (g_vars->scene17_flyState <= 0) {
 		g_vars->scene17_flyCountdown = g_fp->_rnd.getRandomNumber(600) + 600;
 
 		g_vars->scene17_flyState = g_fp->_rnd.getRandomNumber(4) + 1;
@@ -162,7 +162,6 @@ void sceneHandler17_updateFlies() {
 	g_fp->_floaters->_array2[0].val7 = -50;
 }
 
-
 int sceneHandler17(ExCommand *cmd) {
 	if (cmd->_messageKind != 17)
 		return 0;
@@ -206,77 +205,74 @@ int sceneHandler17(ExCommand *cmd) {
 		sceneHandler17_showSugar();
 		break;
 
-	case 29:
-		{
-			int pic = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+	case 29: {
+		int pic = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
-			if (pic == PIC_SC17_RTRUBA2 || pic == PIC_SC17_RTRUBA) {
-				if (cmd->_param == ANI_INV_COIN || cmd->_param == ANI_INV_BOOT || cmd->_param == ANI_INV_HAMMER) {
-					if (g_vars->scene17_handPhase) {
-						if (g_fp->_aniMan->isIdle()) {
-							if (!(g_fp->_aniMan->_flags & 0x100)) {
-								handleObjectInteraction(g_fp->_aniMan, g_vars->scene17_hand, cmd->_param);
-								break;
-							}
+		if (pic == PIC_SC17_RTRUBA2 || pic == PIC_SC17_RTRUBA) {
+			if (cmd->_param == ANI_INV_COIN || cmd->_param == ANI_INV_BOOT || cmd->_param == ANI_INV_HAMMER) {
+				if (g_vars->scene17_handPhase) {
+					if (g_fp->_aniMan->isIdle()) {
+						if (!(g_fp->_aniMan->_flags & 0x100)) {
+							handleObjectInteraction(g_fp->_aniMan, g_vars->scene17_hand, cmd->_param);
+							break;
 						}
 					}
 				}
 			}
 		}
-		break;
+	} break;
 
-	case 33:
-		{
-			int x = g_vars->scene17_sceneEdgeX;
-			g_vars->scene17_sceneOldEdgeX = g_vars->scene17_sceneEdgeX;
+	case 33: {
+		int x = g_vars->scene17_sceneEdgeX;
+		g_vars->scene17_sceneOldEdgeX = g_vars->scene17_sceneEdgeX;
 
-			if (g_fp->_aniMan2) {
-				x = g_fp->_aniMan2->_ox;
+		if (g_fp->_aniMan2) {
+			x = g_fp->_aniMan2->_ox;
 
-				g_vars->scene17_sceneEdgeX = x;
+			g_vars->scene17_sceneEdgeX = x;
 
-				if (x < g_fp->_sceneRect.left + 200) {
-					g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
+			if (x < g_fp->_sceneRect.left + 200) {
+				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
 
-					x = g_vars->scene17_sceneEdgeX;
-				}
-
-				if (x > g_fp->_sceneRect.right - 200) {
-					g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
-					x = g_vars->scene17_sceneEdgeX;
-				}
-			}
-
-			if (g_vars->scene17_sugarIsShown) {
-				sceneHandler17_moonshineFill();
 				x = g_vars->scene17_sceneEdgeX;
 			}
 
-			if (g_vars->scene17_handPhase) {
-				if (g_vars->scene17_sceneOldEdgeX < 410 && x >= 410) {
-					g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 0);
-					g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_ATTRACT, QU_HND17_ATTRACT, 0);
-					g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_ASK, 1);
-				} else if (g_vars->scene17_sceneOldEdgeX > 410 && x <= 410) {
-					g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 1);
-					g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_ATTRACT, QU_HND17_ATTRACT, 1);
-					g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_ASK, 0);
-				}
+			if (x > g_fp->_sceneRect.right - 200) {
+				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
+				x = g_vars->scene17_sceneEdgeX;
 			}
-
-			--g_vars->scene17_flyCountdown;
-
-			if (!g_vars->scene17_flyCountdown)
-				sceneHandler17_updateFlies();
-
-			g_fp->_floaters->update();
-
-			g_fp->_behaviorManager->updateBehaviors();
-
-			g_fp->startSceneTrack();
-
-			break;
 		}
+
+		if (g_vars->scene17_sugarIsShown) {
+			sceneHandler17_moonshineFill();
+			x = g_vars->scene17_sceneEdgeX;
+		}
+
+		if (g_vars->scene17_handPhase) {
+			if (g_vars->scene17_sceneOldEdgeX < 410 && x >= 410) {
+				g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 0);
+				g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_ATTRACT, QU_HND17_ATTRACT, 0);
+				g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_ASK, 1);
+			} else if (g_vars->scene17_sceneOldEdgeX > 410 && x <= 410) {
+				g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 1);
+				g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_ATTRACT, QU_HND17_ATTRACT, 1);
+				g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_ASK, 0);
+			}
+		}
+
+		--g_vars->scene17_flyCountdown;
+
+		if (!g_vars->scene17_flyCountdown)
+			sceneHandler17_updateFlies();
+
+		g_fp->_floaters->update();
+
+		g_fp->_behaviorManager->updateBehaviors();
+
+		g_fp->startSceneTrack();
+
+		break;
+	}
 	}
 
 	return 0;

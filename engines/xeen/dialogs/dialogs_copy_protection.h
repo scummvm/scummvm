@@ -23,8 +23,8 @@
 #ifndef XEEN_DIALOGS_COPY_PROTECTION_H
 #define XEEN_DIALOGS_COPY_PROTECTION_H
 
-#include "xeen/dialogs/dialogs_input.h"
 #include "common/array.h"
+#include "xeen/dialogs/dialogs_input.h"
 
 namespace Xeen {
 
@@ -35,8 +35,10 @@ class CopyProtection : public Input {
 		uint8 _wordNum;
 		Common::String _text;
 	};
+
 private:
 	Common::Array<ProtectionEntry> _entries;
+
 private:
 	/**
 	 * Constructor
@@ -52,6 +54,7 @@ private:
 	 * Load the copy protection entries
 	 */
 	void loadEntries();
+
 public:
 	/**
 	 * Show the dialog

@@ -28,7 +28,6 @@
 //
 // All things considered, I think this is more bother than it's worth.
 
-
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/substream.h"
@@ -36,18 +35,18 @@
 #include "common/textconsole.h"
 
 #include "audio/audiostream.h"
-#include "audio/mixer.h"
+#include "audio/decoders/flac.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/vorbis.h"
-#include "audio/decoders/flac.h"
 #include "audio/decoders/xa.h"
+#include "audio/mixer.h"
 #include "audio/rate.h"
 
-#include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"
 #include "sword2/resman.h"
 #include "sword2/sound.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
@@ -163,19 +162,19 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 	case kMP3Mode: {
 		Common::SafeSeekableSubReadStream *tmp = new Common::SafeSeekableSubReadStream(&fh->file, pos, pos + enc_len);
 		return Audio::makeMP3Stream(tmp, DisposeAfterUse::YES);
-		}
+	}
 #endif
 #ifdef USE_VORBIS
 	case kVorbisMode: {
 		Common::SafeSeekableSubReadStream *tmp = new Common::SafeSeekableSubReadStream(&fh->file, pos, pos + enc_len);
 		return Audio::makeVorbisStream(tmp, DisposeAfterUse::YES);
-		}
+	}
 #endif
 #ifdef USE_FLAC
 	case kFLACMode: {
 		Common::SafeSeekableSubReadStream *tmp = new Common::SafeSeekableSubReadStream(&fh->file, pos, pos + enc_len);
 		return Audio::makeFLACStream(tmp, DisposeAfterUse::YES);
-		}
+	}
 #endif
 	default:
 		return NULL;
@@ -186,12 +185,14 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 // Custom AudioStream class to handle Broken Sword 2's audio compression.
 // ----------------------------------------------------------------------------
 
-#define GetCompressedShift(n)      (((n) >> 4) & 0x0F)
-#define GetCompressedSign(n)       ((n) & 0x08)
-#define GetCompressedAmplitude(n)  ((n) & 0x07)
+#define GetCompressedShift(n) (((n) >> 4) & 0x0F)
+#define GetCompressedSign(n) ((n)&0x08)
+#define GetCompressedAmplitude(n) ((n)&0x07)
 
 CLUInputStream::CLUInputStream(Common::File *file, int size)
-	: _file(file), _firstTime(true), _bufferEnd(_outbuf + BUFFER_SIZE) {
+  : _file(file)
+  , _firstTime(true)
+  , _bufferEnd(_outbuf + BUFFER_SIZE) {
 
 	// Determine the end position.
 	_file_pos = _file->pos();

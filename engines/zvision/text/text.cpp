@@ -20,21 +20,21 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/file.h"
-#include "common/tokenizer.h"
 #include "common/debug.h"
+#include "common/file.h"
 #include "common/rect.h"
-#include "graphics/fontman.h"
+#include "common/scummsys.h"
+#include "common/tokenizer.h"
 #include "graphics/colormasks.h"
-#include "graphics/surface.h"
 #include "graphics/font.h"
+#include "graphics/fontman.h"
 #include "graphics/fonts/ttf.h"
+#include "graphics/surface.h"
 
-#include "zvision/text/text.h"
 #include "zvision/graphics/render_manager.h"
-#include "zvision/text/truetype_font.h"
 #include "zvision/scripting/script_manager.h"
+#include "zvision/text/text.h"
+#include "zvision/text/truetype_font.h"
 
 namespace ZVision {
 
@@ -252,7 +252,6 @@ void TextStyleState::readAllStyles(const Common::String &txt) {
 				}
 			}
 		}
-
 	}
 }
 
@@ -299,9 +298,9 @@ int32 TextRenderer::drawText(const Common::String &text, TextStyleState &state, 
 
 struct TextSurface {
 	TextSurface(Graphics::Surface *surface, Common::Point surfaceOffset, uint lineNumber)
-		: _surface(surface),
-		  _surfaceOffset(surfaceOffset),
-		  _lineNumber(lineNumber) {
+	  : _surface(surface)
+	  , _surfaceOffset(surfaceOffset)
+	  , _lineNumber(lineNumber) {
 	}
 
 	Graphics::Surface *_surface;
@@ -497,7 +496,7 @@ void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics
 		} else if (lineJustifications[iter->_lineNumber] == TEXT_JUSTIFY_CENTER) {
 			_engine->getRenderManager()->blitSurfaceToSurface(*iter->_surface, empty, dest, ((dest.w - lineWidths[iter->_lineNumber]) / 2) + iter->_surfaceOffset.x, iter->_surfaceOffset.y, 0);
 		} else if (lineJustifications[iter->_lineNumber] == TEXT_JUSTIFY_RIGHT) {
-			_engine->getRenderManager()->blitSurfaceToSurface(*iter->_surface, empty, dest, dest.w - lineWidths[iter->_lineNumber]  + iter->_surfaceOffset.x, iter->_surfaceOffset.y, 0);
+			_engine->getRenderManager()->blitSurfaceToSurface(*iter->_surface, empty, dest, dest.w - lineWidths[iter->_lineNumber] + iter->_surfaceOffset.x, iter->_surfaceOffset.y, 0);
 		}
 
 		// Release memory

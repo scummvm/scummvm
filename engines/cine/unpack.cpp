@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "common/endian.h"
 
 #include "cine/unpack.h"
@@ -91,11 +90,11 @@ void CineUnpacker::copyRelocatedBytes(uint offset, uint numBytes) {
 
 bool CineUnpacker::unpack(const byte *src, uint srcLen, byte *dst, uint dstLen) {
 	// Initialize variables used for detecting errors during unpacking
-	_error    = false;
+	_error = false;
 	_srcBegin = src;
-	_srcEnd   = src + srcLen;
+	_srcEnd = src + srcLen;
 	_dstBegin = dst;
-	_dstEnd   = dst + dstLen;
+	_dstEnd = dst + dstLen;
 
 	// Handle already unpacked data here
 	if (srcLen == dstLen) {
@@ -129,7 +128,7 @@ bool CineUnpacker::unpack(const byte *src, uint srcLen, byte *dst, uint dstLen) 
 				unpackRawBytes(numBytes);
 			} else { // 0 1
 				uint numBytes = 2;
-				uint offset   = getBits(8);
+				uint offset = getBits(8);
 				copyRelocatedBytes(offset, numBytes);
 			}
 		} else { // 1...
@@ -139,11 +138,11 @@ bool CineUnpacker::unpack(const byte *src, uint srcLen, byte *dst, uint dstLen) 
 				unpackRawBytes(numBytes);
 			} else if (c < 2) { // 1 0 x
 				uint numBytes = c + 3;
-				uint offset   = getBits(c + 9);
+				uint offset = getBits(c + 9);
 				copyRelocatedBytes(offset, numBytes);
 			} else { // 1 1 0
 				uint numBytes = getBits(8) + 1;
-				uint offset   = getBits(12);
+				uint offset = getBits(12);
 				copyRelocatedBytes(offset, numBytes);
 			}
 		}

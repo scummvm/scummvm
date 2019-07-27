@@ -36,12 +36,12 @@
 
 namespace Tony {
 
-#define INIT_GFX16_FROMRAW(dwRes, buf16)                 \
-	raw = new RMResRaw(dwRes);                             \
-	assert(raw->isValid());                                \
-	assert((buf16) == NULL);                               \
-	(buf16) = new RMGfxSourceBuffer16(false);              \
-	(buf16)->init(*raw, raw->width(), raw->height());      \
+#define INIT_GFX16_FROMRAW(dwRes, buf16)            \
+	raw = new RMResRaw(dwRes);                        \
+	assert(raw->isValid());                           \
+	assert((buf16) == NULL);                          \
+	(buf16) = new RMGfxSourceBuffer16(false);         \
+	(buf16)->init(*raw, raw->width(), raw->height()); \
 	delete raw;
 
 #define INIT_GFX8_FROMRAW(raw, dwRes, buf8)              \
@@ -53,16 +53,16 @@ namespace Tony {
 	delete raw;
 
 // X & Y dimensions of the adventure
-#define RM_SX       640
-#define RM_SY       480
+#define RM_SX 640
+#define RM_SY 480
 
 // X & Y dimensions of bigbuf
-#define RM_BBX      (RM_SX)
-#define RM_BBY      (RM_SY)
+#define RM_BBX (RM_SX)
+#define RM_BBY (RM_SY)
 
 // Skipping X & Y
-#define RM_SKIPY    ((RM_BBY - RM_SY) / 2)
-#define RM_SKIPX    0
+#define RM_SKIPY ((RM_BBY - RM_SY) / 2)
+#define RM_SKIPX 0
 
 // Tony's actions
 enum RMTonyAction {
@@ -173,7 +173,7 @@ public:
 	void hideCursor();
 };
 
-class RMOptionButton: public RMGfxTaskSetPrior {
+class RMOptionButton : public RMGfxTaskSetPrior {
 public:
 	RMRect _rect;
 	RMGfxSourceBuffer16 *_buf;
@@ -248,7 +248,6 @@ private:
 
 	RMOptionSlide *_slideTonySpeed;
 	RMOptionSlide *_slideTextSpeed;
-
 
 	int _statePos;
 	bool _bEditSaveName;

@@ -28,16 +28,16 @@
 
 #include "saga/saga.h"
 
-#include "saga/gfx.h"
+#include "saga/actor.h"
 #include "saga/console.h"
 #include "saga/font.h"
+#include "saga/gfx.h"
 #include "saga/interface.h"
-#include "saga/objectmap.h"
-#include "saga/actor.h"
-#include "saga/scene.h"
 #include "saga/isomap.h"
+#include "saga/objectmap.h"
+#include "saga/scene.h"
 #ifdef SAGA_DEBUG
-#include "saga/render.h"
+#	include "saga/render.h"
 #endif
 
 namespace Saga {
@@ -96,12 +96,9 @@ bool HitZone::hitTest(const Point &testPoint) {
 			points = &i->front();
 			if (pointsCount == 2) {
 				// Hit-test a box region
-				if ((testPoint.x >= points[0].x) &&
-					(testPoint.x <= points[1].x) &&
-					(testPoint.y >= points[0].y) &&
-					(testPoint.y <= points[1].y)) {
-						return true;
-					}
+				if ((testPoint.x >= points[0].x) && (testPoint.x <= points[1].x) && (testPoint.y >= points[0].y) && (testPoint.y <= points[1].y)) {
+					return true;
+				}
 			} else {
 				// Hit-test a polygon
 				if (hitTestPoly(points, pointsCount, testPoint)) {
@@ -189,7 +186,7 @@ void ObjectMap::clear() {
 }
 
 #ifdef SAGA_DEBUG
-void ObjectMap::draw(const Point& testPoint, int color, int color2) {
+void ObjectMap::draw(const Point &testPoint, int color, int color2) {
 	int hitZoneIndex;
 	Common::String txtBuf;
 	Point pickPoint;
@@ -218,7 +215,7 @@ void ObjectMap::draw(const Point& testPoint, int color, int color2) {
 }
 #endif
 
-int ObjectMap::hitTest(const Point& testPoint) {
+int ObjectMap::hitTest(const Point &testPoint) {
 
 	// Loop through all scene objects
 	for (HitZoneArray::iterator i = _hitZoneList.begin(); i != _hitZoneList.end(); ++i) {

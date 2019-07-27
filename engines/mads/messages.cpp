@@ -20,12 +20,12 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "mads/mads.h"
-#include "mads/font.h"
-#include "mads/screen.h"
 #include "mads/messages.h"
+#include "common/scummsys.h"
+#include "mads/font.h"
+#include "mads/mads.h"
 #include "mads/scene_data.h"
+#include "mads/screen.h"
 
 namespace MADS {
 
@@ -44,9 +44,8 @@ void RandomMessages::reset() {
 	}
 }
 
-
 KernelMessages::KernelMessages(MADSEngine *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 	for (int i = 0; i < KERNEL_MESSAGES_SIZE; ++i) {
 		KernelMessage rec;
 		_entries.push_back(rec);
@@ -69,7 +68,7 @@ void KernelMessages::clear() {
 }
 
 int KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags,
-		int endTrigger, uint32 timeout, const Common::String &msg) {
+                        int endTrigger, uint32 timeout, const Common::String &msg) {
 	Scene &scene = _vm->_game->_scene;
 
 	// Find a free slot
@@ -98,8 +97,7 @@ int KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags,
 	rec._actionDetails = scene._action._activeAction;
 
 	if (flags & KMSG_PLAYER_TIMEOUT)
-		rec._frameTimer = _vm->_game->_player._ticksAmount +
-			_vm->_game->_player._priorTimer;
+		rec._frameTimer = _vm->_game->_player._ticksAmount + _vm->_game->_player._priorTimer;
 
 	return idx;
 }
@@ -107,7 +105,7 @@ int KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags,
 int KernelMessages::addQuote(int quoteId, int endTrigger, uint32 timeout) {
 	Common::String quoteStr = _vm->_game->getQuote(quoteId);
 	return add(Common::Point(), 0x1110, KMSG_PLAYER_TIMEOUT | KMSG_CENTER_ALIGN,
-		endTrigger, timeout, quoteStr);
+	           endTrigger, timeout, quoteStr);
 }
 
 void KernelMessages::scrollMessage(int msgIndex, int numTicks, bool quoted) {
@@ -122,8 +120,7 @@ void KernelMessages::scrollMessage(int msgIndex, int numTicks, bool quoted) {
 	Common::String msg = _entries[msgIndex]._msg;
 
 	if (_entries[msgIndex]._flags & KMSG_PLAYER_TIMEOUT)
-		_entries[msgIndex]._frameTimer2 = _vm->_game->_player._ticksAmount +
-		_vm->_game->_player._priorTimer;
+		_entries[msgIndex]._frameTimer2 = _vm->_game->_player._ticksAmount + _vm->_game->_player._priorTimer;
 
 	_entries[msgIndex]._frameTimer = _entries[msgIndex]._frameTimer2;
 }
@@ -233,8 +230,7 @@ void KernelMessages::processText(int msgIndex) {
 
 			int yAmount = player._currentScale * player._centerOfGravity / 100;
 			x1 = player._playerPos.x;
-			y1 = (frame->h * player._currentScale / -100) + yAmount +
-				player._playerPos.y - 15;
+			y1 = (frame->h * player._currentScale / -100) + yAmount + player._playerPos.y - 15;
 		} else {
 			x1 = 160;
 			y1 = 78;
@@ -275,7 +271,7 @@ void KernelMessages::processText(int msgIndex) {
 	if (x1 < 0)
 		x1 = 0;
 
-	if (y1 >(MADS_SCENE_HEIGHT - 1))
+	if (y1 > (MADS_SCENE_HEIGHT - 1))
 		y1 = MADS_SCENE_HEIGHT - 1;
 	if (y1 < 0)
 		y1 = 0;
@@ -293,7 +289,7 @@ void KernelMessages::processText(int msgIndex) {
 	if (msg._textDisplayIndex < 0) {
 		// Need to create a new text display entry for this message
 		int idx = scene._textDisplay.add(x1, y1, msg._color1 | (msg._color2 << 8),
-			scene._textSpacing, displayMsg, _talkFont);
+		                                 scene._textSpacing, displayMsg, _talkFont);
 		if (idx >= 0)
 			msg._textDisplayIndex = idx;
 	}
@@ -318,8 +314,7 @@ void KernelMessages::setQuoted(int msgIndex, int numTicks, bool quoted) {
 		msg._frameTimer2 = _vm->_game->_scene._frameStartTime;
 
 		if (msg._flags & KMSG_PLAYER_TIMEOUT) {
-			msg._frameTimer2 = _vm->_game->_player._priorTimer +
-				_vm->_game->_player._ticksAmount;
+			msg._frameTimer2 = _vm->_game->_player._priorTimer + _vm->_game->_player._ticksAmount;
 		}
 
 		msg._frameTimer = msg._frameTimer2;
@@ -329,8 +324,7 @@ void KernelMessages::setQuoted(int msgIndex, int numTicks, bool quoted) {
 #define RANDOM_MESSAGE_TRIGGER 240
 
 void KernelMessages::randomServer() {
-	if ((_vm->_game->_trigger >= RANDOM_MESSAGE_TRIGGER) &&
-		(_vm->_game->_trigger <  (RANDOM_MESSAGE_TRIGGER + (int)_randomMessages.size()))) {
+	if ((_vm->_game->_trigger >= RANDOM_MESSAGE_TRIGGER) && (_vm->_game->_trigger < (RANDOM_MESSAGE_TRIGGER + (int)_randomMessages.size()))) {
 		_randomMessages[_vm->_game->_trigger - RANDOM_MESSAGE_TRIGGER]._handle = -1;
 		_randomMessages[_vm->_game->_trigger - RANDOM_MESSAGE_TRIGGER]._quoteId = -1;
 	}
@@ -390,7 +384,7 @@ bool KernelMessages::generateRandom(int major, int minor) {
 				// Position the message at a random position
 				Common::Point textPos;
 				textPos.x = _vm->getRandomNumber(_randomMessages._bounds.left,
-					_randomMessages._bounds.right);
+				                                 _randomMessages._bounds.right);
 
 				// Figure out Y position, making sure not to be overlapping with
 				// any other on-screen message
@@ -399,20 +393,20 @@ bool KernelMessages::generateRandom(int major, int minor) {
 				do {
 					// Ensure we don't get stuck in an infinite loop if too many messages
 					// are alrady on-screen
-					if (abortCounter++ > 100) goto done;
+					if (abortCounter++ > 100)
+						goto done;
 					bad = false;
 
 					// Set potential new Y position
 					textPos.y = _vm->getRandomNumber(_randomMessages._bounds.top,
-						_randomMessages._bounds.bottom);
+					                                 _randomMessages._bounds.bottom);
 
 					// Ensure it doesn't overlap an existing on-screen message
 					for (uint msgCtr2 = 0; msgCtr2 < _randomMessages.size(); ++msgCtr2) {
 						if (_randomMessages[msgCtr2]._handle >= 0) {
 							int lastY = _entries[_randomMessages[msgCtr2]._handle]._position.y;
 
-							if ((textPos.y >= (lastY - _randomMessages._randomSpacing)) &&
-								(textPos.y <= (lastY + _randomMessages._randomSpacing))) {
+							if ((textPos.y >= (lastY - _randomMessages._randomSpacing)) && (textPos.y <= (lastY + _randomMessages._randomSpacing))) {
 								bad = true;
 							}
 						}
@@ -421,13 +415,13 @@ bool KernelMessages::generateRandom(int major, int minor) {
 
 				// Add the message
 				_randomMessages[msgCtr]._handle = add(textPos, _randomMessages._color, 0,
-					RANDOM_MESSAGE_TRIGGER + msgCtr, _randomMessages._duration,
-					_vm->_game->getQuote(_randomMessages[msgCtr]._quoteId));
+				                                      RANDOM_MESSAGE_TRIGGER + msgCtr, _randomMessages._duration,
+				                                      _vm->_game->getQuote(_randomMessages[msgCtr]._quoteId));
 
 				if (_randomMessages._scrollRate > 0) {
 					if (_randomMessages[msgCtr]._handle >= 0) {
 						setQuoted(_randomMessages[msgCtr]._handle,
-							_randomMessages._scrollRate, true);
+						          _randomMessages._scrollRate, true);
 					}
 				}
 
@@ -442,8 +436,8 @@ done:
 }
 
 void KernelMessages::initRandomMessages(int maxSimultaneousMessages,
-		const Common::Rect &bounds, int minYSpacing, int scrollRate,
-		int color, int duration, int quoteId, ...) {
+                                        const Common::Rect &bounds, int minYSpacing, int scrollRate,
+                                        int color, int duration, int quoteId, ...) {
 	// Reset the random messages list
 	_randomMessages.clear();
 	_randomMessages.resize(maxSimultaneousMessages);
@@ -479,7 +473,6 @@ void KernelMessages::setAnim(int msgId, int seqId, int val3 = 0) {
 	warning("TODO: KernelMessages::setAnim, unused parameter");
 }
 
-
 /*------------------------------------------------------------------------*/
 
 TextDisplay::TextDisplay() {
@@ -493,7 +486,8 @@ TextDisplay::TextDisplay() {
 
 /*------------------------------------------------------------------------*/
 
-TextDisplayList::TextDisplayList(MADSEngine *vm) : _vm(vm) {
+TextDisplayList::TextDisplayList(MADSEngine *vm)
+  : _vm(vm) {
 	for (int i = 0; i < TEXT_DISPLAY_SIZE; ++i) {
 		TextDisplay rec;
 		rec._active = false;
@@ -508,7 +502,7 @@ void TextDisplayList::reset() {
 }
 
 int TextDisplayList::add(int xp, int yp, uint fontColor, int charSpacing,
-		const Common::String &msg, Font *font) {
+                         const Common::String &msg, Font *font) {
 	int usedSlot = -1;
 
 	for (int idx = 0; idx < TEXT_DISPLAY_SIZE; ++idx) {

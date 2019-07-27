@@ -24,7 +24,7 @@
 #define GOB_CHEATER_H
 
 namespace GUI {
-	class Debugger;
+class Debugger;
 }
 
 namespace Gob {
@@ -55,7 +55,7 @@ public:
 	bool cheat(GUI::Debugger &console);
 
 private:
-	Geisha::Diving      *_diving;
+	Geisha::Diving *_diving;
 	Geisha::Penetration *_penetration;
 };
 

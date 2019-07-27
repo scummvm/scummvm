@@ -23,8 +23,8 @@
 #include "common/coroutines.h"
 #include "common/algorithm.h"
 #include "common/debug.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 
@@ -37,43 +37,45 @@ DECLARE_SINGLETON(CoroutineScheduler);
 
 #ifdef COROUTINE_DEBUG
 namespace {
-/** Count of active coroutines */
-static int s_coroCount = 0;
+	/** Count of active coroutines */
+	static int s_coroCount = 0;
 
-typedef Common::HashMap<Common::String, int> CoroHashMap;
-static CoroHashMap *s_coroFuncs = 0;
+	typedef Common::HashMap<Common::String, int> CoroHashMap;
+	static CoroHashMap *s_coroFuncs = 0;
 
-/**
+	/**
  * Change the current coroutine status
  */
-static void changeCoroStats(const char *func, int change) {
-	if (!s_coroFuncs)
-		s_coroFuncs = new CoroHashMap();
+	static void changeCoroStats(const char *func, int change) {
+		if (!s_coroFuncs)
+			s_coroFuncs = new CoroHashMap();
 
-	(*s_coroFuncs)[func] += change;
-}
+		(*s_coroFuncs)[func] += change;
+	}
 
-/**
+	/**
  * Display the details of active coroutines
  */
-static void displayCoroStats() {
-	debug("%d active coros", s_coroCount);
+	static void displayCoroStats() {
+		debug("%d active coros", s_coroCount);
 
-	// Loop over s_coroFuncs and print info about active coros
-	if (!s_coroFuncs)
-		return;
-	for (CoroHashMap::const_iterator it = s_coroFuncs->begin();
-	        it != s_coroFuncs->end(); ++it) {
-		if (it->_value != 0)
-			debug("  %3d x %s", it->_value, it->_key.c_str());
+		// Loop over s_coroFuncs and print info about active coros
+		if (!s_coroFuncs)
+			return;
+		for (CoroHashMap::const_iterator it = s_coroFuncs->begin();
+		     it != s_coroFuncs->end(); ++it) {
+			if (it->_value != 0)
+				debug("  %3d x %s", it->_value, it->_key.c_str());
+		}
 	}
-}
 
 } // End of anonymous namespace
 #endif
 
 CoroBaseContext::CoroBaseContext(const char *func)
-	: _line(0), _sleep(0), _subctx(nullptr) {
+  : _line(0)
+  , _sleep(0)
+  , _subctx(nullptr) {
 #ifdef COROUTINE_DEBUG
 	_funcName = func;
 	changeCoroStats(_funcName, +1);
@@ -176,7 +178,6 @@ void CoroutineScheduler::reset() {
 		processList[i - 1].pPrevious = (i == 1) ? active : processList + (i - 2);
 	}
 }
-
 
 #ifdef DEBUG
 void CoroutineScheduler::printStats() {
@@ -328,7 +329,6 @@ void CoroutineScheduler::giveWay(PPROCESS pReSchedProc) {
 		;
 	assert(pEnd->pNext == nullptr);
 
-
 	// If we're moving the current process, move it back by one, so that the next
 	// schedule() iteration moves to the now next one
 	if (pCurrent == pReSchedProc)
@@ -347,9 +347,9 @@ void CoroutineScheduler::waitForSingleObject(CORO_PARAM, int pid, uint32 duratio
 		error("Called CoroutineScheduler::waitForSingleObject from the main process");
 
 	CORO_BEGIN_CONTEXT;
-		uint32 endTime;
-		PROCESS *pProcess;
-		EVENT *pEvent;
+	uint32 endTime;
+	PROCESS *pProcess;
+	EVENT *pEvent;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -404,12 +404,12 @@ void CoroutineScheduler::waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *
 		error("Called CoroutineScheduler::waitForMultipleObjects from the main process");
 
 	CORO_BEGIN_CONTEXT;
-		uint32 endTime;
-		bool signalled;
-		bool pidSignalled;
-		int i;
-		PROCESS *pProcess;
-		EVENT *pEvent;
+	uint32 endTime;
+	bool signalled;
+	bool pidSignalled;
+	int i;
+	PROCESS *pProcess;
+	EVENT *pEvent;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -470,9 +470,9 @@ void CoroutineScheduler::sleep(CORO_PARAM, uint32 duration) {
 		error("Called CoroutineScheduler::sleep from the main process");
 
 	CORO_BEGIN_CONTEXT;
-		uint32 endTime;
-		PROCESS *pProcess;
-		EVENT *pEvent;
+	uint32 endTime;
+	PROCESS *pProcess;
+	EVENT *pEvent;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -525,7 +525,6 @@ PROCESS *CoroutineScheduler::createProcess(uint32 pid, CORO_ADDR coroAddr, const
 		if (pProc->pNext)
 			pProc->pNext->pPrevious = pProc;
 		active->pNext = pProc;
-
 	}
 
 	// set coroutine entry point
@@ -681,7 +680,6 @@ EVENT *CoroutineScheduler::getEvent(uint32 pid) {
 
 	return nullptr;
 }
-
 
 uint32 CoroutineScheduler::createEvent(bool bManualReset, bool bInitialState) {
 	EVENT *evt = new EVENT();

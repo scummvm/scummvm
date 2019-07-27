@@ -22,43 +22,42 @@
 
 #include "startrek/room.h"
 
-#define HOTSPOT_EYES_1   0x20
-#define HOTSPOT_EYES_2   0x21
-#define HOTSPOT_EYES_3   0x22
+#define HOTSPOT_EYES_1 0x20
+#define HOTSPOT_EYES_2 0x21
+#define HOTSPOT_EYES_3 0x22
 #define HOTSPOT_BIG_TREE 0x23
-#define HOTSPOT_TREES    0x24
+#define HOTSPOT_TREES 0x24
 #define HOTSPOT_VINES 0x25
 #define HOTSPOT_LEFT_EXIT 0x26
 
 namespace StarTrek {
 
 extern const RoomAction feather2ActionList[] = {
-	{ {ACTION_TICK, 1, 0, 0},                 &Room::feather2Tick1 },
-	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0},    &Room::feather2UseCommunicator },
-	{ {ACTION_USE, OBJECT_IPHASERS, 0xff, 0}, &Room::feather2UsePhaser },
-	{ {ACTION_USE, OBJECT_IPHASERK, 0xff, 0}, &Room::feather2UsePhaser },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0}, &Room::feather2UseSTricorderAnywhere },
-	{ {ACTION_USE, OBJECT_IMTRICOR, 0xff, 0}, &Room::feather2UseMTricorderAnywhere },
-	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0},      &Room::feather2TalkToMccoy },
-	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0},      &Room::feather2TalkToSpock },
-	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0},   &Room::feather2TalkToRedshirt },
-	{ {ACTION_LOOK, HOTSPOT_VINES, 0, 0},     &Room::feather2LookAtVines },
-	{ {ACTION_USE, OBJECT_IMEDKIT, 0xff, 0},  &Room::feather2UseMedkit },
-	{ {ACTION_WALK, HOTSPOT_LEFT_EXIT, 0, 0}, &Room::feather2WalkToLeftExit },
-	{ {ACTION_LOOK, HOTSPOT_EYES_1,    0, 0}, &Room::feather2LookAtEyes },
-	{ {ACTION_LOOK, HOTSPOT_EYES_2,    0, 0}, &Room::feather2LookAtEyes },
-	{ {ACTION_LOOK, HOTSPOT_EYES_3,    0, 0}, &Room::feather2LookAtEyes },
-	{ {ACTION_LOOK, HOTSPOT_BIG_TREE,  0, 0}, &Room::feather2LookAtBigTree },
-	{ {ACTION_LOOK, HOTSPOT_TREES,     0, 0}, &Room::feather2LookAtTrees },
-	{ {ACTION_LOOK, 0xff,              0, 0}, &Room::feather2LookAnywhere },
-	{ {ACTION_LOOK, OBJECT_KIRK,       0, 0}, &Room::feather2LookAtKirk },
-	{ {ACTION_LOOK, OBJECT_SPOCK,      0, 0}, &Room::feather2LookAtSpock },
-	{ {ACTION_LOOK, OBJECT_MCCOY,      0, 0}, &Room::feather2LookAtMccoy },
-	{ {ACTION_LOOK, OBJECT_REDSHIRT,   0, 0}, &Room::feather2LookAtRedshirt },
+	{ { ACTION_TICK, 1, 0, 0 }, &Room::feather2Tick1 },
+	{ { ACTION_USE, OBJECT_ICOMM, 0xff, 0 }, &Room::feather2UseCommunicator },
+	{ { ACTION_USE, OBJECT_IPHASERS, 0xff, 0 }, &Room::feather2UsePhaser },
+	{ { ACTION_USE, OBJECT_IPHASERK, 0xff, 0 }, &Room::feather2UsePhaser },
+	{ { ACTION_USE, OBJECT_ISTRICOR, 0xff, 0 }, &Room::feather2UseSTricorderAnywhere },
+	{ { ACTION_USE, OBJECT_IMTRICOR, 0xff, 0 }, &Room::feather2UseMTricorderAnywhere },
+	{ { ACTION_TALK, OBJECT_MCCOY, 0, 0 }, &Room::feather2TalkToMccoy },
+	{ { ACTION_TALK, OBJECT_SPOCK, 0, 0 }, &Room::feather2TalkToSpock },
+	{ { ACTION_TALK, OBJECT_REDSHIRT, 0, 0 }, &Room::feather2TalkToRedshirt },
+	{ { ACTION_LOOK, HOTSPOT_VINES, 0, 0 }, &Room::feather2LookAtVines },
+	{ { ACTION_USE, OBJECT_IMEDKIT, 0xff, 0 }, &Room::feather2UseMedkit },
+	{ { ACTION_WALK, HOTSPOT_LEFT_EXIT, 0, 0 }, &Room::feather2WalkToLeftExit },
+	{ { ACTION_LOOK, HOTSPOT_EYES_1, 0, 0 }, &Room::feather2LookAtEyes },
+	{ { ACTION_LOOK, HOTSPOT_EYES_2, 0, 0 }, &Room::feather2LookAtEyes },
+	{ { ACTION_LOOK, HOTSPOT_EYES_3, 0, 0 }, &Room::feather2LookAtEyes },
+	{ { ACTION_LOOK, HOTSPOT_BIG_TREE, 0, 0 }, &Room::feather2LookAtBigTree },
+	{ { ACTION_LOOK, HOTSPOT_TREES, 0, 0 }, &Room::feather2LookAtTrees },
+	{ { ACTION_LOOK, 0xff, 0, 0 }, &Room::feather2LookAnywhere },
+	{ { ACTION_LOOK, OBJECT_KIRK, 0, 0 }, &Room::feather2LookAtKirk },
+	{ { ACTION_LOOK, OBJECT_SPOCK, 0, 0 }, &Room::feather2LookAtSpock },
+	{ { ACTION_LOOK, OBJECT_MCCOY, 0, 0 }, &Room::feather2LookAtMccoy },
+	{ { ACTION_LOOK, OBJECT_REDSHIRT, 0, 0 }, &Room::feather2LookAtRedshirt },
 };
 
 extern const int feather2NumActions = ARRAYSIZE(feather2ActionList);
-
 
 void Room::feather2Tick1() {
 	playVoc("FEA2LOOP");
@@ -99,7 +98,7 @@ void Room::feather2LookAtVines() {
 	// NOTE: This might be unused? I can't find where HOTSPOT_VINES is supposed to be.
 	showDescription(TX_FEA2N000);
 	showText(TX_SPEAKER_STRAGEY, TX_FEA2_010);
-	showText(TX_SPEAKER_MCCOY,   TX_FEA2_005);
+	showText(TX_SPEAKER_MCCOY, TX_FEA2_005);
 }
 
 void Room::feather2UseMedkit() {

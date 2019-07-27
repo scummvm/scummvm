@@ -30,10 +30,10 @@ class SoundHandle;
 
 namespace Agi {
 
-#define SOUND_EMU_NONE  0
-#define SOUND_EMU_PC    1
-#define SOUND_EMU_PCJR  2
-#define SOUND_EMU_MAC   3
+#define SOUND_EMU_NONE 0
+#define SOUND_EMU_PC 1
+#define SOUND_EMU_PCJR 2
+#define SOUND_EMU_MAC 3
 #define SOUND_EMU_AMIGA 4
 #define SOUND_EMU_APPLE2GS 5
 #define SOUND_EMU_COCO3 6
@@ -43,9 +43,9 @@ namespace Agi {
  * AGI sound note structure.
  */
 struct AgiNote {
-	uint16 duration;    ///< Note duration
-	uint16 freqDiv;     ///< Note frequency divisor (10-bit)
-	uint8  attenuation; ///< Note volume attenuation (4-bit)
+	uint16 duration; ///< Note duration
+	uint16 freqDiv; ///< Note frequency divisor (10-bit)
+	uint8 attenuation; ///< Note volume attenuation (4-bit)
 
 	/** Reads an AgiNote through the given pointer. */
 	void read(const uint8 *ptr) {
@@ -65,9 +65,9 @@ struct AgiNote {
  * starts (The first 16-bit little endian word, to be precise).
  */
 enum AgiSoundEmuType {
-	AGI_SOUND_SAMPLE    = 0x0001,
-	AGI_SOUND_MIDI      = 0x0002,
-	AGI_SOUND_4CHN      = 0x0008
+	AGI_SOUND_SAMPLE = 0x0001,
+	AGI_SOUND_MIDI = 0x0002,
+	AGI_SOUND_4CHN = 0x0008
 };
 
 class SoundMgr;
@@ -93,10 +93,12 @@ public:
  */
 class AgiSound {
 public:
-	AgiSound() : _isPlaying(false), _isValid(false) {}
+	AgiSound()
+	  : _isPlaying(false)
+	  , _isValid(false) {}
 	virtual ~AgiSound() {}
-	virtual void play()      { _isPlaying = true; }
-	virtual void stop()      { _isPlaying = false; }
+	virtual void play() { _isPlaying = true; }
+	virtual void stop() { _isPlaying = false; }
 	virtual bool isPlaying() { return _isPlaying; }
 	virtual uint16 type() = 0;
 
@@ -111,8 +113,8 @@ public:
 	static AgiSound *createFromRawResource(uint8 *data, uint32 len, int resnum, int soundemu);
 
 protected:
-	bool _isPlaying;    ///< Is the sound playing?
-	bool _isValid;      ///< Is this a valid sound object?
+	bool _isPlaying; ///< Is the sound playing?
+	bool _isValid; ///< Is this a valid sound object?
 };
 
 class PCjrSound : public AgiSound {
@@ -123,9 +125,10 @@ public:
 	const uint8 *getVoicePointer(uint voiceNum);
 	uint8 *getData() { return _data; }
 	uint32 getLength() { return _len; }
+
 protected:
 	uint8 *_data; ///< Raw sound resource data
-	uint32 _len;  ///< Length of the raw sound resource
+	uint32 _len; ///< Length of the raw sound resource
 	uint16 _type; ///< Sound resource type
 };
 

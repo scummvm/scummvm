@@ -23,14 +23,14 @@
 #include "common/config-manager.h"
 
 #include "agi/agi.h"
-#include "agi/sprite.h"
+#include "agi/appleIIgs_timedelay_overwrite.h"
 #include "agi/graphics.h"
 #include "agi/inv.h"
-#include "agi/text.h"
 #include "agi/keyboard.h"
 #include "agi/menu.h"
+#include "agi/sprite.h"
 #include "agi/systemui.h"
-#include "agi/appleIIgs_timedelay_overwrite.h"
+#include "agi/text.h"
 
 namespace Agi {
 
@@ -313,8 +313,8 @@ int AgiEngine::playGame() {
 	_game.playerControl = false;
 
 	setFlag(VM_FLAG_LOGIC_ZERO_FIRST_TIME, true); // not in 2.917
-	setFlag(VM_FLAG_NEW_ROOM_EXEC, true);         // needed for MUMG and SQ2!
-	setFlag(VM_FLAG_SOUND_ON, true);              // enable sound
+	setFlag(VM_FLAG_NEW_ROOM_EXEC, true); // needed for MUMG and SQ2!
+	setFlag(VM_FLAG_SOUND_ON, true); // enable sound
 	// do not set VM_VAR_TIME_DELAY, original AGI did not do it (in the data segment it was simply set to 0)
 
 	_game.gfxMode = true;
@@ -322,7 +322,7 @@ int AgiEngine::playGame() {
 
 	// We run AGIMOUSE always as a side effect
 	//if (getFeatures() & GF_AGIMOUSE)
-		debug(1, "Using AGI Mouse 1.0 protocol");
+	debug(1, "Using AGI Mouse 1.0 protocol");
 
 	if (getFeatures() & GF_AGIPAL)
 		debug(1, "Running AGIPAL game");

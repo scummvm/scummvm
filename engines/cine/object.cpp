@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "common/util.h"
@@ -52,9 +51,11 @@ void loadObject(char *pObjectName) {
 
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
-	numEntry = READ_BE_UINT16(ptr); ptr += 2;
+	numEntry = READ_BE_UINT16(ptr);
+	ptr += 2;
 
-	entrySize = READ_BE_UINT16(ptr); ptr += 2;
+	entrySize = READ_BE_UINT16(ptr);
+	ptr += 2;
 
 	assert(numEntry <= NUM_MAX_OBJECT);
 
@@ -261,9 +262,7 @@ uint16 compareObjectParamRanges(uint16 objIdx1, uint16 xAdd1, uint16 yAdd1, uint
 	const ObjectStruct &obj1 = g_cine->_objectTable[objIdx1];
 	const ObjectStruct &obj2 = g_cine->_objectTable[objIdx2];
 
-	if (compareRanges(obj1.x,    obj1.x    + xAdd1,    obj2.x,    obj2.x    + xAdd2) &&
-		compareRanges(obj1.y,    obj1.y    + yAdd1,    obj2.y,    obj2.y    + yAdd2) &&
-		compareRanges(obj1.mask, obj1.mask + maskAdd1, obj2.mask, obj2.mask + maskAdd2)) {
+	if (compareRanges(obj1.x, obj1.x + xAdd1, obj2.x, obj2.x + xAdd2) && compareRanges(obj1.y, obj1.y + yAdd1, obj2.y, obj2.y + yAdd2) && compareRanges(obj1.mask, obj1.mask + maskAdd1, obj2.mask, obj2.mask + maskAdd2)) {
 		return kCmpEQ;
 	} else {
 		return 0;

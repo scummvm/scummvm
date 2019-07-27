@@ -21,19 +21,21 @@
  */
 
 #include "neverhood/module.h"
-#include "neverhood/navigationscene.h"
-#include "neverhood/smackerscene.h"
 #include "neverhood/modules/module1000.h"
 #include "neverhood/modules/module1500.h"
+#include "neverhood/navigationscene.h"
+#include "neverhood/smackerscene.h"
 
 namespace Neverhood {
 
 Module::Module(NeverhoodEngine *vm, Module *parentModule)
-	: Entity(vm, 0), _parentModule(parentModule), _childObject(NULL),
-	_done(false), _sceneType(kSceneTypeNormal) {
+  : Entity(vm, 0)
+  , _parentModule(parentModule)
+  , _childObject(NULL)
+  , _done(false)
+  , _sceneType(kSceneTypeNormal) {
 
 	SetMessageHandler(&Module::handleMessage);
-
 }
 
 Module::~Module() {
@@ -67,7 +69,7 @@ uint32 Module::handleMessage(int messageNum, const MessageParam &param, Entity *
 }
 
 NavigationScene *Module::navigationScene() {
-	return (NavigationScene*)_childObject;
+	return (NavigationScene *)_childObject;
 }
 
 void Module::createNavigationScene(uint32 navigationListId, int navigationIndex, const byte *itemsTypes) {

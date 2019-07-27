@@ -31,70 +31,70 @@ namespace Graphics {
 
 namespace {
 
-template<typename SrcColor, typename DstColor, bool backward>
-inline void crossBlitLogic(byte *dst, const byte *src, const uint w, const uint h,
-                           const PixelFormat &srcFmt, const PixelFormat &dstFmt,
-                           const uint srcDelta, const uint dstDelta) {
-	for (uint y = 0; y < h; ++y) {
-		for (uint x = 0; x < w; ++x) {
-			const uint32 color = *(const SrcColor *)src;
-			byte a, r, g, b;
-			srcFmt.colorToARGB(color, a, r, g, b);
-			*(DstColor *)dst = dstFmt.ARGBToColor(a, r, g, b);
+	template <typename SrcColor, typename DstColor, bool backward>
+	inline void crossBlitLogic(byte *dst, const byte *src, const uint w, const uint h,
+	                           const PixelFormat &srcFmt, const PixelFormat &dstFmt,
+	                           const uint srcDelta, const uint dstDelta) {
+		for (uint y = 0; y < h; ++y) {
+			for (uint x = 0; x < w; ++x) {
+				const uint32 color = *(const SrcColor *)src;
+				byte a, r, g, b;
+				srcFmt.colorToARGB(color, a, r, g, b);
+				*(DstColor *)dst = dstFmt.ARGBToColor(a, r, g, b);
+
+				if (backward) {
+					src -= sizeof(SrcColor);
+					dst -= sizeof(DstColor);
+				} else {
+					src += sizeof(SrcColor);
+					dst += sizeof(DstColor);
+				}
+			}
 
 			if (backward) {
-				src -= sizeof(SrcColor);
-				dst -= sizeof(DstColor);
+				src -= srcDelta;
+				dst -= dstDelta;
 			} else {
-				src += sizeof(SrcColor);
-				dst += sizeof(DstColor);
+				src += srcDelta;
+				dst += dstDelta;
 			}
 		}
-
-		if (backward) {
-			src -= srcDelta;
-			dst -= dstDelta;
-		} else {
-			src += srcDelta;
-			dst += dstDelta;
-		}
 	}
-}
 
-template<typename DstColor, bool backward>
-inline void crossBlitLogic3BppSource(byte *dst, const byte *src, const uint w, const uint h,
-                                     const PixelFormat &srcFmt, const PixelFormat &dstFmt,
-                                     const uint srcDelta, const uint dstDelta) {
-	uint32 color;
-	byte r, g, b, a;
-	uint8 *col = (uint8 *)&color;
+	template <typename DstColor, bool backward>
+	inline void crossBlitLogic3BppSource(byte *dst, const byte *src, const uint w, const uint h,
+	                                     const PixelFormat &srcFmt, const PixelFormat &dstFmt,
+	                                     const uint srcDelta, const uint dstDelta) {
+		uint32 color;
+		byte r, g, b, a;
+		uint8 *col = (uint8 *)&color;
 #ifdef SCUMM_BIG_ENDIAN
-	col++;
+		col++;
 #endif
-	for (uint y = 0; y < h; ++y) {
-		for (uint x = 0; x < w; ++x) {
-			memcpy(col, src, 3);
-			srcFmt.colorToARGB(color, a, r, g, b);
-			*(DstColor *)dst = dstFmt.ARGBToColor(a, r, g, b);
+		for (uint y = 0; y < h; ++y) {
+			for (uint x = 0; x < w; ++x) {
+				memcpy(col, src, 3);
+				srcFmt.colorToARGB(color, a, r, g, b);
+				*(DstColor *)dst = dstFmt.ARGBToColor(a, r, g, b);
+
+				if (backward) {
+					src -= 3;
+					dst -= sizeof(DstColor);
+				} else {
+					src += 3;
+					dst += sizeof(DstColor);
+				}
+			}
 
 			if (backward) {
-				src -= 3;
-				dst -= sizeof(DstColor);
+				src -= srcDelta;
+				dst -= dstDelta;
 			} else {
-				src += 3;
-				dst += sizeof(DstColor);
+				src += srcDelta;
+				dst += dstDelta;
 			}
 		}
-
-		if (backward) {
-			src -= srcDelta;
-			dst -= dstDelta;
-		} else {
-			src += srcDelta;
-			dst += dstDelta;
-		}
 	}
-}
 
 } // End of anonymous namespace
 
@@ -105,8 +105,8 @@ bool crossBlit(byte *dst, const byte *src,
                const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt) {
 	// Error out if conversion is impossible
 	if ((srcFmt.bytesPerPixel == 1) || (dstFmt.bytesPerPixel == 1)
-			 || (dstFmt.bytesPerPixel == 3)
-			 || (!srcFmt.bytesPerPixel) || (!dstFmt.bytesPerPixel))
+	    || (dstFmt.bytesPerPixel == 3)
+	    || (!srcFmt.bytesPerPixel) || (!dstFmt.bytesPerPixel))
 		return false;
 
 	// Don't perform unnecessary conversion

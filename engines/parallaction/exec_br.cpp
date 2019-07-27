@@ -28,45 +28,45 @@
 
 namespace Parallaction {
 
-#define INST_ON			1
-#define INST_OFF		2
-#define INST_X			3
-#define INST_Y			4
-#define INST_Z			5
-#define INST_F			6
-#define INST_LOOP		7
-#define INST_ENDLOOP	8
-#define INST_SHOW		9
-#define INST_INC		10
-#define INST_DEC		11
-#define INST_SET		12
-#define INST_PUT		13
-#define INST_CALL		14
-#define INST_WAIT		15
-#define INST_START		16
-#define INST_PROCESS	17
-#define INST_MOVE		18
-#define INST_COLOR		19
-#define INST_SOUND		20
-#define INST_MASK		21
-#define INST_PRINT		22
-#define INST_TEXT		23
-#define INST_MUL		24
-#define INST_DIV		25
-#define INST_IFEQ		26
-#define INST_IFLT		27
-#define INST_IFGT		28
-#define INST_ENDIF		29
-#define INST_STOP		30
-#define INST_ENDSCRIPT	31
+#define INST_ON 1
+#define INST_OFF 2
+#define INST_X 3
+#define INST_Y 4
+#define INST_Z 5
+#define INST_F 6
+#define INST_LOOP 7
+#define INST_ENDLOOP 8
+#define INST_SHOW 9
+#define INST_INC 10
+#define INST_DEC 11
+#define INST_SET 12
+#define INST_PUT 13
+#define INST_CALL 14
+#define INST_WAIT 15
+#define INST_START 16
+#define INST_PROCESS 17
+#define INST_MOVE 18
+#define INST_COLOR 19
+#define INST_SOUND 20
+#define INST_MASK 21
+#define INST_PRINT 22
+#define INST_TEXT 23
+#define INST_MUL 24
+#define INST_DIV 25
+#define INST_IFEQ 26
+#define INST_IFLT 27
+#define INST_IFGT 28
+#define INST_ENDIF 29
+#define INST_STOP 30
+#define INST_ENDSCRIPT 31
 
 #define SetOpcodeTable(x) table = &x;
 
-typedef Common::Functor1Mem<CommandContext&, void, CommandExec_br> OpcodeV1;
+typedef Common::Functor1Mem<CommandContext &, void, CommandExec_br> OpcodeV1;
 #define COMMAND_OPCODE(op) table->push_back(new OpcodeV1(this, &CommandExec_br::cmdOp_##op))
 #define DECLARE_COMMAND_OPCODE(op) void CommandExec_br::cmdOp_##op(CommandContext &ctxt)
 
-typedef Common::Functor1Mem<ProgramContext&, void, ProgramExec_br> OpcodeV2;
+typedef Common::Functor1Mem<ProgramContext &, void, ProgramExec_br> OpcodeV2;
 #define INSTRUCTION_OPCODE(op) table->push_back(new OpcodeV2(this, &ProgramExec_br::instOp_##op))
 #define DECLARE_INSTRUCTION_OPCODE(op) void ProgramExec_br::instOp_##op(ProgramContext &ctxt)
 
@@ -97,7 +97,7 @@ void Parallaction_br::setupSubtitles(const char *s, const char *s2, int y) {
 	} else {
 		_subtitle[1] = 0;
 	}
-#if 0	// disabled because no references to lip sync has been found in the scripts
+#if 0 // disabled because no references to lip sync has been found in the scripts
 	_subtitleLipSync = 0;
 #endif
 }
@@ -116,7 +116,6 @@ void Parallaction_br::clearSubtitles() {
 	_subtitle[1] = 0;
 }
 
-
 DECLARE_COMMAND_OPCODE(location) {
 	_vm->_location._startPosition = ctxt._cmd->_startPos;
 	_vm->_location._startFrame = 0;
@@ -126,36 +125,29 @@ DECLARE_COMMAND_OPCODE(location) {
 	_vm->scheduleLocationSwitch(ctxt._cmd->_string.c_str());
 }
 
-
 DECLARE_COMMAND_OPCODE(open) {
 	_vm->updateDoor(ctxt._cmd->_zone, false);
 }
-
 
 DECLARE_COMMAND_OPCODE(close) {
 	_vm->updateDoor(ctxt._cmd->_zone, true);
 }
 
-
 DECLARE_COMMAND_OPCODE(on) {
 	_vm->showZone(ctxt._cmd->_zone, true);
 }
-
 
 DECLARE_COMMAND_OPCODE(off) {
 	_vm->showZone(ctxt._cmd->_zone, false);
 }
 
-
 DECLARE_COMMAND_OPCODE(call) {
 	_vm->callFunction(ctxt._cmd->_callable, &ctxt._z);
 }
 
-
 DECLARE_COMMAND_OPCODE(drop) {
 	_vm->dropItem(ctxt._cmd->_object);
 }
-
 
 DECLARE_COMMAND_OPCODE(move) {
 	_vm->scheduleWalk(ctxt._cmd->_move.x, ctxt._cmd->_move.y, false);
@@ -170,12 +162,10 @@ DECLARE_COMMAND_OPCODE(stop) {
 	ctxt._cmd->_zone->_flags &= ~kFlagsActing;
 }
 
-
 DECLARE_COMMAND_OPCODE(character) {
 	debugC(9, kDebugExec, "Parallaction_br::cmdOp_character(%s)", ctxt._cmd->_string.c_str());
 	_vm->changeCharacter(ctxt._cmd->_string.c_str());
 }
-
 
 DECLARE_COMMAND_OPCODE(followme) {
 	Common::String s(ctxt._cmd->_string);
@@ -185,21 +175,17 @@ DECLARE_COMMAND_OPCODE(followme) {
 	_vm->setFollower(s);
 }
 
-
 DECLARE_COMMAND_OPCODE(onmouse) {
 	_vm->_input->setMouseState(MOUSE_ENABLED_SHOW);
 }
-
 
 DECLARE_COMMAND_OPCODE(offmouse) {
 	_vm->_input->setMouseState(MOUSE_DISABLED);
 }
 
-
 DECLARE_COMMAND_OPCODE(add) {
 	_vm->addInventoryItem(ctxt._cmd->_object);
 }
-
 
 DECLARE_COMMAND_OPCODE(leave) {
 	ZonePtr z = ctxt._cmd->_zone;
@@ -207,12 +193,10 @@ DECLARE_COMMAND_OPCODE(leave) {
 	_vm->showZone(z, true);
 }
 
-
 DECLARE_COMMAND_OPCODE(inc) {
 	int v = _vm->getCounterValue(ctxt._cmd->_counterName);
 	_vm->setCounterValue(ctxt._cmd->_counterName, v + ctxt._cmd->_counterValue);
 }
-
 
 DECLARE_COMMAND_OPCODE(dec) {
 	int v = _vm->getCounterValue(ctxt._cmd->_counterName);
@@ -220,9 +204,9 @@ DECLARE_COMMAND_OPCODE(dec) {
 }
 
 // these definitions must match those in parser_br.cpp
-#define CMD_TEST		25
-#define CMD_TEST_GT		26
-#define CMD_TEST_LT		27
+#define CMD_TEST 25
+#define CMD_TEST_GT 26
+#define CMD_TEST_LT 27
 
 DECLARE_COMMAND_OPCODE(ifeq) {
 	_vm->testCounterCondition(ctxt._cmd->_counterName, CMD_TEST, ctxt._cmd->_counterValue);
@@ -236,26 +220,21 @@ DECLARE_COMMAND_OPCODE(ifgt) {
 	_vm->testCounterCondition(ctxt._cmd->_counterName, CMD_TEST_GT, ctxt._cmd->_counterValue);
 }
 
-
 DECLARE_COMMAND_OPCODE(let) {
 	_vm->setCounterValue(ctxt._cmd->_counterName, ctxt._cmd->_counterValue);
 }
-
 
 DECLARE_COMMAND_OPCODE(music) {
 	warning("Parallaction_br::cmdOp_music not yet implemented");
 }
 
-
 DECLARE_COMMAND_OPCODE(fix) {
 	ctxt._cmd->_zone->_flags |= kFlagsFixed;
 }
 
-
 DECLARE_COMMAND_OPCODE(unfix) {
 	ctxt._cmd->_zone->_flags &= ~kFlagsFixed;
 }
-
 
 DECLARE_COMMAND_OPCODE(zeta) {
 	_vm->_location._zeta0 = ctxt._cmd->_zeta0;
@@ -263,18 +242,15 @@ DECLARE_COMMAND_OPCODE(zeta) {
 	_vm->_location._zeta2 = ctxt._cmd->_zeta2;
 }
 
-
 DECLARE_COMMAND_OPCODE(scroll) {
 	Common::Point p;
 	_vm->_gfx->getScrollPos(p);
 	_vm->_gfx->initiateScroll(ctxt._cmd->_counterValue - p.x, 0);
 }
 
-
 DECLARE_COMMAND_OPCODE(swap) {
 	warning("Parallaction_br::cmdOp_swap not yet implemented");
 }
-
 
 DECLARE_COMMAND_OPCODE(give) {
 	warning("Parallaction_br::cmdOp_give not yet implemented");
@@ -282,39 +258,33 @@ DECLARE_COMMAND_OPCODE(give) {
 	/* NOTE: the following code is disabled until I deal with _inventory and
 	 * _charInventories not being public
 	 */
-/*  int item = ctxt._cmd->_object;
+	/*  int item = ctxt._cmd->_object;
 	int recipient = ctxt._cmd->_characterId;
 	_vm->_charInventories[recipient]->addItem(item);
 	_vm->_inventory->removeItem(item);
 */
 }
 
-
 DECLARE_COMMAND_OPCODE(text) {
 	_vm->setupSubtitles(ctxt._cmd->_string.c_str(), ctxt._cmd->_string2.c_str(), ctxt._cmd->_zeta0);
 }
-
 
 DECLARE_COMMAND_OPCODE(part) {
 	_vm->_nextPart = ctxt._cmd->_counterValue;
 }
 
-
 DECLARE_COMMAND_OPCODE(testsfx) {
 	warning("Parallaction_br::cmdOp_testsfx not completely implemented");
-	_vm->clearLocationFlags(kFlagsTestTrue);	// should test if sfx are enabled
+	_vm->clearLocationFlags(kFlagsTestTrue); // should test if sfx are enabled
 }
-
 
 DECLARE_COMMAND_OPCODE(ret) {
 	g_engineFlags |= kEngineReturn;
 }
 
-
 DECLARE_COMMAND_OPCODE(onsave) {
 	warning("Parallaction_br::cmdOp_onsave not yet implemented");
 }
-
 
 DECLARE_COMMAND_OPCODE(offsave) {
 	warning("Parallaction_br::cmdOp_offsave not yet implemented");
@@ -347,7 +317,6 @@ DECLARE_COMMAND_OPCODE(speak) {
 	}
 }
 
-
 DECLARE_COMMAND_OPCODE(get) {
 	ctxt._cmd->_zone->_flags &= ~kFlagsFixed;
 	_vm->runZone(ctxt._cmd->_zone);
@@ -379,34 +348,29 @@ DECLARE_COMMAND_OPCODE(set) {
 	}
 }
 
-
-
 DECLARE_INSTRUCTION_OPCODE(on) {
 	_vm->showZone(ctxt._inst->_z, true);
 }
-
 
 DECLARE_INSTRUCTION_OPCODE(off) {
 	_vm->showZone(ctxt._inst->_z, false);
 }
 
-
 DECLARE_INSTRUCTION_OPCODE(set) {
 	ctxt._inst->_opA.setValue(ctxt._inst->_opB.getValue());
 }
-
-
 
 DECLARE_INSTRUCTION_OPCODE(inc) {
 	InstructionPtr inst = ctxt._inst;
 
 	int16 rvalue = inst->_opB.getValue();
 
-	if (inst->_flags & kInstMod) {	// mod
+	if (inst->_flags & kInstMod) { // mod
 		int16 _bx = (rvalue > 0 ? rvalue : -rvalue);
-		if (ctxt._modCounter % _bx != 0) return;
+		if (ctxt._modCounter % _bx != 0)
+			return;
 
-		rvalue = (rvalue > 0 ?  1 : -1);
+		rvalue = (rvalue > 0 ? 1 : -1);
 	}
 
 	int16 lvalue = inst->_opA.getValue();
@@ -433,32 +397,25 @@ DECLARE_INSTRUCTION_OPCODE(inc) {
 	}
 
 	inst->_opA.setValue(lvalue);
-
 }
-
 
 DECLARE_INSTRUCTION_OPCODE(put) {
 	// NOTE: there is not a single occurrence of PUT in the scripts
 	warning("PUT instruction is not implemented");
 }
 
-
-
 DECLARE_INSTRUCTION_OPCODE(wait) {
 	// NOTE: there is not a single occurrence of WAIT in the scripts
 	warning("WAIT instruction is not implemented");
 }
 
-
 DECLARE_INSTRUCTION_OPCODE(start) {
 	ctxt._inst->_z->_flags |= kFlagsActing;
 }
 
-
 DECLARE_INSTRUCTION_OPCODE(process) {
 	_vm->_activeZone2 = ctxt._inst->_z;
 }
-
 
 DECLARE_INSTRUCTION_OPCODE(move) {
 	// NOTE: I couldn't find evidence of scripts containing this instruction being used
@@ -467,12 +424,10 @@ DECLARE_INSTRUCTION_OPCODE(move) {
 	ctxt._suspend = true;
 }
 
-
 DECLARE_INSTRUCTION_OPCODE(color) {
 	InstructionPtr inst = ctxt._inst;
 	_vm->_gfx->_palette.setEntry(inst->_opB.getValue(), inst->_colors[0], inst->_colors[1], inst->_colors[2]);
 }
-
 
 DECLARE_INSTRUCTION_OPCODE(mask) {
 #if 0
@@ -482,7 +437,6 @@ DECLARE_INSTRUCTION_OPCODE(mask) {
 	_gfx->_bgLayers[2] = inst->_opC.getRValue();
 #endif
 }
-
 
 DECLARE_INSTRUCTION_OPCODE(print) {
 	// NOTE: there is not a single occurrence of PRINT in the scripts
@@ -495,7 +449,6 @@ DECLARE_INSTRUCTION_OPCODE(text) {
 	_vm->setupSubtitles(inst->_text.c_str(), inst->_text2.c_str(), inst->_y);
 }
 
-
 DECLARE_INSTRUCTION_OPCODE(ifeq) {
 	InstructionPtr inst = ctxt._inst;
 	bool cond = inst->_opA.getValue() == inst->_opB.getValue();
@@ -503,7 +456,6 @@ DECLARE_INSTRUCTION_OPCODE(ifeq) {
 		ctxt._ip = inst->_endif;
 	}
 }
-
 
 DECLARE_INSTRUCTION_OPCODE(iflt) {
 	InstructionPtr inst = ctxt._inst;
@@ -513,7 +465,6 @@ DECLARE_INSTRUCTION_OPCODE(iflt) {
 	}
 }
 
-
 DECLARE_INSTRUCTION_OPCODE(ifgt) {
 	InstructionPtr inst = ctxt._inst;
 	bool cond = inst->_opA.getValue() > inst->_opB.getValue();
@@ -522,18 +473,17 @@ DECLARE_INSTRUCTION_OPCODE(ifgt) {
 	}
 }
 
-
 DECLARE_INSTRUCTION_OPCODE(endif) {
 	// nothing to do here
 }
-
 
 DECLARE_INSTRUCTION_OPCODE(stop) {
 	ZonePtr z = ctxt._inst->_z;
 
 	// Prevent execution if zone is missing. The known case is "PART2/insegui.scr", which has
 	// "STOP insegui", which doesn't exist (see ticket #3021744 for the gory details)
-	if (!z) return;
+	if (!z)
+		return;
 
 	if (ACTIONTYPE(z) == kZoneHear) {
 		warning("Parallaction_br::instOp_stop not yet implemented for HEAR zones");
@@ -550,7 +500,6 @@ DECLARE_INSTRUCTION_OPCODE(loop) {
 	ctxt._program->_loopStart = ctxt._ip;
 }
 
-
 DECLARE_INSTRUCTION_OPCODE(endloop) {
 	if (--ctxt._program->_loopCounter > 0) {
 		ctxt._ip = ctxt._program->_loopStart;
@@ -565,7 +514,6 @@ DECLARE_INSTRUCTION_OPCODE(call) {
 	_vm->callFunction(ctxt._inst->_immediate, 0);
 }
 
-
 DECLARE_INSTRUCTION_OPCODE(endscript) {
 	if ((ctxt._anim->_flags & kFlagsLooping) == 0) {
 		ctxt._anim->_flags &= ~kFlagsActing;
@@ -577,8 +525,9 @@ DECLARE_INSTRUCTION_OPCODE(endscript) {
 	ctxt._suspend = true;
 }
 
-
-CommandExec_br::CommandExec_br(Parallaction_br* vm) : CommandExec(vm), _vm(vm) {
+CommandExec_br::CommandExec_br(Parallaction_br *vm)
+  : CommandExec(vm)
+  , _vm(vm) {
 	CommandOpcodeSet *table = 0;
 
 	SetOpcodeTable(_opcodes);
@@ -626,8 +575,8 @@ CommandExec_br::CommandExec_br(Parallaction_br* vm) : CommandExec(vm), _vm(vm) {
 	COMMAND_OPCODE(offsave);
 }
 
-
-ProgramExec_br::ProgramExec_br(Parallaction_br *vm) : _vm(vm) {
+ProgramExec_br::ProgramExec_br(Parallaction_br *vm)
+  : _vm(vm) {
 	_instructionNames = _instructionNamesRes_br;
 
 	ProgramOpcodeSet *table = 0;
@@ -636,15 +585,15 @@ ProgramExec_br::ProgramExec_br(Parallaction_br *vm) : _vm(vm) {
 	INSTRUCTION_OPCODE(invalid);
 	INSTRUCTION_OPCODE(on);
 	INSTRUCTION_OPCODE(off);
-	INSTRUCTION_OPCODE(set);		// x
-	INSTRUCTION_OPCODE(set);		// y
-	INSTRUCTION_OPCODE(set);		// z
-	INSTRUCTION_OPCODE(set);		// f
+	INSTRUCTION_OPCODE(set); // x
+	INSTRUCTION_OPCODE(set); // y
+	INSTRUCTION_OPCODE(set); // z
+	INSTRUCTION_OPCODE(set); // f
 	INSTRUCTION_OPCODE(loop);
 	INSTRUCTION_OPCODE(endloop);
-	INSTRUCTION_OPCODE(show);		// show
+	INSTRUCTION_OPCODE(show); // show
 	INSTRUCTION_OPCODE(inc);
-	INSTRUCTION_OPCODE(inc);		// dec
+	INSTRUCTION_OPCODE(inc); // dec
 	INSTRUCTION_OPCODE(set);
 	INSTRUCTION_OPCODE(put);
 	INSTRUCTION_OPCODE(call);
@@ -653,12 +602,12 @@ ProgramExec_br::ProgramExec_br(Parallaction_br *vm) : _vm(vm) {
 	INSTRUCTION_OPCODE(process);
 	INSTRUCTION_OPCODE(move);
 	INSTRUCTION_OPCODE(color);
-	INSTRUCTION_OPCODE(process);	// sound
+	INSTRUCTION_OPCODE(process); // sound
 	INSTRUCTION_OPCODE(mask);
 	INSTRUCTION_OPCODE(print);
 	INSTRUCTION_OPCODE(text);
-	INSTRUCTION_OPCODE(inc);		// mul
-	INSTRUCTION_OPCODE(inc);		// div
+	INSTRUCTION_OPCODE(inc); // mul
+	INSTRUCTION_OPCODE(inc); // div
 	INSTRUCTION_OPCODE(ifeq);
 	INSTRUCTION_OPCODE(iflt);
 	INSTRUCTION_OPCODE(ifgt);
@@ -666,7 +615,5 @@ ProgramExec_br::ProgramExec_br(Parallaction_br *vm) : _vm(vm) {
 	INSTRUCTION_OPCODE(stop);
 	INSTRUCTION_OPCODE(endscript);
 }
-
-
 
 } // namespace Parallaction

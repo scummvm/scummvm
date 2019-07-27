@@ -22,17 +22,17 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
 #include "fullpipe/floaters.h"
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
@@ -106,7 +106,7 @@ int scene34_updateCursor() {
 	g_fp->updateCursorCommon();
 
 	if ((g_fp->_objectIdAtCursor != ANI_STOOL_34 || getGameLoaderInventory()->getSelectedItemId() != ANI_INV_BOX)
-		 && (g_fp->_objectIdAtCursor != ANI_BOX_34 || getGameLoaderInventory()->getSelectedItemId() != ANI_INV_STOOL))
+	    && (g_fp->_objectIdAtCursor != ANI_BOX_34 || getGameLoaderInventory()->getSelectedItemId() != ANI_INV_STOOL))
 		; // emtpy
 	else
 		g_fp->_cursorId = PIC_CSR_ITN_INV;
@@ -399,54 +399,53 @@ int sceneHandler34(ExCommand *cmd) {
 		g_fp->lift_goAnimation();
 		break;
 
-	case 29:
-		{
-			if (g_vars->scene34_dudeClimbed) {
-				sceneHandler34_animateAction(cmd);
-				break;
+	case 29: {
+		if (g_vars->scene34_dudeClimbed) {
+			sceneHandler34_animateAction(cmd);
+			break;
+		}
+
+		if (g_vars->scene34_dudeOnBoard) {
+			sceneHandler34_animateLeaveBoard(cmd);
+			break;
+		}
+
+		if (g_vars->scene34_dudeOnCactus) {
+			sceneHandler34_fromCactus(cmd);
+			break;
+		}
+
+		StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y);
+
+		if (ani) {
+			if ((ani->_id == ANI_STOOL_34 && cmd->_param == ANI_INV_BOX) || (ani->_id == ANI_BOX_34 && cmd->_param == ANI_INV_STOOL)) {
+				getGameLoaderInteractionController()->handleInteraction(g_fp->_aniMan, g_vars->scene34_vent, cmd->_param);
+
+				cmd->_messageKind = 0;
 			}
 
-			if (g_vars->scene34_dudeOnBoard) {
-				sceneHandler34_animateLeaveBoard(cmd);
+			if (ani->_id == ANI_LIFTBUTTON) {
+				g_fp->lift_animateButton(ani);
+
+				cmd->_messageKind = 0;
+
 				break;
 			}
+		}
 
-			if (g_vars->scene34_dudeOnCactus) {
-				sceneHandler34_fromCactus(cmd);
-				break;
-			}
+		if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
+			int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
 
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y);
-
-			if (ani) {
-				if ((ani->_id == ANI_STOOL_34 && cmd->_param == ANI_INV_BOX) || (ani->_id == ANI_BOX_34 && cmd->_param == ANI_INV_STOOL)) {
-					getGameLoaderInteractionController()->handleInteraction(g_fp->_aniMan, g_vars->scene34_vent, cmd->_param);
-
-					cmd->_messageKind = 0;
-				}
-
-				if (ani->_id == ANI_LIFTBUTTON) {
-					g_fp->lift_animateButton(ani);
-
-					cmd->_messageKind = 0;
-
+			if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
+				if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1) || (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
+					g_fp->processArcade(cmd);
 					break;
 				}
 			}
-
-			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
-				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
-
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
-					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1) || (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
-						g_fp->processArcade(cmd);
-						break;
-					}
-				}
-			}
-			break;
 		}
+		break;
+	}
 
 	case 33:
 		if (g_fp->_aniMan2) {

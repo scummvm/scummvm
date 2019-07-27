@@ -26,7 +26,8 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CNullPortHole, CClickResponder);
 
-CNullPortHole::CNullPortHole() : CClickResponder() {
+CNullPortHole::CNullPortHole()
+  : CClickResponder() {
 	_message = "For a better view, why not visit the Promenade Deck?";
 	_soundName = "b#48.wav";
 }

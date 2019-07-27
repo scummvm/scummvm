@@ -345,27 +345,27 @@ void ActorCombat::load(SaveFileReadStream &f) {
 }
 
 void ActorCombat::reset() {
-	_active              = false;
-	_actorId             = -1;
-	_state               = -1;
-	_rangedAttack        = false;
-	_enemyId             = -1;
-	_waypointType        = -1;
-	_damage              = 0;
-	_fleeRatio           = -1;
-	_coverRatio          = -1;
-	_attackRatio         = -1;
-	_fleeRatioConst      = -1;
-	_coverRatioConst     = -1;
-	_attackRatioConst    = -1;
-	_actorHp             = 0;
-	_range               = 300;
-	_unstoppable         = false;
-	_actorPosition       = Vector3(0.0f, 0.0f, 0.0f);
-	_enemyPosition       = Vector3(0.0f, 0.0f, 0.0f);
+	_active = false;
+	_actorId = -1;
+	_state = -1;
+	_rangedAttack = false;
+	_enemyId = -1;
+	_waypointType = -1;
+	_damage = 0;
+	_fleeRatio = -1;
+	_coverRatio = -1;
+	_attackRatio = -1;
+	_fleeRatioConst = -1;
+	_coverRatioConst = -1;
+	_attackRatioConst = -1;
+	_actorHp = 0;
+	_range = 300;
+	_unstoppable = false;
+	_actorPosition = Vector3(0.0f, 0.0f, 0.0f);
+	_enemyPosition = Vector3(0.0f, 0.0f, 0.0f);
 	_coversWaypointCount = 0;
-	_fleeWaypointsCount  = 0;
-	_fleeingTowards      = -1;
+	_fleeWaypointsCount = 0;
+	_fleeingTowards = -1;
 }
 
 void ActorCombat::cover() {
@@ -499,7 +499,7 @@ void ActorCombat::flee() {
 	if (_fleeingTowards != -1 && actor->isWalking()) {
 		Vector3 fleeWaypointPosition = _vm->_combat->_fleeWaypoints[_fleeingTowards].position;
 		if (distance(_actorPosition, fleeWaypointPosition) <= 12.0f) {
-			_vm->_aiScripts->fledCombat(_actorId/*, _enemyId*/);
+			_vm->_aiScripts->fledCombat(_actorId /*, _enemyId*/);
 			actor->setSetId(kSetFreeSlotG);
 			actor->combatModeOff();
 			_fleeingTowards = -1;
@@ -520,7 +520,7 @@ void ActorCombat::faceEnemy() {
 	_vm->_actors[_actorId]->setFacing(angle_1024(_actorPosition.x, _actorPosition.z, _enemyPosition.x, _enemyPosition.z), false);
 }
 
-int ActorCombat::getCoefficientCloseAttack() const{
+int ActorCombat::getCoefficientCloseAttack() const {
 	Actor *actor = _vm->_actors[_actorId];
 	Actor *enemy = _vm->_actors[_enemyId];
 
@@ -598,27 +598,16 @@ int ActorCombat::calculateAttackRatio() const {
 	Actor *enemy = _vm->_actors[_enemyId];
 
 	int aggressivenessFactor = actor->getCombatAggressiveness();
-	int actorHpFactor        = actor->getCurrentHP();
-	int enemyHpFactor        = 100 - enemy->getCurrentHP();
-	int combatFactor         = enemy->inCombat() ? 0 : 100;
-	int angleFactor          = (100 * abs(enemy->angleTo(_actorPosition))) / 512;
-	int distanceFactor       = 2 * (50 - MIN(actor->distanceFromActor(_enemyId) / 12.0f, 50.0f));
+	int actorHpFactor = actor->getCurrentHP();
+	int enemyHpFactor = 100 - enemy->getCurrentHP();
+	int combatFactor = enemy->inCombat() ? 0 : 100;
+	int angleFactor = (100 * abs(enemy->angleTo(_actorPosition))) / 512;
+	int distanceFactor = 2 * (50 - MIN(actor->distanceFromActor(_enemyId) / 12.0f, 50.0f));
 
 	if (_rangedAttack) {
-		return
-			angleFactor          * 0.25f +
-			combatFactor         * 0.05f +
-			enemyHpFactor        * 0.20f +
-			actorHpFactor        * 0.10f +
-			aggressivenessFactor * 0.40f;
+		return angleFactor * 0.25f + combatFactor * 0.05f + enemyHpFactor * 0.20f + actorHpFactor * 0.10f + aggressivenessFactor * 0.40f;
 	} else {
-		return
-			distanceFactor       * 0.20f +
-			angleFactor          * 0.10f +
-			combatFactor         * 0.10f +
-			enemyHpFactor        * 0.15f +
-			actorHpFactor        * 0.15f +
-			aggressivenessFactor * 0.30f;
+		return distanceFactor * 0.20f + angleFactor * 0.10f + combatFactor * 0.10f + enemyHpFactor * 0.15f + actorHpFactor * 0.15f + aggressivenessFactor * 0.30f;
 	}
 }
 
@@ -630,25 +619,16 @@ int ActorCombat::calculateCoverRatio() const {
 	Actor *actor = _vm->_actors[_actorId];
 	Actor *enemy = _vm->_actors[_enemyId];
 
-	int angleFactor          = 100 - (100 * abs(enemy->angleTo(_actorPosition))) / 512;
-	int actorHpFactor        = 100 - actor->getCurrentHP();
-	int enemyHpFactor        = enemy->getCurrentHP();
+	int angleFactor = 100 - (100 * abs(enemy->angleTo(_actorPosition))) / 512;
+	int actorHpFactor = 100 - actor->getCurrentHP();
+	int enemyHpFactor = enemy->getCurrentHP();
 	int aggressivenessFactor = 100 - actor->getCombatAggressiveness();
-	int distanceFactor       = 2 * MIN(actor->distanceFromActor(_enemyId) / 12.0f, 50.0f);
+	int distanceFactor = 2 * MIN(actor->distanceFromActor(_enemyId) / 12.0f, 50.0f);
 
 	if (_rangedAttack) {
-		return
-			angleFactor          * 0.40f +
-			enemyHpFactor        * 0.05f +
-			actorHpFactor        * 0.15f +
-			aggressivenessFactor * 0.50f;
+		return angleFactor * 0.40f + enemyHpFactor * 0.05f + actorHpFactor * 0.15f + aggressivenessFactor * 0.50f;
 	} else {
-		return
-			distanceFactor       * 0.25f +
-			angleFactor          * 0.20f +
-			enemyHpFactor        * 0.05f +
-			actorHpFactor        * 0.10f +
-			aggressivenessFactor * 0.50f;
+		return distanceFactor * 0.25f + angleFactor * 0.20f + enemyHpFactor * 0.05f + actorHpFactor * 0.10f + aggressivenessFactor * 0.50f;
 	}
 }
 
@@ -661,23 +641,20 @@ int ActorCombat::calculateFleeRatio() const {
 	Actor *enemy = _vm->_actors[_enemyId];
 
 	int aggressivenessFactor = 100 - actor->getCombatAggressiveness();
-	int actorHpFactor        = 100 - actor->getCurrentHP();
-	int combatFactor         = enemy->inCombat() ? 100 : 0;
+	int actorHpFactor = 100 - actor->getCurrentHP();
+	int combatFactor = enemy->inCombat() ? 100 : 0;
 
-	return
-		combatFactor * 0.2f +
-		actorHpFactor * 0.4f +
-		aggressivenessFactor * 0.4f;
+	return combatFactor * 0.2f + actorHpFactor * 0.4f + aggressivenessFactor * 0.4f;
 }
 
 bool ActorCombat::findClosestPositionToEnemy(Vector3 &output) const {
 	output = Vector3();
 
 	Vector3 offsets[] = {
-		Vector3(  0.0f, 0.0f, -28.0f),
-		Vector3( 28.0f, 0.0f,   0.0f),
-		Vector3(  0.0f, 0.0f,  28.0f),
-		Vector3(-28.0f, 0.0f,   0.0f)
+		Vector3(0.0f, 0.0f, -28.0f),
+		Vector3(28.0f, 0.0f, 0.0f),
+		Vector3(0.0f, 0.0f, 28.0f),
+		Vector3(-28.0f, 0.0f, 0.0f)
 	};
 
 	float min = -1.0f;
@@ -685,7 +662,7 @@ bool ActorCombat::findClosestPositionToEnemy(Vector3 &output) const {
 	for (int i = 0; i < 4; ++i) {
 		Vector3 test = _enemyPosition + offsets[i];
 		float dist = distance(_actorPosition, test);
-		if ( min == -1.0f || dist < min) {
+		if (min == -1.0f || dist < min) {
 			if (!_vm->_sceneObjects->existsOnXZ(_actorId + kSceneObjectOffsetActors, test.x, test.z, true, true) && _vm->_scene->_set->findWalkbox(test.x, test.z) >= 0) {
 				output = test;
 				min = dist;

@@ -486,7 +486,6 @@ static const RoomID kNorad22West = 29;
 
 // Hot Spot Activation IDs.
 
-
 // Hot Spot IDs.
 
 static const HotSpotID kNorad01ECRSpotID = 5000;
@@ -581,7 +580,6 @@ static const ExtraID kN22ClawDLoop = 38;
 static const ExtraID kN22ClawDPinch = 39;
 static const ExtraID kN22ClawDCounterclockwise = 40;
 static const ExtraID kN22ClawDClockwise = 41;
-
 
 // Norad Delta Extra sequence IDs.
 
@@ -701,7 +699,6 @@ static const RoomID kNorad79 = 37;
 static const RoomID kNorad79West = 38;
 
 // Hot Spot Activation IDs.
-
 
 // Hot Spot IDs.
 

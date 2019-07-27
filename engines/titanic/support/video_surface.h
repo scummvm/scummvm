@@ -23,17 +23,17 @@
 #ifndef TITANIC_VIDEO_SURFACE_H
 #define TITANIC_VIDEO_SURFACE_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 #include "graphics/managed_surface.h"
-#include "titanic/support/font.h"
+#include "titanic/core/list.h"
+#include "titanic/core/resource_key.h"
 #include "titanic/support/direct_draw.h"
+#include "titanic/support/font.h"
 #include "titanic/support/movie.h"
 #include "titanic/support/movie_range_info.h"
 #include "titanic/support/rect.h"
 #include "titanic/support/transparency_surface.h"
-#include "titanic/core/list.h"
-#include "titanic/core/resource_key.h"
 
 namespace Titanic {
 
@@ -44,6 +44,7 @@ class CTargaDecode;
 class CVideoSurface : public ListItem {
 	friend class CJPEGDecode;
 	friend class CTargaDecode;
+
 private:
 	static byte _palette1[32][32];
 	static byte _palette2[32][32];
@@ -52,6 +53,7 @@ private:
 	 * Setup the shading palettes
 	 */
 	static void setupPalette(byte palette[32][32], byte val);
+
 public:
 	/**
 	 * Setup statics
@@ -59,12 +61,13 @@ public:
 	static void setup() {
 		setupPalette(_palette1, 0xff);
 	}
+
 private:
 	/**
 	 * Calculates blitting bounds
 	 */
 	void clipBounds(Rect &srcRect, Rect &destRect, CVideoSurface *srcSurface,
-		const Rect *subRect = nullptr, const Point *destPos = nullptr);
+	                const Rect *subRect = nullptr, const Point *destPos = nullptr);
 
 	/**
 	 * Copies a rect from a given source surface
@@ -77,8 +80,10 @@ private:
 	void flippedBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
 
 	void transBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src, bool flipFlag);
+
 protected:
 	static int _videoSurfaceCounter;
+
 protected:
 	CScreenManager *_screenManager;
 	Graphics::ManagedSurface *_rawSurface;
@@ -88,6 +93,7 @@ protected:
 	int _videoSurfaceNum;
 	bool _hasFrame;
 	int _lockCount;
+
 public:
 	CMovie *_movie;
 	DirectDrawSurface *_ddSurface;
@@ -95,6 +101,7 @@ public:
 	bool _flipVertically;
 	CResourceKey _resourceKey;
 	TransparencyMode _transparencyMode;
+
 public:
 	CVideoSurface(CScreenManager *screenManager);
 	virtual ~CVideoSurface();
@@ -197,7 +204,6 @@ public:
 	 * Gets the pixel at the specified position within the surface
 	 */
 	virtual uint16 getPixel(const Common::Point &pt) = 0;
-
 
 	/**
 	 * Sets a pixel at a specified position within the surface
@@ -348,11 +354,12 @@ public:
 	 * @param isAlpha	If true, has alpha channel
 	 */
 	void copyPixel(uint16 *destP, const uint16 *srcP, byte alpha,
-		const Graphics::PixelFormat &srcFormat, bool isAlpha);
+	               const Graphics::PixelFormat &srcFormat, bool isAlpha);
 };
 
 class OSVideoSurface : public CVideoSurface {
 	friend class OSMovie;
+
 public:
 	OSVideoSurface(CScreenManager *screenManager, DirectDrawSurface *surface);
 	OSVideoSurface(CScreenManager *screenManager, const CResourceKey &key, bool flag = false);

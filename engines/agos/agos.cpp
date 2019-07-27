@@ -28,9 +28,9 @@
 
 #include "engines/util.h"
 
+#include "agos/agos.h"
 #include "agos/debugger.h"
 #include "agos/intern.h"
-#include "agos/agos.h"
 #include "agos/midi.h"
 #include "agos/sound.h"
 
@@ -43,56 +43,56 @@
 namespace AGOS {
 
 static const GameSpecificSettings simon1_settings = {
-	"",                                     // base_filename
-	"",                                     // restore_filename
-	"",                                     // tbl_filename
-	"EFFECTS",                              // effects_filename
-	"SIMON",                                // speech_filename
+	"", // base_filename
+	"", // restore_filename
+	"", // tbl_filename
+	"EFFECTS", // effects_filename
+	"SIMON", // speech_filename
 };
 
 static const GameSpecificSettings simon2_settings = {
-	"",                                     // base_filename
-	"",                                     // restore_filename
-	"",                                     // tbl_filename
-	"",                                     // effects_filename
-	"SIMON2",                               // speech_filename
+	"", // base_filename
+	"", // restore_filename
+	"", // tbl_filename
+	"", // effects_filename
+	"SIMON2", // speech_filename
 };
 
 static const GameSpecificSettings dimp_settings = {
-	"Gdimp",                                // base_filename
-	"",                                     // restore_filename
-	"",                                     // tbl_filename
-	"",                                     // effects_filename
-	"MUSIC",                                // speech_filename
+	"Gdimp", // base_filename
+	"", // restore_filename
+	"", // tbl_filename
+	"", // effects_filename
+	"MUSIC", // speech_filename
 };
 
 static const GameSpecificSettings jumble_settings = {
-	"Gjumble",                              // base_filename
-	"",                                     // restore_filename
-	"",                                     // tbl_filename
-	"",                                     // effects_filename
-	"MUSIC",                                // speech_filename
+	"Gjumble", // base_filename
+	"", // restore_filename
+	"", // tbl_filename
+	"", // effects_filename
+	"MUSIC", // speech_filename
 };
 
 static const GameSpecificSettings puzzle_settings = {
-	"Gpuzzle",                              // base_filename
-	"",                                     // restore_filename
-	"",                                     // tbl_filename
-	"",                                     // effects_filename
-	"MUSIC",                                // speech_filename
+	"Gpuzzle", // base_filename
+	"", // restore_filename
+	"", // tbl_filename
+	"", // effects_filename
+	"MUSIC", // speech_filename
 };
 
 static const GameSpecificSettings swampy_settings = {
-	"Gswampy",                              // base_filename
-	"",                                     // restore_filename
-	"",                                     // tbl_filename
-	"",                                     // effects_filename
-	"MUSIC",                                // speech_filename
+	"Gswampy", // base_filename
+	"", // restore_filename
+	"", // tbl_filename
+	"", // effects_filename
+	"MUSIC", // speech_filename
 };
 
 #ifdef ENABLE_AGOS2
 AGOSEngine_DIMP::AGOSEngine_DIMP(OSystem *system, const AGOSGameDescription *gd)
-	: AGOSEngine_PuzzlePack(system, gd) {
+  : AGOSEngine_PuzzlePack(system, gd) {
 
 	_iconToggleCount = 0;
 	_voiceCount = 0;
@@ -103,7 +103,7 @@ AGOSEngine_DIMP::AGOSEngine_DIMP(OSystem *system, const AGOSGameDescription *gd)
 }
 
 AGOSEngine_PuzzlePack::AGOSEngine_PuzzlePack(OSystem *system, const AGOSGameDescription *gd)
-	: AGOSEngine_Feeble(system, gd) {
+  : AGOSEngine_Feeble(system, gd) {
 
 	_oopsValid = false;
 	_gameTime = 0;
@@ -111,15 +111,15 @@ AGOSEngine_PuzzlePack::AGOSEngine_PuzzlePack(OSystem *system, const AGOSGameDesc
 #endif
 
 AGOSEngine_Simon2::AGOSEngine_Simon2(OSystem *system, const AGOSGameDescription *gd)
-	: AGOSEngine_Simon1(system, gd) {
+  : AGOSEngine_Simon1(system, gd) {
 }
 
 AGOSEngine_Simon1::AGOSEngine_Simon1(OSystem *system, const AGOSGameDescription *gd)
-	: AGOSEngine_Waxworks(system, gd) {
+  : AGOSEngine_Waxworks(system, gd) {
 }
 
 AGOSEngine_Waxworks::AGOSEngine_Waxworks(OSystem *system, const AGOSGameDescription *gd)
-	: AGOSEngine_Elvira2(system, gd) {
+  : AGOSEngine_Elvira2(system, gd) {
 
 	_boxCR = false;
 	_boxLineCount = 0;
@@ -136,15 +136,17 @@ AGOSEngine_Waxworks::AGOSEngine_Waxworks(OSystem *system, const AGOSGameDescript
 }
 
 AGOSEngine_Elvira2::AGOSEngine_Elvira2(OSystem *system, const AGOSGameDescription *gd)
-	: AGOSEngine_Elvira1(system, gd) {
+  : AGOSEngine_Elvira1(system, gd) {
 }
 
 AGOSEngine_Elvira1::AGOSEngine_Elvira1(OSystem *system, const AGOSGameDescription *gd)
-	: AGOSEngine(system, gd) {
+  : AGOSEngine(system, gd) {
 }
 
 AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
-	: Engine(system), _rnd("agos"), _gameDescription(gd) {
+  : Engine(system)
+  , _rnd("agos")
+  , _gameDescription(gd) {
 
 	DebugMan.addDebugChannel(kDebugOpcode, "opcode", "Opcode debug level");
 	DebugMan.addDebugChannel(kDebugVGAOpcode, "vga_opcode", "VGA Opcode debug level");
@@ -543,9 +545,8 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	_moveYMax = 0;
 
 	_vc10BasePtrOld = 0;
-	memcpy (_hebrewCharWidths,
-		"\x5\x5\x4\x6\x5\x3\x4\x5\x6\x3\x5\x5\x4\x6\x5\x3\x4\x6\x5\x6\x6\x6\x5\x5\x5\x6\x5\x6\x6\x6\x6\x6", 32);
-
+	memcpy(_hebrewCharWidths,
+	       "\x5\x5\x4\x6\x5\x3\x4\x5\x6\x3\x5\x5\x4\x6\x5\x3\x4\x6\x5\x6\x6\x6\x5\x5\x5\x6\x5\x6\x6\x6\x6\x6", 32);
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
@@ -581,10 +582,7 @@ Common::Error AGOSEngine::init() {
 
 	_midi = new MidiPlayer();
 
-	if ((getGameType() == GType_SIMON2 && getPlatform() == Common::kPlatformWindows) ||
-		(getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformWindows) ||
-		((getFeatures() & GF_TALKIE) && getPlatform() == Common::kPlatformAcorn) ||
-		(getPlatform() == Common::kPlatformDOS)) {
+	if ((getGameType() == GType_SIMON2 && getPlatform() == Common::kPlatformWindows) || (getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformWindows) || ((getFeatures() & GF_TALKIE) && getPlatform() == Common::kPlatformAcorn) || (getPlatform() == Common::kPlatformDOS)) {
 
 		bool isDemo = (getFeatures() & GF_DEMO) ? true : false;
 
@@ -684,27 +682,57 @@ Common::Error AGOSEngine::init() {
 }
 
 static const uint16 initialVideoWindows_Simon[20] = {
-	0,  0, 20, 200,
-	0,  0,  3, 136,
-	17, 0,  3, 136,
-	0,  0, 20, 200,
-	0,  0, 20, 134
+	0, 0, 20, 200,
+	0, 0, 3, 136,
+	17, 0, 3, 136,
+	0, 0, 20, 200,
+	0, 0, 20, 134
 };
 
 static const uint16 initialVideoWindows_Common[20] = {
-	 3, 0, 14, 136,
-	 0, 0,  3, 136,
-	17, 0,  3, 136,
-	 0, 0, 20, 200,
-	 3, 3, 14, 127,
+	3,
+	0,
+	14,
+	136,
+	0,
+	0,
+	3,
+	136,
+	17,
+	0,
+	3,
+	136,
+	0,
+	0,
+	20,
+	200,
+	3,
+	3,
+	14,
+	127,
 };
 
 static const uint16 initialVideoWindows_PN[20] = {
-	 3, 0, 14, 136,
-	 0, 0,  3, 136,
-	17, 0,  3, 136,
-	 0, 0, 20, 200,
-	 3, 2, 14, 129,
+	3,
+	0,
+	14,
+	136,
+	0,
+	0,
+	3,
+	136,
+	17,
+	0,
+	3,
+	136,
+	0,
+	0,
+	20,
+	200,
+	3,
+	2,
+	14,
+	129,
 };
 
 #ifdef ENABLE_AGOS2
@@ -1040,15 +1068,13 @@ Common::Error AGOSEngine::go() {
 		addVgaEvent(count, ANIMATE_INT, NULL, 0, 0);
 	}
 
-	if (getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformAtariST &&
-		(getFeatures() & GF_DEMO)) {
+	if (getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformAtariST && (getFeatures() & GF_DEMO)) {
 		setWindowImage(3, 9900);
 		while (!shouldQuit())
 			delay(0);
 	}
 
-	if (getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformAmiga &&
-		(getFeatures() & GF_DEMO)) {
+	if (getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformAmiga && (getFeatures() & GF_DEMO)) {
 		playMusic(0, 0);
 	}
 
@@ -1063,7 +1089,6 @@ Common::Error AGOSEngine::go() {
 
 	return Common::kNoError;
 }
-
 
 uint32 AGOSEngine::getTime() const {
 	return _system->getMillis() / 1000;

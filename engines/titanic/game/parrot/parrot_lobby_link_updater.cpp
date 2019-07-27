@@ -27,7 +27,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CParrotLobbyLinkUpdater, CParrotLobbyObject)
-	ON_MESSAGE(ActMsg)
+ON_MESSAGE(ActMsg)
 END_MESSAGE_MAP()
 
 /*------------------------------------------------------------------------*/
@@ -52,7 +52,9 @@ void LinkUpdatorEntries::load(Common::SeekableReadStream *s, int count) {
 
 /*------------------------------------------------------------------------*/
 
-CParrotLobbyLinkUpdater::CParrotLobbyLinkUpdater() : CParrotLobbyObject(), _fieldBC(1) {
+CParrotLobbyLinkUpdater::CParrotLobbyLinkUpdater()
+  : CParrotLobbyObject()
+  , _fieldBC(1) {
 	Common::SeekableReadStream *s = g_vm->_filesManager->getResource("DATA/PARROT_LOBBY_LINK_UPDATOR");
 	_entries[0].load(s, 7);
 	_entries[1].load(s, 5);

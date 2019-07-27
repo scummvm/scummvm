@@ -21,22 +21,22 @@
  */
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h	// sys/stat.h includes sys/time.h
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h // sys/stat.h includes sys/time.h
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "common/debug-channels.h"
 #include "backends/platform/sdl/psp2/psp2.h"
 #include "backends/graphics/psp2sdl/psp2sdl-graphics.h"
 #include "backends/saves/default/default-saves.h"
+#include "common/config-manager.h"
+#include "common/debug-channels.h"
+#include "common/scummsys.h"
 
-#include "backends/fs/psp2/psp2-fs-factory.h"
 #include "backends/events/psp2sdl/psp2sdl-events.h"
 #include "backends/fs/psp2/psp2-dirent.h"
+#include "backends/fs/psp2/psp2-fs-factory.h"
 #include <sys/stat.h>
 
 #ifdef __PSP2_DEBUG__
-#include <psp2shell.h>
+#	include <psp2shell.h>
 #endif
 
 int access(const char *pathname, int mode) {
@@ -50,7 +50,7 @@ int access(const char *pathname, int mode) {
 }
 
 OSystem_PSP2::OSystem_PSP2(Common::String baseConfigName)
-	: _baseConfigName(baseConfigName) {
+  : _baseConfigName(baseConfigName) {
 }
 
 void OSystem_PSP2::init() {
@@ -104,7 +104,6 @@ void OSystem_PSP2::initBackend() {
 		ConfMan.setBool("frontpanel_touchpad_mode", false);
 	}
 
-
 	// Create the savefile manager
 	if (_savefileManager == 0)
 		_savefileManager = new DefaultSaveFileManager("ux0:data/scummvm/saves");
@@ -130,11 +129,7 @@ void OSystem_PSP2::initBackend() {
 }
 
 bool OSystem_PSP2::hasFeature(Feature f) {
-	return (f == kFeatureKbdMouseSpeed ||
-		f == kFeatureJoystickDeadzone ||
-		f == kFeatureShader ||
-		f == kFeatureTouchpadMode ||
-		OSystem_SDL::hasFeature(f));
+	return (f == kFeatureKbdMouseSpeed || f == kFeatureJoystickDeadzone || f == kFeatureShader || f == kFeatureTouchpadMode || OSystem_SDL::hasFeature(f));
 }
 
 void OSystem_PSP2::setFeatureState(Feature f, bool enable) {

@@ -26,7 +26,10 @@ namespace Access {
 
 byte Font::_fontColors[4];
 
-Font::Font(byte firstCharIndex) : _firstCharIndex(firstCharIndex), _bitWidth(0), _height(0) {
+Font::Font(byte firstCharIndex)
+  : _firstCharIndex(firstCharIndex)
+  , _bitWidth(0)
+  , _height(0) {
 }
 
 Font::~Font() {
@@ -170,7 +173,8 @@ void AmazonFont::load(const int *fontIndex, const byte *fontData) {
 
 /*------------------------------------------------------------------------*/
 
-MartianFont::MartianFont(int height, Common::SeekableReadStream &s) : Font(0) {
+MartianFont::MartianFont(int height, Common::SeekableReadStream &s)
+  : Font(0) {
 	_height = height;
 	load(s);
 }
@@ -223,7 +227,9 @@ void MartianFont::load(Common::SeekableReadStream &s) {
 
 /*------------------------------------------------------------------------*/
 
-FontManager::FontManager() : _font1(nullptr), _font2(nullptr) {
+FontManager::FontManager()
+  : _font1(nullptr)
+  , _font2(nullptr) {
 	_printMaxX = 0;
 	Common::fill(&Font::_fontColors[0], &Font::_fontColors[4], 0);
 }
@@ -232,6 +238,5 @@ void FontManager::load(Font *font1, Font *font2) {
 	_font1 = font1;
 	_font2 = font2;
 }
-
 
 } // End of namespace Access

@@ -11,19 +11,19 @@
 # USB Keyboard Driver for PS2 using RPC instead of FIO
 */
 
-#include <tamtypes.h>
+#include "backends/platform/ps2/rpckbd.h"
 #include <kernel.h>
 #include <sifrpc.h>
 #include <string.h>
-#include "backends/platform/ps2/rpckbd.h"
+#include <tamtypes.h>
 
 static unsigned int curr_readmode = PS2KBD_READMODE_NORMAL;
 static int kbdRpcSema = -1;
 static int kbdInitialized = 0;
 
 static SifRpcClientData_t cd0;
-static unsigned char rpcBuf[3 * PS2KBD_KEYMAP_SIZE] __attribute__((aligned (16)));
-static unsigned int  rpcKey __attribute__((aligned (16)));
+static unsigned char rpcBuf[3 * PS2KBD_KEYMAP_SIZE] __attribute__((aligned(16)));
+static unsigned int rpcKey __attribute__((aligned(16)));
 
 int PS2KbdInit(void)
 /* Initialise the keyboard library */
@@ -49,7 +49,7 @@ int PS2KbdInit(void)
 }
 
 static void rpcCompleteIntr(void *param) {
-    iSignalSema(kbdRpcSema);
+	iSignalSema(kbdRpcSema);
 }
 
 int PS2KbdRead(char *key)
@@ -115,9 +115,9 @@ int PS2KbdSetKeymap(PS2KbdKeyMap *keymaps)
 {
 	if (kbdInitialized) {
 		WaitSema(kbdRpcSema);
-		memcpy(rpcBuf + 0 * PS2KBD_KEYMAP_SIZE, keymaps->keymap,      PS2KBD_KEYMAP_SIZE);
+		memcpy(rpcBuf + 0 * PS2KBD_KEYMAP_SIZE, keymaps->keymap, PS2KBD_KEYMAP_SIZE);
 		memcpy(rpcBuf + 1 * PS2KBD_KEYMAP_SIZE, keymaps->shiftkeymap, PS2KBD_KEYMAP_SIZE);
-		memcpy(rpcBuf + 2 * PS2KBD_KEYMAP_SIZE, keymaps->keycap,      PS2KBD_KEYMAP_SIZE);
+		memcpy(rpcBuf + 2 * PS2KBD_KEYMAP_SIZE, keymaps->keycap, PS2KBD_KEYMAP_SIZE);
 		return SifCallRpc(&cd0, KBD_RPC_SETKEYMAP, SIF_RPC_M_NOWAIT, rpcBuf, 3 * PS2KBD_KEYMAP_SIZE, rpcBuf, 0, rpcCompleteIntr, NULL);
 	} else
 		return -1;

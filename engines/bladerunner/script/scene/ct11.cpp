@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 enum kCT11Loops {
-	kCT11LoopMainLoop  = 0,
+	kCT11LoopMainLoop = 0,
 	kCT11LoopMainNoCar = 2
 };
 
@@ -33,18 +33,18 @@ void SceneScriptCT11::InitializeScene() {
 	if (Game_Flag_Query(kFlagCT12toCT11)) {
 		Setup_Scene_Information(-378.0f, 9.68f, -55.0f, 440);
 	} else if (Game_Flag_Query(kFlagDR01toCT11)) {
-		Setup_Scene_Information( 315.0f,  0.0f, 628.0f,   0);
+		Setup_Scene_Information(315.0f, 0.0f, 628.0f, 0);
 	} else {
-		Setup_Scene_Information( 152.0f, 9.68f,  -8.0f,   0);
+		Setup_Scene_Information(152.0f, 9.68f, -8.0f, 0);
 	}
 
 	Scene_Exit_Add_2D_Exit(0, 257, 240, 364, 330, 1);
-	Scene_Exit_Add_2D_Exit(1,  97,   0, 155, 324, 0);
-	Scene_Exit_Add_2D_Exit(2,   0,   0,  20, 479, 3);
+	Scene_Exit_Add_2D_Exit(1, 97, 0, 155, 324, 0);
+	Scene_Exit_Add_2D_Exit(2, 0, 0, 20, 479, 3);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50, 0, 1);
-	Ambient_Sounds_Add_Sound(kSfxSPIN2A, 5, 80, 16,  25, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSPIN1A, 5, 80, 16,  25, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2A, 5, 80, 16, 25, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN1A, 5, 80, 16, 25, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDR1, 5, 80, 50, 100, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDR2, 5, 80, 50, 100, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDR3, 5, 80, 50, 100, -100, 100, -101, -101, 0, 0);
@@ -179,9 +179,8 @@ bool SceneScriptCT11::ClickedOn2DRegion(int region) {
 			if (Actor_Clue_Query(kActorMcCoy, kCluePartialLicenseNumber)) {
 				cluesFound += 2;
 			}
-			if ( cluesFound > 2
-			 && !Actor_Clue_Query(kActorMcCoy, kClueCar)
-			) {
+			if (cluesFound > 2
+			    && !Actor_Clue_Query(kActorMcCoy, kClueCar)) {
 				Actor_Voice_Over(510, kActorVoiceOver);
 				Actor_Voice_Over(520, kActorVoiceOver);
 				Actor_Voice_Over(530, kActorVoiceOver);

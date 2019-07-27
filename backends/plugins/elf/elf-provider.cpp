@@ -24,16 +24,16 @@
 
 #if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER)
 
-#ifdef ELF_LOADER_CXA_ATEXIT
-#include <cxxabi.h>
-#endif
+#	ifdef ELF_LOADER_CXA_ATEXIT
+#		include <cxxabi.h>
+#	endif
 
-#include "backends/plugins/elf/elf-provider.h"
-#include "backends/plugins/dynamic-plugin.h"
-#include "backends/plugins/elf/memory-manager.h"
+#	include "backends/plugins/dynamic-plugin.h"
+#	include "backends/plugins/elf/elf-provider.h"
+#	include "backends/plugins/elf/memory-manager.h"
 
-#include "common/debug.h"
-#include "common/fs.h"
+#	include "common/debug.h"
+#	include "common/fs.h"
 
 /* Note about ELF_LOADER_CXA_ATEXIT:
  *
@@ -94,7 +94,7 @@ DynamicPlugin::VoidFunc ELFPlugin::findSymbol(const char *symbol) {
 	return tmp;
 }
 
- /**
+/**
   * Test the size of the plugin.
   */
 void ELFPlugin::trackSize() {
@@ -136,7 +136,7 @@ bool ELFPlugin::loadPlugin() {
 
 	bool ret = DynamicPlugin::loadPlugin();
 
-#ifdef ELF_LOADER_CXA_ATEXIT
+#	ifdef ELF_LOADER_CXA_ATEXIT
 	if (ret) {
 		// FIXME HACK: Reverse HACK of findSymbol() :P
 		VoidFunc tmp;
@@ -144,7 +144,7 @@ bool ELFPlugin::loadPlugin() {
 		memcpy(&_dso_handle, &tmp, sizeof(VoidFunc));
 		debug(2, "elfloader: __dso_handle is %p", _dso_handle);
 	}
-#endif
+#	endif
 
 	_dlHandle->discardSymtab();
 
@@ -155,13 +155,13 @@ void ELFPlugin::unloadPlugin() {
 	DynamicPlugin::unloadPlugin();
 
 	if (_dlHandle) {
-#ifdef ELF_LOADER_CXA_ATEXIT
+#	ifdef ELF_LOADER_CXA_ATEXIT
 		if (_dso_handle) {
 			debug(2, "elfloader: calling __cxa_finalize");
 			__cxxabiv1::__cxa_finalize(_dso_handle);
 			_dso_handle = 0;
 		}
-#endif
+#	endif
 
 		if (!_dlHandle->close())
 			warning("elfloader: Failed unloading plugin '%s'", _filename.c_str());
@@ -171,7 +171,7 @@ void ELFPlugin::unloadPlugin() {
 	}
 }
 
- /**
+/**
   * We override this function in FilePluginProvider to allow the single
   * plugin method to create a non-fragmenting memory allocation. We take
   * the plugins found and tell the memory manager to allocate space for
@@ -180,7 +180,7 @@ void ELFPlugin::unloadPlugin() {
 PluginList ELFPluginProvider::getPlugins() {
 	PluginList pl = FilePluginProvider::getPlugins();
 
-#if defined(UNCACHED_PLUGINS) && !defined(ELF_NO_MEM_MANAGER)
+#	if defined(UNCACHED_PLUGINS) && !defined(ELF_NO_MEM_MANAGER)
 	// This static downcast is safe because all of the plugins must
 	// be ELF plugins
 	for (PluginList::iterator p = pl.begin(); p != pl.end(); ++p) {
@@ -190,7 +190,7 @@ PluginList ELFPluginProvider::getPlugins() {
 	// The Memory Manager should now allocate space based on the information
 	// it collected
 	ELFMemMan.allocateHeap();
-#endif
+#	endif
 
 	return pl;
 }
@@ -199,8 +199,7 @@ bool ELFPluginProvider::isPluginFilename(const Common::FSNode &node) const {
 	// Check the plugin suffix
 	Common::String filename = node.getName();
 
-	if (!filename.hasSuffix(".PLG") && !filename.hasSuffix(".plg") &&
-			!filename.hasSuffix(".PLUGIN") && !filename.hasSuffix(".plugin"))
+	if (!filename.hasSuffix(".PLG") && !filename.hasSuffix(".plg") && !filename.hasSuffix(".PLUGIN") && !filename.hasSuffix(".plugin"))
 		return false;
 
 	return true;

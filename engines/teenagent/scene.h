@@ -23,7 +23,6 @@
 #ifndef TEENAGENT_SCENE_H
 #define TEENAGENT_SCENE_H
 
-#include "teenagent/surface.h"
 #include "teenagent/actor.h"
 #include "teenagent/objects.h"
 #include "teenagent/surface.h"
@@ -43,30 +42,30 @@ class TeenAgentEngine;
 
 struct SceneEvent {
 	enum Type {
-	    kNone,                  //0
-	    kMessage,
-	    kWalk,
-	    kPlayAnimation,
-	    kPlayActorAnimation,    //4
-	    kPauseAnimation,
-	    kClearAnimations,
-	    kLoadScene,
-	    kSetOn,                 //8
-	    kSetLan,
-	    kPlayMusic,
-	    kPlaySound,
-	    kEnableObject,          //12
-	    kHideActor,
-	    kWaitForAnimation,
-	    kWaitLanAnimationFrame,
-	    kCreditsMessage,        //16
-	    kCredits,
-	    kTimer,
-	    kEffect,
-	    kFade,
-	    kWait,
-	    kSetFlag,
-	    kQuit
+		kNone, //0
+		kMessage,
+		kWalk,
+		kPlayAnimation,
+		kPlayActorAnimation, //4
+		kPauseAnimation,
+		kClearAnimations,
+		kLoadScene,
+		kSetOn, //8
+		kSetLan,
+		kPlayMusic,
+		kPlaySound,
+		kEnableObject, //12
+		kHideActor,
+		kWaitForAnimation,
+		kWaitLanAnimationFrame,
+		kCreditsMessage, //16
+		kCredits,
+		kTimer,
+		kEffect,
+		kFade,
+		kWait,
+		kSetFlag,
+		kQuit
 	} type;
 
 	Common::String message;
@@ -92,9 +91,21 @@ struct SceneEvent {
 	};
 	byte object;
 
-	SceneEvent(Type type_) :
-		type(type_), message(), color(textColorMark), slot(0), animation(0), timer(0), orientation(0), dst(),
-		scene(0), ons(0), lan(0), music(0), sound(0), object(0) {}
+	SceneEvent(Type type_)
+	  : type(type_)
+	  , message()
+	  , color(textColorMark)
+	  , slot(0)
+	  , animation(0)
+	  , timer(0)
+	  , orientation(0)
+	  , dst()
+	  , scene(0)
+	  , ons(0)
+	  , lan(0)
+	  , music(0)
+	  , sound(0)
+	  , object(0) {}
 
 	void clear() {
 		type = kNone;
@@ -119,8 +130,7 @@ struct SceneEvent {
 
 	void dump() const {
 		debugC(0, kDebugScene, "event[%d]: \"%s\"[%02x], slot: %d, animation: %u, timer: %u, dst: (%d, %d) [%u], scene: %u, ons: %u, lan: %u, object: %u, music: %u, sound: %u",
-		      (int)type, message.c_str(), color, slot, animation, timer, dst.x, dst.y, orientation, scene, ons, lan, object, music, sound
-		     );
+		       (int)type, message.c_str(), color, slot, animation, timer, dst.x, dst.y, orientation, scene, ons, lan, object, music, sound);
 	}
 };
 
@@ -208,9 +218,9 @@ private:
 
 	bool findPath(Path &p, const Common::Point &src, const Common::Point &dst) const;
 
-	Common::Array<Common::Array<Object> > objects;
-	Common::Array<Common::Array<Walkbox> > walkboxes;
-	Common::Array<Common::Array<FadeType> > fades;
+	Common::Array<Common::Array<Object>> objects;
+	Common::Array<Common::Array<Walkbox>> walkboxes;
+	Common::Array<Common::Array<FadeType>> fades;
 
 	Common::String message;
 	Common::Point messagePos;
@@ -234,19 +244,21 @@ private:
 
 	struct Sound {
 		byte id, delay;
-		Sound(byte i, byte d): id(i), delay(d) {}
+		Sound(byte i, byte d)
+		  : id(i)
+		  , delay(d) {}
 	};
 	typedef Common::List<Sound> Sounds;
 	Sounds sounds;
 
 	struct DebugFeatures {
 		enum {
-		    kShowBack,
-		    kShowLan,
-		    kShowOns,
-		    kShowOn,
-		    kHidePath,
-		    kMax
+			kShowBack,
+			kShowLan,
+			kShowOns,
+			kShowOn,
+			kHidePath,
+			kMax
 		};
 		bool feature[kMax];
 

@@ -22,21 +22,21 @@
 
 #include "common/system.h"
 
-#include "sci/sci.h"
+#include "sci/console.h"
+#include "sci/debug.h" // for g_debug_simulated_key
 #include "sci/engine/features.h"
 #include "sci/engine/guest_additions.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/savegame.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/state.h"
-#include "sci/console.h"
-#include "sci/debug.h"	// for g_debug_simulated_key
 #include "sci/event.h"
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/maciconbar.h"
+#include "sci/sci.h"
 #ifdef ENABLE_SCI32
-#include "sci/graphics/frameout.h"
+#	include "sci/graphics/frameout.h"
 #endif
 
 namespace Sci {
@@ -203,7 +203,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		// track left buttton clicks, if requested
 		if (curEvent.type == kSciEventMousePress && curEvent.modifiers == 0 && g_debug_track_mouse_clicks) {
 			g_sci->getSciDebugger()->debugPrintf("Mouse clicked at %d, %d\n",
-						mousePos.x, mousePos.y);
+			                                     mousePos.x, mousePos.y);
 		}
 
 		if (mask & curEvent.type) {
@@ -285,9 +285,15 @@ struct KeyDirMapping {
 };
 
 const KeyDirMapping keyToDirMap[] = {
-	{ kSciKeyHome, 8 }, { kSciKeyUp,     1 }, { kSciKeyPageUp,   2 },
-	{ kSciKeyLeft, 7 }, { kSciKeyCenter, 0 }, { kSciKeyRight,    3 },
-	{ kSciKeyEnd,  6 }, { kSciKeyDown,   5 }, { kSciKeyPageDown, 4 },
+	{ kSciKeyHome, 8 },
+	{ kSciKeyUp, 1 },
+	{ kSciKeyPageUp, 2 },
+	{ kSciKeyLeft, 7 },
+	{ kSciKeyCenter, 0 },
+	{ kSciKeyRight, 3 },
+	{ kSciKeyEnd, 6 },
+	{ kSciKeyDown, 5 },
+	{ kSciKeyPageDown, 4 },
 };
 
 reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv) {
@@ -308,14 +314,14 @@ reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv) {
 			if (keyToDirMap[i].key == message) {
 				writeSelectorValue(segMan, obj, SELECTOR(type), eventType);
 				writeSelectorValue(segMan, obj, SELECTOR(message), keyToDirMap[i].direction);
-				return TRUE_REG;	// direction mapped
+				return TRUE_REG; // direction mapped
 			}
 		}
 
-		return NULL_REG;	// unknown direction
+		return NULL_REG; // unknown direction
 	}
 
-	return s->r_acc;	// no keyboard event to map, leave accumulator unchanged
+	return s->r_acc; // no keyboard event to map, leave accumulator unchanged
 }
 
 reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv) {
@@ -333,7 +339,6 @@ reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	return s->r_acc;
-
 }
 
 reg_t kLocalToGlobal(EngineState *s, int argc, reg_t *argv) {
@@ -419,9 +424,9 @@ reg_t kSetHotRectangles(EngineState *s, int argc, reg_t *argv) {
 	rects.resize(numRects);
 
 	for (int16 i = 0; i < numRects; ++i) {
-		rects[i].left   = hotRects.getAsInt16(i * 4);
-		rects[i].top    = hotRects.getAsInt16(i * 4 + 1);
-		rects[i].right  = hotRects.getAsInt16(i * 4 + 2) + 1;
+		rects[i].left = hotRects.getAsInt16(i * 4);
+		rects[i].top = hotRects.getAsInt16(i * 4 + 1);
+		rects[i].right = hotRects.getAsInt16(i * 4 + 2) + 1;
 		rects[i].bottom = hotRects.getAsInt16(i * 4 + 3) + 1;
 	}
 

@@ -22,15 +22,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
 #include "common/memstream.h"
 #include "common/rect.h"
 #include "common/system.h"
 
-#include "sword2/sword2.h"
+#include "sword2/console.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"
-#include "sword2/console.h"
 #include "sword2/logic.h"
 #include "sword2/maketext.h"
 #include "sword2/memory.h"
@@ -38,89 +36,90 @@
 #include "sword2/resman.h"
 #include "sword2/screen.h"
 #include "sword2/sound.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
 Debugger::Debugger(Sword2Engine *vm)
-	: GUI::Debugger() {
+  : GUI::Debugger() {
 	_vm = vm;
 
 	memset(_debugTextBlocks, 0, sizeof(_debugTextBlocks));
 	memset(_showVar, 0, sizeof(_showVar));
 
-	_displayDebugText = false;	// "INFO"
-	_displayWalkGrid = false;	// "WALKGRID"
-	_displayMouseMarker = false;	// "MOUSE"
-	_displayTime = false;		// "TIME"
-	_displayPlayerMarker = false;	// "PLAYER"
-	_displayTextNumbers = false;	// "TEXT"
+	_displayDebugText = false; // "INFO"
+	_displayWalkGrid = false; // "WALKGRID"
+	_displayMouseMarker = false; // "MOUSE"
+	_displayTime = false; // "TIME"
+	_displayPlayerMarker = false; // "PLAYER"
+	_displayTextNumbers = false; // "TEXT"
 
-	_definingRectangles = false;	// "RECT"
-	_draggingRectangle = 0;		// 0 = waiting to start new rect
-					// 1 = currently dragging a rectangle
+	_definingRectangles = false; // "RECT"
+	_draggingRectangle = 0; // 0 = waiting to start new rect
+	  // 1 = currently dragging a rectangle
 
 	_rectX1 = _rectY1 = 0;
 	_rectX2 = _rectY2 = 0;
 	_rectFlicker = false;
 
-	_testingSnR = false;		// "SAVEREST" - for system to kill all
-					// object resources (except player) in
-					// fnAddHuman()
+	_testingSnR = false; // "SAVEREST" - for system to kill all
+	  // object resources (except player) in
+	  // fnAddHuman()
 
-	_speechScriptWaiting = 0;	// The id of whoever we're waiting for
-					// in a speech script. See fnTheyDo(),
-					// fnTheyDoWeWait(), fnWeWait(), and
-					// fnTimedWait().
+	_speechScriptWaiting = 0; // The id of whoever we're waiting for
+	  // in a speech script. See fnTheyDo(),
+	  // fnTheyDoWeWait(), fnWeWait(), and
+	  // fnTimedWait().
 
-	_startTime = 0;			// "TIMEON" & "TIMEOFF" - system start
-					// time
+	_startTime = 0; // "TIMEON" & "TIMEOFF" - system start
+	  // time
 
-	_textNumber = 0;		// Current system text line number
+	_textNumber = 0; // Current system text line number
 
-	_graphNoFrames = 0;		// No. of frames in currently displayed
-					// anim
+	_graphNoFrames = 0; // No. of frames in currently displayed
+	  // anim
 
 	// Register commands
 
 	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
-	registerCmd("q",        WRAP_METHOD(Debugger, cmdExit));
-	registerCmd("mem",      WRAP_METHOD(Debugger, Cmd_Mem));
-	registerCmd("tony",     WRAP_METHOD(Debugger, Cmd_Tony));
-	registerCmd("res",      WRAP_METHOD(Debugger, Cmd_Res));
-	registerCmd("reslist",  WRAP_METHOD(Debugger, Cmd_ResList));
-	registerCmd("starts",   WRAP_METHOD(Debugger, Cmd_Starts));
-	registerCmd("start",    WRAP_METHOD(Debugger, Cmd_Start));
-	registerCmd("s",        WRAP_METHOD(Debugger, Cmd_Start));
-	registerCmd("info",     WRAP_METHOD(Debugger, Cmd_Info));
+	registerCmd("q", WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("mem", WRAP_METHOD(Debugger, Cmd_Mem));
+	registerCmd("tony", WRAP_METHOD(Debugger, Cmd_Tony));
+	registerCmd("res", WRAP_METHOD(Debugger, Cmd_Res));
+	registerCmd("reslist", WRAP_METHOD(Debugger, Cmd_ResList));
+	registerCmd("starts", WRAP_METHOD(Debugger, Cmd_Starts));
+	registerCmd("start", WRAP_METHOD(Debugger, Cmd_Start));
+	registerCmd("s", WRAP_METHOD(Debugger, Cmd_Start));
+	registerCmd("info", WRAP_METHOD(Debugger, Cmd_Info));
 	registerCmd("walkgrid", WRAP_METHOD(Debugger, Cmd_WalkGrid));
-	registerCmd("mouse",    WRAP_METHOD(Debugger, Cmd_Mouse));
-	registerCmd("player",   WRAP_METHOD(Debugger, Cmd_Player));
-	registerCmd("reslook",  WRAP_METHOD(Debugger, Cmd_ResLook));
-	registerCmd("cur",      WRAP_METHOD(Debugger, Cmd_CurrentInfo));
-	registerCmd("runlist",  WRAP_METHOD(Debugger, Cmd_RunList));
-	registerCmd("kill",     WRAP_METHOD(Debugger, Cmd_Kill));
-	registerCmd("nuke",     WRAP_METHOD(Debugger, Cmd_Nuke));
-	registerCmd("var",      WRAP_METHOD(Debugger, Cmd_Var));
-	registerCmd("rect",     WRAP_METHOD(Debugger, Cmd_Rect));
-	registerCmd("clear",    WRAP_METHOD(Debugger, Cmd_Clear));
-	registerCmd("debugon",  WRAP_METHOD(Debugger, Cmd_DebugOn));
+	registerCmd("mouse", WRAP_METHOD(Debugger, Cmd_Mouse));
+	registerCmd("player", WRAP_METHOD(Debugger, Cmd_Player));
+	registerCmd("reslook", WRAP_METHOD(Debugger, Cmd_ResLook));
+	registerCmd("cur", WRAP_METHOD(Debugger, Cmd_CurrentInfo));
+	registerCmd("runlist", WRAP_METHOD(Debugger, Cmd_RunList));
+	registerCmd("kill", WRAP_METHOD(Debugger, Cmd_Kill));
+	registerCmd("nuke", WRAP_METHOD(Debugger, Cmd_Nuke));
+	registerCmd("var", WRAP_METHOD(Debugger, Cmd_Var));
+	registerCmd("rect", WRAP_METHOD(Debugger, Cmd_Rect));
+	registerCmd("clear", WRAP_METHOD(Debugger, Cmd_Clear));
+	registerCmd("debugon", WRAP_METHOD(Debugger, Cmd_DebugOn));
 	registerCmd("debugoff", WRAP_METHOD(Debugger, Cmd_DebugOff));
 	registerCmd("saverest", WRAP_METHOD(Debugger, Cmd_SaveRest));
-	registerCmd("timeon",   WRAP_METHOD(Debugger, Cmd_TimeOn));
-	registerCmd("timeoff",  WRAP_METHOD(Debugger, Cmd_TimeOff));
-	registerCmd("text",     WRAP_METHOD(Debugger, Cmd_Text));
-	registerCmd("showvar",  WRAP_METHOD(Debugger, Cmd_ShowVar));
-	registerCmd("hidevar",  WRAP_METHOD(Debugger, Cmd_HideVar));
-	registerCmd("version",  WRAP_METHOD(Debugger, Cmd_Version));
+	registerCmd("timeon", WRAP_METHOD(Debugger, Cmd_TimeOn));
+	registerCmd("timeoff", WRAP_METHOD(Debugger, Cmd_TimeOff));
+	registerCmd("text", WRAP_METHOD(Debugger, Cmd_Text));
+	registerCmd("showvar", WRAP_METHOD(Debugger, Cmd_ShowVar));
+	registerCmd("hidevar", WRAP_METHOD(Debugger, Cmd_HideVar));
+	registerCmd("version", WRAP_METHOD(Debugger, Cmd_Version));
 	registerCmd("animtest", WRAP_METHOD(Debugger, Cmd_AnimTest));
 	registerCmd("texttest", WRAP_METHOD(Debugger, Cmd_TextTest));
 	registerCmd("linetest", WRAP_METHOD(Debugger, Cmd_LineTest));
-	registerCmd("events",   WRAP_METHOD(Debugger, Cmd_Events));
-	registerCmd("sfx",      WRAP_METHOD(Debugger, Cmd_Sfx));
-	registerCmd("english",  WRAP_METHOD(Debugger, Cmd_English));
-	registerCmd("finnish",  WRAP_METHOD(Debugger, Cmd_Finnish));
-	registerCmd("polish",   WRAP_METHOD(Debugger, Cmd_Polish));
-	registerCmd("fxq",      WRAP_METHOD(Debugger, Cmd_FxQueue));
+	registerCmd("events", WRAP_METHOD(Debugger, Cmd_Events));
+	registerCmd("sfx", WRAP_METHOD(Debugger, Cmd_Sfx));
+	registerCmd("english", WRAP_METHOD(Debugger, Cmd_English));
+	registerCmd("finnish", WRAP_METHOD(Debugger, Cmd_Finnish));
+	registerCmd("polish", WRAP_METHOD(Debugger, Cmd_Polish));
+	registerCmd("fxq", WRAP_METHOD(Debugger, Cmd_FxQueue));
 }
 
 void Debugger::varGet(int var) {
@@ -159,8 +158,8 @@ void Debugger::postEnter() {
 // Now the fun stuff: Commands
 
 static int compare_blocks(const void *p1, const void *p2) {
-	const MemBlock *m1 = *(const MemBlock * const *)p1;
-	const MemBlock *m2 = *(const MemBlock * const *)p2;
+	const MemBlock *m1 = *(const MemBlock *const *)p1;
+	const MemBlock *m2 = *(const MemBlock *const *)p2;
 
 	if (m1->size < m2->size)
 		return 1;
@@ -198,7 +197,7 @@ bool Debugger::Cmd_Mem(int argc, const char **argv) {
 			type = "SCREEN_FILE";
 			break;
 		case GAME_OBJECT:
-			type  = "GAME_OBJECT";
+			type = "GAME_OBJECT";
 			break;
 		case WALK_GRID_FILE:
 			type = "WALK_GRID_FILE";
@@ -236,8 +235,8 @@ bool Debugger::Cmd_Mem(int argc, const char **argv) {
 		}
 
 		debugPrintf("%9d %-3d %-4d %-20s %s\n",
-				blocks[i]->size, blocks[i]->id, blocks[i]->uid,
-				type, _vm->_resman->fetchName(blocks[i]->ptr));
+		            blocks[i]->size, blocks[i]->id, blocks[i]->uid,
+		            type, _vm->_resman->fetchName(blocks[i]->ptr));
 	}
 
 	free(blocks);
@@ -399,7 +398,7 @@ bool Debugger::Cmd_ResLook(int argc, const char **argv) {
 
 	if (res < 0 || res >= (int)numResFiles) {
 		debugPrintf("Illegal resource %d. There are %d resources, 0-%d.\n",
-			res, numResFiles, numResFiles - 1);
+		            res, numResFiles, numResFiles - 1);
 		return true;
 	}
 
@@ -504,7 +503,7 @@ bool Debugger::Cmd_Kill(int argc, const char **argv) {
 
 	if (res < 0 || res >= (int)numResFiles) {
 		debugPrintf("Illegal resource %d. There are %d resources, 0-%d.\n",
-			res, numResFiles, numResFiles - 1);
+		            res, numResFiles, numResFiles - 1);
 		return true;
 	}
 

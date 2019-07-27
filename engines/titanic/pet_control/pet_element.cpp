@@ -20,13 +20,14 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "titanic/pet_control/pet_element.h"
+#include "common/textconsole.h"
 #include "titanic/core/game_object.h"
 
 namespace Titanic {
 
-CPetElement::CPetElement() : _mode(MODE_UNSELECTED) {}
+CPetElement::CPetElement()
+  : _mode(MODE_UNSELECTED) {}
 
 Rect CPetElement::getBounds() const {
 	return Rect();

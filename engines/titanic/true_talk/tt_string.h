@@ -33,20 +33,34 @@ struct TTstringData {
 	CString _string;
 	int _referenceCount;
 
-	TTstringData() : _referenceCount(1) {}
-	TTstringData(const char *str) : _string(str), _referenceCount(1) {}
-	TTstringData(const CString &str) : _string(str), _referenceCount(1) {}
+	TTstringData()
+	  : _referenceCount(1) {}
+	TTstringData(const char *str)
+	  : _string(str)
+	  , _referenceCount(1) {}
+	TTstringData(const CString &str)
+	  : _string(str)
+	  , _referenceCount(1) {}
 };
 
 enum TTstringStatus {
-	SS_VALID = 0, SS_1 = 1, SS_2 = 2, SS_3 = 3, SS_4 = 4,
-	SS_5 = 5, SS_7 = 7, SS_8 = 8, SS_11 = 11, SS_13 = 13
+	SS_VALID = 0,
+	SS_1 = 1,
+	SS_2 = 2,
+	SS_3 = 3,
+	SS_4 = 4,
+	SS_5 = 5,
+	SS_7 = 7,
+	SS_8 = 8,
+	SS_11 = 11,
+	SS_13 = 13
 };
 
 class TTstring {
 private:
 	TTstringData *_data;
 	TTstringStatus _status;
+
 public:
 	TTstring();
 	TTstring(const char *str);
@@ -165,7 +179,6 @@ public:
 	 * Delets a specififed number of characters from the end of the string
 	 */
 	int deleteSuffix(int count);
-
 };
 
 } // End of namespace Titanic

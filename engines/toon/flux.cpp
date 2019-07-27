@@ -26,7 +26,8 @@
 
 namespace Toon {
 
-CharacterFlux::CharacterFlux(ToonEngine *vm) : Character(vm) {
+CharacterFlux::CharacterFlux(ToonEngine *vm)
+  : Character(vm) {
 	_id = 1;
 	_animationInstance = vm->getAnimationManager()->createNewInstance(kAnimationCharacter);
 	_animationInstance->setUseMask(true);
@@ -72,7 +73,8 @@ int32 CharacterFlux::fixFacingForAnimation(int32 originalFacing, int32 animation
 		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
 		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xee, 0xff, 0xff, 0xff,
 		0xff, 0xff, 0xff, 0xff, 0xee, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x55,
-		0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff
+	};
 
 	byte animFacingFlag = fixFluxAnimationFacing[animationId];
 	int32 v5 = 1 << originalFacing;
@@ -89,7 +91,7 @@ int32 CharacterFlux::fixFacingForAnimation(int32 originalFacing, int32 animation
 	} while (!facingMask);
 
 	int32 finalFacing = 0;
-	for (finalFacing = 0; ; ++finalFacing) {
+	for (finalFacing = 0;; ++finalFacing) {
 		facingMask >>= 1;
 		if (!facingMask)
 			break;
@@ -105,7 +107,7 @@ void CharacterFlux::setPosition(int16 x, int16 y) {
 	_scale = _vm->getScaleAtPoint(x, y);
 	int32 width = _walkAnim->getWidth() * _scale / 1024;
 	int32 height = 165 * _scale / 1024;
-	_animationInstance->setPosition(x - width / 2, y - height, _z , false);
+	_animationInstance->setPosition(x - width / 2, y - height, _z, false);
 	_animationInstance->setScale(_scale);
 
 	// in original code, flux shadow scale is 3/4 of real scale
@@ -114,7 +116,7 @@ void CharacterFlux::setPosition(int16 x, int16 y) {
 	// work out position and scale of the shadow below character
 	int32 shadowWidth = _shadowAnim->getWidth() * shadowScale / 1024;
 	int32 shadowHeight = _shadowAnim->getHeight() * shadowScale / 1024;
-	_shadowAnimationInstance->setPosition(x - shadowWidth / 2, y - shadowHeight / 2 , _z , false);
+	_shadowAnimationInstance->setPosition(x - shadowWidth / 2, y - shadowHeight / 2, _z, false);
 	_shadowAnimationInstance->setScale(shadowScale);
 	_x = x;
 	_y = y;

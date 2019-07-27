@@ -42,14 +42,14 @@
 
 // Includes
 #include "common/array.h"
-#include "common/rect.h"
 #include "common/ptr.h"
+#include "common/rect.h"
 #include "common/str.h"
 #include "graphics/surface.h"
-#include "sword25/kernel/common.h"
-#include "sword25/kernel/resservice.h"
-#include "sword25/kernel/persistable.h"
 #include "sword25/gfx/renderobjectptr.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/persistable.h"
+#include "sword25/kernel/resservice.h"
 #include "sword25/math/vertex.h"
 
 namespace Sword25 {
@@ -62,8 +62,8 @@ class RenderObjectManager;
 
 typedef uint BS_COLOR;
 
-#define BS_RGB(R,G,B)       (0xFF000000 | ((R) << 16) | ((G) << 8) | (B))
-#define BS_ARGB(A,R,G,B)    (((A) << 24) | ((R) << 16) | ((G) << 8) | (B))
+#define BS_RGB(R, G, B) (0xFF000000 | ((R) << 16) | ((G) << 8) | (B))
+#define BS_ARGB(A, R, G, B) (((A) << 24) | ((R) << 16) | ((G) << 8) | (B))
 
 /**
  * This is the graphics engine. Unlike the original code, this is not
@@ -284,7 +284,6 @@ public:
 	static uint luaColorToARGBColor(lua_State *L, int stackIndex);
 
 protected:
-
 	// Display Variables
 	// -----------------
 	int _width;
@@ -315,10 +314,10 @@ private:
 	Common::ScopedPtr<RenderObjectManager> _renderObjectManagerPtr;
 
 	struct DebugLine {
-		DebugLine(const Vertex &start, const Vertex &end, uint color) :
-			_start(start),
-			_end(end),
-			_color(color) {}
+		DebugLine(const Vertex &start, const Vertex &end, uint color)
+		  : _start(start)
+		  , _end(end)
+		  , _color(color) {}
 		DebugLine() {}
 
 		Vertex _start;

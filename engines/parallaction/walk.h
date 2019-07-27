@@ -23,8 +23,8 @@
 #ifndef PARALLACTION_WALK_H
 #define PARALLACTION_WALK_H
 
-#include "common/ptr.h"
 #include "common/list.h"
+#include "common/ptr.h"
 
 #include "parallaction/objects.h"
 
@@ -34,20 +34,20 @@ struct Character;
 
 class PathWalker_NS {
 	AnimationPtr _a;
-	PointList	_walkPath;
-	int16		_direction, _step;
+	PointList _walkPath;
+	int16 _direction, _step;
 
 	// builder routines
-	PointList	_subPath;
+	PointList _subPath;
 	void correctPathPoint(Common::Point &to);
-	uint32 buildSubPath(const Common::Point& pos, const Common::Point& stop);
-	uint16 walkFunc1(const Common::Point &to, Common::Point& node);
+	uint32 buildSubPath(const Common::Point &pos, const Common::Point &stop);
+	uint16 walkFunc1(const Common::Point &to, Common::Point &node);
 
 	// walker routines
 	void finalizeWalk();
-	void clipMove(Common::Point& pos, const Common::Point& to);
+	void clipMove(Common::Point &pos, const Common::Point &to);
 	void checkDoor(const Common::Point &foot);
-	void updateDirection(const Common::Point& pos, const Common::Point& to);
+	void updateDirection(const Common::Point &pos, const Common::Point &to);
 
 	Parallaction *_vm;
 
@@ -61,15 +61,15 @@ public:
 class PathWalker_BR {
 
 	struct State {
-		bool			_active;
-		AnimationPtr	_a;
-		int				_walkDelay;
-		bool			_stillWalkingTowardsNode;
-		Common::Point	_startFoot;
-		bool			_first;
-		int				_step;
-		int				_dirFrame;
-		PointList		_walkPath;
+		bool _active;
+		AnimationPtr _a;
+		int _walkDelay;
+		bool _stillWalkingTowardsNode;
+		Common::Point _startFoot;
+		bool _first;
+		int _step;
+		int _dirFrame;
+		PointList _walkPath;
 	};
 
 	State _character;
@@ -85,7 +85,7 @@ class PathWalker_BR {
 
 public:
 	PathWalker_BR(Parallaction *vm);
-	~PathWalker_BR() { }
+	~PathWalker_BR() {}
 
 	void setCharacterPath(AnimationPtr a, uint16 x, uint16 y);
 	void setFollowerPath(AnimationPtr a, uint16 x, uint16 y);

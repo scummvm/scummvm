@@ -24,7 +24,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h	//On IRIX, sys/stat.h includes sys/time.h
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h //On IRIX, sys/stat.h includes sys/time.h
 #define FORBIDDEN_SYMBOL_EXCEPTION_system
 #define FORBIDDEN_SYMBOL_EXCEPTION_random
 #define FORBIDDEN_SYMBOL_EXCEPTION_srandom
@@ -33,42 +33,41 @@
 
 #ifdef POSIX
 
-#include "backends/platform/sdl/posix/posix.h"
-#include "backends/saves/posix/posix-saves.h"
-#include "backends/fs/posix/posix-fs-factory.h"
-#include "backends/fs/posix/posix-fs.h"
-#include "backends/taskbar/unity/unity-taskbar.h"
+#	include "backends/fs/posix/posix-fs-factory.h"
+#	include "backends/fs/posix/posix-fs.h"
+#	include "backends/platform/sdl/posix/posix.h"
+#	include "backends/saves/posix/posix-saves.h"
+#	include "backends/taskbar/unity/unity-taskbar.h"
 
-#ifdef USE_LINUXCD
-#include "backends/audiocd/linux/linux-audiocd.h"
-#endif
+#	ifdef USE_LINUXCD
+#		include "backends/audiocd/linux/linux-audiocd.h"
+#	endif
 
-#include "common/textconsole.h"
+#	include "common/textconsole.h"
 
-#include <stdlib.h>
-#include <errno.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <unistd.h>
+#	include <errno.h>
+#	include <stdlib.h>
+#	include <sys/stat.h>
+#	include <sys/wait.h>
+#	include <unistd.h>
 
-#ifdef HAS_POSIX_SPAWN
-#include <spawn.h>
-#endif
+#	ifdef HAS_POSIX_SPAWN
+#		include <spawn.h>
+#	endif
 extern char **environ;
 
 OSystem_POSIX::OSystem_POSIX(Common::String baseConfigName)
-	:
-	_baseConfigName(baseConfigName) {
+  : _baseConfigName(baseConfigName) {
 }
 
 void OSystem_POSIX::init() {
 	// Initialze File System Factory
 	_fsFactory = new POSIXFilesystemFactory();
 
-#if defined(USE_TASKBAR) && defined(USE_UNITY)
+#	if defined(USE_TASKBAR) && defined(USE_UNITY)
 	// Initialize taskbar manager
 	_taskbarManager = new UnityTaskbarManager();
-#endif
+#	endif
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();
@@ -82,19 +81,19 @@ void OSystem_POSIX::initBackend() {
 	// Invoke parent implementation of this method
 	OSystem_SDL::initBackend();
 
-#if defined(USE_TASKBAR) && defined(USE_UNITY)
+#	if defined(USE_TASKBAR) && defined(USE_UNITY)
 	// Register the taskbar manager as an event source (this is necessary for the glib event loop to be run)
 	_eventManager->getEventDispatcher()->registerSource((UnityTaskbarManager *)_taskbarManager, false);
-#endif
+#	endif
 }
 
 bool OSystem_POSIX::hasFeature(Feature f) {
 	if (f == kFeatureDisplayLogFile)
 		return true;
-#ifdef HAS_POSIX_SPAWN
+#	ifdef HAS_POSIX_SPAWN
 	if (f == kFeatureOpenUrl)
 		return true;
-#endif
+#	endif
 	return OSystem_SDL::hasFeature(f);
 }
 
@@ -102,9 +101,9 @@ Common::String OSystem_POSIX::getDefaultConfigFileName() {
 	Common::String configFile;
 
 	Common::String prefix;
-#ifdef MACOSX
+#	ifdef MACOSX
 	prefix = getenv("HOME");
-#elif !defined(SAMSUNGTV)
+#	elif !defined(SAMSUNGTV)
 	const char *envVar;
 	// Our old configuration file path for POSIX systems was ~/.scummvmrc.
 	// If that file exists, we still use it.
@@ -143,7 +142,7 @@ Common::String OSystem_POSIX::getDefaultConfigFileName() {
 	if (!prefix.empty() && Posix::assureDirectoryExists("scummvm", prefix.c_str())) {
 		prefix += "/scummvm";
 	}
-#endif
+#	endif
 
 	if (!prefix.empty() && (prefix.size() + 1 + _baseConfigName.size()) < MAXPATHLEN) {
 		configFile = prefix;
@@ -252,7 +251,7 @@ Common::String OSystem_POSIX::getScreenshotsPath() {
 }
 
 void OSystem_POSIX::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
-#ifdef DATA_PATH
+#	ifdef DATA_PATH
 	const char *snap = getenv("SNAP");
 	if (snap) {
 		Common::String dataPath = Common::String(snap) + DATA_PATH;
@@ -263,7 +262,7 @@ void OSystem_POSIX::addSysArchivesToSearchSet(Common::SearchSet &s, int priority
 			s.add(dataPath, new Common::FSDirectory(dataNode, 4), priority);
 		}
 	}
-#endif
+#	endif
 
 	// For now, we always add the data path, just in case SNAP doesn't make sense.
 	OSystem_SDL::addSysArchivesToSearchSet(s, priority);
@@ -276,17 +275,17 @@ Common::WriteStream *OSystem_POSIX::createLogFile() {
 
 	const char *prefix = nullptr;
 	Common::String logFile;
-#ifdef MACOSX
+#	ifdef MACOSX
 	prefix = getenv("HOME");
 	if (prefix == nullptr) {
 		return 0;
 	}
 
 	logFile = "Library/Logs";
-#elif SAMSUNGTV
+#	elif SAMSUNGTV
 	prefix = nullptr;
 	logFile = "/mtd_ram";
-#else
+#	else
 	// On POSIX systems we follow the XDG Base Directory Specification for
 	// where to store files. The version we based our code upon can be found
 	// over here: http://standards.freedesktop.org/basedir-spec/basedir-spec-0.8.html
@@ -301,7 +300,7 @@ Common::WriteStream *OSystem_POSIX::createLogFile() {
 	}
 
 	logFile += "scummvm/logs";
-#endif
+#	endif
 
 	if (!Posix::assureDirectoryExists(logFile, prefix)) {
 		return 0;
@@ -372,7 +371,7 @@ bool OSystem_POSIX::displayLogFile() {
 }
 
 bool OSystem_POSIX::openUrl(const Common::String &url) {
-#ifdef HAS_POSIX_SPAWN
+#	ifdef HAS_POSIX_SPAWN
 	// inspired by Qt's "qdesktopservices_x11.cpp"
 
 	// try "standards"
@@ -407,13 +406,13 @@ bool OSystem_POSIX::openUrl(const Common::String &url) {
 
 	warning("openUrl() (POSIX) failed to open URL");
 	return false;
-#else
+#	else
 	return false;
-#endif
+#	endif
 }
 
 bool OSystem_POSIX::launchBrowser(const Common::String &client, const Common::String &url) {
-#ifdef HAS_POSIX_SPAWN
+#	ifdef HAS_POSIX_SPAWN
 	pid_t pid;
 	const char *argv[] = {
 		client.c_str(),
@@ -429,17 +428,17 @@ bool OSystem_POSIX::launchBrowser(const Common::String &client, const Common::St
 		return false;
 	}
 	return (waitpid(pid, NULL, WNOHANG) != -1);
-#else
+#	else
 	return false;
-#endif
+#	endif
 }
 
 AudioCDManager *OSystem_POSIX::createAudioCDManager() {
-#ifdef USE_LINUXCD
+#	ifdef USE_LINUXCD
 	return createLinuxAudioCDManager();
-#else
+#	else
 	return OSystem_SDL::createAudioCDManager();
-#endif
+#	endif
 }
 
 #endif

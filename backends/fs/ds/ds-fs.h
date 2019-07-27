@@ -23,12 +23,12 @@
 #ifndef _DS_FS_H
 #define _DS_FS_H
 
+#include "backends/fs/abstract-fs.h"
 #include "common/fs.h"
 #include "common/stream.h"
-#include "backends/fs/abstract-fs.h"
 
-#include "zipreader.h"
 #include "fat/gba_nds_fat.h"
+#include "zipreader.h"
 
 namespace DS {
 
@@ -66,26 +66,26 @@ public:
 	 * @param path String with the path the new node should point to.
 	 * @param path true if path is a directory, false otherwise.
 	 */
-	DSFileSystemNode(const Common::String& path, bool isDir);
+	DSFileSystemNode(const Common::String &path, bool isDir);
 
 	/**
 	 * Copy constructor.
 	 */
 	DSFileSystemNode(const DSFileSystemNode *node);
 
-	virtual bool exists() const { return true; }		//FIXME: this is just a stub
-	virtual Common::String getDisplayName() const {  return _displayName; }
-	virtual Common::String getName() const {  return _displayName; }
+	virtual bool exists() const { return true; } //FIXME: this is just a stub
+	virtual Common::String getDisplayName() const { return _displayName; }
+	virtual Common::String getName() const { return _displayName; }
 	virtual Common::String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
-	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
-	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
+	virtual bool isReadable() const { return true; } //FIXME: this is just a stub
+	virtual bool isWritable() const { return true; } //FIXME: this is just a stub
 
 	/**
 	 * Returns a copy of this node.
 	 */
 	virtual AbstractFSNode *clone() const { return new DSFileSystemNode(this); }
-	virtual AbstractFSNode *getChild(const Common::String& name) const;
+	virtual AbstractFSNode *getChild(const Common::String &name) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFSNode *getParent() const;
 
@@ -100,7 +100,7 @@ public:
 	static ZipFile *getZip() { return _zipFile; }
 };
 
- /**
+/**
  * Implementation of the ScummVM file system API.
  * This class is used when the GBAMP (GBA Movie Player) is used with a CompactFlash card.
  *
@@ -140,18 +140,18 @@ public:
 	GBAMPFileSystemNode(const GBAMPFileSystemNode *node);
 
 	virtual bool exists() const { return _isValid || _isDirectory; }
-	virtual Common::String getDisplayName() const {  return _displayName; }
-	virtual Common::String getName() const {  return _displayName; }
+	virtual Common::String getDisplayName() const { return _displayName; }
+	virtual Common::String getName() const { return _displayName; }
 	virtual Common::String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
-	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
-	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
+	virtual bool isReadable() const { return true; } //FIXME: this is just a stub
+	virtual bool isWritable() const { return true; } //FIXME: this is just a stub
 
 	/**
 	 * Returns a copy of this node.
 	 */
 	virtual AbstractFSNode *clone() const { return new GBAMPFileSystemNode(this); }
-	virtual AbstractFSNode *getChild(const Common::String& name) const;
+	virtual AbstractFSNode *getChild(const Common::String &name) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFSNode *getParent() const;
 
@@ -167,12 +167,10 @@ struct fileHandle {
 	int size;
 };
 
-
 class DSFileStream : public Common::SeekableReadStream, public Common::WriteStream, public Common::NonCopyable {
 protected:
-
 	/** File handle to the actual file. */
-	void 	*_handle;
+	void *_handle;
 
 public:
 	/**
@@ -197,7 +195,6 @@ public:
 	uint32 read(void *dataPtr, uint32 dataSize);
 };
 
-
 // FIXME/TODO: Get rid of the following hacks. Top priority: Get rid of
 // the 'FILE' (re)definition. Simply calling it STD_FILE or so wold already
 // suffice (need to adjust affected code, of course).
@@ -210,23 +207,23 @@ public:
 #undef stdout
 #undef stdin
 
-#define stdout ((DS::fileHandle *) -1)
-#define stderr ((DS::fileHandle *) -2)
-#define stdin ((DS::fileHandle *) -3)
+#define stdout ((DS::fileHandle *)-1)
+#define stderr ((DS::fileHandle *)-2)
+#define stdin ((DS::fileHandle *)-3)
 
 #define FILE DS::fileHandle
 
 // Please do not remove any of these prototypes that appear not to be required.
-FILE*	std_fopen(const char *name, const char *mode);
-void	std_fclose(FILE *handle);
-size_t	std_fread(void *ptr, size_t size, size_t numItems, FILE *handle);
-size_t	std_fwrite(const void *ptr, size_t size, size_t numItems, FILE *handle);
-bool	std_feof(FILE *handle);
+FILE *std_fopen(const char *name, const char *mode);
+void std_fclose(FILE *handle);
+size_t std_fread(void *ptr, size_t size, size_t numItems, FILE *handle);
+size_t std_fwrite(const void *ptr, size_t size, size_t numItems, FILE *handle);
+bool std_feof(FILE *handle);
 long int std_ftell(FILE *handle);
-int		std_fseek(FILE *handle, long int offset, int whence);
-void	std_clearerr(FILE *handle);
-int		std_fflush(FILE *handle);
-int		std_ferror(FILE *handle);
+int std_fseek(FILE *handle, long int offset, int whence);
+void std_clearerr(FILE *handle);
+int std_fflush(FILE *handle);
+int std_ferror(FILE *handle);
 
 } // End of namespace DS
 

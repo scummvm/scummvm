@@ -21,9 +21,9 @@
  */
 
 #if !defined(SCUMM_HE_WIZ_HE_H) && defined(ENABLE_HE)
-#define SCUMM_HE_WIZ_HE_H
+#	define SCUMM_HE_WIZ_HE_H
 
-#include "common/rect.h"
+#	include "common/rect.h"
 
 namespace Scumm {
 
@@ -206,9 +206,9 @@ enum WizCompositeFlags {
 
 enum WizSpcConditionTypes {
 	kWSPCCTBits = 0xc0000000,
-	kWSPCCTOr   = 0x00000000,
-	kWSPCCTAnd  = 0x40000000,
-	kWSPCCTNot  = 0x80000000
+	kWSPCCTOr = 0x00000000,
+	kWSPCCTAnd = 0x40000000,
+	kWSPCCTNot = 0x80000000
 };
 
 enum WizMoonSystemBits {
@@ -225,10 +225,10 @@ enum {
 };
 
 enum DstSurface {
-	kDstScreen   = 0,
-	kDstMemory   = 1,
+	kDstScreen = 0,
+	kDstMemory = 1,
 	kDstResource = 2,
- 	kDstCursor   = 3
+	kDstCursor = 3
 };
 
 class ScummEngine_v71he;
@@ -237,7 +237,7 @@ class Wiz {
 public:
 	enum {
 		NUM_POLYGONS = 200,
-		NUM_IMAGES   = 255
+		NUM_IMAGES = 255
 	};
 
 	WizImage _images[NUM_IMAGES];
@@ -254,7 +254,7 @@ public:
 	void polygonClear();
 	void polygonLoad(const uint8 *polData);
 	void polygonStore(int id, bool flag, int vert1x, int vert1y, int vert2x, int vert2y, int vert3x, int vert3y, int vert4x, int vert4y);
-	void polygonCalcBoundBox(Common::Point *vert, int numVerts, Common::Rect & bound);
+	void polygonCalcBoundBox(Common::Point *vert, int numVerts, Common::Rect &bound);
 	void polygonErase(int fromId, int toId);
 	int polygonHit(int id, int x, int y);
 	bool polygonDefined(int id);
@@ -285,8 +285,8 @@ public:
 	void getWizImageSpot(uint8 *data, int state, int32 &x, int32 &y);
 	void loadWizCursor(int resId, int palette);
 
-	void captureWizImage(int resNum, const Common::Rect& r, bool frontBuffer, int compType);
-	void captureImage(uint8 *src, int srcPitch, int srcw, int srch, int resNum, const Common::Rect& r, int compType);
+	void captureWizImage(int resNum, const Common::Rect &r, bool frontBuffer, int compType);
+	void captureImage(uint8 *src, int srcPitch, int srcw, int srch, int resNum, const Common::Rect &r, int compType);
 	void captureWizPolygon(int resNum, int maskNum, int maskState, int id1, int id2, int compType);
 	void displayWizComplexImage(const WizParameters *params);
 	void displayWizImage(WizImage *pwi);
@@ -299,38 +299,43 @@ public:
 	void drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int flags, int shadow, int dstResNum, int palette);
 	void drawWizPolygonImage(uint8 *dst, const uint8 *src, const uint8 *mask, int dstpitch, int dstType, int dstw, int dsth, int wizW, int wizH, Common::Rect &bound, Common::Point *wp, uint8 bitDepth);
 
-#ifdef USE_RGB_COLOR
+#	ifdef USE_RGB_COLOR
 	static void copyMaskWizImage(uint8 *dst, const uint8 *src, const uint8 *mask, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr);
 
 	void copyCompositeWizImage(uint8 *dst, uint8 *wizPtr, uint8 *wizd, uint8 *maskPtr, int dstPitch, int dstType,
-		int dstw, int dsth, int srcx, int srcy, int srcw, int srch, int state, const Common::Rect *clipBox,
-		int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint32 conditionBits);
+	                           int dstw, int dsth, int srcx, int srcy, int srcw, int srch, int state, const Common::Rect *clipBox,
+	                           int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint32 conditionBits);
 	void copy555WizImage(uint8 *dst, uint8 *wizd, int dstPitch, int dstType,
-			int dstw, int dsth, int srcx, int srcy, const Common::Rect *clipBox, uint32 conditionBits);
-#endif
+	                     int dstw, int dsth, int srcx, int srcy, const Common::Rect *clipBox, uint32 conditionBits);
+#	endif
 
 	static void copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, uint8 bitdepth);
 	static void copyWizImageWithMask(uint8 *dst, const uint8 *src, int dstPitch, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int maskT, int maskP);
 	static void copyWizImage(uint8 *dst, const uint8 *src, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, const uint8 *xmapPtr, uint8 bitdepth);
 	static void copyRawWizImage(uint8 *dst, const uint8 *src, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor, uint8 bitdepth);
-#ifdef USE_RGB_COLOR
+#	ifdef USE_RGB_COLOR
 	static void copy16BitWizImage(uint8 *dst, const uint8 *src, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *xmapPtr);
 	static void copyRaw16BitWizImage(uint8 *dst, const uint8 *src, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, int transColor);
-	template<int type> static void decompress16BitWizImage(uint8 *dst, int dstPitch, int dstType, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *xmapPtr = NULL);
-#endif
-	template<int type> static void decompressWizImage(uint8 *dst, int dstPitch, int dstType, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr, const uint8 *xmapPtr, uint8 bitdepth);
-	template<int type> static void decompressRawWizImage(uint8 *dst, int dstPitch, int dstType, const uint8 *src, int srcPitch, int w, int h, int transColor, const uint8 *palPtr, uint8 bitdepth);
+	template <int type>
+	static void decompress16BitWizImage(uint8 *dst, int dstPitch, int dstType, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *xmapPtr = NULL);
+#	endif
+	template <int type>
+	static void decompressWizImage(uint8 *dst, int dstPitch, int dstType, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr, const uint8 *xmapPtr, uint8 bitdepth);
+	template <int type>
+	static void decompressRawWizImage(uint8 *dst, int dstPitch, int dstType, const uint8 *src, int srcPitch, int w, int h, int transColor, const uint8 *palPtr, uint8 bitdepth);
 
-#ifdef USE_RGB_COLOR
-	template<int type> static void write16BitColor(uint8 *dst, const uint8 *src, int dstType, const uint8 *xmapPtr);
-#endif
-	template<int type> static void write8BitColor(uint8 *dst, const uint8 *src, int dstType, const uint8 *palPtr, const uint8 *xmapPtr, uint8 bitDepth);
+#	ifdef USE_RGB_COLOR
+	template <int type>
+	static void write16BitColor(uint8 *dst, const uint8 *src, int dstType, const uint8 *xmapPtr);
+#	endif
+	template <int type>
+	static void write8BitColor(uint8 *dst, const uint8 *src, int dstType, const uint8 *palPtr, const uint8 *xmapPtr, uint8 bitDepth);
 	static void writeColor(uint8 *dstPtr, int dstType, uint16 color);
 
 	uint16 getWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 bitDepth, uint16 color);
 	uint16 getRawWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 bitDepth, uint16 color);
-	void computeWizHistogram(uint32 *histogram, const uint8 *data, const Common::Rect& rCapt);
-	void computeRawWizHistogram(uint32 *histogram, const uint8 *data, int srcPitch, const Common::Rect& rCapt);
+	void computeWizHistogram(uint32 *histogram, const uint8 *data, const Common::Rect &rCapt);
+	void computeRawWizHistogram(uint32 *histogram, const uint8 *data, int srcPitch, const Common::Rect &rCapt);
 
 private:
 	ScummEngine_v71he *_vm;

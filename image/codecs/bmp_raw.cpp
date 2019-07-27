@@ -28,8 +28,11 @@
 
 namespace Image {
 
-BitmapRawDecoder::BitmapRawDecoder(int width, int height, int bitsPerPixel) : Codec(),
-		_width(width), _height(height), _bitsPerPixel(bitsPerPixel) {
+BitmapRawDecoder::BitmapRawDecoder(int width, int height, int bitsPerPixel)
+  : Codec()
+  , _width(width)
+  , _height(height)
+  , _bitsPerPixel(bitsPerPixel) {
 	_surface.create(_width, _height, getPixelFormat());
 }
 
@@ -73,7 +76,7 @@ const Graphics::Surface *BitmapRawDecoder::decodeFrame(Common::SeekableReadStrea
 				*dst++ = (color & 0xf0) >> 4;
 				j++;
 
-				if (j ==_width)
+				if (j == _width)
 					break;
 
 				*dst++ = color & 0x0f;

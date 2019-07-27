@@ -25,13 +25,13 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#include "common/system.h"
-#include "common/str.h"
-#include "common/debug.h"
-#include "common/debug-channels.h"
-#include "common/memstream.h"
-#include "cge/cge.h"
 #include "cge/fileio.h"
+#include "cge/cge.h"
+#include "common/debug-channels.h"
+#include "common/debug.h"
+#include "common/memstream.h"
+#include "common/str.h"
+#include "common/system.h"
 
 namespace CGE {
 
@@ -159,7 +159,7 @@ BtKeypack *ResourceManager::find(const char *key) {
 		if (pg->_header._down != kBtValNone) {
 			int i;
 			for (i = 0; i < pg->_header._count; i++) {
-				if (scumm_strnicmp((const char *)key, (const char*)pg->_inner[i]._key, kBtKeySize) < 0)
+				if (scumm_strnicmp((const char *)key, (const char *)pg->_inner[i]._key, kBtKeySize) < 0)
 					break;
 			}
 			nxt = (i) ? pg->_inner[i - 1]._down : pg->_header._down;
@@ -181,7 +181,7 @@ BtKeypack *ResourceManager::find(const char *key) {
 bool ResourceManager::exist(const char *name) {
 	debugC(1, kCGEDebugFile, "ResourceManager::exist(%s)", name);
 
-	BtKeypack* result = find(name);
+	BtKeypack *result = find(name);
 	if (!result)
 		return false;
 
@@ -202,7 +202,8 @@ uint16 ResourceManager::catRead(byte *buf, uint16 length) {
 /*-----------------------------------------------------------------------
  * EncryptedStream
  *-----------------------------------------------------------------------*/
-EncryptedStream::EncryptedStream(CGEEngine *vm, const char *name) : _vm(vm) {
+EncryptedStream::EncryptedStream(CGEEngine *vm, const char *name)
+  : _vm(vm) {
 	debugC(3, kCGEDebugFile, "EncryptedStream::EncryptedStream(%s)", name);
 
 	_error = false;

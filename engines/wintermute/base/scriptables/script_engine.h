@@ -29,9 +29,9 @@
 #ifndef WINTERMUTE_SCENGINE_H
 #define WINTERMUTE_SCENGINE_H
 
-#include "engines/wintermute/persistent.h"
-#include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/base/base.h"
+#include "engines/wintermute/coll_templ.h"
+#include "engines/wintermute/persistent.h"
 
 namespace Wintermute {
 
@@ -106,14 +106,12 @@ public:
 	void dumpStats();
 
 private:
-
 	CScCachedScript *_cachedScripts[MAX_CACHED_SCRIPTS];
 	bool _isProfiling;
 	uint32 _profilingStartTime;
 
 	typedef Common::HashMap<Common::String, uint32> ScriptTimes;
 	ScriptTimes _scriptTimes;
-
 };
 
 } // End of namespace Wintermute

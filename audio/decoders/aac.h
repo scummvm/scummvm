@@ -35,7 +35,7 @@
 #ifdef USE_FAAD
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Audio {
@@ -53,8 +53,8 @@ class Codec;
  * @return  a new Codec, or NULL, if an error occurred
  */
 Codec *makeAACDecoder(
-	Common::SeekableReadStream *extraData,
-	DisposeAfterUse::Flag disposeExtraData = DisposeAfterUse::NO);
+  Common::SeekableReadStream *extraData,
+  DisposeAfterUse::Flag disposeExtraData = DisposeAfterUse::NO);
 
 } // End of namespace Audio
 

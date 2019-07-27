@@ -26,14 +26,15 @@
 
 #include "teenagent/inventory.h"
 
-#include "teenagent/resources.h"
 #include "teenagent/objects.h"
-#include "teenagent/teenagent.h"
+#include "teenagent/resources.h"
 #include "teenagent/scene.h"
+#include "teenagent/teenagent.h"
 
 namespace TeenAgent {
 
-Inventory::Inventory(TeenAgentEngine *vm) : _vm(vm) {
+Inventory::Inventory(TeenAgentEngine *vm)
+  : _vm(vm) {
 	_active = false;
 
 	FilePack varia;

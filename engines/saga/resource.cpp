@@ -133,7 +133,8 @@ bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
 	return true;
 }
 
-Resource::Resource(SagaEngine *vm): _vm(vm) {
+Resource::Resource(SagaEngine *vm)
+  : _vm(vm) {
 }
 
 Resource::~Resource() {
@@ -163,7 +164,7 @@ bool Resource::createContexts() {
 	};
 
 	for (const ADGameFileDescription *gameFileDescription = _vm->getFilesDescriptions();
-		gameFileDescription->fileName; gameFileDescription++) {
+	     gameFileDescription->fileName; gameFileDescription++) {
 		addContext(gameFileDescription->fileName, gameFileDescription->fileType);
 		if (gameFileDescription->fileType == GAME_SOUNDFILE) {
 			soundFileInArray = true;
@@ -172,26 +173,28 @@ bool Resource::createContexts() {
 
 	//// Detect and add SFX files ////////////////////////////////////////////////
 	SoundFileInfo sfxFiles[] = {
-		{	GID_ITE,	"sounds.rsc",		false,	0	},
-		{	GID_ITE,	"sounds.cmp",		true,	0	},
-		{	GID_ITE,	"soundsd.rsc",		false,	0	},
-		{	GID_ITE,	"soundsd.cmp",		true,	0	},
+		{ GID_ITE, "sounds.rsc", false, 0 },
+		{ GID_ITE, "sounds.cmp", true, 0 },
+		{ GID_ITE, "soundsd.rsc", false, 0 },
+		{ GID_ITE, "soundsd.cmp", true, 0 },
 #ifdef ENABLE_IHNM
-		{	GID_IHNM,	"sfx.res",			false,	0	},
-		{	GID_IHNM,	"sfx.cmp",			true,	0	},
+		{ GID_IHNM, "sfx.res", false, 0 },
+		{ GID_IHNM, "sfx.cmp", true, 0 },
 #endif
 #ifdef ENABLE_SAGA2
-		{	GID_FTA2,	"ftasound.hrs",		false,	0	},
-		{	GID_DINO,	"dinosnd.hrs",		false,	0	},
+		{ GID_FTA2, "ftasound.hrs", false, 0 },
+		{ GID_DINO, "dinosnd.hrs", false, 0 },
 #endif
-		{	-1,			"",				false,	0	}
+		{ -1, "", false, 0 }
 	};
 
 	_soundFileName[0] = 0;
 	if (!soundFileInArray) {
 		for (SoundFileInfo *curSoundFile = sfxFiles; (curSoundFile->gameId != -1); curSoundFile++) {
-			if (curSoundFile->gameId != _vm->getGameId()) continue;
-			if (!Common::File::exists(curSoundFile->fileName)) continue;
+			if (curSoundFile->gameId != _vm->getGameId())
+				continue;
+			if (!Common::File::exists(curSoundFile->fileName))
+				continue;
 			strcpy(_soundFileName, curSoundFile->fileName);
 			addContext(_soundFileName, GAME_SOUNDFILE, curSoundFile->isCompressed);
 			break;
@@ -200,52 +203,53 @@ bool Resource::createContexts() {
 
 	//// Detect and add voice files /////////////////////////////////////////////
 	SoundFileInfo voiceFiles[] = {
-		{	GID_ITE,	"voices.rsc",					false	,	(uint16)((_soundFileName[0] == 0) ? GAME_SOUNDFILE : 0)},
-		{	GID_ITE,	"voices.cmp",					true	,	(uint16)((_soundFileName[0] == 0) ? GAME_SOUNDFILE : 0)},
-		{	GID_ITE,	"voicesd.rsc",					false	,	(uint16)((_soundFileName[0] == 0) ? GAME_SOUNDFILE : 0)},
-		{	GID_ITE,	"voicesd.cmp",					true	,	(uint16)((_soundFileName[0] == 0) ? GAME_SOUNDFILE : 0)},
+		{ GID_ITE, "voices.rsc", false, (uint16)((_soundFileName[0] == 0) ? GAME_SOUNDFILE : 0) },
+		{ GID_ITE, "voices.cmp", true, (uint16)((_soundFileName[0] == 0) ? GAME_SOUNDFILE : 0) },
+		{ GID_ITE, "voicesd.rsc", false, (uint16)((_soundFileName[0] == 0) ? GAME_SOUNDFILE : 0) },
+		{ GID_ITE, "voicesd.cmp", true, (uint16)((_soundFileName[0] == 0) ? GAME_SOUNDFILE : 0) },
 		// The resources in the Wyrmkeep combined Windows/Mac/Linux CD version are little endian, but
 		// the voice file is big endian. If we got such a version with mixed files, mark this voice file
 		// as big endian
-		{	GID_ITE,	"inherit the earth voices",		false	,	(uint16)(_vm->isBigEndian() ? 0 : GAME_SWAPENDIAN)},
-		{	GID_ITE,	"inherit the earth voices.cmp",	true	,	(uint16)(_vm->isBigEndian() ? 0 : GAME_SWAPENDIAN)},
-		{	GID_ITE,	"ite voices.bin",				false	,	GAME_MACBINARY},
+		{ GID_ITE, "inherit the earth voices", false, (uint16)(_vm->isBigEndian() ? 0 : GAME_SWAPENDIAN) },
+		{ GID_ITE, "inherit the earth voices.cmp", true, (uint16)(_vm->isBigEndian() ? 0 : GAME_SWAPENDIAN) },
+		{ GID_ITE, "ite voices.bin", false, GAME_MACBINARY },
 #ifdef ENABLE_IHNM
-		{	GID_IHNM,	"voicess.res",					false	,	0},
-		{	GID_IHNM,	"voicess.cmp",					true	,	0},
-		{	GID_IHNM,	"voicesd.res",					false	,	0},
-		{	GID_IHNM,	"voicesd.cmp",					true	,	0},
+		{ GID_IHNM, "voicess.res", false, 0 },
+		{ GID_IHNM, "voicess.cmp", true, 0 },
+		{ GID_IHNM, "voicesd.res", false, 0 },
+		{ GID_IHNM, "voicesd.cmp", true, 0 },
 #endif
 #ifdef ENABLE_SAGA2
-		{	GID_FTA2,	"ftavoice.hrs",					false	,	0},
+		{ GID_FTA2, "ftavoice.hrs", false, 0 },
 #endif
-		{	-1,			"",							false	,	0}
+		{ -1, "", false, 0 }
 	};
 
 	// Detect and add voice files
 	_voicesFileName[0][0] = 0;
 	for (SoundFileInfo *curSoundFile = voiceFiles; (curSoundFile->gameId != -1); curSoundFile++) {
-		if (curSoundFile->gameId != _vm->getGameId()) continue;
-		if (!Common::File::exists(curSoundFile->fileName)) continue;
+		if (curSoundFile->gameId != _vm->getGameId())
+			continue;
+		if (!Common::File::exists(curSoundFile->fileName))
+			continue;
 
 		strcpy(_voicesFileName[0], curSoundFile->fileName);
 		addContext(_voicesFileName[0], GAME_VOICEFILE | curSoundFile->voiceFileAddType, curSoundFile->isCompressed);
 
 		// Special cases
-		if (!scumm_stricmp(curSoundFile->fileName, "voicess.res") ||
-			!scumm_stricmp(curSoundFile->fileName, "voicess.cmp")) {
-				// IHNM has multiple voice files
-				for (size_t i = 1; i <= 6; i++) { // voices1-voices6
-					sprintf(_voicesFileName[i], "voices%i.%s", (uint)i, curSoundFile->isCompressed ? "cmp" : "res");
-					if (i == 4) {
-						// The German and French versions of IHNM don't have Nimdok's chapter,
-						// therefore the voices file for that chapter is missing
-						if (!Common::File::exists(_voicesFileName[i])) {
-							continue;
-						}
+		if (!scumm_stricmp(curSoundFile->fileName, "voicess.res") || !scumm_stricmp(curSoundFile->fileName, "voicess.cmp")) {
+			// IHNM has multiple voice files
+			for (size_t i = 1; i <= 6; i++) { // voices1-voices6
+				sprintf(_voicesFileName[i], "voices%i.%s", (uint)i, curSoundFile->isCompressed ? "cmp" : "res");
+				if (i == 4) {
+					// The German and French versions of IHNM don't have Nimdok's chapter,
+					// therefore the voices file for that chapter is missing
+					if (!Common::File::exists(_voicesFileName[i])) {
+						continue;
 					}
-					addContext(_voicesFileName[i], GAME_VOICEFILE, curSoundFile->isCompressed, i);
 				}
+				addContext(_voicesFileName[i], GAME_VOICEFILE, curSoundFile->isCompressed, i);
+			}
 		}
 		break;
 	}
@@ -269,18 +273,20 @@ bool Resource::createContexts() {
 
 	//// Detect and add music files /////////////////////////////////////////
 	SoundFileInfo musicFiles[] = {
-		{	GID_ITE,	"music.rsc",	false,	0	},
-		{	GID_ITE,	"music.cmp",	true,	0	},
-		{	GID_ITE,	"musicd.rsc",	false,	0	},
-		{	GID_ITE,	"musicd.cmp",	true,	0	},
-		{	-1,			"",			false	,	0}
+		{ GID_ITE, "music.rsc", false, 0 },
+		{ GID_ITE, "music.cmp", true, 0 },
+		{ GID_ITE, "musicd.rsc", false, 0 },
+		{ GID_ITE, "musicd.cmp", true, 0 },
+		{ -1, "", false, 0 }
 	};
 
 	// Check for digital music in ITE
 
 	for (SoundFileInfo *curSoundFile = musicFiles; (curSoundFile->gameId != -1); curSoundFile++) {
-		if (curSoundFile->gameId != _vm->getGameId()) continue;
-		if (!Common::File::exists(curSoundFile->fileName)) continue;
+		if (curSoundFile->gameId != _vm->getGameId())
+			continue;
+		if (!Common::File::exists(curSoundFile->fileName))
+			continue;
 		strcpy(_musicFileName, curSoundFile->fileName);
 		addContext(_musicFileName, GAME_DIGITALMUSICFILE, curSoundFile->isCompressed);
 		break;
@@ -297,7 +303,7 @@ bool Resource::createContexts() {
 void Resource::clearContexts() {
 	ResourceContextList::iterator i = _contexts.begin();
 	while (i != _contexts.end()) {
-		ResourceContext * context = *i;
+		ResourceContext *context = *i;
 		i = _contexts.erase(i);
 		delete context;
 	}
@@ -326,7 +332,7 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, ByteArr
 
 ResourceContext *Resource::getContext(uint16 fileType, int serial) {
 	for (ResourceContextList::const_iterator i = _contexts.begin(); i != _contexts.end(); ++i) {
-		ResourceContext * context = *i;
+		ResourceContext *context = *i;
 		if ((context->fileType() & fileType) && (context->serial() == serial)) {
 			return context;
 		}

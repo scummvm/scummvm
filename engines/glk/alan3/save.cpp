@@ -35,125 +35,128 @@
 namespace Glk {
 namespace Alan3 {
 
-static void saveGameInfo(Common::WriteStream *saveFile) {
-	saveFile->writeUint32BE(MKTAG('A', 'S', 'A', 'V'));
-	saveFile->write(header->version, 4);
-	saveFile->writeUint32LE(header->uid);
-}
-
-static void verifySaveFile(CONTEXT, Common::SeekableReadStream *saveFile) {
-	if (saveFile->readUint32BE() != MKTAG('A', 'S', 'A', 'V'))
-		error(context, M_NOTASAVEFILE);
-}
-
-static void verifyCompilerVersion(CONTEXT, Common::SeekableReadStream *saveFile) {
-	char savedVersion[4];
-
-	saveFile->read(&savedVersion, 4);
-	if (!ignoreErrorOption && memcmp(savedVersion, header->version, 4))
-		error(context, M_SAVEVERS);
-}
-
-static void verifyGameId(CONTEXT, Common::SeekableReadStream *saveFile) {
-	Aword savedUid = saveFile->readUint32LE();
-	if (!ignoreErrorOption && savedUid != header->uid)
-		error(context, M_SAVEVERS);
-}
-
-void syncGame(Common::Serializer &s) {
-	// Current values
-	current.synchronize(s);
-
-	// Attributes area
-	for (Aint i = 0; i < header->attributesAreaSize / 3; ++i)
-		attributes[i].synchronize(s);
-
-	// Admin data
-	for (uint i = 1; i <= header->instanceMax; i++)
-		admin[i].synchronize(s);
-
-	// Event queue
-	s.syncAsSint32LE(eventQueueTop);
-	for (int i = 0; i < eventQueueTop; ++i)
-		eventQueue[i].synchronize(s);
-
-	// Scores
-	for (Aint i = 0; i < header->scoreCount; ++i)
-		s.syncAsUint32LE(scores[i]);
-
-	// Strings
-	if (header->stringInitTable != 0)
-		for (StringInitEntry *initEntry = (StringInitEntry *)pointerTo(header->stringInitTable);
-				!isEndOfArray(initEntry); initEntry++) {
-
-		if (s.isSaving()) {
-			char *attr = (char *)getInstanceStringAttribute(initEntry->instanceCode, initEntry->attributeCode);
-			Aint length = strlen(attr) + 1;
-			s.syncAsUint32LE(length);
-			s.syncBytes((byte *)attr, length);
-		} else {
-			Aint length = 0;
-			s.syncAsUint32LE(length);
-			char *string = (char *)allocate(length + 1);
-			s.syncBytes((byte *)string, length);
-			setInstanceAttribute(initEntry->instanceCode, initEntry->attributeCode, toAptr(string));
-		}
+	static void saveGameInfo(Common::WriteStream *saveFile) {
+		saveFile->writeUint32BE(MKTAG('A', 'S', 'A', 'V'));
+		saveFile->write(header->version, 4);
+		saveFile->writeUint32LE(header->uid);
 	}
 
-	// Sets
-	if (header->setInitTable != 0) {
-		for (SetInitEntry *initEntry = (SetInitEntry *)pointerTo(header->setInitTable);
-				!isEndOfArray(initEntry); initEntry++) {
+	static void verifySaveFile(CONTEXT, Common::SeekableReadStream *saveFile) {
+		if (saveFile->readUint32BE() != MKTAG('A', 'S', 'A', 'V'))
+			error(context, M_NOTASAVEFILE);
+	}
 
-			if (s.isSaving()) {
-				Set *attr = (Set *)getInstanceSetAttribute(initEntry->instanceCode, initEntry->attributeCode);
-				s.syncAsUint32LE(attr->size);
-				for (int i = 0; i < attr->size; ++i)
-					s.syncAsUint32LE(attr->members[i]);
+	static void verifyCompilerVersion(CONTEXT, Common::SeekableReadStream *saveFile) {
+		char savedVersion[4];
 
-			} else {
-				Aword setSize = 0, member = 0;
-				s.syncAsUint32BE(setSize);
-				Set *set = newSet(setSize);
-				for (uint i = 0; i < setSize; ++i) {
-					s.syncAsUint32LE(member);
-					addToSet(set, member);
+		saveFile->read(&savedVersion, 4);
+		if (!ignoreErrorOption && memcmp(savedVersion, header->version, 4))
+			error(context, M_SAVEVERS);
+	}
+
+	static void verifyGameId(CONTEXT, Common::SeekableReadStream *saveFile) {
+		Aword savedUid = saveFile->readUint32LE();
+		if (!ignoreErrorOption && savedUid != header->uid)
+			error(context, M_SAVEVERS);
+	}
+
+	void syncGame(Common::Serializer &s) {
+		// Current values
+		current.synchronize(s);
+
+		// Attributes area
+		for (Aint i = 0; i < header->attributesAreaSize / 3; ++i)
+			attributes[i].synchronize(s);
+
+		// Admin data
+		for (uint i = 1; i <= header->instanceMax; i++)
+			admin[i].synchronize(s);
+
+		// Event queue
+		s.syncAsSint32LE(eventQueueTop);
+		for (int i = 0; i < eventQueueTop; ++i)
+			eventQueue[i].synchronize(s);
+
+		// Scores
+		for (Aint i = 0; i < header->scoreCount; ++i)
+			s.syncAsUint32LE(scores[i]);
+
+		// Strings
+		if (header->stringInitTable != 0)
+			for (StringInitEntry *initEntry = (StringInitEntry *)pointerTo(header->stringInitTable);
+			     !isEndOfArray(initEntry); initEntry++) {
+
+				if (s.isSaving()) {
+					char *attr = (char *)getInstanceStringAttribute(initEntry->instanceCode, initEntry->attributeCode);
+					Aint length = strlen(attr) + 1;
+					s.syncAsUint32LE(length);
+					s.syncBytes((byte *)attr, length);
+				} else {
+					Aint length = 0;
+					s.syncAsUint32LE(length);
+					char *string = (char *)allocate(length + 1);
+					s.syncBytes((byte *)string, length);
+					setInstanceAttribute(initEntry->instanceCode, initEntry->attributeCode, toAptr(string));
 				}
+			}
 
-				setInstanceAttribute(initEntry->instanceCode, initEntry->attributeCode, toAptr(set));
+		// Sets
+		if (header->setInitTable != 0) {
+			for (SetInitEntry *initEntry = (SetInitEntry *)pointerTo(header->setInitTable);
+			     !isEndOfArray(initEntry); initEntry++) {
+
+				if (s.isSaving()) {
+					Set *attr = (Set *)getInstanceSetAttribute(initEntry->instanceCode, initEntry->attributeCode);
+					s.syncAsUint32LE(attr->size);
+					for (int i = 0; i < attr->size; ++i)
+						s.syncAsUint32LE(attr->members[i]);
+
+				} else {
+					Aword setSize = 0, member = 0;
+					s.syncAsUint32BE(setSize);
+					Set *set = newSet(setSize);
+					for (uint i = 0; i < setSize; ++i) {
+						s.syncAsUint32LE(member);
+						addToSet(set, member);
+					}
+
+					setInstanceAttribute(initEntry->instanceCode, initEntry->attributeCode, toAptr(set));
+				}
 			}
 		}
 	}
-}
 
-void saveGame(Common::WriteStream *saveFile) {
-	// Save tag, version of interpreter, and unique id of game
-	saveGameInfo(saveFile);
+	void saveGame(Common::WriteStream *saveFile) {
+		// Save tag, version of interpreter, and unique id of game
+		saveGameInfo(saveFile);
 
-	// Save game data
-	Common::Serializer s(nullptr, saveFile);
-	syncGame(s);
-}
+		// Save game data
+		Common::Serializer s(nullptr, saveFile);
+		syncGame(s);
+	}
 
-bool restoreGame(Common::SeekableReadStream *saveFile) {
-	Context ctx;
-	verifySaveFile(ctx, saveFile);
-	if (ctx._break) return false;
+	bool restoreGame(Common::SeekableReadStream *saveFile) {
+		Context ctx;
+		verifySaveFile(ctx, saveFile);
+		if (ctx._break)
+			return false;
 
-	// Verify version of compiler/interpreter of saved game with us
-	verifyCompilerVersion(ctx, saveFile);
-	if (ctx._break) return false;
+		// Verify version of compiler/interpreter of saved game with us
+		verifyCompilerVersion(ctx, saveFile);
+		if (ctx._break)
+			return false;
 
-	// Verify unique id of game
-	verifyGameId(ctx, saveFile);
-	if (ctx._break) return false;
+		// Verify unique id of game
+		verifyGameId(ctx, saveFile);
+		if (ctx._break)
+			return false;
 
-	// Restore game data
-	Common::Serializer s(saveFile, nullptr);
-	syncGame(s);
+		// Restore game data
+		Common::Serializer s(saveFile, nullptr);
+		syncGame(s);
 
-	return true;
-}
+		return true;
+	}
 
 } // End of namespace Alan3
 } // End of namespace Glk

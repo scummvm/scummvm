@@ -32,14 +32,14 @@
 #ifndef SWORD25_MOVIEPLAYER_H
 #define SWORD25_MOVIEPLAYER_H
 
-#include "common/scummsys.h"	// for USE_THEORADEC
+#include "common/scummsys.h" // for USE_THEORADEC
 
+#include "sword25/gfx/bitmap.h"
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/service.h"
-#include "sword25/gfx/bitmap.h"
 
 #ifdef USE_THEORADEC
-#include "video/theora_decoder.h"
+#	include "video/theora_decoder.h"
 #endif
 
 #define THEORA_INDIRECT_RENDERING
@@ -139,14 +139,13 @@ public:
 private:
 	bool registerScriptBindings();
 
-
 #ifdef USE_THEORADEC
 	Video::TheoraDecoder _decoder;
 
 	Graphics::Surface *_backSurface;
 	int _outX, _outY;
 
-	RenderObjectPtr<Bitmap>	_outputBitmap;
+	RenderObjectPtr<Bitmap> _outputBitmap;
 #endif
 };
 

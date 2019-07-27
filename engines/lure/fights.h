@@ -23,13 +23,13 @@
 #ifndef LURE_FIGHT_H
 #define LURE_FIGHT_H
 
-#include "lure/luredefs.h"
 #include "lure/hotspots.h"
+#include "lure/luredefs.h"
 #include "lure/palette.h"
 
-#include "common/singleton.h"
 #include "common/endian.h"
 #include "common/random.h"
+#include "common/singleton.h"
 
 namespace Lure {
 
@@ -64,7 +64,9 @@ struct FighterRecord {
 
 #define FIGHT_DISTANCE 32
 
-enum KeyStatus {KS_UP, KS_KEYDOWN_1, KS_KEYDOWN_2};
+enum KeyStatus { KS_UP,
+	               KS_KEYDOWN_1,
+	               KS_KEYDOWN_2 };
 
 class FightsManager {
 private:
@@ -85,15 +87,18 @@ private:
 	inline uint16 getWord(uint16 offset) {
 		if (!_fightData)
 			_fightData = Disk::getReference().getEntry(FIGHT_DATA_RESOURCE_ID);
-		if (offset >= _fightData->size() - 1) error("Invalid fight data index");
+		if (offset >= _fightData->size() - 1)
+			error("Invalid fight data index");
 		return READ_LE_UINT16(_fightData->data() + offset);
 	}
 	inline uint8 getByte(uint16 offset) {
 		if (!_fightData)
 			_fightData = Disk::getReference().getEntry(FIGHT_DATA_RESOURCE_ID);
-		if (offset >= _fightData->size()) error("Invalid fight data index");
+		if (offset >= _fightData->size())
+			error("Invalid fight data index");
 		return _fightData->data()[offset];
 	}
+
 public:
 	FightsManager();
 	~FightsManager();

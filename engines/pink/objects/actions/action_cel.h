@@ -54,7 +54,6 @@ public:
 
 	void setCenter(const Common::Point &center);
 
-
 	void loadDecoder();
 
 protected:

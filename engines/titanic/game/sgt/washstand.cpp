@@ -26,9 +26,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CWashstand, CSGTStateRoom)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(TurnOff)
-	ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(TurnOff)
+ON_MESSAGE(MovieEndMsg)
 END_MESSAGE_MAP()
 
 void CWashstand::save(SimpleFile *file, int indent) {
@@ -57,7 +57,7 @@ bool CWashstand::TurnOn(CTurnOn *msg) {
 
 bool CWashstand::TurnOff(CTurnOff *msg) {
 	if (_statics->_washstand == "Open" && _statics->_basin == "Closed"
-			&& _statics->_toilet == "Closed" && _statics->_bedfoot != "Open") {
+	    && _statics->_toilet == "Closed" && _statics->_bedfoot != "Open") {
 		_statics->_washstand = "Closed";
 		_isClosed = true;
 		_startFrame = 14;

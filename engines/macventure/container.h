@@ -64,7 +64,6 @@ public:
 	Common::SeekableReadStream *getItem(uint32 id);
 
 protected:
-
 	bool _simplified;
 
 	uint _lenObjs; // In the case of simple container, lenght of an object
@@ -79,9 +78,7 @@ protected:
 	Common::String _filename;
 	Common::File _file;
 	Common::SeekableReadStream *_res;
-
 };
-
 
 } // End of namespace MacVenture
 

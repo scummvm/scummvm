@@ -26,14 +26,14 @@
 #ifndef PEGASUS_AI_AIAREA_H
 #define PEGASUS_AI_AIAREA_H
 
+#include "pegasus/ai/ai_rule.h"
 #include "pegasus/input.h"
 #include "pegasus/movie.h"
 #include "pegasus/timers.h"
-#include "pegasus/ai/ai_rule.h"
 
 namespace Common {
-	class ReadStream;
-	class WriteStream;
+class ReadStream;
+class WriteStream;
 }
 
 /*

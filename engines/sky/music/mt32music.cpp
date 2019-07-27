@@ -21,12 +21,12 @@
  */
 
 #include "sky/music/mt32music.h"
-#include "sky/music/gmchannel.h"
-#include "common/util.h"
-#include "common/system.h"
-#include "common/endian.h"
-#include "common/textconsole.h"
 #include "audio/mididrv.h"
+#include "common/endian.h"
+#include "common/system.h"
+#include "common/textconsole.h"
+#include "common/util.h"
+#include "sky/music/gmchannel.h"
 
 namespace Sky {
 
@@ -34,12 +34,13 @@ void MT32Music::passTimerFunc(void *param) {
 	((MT32Music *)param)->timerCall();
 }
 
-MT32Music::MT32Music(MidiDriver *pMidiDrv, Audio::Mixer *pMixer, Disk *pDisk) : MusicBase(pMixer, pDisk) {
+MT32Music::MT32Music(MidiDriver *pMidiDrv, Audio::Mixer *pMixer, Disk *pDisk)
+  : MusicBase(pMixer, pDisk) {
 	_driverFileBase = 60200;
 	_midiDrv = pMidiDrv;
 	int midiRes = _midiDrv->open();
 	if (midiRes != 0)
-		error("Can't open midi device. Errorcode: %d",midiRes);
+		error("Can't open midi device. Errorcode: %d", midiRes);
 	_timerCount = 0;
 	_midiDrv->setTimerCallback(this, passTimerFunc);
 	_midiDrv->sendMT32Reset();
@@ -94,23 +95,23 @@ bool MT32Music::processPatchSysEx(uint8 *sysExData) {
 		return false;
 
 	// decompress data from stream
-	sysExBuf[ 0] = 0x41;
-	sysExBuf[ 1] = 0x10;
-	sysExBuf[ 2] = 0x16;
-	sysExBuf[ 3] = 0x12;
-	sysExBuf[ 4] = 0x5;
-	sysExBuf[ 5] = sysExData[0] >> 4;			// patch offset part 1
-	sysExBuf[ 6] = (sysExData[0] & 0xF) << 3;	// patch offset part 2
-	sysExBuf[ 7] = sysExData[1] >> 6;			// timbre group
-	sysExBuf[ 8] = sysExData[1] & 0x3F;			// timbre num
-	sysExBuf[ 9] = sysExData[2] & 0x3F;			// key shift
-	sysExBuf[10] = sysExData[3] & 0x7F;			// fine tune
-	sysExBuf[11] = sysExData[4] & 0x7F;         // bender range
-	sysExBuf[12] = sysExData[2] >> 6;			// assign mode
-	sysExBuf[13] = sysExData[3] >> 7;			// reverb switch
+	sysExBuf[0] = 0x41;
+	sysExBuf[1] = 0x10;
+	sysExBuf[2] = 0x16;
+	sysExBuf[3] = 0x12;
+	sysExBuf[4] = 0x5;
+	sysExBuf[5] = sysExData[0] >> 4; // patch offset part 1
+	sysExBuf[6] = (sysExData[0] & 0xF) << 3; // patch offset part 2
+	sysExBuf[7] = sysExData[1] >> 6; // timbre group
+	sysExBuf[8] = sysExData[1] & 0x3F; // timbre num
+	sysExBuf[9] = sysExData[2] & 0x3F; // key shift
+	sysExBuf[10] = sysExData[3] & 0x7F; // fine tune
+	sysExBuf[11] = sysExData[4] & 0x7F; // bender range
+	sysExBuf[12] = sysExData[2] >> 6; // assign mode
+	sysExBuf[13] = sysExData[3] >> 7; // reverb switch
 	for (uint8 cnt = 4; cnt < 14; cnt++)
 		crc -= sysExBuf[cnt];
-	sysExBuf[14] = crc & 0x7F;					// crc
+	sysExBuf[14] = crc & 0x7F; // crc
 	_midiDrv->sysEx(sysExBuf, 15);
 	// We delay the time it takes to send the sysEx plus an
 	// additional 40ms, which is required for MT-32 rev00,
@@ -121,7 +122,7 @@ bool MT32Music::processPatchSysEx(uint8 *sysExData) {
 
 void MT32Music::startDriver() {
 	// setup timbres and patches using SysEx data
-	uint8* sysExData = _sysExSequence;
+	uint8 *sysExData = _sysExSequence;
 	uint8 timbreNum = sysExData[0];
 	uint8 cnt, crc;
 	sysExData++;

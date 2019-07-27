@@ -27,32 +27,32 @@
 
 namespace Glk {
 namespace TADS {
-namespace TADS2 {
+	namespace TADS2 {
 
-enum DataType {
-	DAT_NUMBER  =  1,
-	DAT_OBJECT  =  2,
-	DAT_SSTRING =  3,
-	DAT_BASEPTR =  4,
-	DAT_NIL     =  5,		///< nil, as in FALSE or empty list
-	DAT_CODE    =  6,
-	DAT_LIST    =  7,
-	DAT_TRUE    =  8,		///< inverse of nil
-	DAT_DSTRING =  9,
-	DAT_FNADDR  = 10,		///< a function address
-	DAT_TPL     = 11,		///< template list pointer
-	DAT_PROPNUM = 13,		///< a property number
-	DAT_DEMAND  = 14,		///< special flag: use callback to set on use
-	DAT_SYN     = 15,		///< synonym to indicated property value
-	DAT_REDIR   = 16,		///< redirection to different object
-	DAT_TPL2    = 17		///< new-style template
-};
-typedef int dattyp;
+		enum DataType {
+			DAT_NUMBER = 1,
+			DAT_OBJECT = 2,
+			DAT_SSTRING = 3,
+			DAT_BASEPTR = 4,
+			DAT_NIL = 5, ///< nil, as in FALSE or empty list
+			DAT_CODE = 6,
+			DAT_LIST = 7,
+			DAT_TRUE = 8, ///< inverse of nil
+			DAT_DSTRING = 9,
+			DAT_FNADDR = 10, ///< a function address
+			DAT_TPL = 11, ///< template list pointer
+			DAT_PROPNUM = 13, ///< a property number
+			DAT_DEMAND = 14, ///< special flag: use callback to set on use
+			DAT_SYN = 15, ///< synonym to indicated property value
+			DAT_REDIR = 16, ///< redirection to different object
+			DAT_TPL2 = 17 ///< new-style template
+		};
+		typedef int dattyp;
 
-/* determine the size of a piece of data */
-uint datsiz(dattyp typ, const void *valptr);
+		/* determine the size of a piece of data */
+		uint datsiz(dattyp typ, const void *valptr);
 
-} // End of namespace TADS2
+	} // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk
 

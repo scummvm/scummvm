@@ -32,6 +32,7 @@ class CPETTransport : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	virtual bool EnterRoomMsg(CEnterRoomMsg *msg);
 	virtual bool LeaveRoomMsg(CLeaveRoomMsg *msg);
+
 public:
 	CLASSDEF;
 

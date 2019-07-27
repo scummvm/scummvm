@@ -35,13 +35,13 @@
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
 
-#include "hugo/hugo.h"
 #include "hugo/display.h"
 #include "hugo/file.h"
+#include "hugo/hugo.h"
 #include "hugo/inventory.h"
-#include "hugo/util.h"
-#include "hugo/object.h"
 #include "hugo/mouse.h"
+#include "hugo/object.h"
+#include "hugo/util.h"
 
 namespace Hugo {
 /**
@@ -52,30 +52,30 @@ namespace Hugo {
  * This cursor comes from Mohawk engine.
  */
 static const byte stdMouseCursor[] = {
-	0, 0,  1,  1,  1,  1,  1,  1,  1,  1,  1, 1,
-	0, 15, 0,  1,  1,  1,  1,  1,  1,  1,  1, 1,
-	0, 15, 15, 0,  1,  1,  1,  1,  1,  1,  1, 1,
-	0, 15, 15, 15, 0,  1,  1,  1,  1,  1,  1, 1,
-	0, 15, 15, 15, 15, 0,  1,  1,  1,  1,  1, 1,
-	0, 15, 15, 15, 15, 15, 0,  1,  1,  1,  1, 1,
-	0, 15, 15, 15, 15, 15, 15, 0,  1,  1,  1, 1,
-	0, 15, 15, 15, 15, 15, 15, 15, 0,  1,  1, 1,
-	0, 15, 15, 15, 15, 15, 15, 15, 15, 0,  1, 1,
+	0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	0, 15, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	0, 15, 15, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+	0, 15, 15, 15, 0, 1, 1, 1, 1, 1, 1, 1,
+	0, 15, 15, 15, 15, 0, 1, 1, 1, 1, 1, 1,
+	0, 15, 15, 15, 15, 15, 0, 1, 1, 1, 1, 1,
+	0, 15, 15, 15, 15, 15, 15, 0, 1, 1, 1, 1,
+	0, 15, 15, 15, 15, 15, 15, 15, 0, 1, 1, 1,
+	0, 15, 15, 15, 15, 15, 15, 15, 15, 0, 1, 1,
 	0, 15, 15, 15, 15, 15, 15, 15, 15, 15, 0, 1,
-	0, 15, 15, 15, 15, 15, 15, 0,  0,  0,  0, 0,
-	0, 15, 15, 15, 0,  15, 15, 0,  1,  1,  1, 1,
-	0, 15, 15, 0,  0,  15, 15, 0,  1,  1,  1, 1,
-	0, 15, 0,  1,  0,  0,  15, 15, 0,  1,  1, 1,
-	0, 0,  1,  1,  1,  0,  15, 15, 0,  1,  1, 1,
-	0, 1,  1,  1,  1,  1,  0,  15, 15, 0,  1, 1,
-	1, 1,  1,  1,  1,  1,  0,  15, 15, 0,  1, 1,
-	1, 1,  1,  1,  1,  1,  1,  0,  15, 15, 0, 1,
-	1, 1,  1,  1,  1,  1,  1,  0,  15, 15, 0, 1,
-	1, 1,  1,  1,  1,  1,  1,  1,  0,  0,  1, 1
+	0, 15, 15, 15, 15, 15, 15, 0, 0, 0, 0, 0,
+	0, 15, 15, 15, 0, 15, 15, 0, 1, 1, 1, 1,
+	0, 15, 15, 0, 0, 15, 15, 0, 1, 1, 1, 1,
+	0, 15, 0, 1, 0, 0, 15, 15, 0, 1, 1, 1,
+	0, 0, 1, 1, 1, 0, 15, 15, 0, 1, 1, 1,
+	0, 1, 1, 1, 1, 1, 0, 15, 15, 0, 1, 1,
+	1, 1, 1, 1, 1, 1, 0, 15, 15, 0, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 0, 15, 15, 0, 1,
+	1, 1, 1, 1, 1, 1, 1, 0, 15, 15, 0, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1
 };
 
-
-Screen::Screen(HugoEngine *vm) : _vm(vm) {
+Screen::Screen(HugoEngine *vm)
+  : _vm(vm) {
 	_mainPalette = nullptr;
 	_curPalette = nullptr;
 	_dlAddIndex = 0;
@@ -155,16 +155,16 @@ void Screen::initDisplay() {
 void Screen::moveImage(ImagePtr srcImage, const int16 x1, const int16 y1, const int16 dx, int16 dy, const int16 width1, ImagePtr dstImage, const int16 x2, const int16 y2, const int16 width2) {
 	debugC(3, kDebugDisplay, "moveImage(srcImage, %d, %d, %d, %d, %d, dstImage, %d, %d, %d)", x1, y1, dx, dy, width1, x2, y2, width2);
 
-	int16 wrap_src = width1 - dx;                   // Wrap to next src row
-	int16 wrap_dst = width2 - dx;                   // Wrap to next dst row
+	int16 wrap_src = width1 - dx; // Wrap to next src row
+	int16 wrap_dst = width2 - dx; // Wrap to next dst row
 
-	srcImage += y1 * width1 + x1;                   // Offset into src image
-	dstImage += y2 * width2 + x2;                   // offset into dst image
+	srcImage += y1 * width1 + x1; // Offset into src image
+	dstImage += y2 * width2 + x2; // offset into dst image
 
-	while (dy--) {                                  // For each row
-		for (int16 x = dx; x--;)                    // For each column
+	while (dy--) { // For each row
+		for (int16 x = dx; x--;) // For each column
 			*dstImage++ = *srcImage++;
-		srcImage += wrap_src;                       // Wrap to next line
+		srcImage += wrap_src; // Wrap to next line
 		dstImage += wrap_dst;
 	}
 }
@@ -223,7 +223,6 @@ void Screen::restorePal(Common::ReadStream *f) {
 	g_system->getPaletteManager()->setPalette(_curPalette, 0, _paletteSize / 3);
 }
 
-
 /**
  * Set the new background color.
  * This implementation gives the same result than the DOS version.
@@ -242,22 +241,22 @@ void Screen::setBackgroundColor(const uint16 color) {
 void Screen::displayFrame(const int sx, const int sy, Seq *seq, const bool foreFl) {
 	debugC(3, kDebugDisplay, "displayFrame(%d, %d, seq, %d)", sx, sy, (foreFl) ? 1 : 0);
 
-	ImagePtr image = seq->_imagePtr;                 // Ptr to object image data
+	ImagePtr image = seq->_imagePtr; // Ptr to object image data
 	ImagePtr subFrontBuffer = &_frontBuffer[sy * kXPix + sx]; // Ptr to offset in _frontBuffer
-	int16 frontBufferwrap = kXPix - seq->_x2 - 1;     // Wraps dest_p after each line
+	int16 frontBufferwrap = kXPix - seq->_x2 - 1; // Wraps dest_p after each line
 	int16 imageWrap = seq->_bytesPerLine8 - seq->_x2 - 1;
 	OverlayState overlayState = (foreFl) ? kOvlForeground : kOvlUndef; // Overlay state of object
-	for (uint16 y = 0; y < seq->_lines; y++) {       // Each line in object
+	for (uint16 y = 0; y < seq->_lines; y++) { // Each line in object
 		for (uint16 x = 0; x <= seq->_x2; x++) {
-			if (*image) {                           // Non-transparent
+			if (*image) { // Non-transparent
 				byte ovlBound = _vm->_object->getFirstOverlay((uint16)(subFrontBuffer - _frontBuffer) >> 3); // Ptr into overlay bits
 				if (ovlBound & (0x80 >> ((uint16)(subFrontBuffer - _frontBuffer) & 7))) { // Overlay bit is set
-					if (overlayState == kOvlUndef)  // Overlay defined yet?
-						overlayState = findOvl(seq, subFrontBuffer, y);// No, find it.
+					if (overlayState == kOvlUndef) // Overlay defined yet?
+						overlayState = findOvl(seq, subFrontBuffer, y); // No, find it.
 					if (overlayState == kOvlForeground) // Object foreground
-						*subFrontBuffer = *image;   // Copy pixel
-				} else {                            // No overlay
-					*subFrontBuffer = *image;       // Copy pixel
+						*subFrontBuffer = *image; // Copy pixel
+				} else { // No overlay
+					*subFrontBuffer = *image; // Copy pixel
 				}
 			}
 			image++;
@@ -277,14 +276,14 @@ void Screen::displayFrame(const int sx, const int sy, Seq *seq, const bool foreF
 void Screen::merge(const Rect *rectA, Rect *rectB) {
 	debugC(6, kDebugDisplay, "merge()");
 
-	int16 xa = rectA->_x + rectA->_dx;               // Find x2,y2 for each rectangle
+	int16 xa = rectA->_x + rectA->_dx; // Find x2,y2 for each rectangle
 	int16 xb = rectB->_x + rectB->_dx;
 	int16 ya = rectA->_y + rectA->_dy;
 	int16 yb = rectB->_y + rectB->_dy;
 
-	rectB->_x = MIN(rectA->_x, rectB->_x);           // Minimum x,y
+	rectB->_x = MIN(rectA->_x, rectB->_x); // Minimum x,y
 	rectB->_y = MIN(rectA->_y, rectB->_y);
-	rectB->_dx = MAX(xa, xb) - rectB->_x;            // Maximum dx,dy
+	rectB->_dx = MAX(xa, xb) - rectB->_x; // Maximum dx,dy
 	rectB->_dy = MAX(ya, yb) - rectB->_y;
 }
 
@@ -297,22 +296,22 @@ void Screen::merge(const Rect *rectA, Rect *rectB) {
 int16 Screen::mergeLists(Rect *list, Rect *blist, const int16 len, int16 blen) {
 	debugC(4, kDebugDisplay, "mergeLists()");
 
-	int16   coalesce[kBlitListSize];                // List of overlapping rects
+	int16 coalesce[kBlitListSize]; // List of overlapping rects
 	// Process the list
 	for (int16 a = 0; a < len; a++, list++) {
 		// Compile list of overlapping rectangles in blit list
 		int16 c = 0;
 		Rect *bp = blist;
 		for (int16 b = 0; b < blen; b++, bp++) {
-			if (bp->_dx)                            // blist entry used
+			if (bp->_dx) // blist entry used
 				if (isOverlapping(list, bp))
 					coalesce[c++] = b;
 		}
 
 		// Any overlapping blit rects?
-		if (c == 0) {                               // None, add a new entry
+		if (c == 0) { // None, add a new entry
 			blist[blen++] = *list;
-		} else {                                    // At least one overlapping
+		} else { // At least one overlapping
 			// Merge add-list entry with first blist entry
 			bp = &blist[coalesce[0]];
 			merge(list, bp);
@@ -321,7 +320,7 @@ int16 Screen::mergeLists(Rect *list, Rect *blist, const int16 len, int16 blen) {
 			while (--c) {
 				Rect *cp = &blist[coalesce[c]];
 				merge(cp, bp);
-				cp->_dx = 0;                         // Delete entry
+				cp->_dx = 0; // Delete entry
 			}
 		}
 	}
@@ -335,30 +334,30 @@ int16 Screen::mergeLists(Rect *list, Rect *blist, const int16 len, int16 blen) {
 void Screen::displayList(int update, ...) {
 	debugC(6, kDebugDisplay, "displayList()");
 
-	int16         blitLength = 0;                   // Length of blit list
-	va_list       marker;                           // Args used for D_ADD operation
-	Rect       *p;                                // Ptr to dlist entry
+	int16 blitLength = 0; // Length of blit list
+	va_list marker; // Args used for D_ADD operation
+	Rect *p; // Ptr to dlist entry
 
 	switch (update) {
-	case kDisplayInit:                              // Init lists, restore whole screen
+	case kDisplayInit: // Init lists, restore whole screen
 		_dlAddIndex = _dlRestoreIndex = 0;
 		memcpy(_frontBuffer, _backBuffer, sizeof(_frontBuffer));
 		break;
-	case kDisplayAdd:                               // Add a rectangle to list
+	case kDisplayAdd: // Add a rectangle to list
 		if (_dlAddIndex >= kRectListSize) {
 			warning("Display list exceeded");
 			return;
 		}
-		va_start(marker, update);                   // Initialize variable arguments
+		va_start(marker, update); // Initialize variable arguments
 		p = &_dlAddList[_dlAddIndex];
-		p->_x  = va_arg(marker, int);               // x
-		p->_y  = va_arg(marker, int);               // y
-		p->_dx = va_arg(marker, int);               // dx
-		p->_dy = va_arg(marker, int);               // dy
-		va_end(marker);                             // Reset variable arguments
+		p->_x = va_arg(marker, int); // x
+		p->_y = va_arg(marker, int); // y
+		p->_dx = va_arg(marker, int); // dx
+		p->_dy = va_arg(marker, int); // dy
+		va_end(marker); // Reset variable arguments
 		_dlAddIndex++;
 		break;
-	case kDisplayDisplay:                           // Display whole list
+	case kDisplayDisplay: // Display whole list
 		// Don't blit if newscreen just loaded because _frontBuffer will
 		// get blitted via InvalidateRect() at end of this cycle
 		// and blitting here causes objects to appear too soon.
@@ -373,17 +372,17 @@ void Screen::displayList(int update, ...) {
 
 		// Blit the combined blit-list
 		for (_dlRestoreIndex = 0, p = _dlBlistList; _dlRestoreIndex < blitLength; _dlRestoreIndex++, p++) {
-			if (p->_dx)                              // Marks a used entry
+			if (p->_dx) // Marks a used entry
 				displayRect(p->_x, p->_y, p->_dx, p->_dy);
 		}
 		break;
-	case kDisplayRestore:                           // Restore each rectangle
+	case kDisplayRestore: // Restore each rectangle
 		for (_dlRestoreIndex = 0, p = _dlAddList; _dlRestoreIndex < _dlAddIndex; _dlRestoreIndex++, p++) {
 			// Restoring from _backBuffer to _frontBuffer
-			_dlRestoreList[_dlRestoreIndex] = *p;   // Copy add-list to restore-list
+			_dlRestoreList[_dlRestoreIndex] = *p; // Copy add-list to restore-list
 			moveImage(_backBuffer, p->_x, p->_y, p->_dx, p->_dy, kXPix, _frontBuffer, p->_x, p->_y, kXPix);
 		}
-		_dlAddIndex = 0;                            // Reset add-list
+		_dlAddIndex = 0; // Reset add-list
 		break;
 	}
 }
@@ -395,7 +394,7 @@ void Screen::displayList(int update, ...) {
  * *(fontdata+1) = Font Width (pixels)
  * *(fontdata+x) = Font Bitmap (monochrome)
  */
-void Screen::writeChr(const int sx, const int sy, const byte color, const char *local_fontdata){
+void Screen::writeChr(const int sx, const int sy, const byte color, const char *local_fontdata) {
 	debugC(2, kDebugDisplay, "writeChr(%d, %d, %d, %d)", sx, sy, color, local_fontdata[0]);
 
 	byte height = local_fontdata[0];
@@ -420,7 +419,7 @@ void Screen::writeChr(const int sx, const int sy, const byte color, const char *
 int16 Screen::fontHeight() const {
 	debugC(2, kDebugDisplay, "fontHeight()");
 
-	static const int16 height[kNumFonts] = {5, 7, 8};
+	static const int16 height[kNumFonts] = { 5, 7, 8 };
 	return height[_fnt - kFirstFont];
 }
 
@@ -430,7 +429,7 @@ int16 Screen::fontHeight() const {
 int16 Screen::stringLength(const char *s) const {
 	debugC(2, kDebugDisplay, "stringLength(%s)", s);
 
-	byte *const*fontArr = _font[_fnt];
+	byte *const *fontArr = _font[_fnt];
 	int16 sum = 0;
 	for (; *s; s++)
 		sum += *(fontArr[(uint)*s] + 1) + 1;
@@ -457,7 +456,7 @@ void Screen::writeStr(int16 sx, const int16 sy, const char *s, const byte color)
 	if (sx == kCenter)
 		sx = center(s);
 
-	byte *const*font = _font[_fnt];
+	byte *const *font = _font[_fnt];
 	for (; *s; s++) {
 		writeChr(sx, sy, color, (char *)font[(uint)*s]);
 		sx += *(font[(uint)*s] + 1) + 1;
@@ -483,16 +482,16 @@ void Screen::shadowStr(int16 sx, const int16 sy, const char *s, const byte color
  */
 void Screen::userHelp() const {
 	Utils::notifyBox(
-	           "F1  - Press F1 again\n"
-	           "      for instructions\n"
-	           "F2  - Sound on/off\n"
-	           "F3  - Recall last line\n"
-	           "F4  - Save game\n"
-	           "F5  - Restore game\n"
-	           "F6  - Inventory\n"
-	           "F8  - Turbo button\n"
-	           "\n"
-	           "ESC - Return to game");
+	  "F1  - Press F1 again\n"
+	  "      for instructions\n"
+	  "F2  - Sound on/off\n"
+	  "F3  - Recall last line\n"
+	  "F4  - Save game\n"
+	  "F5  - Restore game\n"
+	  "F6  - Inventory\n"
+	  "F8  - Turbo button\n"
+	  "\n"
+	  "ESC - Return to game");
 }
 
 void Screen::drawStatusText() {
@@ -500,7 +499,7 @@ void Screen::drawStatusText() {
 
 	loadFont(U_FONT8);
 	uint16 sdx = stringLength(_vm->_statusLine);
-	uint16 sdy = fontHeight() + 1;                  // + 1 for shadow
+	uint16 sdy = fontHeight() + 1; // + 1 for shadow
 	uint16 posX = 0;
 	uint16 posY = kYPix - sdy;
 
@@ -596,7 +595,7 @@ void Screen::freeScreen() {
 
 void Screen::selectInventoryObjId(const int16 objId) {
 
-	_vm->_inventory->setInventoryObjId(objId);      // Select new object
+	_vm->_inventory->setInventoryObjId(objId); // Select new object
 
 	// Find index of icon
 	int16 iconId = _vm->_inventory->findIconId(objId);
@@ -618,7 +617,7 @@ void Screen::selectInventoryObjId(const int16 objId) {
 }
 
 void Screen::resetInventoryObjId() {
-	_vm->_inventory->setInventoryObjId(-1);         // Unselect object
+	_vm->_inventory->setInventoryObjId(-1); // Unselect object
 	CursorMan.replaceCursor(stdMouseCursor, stdMouseCursorWidth, stdMouseCursorHeight, 1, 1, 1);
 }
 
@@ -642,8 +641,7 @@ bool Screen::isInY(const int16 y, const Rect *rect) const {
  * Check if two rectangles are overlapping
  */
 bool Screen::isOverlapping(const Rect *rectA, const Rect *rectB) const {
-	return (isInX(rectA->_x, rectB) || isInX(rectA->_x + rectA->_dx, rectB) || isInX(rectB->_x, rectA) || isInX(rectB->_x + rectB->_dx, rectA)) &&
-		   (isInY(rectA->_y, rectB) || isInY(rectA->_y + rectA->_dy, rectB) || isInY(rectB->_y, rectA) || isInY(rectB->_y + rectB->_dy, rectA));
+	return (isInX(rectA->_x, rectB) || isInX(rectA->_x + rectA->_dx, rectB) || isInX(rectB->_x, rectA) || isInX(rectB->_x + rectB->_dx, rectA)) && (isInY(rectA->_y, rectB) || isInY(rectA->_y + rectA->_dy, rectB) || isInY(rectB->_y, rectA) || isInY(rectB->_y + rectB->_dy, rectA));
 }
 
 /**
@@ -663,7 +661,7 @@ void Screen::drawBoundaries() {
 		if (obj->_screenIndex == *_vm->_screenPtr) {
 			if ((obj->_currImagePtr != 0) && (obj->_cycling != kCycleInvisible))
 				drawRectangle(false, obj->_x + obj->_currImagePtr->_x1, obj->_y + obj->_currImagePtr->_y1,
-				                     obj->_x + obj->_currImagePtr->_x2, obj->_y + obj->_currImagePtr->_y2, _TLIGHTGREEN);
+				              obj->_x + obj->_currImagePtr->_x2, obj->_y + obj->_currImagePtr->_y2, _TLIGHTGREEN);
 			else if ((obj->_currImagePtr == 0) && (obj->_vxPath != 0) && !obj->_carriedFl)
 				drawRectangle(false, obj->_oldx, obj->_oldy, obj->_oldx + obj->_vxPath, obj->_oldy + obj->_vyPath, _TBRIGHTWHITE);
 		}
@@ -671,7 +669,8 @@ void Screen::drawBoundaries() {
 	g_system->copyRectToScreen(_frontBuffer, 320, 0, 0, 320, 200);
 }
 
-Screen_v1d::Screen_v1d(HugoEngine *vm) : Screen(vm) {
+Screen_v1d::Screen_v1d(HugoEngine *vm)
+  : Screen(vm) {
 }
 
 Screen_v1d::~Screen_v1d() {
@@ -687,23 +686,23 @@ void Screen_v1d::loadFont(const int16 fontId) {
 
 	assert(fontId < kNumFonts);
 
-	_fnt = fontId - kFirstFont;                     // Set current font number
+	_fnt = fontId - kFirstFont; // Set current font number
 
-	if (fontLoadedFl[_fnt])                         // If already loaded, return
+	if (fontLoadedFl[_fnt]) // If already loaded, return
 		return;
 
 	fontLoadedFl[_fnt] = true;
 
 	memcpy(_fontdata[_fnt], _arrayFont[_fnt], _arrayFontSize[_fnt]);
-	_font[_fnt][0] = _fontdata[_fnt];               // Store height,width of fonts
+	_font[_fnt][0] = _fontdata[_fnt]; // Store height,width of fonts
 
-	int16 offset = 2;                               // Start at fontdata[2] ([0],[1] used for height,width)
+	int16 offset = 2; // Start at fontdata[2] ([0],[1] used for height,width)
 
 	// Setup the font array (127 characters)
 	for (int i = 1; i < 128; i++) {
 		_font[_fnt][i] = _fontdata[_fnt] + offset;
 		byte height = *(_fontdata[_fnt] + offset);
-		byte width  = *(_fontdata[_fnt] + offset + 1);
+		byte width = *(_fontdata[_fnt] + offset + 1);
 
 		int16 size = height * ((width + 7) >> 3);
 		for (int j = 0; j < size; j++)
@@ -738,16 +737,17 @@ OverlayState Screen_v1d::findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y) {
 
 	uint16 index = (uint16)(dstPtr - _frontBuffer) >> 3;
 
-	for (int i = 0; i < seqPtr->_lines-y; i++) {      // Each line in object
-		if (_vm->_object->getBaseBoundary(index))   // If any overlay base byte is non-zero then the object is foreground, else back.
+	for (int i = 0; i < seqPtr->_lines - y; i++) { // Each line in object
+		if (_vm->_object->getBaseBoundary(index)) // If any overlay base byte is non-zero then the object is foreground, else back.
 			return kOvlForeground;
 		index += kCompLineSize;
 	}
 
-	return kOvlBackground;                          // No bits set, must be background
+	return kOvlBackground; // No bits set, must be background
 }
 
-Screen_v1w::Screen_v1w(HugoEngine *vm) : Screen(vm) {
+Screen_v1w::Screen_v1w(HugoEngine *vm)
+  : Screen(vm) {
 }
 
 Screen_v1w::~Screen_v1w() {
@@ -759,24 +759,24 @@ Screen_v1w::~Screen_v1w() {
 void Screen_v1w::loadFont(const int16 fontId) {
 	debugC(2, kDebugDisplay, "loadFont(%d)", fontId);
 
-	_fnt = fontId - kFirstFont;                     // Set current font number
+	_fnt = fontId - kFirstFont; // Set current font number
 
-	if (fontLoadedFl[_fnt])                         // If already loaded, return
+	if (fontLoadedFl[_fnt]) // If already loaded, return
 		return;
 
 	fontLoadedFl[_fnt] = true;
 	_vm->_file->readUIFItem(fontId, _fontdata[_fnt]);
 
 	// Compile font ptrs.  Note: First ptr points to height,width of font
-	_font[_fnt][0] = _fontdata[_fnt];               // Store height,width of fonts
+	_font[_fnt][0] = _fontdata[_fnt]; // Store height,width of fonts
 
-	int16 offset = 2;                               // Start at fontdata[2] ([0],[1] used for height,width)
+	int16 offset = 2; // Start at fontdata[2] ([0],[1] used for height,width)
 
 	// Setup the font array (127 characters)
 	for (int i = 1; i < 128; i++) {
 		_font[_fnt][i] = _fontdata[_fnt] + offset;
 		byte height = *(_fontdata[_fnt] + offset);
-		byte width  = *(_fontdata[_fnt] + offset + 1);
+		byte width = *(_fontdata[_fnt] + offset + 1);
 
 		int16 size = height * ((width + 7) >> 3);
 		for (int j = 0; j < size; j++)
@@ -805,14 +805,14 @@ void Screen_v1w::loadFontArr(Common::ReadStream &in) {
 OverlayState Screen_v1w::findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y) {
 	debugC(4, kDebugDisplay, "findOvl()");
 
-	for (; y < seqPtr->_lines; y++) {                 // Each line in object
+	for (; y < seqPtr->_lines; y++) { // Each line in object
 		byte ovb = _vm->_object->getBaseBoundary((uint16)(dstPtr - _frontBuffer) >> 3); // Ptr into overlay bits
 		if (ovb & (0x80 >> ((uint16)(dstPtr - _frontBuffer) & 7))) // Overlay bit is set
-			return kOvlForeground;                  // Found a bit - must be foreground
+			return kOvlForeground; // Found a bit - must be foreground
 		dstPtr += kXPix;
 	}
 
-	return kOvlBackground;                          // No bits set, must be background
+	return kOvlBackground; // No bits set, must be background
 }
 
 } // End of namespace Hugo

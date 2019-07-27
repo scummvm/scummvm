@@ -91,18 +91,17 @@ int Overlays::play(const Common::String &name, int loopId, bool loopForever, boo
 	bool skipNewVQAPlayerOpen = false;
 	if (_videos[index].vqaPlayer
 	    && !startNow
-	    && _videos[index].vqaPlayer->getFrameCount() > 0
-	) {
+	    && _videos[index].vqaPlayer->getFrameCount() > 0) {
 		skipNewVQAPlayerOpen = true;
 		_videos[index].enqueuedLoopId = loopId;
 	}
 
 	if (skipNewVQAPlayerOpen || _videos[index].vqaPlayer->open()) {
 		_videos[index].vqaPlayer->setLoop(
-			loopId,
-			loopForever ? -1 : 0,
-			startNow ? kLoopSetModeImmediate : kLoopSetModeEnqueue,
-			nullptr, nullptr);
+		  loopId,
+		  loopForever ? -1 : 0,
+		  startNow ? kLoopSetModeImmediate : kLoopSetModeEnqueue,
+		  nullptr, nullptr);
 	} else {
 		resetSingle(index);
 		return -1;
@@ -122,10 +121,10 @@ void Overlays::resume(bool isLoadingGame) {
 
 			_videos[i].vqaPlayer->open();
 			_videos[i].vqaPlayer->setLoop(
-				_videos[i].loopId,
-				_videos[i].loopForever ? -1 : 0,
-				kLoopSetModeImmediate,
-				nullptr, nullptr);
+			  _videos[i].loopId,
+			  _videos[i].loopForever ? -1 : 0,
+			  kLoopSetModeImmediate,
+			  nullptr, nullptr);
 
 			_videos[i].vqaPlayer->seekToFrame(_videos[i].frame);
 			_videos[i].vqaPlayer->update(true);
@@ -203,7 +202,7 @@ void Overlays::save(SaveFileWriteStream &f) {
 		f.writeStringSz(ov.name, 13);
 		f.writeSint32LE(ov.hash);
 		if (ov.enqueuedLoopId != -1) {
-		// When there is an enqueued video, save that loop Id instead
+			// When there is an enqueued video, save that loop Id instead
 			f.writeInt(ov.enqueuedLoopId);
 		} else {
 			f.writeInt(ov.loopId);

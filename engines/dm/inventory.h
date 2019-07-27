@@ -28,10 +28,10 @@
 #ifndef DM_INVENTORY_H
 #define DM_INVENTORY_H
 
-#include "dm/dm.h"
-#include "dm/gfx.h"
 #include "dm/champion.h"
+#include "dm/dm.h"
 #include "dm/dungeonman.h"
+#include "dm/gfx.h"
 
 namespace DM {
 
@@ -80,8 +80,8 @@ public:
 	void drawPanelScroll(Scroll *scoll); // @ F0341_INVENTORY_DrawPanel_Scroll
 	void openAndDrawChest(Thing thingToOpen, Container *chest, bool isPressingEye); // @ F0333_INVENTORY_OpenAndDrawChest
 	void drawIconToViewport(IconIndice iconIndex, int16 xPos, int16 yPos); // @ F0332_INVENTORY_DrawIconToViewport
-	void buildObjectAttributeString(int16 potentialAttribMask, int16 actualAttribMask, const char ** attribStrings,
-									char *destString, const char *prefixString, const char *suffixString); // @ F0336_INVENTORY_DrawPanel_BuildObjectAttributesString
+	void buildObjectAttributeString(int16 potentialAttribMask, int16 actualAttribMask, const char **attribStrings,
+	                                char *destString, const char *prefixString, const char *suffixString); // @ F0336_INVENTORY_DrawPanel_BuildObjectAttributesString
 	void drawPanelObjectDescriptionString(const char *descString); // @ F0335_INVENTORY_DrawPanel_ObjectDescriptionString
 	void drawPanelArrowOrEye(bool pressingEye); // @ F0339_INVENTORY_DrawPanel_ArrowOrEye
 	void drawPanelObject(Thing thingToDraw, bool pressingEye); // @ F0342_INVENTORY_DrawPanel_Object
@@ -89,7 +89,7 @@ public:
 	void decreaseTorchesLightPower(); // @ F0338_INVENTORY_DecreaseTorchesLightPower_CPSE
 	void drawChampionSkillsAndStatistics(); // @ F0351_INVENTORY_DrawChampionSkillsAndStatistics
 	void drawStopPressingMouth(); // @ F0350_INVENTORY_DrawStopPressingMouth
-	void drawStopPressingEye();// @ F0353_INVENTORY_DrawStopPressingEye
+	void drawStopPressingEye(); // @ F0353_INVENTORY_DrawStopPressingEye
 	void clickOnMouth(); // @ F0349_INVENTORY_ProcessCommand70_ClickOnMouth
 	void adjustStatisticCurrentValue(Champion *champ, uint16 statIndex, int16 valueDelta); // @ F0348_INVENTORY_AdjustStatisticCurrentValue
 	void clickOnEye(); // @ F0352_INVENTORY_ProcessCommand71_ClickOnEye

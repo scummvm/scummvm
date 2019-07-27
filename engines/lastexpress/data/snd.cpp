@@ -349,8 +349,8 @@ static const int imaTable[1424] = {
 
 class LastExpress_ADPCMStream : public Audio::ADPCMStream {
 public:
-	LastExpress_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, uint32 blockSize, uint32 volume, bool looped) :
-			Audio::ADPCMStream(stream, disposeAfterUse, size, 44100, 1, blockSize) {
+	LastExpress_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, uint32 blockSize, uint32 volume, bool looped)
+	  : Audio::ADPCMStream(stream, disposeAfterUse, size, 44100, 1, blockSize) {
 		_currentVolume = 0;
 		_nextVolume = volume;
 		_smoothChangeTarget = volume;
@@ -454,7 +454,10 @@ private:
 //////////////////////////////////////////////////////////////////////////
 // Sound
 //////////////////////////////////////////////////////////////////////////
-SimpleSound::SimpleSound() : _size(0), _blocks(0), _blockSize(0) {}
+SimpleSound::SimpleSound()
+  : _size(0)
+  , _blocks(0)
+  , _blockSize(0) {}
 
 SimpleSound::~SimpleSound() {
 }
@@ -469,7 +472,7 @@ void SimpleSound::loadHeader(Common::SeekableReadStream *in) {
 	_blocks = in->readUint16LE();
 	debugC(5, kLastExpressDebugSound, "    sound header data: size=\"%d\", %d blocks", _size, _blocks);
 
-	assert (_size % _blocks == 0);
+	assert(_size % _blocks == 0);
 	_blockSize = _size / _blocks;
 }
 
@@ -479,7 +482,7 @@ LastExpress_ADPCMStream *SimpleSound::makeDecoder(Common::SeekableReadStream *in
 
 void SimpleSound::play(Audio::AudioStream *as, DisposeAfterUse::Flag autofreeStream) {
 	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_handle, as,
-		-1, Audio::Mixer::kMaxChannelVolume, 0, autofreeStream);
+	                                 -1, Audio::Mixer::kMaxChannelVolume, 0, autofreeStream);
 }
 
 uint32 SimpleSound::getTimeMS() {
@@ -489,7 +492,9 @@ uint32 SimpleSound::getTimeMS() {
 //////////////////////////////////////////////////////////////////////////
 // StreamedSound
 //////////////////////////////////////////////////////////////////////////
-StreamedSound::StreamedSound() : _as(NULL), _loaded(false) {}
+StreamedSound::StreamedSound()
+  : _as(NULL)
+  , _loaded(false) {}
 
 StreamedSound::~StreamedSound() {
 	stop(); // should execute before disposal of _as, so don't move in ~SimpleSound
@@ -546,7 +551,8 @@ void StreamedSound::setVolumeSmoothly(uint32 newVolume) {
 //////////////////////////////////////////////////////////////////////////
 // StreamedSound
 //////////////////////////////////////////////////////////////////////////
-AppendableSound::AppendableSound() : SimpleSound() {
+AppendableSound::AppendableSound()
+  : SimpleSound() {
 	// Create an audio stream where the decoded chunks will be appended
 	_as = Audio::makeQueuingAudioStream(44100, false);
 	_finished = false;

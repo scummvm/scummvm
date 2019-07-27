@@ -31,59 +31,59 @@
 #ifndef GLK_TADS_TADS2_MEMORY_CACHE_SWAP
 #define GLK_TADS_TADS2_MEMORY_CACHE_SWAP
 
-#include "glk/tads/tads2/lib.h"
-#include "glk/tads/tads2/error_handling.h"
 #include "glk/tads/os_frob_tads.h"
+#include "glk/tads/tads2/error_handling.h"
+#include "glk/tads/tads2/lib.h"
 
 namespace Glk {
 namespace TADS {
-namespace TADS2 {
+	namespace TADS2 {
 
-/* Forward declarations */
-struct mcmcx1def;
+		/* Forward declarations */
+		struct mcmcx1def;
 
-/**
+		/**
  * swap segment descriptor
  */
-struct mcsdsdef {
-    ulong    mcsdsptr;                         /* seek pointer in swap file */
-    ushort   mcsdssiz;                         /* size of this swap segment */
-    ushort   mcsdsosz;                 /* size of object written to segment */
-    uint     mcsdsobj;                                  /* client object ID */
-    ushort   mcsdsflg;                                             /* flags */
-#define      MCSDSFINUSE   0x01                        /* segment is in use */
-};
+		struct mcsdsdef {
+			ulong mcsdsptr; /* seek pointer in swap file */
+			ushort mcsdssiz; /* size of this swap segment */
+			ushort mcsdsosz; /* size of object written to segment */
+			uint mcsdsobj; /* client object ID */
+			ushort mcsdsflg; /* flags */
+#define MCSDSFINUSE 0x01 /* segment is in use */
+		};
 
-/**
+		/**
  * mcsseg - swap segment handle.  All swap-file segments are addressed
  * through this handle type.  
  */
-typedef ushort mcsseg;
+		typedef ushort mcsseg;
 
-/**
+		/**
  * Swap manager context
  */
-struct mcscxdef {
-    osfildef   *mcscxfp;                                /* swap file handle */
-    char       *mcscxfname;                            /* name of swap file */
-    errcxdef   *mcscxerr;                         /* error handling context */
-    ulong       mcscxtop;              /* top of swap file allocated so far */
-    ulong       mcscxmax;        /* maximum size of swap file we're allowed */
-    mcsdsdef  **mcscxtab;                     /* swap descriptor page table */
-    mcsseg      mcscxmsg;               /* maximum segment allocated so far */
-    mcmcx1def *mcscxmem;                   /* memory manager context */
-};
+		struct mcscxdef {
+			osfildef *mcscxfp; /* swap file handle */
+			char *mcscxfname; /* name of swap file */
+			errcxdef *mcscxerr; /* error handling context */
+			ulong mcscxtop; /* top of swap file allocated so far */
+			ulong mcscxmax; /* maximum size of swap file we're allowed */
+			mcsdsdef **mcscxtab; /* swap descriptor page table */
+			mcsseg mcscxmsg; /* maximum segment allocated so far */
+			mcmcx1def *mcscxmem; /* memory manager context */
+		};
 
-#define MCSSEGINV ((mcsseg)~0)      /* invalid segment ID - error indicator */
+#define MCSSEGINV ((mcsseg)~0) /* invalid segment ID - error indicator */
 
-/* initialize swapper - returns 0 for success, other for error */
-void mcsini(struct mcscxdef *ctx, struct mcmcx1def *gmemctx, ulong maxsiz,
-            osfildef *fp, char *swapfilename, struct errcxdef *errctx);
+		/* initialize swapper - returns 0 for success, other for error */
+		void mcsini(struct mcscxdef *ctx, struct mcmcx1def *gmemctx, ulong maxsiz,
+		            osfildef *fp, char *swapfilename, struct errcxdef *errctx);
 
-/* close swapper (release memory areas) */
-void mcsclose(struct mcscxdef *ctx);
+		/* close swapper (release memory areas) */
+		void mcsclose(struct mcscxdef *ctx);
 
-/**
+		/**
  *   Swap an object out.  The caller specifies the location and size of
  *   the object, as well as a unique handle (arbitrary, up to the caller;
  *   the only requirement is that it be unique among all caller objects
@@ -96,12 +96,11 @@ void mcsclose(struct mcscxdef *ctx);
  *   doesn't wish to take advantage of this optimization, always pass in
  *   dirty == TRUE, which will force a write regardless of the object ID.
  */
-mcsseg mcsout(struct mcscxdef *ctx, uint objid, uchar *objptr,
-              ushort objsize, mcsseg oldswapseg, int dirty);
-            
-/* Swap an object in */
-void mcsin(struct mcscxdef *ctx, mcsseg swapseg, uchar *objptr, ushort size);
+		mcsseg mcsout(struct mcscxdef *ctx, uint objid, uchar *objptr,
+		              ushort objsize, mcsseg oldswapseg, int dirty);
 
+		/* Swap an object in */
+		void mcsin(struct mcscxdef *ctx, mcsseg swapseg, uchar *objptr, ushort size);
 
 /* number of page pointers in page table (max number of pages) */
 #define MCSPAGETAB 256
@@ -110,12 +109,12 @@ void mcsin(struct mcscxdef *ctx, mcsseg swapseg, uchar *objptr, ushort size);
 #define MCSPAGECNT 256
 
 /* find swap descriptor corresponding to swap segment number */
-#define mcsdsc(ctx,seg) (&(ctx)->mcscxtab[(seg)>>8][(seg)&255])
+#define mcsdsc(ctx, seg) (&(ctx)->mcscxtab[(seg) >> 8][(seg)&255])
 
-/* write out a swap segment */
-void mcswrt(mcscxdef *ctx, mcsdsdef *desc, uchar *buf, ushort bufl);
+		/* write out a swap segment */
+		void mcswrt(mcscxdef *ctx, mcsdsdef *desc, uchar *buf, ushort bufl);
 
-} // End of namespace TADS2
+	} // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk
 

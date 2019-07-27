@@ -46,7 +46,7 @@ enum KEYEVENT {
 
 enum PLR_EVENT {
 	// action list
-	PLR_PROV_WALKTO = 0,	// Provisional WALKTO !
+	PLR_PROV_WALKTO = 0, // Provisional WALKTO !
 	PLR_WALKTO = 1,
 	PLR_LOOK = 2,
 	PLR_ACTION = 3,
@@ -61,7 +61,7 @@ enum PLR_EVENT {
 	PLR_DRAG1_END = 12,
 	PLR_DRAG2_START = 13,
 	PLR_DRAG2_END = 14,
-	PLR_JUMP = 15,		// Call up scene hopper
+	PLR_JUMP = 15, // Call up scene hopper
 	PLR_NOEVENT = 16,
 	PLR_SAVE = 17,
 	PLR_LOAD = 18,
@@ -76,8 +76,6 @@ enum PLR_EVENT {
 	PLR_UNKNOWN = PLR_NOEVENT
 };
 
-
-
 /**
  * Reasons for running Glitter code.
  * Do not re-order these as equivalent CONSTs are defined in the master
@@ -86,14 +84,40 @@ enum PLR_EVENT {
  * Note: DW2 renames ENTER & LEAVE to WALKIN & WALKOUT, and has a new LEAVE event
  */
 enum TINSEL_EVENT {
-	NOEVENT, STARTUP, CLOSEDOWN, POINTED, UNPOINT, WALKIN, WALKOUT,
-	PICKUP,	PUTDOWN, WALKTO, LOOK, ACTION, CONVERSE, SHOWEVENT,
-	HIDEEVENT, TALKING, ENDTALK, LEAVE_T2, RESTORE, PROV_WALKTO
+	NOEVENT,
+	STARTUP,
+	CLOSEDOWN,
+	POINTED,
+	UNPOINT,
+	WALKIN,
+	WALKOUT,
+	PICKUP,
+	PUTDOWN,
+	WALKTO,
+	LOOK,
+	ACTION,
+	CONVERSE,
+	SHOWEVENT,
+	HIDEEVENT,
+	TALKING,
+	ENDTALK,
+	LEAVE_T2,
+	RESTORE,
+	PROV_WALKTO
 };
 
 enum TINSEL1_EVENT {
-	T1_POINTED, T1_WALKTO, T1_ACTION, T1_LOOK, T1_ENTER, T1_LEAVE, T1_STARTUP, T1_CONVERSE,
-	T1_UNPOINT, T1_PUTDOWN, T1_NOEVENT
+	T1_POINTED,
+	T1_WALKTO,
+	T1_ACTION,
+	T1_LOOK,
+	T1_ENTER,
+	T1_LEAVE,
+	T1_STARTUP,
+	T1_CONVERSE,
+	T1_UNPOINT,
+	T1_PUTDOWN,
+	T1_NOEVENT
 };
 
 const TINSEL1_EVENT TINSEL1_EVENT_MAP[] = {
@@ -116,7 +140,6 @@ void effRunPolyTinselCode(HPOLYGON hPoly, TINSEL_EVENT event, int actor);
 void ProcessButEvent(PLR_EVENT be);
 void ProcessKeyEvent(PLR_EVENT ke);
 
-
 int GetEscEvents();
 int GetLeftEvents();
 bool LeftEventChange(int myleftEvent);
@@ -129,8 +152,7 @@ void resetUserEventTime();
 void ResetEcount();
 
 void PolygonEvent(CORO_PARAM, HPOLYGON hPoly, TINSEL_EVENT tEvent, int actor, bool bWait,
-				int myEscape, bool *result = NULL);
-
+                  int myEscape, bool *result = NULL);
 
 void PlayerEvent(PLR_EVENT pEvent, const Common::Point &coOrds);
 

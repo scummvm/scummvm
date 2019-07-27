@@ -22,14 +22,14 @@
 
 #ifdef ENABLE_LOL
 
-#include "kyra/engine/lol.h"
-#include "kyra/graphics/screen_lol.h"
+#	include "kyra/engine/lol.h"
+#	include "kyra/graphics/screen_lol.h"
 
-#include "common/savefile.h"
-#include "common/substream.h"
-#include "common/memstream.h"
+#	include "common/memstream.h"
+#	include "common/savefile.h"
+#	include "common/substream.h"
 
-#include "graphics/scaler.h"
+#	include "graphics/scaler.h"
 
 namespace Kyra {
 
@@ -251,7 +251,7 @@ Common::Error LoLEngine::loadGameState(int slot) {
 		}
 
 		if (header.originalSave)
-			l->monsterDifficulty =  in.readUint16();
+			l->monsterDifficulty = in.readUint16();
 
 		for (int ii = 0; ii < 30; ii++) {
 			LoLMonster *m = &lm[ii];
@@ -310,7 +310,7 @@ Common::Error LoLEngine::loadGameState(int slot) {
 		if (header.originalSave)
 			in.seek(next, SEEK_SET);
 		else
-			l->monsterDifficulty =  in.readByte();
+			l->monsterDifficulty = in.readByte();
 	}
 
 	delete[] origCmp;
@@ -538,7 +538,7 @@ void LoLEngine::restoreBlockTempData(int levelIndex) {
 
 void *LoLEngine::generateMonsterTempData(LevelTempData *tmp) {
 	LoLMonster *m = new LoLMonster[30];
-	memcpy(m, _monsters,  sizeof(LoLMonster) * 30);
+	memcpy(m, _monsters, sizeof(LoLMonster) * 30);
 	tmp->monsterDifficulty = _monsterDifficulty;
 	return m;
 }

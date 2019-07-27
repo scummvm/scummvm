@@ -25,9 +25,9 @@
 namespace BladeRunner {
 
 enum kNR01Loops {
-	kNR01LoopInshot            = 0,
-	kNR01LoopMainLoop          = 1,
-	kNR01LoopOutshot           = 3,
+	kNR01LoopInshot = 0,
+	kNR01LoopMainLoop = 1,
+	kNR01LoopOutshot = 3,
 	kNR01LoopMainLoopNoSpinner = 4
 };
 
@@ -35,19 +35,19 @@ void SceneScriptNR01::InitializeScene() {
 	if (Game_Flag_Query(kFlagSpinnerMissing)) {
 		Setup_Scene_Information(-153.86f, 23.88f, -570.21f, 402);
 	} else if (Game_Flag_Query(kFlagNR01DektoraFall)) {
-		Setup_Scene_Information( -416.0f, 31.93f,  -841.0f, 200);
+		Setup_Scene_Information(-416.0f, 31.93f, -841.0f, 200);
 		Actor_Set_Invisible(kActorMcCoy, true);
 		Preload(167);
 	} else if (Game_Flag_Query(kFlagNR03toNR01)) {
-		Setup_Scene_Information( -416.0f, 31.93f,  -841.0f, 200);
+		Setup_Scene_Information(-416.0f, 31.93f, -841.0f, 200);
 	} else if (Game_Flag_Query(kFlagUG06toNR01)) {
-		Setup_Scene_Information( -270.0f,  4.93f, -1096.0f, 500);
+		Setup_Scene_Information(-270.0f, 4.93f, -1096.0f, 500);
 	} else if (Game_Flag_Query(kFlagNR02toNR01)) {
-		Setup_Scene_Information(  312.0f, 31.66f,  -901.0f, 700);
+		Setup_Scene_Information(312.0f, 31.66f, -901.0f, 700);
 	} else if (Game_Flag_Query(kFlagNotUsed545)) {
-		Setup_Scene_Information( -170.0f,  24.0f,  -574.0f, 768);
+		Setup_Scene_Information(-170.0f, 24.0f, -574.0f, 768);
 	} else {
-		Setup_Scene_Information(   76.0f, 23.88f,  -109.0f, 966);
+		Setup_Scene_Information(76.0f, 23.88f, -109.0f, 966);
 	}
 
 	Scene_Exit_Add_2D_Exit(0, 31, 270, 97, 373, 3);
@@ -59,45 +59,41 @@ void SceneScriptNR01::InitializeScene() {
 		Scene_Exit_Add_2D_Exit(3, 320, 445, 639, 479, 2);
 	}
 
-	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1,  50,  0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxMUSBLEED, 22, 55, 1);
-	Ambient_Sounds_Add_Sound(kSfxSEXYAD2,  10, 10, 20, 20,  -70, -70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_0480R,  5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_0540R,  5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_0560R,  5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_0870R,  5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_0900R,  5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_0940R,  5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_1070R,  5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_1080R,  5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_1160R,  5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSPIN2B,   10, 80, 16, 25,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSPIN3A,   10, 80, 16, 25,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDER2,  10, 80, 33, 33,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDER3,  10, 80, 33, 33,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDER4,  10, 80, 33, 33,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSEXYAD2, 10, 10, 20, 20, -70, -70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0480R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0540R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0560R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0870R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0900R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0940R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_1070R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_1080R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_1160R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B, 10, 80, 16, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN3A, 10, 80, 16, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 10, 80, 33, 33, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 10, 80, 33, 33, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 10, 80, 33, 33, 0, 0, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagSteeleKnowsBulletBobIsDead)
-	 && Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleNR01WaitForMcCoy
-	) {
+	    && Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleNR01WaitForMcCoy) {
 		Game_Flag_Reset(kFlagSpinnerAtNR01);
 		Game_Flag_Reset(kFlagSpinnerAtHF01);
 	}
 
-	if ( Game_Flag_Query(kFlagSpinnerAtNR01)
-	 && !Game_Flag_Query(kFlagArrivedFromSpinner1)
-	) {
+	if (Game_Flag_Query(kFlagSpinnerAtNR01)
+	    && !Game_Flag_Query(kFlagArrivedFromSpinner1)) {
 		if ((!Game_Flag_Query(kFlagNR01VisitedFirstTimeWithSpinner) && Global_Variable_Query(kVariableChapter) == 3)
-		     || Random_Query(1, 3) == 1)
-		{
+		    || Random_Query(1, 3) == 1) {
 			// enhancement: don't always play after first visit
 			Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kNR01LoopInshot, false);
 		}
 		Scene_Loop_Set_Default(kNR01LoopMainLoop);
 		Game_Flag_Set(kFlagArrivedFromSpinner1);
 	} else if (Game_Flag_Query(kFlagSpinnerAtNR01)
-	        && Game_Flag_Query(kFlagArrivedFromSpinner1)
-	) {
+	           && Game_Flag_Query(kFlagArrivedFromSpinner1)) {
 		Scene_Loop_Set_Default(kNR01LoopMainLoop);
 	} else {
 		Scene_Loop_Set_Default(kNR01LoopMainLoopNoSpinner);
@@ -263,16 +259,14 @@ bool SceneScriptNR01::ClickedOnExit(int exitId) {
 
 bool SceneScriptNR01::ClickedOn2DRegion(int region) {
 	if (region == 0
-	 && Player_Query_Combat_Mode()
-	) {
+	    && Player_Query_Combat_Mode()) {
 		Sound_Play(kSfxGUNH1A, 100, 0, 0, 50);
 		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleNR01McCoyShotGun);
 		Scene_2D_Region_Remove(0);
 	}
 
 	if (region == 1
-	 && Player_Query_Combat_Mode()
-	) {
+	    && Player_Query_Combat_Mode()) {
 		Sound_Play(kSfxGUNH1A, 100, 0, 0, 50);
 		Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR01Die);
 		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleNR01McCoyShotGordo);
@@ -280,7 +274,6 @@ bool SceneScriptNR01::ClickedOn2DRegion(int region) {
 		return true;
 	}
 	return false;
-
 }
 
 void SceneScriptNR01::SceneFrameAdvanced(int frame) {
@@ -457,20 +450,19 @@ void SceneScriptNR01::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 	if (!Game_Flag_Query(kFlagNR01toUG06)
-	 && !Game_Flag_Query(kFlagNR01toNR02)
-	 && !Game_Flag_Query(kFlagNR01toNR03)
-	 && !Game_Flag_Query(kFlagNR01DektoraFall)
-	 && !Game_Flag_Query(kFlagChapter4Starting)
-	) {
+	    && !Game_Flag_Query(kFlagNR01toNR02)
+	    && !Game_Flag_Query(kFlagNR01toNR03)
+	    && !Game_Flag_Query(kFlagNR01DektoraFall)
+	    && !Game_Flag_Query(kFlagChapter4Starting)) {
 #if BLADERUNNER_ORIGINAL_BUGS
-		Outtake_Play(kOuttakeAway1,   true, -1);
+		Outtake_Play(kOuttakeAway1, true, -1);
 		Outtake_Play(kOuttakeInside2, true, -1);
 #else
 		if (!Game_Flag_Query(kFlagMcCoyInTyrellBuilding)) {
 			// don't play an extra outtake when going to Tyrell Building
 			// also switch order so inside2 outtake is not last
 			Outtake_Play(kOuttakeInside2, true, -1);
-			Outtake_Play(kOuttakeAway1,   true, -1);
+			Outtake_Play(kOuttakeAway1, true, -1);
 		}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 	}
@@ -479,10 +471,9 @@ void SceneScriptNR01::PlayerWalkedOut() {
 
 void SceneScriptNR01::DialogueQueueFlushed(int a1) {
 	if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleNR01TalkToGordo
-	 && Actor_Query_Goal_Number(kActorGordo) != kGoalGordoNR01Die
-	 && Actor_Query_Goal_Number(kActorGordo) != kGoalGordoNR01HostageShot
-	 && Actor_Query_Goal_Number(kActorGordo) != kGoalGordoNR01HostageDie
-	) {
+	    && Actor_Query_Goal_Number(kActorGordo) != kGoalGordoNR01Die
+	    && Actor_Query_Goal_Number(kActorGordo) != kGoalGordoNR01HostageShot
+	    && Actor_Query_Goal_Number(kActorGordo) != kGoalGordoNR01HostageDie) {
 		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleNR01ShootGordo);
 	}
 }

@@ -22,7 +22,6 @@
 
 // Resource file routines for Simon1/Simon2
 
-
 #include "common/archive.h"
 #include "common/file.h"
 #include "common/memstream.h"
@@ -64,27 +63,27 @@ uint32 AGOSEngine::readUint32Wrapper(const void *src) {
 
 void AGOSEngine::decompressData(const char *srcName, byte *dst, uint32 offset, uint32 srcSize, uint32 dstSize) {
 #ifdef USE_ZLIB
-		Common::File in;
-		in.open(srcName);
-		if (in.isOpen() == false)
-			error("decompressData: Can't load %s", srcName);
+	Common::File in;
+	in.open(srcName);
+	if (in.isOpen() == false)
+		error("decompressData: Can't load %s", srcName);
 
-		in.seek(offset, SEEK_SET);
-		if (srcSize != dstSize) {
-			byte *srcBuffer = (byte *)malloc(srcSize);
+	in.seek(offset, SEEK_SET);
+	if (srcSize != dstSize) {
+		byte *srcBuffer = (byte *)malloc(srcSize);
 
-			if (in.read(srcBuffer, srcSize) != srcSize)
-				error("decompressData: Read failed");
+		if (in.read(srcBuffer, srcSize) != srcSize)
+			error("decompressData: Read failed");
 
-			unsigned long decompressedSize = dstSize;
-			if (!Common::uncompress(dst, &decompressedSize, srcBuffer, srcSize))
-				error("decompressData: Zlib uncompress error");
-			free(srcBuffer);
-		} else {
-			if (in.read(dst, dstSize) != dstSize)
-				error("decompressData: Read failed");
-		}
-		in.close();
+		unsigned long decompressedSize = dstSize;
+		if (!Common::uncompress(dst, &decompressedSize, srcBuffer, srcSize))
+			error("decompressData: Zlib uncompress error");
+		free(srcBuffer);
+	} else {
+		if (in.read(dst, dstSize) != dstSize)
+			error("decompressData: Read failed");
+	}
+	in.close();
 #else
 	error("Zlib support is required for Amiga and Macintosh versions");
 #endif
@@ -371,7 +370,6 @@ void AGOSEngine::readItemFromGamePc(Common::SeekableReadStream *in, Item *item) 
 		item->children = NULL;
 	}
 
-
 	type = in->readUint32BE();
 	while (type) {
 		type = in->readUint16BE();
@@ -561,41 +559,43 @@ void AGOSEngine::readGameFile(void *dst, uint32 offs, uint32 size) {
 // Thanks to Stuart Caie for providing the original
 // C conversion upon which this decruncher is based.
 
-#define SD_GETBIT(var) do {     \
-	if (!bits--) {              \
-		s -= 4;                 \
-		if (s < src)            \
-			return false;       \
-		bb = READ_BE_UINT32(s); \
-		bits = 31;              \
-	}                           \
-	(var) = bb & 1;             \
-	bb >>= 1;                   \
-}while (0)
+#define SD_GETBIT(var)        \
+	do {                        \
+		if (!bits--) {            \
+			s -= 4;                 \
+			if (s < src)            \
+				return false;         \
+			bb = READ_BE_UINT32(s); \
+			bits = 31;              \
+		}                         \
+		(var) = bb & 1;           \
+		bb >>= 1;                 \
+	} while (0)
 
-#define SD_GETBITS(var, nbits) do { \
-	bc = (nbits);                   \
-	(var) = 0;                      \
-	while (bc--) {                   \
-		(var) <<= 1;                \
-		SD_GETBIT(bit);             \
-		(var) |= bit;               \
-	}                               \
-}while (0)
+#define SD_GETBITS(var, nbits) \
+	do {                         \
+		bc = (nbits);              \
+		(var) = 0;                 \
+		while (bc--) {             \
+			(var) <<= 1;             \
+			SD_GETBIT(bit);          \
+			(var) |= bit;            \
+		}                          \
+	} while (0)
 
 #define SD_TYPE_LITERAL (0)
-#define SD_TYPE_MATCH   (1)
+#define SD_TYPE_MATCH (1)
 
 bool AGOSEngine::decrunchFile(byte *src, byte *dst, uint32 size) {
 	byte *s = src + size - 4;
-	uint32 destlen = READ_BE_UINT32 (s);
+	uint32 destlen = READ_BE_UINT32(s);
 	uint32 bb, x, y;
 	byte *d = dst + destlen;
 	byte bc, bit, bits, type;
 
 	// Initialize bit buffer.
 	s -= 4;
-	bb = x = READ_BE_UINT32 (s);
+	bb = x = READ_BE_UINT32(s);
 	bits = 0;
 	do {
 		x >>= 1;
@@ -703,10 +703,10 @@ static void transferLoop(uint8 *dataOut, int &outIndex, uint32 destVal, int max)
 	assert(outIndex > max - 1);
 	byte *pDest = dataOut + outIndex;
 
-	 for (int i = 0; (i <= max) && (outIndex > 0); ++i) {
+	for (int i = 0; (i <= max) && (outIndex > 0); ++i) {
 		pDest = dataOut + --outIndex;
 		*pDest = pDest[destVal];
-	 }
+	}
 }
 
 void AGOSEngine::decompressPN(Common::Stack<uint32> &dataList, uint8 *&dataOut, int &dataOutSize) {
@@ -813,8 +813,7 @@ void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
 	uint32 file, offs, srcSize, dstSize;
 	uint extraBuffer = 0;
 
-	if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
-		id == 2 && type == 2) {
+	if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) && id == 2 && type == 2) {
 		// WORKAROUND: For the extra long strings in foreign languages
 		// Allocate more space for text to cope with foreign languages that use
 		// up more space than English. I hope 6400 bytes are enough. This number
@@ -889,7 +888,7 @@ void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
 			}
 
 			decompressPN(data, dataOut, dataOutSize);
-			dst = allocBlock (dataOutSize + extraBuffer);
+			dst = allocBlock(dataOutSize + extraBuffer);
 			memcpy(dst, dataOut, dataOutSize);
 			delete[] dataOut;
 		} else if (getFeatures() & GF_CRUNCHED) {
@@ -898,7 +897,7 @@ void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
 				error("loadVGAVideoFile: Read failed");
 
 			dstSize = READ_BE_UINT32(srcBuffer + srcSize - 4);
-			dst = allocBlock (dstSize + extraBuffer);
+			dst = allocBlock(dstSize + extraBuffer);
 			decrunchFile(srcBuffer, dst, srcSize);
 			free(srcBuffer);
 		} else {

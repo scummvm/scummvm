@@ -56,10 +56,10 @@ void InfoDialog::execute() {
 	// Form the display message
 	int hour = party._minutes / 60;
 	Common::String details = Common::String::format(Res.GAME_INFORMATION,
-		gameName.c_str(), Res.WEEK_DAY_STRINGS[party._day % 10],
-		(hour > 12) ? hour - 12 : (!hour ? 12 : hour),
-		party._minutes % 60, (hour > 11) ? 'p' : 'a',
-		party._day, party._year, statusText.c_str());
+	                                                gameName.c_str(), Res.WEEK_DAY_STRINGS[party._day % 10],
+	                                                (hour > 12) ? hour - 12 : (!hour ? 12 : hour),
+	                                                party._minutes % 60, (hour > 11) ? 'p' : 'a',
+	                                                party._day, party._year, statusText.c_str());
 
 	Window &w = windows[28];
 	w.setBounds(Common::Rect(88, 20, 248, 112 + (_lines.empty() ? 0 : _lines.size() * 9 + 13)));
@@ -82,9 +82,11 @@ void InfoDialog::execute() {
 
 void InfoDialog::protectionText() {
 	Party &party = *_vm->_party;
-//	Common::StringArray _lines;
-	const char *const AA_L024 = "\x3l\n\x9""024";
-	const char *const AA_R124 = "\x3r\x9""124";
+	//	Common::StringArray _lines;
+	const char *const AA_L024 = "\x3l\n\x9"
+	                            "024";
+	const char *const AA_R124 = "\x3r\x9"
+	                            "124";
 
 	if (party._lightCount) {
 		_lines.push_back(Common::String::format(Res.LIGHT_COUNT_TEXT, party._lightCount));
@@ -92,37 +94,37 @@ void InfoDialog::protectionText() {
 
 	if (party._fireResistence) {
 		_lines.push_back(Common::String::format(Res.FIRE_RESISTENCE_TEXT,
-			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._fireResistence));
+		                                        _lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._fireResistence));
 	}
 
 	if (party._electricityResistence) {
 		_lines.push_back(Common::String::format(Res.ELECRICITY_RESISTENCE_TEXT,
-			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._electricityResistence));
+		                                        _lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._electricityResistence));
 	}
 
 	if (party._coldResistence) {
 		_lines.push_back(Common::String::format(Res.COLD_RESISTENCE_TEXT,
-			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._coldResistence));
+		                                        _lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._coldResistence));
 	}
 
 	if (party._poisonResistence) {
 		_lines.push_back(Common::String::format(Res.POISON_RESISTENCE_TEXT,
-			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._poisonResistence));
+		                                        _lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._poisonResistence));
 	}
 
 	if (party._clairvoyanceActive) {
 		_lines.push_back(Common::String::format(Res.CLAIRVOYANCE_TEXT,
-			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124));
+		                                        _lines.size() == 0 ? 10 : 1, AA_L024, AA_R124));
 	}
 
 	if (party._levitateCount) {
 		_lines.push_back(Common::String::format(Res.LEVITATE_TEXT,
-			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124));
+		                                        _lines.size() == 0 ? 10 : 1, AA_L024, AA_R124));
 	}
 
 	if (party._walkOnWaterActive) {
 		_lines.push_back(Common::String::format(Res.WALK_ON_WATER_TEXT,
-			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124));
+		                                        _lines.size() == 0 ? 10 : 1, AA_L024, AA_R124));
 	}
 }
 

@@ -26,26 +26,26 @@ namespace BladeRunner {
 
 enum kDR04Loops {
 	kDR04LoopPanFromDR01PostExplosion = 0,
-	kDR04LoopMainPostExplosion        = 1,
-	kDR04LoopPanFromDR01PreExplosion  = 3,
-	kDR04LoopMainPreExplosion         = 4,
-	kDR04LoopDR04Explosion            = 6
+	kDR04LoopMainPostExplosion = 1,
+	kDR04LoopPanFromDR01PreExplosion = 3,
+	kDR04LoopMainPreExplosion = 4,
+	kDR04LoopDR04Explosion = 6
 };
 
 void SceneScriptDR04::InitializeScene() {
 	if (Game_Flag_Query(kFlagDR05ViewExplosion)) {
-		Setup_Scene_Information(    0.0f,    0.0f,    0.0f,   0);
+		Setup_Scene_Information(0.0f, 0.0f, 0.0f, 0);
 	} else if (Game_Flag_Query(kFlagDR01toDR04)) {
-		Setup_Scene_Information( -711.0f,  -0.04f,   70.0f, 472);
+		Setup_Scene_Information(-711.0f, -0.04f, 70.0f, 472);
 	} else if (Game_Flag_Query(kFlagDR05toDR04)) {
-		Setup_Scene_Information(-1067.0f,   7.18f,  421.0f, 125);
+		Setup_Scene_Information(-1067.0f, 7.18f, 421.0f, 125);
 	} else if (Game_Flag_Query(kFlagDR06toDR04)) {
 		Setup_Scene_Information(-897.75f, 134.45f, 569.75f, 512);
 	} else {
-		Setup_Scene_Information( -810.0f,  -0.04f,  242.0f, 125);
+		Setup_Scene_Information(-810.0f, -0.04f, 242.0f, 125);
 	}
 
-	Scene_Exit_Add_2D_Exit(0, 589,   0, 639, 479, 1);
+	Scene_Exit_Add_2D_Exit(0, 589, 0, 639, 479, 1);
 	Scene_Exit_Add_2D_Exit(1, 443, 264, 488, 353, 0);
 	Scene_Exit_Add_2D_Exit(2, 222, 110, 269, 207, 0);
 	if (_vm->_cutContent) {
@@ -53,18 +53,18 @@ void SceneScriptDR04::InitializeScene() {
 	}
 
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
-	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50,    1,   1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxFIREBD1, 55, -100,   1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxFIREBD1, 55, -100, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxHUMMER1, 28, -100, 100);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Sound(kSfxSPIN2A, 40, 180,  16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSPIN1A, 40, 180,  16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDR1,  5,  80,  50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDR2,  5,  80,  50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDR3,  5,  80,  50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2A, 40, 180, 16, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN1A, 40, 180, 16, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDR1, 5, 80, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDR2, 5, 80, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDR3, 5, 80, 50, 100, 0, 0, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagDR05BombExploded)) {
 		Scene_Loop_Set_Default(kDR04LoopMainPostExplosion);
@@ -106,9 +106,8 @@ bool SceneScriptDR04::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptDR04::ClickedOnActor(int actorId) {
-	if ( actorId == kActorMoraji
-	 && !Player_Query_Combat_Mode()
-	) {
+	if (actorId == kActorMoraji
+	    && !Player_Query_Combat_Mode()) {
 		if (Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiLayDown) {
 			if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 109, 0, true, true)) {
 				Actor_Face_Actor(kActorMcCoy, kActorMoraji, true);
@@ -138,8 +137,7 @@ bool SceneScriptDR04::ClickedOnActor(int actorId) {
 				// and the player skips the conversation fast.
 				// So ask about a sheet (goal 106 (kGoalOfficerGrayfordStopPatrolToTalkToMcCoyAtDR04)) for Moraji only when Grayford starts patrolling (104, 105 goals)
 				if (Actor_Query_Goal_Number(kActorOfficerGrayford) == kGoalOfficerGrayfordPatrolsAtDR04a
-				 || Actor_Query_Goal_Number(kActorOfficerGrayford) == kGoalOfficerGrayfordPatrolsAtDR04b
-				) {
+				    || Actor_Query_Goal_Number(kActorOfficerGrayford) == kGoalOfficerGrayfordPatrolsAtDR04b) {
 					Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordStopPatrolToTalkToMcCoyAtDR04); // This goal reverts to the previous goal after finishing up
 				}
 #endif // BLADERUNNER_ORIGINAL_BUGS
@@ -262,9 +260,8 @@ void SceneScriptDR04::SceneFrameAdvanced(int frame) {
 
 		case 235:
 			if (Actor_Query_Goal_Number(kActorMoraji) != kGoalMorajiJump
-			 && Actor_Query_Goal_Number(kActorMoraji) != kGoalMorajiLayDown
-			 && Actor_Query_Goal_Number(kActorMoraji) != kGoalMorajiPerished
-			) {
+			    && Actor_Query_Goal_Number(kActorMoraji) != kGoalMorajiLayDown
+			    && Actor_Query_Goal_Number(kActorMoraji) != kGoalMorajiPerished) {
 				Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordArrivesToDR04);
 			}
 			Scene_Exits_Enable();
@@ -286,9 +283,8 @@ void SceneScriptDR04::PlayerWalkedIn() {
 		Delay(4000);
 		Actor_Retired_Here(kActorMcCoy, 6, 6, 1, -1);
 	} else {
-		if ( Game_Flag_Query(kFlagDR05BombActivated)
-		 && !Game_Flag_Query(kFlagDR05BombExploded)
-		) {
+		if (Game_Flag_Query(kFlagDR05BombActivated)
+		    && !Game_Flag_Query(kFlagDR05BombExploded)) {
 			Scene_Exits_Disable();
 		}
 

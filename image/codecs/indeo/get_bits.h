@@ -28,22 +28,23 @@
 namespace Image {
 namespace Indeo {
 
-/**
+	/**
  * Intel Indeo Bitstream reader
  */
-class GetBits : public Common::BitStreamMemory8LSB {
-public:
-	/**
+	class GetBits : public Common::BitStreamMemory8LSB {
+	public:
+		/**
 	* Constructor
 	*/
-	GetBits(const byte *dataPtr, uint32 dataSize) : Common::BitStreamMemory8LSB(new Common::BitStreamMemoryStream(dataPtr, dataSize), DisposeAfterUse::YES) {}
+		GetBits(const byte *dataPtr, uint32 dataSize)
+		  : Common::BitStreamMemory8LSB(new Common::BitStreamMemoryStream(dataPtr, dataSize), DisposeAfterUse::YES) {}
 
-	/**
+		/**
 	 * The number of bits left
 	 */
-	int getBitsLeft() const { return size() - pos(); }
+		int getBitsLeft() const { return size() - pos(); }
 
-	/**
+		/**
 	 * Parse a VLC code.
 	 * @param bits is the number of bits which will be read at once, must be
 	 *             identical to nbBits in init_vlc()
@@ -51,38 +52,38 @@ public:
 	 *                  read the longest vlc code
 	 *                  = (max_vlc_length + bits - 1) / bits
 	 */
-	template <int maxDepth>
-	int getVLC2(int16 (*table)[2], int bits) {
-		int code;
-		int n, nbBits;
-		unsigned int index;
+		template <int maxDepth>
+		int getVLC2(int16 (*table)[2], int bits) {
+			int code;
+			int n, nbBits;
+			unsigned int index;
 
-		index = peekBits(bits);
-		code  = table[index][0];
-		n     = table[index][1];
-
-		if (maxDepth > 1 && n < 0) {
-			skip(bits);
-			nbBits = -n;
-
-			index = peekBits(nbBits) + code;
+			index = peekBits(bits);
 			code = table[index][0];
 			n = table[index][1];
 
-			if (maxDepth > 2 && n < 0) {
-				skip(nbBits);
+			if (maxDepth > 1 && n < 0) {
+				skip(bits);
 				nbBits = -n;
 
 				index = peekBits(nbBits) + code;
 				code = table[index][0];
 				n = table[index][1];
-			}
-		}
 
-		skip(n);
-		return code;
-	}
-};
+				if (maxDepth > 2 && n < 0) {
+					skip(nbBits);
+					nbBits = -n;
+
+					index = peekBits(nbBits) + code;
+					code = table[index][0];
+					n = table[index][1];
+				}
+			}
+
+			skip(n);
+			return code;
+		}
+	};
 
 } // End of namespace Indeo
 } // End of namespace Image

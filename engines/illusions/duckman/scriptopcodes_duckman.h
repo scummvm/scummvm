@@ -23,8 +23,8 @@
 #ifndef ILLUSIONS_DUCKMAN_SCRIPTOPCODES_DUCKMAN_H
 #define ILLUSIONS_DUCKMAN_SCRIPTOPCODES_DUCKMAN_H
 
-#include "illusions/scriptopcodes.h"
 #include "common/func.h"
+#include "illusions/scriptopcodes.h"
 
 namespace Illusions {
 
@@ -37,6 +37,7 @@ public:
 	~ScriptOpcodes_Duckman();
 	void initOpcodes();
 	void freeOpcodes();
+
 protected:
 	IllusionsEngine_Duckman *_vm;
 

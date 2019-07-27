@@ -36,17 +36,20 @@
 // INCLUDES
 // -----------------------------------------------------------------------------
 
-#include "sword25/kernel/common.h"
-#include "sword25/gfx/image/image.h"
-#include "sword25/gfx/graphicengine.h"
 #include "graphics/transparent_surface.h"
+#include "sword25/gfx/graphicengine.h"
+#include "sword25/gfx/image/image.h"
+#include "sword25/kernel/common.h"
 
 namespace Sword25 {
 
 class RenderedImage : public Image {
 private:
-	RenderedImage(const RenderedImage &) : Image(), _doCleanup(false) {}
+	RenderedImage(const RenderedImage &)
+	  : Image()
+	  , _doCleanup(false) {}
 	RenderedImage &operator=(const RenderedImage &) { return *this; }
+
 public:
 	RenderedImage(const Common::String &filename, bool &result);
 
@@ -80,7 +83,7 @@ public:
 	                  Common::Rect *pPartRect = NULL,
 	                  uint color = BS_ARGB(255, 255, 255, 255),
 	                  int width = -1, int height = -1,
-					  RectangleList *updateRects = 0);
+	                  RectangleList *updateRects = 0);
 	virtual bool fill(const Common::Rect *pFillRect, uint color);
 	virtual bool setContent(const byte *pixeldata, uint size, uint offset = 0, uint stride = 0);
 	void replaceContent(byte *pixeldata, int width, int height);

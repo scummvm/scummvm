@@ -21,83 +21,83 @@
  */
 
 #include "glk/advsys/detection.h"
-#include "glk/advsys/detection_tables.h"
-#include "glk/advsys/game.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
 #include "engines/game.h"
+#include "glk/advsys/detection_tables.h"
+#include "glk/advsys/game.h"
 
 namespace Glk {
 namespace AdvSys {
 
-void AdvSysMetaEngine::getSupportedGames(PlainGameList &games) {
-	for (const PlainGameDescriptor *pd = ADVSYS_GAME_LIST; pd->gameId; ++pd)
-		games.push_back(*pd);
-}
-
-GameDescriptor AdvSysMetaEngine::findGame(const char *gameId) {
-	for (const PlainGameDescriptor *pd = ADVSYS_GAME_LIST; pd->gameId; ++pd) {
-		if (!strcmp(gameId, pd->gameId))
-			return *pd;
+	void AdvSysMetaEngine::getSupportedGames(PlainGameList &games) {
+		for (const PlainGameDescriptor *pd = ADVSYS_GAME_LIST; pd->gameId; ++pd)
+			games.push_back(*pd);
 	}
 
-	return GameDescriptor::empty();
-}
+	GameDescriptor AdvSysMetaEngine::findGame(const char *gameId) {
+		for (const PlainGameDescriptor *pd = ADVSYS_GAME_LIST; pd->gameId; ++pd) {
+			if (!strcmp(gameId, pd->gameId))
+				return *pd;
+		}
 
-bool AdvSysMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
-	const char *const EXTENSIONS[] = { ".dat", nullptr };
+		return GameDescriptor::empty();
+	}
 
-	// Loop through the files of the folder
-	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		// Check for a recognised filename
-		if (file->isDirectory())
-			continue;
+	bool AdvSysMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
+		const char *const EXTENSIONS[] = { ".dat", nullptr };
 
-		Common::String filename = file->getName();
-		bool hasExt = false;
-		for (const char *const *ext = &EXTENSIONS[0]; *ext && !hasExt; ++ext)
-			hasExt = filename.hasSuffixIgnoreCase(*ext);
-		if (!hasExt)
-			continue;
+		// Loop through the files of the folder
+		for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+			// Check for a recognised filename
+			if (file->isDirectory())
+				continue;
 
-		Common::File gameFile;
-		if (!gameFile.open(*file))
-			continue;
+			Common::String filename = file->getName();
+			bool hasExt = false;
+			for (const char *const *ext = &EXTENSIONS[0]; *ext && !hasExt; ++ext)
+				hasExt = filename.hasSuffixIgnoreCase(*ext);
+			if (!hasExt)
+				continue;
 
-		Header hdr(&gameFile);
-		if (!hdr._valid)
-			continue;
+			Common::File gameFile;
+			if (!gameFile.open(*file))
+				continue;
 
-		gameFile.seek(0);
-		Common::String md5 = Common::computeStreamMD5AsString(gameFile, 5000);
-		uint32 filesize = gameFile.size();
+			Header hdr(&gameFile);
+			if (!hdr._valid)
+				continue;
 
-		// Scan through the AdvSys game list for a match
-		const GlkDetectionEntry *p = ADVSYS_GAMES;
-		while (p->_md5 && p->_filesize != filesize && md5 != p->_md5)
-			++p;
+			gameFile.seek(0);
+			Common::String md5 = Common::computeStreamMD5AsString(gameFile, 5000);
+			uint32 filesize = gameFile.size();
 
-		if (!p->_gameId) {
-			const PlainGameDescriptor &desc = ADVSYS_GAME_LIST[0];
-			gameList.push_back(GlkDetectedGame(desc.gameId, desc.description, filename, md5, filesize));
-		} else {
-			// Found a match
-			PlainGameDescriptor gameDesc = findGame(p->_gameId);
-			gameList.push_back(GlkDetectedGame(p->_gameId, gameDesc.description, filename));
+			// Scan through the AdvSys game list for a match
+			const GlkDetectionEntry *p = ADVSYS_GAMES;
+			while (p->_md5 && p->_filesize != filesize && md5 != p->_md5)
+				++p;
+
+			if (!p->_gameId) {
+				const PlainGameDescriptor &desc = ADVSYS_GAME_LIST[0];
+				gameList.push_back(GlkDetectedGame(desc.gameId, desc.description, filename, md5, filesize));
+			} else {
+				// Found a match
+				PlainGameDescriptor gameDesc = findGame(p->_gameId);
+				gameList.push_back(GlkDetectedGame(p->_gameId, gameDesc.description, filename));
+			}
+		}
+
+		return !gameList.empty();
+	}
+
+	void AdvSysMetaEngine::detectClashes(Common::StringMap &map) {
+		for (const PlainGameDescriptor *pd = ADVSYS_GAME_LIST; pd->gameId; ++pd) {
+			if (map.contains(pd->gameId))
+				error("Duplicate game Id found - %s", pd->gameId);
+			map[pd->gameId] = "";
 		}
 	}
-
-	return !gameList.empty();
-}
-
-void AdvSysMetaEngine::detectClashes(Common::StringMap &map) {
-	for (const PlainGameDescriptor *pd = ADVSYS_GAME_LIST; pd->gameId; ++pd) {
-		if (map.contains(pd->gameId))
-			error("Duplicate game Id found - %s", pd->gameId);
-		map[pd->gameId] = "";
-	}
-}
 
 } // End of namespace AdvSys
 } // End of namespace Glk

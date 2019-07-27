@@ -25,14 +25,19 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CSeasonNoises, CViewAutoSoundPlayer)
-	ON_MESSAGE(ChangeSeasonMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(LoadSuccessMsg)
+ON_MESSAGE(ChangeSeasonMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(LoadSuccessMsg)
 END_MESSAGE_MAP()
 
-CSeasonNoises::CSeasonNoises() : CViewAutoSoundPlayer(), _seasonNumber(SEASON_SUMMER),
-	_springName("NULL"), _summerName("NULL"), _autumnName("NULL"), _winterName("NULL") {
+CSeasonNoises::CSeasonNoises()
+  : CViewAutoSoundPlayer()
+  , _seasonNumber(SEASON_SUMMER)
+  , _springName("NULL")
+  , _summerName("NULL")
+  , _autumnName("NULL")
+  , _winterName("NULL") {
 }
 
 void CSeasonNoises::save(SimpleFile *file, int indent) {

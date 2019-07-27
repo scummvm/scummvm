@@ -23,16 +23,16 @@
  *
  */
 
+#include "pegasus/neighborhood/norad/alpha/noradalpha.h"
+#include "pegasus/ai/ai_area.h"
 #include "pegasus/energymonitor.h"
 #include "pegasus/gamestate.h"
-#include "pegasus/pegasus.h"
-#include "pegasus/ai/ai_area.h"
 #include "pegasus/items/inventory/airmask.h"
-#include "pegasus/neighborhood/norad/constants.h"
-#include "pegasus/neighborhood/norad/subcontrolroom.h"
 #include "pegasus/neighborhood/norad/alpha/ecrmonitor.h"
 #include "pegasus/neighborhood/norad/alpha/fillingstation.h"
-#include "pegasus/neighborhood/norad/alpha/noradalpha.h"
+#include "pegasus/neighborhood/norad/constants.h"
+#include "pegasus/neighborhood/norad/subcontrolroom.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -61,7 +61,8 @@ const uint32 NoradAlpha::_noradAlphaClawExtras[22] = {
 	kN22ClawDClockwise
 };
 
-NoradAlpha::NoradAlpha(InputHandler *nextHandler, PegasusEngine *owner) : Norad(nextHandler, owner, "Norad Alpha", kNoradAlphaID) {
+NoradAlpha::NoradAlpha(InputHandler *nextHandler, PegasusEngine *owner)
+  : Norad(nextHandler, owner, "Norad Alpha", kNoradAlphaID) {
 	_elevatorUpRoomID = kNorad11South;
 	_elevatorDownRoomID = kNorad12South;
 	_elevatorUpSpotID = kNorad12ElevatorUpSpotID;
@@ -195,7 +196,7 @@ bool NoradAlpha::okayToJump() {
 void NoradAlpha::getExtraCompassMove(const ExtraTable::Entry &entry, FaderMoveSpec &compassMove) {
 	if (entry.extra == kNorad19ExitToSub) {
 		compassMove.makeTwoKnotFaderSpec(kNoradAlphaMovieScale, entry.movieStart, 270 + kSubPlatformCompassAngle,
-				entry.movieEnd, 90 + 20 + 360);
+		                                 entry.movieEnd, 90 + 20 + 360);
 		compassMove.insertFaderKnot(entry.movieStart + 10 * kNoradAlphaFrameDuration, 270 + kSubPlatformCompassAngle);
 		compassMove.insertFaderKnot(entry.movieStart + 29 * kNoradAlphaFrameDuration, 270 + kSubPlatformCompassAngle + 20);
 		compassMove.insertFaderKnot(entry.movieStart + 52 * kNoradAlphaFrameDuration, 270 + kSubPlatformCompassAngle + 20);
@@ -227,7 +228,7 @@ void NoradAlpha::loadAmbientLoops() {
 	// clone2727 would like to point out that the following comment does not quite
 	// match the code logic below
 
-/*
+	/*
 	Logic:
 
 	loop sound 1:
@@ -286,7 +287,6 @@ void NoradAlpha::loadAmbientLoops() {
 			loadLoopSound2("");
 		}
 	}
-
 }
 
 void NoradAlpha::checkContinuePoint(const RoomID room, const DirectionConstant direction) {
@@ -513,8 +513,7 @@ void NoradAlpha::activateHotspots() {
 		if (_vm->getDragType() == kDragInventoryUse) {
 			if (!_fillingStationItem) {
 				ItemID itemID = _vm->getDraggingItem()->getObjectID();
-				if (itemID == kArgonCanister || itemID == kGasCanister || itemID == kAirMask ||
-						itemID == kNitrogenCanister)
+				if (itemID == kArgonCanister || itemID == kGasCanister || itemID == kAirMask || itemID == kNitrogenCanister)
 					_vm->getAllHotspots().activateOneHotspot(kN01GasOutletSpotID);
 			}
 		} else {
@@ -563,8 +562,7 @@ void NoradAlpha::clickInHotspot(const Input &input, const Hotspot *cursorSpot) {
 	if (_vm->getDragType() == kDragInventoryUse) {
 		if (GameState.getCurrentRoomAndView() == MakeRoomView(kNorad01West, kWest)) {
 			Item *item = _vm->getDraggingItem();
-			if (item->getObjectID() == kAirMask || item->getObjectID() == kArgonCanister ||
-					item->getObjectID() == kNitrogenCanister || item->getObjectID() == kGasCanister) {
+			if (item->getObjectID() == kAirMask || item->getObjectID() == kArgonCanister || item->getObjectID() == kNitrogenCanister || item->getObjectID() == kGasCanister) {
 				HotspotInfoTable::Entry *hotspotEntry = findHotspotEntry(kN01GasOutletSpotID);
 				hotspotEntry->hotspotItem = item->getObjectID();
 			}
@@ -598,8 +596,8 @@ void NoradAlpha::dropItemIntoRoom(Item *item, Hotspot *droppedSpot) {
 }
 
 void NoradAlpha::getClawInfo(HotSpotID &outSpotID, HotSpotID &prepSpotID, HotSpotID &clawControlSpotID, HotSpotID &pinchClawSpotID,
-		HotSpotID &moveClawDownSpotID, HotSpotID &moveClawRightSpotID, HotSpotID &moveClawLeftSpotID, HotSpotID &moveClawUpSpotID,
-		HotSpotID &clawCCWSpotID, HotSpotID &clawCWSpotID, uint32 &clawPosition, const uint32 *&clawExtraIDs) {
+                             HotSpotID &moveClawDownSpotID, HotSpotID &moveClawRightSpotID, HotSpotID &moveClawLeftSpotID, HotSpotID &moveClawUpSpotID,
+                             HotSpotID &clawCCWSpotID, HotSpotID &clawCWSpotID, uint32 &clawPosition, const uint32 *&clawExtraIDs) {
 	outSpotID = kNorad22MonitorOutSpotID;
 	prepSpotID = kNorad22LaunchPrepSpotID;
 	clawControlSpotID = kNorad22ClawControlSpotID;

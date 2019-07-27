@@ -24,10 +24,10 @@
 #define SWORD1_LOGIC_H
 // combination of logic.c and scr_int.c
 
-#include "sword1/sworddefs.h"
-#include "sword1/objectman.h"
-#include "common/util.h"
 #include "common/random.h"
+#include "common/util.h"
+#include "sword1/objectman.h"
+#include "sword1/sworddefs.h"
 
 class OSystem;
 
@@ -38,7 +38,7 @@ class Mixer;
 namespace Sword1 {
 
 #define NON_ZERO_SCRIPT_VARS 95
-#define NUM_SCRIPT_VARS      1179
+#define NUM_SCRIPT_VARS 1179
 
 class SwordEngine;
 class Text;
@@ -65,8 +65,9 @@ public:
 	void startPositions(uint32 pos);
 
 	static uint32 _scriptVars[NUM_SCRIPT_VARS];
-// public for mouse (menu looking)
+	// public for mouse (menu looking)
 	int cfnPresetScript(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
+
 private:
 	SwordEngine *_vm;
 	ObjectMan *_objMan;
@@ -100,7 +101,7 @@ private:
 	void setupMcodeTable();
 	const BSMcodeTable *_mcodeTable;
 
-//- mcodeTable:
+	//- mcodeTable:
 	int fnBackground(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnForeground(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnSort(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);

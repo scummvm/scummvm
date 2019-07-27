@@ -22,12 +22,13 @@
 
 #ifdef ENABLE_HE
 
-#include "scumm/he/intern_he.h"
-#include "scumm/he/logic_he.h"
+#	include "scumm/he/logic_he.h"
+#	include "scumm/he/intern_he.h"
 
 namespace Scumm {
 
-LogicHE::LogicHE(ScummEngine_v90he *vm) : _vm(vm) {
+LogicHE::LogicHE(ScummEngine_v90he *vm)
+  : _vm(vm) {
 }
 
 LogicHE::~LogicHE() {
@@ -52,7 +53,7 @@ void LogicHE::putInArray(int arg0, int idx2, int idx1, int val) {
 }
 
 int32 LogicHE::dispatch(int op, int numArgs, int32 *args) {
-#if 1
+#	if 1
 	Common::String str;
 
 	str = Common::String::format("LogicHE::dispatch(%d, %d, [", op, numArgs);
@@ -64,14 +65,14 @@ int32 LogicHE::dispatch(int op, int numArgs, int32 *args) {
 	str += "])";
 
 	debug(0, "%s", str.c_str());
-#else
+#	else
 	// Used for parallel trace utility
 	for (int i = 0; i < numArgs; i++)
 		debug(0, "args[%d] = %d;", i, args[i]);
 
 	debug(0, "dispatch(%d, %d, args);", op, numArgs);
 
-#endif
+#	endif
 
 	return 1;
 }

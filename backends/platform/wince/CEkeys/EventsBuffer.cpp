@@ -27,7 +27,7 @@
 namespace CEKEYS {
 
 bool EventsBuffer::simulateKey(GUI::Key *key, bool pushed) {
-	SDL_Event ev = {0};
+	SDL_Event ev = { 0 };
 
 	if (!key->keycode())
 		key->setKey(key->ascii(), key->ascii());
@@ -35,14 +35,14 @@ bool EventsBuffer::simulateKey(GUI::Key *key, bool pushed) {
 		key->setKey(key->keycode());
 
 	ev.type = (pushed ? SDL_KEYDOWN : SDL_KEYUP);
-	ev.key.keysym.unicode = (SDLMod)key->flags();   // HACK: put the flags into the unused unicode field
+	ev.key.keysym.unicode = (SDLMod)key->flags(); // HACK: put the flags into the unused unicode field
 	ev.key.keysym.sym = (SDLKey)key->keycode();
 	ev.key.keysym.mod = KMOD_RESERVED;
 	return (SDL_PushEvent(&ev) == 0);
 }
 
 bool EventsBuffer::simulateMouseMove(int x, int y) {
-	SDL_Event ev = {0};
+	SDL_Event ev = { 0 };
 
 	ev.type = SDL_MOUSEMOTION;
 	ev.motion.x = x;
@@ -51,10 +51,11 @@ bool EventsBuffer::simulateMouseMove(int x, int y) {
 }
 
 bool EventsBuffer::simulateMouseLeftClick(int x, int y, bool pushed) {
-	SDL_Event ev = {0};
+	SDL_Event ev = { 0 };
 	static bool state = false;
 
-	if (pushed == state) return 0;
+	if (pushed == state)
+		return 0;
 	state = pushed;
 	ev.type = (pushed ? SDL_MOUSEBUTTONDOWN : SDL_MOUSEBUTTONUP);
 	ev.button.button = SDL_BUTTON_LEFT;
@@ -64,10 +65,11 @@ bool EventsBuffer::simulateMouseLeftClick(int x, int y, bool pushed) {
 }
 
 bool EventsBuffer::simulateMouseRightClick(int x, int y, bool pushed) {
-	SDL_Event ev = {0};
+	SDL_Event ev = { 0 };
 	static bool state = false;
 
-	if (pushed == state) return 0;
+	if (pushed == state)
+		return 0;
 	state = pushed;
 	ev.type = (pushed ? SDL_MOUSEBUTTONDOWN : SDL_MOUSEBUTTONUP);
 	ev.button.button = SDL_BUTTON_RIGHT;

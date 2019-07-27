@@ -23,14 +23,15 @@
 #include "teenagent/pack.h"
 #include "teenagent/teenagent.h"
 
-#include "common/util.h"
 #include "common/debug.h"
 #include "common/memstream.h"
 #include "common/substream.h"
+#include "common/util.h"
 
 namespace TeenAgent {
 
-FilePack::FilePack() : offsets(0) {}
+FilePack::FilePack()
+  : offsets(0) {}
 
 FilePack::~FilePack() {
 	close();
@@ -79,7 +80,8 @@ Common::SeekableReadStream *FilePack::getStream(uint32 id) const {
 	return new Common::SeekableSubReadStream(&file, offsets[id - 1], offsets[id]);
 }
 
-TransientFilePack::TransientFilePack() : offsets(0) {}
+TransientFilePack::TransientFilePack()
+  : offsets(0) {}
 
 TransientFilePack::~TransientFilePack() {
 	close();

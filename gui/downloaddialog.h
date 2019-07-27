@@ -23,8 +23,8 @@
 #ifndef GUI_DOWNLOADDIALOG_H
 #define GUI_DOWNLOADDIALOG_H
 
-#include "gui/dialog.h"
 #include "common/str.h"
+#include "gui/dialog.h"
 
 namespace GUI {
 class LauncherDialog;

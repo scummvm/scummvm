@@ -25,23 +25,23 @@
 namespace Glk {
 namespace Alan3 {
 
-/* PUBLIC DATA */
-CurVars current;
-bool gameStateChanged = FALSE;
+	/* PUBLIC DATA */
+	CurVars current;
+	bool gameStateChanged = FALSE;
 
-void CurVars::synchronize(Common::Serializer &s) {
-	s.syncAsSint32LE(syntax);
-	s.syncAsSint32LE(verb);
-	s.syncAsSint32LE(location);
-	s.syncAsSint32LE(actor);
-	s.syncAsSint32LE(instance);
-	s.syncAsSint32LE(tick);
-	s.syncAsSint32LE(score);
-	s.syncAsSint32LE(visits);
-	s.syncAsSint32LE(sourceLine);
-	s.syncAsSint32LE(sourceFile);
-	s.syncAsUint32LE(meta);
-}
+	void CurVars::synchronize(Common::Serializer &s) {
+		s.syncAsSint32LE(syntax);
+		s.syncAsSint32LE(verb);
+		s.syncAsSint32LE(location);
+		s.syncAsSint32LE(actor);
+		s.syncAsSint32LE(instance);
+		s.syncAsSint32LE(tick);
+		s.syncAsSint32LE(score);
+		s.syncAsSint32LE(visits);
+		s.syncAsSint32LE(sourceLine);
+		s.syncAsSint32LE(sourceFile);
+		s.syncAsUint32LE(meta);
+	}
 
 } // End of namespace Alan3
 } // End of namespace Glk

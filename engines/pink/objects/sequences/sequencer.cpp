@@ -23,18 +23,21 @@
 #include "common/debug.h"
 
 #include "pink/archive.h"
-#include "pink/pink.h"
 #include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/pages/game_page.h"
-#include "pink/objects/sequences/sequencer.h"
+#include "pink/objects/sequences/seq_timer.h"
 #include "pink/objects/sequences/sequence.h"
 #include "pink/objects/sequences/sequence_context.h"
-#include "pink/objects/sequences/seq_timer.h"
+#include "pink/objects/sequences/sequencer.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
 Sequencer::Sequencer(GamePage *page)
-	: _context(nullptr), _page(page), _time(0), _isSkipping(false) {}
+  : _context(nullptr)
+  , _page(page)
+  , _time(0)
+  , _isSkipping(false) {}
 
 Sequencer::~Sequencer() {
 	for (uint i = 0; i < _sequences.size(); ++i) {
@@ -69,7 +72,7 @@ void Sequencer::authorSequence(Sequence *sequence, bool loadingSave) {
 	if (sequence) {
 		SequenceContext *context = new SequenceContext(sequence);
 		SequenceContext *confilct;
-		while((confilct = findConfilictingContextWith(context)) != nullptr)
+		while ((confilct = findConfilictingContextWith(context)) != nullptr)
 			confilct->getSequence()->forceEnd();
 
 		_context = context;
@@ -97,7 +100,6 @@ void Sequencer::authorParallelSequence(Sequence *sequence, bool loadingSave) {
 	} else
 		delete context;
 }
-
 
 void Sequencer::toConsole() {
 	debugC(6, kPinkDebugLoadingObjects, "Sequencer:");

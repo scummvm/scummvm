@@ -23,17 +23,19 @@
 #ifndef SHERLOCK_SOUND_H
 #define SHERLOCK_SOUND_H
 
+#include "access/files.h"
+#include "audio/mixer.h"
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "audio/mixer.h"
-#include "access/files.h"
 
 namespace Sherlock {
 
 class SherlockEngine;
 
 enum WaitType {
-	WAIT_RETURN_IMMEDIATELY = 0, WAIT_FINISH = 1, WAIT_KBD_OR_FINISH = 2
+	WAIT_RETURN_IMMEDIATELY = 0,
+	WAIT_FINISH = 1,
+	WAIT_KBD_OR_FINISH = 2
 };
 
 #define MAX_MIXER_CHANNELS 10
@@ -51,18 +53,19 @@ private:
 	/**
 	 * Decode a sound sample
 	 */
-	byte decodeSample(byte sample, byte& reference, int16& scale);
+	byte decodeSample(byte sample, byte &reference, int16 &scale);
 
 	/**
 	 * Handle playing a sound or speech
 	 */
 	bool playSoundResource(const Common::String &name, const Common::String &libFilename,
-		Audio::Mixer::SoundType soundType, Audio::SoundHandle &handle);
+	                       Audio::Mixer::SoundType soundType, Audio::SoundHandle &handle);
 
 	/**
 	 * Form a filename from a passed sound resource name
 	 */
 	Common::String formFilename(const Common::String &name);
+
 public:
 	bool _digitized;
 	int _voices;
@@ -73,6 +76,7 @@ public:
 	int _soundVolume;
 
 	Common::String _talkSoundFile;
+
 public:
 	Sound(SherlockEngine *vm, Audio::Mixer *mixer);
 
@@ -147,4 +151,3 @@ public:
 } // End of namespace Sherlock
 
 #endif
-

@@ -23,8 +23,8 @@
 #ifndef ACCESS_AMAZON_ROOM_H
 #define ACCESS_AMAZON_ROOM_H
 
-#include "common/scummsys.h"
 #include "access/room.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
@@ -32,38 +32,40 @@ class AccessEngine;
 
 namespace Amazon {
 
-class AmazonEngine;
+	class AmazonEngine;
 
-class AmazonRoom : public Room {
-private:
-	AmazonEngine *_game;
-	bool _antOutFlag;
-	const byte *_icon;
+	class AmazonRoom : public Room {
+	private:
+		AmazonEngine *_game;
+		bool _antOutFlag;
+		const byte *_icon;
 
-	void roomSet();
-protected:
-	virtual void loadRoom(int roomNumber);
+		void roomSet();
 
-	virtual void reloadRoom();
+	protected:
+		virtual void loadRoom(int roomNumber);
 
-	virtual void reloadRoom1();
+		virtual void reloadRoom();
 
-	virtual void setupRoom();
+		virtual void reloadRoom1();
 
-	virtual void mainAreaClick();
+		virtual void setupRoom();
 
-	virtual void clearRoom();
+		virtual void mainAreaClick();
 
-	virtual void walkCursor();
-public:
-	AmazonRoom(AccessEngine *vm);
+		virtual void clearRoom();
 
-	virtual ~AmazonRoom();
+		virtual void walkCursor();
 
-	virtual void init4Quads();
+	public:
+		AmazonRoom(AccessEngine *vm);
 
-	virtual void roomMenu();
-};
+		virtual ~AmazonRoom();
+
+		virtual void init4Quads();
+
+		virtual void roomMenu();
+	};
 
 } // End of namespace Amazon
 

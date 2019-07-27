@@ -29,11 +29,10 @@
 #ifndef WINTERMUTE_DCTYPES_H
 #define WINTERMUTE_DCTYPES_H
 
-
+#include "common/array.h"
+#include "common/list.h"
 #include "common/str.h"
 #include "common/ustr.h"
-#include "common/list.h"
-#include "common/array.h"
 
 namespace Wintermute {
 
@@ -47,19 +46,16 @@ typedef Common::List<AnsiString> AnsiStringList;
 typedef Common::Array<WideString> WideStringArray;
 typedef Common::Array<AnsiString> AnsiStringArray;
 
-
 enum TGameState {
 	GAME_RUNNING,
 	GAME_FROZEN,
 	GAME_SEMI_FROZEN
 };
 
-
 enum TImageType {
 	IMG_PALETTED8,
 	IMG_TRUECOLOR
 };
-
 
 enum TTextAlign {
 	TAL_LEFT = 0,
@@ -68,7 +64,6 @@ enum TTextAlign {
 	NUM_TEXT_ALIGN
 };
 
-
 enum TVerticalAlign {
 	VAL_TOP = 0,
 	VAL_CENTER,
@@ -76,33 +71,32 @@ enum TVerticalAlign {
 	NUM_VERTICAL_ALIGN
 };
 
-
 enum TDirection {
-	DI_UP           = 0,
-	DI_UPRIGHT      = 1,
-	DI_RIGHT        = 2,
-	DI_DOWNRIGHT    = 3,
-	DI_DOWN         = 4,
-	DI_DOWNLEFT     = 5,
-	DI_LEFT         = 6,
-	DI_UPLEFT       = 7,
-	NUM_DIRECTIONS  = 8,
-	DI_NONE         = 9
+	DI_UP = 0,
+	DI_UPRIGHT = 1,
+	DI_RIGHT = 2,
+	DI_DOWNRIGHT = 3,
+	DI_DOWN = 4,
+	DI_DOWNLEFT = 5,
+	DI_LEFT = 6,
+	DI_UPLEFT = 7,
+	NUM_DIRECTIONS = 8,
+	DI_NONE = 9
 };
 
 enum TEventType {
-	EVENT_NONE           = 0,
-	EVENT_INIT           = 1,
-	EVENT_SHUTDOWN       = 2,
-	EVENT_LEFT_CLICK     = 3,
-	EVENT_RIGHT_CLICK    = 4,
-	EVENT_MIDDLE_CLICK   = 5,
-	EVENT_LEFT_DBLCLICK  = 6,
-	EVENT_PRESS          = 7,
-	EVENT_IDLE           = 8,
-	EVENT_MOUSE_OVER     = 9,
-	EVENT_LEFT_RELEASE   = 10,
-	EVENT_RIGHT_RELEASE  = 11,
+	EVENT_NONE = 0,
+	EVENT_INIT = 1,
+	EVENT_SHUTDOWN = 2,
+	EVENT_LEFT_CLICK = 3,
+	EVENT_RIGHT_CLICK = 4,
+	EVENT_MIDDLE_CLICK = 5,
+	EVENT_LEFT_DBLCLICK = 6,
+	EVENT_PRESS = 7,
+	EVENT_IDLE = 8,
+	EVENT_MOUSE_OVER = 9,
+	EVENT_LEFT_RELEASE = 10,
+	EVENT_RIGHT_RELEASE = 11,
 	EVENT_MIDDLE_RELEASE = 12,
 	NUM_EVENTS
 };
@@ -117,7 +111,6 @@ enum TUIObjectType {
 	UI_CUSTOM
 };
 
-
 enum TRendererState {
 	RSTATE_3D,
 	RSTATE_2D,
@@ -125,11 +118,9 @@ enum TRendererState {
 	RSTATE_NONE
 };
 
-
 enum TDynamicConstructor {
 	DYNAMIC_CONSTRUCTOR
 };
-
 
 enum TVideoMode {
 	VIDEO_WINDOW,
@@ -137,13 +128,11 @@ enum TVideoMode {
 	VIDEO_ANY
 };
 
-
 enum TVideoPlayback {
-	VID_PLAY_POS        = 0,
-	VID_PLAY_STRETCH    = 1,
-	VID_PLAY_CENTER     = 2
+	VID_PLAY_POS = 0,
+	VID_PLAY_STRETCH = 1,
+	VID_PLAY_CENTER = 2
 };
-
 
 enum TMouseEvent {
 	MOUSE_CLICK,
@@ -151,27 +140,23 @@ enum TMouseEvent {
 	MOUSE_DBLCLICK
 };
 
-
 enum TMouseButton {
 	MOUSE_BUTTON_LEFT,
 	MOUSE_BUTTON_RIGHT,
 	MOUSE_BUTTON_MIDDLE
 };
 
-
 enum TTransMgrState {
 	TRANS_MGR_RUNNING,
 	TRANS_MGR_READY
 };
 
-
 enum TTransitionType {
-	TRANSITION_NONE     = 0,
+	TRANSITION_NONE = 0,
 	TRANSITION_FADE_OUT = 1,
-	TRANSITION_FADE_IN  = 2,
+	TRANSITION_FADE_IN = 2,
 	NUM_TRANSITION_TYPES
 };
-
 
 enum TWindowMode {
 	WINDOW_NORMAL,
@@ -185,7 +170,6 @@ enum TSFXType {
 	SFX_REVERB
 };
 
-
 enum TSpriteCacheType {
 	CACHE_ALL,
 	CACHE_HALF
@@ -198,9 +182,9 @@ enum TTextCharset {
 	CHARSET_BALTIC = 3,
 	CHARSET_CHINESEBIG5 = 4,
 	CHARSET_EASTEUROPE = 5,
-	CHARSET_GB2312 = 6, 
+	CHARSET_GB2312 = 6,
 	CHARSET_GREEK = 7,
-	CHARSET_HANGUL = 8, 
+	CHARSET_HANGUL = 8,
 	CHARSET_MAC = 9,
 	CHARSET_RUSSIAN = 10,
 	CHARSET_SHIFTJIS = 11,
@@ -226,10 +210,10 @@ enum TTTSType {
 };
 
 enum TShadowType {
-	SHADOW_NONE     = 0,
-	SHADOW_SIMPLE   = 1,
-	SHADOW_FLAT     = 2,
-	SHADOW_STENCIL  = 3
+	SHADOW_NONE = 0,
+	SHADOW_SIMPLE = 1,
+	SHADOW_FLAT = 2,
+	SHADOW_STENCIL = 3
 };
 
 } // End of namespace Wintermute

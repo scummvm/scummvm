@@ -21,16 +21,17 @@
  */
 
 #include "titanic/support/screen_manager.h"
+#include "graphics/screen.h"
 #include "titanic/support/video_surface.h"
 #include "titanic/titanic.h"
-#include "graphics/screen.h"
 
 namespace Titanic {
 
 CScreenManager *CScreenManager::_screenManagerPtr;
 CScreenManager *CScreenManager::_currentScreenManagerPtr;
 
-CScreenManager::CScreenManager(TitanicEngine *vm): _vm(vm) {
+CScreenManager::CScreenManager(TitanicEngine *vm)
+  : _vm(vm) {
 	_screenManagerPtr = nullptr;
 	_currentScreenManagerPtr = nullptr;
 
@@ -83,8 +84,9 @@ void CScreenManager::preLoad() {
 
 /*------------------------------------------------------------------------*/
 
-OSScreenManager::OSScreenManager(TitanicEngine *vm): CScreenManager(vm),
-		_directDrawManager(vm, false) {
+OSScreenManager::OSScreenManager(TitanicEngine *vm)
+  : CScreenManager(vm)
+  , _directDrawManager(vm, false) {
 	_field48 = 0;
 	_field4C = 0;
 	_field50 = 0;
@@ -173,8 +175,7 @@ void OSScreenManager::fillRect(SurfaceNum surfaceNum, Rect *rect, byte r, byte g
 	}
 
 	// Constrain the fill area to the set modification area of the surface
-	Rect surfaceBounds = (surfaceNum == SURFACE_PRIMARY) ? _frontSurfaceBounds :
-		_backSurfaces[surfaceNum]._bounds;
+	Rect surfaceBounds = (surfaceNum == SURFACE_PRIMARY) ? _frontSurfaceBounds : _backSurfaces[surfaceNum]._bounds;
 	if (!surfaceBounds.isEmpty())
 		tempRect.constrain(surfaceBounds);
 
@@ -184,7 +185,7 @@ void OSScreenManager::fillRect(SurfaceNum surfaceNum, Rect *rect, byte r, byte g
 }
 
 void OSScreenManager::blitFrom(SurfaceNum surfaceNum, CVideoSurface *src,
-		const Point *destPos, const Rect *srcRect) {
+                               const Point *destPos, const Rect *srcRect) {
 	// Get the dest surface
 	CVideoSurface *destSurface = _frontRenderSurface;
 	if (surfaceNum < -1)
@@ -199,8 +200,7 @@ void OSScreenManager::blitFrom(SurfaceNum surfaceNum, CVideoSurface *src,
 	Rect *bounds = &srcBounds;
 	Rect rect2;
 
-	Rect surfaceBounds = (surfaceNum == SURFACE_PRIMARY) ? _frontSurfaceBounds :
-		_backSurfaces[surfaceNum]._bounds;
+	Rect surfaceBounds = (surfaceNum == SURFACE_PRIMARY) ? _frontSurfaceBounds : _backSurfaces[surfaceNum]._bounds;
 
 	if (!surfaceBounds.isEmpty()) {
 		// Perform clipping to the bounds of the back surface
@@ -239,7 +239,7 @@ void OSScreenManager::blitFrom(SurfaceNum surfaceNum, const Rect *rect, CVideoSu
 }
 
 int OSScreenManager::writeString(int surfaceNum, const Rect &destRect,
-		int yOffset, const CString &str, CTextCursor *textCursor) {
+                                 int yOffset, const CString &str, CTextCursor *textCursor) {
 	CVideoSurface *surface;
 	Rect bounds;
 
@@ -254,11 +254,11 @@ int OSScreenManager::writeString(int surfaceNum, const Rect &destRect,
 	}
 
 	return _fonts[_fontNumber].writeString(surface, destRect, bounds,
-		yOffset, str, textCursor);
+	                                       yOffset, str, textCursor);
 }
 
 void OSScreenManager::writeString(int surfaceNum, const Point &destPos,
-		const Rect &clipRect, const CString &str, int lineWidth) {
+                                  const Rect &clipRect, const CString &str, int lineWidth) {
 	CVideoSurface *surface;
 	Rect bounds;
 

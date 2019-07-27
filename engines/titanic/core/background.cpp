@@ -25,12 +25,16 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CBackground, CGameObject)
-	ON_MESSAGE(StatusChangeMsg)
-	ON_MESSAGE(SetFrameMsg)
-	ON_MESSAGE(VisibleMsg)
+ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(SetFrameMsg)
+ON_MESSAGE(VisibleMsg)
 END_MESSAGE_MAP()
 
-CBackground::CBackground() : CGameObject(), _startFrame(0), _endFrame(0), _isBlocking(false) {
+CBackground::CBackground()
+  : CGameObject()
+  , _startFrame(0)
+  , _endFrame(0)
+  , _isBlocking(false) {
 }
 
 void CBackground::save(SimpleFile *file, int indent) {

@@ -23,13 +23,17 @@
 #ifndef TITANIC_SUCCUBUS_H
 #define TITANIC_SUCCUBUS_H
 
-#include "titanic/npcs/true_talk_npc.h"
 #include "titanic/messages/pet_messages.h"
+#include "titanic/npcs/true_talk_npc.h"
 
 namespace Titanic {
 
-enum SuccUBusAction { SA_SENT = 0, SA_FEATHERS = 1, SA_EATEN = 2,
-	SA_BILGE_FEATHERS = 3, SA_BILGE_SENT = 4, SA_BILGE_EATEN = 5 };
+enum SuccUBusAction { SA_SENT = 0,
+	                    SA_FEATHERS = 1,
+	                    SA_EATEN = 2,
+	                    SA_BILGE_FEATHERS = 3,
+	                    SA_BILGE_SENT = 4,
+	                    SA_BILGE_EATEN = 5 };
 
 class CSuccUBus : public CTrueTalkNPC {
 	DECLARE_MESSAGE_MAP;
@@ -48,10 +52,12 @@ class CSuccUBus : public CTrueTalkNPC {
 	bool SetChevRoomBits(CSetChevRoomBits *msg);
 	bool ActMsg(CActMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+
 protected:
 	static bool _isOn;
 	static bool _motherBlocked;
 	static bool _fuseboxOn;
+
 protected:
 	int _initialStartFrame;
 	int _initialEndFrame;
@@ -98,6 +104,7 @@ protected:
 	int _pumpingEndFrame;
 	uint _destRoomFlags;
 	bool _inProgress;
+
 public:
 	CLASSDEF;
 	CSuccUBus();

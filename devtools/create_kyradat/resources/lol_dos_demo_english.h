@@ -12,4 +12,3 @@ static const char *const kLoLSeqplayStringsDOSDemoEnglish[10] = {
 };
 
 static const StringListProvider kLoLSeqplayStringsDOSDemoEnglishProvider = { ARRAYSIZE(kLoLSeqplayStringsDOSDemoEnglish), kLoLSeqplayStringsDOSDemoEnglish };
-

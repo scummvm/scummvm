@@ -28,15 +28,17 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CGlass, CCarry)
-	ON_MESSAGE(UseWithOtherMsg)
-	ON_MESSAGE(UseWithCharMsg)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(MouseDragEndMsg)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(TurnOff)
+ON_MESSAGE(UseWithOtherMsg)
+ON_MESSAGE(UseWithCharMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(MouseDragEndMsg)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(TurnOff)
 END_MESSAGE_MAP()
 
-CGlass::CGlass() : CCarry(), _condiment("None") {
+CGlass::CGlass()
+  : CCarry()
+  , _condiment("None") {
 }
 
 void CGlass::save(SimpleFile *file, int indent) {

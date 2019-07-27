@@ -27,7 +27,7 @@
 
 namespace Networking {
 
-class UploadFileHandler: public FilesBaseHandler {
+class UploadFileHandler : public FilesBaseHandler {
 public:
 	UploadFileHandler();
 	virtual ~UploadFileHandler();

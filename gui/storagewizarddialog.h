@@ -23,8 +23,8 @@
 #ifndef GUI_STORAGEWIZARDDIALOG_H
 #define GUI_STORAGEWIZARDDIALOG_H
 
-#include "gui/dialog.h"
 #include "common/str.h"
+#include "gui/dialog.h"
 
 namespace GUI {
 
@@ -93,6 +93,7 @@ class StorageWizardDialog : public Dialog {
 
 	/** The "CRC16_CCITT_FALSE" CRC-16 algorithm. */
 	uint32 crc16(Common::String s);
+
 public:
 	StorageWizardDialog(uint32 storageId);
 

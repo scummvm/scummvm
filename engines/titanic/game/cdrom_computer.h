@@ -31,8 +31,10 @@ namespace Titanic {
 class CCDROMComputer : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+
 private:
 	Rect _clickRect;
+
 public:
 	CLASSDEF;
 	CCDROMComputer();

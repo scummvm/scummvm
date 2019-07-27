@@ -18,8 +18,8 @@
 #ifndef MT32EMU_MIDI_STREAM_PARSER_H
 #define MT32EMU_MIDI_STREAM_PARSER_H
 
-#include "globals.h"
 #include "Types.h"
+#include "globals.h"
 
 namespace MT32Emu {
 

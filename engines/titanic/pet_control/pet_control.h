@@ -31,25 +31,30 @@
 #include "titanic/pet_control/pet_conversations.h"
 #include "titanic/pet_control/pet_frame.h"
 #include "titanic/pet_control/pet_inventory.h"
-#include "titanic/pet_control/pet_translation.h"
-#include "titanic/pet_control/pet_starfield.h"
 #include "titanic/pet_control/pet_real_life.h"
 #include "titanic/pet_control/pet_remote.h"
 #include "titanic/pet_control/pet_rooms.h"
-#include "titanic/support/strings.h"
+#include "titanic/pet_control/pet_starfield.h"
+#include "titanic/pet_control/pet_translation.h"
 #include "titanic/room_flags.h"
+#include "titanic/support/strings.h"
 
 namespace Titanic {
 
-enum SummonResult { SUMMON_CANT = 0, SUMMON_PRESENT = 1, SUMMON_CAN = 2 };
+enum SummonResult { SUMMON_CANT = 0,
+	                  SUMMON_PRESENT = 1,
+	                  SUMMON_CAN = 2 };
 
 class CPetControl : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	struct PetEventInfo {
 		int _id;
 		CPetSection *_target;
-		PetEventInfo() : _id(0), _target(nullptr) {}
+		PetEventInfo()
+		  : _id(0)
+		  , _target(nullptr) {}
 	};
+
 private:
 	int _inputLockCount;
 	int _areaLockCount;
@@ -68,6 +73,7 @@ private:
 	CRoomItem *_hiddenRoom;
 	Rect _drawBounds;
 	PetEventInfo _timers[2];
+
 private:
 	/**
 	 * Returns true if the control is in a valid state
@@ -108,6 +114,7 @@ private:
 	 * Flags whether the timer will be persisent across save & loads
 	 */
 	void setTimerPersisent(int id, bool flag);
+
 protected:
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
@@ -119,10 +126,12 @@ protected:
 	bool KeyCharMsg(CKeyCharMsg *msg);
 	bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
 	bool TimerMsg(CTimerMsg *msg);
+
 public:
 	PetArea _currentArea;
 	CTreeItem *_activeNPC;
 	CGameObject *_remoteTarget;
+
 public:
 	CLASSDEF;
 	CPetControl();
@@ -197,7 +206,6 @@ public:
 	 */
 	void highlightGlyph(int id);
 
-
 	/**
 	 * Returns a game object used by the PET by name from within the
 	 * special hidden room container
@@ -271,7 +279,7 @@ public:
 	 * Remove an item from the inventory
 	 */
 	void removeFromInventory(CGameObject *item, CTreeItem *newParent,
-		bool refreshUI = true, bool sendMsg = true);
+	                         bool refreshUI = true, bool sendMsg = true);
 
 	/**
 	 * Remove an item from the inventory

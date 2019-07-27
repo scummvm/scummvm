@@ -24,8 +24,8 @@
 
 namespace Drascula {
 
-static const int x_talk_dch[6] = {1, 25, 49, 73, 97, 121};
-static const int x_talk_izq[6] = {145, 169, 193, 217, 241, 265};
+static const int x_talk_dch[6] = { 1, 25, 49, 73, 97, 121 };
+static const int x_talk_izq[6] = { 145, 169, 193, 217, 241, 265 };
 
 void DrasculaEngine::talkInit(const char *filename) {
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
@@ -65,9 +65,9 @@ void DrasculaEngine::talk_igor(int index, int talkerType) {
 	char filename[20];
 	sprintf(filename, "I%i.als", index);
 	const char *said = _texti[index];
-	static const int x_talk0[8] = {  56,  82, 108, 134, 160, 186, 212, 238 };
-	static const int x_talk1[8] = {  56,  86, 116, 146, 176, 206, 236, 266 };
-	static const int x_talk3[4] = {  80, 102, 124, 146 };
+	static const int x_talk0[8] = { 56, 82, 108, 134, 160, 186, 212, 238 };
+	static const int x_talk1[8] = { 56, 86, 116, 146, 176, 206, 236, 266 };
+	static const int x_talk3[4] = { 80, 102, 124, 146 };
 	static const int x_talk4[4] = { 119, 158, 197, 236 };
 	int face = 0;
 
@@ -127,10 +127,9 @@ void DrasculaEngine::talk_igor(int index, int talkerType) {
 			updateScreen();
 			pause(3);
 		}
-	} while	(!isTalkFinished());
+	} while (!isTalkFinished());
 
-	if ((talkerType == kIgorFront && currentChapter == 6) ||
-		 talkerType == kIgorDoor || talkerType == kIgorSeated || talkerType == kIgorWig) {
+	if ((talkerType == kIgorFront && currentChapter == 6) || talkerType == kIgorDoor || talkerType == kIgorSeated || talkerType == kIgorWig) {
 		updateRoom();
 	}
 
@@ -205,7 +204,7 @@ void DrasculaEngine::talk_drascula_big(int index) {
 	char filename[20];
 	sprintf(filename, "d%i.als", index);
 	const char *said = _textd[index];
-	int x_talk[4] = {47, 93, 139, 185};
+	int x_talk[4] = { 47, 93, 139, 185 };
 	int face;
 	int l = 0;
 
@@ -429,8 +428,8 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 			copyBackground(curX, curY, OBJWIDTH + 1, 0, curWidth, TALK_HEIGHT - 1, screenSurface, drawSurface3);
 		else
 			copyBackground(curX, curY, OBJWIDTH + 1, 0, (int)(((float)curWidth / 100) * factor_red[MIN(201, curY + curHeight)]),
-					   (int)(((float)(TALK_HEIGHT - 1) / 100) * factor_red[MIN(201, curY + curHeight)]),
-						   screenSurface, drawSurface3);
+			               (int)(((float)(TALK_HEIGHT - 1) / 100) * factor_red[MIN(201, curY + curHeight)]),
+			               screenSurface, drawSurface3);
 
 		moveCharacters();
 
@@ -439,49 +438,49 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 				copyBackground(OBJWIDTH + 1, 0, curX, curY, curWidth, TALK_HEIGHT - 1, drawSurface3, screenSurface);
 		} else {
 			copyBackground(OBJWIDTH + 1, 0, curX, curY, (int)(((float)curWidth / 100) * factor_red[MIN(201, curY + curHeight)]),
-					   (int)(((float)(TALK_HEIGHT - 1) / 100) * factor_red[MIN(201, curY + curHeight)]),
-						   drawSurface3, screenSurface);
+			               (int)(((float)(TALK_HEIGHT - 1) / 100) * factor_red[MIN(201, curY + curHeight)]),
+			               drawSurface3, screenSurface);
 		}
 
 		if (trackProtagonist == 0) {
 			if (currentChapter == 2)
 				copyRect(x_talk_izq[face], y_mask_talk, curX + 8, curY - 1, TALK_WIDTH, TALK_HEIGHT,
-						extraSurface, screenSurface);
+				         extraSurface, screenSurface);
 			else if (notTowers) {
 				reduce_hare_chico(x_talk_izq[face], y_mask_talk, curX + (int)((8.0f / 100) * factor_red[MIN(201, curY + curHeight)]),
-					curY, TALK_WIDTH, TALK_HEIGHT, factor_red[MIN(201, curY + curHeight)],
-					extraSurface, screenSurface);
+				                  curY, TALK_WIDTH, TALK_HEIGHT, factor_red[MIN(201, curY + curHeight)],
+				                  extraSurface, screenSurface);
 			}
 			updateRefresh();
 		} else if (trackProtagonist == 1) {
 			if (currentChapter == 2)
 				copyRect(x_talk_dch[face], y_mask_talk, curX + 12, curY, TALK_WIDTH, TALK_HEIGHT,
-					extraSurface, screenSurface);
+				         extraSurface, screenSurface);
 			else if (notTowers) {
 				reduce_hare_chico(x_talk_dch[face], y_mask_talk, curX + (int)((12.0f / 100) * factor_red[MIN(201, curY + curHeight)]),
-					curY, TALK_WIDTH, TALK_HEIGHT, factor_red[MIN(201, curY + curHeight)], extraSurface, screenSurface);
+				                  curY, TALK_WIDTH, TALK_HEIGHT, factor_red[MIN(201, curY + curHeight)], extraSurface, screenSurface);
 			}
 			updateRefresh();
 		} else if (trackProtagonist == 2) {
 			if (currentChapter == 2)
 				copyRect(x_talk_izq[face], y_mask_talk, curX + 12, curY, TALK_WIDTH, TALK_HEIGHT,
-					frontSurface, screenSurface);
+				         frontSurface, screenSurface);
 			else if (notTowers) {
 				reduce_hare_chico(x_talk_izq[face], y_mask_talk,
-					talkOffset + curX + (int)((12.0f / 100) * factor_red[MIN(201, curY + curHeight)]),
-					curY, TALK_WIDTH, TALK_HEIGHT, factor_red[MIN(201, curY + curHeight)],
-					frontSurface, screenSurface);
+				                  talkOffset + curX + (int)((12.0f / 100) * factor_red[MIN(201, curY + curHeight)]),
+				                  curY, TALK_WIDTH, TALK_HEIGHT, factor_red[MIN(201, curY + curHeight)],
+				                  frontSurface, screenSurface);
 			}
 			updateRefresh();
 		} else if (trackProtagonist == 3) {
 			if (currentChapter == 2)
 				copyRect(x_talk_dch[face], y_mask_talk, curX + 8, curY, TALK_WIDTH, TALK_HEIGHT,
-					frontSurface, screenSurface);
+				         frontSurface, screenSurface);
 			else if (notTowers) {
 				reduce_hare_chico(x_talk_dch[face], y_mask_talk,
-					talkOffset + curX + (int)((8.0f / 100) * factor_red[MIN(201, curY + curHeight)]),
-					curY, TALK_WIDTH, TALK_HEIGHT, factor_red[MIN(201, curY + curHeight)],
-					frontSurface, screenSurface);
+				                  talkOffset + curX + (int)((8.0f / 100) * factor_red[MIN(201, curY + curHeight)]),
+				                  curY, TALK_WIDTH, TALK_HEIGHT, factor_red[MIN(201, curY + curHeight)],
+				                  frontSurface, screenSurface);
 			}
 			updateRefresh();
 		}
@@ -491,12 +490,10 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 		if (!_subtitlesDisabled) {
 			if (notTowers) {
 				centerText(said, curX, curY);
-			}
-			else {
+			} else {
 				centerText(said, 160, 25);
 			}
 		}
-
 
 		updateScreen();
 		updateEvents();
@@ -516,7 +513,7 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 void DrasculaEngine::talk_pianist(int index) {
 	char filename[20];
 	sprintf(filename, "P%i.als", index);
-	const char* said = _textp[index];
+	const char *said = _textp[index];
 	int x_talk[4] = { 97, 145, 193, 241 };
 	int coords[7] = { 139, 228, 112, 47, 60, 221, 128 };
 
@@ -565,7 +562,7 @@ void DrasculaEngine::talk_vonBraun(int index, int talkerType) {
 	char filename[20];
 	sprintf(filename, "VB%i.als", index);
 	const char *said = _textvb[index];
-	int x_talk[6] = {1, 27, 53, 79, 105, 131};
+	int x_talk[6] = { 1, 27, 53, 79, 105, 131 };
 	int face;
 
 	color_abc(kColorBrown);
@@ -684,7 +681,7 @@ void DrasculaEngine::talk_werewolf(int index) {
 	char filename[20];
 	sprintf(filename, "L%i.als", index);
 	const char *said = _textl[index];
-	int x_talk[9] = {52, 79, 106, 133, 160, 187, 214, 241, 268};
+	int x_talk[9] = { 52, 79, 106, 133, 160, 187, 214, 241, 268 };
 	int coords[7] = { 136, 198, 81, 26, 24, 203, 78 };
 
 	color_abc(kColorRed);
@@ -695,7 +692,7 @@ void DrasculaEngine::talk_mus(int index) {
 	char filename[20];
 	sprintf(filename, "E%i.als", index);
 	const char *said = _texte[index];
-	int x_talk[8] = { 16, 35, 54, 73, 92, 111, 130, 149};
+	int x_talk[8] = { 16, 35, 54, 73, 92, 111, 130, 149 };
 	int coords[7] = { 156, 190, 64, 18, 24, 197, 64 };
 
 	color_abc(kColorWhite);
@@ -703,8 +700,8 @@ void DrasculaEngine::talk_mus(int index) {
 }
 
 void DrasculaEngine::talk_pen(const char *said, const char *filename, int talkerType) {
-	int x_talk[8] = {112, 138, 164, 190, 216, 242, 268, 294};
-	int x_talk2[5] = {122, 148, 174, 200, 226};
+	int x_talk[8] = { 112, 138, 164, 190, 216, 242, 268, 294 };
+	int x_talk2[5] = { 122, 148, 174, 200, 226 };
 	int face;
 
 	flags[1] = 1;
@@ -758,7 +755,7 @@ void DrasculaEngine::talk_bj_bed(int index) {
 	char filename[20];
 	sprintf(filename, "BJ%i.als", index);
 	const char *said = _textbj[index];
-	int x_talk[5] = {51, 101, 151, 201, 251};
+	int x_talk[5] = { 51, 101, 151, 201, 251 };
 	int face;
 
 	color_abc(kColorWhite);
@@ -794,7 +791,7 @@ void DrasculaEngine::talk_htel(int index) {
 	char filename[20];
 	sprintf(filename, "%i.als", index);
 	const char *said = _text[index];
-	int x_talk[3] = {1, 94, 187};
+	int x_talk[3] = { 1, 94, 187 };
 	int face, curScreen;
 
 	color_abc(kColorYellow);
@@ -855,44 +852,44 @@ void DrasculaEngine::talk_sync(const char *said, const char *filename, const cha
 			copyBackground(curX, curY, OBJWIDTH + 1, 0, curWidth, TALK_HEIGHT - 1, screenSurface, drawSurface3);
 		else
 			copyBackground(curX, curY, OBJWIDTH + 1, 0, (int)(((float)curWidth / 100) * factor_red[curY + curHeight]),
-				(int)(((float)(TALK_HEIGHT - 1) / 100) * factor_red[curY + curHeight]), screenSurface, drawSurface3);
+			               (int)(((float)(TALK_HEIGHT - 1) / 100) * factor_red[curY + curHeight]), screenSurface, drawSurface3);
 		moveCharacters();
 		if (currentChapter == 2) {
 			if (curHeight != 56)
 				copyBackground(OBJWIDTH + 1, 0, curX, curY, curWidth, TALK_HEIGHT - 1, drawSurface3, screenSurface);
 		} else
 			copyBackground(OBJWIDTH + 1, 0, curX, curY, (int)(((float)curWidth / 100) * factor_red[curY + curHeight]),
-				(int)(((float)(TALK_HEIGHT - 1) / 100) * factor_red[curY + curHeight]), drawSurface3, screenSurface);
+			               (int)(((float)(TALK_HEIGHT - 1) / 100) * factor_red[curY + curHeight]), drawSurface3, screenSurface);
 
 		if (trackProtagonist == 0) {
 			if (currentChapter == 2)
 				copyRect(x_talk_izq[face], y_mask_talk, curX + 8, curY - 1, TALK_WIDTH, TALK_HEIGHT, extraSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_izq[face], y_mask_talk, (int)(curX + (8.0f / 100) * factor_red[curY + curHeight]),
-							curY, TALK_WIDTH, TALK_HEIGHT, factor_red[curY + curHeight], extraSurface, screenSurface);
+				                  curY, TALK_WIDTH, TALK_HEIGHT, factor_red[curY + curHeight], extraSurface, screenSurface);
 			updateRefresh();
 		} else if (trackProtagonist == 1) {
 			if (currentChapter == 2)
 				copyRect(x_talk_dch[face], y_mask_talk, curX + 12, curY, TALK_WIDTH, TALK_HEIGHT, extraSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_dch[face], y_mask_talk, (int)(curX + (12.0f / 100) * factor_red[curY + curHeight]),
-							curY, TALK_WIDTH, TALK_HEIGHT, factor_red[curY + curHeight], extraSurface, screenSurface);
+				                  curY, TALK_WIDTH, TALK_HEIGHT, factor_red[curY + curHeight], extraSurface, screenSurface);
 			updateRefresh();
 		} else if (trackProtagonist == 2) {
 			if (currentChapter == 2)
 				copyRect(x_talk_izq[face], y_mask_talk, curX + 12, curY, TALK_WIDTH, TALK_HEIGHT, frontSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_izq[face], y_mask_talk,
-						(int)(talkOffset + curX + (12.0f / 100) * factor_red[curY + curHeight]), curY,
-						TALK_WIDTH, TALK_HEIGHT, factor_red[curY + curHeight], frontSurface, screenSurface);
+				                  (int)(talkOffset + curX + (12.0f / 100) * factor_red[curY + curHeight]), curY,
+				                  TALK_WIDTH, TALK_HEIGHT, factor_red[curY + curHeight], frontSurface, screenSurface);
 			updateRefresh();
 		} else if (trackProtagonist == 3) {
 			if (currentChapter == 2)
 				copyRect(x_talk_dch[face], y_mask_talk, curX + 8, curY, TALK_WIDTH, TALK_HEIGHT, frontSurface, screenSurface);
 			else
 				reduce_hare_chico(x_talk_dch[face], y_mask_talk,
-						(int)(talkOffset + curX + (8.0f / 100) * factor_red[curY + curHeight]), curY,
-						TALK_WIDTH, TALK_HEIGHT, factor_red[curY + curHeight], frontSurface, screenSurface);
+				                  (int)(talkOffset + curX + (8.0f / 100) * factor_red[curY + curHeight]), curY,
+				                  TALK_WIDTH, TALK_HEIGHT, factor_red[curY + curHeight], frontSurface, screenSurface);
 			updateRefresh();
 		}
 
@@ -944,7 +941,7 @@ void DrasculaEngine::talk_trunk(int index) {
 	updateScreen();
 }
 
-void DrasculaEngine::talk_generic(const char* said, const char* filename, int* faces, int faceCount, int* coords, byte* surface) {
+void DrasculaEngine::talk_generic(const char *said, const char *filename, int *faces, int faceCount, int *coords, byte *surface) {
 	int face;
 	talkInit(filename);
 
@@ -954,7 +951,7 @@ void DrasculaEngine::talk_generic(const char* said, const char* filename, int* f
 		copyBackground();
 		updateRefresh_pre();
 		copyBackground(faces[face], coords[0], coords[1], coords[2],
-						coords[3], coords[4], surface, screenSurface);
+		               coords[3], coords[4], surface, screenSurface);
 		moveCharacters();
 		updateRefresh();
 
@@ -970,7 +967,6 @@ void DrasculaEngine::talk_generic(const char* said, const char* filename, int* f
 	updateRoom();
 	updateScreen();
 }
-
 
 void DrasculaEngine::grr() {
 	color_abc(kColorDarkGreen);

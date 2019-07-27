@@ -33,6 +33,7 @@ class CSpeechDispensor : public CBackground {
 	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
 	bool ChangeSeasonMsg(CChangeSeasonMsg *msg);
+
 private:
 	int _hitCounter;
 	int _state;
@@ -41,6 +42,7 @@ private:
 	Point _itemPos;
 	bool _failureType;
 	Season _seasonNum;
+
 public:
 	CLASSDEF;
 	CSpeechDispensor();

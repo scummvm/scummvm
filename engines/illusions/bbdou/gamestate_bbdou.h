@@ -32,6 +32,7 @@ class IllusionsEngine_BBDOU;
 class BBDOU_GameState : public GameState {
 public:
 	BBDOU_GameState(IllusionsEngine_BBDOU *vm);
+
 protected:
 	IllusionsEngine_BBDOU *_vm;
 	uint32 calcWriteBufferSizeInternal();

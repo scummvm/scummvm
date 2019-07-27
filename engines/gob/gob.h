@@ -72,30 +72,29 @@ class Util;
 class SaveLoad;
 class PreGob;
 
-#define WRITE_VAR_UINT32(var, val)  _vm->_inter->_variables->writeVar32(var, val)
-#define WRITE_VAR_UINT16(var, val)  _vm->_inter->_variables->writeVar16(var, val)
-#define WRITE_VAR_UINT8(var, val)   _vm->_inter->_variables->writeVar8(var, val)
-#define WRITE_VAR_STR(var, str)     _vm->_inter->_variables->writeVarString(var, str)
+#define WRITE_VAR_UINT32(var, val) _vm->_inter->_variables->writeVar32(var, val)
+#define WRITE_VAR_UINT16(var, val) _vm->_inter->_variables->writeVar16(var, val)
+#define WRITE_VAR_UINT8(var, val) _vm->_inter->_variables->writeVar8(var, val)
+#define WRITE_VAR_STR(var, str) _vm->_inter->_variables->writeVarString(var, str)
 #define WRITE_VARO_UINT32(off, val) _vm->_inter->_variables->writeOff32(off, val)
 #define WRITE_VARO_UINT16(off, val) _vm->_inter->_variables->writeOff16(off, val)
-#define WRITE_VARO_UINT8(off, val)  _vm->_inter->_variables->writeOff8(off, val)
-#define WRITE_VARO_STR(off, str)    _vm->_inter->_variables->writeOffString(off, str)
-#define READ_VAR_UINT32(var)        _vm->_inter->_variables->readVar32(var)
-#define READ_VAR_UINT16(var)        _vm->_inter->_variables->readVar16(var)
-#define READ_VAR_UINT8(var)         _vm->_inter->_variables->readVar8(var)
-#define READ_VARO_UINT32(off)       _vm->_inter->_variables->readOff32(off)
-#define READ_VARO_UINT16(off)       _vm->_inter->_variables->readOff16(off)
-#define READ_VARO_UINT8(off)        _vm->_inter->_variables->readOff8(off)
-#define GET_VAR_STR(var)            _vm->_inter->_variables->getAddressVarString(var)
-#define GET_VARO_STR(off)           _vm->_inter->_variables->getAddressOffString(off)
-#define GET_VAR_FSTR(var)           _vm->_inter->_variables->getAddressVarString(var)
-#define GET_VARO_FSTR(off)          _vm->_inter->_variables->getAddressOffString(off)
+#define WRITE_VARO_UINT8(off, val) _vm->_inter->_variables->writeOff8(off, val)
+#define WRITE_VARO_STR(off, str) _vm->_inter->_variables->writeOffString(off, str)
+#define READ_VAR_UINT32(var) _vm->_inter->_variables->readVar32(var)
+#define READ_VAR_UINT16(var) _vm->_inter->_variables->readVar16(var)
+#define READ_VAR_UINT8(var) _vm->_inter->_variables->readVar8(var)
+#define READ_VARO_UINT32(off) _vm->_inter->_variables->readOff32(off)
+#define READ_VARO_UINT16(off) _vm->_inter->_variables->readOff16(off)
+#define READ_VARO_UINT8(off) _vm->_inter->_variables->readOff8(off)
+#define GET_VAR_STR(var) _vm->_inter->_variables->getAddressVarString(var)
+#define GET_VARO_STR(off) _vm->_inter->_variables->getAddressOffString(off)
+#define GET_VAR_FSTR(var) _vm->_inter->_variables->getAddressVarString(var)
+#define GET_VARO_FSTR(off) _vm->_inter->_variables->getAddressOffString(off)
 
-#define WRITE_VAR_OFFSET(off, val)  WRITE_VARO_UINT32((off), (val))
-#define WRITE_VAR(var, val)         WRITE_VAR_UINT32((var), (val))
-#define VAR_OFFSET(off)             READ_VARO_UINT32(off)
-#define VAR(var)                    READ_VAR_UINT32(var)
-
+#define WRITE_VAR_OFFSET(off, val) WRITE_VARO_UINT32((off), (val))
+#define WRITE_VAR(var, val) WRITE_VAR_UINT32((var), (val))
+#define VAR_OFFSET(off) READ_VARO_UINT32(off)
+#define VAR(var) READ_VAR_UINT32(var)
 
 // WARNING: Reordering these will invalidate save games!
 enum Endianness {
@@ -134,37 +133,37 @@ enum GameType {
 };
 
 enum Features {
-	kFeaturesNone      =      0,
-	kFeaturesCD        = 1 << 0,
-	kFeaturesEGA       = 1 << 1,
-	kFeaturesAdLib     = 1 << 2,
-	kFeaturesSCNDemo   = 1 << 3,
-	kFeaturesBATDemo   = 1 << 4,
-	kFeatures640x480   = 1 << 5,
-	kFeatures800x600   = 1 << 6,
+	kFeaturesNone = 0,
+	kFeaturesCD = 1 << 0,
+	kFeaturesEGA = 1 << 1,
+	kFeaturesAdLib = 1 << 2,
+	kFeaturesSCNDemo = 1 << 3,
+	kFeaturesBATDemo = 1 << 4,
+	kFeatures640x480 = 1 << 5,
+	kFeatures800x600 = 1 << 6,
 	kFeaturesTrueColor = 1 << 7
 };
 
 enum EndiannessMethod {
-	kEndiannessMethodLE,     ///< Always little endian.
-	kEndiannessMethodBE,     ///< Always big endian.
+	kEndiannessMethodLE, ///< Always little endian.
+	kEndiannessMethodBE, ///< Always big endian.
 	kEndiannessMethodSystem, ///< Follows system endianness.
 	kEndiannessMethodAltFile ///< Different endianness in alternate file.
 };
 
 enum {
-	kDebugFuncOp     = 1 <<  0,
-	kDebugDrawOp     = 1 <<  1,
-	kDebugGobOp      = 1 <<  2,
-	kDebugSound      = 1 <<  3,
-	kDebugExpression = 1 <<  4,
-	kDebugGameFlow   = 1 <<  5,
-	kDebugFileIO     = 1 <<  6,
-	kDebugSaveLoad   = 1 <<  7,
-	kDebugGraphics   = 1 <<  8,
-	kDebugVideo      = 1 <<  9,
-	kDebugHotspots   = 1 << 10,
-	kDebugDemo       = 1 << 11
+	kDebugFuncOp = 1 << 0,
+	kDebugDrawOp = 1 << 1,
+	kDebugGobOp = 1 << 2,
+	kDebugSound = 1 << 3,
+	kDebugExpression = 1 << 4,
+	kDebugGameFlow = 1 << 5,
+	kDebugFileIO = 1 << 6,
+	kDebugSaveLoad = 1 << 7,
+	kDebugGraphics = 1 << 8,
+	kDebugVideo = 1 << 9,
+	kDebugHotspots = 1 << 10,
+	kDebugDemo = 1 << 11
 };
 
 struct GOBGameDescription;

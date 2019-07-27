@@ -24,8 +24,8 @@
 #define BACKENDS_AUDIOCD_ABSTRACT_H
 
 #include "audio/mixer.h"
-#include "common/scummsys.h"
 #include "common/noncopyable.h"
+#include "common/scummsys.h"
 
 /**
 * Abstract Audio CD manager class. Subclasses implement the actual
@@ -71,7 +71,8 @@ public:
 	 * @return @c true if the track started playing, @c false otherwise
 	 */
 	virtual bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false,
-		Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType) = 0;
+	                  Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType)
+	  = 0;
 
 	/**
 	 * Get if audio is being played.

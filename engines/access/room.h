@@ -23,10 +23,10 @@
 #ifndef ACCESS_ROOM_H
 #define ACCESS_ROOM_H
 
-#include "common/scummsys.h"
+#include "access/data.h"
 #include "common/array.h"
 #include "common/rect.h"
-#include "access/data.h"
+#include "common/scummsys.h"
 
 #define TILE_WIDTH 16
 #define TILE_HEIGHT 16
@@ -39,6 +39,7 @@ public:
 	Common::Array<Common::Rect> _blocks;
 	int _blockIn;
 	int _delta;
+
 public:
 	Plotter();
 
@@ -58,7 +59,11 @@ public:
 	}
 };
 
-enum Function { FN_NONE = 0, FN_CLEAR1 = 1, FN_CLEAR2 = 2, FN_RELOAD = 3, FN_BREAK = 4 };
+enum Function { FN_NONE = 0,
+	              FN_CLEAR1 = 1,
+	              FN_CLEAR2 = 2,
+	              FN_RELOAD = 3,
+	              FN_BREAK = 4 };
 
 class Room : public Manager {
 private:
@@ -80,6 +85,7 @@ private:
 	void cycleCommand(int incr);
 
 	bool checkCode(int v1, int v2);
+
 protected:
 	void loadRoomData(const byte *roomData);
 
@@ -118,6 +124,7 @@ protected:
 	virtual void mainAreaClick() = 0;
 
 	virtual void walkCursor();
+
 public:
 	Plotter _plotter;
 	Common::Array<JetFrame> _jetFrame;
@@ -131,6 +138,7 @@ public:
 	int _selectCommand;
 	bool _conFlag;
 	int _rMouse[10][2];
+
 public:
 	Room(AccessEngine *vm);
 
@@ -179,6 +187,7 @@ public:
 	struct SoundIdent : FileIdent {
 		int _priority;
 	};
+
 public:
 	int _roomFlag;
 	int _estIndex;
@@ -197,6 +206,7 @@ public:
 	int _numColors;
 	Common::Array<ExtraCell> _extraCells;
 	Common::Array<SoundIdent> _sounds;
+
 public:
 	RoomInfo(const byte *data, int gameType, bool isCD, bool isDemo);
 };

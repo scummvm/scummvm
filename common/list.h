@@ -31,17 +31,17 @@ namespace Common {
  * Simple double linked list, modeled after the list template of the standard
  * C++ library.
  */
-template<typename t_T>
+template <typename t_T>
 class List {
 protected:
-	typedef ListInternal::NodeBase		NodeBase;
-	typedef ListInternal::Node<t_T>		Node;
+	typedef ListInternal::NodeBase NodeBase;
+	typedef ListInternal::Node<t_T> Node;
 
 	NodeBase _anchor;
 
 public:
-	typedef ListInternal::Iterator<t_T>		iterator;
-	typedef ListInternal::ConstIterator<t_T>	const_iterator;
+	typedef ListInternal::Iterator<t_T> iterator;
+	typedef ListInternal::ConstIterator<t_T> const_iterator;
 
 	typedef t_T value_type;
 	typedef uint size_type;
@@ -72,7 +72,7 @@ public:
 	/**
 	 * Inserts the elements from first to last before pos.
 	 */
-	template<typename iterator2>
+	template <typename iterator2>
 	void insert(iterator pos, iterator2 first, iterator2 last) {
 		for (; first != last; ++first)
 			insert(pos, *first);
@@ -206,28 +206,27 @@ public:
 		return (&_anchor == _anchor._next);
 	}
 
-
-	iterator		begin() {
+	iterator begin() {
 		return iterator(_anchor._next);
 	}
 
-	iterator		reverse_begin() {
+	iterator reverse_begin() {
 		return iterator(_anchor._prev);
 	}
 
-	iterator		end() {
+	iterator end() {
 		return iterator(&_anchor);
 	}
 
-	const_iterator	begin() const {
+	const_iterator begin() const {
 		return const_iterator(_anchor._next);
 	}
 
-	const_iterator	reverse_begin() const {
+	const_iterator reverse_begin() const {
 		return const_iterator(_anchor._prev);
 	}
 
-	const_iterator	end() const {
+	const_iterator end() const {
 		return const_iterator(const_cast<NodeBase *>(&_anchor));
 	}
 

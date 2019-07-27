@@ -23,8 +23,8 @@
 #ifndef GLK_WINDOW_GRAPHICS_H
 #define GLK_WINDOW_GRAPHICS_H
 
-#include "glk/windows.h"
 #include "glk/picture.h"
+#include "glk/windows.h"
 
 namespace Glk {
 
@@ -36,11 +36,13 @@ private:
 	void touch();
 
 	void drawPicture(Picture *src, int x0, int y0, int width, int height, uint linkval);
+
 public:
 	uint _bgnd;
 	bool _dirty;
 	uint _w, _h;
 	Graphics::ManagedSurface *_surface;
+
 public:
 	/**
 	 * Constructor
@@ -53,7 +55,7 @@ public:
 	virtual ~GraphicsWindow();
 
 	uint drawPicture(uint image, int xpos, int ypos, int scale,
-	                   uint imagewidth, uint imageheight);
+	                 uint imagewidth, uint imageheight);
 
 	/**
 	 * Rearranges the window

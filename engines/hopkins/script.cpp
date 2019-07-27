@@ -20,18 +20,18 @@
  *
  */
 
-#include "hopkins/objects.h"
 #include "hopkins/dialogs.h"
 #include "hopkins/files.h"
 #include "hopkins/globals.h"
-#include "hopkins/sound.h"
 #include "hopkins/hopkins.h"
+#include "hopkins/objects.h"
+#include "hopkins/sound.h"
 
-#include "common/system.h"
-#include "graphics/palette.h"
 #include "common/file.h"
 #include "common/rect.h"
+#include "common/system.h"
 #include "engines/util.h"
+#include "graphics/palette.h"
 
 namespace Hopkins {
 
@@ -173,7 +173,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			}
 		}
 		break;
-		}
+	}
 	case MKTAG24('B', 'O', 'B'):
 		if (!_vm->_objectsMan->_disableFl) {
 			int vbobIdx = dataP[5];
@@ -216,51 +216,51 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_objectsMan->_startSpriteIndex = dataP[5];
 			if (_vm->_objectsMan->_changeHeadFl) {
 				if (_vm->_globals->_saveData->_data[svField354] == 1
-						&& _vm->_globals->_saveData->_cloneHopkins._pos.x && _vm->_globals->_saveData->_cloneHopkins._pos.y
-						&& _vm->_globals->_saveData->_cloneHopkins._startSpriteIndex && _vm->_globals->_saveData->_cloneHopkins._location) {
+				    && _vm->_globals->_saveData->_cloneHopkins._pos.x && _vm->_globals->_saveData->_cloneHopkins._pos.y
+				    && _vm->_globals->_saveData->_cloneHopkins._startSpriteIndex && _vm->_globals->_saveData->_cloneHopkins._location) {
 
 					_vm->_objectsMan->_characterPos = _vm->_globals->_saveData->_cloneHopkins._pos;
 					_vm->_objectsMan->_startSpriteIndex = _vm->_globals->_saveData->_cloneHopkins._startSpriteIndex;
 				}
 				if (_vm->_globals->_saveData->_data[svField356] == 1
-						&& _vm->_globals->_saveData->_samantha._pos.x && _vm->_globals->_saveData->_samantha._pos.y
-						&& _vm->_globals->_saveData->_samantha._startSpriteIndex && _vm->_globals->_saveData->_samantha._location) {
+				    && _vm->_globals->_saveData->_samantha._pos.x && _vm->_globals->_saveData->_samantha._pos.y
+				    && _vm->_globals->_saveData->_samantha._startSpriteIndex && _vm->_globals->_saveData->_samantha._location) {
 					_vm->_objectsMan->_characterPos = _vm->_globals->_saveData->_samantha._pos;
 					_vm->_objectsMan->_startSpriteIndex = _vm->_globals->_saveData->_samantha._startSpriteIndex;
 				}
 				if (_vm->_globals->_saveData->_data[svField357] == 1
-						&& _vm->_globals->_saveData->_realHopkins._pos.x && _vm->_globals->_saveData->_realHopkins._pos.y
-						&& _vm->_globals->_saveData->_realHopkins._startSpriteIndex && _vm->_globals->_saveData->_realHopkins._location) {
+				    && _vm->_globals->_saveData->_realHopkins._pos.x && _vm->_globals->_saveData->_realHopkins._pos.y
+				    && _vm->_globals->_saveData->_realHopkins._startSpriteIndex && _vm->_globals->_saveData->_realHopkins._location) {
 					_vm->_objectsMan->_characterPos = _vm->_globals->_saveData->_realHopkins._pos;
 					_vm->_objectsMan->_startSpriteIndex = _vm->_globals->_saveData->_realHopkins._startSpriteIndex;
 				}
 			}
 			if (_vm->_globals->_saveData->_data[svField356] == 1
-					&& _vm->_globals->_saveData->_realHopkins._location == _vm->_globals->_screenId) {
+			    && _vm->_globals->_saveData->_realHopkins._location == _vm->_globals->_screenId) {
 				_vm->_objectsMan->addStaticSprite(
-				    _vm->_objectsMan->_headSprites,
-				    _vm->_globals->_saveData->_realHopkins._pos,
-				    1,
-				    2,
-				    _vm->_globals->_saveData->_realHopkins._zoomFactor,
-				    false,
-				    34,
-				    190);
+				  _vm->_objectsMan->_headSprites,
+				  _vm->_globals->_saveData->_realHopkins._pos,
+				  1,
+				  2,
+				  _vm->_globals->_saveData->_realHopkins._zoomFactor,
+				  false,
+				  34,
+				  190);
 				_vm->_objectsMan->animateSprite(1);
 				_vm->_objectsMan->_twoCharactersFl = true;
 			}
 			if (_vm->_globals->_saveData->_data[svField357] == 1
-			        && _vm->_globals->_saveData->_data[svField355] == 1
-			        && _vm->_globals->_saveData->_samantha._location == _vm->_globals->_screenId) {
+			    && _vm->_globals->_saveData->_data[svField355] == 1
+			    && _vm->_globals->_saveData->_samantha._location == _vm->_globals->_screenId) {
 				_vm->_objectsMan->addStaticSprite(
-				    _vm->_objectsMan->_headSprites,
-				    _vm->_globals->_saveData->_samantha._pos,
-				    1,
-				    3,
-				    _vm->_globals->_saveData->_samantha._zoomFactor,
-				    false,
-				    20,
-				    127);
+				  _vm->_objectsMan->_headSprites,
+				  _vm->_globals->_saveData->_samantha._pos,
+				  1,
+				  3,
+				  _vm->_globals->_saveData->_samantha._zoomFactor,
+				  false,
+				  20,
+				  127);
 				_vm->_objectsMan->animateSprite(1);
 				_vm->_objectsMan->_twoCharactersFl = true;
 			}
@@ -462,7 +462,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 		}
 		opcodeType = 1;
 		break;
-		}
+	}
 	case MKTAG24('M', 'U', 'S'):
 		opcodeType = 1;
 		break;
@@ -478,7 +478,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 		}
 		opcodeType = 1;
 		break;
-		}
+	}
 	case MKTAG24('O', 'B', 'P'):
 		opcodeType = 1;
 		_vm->_objectsMan->addObject(READ_LE_INT16(dataP + 5));
@@ -517,7 +517,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_objectsMan->stopBobAnimation(animId - 100);
 		opcodeType = 1;
 		break;
-		}
+	}
 	case MKTAG24('S', 'P', 'E'):
 		switch (READ_LE_INT16(dataP + 5)) {
 		case 6:
@@ -833,7 +833,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_soundMan->removeSample(1);
 			_vm->_soundMan->removeSample(2);
 			break;
-			}
+		}
 
 		case 47:
 			_vm->_talkMan->startAnimatedCharacterDialogue("BARMAN.pe2");
@@ -894,7 +894,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			}
 			_vm->_objectsMan->enableHidingBehavior();
 			break;
-			}
+		}
 
 		case 50:
 			_vm->_soundMan->playSoundFile("SOUND46.WAv");
@@ -932,7 +932,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_graphicsMan->_noFadingFl = true;
 			_vm->_globals->_exitId = 20;
 			break;
-			}
+		}
 
 		case 52:
 			_vm->_globals->_introSpeechOffFl = true;
@@ -1036,7 +1036,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_objectsMan->stopBobAnimation(7);
 			_vm->_objectsMan->stopBobAnimation(3);
 			break;
-			}
+		}
 
 		case 62:
 			_vm->_talkMan->animateObject("SBCADA.pe2");
@@ -1100,7 +1100,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_objectsMan->animateSprite(0);
 			_vm->_objectsMan->loadLinkFile("IM27a", true);
 			break;
-			}
+		}
 
 		case 81: {
 			_vm->_globals->_checkDistanceFl = true;
@@ -1178,7 +1178,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_objectsMan->setBobAnimation(9);
 			_vm->_objectsMan->setBobAnimation(7);
 			break;
-			}
+		}
 
 		case 83:
 			_vm->_talkMan->startAnimatedCharacterDialogue("CVIGIL.pe2");
@@ -1404,7 +1404,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkMan->startAnimatedCharacterDialogue("tourist1.pe2");
 			_vm->_globals->_introSpeechOffFl = false;
-				_vm->_animMan->playAnim2("T421A.ANM", "T421.ANM", 100, 14, 500);
+			_vm->_animMan->playAnim2("T421A.ANM", "T421.ANM", 100, 14, 500);
 			_vm->_events->refreshScreenAndEvents();
 			_vm->_events->refreshScreenAndEvents();
 			_vm->_events->refreshScreenAndEvents();
@@ -1685,7 +1685,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			} while (_vm->_linesMan->_route != (RouteItem *)NULL);
 			_vm->_globals->_exitId = 59;
 			break;
-			}
+		}
 
 		case 172:
 			_vm->_talkMan->startAnimatedCharacterDialogue("GBLEU.pe2");
@@ -1713,7 +1713,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			} while (_vm->_linesMan->_route != (RouteItem *)NULL);
 			_vm->_globals->_exitId = 59;
 			break;
-			}
+		}
 
 		case 174:
 			_vm->_talkMan->startAnimatedCharacterDialogue("Profbl.pe2");
@@ -1844,7 +1844,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_objectsMan->stopBobAnimation(3);
 			_vm->_objectsMan->animateSprite(0);
 			break;
-			}
+		}
 
 		case 205: {
 			_vm->_objectsMan->removeSprite(0);
@@ -1873,7 +1873,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_objectsMan->stopBobAnimation(4);
 			_vm->_objectsMan->animateSprite(0);
 			break;
-			}
+		}
 
 		case 207:
 			_vm->_talkMan->animateObject("PANNEAU.PE2");
@@ -1902,7 +1902,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_globals->_exitId = _vm->_globals->_saveData->_data[svField401];
 			_vm->_globals->_disableInventFl = false;
 			break;
-			}
+		}
 
 		case 209: {
 			_vm->_objectsMan->setBobAnimDataIdx(1, 0);
@@ -1941,7 +1941,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_objectsMan->stopBobAnimation(2);
 			_vm->_objectsMan->setBobAnimation(4);
 			break;
-			}
+		}
 
 		case 210:
 			_vm->_soundMan->_specialSoundNum = 210;
@@ -2040,7 +2040,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_objectsMan->loadLinkFile("IM93c", true);
 			_vm->_objectsMan->enableHidingBehavior();
 			break;
-			}
+		}
 
 		case 231:
 			_vm->_objectsMan->disableHidingBehavior();
@@ -2096,7 +2096,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_graphicsMan->_noFadingFl = true;
 			_vm->_globals->_exitId = 94;
 			break;
-			}
+		}
 
 		case 236: {
 			if (_vm->_globals->_saveData->_data[svField341]) {
@@ -2133,7 +2133,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_objectsMan->setAndPlayAnim(6, 0, 23, false);
 			_vm->_graphicsMan->fastDisplay(_vm->_globals->_levelSpriteBuf, 27, 117, 1);
 			break;
-			}
+		}
 
 		case 237: {
 			switch (_vm->_globals->_saveData->_data[svField341]) {
@@ -2172,7 +2172,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_objectsMan->setAndPlayAnim(5, 0, 23, false);
 			_vm->_graphicsMan->fastDisplay(_vm->_globals->_levelSpriteBuf, 145, 166, 3);
 			break;
-			}
+		}
 
 		case 238: {
 			switch (_vm->_globals->_saveData->_data[svField341]) {
@@ -2209,7 +2209,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_objectsMan->setAndPlayAnim(4, 0, 23, false);
 			_vm->_graphicsMan->fastDisplay(_vm->_globals->_levelSpriteBuf, 296, 212, 5);
 			break;
-			}
+		}
 
 		case 239:
 			_vm->_objectsMan->removeSprite(0);
@@ -2273,7 +2273,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_globals->_saveData->_data[svField353] = 1;
 			_vm->_globals->_saveData->_data[svField354] = 1;
 			break;
-			}
+		}
 
 		case 241:
 			_vm->_talkMan->startAnimatedCharacterDialogue("RECEP.PE2");
@@ -2300,7 +2300,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_objectsMan->addStaticSprite(_vm->_objectsMan->_headSprites, samantha->_pos, 1, 3, samantha->_zoomFactor, false, 20, 127);
 			_vm->_objectsMan->animateSprite(1);
 			break;
-			}
+		}
 
 		case 243:
 			_vm->_soundMan->playSoundFile("SOUND88.WAV");
@@ -2459,7 +2459,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 		assert(idx >= 0 && idx < 2050);
 		_vm->_globals->_saveData->_data[idx] = dataP[7];
 		break;
-		}
+	}
 	case MKTAG24('A', 'D', 'D'):
 		opcodeType = 1;
 		_vm->_globals->_saveData->_data[READ_LE_INT16(dataP + 5)] += dataP[7];
@@ -2488,7 +2488,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 		_vm->_soundMan->playSoundFile(file);
 		opcodeType = 1;
 		break;
-		}
+	}
 	case MKTAG24('V', 'O', 'F'):
 		_vm->_objectsMan->disableVerb(READ_LE_INT16(dataP + 5), READ_LE_INT16(dataP + 7));
 		opcodeType = 1;
@@ -2503,7 +2503,6 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 
 	return opcodeType;
 }
-
 
 int ScriptManager::handleGoto(const byte *dataP) {
 	return READ_LE_INT16(dataP + 5);
@@ -2550,24 +2549,14 @@ int ScriptManager::handleIf(const byte *dataP, int offset) {
 	int saveDataIdx1 = READ_LE_INT16(buf + 5);
 	int compVal1 = READ_LE_INT16(buf + 7);
 	bool check1Fl = false;
-	if ((oper == 1 && _vm->_globals->_saveData->_data[saveDataIdx1] == compVal1) ||
-	    (oper == 2 && _vm->_globals->_saveData->_data[saveDataIdx1] != compVal1) ||
-	    (oper == 3 && _vm->_globals->_saveData->_data[saveDataIdx1] <= compVal1) ||
-	    (oper == 4 && _vm->_globals->_saveData->_data[saveDataIdx1] >= compVal1) ||
-	    (oper == 5 && _vm->_globals->_saveData->_data[saveDataIdx1] > compVal1) ||
-	    (oper == 6 && _vm->_globals->_saveData->_data[saveDataIdx1] < compVal1))
+	if ((oper == 1 && _vm->_globals->_saveData->_data[saveDataIdx1] == compVal1) || (oper == 2 && _vm->_globals->_saveData->_data[saveDataIdx1] != compVal1) || (oper == 3 && _vm->_globals->_saveData->_data[saveDataIdx1] <= compVal1) || (oper == 4 && _vm->_globals->_saveData->_data[saveDataIdx1] >= compVal1) || (oper == 5 && _vm->_globals->_saveData->_data[saveDataIdx1] > compVal1) || (oper == 6 && _vm->_globals->_saveData->_data[saveDataIdx1] < compVal1))
 		check1Fl = true;
 
 	bool check2Fl = false;
 	if (operType != 3) {
 		int saveDataIdx2 = READ_LE_INT16(buf + 9);
 		int compVal2 = READ_LE_INT16(buf + 11);
-		if ((oper2 == 1 && compVal2 == _vm->_globals->_saveData->_data[saveDataIdx2]) ||
-		    (oper2 == 2 && compVal2 != _vm->_globals->_saveData->_data[saveDataIdx2]) ||
-		    (oper2 == 3 && compVal2 >= _vm->_globals->_saveData->_data[saveDataIdx2]) ||
-		    (oper2 == 4 && compVal2 <= _vm->_globals->_saveData->_data[saveDataIdx2]) ||
-		    (oper2 == 5 && compVal2 < _vm->_globals->_saveData->_data[saveDataIdx2]) ||
-		    (oper2 == 6 && compVal2 > _vm->_globals->_saveData->_data[saveDataIdx2]))
+		if ((oper2 == 1 && compVal2 == _vm->_globals->_saveData->_data[saveDataIdx2]) || (oper2 == 2 && compVal2 != _vm->_globals->_saveData->_data[saveDataIdx2]) || (oper2 == 3 && compVal2 >= _vm->_globals->_saveData->_data[saveDataIdx2]) || (oper2 == 4 && compVal2 <= _vm->_globals->_saveData->_data[saveDataIdx2]) || (oper2 == 5 && compVal2 < _vm->_globals->_saveData->_data[saveDataIdx2]) || (oper2 == 6 && compVal2 > _vm->_globals->_saveData->_data[saveDataIdx2]))
 			check2Fl = true;
 	}
 
@@ -2625,8 +2614,8 @@ int ScriptManager::checkOpcode(const byte *dataP) {
 	case MKTAG24('J', 'U', 'M'):
 		result = 6;
 		break;
-//	default:
-//		warning("Unhandled opcode %c%c%c", dataP[2], dataP[3], dataP[4]);
+		//	default:
+		//		warning("Unhandled opcode %c%c%c", dataP[2], dataP[3], dataP[4]);
 	}
 	return result;
 }

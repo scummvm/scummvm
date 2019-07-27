@@ -66,7 +66,9 @@ struct CursorData {
 struct CursorSequence {
 	uint32 _objectId;
 	uint32 _sequenceId;
-	CursorSequence() : _objectId(0), _sequenceId(0) {}
+	CursorSequence()
+	  : _objectId(0)
+	  , _sequenceId(0) {}
 };
 
 const uint kMaxCursorSequences = 100;
@@ -90,6 +92,7 @@ public:
 	uint calcTrackingFlags(Common::Point actorPos, Common::Point trackingLimits);
 	uint calcTrackingCursorIndex(uint trackingFlags);
 	bool getTrackingCursorSequenceId(Control *control, uint32 &outSequenceId);
+
 public:
 	IllusionsEngine_BBDOU *_vm;
 	BbdouSpecialCode *_bbdou;

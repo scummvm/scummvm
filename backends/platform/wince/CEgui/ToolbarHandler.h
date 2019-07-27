@@ -23,16 +23,16 @@
 #ifndef CEGUI_TOOLBARHANDLER_H
 #define CEGUI_TOOLBARHANDLER_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
-#include "common/str.h"
-#include "common/hashmap.h"
 #include "common/config-manager.h"
+#include "common/hashmap.h"
+#include "common/scummsys.h"
+#include "common/str.h"
+#include "common/system.h"
 
 #include "Toolbar.h"
 
-using Common::String;
 using Common::HashMap;
+using Common::String;
 
 namespace CEGUI {
 
@@ -52,8 +52,8 @@ public:
 	bool drawn();
 	Toolbar *active();
 	virtual ~ToolbarHandler();
-private:
 
+private:
 	HashMap<String, Toolbar *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _toolbarMap;
 	String _current;
 	Toolbar *_active;

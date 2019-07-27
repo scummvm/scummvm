@@ -29,17 +29,17 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <windows.h>
-#include <tchar.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include "common/debug.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <tchar.h>
+#include <windows.h>
 
 #ifdef __GNUC__
-#define EXT_C extern "C"
+#	define EXT_C extern "C"
 #else
-#define EXT_C
+#	define EXT_C
 #endif
 
 // common missing functions required by both gcc and evc
@@ -90,7 +90,7 @@ EXT_C char *wce_getcwd(char *buffer, int maxlen) {
 }
 
 #ifdef __GNUC__
-#undef GetCurrentDirectory
+#	undef GetCurrentDirectory
 #endif
 EXT_C void GetCurrentDirectory(int len, char *buf) {
 	wce_getcwd(buf, len);
@@ -123,7 +123,6 @@ int remove(const char *path) {
 	return !DeleteFile(pathUnc);
 }
 
-
 /* check out file access permissions */
 int _access(const char *path, int mode) {
 	TCHAR fname[MAX_PATH];
@@ -149,7 +148,7 @@ int _access(const char *path, int mode) {
 			p2[strlen(path) - 1] = '\0';
 			return _access(p2, mode);
 		} else
-			return -1;  //Can't find file
+			return -1; //Can't find file
 	}
 
 	if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
@@ -160,11 +159,11 @@ int _access(const char *path, int mode) {
 		h = FindFirstFile(fname, &ffd);
 		FindClose(h);
 		if (h == INVALID_HANDLE_VALUE)
-			return -1;  //Can't find file
+			return -1; //Can't find file
 		h = FindFirstFile(fname, &ffd);
 		FindClose(h);
 		if (h == INVALID_HANDLE_VALUE)
-			return -1;  //Can't find file
+			return -1; //Can't find file
 
 		return 0; //Always return success if target is directory and exists
 	}
@@ -184,7 +183,7 @@ int _access(const char *path, int mode) {
 // gcc build only functions follow
 #if defined(__GNUC__)
 
-#ifndef __MINGW32CE__
+#	ifndef __MINGW32CE__
 int islower(int c) {
 	return (c >= 'a' && c <= 'z');
 }
@@ -204,8 +203,8 @@ int isalnum(int c) {
 int isprint(int c) {
 	//static const char punct[] = "!\"#%&'();<=>?[\\]*+,-./:^_{|}~";
 	//return (isalnum(c) || strchr(punct, c));
-	return (32 <= c && c <= 126);   // based on BSD manpage
+	return (32 <= c && c <= 126); // based on BSD manpage
 }
-#endif
+#	endif
 
 #endif

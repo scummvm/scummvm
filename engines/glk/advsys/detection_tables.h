@@ -20,36 +20,36 @@
  *
  */
 
-#include "engines/game.h"
 #include "common/gui_options.h"
 #include "common/language.h"
+#include "engines/game.h"
 
 namespace Glk {
 namespace AdvSys {
 
-const PlainGameDescriptor ADVSYS_GAME_LIST[] = {
-	{ "advsys", "AdvSys Game" },
+	const PlainGameDescriptor ADVSYS_GAME_LIST[] = {
+		{ "advsys", "AdvSys Game" },
 
-	{ "bustedadvsys", "Busted!" },
-	{ "starshipcolumbus", "Starship Columbus" },
-	{ "elves87", "Elves '87" },
-	{ "keytotime", "The Key to Time" },
-	{ "onehand", "The Sound of One Hand Clapping" },
-	{ "pirating", "Pirating" },
+		{ "bustedadvsys", "Busted!" },
+		{ "starshipcolumbus", "Starship Columbus" },
+		{ "elves87", "Elves '87" },
+		{ "keytotime", "The Key to Time" },
+		{ "onehand", "The Sound of One Hand Clapping" },
+		{ "pirating", "Pirating" },
 
-	{ nullptr, nullptr }
-};
+		{ nullptr, nullptr }
+	};
 
-const GlkDetectionEntry ADVSYS_GAMES[] = {
-	DT_ENTRY0("bustedadvsys", "2246a2686a07c714868680eaf980ece9", 79091),
-	DT_ENTRY0("starshipcolumbus", "120d7041dfa000c9a313a8b0ae9cef33", 76032),
-	DT_ENTRY0("elves87", "746963e82552f95b5e743fe24ecd1ec3", 77947),
-	DT_ENTRY0("keytotime", "892217ab8d902a732e82c55efd22931d", 24941),
-	DT_ENTRY0("onehand", "3a2a3cc24709ff3272f3a15d09b5e63e", 95762),
-	DT_ENTRY0("pirating", "e55fff2ac51a8a16b979541e8d3210d8", 29529),
+	const GlkDetectionEntry ADVSYS_GAMES[] = {
+		DT_ENTRY0("bustedadvsys", "2246a2686a07c714868680eaf980ece9", 79091),
+		DT_ENTRY0("starshipcolumbus", "120d7041dfa000c9a313a8b0ae9cef33", 76032),
+		DT_ENTRY0("elves87", "746963e82552f95b5e743fe24ecd1ec3", 77947),
+		DT_ENTRY0("keytotime", "892217ab8d902a732e82c55efd22931d", 24941),
+		DT_ENTRY0("onehand", "3a2a3cc24709ff3272f3a15d09b5e63e", 95762),
+		DT_ENTRY0("pirating", "e55fff2ac51a8a16b979541e8d3210d8", 29529),
 
-	DT_END_MARKER
-};
+		DT_END_MARKER
+	};
 
 } // End of namespace AdvSys
 } // End of namespace Glk

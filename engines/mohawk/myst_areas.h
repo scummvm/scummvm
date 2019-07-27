@@ -52,9 +52,9 @@ enum ResourceType {
 // TODO: Figure out other flags
 enum {
 	kMystSubimageEnableFlag = (1 << 0),
-	kMystHotspotEnableFlag  = (1 << 1),
-	kMystUnknownFlag        = (1 << 2),
-	kMystZipModeEnableFlag  = (1 << 3)
+	kMystHotspotEnableFlag = (1 << 1),
+	kMystUnknownFlag = (1 << 2),
+	kMystZipModeEnableFlag = (1 << 3)
 };
 
 class MystArea {
@@ -85,6 +85,7 @@ public:
 	virtual void handleMouseDrag() {}
 
 	MystArea *_parent;
+
 protected:
 	MohawkEngine_Myst *_vm;
 
@@ -143,6 +144,7 @@ public:
 	void handleMouseDown() override;
 
 	MystArea *getSubResource(uint16 index) { return _subResources[index]; }
+
 protected:
 	typedef void (MystArea::*AreaHandler)();
 
@@ -194,6 +196,7 @@ public:
 	uint16 getStepsV() { return _stepsV; }
 
 	Common::Point _pos;
+
 protected:
 	typedef Common::Array<uint16> ValueList;
 
@@ -224,7 +227,7 @@ public:
 	void handleMouseDrag() override;
 	void setStep(uint16 step);
 	void setPosition(uint16 pos);
-    void restoreBackground();
+	void restoreBackground();
 
 protected:
 	Common::Rect boundingBox();

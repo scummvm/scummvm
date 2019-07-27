@@ -29,8 +29,8 @@
 #ifndef WINTERMUTE_BASE_SURFACE_STORAGE_H
 #define WINTERMUTE_BASE_SURFACE_STORAGE_H
 
-#include "engines/wintermute/base/base.h"
 #include "common/array.h"
+#include "engines/wintermute/base/base.h"
 
 namespace Wintermute {
 class BaseSurface;

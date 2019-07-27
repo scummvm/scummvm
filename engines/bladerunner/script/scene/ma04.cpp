@@ -25,21 +25,21 @@
 namespace BladeRunner {
 
 enum kMA04Loops {
-	kMA04LoopInshot   = 0,
+	kMA04LoopInshot = 0,
 	kMA04LoopMainLoop = 1,
-	kMA04LoopSleep    = 3,
-	kMA04LoopWakeup   = 4
+	kMA04LoopSleep = 3,
+	kMA04LoopWakeup = 4
 };
 
 enum kMA04Exits {
-	kMA04ExitMA02     = 0,
-	kMA04ExitMA05     = 1,
-	kMA04ExitKitchen  = 2
+	kMA04ExitMA02 = 0,
+	kMA04ExitMA05 = 1,
+	kMA04ExitKitchen = 2
 };
 
 enum kMA04Regions {
 	kMA04RegionPhone = 0,
-	kMA04RegionBed   = 1
+	kMA04RegionBed = 1
 };
 
 void SceneScriptMA04::InitializeScene() {
@@ -56,22 +56,22 @@ void SceneScriptMA04::InitializeScene() {
 	} else {
 		Setup_Scene_Information(-7143.0f, 954.0f, 1868.0f, 733);
 	}
-	Scene_Exit_Add_2D_Exit(kMA04ExitMA02,    496,  0, 639, 354, 1);
-	Scene_Exit_Add_2D_Exit(kMA04ExitMA05,     33, 63, 113, 258, 0);
+	Scene_Exit_Add_2D_Exit(kMA04ExitMA02, 496, 0, 639, 354, 1);
+	Scene_Exit_Add_2D_Exit(kMA04ExitMA05, 33, 63, 113, 258, 0);
 	Scene_Exit_Add_2D_Exit(kMA04ExitKitchen, 248, 98, 314, 284, 1);
-	Scene_2D_Region_Add(kMA04RegionPhone, 343,  97, 353, 190);
-	Scene_2D_Region_Add(kMA04RegionBed,     0, 340, 116, 479);
-	Ambient_Sounds_Add_Looping_Sound(kSfxAPRTFAN1, 30,   0, 1);
+	Scene_2D_Region_Add(kMA04RegionPhone, 343, 97, 353, 190);
+	Scene_2D_Region_Add(kMA04RegionBed, 0, 340, 116, 479);
+	Ambient_Sounds_Add_Looping_Sound(kSfxAPRTFAN1, 30, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 30, -80, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxAPRTAMB5, 12,   0, 1);
-	Ambient_Sounds_Add_Sound(kSfxSWEEP2,   5,  30, 11, 11, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSWEEP3,   5,  30, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSWEEP4,   5,  30, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 10,  60, 20, 20,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 10,  60, 20, 20,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSIREN2,  10,  60, 16, 16, -100,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  60, 180, 16, 25,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSPIN3A,  60, 180, 16, 25,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxAPRTAMB5, 12, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP2, 5, 30, 11, 11, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP3, 5, 30, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP4, 5, 30, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 10, 60, 20, 20, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 10, 60, 20, 20, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSIREN2, 10, 60, 16, 16, -100, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B, 60, 180, 16, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN3A, 60, 180, 16, 25, 0, 0, -101, -101, 0, 0);
 	if (isPhoneRinging()) {
 		Ambient_Sounds_Add_Sound(kSfxVIDFONE1, 3, 3, 100, 100, 0, 0, 0, 0, 99, 0);
 	}
@@ -153,7 +153,7 @@ bool SceneScriptMA04::ClickedOnExit(int exitId) {
 	}
 	if (exitId == kMA04ExitKitchen) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7115.0f, 954.0f, 1742.0f, 0, true, false, false)) {
-			int sounds[] = {kSfxBARSFX1, kSfxTOILET1, kSfxDRAIN1X, kSfxWASH1, kSfxGARGLE1};
+			int sounds[] = { kSfxBARSFX1, kSfxTOILET1, kSfxDRAIN1X, kSfxWASH1, kSfxGARGLE1 };
 			Ambient_Sounds_Play_Sound(sounds[Random_Query(0, 4)], 50, 0, 0, 0);
 			Delay(3000);
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7139.0f, 954.0f, 1746.0f, 0, true, false, true);
@@ -334,17 +334,17 @@ void SceneScriptMA04::DialogueQueueFlushed(int a1) {
 
 bool SceneScriptMA04::isPhoneRinging() {
 	return Global_Variable_Query(kVariableChapter) == 5
-	   && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallClovis)
-	   && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallCrystal)
-	   && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallDektora1)
-	   && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallDektora2)
-	   && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallLucy1)
-	   && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallLucy2);
+	  && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallClovis)
+	  && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallCrystal)
+	  && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallDektora1)
+	  && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallDektora2)
+	  && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallLucy1)
+	  && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallLucy2);
 }
 
 bool SceneScriptMA04::isPhoneMessageWaiting() {
 	return (Actor_Clue_Query(kActorClovis, kClueMcCoyRetiredZuben) && !Game_Flag_Query(kFlagMA04PhoneMessageFromClovis))
-	    || (Actor_Clue_Query(kActorLucy, kClueMcCoyLetZubenEscape) && !Game_Flag_Query(kFlagMA04PhoneMessageFromLucy));
+	  || (Actor_Clue_Query(kActorLucy, kClueMcCoyLetZubenEscape) && !Game_Flag_Query(kFlagMA04PhoneMessageFromLucy));
 }
 
 void SceneScriptMA04::phoneCallWithDektora() {
@@ -371,8 +371,7 @@ void SceneScriptMA04::phoneCallWithDektora() {
 	Actor_Says(kActorDektora, 340, 3);
 	Actor_Says(kActorDektora, 350, 3);
 	if (Game_Flag_Query(kFlagCrazylegsArrested)
-	 || Actor_Query_Goal_Number(kActorCrazylegs) == kGoalCrazyLegsLeavesShowroom
-	) {
+	    || Actor_Query_Goal_Number(kActorCrazylegs) == kGoalCrazyLegsLeavesShowroom) {
 		answer = 1170; // CLOVIS
 	} else {
 		Dialogue_Menu_Clear_List();
@@ -426,8 +425,7 @@ void SceneScriptMA04::phoneCallWithLucy() {
 	Actor_Says(kActorMcCoy, 2560, 17);
 	Actor_Says(kActorLucy, 580, 3);
 	if (Game_Flag_Query(kFlagCrazylegsArrested)
-	 || Actor_Query_Goal_Number(kActorCrazylegs) == kGoalCrazyLegsLeavesShowroom
-	) {
+	    || Actor_Query_Goal_Number(kActorCrazylegs) == kGoalCrazyLegsLeavesShowroom) {
 		Actor_Says(kActorLucy, 630, 3);
 		Actor_Says_With_Pause(kActorMcCoy, 2575, 0.0f, 15);
 		if (!Game_Flag_Query(kFlagDirectorsCut)) {
@@ -586,9 +584,9 @@ void SceneScriptMA04::sleep() {
 					Global_Variable_Increment(kVariableChinyen, 200);
 				}
 			}
-#else // ensure valid kFlagZubenBountyPaid flag state
-			// NOTE If not for the "Report Im" to Guzza, it would be simpler to have McCoy get the money as soon as he retires Zuben
-			//		so that would be in a single place in the code
+#else // ensure valid kFlagZubenBountyPaid flag state                                                                      \
+  // NOTE If not for the "Report Im" to Guzza, it would be simpler to have McCoy get the money as soon as he retires Zuben \
+  //		so that would be in a single place in the code
 			if (!Game_Flag_Query(kFlagZubenBountyPaid) && Game_Flag_Query(kFlagZubenRetired)) { // get retirement money at end of day 1 only if Zuben was retired.
 				if (Query_Difficulty_Level() != kGameDifficultyEasy) {
 					Global_Variable_Increment(kVariableChinyen, 200);

@@ -23,9 +23,9 @@
 #ifndef GUI_WIDGETS_TAB_H
 #define GUI_WIDGETS_TAB_H
 
-#include "gui/widget.h"
-#include "common/str.h"
 #include "common/array.h"
+#include "common/str.h"
+#include "gui/widget.h"
 
 namespace GUI {
 

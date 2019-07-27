@@ -22,9 +22,9 @@
 
 #include "bladerunner/subtitles.h"
 
+#include "bladerunner/audio_speech.h"
 #include "bladerunner/font.h"
 #include "bladerunner/text_resource.h"
-#include "bladerunner/audio_speech.h"
 
 #include "common/debug.h"
 
@@ -60,39 +60,39 @@ namespace BladeRunner {
 
 const char *Subtitles::SUBTITLES_FONT_FILENAME_EXTERNAL = "SUBTLS_E.FON";
 
-const char *Subtitles::SUBTITLES_VERSION_TRENAME        = "SBTLVERS"; // addon resource file for Subtitles version info - can only be SBTLVERS.TRE
+const char *Subtitles::SUBTITLES_VERSION_TRENAME = "SBTLVERS"; // addon resource file for Subtitles version info - can only be SBTLVERS.TRE
 /*
  * All entries need to have the language code appended (after a '_').
  * And all entries should get the suffix extension ".TRx"; the last letter in extension "TR*" should also be the language code
  * If/When adding new Text Resources here --> Update kMaxTextResourceEntries and also update method getIdxForSubsTreName()
  */
 const char *Subtitles::SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntries] = {
-	"INGQUO",           // 0 // (in-game subtitles, not VQA subtitles)
-	"WSTLGO",           // 1 // all game (language) versions have the English ('E') version of WSTLGO
-	"BRLOGO",           // 2 // all game (language) versions have the English ('E') version of BRLOGO
-	"INTRO",            // 3
-	"MW_A",             // 4
-	"MW_B01",           // 5
-	"MW_B02",           // 6
-	"MW_B03",           // 7
-	"MW_B04",           // 8
-	"MW_B05",           // 9
-	"INTRGT",           // 10
-	"MW_C01",           // 11
-	"MW_C02",           // 12
-	"MW_C03",           // 13
-	"MW_D",             // 14
-	"END04A",           // 15
-	"END04B",           // 16
-	"END04C",           // 17
-	"END06",            // 18
-	"END01A",           // 19
-	"END01B",           // 20
-	"END01C",           // 21
-	"END01D",           // 22
-	"END01E",           // 23
-	"END01F",           // 24
-	"END03"             // 25
+	"INGQUO", // 0 // (in-game subtitles, not VQA subtitles)
+	"WSTLGO", // 1 // all game (language) versions have the English ('E') version of WSTLGO
+	"BRLOGO", // 2 // all game (language) versions have the English ('E') version of BRLOGO
+	"INTRO", // 3
+	"MW_A", // 4
+	"MW_B01", // 5
+	"MW_B02", // 6
+	"MW_B03", // 7
+	"MW_B04", // 8
+	"MW_B05", // 9
+	"INTRGT", // 10
+	"MW_C01", // 11
+	"MW_C02", // 12
+	"MW_C03", // 13
+	"MW_D", // 14
+	"END04A", // 15
+	"END04B", // 16
+	"END04C", // 17
+	"END06", // 18
+	"END01A", // 19
+	"END01B", // 20
+	"END01C", // 21
+	"END01D", // 22
+	"END01E", // 23
+	"END01F", // 24
+	"END03" // 25
 };
 
 /**
@@ -123,7 +123,7 @@ Subtitles::~Subtitles() {
 void Subtitles::init(void) {
 	// Loading subtitles versioning info if available
 	TextResource versionTxtResource(_vm);
-	if ( versionTxtResource.open(SUBTITLES_VERSION_TRENAME, false)) {
+	if (versionTxtResource.open(SUBTITLES_VERSION_TRENAME, false)) {
 		_subtitlesInfo.credits = versionTxtResource.getText((uint32)0);
 		_subtitlesInfo.versionStr = versionTxtResource.getText((uint32)1);
 		_subtitlesInfo.dateOfCompile = versionTxtResource.getText((uint32)2);
@@ -142,10 +142,10 @@ void Subtitles::init(void) {
 		}
 
 		debug("Subtitles version info: v%s (%s) %s by: %s",
-		       _subtitlesInfo.versionStr.c_str(),
-		       _subtitlesInfo.dateOfCompile.c_str(),
-		       _subtitlesInfo.languageMode.c_str(),
-		       _subtitlesInfo.credits.c_str());
+		      _subtitlesInfo.versionStr.c_str(),
+		      _subtitlesInfo.dateOfCompile.c_str(),
+		      _subtitlesInfo.languageMode.c_str(),
+		      _subtitlesInfo.credits.c_str());
 
 	} else {
 		debug("Subtitles version info: N/A");
@@ -187,8 +187,7 @@ void Subtitles::init(void) {
 		if (!strcmp(SUBTITLES_FILENAME_PREFIXES[i], "WSTLGO") || !strcmp(SUBTITLES_FILENAME_PREFIXES[i], "BRLOGO")) {
 			tmpConstructedFileName = Common::String(SUBTITLES_FILENAME_PREFIXES[i]) + "_E"; // Only English versions of these exist
 			localizedResource = false;
-		}
-		else {
+		} else {
 			tmpConstructedFileName = Common::String(SUBTITLES_FILENAME_PREFIXES[i]) + "_" + _vm->_languageCode;
 		}
 
@@ -229,7 +228,7 @@ int Subtitles::getIdxForSubsTreName(const Common::String &treName) const {
  * Get the active subtitle text by searching with actor ID and speech ID
  * Use this method for in-game dialogue - Not dialogue during a VQA cutscene
  */
-void Subtitles::loadInGameSubsText(int actorId, int speech_id)  {
+void Subtitles::loadInGameSubsText(int actorId, int speech_id) {
 	if (!_isSystemActive) {
 		return;
 	}
@@ -375,18 +374,18 @@ void Subtitles::draw(Graphics::Surface &s) {
 
 	for (uint i = 0; i < lines.size(); i++, y += _font->getFontHeight()) {
 		switch (_subtitlesInfo.fontType) {
-			case Subtitles::kSubtitlesFontTypeInternal:
-				// shadow/outline is part of the font color data
-				_font->drawString(&s, lines[i], 0, y, s.w, 0, Graphics::kTextAlignCenter);
-				break;
-			case Subtitles::kSubtitlesFontTypeTTF:
-				_font->drawString(&s, lines[i], -1, y    , s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
-				_font->drawString(&s, lines[i],  0, y - 1, s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
-				_font->drawString(&s, lines[i],  1, y    , s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
-				_font->drawString(&s, lines[i],  0, y + 1, s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
+		case Subtitles::kSubtitlesFontTypeInternal:
+			// shadow/outline is part of the font color data
+			_font->drawString(&s, lines[i], 0, y, s.w, 0, Graphics::kTextAlignCenter);
+			break;
+		case Subtitles::kSubtitlesFontTypeTTF:
+			_font->drawString(&s, lines[i], -1, y, s.w, s.format.RGBToColor(0, 0, 0), Graphics::kTextAlignCenter);
+			_font->drawString(&s, lines[i], 0, y - 1, s.w, s.format.RGBToColor(0, 0, 0), Graphics::kTextAlignCenter);
+			_font->drawString(&s, lines[i], 1, y, s.w, s.format.RGBToColor(0, 0, 0), Graphics::kTextAlignCenter);
+			_font->drawString(&s, lines[i], 0, y + 1, s.w, s.format.RGBToColor(0, 0, 0), Graphics::kTextAlignCenter);
 
-				_font->drawString(&s, lines[i],  0, y    , s.w, s.format.RGBToColor(255, 255, 255), Graphics::kTextAlignCenter);
-				break;
+			_font->drawString(&s, lines[i], 0, y, s.w, s.format.RGBToColor(255, 255, 255), Graphics::kTextAlignCenter);
+			break;
 		}
 	}
 }

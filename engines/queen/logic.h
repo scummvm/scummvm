@@ -30,17 +30,17 @@
 namespace Queen {
 
 enum RoomDisplayMode {
-	RDM_FADE_NOJOE  = 0, // fade in, hide Joe
-	RDM_FADE_JOE    = 1, // fade in, display Joe
-	RDM_NOFADE_JOE  = 2, // screen does not dissolve into view
-	RDM_FADE_JOE_XY = 3  // display Joe at the current X, Y coords
+	RDM_FADE_NOJOE = 0, // fade in, hide Joe
+	RDM_FADE_JOE = 1, // fade in, display Joe
+	RDM_NOFADE_JOE = 2, // screen does not dissolve into view
+	RDM_FADE_JOE_XY = 3 // display Joe at the current X, Y coords
 };
 
 enum JoeWalkMode {
-	JWM_NORMAL  = 0,
-	JWM_MOVE    = 1,
+	JWM_NORMAL = 0,
+	JWM_MOVE = 1,
 	JWM_EXECUTE = 2,
-	JWM_SPEAK   = 3
+	JWM_SPEAK = 3
 };
 
 enum {
@@ -61,7 +61,6 @@ class QueenEngine;
 
 class Logic {
 public:
-
 	Logic(QueenEngine *vm);
 	virtual ~Logic();
 
@@ -112,7 +111,10 @@ public:
 	uint16 joePrevFacing() const { return _joe.prevFacing; }
 
 	void joeFacing(uint16 dir) { _joe.facing = dir; }
-	void joePos(uint16 x, uint16 y) { _joe.x = x; _joe.y = y; }
+	void joePos(uint16 x, uint16 y) {
+		_joe.x = x;
+		_joe.y = y;
+	}
 	void joeWalk(JoeWalkMode walking);
 	void joeScale(uint16 scale) { _joe.scale = scale; }
 	void joeCutFacing(uint16 dir) { _joe.cutFacing = dir; }
@@ -230,16 +232,15 @@ public:
 	void start();
 
 	enum {
-		JOE_RESPONSE_MAX    = 40,
-		DEFAULT_TALK_SPEED  = 7 * 3,
-		GAME_STATE_COUNT    = 211,
+		JOE_RESPONSE_MAX = 40,
+		DEFAULT_TALK_SPEED = 7 * 3,
+		GAME_STATE_COUNT = 211,
 		TALK_SELECTED_COUNT = 86
 	};
 
 	typedef void (Logic::*SpecialMoveProc)();
 
 protected:
-
 	void readQueenJas();
 
 	void asmMakeJoeUseDress();
@@ -287,7 +288,6 @@ protected:
 
 	virtual bool changeToSpecialRoom() = 0;
 	virtual void setupSpecialMoveTable() = 0;
-
 
 	uint16 _currentRoom;
 	uint16 _oldRoom;
@@ -373,40 +373,36 @@ protected:
 
 class LogicDemo : public Logic {
 public:
-
-	LogicDemo(QueenEngine *vm) : Logic(vm) {}
+	LogicDemo(QueenEngine *vm)
+	  : Logic(vm) {}
 	void useJournal();
 
 protected:
-
 	bool changeToSpecialRoom();
 	void setupSpecialMoveTable();
 };
 
 class LogicInterview : public Logic {
 public:
-
-	LogicInterview(QueenEngine *vm) : Logic(vm) {}
+	LogicInterview(QueenEngine *vm)
+	  : Logic(vm) {}
 	void useJournal();
 
 protected:
-
 	bool changeToSpecialRoom();
 	void setupSpecialMoveTable();
 };
 
 class LogicGame : public Logic {
 public:
-
-	LogicGame(QueenEngine *vm) : Logic(vm) {}
+	LogicGame(QueenEngine *vm)
+	  : Logic(vm) {}
 	void useJournal();
 
 protected:
-
 	bool changeToSpecialRoom();
 	void setupSpecialMoveTable();
 };
-
 
 } // End of namespace Queen
 

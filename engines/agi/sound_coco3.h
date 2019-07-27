@@ -28,9 +28,9 @@
 namespace Agi {
 
 struct CoCoNote {
-	uint8  freq;
-	uint8  volume;
-	uint16 duration;    ///< Note duration
+	uint8 freq;
+	uint8 volume;
+	uint16 duration; ///< Note duration
 
 	/** Reads a CoCoNote through the given pointer. */
 	void read(const uint8 *ptr) {

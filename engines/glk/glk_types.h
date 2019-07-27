@@ -96,91 +96,91 @@ enum UniChars {
 };
 
 enum Gestalt {
-	gestalt_Version                = 0,
-	gestalt_CharInput              = 1,
-	gestalt_LineInput              = 2,
-	gestalt_CharOutput             = 3,
+	gestalt_Version = 0,
+	gestalt_CharInput = 1,
+	gestalt_LineInput = 2,
+	gestalt_CharOutput = 3,
 	gestalt_CharOutput_CannotPrint = 0,
 	gestalt_CharOutput_ApproxPrint = 1,
-	gestalt_CharOutput_ExactPrint  = 2,
-	gestalt_MouseInput             = 4,
-	gestalt_Timer                  = 5,
-	gestalt_Graphics               = 6,
-	gestalt_DrawImage              = 7,
-	gestalt_Sound                  = 8,
-	gestalt_SoundVolume            = 9,
-	gestalt_SoundNotify            = 10,
-	gestalt_Hyperlinks             = 11,
-	gestalt_HyperlinkInput         = 12,
-	gestalt_SoundMusic             = 13,
-	gestalt_GraphicsTransparency   = 14,
-	gestalt_Unicode                = 15,
-	gestalt_UnicodeNorm            = 16,
-	gestalt_LineInputEcho          = 17,
-	gestalt_LineTerminators        = 18,
-	gestalt_LineTerminatorKey      = 19,
-	gestalt_DateTime               = 20,
-	gestalt_Sound2                 = 21,
-	gestalt_GarglkText             = 0x1100
+	gestalt_CharOutput_ExactPrint = 2,
+	gestalt_MouseInput = 4,
+	gestalt_Timer = 5,
+	gestalt_Graphics = 6,
+	gestalt_DrawImage = 7,
+	gestalt_Sound = 8,
+	gestalt_SoundVolume = 9,
+	gestalt_SoundNotify = 10,
+	gestalt_Hyperlinks = 11,
+	gestalt_HyperlinkInput = 12,
+	gestalt_SoundMusic = 13,
+	gestalt_GraphicsTransparency = 14,
+	gestalt_Unicode = 15,
+	gestalt_UnicodeNorm = 16,
+	gestalt_LineInputEcho = 17,
+	gestalt_LineTerminators = 18,
+	gestalt_LineTerminatorKey = 19,
+	gestalt_DateTime = 20,
+	gestalt_Sound2 = 21,
+	gestalt_GarglkText = 0x1100
 };
 
 enum Style {
-	style_Normal       = 0,
-	style_Emphasized   = 1,
+	style_Normal = 0,
+	style_Emphasized = 1,
 	style_Preformatted = 2,
-	style_Header       = 3,
-	style_Subheader    = 4,
-	style_Alert        = 5,
-	style_Note         = 6,
-	style_BlockQuote   = 7,
-	style_Input        = 8,
-	style_User1        = 9,
-	style_User2        = 10,
-	style_NUMSTYLES    = 11
+	style_Header = 3,
+	style_Subheader = 4,
+	style_Alert = 5,
+	style_Note = 6,
+	style_BlockQuote = 7,
+	style_Input = 8,
+	style_User1 = 9,
+	style_User2 = 10,
+	style_NUMSTYLES = 11
 };
 
 enum WinType {
-	wintype_AllTypes   = 0,
-	wintype_Pair       = 1,
-	wintype_Blank      = 2,
+	wintype_AllTypes = 0,
+	wintype_Pair = 1,
+	wintype_Blank = 2,
 	wintype_TextBuffer = 3,
-	wintype_TextGrid   = 4,
-	wintype_Graphics   = 5
+	wintype_TextGrid = 4,
+	wintype_Graphics = 5
 };
 
 enum WinMethod {
-	winmethod_Left         = 0x00,
-	winmethod_Right        = 0x01,
-	winmethod_Above        = 0x02,
-	winmethod_Below        = 0x03,
-	winmethod_Arbitrary    = 0x04,		///< Newly introduced for ScummGlk
-	winmethod_DirMask      = 0x0f,
+	winmethod_Left = 0x00,
+	winmethod_Right = 0x01,
+	winmethod_Above = 0x02,
+	winmethod_Below = 0x03,
+	winmethod_Arbitrary = 0x04, ///< Newly introduced for ScummGlk
+	winmethod_DirMask = 0x0f,
 
-	winmethod_Fixed        = 0x10,
+	winmethod_Fixed = 0x10,
 	winmethod_Proportional = 0x20,
 	winmethod_DivisionMask = 0xf0,
 
-	winmethod_Border     = 0x000,
-	winmethod_NoBorder   = 0x100,
+	winmethod_Border = 0x000,
+	winmethod_NoBorder = 0x100,
 	winmethod_BorderMask = 0x100
 };
 
 enum StyleHint {
-	stylehint_Indentation     = 0,
+	stylehint_Indentation = 0,
 	stylehint_ParaIndentation = 1,
-	stylehint_Justification  = 2,
-	stylehint_Size            = 3,
-	stylehint_Weight          = 4,
-	stylehint_Oblique         = 5,
-	stylehint_Proportional    = 6,
-	stylehint_TextColor       = 7,
-	stylehint_BackColor       = 8,
-	stylehint_ReverseColor    = 9,
-	stylehint_NUMHINTS        = 10,
+	stylehint_Justification = 2,
+	stylehint_Size = 3,
+	stylehint_Weight = 4,
+	stylehint_Oblique = 5,
+	stylehint_Proportional = 6,
+	stylehint_TextColor = 7,
+	stylehint_BackColor = 8,
+	stylehint_ReverseColor = 9,
+	stylehint_NUMHINTS = 10,
 
-	stylehint_just_LeftFlush  = 0,
-	stylehint_just_LeftRight  = 1,
-	stylehint_just_Centered   = 2,
+	stylehint_just_LeftFlush = 0,
+	stylehint_just_LeftRight = 1,
+	stylehint_just_Centered = 2,
 	stylehint_just_RightFlush = 3
 };
 
@@ -192,27 +192,27 @@ enum StyleHint {
  * sequentially, and the numeric constants can be found in the Glk specification.
  */
 enum giDisp {
-	gidisp_Class_Window   = 0,
-	gidisp_Class_Stream   = 1,
-	gidisp_Class_Fileref  = 2,
+	gidisp_Class_Window = 0,
+	gidisp_Class_Stream = 1,
+	gidisp_Class_Fileref = 2,
 	gidisp_Class_Schannel = 3
 };
 
 enum zcolor {
 	zcolor_Transparent = 0x7FFFFFFCU,
-	zcolor_Cursor      = 0x7FFFFFFDU,
-	zcolor_Current     = 0x7FFFFFFEU,
-	zcolor_Default     = 0x7FFFFFFFU
+	zcolor_Cursor = 0x7FFFFFFDU,
+	zcolor_Current = 0x7FFFFFFEU,
+	zcolor_Default = 0x7FFFFFFFU
 };
 
 #ifdef GLK_MODULE_IMAGE
 
 enum ImageAlign {
-	imagealign_InlineUp     = 1,
-	imagealign_InlineDown   = 2,
+	imagealign_InlineUp = 1,
+	imagealign_InlineDown = 2,
 	imagealign_InlineCenter = 3,
-	imagealign_MarginLeft   = 4,
-	imagealign_MarginRight  = 5
+	imagealign_MarginLeft = 4,
+	imagealign_MarginRight = 5
 };
 
 #endif /* GLK_MODULE_IMAGE */
@@ -221,20 +221,21 @@ union gidispatch_rock_t {
 	uint num;
 	void *ptr;
 
-	gidispatch_rock_t() : ptr(nullptr) {}
+	gidispatch_rock_t()
+	  : ptr(nullptr) {}
 };
 
 union gluniversal_union {
-	uint _uint;          ///< Iu
-	int32 _sint;         ///< Is
-	void *_opaqueref;    ///< Qa, Qb, Qc...
-	byte _uch;           ///< Cu
-	int8 _sch;           ///< Cs
-	char _ch;            ///< Cn
-	char *_charstr;		 ///< S
+	uint _uint; ///< Iu
+	int32 _sint; ///< Is
+	void *_opaqueref; ///< Qa, Qb, Qc...
+	byte _uch; ///< Cu
+	int8 _sch; ///< Cs
+	char _ch; ///< Cn
+	char *_charstr; ///< S
 	uint32 *_unicharstr; ///< U
-	void *_array;        ///< all # arguments
-	uint _ptrflag;       ///< [ ... ] or *?
+	void *_array; ///< all # arguments
+	uint _ptrflag; ///< [ ... ] or *?
 };
 typedef gluniversal_union gluniversal_t;
 

@@ -33,7 +33,8 @@ namespace Scumm {
  */
 class LogicHEfunshop : public LogicHE {
 public:
-	LogicHEfunshop(ScummEngine_v90he *vm) : LogicHE(vm) {}
+	LogicHEfunshop(ScummEngine_v90he *vm)
+	  : LogicHE(vm) {}
 
 	int versionID();
 	int32 dispatch(int op, int numArgs, int32 *args);
@@ -68,14 +69,14 @@ int32 LogicHEfunshop::dispatch(int op, int numArgs, int32 *args) {
 void LogicHEfunshop::op_1004(int32 *args) {
 	double data[8], at, sq;
 	int32 x, y;
-	int i=0;
+	int i = 0;
 
 	for (i = 0; i <= 6; i += 2) {
 		data[i] = getFromArray(args[0], 0, 519 + i);
 		data[i + 1] = getFromArray(args[0], 0, 519 + i + 1);
 	}
 	int s = checkShape((int32)data[0], (int32)data[1], (int32)data[4], (int32)data[5],
-		(int32)data[2], (int32)data[3], (int32)data[6], (int32)data[7], &x, &y);
+	                   (int32)data[2], (int32)data[3], (int32)data[6], (int32)data[7], &x, &y);
 
 	if (s != 1) {
 		error("LogicHEfunshop::op_1004: Your shape has defied the laws of physics");

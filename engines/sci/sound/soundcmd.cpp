@@ -20,13 +20,13 @@
  *
  */
 
-#include "common/config-manager.h"
+#include "sci/sound/soundcmd.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "common/config-manager.h"
 #include "sci/resource.h"
 #include "sci/sound/audio.h"
 #include "sci/sound/music.h"
-#include "sci/sound/soundcmd.h"
 
 #include "sci/engine/features.h"
 #include "sci/engine/guest_additions.h"
@@ -36,8 +36,12 @@
 
 namespace Sci {
 
-SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, AudioPlayer *audio, SciVersion soundVersion) :
-	_resMan(resMan), _segMan(segMan), _kernel(kernel), _audio(audio), _soundVersion(soundVersion) {
+SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, AudioPlayer *audio, SciVersion soundVersion)
+  : _resMan(resMan)
+  , _segMan(segMan)
+  , _kernel(kernel)
+  , _audio(audio)
+  , _soundVersion(soundVersion) {
 
 	// Check if the user wants synthesized or digital sound effects in SCI1.1
 	// games based on the prefer_digitalsfx config setting
@@ -143,10 +147,10 @@ void SoundCommandParser::processInitSound(reg_t obj) {
 		newSound->priority = readSelectorValue(_segMan, obj, SELECTOR(priority)) & 0xFF;
 	if (_soundVersion >= SCI_VERSION_1_EARLY)
 		newSound->volume = CLIP<int>(readSelectorValue(_segMan, obj, SELECTOR(vol)), 0, MUSIC_VOLUME_MAX);
-	newSound->reverb = -1;	// initialize to SCI invalid, it'll be set correctly in soundInitSnd() below
+	newSound->reverb = -1; // initialize to SCI invalid, it'll be set correctly in soundInitSnd() below
 
 	debugC(kDebugLevelSound, "kDoSound(init): %04x:%04x number %d, loop %d, prio %d, vol %d", PRINT_REG(obj),
-			resourceId,	newSound->loop, newSound->priority, newSound->volume);
+	       resourceId, newSound->loop, newSound->priority, newSound->volume);
 
 	initSoundResource(newSound);
 
@@ -224,7 +228,7 @@ void SoundCommandParser::processPlaySound(reg_t obj, bool playBed) {
 		musicSlot->volume = readSelectorValue(_segMan, obj, SELECTOR(vol));
 
 	debugC(kDebugLevelSound, "kDoSound(play): %04x:%04x number %d, loop %d, prio %d, vol %d, bed %d", PRINT_REG(obj),
-			resourceId, musicSlot->loop, musicSlot->priority, musicSlot->volume, playBed ? 1 : 0);
+	       resourceId, musicSlot->loop, musicSlot->priority, musicSlot->volume, playBed ? 1 : 0);
 
 	_music->soundPlay(musicSlot);
 
@@ -323,9 +327,7 @@ reg_t SoundCommandParser::kDoSoundPause(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	const bool shouldPause = argc > 1 ? argv[1].toUint16() : false;
 	if (
-		(_soundVersion < SCI_VERSION_2 && !obj.getSegment()) ||
-		(_soundVersion >= SCI_VERSION_2 && obj.isNull())
-	) {
+	  (_soundVersion < SCI_VERSION_2 && !obj.getSegment()) || (_soundVersion >= SCI_VERSION_2 && obj.isNull())) {
 		_music->pauseAll(shouldPause);
 #ifdef ENABLE_SCI32
 		if (_soundVersion >= SCI_VERSION_2_1_EARLY) {
@@ -468,7 +470,7 @@ reg_t SoundCommandParser::kDoSoundFade(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t SoundCommandParser::kDoSoundGetPolyphony(EngineState *s, int argc, reg_t *argv) {
-	return make_reg(0, _music->soundGetVoices());	// Get the number of voices
+	return make_reg(0, _music->soundGetVoices()); // Get the number of voices
 }
 
 reg_t SoundCommandParser::kDoSoundUpdate(EngineState *s, int argc, reg_t *argv) {
@@ -576,7 +578,7 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 		// the sound at this point, otherwise KQ6 Mac breaks because the rest
 		// of the object needs to be reset to avoid a continuous stream of
 		// sound cues.
-		processStopSound(obj, true);	// this also sets the signal selector
+		processStopSound(obj, true); // this also sets the signal selector
 	}
 
 	if (musicSlot->fadeCompleted) {
@@ -625,7 +627,7 @@ reg_t SoundCommandParser::kDoSoundSendMidi(EngineState *s, int argc, reg_t *argv
 	// up - bug #3614447.
 	reg_t obj = argv[0];
 	byte channel = argv[1].toUint16() & 0xf;
-	byte midiCmd = (argc == 5) ? argv[2].toUint16() & 0xff : 0xB0;	// 0xB0: controller
+	byte midiCmd = (argc == 5) ? argv[2].toUint16() & 0xff : 0xB0; // 0xB0: controller
 	uint16 controller = (argc == 5) ? argv[3].toUint16() : argv[2].toUint16();
 	uint16 param = (argc == 5) ? argv[4].toUint16() : argv[3].toUint16();
 
@@ -636,7 +638,7 @@ reg_t SoundCommandParser::kDoSoundSendMidi(EngineState *s, int argc, reg_t *argv
 		return s->r_acc;
 
 	if (argc == 4 && controller == 0xFF) {
-		midiCmd = 0xE0;	// 0xE0: pitch wheel
+		midiCmd = 0xE0; // 0xE0: pitch wheel
 		uint16 pitch = CLIP<uint16>(argv[3].toSint16() + 0x2000, 0x0000, 0x3FFF);
 		controller = pitch & 0x7F;
 		param = pitch >> 7;
@@ -833,7 +835,7 @@ void SoundCommandParser::updateSci0Cues() {
 	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
 		// Is the sound stopped, and the sound object updated too? If yes, skip
 		// this sound, as SCI0 only allows one active song.
-		if  ((*i)->isQueued) {
+		if ((*i)->isQueued) {
 			pWaitingForPlay = (*i);
 			// FIXME(?): In iceman 2 songs are queued when playing the door
 			// sound - if we use the first song for resuming then it's the wrong

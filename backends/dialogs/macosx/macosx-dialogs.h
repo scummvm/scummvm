@@ -25,8 +25,8 @@
 
 #if defined(MACOSX) && defined(USE_SYSDIALOGS)
 
-#include "common/fs.h"
-#include "common/dialogs.h"
+#	include "common/dialogs.h"
+#	include "common/fs.h"
 
 class MacOSXDialogManager : public Common::DialogManager {
 public:

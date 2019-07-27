@@ -23,17 +23,17 @@
  *
  */
 
+#include "pegasus/neighborhood/norad/norad.h"
+#include "pegasus/ai/ai_area.h"
 #include "pegasus/energymonitor.h"
 #include "pegasus/gamestate.h"
-#include "pegasus/pegasus.h"
-#include "pegasus/ai/ai_area.h"
 #include "pegasus/items/inventory/airmask.h"
 #include "pegasus/neighborhood/norad/constants.h"
-#include "pegasus/neighborhood/norad/norad.h"
 #include "pegasus/neighborhood/norad/noradelevator.h"
 #include "pegasus/neighborhood/norad/pressuredoor.h"
 #include "pegasus/neighborhood/norad/subcontrolroom.h"
 #include "pegasus/neighborhood/norad/subplatform.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -44,8 +44,9 @@ const NotificationFlags kNoradNotificationFlags = kDoneWithPressureDoorNotificat
 // This class handles everything that Norad Alpha and Delta have in common, such as
 // oxygen mask usage, the elevator and the pressure doors.
 
-Norad::Norad(InputHandler *nextHandler, PegasusEngine *vm, const Common::String &resName, NeighborhoodID id) :
-		Neighborhood(nextHandler, vm, resName, id), _noradNotification(kNoradNotificationID, vm) {
+Norad::Norad(InputHandler *nextHandler, PegasusEngine *vm, const Common::String &resName, NeighborhoodID id)
+  : Neighborhood(nextHandler, vm, resName, id)
+  , _noradNotification(kNoradNotificationID, vm) {
 	_elevatorUpSpotID = kNoHotSpotID;
 	_elevatorDownSpotID = kNoHotSpotID;
 	_elevatorUpRoomID = kNoHotSpotID;
@@ -91,10 +92,10 @@ GameInteraction *Norad::makeInteraction(const InteractionID interactionID) {
 	case kNoradPressureDoorInteractionID:
 		if (GameState.getCurrentRoom() == _upperPressureDoorRoom)
 			pressureDoor = new PressureDoor(this, true, _upperPressureDoorUpSpotID, _upperPressureDoorDownSpotID,
-					_upperPressureDoorAbortSpotID, _pressureSoundIn, _pressureSoundOut, _equalizeSoundIn, _equalizeSoundOut);
+			                                _upperPressureDoorAbortSpotID, _pressureSoundIn, _pressureSoundOut, _equalizeSoundIn, _equalizeSoundOut);
 		else
 			pressureDoor = new PressureDoor(this, false, _lowerPressureDoorUpSpotID, _lowerPressureDoorDownSpotID,
-					_lowerPressureDoorAbortSpotID, _pressureSoundIn, _pressureSoundOut, _equalizeSoundIn, _equalizeSoundOut);
+			                                _lowerPressureDoorAbortSpotID, _pressureSoundIn, _pressureSoundOut, _equalizeSoundIn, _equalizeSoundOut);
 
 		if (GameState.getCurrentRoom() == kNorad59West && playingAgainstRobot())
 			pressureDoor->playAgainstRobot();
@@ -190,9 +191,7 @@ int16 Norad::getStaticCompassAngle(const RoomID room, const DirectionConstant di
 }
 
 CanOpenDoorReason Norad::canOpenDoor(DoorTable::Entry &entry) {
-	if (((GameState.getCurrentRoom() == _subRoomEntryRoom1 && GameState.getCurrentDirection() == _subRoomEntryDir1) ||
-			(GameState.getCurrentRoom() == _subRoomEntryRoom2 && GameState.getCurrentDirection() == _subRoomEntryDir2)) &&
-			GameState.getNoradSubRoomPressure() != kNormalSubRoomPressure)
+	if (((GameState.getCurrentRoom() == _subRoomEntryRoom1 && GameState.getCurrentDirection() == _subRoomEntryDir1) || (GameState.getCurrentRoom() == _subRoomEntryRoom2 && GameState.getCurrentDirection() == _subRoomEntryDir2)) && GameState.getNoradSubRoomPressure() != kNormalSubRoomPressure)
 		return kCantOpenBadPressure;
 
 	return Neighborhood::canOpenDoor(entry);

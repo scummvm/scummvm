@@ -22,8 +22,8 @@
 
 #include "common/stream.h"
 
-#include "cryomni3d/wam_parser.h"
 #include "cryomni3d/omni3d.h"
+#include "cryomni3d/wam_parser.h"
 
 namespace CryOmni3D {
 
@@ -33,10 +33,10 @@ void WAMParser::loadStream(Common::ReadStream &stream) {
 	_places.clear();
 
 	// These are unused and unknown values
-	(void) stream.readByte();
-	(void) stream.readByte();
-	(void) stream.read(str, 16);
-	(void) stream.readUint32LE();
+	(void)stream.readByte();
+	(void)stream.readByte();
+	(void)stream.read(str, 16);
+	(void)stream.readUint32LE();
 
 	uint nPlaces = stream.readByte();
 	//debug("nPlaces = %u", nPlaces);
@@ -63,14 +63,14 @@ void WAMParser::loadStream(Common::ReadStream &stream) {
 			_places.erase(oldPlace);
 		}
 		//debug("nPlaceId = %u", place.placeId);
-		(void) stream.readUint32LE();
+		(void)stream.readUint32LE();
 		uint nTransitions = stream.readByte();
 		//debug("nTransitions = %u", nTransitions);
 		uint nZones = stream.readByte();
 		//debug("nZones = %u", nZones);
 		for (uint j = 0; j < nTransitions; j++) {
 			Transition trans;
-			(void) stream.readUint32LE();
+			(void)stream.readUint32LE();
 			uint nAnimations = stream.readByte();
 			for (uint k = 0; k < 8; k++) {
 				stream.read(str, 16);
@@ -79,10 +79,10 @@ void WAMParser::loadStream(Common::ReadStream &stream) {
 					nAnimations--;
 				}
 			}
-			(void) stream.readUint32LE();
+			(void)stream.readUint32LE();
 			trans.dstId = stream.readUint32LE();
 			// Unused byte
-			(void) stream.readByte();
+			(void)stream.readByte();
 			trans.srcAlpha = stream.readDoubleLE();
 			trans.srcBeta = stream.readDoubleLE();
 			trans.dstAlpha = stream.readDoubleLE();
@@ -207,7 +207,7 @@ uint Place::hitTest(const Common::Point &point) const {
 
 const Transition *Place::findTransition(uint nextPlaceId) const {
 	for (Common::Array<Transition>::const_iterator it = transitions.begin(); it != transitions.end();
-	        it++) {
+	     it++) {
 		if (it->dstId == nextPlaceId) {
 			return it;
 		}

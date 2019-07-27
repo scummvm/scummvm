@@ -23,22 +23,23 @@
 #ifndef ACCESS_MARTIAN_PLAYER_H
 #define ACCESS_MARTIAN_PLAYER_H
 
-#include "common/scummsys.h"
 #include "access/player.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
 namespace Martian {
 
-class MartianEngine;
+	class MartianEngine;
 
-class MartianPlayer : public Player {
-private:
-	MartianEngine *_game;
-public:
-	MartianPlayer(AccessEngine *vm);
-	virtual void load();
-};
+	class MartianPlayer : public Player {
+	private:
+		MartianEngine *_game;
+
+	public:
+		MartianPlayer(AccessEngine *vm);
+		virtual void load();
+	};
 
 } // End of namespace Martian
 

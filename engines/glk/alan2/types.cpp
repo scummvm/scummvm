@@ -25,27 +25,27 @@
 namespace Glk {
 namespace Alan2 {
 
-// This works around gcc errors for passing packed structure fields
-static void syncVal(Common::Serializer &s, int *fld) {
-	int &v = *fld;
-	s.syncAsSint32LE(v);
-}
+	// This works around gcc errors for passing packed structure fields
+	static void syncVal(Common::Serializer &s, int *fld) {
+		int &v = *fld;
+		s.syncAsSint32LE(v);
+	}
 
-void CurVars::synchronize(Common::Serializer &s) {
-	syncVal(s, &vrb);
-	syncVal(s, &obj);
-	syncVal(s, &loc);
-	syncVal(s, &act);
-	syncVal(s, &tick);
-	syncVal(s, &score);
-	syncVal(s, &visits);
-}
+	void CurVars::synchronize(Common::Serializer &s) {
+		syncVal(s, &vrb);
+		syncVal(s, &obj);
+		syncVal(s, &loc);
+		syncVal(s, &act);
+		syncVal(s, &tick);
+		syncVal(s, &score);
+		syncVal(s, &visits);
+	}
 
-void EvtqElem::synchronize(Common::Serializer &s) {
-	syncVal(s, &time);
-	syncVal(s, &event);
-	syncVal(s, &where);
-}
+	void EvtqElem::synchronize(Common::Serializer &s) {
+		syncVal(s, &time);
+		syncVal(s, &event);
+		syncVal(s, &where);
+	}
 
 } // End of namespace Alan2
 } // End of namespace Glk

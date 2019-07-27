@@ -29,28 +29,28 @@
 namespace Gnap {
 
 enum {
-	kHS53Platypus		= 0,
-	kHS53Device			= 1,
-	kHS53PhoneKey1		= 2,
-	kHS53PhoneKey2		= 3,
-	kHS53PhoneKey3		= 4,
-	kHS53PhoneKey4		= 5,
-	kHS53PhoneKey5		= 6,
-	kHS53PhoneKey6		= 7,
-	kHS53PhoneKey7		= 8,
-	kHS53PhoneKey8		= 9,
-	kHS53PhoneKey9		= 10,
-	kHS53PhoneKey0		= 11,
-	kHS53PhoneKeySharp	= 12,
-	kHS53PhoneKeyStar	= 13,
-	kHS53PhoneExit		= 14
+	kHS53Platypus = 0,
+	kHS53Device = 1,
+	kHS53PhoneKey1 = 2,
+	kHS53PhoneKey2 = 3,
+	kHS53PhoneKey3 = 4,
+	kHS53PhoneKey4 = 5,
+	kHS53PhoneKey5 = 6,
+	kHS53PhoneKey6 = 7,
+	kHS53PhoneKey7 = 8,
+	kHS53PhoneKey8 = 9,
+	kHS53PhoneKey9 = 10,
+	kHS53PhoneKey0 = 11,
+	kHS53PhoneKeySharp = 12,
+	kHS53PhoneKeyStar = 13,
+	kHS53PhoneExit = 14
 };
 
 /*****************************************************************************/
 
 class GnapEngine;
 
-class Scene53: public Scene {
+class Scene53 : public Scene {
 public:
 	Scene53(GnapEngine *vm);
 	virtual ~Scene53() {}

@@ -20,11 +20,11 @@
  *
  */
 
+#include "gui/message.h"
 #include "common/str.h"
 #include "common/system.h"
-#include "gui/message.h"
-#include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
+#include "gui/gui-manager.h"
 #include "gui/widget.h"
 
 namespace GUI {
@@ -34,11 +34,10 @@ enum {
 	kCancelCmd = 'CNCL'
 };
 
-
 // TODO: The default button should be visibly distinct from the alternate button
 
 MessageDialog::MessageDialog(const Common::String &message, const char *defaultButton, const char *altButton)
-	: Dialog(30, 20, 260, 124) {
+  : Dialog(30, 20, 260, 124) {
 
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
@@ -79,7 +78,7 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 	// Each line is represented by one static text item.
 	for (int i = 0; i < lineCount; i++) {
 		new StaticTextWidget(this, 10, 10 + i * kLineHeight, maxlineWidth, kLineHeight,
-								lines[i], Graphics::kTextAlignCenter);
+		                     lines[i], Graphics::kTextAlignCenter);
 	}
 
 	if (defaultButton && altButton) {
@@ -90,10 +89,10 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 	}
 
 	if (defaultButton)
-		new ButtonWidget(this, okButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, defaultButton, 0, kOkCmd, Common::ASCII_RETURN);	// Confirm dialog
+		new ButtonWidget(this, okButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, defaultButton, 0, kOkCmd, Common::ASCII_RETURN); // Confirm dialog
 
 	if (altButton)
-		new ButtonWidget(this, cancelButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, altButton, 0, kCancelCmd, Common::ASCII_ESCAPE);	// Cancel dialog
+		new ButtonWidget(this, cancelButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, altButton, 0, kCancelCmd, Common::ASCII_ESCAPE); // Cancel dialog
 }
 
 void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -110,7 +109,7 @@ void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 }
 
 TimedMessageDialog::TimedMessageDialog(const Common::String &message, uint32 duration)
-	: MessageDialog(message, 0, 0) {
+  : MessageDialog(message, 0, 0) {
 	_timer = g_system->getMillis() + duration;
 }
 

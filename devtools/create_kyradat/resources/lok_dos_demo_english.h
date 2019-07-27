@@ -34,4 +34,3 @@ static const char *const k1IntroStringsDOSDemoEnglish[32] = {
 };
 
 static const StringListProvider k1IntroStringsDOSDemoEnglishProvider = { ARRAYSIZE(k1IntroStringsDOSDemoEnglish), k1IntroStringsDOSDemoEnglish };
-

@@ -23,17 +23,17 @@
 #ifndef __OSYS_N64_H__
 #define __OSYS_N64_H__
 
-#include "common/rect.h"
 #include "common/config-manager.h"
+#include "common/rect.h"
 
 #include "backends/base-backend.h"
 
 #include "base/main.h"
 
-#include "graphics/surface.h"
 #include "graphics/colormasks.h"
 #include "graphics/palette.h"
 #include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 
 #include "audio/mixer_intern.h"
 
@@ -75,12 +75,12 @@ class OSystem_N64 : public EventsBaseBackend, public PaletteManager {
 protected:
 	Audio::MixerImpl *_mixer;
 
-	struct display_context * _dc; // Display context for N64 on screen buffer switching
+	struct display_context *_dc; // Display context for N64 on screen buffer switching
 
 	Graphics::Surface _framebuffer;
 
 	uint16 *_offscreen_hic; // Offscreen converted to 16bit surface
-	uint8  *_offscreen_pal; // Offscreen with palette indexes
+	uint8 *_offscreen_pal; // Offscreen with palette indexes
 	uint16 *_overlayBuffer; // Offscreen for the overlay (16 bit)
 
 	uint16 *_screenPalette; // Array for palette entries (256 colors max)
@@ -108,10 +108,10 @@ protected:
 
 	int _cursorKeycolor;
 
-	uint16	_overlayHeight, _overlayWidth;
-	bool	_overlayVisible;
+	uint16 _overlayHeight, _overlayWidth;
+	bool _overlayVisible;
 
-	bool	_disableFpsLimit; // When this is enabled, the system doesn't limit screen updates
+	bool _disableFpsLimit; // When this is enabled, the system doesn't limit screen updates
 
 	bool _mouseVisible;
 	volatile int _mouseX, _mouseY;
@@ -126,7 +126,6 @@ protected:
 	bool _dirtyOffscreen;
 
 public:
-
 	/* These have to be accessed by interrupt callbacks */
 	uint16 _audioBufferSize;
 	uint32 _viClockRate; // Clock rate of video system, depending on VI mode
@@ -154,6 +153,7 @@ public:
 	virtual int16 getWidth();
 
 	virtual PaletteManager *getPaletteManager() { return this; }
+
 protected:
 	// PaletteManager API
 	virtual void setPalette(const byte *colors, uint start, uint num);

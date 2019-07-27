@@ -40,7 +40,8 @@ const char *archiveCD1Path = "cd1.hpf";
 const char *archiveCD2Path = "cd2.hpf";
 const char *archiveCD3Path = "cd3.hpf";
 
-ResourceManager::ResourceManager(bool isDemo) : _isDemo(isDemo) {
+ResourceManager::ResourceManager(bool isDemo)
+  : _isDemo(isDemo) {
 }
 
 ResourceManager::~ResourceManager() {
@@ -81,7 +82,7 @@ bool ResourceManager::loadArchive(ArchiveIndex type) {
 	if (!loadArchive(archiveHDPath))
 		return false;
 
-	switch(type) {
+	switch (type) {
 	case kArchiveCd1:
 		return loadArchive(archiveCD1Path);
 
@@ -185,7 +186,6 @@ Common::SeekableReadStream *ResourceManager::createReadStreamForMember(const Com
 
 	return NULL;
 }
-
 
 // Resource loading
 

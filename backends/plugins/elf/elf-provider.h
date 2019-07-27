@@ -27,9 +27,9 @@
 
 #if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER)
 
-#include "backends/plugins/elf/elf-loader.h"
+#	include "backends/plugins/elf/elf-loader.h"
 
-#include "common/fs.h"
+#	include "common/fs.h"
 
 /**
  * ELFPlugin
@@ -50,10 +50,10 @@ protected:
 	virtual VoidFunc findSymbol(const char *symbol);
 
 public:
-	ELFPlugin(const Common::String &filename) :
-		DynamicPlugin(filename),
-		_dlHandle(0),
-		_dso_handle(0) {
+	ELFPlugin(const Common::String &filename)
+	  : DynamicPlugin(filename)
+	  , _dlHandle(0)
+	  , _dso_handle(0) {
 	}
 
 	virtual ~ELFPlugin() {
@@ -68,18 +68,17 @@ public:
 	void trackSize();
 };
 
-template<class T>
+template <class T>
 class TemplatedELFPlugin : public ELFPlugin {
 public:
-	TemplatedELFPlugin(const Common::String &filename) :
-		ELFPlugin(filename) {
+	TemplatedELFPlugin(const Common::String &filename)
+	  : ELFPlugin(filename) {
 	}
 
 	virtual DLObject *makeDLObject() {
 		return new T();
 	}
 };
-
 
 class ELFPluginProvider : public FilePluginProvider {
 protected:

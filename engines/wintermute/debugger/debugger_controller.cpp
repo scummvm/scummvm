@@ -20,22 +20,22 @@
  *
  */
 
+#include "engines/wintermute/debugger/debugger_controller.h"
 #include "common/algorithm.h"
 #include "common/str.h"
 #include "common/tokenizer.h"
-#include "engines/wintermute/debugger.h"
-#include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/scriptables/script.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/debugger.h"
 #include "engines/wintermute/debugger/breakpoint.h"
-#include "engines/wintermute/debugger/debugger_controller.h"
-#include "engines/wintermute/debugger/watch.h"
 #include "engines/wintermute/debugger/listing_providers/blank_listing_provider.h"
 #include "engines/wintermute/debugger/listing_providers/cached_source_listing_provider.h"
 #include "engines/wintermute/debugger/listing_providers/source_listing.h"
+#include "engines/wintermute/debugger/watch.h"
 #define SCENGINE _engine->_game->_scEngine
 #define DEBUGGER _engine->_debugger
 
@@ -45,7 +45,8 @@ DebuggerController::~DebuggerController() {
 	delete _sourceListingProvider;
 }
 
-DebuggerController::DebuggerController(WintermuteEngine *vm) : _engine(vm) {
+DebuggerController::DebuggerController(WintermuteEngine *vm)
+  : _engine(vm) {
 	_sourceListingProvider = new CachedSourceListingProvider();
 	clear();
 }
@@ -110,7 +111,6 @@ Error DebuggerController::removeWatchpoint(uint id) {
 	}
 }
 
-
 Error DebuggerController::disableWatchpoint(uint id) {
 	assert(SCENGINE);
 	if (SCENGINE->_watches.size() > id) {
@@ -129,7 +129,6 @@ Error DebuggerController::enableWatchpoint(uint id) {
 	} else {
 		return Error(ERROR, NO_SUCH_BREAKPOINT, id);
 	}
-
 }
 
 Error DebuggerController::addWatch(const char *filename, const char *symbol) {
@@ -298,14 +297,14 @@ Error DebuggerController::setSourcePath(const Common::String &sourcePath) {
 	return Error((err == OK ? SUCCESS : ERROR), err);
 }
 
-Listing* DebuggerController::getListing(Error* &error) {
+Listing *DebuggerController::getListing(Error *&error) {
 	delete (error);
 	if (_lastScript == nullptr) {
 		error = new Error(ERROR, NOT_ALLOWED);
 		return nullptr;
 	}
 	ErrorCode err;
-	Listing* res = _sourceListingProvider->getListing(SCENGINE->_currentScript->_filename, err);
+	Listing *res = _sourceListingProvider->getListing(SCENGINE->_currentScript->_filename, err);
 	error = new Error(err == OK ? SUCCESS : ERROR, err);
 	return res;
 }

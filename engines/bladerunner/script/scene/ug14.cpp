@@ -26,33 +26,33 @@ namespace BladeRunner {
 
 void SceneScriptUG14::InitializeScene() {
 	if (Game_Flag_Query(kFlagUG19toUG14)) {
-		Setup_Scene_Information(-278.0f,  12.97f, -152.0f, 200);
+		Setup_Scene_Information(-278.0f, 12.97f, -152.0f, 200);
 	} else if (Game_Flag_Query(kFlagUG12toUG14)) {
-		Setup_Scene_Information( -50.0f,  129.0f, -814.0f, 533);
+		Setup_Scene_Information(-50.0f, 129.0f, -814.0f, 533);
 	} else {
-		Setup_Scene_Information( 233.0f, 186.04f,  -32.0f, 865);
+		Setup_Scene_Information(233.0f, 186.04f, -32.0f, 865);
 	}
 
-	Scene_Exit_Add_2D_Exit(0,   0, 232,  45, 427, 3);
-	Scene_Exit_Add_2D_Exit(1, 175,  44, 228, 115, 0);
-	Scene_Exit_Add_2D_Exit(2, 537,   0, 639, 190, 1);
+	Scene_Exit_Add_2D_Exit(0, 0, 232, 45, 427, 3);
+	Scene_Exit_Add_2D_Exit(1, 175, 44, 228, 115, 0);
+	Scene_Exit_Add_2D_Exit(2, 537, 0, 639, 190, 1);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxSTMLOOP7, 28, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1,   40, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED2,   40, 0, 1);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP1,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP2,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxYELL1M2,  2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxYELL1M3,  2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxGRUNT1M1, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxGRUNT2M2, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxGRUNT2M3, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP3,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP4,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP5,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN1,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN2,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN3,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1, 40, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED2, 40, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP1, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP2, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxYELL1M2, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxYELL1M3, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT1M1, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT2M2, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT2M3, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP3, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP4, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP5, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN3, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
 }
 
 void SceneScriptUG14::SceneLoaded() {
@@ -81,7 +81,6 @@ bool SceneScriptUG14::ClickedOnExit(int exitId) {
 	float x, y, z;
 	Actor_Query_XYZ(kActorMcCoy, &x, &y, &z);
 	bool v1 = y > 57.0f;
-
 
 	if (exitId == 0) {
 		if (v1) {
@@ -177,10 +176,9 @@ void SceneScriptUG14::PlayerWalkedIn() {
 		Game_Flag_Reset(kFlagUG10toUG14);
 	}
 
-	if ( Global_Variable_Query(kVariableChapter) == 4
-	 &&  Game_Flag_Query(kFlagCT04HomelessBodyThrownAway)
-	 && !Game_Flag_Query(kFlagUG14DeadHomeless)
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 4
+	    && Game_Flag_Query(kFlagCT04HomelessBodyThrownAway)
+	    && !Game_Flag_Query(kFlagUG14DeadHomeless)) {
 		Overlay_Play("UG14OVER", 0, false, true, 0);
 		Delay(1000);
 		Actor_Face_Heading(kActorMcCoy, 609, false);

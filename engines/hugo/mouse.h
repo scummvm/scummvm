@@ -53,41 +53,41 @@ public:
 	void freeHotspots();
 
 	bool getJumpExitFl() const;
-	int  getMouseX() const;
-	int  getMouseY() const;
+	int getMouseX() const;
+	int getMouseY() const;
 
 	int16 getDirection(const int16 hotspotId) const;
 	int16 getHotspotActIndex(const int16 hotspotId) const;
 
-	void  drawHotspots() const;
+	void drawHotspots() const;
 	int16 findExit(const int16 cx, const int16 cy, byte screenId);
-	void  loadHotspots(Common::ReadStream &in);
+	void loadHotspots(Common::ReadStream &in);
 
 private:
 	HugoEngine *_vm;
 
-	static const char kCursorNochar = '~';              // Don't show name of object under cursor
-	static const int  kExitHotspot = -4;                // Cursor over Exit hotspot
-	static const int  kCursorNameIndex = 2;             // Index of name used under cursor
-	static const int  kCursorNameOffX = 10;             // Cursor offset to name string
-	static const int  kCursorNameOffY = -2;             // Cursor offset to name string
+	static const char kCursorNochar = '~'; // Don't show name of object under cursor
+	static const int kExitHotspot = -4; // Cursor over Exit hotspot
+	static const int kCursorNameIndex = 2; // Index of name used under cursor
+	static const int kCursorNameOffX = 10; // Cursor offset to name string
+	static const int kCursorNameOffY = -2; // Cursor offset to name string
 
 	enum seqTextMouse {
 		kMsNoWayText = 0,
-		kMsExit      = 1
+		kMsExit = 1
 	};
 
 	Hotspot *_hotspots;
-	bool  _leftButtonFl;                                // Left mouse button pressed
-	bool  _rightButtonFl;                               // Right button pressed
-	int   _mouseX;
-	int   _mouseY;
-	bool  _jumpExitFl;                                  // Allowed to jump to a screen exit
+	bool _leftButtonFl; // Left mouse button pressed
+	bool _rightButtonFl; // Right button pressed
+	int _mouseX;
+	int _mouseY;
+	bool _jumpExitFl; // Allowed to jump to a screen exit
 
-	void  cursorText(const char *buffer, const int16 cx, const int16 cy, const Uif fontId, const int16 color);
-	void  processRightClick(const int16 objId, const int16 cx, const int16 cy);
-	void  processLeftClick(const int16 objId, const int16 cx, const int16 cy);
-	void  readHotspot(Common::ReadStream &in, Hotspot &hotspot);
+	void cursorText(const char *buffer, const int16 cx, const int16 cy, const Uif fontId, const int16 color);
+	void processRightClick(const int16 objId, const int16 cx, const int16 cy);
+	void processLeftClick(const int16 objId, const int16 cx, const int16 cy);
+	void readHotspot(Common::ReadStream &in, Hotspot &hotspot);
 };
 
 } // End of namespace Hugo

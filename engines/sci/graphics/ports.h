@@ -23,9 +23,9 @@
 #ifndef SCI_GRAPHICS_PORTS_H
 #define SCI_GRAPHICS_PORTS_H
 
-#include "common/serializer.h"
-#include "common/list.h"
 #include "common/array.h"
+#include "common/list.h"
+#include "common/serializer.h"
 
 namespace Sci {
 
@@ -37,10 +37,10 @@ struct WorklistManager;
 // window styles
 enum {
 	SCI_WINDOWMGR_STYLE_TRANSPARENT = (1 << 0),
-	SCI_WINDOWMGR_STYLE_NOFRAME     = (1 << 1),
-	SCI_WINDOWMGR_STYLE_TITLE       = (1 << 2),
-	SCI_WINDOWMGR_STYLE_TOPMOST     = (1 << 3),
-	SCI_WINDOWMGR_STYLE_USER        = (1 << 7)
+	SCI_WINDOWMGR_STYLE_NOFRAME = (1 << 1),
+	SCI_WINDOWMGR_STYLE_TITLE = (1 << 2),
+	SCI_WINDOWMGR_STYLE_TOPMOST = (1 << 3),
+	SCI_WINDOWMGR_STYLE_USER = (1 << 7)
 };
 
 typedef Common::List<Port *> PortList;

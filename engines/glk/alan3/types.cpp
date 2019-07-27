@@ -26,13 +26,13 @@
 namespace Glk {
 namespace Alan3 {
 
-/*======================================================================*/
-Aaddr addressAfterTable(Aaddr adr, int size) {
-	while (!isEndOfArray(&memory[adr])) {
-		adr += size / sizeof(Aword);
+	/*======================================================================*/
+	Aaddr addressAfterTable(Aaddr adr, int size) {
+		while (!isEndOfArray(&memory[adr])) {
+			adr += size / sizeof(Aword);
+		}
+		return adr + 1;
 	}
-	return adr + 1;
-}
 
 } // End of namespace Alan3
 } // End of namespace Glk

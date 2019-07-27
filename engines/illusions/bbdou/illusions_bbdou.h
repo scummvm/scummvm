@@ -23,10 +23,10 @@
 #ifndef ILLUSIONS_ILLUSIONS_BBDOU_H
 #define ILLUSIONS_ILLUSIONS_BBDOU_H
 
-#include "illusions/illusions.h"
-#include "illusions/bbdou/bbdou_triggerfunctions.h"
 #include "common/algorithm.h"
 #include "common/stack.h"
+#include "illusions/bbdou/bbdou_triggerfunctions.h"
+#include "illusions/illusions.h"
 
 namespace Illusions {
 
@@ -54,6 +54,7 @@ public:
 	void getActiveSceneInfo(uint index, uint32 *sceneId, int *pauseCtr);
 	uint32 getCurrentScene();
 	bool isSceneActive(uint32 sceneId);
+
 protected:
 	Common::FixedStack<ActiveScene, 16> _stack;
 };
@@ -61,9 +62,11 @@ protected:
 class IllusionsEngine_BBDOU : public IllusionsEngine {
 public:
 	IllusionsEngine_BBDOU(OSystem *syst, const IllusionsGameDescription *gd);
+
 protected:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
+
 public:
 	ScriptMan *_scriptMan;
 	TriggerFunctions *_triggerFunctions;
@@ -121,19 +124,19 @@ public:
 
 	void startScriptThreadSimple(uint32 threadId, uint32 callingThreadId);
 	void startScriptThread(uint32 threadId, uint32 callingThreadId,
-		uint32 value8, uint32 valueC, uint32 value10);
+	                       uint32 value8, uint32 valueC, uint32 value10);
 	void startAnonScriptThread(int32 threadId, uint32 callingThreadId,
-		uint32 value8, uint32 valueC, uint32 value10);
+	                           uint32 value8, uint32 valueC, uint32 value10);
 	uint32 startAbortableTimerThread(uint32 duration, uint32 threadId);
 	uint32 startTimerThread(uint32 duration, uint32 threadId);
 	uint32 startAbortableThread(byte *scriptCodeIp1, byte *scriptCodeIp2, uint32 callingThreadId);
 	uint32 startTalkThread(int16 duration, uint32 objectId, uint32 talkId, uint32 sequenceId1,
-		uint32 sequenceId2, uint32 namedPointId, uint32 callingThreadId);
+	                       uint32 sequenceId2, uint32 namedPointId, uint32 callingThreadId);
 	uint32 startTempScriptThread(byte *scriptCodeIp, uint32 callingThreadId,
-		uint32 value8, uint32 valueC, uint32 value10);
+	                             uint32 value8, uint32 valueC, uint32 value10);
 
 	void newScriptThread(uint32 threadId, uint32 callingThreadId, uint notifyFlags,
-		byte *scriptCodeIp, uint32 value8, uint32 valueC, uint32 value10);
+	                     byte *scriptCodeIp, uint32 value8, uint32 valueC, uint32 value10);
 	uint32 newTimerThread(uint32 duration, uint32 callingThreadId, bool isAbortable);
 	uint32 newTempThreadId();
 
@@ -157,7 +160,6 @@ public:
 	void saveSavegameFromScript(int16 slotNum, uint32 callingThreadId);
 	void activateSavegame(uint32 callingThreadId);
 	void resumeFromSavegame();
-
 };
 
 } // End of namespace Illusions

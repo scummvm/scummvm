@@ -22,12 +22,12 @@
 
 #include "common/str.h"
 
-#include "gob/hotspots.h"
-#include "gob/global.h"
 #include "gob/draw.h"
 #include "gob/game.h"
-#include "gob/script.h"
+#include "gob/global.h"
+#include "gob/hotspots.h"
 #include "gob/inter.h"
+#include "gob/script.h"
 
 namespace Gob {
 
@@ -36,38 +36,38 @@ Hotspots::Hotspot::Hotspot() {
 }
 
 Hotspots::Hotspot::Hotspot(uint16 i,
-		uint16 l, uint16 t, uint16 r, uint16 b, uint16 f, uint16 k,
-		uint16 enter, uint16 leave, uint16 pos) {
+                           uint16 l, uint16 t, uint16 r, uint16 b, uint16 f, uint16 k,
+                           uint16 enter, uint16 leave, uint16 pos) {
 
-	id        = i;
-	left      = l;
-	top       = t;
-	right     = r;
-	bottom    = b;
-	flags     = f;
-	key       = k;
+	id = i;
+	left = l;
+	top = t;
+	right = r;
+	bottom = b;
+	flags = f;
+	key = k;
 	funcEnter = enter;
 	funcLeave = leave;
-	funcPos   = pos;
-	script    = 0;
+	funcPos = pos;
+	script = 0;
 }
 
 void Hotspots::Hotspot::clear() {
-	id        = 0;
-	left      = 0xFFFF;
-	top       = 0;
-	right     = 0;
-	bottom    = 0;
-	flags     = 0;
-	key       = 0;
+	id = 0;
+	left = 0xFFFF;
+	top = 0;
+	right = 0;
+	bottom = 0;
+	flags = 0;
+	key = 0;
 	funcEnter = 0;
 	funcLeave = 0;
-	funcPos   = 0;
-	script    = 0;
+	funcPos = 0;
+	script = 0;
 }
 
 Hotspots::Type Hotspots::Hotspot::getType() const {
-	return (Type) (flags & 0xF);
+	return (Type)(flags & 0xF);
 }
 
 MouseButtons Hotspots::Hotspot::getButton() const {
@@ -155,13 +155,13 @@ bool Hotspots::Hotspot::isDisabled() const {
 bool Hotspots::Hotspot::isIn(uint16 x, uint16 y) const {
 	// FIXME: the cast to int16 is a hack, to fix handling of Gob2 problems related to
 	// hotspots with negative offset (to temporary disable them).
-	if ((int16) x < (int16) left)
+	if ((int16)x < (int16)left)
 		return false;
-	if ((int16) x > (int16) right)
+	if ((int16)x > (int16)right)
 		return false;
-	if ((int16) y < (int16) top)
+	if ((int16)y < (int16)top)
 		return false;
-	if ((int16) y > (int16) bottom)
+	if ((int16)y > (int16)bottom)
 		return false;
 
 	return true;
@@ -193,17 +193,17 @@ void Hotspots::Hotspot::enable() {
 	id &= ~(kStateDisabled << 12);
 }
 
-
-Hotspots::Hotspots(GobEngine *vm) : _vm(vm) {
+Hotspots::Hotspots(GobEngine *vm)
+  : _vm(vm) {
 	_hotspots = new Hotspot[kHotspotCount];
 
 	_shouldPush = false;
 
-	_currentKey   = 0;
+	_currentKey = 0;
 	_currentIndex = 0;
-	_currentId    = 0;
-	_currentX     = 0;
-	_currentY     = 0;
+	_currentId = 0;
+	_currentX = 0;
+	_currentY = 0;
 }
 
 Hotspots::~Hotspots() {
@@ -226,12 +226,12 @@ void Hotspots::clear() {
 }
 
 uint16 Hotspots::add(uint16 id,
-		uint16 left,  uint16 top, uint16 right, uint16 bottom,
-		uint16 flags, uint16 key,
-		uint16 funcEnter, uint16 funcLeave, uint16 funcPos) {
+                     uint16 left, uint16 top, uint16 right, uint16 bottom,
+                     uint16 flags, uint16 key,
+                     uint16 funcEnter, uint16 funcLeave, uint16 funcPos) {
 
 	Hotspot hotspot(id, left, top, right, bottom,
-			flags, key, funcEnter, funcLeave, funcPos);
+	                flags, key, funcEnter, funcLeave, funcPos);
 
 	return add(hotspot);
 }
@@ -241,31 +241,30 @@ uint16 Hotspots::add(const Hotspot &hotspot) {
 		Hotspot &spot = _hotspots[i];
 
 		//     free space => add    same id => update
-		if (! (spot.isEnd() || (spot.id == hotspot.id)))
+		if (!(spot.isEnd() || (spot.id == hotspot.id)))
 			continue;
 
 		// When updating, keep disabled state intact
 		uint16 id = hotspot.id;
-		if ((spot.id     & ~(kStateDisabled << 12)) ==
-		     (hotspot.id & ~(kStateDisabled << 12)))
+		if ((spot.id & ~(kStateDisabled << 12)) == (hotspot.id & ~(kStateDisabled << 12)))
 			id = spot.id;
 
 		// Set
-		spot    = hotspot;
+		spot = hotspot;
 		spot.id = id;
 
 		// Remember the current script
 		spot.script = _vm->_game->_script;
 
 		debugC(1, kDebugHotspots, "Adding hotspot %03d: Coord:%3d+%3d+%3d+%3d - id:%04X, key:%04X, flag:%04X - fcts:%5d, %5d, %5d",
-				i, spot.left, spot.top, spot.right, spot.bottom,
-				spot.id, spot.key, spot.flags, spot.funcEnter, spot.funcLeave, spot.funcPos);
+		       i, spot.left, spot.top, spot.right, spot.bottom,
+		       spot.id, spot.key, spot.flags, spot.funcEnter, spot.funcLeave, spot.funcPos);
 
 		return i;
 	}
 
 	error("Hotspots::add(): Hotspot array full");
-	return 0xFFFF;	// for compilers that don't support NORETURN
+	return 0xFFFF; // for compilers that don't support NORETURN
 }
 
 void Hotspots::remove(uint16 id) {
@@ -313,9 +312,9 @@ void Hotspots::recalculate(bool force) {
 		_vm->_game->_script->call(spot.funcPos);
 
 		// Calculate positions
-		int16 left   = _vm->_game->_script->readValExpr();
-		int16 top    = _vm->_game->_script->readValExpr();
-		int16 width  = _vm->_game->_script->readValExpr();
+		int16 left = _vm->_game->_script->readValExpr();
+		int16 top = _vm->_game->_script->readValExpr();
+		int16 width = _vm->_game->_script->readValExpr();
 		int16 height = _vm->_game->_script->readValExpr();
 
 		// Re-read the flags too, if applicable
@@ -326,24 +325,24 @@ void Hotspots::recalculate(bool force) {
 		// Apply backDelta, if needed
 		if ((_vm->_draw->_renderFlags & RENDERFLAG_CAPTUREPOP) && (left != -1)) {
 			left += _vm->_draw->_backDeltaX;
-			top  += _vm->_draw->_backDeltaY;
+			top += _vm->_draw->_backDeltaY;
 		}
 
 		// Clamping
 		if (left < 0) {
 			width += left;
-			left   = 0;
+			left = 0;
 		}
 		if (top < 0) {
 			height += top;
-			top     = 0;
+			top = 0;
 		}
 
 		// Set the updated position
-		spot.left   = left;
-		spot.top    = top;
-		spot.right  = left + width  - 1;
-		spot.bottom = top  + height - 1;
+		spot.left = left;
+		spot.top = top;
+		spot.right = left + width - 1;
+		spot.bottom = top + height - 1;
 
 		if (spot.getState() == (kStateFilled | kStateType2))
 			spot.flags = flags;
@@ -367,28 +366,25 @@ void Hotspots::push(uint8 all, bool force) {
 	for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 		Hotspot &spot = _hotspots[i];
 
-		     // Save all of them
-		if ( (all == 1) ||
-		     // Don't save the global ones
+		// Save all of them
+		if ((all == 1) ||
+		    // Don't save the global ones
 		    ((all == 0) && (spot.id >= 20)) ||
-		     // Only save disabled ones
-		    ((all == 2) && ((spot.getState() == (kStateFilledDisabled | kStateType1)) ||
-		                    (spot.getState() == (kStateDisabled)) ||
-		                    (spot.getState() == (kStateFilledDisabled | kStateType2))))) {
+		    // Only save disabled ones
+		    ((all == 2) && ((spot.getState() == (kStateFilledDisabled | kStateType1)) || (spot.getState() == (kStateDisabled)) || (spot.getState() == (kStateFilledDisabled | kStateType2))))) {
 			size++;
 		}
-
 	}
 
 	StackEntry backup;
 
 	backup.shouldPush = _shouldPush;
-	backup.size       = size;
-	backup.key        = _currentKey;
-	backup.id         = _currentId;
-	backup.index      = _currentIndex;
-	backup.x          = _currentX;
-	backup.y          = _currentY;
+	backup.size = size;
+	backup.key = _currentKey;
+	backup.id = _currentId;
+	backup.index = _currentIndex;
+	backup.x = _currentX;
+	backup.y = _currentY;
 
 	backup.hotspots = new Hotspot[size];
 
@@ -397,30 +393,27 @@ void Hotspots::push(uint8 all, bool force) {
 	for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 		Hotspot &spot = _hotspots[i];
 
-		     // Save all of them
-		if ( (all == 1) ||
-		     // Don't save the global ones
+		// Save all of them
+		if ((all == 1) ||
+		    // Don't save the global ones
 		    ((all == 0) && (spot.id >= 20)) ||
-		     // Only save disabled ones
-		    ((all == 2) && ((spot.getState() == (kStateFilledDisabled | kStateType1)) ||
-		                    (spot.getState() == (kStateDisabled)) ||
-		                    (spot.getState() == (kStateFilledDisabled | kStateType2))))) {
+		    // Only save disabled ones
+		    ((all == 2) && ((spot.getState() == (kStateFilledDisabled | kStateType1)) || (spot.getState() == (kStateDisabled)) || (spot.getState() == (kStateFilledDisabled | kStateType2))))) {
 
 			memcpy(destPtr, &spot, sizeof(Hotspot));
 			destPtr++;
 
 			spot.clear();
 		}
-
 	}
 
 	// Reset current state
-	_shouldPush   = false;
-	_currentKey   = 0;
-	_currentId    = 0;
+	_shouldPush = false;
+	_currentKey = 0;
+	_currentId = 0;
 	_currentIndex = 0;
-	_currentX     = 0;
-	_currentY     = 0;
+	_currentX = 0;
+	_currentY = 0;
 
 	_stack.push(backup);
 }
@@ -440,19 +433,20 @@ void Hotspots::pop() {
 			break;
 	}
 
-	if (((uint32) (kHotspotCount - i)) < backup.size)
+	if (((uint32)(kHotspotCount - i)) < backup.size)
 		error("Hotspots::pop(): Not enough free space in the current Hotspot "
-		      "array to pop %d elements (got %d)", backup.size, kHotspotCount - i);
+		      "array to pop %d elements (got %d)",
+		      backup.size, kHotspotCount - i);
 
 	// Copy
 	memcpy(destPtr, backup.hotspots, backup.size * sizeof(Hotspot));
 
-	_shouldPush   = backup.shouldPush;
-	_currentKey   = backup.key;
-	_currentId    = backup.id;
+	_shouldPush = backup.shouldPush;
+	_currentKey = backup.key;
+	_currentId = backup.id;
 	_currentIndex = backup.index;
-	_currentX     = backup.x;
-	_currentY     = backup.y;
+	_currentX = backup.x;
+	_currentY = backup.y;
 
 	delete[] backup.hotspots;
 }
@@ -502,8 +496,7 @@ void Hotspots::enter(uint16 index) {
 	Hotspot &spot = _hotspots[index];
 
 	// If requested, write the ID into a variable
-	if ((spot.getState() == (kStateFilled | kStateType1)) ||
-	    (spot.getState() == (kStateFilled | kStateType2)))
+	if ((spot.getState() == (kStateFilled | kStateType1)) || (spot.getState() == (kStateFilled | kStateType2)))
 		WRITE_VAR(17, -(spot.id & 0x0FFF));
 
 	_currentX = _vm->_global->_inter_mouseX;
@@ -524,8 +517,7 @@ void Hotspots::leave(uint16 index) {
 	Hotspot &spot = _hotspots[index];
 
 	// If requested, write the ID into a variable
-	if ((spot.getState() == (kStateFilled | kStateType1)) ||
-	    (spot.getState() == (kStateFilled | kStateType2)))
+	if ((spot.getState() == (kStateFilled | kStateType1)) || (spot.getState() == (kStateFilled | kStateType2)))
 		WRITE_VAR(17, spot.id & 0x0FFF);
 
 	if (spot.funcLeave != 0)
@@ -541,13 +533,12 @@ int16 Hotspots::windowCursor(int16 &dx, int16 &dy) const {
 			// No such windows
 			continue;
 
-		const int left   = _vm->_draw->_fascinWin[i].left;
-		const int top    = _vm->_draw->_fascinWin[i].top;
-		const int right  = _vm->_draw->_fascinWin[i].left + _vm->_draw->_fascinWin[i].width  - 1;
-		const int bottom = _vm->_draw->_fascinWin[i].top  + _vm->_draw->_fascinWin[i].height - 1;
+		const int left = _vm->_draw->_fascinWin[i].left;
+		const int top = _vm->_draw->_fascinWin[i].top;
+		const int right = _vm->_draw->_fascinWin[i].left + _vm->_draw->_fascinWin[i].width - 1;
+		const int bottom = _vm->_draw->_fascinWin[i].top + _vm->_draw->_fascinWin[i].height - 1;
 
-		if ((_vm->_global->_inter_mouseX < left) || (_vm->_global->_inter_mouseX > right) ||
-		    (_vm->_global->_inter_mouseY < top ) || (_vm->_global->_inter_mouseY > bottom))
+		if ((_vm->_global->_inter_mouseX < left) || (_vm->_global->_inter_mouseX > right) || (_vm->_global->_inter_mouseY < top) || (_vm->_global->_inter_mouseY > bottom))
 			// We're not inside that window
 			continue;
 
@@ -558,13 +549,11 @@ int16 Hotspots::windowCursor(int16 &dx, int16 &dy) const {
 		dx = _vm->_draw->_fascinWin[i].left;
 		dy = _vm->_draw->_fascinWin[i].top;
 
-		if ((_vm->_global->_inter_mouseX < (left + 12)) && (_vm->_global->_inter_mouseY < (top + 12)) &&
-		    (VAR((_vm->_draw->_winVarArrayStatus / 4) + i) & 2))
+		if ((_vm->_global->_inter_mouseX < (left + 12)) && (_vm->_global->_inter_mouseY < (top + 12)) && (VAR((_vm->_draw->_winVarArrayStatus / 4) + i) & 2))
 			// Cursor on 'Close Window'
 			return 5;
 
-		if ((_vm->_global->_inter_mouseX > (right - 12)) & (_vm->_global->_inter_mouseY < (top + 12)) &&
-		    (VAR((_vm->_draw->_winVarArrayStatus / 4) + i) & 4))
+		if ((_vm->_global->_inter_mouseX > (right - 12)) & (_vm->_global->_inter_mouseY < (top + 12)) && (VAR((_vm->_draw->_winVarArrayStatus / 4) + i) & 4))
 			// Cursor on 'Move Window'
 			return 6;
 
@@ -575,7 +564,7 @@ int16 Hotspots::windowCursor(int16 &dx, int16 &dy) const {
 }
 
 uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
-	id    = 0;
+	id = 0;
 	index = 0;
 
 	int16 dx = 0;
@@ -611,7 +600,7 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 				// If we're not in it, ignore it
 				continue;
 
-			id    = spot.id;
+			id = spot.id;
 			index = i;
 
 			return spot.key;
@@ -645,7 +634,7 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 				// Don't follow hotspots with button requirements we don't meet
 				continue;
 
-			id    = spot.id;
+			id = spot.id;
 			index = i;
 
 			if ((spot.getType() == kTypeMove) || (spot.getType() == kTypeClick))
@@ -690,14 +679,14 @@ bool Hotspots::checkHotspotChanged() {
 			return false;
 
 	// Leave the old area
-	if (isValid(_currentKey, _currentId,_currentIndex))
+	if (isValid(_currentKey, _currentId, _currentIndex))
 		leave(_currentIndex);
 
-	_currentKey   = key;
-	_currentId    = id;
+	_currentKey = key;
+	_currentId = id;
 	_currentIndex = index;
-	_currentX     = mouseX;
-	_currentY     = mouseY;
+	_currentX = mouseX;
+	_currentY = mouseY;
 
 	// Enter the new one
 	if (isValid(key, id, index))
@@ -708,12 +697,12 @@ bool Hotspots::checkHotspotChanged() {
 
 uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index) {
 	if (delay >= -1) {
-		_currentKey   = 0;
-		_currentId    = 0;
+		_currentKey = 0;
+		_currentId = 0;
 		_currentIndex = 0;
 	}
 
-	id    = 0;
+	id = 0;
 	index = 0;
 
 	if (handleMouse) {
@@ -760,7 +749,7 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 
 		// Update keyboard and mouse state
 		key = _vm->_game->checkKeys(&_vm->_global->_inter_mouseX,
-				&_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons, handleMouse);
+		                            &_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons, handleMouse);
 
 		if (!handleMouse && (_vm->_game->_mouseButtons != kMouseButtonsNone)) {
 			// We don't want any mouse input but got one => Wait till it went away
@@ -775,7 +764,7 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 			if (handleMouse & 1)
 				_vm->_draw->blitCursor();
 
-			id    = 0;
+			id = 0;
 			index = 0;
 
 			// Leave the current hotspot
@@ -808,16 +797,13 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 					if ((key != 0) || (id != 0)) {
 						// Got a valid region
 
-						if ( (handleMouse & 1) &&
-							  ((delay <= 0) || (_vm->_game->_mouseButtons == kMouseButtonsNone)))
+						if ((handleMouse & 1) && ((delay <= 0) || (_vm->_game->_mouseButtons == kMouseButtonsNone)))
 							_vm->_draw->blitCursor();
 
-
-						if ((key != _currentKey) && (_vm->getGameType() != kGameTypeFascination) &&
-						                            (_vm->getGameType() != kGameTypeGeisha))
-						// If the hotspot changed, leave the old one
-						// Code not present in Fascination executables
-								leave(_currentIndex);
+						if ((key != _currentKey) && (_vm->getGameType() != kGameTypeFascination) && (_vm->getGameType() != kGameTypeGeisha))
+							// If the hotspot changed, leave the old one
+							// Code not present in Fascination executables
+							leave(_currentIndex);
 
 						_currentKey = 0;
 						break;
@@ -846,11 +832,10 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 				checkHotspotChanged();
 		}
 
-		if ((delay == -2) && (key == 0) &&
-		    (_vm->_game->_mouseButtons == kMouseButtonsNone)) {
+		if ((delay == -2) && (key == 0) && (_vm->_game->_mouseButtons == kMouseButtonsNone)) {
 			// Nothing found and no further handling requested. Return.
 
-			id    = 0;
+			id = 0;
 			index = 0;
 			break;
 		}
@@ -858,8 +843,7 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 		if (handleMouse)
 			_vm->_draw->animateCursor(-1);
 
-		if ((delay < 0) && (key == 0) &&
-		    (_vm->_game->_mouseButtons == kMouseButtonsNone)) {
+		if ((delay < 0) && (key == 0) && (_vm->_game->_mouseButtons == kMouseButtonsNone)) {
 
 			// Look if we've maybe reached the timeout
 
@@ -867,16 +851,14 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 			if ((curTime + delay) > startTime) {
 				// If so, return
 
-				id    = 0;
+				id = 0;
 				index = 0;
 				break;
 			}
-
 		}
 
-	// Sleep for a short amount of time
-	_vm->_util->delay(10);
-
+		// Sleep for a short amount of time
+		_vm->_util->delay(10);
 	}
 
 	return key;
@@ -890,8 +872,8 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay) {
 }
 
 uint16 Hotspots::updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 height,
-		uint16 backColor, uint16 frontColor, char *str, uint16 fontIndex,
-		Type type, int16 &duration, uint16 &id, uint16 &index) {
+                             uint16 backColor, uint16 frontColor, char *str, uint16 fontIndex,
+                             Type type, int16 &duration, uint16 &id, uint16 &index) {
 
 	if ((fontIndex >= Draw::kFontCount) || !_vm->_draw->_fonts[fontIndex]) {
 		warning("Hotspots::updateInput(): Invalid font specified: %d", fontIndex);
@@ -900,14 +882,13 @@ uint16 Hotspots::updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 heig
 
 	// Check if we need to consider mouse events
 	bool handleMouse = false;
-	if ( (_vm->_game->_handleMouse != 0) &&
-	    ((_vm->_global->_useMouse != 0) || (_vm->_game->_forceHandleMouse != 0)))
+	if ((_vm->_game->_handleMouse != 0) && ((_vm->_global->_useMouse != 0) || (_vm->_game->_forceHandleMouse != 0)))
 		handleMouse = true;
 
 	const Font &font = *_vm->_draw->_fonts[fontIndex];
 
 	// Current position in the string, preset to the end
-	uint32 pos      = strlen(str);
+	uint32 pos = strlen(str);
 	/* Size of input field in characters.
 	 * If the font is not monospaced, we can't know that */
 	uint32 editSize = font.isMonospaced() ? (width / font.getCharWidth()) : 0;
@@ -929,7 +910,7 @@ uint16 Hotspots::updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 heig
 
 		// Print the current string, vertically centered
 		printText(xPos, yPos + (height - font.getCharHeight()) / 2,
-				tempStr, fontIndex, frontColor);
+		          tempStr, fontIndex, frontColor);
 
 		// If we've reached the end of the input field, set the cursor to the last character
 		if ((editSize != 0) && (pos == editSize))
@@ -949,7 +930,7 @@ uint16 Hotspots::updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 heig
 			// Draw cursor
 			uint16 cursorX, cursorY, cursorWidth, cursorHeight;
 			getTextCursorPos(font, str, pos, xPos, yPos, width, height,
-					cursorX, cursorY, cursorWidth, cursorHeight);
+			                 cursorX, cursorY, cursorWidth, cursorHeight);
 			fillRect(cursorX, cursorY, cursorWidth, cursorHeight, frontColor);
 
 			if (first) {
@@ -970,12 +951,12 @@ uint16 Hotspots::updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 heig
 
 			// Clear cursor
 			getTextCursorPos(font, str, pos, xPos, yPos, width, height,
-					cursorX, cursorY, cursorWidth, cursorHeight);
+			                 cursorX, cursorY, cursorWidth, cursorHeight);
 			fillRect(cursorX, cursorY, cursorWidth, cursorHeight, backColor);
 
 			// Print the current string, vertically centered
 			printText(cursorX, yPos + (height - font.getCharHeight()) / 2,
-					tempStr, fontIndex, frontColor);
+			          tempStr, fontIndex, frontColor);
 
 			if ((key != 0) || (id != 0))
 				// We did get a key, stop looking
@@ -984,8 +965,7 @@ uint16 Hotspots::updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 heig
 			// Try again
 			key = check(handleMouse, -300, id, index);
 
-			if ((key != 0) || (id != 0) ||
-					_vm->_inter->_terminate || _vm->shouldQuit())
+			if ((key != 0) || (id != 0) || _vm->_inter->_terminate || _vm->shouldQuit())
 				// We did get a key, stop looking
 				break;
 
@@ -995,22 +975,20 @@ uint16 Hotspots::updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 heig
 				if (duration <= 1) {
 					// If so, abort
 					key = 0;
-					id  = 0;
+					id = 0;
 					break;
 				}
 			}
 		}
 
-		if ((key == 0) || (id != 0) ||
-				_vm->_inter->_terminate || _vm->shouldQuit())
+		if ((key == 0) || (id != 0) || _vm->_inter->_terminate || _vm->shouldQuit())
 			// Got no key, or a region ID instead, return
 			return 0;
 
 		switch (key) {
 		case kKeyRight:
 			// If possible, move the cursor right
-			if (((editSize != 0) && ((pos > strlen(str)) || (pos > (editSize - 1)))) ||
-			    ((editSize == 0) && (pos > strlen(str)))) {
+			if (((editSize != 0) && ((pos > strlen(str)) || (pos > (editSize - 1)))) || ((editSize == 0) && (pos > strlen(str)))) {
 				pos++;
 				continue;
 			}
@@ -1069,8 +1047,7 @@ uint16 Hotspots::updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 heig
 			_vm->_game->_forceHandleMouse = !_vm->_game->_forceHandleMouse;
 
 			handleMouse = false;
-			if ( (_vm->_game->_handleMouse != 0) &&
-			    ((_vm->_global->_useMouse != 0) || (_vm->_game->_forceHandleMouse != 0)))
+			if ((_vm->_game->_handleMouse != 0) && ((_vm->_global->_useMouse != 0) || (_vm->_game->_forceHandleMouse != 0)))
 				handleMouse = true;
 
 			while (_vm->_global->_pressedKeys[1] != 0)
@@ -1084,17 +1061,14 @@ uint16 Hotspots::updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 heig
 
 			key &= 0xFF;
 
-			if (((type == kTypeInputFloatNoLeave) || (type == kTypeInputFloatLeave)) &&
-					 (key >= ' ') && (key <= 0xFF)) {
+			if (((type == kTypeInputFloatNoLeave) || (type == kTypeInputFloatLeave)) && (key >= ' ') && (key <= 0xFF)) {
 
 				// Only allow character found in numerical floating values
 
 				const char *str1 = "0123456789-.,+ ";
 				const char *str2 = "0123456789-,,+ ";
 
-				if ((((savedKey >> 8) > 1) && ((savedKey >> 8) < 12)) &&
-						((_vm->_global->_pressedKeys[42] != 0) ||
-						 (_vm->_global->_pressedKeys[56] != 0)))
+				if ((((savedKey >> 8) > 1) && ((savedKey >> 8) < 12)) && ((_vm->_global->_pressedKeys[42] != 0) || (_vm->_global->_pressedKeys[56] != 0)))
 					key = ((savedKey >> 8) - 1) % 10 + '0';
 
 				int i;
@@ -1105,21 +1079,20 @@ uint16 Hotspots::updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 heig
 					}
 				}
 
-				if (i == (int16) strlen(str1))
+				if (i == (int16)strlen(str1))
 					key = 0;
 			}
 
 			if ((key >= ' ') && (key <= 0xFF)) {
 				if (editSize == 0) {
 					// Length of the string + current character + next one
-					int length = _vm->_draw->stringLength(str, fontIndex) +
-						font.getCharWidth(' ') + font.getCharWidth(key);
+					int length = _vm->_draw->stringLength(str, fontIndex) + font.getCharWidth(' ') + font.getCharWidth(key);
 
 					if (length > width)
 						// We're above the limit, ignore the key
 						continue;
 
-					if (((int32) strlen(str)) >= (_vm->_global->_inter_animDataSize * 4 - 1))
+					if (((int32)strlen(str)) >= (_vm->_global->_inter_animDataSize * 4 - 1))
 						// Above the limit of character allowed in a string, ignore the key
 						continue;
 
@@ -1145,7 +1118,7 @@ uint16 Hotspots::updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 heig
 }
 
 uint16 Hotspots::handleInputs(int16 time, uint16 inputCount, uint16 &curInput,
-		InputDesc *inputs, uint16 &id, uint16 &index) {
+                              InputDesc *inputs, uint16 &id, uint16 &index) {
 
 	// Redraw all texts in all inputs we currently manage
 	updateAllTexts(inputs);
@@ -1163,11 +1136,11 @@ uint16 Hotspots::handleInputs(int16 time, uint16 inputCount, uint16 &curInput,
 
 		// Handle input events from that input field
 		uint16 key = updateInput(inputSpot.left, inputSpot.top,
-				inputSpot.right - inputSpot.left + 1,
-				inputSpot.bottom - inputSpot.top + 1,
-				inputs[curInput].backColor, inputs[curInput].frontColor,
-				GET_VARO_STR(inputSpot.key), inputs[curInput].fontIndex,
-				inputSpot.getType(), time, id, index);
+		                         inputSpot.right - inputSpot.left + 1,
+		                         inputSpot.bottom - inputSpot.top + 1,
+		                         inputs[curInput].backColor, inputs[curInput].frontColor,
+		                         GET_VARO_STR(inputSpot.key), inputs[curInput].fontIndex,
+		                         inputSpot.getType(), time, id, index);
 
 		if (_vm->_inter->_terminate)
 			return 0;
@@ -1233,18 +1206,18 @@ uint16 Hotspots::handleInputs(int16 time, uint16 inputCount, uint16 &curInput,
 }
 
 void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
-		uint16 &inputId, bool &hasInput, uint16 &inputCount) {
+                           uint16 &inputId, bool &hasInput, uint16 &inputCount) {
 
 	ids[i] = 0;
 
 	// Type and window
-	byte type      = _vm->_game->_script->readByte();
+	byte type = _vm->_game->_script->readByte();
 	byte windowNum = 0;
 
 	if ((type & 0x40) != 0) {
 		// Got a window ID
 
-		type     -= 0x40;
+		type -= 0x40;
 		windowNum = _vm->_game->_script->readByte();
 	}
 
@@ -1254,17 +1227,17 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 	if ((type & 0x80) != 0) {
 		// Complex coordinate expressions
 		funcPos = _vm->_game->_script->pos();
-		left    = _vm->_game->_script->readValExpr();
-		top     = _vm->_game->_script->readValExpr();
-		width   = _vm->_game->_script->readValExpr();
-		height  = _vm->_game->_script->readValExpr();
+		left = _vm->_game->_script->readValExpr();
+		top = _vm->_game->_script->readValExpr();
+		width = _vm->_game->_script->readValExpr();
+		height = _vm->_game->_script->readValExpr();
 	} else {
 		// Immediate values
 		funcPos = 0;
-		left    = _vm->_game->_script->readUint16();
-		top     = _vm->_game->_script->readUint16();
-		width   = _vm->_game->_script->readUint16();
-		height  = _vm->_game->_script->readUint16();
+		left = _vm->_game->_script->readUint16();
+		top = _vm->_game->_script->readUint16();
+		width = _vm->_game->_script->readUint16();
+		height = _vm->_game->_script->readUint16();
 	}
 	type &= 0x7F;
 
@@ -1281,11 +1254,10 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		} else {
 			// The hotspot is inside a window, only draw it if it's the topmost window
 
-			if ((_vm->_draw->_fascinWin[windowNum].id != -1) &&
-			    (_vm->_draw->_fascinWin[windowNum].id == (_vm->_draw->_winCount - 1))) {
+			if ((_vm->_draw->_fascinWin[windowNum].id != -1) && (_vm->_draw->_fascinWin[windowNum].id == (_vm->_draw->_winCount - 1))) {
 
 				const uint16 wLeft = left + _vm->_draw->_fascinWin[windowNum].left;
-				const uint16 wTop  = top  + _vm->_draw->_fascinWin[windowNum].top;
+				const uint16 wTop = top + _vm->_draw->_fascinWin[windowNum].top;
 
 				surface.drawRect(wLeft, wTop, wLeft + width - 1, wTop + height - 1, 0);
 			}
@@ -1295,11 +1267,11 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 	// Apply global drawing offset
 	if ((_vm->_draw->_renderFlags & RENDERFLAG_CAPTUREPOP) && (left != 0xFFFF)) {
 		left += _vm->_draw->_backDeltaX;
-		top  += _vm->_draw->_backDeltaY;
+		top += _vm->_draw->_backDeltaY;
 	}
 
-	right  = left + width  - 1;
-	bottom = top  + height - 1;
+	right = left + width - 1;
+	bottom = top + height - 1;
 
 	// Enabling the hotspots again
 	if ((type == kTypeEnable2) || (type == kTypeEnable1)) {
@@ -1326,13 +1298,13 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		return;
 	}
 
-	int16 key   = 0;
+	int16 key = 0;
 	int16 flags = 0;
 	Font *font = 0;
 	uint32 funcEnter = 0, funcLeave = 0;
 
 	if ((windowNum != 0) && (type != 0) && (type != 2))
-		debugC(0, kDebugHotspots, "evaluateNew - type %d, win %d",type, windowNum);
+		debugC(0, kDebugHotspots, "evaluateNew - type %d, win %d", type, windowNum);
 
 	// Evaluate parameters for the new hotspot
 	switch (type) {
@@ -1345,14 +1317,14 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		funcLeave = _vm->_game->_script->pos();
 		_vm->_game->_script->skipBlock();
 
-		key   = i + ((kStateFilled | kStateType2) << 12);
+		key = i + ((kStateFilled | kStateType2) << 12);
 		flags = type + (windowNum << 8);
 		break;
 
 	case kTypeMove:
-		key    = _vm->_game->_script->readInt16();
+		key = _vm->_game->_script->readInt16();
 		ids[i] = _vm->_game->_script->readInt16();
-		flags  = _vm->_game->_script->readInt16();
+		flags = _vm->_game->_script->readInt16();
 
 		funcEnter = _vm->_game->_script->pos();
 		_vm->_game->_script->skipBlock();
@@ -1379,18 +1351,17 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		_vm->_util->clearKeyBuf();
 
 		// Input text parameters
-		key                           = _vm->_game->_script->readVarIndex();
-		inputs[inputCount].fontIndex  = _vm->_game->_script->readInt16();
-		inputs[inputCount].backColor  = _vm->_game->_script->readByte();
+		key = _vm->_game->_script->readVarIndex();
+		inputs[inputCount].fontIndex = _vm->_game->_script->readInt16();
+		inputs[inputCount].backColor = _vm->_game->_script->readByte();
 		inputs[inputCount].frontColor = _vm->_game->_script->readByte();
-		inputs[inputCount].length     = 0;
-		inputs[inputCount].str        = 0;
+		inputs[inputCount].length = 0;
+		inputs[inputCount].str = 0;
 
 		if ((type >= kTypeInput2NoLeave) && (type <= kTypeInput3Leave)) {
 			inputs[inputCount].length = _vm->_game->_script->readUint16();
 
-			inputs[inputCount].str =
-				(const char *)(_vm->_game->_script->getData() + _vm->_game->_script->pos());
+			inputs[inputCount].str = (const char *)(_vm->_game->_script->getData() + _vm->_game->_script->pos());
 
 			_vm->_game->_script->skip(inputs[inputCount].length);
 		}
@@ -1407,7 +1378,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 			right = left + width * font->getCharWidth() - 1;
 
 		funcEnter = 0;
-		funcPos   = 0;
+		funcPos = 0;
 		funcLeave = 0;
 		if (!(type & 1)) {
 			// Got a leave
@@ -1424,43 +1395,43 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		inputId = i;
 		// fall through
 	case kTypeClick:
-		key    = _vm->_game->_script->readInt16();
+		key = _vm->_game->_script->readInt16();
 		ids[i] = _vm->_game->_script->readInt16();
-		flags  = _vm->_game->_script->readInt16();
+		flags = _vm->_game->_script->readInt16();
 
 		if (flags > 3)
-			warning("evaluateNew: Warning, use of type 2 or 20. flags = %d, should be %d", flags, flags&3);
+			warning("evaluateNew: Warning, use of type 2 or 20. flags = %d, should be %d", flags, flags & 3);
 
 		funcEnter = 0;
 
 		funcLeave = _vm->_game->_script->pos();
 		_vm->_game->_script->skipBlock();
 
-		flags = ((uint16) kTypeClick) + (windowNum << 8) + (flags << 4);
+		flags = ((uint16)kTypeClick) + (windowNum << 8) + (flags << 4);
 		break;
 
 	case kTypeClickEnter:
-		key    = _vm->_game->_script->readInt16();
+		key = _vm->_game->_script->readInt16();
 		ids[i] = _vm->_game->_script->readInt16();
-		flags  = _vm->_game->_script->readInt16() & 3;
+		flags = _vm->_game->_script->readInt16() & 3;
 
 		funcEnter = _vm->_game->_script->pos();
 		_vm->_game->_script->skipBlock();
 
 		funcLeave = 0;
 
-		flags = ((uint16) kTypeClick) + (windowNum << 8) + (flags << 4);
+		flags = ((uint16)kTypeClick) + (windowNum << 8) + (flags << 4);
 		break;
 	}
 
 	// Add the new hotspot
 	add(i | (kStateFilled << 12), left, top, right, bottom,
-			flags, key, funcEnter, funcLeave, funcPos);
+	    flags, key, funcEnter, funcLeave, funcPos);
 }
 
 bool Hotspots::evaluateFind(uint16 key, int16 timeVal, const uint16 *ids,
-		uint16 leaveWindowIndex, uint16 hotspotIndex1, uint16 hotspotIndex2,
-		uint16 endIndex, int16 &duration, uint16 &id, uint16 &index, bool &finished) {
+                            uint16 leaveWindowIndex, uint16 hotspotIndex1, uint16 hotspotIndex2,
+                            uint16 endIndex, int16 &duration, uint16 &id, uint16 &index, bool &finished) {
 
 	bool fascinCheck = false;
 
@@ -1491,9 +1462,8 @@ bool Hotspots::evaluateFind(uint16 key, int16 timeVal, const uint16 *ids,
 	if ((duration != 0) && (!fascinCheck)) {
 		// We've got a time duration
 
-		if        (hotspotIndex1 != 0) {
-			finished =
-				leaveNthPlain(hotspotIndex1, endIndex, timeVal, ids, id, index, duration);
+		if (hotspotIndex1 != 0) {
+			finished = leaveNthPlain(hotspotIndex1, endIndex, timeVal, ids, id, index, duration);
 		} else if (hotspotIndex2 != 0) {
 			findNthPlain(hotspotIndex2, endIndex, id, index);
 		} else {
@@ -1501,7 +1471,7 @@ bool Hotspots::evaluateFind(uint16 key, int16 timeVal, const uint16 *ids,
 			for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 				Hotspot &spot = _hotspots[i];
 				if (spot.isFilledNew()) {
-					id    = spot.id;
+					id = spot.id;
 					index = i;
 					break;
 				}
@@ -1550,15 +1520,15 @@ void Hotspots::evaluate() {
 
 	// Parameters of this block
 	_vm->_game->_handleMouse = _vm->_game->_script->peekByte(0);
-	int16 duration           = _vm->_game->_script->peekByte(1);
+	int16 duration = _vm->_game->_script->peekByte(1);
 
 	byte leaveWindowIndex = 0;
 	if (_vm->getGameType() == kGameTypeFascination)
 		leaveWindowIndex = _vm->_game->_script->peekByte(2);
 
-	byte hotspotIndex1       = _vm->_game->_script->peekByte(3);
-	byte hotspotIndex2       = _vm->_game->_script->peekByte(4);
-	bool needRecalculation   = _vm->_game->_script->peekByte(5) != 0;
+	byte hotspotIndex1 = _vm->_game->_script->peekByte(3);
+	byte hotspotIndex2 = _vm->_game->_script->peekByte(4);
+	bool needRecalculation = _vm->_game->_script->peekByte(5) != 0;
 
 	// Seconds -> Milliseconds
 	duration *= 1000;
@@ -1577,11 +1547,11 @@ void Hotspots::evaluate() {
 
 	bool finishedDuration = false;
 
-	uint16 id      = 0;
+	uint16 id = 0;
 	uint16 inputId = 0xFFFF;
-	uint16 index   = 0;
+	uint16 index = 0;
 
-	bool   hasInput   = false;
+	bool hasInput = false;
 	uint16 inputCount = 0;
 
 	// Adding new hotspots
@@ -1619,7 +1589,7 @@ void Hotspots::evaluate() {
 
 		// Try to find a fitting hotspot
 		evaluateFind(key, timeVal, ids, leaveWindowIndex, hotspotIndex1, hotspotIndex2, endIndex,
-				duration, id, index, finishedDuration);
+		             duration, id, index, finishedDuration);
 
 		if (finishedDuration)
 			break;
@@ -1666,11 +1636,9 @@ void Hotspots::evaluate() {
 		Hotspot &spot = _hotspots[i];
 
 		// Disable the ones still there
-		if ((spot.getState() == (kStateFilled | kStateType1)) ||
-				(spot.getState() == (kStateFilled | kStateType2)))
-				spot.disable();
+		if ((spot.getState() == (kStateFilled | kStateType1)) || (spot.getState() == (kStateFilled | kStateType2)))
+			spot.disable();
 	}
-
 }
 
 int16 Hotspots::findCursor(uint16 x, uint16 y) const {
@@ -1707,12 +1675,11 @@ int16 Hotspots::findCursor(uint16 x, uint16 y) const {
 			}
 
 			if (_vm->_draw->_cursorAnimLow[cursor] == -1)
-			// If the cursor is invalid... there's a generic "click" cursor
+				// If the cursor is invalid... there's a generic "click" cursor
 				cursor = 1;
 
 			return cursor;
 		}
-
 	}
 
 	// Normal, non-window cursor handling
@@ -1764,15 +1731,14 @@ void Hotspots::oPlaytoons_F_1B() {
 	fontIndex = _vm->_game->_script->readValExpr();
 	var4 = _vm->_game->_script->readValExpr();
 
-//  this variable is always set to 0 in Playtoons
-//	var_4 += unk_var;
+	//  this variable is always set to 0 in Playtoons
+	//	var_4 += unk_var;
 
 	for (int i = 0; i < kHotspotCount; i++) {
 		if (_hotspots[i].isEnd())
 			return;
 
-		if ((_hotspots[i].id == 0xD000 + shortId) || (_hotspots[i].id == 0xB000 + shortId) ||
-			(_hotspots[i].id == 0x4000 + shortId)) {
+		if ((_hotspots[i].id == 0xD000 + shortId) || (_hotspots[i].id == 0xB000 + shortId) || (_hotspots[i].id == 0x4000 + shortId)) {
 			longId = _hotspots[i].id;
 			warning("oPlaytoons_F_1B: shortId %d, var2 %d fontIndex %d var4 %d - longId %d", shortId, var2, fontIndex, var4, longId);
 
@@ -1791,7 +1757,7 @@ void Hotspots::oPlaytoons_F_1B() {
 				right -= 2;
 				bottom -= 2;
 			}
-			_vm->_draw->oPlaytoons_sub_F_1B(0x8000+ var2, left, top, right, bottom, _vm->_game->_script->getResultStr(), fontIndex, var4, shortId);
+			_vm->_draw->oPlaytoons_sub_F_1B(0x8000 + var2, left, top, right, bottom, _vm->_game->_script->getResultStr(), fontIndex, var4, shortId);
 			return;
 		}
 	}
@@ -1884,9 +1850,9 @@ bool Hotspots::findFirstInputLeave(uint16 &id, uint16 &inputId, uint16 &index) c
 			// Not an input with a leave function
 			continue;
 
-		id      = spot.id;
+		id = spot.id;
 		inputId = spot.id & 0x7FFF;
-		index   = i;
+		index = i;
 		return true;
 	}
 
@@ -1894,7 +1860,7 @@ bool Hotspots::findFirstInputLeave(uint16 &id, uint16 &inputId, uint16 &index) c
 }
 
 bool Hotspots::findKey(uint16 key, uint16 &id, uint16 &index) const {
-	id    = 0;
+	id = 0;
 	index = 0;
 
 	for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
@@ -1906,7 +1872,7 @@ bool Hotspots::findKey(uint16 key, uint16 &id, uint16 &index) const {
 
 		//      Key match              Catch all
 		if ((spot.key == key) || (spot.key == 0x7FFF)) {
-			id    = spot.id;
+			id = spot.id;
 			index = i;
 			return true;
 		}
@@ -1916,7 +1882,7 @@ bool Hotspots::findKey(uint16 key, uint16 &id, uint16 &index) const {
 }
 
 bool Hotspots::findKeyCaseInsensitive(uint16 key, uint16 &id, uint16 &index) const {
-	id    = 0;
+	id = 0;
 	index = 0;
 
 	for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
@@ -1935,7 +1901,7 @@ bool Hotspots::findKeyCaseInsensitive(uint16 key, uint16 &id, uint16 &index) con
 
 		// Compare
 		if (toupper(key & 0xFF) == toupper(spot.key)) {
-			id    = spot.id;
+			id = spot.id;
 			index = i;
 			return true;
 		}
@@ -1945,7 +1911,7 @@ bool Hotspots::findKeyCaseInsensitive(uint16 key, uint16 &id, uint16 &index) con
 }
 
 bool Hotspots::findNthPlain(uint16 n, uint16 startIndex, uint16 &id, uint16 &index) const {
-	id    = 0;
+	id = 0;
 	index = 0;
 
 	uint16 counter = 0;
@@ -1960,7 +1926,7 @@ bool Hotspots::findNthPlain(uint16 n, uint16 startIndex, uint16 &id, uint16 &ind
 			// Not yet the one we want
 			continue;
 
-		id    = spot.id;
+		id = spot.id;
 		index = i;
 		return true;
 	}
@@ -1969,9 +1935,9 @@ bool Hotspots::findNthPlain(uint16 n, uint16 startIndex, uint16 &id, uint16 &ind
 }
 
 bool Hotspots::leaveNthPlain(uint16 n, uint16 startIndex, int16 timeVal, const uint16 *ids,
-		uint16 &id, uint16 &index, int16 &duration) {
+                             uint16 &id, uint16 &index, int16 &duration) {
 
-	id    = 0;
+	id = 0;
 	index = 0;
 
 	if (!findNthPlain(n, startIndex, id, index))
@@ -2003,7 +1969,7 @@ bool Hotspots::leaveNthPlain(uint16 n, uint16 startIndex, int16 timeVal, const u
 	}
 
 	if (getCurrentHotspot() == 0) {
-		id    = 0;
+		id = 0;
 		index = 0;
 	}
 
@@ -2048,7 +2014,7 @@ void Hotspots::cleanFloatString(const Hotspot &spot) const {
 }
 
 void Hotspots::checkStringMatch(const Hotspot &spot, const InputDesc &input,
-		uint16 inputPos) const {
+                                uint16 inputPos) const {
 
 	const char *str = input.str;
 
@@ -2081,8 +2047,8 @@ void Hotspots::checkStringMatch(const Hotspot &spot, const InputDesc &input,
 
 void Hotspots::matchInputStrings(const InputDesc *inputs) const {
 	uint16 strInputCount = 0;
-	uint16 inputIndex    = 0;
-	uint16 inputPos      = 1;
+	uint16 inputIndex = 0;
+	uint16 inputPos = 1;
 
 	for (int i = 0; i < kHotspotCount; i++) {
 		const Hotspot &spot = _hotspots[i];
@@ -2110,27 +2076,26 @@ void Hotspots::matchInputStrings(const InputDesc *inputs) const {
 	}
 
 	// Notify the scripts if we reached the requested hotspot
-	WRITE_VAR(17, (uint32) (strInputCount == ((uint16) VAR(17))));
+	WRITE_VAR(17, (uint32)(strInputCount == ((uint16)VAR(17))));
 }
 
 uint16 Hotspots::convertSpecialKey(uint16 key) const {
-	if (((key & 0xFF) >= ' ') && ((key & 0xFF) <= 0xFF) &&
-			((key >> 8) > 1) && ((key >> 8) < 12))
+	if (((key & 0xFF) >= ' ') && ((key & 0xFF) <= 0xFF) && ((key >> 8) > 1) && ((key >> 8) < 12))
 		key = '0' + (((key >> 8) - 1) % 10) + (key & 0xFF00);
 
 	return key;
 }
 
 void Hotspots::getTextCursorPos(const Font &font, const char *str,
-		uint32 pos, uint16 x, uint16 y, uint16 width, uint16 height,
-		uint16 &cursorX, uint16 &cursorY, uint16 &cursorWidth, uint16 &cursorHeight) const {
+                                uint32 pos, uint16 x, uint16 y, uint16 width, uint16 height,
+                                uint16 &cursorX, uint16 &cursorY, uint16 &cursorWidth, uint16 &cursorHeight) const {
 
 	if (!font.isMonospaced()) {
 		// Cursor to the right of the current character
 
-		cursorX      = x;
-		cursorY      = y;
-		cursorWidth  = 1;
+		cursorX = x;
+		cursorY = y;
+		cursorWidth = 1;
 		cursorHeight = height;
 
 		// Iterate through the string and add each character's width
@@ -2140,30 +2105,30 @@ void Hotspots::getTextCursorPos(const Font &font, const char *str,
 	} else {
 		// Cursor underlining the current character
 
-		cursorX      = x + font.getCharWidth() * pos;
-		cursorY      = y + height - 1;
-		cursorWidth  = font.getCharWidth();
+		cursorX = x + font.getCharWidth() * pos;
+		cursorY = y + height - 1;
+		cursorWidth = font.getCharWidth();
 		cursorHeight = 1;
 	}
 }
 
 void Hotspots::fillRect(uint16 x, uint16 y, uint16 width, uint16 height, uint16 color) const {
-	_vm->_draw->_destSurface  = Draw::kBackSurface;
-	_vm->_draw->_destSpriteX  = x;
-	_vm->_draw->_destSpriteY  = y;
-	_vm->_draw->_spriteRight  = width;
+	_vm->_draw->_destSurface = Draw::kBackSurface;
+	_vm->_draw->_destSpriteX = x;
+	_vm->_draw->_destSpriteY = y;
+	_vm->_draw->_spriteRight = width;
 	_vm->_draw->_spriteBottom = height;
-	_vm->_draw->_backColor    = color;
+	_vm->_draw->_backColor = color;
 
 	_vm->_draw->spriteOperation(DRAW_FILLRECT | 0x10);
 }
 
 void Hotspots::printText(uint16 x, uint16 y, const char *str, uint16 fontIndex, uint16 color) const {
-	_vm->_draw->_destSpriteX  = x;
-	_vm->_draw->_destSpriteY  = y;
-	_vm->_draw->_frontColor   = color;
-	_vm->_draw->_fontIndex    = fontIndex;
-	_vm->_draw->_textToPrint  = str;
+	_vm->_draw->_destSpriteX = x;
+	_vm->_draw->_destSpriteY = y;
+	_vm->_draw->_frontColor = color;
+	_vm->_draw->_fontIndex = fontIndex;
+	_vm->_draw->_textToPrint = str;
 	_vm->_draw->_transparency = 1;
 
 	_vm->_draw->spriteOperation(DRAW_PRINTTEXT | 0x10);
@@ -2192,10 +2157,10 @@ void Hotspots::updateAllTexts(const InputDesc *inputs) const {
 		Common::strlcpy(tempStr, GET_VARO_STR(spot.key), 256);
 
 		// Coordinates
-		uint16 x      = spot.left;
-		uint16 y      = spot.top;
-		uint16 width  = spot.right  - spot.left + 1;
-		uint16 height = spot.bottom - spot.top  + 1;
+		uint16 x = spot.left;
+		uint16 y = spot.top;
+		uint16 width = spot.right - spot.left + 1;
+		uint16 height = spot.bottom - spot.top + 1;
 		// Clear the background
 		fillRect(x, y, width, height, inputs[input].backColor);
 

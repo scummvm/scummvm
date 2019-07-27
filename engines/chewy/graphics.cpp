@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/system.h"
 #include "common/events.h"
+#include "common/system.h"
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
@@ -37,7 +37,8 @@ namespace Chewy {
 #define DESC_WIDTH 80
 #define DESC_HEIGHT 8
 
-Graphics::Graphics(ChewyEngine *vm) : _vm(vm) {
+Graphics::Graphics(ChewyEngine *vm)
+  : _vm(vm) {
 	_font = nullptr;
 	_descSurface.create(DESC_WIDTH, DESC_HEIGHT, ::Graphics::PixelFormat::createFormatCLUT8());
 }

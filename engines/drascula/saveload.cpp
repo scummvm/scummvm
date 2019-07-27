@@ -32,7 +32,7 @@
 
 namespace Drascula {
 
-#define MAGIC_HEADER 0xD6A55A57		// (D)rascula (GA)me (S)cummVM (SA)ve (ST)ate
+#define MAGIC_HEADER 0xD6A55A57 // (D)rascula (GA)me (S)cummVM (SA)ve (ST)ate
 #define SAVEGAME_VERSION 1
 
 void DrasculaEngine::checkForOldSaveGames() {
@@ -44,9 +44,10 @@ void DrasculaEngine::checkForOldSaveGames() {
 		return;
 
 	GUI::MessageDialog dialog0(
-	    _("ScummVM found that you have old saved games for Drascula that should be converted.\n"
-	      "The old saved game format is no longer supported, so you will not be able to load your games if you don't convert them.\n\n"
-	      "Press OK to convert them now, otherwise you will be asked again the next time you start the game.\n"), _("OK"), _("Cancel"));
+	  _("ScummVM found that you have old saved games for Drascula that should be converted.\n"
+	    "The old saved game format is no longer supported, so you will not be able to load your games if you don't convert them.\n\n"
+	    "Press OK to convert them now, otherwise you will be asked again the next time you start the game.\n"),
+	  _("OK"), _("Cancel"));
 
 	int choice = dialog0.runModal();
 	if (choice == GUI::kMessageCancel)
@@ -105,7 +106,7 @@ SaveStateDescriptor loadMetaData(Common::ReadStream *s, int slot, bool setPlayTi
 	uint32 sig = s->readUint32BE();
 	byte version = s->readByte();
 
-	SaveStateDescriptor desc(-1, "");	// init to an invalid save slot
+	SaveStateDescriptor desc(-1, ""); // init to an invalid save slot
 
 	if (sig != MAGIC_HEADER || version > SAVEGAME_VERSION)
 		return desc;
@@ -172,7 +173,7 @@ void DrasculaEngine::convertSaveGame(int slot, const Common::String &desc) {
 
 	// First, write the appropriate meta data in the new file
 	saveMetaData(newFile, desc);
-	Graphics::saveThumbnail(*newFile);	// basically, at this point this will capture a black screen
+	Graphics::saveThumbnail(*newFile); // basically, at this point this will capture a black screen
 
 	// And then attach the actual save data
 	newFile->write(buffer, dataSize);
@@ -287,7 +288,6 @@ bool DrasculaEngine::loadGame(int slot) {
 		loadPic(97, extraSurface);
 		loadPic(99, backSurface);
 	}
-
 
 	loadMetaData(in, slot, true);
 	Graphics::skipThumbnail(*in);
@@ -439,7 +439,7 @@ bool DrasculaEngine::saveLoadScreen() {
 					if (selectedName.empty()) {
 						selectedName = enterName(selectedName);
 						if (!selectedName.empty())
-							_saveNames[selectedSlot] = selectedName;	// update save name
+							_saveNames[selectedSlot] = selectedName; // update save name
 					}
 					break;
 				}
@@ -449,7 +449,7 @@ bool DrasculaEngine::saveLoadScreen() {
 			if (_mouseX > 117 && _mouseY > 15 && _mouseX < 295 && _mouseY < 24 && !selectedName.empty()) {
 				selectedName = enterName(selectedName);
 				if (!selectedName.empty())
-					_saveNames[selectedSlot] = selectedName;	// update save name
+					_saveNames[selectedSlot] = selectedName; // update save name
 			}
 
 			// Check if the user has clicked a button
@@ -482,7 +482,7 @@ bool DrasculaEngine::saveLoadScreen() {
 				// "Play" button
 				break;
 			}
-		}	// if (_leftMouseButton == 1)
+		} // if (_leftMouseButton == 1)
 
 		_leftMouseButton = 0;
 		delay(10);

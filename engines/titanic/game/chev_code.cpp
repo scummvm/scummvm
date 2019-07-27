@@ -25,16 +25,16 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CChevCode, CGameObject)
-	ON_MESSAGE(SetChevLiftBits)
-	ON_MESSAGE(SetChevClassBits)
-	ON_MESSAGE(SetChevFloorBits)
-	ON_MESSAGE(SetChevRoomBits)
-	ON_MESSAGE(GetChevLiftNum)
-	ON_MESSAGE(GetChevClassNum)
-	ON_MESSAGE(GetChevFloorNum)
-	ON_MESSAGE(GetChevRoomNum)
-	ON_MESSAGE(CheckChevCode)
-	ON_MESSAGE(GetChevCodeFromRoomNameMsg)
+ON_MESSAGE(SetChevLiftBits)
+ON_MESSAGE(SetChevClassBits)
+ON_MESSAGE(SetChevFloorBits)
+ON_MESSAGE(SetChevRoomBits)
+ON_MESSAGE(GetChevLiftNum)
+ON_MESSAGE(GetChevClassNum)
+ON_MESSAGE(GetChevFloorNum)
+ON_MESSAGE(GetChevRoomNum)
+ON_MESSAGE(CheckChevCode)
+ON_MESSAGE(GetChevCodeFromRoomNameMsg)
 END_MESSAGE_MAP()
 
 void CChevCode::save(SimpleFile *file, int indent) {
@@ -225,8 +225,8 @@ bool CChevCode::CheckChevCode(CCheckChevCode *msg) {
 			switch (getClassMsg._classNum) {
 			case 1:
 				if (getFloorMsg._floorNum >= 2 && getFloorMsg._floorNum <= 18
-					&& getRoomMsg._roomNum >= 1 && getRoomMsg._roomNum <= 3
-					&& getLiftMsg._liftNum >= 1 && getLiftMsg._liftNum <= 4)
+				    && getRoomMsg._roomNum >= 1 && getRoomMsg._roomNum <= 3
+				    && getLiftMsg._liftNum >= 1 && getLiftMsg._liftNum <= 4)
 					classNum = 1;
 				else
 					classNum = 5;
@@ -234,8 +234,8 @@ bool CChevCode::CheckChevCode(CCheckChevCode *msg) {
 
 			case 2:
 				if (getFloorMsg._floorNum >= 19 && getFloorMsg._floorNum <= 26
-					&& getRoomMsg._roomNum >= 1 && getRoomMsg._roomNum <= 5
-					&& getLiftMsg._liftNum >= 1 && getLiftMsg._liftNum <= 4)
+				    && getRoomMsg._roomNum >= 1 && getRoomMsg._roomNum <= 5
+				    && getLiftMsg._liftNum >= 1 && getLiftMsg._liftNum <= 4)
 					classNum = 2;
 				else
 					classNum = 5;
@@ -243,9 +243,9 @@ bool CChevCode::CheckChevCode(CCheckChevCode *msg) {
 
 			case 3:
 				if (getFloorMsg._floorNum >= 27 && getFloorMsg._floorNum <= 37
-					&& getRoomMsg._roomNum >= 1 && getRoomMsg._roomNum <= 18
-					&& (getLiftMsg._liftNum & 1) == 1
-					&& getLiftMsg._liftNum >= 1 && getLiftMsg._liftNum <= 4)
+				    && getRoomMsg._roomNum >= 1 && getRoomMsg._roomNum <= 18
+				    && (getLiftMsg._liftNum & 1) == 1
+				    && getLiftMsg._liftNum >= 1 && getLiftMsg._liftNum <= 4)
 					classNum = 3;
 				else
 					classNum = 5;

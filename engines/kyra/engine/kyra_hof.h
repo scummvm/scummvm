@@ -24,14 +24,14 @@
 #define KYRA_KYRA_HOF_H
 
 #include "kyra/engine/kyra_v2.h"
+#include "kyra/graphics/screen_hof.h"
+#include "kyra/gui/gui_hof.h"
 #include "kyra/script/script.h"
 #include "kyra/script/script_tim.h"
-#include "kyra/graphics/screen_hof.h"
 #include "kyra/text/text_hof.h"
-#include "kyra/gui/gui_hof.h"
 
-#include "common/list.h"
 #include "common/func.h"
+#include "common/list.h"
 
 namespace Kyra {
 
@@ -43,9 +43,10 @@ class SeqPlayer_HOF;
 struct TIM;
 
 class KyraEngine_HoF : public KyraEngine_v2 {
-friend class Debugger_HoF;
-friend class TextDisplayer_HoF;
-friend class GUI_HoF;
+	friend class Debugger_HoF;
+	friend class TextDisplayer_HoF;
+	friend class GUI_HoF;
+
 public:
 	KyraEngine_HoF(OSystem *system, const GameFlags &flags);
 	~KyraEngine_HoF();
@@ -442,7 +443,7 @@ protected:
 	void snd_loadSoundFile(int id);
 
 	void playVoice(int high, int low);
-	void snd_playSoundEffect(int track, int volume=0xFF);
+	void snd_playSoundEffect(int track, int volume = 0xFF);
 
 	// timer
 	void timerFadeOutMessage(int);
@@ -615,7 +616,7 @@ protected:
 	bool _chatAltFlag;
 
 	// sequence player
-/*	ActiveWSA *_activeWSA;
+	/*	ActiveWSA *_activeWSA;
 	ActiveText *_activeText;
 	*/
 	/*const char *const *_sequencePakList;
@@ -654,7 +655,7 @@ protected:
 
 	int _sequenceStringsDuration[33];*/
 
-/*	static const uint8 _seqTextColorPresets[];
+	/*	static const uint8 _seqTextColorPresets[];
 	char *_seqProcessedString;
 	WSAMovie_v2 *_seqWsa;
 

@@ -28,16 +28,13 @@
 namespace Agi {
 
 int AgiLoader_v2::detectGame() {
-	if (!Common::File::exists(LOGDIR) ||
-	        !Common::File::exists(PICDIR) ||
-	        !Common::File::exists(SNDDIR) ||
-	        !Common::File::exists(VIEWDIR))
+	if (!Common::File::exists(LOGDIR) || !Common::File::exists(PICDIR) || !Common::File::exists(SNDDIR) || !Common::File::exists(VIEWDIR))
 		return errInvalidAGIFile;
 
 	// Should this go above the previous lines, so we can force emulation versions
 	// even for AGDS games? -- dsymonds
 	if (_vm->getFeatures() & GF_AGDS)
-		_vm->setVersion(0x2440);   // ALL AGDS games built for 2.440
+		_vm->setVersion(0x2440); // ALL AGDS games built for 2.440
 
 	return errOK;
 }
@@ -74,7 +71,7 @@ int AgiLoader_v2::loadDir(AgiDir *agid, const char *fname) {
 	// build directory entries
 	for (i = 0; i < flen; i += 3) {
 		agid[i / 3].volume = *(mem + i) >> 4;
-		agid[i / 3].offset = READ_BE_UINT24(mem + i) & (uint32) _EMPTY;
+		agid[i / 3].offset = READ_BE_UINT24(mem + i) & (uint32)_EMPTY;
 		debugC(3, kDebugLevelResources, "%d: volume %d, offset 0x%05x", i / 3, agid[i / 3].volume, agid[i / 3].offset);
 	}
 
@@ -153,8 +150,8 @@ uint8 *AgiLoader_v2::loadVolRes(struct AgiDir *agid) {
 		debugC(3, kDebugLevelResources, "loading resource at offset %d", agid->offset);
 		fp.seek(agid->offset, SEEK_SET);
 		fp.read(&x, 5);
-		if ((sig = READ_BE_UINT16((uint8 *) x)) == 0x1234) {
-			agid->len = READ_LE_UINT16((uint8 *) x + 3);
+		if ((sig = READ_BE_UINT16((uint8 *)x)) == 0x1234) {
+			agid->len = READ_LE_UINT16((uint8 *)x + 3);
 			data = (uint8 *)calloc(1, agid->len + 32);
 			if (data != NULL) {
 				fp.read(data, agid->len);

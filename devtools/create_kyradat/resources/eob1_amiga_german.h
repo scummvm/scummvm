@@ -126,7 +126,10 @@ static const char *const kEoB1BonusStringsAmigaGerman[3] = {
 static const StringListProvider kEoB1BonusStringsAmigaGermanProvider = { ARRAYSIZE(kEoB1BonusStringsAmigaGerman), kEoB1BonusStringsAmigaGerman };
 
 static const char *const kEoB1TurnUndeadStringAmigaGerman[1] = {
-	"\x06\x06""%s benutzt die Macht, Untote zu vertreiben!""\x06\x1F""\r"
+	"\x06\x06"
+	"%s benutzt die Macht, Untote zu vertreiben!"
+	"\x06\x1F"
+	"\r"
 };
 
 static const StringListProvider kEoB1TurnUndeadStringAmigaGermanProvider = { ARRAYSIZE(kEoB1TurnUndeadStringAmigaGerman), kEoB1TurnUndeadStringAmigaGerman };
@@ -626,7 +629,10 @@ static const char *const kEoB1CharStatusStrings131AmigaGerman[1] = {
 static const StringListProvider kEoB1CharStatusStrings131AmigaGermanProvider = { ARRAYSIZE(kEoB1CharStatusStrings131AmigaGerman), kEoB1CharStatusStrings131AmigaGerman };
 
 static const char *const kEoB1LevelGainStringsAmigaGerman[1] = {
-	"\x06\x06""%s steigt eine erfahrungsstufe auf.""\x06\x1F""\r"
+	"\x06\x06"
+	"%s steigt eine erfahrungsstufe auf."
+	"\x06\x1F"
+	"\r"
 };
 
 static const StringListProvider kEoB1LevelGainStringsAmigaGermanProvider = { ARRAYSIZE(kEoB1LevelGainStringsAmigaGerman), kEoB1LevelGainStringsAmigaGerman };
@@ -896,4 +902,3 @@ static const char *const kEoB1MonsterDistAttStringsAmigaGerman[5] = {
 };
 
 static const StringListProvider kEoB1MonsterDistAttStringsAmigaGermanProvider = { ARRAYSIZE(kEoB1MonsterDistAttStringsAmigaGerman), kEoB1MonsterDistAttStringsAmigaGerman };
-

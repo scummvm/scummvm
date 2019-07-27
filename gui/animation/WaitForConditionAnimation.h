@@ -42,7 +42,7 @@ typedef Common::SharedPtr<Condition> ConditionPtr;
 /**
  * Used for delaying the animation sequence until a certain condition has been met
  */
-class WaitForConditionAnimation: public Animation {
+class WaitForConditionAnimation : public Animation {
 public:
 	WaitForConditionAnimation() {}
 	virtual ~WaitForConditionAnimation() {}

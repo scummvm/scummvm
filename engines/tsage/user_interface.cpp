@@ -21,11 +21,11 @@
  */
 
 #include "tsage/user_interface.h"
-#include "tsage/core.h"
-#include "tsage/tsage.h"
 #include "tsage/blue_force/blueforce_dialogs.h"
 #include "tsage/blue_force/blueforce_logic.h"
+#include "tsage/core.h"
 #include "tsage/ringworld2/ringworld2_logic.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -86,8 +86,7 @@ void UIQuestion::showDescription(CursorType cursor) {
 	case GType_Ringworld2:
 		if ((cursor == R2_COM_SCANNER) || (cursor == R2_COM_SCANNER_2)) {
 			// Show communicator
-			Ringworld2::SceneExt *scene = static_cast<Ringworld2::SceneExt *>
-				(R2_GLOBALS._sceneManager._scene);
+			Ringworld2::SceneExt *scene = static_cast<Ringworld2::SceneExt *>(R2_GLOBALS._sceneManager._scene);
 			if (!scene->_sceneAreas.contains(R2_GLOBALS._scannerDialog))
 				R2_GLOBALS._scannerDialog->setup2(4, 1, 1, 160, 125);
 		} else {
@@ -157,15 +156,19 @@ void UIScore::draw() {
 void UIScore::updateScore() {
 	int score = T2_GLOBALS._uiElements._scoreValue;
 
-	_digit3.setFrame(score / 1000 + 1); score %= 1000;
-	_digit2.setFrame(score / 100 + 1); score %= 100;
-	_digit1.setFrame(score / 10 + 1); score %= 10;
+	_digit3.setFrame(score / 1000 + 1);
+	score %= 1000;
+	_digit2.setFrame(score / 100 + 1);
+	score %= 100;
+	_digit1.setFrame(score / 10 + 1);
+	score %= 10;
 	_digit0.setFrame(score + 1);
 }
 
 /*--------------------------------------------------------------------------*/
 
-UIInventorySlot::UIInventorySlot(): UIElement() {
+UIInventorySlot::UIInventorySlot()
+  : UIElement() {
 	_objIndex = 0;
 	_object = NULL;
 }
@@ -228,7 +231,8 @@ void UIInventoryScroll::toggle(bool pressed) {
 
 /*--------------------------------------------------------------------------*/
 
-UICollection::UICollection(): EventHandler() {
+UICollection::UICollection()
+  : EventHandler() {
 	_clearScreen = false;
 	_visible = false;
 	_cursorChanged = false;
@@ -275,8 +279,8 @@ void UICollection::draw() {
 
 		// Draw the resulting UI onto the screen
 		GLOBALS._screen.copyFrom(GLOBALS._sceneManager._scene->_backSurface,
-			Rect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT),
-			Rect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT));
+		                         Rect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT),
+		                         Rect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT));
 
 		if (g_vm->getGameID() == GType_Ringworld2)
 			r2rDrawFrame();
@@ -299,12 +303,13 @@ void UICollection::r2rDrawFrame() {
 
 	// Restrict drawing area to exclude the borders at the edge of the screen
 	R2_GLOBALS._screen._clipRect = Rect(4, 3, SCREEN_WIDTH - 4,
-		SCREEN_HEIGHT - 3);
+	                                    SCREEN_HEIGHT - 3);
 }
 
 /*--------------------------------------------------------------------------*/
 
-UIElements::UIElements(): UICollection() {
+UIElements::UIElements()
+  : UICollection() {
 	if (g_vm->getGameID() == GType_Ringworld2)
 		_cursorVisage.setVisage(5, 1);
 	else
@@ -344,8 +349,7 @@ void UIElements::synchronize(Serializer &s) {
 }
 
 void UIElements::process(Event &event) {
-	if (_clearScreen && GLOBALS._player._enabled &&
-			((g_vm->getGameID() != GType_BlueForce) || (GLOBALS._sceneManager._sceneNumber != 50))) {
+	if (_clearScreen && GLOBALS._player._enabled && ((g_vm->getGameID() != GType_BlueForce) || (GLOBALS._sceneManager._sceneNumber != 50))) {
 		if (_bounds.contains(event.mousePos)) {
 			// Cursor inside UI area
 			if (!_cursorChanged) {
@@ -376,7 +380,7 @@ void UIElements::process(Event &event) {
 			// Cursor outside UI area, so reset as necessary
 			GLOBALS._events.setCursor(GLOBALS._events.getCursor());
 			_cursorChanged = false;
-/*
+			/*
 			SceneExt *scene = (SceneExt *)GLOBALS._sceneManager._scene;
 			if (scene->_focusObject) {
 				GfxSurface surface = _cursorVisage.getFrame(7);
@@ -502,7 +506,7 @@ void UIElements::updateInventory(int objectNumber) {
 	}
 
 	// Handle cropping the slots start within inventory
-	int lastPage  = (_itemList.size() - 1) / 4 + 1;
+	int lastPage = (_itemList.size() - 1) / 4 + 1;
 	if (_slotStart < 0)
 		_slotStart = lastPage - 1;
 	else if (_slotStart > (lastPage - 1))

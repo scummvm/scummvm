@@ -21,10 +21,10 @@
  */
 
 #include "mutationofjb/commands/ifitemcommand.h"
+#include "common/str.h"
 #include "mutationofjb/gamedata.h"
 #include "mutationofjb/script.h"
 #include "mutationofjb/util.h"
-#include "common/str.h"
 
 /** @file
  * "IFITEM " <item> [ "!" ]
@@ -66,10 +66,9 @@ bool IfItemCommandParser::parse(const Common::String &line, ScriptParseContext &
 	return true;
 }
 
-
-IfItemCommand::IfItemCommand(const Common::String &item, bool negative) :
-	_item(item),
-	_negative(negative) {}
+IfItemCommand::IfItemCommand(const Common::String &item, bool negative)
+  : _item(item)
+  , _negative(negative) {}
 
 Command::ExecuteResult IfItemCommand::execute(ScriptExecutionContext &scriptExecCtx) {
 	_cachedResult = scriptExecCtx.getGameData()._inventory.hasItem(_item);

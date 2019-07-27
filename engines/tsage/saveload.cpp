@@ -20,13 +20,13 @@
  *
  */
 
-#include "common/savefile.h"
+#include "tsage/saveload.h"
 #include "common/mutex.h"
+#include "common/savefile.h"
 #include "graphics/palette.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "tsage/globals.h"
-#include "tsage/saveload.h"
 #include "tsage/sound.h"
 #include "tsage/tsage.h"
 
@@ -67,7 +67,7 @@ Saver::~Saver() {
 /*--------------------------------------------------------------------------*/
 
 void Serializer::syncPointer(SavedObject **ptr, Common::Serializer::Version minVersion,
-		Common::Serializer::Version maxVersion) {
+                             Common::Serializer::Version maxVersion) {
 	int idx = 0;
 	assert(ptr);
 
@@ -89,7 +89,7 @@ void Serializer::syncPointer(SavedObject **ptr, Common::Serializer::Version minV
 }
 
 void Serializer::validate(const Common::String &s, Common::Serializer::Version minVersion,
-		Common::Serializer::Version maxVersion) {
+                          Common::Serializer::Version maxVersion) {
 	Common::String tempStr = s;
 	syncString(tempStr, minVersion, maxVersion);
 
@@ -98,7 +98,7 @@ void Serializer::validate(const Common::String &s, Common::Serializer::Version m
 }
 
 void Serializer::validate(int v, Common::Serializer::Version minVersion,
-		Common::Serializer::Version maxVersion) {
+                          Common::Serializer::Version maxVersion) {
 	int tempVal = v;
 	syncAsUint32LE(tempVal, minVersion, maxVersion);
 	if (isLoading() && (tempVal != v))
@@ -262,7 +262,8 @@ WARN_UNUSED_RESULT bool Saver::readSavegameHeader(Common::InSaveFile *in, tSageS
 	// Read in the string
 	header._saveName.clear();
 	char ch;
-	while ((ch = (char)in->readByte()) != '\0') header._saveName += ch;
+	while ((ch = (char)in->readByte()) != '\0')
+		header._saveName += ch;
 
 	// Get the thumbnail
 	if (!Graphics::loadThumbnail(*in, header._thumbnail, skipThumbnail)) {
@@ -409,7 +410,7 @@ void Saver::resolveLoadPointers(DynObjects &dynObjects) {
 		Common::List<SavedObjectRef>::iterator iPtr;
 		SavedObject *pObj = *iObj;
 
-		for (iPtr = _unresolvedPtrs.begin(); iPtr != _unresolvedPtrs.end(); ) {
+		for (iPtr = _unresolvedPtrs.begin(); iPtr != _unresolvedPtrs.end();) {
 			SavedObjectRef &r = *iPtr;
 			if (r._objIndex == objIndex) {
 				// Found an unresolved pointer to this object

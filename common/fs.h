@@ -23,8 +23,8 @@
 #ifndef COMMON_FS_H
 #define COMMON_FS_H
 
-#include "common/array.h"
 #include "common/archive.h"
+#include "common/array.h"
 #include "common/hash-str.h"
 #include "common/hashmap.h"
 #include "common/ptr.h"
@@ -58,7 +58,7 @@ class FSList : public Array<FSNode> {};
 class FSNode : public ArchiveMember {
 private:
 	friend class ::AbstractFSNode;
-	SharedPtr<AbstractFSNode>	_realNode;
+	SharedPtr<AbstractFSNode> _realNode;
 	/**
 	 * Construct a FSNode from a backend's AbstractFSNode implementation.
 	 *
@@ -101,7 +101,7 @@ public:
 	 * Compare the name of this node to the name of another. Directories
 	 * go before normal files.
 	 */
-	bool operator<(const FSNode& node) const;
+	bool operator<(const FSNode &node) const;
 
 	/**
 	 * Indicates whether the object referred by this node exists in the filesystem or not.
@@ -267,24 +267,24 @@ public:
  *
  */
 class FSDirectory : public Archive {
-	FSNode	_node;
+	FSNode _node;
 
-	String	_prefix; // string that is prepended to each cache item key
+	String _prefix; // string that is prepended to each cache item key
 	void setPrefix(const String &prefix);
 
 	// Caches are case insensitive, clashes are dealt with when creating
 	// Key is stored in lowercase.
 	typedef HashMap<String, FSNode, IgnoreCase_Hash, IgnoreCase_EqualTo> NodeCache;
-	mutable NodeCache	_fileCache, _subDirCache;
+	mutable NodeCache _fileCache, _subDirCache;
 	mutable bool _cached;
-	mutable int	_depth;
+	mutable int _depth;
 	mutable bool _flat;
 
 	// look for a match
 	FSNode *lookupCache(NodeCache &cache, const String &name) const;
 
 	// cache management
-	void cacheDirectoryRecursive(FSNode node, int depth, const String& prefix) const;
+	void cacheDirectoryRecursive(FSNode node, int depth, const String &prefix) const;
 
 	// fill cache if not already cached
 	void ensureCached() const;
@@ -350,7 +350,6 @@ public:
 	 */
 	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
 };
-
 
 } // End of namespace Common
 

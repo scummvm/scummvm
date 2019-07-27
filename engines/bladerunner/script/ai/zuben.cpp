@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptZuben::AIScriptZuben(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptZuben::AIScriptZuben(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 	_animationLoopCounter = 0;
 	_animationLoopLength = 0;
 	_animationLoopFrameMin = 0;
@@ -47,17 +48,15 @@ void AIScriptZuben::Initialize() {
 
 bool AIScriptZuben::Update() {
 	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenGone
-	 && Actor_Query_Which_Set_In(kActorZuben) != kSetFreeSlotI
-	 && Actor_Query_Which_Set_In(kActorZuben) != Player_Query_Current_Set()
-	) {
+	    && Actor_Query_Which_Set_In(kActorZuben) != kSetFreeSlotI
+	    && Actor_Query_Which_Set_In(kActorZuben) != Player_Query_Current_Set()) {
 		Actor_Put_In_Set(kActorZuben, kSetFreeSlotI);
 		Actor_Set_At_Waypoint(kActorZuben, 41, 0);
 	}
 
-	if ( Actor_Query_Goal_Number(kActorZuben) == kGoalZubenDefault
-	 &&  Player_Query_Current_Scene() == kSceneCT01
-	 && !Game_Flag_Query(kFlagCT01ZubenMcCoyCheck)
-	) {
+	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenDefault
+	    && Player_Query_Current_Scene() == kSceneCT01
+	    && !Game_Flag_Query(kFlagCT01ZubenMcCoyCheck)) {
 		AI_Countdown_Timer_Reset(kActorZuben, kActorTimerAIScriptCustomTask2);
 		AI_Countdown_Timer_Start(kActorZuben, kActorTimerAIScriptCustomTask2, 30);
 		Game_Flag_Set(kFlagCT01ZubenMcCoyCheck);
@@ -65,9 +64,8 @@ bool AIScriptZuben::Update() {
 	}
 
 	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenDefault
-	 && Actor_Query_Friendliness_To_Other(kActorZuben, kActorMcCoy) < 48
-	 && Actor_Query_Is_In_Current_Set(kActorZuben)
-	) {
+	    && Actor_Query_Friendliness_To_Other(kActorZuben, kActorMcCoy) < 48
+	    && Actor_Query_Is_In_Current_Set(kActorZuben)) {
 		Actor_Face_Actor(kActorZuben, kActorHowieLee, true);
 		Actor_Says(kActorZuben, 0, 14);
 		if (Random_Query(1, 3) == 1) {
@@ -78,27 +76,24 @@ bool AIScriptZuben::Update() {
 		return true;
 	}
 
-	if ( Global_Variable_Query(kVariableChapter) >= 4
-	 && !Game_Flag_Query(kFlagZubenRetired)
-	 &&  Actor_Query_Goal_Number(kActorZuben) < 200
-	) {
+	if (Global_Variable_Query(kVariableChapter) >= 4
+	    && !Game_Flag_Query(kFlagZubenRetired)
+	    && Actor_Query_Goal_Number(kActorZuben) < 200) {
 		AI_Movement_Track_Flush(kActorZuben);
 		Actor_Set_Goal_Number(kActorZuben, 200);
 		return true;
 	}
 
-	if ( Global_Variable_Query(kVariableChapter) == 5
-	 && !Game_Flag_Query(kFlagZubenRetired)
-	 &&  Actor_Query_Goal_Number(kActorZuben) < 400
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 5
+	    && !Game_Flag_Query(kFlagZubenRetired)
+	    && Actor_Query_Goal_Number(kActorZuben) < 400) {
 		AI_Movement_Track_Flush(kActorZuben);
 		Actor_Set_Goal_Number(kActorZuben, 400);
 		return true;
 	}
 
 	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT06AttackMcCoy
-	 && Player_Query_Current_Scene() == kSceneCT07
-	) {
+	    && Player_Query_Current_Scene() == kSceneCT07) {
 		AI_Countdown_Timer_Reset(kActorZuben, kActorTimerAIScriptCustomTask0);
 		Game_Flag_Set(kFlagCT05WarehouseOpen);
 		Actor_Set_Targetable(kActorZuben, true);
@@ -108,9 +103,8 @@ bool AIScriptZuben::Update() {
 		return true;
 	}
 
-	if ( Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT02PotDodgeCheck
-	 && !Game_Flag_Query(kFlagCT02ZubenFled)
-	) {
+	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT02PotDodgeCheck
+	    && !Game_Flag_Query(kFlagCT02ZubenFled)) {
 		Game_Flag_Set(kFlagCT02ZubenFled);
 		return true;
 	}
@@ -120,9 +114,8 @@ bool AIScriptZuben::Update() {
 void AIScriptZuben::TimerExpired(int timer) {
 	if (timer == kActorTimerAIScriptCustomTask2) { // Check on McCoy every 30s
 		if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenDefault
-		 && Player_Query_Current_Scene() == kSceneCT01
-		 && Random_Query(1, 3) < 3
-		) {
+		    && Player_Query_Current_Scene() == kSceneCT01
+		    && Random_Query(1, 3) < 3) {
 			Actor_Modify_Friendliness_To_Other(kActorZuben, kActorMcCoy, -1);
 		}
 		Game_Flag_Reset(kFlagCT01ZubenMcCoyCheck);
@@ -147,8 +140,7 @@ void AIScriptZuben::TimerExpired(int timer) {
 
 void AIScriptZuben::CompletedMovementTrack() {
 	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT02RunToFreeSlotG
-	 && Game_Flag_Query(kFlagCT02McCoyFell)
-	) {
+	    && Game_Flag_Query(kFlagCT02McCoyFell)) {
 		Set_Enter(kSetCT03_CT04, kSceneCT03);
 	}
 
@@ -156,8 +148,7 @@ void AIScriptZuben::CompletedMovementTrack() {
 		Actor_Set_Goal_Number(kActorZuben, kGoalZubenCT07RunToFreeSlotA);
 		//return true;
 	} else if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT06HideAtFreeSlotA
-	        && Game_Flag_Query(kFlagCT02McCoyFell)
-	) {
+	           && Game_Flag_Query(kFlagCT02McCoyFell)) {
 		AI_Countdown_Timer_Reset(kActorZuben, kActorTimerAIScriptCustomTask0);
 		Game_Flag_Reset(kFlagCT02McCoyFell);
 		Game_Flag_Set(kFlagCT02McCoyCombatReady);
@@ -213,8 +204,7 @@ void AIScriptZuben::ClickedByPlayer() {
 	}
 
 	if (Global_Variable_Query(kVariableChapter) > 1
-	 && Global_Variable_Query(kVariableChapter) < 5
-	) {
+	    && Global_Variable_Query(kVariableChapter) < 5) {
 		if (Actor_Query_Friendliness_To_Other(kActorZuben, kActorMcCoy) <= 20) {
 			Actor_Face_Actor(kActorMcCoy, kActorZuben, true);
 			Actor_Says(kActorMcCoy, 8910, 11);
@@ -251,11 +241,10 @@ void AIScriptZuben::OtherAgentExitedThisScene(int otherActorId) {
 }
 
 void AIScriptZuben::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
-	if ( otherActorId == kActorMcCoy
-	 && !combatMode
-	 &&  Game_Flag_Query(kFlagCT07ZubenAttack)
-	 && !Game_Flag_Query(kFlagMcCoyShotAtZuben)
-	) {
+	if (otherActorId == kActorMcCoy
+	    && !combatMode
+	    && Game_Flag_Query(kFlagCT07ZubenAttack)
+	    && !Game_Flag_Query(kFlagMcCoyShotAtZuben)) {
 		Non_Player_Actor_Combat_Mode_Off(kActorZuben);
 		Game_Flag_Reset(kFlagCT07ZubenAttack);
 		AI_Movement_Track_Flush(kActorZuben);
@@ -273,9 +262,8 @@ void AIScriptZuben::ShotAtAndMissed() {
 
 bool AIScriptZuben::ShotAtAndHit() {
 	Game_Flag_Set(kFlagMcCoyShotAtZuben);
-	if ( Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT07RunToFreeSlotA
-	 && !Actor_Clue_Query(kActorZuben, kClueMcCoyShotZubenInTheBack)
-	) {
+	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT07RunToFreeSlotA
+	    && !Actor_Clue_Query(kActorZuben, kClueMcCoyShotZubenInTheBack)) {
 		Actor_Clue_Acquire(kActorZuben, kClueMcCoyShotZubenInTheBack, true, -1);
 		Actor_Clue_Lose(kActorZuben, kClueMcCoyLetZubenEscape);
 		Actor_Start_Speech_Sample(kActorMcCoy, 490);
@@ -422,7 +410,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Flush(kActorZuben);
 		AI_Movement_Track_Append_Run(kActorZuben, 51, 0);
 		AI_Movement_Track_Append_Run(kActorZuben, 48, 0);
-		AI_Movement_Track_Append(kActorZuben, 33, 1);  // Hide Zuben
+		AI_Movement_Track_Append(kActorZuben, 33, 1); // Hide Zuben
 		AI_Movement_Track_Repeat(kActorZuben);
 		return false;
 
@@ -469,77 +457,76 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorZuben);
 		return false;
 
-	case 105:
-		{
-			int rnd1 = Random_Query(1, 3);
+	case 105: {
+		int rnd1 = Random_Query(1, 3);
 
-			if (rnd1 == 1) {
-				int rnd2 = Random_Query(1, 3);
-				if (rnd2 == 1) {
-					AI_Movement_Track_Flush(kActorZuben);
-					AI_Movement_Track_Append(kActorZuben, 472, 0);
-					AI_Movement_Track_Append_With_Facing(kActorZuben, 470, 2, 506);
-					AI_Movement_Track_Append(kActorZuben, 471, 5);
-					AI_Movement_Track_Append(kActorZuben, 470, 0);
-					AI_Movement_Track_Append(kActorZuben, 469, 0);
-					AI_Movement_Track_Append(kActorZuben, 468, 2);
-				} else if (rnd2 == 2) {
-					AI_Movement_Track_Flush(kActorZuben);
-					AI_Movement_Track_Append(kActorZuben, 471, 0);
-					AI_Movement_Track_Append(kActorZuben, 472, 5);
-					AI_Movement_Track_Append_With_Facing(kActorZuben, 470, 3, 506);
-					AI_Movement_Track_Append(kActorZuben, 471, 5);
-					AI_Movement_Track_Append(kActorZuben, 472, 0);
-				} else if (rnd2 == 3) {
-					AI_Movement_Track_Flush(kActorZuben);
-					AI_Movement_Track_Append(kActorZuben, 468, 0);
-					AI_Movement_Track_Append(kActorZuben, 469, 3);
-					AI_Movement_Track_Append(kActorZuben, 470, 0);
-					AI_Movement_Track_Append(kActorZuben, 471, 0);
-				}
-				AI_Movement_Track_Append(kActorZuben, 33, 15);
-				AI_Movement_Track_Repeat(kActorZuben);
+		if (rnd1 == 1) {
+			int rnd2 = Random_Query(1, 3);
+			if (rnd2 == 1) {
+				AI_Movement_Track_Flush(kActorZuben);
+				AI_Movement_Track_Append(kActorZuben, 472, 0);
+				AI_Movement_Track_Append_With_Facing(kActorZuben, 470, 2, 506);
+				AI_Movement_Track_Append(kActorZuben, 471, 5);
+				AI_Movement_Track_Append(kActorZuben, 470, 0);
+				AI_Movement_Track_Append(kActorZuben, 469, 0);
+				AI_Movement_Track_Append(kActorZuben, 468, 2);
+			} else if (rnd2 == 2) {
+				AI_Movement_Track_Flush(kActorZuben);
+				AI_Movement_Track_Append(kActorZuben, 471, 0);
+				AI_Movement_Track_Append(kActorZuben, 472, 5);
+				AI_Movement_Track_Append_With_Facing(kActorZuben, 470, 3, 506);
+				AI_Movement_Track_Append(kActorZuben, 471, 5);
+				AI_Movement_Track_Append(kActorZuben, 472, 0);
+			} else if (rnd2 == 3) {
+				AI_Movement_Track_Flush(kActorZuben);
+				AI_Movement_Track_Append(kActorZuben, 468, 0);
+				AI_Movement_Track_Append(kActorZuben, 469, 3);
+				AI_Movement_Track_Append(kActorZuben, 470, 0);
+				AI_Movement_Track_Append(kActorZuben, 471, 0);
 			}
-
-			if (rnd1 == 1 || rnd1 == 2) {
-				int rnd2 = Random_Query(1, 3);
-				if (rnd2 == 1) {
-					AI_Movement_Track_Append(kActorZuben, 473, 0);
-					AI_Movement_Track_Append(kActorZuben, 474, 5);
-					AI_Movement_Track_Append(kActorZuben, 473, 5);
-					AI_Movement_Track_Append(kActorZuben, 475, 0);
-				} else if (rnd2 == 2) {
-					AI_Movement_Track_Append(kActorZuben, 473, 0);
-					AI_Movement_Track_Append(kActorZuben, 476, 0);
-				} else if (rnd2 == 3) {
-					AI_Movement_Track_Append(kActorZuben, 475, 0);
-					AI_Movement_Track_Append(kActorZuben, 473, 5);
-					AI_Movement_Track_Append(kActorZuben, 474, 5);
-				}
-				AI_Movement_Track_Append(kActorZuben, 33, 15);
-				AI_Movement_Track_Repeat(kActorZuben);
-			}
-
-			if (rnd1 == 1 || rnd1 == 2 || rnd1 == 3) {
-				int rnd2 = Random_Query(1, 3);
-				if (rnd2 == 1) {
-					AI_Movement_Track_Append(kActorZuben, 477, 3);
-					AI_Movement_Track_Append(kActorZuben, 478, 0);
-				} else if (rnd2 == 2) {
-					AI_Movement_Track_Append(kActorZuben, 479, 0);
-					AI_Movement_Track_Append(kActorZuben, 488, 0);
-					AI_Movement_Track_Append(kActorZuben, 489, 0);
-					AI_Movement_Track_Append(kActorZuben, 480, 0);
-				} else if (rnd2 == 3) {
-					AI_Movement_Track_Append(kActorZuben, 481, 0);
-					AI_Movement_Track_Append(kActorZuben, 482, 5);
-					AI_Movement_Track_Append(kActorZuben, 483, 5);
-				}
-				AI_Movement_Track_Append(kActorZuben, 33, 15);
-				AI_Movement_Track_Repeat(kActorZuben);
-			}
-			return false;
+			AI_Movement_Track_Append(kActorZuben, 33, 15);
+			AI_Movement_Track_Repeat(kActorZuben);
 		}
+
+		if (rnd1 == 1 || rnd1 == 2) {
+			int rnd2 = Random_Query(1, 3);
+			if (rnd2 == 1) {
+				AI_Movement_Track_Append(kActorZuben, 473, 0);
+				AI_Movement_Track_Append(kActorZuben, 474, 5);
+				AI_Movement_Track_Append(kActorZuben, 473, 5);
+				AI_Movement_Track_Append(kActorZuben, 475, 0);
+			} else if (rnd2 == 2) {
+				AI_Movement_Track_Append(kActorZuben, 473, 0);
+				AI_Movement_Track_Append(kActorZuben, 476, 0);
+			} else if (rnd2 == 3) {
+				AI_Movement_Track_Append(kActorZuben, 475, 0);
+				AI_Movement_Track_Append(kActorZuben, 473, 5);
+				AI_Movement_Track_Append(kActorZuben, 474, 5);
+			}
+			AI_Movement_Track_Append(kActorZuben, 33, 15);
+			AI_Movement_Track_Repeat(kActorZuben);
+		}
+
+		if (rnd1 == 1 || rnd1 == 2 || rnd1 == 3) {
+			int rnd2 = Random_Query(1, 3);
+			if (rnd2 == 1) {
+				AI_Movement_Track_Append(kActorZuben, 477, 3);
+				AI_Movement_Track_Append(kActorZuben, 478, 0);
+			} else if (rnd2 == 2) {
+				AI_Movement_Track_Append(kActorZuben, 479, 0);
+				AI_Movement_Track_Append(kActorZuben, 488, 0);
+				AI_Movement_Track_Append(kActorZuben, 489, 0);
+				AI_Movement_Track_Append(kActorZuben, 480, 0);
+			} else if (rnd2 == 3) {
+				AI_Movement_Track_Append(kActorZuben, 481, 0);
+				AI_Movement_Track_Append(kActorZuben, 482, 5);
+				AI_Movement_Track_Append(kActorZuben, 483, 5);
+			}
+			AI_Movement_Track_Append(kActorZuben, 33, 15);
+			AI_Movement_Track_Repeat(kActorZuben);
+		}
+		return false;
+	}
 	case 106:
 		Actor_Set_Goal_Number(kActorZuben, 105);
 		return true;
@@ -995,7 +982,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	case 25:
 		*animation = 417;
-		 _animationFrame++;
+		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 17;
@@ -1016,7 +1003,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 		}
 		break;
 
-	case 27:  // Opening the door
+	case 27: // Opening the door
 		Actor_Set_Frame_Rate_FPS(kActorZuben, -1);
 		*animation = 420;
 		_animationFrame++;
@@ -1185,20 +1172,20 @@ bool AIScriptZuben::ChangeAnimationMode(int mode) {
 			Sound_Play_Speech_Line(kActorZuben, 9020, 75, 0, 99); // add Zuben's death rattle here
 		}
 		switch (_animationState) {
-			case 2:
-			case 4:
-			case 5:
-			case 7:
-			case 8:
-			case 11:
-			case 12:
-				_animationState = 14;
-				_animationFrame = 0;
-				break;
-			default:
-				_animationState = 13;
-				_animationFrame = 0;
-				break;
+		case 2:
+		case 4:
+		case 5:
+		case 7:
+		case 8:
+		case 11:
+		case 12:
+			_animationState = 14;
+			_animationFrame = 0;
+			break;
+		default:
+			_animationState = 13;
+			_animationFrame = 0;
+			break;
 		}
 		break;
 	case kAnimationModeCombatDie:
@@ -1211,17 +1198,17 @@ bool AIScriptZuben::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptZuben::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptZuben::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptZuben::ReachedMovementTrackWaypoint(int waypointId) {

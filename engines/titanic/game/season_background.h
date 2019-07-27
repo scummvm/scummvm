@@ -33,11 +33,13 @@ class CSeasonBackground : public CBackground {
 	bool ChangeSeasonMsg(CChangeSeasonMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool ActMsg(CActMsg *msg);
+
 public:
 	Season _seasonNum;
 	bool _flag;
 	int _defaultFrame;
 	int _unused;
+
 public:
 	CLASSDEF;
 	CSeasonBackground();

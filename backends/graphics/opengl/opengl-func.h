@@ -66,13 +66,13 @@
  */
 
 #if !defined(GL_FUNC_2_DEF)
-#define GL_FUNC_2_DEF(ret, name, extName, param) GL_FUNC_DEF(ret, name, param)
-#define DEFINED_GL_FUNC_2_DEF
+#	define GL_FUNC_2_DEF(ret, name, extName, param) GL_FUNC_DEF(ret, name, param)
+#	define DEFINED_GL_FUNC_2_DEF
 #endif
 
 #if !defined(GL_EXT_FUNC_DEF)
-#define GL_EXT_FUNC_DEF(ret, name, param) GL_FUNC_DEF(ret, name, param)
-#define DEFINED_GL_EXT_FUNC_DEF
+#	define GL_EXT_FUNC_DEF(ret, name, param) GL_FUNC_DEF(ret, name, param)
+#	define DEFINED_GL_EXT_FUNC_DEF
 #endif
 
 GL_FUNC_DEF(void, glEnable, (GLenum cap));
@@ -143,11 +143,11 @@ GL_FUNC_2_DEF(void, glActiveTexture, glActiveTextureARB, (GLenum texture));
 #endif
 
 #ifdef DEFINED_GL_EXT_FUNC_DEF
-#undef DEFINED_GL_EXT_FUNC_DEF
-#undef GL_EXT_FUNC_DEF
+#	undef DEFINED_GL_EXT_FUNC_DEF
+#	undef GL_EXT_FUNC_DEF
 #endif
 
 #ifdef DEFINED_GL_FUNC_2_DEF
-#undef DEFINED_GL_FUNC_2_DEF
-#undef GL_FUNC_2_DEF
+#	undef DEFINED_GL_FUNC_2_DEF
+#	undef GL_FUNC_2_DEF
 #endif

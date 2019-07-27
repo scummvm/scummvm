@@ -20,26 +20,27 @@
  *
  */
 
-#include "gob/gob.h"
 #include "gob/map.h"
+#include "gob/gob.h"
 #include "gob/goblin.h"
-#include "gob/scenery.h"
 #include "gob/mult.h"
+#include "gob/scenery.h"
 
 namespace Gob {
 
-Map::Map(GobEngine *vm) : _vm(vm) {
+Map::Map(GobEngine *vm)
+  : _vm(vm) {
 	_mapVersion = 0;
 
-	_passWidth =  0;
-	_mapWidth  = -1;
+	_passWidth = 0;
+	_mapWidth = -1;
 	_mapHeight = -1;
-	_passMap   =  0;
+	_passMap = 0;
 
-	_screenWidth  = 0;
+	_screenWidth = 0;
 	_screenHeight = 0;
 
-	_tilesWidth  = 0;
+	_tilesWidth = 0;
 	_tilesHeight = 0;
 
 	_bigTiles = false;
@@ -50,13 +51,13 @@ Map::Map(GobEngine *vm) : _vm(vm) {
 	_wayPoints = 0;
 
 	_nearestWayPoint = 0;
-	_nearestDest     = 0;
+	_nearestDest = 0;
 
 	_itemsMap = 0;
 
 	for (int i = 0; i < 40; i++) {
-		_itemPoses[i].x      = 0;
-		_itemPoses[i].y      = 0;
+		_itemPoses[i].x = 0;
+		_itemPoses[i].y = 0;
 		_itemPoses[i].orient = 0;
 	}
 
@@ -192,20 +193,18 @@ Direction Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 	else if (x1 < x0)
 		relDir = (RelativeDirection)(relDir | kRelDirLeft);
 
-
 	// Are we on ladders and can continue the ladder in the wanted direction?
-	if ((getPass(x0, y0) == 3) && (relDir & kRelDirUp  ) && (getPass(x0, y0 - 1) != 0))
+	if ((getPass(x0, y0) == 3) && (relDir & kRelDirUp) && (getPass(x0, y0 - 1) != 0))
 		return kDirN;
 
 	if ((getPass(x0, y0) == 3) && (relDir & kRelDirDown) && (getPass(x0, y0 + 1) != 0))
 		return kDirS;
 
-	if ((getPass(x0, y0) == 6) && (relDir & kRelDirUp  ) && (getPass(x0, y0 - 1) != 0))
+	if ((getPass(x0, y0) == 6) && (relDir & kRelDirUp) && (getPass(x0, y0 - 1) != 0))
 		return kDirN;
 
 	if ((getPass(x0, y0) == 6) && (relDir & kRelDirDown) && (getPass(x0, y0 + 1) != 0))
 		return kDirS;
-
 
 	// Want to go left
 	if (relDir == kRelDirLeft) {
@@ -227,10 +226,9 @@ Direction Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 		return kDirNone;
 	}
 
-
 	// Want to go up
 	if (relDir == kRelDirUp) {
-		if (getPass(x0    , y0 - 1) != 0)
+		if (getPass(x0, y0 - 1) != 0)
 			// Can go north
 			return kDirN;
 
@@ -248,7 +246,7 @@ Direction Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 
 	// Want to go down
 	if (relDir == kRelDirDown) {
-		if (getPass(x0    , y0 + 1) != 0)
+		if (getPass(x0, y0 + 1) != 0)
 			// Can go south
 			return kDirS;
 
@@ -264,18 +262,17 @@ Direction Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 		return kDirNone;
 	}
 
-
 	// Want to go up and right
 	if (relDir == kRelDirRightUp) {
 		if (getPass(x0 + 1, y0 - 1) != 0)
 			// Can go north-east
 			return kDirNE;
 
-		if (getPass(x0    , y0 - 1) != 0)
+		if (getPass(x0, y0 - 1) != 0)
 			// Can only go north
 			return kDirN;
 
-		if (getPass(x0 + 1, y0    ) != 0)
+		if (getPass(x0 + 1, y0) != 0)
 			// Can only go east
 			return kDirE;
 
@@ -289,11 +286,11 @@ Direction Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 			// Can go south-east
 			return kDirSE;
 
-		if (getPass(x0    , y0 + 1) != 0)
+		if (getPass(x0, y0 + 1) != 0)
 			// Can only go south
 			return kDirS;
 
-		if (getPass(x0 + 1, y0    ) != 0)
+		if (getPass(x0 + 1, y0) != 0)
 			// Can only go east
 			return kDirE;
 
@@ -307,11 +304,11 @@ Direction Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 			// Can go north-west
 			return kDirNW;
 
-		if (getPass(x0    , y0 - 1) != 0)
+		if (getPass(x0, y0 - 1) != 0)
 			// Can only go north
 			return kDirN;
 
-		if (getPass(x0 - 1, y0    ) != 0)
+		if (getPass(x0 - 1, y0) != 0)
 			// Can only go west
 			return kDirW;
 
@@ -325,11 +322,11 @@ Direction Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 			// Can go south-west
 			return kDirSW;
 
-		if (getPass(x0    , y0 + 1) != 0)
+		if (getPass(x0, y0 + 1) != 0)
 			// Can only go south
 			return kDirS;
 
-		if (getPass(x0 - 1, y0    ) != 0)
+		if (getPass(x0 - 1, y0) != 0)
 			// Can only go west
 			return kDirW;
 
@@ -349,8 +346,7 @@ int16 Map::findNearestWayPoint(int16 x, int16 y) {
 	length = 30000;
 
 	for (int i = 0; i < _wayPointCount; i++) {
-		if ((_wayPoints[i].x < 0) || (_wayPoints[i].x >= _mapWidth) ||
-				(_wayPoints[i].y < 0) || (_wayPoints[i].y >= _mapHeight))
+		if ((_wayPoints[i].x < 0) || (_wayPoints[i].x >= _mapWidth) || (_wayPoints[i].y < 0) || (_wayPoints[i].y >= _mapHeight))
 			break;
 
 		tmp = ABS(x - _wayPoints[i].x) + ABS(y - _wayPoints[i].y);
@@ -365,7 +361,7 @@ int16 Map::findNearestWayPoint(int16 x, int16 y) {
 }
 
 void Map::findNearestWalkable(int16 &gobDestX, int16 &gobDestY,
-		int16 mouseX, int16 mouseY) {
+                              int16 mouseX, int16 mouseY) {
 	int16 mapWidth, mapHeight;
 	int16 pos1 = -1, pos2 = -1;
 	int16 distance;
@@ -531,8 +527,7 @@ int16 Map::checkLongPath(int16 x0, int16 y0, int16 x1, int16 y1, int16 i0, int16
 				curY = _wayPoints[i0].y;
 			}
 		}
-		if ((i0 == i1) && (_wayPoints[i0].x == x0) &&
-		    (_wayPoints[i0].y == y0)) {
+		if ((i0 == i1) && (_wayPoints[i0].x == x0) && (_wayPoints[i0].y == y0)) {
 			if (checkDirectPath(0, x0, y0, x1, y1) == 1)
 				return 1;
 			return 0;
@@ -561,11 +556,9 @@ void Map::loadMapsInitGobs() {
 
 		layer = gob.stateMach[gob.state][0]->layer;
 		_vm->_scenery->updateAnim(layer, 0, gob.animation, 0,
-				gob.xPos, gob.yPos, 0);
-		gob.yPos = (_vm->_goblin->_gobPositions[i].y + 1) * 6 -
-			(_vm->_scenery->_toRedrawBottom - _vm->_scenery->_animTop);
-		gob.xPos = _vm->_goblin->_gobPositions[i].x * 12 -
-			(_vm->_scenery->_toRedrawLeft - _vm->_scenery->_animLeft);
+		                          gob.xPos, gob.yPos, 0);
+		gob.yPos = (_vm->_goblin->_gobPositions[i].y + 1) * 6 - (_vm->_scenery->_toRedrawBottom - _vm->_scenery->_animTop);
+		gob.xPos = _vm->_goblin->_gobPositions[i].x * 12 - (_vm->_scenery->_toRedrawLeft - _vm->_scenery->_animLeft);
 		gob.order = _vm->_scenery->_toRedrawBottom / 24 + 3;
 	}
 

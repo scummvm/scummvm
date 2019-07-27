@@ -590,4 +590,3 @@ static const char *const k1AudioTracksIntroDOSCDDemo[2] = {
 };
 
 static const StringListProvider k1AudioTracksIntroDOSCDDemoProvider = { ARRAYSIZE(k1AudioTracksIntroDOSCDDemo), k1AudioTracksIntroDOSCDDemo };
-

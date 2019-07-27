@@ -23,9 +23,9 @@
 #ifndef WINTERMUTE_WINTERMUTE_H
 #define WINTERMUTE_WINTERMUTE_H
 
+#include "common/fs.h"
 #include "engines/engine.h"
 #include "gui/debugger.h"
-#include "common/fs.h"
 
 namespace Wintermute {
 
@@ -46,8 +46,8 @@ enum {
 };
 
 enum WintermuteGameFeatures {
- 	/** A game with low-spec resources. */
- 	GF_LOWSPEC_ASSETS       = 1 << 0
+	/** A game with low-spec resources. */
+	GF_LOWSPEC_ASSETS = 1 << 0
 };
 
 class WintermuteEngine : public Engine {
@@ -68,6 +68,7 @@ public:
 	virtual bool canSaveGameStateCurrently();
 	// For detection-purposes:
 	static bool getGameInfo(const Common::FSList &fslist, Common::String &name, Common::String &caption);
+
 private:
 	bool _trigDebug;
 	int init();

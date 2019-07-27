@@ -22,16 +22,16 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/scripting/script_manager.h"
 #include "zvision/text/text.h"
+#include "zvision/zvision.h"
 
 #include "zvision/file/lzss_read_stream.h"
 
 #include "common/file.h"
-#include "common/system.h"
 #include "common/stream.h"
+#include "common/system.h"
 
 #include "engines/util.h"
 
@@ -40,18 +40,18 @@
 namespace ZVision {
 
 RenderManager::RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow, const Graphics::PixelFormat pixelFormat, bool doubleFPS)
-	: _engine(engine),
-	  _system(engine->_system),
-	  _screenCenterX(_workingWindow.width() / 2),
-	  _screenCenterY(_workingWindow.height() / 2),
-	  _workingWindow(workingWindow),
-	  _pixelFormat(pixelFormat),
-	  _backgroundWidth(0),
-	  _backgroundHeight(0),
-	  _backgroundOffset(0),
-	  _renderTable(_workingWindow.width(), _workingWindow.height()),
-	  _doubleFPS(doubleFPS),
-	  _subid(0) {
+  : _engine(engine)
+  , _system(engine->_system)
+  , _screenCenterX(_workingWindow.width() / 2)
+  , _screenCenterY(_workingWindow.height() / 2)
+  , _workingWindow(workingWindow)
+  , _pixelFormat(pixelFormat)
+  , _backgroundWidth(0)
+  , _backgroundHeight(0)
+  , _backgroundOffset(0)
+  , _renderTable(_workingWindow.width(), _workingWindow.height())
+  , _doubleFPS(doubleFPS)
+  , _subid(0) {
 
 	_backgroundSurface.create(_workingWindow.width(), _workingWindow.height(), _pixelFormat);
 	_effectSurface.create(_workingWindow.width(), _workingWindow.height(), _pixelFormat);
@@ -104,7 +104,7 @@ void RenderManager::renderSceneToScreen() {
 				Common::Rect empty;
 				blitSurfaceToSurface(*post, empty, _effectSurface, screenSpaceLocation.left, screenSpaceLocation.top);
 				screenSpaceLocation.clip(windowRect);
-				if (_backgroundSurfaceDirtyRect .isEmpty()) {
+				if (_backgroundSurfaceDirtyRect.isEmpty()) {
 					_backgroundSurfaceDirtyRect = screenSpaceLocation;
 				} else {
 					_backgroundSurfaceDirtyRect.extend(screenSpaceLocation);
@@ -127,11 +127,10 @@ void RenderManager::renderSceneToScreen() {
 
 	if (!outWndDirtyRect.isEmpty()) {
 		Common::Rect rect(
-			outWndDirtyRect.left + _workingWindow.left,
-			outWndDirtyRect.top + _workingWindow.top,
-			outWndDirtyRect.left + _workingWindow.left + outWndDirtyRect.width(),
-			outWndDirtyRect.top + _workingWindow.top + outWndDirtyRect.height()
-		);
+		  outWndDirtyRect.left + _workingWindow.left,
+		  outWndDirtyRect.top + _workingWindow.top,
+		  outWndDirtyRect.left + _workingWindow.left + outWndDirtyRect.width(),
+		  outWndDirtyRect.top + _workingWindow.top + outWndDirtyRect.height());
 		copyToScreen(*out, rect, outWndDirtyRect.left, outWndDirtyRect.top);
 	}
 }
@@ -140,11 +139,11 @@ void RenderManager::copyToScreen(const Graphics::Surface &surface, Common::Rect 
 	// Convert the surface to RGB565, if needed
 	Graphics::Surface *outSurface = surface.convertTo(_engine->_screenPixelFormat);
 	_system->copyRectToScreen(outSurface->getBasePtr(srcLeft, srcTop),
-		                        outSurface->pitch,
-		                        rect.left,
-		                        rect.top,
-		                        rect.width(),
-		                        rect.height());
+	                          outSurface->pitch,
+	                          rect.left,
+	                          rect.top,
+	                          rect.width(),
+	                          rect.height());
 	outSurface->free();
 	delete outSurface;
 }
@@ -165,7 +164,7 @@ void RenderManager::renderImageToBackground(const Common::String &fileName, int1
 	surface.free();
 }
 
-void RenderManager::renderImageToBackground(const Common::String &fileName, int16 destX, int16 destY, int16  keyX, int16 keyY) {
+void RenderManager::renderImageToBackground(const Common::String &fileName, int16 destX, int16 destY, int16 keyX, int16 keyY) {
 	Graphics::Surface surface;
 	readImageToSurface(fileName, surface);
 
@@ -359,8 +358,8 @@ Graphics::Surface *RenderManager::tranposeSurface(const Graphics::Surface *surfa
 void RenderManager::scaleBuffer(const void *src, void *dst, uint32 srcWidth, uint32 srcHeight, byte bytesPerPixel, uint32 dstWidth, uint32 dstHeight) {
 	assert(bytesPerPixel == 1 || bytesPerPixel == 2);
 
-	const float  xscale = (float)srcWidth / (float)dstWidth;
-	const float  yscale = (float)srcHeight / (float)dstHeight;
+	const float xscale = (float)srcWidth / (float)dstWidth;
+	const float yscale = (float)srcHeight / (float)dstHeight;
 
 	if (bytesPerPixel == 1) {
 		const byte *srcPtr = (const byte *)src;
@@ -383,12 +382,12 @@ void RenderManager::scaleBuffer(const void *src, void *dst, uint32 srcWidth, uin
 	}
 }
 
-void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect , Graphics::Surface &dst, int _x, int _y) {
+void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect, Graphics::Surface &dst, int _x, int _y) {
 	Common::Rect srcRect = _srcRect;
 	if (srcRect.isEmpty())
 		srcRect = Common::Rect(src.w, src.h);
 	srcRect.clip(src.w, src.h);
-	Common::Rect dstRect = Common::Rect(-_x + srcRect.left , -_y + srcRect.top, -_x + srcRect.left + dst.w, -_y + srcRect.top + dst.h);
+	Common::Rect dstRect = Common::Rect(-_x + srcRect.left, -_y + srcRect.top, -_x + srcRect.left + dst.w, -_y + srcRect.top + dst.h);
 	srcRect.clip(dstRect);
 
 	if (srcRect.isEmpty() || !srcRect.isValidRect())
@@ -428,12 +427,12 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 	delete srcAdapted;
 }
 
-void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect , Graphics::Surface &dst, int _x, int _y, uint32 colorkey) {
+void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Common::Rect &_srcRect, Graphics::Surface &dst, int _x, int _y, uint32 colorkey) {
 	Common::Rect srcRect = _srcRect;
 	if (srcRect.isEmpty())
 		srcRect = Common::Rect(src.w, src.h);
 	srcRect.clip(src.w, src.h);
-	Common::Rect dstRect = Common::Rect(-_x + srcRect.left , -_y + srcRect.top, -_x + srcRect.left + dst.w, -_y + srcRect.top + dst.h);
+	Common::Rect dstRect = Common::Rect(-_x + srcRect.left, -_y + srcRect.top, -_x + srcRect.left + dst.w, -_y + srcRect.top + dst.h);
 	srcRect.clip(dstRect);
 
 	if (srcRect.isEmpty() || !srcRect.isValidRect())
@@ -475,8 +474,7 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 				srcTemp++;
 				dstTemp++;
 			}
-		}
-		break;
+		} break;
 
 		case 2: {
 			const uint16 *srcTemp = (const uint16 *)srcBuffer;
@@ -487,8 +485,7 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 				srcTemp++;
 				dstTemp++;
 			}
-		}
-		break;
+		} break;
 
 		case 4: {
 			const uint32 *srcTemp = (const uint32 *)srcBuffer;
@@ -499,8 +496,7 @@ void RenderManager::blitSurfaceToSurface(const Graphics::Surface &src, const Com
 				srcTemp++;
 				dstTemp++;
 			}
-		}
-		break;
+		} break;
 
 		default:
 			break;
@@ -628,7 +624,6 @@ void RenderManager::prepareBackground() {
 			tmp.translate(_screenCenterX + _backgroundWidth - _backgroundOffset, 0);
 			if (!tmp.isEmpty())
 				_backgroundSurfaceDirtyRect.extend(tmp);
-
 		}
 	} else if (state == RenderTable::TILT) {
 		// Tilt doesn't allow wrapping, so we just do a simple clip
@@ -673,11 +668,10 @@ void RenderManager::renderMenuToScreen() {
 		_menuSurfaceDirtyRect.clip(Common::Rect(_menuSurface.w, _menuSurface.h));
 		if (!_menuSurfaceDirtyRect.isEmpty()) {
 			Common::Rect rect(
-				_menuSurfaceDirtyRect.left + _menuArea.left,
-				_menuSurfaceDirtyRect.top + _menuArea.top,
-				_menuSurfaceDirtyRect.left + _menuArea.left + _menuSurfaceDirtyRect.width(),
-				_menuSurfaceDirtyRect.top + _menuArea.top + _menuSurfaceDirtyRect.height()
-			);
+			  _menuSurfaceDirtyRect.left + _menuArea.left,
+			  _menuSurfaceDirtyRect.top + _menuArea.top,
+			  _menuSurfaceDirtyRect.left + _menuArea.left + _menuSurfaceDirtyRect.width(),
+			  _menuSurfaceDirtyRect.top + _menuArea.top + _menuSurfaceDirtyRect.height());
 			copyToScreen(_menuSurface, rect, _menuSurfaceDirtyRect.left, _menuSurfaceDirtyRect.top);
 		}
 		_menuSurfaceDirtyRect = Common::Rect();
@@ -764,11 +758,10 @@ void RenderManager::processSubs(uint16 deltatime) {
 		}
 
 		Common::Rect rect(
-			_subtitleArea.left,
-			_subtitleArea.top,
-			_subtitleArea.left + _subtitleSurface.w,
-			_subtitleArea.top + _subtitleSurface.h
-		);
+		  _subtitleArea.left,
+		  _subtitleArea.top,
+		  _subtitleArea.left + _subtitleSurface.w,
+		  _subtitleArea.top + _subtitleSurface.h);
 		copyToScreen(_subtitleSurface, rect, 0, 0);
 	}
 }
@@ -866,14 +859,10 @@ EffectMap *RenderManager::makeEffectMap(const Common::Point &xy, int16 depth, co
 			if (curClr == color)
 				use = true;
 			else if (curClr > color) {
-				if ((cC1 - stC1 < depth8) &&
-				        (cC2 - stC2 < depth8) &&
-				        (cC3 - stC3 < depth8))
+				if ((cC1 - stC1 < depth8) && (cC2 - stC2 < depth8) && (cC3 - stC3 < depth8))
 					use = true;
 			} else { /* if (curClr < color) */
-				if ((stC1 - cC1 < depth8) &&
-				        (stC2 - cC2 < depth8) &&
-				        (stC3 - cC3 < depth8))
+				if ((stC1 - cC1 < depth8) && (stC2 - cC2 < depth8) && (stC3 - cC3 < depth8))
 					use = true;
 			}
 
@@ -1052,10 +1041,7 @@ void RenderManager::delayedMessage(const Common::String &str, uint16 milsecs) {
 	while (_system->getMillis() < stopTime) {
 		Common::Event evnt;
 		while (_engine->getEventManager()->pollEvent(evnt)) {
-			if (evnt.type == Common::EVENT_KEYDOWN &&
-			        (evnt.kbd.keycode == Common::KEYCODE_SPACE ||
-			         evnt.kbd.keycode == Common::KEYCODE_RETURN ||
-			         evnt.kbd.keycode == Common::KEYCODE_ESCAPE))
+			if (evnt.type == Common::EVENT_KEYDOWN && (evnt.kbd.keycode == Common::KEYCODE_SPACE || evnt.kbd.keycode == Common::KEYCODE_RETURN || evnt.kbd.keycode == Common::KEYCODE_ESCAPE))
 				break;
 		}
 		_system->updateScreen();

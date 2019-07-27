@@ -24,10 +24,10 @@
 #include "titanic/core/game_object.h"
 #include "titanic/events.h"
 #include "titanic/messages/messages.h"
+#include "titanic/sound/sound_manager.h"
 #include "titanic/support/avi_surface.h"
 #include "titanic/support/screen_manager.h"
 #include "titanic/support/video_surface.h"
-#include "titanic/sound/sound_manager.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -40,7 +40,10 @@ namespace Titanic {
 CMovieList *CMovie::_playingMovies;
 CVideoSurface *CMovie::_movieSurface;
 
-CMovie::CMovie() : ListItem(), _handled(false), _hasVideoFrame(false) {
+CMovie::CMovie()
+  : ListItem()
+  , _handled(false)
+  , _hasVideoFrame(false) {
 }
 
 CMovie::~CMovie() {
@@ -84,8 +87,9 @@ bool CMovie::hasVideoFrame() {
 
 /*------------------------------------------------------------------------*/
 
-OSMovie::OSMovie(const CResourceKey &name, CVideoSurface *surface) :
-		_aviSurface(name), _videoSurface(surface) {
+OSMovie::OSMovie(const CResourceKey &name, CVideoSurface *surface)
+  : _aviSurface(name)
+  , _videoSurface(surface) {
 	_field18 = 0;
 	_field24 = 0;
 	_field28 = 0;

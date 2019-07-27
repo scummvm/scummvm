@@ -29,60 +29,60 @@ namespace Sherlock {
 
 namespace Scalpel {
 
-class ScalpelInventory : public Inventory {
-public:
-	ScalpelInventory(SherlockEngine *vm);
-	~ScalpelInventory();
+	class ScalpelInventory : public Inventory {
+	public:
+		ScalpelInventory(SherlockEngine *vm);
+		~ScalpelInventory();
 
-	Common::String _fixedTextExit;
-	Common::String _fixedTextLook;
-	Common::String _fixedTextUse;
-	Common::String _fixedTextGive;
+		Common::String _fixedTextExit;
+		Common::String _fixedTextLook;
+		Common::String _fixedTextUse;
+		Common::String _fixedTextGive;
 
-	byte _hotkeyExit;
-	byte _hotkeyLook;
-	byte _hotkeyUse;
-	byte _hotkeyGive;
+		byte _hotkeyExit;
+		byte _hotkeyLook;
+		byte _hotkeyUse;
+		byte _hotkeyGive;
 
-	byte _hotkeysIndexed[8];
+		byte _hotkeysIndexed[8];
 
-	/**
+		/**
 	 * Put the game into inventory mode and open the interface window.
 	 */
-	void drawInventory(InvNewMode flag);
+		void drawInventory(InvNewMode flag);
 
-	/**
+		/**
 	 * Prints the line of inventory commands at the top of an inventory window with
 	 * the correct highlighting
 	 */
-	void invCommands(bool slamIt);
+		void invCommands(bool slamIt);
 
-	/**
+		/**
 	 * Set the highlighting color of a given inventory item
 	 */
-	void highlight(int index, byte color);
+		void highlight(int index, byte color);
 
-	/**
+		/**
 	 * Support method for refreshing the display of the inventory
 	 */
-	void refreshInv();
+		void refreshInv();
 
-	/**
+		/**
 	 * Display the character's inventory. The slamIt parameter specifies:
 	 */
-	void putInv(InvSlamMode slamIt);
+		void putInv(InvSlamMode slamIt);
 
-	/**
+		/**
 	 * Load the list of names the inventory items correspond to, if not already loaded,
 	 * and then calls loadGraphics to load the associated graphics
 	 */
-	virtual void loadInv();
+		virtual void loadInv();
 
-	/**
+		/**
 	 * Identifies a button number according to the key, that the user pressed
 	 */
-	int identifyUserButton(int key);
-};
+		int identifyUserButton(int key);
+	};
 
 } // End of namespace Scalpel
 

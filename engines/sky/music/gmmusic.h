@@ -34,6 +34,7 @@ public:
 	GmMusic(MidiDriver *pMidiDrv, Audio::Mixer *pMixer, Disk *pDisk);
 	~GmMusic();
 	virtual void setVolume(uint16 param);
+
 private:
 	static void passTimerFunc(void *param);
 	void timerCall();

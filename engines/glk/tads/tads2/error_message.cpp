@@ -25,46 +25,46 @@
 
 namespace Glk {
 namespace TADS {
-namespace TADS2 {
+	namespace TADS2 {
 
-errcxdef *lerini() {
-	errcxdef *errcx;                                         /* error context */
-  
-	// allocate an error context
-	if (!(errcx = (errcxdef *)ltk_suballoc(sizeof(errcxdef)))) {
-		// failure
-		return((errcxdef *)0);
-	}
+		errcxdef *lerini() {
+			errcxdef *errcx; /* error context */
 
-	// initialize the error context
-	errcx->errcxfp  = (osfildef *)0;                  /* no error file handle */
-	errcx->errcxofs = 0;                      /* no offset in argument buffer */
-	errcx->errcxlog = ltk_errlog;                    /* error logging routine */
-	errcx->errcxlgc = errcx;                         /* error logging context */
+			// allocate an error context
+			if (!(errcx = (errcxdef *)ltk_suballoc(sizeof(errcxdef)))) {
+				// failure
+				return ((errcxdef *)0);
+			}
 
-	// return the new context
-	return errcx;
-}
+			// initialize the error context
+			errcx->errcxfp = (osfildef *)0; /* no error file handle */
+			errcx->errcxofs = 0; /* no offset in argument buffer */
+			errcx->errcxlog = ltk_errlog; /* error logging routine */
+			errcx->errcxlgc = errcx; /* error logging context */
 
-void errini(errcxdef *ctx, char *arg0) {
-	VARUSED(ctx);
-	VARUSED(arg0);
-}
+			// return the new context
+			return errcx;
+		}
 
-void errini(errcxdef *ctx, osfildef *fp) {
-	VARUSED(ctx);
-	VARUSED(fp);
-}
+		void errini(errcxdef *ctx, char *arg0) {
+			VARUSED(ctx);
+			VARUSED(arg0);
+		}
 
-void lerfre(errcxdef *errcx) {
-	// free the context
-	ltk_subfree(errcx);
-}
+		void errini(errcxdef *ctx, osfildef *fp) {
+			VARUSED(ctx);
+			VARUSED(fp);
+		}
 
-void errmsg(errcxdef *ctx, char *outbuf, uint outbufl, uint err) {
-	sprintf(outbuf, "Error #%d occured.", err);
-}
+		void lerfre(errcxdef *errcx) {
+			// free the context
+			ltk_subfree(errcx);
+		}
 
-} // End of namespace TADS2
+		void errmsg(errcxdef *ctx, char *outbuf, uint outbufl, uint err) {
+			sprintf(outbuf, "Error #%d occured.", err);
+		}
+
+	} // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk

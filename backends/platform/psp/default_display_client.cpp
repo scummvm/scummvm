@@ -20,10 +20,10 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "backends/platform/psp/psppixelformat.h"
-#include "backends/platform/psp/display_client.h"
 #include "backends/platform/psp/default_display_client.h"
+#include "backends/platform/psp/display_client.h"
+#include "backends/platform/psp/psppixelformat.h"
+#include "common/scummsys.h"
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging the stack */
 //#define __PSP_DEBUG_PRINT__
@@ -57,7 +57,6 @@ void DefaultDisplayClient::deallocate() {
 	if (_buffer.hasPalette())
 		_palette.deallocate();
 }
-
 
 void DefaultDisplayClient::clearBuffer() {
 	DEBUG_ENTER_FUNC();
@@ -97,7 +96,7 @@ void Overlay::init() {
 	_renderer.setAlphaBlending(true);
 	_renderer.setColorTest(false);
 	_renderer.setUseGlobalScaler(false);
-	_renderer.setFullScreen(true);	// speeds up render slightly
+	_renderer.setFullScreen(true); // speeds up render slightly
 }
 
 void Overlay::setBytesPerPixel(uint32 size) {
@@ -120,7 +119,7 @@ void Overlay::setBytesPerPixel(uint32 size) {
 void Overlay::setSize(uint32 width, uint32 height) {
 	DEBUG_ENTER_FUNC();
 	_buffer.setSize(width, height, Buffer::kSizeBySourceSize);
-	_renderer.setDrawWholeBuffer();	// We need to let the renderer know how much to draw
+	_renderer.setDrawWholeBuffer(); // We need to let the renderer know how much to draw
 }
 
 void Overlay::copyToArray(void *buf, int pitch) {
@@ -140,7 +139,7 @@ void Overlay::copyFromRect(const void *buf, int pitch, int x, int y, int w, int 
 bool Overlay::allocate() {
 	DEBUG_ENTER_FUNC();
 
-	bool ret = DefaultDisplayClient::allocate(true, false);	// buffer in VRAM
+	bool ret = DefaultDisplayClient::allocate(true, false); // buffer in VRAM
 
 	return ret;
 }
@@ -167,7 +166,7 @@ void Screen::setSize(uint32 width, uint32 height) {
 	DEBUG_ENTER_FUNC();
 
 	_buffer.setSize(width, height, Buffer::kSizeBySourceSize);
-	_renderer.setDrawWholeBuffer();	// We need to let the renderer know how much to draw
+	_renderer.setDrawWholeBuffer(); // We need to let the renderer know how much to draw
 }
 
 void Screen::setScummvmPixelFormat(const Graphics::PixelFormat *format) {
@@ -176,7 +175,7 @@ void Screen::setScummvmPixelFormat(const Graphics::PixelFormat *format) {
 
 	if (!format) {
 		bzero(&_pixelFormat, sizeof(_pixelFormat));
-		_pixelFormat.bytesPerPixel = 1;	// default
+		_pixelFormat.bytesPerPixel = 1; // default
 	} else {
 		_pixelFormat = *format;
 	}
@@ -202,5 +201,5 @@ Graphics::Surface *Screen::lockAndGetForEditing() {
 bool Screen::allocate() {
 	DEBUG_ENTER_FUNC();
 
-	return DefaultDisplayClient::allocate(true, false);	// buffer in VRAM
+	return DefaultDisplayClient::allocate(true, false); // buffer in VRAM
 }

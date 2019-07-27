@@ -25,19 +25,21 @@
  * Copyright (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon
  */
 
-#include "sound.h"
 #include "cge2/cge2_main.h"
 #include "cge2/cge2.h"
-#include "cge2/vga13h.h"
-#include "cge2/text.h"
-#include "cge2/snail.h"
 #include "cge2/hero.h"
-#include "cge2/spare.h"
 #include "cge2/map.h"
+#include "cge2/snail.h"
+#include "cge2/spare.h"
+#include "cge2/text.h"
+#include "cge2/vga13h.h"
+#include "sound.h"
 
 namespace CGE2 {
 
-System::System(CGE2Engine *vm) : Sprite(vm), _vm(vm) {
+System::System(CGE2Engine *vm)
+  : Sprite(vm)
+  , _vm(vm) {
 	_blinkCounter = 0;
 	_blinkSprite = nullptr;
 	tick();
@@ -60,7 +62,7 @@ void System::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
 		_vm->_infoLine->setText(nullptr);
 
 		if (mask & kMouseLeftUp) {
-			if (pos.y >= 0)	{ // world
+			if (pos.y >= 0) { // world
 				if (!_vm->_talk && pos.y < _vm->_mouseTop)
 					_vm->_heroTab[_vm->_sex]->_ptr->walkTo(pos);
 			} else { // panel
@@ -70,7 +72,7 @@ void System::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
 						_vm->switchHero(sex);
 						if (_vm->_sex == sex) {
 							int dx = kPocketsWidth >> 1,
-								dy = 1 - (kPanHeight >> 1);
+							    dy = 1 - (kPanHeight >> 1);
 							Sprite *s;
 							if (!sex)
 								pos.x -= kScrWidth - kPocketsWidth;
@@ -180,7 +182,7 @@ Sprite *CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) 
 		int label = kNoByte;
 		Common::String line;
 
-		for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()){
+		for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()) {
 			if (line.empty())
 				continue;
 			Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
@@ -666,7 +668,7 @@ void CGE2Engine::loadHeroes() { // Original name: loadGame()
 	s = _spare->take(142);
 	if (s) {
 		h = new Hero(this);
-		*(Sprite*)h = *s;
+		*(Sprite *)h = *s;
 		delete s;
 		h->expand();
 		_spare->update(h);
@@ -680,7 +682,7 @@ void CGE2Engine::loadHeroes() { // Original name: loadGame()
 	s = _spare->take(141);
 	if (s) {
 		h = new Hero(this);
-		*(Sprite*)h = *s;
+		*(Sprite *)h = *s;
 		delete s;
 		h->expand();
 		_spare->update(h);
@@ -720,7 +722,7 @@ void CGE2Engine::loadTab() {
 	for (int i = 0; i < kSceneMax; i++)
 		*(_eyeTab[i]) = *_eye;
 
-	if  (_resman->exist(kTabName)) {
+	if (_resman->exist(kTabName)) {
 		EncryptedStream f(this, kTabName);
 
 		for (int i = 0; i < kSceneMax; i++) {
@@ -771,7 +773,7 @@ void CGE2Engine::setEye(const V3D &e) {
 	*_eye = e;
 }
 
-void CGE2Engine::setEye(const V2D& e2, int z) {
+void CGE2Engine::setEye(const V2D &e2, int z) {
 	_eye->_x = e2.x;
 	_eye->_y = e2.y;
 	_eye->_z = z;

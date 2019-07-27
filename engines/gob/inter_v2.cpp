@@ -26,34 +26,35 @@
 
 #include "gui/message.h"
 
-#include "gob/gob.h"
-#include "gob/inter.h"
-#include "gob/global.h"
-#include "gob/util.h"
 #include "gob/dataio.h"
 #include "gob/draw.h"
-#include "gob/game.h"
 #include "gob/expression.h"
-#include "gob/script.h"
-#include "gob/resources.h"
-#include "gob/hotspots.h"
+#include "gob/game.h"
+#include "gob/global.h"
+#include "gob/gob.h"
 #include "gob/goblin.h"
+#include "gob/hotspots.h"
+#include "gob/inter.h"
 #include "gob/map.h"
 #include "gob/mult.h"
-#include "gob/scenery.h"
-#include "gob/video.h"
+#include "gob/resources.h"
 #include "gob/save/saveload.h"
-#include "gob/videoplayer.h"
+#include "gob/scenery.h"
+#include "gob/script.h"
 #include "gob/sound/sound.h"
+#include "gob/util.h"
+#include "gob/video.h"
+#include "gob/videoplayer.h"
 
 namespace Gob {
 
 #define OPCODEVER Inter_v2
-#define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
-#define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
-#define OPCODEGOB(i, x)   _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
+#define OPCODEDRAW(i, x) _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
+#define OPCODEFUNC(i, x) _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
+#define OPCODEGOB(i, x) _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 
-Inter_v2::Inter_v2(GobEngine *vm) : Inter_v1(vm) {
+Inter_v2::Inter_v2(GobEngine *vm)
+  : Inter_v1(vm) {
 }
 
 void Inter_v2::setupOpcodesDraw() {
@@ -136,11 +137,11 @@ void Inter_v2::setupOpcodesFunc() {
 }
 
 void Inter_v2::setupOpcodesGob() {
-	OPCODEGOB(  0, o2_loadInfogramesIns);
-	OPCODEGOB(  1, o2_startInfogrames);
-	OPCODEGOB(  2, o2_stopInfogrames);
+	OPCODEGOB(0, o2_loadInfogramesIns);
+	OPCODEGOB(1, o2_startInfogrames);
+	OPCODEGOB(2, o2_stopInfogrames);
 
-	OPCODEGOB( 10, o2_playInfogrames);
+	OPCODEGOB(10, o2_playInfogrames);
 
 	OPCODEGOB(100, o2_handleGoblins);
 
@@ -159,12 +160,12 @@ void Inter_v2::checkSwitchTable(uint32 &offset) {
 
 	type = _vm->_game->_script->peekByte();
 
-	value = (uint16) _vm->_game->_script->readVarIndex();
+	value = (uint16)_vm->_game->_script->readVarIndex();
 
 	switch (type) {
 	case TYPE_VAR_INT8:
 	case TYPE_ARRAY_INT8:
-		value = (int8) READ_VARO_UINT8(value);
+		value = (int8)READ_VARO_UINT8(value);
 		break;
 
 	case TYPE_VAR_INT32:
@@ -173,7 +174,7 @@ void Inter_v2::checkSwitchTable(uint32 &offset) {
 		break;
 
 	default:
-		value = (int16) READ_VARO_UINT16(value);
+		value = (int16)READ_VARO_UINT16(value);
 		break;
 	}
 
@@ -188,16 +189,14 @@ void Inter_v2::checkSwitchTable(uint32 &offset) {
 			switch (type) {
 			case TYPE_IMM_INT32:
 				_vm->_game->_script->skip(1);
-				if (!found &&
-						(value == _vm->_game->_script->peekInt32()))
+				if (!found && (value == _vm->_game->_script->peekInt32()))
 					found = true;
 				_vm->_game->_script->skip(5);
 				break;
 
 			case TYPE_IMM_INT16:
 				_vm->_game->_script->skip(1);
-				if (!found &&
-						(value == _vm->_game->_script->peekInt16()))
+				if (!found && (value == _vm->_game->_script->peekInt16()))
 					found = true;
 				_vm->_game->_script->skip(3);
 				break;
@@ -299,7 +298,7 @@ void Inter_v2::o2_initMult() {
 
 	if (_vm->_mult->_objects && (oldObjCount != _vm->_mult->_objCount)) {
 		warning("Initializing new objects without having "
-				"cleaned up the old ones at first");
+		        "cleaned up the old ones at first");
 
 		_vm->_mult->clearObjectVideos();
 
@@ -318,9 +317,9 @@ void Inter_v2::o2_initMult() {
 	}
 
 	if (_vm->_mult->_objects == 0) {
-		_vm->_mult->_renderObjs = new Mult::Mult_Object*[_vm->_mult->_objCount];
+		_vm->_mult->_renderObjs = new Mult::Mult_Object *[_vm->_mult->_objCount];
 		memset(_vm->_mult->_renderObjs, 0,
-				_vm->_mult->_objCount * sizeof(Mult::Mult_Object*));
+		       _vm->_mult->_objCount * sizeof(Mult::Mult_Object *));
 
 		if (_terminate)
 			return;
@@ -329,7 +328,7 @@ void Inter_v2::o2_initMult() {
 		memset(_vm->_mult->_orderArray, 0, _vm->_mult->_objCount * sizeof(int8));
 		_vm->_mult->_objects = new Mult::Mult_Object[_vm->_mult->_objCount];
 		memset(_vm->_mult->_objects, 0,
-				_vm->_mult->_objCount * sizeof(Mult::Mult_Object));
+		       _vm->_mult->_objCount * sizeof(Mult::Mult_Object));
 
 		for (int i = 0; i < _vm->_mult->_objCount; i++) {
 			uint32 offPosX = i * 4 + (posXVar / 4) * 4;
@@ -339,8 +338,7 @@ void Inter_v2::o2_initMult() {
 			_vm->_mult->_objects[i].pPosX = new VariableReference(*_vm->_inter->_variables, offPosX);
 			_vm->_mult->_objects[i].pPosY = new VariableReference(*_vm->_inter->_variables, offPosY);
 
-			_vm->_mult->_objects[i].pAnimData =
-				(Mult::Mult_AnimData *)_variables->getAddressOff8(offAnim);
+			_vm->_mult->_objects[i].pAnimData = (Mult::Mult_AnimData *)_variables->getAddressOff8(offAnim);
 
 			_vm->_mult->_objects[i].pAnimData->isStatic = 1;
 			_vm->_mult->_objects[i].tick = 0;
@@ -353,25 +351,23 @@ void Inter_v2::o2_initMult() {
 		}
 	}
 
-	if (_vm->_mult->_animSurf &&
-	    ((oldAnimWidth != _vm->_mult->_animWidth) ||
-			 (oldAnimHeight != _vm->_mult->_animHeight))) {
+	if (_vm->_mult->_animSurf && ((oldAnimWidth != _vm->_mult->_animWidth) || (oldAnimHeight != _vm->_mult->_animHeight))) {
 		_vm->_draw->freeSprite(Draw::kAnimSurface);
 		_vm->_mult->_animSurf.reset();
 	}
 
 	_vm->_draw->adjustCoords(0,
-			&_vm->_mult->_animWidth, &_vm->_mult->_animHeight);
+	                         &_vm->_mult->_animWidth, &_vm->_mult->_animHeight);
 	if (!_vm->_mult->_animSurf) {
 		_vm->_draw->initSpriteSurf(Draw::kAnimSurface, _vm->_mult->_animWidth,
-				_vm->_mult->_animHeight, 0);
+		                           _vm->_mult->_animHeight, 0);
 		_vm->_mult->_animSurf = _vm->_draw->_spritesArray[Draw::kAnimSurface];
 		if (_terminate)
 			return;
 	}
 
 	_vm->_draw->adjustCoords(1,
-			&_vm->_mult->_animWidth, &_vm->_mult->_animHeight);
+	                         &_vm->_mult->_animWidth, &_vm->_mult->_animHeight);
 	_vm->_draw->_sourceSurface = Draw::kBackSurface;
 	_vm->_draw->_destSurface = Draw::kAnimSurface;
 	_vm->_draw->_spriteLeft = _vm->_mult->_animLeft;
@@ -383,11 +379,12 @@ void Inter_v2::o2_initMult() {
 	_vm->_draw->spriteOperation(0);
 
 	debugC(4, kDebugGraphics, "o2_initMult: x = %d, y = %d, w = %d, h = %d",
-		  _vm->_mult->_animLeft, _vm->_mult->_animTop,
-			_vm->_mult->_animWidth, _vm->_mult->_animHeight);
+	       _vm->_mult->_animLeft, _vm->_mult->_animTop,
+	       _vm->_mult->_animWidth, _vm->_mult->_animHeight);
 	debugC(4, kDebugGraphics, "    _vm->_mult->_objCount = %d, "
-			"animation data size = %d", _vm->_mult->_objCount,
-			_vm->_global->_inter_animDataSize);
+	                          "animation data size = %d",
+	       _vm->_mult->_objCount,
+	       _vm->_global->_inter_animDataSize);
 }
 
 void Inter_v2::o2_loadMultObject() {
@@ -403,7 +400,7 @@ void Inter_v2::o2_loadMultObject() {
 	*obj.pPosX = _vm->_game->_script->readValExpr();
 	*obj.pPosY = _vm->_game->_script->readValExpr();
 
-	byte *multData = (byte *) &objAnim;
+	byte *multData = (byte *)&objAnim;
 	for (int i = 0; i < 11; i++) {
 		if (_vm->_game->_script->peekByte() != 99)
 			multData[i] = _vm->_game->_script->readValExpr();
@@ -413,40 +410,38 @@ void Inter_v2::o2_loadMultObject() {
 
 	if ((objAnim.animType == 100) && (objIndex < _vm->_goblin->_gobsCount)) {
 
-		uint8 posX   = *(obj.pPosX) % 256;
-		obj.destX    = posX;
+		uint8 posX = *(obj.pPosX) % 256;
+		obj.destX = posX;
 		obj.gobDestX = posX;
-		obj.goblinX  = posX;
+		obj.goblinX = posX;
 
-		uint8 posY   = *(obj.pPosY) % 256;
-		obj.destY    = posY;
+		uint8 posY = *(obj.pPosY) % 256;
+		obj.destY = posY;
 		obj.gobDestY = posY;
-		obj.goblinY  = posY;
+		obj.goblinY = posY;
 
 		*(obj.pPosX) *= _vm->_map->getTilesWidth();
 
-		int16 layer     = objAnim.layer;
+		int16 layer = objAnim.layer;
 		int16 animation = obj.goblinStates[layer][0].animation;
 
-		objAnim.framesLeft    = objAnim.maxFrame;
-		objAnim.nextState     = -1;
-		objAnim.newState      = -1;
+		objAnim.framesLeft = objAnim.maxFrame;
+		objAnim.nextState = -1;
+		objAnim.newState = -1;
 		objAnim.pathExistence = 0;
-		objAnim.isBusy        = 0;
-		objAnim.state         = layer;
-		objAnim.layer         = obj.goblinStates[objAnim.state][0].layer;
-		objAnim.animation     = animation;
+		objAnim.isBusy = 0;
+		objAnim.state = layer;
+		objAnim.layer = obj.goblinStates[objAnim.state][0].layer;
+		objAnim.animation = animation;
 
 		_vm->_scenery->updateAnim(layer, 0, animation, 0,
-				*(obj.pPosX), *(obj.pPosY), 0);
+		                          *(obj.pPosX), *(obj.pPosY), 0);
 
 		if (!_vm->_map->hasBigTiles())
 			*(obj.pPosY) = (obj.goblinY + 1) * _vm->_map->getTilesHeight()
-				- (_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
+			  - (_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
 		else
-			*(obj.pPosY) = ((obj.goblinY + 1) * _vm->_map->getTilesHeight()) -
-				(_vm->_scenery->_animBottom - _vm->_scenery->_animTop) -
-				((obj.goblinY + 1) / 2);
+			*(obj.pPosY) = ((obj.goblinY + 1) * _vm->_map->getTilesHeight()) - (_vm->_scenery->_animBottom - _vm->_scenery->_animTop) - ((obj.goblinY + 1) / 2);
 		*(obj.pPosX) = obj.goblinX * _vm->_map->getTilesWidth();
 
 	} else if ((objAnim.animType == 101) && (objIndex < _vm->_goblin->_gobsCount)) {
@@ -455,35 +450,33 @@ void Inter_v2::o2_loadMultObject() {
 		int16 animation = obj.goblinStates[layer][0].animation;
 
 		objAnim.nextState = -1;
-		objAnim.newState  = -1;
-		objAnim.state     = layer;
-		objAnim.layer     = obj.goblinStates[objAnim.state][0].layer;
+		objAnim.newState = -1;
+		objAnim.state = layer;
+		objAnim.layer = obj.goblinStates[objAnim.state][0].layer;
 		objAnim.animation = animation;
 
 		if ((*(obj.pPosX) == 1000) && (*(obj.pPosY) == 1000)) {
-			Scenery::AnimLayer *animLayer =
-				_vm->_scenery->getAnimLayer(animation, objAnim.layer);
+			Scenery::AnimLayer *animLayer = _vm->_scenery->getAnimLayer(animation, objAnim.layer);
 
 			*(obj.pPosX) = animLayer->posX;
 			*(obj.pPosY) = animLayer->posY;
 		}
 		_vm->_scenery->updateAnim(layer, 0, animation, 0,
-				*(obj.pPosX), *(obj.pPosY), 0);
+		                          *(obj.pPosX), *(obj.pPosY), 0);
 
 	} else if ((objAnim.animType != 100) && (objAnim.animType != 101)) {
 
-		if ((((int32) *(obj.pPosX)) == -1234) && (((int32) *(obj.pPosY)) == -4321)) {
+		if ((((int32) * (obj.pPosX)) == -1234) && (((int32) * (obj.pPosY)) == -4321)) {
 
 			if (obj.videoSlot > 0)
 				_vm->_vidPlayer->closeVideo(obj.videoSlot - 1);
 
-			obj.videoSlot  = 0;
-			obj.lastLeft   = -1;
-			obj.lastTop    = -1;
+			obj.videoSlot = 0;
+			obj.lastLeft = -1;
+			obj.lastTop = -1;
 			obj.lastBottom = -1;
-			obj.lastRight  = -1;
+			obj.lastRight = -1;
 		}
-
 	}
 }
 
@@ -595,8 +588,7 @@ void Inter_v2::o2_switchTotSub() {
 void Inter_v2::o2_pushVars() {
 	uint8 count = _vm->_game->_script->readByte();
 	for (int i = 0; i < count; i++) {
-		if ((_vm->_game->_script->peekByte() == 25) ||
-				(_vm->_game->_script->peekByte() == 28)) {
+		if ((_vm->_game->_script->peekByte() == 25) || (_vm->_game->_script->peekByte() == 28)) {
 
 			int16 varOff = _vm->_game->_script->readVarIndex();
 			_vm->_game->_script->skip(1);
@@ -702,13 +694,12 @@ void Inter_v2::o2_setGoblinState() {
 		layer = obj.goblinStates[objAnim.state][0].layer;
 		animation = obj.goblinStates[objAnim.state][0].animation;
 		_vm->_scenery->updateAnim(layer, 0, animation, 0,
-				*(obj.pPosX), *(obj.pPosY), 0);
+		                          *(obj.pPosX), *(obj.pPosY), 0);
 
 		deltaHeight = _vm->_scenery->_animBottom - _vm->_scenery->_animTop;
 		deltaWidth = _vm->_scenery->_animRight - _vm->_scenery->_animLeft;
 
-		animLayer =
-			_vm->_scenery->getAnimLayer(objAnim.animation, objAnim.layer);
+		animLayer = _vm->_scenery->getAnimLayer(objAnim.animation, objAnim.layer);
 		deltaX = animLayer->animDeltaX;
 		deltaY = animLayer->animDeltaY;
 
@@ -725,7 +716,7 @@ void Inter_v2::o2_setGoblinState() {
 		objAnim.newCycle = animLayer->framesCount;
 
 		_vm->_scenery->updateAnim(layer, 0, animation, 0,
-				*(obj.pPosX), *(obj.pPosY), 0);
+		                          *(obj.pPosX), *(obj.pPosY), 0);
 
 		deltaHeight -= _vm->_scenery->_animBottom - _vm->_scenery->_animTop;
 		deltaWidth -= _vm->_scenery->_animRight - _vm->_scenery->_animLeft;
@@ -746,15 +737,12 @@ void Inter_v2::o2_setGoblinState() {
 		animLayer = _vm->_scenery->getAnimLayer(animation, layer);
 		objAnim.newCycle = animLayer->framesCount;
 		_vm->_scenery->updateAnim(layer, 0, animation, 0,
-				*(obj.pPosX), *(obj.pPosY), 0);
+		                          *(obj.pPosX), *(obj.pPosY), 0);
 
 		if (_vm->_map->hasBigTiles())
-			*(obj.pPosY) = ((obj.goblinY + 1) * _vm->_map->getTilesHeight()) -
-				(_vm->_scenery->_animBottom - _vm->_scenery->_animTop) -
-				((obj.goblinY + 1) / 2);
+			*(obj.pPosY) = ((obj.goblinY + 1) * _vm->_map->getTilesHeight()) - (_vm->_scenery->_animBottom - _vm->_scenery->_animTop) - ((obj.goblinY + 1) / 2);
 		else
-			*(obj.pPosY) = ((obj.goblinY + 1) * _vm->_map->getTilesHeight()) -
-				(_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
+			*(obj.pPosY) = ((obj.goblinY + 1) * _vm->_map->getTilesHeight()) - (_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
 		*(obj.pPosX) = obj.goblinX * _vm->_map->getTilesWidth();
 		break;
 	}
@@ -811,7 +799,6 @@ void Inter_v2::o2_initScreen() {
 			_vm->_global->_colorCount = 256;
 
 			_vm->_video->setSize();
-
 		}
 	}
 
@@ -854,7 +841,7 @@ void Inter_v2::o2_initScreen() {
 	_vm->_global->_setAllPalette = true;
 
 	_vm->_util->setMousePos(_vm->_global->_inter_mouseX,
-			_vm->_global->_inter_mouseY);
+	                        _vm->_global->_inter_mouseY);
 	_vm->_util->clearPalette();
 
 	_vm->_draw->initScreen();
@@ -873,23 +860,21 @@ void Inter_v2::o2_scroll() {
 	int16 curY;
 
 	startX = CLIP((int)_vm->_game->_script->readValExpr(), 0,
-			_vm->_video->_surfWidth - _vm->_width);
+	              _vm->_video->_surfWidth - _vm->_width);
 	startY = CLIP((int)_vm->_game->_script->readValExpr(), 0,
-			_vm->_video->_surfHeight - _vm->_height);
+	              _vm->_video->_surfHeight - _vm->_height);
 	endX = CLIP((int)_vm->_game->_script->readValExpr(), 0,
-			_vm->_video->_surfWidth - _vm->_width);
+	            _vm->_video->_surfWidth - _vm->_width);
 	endY = CLIP((int)_vm->_game->_script->readValExpr(), 0,
-			_vm->_video->_surfHeight - _vm->_height);
+	            _vm->_video->_surfHeight - _vm->_height);
 	stepX = _vm->_game->_script->readValExpr();
 	stepY = _vm->_game->_script->readValExpr();
 
 	curX = startX;
 	curY = startY;
 	while (!_vm->shouldQuit() && ((curX != endX) || (curY != endY))) {
-		curX = stepX > 0 ? MIN(curX + stepX, (int)endX) :
-			MAX(curX + stepX, (int)endX);
-		curY = stepY > 0 ? MIN(curY + stepY, (int)endY) :
-			MAX(curY + stepY, (int)endY);
+		curX = stepX > 0 ? MIN(curX + stepX, (int)endX) : MAX(curX + stepX, (int)endX);
+		curY = stepY > 0 ? MIN(curY + stepY, (int)endY) : MAX(curY + stepY, (int)endY);
 
 		_vm->_draw->_scrollOffsetX = curX;
 		_vm->_draw->_scrollOffsetY = curY;
@@ -934,26 +919,27 @@ void Inter_v2::o2_playImd() {
 	if (imd.size() > 8)
 		imd = Common::String(imd.c_str(), 8);
 
-	props.x          = _vm->_game->_script->readValExpr();
-	props.y          = _vm->_game->_script->readValExpr();
+	props.x = _vm->_game->_script->readValExpr();
+	props.y = _vm->_game->_script->readValExpr();
 	props.startFrame = _vm->_game->_script->readValExpr();
-	props.lastFrame  = _vm->_game->_script->readValExpr();
-	props.breakKey   = _vm->_game->_script->readValExpr();
-	props.flags      = _vm->_game->_script->readValExpr();
-	props.palStart   = _vm->_game->_script->readValExpr();
-	props.palEnd     = _vm->_game->_script->readValExpr();
-	props.palCmd     = 1 << (props.flags & 0x3F);
+	props.lastFrame = _vm->_game->_script->readValExpr();
+	props.breakKey = _vm->_game->_script->readValExpr();
+	props.flags = _vm->_game->_script->readValExpr();
+	props.palStart = _vm->_game->_script->readValExpr();
+	props.palEnd = _vm->_game->_script->readValExpr();
+	props.palCmd = 1 << (props.flags & 0x3F);
 
 	debugC(1, kDebugVideo, "Playing video \"%s\" @ %d+%d, frames %d - %d, "
-			"paletteCmd %d (%d - %d), flags %X", imd.c_str(),
-			props.x, props.y, props.startFrame, props.lastFrame,
-			props.palCmd, props.palStart, props.palEnd, props.flags);
+	                       "paletteCmd %d (%d - %d), flags %X",
+	       imd.c_str(),
+	       props.x, props.y, props.startFrame, props.lastFrame,
+	       props.palCmd, props.palStart, props.palEnd, props.flags);
 
 	int slot = 0;
 	if (!imd.empty()) {
 		_vm->_vidPlayer->evaluateFlags(props);
 		if ((slot = _vm->_vidPlayer->openVideo(true, imd, props)) < 0) {
-			WRITE_VAR(11, (uint32) -1);
+			WRITE_VAR(11, (uint32)-1);
 			return;
 		}
 	}
@@ -961,7 +947,7 @@ void Inter_v2::o2_playImd() {
 	bool close = (props.lastFrame == -1);
 	if (props.startFrame == -2) {
 		props.startFrame = 0;
-		props.lastFrame  = 0;
+		props.lastFrame = 0;
 		close = false;
 	}
 
@@ -975,16 +961,15 @@ void Inter_v2::o2_playImd() {
 void Inter_v2::o2_getImdInfo() {
 	Common::String imd = _vm->_game->_script->evalString();
 
-	int16 varX      = _vm->_game->_script->readVarIndex();
-	int16 varY      = _vm->_game->_script->readVarIndex();
+	int16 varX = _vm->_game->_script->readVarIndex();
+	int16 varY = _vm->_game->_script->readVarIndex();
 	int16 varFrames = _vm->_game->_script->readVarIndex();
-	int16 varWidth  = _vm->_game->_script->readVarIndex();
+	int16 varWidth = _vm->_game->_script->readVarIndex();
 	int16 varHeight = _vm->_game->_script->readVarIndex();
 
 	// WORKAROUND: The nut rolling animation in the administration center
 	// in Woodruff is called "noixroul", but the scripts think it's "noixroule".
-	if ((_vm->getGameType() == kGameTypeWoodruff) &&
-	    imd.equalsIgnoreCase("noixroule"))
+	if ((_vm->getGameType() == kGameTypeWoodruff) && imd.equalsIgnoreCase("noixroule"))
 		imd = "noixroul";
 
 	_vm->_vidPlayer->writeVideoInfo(imd, varX, varY, varFrames, varWidth, varHeight);
@@ -1003,7 +988,7 @@ void Inter_v2::o2_closeItk() {
 
 	// NOTE: Lost in Time might close a data file without explicitely closing a video in it.
 	//       So we make sure that all open videos are still available.
-		_vm->_vidPlayer->reopenAll();
+	_vm->_vidPlayer->reopenAll();
 }
 
 void Inter_v2::o2_setImdFrontSurf() {
@@ -1073,7 +1058,7 @@ void Inter_v2::o2_printText(OpFuncParams &params) {
 	_vm->_draw->_transparency = 0;
 
 	SurfacePtr surface = _vm->_draw->_spritesArray[_vm->_draw->_destSurface];
-	uint16 destWidth  = surface ? surface->getWidth()  : 0;
+	uint16 destWidth = surface ? surface->getWidth() : 0;
 	uint16 destHeight = surface ? surface->getHeight() : 0;
 
 	if (_vm->_draw->_backColor == 16) {
@@ -1082,8 +1067,7 @@ void Inter_v2::o2_printText(OpFuncParams &params) {
 	}
 
 	do {
-		for (i = 0; (_vm->_game->_script->peekChar() != '.') &&
-				(_vm->_game->_script->peekByte() != 200); i++) {
+		for (i = 0; (_vm->_game->_script->peekChar() != '.') && (_vm->_game->_script->peekByte() != 200); i++) {
 			buf[i] = _vm->_game->_script->readChar();
 		}
 
@@ -1093,34 +1077,33 @@ void Inter_v2::o2_printText(OpFuncParams &params) {
 			case TYPE_VAR_INT8:
 			case TYPE_ARRAY_INT8:
 				sprintf(buf + i, "%d",
-						(int8) READ_VARO_UINT8(_vm->_game->_script->readVarIndex()));
+				        (int8)READ_VARO_UINT8(_vm->_game->_script->readVarIndex()));
 				break;
 
 			case TYPE_VAR_INT16:
 			case TYPE_VAR_INT32_AS_INT16:
 			case TYPE_ARRAY_INT16:
 				sprintf(buf + i, "%d",
-						(int16) READ_VARO_UINT16(_vm->_game->_script->readVarIndex()));
+				        (int16)READ_VARO_UINT16(_vm->_game->_script->readVarIndex()));
 				break;
 
 			case TYPE_VAR_INT32:
 			case TYPE_ARRAY_INT32:
 				sprintf(buf + i, "%d",
-						(int32)VAR_OFFSET(_vm->_game->_script->readVarIndex()));
+				        (int32)VAR_OFFSET(_vm->_game->_script->readVarIndex()));
 				break;
 
 			case TYPE_VAR_STR:
 			case TYPE_ARRAY_STR:
 				sprintf(buf + i, "%s",
-						GET_VARO_STR(_vm->_game->_script->readVarIndex()));
+				        GET_VARO_STR(_vm->_game->_script->readVarIndex()));
 				break;
 			}
 			_vm->_game->_script->skip(1);
 		} else
 			buf[i] = 0;
 
-		if ((_vm->_draw->_destSpriteX < destWidth) &&
-		    (_vm->_draw->_destSpriteY < destHeight))
+		if ((_vm->_draw->_destSpriteX < destWidth) && (_vm->_draw->_destSpriteY < destHeight))
 			_vm->_draw->spriteOperation(DRAW_PRINTTEXT);
 
 	} while (_vm->_game->_script->peekByte() != 200);
@@ -1150,34 +1133,34 @@ void Inter_v2::o2_animPalInit(OpFuncParams &params) {
 }
 
 void Inter_v2::o2_addHotspot(OpFuncParams &params) {
-	int16 id       = _vm->_game->_script->readValExpr();
+	int16 id = _vm->_game->_script->readValExpr();
 	uint16 funcPos = _vm->_game->_script->pos();
-	int16 left     = _vm->_game->_script->readValExpr();
-	int16 top      = _vm->_game->_script->readValExpr();
-	uint16 width   = _vm->_game->_script->readValExpr();
-	uint16 height  = _vm->_game->_script->readValExpr();
-	uint16 flags   = _vm->_game->_script->readValExpr();
-	uint16 key     = _vm->_game->_script->readInt16();
+	int16 left = _vm->_game->_script->readValExpr();
+	int16 top = _vm->_game->_script->readValExpr();
+	uint16 width = _vm->_game->_script->readValExpr();
+	uint16 height = _vm->_game->_script->readValExpr();
+	uint16 flags = _vm->_game->_script->readValExpr();
+	uint16 key = _vm->_game->_script->readInt16();
 
 	if (key == 0)
 		key = ABS(id) + 41960;
 
 	if (left < 0) {
 		width += left;
-		left   = 0;
+		left = 0;
 	}
 
 	if (top < 0) {
 		height += top;
-		top     = 0;
+		top = 0;
 	}
 
 	if (id < 0)
 		_vm->_game->_hotspots->add(0xD000 - id, left & 0xFFFC, top & 0xFFFC,
-				left + width + 3, top + height + 3, flags, key, 0, 0, funcPos);
+		                           left + width + 3, top + height + 3, flags, key, 0, 0, funcPos);
 	else
 		_vm->_game->_hotspots->add(0xE000 + id, left, top,
-				left + width - 1, top + height - 1, flags, key, 0, 0, funcPos);
+		                           left + width - 1, top + height - 1, flags, key, 0, 0, funcPos);
 }
 
 void Inter_v2::o2_removeHotspot(OpFuncParams &params) {
@@ -1185,7 +1168,7 @@ void Inter_v2::o2_removeHotspot(OpFuncParams &params) {
 	uint8 stateType1 = Hotspots::kStateFilledDisabled | Hotspots::kStateType1;
 	uint8 stateType2 = Hotspots::kStateFilledDisabled | Hotspots::kStateType2;
 
-	if      (id == -2)
+	if (id == -2)
 		_vm->_game->_hotspots->removeState(stateType1);
 	else if (id == -1)
 		_vm->_game->_hotspots->removeState(stateType2);
@@ -1221,7 +1204,7 @@ void Inter_v2::o2_getTotTextItemPart(OpFuncParams &params) {
 	totData = textItem->getData();
 
 	// Skip background rectangles
-	while (((int16) READ_LE_UINT16(totData)) != -1)
+	while (((int16)READ_LE_UINT16(totData)) != -1)
 		totData += 9;
 	totData += 2;
 
@@ -1266,8 +1249,7 @@ void Inter_v2::o2_getTotTextItemPart(OpFuncParams &params) {
 						continue;
 					}
 
-					if ((n != 0) || (*totData == 1) ||
-							(*totData == 6) || (*totData == 7)) {
+					if ((n != 0) || (*totData == 1) || (*totData == 6) || (*totData == 7)) {
 						WRITE_VARO_UINT8(stringVar, 0);
 						delete textItem;
 						return;
@@ -1285,7 +1267,6 @@ void Inter_v2::o2_getTotTextItemPart(OpFuncParams &params) {
 						break;
 					}
 				}
-
 			}
 			break;
 
@@ -1301,7 +1282,7 @@ void Inter_v2::o2_getTotTextItemPart(OpFuncParams &params) {
 				WRITE_VARO_UINT16(stringVar, offX);
 				WRITE_VARO_UINT16(stringVar + 2, offY);
 				WRITE_VARO_UINT16(stringVar + 4,
-						totData - _vm->_game->_resources->getTexts());
+				                  totData - _vm->_game->_resources->getTexts());
 				WRITE_VARO_UINT8(stringVar + 6, 0);
 				delete textItem;
 				return;
@@ -1346,8 +1327,7 @@ void Inter_v2::o2_getTotTextItemPart(OpFuncParams &params) {
 					WRITE_VARO_UINT8(stringVar++, *totData++);
 				WRITE_VARO_UINT8(stringVar, 0);
 
-				if (((*totData != 2) && (*totData != 5)) ||
-						(ABS(offY - READ_LE_UINT16(totData + 3)) > 1)) {
+				if (((*totData != 2) && (*totData != 5)) || (ABS(offY - READ_LE_UINT16(totData + 3)) > 1)) {
 
 					if (curPart == part) {
 						delete textItem;
@@ -1366,7 +1346,6 @@ void Inter_v2::o2_getTotTextItemPart(OpFuncParams &params) {
 
 				} else
 					totData += 5;
-
 			}
 			break;
 		}
@@ -1409,11 +1388,11 @@ void Inter_v2::o2_getFreeMem(OpFuncParams &params) {
 	uint16 freeVar;
 	uint16 maxFreeVar;
 
-	freeVar    = _vm->_game->_script->readVarIndex();
+	freeVar = _vm->_game->_script->readVarIndex();
 	maxFreeVar = _vm->_game->_script->readVarIndex();
 
 	// HACK
-	WRITE_VAR_OFFSET(freeVar   , 1000000);
+	WRITE_VAR_OFFSET(freeVar, 1000000);
 	WRITE_VAR_OFFSET(maxFreeVar, 1000000);
 	WRITE_VAR(16, _vm->_game->_script->getVariablesCount() * 4);
 }
@@ -1443,19 +1422,19 @@ void Inter_v2::o2_checkData(OpFuncParams &params) {
 	debugC(2, kDebugFileIO, "Requested size of file \"%s\": %d", file.c_str(), size);
 
 	WRITE_VAR_OFFSET(varOff, (size == -1) ? -1 : 50);
-	WRITE_VAR(16, (uint32) size);
+	WRITE_VAR(16, (uint32)size);
 }
 
 void Inter_v2::o2_readData(OpFuncParams &params) {
 	const char *file = _vm->_game->_script->evalString();
 
 	uint16 dataVar = _vm->_game->_script->readVarIndex();
-	int32  size    = _vm->_game->_script->readValExpr();
-	int32  offset  = _vm->_game->_script->evalInt();
-	int32  retSize = 0;
+	int32 size = _vm->_game->_script->readValExpr();
+	int32 offset = _vm->_game->_script->evalInt();
+	int32 retSize = 0;
 
 	debugC(2, kDebugFileIO, "Read from file \"%s\" (%d, %d bytes at %d)",
-			file, dataVar, size, offset);
+	       file, dataVar, size, offset);
 
 	SaveLoad::SaveMode mode = _vm->_saveLoad ? _vm->_saveLoad->getSaveMode(file) : SaveLoad::kSaveModeNone;
 	if (mode == SaveLoad::kSaveModeSave) {
@@ -1477,7 +1456,7 @@ void Inter_v2::o2_readData(OpFuncParams &params) {
 
 	if (size < 0) {
 		warning("Attempted to read a raw sprite from file \"%s\"",
-				file);
+		        file);
 		return;
 	} else if (size == 0) {
 		dataVar = 0;
@@ -1521,11 +1500,11 @@ void Inter_v2::o2_writeData(OpFuncParams &params) {
 	const char *file = _vm->_game->_script->evalString();
 
 	int16 dataVar = _vm->_game->_script->readVarIndex();
-	int32 size    = _vm->_game->_script->readValExpr();
-	int32 offset  = _vm->_game->_script->evalInt();
+	int32 size = _vm->_game->_script->readValExpr();
+	int32 offset = _vm->_game->_script->evalInt();
 
 	debugC(2, kDebugFileIO, "Write to file \"%s\" (%d, %d bytes at %d)",
-			file, dataVar, size, offset);
+	       file, dataVar, size, offset);
 
 	WRITE_VAR(1, 1);
 
@@ -1634,7 +1613,8 @@ int16 Inter_v2::loadSound(int16 search) {
 
 			if (slot == -1) {
 				warning("Inter_v2::loadSound(): No free slot to load sound "
-						"(id = %d)", id);
+				        "(id = %d)",
+				        id);
 				return 0;
 			}
 		}
@@ -1688,7 +1668,7 @@ void Inter_v2::animPalette() {
 	bool first;
 
 	first = true;
-	for (j = 0; j < 8; j ++) {
+	for (j = 0; j < 8; j++) {
 		if (_animPalDir[j] == 0)
 			continue;
 

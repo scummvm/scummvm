@@ -31,32 +31,32 @@ void SceneScriptUG07::InitializeScene() {
 	} else if (Game_Flag_Query(kFlagUG08toUG07)) {
 		Setup_Scene_Information(110.0f, -12.21f, -276.0f, 605);
 	} else {
-		Setup_Scene_Information(-10.0f, -12.21f,  -58.0f,   0);
+		Setup_Scene_Information(-10.0f, -12.21f, -58.0f, 0);
 		Game_Flag_Reset(kFlagUG10toUG07);
 	}
 
 	if (Game_Flag_Query(kFlagUG07Empty)) {
-		Scene_Exit_Add_2D_Exit(0,   0, 192,  51, 334, 0);
+		Scene_Exit_Add_2D_Exit(0, 0, 192, 51, 334, 0);
 		Scene_Exit_Add_2D_Exit(1, 226, 224, 314, 396, 1);
 	}
 	Scene_Exit_Add_2D_Exit(2, 60, 440, 460, 479, 2);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRUNOFF, 90, -45, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1,   40,   0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED2,   40,   0, 1);
-	Ambient_Sounds_Add_Sound(kSfxYELL1M1,  2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxYELL1M3,  2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxGRUNT1M1, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxGRUNT1M2, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxGRUNT2M3, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP1,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP2,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP3,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP4,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBDRIP5,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN1,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN2,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN3,   5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1, 40, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED2, 40, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxYELL1M1, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxYELL1M3, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT1M1, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT1M2, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT2M3, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP1, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP2, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP3, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP4, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBDRIP5, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN3, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
 }
 
 void SceneScriptUG07::SceneLoaded() {
@@ -117,10 +117,9 @@ bool SceneScriptUG07::ClickedOnExit(int exitId) {
 
 	if (exitId == 2) {
 		if (!Game_Flag_Query(kFlagMcCoyRetiredHuman)
-		 &&  Game_Flag_Query(kFlagUG18GuzzaScene)
-		 &&  Global_Variable_Query(kVariableChapter) == 4
-		 && !Game_Flag_Query(kFlagUG07ClovisCaughtMcCoy)
-		) {
+		    && Game_Flag_Query(kFlagUG18GuzzaScene)
+		    && Global_Variable_Query(kVariableChapter) == 4
+		    && !Game_Flag_Query(kFlagUG07ClovisCaughtMcCoy)) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 49.0f, -12.21f, -130.0f, 0, true, false, false)) {
 				Game_Flag_Set(kFlagUG07ClovisCaughtMcCoy);
 				Actor_Put_In_Set(kActorClovis, kSetUG07);
@@ -151,8 +150,7 @@ bool SceneScriptUG07::ClickedOnExit(int exitId) {
 			}
 		} else {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.0f, -21.47f, -58.0f, 0, true, false, false)
-			 && Actor_Query_Goal_Number(kActorClovis) != kGoalClovisUG07KillMcCoy
-			) {
+			    && Actor_Query_Goal_Number(kActorClovis) != kGoalClovisUG07KillMcCoy) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Game_Flag_Set(kFlagUG07toUG10);
@@ -175,9 +173,8 @@ void SceneScriptUG07::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptUG07::PlayerWalkedIn() {
-	if ( Global_Variable_Query(kVariableChapter) == 4
-	 && !Game_Flag_Query(kFlagUG07Empty)
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 4
+	    && !Game_Flag_Query(kFlagUG07Empty)) {
 		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyBlockingUG07);
 		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordBlockingUG07);
 	}
@@ -190,10 +187,8 @@ void SceneScriptUG07::PlayerWalkedIn() {
 
 void SceneScriptUG07::PlayerWalkedOut() {
 	if (Global_Variable_Query(kVariableChapter) == 4
-	 && (Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyBlockingUG07
-	  || Actor_Query_Goal_Number(kActorOfficerGrayford) == kGoalOfficerGrayfordBlockingUG07
-	 )
-	) {
+	    && (Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyBlockingUG07
+	        || Actor_Query_Goal_Number(kActorOfficerGrayford) == kGoalOfficerGrayfordBlockingUG07)) {
 		Non_Player_Actor_Combat_Mode_Off(kActorOfficerLeary);
 		Non_Player_Actor_Combat_Mode_Off(kActorOfficerGrayford);
 		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyPrepareToHuntAroundAct4);

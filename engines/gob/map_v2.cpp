@@ -22,19 +22,20 @@
 
 #include "common/stream.h"
 
-#include "gob/gob.h"
-#include "gob/map.h"
+#include "gob/game.h"
 #include "gob/global.h"
+#include "gob/gob.h"
 #include "gob/goblin.h"
 #include "gob/inter.h"
-#include "gob/game.h"
-#include "gob/script.h"
-#include "gob/resources.h"
+#include "gob/map.h"
 #include "gob/mult.h"
+#include "gob/resources.h"
+#include "gob/script.h"
 
 namespace Gob {
 
-Map_v2::Map_v2(GobEngine *vm) : Map_v1(vm) {
+Map_v2::Map_v2(GobEngine *vm)
+  : Map_v1(vm) {
 	_screenHeight = 200;
 }
 
@@ -57,42 +58,42 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 
 	id = _vm->_game->_script->readInt16();
 
-	if (((uint16) id) >= 65520) {
-		switch ((uint16) id) {
-			case 65530:
-				for (int i = 0; i < _mapWidth * _mapHeight; i++)
-					_passMap[i] -= READ_VARO_UINT8(var + i);
-				break;
-			case 65531:
-				for (int i = 0; i < _mapWidth * _mapHeight; i++)
-					_passMap[i] += READ_VARO_UINT8(var + i);
-				break;
-			case 65532:
-				for (int i = 0; i < _mapWidth * _mapHeight; i++)
-					WRITE_VARO_UINT8(var + i, 0x00);
-				break;
-			case 65533: {
-				int index = READ_VARO_UINT16(var);
-				// _vm->_mult->_objects[index].field_6E = 0;
-				// _vm->_mult->_objects[index].field_6A = variables;
-				warning("Map_v2::loadMapObjects(): ID == 65533 (%d)", index);
-				break;
-			}
-			case 65534:
-				_tilesWidth     = READ_VARO_UINT8(var);
-				_tilesHeight    = READ_VARO_UINT8(var + 1);
-				_mapWidth       = READ_VARO_UINT8(var + 2);
-				_mapHeight      = READ_VARO_UINT8(var + 3);
-				_mapUnknownBool = READ_VARO_UINT8(var + 4) ? true : false;
-				if (_mapUnknownBool)
-					warning("Map_v2::loadMapObjects(): _mapUnknownBool == true");
-				break;
-			case 65535:
-				_passMap = (int8 *)_vm->_inter->_variables->getAddressOff8(var);
-				break;
-			default:
-				warning("Map_v2::loadMapObjects(): ID == %d", (uint16) id);
-				break;
+	if (((uint16)id) >= 65520) {
+		switch ((uint16)id) {
+		case 65530:
+			for (int i = 0; i < _mapWidth * _mapHeight; i++)
+				_passMap[i] -= READ_VARO_UINT8(var + i);
+			break;
+		case 65531:
+			for (int i = 0; i < _mapWidth * _mapHeight; i++)
+				_passMap[i] += READ_VARO_UINT8(var + i);
+			break;
+		case 65532:
+			for (int i = 0; i < _mapWidth * _mapHeight; i++)
+				WRITE_VARO_UINT8(var + i, 0x00);
+			break;
+		case 65533: {
+			int index = READ_VARO_UINT16(var);
+			// _vm->_mult->_objects[index].field_6E = 0;
+			// _vm->_mult->_objects[index].field_6A = variables;
+			warning("Map_v2::loadMapObjects(): ID == 65533 (%d)", index);
+			break;
+		}
+		case 65534:
+			_tilesWidth = READ_VARO_UINT8(var);
+			_tilesHeight = READ_VARO_UINT8(var + 1);
+			_mapWidth = READ_VARO_UINT8(var + 2);
+			_mapHeight = READ_VARO_UINT8(var + 3);
+			_mapUnknownBool = READ_VARO_UINT8(var + 4) ? true : false;
+			if (_mapUnknownBool)
+				warning("Map_v2::loadMapObjects(): _mapUnknownBool == true");
+			break;
+		case 65535:
+			_passMap = (int8 *)_vm->_inter->_variables->getAddressOff8(var);
+			break;
+		default:
+			warning("Map_v2::loadMapObjects(): ID == %d", (uint16)id);
+			break;
 		}
 		return;
 	}
@@ -149,15 +150,14 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 	}
 
 	if (_mapVersion == 4) {
-		_mapWidth  = VAR(17);
+		_mapWidth = VAR(17);
 		_passWidth = _mapWidth;
 	}
 
 	// In the original asm, this writes byte-wise into the variables-array
 	tmpPos = mapData.pos();
 	mapData.seek(passPos);
-	if ((variables != 0) &&
-	    (variables != _vm->_inter->_variables->getAddressOff8(0))) {
+	if ((variables != 0) && (variables != _vm->_inter->_variables->getAddressOff8(0))) {
 
 		_passMap = (int8 *)variables;
 		mapHeight = _screenHeight / _tilesHeight;
@@ -197,9 +197,9 @@ void Map_v2::loadGoblinStates(Common::SeekableReadStream &data, int index) {
 	uint32 tmpPos;
 
 	memset(indices, -1, 101);
-	_vm->_mult->_objects[index].goblinStates = new Mult::Mult_GobState*[101];
+	_vm->_mult->_objects[index].goblinStates = new Mult::Mult_GobState *[101];
 	memset(_vm->_mult->_objects[index].goblinStates, 0,
-			101 * sizeof(Mult::Mult_GobState *));
+	       101 * sizeof(Mult::Mult_GobState *));
 
 	data.read(indices, 100);
 	tmpPos = data.pos();
@@ -277,9 +277,7 @@ void Map_v2::optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y) {
 			if (checkDirectPath(obj, x, y, _wayPoints[i].x, _wayPoints[i].y) == 1)
 				obj->nearestWayPoint = i;
 		}
-
 	}
-
 }
 
 } // End of namespace Gob

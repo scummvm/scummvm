@@ -29,7 +29,6 @@
 #ifndef WINTERMUTE_BASE_FONTBITMAP_H
 #define WINTERMUTE_BASE_FONTBITMAP_H
 
-
 #include "engines/wintermute/base/font/base_font.h"
 
 namespace Wintermute {
@@ -63,7 +62,6 @@ private:
 	void drawChar(byte c, int x, int y);
 
 	int textHeightDraw(const byte *text, int x, int y, int width, TTextAlign align, bool draw, int max_height = -1, int maxLength = -1);
-
 };
 
 } // End of namespace Wintermute

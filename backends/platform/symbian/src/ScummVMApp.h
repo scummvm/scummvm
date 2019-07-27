@@ -23,12 +23,12 @@
 #ifndef SCUMMVMAPP_H
 #define SCUMMVMAPP_H
 
-#include <eikapp.h>
-#include <e32base.h>
 #include <coecntrl.h>
-#include <eikenv.h>
 #include <coeview.h>
+#include <e32base.h>
+#include <eikapp.h>
 #include <eikappui.h>
+#include <eikenv.h>
 
 class CScummVM : public CEikApplication {
 public:
@@ -38,7 +38,6 @@ public:
 	CApaDocument *CreateDocumentL();
 	TUid AppDllUid() const;
 };
-
 
 #include <eikdoc.h>
 

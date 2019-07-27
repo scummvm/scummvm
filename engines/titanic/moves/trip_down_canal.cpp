@@ -25,10 +25,11 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CTripDownCanal, CMovePlayerTo)
-	ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseButtonDownMsg)
 END_MESSAGE_MAP()
 
-CTripDownCanal::CTripDownCanal() : CMovePlayerTo() {
+CTripDownCanal::CTripDownCanal()
+  : CMovePlayerTo() {
 }
 
 void CTripDownCanal::save(SimpleFile *file, int indent) {

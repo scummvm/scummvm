@@ -20,17 +20,18 @@
  *
  */
 
-#include "common/coroutines.h"
 #include "tony/debugger.h"
+#include "common/coroutines.h"
 #include "tony/globals.h"
 #include "tony/tony.h"
 
 namespace Tony {
 
-Debugger::Debugger() : GUI::Debugger() {
-	registerCmd("continue",		WRAP_METHOD(Debugger, cmdExit));
-	registerCmd("scene",			WRAP_METHOD(Debugger, Cmd_Scene));
-	registerCmd("dirty_rects",	WRAP_METHOD(Debugger, Cmd_DirtyRects));
+Debugger::Debugger()
+  : GUI::Debugger() {
+	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("scene", WRAP_METHOD(Debugger, Cmd_Scene));
+	registerCmd("dirty_rects", WRAP_METHOD(Debugger, Cmd_DirtyRects));
 }
 
 static int strToInt(const char *s) {

@@ -60,14 +60,13 @@ public:
 	bool sampleLoad(SoundDesc *sndDesc, SoundType type, const char *fileName);
 	void sampleFree(SoundDesc *sndDesc, bool noteAdLib = false, int index = -1);
 
-
 	// SoundBlaster
 	void blasterPlay(SoundDesc *sndDesc, int16 repCount,
-			int16 frequency, int16 fadeLength = 0);
+	                 int16 frequency, int16 fadeLength = 0);
 	void blasterStop(int16 fadeLength, SoundDesc *sndDesc = 0);
 
 	void blasterPlayComposition(const int16 *composition, int16 freqVal,
-			SoundDesc *sndDescs = 0, int8 sndCount = kSoundsCount);
+	                            SoundDesc *sndDescs = 0, int8 sndCount = kSoundsCount);
 	void blasterStopComposition();
 	void blasterRepeatComposition(int32 repCount);
 
@@ -76,12 +75,10 @@ public:
 	void blasterSetRepeating(int32 repCount);
 	void blasterWaitEndPlay(bool interruptible = false, bool stopComp = true);
 
-
 	// PCSpeaker
 	void speakerOn(int16 frequency, int32 length = -1);
 	void speakerOff();
 	void speakerOnUpdate(uint32 millis);
-
 
 	// AdLib
 	bool adlibLoadADL(const char *fileName);
@@ -104,7 +101,6 @@ public:
 	void adlibSetRepeating(int32 repCount);
 	void adlibSyncVolume();
 
-
 	// Infogrames
 	bool infogramesLoadInstruments(const char *fileName);
 	bool infogramesLoadSong(const char *fileName);
@@ -112,11 +108,9 @@ public:
 	void infogramesPlay();
 	void infogramesStop();
 
-
 	// Protracker
 	bool protrackerPlay(const char *fileName);
 	void protrackerStop();
-
 
 	// CD-ROM
 	void cdLoadLIC(const Common::String &fname);
@@ -134,7 +128,6 @@ public:
 	const char *cdGetCurrentTrack() const;
 
 	void cdTest(int trySubst, const char *label);
-
 
 	// Background Atmosphere
 	void bgPlay(const char *file, SoundType type);

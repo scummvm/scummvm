@@ -98,8 +98,16 @@ private:
 	// Opcodes
 	typedef void (PICTDecoder::*OpcodeProcPICT)(Common::SeekableReadStream &stream);
 	struct PICTOpcode {
-		PICTOpcode() { op = 0; proc = 0; desc = 0; }
-		PICTOpcode(uint16 o, OpcodeProcPICT p, const char *d) { op = o; proc = p; desc = d; }
+		PICTOpcode() {
+			op = 0;
+			proc = 0;
+			desc = 0;
+		}
+		PICTOpcode(uint16 o, OpcodeProcPICT p, const char *d) {
+			op = o;
+			proc = p;
+			desc = d;
+		}
 		uint16 op;
 		OpcodeProcPICT proc;
 		const char *desc;

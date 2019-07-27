@@ -30,7 +30,9 @@
 
 namespace Avalanche {
 
-AvalancheConsole::AvalancheConsole(AvalancheEngine *vm) : GUI::Debugger(), _vm(vm) {
+AvalancheConsole::AvalancheConsole(AvalancheEngine *vm)
+  : GUI::Debugger()
+  , _vm(vm) {
 	registerCmd("magic_lines", WRAP_METHOD(AvalancheConsole, Cmd_MagicLines));
 }
 

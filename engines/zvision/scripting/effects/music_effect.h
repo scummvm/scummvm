@@ -35,7 +35,8 @@ namespace ZVision {
 
 class MusicNodeBASE : public ScriptingEffect {
 public:
-	MusicNodeBASE(ZVision *engine, uint32 key, ScriptingEffectType type) : ScriptingEffect(engine, key, type) {}
+	MusicNodeBASE(ZVision *engine, uint32 key, ScriptingEffectType type)
+	  : ScriptingEffect(engine, key, type) {}
 	~MusicNodeBASE() {}
 
 	/**

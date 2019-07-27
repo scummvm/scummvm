@@ -22,10 +22,10 @@
 
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 
-#include "kyra/engine/kyra_rpg.h"
-#include "kyra/engine/timer.h"
+#	include "kyra/engine/kyra_rpg.h"
+#	include "kyra/engine/timer.h"
 
-#include "common/system.h"
+#	include "common/system.h"
 
 namespace Kyra {
 
@@ -33,9 +33,18 @@ enum {
 	kEoBTextBufferSize = 2560
 };
 
-TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(engine), _screen(scr),
-	_lineCount(0), _printFlag(false), _lineWidth(0), _numCharsTotal(0), _allowPageBreak(true),
-	_numCharsLeft(0), _numCharsPrinted(0), _sjisTextModeLineBreak(false), _waitButtonMode(1) {
+TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr)
+  : _vm(engine)
+  , _screen(scr)
+  , _lineCount(0)
+  , _printFlag(false)
+  , _lineWidth(0)
+  , _numCharsTotal(0)
+  , _allowPageBreak(true)
+  , _numCharsLeft(0)
+  , _numCharsPrinted(0)
+  , _sjisTextModeLineBreak(false)
+  , _waitButtonMode(1) {
 
 	static const uint8 amigaColorMap[16] = {
 		0x00, 0x06, 0x1d, 0x1b, 0x1a, 0x17, 0x18, 0x0e, 0x19, 0x1c, 0x1c, 0x1e, 0x13, 0x0a, 0x11, 0x1f
@@ -163,7 +172,7 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 		}
 
 		if (_vm->gameFlags().lang == Common::JA_JPN) {
-			uint8 cu = (uint8) c;
+			uint8 cu = (uint8)c;
 			if (cu >= 0xE0 || (cu > 0x80 && cu < 0xA0)) {
 				if ((_textDimData[sdx].column + _lineWidth + sjisOffs) > (sd->w << 3))
 					printLine(_currentLine);
@@ -222,8 +231,12 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 			_textDimData[sdx].line++;
 			break;
 
-		case 11: case 18: case 23:
-		case 24: case 26: case 28:
+		case 11:
+		case 18:
+		case 23:
+		case 24:
+		case 26:
+		case 28:
 			// These are at the time of writing this comment not known to be
 			// used. In case there is some use of them in some odd version
 			// we display this warning here.
@@ -290,7 +303,7 @@ void TextDisplayer_rpg::readNextPara() {
 	// All necessary conversions take place somewhere else. This code actually causes issues if the character conversions
 	// don't take place before calling displayText(). So we disable it for now. If some (not yet supported) localized
 	// versions depend on this code we'll have to look at this again.
-#if 0
+#	if 0
 	if ((_vm->game() != GI_LOL) && (d & 0x80)) {
 		d &= 0x7F;
 		c = d & 7;
@@ -299,7 +312,7 @@ void TextDisplayer_rpg::readNextPara() {
 		c = _table1[(l << 3) + c];
 		d = _table2[l];
 	}
-#endif
+#	endif
 
 	_ctrl[1] = d;
 	_ctrl[2] = c;
@@ -342,7 +355,6 @@ void TextDisplayer_rpg::printLine(char *str) {
 	char c = 0;
 	uint8 twoByteCharOffs = 0;
 
-
 	if (sjisTextMode) {
 		bool ct = true;
 
@@ -366,7 +378,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 
 			while (n2 < n1 && n2 < s) {
 				c = str[n2];
-				uint8 cu = (uint8) c;
+				uint8 cu = (uint8)c;
 				if (cu >= 0xE0 || (cu > 0x80 && cu < 0xA0))
 					n2++;
 				n2++;
@@ -376,7 +388,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 	} else {
 		if (_vm->gameFlags().lang == Common::JA_JPN) {
 			for (int i = 0; i < s; ++i) {
-				uint8 cu = (uint8) str[i];
+				uint8 cu = (uint8)str[i];
 				if (cu >= 0xE0 || (cu > 0x80 && cu < 0xA0))
 					twoByteCharOffs = 8;
 			}
@@ -398,7 +410,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 				c = str[0];
 
 				for (strPos = 0; strPos < s; ++strPos) {
-					uint8 cu = (uint8) str[strPos];
+					uint8 cu = (uint8)str[strPos];
 					if (cu >= 0xE0 || (cu > 0x80 && cu < 0xA0)) {
 						lw += 9;
 						strPos++;
@@ -415,7 +427,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 						break;
 					}
 					prevStrPos = strPos;
-					c = (char) cu;
+					c = (char)cu;
 				}
 
 				if (!lineLastCharPos) {
@@ -455,7 +467,6 @@ void TextDisplayer_rpg::printLine(char *str) {
 					s = lineLastCharPos;
 				}
 			}
-
 		}
 	}
 
@@ -607,7 +618,7 @@ void TextDisplayer_rpg::textPageBreak() {
 	int resetPortraitAfterSpeechAnim = 0;
 	int updatePortraitSpeechAnimDuration = 0;
 
-	if (_vm->_updateCharNum != -1)  {
+	if (_vm->_updateCharNum != -1) {
 		resetPortraitAfterSpeechAnim = _vm->_resetPortraitAfterSpeechAnim;
 		_vm->_resetPortraitAfterSpeechAnim = 0;
 		updatePortraitSpeechAnimDuration = _vm->_updatePortraitSpeechAnimDuration;
@@ -744,7 +755,8 @@ void TextDisplayer_rpg::displayWaitButton() {
 	if (!_vm->shouldQuit())
 		_vm->removeInputTop();
 
-	while (!_vm->processDialogue() && !_vm->shouldQuit()) {}
+	while (!_vm->processDialogue() && !_vm->shouldQuit()) {
+	}
 
 	_screen->set16bitShadingLevel(4);
 	_screen->fillRect(_vm->_dialogueButtonPosX[0], _vm->_dialogueButtonPosY[0], _vm->_dialogueButtonPosX[0] + _vm->_dialogueButtonWidth - 1, _vm->_dialogueButtonPosY[0] + _vm->guiSettings()->buttons.height - 1, _vm->guiSettings()->colors.fill);
@@ -773,7 +785,7 @@ void TextDisplayer_rpg::convertString(char *str) {
 			if ((*str) == c[0])
 				*str = c[1];
 		}
-	}	
+	}
 }
 
 } // End of namespace Kyra

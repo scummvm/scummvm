@@ -22,23 +22,23 @@
 
 #if defined(__SYMBIAN32__)
 
-#include "backends/fs/symbian/symbian-fs.h"
-#include "backends/fs/symbian/symbianstream.h"
-#include "backends/platform/symbian/src/symbianos.h"
+#	include "backends/fs/symbian/symbian-fs.h"
+#	include "backends/fs/symbian/symbianstream.h"
+#	include "backends/platform/symbian/src/symbianos.h"
 
-#include <dirent.h>
-#include <eikenv.h>
-#include <f32file.h>
-#include <bautils.h>
+#	include <bautils.h>
+#	include <dirent.h>
+#	include <eikenv.h>
+#	include <f32file.h>
 
-#define KDriveLabelSize 30
+#	define KDriveLabelSize 30
 
 /**
  * Fixes the path by changing all slashes to backslashes.
  *
  * @param path Common::String with the path to be fixed.
  */
-static void fixFilePath(Common::String &aPath){
+static void fixFilePath(Common::String &aPath) {
 	TInt len = aPath.size();
 
 	for (TInt index = 0; index < len; index++) {
@@ -54,7 +54,6 @@ SymbianFilesystemNode::SymbianFilesystemNode(bool aIsRoot) {
 	_isDirectory = true;
 	_isPseudoRoot = aIsRoot;
 	_displayName = "Root";
-
 }
 
 SymbianFilesystemNode::SymbianFilesystemNode(const Common::String &path) {
@@ -68,7 +67,7 @@ SymbianFilesystemNode::SymbianFilesystemNode(const Common::String &path) {
 
 	TEntry fileAttribs;
 	TFileName fname;
-	TPtrC8 ptr((const unsigned char*)_path.c_str(),_path.size());
+	TPtrC8 ptr((const unsigned char *)_path.c_str(), _path.size());
 	fname.Copy(ptr);
 
 	if (static_cast<OSystem_SDL_Symbian *>(g_system)->FsSession().Entry(fname, fileAttribs) == KErrNone) {
@@ -78,7 +77,7 @@ SymbianFilesystemNode::SymbianFilesystemNode(const Common::String &path) {
 		_isValid = true;
 		_isDirectory = false;
 		TParsePtrC parser(fname);
-		if (parser.PathPresent() && parser.Path().Compare(_L("\\")) == KErrNone && !parser.NameOrExtPresent())  {
+		if (parser.PathPresent() && parser.Path().Compare(_L("\\")) == KErrNone && !parser.NameOrExtPresent()) {
 			_isDirectory = true;
 		}
 	}
@@ -86,9 +85,9 @@ SymbianFilesystemNode::SymbianFilesystemNode(const Common::String &path) {
 
 bool SymbianFilesystemNode::exists() const {
 	TFileName fname;
-	TPtrC8 ptr((const unsigned char*) _path.c_str(), _path.size());
+	TPtrC8 ptr((const unsigned char *)_path.c_str(), _path.size());
 	fname.Copy(ptr);
-	bool fileExists = BaflUtils::FileExists(static_cast<OSystem_SDL_Symbian *> (g_system)->FsSession(), fname);
+	bool fileExists = BaflUtils::FileExists(static_cast<OSystem_SDL_Symbian *>(g_system)->FsSession(), fname);
 	if (!fileExists) {
 		TParsePtrC parser(fname);
 		if (parser.PathPresent() && parser.Path().Compare(_L("\\")) == KErrNone && !parser.NameOrExtPresent()) {
@@ -105,7 +104,6 @@ bool SymbianFilesystemNode::isReadable() const {
 bool SymbianFilesystemNode::isWritable() const {
 	return access(_path.c_str(), W_OK) == 0;
 }
-
 
 AbstractFSNode *SymbianFilesystemNode::getChild(const Common::String &n) const {
 	assert(_isDirectory);
@@ -126,7 +124,7 @@ bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 
 	if (_isPseudoRoot) {
 		// Drives enumeration
-		RFs& fs = static_cast<OSystem_SDL_Symbian *>(g_system)->FsSession();
+		RFs &fs = static_cast<OSystem_SDL_Symbian *>(g_system)->FsSession();
 		TInt driveNumber;
 		TChar driveLetter;
 		TUint driveLetterValue;
@@ -134,7 +132,7 @@ bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 		TBuf8<KDriveLabelSize> driveLabel8;
 		TBuf8<KDriveLabelSize> driveString8;
 
-		for (driveNumber=EDriveA; driveNumber<=EDriveZ; driveNumber++) {
+		for (driveNumber = EDriveA; driveNumber <= EDriveZ; driveNumber++) {
 			TInt err = fs.Volume(volumeInfo, driveNumber);
 			if (err != KErrNone)
 				continue;
@@ -151,10 +149,10 @@ bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 			}
 
 			char path[10];
-			sprintf(path,"%c:\\", driveNumber+'A');
+			sprintf(path, "%c:\\", driveNumber + 'A');
 
 			SymbianFilesystemNode entry(false);
-			entry._displayName = (char *) driveString8.PtrZ(); // drive_name
+			entry._displayName = (char *)driveString8.PtrZ(); // drive_name
 			entry._isDirectory = true;
 			entry._isValid = true;
 			entry._isPseudoRoot = false;
@@ -162,16 +160,16 @@ bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 			myList.push_back(new SymbianFilesystemNode(entry));
 		}
 	} else {
-		TPtrC8 ptr((const unsigned char*) _path.c_str(), _path.size());
+		TPtrC8 ptr((const unsigned char *)_path.c_str(), _path.size());
 		TFileName fname;
-		TBuf8<256>nameBuf;
-		CDir* dirPtr;
+		TBuf8<256> nameBuf;
+		CDir *dirPtr;
 		fname.Copy(ptr);
 
 		if (_path.lastChar() != '\\')
 			fname.Append('\\');
 
-		if (static_cast<OSystem_SDL_Symbian *>(g_system)->FsSession().GetDir(fname, KEntryAttNormal|KEntryAttDir, 0, dirPtr) == KErrNone) {
+		if (static_cast<OSystem_SDL_Symbian *>(g_system)->FsSession().GetDir(fname, KEntryAttNormal | KEntryAttDir, 0, dirPtr) == KErrNone) {
 			CleanupStack::PushL(dirPtr);
 			TInt cnt = dirPtr->Count();
 			for (TInt loop = 0; loop < cnt; loop++) {
@@ -180,18 +178,17 @@ bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 				SymbianFilesystemNode entry(false);
 				entry._isPseudoRoot = false;
 
-				entry._displayName =(char *)nameBuf.PtrZ();
+				entry._displayName = (char *)nameBuf.PtrZ();
 				entry._path = _path;
 
 				if (entry._path.lastChar() != '\\')
-					entry._path+= '\\';
+					entry._path += '\\';
 
-				entry._path +=(char *)nameBuf.PtrZ();
+				entry._path += (char *)nameBuf.PtrZ();
 				entry._isDirectory = fileentry.IsDir();
 
 				// Honor the chosen mode
-				if ((mode == Common::FSNode::kListFilesOnly && entry._isDirectory) ||
-					(mode == Common::FSNode::kListDirectoriesOnly && !entry._isDirectory))
+				if ((mode == Common::FSNode::kListFilesOnly && entry._isDirectory) || (mode == Common::FSNode::kListDirectoriesOnly && !entry._isDirectory))
 					continue;
 
 				myList.push_back(new SymbianFilesystemNode(entry));
@@ -204,7 +201,7 @@ bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 }
 
 AbstractFSNode *SymbianFilesystemNode::getParent() const {
-	SymbianFilesystemNode *p =NULL;
+	SymbianFilesystemNode *p = NULL;
 
 	// Root node is its own parent. Still we can't just return this
 	// as the GUI code will call delete on the old node.

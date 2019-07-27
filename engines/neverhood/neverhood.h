@@ -23,11 +23,11 @@
 #ifndef NEVERHOOD_NEVERHOOD_H
 #define NEVERHOOD_NEVERHOOD_H
 
-#include "common/scummsys.h"
 #include "common/events.h"
 #include "common/keyboard.h"
 #include "common/random.h"
 #include "common/savefile.h"
+#include "common/scummsys.h"
 #include "common/str-array.h"
 #include "common/system.h"
 #include "engines/engine.h"
@@ -58,7 +58,6 @@ struct GameState {
 
 class NeverhoodEngine : public ::Engine {
 protected:
-
 	Common::Error run();
 	void mainLoop();
 
@@ -96,7 +95,6 @@ public:
 	AudioResourceMan *_audioResourceMan;
 
 public:
-
 	/* Save/load */
 
 	enum kReadSaveHeaderError {
@@ -131,7 +129,7 @@ public:
 	static Common::String getSavegameFilename(const Common::String &target, int num);
 	WARN_UNUSED_RESULT static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail = true);
 
-	GameState& gameState() { return _gameState; }
+	GameState &gameState() { return _gameState; }
 	GameModule *gameModule() { return _gameModule; }
 	int16 getMouseX() const { return _mouseX; }
 	int16 getMouseY() const { return _mouseY; }
@@ -144,7 +142,6 @@ public:
 private:
 	bool _updateSound;
 	bool _enableMusic;
-
 };
 
 } // End of namespace Neverhood

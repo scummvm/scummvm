@@ -31,16 +31,16 @@
 namespace Tinsel {
 
 // flags2
-#define fCd1	0x00000001L
-#define fCd2	0x00000002L
-#define fCd3	0x00000004L
-#define fCd4	0x00000008L
-#define fCd5	0x00000010L
-#define fCd6	0x00000020L
-#define fCd7	0x00000040L
-#define fCd8	0x00000080L
+#define fCd1 0x00000001L
+#define fCd2 0x00000002L
+#define fCd3 0x00000004L
+#define fCd4 0x00000008L
+#define fCd5 0x00000010L
+#define fCd6 0x00000020L
+#define fCd7 0x00000040L
+#define fCd8 0x00000080L
 
-#define fAllCds	(fCd1|fCd2|fCd3|fCd4|fCd5|fCd6|fCd7|fCd8)
+#define fAllCds (fCd1 | fCd2 | fCd3 | fCd4 | fCd5 | fCd6 | fCd7 | fCd8)
 
 void DoCdChange();
 
@@ -61,6 +61,7 @@ private:
 	static bool _warningShown;
 	Common::SeekableReadStream *_stream;
 	bool openInternal(const Common::String &filename);
+
 public:
 	TinselFile();
 	~TinselFile();
@@ -78,7 +79,6 @@ public:
 	int32 size() const;
 	bool seek(int32 offset, int whence = SEEK_SET);
 };
-
 
 } // End of namespace Tinsel
 

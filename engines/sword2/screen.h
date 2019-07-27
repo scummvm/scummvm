@@ -22,8 +22,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef	SWORD2_SCREEN_H
-#define	SWORD2_SCREEN_H
+#ifndef SWORD2_SCREEN_H
+#define SWORD2_SCREEN_H
 
 #include "common/rect.h"
 #include "common/stream.h"
@@ -36,23 +36,23 @@
 #define MAX_fgp0_sprites 6
 #define MAX_fgp1_sprites 6
 
-#define PALTABLESIZE     (64 * 64 * 64)
+#define PALTABLESIZE (64 * 64 * 64)
 
-#define BLOCKWIDTH       64
-#define BLOCKHEIGHT      64
-#define MAXLAYERS        5
+#define BLOCKWIDTH 64
+#define BLOCKHEIGHT 64
+#define MAXLAYERS 5
 
-#define MENUDEEP         40
-#define RENDERWIDE       640
-#define RENDERDEEP       (480 - (MENUDEEP * 2))
+#define MENUDEEP 40
+#define RENDERWIDE 640
+#define RENDERDEEP (480 - (MENUDEEP * 2))
 
 // Maximum scaled size of a sprite
-#define SCALE_MAXWIDTH   512
-#define SCALE_MAXHEIGHT  512
+#define SCALE_MAXWIDTH 512
+#define SCALE_MAXHEIGHT 512
 
 // Dirty grid cell size
-#define CELLWIDE         10
-#define CELLDEEP         20
+#define CELLWIDE 10
+#define CELLDEEP 20
 
 namespace Sword2 {
 
@@ -63,20 +63,20 @@ class Sword2Engine;
 enum {
 	// This is the low byte part of the sprite type.
 
-	RDSPR_TRANS			= 0x0001,
-	RDSPR_BLEND			= 0x0004,
-	RDSPR_FLIP			= 0x0008,
-	RDSPR_SHADOW			= 0x0010,
-	RDSPR_DISPLAYALIGN		= 0x0020,
-	RDSPR_NOCOMPRESSION		= 0x0040,
-	RDSPR_EDGEBLEND			= 0x0080,	// Unused
+	RDSPR_TRANS = 0x0001,
+	RDSPR_BLEND = 0x0004,
+	RDSPR_FLIP = 0x0008,
+	RDSPR_SHADOW = 0x0010,
+	RDSPR_DISPLAYALIGN = 0x0020,
+	RDSPR_NOCOMPRESSION = 0x0040,
+	RDSPR_EDGEBLEND = 0x0080, // Unused
 
 	// This is the high byte part of the sprite type, which defines what
 	// type of compression is used. Unless RDSPR_NOCOMPRESSION is set.
 
-	RDSPR_RLE16			= 0x0000,
-	RDSPR_RLE256			= 0x0100,
-	RDSPR_RLE256FAST		= 0x0200
+	RDSPR_RLE16 = 0x0000,
+	RDSPR_RLE256 = 0x0100,
+	RDSPR_RLE256FAST = 0x0200
 };
 
 // Fading defines
@@ -98,9 +98,9 @@ enum {
 // Blitting FX defines
 
 enum {
-	RDBLTFX_SPRITEBLEND		= 0x01,
-	RDBLTFX_SHADOWBLEND		= 0x02,
-	RDBLTFX_EDGEBLEND		= 0x04
+	RDBLTFX_SPRITEBLEND = 0x01,
+	RDBLTFX_SHADOWBLEND = 0x02,
+	RDBLTFX_EDGEBLEND = 0x04
 };
 
 // Structure filled out by each object to register its graphic printing
@@ -131,27 +131,27 @@ struct BuildUnit {
 };
 
 struct ScreenInfo {
-	uint16 scroll_offset_x;		// Position x
-	uint16 scroll_offset_y;		// Position y
-	uint16 max_scroll_offset_x;	// Calc'ed in fnInitBackground
+	uint16 scroll_offset_x; // Position x
+	uint16 scroll_offset_y; // Position y
+	uint16 max_scroll_offset_x; // Calc'ed in fnInitBackground
 	uint16 max_scroll_offset_y;
-	int16 player_feet_x;		// Feet coordinates to use - cant just
-	int16 player_feet_y;		// fetch the player compact anymore
-	int16 feet_x;			// Special offset-to-player position -
-	int16 feet_y;			// tweek as desired - always set in
-					// screen manager object startup
-	uint16 screen_wide;		// Size of background layer - hence
-	uint16 screen_deep;		// size of back buffer itself (Paul
-					// actually malloc's it)
-	uint32 background_layer_id;	// Id of the normal background layer
-					// from the header of the main
-					// background layer
+	int16 player_feet_x; // Feet coordinates to use - cant just
+	int16 player_feet_y; // fetch the player compact anymore
+	int16 feet_x; // Special offset-to-player position -
+	int16 feet_y; // tweek as desired - always set in
+	  // screen manager object startup
+	uint16 screen_wide; // Size of background layer - hence
+	uint16 screen_deep; // size of back buffer itself (Paul
+	  // actually malloc's it)
+	uint32 background_layer_id; // Id of the normal background layer
+	  // from the header of the main
+	  // background layer
 	uint16 number_of_layers;
-	uint8 new_palette;		// Set to non zero to start the
-					// palette held within layer file
-					// fading up after a buildDisplay()
-	uint8 scroll_flag;		// Scroll mode 0 off 1 on
-	bool mask_flag;			// Using shading mask
+	uint8 new_palette; // Set to non zero to start the
+	  // palette held within layer file
+	  // fading up after a buildDisplay()
+	uint8 scroll_flag; // Scroll mode 0 off 1 on
+	bool mask_flag; // Using shading mask
 };
 
 // The SpriteInfo structure is used to tell the driver96 code what attributes
@@ -159,18 +159,18 @@ struct ScreenInfo {
 // compression.
 
 struct SpriteInfo {
-	int16 x;		// coords for top-left of sprite
+	int16 x; // coords for top-left of sprite
 	int16 y;
-	uint16 w;		// dimensions of sprite (before scaling)
+	uint16 w; // dimensions of sprite (before scaling)
 	uint16 h;
-	uint16 scale;		// scale at which to draw, given in 256ths ['0' or '256' MEANS DON'T SCALE]
-	uint16 scaledWidth;	// new dimensions (we calc these for the mouse area, so may as well pass to you to save time)
-	uint16 scaledHeight;	//
-	uint16 type;		// mask containing 'RDSPR_' bits specifying compression type, flip, transparency, etc
-	uint16 blend;		// holds the blending values.
-	byte *data;		// pointer to the sprite data
-	byte *colorTable;	// pointer to 16-byte color table, only applicable to 16-col compression type
-	bool isText;		// It is a engine-generated sprite containing text
+	uint16 scale; // scale at which to draw, given in 256ths ['0' or '256' MEANS DON'T SCALE]
+	uint16 scaledWidth; // new dimensions (we calc these for the mouse area, so may as well pass to you to save time)
+	uint16 scaledHeight; //
+	uint16 type; // mask containing 'RDSPR_' bits specifying compression type, flip, transparency, etc
+	uint16 blend; // holds the blending values.
+	byte *data; // pointer to the sprite data
+	byte *colorTable; // pointer to 16-byte color table, only applicable to 16-col compression type
+	bool isText; // It is a engine-generated sprite containing text
 };
 
 struct BlockSurface {
@@ -226,10 +226,10 @@ private:
 	int16 _scrollXOld;
 	int16 _scrollYOld;
 
-	int16 _parallaxScrollX;	// current x offset to link a sprite to the
-				// parallax layer
-	int16 _parallaxScrollY;	// current y offset to link a sprite to the
-				// parallax layer
+	int16 _parallaxScrollX; // current x offset to link a sprite to the
+	  // parallax layer
+	int16 _parallaxScrollY; // current y offset to link a sprite to the
+	  // parallax layer
 	int16 _locationWide;
 	int16 _locationDeep;
 
@@ -321,7 +321,6 @@ private:
 	int32 decompressRLE16(byte *dst, byte *src, int32 decompSize, byte *colTable);
 	void renderParallax(byte *ptr, int16 layer);
 
-
 	void markAsDirty(int16 x0, int16 y0, int16 x1, int16 y1);
 
 	uint8 _xBlocks[MAXLAYERS];
@@ -391,7 +390,7 @@ public:
 
 	void setLocationMetrics(uint16 w, uint16 h);
 	int32 initializeBackgroundLayer(byte *parallax);
-	int32 initializePsxParallaxLayer(byte *parallax);   // These are used to initialize psx backgrounds and
+	int32 initializePsxParallaxLayer(byte *parallax); // These are used to initialize psx backgrounds and
 	int32 initializePsxBackgroundLayer(byte *parallax); // parallaxes, which are different from pc counterparts.
 	void closeBackgroundLayer();
 
@@ -426,11 +425,11 @@ public:
 	int32 drawSprite(SpriteInfo *s);
 
 	void scaleImageFast(byte *dst, uint16 dstPitch, uint16 dstWidth,
-		uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth,
-		uint16 srcHeight);
+	                    uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth,
+	                    uint16 srcHeight);
 	void scaleImageGood(byte *dst, uint16 dstPitch, uint16 dstWidth,
-		uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth,
-		uint16 srcHeight, byte *backBuf, int16 bbXPos, int16 bbYPos);
+	                    uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth,
+	                    uint16 srcHeight, byte *backBuf, int16 bbXPos, int16 bbYPos);
 
 	void updateRect(Common::Rect *r);
 
@@ -459,7 +458,6 @@ public:
 	byte *getPsxScrCache(uint8 level);
 	bool getPsxScrCacheStatus(uint8 level);
 	void flushPsxScrCache();
-
 };
 
 } // End of namespace Sword2

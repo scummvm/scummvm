@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_RENAMECOMMAND_H
 #define MUTATIONOFJB_RENAMECOMMAND_H
 
-#include "mutationofjb/commands/seqcommand.h"
 #include "common/str.h"
+#include "mutationofjb/commands/seqcommand.h"
 
 namespace MutationOfJB {
 
@@ -35,7 +35,9 @@ public:
 
 class RenameCommand : public SeqCommand {
 public:
-	RenameCommand(const Common::String &oldName, const Common::String &newName) : _oldName(oldName), _newName(newName) {}
+	RenameCommand(const Common::String &oldName, const Common::String &newName)
+	  : _oldName(oldName)
+	  , _newName(newName) {}
 
 	virtual Command::ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const override;

@@ -1,11 +1,14 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 #include "po_parser.h"
 
-PoMessageList::PoMessageList() : _list(NULL), _size(0), _allocated(0) {
+PoMessageList::PoMessageList()
+  : _list(NULL)
+  , _size(0)
+  , _allocated(0) {
 }
 
 PoMessageList::~PoMessageList() {
@@ -14,7 +17,7 @@ PoMessageList::~PoMessageList() {
 	delete[] _list;
 }
 
-int PoMessageList::compareString(const char* left, const char* right) {
+int PoMessageList::compareString(const char *left, const char *right) {
 	if (left == NULL && right == NULL)
 		return 0;
 	if (left == NULL)
@@ -52,7 +55,7 @@ void PoMessageList::insert(const char *translation, const char *msg, const char 
 	// between the two (i.a. at leftIndex).
 	if (_size + 1 > _allocated) {
 		_allocated += 100;
-		PoMessage **newList = new PoMessage*[_allocated];
+		PoMessage **newList = new PoMessage *[_allocated];
 		for (int i = 0; i < leftIndex; ++i)
 			newList[i] = _list[i];
 		for (int i = leftIndex; i < _size; ++i)
@@ -168,22 +171,33 @@ char *stripLine(char *const line) {
 	// and replace them by the special character so that strcmp() can match them at run time.
 	// Look for the first quote
 	char const *src = line;
-	while (*src != '\0' && *src++ != '"') {}
+	while (*src != '\0' && *src++ != '"') {
+	}
 	// shift characters until we reach the end of the string or an unprotected quote
 	char *dst = line;
 	while (*src != '\0' && *src != '"') {
 		char c = *src++;
 		if (c == '\\') {
 			switch (c = *src++) {
-				case  'n': c = '\n'; break;
-				case  't': c = '\t'; break;
-				case '\"': c = '\"'; break;
-				case '\'': c = '\''; break;
-				case '\\': c = '\\'; break;
-				default:
-					// Just skip
-					fprintf(stderr, "Unsupported special character \"\\%c\" in string. Please contact ScummVM developers.\n", c);
-					continue;
+			case 'n':
+				c = '\n';
+				break;
+			case 't':
+				c = '\t';
+				break;
+			case '\"':
+				c = '\"';
+				break;
+			case '\'':
+				c = '\'';
+				break;
+			case '\\':
+				c = '\\';
+				break;
+			default:
+				// Just skip
+				fprintf(stderr, "Unsupported special character \"\\%c\" in string. Please contact ScummVM developers.\n", c);
+				continue;
 			}
 		}
 		*dst++ = c;
@@ -218,4 +232,3 @@ char *parseLine(const char *line, const char *field) {
 	result[len] = '\0';
 	return result;
 }
-

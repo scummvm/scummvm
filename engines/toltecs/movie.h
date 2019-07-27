@@ -23,7 +23,7 @@
 #ifndef TOLTECS_MOVIE_H
 #define TOLTECS_MOVIE_H
 
-#include "audio/mixer.h"	// for Audio::SoundHandle
+#include "audio/mixer.h" // for Audio::SoundHandle
 
 namespace Audio {
 class QueuingAudioStream;
@@ -57,7 +57,6 @@ protected:
 	void fetchAudioChunks();
 
 	bool handleInput();
-
 };
 
 } // End of namespace Toltecs

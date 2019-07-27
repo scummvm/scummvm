@@ -23,20 +23,21 @@
 #ifndef COMMON_STACK_H
 #define COMMON_STACK_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 
 namespace Common {
 
 /**
  * Extremly simple fixed size stack class.
  */
-template<class T, uint MAX_SIZE = 10>
+template <class T, uint MAX_SIZE = 10>
 class FixedStack {
 public:
 	typedef uint size_type;
 
-	FixedStack<T, MAX_SIZE>() : _size(0) {}
+	FixedStack<T, MAX_SIZE>()
+	  : _size(0) {}
 
 	bool empty() const {
 		return _size <= 0;
@@ -82,15 +83,14 @@ public:
 	}
 
 protected:
-	T         _stack[MAX_SIZE];
+	T _stack[MAX_SIZE];
 	size_type _size;
 };
-
 
 /**
  * Variable size stack class, implemented using our Array class.
  */
-template<class T>
+template <class T>
 class Stack {
 private:
 	Array<T> _stack;
@@ -99,7 +99,8 @@ public:
 	typedef typename Array<T>::size_type size_type;
 
 	Stack<T>() {}
-	Stack<T>(const Array<T> &stackContent) : _stack(stackContent) {}
+	Stack<T>(const Array<T> &stackContent)
+	  : _stack(stackContent) {}
 
 	bool empty() const {
 		return _stack.empty();

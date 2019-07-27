@@ -20,483 +20,480 @@
  *
  */
 
-#include "dreamweb/sound.h"
-#include "dreamweb/dreamweb.h"
-#include "engines/util.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "dreamweb/dreamweb.h"
+#include "dreamweb/sound.h"
+#include "engines/util.h"
 
 namespace DreamWeb {
 
 const Room g_roomData[] = {
 	// location 0
 	{ "DREAMWEB.R00", // Ryan's apartment
-	  5,255,33,10,
-	  255,255,255,0,
-	  1,6,2,255,3,255,255,255,255,255,0 },
+	  5, 255, 33, 10,
+	  255, 255, 255, 0,
+	  1, 6, 2, 255, 3, 255, 255, 255, 255, 255, 0 },
 
 	// location 1
 	{ "DREAMWEB.R01",
-	  1,255,44,10,
-	  255,255,255,0,
-	  7,2,255,255,255,255,6,255,255,255,1 },
+	  1, 255, 44, 10,
+	  255, 255, 255, 0,
+	  7, 2, 255, 255, 255, 255, 6, 255, 255, 255, 1 },
 
 	// location 2: Louis' (?)
 	{ "DREAMWEB.R02",
-	  2,255,33,0,
-	  255,255,255,0,
-	  1,0,255,255,1,255,3,255,255,255,2 },
+	  2, 255, 33, 0,
+	  255, 255, 255, 0,
+	  1, 0, 255, 255, 1, 255, 3, 255, 255, 255, 2 },
 
 	// location 3
 	{ "DREAMWEB.R03",
-	  5,255,33,10,
-	  255,255,255,0,
-	  2,2,0,2,4,255,0,255,255,255,3 },
+	  5, 255, 33, 10,
+	  255, 255, 255, 0,
+	  2, 2, 0, 2, 4, 255, 0, 255, 255, 255, 3 },
 
 	// location 4
 	{ "DREAMWEB.R04",
-	  23,255,11,30,
-	  255,255,255,0,
-	  1,4,0,5,255,255,3,255,255,255,4 },
+	  23, 255, 11, 30,
+	  255, 255, 255, 0,
+	  1, 4, 0, 5, 255, 255, 3, 255, 255, 255, 4 },
 
 	// location 5: In hotel, lift noise audible (?)
 	{ "DREAMWEB.R05",
-	  5,255,22,30, // if demo: 22,255,22,30,
-	  255,255,255,0,
-	  1,2,0,4,255,255,3,255,255,255,5 },
+	  5, 255, 22, 30, // if demo: 22,255,22,30,
+	  255, 255, 255, 0,
+	  1, 2, 0, 4, 255, 255, 3, 255, 255, 255, 5 },
 
 	// location 6: sarters (?)
 	{ "DREAMWEB.R06",
-	  5,255,11,30,
-	  255,255,255,0,
-	  1,0,0,1,2,255,0,255,255,255,6 },
+	  5, 255, 11, 30,
+	  255, 255, 255, 0,
+	  1, 0, 0, 1, 2, 255, 0, 255, 255, 255, 6 },
 
 	// location 7
 	{ "DREAMWEB.R07",
-	  255,255,0,20,
-	  255,255,255,0,
-	  2,2,255,255,255,255,0,255,255,255,7 },
+	  255, 255, 0, 20,
+	  255, 255, 255, 0,
+	  2, 2, 255, 255, 255, 255, 0, 255, 255, 255, 7 },
 
 	// location 8: TV studio (?)
 	{ "DREAMWEB.R08",
-	  8,255,0,10,
-	  255,255,255,0,
-	  1,2,255,255,255,255,0,11,40,0,8 },
+	  8, 255, 0, 10,
+	  255, 255, 255, 0,
+	  1, 2, 255, 255, 255, 255, 0, 11, 40, 0, 8 },
 
 	// location 9
 	{ "DREAMWEB.R09",
-	  9,255,22,10,
-	  255,255,255,0,
-	  4,6,255,255,255,255,0,255,255,255,9 },
+	  9, 255, 22, 10,
+	  255, 255, 255, 0,
+	  4, 6, 255, 255, 255, 255, 0, 255, 255, 255, 9 },
 
 	// location 10
 	{ "DREAMWEB.R10",
-	  10,255,33,30,
-	  255,255,255,0,
-	  2,0,255,255,2,2,4,22,30,255,10 }, // 22,30,0 switches
-	                                    // off path 0 in skip
+	  10, 255, 33, 30,
+	  255, 255, 255, 0,
+	  2, 0, 255, 255, 2, 2, 4, 22, 30, 255, 10 }, // 22,30,0 switches
+	// off path 0 in skip
 	// location 11
 	{ "DREAMWEB.R11",
-	  11,255,11,20,
-	  255,255,255,0,
-	  0,4,255,255,255,255,255,255,255,255,11 },
+	  11, 255, 11, 20,
+	  255, 255, 255, 0,
+	  0, 4, 255, 255, 255, 255, 255, 255, 255, 255, 11 },
 
 	// location 12
 	{ "DREAMWEB.R12",
-	  12,255,22,20,
-	  255,255,255,0,
-	  1,4,255,255,255,255,255,255,255,255,12 },
+	  12, 255, 22, 20,
+	  255, 255, 255, 0,
+	  1, 4, 255, 255, 255, 255, 255, 255, 255, 255, 12 },
 
 	// location 13: boathouse (?)
 	{ "DREAMWEB.R13",
-	  12,255,22,20,
-	  255,255,255,0,
-	  1,4,255,255,255,255,255,255,255,255,13 },
+	  12, 255, 22, 20,
+	  255, 255, 255, 0,
+	  1, 4, 255, 255, 255, 255, 255, 255, 255, 255, 13 },
 
 	// location 14
 	{ "DREAMWEB.R14",
-	  14,255,44,20,
-	  255,255,255,0,
-	  0,6,255,255,255,255,255,255,255,255,14 },
+	  14, 255, 44, 20,
+	  255, 255, 255, 0,
+	  0, 6, 255, 255, 255, 255, 255, 255, 255, 255, 14 },
 
-	{ "", 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ "", 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ "", 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ "", 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 
 	// location 19
 	{ "DREAMWEB.R19",
-	  19,255,0,0,
-	  255,255,255,0,
-	  0,4,255,255,255,255,255,255,255,255,19 },
+	  19, 255, 0, 0,
+	  255, 255, 255, 0,
+	  0, 4, 255, 255, 255, 255, 255, 255, 255, 255, 19 },
 
 	// location 20: Sart room (?)
 	{ "DREAMWEB.R20",
-	  22,255,0,20,
-	  255,255,255,0,
-	  1,4,2,15,255,255,255,255,255,255,20 },
+	  22, 255, 0, 20,
+	  255, 255, 255, 0,
+	  1, 4, 2, 15, 255, 255, 255, 255, 255, 255, 20 },
 
 	// location 21: lift noise audible (?)
 	{ "DREAMWEB.R21",
-	  5,255,11,10, // if demo: 22,255,11,10,
-	  255,255,255,0,
-	  1,4,2,15,1,255,255,255,255,255,21 },
+	  5, 255, 11, 10, // if demo: 22,255,11,10,
+	  255, 255, 255, 0,
+	  1, 4, 2, 15, 1, 255, 255, 255, 255, 255, 21 },
 
 	// location 22: pool room (?)
 	{ "DREAMWEB.R22",
-	  22,255,22,10,
-	  255,255,255,0,
-	  0,4,255,255,1,255,255,255,255,255,22 },
+	  22, 255, 22, 10,
+	  255, 255, 255, 0,
+	  0, 4, 255, 255, 1, 255, 255, 255, 255, 255, 22 },
 
 	// location 23
 	{ "DREAMWEB.R23",
-	  23,255,22,30,
-	  255,255,255,0,
-	  1,4,2,15,3,255,255,255,255,255,23 },
+	  23, 255, 22, 30,
+	  255, 255, 255, 0,
+	  1, 4, 2, 15, 3, 255, 255, 255, 255, 255, 23 },
 
 	// location 24: only room in which initialInv() is active, i.e. we get initial inventory here
 	{ "DREAMWEB.R24",
-	  5,255,44,0,
-	  255,255,255,0,
-	  1,6,2,15,255,255,255,255,255,255,24 },
+	  5, 255, 44, 0,
+	  255, 255, 255, 0,
+	  1, 6, 2, 15, 255, 255, 255, 255, 255, 255, 24 },
 
 	// location 25: helicopter (?)
 	{ "DREAMWEB.R25",
-	  22,255,11,40,
-	  255,255,255,0,
-	  1,0,255,255,255,255,255,255,255,255,25 },
+	  22, 255, 11, 40,
+	  255, 255, 255, 0,
+	  1, 0, 255, 255, 255, 255, 255, 255, 255, 255, 25 },
 
 	// location 26: reached via trap door (?)
 	{ "DREAMWEB.R26",
-	  9,255,22,20,
-	  255,255,255,0,
-	  4,2,255,255,255,255,255,255,255,255,26 },
+	  9, 255, 22, 20,
+	  255, 255, 255, 0,
+	  4, 2, 255, 255, 255, 255, 255, 255, 255, 255, 26 },
 
 	// location 27: rock room (?)
 	{ "DREAMWEB.R27",
-	  22,255,11,20,
-	  255,255,255,0,
-	  0,6,255,255,255,255,255,255,255,255,27 },
+	  22, 255, 11, 20,
+	  255, 255, 255, 0,
+	  0, 6, 255, 255, 255, 255, 255, 255, 255, 255, 27 },
 
 	// location 28: related to TV studiou (?), see resetLocation()
 	{ "DREAMWEB.R28",
-	  5,255,11,30,
-	  255,255,255,0,
-	  0,0,255,255,2,255,255,255,255,255,28 },
+	  5, 255, 11, 30,
+	  255, 255, 255, 0,
+	  0, 0, 255, 255, 2, 255, 255, 255, 255, 255, 28 },
 
 	// location 29: aide (?)
 	{ "DREAMWEB.R29",
-	  22,255,11,10,
-	  255,255,255,0,
-	  0,2,255,255,255,255,255,255,255,255,29 },
-
+	  22, 255, 11, 10,
+	  255, 255, 255, 0,
+	  0, 2, 255, 255, 255, 255, 255, 255, 255, 255, 29 },
 
 	// location 30
 	{ "DREAMWEB.R05", // Duplicate of hotel lobby, but emerging from the lift.
-	  5,255,22,10,    // if demo: 22,255,22,10
-	  255,255,255,0,
-	  1,4,1,15,255,255,255,255,255,255,5 },
+	  5, 255, 22, 10, // if demo: 22,255,22,10
+	  255, 255, 255, 0,
+	  1, 4, 1, 15, 255, 255, 255, 255, 255, 255, 5 },
 
 	// location 31
-	{ "DREAMWEB.R04",  // Duplicate of pool hall lobby,
-	  23,255,22,20,    // but emerging from the lift.
-	  255,255,255,0,
-	  1,4,2,15,255,255,255,255,255,255,4 },
+	{ "DREAMWEB.R04", // Duplicate of pool hall lobby,
+	  23, 255, 22, 20, // but emerging from the lift.
+	  255, 255, 255, 0,
+	  1, 4, 2, 15, 255, 255, 255, 255, 255, 255, 4 },
 
 	// location 32
-	{ "DREAMWEB.R10",  // entering alley via skip
-	  10,255,22,30,
-	  255,255,255,0,
-	  3,6,255,255,255,255,255,255,255,255,10 },
+	{ "DREAMWEB.R10", // entering alley via skip
+	  10, 255, 22, 30,
+	  255, 255, 255, 0,
+	  3, 6, 255, 255, 255, 255, 255, 255, 255, 255, 10 },
 
 	// location 33
-	{ "DREAMWEB.R12",  // on the beach, getting up.
-	  12,255,22,20,
-	  255,255,255,0,
-	  0,2,255,255,255,255,255,255,255,255,12 },
+	{ "DREAMWEB.R12", // on the beach, getting up.
+	  12, 255, 22, 20,
+	  255, 255, 255, 0,
+	  0, 2, 255, 255, 255, 255, 255, 255, 255, 255, 12 },
 
 	// location 34
-	{ "DREAMWEB.R03",  // Duplicate of Eden's lobby
-	  5,255,44,0,      // but emerging from the lift
-	  255,255,255,0,
-	  1,6,2,255,4,255,255,255,255,255,3 },
+	{ "DREAMWEB.R03", // Duplicate of Eden's lobby
+	  5, 255, 44, 0, // but emerging from the lift
+	  255, 255, 255, 0,
+	  1, 6, 2, 255, 4, 255, 255, 255, 255, 255, 3 },
 
 	// location 35: Location when starting the game, after dream (?)
-	{ "DREAMWEB.R24",  // Duplicate of Eden's flat
-	  5,255,22,0,      // but starting on the bed
-	  255,255,255,0,
-	  3,6,0,255,255,255,255,33,0,3,24 }, //  33,0,3 turns off path for lift
+	{ "DREAMWEB.R24", // Duplicate of Eden's flat
+	  5, 255, 22, 0, // but starting on the bed
+	  255, 255, 255, 0,
+	  3, 6, 0, 255, 255, 255, 255, 33, 0, 3, 24 }, //  33,0,3 turns off path for lift
 
 	// location 36
-	{ "DREAMWEB.R22",  // Duplicate
-	  22,255,22,20,    // of hotel but in pool room
-	  255,255,255,0,
-	  1,4,255,255,255,255,255,255,255,255,22 },
+	{ "DREAMWEB.R22", // Duplicate
+	  22, 255, 22, 20, // of hotel but in pool room
+	  255, 255, 255, 0,
+	  1, 4, 255, 255, 255, 255, 255, 255, 255, 255, 22 },
 
 	// location 37
-	{ "DREAMWEB.R22",  // Duplicate
-	  22,255,22,20,    // of hotel but in pool room
-	  255,255,255,0,   // coming out of bedroom
-	  0,2,255,255,255,255,255,255,255,255,22 },
+	{ "DREAMWEB.R22", // Duplicate
+	  22, 255, 22, 20, // of hotel but in pool room
+	  255, 255, 255, 0, // coming out of bedroom
+	  0, 2, 255, 255, 255, 255, 255, 255, 255, 255, 22 },
 
 	// location 38
-	{ "DREAMWEB.R11",  // Duplicate
-	  11,255,22,30,    // of carpark but getting
-	  255,255,255,0,   // up off the floor
-	  0,0,255,255,255,255,255,255,255,255,11 },
+	{ "DREAMWEB.R11", // Duplicate
+	  11, 255, 22, 30, // of carpark but getting
+	  255, 255, 255, 0, // up off the floor
+	  0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 11 },
 
 	// location 39
 	{ "DREAMWEB.R28",
-	  5,255,11,20,
-	  255,255,255,0,
-	  0,6,255,255,2,255,255,255,255,255,28 },
+	  5, 255, 11, 20,
+	  255, 255, 255, 0,
+	  0, 6, 255, 255, 2, 255, 255, 255, 255, 255, 28 },
 
 	// location 40
 	{ "DREAMWEB.R21",
-	  5,255,11,10, // if demo: 22,255,11,10
-	  255,255,255,0,
-	  1,4,2,15,1,255,255,255,255,255,21 },
+	  5, 255, 11, 10, // if demo: 22,255,11,10
+	  255, 255, 255, 0,
+	  1, 4, 2, 15, 1, 255, 255, 255, 255, 255, 21 },
 
 	// location 41
 	{ "DREAMWEB.R26",
-	  9,255,0,40,
-	  255,255,255,0,
-	  0,0,255,255,255,255,255,255,255,255,26 },
+	  9, 255, 0, 40,
+	  255, 255, 255, 0,
+	  0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 26 },
 
 	// location 42
 	{ "DREAMWEB.R19",
-	  19,255,0,0,
-	  255,255,255,0,
-	  2,2,255,255,255,255,255,255,255,255,19 },
+	  19, 255, 0, 0,
+	  255, 255, 255, 0,
+	  2, 2, 255, 255, 255, 255, 255, 255, 255, 255, 19 },
 
 	// location 43
-	{ "DREAMWEB.R08",  // leaving tvstudio into street
-	  8,255,11,40,
-	  255,255,255,0,
-	  0,4,255,255,255,255,255,255,255,255,8 },
+	{ "DREAMWEB.R08", // leaving tvstudio into street
+	  8, 255, 11, 40,
+	  255, 255, 255, 0,
+	  0, 4, 255, 255, 255, 255, 255, 255, 255, 255, 8 },
 
 	// location 44
 	{ "DREAMWEB.R01",
-	  1,255,44,10,
-	  255,255,255,0,
-	  3,6,255,255,255,255,255,255,255,255,1 },
-
+	  1, 255, 44, 10,
+	  255, 255, 255, 0,
+	  3, 6, 255, 255, 255, 255, 255, 255, 255, 255, 1 },
 
 	// location 45
-	{ "DREAMWEB.R45",  // Dream room
-	  35,255,22,30,
-	  255,255,255,0,
-	  0,6,255,255,255,255,255,255,255,255,45 },
+	{ "DREAMWEB.R45", // Dream room
+	  35, 255, 22, 30,
+	  255, 255, 255, 0,
+	  0, 6, 255, 255, 255, 255, 255, 255, 255, 255, 45 },
 
 	// location 46
-	{ "DREAMWEB.R46",  // Dream room
-	  35,255,22,40,
-	  255,255,255,0,
-	  0,4,255,255,255,255,255,255,255,255,46 },
+	{ "DREAMWEB.R46", // Dream room
+	  35, 255, 22, 40,
+	  255, 255, 255, 0,
+	  0, 4, 255, 255, 255, 255, 255, 255, 255, 255, 46 },
 
 	// location 47
-	{ "DREAMWEB.R47",  // Dream room
-	  35,255,0,0,
-	  255,255,255,0,
-	  0,0,255,255,255,255,255,255,255,255,47 },
+	{ "DREAMWEB.R47", // Dream room
+	  35, 255, 0, 0,
+	  255, 255, 255, 0,
+	  0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 47 },
 
 	// location 48
-	{ "DREAMWEB.R45",  // Dream room
-	  35,255,22,30,
-	  255,255,255,0,
-	  4,0,255,255,255,255,255,255,255,255,45 },
+	{ "DREAMWEB.R45", // Dream room
+	  35, 255, 22, 30,
+	  255, 255, 255, 0,
+	  4, 0, 255, 255, 255, 255, 255, 255, 255, 255, 45 },
 
 	// location 49
-	{ "DREAMWEB.R46",  // Dream room
-	  35,255,22,50,
-	  255,255,255,0,
-	  0,4,255,255,255,255,255,255,255,255,46 },
-
+	{ "DREAMWEB.R46", // Dream room
+	  35, 255, 22, 50,
+	  255, 255, 255, 0,
+	  0, 4, 255, 255, 255, 255, 255, 255, 255, 255, 46 },
 
 	// location 50
-	{ "DREAMWEB.R50",  //  Intro sequence one
-	  35,255,22,30,
-	  255,255,255,0,
-	  0,0,255,255,255,255,255,255,255,255,50 },
+	{ "DREAMWEB.R50", //  Intro sequence one
+	  35, 255, 22, 30,
+	  255, 255, 255, 0,
+	  0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 50 },
 
-	{ "DREAMWEB.R51",  //  Intro sequence two
-	  35,255,11,30,
-	  255,255,255,0,
-	  0,0,255,255,255,255,255,255,255,255,51 },
+	{ "DREAMWEB.R51", //  Intro sequence two
+	  35, 255, 11, 30,
+	  255, 255, 255, 0,
+	  0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 51 },
 
-	{ "DREAMWEB.R52",  //  Intro sequence three
-	  35,255,22,30,
-	  255,255,255,0,
-	  0,0,255,255,255,255,255,255,255,255,52 },
+	{ "DREAMWEB.R52", //  Intro sequence three
+	  35, 255, 22, 30,
+	  255, 255, 255, 0,
+	  0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 52 },
 
-	{ "DREAMWEB.R53",  //  Intro sequence four
-	  35,255,33,0,
-	  255,255,255,0,
-	  0,0,255,255,255,255,255,255,255,255,53 },
+	{ "DREAMWEB.R53", //  Intro sequence four
+	  35, 255, 33, 0,
+	  255, 255, 255, 0,
+	  0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 53 },
 
-	{ "DREAMWEB.R54",  //  Intro sequence five - wasteland
-	  35,255,0,0,
-	  255,255,255,0,
-	  0,0,255,255,255,255,255,255,255,255,54 },
+	{ "DREAMWEB.R54", //  Intro sequence five - wasteland
+	  35, 255, 0, 0,
+	  255, 255, 255, 0,
+	  0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 54 },
 
-	{ "DREAMWEB.R55",  //  End sequence
-	  14,255,44,0,
-	  255,255,255,0,
-	  0,0,255,255,255,255,255,255,255,255,55 }
+	{ "DREAMWEB.R55", //  End sequence
+	  14, 255, 44, 0,
+	  255, 255, 255, 0,
+	  0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 55 }
 };
 
 static const Atmosphere g_atmosphereList[] = {
 	// location,map x,y,sound,repeat
-	{ 0,33,10,15,255 },
-	{ 0,22,10,15,255 },
-	{ 0,22,0,15,255 },
-	{ 0,11,0,15,255 },
-	{ 0,11,10,15,255 },
-	{ 0,0,10,15,255 },
+	{ 0, 33, 10, 15, 255 },
+	{ 0, 22, 10, 15, 255 },
+	{ 0, 22, 0, 15, 255 },
+	{ 0, 11, 0, 15, 255 },
+	{ 0, 11, 10, 15, 255 },
+	{ 0, 0, 10, 15, 255 },
 
-	{ 1,44,10,6,255	},
-	{ 1,44,0,13,255 },
+	{ 1, 44, 10, 6, 255 },
+	{ 1, 44, 0, 13, 255 },
 
-	{ 2,33,0,6,255 },
-	{ 2,22,0,5,255 },
-	{ 2,22,10,16,255 },
-	{ 2,11,10,16,255 },
+	{ 2, 33, 0, 6, 255 },
+	{ 2, 22, 0, 5, 255 },
+	{ 2, 22, 10, 16, 255 },
+	{ 2, 11, 10, 16, 255 },
 
-	{ 3,44,0,15,255 },
-	{ 3,33,10,6,255 },
-	{ 3,33,0,5,255 },
+	{ 3, 44, 0, 15, 255 },
+	{ 3, 33, 10, 6, 255 },
+	{ 3, 33, 0, 5, 255 },
 
-	{ 4,11,30,6,255 },
-	{ 4,22,30,5,255 },
-	{ 4,22,20,13,255 },
+	{ 4, 11, 30, 6, 255 },
+	{ 4, 22, 30, 5, 255 },
+	{ 4, 22, 20, 13, 255 },
 
-	{ 10,33,30,6,255 },
-	{ 10,22,30,6,255 },
+	{ 10, 33, 30, 6, 255 },
+	{ 10, 22, 30, 6, 255 },
 
-	{ 9,22,10,6,255 },
-	{ 9,22,20,16,255 },
-	{ 9,22,30,16,255 },
-	{ 9,22,40,16,255 },
-	{ 9,22,50,16,255 },
+	{ 9, 22, 10, 6, 255 },
+	{ 9, 22, 20, 16, 255 },
+	{ 9, 22, 30, 16, 255 },
+	{ 9, 22, 40, 16, 255 },
+	{ 9, 22, 50, 16, 255 },
 
-	{ 6,11,30,6,255 },
-	{ 6,0,10,15,255 },
-	{ 6,0,20,15,255 },
-	{ 6,11,20,15,255 },
-	{ 6,22,20,15,255 },
+	{ 6, 11, 30, 6, 255 },
+	{ 6, 0, 10, 15, 255 },
+	{ 6, 0, 20, 15, 255 },
+	{ 6, 11, 20, 15, 255 },
+	{ 6, 22, 20, 15, 255 },
 
-	{ 7,11,20,6,255 },
-	{ 7,0,20,6,255 },
-	{ 7,0,30,6,255 },
+	{ 7, 11, 20, 6, 255 },
+	{ 7, 0, 20, 6, 255 },
+	{ 7, 0, 30, 6, 255 },
 
-	{ 55,44,0,5,255 },
-	{ 55,44,10,5,255 },
+	{ 55, 44, 0, 5, 255 },
+	{ 55, 44, 10, 5, 255 },
 
-	{ 5,22,30,6,255 },
-	{ 5,22,20,15,255 }, // if demo: { 5,22,20,16,255 },
-	{ 5,22,10,15,255 }, // if demo: { 5,22,10,16,255 },
+	{ 5, 22, 30, 6, 255 },
+	{ 5, 22, 20, 15, 255 }, // if demo: { 5,22,20,16,255 },
+	{ 5, 22, 10, 15, 255 }, // if demo: { 5,22,10,16,255 },
 
-	{ 24,22,0,15,255 },
-	{ 24,33,0,15,255 },
-	{ 24,44,0,15,255 },
-	{ 24,33,10,15,255 },
+	{ 24, 22, 0, 15, 255 },
+	{ 24, 33, 0, 15, 255 },
+	{ 24, 44, 0, 15, 255 },
+	{ 24, 33, 10, 15, 255 },
 
-	{ 8,0,10,6,255 },
-	{ 8,11,10,6,255 },
-	{ 8,22,10,6,255 },
-	{ 8,33,10,6,255 },
-	{ 8,33,20,6,255 },
-	{ 8,33,30,6,255 },
-	{ 8,33,40,6,255 },
-	{ 8,22,40,6,255 },
-	{ 8,11,40,6,255 },
+	{ 8, 0, 10, 6, 255 },
+	{ 8, 11, 10, 6, 255 },
+	{ 8, 22, 10, 6, 255 },
+	{ 8, 33, 10, 6, 255 },
+	{ 8, 33, 20, 6, 255 },
+	{ 8, 33, 30, 6, 255 },
+	{ 8, 33, 40, 6, 255 },
+	{ 8, 22, 40, 6, 255 },
+	{ 8, 11, 40, 6, 255 },
 
-	{ 11,11,20,12,255 },
-	{ 11,11,30,12,255 },
-	{ 11,22,20,12,255 },
-	{ 11,22,30,12,255 },
+	{ 11, 11, 20, 12, 255 },
+	{ 11, 11, 30, 12, 255 },
+	{ 11, 22, 20, 12, 255 },
+	{ 11, 22, 30, 12, 255 },
 
-	{ 12,22,20,12,255 },
-	{ 13,22,20,12,255 },
-	{ 13,33,20,12,255 },
+	{ 12, 22, 20, 12, 255 },
+	{ 13, 22, 20, 12, 255 },
+	{ 13, 33, 20, 12, 255 },
 
-	{ 14,44,20,12,255 },
-	{ 14,33,0,12,255 },
-	{ 14,33,10,12,255 },
-	{ 14,33,20,12,255 },
-	{ 14,33,30,12,255 },
-	{ 14,33,40,12,255 },
-	{ 14,22,0,16,255 },
+	{ 14, 44, 20, 12, 255 },
+	{ 14, 33, 0, 12, 255 },
+	{ 14, 33, 10, 12, 255 },
+	{ 14, 33, 20, 12, 255 },
+	{ 14, 33, 30, 12, 255 },
+	{ 14, 33, 40, 12, 255 },
+	{ 14, 22, 0, 16, 255 },
 
-	{ 19,0,0,12,255 },
+	{ 19, 0, 0, 12, 255 },
 
-	{ 20,0,20,16,255 },
-	{ 20,0,30,16,255 },
-	{ 20,11,30,16,255 },
-	{ 20,0,40,16,255 },
-	{ 20,11,40,16,255 },
+	{ 20, 0, 20, 16, 255 },
+	{ 20, 0, 30, 16, 255 },
+	{ 20, 11, 30, 16, 255 },
+	{ 20, 0, 40, 16, 255 },
+	{ 20, 11, 40, 16, 255 },
 
-	{ 21,11,10,15,255 }, // if demo: { 21,11,10,16,255 },
-	{ 21,11,20,15,255 }, // if demo: { 21,11,20,16,255 },
-	{ 21, 0,20,15,255 }, // if demo: { 21,0,20,16,255 },
-	{ 21,22,20,15,255 }, // if demo: { 21,22,20,16,255 },
-	{ 21,33,20,15,255 }, // if demo: { 21,33,20,16,255 },
-	{ 21,44,20,15,255 }, // if demo: { 21,44,20,16,255 },
-	{ 21,44,10,15,255 }, // if demo: { 21,44,10,16,255 },
+	{ 21, 11, 10, 15, 255 }, // if demo: { 21,11,10,16,255 },
+	{ 21, 11, 20, 15, 255 }, // if demo: { 21,11,20,16,255 },
+	{ 21, 0, 20, 15, 255 }, // if demo: { 21,0,20,16,255 },
+	{ 21, 22, 20, 15, 255 }, // if demo: { 21,22,20,16,255 },
+	{ 21, 33, 20, 15, 255 }, // if demo: { 21,33,20,16,255 },
+	{ 21, 44, 20, 15, 255 }, // if demo: { 21,44,20,16,255 },
+	{ 21, 44, 10, 15, 255 }, // if demo: { 21,44,10,16,255 },
 
-	{ 22,22,10,16,255 },
-	{ 22,22,20,16,255 },
+	{ 22, 22, 10, 16, 255 },
+	{ 22, 22, 20, 16, 255 },
 
-	{ 23,22,30,13,255 },
-	{ 23,22,40,13,255 },
-	{ 23,33,40,13,255 },
-	{ 23,11,40,13,255 },
-	{ 23,0,40,13,255 },
-	{ 23,0,50,13,255 },
+	{ 23, 22, 30, 13, 255 },
+	{ 23, 22, 40, 13, 255 },
+	{ 23, 33, 40, 13, 255 },
+	{ 23, 11, 40, 13, 255 },
+	{ 23, 0, 40, 13, 255 },
+	{ 23, 0, 50, 13, 255 },
 
-	{ 25,11,40,16,255 },
-	{ 25,11,50,16,255 },
-	{ 25,0,50,16,255 },
+	{ 25, 11, 40, 16, 255 },
+	{ 25, 11, 50, 16, 255 },
+	{ 25, 0, 50, 16, 255 },
 
-	{ 27,11,20,16,255 },
-	{ 27,11,30,16,255 },
+	{ 27, 11, 20, 16, 255 },
+	{ 27, 11, 30, 16, 255 },
 
-	{ 29,11,10,16,255 },
+	{ 29, 11, 10, 16, 255 },
 
-	{ 45,22,30,12,255 },
-	{ 45,22,40,12,255 },
-	{ 45,22,50,12,255 },
+	{ 45, 22, 30, 12, 255 },
+	{ 45, 22, 40, 12, 255 },
+	{ 45, 22, 50, 12, 255 },
 
-	{ 46,22,40,12,255 },
-	{ 46,11,50,12,255 },
-	{ 46,22,50,12,255 },
-	{ 46,33,50,12,255 },
+	{ 46, 22, 40, 12, 255 },
+	{ 46, 11, 50, 12, 255 },
+	{ 46, 22, 50, 12, 255 },
+	{ 46, 33, 50, 12, 255 },
 
-	{ 47,0,0,12,255 },
+	{ 47, 0, 0, 12, 255 },
 
-	{ 26,22,20,16,255 },
-	{ 26,33,10,16,255 },
-	{ 26,33,20,16,255 },
-	{ 26,33,30,16,255 },
-	{ 26,44,30,16,255 },
-	{ 26,22,30,16,255 },
-	{ 26,11,30,16,255 },
-	{ 26,11,20,16,255 },
-	{ 26,0,20,16,255 },
-	{ 26,11,40,16,255 },
-	{ 26,0,40,16,255 },
-	{ 26,22,40,16,255 },
-	{ 26,11,50,16,255 },
+	{ 26, 22, 20, 16, 255 },
+	{ 26, 33, 10, 16, 255 },
+	{ 26, 33, 20, 16, 255 },
+	{ 26, 33, 30, 16, 255 },
+	{ 26, 44, 30, 16, 255 },
+	{ 26, 22, 30, 16, 255 },
+	{ 26, 11, 30, 16, 255 },
+	{ 26, 11, 20, 16, 255 },
+	{ 26, 0, 20, 16, 255 },
+	{ 26, 11, 40, 16, 255 },
+	{ 26, 0, 40, 16, 255 },
+	{ 26, 22, 40, 16, 255 },
+	{ 26, 11, 50, 16, 255 },
 
-	{ 28,0,30,15,255 },
-	{ 28,0,20,15,255 },
-	{ 28,0,40,15,255 },
-	{ 28,11,30,15,255 },
-	{ 28,11,20,15,255 },
-	{ 28,22,30,15,255 },
-	{ 28,22,20,15,255 },
+	{ 28, 0, 30, 15, 255 },
+	{ 28, 0, 20, 15, 255 },
+	{ 28, 0, 40, 15, 255 },
+	{ 28, 11, 30, 15, 255 },
+	{ 28, 11, 20, 15, 255 },
+	{ 28, 22, 30, 15, 255 },
+	{ 28, 22, 20, 15, 255 },
 
-	{ 255,255,255,255,255 }
+	{ 255, 255, 255, 255, 255 }
 
 };
 
@@ -553,7 +550,7 @@ void DreamWebEngine::dreamwebFinalize() {
 }
 
 void DreamWebEngine::dreamweb() {
-	switch(getLanguage()) {
+	switch (getLanguage()) {
 	case Common::EN_ANY:
 	case Common::EN_GRB:
 	case Common::EN_USA:
@@ -737,13 +734,13 @@ void DreamWebEngine::loadTextFile(TextFile &file, const char *suffix) {
 	f.open(fileName);
 	f.read((uint8 *)&header, sizeof(FileHeader));
 	uint16 sizeInBytes = header.len(0);
-	assert(sizeInBytes >= 2*66);
+	assert(sizeInBytes >= 2 * 66);
 
 	delete[] file._text;
-	file._text = new char[sizeInBytes - 2*66];
+	file._text = new char[sizeInBytes - 2 * 66];
 
-	f.read(file._offsetsLE, 2*66);
-	f.read(file._text, sizeInBytes - 2*66);
+	f.read(file._offsetsLE, 2 * 66);
+	f.read(file._text, sizeInBytes - 2 * 66);
 }
 
 void DreamWebEngine::screenUpdate() {
@@ -935,7 +932,6 @@ void DreamWebEngine::useTimedText() {
 		// to finish (_sound->isChannel1Playing()) when we're in speech+subtitles mode,
 		// instead of waiting the pre-specified amount of time.
 
-
 		// Ugly... (Maybe make this an argument to putUnderTimed()?)
 		TimedTemp t = _timedTemp;
 		_timedTemp = _previousTimedTemp;
@@ -1043,7 +1039,7 @@ void DreamWebEngine::eraseOldObs() {
 	// change the order of entries, but since they are drawn based on the
 	// priority field, this shouldn't matter.
 	Common::List<Sprite>::iterator i;
-	for (i = _spriteTable.begin(); i != _spriteTable.end(); ) {
+	for (i = _spriteTable.begin(); i != _spriteTable.end();) {
 		Sprite &sprite = *i;
 		if (sprite._objData)
 			i = _spriteTable.erase(i);
@@ -1101,7 +1097,7 @@ void DreamWebEngine::startLoading(const Room &room) {
 	deleteTaken();
 	setAllChanges();
 	autoAppear();
-//	const Room &newRoom = g_roomData[_newLocation];
+	//	const Room &newRoom = g_roomData[_newLocation];
 	_vars._lastWeapon = (uint8)-1;
 	_vars._manDead = 0;
 	_lookCounter = 160;
@@ -1210,7 +1206,7 @@ bool DreamWebEngine::checkIfFree(uint8 x, uint8 y) {
 	for (i = _freeList.reverse_begin(); i != _freeList.end(); --i) {
 		const ObjPos &pos = *i;
 		assert(pos.index != 0xff);
-		if (!pos.contains(x,y))
+		if (!pos.contains(x, y))
 			continue;
 		obName(pos.index, 2);
 		return true;
@@ -1223,7 +1219,7 @@ bool DreamWebEngine::checkIfEx(uint8 x, uint8 y) {
 	for (i = _exList.reverse_begin(); i != _exList.end(); --i) {
 		const ObjPos &pos = *i;
 		assert(pos.index != 0xff);
-		if (!pos.contains(x,y))
+		if (!pos.contains(x, y))
 			continue;
 		obName(pos.index, 4);
 		return true;
@@ -1344,7 +1340,7 @@ void *DreamWebEngine::getAnyAd(uint8 *slotSize, uint8 *slotCount) {
 		*slotSize = freeObject->slotSize;
 		*slotCount = freeObject->slotCount;
 		return freeObject;
-	} else {	// 1 or 3. 0 should never happen
+	} else { // 1 or 3. 0 should never happen
 		SetObject *setObject = getSetAd(_command);
 		// Note: the original returned slotCount/priority (bytes 4 and 5)
 		// instead of slotSize/slotCount (bytes 3 and 4).
@@ -1518,7 +1514,7 @@ void DreamWebEngine::showBlink() {
 	_blinkFrame = blinkFrame;
 	if (blinkFrame > 6)
 		blinkFrame = 6;
-	static const uint8 blinkTab[] = { 16,18,18,17,16,16,16 };
+	static const uint8 blinkTab[] = { 16, 18, 18, 17, 16, 16, 16 };
 	uint8 width, height;
 	showFrame(_icons1, 44, 32, blinkTab[blinkFrame], 0, &width, &height);
 }
@@ -1602,7 +1598,7 @@ void DreamWebEngine::showIcon() {
 	} else {
 		error("Unimplemented tempsprites code called");
 		// the tempsprites segment is never initialized, but used here.
-/*
+		/*
 		Frame *tempSprites = (Frame *)getSegment(data.word(kTempsprites)).ptr(0, 0);
 		showFrame(tempSprites, 72, 2, 45, 0);
 		showFrame(tempSprites, 72+47, 2, 46, 0);
@@ -1625,7 +1621,7 @@ bool DreamWebEngine::checkIfSet(uint8 x, uint8 y) {
 	for (i = _setList.reverse_begin(); i != _setList.end(); --i) {
 		const ObjPos &pos = *i;
 		assert(pos.index != 0xff);
-		if (!pos.contains(x,y))
+		if (!pos.contains(x, y))
 			continue;
 		if (!pixelCheckSet(&pos, x, y))
 			continue;
@@ -1741,24 +1737,24 @@ void DreamWebEngine::mainScreen() {
 	_inMapArea = 0;
 	if (_vars._watchOn == 1) {
 		RectWithCallback mainList[] = {
-			{ 44,70,32,46,&DreamWebEngine::look },
-			{ 0,50,0,180,&DreamWebEngine::inventory },
-			{ 226,244,10,26,&DreamWebEngine::zoomOnOff },
-			{ 226,244,26,40,&DreamWebEngine::saveLoad },
-			{ 240,260,100,124,&DreamWebEngine::madmanRun },
-			{ 0,320,0,200,&DreamWebEngine::identifyOb },
-			{ 0xFFFF,0,0,0,0 }
+			{ 44, 70, 32, 46, &DreamWebEngine::look },
+			{ 0, 50, 0, 180, &DreamWebEngine::inventory },
+			{ 226, 244, 10, 26, &DreamWebEngine::zoomOnOff },
+			{ 226, 244, 26, 40, &DreamWebEngine::saveLoad },
+			{ 240, 260, 100, 124, &DreamWebEngine::madmanRun },
+			{ 0, 320, 0, 200, &DreamWebEngine::identifyOb },
+			{ 0xFFFF, 0, 0, 0, 0 }
 		};
 		checkCoords(mainList);
 	} else {
 		RectWithCallback mainList2[] = {
-			{ 44,70,32,46,&DreamWebEngine::look },
-			{ 0,50,0,180,&DreamWebEngine::inventory },
-			{ 226+48,244+48,10,26,&DreamWebEngine::zoomOnOff },
-			{ 226+48,244+48,26,40,&DreamWebEngine::saveLoad },
-			{ 240,260,100,124,&DreamWebEngine::madmanRun },
-			{ 0,320,0,200,&DreamWebEngine::identifyOb },
-			{ 0xFFFF,0,0,0,0 }
+			{ 44, 70, 32, 46, &DreamWebEngine::look },
+			{ 0, 50, 0, 180, &DreamWebEngine::inventory },
+			{ 226 + 48, 244 + 48, 10, 26, &DreamWebEngine::zoomOnOff },
+			{ 226 + 48, 244 + 48, 26, 40, &DreamWebEngine::saveLoad },
+			{ 240, 260, 100, 124, &DreamWebEngine::madmanRun },
+			{ 0, 320, 0, 200, &DreamWebEngine::identifyOb },
+			{ 0xFFFF, 0, 0, 0, 0 }
 		};
 		checkCoords(mainList2);
 	}
@@ -1789,16 +1785,16 @@ void DreamWebEngine::showTime() {
 	int minutes = _vars._minuteCount;
 	int hours = _vars._hourCount;
 
-	showFrame(_charset1, 282+5, 21, 91*3+10 + seconds / 10, 0);
-	showFrame(_charset1, 282+9, 21, 91*3+10 + seconds % 10, 0);
+	showFrame(_charset1, 282 + 5, 21, 91 * 3 + 10 + seconds / 10, 0);
+	showFrame(_charset1, 282 + 9, 21, 91 * 3 + 10 + seconds % 10, 0);
 
-	showFrame(_charset1, 270+5, 21, 91*3 + minutes / 10, 0);
-	showFrame(_charset1, 270+11, 21, 91*3 + minutes % 10, 0);
+	showFrame(_charset1, 270 + 5, 21, 91 * 3 + minutes / 10, 0);
+	showFrame(_charset1, 270 + 11, 21, 91 * 3 + minutes % 10, 0);
 
-	showFrame(_charset1, 256+5, 21, 91*3 + hours / 10, 0);
-	showFrame(_charset1, 256+11, 21, 91*3 + hours % 10, 0);
+	showFrame(_charset1, 256 + 5, 21, 91 * 3 + hours / 10, 0);
+	showFrame(_charset1, 256 + 11, 21, 91 * 3 + hours % 10, 0);
 
-	showFrame(_charset1, 267+5, 21, 91*3+20, 0);
+	showFrame(_charset1, 267 + 5, 21, 91 * 3 + 20, 0);
 }
 
 void DreamWebEngine::watchCount() {
@@ -1806,7 +1802,7 @@ void DreamWebEngine::watchCount() {
 		return;
 	++_timerCount;
 	if (_timerCount == 9) {
-		showFrame(_charset1, 268+4, 21, 91*3+21, 0);
+		showFrame(_charset1, 268 + 4, 21, 91 * 3 + 21, 0);
 		_watchDump = 1;
 	} else if (_timerCount == 18) {
 		_timerCount = 0;
@@ -1981,15 +1977,15 @@ void DreamWebEngine::loadRoomData(const Room &room, bool skipDat) {
 	file.read((uint8 *)_backdropFlags, 192);
 	file.read(_backdropBlocks, len[0] - 192);
 
-	assert(len[1] <= 132*66); // 132*66 = maplen
-	memset(workspace(), 0, 132*66);
+	assert(len[1] <= 132 * 66); // 132*66 = maplen
+	memset(workspace(), 0, 132 * 66);
 	file.read(workspace(), len[1]);
 
 	sortOutMap();
 
 	loadGraphicsSegment(_setFrames, file, len[2]);
 	if (!skipDat) {
-		const uint16 kSetdatlen = 64*128;
+		const uint16 kSetdatlen = 64 * 128;
 		assert(len[3] <= kSetdatlen);
 		memset(_setDat, 255, kSetdatlen);
 		file.read(_setDat, len[3]);
@@ -2005,12 +2001,12 @@ void DreamWebEngine::loadRoomData(const Room &room, bool skipDat) {
 
 	// segment 7 consists of 36 RoomPaths followed by 'reelList'
 	delete[] _reelList;
-	if (len[7] <= 36*sizeof(RoomPaths)) {
+	if (len[7] <= 36 * sizeof(RoomPaths)) {
 		file.read((uint8 *)_pathData, len[7]);
 		_reelList = 0;
 	} else {
-		file.read((uint8 *)_pathData, 36*sizeof(RoomPaths));
-		unsigned int reelLen = len[7] - 36*sizeof(RoomPaths);
+		file.read((uint8 *)_pathData, 36 * sizeof(RoomPaths));
+		unsigned int reelLen = len[7] - 36 * sizeof(RoomPaths);
 		unsigned int reelCount = (reelLen + sizeof(Reel) - 1) / sizeof(Reel);
 		_reelList = new Reel[reelCount];
 		file.read((uint8 *)_reelList, reelLen);
@@ -2025,7 +2021,7 @@ void DreamWebEngine::loadRoomData(const Room &room, bool skipDat) {
 	loadTextSegment(_roomDesc, file, len[11]);
 	loadGraphicsSegment(_freeFrames, file, len[12]);
 	if (!skipDat) {
-		const uint16 kFreedatlen = 16*80;
+		const uint16 kFreedatlen = 16 * 80;
 		assert(len[13] <= kFreedatlen);
 		memset(_freeDat, 255, kFreedatlen);
 		file.read(_freeDat, len[13]);
@@ -2182,7 +2178,6 @@ void DreamWebEngine::atmospheres() {
 					_sound->volumeSet(5);
 					return;
 				}
-
 			}
 		}
 
@@ -2503,18 +2498,14 @@ void DreamWebEngine::afterNewRoom() {
 }
 
 void DreamWebEngine::madmanRun() {
-	if (_vars._location    != 14 ||
-		_mapX        != 22 ||
-		_pointerMode !=  2 ||
-		_vars._madmanFlag  !=  0) {
+	if (_vars._location != 14 || _mapX != 22 || _pointerMode != 2 || _vars._madmanFlag != 0) {
 		identifyOb();
 		return;
 	}
 
 	commandOnlyCond(52, 211);
 
-	if (_mouseButton == 1 &&
-		_mouseButton != _oldButton)
+	if (_mouseButton == 1 && _mouseButton != _oldButton)
 		_vars._lastWeapon = 8;
 }
 
@@ -2536,11 +2527,11 @@ void DreamWebEngine::decide() {
 	_getBack = 0;
 
 	RectWithCallback decideList[] = {
-		{ kOpsx+69,kOpsx+124,kOpsy+30,kOpsy+76,&DreamWebEngine::newGame },
-		{ kOpsx+20,kOpsx+87,kOpsy+10,kOpsy+59,&DreamWebEngine::DOSReturn },
-		{ kOpsx+123,kOpsx+190,kOpsy+10,kOpsy+59,&DreamWebEngine::loadOld },
-		{ 0,320,0,200,&DreamWebEngine::blank },
-		{ 0xFFFF,0,0,0,0 }
+		{ kOpsx + 69, kOpsx + 124, kOpsy + 30, kOpsy + 76, &DreamWebEngine::newGame },
+		{ kOpsx + 20, kOpsx + 87, kOpsy + 10, kOpsy + 59, &DreamWebEngine::DOSReturn },
+		{ kOpsx + 123, kOpsx + 190, kOpsy + 10, kOpsy + 59, &DreamWebEngine::loadOld },
+		{ 0, 320, 0, 200, &DreamWebEngine::blank },
+		{ 0xFFFF, 0, 0, 0, 0 }
 	};
 
 	do {
@@ -2557,7 +2548,7 @@ void DreamWebEngine::decide() {
 	} while (!_getBack);
 
 	if (_getBack != 4)
-		_saveGraphics.clear();	// room not loaded
+		_saveGraphics.clear(); // room not loaded
 
 	_textAddressX = 13;
 	_textAddressY = 182;
@@ -2688,13 +2679,13 @@ void DreamWebEngine::entryTexts() {
 	case 31:
 		setupTimedUse(30, 60, 11, 68, 64);
 		break;
-	case 20:	// Sarter's 2
+	case 20: // Sarter's 2
 		setupTimedUse(31, 60, 11, 68, 64);
 		break;
-	case 24:	// Eden's lobby
+	case 24: // Eden's lobby
 		setupTimedUse(32, 60, 3, 68, 64);
 		break;
-	case 34:	// Eden 2
+	case 34: // Eden 2
 		setupTimedUse(33, 60, 3, 68, 64);
 		break;
 	default:
@@ -2707,7 +2698,7 @@ void DreamWebEngine::entryAnims() {
 	_vars._watchMode = (byte)-1;
 
 	switch (_vars._location) {
-	case 33:	// beach
+	case 33: // beach
 		switchRyanOff();
 		_vars._watchingTime = 76 * 2;
 		_vars._reelToWatch = 0;
@@ -2715,16 +2706,16 @@ void DreamWebEngine::entryAnims() {
 		_vars._watchSpeed = 1;
 		_vars._speedCount = 1;
 		break;
-	case 44:	// Sparky's
+	case 44: // Sparky's
 		resetLocation(8);
-		_vars._watchingTime = 50*2;
+		_vars._watchingTime = 50 * 2;
 		_vars._reelToWatch = 247;
 		_vars._endWatchReel = 297;
 		_vars._watchSpeed = 1;
 		_vars._speedCount = 1;
 		switchRyanOff();
 		break;
-	case 22:	// lift
+	case 22: // lift
 		_vars._watchingTime = 31 * 2;
 		_vars._reelToWatch = 0;
 		_vars._endWatchReel = 30;
@@ -2732,11 +2723,11 @@ void DreamWebEngine::entryAnims() {
 		_vars._speedCount = 1;
 		switchRyanOff();
 		break;
-	case 26:	// under church
+	case 26: // under church
 		_symbolTopNum = 2;
 		_symbolBotNum = 1;
 		break;
-	case 45:	// entered Dreamweb
+	case 45: // entered Dreamweb
 		_vars._keeperFlag = 0;
 		_vars._watchingTime = 296;
 		_vars._reelToWatch = 45;
@@ -2746,7 +2737,7 @@ void DreamWebEngine::entryAnims() {
 		switchRyanOff();
 		break;
 	default:
-		if (_realLocation == 46 && _vars._sartainDead == 1) {	// Crystal
+		if (_realLocation == 46 && _vars._sartainDead == 1) { // Crystal
 			removeFreeObject(0);
 		} else if (_vars._location == 9 && !checkIfPathIsOn(2) && _vars._aideDead != 0) {
 			// Top of church
@@ -2756,24 +2747,24 @@ void DreamWebEngine::entryAnims() {
 			// Make doors open
 			removeSetObject(4);
 			placeSetObject(5);
-		} else if (_vars._location == 47) {	// Dream center
+		} else if (_vars._location == 47) { // Dream center
 			placeSetObject(4);
 			placeSetObject(5);
-		} else if (_vars._location == 38) {	// Car park
+		} else if (_vars._location == 38) { // Car park
 			_vars._watchingTime = 57 * 2;
 			_vars._reelToWatch = 4;
 			_vars._endWatchReel = 57;
 			_vars._watchSpeed = 1;
 			_vars._speedCount = 1;
 			switchRyanOff();
-		} else if (_vars._location == 32) {	// Alley
+		} else if (_vars._location == 32) { // Alley
 			_vars._watchingTime = 66 * 2;
 			_vars._reelToWatch = 0;
 			_vars._endWatchReel = 66;
 			_vars._watchSpeed = 1;
 			_vars._speedCount = 1;
 			switchRyanOff();
-		} else if (_vars._location == 24) {	// Eden's again
+		} else if (_vars._location == 24) { // Eden's again
 			turnAnyPathOn(2, _roomNum - 1);
 		}
 	}
@@ -2821,7 +2812,7 @@ void DreamWebEngine::clearChanges() {
 	memset(_exFrames._frames, 0xFF, kFrameBlocksize);
 	memset(_exFrames._data, 0xFF, kExframeslen);
 	memset(_exData, 0xFF, sizeof(_exData));
-	memset(_exText._offsetsLE, 0xFF, 2*(kNumexobjects+2));
+	memset(_exText._offsetsLE, 0xFF, 2 * (kNumexobjects + 2));
 	memset(_exText._text, 0xFF, kExtextlen);
 
 	const uint8 initialRoomsCanGo[16] = { 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -2899,23 +2890,23 @@ void DreamWebEngine::edensFlatReminders() {
 
 	uint16 exObjextIndex = findExObject("CSHR");
 	if (!isRyanHolding("DKEY") || exObjextIndex == kNumexobjects) {
-		setupTimedUse(50, 48, 8, 54, 70);	// forgot something
+		setupTimedUse(50, 48, 8, 54, 70); // forgot something
 		return;
 	}
 
 	DynObject *object = getExAd(exObjextIndex);
 
 	if (object->mapad[0] != 4) {
-		setupTimedUse(50, 48, 8, 54, 70);	// forgot something
+		setupTimedUse(50, 48, 8, 54, 70); // forgot something
 		return;
 	} else if (object->mapad[1] != 255) {
 		if (!compare(object->mapad[1], object->mapad[0], "PURS")) {
-			setupTimedUse(50, 48, 8, 54, 70);	// forgot something
+			setupTimedUse(50, 48, 8, 54, 70); // forgot something
 			return;
 		}
 	}
 
-	_vars._progressPoints++;	// got card
+	_vars._progressPoints++; // got card
 }
 
 } // End of namespace DreamWeb

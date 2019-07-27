@@ -23,13 +23,13 @@
 #ifndef ILLUSIONS_SOUND_H
 #define ILLUSIONS_SOUND_H
 
-#include "illusions/graphics.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
 #include "audio/midiplayer.h"
 #include "audio/mixer.h"
 #include "common/array.h"
 #include "common/list.h"
+#include "illusions/graphics.h"
 
 namespace Illusions {
 
@@ -42,6 +42,7 @@ public:
 	void play(uint32 musicId, bool looping, int16 volume, int16 pan);
 	void stop();
 	bool isPlaying();
+
 protected:
 	Audio::SoundHandle _soundHandle;
 	uint32 _musicId;
@@ -55,6 +56,7 @@ public:
 	bool play(uint32 musicId);
 	void stop();
 	bool isIdle() const { return _isIdle; }
+
 protected:
 	bool _isIdle;
 	bool _isPlaying;
@@ -86,6 +88,7 @@ public:
 	bool isPlaying();
 	bool isEnabled();
 	bool isCued();
+
 protected:
 	Audio::SoundHandle _soundHandle;
 	Common::String _voiceName;
@@ -103,9 +106,11 @@ public:
 	void play(int16 volume, int16 pan);
 	void stop();
 	bool isPlaying();
+
 public:
 	uint32 _soundEffectId;
 	uint32 _soundGroupId;
+
 protected:
 	Audio::RewindableAudioStream *_stream;
 	Audio::SoundHandle _soundHandle;
@@ -121,7 +126,9 @@ struct MidiMusicFader {
 	int16 _startTime;
 	int16 _duration;
 	uint32 _notifyThreadId;
-	MidiMusicFader() : _active(false), _currVolume(255) {}
+	MidiMusicFader()
+	  : _active(false)
+	  , _currVolume(255) {}
 };
 
 class SoundMan {
@@ -162,7 +169,7 @@ public:
 	void unloadSounds(uint32 soundGroupId);
 
 protected:
-	typedef Common::List<Sound*> SoundList;
+	typedef Common::List<Sound *> SoundList;
 	typedef SoundList::iterator SoundListIterator;
 	IllusionsEngine *_vm;
 	uint32 _musicNotifyThreadId;

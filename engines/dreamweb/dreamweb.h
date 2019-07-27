@@ -57,18 +57,18 @@ const unsigned int kUnderTextBufSize = kUnderTextSizeX_f * kUnderTextSizeY_f;
 const unsigned int kUnderTimedTextBufSize = 256 * kUnderTimedTextSizeY_f;
 const unsigned int kLengthOfVars = 68;
 const unsigned int kNumChanges = 250;
-const unsigned int kLenOfMapStore = 22*8*20*8;
+const unsigned int kLenOfMapStore = 22 * 8 * 20 * 8;
 const unsigned int kMapWidth = 66;
 const unsigned int kMapHeight = 60;
 const unsigned int kLengthOfMap = kMapWidth * kMapHeight;
 const unsigned int kNumExObjects = 114;
 const unsigned int kScreenwidth = 320;
 const unsigned int kScreenheight = 200;
-const unsigned int kDiaryx = (68+24);
-const unsigned int kDiaryy = (48+12);
+const unsigned int kDiaryx = (68 + 24);
+const unsigned int kDiaryy = (48 + 12);
 const unsigned int kInventx = 80;
 const unsigned int kInventy = 58;
-const unsigned int kMenux = (80+40);
+const unsigned int kMenux = (80 + 40);
 const unsigned int kMenuy = 60;
 const unsigned int kOpsx = 60;
 const unsigned int kOpsy = 52;
@@ -81,7 +81,7 @@ const unsigned int kNumexobjects = 114;
 const unsigned int kNumExTexts = kNumexobjects + 2;
 const uint16 kExtextlen = 18000;
 const uint16 kExframeslen = 30000;
-const unsigned int kLengthofextra = kFrameBlocksize + kExframeslen + sizeof(DynObject)*kNumexobjects + sizeof(uint16)*kNumExTexts + kExtextlen;
+const unsigned int kLengthofextra = kFrameBlocksize + kExframeslen + sizeof(DynObject) * kNumexobjects + sizeof(uint16) * kNumExTexts + kExtextlen;
 const unsigned int kItempicsize = 44;
 const unsigned int kNumSetTexts = 130;
 const unsigned int kNumBlockTexts = 98;
@@ -100,9 +100,9 @@ class DreamWebSound;
 
 class DreamWebEngine : public Engine {
 private:
-	DreamWebConsole			*_console;
+	DreamWebConsole *_console;
 	DreamWebSound *_sound;
-	bool					_vSyncInterrupt;
+	bool _vSyncInterrupt;
 
 protected:
 	// Engine APIs
@@ -149,8 +149,8 @@ public:
 	uint8 modifyChar(uint8 c) const;
 	Common::String modifyFileName(const char *);
 
-	const Common::String& getDatafilePrefix() { return _datafilePrefix; }
-	const Common::String& getSpeechDirName() { return _speechDirName; }
+	const Common::String &getDatafilePrefix() { return _datafilePrefix; }
+	const Common::String &getSpeechDirName() { return _speechDirName; }
 
 private:
 	// Keyboard buffer. _bufferIn and _bufferOut are indexes
@@ -162,8 +162,8 @@ private:
 	void keyPressed(uint16 ascii);
 	void setSpeed(uint speed);
 
-	const DreamWebGameDescription	*_gameDescription;
-	Common::RandomSource			_rnd;
+	const DreamWebGameDescription *_gameDescription;
+	Common::RandomSource _rnd;
 	Common::String _datafilePrefix;
 	Common::String _speechDirName;
 
@@ -209,35 +209,35 @@ protected:
 	ObjectRef _oldSubject;
 
 	// from pathfind.cpp
-	Common::Point _lineData[200];		// Output of Bresenham
+	Common::Point _lineData[200]; // Output of Bresenham
 
 	// from saveload.cpp
-	char _saveNames[17*21];
-	char _saveNamesOld[17*21];
+	char _saveNames[17 * 21];
+	char _saveNamesOld[17 * 21];
 
 	// from vgagrafx.cpp
 	uint8 _workspace[(0x1000 + 2) * 16];
 	uint8 _mapStore[kLenOfMapStore + 32];
 
 	// from people.cpp
-	ReelRoutine _reelRoutines[kNumReelRoutines+1];
+	ReelRoutine _reelRoutines[kNumReelRoutines + 1];
 	ReelRoutine *_personData;
 
 	// from Buffers
 	uint8 _textUnder[kUnderTextBufSize];
 	ObjectRef _openInvList[16];
 	ObjectRef _ryanInvList[30];
-	uint8 _pointerBack[32*32];
-	MapFlag _mapFlags[11*10];
-	uint8 _startPal[3*256];
-	uint8 _endPal[3*256];
-	uint8 _mainPal[3*256];
+	uint8 _pointerBack[32 * 32];
+	MapFlag _mapFlags[11 * 10];
+	uint8 _startPal[3 * 256];
+	uint8 _endPal[3 * 256];
+	uint8 _mainPal[3 * 256];
 	Common::List<Sprite> _spriteTable;
 	Common::List<ObjPos> _setList;
 	Common::List<ObjPos> _freeList;
 	Common::List<ObjPos> _exList;
 	Common::List<People> _peopleList;
-	uint8 _zoomSpace[46*40];
+	uint8 _zoomSpace[46 * 40];
 	// _printedList (unused?)
 	Change _listOfChanges[kNumChanges]; // Note: this array is saved
 	uint8 _underTimedText[kUnderTimedTextBufSize];
@@ -443,7 +443,7 @@ public:
 	uint8 getXAd(const uint8 *setData, uint8 *result);
 	uint8 getYAd(const uint8 *setData, uint8 *result);
 	uint8 getMapAd(const uint8 *setData, uint16 *x, uint16 *y);
-	void calcFrFrame(const Frame &frame, uint8* width, uint8* height, uint16 x, uint16 y, ObjPos *objPos);
+	void calcFrFrame(const Frame &frame, uint8 *width, uint8 *height, uint16 x, uint16 y, ObjPos *objPos);
 	void makeBackOb(SetObject *objData, uint16 x, uint16 y);
 	void showAllObs();
 	void getDimension(uint8 *mapXstart, uint8 *mapYstart, uint8 *mapXsize, uint8 *mapYsize);
@@ -649,8 +649,8 @@ public:
 	void printChar(const GraphicsFile &charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height, bool kerning = false);
 	void printChar(const GraphicsFile &charSet, uint16 x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height);
 	void printBoth(const GraphicsFile &charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar);
-	uint8 printDirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered, bool kerning = false);
-	uint8 printDirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered);
+	uint8 printDirect(const uint8 **string, uint16 x, uint16 *y, uint8 maxWidth, bool centered, bool kerning = false);
+	uint8 printDirect(const uint8 *string, uint16 x, uint16 y, uint8 maxWidth, bool centered);
 	uint8 getNumber(const GraphicsFile &charSet, const uint8 *string, uint16 maxWidth, bool centered, uint16 *offset);
 	uint8 kernChars(uint8 firstChar, uint8 secondChar, uint8 width);
 	uint8 printSlow(const uint8 *string, uint16 x, uint16 y, uint8 maxWidth, bool centered);

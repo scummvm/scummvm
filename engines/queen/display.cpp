@@ -20,11 +20,10 @@
  *
  */
 
-
-#include "common/system.h"
 #include "common/events.h"
-#include "common/stream.h"
 #include "common/memstream.h"
+#include "common/stream.h"
+#include "common/system.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
@@ -42,30 +41,35 @@
 namespace Queen {
 
 Display::Display(QueenEngine *vm, OSystem *system)
-	: _fullscreen(true), _horizontalScroll(0), _bdWidth(0), _bdHeight(0),
-	_system(system), _vm(vm), _rnd("queenDisplay") {
+  : _fullscreen(true)
+  , _horizontalScroll(0)
+  , _bdWidth(0)
+  , _bdHeight(0)
+  , _system(system)
+  , _vm(vm)
+  , _rnd("queenDisplay") {
 
 	initFont();
 
-	_screenBuf   = new uint8[ SCREEN_W * SCREEN_H ];
-	_panelBuf    = new uint8[ PANEL_W * PANEL_H ];
-	_backdropBuf = new uint8[ BACKDROP_W * BACKDROP_H ];
-	memset(_screenBuf,   0, SCREEN_W * SCREEN_H);
-	memset(_panelBuf,    0, PANEL_W * PANEL_H);
+	_screenBuf = new uint8[SCREEN_W * SCREEN_H];
+	_panelBuf = new uint8[PANEL_W * PANEL_H];
+	_backdropBuf = new uint8[BACKDROP_W * BACKDROP_H];
+	memset(_screenBuf, 0, SCREEN_W * SCREEN_H);
+	memset(_panelBuf, 0, PANEL_W * PANEL_H);
 	memset(_backdropBuf, 0, BACKDROP_W * BACKDROP_H);
 
 	_fullRefresh = 1;
-	_dirtyBlocksWidth  = SCREEN_W / D_BLOCK_W;
+	_dirtyBlocksWidth = SCREEN_W / D_BLOCK_W;
 	_dirtyBlocksHeight = SCREEN_H / D_BLOCK_H;
 	_dirtyBlocks = new uint8[_dirtyBlocksWidth * _dirtyBlocksHeight];
 	memset(_dirtyBlocks, 0, _dirtyBlocksWidth * _dirtyBlocksHeight);
 
-	_pal.room   = new uint8[ 256 * 3 ];
-	_pal.screen = new uint8[ 256 * 3 ];
-	_pal.panel  = new uint8[ 112 * 3 ];
-	memset(_pal.room,   0, 256 * 3);
+	_pal.room = new uint8[256 * 3];
+	_pal.screen = new uint8[256 * 3];
+	_pal.panel = new uint8[112 * 3];
+	memset(_pal.room, 0, 256 * 3);
 	memset(_pal.screen, 0, 256 * 3);
-	memset(_pal.panel,  0, 112 * 3);
+	memset(_pal.panel, 0, 112 * 3);
 	_pal.dirtyMin = 0;
 	_pal.dirtyMax = 255;
 	_pal.scrollable = true;
@@ -255,12 +259,14 @@ void Display::palScroll(int start, int end) {
 
 	*palStart++ = r;
 	*palStart++ = g;
-	*palStart   = b;
+	*palStart = b;
 }
 
 void Display::palSetAmigaColor(uint8 color, uint16 rgb) {
-	uint8 b = rgb & 0xF; rgb >>= 4;
-	uint8 g = rgb & 0xF; rgb >>= 4;
+	uint8 b = rgb & 0xF;
+	rgb >>= 4;
+	uint8 g = rgb & 0xF;
+	rgb >>= 4;
 	uint8 r = rgb & 0xF;
 	_pal.room[color * 3] = (r << 4) | r;
 	_pal.room[color * 3 + 1] = (g << 4) | g;
@@ -366,40 +372,38 @@ void Display::palCustomScroll(uint16 roomNum) {
 
 	switch (roomNum) {
 	case 123: {
-			static int16 j = 0, jdir = 2;
-			for (i = 96; i < 111; ++i) {
-				_pal.screen[i * 3 + 0] = MIN(255, _pal.room[i * 3 + 0] + j * 8);
-				_pal.screen[i * 3 + 1] = MIN(255, _pal.room[i * 3 + 1] + j * 4);
-			}
-			j += jdir;
-			if (j <= 0 || j >= 18) {
-				jdir = -jdir;
-			}
-			loPal = 96;
-			hiPal = 111;
+		static int16 j = 0, jdir = 2;
+		for (i = 96; i < 111; ++i) {
+			_pal.screen[i * 3 + 0] = MIN(255, _pal.room[i * 3 + 0] + j * 8);
+			_pal.screen[i * 3 + 1] = MIN(255, _pal.room[i * 3 + 1] + j * 4);
 		}
-		break;
+		j += jdir;
+		if (j <= 0 || j >= 18) {
+			jdir = -jdir;
+		}
+		loPal = 96;
+		hiPal = 111;
+	} break;
 	case 124: {
-			static int16 j = 0,jdir = 2;
-			for (i = 80; i < 144; ++i) {
-				_pal.screen[i * 3 + 0] = MIN(255, _pal.room[i * 3 + 0] + j * 8);
-				_pal.screen[i * 3 + 1] = MIN(255, _pal.room[i * 3 + 1] + j * 4);
-			}
-			j += jdir;
-			if (j <= 0 || j >= 14) {
-				jdir = -jdir;
-				if (_rnd.getRandomNumber(1)) {
-					if (ABS(jdir) == 1) {
-						jdir *= 2;
-					} else {
-						jdir /= 2;
-					}
+		static int16 j = 0, jdir = 2;
+		for (i = 80; i < 144; ++i) {
+			_pal.screen[i * 3 + 0] = MIN(255, _pal.room[i * 3 + 0] + j * 8);
+			_pal.screen[i * 3 + 1] = MIN(255, _pal.room[i * 3 + 1] + j * 4);
+		}
+		j += jdir;
+		if (j <= 0 || j >= 14) {
+			jdir = -jdir;
+			if (_rnd.getRandomNumber(1)) {
+				if (ABS(jdir) == 1) {
+					jdir *= 2;
+				} else {
+					jdir /= 2;
 				}
 			}
-			loPal = 80;
-			hiPal = 143;
 		}
-		break;
+		loPal = 80;
+		hiPal = 143;
+	} break;
 	case 125:
 		palScroll(32, 63);
 		palScroll(64, 95);
@@ -526,7 +530,7 @@ void Display::palCustomScroll(uint16 roomNum) {
 		break;
 	case 4:
 		if (scrollx & 1) {
-			palScroll(32,47);
+			palScroll(32, 47);
 		}
 		palScroll(64, 70);
 		palScroll(71, 79);
@@ -653,7 +657,7 @@ void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 		_pal.dirtyMax = 144;
 	}
 	// uncomment this line to disable the dirty blocks rendering
-//	_fullRefresh = 1;
+	//	_fullRefresh = 1;
 	if (_fullRefresh) {
 		_system->copyRectToScreen(_screenBuf, SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
 		_system->updateScreen();
@@ -838,13 +842,13 @@ void Display::decodeIFF(const uint8 *src, uint32 srcSize, uint8 *dst, uint16 dst
 		error("Error while reading IFF image");
 
 	const ::Graphics::Surface *iffSurface = iff.getSurface();
-	*w	= iffSurface->w;
-	*h	= iffSurface->h;
+	*w = iffSurface->w;
+	*h = iffSurface->h;
 
 	assert(palStart <= palEnd && palEnd <= 256);
 	memcpy(pal, iff.getPalette() + palStart * 3, (palEnd - palStart) * 3);
 	for (uint16 y = 0; y < iffSurface->h; y++)
-		for(uint16 x = 0; x < iffSurface->w; x++)
+		for (uint16 x = 0; x < iffSurface->w; x++)
 			dst[(y * dstPitch) + x] = *(const byte *)iffSurface->getBasePtr(x, y) + colorBase;
 }
 
@@ -936,8 +940,10 @@ void Display::initFont() {
 
 void Display::setText(uint16 x, uint16 y, const char *text, bool outlined) {
 	if (y < GAME_SCREEN_HEIGHT) {
-		if (x == 0) x = 1;
-		if (y == 0) y = 1;
+		if (x == 0)
+			x = 1;
+		if (y == 0)
+			y = 1;
 		TextSlot *pts = &_texts[y];
 		pts->x = x;
 		pts->color = _curTextColor;
@@ -1001,7 +1007,7 @@ void Display::setupInkColors() {
 	}
 }
 
-void Display::setFocusRect(const Common::Rect& rect) {
+void Display::setFocusRect(const Common::Rect &rect) {
 	_system->setFocusRectangle(rect);
 }
 
@@ -1017,7 +1023,7 @@ uint16 Display::textWidth(const char *text, uint16 len) const {
 	assert(len <= strlen(text));
 	uint16 width = 0;
 	for (uint16 i = 0; i < len; ++i) {
-		width += _charWidth[ (uint8)text[i] ];
+		width += _charWidth[(uint8)text[i]];
 	}
 	return width;
 }
@@ -1691,14 +1697,14 @@ const uint8 Display::_fontRussian[] = {
 
 const uint8 Display::_palJoeClothes[] = {
 	0x00, 0x00, 0x00, 0x60, 0x60, 0x60, 0x87, 0x87, 0x87, 0xB0, 0xB0, 0xB0, 0xDA, 0xDA, 0xDA, 0x43,
-	0x34, 0x20,	0x77, 0x33, 0x1F, 0xA3, 0x43, 0x27, 0x80, 0x45, 0x45, 0x9E, 0x5D, 0x5B, 0xB9, 0x78,
-	0x75, 0xDF, 0x97, 0x91,	0x17, 0x27, 0x63, 0x1F, 0x3F, 0x83, 0x27, 0x5B, 0xA7, 0x98, 0xD4, 0xFF
+	0x34, 0x20, 0x77, 0x33, 0x1F, 0xA3, 0x43, 0x27, 0x80, 0x45, 0x45, 0x9E, 0x5D, 0x5B, 0xB9, 0x78,
+	0x75, 0xDF, 0x97, 0x91, 0x17, 0x27, 0x63, 0x1F, 0x3F, 0x83, 0x27, 0x5B, 0xA7, 0x98, 0xD4, 0xFF
 };
 
 const uint8 Display::_palJoeDress[] = {
 	0x00, 0x00, 0x00, 0x50, 0x50, 0x50, 0x70, 0x70, 0x70, 0x90, 0x90, 0x90, 0xC6, 0xC6, 0xC6, 0xFF,
-	0xFF, 0xFF,	0x30, 0x30, 0x90, 0x47, 0x49, 0xD0, 0x40, 0x24, 0x00, 0x79, 0x34, 0x0B, 0xB2, 0x3D,
-	0x22, 0xED, 0x42, 0x42,	0x80, 0x45, 0x45, 0xA3, 0x5F, 0x5F, 0xC8, 0x7C, 0x7C, 0xEC, 0x9C, 0x9C
+	0xFF, 0xFF, 0x30, 0x30, 0x90, 0x47, 0x49, 0xD0, 0x40, 0x24, 0x00, 0x79, 0x34, 0x0B, 0xB2, 0x3D,
+	0x22, 0xED, 0x42, 0x42, 0x80, 0x45, 0x45, 0xA3, 0x5F, 0x5F, 0xC8, 0x7C, 0x7C, 0xEC, 0x9C, 0x9C
 };
 
 } // End of namespace Queen

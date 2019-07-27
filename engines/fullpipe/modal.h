@@ -42,13 +42,13 @@ struct FileInfo {
 };
 
 class BaseModalObject {
- public:
-
+public:
 	BaseModalObject *_parentObj;
 	ObjType _objtype;
 
- public:
-	BaseModalObject() : _parentObj(0) { _objtype = kObjTypeDefault; }
+public:
+	BaseModalObject()
+	  : _parentObj(0) { _objtype = kObjTypeDefault; }
 	virtual ~BaseModalObject() {}
 
 	void deleteObject();
@@ -68,7 +68,7 @@ class ModalIntro : public BaseModalObject {
 	int _stillRunning;
 	int _sfxVolume;
 
- public:
+public:
 	ModalIntro();
 	virtual ~ModalIntro();
 
@@ -88,7 +88,7 @@ class ModalIntroDemo : public BaseModalObject {
 	int _stillRunning;
 	int _sfxVolume;
 
- public:
+public:
 	ModalIntroDemo();
 	virtual ~ModalIntroDemo();
 
@@ -103,7 +103,6 @@ class ModalIntroDemo : public BaseModalObject {
 
 class ModalVideoPlayer : public BaseModalObject {
 public:
-
 	virtual bool pollEvent() { return true; }
 	virtual bool handleMessage(ExCommand *message) { return true; }
 	virtual bool init(int counterdiff) { return false; }
@@ -133,7 +132,7 @@ class ModalMap : public BaseModalObject {
 	int _hotSpotDelay;
 	Common::Rect _rect2;
 
- public:
+public:
 	ModalMap();
 	virtual ~ModalMap();
 
@@ -161,7 +160,7 @@ class ModalFinal : public BaseModalObject {
 	int _counter;
 	int _sfxVolume;
 
- public:
+public:
 	ModalFinal();
 	virtual ~ModalFinal();
 
@@ -185,7 +184,7 @@ class ModalCredits : public BaseModalObject {
 	int _currY;
 	int _maxY;
 
- public:
+public:
 	ModalCredits();
 	virtual ~ModalCredits();
 
@@ -275,14 +274,12 @@ public:
 	bool create(Scene *sc, Scene *bgScene, int picId);
 	int getQueryResult() { return _queryResult; }
 
-
 private:
 	Scene *_bgScene;
 	PictureObject *_bg;
 	PictureObject *_okBtn;
 	PictureObject *_cancelBtn;
 	int _queryResult;
-
 };
 
 class ModalSaveGame : public BaseModalObject {
@@ -320,9 +317,9 @@ public:
 	Scene *_menuScene;
 	int _mode;
 	ModalQuery *_queryDlg;
-	Common::Array <FileInfo> _files;
-	Common::Array <PictureObject *> _arrayL;
-	Common::Array <PictureObject *> _arrayD;
+	Common::Array<FileInfo> _files;
+	Common::Array<PictureObject *> _arrayL;
+	Common::Array<PictureObject *> _arrayD;
 	int _queryRes;
 };
 
@@ -334,7 +331,7 @@ class ModalDemo : public BaseModalObject {
 	int _countdown;
 	Scene *_scene;
 
- public:
+public:
 	ModalDemo();
 	virtual ~ModalDemo();
 
@@ -347,7 +344,6 @@ class ModalDemo : public BaseModalObject {
 	virtual void update();
 	virtual void saveload() {}
 };
-
 
 } // End of namespace Fullpipe
 

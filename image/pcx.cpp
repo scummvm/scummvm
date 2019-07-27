@@ -61,15 +61,15 @@ void PCXDecoder::destroy() {
 bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
 	destroy();
 
-	if (stream.readByte() != 0x0a)	// ZSoft PCX
+	if (stream.readByte() != 0x0a) // ZSoft PCX
 		return false;
 
-	byte version = stream.readByte();	// 0 - 5
+	byte version = stream.readByte(); // 0 - 5
 	if (version > 5)
 		return false;
 
 	bool compressed = stream.readByte(); // encoding, 1 = run length encoding
-	byte bitsPerPixel = stream.readByte();	// 1, 2, 4 or 8
+	byte bitsPerPixel = stream.readByte(); // 1, 2, 4 or 8
 
 	// Window
 	uint16 xMin = stream.readUint16LE();
@@ -77,7 +77,7 @@ bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
 	uint16 xMax = stream.readUint16LE();
 	uint16 yMax = stream.readUint16LE();
 
-	uint16 width  = xMax - xMin + 1;
+	uint16 width = xMax - xMin + 1;
 	uint16 height = yMax - yMin + 1;
 
 	if (xMax < xMin || yMax < yMin) {
@@ -85,7 +85,7 @@ bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
 		return false;
 	}
 
-	stream.skip(4);	// HDpi, VDpi
+	stream.skip(4); // HDpi, VDpi
 
 	// Read the EGA palette (colormap)
 	_palette = new byte[16 * 3];
@@ -95,7 +95,7 @@ bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
 		_palette[i * 3 + 2] = stream.readByte();
 	}
 
-	if (stream.readByte() != 0)	// reserved, should be set to 0
+	if (stream.readByte() != 0) // reserved, should be set to 0
 		return false;
 
 	byte nPlanes = stream.readByte();
@@ -107,7 +107,7 @@ bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
 		return false;
 	}
 
-	stream.skip(60);	// PaletteInfo, HscreenSize, VscreenSize, Filler
+	stream.skip(60); // PaletteInfo, HscreenSize, VscreenSize, Filler
 
 	_surface = new Graphics::Surface();
 
@@ -115,7 +115,7 @@ bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
 	byte *dst;
 	int x, y;
 
-	if (nPlanes == 3 && bitsPerPixel == 8) {	// 24bpp
+	if (nPlanes == 3 && bitsPerPixel == 8) { // 24bpp
 		Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 		_surface->create(width, height, format);
 		dst = (byte *)_surface->getPixels();
@@ -126,7 +126,7 @@ bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 			for (x = 0; x < width; x++) {
 				byte b = scanLine[x];
-				byte g = scanLine[x +  bytesPerLine];
+				byte g = scanLine[x + bytesPerLine];
 				byte r = scanLine[x + (bytesPerLine << 1)];
 				uint32 color = format.RGBToColor(r, g, b);
 
@@ -134,7 +134,7 @@ bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
 				dst += format.bytesPerPixel;
 			}
 		}
-	} else if (nPlanes == 1 && bitsPerPixel == 8) {	// 8bpp indexed
+	} else if (nPlanes == 1 && bitsPerPixel == 8) { // 8bpp indexed
 		_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		dst = (byte *)_surface->getPixels();
 		_paletteColorCount = 16;
@@ -162,7 +162,7 @@ bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 			_paletteColorCount = 256;
 		}
-	} else if ((nPlanes == 2 || nPlanes == 3 || nPlanes == 4) && bitsPerPixel == 1) {	// planar, 4, 8 or 16 colors
+	} else if ((nPlanes == 2 || nPlanes == 3 || nPlanes == 4) && bitsPerPixel == 1) { // planar, 4, 8 or 16 colors
 		_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		dst = (byte *)_surface->getPixels();
 		_paletteColorCount = 16;
@@ -174,7 +174,7 @@ bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
 				int m = 0x80 >> (x & 7), v = 0;
 				for (int i = nPlanes - 1; i >= 0; i--) {
 					v <<= 1;
-					v  += (scanLine[i * bytesPerLine + (x >> 3)] & m) == 0 ? 0 : 1;
+					v += (scanLine[i * bytesPerLine + (x >> 3)] & m) == 0 ? 0 : 1;
 				}
 				dst[x] = v;
 			}

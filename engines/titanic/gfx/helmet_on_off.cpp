@@ -26,7 +26,8 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CHelmetOnOff, CToggleSwitch);
 
-CHelmetOnOff::CHelmetOnOff() : CToggleSwitch() {
+CHelmetOnOff::CHelmetOnOff()
+  : CToggleSwitch() {
 }
 
 void CHelmetOnOff::save(SimpleFile *file, int indent) {

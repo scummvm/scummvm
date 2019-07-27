@@ -64,7 +64,6 @@ public:
 	int remoteStartScriptFunction(int typeOfSend, int sendTypeParam, int priority, int defaultReturnValue, int argsCount, int32 *args);
 
 private:
-
 public:
 	//getters
 	bool getHostName(char *hostname, int length);

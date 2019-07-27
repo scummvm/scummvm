@@ -20,11 +20,11 @@
  *
  */
 
-#include "sci/sci.h"
-#include "sci/engine/state.h"
-#include "sci/engine/seg_manager.h"
 #include "sci/engine/vm_types.h"
+#include "sci/engine/seg_manager.h"
+#include "sci/engine/state.h"
 #include "sci/engine/workarounds.h"
+#include "sci/sci.h"
 
 namespace Sci {
 

@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptGuzza::AIScriptGuzza(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptGuzza::AIScriptGuzza(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 	_frameDelta = 0;
 	_counter = 0;
 	_state = 0;
@@ -57,10 +58,9 @@ bool AIScriptGuzza::Update() {
 			return true;
 		}
 
-		if ( Actor_Query_Goal_Number(kActorGuzza) != kGoalGuzzaGoToHawkersCircle1
-		 && !Game_Flag_Query(kFlagHC01GuzzaWalk)
-		 &&  Game_Flag_Query(kFlagHC01GuzzaPrepare)
-		) {
+		if (Actor_Query_Goal_Number(kActorGuzza) != kGoalGuzzaGoToHawkersCircle1
+		    && !Game_Flag_Query(kFlagHC01GuzzaWalk)
+		    && Game_Flag_Query(kFlagHC01GuzzaPrepare)) {
 			Game_Flag_Set(kFlagHC01GuzzaWalk);
 			Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaGoToHawkersCircle2);
 			return true;
@@ -124,7 +124,6 @@ void AIScriptGuzza::CompletedMovementTrack() {
 		Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaLeftOffice);
 		// return true;
 		break;
-
 	}
 	// return false;
 }
@@ -135,8 +134,7 @@ void AIScriptGuzza::ReceivedClue(int clueId, int fromActorId) {
 
 void AIScriptGuzza::ClickedByPlayer() {
 	if (Global_Variable_Query(kVariableChapter) == 2
-	 && Game_Flag_Query(kFlagGuzzaIsMovingAround)
-	) {
+	    && Game_Flag_Query(kFlagGuzzaIsMovingAround)) {
 		Actor_Face_Actor(kActorMcCoy, kActorGuzza, true);
 
 #if BLADERUNNER_ORIGINAL_BUGS
@@ -164,8 +162,8 @@ void AIScriptGuzza::ClickedByPlayer() {
 		}
 #else
 		if (Actor_Query_Friendliness_To_Other(kActorGuzza, kActorMcCoy) < 48) {
-			Actor_Says(kActorMcCoy, 3970, 13);	// Hey
-			Actor_Says(kActorGuzza, 780, -1);   // Get lost
+			Actor_Says(kActorMcCoy, 3970, 13); // Hey
+			Actor_Says(kActorGuzza, 780, -1); // Get lost
 		} else {
 			// At the very least Random_Query(1, 4) should only be calculated once
 			switch (Random_Query(1, 4)) {
@@ -853,8 +851,7 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 			_animationState = 29;
 			_animationFrame = 0;
 		} else if (_animationState != 24
-		        && _animationState != 29
-		) {
+		           && _animationState != 29) {
 			_animationState = 24;
 			_animationFrame = 0;
 		}
@@ -1055,17 +1052,17 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptGuzza::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptGuzza::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptGuzza::ReachedMovementTrackWaypoint(int waypointId) {

@@ -23,19 +23,23 @@
 #ifndef TITANIC_SURFACE_OBJ_H
 #define TITANIC_SURFACE_OBJ_H
 
-#include "titanic/support/rect.h"
-#include "titanic/support/video_surface.h"
 #include "titanic/star_control/fpoint.h"
 #include "titanic/star_control/frect.h"
+#include "titanic/support/rect.h"
+#include "titanic/support/video_surface.h"
 
 namespace Titanic {
 
 enum SurfaceAreaMode {
-	SA_SOLID = 0, SA_MODE1 = 1, SA_MODE2 = 2, SA_XOR = 3, SA_MODE4 = 4
+	SA_SOLID = 0,
+	SA_MODE1 = 1,
+	SA_MODE2 = 2,
+	SA_XOR = 3,
+	SA_MODE4 = 4
 };
 
 class CSurfaceArea {
-	template<typename T>
+	template <typename T>
 	static void plotPoint(int x, int y, int color, void *data) {
 		CSurfaceArea *sa = (CSurfaceArea *)data;
 		if (x >= 0 && x < sa->_width && y >= 0 && y < sa->_height) {
@@ -43,6 +47,7 @@ class CSurfaceArea {
 			*ptr = (*ptr & sa->_colorMask) ^ sa->_color;
 		}
 	}
+
 private:
 	/**
 	 * Initialize data for the class
@@ -57,6 +62,7 @@ private:
 	void pixelToRGB(uint pixel, uint *rgb);
 
 	Graphics::PixelFormat getPixelFormat() const;
+
 public:
 	int _field0;
 	int _width;
@@ -77,6 +83,7 @@ public:
 	SurfaceAreaMode _mode;
 	Rect _bounds;
 	Graphics::Surface *_surface;
+
 public:
 	CSurfaceArea(CVideoSurface *surface);
 

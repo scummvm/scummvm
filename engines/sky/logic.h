@@ -23,8 +23,8 @@
 #ifndef SKY_LOGIC_H
 #define SKY_LOGIC_H
 
-#include "common/util.h"
 #include "common/random.h"
+#include "common/util.h"
 
 namespace Sky {
 
@@ -128,19 +128,19 @@ class SkyCompact;
 
 class Logic;
 
-typedef void (Logic::*LogicTable) ();
-typedef bool (Logic::*McodeTable) (uint32, uint32, uint32);
+typedef void (Logic::*LogicTable)();
+typedef bool (Logic::*McodeTable)(uint32, uint32, uint32);
 
 class Logic {
 public:
 	Logic(
-		SkyCompact *skyCompact,
-		Screen *skyScreen,
-		Disk *skyDisk,
-		Text *skyText,
-		MusicBase *skyMusic,
-		Mouse *skyMouse,
-		Sound *skySound);
+	  SkyCompact *skyCompact,
+	  Screen *skyScreen,
+	  Disk *skyDisk,
+	  Text *skyText,
+	  MusicBase *skyMusic,
+	  Mouse *skyMouse,
+	  Sound *skySound);
 	~Logic();
 	void engine();
 	void useControlInstance(Control *control) { _skyControl = control; }
@@ -320,15 +320,15 @@ protected:
 
 	Common::RandomSource _rnd;
 
-	SkyCompact	*_skyCompact;
-	Screen		*_skyScreen;
-	Disk		*_skyDisk;
-	Text		*_skyText;
-	MusicBase	*_skyMusic;
-	Sound		*_skySound;
-	AutoRoute	*_skyAutoRoute;
-	Mouse		*_skyMouse;
-	Control		*_skyControl;
+	SkyCompact *_skyCompact;
+	Screen *_skyScreen;
+	Disk *_skyDisk;
+	Text *_skyText;
+	MusicBase *_skyMusic;
+	Sound *_skySound;
+	AutoRoute *_skyAutoRoute;
+	Mouse *_skyMouse;
+	Control *_skyControl;
 
 	friend class Debugger;
 };

@@ -32,6 +32,7 @@ class CVisionCentre : public CBrain {
 	bool PuzzleSolvedMsg(CPuzzleSolvedMsg *msg);
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+
 public:
 	CLASSDEF;
 

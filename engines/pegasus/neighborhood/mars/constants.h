@@ -133,8 +133,7 @@ static const TimeValue kCanyonChaseStart = kShuttleSwingStop;
 static const TimeValue kCanyonChaseStop = 60 * 600 + 43 * 600 + 14 * 40;
 
 static const TimeValue kLaunchTubeReachedTime = 60 * 600 + 38 * 600 - kCanyonChaseStart;
-static const TimeValue kCanyonChaseFinishedTime = kCanyonChaseStop - kCanyonChaseStart -
-											kLaunchTubeReachedTime;
+static const TimeValue kCanyonChaseFinishedTime = kCanyonChaseStop - kCanyonChaseStart - kLaunchTubeReachedTime;
 
 // Left shuttle.
 

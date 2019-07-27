@@ -22,7 +22,6 @@
 
 #include "audio/mididrv.h"
 
-#include "groovie/script.h"
 #include "groovie/cell.h"
 #include "groovie/cursor.h"
 #include "groovie/graphics.h"
@@ -30,6 +29,7 @@
 #include "groovie/player.h"
 #include "groovie/resource.h"
 #include "groovie/saveload.h"
+#include "groovie/script.h"
 
 #include "common/archive.h"
 #include "common/config-manager.h"
@@ -45,10 +45,18 @@
 
 namespace Groovie {
 
-Script::Script(GroovieEngine *vm, EngineVersion version) :
-	_code(NULL), _savedCode(NULL), _stacktop(0), _debugger(NULL), _vm(vm),
-	_videoFile(NULL), _videoRef(0), _staufsMove(NULL), _lastCursor(0xff),
-	_version(version), _random("GroovieScripts") {
+Script::Script(GroovieEngine *vm, EngineVersion version)
+  : _code(NULL)
+  , _savedCode(NULL)
+  , _stacktop(0)
+  , _debugger(NULL)
+  , _vm(vm)
+  , _videoFile(NULL)
+  , _videoRef(0)
+  , _staufsMove(NULL)
+  , _lastCursor(0xff)
+  , _version(version)
+  , _random("GroovieScripts") {
 
 	// Initialize the opcode set depending on the engine version
 	switch (version) {
@@ -254,7 +262,8 @@ Common::String &Script::getContext() {
 uint8 Script::getCodeByte(uint16 address) {
 	if (address >= _codeSize)
 		error("Trying to read a script byte at address 0x%04X, while the "
-			"script is just 0x%04X bytes long", address, _codeSize);
+		      "script is just 0x%04X bytes long",
+		      address, _codeSize);
 	return _code[address];
 }
 
@@ -497,7 +506,7 @@ void Script::o_nop8or16() {
 	debugC(1, kDebugScript, "NOP8OR16: 0x%04X", tmp);
 }
 
-void Script::o_playsong() {			// 0x02
+void Script::o_playsong() { // 0x02
 	uint16 fileref = readScript16bits();
 	debugC(1, kDebugScript, "PlaySong(0x%04X): Play xmidi file", fileref);
 	if (fileref == 0x4C17) {
@@ -507,7 +516,7 @@ void Script::o_playsong() {			// 0x02
 	_vm->_musicPlayer->playSong(fileref);
 }
 
-void Script::o_bf9on() {			// 0x03
+void Script::o_bf9on() { // 0x03
 	debugC(1, kDebugScript, "BF9ON: bitflag 9 turned on");
 	_bitflags |= 1 << 9;
 }
@@ -517,28 +526,28 @@ void Script::o_palfadeout() {
 	_vm->_graphicsMan->fadeOut();
 }
 
-void Script::o_bf8on() {			// 0x05
+void Script::o_bf8on() { // 0x05
 	debugC(1, kDebugScript, "BF8ON: bitflag 8 turned on");
 	_bitflags |= 1 << 8;
 }
 
-void Script::o_bf6on() {			// 0x06
+void Script::o_bf6on() { // 0x06
 	debugC(1, kDebugScript, "BF6ON: bitflag 6 turned on");
 	_bitflags |= 1 << 6;
 }
 
-void Script::o_bf7on() {			// 0x07
+void Script::o_bf7on() { // 0x07
 	debugC(1, kDebugScript, "BF7ON: bitflag 7 turned on");
 	_bitflags |= 1 << 7;
 }
 
-void Script::o_setbackgroundsong() {			// 0x08
+void Script::o_setbackgroundsong() { // 0x08
 	uint16 fileref = readScript16bits();
 	debugC(1, kDebugScript, "SetBackgroundSong(0x%04X)", fileref);
 	_vm->_musicPlayer->setBackgroundSong(fileref);
 }
 
-void Script::o_videofromref() {			// 0x09
+void Script::o_videofromref() { // 0x09
 	uint16 fileref = readScript16bits();
 
 	// Show the debug information just when starting the playback
@@ -547,21 +556,21 @@ void Script::o_videofromref() {			// 0x09
 		debugC(5, kDebugVideo, "Playing video 0x%04X via 0x09", fileref);
 	}
 	switch (fileref) {
-	case 0x1C03:	// Trilobyte logo
-	case 0x1C04:	// Virgin logo
-	case 0x1C05:	// Credits
+	case 0x1C03: // Trilobyte logo
+	case 0x1C04: // Virgin logo
+	case 0x1C05: // Credits
 		if (fileref != _videoRef) {
 			debugC(1, kDebugScript, "Use external file if available");
 		}
 		break;
 
-	case 0x400D:	// floating objects in music room
-	case 0x5060:	// a sound from gamwav?
-	case 0x5098:	// a sound from gamwav?
-	case 0x2402:	// House becomes book in intro?
-	case 0x1426:	// Turn to face front in hall: played after intro
-	case 0x206D:	// Cards on table puzzle (bedroom)
-	case 0x2001:	// Coins on table puzzle (bedroom)
+	case 0x400D: // floating objects in music room
+	case 0x5060: // a sound from gamwav?
+	case 0x5098: // a sound from gamwav?
+	case 0x2402: // House becomes book in intro?
+	case 0x1426: // Turn to face front in hall: played after intro
+	case 0x206D: // Cards on table puzzle (bedroom)
+	case 0x2001: // Coins on table puzzle (bedroom)
 		if (fileref != _videoRef) {
 			debugCN(1, kDebugScript, " (This video is special somehow!)");
 			warning("(This video (0x%04X) is special somehow!)", fileref);
@@ -584,7 +593,7 @@ bool Script::playvideofromref(uint32 fileref) {
 		// Debug bitflags
 		debugCN(1, kDebugScript, "Play video 0x%04X (bitflags:", fileref);
 		for (int i = 15; i >= 0; i--) {
-			debugCN(1, kDebugScript, "%d", _bitflags & (1 << i)? 1 : 0);
+			debugCN(1, kDebugScript, "%d", _bitflags & (1 << i) ? 1 : 0);
 			if (i % 4 == 0) {
 				debugCN(1, kDebugScript, " ");
 			}
@@ -657,12 +666,12 @@ bool Script::playvideofromref(uint32 fileref) {
 	return true;
 }
 
-void Script::o_bf5on() {			// 0x0A
+void Script::o_bf5on() { // 0x0A
 	debugC(1, kDebugScript, "BF5ON: bitflag 5 turned on");
 	_bitflags |= 1 << 5;
 }
 
-void Script::o_inputloopstart() {	//0x0B
+void Script::o_inputloopstart() { //0x0B
 	debugC(5, kDebugScript, "Input loop start");
 
 	// Reset the input action and the mouse cursor
@@ -877,7 +886,7 @@ void Script::o_sleep() {
 	_vm->_system->delayMillis(time * 3);
 }
 
-void Script::o_strcmpnejmp() {			// 0x1A
+void Script::o_strcmpnejmp() { // 0x1A
 	uint16 varnum = readScript8or16bits();
 	uint8 result = 1;
 
@@ -919,7 +928,7 @@ void Script::o_xor_obfuscate() {
 	debugCN(1, kDebugScript, "\n");
 }
 
-void Script::o_vdxtransition() {		// 0x1C
+void Script::o_vdxtransition() { // 0x1C
 	uint16 fileref = readScript16bits();
 
 	// Show the debug information just when starting the playback
@@ -973,7 +982,7 @@ void Script::o_dec() {
 	setVariable(varnum, _variables[varnum] - 1);
 }
 
-void Script::o_strcmpnejmp_var() {			// 0x21
+void Script::o_strcmpnejmp_var() { // 0x21
 	uint16 data = readScriptVar();
 
 	if (data > 9) {
@@ -993,12 +1002,12 @@ void Script::o_strcmpnejmp_var() {			// 0x21
 	}
 }
 
-void Script::o_copybgtofg() {			// 0x22
+void Script::o_copybgtofg() { // 0x22
 	debugC(1, kDebugScript, "COPY_BG_TO_FG");
 	memcpy(_vm->_graphicsMan->_foreground.getPixels(), _vm->_graphicsMan->_background.getPixels(), 640 * _vm->_graphicsMan->_foreground.h);
 }
 
-void Script::o_strcmpeqjmp() {			// 0x23
+void Script::o_strcmpeqjmp() { // 0x23
 	uint16 varnum = readScript8or16bits();
 	uint8 result = 1;
 
@@ -1128,7 +1137,7 @@ void Script::o_savegame() {
 	savegame(slot);
 }
 
-void Script::o_hotspotbottom_4() {	//0x30
+void Script::o_hotspotbottom_4() { //0x30
 	uint16 address = readScript16bits();
 
 	debugC(5, kDebugScript, "HOTSPOT-BOTTOM @0x%04X", address);
@@ -1226,7 +1235,7 @@ void Script::o_charlessjmp() {
 	}
 }
 
-void Script::o_copyrecttobg() {	// 0x37
+void Script::o_copyrecttobg() { // 0x37
 	uint16 left = readScript16bits();
 	uint16 top = readScript16bits();
 	uint16 right = readScript16bits();
@@ -1319,7 +1328,7 @@ void Script::o_printstring() {
 	memset(stringstorage, 0, 15);
 	do {
 		char newchar = readScriptChar(true, true, true) + 0x30;
-		if (newchar < 0x30 || newchar > 0x39) {		// If character is invalid, chuck a space in
+		if (newchar < 0x30 || newchar > 0x39) { // If character is invalid, chuck a space in
 			if (newchar < 0x41 || newchar > 0x7A) {
 				newchar = 0x20;
 			}
@@ -1833,13 +1842,13 @@ Script::OpcodeFunc Script::_opcodesT7G[NUM_OPCODES] = {
 	&Script::o_nop16, // 0x50
 	&Script::o_nop16,
 	//&Script::o_nop8,
-	&Script::o_invalid,		// Do loads with game area, maybe draw dirty areas?
+	&Script::o_invalid, // Do loads with game area, maybe draw dirty areas?
 	&Script::o_hotspot_outrect,
 	&Script::o_nop, // 0x54
 	&Script::o_nop16,
 	&Script::o_stub56,
 	//&Script::o_nop32,
-	&Script::o_invalid,		// completely unimplemented, plays vdx in some way
+	&Script::o_invalid, // completely unimplemented, plays vdx in some way
 	//&Script::o_nop, // 0x58
 	&Script::o_invalid, // 0x58	// like above, but plays from string not ref
 	&Script::o_stub59

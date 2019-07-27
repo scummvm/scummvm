@@ -46,6 +46,7 @@ private:
 	 * Loads buttons for the dialog
 	 */
 	void loadButtons();
+
 public:
 	/**
 	 * Shows the difficulty selection dialog

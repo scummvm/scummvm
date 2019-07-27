@@ -33,32 +33,35 @@
 
 namespace CGE2 {
 
-#define kTextHMargin      (6&~1)                    // EVEN horizontal margins!
-#define kTextVMargin       5                        // vertical margins
-#define kTextLineSpace     2                        // line spacing
-#define kTextRoundCorner   3                        // rounded corners
-#define kWidSize           256
-#define kPosSize           256
-#define kMapSize          (256*8)
-#define kFontHigh          8
-#define kCaptionSide       24
-#define kInfName           101
-#define kSayName           102
+#define kTextHMargin (6 & ~1) // EVEN horizontal margins!
+#define kTextVMargin 5 // vertical margins
+#define kTextLineSpace 2 // line spacing
+#define kTextRoundCorner 3 // rounded corners
+#define kWidSize 256
+#define kPosSize 256
+#define kMapSize (256 * 8)
+#define kFontHigh 8
+#define kCaptionSide 24
+#define kInfName 101
+#define kSayName 102
 
 class Font {
 	void load();
 	CGE2Engine *_vm;
+
 public:
-	uint8  *_widthArr;
+	uint8 *_widthArr;
 	uint16 *_pos;
-	uint8  *_map;
-	uint8  _colorSet[kColorNum][4];
+	uint8 *_map;
+	uint8 _colorSet[kColorNum][4];
 	Font(CGE2Engine *vm);
 	~Font();
 	uint16 width(const char *text);
 };
 
-enum TextBoxStyle { kTBPure, kTBRect, kTBRound };
+enum TextBoxStyle { kTBPure,
+	                  kTBRect,
+	                  kTBRound };
 
 class Talk : public Sprite {
 protected:
@@ -66,6 +69,7 @@ protected:
 	bool _created;
 	uint8 *box(V2D siz);
 	bool _wideSpace;
+
 public:
 	uint8 *_color;
 
@@ -73,18 +77,21 @@ public:
 	Talk(CGE2Engine *vm, ColorBank color = kCBStd);
 
 	void update(const char *text);
+
 private:
 	CGE2Engine *_vm;
 };
 
 class InfoLine : public Talk {
 	const char *_oldText, *_newText;
+
 public:
 	bool _realTime;
 	InfoLine(CGE2Engine *vm, uint16 wid, ColorBank color = kCBStd);
 	void update(const char *text);
 	void update() { update(_newText); }
 	void setText(const char *txt) { _newText = txt; }
+
 private:
 	CGE2Engine *_vm;
 };

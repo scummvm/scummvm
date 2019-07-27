@@ -25,10 +25,10 @@
 namespace BladeRunner {
 
 enum kHF04Loops {
-	kHF04LoopMainLoop        = 0,
-	kHF04LoopDoorsClosing    = 2,
+	kHF04LoopMainLoop = 0,
+	kHF04LoopDoorsClosing = 2,
 	kHF04LoopMainDoorsClosed = 3,
-	kHF04LoopDoorsOpening    = 5
+	kHF04LoopDoorsOpening = 5
 };
 
 void SceneScriptHF04::InitializeScene() {
@@ -38,7 +38,7 @@ void SceneScriptHF04::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 602, 104, 639, 177, 1);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxBOOLOOP2, 35, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED3,   40, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED3, 40, 0, 1);
 	Ambient_Sounds_Add_Sound(kSfxSWEEP2, 6, 70, 14, 20, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxSWEEP3, 3, 70, 14, 20, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxSWEEP4, 5, 70, 14, 20, -100, 100, -101, -101, 0, 0);
@@ -55,7 +55,7 @@ void SceneScriptHF04::InitializeScene() {
 
 void SceneScriptHF04::SceneLoaded() {
 	if (Game_Flag_Query(kFlagHF04DoorsClosed)) {
-		Unobstacle_Object("PIVOT_WALL#1",  true);
+		Unobstacle_Object("PIVOT_WALL#1", true);
 		Unobstacle_Object("PIVOT_WALL#02", true);
 		Unobstacle_Object("PIVOT_WALL#03", true);
 	} else {
@@ -65,8 +65,7 @@ void SceneScriptHF04::SceneLoaded() {
 
 	if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyHF03RunToHF042) {
 		if (Actor_Clue_Query(kActorLucy, kClueMcCoyHelpedLucy)
-		 && Global_Variable_Query(kVariableHollowayArrest) != 3
-		) {
+		    && Global_Variable_Query(kVariableHollowayArrest) != 3) {
 			Game_Flag_Set(kFlagLucyRanAway);
 		} else {
 			Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF04Start);
@@ -118,8 +117,7 @@ void SceneScriptHF04::SceneFrameAdvanced(int frame) {
 	}
 
 	if (frame == 179
-	 && Actor_Query_Goal_Number(kActorLucy) == kGoalLucyHF04WaitForMcCoy1
-	) {
+	    && Actor_Query_Goal_Number(kActorLucy) == kGoalLucyHF04WaitForMcCoy1) {
 		Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF04Run3);
 	}
 
@@ -168,8 +166,7 @@ void SceneScriptHF04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptHF04::PlayerWalkedIn() {
 	if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyHF04Start
-	 || Actor_Query_Goal_Number(kActorLucy) == kGoalLucyHF04Run1
-	) {
+	    || Actor_Query_Goal_Number(kActorLucy) == kGoalLucyHF04Run1) {
 		Player_Set_Combat_Mode(true);
 		Music_Play(kMusicBatl226M, 60, 0, 2, -1, 0, 0);
 	}

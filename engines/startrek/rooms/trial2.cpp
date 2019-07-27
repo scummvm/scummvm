@@ -28,9 +28,8 @@
 #define OBJECT_11 11
 
 #define HOTSPOT_INSIGNIA 0x20 // This doesn't seem to be visible anywhere
-#define HOTSPOT_WALL 0x21     // Same here
+#define HOTSPOT_WALL 0x21 // Same here
 #define HOTSPOT_DOOR 0x22
-
 
 #define GLOB_X 0x46
 #define GLOB_Y 0xaf
@@ -49,79 +48,78 @@ namespace StarTrek {
 // finished, though.
 
 extern const RoomAction trial2ActionList[] = {
-	{ {ACTION_TICK, 1, 0, 0},  &Room::trial2Tick1 },
-	{ {ACTION_TICK, 60, 0, 0}, &Room::trial2Tick60 },
-	{ {ACTION_TOUCHED_HOTSPOT, 0, 0, 0},     &Room::trial2TouchedHotspot0 },
-	{ {ACTION_LOOK, OBJECT_KIRK,      0, 0}, &Room::trial2LookAtKirk },
-	{ {ACTION_LOOK, OBJECT_SPOCK,     0, 0}, &Room::trial2LookAtSpock },
-	{ {ACTION_LOOK, OBJECT_MCCOY,     0, 0}, &Room::trial2LookAtMccoy },
-	{ {ACTION_LOOK, OBJECT_REDSHIRT,  0, 0}, &Room::trial2LookAtRedshirt },
-	{ {ACTION_LOOK, HOTSPOT_INSIGNIA, 0, 0}, &Room::trial2LookAtInsignia },
-	{ {ACTION_LOOK, OBJECT_GLOB,         0, 0}, &Room::trial2LookAtGlob },
-	{ {ACTION_LOOK, OBJECT_SPLIT_GLOB_1, 0, 0}, &Room::trial2LookAtGlob },
-	{ {ACTION_LOOK, OBJECT_SPLIT_GLOB_2, 0, 0}, &Room::trial2LookAtGlob },
-	{ {ACTION_LOOK, HOTSPOT_WALL, 0, 0}, &Room::trial2LookAtWall },
-	{ {ACTION_LOOK, HOTSPOT_DOOR, 0, 0}, &Room::trial2LookAtDoor },
+	{ { ACTION_TICK, 1, 0, 0 }, &Room::trial2Tick1 },
+	{ { ACTION_TICK, 60, 0, 0 }, &Room::trial2Tick60 },
+	{ { ACTION_TOUCHED_HOTSPOT, 0, 0, 0 }, &Room::trial2TouchedHotspot0 },
+	{ { ACTION_LOOK, OBJECT_KIRK, 0, 0 }, &Room::trial2LookAtKirk },
+	{ { ACTION_LOOK, OBJECT_SPOCK, 0, 0 }, &Room::trial2LookAtSpock },
+	{ { ACTION_LOOK, OBJECT_MCCOY, 0, 0 }, &Room::trial2LookAtMccoy },
+	{ { ACTION_LOOK, OBJECT_REDSHIRT, 0, 0 }, &Room::trial2LookAtRedshirt },
+	{ { ACTION_LOOK, HOTSPOT_INSIGNIA, 0, 0 }, &Room::trial2LookAtInsignia },
+	{ { ACTION_LOOK, OBJECT_GLOB, 0, 0 }, &Room::trial2LookAtGlob },
+	{ { ACTION_LOOK, OBJECT_SPLIT_GLOB_1, 0, 0 }, &Room::trial2LookAtGlob },
+	{ { ACTION_LOOK, OBJECT_SPLIT_GLOB_2, 0, 0 }, &Room::trial2LookAtGlob },
+	{ { ACTION_LOOK, HOTSPOT_WALL, 0, 0 }, &Room::trial2LookAtWall },
+	{ { ACTION_LOOK, HOTSPOT_DOOR, 0, 0 }, &Room::trial2LookAtDoor },
 
-	{ {ACTION_TALK, OBJECT_KIRK,     0, 0}, &Room::trial2TalkToKirk },
-	{ {ACTION_TALK, OBJECT_SPOCK,    0, 0}, &Room::trial2TalkToSpock },
-	{ {ACTION_TALK, OBJECT_MCCOY,    0, 0}, &Room::trial2TalkToMccoy },
-	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::trial2TalkToRedshirt },
-	{ {ACTION_TALK, OBJECT_GLOB,         0, 0}, &Room::trial2TalkToGlob },
-	{ {ACTION_TALK, OBJECT_SPLIT_GLOB_1, 0, 0}, &Room::trial2TalkToGlob },
-	{ {ACTION_TALK, OBJECT_SPLIT_GLOB_2, 0, 0}, &Room::trial2TalkToGlob },
+	{ { ACTION_TALK, OBJECT_KIRK, 0, 0 }, &Room::trial2TalkToKirk },
+	{ { ACTION_TALK, OBJECT_SPOCK, 0, 0 }, &Room::trial2TalkToSpock },
+	{ { ACTION_TALK, OBJECT_MCCOY, 0, 0 }, &Room::trial2TalkToMccoy },
+	{ { ACTION_TALK, OBJECT_REDSHIRT, 0, 0 }, &Room::trial2TalkToRedshirt },
+	{ { ACTION_TALK, OBJECT_GLOB, 0, 0 }, &Room::trial2TalkToGlob },
+	{ { ACTION_TALK, OBJECT_SPLIT_GLOB_1, 0, 0 }, &Room::trial2TalkToGlob },
+	{ { ACTION_TALK, OBJECT_SPLIT_GLOB_2, 0, 0 }, &Room::trial2TalkToGlob },
 
-	{ {ACTION_USE, OBJECT_IPHASERS, HOTSPOT_WALL, 0}, &Room::trial2UsePhaserOnWall },
-	{ {ACTION_USE, OBJECT_IPHASERK, HOTSPOT_WALL, 0}, &Room::trial2UsePhaserOnWall },
+	{ { ACTION_USE, OBJECT_IPHASERS, HOTSPOT_WALL, 0 }, &Room::trial2UsePhaserOnWall },
+	{ { ACTION_USE, OBJECT_IPHASERK, HOTSPOT_WALL, 0 }, &Room::trial2UsePhaserOnWall },
 
-	{ {ACTION_DONE_WALK, 7,  0, 0},                  &Room::trial2ReachedPositionToShootGlob },
-	{ {ACTION_DONE_ANIM, 10, 0, 0},                  &Room::trial2DrewPhaserToShootGlob },
-	{ {ACTION_DONE_ANIM, 4, 0, 0},                   &Room::trial2GlobDoneExploding },
-	{ {ACTION_DONE_ANIM, 1, 0, 0},                   &Room::trial2GlobDoneSplitting },
-	{ {ACTION_DONE_ANIM, 19, 0, 0},                  &Room::trial2KirkDied },
+	{ { ACTION_DONE_WALK, 7, 0, 0 }, &Room::trial2ReachedPositionToShootGlob },
+	{ { ACTION_DONE_ANIM, 10, 0, 0 }, &Room::trial2DrewPhaserToShootGlob },
+	{ { ACTION_DONE_ANIM, 4, 0, 0 }, &Room::trial2GlobDoneExploding },
+	{ { ACTION_DONE_ANIM, 1, 0, 0 }, &Room::trial2GlobDoneSplitting },
+	{ { ACTION_DONE_ANIM, 19, 0, 0 }, &Room::trial2KirkDied },
 
-	{ {ACTION_USE, OBJECT_IPHASERS, OBJECT_GLOB, 0}, &Room::trial2UseStunPhaserOnGlob },
-	{ {ACTION_USE, OBJECT_IPHASERK, OBJECT_GLOB, 0}, &Room::trial2UseKillPhaserOnGlob },
-	{ {ACTION_USE, OBJECT_IPHASERS, OBJECT_SPLIT_GLOB_1, 0}, &Room::trial2UseStunPhaserOnSplitGlob1 },
-	{ {ACTION_USE, OBJECT_IPHASERK, OBJECT_SPLIT_GLOB_1, 0}, &Room::trial2UseKillPhaserOnSplitGlob1 },
-	{ {ACTION_USE, OBJECT_IPHASERS, OBJECT_SPLIT_GLOB_2, 0}, &Room::trial2UseStunPhaserOnSplitGlob2 },
-	{ {ACTION_USE, OBJECT_IPHASERK, OBJECT_SPLIT_GLOB_2, 0}, &Room::trial2UseKillPhaserOnSplitGlob2 },
+	{ { ACTION_USE, OBJECT_IPHASERS, OBJECT_GLOB, 0 }, &Room::trial2UseStunPhaserOnGlob },
+	{ { ACTION_USE, OBJECT_IPHASERK, OBJECT_GLOB, 0 }, &Room::trial2UseKillPhaserOnGlob },
+	{ { ACTION_USE, OBJECT_IPHASERS, OBJECT_SPLIT_GLOB_1, 0 }, &Room::trial2UseStunPhaserOnSplitGlob1 },
+	{ { ACTION_USE, OBJECT_IPHASERK, OBJECT_SPLIT_GLOB_1, 0 }, &Room::trial2UseKillPhaserOnSplitGlob1 },
+	{ { ACTION_USE, OBJECT_IPHASERS, OBJECT_SPLIT_GLOB_2, 0 }, &Room::trial2UseStunPhaserOnSplitGlob2 },
+	{ { ACTION_USE, OBJECT_IPHASERK, OBJECT_SPLIT_GLOB_2, 0 }, &Room::trial2UseKillPhaserOnSplitGlob2 },
 
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK,         0}, &Room::trial2UseMTricorderOnKirk },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPOCK,        0}, &Room::trial2UseMTricorderOnSpock },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY,        0}, &Room::trial2UseMTricorderOnMccoy },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT,     0}, &Room::trial2UseMTricorderOnRedshirt },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_GLOB,         0}, &Room::trial2UseMTricorderOnGlob },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPLIT_GLOB_1, 0}, &Room::trial2UseMTricorderOnGlob },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPLIT_GLOB_2, 0}, &Room::trial2UseMTricorderOnGlob },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_WALL,        0}, &Room::trial2UseSTricorderOnWall },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff,                0}, &Room::trial2UseSTricorderAnywhere },
-	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_GLOB,         0}, &Room::trial2UseSTricorderOnGlob },
-	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_SPLIT_GLOB_1, 0}, &Room::trial2UseSTricorderOnGlob },
-	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_SPLIT_GLOB_2, 0}, &Room::trial2UseSTricorderOnGlob },
-	{ {ACTION_USE, OBJECT_ICOMM, 0xff,                   0}, &Room::trial2UseCommunicator },
-	{ {ACTION_USE, OBJECT_MCCOY, OBJECT_SPLIT_GLOB_1,    0}, &Room::trial2UseMccoyOnGlob },
-	{ {ACTION_USE, OBJECT_MCCOY, OBJECT_SPLIT_GLOB_2,    0}, &Room::trial2UseMccoyOnGlob },
-	{ {ACTION_USE, OBJECT_MCCOY, HOTSPOT_WALL,           0}, &Room::trial2UseMccoyOnWall },
-	{ {ACTION_USE, OBJECT_SPOCK, OBJECT_SPLIT_GLOB_1,    0}, &Room::trial2UseSpockOnGlob },
-	{ {ACTION_USE, OBJECT_SPOCK, OBJECT_SPLIT_GLOB_2,    0}, &Room::trial2UseSpockOnGlob },
-	{ {ACTION_USE, OBJECT_SPOCK, HOTSPOT_WALL,           0}, &Room::trial2UseSpockOnWall },
-	{ {ACTION_USE, OBJECT_REDSHIRT, OBJECT_SPLIT_GLOB_1, 0}, &Room::trial2UseRedshirtOnGlob },
-	{ {ACTION_USE, OBJECT_REDSHIRT, OBJECT_SPLIT_GLOB_2, 0}, &Room::trial2UseRedshirtOnGlob },
-	{ {ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_WALL,        0}, &Room::trial2UseRedshirtOnWall },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK, 0 }, &Room::trial2UseMTricorderOnKirk },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPOCK, 0 }, &Room::trial2UseMTricorderOnSpock },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY, 0 }, &Room::trial2UseMTricorderOnMccoy },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0 }, &Room::trial2UseMTricorderOnRedshirt },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_GLOB, 0 }, &Room::trial2UseMTricorderOnGlob },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPLIT_GLOB_1, 0 }, &Room::trial2UseMTricorderOnGlob },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPLIT_GLOB_2, 0 }, &Room::trial2UseMTricorderOnGlob },
+	{ { ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_WALL, 0 }, &Room::trial2UseSTricorderOnWall },
+	{ { ACTION_USE, OBJECT_ISTRICOR, 0xff, 0 }, &Room::trial2UseSTricorderAnywhere },
+	{ { ACTION_USE, OBJECT_ISTRICOR, OBJECT_GLOB, 0 }, &Room::trial2UseSTricorderOnGlob },
+	{ { ACTION_USE, OBJECT_ISTRICOR, OBJECT_SPLIT_GLOB_1, 0 }, &Room::trial2UseSTricorderOnGlob },
+	{ { ACTION_USE, OBJECT_ISTRICOR, OBJECT_SPLIT_GLOB_2, 0 }, &Room::trial2UseSTricorderOnGlob },
+	{ { ACTION_USE, OBJECT_ICOMM, 0xff, 0 }, &Room::trial2UseCommunicator },
+	{ { ACTION_USE, OBJECT_MCCOY, OBJECT_SPLIT_GLOB_1, 0 }, &Room::trial2UseMccoyOnGlob },
+	{ { ACTION_USE, OBJECT_MCCOY, OBJECT_SPLIT_GLOB_2, 0 }, &Room::trial2UseMccoyOnGlob },
+	{ { ACTION_USE, OBJECT_MCCOY, HOTSPOT_WALL, 0 }, &Room::trial2UseMccoyOnWall },
+	{ { ACTION_USE, OBJECT_SPOCK, OBJECT_SPLIT_GLOB_1, 0 }, &Room::trial2UseSpockOnGlob },
+	{ { ACTION_USE, OBJECT_SPOCK, OBJECT_SPLIT_GLOB_2, 0 }, &Room::trial2UseSpockOnGlob },
+	{ { ACTION_USE, OBJECT_SPOCK, HOTSPOT_WALL, 0 }, &Room::trial2UseSpockOnWall },
+	{ { ACTION_USE, OBJECT_REDSHIRT, OBJECT_SPLIT_GLOB_1, 0 }, &Room::trial2UseRedshirtOnGlob },
+	{ { ACTION_USE, OBJECT_REDSHIRT, OBJECT_SPLIT_GLOB_2, 0 }, &Room::trial2UseRedshirtOnGlob },
+	{ { ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_WALL, 0 }, &Room::trial2UseRedshirtOnWall },
 
-	{ {ACTION_WALK, HOTSPOT_DOOR, 0, 0}, &Room::trial2WalkToDoor },
-	{ {ACTION_USE, OBJECT_IMEDKIT, 0xff, 0}, &Room::trial2UseMedkitAnywhere },
+	{ { ACTION_WALK, HOTSPOT_DOOR, 0, 0 }, &Room::trial2WalkToDoor },
+	{ { ACTION_USE, OBJECT_IMEDKIT, 0xff, 0 }, &Room::trial2UseMedkitAnywhere },
 
 	// ENHANCEMENT: Define these actions for the main glob, not just the (unused) split
 	// globs
-	{ {ACTION_USE, OBJECT_MCCOY, OBJECT_GLOB, 0}, &Room::trial2UseMccoyOnGlob },
-	{ {ACTION_USE, OBJECT_SPOCK, OBJECT_GLOB, 0}, &Room::trial2UseSpockOnGlob },
-	{ {ACTION_USE, OBJECT_REDSHIRT, OBJECT_GLOB, 0}, &Room::trial2UseRedshirtOnGlob },
+	{ { ACTION_USE, OBJECT_MCCOY, OBJECT_GLOB, 0 }, &Room::trial2UseMccoyOnGlob },
+	{ { ACTION_USE, OBJECT_SPOCK, OBJECT_GLOB, 0 }, &Room::trial2UseSpockOnGlob },
+	{ { ACTION_USE, OBJECT_REDSHIRT, OBJECT_GLOB, 0 }, &Room::trial2UseRedshirtOnGlob },
 };
 
 extern const int trial2NumActions = ARRAYSIZE(trial2ActionList);
-
 
 void Room::trial2Tick1() {
 	playVoc("NOOOLOOP");
@@ -219,7 +217,6 @@ void Room::trial2UsePhaserOnWall() {
 	showDescription(TX_TRI2N008);
 }
 
-
 void Room::trial2UsePhaserOnGlob(int object, bool phaserOnKill) {
 	_roomVar.trial.globBeingShot = object;
 	_roomVar.trial.phaserOnKill = phaserOnKill;
@@ -267,7 +264,6 @@ void Room::trial2DrewPhaserToShootGlob() {
 		else
 			showText(TX_SPEAKER_SPOCK, TX_TRI2_025);
 	}
-
 
 	const Common::Point globPositions[] = {
 		Common::Point(GLOB_X, GLOB_Y),
@@ -422,11 +418,11 @@ void Room::trial2UseCommunicator() {
 		} // Else don't transport anywhere
 	} else { // Force field still up
 		showText(TX_SPEAKER_UHURA, TX_TRI2U087);
-		showText(TX_SPEAKER_KIRK,  TX_TRI2_006);
+		showText(TX_SPEAKER_KIRK, TX_TRI2_006);
 		showText(TX_SPEAKER_UHURA, TX_TRI2U104);
 		if (!_awayMission->trial.globDefeated) {
 			showText(TX_SPEAKER_UHURA, TX_TRI2U081);
-			showText(TX_SPEAKER_KIRK,  TX_TRI2_002);
+			showText(TX_SPEAKER_KIRK, TX_TRI2_002);
 		}
 		showText(TX_SPEAKER_UHURA, TX_TRI2U074);
 	}

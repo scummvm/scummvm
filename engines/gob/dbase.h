@@ -23,11 +23,11 @@
 #ifndef GOB_DBASE_H
 #define GOB_DBASE_H
 
-#include "common/system.h"
-#include "common/util.h"
+#include "common/array.h"
 #include "common/str.h"
 #include "common/stream.h"
-#include "common/array.h"
+#include "common/system.h"
+#include "common/util.h"
 
 namespace Gob {
 
@@ -42,18 +42,18 @@ class dBase {
 public:
 	enum Type {
 		kTypeString = 0x43, // 'C'
-		kTypeDate   = 0x44, // 'D'
-		kTypeBool   = 0x4C, // 'L'
-		kTypeMemo   = 0x4D, // 'M'
-		kTypeNumber = 0x4E  // 'N'
+		kTypeDate = 0x44, // 'D'
+		kTypeBool = 0x4C, // 'L'
+		kTypeMemo = 0x4D, // 'M'
+		kTypeNumber = 0x4E // 'N'
 	};
 
 	/** A field description. */
 	struct Field {
 		Common::String name; ///< Name of the field.
 
-		Type  type;     ///< Type of the field.
-		uint8 size;     ///< Size of raw field data in bytes.
+		Type type; ///< Type of the field.
+		uint8 size; ///< Size of raw field data in bytes.
 		uint8 decimals; ///< Number of decimals the field holds.
 	};
 
@@ -74,7 +74,7 @@ public:
 	/** Return the date the database was last updated. */
 	TimeDate getLastUpdate() const;
 
-	const Common::Array<Field>  &getFields()  const;
+	const Common::Array<Field> &getFields() const;
 	const Common::Array<Record> &getRecords() const;
 
 	/** Extract a string out of raw field data. */
@@ -86,7 +86,7 @@ private:
 
 	TimeDate _lastUpdate;
 
-	Common::Array<Field>  _fields;
+	Common::Array<Field> _fields;
 	Common::Array<Record> _records;
 
 	byte *_recordData;

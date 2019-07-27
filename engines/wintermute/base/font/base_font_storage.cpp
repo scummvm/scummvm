@@ -27,9 +27,9 @@
  */
 
 #include "engines/wintermute/base/font/base_font_storage.h"
-#include "engines/wintermute/base/font/base_font.h"
-#include "engines/wintermute/base/base_game.h"
 #include "common/str.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/font/base_font.h"
 
 namespace Wintermute {
 
@@ -40,7 +40,8 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(BaseFontStorage, true)
 
 //////////////////////////////////////////////////////////////////////////
-BaseFontStorage::BaseFontStorage(BaseGame *inGame) : BaseClass(inGame) {
+BaseFontStorage::BaseFontStorage(BaseGame *inGame)
+  : BaseClass(inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -96,14 +97,13 @@ BaseFont *BaseFontStorage::addFont(const Common::String &filename) {
 	    return font;
 	}
 	*/
-	BaseFont *font = BaseFont::createFromFile(_gameRef,  filename);
+	BaseFont *font = BaseFont::createFromFile(_gameRef, filename);
 	if (font) {
 		font->_refCount = 1;
 		_fonts.add(font);
 	}
 	return font;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFontStorage::removeFont(BaseFont *font) {
@@ -123,7 +123,6 @@ bool BaseFontStorage::removeFont(BaseFont *font) {
 	}
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFontStorage::persist(BasePersistenceManager *persistMgr) {

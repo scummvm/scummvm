@@ -39,8 +39,8 @@ enum ActionType {
 	kActionShowDiff = 3,
 	kActionShowDiffLooping = 4,
 	kActionLoadDiff = 5,
-	kActionLoadBitmap = 6,	// unused
-	kActionShowBitmap = 7,	// unused
+	kActionLoadBitmap = 6, // unused
+	kActionShowBitmap = 7, // unused
 	kActionTransition = 8,
 	kActionNoUpdate = 9,
 	kActionForceUpdate = 10,
@@ -65,7 +65,7 @@ enum ActionType {
 	kActionClearSound = 29,
 	kActionWinMusic = 30,
 	kActionWinGame = 31,
-	kActionLostGame = 32,	// unused
+	kActionLostGame = 32, // unused
 	kActionResetBuffer = 33,
 	kActionSpecialCmd = 34,
 	kActionCShowMessage = 35,
@@ -77,7 +77,7 @@ enum RuleType {
 	kRuleTypeAction = 1,
 	kRuleTypeOperate = 2,
 	kRuleTypeGoForward = 3,
-	kRuleTypeConditions = 4,	// unused?
+	kRuleTypeConditions = 4, // unused?
 	kRuleTypeTurn = 5,
 	kRuleTypeGoMainView = 6,
 	kRuleTypeTurnFromTo = 7
@@ -85,9 +85,9 @@ enum RuleType {
 
 enum RuleAction {
 	kRuleActionTake = 0,
-	kRuleActionMove = 1,	// unused?
-	kRuleActionOpenDoor = 2,	// unused?
-	kRuleActionCloseDoor = 3,	// unused?
+	kRuleActionMove = 1, // unused?
+	kRuleActionOpenDoor = 2, // unused?
+	kRuleActionCloseDoor = 3, // unused?
 	kRuleActionTakeDef = 4
 };
 
@@ -136,8 +136,8 @@ enum SpecialRoom {
 
 struct CloseData {
 	uint16 _x1, _y1, _x2, _y2;
-	int16 _closeUpType;          // if > 0, an object.  If < 0, an item
-	uint16 _depth;               // Level of the closeup.
+	int16 _closeUpType; // if > 0, an object.  If < 0, an item
+	uint16 _depth; // Level of the closeup.
 	Common::String _graphicName;
 	Common::String _message;
 	CloseDataList _subCloseUps;

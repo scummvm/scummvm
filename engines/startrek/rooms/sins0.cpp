@@ -33,50 +33,48 @@
 namespace StarTrek {
 
 extern const RoomAction sins0ActionList[] = {
-	{ {ACTION_TICK, 1, 0, 0}, &Room::sins0Tick1 },
+	{ { ACTION_TICK, 1, 0, 0 }, &Room::sins0Tick1 },
 
-	{ {ACTION_LOOK, 0xff,            0, 0}, &Room::sins0LookAnywhere },
-	{ {ACTION_LOOK, OBJECT_DOOR,     0, 0}, &Room::sins0LookAtOpenDoor },
-	{ {ACTION_LOOK, HOTSPOT_DOOR,    0, 0}, &Room::sins0LookAtClosedDoor },
-	{ {ACTION_TALK, OBJECT_SPOCK,    0, 0}, &Room::sins0TalkToSpock },
-	{ {ACTION_TALK, OBJECT_MCCOY,    0, 0}, &Room::sins0TalkToMccoy },
-	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::sins0TalkToRedshirt },
-	{ {ACTION_LOOK, HOTSPOT_GROUND,  0, 0}, &Room::sins0LookAtGround },
-	{ {ACTION_GET, HOTSPOT_GROUND,   0, 0}, &Room::sins0GetRock },
-	{ {ACTION_DONE_ANIM, 1,          0, 0}, &Room::sins0PickedUpRock },
+	{ { ACTION_LOOK, 0xff, 0, 0 }, &Room::sins0LookAnywhere },
+	{ { ACTION_LOOK, OBJECT_DOOR, 0, 0 }, &Room::sins0LookAtOpenDoor },
+	{ { ACTION_LOOK, HOTSPOT_DOOR, 0, 0 }, &Room::sins0LookAtClosedDoor },
+	{ { ACTION_TALK, OBJECT_SPOCK, 0, 0 }, &Room::sins0TalkToSpock },
+	{ { ACTION_TALK, OBJECT_MCCOY, 0, 0 }, &Room::sins0TalkToMccoy },
+	{ { ACTION_TALK, OBJECT_REDSHIRT, 0, 0 }, &Room::sins0TalkToRedshirt },
+	{ { ACTION_LOOK, HOTSPOT_GROUND, 0, 0 }, &Room::sins0LookAtGround },
+	{ { ACTION_GET, HOTSPOT_GROUND, 0, 0 }, &Room::sins0GetRock },
+	{ { ACTION_DONE_ANIM, 1, 0, 0 }, &Room::sins0PickedUpRock },
 
-	{ {ACTION_USE, OBJECT_ISTRICOR,           0xff, 0}, &Room::sins0UseSTricorderAnywhere },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_GROUND, 0}, &Room::sins0UseSTricorderOnGround },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_PLANET, 0}, &Room::sins0UseSTricorderOnPlanet },
+	{ { ACTION_USE, OBJECT_ISTRICOR, 0xff, 0 }, &Room::sins0UseSTricorderAnywhere },
+	{ { ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_GROUND, 0 }, &Room::sins0UseSTricorderOnGround },
+	{ { ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_PLANET, 0 }, &Room::sins0UseSTricorderOnPlanet },
 
-	{ {ACTION_TICK, 40,              0, 0}, &Room::sins0Tick40 },
-	{ {ACTION_LOOK, HOTSPOT_STATUE,  0, 0}, &Room::sins0LookAtStatue },
-	{ {ACTION_LOOK, HOTSPOT_PLANET,  0, 0}, &Room::sins0LookAtPlanet },
-	{ {ACTION_LOOK, HOTSPOT_SKY,     0, 0}, &Room::sins0LookAtSky },
-	{ {ACTION_LOOK, OBJECT_KIRK,     0, 0}, &Room::sins0LookAtKirk },
-	{ {ACTION_LOOK, OBJECT_SPOCK,    0, 0}, &Room::sins0LookAtSpock },
-	{ {ACTION_LOOK, OBJECT_MCCOY,    0, 0}, &Room::sins0LookAtMccoy },
-	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::sins0LookAtRedshirt },
+	{ { ACTION_TICK, 40, 0, 0 }, &Room::sins0Tick40 },
+	{ { ACTION_LOOK, HOTSPOT_STATUE, 0, 0 }, &Room::sins0LookAtStatue },
+	{ { ACTION_LOOK, HOTSPOT_PLANET, 0, 0 }, &Room::sins0LookAtPlanet },
+	{ { ACTION_LOOK, HOTSPOT_SKY, 0, 0 }, &Room::sins0LookAtSky },
+	{ { ACTION_LOOK, OBJECT_KIRK, 0, 0 }, &Room::sins0LookAtKirk },
+	{ { ACTION_LOOK, OBJECT_SPOCK, 0, 0 }, &Room::sins0LookAtSpock },
+	{ { ACTION_LOOK, OBJECT_MCCOY, 0, 0 }, &Room::sins0LookAtMccoy },
+	{ { ACTION_LOOK, OBJECT_REDSHIRT, 0, 0 }, &Room::sins0LookAtRedshirt },
 
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_DOOR,    0}, &Room::sins0UseSTricorderOnClosedDoor },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_STATUE,  0}, &Room::sins0UseSTricorderOnStatue },
-	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_KIRK,     0}, &Room::sins0UseMedkitOnCrewman },
-	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_SPOCK,    0}, &Room::sins0UseMedkitOnCrewman },
-	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_MCCOY,    0}, &Room::sins0UseMedkitOnCrewman },
-	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_REDSHIRT, 0}, &Room::sins0UseMedkitOnCrewman },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK,     0}, &Room::sins0UseMTricorderOnCrewman },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPOCK,    0}, &Room::sins0UseMTricorderOnCrewman },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY,    0}, &Room::sins0UseMTricorderOnCrewman },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0}, &Room::sins0UseMTricorderOnCrewman },
+	{ { ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_DOOR, 0 }, &Room::sins0UseSTricorderOnClosedDoor },
+	{ { ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_STATUE, 0 }, &Room::sins0UseSTricorderOnStatue },
+	{ { ACTION_USE, OBJECT_IMEDKIT, OBJECT_KIRK, 0 }, &Room::sins0UseMedkitOnCrewman },
+	{ { ACTION_USE, OBJECT_IMEDKIT, OBJECT_SPOCK, 0 }, &Room::sins0UseMedkitOnCrewman },
+	{ { ACTION_USE, OBJECT_IMEDKIT, OBJECT_MCCOY, 0 }, &Room::sins0UseMedkitOnCrewman },
+	{ { ACTION_USE, OBJECT_IMEDKIT, OBJECT_REDSHIRT, 0 }, &Room::sins0UseMedkitOnCrewman },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK, 0 }, &Room::sins0UseMTricorderOnCrewman },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPOCK, 0 }, &Room::sins0UseMTricorderOnCrewman },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY, 0 }, &Room::sins0UseMTricorderOnCrewman },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0 }, &Room::sins0UseMTricorderOnCrewman },
 
-	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0}, &Room::sins0UseCommunicator },
-	{ {ACTION_WALK, HOTSPOT_DOOR,   0, 0}, &Room::sins0WalkToDoor },
-	{ {ACTION_WALK, OBJECT_DOOR,    0, 0}, &Room::sins0WalkToDoor },
+	{ { ACTION_USE, OBJECT_ICOMM, 0xff, 0 }, &Room::sins0UseCommunicator },
+	{ { ACTION_WALK, HOTSPOT_DOOR, 0, 0 }, &Room::sins0WalkToDoor },
+	{ { ACTION_WALK, OBJECT_DOOR, 0, 0 }, &Room::sins0WalkToDoor },
 };
 
-
 extern const int sins0NumActions = ARRAYSIZE(sins0ActionList);
-
 
 void Room::sins0Tick1() {
 	playVoc("SIN0LOOP");
@@ -121,8 +119,8 @@ void Room::sins0TalkToRedshirt() {
 		showText(TX_SPEAKER_MOSHER, TX_SIN0_024);
 	else {
 		showText(TX_SPEAKER_MOSHER, TX_SIN0_026);
-		showText(TX_SPEAKER_SPOCK,  TX_SIN0_022);
-		showText(TX_SPEAKER_KIRK,   TX_SIN0_006);
+		showText(TX_SPEAKER_SPOCK, TX_SIN0_022);
+		showText(TX_SPEAKER_KIRK, TX_SIN0_006);
 	}
 }
 
@@ -160,23 +158,23 @@ void Room::sins0Tick40() {
 	if (!_awayMission->sins.enteredRoom0FirstTime) {
 		_awayMission->disableInput = false;
 		showText(TX_SPEAKER_UHURA, TX_SIN0U082);
-		showText(TX_SPEAKER_KIRK,  TX_SIN0_003);
+		showText(TX_SPEAKER_KIRK, TX_SIN0_003);
 		showText(TX_SPEAKER_SCOTT, TX_SIN0_S48);
-		showText(TX_SPEAKER_KIRK,  TX_SIN0_007);
+		showText(TX_SPEAKER_KIRK, TX_SIN0_007);
 		showText(TX_SPEAKER_SCOTT, TX_SIN0_S50);
-		showText(TX_SPEAKER_KIRK,  TX_SIN0_005);
+		showText(TX_SPEAKER_KIRK, TX_SIN0_005);
 		showText(TX_SPEAKER_SCOTT, TX_SIN0_S49);
-		showText(TX_SPEAKER_KIRK,  TX_SIN0_001);
+		showText(TX_SPEAKER_KIRK, TX_SIN0_001);
 		_awayMission->sins.enteredRoom0FirstTime = true;
 	}
 }
 
 void Room::sins0LookAtStatue() {
 	showDescription(TX_SIN0N011);
-	showText(TX_SPEAKER_MCCOY,  TX_SIN0_015);
-	showText(TX_SPEAKER_SPOCK,  TX_SIN0_021);
+	showText(TX_SPEAKER_MCCOY, TX_SIN0_015);
+	showText(TX_SPEAKER_SPOCK, TX_SIN0_021);
 	showText(TX_SPEAKER_MOSHER, TX_SIN0_027);
-	showText(TX_SPEAKER_MCCOY,  TX_SIN0_014);
+	showText(TX_SPEAKER_MCCOY, TX_SIN0_014);
 }
 
 void Room::sins0LookAtPlanet() {
@@ -207,13 +205,13 @@ void Room::sins0LookAtRedshirt() {
 void Room::sins0UseSTricorderOnClosedDoor() {
 	spockScan(DIR_S, TX_SIN0_019);
 	showText(TX_SPEAKER_MOSHER, TX_SIN0_025);
-	showText(TX_SPEAKER_MCCOY,  TX_SIN0_013);
+	showText(TX_SPEAKER_MCCOY, TX_SIN0_013);
 	showText(TX_SPEAKER_MOSHER, TX_SIN0_028);
 }
 
 void Room::sins0UseSTricorderOnStatue() {
 	spockScan(DIR_S, TX_SIN0_020);
-	showText(TX_SPEAKER_KIRK,  TX_SIN0_008);
+	showText(TX_SPEAKER_KIRK, TX_SIN0_008);
 	showText(TX_SPEAKER_SPOCK, TX_SIN0_023);
 
 	if (!_awayMission->sins.gotPointsForScanningStatue) {
@@ -232,9 +230,9 @@ void Room::sins0UseMTricorderOnCrewman() {
 
 void Room::sins0UseCommunicator() {
 	if (!_awayMission->sins.scottyInformedKirkAboutVirus) {
-		showText(TX_SPEAKER_KIRK,  TX_SIN0_004);
+		showText(TX_SPEAKER_KIRK, TX_SIN0_004);
 		showText(TX_SPEAKER_SCOTT, TX_SIN0_S01);
-		showText(TX_SPEAKER_KIRK,  TX_SIN0_002);
+		showText(TX_SPEAKER_KIRK, TX_SIN0_002);
 	} else
 		showText(TX_SPEAKER_UHURA, TX_SIN0U069);
 }

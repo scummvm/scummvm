@@ -22,27 +22,28 @@
 
 #include "common/str.h"
 
-#include "gob/gob.h"
-#include "gob/inter.h"
-#include "gob/global.h"
 #include "gob/dataio.h"
-#include "gob/game.h"
-#include "gob/expression.h"
-#include "gob/script.h"
-#include "gob/resources.h"
-#include "gob/hotspots.h"
 #include "gob/draw.h"
+#include "gob/expression.h"
+#include "gob/game.h"
+#include "gob/global.h"
+#include "gob/gob.h"
+#include "gob/hotspots.h"
+#include "gob/inter.h"
+#include "gob/resources.h"
+#include "gob/script.h"
 #include "gob/sound/sound.h"
 #include "gob/videoplayer.h"
 
 namespace Gob {
 
 #define OPCODEVER Inter_v6
-#define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
-#define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
-#define OPCODEGOB(i, x)   _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
+#define OPCODEDRAW(i, x) _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
+#define OPCODEFUNC(i, x) _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
+#define OPCODEGOB(i, x) _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 
-Inter_v6::Inter_v6(GobEngine *vm) : Inter_v5(vm) {
+Inter_v6::Inter_v6(GobEngine *vm)
+  : Inter_v5(vm) {
 	_gotFirstPalette = false;
 }
 
@@ -90,21 +91,22 @@ void Inter_v6::o6_playVmdOrMusic() {
 
 	VideoPlayer::Properties props;
 
-	props.x          = _vm->_game->_script->readValExpr();
-	props.y          = _vm->_game->_script->readValExpr();
+	props.x = _vm->_game->_script->readValExpr();
+	props.y = _vm->_game->_script->readValExpr();
 	props.startFrame = _vm->_game->_script->readValExpr();
-	props.lastFrame  = _vm->_game->_script->readValExpr();
-	props.breakKey   = _vm->_game->_script->readValExpr();
-	props.flags      = _vm->_game->_script->readValExpr();
-	props.palStart   = _vm->_game->_script->readValExpr();
-	props.palEnd     = _vm->_game->_script->readValExpr();
-	props.palCmd     = 1 << (props.flags & 0x3F);
-	props.forceSeek  = true;
+	props.lastFrame = _vm->_game->_script->readValExpr();
+	props.breakKey = _vm->_game->_script->readValExpr();
+	props.flags = _vm->_game->_script->readValExpr();
+	props.palStart = _vm->_game->_script->readValExpr();
+	props.palEnd = _vm->_game->_script->readValExpr();
+	props.palCmd = 1 << (props.flags & 0x3F);
+	props.forceSeek = true;
 
 	debugC(1, kDebugVideo, "Playing video \"%s\" @ %d+%d, frames %d - %d, "
-			"paletteCmd %d (%d - %d), flags %X", file.c_str(),
-			props.x, props.y, props.startFrame, props.lastFrame,
-			props.palCmd, props.palStart, props.palEnd, props.flags);
+	                       "paletteCmd %d (%d - %d), flags %X",
+	       file.c_str(),
+	       props.x, props.y, props.startFrame, props.lastFrame,
+	       props.palCmd, props.palStart, props.palEnd, props.flags);
 
 	// WORKAROUND: When taking the music sheet from Dr. Dramish's car,
 	//             the video that lets the sheet vanish is missing. We'll
@@ -121,14 +123,14 @@ void Inter_v6::o6_playVmdOrMusic() {
 	if (props.lastFrame == -1) {
 		close = true;
 	} else if (props.lastFrame == -5) {
-//		warning("Urban/Playtoons Stub: Stop without delay");
+		//		warning("Urban/Playtoons Stub: Stop without delay");
 		_vm->_sound->bgStop();
 		return;
 	} else if (props.lastFrame == -6) {
-//		warning("Urban/Playtoons Stub: Video/Music command -6 (cache video)");
+		//		warning("Urban/Playtoons Stub: Video/Music command -6 (cache video)");
 		return;
 	} else if (props.lastFrame == -7) {
-//		warning("Urban/Playtoons Stub: Video/Music command -6 (flush cache)");
+		//		warning("Urban/Playtoons Stub: Video/Music command -6 (flush cache)");
 		return;
 	} else if ((props.lastFrame == -8) || (props.lastFrame == -9)) {
 		if (!file.contains('.'))
@@ -155,8 +157,8 @@ void Inter_v6::o6_playVmdOrMusic() {
 
 	if (props.startFrame == -2) {
 		props.startFrame = 0;
-		props.lastFrame  = -1;
-		props.noBlock    = true;
+		props.lastFrame = -1;
+		props.noBlock = true;
 	}
 
 	_vm->_vidPlayer->evaluateFlags(props);
@@ -167,7 +169,7 @@ void Inter_v6::o6_playVmdOrMusic() {
 
 	int slot = 0;
 	if (!file.empty() && ((slot = _vm->_vidPlayer->openVideo(primary, file, props)) < 0)) {
-		WRITE_VAR(11, (uint32) -1);
+		WRITE_VAR(11, (uint32)-1);
 		return;
 	}
 
@@ -182,7 +184,6 @@ void Inter_v6::o6_playVmdOrMusic() {
 			_vm->_vidPlayer->waitSoundEnd(slot);
 		_vm->_vidPlayer->closeVideo(slot);
 	}
-
 }
 
 void Inter_v6::o6_loadCursor(OpFuncParams &params) {
@@ -215,14 +216,14 @@ void Inter_v6::o6_loadCursor(OpFuncParams &params) {
 		int16 framesCount = _vm->_vidPlayer->getFrameCount(vmdSlot);
 
 		for (int i = 0; i < framesCount; i++) {
-			props.startFrame   = i;
-			props.lastFrame    = i;
+			props.startFrame = i;
+			props.lastFrame = i;
 			props.waitEndFrame = false;
 
 			_vm->_vidPlayer->play(vmdSlot, props);
 			_vm->_vidPlayer->copyFrame(vmdSlot, *_vm->_draw->_cursorSprites,
-					0, 0, _vm->_draw->_cursorWidth, _vm->_draw->_cursorWidth,
-					(start + i) * _vm->_draw->_cursorWidth, 0);
+			                           0, 0, _vm->_draw->_cursorWidth, _vm->_draw->_cursorWidth,
+			                           (start + i) * _vm->_draw->_cursorWidth, 0);
 		}
 
 		_vm->_vidPlayer->closeVideo(vmdSlot);
@@ -239,17 +240,17 @@ void Inter_v6::o6_loadCursor(OpFuncParams &params) {
 	if ((index * _vm->_draw->_cursorWidth) >= _vm->_draw->_cursorSprites->getWidth())
 		return;
 
-	Resource *resource = _vm->_game->_resources->getResource((uint16) id);
+	Resource *resource = _vm->_game->_resources->getResource((uint16)id);
 	if (!resource)
 		return;
 
 	_vm->_draw->_cursorSprites->fillRect(index * _vm->_draw->_cursorWidth, 0,
-			index * _vm->_draw->_cursorWidth + _vm->_draw->_cursorWidth - 1,
-			_vm->_draw->_cursorHeight - 1, 0);
+	                                     index * _vm->_draw->_cursorWidth + _vm->_draw->_cursorWidth - 1,
+	                                     _vm->_draw->_cursorHeight - 1, 0);
 
 	_vm->_video->drawPackedSprite(resource->getData(),
-			resource->getWidth(), resource->getHeight(),
-			index * _vm->_draw->_cursorWidth, 0, 0, *_vm->_draw->_cursorSprites);
+	                              resource->getWidth(), resource->getHeight(),
+	                              index * _vm->_draw->_cursorWidth, 0, 0, *_vm->_draw->_cursorSprites);
 	_vm->_draw->_cursorAnimLow[index] = 0;
 
 	delete resource;
@@ -267,7 +268,7 @@ void Inter_v6::o6_assign(OpFuncParams &params) {
 		src = _vm->_game->_script->readVarIndex(&size, 0);
 
 		memcpy(_vm->_inter->_variables->getAddressOff8(dest),
-				_vm->_inter->_variables->getAddressOff8((uint16) src), size * 4);
+		       _vm->_inter->_variables->getAddressOff8((uint16)src), size * 4);
 
 		_vm->_game->_script->pop();
 
@@ -335,8 +336,8 @@ void Inter_v6::o6_assign(OpFuncParams &params) {
 
 void Inter_v6::o6_removeHotspot(OpFuncParams &params) {
 	int16 id;
-	uint8 stateType1    = Hotspots::kStateFilledDisabled | Hotspots::kStateType1;
-	uint8 stateType2    = Hotspots::kStateFilledDisabled | Hotspots::kStateType2;
+	uint8 stateType1 = Hotspots::kStateFilledDisabled | Hotspots::kStateType1;
+	uint8 stateType2 = Hotspots::kStateFilledDisabled | Hotspots::kStateType2;
 	uint8 stateDisabled = Hotspots::kStateDisabled;
 
 	id = _vm->_game->_script->readValExpr();
@@ -377,7 +378,7 @@ void Inter_v6::o6_fillRect(OpFuncParams &params) {
 	uint32 patternColor = _vm->_game->_script->evalInt();
 
 	_vm->_draw->_backColor = patternColor & 0xFFFF;
-	_vm->_draw->_pattern   = patternColor >> 16;
+	_vm->_draw->_pattern = patternColor >> 16;
 
 	if (_vm->_draw->_pattern != 0)
 		warning("Urban Stub: o6_fillRect(), _pattern = %d", _vm->_draw->_pattern);

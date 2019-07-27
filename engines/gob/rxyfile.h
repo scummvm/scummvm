@@ -23,12 +23,12 @@
 #ifndef GOB_RXYFILE_H
 #define GOB_RXYFILE_H
 
-#include "common/system.h"
 #include "common/array.h"
+#include "common/system.h"
 
 namespace Common {
-	class SeekableReadStream;
-	class SeekableSubReadStreamEndian;
+class SeekableReadStream;
+class SeekableSubReadStreamEndian;
 }
 
 namespace Gob {
@@ -53,7 +53,7 @@ public:
 
 	uint size() const;
 
-	uint16 getWidth () const;
+	uint16 getWidth() const;
 	uint16 getHeight() const;
 
 	uint16 getRealCount() const;
@@ -71,7 +71,6 @@ private:
 
 	uint16 _width;
 	uint16 _height;
-
 
 	void load(Common::SeekableSubReadStreamEndian &rxy);
 };

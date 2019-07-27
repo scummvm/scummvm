@@ -29,8 +29,8 @@
 #include "common/savefile.h"
 
 #include "saga/displayinfo.h"
-#include "saga/sprite.h"
 #include "saga/script.h"
+#include "saga/sprite.h"
 
 namespace Saga {
 
@@ -53,12 +53,12 @@ enum InterfaceUpdateFlags {
 #define STATUS_TEXT_LEN 128
 #define STATUS_TEXT_INPUT_MAX 256
 
-#define RID_IHNM_BOSS_SCREEN 19		// not in demo
+#define RID_IHNM_BOSS_SCREEN 19 // not in demo
 #define RID_ITE_TYCHO_MAP 1686
 #define RID_ITE_SPR_CROSSHAIR (73 + 9)
 #define TIMETOSAVE (1000000 * 60 * 30) // 30 minutes
-#define TIMETOBLINK_ITE	(1000000 * 1)
-#define TIMETOBLINK_IHNM	(1000000 / 10)
+#define TIMETOBLINK_ITE (1000000 * 1)
+#define TIMETOBLINK_IHNM (1000000 / 10)
 
 // Converse-specific stuff
 
@@ -79,7 +79,7 @@ enum PanelModes {
 	kPanelCutaway,
 	kPanelVideo,
 	kPanelBoss
-//	kPanelInventory
+	//	kPanelInventory
 };
 
 enum FadeModes {
@@ -122,14 +122,14 @@ struct InterfacePanel {
 		rect.setHeight(imageHeight);
 	}
 
-	void calcPanelButtonRect(const PanelButton* panelButton, Rect &rect) {
+	void calcPanelButtonRect(const PanelButton *panelButton, Rect &rect) {
 		rect.left = x + panelButton->xOffset;
 		rect.right = rect.left + panelButton->width;
 		rect.top = y + panelButton->yOffset;
 		rect.bottom = rect.top + panelButton->height;
 	}
 
-	PanelButton *hitTest(const Point& mousePoint, int buttonType) {
+	PanelButton *hitTest(const Point &mousePoint, int buttonType) {
 		PanelButton *panelButton;
 		Rect rect;
 		int i;
@@ -153,8 +153,6 @@ struct InterfacePanel {
 			buttons[i].state = 0;
 		}
 	}
-
-
 };
 
 struct Converse {
@@ -166,7 +164,6 @@ struct Converse {
 	int replyFlags;
 	int replyBit;
 };
-
 
 enum StatusTextInputState {
 	kStatusTextInputFirstRun,
@@ -223,7 +220,7 @@ public:
 	void drawLoad();
 	void drawSave();
 	void drawProtect();
-	void update(const Point& mousePoint, int updateFlag);
+	void update(const Point &mousePoint, int updateFlag);
 	void drawStatusBar();
 	void setVerbState(int verb, int state);
 
@@ -264,7 +261,7 @@ public:
 	void removeFromInventory(int objectId);
 	void clearInventory();
 	int inventoryItemPosition(int objectId);
-	int getInventoryContentByPanelButton(PanelButton * panelButton) {
+	int getInventoryContentByPanelButton(PanelButton *panelButton) {
 		int cell = _inventoryStart + panelButton->id;
 		if (cell >= _inventoryCount) {
 			return 0;
@@ -272,10 +269,10 @@ public:
 		return _inventory[cell];
 	}
 
-	PanelButton *inventoryHitTest(const Point& mousePoint) {
+	PanelButton *inventoryHitTest(const Point &mousePoint) {
 		return _mainPanel.hitTest(mousePoint, kPanelButtonInventory);
 	}
-	PanelButton *verbHitTest(const Point& mousePoint){
+	PanelButton *verbHitTest(const Point &mousePoint) {
 		return _mainPanel.hitTest(mousePoint, kPanelButtonVerb);
 	}
 	void saveState(Common::OutSaveFile *out);
@@ -288,41 +285,41 @@ public:
 	void resetSaveReminder();
 
 private:
-	void handleMainUpdate(const Point& mousePoint);					// main panel update
-	void handleMainClick(const Point& mousePoint);					// main panel click
+	void handleMainUpdate(const Point &mousePoint); // main panel update
+	void handleMainClick(const Point &mousePoint); // main panel click
 
-	PanelButton *converseHitTest(const Point& mousePoint) {
+	PanelButton *converseHitTest(const Point &mousePoint) {
 		return _conversePanel.hitTest(mousePoint, kPanelAllButtons);
 	}
-	void handleConverseUpdate(const Point& mousePoint);				// converse panel update
-	void handleConverseClick(const Point& mousePoint);				// converse panel click
+	void handleConverseUpdate(const Point &mousePoint); // converse panel update
+	void handleConverseClick(const Point &mousePoint); // converse panel click
 
-	PanelButton *optionHitTest(const Point& mousePoint) {
+	PanelButton *optionHitTest(const Point &mousePoint) {
 		return _optionPanel.hitTest(mousePoint, kPanelButtonOptionSaveFiles | kPanelButtonOption | kPanelButtonOptionSlider);
 	}
-	void handleOptionUpdate(const Point& mousePoint);				// option panel update
-	void handleOptionClick(const Point& mousePoint);				// option panel click
+	void handleOptionUpdate(const Point &mousePoint); // option panel update
+	void handleOptionClick(const Point &mousePoint); // option panel click
 
-	PanelButton *quitHitTest(const Point& mousePoint) {
+	PanelButton *quitHitTest(const Point &mousePoint) {
 		return _quitPanel.hitTest(mousePoint, kPanelAllButtons);
 	}
-	void handleQuitUpdate(const Point& mousePoint);					// quit panel update
-	void handleQuitClick(const Point& mousePoint);					// quit panel click
+	void handleQuitUpdate(const Point &mousePoint); // quit panel update
+	void handleQuitClick(const Point &mousePoint); // quit panel click
 
-	PanelButton *loadHitTest(const Point& mousePoint) {
+	PanelButton *loadHitTest(const Point &mousePoint) {
 		return _loadPanel.hitTest(mousePoint, kPanelAllButtons);
 	}
-	void handleLoadUpdate(const Point& mousePoint);					// load panel update
-	void handleLoadClick(const Point& mousePoint);					// load panel click
+	void handleLoadUpdate(const Point &mousePoint); // load panel update
+	void handleLoadClick(const Point &mousePoint); // load panel click
 
-	PanelButton *saveHitTest(const Point& mousePoint) {
+	PanelButton *saveHitTest(const Point &mousePoint) {
 		return _savePanel.hitTest(mousePoint, kPanelAllButtons);
 	}
-	void handleSaveUpdate(const Point& mousePoint);					// save panel update
-	void handleSaveClick(const Point& mousePoint);					// save panel click
+	void handleSaveUpdate(const Point &mousePoint); // save panel update
+	void handleSaveClick(const Point &mousePoint); // save panel click
 
-	void handleChapterSelectionUpdate(const Point& mousePoint);
-	void handleChapterSelectionClick(const Point& mousePoint);
+	void handleChapterSelectionUpdate(const Point &mousePoint);
+	void handleChapterSelectionClick(const Point &mousePoint);
 
 	void mapPanelShow();
 	void mapPanelClean();
@@ -346,7 +343,7 @@ private:
 	void drawButtonBox(const Rect &rect, ButtonKind kind, bool down);
 	void drawPanelButtonArrow(InterfacePanel *panel, PanelButton *panelButton);
 	void drawVerbPanelText(PanelButton *panelButton, KnownColor textKnownColor, KnownColor textShadowKnownColor);
-	void drawVerbPanel(PanelButton* panelButton);
+	void drawVerbPanel(PanelButton *panelButton);
 	void calcOptionSaveSlider();
 	bool processTextInput(Common::KeyState keystate);
 	void processStatusTextInput(Common::KeyState keystate);
@@ -400,14 +397,14 @@ private:
 	SpriteList _scenePortraits;
 	PanelButton *_verbTypeToPanelButton[kVerbTypeIdsMax];
 	InterfacePanel _optionPanel;
-	PanelButton * _optionSaveFileSlider;
-	PanelButton * _optionSaveFilePanel;
+	PanelButton *_optionSaveFileSlider;
+	PanelButton *_optionSaveFilePanel;
 	InterfacePanel _quitPanel;
 	InterfacePanel _loadPanel;
 	InterfacePanel _savePanel;
-	PanelButton * _saveEdit;
+	PanelButton *_saveEdit;
 	InterfacePanel _protectPanel;
-	PanelButton * _protectEdit;
+	PanelButton *_protectEdit;
 
 	bool _disableAbortSpeeches;
 

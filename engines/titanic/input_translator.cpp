@@ -20,16 +20,16 @@
  *
  */
 
-#include "titanic/input_handler.h"
 #include "titanic/input_translator.h"
 #include "titanic/events.h"
+#include "titanic/input_handler.h"
 #include "titanic/messages/mouse_messages.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
 
-CInputTranslator::CInputTranslator(CInputHandler *inputHandler) :
-		_inputHandler(inputHandler) {
+CInputTranslator::CInputTranslator(CInputHandler *inputHandler)
+  : _inputHandler(inputHandler) {
 	inputHandler->setTranslator(this);
 }
 
@@ -110,14 +110,10 @@ bool CInputTranslator::isMousePressed() const {
 }
 
 bool CInputTranslator::isSpecialKey(Common::KeyCode key) {
-	if ((key >= Common::KEYCODE_F1 && key <= Common::KEYCODE_F8) ||
-		(key >= Common::KEYCODE_KP1 && key <= Common::KEYCODE_KP9))
+	if ((key >= Common::KEYCODE_F1 && key <= Common::KEYCODE_F8) || (key >= Common::KEYCODE_KP1 && key <= Common::KEYCODE_KP9))
 		return true;
 
-	if (key == Common::KEYCODE_PAGEUP || key == Common::KEYCODE_PAGEDOWN ||
-		key == Common::KEYCODE_HOME || key == Common::KEYCODE_END ||
-		key == Common::KEYCODE_LEFT || key == Common::KEYCODE_RIGHT ||
-		key == Common::KEYCODE_UP || key == Common::KEYCODE_DOWN)
+	if (key == Common::KEYCODE_PAGEUP || key == Common::KEYCODE_PAGEDOWN || key == Common::KEYCODE_HOME || key == Common::KEYCODE_END || key == Common::KEYCODE_LEFT || key == Common::KEYCODE_RIGHT || key == Common::KEYCODE_UP || key == Common::KEYCODE_DOWN)
 		return true;
 
 	return false;

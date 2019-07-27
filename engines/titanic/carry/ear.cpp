@@ -26,11 +26,12 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CEar, CHeadPiece)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(UseWithOtherMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(UseWithOtherMsg)
 END_MESSAGE_MAP()
 
-CEar::CEar() : CHeadPiece() {
+CEar::CEar()
+  : CHeadPiece() {
 }
 
 void CEar::save(SimpleFile *file, int indent) {

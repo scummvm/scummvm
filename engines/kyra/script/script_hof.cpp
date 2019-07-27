@@ -58,7 +58,7 @@ int KyraEngine_HoF::o2_setCharacterPos(EMCState *script) {
 
 int KyraEngine_HoF::o2_defineObject(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_defineObject(%p) (%d, '%s', %d, %d, %d, %d)", (const void *)script,
-			stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+	       stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	TalkObject *object = &_talkObjectList[stackPos(0)];
 	strcpy(object->filename, stackPosString(1));
 	object->scriptId = stackPos(2);
@@ -168,7 +168,7 @@ int KyraEngine_HoF::o2_restoreScreen(EMCState *script) {
 
 int KyraEngine_HoF::o2_displayWsaFrame(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_displayWsaFrame(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script,
-			stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8));
+	       stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8));
 	int frame = stackPos(0);
 	int x = stackPos(1);
 	int y = stackPos(2);
@@ -194,7 +194,7 @@ int KyraEngine_HoF::o2_displayWsaFrame(EMCState *script) {
 
 int KyraEngine_HoF::o2_displayWsaSequentialFramesLooping(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_displayWsaSequentialFramesLooping(%p) (%d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script,
-			stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
+	       stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
 	int startFrame = stackPos(0);
 	int endFrame = stackPos(1);
 	int x = stackPos(2);
@@ -416,7 +416,7 @@ int KyraEngine_HoF::o2_wipeDownMouseItem(EMCState *script) {
 
 	if (_itemInHand >= 0) {
 		backUpGfxRect32x32(x, y);
-		uint8 *shape = getShapePtr(_itemInHand+64);
+		uint8 *shape = getShapePtr(_itemInHand + 64);
 		for (int curY = y, height = 16; height > 0; height -= 2, curY += 2) {
 			restoreGfxRect32x32(x, y);
 			_screen->setNewShapeHeight(shape, height);
@@ -483,7 +483,7 @@ int KyraEngine_HoF::o2_loadZShapes(EMCState *script) {
 
 int KyraEngine_HoF::o2_drawSceneShape(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_drawSceneShape(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1),
-		stackPos(2), stackPos(3));
+	       stackPos(2), stackPos(3));
 
 	int shape = stackPos(0);
 	int x = stackPos(1);
@@ -506,7 +506,7 @@ int KyraEngine_HoF::o2_drawSceneShape(EMCState *script) {
 
 int KyraEngine_HoF::o2_drawSceneShapeOnPage(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_drawSceneShapeOnPage(%p) (%d, %d, %d, %d, %d)", (const void *)script,
-		stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	       stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	int shape = stackPos(0);
 	int x = stackPos(1);
 	int y = stackPos(2);
@@ -519,13 +519,13 @@ int KyraEngine_HoF::o2_drawSceneShapeOnPage(EMCState *script) {
 
 int KyraEngine_HoF::o2_disableAnimObject(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_disableAnimObject(%p) (%d)", (const void *)script, stackPos(0));
-	_animObjects[stackPos(0)+1].enabled = false;
+	_animObjects[stackPos(0) + 1].enabled = false;
 	return 0;
 }
 
 int KyraEngine_HoF::o2_enableAnimObject(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_enableAnimObject(%p) (%d)", (const void *)script, stackPos(0));
-	_animObjects[stackPos(0)+1].enabled = true;
+	_animObjects[stackPos(0) + 1].enabled = true;
 	return 0;
 }
 
@@ -602,7 +602,7 @@ int KyraEngine_HoF::o2_fadeScenePal(EMCState *script) {
 
 int KyraEngine_HoF::o2_enterNewScene(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_enterNewScene(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0),
-		stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	       stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 
 	int skipNpcScript = stackPos(3);
 	enterNewScene(stackPos(0), stackPos(1), stackPos(2), skipNpcScript, stackPos(4));
@@ -711,7 +711,7 @@ int KyraEngine_HoF::o2_showItemString(EMCState *script) {
 			string = 8;
 	}
 
-	updateCommandLineEx(item+54, string, 0xD6);
+	updateCommandLineEx(item + 54, string, 0xD6);
 	return 0;
 }
 
@@ -767,7 +767,7 @@ int KyraEngine_HoF::o2_showLetter(EMCState *script) {
 	_screen->clearPage(3);
 	_screen->loadBitmap("_NOTE.CPS", 3, 3, 0);
 
-	sprintf(filename, "_NTEPAL%.1d.COL", letter+1);
+	sprintf(filename, "_NTEPAL%.1d.COL", letter + 1);
 	_screen->loadPalette(filename, _screen->getPalette(0));
 
 	_screen->fadeToBlack(0x14);
@@ -817,8 +817,7 @@ int KyraEngine_HoF::o2_showLetter(EMCState *script) {
 
 int KyraEngine_HoF::o2_playFireflyScore(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_playFireflyScore(%p) ()", (const void *)script);
-	if (_sound->getSfxType() == Sound::kAdLib || _sound->getSfxType() == Sound::kPCSpkr ||
-			_sound->getSfxType() == Sound::kMidiMT32 || _sound->getSfxType() == Sound::kMidiGM) {
+	if (_sound->getSfxType() == Sound::kAdLib || _sound->getSfxType() == Sound::kPCSpkr || _sound->getSfxType() == Sound::kMidiMT32 || _sound->getSfxType() == Sound::kMidiGM) {
 		snd_playWanderScoreViaMap(86, 1);
 		return 1;
 	} else {
@@ -828,15 +827,15 @@ int KyraEngine_HoF::o2_playFireflyScore(EMCState *script) {
 
 int KyraEngine_HoF::o2_encodeShape(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_encodeShape(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1),
-		stackPos(2), stackPos(3), stackPos(4));
+	       stackPos(2), stackPos(3), stackPos(4));
 	_sceneShapeTable[stackPos(0)] = _screen->encodeShape(stackPos(1), stackPos(2), stackPos(3), stackPos(4), 2);
 	return 0;
 }
 
 int KyraEngine_HoF::o2_defineSceneAnim(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_defineSceneAnim(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, '%s')", (const void *)script,
-			stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8),
-			stackPos(9), stackPos(10), stackPos(11), stackPosString(12));
+	       stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8),
+	       stackPos(9), stackPos(10), stackPos(11), stackPosString(12));
 	int animId = stackPos(0);
 	SceneAnim &anim = _sceneAnims[animId];
 	anim.flags = stackPos(1);
@@ -886,10 +885,7 @@ int KyraEngine_HoF::o2_updateSceneAnim(EMCState *script) {
 	// - When the sheriff enters the jail, either to lock you up or to throw
 	//   away the key. (see bug #1926838 "HoF: Animation plays too fast").
 
-	if ((stackPos(0) == 2 && _mainCharacter.sceneId == 3) ||
-			(stackPos(0) == 3 && _mainCharacter.sceneId == 33) ||
-			((stackPos(0) == 1 || stackPos(0) == 2) && _mainCharacter.sceneId == 19) ||
-			((stackPos(0) == 1 || stackPos(0) == 2) && _mainCharacter.sceneId == 27))
+	if ((stackPos(0) == 2 && _mainCharacter.sceneId == 3) || (stackPos(0) == 3 && _mainCharacter.sceneId == 33) || ((stackPos(0) == 1 || stackPos(0) == 2) && _mainCharacter.sceneId == 19) || ((stackPos(0) == 1 || stackPos(0) == 2) && _mainCharacter.sceneId == 27))
 		_sceneSpecialScriptsTimer[_lastProcessedSceneScript] = _system->getMillis() + _tickLength * 6;
 
 	_specialSceneScriptRunFlag = false;
@@ -987,7 +983,7 @@ int KyraEngine_HoF::o2_changeChapter(EMCState *script) {
 
 	static const int zShapeList[] = { 1, 2, 2, 2, 4 };
 	assert(chapter > 1 && chapter <= ARRAYSIZE(zShapeList));
-	loadCharacterShapes(zShapeList[chapter-1]);
+	loadCharacterShapes(zShapeList[chapter - 1]);
 
 	enterNewScene(scene, (chapter == 2) ? 2 : 0, 0, 0, 0);
 
@@ -1158,7 +1154,7 @@ int KyraEngine_HoF::o2_customChatFinish(EMCState *script) {
 
 int KyraEngine_HoF::o2_setupSceneAnimation(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_setupSceneAnimation(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, '%s')", (const void *)script,
-		stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9), stackPos(10), stackPos(11), stackPosString(12));
+	       stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9), stackPos(10), stackPos(11), stackPosString(12));
 	const int index = stackPos(0);
 	const uint16 flags = stackPos(1);
 
@@ -1185,7 +1181,7 @@ int KyraEngine_HoF::o2_setupSceneAnimation(EMCState *script) {
 			anim.wsaFlag = 0;
 	}
 
-	AnimObj *obj = &_animObjects[1+index];
+	AnimObj *obj = &_animObjects[1 + index];
 	obj->enabled = 1;
 	obj->needRefresh = 1;
 	obj->specialRefresh = 1;
@@ -1231,7 +1227,7 @@ int KyraEngine_HoF::o2_setupSceneAnimation(EMCState *script) {
 int KyraEngine_HoF::o2_stopSceneAnimation(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_stopSceneAnimation(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	const int index = stackPos(0);
-	AnimObj &obj = _animObjects[1+index];
+	AnimObj &obj = _animObjects[1 + index];
 	restorePage3();
 	obj.shapeIndex3 = 0xFFFF;
 	obj.animNum = 0xFFFF;
@@ -1240,7 +1236,7 @@ int KyraEngine_HoF::o2_stopSceneAnimation(EMCState *script) {
 	if (stackPos(1))
 		refreshAnimObjectsIfNeed();
 	obj.enabled = 0;
-	_animList = deleteAnimListEntry(_animList, &_animObjects[1+index]);
+	_animList = deleteAnimListEntry(_animList, &_animObjects[1 + index]);
 
 	if (_sceneAnimMovie[index]->opened())
 		_sceneAnimMovie[index]->close();
@@ -1256,9 +1252,9 @@ int KyraEngine_HoF::o2_processPaletteIndex(EMCState *script) {
 	const bool updatePalette = (stackPos(4) != 0);
 	const int delayTime = stackPos(5);
 
-	palette[index*3+0] = (stackPos(1) * 0x3F) / 100;
-	palette[index*3+1] = (stackPos(2) * 0x3F) / 100;
-	palette[index*3+2] = (stackPos(3) * 0x3F) / 100;
+	palette[index * 3 + 0] = (stackPos(1) * 0x3F) / 100;
+	palette[index * 3 + 1] = (stackPos(2) * 0x3F) / 100;
+	palette[index * 3 + 2] = (stackPos(3) * 0x3F) / 100;
 
 	if (updatePalette) {
 		if (delayTime > 0)
@@ -1291,7 +1287,7 @@ int KyraEngine_HoF::o2_drawSceneShapeEx(EMCState *script) {
 	const bool skipFronUpdate = (stackPos(3) != 0);
 
 	_screen->drawShape(2, _sceneShapeTable[6], x, y, 2, 0);
-	_screen->drawShape(2, getShapePtr(itemShape), x+2, y+2, 2, 0);
+	_screen->drawShape(2, getShapePtr(itemShape), x + 2, y + 2, 2, 0);
 
 	if (!skipFronUpdate) {
 		_screen->copyRegion(x, y, x, y, 0x15, 0x14, 2, 0, Screen::CR_NO_P_CHECK);
@@ -1304,8 +1300,7 @@ int KyraEngine_HoF::o2_drawSceneShapeEx(EMCState *script) {
 int KyraEngine_HoF::o2_midiSoundFadeout(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_midiSoundFadeout(%p) ()", (const void *)script);
 	if (!stackPos(0)) {
-		if ((_sound->getMusicType() == Sound::kMidiMT32 || _sound->getMusicType() == Sound::kMidiGM) &&
-			(_sound->getSfxType() == Sound::kMidiMT32 || _sound->getSfxType() == Sound::kMidiGM)) {
+		if ((_sound->getMusicType() == Sound::kMidiMT32 || _sound->getMusicType() == Sound::kMidiGM) && (_sound->getSfxType() == Sound::kMidiMT32 || _sound->getSfxType() == Sound::kMidiGM)) {
 			_sound->beginFadeOut();
 			delay(2000, true);
 			_lastMusicCommand = -1;
@@ -1519,8 +1514,8 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o2_addItemToInventory);
 	Opcode(o2_drawShape);
 	Opcode(o2_addItemToCurScene);
-	Opcode(o2_dummy);	// the original used this opcode to limit the mouse range temporary,
-						// since that is of no use and not really important we just use a dummy here
+	Opcode(o2_dummy); // the original used this opcode to limit the mouse range temporary,
+	  // since that is of no use and not really important we just use a dummy here
 	// 0x20
 	Opcode(o2_checkForItem);
 	Opcode(o2_loadSoundFile);

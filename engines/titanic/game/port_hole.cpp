@@ -25,14 +25,17 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPortHole, CGameObject)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(EnterViewMsg)
 END_MESSAGE_MAP()
 
-CPortHole::CPortHole() : CGameObject(), _open(false),
-		_closeSoundName("b#47.wav"), _openSoundName("b#46.wav") {
+CPortHole::CPortHole()
+  : CGameObject()
+  , _open(false)
+  , _closeSoundName("b#47.wav")
+  , _openSoundName("b#46.wav") {
 }
 
 void CPortHole::save(SimpleFile *file, int indent) {

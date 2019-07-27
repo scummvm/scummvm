@@ -24,116 +24,119 @@
 #define MADS_GAME_DRAGONSPHERE_H
 
 #include "common/scummsys.h"
+#include "mads/dragonsphere/globals_dragonsphere.h"
 #include "mads/game.h"
 #include "mads/globals.h"
-#include "mads/dragonsphere/globals_dragonsphere.h"
 
 namespace MADS {
 
 namespace Dragonsphere {
 
-// TODO: Adapt for Dragonsphere's difficulty setting
-enum StoryMode { STORYMODE_NAUGHTY = 1, STORYMODE_NICE = 2 };
+	// TODO: Adapt for Dragonsphere's difficulty setting
+	enum StoryMode { STORYMODE_NAUGHTY = 1,
+		               STORYMODE_NICE = 2 };
 
-enum InventoryObject {
-	OBJ_NONE = -1,
-	OBJ_SIGNET_RING = 0,
-	OBJ_BIRD_FIGURINE = 1,
-	OBJ_BIRDCALL = 2,
-	OBJ_SHIELDSTONE = 3,
-	OBJ_SWORD = 4,
-	OBJ_GOBLET = 5,
-	OBJ_BONE = 6,
-	OBJ_FRUIT = 7,
-	OBJ_DOLL = 8,
-	OBJ_POLYSTONE = 9,
-	OBJ_RED_STONE = 10,
-	OBJ_YELLOW_STONE = 11,
-	OBJ_BLUE_STONE = 12,
-	OBJ_KEY_CROWN = 13,
-	OBJ_DATES = 14,
-	OBJ_STATUE = 15,
-	OBJ_FLIES = 16,
-	OBJ_SOUL_EGG = 17,
-	OBJ_MAGIC_BELT = 18,
-	OBJ_AMULET = 19,
-	OBJ_MUD = 20,
-	OBJ_FEATHERS = 21,
-	OBJ_TORCH = 22,
-	OBJ_FLASK = 23,
-	OBJ_FLASK_OF_ACID = 24,
-	OBJ_ROPE = 25,
-	OBJ_VORTEX_STONE = 26,
-	OBJ_DEAD_RAT = 27,
-	OBJ_MAP = 28,
-	OBJ_CRYSTAL_BALL = 29,
-	OBJ_BLACK_SPHERE = 30,
-	OBJ_SOPORIFIC = 31,
-	OBJ_SHIFTER_RING = 32,
-	OBJ_SPIRIT_BUNDLE = 33,
-	OBJ_PARTIAL_BUNDLE = 34,
-	OBJ_RATSICLE = 35,
-	OBJ_TENTACLE_PARTS = 36,
-	OBJ_TELEPORT_DOOR = 37,
-	OBJ_RARE_COIN = 38,
-	OBJ_CRYSTAL_FLOWER = 39,
-	OBJ_DIAMOND_DUST = 40,
-	OBJ_RUBY_RING = 41,
-	OBJ_GOLD_NUGGET = 42,
-	OBJ_MAGIC_MUSIC_BOX = 43,
-	OBJ_EMERALD = 44,
-	OBJ_PARCHMENT = 45,
-	OBJ_GAME = 46,
-	OBJ_GAME2 = 47,
-	OBJ_NEW_BUNDLE = 48
-};
+	enum InventoryObject {
+		OBJ_NONE = -1,
+		OBJ_SIGNET_RING = 0,
+		OBJ_BIRD_FIGURINE = 1,
+		OBJ_BIRDCALL = 2,
+		OBJ_SHIELDSTONE = 3,
+		OBJ_SWORD = 4,
+		OBJ_GOBLET = 5,
+		OBJ_BONE = 6,
+		OBJ_FRUIT = 7,
+		OBJ_DOLL = 8,
+		OBJ_POLYSTONE = 9,
+		OBJ_RED_STONE = 10,
+		OBJ_YELLOW_STONE = 11,
+		OBJ_BLUE_STONE = 12,
+		OBJ_KEY_CROWN = 13,
+		OBJ_DATES = 14,
+		OBJ_STATUE = 15,
+		OBJ_FLIES = 16,
+		OBJ_SOUL_EGG = 17,
+		OBJ_MAGIC_BELT = 18,
+		OBJ_AMULET = 19,
+		OBJ_MUD = 20,
+		OBJ_FEATHERS = 21,
+		OBJ_TORCH = 22,
+		OBJ_FLASK = 23,
+		OBJ_FLASK_OF_ACID = 24,
+		OBJ_ROPE = 25,
+		OBJ_VORTEX_STONE = 26,
+		OBJ_DEAD_RAT = 27,
+		OBJ_MAP = 28,
+		OBJ_CRYSTAL_BALL = 29,
+		OBJ_BLACK_SPHERE = 30,
+		OBJ_SOPORIFIC = 31,
+		OBJ_SHIFTER_RING = 32,
+		OBJ_SPIRIT_BUNDLE = 33,
+		OBJ_PARTIAL_BUNDLE = 34,
+		OBJ_RATSICLE = 35,
+		OBJ_TENTACLE_PARTS = 36,
+		OBJ_TELEPORT_DOOR = 37,
+		OBJ_RARE_COIN = 38,
+		OBJ_CRYSTAL_FLOWER = 39,
+		OBJ_DIAMOND_DUST = 40,
+		OBJ_RUBY_RING = 41,
+		OBJ_GOLD_NUGGET = 42,
+		OBJ_MAGIC_MUSIC_BOX = 43,
+		OBJ_EMERALD = 44,
+		OBJ_PARCHMENT = 45,
+		OBJ_GAME = 46,
+		OBJ_GAME2 = 47,
+		OBJ_NEW_BUNDLE = 48
+	};
 
-class GameDragonsphere : public Game {
-	friend class Game;
-protected:
-	GameDragonsphere(MADSEngine *vm);
+	class GameDragonsphere : public Game {
+		friend class Game;
 
-	virtual void startGame();
+	protected:
+		GameDragonsphere(MADSEngine *vm);
 
-	virtual void initializeGlobals();
+		virtual void startGame();
 
-	virtual void setSectionHandler();
+		virtual void initializeGlobals();
 
-	virtual void checkShowDialog();
-public:
-	DragonsphereGlobals _globals;
-	StoryMode _storyMode;
+		virtual void setSectionHandler();
 
-	virtual Globals &globals() { return _globals; }
+		virtual void checkShowDialog();
 
-	virtual void doObjectAction();
+	public:
+		DragonsphereGlobals _globals;
+		StoryMode _storyMode;
 
-	virtual void unhandledAction();
+		virtual Globals &globals() { return _globals; }
 
-	virtual void step();
+		virtual void doObjectAction();
 
-	virtual void synchronize(Common::Serializer &s, bool phase1);
-};
+		virtual void unhandledAction();
 
+		virtual void step();
 
-class Section1Handler : public SectionHandler {
-public:
-	Section1Handler(MADSEngine *vm) : SectionHandler(vm) {}
+		virtual void synchronize(Common::Serializer &s, bool phase1);
+	};
 
-	// TODO: Properly implement handler methods
-	virtual void preLoadSection() {}
-	virtual void sectionPtr2() {}
-	virtual void postLoadSection() {}
-};
+	class Section1Handler : public SectionHandler {
+	public:
+		Section1Handler(MADSEngine *vm)
+		  : SectionHandler(vm) {}
 
-// TODO: Properly implement handler classes
-typedef Section1Handler Section2Handler;
-typedef Section1Handler Section3Handler;
-typedef Section1Handler Section4Handler;
-typedef Section1Handler Section5Handler;
-typedef Section1Handler Section6Handler;
-typedef Section1Handler Section7Handler;
-typedef Section1Handler Section8Handler;
+		// TODO: Properly implement handler methods
+		virtual void preLoadSection() {}
+		virtual void sectionPtr2() {}
+		virtual void postLoadSection() {}
+	};
+
+	// TODO: Properly implement handler classes
+	typedef Section1Handler Section2Handler;
+	typedef Section1Handler Section3Handler;
+	typedef Section1Handler Section4Handler;
+	typedef Section1Handler Section5Handler;
+	typedef Section1Handler Section6Handler;
+	typedef Section1Handler Section7Handler;
+	typedef Section1Handler Section8Handler;
 
 } // End of namespace Nebular
 

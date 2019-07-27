@@ -1,41 +1,109 @@
 static const char *const k2SeqplayStringsDOSCDFrench[104] = {
-	"Kyrandia est en train de dispara""\x8C""tre!",
-	"Pierre apr""\x8A""s pierre...",
-	"Arbre apr""\x8A""s arbre.",
+	"Kyrandia est en train de dispara"
+	"\x8C"
+	"tre!",
+	"Pierre apr"
+	"\x8A"
+	"s pierre...",
+	"Arbre apr"
+	"\x8A"
+	"s arbre.",
 	"Kyrandia va cesser d'exister!",
 	"Les Grands Mystiques Royaux sont perplexes...",
-	"Ils ont consult""\x82"" tous les ouvrages!",
-	"M""\x88""me Marko et son nouveau valet ont ""\x82""t""\x82"" admis dans la conf""\x82""rence.",
+	"Ils ont consult"
+	"\x82"
+	" tous les ouvrages!",
+	"M"
+	"\x88"
+	"me Marko et son nouveau valet ont "
+	"\x82"
+	"t"
+	"\x82"
+	" admis dans la conf"
+	"\x82"
+	"rence.",
 	"Heureusement, la Main connaissait bien ce sujet.",
-	"Un plan fut finalement approuv""\x82""...",
-	"Il n""\x82""cessitait une Ancre de Pierre magique...",
+	"Un plan fut finalement approuv"
+	"\x82"
+	"...",
+	"Il n"
+	"\x82"
+	"cessitait une Ancre de Pierre magique...",
 	"Qu'il fallait aller chercher au centre du monde!",
-	"Zanthia, la plus jeune des Mystiques de Kyrandia, a ""\x82""t""\x82"" choisie pour r""\x82""cup""\x82""rer cette pierre.",
-	"Merci d'avoir jou""\x82"" ""\x85"" The Hand of Fate.",
+	"Zanthia, la plus jeune des Mystiques de Kyrandia, a "
+	"\x82"
+	"t"
+	"\x82"
+	" choisie pour r"
+	"\x82"
+	"cup"
+	"\x82"
+	"rer cette pierre.",
+	"Merci d'avoir jou"
+	"\x82"
+	" "
+	"\x85"
+	" The Hand of Fate.",
 	"Je devrais avoir assez de myrtilles pour ouvrir un portail vers le centre du monde...",
 	" DUMMY STRING... ",
 	" DUMMY STRING... ",
-	"H""\x82""! On m'a vol""\x82"" tout mon ""\x82""quipement!",
+	"H"
+	"\x82"
+	"! On m'a vol"
+	"\x82"
+	" tout mon "
+	"\x82"
+	"quipement!",
 	" DUMMY STRING... ",
-	"S'ils croient que je vais y aller ""\x85"" pied, ils peuvent toujours courir!",
+	"S'ils croient que je vais y aller "
+	"\x85"
+	" pied, ils peuvent toujours courir!",
 	" DUMMY STRING... ",
 	" DUMMY STRING... ",
 	"Vite, Faun!",
-	"Mon vieux, nous l'avons ""\x82""chapp""\x82"" belle!",
+	"Mon vieux, nous l'avons "
+	"\x82"
+	"chapp"
+	"\x82"
+	" belle!",
 	"Tu l'as dit! En ce qui me concerne, j'abandonne la chasse!",
 	"Crooa.",
 	"Combien de fois faudra-t-il que je te le dise? Tu n'es qu'un sale crapaud!",
 	"Oh non! Nous n'avons plus de fromage!",
-	"On n'a qu'""\x85"" essayer ""\x87""a. C'est orange.",
+	"On n'a qu'"
+	"\x85"
+	" essayer "
+	"\x87"
+	"a. C'est orange.",
 	"Maman, quand est-ce qu'on mangera du lierre?",
 	"Sortez d'ici! Allez! Filez!",
 	"Tu coupes, et je choisis.",
 	"Non. TU coupes et JE choisis.",
-	"Je maintiens que c'""\x82""tait du radotage sans int""\x82""r""\x88""t.",
-	"Tu ne reconna""\x8C""trais toujours pas un po""\x8A""me ""\x8B""ambique, m""\x88""me s'il te mordait les fesses!",
-	"Producteur Ex""\x82""cutif",
+	"Je maintiens que c'"
+	"\x82"
+	"tait du radotage sans int"
+	"\x82"
+	"r"
+	"\x88"
+	"t.",
+	"Tu ne reconna"
+	"\x8C"
+	"trais toujours pas un po"
+	"\x8A"
+	"me "
+	"\x8B"
+	"ambique, m"
+	"\x88"
+	"me s'il te mordait les fesses!",
+	"Producteur Ex"
+	"\x82"
+	"cutif",
 	"Brett W. Sperry",
-	"Con""\x87""u et Dirig""\x82"" par",
+	"Con"
+	"\x87"
+	"u et Dirig"
+	"\x82"
+	" par",
 	"Rick Gush",
 	"Programmeur Principal",
 	"Michael Legg",
@@ -69,20 +137,30 @@ static const char *const k2SeqplayStringsDOSCDFrench[104] = {
 	"Frank Klepacki",
 	"Dwight Okahara",
 	"Pat Collins",
-	"Tests de Qualit""\x82",
+	"Tests de Qualit"
+	"\x82",
 	"Glenn Sperry",
 	"Michael Lightner",
 	"William Foster",
 	"Jesse Clemit",
 	"Pierre Cardin",
 	"Conception du Manuel,",
-	"Emballage & Ex""\x82""cution",
+	"Emballage & Ex"
+	"\x82"
+	"cution",
 	"Eydie Laramore",
 	"Lisa Marcinko",
 	"Lauren Rifkin",
-	"F""\x82""licitations!",
-	"Merci d'avoir jou""\x82"" ""\x85"" The Hand of Fate!",
-	"Programmeur invit""\x82",
+	"F"
+	"\x82"
+	"licitations!",
+	"Merci d'avoir jou"
+	"\x82"
+	" "
+	"\x85"
+	" The Hand of Fate!",
+	"Programmeur invit"
+	"\x82",
 	"Coordination Production",
 	"Scott Duckett",
 	"Testeurs - Irvine",
@@ -92,17 +170,25 @@ static const char *const k2SeqplayStringsDOSCDFrench[104] = {
 	"Jared Brinkley",
 	"Jon Williams",
 	"Chris Toft",
-	"Adaptation fran""\x87""aise",
+	"Adaptation fran"
+	"\x87"
+	"aise",
 	"Art Of Words",
 	"Charger une partie",
 	"Introduction",
 	"Nouvelle Partie",
 	"Quitter le jeu",
-	"Remerciements sp""\x82""ciaux",
+	"Remerciements sp"
+	"\x82"
+	"ciaux",
 	"Sake Joe Bostic-san",
 	"Tim Fritz",
 	"Kenny Dunne",
-	"Merci d'avoir jou""\x82"" ""\x85""\"The Hand of Fate.\"\n"
+	"Merci d'avoir jou"
+	"\x82"
+	" "
+	"\x85"
+	"\"The Hand of Fate.\"\n"
 };
 
 static const StringListProvider k2SeqplayStringsDOSCDFrenchProvider = { ARRAYSIZE(k2SeqplayStringsDOSCDFrench), k2SeqplayStringsDOSCDFrench };
@@ -125,4 +211,3 @@ static const char *const k2SeqplayTlkFilesDOSCDFrench[14] = {
 };
 
 static const StringListProvider k2SeqplayTlkFilesDOSCDFrenchProvider = { ARRAYSIZE(k2SeqplayTlkFilesDOSCDFrench), k2SeqplayTlkFilesDOSCDFrench };
-

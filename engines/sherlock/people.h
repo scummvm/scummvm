@@ -23,22 +23,28 @@
 #ifndef SHERLOCK_PEOPLE_H
 #define SHERLOCK_PEOPLE_H
 
-#include "common/scummsys.h"
 #include "common/queue.h"
+#include "common/scummsys.h"
 #include "sherlock/objects.h"
 #include "sherlock/saveload.h"
 
 namespace Sherlock {
 
 enum PeopleId {
-	HOLMES			= 0,
-	WATSON			= 1,
-	MAX_NPC_PATH	= 200
+	HOLMES = 0,
+	WATSON = 1,
+	MAX_NPC_PATH = 200
 };
 
 enum {
-	MAP_UP = 1, MAP_UPRIGHT = 2, MAP_RIGHT = 1, MAP_DOWNRIGHT = 4,
-	MAP_DOWN = 5, MAP_DOWNLEFT = 6, MAP_LEFT = 2, MAP_UPLEFT = 8
+	MAP_UP = 1,
+	MAP_UPRIGHT = 2,
+	MAP_RIGHT = 1,
+	MAP_DOWNRIGHT = 4,
+	MAP_DOWN = 5,
+	MAP_DOWNLEFT = 6,
+	MAP_LEFT = 2,
+	MAP_UPLEFT = 8
 };
 
 #define NUM_IN_WALK_LIB 10
@@ -52,8 +58,11 @@ struct PersonData {
 	const byte *_stillSequences;
 	const byte *_talkSequences;
 
-	PersonData(const char *name, const char *portrait, const byte *stillSequences, const byte *talkSequences) :
-		_name(name), _portrait(portrait), _stillSequences(stillSequences), _talkSequences(talkSequences) {}
+	PersonData(const char *name, const char *portrait, const byte *stillSequences, const byte *talkSequences)
+	  : _name(name)
+	  , _portrait(portrait)
+	  , _stillSequences(stillSequences)
+	  , _talkSequences(talkSequences) {}
 };
 
 class Person : public Sprite {
@@ -62,6 +71,7 @@ protected:
 	 * Get the source position for a character potentially affected by scaling
 	 */
 	virtual Common::Point getSourcePoint() const = 0;
+
 public:
 	Common::Queue<Common::Point> _walkTo;
 	int _srcZone, _destZone;
@@ -71,7 +81,7 @@ public:
 	Common::String _npcName;
 
 	// Rose Tattoo fields
-	Common::String _walkVGSName;		// Name of walk library person is using
+	Common::String _walkVGSName; // Name of walk library person is using
 public:
 	Person();
 	virtual ~Person() {}
@@ -102,6 +112,7 @@ protected:
 	Common::Array<Person *> _data;
 
 	People(SherlockEngine *vm);
+
 public:
 	Common::Array<PersonData> _characters;
 	ImageFile *_talkPics;
@@ -120,6 +131,7 @@ public:
 	bool _useWalkLib;
 
 	int _walkControl;
+
 public:
 	static People *init(SherlockEngine *vm);
 	virtual ~People();

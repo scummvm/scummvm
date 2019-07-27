@@ -23,10 +23,10 @@
 #ifndef QUEEN_MUSIC_H
 #define QUEEN_MUSIC_H
 
-#include "common/util.h"
+#include "audio/mididrv.h"
 #include "common/mutex.h"
 #include "common/random.h"
-#include "audio/mididrv.h"
+#include "common/util.h"
 
 class MidiParser;
 
@@ -41,13 +41,13 @@ public:
 	MidiMusic(QueenEngine *vm);
 	~MidiMusic();
 	void setVolume(int volume);
-	int getVolume()	const { return _masterVolume; }
+	int getVolume() const { return _masterVolume; }
 
 	void playSong(uint16 songNum);
 	void stopSong() { stopMusic(); }
 	void playMusic();
 	void stopMusic();
-	void setLoop(bool loop)		{ _isLooping = loop; }
+	void setLoop(bool loop) { _isLooping = loop; }
 	void queueTuneList(int16 tuneList);
 	bool queueSong(uint16 songNum);
 	void queueClear();
@@ -58,9 +58,8 @@ public:
 	virtual void metaEvent(byte type, byte *data, uint16 length);
 
 protected:
-
 	enum {
-		MUSIC_QUEUE_SIZE	=	14
+		MUSIC_QUEUE_SIZE = 14
 	};
 
 	void queueUpdatePos();
@@ -86,7 +85,7 @@ protected:
 	byte _masterVolume;
 	uint8 _queuePos;
 	int16 _currentSong;
-	int16 _lastSong;	//first song from previous queue
+	int16 _lastSong; //first song from previous queue
 	int16 _songQueue[MUSIC_QUEUE_SIZE];
 
 	uint16 _numSongs;

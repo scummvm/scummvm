@@ -48,19 +48,19 @@ class AudioPlayer {
 #endif // BLADERUNNER_ORIGINAL_BUGS
 
 	struct Track {
-		bool                isActive;
-		int                 channel;
-		int                 priority;
-		int                 volume;
-		int                 pan;
+		bool isActive;
+		int channel;
+		int priority;
+		int volume;
+		int pan;
 		Audio::AudioStream *stream;
 	};
 
 	BladeRunnerEngine *_vm;
 
 	Common::Mutex _mutex;
-	Track         _tracks[kTracks];
-	int           _sfxVolume;
+	Track _tracks[kTracks];
+	int _sfxVolume;
 
 public:
 	AudioPlayer(BladeRunnerEngine *vm);

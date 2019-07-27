@@ -30,34 +30,35 @@
 namespace Cloud {
 namespace Id {
 
-class IdStorage;
+	class IdStorage;
 
-class IdCreateDirectoryRequest: public Networking::Request {
-	Common::String _requestedParentPath;
-	Common::String _requestedDirectoryName;
-	IdStorage *_storage;
-	Storage::BoolCallback _boolCallback;
-	Request *_workingRequest;
-	bool _ignoreCallback;
-	Common::String _date;
+	class IdCreateDirectoryRequest : public Networking::Request {
+		Common::String _requestedParentPath;
+		Common::String _requestedDirectoryName;
+		IdStorage *_storage;
+		Storage::BoolCallback _boolCallback;
+		Request *_workingRequest;
+		bool _ignoreCallback;
+		Common::String _date;
 
-	void start();
-	void createdBaseDirectoryCallback(Storage::BoolResponse response);
-	void createdBaseDirectoryErrorCallback(Networking::ErrorResponse error);
-	void resolveId();
-	void idResolvedCallback(Storage::UploadResponse response);
-	void idResolveFailedCallback(Networking::ErrorResponse error);
-	void createdDirectoryCallback(Storage::BoolResponse response);
-	void createdDirectoryErrorCallback(Networking::ErrorResponse error);
-	void finishCreation(bool success);
-public:
-	IdCreateDirectoryRequest(IdStorage *storage, Common::String parentPath, Common::String directoryName, Storage::BoolCallback cb, Networking::ErrorCallback ecb);
-	virtual ~IdCreateDirectoryRequest();
+		void start();
+		void createdBaseDirectoryCallback(Storage::BoolResponse response);
+		void createdBaseDirectoryErrorCallback(Networking::ErrorResponse error);
+		void resolveId();
+		void idResolvedCallback(Storage::UploadResponse response);
+		void idResolveFailedCallback(Networking::ErrorResponse error);
+		void createdDirectoryCallback(Storage::BoolResponse response);
+		void createdDirectoryErrorCallback(Networking::ErrorResponse error);
+		void finishCreation(bool success);
 
-	virtual void handle();
-	virtual void restart();
-	virtual Common::String date() const;
-};
+	public:
+		IdCreateDirectoryRequest(IdStorage *storage, Common::String parentPath, Common::String directoryName, Storage::BoolCallback cb, Networking::ErrorCallback ecb);
+		virtual ~IdCreateDirectoryRequest();
+
+		virtual void handle();
+		virtual void restart();
+		virtual Common::String date() const;
+	};
 
 } // End of namespace Id
 } // End of namespace Cloud

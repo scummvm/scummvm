@@ -31,7 +31,8 @@ class GnapEngine;
 
 class Scene {
 public:
-	Scene(GnapEngine *vm) : _vm(vm) {};
+	Scene(GnapEngine *vm)
+	  : _vm(vm) {};
 	virtual ~Scene() {};
 
 	void playRandomSound(int timerIndex);

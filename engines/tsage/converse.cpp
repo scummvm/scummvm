@@ -22,17 +22,17 @@
 
 #include "common/str-array.h"
 
-#include "tsage/tsage.h"
+#include "ringworld2/ringworld2_speakers.h"
 #include "tsage/globals.h"
 #include "tsage/staticres.h"
-#include "ringworld2/ringworld2_speakers.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
 #define STRIP_WORD_DELAY 30
 
-
-SequenceManager::SequenceManager() : Action() {
+SequenceManager::SequenceManager()
+  : Action() {
 	Common::fill(&_objectList[0], &_objectList[6], (SceneObject *)NULL);
 	_sequenceData.clear();
 	_fontNum = 0;
@@ -42,7 +42,7 @@ SequenceManager::SequenceManager() : Action() {
 	_objectIndex = 0;
 	_keepActive = false;
 	_onCallback = NULL;
-	for (int i = 0; i < 6; i ++)
+	for (int i = 0; i < 6; i++)
 		_objectList[i] = NULL;
 	setup();
 }
@@ -94,7 +94,7 @@ void SequenceManager::signal() {
 
 	bool continueFlag = true;
 	while (continueFlag) {
-		if (_sequenceOffset >=_sequenceData.size()) {
+		if (_sequenceOffset >= _sequenceData.size()) {
 			// Reached the end of the sequence
 			if (!_keepActive)
 				remove();
@@ -150,7 +150,7 @@ void SequenceManager::signal() {
 			g_globals->_sceneManager._scene->loadScene(v1);
 			break;
 		case 10: {
-			int resNum= getNextValue();
+			int resNum = getNextValue();
 			int lineNum = getNextValue();
 			int color = getNextValue();
 			int xp = getNextValue();
@@ -283,7 +283,7 @@ void SequenceManager::signal() {
 			int objIndex6 = getNextValue() - 1;
 
 			setAction(globalManager(), v2 ? this : NULL, v1, _objectList[objIndex1], _objectList[objIndex2],
-				_objectList[objIndex3], _objectList[objIndex4], _objectList[objIndex5], _objectList[objIndex6], NULL);
+			          _objectList[objIndex3], _objectList[objIndex4], _objectList[objIndex5], _objectList[objIndex6], NULL);
 			break;
 		}
 		/* Following indexes were introduced for Blue Force */
@@ -321,8 +321,7 @@ void SequenceManager::signal() {
 }
 
 void SequenceManager::process(Event &event) {
-	if (((event.eventType == EVENT_BUTTON_DOWN) || (event.eventType == EVENT_KEYPRESS)) &&
-		!event.handled && g_globals->_sceneObjects->contains(&_sceneText)) {
+	if (((event.eventType == EVENT_BUTTON_DOWN) || (event.eventType == EVENT_KEYPRESS)) && !event.handled && g_globals->_sceneObjects->contains(&_sceneText)) {
 		// Remove the text item
 		_sceneText.remove();
 		setDelay(2);
@@ -331,7 +330,6 @@ void SequenceManager::process(Event &event) {
 		Action::process(event);
 	}
 }
-
 
 void SequenceManager::attached(EventHandler *newOwner, EventHandler *endHandler, va_list va) {
 	// Get the sequence number to use
@@ -370,7 +368,7 @@ void SequenceManager::setMessage(int resNum, int lineNum, int color, const Commo
 }
 
 void SequenceManager::setMessage(int resNum, int lineNum, int fontNum, int color1, int color2, int color3,
-								 const Common::Point &pt, int width) {
+                                 const Common::Point &pt, int width) {
 	_sceneText._color1 = color1;
 	_sceneText._color2 = color2;
 	_sceneText._color3 = color3;
@@ -466,21 +464,18 @@ int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 	// Event handling loop
 	Event event;
 	while (!g_vm->shouldQuit()) {
-		while (!g_globals->_events.getEvent(event, EVENT_KEYPRESS | EVENT_BUTTON_DOWN | EVENT_MOUSE_MOVE) &&
-				!g_vm->shouldQuit()) {
+		while (!g_globals->_events.getEvent(event, EVENT_KEYPRESS | EVENT_BUTTON_DOWN | EVENT_MOUSE_MOVE) && !g_vm->shouldQuit()) {
 			g_system->delayMillis(10);
 			GLOBALS._screen.update();
 		}
 		if (g_vm->shouldQuit())
 			break;
 
-		if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode >= Common::KEYCODE_1) &&
-			(event.kbd.keycode <= (Common::KEYCODE_0 + (int)_choiceList.size()))) {
+		if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode >= Common::KEYCODE_1) && (event.kbd.keycode <= (Common::KEYCODE_0 + (int)_choiceList.size()))) {
 			// Selected an option by number
 			_selectedIndex = event.kbd.keycode - Common::KEYCODE_1;
 			break;
-		} else if ((_selectedIndex != _choiceList.size()) && ((event.eventType == EVENT_BUTTON_DOWN) ||
-					(event.eventType == EVENT_BUTTON_UP))) {
+		} else if ((_selectedIndex != _choiceList.size()) && ((event.eventType == EVENT_BUTTON_DOWN) || (event.eventType == EVENT_BUTTON_UP))) {
 			// Item selected
 			break;
 		} else {
@@ -497,7 +492,7 @@ int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 					// De-highlight previously selected item
 					_gfxManager._font._colors.foreground = _stdColor;
 					_gfxManager._font.writeLines(_choiceList[_selectedIndex]._msg.c_str(),
-						_choiceList[_selectedIndex]._bounds, ALIGN_LEFT);
+					                             _choiceList[_selectedIndex]._bounds, ALIGN_LEFT);
 				}
 
 				_selectedIndex = idx;
@@ -507,7 +502,6 @@ int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 					_gfxManager._font._colors.foreground = _highlightColor;
 					_gfxManager._font.writeLines(_choiceList[idx]._msg.c_str(), _choiceList[idx]._bounds, ALIGN_LEFT);
 				}
-
 			}
 		}
 	}
@@ -802,8 +796,8 @@ void StripManager::signal() {
 		EventHandler *endHandler = _endHandler;
 		remove();
 
-		 if ((g_vm->getGameID() == GType_Ringworld2) && endHandler)
-			 endHandler->signal();
+		if ((g_vm->getGameID() == GType_Ringworld2) && endHandler)
+			endHandler->signal();
 
 		return;
 	}
@@ -1062,7 +1056,8 @@ int StripManager::getNewIndex(int id) {
 
 /*--------------------------------------------------------------------------*/
 
-Speaker::Speaker() : EventHandler() {
+Speaker::Speaker()
+  : EventHandler() {
 	_newSceneNumber = -1;
 	_hideObjects = true;
 	_field18 = 0;
@@ -1087,7 +1082,8 @@ void Speaker::synchronize(Serializer &s) {
 	s.syncAsSint32LE(_oldSceneNumber);
 	_sceneBounds.synchronize(s);
 	s.syncAsSint32LE(_textWidth);
-	s.syncAsSint16LE(_textPos.x); s.syncAsSint16LE(_textPos.y);
+	s.syncAsSint16LE(_textPos.x);
+	s.syncAsSint16LE(_textPos.y);
 	s.syncAsSint32LE(_fontNumber);
 	SYNC_ENUM(_textMode, TextAlign);
 	s.syncAsSint16LE(_color1);
@@ -1152,7 +1148,8 @@ void Speaker::removeText() {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerGameText::SpeakerGameText() : Speaker() {
+SpeakerGameText::SpeakerGameText()
+  : Speaker() {
 	_speakerName = "GAMETEXT";
 	_textPos = Common::Point(40, 40);
 	_textMode = ALIGN_CENTER;
@@ -1163,7 +1160,8 @@ SpeakerGameText::SpeakerGameText() : Speaker() {
 
 /*--------------------------------------------------------------------------*/
 
-ScreenSpeaker::ScreenSpeaker() : Speaker() {
+ScreenSpeaker::ScreenSpeaker()
+  : Speaker() {
 	_npc = NULL;
 	_textMode = ALIGN_CENTER;
 }
@@ -1178,9 +1176,8 @@ void ScreenSpeaker::setText(const Common::String &msg) {
 	if (_npc) {
 		textRect.center(_npc->_position.x, _npc->_bounds.top - (textRect.height() / 2 + 10));
 	} else {
-		textRect.center(g_globals->_sceneManager._scene->_sceneBounds.left +
-			(g_globals->_sceneManager._scene->_sceneBounds.width() / 2),
-			g_globals->_sceneManager._scene->_sceneBounds.top);
+		textRect.center(g_globals->_sceneManager._scene->_sceneBounds.left + (g_globals->_sceneManager._scene->_sceneBounds.width() / 2),
+		                g_globals->_sceneManager._scene->_sceneBounds.top);
 	}
 
 	Rect rect2 = g_globals->_sceneManager._scene->_sceneBounds;

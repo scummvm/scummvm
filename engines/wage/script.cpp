@@ -45,9 +45,9 @@
  *
  */
 
-#include "wage/wage.h"
-#include "wage/entities.h"
 #include "wage/script.h"
+#include "wage/entities.h"
+#include "wage/wage.h"
 #include "wage/world.h"
 
 #include "common/config-manager.h"
@@ -75,7 +75,7 @@ static Common::String toString(int16 val) {
 }
 
 Common::String Script::Operand::toString() const {
-	switch(_type) {
+	switch (_type) {
 	case NUMBER:
 		return Wage::toString(_value.number);
 	case STRING:
@@ -94,7 +94,9 @@ Common::String Script::Operand::toString() const {
 	}
 }
 
-Script::Script(Common::SeekableReadStream *data, int num, WageEngine *engine) : _data(data), _engine(engine) {
+Script::Script(Common::SeekableReadStream *data, int num, WageEngine *engine)
+  : _data(data)
+  , _engine(engine) {
 	_world = NULL;
 
 	_loopCount = 0;
@@ -211,7 +213,7 @@ bool Script::execute(World *world, int loopCount, Common::String *inputText, Des
 
 		byte command = _data->readByte();
 
-		switch(command) {
+		switch (command) {
 		case 0x80: // IF
 			processIf();
 			break;
@@ -220,50 +222,50 @@ bool Script::execute(World *world, int loopCount, Common::String *inputText, Des
 
 			return true;
 		case 0x89: // MOVE
-			{
-				Scene *currentScene = _world->_player->_currentScene;
-				processMove();
-				if (_world->_player->_currentScene != currentScene)
-					return true;
-				break;
-			}
+		{
+			Scene *currentScene = _world->_player->_currentScene;
+			processMove();
+			if (_world->_player->_currentScene != currentScene)
+				return true;
+			break;
+		}
 		case 0x8B: // PRINT
-			{
-				Operand *op = readOperand();
-				// TODO check op type is string or number, or something good...
-				_handled = true;
-				_engine->appendText(op->toString().c_str());
-				delete op;
-				byte d = _data->readByte();
-				if (d != 0xFD)
-					warning("Operand 0x8B (PRINT) End Byte != 0xFD");
-				break;
-			}
+		{
+			Operand *op = readOperand();
+			// TODO check op type is string or number, or something good...
+			_handled = true;
+			_engine->appendText(op->toString().c_str());
+			delete op;
+			byte d = _data->readByte();
+			if (d != 0xFD)
+				warning("Operand 0x8B (PRINT) End Byte != 0xFD");
+			break;
+		}
 		case 0x8C: // SOUND
-			{
-				Operand *op = readOperand();
-				// TODO check op type is string.
-				_handled = true;
-				_engine->playSound(op->toString());
-				delete op;
-				byte d = _data->readByte();
-				if (d != 0xFD)
-					warning("Operand 0x8B (PRINT) End Byte != 0xFD");
-				break;
-			}
+		{
+			Operand *op = readOperand();
+			// TODO check op type is string.
+			_handled = true;
+			_engine->playSound(op->toString());
+			delete op;
+			byte d = _data->readByte();
+			if (d != 0xFD)
+				warning("Operand 0x8B (PRINT) End Byte != 0xFD");
+			break;
+		}
 		case 0x8E: // LET
 			processLet();
 			break;
 		case 0x95: // MENU
-			{
-				Operand *op = readStringOperand(); // allows empty menu
-				// TODO check op type is string.
-				_engine->setMenu(op->toString());
-				delete op;
-				byte d = _data->readByte();
-				if (d != 0xFD)
-					warning("Operand 0x8B (PRINT) End Byte != 0xFD");
-			}
+		{
+			Operand *op = readStringOperand(); // allows empty menu
+			// TODO check op type is string.
+			_engine->setMenu(op->toString());
+			delete op;
+			byte d = _data->readByte();
+			if (d != 0xFD)
+				warning("Operand 0x8B (PRINT) End Byte != 0xFD");
+		}
 		case 0x88: // END
 			break;
 		default:
@@ -317,7 +319,7 @@ bool Script::execute(World *world, int loopCount, Common::String *inputText, Des
 
 			delete weapons;
 		}
-	// TODO: weapons, offer, etc...
+		// TODO: weapons, offer, etc...
 	} else if (_inputClick->_classType == OBJ) {
 		Obj *obj = (Obj *)_inputClick;
 		if (obj->_type != Obj::IMMOBILE_OBJECT) {
@@ -369,14 +371,13 @@ Script::Operand *Script::readOperand() {
 		return new Operand(cont->_kills, NUMBER);
 	case 0xB4: // BADCOPY#
 		return new Operand(0, NUMBER); // \?\?\??
-	case 0xFF:
-		{
-			// user variable
-			int value = _data->readByte();
+	case 0xFF: {
+		// user variable
+		int value = _data->readByte();
 
-			// TODO: Verify that we're using the right index.
-			return new Operand(cont->_userVariables[value - 1], NUMBER);
-		}
+		// TODO: Verify that we're using the right index.
+		return new Operand(cont->_userVariables[value - 1], NUMBER);
+	}
 	case 0xD0:
 		return new Operand(cont->_statVariables[PHYS_STR_BAS], NUMBER);
 	case 0xD1:
@@ -418,7 +419,7 @@ Script::Operand *Script::readOperand() {
 			_data->seek(-1, SEEK_CUR);
 			return readStringOperand();
 		} else {
-			debug("Dunno what %x is (index=%d)!\n", operandType, _data->pos()-1);
+			debug("Dunno what %x is (index=%d)!\n", operandType, _data->pos() - 1);
 		}
 		return NULL;
 	}
@@ -486,7 +487,7 @@ void Script::assign(byte operandType, int uservar, uint16 value) {
 		cont->_statVariables[PHYS_SPE_CUR] = value;
 		break;
 	default:
-		debug("No idea what I'm supposed to assign! (%x at %d)!\n", operandType, _data->pos()-1);
+		debug("No idea what I'm supposed to assign! (%x at %d)!\n", operandType, _data->pos() - 1);
 	}
 }
 
@@ -616,14 +617,15 @@ void Script::skipBlock() {
 			if (nesting == 0) {
 				return;
 			}
-		} else switch (op) {
+		} else
+			switch (op) {
 			case 0x8B: // PRINT
 			case 0x8C: // SOUND
 			case 0x8E: // LET
 			case 0x95: // MENU
 				while (_data->readByte() != 0xFD)
 					;
-		}
+			}
 	}
 }
 
@@ -712,7 +714,7 @@ struct Comparator {
 };
 
 bool Script::compare(Operand *o1, Operand *o2, int comparator) {
-	switch(comparator) {
+	switch (comparator) {
 	case kCompEqNumNum:
 		return o1->_value.number == o2->_value.number;
 	case kCompEqObjScene:
@@ -787,7 +789,7 @@ bool Script::compare(Operand *o1, Operand *o2, int comparator) {
 	case kMoveObjChr:
 		if (o1->_value.obj->_currentOwner != o2->_value.chr) {
 			_world->move(o1->_value.obj, o2->_value.chr);
-			_handled = true;  // TODO: Is this correct?
+			_handled = true; // TODO: Is this correct?
 		}
 		break;
 	case kMoveObjScene:
@@ -799,7 +801,7 @@ bool Script::compare(Operand *o1, Operand *o2, int comparator) {
 		break;
 	case kMoveChrScene:
 		_world->move(o1->_value.chr, o2->_value.scene);
-		_handled = true;  // TODO: Is this correct?
+		_handled = true; // TODO: Is this correct?
 		break;
 	}
 
@@ -808,7 +810,7 @@ bool Script::compare(Operand *o1, Operand *o2, int comparator) {
 
 bool Script::evaluatePair(Operand *lhs, const char *op, Operand *rhs) {
 	debug(7, "HANDLING CASE: [lhs=%s/%s, op=%s rhs=%s/%s]",
-		operandTypeToStr(lhs->_type), lhs->toString().c_str(), op, operandTypeToStr(rhs->_type), rhs->toString().c_str());
+	      operandTypeToStr(lhs->_type), lhs->toString().c_str(), op, operandTypeToStr(rhs->_type), rhs->toString().c_str());
 
 	for (int cmp = 0; comparators[cmp].op != 0; cmp++) {
 		if (comparators[cmp].op != op[0])
@@ -824,13 +826,11 @@ bool Script::evaluatePair(Operand *lhs, const char *op, Operand *rhs) {
 		if (comparators[cmp].op != op[0])
 			continue;
 
-		if (comparators[cmp].o1 == lhs->_type &&
-				(c2 = convertOperand(rhs, comparators[cmp].o2)) != NULL) {
+		if (comparators[cmp].o1 == lhs->_type && (c2 = convertOperand(rhs, comparators[cmp].o2)) != NULL) {
 			bool res = compare(lhs, c2, comparators[cmp].cmp);
 			delete c2;
 			return res;
-		} else if (comparators[cmp].o2 == rhs->_type &&
-				(c1 = convertOperand(lhs, comparators[cmp].o1)) != NULL) {
+		} else if (comparators[cmp].o2 == rhs->_type && (c1 = convertOperand(lhs, comparators[cmp].o1)) != NULL) {
 			bool res = compare(c1, rhs, comparators[cmp].cmp);
 			delete c1;
 			return res;
@@ -857,7 +857,7 @@ bool Script::evaluatePair(Operand *lhs, const char *op, Operand *rhs) {
 	}
 
 	warning("UNHANDLED CASE: [lhs=%s/%s, op=%s rhs=%s/%s]",
-		operandTypeToStr(lhs->_type), lhs->toString().c_str(), op, operandTypeToStr(rhs->_type), rhs->toString().c_str());
+	        operandTypeToStr(lhs->_type), lhs->toString().c_str(), op, operandTypeToStr(rhs->_type), rhs->toString().c_str());
 
 	return false;
 }
@@ -884,7 +884,7 @@ bool Script::eval(Operand *lhs, const char *op, Operand *rhs) {
 			}
 		} else {
 			error("UNHANDLED CASE: [lhs=%s/%s, rhs=%s/%s]",
-				operandTypeToStr(lhs->_type), lhs->toString().c_str(), operandTypeToStr(rhs->_type), rhs->toString().c_str());
+			      operandTypeToStr(lhs->_type), lhs->toString().c_str(), operandTypeToStr(rhs->_type), rhs->toString().c_str());
 		}
 		if (!strcmp(op, ">>")) {
 			result = !result;
@@ -1108,7 +1108,7 @@ struct Mapping {
 	{ "\?\?\?(0xaf)", OPCODE },
 	{ "VISITS#", OPCODE }, // 0xb0 // The number of scenes the player has visited, including repeated visits.
 	{ "RANDOM#", OPCODE }, // RANDOM# for Star Trek, but VISITS# for some other games?
-	{ "LOOP#", OPCODE },   // The number of commands the player has given in the current scene.
+	{ "LOOP#", OPCODE }, // The number of commands the player has given in the current scene.
 	{ "VICTORY#", OPCODE }, // The number of characters killed.
 	{ "BADCOPY#", OPCODE },
 	{ "RANDOM#", OPCODE }, // A random number between 1 and 100.
@@ -1195,7 +1195,7 @@ void Script::convertToText() {
 	ScriptText *scr = new ScriptText;
 	scr->offset = _data->pos();
 
-	while(true) {
+	while (true) {
 		int c = _data->readByte();
 
 		if (_data->eos())

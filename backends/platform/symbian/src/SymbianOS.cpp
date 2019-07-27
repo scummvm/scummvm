@@ -20,25 +20,25 @@
  *
  */
 
-#include <sdlapp.h> // for CSDLApp::GetExecutablePathCStr() @ Symbian::GetExecutablePath()
 #include <bautils.h>
 #include <eikenv.h> // for CEikonEnv::Static()
+#include <sdlapp.h> // for CSDLApp::GetExecutablePathCStr() @ Symbian::GetExecutablePath()
 #define FORBIDDEN_SYMBOL_EXCEPTION_fclose
 #define FORBIDDEN_SYMBOL_EXCEPTION_fopen
 
-#include "backends/platform/symbian/src/SymbianOS.h"
 #include "backends/platform/symbian/src/SymbianActions.h"
+#include "backends/platform/symbian/src/SymbianOS.h"
 #include "common/config-manager.h"
 #include "common/scummsys.h"
 #include "common/translation.h"
 
 #include "gui/message.h"
 
-#include "backends/fs/symbian/symbian-fs-factory.h"
-#include "backends/saves/default/default-saves.h"
 #include "backends/events/symbiansdl/symbiansdl-events.h"
+#include "backends/fs/symbian/symbian-fs-factory.h"
 #include "backends/graphics/symbiansdl/symbiansdl-graphics.h"
 #include "backends/mixer/symbiansdl/symbiansdl-mixer.h"
+#include "backends/saves/default/default-saves.h"
 
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 #define DEFAULT_SAVE_PATH "Savegames"
@@ -56,9 +56,7 @@ char *GetExecutablePath() {
 ////////// OSystem_SDL_Symbian //////////////////////////////////////////
 
 OSystem_SDL_Symbian::OSystem_SDL_Symbian()
-	:
-	_RFs(0) {
-
+  : _RFs(0) {
 }
 
 void OSystem_SDL_Symbian::init() {
@@ -84,7 +82,7 @@ void OSystem_SDL_Symbian::initBackend() {
 	// Ensure that the current set path (might have been altered by the user) exists
 	Common::String currentPath = ConfMan.get("savepath");
 	TFileName fname;
-	TPtrC8 ptr((const unsigned char*)currentPath.c_str(), currentPath.size());
+	TPtrC8 ptr((const unsigned char *)currentPath.c_str(), currentPath.size());
 	fname.Copy(ptr);
 	BaflUtils::EnsurePathExistsL(static_cast<OSystem_SDL_Symbian *>(g_system)->FsSession(), fname);
 
@@ -117,7 +115,7 @@ void OSystem_SDL_Symbian::initBackend() {
 	OSystem_SDL::initBackend();
 
 	// Initialize global key mapping for Smartphones
-	GUI::Actions* actions = GUI::Actions::Instance();
+	GUI::Actions *actions = GUI::Actions::Instance();
 
 	actions->initInstanceMain(this);
 	actions->loadMapping();
@@ -126,12 +124,12 @@ void OSystem_SDL_Symbian::initBackend() {
 void OSystem_SDL_Symbian::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	Common::FSNode pluginsNode(Symbian::GetExecutablePath());
 	if (pluginsNode.exists() && pluginsNode.isDirectory()) {
-			s.add("SYMBIAN_DATAFOLDER", new Common::FSDirectory(Symbian::GetExecutablePath()), priority);
-		}
+		s.add("SYMBIAN_DATAFOLDER", new Common::FSDirectory(Symbian::GetExecutablePath()), priority);
+	}
 }
 
 void OSystem_SDL_Symbian::quitWithErrorMsg(const char * /*aMsg*/) {
-	CEikonEnv::Static()->AlertWin(_L("quitWithErrorMsg()")) ;
+	CEikonEnv::Static()->AlertWin(_L("quitWithErrorMsg()"));
 
 	if (g_system)
 		g_system->quit();
@@ -174,18 +172,18 @@ Common::String OSystem_SDL_Symbian::getDefaultConfigFileName() {
 }
 
 bool OSystem_SDL_Symbian::hasFeature(Feature f) {
-	if (f == kFeatureJoystickDeadzone) return false;
+	if (f == kFeatureJoystickDeadzone)
+		return false;
 
 	return OSystem_SDL::hasFeature(f);
 }
 
-
-RFs& OSystem_SDL_Symbian::FsSession() {
+RFs &OSystem_SDL_Symbian::FsSession() {
 	return *_RFs;
 }
 
 // Symbian bsearch implementation is flawed
-void* scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *)) {
+void *scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *)) {
 	// Perform binary search
 	size_t lo = 0;
 	size_t hi = nmemb;
@@ -203,4 +201,3 @@ void* scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size
 
 	return NULL;
 }
-

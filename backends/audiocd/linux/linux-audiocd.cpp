@@ -49,21 +49,21 @@
 
 #ifdef USE_LINUXCD
 
-#include "backends/audiocd/audiocd-stream.h"
-#include "backends/audiocd/default/default-audiocd.h"
-#include "common/array.h"
-#include "common/config-manager.h"
-#include "common/str.h"
-#include "common/debug.h"
+#	include "backends/audiocd/audiocd-stream.h"
+#	include "backends/audiocd/default/default-audiocd.h"
+#	include "common/array.h"
+#	include "common/config-manager.h"
+#	include "common/debug.h"
+#	include "common/str.h"
 
-#include <errno.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <linux/cdrom.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/sysmacros.h>
-#include <sys/types.h>
+#	include <errno.h>
+#	include <fcntl.h>
+#	include <linux/cdrom.h>
+#	include <sys/ioctl.h>
+#	include <sys/stat.h>
+#	include <sys/sysmacros.h>
+#	include <sys/types.h>
+#	include <unistd.h>
 
 enum {
 	kLeadoutTrack = 0xAA
@@ -98,13 +98,13 @@ static Common::String getErrorMessage(int errorCode) {
 	char buf[256];
 	buf[0] = 0;
 
-#ifdef _GNU_SOURCE
+#	ifdef _GNU_SOURCE
 	// glibc sucks
 	return Common::String(strerror_r(errorCode, buf, sizeof(buf)));
-#else
+#	else
 	strerror_r(errorCode, buf, sizeof(buf));
 	return Common::String(buf);
-#endif
+#	endif
 }
 
 class LinuxAudioCDStream : public AudioCDStream {
@@ -122,8 +122,10 @@ private:
 	const cdrom_tocentry &_startEntry, &_endEntry;
 };
 
-LinuxAudioCDStream::LinuxAudioCDStream(int fd, const cdrom_tocentry &startEntry, const cdrom_tocentry &endEntry) :
-	_fd(fd), _startEntry(startEntry), _endEntry(endEntry) {
+LinuxAudioCDStream::LinuxAudioCDStream(int fd, const cdrom_tocentry &startEntry, const cdrom_tocentry &endEntry)
+  : _fd(fd)
+  , _startEntry(startEntry)
+  , _endEntry(endEntry) {
 	// We fill the buffer here already to prevent any out of sync issues due
 	// to the CD not yet having spun up.
 	startTimer(true);
@@ -172,7 +174,6 @@ uint LinuxAudioCDStream::getEndFrame() const {
 	return getFrameCount(_endEntry.cdte_addr.msf);
 }
 
-
 class LinuxAudioCDManager : public DefaultAudioCDManager {
 public:
 	LinuxAudioCDManager();
@@ -181,7 +182,7 @@ public:
 	bool open() override;
 	void close() override;
 	bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
-			Audio::Mixer::SoundType soundType) override;
+	          Audio::Mixer::SoundType soundType) override;
 
 protected:
 	bool openCD(int drive) override;
@@ -189,7 +190,9 @@ protected:
 
 private:
 	struct Device {
-		Device(const Common::String &n, dev_t d) : name(n), device(d) {}
+		Device(const Common::String &n, dev_t d)
+		  : name(n)
+		  , device(d) {}
 		Common::String name;
 		dev_t device;
 	};
@@ -214,9 +217,9 @@ static bool isTrayEmpty(int errorNumber) {
 	case EIO:
 	case ENOENT:
 	case EINVAL:
-#ifdef ENOMEDIUM
+#	ifdef ENOMEDIUM
 	case ENOMEDIUM:
-#endif
+#	endif
 		return true;
 	}
 
@@ -287,7 +290,7 @@ bool LinuxAudioCDManager::openCD(const Common::String &drive) {
 }
 
 bool LinuxAudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
-		Audio::Mixer::SoundType soundType) {
+                               Audio::Mixer::SoundType soundType) {
 	// Prefer emulation
 	if (DefaultAudioCDManager::play(track, numLoops, startFrame, duration, onlyEmulate, soundType))
 		return true;
@@ -322,14 +325,14 @@ bool LinuxAudioCDManager::play(int track, int numLoops, int startFrame, int dura
 	_emulating = true;
 
 	_mixer->playStream(
-	    soundType,
-	    &_handle,
-	    Audio::makeLoopingAudioStream(audioStream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops),
-	    -1,
-	    _cd.volume,
-	    _cd.balance,
-	    DisposeAfterUse::YES,
-	    true);
+	  soundType,
+	  &_handle,
+	  Audio::makeLoopingAudioStream(audioStream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops),
+	  -1,
+	  _cd.volume,
+	  _cd.balance,
+	  DisposeAfterUse::YES,
+	  true);
 
 	return true;
 }
@@ -423,7 +426,7 @@ bool LinuxAudioCDManager::loadTOC() {
 		if (ioctl(_fd, CDROMREADTOCENTRY, &entry) < 0)
 			return false;
 
-#if 0
+#	if 0
 		debug("Entry:");
 		debug("\tTrack: %d", entry.cdte_track);
 		debug("\tAdr: %d", entry.cdte_adr);
@@ -431,7 +434,7 @@ bool LinuxAudioCDManager::loadTOC() {
 		debug("\tFormat: %d", entry.cdte_format);
 		debug("\tMSF: %d:%d:%d", entry.cdte_addr.msf.minute, entry.cdte_addr.msf.second, entry.cdte_addr.msf.frame);
 		debug("\tMode: %d\n", entry.cdte_datamode);
-#endif
+#	endif
 
 		_tocEntries.push_back(entry);
 	}
@@ -445,7 +448,7 @@ bool LinuxAudioCDManager::loadTOC() {
 	if (ioctl(_fd, CDROMREADTOCENTRY, &entry) < 0)
 		return false;
 
-#if 0
+#	if 0
 	debug("Lead out:");
 	debug("\tTrack: %d", entry.cdte_track);
 	debug("\tAdr: %d", entry.cdte_adr);
@@ -453,7 +456,7 @@ bool LinuxAudioCDManager::loadTOC() {
 	debug("\tFormat: %d", entry.cdte_format);
 	debug("\tMSF: %d:%d:%d", entry.cdte_addr.msf.minute, entry.cdte_addr.msf.second, entry.cdte_addr.msf.frame);
 	debug("\tMode: %d\n", entry.cdte_datamode);
-#endif
+#	endif
 
 	_tocEntries.push_back(entry);
 	return true;

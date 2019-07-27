@@ -30,34 +30,40 @@ namespace Common {
 
 /** The default Windows resources. */
 enum WinResourceType {
-	kWinCursor       = 0x01,
-	kWinBitmap       = 0x02,
-	kWinIcon         = 0x03,
-	kWinMenu         = 0x04,
-	kWinDialog       = 0x05,
-	kWinString       = 0x06,
-	kWinFontDir      = 0x07,
-	kWinFont         = 0x08,
-	kWinAccelerator  = 0x09,
-	kWinRCData       = 0x0A,
+	kWinCursor = 0x01,
+	kWinBitmap = 0x02,
+	kWinIcon = 0x03,
+	kWinMenu = 0x04,
+	kWinDialog = 0x05,
+	kWinString = 0x06,
+	kWinFontDir = 0x07,
+	kWinFont = 0x08,
+	kWinAccelerator = 0x09,
+	kWinRCData = 0x0A,
 	kWinMessageTable = 0x0B,
-	kWinGroupCursor  = 0x0C,
-	kWinGroupIcon    = 0x0E,
-	kWinVersion      = 0x10,
-	kWinDlgInclude   = 0x11,
-	kWinPlugPlay     = 0x13,
-	kWinVXD          = 0x14,
-	kWinAniCursor    = 0x15,
-	kWinAniIcon      = 0x16,
-	kWinHTML         = 0x17,
-	kWinManifest     = 0x18
+	kWinGroupCursor = 0x0C,
+	kWinGroupIcon = 0x0E,
+	kWinVersion = 0x10,
+	kWinDlgInclude = 0x11,
+	kWinPlugPlay = 0x13,
+	kWinVXD = 0x14,
+	kWinAniCursor = 0x15,
+	kWinAniIcon = 0x16,
+	kWinHTML = 0x17,
+	kWinManifest = 0x18
 };
 
 class WinResourceID {
 public:
 	WinResourceID() { _idType = kIDTypeNull; }
-	WinResourceID(String x) { _idType = kIDTypeString; _name = x; }
-	WinResourceID(uint32 x) { _idType = kIDTypeNumerical; _id = x; }
+	WinResourceID(String x) {
+		_idType = kIDTypeString;
+		_name = x;
+	}
+	WinResourceID(uint32 x) {
+		_idType = kIDTypeNumerical;
+		_id = x;
+	}
 
 	WinResourceID &operator=(const String &x);
 	WinResourceID &operator=(uint32 x);
@@ -73,13 +79,13 @@ public:
 private:
 	/** An ID Type. */
 	enum IDType {
-		kIDTypeNull,      ///< No type set
+		kIDTypeNull, ///< No type set
 		kIDTypeNumerical, ///< A numerical ID.
-		kIDTypeString     ///< A string ID.
+		kIDTypeString ///< A string ID.
 	} _idType;
 
-	String _name;         ///< The resource's string ID.
-	uint32 _id;           ///< The resource's numerical ID.
+	String _name; ///< The resource's string ID.
+	uint32 _id; ///< The resource's numerical ID.
 };
 
 struct WinResourceID_Hash {

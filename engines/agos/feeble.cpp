@@ -20,20 +20,18 @@
  *
  */
 
-
-
 #ifdef ENABLE_AGOS2
 
-#include "common/config-manager.h"
+#	include "common/config-manager.h"
 
-#include "agos/intern.h"
-#include "agos/agos.h"
-#include "agos/animation.h"
+#	include "agos/agos.h"
+#	include "agos/animation.h"
+#	include "agos/intern.h"
 
 namespace AGOS {
 
 AGOSEngine_Feeble::AGOSEngine_Feeble(OSystem *system, const AGOSGameDescription *gd)
-	: AGOSEngine_Simon2(system, gd) {
+  : AGOSEngine_Simon2(system, gd) {
 
 	_interactiveVideo = 0;
 	_moviePlayer = 0;
@@ -47,11 +45,11 @@ AGOSEngine_Feeble::~AGOSEngine_Feeble() {
 }
 
 static const GameSpecificSettings feeblefiles_settings = {
-	"game22",                               // base_filename
-	"save.999",                             // restore_filename
-	"tbllist",                              // tbl_filename
-	"",                                     // effects_filename
-	"VOICES",                               // speech_filename
+	"game22", // base_filename
+	"save.999", // restore_filename
+	"tbllist", // tbl_filename
+	"", // effects_filename
+	"VOICES", // speech_filename
 };
 
 void AGOSEngine_Feeble::setupGame() {
@@ -77,8 +75,7 @@ void AGOSEngine_Feeble::setupGame() {
 }
 
 void AGOSEngine_Feeble::runSubroutine101() {
-	if ((getPlatform() == Common::kPlatformAmiga || getPlatform() == Common::kPlatformMacintosh) &&
-		getGameType() == GType_FF) {
+	if ((getPlatform() == Common::kPlatformAmiga || getPlatform() == Common::kPlatformMacintosh) && getGameType() == GType_FF) {
 		playVideo("epic.dxa");
 	}
 
@@ -115,36 +112,36 @@ void AGOSEngine_Feeble::stopInteractiveVideo() {
 }
 
 AGOSEngine_FeebleDemo::AGOSEngine_FeebleDemo(OSystem *system, const AGOSGameDescription *gd)
-	: AGOSEngine_Feeble(system, gd) {
+  : AGOSEngine_Feeble(system, gd) {
 
 	_filmMenuUsed = 0;
 }
 
 Common::Error AGOSEngine_FeebleDemo::go() {
 	// Main menu
-	defineBox( 1,  80,  75,  81, 117, kBFBoxDead, 0, NULL);
-	defineBox( 2, 267,  21, 105,  97, kBFBoxDead, 0, NULL);
-	defineBox( 3, 456,  89, 125, 103, kBFBoxDead, 0, NULL);
-	defineBox( 4, 151, 225, 345,  41, kBFBoxDead, 0, NULL);
-	defineBox( 5, 169, 319, 109, 113, kBFBoxDead, 0, NULL);
-	defineBox( 6, 404, 308,  62, 117, kBFBoxDead, 0, NULL);
+	defineBox(1, 80, 75, 81, 117, kBFBoxDead, 0, NULL);
+	defineBox(2, 267, 21, 105, 97, kBFBoxDead, 0, NULL);
+	defineBox(3, 456, 89, 125, 103, kBFBoxDead, 0, NULL);
+	defineBox(4, 151, 225, 345, 41, kBFBoxDead, 0, NULL);
+	defineBox(5, 169, 319, 109, 113, kBFBoxDead, 0, NULL);
+	defineBox(6, 404, 308, 62, 117, kBFBoxDead, 0, NULL);
 
 	// Film menu
-	defineBox(11,  28,  81, 123,  93, kBFBoxDead, 0, NULL);
-	defineBox(12, 182,  81, 123,  93, kBFBoxDead, 0, NULL);
-	defineBox(13, 335,  81, 123,  93, kBFBoxDead, 0, NULL);
-	defineBox(14, 488,  81, 123,  93, kBFBoxDead, 0, NULL);
-	defineBox(15,  28, 201, 123,  93, kBFBoxDead, 0, NULL);
-	defineBox(16, 182, 201, 123,  93, kBFBoxDead, 0, NULL);
-	defineBox(17, 335, 201, 123,  93, kBFBoxDead, 0, NULL);
-	defineBox(18, 488, 201, 123,  93, kBFBoxDead, 0, NULL);
-	defineBox(19, 255, 357, 135,  45, kBFBoxDead, 0, NULL);
+	defineBox(11, 28, 81, 123, 93, kBFBoxDead, 0, NULL);
+	defineBox(12, 182, 81, 123, 93, kBFBoxDead, 0, NULL);
+	defineBox(13, 335, 81, 123, 93, kBFBoxDead, 0, NULL);
+	defineBox(14, 488, 81, 123, 93, kBFBoxDead, 0, NULL);
+	defineBox(15, 28, 201, 123, 93, kBFBoxDead, 0, NULL);
+	defineBox(16, 182, 201, 123, 93, kBFBoxDead, 0, NULL);
+	defineBox(17, 335, 201, 123, 93, kBFBoxDead, 0, NULL);
+	defineBox(18, 488, 201, 123, 93, kBFBoxDead, 0, NULL);
+	defineBox(19, 255, 357, 135, 45, kBFBoxDead, 0, NULL);
 
 	// Exit Menu
-	defineBox(21, 548, 421,  42,  21, kBFBoxDead, 0, NULL);
+	defineBox(21, 548, 421, 42, 21, kBFBoxDead, 0, NULL);
 
 	// Text Window used by Feeble Files Data section
-	if (_language ==Common::DE_DEU) {
+	if (_language == Common::DE_DEU) {
 		_textWindow = openWindow(322, 457, 196, 15, 1, 0, 255);
 	} else {
 		_textWindow = openWindow(444, 452, 196, 15, 1, 0, 255);
@@ -373,7 +370,8 @@ void AGOSEngine_FeebleDemo::waitForSpace() {
 	const char *message;
 
 	if (_language == Common::DE_DEU) {
-		message = "Dr\x81""cken Sie die <Leertaste>, um fortzufahren...";
+		message = "Dr\x81"
+		          "cken Sie die <Leertaste>, um fortzufahren...";
 	} else {
 		message = "Press <SPACE> to continue...";
 	}

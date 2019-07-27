@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "common/rect.h"
 #include "common/textconsole.h"
 
@@ -43,20 +42,20 @@
 namespace Queen {
 
 void Talk::talk(
-		const char *filename,
-		int personInRoom,
-		char *cutawayFilename,
-		QueenEngine *vm) {
+  const char *filename,
+  int personInRoom,
+  char *cutawayFilename,
+  QueenEngine *vm) {
 	Talk *talk = new Talk(vm);
 	talk->talk(filename, personInRoom, cutawayFilename);
 	delete talk;
 }
 
 bool Talk::speak(
-		const char *sentence,
-		Person *person,
-		const char *voiceFilePrefix,
-		QueenEngine *vm) {
+  const char *sentence,
+  Person *person,
+  const char *voiceFilePrefix,
+  QueenEngine *vm) {
 	Talk *talk = new Talk(vm);
 	bool result;
 	if (sentence)
@@ -68,7 +67,8 @@ bool Talk::speak(
 }
 
 Talk::Talk(QueenEngine *vm)
-	: _vm(vm), _fileData(NULL) {
+  : _vm(vm)
+  , _fileData(NULL) {
 	_vm->input()->talkQuitReset();
 }
 
@@ -118,7 +118,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 	// Lines 906-? in talk.c
 	_vm->display()->showMouseCursor(true);
 
-	int16 level=1, retval=0;
+	int16 level = 1, retval = 0;
 	int16 head = _dialogueTree[level][0].head;
 
 	// TODO: split this loop in several functions
@@ -139,7 +139,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 		if (_talkString[0][0] == '\0' && retval > 1) {
 			findDialogueString(_person1PtrOff, retval, _pMax, _talkString[0]);
-			sprintf(otherVoiceFilePrefix,"%2d%4xP", _talkKey, retval);
+			sprintf(otherVoiceFilePrefix, "%2d%4xP", _talkKey, retval);
 		}
 
 		// Joe dialogue
@@ -192,10 +192,10 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 		if (_vm->input()->talkQuit() || _vm->shouldQuit())
 			break;
 
-		retval   = _dialogueTree[level][selectedSentence].dialogueNodeValue1;
-		head     = _dialogueTree[level][selectedSentence].head;
+		retval = _dialogueTree[level][selectedSentence].dialogueNodeValue1;
+		head = _dialogueTree[level][selectedSentence].head;
 		oldLevel = level;
-		level    = 0;
+		level = 0;
 
 		// Set LEVEL to the selected child in dialogue tree
 
@@ -219,9 +219,9 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 			if (_dialogueTree[level][0].dialogueNodeValue1 > 0) {
 				if (1 == oldLevel) {
-						_oldSelectedSentenceIndex = selectedSentence;
-						_oldSelectedSentenceValue = selectedValue(selectedSentence);
-						selectedValue(selectedSentence, _dialogueTree[level][0].dialogueNodeValue1);
+					_oldSelectedSentenceIndex = selectedSentence;
+					_oldSelectedSentenceValue = selectedValue(selectedSentence);
+					selectedValue(selectedSentence, _dialogueTree[level][0].dialogueNodeValue1);
 				}
 
 				_dialogueTree[oldLevel][selectedSentence].head = _dialogueTree[level][0].dialogueNodeValue1;
@@ -271,8 +271,10 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 	uint16 offset = _cutawayPtrOff;
 
-	int16 cutawayGameState = (int16)READ_BE_INT16(_fileData + offset); offset += 2;
-	int16 cutawayTestValue = (int16)READ_BE_INT16(_fileData + offset); offset += 2;
+	int16 cutawayGameState = (int16)READ_BE_INT16(_fileData + offset);
+	offset += 2;
+	int16 cutawayTestValue = (int16)READ_BE_INT16(_fileData + offset);
+	offset += 2;
 
 	if (_vm->logic()->gameState(cutawayGameState) == cutawayTestValue) {
 		getString(_fileData, offset, cutawayFilename, 20);
@@ -347,11 +349,10 @@ byte *Talk::loadDialogFile(const char *filename) {
 	} dogFiles[] = {
 		{ "CHIEF1.DOG", Common::FR_FRA },
 		{ "CHIEF2.DOG", Common::FR_FRA },
-		{ "BUD1.DOG",   Common::IT_ITA }
+		{ "BUD1.DOG", Common::IT_ITA }
 	};
 	for (int i = 0; i < ARRAYSIZE(dogFiles); ++i) {
-		if (!scumm_stricmp(filename, dogFiles[i].filename) &&
-			_vm->resource()->getLanguage() == dogFiles[i].language) {
+		if (!scumm_stricmp(filename, dogFiles[i].filename) && _vm->resource()->getLanguage() == dogFiles[i].language) {
 			Common::File fdog;
 			fdog.open(filename);
 			if (fdog.isOpen()) {
@@ -373,7 +374,8 @@ void Talk::load(const char *filename) {
 
 	// Load talk header
 
-	_levelMax = (int16)READ_BE_INT16(ptr); ptr += 2;
+	_levelMax = (int16)READ_BE_INT16(ptr);
+	ptr += 2;
 
 	if (_levelMax < 0) {
 		_levelMax = -_levelMax;
@@ -382,21 +384,31 @@ void Talk::load(const char *filename) {
 		_vm->input()->canQuit(true);
 	}
 
-	_uniqueKey      = (int16)READ_BE_INT16(ptr); ptr += 2;
-	_talkKey        = (int16)READ_BE_INT16(ptr); ptr += 2;
-	_jMax           = (int16)READ_BE_INT16(ptr); ptr += 2;
-	_pMax           = (int16)READ_BE_INT16(ptr); ptr += 2;
+	_uniqueKey = (int16)READ_BE_INT16(ptr);
+	ptr += 2;
+	_talkKey = (int16)READ_BE_INT16(ptr);
+	ptr += 2;
+	_jMax = (int16)READ_BE_INT16(ptr);
+	ptr += 2;
+	_pMax = (int16)READ_BE_INT16(ptr);
+	ptr += 2;
 
 	for (i = 0; i < 2; i++) {
-		_gameState [i] = (int16)READ_BE_INT16(ptr); ptr += 2;
-		_testValue [i] = (int16)READ_BE_INT16(ptr); ptr += 2;
-		_itemNumber[i] = (int16)READ_BE_INT16(ptr); ptr += 2;
+		_gameState[i] = (int16)READ_BE_INT16(ptr);
+		ptr += 2;
+		_testValue[i] = (int16)READ_BE_INT16(ptr);
+		ptr += 2;
+		_itemNumber[i] = (int16)READ_BE_INT16(ptr);
+		ptr += 2;
 	}
 
-	_person1PtrOff = READ_BE_UINT16(ptr); ptr += 2;
-	_cutawayPtrOff = READ_BE_UINT16(ptr); ptr += 2;
-	_person2PtrOff = READ_BE_UINT16(ptr); ptr += 2;
-	_joePtrOff     = 32 + _levelMax * 96;
+	_person1PtrOff = READ_BE_UINT16(ptr);
+	ptr += 2;
+	_cutawayPtrOff = READ_BE_UINT16(ptr);
+	ptr += 2;
+	_person2PtrOff = READ_BE_UINT16(ptr);
+	ptr += 2;
+	_joePtrOff = 32 + _levelMax * 96;
 
 	// Load dialogue tree
 	ptr = _fileData + 32;
@@ -404,13 +416,17 @@ void Talk::load(const char *filename) {
 	for (i = 1; i <= _levelMax; i++)
 		for (int j = 0; j <= 5; j++) {
 			ptr += 2;
-			_dialogueTree[i][j].head = (int16)READ_BE_INT16(ptr); ptr += 2;
+			_dialogueTree[i][j].head = (int16)READ_BE_INT16(ptr);
 			ptr += 2;
-			_dialogueTree[i][j].dialogueNodeValue1 = (int16)READ_BE_INT16(ptr); ptr += 2;
 			ptr += 2;
-			_dialogueTree[i][j].gameStateIndex = (int16)READ_BE_INT16(ptr); ptr += 2;
+			_dialogueTree[i][j].dialogueNodeValue1 = (int16)READ_BE_INT16(ptr);
 			ptr += 2;
-			_dialogueTree[i][j].gameStateValue = (int16)READ_BE_INT16(ptr); ptr += 2;
+			ptr += 2;
+			_dialogueTree[i][j].gameStateIndex = (int16)READ_BE_INT16(ptr);
+			ptr += 2;
+			ptr += 2;
+			_dialogueTree[i][j].gameStateValue = (int16)READ_BE_INT16(ptr);
+			ptr += 2;
 		}
 }
 
@@ -418,7 +434,8 @@ void Talk::initialTalk() {
 	// Lines 848-903 in talk.c
 
 	uint16 offset = _joePtrOff + 2;
-	uint16 hasNotString = READ_BE_UINT16(_fileData + offset); offset += 2;
+	uint16 hasNotString = READ_BE_UINT16(_fileData + offset);
+	offset += 2;
 
 	char joeString[MAX_STRING_SIZE];
 	if (!hasNotString) {
@@ -496,8 +513,7 @@ int Talk::getSpeakCommand(const Person *person, const char *sentence, unsigned &
 		}
 		break;
 	default:
-		if (sentence[index + 0] >= '0' && sentence[index + 0] <= '9' &&
-				sentence[index + 1] >= '0' && sentence[index + 1] <= '9') {
+		if (sentence[index + 0] >= '0' && sentence[index + 0] <= '9' && sentence[index + 1] >= '0' && sentence[index + 1] <= '9') {
 			commandCode = (sentence[index] - '0') * 10 + (sentence[index + 1] - '0');
 		} else
 			warning("Unknown command string: '%2s'", sentence + index);
@@ -507,7 +523,6 @@ int Talk::getSpeakCommand(const Person *person, const char *sentence, unsigned &
 
 	return commandCode;
 }
-
 
 bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePrefix) {
 	// Function SPEAK, lines 1266-1384 in talk.c
@@ -537,24 +552,18 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 	}
 
 	debug(6, "Sentence '%s' is said by person '%s' and voice files with prefix '%s' played",
-			sentence, person->name, voiceFilePrefix);
+	      sentence, person->name, voiceFilePrefix);
 
 	if (sentence[0] == '\0') {
 		return personWalking;
 	}
 
-	if (0 == strcmp(person->name, "FAYE-H") ||
-		0 == strcmp(person->name, "FRANK-H") ||
-		0 == strcmp(person->name, "AZURA-H") ||
-		0 == strcmp(person->name, "X3_RITA") ||
-		(0 == strcmp(person->name, "JOE") && _vm->logic()->currentRoom() == FAYE_HEAD) ||
-		(0 == strcmp(person->name, "JOE") && _vm->logic()->currentRoom() == AZURA_HEAD) ||
-		(0 == strcmp(person->name, "JOE") && _vm->logic()->currentRoom() == FRANK_HEAD))
+	if (0 == strcmp(person->name, "FAYE-H") || 0 == strcmp(person->name, "FRANK-H") || 0 == strcmp(person->name, "AZURA-H") || 0 == strcmp(person->name, "X3_RITA") || (0 == strcmp(person->name, "JOE") && _vm->logic()->currentRoom() == FAYE_HEAD) || (0 == strcmp(person->name, "JOE") && _vm->logic()->currentRoom() == AZURA_HEAD) || (0 == strcmp(person->name, "JOE") && _vm->logic()->currentRoom() == FRANK_HEAD))
 		_talkHead = true;
 	else
 		_talkHead = false;
 
-	for (i = 0; i < strlen(sentence); ) {
+	for (i = 0; i < strlen(sentence);) {
 		if (sentence[i] == '*') {
 			int segmentLength = i - segmentStart;
 
@@ -563,12 +572,12 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 
 			if (SPEAK_NONE != command) {
 				speakSegment(
-						sentence + segmentStart,
-						segmentLength,
-						person,
-						command,
-						voiceFilePrefix,
-						segmentIndex);
+				  sentence + segmentStart,
+				  segmentLength,
+				  person,
+				  command,
+				  voiceFilePrefix,
+				  segmentIndex);
 				// XXX if (JOEWALK == 2) break
 			}
 
@@ -583,12 +592,12 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 
 	if (segmentStart != i) {
 		speakSegment(
-				sentence + segmentStart,
-				i - segmentStart,
-				person,
-				0,
-				voiceFilePrefix,
-				segmentIndex);
+		  sentence + segmentStart,
+		  i - segmentStart,
+		  person,
+		  0,
+		  voiceFilePrefix,
+		  segmentIndex);
 	}
 
 	return personWalking;
@@ -613,7 +622,7 @@ void Talk::headStringAnimation(const SpeechParameters *parameters, int bobNum, i
 	if (parameters->animation[0] == 'E') {
 		int offset = 1;
 
-		BobSlot *bob  = _vm->graphics()->bob(bobNum);
+		BobSlot *bob = _vm->graphics()->bob(bobNum);
 		int16 x = bob->x;
 		int16 y = bob->y;
 
@@ -686,14 +695,14 @@ void Talk::stringAnimation(const SpeechParameters *parameters, int startFrame, i
 }
 
 void Talk::defaultAnimation(
-		const char *segment,
-		bool isJoe,
-		const SpeechParameters *parameters,
-		int startFrame,
-		int bankNum) {
+  const char *segment,
+  bool isJoe,
+  const SpeechParameters *parameters,
+  int startFrame,
+  int bankNum) {
 	// lines 1730-1823 in talk.c
 
-	if (segment[0] != 0)  {
+	if (segment[0] != 0) {
 
 		// Why on earth would someone name a variable qzx?
 		short qzx = 0;
@@ -773,15 +782,13 @@ void Talk::defaultAnimation(
 		_vm->bankMan()->overpack(parameters->ff, startFrame, bankNum);
 }
 
-
 void Talk::speakSegment(
-		const char *segmentStart,
-		int length,
-		Person *person,
-		int command,
-		const char *voiceFilePrefix,
-		int index)
-{
+  const char *segmentStart,
+  int length,
+  Person *person,
+  int command,
+  const char *voiceFilePrefix,
+  int index) {
 	int i;
 	char segment[MAX_STRING_SIZE];
 	memcpy(segment, segmentStart, length);
@@ -815,8 +822,8 @@ void Talk::speakSegment(
 
 	bool isJoe = (0 == person->actor->bobNum);
 
-	int16  bobNum  = person->actor->bobNum;
-	uint16 color   = person->actor->color;
+	int16 bobNum = person->actor->bobNum;
+	uint16 color = person->actor->color;
 	uint16 bankNum = person->actor->bankNum;
 
 	BobSlot *bob = _vm->graphics()->bob(bobNum);
@@ -879,7 +886,6 @@ void Talk::speakSegment(
 	Common::Rect focus(textX - 96, textY - height - 64, textX + 96, textY + height + 64);
 	_vm->display()->setFocusRect(focus);
 
-
 	//int SF = _vm->grid()->findScale(textX, textY);
 
 	const SpeechParameters *parameters = NULL;
@@ -898,8 +904,7 @@ void Talk::speakSegment(
 				parameters = findSpeechParameters("JOE-E", command, 0);
 			else
 				parameters = findSpeechParameters("JOE", command, _vm->logic()->joeFacing());
-		}
-		else
+		} else
 			parameters = findSpeechParameters(person->name, command, 0);
 
 		startFrame = 31 + bobNum;
@@ -985,7 +990,7 @@ void Talk::speakSegment(
 	}
 
 	// Moved here so that Text is cleared when a Torso command done!
-	_vm->display()->clearTexts(0,198);
+	_vm->display()->clearTexts(0, 198);
 
 	if (oracle) {
 		uint16 frameNum = _vm->graphics()->personFrames(bobNum);
@@ -998,17 +1003,14 @@ void Talk::speakSegment(
 	// Ensure that the correct buffer frame is selected
 
 	if (isJoe && !_talkHead) {
-		if (_vm->logic()->joeFacing() == DIR_FRONT ||
-				_vm->logic()->joeFacing() == DIR_BACK) {
+		if (_vm->logic()->joeFacing() == DIR_FRONT || _vm->logic()->joeFacing() == DIR_BACK) {
 			// Joe is facing either Front or Back!
 			//  - Don't FACE_JOE in room 69, because Joe is probably
 			//       holding the Dino Ray gun.
 			if (_vm->logic()->currentRoom() != 69)
 				_vm->logic()->joeFace();
 		} else {
-			if (command == SPEAK_DEFAULT ||
-					command == 6 ||
-					command == 7) {
+			if (command == SPEAK_DEFAULT || command == 6 || command == 7) {
 				_vm->logic()->joeFace();
 			} else if (command != 5) {
 				// 7/11/94, Ensure that correct mouth closed frame is used!
@@ -1028,16 +1030,14 @@ void Talk::speakSegment(
 }
 
 const Talk::SpeechParameters *Talk::findSpeechParameters(
-		const char *name,
-		int state,
-		int faceDirection) {
+  const char *name,
+  int state,
+  int faceDirection) {
 	const SpeechParameters *iterator = _speechParameters;
 	if (faceDirection == DIR_RIGHT)
 		faceDirection = DIR_LEFT;
 	while (iterator->name[0] != '*') {
-		if (0 == scumm_stricmp(iterator->name, name) &&
-				iterator->state == state &&
-				iterator->faceDirection == faceDirection)
+		if (0 == scumm_stricmp(iterator->name, name) && iterator->state == state && iterator->faceDirection == faceDirection)
 			break;
 		iterator++;
 	}
@@ -1121,7 +1121,7 @@ int Talk::splitOptionHebrew(const char *str, char optionText[5][MAX_STRING_SIZE]
 			len = 1;
 			width += spaceCharWidth;
 		} else {
-				if (len > 1) {
+			if (len > 1) {
 				if (width + _vm->display()->textWidth(p + 1, len) > maxTextLen) {
 					++optionLines;
 				}
@@ -1184,10 +1184,10 @@ int16 Talk::selectSentence() {
 	_vm->display()->textCurrentColor(_vm->display()->getInkColor(INK_TALK_NORMAL));
 
 	_vm->graphics()->setupArrows();
-	BobSlot *arrowBobUp   = _vm->graphics()->bob(Graphics::ARROW_BOB_UP);
-	arrowBobUp->active    = false;
+	BobSlot *arrowBobUp = _vm->graphics()->bob(Graphics::ARROW_BOB_UP);
+	arrowBobUp->active = false;
 	BobSlot *arrowBobDown = _vm->graphics()->bob(Graphics::ARROW_BOB_DOWN);
-	arrowBobDown->active  = false;
+	arrowBobDown->active = false;
 
 	bool rezone = true;
 
@@ -1199,7 +1199,7 @@ int16 Talk::selectSentence() {
 		_vm->grid()->clear(GS_PANEL);
 
 		if (_vm->resource()->getLanguage() != Common::EN_ANY) {
-			_vm->grid()->setZone(GS_PANEL, ARROW_ZONE_UP,   MAX_TEXT_WIDTH + 1, 0,  319, 24);
+			_vm->grid()->setZone(GS_PANEL, ARROW_ZONE_UP, MAX_TEXT_WIDTH + 1, 0, 319, 24);
 			_vm->grid()->setZone(GS_PANEL, ARROW_ZONE_DOWN, MAX_TEXT_WIDTH + 1, 25, 319, 49);
 		}
 
@@ -1217,21 +1217,21 @@ int16 Talk::selectSentence() {
 
 				if (yOffset < 5) {
 					_vm->grid()->setZone(
-							GS_PANEL,
-							i,
-							0,
-							yOffset * LINE_HEIGHT - PUSHUP,
-							(_vm->resource()->getLanguage() == Common::EN_ANY) ? 319 : MAX_TEXT_WIDTH,
-							(yOffset + optionLines) * LINE_HEIGHT - PUSHUP);
+					  GS_PANEL,
+					  i,
+					  0,
+					  yOffset * LINE_HEIGHT - PUSHUP,
+					  (_vm->resource()->getLanguage() == Common::EN_ANY) ? 319 : MAX_TEXT_WIDTH,
+					  (yOffset + optionLines) * LINE_HEIGHT - PUSHUP);
 				}
 
 				int j;
 				for (j = 0; j < optionLines; j++) {
 					if (yOffset < 5) {
 						_vm->display()->setText(
-								(j == 0) ? 0 : OPTION_TEXT_MARGIN,
-								150 - PUSHUP + yOffset * LINE_HEIGHT,
-								optionText[j]);
+						  (j == 0) ? 0 : OPTION_TEXT_MARGIN,
+						  150 - PUSHUP + yOffset * LINE_HEIGHT,
+						  optionText[j]);
 					}
 					yOffset++;
 				}
@@ -1245,8 +1245,8 @@ int16 Talk::selectSentence() {
 		// Up and down dialogue arrows
 
 		if (_vm->resource()->getLanguage() != Common::EN_ANY) {
-			arrowBobUp->active    = (startOption > 1);
-			arrowBobDown->active  = (yOffset > 4);
+			arrowBobUp->active = (startOption > 1);
+			arrowBobDown->active = (yOffset > 4);
 		}
 
 		_vm->input()->clearKeyVerb();
@@ -1287,7 +1287,7 @@ int16 Talk::selectSentence() {
 						int y;
 
 						debug(6, "Changed zone. oldZone = %i, zone = %i",
-								oldZone, zone);
+						      oldZone, zone);
 
 						if (zone > 0) {
 							const Box *b = _vm->grid()->zone(GS_PANEL, zone);
@@ -1303,7 +1303,6 @@ int16 Talk::selectSentence() {
 
 						oldZone = zone;
 					}
-
 				}
 
 				Verb v = _vm->input()->keyVerb();
@@ -1330,8 +1329,8 @@ int16 Talk::selectSentence() {
 
 	debug(6, "Selected sentence %i", selectedSentence);
 
-	arrowBobUp->active    = false;
-	arrowBobDown->active  = false;
+	arrowBobUp->active = false;
+	arrowBobDown->active = false;
 
 	if (selectedSentence > 0) {
 		_vm->display()->clearTexts(0, 198);
@@ -1350,20 +1349,20 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 	{ "JOE", 0, 4, 5, 38, 1, 0, "", 0 },
 
 	{ "JOE", 1, 1, 1, 45, -1, 0, "", 0 },
-	{ "JOE", 1, 3, 3, 28,  2, 3, "", 0 },
-	{ "JOE", 1, 4, 5, 38,  1, 0, "", 0 },
+	{ "JOE", 1, 3, 3, 28, 2, 3, "", 0 },
+	{ "JOE", 1, 4, 5, 38, 1, 0, "", 0 },
 
 	{ "JOE", 2, 1, 1, 46, -1, 0, "", 0 },
-	{ "JOE", 2, 3, 3, 28,  2, 3, "", 0 },
-	{ "JOE", 2, 4, 5, 38,  1, 0, "", 0 },
+	{ "JOE", 2, 3, 3, 28, 2, 3, "", 0 },
+	{ "JOE", 2, 4, 5, 38, 1, 0, "", 0 },
 
 	{ "JOE", 3, 1, 1, 47, -1, 0, "", 0 },
-	{ "JOE", 3, 3, 3, 28,  2, 3, "", 0 },
-	{ "JOE", 3, 4, 5, 38,  1, 0, "", 0 },
+	{ "JOE", 3, 3, 3, 28, 2, 3, "", 0 },
+	{ "JOE", 3, 4, 5, 38, 1, 0, "", 0 },
 
 	{ "JOE", 4, 1, 1, 50, -1, 0, "", 0 },
-	{ "JOE", 4, 3, 3, 28,  2, 3, "", 0 },
-	{ "JOE", 4, 4, 5, 38,  1, 0, "", 0 },
+	{ "JOE", 4, 3, 3, 28, 2, 3, "", 0 },
+	{ "JOE", 4, 4, 5, 38, 1, 0, "", 0 },
 
 	{ "JOE", 5, 1, 2, 0, 0, 0, "", 0 },
 	{ "JOE", 5, 3, 4, 0, 0, 0, "", 0 },
@@ -1390,8 +1389,8 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 	{ "JOE", 10, 4, 5, 44, 0, 0, "", 0 },
 
 	{ "JOE", 11, 1, 1, 53, -1, 0, "", 0 },
-	{ "JOE", 11, 3, 3, 28,  2, 3, "", 0 },
-	{ "JOE", 11, 4, 5, 38,  1, 0, "", 0 },
+	{ "JOE", 11, 3, 3, 28, 2, 3, "", 0 },
+	{ "JOE", 11, 4, 5, 38, 1, 0, "", 0 },
 
 	{ "JOE", 12, 1, 1, 10, 2, 3, "", 0 },
 	{ "JOE", 12, 3, 3, 28, 2, 0, "", 0 },
@@ -1406,32 +1405,32 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 	{ "JOE", 14, 4, 5, 38, 1, 0, "", 0 },
 
 	{ "JOE", 15, 1, 1, 58, -1, 0, "", 0 },
-	{ "JOE", 15, 3, 3, 28,  2, 3, "", 0 },
-	{ "JOE", 15, 4, 5, 38,  1, 0, "", 0 },
+	{ "JOE", 15, 3, 3, 28, 2, 3, "", 0 },
+	{ "JOE", 15, 4, 5, 38, 1, 0, "", 0 },
 
 	{ "JOE", 16, 1, 1, 59, -1, 0, "", 0 },
-	{ "JOE", 16, 3, 3, 28,  2, 3, "", 0 },
-	{ "JOE", 16, 4, 5, 38,  1, 0, "", 0 },
+	{ "JOE", 16, 3, 3, 28, 2, 3, "", 0 },
+	{ "JOE", 16, 4, 5, 38, 1, 0, "", 0 },
 
 	{ "JOE", 17, 1, 1, 56, -1, 0, "", 0 },
-	{ "JOE", 17, 3, 3, 28,  2, 3, "", 0 },
-	{ "JOE", 17, 4, 5, 38,  1, 0, "", 0 },
+	{ "JOE", 17, 3, 3, 28, 2, 3, "", 0 },
+	{ "JOE", 17, 4, 5, 38, 1, 0, "", 0 },
 
 	{ "JOE", 18, 1, 56, 16, 2, 3, "T056,057,057,057,056,056,000", 0 },
-	{ "JOE", 18, 3,  3, 28, 2, 3, "", 0 },
-	{ "JOE", 18, 4,  5, 38, 1, 0, "", 0 },
+	{ "JOE", 18, 3, 3, 28, 2, 3, "", 0 },
+	{ "JOE", 18, 4, 5, 38, 1, 0, "", 0 },
 
 	{ "JOE", 19, 1, 54, 16, 2, 3, "T054,055,057,056,000", 0 },
-	{ "JOE", 19, 3,  3, 28, 2, 3, "", 0 },
-	{ "JOE", 19, 4,  5, 38, 1, 0, "", 0 },
+	{ "JOE", 19, 3, 3, 28, 2, 3, "", 0 },
+	{ "JOE", 19, 4, 5, 38, 1, 0, "", 0 },
 
 	{ "JOE", 20, 1, 56, 16, 2, 3, "T056,057,055,054,001,000", 0 },
-	{ "JOE", 20, 3,  3, 28, 2, 3, "", 0 },
-	{ "JOE", 20, 4,  5, 38, 1, 0, "", 0 },
+	{ "JOE", 20, 3, 3, 28, 2, 3, "", 0 },
+	{ "JOE", 20, 4, 5, 38, 1, 0, "", 0 },
 
-	{ "JOE", 21, 1,  1, 60, -1, 0, "", 0 },
-	{ "JOE", 21, 3,  3, 28,  2, 3, "", 0 },
-	{ "JOE", 21, 4, 61, 38,  1, 0, "", 0 },
+	{ "JOE", 21, 1, 1, 60, -1, 0, "", 0 },
+	{ "JOE", 21, 3, 3, 28, 2, 3, "", 0 },
+	{ "JOE", 21, 4, 61, 38, 1, 0, "", 0 },
 
 	{ "JOE", 22, 1, 1, 16, 2, 3, "T063,060,000", 0 },
 	{ "JOE", 22, 3, 3, 28, 2, 3, "", 0 },
@@ -1442,68 +1441,68 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 	{ "JOE", 23, 4, 5, 38, 1, 0, "", 0 },
 
 	{ "JOE", 24, 1, 1, 47, -2, 0, "", 0 },
-	{ "JOE", 24, 3, 3, 28,  2, 3, "", 0 },
-	{ "JOE", 24, 4, 5, 38,  1, 0, "", 0 },
+	{ "JOE", 24, 3, 3, 28, 2, 3, "", 0 },
+	{ "JOE", 24, 4, 5, 38, 1, 0, "", 0 },
 
-	{ "RICO", 0, 0, 1, 7,  1, 3, "", 7 },
+	{ "RICO", 0, 0, 1, 7, 1, 3, "", 7 },
 	{ "RICO", 1, 0, 1, 5, -1, 0, "", 7 },
-	{ "RICO", 2, 0, 1, 9,  0, 3, "", 7 },
+	{ "RICO", 2, 0, 1, 9, 0, 3, "", 7 },
 	{ "RICO", 3, 0, 1, 4, -1, 0, "", 7 },
 
 	{ "EDDY", 0, 0, 14, 18, 1, 3, "", 18 },
-	{ "EDDY", 1, 0, 14,  0, 0, 0, "T016,017,017,016,016,017,017,016,016,017,017,000", 18 },
+	{ "EDDY", 1, 0, 14, 0, 0, 0, "T016,017,017,016,016,017,017,016,016,017,017,000", 18 },
 
 	{ "MIKE", 0, 0, 1, 2, 2, 3, "", 2 },
 
 	{ "LOLA", 0, 0, 30, 33, 2, 3, "", 33 },
-	{ "LOLA", 1, 0,  9, 10, 2, 3, "", 33 },
+	{ "LOLA", 1, 0, 9, 10, 2, 3, "", 33 },
 	{ "LOLA", 2, 0, 30, 33, 2, 3, "", 33 },
 	{ "LOLA", 3, 0, 32, 33, 2, 3, "", 33 },
-	{ "LOLA", 4, 0,  8,  0, 0, 0, "", 33 },
-	{ "LOLA", 5, 0, 31,  0, 0, 0, "", 0 },
-	{ "LOLA", 6, 0, 31,  0, 0, 0, "047,048,049,050,000", 33 },
+	{ "LOLA", 4, 0, 8, 0, 0, 0, "", 33 },
+	{ "LOLA", 5, 0, 31, 0, 0, 0, "", 0 },
+	{ "LOLA", 6, 0, 31, 0, 0, 0, "047,048,049,050,000", 33 },
 
-	{ "LOLA_SHOWER", 0, 0,  7, 10, 2, 3, "", 10 },
-	{ "LOLA_SHOWER", 1, 0,  9, 10, 2, 3, "", 10 },
+	{ "LOLA_SHOWER", 0, 0, 7, 10, 2, 3, "", 10 },
+	{ "LOLA_SHOWER", 1, 0, 9, 10, 2, 3, "", 10 },
 	{ "LOLA_SHOWER", 2, 0, 30, 33, 2, 3, "", 10 },
 	{ "LOLA_SHOWER", 3, 0, 32, 33, 2, 3, "", 10 },
-	{ "LOLA_SHOWER", 4, 0,  8,  0, 0, 0, "", 0 },
-	{ "LOLA_SHOWER", 5, 0, 61,  0, 0, 0, "", 0 },
+	{ "LOLA_SHOWER", 4, 0, 8, 0, 0, 0, "", 0 },
+	{ "LOLA_SHOWER", 5, 0, 61, 0, 0, 0, "", 0 },
 	{ "LOLA_SHOWER", 6, 0, 64, 10, 2, 3, "", 0 },
-	{ "LOLA_SHOWER", 7, 0, 31,  0, 0, 0, "062,063,064,000", 0 },
+	{ "LOLA_SHOWER", 7, 0, 31, 0, 0, 0, "062,063,064,000", 0 },
 
 	{ "SECRETARY", 0, 0, 1, 12, 2, 3, "", 12 },
 	{ "SECRETARY", 1, 0, 1, 12, 2, 0, "", 12 },
 	{ "SECRETARY", 2, 0, 1, 12, 2, 0, "", 12 },
 
-	{ "SPARKY",  0, 0, 21, 23, 2, 3, "", 23 },
-	{ "SPARKY",  1, 0, 21, 22, 0, 0, "", 0 },
-	{ "SPARKY",  2, 0, 21, 22, 0, 0, "021,042,043,000", 0 },
-	{ "SPARKY",  3, 0, 21, 22, 0, 0, "043,042,021,000", 0 },
-	{ "SPARKY",  4, 0, 43, 43, 1, 0, "", 0 },
+	{ "SPARKY", 0, 0, 21, 23, 2, 3, "", 23 },
+	{ "SPARKY", 1, 0, 21, 22, 0, 0, "", 0 },
+	{ "SPARKY", 2, 0, 21, 22, 0, 0, "021,042,043,000", 0 },
+	{ "SPARKY", 3, 0, 21, 22, 0, 0, "043,042,021,000", 0 },
+	{ "SPARKY", 4, 0, 43, 43, 1, 0, "", 0 },
 	{ "SPARKY", 14, 0, 21, 29, 5, 0, "", 29 },
 
-	{ "SPARKY-F",  0, 0, 45, 23, 5, 0, "", 23 },
-	{ "SPARKY-F",  1, 0, 45, 47, 0, 0, "", 0 },
-	{ "SPARKY-F",  2, 0, 45, 23, 5, 0, "045,046,046,045,000", 23 },
+	{ "SPARKY-F", 0, 0, 45, 23, 5, 0, "", 23 },
+	{ "SPARKY-F", 1, 0, 45, 47, 0, 0, "", 0 },
+	{ "SPARKY-F", 2, 0, 45, 23, 5, 0, "045,046,046,045,000", 23 },
 	{ "SPARKY-F", 14, 0, 45, 29, 5, 0, "", 29 },
 
-	{ "FAYE", 0, 0, 19, 35,  2, 3, "", 35 },
-	{ "FAYE", 1, 0, 19, 41,  2, 3, "", 35 },
+	{ "FAYE", 0, 0, 19, 35, 2, 3, "", 35 },
+	{ "FAYE", 1, 0, 19, 41, 2, 3, "", 35 },
 	{ "FAYE", 2, 0, 19, 28, -1, 0, "", 35 },
-	{ "FAYE", 3, 0, 19, 20,  0, 0, "", 0 },
+	{ "FAYE", 3, 0, 19, 20, 0, 0, "", 0 },
 	{ "FAYE", 4, 0, 19, 27, -1, 0, "", 35 },
 	{ "FAYE", 5, 0, 19, 29, -1, 0, "", 35 },
-	{ "FAYE", 6, 0, 59, 35,  2, 3, "", 35 },
+	{ "FAYE", 6, 0, 59, 35, 2, 3, "", 35 },
 	{ "FAYE", 7, 0, 19, 30, -1, 0, "", 35 },
 	{ "FAYE", 8, 0, 19, 31, -1, 0, "", 35 },
 
-	{ "BOB", 0, 0, 27, 34,  2, 3, "", 34 },
+	{ "BOB", 0, 0, 27, 34, 2, 3, "", 34 },
 	{ "BOB", 1, 0, 27, 28, -1, 0, "", 34 },
-	{ "BOB", 2, 0, 30,  0,  0, 0, "", 0 },
-	{ "BOB", 3, 0, 31,  0,  0, 0, "", 0 },
+	{ "BOB", 2, 0, 30, 0, 0, 0, "", 0 },
+	{ "BOB", 3, 0, 31, 0, 0, 0, "", 0 },
 	{ "BOB", 4, 0, 27, 61, -1, 0, "", 34 },
-	{ "BOB", 5, 0, 27, 42,  1, 0, "", 42 },
+	{ "BOB", 5, 0, 27, 42, 1, 0, "", 42 },
 
 	{ "PYGMY", 0, 0, 20, 21, 2, 6, "", 0 },
 	{ "PYGMY", 1, 0, 20, 21, 2, 6, "020,068,068,068,068,068,068,068,068,020,000", 0 },
@@ -1513,26 +1512,26 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 	{ "PYGMY", 5, 0, 20, 21, 2, 6, "T023,022,021,022,023,024,025,026,027,026,025,024,023,000", 0 },
 	{ "PYGMY", 6, 0, 20, 21, 2, 6, "T034,034,034,035,000", 0 },
 
-	{ "WITCH", 0, 0, 39, 40,  2, 6, "", 40 },
-	{ "WITCH", 1, 0, 39, 40,  2, 6, "073,074,000", 40 },
-	{ "WITCH", 2, 0, 39, 40,  2, 6, "074,073,000", 40 },
-	{ "WITCH", 3, 0, 39, 40,  2, 6, "T047,048,049,050,051,000", 40 },
-	{ "WITCH", 4, 0, 39, 40,  2, 6, "T052,053,054,055,056,057,058,057,056,056,056,055,054,053,052,000", 40 },
-	{ "WITCH", 5, 0, 39, 40,  2, 6, "069,070,071,072,073,074,000", 40 },
-	{ "WITCH", 6, 0, 39, 40,  2, 6, "074,073,072,071,070,069,070,000", 40 },
+	{ "WITCH", 0, 0, 39, 40, 2, 6, "", 40 },
+	{ "WITCH", 1, 0, 39, 40, 2, 6, "073,074,000", 40 },
+	{ "WITCH", 2, 0, 39, 40, 2, 6, "074,073,000", 40 },
+	{ "WITCH", 3, 0, 39, 40, 2, 6, "T047,048,049,050,051,000", 40 },
+	{ "WITCH", 4, 0, 39, 40, 2, 6, "T052,053,054,055,056,057,058,057,056,056,056,055,054,053,052,000", 40 },
+	{ "WITCH", 5, 0, 39, 40, 2, 6, "069,070,071,072,073,074,000", 40 },
+	{ "WITCH", 6, 0, 39, 40, 2, 6, "074,073,072,071,070,069,070,000", 40 },
 	{ "WITCH", 7, 0, 39, 51, -1, 0, "", 40 },
-	{ "WITCH", 8, 0, 39, 40,  2, 6, "T051,050,049,048,047,000", 40 },
+	{ "WITCH", 8, 0, 39, 40, 2, 6, "T051,050,049,048,047,000", 40 },
 
-	{ "CHIEF", 0, 0, 1,  7,  1, 7, "", 3 },
-	{ "CHIEF", 1, 0, 1,  2,  2, 6, "062,063,064,065,066,000", 0 },
-	{ "CHIEF", 2, 0, 1,  2,  2, 6, "066,065,064,063,062,000", 0 },
+	{ "CHIEF", 0, 0, 1, 7, 1, 7, "", 3 },
+	{ "CHIEF", 1, 0, 1, 2, 2, 6, "062,063,064,065,066,000", 0 },
+	{ "CHIEF", 2, 0, 1, 2, 2, 6, "066,065,064,063,062,000", 0 },
 	{ "CHIEF", 3, 0, 1, 17, -1, 0, "", 3 },
 	{ "CHIEF", 4, 0, 1, 18, -1, 0, "", 3 },
 	{ "CHIEF", 5, 0, 1, 19, -1, 0, "", 3 },
 
-	{ "NAOMI", 0, 0, 1,  2,  2, 3, "", 2 },
-	{ "NAOMI", 1, 0, 1,  2,  2, 6, "048,049,050,051,052,053,054,055,000", 0 },
-	{ "NAOMI", 2, 0, 1,  2,  2, 6, "055,054,053,052,051,050,049,048,000", 0 },
+	{ "NAOMI", 0, 0, 1, 2, 2, 3, "", 2 },
+	{ "NAOMI", 1, 0, 1, 2, 2, 6, "048,049,050,051,052,053,054,055,000", 0 },
+	{ "NAOMI", 2, 0, 1, 2, 2, 6, "055,054,053,052,051,050,049,048,000", 0 },
 	{ "NAOMI", 3, 0, 1, 13, -1, 0, "", 2 },
 	{ "NAOMI", 4, 0, 1, 14, -1, 0, "", 2 },
 	{ "NAOMI", 5, 0, 1, 10, -1, 0, "", 2 },
@@ -1542,8 +1541,8 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 	{ "WEDGEWOOD", 0, 0, 8, 1, 2, 0, "", 8 },
 	{ "WEDGEWOOD", 1, 0, 1, 1, 3, 0, "", 1 },
 
-	{ "BUD", 0, 0, 1,  2,  3, 2, "", 2 },
-	{ "BUD", 1, 0, 1,  2,  4, 2, "T017,018,000", 2 },
+	{ "BUD", 0, 0, 1, 2, 3, 2, "", 2 },
+	{ "BUD", 1, 0, 1, 2, 4, 2, "T017,018,000", 2 },
 	{ "BUD", 2, 0, 1, 21, -1, 0, "", 2 },
 	{ "BUD", 3, 0, 1, 14, -1, 0, "", 2 },
 	{ "BUD", 4, 0, 1, 15, -1, 0, "", 2 },
@@ -1557,7 +1556,7 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 	{ "LOU", 1, 0, 1, 2, 4, 2, "013,014,015,016,017,018,000", 2 },
 	{ "LOU", 2, 0, 1, 2, 4, 2, "018,017,016,015,014,013,000", 2 },
 
-	{ "JIMMY", 0, 0, 16, 17,  2, 3, "", 17 },
+	{ "JIMMY", 0, 0, 16, 17, 2, 3, "", 17 },
 	{ "JIMMY", 1, 0, 16, 25, -1, 0, "", 17 },
 	{ "JIMMY", 2, 0, 16, 26, -1, 0, "", 17 },
 	{ "JIMMY", 3, 0, 16, 27, -1, 0, "", 17 },
@@ -1581,21 +1580,21 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 	{ "APE", 4, 0, 1, 6, 7, 0, "001,003,005,004,005,004,001,000", 6 },
 
 	{ "APE1", 0, 0, 15, 16, 7, 0, "", 16 },
-	{ "APE2", 0, 0, 14,  6, 7, 0, "", 6 },
+	{ "APE2", 0, 0, 14, 6, 7, 0, "", 6 },
 
 	{ "SHOWERAM", 0, 0, 1, 2, 3, 0, "", 2 },
 	{ "SHOWERAM", 1, 0, 1, 2, 3, 0, "026,027,028,029,001,000", 2 },
 	{ "SHOWERAM", 2, 0, 1, 2, 3, 0, "001,029,028,027,026,000", 2 },
 
-	{ "PRINCESS1", 0, 0, 19, 23,  2, 3, "", 23 },
+	{ "PRINCESS1", 0, 0, 19, 23, 2, 3, "", 23 },
 	{ "PRINCESS1", 1, 0, 19, 41, -1, 0, "", 23 },
 	{ "PRINCESS1", 2, 0, 19, 42, -1, 0, "", 23 },
 	{ "PRINCESS1", 3, 0, 19, 45, -1, 0, "", 23 },
 	{ "PRINCESS1", 4, 0, 19, 40, -1, 0, "", 23 },
-	{ "PRINCESS1", 5, 0, 19, 45,  2, 3, "T40,043,044,045,000", 45 },
+	{ "PRINCESS1", 5, 0, 19, 45, 2, 3, "T40,043,044,045,000", 45 },
 	{ "PRINCESS1", 6, 0, 19, 45, -1, 0, "T041,038,000", 38 },
-	{ "PRINCESS1", 7, 0, 22,  0,  0, 0, "", 0 },
-	{ "PRINCESS1", 8, 0, 19, 45,  2, 3, "T045,044,043,040,039,000", 39 },
+	{ "PRINCESS1", 7, 0, 22, 0, 0, 0, "", 0 },
+	{ "PRINCESS1", 8, 0, 19, 45, 2, 3, "T045,044,043,040,039,000", 39 },
 
 	{ "PRINCESS2", 0, 0, 46, 23, 2, 3, "", 23 },
 	{ "PRINCESS2", 1, 0, 46, 29, 2, 3, "", 29 },
@@ -1614,27 +1613,27 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 
 	{ "CHEF", 0, 0, 5, 6, 2, 3, "", 6 },
 
-	{ "HENRY",  0, 0,  7,  9,  2, 3, "", 9 },
-	{ "HENRY",  1, 0,  7, 21, -1, 0, "", 9 },
-	{ "HENRY",  2, 0,  7, 19, -1, 0, "", 9 },
-	{ "HENRY",  3, 0,  7, 20, -1, 0, "", 9 },
-	{ "HENRY",  4, 0,  8,  9,  2, 3, "", 9 },
-	{ "HENRY",  5, 0, 23,  9, -1, 0, "", 9 },
-	{ "HENRY",  6, 0,  7,  9,  2, 3, "T019,015,017,017,017,017,017,017,017,015,009,000", 9 },
-	{ "HENRY",  7, 0,  7,  9,  2, 3, "T018,010,000", 10 },
-	{ "HENRY",  8, 0,  7,  9,  2, 3, "T018,016,000", 16 },
-	{ "HENRY",  9, 0,  7,  9,  2, 3, "T018,011,000", 11 },
-	{ "HENRY", 10, 0, 29, 33,  1, 1, "", 33 },
-	{ "HENRY", 11, 0,  7, 30,  2, 0, "", 9 },
-	{ "HENRY", 12, 0,  7,  9,  2, 3, "025,026,000", 26 },
-	{ "HENRY", 13, 0,  7,  9,  2, 3, "027,028,027,028,000", 28 },
-	{ "HENRY", 14, 0,  7,  9,  2, 3, "026,025,007,000", 9 },
+	{ "HENRY", 0, 0, 7, 9, 2, 3, "", 9 },
+	{ "HENRY", 1, 0, 7, 21, -1, 0, "", 9 },
+	{ "HENRY", 2, 0, 7, 19, -1, 0, "", 9 },
+	{ "HENRY", 3, 0, 7, 20, -1, 0, "", 9 },
+	{ "HENRY", 4, 0, 8, 9, 2, 3, "", 9 },
+	{ "HENRY", 5, 0, 23, 9, -1, 0, "", 9 },
+	{ "HENRY", 6, 0, 7, 9, 2, 3, "T019,015,017,017,017,017,017,017,017,015,009,000", 9 },
+	{ "HENRY", 7, 0, 7, 9, 2, 3, "T018,010,000", 10 },
+	{ "HENRY", 8, 0, 7, 9, 2, 3, "T018,016,000", 16 },
+	{ "HENRY", 9, 0, 7, 9, 2, 3, "T018,011,000", 11 },
+	{ "HENRY", 10, 0, 29, 33, 1, 1, "", 33 },
+	{ "HENRY", 11, 0, 7, 30, 2, 0, "", 9 },
+	{ "HENRY", 12, 0, 7, 9, 2, 3, "025,026,000", 26 },
+	{ "HENRY", 13, 0, 7, 9, 2, 3, "027,028,027,028,000", 28 },
+	{ "HENRY", 14, 0, 7, 9, 2, 3, "026,025,007,000", 9 },
 
-	{ "JOHAN", 0, 0, 1, 15,  2, 3, "", 15 },
-	{ "JOHAN", 1, 0, 1,  0,  0, 0, "T006,007,008,000", 15 },
-	{ "JOHAN", 2, 0, 1, 15,  2, 3, "T002,003,004,005,004,005,004,005,004,005,004,005,004,003,002,000", 15 },
-	{ "JOHAN", 3, 0, 1,  8, -1, 0, "", 15 },
-	{ "JOHAN", 4, 0, 1,  0,  0, 0, "T008,007,006,001,000", 15 },
+	{ "JOHAN", 0, 0, 1, 15, 2, 3, "", 15 },
+	{ "JOHAN", 1, 0, 1, 0, 0, 0, "T006,007,008,000", 15 },
+	{ "JOHAN", 2, 0, 1, 15, 2, 3, "T002,003,004,005,004,005,004,005,004,005,004,005,004,003,002,000", 15 },
+	{ "JOHAN", 3, 0, 1, 8, -1, 0, "", 15 },
+	{ "JOHAN", 4, 0, 1, 0, 0, 0, "T008,007,006,001,000", 15 },
 
 	{ "KLUNK", 0, 0, 1, 2, 2, 3, "", 2 },
 	{ "KLUNK", 1, 0, 1, 2, 2, 3, "019,020,021,022,001,000", 2 },
@@ -1659,38 +1658,38 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 
 	{ "ORACLE", 0, 0, 1, 5, 3, 0, "", 0 },
 
-	{ "ZOMBIE", 0, 0, 1,  5,  2, 3, "", 5 },
+	{ "ZOMBIE", 0, 0, 1, 5, 2, 3, "", 5 },
 	{ "ZOMBIE", 1, 0, 1, 12, -1, 0, "", 5 },
 	{ "ZOMBIE", 2, 0, 1, 13, -1, 0, "", 5 },
-	{ "ZOMBIE", 3, 0, 1,  1,  5, 5, "", 5 },
+	{ "ZOMBIE", 3, 0, 1, 1, 5, 5, "", 5 },
 
 	{ "ZOMBIE2", 0, 0, 14, 14, 0, 0, "", 0 },
 	{ "ZOMBIE3", 0, 0, 18, 18, 0, 0, "", 0 },
 
-	{ "ANDERSON", 0, 0, 7,  8,  2, 3, "", 8 },
-	{ "ANDERSON", 1, 0, 7,  8,  1, 0, "", 8 },
+	{ "ANDERSON", 0, 0, 7, 8, 2, 3, "", 8 },
+	{ "ANDERSON", 1, 0, 7, 8, 1, 0, "", 8 },
 	{ "ANDERSON", 2, 0, 7, 16, -1, 0, "", 8 },
 	{ "ANDERSON", 3, 0, 7, 18, -1, 0, "", 8 },
 	{ "ANDERSON", 4, 0, 7, 19, -1, 0, "", 8 },
 	{ "ANDERSON", 5, 0, 7, 20, -1, 0, "", 8 },
-	{ "ANDERSON", 6, 0, 7, 21,  1, 0, "", 8 },
+	{ "ANDERSON", 6, 0, 7, 21, 1, 0, "", 8 },
 
 	{ "COMPY", 0, 0, 12, 12, -1, 0, "", 0 },
 	{ "COMPY", 1, 0, 10, 10, 10, 0, "010,011,012,012,013,014,014,000", 0 },
 	{ "COMPY", 2, 0, 10, 10, 10, 0, "014,013,012,000", 0 },
 
 	{ "DEINO", 0, 0, 13, 13, -1, 0, "", 0 },
-	{ "DEINO", 1, 0,  9,  9,  9, 0, "009,010,000", 0 },
+	{ "DEINO", 1, 0, 9, 9, 9, 0, "009,010,000", 0 },
 
 	{ "TMPD", 0, 0, 19, 22, 2, 3, "", 22 },
 
-	{ "IAN", 0, 0, 7,  9,  2, 3, "", 9 },
-	{ "IAN", 1, 0, 8, 25,  3, 0, "", 25 },
+	{ "IAN", 0, 0, 7, 9, 2, 3, "", 9 },
+	{ "IAN", 1, 0, 8, 25, 3, 0, "", 25 },
 	{ "IAN", 2, 0, 7, 21, -1, 0, "", 9 },
-	{ "IAN", 3, 0, 7, 22,  1, 0, "", 9 },
+	{ "IAN", 3, 0, 7, 22, 1, 0, "", 9 },
 	{ "IAN", 4, 0, 7, 22, -1, 0, "", 9 },
 	{ "IAN", 5, 0, 7, 24, -1, 0, "", 9 },
-	{ "IAN", 6, 0, 7,  9,  2, 3, "034,034,034,035,035,036,036,035,035,036,035,036,035,000", 9 },
+	{ "IAN", 6, 0, 7, 9, 2, 3, "034,034,034,035,035,036,036,035,035,036,035,036,035,000", 9 },
 	{ "IAN", 7, 0, 7, 31, -1, 0, "", 9 },
 
 	{ "FAYE-H", 0, 0, 1, 1, 4, 1, "", 1 },
@@ -1724,10 +1723,10 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 	{ "ANDSON-E", 0, 0, 1, 3, 4, 1, "", 1 },
 	{ "ANDSON-E", 1, 0, 1, 3, 4, 1, "002,001,000", 1 },
 
-	{ "JOE-H", 0, 0, 1,  1, 4, 4, "", 1 },
-	{ "JOE-H", 1, 0, 1,  1, 2, 3, "012,013,014,000", 14 },
-	{ "JOE-H", 2, 0, 1,  1, 2, 3, "010,011,000", 11 },
-	{ "JOE-H", 3, 0, 1,  1, 2, 3, "014,013,012,001,000", 1 },
+	{ "JOE-H", 0, 0, 1, 1, 4, 4, "", 1 },
+	{ "JOE-H", 1, 0, 1, 1, 2, 3, "012,013,014,000", 14 },
+	{ "JOE-H", 2, 0, 1, 1, 2, 3, "010,011,000", 11 },
+	{ "JOE-H", 3, 0, 1, 1, 2, 3, "014,013,012,001,000", 1 },
 	{ "JOE-H", 4, 0, 1, 13, 1, 0, "", 13 },
 
 	{ "RITA-H", 0, 0, 7, 1, 2, 3, "", 1 },
@@ -1758,11 +1757,11 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 	{ "X3_RITA", 4, 0, 1, 1, 4, 1, "E015,000", 1 },
 	{ "X3_RITA", 5, 0, 1, 1, 4, 1, "E014,000", 1 },
 
-	{ "X4_JOE", 0, 0, 1,  1, 3, 4, "", 1 },
+	{ "X4_JOE", 0, 0, 1, 1, 3, 4, "", 1 },
 	{ "X4_JOE", 1, 0, 1, 13, 2, 3, "", 13 },
-	{ "X4_JOE", 2, 0, 1,  1, 3, 4, "009, 010, 011, 012, 013, 000", 13 },
-	{ "X4_JOE", 3, 0, 1,  1, 3, 4, "012, 011, 010, 009, 000", 9 },
-	{ "X4_JOE", 4, 0, 1,  1, 3, 4, "001, 019, 000", 19 },
+	{ "X4_JOE", 2, 0, 1, 1, 3, 4, "009, 010, 011, 012, 013, 000", 13 },
+	{ "X4_JOE", 3, 0, 1, 1, 3, 4, "012, 011, 010, 009, 000", 9 },
+	{ "X4_JOE", 4, 0, 1, 1, 3, 4, "001, 019, 000", 19 },
 
 	{ "X4_RITA", 0, 0, 1, 1, 0, 1, "", 1 },
 	{ "X4_RITA", 1, 0, 1, 7, 0, 1, "", 7 },
@@ -1789,17 +1788,17 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 	{ "X11_RITA", 0, 0, 1, 2, 0, 1, "", 2 },
 	{ "X11_RITA", 1, 0, 1, 2, 1, 0, "003,004,000", 4 },
 
-	{ "JOHN", 0, 0, 1,  2,  2, 3, "", 1 },
+	{ "JOHN", 0, 0, 1, 2, 2, 3, "", 1 },
 	{ "JOHN", 1, 0, 1, 15, -1, 0, "", 1 },
 	{ "JOHN", 2, 0, 1, 16, -1, 0, "", 1 },
 	{ "JOHN", 3, 0, 1, 17, -1, 0, "", 1 },
 
-	{ "STEVE", 0, 0, 8,  2,  2, 3, "", 2 },
+	{ "STEVE", 0, 0, 8, 2, 2, 3, "", 2 },
 	{ "STEVE", 1, 0, 8, 16, -1, 0, "", 2 },
 	{ "STEVE", 2, 0, 9, 18, -1, 0, "T016,017,017,016,008,000", 2 },
 	{ "STEVE", 3, 0, 8, 18, -1, 0, "", 2 },
 
-	{ "TONY", 0, 0, 1,  2,  2, 3, "", 1 },
+	{ "TONY", 0, 0, 1, 2, 2, 3, "", 1 },
 	{ "TONY", 1, 0, 1, 12, -1, 0, "", 1 },
 
 	{ "*", 0, 0, 0, 0, 0, 0, "", 0 }

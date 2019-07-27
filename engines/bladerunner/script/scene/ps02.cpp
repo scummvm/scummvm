@@ -32,7 +32,7 @@ void SceneScriptPS02::InitializeScene() {
 
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
 	Ambient_Sounds_Add_Looping_Sound(kSfxESPLOOP1, 20, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxELEAMB3,  20, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxELEAMB3, 20, 1, 1);
 	Ambient_Sounds_Add_Sound(kSfxCROSLOCK, 3, 20, 12, 16, 0, 0, -101, -101, 0, 0);
 
 	Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
@@ -60,8 +60,7 @@ bool SceneScriptPS02::ClickedOn3DObject(const char *objectName, bool a2) {
 	// McCoy never clicks on the door
 	// This stuff is never called
 	if (Object_Query_Click("E.DOOR01", objectName)
-	 || Object_Query_Click("E.D00R02", objectName)
-	) {
+	    || Object_Query_Click("E.D00R02", objectName)) {
 		if (Game_Flag_Query(kFlagPS02toPS01)) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, true, false, false)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
@@ -139,19 +138,19 @@ void SceneScriptPS02::PlayerWalkedIn() {
 	Player_Gains_Control();
 	activateElevator();
 	Player_Loses_Control();
-	if (Game_Flag_Query(kFlagPS02toPS01) ) {
+	if (Game_Flag_Query(kFlagPS02toPS01)) {
 		Set_Enter(kSetPS01, kScenePS01);
 		Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 3, true);
-	} else if (Game_Flag_Query(kFlagPS02toPS05) ) {
+	} else if (Game_Flag_Query(kFlagPS02toPS05)) {
 		Set_Enter(kSetPS05, kScenePS05);
 		Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 3, true);
-	} else if (Game_Flag_Query(kFlagPS02toPS07) ) {
+	} else if (Game_Flag_Query(kFlagPS02toPS07)) {
 		Set_Enter(kSetPS07, kScenePS07);
 		Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 3, true);
-	} else if (Game_Flag_Query(kFlagPS02toPS03) ) {
+	} else if (Game_Flag_Query(kFlagPS02toPS03)) {
 		Set_Enter(kSetPS03, kScenePS03);
 		Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 3, true);
-	} else if (Game_Flag_Query(kFlagPS02toPS09) ) {
+	} else if (Game_Flag_Query(kFlagPS02toPS09)) {
 		Set_Enter(kSetPS09, kScenePS09);
 		Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 3, true);
 	}

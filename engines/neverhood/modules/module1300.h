@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE1300_H
 #define NEVERHOOD_MODULES_MODULE1300_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -35,6 +35,7 @@ class Module1300 : public Module {
 public:
 	Module1300(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module1300();
+
 protected:
 	int _sceneNum;
 	uint32 _musicFileHash;
@@ -45,6 +46,7 @@ protected:
 class Scene1302 : public Scene {
 public:
 	Scene1302(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	Sprite *_asVenusFlyTrap;
 	Sprite *_asBridge;
@@ -64,6 +66,7 @@ protected:
 class Scene1303 : public Scene {
 public:
 	Scene1303(NeverhoodEngine *vm, Module *parentModule);
+
 protected:
 	Sprite *_sprite1;
 	Sprite *_asBalloon;
@@ -73,6 +76,7 @@ protected:
 class Scene1304 : public Scene {
 public:
 	Scene1304(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	Sprite *_sprite1;
 	Sprite *_asKey;
@@ -83,6 +87,7 @@ protected:
 class Scene1305 : public Scene {
 public:
 	Scene1305(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -91,6 +96,7 @@ class Scene1306 : public Scene {
 public:
 	Scene1306(NeverhoodEngine *vm, Module *parentModule, int which);
 	~Scene1306();
+
 protected:
 	Sprite *_ssButton;
 	Sprite *_asTape;
@@ -105,6 +111,7 @@ protected:
 class Scene1307 : public Scene {
 public:
 	Scene1307(NeverhoodEngine *vm, Module *parentModule);
+
 protected:
 	NPointArray *_keyHolePoints;
 	NRect _keyHoleRects[16];
@@ -122,6 +129,7 @@ protected:
 class Scene1308 : public Scene {
 public:
 	Scene1308(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	Sprite *_asTape;
 	Sprite *_asJaggyDoor;
@@ -142,6 +150,7 @@ protected:
 class Scene1317 : public Scene {
 public:
 	Scene1317(NeverhoodEngine *vm, Module *parentModule);
+
 protected:
 	SmackerPlayer *_smackerPlayer;
 	bool _klaymenBlinks;

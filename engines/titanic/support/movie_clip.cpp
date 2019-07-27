@@ -25,11 +25,17 @@
 
 namespace Titanic {
 
-CMovieClip::CMovieClip(): ListItem(), _startFrame(0), _endFrame(0) {
+CMovieClip::CMovieClip()
+  : ListItem()
+  , _startFrame(0)
+  , _endFrame(0) {
 }
 
-CMovieClip::CMovieClip(const CString &name, int startFrame, int endFrame):
-	ListItem(), _name(name), _startFrame(startFrame), _endFrame(endFrame) {
+CMovieClip::CMovieClip(const CString &name, int startFrame, int endFrame)
+  : ListItem()
+  , _name(name)
+  , _startFrame(startFrame)
+  , _endFrame(endFrame) {
 }
 
 void CMovieClip::save(SimpleFile *file, int indent) {

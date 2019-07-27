@@ -31,7 +31,8 @@
 
 namespace DM {
 
-TextMan::TextMan(DMEngine *vm) : _vm(vm) {
+TextMan::TextMan(DMEngine *vm)
+  : _vm(vm) {
 	_messageAreaCursorColumn = 0;
 	_messageAreaCursorRow = 0;
 	for (uint16 i = 0; i < 4; ++i)
@@ -49,7 +50,7 @@ TextMan::~TextMan() {
 }
 
 void TextMan::printTextToBitmap(byte *destBitmap, uint16 destByteWidth, int16 destX, int16 destY,
-								Color textColor, Color bgColor, const char *text, uint16 destHeight) {
+                                Color textColor, Color bgColor, const char *text, uint16 destHeight) {
 	if ((destX -= 1) < 0) // fixes missalignment, to be checked
 		destX = 0;
 	if ((destY -= 4) < 0) // fixes missalignment, to be checked
@@ -80,7 +81,7 @@ void TextMan::printTextToBitmap(byte *destBitmap, uint16 destByteWidth, int16 de
 
 		Box box((nextX == destX) ? (nextX + 1) : nextX, nextX + kDMFontLetterWidth + 1, nextY, nextY + kDMFontLetterHeight - 1);
 		_vm->_displayMan->blitToBitmap(srcBitmap, destBitmap, box, (nextX == destX) ? (srcX + 1) : srcX, 0, 6 * 128 / 2, destByteWidth, kDMColorNoTransparency,
-									   kDMFontLetterHeight, destHeight);
+		                               kDMFontLetterHeight, destHeight);
 
 		nextX += kDMFontLetterWidth + 1;
 	}
@@ -95,7 +96,7 @@ void TextMan::printToViewport(int16 posX, int16 posY, Color textColor, const cha
 }
 
 void TextMan::printWithTrailingSpaces(byte *destBitmap, int16 destByteWidth, int16 destX, int16 destY, Color textColor,
-									  Color bgColor, const char *text, int16 requiredTextLength, int16 destHeight) {
+                                      Color bgColor, const char *text, int16 requiredTextLength, int16 destHeight) {
 	Common::String str = text;
 	for (int16 i = str.size(); i < requiredTextLength; ++i)
 		str += ' ';
@@ -153,7 +154,7 @@ void TextMan::createNewRow() {
 		_messageAreaCursorRow++;
 }
 
-void TextMan::printString(Color color, const char* string) {
+void TextMan::printString(Color color, const char *string) {
 	int16 stringLength = strlen(string);
 	if (isTextScrolling(&_textScroller, false))
 		printToLogicalScreen(_messageAreaCursorColumn * 6, (_messageAreaCursorRow * 7 - 1) + 177, color, kDMColorBlack, string);
@@ -165,7 +166,6 @@ void TextMan::printString(Color color, const char* string) {
 	}
 	_messageAreaCursorColumn += stringLength;
 	_messageAreaRowExpirationTime[_messageAreaCursorRow] = _vm->_gameTime + 200;
-
 }
 
 void TextMan::initialize() {
@@ -206,7 +206,7 @@ void TextMan::clearExpiredRows() {
 	}
 }
 
-void TextMan::printEndGameString(int16 x, int16 y, Color textColor, const char* text) {
+void TextMan::printEndGameString(int16 x, int16 y, Color textColor, const char *text) {
 	char modifiedString[50];
 
 	char *wrkStringPtr = modifiedString;
@@ -247,7 +247,7 @@ void TextMan::updateMessageArea() {
 			_isScrolling = false;
 		}
 		memcpy(_vm->_displayMan->_bitmapScreen + (200 - 7 * 4) * 320, _messageAreaCopy + linesToCopy * 320,
-				320 * (7 * 4 - linesToCopy));
+		       320 * (7 * 4 - linesToCopy));
 		memcpy(_vm->_displayMan->_bitmapScreen + (200 - linesToCopy) * 320, _bitmapMessageAreaNewRow, 320 * linesToCopy);
 	}
 }

@@ -23,10 +23,10 @@
 #ifndef TITANIC_STAR_CLOSEUP_H
 #define TITANIC_STAR_CLOSEUP_H
 
-#include "titanic/star_control/fvector.h"
-#include "titanic/star_control/fpose.h"
-#include "titanic/star_control/surface_area.h"
 #include "common/array.h"
+#include "titanic/star_control/fpose.h"
+#include "titanic/star_control/fvector.h"
+#include "titanic/star_control/surface_area.h"
 
 namespace Titanic {
 
@@ -41,7 +41,9 @@ class CStarCloseup {
 	struct Data1 {
 		int _index1;
 		int _index2;
-		Data1() : _index1(0), _index2(0) {}
+		Data1()
+		  : _index1(0)
+		  , _index2(0) {}
 	};
 
 	struct SubEntry {
@@ -65,14 +67,22 @@ class CStarCloseup {
 		double _field10;
 		double _field14;
 
-		Entry() : _field0(0), _pixel1(0), _pixel2(0), _pixel3(0), _field8(0),
-				_fieldC(0), _field10(0), _field14(0) {}
+		Entry()
+		  : _field0(0)
+		  , _pixel1(0)
+		  , _pixel2(0)
+		  , _pixel3(0)
+		  , _field8(0)
+		  , _fieldC(0)
+		  , _field10(0)
+		  , _field14(0) {}
 	};
 
 	struct GridEntry : public FVector {
 		FPoint _position;
 
-		GridEntry() : FVector() {}
+		GridEntry()
+		  : FVector() {}
 	};
 
 	/**
@@ -82,6 +92,7 @@ class CStarCloseup {
 	struct SineTable {
 	private:
 		Common::Array<float> _data;
+
 	public:
 		SineTable() {}
 
@@ -95,6 +106,7 @@ class CStarCloseup {
 		 */
 		double operator[](int idx) { return _data[idx]; }
 	};
+
 private:
 	bool _flag;
 	FPose _sub1, _sub2;
@@ -103,6 +115,7 @@ private:
 	int _multiplier;
 	SineTable _sineTable;
 	Common::Array<GridEntry> _grid;
+
 private:
 	/**
 	 * Sets up the data for an array entry
@@ -115,6 +128,7 @@ private:
 	 * @return	True if success
 	 */
 	bool setup2(int val1, int val2);
+
 public:
 	CStarCloseup();
 	virtual ~CStarCloseup() {}
@@ -125,7 +139,7 @@ public:
 	 * Draws the star globe
 	 */
 	virtual void draw(const FPose &pose, const FVector &vector, const FVector &vector2,
-		CSurfaceArea *surfaceArea, CStarCamera *camera);
+	                  CSurfaceArea *surfaceArea, CStarCamera *camera);
 
 	virtual void proc3(CErrorCode *errorCode);
 

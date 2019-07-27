@@ -22,10 +22,10 @@
 
 // Console module
 
-#include "saga/saga.h"
 #include "saga/actor.h"
 #include "saga/animation.h"
 #include "saga/music.h"
+#include "saga/saga.h"
 #include "saga/scene.h"
 #include "saga/script.h"
 #include "saga/sndres.h"
@@ -34,28 +34,29 @@
 
 namespace Saga {
 
-Console::Console(SagaEngine *vm) : GUI::Debugger() {
+Console::Console(SagaEngine *vm)
+  : GUI::Debugger() {
 	_vm = vm;
 
-	registerCmd("continue",			WRAP_METHOD(Console, cmdExit));
+	registerCmd("continue", WRAP_METHOD(Console, cmdExit));
 
 	// Actor commands
-	registerCmd("actor_walk_to",		WRAP_METHOD(Console, cmdActorWalkTo));
+	registerCmd("actor_walk_to", WRAP_METHOD(Console, cmdActorWalkTo));
 
 	// Animation commands
-	registerCmd("anim_info",			WRAP_METHOD(Console, cmdAnimInfo));
-	registerCmd("cutaway_info",		WRAP_METHOD(Console, cmdCutawayInfo));
-	registerCmd("play_cutaway",		WRAP_METHOD(Console, cmdPlayCutaway));
+	registerCmd("anim_info", WRAP_METHOD(Console, cmdAnimInfo));
+	registerCmd("cutaway_info", WRAP_METHOD(Console, cmdCutawayInfo));
+	registerCmd("play_cutaway", WRAP_METHOD(Console, cmdPlayCutaway));
 
 	// Sound commands
-	registerCmd("play_music",	WRAP_METHOD(Console, cmdPlayMusic));
-	registerCmd("play_sound",	WRAP_METHOD(Console, cmdPlaySound));
-	registerCmd("play_voice",	WRAP_METHOD(Console, cmdPlayVoice));
+	registerCmd("play_music", WRAP_METHOD(Console, cmdPlayMusic));
+	registerCmd("play_sound", WRAP_METHOD(Console, cmdPlaySound));
+	registerCmd("play_voice", WRAP_METHOD(Console, cmdPlayVoice));
 
 	// Game stuff
 
 #if 0
-	#define MAXPATH 512
+#	define MAXPATH 512
 
 	// Register "g_language" cfg cvar
 	strncpy(GameModule.game_language, "us", MAXPATH);
@@ -67,28 +68,28 @@ Console::Console(SagaEngine *vm) : GUI::Debugger() {
 #endif
 
 	// Scene commands
-	registerCmd("current_scene",		WRAP_METHOD(Console, cmdCurrentScene));
-	registerCmd("current_chapter",	WRAP_METHOD(Console, cmdCurrentChapter));
-	registerCmd("scene_change",		WRAP_METHOD(Console, cmdSceneChange));
-	registerCmd("chapter_change",		WRAP_METHOD(Console, cmdChapterChange));
+	registerCmd("current_scene", WRAP_METHOD(Console, cmdCurrentScene));
+	registerCmd("current_chapter", WRAP_METHOD(Console, cmdCurrentChapter));
+	registerCmd("scene_change", WRAP_METHOD(Console, cmdSceneChange));
+	registerCmd("chapter_change", WRAP_METHOD(Console, cmdChapterChange));
 
-	registerCmd("action_map_info",	WRAP_METHOD(Console, cmdActionMapInfo));
-	registerCmd("object_map_info",	WRAP_METHOD(Console, cmdObjectMapInfo));
+	registerCmd("action_map_info", WRAP_METHOD(Console, cmdActionMapInfo));
+	registerCmd("object_map_info", WRAP_METHOD(Console, cmdObjectMapInfo));
 
 	// Script commands
-	registerCmd("wake_up_threads",	WRAP_METHOD(Console, cmdWakeUpThreads));
+	registerCmd("wake_up_threads", WRAP_METHOD(Console, cmdWakeUpThreads));
 
 	// Panel commands
-	registerCmd("current_panel_mode",	WRAP_METHOD(Console, cmdCurrentPanelMode));
-	registerCmd("set_panel_mode",		WRAP_METHOD(Console, cmdSetPanelMode));
+	registerCmd("current_panel_mode", WRAP_METHOD(Console, cmdCurrentPanelMode));
+	registerCmd("set_panel_mode", WRAP_METHOD(Console, cmdSetPanelMode));
 
 	// Font commands
-	registerCmd("set_font_mapping",	WRAP_METHOD(Console, cmdSetFontMapping));
+	registerCmd("set_font_mapping", WRAP_METHOD(Console, cmdSetFontMapping));
 
 	// Global flags commands
-	registerCmd("global_flags_info",	WRAP_METHOD(Console, cmdGlobalFlagsInfo));
-	registerCmd("set_global_flag",	WRAP_METHOD(Console, cmdSetGlobalFlag));
-	registerCmd("clear_global_flag",	WRAP_METHOD(Console, cmdClearGlobalFlag));
+	registerCmd("global_flags_info", WRAP_METHOD(Console, cmdGlobalFlagsInfo));
+	registerCmd("set_global_flag", WRAP_METHOD(Console, cmdSetGlobalFlag));
+	registerCmd("clear_global_flag", WRAP_METHOD(Console, cmdClearGlobalFlag));
 }
 
 Console::~Console() {
@@ -165,7 +166,7 @@ bool Console::cmdPlayVoice(int argc, const char **argv) {
 
 bool Console::cmdCurrentScene(int argc, const char **argv) {
 	debugPrintf("Current Scene is: %i, scene resource id: %i\n",
-		_vm->_scene->currentSceneNumber(), _vm->_scene->currentSceneResourceId());
+	            _vm->_scene->currentSceneNumber(), _vm->_scene->currentSceneResourceId());
 	return true;
 }
 
@@ -276,7 +277,7 @@ bool Console::cmdGlobalFlagsInfo(int argc, const char **argv) {
 	int i = 0, k = 0, flagStatus = 0;
 
 	for (i = 0; i < 32; i += 8) {
-		for (k = i; k < i + 8; k ++) {
+		for (k = i; k < i + 8; k++) {
 			flagStatus = _vm->_globalFlags & (1 << k) ? 1 : 0;
 			_vm->_console->debugPrintf("%02d: %u |", k, flagStatus);
 		}

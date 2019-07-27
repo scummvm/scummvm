@@ -29,8 +29,9 @@
 namespace Networking {
 class LocalWebserver;
 
-class IndexPageHandler: public BaseHandler, public GUI::CommandSender {
+class IndexPageHandler : public BaseHandler, public GUI::CommandSender {
 	Common::String _code;
+
 public:
 	IndexPageHandler();
 	virtual ~IndexPageHandler();

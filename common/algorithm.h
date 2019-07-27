@@ -23,8 +23,8 @@
 #ifndef COMMON_ALGORITHM_H
 #define COMMON_ALGORITHM_H
 
-#include "common/scummsys.h"
 #include "common/func.h"
+#include "common/scummsys.h"
 #include "common/util.h"
 
 namespace Common {
@@ -34,7 +34,7 @@ namespace Common {
  * It requires the range [dst, dst + (last - first)) to be valid.
  * It also requires dst not to be in the range [first, last).
  */
-template<class In, class Out>
+template <class In, class Out>
 Out copy(In first, In last, Out dst) {
 	while (first != last)
 		*dst++ = *first++;
@@ -48,7 +48,7 @@ Out copy(In first, In last, Out dst) {
  *
  * Unlike copy copy_backward copies the data from the end to the beginning.
  */
-template<class In, class Out>
+template <class In, class Out>
 Out copy_backward(In first, In last, Out dst) {
 	while (first != last)
 		*--dst = *--last;
@@ -64,7 +64,7 @@ Out copy_backward(In first, In last, Out dst) {
  * a data element when operator() of the op parameter returns true for the
  * passed data element.
  */
-template<class In, class Out, class Op>
+template <class In, class Out, class Op>
 Out copy_if(In first, In last, Out dst, Op op) {
 	while (first != last) {
 		if (op(*first))
@@ -79,19 +79,19 @@ Out copy_if(In first, In last, Out dst, Op op) {
 // are going this way...
 // With this we assure the usage of memset for those, which should be
 // faster than a simple loop like for the generic 'fill'.
-template<class Value>
+template <class Value>
 signed char *fill(signed char *first, signed char *last, Value val) {
 	memset(first, (val & 0xFF), last - first);
 	return last;
 }
 
-template<class Value>
+template <class Value>
 unsigned char *fill(unsigned char *first, unsigned char *last, Value val) {
 	memset(first, (val & 0xFF), last - first);
 	return last;
 }
 
-template<class Value>
+template <class Value>
 char *fill(char *first, char *last, Value val) {
 	memset(first, (val & 0xFF), last - first);
 	return last;
@@ -100,7 +100,7 @@ char *fill(char *first, char *last, Value val) {
 /**
  * Sets all elements in the range [first, last) to val.
  */
-template<class In, class Value>
+template <class In, class Value>
 In fill(In first, In last, const Value &val) {
 	while (first != last)
 		*first++ = val;
@@ -111,7 +111,7 @@ In fill(In first, In last, const Value &val) {
  * Finds the first data value in the range [first, last) matching v.
  * For data comperance it uses operator == of the data elements.
  */
-template<class In, class T>
+template <class In, class T>
 In find(In first, In last, const T &v) {
 	while (first != last) {
 		if (*first == v)
@@ -125,7 +125,7 @@ In find(In first, In last, const T &v) {
  * Finds the first data value in the range [first, last) for which
  * the specified predicate p returns true.
  */
-template<class In, class Pred>
+template <class In, class Pred>
 In find_if(In first, In last, Pred p) {
 	while (first != last) {
 		if (p(*first))
@@ -139,19 +139,19 @@ In find_if(In first, In last, Pred p) {
  * Applies the function f on all elements of the range [first, last).
  * The processing order is from beginning to end.
  */
-template<class In, class Op>
+template <class In, class Op>
 Op for_each(In first, In last, Op f) {
 	while (first != last)
 		f(*first++);
 	return f;
 }
 
-template<typename T>
+template <typename T>
 unsigned int distance(T *first, T *last) {
 	return last - first;
 }
 
-template<typename T>
+template <typename T>
 unsigned int distance(T first, T last) {
 	unsigned int n = 0;
 	while (first != last) {
@@ -161,12 +161,12 @@ unsigned int distance(T first, T last) {
 	return n;
 }
 
-template<typename T>
+template <typename T>
 T *sortChoosePivot(T *first, T *last) {
 	return first + distance(first, last) / 2;
 }
 
-template<typename T>
+template <typename T>
 T sortChoosePivot(T first, T last) {
 	unsigned int n = distance(first, last);
 	n /= 2;
@@ -175,7 +175,7 @@ T sortChoosePivot(T first, T last) {
 	return first;
 }
 
-template<typename T, class StrictWeakOrdering>
+template <typename T, class StrictWeakOrdering>
 T sortPartition(T first, T last, T pivot, StrictWeakOrdering &comp) {
 	--last;
 	if (pivot != last)
@@ -214,7 +214,7 @@ T sortPartition(T first, T last, T pivot, StrictWeakOrdering &comp) {
  *
  * NOTE: Actually as the time of writing our implementation is unstable.
  */
-template<typename T, class StrictWeakOrdering>
+template <typename T, class StrictWeakOrdering>
 void sort(T first, T last, StrictWeakOrdering comp) {
 	if (first == last)
 		return;
@@ -228,12 +228,12 @@ void sort(T first, T last, StrictWeakOrdering comp) {
 /**
  * Simple sort function, modeled after std::sort.
  */
-template<typename T>
+template <typename T>
 void sort(T *first, T *last) {
 	sort(first, last, Less<T>());
 }
 
-template<class T>
+template <class T>
 void sort(T first, T last) {
 	sort(first, last, Less<typename T::ValueType>());
 }
@@ -241,14 +241,14 @@ void sort(T first, T last) {
 // MSVC is complaining about the minus operator being applied to an unsigned type
 // We disable this warning for the affected section of code
 #if defined(_MSC_VER)
-#pragma warning(push)
-#pragma warning(disable: 4146)
+#	pragma warning(push)
+#	pragma warning(disable : 4146)
 #endif
 
 /**
  * Euclid's algorithm to compute the greatest common divisor.
  */
-template<class T>
+template <class T>
 T gcd(T a, T b) {
 	// Note: We check for <= instead of < to avoid spurious compiler
 	// warnings if T is an unsigned type, i.e. warnings like "comparison
@@ -268,7 +268,7 @@ T gcd(T a, T b) {
 }
 
 #if defined(_MSC_VER)
-#pragma warning(pop)
+#	pragma warning(pop)
 #endif
 
 /**
@@ -283,13 +283,13 @@ T gcd(T a, T b) {
  *
  * @note Usage examples and unit tests may be found in "test/common/algorithm.h"
  */
-template<class It, class Dat>
+template <class It, class Dat>
 void replace(It begin, It end, const Dat &original, const Dat &replaced) {
 	for (; begin != end; ++begin) {
-        if (*begin == original) {
-            *begin = replaced;
-        }
-    }
+		if (*begin == original) {
+			*begin = replaced;
+		}
+	}
 }
 
 } // End of namespace Common

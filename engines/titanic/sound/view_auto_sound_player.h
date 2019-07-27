@@ -31,11 +31,15 @@ class CViewAutoSoundPlayer : public CAutoSoundPlayer {
 	DECLARE_MESSAGE_MAP;
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
+
 private:
 	bool _enabled;
+
 public:
 	CLASSDEF;
-	CViewAutoSoundPlayer() : CAutoSoundPlayer(), _enabled(false) {}
+	CViewAutoSoundPlayer()
+	  : CAutoSoundPlayer()
+	  , _enabled(false) {}
 
 	/**
 	 * Save the data for the class to file

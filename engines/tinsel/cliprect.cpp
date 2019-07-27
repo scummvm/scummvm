@@ -21,11 +21,11 @@
  * This file contains the clipping rectangle code.
  */
 
-#include "tinsel/cliprect.h"	// object clip rect defs
-#include "tinsel/graphics.h"	// normal object drawing
+#include "tinsel/cliprect.h" // object clip rect defs
+#include "tinsel/graphics.h" // normal object drawing
 #include "tinsel/object.h"
 #include "tinsel/palette.h"
-#include "tinsel/tinsel.h"		// for _vm
+#include "tinsel/tinsel.h" // for _vm
 
 namespace Tinsel {
 
@@ -56,9 +56,9 @@ const RectList &GetClipRects() {
  * @param pSrc2			Pointer to a source rectangle
  */
 bool IntersectRectangle(Common::Rect &pDest, const Common::Rect &pSrc1, const Common::Rect &pSrc2) {
-	pDest.left   = MAX(pSrc1.left, pSrc2.left);
-	pDest.top    = MAX(pSrc1.top, pSrc2.top);
-	pDest.right  = MIN(pSrc1.right, pSrc2.right);
+	pDest.left = MAX(pSrc1.left, pSrc2.left);
+	pDest.top = MAX(pSrc1.top, pSrc2.top);
+	pDest.right = MIN(pSrc1.right, pSrc2.right);
 	pDest.bottom = MIN(pSrc1.bottom, pSrc2.bottom);
 
 	return !pDest.isEmpty();
@@ -72,9 +72,9 @@ bool IntersectRectangle(Common::Rect &pDest, const Common::Rect &pSrc1, const Co
  * @param pSrc2			a source rectangle
  */
 bool UnionRectangle(Common::Rect &pDest, const Common::Rect &pSrc1, const Common::Rect &pSrc2) {
-	pDest.left   = MIN(pSrc1.left, pSrc2.left);
-	pDest.top    = MIN(pSrc1.top, pSrc2.top);
-	pDest.right  = MAX(pSrc1.right, pSrc2.right);
+	pDest.left = MIN(pSrc1.left, pSrc2.left);
+	pDest.top = MIN(pSrc1.top, pSrc2.top);
+	pDest.right = MAX(pSrc1.right, pSrc2.right);
 	pDest.bottom = MAX(pSrc1.bottom, pSrc2.bottom);
 
 	return !pDest.isEmpty();
@@ -88,9 +88,9 @@ bool UnionRectangle(Common::Rect &pDest, const Common::Rect &pSrc1, const Common
 static bool LooseIntersectRectangle(const Common::Rect &pSrc1, const Common::Rect &pSrc2) {
 	Common::Rect pDest;
 
-	pDest.left   = MAX(pSrc1.left, pSrc2.left);
-	pDest.top    = MAX(pSrc1.top, pSrc2.top);
-	pDest.right  = MIN(pSrc1.right, pSrc2.right);
+	pDest.left = MAX(pSrc1.left, pSrc2.left);
+	pDest.top = MAX(pSrc1.top, pSrc2.top);
+	pDest.right = MIN(pSrc1.right, pSrc2.right);
 	pDest.bottom = MIN(pSrc1.bottom, pSrc2.bottom);
 
 	return pDest.isValidRect();
@@ -106,7 +106,7 @@ static bool LooseIntersectRectangle(const Common::Rect &pSrc1, const Common::Rec
  * @param bScrolled)		When set, playfield has scrolled
  */
 void FindMovingObjects(OBJECT **pObjList, Common::Point *pWin, Common::Rect *pClip, bool bNoVelocity, bool bScrolled) {
-	OBJECT *pObj;			// object list traversal pointer
+	OBJECT *pObj; // object list traversal pointer
 
 	for (pObj = *pObjList; pObj != NULL; pObj = pObj->pNext) {
 		if (!bNoVelocity) {
@@ -120,12 +120,12 @@ void FindMovingObjects(OBJECT **pObjList, Common::Point *pWin, Common::Rect *pCl
 			}
 		}
 
-		if ((pObj->flags & DMA_CHANGED) ||	// object changed
-			HasPalMoved(pObj->pPal)) {	// or palette moved
+		if ((pObj->flags & DMA_CHANGED) || // object changed
+		    HasPalMoved(pObj->pPal)) { // or palette moved
 			// object has changed in some way
 
-			Common::Rect rcClip;	// objects clipped bounding rectangle
-			Common::Rect rcObj;	// objects bounding rectangle
+			Common::Rect rcClip; // objects clipped bounding rectangle
+			Common::Rect rcObj; // objects bounding rectangle
 
 			// calc intersection of objects previous bounding rectangle
 			// NOTE: previous position is in screen co-ords
@@ -138,14 +138,14 @@ void FindMovingObjects(OBJECT **pObjList, Common::Point *pWin, Common::Rect *pCl
 			if (pObj->flags & DMA_ABS) {
 				// object position is absolute
 				rcObj.left = fracToInt(pObj->xPos);
-				rcObj.top  = fracToInt(pObj->yPos);
+				rcObj.top = fracToInt(pObj->yPos);
 			} else {
 				// object position is relative to window
 				rcObj.left = fracToInt(pObj->xPos) - pWin->x;
-				rcObj.top  = fracToInt(pObj->yPos) - pWin->y;
+				rcObj.top = fracToInt(pObj->yPos) - pWin->y;
 			}
-			rcObj.right  = rcObj.left + pObj->width;
-			rcObj.bottom = rcObj.top  + pObj->height;
+			rcObj.right = rcObj.left + pObj->width;
+			rcObj.bottom = rcObj.top + pObj->height;
 
 			// calc intersection of object with clipping rect
 			if (IntersectRectangle(rcClip, rcObj, *pClip)) {
@@ -204,10 +204,10 @@ void MergeClipRect() {
  * @param pClip			Pointer to clip rectangle
  */
 void UpdateClipRect(OBJECT **pObjList, Common::Point *pWin, Common::Rect *pClip) {
-	int x, y, right, bottom;	// object corners
-	int hclip, vclip;			// total size of object clipping
-	DRAWOBJECT currentObj;		// filled in to draw the current object in list
-	OBJECT *pObj;				// object list iterator
+	int x, y, right, bottom; // object corners
+	int hclip, vclip; // total size of object clipping
+	DRAWOBJECT currentObj; // filled in to draw the current object in list
+	OBJECT *pObj; // object list iterator
 
 	// Initialize the fields of the drawing object to empty
 	memset(&currentObj, 0, sizeof(DRAWOBJECT));
@@ -254,7 +254,7 @@ void UpdateClipRect(OBJECT **pObjList, Common::Point *pWin, Common::Rect *pClip)
 		if (currentObj.topClip < 0) {
 			// negative - object is not clipped
 			currentObj.topClip = 0;
-		} else {	// clipped - adjust start position to top of clip rect
+		} else { // clipped - adjust start position to top of clip rect
 			y = pClip->top;
 		}
 
@@ -288,18 +288,18 @@ void UpdateClipRect(OBJECT **pObjList, Common::Point *pWin, Common::Rect *pClip)
 
 			// set clip bit in objects flags
 			currentObj.flags = pObj->flags | DMA_CLIP;
-		} else {	// object is not clipped - copy flags
+		} else { // object is not clipped - copy flags
 			currentObj.flags = pObj->flags;
 		}
 
 		// copy objects properties to local object
-		currentObj.width    = pObj->width;
-		currentObj.height   = pObj->height;
-		currentObj.xPos     = (short)x;
-		currentObj.yPos     = (short)y;
-		currentObj.pPal     = pObj->pPal;
+		currentObj.width = pObj->width;
+		currentObj.height = pObj->height;
+		currentObj.xPos = (short)x;
+		currentObj.yPos = (short)y;
+		currentObj.pPal = pObj->pPal;
 		currentObj.constant = pObj->constant;
-		currentObj.hBits    = pObj->hBits;
+		currentObj.hBits = pObj->hBits;
 
 		// draw the object
 		DrawObject(&currentObj);

@@ -463,7 +463,7 @@ void Room::demon3TalkToMiner() {
 }
 
 void Room::demon3TalkToKirk() {
-	showText(TX_SPEAKER_KIRK,  2, true);
+	showText(TX_SPEAKER_KIRK, 2, true);
 	showText(TX_SPEAKER_SPOCK, 29, true);
 	showText(TX_SPEAKER_MCCOY, 26, true);
 }
@@ -477,9 +477,8 @@ void Room::demon3TalkToMccoy() {
 		showText(TX_SPEAKER_MCCOY, 14, true);
 	} else {
 		showText(TX_SPEAKER_MCCOY, 25, true);
-		showText(TX_SPEAKER_KIRK,  3, true);
+		showText(TX_SPEAKER_KIRK, 3, true);
 		showText(TX_SPEAKER_MCCOY, 24, true);
-
 	}
 }
 
@@ -487,7 +486,7 @@ void Room::demon3TalkToRedshirt() {
 	// FIXME: this shouldn't work if he's dead. Should it check higher up whether that's
 	// the case?
 	showText(TX_SPEAKER_EVERTS, 36, true);
-	showText(TX_SPEAKER_KIRK,   4, true);
+	showText(TX_SPEAKER_KIRK, 4, true);
 }
 
 void Room::demon3LookAtKirk() {

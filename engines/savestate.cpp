@@ -21,18 +21,34 @@
  */
 
 #include "engines/savestate.h"
-#include "graphics/surface.h"
 #include "common/textconsole.h"
+#include "graphics/surface.h"
 
 SaveStateDescriptor::SaveStateDescriptor()
-	// FIXME: default to 0 (first slot) or to -1 (invalid slot) ?
-	: _slot(-1), _description(), _isDeletable(true), _isWriteProtected(false),
-	  _isLocked(false), _saveDate(), _saveTime(), _playTime(), _playTimeMSecs(0), _thumbnail() {
+  // FIXME: default to 0 (first slot) or to -1 (invalid slot) ?
+  : _slot(-1)
+  , _description()
+  , _isDeletable(true)
+  , _isWriteProtected(false)
+  , _isLocked(false)
+  , _saveDate()
+  , _saveTime()
+  , _playTime()
+  , _playTimeMSecs(0)
+  , _thumbnail() {
 }
 
 SaveStateDescriptor::SaveStateDescriptor(int s, const Common::String &d)
-	: _slot(s), _description(d), _isDeletable(true), _isWriteProtected(false),
-	  _isLocked(false), _saveDate(), _saveTime(), _playTime(), _playTimeMSecs(0), _thumbnail() {
+  : _slot(s)
+  , _description(d)
+  , _isDeletable(true)
+  , _isWriteProtected(false)
+  , _isLocked(false)
+  , _saveDate()
+  , _saveTime()
+  , _playTime()
+  , _playTimeMSecs(0)
+  , _thumbnail() {
 }
 
 void SaveStateDescriptor::setThumbnail(Graphics::Surface *t) {

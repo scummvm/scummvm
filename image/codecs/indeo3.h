@@ -30,9 +30,9 @@
  */
 
 #ifndef IMAGE_CODECS_INDEO3_H
-#define IMAGE_CODECS_INDEO3_H
+#	define IMAGE_CODECS_INDEO3_H
 
-#include "image/codecs/codec.h"
+#	include "image/codecs/codec.h"
 
 namespace Image {
 
@@ -86,8 +86,8 @@ private:
 	void allocFrames();
 
 	void decodeChunk(byte *cur, byte *ref, int width, int height,
-			const byte *buf1, uint32 fflags2, const byte *hdr,
-			const byte *buf2, int min_width_160);
+	                 const byte *buf1, uint32 fflags2, const byte *hdr,
+	                 const byte *buf2, int min_width_160);
 };
 
 } // End of namespace Image

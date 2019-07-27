@@ -25,14 +25,17 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CHammerDispensor, CBackground)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(MovieEndMsg)
 END_MESSAGE_MAP()
 
-CHammerDispensor::CHammerDispensor() : CBackground(),
-	_isOpen(false), _panUp(true), _state(0) {
+CHammerDispensor::CHammerDispensor()
+  : CBackground()
+  , _isOpen(false)
+  , _panUp(true)
+  , _state(0) {
 }
 
 void CHammerDispensor::save(SimpleFile *file, int indent) {

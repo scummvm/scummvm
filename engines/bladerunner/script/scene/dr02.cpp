@@ -26,23 +26,23 @@ namespace BladeRunner {
 
 void SceneScriptDR02::InitializeScene() {
 	if (Game_Flag_Query(kFlagDR03toDR02)) {
-		Setup_Scene_Information(-1162.0f,  7.18f,  -322.0f, 552);
+		Setup_Scene_Information(-1162.0f, 7.18f, -322.0f, 552);
 	} else if (Game_Flag_Query(kFlagDR01toDR02)) {
-		Setup_Scene_Information( -835.0f, -0.04f,  -118.0f, 193);
+		Setup_Scene_Information(-835.0f, -0.04f, -118.0f, 193);
 	} else if (Game_Flag_Query(kFlagBB01toDR02)) {
-		Setup_Scene_Information(-1258.0f,  7.18f,  -314.0f, 400);
+		Setup_Scene_Information(-1258.0f, 7.18f, -314.0f, 400);
 	} else {
-		Setup_Scene_Information( 168.78f,  0.16f, -775.72f, 193);
+		Setup_Scene_Information(168.78f, 0.16f, -775.72f, 193);
 	}
 
-	Scene_Exit_Add_2D_Exit(0, 605,   0, 639, 479, 1);
+	Scene_Exit_Add_2D_Exit(0, 605, 0, 639, 479, 1);
 	Scene_Exit_Add_2D_Exit(1, 222, 176, 279, 314, 0);
 	if (Game_Flag_Query(kFlagBB01Available)) {
 		Scene_Exit_Add_2D_Exit(2, 95, 0, 148, 292, 0);
 	}
 	if (_vm->_cutContent) {
 		// improved navigation of this set of scenes
-		Scene_Exit_Add_2D_Exit(3,  0,   0,  34, 479, 3);
+		Scene_Exit_Add_2D_Exit(3, 0, 0, 34, 479, 3);
 		Scene_Exit_Add_2D_Exit(4, 34, 445, 605, 479, 2);
 	}
 
@@ -51,11 +51,11 @@ void SceneScriptDR02::InitializeScene() {
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxHUMMER3, 27, 85, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxBIGFAN2, 38, 85, 1);
-	Ambient_Sounds_Add_Sound(kSfxTHNDR1, 2,  50, 33, 100, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDR2, 2,  50, 33, 100, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDR3, 2,  50, 33, 100, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSPIN2A, 5, 100, 16,  25, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSPIN1A, 5, 100, 16,  25, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDR1, 2, 50, 33, 100, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDR2, 2, 50, 33, 100, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDR3, 2, 50, 33, 100, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2A, 5, 100, 16, 25, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN1A, 5, 100, 16, 25, -100, 100, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagDR01toDR02)) {
 		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
@@ -125,8 +125,7 @@ bool SceneScriptDR02::MouseClick(int x, int y) {
 bool SceneScriptDR02::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (_vm->_cutContent) {
 		if (!Game_Flag_Query(kFlagMcCoyCommentsOnEyeOfEyeworks)
-		    && (Object_Query_Click("U2 EYE", objectName))
-		) {
+		    && (Object_Query_Click("U2 EYE", objectName))) {
 			Game_Flag_Set(kFlagMcCoyCommentsOnEyeOfEyeworks);
 			Unclickable_Object("U2 EYE");
 			Actor_Voice_Over(660, kActorVoiceOver);
@@ -158,9 +157,8 @@ bool SceneScriptDR02::ClickedOnExit(int exitId) {
 
 	if (_vm->_cutContent
 	    && (exitId == 3 || exitId == 4)) {
-	    if ((exitId == 3 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1162.45f, 0.78f, -167.45f, 0, true, false, false))
-		    || (exitId == 4 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, -975.17f, 0.42f, -120.04f, 0, true, false, false))
-		) {
+		if ((exitId == 3 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1162.45f, 0.78f, -167.45f, 0, true, false, false))
+		    || (exitId == 4 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, -975.17f, 0.42f, -120.04f, 0, true, false, false))) {
 			if (exitId == 3) {
 				Async_Actor_Walk_To_XYZ(kActorMcCoy, -1176.40f, 0.58f, -86.02f, 0, false);
 			} else {
@@ -173,7 +171,6 @@ bool SceneScriptDR02::ClickedOnExit(int exitId) {
 		Ambient_Sounds_Adjust_Looping_Sound(kSfxBIGFAN2, 14, -101, 1);
 		return true;
 	}
-
 
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1162.0f, 7.18f, -322.0f, 0, true, false, false)) {

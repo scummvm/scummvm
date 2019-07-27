@@ -29,31 +29,31 @@ namespace Testbed {
 
 namespace GFXtests {
 
-// Helper functions for GFX tests
-void drawEllipse(int x, int y, int a, int b);
-void setupMouseLoop(bool disableCursorPalette = false, const char *gfxModeName = "", int cursorTargetScale = 1);
-void initMousePalette();
-void initMouseCursor();
-Common::Rect computeSize(const Common::Rect &cursorRect, int scalingFactor, int cursorTargetScale);
-void HSVtoRGB(int &rComp, int &gComp, int &bComp, int hue, int sat, int val);
-Common::Rect drawCursor(bool cursorPaletteDisabled = false, int cursorTargetScale = 1);
+	// Helper functions for GFX tests
+	void drawEllipse(int x, int y, int a, int b);
+	void setupMouseLoop(bool disableCursorPalette = false, const char *gfxModeName = "", int cursorTargetScale = 1);
+	void initMousePalette();
+	void initMouseCursor();
+	Common::Rect computeSize(const Common::Rect &cursorRect, int scalingFactor, int cursorTargetScale);
+	void HSVtoRGB(int &rComp, int &gComp, int &bComp, int hue, int sat, int val);
+	Common::Rect drawCursor(bool cursorPaletteDisabled = false, int cursorTargetScale = 1);
 
-// will contain function declarations for GFX tests
-TestExitStatus cursorTrails();
-TestExitStatus fullScreenMode();
-TestExitStatus filteringMode();
-TestExitStatus aspectRatio();
-TestExitStatus palettizedCursors();
-TestExitStatus mouseMovements();
-TestExitStatus copyRectToScreen();
-TestExitStatus iconifyWindow();
-TestExitStatus scaledCursors();
-TestExitStatus shakingEffect();
-TestExitStatus focusRectangle();
-TestExitStatus overlayGraphics();
-TestExitStatus paletteRotation();
-TestExitStatus pixelFormats();
-// add more here
+	// will contain function declarations for GFX tests
+	TestExitStatus cursorTrails();
+	TestExitStatus fullScreenMode();
+	TestExitStatus filteringMode();
+	TestExitStatus aspectRatio();
+	TestExitStatus palettizedCursors();
+	TestExitStatus mouseMovements();
+	TestExitStatus copyRectToScreen();
+	TestExitStatus iconifyWindow();
+	TestExitStatus scaledCursors();
+	TestExitStatus shakingEffect();
+	TestExitStatus focusRectangle();
+	TestExitStatus overlayGraphics();
+	TestExitStatus paletteRotation();
+	TestExitStatus pixelFormats();
+	// add more here
 
 } // End of namespace GFXtests
 

@@ -23,9 +23,9 @@
 #ifndef CEKEYS_EVENTSBUFFER_H
 #define CEKEYS_EVENTSBUFFER_H
 
+#include "common/list.h"
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "common/list.h"
 
 #include "gui/Key.h"
 
@@ -37,7 +37,6 @@ public:
 	static bool simulateMouseMove(int x, int y);
 	static bool simulateMouseLeftClick(int x, int y, bool pushed);
 	static bool simulateMouseRightClick(int x, int y, bool pushed);
-
 };
 }
 

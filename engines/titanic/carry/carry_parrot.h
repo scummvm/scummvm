@@ -41,11 +41,13 @@ class CCarryParrot : public CCarry {
 	bool PreEnterViewMsg(CPreEnterViewMsg *msg);
 	bool UseWithCharMsg(CUseWithCharMsg *msg);
 	bool ActMsg(CActMsg *msg);
+
 private:
 	CString _parrotName;
 	int _timerId;
 	int _freeCounter;
 	bool _feathersFlag;
+
 public:
 	CLASSDEF;
 	CCarryParrot();

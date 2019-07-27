@@ -35,8 +35,8 @@
 #include "common/array.h"
 #include "common/str.h"
 #include "sword25/kernel/common.h"
-#include "sword25/kernel/service.h"
 #include "sword25/kernel/persistable.h"
+#include "sword25/kernel/service.h"
 
 namespace Sword25 {
 
@@ -46,7 +46,8 @@ class BS_InputPersistenceBlock;
 
 class ScriptEngine : public Service, public Persistable {
 public:
-	ScriptEngine(Kernel *KernelPtr) : Service(KernelPtr) {}
+	ScriptEngine(Kernel *KernelPtr)
+	  : Service(KernelPtr) {}
 	virtual ~ScriptEngine() {}
 
 	// -----------------------------------------------------------------------------

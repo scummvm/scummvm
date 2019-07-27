@@ -21,11 +21,11 @@
  */
 
 #if !defined(BACKEND_POSIX_SAVES_H) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
-#define BACKEND_POSIX_SAVES_H
+#	define BACKEND_POSIX_SAVES_H
 
-#include "backends/saves/default/default-saves.h"
+#	include "backends/saves/default/default-saves.h"
 
-#if defined(POSIX) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
+#	if defined(POSIX) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 /**
  * Customization of the DefaultSaveFileManager for POSIX platforms.
  * The only two differences are that the default constructor sets
@@ -44,6 +44,6 @@ protected:
 	 */
 	virtual void checkPath(const Common::FSNode &dir);
 };
-#endif
+#	endif
 
 #endif

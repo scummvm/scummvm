@@ -20,9 +20,9 @@
  *
  */
 
+#include "mads/inventory.h"
 #include "common/scummsys.h"
 #include "mads/mads.h"
-#include "mads/inventory.h"
 
 namespace MADS {
 
@@ -150,7 +150,7 @@ void InventoryObjects::addToInventory(int objectId) {
 		_inventoryList.push_back(objectId);
 		userInterface._selectedInvIndex = _inventoryList.size() - 1;
 		userInterface._inventoryTopIndex = CLIP(userInterface._inventoryTopIndex,
-			0, userInterface._selectedInvIndex);
+		                                        0, userInterface._selectedInvIndex);
 
 		if ((userInterface._inventoryTopIndex + 5) <= (int)_inventoryList.size())
 			userInterface._inventoryTopIndex = _inventoryList.size() - 5;
@@ -158,8 +158,7 @@ void InventoryObjects::addToInventory(int objectId) {
 
 		(*this)[objectId]._roomNumber = PLAYER_INVENTORY;
 
-		if (_vm->_game->_kernelMode == KERNEL_ACTIVE_CODE &&
-				_vm->_game->_screenObjects._inputMode == kInputBuildingSentences) {
+		if (_vm->_game->_kernelMode == KERNEL_ACTIVE_CODE && _vm->_game->_screenObjects._inputMode == kInputBuildingSentences) {
 			userInterface.categoryChanged();
 			userInterface.selectObject(userInterface._selectedInvIndex);
 		}
@@ -184,8 +183,7 @@ void InventoryObjects::removeFromInventory(int objectId, int newScene) {
 	int selectedIndex = userInterface._selectedInvIndex;
 	bool noSelection = selectedIndex < 0;
 
-	if (_vm->_game->_kernelMode == KERNEL_ACTIVE_CODE &&
-			_vm->_game->_screenObjects._inputMode == kInputBuildingSentences)
+	if (_vm->_game->_kernelMode == KERNEL_ACTIVE_CODE && _vm->_game->_screenObjects._inputMode == kInputBuildingSentences)
 		userInterface.selectObject(-1);
 
 	// Remove the item from the inventory list
@@ -205,8 +203,7 @@ void InventoryObjects::removeFromInventory(int objectId, int newScene) {
 	userInterface._inventoryChanged = true;
 	(*this)[objectId]._roomNumber = newScene;
 
-	if (_vm->_game->_kernelMode == KERNEL_ACTIVE_CODE &&
-			_vm->_game->_screenObjects._inputMode == kInputBuildingSentences) {
+	if (_vm->_game->_kernelMode == KERNEL_ACTIVE_CODE && _vm->_game->_screenObjects._inputMode == kInputBuildingSentences) {
 		userInterface.categoryChanged();
 		userInterface.selectObject(selectedIndex);
 	}

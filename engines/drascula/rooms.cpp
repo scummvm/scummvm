@@ -34,30 +34,26 @@ struct doorInfo {
 };
 
 static const doorInfo doors[] = {
-	{	2,	138,	 0 },	{	2,	136,	 8 },
-	{	2,	156,	16 },	{	2,	163,	17 },
-	{	2,	177,	15 },	{	2,	175,	40 },
-	{	2,	173,	36 },	{	4,	103,	 0 },
-	{	4,	104,	 1 },	{	4,	105,	 1 },
-	{	4,	106,	 2 },	{	4,	107,	 2 },
-	{	4,	110,	 6 },	{	4,	114,	 4 },
-	{	4,	115,	 4 },	{	4,	117,	 5 },
-	{	4,	120,	 8 },	{	4,	122,	 7 }
+	{ 2, 138, 0 }, { 2, 136, 8 }, { 2, 156, 16 }, { 2, 163, 17 }, { 2, 177, 15 }, { 2, 175, 40 }, { 2, 173, 36 }, { 4, 103, 0 }, { 4, 104, 1 }, { 4, 105, 1 }, { 4, 106, 2 }, { 4, 107, 2 }, { 4, 110, 6 }, { 4, 114, 4 }, { 4, 115, 4 }, { 4, 117, 5 }, { 4, 120, 8 }, { 4, 122, 7 }
 };
 
 typedef bool (DrasculaEngine::*RoomParser)(int args);
 
 struct DrasculaRoomParser {
-	DrasculaRoomParser(const char* d, RoomParser p) : desc(d), proc(p) {}
-	const char* desc;
+	DrasculaRoomParser(const char *d, RoomParser p)
+	  : desc(d)
+	  , proc(p) {}
+	const char *desc;
 	RoomParser proc;
 };
 
 typedef void (DrasculaEngine::*Updater)();
 
 struct DrasculaUpdater {
-	DrasculaUpdater(const char* d, Updater p) : desc(d), proc(p) {}
-	const char* desc;
+	DrasculaUpdater(const char *d, Updater p)
+	  : desc(d)
+	  , proc(p) {}
+	const char *desc;
 	Updater proc;
 };
 
@@ -74,7 +70,7 @@ struct RoomHandlers {
 void DrasculaEngine::setupRoomsTable() {
 	_roomHandlers = new RoomHandlers();
 
-	ROOM(room_0);	// default
+	ROOM(room_0); // default
 	ROOM(room_1);
 	ROOM(room_3);
 	ROOM(room_4);
@@ -84,13 +80,13 @@ void DrasculaEngine::setupRoomsTable() {
 	ROOM(room_8);
 	ROOM(room_9);
 	ROOM(room_12);
-	ROOM(room_13);	// returns bool
+	ROOM(room_13); // returns bool
 	ROOM(room_14);
 	ROOM(room_15);
 	ROOM(room_16);
 	ROOM(room_17);
 	ROOM(room_18);
-	ROOM(room_21);	// returns bool
+	ROOM(room_21); // returns bool
 	ROOM(room_22);
 	ROOM(room_23);
 	ROOM(room_24);
@@ -105,10 +101,10 @@ void DrasculaEngine::setupRoomsTable() {
 	ROOM(room_53);
 	ROOM(room_54);
 	ROOM(room_55);
-	ROOM(room_56);	// returns bool
+	ROOM(room_56); // returns bool
 	ROOM(room_58);
 	ROOM(room_59);
-	ROOM(room_60);	// returns bool
+	ROOM(room_60); // returns bool
 	ROOM(room_62);
 	ROOM(room_102);
 
@@ -163,12 +159,9 @@ bool DrasculaEngine::roomParse(int rN, int fl) {
 	for (int i = 0; i < _roomActionsSize; i++) {
 		if (_roomActions[i].room == rN) {
 			seen = true;
-			if (_roomActions[i].chapter == currentChapter ||
-				_roomActions[i].chapter == -1) {
-				if (_roomActions[i].action == pickedObject ||
-					_roomActions[i].action == kVerbDefault) {
-					if (_roomActions[i].objectID == fl ||
-						_roomActions[i].objectID == -1) {
+			if (_roomActions[i].chapter == currentChapter || _roomActions[i].chapter == -1) {
+				if (_roomActions[i].action == pickedObject || _roomActions[i].action == kVerbDefault) {
+					if (_roomActions[i].objectID == fl || _roomActions[i].objectID == -1) {
 						talk(_roomActions[i].speechID);
 						hasAnswer = 1;
 						return true;
@@ -185,12 +178,11 @@ bool DrasculaEngine::roomParse(int rN, int fl) {
 bool DrasculaEngine::room_0(int fl) {
 	(void)fl;
 
-	static const int lookExcuses[3] = {100, 101, 54};
-	static const int actionExcuses[6] = {11, 109, 111, 110, 115, 116};
+	static const int lookExcuses[3] = { 100, 101, 54 };
+	static const int actionExcuses[6] = { 11, 109, 111, 110, 115, 116 };
 
 	// non-default actions
-	if (currentChapter == 2 || currentChapter == 4 ||
-		currentChapter == 5 || currentChapter == 6) {
+	if (currentChapter == 2 || currentChapter == 4 || currentChapter == 5 || currentChapter == 6) {
 		if (pickedObject == kVerbLook) {
 			talk(lookExcuses[curExcuseLook]);
 			curExcuseLook++;
@@ -235,7 +227,7 @@ bool DrasculaEngine::room_3(int fl) {
 		talk(149);
 		talk(150);
 	} else if (pickedObject == kVerbPick && fl == 165) {
-		copyBackground(0, 0, 0,0, 320, 200, bgSurface, screenSurface);
+		copyBackground(0, 0, 0, 0, 320, 200, bgSurface, screenSurface);
 		updateRefresh_pre();
 		copyRect(44, 1, curX, curY, 41, 70, drawSurface2, screenSurface);
 		updateRefresh();
@@ -284,7 +276,7 @@ bool DrasculaEngine::room_5(int fl) {
 }
 
 bool DrasculaEngine::room_6(int fl) {
-	if (pickedObject == kVerbLook && fl==144) {
+	if (pickedObject == kVerbLook && fl == 144) {
 		talk(41);
 		talk(42);
 	} else if (pickedObject == kVerbOpen && fl == 138)
@@ -520,7 +512,7 @@ bool DrasculaEngine::room_17(int fl) {
 	} else if (pickedObject == kVerbOpen && fl == 177 && flags[18] == 1)
 		talk(346);
 	else if (pickedObject == kVerbOpen && fl == 177 && flags[14] == 0 && flags[18] == 0)
-		playTalkSequence(22);	// sequence 22, chapter 2
+		playTalkSequence(22); // sequence 22, chapter 2
 	else if (pickedObject == kVerbOpen && fl == 177 && flags[14] == 1)
 		toggleDoor(15, 1, kOpenDoor);
 	else if (pickedObject == kVerbClose && fl == 177 && flags[14] == 1)
@@ -552,15 +544,12 @@ bool DrasculaEngine::room_18(int fl) {
 		visible[2] = 0;
 		flags[28] = 1;
 	} else if (fl == 55 && flags[38] == 0 && flags[33] == 0) {
-		if (pickedObject == 8 || pickedObject == 13 || pickedObject == 15 ||
-			pickedObject == 16 || pickedObject == 17)
+		if (pickedObject == 8 || pickedObject == 13 || pickedObject == 15 || pickedObject == 16 || pickedObject == 17)
 			talk(349);
 	} else if (fl == 55 && flags[38] == 1 && flags[33] == 1) {
-		if (pickedObject == 8 || pickedObject == 13 || pickedObject == 15 ||
-			pickedObject == 16 || pickedObject == 17)
+		if (pickedObject == 8 || pickedObject == 13 || pickedObject == 15 || pickedObject == 16 || pickedObject == 17)
 			animation_24_2();
-	}
-	else if (pickedObject == 11 && fl == 50 && flags[22] == 0) {
+	} else if (pickedObject == 11 && fl == 50 && flags[22] == 0) {
 		trackProtagonist = 3;
 		updateRoom();
 		updateScreen();
@@ -611,14 +600,14 @@ bool DrasculaEngine::room_22(int fl) {
 		visible[1] = 0;
 		flags[24] = 1;
 	} else if (pickedObject == 22 && fl == 52) {
-		animate("up.bin",14);
-		flags[26]=1;
+		animate("up.bin", 14);
+		flags[26] = 1;
 		playSound(1);
 		hiccup(14);
 		finishSound();
 		selectVerb(kVerbNone);
 		removeObject(22);
-		updateVisible();	// sets visible[2] to 0 and visible[1] to 1
+		updateVisible(); // sets visible[2] to 0 and visible[1] to 1
 		trackProtagonist = 3;
 		talk(499);
 		talk(500);
@@ -805,7 +794,7 @@ bool DrasculaEngine::room_34(int fl) {
 	} else if (pickedObject == kVerbClose && fl == 120)
 		toggleDoor(8, 2, kCloseDoor);
 	else
-		hasAnswer=0;
+		hasAnswer = 0;
 
 	return true;
 }
@@ -815,17 +804,17 @@ bool DrasculaEngine::room_35(int fl) {
 		pickObject(16);
 		visible[2] = 0;
 		flags[14] = 1;
-	if (flags[11] == 1 && flags[22] == 1)
-		flags[18] = 1;
-	if (flags[18] == 1)
-		animation_6_4();
+		if (flags[11] == 1 && flags[22] == 1)
+			flags[18] = 1;
+		if (flags[18] == 1)
+			animation_6_4();
 	} else if (pickedObject == kVerbPick && fl == 147) {
 		talk(426);
 		pickObject(15);
 		visible[1] = 0;
 		flags[15] = 1;
 		flags[17] = 1;
-		updateVisible();	// sets visible[1] to 0 and visible[3] to 1
+		updateVisible(); // sets visible[1] to 0 and visible[3] to 1
 	} else if (pickedObject == kVerbPick && fl == 149) {
 		pickObject(13);
 		visible[3] = 0;
@@ -872,7 +861,7 @@ bool DrasculaEngine::room_53(int fl) {
 	} else if (pickedObject == 16 && fl == 121) {
 		flags[2] = 1;
 		selectVerb(kVerbNone);
-		updateVisible();	// sets visible[3] to 0
+		updateVisible(); // sets visible[3] to 0
 		pickedObject = kVerbMove;
 	} else if (pickedObject == 16) {
 		// Wall plug in chapter 5
@@ -906,7 +895,7 @@ bool DrasculaEngine::room_54(int fl) {
 		pickObject(8);
 		flags[13] = 1;
 		talk_mus(10);
-		updateVisible();	// sets visible[3] to 0
+		updateVisible(); // sets visible[3] to 0
 	} else if (pickedObject == 10 && fl == 119) {
 		pause(4);
 		talk(436);
@@ -922,7 +911,7 @@ bool DrasculaEngine::room_55(int fl) {
 	if (pickedObject == kVerbPick && fl == 122) {
 		pickObject(12);
 		flags[8] = 1;
-		updateVisible();	// sets visible[1] to 0
+		updateVisible(); // sets visible[1] to 0
 	} else if (fl == 206) {
 		playSound(11);
 		animate("det.bin", 17);
@@ -947,7 +936,7 @@ bool DrasculaEngine::room_56(int fl) {
 bool DrasculaEngine::room_58(int fl) {
 	if (pickedObject == kVerbMove && fl == 103) {
 		flags[8] = 1;
-		updateVisible();	// sets isDoor[1] to 1
+		updateVisible(); // sets isDoor[1] to 1
 	} else {
 		hasAnswer = 0;
 	}
@@ -1003,7 +992,7 @@ bool DrasculaEngine::room_59(int fl) {
 			talk_solo(_textvb[60], "VB60.als");
 			talk_htel(196);
 			color_abc(kColorBrown);
-			talk_solo(_textvb[61],"VB61.als");
+			talk_solo(_textvb[61], "VB61.als");
 			talk_htel(244);
 			color_abc(kColorBrown);
 			talk_solo(_textvb[62], "VB62.als");
@@ -1088,18 +1077,17 @@ void DrasculaEngine::updateRefresh() {
 	// Check generic updaters
 	for (int i = 0; i < _roomUpdatesSize; i++) {
 		if (_roomUpdates[i].roomNum == _roomNumber) {
-			if (_roomUpdates[i].flag < 0 ||
-				flags[_roomUpdates[i].flag] == _roomUpdates[i].flagValue) {
+			if (_roomUpdates[i].flag < 0 || flags[_roomUpdates[i].flag] == _roomUpdates[i].flagValue) {
 				if (_roomUpdates[i].type == 0) {
 					copyBackground(_roomUpdates[i].sourceX, _roomUpdates[i].sourceY,
-								   _roomUpdates[i].destX, _roomUpdates[i].destY,
-								   _roomUpdates[i].width, _roomUpdates[i].height,
-								   drawSurface3, screenSurface);
+					               _roomUpdates[i].destX, _roomUpdates[i].destY,
+					               _roomUpdates[i].width, _roomUpdates[i].height,
+					               drawSurface3, screenSurface);
 				} else {
 					copyRect(_roomUpdates[i].sourceX, _roomUpdates[i].sourceY,
-							 _roomUpdates[i].destX, _roomUpdates[i].destY,
-							 _roomUpdates[i].width, _roomUpdates[i].height,
-							 drawSurface3, screenSurface);
+					         _roomUpdates[i].destX, _roomUpdates[i].destY,
+					         _roomUpdates[i].width, _roomUpdates[i].height,
+					         drawSurface3, screenSurface);
 				}
 			}
 		}
@@ -1126,18 +1114,17 @@ void DrasculaEngine::updateRefresh_pre() {
 	// Check generic preupdaters
 	for (int i = 0; i < _roomPreUpdatesSize; i++) {
 		if (_roomPreUpdates[i].roomNum == _roomNumber) {
-			if (_roomPreUpdates[i].flag < 0 ||
-				flags[_roomPreUpdates[i].flag] == _roomPreUpdates[i].flagValue) {
+			if (_roomPreUpdates[i].flag < 0 || flags[_roomPreUpdates[i].flag] == _roomPreUpdates[i].flagValue) {
 				if (_roomPreUpdates[i].type == 0) {
 					copyBackground(_roomPreUpdates[i].sourceX, _roomPreUpdates[i].sourceY,
-								   _roomPreUpdates[i].destX, _roomPreUpdates[i].destY,
-								   _roomPreUpdates[i].width, _roomPreUpdates[i].height,
-								   drawSurface3, screenSurface);
+					               _roomPreUpdates[i].destX, _roomPreUpdates[i].destY,
+					               _roomPreUpdates[i].width, _roomPreUpdates[i].height,
+					               drawSurface3, screenSurface);
 				} else {
 					copyRect(_roomPreUpdates[i].sourceX, _roomPreUpdates[i].sourceY,
-							 _roomPreUpdates[i].destX, _roomPreUpdates[i].destY,
-							 _roomPreUpdates[i].width, _roomPreUpdates[i].height,
-							 drawSurface3, screenSurface);
+					         _roomPreUpdates[i].destX, _roomPreUpdates[i].destY,
+					         _roomPreUpdates[i].width, _roomPreUpdates[i].height,
+					         drawSurface3, screenSurface);
 				}
 			}
 		}
@@ -1169,21 +1156,21 @@ void DrasculaEngine::update_1_pre() {
 void DrasculaEngine::update_2() {
 	int difference;
 	int w, h;
-	int batX[] = {0, 38, 76, 114, 152, 190, 228, 266,
-					0, 38, 76, 114, 152, 190, 228, 266,
-					0, 38, 76, 114, 152, 190,
-					0, 48, 96, 144, 192, 240,
-					30, 88, 146, 204, 262,
-					88, 146, 204, 262,
-					88, 146, 204, 262};
+	int batX[] = { 0, 38, 76, 114, 152, 190, 228, 266,
+		             0, 38, 76, 114, 152, 190, 228, 266,
+		             0, 38, 76, 114, 152, 190,
+		             0, 48, 96, 144, 192, 240,
+		             30, 88, 146, 204, 262,
+		             88, 146, 204, 262,
+		             88, 146, 204, 262 };
 
-	int batY[] = {179, 179, 179, 179, 179, 179, 179, 179,
-					158, 158, 158, 158, 158, 158, 158, 158,
-					137, 137, 137, 137, 137, 137,
-					115, 115, 115, 115, 115, 115,
-					78, 78, 78, 78, 78,
-					41, 41, 41, 41,
-					4, 4, 4, 4};
+	int batY[] = { 179, 179, 179, 179, 179, 179, 179, 179,
+		             158, 158, 158, 158, 158, 158, 158, 158,
+		             137, 137, 137, 137, 137, 137,
+		             115, 115, 115, 115, 115, 115,
+		             78, 78, 78, 78, 78,
+		             41, 41, 41, 41,
+		             4, 4, 4, 4 };
 
 	if (actorFrames[kFrameBat] == 41)
 		actorFrames[kFrameBat] = 0;
@@ -1200,7 +1187,7 @@ void DrasculaEngine::update_2() {
 	}
 
 	copyRect(batX[actorFrames[kFrameBat]], batY[actorFrames[kFrameBat]],
-			 239, 19, w, h, drawSurface3, screenSurface);
+	         239, 19, w, h, drawSurface3, screenSurface);
 	difference = getTime() - savedTime;
 	if (difference >= 6) {
 		actorFrames[kFrameBat]++;
@@ -1226,8 +1213,7 @@ void DrasculaEngine::update_4() {
 }
 
 void DrasculaEngine::update_6_pre() {
-	if ((curX > 149 && curY + curHeight > 160 && curX < 220 && curY + curHeight < 188) ||
-		(curX > 75 && curY + curHeight > 183 && curX < 145)) {
+	if ((curX > 149 && curY + curHeight > 160 && curX < 220 && curY + curHeight < 188) || (curX > 75 && curY + curHeight > 183 && curX < 145)) {
 		setDefaultPalette(brightPalette);
 	} else {
 		setDefaultPalette(darkPalette);
@@ -1235,12 +1221,12 @@ void DrasculaEngine::update_6_pre() {
 }
 
 void DrasculaEngine::update_9_pre() {
-	int blindX[] = {26, 68, 110, 152, 194, 236, 278, 26, 68};
-	int blindY[] = {51, 51, 51, 51, 51, 51, 51, 127, 127};
+	int blindX[] = { 26, 68, 110, 152, 194, 236, 278, 26, 68 };
+	int blindY[] = { 51, 51, 51, 51, 51, 51, 51, 127, 127 };
 	int difference;
 
 	copyRect(blindX[actorFrames[kFrameBlind]], blindY[actorFrames[kFrameBlind]],
-			 122, 57, 41, 72, drawSurface3, screenSurface);
+	         122, 57, 41, 72, drawSurface3, screenSurface);
 	if (flags[9] == 0) {
 		difference = getTime() - savedTime;
 		if (difference >= 11) {
@@ -1319,14 +1305,14 @@ void DrasculaEngine::update_16_pre() {
 
 void DrasculaEngine::update_18_pre() {
 	int difference;
-	int snore_x[] = {95, 136, 95, 136, 95, 95, 95, 95, 136, 95, 95, 95, 95, 95, 95, 95};
-	int snore_y[] = {18, 18, 56, 56, 94, 94, 94, 94, 94, 18, 18, 18, 18, 18, 18, 18};
+	int snore_x[] = { 95, 136, 95, 136, 95, 95, 95, 95, 136, 95, 95, 95, 95, 95, 95, 95 };
+	int snore_y[] = { 18, 18, 56, 56, 94, 94, 94, 94, 94, 18, 18, 18, 18, 18, 18, 18 };
 
 	if (flags[21] == 0) {
 		copyBackground(1, 69, 120, 58, 56, 61, drawSurface3, screenSurface);
 		copyBackground(snore_x[actorFrames[kFrameSnore]],
-					  snore_y[actorFrames[kFrameSnore]],
-					  124, 59, 40, 37, drawSurface3, screenSurface);
+		               snore_y[actorFrames[kFrameSnore]],
+		               124, 59, 40, 37, drawSurface3, screenSurface);
 	} else
 		moveVonBraun();
 
@@ -1491,7 +1477,7 @@ void DrasculaEngine::update_62() {
 }
 
 void DrasculaEngine::update_102() {
-	int pendulum_x[] = {40, 96, 152, 208, 264, 40, 96, 152, 208, 208, 152, 264, 40, 96, 152, 208, 264};
+	int pendulum_x[] = { 40, 96, 152, 208, 264, 40, 96, 152, 208, 208, 152, 264, 40, 96, 152, 208, 264 };
 	int difference;
 	byte *pendulumSurface = drawSurface3;
 
@@ -1536,7 +1522,7 @@ bool DrasculaEngine::checkAction(int fl) {
 			hasAnswer = 0;
 		} else if (currentChapter == 2) {
 			if ((pickedObject == kVerbLook && fl == 22 && flags[23] == 0)
-				|| (pickedObject == kVerbOpen && fl == 22 && flags[23] == 0)) {
+			    || (pickedObject == kVerbOpen && fl == 22 && flags[23] == 0)) {
 				talk(164);
 				flags[23] = 1;
 				selectVerb(kVerbNone);
@@ -1620,8 +1606,7 @@ bool DrasculaEngine::checkAction(int fl) {
 					showCursor();
 					return true;
 				}
-			}
-			else
+			} else
 				hasAnswer = 0;
 		}
 	}
@@ -1888,7 +1873,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 		if (_roomNumber == 45)
 			_characterVisible = false;
 		if (_roomNumber == 49 && flags[7] == 0) {
-			playTalkSequence(4);	// sequence 4, chapter 5
+			playTalkSequence(4); // sequence 4, chapter 5
 		}
 	}
 
@@ -1916,8 +1901,7 @@ bool DrasculaEngine::exitRoom(int doorNumber) {
 	}
 
 	updateDoor(doorNumber);
-	if (isDoor[doorNumber] != 0 &&
-		((currentChapter != 3 && currentChapter != 5) || visible[doorNumber] == 1)) {
+	if (isDoor[doorNumber] != 0 && ((currentChapter != 3 && currentChapter != 5) || visible[doorNumber] == 1)) {
 
 		hideCursor();
 		walkToPoint(_roomObject[doorNumber]);
@@ -1995,8 +1979,7 @@ void DrasculaEngine::updateDoor(int doorNum) {
 		return;
 
 	for (int i = 0; i < ARRAYSIZE(doors); i++) {
-		if (doors[i].chapter == currentChapter &&
-			objectNum[doorNum] == doors[i].doorNum) {
+		if (doors[i].chapter == currentChapter && objectNum[doorNum] == doors[i].doorNum) {
 			isDoor[doorNum] = flags[doors[i].flag];
 			return;
 		}
@@ -2015,8 +1998,7 @@ void DrasculaEngine::updateDoor(int doorNum) {
 }
 
 void DrasculaEngine::toggleDoor(int nflag, int doorNum, int action) {
-	if ((flags[nflag] == 0 && action == kOpenDoor) ||
-		(flags[nflag] == 1 && action == kCloseDoor)) {
+	if ((flags[nflag] == 0 && action == kOpenDoor) || (flags[nflag] == 1 && action == kCloseDoor)) {
 		if (currentChapter == 1 && nflag == 7 && action == kOpenDoor)
 			return;
 

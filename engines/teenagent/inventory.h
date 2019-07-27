@@ -23,11 +23,11 @@
 #ifndef TEENAGENT_INVENTORY_H
 #define TEENAGENT_INVENTORY_H
 
-#include "teenagent/surface.h"
-#include "teenagent/animation.h"
-#include "common/events.h"
 #include "common/array.h"
+#include "common/events.h"
+#include "teenagent/animation.h"
 #include "teenagent/objects.h"
+#include "teenagent/surface.h"
 
 namespace TeenAgent {
 
@@ -162,7 +162,7 @@ private:
 	TeenAgentEngine *_vm;
 	Surface _background;
 	byte *_items;
-	uint _offset[kNumInventoryItems+1];
+	uint _offset[kNumInventoryItems + 1];
 
 	Common::Array<InventoryObject> _objects;
 	byte *_inventory;
@@ -173,7 +173,8 @@ private:
 		Rect _rect;
 		bool _hovered;
 
-		Item() : _hovered(false) {}
+		Item()
+		  : _hovered(false) {}
 		void free();
 		void load(Inventory *inventory, uint itemId);
 		void backgroundEffect(Graphics::Surface *s);

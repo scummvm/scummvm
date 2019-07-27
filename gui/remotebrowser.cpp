@@ -24,14 +24,14 @@
 #include "gui/gui-manager.h"
 #include "gui/widgets/list.h"
 
+#include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "common/system.h"
-#include "common/algorithm.h"
 
-#include "common/translation.h"
-#include "backends/networking/curl/request.h"
-#include "backends/cloud/storage.h"
 #include "backends/cloud/cloudmanager.h"
+#include "backends/cloud/storage.h"
+#include "backends/networking/curl/request.h"
+#include "common/translation.h"
 #include "message.h"
 
 namespace GUI {
@@ -41,9 +41,13 @@ enum {
 	kGoUpCmd = 'GoUp'
 };
 
-RemoteBrowserDialog::RemoteBrowserDialog(const char *title):
-	Dialog("Browser"), _navigationLocked(false), _updateList(false), _showError(false),
-	_workingRequest(nullptr), _ignoreCallback(false) {
+RemoteBrowserDialog::RemoteBrowserDialog(const char *title)
+  : Dialog("Browser")
+  , _navigationLocked(false)
+  , _updateList(false)
+  , _showError(false)
+  , _workingRequest(nullptr)
+  , _ignoreCallback(false) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	new StaticTextWidget(this, "Browser.Headline", title);
@@ -196,11 +200,10 @@ void RemoteBrowserDialog::listDirectory(Cloud::StorageFile node) {
 		_navigationLocked = true;
 
 		_workingRequest = CloudMan.listDirectory(
-			node.path(),
-			new Common::Callback<RemoteBrowserDialog, Cloud::Storage::ListDirectoryResponse>(this, &RemoteBrowserDialog::directoryListedCallback),
-			new Common::Callback<RemoteBrowserDialog, Networking::ErrorResponse>(this, &RemoteBrowserDialog::directoryListedErrorCallback),
-			false
-		);
+		  node.path(),
+		  new Common::Callback<RemoteBrowserDialog, Cloud::Storage::ListDirectoryResponse>(this, &RemoteBrowserDialog::directoryListedCallback),
+		  new Common::Callback<RemoteBrowserDialog, Networking::ErrorResponse>(this, &RemoteBrowserDialog::directoryListedErrorCallback),
+		  false);
 	}
 
 	_backupNode = _node;

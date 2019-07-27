@@ -22,15 +22,15 @@
 
 #include "hopkins/files.h"
 
-#include "hopkins/hopkins.h"
 #include "hopkins/globals.h"
+#include "hopkins/hopkins.h"
 
 #include "common/config-manager.h"
-#include "common/system.h"
 #include "common/debug.h"
 #include "common/file.h"
-#include "common/str.h"
 #include "common/savefile.h"
+#include "common/str.h"
+#include "common/system.h"
 
 namespace Hopkins {
 
@@ -51,7 +51,7 @@ byte *FileManager::loadFile(const Common::String &file) {
 
 	// Allocate space for the file contents
 	size_t filesize = f.size();
-	byte *data = _vm->_globals->allocMemory(filesize+1);
+	byte *data = _vm->_globals->allocMemory(filesize + 1);
 	if (!data)
 		error("Error allocating space for file being loaded - %s", file.c_str());
 
@@ -192,7 +192,7 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode, bool &fil
 
 		ptr = loadFile(tmpFilename);
 		break;
-		}
+	}
 
 	default:
 		break;

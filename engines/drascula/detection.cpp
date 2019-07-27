@@ -61,8 +61,8 @@ void DrasculaEngine::loadArchives() {
 }
 
 static const PlainGameDescriptor drasculaGames[] = {
-	{"drascula", "Drascula: The Vampire Strikes Back"},
-	{0, 0}
+	{ "drascula", "Drascula: The Vampire Strikes Back" },
+	{ 0, 0 }
 };
 
 namespace Drascula {
@@ -72,256 +72,225 @@ static const DrasculaGameDescription gameDescriptions[] = {
 	//// Packed versions //////////////////////////////////////////////////////
 
 	{
-		// Drascula English version (original packed files)
-		{
-			"drascula",
-			0,
-			{
-				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
-				// HACK: List packet.001 twice to ensure this detector entry
-				// is ranked just as high as the others (which each have two
-				// detection files).
-				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
-				{NULL, 0, NULL, 0}
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			GF_PACKED,
-			GUIO1(GUIO_LINKSPEECHTOSFX)
-		},
+	  // Drascula English version (original packed files)
+	  {
+	    "drascula",
+	    0,
+	    { { "packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563 },
+	      // HACK: List packet.001 twice to ensure this detector entry
+	      // is ranked just as high as the others (which each have two
+	      // detection files).
+	      { "packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563 },
+	      { NULL, 0, NULL, 0 } },
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    GF_PACKED,
+	    GUIO1(GUIO_LINKSPEECHTOSFX) },
 	},
 
 	{
-		// Drascula French version (original packed files)
-		{
-			"drascula",
-			0,
-			{
-				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
-				{"packet.002", 1, "4401123400f22f212b89f15fb4b43013", 721122},
-				{NULL, 0, NULL, 0}
-			},
-			Common::FR_FRA,
-			Common::kPlatformDOS,
-			GF_PACKED,
-			GUIO1(GUIO_LINKSPEECHTOSFX)
-		},
+	  // Drascula French version (original packed files)
+	  {
+	    "drascula",
+	    0,
+	    { { "packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563 },
+	      { "packet.002", 1, "4401123400f22f212b89f15fb4b43013", 721122 },
+	      { NULL, 0, NULL, 0 } },
+	    Common::FR_FRA,
+	    Common::kPlatformDOS,
+	    GF_PACKED,
+	    GUIO1(GUIO_LINKSPEECHTOSFX) },
 	},
 
 	{
-		// Drascula French version (ScummVM repacked files)
-		{
-			"drascula",
-			0,
-			{
-				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
-				{"packet.002", 1, "7b83cedb9bb326ed5143e5c459508d43", 722383},
-				{NULL, 0, NULL, 0}
-			},
-			Common::FR_FRA,
-			Common::kPlatformDOS,
-			GF_PACKED,
-			GUIO1(GUIO_LINKSPEECHTOSFX)
-		},
+	  // Drascula French version (ScummVM repacked files)
+	  {
+	    "drascula",
+	    0,
+	    { { "packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563 },
+	      { "packet.002", 1, "7b83cedb9bb326ed5143e5c459508d43", 722383 },
+	      { NULL, 0, NULL, 0 } },
+	    Common::FR_FRA,
+	    Common::kPlatformDOS,
+	    GF_PACKED,
+	    GUIO1(GUIO_LINKSPEECHTOSFX) },
 	},
 
 	{
-		// Drascula German version (original packed files)
-		{
-			"drascula",
-			0,
-			{
-				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
-				{"packet.003", 1, "e8f4dc6091037329bab4ddb1cba35807", 719728},
-				{NULL, 0, NULL, 0}
-			},
-			Common::DE_DEU,
-			Common::kPlatformDOS,
-			GF_PACKED,
-			GUIO1(GUIO_LINKSPEECHTOSFX)
-		},
+	  // Drascula German version (original packed files)
+	  {
+	    "drascula",
+	    0,
+	    { { "packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563 },
+	      { "packet.003", 1, "e8f4dc6091037329bab4ddb1cba35807", 719728 },
+	      { NULL, 0, NULL, 0 } },
+	    Common::DE_DEU,
+	    Common::kPlatformDOS,
+	    GF_PACKED,
+	    GUIO1(GUIO_LINKSPEECHTOSFX) },
 	},
 
 	{
-		// Drascula Italian version (original packed version)
-		{
-			"drascula",
-			0,
-			AD_ENTRY1s("packet.001", "0253e924af223f5fe52537023385159b", 32564209),
-			Common::IT_ITA,
-			Common::kPlatformDOS,
-			GF_PACKED,
-			GUIO1(GUIO_LINKSPEECHTOSFX)
-		},
+	  // Drascula Italian version (original packed version)
+	  {
+	    "drascula",
+	    0,
+	    AD_ENTRY1s("packet.001", "0253e924af223f5fe52537023385159b", 32564209),
+	    Common::IT_ITA,
+	    Common::kPlatformDOS,
+	    GF_PACKED,
+	    GUIO1(GUIO_LINKSPEECHTOSFX) },
 	},
 
 	{
-		// Drascula Italian version (ScummVM repacked files)
-		{
-			"drascula",
-			0,
-			{
-				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
-				{"packet.005", 1, "58caac54b891f5d7f335e710e45e5d29", 16209623},
-				{NULL, 0, NULL, 0}
-			},
-			Common::IT_ITA,
-			Common::kPlatformDOS,
-			GF_PACKED,
-			GUIO1(GUIO_LINKSPEECHTOSFX)
-		},
+	  // Drascula Italian version (ScummVM repacked files)
+	  {
+	    "drascula",
+	    0,
+	    { { "packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563 },
+	      { "packet.005", 1, "58caac54b891f5d7f335e710e45e5d29", 16209623 },
+	      { NULL, 0, NULL, 0 } },
+	    Common::IT_ITA,
+	    Common::kPlatformDOS,
+	    GF_PACKED,
+	    GUIO1(GUIO_LINKSPEECHTOSFX) },
 	},
 
 	{
-		// Drascula Spanish version (original packed version)
-		{
-			"drascula",
-			0,
-			AD_ENTRY1s("packet.001", "3c971aba65a037d29d0b479cad6f5943", 31702652),
-			Common::ES_ESP,
-			Common::kPlatformDOS,
-			GF_PACKED,
-			GUIO1(GUIO_LINKSPEECHTOSFX)
-		},
+	  // Drascula Spanish version (original packed version)
+	  {
+	    "drascula",
+	    0,
+	    AD_ENTRY1s("packet.001", "3c971aba65a037d29d0b479cad6f5943", 31702652),
+	    Common::ES_ESP,
+	    Common::kPlatformDOS,
+	    GF_PACKED,
+	    GUIO1(GUIO_LINKSPEECHTOSFX) },
 	},
 
 	{
-		// Drascula Spanish version (ScummVM repacked files)
-		{
-			"drascula",
-			0,
-			{
-				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
-				{"packet.004", 1, "a289d3cf80d50f25ec569b653248437e", 17205838},
-				{NULL, 0, NULL, 0}
-			},
-			Common::ES_ESP,
-			Common::kPlatformDOS,
-			GF_PACKED,
-			GUIO1(GUIO_LINKSPEECHTOSFX)
-		},
+	  // Drascula Spanish version (ScummVM repacked files)
+	  {
+	    "drascula",
+	    0,
+	    { { "packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563 },
+	      { "packet.004", 1, "a289d3cf80d50f25ec569b653248437e", 17205838 },
+	      { NULL, 0, NULL, 0 } },
+	    Common::ES_ESP,
+	    Common::kPlatformDOS,
+	    GF_PACKED,
+	    GUIO1(GUIO_LINKSPEECHTOSFX) },
 	},
 
 	{
-		// Drascula Russian version (ScummVM repacked files)
-		{
-			"drascula",
-			0,
-			{
-				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
-				{"packet.006", 1, "e464b99de7f226391337510d5c328258", 697173},
-				{NULL, 0, NULL, 0}
-			},
-			Common::RU_RUS,
-			Common::kPlatformDOS,
-			GF_PACKED,
-			GUIO1(GUIO_LINKSPEECHTOSFX)
-		},
+	  // Drascula Russian version (ScummVM repacked files)
+	  {
+	    "drascula",
+	    0,
+	    { { "packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563 },
+	      { "packet.006", 1, "e464b99de7f226391337510d5c328258", 697173 },
+	      { NULL, 0, NULL, 0 } },
+	    Common::RU_RUS,
+	    Common::kPlatformDOS,
+	    GF_PACKED,
+	    GUIO1(GUIO_LINKSPEECHTOSFX) },
 	},
 
 	//// Unpacked versions ////////////////////////////////////////////////////
 
 	{
-		// Drascula English version
-		{
-			"drascula",
-			0,
-			AD_ENTRY1s("14.ald", "09b2735953edcd43af115c65ae00b10e", 1595),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_LINKSPEECHTOSFX)
-		},
+	  // Drascula English version
+	  {
+	    "drascula",
+	    0,
+	    AD_ENTRY1s("14.ald", "09b2735953edcd43af115c65ae00b10e", 1595),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO1(GUIO_LINKSPEECHTOSFX) },
 	},
 
 	{
-		// Drascula French version
-		{
-			"drascula",
-			0,
-			AD_ENTRY1s("14.ald", "eeeee96b82169003630e08992248296c", 608),
-			Common::FR_FRA,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_LINKSPEECHTOSFX)
-		},
+	  // Drascula French version
+	  {
+	    "drascula",
+	    0,
+	    AD_ENTRY1s("14.ald", "eeeee96b82169003630e08992248296c", 608),
+	    Common::FR_FRA,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO1(GUIO_LINKSPEECHTOSFX) },
 	},
 
 	{
-		// Drascula French version (updated - bug #3612236)
-		{
-			"drascula",
-			0,
-			AD_ENTRY1s("14.ald", "1f9fbded768bee061cc22bc5bdeab540", 611),
-			Common::FR_FRA,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_LINKSPEECHTOSFX)
-		},
+	  // Drascula French version (updated - bug #3612236)
+	  {
+	    "drascula",
+	    0,
+	    AD_ENTRY1s("14.ald", "1f9fbded768bee061cc22bc5bdeab540", 611),
+	    Common::FR_FRA,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO1(GUIO_LINKSPEECHTOSFX) },
 	},
 
 	{
-		// Drascula German version
-		{
-			"drascula",
-			0,
-			AD_ENTRY1s("14.ald", "72e46089033d56bad1c179ac36e2a9d2", 610),
-			Common::DE_DEU,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_LINKSPEECHTOSFX)
-		},
+	  // Drascula German version
+	  {
+	    "drascula",
+	    0,
+	    AD_ENTRY1s("14.ald", "72e46089033d56bad1c179ac36e2a9d2", 610),
+	    Common::DE_DEU,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO1(GUIO_LINKSPEECHTOSFX) },
 	},
 
 	{
-		// Drascula Italian version
-		{
-			"drascula",
-			0,
-			AD_ENTRY1s("14.ald", "02b49a18328d0bf2efe6ba658c9c7a1d", 2098),
-			Common::IT_ITA,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_LINKSPEECHTOSFX)
-		},
+	  // Drascula Italian version
+	  {
+	    "drascula",
+	    0,
+	    AD_ENTRY1s("14.ald", "02b49a18328d0bf2efe6ba658c9c7a1d", 2098),
+	    Common::IT_ITA,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO1(GUIO_LINKSPEECHTOSFX) },
 	},
 
 	{
-		// Drascula Italian version (updated - bug #3612236)
-		{
-			"drascula",
-			0,
-			AD_ENTRY1s("14.ald", "ccaee939bb3b344c048f28f9205710d1", 2925),
-			Common::IT_ITA,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_LINKSPEECHTOSFX)
-		},
+	  // Drascula Italian version (updated - bug #3612236)
+	  {
+	    "drascula",
+	    0,
+	    AD_ENTRY1s("14.ald", "ccaee939bb3b344c048f28f9205710d1", 2925),
+	    Common::IT_ITA,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO1(GUIO_LINKSPEECHTOSFX) },
 	},
 
 	{
-		// Drascula Spanish version
-		{
-			"drascula",
-			0,
-			AD_ENTRY1s("14.ald", "0746ed1a5cc8d9728f790c29813f4b43", 23059),
-			Common::ES_ESP,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_LINKSPEECHTOSFX)
-		},
+	  // Drascula Spanish version
+	  {
+	    "drascula",
+	    0,
+	    AD_ENTRY1s("14.ald", "0746ed1a5cc8d9728f790c29813f4b43", 23059),
+	    Common::ES_ESP,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO1(GUIO_LINKSPEECHTOSFX) },
 	},
 	{
-		// Drascula Russian version
-		{
-			"drascula",
-			0,
-			AD_ENTRY1s("14.ald", "4dfab170eae935a2e9889196df427a4a", 1426),
-			Common::RU_RUS,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_LINKSPEECHTOSFX)
-		},
+	  // Drascula Russian version
+	  {
+	    "drascula",
+	    0,
+	    AD_ENTRY1s("14.ald", "4dfab170eae935a2e9889196df427a4a", 1426),
+	    Common::RU_RUS,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO1(GUIO_LINKSPEECHTOSFX) },
 	},
 
 	{ AD_TABLE_END_MARKER }
@@ -338,7 +307,8 @@ SaveStateDescriptor loadMetaData(Common::ReadStream *s, int slot, bool setPlayTi
 
 class DrasculaMetaEngine : public AdvancedMetaEngine {
 public:
-	DrasculaMetaEngine() : AdvancedMetaEngine(Drascula::gameDescriptions, sizeof(Drascula::DrasculaGameDescription), drasculaGames) {
+	DrasculaMetaEngine()
+	  : AdvancedMetaEngine(Drascula::gameDescriptions, sizeof(Drascula::DrasculaGameDescription), drasculaGames) {
 		_singleId = "drascula";
 		_guiOptions = GUIO1(GUIO_NOMIDI);
 	}
@@ -361,15 +331,7 @@ public:
 };
 
 bool DrasculaMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup) || (f == kSupportsDeleteSave) || (f == kSavesSupportMetaInfo) || (f == kSavesSupportThumbnail) || (f == kSavesSupportCreationDate) || (f == kSavesSupportPlayTime) || (f == kSimpleSavesNames);
 }
 
 const ExtraGuiOptions DrasculaMetaEngine::getExtraGuiOptions(const Common::String &target) const {
@@ -461,7 +423,7 @@ bool DrasculaMetaEngine::createInstance(OSystem *syst, Engine **engine, const AD
 } // End of namespace Drascula
 
 #if PLUGIN_ENABLED_DYNAMIC(DRASCULA)
-	REGISTER_PLUGIN_DYNAMIC(DRASCULA, PLUGIN_TYPE_ENGINE, Drascula::DrasculaMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(DRASCULA, PLUGIN_TYPE_ENGINE, Drascula::DrasculaMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(DRASCULA, PLUGIN_TYPE_ENGINE, Drascula::DrasculaMetaEngine);
+REGISTER_PLUGIN_STATIC(DRASCULA, PLUGIN_TYPE_ENGINE, Drascula::DrasculaMetaEngine);
 #endif

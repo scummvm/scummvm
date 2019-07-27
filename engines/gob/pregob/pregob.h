@@ -23,11 +23,11 @@
 #ifndef GOB_PREGOB_PREGOB_H
 #define GOB_PREGOB_PREGOB_H
 
-#include "common/str.h"
 #include "common/array.h"
+#include "common/str.h"
 
-#include "gob/util.h"
 #include "gob/aniobject.h"
+#include "gob/util.h"
 
 #include "gob/pregob/txtfile.h"
 
@@ -64,12 +64,10 @@ public:
 protected:
 	typedef Common::Array<ANIObject *> ANIList;
 
-	static const char  kLanguageSuffixShort[5];
-	static const char *kLanguageSuffixLong [5];
-
+	static const char kLanguageSuffixShort[5];
+	static const char *kLanguageSuffixLong[5];
 
 	GobEngine *_vm;
-
 
 	// -- Graphics --
 
@@ -77,7 +75,7 @@ protected:
 	void initScreen();
 
 	void fadeOut(); ///< Fade to black.
-	void fadeIn();  ///< Fade to the current palette.
+	void fadeIn(); ///< Fade to the current palette.
 
 	void clearScreen();
 
@@ -129,11 +127,10 @@ protected:
 	/** Wait for the frame to end, handling screen updates and optionally update input. */
 	void endFrame(bool doInput);
 
-
 	// -- Sound --
 
 	/** Load all sounds that can be played interactively in the game. */
-	void loadSounds(const char * const *sounds, uint soundCount);
+	void loadSounds(const char *const *sounds, uint soundCount);
 	/** Free all loaded sound. */
 	void freeSounds();
 
@@ -148,18 +145,16 @@ protected:
 	/** Beep the PC speaker. */
 	void beep(int16 frequency, int32 length);
 
-
 	// -- Input --
 
 	/** Check mouse and keyboard input. */
 	int16 checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
 	/** Wait for mouse or keyboard input. */
-	int16 waitInput (int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
+	int16 waitInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
 	/** Wait for mouse or keyboard input, but don't care about what was done with the mouse. */
 	int16 waitInput();
 	/** Did we have mouse or keyboard input? */
-	bool  hasInput();
-
+	bool hasInput();
 
 	// -- TXT helpers --
 
@@ -171,11 +166,9 @@ protected:
 	/** Called by loadTXT() to fix strings within the TXT file. */
 	virtual void fixTXTStrings(TXTFile &txt) const;
 
-
 	// -- GCT helpers --
 
 	GCTFile *loadGCT(const Common::String &gctFile) const;
-
 
 private:
 	/** Did we fade out? */
@@ -183,7 +176,6 @@ private:
 
 	/** All loaded sounds. */
 	Common::Array<SoundDesc> _sounds;
-
 
 	/** Load a sound file. */
 	bool loadSound(SoundDesc &sound, const Common::String &file) const;

@@ -20,8 +20,8 @@
  *
  */
 
-#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
+#include "dreamweb/sound.h"
 
 namespace DreamWeb {
 
@@ -42,10 +42,10 @@ void DreamWebEngine::talk() {
 	workToScreen();
 
 	RectWithCallback talkList[] = {
-		{ 273,320,157,198,&DreamWebEngine::getBack1 },
-		{ 240,290,2,44,&DreamWebEngine::moreTalk },
-		{ 0,320,0,200,&DreamWebEngine::blank },
-		{ 0xFFFF,0,0,0,0 }
+		{ 273, 320, 157, 198, &DreamWebEngine::getBack1 },
+		{ 240, 290, 2, 44, &DreamWebEngine::moreTalk },
+		{ 0, 320, 0, 200, &DreamWebEngine::blank },
+		{ 0xFFFF, 0, 0, 0, 0 }
 	};
 
 	do {
@@ -90,7 +90,7 @@ void DreamWebEngine::startTalk() {
 	const uint8 *str = getPersonText(_character & 0x7F, 0);
 	uint16 y;
 
-	_charShift = 91+91;
+	_charShift = 91 + 91;
 	y = 64;
 	printDirect(&str, 66, &y, 241, true);
 
@@ -99,7 +99,7 @@ void DreamWebEngine::startTalk() {
 	printDirect(&str, 66, &y, 241, true);
 
 	if (hasSpeech()) {
-		_speechLoaded = _sound->loadSpeech('R', _realLocation, 'C', 64*(_character & 0x7F));
+		_speechLoaded = _sound->loadSpeech('R', _realLocation, 'C', 64 * (_character & 0x7F));
 		if (_speechLoaded) {
 			_sound->volumeChange(6, 1);
 			_sound->playChannel1(62);
@@ -108,7 +108,7 @@ void DreamWebEngine::startTalk() {
 }
 
 const uint8 *DreamWebEngine::getPersonText(uint8 index, uint8 talkPos) {
-	return (const uint8 *)_personText.getString(index*64 + talkPos);
+	return (const uint8 *)_personText.getString(index * 64 + talkPos);
 }
 
 void DreamWebEngine::moreTalk() {
@@ -120,7 +120,7 @@ void DreamWebEngine::moreTalk() {
 	commandOnlyCond(49, 215);
 
 	if (_mouseButton == _oldButton)
-		return;	// nomore
+		return; // nomore
 
 	if (!(_mouseButton & 1))
 		return;
@@ -197,9 +197,9 @@ bool DreamWebEngine::hangOnPQ() {
 	_getBack = 0;
 
 	RectWithCallback quitList[] = {
-		{ 273,320,157,198,&DreamWebEngine::getBack1 },
-		{ 0,320,0,200,&DreamWebEngine::blank },
-		{ 0xFFFF,0,0,0,0 }
+		{ 273, 320, 157, 198, &DreamWebEngine::getBack1 },
+		{ 0, 320, 0, 200, &DreamWebEngine::blank },
+		{ 0xFFFF, 0, 0, 0, 0 }
 	};
 
 	uint16 speechFlag = 0;

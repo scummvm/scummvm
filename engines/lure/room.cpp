@@ -21,29 +21,29 @@
  */
 
 #include "lure/room.h"
+#include "lure/events.h"
+#include "lure/game.h"
+#include "lure/lure.h"
 #include "lure/luredefs.h"
 #include "lure/res.h"
 #include "lure/screen.h"
-#include "lure/game.h"
-#include "lure/lure.h"
-#include "lure/events.h"
-#include "lure/strings.h"
 #include "lure/scripts.h"
 #include "lure/sound.h"
+#include "lure/strings.h"
 
 namespace Lure {
 
 static Room *int_room;
 
-RoomLayer::RoomLayer(uint16 screenId, bool backgroundLayer):
-		Surface(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT) {
+RoomLayer::RoomLayer(uint16 screenId, bool backgroundLayer)
+  : Surface(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT) {
 	Disk &disk = Disk::getReference();
 	byte *screenData = data().data();
 	int cellY;
 	int cellIndex = 0;
 
 	// Reset all the cells to unused
-	Common::fill((uint8 *) _cells, (uint8 *) _cells + GRID_SIZE, 0xff);
+	Common::fill((uint8 *)_cells, (uint8 *)_cells + GRID_SIZE, 0xff);
 
 	// Load up the screen data
 	MemoryBlock *rawData = disk.getEntry(screenId);
@@ -76,26 +76,27 @@ RoomLayer::RoomLayer(uint16 screenId, bool backgroundLayer):
 			} else {
 				// Check the cell
 				for (int yP = 0; yP < RECT_SIZE; ++yP) {
-					if (hasPixels) break;
-					byte *linePos = screenData + (cellY * RECT_SIZE + yP + MENUBAR_Y_SIZE)
-						* FULL_SCREEN_WIDTH + (cellX * RECT_SIZE);
+					if (hasPixels)
+						break;
+					byte *linePos = screenData + (cellY * RECT_SIZE + yP + MENUBAR_Y_SIZE) * FULL_SCREEN_WIDTH + (cellX * RECT_SIZE);
 
 					for (int xP = 0; xP < RECT_SIZE; ++xP) {
 						hasPixels = *linePos++ != 0;
-						if (hasPixels) break;
+						if (hasPixels)
+							break;
 					}
 				}
 			}
 
-			_cells[cellY + NUM_EDGE_RECTS][cellX + NUM_EDGE_RECTS] =
-				hasPixels ? cellIndex++ : 0xff;
+			_cells[cellY + NUM_EDGE_RECTS][cellX + NUM_EDGE_RECTS] = hasPixels ? cellIndex++ : 0xff;
 		}
 	}
 }
 
 /*--------------------------------------------------------------------------*/
 
-Room::Room(): _screen(Screen::getReference()) {
+Room::Room()
+  : _screen(Screen::getReference()) {
 	int_room = this;
 
 	_roomData = NULL;
@@ -103,7 +104,8 @@ Room::Room(): _screen(Screen::getReference()) {
 	_hotspotId = 0;
 	_hotspotName[0] = '\0';
 	_statusLine[0] = '\0';
-	for (int ctr = 0; ctr < MAX_NUM_LAYERS; ++ctr) _layers[ctr] = NULL;
+	for (int ctr = 0; ctr < MAX_NUM_LAYERS; ++ctr)
+		_layers[ctr] = NULL;
 	_numLayers = 0;
 	_showInfo = false;
 	_isExit = false;
@@ -111,7 +113,7 @@ Room::Room(): _screen(Screen::getReference()) {
 	_destRoomNumber = 0;
 	_cursorState = CS_NONE;
 
-//****DEBUG****
+	//****DEBUG****
 	memset(tempLayer, 0, DECODED_PATHS_WIDTH * DECODED_PATHS_HEIGHT * 2);
 }
 
@@ -155,15 +157,14 @@ void Room::loadRoomHotspots() {
 	for (i = list.begin(); i != list.end(); ++i) {
 		HotspotData const &rec = **i;
 
-		if ((rec.hotspotId < 0x7530) && (rec.roomNumber == _roomNumber) &&
-			(rec.layer != 0))
+		if ((rec.hotspotId < 0x7530) && (rec.roomNumber == _roomNumber) && (rec.layer != 0))
 			r.activateHotspot(rec.hotspotId);
 	}
 }
 
 void Room::checkRoomHotspots() {
-	uint16 rangeStart[4] = {0x408, 0x3e8, 0x7530, 0x2710};
-	uint16 rangeEnd[4] = {0x270f, 0x407, 0xffff, 0x752f};
+	uint16 rangeStart[4] = { 0x408, 0x3e8, 0x7530, 0x2710 };
+	uint16 rangeEnd[4] = { 0x270f, 0x407, 0xffff, 0x752f };
 
 	Mouse &m = Mouse::getReference();
 	Resources &res = Resources::getReference();
@@ -185,9 +186,7 @@ void Room::checkRoomHotspots() {
 
 			bool skipFlag = (entry->roomNumber != _roomNumber);
 			if (!skipFlag) {
-				skipFlag = (((entry->flags & HOTSPOTFLAG_FOUND) == 0) &&
-							((entry->flags & HOTSPOTFLAG_SKIP) != 0)) ||
-						    ((entry->flags & HOTSPOTFLAG_MENU_EXCLUSION) != 0);
+				skipFlag = (((entry->flags & HOTSPOTFLAG_FOUND) == 0) && ((entry->flags & HOTSPOTFLAG_SKIP) != 0)) || ((entry->flags & HOTSPOTFLAG_MENU_EXCLUSION) != 0);
 			}
 
 			if ((!skipFlag) && (entry->hotspotId < 0x409))
@@ -208,15 +207,12 @@ void Room::checkRoomHotspots() {
 
 				if (hsEntry) {
 					// Check whether cursor is in override hotspot area
-					if ((currentX >= hsEntry->xs) && (currentX <= hsEntry->xe) &&
-						(currentY >= hsEntry->ys) && (currentY <= hsEntry->ye))
+					if ((currentX >= hsEntry->xs) && (currentX <= hsEntry->xe) && (currentY >= hsEntry->ys) && (currentY <= hsEntry->ye))
 						// Found to be in hotspot entry
 						break;
 				} else {
 					// Check whether cursor is in default hospot area
-					if ((currentX >= entry->startX) && (currentY >= entry->startY) &&
-						(currentX < entry->startX + entry->widthCopy) &&
-						(currentY < entry->startY + entry->height))
+					if ((currentX >= entry->startX) && (currentY >= entry->startY) && (currentX < entry->startX + entry->widthCopy) && (currentY < entry->startY + entry->height))
 						// Found hotspot entry
 						break;
 				}
@@ -246,7 +242,8 @@ CursorType Room::checkRoomExits() {
 	_destRoomNumber = 0;
 
 	RoomExitHotspotList &exits = _roomData->exitHotspots;
-	if (exits.empty()) return CURSOR_ARROW;
+	if (exits.empty())
+		return CURSOR_ARROW;
 	RoomExitJoinData *join;
 	bool skipFlag;
 
@@ -261,8 +258,7 @@ CursorType Room::checkRoomExits() {
 				skipFlag = true;
 		}
 
-		if (!skipFlag && (m.x() >= rec.xs) && (m.x() <= rec.xe) &&
-			(m.y() >= rec.ys) && (m.y() <= rec.ye)) {
+		if (!skipFlag && (m.x() >= rec.xs) && (m.x() <= rec.xe) && (m.y() >= rec.ys) && (m.y() <= rec.ye)) {
 			// Cursor is within exit area
 			CursorType cursorNum = (CursorType)rec.cursorNum;
 			_destRoomNumber = rec.destRoomNumber;
@@ -294,7 +290,6 @@ void Room::addAnimation(Hotspot &h) {
 		int16 y = h.y();
 		if ((x >= 0) && (x < FULL_SCREEN_WIDTH) && (y >= 0) && (y < FULL_SCREEN_HEIGHT))
 			sprintf(buffer, "%xh", h.hotspotId());
-
 	}
 }
 
@@ -314,19 +309,21 @@ void Room::addLayers(Hotspot &h) {
 
 	for (int16 xCtr = 0; xCtr < numX; ++xCtr, ++xStart) {
 		int16 xs = xStart - NUM_EDGE_RECTS;
-		if (xs < 0) continue;
+		if (xs < 0)
+			continue;
 
 		// Check foreground layers for an occupied one
 
 		int layerNum = 1;
-		while ((layerNum < 4) && (_layers[layerNum] != NULL) &&
-				(_layers[layerNum]->getCell(xStart, yEnd) == 0xff))
+		while ((layerNum < 4) && (_layers[layerNum] != NULL) && (_layers[layerNum]->getCell(xStart, yEnd) == 0xff))
 			++layerNum;
-		if ((layerNum == 4) || (_layers[layerNum] == NULL)) continue;
+		if ((layerNum == 4) || (_layers[layerNum] == NULL))
+			continue;
 
 		int16 ye = yEnd - NUM_EDGE_RECTS;
 		for (int16 yCtr = 0; yCtr < numY; ++yCtr, --ye) {
-			if (ye < 0) break;
+			if (ye < 0)
+				break;
 			addCell(xs, ye, layerNum);
 		}
 	}
@@ -335,10 +332,10 @@ void Room::addLayers(Hotspot &h) {
 void Room::addCell(int16 xp, int16 yp, int layerNum) {
 	Surface &s = _screen.screen();
 
-	while ((layerNum < 4) && (_layers[layerNum] != NULL) &&
-			(_layers[layerNum]->getCell(xp + NUM_EDGE_RECTS, yp + NUM_EDGE_RECTS) >= 0xfe))
+	while ((layerNum < 4) && (_layers[layerNum] != NULL) && (_layers[layerNum]->getCell(xp + NUM_EDGE_RECTS, yp + NUM_EDGE_RECTS) >= 0xfe))
 		++layerNum;
-	if ((layerNum == 4) || (_layers[layerNum] == NULL)) return;
+	if ((layerNum == 4) || (_layers[layerNum] == NULL))
+		return;
 
 	RoomLayer *layer = _layers[layerNum];
 
@@ -349,7 +346,8 @@ void Room::addCell(int16 xp, int16 yp, int layerNum) {
 	for (int yCtr = 0; yCtr < RECT_SIZE; ++yCtr) {
 		for (int xCtr = 0; xCtr < RECT_SIZE; ++xCtr, ++destPos) {
 			byte pixel = *srcPos++;
-			if (pixel) *destPos = pixel;
+			if (pixel)
+				*destPos = pixel;
 		}
 
 		// Move to start of next cell line
@@ -360,15 +358,16 @@ void Room::addCell(int16 xp, int16 yp, int layerNum) {
 
 void Room::blockMerge() {
 	for (int layerNum1 = 0; layerNum1 < 3; ++layerNum1) {
-		if (_layers[layerNum1] == NULL) break;
+		if (_layers[layerNum1] == NULL)
+			break;
 
 		for (int layerNum2 = layerNum1 + 1; layerNum2 < 4; ++layerNum2) {
-			if (_layers[layerNum2] == NULL) break;
+			if (_layers[layerNum2] == NULL)
+				break;
 
 			for (int yp = 0; yp < NUM_VERT_RECTS; ++yp) {
 				for (int xp = 0; xp < NUM_HORIZ_RECTS; ++xp) {
-					if (_layers[layerNum1]->isOccupied(xp + NUM_EDGE_RECTS, yp + NUM_EDGE_RECTS) &&
-						_layers[layerNum2]->isOccupied(xp + NUM_EDGE_RECTS, yp + NUM_EDGE_RECTS)) {
+					if (_layers[layerNum1]->isOccupied(xp + NUM_EDGE_RECTS, yp + NUM_EDGE_RECTS) && _layers[layerNum2]->isOccupied(xp + NUM_EDGE_RECTS, yp + NUM_EDGE_RECTS)) {
 						// Copy the rect from the later layer onto the earlier layer
 						int offset = (yp * RECT_SIZE + MENUBAR_Y_SIZE) * FULL_SCREEN_WIDTH + (xp * RECT_SIZE);
 						byte *src = _layers[layerNum2]->data().data() + offset;
@@ -376,7 +375,8 @@ void Room::blockMerge() {
 
 						for (int y = 0; y < RECT_SIZE; ++y) {
 							for (int x = 0; x < RECT_SIZE; ++x, ++src, ++dest) {
-								if (*src != 0) *dest = *src;
+								if (*src != 0)
+									*dest = *src;
 							}
 							src += FULL_SCREEN_WIDTH - RECT_SIZE;
 							dest += FULL_SCREEN_WIDTH - RECT_SIZE;
@@ -429,7 +429,7 @@ void Room::update() {
 	Surface &s = _screen.screen();
 	Resources &res = Resources::getReference();
 	HotspotList &hotspots = res.activeHotspots();
-	byte white = LureEngine::getReference().isEGA() ?  EGA_DIALOG_WHITE_COLOR : VGA_DIALOG_WHITE_COLOR;
+	byte white = LureEngine::getReference().isEGA() ? EGA_DIALOG_WHITE_COLOR : VGA_DIALOG_WHITE_COLOR;
 	HotspotList::iterator i;
 
 	// Copy the background to the temporary screen surface
@@ -450,15 +450,15 @@ void Room::update() {
 	Common::List<Hotspot *>::iterator iTemp;
 	for (i = hotspots.begin(); i != hotspots.end(); ++i) {
 		Hotspot *h = i->get();
-		if ((h->layer() != 1) || (h->roomNumber() != _roomNumber) ||
-			h->skipFlag() || !h->isActiveAnimation())
+		if ((h->layer() != 1) || (h->roomNumber() != _roomNumber) || h->skipFlag() || !h->isActiveAnimation())
 			continue;
 		int16 endY = h->y() + h->heightCopy();
 
 		for (iTemp = tempList.begin(); iTemp != tempList.end(); ++iTemp) {
 			Hotspot *hTemp = *iTemp;
 			int16 tempY = hTemp->y() + hTemp->heightCopy();
-			if (endY < tempY) break;
+			if (endY < tempY)
+				break;
 		}
 		tempList.insert(iTemp, h);
 	}
@@ -478,7 +478,7 @@ void Room::update() {
 	}
 
 	// Show any active talk dialog
-	if (_talkDialog)  {
+	if (_talkDialog) {
 		// Make sure the character is still active and in the viewing room
 		Hotspot *talkCharacter = res.getActiveHotspot(res.getTalkingCharacter());
 		if ((talkCharacter != NULL) && (talkCharacter->roomNumber() == _roomNumber))
@@ -516,7 +516,7 @@ void Room::update() {
 		// Temporary display of pathfinding data
 		for (int yctr = 0; yctr < ROOM_PATHS_HEIGHT; ++yctr) {
 			for (int xctr = 0; xctr < ROOM_PATHS_WIDTH; ++xctr) {
-/*
+				/*
 				if (_roomData->paths.isOccupied(xctr, yctr))
 					s.fillRect(Rect(xctr * 8, yctr * 8 + 8, xctr * 8 + 7, yctr * 8 + 15), 255);
 */
@@ -524,7 +524,7 @@ void Room::update() {
 				if ((v != 0) && (v < 100)) {
 					sprintf(buffer, "%d", v % 10);
 					s.writeString(xctr * 8, yctr * 8 + 8, buffer, true);
-//				} else if (v == 0xffff) {
+					//				} else if (v == 0xffff) {
 				} else if (_roomData->paths.isOccupied(xctr, yctr)) {
 					s.fillRect(Common::Rect(xctr * 8, yctr * 8 + 8, xctr * 8 + 7, yctr * 8 + 15), 255);
 				}
@@ -533,7 +533,7 @@ void Room::update() {
 
 		Mouse &m = Mouse::getReference();
 		sprintf(buffer, "Room %d Pos (%d,%d) @ (%d,%d)", _roomNumber, m.x(), m.y(),
-			m.x() / RECT_SIZE, (m.y() - MENUBAR_Y_SIZE) / RECT_SIZE);
+		        m.x() / RECT_SIZE, (m.y() - MENUBAR_Y_SIZE) / RECT_SIZE);
 		s.writeString(FULL_SCREEN_WIDTH / 2, 0, buffer, false, white);
 	}
 }
@@ -582,11 +582,12 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 	_screen.setPaletteEmpty(RES_PALETTE_ENTRIES);
 
 	_numLayers = _roomData->numLayers;
-	if (showOverlay) ++_numLayers;
+	if (showOverlay)
+		++_numLayers;
 
 	for (uint8 layerNum = 0; layerNum < _numLayers; ++layerNum)
 		_layers[layerNum] = new RoomLayer(_roomData->layers[layerNum],
-			layerNum == 0);
+		                                  layerNum == 0);
 
 	blockMerge();
 	layersPostProcess();
@@ -616,7 +617,8 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 		if ((_roomData->exitTime != 0xffff) && (_roomData->exitTime != 0)) {
 			// If time has passed, animation ticks needed before room is displayed
 			int numSeconds = (g_system->getMillis() - _roomData->exitTime) / 1000;
-			if (numSeconds > 300) numSeconds = 300;
+			if (numSeconds > 300)
+				numSeconds = 300;
 
 			game.preloadFlag() = true;
 			while (numSeconds-- > 0)
@@ -650,11 +652,11 @@ void Room::checkCursor() {
 	CurrentAction playerAction = res.getActiveHotspot(PLAYER_ID)->currentActions().action();
 	uint16 oldRoomNumber = res.fieldList().getField(OLD_ROOM_NUMBER);
 
-	if ((currentCursor >= CURSOR_TIME_START) && (currentCursor <= CURSOR_TIME_END) &&
-		((playerAction == START_WALKING) || (playerAction == PROCESSING_PATH))) {
+	if ((currentCursor >= CURSOR_TIME_START) && (currentCursor <= CURSOR_TIME_END) && ((playerAction == START_WALKING) || (playerAction == PROCESSING_PATH))) {
 		// Animate the clock when processing the player path
 		newCursor = (CursorType)((int)newCursor + 1);
-		if (newCursor == CURSOR_CROSS) newCursor = CURSOR_TIME_START;
+		if (newCursor == CURSOR_CROSS)
+			newCursor = CURSOR_TIME_START;
 	} else if (checkInTalkDialog() && (oldRoomNumber == 0)) {
 		newCursor = CURSOR_TALK;
 	} else if (res.getTalkData()) {
@@ -665,7 +667,8 @@ void Room::checkCursor() {
 		newCursor = CURSOR_ARROW;
 	} else if (mouse.y() < MENUBAR_Y_SIZE) {
 		// If viewing a room remotely, then don't change to the menu cursor
-		if (oldRoomNumber != 0) return;
+		if (oldRoomNumber != 0)
+			return;
 
 		newCursor = CURSOR_MENUBAR;
 	} else if (_cursorState != CS_NONE) {
@@ -693,13 +696,13 @@ void Room::checkCursor() {
 void Room::setTalkDialog(uint16 srcCharacterId, uint16 destCharacterId, uint16 usedId, uint16 stringId) {
 	Resources &res = Resources::getReference();
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Room::setTalkDialog - char=%xh string=%d",
-		srcCharacterId, stringId);
+	       srcCharacterId, stringId);
 
 	if (_talkDialog) {
 		delete _talkDialog;
 		_talkDialog = NULL;
 	}
-/*
+	/*
 	if (res.getTalkingCharacter() != 0) {
 		// Signal to any talked to character that they're no longer being talked to
 		HotspotData *talkingChar = res.getHotspot(res.getTalkingCharacter());
@@ -722,7 +725,8 @@ void Room::setTalkDialog(uint16 srcCharacterId, uint16 destCharacterId, uint16 u
 	_talkDialog = new TalkDialog(srcCharacterId, destCharacterId, usedId, stringId);
 	_talkDialogX = character->startX + (character->width / 2) - (TALK_DIALOG_WIDTH / 2);
 
-	if (_talkDialogX < 0) _talkDialogX = 0;
+	if (_talkDialogX < 0)
+		_talkDialogX = 0;
 	if (_talkDialogX + TALK_DIALOG_WIDTH >= FULL_SCREEN_WIDTH - 10)
 		_talkDialogX = FULL_SCREEN_WIDTH - 10 - TALK_DIALOG_WIDTH;
 
@@ -735,10 +739,12 @@ void Room::setTalkDialog(uint16 srcCharacterId, uint16 destCharacterId, uint16 u
 
 bool Room::checkInTalkDialog() {
 	// Make sure there is a talk dialog active
-	if (!_talkDialog) return false;
+	if (!_talkDialog)
+		return false;
 
 	// Don't allow dialog close if it's still in progress
-	if (_talkDialog->isBuilding()) return false;
+	if (_talkDialog->isBuilding())
+		return false;
 
 	// Only allow the dialog to be closable if it's the player talking, or
 	// someone talking to the player
@@ -756,9 +762,7 @@ bool Room::checkInTalkDialog() {
 
 	// Check boundaries
 	Mouse &mouse = Mouse::getReference();
-	return ((mouse.x() >= _talkDialogX) && (mouse.y() >= _talkDialogY) &&
-		(mouse.x() < _talkDialogX + _talkDialog->surface().width()) &&
-		(mouse.y() < _talkDialogY + _talkDialog->surface().height()));
+	return ((mouse.x() >= _talkDialogX) && (mouse.y() >= _talkDialogY) && (mouse.x() < _talkDialogX + _talkDialog->surface().width()) && (mouse.y() < _talkDialogY + _talkDialog->surface().height()));
 }
 
 void Room::saveToStream(Common::WriteStream *stream) {
@@ -795,7 +799,7 @@ void Room::loadFromStream(Common::ReadStream *stream) {
 
 	_destRoomNumber = stream->readUint16LE();
 	_showInfo = stream->readByte() != 0;
-	_cursorState = (CursorState) stream->readUint16LE();
+	_cursorState = (CursorState)stream->readUint16LE();
 }
 
 void Room::reset() {

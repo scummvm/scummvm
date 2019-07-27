@@ -31,11 +31,15 @@ class CMusicSystemLock : public CDropTarget {
 	DECLARE_MESSAGE_MAP;
 	bool DropObjectMsg(CDropObjectMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
+
 private:
 	int _value;
+
 public:
 	CLASSDEF;
-	CMusicSystemLock() : CDropTarget(), _value(0) {}
+	CMusicSystemLock()
+	  : CDropTarget()
+	  , _value(0) {}
 
 	/**
 	 * Save the data for the class to file

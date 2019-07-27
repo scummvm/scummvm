@@ -26,13 +26,19 @@
  */
 
 #include "cge2/hero.h"
-#include "cge2/text.h"
 #include "cge2/map.h"
+#include "cge2/text.h"
 
 namespace CGE2 {
 
-Hero::Hero(CGE2Engine *vm) : Sprite(vm), _contact(nullptr), _dir(kNoDir),
-	_curDim(0), _tracePtr(-1), _ignoreMap(false), _maxDist(0) {
+Hero::Hero(CGE2Engine *vm)
+  : Sprite(vm)
+  , _contact(nullptr)
+  , _dir(kNoDir)
+  , _curDim(0)
+  , _tracePtr(-1)
+  , _ignoreMap(false)
+  , _maxDist(0) {
 
 	for (int i = 0; i < kDimMax; i++)
 		_dim[i] = nullptr;
@@ -379,7 +385,7 @@ void Hero::park() {
 		++_time;
 }
 
-bool Hero::lower(Sprite * spr) {
+bool Hero::lower(Sprite *spr) {
 	return (spr->_pos3D._y + (spr->_siz.y >> 2) < 10);
 }
 
@@ -388,8 +394,8 @@ void Hero::reach(int mode) {
 	if (mode >= 4) {
 		spr = _vm->_vga->_showQ->locate(mode);
 		if (spr) {
-			mode = !spr->_flags._east;      // 0-1
-			if (lower(spr))                 // 2-3
+			mode = !spr->_flags._east; // 0-1
+			if (lower(spr)) // 2-3
 				mode += 2;
 		}
 	}
@@ -418,7 +424,7 @@ int Hero::len(V2D v) {
 	return (int)sqrt(double(v.x * v.x + v.y * v.y));
 }
 
-bool Hero::findWay(){
+bool Hero::findWay() {
 	V2D p0(_vm, _pos3D._x.round(), _pos3D._z.round());
 	V2D p1(_vm, _trace[_tracePtr]._x.round(), _trace[_tracePtr]._z.round());
 	V2D ph(_vm, p1.x, p0.y);

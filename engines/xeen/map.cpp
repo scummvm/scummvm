@@ -20,14 +20,14 @@
  *
  */
 
-#include "common/serializer.h"
 #include "xeen/map.h"
+#include "common/serializer.h"
+#include "xeen/dialogs/please_wait.h"
 #include "xeen/interface.h"
 #include "xeen/resources.h"
 #include "xeen/saves.h"
 #include "xeen/screen.h"
 #include "xeen/xeen.h"
-#include "xeen/dialogs/please_wait.h"
 
 namespace Xeen {
 
@@ -72,25 +72,45 @@ MonsterStruct::MonsterStruct() {
 }
 
 MonsterStruct::MonsterStruct(Common::String name, int experience, int hp, int armorClass,
-		int speed, int numberOfAttacks, CharacterClass hatesClass, int strikes,
-		int dmgPerStrike, DamageType attackType, SpecialAttack specialAttack,
-		int hitChance, int rangeAttack, MonsterType monsterType,
-		int fireResistence, int electricityResistence, int coldResistence,
-		int poisonResistence, int energyResistence, int magicResistence,
-		int phsyicalResistence, int field29, int gold, int gems, int itemDrop,
-		bool flying, int imageNumber, int loopAnimation, int animationEffect,
-		int fx, Common::String attackVoc):
-		_name(name), _experience(experience), _hp(hp), _armorClass(armorClass),
-		_speed(speed), _numberOfAttacks(numberOfAttacks), _hatesClass(hatesClass),
-		_strikes(strikes), _dmgPerStrike(dmgPerStrike), _attackType(attackType),
-		_specialAttack(specialAttack), _hitChance(hitChance), _rangeAttack(rangeAttack),
-		_monsterType(monsterType), _fireResistence(fireResistence),
-		_electricityResistence(electricityResistence), _coldResistence(coldResistence),
-		_poisonResistence(poisonResistence), _energyResistence(energyResistence),
-		_magicResistence(magicResistence), _phsyicalResistence(phsyicalResistence),
-		_field29(field29), _gold(gold), _gems(gems), _itemDrop(itemDrop),
-		_flying(flying), _imageNumber(imageNumber), _loopAnimation(loopAnimation),
-		_animationEffect(animationEffect), _fx(fx), _attackVoc(attackVoc) {
+                             int speed, int numberOfAttacks, CharacterClass hatesClass, int strikes,
+                             int dmgPerStrike, DamageType attackType, SpecialAttack specialAttack,
+                             int hitChance, int rangeAttack, MonsterType monsterType,
+                             int fireResistence, int electricityResistence, int coldResistence,
+                             int poisonResistence, int energyResistence, int magicResistence,
+                             int phsyicalResistence, int field29, int gold, int gems, int itemDrop,
+                             bool flying, int imageNumber, int loopAnimation, int animationEffect,
+                             int fx, Common::String attackVoc)
+  : _name(name)
+  , _experience(experience)
+  , _hp(hp)
+  , _armorClass(armorClass)
+  , _speed(speed)
+  , _numberOfAttacks(numberOfAttacks)
+  , _hatesClass(hatesClass)
+  , _strikes(strikes)
+  , _dmgPerStrike(dmgPerStrike)
+  , _attackType(attackType)
+  , _specialAttack(specialAttack)
+  , _hitChance(hitChance)
+  , _rangeAttack(rangeAttack)
+  , _monsterType(monsterType)
+  , _fireResistence(fireResistence)
+  , _electricityResistence(electricityResistence)
+  , _coldResistence(coldResistence)
+  , _poisonResistence(poisonResistence)
+  , _energyResistence(energyResistence)
+  , _magicResistence(magicResistence)
+  , _phsyicalResistence(phsyicalResistence)
+  , _field29(field29)
+  , _gold(gold)
+  , _gems(gems)
+  , _itemDrop(itemDrop)
+  , _flying(flying)
+  , _imageNumber(imageNumber)
+  , _loopAnimation(loopAnimation)
+  , _animationEffect(animationEffect)
+  , _fx(fx)
+  , _attackVoc(attackVoc) {
 }
 
 void MonsterStruct::synchronize(Common::SeekableReadStream &s) {
@@ -229,7 +249,7 @@ void MazeData::clear() {
 	}
 	_mazeNumber = 0;
 	_surroundingMazes.clear();
-	_mazeFlags = _mazeFlags2  = 0;
+	_mazeFlags = _mazeFlags2 = 0;
 	_floorType = 0;
 	_trapDamage = 0;
 	_wallKind = 0;
@@ -365,7 +385,8 @@ MazeWallItem::MazeWallItem() {
 
 /*------------------------------------------------------------------------*/
 
-MonsterObjectData::MonsterObjectData(XeenEngine *vm): _vm(vm) {
+MonsterObjectData::MonsterObjectData(XeenEngine *vm)
+  : _vm(vm) {
 }
 
 void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData) {
@@ -602,7 +623,9 @@ void AnimationInfo::load(const Common::String &name) {
 
 /*------------------------------------------------------------------------*/
 
-Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
+Map::Map(XeenEngine *vm)
+  : _vm(vm)
+  , _mobData(vm) {
 	_loadCcNum = 0;
 	_sideTownPortal = 0;
 	_sideObjects = 0;
@@ -728,7 +751,7 @@ void Map::load(int mapId) {
 		} else {
 			// Load in the maze's data file
 			Common::String datName = Common::String::format("maze%c%03d.dat",
-				(mapId >= 100) ? 'x' : '0', mapId);
+			                                                (mapId >= 100) ? 'x' : '0', mapId);
 			File datFile(datName);
 			XeenSerializer datSer(&datFile, nullptr);
 			mazeDataP->synchronize(datSer);
@@ -736,8 +759,7 @@ void Map::load(int mapId) {
 
 			if (ccNum && mapId == 50)
 				mazeDataP->setAllTilesStepped();
-			if (!ccNum && party._gameFlags[0][25] &&
-					(mapId == 42 || mapId == 43 || mapId == 4)) {
+			if (!ccNum && party._gameFlags[0][25] && (mapId == 42 || mapId == 43 || mapId == 4)) {
 				mazeDataP->clearCellSurfaces();
 			}
 
@@ -750,22 +772,20 @@ void Map::load(int mapId) {
 
 				// Load the monster/object data
 				Common::String mobName = Common::String::format("maze%c%03d.mob",
-					(mapId >= 100) ? 'x' : '0', mapId);
+				                                                (mapId >= 100) ? 'x' : '0', mapId);
 				File mobFile(mobName);
 				XeenSerializer sMob(&mobFile, nullptr);
 				_mobData.synchronize(sMob, _monsterData);
 				mobFile.close();
 
 				Common::String headName = Common::String::format("aaze%c%03d.hed",
-					(mapId >= 100) ? 'x' : '0', mapId);
+				                                                 (mapId >= 100) ? 'x' : '0', mapId);
 				File headFile(headName);
 				_headData.synchronize(headFile);
 				headFile.close();
 
 				if (!ccNum && mapId == 15) {
-					if ((_mobData._monsters[0]._position.x > 31 || _mobData._monsters[0]._position.y > 31) &&
-						(_mobData._monsters[1]._position.x > 31 || _mobData._monsters[1]._position.y > 31) &&
-						(_mobData._monsters[2]._position.x > 31 || _mobData._monsters[2]._position.y > 31)) {
+					if ((_mobData._monsters[0]._position.x > 31 || _mobData._monsters[0]._position.y > 31) && (_mobData._monsters[1]._position.x > 31 || _mobData._monsters[1]._position.y > 31) && (_mobData._monsters[2]._position.x > 31 || _mobData._monsters[2]._position.y > 31)) {
 						party._gameFlags[0][56] = true;
 					}
 				}
@@ -784,7 +804,7 @@ void Map::load(int mapId) {
 	// Reload the monster data for the main maze that we're loading
 	mapId = party._mazeId;
 	Common::String filename = Common::String::format("maze%c%03d.mob",
-		(mapId >= 100) ? 'x' : '0', mapId);
+	                                                 (mapId >= 100) ? 'x' : '0', mapId);
 	File mobFile(filename);
 	XeenSerializer sMob(&mobFile, nullptr);
 	_mobData.synchronize(sMob, _monsterData);
@@ -794,19 +814,17 @@ void Map::load(int mapId) {
 	for (uint i = 0; i < _mobData._objectSprites.size(); ++i) {
 		files.setGameCc(_sideObjects);
 
-		if (party._cloudsCompleted && _mobData._objectSprites[i]._spriteId == 85 &&
-				mapId == 27 && ccNum) {
+		if (party._cloudsCompleted && _mobData._objectSprites[i]._spriteId == 85 && mapId == 27 && ccNum) {
 			_mobData._objects[29]._spriteId = 0;
 			_mobData._objects[29]._id = 8;
 			_mobData._objectSprites[i]._sprites.clear();
-		} else if (mapId == 12 && party._gameFlags[0][43] &&
-			_mobData._objectSprites[i]._spriteId == 118 && !ccNum) {
+		} else if (mapId == 12 && party._gameFlags[0][43] && _mobData._objectSprites[i]._spriteId == 118 && !ccNum) {
 			filename = "085.obj";
 			_mobData._objectSprites[0]._spriteId = 85;
 		} else {
 			filename = Common::String::format("%03d.%cbj",
-				_mobData._objectSprites[i]._spriteId,
-				_mobData._objectSprites[i]._spriteId >= 100 ? '0' : 'o');
+			                                  _mobData._objectSprites[i]._spriteId,
+			                                  _mobData._objectSprites[i]._spriteId >= 100 ? '0' : 'o');
 		}
 
 		// Read in the object sprites
@@ -818,8 +836,7 @@ void Map::load(int mapId) {
 		MonsterObjectData::SpriteResourceEntry &spr = _mobData._monsterSprites[i];
 		uint imgNumber = _monsterData[spr._spriteId]._imageNumber;
 
-		files.setGameCc((spr._spriteId == 91 && _vm->getGameID() == GType_WorldOfXeen) ?
-			0 : _sideMonsters);
+		files.setGameCc((spr._spriteId == 91 && _vm->getGameID() == GType_WorldOfXeen) ? 0 : _sideMonsters);
 		filename = Common::String::format("%03u.mon", imgNumber);
 		_mobData._monsterSprites[i]._sprites.load(filename);
 
@@ -862,7 +879,7 @@ void Map::load(int mapId) {
 
 			if (_mazeData[0]._wallTypes[i] != 0) {
 				_wallSprites._surfaces[i].load(Common::String::format("%s.wal",
-					Res.OUTDOORS_WALL_TYPES[_mazeData[0]._wallTypes[i]]));
+				                                                      Res.OUTDOORS_WALL_TYPES[_mazeData[0]._wallTypes[i]]));
 			}
 
 			_surfaceSprites[i].clear();
@@ -889,11 +906,11 @@ void Map::load(int mapId) {
 
 		// Load sprite sets needed for scene rendering
 		_skySprites[1].load(Common::String::format("%s.sky",
-			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]));
+		                                           Res.TERRAIN_TYPES[_mazeData[0]._wallKind]));
 		_groundSprites.load(Common::String::format("%s.gnd",
-			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]));
+		                                           Res.TERRAIN_TYPES[_mazeData[0]._wallKind]));
 		_tileSprites.load(Common::String::format("%s.til",
-			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]));
+		                                         Res.TERRAIN_TYPES[_mazeData[0]._wallKind]));
 
 		for (int i = 0; i < TOTAL_SURFACES; ++i) {
 			_surfaceSprites[i].clear();
@@ -906,15 +923,20 @@ void Map::load(int mapId) {
 			_wallSprites._surfaces[i].clear();
 
 		_wallSprites._fwl1.load(Common::String::format("f%s1.fwl",
-			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]), _sidePictures);
+		                                               Res.TERRAIN_TYPES[_mazeData[0]._wallKind]),
+		                        _sidePictures);
 		_wallSprites._fwl2.load(Common::String::format("f%s2.fwl",
-			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]), _sidePictures);
+		                                               Res.TERRAIN_TYPES[_mazeData[0]._wallKind]),
+		                        _sidePictures);
 		_wallSprites._fwl3.load(Common::String::format("f%s3.fwl",
-			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]), _sidePictures);
+		                                               Res.TERRAIN_TYPES[_mazeData[0]._wallKind]),
+		                        _sidePictures);
 		_wallSprites._fwl4.load(Common::String::format("f%s4.fwl",
-			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]), _sidePictures);
+		                                               Res.TERRAIN_TYPES[_mazeData[0]._wallKind]),
+		                        _sidePictures);
 		_wallSprites._swl.load(Common::String::format("s%s.swl",
-			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]), _sidePictures);
+		                                              Res.TERRAIN_TYPES[_mazeData[0]._wallKind]),
+		                       _sidePictures);
 
 		// Set entries in the indoor draw list to the correct sprites
 		// for drawing various parts of the background
@@ -1052,8 +1074,7 @@ int Map::mazeLookup(const Common::Point &pt, int layerShift, int wallMask) {
 			_currentSurfaceId = _mazeData[_mazeDataIndex]._cells[pos.y][pos.x]._surfaceId;
 		}
 
-		if (mazeData()._surfaceTypes[_currentSurfaceId] == SURFTYPE_SPACE ||
-				mazeData()._surfaceTypes[_currentSurfaceId] == SURFTYPE_SKY) {
+		if (mazeData()._surfaceTypes[_currentSurfaceId] == SURFTYPE_SPACE || mazeData()._surfaceTypes[_currentSurfaceId] == SURFTYPE_SKY) {
 			_currentSteppedOn = true;
 		} else {
 			_currentSteppedOn = _mazeData[_mazeDataIndex]._steppedOnTiles[pos.y][pos.x];
@@ -1070,7 +1091,7 @@ int Map::mazeLookup(const Common::Point &pt, int layerShift, int wallMask) {
 void Map::loadEvents(int mapId, int ccNum) {
 	// Load events
 	Common::String filename = Common::String::format("maze%c%03d.evt",
-		(mapId >= 100) ? 'x' : '0', mapId);
+	                                                 (mapId >= 100) ? 'x' : '0', mapId);
 	File fEvents(filename, ccNum);
 	XeenSerializer sEvents(&fEvents, nullptr);
 	_events.synchronize(sEvents);
@@ -1078,7 +1099,7 @@ void Map::loadEvents(int mapId, int ccNum) {
 
 	// Load text data
 	filename = Common::String::format("aaze%c%03d.txt",
-		(mapId >= 100) ? 'x' : '0', mapId);
+	                                  (mapId >= 100) ? 'x' : '0', mapId);
 	File fText(filename, ccNum);
 	_events._text.clear();
 	while (fText.pos() < fText.size())
@@ -1090,7 +1111,7 @@ void Map::saveEvents() {
 	// Save eents
 	int mapId = _mazeData[0]._mazeId;
 	Common::String filename = Common::String::format("maze%c%03d.evt",
-		(mapId >= 100) ? 'x' : '0', mapId);
+	                                                 (mapId >= 100) ? 'x' : '0', mapId);
 	OutFile fEvents(filename);
 	XeenSerializer sEvents(nullptr, &fEvents);
 	_events.synchronize(sEvents);
@@ -1140,7 +1161,7 @@ void Map::saveMap() {
 void Map::saveMonsters() {
 	int mapId = _mazeData[0]._mazeId;
 	Common::String filename = Common::String::format("maze%c%03d.mob",
-		(mapId >= 100) ? 'x' : '0', mapId);
+	                                                 (mapId >= 100) ? 'x' : '0', mapId);
 	OutFile fMob(filename);
 	XeenSerializer sMob(nullptr, &fMob);
 	_mobData.synchronize(sMob, _monsterData);
@@ -1227,14 +1248,12 @@ int Map::getCell(int idx) {
 	int mapId = party._mazeId;
 	Direction dir = _vm->_party->_mazeDirection;
 	Common::Point pt(
-		_vm->_party->_mazePosition.x + Res.SCREEN_POSITIONING_X[_vm->_party->_mazeDirection][idx],
-		_vm->_party->_mazePosition.y + Res.SCREEN_POSITIONING_Y[_vm->_party->_mazeDirection][idx]
-	);
+	  _vm->_party->_mazePosition.x + Res.SCREEN_POSITIONING_X[_vm->_party->_mazeDirection][idx],
+	  _vm->_party->_mazePosition.y + Res.SCREEN_POSITIONING_Y[_vm->_party->_mazeDirection][idx]);
 
 	if (pt.x > 31 || pt.y > 31) {
 		if (_vm->_files->_ccNum) {
-			if ((mapId >= 53 && mapId <= 88 && mapId != 73) || (mapId >= 74 && mapId <= 120) ||
-					mapId == 125 || mapId == 126 || mapId == 128 || mapId == 129) {
+			if ((mapId >= 53 && mapId <= 88 && mapId != 73) || (mapId >= 74 && mapId <= 120) || mapId == 125 || mapId == 126 || mapId == 128 || mapId == 129) {
 				_currentSurfaceId = SURFTYPE_DESERT;
 			} else {
 				_currentSurfaceId = 0;
@@ -1266,8 +1285,7 @@ int Map::getCell(int idx) {
 				return 0;
 			} else {
 				if (_vm->_files->_ccNum) {
-					if ((mapId >= 53 && mapId <= 88 && mapId != 73) || (mapId >= 74 && mapId <= 120) ||
-						mapId == 125 || mapId == 126 || mapId == 128 || mapId == 129) {
+					if ((mapId >= 53 && mapId <= 88 && mapId != 73) || (mapId >= 74 && mapId <= 120) || mapId == 125 || mapId == 126 || mapId == 128 || mapId == 129) {
 						_currentSurfaceId = 6;
 					} else {
 						_currentSurfaceId = 0;
@@ -1302,8 +1320,7 @@ int Map::getCell(int idx) {
 				return 0;
 			} else {
 				if (_vm->_files->_ccNum) {
-					if ((mapId >= 53 && mapId <= 88 && mapId != 73) || (mapId >= 74 && mapId <= 120) ||
-						mapId == 125 || mapId == 126 || mapId == 128 || mapId == 129) {
+					if ((mapId >= 53 && mapId <= 88 && mapId != 73) || (mapId >= 74 && mapId <= 120) || mapId == 125 || mapId == 126 || mapId == 128 || mapId == 129) {
 						_currentSurfaceId = 6;
 					} else {
 						_currentSurfaceId = 0;
@@ -1348,9 +1365,9 @@ void Map::loadSky() {
 	Party &party = *_vm->_party;
 
 	party._isNight = party._minutes < (5 * 60) || party._minutes >= (21 * 60);
-	_skySprites[0].load(((party._mazeId >= 89 && party._mazeId <= 112) ||
-		party._mazeId == 128 || party._mazeId == 129) || !party._isNight
-		? "sky.sky" : "night.sky");
+	_skySprites[0].load(((party._mazeId >= 89 && party._mazeId <= 112) || party._mazeId == 128 || party._mazeId == 129) || !party._isNight
+	                      ? "sky.sky"
+	                      : "night.sky");
 }
 
 void Map::getNewMaze() {
@@ -1404,7 +1421,7 @@ Common::String Map::getMazeName(int mapId, int ccNum) {
 		return Res._cloudsMapNames[mapId];
 	} else {
 		Common::String txtName = Common::String::format("%s%c%03d.txt",
-			ccNum ? "dark" : "xeen", mapId >= 100 ? 'x' : '0', mapId);
+		                                                ccNum ? "dark" : "xeen", mapId >= 100 ? 'x' : '0', mapId);
 		File fText(txtName, 1);
 		char mazeName[33];
 		fText.read(mazeName, 33);

@@ -25,8 +25,8 @@
 
 #include "common/scummsys.h"
 
-#include "sci/engine/vm_types.h"	// for reg_t
 #include "sci/engine/vm.h"
+#include "sci/engine/vm_types.h" // for reg_t
 
 namespace Sci {
 
@@ -37,7 +37,7 @@ struct SelectorCache {
 	}
 
 	// Statically defined selectors, (almost the) same in all SCI versions
-	Selector _info_;	///< Removed in SCI3
+	Selector _info_; ///< Removed in SCI3
 	Selector y;
 	Selector x;
 	Selector view, loop, cel; ///< Description of a specific image
@@ -53,7 +53,7 @@ struct SelectorCache {
 	// color, back
 	Selector mode; ///< Used by text controls (-> DrawControl())
 	// style
-	Selector state, font, type;///< Used by controls
+	Selector state, font, type; ///< Used by controls
 	// window
 	Selector cursor; ///< Used by EditControl
 	Selector max; ///< Used by EditControl, removed in SCI3
@@ -65,8 +65,8 @@ struct SelectorCache {
 	Selector play; ///< Play function (first function to be called)
 	Selector restore;
 	Selector number;
-	Selector handle;	///< Replaced by nodePtr in SCI1+
-	Selector nodePtr;	///< Replaces handle in SCI1+
+	Selector handle; ///< Replaced by nodePtr in SCI1+
+	Selector nodePtr; ///< Replaces handle in SCI1+
 	Selector client; ///< The object that wants to be moved
 	Selector dx, dy; ///< Deltas
 	Selector b_movCnt, b_i1, b_i2, b_di, b_xAxis, b_incr; ///< Various Bresenham vars
@@ -76,7 +76,7 @@ struct SelectorCache {
 	Selector canBeHere; ///< Funcselector: Checks for movement validity in SCI0
 	Selector heading, mover; ///< Used in DoAvoider
 	Selector doit; ///< Called (!) by the Animate() system call
-	Selector isBlocked, looper;	///< Used in DoAvoider
+	Selector isBlocked, looper; ///< Used in DoAvoider
 	Selector priority;
 	Selector modifiers; ///< Used by GetEvent
 	Selector replay; ///< Replay function
@@ -96,8 +96,8 @@ struct SelectorCache {
 	Selector subtitleLang;
 	Selector size;
 	Selector points; ///< Used by AvoidPath()
-	Selector palette;	///< Used by the SCI0-SCI1.1 animate code, unused in SCI2-SCI2.1, removed in SCI3
-	Selector dataInc;	///< Used to sync music with animations, removed in SCI3
+	Selector palette; ///< Used by the SCI0-SCI1.1 animate code, unused in SCI2-SCI2.1, removed in SCI3
+	Selector dataInc; ///< Used to sync music with animations, removed in SCI3
 	// handle (in SCI1)
 	Selector min; ///< SMPTE time format
 	Selector sec;
@@ -105,7 +105,7 @@ struct SelectorCache {
 	Selector vol;
 	Selector pri;
 	// perform
-	Selector moveDone;	///< used for DoBresen
+	Selector moveDone; ///< used for DoBresen
 
 	// SCI1 selectors which have been moved a bit in SCI1.1, but otherwise static
 	Selector cantBeHere; ///< Checks for movement avoidance in SCI1+. Replaces canBeHere
@@ -119,13 +119,13 @@ struct SelectorCache {
 
 	// SCI1.1 specific selectors
 	Selector scaleSignal; //< Used by kAnimate() for cel scaling (SCI1.1+)
-	Selector scaleX, scaleY;	///< SCI1.1 view scaling
-	Selector maxScale;		///< SCI1.1 view scaling, limit for cel, when using global scaling
-	Selector vanishingX;	///< SCI1.1 view scaling, used by global scaling
-	Selector vanishingY;	///< SCI1.1 view scaling, used by global scaling
+	Selector scaleX, scaleY; ///< SCI1.1 view scaling
+	Selector maxScale; ///< SCI1.1 view scaling, limit for cel, when using global scaling
+	Selector vanishingX; ///< SCI1.1 view scaling, used by global scaling
+	Selector vanishingY; ///< SCI1.1 view scaling, used by global scaling
 
 	// Used for auto detection purposes
-	Selector overlay;	///< Used to determine if a game is using old gfx functions or not
+	Selector overlay; ///< Used to determine if a game is using old gfx functions or not
 
 	// SCI1.1 Mac icon bar selectors
 	Selector iconIndex; ///< Used to index icon bar objects
@@ -200,7 +200,7 @@ struct SelectorCache {
 /**
  * Map a selector name to a selector id. Shortcut for accessing the selector cache.
  */
-#define SELECTOR(_slc_)		(g_sci->getKernel()->_selectorCache._slc_)
+#define SELECTOR(_slc_) (g_sci->getKernel()->_selectorCache._slc_)
 
 /**
  * Retrieves a selector from an object.
@@ -230,7 +230,7 @@ void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t 
  * Invokes a selector from an object.
  */
 void invokeSelector(EngineState *s, reg_t object, int selectorId,
-	int k_argc, StackPtr k_argp, int argc = 0, const reg_t *argv = 0);
+                    int k_argc, StackPtr k_argp, int argc = 0, const reg_t *argv = 0);
 
 #ifdef ENABLE_SCI32
 /**

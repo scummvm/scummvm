@@ -19,9 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "tinsel/font.h"
 #include "tinsel/actors.h"
 #include "tinsel/dw.h"
-#include "tinsel/font.h"
 #include "tinsel/handle.h"
 #include "tinsel/object.h"
 #include "tinsel/sysvar.h"
@@ -38,7 +38,6 @@ static char g_tBuffer[TBUFSZ];
 
 static SCNHANDLE g_hTagFont = 0, g_hTalkFont = 0;
 static SCNHANDLE g_hRegularTalkFont = 0, g_hRegularTagFont = 0;
-
 
 /**
  * Return address of tBuffer
@@ -65,7 +64,7 @@ SCNHANDLE GetTalkFontHandle() {
  * Called from dec_tagfont() Glitter function. Store the tag font handle.
  */
 void SetTagFontHandle(SCNHANDLE hFont) {
-	g_hTagFont = g_hRegularTagFont = hFont;		// Store the font handle
+	g_hTagFont = g_hRegularTagFont = hFont; // Store the font handle
 }
 
 /**
@@ -73,7 +72,7 @@ void SetTagFontHandle(SCNHANDLE hFont) {
  * Store the talk font handle.
  */
 void SetTalkFontHandle(SCNHANDLE hFont) {
-	g_hTalkFont = g_hRegularTalkFont = hFont;		// Store the font handle
+	g_hTalkFont = g_hRegularTalkFont = hFont; // Store the font handle
 }
 
 void SetTempTagFontHandle(SCNHANDLE hFont) {
@@ -89,7 +88,6 @@ void ResetFontHandles() {
 	g_hTalkFont = g_hRegularTalkFont;
 }
 
-
 /**
  * Poke the background palette into character 0's images.
  */
@@ -102,14 +100,14 @@ void FettleFontPal(SCNHANDLE fontPal) {
 	assert(g_hTalkFont); // Talk font not declared
 
 	pFont = (const FONT *)LockMem(g_hTagFont);
-	pImg = (IMAGE *)LockMem(FROM_32(pFont->fontInit.hObjImg));	// get image for char 0
+	pImg = (IMAGE *)LockMem(FROM_32(pFont->fontInit.hObjImg)); // get image for char 0
 	if (!TinselV2)
 		pImg->hImgPal = TO_32(fontPal);
 	else
 		pImg->hImgPal = 0;
 
 	pFont = (const FONT *)LockMem(g_hTalkFont);
-	pImg = (IMAGE *)LockMem(FROM_32(pFont->fontInit.hObjImg));	// get image for char 0
+	pImg = (IMAGE *)LockMem(FROM_32(pFont->fontInit.hObjImg)); // get image for char 0
 	if (!TinselV2)
 		pImg->hImgPal = TO_32(fontPal);
 	else

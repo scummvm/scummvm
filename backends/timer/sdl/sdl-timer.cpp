@@ -25,9 +25,9 @@
 
 #if defined(SDL_BACKEND)
 
-#include "backends/timer/sdl/sdl-timer.h"
+#	include "backends/timer/sdl/sdl-timer.h"
 
-#include "common/textconsole.h"
+#	include "common/textconsole.h"
 
 static Uint32 timer_handler(Uint32 interval, void *param) {
 	((DefaultTimerManager *)param)->handler();

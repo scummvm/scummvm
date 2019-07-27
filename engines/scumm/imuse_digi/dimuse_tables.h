@@ -21,9 +21,9 @@
  */
 
 #if !defined(SCUMM_IMUSE_DIGI_TABLES_H) && defined(ENABLE_SCUMM_7_8)
-#define SCUMM_IMUSE_DIGI_TABLES_H
+#	define SCUMM_IMUSE_DIGI_TABLES_H
 
-#include "common/scummsys.h"
+#	include "common/scummsys.h"
 
 namespace Scumm {
 
@@ -54,7 +54,6 @@ struct imuseComiTable {
 	int16 fadeOutDelay;
 	char filename[13];
 };
-
 
 struct imuseFtNames {
 	char name[20];

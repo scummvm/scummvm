@@ -29,7 +29,8 @@ namespace Pegasus {
 
 Compass *g_compass = 0;
 
-Compass::Compass() : FaderAnimation(kCompassID) {
+Compass::Compass()
+  : FaderAnimation(kCompassID) {
 	// Initialize it to east...
 	setFaderValue(90);
 	g_compass = this;

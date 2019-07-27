@@ -21,16 +21,16 @@
  */
 
 #include "mutationofjb/font.h"
+#include "common/debug.h"
 #include "mutationofjb/encryptedfile.h"
 #include "mutationofjb/util.h"
-#include "common/debug.h"
 
 namespace MutationOfJB {
 
-Font::Font(const Common::String &fileName, int horizSpacing, int lineHeight) :
-	_horizSpacing(horizSpacing),
-	_lineHeight(lineHeight),
-	_maxCharWidth(0) {
+Font::Font(const Common::String &fileName, int horizSpacing, int lineHeight)
+  : _horizSpacing(horizSpacing)
+  , _lineHeight(lineHeight)
+  , _maxCharWidth(0) {
 
 	load(fileName);
 }
@@ -115,8 +115,8 @@ int Font::getKerningOffset(uint32 left, uint32 right) const {
 class FontBlitOperation {
 public:
 	FontBlitOperation(const Font &font, const byte baseColor)
-		: _font(font),
-		  _baseColor(baseColor) {}
+	  : _font(font)
+	  , _baseColor(baseColor) {}
 
 	byte operator()(const byte srcColor, const byte destColor) {
 		if (srcColor == 0) {
@@ -148,9 +148,11 @@ uint8 Font::transformColor(uint8 baseColor, uint8 glyphColor) const {
 	return baseColor + glyphColor - 0x10;
 }
 
-SystemFont::SystemFont() : Font("sysfnt.aft", 1, 7) {}
+SystemFont::SystemFont()
+  : Font("sysfnt.aft", 1, 7) {}
 
-SpeechFont::SpeechFont() : Font("font1.aft", -1, -1) {}
+SpeechFont::SpeechFont()
+  : Font("font1.aft", -1, -1) {}
 
 uint8 SpeechFont::transformColor(uint8 baseColor, uint8 glyphColor) const {
 	// Hack in original game.

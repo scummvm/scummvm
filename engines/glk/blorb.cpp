@@ -27,14 +27,18 @@ namespace Glk {
 
 /*--------------------------------------------------------------------------*/
 
-Blorb::Blorb(const Common::String &filename, InterpreterType interpType) :
-		Common::Archive(), _filename(filename), _interpType(interpType) {
+Blorb::Blorb(const Common::String &filename, InterpreterType interpType)
+  : Common::Archive()
+  , _filename(filename)
+  , _interpType(interpType) {
 	if (load() != Common::kNoError)
 		error("Could not parse blorb file");
 }
 
-Blorb::Blorb(const Common::FSNode &fileNode, InterpreterType interpType) :
-		Common::Archive(), _fileNode(fileNode), _interpType(interpType) {
+Blorb::Blorb(const Common::FSNode &fileNode, InterpreterType interpType)
+  : Common::Archive()
+  , _fileNode(fileNode)
+  , _interpType(interpType) {
 	if (load() != Common::kNoError)
 		error("Could not parse blorb file");
 }
@@ -69,13 +73,12 @@ Common::SeekableReadStream *Blorb::createReadStreamForMember(const Common::Strin
 
 		if (ce._filename.equalsIgnoreCase(name)) {
 			Common::File f;
-			if ((!_filename.empty() && !f.open(_filename)) ||
-					(_filename.empty() && !f.open(_fileNode)))
+			if ((!_filename.empty() && !f.open(_filename)) || (_filename.empty() && !f.open(_fileNode)))
 				error("Reading failed");
 
 			f.seek(ce._offset);
 			Common::SeekableReadStream *result;
-			
+
 			if (ce._id == ID_FORM) {
 				// AIFF chunks need to be wrapped in a FORM chunk for ScummVM decoder
 				byte *sound = (byte *)malloc(ce._size + 8);
@@ -100,8 +103,7 @@ Common::SeekableReadStream *Blorb::createReadStreamForMember(const Common::Strin
 Common::ErrorCode Blorb::load() {
 	// First, chew through the file and index the chunks
 	Common::File f;
-	if ((!_filename.empty() && !f.open(_filename)) ||
-			(_filename.empty() && !f.open(_fileNode)))
+	if ((!_filename.empty() && !f.open(_filename)) || (_filename.empty() && !f.open(_fileNode)))
 		return Common::kReadingFailed;
 
 	if (!isBlorb(f))
@@ -134,7 +136,7 @@ Common::ErrorCode Blorb::load() {
 			else if (ce._id == ID_AIFF || ce._id == ID_FORM)
 				ce._filename += ".aiff";
 			else if (ce._id == ID_OGG)
-				ce._filename += ".ogg"; 
+				ce._filename += ".ogg";
 			else if (ce._id == ID_MOD)
 				ce._filename += ".mod";
 
@@ -143,13 +145,7 @@ Common::ErrorCode Blorb::load() {
 
 		} else if (ce._type == ID_Exec) {
 			if (
-				(_interpType == INTERPRETER_FROTZ && ce._id == ID_ZCOD) ||
-				(_interpType == INTERPRETER_GLULXE && ce._id == ID_GLUL) ||
-				(_interpType == INTERPRETER_TADS2 && ce._id == ID_TAD2) ||
-				(_interpType == INTERPRETER_TADS3 && ce._id == ID_TAD3) ||
-				(_interpType == INTERPRETER_HUGO && ce._id == ID_HUGO) ||
-				(_interpType == INTERPRETER_SCOTT && ce._id == ID_SAAI)
-			) {
+			  (_interpType == INTERPRETER_FROTZ && ce._id == ID_ZCOD) || (_interpType == INTERPRETER_GLULXE && ce._id == ID_GLUL) || (_interpType == INTERPRETER_TADS2 && ce._id == ID_TAD2) || (_interpType == INTERPRETER_TADS3 && ce._id == ID_TAD3) || (_interpType == INTERPRETER_HUGO && ce._id == ID_HUGO) || (_interpType == INTERPRETER_SCOTT && ce._id == ID_SAAI)) {
 				// Game executable
 				ce._filename = "game";
 			} else {
@@ -231,12 +227,12 @@ bool Blorb::isBlorb(const Common::String &filename, uint32 type) {
 
 bool Blorb::hasBlorbExt(const Common::String &filename) {
 	return filename.hasSuffixIgnoreCase(".blorb") || filename.hasSuffixIgnoreCase(".zblorb")
-		|| filename.hasSuffixIgnoreCase(".gblorb") || filename.hasSuffixIgnoreCase(".blb")
-		|| filename.hasSuffixIgnoreCase(".a3r");
+	  || filename.hasSuffixIgnoreCase(".gblorb") || filename.hasSuffixIgnoreCase(".blb")
+	  || filename.hasSuffixIgnoreCase(".a3r");
 }
 
 void Blorb::getBlorbFilenames(const Common::String &srcFilename, Common::StringArray &filenames,
-		InterpreterType interpType) {
+                              InterpreterType interpType) {
 	// Strip off the source filename extension
 	Common::String filename = srcFilename;
 	if (!filename.contains('.')) {

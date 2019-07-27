@@ -28,22 +28,22 @@
 #ifndef MORTEVIELLE_MORTEVIELLE_H
 #define MORTEVIELLE_MORTEVIELLE_H
 
+#include "common/error.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/random.h"
 #include "common/rect.h"
 #include "common/stack.h"
 #include "engines/engine.h"
-#include "common/error.h"
 #include "graphics/surface.h"
 #include "mortevielle/debugger.h"
 #include "mortevielle/dialogs.h"
 #include "mortevielle/graphics.h"
 #include "mortevielle/menu.h"
 #include "mortevielle/mouse.h"
+#include "mortevielle/outtext.h"
 #include "mortevielle/saveload.h"
 #include "mortevielle/sound.h"
-#include "mortevielle/outtext.h"
 
 namespace Mortevielle {
 
@@ -68,16 +68,50 @@ enum {
 
 // Static string list
 enum {
-	S_YES_NO = 0, S_GO_TO = 1, S_SOMEONE_ENTERS = 2, S_COOL = 3, S_LOURDE = 4,
-	S_MALSAINE = 5, S_IDEM = 6,	S_YOU = 7, S_ARE = 8, S_ALONE = 9,
-	S_HEAR_NOISE = 10, S_SHOULD_HAVE_NOTICED = 11, S_NUMBER_OF_HINTS = 12,
-	S_WANT_TO_WAKE_UP = 13, S_OKAY = 14, S_SAVE_LOAD = 15, S_RESTART = 18, S_F3 = 19,
-	S_F8 = 20, S_HIDE_SELF = 21, S_TAKE = 22, S_PROBE = 23, S_RAISE = 24, S_SUITE = 25,
-	S_STOP = 26, S_USE_DEP_MENU = 27, S_LIFT = 28, S_READ = 29,
-	S_LOOK = 30, S_SEARCH = 31, S_OPEN = 32, S_PUT = 33, S_TURN = 34, S_TIE = 35, S_CLOSE = 36,
-	S_HIT = 37, S_POSE = 38, S_SMASH = 39,
+	S_YES_NO = 0,
+	S_GO_TO = 1,
+	S_SOMEONE_ENTERS = 2,
+	S_COOL = 3,
+	S_LOURDE = 4,
+	S_MALSAINE = 5,
+	S_IDEM = 6,
+	S_YOU = 7,
+	S_ARE = 8,
+	S_ALONE = 9,
+	S_HEAR_NOISE = 10,
+	S_SHOULD_HAVE_NOTICED = 11,
+	S_NUMBER_OF_HINTS = 12,
+	S_WANT_TO_WAKE_UP = 13,
+	S_OKAY = 14,
+	S_SAVE_LOAD = 15,
+	S_RESTART = 18,
+	S_F3 = 19,
+	S_F8 = 20,
+	S_HIDE_SELF = 21,
+	S_TAKE = 22,
+	S_PROBE = 23,
+	S_RAISE = 24,
+	S_SUITE = 25,
+	S_STOP = 26,
+	S_USE_DEP_MENU = 27,
+	S_LIFT = 28,
+	S_READ = 29,
+	S_LOOK = 30,
+	S_SEARCH = 31,
+	S_OPEN = 32,
+	S_PUT = 33,
+	S_TURN = 34,
+	S_TIE = 35,
+	S_CLOSE = 36,
+	S_HIT = 37,
+	S_POSE = 38,
+	S_SMASH = 39,
 
-	S_SMELL = 40, S_SCRATCH = 41, S_PROBE2 = 42, S_BEFORE_USE_DEP_MENU = 43, S_DAY = 44
+	S_SMELL = 40,
+	S_SCRATCH = 41,
+	S_PROBE2 = 42,
+	S_BEFORE_USE_DEP_MENU = 43,
+	S_DAY = 44
 };
 
 enum DataType {
@@ -110,7 +144,7 @@ const int kArega = 0;
 const int kMaxDialogIndex = 9000;
 const int kMaxDialogHint = 600;
 
-const int kDescriptionStringIndex = 0;                // Unused
+const int kDescriptionStringIndex = 0; // Unused
 const int kInventoryStringIndex = 186;
 const int kQuestionStringIndex = 247;
 const int kDialogStringIndex = 292;
@@ -127,12 +161,34 @@ const int kResolutionScaler = 2;
 26  "A photograph$"
 */
 enum Places {
-	OWN_ROOM = 0,     GREEN_ROOM = 1,   PURPLE_ROOM = 2,     TOILETS = 3,      DARKBLUE_ROOM = 4,
-	BLUE_ROOM = 5,    RED_ROOM = 6,     BATHROOM = 7,        GREEN_ROOM2 = 8,  JULIA_ROOM = 9,
-	DINING_ROOM = 10, BUREAU = 11,      KITCHEN = 12,        ATTIC = 13,       CELLAR = 14,
-	LANDING = 15,     CRYPT = 16,       SECRET_PASSAGE = 17, ROOM18 = 18,      MOUNTAIN = 19,
-	CHAPEL = 20,      MANOR_FRONT = 21, MANOR_BACK = 22,     INSIDE_WELL = 23, WELL = 24,
-	DOOR = 25,        ROOM26 = 26,      COAT_ARMS = 27
+	OWN_ROOM = 0,
+	GREEN_ROOM = 1,
+	PURPLE_ROOM = 2,
+	TOILETS = 3,
+	DARKBLUE_ROOM = 4,
+	BLUE_ROOM = 5,
+	RED_ROOM = 6,
+	BATHROOM = 7,
+	GREEN_ROOM2 = 8,
+	JULIA_ROOM = 9,
+	DINING_ROOM = 10,
+	BUREAU = 11,
+	KITCHEN = 12,
+	ATTIC = 13,
+	CELLAR = 14,
+	LANDING = 15,
+	CRYPT = 16,
+	SECRET_PASSAGE = 17,
+	ROOM18 = 18,
+	MOUNTAIN = 19,
+	CHAPEL = 20,
+	MANOR_FRONT = 21,
+	MANOR_BACK = 22,
+	INSIDE_WELL = 23,
+	WELL = 24,
+	DOOR = 25,
+	ROOM26 = 26,
+	COAT_ARMS = 27
 };
 
 struct SaveStruct {
@@ -171,11 +227,11 @@ private:
 
 	int _menuOpcode;
 
-	bool _inMainGameLoop;	// Flag when the main game loop is active
-	bool _quitGame;			// Quit game flag. Originally called 'arret'
-	bool _endGame;			// End game flag. Originally called 'solu'
-	bool _loseGame;			// Lose game flag. Originally called 'perdu'
-	bool _txxFileFl;        // Flag used to determine if texts are from the original files or from a DAT file
+	bool _inMainGameLoop; // Flag when the main game loop is active
+	bool _quitGame; // Quit game flag. Originally called 'arret'
+	bool _endGame; // End game flag. Originally called 'solu'
+	bool _loseGame; // Lose game flag. Originally called 'perdu'
+	bool _txxFileFl; // Flag used to determine if texts are from the original files or from a DAT file
 	bool _roomPresenceLuc;
 	bool _roomPresenceIda;
 	bool _purpleRoomPresenceLeo;
@@ -197,42 +253,42 @@ private:
 	bool _anyone;
 	bool _uptodatePresence;
 
-	int  _textColor;
-	int  _place;
-	int  _manorDistance;
-	int  _currBitIndex;
-	int  _currDay;
-	int  _currHour;
-	int  _currHalfHour;
-	int  _day;
-	int  _hour;
-	int  _minute;
-	int  _curSearchObjId;
-	int  _controlMenu;
-	int  _startTime;
-	int  _endTime;
+	int _textColor;
+	int _place;
+	int _manorDistance;
+	int _currBitIndex;
+	int _currDay;
+	int _currHour;
+	int _currHalfHour;
+	int _day;
+	int _hour;
+	int _minute;
+	int _curSearchObjId;
+	int _controlMenu;
+	int _startTime;
+	int _endTime;
 	Common::Point _stdPal[91][17];
 
-	int  _x26KeyCount;
-	int  _roomDoorId;
-	int  _openObjCount;
-	int  _takeObjCount;
-	int  _num;
-	int  _searchCount;
+	int _x26KeyCount;
+	int _roomDoorId;
+	int _openObjCount;
+	int _takeObjCount;
+	int _num;
+	int _searchCount;
 	bool _introSpeechPlayed;
-	int  _inGameHourDuration;
-	int  _x;
-	int  _y;
-	int  _currentHourCount;
-	int  _currentTime;
-	int  _pauseStartTime;
+	int _inGameHourDuration;
+	int _x;
+	int _y;
+	int _currentHourCount;
+	int _currentTime;
+	int _pauseStartTime;
 
 	Common::String _hintPctMessage;
-	byte  *_cfiecBuffer;
-	int    _cfiecBufferSize;
-	int    _openObjects[7];
+	byte *_cfiecBuffer;
+	int _cfiecBufferSize;
+	int _openObjects[7];
 	uint16 _dialogIndexArray[kMaxDialogIndex + 1];
-	Hint   _dialogHintArray[kMaxDialogHint + 1];
+	Hint _dialogHintArray[kMaxDialogHint + 1];
 
 	Common::ErrorCode initialize();
 	Common::ErrorCode loadMortDat();
@@ -250,7 +306,7 @@ private:
 	void loadCFIEC();
 	void loadCFIPH();
 	void showTitleScreen();
-	int  readclock();
+	int readclock();
 	void palette(int v1);
 	int checkLeoMaxRandomPresence();
 	void interactNPC();
@@ -258,13 +314,13 @@ private:
 	void displayControlMenu();
 	void displayItemInHand(int objId);
 	void resetRoomVariables(int roomId);
-	int  getPresenceStats(int &rand, int faithScore, int roomId);
+	int getPresenceStats(int &rand, int faithScore, int roomId);
 	void setPresenceFlags(int roomId);
 	void testKey(bool d);
 	void exitRoom();
 	void getReadDescription(int objId);
 	void getSearchDescription(int objId);
-	int  checkLeaveSecretPassage();
+	int checkLeaveSecretPassage();
 	void startDialog(int16 rep);
 	void endSearch();
 	int convertCharacterIndexToBitIndex(int characterIndex);
@@ -273,7 +329,7 @@ private:
 	void clearDescriptionBar();
 	void clearVerbBar();
 	void clearUpperRightPart();
-	int  getRandomNumber(int minval, int maxval);
+	int getRandomNumber(int minval, int maxval);
 	void showMoveMenuAlert();
 	void showConfigScreen();
 	void decodeNumber(byte *pStart, int count);
@@ -297,27 +353,27 @@ private:
 	void prepareScreenType3();
 	void updateHour(int &day, int &hour, int &minute);
 	void getKnockAnswer();
-	int  getPresenceStatsGreenRoom();
-	int  getPresenceStatsPurpleRoom();
-	int  getPresenceStatsToilets();
-	int  getPresenceStatsBlueRoom();
-	int  getPresenceStatsRedRoom();
-	int  getPresenceStatsDiningRoom(int &hour);
-	int  getPresenceStatsBureau(int &hour);
-	int  getPresenceStatsKitchen();
-	int  getPresenceStatsAttic();
-	int  getPresenceStatsLanding();
-	int  getPresenceStatsChapel(int &hour);
-	int  getPresenceBitIndex(int roomId);
+	int getPresenceStatsGreenRoom();
+	int getPresenceStatsPurpleRoom();
+	int getPresenceStatsToilets();
+	int getPresenceStatsBlueRoom();
+	int getPresenceStatsRedRoom();
+	int getPresenceStatsDiningRoom(int &hour);
+	int getPresenceStatsBureau(int &hour);
+	int getPresenceStatsKitchen();
+	int getPresenceStatsAttic();
+	int getPresenceStatsLanding();
+	int getPresenceStatsChapel(int &hour);
+	int getPresenceBitIndex(int roomId);
 	void setPresenceGreenRoom(int roomId);
 	void setPresencePurpleRoom();
 	void setPresenceBlueRoom();
 	void setPresenceRedRoom(int roomId);
-	int  setPresenceDiningRoom(int hour);
-	int  setPresenceBureau(int hour);
-	int  setPresenceKitchen();
-	int  setPresenceLanding();
-	int  setPresenceChapel(int hour);
+	int setPresenceDiningRoom(int hour);
+	int setPresenceBureau(int hour);
+	int setPresenceKitchen();
+	int setPresenceLanding();
+	int setPresenceChapel(int hour);
 	void setRandomPresenceGreenRoom(int faithScore);
 	void setRandomPresencePurpleRoom(int faithScore);
 	void setRandomPresenceBlueRoom(int faithScore);
@@ -332,7 +388,7 @@ private:
 	void loadPlaces();
 	void resetPresenceInRooms(int roomId);
 	void showPeoplePresent(int bitIndex);
-	int  selectCharacters(int min, int max);
+	int selectCharacters(int min, int max);
 	void fctMove();
 	void fctTake();
 	void fctInventoryTake();
@@ -382,7 +438,7 @@ private:
 	void putInHand(int &objId);
 	void initMaxAnswer();
 	void displayAnimFrame(int frameNum, int animId);
-	int  getFirstObject();
+	int getFirstObject();
 	void prepareNextObject();
 	void putObject();
 	void resetObjectPlace();
@@ -396,27 +452,27 @@ private:
 
 public:
 	Common::Point _prevPos;
-	int  _currMenu;
-	int  _currAction;
-	int  _drawingSizeArr[108];
-	int  _charAnswerCount[9];
-	int  _charAnswerMax[9];
+	int _currMenu;
+	int _currAction;
+	int _drawingSizeArr[108];
+	int _charAnswerCount[9];
+	int _charAnswerMax[9];
 	byte _tabdon[4001];
 	bool _soundOff;
 	bool _outsideOnlyFl;
 	bool _destinationOk;
 	bool _largestClearScreen;
 	float _addFix;
-	int  _savedBitIndex;
-	int  _numpal;
-	int  _key;
+	int _savedBitIndex;
+	int _numpal;
+	int _key;
 	bool _mouseClick;
 	SaveStruct _coreVar, _saveStruct;
 
 	int _maff;
 	int _caff;
 	int _crep;
-	int _is;		// ???
+	int _is; // ???
 
 	byte _destinationArray[7][25];
 
@@ -446,7 +502,7 @@ public:
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual Common::Error run();
 	virtual void pauseEngineIntern(bool pause);
-	virtual GUI::Debugger *getDebugger() {return _debugger;}
+	virtual GUI::Debugger *getDebugger() { return _debugger; }
 	uint32 getGameFlags() const;
 	Common::Language getLanguage() const;
 	Common::Language getOriginalLanguage() const;
@@ -475,13 +531,13 @@ public:
 	void setPal(int n);
 	Common::String copy(const Common::String &s, int idx, size_t size);
 	void testKeyboard();
-	int  getPresence(int roomId);
+	int getPresence(int roomId);
 	void displayEmptyHand();
 	void displayPicture(const byte *pic, int x, int y);
 
-	int  gettKeyPressed();
+	int gettKeyPressed();
 	void handleDescriptionText(int f, int mesgId);
-	int  getAnimOffset(int frameNum, int animNum);
+	int getAnimOffset(int frameNum, int animNum);
 
 	void clearScreen();
 };

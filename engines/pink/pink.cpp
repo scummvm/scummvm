@@ -20,29 +20,36 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/winexe_pe.h"
-#include "common/config-manager.h"
 
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
 
 #include "graphics/cursorman.h"
-#include "graphics/thumbnail.h"
 #include "graphics/surface.h"
+#include "graphics/thumbnail.h"
 
-#include "pink/pink.h"
 #include "pink/console.h"
 #include "pink/director.h"
-#include "pink/objects/module.h"
 #include "pink/objects/actors/lead_actor.h"
+#include "pink/objects/module.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
 PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
-	: Engine(system), _console(nullptr), _rnd("pink"),
-	_desc(desc), _bro(nullptr), _menu(nullptr), _actor(nullptr),
-	_module(nullptr), _director(nullptr), _pdaMgr(this) {
+  : Engine(system)
+  , _console(nullptr)
+  , _rnd("pink")
+  , _desc(desc)
+  , _bro(nullptr)
+  , _menu(nullptr)
+  , _actor(nullptr)
+  , _module(nullptr)
+  , _director(nullptr)
+  , _pdaMgr(this) {
 
 	DebugMan.addDebugChannel(kPinkDebugGeneral, "general", "General issues");
 	DebugMan.addDebugChannel(kPinkDebugLoadingResources, "loading_resources", "Loading resources data");
@@ -164,7 +171,7 @@ Common::Error Pink::PinkEngine::run() {
 }
 
 void PinkEngine::pauseEngine(void *engine, bool pause) {
-	PinkEngine *vm = (PinkEngine*)engine;
+	PinkEngine *vm = (PinkEngine *)engine;
 	vm->pauseEngineIntern(pause);
 }
 
@@ -276,7 +283,7 @@ void PinkEngine::setCursor(uint cursorIndex) {
 	Graphics::Cursor *cursor = _cursors[cursorIndex]->cursors[0].cursor;
 	_system->setCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());
 	_system->setMouseCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(),
-							cursor->getHotspotX(), cursor->getHotspotY(), cursor->getKeyColor());
+	                        cursor->getHotspotX(), cursor->getHotspotY(), cursor->getKeyColor());
 	_system->showMouse(true);
 }
 
@@ -289,10 +296,7 @@ bool PinkEngine::canSaveGameStateCurrently() {
 }
 
 bool PinkEngine::hasFeature(Engine::EngineFeature f) const {
-	return
-		f == kSupportsRTL ||
-		f == kSupportsLoadingDuringRuntime ||
-		f == kSupportsSavingDuringRuntime;
+	return f == kSupportsRTL || f == kSupportsLoadingDuringRuntime || f == kSupportsSavingDuringRuntime;
 }
 
 void PinkEngine::pauseEngineIntern(bool pause) {

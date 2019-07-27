@@ -31,7 +31,7 @@ namespace TsAGE {
 class Debugger : public GUI::Debugger {
 public:
 	Debugger();
-	virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
+	virtual ~Debugger() {} // we need this for __SYMBIAN32__ archaic gcc/UIQ
 
 protected:
 	bool Cmd_Scene(int argc, const char **argv);

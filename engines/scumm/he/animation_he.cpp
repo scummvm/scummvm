@@ -22,16 +22,16 @@
 
 #ifdef ENABLE_HE
 
-#include "common/scummsys.h"
+#	include "common/scummsys.h"
 
-#include "scumm/he/animation_he.h"
-#include "scumm/he/intern_he.h"
+#	include "scumm/he/animation_he.h"
+#	include "scumm/he/intern_he.h"
 
-#include "video/smk_decoder.h"
+#	include "video/smk_decoder.h"
 
-#ifdef USE_BINK
-#include "video/bink_decoder.h"
-#endif
+#	ifdef USE_BINK
+#		include "video/bink_decoder.h"
+#	endif
 
 namespace Audio {
 class Mixer;
@@ -39,12 +39,13 @@ class Mixer;
 
 namespace Scumm {
 
-MoviePlayer::MoviePlayer(ScummEngine_v90he *vm, Audio::Mixer *mixer) : _vm(vm) {
-#ifdef USE_BINK
+MoviePlayer::MoviePlayer(ScummEngine_v90he *vm, Audio::Mixer *mixer)
+  : _vm(vm) {
+#	ifdef USE_BINK
 	if (_vm->_game.heversion >= 100 && (_vm->_game.features & GF_16BIT_COLOR))
 		_video = new Video::BinkDecoder();
 	else
-#endif
+#	endif
 		_video = new Video::SmackerDecoder();
 
 	_flags = 0;
@@ -159,7 +160,7 @@ void MoviePlayer::handleNextFrame() {
 	if (_flags & 2) {
 		uint8 *dstPtr = _vm->getResourceAddress(rtImage, _wizResNum);
 		assert(dstPtr);
-		uint8 *dst = _vm->findWrappedBlock(MKTAG('W','I','Z','D'), dstPtr, 0, 0);
+		uint8 *dst = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), dstPtr, 0, 0);
 		assert(dst);
 		copyFrameToBuffer(dst, kDstResource, 0, 0, _vm->_screenWidth * _vm->_bytesPerPixel);
 	} else if (_flags & 1) {

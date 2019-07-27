@@ -45,16 +45,16 @@
  *
  */
 
-#include "wage/wage.h"
 #include "wage/entities.h"
 #include "wage/design.h"
 #include "wage/gui.h"
 #include "wage/script.h"
+#include "wage/wage.h"
 #include "wage/world.h"
 
 #include "common/memstream.h"
-#include "graphics/managed_surface.h"
 #include "graphics/macgui/macfontmanager.h"
+#include "graphics/managed_surface.h"
 
 namespace Wage {
 
@@ -75,7 +75,7 @@ Context::Context() {
 	_frozen = false;
 
 	for (int i = 0; i < 26 * 9; i++)
-		 _userVariables[i] = 0;
+		_userVariables[i] = 0;
 
 	for (int i = 0; i < 18; i++)
 		_statVariables[i] = 0;
@@ -158,13 +158,13 @@ void Scene::paint(Graphics::ManagedSurface *surface, int x, int y) {
 }
 
 Designed *Scene::lookUpEntity(int x, int y) {
-	for (ObjList::const_iterator it = _objs.end(); it != _objs.begin(); ) {
+	for (ObjList::const_iterator it = _objs.end(); it != _objs.begin();) {
 		it--;
 		if ((*it)->_design->isPointOpaque(x, y))
 			return *it;
 	}
 
-	for (ChrList::const_iterator it = _chrs.end(); it != _chrs.begin(); ) {
+	for (ChrList::const_iterator it = _chrs.end(); it != _chrs.begin();) {
 		it--;
 		if ((*it)->_design->isPointOpaque(x, y))
 			return *it;
@@ -173,7 +173,9 @@ Designed *Scene::lookUpEntity(int x, int y) {
 	return nullptr;
 }
 
-Obj::Obj() : _currentOwner(NULL), _currentScene(NULL) {
+Obj::Obj()
+  : _currentOwner(NULL)
+  , _currentScene(NULL) {
 	_index = 0;
 	_resourceId = 0;
 	_namePlural = false;
@@ -244,7 +246,7 @@ Obj::~Obj() {
 
 Chr *Obj::removeFromChr() {
 	if (_currentOwner != NULL) {
-	  for (int i = (int)_currentOwner->_inventory.size() - 1; i >= 0; i--)
+		for (int i = (int)_currentOwner->_inventory.size() - 1; i >= 0; i--)
 			if (_currentOwner->_inventory[i] == this)
 				_currentOwner->_inventory.remove_at(i);
 

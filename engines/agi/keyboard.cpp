@@ -35,32 +35,32 @@ namespace Agi {
 // IBM-PC keyboard scancodes
 //
 const uint8 scancodeTable[26] = {
-	30,         // A
-	48,         // B
-	46,         // C
-	32,         // D
-	18,         // E
-	33,         // F
-	34,         // G
-	35,         // H
-	23,         // I
-	36,         // J
-	37,         // K
-	38,         // L
-	50,         // M
-	49,         // N
-	24,         // O
-	25,         // P
-	16,         // Q
-	19,         // R
-	31,         // S
-	20,         // T
-	22,         // U
-	47,         // V
-	17,         // W
-	45,         // X
-	21,         // Y
-	44          // Z
+	30, // A
+	48, // B
+	46, // C
+	32, // D
+	18, // E
+	33, // F
+	34, // G
+	35, // H
+	23, // I
+	36, // J
+	37, // K
+	38, // L
+	50, // M
+	49, // N
+	24, // O
+	25, // P
+	16, // Q
+	19, // R
+	31, // S
+	20, // T
+	22, // U
+	47, // V
+	17, // W
+	45, // X
+	21, // Y
+	44 // Z
 };
 
 void AgiEngine::processScummVMEvents() {
@@ -344,7 +344,7 @@ bool AgiEngine::handleMouseClicks(uint16 &key) {
 	if (!cycleInnerLoopIsActive()) {
 		// Only do this, when no inner loop is currently active
 		Common::Rect displayLineRect = _gfx->getFontRectForDisplayScreen(0, 0, FONT_COLUMN_CHARACTERS, 1);
-//		Common::Rect displayLineRect(_gfx->getDisplayScreenWidth(), _gfx->getDisplayFontHeight());
+		//		Common::Rect displayLineRect(_gfx->getDisplayScreenWidth(), _gfx->getDisplayFontHeight());
 
 		if (displayLineRect.contains(_mouse.pos)) {
 			// Mouse is inside first line of the screen
@@ -459,8 +459,7 @@ bool AgiEngine::handleController(uint16 key) {
 	//		(key == KEY_ESCAPE && getVersion() != 0x3149 && getGameID() != GID_BC && getGameID() != GID_KQ4 && !(getFeatures() & GF_ESCPAUSE)) )
 	//		return false;
 
-	if ((getGameID() == GID_MH1 || getGameID() == GID_MH2) && (key == AGI_KEY_ENTER) &&
-	        (!_text->promptIsEnabled())) {
+	if ((getGameID() == GID_MH1 || getGameID() == GID_MH2) && (key == AGI_KEY_ENTER) && (!_text->promptIsEnabled())) {
 		key = 0x20; // Set Enter key to Space in Manhunter when prompt is disabled
 	}
 
@@ -513,7 +512,7 @@ bool AgiEngine::handleController(uint16 key) {
 					if (getGameID() == GID_PQ1 && getVar(VM_VAR_CURRENT_ROOM) == 116) {
 						// WORKAROUND: Special handling for mouse clicks in the newspaper
 						// screen of PQ1. Fixes bug #3018770.
-						newDirection = 3;   // fake a right arrow key (next page)
+						newDirection = 3; // fake a right arrow key (next page)
 
 					} else {
 						// Click-to-walk mouse interface
@@ -530,7 +529,7 @@ bool AgiEngine::handleController(uint16 key) {
 						} else {
 							screenObjEgo->move_x = egoDestinationX - (screenObjEgo->xSize / 2);
 						}
-						screenObjEgo->move_y        = egoDestinationY;
+						screenObjEgo->move_y = egoDestinationY;
 						screenObjEgo->move_stepSize = screenObjEgo->stepSize;
 						return true;
 					}
@@ -629,7 +628,7 @@ bool AgiEngine::isKeypress() {
 int AgiEngine::getKeypress() {
 	int k;
 
-	while (_keyQueueStart == _keyQueueEnd)  // block
+	while (_keyQueueStart == _keyQueueEnd) // block
 		wait(10);
 
 	keyDequeue(k);

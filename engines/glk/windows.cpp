@@ -21,16 +21,16 @@
  */
 
 #include "glk/windows.h"
-#include "glk/window_graphics.h"
-#include "glk/window_pair.h"
-#include "glk/window_text_buffer.h"
-#include "glk/window_text_grid.h"
+#include "common/algorithm.h"
+#include "common/textconsole.h"
 #include "glk/conf.h"
 #include "glk/glk.h"
 #include "glk/screen.h"
 #include "glk/streams.h"
-#include "common/algorithm.h"
-#include "common/textconsole.h"
+#include "glk/window_graphics.h"
+#include "glk/window_pair.h"
+#include "glk/window_text_buffer.h"
+#include "glk/window_text_grid.h"
 
 namespace Glk {
 
@@ -51,8 +51,11 @@ uint Windows::_zcolor_Bright;
 
 /*--------------------------------------------------------------------------*/
 
-Windows::Windows(Graphics::Screen *screen) : _screen(screen), _windowList(nullptr),
-	_rootWin(nullptr), _focusWin(nullptr) {
+Windows::Windows(Graphics::Screen *screen)
+  : _screen(screen)
+  , _windowList(nullptr)
+  , _rootWin(nullptr)
+  , _focusWin(nullptr) {
 	_overrideReverse = false;
 	_overrideFgSet = false;
 	_overrideBgSet = false;
@@ -74,7 +77,7 @@ Windows::~Windows() {
 }
 
 Window *Windows::windowOpen(Window *splitwin, uint method, uint size,
-							uint wintype, uint rock) {
+                            uint wintype, uint rock) {
 	Window *newwin, *oldparent = nullptr;
 	PairWindow *pairWin;
 	uint val;
@@ -103,7 +106,7 @@ Window *Windows::windowOpen(Window *splitwin, uint method, uint size,
 
 		val = (method & winmethod_DirMask);
 		if (val != winmethod_Above && val != winmethod_Below && val != winmethod_Left
-				&& val != winmethod_Right && val != winmethod_Arbitrary) {
+		    && val != winmethod_Right && val != winmethod_Arbitrary) {
 			warning("window_open: invalid method (bad direction)");
 			return nullptr;
 		}
@@ -305,8 +308,7 @@ void Windows::inputGuessFocus() {
 
 	do {
 		if (altWin
-				&& (altWin->_lineRequest || altWin->_charRequest ||
-					altWin->_lineRequestUni || altWin->_charRequestUni))
+		    && (altWin->_lineRequest || altWin->_charRequest || altWin->_lineRequestUni || altWin->_charRequestUni))
 			break;
 		altWin = iterateTreeOrder(altWin);
 	} while (altWin != _focusWin);
@@ -336,12 +338,11 @@ void Windows::inputNextFocus() {
 	do {
 		altWin = iterateTreeOrder(altWin);
 		if (altWin
-				&& (altWin->_lineRequest || altWin->_charRequest ||
-					altWin->_lineRequestUni || altWin->_charRequestUni))
+		    && (altWin->_lineRequest || altWin->_charRequest || altWin->_lineRequestUni || altWin->_charRequestUni))
 			break;
 	} while (altWin != _focusWin);
 
-	if (_focusWin  != altWin) {
+	if (_focusWin != altWin) {
 		_focusWin = altWin;
 		_forceRedraw = true;
 		redraw();
@@ -363,8 +364,7 @@ void Windows::inputScrollFocus() {
 void Windows::inputHandleKey(uint key) {
 	if (_moreFocus) {
 		inputMoreFocus();
-	} else if (_focusWin && (_focusWin->_lineRequest || _focusWin->_lineRequestUni) &&
-			_focusWin->checkTerminators(key)) {
+	} else if (_focusWin && (_focusWin->_lineRequest || _focusWin->_lineRequestUni) && _focusWin->checkTerminators(key)) {
 		// WORKAROUND: Do line terminators checking first. This was first needed for Beyond Zork,
 		// since it needs the Page Up/Down keys to scroll the description area rathern than the buffer area
 	} else {
@@ -518,11 +518,27 @@ Window *Windows::iterateTreeOrder(Window *win) {
 
 /*--------------------------------------------------------------------------*/
 
-Window::Window(Windows *windows, uint rock) : _windows(windows), _rock(rock),
-	_type(0), _parent(nullptr), _next(nullptr), _prev(nullptr), _yAdj(0),
-	_lineRequest(0), _lineRequestUni(0), _charRequest(0), _charRequestUni(0),
-	_mouseRequest(0), _hyperRequest(0), _moreRequest(0), _scrollRequest(0), _imageLoaded(0),
-	_echoLineInputBase(true), _lineTerminatorsBase(nullptr), _termCt(0), _echoStream(nullptr) {
+Window::Window(Windows *windows, uint rock)
+  : _windows(windows)
+  , _rock(rock)
+  , _type(0)
+  , _parent(nullptr)
+  , _next(nullptr)
+  , _prev(nullptr)
+  , _yAdj(0)
+  , _lineRequest(0)
+  , _lineRequestUni(0)
+  , _charRequest(0)
+  , _charRequestUni(0)
+  , _mouseRequest(0)
+  , _hyperRequest(0)
+  , _moreRequest(0)
+  , _scrollRequest(0)
+  , _imageLoaded(0)
+  , _echoLineInputBase(true)
+  , _lineTerminatorsBase(nullptr)
+  , _termCt(0)
+  , _echoStream(nullptr) {
 	_attr.fgset = false;
 	_attr.bgset = false;
 	_attr.reverse = false;
@@ -737,13 +753,16 @@ void Window::getSize(uint *width, uint *height) const {
 
 /*--------------------------------------------------------------------------*/
 
-BlankWindow::BlankWindow(Windows *windows, uint rock) : Window(windows, rock) {
+BlankWindow::BlankWindow(Windows *windows, uint rock)
+  : Window(windows, rock) {
 	_type = wintype_Blank;
 }
 
 /*--------------------------------------------------------------------------*/
 
-WindowStyle::WindowStyle(const WindowStyleStatic &src) : font(src.font), reverse(src.reverse) {
+WindowStyle::WindowStyle(const WindowStyleStatic &src)
+  : font(src.font)
+  , reverse(src.reverse) {
 	Graphics::PixelFormat pf = g_system->getScreenFormat();
 	fg = pf.RGBToColor(src.fg[0], src.fg[1], src.fg[2]);
 	bg = pf.RGBToColor(src.bg[0], src.bg[1], src.bg[1]);

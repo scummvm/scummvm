@@ -22,11 +22,11 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objects.h"
-#include "fullpipe/ngiarchive.h"
-#include "fullpipe/statics.h"
-#include "fullpipe/messages.h"
 #include "fullpipe/gameloader.h"
+#include "fullpipe/messages.h"
+#include "fullpipe/ngiarchive.h"
+#include "fullpipe/objects.h"
+#include "fullpipe/statics.h"
 
 #include "fullpipe/constants.h"
 
@@ -68,9 +68,9 @@ bool SceneTagList::load(MfcArchive &file) {
 	return true;
 }
 
-SceneTag::SceneTag() :
-	_scene(nullptr),
-	_sceneId(0) {}
+SceneTag::SceneTag()
+  : _scene(nullptr)
+  , _sceneId(0) {}
 
 SceneTag::~SceneTag() {
 	delete _scene;
@@ -110,7 +110,9 @@ void SceneTag::loadScene() {
 	g_fp->_currArchive = nullptr;
 }
 
-Scene::Scene() : _sceneId(0), _field_BC(0) {}
+Scene::Scene()
+  : _sceneId(0)
+  , _field_BC(0) {}
 
 Scene::~Scene() {
 	// _faObjlist is not used
@@ -392,7 +394,7 @@ void Scene::preloadMovements(GameVar *var) {
 			GameVar *subVars = i->_subVars;
 
 			if (subVars) {
-				for (;subVars; subVars = subVars->_nextVarObj) {
+				for (; subVars; subVars = subVars->_nextVarObj) {
 					Movement *mov = ani->getMovementByName(subVars->_varName);
 
 					if (mov)
@@ -479,7 +481,7 @@ void Scene::objectList_sortByPriority(Common::Array<PictureObject *> &list, bool
 	}
 }
 #else
-template<typename T>
+template <typename T>
 void Scene::objectList_sortByPriority(Common::Array<T *> &list, uint startIndex) {
 	if (list.size() > startIndex) {
 		int lastIndex = list.size() - 1;
@@ -609,9 +611,7 @@ StaticANIObject *Scene::getStaticANIObjectAtPos(int x, int y) {
 	for (uint i = 0; i < _staticANIObjectList1.size(); i++) {
 		StaticANIObject *p = _staticANIObjectList1[i];
 
-		if ((p->_field_8 & 0x100) && (p->_flags & 4) &&
-				p->isPixelHitAtPos(x, y) &&
-				(!res || res->_priority > p->_priority))
+		if ((p->_field_8 & 0x100) && (p->_flags & 4) && p->isPixelHitAtPos(x, y) && (!res || res->_priority > p->_priority))
 			res = p;
 	}
 
@@ -623,9 +623,7 @@ PictureObject *Scene::getPictureObjectAtPos(int x, int y) {
 
 	for (uint i = 0; i < _picObjList.size(); i++) {
 		PictureObject *p = _picObjList[i];
-		if ((p->_field_8 & 0x100) && (p->_flags & 4) &&
-				p->isPixelHitAtPos(x, y) &&
-				(!res || res->_priority >= p->_priority))
+		if ((p->_field_8 & 0x100) && (p->_flags & 4) && p->isPixelHitAtPos(x, y) && (!res || res->_priority >= p->_priority))
 			res = p;
 	}
 
@@ -638,9 +636,7 @@ int Scene::getPictureObjectIdAtPos(int x, int y) {
 
 	for (uint i = 0; i < _picObjList.size(); i++) {
 		PictureObject *p = _picObjList[i];
-		if ((p->_field_8 & 0x100) && (p->_flags & 4) &&
-				p->isPixelHitAtPos(x, y) &&
-				(!res || resp->_priority >= p->_priority)) {
+		if ((p->_field_8 & 0x100) && (p->_flags & 4) && p->isPixelHitAtPos(x, y) && (!res || resp->_priority >= p->_priority)) {
 			resp = p;
 			res = p->_id;
 		}
@@ -747,7 +743,6 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 			}
 		}
 	}
-
 
 	for (uint i = 1; i < _picObjList.size(); i++) {
 		PictureObject *obj = _picObjList[i];

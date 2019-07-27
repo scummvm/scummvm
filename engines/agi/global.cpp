@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "audio/mixer.h"
+#include "common/config-manager.h"
 
 #include "agi/agi.h"
 #include "agi/graphics.h"
@@ -40,7 +40,7 @@ void AgiBase::setFlag(int16 flagNr, bool newState) {
 
 	flagPtr += flagNr >> 3;
 	if (newState)
-		*flagPtr |= 1 << (flagNr & 0x07);    // set bit
+		*flagPtr |= 1 << (flagNr & 0x07); // set bit
 	else
 		*flagPtr &= ~(1 << (flagNr & 0x07)); // clear bit
 }
@@ -49,7 +49,7 @@ void AgiBase::flipFlag(int16 flagNr) {
 	uint8 *flagPtr = _game.flags;
 
 	flagPtr += flagNr >> 3;
-	*flagPtr ^= 1 << (flagNr & 0x07);        // flip bit
+	*flagPtr ^= 1 << (flagNr & 0x07); // flip bit
 }
 
 void AgiEngine::setVar(int16 varNr, byte newValue) {
@@ -282,10 +282,10 @@ void AgiEngine::inGameTimerUpdate() {
 	if (playTimeSecondsDelta > 0) {
 		// Read and write to VM vars directly to avoid endless loop
 		uint32 secondsLeft = playTimeSecondsDelta;
-		byte   curSeconds = _game.vars[VM_VAR_SECONDS];
-		byte   curMinutes = _game.vars[VM_VAR_MINUTES];
-		byte   curHours = _game.vars[VM_VAR_HOURS];
-		byte   curDays = _game.vars[VM_VAR_DAYS];
+		byte curSeconds = _game.vars[VM_VAR_SECONDS];
+		byte curMinutes = _game.vars[VM_VAR_MINUTES];
+		byte curHours = _game.vars[VM_VAR_HOURS];
+		byte curDays = _game.vars[VM_VAR_DAYS];
 
 		// Add delta to VM variables
 		if (secondsLeft >= 86400) {

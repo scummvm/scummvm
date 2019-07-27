@@ -21,27 +21,27 @@
  */
 
 #include "sci/sound/audio32.h"
-#include "audio/audiostream.h"      // for SeekableAudioStream
-#include "audio/decoders/raw.h"     // for makeRawStream, RawFlags::FLAG_16BITS
-#include "audio/decoders/wave.h"    // for makeWAVStream
-#include "audio/rate.h"             // for RateConverter, makeRateConverter
-#include "audio/timestamp.h"        // for Timestamp
-#include "common/config-manager.h"  // for ConfMan
-#include "common/endian.h"          // for MKTAG
-#include "common/memstream.h"       // for MemoryReadStream
-#include "common/str.h"             // for String
-#include "common/stream.h"          // for SeekableReadStream
-#include "common/system.h"          // for OSystem, g_system
-#include "common/textconsole.h"     // for warning
-#include "common/types.h"           // for Flag::NO
-#include "engine.h"                 // for Engine, g_engine
-#include "sci/console.h"            // for Console
-#include "sci/engine/features.h"    // for GameFeatures
+#include "audio/audiostream.h" // for SeekableAudioStream
+#include "audio/decoders/raw.h" // for makeRawStream, RawFlags::FLAG_16BITS
+#include "audio/decoders/wave.h" // for makeWAVStream
+#include "audio/rate.h" // for RateConverter, makeRateConverter
+#include "audio/timestamp.h" // for Timestamp
+#include "common/config-manager.h" // for ConfMan
+#include "common/endian.h" // for MKTAG
+#include "common/memstream.h" // for MemoryReadStream
+#include "common/str.h" // for String
+#include "common/stream.h" // for SeekableReadStream
+#include "common/system.h" // for OSystem, g_system
+#include "common/textconsole.h" // for warning
+#include "common/types.h" // for Flag::NO
+#include "engine.h" // for Engine, g_engine
+#include "sci/console.h" // for Console
+#include "sci/engine/features.h" // for GameFeatures
 #include "sci/engine/guest_additions.h" // for GuestAdditions
-#include "sci/engine/state.h"       // for EngineState
-#include "sci/engine/vm_types.h"    // for reg_t, make_reg, NULL_REG
-#include "sci/resource.h"           // for ResourceId, ResourceType::kResour...
-#include "sci/sci.h"                // for SciEngine, g_sci, getSciVersion
+#include "sci/engine/state.h" // for EngineState
+#include "sci/engine/vm_types.h" // for reg_t, make_reg, NULL_REG
+#include "sci/resource.h" // for ResourceId, ResourceType::kResour...
+#include "sci/sci.h" // for SciEngine, g_sci, getSciVersion
 #include "sci/sound/decoders/sol.h" // for makeSOLStream
 
 namespace Sci {
@@ -88,9 +88,9 @@ bool detectWaveAudio(Common::SeekableReadStream &stream) {
 
 class MutableLoopAudioStream : public Audio::AudioStream {
 public:
-	MutableLoopAudioStream(Audio::RewindableAudioStream *stream, const bool loop_, const DisposeAfterUse::Flag dispose = DisposeAfterUse::YES) :
-		_stream(stream, dispose),
-		_loop(loop_) {}
+	MutableLoopAudioStream(Audio::RewindableAudioStream *stream, const bool loop_, const DisposeAfterUse::Flag dispose = DisposeAfterUse::YES)
+	  : _stream(stream, dispose)
+	  , _loop(loop_) {}
 
 	virtual int readBuffer(int16 *buffer, int numSamples) override {
 		int totalSamplesRead = 0;
@@ -147,34 +147,40 @@ private:
 
 #pragma mark -
 
-Audio32::Audio32(ResourceManager *resMan) :
-	_resMan(resMan),
-	_mixer(g_system->getMixer()),
-	_handle(),
-	_mutex(),
+Audio32::Audio32(ResourceManager *resMan)
+  : _resMan(resMan)
+  , _mixer(g_system->getMixer())
+  , _handle()
+  , _mutex()
+  ,
 
-	_channels(getSciVersion() < SCI_VERSION_2_1_EARLY ? 10 : getSciVersion() < SCI_VERSION_3 ? 5 : 8),
-	_numActiveChannels(0),
-	_inAudioThread(false),
+  _channels(getSciVersion() < SCI_VERSION_2_1_EARLY ? 10 : getSciVersion() < SCI_VERSION_3 ? 5 : 8)
+  , _numActiveChannels(0)
+  , _inAudioThread(false)
+  ,
 
-	_globalSampleRate(44100),
-	_maxAllowedSampleRate(44100),
-	_globalBitDepth(16),
-	_maxAllowedBitDepth(16),
-	_globalNumOutputChannels(2),
-	_maxAllowedOutputChannels(2),
-	_preload(0),
+  _globalSampleRate(44100)
+  , _maxAllowedSampleRate(44100)
+  , _globalBitDepth(16)
+  , _maxAllowedBitDepth(16)
+  , _globalNumOutputChannels(2)
+  , _maxAllowedOutputChannels(2)
+  , _preload(0)
+  ,
 
-	_robotAudioPaused(false),
+  _robotAudioPaused(false)
+  ,
 
-	_pausedAtTick(0),
-	_startedAtTick(0),
+  _pausedAtTick(0)
+  , _startedAtTick(0)
+  ,
 
-	_attenuatedMixing(true),
-	_useModifiedAttenuation(g_sci->_features->usesModifiedAudioAttenuation()),
+  _attenuatedMixing(true)
+  , _useModifiedAttenuation(g_sci->_features->usesModifiedAudioAttenuation())
+  ,
 
-	_monitoredChannelIndex(-1),
-	_numMonitoredSamples(0) {
+  _monitoredChannelIndex(-1)
+  , _numMonitoredSamples(0) {
 	// In games where scripts premultiply master audio volumes into the volumes
 	// of the individual audio channels sent to the mixer, Audio32 needs to use
 	// the kPlainSoundType so that the master SFX volume is not applied twice.
@@ -215,8 +221,7 @@ int16 Audio32::getNumChannelsToMix() const {
 }
 
 bool Audio32::channelShouldMix(const AudioChannel &channel) const {
-	if (channel.pausedAtTick ||
-		(channel.robot && (_robotAudioPaused || channel.stream->endOfStream()))) {
+	if (channel.pausedAtTick || (channel.robot && (_robotAudioPaused || channel.stream->endOfStream()))) {
 
 		return false;
 	}
@@ -452,13 +457,12 @@ int16 Audio32::findChannelByArgs(int argc, const reg_t *argv, const int startInd
 		searchId = ResourceId(kResourceTypeAudio, argv[startIndex].toUint16());
 	} else {
 		searchId = ResourceId(
-			kResourceTypeAudio36,
-			argv[startIndex].toUint16(),
-			argv[startIndex + 1].toUint16(),
-			argv[startIndex + 2].toUint16(),
-			argv[startIndex + 3].toUint16(),
-			argv[startIndex + 4].toUint16()
-		);
+		  kResourceTypeAudio36,
+		  argv[startIndex].toUint16(),
+		  argv[startIndex + 1].toUint16(),
+		  argv[startIndex + 2].toUint16(),
+		  argv[startIndex + 3].toUint16(),
+		  argv[startIndex + 4].toUint16());
 	}
 
 	return findChannelById(searchId, soundNode);
@@ -475,9 +479,7 @@ int16 Audio32::findChannelById(const ResourceId resourceId, const reg_t soundNod
 		for (int16 i = 0; i < _numActiveChannels; ++i) {
 			const AudioChannel &candidate = _channels[i];
 			if (
-				candidate.id == resourceId &&
-				(soundNode.isNull() || soundNode == candidate.soundNode)
-			) {
+			  candidate.id == resourceId && (soundNode.isNull() || soundNode == candidate.soundNode)) {
 				return i;
 			}
 		}
@@ -1330,24 +1332,24 @@ void Audio32::printAudioList(Console *con) const {
 		const AudioChannel &channel = _channels[i];
 		const MutableLoopAudioStream *stream = dynamic_cast<MutableLoopAudioStream *>(channel.stream.get());
 		con->debugPrintf("  %d[%04x:%04x]: %s, started at %d, pos %d/%d, vol %d, pan %d%s%s\n",
-						 i,
-						 PRINT_REG(channel.soundNode),
-						 channel.robot ? "robot" : channel.resource->name().c_str(),
-						 channel.startedAtTick,
-						 (g_sci->getTickCount() - channel.startedAtTick) % channel.duration,
-						 channel.duration,
-						 channel.volume,
-						 channel.pan,
-						 stream && stream->loop() ? ", looping" : "",
-						 channel.pausedAtTick ? ", paused" : "");
+		                 i,
+		                 PRINT_REG(channel.soundNode),
+		                 channel.robot ? "robot" : channel.resource->name().c_str(),
+		                 channel.startedAtTick,
+		                 (g_sci->getTickCount() - channel.startedAtTick) % channel.duration,
+		                 channel.duration,
+		                 channel.volume,
+		                 channel.pan,
+		                 stream && stream->loop() ? ", looping" : "",
+		                 channel.pausedAtTick ? ", paused" : "");
 		if (channel.fadeStartTick) {
 			con->debugPrintf("                fade: vol %d -> %d, started at %d, pos %d/%d%s\n",
-							 channel.fadeStartVolume,
-							 channel.fadeTargetVolume,
-							 channel.fadeStartTick,
-							 (g_sci->getTickCount() - channel.fadeStartTick) % channel.duration,
-							 channel.fadeDuration,
-							 channel.stopChannelOnFade ? ", stopping" : "");
+			                 channel.fadeStartVolume,
+			                 channel.fadeTargetVolume,
+			                 channel.fadeStartTick,
+			                 (g_sci->getTickCount() - channel.fadeStartTick) % channel.duration,
+			                 channel.fadeDuration,
+			                 channel.stopChannelOnFade ? ", stopping" : "");
 		}
 	}
 

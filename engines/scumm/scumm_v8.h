@@ -25,7 +25,7 @@
 
 #ifdef ENABLE_SCUMM_7_8
 
-#include "scumm/scumm_v7.h"
+#	include "scumm/scumm_v7.h"
 
 namespace Scumm {
 
@@ -70,7 +70,6 @@ protected:
 	virtual void processKeyboard(Common::KeyState lastKeyHit);
 
 	void desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor);
-
 
 	/* Version 8 script opcodes */
 	void o8_mod();

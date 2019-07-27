@@ -29,11 +29,11 @@
 #ifndef WINTERMUTE_BASE_IMAGE_H
 #define WINTERMUTE_BASE_IMAGE_H
 
-#include "graphics/surface.h"
-#include "graphics/pixelformat.h"
 #include "common/endian.h"
 #include "common/str.h"
 #include "common/stream.h"
+#include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 
 namespace Image {
 class ImageDecoder;
@@ -61,6 +61,7 @@ public:
 	bool saveBMPFile(const Common::String &filename) const;
 	bool copyFrom(BaseImage *origImage, int newWidth = 0, int newHeight = 0);
 	void copyFrom(const Graphics::Surface *surface);
+
 private:
 	Common::String _filename;
 	Image::ImageDecoder *_decoder;

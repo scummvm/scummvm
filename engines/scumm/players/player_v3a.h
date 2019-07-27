@@ -45,8 +45,8 @@ public:
 	virtual void startSound(int sound);
 	virtual void stopSound(int sound);
 	virtual void stopAllSounds();
-	virtual int  getMusicTimer();
-	virtual int  getSoundStatus(int sound) const;
+	virtual int getMusicTimer();
+	virtual int getSoundStatus(int sound) const;
 
 private:
 	enum {
@@ -90,8 +90,8 @@ private:
 
 	instData **_wavetable;
 
-	int getMusChan (int id = 0) const;
-	int getSfxChan (int id = 0) const;
+	int getMusChan(int id = 0) const;
+	int getSfxChan(int id = 0) const;
 	static void update_proc(void *param);
 	void playMusic();
 };

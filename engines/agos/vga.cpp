@@ -22,11 +22,10 @@
 
 // Video script opcodes for Simon1/Simon2
 
-
+#include "agos/vga.h"
 #include "agos/agos.h"
 #include "agos/intern.h"
 #include "agos/sound.h"
-#include "agos/vga.h"
 
 #include "common/debug-channels.h"
 #include "common/endian.h"
@@ -174,7 +173,7 @@ void AGOSEngine::runVgaScript() {
 		if (opcode >= _numVideoOpcodes || !_vga_opcode_table[opcode])
 			error("runVgaScript: Invalid VGA opcode '%d' encountered", opcode);
 
-		(this->*_vga_opcode_table[opcode]) ();
+		(this->*_vga_opcode_table[opcode])();
 	}
 }
 
@@ -292,60 +291,172 @@ void AGOSEngine::vcWriteVar(uint var, int16 value) {
 void AGOSEngine::vcSkipNextInstruction() {
 
 	static const byte opcodeParamLenPN[] = {
-		0, 6,  2, 10, 6, 4, 2, 2,
-		4, 4,  8,  2, 0, 2, 2, 2,
-		0, 2,  2,  2, 0, 4, 2, 2,
-		2, 8,  0, 10, 0, 8, 0, 2,
-		2, 0,  0,  0, 0, 2, 4, 2,
-		4, 4,  0,  0, 2, 2, 2, 4,
-		4, 0, 18,  2, 4, 4, 4, 0,
+		0, 6, 2, 10, 6, 4, 2, 2,
+		4, 4, 8, 2, 0, 2, 2, 2,
+		0, 2, 2, 2, 0, 4, 2, 2,
+		2, 8, 0, 10, 0, 8, 0, 2,
+		2, 0, 0, 0, 0, 2, 4, 2,
+		4, 4, 0, 0, 2, 2, 2, 4,
+		4, 0, 18, 2, 4, 4, 4, 0,
 		4
 	};
 
 	static const byte opcodeParamLenElvira1[] = {
-		0, 6,  2, 10, 6, 4, 2, 2,
-		4, 4,  8,  2, 0, 2, 2, 2,
-		2, 2,  2,  2, 0, 4, 2, 2,
-		2, 8,  0, 10, 0, 8, 0, 2,
-		2, 0,  0,  0, 0, 2, 4, 2,
-		4, 4,  0,  0, 2, 2, 2, 4,
-		4, 0, 18,  2, 4, 4, 4, 0,
+		0, 6, 2, 10, 6, 4, 2, 2,
+		4, 4, 8, 2, 0, 2, 2, 2,
+		2, 2, 2, 2, 0, 4, 2, 2,
+		2, 8, 0, 10, 0, 8, 0, 2,
+		2, 0, 0, 0, 0, 2, 4, 2,
+		4, 4, 0, 0, 2, 2, 2, 4,
+		4, 0, 18, 2, 4, 4, 4, 0,
 		4
 	};
 
 	static const byte opcodeParamLenWW[] = {
-		0, 6,  2, 10, 6, 4, 2, 2,
-		4, 4,  8,  2, 2, 2, 2, 2,
-		2, 2,  2,  0, 4, 2, 2, 2,
-		8, 0, 10,  0, 8, 0, 2, 2,
-		0, 0,  0,  4, 4, 4, 2, 4,
-		4, 4,  4,  2, 2, 4, 2, 2,
-		2, 2,  2,  2, 2, 4, 6, 6,
-		0, 0,  0,  0, 2, 2, 0, 0,
+		0,
+		6,
+		2,
+		10,
+		6,
+		4,
+		2,
+		2,
+		4,
+		4,
+		8,
+		2,
+		2,
+		2,
+		2,
+		2,
+		2,
+		2,
+		2,
+		0,
+		4,
+		2,
+		2,
+		2,
+		8,
+		0,
+		10,
+		0,
+		8,
+		0,
+		2,
+		2,
+		0,
+		0,
+		0,
+		4,
+		4,
+		4,
+		2,
+		4,
+		4,
+		4,
+		4,
+		2,
+		2,
+		4,
+		2,
+		2,
+		2,
+		2,
+		2,
+		2,
+		2,
+		4,
+		6,
+		6,
+		0,
+		0,
+		0,
+		0,
+		2,
+		2,
+		0,
+		0,
 	};
 
 	static const byte opcodeParamLenSimon1[] = {
-		0, 6,  2, 10, 6, 4, 2, 2,
-		4, 4, 10,  0, 2, 2, 2, 2,
-		2, 0,  2,  0, 4, 2, 4, 2,
-		8, 0, 10,  0, 8, 0, 2, 2,
-		4, 0,  0,  4, 4, 2, 2, 4,
-		4, 4,  4,  2, 2, 2, 2, 4,
-		0, 2,  2,  2, 2, 4, 6, 6,
-		0, 0,  0,  0, 2, 6, 0, 0,
+		0,
+		6,
+		2,
+		10,
+		6,
+		4,
+		2,
+		2,
+		4,
+		4,
+		10,
+		0,
+		2,
+		2,
+		2,
+		2,
+		2,
+		0,
+		2,
+		0,
+		4,
+		2,
+		4,
+		2,
+		8,
+		0,
+		10,
+		0,
+		8,
+		0,
+		2,
+		2,
+		4,
+		0,
+		0,
+		4,
+		4,
+		2,
+		2,
+		4,
+		4,
+		4,
+		4,
+		2,
+		2,
+		2,
+		2,
+		4,
+		0,
+		2,
+		2,
+		2,
+		2,
+		4,
+		6,
+		6,
+		0,
+		0,
+		0,
+		0,
+		2,
+		6,
+		0,
+		0,
 	};
 
 	static const byte opcodeParamLenSimon2[] = {
-		0, 6,  2, 12, 6, 4, 2, 2,
-		4, 4,  9,  0, 1, 2, 2, 2,
-		2, 0,  2,  0, 4, 2, 4, 2,
-		7, 0, 10,  0, 8, 0, 2, 2,
-		4, 0,  0,  4, 4, 2, 2, 4,
-		4, 4,  4,  2, 2, 2, 2, 4,
-		0, 2,  2,  2, 2, 4, 6, 6,
-		2, 0,  6,  6, 4, 6, 0, 0,
-		0, 0,  4,  4, 4, 4, 4, 0,
-		4, 2,  2
+		0, 6, 2, 12, 6, 4, 2, 2,
+		4, 4, 9, 0, 1, 2, 2, 2,
+		2, 0, 2, 0, 4, 2, 4, 2,
+		7, 0, 10, 0, 8, 0, 2, 2,
+		4, 0, 0, 4, 4, 2, 2, 4,
+		4, 4, 4, 2, 2, 2, 2, 4,
+		0, 2, 2, 2, 2, 4, 6, 6,
+		2, 0, 6, 6, 4, 6, 0, 0,
+		0, 0, 4, 4, 4, 4, 4, 0,
+		4, 2, 2
 	};
 
 	static const byte opcodeParamLenFeebleFiles[] = {
@@ -651,20 +762,19 @@ void AGOSEngine::drawImage_init(int16 image, uint16 palette, int16 x, int16 y, u
 
 	if (DebugMan.isDebugChannelEnabled(kDebugImageDump))
 		dumpSingleBitmap(_vgaCurZoneNum, state.image, state.srcPtr, width, height,
-											 state.palette);
-	state.width = state.draw_width = width;		/* cl */
-	state.height = state.draw_height = height;	/* ch */
+		                 state.palette);
+	state.width = state.draw_width = width; /* cl */
+	state.height = state.draw_height = height; /* ch */
 
 	state.depack_cont = -0x80;
 
-	state.x_skip = 0;				/* colums to skip = bh */
-	state.y_skip = 0;				/* rows to skip   = bl */
+	state.x_skip = 0; /* colums to skip = bh */
+	state.y_skip = 0; /* rows to skip   = bl */
 
 	if (getFeatures() & GF_PLANAR) {
 		if (getGameType() == GType_PN) {
 			state.srcPtr = convertImage(&state, ((state.flags & (kDFCompressed | kDFCompressedFlip)) != 0));
-		}
-		else
+		} else
 			state.srcPtr = convertImage(&state, ((flags & 0x80) != 0));
 
 		// converted planar clip is already uncompressed
@@ -863,17 +973,17 @@ void AGOSEngine::vc19_loop() {
 	b = _curVgaFile1 + READ_BE_UINT16(bb + 10);
 	b += 20;
 
-	count = READ_BE_UINT16(&((VgaFile1Header_Common *) b)->animationCount);
-	b = bb + READ_BE_UINT16(&((VgaFile1Header_Common *) b)->animationTable);
+	count = READ_BE_UINT16(&((VgaFile1Header_Common *)b)->animationCount);
+	b = bb + READ_BE_UINT16(&((VgaFile1Header_Common *)b)->animationTable);
 
 	while (count--) {
-		if (READ_BE_UINT16(&((AnimationHeader_WW *) b)->id) == _vgaCurSpriteId)
+		if (READ_BE_UINT16(&((AnimationHeader_WW *)b)->id) == _vgaCurSpriteId)
 			break;
 		b += sizeof(AnimationHeader_WW);
 	}
-	assert(READ_BE_UINT16(&((AnimationHeader_WW *) b)->id) == _vgaCurSpriteId);
+	assert(READ_BE_UINT16(&((AnimationHeader_WW *)b)->id) == _vgaCurSpriteId);
 
-	_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((AnimationHeader_WW *) b)->scriptOffs);
+	_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((AnimationHeader_WW *)b)->scriptOffs);
 }
 
 void AGOSEngine::vc20_setRepeat() {
@@ -900,22 +1010,54 @@ void AGOSEngine::vc21_endRepeat() {
 }
 
 static const uint8 iconPalette[64] = {
-	0x00, 0x00, 0x00,
-	0x77, 0x77, 0x55,
-	0x55, 0x00, 0x00,
-	0x77, 0x00, 0x00,
-	0x22, 0x00, 0x00,
-	0x00, 0x11, 0x00,
-	0x11, 0x22, 0x11,
-	0x22, 0x33, 0x22,
-	0x44, 0x55, 0x44,
-	0x33, 0x44, 0x00,
-	0x11, 0x33, 0x00,
-	0x00, 0x11, 0x44,
-	0x77, 0x44, 0x00,
-	0x66, 0x22, 0x00,
-	0x00, 0x22, 0x66,
-	0x77, 0x55, 0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x77,
+	0x77,
+	0x55,
+	0x55,
+	0x00,
+	0x00,
+	0x77,
+	0x00,
+	0x00,
+	0x22,
+	0x00,
+	0x00,
+	0x00,
+	0x11,
+	0x00,
+	0x11,
+	0x22,
+	0x11,
+	0x22,
+	0x33,
+	0x22,
+	0x44,
+	0x55,
+	0x44,
+	0x33,
+	0x44,
+	0x00,
+	0x11,
+	0x33,
+	0x00,
+	0x00,
+	0x11,
+	0x44,
+	0x77,
+	0x44,
+	0x00,
+	0x66,
+	0x22,
+	0x00,
+	0x00,
+	0x22,
+	0x66,
+	0x77,
+	0x55,
+	0x00,
 };
 
 void AGOSEngine::vc22_setPalette() {
@@ -944,12 +1086,12 @@ void AGOSEngine::vc22_setPalette() {
 			_bottomPalette = 0;
 		} else {
 			const byte extraColors[19 * 3] = {
-				40,  0,  0,   24, 24, 16,   48, 48, 40,
-				 0,  0,  0,   16,  0,  0,    8,  8,  0,
-				48, 24,  0,   56, 40,  0,    0,  0, 24,
-				 8, 16, 24,   24, 32, 40,   16, 24,  0,
-				24,  8,  0,   16, 16,  0,   40, 40, 32,
-				32, 32, 24,   40,  0,  0,   24, 24, 16,
+				40, 0, 0, 24, 24, 16, 48, 48, 40,
+				0, 0, 0, 16, 0, 0, 8, 8, 0,
+				48, 24, 0, 56, 40, 0, 0, 0, 24,
+				8, 16, 24, 24, 32, 40, 16, 24, 0,
+				24, 8, 0, 16, 16, 0, 40, 40, 32,
+				32, 32, 24, 40, 0, 0, 24, 24, 16,
 				48, 48, 40
 			};
 
@@ -1121,7 +1263,7 @@ void AGOSEngine::vc27_resetSprite() {
 		// Skip the animateSprites event in earlier games
 		if (vte->type == ANIMATE_INT) {
 			vte++;
-		// For animated heart in Elvira 2
+			// For animated heart in Elvira 2
 		} else if (getGameType() == GType_ELVIRA2 && vte->id == 100) {
 			vte++;
 		} else {
@@ -1253,7 +1395,7 @@ void AGOSEngine::clearVideoWindow(uint16 num, uint16 color) {
 			memset(dst, color, _screenWidth);
 			dst += screen->pitch;
 		}
-		 _system->unlockScreen();
+		_system->unlockScreen();
 	} else {
 		const uint16 *vlut = &_videoWindows[num * 4];
 		uint16 xoffs = (vlut[0] - _videoWindows[16]) * 16;

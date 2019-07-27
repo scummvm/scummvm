@@ -30,10 +30,10 @@
 namespace Saga {
 
 enum EventTypes {
-	kEvTOneshot,    // Event takes no time
+	kEvTOneshot, // Event takes no time
 	kEvTContinuous, // Event takes time; next event starts immediately
-	kEvTInterval,   // Not yet implemented
-	kEvTImmediate   // Event takes time; next event starts when event is done
+	kEvTInterval, // Not yet implemented
+	kEvTImmediate // Event takes time; next event starts when event is done
 };
 
 enum EventFlags {
@@ -66,11 +66,11 @@ enum EventOps {
 	// BG events
 	kEventDisplay = 1,
 	// ANIM events
-	kEventPlay = 1,			// used in music and sound events too
-	kEventStop = 2,			// used in music and sound events too
+	kEventPlay = 1, // used in music and sound events too
+	kEventStop = 2, // used in music and sound events too
 	kEventFrame = 3,
-	kEventSetFlag = 4,		// used in graphics events too
-	kEventClearFlag = 5,	// used in graphics events too
+	kEventSetFlag = 4, // used in graphics events too
+	kEventClearFlag = 5, // used in graphics events too
 	kEventResumeAll = 6,
 	// MUSIC and SOUND events
 	// Reused: kEventPlay, kEventStop
@@ -99,7 +99,7 @@ enum EventOps {
 	kEventThreadWake = 3,
 	// CURSOR events
 	kEventShow = 1,
-	kEventHide = 2,			// used in text events too
+	kEventHide = 2, // used in text events too
 	kEventSetNormalCursor = 3,
 	kEventSetBusyCursor = 4,
 	// GRAPHICS events
@@ -127,16 +127,16 @@ enum EventParams {
 struct Event {
 	unsigned int type;
 	unsigned int code; // Event operation category & flags
-	int op;            // Event operation
-	long param;        // Optional event parameter
+	int op; // Event operation
+	long param; // Optional event parameter
 	long param2;
 	long param3;
 	long param4;
 	long param5;
 	long param6;
-	void *data;        // Optional event data
-	long time;         // Elapsed time until event
-	long duration;     // Duration of event
+	void *data; // Optional event data
+	long time; // Elapsed time until event
+	long duration; // Duration of event
 	long d_reserved;
 
 	Event() {
@@ -159,7 +159,7 @@ enum EventStatusCode {
 };
 
 class Events {
- public:
+public:
 	Events(SagaEngine *vm);
 	~Events();
 	void handleEvents(long msec);
@@ -184,7 +184,7 @@ class Events {
 	// Places a music 'event' on the end of an event columns given by 'eventColumns'
 	EventColumns *chainMusic(EventColumns *eventColumns, long musicId, bool loop = false, long time = 0);
 
- private:
+private:
 	int handleContinuous(Event *event);
 	int handleOneShot(Event *event);
 	int handleInterval(Event *event);
@@ -192,7 +192,7 @@ class Events {
 	void processEventTime(long msec);
 	void initializeEvent(Event &event);
 
- private:
+private:
 	SagaEngine *_vm;
 
 	EventList _eventList;

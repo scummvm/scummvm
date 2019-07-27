@@ -22,11 +22,11 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
+#include "backends/platform/ps2/ps2pad.h"
+#include "backends/platform/ps2/systemps2.h"
+#include <assert.h>
 #include <kernel.h>
 #include <malloc.h>
-#include <assert.h>
-#include "backends/platform/ps2/systemps2.h"
-#include "backends/platform/ps2/ps2pad.h"
 
 Ps2Pad::Ps2Pad(OSystem_PS2 *system) {
 	_system = system;
@@ -51,59 +51,59 @@ void Ps2Pad::initPad(void) {
 	} else {
 		if (checkPadReady(_port, _slot)) {
 			switch (_padStatus) {
-				case STAT_OPEN:
-					_padStatus = STAT_DETECT;
-					break;
-				case STAT_DETECT:
-					_isDualShock = false;
-					modes = padInfoMode(_port, _slot, PAD_MODETABLE, -1);
+			case STAT_OPEN:
+				_padStatus = STAT_DETECT;
+				break;
+			case STAT_DETECT:
+				_isDualShock = false;
+				modes = padInfoMode(_port, _slot, PAD_MODETABLE, -1);
 
-					// Verify that the controller has a DUAL SHOCK mode
-					for (int cnt = 0; cnt < modes; cnt++)
-						if (padInfoMode(_port, _slot, PAD_MODETABLE, cnt) == PAD_TYPE_DUALSHOCK)
-							_isDualShock = true;
+				// Verify that the controller has a DUAL SHOCK mode
+				for (int cnt = 0; cnt < modes; cnt++)
+					if (padInfoMode(_port, _slot, PAD_MODETABLE, cnt) == PAD_TYPE_DUALSHOCK)
+						_isDualShock = true;
 
-					// If ExId != 0x0 => This controller has actuator engines
-					// This check should always pass if the Dual Shock test above passed
-					if (_isDualShock)
-						if (padInfoMode(_port, _slot, PAD_MODECUREXID, 0) == 0)
-							_isDualShock = false;
-
-					if (_isDualShock) {
-						// When using MMODE_LOCK, user cant change mode with Select button
-						padSetMainMode(_port, _slot, PAD_MMODE_DUALSHOCK, PAD_MMODE_LOCK);
-						_padStatus = STAT_INIT_DSHOCK;
-					} else
-						_padStatus = STAT_WAIT_READY;
-					break;
-				case STAT_INIT_DSHOCK:
-					padEnterPressMode(_port, _slot);
-					_padStatus = STAT_CHECK_ACT;
-					break;
-				case STAT_CHECK_ACT:
-					_actuators = padInfoAct(_port, _slot, -1, 0);
-					if (_actuators != 0)
-						_padStatus = STAT_INIT_ACT;
-					else {
+				// If ExId != 0x0 => This controller has actuator engines
+				// This check should always pass if the Dual Shock test above passed
+				if (_isDualShock)
+					if (padInfoMode(_port, _slot, PAD_MODECUREXID, 0) == 0)
 						_isDualShock = false;
-						_padStatus = STAT_WAIT_READY;
-					}
-					break;
-				case STAT_INIT_ACT:
-					char actAlign[6];
-					actAlign[0] = 0;
-					actAlign[1] = 1;
-					actAlign[2] = actAlign[3] = actAlign[4] = actAlign[5] = 0xff;
-					padSetActAlign(_port, _slot, actAlign);
+
+				if (_isDualShock) {
+					// When using MMODE_LOCK, user cant change mode with Select button
+					padSetMainMode(_port, _slot, PAD_MMODE_DUALSHOCK, PAD_MMODE_LOCK);
+					_padStatus = STAT_INIT_DSHOCK;
+				} else
 					_padStatus = STAT_WAIT_READY;
-					break;
-				case STAT_WAIT_READY:
-					_padStatus = STAT_OKAY;
-					break;
-				case STAT_OKAY:
-				case STAT_NONE:
-					// pad is already initialized (or not there)
-					break;
+				break;
+			case STAT_INIT_DSHOCK:
+				padEnterPressMode(_port, _slot);
+				_padStatus = STAT_CHECK_ACT;
+				break;
+			case STAT_CHECK_ACT:
+				_actuators = padInfoAct(_port, _slot, -1, 0);
+				if (_actuators != 0)
+					_padStatus = STAT_INIT_ACT;
+				else {
+					_isDualShock = false;
+					_padStatus = STAT_WAIT_READY;
+				}
+				break;
+			case STAT_INIT_ACT:
+				char actAlign[6];
+				actAlign[0] = 0;
+				actAlign[1] = 1;
+				actAlign[2] = actAlign[3] = actAlign[4] = actAlign[5] = 0xff;
+				padSetActAlign(_port, _slot, actAlign);
+				_padStatus = STAT_WAIT_READY;
+				break;
+			case STAT_WAIT_READY:
+				_padStatus = STAT_OKAY;
+				break;
+			case STAT_OKAY:
+			case STAT_NONE:
+				// pad is already initialized (or not there)
+				break;
 			}
 		} else {
 			// check for timeout...

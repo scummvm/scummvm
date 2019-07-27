@@ -22,21 +22,21 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#include <unistd.h>
 #include <malloc.h>
+#include <unistd.h>
 
 #include "osystem.h"
 
 #include <ogc/lwp_watchdog.h>
 #ifndef GAMECUBE
-#include <wiiuse/wpad.h>
+#	include <wiiuse/wpad.h>
 #endif
 #ifdef USE_WII_KBD
-#include <wiikeyboard/keyboard.h>
+#	include <wiikeyboard/keyboard.h>
 #endif
 
-#include "common/config-manager.h"
 #include "backends/timer/default/default-timer.h"
+#include "common/config-manager.h"
 
 #define TIMER_THREAD_STACKSIZE (1024 * 32)
 #define TIMER_THREAD_PRIO 64
@@ -44,29 +44,29 @@
 #define PAD_CHECK_TIME 40
 
 #ifndef GAMECUBE
-#define PADS_A (PAD_BUTTON_A | (WPAD_BUTTON_A << 16))
-#define PADS_B (PAD_BUTTON_B | (WPAD_BUTTON_B << 16))
-#define PADS_X (PAD_BUTTON_X | (WPAD_BUTTON_MINUS << 16))
-#define PADS_Y (PAD_BUTTON_Y | (WPAD_BUTTON_PLUS << 16))
-#define PADS_R (PAD_TRIGGER_R | (WPAD_BUTTON_1 << 16))
-#define PADS_Z (PAD_TRIGGER_Z | (WPAD_BUTTON_2 << 16))
-#define PADS_START (PAD_BUTTON_START | (WPAD_BUTTON_HOME << 16))
-#define PADS_UP (PAD_BUTTON_UP | (WPAD_BUTTON_UP << 16))
-#define PADS_DOWN (PAD_BUTTON_DOWN | (WPAD_BUTTON_DOWN << 16))
-#define PADS_LEFT (PAD_BUTTON_LEFT | (WPAD_BUTTON_LEFT << 16))
-#define PADS_RIGHT (PAD_BUTTON_RIGHT | (WPAD_BUTTON_RIGHT << 16))
+#	define PADS_A (PAD_BUTTON_A | (WPAD_BUTTON_A << 16))
+#	define PADS_B (PAD_BUTTON_B | (WPAD_BUTTON_B << 16))
+#	define PADS_X (PAD_BUTTON_X | (WPAD_BUTTON_MINUS << 16))
+#	define PADS_Y (PAD_BUTTON_Y | (WPAD_BUTTON_PLUS << 16))
+#	define PADS_R (PAD_TRIGGER_R | (WPAD_BUTTON_1 << 16))
+#	define PADS_Z (PAD_TRIGGER_Z | (WPAD_BUTTON_2 << 16))
+#	define PADS_START (PAD_BUTTON_START | (WPAD_BUTTON_HOME << 16))
+#	define PADS_UP (PAD_BUTTON_UP | (WPAD_BUTTON_UP << 16))
+#	define PADS_DOWN (PAD_BUTTON_DOWN | (WPAD_BUTTON_DOWN << 16))
+#	define PADS_LEFT (PAD_BUTTON_LEFT | (WPAD_BUTTON_LEFT << 16))
+#	define PADS_RIGHT (PAD_BUTTON_RIGHT | (WPAD_BUTTON_RIGHT << 16))
 #else
-#define PADS_A PAD_BUTTON_A
-#define PADS_B PAD_BUTTON_B
-#define PADS_X PAD_BUTTON_X
-#define PADS_Y PAD_BUTTON_Y
-#define PADS_R PAD_TRIGGER_R
-#define PADS_Z PAD_TRIGGER_Z
-#define PADS_START PAD_BUTTON_START
-#define PADS_UP PAD_BUTTON_UP
-#define PADS_DOWN PAD_BUTTON_DOWN
-#define PADS_LEFT PAD_BUTTON_LEFT
-#define PADS_RIGHT PAD_BUTTON_RIGHT
+#	define PADS_A PAD_BUTTON_A
+#	define PADS_B PAD_BUTTON_B
+#	define PADS_X PAD_BUTTON_X
+#	define PADS_Y PAD_BUTTON_Y
+#	define PADS_R PAD_TRIGGER_R
+#	define PADS_Z PAD_TRIGGER_Z
+#	define PADS_START PAD_BUTTON_START
+#	define PADS_UP PAD_BUTTON_UP
+#	define PADS_DOWN PAD_BUTTON_DOWN
+#	define PADS_LEFT PAD_BUTTON_LEFT
+#	define PADS_RIGHT PAD_BUTTON_RIGHT
 #endif
 
 #ifdef USE_WII_KBD
@@ -146,10 +146,9 @@ static u8 *timer_stack;
 static bool timer_thread_running = false;
 static bool timer_thread_quit = false;
 
-static void * timer_thread_func(void *arg) {
+static void *timer_thread_func(void *arg) {
 	while (!timer_thread_quit) {
-		DefaultTimerManager *tm =
-			(DefaultTimerManager *) g_system->getTimerManager();
+		DefaultTimerManager *tm = (DefaultTimerManager *)g_system->getTimerManager();
 		tm->handler();
 
 		usleep(1000 * 10);
@@ -161,15 +160,15 @@ static void * timer_thread_func(void *arg) {
 void OSystem_Wii::initEvents() {
 	timer_thread_quit = false;
 
-	timer_stack = (u8 *) memalign(32, TIMER_THREAD_STACKSIZE);
+	timer_stack = (u8 *)memalign(32, TIMER_THREAD_STACKSIZE);
 	if (timer_stack) {
 		memset(timer_stack, 0, TIMER_THREAD_STACKSIZE);
 
 		LWP_InitQueue(&timer_queue);
 
 		s32 res = LWP_CreateThread(&timer_thread, timer_thread_func, NULL,
-									timer_stack, TIMER_THREAD_STACKSIZE,
-									TIMER_THREAD_PRIO);
+		                           timer_stack, TIMER_THREAD_STACKSIZE,
+		                           TIMER_THREAD_PRIO);
 
 		if (res) {
 			printf("ERROR creating timer thread: %ld\n", res);
@@ -218,7 +217,7 @@ void OSystem_Wii::deinitEvents() {
 void OSystem_Wii::updateEventScreenResolution() {
 #ifndef GAMECUBE
 	WPAD_SetVRes(WPAD_CHAN_0, _currentWidth + _currentWidth / 5,
-					_currentHeight + _currentHeight / 5);
+	             _currentHeight + _currentHeight / 5);
 #endif
 }
 
@@ -283,17 +282,17 @@ bool OSystem_Wii::pollKeyboard(Common::Event &event) {
 #endif
 
 #define PAD_EVENT(pad_button, kbd_keycode, kbd_ascii, modifier) \
-	do { \
-		if ((bd | bu) & pad_button) { \
-			if (bd & pad_button) \
-				event.type = Common::EVENT_KEYDOWN; \
-			else \
-				event.type = Common::EVENT_KEYUP; \
-			event.kbd.keycode = kbd_keycode; \
-			event.kbd.ascii = kbd_ascii; \
-			event.kbd.flags = modifier; \
-			return true; \
-		} \
+	do {                                                          \
+		if ((bd | bu) & pad_button) {                               \
+			if (bd & pad_button)                                      \
+				event.type = Common::EVENT_KEYDOWN;                     \
+			else                                                      \
+				event.type = Common::EVENT_KEYUP;                       \
+			event.kbd.keycode = kbd_keycode;                          \
+			event.kbd.ascii = kbd_ascii;                              \
+			event.kbd.flags = modifier;                               \
+			return true;                                              \
+		}                                                           \
 	} while (0)
 
 bool OSystem_Wii::pollEvent(Common::Event &event) {
@@ -334,7 +333,7 @@ bool OSystem_Wii::pollEvent(Common::Event &event) {
 
 		if (bh & PADS_UP) {
 			PAD_EVENT(PADS_START, Common::KEYCODE_F5, Common::ASCII_F5,
-						Common::KBD_CTRL);
+			          Common::KBD_CTRL);
 
 			if (bd & PADS_R) {
 				_consoleVisible = !_consoleVisible;
@@ -419,12 +418,10 @@ bool OSystem_Wii::pollEvent(Common::Event &event) {
 	if (time - _lastPadCheck > PAD_CHECK_TIME) {
 		_lastPadCheck = time;
 
-		if (abs (PAD_StickX(0)) > _padSensitivity)
-			mx += PAD_StickX(0) /
-					(_padAcceleration * _overlayWidth / _currentWidth);
-		if (abs (PAD_StickY(0)) > _padSensitivity)
-			my -= PAD_StickY(0) /
-					(_padAcceleration * _overlayHeight / _currentHeight);
+		if (abs(PAD_StickX(0)) > _padSensitivity)
+			mx += PAD_StickX(0) / (_padAcceleration * _overlayWidth / _currentWidth);
+		if (abs(PAD_StickY(0)) > _padSensitivity)
+			my -= PAD_StickY(0) / (_padAcceleration * _overlayHeight / _currentHeight);
 
 		if (mx < 0)
 			mx = 0;

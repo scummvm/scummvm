@@ -20,8 +20,8 @@
  *
  */
 
-#include "dreamweb/dreamweb.h"
 #include "common/file.h"
+#include "dreamweb/dreamweb.h"
 #include "engines/util.h"
 #include "graphics/surface.h"
 #include "image/pcx.h"
@@ -126,23 +126,117 @@ void DreamWebEngine::doShake() {
 
 	++counter;
 	static const int shakeTable[] = {
-		0, -2,  3, -2,  0,  2,  4, -1,
-		1, -3,  3,  2,  0, -2,  3, -2,
-		0,  2,  4, -1,  1, -3,  3,  2,
-		0, -2,  3, -2,  0,  2,  4, -1,
+		0,
+		-2,
+		3,
+		-2,
+		0,
+		2,
+		4,
+		-1,
+		1,
+		-3,
+		3,
+		2,
+		0,
+		-2,
+		3,
+		-2,
+		0,
+		2,
+		4,
+		-1,
+		1,
+		-3,
+		3,
+		2,
+		0,
+		-2,
+		3,
+		-2,
+		0,
+		2,
+		4,
+		-1,
 
-		1, -3,  3,  2,  0, -2,  3, -2,
-		0,  2,  4, -1,  1, -3,  3,  2,
-		0, -2,  3, -2,  0,  2,  4, -1,
-		1, -3,  3,  2,  0, -2,  3, -2,
+		1,
+		-3,
+		3,
+		2,
+		0,
+		-2,
+		3,
+		-2,
+		0,
+		2,
+		4,
+		-1,
+		1,
+		-3,
+		3,
+		2,
+		0,
+		-2,
+		3,
+		-2,
+		0,
+		2,
+		4,
+		-1,
+		1,
+		-3,
+		3,
+		2,
+		0,
+		-2,
+		3,
+		-2,
 
-		0,  2,  4, -1,  1, -3,  3,  2,
-		0, -2,  3, -2,  0,  2,  4, -1,
-		1, -3,  3,  2,  0, -2,  3, -2,
-		0,  2,  4, -1,  1, -3,  3,  2,
+		0,
+		2,
+		4,
+		-1,
+		1,
+		-3,
+		3,
+		2,
+		0,
+		-2,
+		3,
+		-2,
+		0,
+		2,
+		4,
+		-1,
+		1,
+		-3,
+		3,
+		2,
+		0,
+		-2,
+		3,
+		-2,
+		0,
+		2,
+		4,
+		-1,
+		1,
+		-3,
+		3,
+		2,
 
-		0, -2,  3, -2,  0,  2,  4, -1,
-		1, -3,  3,  0,
+		0,
+		-2,
+		3,
+		-2,
+		0,
+		2,
+		4,
+		-1,
+		1,
+		-3,
+		3,
+		0,
 	};
 	assert(counter < ARRAYSIZE(shakeTable));
 	int offset = shakeTable[counter];
@@ -290,7 +384,7 @@ void DreamWebEngine::showFrame(const GraphicsFile &frameData, uint16 x, uint16 y
 }
 
 void DreamWebEngine::clearWork() {
-	memset(workspace(), 0, kScreenwidth*kScreenheight);
+	memset(workspace(), 0, kScreenwidth * kScreenheight);
 }
 
 void DreamWebEngine::dumpZoom() {
@@ -319,7 +413,7 @@ void DreamWebEngine::putUnderZoom() {
 void DreamWebEngine::zoomIcon() {
 	if (_vars._zoomOn == 0)
 		return;
-	showFrame(_icons1, kZoomx, kZoomy-1, 8, 0);
+	showFrame(_icons1, kZoomx, kZoomy - 1, 8, 0);
 }
 
 void DreamWebEngine::zoom() {
@@ -338,13 +432,13 @@ void DreamWebEngine::zoom() {
 	for (uint i = 0; i < 20; ++i) {
 		for (uint j = 0; j < 23; ++j) {
 			uint8 v = src[j];
-			dst[2*j+0] = v;
-			dst[2*j+1] = v;
-			dst[2*j+kScreenwidth] = v;
-			dst[2*j+kScreenwidth+1] = v;
+			dst[2 * j + 0] = v;
+			dst[2 * j + 1] = v;
+			dst[2 * j + kScreenwidth] = v;
+			dst[2 * j + kScreenwidth + 1] = v;
 		}
 		src += kScreenwidth;
-		dst += kScreenwidth*2;
+		dst += kScreenwidth * 2;
 	}
 	crosshair();
 	_didZoom = 1;
@@ -373,14 +467,14 @@ bool DreamWebEngine::pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y) {
 
 void DreamWebEngine::loadPalFromIFF() {
 	Common::File palFile;
-	uint8* buf = new uint8[2000];
+	uint8 *buf = new uint8[2000];
 	palFile.open(getDatafilePrefix() + "PAL");
 	palFile.read(buf, 2000);
 	palFile.close();
 
 	const uint8 *src = buf + 0x30;
 	uint8 *dst = _mainPal;
-	for (uint i = 0; i < 256*3; ++i) {
+	for (uint i = 0; i < 256 * 3; ++i) {
 		uint8 c = src[i] / 4;
 		if (_brightPalette) {
 			if (c) {
@@ -414,8 +508,8 @@ void DreamWebEngine::showPanel() {
 }
 
 void DreamWebEngine::transferFrame(uint8 from, uint8 to, uint8 offset) {
-	const Frame &freeFrame = _freeFrames._frames[3*from + offset];
-	Frame &exFrame = _exFrames._frames[3*to + offset];
+	const Frame &freeFrame = _freeFrames._frames[3 * from + offset];
+	Frame &exFrame = _exFrames._frames[3 * to + offset];
 
 	exFrame.width = freeFrame.width;
 	exFrame.height = freeFrame.height;
@@ -423,7 +517,7 @@ void DreamWebEngine::transferFrame(uint8 from, uint8 to, uint8 offset) {
 	exFrame.y = freeFrame.y;
 	uint16 byteCount = freeFrame.width * freeFrame.height;
 
-	const uint8 *src = _freeFrames.getFrameData(3*from + offset);
+	const uint8 *src = _freeFrames.getFrameData(3 * from + offset);
 	uint8 *dst = _exFrames._data + _vars._exFramePos;
 	assert(_vars._exFramePos + byteCount <= kExframeslen);
 	memcpy(dst, src, byteCount);

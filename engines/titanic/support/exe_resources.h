@@ -27,9 +27,13 @@ namespace Titanic {
 
 class CScriptHandler;
 
-enum FileHandle { HANDLE_STDIN = 0, HANDLE_STDOUT = 1, HANDLE_STDERR = 2 };
+enum FileHandle { HANDLE_STDIN = 0,
+	                HANDLE_STDOUT = 1,
+	                HANDLE_STDERR = 2 };
 
-enum VocabMode { VOCAB_MODE_NONE = 0, VOCAB_MODE_EN = 3, VOCAB_MODE_DE = 5 };
+enum VocabMode { VOCAB_MODE_NONE = 0,
+	               VOCAB_MODE_EN = 3,
+	               VOCAB_MODE_DE = 5 };
 
 class CExeResources {
 public:
@@ -40,6 +44,7 @@ public:
 	int _field10;
 	int _field14;
 	VocabMode _vocabMode;
+
 public:
 	CExeResources();
 

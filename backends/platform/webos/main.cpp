@@ -22,23 +22,23 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
+#include "base/main.h"
 #include "backends/platform/webos/webos.h"
 #include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
 
 #if defined(WEBOS)
 
-#include <unistd.h>
+#	include <unistd.h>
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 	g_system = new OSystem_SDL_WebOS();
 	assert(g_system);
 
 	((OSystem_SDL_WebOS *)g_system)->init();
 
-#ifdef DYNAMIC_MODULES
+#	ifdef DYNAMIC_MODULES
 	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
-#endif
+#	endif
 
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);

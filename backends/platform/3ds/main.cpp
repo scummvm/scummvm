@@ -28,17 +28,17 @@ int main(int argc, char *argv[]) {
 	gfxInitDefault();
 	cfguInit();
 	osSetSpeedupEnable(true);
-// 	consoleInit(GFX_TOP, NULL);
+	// 	consoleInit(GFX_TOP, NULL);
 
 	g_system = new _3DS::OSystem_3DS();
 	assert(g_system);
 
 	// Invoke the actual ScummVM main entry point
-// 	if (argc > 2)
-// 		res = scummvm_main(argc-2, &argv[2]);
-// 	else
-// 		res = scummvm_main(argc, argv);
-//	scummvm_main(0, nullptr);
+	// 	if (argc > 2)
+	// 		res = scummvm_main(argc-2, &argv[2]);
+	// 	else
+	// 		res = scummvm_main(argc, argv);
+	//	scummvm_main(0, nullptr);
 
 	int res = scummvm_main(argc, argv);
 

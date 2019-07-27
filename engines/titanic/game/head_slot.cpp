@@ -28,21 +28,29 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CHeadSlot, CGameObject)
-	ON_MESSAGE(AddHeadPieceMsg)
-	ON_MESSAGE(SenseWorkingMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(LoadSuccessMsg)
-	ON_MESSAGE(TimerMsg)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(AddHeadPieceMsg)
+ON_MESSAGE(SenseWorkingMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(LoadSuccessMsg)
+ON_MESSAGE(TimerMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(MouseDragStartMsg)
 END_MESSAGE_MAP()
 
 bool CHeadSlot::_titaniaWoken;
 
-CHeadSlot::CHeadSlot() : CGameObject(), _senseState("NotWorking"), _target("NULL"),
-	_occupied(false), _timerDuration(0), _frameNum1(27), _frameNum2(56),
-	_frameNum3(82), _frameNum4(112), _workingFlag(false) {
+CHeadSlot::CHeadSlot()
+  : CGameObject()
+  , _senseState("NotWorking")
+  , _target("NULL")
+  , _occupied(false)
+  , _timerDuration(0)
+  , _frameNum1(27)
+  , _frameNum2(56)
+  , _frameNum3(82)
+  , _frameNum4(112)
+  , _workingFlag(false) {
 }
 
 void CHeadSlot::save(SimpleFile *file, int indent) {
@@ -139,7 +147,7 @@ bool CHeadSlot::LoadSuccessMsg(CLoadSuccessMsg *msg) {
 
 bool CHeadSlot::TimerMsg(CTimerMsg *msg) {
 	if (compareViewNameTo("Titania.Node 15.S") && CBrainSlot::_numAdded == 5
-			&& _occupied) {
+	    && _occupied) {
 		// WORKAROUND: Fix original bug where returning to Titania closeup when all the brain slots
 		// were inserted in an incorrect order, would result in endless busy cursor
 		if (getGameManager()->_gameState._mode != GSMODE_CUTSCENE) {

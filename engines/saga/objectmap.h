@@ -27,11 +27,11 @@
 
 namespace Saga {
 
-
 class HitZone {
 private:
 	typedef Common::Array<Point> ClickArea;
 	typedef Common::Array<ClickArea> ClickAreas;
+
 public:
 	void load(SagaEngine *vm, Common::MemoryReadStreamEndian *readStream, int index, int sceneNumber);
 
@@ -73,12 +73,12 @@ public:
 	}
 	bool getSpecialPoint(Point &specialPoint) const;
 #ifdef SAGA_DEBUG
-	void draw(SagaEngine *vm, int color);	// for debugging
+	void draw(SagaEngine *vm, int color); // for debugging
 #endif
 	bool hitTest(const Point &testPoint);
 
 private:
-	int _flags;				// Saga::HitZoneFlags
+	int _flags; // Saga::HitZoneFlags
 	int _rightButtonVerb;
 	int _nameIndex;
 	int _scriptNumber;
@@ -91,14 +91,15 @@ typedef Common::Array<HitZone> HitZoneArray;
 
 class ObjectMap {
 public:
-	ObjectMap(SagaEngine *vm) : _vm(vm) {
+	ObjectMap(SagaEngine *vm)
+	  : _vm(vm) {
 	}
 	void load(const ByteArray &resourceData);
 	void clear();
 #ifdef SAGA_DEBUG
-	void draw(const Point& testPoint, int color, int color2);	// for debugging
+	void draw(const Point &testPoint, int color, int color2); // for debugging
 #endif
-	int hitTest(const Point& testPoint);
+	int hitTest(const Point &testPoint);
 	HitZone *getHitZone(int16 index) {
 		if (uint(index) >= _hitZoneList.size()) {
 			return NULL;

@@ -25,20 +25,18 @@
 namespace Bbvs {
 
 static const BBPoint kPosIncrTbl1[] = {
-	{0, -1}, {-1, -1}, {-1, 0}, {-1,  1},
-	{ 0, 1}, { 1,  1}, { 1, 0}, { 1, -1}
+	{ 0, -1 }, { -1, -1 }, { -1, 0 }, { -1, 1 }, { 0, 1 }, { 1, 1 }, { 1, 0 }, { 1, -1 }
 };
 
 static const BBPoint kPosIncrTbl2[] = {
-	{0, -2}, {-2, -2}, {-2, 0}, {-2,  2},
-	{ 0, 2}, { 2,  2}, { 2, 0}, { 2, -2}
+	{ 0, -2 }, { -2, -2 }, { -2, 0 }, { -2, 2 }, { 0, 2 }, { 2, 2 }, { 2, 0 }, { 2, -2 }
 };
 
 static const int kScoreTbl[] = {
 	0, 1, 1, 3, 2, 4
 };
 
-static const char * const kSoundFilenames[] = {
+static const char *const kSoundFilenames[] = {
 	"ant1.aif", "ant2.aif", "ant3.aif", "ant4.aif", "ant5.aif",
 	"ant6.aif", "ant7.aif", "ant8.aif", "ant9.aif", "ant10.aif",
 	"ant11.aif", "antmus1.aif", "fryant.aif", "stomp.aif", "bing.aif",
@@ -73,7 +71,6 @@ void MinigameBbAnt::buildDrawList0(DrawList &drawList) {
 		if (obj->kind)
 			drawList.add(obj->anim->frameIndices[obj->frameIndex], obj->x, obj->y, obj->priority);
 	}
-
 }
 
 void MinigameBbAnt::buildDrawList1(DrawList &drawList) {
@@ -85,8 +82,8 @@ void MinigameBbAnt::buildDrawList1(DrawList &drawList) {
 		Obj *obj = &_objects[i];
 		if (obj->kind) {
 			drawList.add(obj->anim->frameIndices[obj->frameIndex],
-				_stompX + (obj->x / 65536), _stompY + (obj->y / 65536),
-				obj->priority);
+			             _stompX + (obj->x / 65536), _stompY + (obj->y / 65536),
+			             obj->priority);
 		}
 	}
 
@@ -97,7 +94,6 @@ void MinigameBbAnt::buildDrawList1(DrawList &drawList) {
 
 	for (int i = 0; i < _stompCount; ++i)
 		drawList.add(getAnimation(130)->frameIndices[0], 20 + i * 30, 230, 2000);
-
 }
 
 void MinigameBbAnt::buildDrawList2(DrawList &drawList) {
@@ -266,7 +262,6 @@ void MinigameBbAnt::initObjects1() {
 		_objects[i].priority = 600;
 		_objects[i].status = 9;
 		_objects[i].damageCtr = 0;
-
 	}
 }
 
@@ -419,7 +414,7 @@ bool MinigameBbAnt::updateStatus1(int mouseX, int mouseY, uint mouseButtons) {
 		return true;
 	}
 
-	if ((mouseButtons & kRightButtonClicked) && (_stompCount > 0|| _hasLastStompObj) && !_objects[2].status) {
+	if ((mouseButtons & kRightButtonClicked) && (_stompCount > 0 || _hasLastStompObj) && !_objects[2].status) {
 		if (_hasLastStompObj)
 			removeStompObj(_lastStompObj);
 		--_stompCount;
@@ -460,7 +455,6 @@ bool MinigameBbAnt::updateStatus1(int mouseX, int mouseY, uint mouseButtons) {
 
 		if (objKind)
 			insertRandomBugObj(objKind);
-
 	}
 
 	updateObjs(mouseButtons);
@@ -644,7 +638,7 @@ void MinigameBbAnt::removeStompObj(Obj *obj) {
 void MinigameBbAnt::insertBugObj(int kind, int animIndexIncr, int always0, int x, int y, int field30, int always1) {
 	Obj *obj = getFreeObject();
 	if (obj) {
-		const ObjAnimation * const *objKindAnimTable = getObjKindAnimTable(kind);
+		const ObjAnimation *const *objKindAnimTable = getObjKindAnimTable(kind);
 		obj->field30 = field30;
 		obj->animIndexIncr = animIndexIncr;
 		obj->kind = kind;
@@ -691,7 +685,7 @@ void MinigameBbAnt::updateBugObjAnim(int objIndex) {
 		obj->animIndexIncr = 6;
 		break;
 	}
-	const ObjAnimation * const *objKindAnimTable = getObjKindAnimTable(obj->kind);
+	const ObjAnimation *const *objKindAnimTable = getObjKindAnimTable(obj->kind);
 	obj->xIncr = kPosIncrTbl1[obj->animIndexIncr].x * 65536;
 	obj->yIncr = kPosIncrTbl1[obj->animIndexIncr].y * 65536;
 	obj->anim = objKindAnimTable[obj->animIndexIncr];
@@ -710,7 +704,7 @@ void MinigameBbAnt::updateObjAnim2(int objIndex) {
 	obj->animIndexIncr += 4;
 	if (obj->animIndexIncr >= 8)
 		obj->animIndexIncr %= 8;
-	const ObjAnimation * const *objKindAnimTable = getObjKindAnimTable(obj->kind);
+	const ObjAnimation *const *objKindAnimTable = getObjKindAnimTable(obj->kind);
 	obj->xIncr = kPosIncrTbl1[obj->animIndex + obj->animIndexIncr].x * 65536;
 	obj->yIncr = kPosIncrTbl1[obj->animIndex + obj->animIndexIncr].y * 65536;
 	obj->anim = objKindAnimTable[obj->animIndex + obj->animIndexIncr];
@@ -729,9 +723,7 @@ void MinigameBbAnt::insertRandomBugObj(int kind) {
 bool MinigameBbAnt::isBugOutOfScreen(int objIndex) {
 	Obj *obj = &_objects[objIndex];
 
-	return
-		obj->x < (-10 * 65536) || obj->x > (330 * 65536) ||
-		obj->y < (-10 * 65536) || obj->y > (250 * 65536);
+	return obj->x < (-10 * 65536) || obj->x > (330 * 65536) || obj->y < (-10 * 65536) || obj->y > (250 * 65536);
 }
 
 void MinigameBbAnt::updateObjAnim3(int objIndex) {
@@ -742,7 +734,7 @@ void MinigameBbAnt::updateObjAnim3(int objIndex) {
 		obj->animIndexIncr = 7;
 	if (obj->animIndexIncr > 7)
 		obj->animIndexIncr = 0;
-	const ObjAnimation * const *objKindAnimTable = getObjKindAnimTable(obj->kind);
+	const ObjAnimation *const *objKindAnimTable = getObjKindAnimTable(obj->kind);
 	obj->xIncr = kPosIncrTbl1[obj->animIndexIncr].x * 65536;
 	obj->yIncr = kPosIncrTbl1[obj->animIndexIncr].y * 65536;
 	obj->anim = objKindAnimTable[obj->animIndexIncr];
@@ -786,7 +778,7 @@ void MinigameBbAnt::updateBugObj1(int objIndex) {
 					playSound(kSoundTbl2[_vm->getRandom(3)]);
 			}
 			flag1 = false;
-			const ObjAnimation * const *objKindAnimTable = getObjKindAnimTable(obj->kind);
+			const ObjAnimation *const *objKindAnimTable = getObjKindAnimTable(obj->kind);
 			obj->hasSmoke = false;
 			obj->status = 4;
 			obj->xIncr = 0;
@@ -833,7 +825,7 @@ void MinigameBbAnt::updateBugObj1(int objIndex) {
 
 	case 4:
 		if (flag1) {
-			const ObjAnimation * const *objKindAnimTable = getObjKindAnimTable(obj->kind);
+			const ObjAnimation *const *objKindAnimTable = getObjKindAnimTable(obj->kind);
 			obj->status = 6;
 			obj->xIncr = 0;
 			obj->yIncr = 0;
@@ -845,7 +837,7 @@ void MinigameBbAnt::updateBugObj1(int objIndex) {
 
 	case 6:
 		if (flag1) {
-			const ObjAnimation * const *objKindAnimTable = getObjKindAnimTable(obj->kind);
+			const ObjAnimation *const *objKindAnimTable = getObjKindAnimTable(obj->kind);
 			obj->status = 7;
 			obj->xIncr = kPosIncrTbl2[obj->animIndexIncr].x * 65536;
 			obj->yIncr = kPosIncrTbl2[obj->animIndexIncr].y * 65536;
@@ -878,9 +870,7 @@ void MinigameBbAnt::updateBugObj1(int objIndex) {
 			obj->priority = 610;
 		}
 		break;
-
 	}
-
 }
 
 void MinigameBbAnt::updateObjKind2(int objIndex) {
@@ -976,7 +966,7 @@ void MinigameBbAnt::updateFootObj(int objIndex) {
 				Obj *bugObj = &_objects[i];
 				if (bugObj->kind >= 1 && bugObj->kind <= 5) {
 					bugObj->counter = _vm->getRandom(200) + 360;
-					const ObjAnimation * const *objKindAnimTable = getObjKindAnimTable(bugObj->kind);
+					const ObjAnimation *const *objKindAnimTable = getObjKindAnimTable(bugObj->kind);
 					if (bugObj->status == 8) {
 						bugObj->hasSmoke = false;
 						bugObj->xIncr = 0;
@@ -1012,9 +1002,7 @@ void MinigameBbAnt::updateFootObj(int objIndex) {
 			}
 		}
 		break;
-
 	}
-
 }
 
 bool MinigameBbAnt::isBugAtCandy(int objIndex, int &candyObjIndex) {
@@ -1160,11 +1148,8 @@ void MinigameBbAnt::updateObjs(uint mouseButtons) {
 				updateStompObj(i);
 				break;
 			}
-
 		}
-
 	}
-
 }
 
 bool MinigameBbAnt::run(bool fromMainGame) {
@@ -1199,7 +1184,7 @@ bool MinigameBbAnt::run(bool fromMainGame) {
 	_gameTicks = 0;
 	playSound(12, true);
 
-	while (!_vm->shouldQuit() &&!_gameDone) {
+	while (!_vm->shouldQuit() && !_gameDone) {
 		_vm->updateEvents();
 		update();
 	}
@@ -1247,7 +1232,6 @@ void MinigameBbAnt::update() {
 	drawSprites();
 
 	_vm->_system->delayMillis(10);
-
 }
 
 void MinigameBbAnt::scale2x(int x, int y) {
@@ -1273,7 +1257,7 @@ void MinigameBbAnt::scale2x(int x, int y) {
 		srcH = 240 - srcY - 1;
 
 	for (int yc = 0; yc < srcH; ++yc) {
-		byte *src = (byte*)surface->getBasePtr(srcX, srcY + yc);
+		byte *src = (byte *)surface->getBasePtr(srcX, srcY + yc);
 		memcpy(&_scaleBuf[yc * kScaleDim], src, srcW);
 	}
 
@@ -1300,11 +1284,10 @@ void MinigameBbAnt::scale2x(int x, int y) {
 
 	for (int yc = 0; yc < h; ++yc) {
 		byte *src = _scaleBuf + kScaleDim * (yc / 2);
-		byte *dst = (byte*)surface->getBasePtr(dstX, dstY + yc);
+		byte *dst = (byte *)surface->getBasePtr(dstX, dstY + yc);
 		for (int xc = 0; xc < w; ++xc)
 			dst[xc] = src[xc / 2];
 	}
-
 }
 
 void MinigameBbAnt::loadSounds() {

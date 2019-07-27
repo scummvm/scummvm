@@ -20,25 +20,25 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/screen.h"
-#include "illusions/resources/fontresource.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
+#include "illusions/illusions.h"
+#include "illusions/resources/fontresource.h"
 
 namespace Illusions {
 
 // SpriteDecompressQueue
 
 SpriteDecompressQueue::SpriteDecompressQueue(Screen *screen)
-	: _screen(screen) {
+  : _screen(screen) {
 }
 
 SpriteDecompressQueue::~SpriteDecompressQueue() {
 }
 
 void SpriteDecompressQueue::insert(byte *drawFlags, uint32 flags, uint32 field8, WidthHeight &dimensions,
-	byte *compressedPixels, Graphics::Surface *surface) {
+                                   byte *compressedPixels, Graphics::Surface *surface) {
 	SpriteDecompressQueueItem *item = new SpriteDecompressQueueItem();
 	item->_drawFlags = drawFlags;
 	*item->_drawFlags &= 1;
@@ -66,7 +66,7 @@ void SpriteDecompressQueue::decompress(SpriteDecompressQueueItem *item) {
 // SpriteDrawQueue
 
 SpriteDrawQueue::SpriteDrawQueue(Screen *screen)
-	: _screen(screen) {
+  : _screen(screen) {
 }
 
 SpriteDrawQueue::~SpriteDrawQueue() {
@@ -112,7 +112,7 @@ void SpriteDrawQueue::drawAll() {
 }
 
 void SpriteDrawQueue::insertSprite(byte *drawFlags, Graphics::Surface *surface, WidthHeight &dimensions,
-	Common::Point &drawPosition, Common::Point &controlPosition, uint32 priority, int16 scale, uint16 flags) {
+                                   Common::Point &drawPosition, Common::Point &controlPosition, uint32 priority, int16 scale, uint16 flags) {
 	SpriteDrawQueueItem *item = new SpriteDrawQueueItem();
 	item->_drawFlags = drawFlags;
 	*item->_drawFlags &= 4;
@@ -128,7 +128,7 @@ void SpriteDrawQueue::insertSprite(byte *drawFlags, Graphics::Surface *surface, 
 }
 
 void SpriteDrawQueue::insertSurface(Graphics::Surface *surface, WidthHeight &dimensions,
-	Common::Point &drawPosition, uint32 priority) {
+                                    Common::Point &drawPosition, uint32 priority) {
 	SpriteDrawQueueItem *item = new SpriteDrawQueueItem();
 	item->_surface = surface;
 	item->_dimensions = dimensions;
@@ -140,12 +140,12 @@ void SpriteDrawQueue::insertSurface(Graphics::Surface *surface, WidthHeight &dim
 	item->_controlPosition.y = 0;
 	item->_flags = 0;
 	item->_scale = 100;
-	item->_priority = priority;// << 16;
+	item->_priority = priority; // << 16;
 	insert(item, priority);
 }
 
 void SpriteDrawQueue::insertTextSurface(Graphics::Surface *surface, WidthHeight &dimensions,
-	Common::Point &drawPosition, uint32 priority) {
+                                        Common::Point &drawPosition, uint32 priority) {
 	SpriteDrawQueueItem *item = new SpriteDrawQueueItem();
 	item->_surface = surface;
 	item->_drawPosition = drawPosition;
@@ -162,7 +162,7 @@ void SpriteDrawQueue::insertTextSurface(Graphics::Surface *surface, WidthHeight 
 
 void SpriteDrawQueue::insert(SpriteDrawQueueItem *item, uint32 priority) {
 	SpriteDrawQueueListIterator insertionPos = Common::find_if(_queue.begin(), _queue.end(),
-		FindInsertionPosition(priority));
+	                                                           FindInsertionPosition(priority));
 	_queue.insert(insertionPos, item);
 }
 
@@ -217,7 +217,9 @@ bool SpriteDrawQueue::calcItemRect(SpriteDrawQueueItem *item, Common::Rect &srcR
 // Palette
 
 ScreenPalette::ScreenPalette(IllusionsEngine *vm)
-	: _vm(vm), _needRefreshPalette(false), _isFaderActive(false) {
+  : _vm(vm)
+  , _needRefreshPalette(false)
+  , _isFaderActive(false) {
 
 	memset(_mainPalette, 0, sizeof(_mainPalette));
 }
@@ -350,10 +352,7 @@ void ScreenPalette::buildColorTransTbl() {
 		int minDistance = 766;
 		int minIndex2 = 2;
 		for (int index2 = 2; index2 < 256; ++index2) {
-			int distance =
-				ABS(dr - _mainPalette[3 * index2 + 0]) +
-				ABS(dg - _mainPalette[3 * index2 + 1]) +
-				ABS(db - _mainPalette[3 * index2 + 2]);
+			int distance = ABS(dr - _mainPalette[3 * index2 + 0]) + ABS(dg - _mainPalette[3 * index2 + 1]) + ABS(db - _mainPalette[3 * index2 + 2]);
 			if (distance < minDistance) {
 				minDistance = distance;
 				minIndex2 = index2;
@@ -366,7 +365,9 @@ void ScreenPalette::buildColorTransTbl() {
 // Screen
 
 Screen::Screen(IllusionsEngine *vm, int16 width, int16 height, int bpp)
-	: _vm(vm), _colorKey1(0), _colorKey2(0) {
+  : _vm(vm)
+  , _colorKey1(0)
+  , _colorKey2(0) {
 	_displayOn = true;
 	_decompressQueue = new SpriteDecompressQueue(this);
 	_drawQueue = new SpriteDrawQueue(this);
@@ -408,7 +409,7 @@ void Screen::setDisplayOn(bool isOn) {
 	if (!_displayOn) {
 		// Clear screen when off
 		_backSurface->fillRect(Common::Rect(_backSurface->w, _backSurface->h), 0);
-		g_system->copyRectToScreen((byte*)_backSurface->getBasePtr(0, 0), _backSurface->pitch, 0, 0, _backSurface->w, _backSurface->h);
+		g_system->copyRectToScreen((byte *)_backSurface->getBasePtr(0, 0), _backSurface->pitch, 0, 0, _backSurface->w, _backSurface->h);
 		g_system->updateScreen();
 	}
 }
@@ -430,7 +431,7 @@ void Screen::updateSprites() {
 		clearScreenOffsetAreas();
 	if (!_displayOn && !_vm->isVideoPlaying())
 		_backSurface->fillRect(Common::Rect(_backSurface->w, _backSurface->h), 0);
-	g_system->copyRectToScreen((byte*)_backSurface->getBasePtr(0, 0), _backSurface->pitch, 0, 0, _backSurface->w, _backSurface->h);
+	g_system->copyRectToScreen((byte *)_backSurface->getBasePtr(0, 0), _backSurface->pitch, 0, 0, _backSurface->w, _backSurface->h);
 }
 
 void Screen::clearScreenOffsetAreas() {
@@ -466,11 +467,10 @@ void Screen8Bit::decompressSprite(SpriteDecompressQueueItem *item) {
 	*item->_drawFlags &= ~1;
 
 	// Safeguard
-	if (item->_dimensions._width > item->_surface->w ||
-		item->_dimensions._height > item->_surface->h) {
+	if (item->_dimensions._width > item->_surface->w || item->_dimensions._height > item->_surface->h) {
 		debug("Incorrect frame dimensions (%d, %d <> %d, %d)",
-			item->_dimensions._width, item->_dimensions._height,
-			item->_surface->w, item->_surface->h);
+		      item->_dimensions._width, item->_dimensions._height,
+		      item->_surface->w, item->_surface->h);
 		return;
 	}
 
@@ -490,7 +490,7 @@ void Screen8Bit::decompressSprite(SpriteDecompressQueueItem *item) {
 		yincr = 1;
 	}
 
-	byte *dst = (byte*)dstSurface->getBasePtr(x, y);
+	byte *dst = (byte *)dstSurface->getBasePtr(x, y);
 
 	while (processedSize < dstSize) {
 		byte op = *src++;
@@ -504,7 +504,7 @@ void Screen8Bit::decompressSprite(SpriteDecompressQueueItem *item) {
 				if (x >= item->_dimensions._width || x < 0) {
 					x = xstart;
 					y += yincr;
-					dst = (byte*)dstSurface->getBasePtr(x, y);
+					dst = (byte *)dstSurface->getBasePtr(x, y);
 				} else {
 					dst += xincr;
 				}
@@ -519,14 +519,13 @@ void Screen8Bit::decompressSprite(SpriteDecompressQueueItem *item) {
 				if (x >= item->_dimensions._width || x < 0) {
 					x = xstart;
 					y += yincr;
-					dst = (byte*)dstSurface->getBasePtr(x, y);
+					dst = (byte *)dstSurface->getBasePtr(x, y);
 				} else {
 					dst += xincr;
 				}
 			}
 		}
 	}
-
 }
 
 void Screen8Bit::drawSurface(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags) {
@@ -552,7 +551,7 @@ void Screen8Bit::fillSurfaceRect(Graphics::Surface *surface, Common::Rect r, byt
 }
 
 bool Screen8Bit::isSpritePixelSolid(Common::Point &testPt, Common::Point &drawPosition, Common::Point &drawOffset,
-	const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels) {
+                                    const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels) {
 	// Unused in Duckman
 	return false;
 }
@@ -560,7 +559,7 @@ bool Screen8Bit::isSpritePixelSolid(Common::Point &testPt, Common::Point &drawPo
 int16 Screen8Bit::drawChar(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 c) {
 	const CharInfo *charInfo = font->getCharInfo(c);
 	const int16 charWidth = charInfo->_width;
-	byte *dst = (byte*)surface->getBasePtr(x, y);
+	byte *dst = (byte *)surface->getBasePtr(x, y);
 	byte *pixels = charInfo->_pixels;
 	for (int16 yc = 0; yc < font->_charHeight; ++yc) {
 		for (int16 xc = 0; xc < charWidth; ++xc) {
@@ -576,10 +575,10 @@ int16 Screen8Bit::drawChar(FontResource *font, Graphics::Surface *surface, int16
 void Screen8Bit::drawSurfaceUnscaled(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect) {
 	const int16 w = srcRect.width();
 	const int16 h = srcRect.height();
-	const byte* colorTransTbl = _vm->_screenPalette->getColorTransTbl();
+	const byte *colorTransTbl = _vm->_screenPalette->getColorTransTbl();
 	for (int16 yc = 0; yc < h; ++yc) {
-		byte *src = (byte*)surface->getBasePtr(srcRect.left, srcRect.top + yc);
-		byte *dst = (byte*)_backSurface->getBasePtr(destX, destY + yc);
+		byte *src = (byte *)surface->getBasePtr(srcRect.left, srcRect.top + yc);
+		byte *dst = (byte *)_backSurface->getBasePtr(destX, destY + yc);
 		for (int16 xc = 0; xc < w; ++xc) {
 			const byte pixel = *src++;
 			if (pixel != 0) {
@@ -600,16 +599,16 @@ void Screen8Bit::drawSurfaceScaled(Common::Rect &dstRect, Graphics::Surface *sur
 	const int errYIncr = srcHeight % dstHeight;
 	const int errXStart = srcWidth / dstWidth;
 	const int errXIncr = srcWidth % dstWidth;
-	const byte* colorTransTbl = _vm->_screenPalette->getColorTransTbl();
+	const byte *colorTransTbl = _vm->_screenPalette->getColorTransTbl();
 	int h = dstHeight, errY = 0, skipY, srcY = srcRect.top;
-	byte *dst = (byte*)_backSurface->getBasePtr(dstRect.left, dstRect.top);
-	skipY = (dstHeight < srcHeight) ? 0 : dstHeight / (2*srcHeight) + 1;
+	byte *dst = (byte *)_backSurface->getBasePtr(dstRect.left, dstRect.top);
+	skipY = (dstHeight < srcHeight) ? 0 : dstHeight / (2 * srcHeight) + 1;
 	h -= skipY;
 	while (h-- > 0) {
 		int w = dstWidth, errX = 0, skipX;
-		skipX = (dstWidth < srcWidth) ? 0 : dstWidth / (2*srcWidth) + 1;
+		skipX = (dstWidth < srcWidth) ? 0 : dstWidth / (2 * srcWidth) + 1;
 		w -= skipX;
-		byte *src = (byte*)surface->getBasePtr(srcRect.left, srcY);
+		byte *src = (byte *)surface->getBasePtr(srcRect.left, srcY);
 		byte *dstRow = dst;
 		while (w-- > 0) {
 			const byte pixel = *src;
@@ -661,11 +660,10 @@ void Screen16Bit::decompressSprite(SpriteDecompressQueueItem *item) {
 	*item->_drawFlags &= ~1;
 
 	// Safeguard
-	if (item->_dimensions._width > item->_surface->w ||
-		item->_dimensions._height > item->_surface->h) {
+	if (item->_dimensions._width > item->_surface->w || item->_dimensions._height > item->_surface->h) {
 		debug("Incorrect frame dimensions (%d, %d <> %d, %d)",
-			item->_dimensions._width, item->_dimensions._height,
-			item->_surface->w, item->_surface->h);
+		      item->_dimensions._width, item->_dimensions._height,
+		      item->_surface->w, item->_surface->h);
 		return;
 	}
 
@@ -685,7 +683,7 @@ void Screen16Bit::decompressSprite(SpriteDecompressQueueItem *item) {
 		yincr = 1;
 	}
 
-	byte *dst = (byte*)dstSurface->getBasePtr(x, y);
+	byte *dst = (byte *)dstSurface->getBasePtr(x, y);
 
 	while (processedSize < dstSize) {
 		int16 op = READ_LE_UINT16(src);
@@ -701,7 +699,7 @@ void Screen16Bit::decompressSprite(SpriteDecompressQueueItem *item) {
 				if (x >= item->_dimensions._width || x < 0) {
 					x = xstart;
 					y += yincr;
-					dst = (byte*)dstSurface->getBasePtr(x, y);
+					dst = (byte *)dstSurface->getBasePtr(x, y);
 				} else {
 					dst += 2 * xincr;
 				}
@@ -717,14 +715,13 @@ void Screen16Bit::decompressSprite(SpriteDecompressQueueItem *item) {
 				if (x >= item->_dimensions._width || x < 0) {
 					x = xstart;
 					y += yincr;
-					dst = (byte*)dstSurface->getBasePtr(x, y);
+					dst = (byte *)dstSurface->getBasePtr(x, y);
 				} else {
 					dst += 2 * xincr;
 				}
 			}
 		}
 	}
-
 }
 
 void Screen16Bit::drawSurface(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags) {
@@ -756,7 +753,7 @@ void Screen16Bit::fillSurfaceRect(Graphics::Surface *surface, Common::Rect r, by
 }
 
 bool Screen16Bit::isSpritePixelSolid(Common::Point &testPt, Common::Point &drawPosition, Common::Point &drawOffset,
-	const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels) {
+                                     const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels) {
 
 	int ptX = scale * drawPosition.x / 100 + testPt.x - drawOffset.x;
 	int ptY = scale * drawPosition.y / 100 + testPt.y - drawOffset.y;
@@ -776,9 +773,7 @@ bool Screen16Bit::isSpritePixelSolid(Common::Point &testPt, Common::Point &drawP
 	const int lookOffset = pixelLookX + surfInfo._dimensions._width * pixelLookY;
 	const int dstSize = surfInfo._dimensions._width * surfInfo._dimensions._height;
 
-	if (pixelLookX < 0 || pixelLookX >= surfInfo._dimensions._width ||
-		pixelLookY < 0 || pixelLookY >= surfInfo._dimensions._height ||
-		lookOffset < 0 || lookOffset >= dstSize)
+	if (pixelLookX < 0 || pixelLookX >= surfInfo._dimensions._width || pixelLookY < 0 || pixelLookY >= surfInfo._dimensions._height || lookOffset < 0 || lookOffset >= dstSize)
 		return false;
 
 	byte *src = compressedPixels;
@@ -816,7 +811,7 @@ int16 Screen16Bit::drawChar(FontResource *font, Graphics::Surface *surface, int1
 	const int16 charWidth = charInfo->_width;
 	byte *pixels = charInfo->_pixels;
 	for (int16 yc = 0; yc < font->_charHeight; ++yc) {
-		byte *dst = (byte*)surface->getBasePtr(x, y + yc);
+		byte *dst = (byte *)surface->getBasePtr(x, y + yc);
 		for (int16 xc = 0; xc < charWidth; ++xc) {
 			if (pixels[xc])
 				WRITE_LE_UINT16(dst, convertFontColor(pixels[xc]));
@@ -839,8 +834,8 @@ void Screen16Bit::drawSurface11(int16 destX, int16 destY, Graphics::Surface *sur
 	const int16 w = srcRect.width();
 	const int16 h = srcRect.height();
 	for (int16 yc = 0; yc < h; ++yc) {
-		byte *src = (byte*)surface->getBasePtr(srcRect.left, srcRect.top + yc);
-		byte *dst = (byte*)_backSurface->getBasePtr(destX, destY + yc);
+		byte *src = (byte *)surface->getBasePtr(srcRect.left, srcRect.top + yc);
+		byte *dst = (byte *)_backSurface->getBasePtr(destX, destY + yc);
 		for (int16 xc = 0; xc < w; ++xc) {
 			uint16 pixel = READ_LE_UINT16(src);
 			if (pixel != _colorKey1)
@@ -866,14 +861,14 @@ void Screen16Bit::drawSurface21(Common::Rect &dstRect, Graphics::Surface *surfac
 	const int errXStart = srcWidth / dstWidth;
 	const int errXIncr = srcWidth % dstWidth;
 	int h = dstHeight, errY = 0, skipY, srcY = srcRect.top;
-	byte *dst = (byte*)_backSurface->getBasePtr(dstRect.left, dstRect.top);
-	skipY = (dstHeight < srcHeight) ? 0 : dstHeight / (2*srcHeight) + 1;
+	byte *dst = (byte *)_backSurface->getBasePtr(dstRect.left, dstRect.top);
+	skipY = (dstHeight < srcHeight) ? 0 : dstHeight / (2 * srcHeight) + 1;
 	h -= skipY;
 	while (h-- > 0) {
 		int w = dstWidth, errX = 0, skipX;
-		skipX = (dstWidth < srcWidth) ? 0 : dstWidth / (2*srcWidth) + 1;
+		skipX = (dstWidth < srcWidth) ? 0 : dstWidth / (2 * srcWidth) + 1;
 		w -= skipX;
-		byte *src = (byte*)surface->getBasePtr(srcRect.left, srcY);
+		byte *src = (byte *)surface->getBasePtr(srcRect.left, srcY);
 		byte *dstRow = dst;
 		while (w-- > 0) {
 			uint16 pixel = READ_LE_UINT16(src);

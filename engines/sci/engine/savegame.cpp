@@ -20,25 +20,25 @@
  *
  */
 
+#include "common/func.h"
 #include "common/savefile.h"
+#include "common/serializer.h"
 #include "common/stream.h"
 #include "common/system.h"
-#include "common/func.h"
-#include "common/serializer.h"
 #include "common/translation.h"
 #include "graphics/thumbnail.h"
 
-#include "sci/sci.h"
 #include "sci/event.h"
+#include "sci/sci.h"
 
 #include "sci/engine/features.h"
 #include "sci/engine/kernel.h"
-#include "sci/engine/state.h"
 #include "sci/engine/message.h"
 #include "sci/engine/savegame.h"
+#include "sci/engine/script.h" // for SCI_OBJ_EXPORTS and SCI_OBJ_SYNONYMS
 #include "sci/engine/selector.h"
+#include "sci/engine/state.h"
 #include "sci/engine/vm_types.h"
-#include "sci/engine/script.h"	// for SCI_OBJ_EXPORTS and SCI_OBJ_SYNONYMS
 #include "sci/graphics/helpers.h"
 #include "sci/graphics/menu.h"
 #include "sci/graphics/palette.h"
@@ -49,14 +49,14 @@
 #include "sci/sound/music.h"
 
 #ifdef ENABLE_SCI32
-#include "common/config-manager.h"
-#include "common/gui_options.h"
-#include "sci/engine/guest_additions.h"
-#include "sci/graphics/cursor32.h"
-#include "sci/graphics/frameout.h"
-#include "sci/graphics/palette32.h"
-#include "sci/graphics/remap32.h"
-#include "sci/graphics/video32.h"
+#	include "common/config-manager.h"
+#	include "common/gui_options.h"
+#	include "sci/engine/guest_additions.h"
+#	include "sci/graphics/cursor32.h"
+#	include "sci/graphics/frameout.h"
+#	include "sci/graphics/palette32.h"
+#	include "sci/graphics/remap32.h"
+#	include "sci/graphics/video32.h"
 #endif
 
 namespace Sci {
@@ -103,7 +103,7 @@ void syncWithSerializer(Common::Serializer &s, Node &obj) {
 #pragma mark -
 
 // By default, sync using syncWithSerializer, which in turn can easily be overloaded.
-template<typename T>
+template <typename T>
 struct DefaultSyncer : Common::BinaryFunction<Common::Serializer, T, void> {
 	void operator()(Common::Serializer &s, T &obj, int) const {
 		syncWithSerializer(s, obj);
@@ -111,7 +111,7 @@ struct DefaultSyncer : Common::BinaryFunction<Common::Serializer, T, void> {
 };
 
 // Syncer for entries in a segment obj table
-template<typename T>
+template <typename T>
 struct SegmentObjTableEntrySyncer : Common::BinaryFunction<Common::Serializer, typename T::Entry &, void> {
 	void operator()(Common::Serializer &s, typename T::Entry &entry, int index) const {
 		s.syncAsSint32LE(entry.next_free);
@@ -154,7 +154,7 @@ struct SegmentObjTableEntrySyncer : Common::BinaryFunction<Common::Serializer, t
  *
  * TODO: Add something like this for lists, queues....
  */
-template<typename T, class Syncer = DefaultSyncer<T> >
+template <typename T, class Syncer = DefaultSyncer<T>>
 struct ArraySyncer : Common::BinaryFunction<Common::Serializer, T, void> {
 	void operator()(Common::Serializer &s, Common::Array<T> &arr) const {
 		uint len = arr.size();
@@ -172,13 +172,13 @@ struct ArraySyncer : Common::BinaryFunction<Common::Serializer, T, void> {
 };
 
 // Convenience wrapper
-template<typename T>
+template <typename T>
 void syncArray(Common::Serializer &s, Common::Array<T> &arr) {
 	ArraySyncer<T> sync;
 	sync(s, arr);
 }
 
-template<typename T, class Syncer>
+template <typename T, class Syncer>
 void syncArray(Common::Serializer &s, Common::Array<T> &arr) {
 	ArraySyncer<T, Syncer> sync;
 	sync(s, arr);
@@ -192,7 +192,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 		_scriptSegMap.clear();
 	}
 
-	s.skip(4, VER(14), VER(18));		// OBSOLETE: Used to be _exportsAreWide
+	s.skip(4, VER(14), VER(18)); // OBSOLETE: Used to be _exportsAreWide
 
 	uint sync_heap_size = _heap.size();
 	s.syncAsUint32LE(sync_heap_size);
@@ -219,11 +219,11 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 				// Old saved game. Skip the data.
 				Common::String tmp;
 				for (int j = 0; j < 4; j++) {
-					s.syncString(tmp);	// OBSOLETE: name
-					s.skip(4);			// OBSOLETE: maxSize
-					s.syncString(tmp);	// OBSOLETE: value
+					s.syncString(tmp); // OBSOLETE: name
+					s.skip(4); // OBSOLETE: maxSize
+					s.syncString(tmp); // OBSOLETE: value
 				}
-				_heap[i] = NULL;	// set as freed
+				_heap[i] = NULL; // set as freed
 				continue;
 			}
 #ifdef ENABLE_SCI32
@@ -267,7 +267,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 		int passes = getSciVersion() < SCI_VERSION_1_1 ? 2 : 1;
 		for (int pass = 1; pass <= passes; ++pass) {
 			for (uint i = 0; i < _heap.size(); i++) {
-				if (!_heap[i] ||  _heap[i]->getType() != SEG_TYPE_SCRIPT)
+				if (!_heap[i] || _heap[i]->getType() != SEG_TYPE_SCRIPT)
 					continue;
 
 				Script *scr = (Script *)_heap[i];
@@ -340,7 +340,6 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 	}
 }
 
-
 static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) {
 	s.syncString(obj.name);
 	s.syncVersion(CURRENT_SAVEGAME_VERSION);
@@ -395,7 +394,7 @@ static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) 
 
 void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	Common::String tmp;
-	s.syncString(tmp, VER(14), VER(23));			// OBSOLETE: Used to be gameVersion
+	s.syncString(tmp, VER(14), VER(23)); // OBSOLETE: Used to be gameVersion
 
 	if (getSciVersion() <= SCI_VERSION_1_1) {
 		// Save/Load picPort as well for SCI0-SCI1.1. Necessary for Castle of Dr. Brain,
@@ -451,7 +450,7 @@ void LocalVariables::saveLoadWithSerializer(Common::Serializer &s) {
 void Object::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_isFreed);
 	syncWithSerializer(s, _pos);
-	s.syncAsSint32LE(_methodCount);		// that's actually a uint16
+	s.syncAsSint32LE(_methodCount); // that's actually a uint16
 
 	syncArray<reg_t>(s, _variables);
 
@@ -470,13 +469,12 @@ void Object::saveLoadWithSerializer(Common::Serializer &s) {
 #endif
 }
 
-
-template<typename T>
+template <typename T>
 void sync_Table(Common::Serializer &s, T &obj) {
 	s.syncAsSint32LE(obj.first_free);
 	s.syncAsSint32LE(obj.entries_used);
 
-	syncArray<typename T::Entry, SegmentObjTableEntrySyncer<T> >(s, obj._table);
+	syncArray<typename T::Entry, SegmentObjTableEntrySyncer<T>>(s, obj._table);
 }
 
 void CloneTable::saveLoadWithSerializer(Common::Serializer &s) {
@@ -519,7 +517,7 @@ void Script::syncStringHeap(Common::Serializer &s) {
 			buf += blockSize;
 		}
 
-	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE){
+	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
 		// Strings in SCI1.1 come after the object instances
 		SciSpan<byte> buf = _heap.subspan(4 + _heap.getUint16SEAt(2) * 2);
 
@@ -542,12 +540,12 @@ void Script::saveLoadWithSerializer(Common::Serializer &s) {
 
 	if (s.isLoading())
 		load(_nr, g_sci->getResMan(), g_sci->getScriptPatcher());
-	s.skip(4, VER(14), VER(22));		// OBSOLETE: Used to be _bufSize
-	s.skip(4, VER(14), VER(22));		// OBSOLETE: Used to be _scriptSize
-	s.skip(4, VER(14), VER(22));		// OBSOLETE: Used to be _heapSize
+	s.skip(4, VER(14), VER(22)); // OBSOLETE: Used to be _bufSize
+	s.skip(4, VER(14), VER(22)); // OBSOLETE: Used to be _scriptSize
+	s.skip(4, VER(14), VER(22)); // OBSOLETE: Used to be _heapSize
 
-	s.skip(4, VER(14), VER(19));		// OBSOLETE: Used to be _numExports
-	s.skip(4, VER(14), VER(19));		// OBSOLETE: Used to be _numSynonyms
+	s.skip(4, VER(14), VER(19)); // OBSOLETE: Used to be _numExports
+	s.skip(4, VER(14), VER(19)); // OBSOLETE: Used to be _numSynonyms
 	s.syncAsSint32LE(_lockers);
 
 	// Sync _objects. This is a hashmap, and we use the following on disk format:
@@ -575,7 +573,7 @@ void Script::saveLoadWithSerializer(Common::Serializer &s) {
 		}
 	}
 
-	s.skip(4, VER(14), VER(20));		// OBSOLETE: Used to be _localsOffset
+	s.skip(4, VER(14), VER(20)); // OBSOLETE: Used to be _localsOffset
 	s.syncAsSint32LE(_localsSegment);
 
 	s.syncAsSint32LE(_markedAsDeleted);
@@ -684,7 +682,7 @@ void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 		soundRes = 0;
 		pMidiParser = 0;
 		pStreamAud = 0;
-		reverb = -1;	// invalid reverb, will be initialized in processInitSound()
+		reverb = -1; // invalid reverb, will be initialized in processInitSound()
 	}
 }
 
@@ -711,15 +709,14 @@ void SoundCommandParser::reconstructPlayList() {
 		if (_soundVersion >= SCI_VERSION_2 && entry->isSample) {
 			const reg_t &soundObj = entry->soundObj;
 
-			if (readSelectorValue(_segMan, soundObj, SELECTOR(loop)) == 0xFFFF &&
-				readSelector(_segMan, soundObj, SELECTOR(handle)) != NULL_REG) {
+			if (readSelectorValue(_segMan, soundObj, SELECTOR(loop)) == 0xFFFF && readSelector(_segMan, soundObj, SELECTOR(handle)) != NULL_REG) {
 
 				writeSelector(_segMan, soundObj, SELECTOR(handle), NULL_REG);
 				processPlaySound(soundObj, entry->playBed);
 			}
 		} else
 #endif
-		if (entry->status == kSoundPlaying) {
+		  if (entry->status == kSoundPlaying) {
 			// WORKAROUND: PQ3 (German?) scripts can set volume negative in the
 			// sound object directly without going through DoSound.
 			// Since we re-read this selector when re-playing the sound after loading,
@@ -1148,7 +1145,7 @@ void SegManager::reconstructClones() {
 				// Check if the clone entry is used
 				uint entryNum = (uint)ct->first_free;
 				bool isUsed = true;
-				while (entryNum != ((uint) CloneTable::HEAPENTRY_INVALID)) {
+				while (entryNum != ((uint)CloneTable::HEAPENTRY_INVALID)) {
 					if (entryNum == j) {
 						isUsed = false;
 						break;
@@ -1166,19 +1163,17 @@ void SegManager::reconstructClones() {
 					// Can happen when loading some KQ6 savegames
 					warning("Clone entry without a base class: %d", j);
 				}
-			}	// end for
-		}	// end if
-	}	// end for
+			} // end for
+		} // end if
+	} // end for
 }
 
-
 #pragma mark -
-
 
 bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::String &savename, const Common::String &version) {
 	Common::Serializer ser(nullptr, fh);
 	set_savegame_metadata(ser, fh, savename, version);
-	s->saveLoadWithSerializer(ser);		// FIXME: Error handling?
+	s->saveLoadWithSerializer(ser); // FIXME: Error handling?
 	if (g_sci->_gfxPorts)
 		g_sci->_gfxPorts->saveLoadWithSerializer(ser);
 	Vocabulary *voc = g_sci->getVocabulary();
@@ -1220,14 +1215,14 @@ void gamestate_afterRestoreFixUp(EngineState *s, int savegameId) {
 		// These two are needed when restoring from the launcher
 		// FIXME: The original interpreter saves and restores the menu state, so these attributes
 		// are automatically reset there. We may want to do the same.
-		g_sci->_gfxMenu->kernelSetAttribute(257 >> 8, 257 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Sierra -> About Jones
-		g_sci->_gfxMenu->kernelSetAttribute(258 >> 8, 258 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Sierra -> Help
+		g_sci->_gfxMenu->kernelSetAttribute(257 >> 8, 257 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG); // Sierra -> About Jones
+		g_sci->_gfxMenu->kernelSetAttribute(258 >> 8, 258 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG); // Sierra -> Help
 		// The rest are normally enabled from room1::init
-		g_sci->_gfxMenu->kernelSetAttribute(769 >> 8, 769 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Options -> Delete current player
-		g_sci->_gfxMenu->kernelSetAttribute(513 >> 8, 513 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Game -> Save Game
-		g_sci->_gfxMenu->kernelSetAttribute(515 >> 8, 515 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Game -> Restore Game
-		g_sci->_gfxMenu->kernelSetAttribute(1025 >> 8, 1025 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);  // Status -> Statistics
-		g_sci->_gfxMenu->kernelSetAttribute(1026 >> 8, 1026 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);  // Status -> Goals
+		g_sci->_gfxMenu->kernelSetAttribute(769 >> 8, 769 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG); // Options -> Delete current player
+		g_sci->_gfxMenu->kernelSetAttribute(513 >> 8, 513 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG); // Game -> Save Game
+		g_sci->_gfxMenu->kernelSetAttribute(515 >> 8, 515 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG); // Game -> Restore Game
+		g_sci->_gfxMenu->kernelSetAttribute(1025 >> 8, 1025 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG); // Status -> Statistics
+		g_sci->_gfxMenu->kernelSetAttribute(1026 >> 8, 1026 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG); // Status -> Goals
 		break;
 	case GID_KQ6:
 		if (g_sci->isCD()) {
@@ -1252,7 +1247,7 @@ void gamestate_afterRestoreFixUp(EngineState *s, int savegameId) {
 	case GID_PQ2:
 		// HACK: Same as in Jones - enable the save game menu option when loading in
 		// PQ2 (bug #6875). It gets disabled in the game's death screen.
-		g_sci->_gfxMenu->kernelSetAttribute(2, 1, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);	// Game -> Save Game
+		g_sci->_gfxMenu->kernelSetAttribute(2, 1, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG); // Game -> Save Game
 		break;
 #ifdef ENABLE_SCI32
 	case GID_KQ7:
@@ -1289,7 +1284,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	sync_SavegameMetadata(ser, meta);
 
 	if (fh->eos()) {
-		s->r_acc = TRUE_REG;	// signal failure
+		s->r_acc = TRUE_REG; // signal failure
 		return;
 	}
 
@@ -1303,7 +1298,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 				showScummVMDialog(msg);
 			}
 
-			s->r_acc = TRUE_REG;	// signal failure
+			s->r_acc = TRUE_REG; // signal failure
 			return;
 		}
 
@@ -1312,7 +1307,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 			if (script0->size() != meta.script0Size || g_sci->getGameObject().getOffset() != meta.gameObjectOffset) {
 				showScummVMDialog(_("This saved game was created with a different version of the game, unable to load it"));
 
-				s->r_acc = TRUE_REG;	// signal failure
+				s->r_acc = TRUE_REG; // signal failure
 				return;
 			}
 		}
@@ -1341,7 +1336,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	}
 
 	s->reset(true);
-	s->saveLoadWithSerializer(ser);	// FIXME: Error handling?
+	s->saveLoadWithSerializer(ser); // FIXME: Error handling?
 
 	// Now copy all current state information
 
@@ -1415,8 +1410,7 @@ bool get_savegame_metadata(Common::SeekableReadStream *stream, SavegameMetadata 
 	if (stream->eos())
 		return false;
 
-	if ((meta.version < MINIMUM_SAVEGAME_VERSION) ||
-	    (meta.version > CURRENT_SAVEGAME_VERSION)) {
+	if ((meta.version < MINIMUM_SAVEGAME_VERSION) || (meta.version > CURRENT_SAVEGAME_VERSION)) {
 		if (meta.version < MINIMUM_SAVEGAME_VERSION)
 			warning("Old savegame version detected- can't load");
 		else

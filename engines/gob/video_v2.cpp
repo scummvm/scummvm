@@ -27,11 +27,12 @@
 
 namespace Gob {
 
-Video_v2::Video_v2(GobEngine *vm) : Video_v1(vm) {
+Video_v2::Video_v2(GobEngine *vm)
+  : Video_v1(vm) {
 }
 
 char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
-	    int16 x, int16 y, int16 transp, Surface &destDesc) {
+                                  int16 x, int16 y, int16 transp, Surface &destDesc) {
 	byte *memBuffer;
 	byte *srcPtr;
 	byte temp;
@@ -68,7 +69,7 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 
 		Pixel destPtr = destDesc.get(x, y);
 
-		curWidth  = 0;
+		curWidth = 0;
 		curHeight = 0;
 
 		Pixel linePtr = destPtr;
@@ -117,10 +118,10 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 
 			} else {
 				offset = *srcPtr++;
-				temp   = *srcPtr++;
+				temp = *srcPtr++;
 
 				offset |= (temp & 0xF0) << 4;
-				strLen  = (temp & 0x0F)  + 3;
+				strLen = (temp & 0x0F) + 3;
 
 				if (strLen == lenCmd)
 					strLen = *srcPtr++ + 18;
@@ -148,14 +149,12 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 					bufPos = (bufPos + 1) % 4096;
 				}
 
-				if (strLen >= ((int32) sourceLeft)) {
+				if (strLen >= ((int32)sourceLeft)) {
 					delete[] memBuffer;
 					return 1;
 				} else
 					sourceLeft--;
-
 			}
-
 		}
 	} else
 		return 0;

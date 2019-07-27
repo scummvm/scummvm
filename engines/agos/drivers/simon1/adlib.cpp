@@ -22,27 +22,38 @@
 
 #include "agos/drivers/simon1/adlib.h"
 
+#include "common/file.h"
 #include "common/textconsole.h"
 #include "common/util.h"
-#include "common/file.h"
 
 namespace AGOS {
 
 enum {
-	kChannelUnused       = 0xFF,
+	kChannelUnused = 0xFF,
 	kChannelOrphanedFlag = 0x80,
 
 	kOPLVoicesCount = 9
 };
 
 MidiDriver_Simon1_AdLib::Voice::Voice()
-    : channel(kChannelUnused), note(0), instrTotalLevel(0), instrScalingLevel(0), frequency(0) {
+  : channel(kChannelUnused)
+  , note(0)
+  , instrTotalLevel(0)
+  , instrScalingLevel(0)
+  , frequency(0) {
 }
 
 MidiDriver_Simon1_AdLib::MidiDriver_Simon1_AdLib(const byte *instrumentData)
-    : _isOpen(false), _opl(nullptr), _timerProc(nullptr), _timerParam(nullptr),
-      _melodyVoices(0), _amvdrBits(0), _rhythmEnabled(false), _voices(), _midiPrograms(),
-      _instruments(instrumentData) {
+  : _isOpen(false)
+  , _opl(nullptr)
+  , _timerProc(nullptr)
+  , _timerParam(nullptr)
+  , _melodyVoices(0)
+  , _amvdrBits(0)
+  , _rhythmEnabled(false)
+  , _voices()
+  , _midiPrograms()
+  , _instruments(instrumentData) {
 }
 
 MidiDriver_Simon1_AdLib::~MidiDriver_Simon1_AdLib() {
@@ -97,8 +108,8 @@ void MidiDriver_Simon1_AdLib::close() {
 void MidiDriver_Simon1_AdLib::send(uint32 b) {
 	int channel = b & 0x0F;
 	int command = b & 0xF0;
-	int param1  = (b >>  8) & 0xFF;
-	int param2  = (b >> 16) & 0xFF;
+	int param1 = (b >> 8) & 0xFF;
+	int param2 = (b >> 16) & 0xFF;
 
 	// The percussion channel is handled specially. The AdLib output uses
 	// channels 11 to 15 for percussions. For this, the original converted
@@ -232,7 +243,7 @@ int MidiDriver_Simon1_AdLib::allocateVoice(uint channel) {
 	// However, the priority value is always 0, which causes the first channel
 	// to be picked all the time.
 	const int voice = 0;
-	_opl->writeReg(0xA0 + voice, (_voices[voice].frequency     ) & 0xFF);
+	_opl->writeReg(0xA0 + voice, (_voices[voice].frequency) & 0xFF);
 	_opl->writeReg(0xB0 + voice, (_voices[voice].frequency >> 8) & 0xFF);
 	return voice;
 }
@@ -245,7 +256,7 @@ void MidiDriver_Simon1_AdLib::noteOff(uint channel, uint note) {
 		for (int i = 0; i < _melodyVoices; ++i) {
 			if (_voices[i].note == note && _voices[i].channel == channel) {
 				_voices[i].channel |= kChannelOrphanedFlag;
-				_opl->writeReg(0xA0 + i, (_voices[i].frequency     ) & 0xFF);
+				_opl->writeReg(0xA0 + i, (_voices[i].frequency) & 0xFF);
 				_opl->writeReg(0xB0 + i, (_voices[i].frequency >> 8) & 0xFF);
 				return;
 			}
@@ -278,7 +289,7 @@ void MidiDriver_Simon1_AdLib::noteOn(uint channel, uint note, uint velocity) {
 	const uint frequency = _frequencyTable[frequencyAndOctave & 0x0F];
 
 	uint highByte = ((frequency & 0xFF00) >> 8) | ((frequencyAndOctave & 0x70) >> 2);
-	uint lowByte  = frequency & 0x00FF;
+	uint lowByte = frequency & 0x00FF;
 	voice.frequency = (highByte << 8) | lowByte;
 
 	_opl->writeReg(0xA0 + voiceNum, lowByte);
@@ -307,7 +318,7 @@ void MidiDriver_Simon1_AdLib::noteOnRhythm(uint channel, uint note, uint velocit
 	const uint frequency = _frequencyTable[frequencyAndOctave & 0x0F];
 
 	uint highByte = ((frequency & 0xFF00) >> 8) | ((frequencyAndOctave & 0x70) >> 2);
-	uint lowByte  = frequency & 0x00FF;
+	uint lowByte = frequency & 0x00FF;
 	voice.frequency = (highByte << 8) | lowByte;
 
 	const uint oplOperator = _rhythmVoiceMap[voiceNum - 6];
@@ -371,10 +382,10 @@ void MidiDriver_Simon1_AdLib::setupInstrument(uint voice, uint instrument) {
 	}
 
 	const int scalingLevel = scaling & 0xC0;
-	const int totalLevel   = scaling & 0x3F;
+	const int totalLevel = scaling & 0x3F;
 
 	_voices[voice].instrScalingLevel = scalingLevel;
-	_voices[voice].instrTotalLevel   = (-(totalLevel - 0x3F)) & 0xFF;
+	_voices[voice].instrTotalLevel = (-(totalLevel - 0x3F)) & 0xFF;
 
 	if (!_rhythmEnabled || voice <= 6) {
 		int oplRegister = _operatorMap[voice];
@@ -451,44 +462,44 @@ const int MidiDriver_Simon1_AdLib::_frequencyTable[16] = {
 };
 
 const MidiDriver_Simon1_AdLib::RhythmMap MidiDriver_Simon1_AdLib::_rhythmMap[39] = {
-	{ 11, 123,  40 },
-	{ 12, 127,  50 },
-	{ 12, 124,   1 },
-	{ 12, 124,  90 },
-	{ 13, 125,  50 },
-	{ 13, 125,  25 },
-	{ 15, 127,  80 },
-	{ 13, 125,  25 },
-	{ 15, 127,  40 },
-	{ 13, 125,  35 },
-	{ 15, 127,  90 },
-	{ 13, 125,  35 },
-	{ 13, 125,  45 },
-	{ 14, 126,  90 },
-	{ 13, 125,  45 },
-	{ 15, 127,  90 },
-	{  0,   0,   0 },
-	{ 15, 127,  60 },
-	{  0,   0,   0 },
-	{ 13, 125,  60 },
-	{  0,   0,   0 },
-	{  0,   0,   0 },
-	{  0,   0,   0 },
-	{ 13, 125,  45 },
-	{ 13, 125,  40 },
-	{ 13, 125,  35 },
-	{ 13, 125,  30 },
-	{ 13, 125,  25 },
-	{ 13, 125,  80 },
-	{ 13, 125,  40 },
-	{ 13, 125,  80 },
-	{ 13, 125,  40 },
-	{ 14, 126,  40 },
-	{ 15, 127,  60 },
-	{  0,   0,   0 },
-	{  0,   0,   0 },
-	{ 14, 126,  80 },
-	{  0,   0,   0 },
+	{ 11, 123, 40 },
+	{ 12, 127, 50 },
+	{ 12, 124, 1 },
+	{ 12, 124, 90 },
+	{ 13, 125, 50 },
+	{ 13, 125, 25 },
+	{ 15, 127, 80 },
+	{ 13, 125, 25 },
+	{ 15, 127, 40 },
+	{ 13, 125, 35 },
+	{ 15, 127, 90 },
+	{ 13, 125, 35 },
+	{ 13, 125, 45 },
+	{ 14, 126, 90 },
+	{ 13, 125, 45 },
+	{ 15, 127, 90 },
+	{ 0, 0, 0 },
+	{ 15, 127, 60 },
+	{ 0, 0, 0 },
+	{ 13, 125, 60 },
+	{ 0, 0, 0 },
+	{ 0, 0, 0 },
+	{ 0, 0, 0 },
+	{ 13, 125, 45 },
+	{ 13, 125, 40 },
+	{ 13, 125, 35 },
+	{ 13, 125, 30 },
+	{ 13, 125, 25 },
+	{ 13, 125, 80 },
+	{ 13, 125, 40 },
+	{ 13, 125, 80 },
+	{ 13, 125, 40 },
+	{ 14, 126, 40 },
+	{ 15, 127, 60 },
+	{ 0, 0, 0 },
+	{ 0, 0, 0 },
+	{ 14, 126, 80 },
+	{ 0, 0, 0 },
 	{ 13, 125, 100 }
 };
 

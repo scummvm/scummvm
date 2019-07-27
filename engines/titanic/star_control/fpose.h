@@ -35,6 +35,7 @@ class CMatrixTransform;
 class FPose : public FMatrix {
 public:
 	FVector _vector;
+
 public:
 	FPose();
 	FPose(Axis axis, float amount);

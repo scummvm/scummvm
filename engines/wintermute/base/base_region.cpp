@@ -27,13 +27,13 @@
  */
 
 #include "engines/wintermute/base/base_region.h"
-#include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
-#include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/platform_osystem.h"
 #include <limits.h>
 
@@ -42,7 +42,8 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(BaseRegion, false)
 
 //////////////////////////////////////////////////////////////////////////
-BaseRegion::BaseRegion(BaseGame *inGame) : BaseObject(inGame) {
+BaseRegion::BaseRegion(BaseGame *inGame)
+  : BaseObject(inGame) {
 	_active = true;
 	_editorSelectedPoint = -1;
 	_lastMimicScale = -1;
@@ -51,12 +52,10 @@ BaseRegion::BaseRegion(BaseGame *inGame) : BaseObject(inGame) {
 	_rect.setEmpty();
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 BaseRegion::~BaseRegion() {
 	cleanup();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRegion::cleanup() {
@@ -69,12 +68,10 @@ void BaseRegion::cleanup() {
 	_editorSelectedPoint = -1;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::createRegion() {
 	return DID_SUCCEED(getBoundingRect(&_rect));
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::pointInRegion(int x, int y) {
@@ -99,7 +96,6 @@ bool BaseRegion::pointInRegion(int x, int y) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
@@ -116,12 +112,10 @@ bool BaseRegion::loadFile(const char *filename) {
 		BaseEngine::LOG(0, "Error parsing REGION file '%s'", filename);
 	}
 
-
 	delete[] buffer;
 
 	return ret;
 }
-
 
 TOKEN_DEF_START
 TOKEN_DEF(REGION)
@@ -189,8 +183,7 @@ bool BaseRegion::loadBuffer(char *buffer, bool complete) {
 			int x, y;
 			parser.scanStr(params, "%d,%d", &x, &y);
 			_points.add(new BasePoint(x, y));
-		}
-		break;
+		} break;
 
 		case TOKEN_SCRIPT:
 			addScript(params);
@@ -214,7 +207,6 @@ bool BaseRegion::loadBuffer(char *buffer, bool complete) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
@@ -325,7 +317,6 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *BaseRegion::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
@@ -365,7 +356,6 @@ ScValue *BaseRegion::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
@@ -387,12 +377,10 @@ bool BaseRegion::scSetProperty(const char *name, ScValue *value) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 const char *BaseRegion::scToString() {
 	return "[region]";
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::saveAsText(BaseDynamicBuffer *buffer, int indent, const char *nameOverride) {
@@ -424,7 +412,6 @@ bool BaseRegion::saveAsText(BaseDynamicBuffer *buffer, int indent, const char *n
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::persist(BasePersistenceManager *persistMgr) {
 
@@ -439,7 +426,6 @@ bool BaseRegion::persist(BasePersistenceManager *persistMgr) {
 
 	return STATUS_OK;
 }
-
 
 typedef struct {
 	double x, y;
@@ -487,7 +473,6 @@ bool BaseRegion::ptInPolygon(int32 x, int32 y) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::getBoundingRect(Rect32 *rect) {
 	if (_points.size() == 0) {
@@ -506,7 +491,6 @@ bool BaseRegion::getBoundingRect(Rect32 *rect) {
 	}
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::mimic(BaseRegion *region, float scale, int x, int y) {

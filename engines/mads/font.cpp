@@ -20,10 +20,10 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "mads/mads.h"
-#include "mads/compression.h"
 #include "mads/font.h"
+#include "common/scummsys.h"
+#include "mads/compression.h"
+#include "mads/mads.h"
 #include "mads/msurface.h"
 
 namespace MADS {
@@ -103,7 +103,7 @@ void Font::setFont(const Common::String &filename) {
 	// Char data is shifted by 1
 	_charWidths[0] = 0;
 	fontFile->read(_charWidths + 1, 127);
-	fontFile->readByte();	// remainder
+	fontFile->readByte(); // remainder
 
 	_charOffs = new uint16[128];
 
@@ -114,7 +114,7 @@ void Font::setFont(const Common::String &filename) {
 	_charOffs[0] = 0;
 	for (int i = 1; i < 128; i++)
 		_charOffs[i] = fontFile->readUint16LE() - startOffs;
-	fontFile->readUint16LE();	// remainder
+	fontFile->readUint16LE(); // remainder
 
 	_charData = new uint8[fontSize];
 	fontFile->read(_charData, fontSize);
@@ -146,7 +146,7 @@ void Font::setColorMode(SelectionMode mode) {
 }
 
 int Font::writeString(BaseSurface *surface, const Common::String &msg, const Common::Point &pt,
-		int spaceWidth, int width) {
+                      int spaceWidth, int width) {
 	int xEnd;
 	if (width > 0)
 		xEnd = MIN((int)surface->w, pt.x + width);
@@ -186,7 +186,7 @@ int Font::writeString(BaseSurface *surface, const Common::String &msg, const Com
 				return xPos;
 
 			Graphics::Surface dest = surface->getSubArea(
-				Common::Rect(xPos, y, xPos + charWidth, y + height));
+			  Common::Rect(xPos, y, xPos + charWidth, y + height));
 			uint8 *charData = &_charData[_charOffs[(byte)theChar]];
 			int bpp = getBpp(charWidth);
 

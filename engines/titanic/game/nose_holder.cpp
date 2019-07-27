@@ -26,15 +26,17 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CNoseHolder, CDropTarget)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(FrameMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(FrameMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(EnterViewMsg)
 END_MESSAGE_MAP()
 
-CNoseHolder::CNoseHolder() : CDropTarget(), _dragObject(nullptr),
-		_draggingFeather(false) {
+CNoseHolder::CNoseHolder()
+  : CDropTarget()
+  , _dragObject(nullptr)
+  , _draggingFeather(false) {
 }
 
 void CNoseHolder::save(SimpleFile *file, int indent) {

@@ -23,12 +23,12 @@
 #ifndef ACCESS_ASURFACE_H
 #define ACCESS_ASURFACE_H
 
-#include "common/scummsys.h"
+#include "access/data.h"
 #include "common/array.h"
 #include "common/memstream.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "graphics/screen.h"
-#include "access/data.h"
 
 namespace Access {
 
@@ -45,8 +45,10 @@ private:
 	Graphics::Surface _savedBlock;
 
 	void flipHorizontal(BaseSurface &dest);
+
 protected:
 	Common::Rect _savedBounds;
+
 public:
 	int _leftSkip, _rightSkip;
 	int _topSkip, _bottomSkip;
@@ -59,8 +61,10 @@ public:
 	Common::Point _printOrg;
 	Common::Point _printStart;
 	int _maxChars;
+
 public:
 	static int _clipWidth, _clipHeight;
+
 public:
 	BaseSurface();
 
@@ -126,8 +130,10 @@ protected:
 	 * surfaces we don't need dirty rects to be tracked
 	 */
 	virtual void addDirtyRect(const Common::Rect &r) {}
+
 public:
-	ASurface() : BaseSurface() {}
+	ASurface()
+	  : BaseSurface() {}
 };
 
 class SpriteFrame : public ASurface {
@@ -139,6 +145,7 @@ public:
 class SpriteResource {
 public:
 	Common::Array<SpriteFrame *> _frames;
+
 public:
 	SpriteResource(AccessEngine *vm, Resource *res);
 	~SpriteResource();
@@ -162,6 +169,7 @@ public:
 	int _offsetY;
 	Common::Point _position;
 	int _flags;
+
 public:
 	ImageEntry();
 };

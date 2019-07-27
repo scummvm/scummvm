@@ -29,26 +29,35 @@
  *
  */
 
-#include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
 
-#include "sword25/math/polygon.h"
 #include "sword25/math/line.h"
+#include "sword25/math/polygon.h"
 
 namespace Sword25 {
 
-Polygon::Polygon() : vertexCount(0), vertices(NULL) {
+Polygon::Polygon()
+  : vertexCount(0)
+  , vertices(NULL) {
 }
 
-Polygon::Polygon(int vertexCount_, const Vertex *vertices_) : vertexCount(0), vertices(NULL) {
+Polygon::Polygon(int vertexCount_, const Vertex *vertices_)
+  : vertexCount(0)
+  , vertices(NULL) {
 	init(vertexCount_, vertices_);
 }
 
-Polygon::Polygon(const Polygon &other) : Persistable(other), vertexCount(0), vertices(NULL) {
+Polygon::Polygon(const Polygon &other)
+  : Persistable(other)
+  , vertexCount(0)
+  , vertices(NULL) {
 	init(other.vertexCount, other.vertices);
 }
 
-Polygon::Polygon(InputPersistenceBlock &Reader) : vertexCount(0), vertices(NULL) {
+Polygon::Polygon(InputPersistenceBlock &Reader)
+  : vertexCount(0)
+  , vertices(NULL) {
 	unpersist(Reader);
 }
 
@@ -123,8 +132,7 @@ int Polygon::findLRVertexIndex() const {
 		int maxY = vertices[0].y;
 
 		for (int i = 1; i < vertexCount; i++) {
-			if (vertices[i].y > maxY ||
-			        (vertices[i].y == maxY && vertices[i].x > maxX)) {
+			if (vertices[i].y > maxY || (vertices[i].y == maxY && vertices[i].x > maxX)) {
 				maxX = vertices[i].x;
 				maxY = vertices[i].y;
 				curIndex = i;
@@ -162,8 +170,7 @@ void Polygon::reverseVertexOrder() {
 // -------------
 
 int Polygon::crossProduct(const Vertex &v1, const Vertex &v2, const Vertex &v3) const {
-	return (v2.x - v1.x) * (v3.y - v2.y) -
-	       (v2.y - v1.y) * (v3.x - v2.x);
+	return (v2.x - v1.x) * (v3.y - v2.y) - (v2.y - v1.y) * (v3.x - v2.x);
 }
 // Check for self-intersections
 // ----------------------------
@@ -298,18 +305,14 @@ bool Polygon::isLineInCone(int startVertexIndex, const Vertex &endVertex, bool i
 
 	if (Line::isVertexLeftOn(prevVertex, startVertex, nextVertex)) {
 		if (includeEdges)
-			return Line::isVertexLeftOn(endVertex, startVertex, nextVertex) &&
-			       Line::isVertexLeftOn(startVertex, endVertex, prevVertex);
+			return Line::isVertexLeftOn(endVertex, startVertex, nextVertex) && Line::isVertexLeftOn(startVertex, endVertex, prevVertex);
 		else
-			return Line::isVertexLeft(endVertex, startVertex, nextVertex) &&
-			       Line::isVertexLeft(startVertex, endVertex, prevVertex);
+			return Line::isVertexLeft(endVertex, startVertex, nextVertex) && Line::isVertexLeft(startVertex, endVertex, prevVertex);
 	} else {
 		if (includeEdges)
-			return !(Line::isVertexLeft(endVertex, startVertex, prevVertex) &&
-			         Line::isVertexLeft(startVertex, endVertex, nextVertex));
+			return !(Line::isVertexLeft(endVertex, startVertex, prevVertex) && Line::isVertexLeft(startVertex, endVertex, nextVertex));
 		else
-			return !(Line::isVertexLeftOn(endVertex, startVertex, prevVertex) &&
-			         Line::isVertexLeftOn(startVertex, endVertex, nextVertex));
+			return !(Line::isVertexLeftOn(endVertex, startVertex, prevVertex) && Line::isVertexLeftOn(startVertex, endVertex, nextVertex));
 	}
 }
 

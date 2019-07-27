@@ -22,10 +22,10 @@
 
 #ifndef DEBUGGABLE_SCRIPT_ENGINE_H_
 #define DEBUGGABLE_SCRIPT_ENGINE_H_
-#include "engines/wintermute/base/scriptables/script_engine.h"
-#include "engines/wintermute/coll_templ.h"
 #include "common/algorithm.h"
 #include "engines/wintermute/base/scriptables/debuggable/debuggable_script.h"
+#include "engines/wintermute/base/scriptables/script_engine.h"
+#include "engines/wintermute/coll_templ.h"
 
 namespace Wintermute {
 
@@ -42,6 +42,7 @@ class PublisherWArray : private Common::Array<Watch *> {
 			_subscribers[i]->updateWatches();
 		}
 	}
+
 public:
 	void subscribe(DebuggableScript *script) {
 		if (Common::find(_subscribers.begin(), _subscribers.end(), script) == _subscribers.end()) {
@@ -73,11 +74,11 @@ public:
 		return Common::Array<Watch *>::size();
 	}
 
-	iterator       begin() {
+	iterator begin() {
 		return Common::Array<Watch *>::begin();
 	}
 
-	iterator       end() {
+	iterator end() {
 		return Common::Array<Watch *>::end();
 	}
 
@@ -95,6 +96,7 @@ class DebuggableScEngine : public ScEngine {
 	Common::Array<Breakpoint *> _breakpoints;
 	PublisherWArray _watches;
 	ScriptMonitor *_monitor;
+
 public:
 	DebuggableScEngine(BaseGame *inGame);
 	void attachMonitor(ScriptMonitor *);

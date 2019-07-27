@@ -27,14 +27,13 @@
 namespace Titanic {
 
 void CMarkedAutoMover::setPathOrients(const FVector &oldPos, const FVector &newPos,
-	const FMatrix &oldOrientation, const FMatrix &newOrientation) {
+                                      const FMatrix &oldOrientation, const FMatrix &newOrientation) {
 	CCameraAutoMover::setPath(oldPos, newPos);
 
 	double distance = _distance;
 	_active = true;
 	_field34 = true;
 	calcSpeeds(120, 4, distance);
-
 
 	_orientationChanger.load(oldOrientation, newOrientation);
 	_transitionPercent = 0.0;
@@ -46,7 +45,6 @@ void CMarkedAutoMover::setPathOrients(const FVector &oldPos, const FVector &newP
 		_transitionPercentInc = 1.0 / _field4C;
 		_active = true;
 	}
-
 }
 
 MoverState CMarkedAutoMover::move(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
@@ -96,10 +94,9 @@ void CMarkedAutoMover::getVectorOnPath(FVector &pos) const {
 		pos = _destPos;
 	} else {
 		pos = FVector(
-			(_destPos._x - _srcPos._x) * distance + _srcPos._x,
-			(_destPos._y - _srcPos._y) * distance + _srcPos._y,
-			(_destPos._z - _srcPos._z) * distance + _srcPos._z
-		);
+		  (_destPos._x - _srcPos._x) * distance + _srcPos._x,
+		  (_destPos._y - _srcPos._y) * distance + _srcPos._y,
+		  (_destPos._z - _srcPos._z) * distance + _srcPos._z);
 	}
 }
 

@@ -34,7 +34,8 @@ namespace StarTrek {
 
 // Main Sound Functions
 
-Sound::Sound(StarTrekEngine *vm) : _vm(vm) {
+Sound::Sound(StarTrekEngine *vm)
+  : _vm(vm) {
 	_midiDevice = MT_AUTO;
 	_midiDriver = nullptr;
 	_loopingMidiTrack = false;
@@ -84,7 +85,6 @@ Sound::~Sound() {
 	delete _soundHandle;
 	delete[] loadedSoundData;
 }
-
 
 void Sound::clearAllMidiSlots() {
 	for (int i = 0; i < NUM_MIDI_SLOTS; i++) {
@@ -281,7 +281,6 @@ void Sound::stopPlayingSpeech() {
 	}
 }
 
-
 void Sound::setMusicEnabled(bool enable) {
 	if (!_vm->_musicWorking || _vm->_musicEnabled == enable)
 		return;
@@ -316,7 +315,6 @@ void Sound::checkLoopMusic() {
 	// TODO
 	// It might be better to get rid of this altogether and deal with it in callbacks...
 }
-
 
 // XMIDI or SM sound
 void Sound::loadPCMusicFile(const Common::String &baseSoundName) {

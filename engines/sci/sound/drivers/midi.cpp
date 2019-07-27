@@ -29,11 +29,11 @@
 
 #include "audio/mididrv.h"
 
-#include "sci/resource.h"
 #include "sci/engine/features.h"
+#include "sci/resource.h"
 #include "sci/sound/drivers/gm_names.h"
-#include "sci/sound/drivers/mididriver.h"
 #include "sci/sound/drivers/map-mt32-to-gm.h"
+#include "sci/sound/drivers/mididriver.h"
 
 namespace Sci {
 
@@ -194,8 +194,16 @@ private:
 		uint8 hold;
 		uint8 volume;
 
-		Channel() : mappedPatch(MIDI_UNMAPPED), patch(MIDI_UNMAPPED), velocityMapIdx(0), playing(false),
-			keyShift(0), volAdjust(0), pan(0x40), hold(0), volume(0x7f) { }
+		Channel()
+		  : mappedPatch(MIDI_UNMAPPED)
+		  , patch(MIDI_UNMAPPED)
+		  , velocityMapIdx(0)
+		  , playing(false)
+		  , keyShift(0)
+		  , volAdjust(0)
+		  , pan(0x40)
+		  , hold(0)
+		  , volume(0x7f) {}
 	};
 
 	Mt32Type _mt32Type;
@@ -222,7 +230,14 @@ private:
 	byte _sysExBuf[kMaxSysExSize];
 };
 
-MidiPlayer_Midi::MidiPlayer_Midi(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _mt32Type(kMt32TypeNone), _hasReverb(false), _defaultReverb(-1), _useMT32Track(true) {
+MidiPlayer_Midi::MidiPlayer_Midi(SciVersion version)
+  : MidiPlayer(version)
+  , _playSwitch(true)
+  , _masterVolume(15)
+  , _mt32Type(kMt32TypeNone)
+  , _hasReverb(false)
+  , _defaultReverb(-1)
+  , _useMT32Track(true) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI);
 	_driver = MidiDriver::createMidi(dev);
 
@@ -247,7 +262,7 @@ MidiPlayer_Midi::~MidiPlayer_Midi() {
 
 	const Mt32ToGmMapList::iterator end = Mt32dynamicMappings->end();
 	for (Mt32ToGmMapList::iterator it = Mt32dynamicMappings->begin(); it != end; ++it) {
-		delete[] (*it).name;
+		delete[](*it).name;
 		(*it).name = 0;
 	}
 
@@ -339,9 +354,9 @@ void MidiPlayer_Midi::controlChange(int channel, int control, int value) {
 	case 0x40:
 		_channels[channel].hold = value;
 		break;
-	case 0x4b:	// voice mapping
+	case 0x4b: // voice mapping
 		break;
-	case 0x4e:	// velocity
+	case 0x4e: // velocity
 		break;
 	case 0x7b:
 		_channels[channel].playing = false;
@@ -555,7 +570,7 @@ void MidiPlayer_Midi::initTrack(SciSpan<const byte> &header) {
 
 	// assign channels
 	debugC(5, kDebugLevelSound, "MidiPlayer_Midi::initTrack(): Channels assigned to MT-32 parts: 0x%.02x 0x%.02x 0x%.02x 0x%.02x 0x%.02x 0x%.02x 0x%.02x 0x%.02x 0x%.02x", msg[0], msg[1], msg[2], msg[3], msg[4], msg[5], msg[6], msg[7], msg[8]);
- 	Sci::SciSpan<const byte> s(msg, 9);
+	Sci::SciSpan<const byte> s(msg, 9);
 	sendMt32SysEx(0x10000D, s, false);
 }
 
@@ -593,11 +608,11 @@ bool MidiPlayer_Midi::isMt32GmPatch(const SciSpan<const byte> &data) {
 
 	// Patches 49-96
 	if (size >= pos + 386 && data.getUint16BEAt(pos) == 0xabcd)
-		pos += 386;	// 256 + 128 + 2
+		pos += 386; // 256 + 128 + 2
 
 	// Rhythm key map + partial reserve
 	if (size >= pos + 267 && data.getUint16BEAt(pos) == 0xdcba)
-		pos += 267;	// 256 + 9 + 2
+		pos += 267; // 256 + 9 + 2
 
 	if (size == pos)
 		isMt32 = true;
@@ -637,7 +652,6 @@ void MidiPlayer_Midi::sendMt32SysEx(const uint32 addr, const SciSpan<const byte>
 	Common::MemoryReadStream stream(buf.toStream());
 	sendMt32SysEx(addr, stream, buf.size(), noDelay);
 }
-
 
 void MidiPlayer_Midi::readMt32Patch(const SciSpan<const byte> &data) {
 	// MT-32 patch contents:
@@ -803,9 +817,9 @@ void MidiPlayer_Midi::readMt32DrvData() {
 		int size = f.size();
 
 		// Skip before-SysEx text
-		if (size == 1773 || size == 1759 || size == 1747)	// XMAS88 / KQ4 early (0.000.253 / 0.000.274)
+		if (size == 1773 || size == 1759 || size == 1747) // XMAS88 / KQ4 early (0.000.253 / 0.000.274)
 			f.seek(0x59);
-		else if (size == 2771)				// LSL2 early
+		else if (size == 2771) // LSL2 early
 			f.seek(0x29);
 		else
 			error("Unknown MT32.DRV size (%d)", size);
@@ -852,7 +866,7 @@ void MidiPlayer_Midi::readMt32DrvData() {
 				}
 			}
 
-			f.skip(2235);	// skip driver code
+			f.skip(2235); // skip driver code
 
 			// Patches 1-48
 			sendMt32SysEx(0x50000, f, 256);
@@ -1164,9 +1178,9 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 			// a warning to the user
 			if (getSciVersion() >= SCI_VERSION_1_EGA_ONLY)
 				warning("The automatic mapping for General MIDI hasn't been worked on for "
-						"SCI1 games. Music might sound wrong or broken. Please choose another "
-						"music driver for this game (e.g. AdLib or MT-32) if you are "
-						"experiencing issues with music");
+				        "SCI1 games. Music might sound wrong or broken. Please choose another "
+				        "music driver for this game (e.g. AdLib or MT-32) if you are "
+				        "experiencing issues with music");
 
 			// Modify velocity map to make low velocity notes a little louder
 			for (uint i = 1; i < 0x40; i++) {

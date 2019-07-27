@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE1400_H
 #define NEVERHOOD_MODULES_MODULE1400_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -33,6 +33,7 @@ class Module1400 : public Module {
 public:
 	Module1400(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module1400();
+
 protected:
 	int _sceneNum;
 	void createScene(int sceneNum, int which);
@@ -46,6 +47,7 @@ class AsScene1405Tile;
 class Scene1401 : public Scene {
 public:
 	Scene1401(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	bool _projectorBorderFlag;
 	Sprite *_ssFloorButton;
@@ -65,6 +67,7 @@ protected:
 class Scene1402 : public Scene {
 public:
 	Scene1402(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	Sprite *_ssBridgePart1;
 	Sprite *_ssBridgePart2;
@@ -81,6 +84,7 @@ protected:
 class Scene1407 : public Scene {
 public:
 	Scene1407(NeverhoodEngine *vm, Module *parentModule);
+
 protected:
 	Sprite *_asMouse;
 	Sprite *_ssResetButton;
@@ -93,6 +97,7 @@ protected:
 class Scene1403 : public Scene {
 public:
 	Scene1403(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	Sprite *_sprite1;
 	Sprite *_sprite2;
@@ -108,6 +113,7 @@ class Scene1404 : public Scene {
 public:
 	Scene1404(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Scene1404();
+
 protected:
 	Sprite *_sprite1;
 	Sprite *_asTape;
@@ -120,6 +126,7 @@ class Scene1405 : public Scene {
 public:
 	Scene1405(NeverhoodEngine *vm, Module *parentModule);
 	int getCountdown() const { return _countdown; }
+
 protected:
 	bool _selectFirstTile;
 	int _firstTileIndex;

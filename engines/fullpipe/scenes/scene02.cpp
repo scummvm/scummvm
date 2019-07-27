@@ -22,18 +22,17 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
 #include "fullpipe/floaters.h"
-
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
@@ -81,7 +80,7 @@ int sceneHandler02(ExCommand *ex) {
 	if (ex->_messageKind != 17)
 		return 0;
 
-	switch(ex->_messageNum) {
+	switch (ex->_messageNum) {
 	case MSG_SC2_LADDERCLICK:
 		sceneHandler02_ladderClick();
 		return 0;

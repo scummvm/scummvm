@@ -37,7 +37,7 @@ enum PadStatus {
 #include "common/system.h"
 #include <libpad.h>
 
-#define PAD_DIR_MASK  (PAD_LEFT | PAD_DOWN | PAD_RIGHT | PAD_UP)
+#define PAD_DIR_MASK (PAD_LEFT | PAD_DOWN | PAD_RIGHT | PAD_UP)
 #define PAD_BUTTON_MASK (PAD_START | PAD_SELECT | PAD_SQUARE | PAD_CROSS | PAD_CIRCLE | PAD_TRIANGLE)
 
 class OSystem_PS2;
@@ -48,6 +48,7 @@ public:
 	bool padAlive(void);
 	bool isDualShock(void);
 	void readPad(uint16 *pbuttons, int16 *joyh, int16 *joyv);
+
 private:
 	void initPad(void);
 	bool checkPadReady(int port, int slot);

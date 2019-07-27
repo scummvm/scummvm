@@ -31,12 +31,16 @@
 namespace TeenAgent {
 
 static const uint32 noteToPeriod[3][12] = {
-	{855, 807, 761, 720, 678, 640, 604, 569, 537, 508, 480, 453},
-	{428, 404, 381, 360, 338, 320, 301, 285, 269, 254, 239, 226},
-	{214, 201, 189, 179, 170, 160, 151, 143, 135, 127, 120, 113}
+	{ 855, 807, 761, 720, 678, 640, 604, 569, 537, 508, 480, 453 },
+	{ 428, 404, 381, 360, 338, 320, 301, 285, 269, 254, 239, 226 },
+	{ 214, 201, 189, 179, 170, 160, 151, 143, 135, 127, 120, 113 }
 };
 
-MusicPlayer::MusicPlayer(TeenAgentEngine *vm) : Paula(false, 44100, 5000), _vm(vm), _id(0), _currRow(0) {
+MusicPlayer::MusicPlayer(TeenAgentEngine *vm)
+  : Paula(false, 44100, 5000)
+  , _vm(vm)
+  , _id(0)
+  , _currRow(0) {
 }
 
 MusicPlayer::~MusicPlayer() {
@@ -91,7 +95,7 @@ bool MusicPlayer::load(int id) {
 			_rows.push_back(row);
 		} else if ((cmd & 0xf0) == 0x50) {
 			byte sample = stream->readByte();
-			debugC(1, kDebugMusic,  "%02x: set sample %02x", cmd, sample);
+			debugC(1, kDebugMusic, "%02x: set sample %02x", cmd, sample);
 			row.channels[(cmd & 0x0f) - 1].sample = sample;
 		} else if ((cmd & 0xf0) == 0x40) {
 			byte vol = stream->readByte();

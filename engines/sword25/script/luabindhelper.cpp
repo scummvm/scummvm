@@ -29,8 +29,8 @@
  *
  */
 
-#include "sword25/kernel/kernel.h"
 #include "sword25/script/luabindhelper.h"
+#include "sword25/kernel/kernel.h"
 #include "sword25/script/luascript.h"
 
 namespace {
@@ -100,7 +100,8 @@ bool LuaBindhelper::addFunctionsToLib(lua_State *L, const Common::String &libNam
 		}
 	} else { // If the table name is not empty, the functions are added to the given table
 		// Ensure that the library table exists
-		if (!createTable(L, libName)) return false;
+		if (!createTable(L, libName))
+			return false;
 
 		// Register each function into the table
 		for (; functions->name; ++functions) {
@@ -151,7 +152,8 @@ bool LuaBindhelper::addConstantsToLib(lua_State *L, const Common::String &libNam
 	// If the table name is nto empty, the constants are added to that table
 	else {
 		// Ensure that the library table exists
-		if (!createTable(L, libName)) return false;
+		if (!createTable(L, libName))
+			return false;
 
 		// Register each constant in the table
 		for (; constants->Name; ++constants) {
@@ -186,7 +188,8 @@ bool LuaBindhelper::addMethodsToClass(lua_State *L, const Common::String &classN
 #endif
 
 	// Load the metatable onto the Lua stack
-	if (!getMetatable(L, className)) return false;
+	if (!getMetatable(L, className))
+		return false;
 
 	// Register each method in the Metatable
 	for (; methods->name; ++methods) {
@@ -224,7 +227,8 @@ bool LuaBindhelper::setClassGCHandler(lua_State *L, const Common::String &classN
 #endif
 
 	// Load the metatable onto the Lua stack
-	if (!getMetatable(L, className)) return false;
+	if (!getMetatable(L, className))
+		return false;
 
 	// Add the GC handler to the Metatable
 	lua_pushstring(L, "__gc");
@@ -319,7 +323,6 @@ void *LuaBindhelper::my_checkudata(lua_State *L, int ud, const char *tname) {
 	lua_settop(L, top);
 	return NULL;
 }
-
 
 bool LuaBindhelper::createTable(lua_State *L, const Common::String &tableName) {
 	const char *partBegin = tableName.c_str();

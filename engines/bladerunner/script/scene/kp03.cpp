@@ -25,25 +25,25 @@
 namespace BladeRunner {
 
 enum KP03Loops {
-	kKP03MainLoopBombInactive  = 0,
-	kKP03MainLoopBombActive    = 2,
+	kKP03MainLoopBombInactive = 0,
+	kKP03MainLoopBombActive = 2,
 	kKP03MainLoopBombExploding = 4,
-	kKP03MainLoopBombExploded  = 5,
-	kKP03MainLoopBombNoWire    = 7
+	kKP03MainLoopBombExploded = 5,
+	kKP03MainLoopBombNoWire = 7
 };
 
 void SceneScriptKP03::InitializeScene() {
 	if (Game_Flag_Query(kFlagKP05toKP03)) {
-		Setup_Scene_Information(   1.0f, -36.55f, 111.0f, 200);
+		Setup_Scene_Information(1.0f, -36.55f, 111.0f, 200);
 	} else {
-		Setup_Scene_Information(-321.0f, -36.55f,  26.0f, 350);
+		Setup_Scene_Information(-321.0f, -36.55f, 26.0f, 350);
 	}
-	Scene_Exit_Add_2D_Exit(0,   0,   0,  30, 479, 3);
+	Scene_Exit_Add_2D_Exit(0, 0, 0, 30, 479, 3);
 	Scene_Exit_Add_2D_Exit(1, 287, 104, 367, 255, 0);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxRAIN10, 100, 1, 1);
-	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSPIN3A,  60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B, 60, 180, 16, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN3A, 60, 180, 16, 25, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 60, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
@@ -57,18 +57,13 @@ void SceneScriptKP03::InitializeScene() {
 		Game_Flag_Set(kFlagKP03BombActive);
 	}
 
-	if (( Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleGone
-	  && !Game_Flag_Query(kFlagKP03BombExploded)
-	  && !Game_Flag_Query(kFlagKP03BombDisarmed)
-	 )
-	 && ((Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
-	   && Game_Flag_Query(kFlagKP05toKP03)
-	  )
-	  || (!Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
-	   &&  Game_Flag_Query(kFlagKP01toKP03)
-	  )
-	 )
-	) {
+	if ((Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleGone
+	     && !Game_Flag_Query(kFlagKP03BombExploded)
+	     && !Game_Flag_Query(kFlagKP03BombDisarmed))
+	    && ((Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
+	         && Game_Flag_Query(kFlagKP05toKP03))
+	        || (!Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
+	            && Game_Flag_Query(kFlagKP01toKP03)))) {
 		Actor_Put_In_Set(kActorSteele, kSetKP03);
 		Actor_Set_At_XYZ(kActorSteele, -300.0f, -36.55f, 26.0f, 350);
 	}
@@ -88,9 +83,8 @@ bool SceneScriptKP03::MouseClick(int x, int y) {
 
 bool SceneScriptKP03::ClickedOn3DObject(const char *objectName, bool combatMode) {
 	Actor_Face_Object(kActorSteele, "BRACK MID", true);
-	if ( Object_Query_Click("BRACK MID", objectName)
-	 && !Game_Flag_Query(kFlagKP03BombExploded)
-	) {
+	if (Object_Query_Click("BRACK MID", objectName)
+	    && !Game_Flag_Query(kFlagKP03BombExploded)) {
 		if (combatMode) {
 			Scene_Loop_Set_Default(kKP03MainLoopBombExploded);
 			Scene_Loop_Start_Special(kSceneLoopModeOnce, kKP03MainLoopBombExploding, true);
@@ -137,8 +131,7 @@ bool SceneScriptKP03::ClickedOn3DObject(const char *objectName, bool combatMode)
 
 bool SceneScriptKP03::ClickedOnActor(int actorId) {
 	if (actorId == kActorSteele
-	 && Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleKP03Walk
-	) {
+	    && Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleKP03Walk) {
 		Actor_Face_Object(kActorSteele, "BRACK MID", true);
 		saveSteele();
 	}
@@ -191,44 +184,33 @@ void SceneScriptKP03::SceneFrameAdvanced(int frame) {
 		Ambient_Sounds_Play_Sound(kSfxCRYEXPL1, 99, -60, 100, 99);
 	}
 
-	if ( Game_Flag_Query(kFlagKP03BombActive)
-	 && !Game_Flag_Query(kFlagKP03BombDisarmed)
-	 && !Game_Flag_Query(kFlagKP03BombExploded)
-	) {
+	if (Game_Flag_Query(kFlagKP03BombActive)
+	    && !Game_Flag_Query(kFlagKP03BombDisarmed)
+	    && !Game_Flag_Query(kFlagKP03BombExploded)) {
 		float x, y, z;
 		int bombTriggeredByActor = -1;
 
 		Actor_Query_XYZ(kActorMcCoy, &x, &y, &z);
 		if ((Game_Flag_Query(kFlagKP01toKP03)
-			&& -130.0f < x
-			)
-			|| (Game_Flag_Query(kFlagKP05toKP03)
-			&& -130.0f > x
-			)
-		) {
+		     && -130.0f < x)
+		    || (Game_Flag_Query(kFlagKP05toKP03)
+		        && -130.0f > x)) {
 			bombTriggeredByActor = kActorMcCoy;
 		}
 
 		Actor_Query_XYZ(kActorSteele, &x, &y, &z);
 		if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
-		 && Actor_Query_Which_Set_In(kActorSteele) == kSetKP03
-		) {
+		    && Actor_Query_Which_Set_In(kActorSteele) == kSetKP03) {
 			if ((Game_Flag_Query(kFlagKP01toKP03)
-			  && -130.0f > x
-			 )
-			 || (Game_Flag_Query(kFlagKP05toKP03)
-			  && -130.0f < x
-			 )
-			) {
+			     && -130.0f > x)
+			    || (Game_Flag_Query(kFlagKP05toKP03)
+			        && -130.0f < x)) {
 				bombTriggeredByActor = kActorSteele;
 			}
 		} else if ((Game_Flag_Query(kFlagKP01toKP03)
-		         && -130.0f < x
-		        )
-		        || (Game_Flag_Query(kFlagKP05toKP03)
-		         && -130.0f > x
-		        )
-		) {
+		            && -130.0f < x)
+		           || (Game_Flag_Query(kFlagKP05toKP03)
+		               && -130.0f > x)) {
 			bombTriggeredByActor = kActorSteele;
 		}
 
@@ -268,8 +250,7 @@ void SceneScriptKP03::PlayerWalkedIn() {
 	}
 
 	if (Actor_Query_Is_In_Current_Set(kActorSteele)
-	 && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleKP03Dead
-	) {
+	    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleKP03Dead) {
 		if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 			if (Game_Flag_Query(kFlagKP05toKP03)) {
 				Actor_Set_Goal_Number(kActorSteele, 410);
@@ -278,9 +259,8 @@ void SceneScriptKP03::PlayerWalkedIn() {
 		}
 
 		if (!Game_Flag_Query(kFlagKP03BombExploded)
-		 && !Game_Flag_Query(kFlagKP03BombDisarmed)
-		 &&  Game_Flag_Query(kFlagKP01toKP03)
-		) {
+		    && !Game_Flag_Query(kFlagKP03BombDisarmed)
+		    && Game_Flag_Query(kFlagKP01toKP03)) {
 			Scene_Exits_Disable();
 			Delay(1000);
 			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleKP03Walk);

@@ -28,81 +28,82 @@
 namespace Xeen {
 namespace SwordsOfXeen {
 
-void MainMenu::show(XeenEngine *vm) {
-	MainMenu *dlg = new MainMenu(vm);
-	dlg->execute();
-	delete dlg;
-}
+	void MainMenu::show(XeenEngine *vm) {
+		MainMenu *dlg = new MainMenu(vm);
+		dlg->execute();
+		delete dlg;
+	}
 
-MainMenu::MainMenu(XeenEngine *vm) : ButtonContainer(vm) {
-	loadButtons();
-	_start.load("start.int");
-}
+	MainMenu::MainMenu(XeenEngine *vm)
+	  : ButtonContainer(vm) {
+		loadButtons();
+		_start.load("start.int");
+	}
 
-void MainMenu::execute() {
-	EventsManager &events = *_vm->_events;
-	Screen &screen = *_vm->_screen;
-	Sound &sound = *_vm->_sound;
-	int difficulty;
+	void MainMenu::execute() {
+		EventsManager &events = *_vm->_events;
+		Screen &screen = *_vm->_screen;
+		Sound &sound = *_vm->_sound;
+		int difficulty;
 
-	events.setCursor(0);
-	events.showCursor();
-	sound.playSong("newbrigh.m");
+		events.setCursor(0);
+		events.showCursor();
+		sound.playSong("newbrigh.m");
 
-	do {
-		// Draw the screen
-		screen.fadeOut();
-		screen.loadPalette("scr.pal");
-		_start.draw(0, 0, Common::Point(0, 0));
-		_start.draw(0, 1, Common::Point(160, 0));
-		screen.fadeIn(129);
-
-		bool redrawFlag = false;
 		do {
-			events.pollEventsAndWait();
-			checkEvents(_vm);
+			// Draw the screen
+			screen.fadeOut();
+			screen.loadPalette("scr.pal");
+			_start.draw(0, 0, Common::Point(0, 0));
+			_start.draw(0, 1, Common::Point(160, 0));
+			screen.fadeIn(129);
 
-			// Handle keypress
-			switch (_buttonValue) {
-			case Common::KEYCODE_ESCAPE:
-				// Exit game
-				_vm->_gameMode = GMODE_QUIT;
-				break;
-			case Common::KEYCODE_c:
-			case Common::KEYCODE_v:
-				// Show credits
-				CreditsScreen::show(_vm);
-				redrawFlag = true;
-				break;
-			case Common::KEYCODE_s:
-				// Start new game
-				difficulty = DifficultyDialog::show(_vm);
-				if (difficulty != -1) {
-					// Load a new game state and set the difficulty
+			bool redrawFlag = false;
+			do {
+				events.pollEventsAndWait();
+				checkEvents(_vm);
+
+				// Handle keypress
+				switch (_buttonValue) {
+				case Common::KEYCODE_ESCAPE:
+					// Exit game
+					_vm->_gameMode = GMODE_QUIT;
+					break;
+				case Common::KEYCODE_c:
+				case Common::KEYCODE_v:
+					// Show credits
+					CreditsScreen::show(_vm);
+					redrawFlag = true;
+					break;
+				case Common::KEYCODE_s:
+					// Start new game
+					difficulty = DifficultyDialog::show(_vm);
+					if (difficulty != -1) {
+						// Load a new game state and set the difficulty
+						_vm->_saves->newGame();
+						_vm->_party->_difficulty = (Difficulty)difficulty;
+						_vm->_gameMode = GMODE_PLAY_GAME;
+					}
+					break;
+				case Common::KEYCODE_l:
 					_vm->_saves->newGame();
-					_vm->_party->_difficulty = (Difficulty)difficulty;
-					_vm->_gameMode = GMODE_PLAY_GAME;
+					if (_vm->_saves->loadGame())
+						_vm->_gameMode = GMODE_PLAY_GAME;
+					break;
+				default:
+					break;
 				}
-				break;
-			case Common::KEYCODE_l:
-				_vm->_saves->newGame();
-				if (_vm->_saves->loadGame())
-					_vm->_gameMode = GMODE_PLAY_GAME;
-				break;
-			default:
-				break;
-			}
-		} while (!_vm->shouldExit() && _vm->_gameMode == GMODE_NONE && !redrawFlag);
-	} while (!_vm->shouldExit() && _vm->_gameMode == GMODE_NONE);
+			} while (!_vm->shouldExit() && _vm->_gameMode == GMODE_NONE && !redrawFlag);
+		} while (!_vm->shouldExit() && _vm->_gameMode == GMODE_NONE);
 
-	screen.loadPalette("dark.pal");
-}
+		screen.loadPalette("dark.pal");
+	}
 
-void MainMenu::loadButtons() {
-	addButton(Common::Rect(93, 87, 227, 97), Common::KEYCODE_s);
-	addButton(Common::Rect(93, 98, 227, 108), Common::KEYCODE_l);
-	addButton(Common::Rect(93, 110, 227, 120), Common::KEYCODE_v);
-}
+	void MainMenu::loadButtons() {
+		addButton(Common::Rect(93, 87, 227, 97), Common::KEYCODE_s);
+		addButton(Common::Rect(93, 98, 227, 108), Common::KEYCODE_l);
+		addButton(Common::Rect(93, 110, 227, 120), Common::KEYCODE_v);
+	}
 
 } // End of namespace SwordsOfXeen
 } // End of namespace Xeen

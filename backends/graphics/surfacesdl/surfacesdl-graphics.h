@@ -25,10 +25,10 @@
 
 #include "backends/graphics/graphics.h"
 #include "backends/graphics/sdl/sdl-graphics.h"
-#include "graphics/pixelformat.h"
-#include "graphics/scaler.h"
 #include "common/events.h"
 #include "common/system.h"
+#include "graphics/pixelformat.h"
+#include "graphics/scaler.h"
 
 #include "backends/events/sdl/sdl-events.h"
 
@@ -36,7 +36,7 @@
 
 #ifndef RELEASE_BUILD
 // Define this to allow for focus rectangle debugging
-#define USE_SDL_DEBUG_FOCUSRECT
+#	define USE_SDL_DEBUG_FOCUSRECT
 #endif
 
 enum {
@@ -54,9 +54,9 @@ enum {
 	GFX_DOTMATRIX = 11
 };
 
-
 class AspectRatio {
 	int _kw, _kh;
+
 public:
 	AspectRatio() { _kw = _kh = 0; }
 	AspectRatio(int w, int h);
@@ -120,6 +120,7 @@ protected:
 	 * @param out   A pixel format to be written to
 	 */
 	Graphics::PixelFormat convertSDLPixelFormat(SDL_PixelFormat *in) const;
+
 public:
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override;
 	virtual Graphics::Surface *lockScreen() override;
@@ -127,7 +128,7 @@ public:
 	virtual void fillScreen(uint32 col) override;
 	virtual void updateScreen() override;
 	virtual void setShakePos(int shakeOffset) override;
-	virtual void setFocusRectangle(const Common::Rect& rect) override;
+	virtual void setFocusRectangle(const Common::Rect &rect) override;
 	virtual void clearFocusRectangle() override;
 
 	virtual Graphics::PixelFormat getOverlayFormat() const override { return _overlayFormat; }
@@ -162,9 +163,9 @@ protected:
 	uint32 _osdMessageFadeStartTime;
 	/** Enum with OSD options */
 	enum {
-		kOSDFadeOutDelay = 2 * 1000,	/** < Delay before the OSD is faded out (in milliseconds) */
-		kOSDFadeOutDuration = 500,		/** < Duration of the OSD fade out (in milliseconds) */
-		kOSDInitialAlpha = 80			/** < Initial alpha level, in percent */
+		kOSDFadeOutDelay = 2 * 1000, /** < Delay before the OSD is faded out (in milliseconds) */
+		kOSDFadeOutDuration = 500, /** < Duration of the OSD fade out (in milliseconds) */
+		kOSDInitialAlpha = 80 /** < Initial alpha level, in percent */
 	};
 	/** Screen rectangle where the OSD message is drawn */
 	SDL_Rect getOSDMessageRect() const;
@@ -251,7 +252,7 @@ protected:
 		bool aspectRatioCorrection;
 		AspectRatio desiredAspectRatio;
 		bool filtering;
-		
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		int stretchMode;
 #endif
@@ -324,10 +325,19 @@ protected:
 		int16 vW, vH;
 		int16 vHotX, vHotY;
 
-		MousePos() : w(0), h(0), hotX(0), hotY(0),
-					rW(0), rH(0), rHotX(0), rHotY(0), vW(0), vH(0),
-					vHotX(0), vHotY(0)
-			{ }
+		MousePos()
+		  : w(0)
+		  , h(0)
+		  , hotX(0)
+		  , hotY(0)
+		  , rW(0)
+		  , rH(0)
+		  , rHotX(0)
+		  , rHotY(0)
+		  , vW(0)
+		  , vH(0)
+		  , vHotX(0)
+		  , vHotY(0) {}
 	};
 
 	byte *_mouseData;
@@ -403,7 +413,7 @@ private:
 		}
 
 		return Common::Point(x * getWidth() / getOverlayWidth(),
-							 y * getHeight() / getOverlayHeight());
+		                     y * getHeight() / getOverlayHeight());
 	}
 
 	/**
@@ -416,7 +426,7 @@ private:
 		}
 
 		return Common::Point(x * getOverlayWidth() / getWidth(),
-							 y * getOverlayHeight() / getHeight());
+		                     y * getOverlayHeight() / getHeight());
 	}
 };
 

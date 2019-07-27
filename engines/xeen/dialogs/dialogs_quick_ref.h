@@ -29,9 +29,11 @@ namespace Xeen {
 
 class QuickReferenceDialog : public ButtonContainer {
 private:
-	QuickReferenceDialog(XeenEngine *vm) : ButtonContainer(vm) {}
+	QuickReferenceDialog(XeenEngine *vm)
+	  : ButtonContainer(vm) {}
 
 	void execute();
+
 public:
 	static void show(XeenEngine *vm);
 };

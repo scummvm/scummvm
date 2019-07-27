@@ -30,6 +30,7 @@ namespace Titanic {
 class CReplacementEar : public CBackground {
 	DECLARE_MESSAGE_MAP;
 	bool VisibleMsg(CVisibleMsg *msg);
+
 public:
 	CLASSDEF;
 

@@ -28,20 +28,23 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CLightSwitch, CBackground)
-	ON_MESSAGE(PETUpMsg)
-	ON_MESSAGE(PETDownMsg)
-	ON_MESSAGE(PETLeftMsg)
-	ON_MESSAGE(PETRightMsg)
-	ON_MESSAGE(PETActivateMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(PETUpMsg)
+ON_MESSAGE(PETDownMsg)
+ON_MESSAGE(PETLeftMsg)
+ON_MESSAGE(PETRightMsg)
+ON_MESSAGE(PETActivateMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(EnterRoomMsg)
 END_MESSAGE_MAP()
 
 bool CLightSwitch::_flag;
 
-CLightSwitch::CLightSwitch() : CBackground(),
-		_fieldE0(0), _fieldE4(0), _turnOnTV(false) {
+CLightSwitch::CLightSwitch()
+  : CBackground()
+  , _fieldE0(0)
+  , _fieldE4(0)
+  , _turnOnTV(false) {
 }
 
 void CLightSwitch::save(SimpleFile *file, int indent) {

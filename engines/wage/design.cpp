@@ -45,9 +45,9 @@
  *
  */
 
+#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/managed_surface.h"
 #include "graphics/primitives.h"
-#include "graphics/macgui/macwindowmanager.h"
 
 #include "wage/design.h"
 
@@ -60,8 +60,12 @@ struct PlotData {
 	int thickness;
 	Design *design;
 
-	PlotData(Graphics::ManagedSurface *s, Graphics::MacPatterns *p, int f, int t, Design *d) :
-		surface(s), patterns(p), fillType(f), thickness(t), design(d) {}
+	PlotData(Graphics::ManagedSurface *s, Graphics::MacPatterns *p, int f, int t, Design *d)
+	  : surface(s)
+	  , patterns(p)
+	  , fillType(f)
+	  , thickness(t)
+	  , design(d) {}
 };
 
 void drawPixel(int x, int y, int color, void *data);
@@ -194,7 +198,7 @@ bool Design::isPointOpaque(int x, int y) {
 }
 
 void Design::adjustBounds(int16 x, int16 y) {
-	_bounds->right  = MAX(x, _bounds->right);
+	_bounds->right = MAX(x, _bounds->right);
 	_bounds->bottom = MAX(y, _bounds->bottom);
 }
 
@@ -230,9 +234,7 @@ void drawPixel(int x, int y, int color, void *data) {
 			uint xu = (uint)x; // for letting compiler optimize it
 			uint yu = (uint)y;
 
-			*((byte *)p->surface->getBasePtr(xu, yu)) =
-				(pat[yu % 8] & (1 << (7 - xu % 8))) ?
-					color : kColorWhite;
+			*((byte *)p->surface->getBasePtr(xu, yu)) = (pat[yu % 8] & (1 << (7 - xu % 8))) ? color : kColorWhite;
 		}
 	} else {
 		int x1 = x - p->thickness / 2;
@@ -245,9 +247,7 @@ void drawPixel(int x, int y, int color, void *data) {
 				if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h) {
 					uint xu = (uint)x; // for letting compiler optimize it
 					uint yu = (uint)y;
-					*((byte *)p->surface->getBasePtr(xu, yu)) =
-						(pat[yu % 8] & (1 << (7 - xu % 8))) ?
-							color : kColorWhite;
+					*((byte *)p->surface->getBasePtr(xu, yu)) = (pat[yu % 8] & (1 << (7 - xu % 8))) ? color : kColorWhite;
 				}
 	}
 }
@@ -265,7 +265,7 @@ void drawPixelPlain(int x, int y, int color, void *data) {
 }
 
 void Design::drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
-				Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
+                      Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 	int16 y1 = in.readSint16BE();
 	int16 x1 = in.readSint16BE();
 	int16 y2 = in.readSint16BE();
@@ -294,7 +294,7 @@ void Design::drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 }
 
 void Design::drawRoundRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
-				Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
+                           Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 	int16 y1 = in.readSint16BE();
 	int16 x1 = in.readSint16BE();
 	int16 y2 = in.readSint16BE();
@@ -320,7 +320,7 @@ void Design::drawRoundRect(Graphics::ManagedSurface *surface, Common::ReadStream
 }
 
 void Design::drawPolygon(Graphics::ManagedSurface *surface, Common::ReadStream &in,
-	Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
+                         Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 
 	byte ignored = in.readSint16BE(); // ignored
 
@@ -389,7 +389,7 @@ void Design::drawPolygon(Graphics::ManagedSurface *surface, Common::ReadStream &
 	pd.thickness = borderThickness;
 	if (borderThickness > 0 && borderFillType <= patterns.size()) {
 		for (int i = 1; i < npoints; i++)
-			Graphics::drawLine(xpoints[i-1], ypoints[i-1], xpoints[i], ypoints[i], kColorBlack, drawPixel, &pd);
+			Graphics::drawLine(xpoints[i - 1], ypoints[i - 1], xpoints[i], ypoints[i], kColorBlack, drawPixel, &pd);
 	}
 
 	free(xpoints);
@@ -397,7 +397,7 @@ void Design::drawPolygon(Graphics::ManagedSurface *surface, Common::ReadStream &
 }
 
 void Design::drawOval(Graphics::ManagedSurface *surface, Common::ReadStream &in,
-			Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
+                      Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 	int16 y1 = in.readSint16BE();
 	int16 x1 = in.readSint16BE();
 	int16 y2 = in.readSint16BE();
@@ -405,13 +405,13 @@ void Design::drawOval(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 	PlotData pd(surface, &patterns, fillType, 1, this);
 
 	if (fillType <= patterns.size())
-		Graphics::drawEllipse(x1, y1, x2-1, y2-1, kColorBlack, true, drawPixel, &pd);
+		Graphics::drawEllipse(x1, y1, x2 - 1, y2 - 1, kColorBlack, true, drawPixel, &pd);
 
 	pd.fillType = borderFillType;
 	pd.thickness = borderThickness;
 
 	if (borderThickness > 0 && borderFillType <= patterns.size())
-		Graphics::drawEllipse(x1, y1, x2-1, y2-1, kColorBlack, false, drawPixel, &pd);
+		Graphics::drawEllipse(x1, y1, x2 - 1, y2 - 1, kColorBlack, false, drawPixel, &pd);
 }
 
 void Design::drawBitmap(Graphics::ManagedSurface *surface, Common::SeekableReadStream &in) {
@@ -513,7 +513,6 @@ void Design::drawRect(Graphics::ManagedSurface *surface, int x1, int y1, int x2,
 	Graphics::drawLine(x2, y2, x1, y2, kColorBlack, drawPixel, &pd);
 	Graphics::drawLine(x1, y2, x1, y1, kColorBlack, drawPixel, &pd);
 }
-
 
 void Design::drawFilledRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int color, Graphics::MacPatterns &patterns, byte fillType) {
 	PlotData pd(surface, &patterns, fillType, 1, nullptr);

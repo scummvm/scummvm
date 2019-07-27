@@ -54,22 +54,22 @@ public:
 	void playFinalSequence() const;
 	void updateCursor(bool redraw = true) const;
 
-	Action     *getGameAction()   { return _action; }
-	Beetle     *getGameBeetle()   { return _beetle; }
-	Entities   *getGameEntities() { return _entities; }
-	Fight      *getGameFight()    { return _fight; }
-	SaveLoad   *getGameSaveLoad() { return _saveload; }
-	State      *getGameState()    { return _state; }
+	Action *getGameAction() { return _action; }
+	Beetle *getGameBeetle() { return _beetle; }
+	Entities *getGameEntities() { return _entities; }
+	Fight *getGameFight() { return _fight; }
+	SaveLoad *getGameSaveLoad() { return _saveload; }
+	State *getGameState() { return _state; }
 
 private:
 	LastExpressEngine *_engine;
 
-	Action   *_action;          ///< Actions
-	Beetle   *_beetle;          ///< Beetle catching
-	Entities *_entities;        ///< Entities
-	Fight    *_fight;           ///< Fight handling
-	SaveLoad *_saveload;        ///< Save & loading
-	State    *_state;           ///< Game state
+	Action *_action; ///< Actions
+	Beetle *_beetle; ///< Beetle catching
+	Entities *_entities; ///< Entities
+	Fight *_fight; ///< Fight handling
+	SaveLoad *_saveload; ///< Save & loading
+	State *_state; ///< Game state
 
 	void switchChapter() const;
 	void showCredits() const;

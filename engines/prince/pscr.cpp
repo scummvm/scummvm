@@ -28,8 +28,11 @@
 
 namespace Prince {
 
-PScr::PScr() : _x(0), _y(0), _step(0), _surface(nullptr)
-{
+PScr::PScr()
+  : _x(0)
+  , _y(0)
+  , _step(0)
+  , _surface(nullptr) {
 }
 
 PScr::~PScr() {

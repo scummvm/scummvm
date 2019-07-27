@@ -22,13 +22,14 @@
 
 #include "graphics/palette.h"
 
-#include "toltecs/toltecs.h"
 #include "toltecs/palette.h"
 #include "toltecs/resource.h"
+#include "toltecs/toltecs.h"
 
 namespace Toltecs {
 
-Palette::Palette(ToltecsEngine *vm) : _vm(vm) {
+Palette::Palette(ToltecsEngine *vm)
+  : _vm(vm) {
 	clearFragments();
 
 	memset(_mainPalette, 0, sizeof(_mainPalette));
@@ -75,11 +76,14 @@ void Palette::setDeltaPalette(byte *palette, byte mask, int8 deltaValue, int16 c
 
 	while (count--) {
 		rgb = *palPtr++;
-		if (mask & 1) colors[index * 3 + 0] = CLIP<int>(rgb + deltaValue, 0, 63) << 2;
+		if (mask & 1)
+			colors[index * 3 + 0] = CLIP<int>(rgb + deltaValue, 0, 63) << 2;
 		rgb = *palPtr++;
-		if (mask & 2) colors[index * 3 + 1] = CLIP<int>(rgb + deltaValue, 0, 63) << 2;
+		if (mask & 2)
+			colors[index * 3 + 1] = CLIP<int>(rgb + deltaValue, 0, 63) << 2;
 		rgb = *palPtr++;
-		if (mask & 4) colors[index * 3 + 2] = CLIP<int>(rgb + deltaValue, 0, 63) << 2;
+		if (mask & 4)
+			colors[index * 3 + 2] = CLIP<int>(rgb + deltaValue, 0, 63) << 2;
 		index++;
 	}
 
@@ -161,7 +165,7 @@ void Palette::buildColorTransTable(byte limit, int8 deltaValue, byte mask) {
 
 	mask &= 7;
 
-	if (deltaValue < 0)	// unused
+	if (deltaValue < 0) // unused
 		error("buildColorTransTable called with a negative delta value(limit %d, delta %d, mask %02X)", limit, deltaValue, mask);
 
 	for (int i = 0; i < 256; i++) {
@@ -223,6 +227,5 @@ void Palette::loadState(Common::ReadStream *in) {
 	}
 	_fragmentIndex = in->readByte();
 }
-
 
 } // End of namespace Toltecs

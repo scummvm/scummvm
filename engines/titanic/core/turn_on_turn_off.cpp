@@ -25,12 +25,17 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CTurnOnTurnOff, CBackground)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(TurnOff)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(TurnOff)
 END_MESSAGE_MAP()
 
-CTurnOnTurnOff::CTurnOnTurnOff() : CBackground(), _startFrameOn(0),
-	_endFrameOn(0), _startFrameOff(0), _endFrameOff(0), _isOn(false) {
+CTurnOnTurnOff::CTurnOnTurnOff()
+  : CBackground()
+  , _startFrameOn(0)
+  , _endFrameOn(0)
+  , _startFrameOff(0)
+  , _endFrameOff(0)
+  , _isOn(false) {
 }
 
 void CTurnOnTurnOff::save(SimpleFile *file, int indent) {

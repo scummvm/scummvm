@@ -28,24 +28,29 @@
 #ifndef CGE_WALK_H
 #define CGE_WALK_H
 
-#include "common/rect.h"
-#include "cge/vga13h.h"
 #include "cge/events.h"
+#include "cge/vga13h.h"
+#include "common/rect.h"
 
 namespace CGE {
 
-#define kMapArrSize    (kMapZCnt * kMapXCnt)
-#define kMapHig        80
-#define kMapGridX      (kScrWidth / kMapXCnt)
-#define kMapGridZ      (kMapHig / kMapZCnt)
-#define kMaxFindLevel  3
+#define kMapArrSize (kMapZCnt * kMapXCnt)
+#define kMapHig 80
+#define kMapGridX (kScrWidth / kMapXCnt)
+#define kMapGridZ (kMapHig / kMapZCnt)
+#define kMaxFindLevel 3
 
-enum Dir { kDirNone = -1, kDirNorth, kDirEast, kDirSouth, kDirWest };
+enum Dir { kDirNone = -1,
+	         kDirNorth,
+	         kDirEast,
+	         kDirSouth,
+	         kDirWest };
 
 class Cluster {
 public:
 	CGEEngine *_vm;
 	Common::Point _pt;
+
 public:
 	uint8 &cell();
 	Cluster(CGEEngine *vm, int16 a, int16 b);
@@ -57,6 +62,7 @@ public:
 class Walk : public Sprite {
 private:
 	CGEEngine *_vm;
+
 public:
 	Cluster _here;
 	int _tracePtr;

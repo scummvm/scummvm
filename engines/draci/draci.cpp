@@ -33,9 +33,9 @@
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
 
-#include "draci/draci.h"
 #include "draci/animation.h"
 #include "draci/barchive.h"
+#include "draci/draci.h"
 #include "draci/font.h"
 #include "draci/game.h"
 #include "draci/mouse.h"
@@ -70,7 +70,8 @@ const uint kSoundsFrequency = 13000;
 const uint kDubbingFrequency = 22050;
 
 DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
- : Engine(syst), _rnd("draci") {
+  : Engine(syst)
+  , _rnd("draci") {
 	DebugMan.addDebugChannel(kDraciGeneralDebugLevel, "general", "Draci general debug info");
 	DebugMan.addDebugChannel(kDraciBytecodeDebugLevel, "bytecode", "GPL bytecode instructions");
 	DebugMan.addDebugChannel(kDraciArchiverDebugLevel, "archiver", "BAR archiver debug info");
@@ -109,13 +110,10 @@ DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
 }
 
 bool DraciEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsSubtitleOptions) ||
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsSubtitleOptions) || (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
-static SoundArchive* openAnyPossibleDubbing() {
+static SoundArchive *openAnyPossibleDubbing() {
 	debugC(1, kDraciGeneralDebugLevel, "Trying to find original dubbing");
 	LegacySoundArchive *legacy = new LegacySoundArchive(dubbingPath, kDubbingFrequency);
 	if (legacy->isOpen() && legacy->size()) {
@@ -130,18 +128,22 @@ static SoundArchive* openAnyPossibleDubbing() {
 	ZipSoundArchive *zip = new ZipSoundArchive();
 
 	zip->openArchive("dub-raw.zzz", "buf", RAW80, kDubbingFrequency);
-	if (zip->isOpen() && zip->size()) return zip;
+	if (zip->isOpen() && zip->size())
+		return zip;
 #ifdef USE_FLAC
 	zip->openArchive("dub-flac.zzz", "flac", FLAC);
-	if (zip->isOpen() && zip->size()) return zip;
+	if (zip->isOpen() && zip->size())
+		return zip;
 #endif
 #ifdef USE_VORBIS
 	zip->openArchive("dub-ogg.zzz", "ogg", OGG);
-	if (zip->isOpen() && zip->size()) return zip;
+	if (zip->isOpen() && zip->size())
+		return zip;
 #endif
 #ifdef USE_MAD
 	zip->openArchive("dub-mp3.zzz", "mp3", MP3);
-	if (zip->isOpen() && zip->size()) return zip;
+	if (zip->isOpen() && zip->size())
+		return zip;
 #endif
 
 	// Return an empty (but initialized) archive anyway.
@@ -276,14 +278,14 @@ void DraciEngine::handleEvents() {
 				}
 				break;
 			case Common::KEYCODE_ESCAPE: {
-				if (_game->getLoopStatus() == kStatusInventory &&
-				   _game->getLoopSubstatus() == kOuterLoop) {
+				if (_game->getLoopStatus() == kStatusInventory && _game->getLoopSubstatus() == kOuterLoop) {
 					_game->inventoryDone();
 					break;
 				}
 
 				const int escRoom = _game->getRoomNum() != _game->getMapRoom()
-					? _game->getEscRoom() : _game->getPreviousRoomNum();
+				  ? _game->getEscRoom()
+				  : _game->getPreviousRoomNum();
 
 				// Check if there is an escape room defined for the current room
 				if (escRoom >= 0) {
@@ -310,7 +312,8 @@ void DraciEngine::handleEvents() {
 			case Common::KEYCODE_m:
 				if (_game->getLoopStatus() == kStatusOrdinary) {
 					const int new_room = _game->getRoomNum() != _game->getMapRoom()
-						? _game->getMapRoom() : _game->getPreviousRoomNum();
+					  ? _game->getMapRoom()
+					  : _game->getPreviousRoomNum();
 					_game->scheduleEnteringRoomUsingGate(new_room, 0);
 				}
 				break;
@@ -323,8 +326,7 @@ void DraciEngine::handleEvents() {
 				_game->setWantQuickHero(!_game->getWantQuickHero());
 				break;
 			case Common::KEYCODE_i:
-				if (_game->getRoomNum() == _game->getMapRoom() ||
-				    _game->getLoopSubstatus() != kOuterLoop) {
+				if (_game->getRoomNum() == _game->getMapRoom() || _game->getLoopSubstatus() != kOuterLoop) {
 					break;
 				}
 				if (_game->getLoopStatus() == kStatusInventory) {
@@ -341,10 +343,7 @@ void DraciEngine::handleEvents() {
 			case Common::KEYCODE_COMMA:
 			case Common::KEYCODE_PERIOD:
 			case Common::KEYCODE_SLASH:
-				if ((_game->getLoopStatus() == kStatusOrdinary ||
-				    _game->getLoopStatus() == kStatusInventory) &&
-				   _game->getLoopSubstatus() == kOuterLoop &&
-				   _game->getRoomNum() != _game->getMapRoom()) {
+				if ((_game->getLoopStatus() == kStatusOrdinary || _game->getLoopStatus() == kStatusInventory) && _game->getLoopSubstatus() == kOuterLoop && _game->getRoomNum() != _game->getMapRoom()) {
 					_game->inventorySwitch(event.kbd.keycode);
 				}
 				break;
@@ -472,8 +471,7 @@ Common::Error DraciEngine::loadGameState(int slot) {
 }
 
 bool DraciEngine::canLoadGameStateCurrently() {
-	return (_game->getLoopStatus() == kStatusOrdinary) &&
-		(_game->getLoopSubstatus() == kOuterLoop);
+	return (_game->getLoopStatus() == kStatusOrdinary) && (_game->getLoopSubstatus() == kOuterLoop);
 }
 
 Common::Error DraciEngine::saveGameState(int slot, const Common::String &desc) {
@@ -481,8 +479,7 @@ Common::Error DraciEngine::saveGameState(int slot, const Common::String &desc) {
 }
 
 bool DraciEngine::canSaveGameStateCurrently() {
-	return (_game->getLoopStatus() == kStatusOrdinary) &&
-		(_game->getLoopSubstatus() == kOuterLoop);
+	return (_game->getLoopStatus() == kStatusOrdinary) && (_game->getLoopSubstatus() == kOuterLoop);
 }
 
 } // End of namespace Draci

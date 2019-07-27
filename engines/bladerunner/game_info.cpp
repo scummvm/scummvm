@@ -31,22 +31,22 @@ namespace BladeRunner {
 
 GameInfo::GameInfo(BladeRunnerEngine *vm) {
 	_vm = vm;
-	_actorCount         = 0;
-	_playerId           = 0;
-	_flagCount          = 0;
-	_clueCount          = 0;
-	_globalVarCount     = 0;
-	_sceneNamesCount    = 0;
-	_initialSceneId     = 0;
-	_initialSetId       = 0;
-	_waypointCount      = 0;
-	_sfxTrackCount      = 0;
-	_musicTrackCount    = 0;
-	_outtakeCount       = 0;
-	_crimeCount         = 0;
-	_suspectCount       = 0;
+	_actorCount = 0;
+	_playerId = 0;
+	_flagCount = 0;
+	_clueCount = 0;
+	_globalVarCount = 0;
+	_sceneNamesCount = 0;
+	_initialSceneId = 0;
+	_initialSetId = 0;
+	_waypointCount = 0;
+	_sfxTrackCount = 0;
+	_musicTrackCount = 0;
+	_outtakeCount = 0;
+	_crimeCount = 0;
+	_suspectCount = 0;
 	_coverWaypointCount = 0;
-	_fleeWaypointCount  = 0;
+	_fleeWaypointCount = 0;
 }
 
 bool GameInfo::open(const Common::String &name) {
@@ -56,24 +56,24 @@ bool GameInfo::open(const Common::String &name) {
 		return false;
 	}
 
-	_actorCount           = s->readUint32LE();   /* 00 */
-	_playerId             = s->readUint32LE();   /* 01 */
-	_flagCount            = s->readUint32LE();   /* 02 */
-	_clueCount            = s->readUint32LE();   /* 03 */
-	_globalVarCount       = s->readUint32LE();   /* 04 */
-	_sceneNamesCount      = s->readUint32LE();   /* 05 */
-	_initialSceneId       = s->readUint32LE();   /* 06 */
-	                        s->skip(4);          /* 07 */
-	_initialSetId         = s->readUint32LE();   /* 08 */
-	                        s->skip(4);          /* 09 */
-	_waypointCount        = s->readUint32LE();   /* 10 */
-	_sfxTrackCount        = s->readUint32LE();   /* 11 */
-	_musicTrackCount      = s->readUint32LE();   /* 12 */
-	_outtakeCount         = s->readUint32LE();   /* 13 */
-	_crimeCount           = s->readUint32LE();   /* 14 */
-	_suspectCount         = s->readUint32LE();   /* 15 */
-	_coverWaypointCount   = s->readUint32LE();   /* 16 */
-	_fleeWaypointCount    = s->readUint32LE();   /* 17 */
+	_actorCount = s->readUint32LE(); /* 00 */
+	_playerId = s->readUint32LE(); /* 01 */
+	_flagCount = s->readUint32LE(); /* 02 */
+	_clueCount = s->readUint32LE(); /* 03 */
+	_globalVarCount = s->readUint32LE(); /* 04 */
+	_sceneNamesCount = s->readUint32LE(); /* 05 */
+	_initialSceneId = s->readUint32LE(); /* 06 */
+	s->skip(4); /* 07 */
+	_initialSetId = s->readUint32LE(); /* 08 */
+	s->skip(4); /* 09 */
+	_waypointCount = s->readUint32LE(); /* 10 */
+	_sfxTrackCount = s->readUint32LE(); /* 11 */
+	_musicTrackCount = s->readUint32LE(); /* 12 */
+	_outtakeCount = s->readUint32LE(); /* 13 */
+	_crimeCount = s->readUint32LE(); /* 14 */
+	_suspectCount = s->readUint32LE(); /* 15 */
+	_coverWaypointCount = s->readUint32LE(); /* 16 */
+	_fleeWaypointCount = s->readUint32LE(); /* 17 */
 
 	char buf[9];
 

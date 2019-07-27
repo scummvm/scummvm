@@ -41,7 +41,6 @@ struct SoundFxInstrument {
 
 class SoundFx : public Paula {
 public:
-
 	enum {
 		NUM_CHANNELS = 4,
 		NUM_INSTRUMENTS = 15
@@ -54,7 +53,6 @@ public:
 	void play();
 
 protected:
-
 	void handlePattern(int ch, uint32 pat);
 	void updateEffects(int ch);
 	void handleTick();
@@ -76,7 +74,7 @@ protected:
 };
 
 SoundFx::SoundFx(int rate, bool stereo)
-	: Paula(stereo, rate) {
+  : Paula(stereo, rate) {
 	setTimerBaseValue(kPalCiaClock);
 	_ticks = 0;
 	_delay = 0;
@@ -112,7 +110,8 @@ bool SoundFx::load(Common::SeekableReadStream *data, LoadSoundFxInstrumentCallba
 	data->skip(7 * 2);
 	for (int i = 0; i < NUM_INSTRUMENTS; ++i) {
 		SoundFxInstrument *ins = &_instruments[i];
-		data->read(ins->name, 22); ins->name[22] = 0;
+		data->read(ins->name, 22);
+		ins->name[22] = 0;
 		ins->len = data->readUint16BE();
 		ins->finetune = data->readByte();
 		ins->volume = data->readByte();

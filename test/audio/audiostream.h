@@ -4,8 +4,7 @@
 
 #include "helper.h"
 
-class AudioStreamTestSuite : public CxxTest::TestSuite
-{
+class AudioStreamTestSuite : public CxxTest::TestSuite {
 public:
 	void test_convertTimeToStreamPos() {
 		const Audio::Timestamp a = Audio::convertTimeToStreamPos(Audio::Timestamp(500, 1000), 11025, true);

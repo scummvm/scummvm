@@ -48,8 +48,10 @@ private:
 	byte _cursorB;
 	CVideoSurface *_surface;
 	int _mode;
+
 public:
 	bool _active;
+
 public:
 	CTextCursor(CScreenManager *screenManager);
 	~CTextCursor();

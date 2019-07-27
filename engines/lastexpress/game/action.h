@@ -37,9 +37,9 @@ namespace LastExpress {
 #define ADD_ACTION(name) \
 	_actions.push_back(new Functor1MemConst<const SceneHotspot &, SceneIndex, Action>(this, &Action::action_##name));
 
-#define IMPLEMENT_ACTION(name) \
+#define IMPLEMENT_ACTION(name)                                          \
 	SceneIndex Action::action_##name(const SceneHotspot &hotspot) const { \
-	debugC(6, kLastExpressDebugLogic, "Hotspot action: " #name "%s", hotspot.toString().c_str());
+		debugC(6, kLastExpressDebugLogic, "Hotspot action: " #name "%s", hotspot.toString().c_str());
 
 class LastExpressEngine;
 class SceneHotspot;

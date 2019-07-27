@@ -22,21 +22,21 @@
 
 #ifdef ENABLE_HE
 
-#include "scumm/actor.h"
-#include "scumm/charset.h"
-#include "scumm/he/animation_he.h"
-#include "scumm/he/intern_he.h"
-#include "scumm/he/logic_he.h"
-#include "scumm/object.h"
-#include "scumm/resource.h"
-#include "scumm/scumm.h"
-#include "scumm/sound.h"
-#include "scumm/he/sprite_he.h"
-#include "scumm/util.h"
+#	include "scumm/actor.h"
+#	include "scumm/charset.h"
+#	include "scumm/he/animation_he.h"
+#	include "scumm/he/intern_he.h"
+#	include "scumm/he/logic_he.h"
+#	include "scumm/he/sprite_he.h"
+#	include "scumm/object.h"
+#	include "scumm/resource.h"
+#	include "scumm/scumm.h"
+#	include "scumm/sound.h"
+#	include "scumm/util.h"
 
 namespace Scumm {
 
-#define OPCODE(i, x)	_opcodes[i]._OPCODE(ScummEngine_v90he, x)
+#	define OPCODE(i, x) _opcodes[i]._OPCODE(ScummEngine_v90he, x)
 
 void ScummEngine_v90he::setupOpcodes() {
 	ScummEngine_v80he::setupOpcodes();
@@ -1449,27 +1449,27 @@ void ScummEngine_v90he::o90_getVideoData() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 32:	// Get width
+	case 32: // Get width
 		pop();
 		push(_moviePlay->getWidth());
 		break;
-	case 33:	// Get height
+	case 33: // Get height
 		pop();
 		push(_moviePlay->getHeight());
 		break;
-	case 36:		// Get frame count
+	case 36: // Get frame count
 		pop();
 		push(_moviePlay->getFrameCount());
 		break;
-	case 52:	// Get current frame
+	case 52: // Get current frame
 		pop();
 		push(_moviePlay->getCurFrame());
 		break;
-	case 63:	// Get image number
+	case 63: // Get image number
 		pop();
 		push(_moviePlay->getImageNum());
 		break;
-	case 139:	// Get statistics
+	case 139: // Get statistics
 		debug(0, "o90_getVideoData: subOp 107 stub (%d, %d)", pop(), pop());
 		push(0);
 		break;
@@ -1582,155 +1582,138 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 	int subOp = pop();
 
 	switch (subOp) {
-	case 1:
-		{
-			Common::Rect r(args1[0], args1[1], args1[2] + 1, args1[3] + 1);
-			Common::Point p(args2[0], args2[1]);
-			push(r.contains(p) ? 1 : 0);
+	case 1: {
+		Common::Rect r(args1[0], args1[1], args1[2] + 1, args1[3] + 1);
+		Common::Point p(args2[0], args2[1]);
+		push(r.contains(p) ? 1 : 0);
+	} break;
+	case 2: {
+		int dx = args2[0] - args1[0];
+		int dy = args2[1] - args1[1];
+		int dist = dx * dx + dy * dy;
+		if (dist >= 2) {
+			dist = (int)sqrt((double)(dist + 1));
 		}
-		break;
-	case 2:
-		{
-			int dx = args2[0] - args1[0];
-			int dy = args2[1] - args1[1];
-			int dist = dx * dx + dy * dy;
-			if (dist >= 2) {
-				dist = (int)sqrt((double)(dist + 1));
+		if (_game.heversion >= 98) {
+			push((dist <= args1[2]) ? 1 : 0);
+		} else {
+			push((dist > args1[2]) ? 1 : 0);
+		}
+	} break;
+	case 3: {
+		Common::Rect r1(args1[0], args1[1], args1[2] + 1, args1[3] + 1);
+		Common::Rect r2(args2[0], args2[1], args2[2] + 1, args2[3] + 1);
+		push(r2.intersects(r1) ? 1 : 0);
+	} break;
+	case 4: {
+		int dx = args2[0] - args1[0];
+		int dy = args2[1] - args1[1];
+		int dist = dx * dx + dy * dy;
+		if (dist >= 2) {
+			dist = (int)sqrt((double)(dist + 1));
+		}
+		push((dist < args1[2] && dist < args2[2]) ? 1 : 0);
+	} break;
+	case 5: {
+		assert((n1 & 1) == 0);
+		n1 /= 2;
+		if (n1 == 0) {
+			push(0);
+		} else {
+			WizPolygon wp;
+			wp.reset();
+			wp.numVerts = n1;
+			assert(n1 < ARRAYSIZE(wp.vert));
+			for (int i = 0; i < n1; ++i) {
+				wp.vert[i].x = args1[i * 2 + 0];
+				wp.vert[i].y = args1[i * 2 + 1];
 			}
-			if (_game.heversion >= 98) {
-				push((dist <= args1[2]) ? 1 : 0);
-			} else {
-				push((dist > args1[2]) ? 1 : 0);
-			}
+			push(_wiz->polygonContains(wp, args2[0], args2[1]) ? 1 : 0);
 		}
-		break;
-	case 3:
-		{
-			Common::Rect r1(args1[0], args1[1], args1[2] + 1, args1[3] + 1);
-			Common::Rect r2(args2[0], args2[1], args2[2] + 1, args2[3] + 1);
-			push(r2.intersects(r1) ? 1 : 0);
-		}
-		break;
-	case 4:
-		{
-			int dx = args2[0] - args1[0];
-			int dy = args2[1] - args1[1];
-			int dist = dx * dx + dy * dy;
-			if (dist >= 2) {
-				dist = (int)sqrt((double)(dist + 1));
-			}
-			push((dist < args1[2] && dist < args2[2]) ? 1 : 0);
-		}
-		break;
-	case 5:
-		{
-			assert((n1 & 1) == 0);
-			n1 /= 2;
-			if (n1 == 0) {
-				push(0);
-			} else {
-				WizPolygon wp;
-				wp.reset();
-				wp.numVerts = n1;
-				assert(n1 < ARRAYSIZE(wp.vert));
-				for (int i = 0; i < n1; ++i) {
-					wp.vert[i].x = args1[i * 2 + 0];
-					wp.vert[i].y = args1[i * 2 + 1];
-				}
-				push(_wiz->polygonContains(wp, args2[0], args2[1]) ? 1 : 0);
-			}
-		}
-		break;
+	} break;
 	// HE 98+
-	case 6:
-		{
-			Common::Rect r1, r2;
-			_sprite->getSpriteBounds(args2[0], false, r2);
-			_sprite->getSpriteBounds(args1[0], false, r1);
-			if (r2.isValidRect() == false) {
-				push(0);
-				break;
-			}
-
-			if (n2 == 3) {
-				r2.left += args2[1];
-				r2.right += args2[1];
-				r2.top += args2[2];
-				r2.bottom += args2[2];
-			}
-			if (n1 == 3) {
-				r1.left += args1[1];
-				r1.right += args1[1];
-				r1.top += args1[2];
-				r1.bottom += args1[2];
-			}
-			push(r2.intersects(r1) ? 1 : 0);
+	case 6: {
+		Common::Rect r1, r2;
+		_sprite->getSpriteBounds(args2[0], false, r2);
+		_sprite->getSpriteBounds(args1[0], false, r1);
+		if (r2.isValidRect() == false) {
+			push(0);
+			break;
 		}
-		break;
-	case 7:
-		{
-			Common::Rect r2;
-			_sprite->getSpriteBounds(args2[0], false, r2);
-			Common::Rect r1(args1[0], args1[1], args1[2] + 1, args1[3] + 1);
-			if (r2.isValidRect() == false) {
-				push(0);
-				break;
-			}
 
-			if (n2 == 3) {
-				r2.left += args2[1];
-				r2.right += args2[1];
-				r2.top += args2[2];
-				r2.bottom += args2[2];
-			}
-			push(r2.intersects(r1) ? 1 : 0);
+		if (n2 == 3) {
+			r2.left += args2[1];
+			r2.right += args2[1];
+			r2.top += args2[2];
+			r2.bottom += args2[2];
 		}
-		break;
+		if (n1 == 3) {
+			r1.left += args1[1];
+			r1.right += args1[1];
+			r1.top += args1[2];
+			r1.bottom += args1[2];
+		}
+		push(r2.intersects(r1) ? 1 : 0);
+	} break;
+	case 7: {
+		Common::Rect r2;
+		_sprite->getSpriteBounds(args2[0], false, r2);
+		Common::Rect r1(args1[0], args1[1], args1[2] + 1, args1[3] + 1);
+		if (r2.isValidRect() == false) {
+			push(0);
+			break;
+		}
+
+		if (n2 == 3) {
+			r2.left += args2[1];
+			r2.right += args2[1];
+			r2.top += args2[2];
+			r2.bottom += args2[2];
+		}
+		push(r2.intersects(r1) ? 1 : 0);
+	} break;
 	case 8:
-	case 10:	// TODO: Draw sprites to buffer and compare.
-		{
-			Common::Rect r1, r2;
-			_sprite->getSpriteBounds(args2[0], true, r2);
-			_sprite->getSpriteBounds(args1[0], true, r1);
-			if (r2.isValidRect() == false) {
-				push(0);
-				break;
-			}
-
-			if (n2 == 3) {
-				r2.left += args2[1];
-				r2.right += args2[1];
-				r2.top += args2[2];
-				r2.bottom += args2[2];
-			}
-			if (n1 == 3) {
-				r1.left += args1[1];
-				r1.right += args1[1];
-				r1.top += args1[2];
-				r1.bottom += args1[2];
-			}
-			push(r2.intersects(r1) ? 1 : 0);
+	case 10: // TODO: Draw sprites to buffer and compare.
+	{
+		Common::Rect r1, r2;
+		_sprite->getSpriteBounds(args2[0], true, r2);
+		_sprite->getSpriteBounds(args1[0], true, r1);
+		if (r2.isValidRect() == false) {
+			push(0);
+			break;
 		}
-		break;
-	case 9:
-		{
-			Common::Rect r2;
-			_sprite->getSpriteBounds(args2[0], true, r2);
-			Common::Rect r1(args1[0], args1[1], args1[2] + 1, args1[3] + 1);
-			if (r2.isValidRect() == false) {
-				push(0);
-				break;
-			}
 
-			if (n2 == 3) {
-				r2.left += args2[1];
-				r2.right += args2[1];
-				r2.top += args2[2];
-				r2.bottom += args2[2];
-			}
-			push(r2.intersects(r1) ? 1 : 0);
+		if (n2 == 3) {
+			r2.left += args2[1];
+			r2.right += args2[1];
+			r2.top += args2[2];
+			r2.bottom += args2[2];
 		}
-		break;
+		if (n1 == 3) {
+			r1.left += args1[1];
+			r1.right += args1[1];
+			r1.top += args1[2];
+			r1.bottom += args1[2];
+		}
+		push(r2.intersects(r1) ? 1 : 0);
+	} break;
+	case 9: {
+		Common::Rect r2;
+		_sprite->getSpriteBounds(args2[0], true, r2);
+		Common::Rect r1(args1[0], args1[1], args1[2] + 1, args1[3] + 1);
+		if (r2.isValidRect() == false) {
+			push(0);
+			break;
+		}
+
+		if (n2 == 3) {
+			r2.left += args2[1];
+			r2.right += args2[1];
+			r2.top += args2[2];
+			r2.bottom += args2[2];
+		}
+		push(r2.intersects(r1) ? 1 : 0);
+	} break;
 	default:
 		error("o90_getPolygonOverlap: default case %d", subOp);
 	}
@@ -1752,22 +1735,22 @@ void ScummEngine_v90he::o90_dim2dim2Array() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 2:		// SO_BIT_ARRAY
+	case 2: // SO_BIT_ARRAY
 		data = kBitArray;
 		break;
-	case 3:		// SO_NIBBLE_ARRAY
+	case 3: // SO_NIBBLE_ARRAY
 		data = kNibbleArray;
 		break;
-	case 4:		// SO_BYTE_ARRAY
+	case 4: // SO_BYTE_ARRAY
 		data = kByteArray;
 		break;
-	case 5:		// SO_INT_ARRAY
+	case 5: // SO_INT_ARRAY
 		data = kIntArray;
 		break;
 	case 6:
 		data = kDwordArray;
 		break;
-	case 7:		// SO_STRING_ARRAY
+	case 7: // SO_STRING_ARRAY
 		data = kStringArray;
 		break;
 	default:
@@ -1987,7 +1970,6 @@ static int compareDwordArrayReverse(const void *a, const void *b) {
 	return vb - va;
 }
 
-
 /**
  * Sort a row range in a two-dimensional array by the value in a given column.
  *
@@ -2002,10 +1984,10 @@ void ScummEngine_v90he::sortArray(int array, int dim2start, int dim2end, int dim
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
 	assert(ah);
 
-	const int num = dim2end - dim2start + 1;	// number of rows to sort
-	const int pitch = FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1;	// length of a row = number of columns in it
-	const int offset = pitch * (dim2start - FROM_LE_32(ah->dim2start));	// memory offset to the first row to be sorted
-	sortArrayOffset = dim1start - FROM_LE_32(ah->dim1start);	// offset to the column by which we sort
+	const int num = dim2end - dim2start + 1; // number of rows to sort
+	const int pitch = FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1; // length of a row = number of columns in it
+	const int offset = pitch * (dim2start - FROM_LE_32(ah->dim2start)); // memory offset to the first row to be sorted
+	sortArrayOffset = dim1start - FROM_LE_32(ah->dim1start); // offset to the column by which we sort
 
 	// Now we just have to invoke qsort on the appropriate row range. We
 	// need to pass sortArrayOffset as an implicit parameter to the
@@ -2051,17 +2033,16 @@ void ScummEngine_v90he::o90_sortArray() {
 	switch (subOp) {
 	case 129:
 	case 134: // HE100
-		{
-			int array = fetchScriptWord();
-			int sortOrder = pop();
-			int dim1end = pop();
-			int dim1start = pop();
-			int dim2end = pop();
-			int dim2start = pop();
-			getArrayDim(array, &dim2start, &dim2end, &dim1start, &dim1end);
-			sortArray(array, dim2start, dim2end, dim1start, dim1end, sortOrder);
-		}
-		break;
+	{
+		int array = fetchScriptWord();
+		int sortOrder = pop();
+		int dim1end = pop();
+		int dim1start = pop();
+		int dim2end = pop();
+		int dim2start = pop();
+		getArrayDim(array, &dim2start, &dim2end, &dim1start, &dim1end);
+		sortArray(array, dim2start, dim2end, dim1start, dim1end, sortOrder);
+	} break;
 	default:
 		error("o90_sortArray: Unknown case %d", subOp);
 	}
@@ -2254,7 +2235,7 @@ void ScummEngine_v90he::o90_fontUnk() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 60:	// HE100
+	case 60: // HE100
 	case 42:
 		a = pop();
 		if (a == 2) {
@@ -2268,7 +2249,7 @@ void ScummEngine_v90he::o90_fontUnk() {
 			push(readVar(0));
 		}
 		break;
-	case 0:		// HE100
+	case 0: // HE100
 	case 57:
 		push(1);
 		break;
@@ -2292,18 +2273,14 @@ void ScummEngine_v90he::o90_kernelGetFunctions() {
 	num = getStackList(args, ARRAYSIZE(args));
 
 	switch (args[0]) {
-	case 1001:
-		{
+	case 1001: {
 		double b = args[1] * M_PI / 180.;
 		push((int)(sin(b) * 100000));
-		}
-		break;
-	case 1002:
-		{
+	} break;
+	case 1002: {
 		double b = args[1] * M_PI / 180.;
 		push((int)(cos(b) * 100000));
-		}
-		break;
+	} break;
 	case 1969:
 		a = derefActor(args[1], "o90_kernelGetFunctions: 1969");
 		tmp = a->_heCondMask;

@@ -28,53 +28,55 @@
 namespace Glk {
 namespace Alan3 {
 
-/**
+	/**
  * Alan3 game interpreter
  */
-class Alan3 : public GlkIO {
-public:
-	Common::String _advName;
-private:
-	/**
+	class Alan3 : public GlkIO {
+	public:
+		Common::String _advName;
+
+	private:
+		/**
 	 * Initialization
 	 */
-	bool initialize();
+		bool initialize();
 
-	/**
+		/**
 	 * Deinitialization
 	 */
-	void deinitialize();
-public:
-	/**
+		void deinitialize();
+
+	public:
+		/**
 	 * Constructor
 	 */
-	Alan3(OSystem *syst, const GlkGameDescription &gameDesc);
+		Alan3(OSystem *syst, const GlkGameDescription &gameDesc);
 
-	/**
+		/**
 	 * Run the game
 	 */
-	void runGame();
+		void runGame();
 
-	/**
+		/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override {
-		return INTERPRETER_ALAN3;
-	}
+		virtual InterpreterType getInterpreterType() const override {
+			return INTERPRETER_ALAN3;
+		}
 
-	/**
+		/**
 	 * Load a savegame from the passed Quetzal file chunk stream
 	 */
-	virtual Common::Error readSaveData(Common::SeekableReadStream *rs) override;
+		virtual Common::Error readSaveData(Common::SeekableReadStream *rs) override;
 
-	/**
+		/**
 	 * Save the game. The passed write stream represents access to the UMem chunk
 	 * in the Quetzal save file that will be created
 	 */
-	virtual Common::Error writeGameData(Common::WriteStream *ws) override;
-};
+		virtual Common::Error writeGameData(Common::WriteStream *ws) override;
+	};
 
-extern Alan3 *g_vm;
+	extern Alan3 *g_vm;
 
 } // End of namespace Alan3
 } // End of namespace Glk

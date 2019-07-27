@@ -20,22 +20,22 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 
-#include "scumm/util.h"
 #include "scumm/smush/channel.h"
+#include "scumm/util.h"
 
 namespace Scumm {
 
-SaudChannel::SaudChannel(int32 track) : SmushChannel(track),
-	_nbframes(0),
-	_markReached(false),
-	_index(0),
-	_keepSize(false),
-	_flags(0) {
+SaudChannel::SaudChannel(int32 track)
+  : SmushChannel(track)
+  , _nbframes(0)
+  , _markReached(false)
+  , _index(0)
+  , _keepSize(false)
+  , _flags(0) {
 }
 
 bool SaudChannel::isTerminated() const {
@@ -49,7 +49,7 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 		uint32 available_size = _tbufferSize - offset;
 
 		switch (type) {
-		case MKTAG('S','T','R','K'):
+		case MKTAG('S', 'T', 'R', 'K'):
 			_inData = false;
 			if (available_size >= (size + 8)) {
 				int32 subSize = READ_BE_UINT32((byte *)_tbuffer + offset + 4);
@@ -59,14 +59,14 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 			} else
 				return false;
 			break;
-		case MKTAG('S','M','R','K'):
+		case MKTAG('S', 'M', 'R', 'K'):
 			_inData = false;
 			if (available_size >= (size + 8))
 				_markReached = true;
 			else
 				return false;
 			break;
-		case MKTAG('S','H','D','R'):
+		case MKTAG('S', 'H', 'D', 'R'):
 			_inData = false;
 			if (available_size >= (size + 8)) {
 				int32 subSize = READ_BE_UINT32((byte *)_tbuffer + offset + 4);
@@ -75,7 +75,7 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 			} else
 				return false;
 			break;
-		case MKTAG('S','D','A','T'):
+		case MKTAG('S', 'D', 'A', 'T'):
 			_inData = true;
 			_dataSize = size;
 			offset += 8;
@@ -121,8 +121,8 @@ bool SaudChannel::appendData(Common::SeekableReadStream &b, int32 size) {
 	if (_dataSize == -1) {
 		assert(size > 8);
 		uint32 saud_type = b.readUint32BE();
-		/*uint32 saud_size =*/ b.readUint32BE();
-		if (saud_type != MKTAG('S','A','U','D'))
+		/*uint32 saud_size =*/b.readUint32BE();
+		if (saud_type != MKTAG('S', 'A', 'U', 'D'))
 			error("Invalid Chunk for SaudChannel : %X", saud_type);
 		size -= 8;
 		_dataSize = -2;

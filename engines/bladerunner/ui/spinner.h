@@ -39,22 +39,22 @@ class Spinner {
 	static const int kSpinnerDestinations = 10;
 
 	struct Destination {
-		int          id;
+		int id;
 		Common::Rect rect;
 	};
 
-	BladeRunnerEngine      *_vm;
-	bool                    _isDestinationSelectable[kSpinnerDestinations];
-	bool                    _isOpen;
-	VQAPlayer              *_vqaPlayer;
-	const Destination      *_destinations;
-	int                     _selectedDestination;
-	Common::Array<Shape *>  _shapes;
-	UIImagePicker          *_imagePicker;
+	BladeRunnerEngine *_vm;
+	bool _isDestinationSelectable[kSpinnerDestinations];
+	bool _isOpen;
+	VQAPlayer *_vqaPlayer;
+	const Destination *_destinations;
+	int _selectedDestination;
+	Common::Array<Shape *> _shapes;
+	UIImagePicker *_imagePicker;
 
-	int                    _actorId;
-	int                    _sentenceId;
-	uint32                 _timeSpeakDescriptionStart;
+	int _actorId;
+	int _sentenceId;
+	uint32 _timeSpeakDescriptionStart;
 
 public:
 	Spinner(BladeRunnerEngine *vm);

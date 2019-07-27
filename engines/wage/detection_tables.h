@@ -22,14 +22,18 @@
 
 namespace Wage {
 
-#define ADGF_DEFAULT (ADGF_DROPLANGUAGE|ADGF_DROPPLATFORM|ADGF_MACRESFORK)
-#define ADGF_GENERIC (ADGF_DEFAULT|ADGF_USEEXTRAASTITLE|ADGF_AUTOGENTARGET)
-#define ADGF_DEMO (ADGF_GENERIC|ADGF_DEMO)
+#define ADGF_DEFAULT (ADGF_DROPLANGUAGE | ADGF_DROPPLATFORM | ADGF_MACRESFORK)
+#define ADGF_GENERIC (ADGF_DEFAULT | ADGF_USEEXTRAASTITLE | ADGF_AUTOGENTARGET)
+#define ADGF_DEMO (ADGF_GENERIC | ADGF_DEMO)
 
-#define FANGAME(n,m,s) { "wage",n,AD_ENTRY1s(n,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_GENERIC,GUIO0()}
-#define FANGAMEN(n,f,m,s) { "wage",n,AD_ENTRY1s(f,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_GENERIC,GUIO0()}
-#define FANGAMEND(n,f,m,s) { "wage",n,AD_ENTRY1s(f,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_DEMO,GUIO0()}
-#define BIGGAME(t,v,f,m,s) { t,v,AD_ENTRY1s(f,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_DEFAULT,GUIO0()}
+#define FANGAME(n, m, s) \
+	{ "wage", n, AD_ENTRY1s(n, m, s), Common::EN_ANY, Common::kPlatformMacintosh, ADGF_GENERIC, GUIO0() }
+#define FANGAMEN(n, f, m, s) \
+	{ "wage", n, AD_ENTRY1s(f, m, s), Common::EN_ANY, Common::kPlatformMacintosh, ADGF_GENERIC, GUIO0() }
+#define FANGAMEND(n, f, m, s) \
+	{ "wage", n, AD_ENTRY1s(f, m, s), Common::EN_ANY, Common::kPlatformMacintosh, ADGF_DEMO, GUIO0() }
+#define BIGGAME(t, v, f, m, s) \
+	{ t, v, AD_ENTRY1s(f, m, s), Common::EN_ANY, Common::kPlatformMacintosh, ADGF_DEFAULT, GUIO0() }
 
 static const ADGameDescription gameDescriptions[] = {
 	FANGAME("3rd Floor", "931aa0b6ada3aced5117ee6e6daf2fb8", 281409),

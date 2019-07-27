@@ -46,12 +46,11 @@ bool MenuInputHelper::run() {
 
 MenuInputHelper::~MenuInputHelper() {
 	StateMap::iterator b = _map.begin();
-	for ( ; b != _map.end(); ++b) {
+	for (; b != _map.end(); ++b) {
 		delete b->_value;
 	}
 	_map.clear();
 }
-
 
 void Parallaction::runGuiFrame() {
 	if (_input->_inputMode != Input::kInputModeMenu) {
@@ -68,7 +67,6 @@ void Parallaction::runGuiFrame() {
 		cleanupGui();
 		_input->_inputMode = Input::kInputModeGame;
 	}
-
 }
 
 void Parallaction::cleanupGui() {
@@ -86,6 +84,5 @@ void Parallaction::setInternLanguage(uint id) {
 uint Parallaction::getInternLanguage() {
 	return _language;
 }
-
 
 } // namespace  Parallaction

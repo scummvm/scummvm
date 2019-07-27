@@ -51,11 +51,11 @@ bool PAKFile::loadFile(const char *file, const bool isAmiga) {
 
 	uint32 startoffset = _isAmiga ? READ_BE_UINT32(buffer) : READ_LE_UINT32(buffer);
 	uint32 endoffset = 0;
-	uint8* position = buffer + 4;
+	uint8 *position = buffer + 4;
 
 	while (true) {
-		uint32 strlgt = strlen((const char*)position);
-		currentName = (const char*)position;
+		uint32 strlgt = strlen((const char *)position);
+		currentName = (const char *)position;
 
 		if (!(*currentName))
 			break;
@@ -96,7 +96,7 @@ bool PAKFile::saveFile(const char *file) {
 	}
 
 	// TODO: implement error handling
-	uint32 startAddr = _fileList->getTableSize()+5+4;
+	uint32 startAddr = _fileList->getTableSize() + 5 + 4;
 	static const char *zeroName = "\0\0\0\0\0";
 
 	uint32 curAddr = startAddr;
@@ -219,9 +219,9 @@ bool PAKFile::addFile(const char *name, uint8 *data, uint32 size) {
 
 	FileList *newEntry = new FileList;
 	assert(newEntry);
-	newEntry->filename = new char[strlen(name)+1];
+	newEntry->filename = new char[strlen(name) + 1];
 	assert(newEntry->filename);
-	strncpy(newEntry->filename, name, strlen(name)+1);
+	strncpy(newEntry->filename, name, strlen(name) + 1);
 	newEntry->size = size;
 	newEntry->data = data;
 

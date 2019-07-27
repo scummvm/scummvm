@@ -32,11 +32,9 @@
 #include "graphics/pixelformat.h"
 
 ModularBackend::ModularBackend()
-	:
-	_mutexManager(0),
-	_graphicsManager(0),
-	_mixer(0) {
-
+  : _mutexManager(0)
+  , _graphicsManager(0)
+  , _mixer(0) {
 }
 
 ModularBackend::~ModularBackend() {
@@ -125,7 +123,7 @@ Common::List<Graphics::PixelFormat> ModularBackend::getSupportedFormats() const 
 
 #endif
 
-void ModularBackend::initSize(uint w, uint h, const Graphics::PixelFormat *format ) {
+void ModularBackend::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	_graphicsManager->initSize(w, h, format);
 }
 
@@ -188,7 +186,7 @@ void ModularBackend::updateScreen() {
 void ModularBackend::setShakePos(int shakeOffset) {
 	_graphicsManager->setShakePos(shakeOffset);
 }
-void ModularBackend::setFocusRectangle(const Common::Rect& rect) {
+void ModularBackend::setFocusRectangle(const Common::Rect &rect) {
 	_graphicsManager->setFocusRectangle(rect);
 }
 

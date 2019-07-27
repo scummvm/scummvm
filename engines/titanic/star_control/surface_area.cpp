@@ -127,13 +127,13 @@ double CSurfaceArea::drawLine(const FPoint &pt1, const FPoint &pt2) {
 	double xp = pt1._x, yp = pt1._y;
 
 	int flags1 = (p1._x < _bounds.left ? 1 : 0)
-		| (p1._x > _bounds.right ? 2 : 0)
-		| (p1._y < _bounds.top ? 4 : 0)
-		| (p1._y > _bounds.bottom ? 8 : 0);
+	  | (p1._x > _bounds.right ? 2 : 0)
+	  | (p1._y < _bounds.top ? 4 : 0)
+	  | (p1._y > _bounds.bottom ? 8 : 0);
 	int flags2 = (p2._x < _bounds.left ? 1 : 0)
-		| (p2._x > _bounds.right ? 2 : 0)
-		| (p2._y < _bounds.top ? 4 : 0)
-		| (p2._y > _bounds.bottom ? 8 : 0);
+	  | (p2._x > _bounds.right ? 2 : 0)
+	  | (p2._y < _bounds.top ? 4 : 0)
+	  | (p2._y > _bounds.bottom ? 8 : 0);
 
 	// Handle any clipping
 	while (flags1 | flags2) {

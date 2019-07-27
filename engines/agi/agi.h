@@ -23,16 +23,16 @@
 #ifndef AGI_AGI_H
 #define AGI_AGI_H
 
-#include "common/scummsys.h"
 #include "common/error.h"
-#include "common/util.h"
 #include "common/file.h"
 #include "common/keyboard.h"
 #include "common/rect.h"
 #include "common/rendermode.h"
+#include "common/scummsys.h"
 #include "common/stack.h"
 #include "common/str.h"
 #include "common/system.h"
+#include "common/util.h"
 
 #include "engines/engine.h"
 
@@ -40,10 +40,10 @@
 
 // AGI resources
 #include "agi/console.h"
-#include "agi/view.h"
-#include "agi/picture.h"
 #include "agi/logic.h"
+#include "agi/picture.h"
 #include "agi/sound.h"
+#include "agi/view.h"
 
 namespace Common {
 class RandomSource;
@@ -69,37 +69,37 @@ typedef signed int Err;
 // Version and other definitions
 //
 
-#define TITLE       "AGI engine"
+#define TITLE "AGI engine"
 
-#define DIR_        "dir"
-#define LOGDIR      "logdir"
-#define PICDIR      "picdir"
-#define VIEWDIR     "viewdir"
-#define SNDDIR      "snddir"
-#define OBJECTS     "object"
-#define WORDS       "words.tok"
+#define DIR_ "dir"
+#define LOGDIR "logdir"
+#define PICDIR "picdir"
+#define VIEWDIR "viewdir"
+#define SNDDIR "snddir"
+#define OBJECTS "object"
+#define WORDS "words.tok"
 
-#define MAX_DIRECTORY_ENTRIES      256
-#define MAX_CONTROLLERS            256
-#define MAX_VARS                   256
-#define MAX_FLAGS                  (256 >> 3)
-#define SCREENOBJECTS_MAX          255        // KQ3 uses o255!
-#define SCREENOBJECTS_EGO_ENTRY    0          // first entry is ego
-#define MAX_WORDS                  20
-#define MAX_STRINGS                24         // MAX_STRINGS + 1 used for get.num
-#define MAX_STRINGLEN              40
+#define MAX_DIRECTORY_ENTRIES 256
+#define MAX_CONTROLLERS 256
+#define MAX_VARS 256
+#define MAX_FLAGS (256 >> 3)
+#define SCREENOBJECTS_MAX 255 // KQ3 uses o255!
+#define SCREENOBJECTS_EGO_ENTRY 0 // first entry is ego
+#define MAX_WORDS 20
+#define MAX_STRINGS 24 // MAX_STRINGS + 1 used for get.num
+#define MAX_STRINGLEN 40
 #define MAX_CONTROLLER_KEYMAPPINGS 39
 
 #define SAVEDGAME_DESCRIPTION_LEN 30
 
-#define _EMPTY       0xfffff
-#define EGO_OWNED    0xff
+#define _EMPTY 0xfffff
+#define EGO_OWNED 0xff
 #define EGO_OWNED_V1 0xf9
 
-#define CRYPT_KEY_SIERRA    "Avis Durgan"
-#define CRYPT_KEY_AGDS      "Alex Simkin"
+#define CRYPT_KEY_SIERRA "Avis Durgan"
+#define CRYPT_KEY_AGDS "Alex Simkin"
 
-#define ADD_PIC  1
+#define ADD_PIC 1
 #define ADD_VIEW 2
 
 #define CMD_BSIZE 12
@@ -123,9 +123,9 @@ enum AgiGameID {
 	GID_XMASCARD,
 	GID_FANMADE,
 	GID_GETOUTTASQ, // Fanmade
-	GID_MICKEY,     // PreAGI
-	GID_WINNIE,     // PreAGI
-	GID_TROLL       // PreAGI
+	GID_MICKEY, // PreAGI
+	GID_WINNIE, // PreAGI
+	GID_TROLL // PreAGI
 };
 
 enum AgiGameType {
@@ -148,17 +148,17 @@ enum BooterDisks {
 // position and position.v.
 //
 enum AgiGameFeatures {
-	GF_AGIMOUSE    = (1 << 0), // this disables "Click-to-walk mouse interface"
-	GF_AGDS        = (1 << 1),
-	GF_AGI256      = (1 << 2), // marks fanmade AGI-256 games
-	GF_AGI256_2    = (1 << 3), // marks fanmade AGI-256-2 games
-	GF_AGIPAL      = (1 << 4), // marks game using fanmade AGIPAL extension
+	GF_AGIMOUSE = (1 << 0), // this disables "Click-to-walk mouse interface"
+	GF_AGDS = (1 << 1),
+	GF_AGI256 = (1 << 2), // marks fanmade AGI-256 games
+	GF_AGI256_2 = (1 << 3), // marks fanmade AGI-256-2 games
+	GF_AGIPAL = (1 << 4), // marks game using fanmade AGIPAL extension
 	GF_MACGOLDRUSH = (1 << 5), // use "grdir" instead of "dir" for volume loading
-	GF_FANMADE     = (1 << 6), // marks fanmade games
-	GF_MENUS       = (1 << 7), // not used anymore
-	GF_ESCPAUSE    = (1 << 8), // not used anymore, we detect this internally
+	GF_FANMADE = (1 << 6), // marks fanmade games
+	GF_MENUS = (1 << 7), // not used anymore
+	GF_ESCPAUSE = (1 << 8), // not used anymore, we detect this internally
 	GF_OLDAMIGAV20 = (1 << 9),
-	GF_CLIPCOORDS  = (1 << 10), // not used atm
+	GF_CLIPCOORDS = (1 << 10), // not used atm
 	GF_2GSOLDSOUND = (1 << 11)
 };
 
@@ -187,16 +187,16 @@ enum AGIErrors {
 };
 
 enum kDebugLevels {
-	kDebugLevelMain =      1 << 0,
+	kDebugLevelMain = 1 << 0,
 	kDebugLevelResources = 1 << 1,
-	kDebugLevelSprites =   1 << 2,
+	kDebugLevelSprites = 1 << 2,
 	kDebugLevelInventory = 1 << 3,
-	kDebugLevelInput =     1 << 4,
-	kDebugLevelMenu =      1 << 5,
-	kDebugLevelScripts =   1 << 6,
-	kDebugLevelSound =     1 << 7,
-	kDebugLevelText =      1 << 8,
-	kDebugLevelSavegame =  1 << 9
+	kDebugLevelInput = 1 << 4,
+	kDebugLevelMenu = 1 << 5,
+	kDebugLevelScripts = 1 << 6,
+	kDebugLevelSound = 1 << 7,
+	kDebugLevelText = 1 << 8,
+	kDebugLevelSavegame = 1 << 9
 };
 
 /**
@@ -210,10 +210,10 @@ enum {
 };
 
 enum {
-	RES_LOADED                 = 0x01,
-	RES_COMPRESSED             = 0x40,
-	RES_PICTURE_V3_NIBBLE_PARM = 0x80  // Flag that gets set for picture resources,
-	                                   // which use a nibble instead of a byte as F0+F2 parameters
+	RES_LOADED = 0x01,
+	RES_COMPRESSED = 0x40,
+	RES_PICTURE_V3_NIBBLE_PARM = 0x80 // Flag that gets set for picture resources,
+	// which use a nibble instead of a byte as F0+F2 parameters
 };
 
 enum {
@@ -236,8 +236,8 @@ struct Mouse {
 
 // Used by AGI Mouse protocol 1.0 for v27 (i.e. button pressed -variable).
 enum AgiMouseButton {
-	kAgiMouseButtonUp,    // Mouse button is up (not pressed)
-	kAgiMouseButtonLeft,  // Left mouse button
+	kAgiMouseButtonUp, // Mouse button is up (not pressed)
+	kAgiMouseButtonLeft, // Left mouse button
 	kAgiMouseButtonRight, // Right mouse button
 	kAgiMouseButtonMiddle // Middle mouse button
 };
@@ -246,36 +246,36 @@ enum AgiMouseButton {
  * AGI variables.
  */
 enum {
-	VM_VAR_CURRENT_ROOM = 0,        // 0
-	VM_VAR_PREVIOUS_ROOM,           // 1
-	VM_VAR_BORDER_TOUCH_EGO,        // 2
-	VM_VAR_SCORE,                   // 3
-	VM_VAR_BORDER_CODE,             // 4
-	VM_VAR_BORDER_TOUCH_OBJECT,     // 5
-	VM_VAR_EGO_DIRECTION,           // 6
-	VM_VAR_MAX_SCORE,               // 7
-	VM_VAR_FREE_PAGES,              // 8
-	VM_VAR_WORD_NOT_FOUND,          // 9
-	VM_VAR_TIME_DELAY,              // 10
-	VM_VAR_SECONDS,                 // 11
-	VM_VAR_MINUTES,                 // 12
-	VM_VAR_HOURS,                   // 13
-	VM_VAR_DAYS,                    // 14
-	VM_VAR_JOYSTICK_SENSITIVITY,    // 15
-	VM_VAR_EGO_VIEW_RESOURCE,       // 16
-	VM_VAR_AGI_ERROR_CODE,          // 17
-	VM_VAR_AGI_ERROR_INFO,          // 18
-	VM_VAR_KEY,                     // 19
-	VM_VAR_COMPUTER,                // 20
+	VM_VAR_CURRENT_ROOM = 0, // 0
+	VM_VAR_PREVIOUS_ROOM, // 1
+	VM_VAR_BORDER_TOUCH_EGO, // 2
+	VM_VAR_SCORE, // 3
+	VM_VAR_BORDER_CODE, // 4
+	VM_VAR_BORDER_TOUCH_OBJECT, // 5
+	VM_VAR_EGO_DIRECTION, // 6
+	VM_VAR_MAX_SCORE, // 7
+	VM_VAR_FREE_PAGES, // 8
+	VM_VAR_WORD_NOT_FOUND, // 9
+	VM_VAR_TIME_DELAY, // 10
+	VM_VAR_SECONDS, // 11
+	VM_VAR_MINUTES, // 12
+	VM_VAR_HOURS, // 13
+	VM_VAR_DAYS, // 14
+	VM_VAR_JOYSTICK_SENSITIVITY, // 15
+	VM_VAR_EGO_VIEW_RESOURCE, // 16
+	VM_VAR_AGI_ERROR_CODE, // 17
+	VM_VAR_AGI_ERROR_INFO, // 18
+	VM_VAR_KEY, // 19
+	VM_VAR_COMPUTER, // 20
 	VM_VAR_WINDOW_AUTO_CLOSE_TIMER, // 21
-	VM_VAR_SOUNDGENERATOR,          // 22
-	VM_VAR_VOLUME,                  // 23
-	VM_VAR_MAX_INPUT_CHARACTERS,    // 24
+	VM_VAR_SOUNDGENERATOR, // 22
+	VM_VAR_VOLUME, // 23
+	VM_VAR_MAX_INPUT_CHARACTERS, // 24
 	VM_VAR_SELECTED_INVENTORY_ITEM, // 25
-	VM_VAR_MONITOR = 26,            // 26
-	VM_VAR_MOUSE_BUTTONSTATE = 27,  // 27
-	VM_VAR_MOUSE_X = 28,            // 28
-	VM_VAR_MOUSE_Y = 29             // 29
+	VM_VAR_MONITOR = 26, // 26
+	VM_VAR_MOUSE_BUTTONSTATE = 27, // 27
+	VM_VAR_MOUSE_X = 28, // 28
+	VM_VAR_MOUSE_Y = 29 // 29
 };
 
 /**
@@ -329,28 +329,28 @@ enum AgiSoundType {
  * AGI flags
  */
 enum {
-	VM_FLAG_EGO_WATER = 0,  // 0
+	VM_FLAG_EGO_WATER = 0, // 0
 	VM_FLAG_EGO_INVISIBLE,
 	VM_FLAG_ENTERED_CLI,
 	VM_FLAG_EGO_TOUCHED_P2,
 	VM_FLAG_SAID_ACCEPTED_INPUT,
-	VM_FLAG_NEW_ROOM_EXEC,  // 5
+	VM_FLAG_NEW_ROOM_EXEC, // 5
 	VM_FLAG_RESTART_GAME,
 	VM_FLAG_SCRIPT_BLOCKED,
 	VM_FLAG_JOY_SENSITIVITY,
 	VM_FLAG_SOUND_ON,
-	VM_FLAG_DEBUGGER_ON,        // 10
+	VM_FLAG_DEBUGGER_ON, // 10
 	VM_FLAG_LOGIC_ZERO_FIRST_TIME,
 	VM_FLAG_RESTORE_JUST_RAN,
 	VM_FLAG_STATUS_SELECTS_ITEMS,
 	VM_FLAG_MENUS_ACCESSIBLE,
-	VM_FLAG_OUTPUT_MODE,        // 15
+	VM_FLAG_OUTPUT_MODE, // 15
 	VM_FLAG_AUTO_RESTART
 };
 
 struct AgiControllerKeyMapping {
 	uint16 keycode;
-	byte   controllerSlot;
+	byte controllerSlot;
 };
 
 struct AgiObject {
@@ -407,33 +407,33 @@ struct AgiGame {
 
 	// TODO: Check whether adjMouseX and adjMouseY must be saved and loaded when using savegames.
 	//       If they must be then loading and saving is partially broken at the moment.
-	int adjMouseX;  /**< last given adj.ego.move.to.x.y-command's 1st parameter */
-	int adjMouseY;  /**< last given adj.ego.move.to.x.y-command's 2nd parameter */
+	int adjMouseX; /**< last given adj.ego.move.to.x.y-command's 1st parameter */
+	int adjMouseY; /**< last given adj.ego.move.to.x.y-command's 2nd parameter */
 
-	char name[8];   /**< lead in id (e.g. `GR' for goldrush) */
-	char id[8];     /**< game id */
-	uint32 crc;     /**< game CRC */
+	char name[8]; /**< lead in id (e.g. `GR' for goldrush) */
+	char id[8]; /**< game id */
+	uint32 crc; /**< game CRC */
 
 	// game flags and variables
 	uint8 flags[MAX_FLAGS]; /**< 256 1-bit flags combined into a total of 32 bytes */
-	uint8 vars[MAX_VARS];   /**< 256 variables */
+	uint8 vars[MAX_VARS]; /**< 256 variables */
 
 	// internal variables
-	int16 horizon;          /**< horizon y coordinate */
+	int16 horizon; /**< horizon y coordinate */
 
-	bool  cycleInnerLoopActive;
+	bool cycleInnerLoopActive;
 	int16 cycleInnerLoopType;
 
-	int16 curLogicNr;               /**< current logic number */
+	int16 curLogicNr; /**< current logic number */
 	Common::Array<ScriptPos> execStack;
 
 	// internal flags
 	bool playerControl; /**< player is in control */
 	bool exitAllLogics; /**< break cycle after new.room */
-	bool pictureShown;  /**< show.pic has been issued */
-#define ID_AGDS     0x00000001
-#define ID_AMIGA    0x00000002
-	int gameFlags;      /**< agi options flags */
+	bool pictureShown; /**< show.pic has been issued */
+#define ID_AGDS 0x00000001
+#define ID_AMIGA 0x00000002
+	int gameFlags; /**< agi options flags */
 
 	// windows
 	AgiBlock block;
@@ -443,7 +443,7 @@ struct AgiGame {
 
 	unsigned int numObjects;
 
-	bool controllerOccured[MAX_CONTROLLERS];  /**< keyboard keypress events */
+	bool controllerOccured[MAX_CONTROLLERS]; /**< keyboard keypress events */
 	AgiControllerKeyMapping controllerKeyMapping[MAX_CONTROLLER_KEYMAPPINGS];
 
 	char strings[MAX_STRINGS + 1][MAX_STRINGLEN]; /**< strings */
@@ -456,9 +456,9 @@ struct AgiGame {
 
 	// resources
 	AgiPicture pictures[MAX_DIRECTORY_ENTRIES]; /**< AGI picture resources */
-	AgiLogic logics[MAX_DIRECTORY_ENTRIES];     /**< AGI logic resources */
-	AgiView views[MAX_DIRECTORY_ENTRIES];       /**< AGI view resources */
-	AgiSound *sounds[MAX_DIRECTORY_ENTRIES];    /**< Pointers to AGI sound resources */
+	AgiLogic logics[MAX_DIRECTORY_ENTRIES]; /**< AGI logic resources */
+	AgiView views[MAX_DIRECTORY_ENTRIES]; /**< AGI view resources */
+	AgiSound *sounds[MAX_DIRECTORY_ENTRIES]; /**< Pointers to AGI sound resources */
 
 	AgiLogic *_curLogic;
 
@@ -467,12 +467,12 @@ struct AgiGame {
 
 	ScreenObjEntry addToPicView;
 
-	bool automaticSave;             /**< set by CmdSetSimple() */
+	bool automaticSave; /**< set by CmdSetSimple() */
 	char automaticSaveDescription[SAVEDGAME_DESCRIPTION_LEN + 1];
 
-	Common::Rect mouseFence;        /**< rectangle set by fence.mouse command */
-	bool mouseEnabled;              /**< if mouse is supposed to be active */
-	bool mouseHidden;               /**< if mouse is currently hidden */
+	Common::Rect mouseFence; /**< rectangle set by fence.mouse command */
+	bool mouseEnabled; /**< if mouse is supposed to be active */
+	bool mouseHidden; /**< if mouse is currently hidden */
 
 	// IF condition handling
 	int testResult;
@@ -495,7 +495,6 @@ struct AgiGame {
 
 class AgiLoader {
 public:
-
 	AgiLoader() {}
 	virtual ~AgiLoader() {}
 
@@ -538,7 +537,6 @@ private:
 	uint8 *loadVolRes(AgiDir *agid);
 
 public:
-
 	AgiLoader_v2(AgiEngine *vm) {
 		_vm = vm;
 	}
@@ -560,7 +558,6 @@ private:
 	uint8 *loadVolRes(AgiDir *agid);
 
 public:
-
 	AgiLoader_v3(AgiEngine *vm) {
 		_vm = vm;
 	}
@@ -629,7 +626,7 @@ public:
 	Words *_words;
 
 	GfxFont *_font;
-	GfxMgr  *_gfx;
+	GfxMgr *_gfx;
 
 	Common::RenderMode _renderMode;
 	AgiDebug _debug;
@@ -655,9 +652,11 @@ public:
 
 	virtual void clearImageStack() = 0;
 	virtual void recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
-	                                  int16 p4, int16 p5, int16 p6, int16 p7) = 0;
+	                                  int16 p4, int16 p5, int16 p6, int16 p7)
+	  = 0;
 	virtual void replayImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
-	                                  int16 p4, int16 p5, int16 p6, int16 p7) = 0;
+	                                  int16 p4, int16 p5, int16 p6, int16 p7)
+	  = 0;
 	virtual void releaseImageStack() = 0;
 
 	int _soundemu;
@@ -723,7 +722,7 @@ struct AgiOpCodeEntry {
 	const char *name;
 	const char *parameters;
 	AgiOpCodeFunction functionPtr;
-	uint16     parameterSize;
+	uint16 parameterSize;
 };
 
 struct AgiOpCodeDefinitionEntry {
@@ -764,7 +763,7 @@ private:
 	int _firstSlot;
 
 public:
-	Common::Array<AgiObject> _objects;    // objects in the game
+	Common::Array<AgiObject> _objects; // objects in the game
 
 	StringData _stringdata;
 
@@ -856,6 +855,7 @@ public:
 	const char *objectName(uint16 objectNr);
 	int objectGetLocation(uint16 objectNr);
 	void objectSetLocation(uint16 objectNr, int);
+
 private:
 	int decodeObjects(uint8 *mem, uint32 flen);
 	int readObjects(Common::File &fp, int flen);
@@ -898,7 +898,6 @@ public:
 
 	// View
 private:
-
 	void lSetLoop(ScreenObjEntry *screenObj, int16 loopNr);
 	void updateView(ScreenObjEntry *screenObj);
 

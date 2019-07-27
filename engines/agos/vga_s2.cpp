@@ -86,8 +86,7 @@ void AGOSEngine::vc59_stopAnimations() {
 }
 
 void AGOSEngine::vc64_ifSpeech() {
-	if ((getGameType() == GType_SIMON2 && _subtitles && _language != Common::HE_ISR) ||
-		!_sound->isVoiceActive()) {
+	if ((getGameType() == GType_SIMON2 && _subtitles && _language != Common::HE_ISR) || !_sound->isVoiceActive()) {
 		vcSkipNextInstruction();
 	}
 }

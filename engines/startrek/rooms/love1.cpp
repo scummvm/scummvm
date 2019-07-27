@@ -75,9 +75,9 @@ void Room::love1Tick1() {
 		_roomVar.love.itemInNozzle = OBJECT_IRLG;
 		goto common;
 
-common:
+	common:
 		loadActorAnim(OBJECT_BOTTLE, _roomVar.love.bottleAnimation, 0xa3, 0x72, 0);
-	// fall through
+		// fall through
 
 	case BOTTLETYPE_NONE:
 		break;

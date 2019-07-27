@@ -33,21 +33,21 @@ class MidiChannel;
  * Music types that music drivers can implement and engines can rely on.
  */
 enum MusicType {
-	MT_INVALID = -1,	// Invalid output
-	MT_AUTO = 0,		// Auto
-	MT_NULL,			// Null
-	MT_PCSPK,			// PC Speaker
-	MT_PCJR,			// PCjr
-	MT_CMS,				// CMS
-	MT_ADLIB,			// AdLib
-	MT_C64,				// C64
-	MT_AMIGA,			// Amiga
-	MT_APPLEIIGS,		// Apple IIGS
-	MT_TOWNS,			// FM-TOWNS
-	MT_PC98,			// PC98
-	MT_GM,				// General MIDI
-	MT_MT32,			// MT-32
-	MT_GS				// Roland GS
+	MT_INVALID = -1, // Invalid output
+	MT_AUTO = 0, // Auto
+	MT_NULL, // Null
+	MT_PCSPK, // PC Speaker
+	MT_PCJR, // PCjr
+	MT_CMS, // CMS
+	MT_ADLIB, // AdLib
+	MT_C64, // C64
+	MT_AMIGA, // Amiga
+	MT_APPLEIIGS, // Apple IIGS
+	MT_TOWNS, // FM-TOWNS
+	MT_PC98, // PC98
+	MT_GM, // General MIDI
+	MT_MT32, // MT-32
+	MT_GS // Roland GS
 };
 
 /**
@@ -66,19 +66,19 @@ enum MusicType {
  * @todo Rename MidiDriverFlags to MusicDriverFlags
  */
 enum MidiDriverFlags {
-	MDT_NONE        = 0,
-	MDT_PCSPK       = 1 << 0,		// PC Speaker: Maps to MT_PCSPK and MT_PCJR
-	MDT_CMS         = 1 << 1,		// Creative Music System / Gameblaster: Maps to MT_CMS
-	MDT_PCJR        = 1 << 2,		// Tandy/PC Junior driver
-	MDT_ADLIB       = 1 << 3,		// AdLib: Maps to MT_ADLIB
-	MDT_C64         = 1 << 4,
-	MDT_AMIGA       = 1 << 5,
-	MDT_APPLEIIGS   = 1 << 6,
-	MDT_TOWNS       = 1 << 7,		// FM-TOWNS: Maps to MT_TOWNS
-	MDT_PC98        = 1 << 8,		// FM-TOWNS: Maps to MT_PC98
-	MDT_MIDI        = 1 << 9,		// Real MIDI
-	MDT_PREFER_MT32 = 1 << 10,		// MT-32 output is preferred
-	MDT_PREFER_GM   = 1 << 11		// GM output is preferred
+	MDT_NONE = 0,
+	MDT_PCSPK = 1 << 0, // PC Speaker: Maps to MT_PCSPK and MT_PCJR
+	MDT_CMS = 1 << 1, // Creative Music System / Gameblaster: Maps to MT_CMS
+	MDT_PCJR = 1 << 2, // Tandy/PC Junior driver
+	MDT_ADLIB = 1 << 3, // AdLib: Maps to MT_ADLIB
+	MDT_C64 = 1 << 4,
+	MDT_AMIGA = 1 << 5,
+	MDT_APPLEIIGS = 1 << 6,
+	MDT_TOWNS = 1 << 7, // FM-TOWNS: Maps to MT_TOWNS
+	MDT_PC98 = 1 << 8, // FM-TOWNS: Maps to MT_PC98
+	MDT_MIDI = 1 << 9, // Real MIDI
+	MDT_PREFER_MT32 = 1 << 10, // MT-32 output is preferred
+	MDT_PREFER_GM = 1 << 11 // GM output is preferred
 };
 
 /**
@@ -86,7 +86,7 @@ enum MidiDriverFlags {
  */
 class MidiDriver_BASE {
 public:
-	virtual ~MidiDriver_BASE() { }
+	virtual ~MidiDriver_BASE() {}
 
 	/**
 	 * Output a packed midi command to the midi stream.
@@ -117,10 +117,10 @@ public:
 	 * is 264 bytes. Passing longer buffers can lead to
 	 * undefined behavior (most likely, a crash).
 	 */
-	virtual void sysEx(const byte *msg, uint16 length) { }
+	virtual void sysEx(const byte *msg, uint16 length) {}
 
 	// TODO: Document this.
-	virtual void metaEvent(byte type, byte *data, uint16 length) { }
+	virtual void metaEvent(byte type, byte *data, uint16 length) {}
 };
 
 /**
@@ -175,7 +175,7 @@ private:
 	static bool _forceTypeMT32;
 
 public:
-	virtual ~MidiDriver() { }
+	virtual ~MidiDriver() {}
 
 	static const byte _mt32ToGm[128];
 	static const byte _gmToMt32[128];
@@ -186,13 +186,13 @@ public:
 	 */
 	enum {
 		MERR_CANNOT_CONNECT = 1,
-//		MERR_STREAMING_NOT_AVAILABLE = 2,
+		//		MERR_STREAMING_NOT_AVAILABLE = 2,
 		MERR_DEVICE_NOT_AVAILABLE = 3,
 		MERR_ALREADY_OPEN = 4
 	};
 
 	enum {
-//		PROP_TIMEDIV = 1,
+		//		PROP_TIMEDIV = 1,
 		PROP_OLD_ADLIB = 2,
 		PROP_CHANNEL_MASK = 3,
 		// HACK: Not so nice, but our SCUMM AdLib code is in audio/
@@ -223,8 +223,8 @@ public:
 	virtual void setPitchBendRange(byte channel, uint range) {
 		send(0xB0 | channel, 101, 0);
 		send(0xB0 | channel, 100, 0);
-		send(0xB0 | channel,   6, range);
-		send(0xB0 | channel,  38, 0);
+		send(0xB0 | channel, 6, range);
+		send(0xB0 | channel, 38, 0);
 		send(0xB0 | channel, 101, 127);
 		send(0xB0 | channel, 100, 127);
 	}
@@ -239,7 +239,7 @@ public:
 	 */
 	void sendGMReset();
 
-	virtual void sysEx_customInstrument(byte channel, uint32 type, const byte *instr) { }
+	virtual void sysEx_customInstrument(byte channel, uint32 type, const byte *instr) {}
 
 	// Timing functions - MidiDriver now operates timers
 	virtual void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) = 0;
@@ -276,7 +276,7 @@ public:
 	virtual void pitchBendFactor(byte value) = 0;
 	virtual void transpose(int8 value) {}
 	virtual void detune(byte value) { controlChange(17, value); }
-	virtual void priority(byte value) { }
+	virtual void priority(byte value) {}
 	virtual void sustain(bool value) { controlChange(64, value ? 1 : 0); }
 	virtual void effectLevel(byte value) { controlChange(91, value); }
 	virtual void chorusLevel(byte value) { controlChange(93, value); }

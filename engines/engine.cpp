@@ -23,35 +23,35 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_getcwd
 
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <direct.h>
+#	define WIN32_LEAN_AND_MEAN
+#	include <direct.h>
+#	include <windows.h>
 #endif
 
-#include "engines/engine.h"
 #include "engines/dialogs.h"
+#include "engines/engine.h"
 #include "engines/util.h"
 
 #include "common/config-manager.h"
+#include "common/error.h"
 #include "common/events.h"
 #include "common/file.h"
-#include "common/system.h"
-#include "common/str.h"
-#include "common/error.h"
 #include "common/list.h"
 #include "common/memstream.h"
 #include "common/scummsys.h"
+#include "common/singleton.h"
+#include "common/str.h"
+#include "common/system.h"
 #include "common/taskbar.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
-#include "common/singleton.h"
 
 #include "backends/keymapper/keymapper.h"
 #include "base/version.h"
 
-#include "gui/gui-manager.h"
 #include "gui/debugger.h"
 #include "gui/dialog.h"
+#include "gui/gui-manager.h"
 #include "gui/message.h"
 
 #include "audio/mixer.h"
@@ -97,11 +97,9 @@ static void defaultErrorHandler(const char *msg) {
 			debugger->onFrame();
 		}
 
-
 #if defined(USE_TASKBAR)
 		g_system->getTaskbarManager()->clearError();
 #endif
-
 	}
 }
 
@@ -137,17 +135,17 @@ DECLARE_SINGLETON(ChainedGamesManager);
 }
 
 Engine::Engine(OSystem *syst)
-	: _system(syst),
-		_mixer(_system->getMixer()),
-		_timer(_system->getTimerManager()),
-		_eventMan(_system->getEventManager()),
-		_saveFileMan(_system->getSavefileManager()),
-		_targetName(ConfMan.getActiveDomainName()),
-		_pauseLevel(0),
-		_pauseStartTime(0),
-		_saveSlotToLoad(-1),
-		_engineStartTime(_system->getMillis()),
-		_mainMenuDialog(NULL) {
+  : _system(syst)
+  , _mixer(_system->getMixer())
+  , _timer(_system->getTimerManager())
+  , _eventMan(_system->getEventManager())
+  , _saveFileMan(_system->getSavefileManager())
+  , _targetName(ConfMan.getActiveDomainName())
+  , _pauseLevel(0)
+  , _pauseStartTime(0)
+  , _saveSlotToLoad(-1)
+  , _engineStartTime(_system->getMillis())
+  , _mainMenuDialog(NULL) {
 
 	g_engine = this;
 	Common::setErrorOutputFormatter(defaultOutputFormatter);
@@ -282,16 +280,16 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 
 	g_system->beginGFXTransaction();
 
-		initCommonGFX();
+	initCommonGFX();
 #ifdef USE_RGB_COLOR
-		if (format)
-			g_system->initSize(width, height, format);
-		else {
-			Graphics::PixelFormat bestFormat = g_system->getSupportedFormats().front();
-			g_system->initSize(width, height, &bestFormat);
-		}
+	if (format)
+		g_system->initSize(width, height, format);
+	else {
+		Graphics::PixelFormat bestFormat = g_system->getSupportedFormats().front();
+		g_system->initSize(width, height, &bestFormat);
+	}
 #else
-		g_system->initSize(width, height);
+	g_system->initSize(width, height);
 #endif
 
 	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
@@ -375,7 +373,6 @@ inline Graphics::PixelFormat findCompatibleFormat(const Common::List<Graphics::P
 	return Graphics::PixelFormat::createFormatCLUT8();
 }
 
-
 void initGraphics(int width, int height, const Common::List<Graphics::PixelFormat> &formatList) {
 	Graphics::PixelFormat format = findCompatibleFormat(g_system->getSupportedFormats(), formatList);
 	initGraphics(width, height, &format);
@@ -389,8 +386,8 @@ void initGraphics(int width, int height) {
 void GUIErrorMessage(const Common::String &msg) {
 	g_system->setWindowCaption("Error");
 	g_system->beginGFXTransaction();
-		initCommonGFX();
-		g_system->initSize(320, 200);
+	initCommonGFX();
+	g_system->initSize(320, 200);
 	if (g_system->endGFXTransaction() == OSystem::kTransactionSuccess) {
 		GUI::MessageDialog dialog(msg);
 		dialog.runModal();
@@ -419,23 +416,18 @@ void Engine::checkCD() {
 	// If we can find a compressed audio track, then it should be ok even
 	// if it's running from CD.
 
-#ifdef USE_VORBIS
-	if (Common::File::exists("track1.ogg") ||
-	    Common::File::exists("track01.ogg"))
+#	ifdef USE_VORBIS
+	if (Common::File::exists("track1.ogg") || Common::File::exists("track01.ogg"))
 		return;
-#endif
-#ifdef USE_FLAC
-	if (Common::File::exists("track1.fla") ||
-            Common::File::exists("track1.flac") ||
-	    Common::File::exists("track01.fla") ||
-	    Common::File::exists("track01.flac"))
+#	endif
+#	ifdef USE_FLAC
+	if (Common::File::exists("track1.fla") || Common::File::exists("track1.flac") || Common::File::exists("track01.fla") || Common::File::exists("track01.flac"))
 		return;
-#endif
-#ifdef USE_MAD
-	if (Common::File::exists("track1.mp3") ||
-	    Common::File::exists("track01.mp3"))
+#	endif
+#	ifdef USE_MAD
+	if (Common::File::exists("track1.mp3") || Common::File::exists("track01.mp3"))
 		return;
-#endif
+#	endif
 
 	char buffer[MAXPATHLEN];
 	int i;
@@ -458,22 +450,24 @@ void Engine::checkCD() {
 
 	if (GetDriveType(buffer) == DRIVE_CDROM) {
 		GUI::MessageDialog dialog(
-			_("You appear to be playing this game directly\n"
-			"from the CD. This is known to cause problems,\n"
-			"and it is therefore recommended that you copy\n"
-			"the data files to your hard disk instead.\n"
-			"See the README file for details."), _("OK"));
+		  _("You appear to be playing this game directly\n"
+		    "from the CD. This is known to cause problems,\n"
+		    "and it is therefore recommended that you copy\n"
+		    "the data files to your hard disk instead.\n"
+		    "See the README file for details."),
+		  _("OK"));
 		dialog.runModal();
 	} else {
 		// If we reached here, the game has audio tracks,
 		// it's not ran from the CD and the tracks have not
 		// been ripped.
 		GUI::MessageDialog dialog(
-			_("This game has audio tracks in its disk. These\n"
-			"tracks need to be ripped from the disk using\n"
-			"an appropriate CD audio extracting tool in\n"
-			"order to listen to the game's music.\n"
-			"See the README file for details."), _("OK"));
+		  _("This game has audio tracks in its disk. These\n"
+		    "tracks need to be ripped from the disk using\n"
+		    "an appropriate CD audio extracting tool in\n"
+		    "order to listen to the game's music.\n"
+		    "See the README file for details."),
+		  _("OK"));
 		dialog.runModal();
 	}
 #endif
@@ -528,8 +522,9 @@ void Engine::openMainMenuDialog() {
 		Common::Error status = loadGameState(_saveSlotToLoad);
 		if (status.getCode() != Common::kNoError) {
 			Common::String failMessage = Common::String::format(_("Failed to load saved game (%s)! "
-				  "Please consult the README for basic information, and for "
-				  "instructions on how to obtain further assistance."), status.getDesc().c_str());
+			                                                      "Please consult the README for basic information, and for "
+			                                                      "instructions on how to obtain further assistance."),
+			                                                    status.getDesc().c_str());
 			GUI::MessageDialog dialog(failMessage);
 			dialog.runModal();
 		}
@@ -541,9 +536,10 @@ void Engine::openMainMenuDialog() {
 bool Engine::warnUserAboutUnsupportedGame() {
 	if (ConfMan.getBool("enable_unsupported_game_warning")) {
 		GUI::MessageDialog alert(_("WARNING: The game you are about to start is"
-			" not yet fully supported by ScummVM. As such, it is likely to be"
-			" unstable, and any saved game you make might not work in future"
-			" versions of ScummVM."), _("Start anyway"), _("Cancel"));
+		                           " not yet fully supported by ScummVM. As such, it is likely to be"
+		                           " unstable, and any saved game you make might not work in future"
+		                           " versions of ScummVM."),
+		                         _("Start anyway"), _("Cancel"));
 		return alert.runModal() == GUI::kMessageOK;
 	}
 	return true;

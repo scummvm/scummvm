@@ -35,25 +35,25 @@ namespace MystStacks {
 
 #define DECLARE_OPCODE(x) void x(uint16 var, const ArgumentsArray &args)
 
-class Slides : public MystScriptParser {
-public:
-	explicit Slides(MohawkEngine_Myst *vm);
-	~Slides() override;
+	class Slides : public MystScriptParser {
+	public:
+		explicit Slides(MohawkEngine_Myst *vm);
+		~Slides() override;
 
-	void disablePersistentScripts() override;
-	void runPersistentScripts() override;
+		void disablePersistentScripts() override;
+		void runPersistentScripts() override;
 
-private:
-	void setupOpcodes();
+	private:
+		void setupOpcodes();
 
-	DECLARE_OPCODE(o_returnToMenu);
+		DECLARE_OPCODE(o_returnToMenu);
 
-	DECLARE_OPCODE(o_setCardSwap);
+		DECLARE_OPCODE(o_setCardSwap);
 
-	bool _cardSwapEnabled;
-	uint16 _nextCardID;
-	uint32 _nextCardTime;
-};
+		bool _cardSwapEnabled;
+		uint16 _nextCardID;
+		uint32 _nextCardTime;
+	};
 
 } // End of namespace MystStacks
 } // End of namespace Mohawk

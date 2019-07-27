@@ -22,16 +22,17 @@
 
 #include "engines/engine.h"
 
+#include "backends/platform/tizen/application.h"
 #include "backends/platform/tizen/form.h"
 #include "backends/platform/tizen/system.h"
-#include "backends/platform/tizen/application.h"
 
 Application *TizenScummVM::createInstance() {
 	logEntered();
 	return new TizenScummVM();
 }
 
-TizenScummVM::TizenScummVM() : _appForm(NULL) {
+TizenScummVM::TizenScummVM()
+  : _appForm(NULL) {
 	logEntered();
 }
 
@@ -95,7 +96,7 @@ void TizenScummVM::OnUserEventReceivedN(RequestId requestId, IList *args) {
 	case USER_MESSAGE_EXIT_ERR_CONFIG:
 		// the config file was corrupted
 		messageBox.Construct(L"Config file corrupted",
-				L"Settings have been reverted, please restart.", MSGBOX_STYLE_OK);
+		                     L"Settings have been reverted, please restart.", MSGBOX_STYLE_OK);
 		messageBox.ShowAndWait(modalResult);
 		Terminate();
 		break;

@@ -36,7 +36,9 @@ struct Tone {
 	double freq; // Hz
 	double len; // ms
 
-	Tone(double frequency, double length) : freq(frequency), len(length) { }
+	Tone(double frequency, double length)
+	  : freq(frequency)
+	  , len(length) {}
 };
 
 typedef Common::Array<Tone> Tones;
@@ -50,7 +52,7 @@ public:
 	int readBuffer(int16 *buffer, const int numSamples);
 	bool isStereo() const { return false; }
 	bool endOfData() const;
-	int getRate() const	{ return _rate; }
+	int getRate() const { return _rate; }
 
 private:
 	const Tones &_tones;

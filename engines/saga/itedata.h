@@ -28,14 +28,14 @@
 namespace Saga {
 
 enum ActorFlags {
-	kProtagonist	= 0x01,	// (1<<0) Actor is protagonist
-	kFollower		= 0x02,	// (1<<1) Actor is follower
-	kCycle			= 0x04, // (1<<2) Actor stand has a cycle
-	kFaster			= 0x08, // (1<<3) Actor is fast
-	kFastest		= 0x10, // (1<<4) Actor is faster
-	kExtended		= 0x20, // (1<<5) Actor uses extended sprites
-	kUsable			= 0x40, // (1<<6) Actor can be used
-	kNoScale		= 0x80  // (1<<7) Actor is not scaled
+	kProtagonist = 0x01, // (1<<0) Actor is protagonist
+	kFollower = 0x02, // (1<<1) Actor is follower
+	kCycle = 0x04, // (1<<2) Actor stand has a cycle
+	kFaster = 0x08, // (1<<3) Actor is fast
+	kFastest = 0x10, // (1<<4) Actor is faster
+	kExtended = 0x20, // (1<<5) Actor uses extended sprites
+	kUsable = 0x40, // (1<<6) Actor can be used
+	kNoScale = 0x80 // (1<<7) Actor is not scaled
 };
 
 struct ActorTableData {
@@ -97,12 +97,12 @@ enum {
 };
 
 enum {
-	kITECreditsPC           = (1 << 0),
-	kITECreditsPCCD         = (1 << 1),
-	kITECreditsMac          = (1 << 2),
-	kITECreditsWyrmKeep     = (1 << 3),
-	kITECreditsAny          = 0xffff,
-	kITECreditsNotWyrmKeep  = kITECreditsAny & ~kITECreditsWyrmKeep
+	kITECreditsPC = (1 << 0),
+	kITECreditsPCCD = (1 << 1),
+	kITECreditsMac = (1 << 2),
+	kITECreditsWyrmKeep = (1 << 3),
+	kITECreditsAny = 0xffff,
+	kITECreditsNotWyrmKeep = kITECreditsAny & ~kITECreditsWyrmKeep
 };
 
 #define ITE_OBJECTCOUNT 39
@@ -115,7 +115,9 @@ extern const char *ITEinterfaceTextStrings[][53];
 
 #define PUZZLE_PIECES 15
 
-struct RawPoint { int x, y; };
+struct RawPoint {
+	int x, y;
+};
 extern const RawPoint pieceOrigins[PUZZLE_PIECES];
 extern const char *pieceNames[][PUZZLE_PIECES];
 

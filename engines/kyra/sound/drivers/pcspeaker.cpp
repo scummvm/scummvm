@@ -28,7 +28,8 @@
 namespace Kyra {
 
 MidiDriver_PCSpeaker::MidiDriver_PCSpeaker(Audio::Mixer *mixer)
-	: MidiDriver_Emulated(mixer), _rate(mixer->getOutputRate()) {
+  : MidiDriver_Emulated(mixer)
+  , _rate(mixer->getOutputRate()) {
 	_timerValue = 0;
 	memset(_channel, 0, sizeof(_channel));
 	memset(_note, 0, sizeof(_note));
@@ -55,7 +56,7 @@ void MidiDriver_PCSpeaker::send(uint32 data) {
 	Common::StackLock lock(_mutex);
 
 	uint8 channel = data & 0x0F;
-	uint8 param1 = (data >>  8) & 0xFF;
+	uint8 param1 = (data >> 8) & 0xFF;
 	uint8 param2 = (data >> 16) & 0xFF;
 
 	uint8 flags = 0x00;
@@ -64,11 +65,11 @@ void MidiDriver_PCSpeaker::send(uint32 data) {
 		return;
 
 	switch (data & 0xF0) {
-	case 0x80:	// note off
+	case 0x80: // note off
 		noteOff(channel, param1);
 		return;
 
-	case 0x90:	// note on
+	case 0x90: // note on
 		if (channel > 1)
 			return;
 
@@ -78,23 +79,23 @@ void MidiDriver_PCSpeaker::send(uint32 data) {
 			noteOff(channel, param1);
 		return;
 
-	case 0xB0:	// controller
+	case 0xB0: // controller
 		switch (param1) {
-		case 0x01:	// modulation
+		case 0x01: // modulation
 			_channel[channel].modulation = param2;
 			break;
 
-		case 0x40:	// hold
+		case 0x40: // hold
 			_channel[channel].hold = param2;
 			if (param2 < 0x40)
 				resetController(channel);
 			return;
 
-		case 0x70:	// voice protect
+		case 0x70: // voice protect
 			_channel[channel].voiceProtect = param2;
 			return;
 
-		case 0x79:	// all notes off
+		case 0x79: // all notes off
 			_channel[channel].hold = 0;
 			resetController(channel);
 			_channel[channel].modulation = 0;
@@ -108,7 +109,7 @@ void MidiDriver_PCSpeaker::send(uint32 data) {
 		}
 		break;
 
-	case 0xE0:	// pitch bend
+	case 0xE0: // pitch bend
 		flags = 0x01;
 		_channel[channel].pitchBendLow = param1;
 		_channel[channel].pitchBendHigh = param2;

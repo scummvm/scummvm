@@ -30,7 +30,9 @@
 
 namespace Sludge {
 
-HSIDecoder::HSIDecoder() : _surface(nullptr), _reserve(-1) {
+HSIDecoder::HSIDecoder()
+  : _surface(nullptr)
+  , _reserve(-1) {
 }
 
 HSIDecoder::~HSIDecoder() {

@@ -34,9 +34,16 @@ namespace Titanic {
  * Types of words
  */
 enum WordClass {
-	WC_UNKNOWN = 0, WC_ACTION = 1, WC_THING = 2, WC_ABSTRACT = 3,
-	WC_ARTICLE = 4, WC_CONJUNCTION = 5, WC_PRONOUN = 6,
-	WC_PREPOSITION = 7, WC_ADJECTIVE = 8, WC_ADVERB = 9
+	WC_UNKNOWN = 0,
+	WC_ACTION = 1,
+	WC_THING = 2,
+	WC_ABSTRACT = 3,
+	WC_ARTICLE = 4,
+	WC_CONJUNCTION = 5,
+	WC_PRONOUN = 6,
+	WC_PREPOSITION = 7,
+	WC_ADJECTIVE = 8,
+	WC_ADVERB = 9
 };
 
 class TTword {
@@ -44,6 +51,7 @@ protected:
 	TTstringStatus _status;
 	int _field24;
 	int _field28;
+
 protected:
 	/**
 	 * Read in a number
@@ -52,6 +60,7 @@ protected:
 
 	bool testFileHandle(SimpleFile *file) const { return true; }
 	bool testFileHandle(FileHandle resHandle) const;
+
 public:
 	TTword *_nextP;
 	TTsynonym *_synP;
@@ -59,6 +68,7 @@ public:
 	WordClass _wordClass;
 	int _id;
 	uint _tag;
+
 public:
 	TTword(const TTstring &str, WordClass wordClass, int val2);
 	TTword(const TTword *src);

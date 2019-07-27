@@ -22,16 +22,16 @@
 
 #include "base/plugins.h"
 
-#include "engines/advancedDetector.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "engines/advancedDetector.h"
 
 #include "cryomni3d/cryomni3d.h"
 
 #ifdef ENABLE_VERSAILLES
-#include "cryomni3d/versailles/engine.h"
+#	include "cryomni3d/versailles/engine.h"
 #endif
 
 namespace CryOmni3D {
@@ -64,16 +64,15 @@ Common::Language CryOmni3DEngine::getLanguage() const {
 }
 
 bool CryOmni3DEngine::hasFeature(EngineFeature f) const {
-	return
-	    (f == kSupportsRTL)
-	    || (f == kSupportsSubtitleOptions);
+	return (f == kSupportsRTL)
+	  || (f == kSupportsSubtitleOptions);
 }
 
 } // End of Namespace CryOmni3D
 
 static const PlainGameDescriptor cryomni3DGames[] = {
-	{"versailles", "Versailles 1685"},
-	{0, 0}
+	{ "versailles", "Versailles 1685" },
+	{ 0, 0 }
 };
 
 #include "cryomni3d/detection_tables.h"
@@ -84,8 +83,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 
 class CryOmni3DMetaEngine : public AdvancedMetaEngine {
 public:
-	CryOmni3DMetaEngine() : AdvancedMetaEngine(CryOmni3D::gameDescriptions,
-		        sizeof(CryOmni3D::CryOmni3DGameDescription), cryomni3DGames, optionsList) {
+	CryOmni3DMetaEngine()
+	  : AdvancedMetaEngine(CryOmni3D::gameDescriptions,
+	                       sizeof(CryOmni3D::CryOmni3DGameDescription), cryomni3DGames, optionsList) {
 		//_singleId = "cryomni3d";
 		_maxScanDepth = 2;
 	}
@@ -111,11 +111,10 @@ public:
 };
 
 bool CryOmni3DMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-	    (f == kSupportsListSaves)
-	    || (f == kSupportsLoadingDuringStartup)
-	    || (f == kSupportsDeleteSave)
-	    || (f == kSimpleSavesNames);
+	return (f == kSupportsListSaves)
+	  || (f == kSupportsLoadingDuringStartup)
+	  || (f == kSupportsDeleteSave)
+	  || (f == kSimpleSavesNames);
 }
 
 SaveStateList CryOmni3DMetaEngine::listSaves(const char *target) const {
@@ -129,12 +128,12 @@ SaveStateList CryOmni3DMetaEngine::listSaves(const char *target) const {
 	saveName[kSaveDescriptionLen] = '\0';
 	Common::String pattern = Common::String::format("%s.????", target);
 	Common::StringArray filenames = saveMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
+	sort(filenames.begin(), filenames.end()); // Sort (hopefully ensuring we are sorted numerically..)
 
 	int slotNum;
 
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end();
-	        ++file) {
+	     ++file) {
 		// Obtain the last 4 digits of the filename, since they correspond to the save slot
 		slotNum = atoi(file->c_str() + file->size() - 4);
 
@@ -159,7 +158,7 @@ void CryOmni3DMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 bool CryOmni3DMetaEngine::createInstance(OSystem *syst, Engine **engine,
-        const ADGameDescription *desc) const {
+                                         const ADGameDescription *desc) const {
 	const CryOmni3D::CryOmni3DGameDescription *gd = (const CryOmni3D::CryOmni3DGameDescription *)desc;
 
 	if (gd) {

@@ -161,29 +161,29 @@ void UIImagePicker::activate(UIImagePickerCallback *mouseInCallback,
                              UIImagePickerCallback *mouseDownCallback,
                              UIImagePickerCallback *mouseUpCallback,
                              void *callbackData) {
-	_isButtonDown        = false;
-	_mouseInCallback     = mouseInCallback;
-	_mouseOutCallback    = mouseOutCallback;
-	_mouseDownCallback   = mouseDownCallback;
-	_mouseUpCallback     = mouseUpCallback;
-	_callbackData        = callbackData;
+	_isButtonDown = false;
+	_mouseInCallback = mouseInCallback;
+	_mouseOutCallback = mouseOutCallback;
+	_mouseDownCallback = mouseDownCallback;
+	_mouseUpCallback = mouseUpCallback;
+	_callbackData = callbackData;
 	_hoverStartTimestamp = 0u;
-	_isVisible           = true;
-	_hoveredImageIndex   = -1;
-	_pressedImageIndex   = -1;
+	_isVisible = true;
+	_hoveredImageIndex = -1;
+	_pressedImageIndex = -1;
 }
 
 void UIImagePicker::deactivate() {
-	_isButtonDown        = false;
-	_mouseInCallback     = nullptr;
-	_mouseOutCallback    = nullptr;
-	_mouseDownCallback   = nullptr;
-	_mouseUpCallback     = nullptr;
-	_callbackData        = nullptr;
+	_isButtonDown = false;
+	_mouseInCallback = nullptr;
+	_mouseOutCallback = nullptr;
+	_mouseDownCallback = nullptr;
+	_mouseUpCallback = nullptr;
+	_callbackData = nullptr;
 	_hoverStartTimestamp = 0u;
-	_isVisible           = false;
-	_hoveredImageIndex   = -1;
-	_pressedImageIndex   = -1;
+	_isVisible = false;
+	_hoveredImageIndex = -1;
+	_pressedImageIndex = -1;
 }
 
 void UIImagePicker::draw(Graphics::Surface &surface) {
@@ -198,12 +198,12 @@ void UIImagePicker::draw(Graphics::Surface &surface) {
 		}
 
 		if (i == _hoveredImageIndex && i == _pressedImageIndex && _isButtonDown
-			&& !_vm->_mouse->isDisabled()
-			&& img.shapeDown) {
+		    && !_vm->_mouse->isDisabled()
+		    && img.shapeDown) {
 			img.shapeDown->draw(surface, img.rect.left, img.rect.top);
 		} else if (i == _hoveredImageIndex && !_isButtonDown
-			&& !_vm->_mouse->isDisabled()
-			&& img.shapeHovered) {
+		           && !_vm->_mouse->isDisabled()
+		           && img.shapeHovered) {
 			img.shapeHovered->draw(surface, img.rect.left, img.rect.top);
 		} else {
 			// this shape should always be the fall back shape to prevent blinking
@@ -225,11 +225,7 @@ void UIImagePicker::drawTooltip(Graphics::Surface &surface, int x, int y) {
 	}
 
 	if (
-		(_hoveredImageIndex == -1) ||
-		(_vm->_mouse->isDisabled()) ||
-		(!_images[_hoveredImageIndex].active) ||
-		(_vm->_time->current() - _hoverStartTimestamp < 1000u)
-	) { // unsigned difference is intentional (time difference)
+	  (_hoveredImageIndex == -1) || (_vm->_mouse->isDisabled()) || (!_images[_hoveredImageIndex].active) || (_vm->_time->current() - _hoverStartTimestamp < 1000u)) { // unsigned difference is intentional (time difference)
 		return;
 	}
 
@@ -349,16 +345,16 @@ bool UIImagePicker::hasHoveredImage() {
 }
 
 void UIImagePicker::reset() {
-	_isVisible           = false;
-	_hoveredImageIndex   = -1;
-	_pressedImageIndex   = -1;
+	_isVisible = false;
+	_hoveredImageIndex = -1;
+	_pressedImageIndex = -1;
 	_hoverStartTimestamp = 0u;
-	_isButtonDown        = false;
-	_mouseInCallback     = nullptr;
-	_mouseOutCallback    = nullptr;
-	_mouseDownCallback   = nullptr;
-	_mouseUpCallback     = nullptr;
-	_callbackData        = nullptr;
+	_isButtonDown = false;
+	_mouseInCallback = nullptr;
+	_mouseOutCallback = nullptr;
+	_mouseDownCallback = nullptr;
+	_mouseUpCallback = nullptr;
+	_callbackData = nullptr;
 }
 
 } // End of namespace BladeRunner

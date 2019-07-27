@@ -20,23 +20,23 @@
  *
  */
 
+#include "scumm/players/player_mac.h"
 #include "common/macresman.h"
 #include "engines/engine.h"
-#include "scumm/players/player_mac.h"
+#include "scumm/imuse/imuse.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
-#include "scumm/imuse/imuse.h"
 
 namespace Scumm {
 
 Player_Mac::Player_Mac(ScummEngine *scumm, Audio::Mixer *mixer, int numberOfChannels, int channelMask, bool fadeNoteEnds)
-	: _vm(scumm),
-	  _mixer(mixer),
-	  _sampleRate(_mixer->getOutputRate()),
-	  _soundPlaying(-1),
-	  _numberOfChannels(numberOfChannels),
-	  _channelMask(channelMask),
-	  _fadeNoteEnds(fadeNoteEnds) {
+  : _vm(scumm)
+  , _mixer(mixer)
+  , _sampleRate(_mixer->getOutputRate())
+  , _soundPlaying(-1)
+  , _numberOfChannels(numberOfChannels)
+  , _channelMask(channelMask)
+  , _fadeNoteEnds(fadeNoteEnds) {
 	assert(scumm);
 	assert(mixer);
 }
@@ -220,7 +220,7 @@ bool Player_Mac::Channel::loadInstrument(Common::SeekableReadStream *stream) {
 		return false;
 	}
 
-	stream->readUint32BE();	// initialization option
+	stream->readUint32BE(); // initialization option
 
 	uint16 cmdCount = stream->readUint16BE();
 	if (cmdCount != 1) {

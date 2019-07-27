@@ -20,35 +20,34 @@
  *
  */
 
-#include "gob/save/saveload.h"
-#include "gob/save/saveconverter.h"
 #include "gob/inter.h"
+#include "gob/save/saveconverter.h"
+#include "gob/save/saveload.h"
 #include "gob/variables.h"
 
 namespace Gob {
 
 SaveLoad_v4::SaveFile SaveLoad_v4::_saveFiles[] = {
-	{   "cat.inf", kSaveModeSave, 0, "savegame"},
-	{  "save.tmp", kSaveModeSave, 0, "current screen properties"},
-	{ "save0.tmp", kSaveModeSave, 0, "savegame screen properties"}, // Slot 0
-	{ "save1.tmp", kSaveModeSave, 0, "savegame screen properties"}, // Slot 1
-	{ "save2.tmp", kSaveModeSave, 0, "savegame screen properties"}, // Slot 2
-	{ "save3.tmp", kSaveModeSave, 0, "savegame screen properties"}, // Slot 3
-	{ "save4.tmp", kSaveModeSave, 0, "savegame screen properties"}, // Slot 4
-	{ "save5.tmp", kSaveModeSave, 0, "savegame screen properties"}, // Slot 5
-	{ "save6.tmp", kSaveModeSave, 0, "savegame screen properties"}, // Slot 6
-	{ "save7.tmp", kSaveModeSave, 0, "savegame screen properties"}, // Slot 7
-	{ "save8.tmp", kSaveModeSave, 0, "savegame screen properties"}, // Slot 8
-	{ "save9.tmp", kSaveModeSave, 0, "savegame screen properties"}  // Slot 9
+	{ "cat.inf", kSaveModeSave, 0, "savegame" },
+	{ "save.tmp", kSaveModeSave, 0, "current screen properties" },
+	{ "save0.tmp", kSaveModeSave, 0, "savegame screen properties" }, // Slot 0
+	{ "save1.tmp", kSaveModeSave, 0, "savegame screen properties" }, // Slot 1
+	{ "save2.tmp", kSaveModeSave, 0, "savegame screen properties" }, // Slot 2
+	{ "save3.tmp", kSaveModeSave, 0, "savegame screen properties" }, // Slot 3
+	{ "save4.tmp", kSaveModeSave, 0, "savegame screen properties" }, // Slot 4
+	{ "save5.tmp", kSaveModeSave, 0, "savegame screen properties" }, // Slot 5
+	{ "save6.tmp", kSaveModeSave, 0, "savegame screen properties" }, // Slot 6
+	{ "save7.tmp", kSaveModeSave, 0, "savegame screen properties" }, // Slot 7
+	{ "save8.tmp", kSaveModeSave, 0, "savegame screen properties" }, // Slot 8
+	{ "save9.tmp", kSaveModeSave, 0, "savegame screen properties" } // Slot 9
 };
 
-
-SaveLoad_v4::GameHandler::File::File(GobEngine *vm, const char *base) :
-	SlotFileIndexed(vm, SaveLoad_v4::kSlotCount, base, "s") {
+SaveLoad_v4::GameHandler::File::File(GobEngine *vm, const char *base)
+  : SlotFileIndexed(vm, SaveLoad_v4::kSlotCount, base, "s") {
 }
 
-SaveLoad_v4::GameHandler::File::File(const File &file) :
-	SlotFileIndexed(file._vm, file._slotCount, file._base, file._ext) {
+SaveLoad_v4::GameHandler::File::File(const File &file)
+  : SlotFileIndexed(file._vm, file._slotCount, file._base, file._ext) {
 }
 
 SaveLoad_v4::GameHandler::File::~File() {
@@ -72,8 +71,8 @@ int SaveLoad_v4::GameHandler::File::getSlotRemainder(int32 offset) const {
 	return ((offset - (kPropsSize + kIndexSize)) % varSize);
 }
 
-
-SaveLoad_v4::GameHandler::GameHandler(GobEngine *vm, const char *target) : SaveHandler(vm) {
+SaveLoad_v4::GameHandler::GameHandler(GobEngine *vm, const char *target)
+  : SaveHandler(vm) {
 	_firstSize = true;
 	memset(_props, 0, kPropsSize);
 	memset(_index, 0, kIndexSize);
@@ -124,22 +123,22 @@ bool SaveLoad_v4::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
 		size = varSize;
 	}
 
-	if (((uint32) offset) < kPropsSize) {
+	if (((uint32)offset) < kPropsSize) {
 		// Global properties
 
 		debugC(3, kDebugSaveLoad, "Loading global properties");
 
-		if (((uint32) (offset + size)) > kPropsSize) {
+		if (((uint32)(offset + size)) > kPropsSize) {
 			warning("Wrong global properties list size (%d, %d)", size, offset);
 			return false;
 		}
 
 		_vm->_inter->_variables->copyFrom(dataVar, _props + offset, size);
 
-	} else if (((uint32) offset) == kPropsSize) {
+	} else if (((uint32)offset) == kPropsSize) {
 		// Save index
 
-		if (((uint32) size) != kIndexSize) {
+		if (((uint32)size) != kIndexSize) {
 			warning("Requested index has wrong size (%d)", size);
 			return false;
 		}
@@ -155,11 +154,10 @@ bool SaveLoad_v4::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
 
 		debugC(2, kDebugSaveLoad, "Loading from slot %d", slot);
 
-		if ((slot >= kSlotCount) || (slotRem != 0) ||
-		    (dataVar != 0) || (((uint32) size) != varSize)) {
+		if ((slot >= kSlotCount) || (slotRem != 0) || (dataVar != 0) || (((uint32)size) != varSize)) {
 
 			warning("Invalid saving procedure (%d, %d, %d, %d, %d)",
-					dataVar, size, offset, slot, slotRem);
+			        dataVar, size, offset, slot, slotRem);
 			return false;
 		}
 
@@ -168,8 +166,8 @@ bool SaveLoad_v4::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
 		if (!createReader(slot))
 			return false;
 
-		SavePartInfo info(kSlotNameLength, (uint32) _vm->getGameType(), 0,
-				_vm->getEndianness(), varSize);
+		SavePartInfo info(kSlotNameLength, (uint32)_vm->getGameType(), 0,
+		                  _vm->getEndianness(), varSize);
 		SavePartVars vars(_vm, varSize);
 
 		if (!_reader->readPart(0, &info))
@@ -199,22 +197,22 @@ bool SaveLoad_v4::GameHandler::save(int16 dataVar, int32 size, int32 offset) {
 		size = varSize;
 	}
 
-	if (((uint32) offset) < kPropsSize) {
+	if (((uint32)offset) < kPropsSize) {
 		// Global properties
 
 		debugC(3, kDebugSaveLoad, "Saving global properties");
 
-		if (((uint32) (offset + size)) > kPropsSize) {
+		if (((uint32)(offset + size)) > kPropsSize) {
 			warning("Wrong global properties list size (%d, %d)", size, offset);
 			return false;
 		}
 
 		_vm->_inter->_variables->copyTo(dataVar, _props + offset, size);
 
-	} else if (((uint32) offset) == kPropsSize) {
+	} else if (((uint32)offset) == kPropsSize) {
 		// Save index
 
-		if (((uint32) size) != kIndexSize) {
+		if (((uint32)size) != kIndexSize) {
 			warning("Requested index has wrong size (%d)", size);
 			return false;
 		}
@@ -231,11 +229,10 @@ bool SaveLoad_v4::GameHandler::save(int16 dataVar, int32 size, int32 offset) {
 
 		debugC(2, kDebugSaveLoad, "Saving to slot %d", slot);
 
-		if ((slot >= kSlotCount) || (slotRem != 0) ||
-		    (dataVar != 0) || (((uint32) size) != varSize)) {
+		if ((slot >= kSlotCount) || (slotRem != 0) || (dataVar != 0) || (((uint32)size) != varSize)) {
 
 			warning("Invalid saving procedure (%d, %d, %d, %d, %d)",
-					dataVar, size, offset, slot, slotRem);
+			        dataVar, size, offset, slot, slotRem);
 			return false;
 		}
 
@@ -250,8 +247,8 @@ bool SaveLoad_v4::GameHandler::save(int16 dataVar, int32 size, int32 offset) {
 		if (!createWriter(slot))
 			return false;
 
-		SavePartInfo info(kSlotNameLength, (uint32) _vm->getGameType(), 0,
-				_vm->getEndianness(), varSize);
+		SavePartInfo info(kSlotNameLength, (uint32)_vm->getGameType(), 0,
+		                  _vm->getEndianness(), varSize);
 		SavePartVars vars(_vm, varSize);
 
 		// Write the description
@@ -304,8 +301,8 @@ void SaveLoad_v4::GameHandler::buildIndex(byte *buffer) const {
 	if (varSize == 0)
 		return;
 
-	SavePartInfo info(kSlotNameLength, (uint32) _vm->getGameType(),
-			0, _vm->getEndianness(), varSize);
+	SavePartInfo info(kSlotNameLength, (uint32)_vm->getGameType(),
+	                  0, _vm->getEndianness(), varSize);
 
 	SaveConverter_v4 converter(_vm);
 
@@ -320,7 +317,7 @@ bool SaveLoad_v4::GameHandler::createReader(int slot) {
 	if (slot < 0)
 		return (_reader != 0);
 
-	if (!_reader || (_reader->getSlot() != ((uint32) slot))) {
+	if (!_reader || (_reader->getSlot() != ((uint32)slot))) {
 		Common::String slotFile = _slotFile->build(slot);
 
 		if (slotFile.empty())
@@ -355,7 +352,7 @@ bool SaveLoad_v4::GameHandler::createWriter(int slot) {
 	if (slot < 0)
 		return (_writer != 0);
 
-	if (!_writer || (_writer->getSlot() != ((uint32) slot))) {
+	if (!_writer || (_writer->getSlot() != ((uint32)slot))) {
 		Common::String slotFile = _slotFile->build(slot);
 
 		if (slotFile.empty())
@@ -368,9 +365,8 @@ bool SaveLoad_v4::GameHandler::createWriter(int slot) {
 	return true;
 }
 
-
-SaveLoad_v4::CurScreenPropsHandler::CurScreenPropsHandler(GobEngine *vm) :
-	SaveHandler(vm) {
+SaveLoad_v4::CurScreenPropsHandler::CurScreenPropsHandler(GobEngine *vm)
+  : SaveHandler(vm) {
 
 	_props = new byte[256000];
 	memset(_props, 0, 256000);
@@ -385,7 +381,7 @@ int32 SaveLoad_v4::CurScreenPropsHandler::getSize() {
 }
 
 bool SaveLoad_v4::CurScreenPropsHandler::load(int16 dataVar,
-		int32 size, int32 offset) {
+                                              int32 size, int32 offset) {
 
 	// Using a sprite as a buffer
 	if (size <= 0)
@@ -397,7 +393,7 @@ bool SaveLoad_v4::CurScreenPropsHandler::load(int16 dataVar,
 	}
 
 	debugC(3, kDebugSaveLoad, "Loading screen properties (%d, %d, %d)",
-			dataVar, size, offset);
+	       dataVar, size, offset);
 
 	_vm->_inter->_variables->copyFrom(dataVar, _props + offset, size);
 
@@ -405,7 +401,7 @@ bool SaveLoad_v4::CurScreenPropsHandler::load(int16 dataVar,
 }
 
 bool SaveLoad_v4::CurScreenPropsHandler::save(int16 dataVar,
-		int32 size, int32 offset) {
+                                              int32 size, int32 offset) {
 
 	// Using a sprite as a buffer
 	if (size <= 0)
@@ -417,16 +413,16 @@ bool SaveLoad_v4::CurScreenPropsHandler::save(int16 dataVar,
 	}
 
 	debugC(3, kDebugSaveLoad, "Saving screen properties (%d, %d, %d)",
-			dataVar, size, offset);
+	       dataVar, size, offset);
 
 	_vm->_inter->_variables->copyTo(dataVar, _props + offset, size);
 
 	return true;
 }
 
-
 SaveLoad_v4::ScreenPropsHandler::File::File(const SaveLoad_v4::GameHandler::File &file,
-		uint32 slot) : SaveLoad_v4::GameHandler::File(file) {
+                                            uint32 slot)
+  : SaveLoad_v4::GameHandler::File(file) {
 
 	_slot = slot;
 }
@@ -442,9 +438,9 @@ int SaveLoad_v4::ScreenPropsHandler::File::getSlotRemainder(int32 offset) const 
 	return 0;
 }
 
-
 SaveLoad_v4::ScreenPropsHandler::ScreenPropsHandler(GobEngine *vm, uint32 slot,
-		CurScreenPropsHandler *curProps, GameHandler *gameHandler) : SaveHandler(vm) {
+                                                    CurScreenPropsHandler *curProps, GameHandler *gameHandler)
+  : SaveHandler(vm) {
 
 	_slot = slot;
 	_curProps = curProps;
@@ -490,12 +486,11 @@ bool SaveLoad_v4::ScreenPropsHandler::save(int16 dataVar, int32 size, int32 offs
 	return _gameHandler->saveScreenProps(slot, _curProps->_props);
 }
 
-
-SaveLoad_v4::SaveLoad_v4(GobEngine *vm, const char *targetName) :
-		SaveLoad(vm) {
+SaveLoad_v4::SaveLoad_v4(GobEngine *vm, const char *targetName)
+  : SaveLoad(vm) {
 
 	_gameHandler = new GameHandler(vm, targetName);
-	_curProps    = new CurScreenPropsHandler(vm);
+	_curProps = new CurScreenPropsHandler(vm);
 	for (int i = 0; i < 10; i++)
 		_props[i] = new ScreenPropsHandler(vm, i, _curProps, _gameHandler);
 

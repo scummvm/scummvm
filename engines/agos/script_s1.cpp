@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/system.h"
 #include "common/localization.h"
+#include "common/system.h"
 
 #include "graphics/palette.h"
 
@@ -31,7 +31,7 @@
 
 namespace AGOS {
 
-#define OPCODE(x)	_OPCODE(AGOSEngine_Simon1, x)
+#define OPCODE(x) _OPCODE(AGOSEngine_Simon1, x)
 
 void AGOSEngine_Simon1::setupOpcodes() {
 	static const OpcodeEntrySimon1 opcodes[] = {
@@ -278,7 +278,7 @@ void AGOSEngine_Simon1::setupOpcodes() {
 
 void AGOSEngine_Simon1::executeOpcode(int opcode) {
 	OpcodeProcSimon1 op = _opcodesSimon1[opcode].proc;
-	(this->*op) ();
+	(this->*op)();
 }
 
 // -----------------------------------------------------------------------
@@ -355,8 +355,7 @@ void AGOSEngine_Simon1::os1_screenTextMsg() {
 	tl = getTextLocation(vgaSpriteId);
 	if (_speech && speechId != 0)
 		playSpeech(speechId, vgaSpriteId);
-	if (((getGameType() == GType_SIMON2 && (getFeatures() & GF_TALKIE)) || getGameType() == GType_FF) &&
-		speechId == 0) {
+	if (((getGameType() == GType_SIMON2 && (getFeatures() & GF_TALKIE)) || getGameType() == GType_FF) && speechId == 0) {
 		stopAnimateSimon2(2, vgaSpriteId + 2);
 	}
 
@@ -371,7 +370,6 @@ void AGOSEngine_Simon1::os1_screenTextMsg() {
 
 	if (stringPtr != NULL && stringPtr[0] != 0 && (speechId == 0 || _subtitles))
 		printScreenText(vgaSpriteId, color, (const char *)stringPtr, tl->x, tl->y, tl->width);
-
 }
 
 void AGOSEngine_Simon1::os1_playEffect() {
@@ -412,11 +410,11 @@ void AGOSEngine_Simon1::os1_screenTextPObj() {
 				k = (j % 10) * 10;
 				k += j / 10;
 				if (!(j % 10))
-					sprintf(buf,"0%d%s", k, stringPtr);
+					sprintf(buf, "0%d%s", k, stringPtr);
 				else
-					sprintf(buf,"%d%s", k, stringPtr);
+					sprintf(buf, "%d%s", k, stringPtr);
 			} else {
-				sprintf(buf,"%d%s", subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)], stringPtr);
+				sprintf(buf, "%d%s", subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)], stringPtr);
 			}
 			stringPtr = buf;
 		}

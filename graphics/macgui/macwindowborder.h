@@ -23,11 +23,11 @@
 #ifndef GRAPHICS_MACGUI_MACWINDOWBORDER_H
 #define GRAPHICS_MACGUI_MACWINDOWBORDER_H
 
-#include "common/str.h"
 #include "common/list.h"
+#include "common/str.h"
 
-#include "graphics/nine_patch.h"
 #include "graphics/managed_surface.h"
+#include "graphics/nine_patch.h"
 #include "graphics/transparent_surface.h"
 
 namespace Graphics {
@@ -36,7 +36,7 @@ enum MacBorderOffset {
 	kBorderOffsetLeft = 0,
 	kBorderOffsetRight = 1,
 	kBorderOffsetTop = 2,
-	kBorderOffsetBottom	= 3
+	kBorderOffsetBottom = 3
 };
 
 /**
@@ -108,7 +108,6 @@ public:
 	void blitBorderInto(ManagedSurface &destination, bool active);
 
 private:
-
 	NinePatchBitmap *_activeBorder;
 	NinePatchBitmap *_inactiveBorder;
 
@@ -117,7 +116,6 @@ private:
 
 	bool _hasOffsets;
 	int _borderOffsets[4];
-
 };
 
 } // End of namespace Graphics

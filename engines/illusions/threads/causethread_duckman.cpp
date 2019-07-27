@@ -20,9 +20,9 @@
  *
  */
 
-#include "illusions/duckman/illusions_duckman.h"
 #include "illusions/threads/causethread_duckman.h"
 #include "illusions/actor.h"
+#include "illusions/duckman/illusions_duckman.h"
 #include "illusions/input.h"
 
 namespace Illusions {
@@ -30,8 +30,11 @@ namespace Illusions {
 // CauseThread_Duckman
 
 CauseThread_Duckman::CauseThread_Duckman(IllusionsEngine_Duckman *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
-	uint32 triggerThreadId)
-	: Thread(vm, threadId, callingThreadId, notifyFlags), _vm(vm), _triggerThreadId(triggerThreadId), _flag(false) {
+                                         uint32 triggerThreadId)
+  : Thread(vm, threadId, callingThreadId, notifyFlags)
+  , _vm(vm)
+  , _triggerThreadId(triggerThreadId)
+  , _flag(false) {
 	_type = kTTCauseThread;
 	_sceneId = _vm->getCurrentScene();
 }

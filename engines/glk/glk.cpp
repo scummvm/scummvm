@@ -20,16 +20,14 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "glk/glk.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/language.h"
+#include "common/scummsys.h"
 #include "engines/util.h"
-#include "graphics/scaler.h"
-#include "graphics/thumbnail.h"
-#include "glk/glk.h"
 #include "glk/blorb.h"
 #include "glk/conf.h"
 #include "glk/events.h"
@@ -40,18 +38,33 @@
 #include "glk/sound.h"
 #include "glk/streams.h"
 #include "glk/windows.h"
+#include "graphics/scaler.h"
+#include "graphics/thumbnail.h"
 
 namespace Glk {
 
 GlkEngine *g_vm;
 
-GlkEngine::GlkEngine(OSystem *syst, const GlkGameDescription &gameDesc) :
-		_gameDescription(gameDesc), Engine(syst), _random("Glk"), _blorb(nullptr),
-		_clipboard(nullptr), _conf(nullptr), _events(nullptr), _pictures(nullptr),
-		_screen(nullptr), _selection(nullptr), _sounds(nullptr), _windows(nullptr),
-		_copySelect(false), _terminated(false), _pcSpeaker(nullptr),
-		gli_register_obj(nullptr), gli_unregister_obj(nullptr), gli_register_arr(nullptr),
-		gli_unregister_arr(nullptr) {
+GlkEngine::GlkEngine(OSystem *syst, const GlkGameDescription &gameDesc)
+  : _gameDescription(gameDesc)
+  , Engine(syst)
+  , _random("Glk")
+  , _blorb(nullptr)
+  , _clipboard(nullptr)
+  , _conf(nullptr)
+  , _events(nullptr)
+  , _pictures(nullptr)
+  , _screen(nullptr)
+  , _selection(nullptr)
+  , _sounds(nullptr)
+  , _windows(nullptr)
+  , _copySelect(false)
+  , _terminated(false)
+  , _pcSpeaker(nullptr)
+  , gli_register_obj(nullptr)
+  , gli_unregister_obj(nullptr)
+  , gli_register_arr(nullptr)
+  , gli_unregister_arr(nullptr) {
 	// Set up debug channels
 	DebugMan.addDebugChannel(kDebugCore, "core", "Core engine debug level");
 	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
@@ -156,7 +169,7 @@ Common::Error GlkEngine::run() {
 
 Common::Error GlkEngine::loadGame() {
 	frefid_t ref = _streams->createByPrompt(fileusage_BinaryMode | fileusage_SavedGame,
-		filemode_Read, 0);
+	                                        filemode_Read, 0);
 	if (ref == nullptr)
 		return Common::kReadingFailed;
 
@@ -168,7 +181,7 @@ Common::Error GlkEngine::loadGame() {
 
 Common::Error GlkEngine::saveGame() {
 	frefid_t ref = _streams->createByPrompt(fileusage_BinaryMode | fileusage_SavedGame,
-		filemode_Write, 0);
+	                                        filemode_Write, 0);
 	if (ref == nullptr)
 		return Common::kWritingFailed;
 
@@ -202,15 +215,14 @@ Common::Error GlkEngine::loadGameState(int slot) {
 				Common::String md5 = QuetzalReader::readString(rs);
 				delete rs;
 
-				if (interpType != INTERPRETER_IDS[getInterpreterType()] ||
-					parseLanguage(langCode) !=getLanguage() || md5 != getGameMD5())
+				if (interpType != INTERPRETER_IDS[getInterpreterType()] || parseLanguage(langCode) != getLanguage() || md5 != getGameMD5())
 					errCode = Common::kReadingFailed;
 			}
 		}
 
 		if (errCode == Common::kNoError) {
 			// Scan for an uncompressed memory chunk
-			errCode = Common::kReadingFailed;		// Presume we won't find chunk
+			errCode = Common::kReadingFailed; // Presume we won't find chunk
 			for (QuetzalReader::Iterator it = r.begin(); it != r.end(); ++it) {
 				if ((*it)._id == ID_UMem) {
 					Common::SeekableReadStream *rs = it.getStream();

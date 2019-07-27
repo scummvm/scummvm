@@ -20,13 +20,13 @@
  *
  */
 
+#include "sherlock/music.h"
+#include "audio/audiostream.h"
 #include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "common/mutex.h"
-#include "sherlock/sherlock.h"
-#include "sherlock/music.h"
 #include "sherlock/scalpel/drivers/mididriver.h"
-#include "audio/audiostream.h"
+#include "sherlock/sherlock.h"
 // for Miles Audio (Sherlock Holmes 2)
 #include "audio/miles.h"
 // for 3DO digital music
@@ -38,23 +38,23 @@ namespace Sherlock {
 
 /* This tells which song to play in each room, 0 = no song played */
 static const char ROOM_SONG[62] = {
-	 0, 20, 43,  6, 11,  2,  8, 15,  6, 28,
-	 6, 38,  7, 32, 16,  5,  8, 41,  9, 22,
-	10, 23,  4, 39, 19, 24, 13, 27,  0, 30,
-	 3, 21, 26, 25, 16, 29,  1,  1, 18, 12,
-	 1, 17, 17, 31, 17, 34, 36,  7, 20, 20,
-	33,  8, 44, 40, 42, 35,  0,  0,  0, 12,
+	0, 20, 43, 6, 11, 2, 8, 15, 6, 28,
+	6, 38, 7, 32, 16, 5, 8, 41, 9, 22,
+	10, 23, 4, 39, 19, 24, 13, 27, 0, 30,
+	3, 21, 26, 25, 16, 29, 1, 1, 18, 12,
+	1, 17, 17, 31, 17, 34, 36, 7, 20, 20,
+	33, 8, 44, 40, 42, 35, 0, 0, 0, 12,
 	12
 };
 
 static const char *const SONG_NAMES[NUM_SONGS] = {
-	"SINGERF",  "CHEMIST",  "TOBAC",   "EQUEST",  "MORTUARY", "DOCKS",    "LSTUDY",
-	"LORD",     "BOY",      "PERFUM1", "BAKER1",  "BAKER2",   "OPERA1",   "HOLMES",
-	"FFLAT",    "OP1FLAT",  "ZOO",     "SROOM",   "FLOWERS",  "YARD",     "TAXID",
-	"PUB1",     "VICTIM",   "RUGBY",   "DORM",    "SHERMAN",  "LAWYER",   "THEATRE",
-	"DETECT",   "OPERA4",   "POOL",    "SOOTH",   "ANNA1",    "ANNA2",    "PROLOG3",
+	"SINGERF", "CHEMIST", "TOBAC", "EQUEST", "MORTUARY", "DOCKS", "LSTUDY",
+	"LORD", "BOY", "PERFUM1", "BAKER1", "BAKER2", "OPERA1", "HOLMES",
+	"FFLAT", "OP1FLAT", "ZOO", "SROOM", "FLOWERS", "YARD", "TAXID",
+	"PUB1", "VICTIM", "RUGBY", "DORM", "SHERMAN", "LAWYER", "THEATRE",
+	"DETECT", "OPERA4", "POOL", "SOOTH", "ANNA1", "ANNA2", "PROLOG3",
 	"PAWNSHOP", "MUSICBOX", "MOZART1", "ROBHUNT", "PANCRAS1", "PANCRAS2", "LORDKILL",
-	"BLACKWEL", "RESCUE",   "MAP"
+	"BLACKWEL", "RESCUE", "MAP"
 };
 
 MidiParser_SH::MidiParser_SH() {
@@ -65,7 +65,7 @@ MidiParser_SH::MidiParser_SH() {
 	_lastEvent = 0;
 	_trackEnd = nullptr;
 
-	_musData     = nullptr;
+	_musData = nullptr;
 	_musDataSize = 0;
 }
 
@@ -78,7 +78,7 @@ MidiParser_SH::~MidiParser_SH() {
 void MidiParser_SH::parseNextEvent(EventInfo &info) {
 	Common::StackLock lock(_mutex);
 
-//	warning("parseNextEvent");
+	//	warning("parseNextEvent");
 
 	// there is no delta right at the start of the music data
 	// this order is essential, otherwise notes will get delayed or even go missing
@@ -99,8 +99,7 @@ void MidiParser_SH::parseNextEvent(EventInfo &info) {
 		int idx = *_position._playPos++;
 		info.basic.param1 = idx & 0x7f;
 		info.basic.param2 = 0;
-		}
-		break;
+	} break;
 	case 0xD:
 		info.basic.param1 = *_position._playPos++;
 		info.basic.param2 = 0;
@@ -129,7 +128,7 @@ void MidiParser_SH::parseNextEvent(EventInfo &info) {
 			error("SysEx META event 0xFF");
 
 			byte type = *(_position._playPos++);
-			switch(type) {
+			switch (type) {
 			case 0x2F:
 				// End of Track
 				allNotesOff();
@@ -170,7 +169,7 @@ void MidiParser_SH::parseNextEvent(EventInfo &info) {
 	default:
 		warning("MidiParser_SH::parseNextEvent: Unsupported event code %x", info.event);
 		break;
-	}// switch (info.command())
+	} // switch (info.command())
 }
 
 bool MidiParser_SH::loadMusic(byte *musData, uint32 musDataSize) {
@@ -179,11 +178,11 @@ bool MidiParser_SH::loadMusic(byte *musData, uint32 musDataSize) {
 	debugC(kDebugLevelMusic, "Music: loadMusic()");
 	unloadMusic();
 
-	_musData     = musData;
+	_musData = musData;
 	_musDataSize = musDataSize;
 
 	byte *headerPtr = _musData + 12; // skip over the already checked SPACE header
-	byte *pos       = headerPtr;
+	byte *pos = headerPtr;
 
 	uint16 headerSize = READ_LE_UINT16(headerPtr);
 	assert(headerSize == 0x7F); // Security check
@@ -218,7 +217,9 @@ void MidiParser_SH::unloadMusic() {
 
 /*----------------------------------------------------------------*/
 
-Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
+Music::Music(SherlockEngine *vm, Audio::Mixer *mixer)
+  : _vm(vm)
+  , _mixer(mixer) {
 	_midiDriver = NULL;
 	_midiParser = NULL;
 	_musicType = MT_NULL;
@@ -352,25 +353,25 @@ Music::~Music() {
 bool Music::loadSong(int songNumber) {
 	debugC(kDebugLevelMusic, "Music: loadSong()");
 
-	if(songNumber == 100)
+	if (songNumber == 100)
 		songNumber = 55;
-	else if(songNumber == 70)
+	else if (songNumber == 70)
 		songNumber = 54;
 
-	if((songNumber > 60) || (songNumber < 1))
+	if ((songNumber > 60) || (songNumber < 1))
 		return false;
 
 	songNumber = ROOM_SONG[songNumber];
 
-	if(songNumber == 0)
+	if (songNumber == 0)
 		songNumber = 12;
 
-	if((songNumber > NUM_SONGS) || (songNumber < 1))
+	if ((songNumber > NUM_SONGS) || (songNumber < 1))
 		return false;
 
 	Common::String songName = Common::String(SONG_NAMES[songNumber - 1]);
 
-	freeSong();  // free any song that is currently loaded
+	freeSong(); // free any song that is currently loaded
 	stopMusic();
 
 	if (!playMusic(songName))
@@ -381,7 +382,7 @@ bool Music::loadSong(int songNumber) {
 }
 
 bool Music::loadSong(const Common::String &songName) {
-	freeSong();  // free any song that is currently loaded
+	freeSong(); // free any song that is currently loaded
 	stopMusic();
 
 	if (!playMusic(songName))
@@ -410,7 +411,7 @@ bool Music::playMusic(const Common::String &name) {
 		Common::String midiMusicName = (IS_SERRATED_SCALPEL) ? name + ".MUS" : name + ".XMI";
 		Common::SeekableReadStream *stream = _vm->_res->load(midiMusicName, "MUSIC.LIB");
 
-		byte *midiMusicData     = new byte[stream->size()];
+		byte *midiMusicData = new byte[stream->size()];
 		int32 midiMusicDataSize = stream->size();
 
 		stream->read(midiMusicData, midiMusicDataSize);
@@ -422,7 +423,7 @@ bool Music::playMusic(const Common::String &name) {
 			return false;
 		}
 
-		byte  *dataPos  = midiMusicData;
+		byte *dataPos = midiMusicData;
 		uint32 dataSize = midiMusicDataSize;
 
 		if (IS_SERRATED_SCALPEL) {

@@ -109,7 +109,7 @@ bool ModalIntro::init(int counterdiff) {
 
 		_countDown--;
 
-		if (_countDown > 0 )
+		if (_countDown > 0)
 			return true;
 
 		if (_stillRunning <= 0) {
@@ -150,7 +150,7 @@ bool ModalIntro::init(int counterdiff) {
 	if (_introFlags & 8) {
 		_countDown--;
 
-		if (_countDown > 0 )
+		if (_countDown > 0)
 			return true;
 
 		if (_stillRunning > 0) {
@@ -398,7 +398,7 @@ void ModalVideoPlayer::play(const char *filename) {
 					frame = tmpFrame.get();
 				}
 				g_fp->_system->copyRectToScreen(frame->getPixels(), frame->pitch,
-					x, y, frame->w, frame->h);
+				                                x, y, frame->w, frame->h);
 
 				if (_decoder.hasDirtyPalette())
 					g_fp->_system->getPaletteManager()->setPalette(_decoder.getPalette(), 0, 256);
@@ -578,7 +578,6 @@ int ModalMap::findMapSceneId(int picId) {
 	return 0;
 }
 
-
 void ModalMap::update() {
 	g_fp->_sceneRect = _rect2;
 
@@ -722,8 +721,7 @@ void ModalMap::clickButton(PictureObject *pic) {
 	PreloadItem *pitem2 = nullptr;
 
 	for (uint i = 0; i < g_fp->_gameLoader->_preloadItems.size(); i++)
-		if (g_fp->_gameLoader->_preloadItems[i].preloadId1 == SC_MAP &&
-				g_fp->_gameLoader->_preloadItems[i].preloadId2 == pic->_id) {
+		if (g_fp->_gameLoader->_preloadItems[i].preloadId1 == SC_MAP && g_fp->_gameLoader->_preloadItems[i].preloadId2 == pic->_id) {
 			pitem2 = &g_fp->_gameLoader->_preloadItems[i];
 			break;
 		}
@@ -881,7 +879,7 @@ PictureObject *ModalMap::getSceneHPicture(PictureObject *obj) {
 
 	switch (obj->_id) {
 	case PIC_MAP_S01:
- 		return _mapScene->getPictureObjectById(PIC_MAP_H01, 0);
+		return _mapScene->getPictureObjectById(PIC_MAP_H01, 0);
 	case PIC_MAP_S02:
 		return _mapScene->getPictureObjectById(PIC_MAP_H02, 0);
 	case PIC_MAP_S03:
@@ -1030,8 +1028,8 @@ bool ModalMap::checkScenePass(PreloadItem *item) {
 	}
 
 	if ((item->sceneId != SC_37 && item->preloadId1 != SC_37)
-		|| (g_fp->getObjectState(sO_Jawcrucnher) != g_fp->getObjectEnumState(sO_Jawcrucnher, sO_WithoutCarpet))) {
-			return res;
+	    || (g_fp->getObjectState(sO_Jawcrucnher) != g_fp->getObjectEnumState(sO_Jawcrucnher, sO_WithoutCarpet))) {
+		return res;
 	} else {
 		res = false;
 	}
@@ -1397,19 +1395,18 @@ bool ModalMainMenu::init(int counterdiff) {
 		delete this;
 		break;
 
-	case PIC_MNU_EXIT_L:
-		{
-			ModalQuery *mq = new ModalQuery();
+	case PIC_MNU_EXIT_L: {
+		ModalQuery *mq = new ModalQuery();
 
-			g_fp->_modalObject = mq;
+		g_fp->_modalObject = mq;
 
-			mq->_parentObj = this;
-			mq->create(_scene, _scene, PIC_MEX_BGR);
+		mq->_parentObj = this;
+		mq->create(_scene, _scene, PIC_MEX_BGR);
 
-			_hoverAreaId = 0;
+		_hoverAreaId = 0;
 
-			return true;
-		}
+		return true;
+	}
 
 	case PIC_MNU_DEBUG_L:
 		g_fp->_gameLoader->unloadScene(SC_MAINMENU);
@@ -1458,28 +1455,27 @@ bool ModalMainMenu::init(int counterdiff) {
 		return true;
 
 	case PIC_MNU_SAVE_L:
-	case PIC_MNU_LOAD_L:
-		{
-			ModalSaveGame *sg = new ModalSaveGame();
+	case PIC_MNU_LOAD_L: {
+		ModalSaveGame *sg = new ModalSaveGame();
 
-			g_fp->_modalObject = sg;
-			g_fp->_modalObject->_parentObj = _parentObj;
+		g_fp->_modalObject = sg;
+		g_fp->_modalObject->_parentObj = _parentObj;
 
-			int mode = 0;
-			if (_hoverAreaId == PIC_MNU_SAVE_L)
-				mode = 1;
+		int mode = 0;
+		if (_hoverAreaId == PIC_MNU_SAVE_L)
+			mode = 1;
 
-			sg->setup(g_fp->accessScene(SC_MAINMENU), mode);
-			sg->setScene(g_fp->accessScene(SC_MAINMENU));
+		sg->setup(g_fp->accessScene(SC_MAINMENU), mode);
+		sg->setScene(g_fp->accessScene(SC_MAINMENU));
 
-			sg->_rect = _screct;
-			sg->_oldBgX = _bgX;
-			sg->_oldBgY = _bgY;
+		sg->_rect = _screct;
+		sg->_oldBgX = _bgX;
+		sg->_oldBgY = _bgY;
 
-			delete this;
-		}
+		delete this;
+	}
 
-		break;
+	break;
 
 	default:
 		if (_lastArea) {
@@ -1494,7 +1490,7 @@ bool ModalMainMenu::init(int counterdiff) {
 
 			g_fp->_cursorId = PIC_CSR_DEFAULT;
 
-			if (idx != this->_menuSliderIdx && idx != this->_musicSliderIdx )
+			if (idx != this->_menuSliderIdx && idx != this->_musicSliderIdx)
 				goto LABEL_40;
 		}
 
@@ -1691,7 +1687,7 @@ void ModalMainMenu::enableDebugMenu(char c) {
 	if (c == deb[_debugKeyCount]) {
 		_debugKeyCount++;
 
-		if (deb[_debugKeyCount] )
+		if (deb[_debugKeyCount])
 			return;
 
 		enableDebugMenuButton();
@@ -2134,7 +2130,7 @@ char *ModalSaveGame::getSaveName() {
 
 bool ModalSaveGame::getFileInfo(int slot, FileInfo *fileinfo) {
 	Common::ScopedPtr<Common::InSaveFile> f(g_system->getSavefileManager()->openForLoading(
-		Fullpipe::getSavegameFile(slot)));
+	  Fullpipe::getSavegameFile(slot)));
 
 	if (!f)
 		return false;
@@ -2200,8 +2196,7 @@ void ModalSaveGame::update() {
 	g_fp->setCursor(g_fp->_cursorId);
 
 	for (uint i = 0; i < _files.size(); i++) {
-		if (g_fp->_mouseScreenPos.x < _files[i].fx1 || g_fp->_mouseScreenPos.x > _files[i].fx2 ||
-			g_fp->_mouseScreenPos.y < _files[i].fy1 || g_fp->_mouseScreenPos.y > _files[i].fy2 ) {
+		if (g_fp->_mouseScreenPos.x < _files[i].fx1 || g_fp->_mouseScreenPos.x > _files[i].fx2 || g_fp->_mouseScreenPos.y < _files[i].fy1 || g_fp->_mouseScreenPos.y > _files[i].fy2) {
 			if (_files[i].empty) {
 				_emptyD->setOXY(_files[i].fx1, _files[i].fy1);
 				_emptyD->draw();

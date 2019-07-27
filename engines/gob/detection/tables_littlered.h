@@ -28,238 +28,225 @@
 // -- DOS EGA Floppy --
 
 {
-	{
-		"littlered",
-		"",
-		AD_ENTRY1s("intro.stk", "0b72992f5d8b5e6e0330572a5753ea25", 256490),
-		EN_GRB,
-		kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
+	{ "littlered",
+	  "",
+	  AD_ENTRY1s("intro.stk", "0b72992f5d8b5e6e0330572a5753ea25", 256490),
+	  EN_GRB,
+	  kPlatformDOS,
+	  ADGF_NO_FLAGS,
+	  GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
 	kGameTypeLittleRed,
 	kFeaturesAdLib | kFeaturesEGA,
-	0, 0, 0
+	0,
+	0,
+	0
 },
-{
-	{
-		"littlered",
-		"",
-		AD_ENTRY1s("intro.stk", "0b72992f5d8b5e6e0330572a5753ea25", 256490),
-		FR_FRA,
-		kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
-	kGameTypeLittleRed,
-	kFeaturesAdLib | kFeaturesEGA,
-	0, 0, 0
-},
-{
-	{
-		"littlered",
-		"",
-		AD_ENTRY1s("intro.stk", "0b72992f5d8b5e6e0330572a5753ea25", 256490),
-		DE_DEU,
-		kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
-	kGameTypeLittleRed,
-	kFeaturesAdLib | kFeaturesEGA,
-	0, 0, 0
-},
-{
-	{
-		"littlered",
-		"",
-		AD_ENTRY1s("intro.stk", "0b72992f5d8b5e6e0330572a5753ea25", 256490),
-		ES_ESP,
-		kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
-	kGameTypeLittleRed,
-	kFeaturesAdLib | kFeaturesEGA,
-	0, 0, 0
-},
-{
-	{
-		"littlered",
-		"",
-		AD_ENTRY1s("intro.stk", "0b72992f5d8b5e6e0330572a5753ea25", 256490),
-		IT_ITA,
-		kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
-	kGameTypeLittleRed,
-	kFeaturesAdLib | kFeaturesEGA,
-	0, 0, 0
-},
+  { { "littlered",
+	    "",
+	    AD_ENTRY1s("intro.stk", "0b72992f5d8b5e6e0330572a5753ea25", 256490),
+	    FR_FRA,
+	    kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
+	  kGameTypeLittleRed,
+	  kFeaturesAdLib | kFeaturesEGA,
+	  0,
+	  0,
+	  0 },
+  { { "littlered",
+	    "",
+	    AD_ENTRY1s("intro.stk", "0b72992f5d8b5e6e0330572a5753ea25", 256490),
+	    DE_DEU,
+	    kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
+	  kGameTypeLittleRed,
+	  kFeaturesAdLib | kFeaturesEGA,
+	  0,
+	  0,
+	  0 },
+  { { "littlered",
+	    "",
+	    AD_ENTRY1s("intro.stk", "0b72992f5d8b5e6e0330572a5753ea25", 256490),
+	    ES_ESP,
+	    kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
+	  kGameTypeLittleRed,
+	  kFeaturesAdLib | kFeaturesEGA,
+	  0,
+	  0,
+	  0 },
+  { { "littlered",
+	    "",
+	    AD_ENTRY1s("intro.stk", "0b72992f5d8b5e6e0330572a5753ea25", 256490),
+	    IT_ITA,
+	    kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
+	  kGameTypeLittleRed,
+	  kFeaturesAdLib | kFeaturesEGA,
+	  0,
+	  0,
+	  0 },
 
-// -- Windows --
+  // -- Windows --
 
-{
-	{
-		"littlered",
-		"",
-		AD_ENTRY1s("intro.stk", "113a16877e4f72037d9714be1c2b0221", 1187522),
-		EN_GRB,
-		kPlatformWindows,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
-	kGameTypeLittleRed,
-	kFeaturesAdLib | kFeaturesEGA,
-	0, 0, 0
-},
-{
-	{
-		"littlered",
-		"",
-		AD_ENTRY1s("intro.stk", "113a16877e4f72037d9714be1c2b0221", 1187522),
-		FR_FRA,
-		kPlatformWindows,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
-	kGameTypeLittleRed,
-	kFeaturesAdLib | kFeaturesEGA,
-	0, 0, 0
-},
-{
-	{
-		"littlered",
-		"",
-		AD_ENTRY1s("intro.stk", "113a16877e4f72037d9714be1c2b0221", 1187522),
-		DE_DEU,
-		kPlatformWindows,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
-	kGameTypeLittleRed,
-	kFeaturesAdLib | kFeaturesEGA,
-	0, 0, 0
-},
-{
-	{
-		"littlered",
-		"",
-		AD_ENTRY1s("intro.stk", "113a16877e4f72037d9714be1c2b0221", 1187522),
-		IT_ITA,
-		kPlatformWindows,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
-	kGameTypeLittleRed,
-	kFeaturesAdLib | kFeaturesEGA,
-	0, 0, 0
-},
-{
-	{
-		"littlered",
-		"",
-		AD_ENTRY1s("intro.stk", "113a16877e4f72037d9714be1c2b0221", 1187522),
-		ES_ESP,
-		kPlatformWindows,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
-	kGameTypeLittleRed,
-	kFeaturesAdLib | kFeaturesEGA,
-	0, 0, 0
-},
-{ // Found in french ADI 2 Francais-Maths CM1
-	{
-		"littlered",
-		"",
-		AD_ENTRY1s("intro.stk", "5c15b37ed27ac2470854e9e09374d50e", 1248610),
-		FR_FRA,
-		kPlatformWindows,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
-	kGameTypeLittleRed,
-	kFeaturesAdLib | kFeaturesEGA,
-	0, 0, 0
-},
-{ // Found in french ADI 2 Francais-Maths CM1
-	{
-		"littlered",
-		"",
-		AD_ENTRY1s("intro.stk", "5c15b37ed27ac2470854e9e09374d50e", 1248610),
-		ES_ESP,
-		kPlatformWindows,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
-	kGameTypeLittleRed,
-	kFeaturesAdLib | kFeaturesEGA,
-	0, 0, 0
-},
-{ // Found in french ADI 2 Francais-Maths CM1
-	{
-		"littlered",
-		"",
-		AD_ENTRY1s("intro.stk", "5c15b37ed27ac2470854e9e09374d50e", 1248610),
-		EN_GRB,
-		kPlatformWindows,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
-	kGameTypeLittleRed,
-	kFeaturesAdLib | kFeaturesEGA,
-	0, 0, 0
-},
-{ // Found in french ADI 2 Francais-Maths CM1
-	{
-		"littlered",
-		"",
-		AD_ENTRY1s("intro.stk", "5c15b37ed27ac2470854e9e09374d50e", 1248610),
-		IT_ITA,
-		kPlatformWindows,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
-	kGameTypeLittleRed,
-	kFeaturesAdLib | kFeaturesEGA,
-	0, 0, 0
-},
-{ // Found in french ADI 2 Francais-Maths CM1
-	{
-		"littlered",
-		"",
-		AD_ENTRY1s("intro.stk", "5c15b37ed27ac2470854e9e09374d50e", 1248610),
-		DE_DEU,
-		kPlatformWindows,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
-	kGameTypeLittleRed,
-	kFeaturesAdLib | kFeaturesEGA,
-	0, 0, 0
-},
+  {
+	  { "littlered",
+	    "",
+	    AD_ENTRY1s("intro.stk", "113a16877e4f72037d9714be1c2b0221", 1187522),
+	    EN_GRB,
+	    kPlatformWindows,
+	    ADGF_NO_FLAGS,
+	    GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
+	  kGameTypeLittleRed,
+	  kFeaturesAdLib | kFeaturesEGA,
+	  0,
+	  0,
+	  0
+  },
+  { { "littlered",
+	    "",
+	    AD_ENTRY1s("intro.stk", "113a16877e4f72037d9714be1c2b0221", 1187522),
+	    FR_FRA,
+	    kPlatformWindows,
+	    ADGF_NO_FLAGS,
+	    GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
+	  kGameTypeLittleRed,
+	  kFeaturesAdLib | kFeaturesEGA,
+	  0,
+	  0,
+	  0 },
+  { { "littlered",
+	    "",
+	    AD_ENTRY1s("intro.stk", "113a16877e4f72037d9714be1c2b0221", 1187522),
+	    DE_DEU,
+	    kPlatformWindows,
+	    ADGF_NO_FLAGS,
+	    GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
+	  kGameTypeLittleRed,
+	  kFeaturesAdLib | kFeaturesEGA,
+	  0,
+	  0,
+	  0 },
+  { { "littlered",
+	    "",
+	    AD_ENTRY1s("intro.stk", "113a16877e4f72037d9714be1c2b0221", 1187522),
+	    IT_ITA,
+	    kPlatformWindows,
+	    ADGF_NO_FLAGS,
+	    GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
+	  kGameTypeLittleRed,
+	  kFeaturesAdLib | kFeaturesEGA,
+	  0,
+	  0,
+	  0 },
+  { { "littlered",
+	    "",
+	    AD_ENTRY1s("intro.stk", "113a16877e4f72037d9714be1c2b0221", 1187522),
+	    ES_ESP,
+	    kPlatformWindows,
+	    ADGF_NO_FLAGS,
+	    GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
+	  kGameTypeLittleRed,
+	  kFeaturesAdLib | kFeaturesEGA,
+	  0,
+	  0,
+	  0 },
+  { // Found in french ADI 2 Francais-Maths CM1
+	  {
+	    "littlered",
+	    "",
+	    AD_ENTRY1s("intro.stk", "5c15b37ed27ac2470854e9e09374d50e", 1248610),
+	    FR_FRA,
+	    kPlatformWindows,
+	    ADGF_NO_FLAGS,
+	    GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
+	  kGameTypeLittleRed,
+	  kFeaturesAdLib | kFeaturesEGA,
+	  0,
+	  0,
+	  0
+  },
+  { // Found in french ADI 2 Francais-Maths CM1
+	  {
+	    "littlered",
+	    "",
+	    AD_ENTRY1s("intro.stk", "5c15b37ed27ac2470854e9e09374d50e", 1248610),
+	    ES_ESP,
+	    kPlatformWindows,
+	    ADGF_NO_FLAGS,
+	    GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
+	  kGameTypeLittleRed,
+	  kFeaturesAdLib | kFeaturesEGA,
+	  0,
+	  0,
+	  0
+  },
+  { // Found in french ADI 2 Francais-Maths CM1
+	  {
+	    "littlered",
+	    "",
+	    AD_ENTRY1s("intro.stk", "5c15b37ed27ac2470854e9e09374d50e", 1248610),
+	    EN_GRB,
+	    kPlatformWindows,
+	    ADGF_NO_FLAGS,
+	    GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
+	  kGameTypeLittleRed,
+	  kFeaturesAdLib | kFeaturesEGA,
+	  0,
+	  0,
+	  0
+  },
+  { // Found in french ADI 2 Francais-Maths CM1
+	  {
+	    "littlered",
+	    "",
+	    AD_ENTRY1s("intro.stk", "5c15b37ed27ac2470854e9e09374d50e", 1248610),
+	    IT_ITA,
+	    kPlatformWindows,
+	    ADGF_NO_FLAGS,
+	    GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
+	  kGameTypeLittleRed,
+	  kFeaturesAdLib | kFeaturesEGA,
+	  0,
+	  0,
+	  0
+  },
+  { // Found in french ADI 2 Francais-Maths CM1
+	  {
+	    "littlered",
+	    "",
+	    AD_ENTRY1s("intro.stk", "5c15b37ed27ac2470854e9e09374d50e", 1248610),
+	    DE_DEU,
+	    kPlatformWindows,
+	    ADGF_NO_FLAGS,
+	    GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
+	  kGameTypeLittleRed,
+	  kFeaturesAdLib | kFeaturesEGA,
+	  0,
+	  0,
+	  0
+  },
 
-// -- Amiga --
+  // -- Amiga --
 
-{
-	{
-		"littlered",
-		"",
-		{
-			{"intro.stk", 0, "0b72992f5d8b5e6e0330572a5753ea25", 256490},
-			{"mod.babayaga", 0, "43484cde74e0860785f8e19f0bc776d1", 60248},
-			{0, 0, 0, 0}
-		},
-		UNK_LANG,
-		kPlatformAmiga,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
-	kGameTypeLittleRed,
-	kFeaturesNone,
-	0, 0, 0
-},
+  {
+	  { "littlered",
+	    "",
+	    { { "intro.stk", 0, "0b72992f5d8b5e6e0330572a5753ea25", 256490 },
+	      { "mod.babayaga", 0, "43484cde74e0860785f8e19f0bc776d1", 60248 },
+	      { 0, 0, 0, 0 } },
+	    UNK_LANG,
+	    kPlatformAmiga,
+	    ADGF_NO_FLAGS,
+	    GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH) },
+	  kGameTypeLittleRed,
+	  kFeaturesNone,
+	  0,
+	  0,
+	  0
+  },
 
 #endif // GOB_DETECTION_TABLES_LITTLERED_H

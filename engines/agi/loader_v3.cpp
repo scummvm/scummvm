@@ -43,7 +43,7 @@ int AgiLoader_v3::detectGame() {
 	}
 
 	for (Common::FSList::const_iterator file = fslist.begin();
-	        file != fslist.end() && !found; ++file) {
+	     file != fslist.end() && !found; ++file) {
 		Common::String f = file->getName();
 		f.toLowercase();
 
@@ -85,7 +85,7 @@ int AgiLoader_v3::loadDir(struct AgiDir *agid, Common::File *fp,
 		// build directory entries
 		for (i = 0; i < len; i += 3) {
 			agid[i / 3].volume = *(mem + i) >> 4;
-			agid[i / 3].offset = READ_BE_UINT24(mem + i) & (uint32) _EMPTY;
+			agid[i / 3].offset = READ_BE_UINT24(mem + i) & (uint32)_EMPTY;
 		}
 
 		free(mem);
@@ -128,7 +128,7 @@ int AgiLoader_v3::init() {
 	fp.seek(0, SEEK_END);
 
 	for (i = 0; i < 4; i++)
-		agiVol3[i].sddr = READ_LE_UINT16((uint8 *) & xd[i]);
+		agiVol3[i].sddr = READ_LE_UINT16((uint8 *)&xd[i]);
 
 	agiVol3[0].len = agiVol3[1].sddr - agiVol3[0].sddr;
 	agiVol3[1].len = agiVol3[2].sddr - agiVol3[1].sddr;
@@ -211,16 +211,16 @@ uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
 		fp.seek(agid->offset, SEEK_SET);
 		fp.read(&x, 7);
 
-		if (READ_BE_UINT16((uint8 *) x) != 0x1234) {
+		if (READ_BE_UINT16((uint8 *)x) != 0x1234) {
 			debugC(3, kDebugLevelResources, "path = %s", path.c_str());
 			debugC(3, kDebugLevelResources, "offset = %d", agid->offset);
 			debugC(3, kDebugLevelResources, "x = %x %x", x[0], x[1]);
 			error("ACK! BAD RESOURCE");
-			_vm->quitGame();    // for compilers that don't support NORETURN
+			_vm->quitGame(); // for compilers that don't support NORETURN
 		}
 
-		agid->len = READ_LE_UINT16((uint8 *) x + 3);    // uncompressed size
-		agid->clen = READ_LE_UINT16((uint8 *) x + 5);   // compressed len
+		agid->len = READ_LE_UINT16((uint8 *)x + 3); // uncompressed size
+		agid->clen = READ_LE_UINT16((uint8 *)x + 5); // compressed len
 
 		compBuffer = (uint8 *)calloc(1, agid->clen + 32);
 		fp.read(compBuffer, agid->clen);

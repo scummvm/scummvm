@@ -344,8 +344,8 @@ void Mouse::tick(int x, int y) {
 	int cursorId = 0;
 
 	bool isClickable = false;
-	bool isObstacle  = false;
-	bool isTarget    = false;
+	bool isObstacle = false;
+	bool isTarget = false;
 
 	int sceneObjectId = _vm->_sceneObjects->findByXYZ(&isClickable, &isObstacle, &isTarget, scenePosition, true, false, true);
 	int exitType = _vm->_scene->_exits->getTypeAtXY(x, y);
@@ -375,8 +375,8 @@ void Mouse::tick(int x, int y) {
 
 	if (!_vm->_combat->isActive()) {
 		if (sceneObjectId == kActorMcCoy + kSceneObjectOffsetActors
-		|| (sceneObjectId > 0 && isClickable)
-		|| _vm->_scene->_regions->getRegionAtXY(x, y) >= 0) {
+		    || (sceneObjectId > 0 && isClickable)
+		    || _vm->_scene->_regions->getRegionAtXY(x, y) >= 0) {
 			cursorId = 1;
 		}
 		setCursor(cursorId);
@@ -444,12 +444,12 @@ Vector3 Mouse::getXYZ(int x, int y) const {
 		return Vector3();
 
 	int screenRight = 640 - x;
-	int screenDown  = 480 - y;
+	int screenDown = 480 - y;
 
 	float zcoef = 1.0f / tan(_vm->_view->_fovX / 2.0f);
 
 	float x3d = (2.0f / 640.0f * screenRight - 1.0f);
-	float y3d = (2.0f / 480.0f * screenDown  - 1.0f) * 0.75f;
+	float y3d = (2.0f / 480.0f * screenDown - 1.0f) * 0.75f;
 
 	uint16 zbufval = _vm->_zbuffer->getZValue(x, y);
 

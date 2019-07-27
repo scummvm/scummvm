@@ -25,12 +25,12 @@
 #ifndef GUI_ANIMATION_PARALLELANIMATION_H
 #define GUI_ANIMATION_PARALLELANIMATION_H
 
-#include "gui/animation/Animation.h"
 #include "common/array.h"
+#include "gui/animation/Animation.h"
 
 namespace GUI {
 
-class ParallelAnimation: public Animation {
+class ParallelAnimation : public Animation {
 public:
 	ParallelAnimation() {}
 	virtual ~ParallelAnimation() {}
@@ -63,7 +63,6 @@ public:
 	}
 
 private:
-
 	Common::Array<AnimationPtr> _animations;
 };
 

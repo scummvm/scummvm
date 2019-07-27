@@ -23,8 +23,8 @@
 #ifndef HOPKINS_FILES_H
 #define HOPKINS_FILES_H
 
-#include "common/scummsys.h"
 #include "common/hash-str.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 #include "common/stream.h"
 
@@ -33,8 +33,14 @@ namespace Hopkins {
 class HopkinsEngine;
 
 // RES_ANI = 4 has been removed because it's not used
-enum CatMode { RES_INI = 1, RES_REP = 2, RES_LIN = 3, RES_PER = 5,
-               RES_PIC = 6, RES_SAN = 7, RES_SLI = 8, RES_VOI = 9 };
+enum CatMode { RES_INI = 1,
+	             RES_REP = 2,
+	             RES_LIN = 3,
+	             RES_PER = 5,
+	             RES_PIC = 6,
+	             RES_SAN = 7,
+	             RES_SLI = 8,
+	             RES_VOI = 9 };
 
 class FileManager {
 public:

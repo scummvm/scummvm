@@ -26,21 +26,22 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CArboretumGate, CBackground)
-	ON_MESSAGE(ChangeSeasonMsg)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(TurnOff)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(TurnOn)
+ON_MESSAGE(ChangeSeasonMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(TurnOff)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(TurnOn)
 END_MESSAGE_MAP()
 
 bool CArboretumGate::_gotSpeechCentre;
 bool CArboretumGate::_disabled;
 int CArboretumGate::_initialFrame;
 
-CArboretumGate::CArboretumGate() : CBackground() {
+CArboretumGate::CArboretumGate()
+  : CBackground() {
 	_arboretumViewName = "NULL";
 	_exitViewName = "NULL";
 	_seasonNum = SEASON_SUMMER;

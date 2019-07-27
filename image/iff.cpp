@@ -76,12 +76,12 @@ bool IFFDecoder::loadStream(Common::SeekableReadStream &stream) {
 	const uint32 type = stream.readUint32BE();
 
 	switch (type) {
-		case ID_ILBM:
-			_type = TYPE_ILBM;
-			break;
-		case ID_PBM:
-			_type = TYPE_PBM;
-			break;
+	case ID_ILBM:
+		_type = TYPE_ILBM;
+		break;
+	case ID_PBM:
+		_type = TYPE_PBM;
+		break;
 	}
 
 	if (type == TYPE_UNKNOWN) {

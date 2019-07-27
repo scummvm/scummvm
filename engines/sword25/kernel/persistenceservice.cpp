@@ -29,30 +29,30 @@
  *
  */
 
+#include "sword25/kernel/persistenceservice.h"
 #include "common/fs.h"
 #include "common/savefile.h"
 #include "common/zlib.h"
-#include "sword25/kernel/kernel.h"
-#include "sword25/kernel/persistenceservice.h"
-#include "sword25/kernel/inputpersistenceblock.h"
-#include "sword25/kernel/outputpersistenceblock.h"
-#include "sword25/kernel/filesystemutil.h"
 #include "sword25/gfx/graphicengine.h"
-#include "sword25/sfx/soundengine.h"
 #include "sword25/input/inputengine.h"
+#include "sword25/kernel/filesystemutil.h"
+#include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/math/regionregistry.h"
 #include "sword25/script/script.h"
+#include "sword25/sfx/soundengine.h"
 
 namespace Sword25 {
 
 //static const char *SAVEGAME_EXTENSION = ".b25s";
 static const char *SAVEGAME_DIRECTORY = "saves";
 static const char *FILE_MARKER = "BS25SAVEGAME";
-static const uint  SLOT_COUNT = 18;
-static const uint  FILE_COPY_BUFFER_SIZE = 1024 * 10;
+static const uint SLOT_COUNT = 18;
+static const uint FILE_COPY_BUFFER_SIZE = 1024 * 10;
 static const char *VERSIONIDOLD = "SCUMMVM1";
 static const char *VERSIONID = "SCUMMVM2";
-static const int   VERSIONNUM = 3;
+static const int VERSIONNUM = 3;
 
 #define MAX_SAVEGAME_SIZE 100
 
@@ -77,8 +77,7 @@ static Common::String formatTimestamp(TimeDate time) {
 	char buffer[100];
 	snprintf(buffer, 100, "%.2d-%s-%.4d %.2d:%.2d:%.2d",
 	         time.tm_mday, monthList[time.tm_mon].c_str(), 1900 + time.tm_year,
-	         time.tm_hour, time.tm_min, time.tm_sec
-	        );
+	         time.tm_hour, time.tm_min, time.tm_sec);
 
 	return Common::String(buffer);
 }
@@ -101,7 +100,7 @@ struct SavegameInformation {
 	bool isOccupied;
 	bool isCompatible;
 	Common::String description;
-	int  version;
+	int version;
 	uint gamedataLength;
 	uint gamedataOffset;
 	uint gamedataUncompressedLength;
@@ -186,7 +185,8 @@ PersistenceService &PersistenceService::getInstance() {
 	return instance;
 }
 
-PersistenceService::PersistenceService() : _impl(new Impl) {
+PersistenceService::PersistenceService()
+  : _impl(new Impl) {
 }
 
 PersistenceService::~PersistenceService() {
@@ -213,15 +213,15 @@ Common::String PersistenceService::getSavegameDirectory() {
 }
 
 namespace {
-bool checkslotID(uint slotID) {
-	// Überprüfen, ob die Slot-ID zulässig ist.
-	if (slotID >= SLOT_COUNT) {
-		error("Tried to access an invalid slot (%d). Only slot ids from 0 to %d are allowed.", slotID, SLOT_COUNT - 1);
-		return false;
-	} else {
-		return true;
+	bool checkslotID(uint slotID) {
+		// Überprüfen, ob die Slot-ID zulässig ist.
+		if (slotID >= SLOT_COUNT) {
+			error("Tried to access an invalid slot (%d). Only slot ids from 0 to %d are allowed.", slotID, SLOT_COUNT - 1);
+			return false;
+		} else {
+			return true;
+		}
 	}
-}
 }
 
 bool PersistenceService::isSlotOccupied(uint slotID) {
@@ -393,7 +393,7 @@ bool PersistenceService::loadGame(uint slotID) {
 	if (uncompressedBufferSize > curSavegameInfo.gamedataLength) {
 		// Older saved game, where the game data was compressed again.
 		if (!Common::uncompress(reinterpret_cast<byte *>(&uncompressedDataBuffer[0]), &uncompressedBufferSize,
-					   reinterpret_cast<byte *>(&compressedDataBuffer[0]), curSavegameInfo.gamedataLength)) {
+		                        reinterpret_cast<byte *>(&compressedDataBuffer[0]), curSavegameInfo.gamedataLength)) {
 			error("Unable to decompress the gamedata from savegame file \"%s\".", filename.c_str());
 			delete[] uncompressedDataBuffer;
 			delete[] compressedDataBuffer;

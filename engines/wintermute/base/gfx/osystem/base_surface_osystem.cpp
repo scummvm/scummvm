@@ -26,24 +26,25 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
+#include "common/stream.h"
+#include "common/system.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
-#include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
 #include "engines/wintermute/base/gfx/base_image.h"
+#include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
 #include "engines/wintermute/platform_osystem.h"
-#include "graphics/transparent_surface.h"
-#include "graphics/transform_tools.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
-#include "common/stream.h"
-#include "common/system.h"
+#include "graphics/transform_tools.h"
+#include "graphics/transparent_surface.h"
 
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-BaseSurfaceOSystem::BaseSurfaceOSystem(BaseGame *inGame) : BaseSurface(inGame) {
+BaseSurfaceOSystem::BaseSurfaceOSystem(BaseGame *inGame)
+  : BaseSurface(inGame) {
 	_surface = new Graphics::Surface();
 	_alphaMask = nullptr;
 	_alphaType = Graphics::ALPHA_FULL;
@@ -106,12 +107,12 @@ Graphics::AlphaType hasTransparencyType(const Graphics::Surface *surf) {
 bool BaseSurfaceOSystem::create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	/*  BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer); */
 	_filename = filename;
-//	const Graphics::Surface *surface = image->getSurface();
+	//	const Graphics::Surface *surface = image->getSurface();
 
 	if (defaultCK) {
-		ckRed   = 255;
+		ckRed = 255;
 		ckGreen = 0;
-		ckBlue  = 255;
+		ckBlue = 255;
 	}
 
 	_ckDefault = defaultCK;
@@ -288,7 +289,7 @@ uint32 BaseSurfaceOSystem::getPixelAt(Graphics::Surface *surface, int x, int y) 
 		break;
 
 	default:
-		return 0;       /* shouldn't happen, but avoids warnings */
+		return 0; /* shouldn't happen, but avoids warnings */
 	}
 	return 0;
 }
@@ -345,13 +346,11 @@ bool BaseSurfaceOSystem::endPixelOp() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::display(int x, int y, Rect32 rect, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
-	return drawSprite(x, y, &rect, nullptr, Graphics::TransformStruct(Graphics::kDefaultZoomX, Graphics::kDefaultZoomY,  mirrorX, mirrorY));
+	return drawSprite(x, y, &rect, nullptr, Graphics::TransformStruct(Graphics::kDefaultZoomX, Graphics::kDefaultZoomY, mirrorX, mirrorY));
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTrans(int x, int y, Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
@@ -362,7 +361,7 @@ bool BaseSurfaceOSystem::displayTrans(int x, int y, Rect32 rect, uint32 alpha, G
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTransOffset(int x, int y, Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
 	_rotation = 0;
-	return drawSprite(x, y, &rect, nullptr,  Graphics::TransformStruct(Graphics::kDefaultZoomX, Graphics::kDefaultZoomY, Graphics::kDefaultAngle, Graphics::kDefaultHotspotX, Graphics::kDefaultHotspotY, blendMode, alpha, mirrorX, mirrorY, offsetX, offsetY));
+	return drawSprite(x, y, &rect, nullptr, Graphics::TransformStruct(Graphics::kDefaultZoomX, Graphics::kDefaultZoomY, Graphics::kDefaultAngle, Graphics::kDefaultHotspotX, Graphics::kDefaultHotspotY, blendMode, alpha, mirrorX, mirrorY, offsetX, offsetY));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -371,19 +370,17 @@ bool BaseSurfaceOSystem::displayTransZoom(int x, int y, Rect32 rect, float zoomX
 	return drawSprite(x, y, &rect, nullptr, Graphics::TransformStruct((int32)zoomX, (int32)zoomY, blendMode, alpha, mirrorX, mirrorY));
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, bool transparent, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
 	Graphics::TransformStruct transform;
 	if (transparent) {
-		transform = Graphics::TransformStruct((int32)zoomX, (int32)zoomY, Graphics::kDefaultAngle, Graphics::kDefaultHotspotX, Graphics::kDefaultHotspotY, blendMode, alpha,  mirrorX, mirrorY);
+		transform = Graphics::TransformStruct((int32)zoomX, (int32)zoomY, Graphics::kDefaultAngle, Graphics::kDefaultHotspotX, Graphics::kDefaultHotspotY, blendMode, alpha, mirrorX, mirrorY);
 	} else {
 		transform = Graphics::TransformStruct((int32)zoomX, (int32)zoomY, mirrorX, mirrorY);
 	}
 	return drawSprite(x, y, &rect, nullptr, transform);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTransform(int x, int y, Rect32 rect, Rect32 newRect, const Graphics::TransformStruct &transform) {
@@ -402,7 +399,6 @@ bool BaseSurfaceOSystem::displayTiled(int x, int y, Rect32 rect, int numTimesX, 
 	Graphics::TransformStruct transform(numTimesX, numTimesY);
 	return drawSprite(x, y, &rect, nullptr, transform);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect, Graphics::TransformStruct transform) {

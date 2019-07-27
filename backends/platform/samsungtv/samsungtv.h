@@ -25,7 +25,7 @@
 
 #if defined(SAMSUNGTV)
 
-#include "backends/platform/sdl/posix/posix.h"
+#	include "backends/platform/sdl/posix/posix.h"
 
 class OSystem_SDL_SamsungTV : public OSystem_POSIX {
 public:

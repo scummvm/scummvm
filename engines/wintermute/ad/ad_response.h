@@ -29,9 +29,8 @@
 #ifndef WINTERMUTE_ADRESPONSE_H
 #define WINTERMUTE_ADRESPONSE_H
 
-
-#include "engines/wintermute/base/base_object.h"
 #include "engines/wintermute/ad/ad_types.h"
+#include "engines/wintermute/base/base_object.h"
 
 namespace Wintermute {
 class BaseFont;
@@ -56,6 +55,7 @@ public:
 	AdResponse(BaseGame *inGame);
 	virtual ~AdResponse();
 	TResponseType _responseType;
+
 private:
 	BaseSprite *_icon;
 	BaseSprite *_iconHover;

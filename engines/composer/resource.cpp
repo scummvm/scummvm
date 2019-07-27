@@ -25,8 +25,8 @@
 #include "common/debug.h"
 #include "common/memstream.h"
 #include "common/substream.h"
-#include "common/util.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
 namespace Composer {
 
@@ -59,7 +59,8 @@ bool Archive::openFile(const Common::String &fileName) {
 
 void Archive::close() {
 	_types.clear();
-	delete _stream; _stream = 0;
+	delete _stream;
+	_stream = 0;
 }
 
 bool Archive::hasResource(uint32 tag, uint16 id) const {
@@ -231,7 +232,6 @@ bool ComposerArchive::openStream(Common::SeekableReadStream *stream) {
 				offset += headerSize;
 				size = stream->readUint32LE();
 				flags = stream->readUint16LE(); // FIXME
-
 			}
 
 			Resource &res = resMap[id];
@@ -312,12 +312,13 @@ Common::SeekableReadStream *Pipe::getResource(uint32 tag, uint16 id, bool buffer
 
 	if (res.entries.size() == 1) {
 		Common::SeekableReadStream *stream = new Common::SeekableSubReadStream(_stream,
-			res.entries[0].offset, res.entries[0].offset + res.entries[0].size);
+		                                                                       res.entries[0].offset, res.entries[0].offset + res.entries[0].size);
 		if (buffering) {
 			_types[tag].erase(id);
 			bool found = false;
 			for (Common::List<uint16>::const_iterator i = _bufferedResources[tag].begin(); !found && (i != _bufferedResources[tag].end()); i++)
-				if ((*i) == id) found = true;
+				if ((*i) == id)
+					found = true;
 			if (!found)
 				_bufferedResources[tag].push_back(id);
 		}
@@ -341,14 +342,17 @@ Common::SeekableReadStream *Pipe::getResource(uint32 tag, uint16 id, bool buffer
 		_types[tag].erase(id);
 		bool found = false;
 		for (Common::List<uint16>::const_iterator i = _bufferedResources[tag].begin(); !found && (i != _bufferedResources[tag].end()); i++)
-			if ((*i) == id) found = true;
+			if ((*i) == id)
+				found = true;
 		if (!found)
 			_bufferedResources[tag].push_back(id);
 	}
 	return new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES);
 }
 
-OldPipe::OldPipe(Common::SeekableReadStream *stream, uint16 pipeId) : Pipe(stream, pipeId), _currFrame(0) {
+OldPipe::OldPipe(Common::SeekableReadStream *stream, uint16 pipeId)
+  : Pipe(stream, pipeId)
+  , _currFrame(0) {
 	uint32 tag = _stream->readUint32BE();
 	if (tag != ID_PIPE)
 		error("invalid tag for pipe (%08x)", tag);

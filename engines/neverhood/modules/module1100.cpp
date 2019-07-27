@@ -20,10 +20,10 @@
  *
  */
 
-#include "neverhood/gamemodule.h"
-#include "neverhood/navigationscene.h"
 #include "neverhood/modules/module1100.h"
+#include "neverhood/gamemodule.h"
 #include "neverhood/modules/module1100_sprites.h"
+#include "neverhood/navigationscene.h"
 
 namespace Neverhood {
 
@@ -40,7 +40,7 @@ static const uint32 kModule1100SoundList[] = {
 };
 
 Module1100::Module1100(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule) {
+  : Module(vm, parentModule) {
 
 	if (which < 0) {
 		createScene(_vm->gameState().sceneNum, -1);
@@ -55,7 +55,6 @@ Module1100::Module1100(NeverhoodEngine *vm, Module *parentModule, int which)
 	_vm->_soundMan->setSoundParams(0x74E01054, false, 100, 200, 10, 20);
 	_vm->_soundMan->setSoundVolume(0x74E01054, 60);
 	_vm->_soundMan->playTwoSounds(0x0002C818, 0x41861371, 0x43A2507F, 0);
-
 }
 
 Module1100::~Module1100() {
@@ -63,9 +62,9 @@ Module1100::~Module1100() {
 }
 
 void Module1100::createScene(int sceneNum, int which) {
-	static const uint32 kSmackerFileHashList06[] = {0x10880805, 0x1088081D, 0};
-	static const uint32 kSmackerFileHashList07[] = {0x00290321, 0x01881000, 0};
-	static const byte kNavigationTypes02[] = {1, 0, 4, 1};
+	static const uint32 kSmackerFileHashList06[] = { 0x10880805, 0x1088081D, 0 };
+	static const uint32 kSmackerFileHashList07[] = { 0x00290321, 0x01881000, 0 };
+	static const byte kNavigationTypes02[] = { 1, 0, 4, 1 };
 	debug(1, "Module1100::createScene(%d, %d)", sceneNum, which);
 	_sceneNum = sceneNum;
 	switch (_sceneNum) {
@@ -263,8 +262,14 @@ static const uint32 kScene1105FileHashes[] = {
 };
 
 Scene1105::Scene1105(NeverhoodEngine *vm, Module *parentModule)
-	: Scene(vm, parentModule), _countdown(0), _isPanelOpen(false), _isActionButtonClicked(false), _doMoveTeddy(false),
-	_isClosePanelDone(false), _leaveResult(0), _backgroundIndex(0) {
+  : Scene(vm, parentModule)
+  , _countdown(0)
+  , _isPanelOpen(false)
+  , _isActionButtonClicked(false)
+  , _doMoveTeddy(false)
+  , _isClosePanelDone(false)
+  , _leaveResult(0)
+  , _backgroundIndex(0) {
 
 	Sprite *ssOpenButton;
 
@@ -284,7 +289,6 @@ Scene1105::Scene1105(NeverhoodEngine *vm, Module *parentModule)
 	loadSound(0, 0x48442057);
 	loadSound(1, 0xC025014F);
 	loadSound(2, 0x68E25540);
-
 }
 
 uint32 Scene1105::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -316,9 +320,7 @@ uint32 Scene1105::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case NM_KLAYMEN_RAISE_LEVER:
 		if (sender == _ssActionButton) {
-			if (getSubVar(VA_GOOD_DICE_NUMBERS, 0) == getSubVar(VA_CURR_DICE_NUMBERS, 0) &&
-				getSubVar(VA_GOOD_DICE_NUMBERS, 1) == getSubVar(VA_CURR_DICE_NUMBERS, 1) &&
-				getSubVar(VA_GOOD_DICE_NUMBERS, 2) == getSubVar(VA_CURR_DICE_NUMBERS, 2)) {
+			if (getSubVar(VA_GOOD_DICE_NUMBERS, 0) == getSubVar(VA_CURR_DICE_NUMBERS, 0) && getSubVar(VA_GOOD_DICE_NUMBERS, 1) == getSubVar(VA_CURR_DICE_NUMBERS, 1) && getSubVar(VA_GOOD_DICE_NUMBERS, 2) == getSubVar(VA_CURR_DICE_NUMBERS, 2)) {
 				setGlobalVar(V_ROBOT_TARGET, 1);
 				playSound(2);
 				_doMoveTeddy = true;
@@ -408,7 +410,6 @@ void Scene1105::createObjects() {
 	_asTeddyBear->show();
 
 	insertPuzzleMouse(0x18666208, 20, 620);
-
 }
 
 void Scene1105::upOpenPanel() {
@@ -471,7 +472,7 @@ void Scene1105::update() {
 }
 
 Scene1109::Scene1109(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule) {
+  : Scene(vm, parentModule) {
 
 	SetMessageHandler(&Scene1109::handleMessage);
 
@@ -512,7 +513,6 @@ Scene1109::Scene1109(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	_klaymen->setClipRect(0, 0, _sprite1->getDrawRect().x2(), 480);
-
 }
 
 uint32 Scene1109::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {

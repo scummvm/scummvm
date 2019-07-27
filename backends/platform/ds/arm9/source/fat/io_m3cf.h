@@ -20,9 +20,9 @@
 #include "disc_io.h"
 
 // export interface
-extern LPIO_INTERFACE M3CF_GetInterface(void) ;
+extern LPIO_INTERFACE M3CF_GetInterface(void);
 
-#endif	// define IO_M3CF_H
+#endif // define IO_M3CF_H
 /*
 	io_m3cf.h
 
@@ -45,6 +45,6 @@ extern LPIO_INTERFACE M3CF_GetInterface(void) ;
 #include "disc_io.h"
 
 // export interface
-extern LPIO_INTERFACE M3CF_GetInterface(void) ;
+extern LPIO_INTERFACE M3CF_GetInterface(void);
 
-#endif	// define IO_M3CF_H
+#endif // define IO_M3CF_H

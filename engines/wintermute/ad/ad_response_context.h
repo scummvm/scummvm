@@ -29,8 +29,8 @@
 #ifndef WINTERMUTE_ADRESPONSECONTEXT_H
 #define WINTERMUTE_ADRESPONSECONTEXT_H
 
-#include "engines/wintermute/persistent.h"
 #include "engines/wintermute/base/base.h"
+#include "engines/wintermute/persistent.h"
 
 namespace Wintermute {
 
@@ -43,6 +43,7 @@ public:
 	DECLARE_PERSISTENT(AdResponseContext, BaseClass)
 	AdResponseContext(BaseGame *inGame);
 	virtual ~AdResponseContext();
+
 private:
 	char *_context;
 };

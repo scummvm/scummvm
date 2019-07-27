@@ -23,9 +23,9 @@
 #ifndef AGOS_SOUND_H
 #define AGOS_SOUND_H
 
+#include "agos/intern.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
-#include "agos/intern.h"
 #include "common/str.h"
 
 namespace Common {
@@ -69,14 +69,15 @@ private:
 	uint16 _soundQueueNum;
 	uint32 _soundQueueSize;
 	uint16 _soundQueueFreq;
+
 public:
 	Sound(AGOSEngine *vm, const GameSpecificSettings *gss, Audio::Mixer *mixer);
 	~Sound();
 
 	enum TypeFlags {
 		TYPE_AMBIENT = 1 << 0,
-		TYPE_SFX     = 1 << 1,
-		TYPE_SFX5    = 1 << 2
+		TYPE_SFX = 1 << 1,
+		TYPE_SFX5 = 1 << 2
 	};
 
 protected:

@@ -281,7 +281,7 @@ void Set::resetFoodstepSoundOverride() {
 	_footstepSoundOverride = -1;
 }
 
-int Set::getWalkboxSoundWalkLeft(int walkboxId) const{
+int Set::getWalkboxSoundWalkLeft(int walkboxId) const {
 	int floorType;
 	if (_footstepSoundOverride >= 0) {
 		floorType = _footstepSoundOverride;
@@ -336,7 +336,6 @@ int Set::getWalkboxSoundWalkRight(int walkboxId) const {
 		// one of kSfxCEMWETR1, kSfxCEMWETR2, kSfxCEMWETR3, kSfxCEMWETR4, kSfxCEMWETR5
 		return _vm->_rnd.getRandomNumberRng(kSfxCEMWETR1, kSfxCEMWETR5);
 #endif // BLADERUNNER_ORIGINAL_BUGS
-
 	}
 	if (floorType == 2) { //wooden floor
 		// one of kSfxWOODR1, kSfxWOODR2, kSfxWOODR3, kSfxWOODR4, kSfxWOODR5
@@ -522,11 +521,11 @@ void Set::overrideSceneObjectInfo(int objectId) const {
 		// fix obstacles map
 		if (objectId == 1 && _objects[objectId].name == "PIT_RAIL 03") {
 			_objects[objectId].bbox.setXYZ(-615.83f, 0.0f, -1237.04f, -602.30f, 37.66f, -13.48f);
-		} else  if (objectId == 4 && _objects[objectId].name == "WALL_LEFT") {
+		} else if (objectId == 4 && _objects[objectId].name == "WALL_LEFT") {
 			_objects[objectId].bbox.setXYZ(-1310.70f, 0.0f, -2105.59f, -910.95f, 840.0f, -111.55f);
-		} else  if (objectId == 5 && _objects[objectId].name == "OBSTACLE1") {
+		} else if (objectId == 5 && _objects[objectId].name == "OBSTACLE1") {
 			_objects[objectId].bbox.setXYZ(91.00f, -1.87f, 375.75f, 476.37f, 61.18f, 955.24f);
-		} else  if (objectId == 6 && _objects[objectId].name == "OBSTACLE02") {
+		} else if (objectId == 6 && _objects[objectId].name == "OBSTACLE02") {
 			_objects[objectId].bbox.setXYZ(-1191.22f, -1.87f, -2105.59f, -606.15f, 61.18f, -937.04f);
 		}
 		break;
@@ -540,11 +539,11 @@ void Set::setupNewObjectInSet(Common::String objName, BoundingBox objBbox) {
 	int objectId = _objectCount;
 	_objects[objectId].name = objName.c_str();
 	_objects[objectId].bbox = objBbox;
-	_objects[objectId].isObstacle  = 0; // init as false - Can be changed in Scene script eg. SceneLoaded() with (Un)Obstacle_Object()
+	_objects[objectId].isObstacle = 0; // init as false - Can be changed in Scene script eg. SceneLoaded() with (Un)Obstacle_Object()
 	_objects[objectId].isClickable = 0; // init as false - Can be changed in Scene script eg. SceneLoaded() with (Un)Clickable_Object()
-	_objects[objectId].isHotMouse  = 0;
-	_objects[objectId].unknown1    = 0;
-	_objects[objectId].isTarget    = 0; // init as false - Can be changed in Scene script eg. SceneLoaded() with (Un_)Combat_Target_Object
+	_objects[objectId].isHotMouse = 0;
+	_objects[objectId].unknown1 = 0;
+	_objects[objectId].isTarget = 0; // init as false - Can be changed in Scene script eg. SceneLoaded() with (Un_)Combat_Target_Object
 	_objectCount++;
 }
 /**
@@ -622,8 +621,7 @@ void Set::patchOutBadObjectsFromSet() {
 		case kSceneNR05:
 			if ((objectId == 0 && _objects[objectId].name == "NM1-1+")
 			    || (objectId == 2 && _objects[objectId].name == "NM1-1+")
-			    || (objectId == 3 && _objects[objectId].name == "NM1-1+")
-			) {
+			    || (objectId == 3 && _objects[objectId].name == "NM1-1+")) {
 				// Remove objects that are named the same and set as clickables
 				// leave only objectId == 1, named "NM1-1+"
 				removeCurrObj = true;
@@ -633,8 +631,7 @@ void Set::patchOutBadObjectsFromSet() {
 			if ((objectId == 46 && _objects[objectId].name == "BOX53")
 			    || (objectId == 36 && _objects[objectId].name == "BOX43")
 			    || (objectId == 37 && _objects[objectId].name == "BOX44")
-			    || (objectId == 13 && _objects[objectId].name == "LOFT04")
-			) {
+			    || (objectId == 13 && _objects[objectId].name == "LOFT04")) {
 				// Removing obj 46, 36, 37 (BOX53, BOX43, BOX44) fixes paths in the scene
 				// Removing obj 13 (LOFT04) fixes duplicate named box that confuses the engine
 				removeCurrObj = true;
@@ -652,11 +649,11 @@ void Set::patchOutBadObjectsFromSet() {
 		if (removeCurrObj) {
 			removeCurrObj = false;
 			_objects[objectId].name = Common::String::format("REMOVED%02d", removedIndexRef++);
-			_objects[objectId].isObstacle  = 0;
+			_objects[objectId].isObstacle = 0;
 			_objects[objectId].isClickable = 0;
-			_objects[objectId].isHotMouse  = 0;
-			_objects[objectId].unknown1    = 0;
-			_objects[objectId].isTarget    = 0;
+			_objects[objectId].isHotMouse = 0;
+			_objects[objectId].unknown1 = 0;
+			_objects[objectId].isTarget = 0;
 		}
 	}
 	return;

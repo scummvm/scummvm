@@ -28,7 +28,10 @@
 
 namespace Titanic {
 
-enum MusicWaveInstrument { MV_PIANO = 0, MV_BASS = 1, MV_BELLS = 2, MV_SNAKE = 3 };
+enum MusicWaveInstrument { MV_PIANO = 0,
+	                         MV_BASS = 1,
+	                         MV_BELLS = 2,
+	                         MV_SNAKE = 3 };
 
 class CProjectItem;
 class CSoundManager;
@@ -39,8 +42,11 @@ class CMusicRoomInstrument {
 	struct CInstrumentWaveFile {
 		CWaveFile *_waveFile;
 		int _value;
-		CInstrumentWaveFile() : _waveFile(nullptr), _value(0) {}
+		CInstrumentWaveFile()
+		  : _waveFile(nullptr)
+		  , _value(0) {}
 	};
+
 private:
 	static bool _pianoToggle;
 	static int _pianoCtr;
@@ -48,6 +54,7 @@ private:
 	static byte *_buffer;
 	static double *_array;
 	static int _arrayIndex;
+
 private:
 	CSoundManager *_soundManager;
 	Common::Array<CInstrumentWaveFile> _items;
@@ -60,6 +67,7 @@ private:
 	uint _size;
 	uint _count;
 	int _field4C;
+
 private:
 	/**
 	 * Loads the specified wave file, and returns a CWaveFile instance for it
@@ -72,8 +80,10 @@ private:
 	 * music based on the console's settings
 	 */
 	void setupArray(int minVal, int maxVal);
+
 public:
 	double _insStartTime;
+
 public:
 	/**
 	 * Handles initialization of static fields
@@ -84,6 +94,7 @@ public:
 	 * Deinitialization of static fields
 	 */
 	static void deinit();
+
 public:
 	CMusicRoomInstrument(CProjectItem *project, CSoundManager *soundManager, MusicWaveInstrument instrument);
 
@@ -96,7 +107,6 @@ public:
 	 * Loads a new file into the list of available entries
 	 */
 	void load(int index, const CString &filename, int v3);
-
 
 	/**
 	 * Starts the music and associated animations

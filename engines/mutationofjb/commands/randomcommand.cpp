@@ -22,10 +22,10 @@
 
 #include "mutationofjb/commands/randomcommand.h"
 
-#include "mutationofjb/game.h"
-#include "mutationofjb/script.h"
 #include "common/debug.h"
 #include "common/random.h"
+#include "mutationofjb/game.h"
+#include "mutationofjb/script.h"
 
 /** @file
  * "RANDOM " <numChoices>
@@ -60,7 +60,6 @@ bool RandomCommandParser::parse(const Common::String &line, ScriptParseContext &
 	return true;
 }
 
-
 bool RandomBlockStartParser::parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&) {
 	if (line != "/") {
 		return false;
@@ -84,10 +83,9 @@ void RandomBlockStartParser::transition(ScriptParseContext &parseCtx, Command *,
 	}
 }
 
-
 RandomCommand::RandomCommand(uint numChoices)
-	: _numChoices(numChoices),
-	  _chosenNext(nullptr) {
+  : _numChoices(numChoices)
+  , _chosenNext(nullptr) {
 	_choices.reserve(numChoices);
 }
 

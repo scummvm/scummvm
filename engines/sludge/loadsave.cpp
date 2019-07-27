@@ -42,9 +42,9 @@
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
 #include "sludge/sound.h"
+#include "sludge/speech.h"
 #include "sludge/sprites.h"
 #include "sludge/statusba.h"
-#include "sludge/speech.h"
 #include "sludge/utf8.h"
 #include "sludge/variable.h"
 #include "sludge/version.h"
@@ -56,11 +56,11 @@ namespace Sludge {
 // From elsewhere
 //----------------------------------------------------------------------
 
-extern LoadedFunction *saverFunc;					// In function.cpp
-extern LoadedFunction *allRunningFunctions;         // In sludger.cpp
-extern int numGlobals;                              // In sludger.cpp
-extern Variable *globalVars;                        // In sludger.cpp
-extern FILETIME fileTime;                           // In sludger.cpp
+extern LoadedFunction *saverFunc; // In function.cpp
+extern LoadedFunction *allRunningFunctions; // In sludger.cpp
+extern int numGlobals; // In sludger.cpp
+extern Variable *globalVars; // In sludger.cpp
+extern FILETIME fileTime; // In sludger.cpp
 extern bool allowAnyFilename;
 
 //----------------------------------------------------------------------

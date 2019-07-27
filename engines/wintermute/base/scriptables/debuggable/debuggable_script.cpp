@@ -20,18 +20,21 @@
  *
  */
 
-#include "common/tokenizer.h"
 #include "debuggable_script.h"
+#include "common/tokenizer.h"
+#include "engines/wintermute/base/scriptables/debuggable/debuggable_script_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
-#include "engines/wintermute/base/scriptables/debuggable/debuggable_script_engine.h"
 #include "engines/wintermute/debugger/breakpoint.h"
 #include "engines/wintermute/debugger/script_monitor.h"
 #include "engines/wintermute/debugger/watch_instance.h"
 
 namespace Wintermute {
 
-DebuggableScript::DebuggableScript(BaseGame *inGame, DebuggableScEngine *engine) : ScScript(inGame, engine), _engine(engine), _stepDepth(kDefaultStepDepth) {
+DebuggableScript::DebuggableScript(BaseGame *inGame, DebuggableScEngine *engine)
+  : ScScript(inGame, engine)
+  , _engine(engine)
+  , _stepDepth(kDefaultStepDepth) {
 	_engine->_watches.subscribe(this);
 	for (uint i = 0; i < _engine->_watches.size(); i++) {
 		_watchInstances.push_back(new WatchInstance(_engine->_watches[i], this));
@@ -60,7 +63,6 @@ void DebuggableScript::postInstHook(uint32 inst) {
 	for (uint i = 0; i < _watchInstances.size(); i++) {
 		this->_watchInstances[i]->evaluate();
 	}
-
 }
 
 void DebuggableScript::setStepDepth(int depth) {
@@ -88,7 +90,6 @@ ScValue *DebuggableScript::resolveName(const Common::String &name) {
 	Common::String nextToken;
 
 	nextToken = st.nextToken();
-
 
 	char cstr[256]; // TODO not pretty
 	Common::strlcpy(cstr, nextToken.c_str(), nextToken.size() + 1);
@@ -145,4 +146,3 @@ void DebuggableScript::updateWatches() {
 	}
 }
 } // End of namespace Wintermute
-

@@ -32,11 +32,15 @@ class CMaitreDBody : public CMaitreDProdReceptor {
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool AnimateMaitreDMsg(CAnimateMaitreDMsg *msg);
 	bool ActMsg(CActMsg *msg);
+
 private:
 	bool _armed;
+
 public:
 	CLASSDEF;
-	CMaitreDBody() : CMaitreDProdReceptor(), _armed(true) {}
+	CMaitreDBody()
+	  : CMaitreDProdReceptor()
+	  , _armed(true) {}
 
 	/**
 	 * Save the data for the class to file

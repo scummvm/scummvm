@@ -20,29 +20,29 @@
  *
  */
 
-#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
+#include "dreamweb/sound.h"
 
 namespace DreamWeb {
 
 struct MonitorKeyEntry {
 	uint8 keyAssigned;
-	char  username[12];
-	char  password[12];
+	char username[12];
+	char password[12];
 };
 
 // New monitor key list
 static MonitorKeyEntry monitorKeyEntries[4] = {
-	{ 1, "PUBLIC",  "PUBLIC"      },
-	{ 0, "RYAN",    "BLACKDRAGON" },
-	{ 0, "LOUIS",   "HENDRIX"     },
-	{ 0, "BECKETT", "SEPTIMUS"    }
+	{ 1, "PUBLIC", "PUBLIC" },
+	{ 0, "RYAN", "BLACKDRAGON" },
+	{ 0, "LOUIS", "HENDRIX" },
+	{ 0, "BECKETT", "SEPTIMUS" }
 };
 
 void DreamWebEngine::useMon() {
 	_vars._lastTrigger = 0;
 	_currentFile[0] = 34;
-	memset(_currentFile+1, ' ', 12);
+	memset(_currentFile + 1, ' ', 12);
 	_currentFile[13] = 0;
 
 	monitorKeyEntries[0].keyAssigned = 1;
@@ -115,7 +115,8 @@ int DreamWebEngine::findCommand(const char *const cmdList[]) {
 		// We only care about the prefix matching, though.
 		char inputChar, cmdChar;
 		do {
-			inputChar = *inputStr; inputStr += 2;
+			inputChar = *inputStr;
+			inputStr += 2;
 			cmdChar = *cmdStr++;
 			if (cmdChar == 0)
 				return cmd;
@@ -249,7 +250,6 @@ bool DreamWebEngine::execCommand() {
 	}
 	return false;
 }
-
 
 void DreamWebEngine::monitorLogo() {
 	if (_logoNum != _oldLogoNum) {
@@ -426,13 +426,13 @@ void DreamWebEngine::netError() {
 }
 
 void DreamWebEngine::powerLightOn() {
-	showFrame(_monitorGraphics, 257+4, 182, 6, 0);
-	multiDump(257+4, 182, 12, 8);
+	showFrame(_monitorGraphics, 257 + 4, 182, 6, 0);
+	multiDump(257 + 4, 182, 12, 8);
 }
 
 void DreamWebEngine::powerLightOff() {
-	showFrame(_monitorGraphics, 257+4, 182, 5, 0);
-	multiDump(257+4, 182, 12, 8);
+	showFrame(_monitorGraphics, 257 + 4, 182, 5, 0);
+	multiDump(257 + 4, 182, 12, 8);
 }
 
 void DreamWebEngine::lockLightOn() {
@@ -522,7 +522,7 @@ const char *DreamWebEngine::getKeyAndLogo(const char *foundString) {
 		_logoNum = newLogo;
 		return foundString + 4;
 	} else {
-		monMessage(12);	// "Access denied, key required -"
+		monMessage(12); // "Access denied, key required -"
 		monPrint(monitorKeyEntries[keyNum].username);
 		scrollMonitor();
 		return 0;
@@ -563,7 +563,7 @@ void DreamWebEngine::dirCom() {
 	}
 
 	_logoNum = 0;
-	memcpy(_currentFile+1, "ROOT        ", 12);
+	memcpy(_currentFile + 1, "ROOT        ", 12);
 	monitorLogo();
 	scrollMonitor();
 	monMessage(9);
@@ -600,7 +600,7 @@ void DreamWebEngine::dirFile(const char *dirName) {
 	}
 
 	// "keyok2"
-	memcpy(_currentFile+1, dirName+1, 12);
+	memcpy(_currentFile + 1, dirName + 1, 12);
 	monitorLogo();
 	scrollMonitor();
 	monMessage(10);
@@ -703,7 +703,7 @@ void DreamWebEngine::signOn() {
 
 	uint16 prevX = _monAdX;
 	uint16 prevY = _monAdY;
-	input();	// password input
+	input(); // password input
 	_monAdX = prevX;
 	_monAdY = prevY;
 

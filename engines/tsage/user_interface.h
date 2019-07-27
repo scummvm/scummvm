@@ -30,12 +30,12 @@
 
 namespace TsAGE {
 
-class StripProxy: public EventHandler {
+class StripProxy : public EventHandler {
 public:
 	virtual void process(Event &event);
 };
 
-class UIElement: public BackgroundSceneObject {
+class UIElement : public BackgroundSceneObject {
 public:
 	bool _enabled;
 	int _frameNum;
@@ -48,19 +48,21 @@ public:
 };
 
 // This class implements the Question mark button
-class UIQuestion: public UIElement {
+class UIQuestion : public UIElement {
 private:
 	void showDescription(CursorType item);
 	void showItem(int resNum, int rlbNum, int frameNum);
+
 public:
 	virtual void process(Event &event);
 	void setEnabled(bool flag);
 };
 
 // This class implements the score counter
-class UIScore: public UIElement {
+class UIScore : public UIElement {
 private:
 	void showDescription(int lineNum);
+
 public:
 	UIElement _digit3, _digit2, _digit1, _digit0;
 
@@ -70,7 +72,7 @@ public:
 	void updateScore();
 };
 
-class UIInventorySlot: public UIElement {
+class UIInventorySlot : public UIElement {
 public:
 	int _objIndex;
 	InvObject *_object;
@@ -81,9 +83,10 @@ public:
 	virtual void process(Event &event);
 };
 
-class UIInventoryScroll: public UIElement {
+class UIInventoryScroll : public UIElement {
 private:
 	void toggle(bool pressed);
+
 public:
 	bool _isLeft;
 
@@ -93,11 +96,13 @@ public:
 	virtual void process(Event &event);
 };
 
-class UICollection: public EventHandler {
+class UICollection : public EventHandler {
 private:
 	void r2rDrawFrame();
+
 protected:
 	void erase();
+
 public:
 	Common::Point _position;
 	Rect _bounds;
@@ -114,10 +119,11 @@ public:
 	void draw();
 };
 
-class UIElements: public UICollection {
+class UIElements : public UICollection {
 private:
 	void add(UIElement *obj);
 	void updateInvList();
+
 public:
 	UIElement _background;
 	UIQuestion _question;

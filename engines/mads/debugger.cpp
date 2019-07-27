@@ -20,18 +20,20 @@
  *
  */
 
+#include "mads/debugger.h"
 #include "common/file.h"
 #include "mads/compression.h"
 #include "mads/mads.h"
-#include "mads/debugger.h"
 #include "mads/nebular/menu_nebular.h"
 
 namespace MADS {
 
-Debugger::Debugger(MADSEngine *vm) : GUI::Debugger(), _vm(vm) {
+Debugger::Debugger(MADSEngine *vm)
+  : GUI::Debugger()
+  , _vm(vm) {
 	_showMousePos = false;
 
-	registerCmd("continue",		WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("mouse", WRAP_METHOD(Debugger, Cmd_Mouse));
 	registerCmd("scene", WRAP_METHOD(Debugger, Cmd_LoadScene));
 	registerCmd("show_hotspots", WRAP_METHOD(Debugger, Cmd_ShowHotSpots));
@@ -115,9 +117,9 @@ bool Debugger::Cmd_ListHotSpots(int argc, const char **argv) {
 
 	for (uint index = 0; index < hotspots.size(); ++index) {
 		debugPrintf("(%d): %p x1 = %d; y1 = %d; x2 = %d; y2 = %d\n",
-			index, (void *)&hotspots[index],
-			hotspots[index]._bounds.left, hotspots[index]._bounds.top,
-			hotspots[index]._bounds.right, hotspots[index]._bounds.bottom);
+		            index, (void *)&hotspots[index],
+		            hotspots[index]._bounds.left, hotspots[index]._bounds.top,
+		            hotspots[index]._bounds.right, hotspots[index]._bounds.bottom);
 	}
 
 	return true;

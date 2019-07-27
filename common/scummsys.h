@@ -23,148 +23,148 @@
 #ifndef COMMON_SCUMMSYS_H
 #define COMMON_SCUMMSYS_H
 
-#ifndef __has_feature           // Optional of course.
-	#define __has_feature(x) 0  // Compatibility with non-clang compilers.
+#ifndef __has_feature // Optional of course.
+#	define __has_feature(x) 0 // Compatibility with non-clang compilers.
 #endif
 
 // This is a convenience macro to test whether the compiler used is a GCC
 // version, which is at least major.minor.
 #ifdef __GNUC__
-	#define GCC_ATLEAST(major, minor) (__GNUC__ > (major) || (__GNUC__ == (major) && __GNUC_MINOR__ >= (minor)))
+#	define GCC_ATLEAST(major, minor) (__GNUC__ > (major) || (__GNUC__ == (major) && __GNUC_MINOR__ >= (minor)))
 #else
-	#define GCC_ATLEAST(major, minor) 0
+#	define GCC_ATLEAST(major, minor) 0
 #endif
 
 #if defined(NONSTANDARD_PORT)
 
-	// Ports which need to perform #includes and #defines visible in
-	// virtually all the source of ScummVM should do so by providing a
-	// "portdefs.h" header file (and not by directly modifying this
-	// header file).
-	#include <portdefs.h>
+// Ports which need to perform #includes and #defines visible in
+// virtually all the source of ScummVM should do so by providing a
+// "portdefs.h" header file (and not by directly modifying this
+// header file).
+#	include <portdefs.h>
 #else // defined(NONSTANDARD_PORT)
 
-	#if defined(WIN32)
+#	if defined(WIN32)
 
-		#if defined(_MSC_VER) && _MSC_VER <= 1800
+#		if defined(_MSC_VER) && _MSC_VER <= 1800
 
-		// FIXME: The placement of the workaround functions for MSVC below
-		// require us to include stdio.h and stdarg.h for MSVC here. This
-		// is not exactly nice...
-		// We should think of a better way of doing this.
-		#include <stdio.h>
-		#include <stdarg.h>
+// FIXME: The placement of the workaround functions for MSVC below
+// require us to include stdio.h and stdarg.h for MSVC here. This
+// is not exactly nice...
+// We should think of a better way of doing this.
+#			include <stdio.h>
+#			include <stdarg.h>
 
-		// MSVC's vsnprintf is either non-existent (2003) or bugged since it
-		// does not always include a terminating NULL (2005+). To work around
-		// that we fix up the _vsnprintf included. Note that the return value
-		// will still not match C99's specs!
-		inline int vsnprintf_msvc(char *str, size_t size, const char *format, va_list args) {
-			// We do not pass size - 1 here, to ensure we would get the same
-			// return value as when we would use _vsnprintf directly, since
-			// for example Common::String::format relies on this.
-			int retValue = _vsnprintf(str, size, format, args);
-			str[size - 1] = 0;
-			return retValue;
-		}
+// MSVC's vsnprintf is either non-existent (2003) or bugged since it
+// does not always include a terminating NULL (2005+). To work around
+// that we fix up the _vsnprintf included. Note that the return value
+// will still not match C99's specs!
+inline int vsnprintf_msvc(char *str, size_t size, const char *format, va_list args) {
+	// We do not pass size - 1 here, to ensure we would get the same
+	// return value as when we would use _vsnprintf directly, since
+	// for example Common::String::format relies on this.
+	int retValue = _vsnprintf(str, size, format, args);
+	str[size - 1] = 0;
+	return retValue;
+}
 
-		#define vsnprintf vsnprintf_msvc
+#			define vsnprintf vsnprintf_msvc
 
-		// Visual Studio does not include snprintf in its standard C library.
-		// Instead it includes a function called _snprintf with somewhat
-		// similar semantics. The minor difference is that the return value in
-		// case the formatted string exceeds the buffer size is different.
-		// A much more dangerous one is that _snprintf does not always include
-		// a terminating null (Whoops!). Instead we map to our fixed vsnprintf.
-		inline int snprintf(char *str, size_t size, const char *format, ...) {
-			va_list args;
-			va_start(args, format);
-			int len = vsnprintf(str, size, format, args);
-			va_end(args);
-			return len;
-		}
-		#endif
+// Visual Studio does not include snprintf in its standard C library.
+// Instead it includes a function called _snprintf with somewhat
+// similar semantics. The minor difference is that the return value in
+// case the formatted string exceeds the buffer size is different.
+// A much more dangerous one is that _snprintf does not always include
+// a terminating null (Whoops!). Instead we map to our fixed vsnprintf.
+inline int snprintf(char *str, size_t size, const char *format, ...) {
+	va_list args;
+	va_start(args, format);
+	int len = vsnprintf(str, size, format, args);
+	va_end(args);
+	return len;
+}
+#		endif
 
-		#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
-		#define NOGDICAPMASKS
-		#define OEMRESOURCE
-		#define NONLS
-		#define NOICONS
-		#define NOMCX
-		#define NOPROFILER
-		#define NOKANJI
-		#define NOSERVICE
-		#define NOMETAFILE
-		#define NOCOMM
-		#define NOCRYPT
-		#define NOIME
-		#define NOATOM
-		#define NOCTLMGR
-		#define NOCLIPBOARD
-		#define NOMEMMGR
-		#define NOSYSMETRICS
-		#define NOMENUS
-		#define NOOPENFILE
-		#define NOWH
-		#define NOSOUND
-		#define NODRAWTEXT
+#		define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
+#		define NOGDICAPMASKS
+#		define OEMRESOURCE
+#		define NONLS
+#		define NOICONS
+#		define NOMCX
+#		define NOPROFILER
+#		define NOKANJI
+#		define NOSERVICE
+#		define NOMETAFILE
+#		define NOCOMM
+#		define NOCRYPT
+#		define NOIME
+#		define NOATOM
+#		define NOCTLMGR
+#		define NOCLIPBOARD
+#		define NOMEMMGR
+#		define NOSYSMETRICS
+#		define NOMENUS
+#		define NOOPENFILE
+#		define NOWH
+#		define NOSOUND
+#		define NODRAWTEXT
 
-	#endif
+#	endif
 
-	#if defined(__QNXNTO__)
-	#include <strings.h>	/* For strcasecmp */
-	#endif
+#	if defined(__QNXNTO__)
+#		include <strings.h> /* For strcasecmp */
+#	endif
 
-	#include <stdio.h>
-	#include <stdlib.h>
-	#include <string.h>
-	#include <stdarg.h>
-	#include <stddef.h>
-	#include <assert.h>
-	#include <ctype.h>
-	// MSVC does not define M_PI, M_SQRT2 and other math defines by default.
-	// _USE_MATH_DEFINES must be defined in order to have these defined, thus
-	// we enable it here. For more information, check:
-	// http://msdn.microsoft.com/en-us/library/4hwaceh6(v=VS.100).aspx
-	#define _USE_MATH_DEFINES
-	#include <math.h>
+#	include <stdio.h>
+#	include <stdlib.h>
+#	include <string.h>
+#	include <stdarg.h>
+#	include <stddef.h>
+#	include <assert.h>
+#	include <ctype.h>
+// MSVC does not define M_PI, M_SQRT2 and other math defines by default.
+// _USE_MATH_DEFINES must be defined in order to have these defined, thus
+// we enable it here. For more information, check:
+// http://msdn.microsoft.com/en-us/library/4hwaceh6(v=VS.100).aspx
+#	define _USE_MATH_DEFINES
+#	include <math.h>
 
-	// FIXME: We sadly can't assume standard C++ headers to be present on every
-	// system we support, so we should get rid of this. The solution should be to
-	// write a simple placement new on our own. It might be noteworthy we can't
-	// easily do that for systems which do have a <new>, since it might clash with
-	// the default definition otherwise!
-	// Symbian does not have <new> but the new operator
-	#if !defined(__SYMBIAN32__)
-	#include <new>
-	#endif
+// FIXME: We sadly can't assume standard C++ headers to be present on every
+// system we support, so we should get rid of this. The solution should be to
+// write a simple placement new on our own. It might be noteworthy we can't
+// easily do that for systems which do have a <new>, since it might clash with
+// the default definition otherwise!
+// Symbian does not have <new> but the new operator
+#	if !defined(__SYMBIAN32__)
+#		include <new>
+#	endif
 #endif
 
 #ifndef STATIC_ASSERT
-#if __cplusplus >= 201103L || (defined(_MSC_VER) && _MSC_VER > 1600)
-	/**
+#	if __cplusplus >= 201103L || (defined(_MSC_VER) && _MSC_VER > 1600)
+/**
 	 * Generates a compile-time assertion.
 	 *
 	 * @param expression An expression that can be evaluated at compile time.
 	 * @param message An underscore-delimited message to be presented at compile
 	 * time if the expression evaluates to false.
 	 */
-	#define STATIC_ASSERT(expression, message) \
-		static_assert((expression), #message)
-#else
-	/**
+#		define STATIC_ASSERT(expression, message) \
+			static_assert((expression), #message)
+#	else
+/**
 	 * Generates a compile-time assertion.
 	 *
 	 * @param expression An expression that can be evaluated at compile time.
 	 * @param message An underscore-delimited message to be presented at compile
 	 * time if the expression evaluates to false.
 	 */
-	#define STATIC_ASSERT(expression, message) \
-		do { \
-			extern int STATIC_ASSERT_##message[(expression) ? 1 : -1]; \
-			(void)(STATIC_ASSERT_##message); \
-		} while (false)
-#endif
+#		define STATIC_ASSERT(expression, message)                     \
+			do {                                                         \
+				extern int STATIC_ASSERT_##message[(expression) ? 1 : -1]; \
+				(void)(STATIC_ASSERT_##message);                           \
+			} while (false)
+#	endif
 #endif
 
 // The following math constants are usually defined by the system math.h header, but
@@ -173,67 +173,66 @@
 // As we rely on these being present, we define them if they are not set.
 
 #ifndef M_E
-	#define M_E 2.7182818284590452354 /* e */
+#	define M_E 2.7182818284590452354 /* e */
 #endif
 
 #ifndef M_LOG2E
-	#define M_LOG2E 1.4426950408889634074 /* log_2 e */
+#	define M_LOG2E 1.4426950408889634074 /* log_2 e */
 #endif
 
 #ifndef M_LOG10E
-	#define M_LOG10E 0.43429448190325182765 /* log_10 e */
+#	define M_LOG10E 0.43429448190325182765 /* log_10 e */
 #endif
 
 #ifndef M_LN2
-	#define M_LN2 0.69314718055994530942 /* log_e 2 */
+#	define M_LN2 0.69314718055994530942 /* log_e 2 */
 #endif
 
 #ifndef M_LN10
-	#define M_LN10 2.30258509299404568402 /* log_e 10 */
+#	define M_LN10 2.30258509299404568402 /* log_e 10 */
 #endif
 
 #ifndef M_PI
-	#define M_PI 3.14159265358979323846 /* pi */
+#	define M_PI 3.14159265358979323846 /* pi */
 #endif
 
 #ifndef M_PI_2
-	#define M_PI_2 1.57079632679489661923 /* pi/2 */
+#	define M_PI_2 1.57079632679489661923 /* pi/2 */
 #endif
 
 #ifndef M_PI_4
-	#define M_PI_4 0.78539816339744830962 /* pi/4 */
+#	define M_PI_4 0.78539816339744830962 /* pi/4 */
 #endif
 
 #ifndef M_1_PI
-	#define M_1_PI 0.31830988618379067154 /* 1/pi */
+#	define M_1_PI 0.31830988618379067154 /* 1/pi */
 #endif
 
 #ifndef M_2_PI
-	#define M_2_PI 0.63661977236758134308 /* 2/pi */
+#	define M_2_PI 0.63661977236758134308 /* 2/pi */
 #endif
 
 #ifndef M_2_SQRTPI
-	#define M_2_SQRTPI 1.12837916709551257390 /* 2/sqrt(pi) */
+#	define M_2_SQRTPI 1.12837916709551257390 /* 2/sqrt(pi) */
 #endif
 
 #ifndef M_SQRT2
-	#define M_SQRT2 1.41421356237309504880 /* sqrt(2) */
+#	define M_SQRT2 1.41421356237309504880 /* sqrt(2) */
 #endif
 
 #ifndef M_SQRT1_2
-	#define M_SQRT1_2 0.70710678118654752440 /* 1/sqrt(2) */
+#	define M_SQRT1_2 0.70710678118654752440 /* 1/sqrt(2) */
 #endif
 
 // Include our C++11 compatability header for pre-C++11 compilers.
 #if __cplusplus < 201103L
-#include "common/c++11-compat.h"
+#	include "common/c++11-compat.h"
 #endif
 
 // Use config.h, generated by configure
 #if defined(HAVE_CONFIG_H)
-#include "config.h"
+#	include "config.h"
 #endif
-
 
 // In the following we configure various targets, in particular those
 // which can't use our "configure" tool and hence don't use config.h.
@@ -248,7 +247,6 @@
 // SMALL_SCREEN_DEVICE
 //    - ...
 // ...
-
 
 //
 // By default we try to use pragma push/pop to ensure various structs we use
@@ -268,45 +266,39 @@
 //
 #if !defined(HAVE_CONFIG_H)
 
-	#if defined(__DC__) || \
-		  defined(__DS__) || \
-		  defined(__3DS__) || \
-		  defined(IPHONE) || \
-		  defined(__PLAYSTATION2__) || \
-		  defined(__PSP__) || \
-		  defined(__SYMBIAN32__)
+#	if defined(__DC__) || defined(__DS__) || defined(__3DS__) || defined(IPHONE) || defined(__PLAYSTATION2__) || defined(__PSP__) || defined(__SYMBIAN32__)
 
-		#define SCUMM_LITTLE_ENDIAN
-		#define SCUMM_NEED_ALIGNMENT
+#		define SCUMM_LITTLE_ENDIAN
+#		define SCUMM_NEED_ALIGNMENT
 
-	#elif defined(_WIN32_WCE) || defined(_MSC_VER) || defined(__MINGW32__)
+#	elif defined(_WIN32_WCE) || defined(_MSC_VER) || defined(__MINGW32__)
 
-		#define SCUMM_LITTLE_ENDIAN
+#		define SCUMM_LITTLE_ENDIAN
 
-	#elif defined(__amigaos4__) || defined(__N64__) || defined(__WII__)
+#	elif defined(__amigaos4__) || defined(__N64__) || defined(__WII__)
 
-		#define SCUMM_BIG_ENDIAN
-		#define SCUMM_NEED_ALIGNMENT
+#		define SCUMM_BIG_ENDIAN
+#		define SCUMM_NEED_ALIGNMENT
 
-	#elif defined(SDL_BACKEND)
-		// On SDL based ports, we try to use SDL_BYTEORDER to determine the
-		// endianess. We explicitly do this as the *last* thing we try, so that
-		// platform specific settings have precedence.
-		#include <SDL_endian.h>
+#	elif defined(SDL_BACKEND)
+// On SDL based ports, we try to use SDL_BYTEORDER to determine the
+// endianess. We explicitly do this as the *last* thing we try, so that
+// platform specific settings have precedence.
+#		include <SDL_endian.h>
 
-		#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-		#define SCUMM_LITTLE_ENDIAN
-		#elif SDL_BYTEORDER == SDL_BIG_ENDIAN
-		#define SCUMM_BIG_ENDIAN
-		#else
-		#error Neither SDL_BIG_ENDIAN nor SDL_LIL_ENDIAN is set.
-		#endif
+#		if SDL_BYTEORDER == SDL_LIL_ENDIAN
+#			define SCUMM_LITTLE_ENDIAN
+#		elif SDL_BYTEORDER == SDL_BIG_ENDIAN
+#			define SCUMM_BIG_ENDIAN
+#		else
+#			error Neither SDL_BIG_ENDIAN nor SDL_LIL_ENDIAN is set.
+#		endif
 
-	#else
+#	else
 
-		#error No system type defined, host endianess unknown.
+#		error No system type defined, host endianess unknown.
 
-	#endif
+#	endif
 #endif
 
 //
@@ -315,136 +307,134 @@
 //
 #if defined(DINGUX)
 
-	// Very BAD hack following, used to avoid triggering an assert in uClibc dingux library
-	// "toupper" when pressing keyboard function keys.
-	#undef toupper
-	#define toupper(c) (((c & 0xFF) >= 97) && ((c & 0xFF) <= 122) ? ((c & 0xFF) - 32) : (c & 0xFF))
+// Very BAD hack following, used to avoid triggering an assert in uClibc dingux library
+// "toupper" when pressing keyboard function keys.
+#	undef toupper
+#	define toupper(c) (((c & 0xFF) >= 97) && ((c & 0xFF) <= 122) ? ((c & 0xFF) - 32) : (c & 0xFF))
 
 #elif defined(__PSP__)
 
-	#include <malloc.h>
-	#include "backends/platform/psp/memory.h"
+#	include <malloc.h>
+#	include "backends/platform/psp/memory.h"
 
-	/* to make an efficient, inlined memcpy implementation */
-	#define memcpy(dst, src, size)   psp_memcpy(dst, src, size)
+/* to make an efficient, inlined memcpy implementation */
+#	define memcpy(dst, src, size) psp_memcpy(dst, src, size)
 
 #endif
 
 #if defined(USE_TREMOR) && !defined(USE_VORBIS)
-#define USE_VORBIS // make sure this one is defined together with USE_TREMOR!
+#	define USE_VORBIS // make sure this one is defined together with USE_TREMOR!
 #endif
 
 //
 // Fallbacks / default values for various special macros
 //
 #ifndef GCC_PRINTF
-	#if defined(__GNUC__) || defined(__INTEL_COMPILER)
-		#define GCC_PRINTF(x,y) __attribute__((__format__(__printf__, x, y)))
-	#else
-		#define GCC_PRINTF(x,y)
-	#endif
+#	if defined(__GNUC__) || defined(__INTEL_COMPILER)
+#		define GCC_PRINTF(x, y) __attribute__((__format__(__printf__, x, y)))
+#	else
+#		define GCC_PRINTF(x, y)
+#	endif
 #endif
 
 #ifndef PACKED_STRUCT
-	#if defined(__GNUC__) || defined(__INTEL_COMPILER)
-		#define PACKED_STRUCT __attribute__((__packed__))
-	#else
-		#define PACKED_STRUCT
-	#endif
+#	if defined(__GNUC__) || defined(__INTEL_COMPILER)
+#		define PACKED_STRUCT __attribute__((__packed__))
+#	else
+#		define PACKED_STRUCT
+#	endif
 #endif
 
 #ifndef FORCEINLINE
-	#if defined(_MSC_VER)
-		#define FORCEINLINE __forceinline
-	#elif GCC_ATLEAST(3, 1)
-		#define FORCEINLINE inline __attribute__((__always_inline__))
-	#else
-		#define FORCEINLINE inline
-	#endif
+#	if defined(_MSC_VER)
+#		define FORCEINLINE __forceinline
+#	elif GCC_ATLEAST(3, 1)
+#		define FORCEINLINE inline __attribute__((__always_inline__))
+#	else
+#		define FORCEINLINE inline
+#	endif
 #endif
 
 #ifndef PLUGIN_EXPORT
-	#if defined(_MSC_VER) || defined(_WIN32_WCE) || defined(__MINGW32__)
-		#define PLUGIN_EXPORT __declspec(dllexport)
-	#else
-		#define PLUGIN_EXPORT
-	#endif
+#	if defined(_MSC_VER) || defined(_WIN32_WCE) || defined(__MINGW32__)
+#		define PLUGIN_EXPORT __declspec(dllexport)
+#	else
+#		define PLUGIN_EXPORT
+#	endif
 #endif
 
 #ifndef NORETURN_PRE
-	#if defined(_MSC_VER)
-		#define NORETURN_PRE __declspec(noreturn)
-	#else
-		#define NORETURN_PRE
-	#endif
+#	if defined(_MSC_VER)
+#		define NORETURN_PRE __declspec(noreturn)
+#	else
+#		define NORETURN_PRE
+#	endif
 #endif
 
 #ifndef NORETURN_POST
-	#if defined(__GNUC__) || defined(__INTEL_COMPILER)
-		#define NORETURN_POST __attribute__((__noreturn__))
-	#else
-		#define NORETURN_POST
-	#endif
+#	if defined(__GNUC__) || defined(__INTEL_COMPILER)
+#		define NORETURN_POST __attribute__((__noreturn__))
+#	else
+#		define NORETURN_POST
+#	endif
 #endif
 
 #ifndef WARN_UNUSED_RESULT
-	#if __cplusplus >= 201703L
-		#define WARN_UNUSED_RESULT [[nodiscard]]
-	#elif GCC_ATLEAST(3, 4)
-		#define WARN_UNUSED_RESULT __attribute__((__warn_unused_result__))
-	#elif defined(_Check_return_)
-		#define WARN_UNUSED_RESULT _Check_return_
-	#else
-		#define WARN_UNUSED_RESULT
-	#endif
+#	if __cplusplus >= 201703L
+#		define WARN_UNUSED_RESULT [[nodiscard]]
+#	elif GCC_ATLEAST(3, 4)
+#		define WARN_UNUSED_RESULT __attribute__((__warn_unused_result__))
+#	elif defined(_Check_return_)
+#		define WARN_UNUSED_RESULT _Check_return_
+#	else
+#		define WARN_UNUSED_RESULT
+#	endif
 #endif
 
 #ifndef STRINGBUFLEN
-	#if defined(__N64__) || defined(__DS__) || defined(__3DS__)
-		#define STRINGBUFLEN 256
-	#else
-		#define STRINGBUFLEN 1024
-	#endif
+#	if defined(__N64__) || defined(__DS__) || defined(__3DS__)
+#		define STRINGBUFLEN 256
+#	else
+#		define STRINGBUFLEN 1024
+#	endif
 #endif
 
 #ifndef MAXPATHLEN
-#define MAXPATHLEN 256
+#	define MAXPATHLEN 256
 #endif
 
 #ifndef scumm_va_copy
-	#if defined(va_copy)
-		#define scumm_va_copy va_copy
-	#elif defined(__va_copy)
-		#define scumm_va_copy __va_copy
-	#elif defined(_MSC_VER) || defined(__SYMBIAN32__)
-		#define scumm_va_copy(dst, src)       ((dst) = (src))
-	#else
-		#error scumm_va_copy undefined for this port
-	#endif
+#	if defined(va_copy)
+#		define scumm_va_copy va_copy
+#	elif defined(__va_copy)
+#		define scumm_va_copy __va_copy
+#	elif defined(_MSC_VER) || defined(__SYMBIAN32__)
+#		define scumm_va_copy(dst, src) ((dst) = (src))
+#	else
+#		error scumm_va_copy undefined for this port
+#	endif
 #endif
-
-
 
 //
 // Typedef our system types unless they have already been defined by config.h,
 // or SCUMMVM_DONT_DEFINE_TYPES is set.
 //
 #if !defined(HAVE_CONFIG_H) && !defined(SCUMMVM_DONT_DEFINE_TYPES)
-	typedef unsigned char byte;
-	typedef unsigned char uint8;
-	typedef signed char int8;
-	typedef unsigned short uint16;
-	typedef signed short int16;
-	typedef unsigned int uint32;
-	typedef signed int int32;
-	typedef unsigned int uint;
-	#ifdef __PLAYSTATION2__
-	typedef signed long int64;
-	typedef unsigned long uint64;
-	#else
-	typedef signed long long int64;
-	typedef unsigned long long uint64;
-	#endif
+typedef unsigned char byte;
+typedef unsigned char uint8;
+typedef signed char int8;
+typedef unsigned short uint16;
+typedef signed short int16;
+typedef unsigned int uint32;
+typedef signed int int32;
+typedef unsigned int uint;
+#	ifdef __PLAYSTATION2__
+typedef signed long int64;
+typedef unsigned long uint64;
+#	else
+typedef signed long long int64;
+typedef unsigned long long uint64;
+#	endif
 #endif
 
 //
@@ -453,19 +443,15 @@
 //
 #if !defined(HAVE_CONFIG_H)
 
-#if defined(__x86_64__) || \
-		  defined(_M_X64) || \
-		  defined(__ppc64__) || \
-		  defined(__powerpc64__) || \
-		  defined(__LP64__)
+#	if defined(__x86_64__) || defined(_M_X64) || defined(__ppc64__) || defined(__powerpc64__) || defined(__LP64__)
 
 typedef uint64 uintptr;
 
-#else
+#	else
 
 typedef uint32 uintptr;
 
-#endif
+#	endif
 
 #endif
 

@@ -24,9 +24,9 @@
 
 #include "common/endian.h"
 
-#include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/screen.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
@@ -62,8 +62,8 @@ int32 Screen::decompressRLE256(byte *dst, byte *src, int32 decompSize) {
 	// dest		points to start of destination buffer for decompressed
 	//		data
 
-	byte headerByte;			// block header byte
-	byte *endDest = dst + decompSize;	// pointer to byte after end of decomp buffer
+	byte headerByte; // block header byte
+	byte *endDest = dst + decompSize; // pointer to byte after end of decomp buffer
 	int32 rv;
 
 	while (1) {
@@ -92,7 +92,7 @@ int32 Screen::decompressRLE256(byte *dst, byte *src, int32 decompSize) {
 
 			// if we've decompressed all of the data
 			if (dst == endDest) {
-				rv = 0;		// return "OK"
+				rv = 0; // return "OK"
 				break;
 			}
 		}
@@ -122,7 +122,7 @@ int32 Screen::decompressRLE256(byte *dst, byte *src, int32 decompSize) {
 
 			// if we've decompressed all of the data
 			if (dst == endDest) {
-				rv = 0;		// return "OK"
+				rv = 0; // return "OK"
 				break;
 			}
 		}
@@ -152,7 +152,6 @@ void Screen::unwindRaw16(byte *dst, byte *src, uint16 blockSize, byte *colTable)
 			*dst++ = colTable[(*src) & 0x0f];
 		}
 
-
 		// point to next source byte
 		src++;
 
@@ -178,8 +177,8 @@ void Screen::unwindRaw16(byte *dst, byte *src, uint16 blockSize, byte *colTable)
  */
 
 int32 Screen::decompressRLE16(byte *dst, byte *src, int32 decompSize, byte *colTable) {
-	byte headerByte;			// block header byte
-	byte *endDest = dst + decompSize;	// pointer to byte after end of decomp buffer
+	byte headerByte; // block header byte
+	byte *endDest = dst + decompSize; // pointer to byte after end of decomp buffer
 	int32 rv;
 
 	while (1) {
@@ -208,7 +207,7 @@ int32 Screen::decompressRLE16(byte *dst, byte *src, int32 decompSize, byte *colT
 
 			// if we've decompressed all of the data
 			if (dst == endDest) {
-				rv = 0;		// return "OK"
+				rv = 0; // return "OK"
 				break;
 			}
 		}
@@ -239,7 +238,7 @@ int32 Screen::decompressRLE16(byte *dst, byte *src, int32 decompSize, byte *colT
 
 			// if we've decompressed all of the data
 			if (dst >= endDest) {
-				rv = 0;		// return "OK"
+				rv = 0; // return "OK"
 				break;
 			}
 		}
@@ -271,14 +270,16 @@ uint32 Screen::decompressHIF(byte *src, byte *dst, uint32 *skipData) {
 				src += 2;
 				readByte += 2;
 				if (info_word == 0xFFFF) { // Got 0xFFFF code, finished.
-					if (skipData != NULL) *(skipData) = readByte;
+					if (skipData != NULL)
+						*(skipData) = readByte;
 					return decompSize;
 				}
 
 				int32 repeat_count = (info_word >> 12) + 2; // How many time data needs to be refetched
 				while (repeat_count >= 0) {
 					uint16 refetchData = (info_word & 0xFFF) + 1;
-					if (refetchData > decompSize) return 0; // We have a problem here...
+					if (refetchData > decompSize)
+						return 0; // We have a problem here...
 					uint8 *old_data_src = dst - refetchData;
 					*dst++ = *old_data_src;
 					decompSize++;
@@ -325,7 +326,6 @@ void Screen::recomposePsxSprite(SpriteInfo *s) {
 	}
 
 	s->data = buffer;
-
 }
 
 // Recomposes sprites wider than 254 pixels but also
@@ -357,7 +357,6 @@ void Screen::recomposeCompPsxSprite(SpriteInfo *s) {
 
 	free(stripeBuffer);
 	s->data = buffer;
-
 }
 
 /**
@@ -737,7 +736,7 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 	// Light masking makes use of palette match table, so it's unavailable
 	// in PSX version.
 
-	if ((_renderCaps & RDBLTFX_SHADOWBLEND) && _lightMask && (scale != 256 || ((s->type & RDSPR_SHADOW) && !Sword2Engine::isPsx()) )) {
+	if ((_renderCaps & RDBLTFX_SHADOWBLEND) && _lightMask && (scale != 256 || ((s->type & RDSPR_SHADOW) && !Sword2Engine::isPsx()))) {
 		byte *lightMap;
 
 		// Make sure that we never apply the shadow to the original

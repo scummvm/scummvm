@@ -50,11 +50,11 @@ bool AgiEngine::checkPosition(ScreenObjEntry *screenObj) {
 	}
 
 	// MH1 needs this, but it breaks LSL1
-// TODO: *NOT* in disassembly of AGI3 .149, why was this needed?
-//	if (getVersion() >= 0x3000) {
-//		if (screenObj->yPos < screenObj->ySize)
-//			result = false;
-//	}
+	// TODO: *NOT* in disassembly of AGI3 .149, why was this needed?
+	//	if (getVersion() >= 0x3000) {
+	//		if (screenObj->yPos < screenObj->ySize)
+	//			result = false;
+	//	}
 
 	if (!result) {
 		debugC(4, kDebugLevelSprites, "check position failed: x=%d, y=%d, h=%d, w=%d",
@@ -94,8 +94,7 @@ bool AgiEngine::checkCollision(ScreenObjEntry *screenObj) {
 		}
 
 		// Crossed the baseline, return error!
-		if ((screenObj->yPos > checkObj->yPos && screenObj->yPos_prev < checkObj->yPos_prev) ||
-		        (screenObj->yPos < checkObj->yPos && screenObj->yPos_prev > checkObj->yPos_prev)) {
+		if ((screenObj->yPos > checkObj->yPos && screenObj->yPos_prev < checkObj->yPos_prev) || (screenObj->yPos < checkObj->yPos && screenObj->yPos_prev > checkObj->yPos_prev)) {
 			debugC(4, kDebugLevelSprites, "check returns 1 (object %d)", screenObj->objectNr);
 			return true;
 		}
@@ -128,15 +127,15 @@ bool AgiEngine::checkPriority(ScreenObjEntry *screenObj) {
 		for (celX = 0; celX < screenObj->xSize; celX++, curX++) {
 			screenPriority = _gfx->getPriority(curX, curY);
 
-			if (screenPriority == 0) {  // unconditional black. no go at all!
+			if (screenPriority == 0) { // unconditional black. no go at all!
 				touchedControl = false;
 				break;
 			}
 
-			if (screenPriority != 3) {  // not water surface
+			if (screenPriority != 3) { // not water surface
 				touchedWater = false;
 
-				if (screenPriority == 1) {  // conditional blue
+				if (screenPriority == 1) { // conditional blue
 					if (!(screenObj->flags & fIgnoreBlocks)) {
 						debugC(4, kDebugLevelSprites, "Blocks observed!");
 						touchedControl = false;
@@ -234,10 +233,10 @@ void AgiEngine::updatePosition() {
 			}
 		}
 
-//		} else if (v->entry == 0 && x == 0 && v->flags & fAdjEgoXY) { // should not be required
-//			// Extra test to walk west clicking the mouse
-//			x = 0;
-//			border = 4;
+		//		} else if (v->entry == 0 && x == 0 && v->flags & fAdjEgoXY) { // should not be required
+		//			// Extra test to walk west clicking the mouse
+		//			x = 0;
+		//			border = 4;
 
 		if (!border) {
 			if (x + screenObj->xSize > SCRIPT_WIDTH) {

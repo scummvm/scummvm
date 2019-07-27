@@ -42,10 +42,10 @@ struct exportEntryStruct {
 };
 
 struct ovlData3Struct {
-	uint8 *dataPtr;		//0
-	short int sizeOfData;	//4
-	short int offsetToSubData3;	//6
-	short int offsetToImportData;	//8
+	uint8 *dataPtr; //0
+	short int sizeOfData; //4
+	short int offsetToSubData3; //6
+	short int offsetToImportData; //8
 	short int offsetToSubData2;
 	short int offsetToImportName;
 	short int offsetToSubData5;
@@ -89,10 +89,10 @@ struct linkDataStruct {
 };
 
 struct importDataStruct {
-	uint16 var0;		// 0
-	uint16 var1;		// 2
-	uint16 linkType;	// 4
-	uint16 linkIdx;		// 6
+	uint16 var0; // 0
+	uint16 var1; // 2
+	uint16 linkType; // 4
+	uint16 linkIdx; // 6
 	uint16 nameOffset;
 };
 
@@ -166,9 +166,9 @@ struct overlayStruct {
 	ovlDataStruct *ovlData;
 	short int alreadyLoaded;
 	short int state;
-	char* pDebug;
+	char *pDebug;
 	long int debugSize;
-	char* pSource;
+	char *pSource;
 	long int sourceSize;
 	short int executeScripts;
 };
@@ -177,8 +177,8 @@ extern overlayStruct overlayTable[90];
 extern int numOfLoadedOverlay;
 
 void initOverlayTable();
-int loadOverlay(const char * scriptName);
-int32 findOverlayByName2(const char * name);
+int loadOverlay(const char *scriptName);
+int32 findOverlayByName2(const char *name);
 int findOverlayByName(const char *overlayName);
 int releaseOverlay(const char *name);
 int freeOverlay(int overlayIdx);

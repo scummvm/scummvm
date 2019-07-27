@@ -29,9 +29,9 @@ namespace StarTrek {
 
 #define HOTSPOT_BRIDGEDOOR 0x21
 #define HOTSPOT_BRIDGEARCH 0x22
-#define HOTSPOT_TERMINAL   0x23
-#define HOTSPOT_DEBRIS     0x24
-#define HOTSPOT_BRIGDOOR   0x25
+#define HOTSPOT_TERMINAL 0x23
+#define HOTSPOT_DEBRIS 0x24
+#define HOTSPOT_BRIGDOOR 0x25
 
 void Room::tug1Tick1() {
 	playVoc("TUG1LOOP");
@@ -243,7 +243,7 @@ void Room::tug1UseSTricorderOnBrigDoor() {
 }
 
 void Room::tug1TalkToKirk() {
-	showText(TX_SPEAKER_KIRK,  TX_TUG1_001);
+	showText(TX_SPEAKER_KIRK, TX_TUG1_001);
 	showText(TX_SPEAKER_MCCOY, TX_TUG1_008);
 }
 

@@ -24,34 +24,35 @@
 #define BACKENDS_CLOUD_ONEDRIVE_ONEDRIVECREATEDIRECTORYREQUEST_H
 
 #include "backends/cloud/storage.h"
-#include "backends/networking/curl/request.h"
 #include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/curl/request.h"
 
 namespace Cloud {
 namespace OneDrive {
 
-class OneDriveStorage;
+	class OneDriveStorage;
 
-class OneDriveCreateDirectoryRequest: public Networking::Request {
-	OneDriveStorage *_storage;
-	Common::String _path;
-	Storage::BoolCallback _boolCallback;
-	Request *_workingRequest;
-	bool _ignoreCallback;
-	Common::String _date;
+	class OneDriveCreateDirectoryRequest : public Networking::Request {
+		OneDriveStorage *_storage;
+		Common::String _path;
+		Storage::BoolCallback _boolCallback;
+		Request *_workingRequest;
+		bool _ignoreCallback;
+		Common::String _date;
 
-	void start();
-	void responseCallback(Networking::JsonResponse response);
-	void errorCallback(Networking::ErrorResponse error);
-	void finishCreation(bool success);
-public:
-	OneDriveCreateDirectoryRequest(OneDriveStorage *storage, Common::String path, Storage::BoolCallback cb, Networking::ErrorCallback ecb);
-	virtual ~OneDriveCreateDirectoryRequest();
+		void start();
+		void responseCallback(Networking::JsonResponse response);
+		void errorCallback(Networking::ErrorResponse error);
+		void finishCreation(bool success);
 
-	virtual void handle();
-	virtual void restart();
-	virtual Common::String date() const;
-};
+	public:
+		OneDriveCreateDirectoryRequest(OneDriveStorage *storage, Common::String path, Storage::BoolCallback cb, Networking::ErrorCallback ecb);
+		virtual ~OneDriveCreateDirectoryRequest();
+
+		virtual void handle();
+		virtual void restart();
+		virtual Common::String date() const;
+	};
 
 } // End of namespace OneDrive
 } // End of namespace Cloud

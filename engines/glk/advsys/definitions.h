@@ -26,7 +26,6 @@
 namespace Glk {
 namespace AdvSys {
 
-
 } // End of namespace AdvSys
 } // End of namespace Glk
 

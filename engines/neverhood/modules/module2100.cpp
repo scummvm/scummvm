@@ -20,14 +20,14 @@
  *
  */
 
-#include "neverhood/modules/module1200_sprites.h"
 #include "neverhood/modules/module2100.h"
+#include "neverhood/modules/module1200_sprites.h"
 #include "neverhood/modules/module2100_sprites.h"
 
 namespace Neverhood {
 
 Module2100::Module2100(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule) {
+  : Module(vm, parentModule) {
 
 	_vm->_soundMan->addMusic(0x10A10C14, 0x11482B95);
 
@@ -39,7 +39,6 @@ Module2100::Module2100(NeverhoodEngine *vm, Module *parentModule, int which)
 		createScene(0, 3);
 	else
 		createScene(0, 1);
-
 }
 
 Module2100::~Module2100() {
@@ -75,7 +74,7 @@ void Module2100::updateScene() {
 }
 
 Scene2101::Scene2101(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule) {
+  : Scene(vm, parentModule) {
 
 	Sprite *tempSprite;
 
@@ -140,7 +139,6 @@ Scene2101::Scene2101(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_asHitByDoorEffect = insertSprite<AsScene2101HitByDoorEffect>(_klaymen);
 	_klaymen->setClipRect(0, 0, tempSprite->getDrawRect().x2(), 480);
-
 }
 
 void Scene2101::update() {
@@ -152,7 +150,7 @@ void Scene2101::update() {
 			}
 		} else {
 			if (_klaymen->getX() > 575)
-				_canAcceptInput  = false;
+				_canAcceptInput = false;
 			if (--_countdown1 == 0) {
 				if (_klaymen->getX() < 480) {
 					sendMessage(_asDoor, NM_KLAYMEN_CLOSE_DOOR, 0);

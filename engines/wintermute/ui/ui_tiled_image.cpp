@@ -27,13 +27,13 @@
  */
 
 #include "engines/wintermute/ui/ui_tiled_image.h"
-#include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
-#include "engines/wintermute/base/base_parser.h"
-#include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/base_sub_frame.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_parser.h"
+#include "engines/wintermute/base/base_sub_frame.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/platform_osystem.h"
 
 namespace Wintermute {
@@ -41,7 +41,8 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(UITiledImage, false)
 
 //////////////////////////////////////////////////////////////////////////
-UITiledImage::UITiledImage(BaseGame *inGame) : BaseObject(inGame) {
+UITiledImage::UITiledImage(BaseGame *inGame)
+  : BaseObject(inGame) {
 	_image = nullptr;
 
 	_upLeft.setEmpty();
@@ -55,13 +56,11 @@ UITiledImage::UITiledImage(BaseGame *inGame) : BaseObject(inGame) {
 	_downRight.setEmpty();
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 UITiledImage::~UITiledImage() {
 	delete _image;
 	_image = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool UITiledImage::display(int x, int y, int width, int height) {
@@ -78,11 +77,11 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 	_gameRef->_renderer->startSpriteBatch();
 
 	// top left/right
-	_image->_surface->displayTrans(x,                                                       y, _upLeft);
+	_image->_surface->displayTrans(x, y, _upLeft);
 	_image->_surface->displayTrans(x + (_upLeft.right - _upLeft.left) + nuColumns * tileWidth, y, _upRight);
 
 	// bottom left/right
-	_image->_surface->displayTrans(x,                                                       y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downLeft);
+	_image->_surface->displayTrans(x, y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downLeft);
 	_image->_surface->displayTrans(x + (_upLeft.right - _upLeft.left) + nuColumns * tileWidth, y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downRight);
 
 	// left/right
@@ -111,7 +110,6 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool UITiledImage::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
@@ -128,12 +126,10 @@ bool UITiledImage::loadFile(const char *filename) {
 		_gameRef->LOG(0, "Error parsing TILED_IMAGE file '%s'", filename);
 	}
 
-
 	delete[] buffer;
 
 	return ret;
 }
-
 
 TOKEN_DEF_START
 TOKEN_DEF(TILED_IMAGE)
@@ -341,7 +337,6 @@ bool UITiledImage::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	v2 = _middleLeft.bottom - _middleLeft.top;
 	v3 = _downLeft.bottom - _downLeft.top;
 
-
 	buffer->putTextIndent(indent + 2, "VERTICAL_TILES { %d, %d, %d }\n", v1, v2, v3);
 	buffer->putTextIndent(indent + 2, "HORIZONTAL_TILES { %d, %d, %d }\n", h1, h2, h3);
 
@@ -360,10 +355,9 @@ void UITiledImage::correctSize(int32 *width, int32 *height) {
 	int nuColumns = (*width - (_middleLeft.right - _middleLeft.left) - (_middleRight.right - _middleRight.left)) / tileWidth;
 	int nuRows = (*height - (_upMiddle.bottom - _upMiddle.top) - (_downMiddle.bottom - _downMiddle.top)) / tileHeight;
 
-	*width  = (_middleLeft.right - _middleLeft.left) + (_middleRight.right - _middleRight.left) + nuColumns * tileWidth;
+	*width = (_middleLeft.right - _middleLeft.left) + (_middleRight.right - _middleRight.left) + nuColumns * tileWidth;
 	*height = (_upMiddle.bottom - _upMiddle.top) + (_downMiddle.bottom - _downMiddle.top) + nuRows * tileHeight;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool UITiledImage::persist(BasePersistenceManager *persistMgr) {

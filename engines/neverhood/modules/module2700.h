@@ -23,10 +23,10 @@
 #ifndef NEVERHOOD_MODULES_MODULE2700_H
 #define NEVERHOOD_MODULES_MODULE2700_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/modules/module1600_sprites.h" // for Tracks
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
-#include "neverhood/modules/module1600_sprites.h"	// for Tracks
 
 namespace Neverhood {
 
@@ -36,6 +36,7 @@ class Module2700 : public Module {
 public:
 	Module2700(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module2700();
+
 protected:
 	int _sceneNum;
 	int _soundIndex;
@@ -54,6 +55,7 @@ class AsCommonCar;
 class Scene2701 : public Scene {
 public:
 	Scene2701(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	AsCommonCar *_asCar;
 	Sprite *_ssTrackShadowBackground;
@@ -70,6 +72,7 @@ protected:
 class Scene2702 : public Scene {
 public:
 	Scene2702(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	AsCommonCar *_asCar;
 	Sprite *_ssTrackShadowBackground;
@@ -91,6 +94,7 @@ protected:
 class Scene2703 : public Scene {
 public:
 	Scene2703(NeverhoodEngine *vm, Module *parentModule, int which, uint32 trackInfoId);
+
 protected:
 	AsCommonCar *_asCar;
 	Sprite *_ssTrackShadowBackground;
@@ -108,7 +112,8 @@ protected:
 class Scene2704 : public Scene {
 public:
 	Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint32 trackInfoId, int16 value,
-		const uint32 *staticSprites = NULL, const NRect *clipRect = NULL);
+	          const uint32 *staticSprites = NULL, const NRect *clipRect = NULL);
+
 protected:
 	AsCommonCar *_asCar;
 	Sprite *_ssTrackShadowBackground;
@@ -125,6 +130,7 @@ protected:
 class Scene2706 : public Scene {
 public:
 	Scene2706(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	AsCommonCar *_asCar;
 	Sprite *_ssTrackShadowBackground;

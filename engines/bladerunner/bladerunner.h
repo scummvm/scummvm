@@ -36,9 +36,9 @@
 #include "graphics/surface.h"
 
 //TODO: change this to debugflag
-#define BLADERUNNER_DEBUG_CONSOLE     0
+#define BLADERUNNER_DEBUG_CONSOLE 0
 #define BLADERUNNER_ORIGINAL_SETTINGS 0
-#define BLADERUNNER_ORIGINAL_BUGS     0
+#define BLADERUNNER_ORIGINAL_BUGS 0
 
 namespace Common {
 struct Event;
@@ -108,7 +108,7 @@ class ZBuffer;
 class BladeRunnerEngine : public Engine {
 public:
 	static const int kArchiveCount = 12; // +2 to original value (10) to accommodate for SUBTITLES.MIX and one extra resource file, to allow for capability of loading all VQAx.MIX and the MODE.MIX file (debug purposes)
-	static const int kActorCount =  100;
+	static const int kActorCount = 100;
 	static const int kActorVoiceOver = kActorCount - 1;
 	// Incremental number to keep track of significant revisions of the ScummVM bladerunner engine
 	// that could potentially introduce incompatibilities with old save files or require special actions to restore compatibility
@@ -121,78 +121,78 @@ public:
 
 	bool _gameIsRunning;
 	bool _windowIsActive;
-	int  _playerLosesControlCounter;
+	int _playerLosesControlCounter;
 
-	Common::String   _languageCode;
+	Common::String _languageCode;
 	Common::Language _language;
 
 	ActorDialogueQueue *_actorDialogueQueue;
-	ScreenEffects      *_screenEffects;
-	AIScripts          *_aiScripts;
-	AmbientSounds      *_ambientSounds;
-	AudioCache         *_audioCache;
-	AudioMixer         *_audioMixer;
-	AudioPlayer        *_audioPlayer;
-	AudioSpeech        *_audioSpeech;
-	Chapters           *_chapters;
-	CrimesDatabase     *_crimesDatabase;
-	Combat             *_combat;
-	DialogueMenu       *_dialogueMenu;
-	Elevator           *_elevator;
-	EndCredits         *_endCredits;
-	ESPER              *_esper;
-	GameFlags          *_gameFlags;
-	GameInfo           *_gameInfo;
-	ItemPickup         *_itemPickup;
-	Items              *_items;
-	KIA                *_kia;
-	Lights             *_lights;
-	Font               *_mainFont;
-	Subtitles          *_subtitles;
-	Mouse              *_mouse;
-	Music              *_music;
-	Obstacles          *_obstacles;
-	Overlays           *_overlays;
-	PoliceMaze         *_policeMaze;
-	Scene              *_scene;
-	SceneObjects       *_sceneObjects;
-	SceneScript        *_sceneScript;
-	Scores             *_scores;
-	Settings           *_settings;
-	SliceAnimations    *_sliceAnimations;
-	SliceRenderer      *_sliceRenderer;
-	Spinner            *_spinner;
-	SuspectsDatabase   *_suspectsDatabase;
-	Time               *_time;
-	View               *_view;
-	VK                 *_vk;
-	Waypoints          *_waypoints;
-	int                *_gameVars;
+	ScreenEffects *_screenEffects;
+	AIScripts *_aiScripts;
+	AmbientSounds *_ambientSounds;
+	AudioCache *_audioCache;
+	AudioMixer *_audioMixer;
+	AudioPlayer *_audioPlayer;
+	AudioSpeech *_audioSpeech;
+	Chapters *_chapters;
+	CrimesDatabase *_crimesDatabase;
+	Combat *_combat;
+	DialogueMenu *_dialogueMenu;
+	Elevator *_elevator;
+	EndCredits *_endCredits;
+	ESPER *_esper;
+	GameFlags *_gameFlags;
+	GameInfo *_gameInfo;
+	ItemPickup *_itemPickup;
+	Items *_items;
+	KIA *_kia;
+	Lights *_lights;
+	Font *_mainFont;
+	Subtitles *_subtitles;
+	Mouse *_mouse;
+	Music *_music;
+	Obstacles *_obstacles;
+	Overlays *_overlays;
+	PoliceMaze *_policeMaze;
+	Scene *_scene;
+	SceneObjects *_sceneObjects;
+	SceneScript *_sceneScript;
+	Scores *_scores;
+	Settings *_settings;
+	SliceAnimations *_sliceAnimations;
+	SliceRenderer *_sliceRenderer;
+	Spinner *_spinner;
+	SuspectsDatabase *_suspectsDatabase;
+	Time *_time;
+	View *_view;
+	VK *_vk;
+	Waypoints *_waypoints;
+	int *_gameVars;
 
-	TextResource       *_textActorNames;
-	TextResource       *_textCrimes;
-	TextResource       *_textClueTypes;
-	TextResource       *_textKIA;
-	TextResource       *_textSpinnerDestinations;
-	TextResource       *_textVK;
-	TextResource       *_textOptions;
+	TextResource *_textActorNames;
+	TextResource *_textCrimes;
+	TextResource *_textClueTypes;
+	TextResource *_textKIA;
+	TextResource *_textSpinnerDestinations;
+	TextResource *_textVK;
+	TextResource *_textOptions;
 
-	Common::Array<Shape*> _shapes;
+	Common::Array<Shape *> _shapes;
 
 	Actor *_actors[kActorCount];
 	Actor *_playerActor;
 
-	Graphics::Surface  _surfaceFront;
-	Graphics::Surface  _surfaceBack;
+	Graphics::Surface _surfaceFront;
+	Graphics::Surface _surfaceBack;
 
-	ZBuffer           *_zbuffer;
+	ZBuffer *_zbuffer;
 
 	Common::RandomSource _rnd;
 
 	Debugger *_debugger;
 
 	Common::CosineTable *_cosTable1024;
-	Common::SineTable   *_sinTable1024;
+	Common::SineTable *_sinTable1024;
 
 	bool _isWalkingInterruptible;
 	bool _interruptWalking;
@@ -201,13 +201,13 @@ public:
 	bool _actorIsSpeaking;
 	bool _actorSpeakStopIsRequested;
 	bool _gameOver;
-	int  _gameAutoSaveTextId;
+	int _gameAutoSaveTextId;
 	bool _gameIsAutoSaving;
 	bool _gameIsLoading;
 	bool _sceneIsLoading;
 	bool _vqaIsPlaying;
 	bool _vqaStopIsRequested;
-	bool _subtitlesEnabled;  // tracks the state of whether subtitles are enabled or disabled from ScummVM GUI option or KIA checkbox (the states are synched)
+	bool _subtitlesEnabled; // tracks the state of whether subtitles are enabled or disabled from ScummVM GUI option or KIA checkbox (the states are synched)
 	bool _sitcomMode;
 	bool _shortyMode;
 	bool _cutContent;
@@ -220,22 +220,22 @@ public:
 	uint32 _mouseClickTimeLast;
 	uint32 _mouseClickTimeDiff;
 
-	int  _walkingToExitId;
+	int _walkingToExitId;
 	bool _isInsideScriptExit;
-	int  _walkingToRegionId;
+	int _walkingToRegionId;
 	bool _isInsideScriptRegion;
-	int  _walkingToObjectId;
+	int _walkingToObjectId;
 	bool _isInsideScriptObject;
-	int  _walkingToItemId;
+	int _walkingToItemId;
 	bool _isInsideScriptItem;
 	bool _walkingToEmpty;
-	int  _walkingToEmptyX;
-	int  _walkingToEmptyY;
+	int _walkingToEmptyX;
+	int _walkingToEmptyY;
 	bool _isInsideScriptEmpty;
-	int  _walkingToActorId;
+	int _walkingToActorId;
 	bool _isInsideScriptActor;
 
-	int    _actorUpdateCounter;
+	int _actorUpdateCounter;
 	uint32 _actorUpdateTimeLast;
 
 private:

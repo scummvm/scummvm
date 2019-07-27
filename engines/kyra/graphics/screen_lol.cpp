@@ -22,16 +22,17 @@
 
 #ifdef ENABLE_LOL
 
-#include "kyra/graphics/screen_lol.h"
-#include "kyra/engine/lol.h"
+#	include "kyra/graphics/screen_lol.h"
+#	include "kyra/engine/lol.h"
 
-#include "common/system.h"
+#	include "common/system.h"
 
-#include "graphics/palette.h"
+#	include "graphics/palette.h"
 
 namespace Kyra {
 
-Screen_LoL::Screen_LoL(LoLEngine *vm, OSystem *system) : Screen_v2(vm, system,  vm->gameFlags().use16ColorMode ? _screenDimTable16C : _screenDimTable256C, _screenDimTableCount) {
+Screen_LoL::Screen_LoL(LoLEngine *vm, OSystem *system)
+  : Screen_v2(vm, system, vm->gameFlags().use16ColorMode ? _screenDimTable16C : _screenDimTable256C, _screenDimTableCount) {
 	_paletteOverlay1 = new uint8[0x100];
 	_paletteOverlay2 = new uint8[0x100];
 	_grayOverlay = new uint8[0x100];
@@ -299,7 +300,7 @@ void Screen_LoL::clearGuiShapeMemory(int pageNum) {
 	}
 }
 
-void Screen_LoL::copyGuiShapeFromSceneBackupBuffer(int srcPageNum,  int dstPageNum) {
+void Screen_LoL::copyGuiShapeFromSceneBackupBuffer(int srcPageNum, int dstPageNum) {
 	uint8 *src = getPagePtr(srcPageNum) + 0x79C3;
 	uint8 *dst = getPagePtr(dstPageNum);
 
@@ -472,7 +473,7 @@ void Screen_LoL::smoothScrollTurnStep1(int srcPage1Num, int srcPage2Num, int dst
 	}
 
 	s = getPagePtr(srcPage2Num) + 112;
-	d = getPagePtr(dstPageNum)  + 0xA52C;
+	d = getPagePtr(dstPageNum) + 0xA52C;
 
 	for (int i = 0; i < 120; i++) {
 		for (int ii = 0; ii < 33; ii++) {
@@ -527,7 +528,7 @@ void Screen_LoL::smoothScrollTurnStep3(int srcPage1Num, int srcPage2Num, int dst
 	}
 
 	s = getPagePtr(srcPage2Num) + 112;
-	d = getPagePtr(dstPageNum)  + 0xA584;
+	d = getPagePtr(dstPageNum) + 0xA584;
 
 	for (int i = 0; i < 120; i++) {
 		for (int ii = 0; ii < 14; ii++) {
@@ -710,7 +711,8 @@ void Screen_LoL::copyBlockAndApplyOverlayOutro(int srcPage, int dstPage, const u
 
 	for (int y = 0; y < 200; ++y) {
 		for (int x = 0; x < 80; ++x) {
-			uint32 srcData = READ_LE_UINT32(src); src += 4;
+			uint32 srcData = READ_LE_UINT32(src);
+			src += 4;
 			uint32 dstData = READ_LE_UINT32(dst);
 			uint16 offset = 0;
 

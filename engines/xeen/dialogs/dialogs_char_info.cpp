@@ -20,8 +20,8 @@
  *
  */
 
-#include "xeen/dialogs/dialogs_awards.h"
 #include "xeen/dialogs/dialogs_char_info.h"
+#include "xeen/dialogs/dialogs_awards.h"
 #include "xeen/dialogs/dialogs_exchange.h"
 #include "xeen/dialogs/dialogs_items.h"
 #include "xeen/dialogs/dialogs_quick_ref.h"
@@ -281,42 +281,35 @@ Common::String CharacterInfo::loadCharacterDetails(const Character &c) {
 	Party &party = *_vm->_party;
 	int foodVal = party._food / party._activeParty.size() / 3;
 
-	int totalResist =
-		c._fireResistence._permanent + c.itemScan(11) + c._fireResistence._temporary +
-		c._coldResistence._permanent + c.itemScan(13) + c._coldResistence._temporary +
-		c._electricityResistence._permanent + c.itemScan(12) + c._electricityResistence._temporary +
-		c._poisonResistence._permanent + c.itemScan(14) + c._poisonResistence._temporary +
-		c._energyResistence._permanent + c.itemScan(15) + c._energyResistence._temporary +
-		c._magicResistence._permanent + c.itemScan(16) + c._magicResistence._temporary;
+	int totalResist = c._fireResistence._permanent + c.itemScan(11) + c._fireResistence._temporary + c._coldResistence._permanent + c.itemScan(13) + c._coldResistence._temporary + c._electricityResistence._permanent + c.itemScan(12) + c._electricityResistence._temporary + c._poisonResistence._permanent + c.itemScan(14) + c._poisonResistence._temporary + c._energyResistence._permanent + c.itemScan(15) + c._energyResistence._temporary + c._magicResistence._permanent + c.itemScan(16) + c._magicResistence._temporary;
 
 	return Common::String::format(Res.CHARACTER_DETAILS,
-		Res.PARTY_GOLD, c._name.c_str(), Res.SEX_NAMES[c._sex],
-		Res.RACE_NAMES[c._race], Res.CLASS_NAMES[c._class],
-		c.statColor(c.getStat(MIGHT), c.getStat(MIGHT, true)), c.getStat(MIGHT),
-		c.statColor(c.getStat(ACCURACY), c.getStat(ACCURACY, true)), c.getStat(ACCURACY),
-		c.statColor(c._currentHp, c.getMaxHP()), c._currentHp,
-		c.getCurrentExperience(),
-		c.statColor(c.getStat(INTELLECT), c.getStat(INTELLECT, true)), c.getStat(INTELLECT),
-		c.statColor(c.getStat(LUCK), c.getStat(LUCK, true)), c.getStat(LUCK),
-		c.statColor(c._currentSp, c.getMaxSP()), c._currentSp,
-		party._gold,
-		c.statColor(c.getStat(PERSONALITY), c.getStat(PERSONALITY, true)), c.getStat(PERSONALITY),
-		c.statColor(c.getAge(), c.getAge(true)), c.getAge(),
-		totalResist,
-		party._gems,
-		c.statColor(c.getStat(ENDURANCE), c.getStat(ENDURANCE, true)), c.getStat(ENDURANCE),
-		c.statColor(c.getCurrentLevel(), c._level._permanent), c.getCurrentLevel(),
-		c.getNumSkills(),
-		foodVal, (foodVal == 1) ? ' ' : 's',
-		c.statColor(c.getStat(SPEED), c.getStat(SPEED, true)), c.getStat(SPEED),
-		c.statColor(c.getArmorClass(), c.getArmorClass(true)), c.getArmorClass(),
-		c.getNumAwards(),
-		Res.CONDITION_COLORS[condition], Res.CONDITION_NAMES[condition],
-		condition == NO_CONDITION && party._blessed ? Res.PLUS_14 : "",
-		condition == NO_CONDITION && party._powerShield ? Res.PLUS_14 : "",
-		condition == NO_CONDITION && party._holyBonus ? Res.PLUS_14 : "",
-		condition == NO_CONDITION && party._heroism ? Res.PLUS_14 : ""
-	);
+	                              Res.PARTY_GOLD, c._name.c_str(), Res.SEX_NAMES[c._sex],
+	                              Res.RACE_NAMES[c._race], Res.CLASS_NAMES[c._class],
+	                              c.statColor(c.getStat(MIGHT), c.getStat(MIGHT, true)), c.getStat(MIGHT),
+	                              c.statColor(c.getStat(ACCURACY), c.getStat(ACCURACY, true)), c.getStat(ACCURACY),
+	                              c.statColor(c._currentHp, c.getMaxHP()), c._currentHp,
+	                              c.getCurrentExperience(),
+	                              c.statColor(c.getStat(INTELLECT), c.getStat(INTELLECT, true)), c.getStat(INTELLECT),
+	                              c.statColor(c.getStat(LUCK), c.getStat(LUCK, true)), c.getStat(LUCK),
+	                              c.statColor(c._currentSp, c.getMaxSP()), c._currentSp,
+	                              party._gold,
+	                              c.statColor(c.getStat(PERSONALITY), c.getStat(PERSONALITY, true)), c.getStat(PERSONALITY),
+	                              c.statColor(c.getAge(), c.getAge(true)), c.getAge(),
+	                              totalResist,
+	                              party._gems,
+	                              c.statColor(c.getStat(ENDURANCE), c.getStat(ENDURANCE, true)), c.getStat(ENDURANCE),
+	                              c.statColor(c.getCurrentLevel(), c._level._permanent), c.getCurrentLevel(),
+	                              c.getNumSkills(),
+	                              foodVal, (foodVal == 1) ? ' ' : 's',
+	                              c.statColor(c.getStat(SPEED), c.getStat(SPEED, true)), c.getStat(SPEED),
+	                              c.statColor(c.getArmorClass(), c.getArmorClass(true)), c.getArmorClass(),
+	                              c.getNumAwards(),
+	                              Res.CONDITION_COLORS[condition], Res.CONDITION_NAMES[condition],
+	                              condition == NO_CONDITION && party._blessed ? Res.PLUS_14 : "",
+	                              condition == NO_CONDITION && party._powerShield ? Res.PLUS_14 : "",
+	                              condition == NO_CONDITION && party._holyBonus ? Res.PLUS_14 : "",
+	                              condition == NO_CONDITION && party._heroism ? Res.PLUS_14 : "");
 }
 
 void CharacterInfo::showCursor(bool flag) {
@@ -325,23 +318,20 @@ void CharacterInfo::showCursor(bool flag) {
 
 	if (_cursorCell < 20) {
 		_iconSprites.draw(0, flag ? 49 : 48,
-			Common::Point(CURSOR_X[_cursorCell / 5], CURSOR_Y[_cursorCell % 5]));
+		                  Common::Point(CURSOR_X[_cursorCell / 5], CURSOR_Y[_cursorCell % 5]));
 	}
 }
 
 bool CharacterInfo::expandStat(int attrib, const Character &c) {
 	const int STAT_POS[2][20] = {
-		{
-			61, 61, 61, 61, 61, 112, 112, 112, 112, 112,
-			177, 177, 177, 177, 177, 34, 34, 34, 34, 34
-		}, {
-			24, 47, 70, 93, 116, 24, 47, 70, 93, 116,
-			24, 47, 70, 93, 116, 24, 47, 70, 93, 116
-		}
+		{ 61, 61, 61, 61, 61, 112, 112, 112, 112, 112,
+		  177, 177, 177, 177, 177, 34, 34, 34, 34, 34 },
+		{ 24, 47, 70, 93, 116, 24, 47, 70, 93, 116,
+		  24, 47, 70, 93, 116, 24, 47, 70, 93, 116 }
 	};
 	assert(attrib < 20);
 	Common::Rect bounds(STAT_POS[0][attrib], STAT_POS[1][attrib],
-		STAT_POS[0][attrib] + 143, STAT_POS[1][attrib] + 52);
+	                    STAT_POS[0][attrib] + 143, STAT_POS[1][attrib] + 52);
 	Party &party = *_vm->_party;
 	Windows &windows = *_vm->_windows;
 	uint stat1, stat2;
@@ -364,7 +354,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 				break;
 
 		msg = Common::String::format(Res.CURRENT_MAXIMUM_RATING_TEXT, Res.STAT_NAMES[attrib],
-			stat1, stat2, Res.RATING_TEXT[idx]);
+		                             stat1, stat2, Res.RATING_TEXT[idx]);
 		break;
 
 	case 7:
@@ -372,7 +362,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 		stat1 = c.getAge(false);
 		stat2 = c.getAge(true);
 		msg = Common::String::format(Res.AGE_TEXT, Res.STAT_NAMES[attrib],
-			stat1, stat2, c._birthDay, c._birthYear);
+		                             stat1, stat2, c._birthDay, c._birthYear);
 		break;
 
 	case 8: {
@@ -381,9 +371,9 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 		idx = c.getCurrentLevel() / CLASS_ATTACK_GAINS[c._class] + 1;
 
 		msg = Common::String::format(Res.LEVEL_TEXT, Res.STAT_NAMES[attrib],
-			c.getCurrentLevel(), c._level._permanent,
-			idx, idx > 1 ? "s" : "",
-			c._level._permanent);
+		                             c.getCurrentLevel(), c._level._permanent,
+		                             idx, idx > 1 ? "s" : "",
+		                             c._level._permanent);
 		break;
 	}
 
@@ -392,7 +382,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 		stat1 = c.getArmorClass(false);
 		stat2 = c.getArmorClass(true);
 		msg = Common::String::format(Res.CURRENT_MAXIMUM_TEXT, Res.STAT_NAMES[attrib],
-			stat1, stat2);
+		                             stat1, stat2);
 		bounds.setHeight(42);
 		break;
 
@@ -404,7 +394,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 			fmt.setChar('d', p - fmt.c_str() + 1);
 
 		msg = Common::String::format(fmt.c_str(), Res.STAT_NAMES[attrib],
-			c._currentHp, c.getMaxHP());
+		                             c._currentHp, c.getMaxHP());
 		bounds.setHeight(42);
 		break;
 	}
@@ -414,19 +404,19 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 		stat1 = c._currentSp;
 		stat2 = c.getMaxSP();
 		msg = Common::String::format(Res.CURRENT_MAXIMUM_TEXT, Res.STAT_NAMES[attrib],
-			stat1, stat2);
+		                             stat1, stat2);
 		bounds.setHeight(42);
 		break;
 
 	case 12:
 		// Resistences
 		msg = Common::String::format(Res.RESISTENCES_TEXT, Res.STAT_NAMES[attrib],
-			c._fireResistence._permanent + c.itemScan(11) + c._fireResistence._temporary,
-			c._coldResistence._permanent + c.itemScan(13) + c._coldResistence._temporary,
-			c._electricityResistence._permanent + c.itemScan(12) + c._electricityResistence._temporary,
-			c._poisonResistence._permanent + c.itemScan(14) + c._poisonResistence._temporary,
-			c._energyResistence._permanent + c.itemScan(15) + c._energyResistence._temporary,
-			c._magicResistence._permanent + c.itemScan(16) + c._magicResistence._temporary);
+		                             c._fireResistence._permanent + c.itemScan(11) + c._fireResistence._temporary,
+		                             c._coldResistence._permanent + c.itemScan(13) + c._coldResistence._temporary,
+		                             c._electricityResistence._permanent + c.itemScan(12) + c._electricityResistence._temporary,
+		                             c._poisonResistence._permanent + c.itemScan(14) + c._poisonResistence._temporary,
+		                             c._energyResistence._permanent + c.itemScan(15) + c._energyResistence._temporary,
+		                             c._magicResistence._permanent + c.itemScan(16) + c._magicResistence._temporary);
 		bounds.setHeight(80);
 		break;
 
@@ -439,7 +429,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 				if (c._skills[skill]) {
 					if (skill == THIEVERY) {
 						lines[0] = Common::String::format("\n\t020%s%u",
-							Res.SKILL_NAMES[THIEVERY], c.getThievery());
+						                                  Res.SKILL_NAMES[THIEVERY], c.getThievery());
 					} else {
 						lines[skill] = Common::String::format("\n\t020%s", Res.SKILL_NAMES[skill]);
 					}
@@ -450,12 +440,13 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 			numLines = 1;
 		}
 
-		msg = Common::String::format("\x2\x3""c%s\x3l%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
-			Res.STAT_NAMES[attrib], lines[0].c_str(), lines[1].c_str(),
-			lines[2].c_str(), lines[3].c_str(), lines[4].c_str(), lines[5].c_str(),
-			lines[17].c_str(), lines[6].c_str(), lines[7].c_str(), lines[8].c_str(),
-			lines[9].c_str(), lines[10].c_str(), lines[11].c_str(), lines[12].c_str(),
-			lines[13].c_str(), lines[16].c_str(), lines[14].c_str(), lines[15].c_str());
+		msg = Common::String::format("\x2\x3"
+		                             "c%s\x3l%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
+		                             Res.STAT_NAMES[attrib], lines[0].c_str(), lines[1].c_str(),
+		                             lines[2].c_str(), lines[3].c_str(), lines[4].c_str(), lines[5].c_str(),
+		                             lines[17].c_str(), lines[6].c_str(), lines[7].c_str(), lines[8].c_str(),
+		                             lines[9].c_str(), lines[10].c_str(), lines[11].c_str(), lines[12].c_str(),
+		                             lines[13].c_str(), lines[16].c_str(), lines[14].c_str(), lines[15].c_str());
 
 		bounds.top -= (numLines / 2) * 8;
 		bounds.setHeight(numLines * 9 + 26);
@@ -474,23 +465,22 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 		stat1 = c.getCurrentExperience();
 		stat2 = c.experienceToNextLevel();
 		msg = Common::String::format(Res.EXPERIENCE_TEXT,
-			Res.STAT_NAMES[attrib], stat1,
-			stat2 == 0 ? Res.ELIGIBLE : Common::String::format("%d", stat2).c_str()
-		);
+		                             Res.STAT_NAMES[attrib], stat1,
+		                             stat2 == 0 ? Res.ELIGIBLE : Common::String::format("%d", stat2).c_str());
 		bounds.setHeight(43);
 		break;
 
 	case 16:
 		// Gold
 		msg = Common::String::format(Res.IN_PARTY_IN_BANK, Res.CONSUMABLE_NAMES[0],
-			party._gold, party._bankGold);
+		                             party._gold, party._bankGold);
 		bounds.setHeight(43);
 		break;
 
 	case 17:
 		// Gems
 		msg = Common::String::format(Res.IN_PARTY_IN_BANK, Res.CONSUMABLE_NAMES[1],
-			party._gems, party._bankGems);
+		                             party._gems, party._bankGems);
 		bounds.setHeight(43);
 		break;
 
@@ -498,7 +488,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 		// Food
 		int food = (party._food / party._activeParty.size()) / 3;
 		msg = Common::String::format(Res.FOOD_TEXT, Res.CONSUMABLE_NAMES[2],
-			party._food, food, food != 1 ? "s" : "");
+		                             party._food, food, food != 1 ? "s" : "");
 		break;
 	}
 
@@ -510,10 +500,10 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 			if (c._conditions[condition]) {
 				if (condition >= UNCONSCIOUS) {
 					lines[condition] = Common::String::format("\n\t020%s",
-						Res.CONDITION_NAMES[condition]);
+					                                          Res.CONDITION_NAMES[condition]);
 				} else {
 					lines[condition] = Common::String::format("\n\t020%s\t095-%d",
-						Res.CONDITION_NAMES[condition], c._conditions[condition]);
+					                                          Res.CONDITION_NAMES[condition], c._conditions[condition]);
 				}
 
 				++total;
@@ -543,15 +533,15 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 			++total;
 		}
 
-		msg = Common::String::format("\x2\x3""c%s\x3l%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\x1",
-			Res.CONSUMABLE_NAMES[3], lines[0].c_str(), lines[1].c_str(),
-			lines[2].c_str(), lines[3].c_str(), lines[4].c_str(),
-			lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
-			lines[8].c_str(), lines[9].c_str(), lines[10].c_str(),
-			lines[11].c_str(), lines[12].c_str(), lines[13].c_str(),
-			lines[14].c_str(), lines[15].c_str(), lines[16].c_str(),
-			lines[17].c_str(), lines[18].c_str(), lines[19].c_str()
-		);
+		msg = Common::String::format("\x2\x3"
+		                             "c%s\x3l%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\x1",
+		                             Res.CONSUMABLE_NAMES[3], lines[0].c_str(), lines[1].c_str(),
+		                             lines[2].c_str(), lines[3].c_str(), lines[4].c_str(),
+		                             lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
+		                             lines[8].c_str(), lines[9].c_str(), lines[10].c_str(),
+		                             lines[11].c_str(), lines[12].c_str(), lines[13].c_str(),
+		                             lines[14].c_str(), lines[15].c_str(), lines[16].c_str(),
+		                             lines[17].c_str(), lines[18].c_str(), lines[19].c_str());
 
 		bounds.top -= ((total - 1) / 2) * 8;
 		bounds.setHeight(total * 9 + 26);

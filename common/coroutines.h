@@ -23,10 +23,10 @@
 #ifndef COMMON_COROUTINES_H
 #define COMMON_COROUTINES_H
 
-#include "common/scummsys.h"
-#include "common/util.h"    // for SCUMMVM_CURRENT_FUNCTION
 #include "common/list.h"
+#include "common/scummsys.h"
 #include "common/singleton.h"
+#include "common/util.h" // for SCUMMVM_CURRENT_FUNCTION
 
 namespace Common {
 
@@ -41,7 +41,6 @@ namespace Common {
 //@{
 
 #define CoroScheduler (Common::CoroutineScheduler::instance())
-
 
 // Enable this macro to enable some debugging support in the coroutine code.
 //#define COROUTINE_DEBUG
@@ -70,7 +69,6 @@ struct CoroBaseContext {
 
 typedef CoroBaseContext *CoroContext;
 
-
 /** This is a special constant that can be temporarily used as a parameter to call coroutine-ised
  * methods from code that haven't yet been converted to being a coroutine, so code at least
  * compiles correctly. Be aware, though, that an error will occur if a coroutine that was passed
@@ -88,8 +86,10 @@ extern CoroContext nullContext;
  */
 class CoroContextHolder {
 	CoroContext &_ctx;
+
 public:
-	CoroContextHolder(CoroContext &ctx) : _ctx(ctx) {
+	CoroContextHolder(CoroContext &ctx)
+	  : _ctx(ctx) {
 		assert(ctx);
 		assert(ctx->_sleep >= 0);
 		ctx->_sleep = 0;
@@ -103,8 +103,7 @@ public:
 };
 
 /** Methods that have been converted to being a coroutine should have this as the first parameter */
-#define CORO_PARAM    Common::CoroContext &coroParam
-
+#define CORO_PARAM Common::CoroContext &coroParam
 
 /**
  * Begin the declaration of a coroutine context.
@@ -127,9 +126,10 @@ public:
  * @note We declare a variable 'DUMMY' to allow the user to specify an 'empty'
  * context, and so compilers won't complain about ";" following the macro.
  */
-#define CORO_BEGIN_CONTEXT  \
-	struct CoroContextTag : Common::CoroBaseContext { \
- CoroContextTag() : CoroBaseContext(SCUMMVM_CURRENT_FUNCTION) { DUMMY = 0; } \
+#define CORO_BEGIN_CONTEXT                                       \
+	struct CoroContextTag : Common::CoroBaseContext {              \
+		CoroContextTag()                                             \
+		  : CoroBaseContext(SCUMMVM_CURRENT_FUNCTION) { DUMMY = 0; } \
 		int DUMMY
 
 /**
@@ -137,44 +137,59 @@ public:
  * @param x name of the coroutine context
  * @see CORO_BEGIN_CONTEXT
  */
-#define CORO_END_CONTEXT(x)    } *x = (CoroContextTag *)coroParam
+#define CORO_END_CONTEXT(x) \
+	}                         \
+	*x = (CoroContextTag *)coroParam
 
 /**
  * Begin the code section of a coroutine.
  * @param x name of the coroutine context
  * @see CORO_BEGIN_CODE
  */
-#define CORO_BEGIN_CODE(x) \
-	if (&coroParam == &Common::nullContext) assert(!Common::nullContext); \
-	if (!x) { coroParam = x = new CoroContextTag(); } \
-	x->DUMMY = 0; \
+#define CORO_BEGIN_CODE(x)                        \
+	if (&coroParam == &Common::nullContext)         \
+		assert(!Common::nullContext);                 \
+	if (!x) {                                       \
+		coroParam = x = new CoroContextTag();         \
+	}                                               \
+	x->DUMMY = 0;                                   \
 	Common::CoroContextHolder tmpHolder(coroParam); \
-	switch (coroParam->_line) { case 0:;
+	switch (coroParam->_line) {                     \
+	case 0:;
 
 /**
  * End the code section of a coroutine.
  * @see CORO_END_CODE
  */
-#define CORO_END_CODE \
+#define CORO_END_CODE                       \
 	if (&coroParam == &Common::nullContext) { \
-		delete Common::nullContext; \
-		Common::nullContext = NULL; \
-	} \
+		delete Common::nullContext;             \
+		Common::nullContext = NULL;             \
+	}                                         \
 	}
 
 /**
  * Sleep for the specified number of scheduler cycles.
  */
-#define CORO_SLEEP(delay) \
-	do { \
-		coroParam->_line = __LINE__; \
-		coroParam->_sleep = delay; \
+#define CORO_SLEEP(delay)                       \
+	do {                                          \
+		coroParam->_line = __LINE__;                \
+		coroParam->_sleep = delay;                  \
 		assert(&coroParam != &Common::nullContext); \
-		return; case __LINE__:; \
+		return;                                     \
+	case __LINE__:;                               \
 	} while (0)
 
-#define CORO_GIVE_WAY do { CoroScheduler.giveWay(); CORO_SLEEP(1); } while (0)
-#define CORO_RESCHEDULE do { CoroScheduler.reschedule(); CORO_SLEEP(1); } while (0)
+#define CORO_GIVE_WAY        \
+	do {                       \
+		CoroScheduler.giveWay(); \
+		CORO_SLEEP(1);           \
+	} while (0)
+#define CORO_RESCHEDULE         \
+	do {                          \
+		CoroScheduler.reschedule(); \
+		CORO_SLEEP(1);              \
+	} while (0)
 
 /**
  * Stop the currently running coroutine and all calling coroutines.
@@ -184,15 +199,19 @@ public:
  * propogate the _sleep value and return immediately (the scheduler will
  * then delete the entire coroutine's state, including all subcontexts).
  */
-#define CORO_KILL_SELF() \
-	do { if (&coroParam != &Common::nullContext) { coroParam->_sleep = -1; } return; } while (0)
-
+#define CORO_KILL_SELF()                      \
+	do {                                        \
+		if (&coroParam != &Common::nullContext) { \
+			coroParam->_sleep = -1;                 \
+		}                                         \
+		return;                                   \
+	} while (0)
 
 /**
  * This macro is to be used in conjunction with CORO_INVOKE_ARGS and
  * similar macros for calling coroutines-enabled subroutines.
  */
-#define CORO_SUBCTX   coroParam->_subctx
+#define CORO_SUBCTX coroParam->_subctx
 
 /**
  * Invoke another coroutine.
@@ -214,17 +233,19 @@ public:
  *       becomes the following:
  *          CORO_INVOKE_ARGS(myFunc, (CORO_SUBCTX, a, b));
  */
-#define CORO_INVOKE_ARGS(subCoro, ARGS) \
-	do { \
-		coroParam->_line = __LINE__; \
-		coroParam->_subctx = 0; \
-		do { \
-			subCoro ARGS; \
-			if (!coroParam->_subctx) break; \
+#define CORO_INVOKE_ARGS(subCoro, ARGS)               \
+	do {                                                \
+		coroParam->_line = __LINE__;                      \
+		coroParam->_subctx = 0;                           \
+		do {                                              \
+			subCoro ARGS;                                   \
+			if (!coroParam->_subctx)                        \
+				break;                                        \
 			coroParam->_sleep = coroParam->_subctx->_sleep; \
-			assert(&coroParam != &Common::nullContext); \
-			return; case __LINE__:; \
-		} while (1); \
+			assert(&coroParam != &Common::nullContext);     \
+			return;                                         \
+		case __LINE__:;                                   \
+		} while (1);                                      \
 	} while (0)
 
 /**
@@ -233,17 +254,19 @@ public:
  * if invoked coroutine yields (thus causing the current
  * coroutine to yield, too).
  */
-#define CORO_INVOKE_ARGS_V(subCoro, RESULT, ARGS) \
-	do { \
-		coroParam->_line = __LINE__; \
-		coroParam->_subctx = 0; \
-		do { \
-			subCoro ARGS; \
-			if (!coroParam->_subctx) break; \
+#define CORO_INVOKE_ARGS_V(subCoro, RESULT, ARGS)     \
+	do {                                                \
+		coroParam->_line = __LINE__;                      \
+		coroParam->_subctx = 0;                           \
+		do {                                              \
+			subCoro ARGS;                                   \
+			if (!coroParam->_subctx)                        \
+				break;                                        \
 			coroParam->_sleep = coroParam->_subctx->_sleep; \
-			assert(&coroParam != &Common::nullContext); \
-			return RESULT; case __LINE__:; \
-		} while (1); \
+			assert(&coroParam != &Common::nullContext);     \
+			return RESULT;                                  \
+		case __LINE__:;                                   \
+		} while (1);                                      \
 	} while (0)
 
 /**
@@ -264,31 +287,29 @@ public:
  * Convenience wrapper for CORO_INVOKE_ARGS for invoking a coroutine
  * with two parameters.
  */
-#define CORO_INVOKE_2(subCoroutine, a0,a1) \
+#define CORO_INVOKE_2(subCoroutine, a0, a1) \
 	CORO_INVOKE_ARGS(subCoroutine, (CORO_SUBCTX, a0, a1))
 
 /**
  * Convenience wrapper for CORO_INVOKE_ARGS for invoking a coroutine
  * with three parameters.
  */
-#define CORO_INVOKE_3(subCoroutine, a0,a1,a2) \
+#define CORO_INVOKE_3(subCoroutine, a0, a1, a2) \
 	CORO_INVOKE_ARGS(subCoroutine, (CORO_SUBCTX, a0, a1, a2))
 
 /**
  * Convenience wrapper for CORO_INVOKE_ARGS for invoking a coroutine
  * with four parameters.
  */
-#define CORO_INVOKE_4(subCoroutine, a0,a1,a2,a3) \
+#define CORO_INVOKE_4(subCoroutine, a0, a1, a2, a3) \
 	CORO_INVOKE_ARGS(subCoroutine, (CORO_SUBCTX, a0, a1, a2, a3))
-
-
 
 // the size of process specific info
 #define CORO_PARAM_SIZE 32
 
 // the maximum number of processes
-#define CORO_NUM_PROCESS    100
-#define CORO_MAX_PROCESSES  100
+#define CORO_NUM_PROCESS 100
+#define CORO_MAX_PROCESSES 100
 #define CORO_MAX_PID_WAITING 5
 
 #define CORO_INFINITE 0xffffffff
@@ -299,19 +320,18 @@ typedef void (*CORO_ADDR)(CoroContext &, const void *);
 
 /** process structure */
 struct PROCESS {
-	PROCESS *pNext;     ///< pointer to next process in active or free list
+	PROCESS *pNext; ///< pointer to next process in active or free list
 	PROCESS *pPrevious; ///< pointer to previous process in active or free list
 
-	CoroContext state;      ///< the state of the coroutine
-	CORO_ADDR  coroAddr;    ///< the entry point of the coroutine
+	CoroContext state; ///< the state of the coroutine
+	CORO_ADDR coroAddr; ///< the entry point of the coroutine
 
-	int sleepTime;      ///< number of scheduler cycles to sleep
-	uint32 pid;         ///< process ID
-	uint32 pidWaiting[CORO_MAX_PID_WAITING];    ///< Process ID(s) process is currently waiting on
-	char param[CORO_PARAM_SIZE];    ///< process specific info
+	int sleepTime; ///< number of scheduler cycles to sleep
+	uint32 pid; ///< process ID
+	uint32 pidWaiting[CORO_MAX_PID_WAITING]; ///< Process ID(s) process is currently waiting on
+	char param[CORO_PARAM_SIZE]; ///< process specific info
 };
 typedef PROCESS *PPROCESS;
-
 
 /** Event structure */
 struct EVENT {
@@ -320,7 +340,6 @@ struct EVENT {
 	bool signalled;
 	bool pulsing;
 };
-
 
 /**
  * Creates and manages "processes" (really coroutines).
@@ -342,7 +361,6 @@ private:
 	 * Destructor
 	 */
 	~CoroutineScheduler();
-
 
 	/** list of all processes */
 	PROCESS *processList;
@@ -382,6 +400,7 @@ private:
 
 	PROCESS *getProcess(uint32 pid);
 	EVENT *getEvent(uint32 pid);
+
 public:
 	/**
 	 * Kills all processes and places them on the free list.

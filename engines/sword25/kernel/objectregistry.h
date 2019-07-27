@@ -39,10 +39,11 @@
 
 namespace Sword25 {
 
-template<typename T>
+template <typename T>
 class ObjectRegistry {
 public:
-	ObjectRegistry() : _nextHandle(1) {}
+	ObjectRegistry()
+	  : _nextHandle(1) {}
 	virtual ~ObjectRegistry() {}
 
 	uint registerObject(T *objectPtr) {
@@ -139,12 +140,12 @@ protected:
 		}
 	};
 
-	typedef Common::HashMap<uint32, T *>  HANDLE2PTR_MAP;
+	typedef Common::HashMap<uint32, T *> HANDLE2PTR_MAP;
 	typedef Common::HashMap<T *, uint32, ClassPointer_Hash, ClassPointer_EqualTo> PTR2HANDLE_MAP;
 
-	HANDLE2PTR_MAP  _handle2PtrMap;
-	PTR2HANDLE_MAP  _ptr2HandleMap;
-	uint32    _nextHandle;
+	HANDLE2PTR_MAP _handle2PtrMap;
+	PTR2HANDLE_MAP _ptr2HandleMap;
+	uint32 _nextHandle;
 
 	T *findPtrByHandle(uint handle) {
 		// Zum Handle gehörigen Pointer finden.

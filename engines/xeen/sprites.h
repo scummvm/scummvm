@@ -23,9 +23,9 @@
 #ifndef XEEN_SPRITES_H
 #define XEEN_SPRITES_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/file.h"
+#include "common/scummsys.h"
 #include "graphics/surface.h"
 #include "xeen/files.h"
 #include "xeen/xsurface.h"
@@ -36,12 +36,16 @@ class XeenEngine;
 class Window;
 
 enum {
-	SCALE_MASK = 0x7FFF, SCALE_ENLARGE = 0x8000
+	SCALE_MASK = 0x7FFF,
+	SCALE_ENLARGE = 0x8000
 };
 
 enum SpriteFlags {
-	SPRFLAG_800 = 0x800, SPRFLAG_SCENE_CLIPPED = 0x2000, SPRFLAG_BOTTOM_CLIPPED = 0x4000,
-	SPRFLAG_HORIZ_FLIPPED = 0x8000, SPRFLAG_RESIZE = 0x10000
+	SPRFLAG_800 = 0x800,
+	SPRFLAG_SCENE_CLIPPED = 0x2000,
+	SPRFLAG_BOTTOM_CLIPPED = 0x4000,
+	SPRFLAG_HORIZ_FLIPPED = 0x8000,
+	SPRFLAG_RESIZE = 0x10000
 };
 
 class SpriteResource {
@@ -65,24 +69,25 @@ private:
 	 * Draw the sprite onto the given surface
 	 */
 	void draw(XSurface &dest, int frame, const Common::Point &destPos,
-		const Common::Rect &bounds, uint flags = 0, int scale = 0);
+	          const Common::Rect &bounds, uint flags = 0, int scale = 0);
 
 	/**
 	 * Draw the sprite onto a given window
 	 */
 	void draw(int windowNum, int frame, const Common::Point &destPos,
-		const Common::Rect &bounds, uint flags = 0, int scale = 0);
+	          const Common::Rect &bounds, uint flags = 0, int scale = 0);
 
 	/**
 	 * Draw a sprite frame based on a passed offset into the data stream
 	 */
 	void drawOffset(XSurface &dest, uint16 offset, const Common::Point &pt,
-		const Common::Rect &clipRect, uint flags, int scale);
+	                const Common::Rect &clipRect, uint flags, int scale);
 
 	/**
 	 * Scale a co-ordinate value based on the passed scaling mask
 	 */
 	static uint getScaledVal(int xy, uint16 &scaleMask);
+
 public:
 	SpriteResource();
 	SpriteResource(const Common::String &filename);
@@ -120,7 +125,7 @@ public:
 	 *					1..15   -> reduces the sprite: the higher, the smaller it'll be
 	 */
 	void draw(XSurface &dest, int frame, const Common::Point &destPos,
-		uint flags = 0, int scale = 0);
+	          uint flags = 0, int scale = 0);
 
 	/**
 	 * Draw a sprite onto a specific window
@@ -132,7 +137,7 @@ public:
 	 *					1..15   -> reduces the sprite: the higher, the smaller it'll be
 	 */
 	void draw(Window &dest, int frame, const Common::Point &destPos,
-		uint flags = 0, int scale = 0);
+	          uint flags = 0, int scale = 0);
 
 	/**
 	 * Draw a sprite onto a given window
@@ -144,7 +149,7 @@ public:
 	 *					1..15   -> reduces the sprite: the higher, the smaller it'll be
 	 */
 	void draw(int windowIndex, int frame, const Common::Point &destPos,
-		uint flags = 0, int scale = 0);
+	          uint flags = 0, int scale = 0);
 
 	/**
 	 * Draw the sprite onto the given surface

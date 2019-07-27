@@ -20,13 +20,13 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "xeen/sprites.h"
 #include "common/archive.h"
 #include "common/memstream.h"
+#include "common/scummsys.h"
 #include "common/textconsole.h"
-#include "xeen/xeen.h"
 #include "xeen/screen.h"
-#include "xeen/sprites.h"
+#include "xeen/xeen.h"
 
 namespace Xeen {
 
@@ -110,7 +110,7 @@ void SpriteResource::clear() {
 }
 
 void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Point &pt,
-		const Common::Rect &clipRect, uint flags, int scale) {
+                                const Common::Rect &clipRect, uint flags, int scale) {
 	static const uint SCALE_TABLE[] = {
 		0xFFFF, 0xFFEF, 0xEFEF, 0xEFEE, 0xEEEE, 0xEEAE, 0xAEAE, 0xAEAA,
 		0xAAAA, 0xAA8A, 0x8A8A, 0x8A88, 0x8888, 0x8880, 0x8080, 0x8000
@@ -195,17 +195,18 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 			// Build up the line
 			int byteCount, opr1, opr2;
 			int32 pos;
-			for (byteCount = 1; byteCount < lineLength; ) {
+			for (byteCount = 1; byteCount < lineLength;) {
 				// The next byte is an opcode that determines what operators are to follow and how to interpret them.
-				int opcode = f.readByte(); ++byteCount;
+				int opcode = f.readByte();
+				++byteCount;
 
 				// Decode the opcode
 				int len = opcode & 0x1F;
 				int cmd = (opcode & 0xE0) >> 5;
 
 				switch (cmd) {
-				case 0:   // The following len + 1 bytes are stored as indexes into the color table.
-				case 1:   // The following len + 33 bytes are stored as indexes into the color table.
+				case 0: // The following len + 1 bytes are stored as indexes into the color table.
+				case 1: // The following len + 33 bytes are stored as indexes into the color table.
 					for (int i = 0; i < opcode + 1; ++i, ++byteCount) {
 						byte b = f.readByte();
 						*lineP = b;
@@ -213,16 +214,18 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 					}
 					break;
 
-				case 2:   // The following byte is an index into the color table, draw it len + 3 times.
-					opr1 = f.readByte(); ++byteCount;
+				case 2: // The following byte is an index into the color table, draw it len + 3 times.
+					opr1 = f.readByte();
+					++byteCount;
 					for (int i = 0; i < len + 3; ++i) {
 						*lineP = opr1;
 						lineP += xInc;
 					}
 					break;
 
-				case 3:   // Stream copy command.
-					opr1 = f.readUint16LE(); byteCount += 2;
+				case 3: // Stream copy command.
+					opr1 = f.readUint16LE();
+					byteCount += 2;
 					pos = f.pos();
 					f.seek(-opr1, SEEK_CUR);
 
@@ -234,9 +237,11 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 					f.seek(pos, SEEK_SET);
 					break;
 
-				case 4:   // The following two bytes are indexes into the color table, draw the pair len + 2 times.
-					opr1 = f.readByte(); ++byteCount;
-					opr2 = f.readByte(); ++byteCount;
+				case 4: // The following two bytes are indexes into the color table, draw the pair len + 2 times.
+					opr1 = f.readByte();
+					++byteCount;
+					opr2 = f.readByte();
+					++byteCount;
 					for (int i = 0; i < len + 2; ++i) {
 						*lineP = opr1;
 						lineP += xInc;
@@ -245,17 +250,18 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 					}
 					break;
 
-				case 5:   // Skip len + 1 pixels
+				case 5: // Skip len + 1 pixels
 					lineP += (len + 1) * xInc;
 					break;
 
-				case 6:   // Pattern command.
+				case 6: // Pattern command.
 				case 7:
 					// The pattern command has a different opcode format
 					len = opcode & 0x07;
 					cmd = (opcode >> 2) & 0x0E;
 
-					opr1 = f.readByte(); ++byteCount;
+					opr1 = f.readByte();
+					++byteCount;
 					for (int i = 0; i < len + 3; ++i) {
 						*lineP = opr1;
 						lineP += xInc;
@@ -318,23 +324,23 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 }
 
 void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos,
-		uint flags, int scale) {
+                          uint flags, int scale) {
 	draw(dest, frame, destPos, Common::Rect(0, 0, dest.w, dest.h), flags, scale);
 }
 
 void SpriteResource::draw(Window &dest, int frame, const Common::Point &destPos,
-		uint flags, int scale) {
+                          uint flags, int scale) {
 	draw(dest, frame, destPos, dest.getBounds(), flags, scale);
 }
 
 void SpriteResource::draw(int windowIndex, int frame, const Common::Point &destPos,
-		uint flags, int scale) {
+                          uint flags, int scale) {
 	Window &win = (*g_vm->_windows)[windowIndex];
 	draw(win, frame, destPos, flags, scale);
 }
 
 void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos,
-		const Common::Rect &bounds, uint flags, int scale) {
+                          const Common::Rect &bounds, uint flags, int scale) {
 	Common::Rect r = bounds;
 	if (flags & SPRFLAG_BOTTOM_CLIPPED)
 		r.clip(SCREEN_WIDTH, _clippedBottom);

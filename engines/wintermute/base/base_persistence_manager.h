@@ -29,14 +29,13 @@
 #ifndef WINTERMUTE_BASE_PERSISTENCE_MANAGER_H
 #define WINTERMUTE_BASE_PERSISTENCE_MANAGER_H
 
-
+#include "common/rect.h"
+#include "common/str.h"
+#include "common/stream.h"
+#include "common/system.h"
+#include "engines/savestate.h"
 #include "engines/wintermute/dctypes.h"
 #include "engines/wintermute/math/rect32.h"
-#include "engines/savestate.h"
-#include "common/stream.h"
-#include "common/str.h"
-#include "common/system.h"
-#include "common/rect.h"
 
 namespace Wintermute {
 
@@ -88,13 +87,14 @@ public:
 	bool transferVector2(const char *name, Vector2 *val);
 	BasePersistenceManager(const Common::String &savePrefix = "", bool deleteSingleton = false);
 	virtual ~BasePersistenceManager();
-	bool checkVersion(byte  verMajor, byte verMinor, byte verBuild);
+	bool checkVersion(byte verMajor, byte verMinor, byte verBuild);
 
 	uint32 _thumbnailDataSize;
 	byte *_thumbnailData;
 	uint32 _scummVMThumbSize;
 	byte *_scummVMThumbnailData;
 	Common::String getFilenameForSlot(int slot) const;
+
 private:
 	bool _deleteSingleton;
 	bool readHeader(const Common::String &filename);

@@ -42,9 +42,9 @@ uint32 decompress_lcw(uint8 *inBuf, uint32 inLen, uint8 *outBuf, uint32 outLen) 
 	while (src < inBuf + inLen && dst < outEnd && src[0] != 0x80) {
 		int out_remain = (int)(outEnd - dst);
 
-		if (src[0] == 0xff) {     // 0b11111111
+		if (src[0] == 0xff) { // 0b11111111
 			count = src[1] | (src[2] << 8);
-			pos   = src[3] | (src[4] << 8);
+			pos = src[3] | (src[4] << 8);
 			src += 5;
 			count = MIN(count, out_remain);
 
@@ -64,7 +64,7 @@ uint32 decompress_lcw(uint8 *inBuf, uint32 inLen, uint8 *outBuf, uint32 outLen) 
 			memset(dst, color, count);
 		} else if (src[0] >= 0xc0) { // 0b11??????
 			count = (src[0] & 0x3f) + 3;
-			pos   = src[1] | (src[2] << 8);
+			pos = src[1] | (src[2] << 8);
 			src += 3;
 			count = MIN(count, out_remain);
 
@@ -82,8 +82,8 @@ uint32 decompress_lcw(uint8 *inBuf, uint32 inLen, uint8 *outBuf, uint32 outLen) 
 
 			memcpy(dst, src, count);
 			src += count;
-		} else {                    // 0b0???????
-			count  = ((src[0] & 0x70) >> 4) + 3;
+		} else { // 0b0???????
+			count = ((src[0] & 0x70) >> 4) + 3;
 			relpos = ((src[0] & 0x0f) << 8) | src[1];
 			src += 2;
 			count = MIN(count, out_remain);
@@ -101,14 +101,14 @@ uint32 decompress_lcw(uint8 *inBuf, uint32 inLen, uint8 *outBuf, uint32 outLen) 
 
 uint32 decompress_lcw_output_size(uint8 *inBuf, uint32 inLen) {
 	int count;
-	uint8 *src     = inBuf;
+	uint8 *src = inBuf;
 	uint32 outsize = 0;
 
 	if (src[0] == 0)
 		++src;
 
 	while (src[0] != 0x80 && src < inBuf + inLen) {
-		if (src[0] == 0xff) {        // 0b11111111
+		if (src[0] == 0xff) { // 0b11111111
 			count = src[1] | (src[2] << 8);
 			src += 5;
 		} else if (src[0] == 0xfe) { // 0b11111110
@@ -117,11 +117,11 @@ uint32 decompress_lcw_output_size(uint8 *inBuf, uint32 inLen) {
 		} else if (src[0] >= 0xc0) { // 0b11??????
 			count = (src[0] & 0x3f) + 3;
 			src += 3;
-		} else if (src[0] & 0x80) {  // 0b10??????
+		} else if (src[0] & 0x80) { // 0b10??????
 			count = src[0] & 0x3f;
 			src += count + 1;
-		} else {                    // 0b0???????
-			count  = ((src[0] & 0x70) >> 4) + 3;
+		} else { // 0b0???????
+			count = ((src[0] & 0x70) >> 4) + 3;
 			src += 2;
 		}
 

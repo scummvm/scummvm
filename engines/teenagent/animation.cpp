@@ -20,15 +20,26 @@
  *
  */
 
-#include "teenagent/teenagent.h"
 #include "teenagent/animation.h"
+#include "teenagent/teenagent.h"
 
 #include "common/endian.h"
 #include "common/textconsole.h"
 
 namespace TeenAgent {
 
-Animation::Animation() : id(0), x(0), y(0), loop(true), paused(false), ignore(false), data(0), dataSize(0), framesCount(0), frames(0), index(0) {
+Animation::Animation()
+  : id(0)
+  , x(0)
+  , y(0)
+  , loop(true)
+  , paused(false)
+  , ignore(false)
+  , data(0)
+  , dataSize(0)
+  , framesCount(0)
+  , frames(0)
+  , index(0) {
 }
 
 Animation::~Animation() {
@@ -180,8 +191,7 @@ void Animation::load(Common::SeekableReadStream &s, Type type) {
 		for (uint16 i = 0; i < framesCount; ++i) {
 			frames[i].load(s, Surface::kTypeOns);
 		}
-	}
-	break;
+	} break;
 
 	case kTypeVaria:
 		framesCount = s.readByte();

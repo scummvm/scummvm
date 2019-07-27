@@ -23,9 +23,9 @@
 #ifndef BROWSER_DIALOG_H
 #define BROWSER_DIALOG_H
 
-#include "gui/dialog.h"
 #include "common/fs.h"
 #include "common/str.h"
+#include "gui/dialog.h"
 
 namespace GUI {
 
@@ -42,20 +42,20 @@ public:
 	virtual void open();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
-	const Common::FSNode	&getResult() { return _choice; }
+	const Common::FSNode &getResult() { return _choice; }
 
 protected:
-	ListWidget		*_fileList;
-	EditTextWidget	*_currentPath;
-	Common::FSNode	_node;
-	Common::FSList	_nodeContent;
+	ListWidget *_fileList;
+	EditTextWidget *_currentPath;
+	Common::FSNode _node;
+	Common::FSList _nodeContent;
 
 	bool _showHidden;
 	CheckboxWidget *_showHiddenWidget;
 
-	Common::FSNode	_choice;
-	Common::String	_title;
-	bool			_isDirBrowser;
+	Common::FSNode _choice;
+	Common::String _title;
+	bool _isDirBrowser;
 
 	void updateListing();
 };

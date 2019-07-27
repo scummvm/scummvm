@@ -25,21 +25,25 @@
 #define TINSEL_SOUND_H
 
 #include "common/file.h"
-#include "common/file.h"
 
 #include "audio/mixer.h"
 
+#include "tinsel/drives.h"
 #include "tinsel/dw.h"
 #include "tinsel/tinsel.h"
-#include "tinsel/drives.h"
 
 namespace Tinsel {
 
-enum STYPE {FX, VOICE};
+enum STYPE { FX,
+	           VOICE };
 
-enum PlayPriority { PRIORITY_SCRIPT, PRIORITY_SPLAY1, PRIORITY_SPLAY2, PRIORITY_TALK };
+enum PlayPriority { PRIORITY_SCRIPT,
+	                  PRIORITY_SPLAY1,
+	                  PRIORITY_SPLAY2,
+	                  PRIORITY_TALK };
 
-enum SampleFlags {PS_COMPLETE = 0x01, PS_SUSTAIN = 0x02};
+enum SampleFlags { PS_COMPLETE = 0x01,
+	                 PS_SUSTAIN = 0x02 };
 
 /*----------------------------------------------------------------------*\
 |*				Function Prototypes			*|
@@ -102,16 +106,15 @@ protected:
 	int8 getPan(int x);
 
 public:
-
 	SoundManager(TinselEngine *vm);
 	~SoundManager();
 
 	bool playSample(int id, Audio::Mixer::SoundType type, Audio::SoundHandle *handle = 0);
 	bool playSample(int id, int sub, bool bLooped, int x, int y, int priority,
-			Audio::Mixer::SoundType type, Audio::SoundHandle *handle = 0);
+	                Audio::Mixer::SoundType type, Audio::SoundHandle *handle = 0);
 	void playDW1MacMusic(Common::File &s, uint32 length);
 
-	void stopAllSamples();                // Stops any currently playing sample
+	void stopAllSamples(); // Stops any currently playing sample
 	void stopSpecSample(int id, int sub = 0); // Stops a specific sample
 
 	void setSFXVolumes(uint8 volume);
@@ -128,4 +131,4 @@ private:
 
 } // End of namespace Tinsel
 
-#endif	// TINSEL_SOUND_H
+#endif // TINSEL_SOUND_H

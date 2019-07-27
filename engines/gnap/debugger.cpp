@@ -25,7 +25,8 @@
 
 namespace Gnap {
 
-Debugger::Debugger() : GUI::Debugger() {
+Debugger::Debugger()
+  : GUI::Debugger() {
 	// Register methods
 	registerCmd("hotspots", WRAP_METHOD(Debugger, Cmd_Hotspots));
 

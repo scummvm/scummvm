@@ -26,7 +26,6 @@
 #include "base/plugins.h"
 #include "common/textconsole.h"
 
-
 class DynamicPlugin : public Plugin {
 protected:
 	typedef int32 (*IntFunc)();
@@ -38,8 +37,8 @@ protected:
 	const Common::String _filename;
 
 public:
-	DynamicPlugin(const Common::String &filename) :
-		_filename(filename) {}
+	DynamicPlugin(const Common::String &filename)
+	  : _filename(filename) {}
 
 	virtual bool loadPlugin() {
 		// Validate the plugin API version

@@ -39,7 +39,8 @@ private:
 	bool seek(int32 offs, int whence);
 
 public:
-	InPAKSave() : fd(NULL) { }
+	InPAKSave()
+	  : fd(NULL) {}
 
 	~InPAKSave() {
 		if (fd != NULL)
@@ -76,7 +77,8 @@ public:
 		return pakfs_tell(fd);
 	}
 
-	OutPAKSave(const char *_filename) : fd(NULL) {
+	OutPAKSave(const char *_filename)
+	  : fd(NULL) {
 		fd = pakfs_open(_filename, "w");
 	}
 
@@ -146,6 +148,5 @@ public:
 
 	virtual Common::StringArray listSavefiles(const Common::String &pattern);
 };
-
 
 #endif

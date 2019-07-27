@@ -34,7 +34,7 @@
  * (very rare) PC-98 versions of Legend of Kyrandia 2 and Lands of Lore. Music will
  * still be okay, just missing a couple of rhythm instruments.
  */
-#define DISABLE_PC98_RHYTHM_CHANNEL
+#	define DISABLE_PC98_RHYTHM_CHANNEL
 #endif
 
 class TownsPC98_FmSynthOperator;

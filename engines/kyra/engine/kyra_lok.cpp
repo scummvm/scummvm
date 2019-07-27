@@ -21,22 +21,22 @@
  */
 
 #include "kyra/engine/kyra_lok.h"
-#include "kyra/resource/resource.h"
-#include "kyra/sequence/seqplayer.h"
 #include "kyra/engine/sprites.h"
+#include "kyra/engine/timer.h"
 #include "kyra/graphics/animator_lok.h"
 #include "kyra/gui/debugger.h"
-#include "kyra/engine/timer.h"
+#include "kyra/resource/resource.h"
+#include "kyra/sequence/seqplayer.h"
 #include "kyra/sound/sound.h"
 
-#include "common/system.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/system.h"
 
 namespace Kyra {
 
 KyraEngine_LoK::KyraEngine_LoK(OSystem *system, const GameFlags &flags)
-	: KyraEngine_v1(system, flags) {
+  : KyraEngine_v1(system, flags) {
 
 	_seq_Forest = _seq_KallakWriting = _seq_KyrandiaLogo = _seq_KallakMalcolm = 0;
 	_seq_MalcolmTree = _seq_WestwoodLogo = _seq_Demo1 = _seq_Demo2 = _seq_Demo3 = 0;
@@ -338,7 +338,6 @@ Common::Error KyraEngine_LoK::go() {
 	return Common::kNoError;
 }
 
-
 void KyraEngine_LoK::startup() {
 	static const uint8 colorMap[] = { 0, 0, 0, 0, 12, 12, 12, 0, 0, 0, 0, 0 };
 	_screen->setTextColorMap(colorMap);
@@ -349,7 +348,7 @@ void KyraEngine_LoK::startup() {
 	else
 		_sound->loadSoundFile(0);
 
-//	_screen->setFont(Screen::FID_6_FNT);
+	//	_screen->setFont(Screen::FID_6_FNT);
 	_screen->setAnimBlockPtr(3750);
 	memset(_sceneAnimTable, 0, sizeof(_sceneAnimTable));
 	loadMouseShapes();
@@ -577,7 +576,7 @@ void KyraEngine_LoK::setupShapes123(const Shape *shapeTable, int endShape, int f
 
 	uint8 curImage = 0xFF;
 	int curPageBackUp = _screen->_curPage;
-	_screen->_curPage = 8;  // we are using page 8 here in the original page 2 was backuped and then used for this stuff
+	_screen->_curPage = 8; // we are using page 8 here in the original page 2 was backuped and then used for this stuff
 	int shapeFlags = 2;
 	if (flags)
 		shapeFlags = 3;
@@ -781,7 +780,7 @@ void KyraEngine_LoK::updateMousePointer(bool forceUpdate) {
 	}
 
 	if (mouse.x >= _entranceMouseCursorTracks[0] && mouse.y >= _entranceMouseCursorTracks[1]
-	        && mouse.x <= _entranceMouseCursorTracks[2] && mouse.y <= _entranceMouseCursorTracks[3]) {
+	    && mouse.x <= _entranceMouseCursorTracks[2] && mouse.y <= _entranceMouseCursorTracks[3]) {
 		switch (_entranceMouseCursorTracks[4]) {
 		case 0:
 			newMouseState = -6;
@@ -954,13 +953,13 @@ void KyraEngine_LoK::readSettings() {
 	// The default talk speed is 60. This should be mapped to "Normal".
 
 	if (talkspeed == 0)
-		_configTextspeed = 3;   // Clickable
+		_configTextspeed = 3; // Clickable
 	if (talkspeed <= 50)
-		_configTextspeed = 0;   // Slow
+		_configTextspeed = 0; // Slow
 	else if (talkspeed <= 150)
-		_configTextspeed = 1;   // Normal
+		_configTextspeed = 1; // Normal
 	else
-		_configTextspeed = 2;   // Fast
+		_configTextspeed = 2; // Fast
 
 	KyraEngine_v1::readSettings();
 }
@@ -969,16 +968,16 @@ void KyraEngine_LoK::writeSettings() {
 	int talkspeed;
 
 	switch (_configTextspeed) {
-	case 0:     // Slow
+	case 0: // Slow
 		talkspeed = 1;
 		break;
-	case 1:     // Normal
+	case 1: // Normal
 		talkspeed = 60;
 		break;
-	case 2:     // Fast
+	case 2: // Fast
 		talkspeed = 255;
 		break;
-	default:    // Clickable
+	default: // Clickable
 		talkspeed = 0;
 	}
 

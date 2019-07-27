@@ -29,9 +29,9 @@
  *
  */
 
+#include "sword25/gfx/screenshot.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
-#include "sword25/gfx/screenshot.h"
 #include "sword25/kernel/filesystemutil.h"
 
 namespace Sword25 {
@@ -43,7 +43,7 @@ bool Screenshot::saveToFile(Graphics::Surface *data, Common::WriteStream *stream
 	const uint32 *pSrc = (const uint32 *)data->getPixels();
 
 	// Write our own custom header
-	stream->writeUint32BE(MKTAG('S','C','R','N'));	// SCRN, short for "Screenshot"
+	stream->writeUint32BE(MKTAG('S', 'C', 'R', 'N')); // SCRN, short for "Screenshot"
 	stream->writeUint16LE(data->w);
 	stream->writeUint16LE(data->h);
 	stream->writeByte(THUMBNAIL_VERSION);
@@ -86,7 +86,7 @@ Common::SeekableReadStream *Screenshot::createThumbnail(Graphics::Surface *data)
 	uint x, y;
 	x = y = 0;
 
-	for (uint32 *pDest = (uint32 *)thumbnail.getPixels(); pDest < thumbnail.getBasePtr(0, thumbnail.h); ) {
+	for (uint32 *pDest = (uint32 *)thumbnail.getPixels(); pDest < thumbnail.getBasePtr(0, thumbnail.h);) {
 		// Get an average over a 4x4 pixel block in the source image
 		int alpha, red, green, blue;
 		alpha = red = green = blue = 0;
@@ -119,7 +119,7 @@ Common::SeekableReadStream *Screenshot::createThumbnail(Graphics::Surface *data)
 
 	// Output a MemoryReadStream that encompasses the written data
 	Common::SeekableReadStream *result = new Common::MemoryReadStream(stream.getData(), stream.size(),
-		DisposeAfterUse::YES);
+	                                                                  DisposeAfterUse::YES);
 	return result;
 }
 

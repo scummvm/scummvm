@@ -20,13 +20,13 @@
  *
  */
 
-#include "sherlock/sherlock.h"
-#include "sherlock/saveload.h"
-#include "sherlock/scalpel/scalpel.h"
-#include "sherlock/tattoo/tattoo.h"
 #include "common/system.h"
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
+#include "sherlock/saveload.h"
+#include "sherlock/scalpel/scalpel.h"
+#include "sherlock/sherlock.h"
+#include "sherlock/tattoo/tattoo.h"
 
 namespace Sherlock {
 
@@ -53,88 +53,63 @@ Common::Language SherlockEngine::getLanguage() const {
 static const PlainGameDescriptor sherlockGames[] = {
 	{ "scalpel", "The Case of the Serrated Scalpel" },
 	{ "rosetattoo", "The Case of the Rose Tattoo" },
-	{0, 0}
+	{ 0, 0 }
 };
 
-
-#define GAMEOPTION_ORIGINAL_SAVES	GUIO_GAMEOPTIONS1
-#define GAMEOPTION_FADE_STYLE		GUIO_GAMEOPTIONS2
-#define GAMEOPTION_HELP_STYLE		GUIO_GAMEOPTIONS3
-#define GAMEOPTION_PORTRAITS_ON		GUIO_GAMEOPTIONS4
-#define GAMEOPTION_WINDOW_STYLE		GUIO_GAMEOPTIONS5
-#define GAMEOPTION_TRANSPARENT_WINDOWS		GUIO_GAMEOPTIONS6
+#define GAMEOPTION_ORIGINAL_SAVES GUIO_GAMEOPTIONS1
+#define GAMEOPTION_FADE_STYLE GUIO_GAMEOPTIONS2
+#define GAMEOPTION_HELP_STYLE GUIO_GAMEOPTIONS3
+#define GAMEOPTION_PORTRAITS_ON GUIO_GAMEOPTIONS4
+#define GAMEOPTION_WINDOW_STYLE GUIO_GAMEOPTIONS5
+#define GAMEOPTION_TRANSPARENT_WINDOWS GUIO_GAMEOPTIONS6
 
 static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_ORIGINAL_SAVES,
-		{
-			_s("Use original save/load screens"),
-			_s("Use the original save/load screens instead of the ScummVM ones"),
-			"originalsaveload",
-			false
-		}
-	},
+	{ GAMEOPTION_ORIGINAL_SAVES,
+	  { _s("Use original save/load screens"),
+	    _s("Use the original save/load screens instead of the ScummVM ones"),
+	    "originalsaveload",
+	    false } },
 
-	{
-		GAMEOPTION_FADE_STYLE,
-		{
-			_s("Pixellated scene transitions"),
-			_s("When changing scenes, a randomized pixel transition is done"),
-			"fade_style",
-			true
-		}
-	},
+	{ GAMEOPTION_FADE_STYLE,
+	  { _s("Pixellated scene transitions"),
+	    _s("When changing scenes, a randomized pixel transition is done"),
+	    "fade_style",
+	    true } },
 
-	{
-		GAMEOPTION_HELP_STYLE,
-		{
-			_s("Don't show hotspots when moving mouse"),
-			_s("Only show hotspot names after you actually click on a hotspot or action button"),
-			"help_style",
-			false
-		}
-	},
+	{ GAMEOPTION_HELP_STYLE,
+	  { _s("Don't show hotspots when moving mouse"),
+	    _s("Only show hotspot names after you actually click on a hotspot or action button"),
+	    "help_style",
+	    false } },
 
-	{
-		GAMEOPTION_PORTRAITS_ON,
-		{
-			_s("Show character portraits"),
-			_s("Show portraits for the characters when conversing"),
-			"portraits_on",
-			true
-		}
-	},
+	{ GAMEOPTION_PORTRAITS_ON,
+	  { _s("Show character portraits"),
+	    _s("Show portraits for the characters when conversing"),
+	    "portraits_on",
+	    true } },
 
-	{
-		GAMEOPTION_WINDOW_STYLE,
-		{
-			_s("Slide dialogs into view"),
-			_s("Slide UI dialogs into view, rather than simply showing them immediately"),
-			"window_style",
-			true
-		}
-	},
+	{ GAMEOPTION_WINDOW_STYLE,
+	  { _s("Slide dialogs into view"),
+	    _s("Slide UI dialogs into view, rather than simply showing them immediately"),
+	    "window_style",
+	    true } },
 
-	{
-		GAMEOPTION_TRANSPARENT_WINDOWS,
-		{
-			_s("Transparent windows"),
-			_s("Show windows with a partially transparent background"),
-			"transparent_windows",
-			true
-		}
-	},
+	{ GAMEOPTION_TRANSPARENT_WINDOWS,
+	  { _s("Transparent windows"),
+	    _s("Show windows with a partially transparent background"),
+	    "transparent_windows",
+	    true } },
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
-
 
 #include "sherlock/detection_tables.h"
 
 class SherlockMetaEngine : public AdvancedMetaEngine {
 public:
-	SherlockMetaEngine() : AdvancedMetaEngine(Sherlock::gameDescriptions, sizeof(Sherlock::SherlockGameDescription),
-		sherlockGames, optionsList) {}
+	SherlockMetaEngine()
+	  : AdvancedMetaEngine(Sherlock::gameDescriptions, sizeof(Sherlock::SherlockGameDescription),
+	                       sherlockGames, optionsList) {}
 
 	virtual const char *getName() const {
 		return "Sherlock";
@@ -194,22 +169,11 @@ bool SherlockMetaEngine::createInstance(OSystem *syst, Engine **engine, const AD
 }
 
 bool SherlockMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup) || (f == kSupportsDeleteSave) || (f == kSavesSupportMetaInfo) || (f == kSavesSupportThumbnail) || (f == kSavesSupportCreationDate) || (f == kSavesSupportPlayTime) || (f == kSimpleSavesNames);
 }
 
 bool Sherlock::SherlockEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
 bool Sherlock::SherlockEngine::isDemo() const {
@@ -254,9 +218,8 @@ SaveStateDescriptor SherlockMetaEngine::querySaveMetaInfos(const char *target, i
 	return SaveStateDescriptor();
 }
 
-
 #if PLUGIN_ENABLED_DYNAMIC(SHERLOCK)
-	REGISTER_PLUGIN_DYNAMIC(SHERLOCK, PLUGIN_TYPE_ENGINE, SherlockMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(SHERLOCK, PLUGIN_TYPE_ENGINE, SherlockMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(SHERLOCK, PLUGIN_TYPE_ENGINE, SherlockMetaEngine);
+REGISTER_PLUGIN_STATIC(SHERLOCK, PLUGIN_TYPE_ENGINE, SherlockMetaEngine);
 #endif

@@ -94,10 +94,20 @@ static const char *const k2SeqplayStringsDOSCDRussian[104] = {
 	"Chris Toft",
 	"Joe Kucan's Hair by",
 	"Theodore A. Morris",
-	"\xC7\xE0\xE3\xF0\xF3\xE7\xE8\xF2\xFC"" ""\xE8\xE3\xF0\xF3",
+	"\xC7\xE0\xE3\xF0\xF3\xE7\xE8\xF2\xFC"
+	" "
+	"\xE8\xE3\xF0\xF3",
 	"\xC2\xE2\xE5\xE4\xE5\xED\xE8\xE5",
-	"\xCD\xE0\xF7\xE0\xF2\xFC"" ""\xED\xEE\xE2\xF3\xFE"" ""\xE8\xE3\xF0\xF3",
-	"\xC2\xFB\xE9\xF2\xE8"" ""\xE8\xE7"" ""\xE8\xE3\xF0\xFB",
+	"\xCD\xE0\xF7\xE0\xF2\xFC"
+	" "
+	"\xED\xEE\xE2\xF3\xFE"
+	" "
+	"\xE8\xE3\xF0\xF3",
+	"\xC2\xFB\xE9\xF2\xE8"
+	" "
+	"\xE8\xE7"
+	" "
+	"\xE8\xE3\xF0\xFB",
 	"Special Thanks to",
 	"Sake Joe Bostic-san",
 	"Tim Fritz",
@@ -125,4 +135,3 @@ static const char *const k2SeqplayTlkFilesDOSCDRussian[14] = {
 };
 
 static const StringListProvider k2SeqplayTlkFilesDOSCDRussianProvider = { ARRAYSIZE(k2SeqplayTlkFilesDOSCDRussian), k2SeqplayTlkFilesDOSCDRussian };
-

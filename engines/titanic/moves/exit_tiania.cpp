@@ -25,10 +25,12 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CExitTiania, CMovePlayerTo)
-	ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseButtonDownMsg)
 END_MESSAGE_MAP()
 
-CExitTiania::CExitTiania() : CMovePlayerTo(), _fieldC8(0) {
+CExitTiania::CExitTiania()
+  : CMovePlayerTo()
+  , _fieldC8(0) {
 	_viewNames[0] = _viewNames[1] = _viewNames[2] = "NULL";
 }
 

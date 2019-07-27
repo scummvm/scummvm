@@ -32,10 +32,12 @@ class IllusionsEngine;
 
 class MidiGroupResourceLoader : public BaseResourceLoader {
 public:
-	MidiGroupResourceLoader(IllusionsEngine *vm) : _vm(vm) {}
+	MidiGroupResourceLoader(IllusionsEngine *vm)
+	  : _vm(vm) {}
 	virtual ~MidiGroupResourceLoader() {}
 	virtual void load(Resource *resource);
 	virtual bool isFlag(int flag);
+
 protected:
 	IllusionsEngine *_vm;
 };
@@ -51,6 +53,7 @@ public:
 	MidiGroupResource();
 	~MidiGroupResource();
 	void load(byte *data, uint32 dataSize);
+
 public:
 	uint _midiMusicCount;
 	MidiMusic *_midiMusic;
@@ -61,8 +64,9 @@ public:
 	MidiGroupInstance(IllusionsEngine *vm);
 	virtual void load(Resource *resource);
 	virtual void unload();
+
 public:
-	IllusionsEngine *_vm;	
+	IllusionsEngine *_vm;
 	MidiGroupResource *_midiGroupResource;
 	uint32 _resId;
 };

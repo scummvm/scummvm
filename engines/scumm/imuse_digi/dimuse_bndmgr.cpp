@@ -20,13 +20,12 @@
  *
  */
 
-
+#include "scumm/imuse_digi/dimuse_bndmgr.h"
 #include "common/scummsys.h"
+#include "scumm/file.h"
+#include "scumm/imuse_digi/dimuse_codecs.h"
 #include "scumm/scumm.h"
 #include "scumm/util.h"
-#include "scumm/file.h"
-#include "scumm/imuse_digi/dimuse_bndmgr.h"
-#include "scumm/imuse_digi/dimuse_codecs.h"
 
 namespace Scumm {
 
@@ -91,7 +90,7 @@ int BundleDirCache::matchFile(const char *filename) {
 			error("BundleDirCache::matchFileFile() Can't find free slot for file bundle dir cache");
 
 		tag = file.readUint32BE();
-		if (tag == MKTAG('L','B','2','3'))
+		if (tag == MKTAG('L', 'B', '2', '3'))
 			_budleDirCache[freeSlot].isCompressed = true;
 		offset = file.readUint32BE();
 
@@ -102,8 +101,7 @@ int BundleDirCache::matchFile(const char *filename) {
 
 		file.seek(offset, SEEK_SET);
 
-		_budleDirCache[freeSlot].indexTable =
-				(IndexNode *)calloc(_budleDirCache[freeSlot].numFiles, sizeof(IndexNode));
+		_budleDirCache[freeSlot].indexTable = (IndexNode *)calloc(_budleDirCache[freeSlot].numFiles, sizeof(IndexNode));
 		assert(_budleDirCache[freeSlot].indexTable);
 
 		for (int32 i = 0; i < _budleDirCache[freeSlot].numFiles; i++) {
@@ -111,7 +109,7 @@ int BundleDirCache::matchFile(const char *filename) {
 			int32 z = 0;
 			int32 z2;
 
-			if (tag == MKTAG('L','B','2','3')) {
+			if (tag == MKTAG('L', 'B', '2', '3')) {
 				file.read(_budleDirCache[freeSlot].bundleTable[i].filename, 24);
 			} else {
 				for (z2 = 0; z2 < 8; z2++)
@@ -128,11 +126,11 @@ int BundleDirCache::matchFile(const char *filename) {
 			_budleDirCache[freeSlot].bundleTable[i].offset = file.readUint32BE();
 			_budleDirCache[freeSlot].bundleTable[i].size = file.readUint32BE();
 			strcpy(_budleDirCache[freeSlot].indexTable[i].filename,
-					_budleDirCache[freeSlot].bundleTable[i].filename);
+			       _budleDirCache[freeSlot].bundleTable[i].filename);
 			_budleDirCache[freeSlot].indexTable[i].index = i;
 		}
 		qsort(_budleDirCache[freeSlot].indexTable, _budleDirCache[freeSlot].numFiles,
-				sizeof(IndexNode), (int (*)(const void*, const void*))scumm_stricmp);
+		      sizeof(IndexNode), (int (*)(const void *, const void *))scumm_stricmp);
 		return freeSlot;
 	} else {
 		return fileId;
@@ -160,7 +158,7 @@ Common::SeekableReadStream *BundleMgr::getFile(const char *filename, int32 &offs
 	BundleDirCache::IndexNode target;
 	strcpy(target.filename, filename);
 	BundleDirCache::IndexNode *found = (BundleDirCache::IndexNode *)bsearch(&target, _indexTable, _numFiles,
-			sizeof(BundleDirCache::IndexNode), (int (*)(const void*, const void*))scumm_stricmp);
+	                                                                        sizeof(BundleDirCache::IndexNode), (int (*)(const void *, const void *))scumm_stricmp);
 	if (found) {
 		_file->seek(_bundleTable[found->index].offset, SEEK_SET);
 		offset = _bundleTable[found->index].offset;
@@ -223,7 +221,7 @@ bool BundleMgr::loadCompTable(int32 index) {
 	assert(_numCompItems > 0);
 	_file->seek(8, SEEK_CUR);
 
-	if (tag != MKTAG('C','O','M','P')) {
+	if (tag != MKTAG('C', 'O', 'M', 'P')) {
 		error("BundleMgr::loadCompTable() Compressed sound %d (%s:%d) invalid (%s)", index, _file->getName(), _bundleTable[index].offset, tag2str(tag));
 		return false;
 	}
@@ -341,7 +339,7 @@ int32 BundleMgr::decompressSampleByName(const char *name, int32 offset, int32 si
 	BundleDirCache::IndexNode target;
 	strcpy(target.filename, name);
 	BundleDirCache::IndexNode *found = (BundleDirCache::IndexNode *)bsearch(&target, _indexTable, _numFiles,
-			sizeof(BundleDirCache::IndexNode), (int (*)(const void*, const void*))scumm_stricmp);
+	                                                                        sizeof(BundleDirCache::IndexNode), (int (*)(const void *, const void *))scumm_stricmp);
 	if (found) {
 		final_size = decompressSampleByIndex(found->index, offset, size, comp_final, 0, header_outside);
 		return final_size;

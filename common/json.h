@@ -48,8 +48,8 @@
 #define COMMON_JSON_H
 
 #include "common/array.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/str.h"
 
 // Win32 incompatibilities
@@ -70,7 +70,8 @@ static inline bool simplejson_wcsnlen(const char *s, size_t n) {
 
 	const char *save = s;
 	while (n-- > 0) {
-		if (*(save++) == 0) return false;
+		if (*(save++) == 0)
+			return false;
 	}
 
 	return true;
@@ -80,12 +81,18 @@ namespace Common {
 
 // Custom types
 class JSONValue;
-typedef Array<JSONValue*> JSONArray;
-typedef HashMap<String, JSONValue*> JSONObject;
+typedef Array<JSONValue *> JSONArray;
+typedef HashMap<String, JSONValue *> JSONObject;
 
 class JSON;
 
-enum JSONType { JSONType_Null, JSONType_String, JSONType_Bool, JSONType_Number, JSONType_IntegerNumber, JSONType_Array, JSONType_Object };
+enum JSONType { JSONType_Null,
+	              JSONType_String,
+	              JSONType_Bool,
+	              JSONType_Number,
+	              JSONType_IntegerNumber,
+	              JSONType_Array,
+	              JSONType_Object };
 
 class JSONValue {
 	friend class JSON;
@@ -125,6 +132,7 @@ public:
 	Array<String> objectKeys() const;
 
 	String stringify(bool const prettyprint = false) const;
+
 protected:
 	static JSONValue *parse(const char **data);
 
@@ -143,7 +151,6 @@ private:
 		JSONArray *_arrayValue;
 		JSONObject *_objectValue;
 	};
-
 };
 
 class JSON {
@@ -152,11 +159,13 @@ class JSON {
 public:
 	static JSONValue *parse(const char *data);
 	static String stringify(const JSONValue *value);
+
 protected:
 	static bool skipWhitespace(const char **data);
 	static bool extractString(const char **data, String &str);
 	static double parseInt(const char **data);
 	static double parseDecimal(const char **data);
+
 private:
 	JSON();
 };

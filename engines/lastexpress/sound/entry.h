@@ -125,12 +125,12 @@ public:
 		return (_name != "NISSND?" && (_status & kSoundTypeMask) != kSoundTypeMenu);
 	}
 
-	uint32           getStatus()   { return _status; }
-	int32            getTag()      { return _tag; }
-	uint32           getTime()     { return _soundStream ? (_soundStream->getTimeMS() * 30 / 1000) + _startTime : 0; }
-	EntityIndex      getEntity()   { return _entity; }
-	uint32           getPriority() { return _priority; }
-	const Common::String& getName(){ return _name; }
+	uint32 getStatus() { return _status; }
+	int32 getTag() { return _tag; }
+	uint32 getTime() { return _soundStream ? (_soundStream->getTimeMS() * 30 / 1000) + _startTime : 0; }
+	EntityIndex getEntity() { return _entity; }
+	uint32 getPriority() { return _priority; }
+	const Common::String &getName() { return _name; }
 
 	// Streams
 	SimpleSound *getSoundStream() { return _soundStream; }
@@ -150,7 +150,7 @@ private:
 	uint32 _startTime;
 	//uint32 _bufferSize;
 	//union { uint32 _streamPos; enum StreamCloseReason _streamCloseReason; };
-	Common::SeekableReadStream *_stream;    // The file stream
+	Common::SeekableReadStream *_stream; // The file stream
 	//SoundEntry* _linkAfter;
 	//uint32 _volumeHoldBlocks; // the related logic is in LastExpress_ADPCMStream
 	//uint32 _unused;
@@ -164,12 +164,12 @@ private:
 	uint32 _initTimeMS, _activateDelayMS;
 	uint32 _priority;
 	// char _linkAfterName[16];
-	Common::String _name;    //char[16];
+	Common::String _name; //char[16];
 	// original has pointer to the next structure in the list (not used)
 	SubtitleEntry *_subtitle;
 
 	// Sound buffer & stream
-	StreamedSound *_soundStream;    // the filtered sound stream
+	StreamedSound *_soundStream; // the filtered sound stream
 
 	void setupTag(SoundFlag flag);
 	void setupStatus(SoundFlag flag);
@@ -192,15 +192,15 @@ public:
 
 	// Accessors
 	uint32 getStatus() { return _status; }
-	SoundEntry *getSoundEntry()  { return _sound; }
+	SoundEntry *getSoundEntry() { return _sound; }
 
 private:
 	LastExpressEngine *_engine;
 
-	Common::String    _filename;
-	uint32            _status;
-	SoundEntry       *_sound;
-	SubtitleManager  *_data;
+	Common::String _filename;
+	uint32 _status;
+	SoundEntry *_sound;
+	SubtitleManager *_data;
 };
 
 } // End of namespace LastExpress

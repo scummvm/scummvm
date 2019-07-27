@@ -26,28 +26,29 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/ad/ad_inventory_box.h"
+#include "common/rect.h"
+#include "common/str.h"
+#include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/ad/ad_inventory.h"
 #include "engines/wintermute/ad/ad_item.h"
+#include "engines/wintermute/base/base_dynamic_buffer.h"
+#include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_parser.h"
-#include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_viewport.h"
-#include "engines/wintermute/base/base_dynamic_buffer.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/ui/ui_button.h"
 #include "engines/wintermute/ui/ui_window.h"
-#include "engines/wintermute/platform_osystem.h"
-#include "common/str.h"
-#include "common/rect.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdInventoryBox, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdInventoryBox::AdInventoryBox(BaseGame *inGame) : BaseObject(inGame) {
+AdInventoryBox::AdInventoryBox(BaseGame *inGame)
+  : BaseObject(inGame) {
 	_itemsArea.setEmpty();
 	_scrollOffset = 0;
 	_spacing = 0;
@@ -63,7 +64,6 @@ AdInventoryBox::AdInventoryBox(BaseGame *inGame) : BaseObject(inGame) {
 	_exclusive = false;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 AdInventoryBox::~AdInventoryBox() {
 	_gameRef->unregisterObject(_window);
@@ -72,7 +72,6 @@ AdInventoryBox::~AdInventoryBox() {
 	delete _closeButton;
 	_closeButton = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdInventoryBox::listen(BaseScriptHolder *param1, uint32 param2) {
@@ -99,7 +98,6 @@ bool AdInventoryBox::listen(BaseScriptHolder *param1, uint32 param2) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdInventoryBox::display() {
 	AdGame *adGame = (AdGame *)_gameRef;
@@ -117,7 +115,6 @@ bool AdInventoryBox::display() {
 		_window->enableWidget("next", _scrollOffset + itemsX * itemsY < (int32)adGame->_inventoryOwner->getInventory()->_takenItems.size());
 	}
 
-
 	if (_closeButton) {
 		_closeButton->_posX = _closeButton->_posY = 0;
 		_closeButton->setWidth(_gameRef->_renderer->getWidth());
@@ -125,7 +122,6 @@ bool AdInventoryBox::display() {
 
 		_closeButton->display();
 	}
-
 
 	// display window
 	Rect32 rect = _itemsArea;
@@ -162,7 +158,6 @@ bool AdInventoryBox::display() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdInventoryBox::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
@@ -179,12 +174,10 @@ bool AdInventoryBox::loadFile(const char *filename) {
 		_gameRef->LOG(0, "Error parsing INVENTORY_BOX file '%s'", filename);
 	}
 
-
 	delete[] buffer;
 
 	return ret;
 }
-
 
 TOKEN_DEF_START
 TOKEN_DEF(INVENTORY_BOX)
@@ -365,7 +358,6 @@ bool AdInventoryBox::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "}\n");
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdInventoryBox::persist(BasePersistenceManager *persistMgr) {

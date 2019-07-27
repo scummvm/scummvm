@@ -23,12 +23,13 @@
 #ifndef GRAPHICS_FONT_H
 #define GRAPHICS_FONT_H
 
+#include "common/rect.h"
 #include "common/str.h"
 #include "common/ustr.h"
-#include "common/rect.h"
 
 namespace Common {
-template<class T> class Array;
+template <class T>
+class Array;
 }
 
 namespace Graphics {
@@ -39,9 +40,9 @@ class ManagedSurface;
 /** Text alignment modes */
 enum TextAlign {
 	kTextAlignInvalid,
-	kTextAlignLeft,     ///< Text should be aligned to the left
-	kTextAlignCenter,   ///< Text should be centered
-	kTextAlignRight     ///< Text should be aligned to the right
+	kTextAlignLeft, ///< Text should be aligned to the left
+	kTextAlignCenter, ///< Text should be centered
+	kTextAlignRight ///< Text should be aligned to the right
 };
 
 /**

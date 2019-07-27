@@ -28,52 +28,52 @@
 namespace Mohawk {
 namespace RivenStacks {
 
-/**
+	/**
  * Boiler Island
  */
-class BSpit : public DomeSpit {
-public:
-	BSpit(MohawkEngine_Riven *vm);
+	class BSpit : public DomeSpit {
+	public:
+		BSpit(MohawkEngine_Riven *vm);
 
-	// External commands - Gehn's Lab Journal
-	void xblabopenbook(const ArgumentArray &args);
-	void xblabbooknextpage(const ArgumentArray &args);
-	void xblabbookprevpage(const ArgumentArray &args);
+		// External commands - Gehn's Lab Journal
+		void xblabopenbook(const ArgumentArray &args);
+		void xblabbooknextpage(const ArgumentArray &args);
+		void xblabbookprevpage(const ArgumentArray &args);
 
-	// External commands - Boiler Puzzle
-	void xsoundplug(const ArgumentArray &args);
-	void xbchangeboiler(const ArgumentArray &args);
-	void xbupdateboiler(const ArgumentArray &args);
+		// External commands - Boiler Puzzle
+		void xsoundplug(const ArgumentArray &args);
+		void xbchangeboiler(const ArgumentArray &args);
+		void xbupdateboiler(const ArgumentArray &args);
 
-	// External commands - Frog Trap
-	void xbsettrap(const ArgumentArray &args);
-	void xbcheckcatch(const ArgumentArray &args);
-	void xbait(const ArgumentArray &args);
-	void xbfreeytram(const ArgumentArray &args);
-	void xbaitplate(const ArgumentArray &args);
+		// External commands - Frog Trap
+		void xbsettrap(const ArgumentArray &args);
+		void xbcheckcatch(const ArgumentArray &args);
+		void xbait(const ArgumentArray &args);
+		void xbfreeytram(const ArgumentArray &args);
+		void xbaitplate(const ArgumentArray &args);
 
-	// External commands - Dome
-	void xbisland190_opencard(const ArgumentArray &args);
-	void xbisland190_resetsliders(const ArgumentArray &args);
-	void xbisland190_slidermd(const ArgumentArray &args);
-	void xbisland190_slidermw(const ArgumentArray &args);
-	void xbscpbtn(const ArgumentArray &args);
-	void xbisland_domecheck(const ArgumentArray &args);
+		// External commands - Dome
+		void xbisland190_opencard(const ArgumentArray &args);
+		void xbisland190_resetsliders(const ArgumentArray &args);
+		void xbisland190_slidermd(const ArgumentArray &args);
+		void xbisland190_slidermw(const ArgumentArray &args);
+		void xbscpbtn(const ArgumentArray &args);
+		void xbisland_domecheck(const ArgumentArray &args);
 
-	// External commands - Water Control
-	void xvalvecontrol(const ArgumentArray &args);
+		// External commands - Water Control
+		void xvalvecontrol(const ArgumentArray &args);
 
-	// External commands - Run the Wood Chipper
-	void xbchipper(const ArgumentArray &args);
+		// External commands - Run the Wood Chipper
+		void xbchipper(const ArgumentArray &args);
 
-	// Time callback
-	void ytramTrapTimer();
-	void checkYtramCatch(bool playSound);
+		// Time callback
+		void ytramTrapTimer();
+		void checkYtramCatch(bool playSound);
 
-	void valveChangePosition(uint32 valvePosition, uint16 videoId, uint16 pictureId);
+		void valveChangePosition(uint32 valvePosition, uint16 videoId, uint16 pictureId);
 
-	void labBookDrawDomeCombination() const;
-};
+		void labBookDrawDomeCombination() const;
+	};
 
 } // End of namespace RivenStacks
 } // End of namespace Mohawk

@@ -20,10 +20,10 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/scummsys.h"
 #include "common/system.h"
 #include "common/unzip.h"
 #include "common/ustr.h"
@@ -31,22 +31,22 @@
 #include "graphics/fonts/ttf.h"
 #include "graphics/surface.h"
 
-#include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/text/truetype_font.h"
+#include "zvision/zvision.h"
 
 namespace ZVision {
 
 const FontStyle systemFonts[] = {
-	{ "*times new roman*",	  "times",   "FreeSerif", "Italic", "LiberationSerif"  },
-	{ "*times*",		  "times",   "FreeSerif", "Italic", "LiberationSerif"  },
-	{ "*century schoolbook*", "censcbk", "FreeSerif", "Italic", "LiberationSerif"  },
-	{ "*garamond*", 	  "gara",    "FreeSerif", "Italic", "LiberationSerif"  },
-	{ "*courier new*",	  "cour",    "FreeMono",  "Oblique", "LiberationMono" },
-	{ "*courier*",		  "cour",    "FreeMono",  "Oblique", "LiberationMono" },
-	{ "*ZorkDeath*",	  "cour",    "FreeMono",  "Oblique", "LiberationMono" },
-	{ "*arial*",		  "arial",   "FreeSans",  "Oblique", "LiberationSans" },
-	{ "*ZorkNormal*",	  "arial",   "FreeSans",  "Oblique", "LiberationSans" }
+	{ "*times new roman*", "times", "FreeSerif", "Italic", "LiberationSerif" },
+	{ "*times*", "times", "FreeSerif", "Italic", "LiberationSerif" },
+	{ "*century schoolbook*", "censcbk", "FreeSerif", "Italic", "LiberationSerif" },
+	{ "*garamond*", "gara", "FreeSerif", "Italic", "LiberationSerif" },
+	{ "*courier new*", "cour", "FreeMono", "Oblique", "LiberationMono" },
+	{ "*courier*", "cour", "FreeMono", "Oblique", "LiberationMono" },
+	{ "*ZorkDeath*", "cour", "FreeMono", "Oblique", "LiberationMono" },
+	{ "*arial*", "arial", "FreeSans", "Oblique", "LiberationSans" },
+	{ "*ZorkNormal*", "arial", "FreeSans", "Oblique", "LiberationSans" }
 };
 
 const FontStyle getSystemFont(int fontIndex) {
@@ -119,9 +119,7 @@ bool StyledTTFont::loadFont(const Common::String &fontName, int32 point, uint st
 
 	Common::File file;
 	Graphics::Font *newFont;
-	if (!file.open(newFontName) && !_engine->getSearchManager()->openFile(file, newFontName) &&
-		!file.open(liberationFontName) && !_engine->getSearchManager()->openFile(file, liberationFontName) &&
-		!file.open(freeFontName) && !_engine->getSearchManager()->openFile(file, freeFontName)) {
+	if (!file.open(newFontName) && !_engine->getSearchManager()->openFile(file, newFontName) && !file.open(liberationFontName) && !_engine->getSearchManager()->openFile(file, liberationFontName) && !file.open(freeFontName) && !_engine->getSearchManager()->openFile(file, freeFontName)) {
 		newFont = Graphics::loadTTFFontFromArchive(freeFontName, point, Graphics::kTTFSizeModeCell, 0, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal));
 	} else {
 		newFont = Graphics::loadTTFFont(file, point, Graphics::kTTFSizeModeCell, 0, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal));

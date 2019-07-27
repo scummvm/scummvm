@@ -60,7 +60,8 @@ enum {
 
 class RandomHat {
 public:
-	RandomHat(Common::RandomSource *rnd) : _rnd(rnd) {}
+	RandomHat(Common::RandomSource *rnd)
+	  : _rnd(rnd) {}
 
 	void addTokens(int type, int count);
 	int drawToken();

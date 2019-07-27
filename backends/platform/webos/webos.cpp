@@ -29,8 +29,7 @@
 using namespace Common;
 
 OSystem_SDL_WebOS::OSystem_SDL_WebOS()
-	:
-	OSystem_POSIX() {
+  : OSystem_POSIX() {
 }
 
 /**

@@ -26,10 +26,10 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CEndSequenceControl, CGameObject)
-	ON_MESSAGE(TimerMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(EnterRoomMsg)
-	ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(TimerMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(EnterViewMsg)
 END_MESSAGE_MAP()
 
 void CEndSequenceControl::save(SimpleFile *file, int indent) {

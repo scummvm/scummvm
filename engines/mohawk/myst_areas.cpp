@@ -33,10 +33,10 @@
 
 namespace Mohawk {
 
-MystArea::MystArea(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
-		_vm(vm),
-		_parent(parent),
-		_type(type) {
+MystArea::MystArea(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent)
+  : _vm(vm)
+  , _parent(parent)
+  , _type(type) {
 
 	if (parent == nullptr) {
 		_flags = rlstStream->readUint16LE();
@@ -104,7 +104,7 @@ bool MystArea::canBecomeActive() {
 
 bool MystArea::unreachableZipDest() {
 	return (_flags & kMystZipModeEnableFlag)
-			&& !_vm->_gameState->isReachableZipDest(_vm->_stack->getStackId() , _dest);
+	  && !_vm->_gameState->isReachableZipDest(_vm->_stack->getStackId(), _dest);
 }
 
 bool MystArea::isEnabled() {
@@ -120,7 +120,7 @@ void MystArea::setEnabled(bool enabled) {
 
 const Common::String MystArea::describe() {
 	Common::String desc = Common::String::format("type: %2d rect: (%3d %3d %3d %3d)",
-			_type, _rect.left, _rect.top, _rect.width(), _rect.height());
+	                                             _type, _rect.left, _rect.top, _rect.width(), _rect.height());
 
 	if (_dest != 0)
 		desc += Common::String::format(" dest: %4d", _dest);
@@ -139,8 +139,8 @@ void MystArea::drawBoundingRect() {
 	}
 }
 
-MystAreaAction::MystAreaAction(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
-		MystArea(vm, type, rlstStream, parent) {
+MystAreaAction::MystAreaAction(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent)
+  : MystArea(vm, type, rlstStream, parent) {
 	debugC(kDebugResource, "\tResource Type 5 Script:");
 
 	_script = vm->_stack->readScript(rlstStream, kMystScriptNormal);
@@ -180,8 +180,8 @@ Common::String MystAreaVideo::convertMystVideoName(const Common::String &name) {
 	return temp + ".mov";
 }
 
-MystAreaVideo::MystAreaVideo(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
-		MystAreaAction(vm, type, rlstStream, parent) {
+MystAreaVideo::MystAreaVideo(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent)
+  : MystAreaAction(vm, type, rlstStream, parent) {
 	char c = 0;
 
 	do {
@@ -296,8 +296,8 @@ void MystAreaVideo::pauseMovie(bool pause) {
 		handle->pause(pause);
 }
 
-MystAreaActionSwitch::MystAreaActionSwitch(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
-		MystArea(vm, type, rlstStream, parent) {
+MystAreaActionSwitch::MystAreaActionSwitch(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent)
+  : MystArea(vm, type, rlstStream, parent) {
 	_actionSwitchVar = rlstStream->readUint16LE();
 	uint16 numSubResources = rlstStream->readUint16LE();
 	debugC(kDebugResource, "\tactionSwitchVar: %d", _actionSwitchVar);
@@ -350,8 +350,8 @@ void MystAreaActionSwitch::handleMouseDown() {
 	doSwitch(&MystArea::handleMouseDown);
 }
 
-MystAreaImageSwitch::MystAreaImageSwitch(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
-		MystAreaActionSwitch(vm, type, rlstStream, parent) {
+MystAreaImageSwitch::MystAreaImageSwitch(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent)
+  : MystAreaActionSwitch(vm, type, rlstStream, parent) {
 	_imageSwitchVar = rlstStream->readUint16LE();
 	uint16 numSubImages = rlstStream->readUint16LE();
 	debugC(kDebugResource, "\tvar8: %d", _imageSwitchVar);
@@ -435,7 +435,6 @@ void MystAreaImageSwitch::drawConditionalDataToScreen(uint16 state, bool update)
 	bool drawSubImage = false;
 	int16 subImageId = 0;
 
-
 	if (_subImages.size() == 1 && state != 0) {
 		subImageId = 0;
 		drawSubImage = true;
@@ -446,7 +445,6 @@ void MystAreaImageSwitch::drawConditionalDataToScreen(uint16 state, bool update)
 		} else
 			warning("Image Switch Var %d: %d exceeds number of subImages %d", _imageSwitchVar, state, _subImages.size());
 	}
-
 
 	if (drawSubImage) {
 		uint16 imageToDraw = _subImages[subImageId].wdib;
@@ -481,7 +479,7 @@ const Common::String MystAreaImageSwitch::describe() {
 	                                             MystAreaActionSwitch::describe().c_str(), _imageSwitchVar);
 
 	if (_subImages.size() > 0) {
-		desc +=  " subImgs:";
+		desc += " subImgs:";
 
 		for (uint i = 0; i < _subImages.size(); i++)
 			desc += Common::String::format(" %d", (int16)_subImages[i].wdib);
@@ -492,8 +490,8 @@ const Common::String MystAreaImageSwitch::describe() {
 
 // No MystResourceType9!
 
-MystAreaSlider::MystAreaSlider(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
-		MystAreaDrag(vm, type, rlstStream, parent) {
+MystAreaSlider::MystAreaSlider(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent)
+  : MystAreaDrag(vm, type, rlstStream, parent) {
 	_dragSound = rlstStream->readUint16LE();
 
 	debugC(kDebugResource, "\tdrag sound : %d", _dragSound);
@@ -658,8 +656,8 @@ void MystAreaSlider::updatePosition(const Common::Point &mouse) {
 		_vm->_sound->playEffect(_dragSound);
 }
 
-MystAreaDrag::MystAreaDrag(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
-		MystAreaImageSwitch(vm, type, rlstStream, parent) {
+MystAreaDrag::MystAreaDrag(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent)
+  : MystAreaImageSwitch(vm, type, rlstStream, parent) {
 	_flagHV = rlstStream->readUint16LE();
 	_minH = rlstStream->readUint16LE();
 	_maxH = rlstStream->readUint16LE();
@@ -737,10 +735,10 @@ void MystAreaDrag::handleMouseDrag() {
 
 const Common::String MystAreaDrag::describe() {
 	return Common::String::format("%s down: %s drag: %s up: %s",
-			MystAreaImageSwitch::describe().c_str(),
-			_vm->_stack->getOpcodeDesc(_mouseDownOpcode).c_str(),
-			_vm->_stack->getOpcodeDesc(_mouseDragOpcode).c_str(),
-			_vm->_stack->getOpcodeDesc(_mouseUpOpcode).c_str());
+	                              MystAreaImageSwitch::describe().c_str(),
+	                              _vm->_stack->getOpcodeDesc(_mouseDownOpcode).c_str(),
+	                              _vm->_stack->getOpcodeDesc(_mouseDragOpcode).c_str(),
+	                              _vm->_stack->getOpcodeDesc(_mouseUpOpcode).c_str());
 }
 
 void MystAreaDrag::setPositionClipping(const Common::Point &mouse, Common::Point &dest) {
@@ -756,15 +754,15 @@ uint16 MystAreaDrag::getList1(uint16 index) {
 }
 
 uint16 MystAreaDrag::getList2(uint16 index) {
-	return (index < _lists[1].size()) ?  _lists[1][index] : 0;
+	return (index < _lists[1].size()) ? _lists[1][index] : 0;
 }
 
 uint16 MystAreaDrag::getList3(uint16 index) {
-	return (index < _lists[2].size()) ?  _lists[2][index] : 0;
+	return (index < _lists[2].size()) ? _lists[2][index] : 0;
 }
 
-MystVideoInfo::MystVideoInfo(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
-		MystAreaDrag(vm, type, rlstStream, parent) {
+MystVideoInfo::MystVideoInfo(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent)
+  : MystAreaDrag(vm, type, rlstStream, parent) {
 	_numFrames = rlstStream->readUint16LE();
 	_firstFrame = rlstStream->readUint16LE();
 	uint16 frameWidth = rlstStream->readUint16LE();
@@ -825,8 +823,8 @@ void MystVideoInfo::releaseLeverV() {
 	}
 }
 
-MystAreaHover::MystAreaHover(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
-		MystArea(vm, type, rlstStream, parent) {
+MystAreaHover::MystAreaHover(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent)
+  : MystArea(vm, type, rlstStream, parent) {
 	_enterOpcode = rlstStream->readUint16LE();
 	_leaveOpcode = rlstStream->readUint16LE();
 
@@ -854,9 +852,9 @@ void MystAreaHover::handleMouseUp() {
 
 const Common::String MystAreaHover::describe() {
 	return Common::String::format("%s enter: %s leave: %s",
-			MystArea::describe().c_str(),
-			_vm->_stack->getOpcodeDesc(_enterOpcode).c_str(),
-			_vm->_stack->getOpcodeDesc(_leaveOpcode).c_str());
+	                              MystArea::describe().c_str(),
+	                              _vm->_stack->getOpcodeDesc(_enterOpcode).c_str(),
+	                              _vm->_stack->getOpcodeDesc(_leaveOpcode).c_str());
 }
 
 } // End of namespace Mohawk

@@ -24,37 +24,39 @@
 #include "common/stream.h"
 #include "common/substream.h"
 
-#include "gob/gob.h"
-#include "gob/util.h"
-#include "gob/dataio.h"
-#include "gob/surface.h"
-#include "gob/video.h"
 #include "gob/cmpfile.h"
+#include "gob/dataio.h"
 #include "gob/decfile.h"
+#include "gob/gob.h"
+#include "gob/surface.h"
+#include "gob/util.h"
+#include "gob/video.h"
 
 namespace Gob {
 
 DECFile::DECFile(GobEngine *vm, const Common::String &fileName,
-                 uint16 width, uint16 height, uint8 bpp) : _vm(vm),
-	_width(width), _height(height), _bpp(bpp), _hasPadding(false), _backdrop(0) {
+                 uint16 width, uint16 height, uint8 bpp)
+  : _vm(vm)
+  , _width(width)
+  , _height(height)
+  , _bpp(bpp)
+  , _hasPadding(false)
+  , _backdrop(0) {
 
 	bool bigEndian = false;
 	Common::String endianFileName = fileName;
 
-	if ((_vm->getEndiannessMethod() == kEndiannessMethodAltFile) &&
-	    !_vm->_dataIO->hasFile(fileName)) {
+	if ((_vm->getEndiannessMethod() == kEndiannessMethodAltFile) && !_vm->_dataIO->hasFile(fileName)) {
 		// If the game has alternate big-endian files, look if one exist
 
 		Common::String alternateFileName = fileName;
 		alternateFileName.setChar('_', 0);
 
 		if (_vm->_dataIO->hasFile(alternateFileName)) {
-			bigEndian      = true;
+			bigEndian = true;
 			endianFileName = alternateFileName;
 		}
-	} else if ((_vm->getEndiannessMethod() == kEndiannessMethodBE) ||
-	           ((_vm->getEndiannessMethod() == kEndiannessMethodSystem) &&
-	            (_vm->getEndianness() == kEndiannessBE)))
+	} else if ((_vm->getEndiannessMethod() == kEndiannessMethodBE) || ((_vm->getEndiannessMethod() == kEndiannessMethodSystem) && (_vm->getEndianness() == kEndiannessBE)))
 		// Game always little endian or it follows the system and it is big endian
 		bigEndian = true;
 
@@ -83,7 +85,7 @@ void DECFile::load(Common::SeekableSubReadStreamEndian &dec, const Common::Strin
 	dec.skip(2); // Unused
 
 	int16 backdropCount = dec.readUint16();
-	int16 layerCount    = dec.readUint16();
+	int16 layerCount = dec.readUint16();
 
 	// Sanity checks
 	if (backdropCount > 1)
@@ -146,7 +148,7 @@ void DECFile::loadParts(Common::SeekableSubReadStreamEndian &dec) {
 
 void DECFile::loadPart(Part &part, Common::SeekableSubReadStreamEndian &dec) {
 	part.layer = dec.readByte() - 1;
-	part.part  = dec.readByte();
+	part.part = dec.readByte();
 
 	dec.skip(1); // Unknown
 

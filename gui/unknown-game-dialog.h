@@ -23,9 +23,9 @@
 #ifndef GUI_UNKNOWN_GAME_DIALOG_H
 #define GUI_UNKNOWN_GAME_DIALOG_H
 
-#include "gui/dialog.h"
 #include "common/array.h"
 #include "engines/game.h"
+#include "gui/dialog.h"
 
 namespace GUI {
 
@@ -38,6 +38,7 @@ public:
 	UnknownGameDialog(const DetectedGame &detectedGame);
 
 	void handleMouseWheel(int x, int y, int direction) override;
+
 private:
 	void rebuild();
 

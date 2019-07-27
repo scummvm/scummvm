@@ -23,8 +23,8 @@
 #ifndef __CoDyVDfs_H__
 #define __CoDyVDfs_H__
 
-#include <cdvdman.h>
 #include "cdtypes.h"
+#include <cdvdman.h>
 
 typedef cd_read_mode_t CdRMode;
 
@@ -36,18 +36,18 @@ typedef cd_read_mode_t CdRMode;
 #define SECTOR_MASK 0x7FF
 #define NUM_SECTORS(a) ((a + 2047) >> 11)
 
-#define IS_DIR(a)  ((a)->flags & 2)
+#define IS_DIR(a) ((a)->flags & 2)
 
 #define DISC_UNKNOWN 0xFE
-#define DISC_NONE  0xFF
-#define DISC_DVD   0
+#define DISC_NONE 0xFF
+#define DISC_DVD 0
 #define DISC_MODE1 1
 #define DISC_MODE2 2
 
 enum ReadModes {
 	CdSect2048 = 0,
 	CdSect2328, // 1
-	CdSect2340  // 2
+	CdSect2340 // 2
 };
 
 enum {

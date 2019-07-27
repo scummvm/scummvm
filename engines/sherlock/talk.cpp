@@ -21,12 +21,12 @@
  */
 
 #include "sherlock/talk.h"
-#include "sherlock/sherlock.h"
-#include "sherlock/screen.h"
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/scalpel/scalpel_people.h"
 #include "sherlock/scalpel/scalpel_talk.h"
 #include "sherlock/scalpel/scalpel_user_interface.h"
+#include "sherlock/screen.h"
+#include "sherlock/sherlock.h"
 #include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo_people.h"
@@ -53,22 +53,22 @@ void Statement::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	length = s.readUint16LE();
 	for (int idx = 0; idx < length - 1; ++idx)
 		_statement += (char)s.readByte();
-	s.readByte();	// Null ending
+	s.readByte(); // Null ending
 
 	length = s.readUint16LE();
 	for (int idx = 0; idx < length - 1; ++idx)
 		_reply += (char)s.readByte();
-	s.readByte();	// Null ending
+	s.readByte(); // Null ending
 
 	length = s.readUint16LE();
 	for (int idx = 0; idx < length - 1; ++idx)
 		_linkFile += (char)s.readByte();
-	s.readByte();	// Null ending
+	s.readByte(); // Null ending
 
 	length = s.readUint16LE();
 	for (int idx = 0; idx < length - 1; ++idx)
 		_voiceFile += (char)s.readByte();
-	s.readByte();	// Null ending
+	s.readByte(); // Null ending
 
 	_required.resize(s.readByte());
 	_modified.resize(s.readByte());
@@ -99,7 +99,8 @@ Talk *Talk::init(SherlockEngine *vm) {
 		return new Tattoo::TattooTalk(vm);
 }
 
-Talk::Talk(SherlockEngine *vm) : _vm(vm) {
+Talk::Talk(SherlockEngine *vm)
+  : _vm(vm) {
 	_talkCounter = 0;
 	_talkToAbort = false;
 	_openTalkWindow = false;
@@ -172,8 +173,7 @@ void Talk::talkTo(const Common::String filename) {
 	// Turn on the Exit option
 	ui._endKeyActive = true;
 
-	if (people[HOLMES]._walkCount || (!people[HOLMES]._walkTo.empty() &&
-			(IS_SERRATED_SCALPEL || people._allowWalkAbort))) {
+	if (people[HOLMES]._walkCount || (!people[HOLMES]._walkTo.empty() && (IS_SERRATED_SCALPEL || people._allowWalkAbort))) {
 		// Only interrupt if trying to do an action, and not just if player is walking around the scene
 		if (people._allowWalkAbort)
 			abortFlag = true;
@@ -311,7 +311,7 @@ void Talk::talkTo(const Common::String filename) {
 	if (select == -1) {
 		if (IS_ROSE_TATTOO) {
 			static_cast<Tattoo::TattooUserInterface *>(&ui)->putMessage(
-				"%s", _vm->_fixedText->getText(Tattoo::kFixedText_NoEffect));
+			  "%s", _vm->_fixedText->getText(Tattoo::kFixedText_NoEffect));
 			return;
 		}
 		error("Couldn't find statement to display");
@@ -571,8 +571,7 @@ void Talk::loadTalkFile(const Common::String &filename) {
 	}
 
 	const char *chP = strchr(filename.c_str(), '.');
-	Common::String talkFile = chP ? Common::String(filename.c_str(), chP) + ".tlk" :
-		Common::String(filename.c_str(), filename.c_str() + 7) + ".tlk";
+	Common::String talkFile = chP ? Common::String(filename.c_str(), chP) + ".tlk" : Common::String(filename.c_str(), filename.c_str() + 7) + ".tlk";
 
 	// Create the base of the sound filename used for talking in Rose Tattoo
 	if (IS_ROSE_TATTOO && _scriptMoreFlag != 1)
@@ -581,7 +580,7 @@ void Talk::loadTalkFile(const Common::String &filename) {
 	// Open the talk file for reading
 	Common::SeekableReadStream *talkStream = res.load(talkFile);
 	_converseNum = res.resourceIndex();
-	talkStream->skip(2);	// Skip talk file version num
+	talkStream->skip(2); // Skip talk file version num
 
 	_statements.clear();
 	_statements.resize(talkStream->readByte());
@@ -605,8 +604,8 @@ void Talk::stripVoiceCommands() {
 				// Replace instruction character with a space, and delete the
 				// rest of the name following it
 				statement._reply = Common::String(statement._reply.c_str(),
-					statement._reply.c_str() + idx) + " " +
-					Common::String(statement._reply.c_str() + idx + 9);
+				                                  statement._reply.c_str() + idx)
+				  + " " + Common::String(statement._reply.c_str() + idx + 9);
 			}
 		}
 
@@ -728,7 +727,6 @@ void Talk::doScript(const Common::String &script) {
 					break;
 				default:
 					break;
-
 				}
 
 				if (str[1] > 15)
@@ -738,7 +736,7 @@ void Talk::doScript(const Common::String &script) {
 
 			if (IS_SERRATED_SCALPEL) {
 				// Remove portrait?
-				if ( str[0] == _opcodes[OP_REMOVE_PORTRAIT]) {
+				if (str[0] == _opcodes[OP_REMOVE_PORTRAIT]) {
 					_speaker = -1;
 				} else {
 					// Nope, so set the first speaker
@@ -897,7 +895,7 @@ int Talk::waitForMore(int delay) {
 		if (playingSpeech && !sound.isSpeechPlaying())
 			delay = 0;
 	} while (!_vm->shouldQuit() && key2 == 254 && (delay || (playingSpeech && sound.isSpeechPlaying()))
-		&& !events._released && !events._rightReleased);
+	         && !events._released && !events._rightReleased);
 
 	// If voices was set 2 to indicate a Scalpel voice file was playing, then reset it back to 1
 	if (sound._voices == 2)
@@ -920,7 +918,6 @@ int Talk::waitForMore(int delay) {
 	default:
 		break;
 	}
-
 
 	sound.stopSpeech();
 	events.setCursor(_talkToAbort ? ARROW : oldCursor);
@@ -1119,8 +1116,7 @@ OpcodeReturn Talk::cmdRunCAnimation(const byte *&str) {
 
 	// Check if next character is changing side or changing portrait
 	_wait = 0;
-	if (_charCount && (str[1] == _opcodes[OP_SWITCH_SPEAKER] ||
-			(IS_SERRATED_SCALPEL && str[1] == _opcodes[OP_ASSIGN_PORTRAIT_LOCATION])))
+	if (_charCount && (str[1] == _opcodes[OP_SWITCH_SPEAKER] || (IS_SERRATED_SCALPEL && str[1] == _opcodes[OP_ASSIGN_PORTRAIT_LOCATION])))
 		_wait = 1;
 
 	return RET_SUCCESS;

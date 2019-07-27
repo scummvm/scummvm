@@ -24,11 +24,11 @@
 
 namespace CEGUI {
 
-PanelItem::PanelItem(WORD reference) : GUIElement() {
+PanelItem::PanelItem(WORD reference)
+  : GUIElement() {
 	setBackground(reference);
 	_panel = NULL;
 }
-
 
 PanelItem::~PanelItem() {
 }

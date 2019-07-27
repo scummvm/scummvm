@@ -27,7 +27,8 @@
 
 namespace Gob {
 
-Scenery_v2::Scenery_v2(GobEngine *vm) : Scenery_v1(vm) {
+Scenery_v2::Scenery_v2(GobEngine *vm)
+  : Scenery_v1(vm) {
 }
 
 int16 Scenery_v2::loadAnim(char search) {

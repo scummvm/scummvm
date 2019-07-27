@@ -42,13 +42,17 @@ class Resources {
 	 * Derived file class with sync method aliases so that the same
 	 * code from create_xeen can be re-used for both reading and
 	 * writing the resource data
-	 */	
+	 */
 	class ResFile : public File {
 	private:
 		char *_buffer;
 		char *_buffStart;
+
 	public:
-		ResFile(char *buffer) : File("CONSTANTS"), _buffer(buffer), _buffStart(buffer) {}
+		ResFile(char *buffer)
+		  : File("CONSTANTS")
+		  , _buffer(buffer)
+		  , _buffStart(buffer) {}
 
 		void syncString(const char *&str) {
 			str = _buffer;
@@ -101,18 +105,21 @@ class Resources {
 			read(vals, count1 * count2);
 		}
 	};
+
 private:
 	char _buffer[STRING_BUFFER_SIZE];
+
 private:
 	/**
 	 * Loads all the constants data stored in the xeen.css
 	 */
 	void loadData();
+
 public:
 	SpriteResource _globalSprites;
 	SpriteResource _logoSprites;
-	Common::StringArray _maeNames;			// Magic and equipment names
-	Common::StringArray _cloudsMapNames;	// Clouds of Xeen map names
+	Common::StringArray _maeNames; // Magic and equipment names
+	Common::StringArray _cloudsMapNames; // Clouds of Xeen map names
 	const char **ITEM_NAMES[4];
 
 	// Data loaded from xeen.ccs
@@ -462,6 +469,7 @@ public:
 	const char *DARKSIDE_ENDING2;
 	const char *PHAROAH_ENDING_TEXT1;
 	const char *PHAROAH_ENDING_TEXT2;
+
 public:
 	/**
 	 * Constructor
@@ -478,4 +486,4 @@ extern Resources *g_resources;
 
 } // End of namespace Xeen
 
-#endif	/* XEEN_RESOURCES_H */
+#endif /* XEEN_RESOURCES_H */

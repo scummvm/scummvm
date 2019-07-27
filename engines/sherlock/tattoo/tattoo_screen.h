@@ -31,11 +31,11 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-class TattooScreen : public Screen {
-public:
-	TattooScreen(SherlockEngine *vm);
-	virtual ~TattooScreen() {}
-};
+	class TattooScreen : public Screen {
+	public:
+		TattooScreen(SherlockEngine *vm);
+		virtual ~TattooScreen() {}
+	};
 
 } // End of namespace Tattoo
 

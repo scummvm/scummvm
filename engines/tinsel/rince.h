@@ -21,120 +21,131 @@
  * Should really be called "moving actors.h"
  */
 
-#ifndef TINSEL_RINCE_H	// prevent multiple includes
+#ifndef TINSEL_RINCE_H // prevent multiple includes
 #define TINSEL_RINCE_H
 
-#include "tinsel/anim.h"	// for ANIM
-#include "tinsel/scene.h"	// for TFTYPE
+#include "tinsel/anim.h" // for ANIM
+#include "tinsel/scene.h" // for TFTYPE
 #include "tinsel/tinsel.h"
 
 namespace Tinsel {
 
 struct OBJECT;
 
-enum NPS {NOT_IN, GOING_UP, GOING_DOWN, LEAVING, ENTERING};
+enum NPS { NOT_IN,
+	         GOING_UP,
+	         GOING_DOWN,
+	         LEAVING,
+	         ENTERING };
 
-enum IND {NO_PROB, TRY_CENTER, TRY_CORNER, TRY_NEXTCORNER};
+enum IND { NO_PROB,
+	         TRY_CENTER,
+	         TRY_CORNER,
+	         TRY_NEXTCORNER };
 
-enum DIRECTION { LEFTREEL, RIGHTREEL, FORWARD, AWAY };
+enum DIRECTION { LEFTREEL,
+	               RIGHTREEL,
+	               FORWARD,
+	               AWAY };
 
-#define NUM_MAINSCALES	(TinselV2 ? 10 : 5)
-#define NUM_AUXSCALES	5
-#define TOTAL_SCALES	(NUM_MAINSCALES + NUM_AUXSCALES)
-#define REQ_MAIN_SCALES		10
-#define REQ_TOTAL_SCALES	15
+#define NUM_MAINSCALES (TinselV2 ? 10 : 5)
+#define NUM_AUXSCALES 5
+#define TOTAL_SCALES (NUM_MAINSCALES + NUM_AUXSCALES)
+#define REQ_MAIN_SCALES 10
+#define REQ_TOTAL_SCALES 15
 
 #define BOGUS_BRIGHTNESS -1
 
 struct MOVER {
 
-	int		objX, objY;           /* Co-ordinates object  */
+	int objX, objY; /* Co-ordinates object  */
 
-	int     targetX, targetY;
-	int     ItargetX, ItargetY;     /* Intermediate destination */
-	int     UtargetX, UtargetY;     /* Ultimate destination */
+	int targetX, targetY;
+	int ItargetX, ItargetY; /* Intermediate destination */
+	int UtargetX, UtargetY; /* Ultimate destination */
 
 	HPOLYGON hIpath;
 	HPOLYGON hUpath;
 	HPOLYGON hCpath;
 
 	bool over;
-	int	walkNumber;
+	int walkNumber;
 
-	IND	InDifficulty;
+	IND InDifficulty;
 
 	/* For use in 'follow nodes' polygons   */
 	HPOLYGON hFnpath;
-	NPS	npstatus;
-	int     line;
+	NPS npstatus;
+	int line;
 
-	int     Tline;                   // NEW
+	int Tline; // NEW
 
 	// TODO: TagReelRunning may be the same as bSpecReel
-	bool		bSpecReel;
+	bool bSpecReel;
 
 	/* Used internally */
-	DIRECTION	direction;		// Current reel
-	int			scale;		// Current scale
+	DIRECTION direction; // Current reel
+	int scale; // Current scale
 
-	int			stepCount;		// Step count for walking reel synchronisation
+	int stepCount; // Step count for walking reel synchronisation
 
-	int			walkedFromX, walkedFromY;
+	int walkedFromX, walkedFromY;
 
-	bool		bMoving;		// Set this to TRUE during a walk
+	bool bMoving; // Set this to TRUE during a walk
 
-	bool		bNoPath;
-	bool		bIgPath;
-	bool		bWalkReel;
+	bool bNoPath;
+	bool bIgPath;
+	bool bWalkReel;
 
-	OBJECT		*actorObj;	// Actor's object
-	ANIM		actorAnim;	// Actor's animation script
+	OBJECT *actorObj; // Actor's object
+	ANIM actorAnim; // Actor's animation script
 
-	SCNHANDLE	hLastFilm;	// } Used by AlterMover()
-	SCNHANDLE	hPushedFilm;	// }
+	SCNHANDLE hLastFilm; // } Used by AlterMover()
+	SCNHANDLE hPushedFilm; // }
 
-	int			actorID;
-	int			actorToken;
+	int actorID;
+	int actorToken;
 
-	SCNHANDLE	walkReels[REQ_TOTAL_SCALES][4];
-	SCNHANDLE	standReels[REQ_TOTAL_SCALES][4];
-	SCNHANDLE	talkReels[REQ_TOTAL_SCALES][4];
+	SCNHANDLE walkReels[REQ_TOTAL_SCALES][4];
+	SCNHANDLE standReels[REQ_TOTAL_SCALES][4];
+	SCNHANDLE talkReels[REQ_TOTAL_SCALES][4];
 
-	bool		bActive;
+	bool bActive;
 
-	int			SlowFactor;	// Slow down movement while hidden
+	int SlowFactor; // Slow down movement while hidden
 
-	bool		bStop;
+	bool bStop;
 
 	/* NOTE: If effect polys can overlap, this needs improving */
-	bool		bInEffect;
+	bool bInEffect;
 
-	Common::PROCESS		*pProc;
+	Common::PROCESS *pProc;
 
 	// Discworld 2 specific fields
-	int32		zOverride;
-	bool		bHidden;
-	int			brightness;	// Current brightness
-	int			startColor;
-	int			paletteLength;
-	HPOLYGON	hRpath;		// Recent path
+	int32 zOverride;
+	bool bHidden;
+	int brightness; // Current brightness
+	int startColor;
+	int paletteLength;
+	HPOLYGON hRpath; // Recent path
 };
 typedef MOVER *PMOVER;
 
 struct MAINIT {
-	int	X;
-	int	Y;
-	PMOVER	pMover;
+	int X;
+	int Y;
+	PMOVER pMover;
 };
 typedef MAINIT *PMAINIT;
 
 //---------------------------------------------------------------------------
 
-
 void MoverProcessCreate(int X, int Y, int id, PMOVER pMover);
 
-
-enum AR_FUNCTION { AR_NORMAL, AR_PUSHREEL, AR_POPREEL, AR_WALKREEL };
+enum AR_FUNCTION { AR_NORMAL,
+	                 AR_PUSHREEL,
+	                 AR_POPREEL,
+	                 AR_WALKREEL };
 
 void StoreMoverPalette(PMOVER pMover, int startColor, int length);
 
@@ -188,20 +199,20 @@ void StopMover(PMOVER pMover);
 
 struct SAVED_MOVER {
 
-	int		actorID;
-	int		objX;
-	int		objY;
+	int actorID;
+	int objX;
+	int objY;
 	SCNHANDLE hLastfilm;
 
-	SCNHANDLE	walkReels[REQ_TOTAL_SCALES][4];
-	SCNHANDLE	standReels[REQ_TOTAL_SCALES][4];
-	SCNHANDLE	talkReels[REQ_TOTAL_SCALES][4];
+	SCNHANDLE walkReels[REQ_TOTAL_SCALES][4];
+	SCNHANDLE standReels[REQ_TOTAL_SCALES][4];
+	SCNHANDLE talkReels[REQ_TOTAL_SCALES][4];
 
-	bool	bActive;
-	bool	bHidden;
-	int		brightness;
-	int		startColor;
-	int		paletteLength;
+	bool bActive;
+	bool bHidden;
+	int brightness;
+	int startColor;
+	int paletteLength;
 };
 
 void SaveMovers(SAVED_MOVER *sMoverInfo);
@@ -212,8 +223,8 @@ PMOVER NextMover(PMOVER pMover);
 /*----------------------------------------------------------------------*/
 
 enum {
-	MAGICX	= -101,
-	MAGICY	= -102
+	MAGICX = -101,
+	MAGICY = -102
 };
 
 /*----------------------------------------------------------------------*/

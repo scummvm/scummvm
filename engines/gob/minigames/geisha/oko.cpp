@@ -28,46 +28,49 @@ namespace Gob {
 
 namespace Geisha {
 
-enum kOkoAnimation {
-	kOkoAnimationEnter   =  0,
-	kOkoAnimationSwim    =  1,
-	kOkoAnimationSink    =  8,
-	kOkoAnimationRaise   =  7,
-	kOkoAnimationBreathe =  2,
-	kOkoAnimationPick    =  3,
-	kOkoAnimationHurt    =  4,
-	kOkoAnimationDie0    = 17,
-	kOkoAnimationDie1    = 18,
-	kOkoAnimationDie2    = 19
-};
+	enum kOkoAnimation {
+		kOkoAnimationEnter = 0,
+		kOkoAnimationSwim = 1,
+		kOkoAnimationSink = 8,
+		kOkoAnimationRaise = 7,
+		kOkoAnimationBreathe = 2,
+		kOkoAnimationPick = 3,
+		kOkoAnimationHurt = 4,
+		kOkoAnimationDie0 = 17,
+		kOkoAnimationDie1 = 18,
+		kOkoAnimationDie2 = 19
+	};
 
-static const int16 kOkoPositionX = 110;
+	static const int16 kOkoPositionX = 110;
 
-static const uint kLevelCount = 3;
-static const int16 kLevelPositionX[kLevelCount] = { 44, 84, 124 };
+	static const uint kLevelCount = 3;
+	static const int16 kLevelPositionX[kLevelCount] = { 44, 84, 124 };
 
+	Oko::Oko(const ANIFile &ani, Sound &sound, SoundDesc &breathe)
+	  : ANIObject(ani)
+	  , _sound(&sound)
+	  , _breathe(&breathe)
+	  , _state(kStateEnter)
+	  , _level(0) {
 
-Oko::Oko(const ANIFile &ani, Sound &sound, SoundDesc &breathe) :
-	ANIObject(ani), _sound(&sound), _breathe(&breathe), _state(kStateEnter), _level(0) {
-
-	setAnimation(kOkoAnimationEnter);
-	setVisible(true);
-}
-
-Oko::~Oko() {
-}
-
-void Oko::advance() {
-	bool wasLastFrame = lastFrame();
-
-	if ((_state == kStateDead) && wasLastFrame) {
-		setPause(true);
-		return;
+		setAnimation(kOkoAnimationEnter);
+		setVisible(true);
 	}
 
-	ANIObject::advance();
+	Oko::~Oko() {
+	}
 
-	switch (_state) {
+	void Oko::advance() {
+		bool wasLastFrame = lastFrame();
+
+		if ((_state == kStateDead) && wasLastFrame) {
+			setPause(true);
+			return;
+		}
+
+		ANIObject::advance();
+
+		switch (_state) {
 		case kStateEnter:
 			if (wasLastFrame) {
 				setAnimation(kOkoAnimationSwim);
@@ -101,70 +104,70 @@ void Oko::advance() {
 
 		default:
 			break;
-	}
-}
-
-void Oko::sink() {
-	if (_state != kStateSwim)
-		return;
-
-	if (_level >= (kLevelCount - 1)) {
-		setAnimation(kOkoAnimationPick);
-		_state = kStatePick;
-		return;
+		}
 	}
 
-	setAnimation(kOkoAnimationSink);
-	setPosition(kOkoPositionX, kLevelPositionX[_level]);
-	_state = kStateSink;
+	void Oko::sink() {
+		if (_state != kStateSwim)
+			return;
 
-	_level++;
-}
+		if (_level >= (kLevelCount - 1)) {
+			setAnimation(kOkoAnimationPick);
+			_state = kStatePick;
+			return;
+		}
 
-void Oko::raise() {
-	if (_state != kStateSwim)
-		return;
+		setAnimation(kOkoAnimationSink);
+		setPosition(kOkoPositionX, kLevelPositionX[_level]);
+		_state = kStateSink;
 
-	if (_level == 0) {
-		setAnimation(kOkoAnimationBreathe);
-		_state = kStateBreathe;
-		return;
+		_level++;
 	}
 
-	setAnimation(kOkoAnimationRaise);
-	setPosition(kOkoPositionX, kLevelPositionX[_level]);
-	_state = kStateSink;
+	void Oko::raise() {
+		if (_state != kStateSwim)
+			return;
 
-	_level--;
-}
+		if (_level == 0) {
+			setAnimation(kOkoAnimationBreathe);
+			_state = kStateBreathe;
+			return;
+		}
 
-void Oko::hurt() {
-	if (_state != kStateSwim)
-		return;
+		setAnimation(kOkoAnimationRaise);
+		setPosition(kOkoPositionX, kLevelPositionX[_level]);
+		_state = kStateSink;
 
-	setAnimation(kOkoAnimationHurt);
-	_state = kStateHurt;
-}
+		_level--;
+	}
 
-void Oko::die() {
-	if (_state != kStateSwim)
-		return;
+	void Oko::hurt() {
+		if (_state != kStateSwim)
+			return;
 
-	setAnimation(kOkoAnimationDie0 + _level);
-	_state = kStateDead;
-}
+		setAnimation(kOkoAnimationHurt);
+		_state = kStateHurt;
+	}
 
-Oko::State Oko::getState() const {
-	return _state;
-}
+	void Oko::die() {
+		if (_state != kStateSwim)
+			return;
 
-bool Oko::isBreathing() const {
-	return (_state == kStateBreathe) && ((getFrame() >= 9) && (getFrame() <= 30));
-}
+		setAnimation(kOkoAnimationDie0 + _level);
+		_state = kStateDead;
+	}
 
-bool Oko::isMoving() const {
-	return (_state != kStateBreathe) && (_state != kStateHurt) && (_state != kStateDead);
-}
+	Oko::State Oko::getState() const {
+		return _state;
+	}
+
+	bool Oko::isBreathing() const {
+		return (_state == kStateBreathe) && ((getFrame() >= 9) && (getFrame() <= 30));
+	}
+
+	bool Oko::isMoving() const {
+		return (_state != kStateBreathe) && (_state != kStateHurt) && (_state != kStateDead);
+	}
 
 } // End of namespace Geisha
 

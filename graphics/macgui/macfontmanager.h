@@ -26,8 +26,8 @@
 #include "graphics/fontman.h"
 
 namespace Common {
-	class SeekableReadStream;
-	class MacResManager;
+class SeekableReadStream;
+class MacResManager;
 }
 
 namespace Graphics {

@@ -24,8 +24,8 @@
 
 #include "bladerunner/bladerunner.h"
 
-#include "common/timer.h"
 #include "common/system.h"
+#include "common/timer.h"
 
 namespace BladeRunner {
 

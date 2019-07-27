@@ -27,11 +27,11 @@
 
 #ifdef ENABLE_VKEYBD
 
-#include "backends/vkeybd/virtual-keyboard.h"
-#include "common/rect.h"
-#include "common/system.h"
-#include "graphics/font.h"
-#include "graphics/surface.h"
+#	include "backends/vkeybd/virtual-keyboard.h"
+#	include "common/rect.h"
+#	include "common/system.h"
+#	include "graphics/font.h"
+#	include "graphics/surface.h"
 
 namespace Common {
 
@@ -44,7 +44,6 @@ namespace Common {
 class VirtualKeyboardGUI {
 
 public:
-
 	VirtualKeyboardGUI(VirtualKeyboard *kbd);
 	~VirtualKeyboardGUI();
 
@@ -93,7 +92,6 @@ public:
 	void initSize(int16 w, int16 h);
 
 private:
-
 	OSystem *_system;
 
 	VirtualKeyboard *_kbd;
@@ -146,7 +144,6 @@ private:
 	void setupCursor();
 	void removeCursor();
 	void animateCursor();
-
 };
 
 } // End of namespace Common

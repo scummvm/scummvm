@@ -26,27 +26,53 @@
 #include "audio/mixer.h"
 #include "common/stream.h"
 #include "titanic/core/named_item.h"
+#include "titanic/game_state.h"
+#include "titanic/gfx/text_control.h"
+#include "titanic/pet_control/pet_section.h"
 #include "titanic/sound/proximity.h"
 #include "titanic/sound/sound_manager.h"
-#include "titanic/support/mouse_cursor.h"
 #include "titanic/support/credit_text.h"
+#include "titanic/support/mouse_cursor.h"
+#include "titanic/support/movie_clip.h"
 #include "titanic/support/movie_range_info.h"
 #include "titanic/support/rect.h"
 #include "titanic/support/strings.h"
-#include "titanic/support/movie_clip.h"
-#include "titanic/pet_control/pet_section.h"
-#include "titanic/gfx/text_control.h"
-#include "titanic/game_state.h"
 
 namespace Titanic {
 
-enum Find { FIND_GLOBAL = 1, FIND_ROOM = 2, FIND_PET = 4, FIND_MAILMAN = 8 };
-enum Found { FOUND_NONE = 0, FOUND_GLOBAL = 1, FOUND_ROOM = 2, FOUND_PET = 3, FOUND_MAILMAN = 4 };
-enum RoomFlagsComparison { RFC_LOCATION = 1, RFC_CLASS_ELEVATOR = 2, RFC_TITANIA = 3 };
+enum Find { FIND_GLOBAL = 1,
+	          FIND_ROOM = 2,
+	          FIND_PET = 4,
+	          FIND_MAILMAN = 8 };
+enum Found { FOUND_NONE = 0,
+	           FOUND_GLOBAL = 1,
+	           FOUND_ROOM = 2,
+	           FOUND_PET = 3,
+	           FOUND_MAILMAN = 4 };
+enum RoomFlagsComparison { RFC_LOCATION = 1,
+	                         RFC_CLASS_ELEVATOR = 2,
+	                         RFC_TITANIA = 3 };
 enum StarControlAction {
-	STAR_SHOW = 0, STAR_HIDE, STAR_2, STAR_RESET_POS, STAR_4, STAR_5, STAR_6, STAR_FULL_SPEED,
-	STAR_8, STAR_TOGGLE_MODE, STAR_10, STAR_11, STAR_12, STAR_13, STAR_SET_REFERENCE, STAR_FADE_IN,
-	STAR_FADE_OUT, LOCK_STAR, UNLOCK_STAR, STAR_19
+	STAR_SHOW = 0,
+	STAR_HIDE,
+	STAR_2,
+	STAR_RESET_POS,
+	STAR_4,
+	STAR_5,
+	STAR_6,
+	STAR_FULL_SPEED,
+	STAR_8,
+	STAR_TOGGLE_MODE,
+	STAR_10,
+	STAR_11,
+	STAR_12,
+	STAR_13,
+	STAR_SET_REFERENCE,
+	STAR_FADE_IN,
+	STAR_FADE_OUT,
+	LOCK_STAR,
+	UNLOCK_STAR,
+	STAR_19
 };
 
 class CDontSaveFileItem;
@@ -62,8 +88,10 @@ class OSMovie;
 class CGameObject : public CNamedItem {
 	friend class OSMovie;
 	DECLARE_MESSAGE_MAP;
+
 private:
 	static int _soundHandles[4];
+
 private:
 	/**
 	 * Load a visual resource for the object
@@ -80,8 +108,10 @@ private:
 	 * a common intersection
 	 */
 	bool clipRect(const Rect &rect1, Rect &rect2) const;
+
 protected:
 	static CCreditText *_credits;
+
 protected:
 	double _unused1;
 	double _unused2;
@@ -99,6 +129,7 @@ protected:
 	CVideoSurface *_surface;
 	CString _resource;
 	int _unused4;
+
 protected:
 	/**
 	 * Saves the current position the object is located at
@@ -124,7 +155,7 @@ protected:
 	 * Parses a view into it's components of room, node, and view,
 	 * and locates the designated view
 	 */
-	CViewItem * parseView(const CString &viewString);
+	CViewItem *parseView(const CString &viewString);
 
 	/**
 	 * Loads a movie
@@ -231,7 +262,7 @@ protected:
 	 * @param repeated		If true, sound will repeat indefinitely
 	 */
 	int queueSound(const CString &name, uint priorHandle, uint volume = 100, int balance = 0,
-		bool repeated = false, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
+	               bool repeated = false, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 
 	/**
 	 * Stop a sound
@@ -263,7 +294,7 @@ protected:
 	 * @param soundType		Specifies whether the sound is a sound effect or music
 	 */
 	void playAmbientSound(const CString &resName, VolumeMode mode, bool initialMute, bool repeated,
-		int handleIndex, Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
+	                      int handleIndex, Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
 
 	/**
 	 * Stops playing an ambient sound
@@ -529,6 +560,7 @@ protected:
 	 * Gets a new random number
 	 */
 	int getRandomNumber(int max, int *oldVal = nullptr);
+
 public:
 	Rect _bounds;
 	bool _isPendingMail;
@@ -537,6 +569,7 @@ public:
 	bool _handleMouseFlag;
 	CursorId _cursorId;
 	bool _visible;
+
 public:
 	/**
 	 * Initializes statics
@@ -547,6 +580,7 @@ public:
 	 * Deinitializes statics
 	 */
 	static void deinit();
+
 public:
 	CLASSDEF;
 	CGameObject();
@@ -1002,7 +1036,6 @@ public:
 	 * Start a conversation with the NPC
 	 */
 	void setTalking(CTrueTalkNPC *npc, bool viewFlag, CViewItem *view = nullptr);
-
 
 	/**
 	 * Sets a dial region for a given NPC

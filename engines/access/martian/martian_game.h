@@ -29,46 +29,48 @@ namespace Access {
 
 namespace Martian {
 
-class MartianEngine : public AccessEngine {
-private:
-	bool _skipStart;
-	SpriteResource *_introObjects;
-	Common::MemoryReadStream *_creditsStream;
-	/**
+	class MartianEngine : public AccessEngine {
+	private:
+		bool _skipStart;
+		SpriteResource *_introObjects;
+		Common::MemoryReadStream *_creditsStream;
+		/**
 	 * Do the game introduction
 	 */
-	void doCredits();
+		void doCredits();
 
-	bool showCredits();
+		bool showCredits();
 
-	/**
+		/**
 	 * Setup variables for the game
 	 */
-	void setupGame();
+		void setupGame();
 
-	void initObjects();
-	void configSelect();
-	void initVariables();
-protected:
-	/**
+		void initObjects();
+		void configSelect();
+		void initVariables();
+
+	protected:
+		/**
 	 * Play the game
 	 */
-	virtual void playGame();
+		virtual void playGame();
 
-	virtual void dead(int deathId);
+		virtual void dead(int deathId);
 
-	void setNoteParams();
-	void displayNote(const Common::String &msg);
-public:
-	SpriteResource *_spec7Objects;
+		void setNoteParams();
+		void displayNote(const Common::String &msg);
 
-	MartianEngine(OSystem *syst, const AccessGameDescription *gameDesc);
-	virtual ~MartianEngine();
+	public:
+		SpriteResource *_spec7Objects;
 
-	void doSpecial5(int param1);
-	void showDeathText(Common::String msg);
-	virtual void establish(int esatabIndex, int sub) {};
-};
+		MartianEngine(OSystem *syst, const AccessGameDescription *gameDesc);
+		virtual ~MartianEngine();
+
+		void doSpecial5(int param1);
+		void showDeathText(Common::String msg);
+		virtual void establish(int esatabIndex, int sub) {};
+	};
 
 } // End of namespace Martian
 

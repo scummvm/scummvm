@@ -27,14 +27,14 @@
 
 #if defined(USE_ALSA)
 
-#include "common/config-manager.h"
-#include "common/error.h"
-#include "common/textconsole.h"
-#include "common/util.h"
-#include "audio/musicplugin.h"
-#include "audio/mpu401.h"
+#	include "audio/mpu401.h"
+#	include "audio/musicplugin.h"
+#	include "common/config-manager.h"
+#	include "common/error.h"
+#	include "common/textconsole.h"
+#	include "common/util.h"
 
-#include <alsa/asoundlib.h>
+#	include <alsa/asoundlib.h>
 
 /*
  *     ALSA sequencer driver
@@ -42,16 +42,16 @@
  *                                      (you really rox, you know?)
  */
 
-#if SND_LIB_MAJOR >= 1 || SND_LIB_MINOR >= 6
-#define snd_seq_flush_output(x) snd_seq_drain_output(x)
-#define snd_seq_set_client_group(x,name)    /*nop */
-#define my_snd_seq_open(seqp) snd_seq_open(seqp, "hw", SND_SEQ_OPEN_DUPLEX, 0)
-#else
+#	if SND_LIB_MAJOR >= 1 || SND_LIB_MINOR >= 6
+#		define snd_seq_flush_output(x) snd_seq_drain_output(x)
+#		define snd_seq_set_client_group(x, name) /*nop */
+#		define my_snd_seq_open(seqp) snd_seq_open(seqp, "hw", SND_SEQ_OPEN_DUPLEX, 0)
+#	else
 /* SND_SEQ_OPEN_OUT causes oops on early version of ALSA */
-#define my_snd_seq_open(seqp) snd_seq_open(seqp, SND_SEQ_OPEN)
-#endif
+#		define my_snd_seq_open(seqp) snd_seq_open(seqp, SND_SEQ_OPEN)
+#	endif
 
-#define perm_ok(pinfo,bits) ((snd_seq_port_info_get_capability(pinfo) & (bits)) == (bits))
+#	define perm_ok(pinfo, bits) ((snd_seq_port_info_get_capability(pinfo) & (bits)) == (bits))
 
 static int check_permission(snd_seq_port_info_t *pinfo) {
 	if (perm_ok(pinfo, SND_SEQ_PORT_CAP_WRITE | SND_SEQ_PORT_CAP_SUBS_WRITE)) {
@@ -65,7 +65,7 @@ static int check_permission(snd_seq_port_info_t *pinfo) {
  * parse address string
  */
 
-#define ADDR_DELIM      ".:"
+#	define ADDR_DELIM ".:"
 
 class MidiDriver_ALSA : public MidiDriver_MPU401 {
 public:
@@ -88,7 +88,13 @@ private:
 };
 
 MidiDriver_ALSA::MidiDriver_ALSA(int client, int port)
-	: _isOpen(false), seq_handle(0), seq_client(client), seq_port(port), my_client(0), my_port(0), _channel0Volume(127) {
+  : _isOpen(false)
+  , seq_handle(0)
+  , seq_client(client)
+  , seq_port(port)
+  , my_client(0)
+  , my_port(0)
+  , _channel0Volume(127) {
 	memset(&ev, 0, sizeof(ev));
 }
 
@@ -248,7 +254,7 @@ void MidiDriver_ALSA::send(uint32 b) {
 		long theBend = ((long)midiCmd[1] + (long)(midiCmd[2] << 7)) - 0x2000;
 		snd_seq_ev_set_pitchbend(&ev, chanID, theBend);
 		send_event(1);
-		} break;
+	} break;
 
 	default:
 		warning("Unknown MIDI Command: %08x", (int)b);
@@ -288,7 +294,6 @@ void MidiDriver_ALSA::send_event(int do_flush) {
 		snd_seq_flush_output(seq_handle);
 }
 
-
 // Plugin interface
 
 class AlsaDevice {
@@ -307,7 +312,9 @@ private:
 typedef Common::List<AlsaDevice> AlsaDevices;
 
 AlsaDevice::AlsaDevice(Common::String name, MusicType mt, int client)
-	: _name(name), _type(mt), _client(client) {
+  : _name(name)
+  , _type(mt)
+  , _client(client) {
 	// Make sure we do not get any trailing spaces to avoid problems when
 	// storing the name in the configuration file.
 	_name.trim();
@@ -496,9 +503,9 @@ int AlsaMusicPlugin::parse_addr(const char *arg, int *client, int *port) {
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(ALSA)
-	//REGISTER_PLUGIN_DYNAMIC(ALSA, PLUGIN_TYPE_MUSIC, AlsaMusicPlugin);
+//REGISTER_PLUGIN_DYNAMIC(ALSA, PLUGIN_TYPE_MUSIC, AlsaMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(ALSA, PLUGIN_TYPE_MUSIC, AlsaMusicPlugin);
+REGISTER_PLUGIN_STATIC(ALSA, PLUGIN_TYPE_MUSIC, AlsaMusicPlugin);
 //#endif
 
 #endif

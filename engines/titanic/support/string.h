@@ -23,30 +23,41 @@
 #ifndef TITANIC_STRING_H
 #define TITANIC_STRING_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 
 namespace Titanic {
 
 enum FileType {
-	FILETYPE_UNKNOWN = 0, FILETYPE_IMAGE = 1, FILETYPE_MOVIE = 2,
-	FILETYPE_WAV = 3, FILETYPE_DLG = 4
+	FILETYPE_UNKNOWN = 0,
+	FILETYPE_IMAGE = 1,
+	FILETYPE_MOVIE = 2,
+	FILETYPE_WAV = 3,
+	FILETYPE_DLG = 4
 };
 
 enum ImageType {
-	IMAGETYPE_UNKNOWN = 0, IMAGETYPE_TARGA = 1, IMAGETYPE_JPEG = 2
+	IMAGETYPE_UNKNOWN = 0,
+	IMAGETYPE_TARGA = 1,
+	IMAGETYPE_JPEG = 2
 };
 
 class CString : public Common::String {
 public:
-	CString() : Common::String() {}
-	CString(const char *str) : Common::String(str) {}
-	CString(const char *str, uint32 len) : Common::String(str, len) {}
-	CString(const char *beginP, const char *endP) : Common::String(beginP, endP) {}
-	CString(const String &str) : Common::String(str) {}
+	CString()
+	  : Common::String() {}
+	CString(const char *str)
+	  : Common::String(str) {}
+	CString(const char *str, uint32 len)
+	  : Common::String(str, len) {}
+	CString(const char *beginP, const char *endP)
+	  : Common::String(beginP, endP) {}
+	CString(const String &str)
+	  : Common::String(str) {}
 	CString(char c, uint32 len);
-	explicit CString(char c) : Common::String(c) {}
+	explicit CString(char c)
+	  : Common::String(c) {}
 	explicit CString(int val);
 
 	bool operator==(const CString &x) const;

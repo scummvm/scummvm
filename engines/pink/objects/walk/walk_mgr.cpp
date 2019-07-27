@@ -22,16 +22,17 @@
 
 #include "pink/archive.h"
 #include "pink/cel_decoder.h"
-#include "pink/pink.h"
 #include "pink/objects/actions/walk_action.h"
 #include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/walk/walk_location.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
 WalkMgr::WalkMgr()
-	: _isWalking(false), _leadActor(nullptr),
-	_destination(nullptr) {}
+  : _isWalking(false)
+  , _leadActor(nullptr)
+  , _destination(nullptr) {}
 
 WalkMgr::~WalkMgr() {
 	for (uint i = 0; i < _locations.size(); ++i) {
@@ -47,7 +48,7 @@ void WalkMgr::deserialize(Pink::Archive &archive) {
 WalkLocation *WalkMgr::findLocation(const Common::String &name) {
 	for (uint i = 0; i < _locations.size(); ++i) {
 		if (_locations[i]->getName() == name)
-			return 	_locations[i];
+			return _locations[i];
 	}
 	return nullptr;
 }
@@ -114,7 +115,7 @@ double WalkMgr::getLengthBetweenLocations(WalkLocation *first, WalkLocation *sec
 }
 
 Coordinates WalkMgr::getLocationCoordinates(const Common::String &locationName) {
-	Action *action  = _leadActor->findAction(locationName);
+	Action *action = _leadActor->findAction(locationName);
 	return action->getCoordinates();
 }
 
@@ -135,7 +136,6 @@ void WalkMgr::update() {
 		_leadActor->setAction(getWalkAction());
 	} else
 		end();
-
 }
 
 void WalkMgr::end() {

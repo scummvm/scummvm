@@ -25,8 +25,8 @@
 
 #include "common/error.h"
 #include "common/events.h"
-#include "common/rect.h"
 #include "common/keyboard.h"
+#include "common/rect.h"
 #include "supernova/rooms.h"
 #include "supernova/sound.h"
 
@@ -34,42 +34,47 @@ namespace Supernova {
 
 const int32 kMaxTimerValue = 0x7FFFFFFF;
 
-enum EventFunction { kNoFn, kSupernovaFn, kGuardReturnedFn, kGuardWalkFn, kTaxiFn, kSearchStartFn };
+enum EventFunction { kNoFn,
+	                   kSupernovaFn,
+	                   kGuardReturnedFn,
+	                   kGuardWalkFn,
+	                   kTaxiFn,
+	                   kSearchStartFn };
 
 struct GameState {
-	int32  _time;
-	int32  _timeSleep;
-	int32  _timeAlarm;
-	int32  _eventTime;
+	int32 _time;
+	int32 _timeSleep;
+	int32 _timeAlarm;
+	int32 _eventTime;
 	EventFunction _eventCallback;
-	int32  _arrivalDaysLeft;
-	int32  _shipEnergyDaysLeft;
-	int32  _landingModuleEnergyDaysLeft;
+	int32 _arrivalDaysLeft;
+	int32 _shipEnergyDaysLeft;
+	int32 _landingModuleEnergyDaysLeft;
 	uint16 _greatFlag;
-	int16  _timeRobot;
-	int16  _money;
-	byte   _coins;
-	byte   _shoes;
-	byte   _origin;
-	byte   _destination;
-	byte   _language;
-	bool   _corridorSearch;
-	bool   _alarmOn;
-	bool   _terminalStripConnected;
-	bool   _terminalStripWire;
-	bool   _cableConnected;
-	bool   _powerOff;
-	bool   _dream;
-	bool   _nameSeen[4];
-	bool   _playerHidden;
+	int16 _timeRobot;
+	int16 _money;
+	byte _coins;
+	byte _shoes;
+	byte _origin;
+	byte _destination;
+	byte _language;
+	bool _corridorSearch;
+	bool _alarmOn;
+	bool _terminalStripConnected;
+	bool _terminalStripWire;
+	bool _cableConnected;
+	bool _powerOff;
+	bool _dream;
+	bool _nameSeen[4];
+	bool _playerHidden;
 };
 
 class Inventory {
 public:
 	Inventory(Object *nullObject, int &inventoryScroll)
-		: _numObjects(0)
-		, _nullObject(nullObject)
-	    , _inventoryScroll(inventoryScroll) {
+	  : _numObjects(0)
+	  , _nullObject(nullObject)
+	  , _inventoryScroll(inventoryScroll) {
 		for (int i = 0; i < kMaxCarry; ++i)
 			_inventory[i] = nullptr;
 	}
@@ -222,7 +227,7 @@ public:
 	void saveTime();
 	void setAnimationTimer(int ticks);
 	void dead(StringId messageId);
-	int  dialog(int num, byte rowLength[6], StringId text[6], int number);
+	int dialog(int num, byte rowLength[6], StringId text[6], int number);
 	void sentence(int number, bool brightness);
 	void say(StringId textId);
 	void say(const char *text);

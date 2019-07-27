@@ -25,7 +25,7 @@
 
 #ifdef ENABLE_EOB
 
-#include "kyra/graphics/screen.h"
+#	include "kyra/graphics/screen.h"
 
 namespace Kyra {
 
@@ -79,7 +79,7 @@ public:
 	void setFadeTable(const uint8 *table);
 	void createFadeTable(const uint8 *palData, uint8 *dst, uint8 rootColor, uint8 weight);
 	void createFadeTable16bit(const uint16 *palData, uint16 *dst, uint16 rootColor, uint8 weight);
-	
+
 	const uint16 *getCGADitheringTable(int index);
 	const uint8 *getEGADitheringTable();
 
@@ -120,7 +120,7 @@ private:
 	const uint8 *_gfxMaxY;
 
 	int16 _dsX1, _dsX2, _dsY1, _dsY2;
-	
+
 	bool _dsBackgroundFading;
 	int16 _dsBackgroundFadingXOffs;
 	uint8 _shapeOverlay[16];

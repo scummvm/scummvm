@@ -29,7 +29,7 @@
 #include "common/rect.h"
 
 namespace Video {
-	class VideoDecoder;
+class VideoDecoder;
 }
 
 namespace ZVision {
@@ -41,9 +41,10 @@ public:
 	~LeverControl();
 
 private:
-
 	struct Direction {
-		Direction(uint a, uint t) : angle(a), toFrame(t) {}
+		Direction(uint a, uint t)
+		  : angle(a)
+		  , toFrame(t) {}
 
 		uint angle;
 		uint toFrame;

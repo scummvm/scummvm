@@ -20,30 +20,32 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/debug.h"
 #include "common/error.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/scummsys.h"
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
 #include "gui/message.h"
 
 #include "cge/cge.h"
-#include "cge/vga13h.h"
 #include "cge/cge_main.h"
 #include "cge/talk.h"
 #include "cge/text.h"
+#include "cge/vga13h.h"
 #include "cge/walk.h"
 
 namespace CGE {
 
-const int CGEEngine::_maxSceneArr[5] = {1, 8, 16, 23, 24};
+const int CGEEngine::_maxSceneArr[5] = { 1, 8, 16, 23, 24 };
 
 CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
-	: Engine(syst), _gameDescription(gameDescription), _randomSource("cge") {
+  : Engine(syst)
+  , _gameDescription(gameDescription)
+  , _randomSource("cge") {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(kCGEDebugBitmap, "bitmap", "CGE Bitmap debug channel");
@@ -105,7 +107,7 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_lev = -1;
 	_mode = 0;
 	_gameCase2Cpt = 0;
-	_offUseCount  = 0;
+	_offUseCount = 0;
 	_volume[0] = 0;
 	_volume[1] = 0;
 	for (int i = 0; i < kPocketNX; i++)
@@ -161,7 +163,7 @@ void CGEEngine::init() {
 	_mouse = new Mouse(this);
 	_keyboard = new Keyboard(this);
 	_eventManager = new EventManager(this);
-	_fx = new Fx(this, 16);   // must precede SOUND!!
+	_fx = new Fx(this, 16); // must precede SOUND!!
 	_sound = new Sound(this);
 
 	_offUseCount = atoi(_text->getText(kOffUseCount));
@@ -243,10 +245,7 @@ Common::Error CGEEngine::run() {
 }
 
 bool CGEEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
 bool CGEEngine::canLoadGameStateCurrently() {
@@ -254,8 +253,7 @@ bool CGEEngine::canLoadGameStateCurrently() {
 }
 
 bool CGEEngine::canSaveGameStateCurrently() {
-	return (_startupMode == 0) && _mouse->_active &&
-				_commandHandler->idle() && !_hero->_flags._hide;
+	return (_startupMode == 0) && _mouse->_active && _commandHandler->idle() && !_hero->_flags._hide;
 }
 
 } // End of namespace CGE

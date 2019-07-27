@@ -21,16 +21,16 @@
  * Virtual processor.
  */
 
-#include "tinsel/dw.h"
-#include "tinsel/drives.h"
-#include "tinsel/events.h"	// 'POINTED' etc.
-#include "tinsel/handle.h"	// LockMem()
-#include "tinsel/dialogs.h"	// for inventory id's
-#include "tinsel/pcode.h"	// opcodes etc.
-#include "tinsel/scn.h"	// FindChunk()
+#include "tinsel/pcode.h" // opcodes etc.
 #include "common/serializer.h"
+#include "tinsel/dialogs.h" // for inventory id's
+#include "tinsel/drives.h"
+#include "tinsel/dw.h"
+#include "tinsel/events.h" // 'POINTED' etc.
+#include "tinsel/handle.h" // LockMem()
+#include "tinsel/scn.h" // FindChunk()
 #include "tinsel/timers.h"
-#include "tinsel/tinlib.h"	// Library routines
+#include "tinsel/tinlib.h" // Library routines
 #include "tinsel/tinsel.h"
 
 #include "common/textconsole.h"
@@ -44,61 +44,61 @@ extern int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONT
 
 //----------------- LOCAL DEFINES --------------------
 
-#define	GLOBALS_FILENAME	"gdata"		// name of globals file
+#define GLOBALS_FILENAME "gdata" // name of globals file
 
 /** list of all opcodes */
 enum OPCODE {
-	OP_HALT = 0,	///< end of program
-	OP_IMM = 1,		///< loads signed immediate onto stack
-	OP_ZERO = 2,	///< loads zero onto stack
-	OP_ONE = 3,		///< loads one onto stack
-	OP_MINUSONE = 4,	///< loads minus one onto stack
-	OP_STR = 5,		///< loads string offset onto stack
-	OP_FILM = 6,	///< loads film offset onto stack
-	OP_FONT = 7,	///< loads font offset onto stack
-	OP_PAL = 8,		///< loads palette offset onto stack
-	OP_LOAD = 9,	///< loads local variable onto stack
-	OP_GLOAD = 10,	///< loads global variable onto stack - long offset to variable
-	OP_STORE = 11,	///< pops stack and stores in local variable - long offset to variable
-	OP_GSTORE = 12,	///< pops stack and stores in global variable - long offset to variable
-	OP_CALL = 13,	///< procedure call
-	OP_LIBCALL = 14,	///< library procedure call - long offset to procedure
-	OP_RET = 15,		///< procedure return
-	OP_ALLOC = 16,	///< allocate storage on stack
-	OP_JUMP = 17,	///< unconditional jump	- signed word offset
-	OP_JMPFALSE = 18,	///< conditional jump	- signed word offset
-	OP_JMPTRUE = 19,	///< conditional jump	- signed word offset
-	OP_EQUAL = 20,	///< tests top two items on stack for equality
-	OP_LESS,	///< tests top two items on stack
-	OP_LEQUAL,	///< tests top two items on stack
-	OP_NEQUAL,	///< tests top two items on stack
-	OP_GEQUAL,	///< tests top two items on stack
-	OP_GREAT = 25,	///< tests top two items on stack
-	OP_PLUS,	///< adds top two items on stack and replaces with result
-	OP_MINUS,	///< subs top two items on stack and replaces with result
-	OP_LOR,		///< logical or of top two items on stack and replaces with result
-	OP_MULT,	///< multiplies top two items on stack and replaces with result
-	OP_DIV = 30,		///< divides top two items on stack and replaces with result
-	OP_MOD,		///< divides top two items on stack and replaces with modulus
-	OP_AND,		///< bitwise ands top two items on stack and replaces with result
-	OP_OR,		///< bitwise ors top two items on stack and replaces with result
-	OP_EOR,		///< bitwise exclusive ors top two items on stack and replaces with result
-	OP_LAND = 35,	///< logical ands top two items on stack and replaces with result
-	OP_NOT,		///< logical nots top item on stack
-	OP_COMP,	///< complements top item on stack
-	OP_NEG,		///< negates top item on stack
-	OP_DUP,		///< duplicates top item on stack
-	OP_ESCON = 40,	///< start of escapable sequence
-	OP_ESCOFF = 41,	///< end of escapable sequence
-	OP_CIMM,	///< loads signed immediate onto stack (special to case statements)
-	OP_CDFILM	///< loads film offset onto stack but not in current scene
+	OP_HALT = 0, ///< end of program
+	OP_IMM = 1, ///< loads signed immediate onto stack
+	OP_ZERO = 2, ///< loads zero onto stack
+	OP_ONE = 3, ///< loads one onto stack
+	OP_MINUSONE = 4, ///< loads minus one onto stack
+	OP_STR = 5, ///< loads string offset onto stack
+	OP_FILM = 6, ///< loads film offset onto stack
+	OP_FONT = 7, ///< loads font offset onto stack
+	OP_PAL = 8, ///< loads palette offset onto stack
+	OP_LOAD = 9, ///< loads local variable onto stack
+	OP_GLOAD = 10, ///< loads global variable onto stack - long offset to variable
+	OP_STORE = 11, ///< pops stack and stores in local variable - long offset to variable
+	OP_GSTORE = 12, ///< pops stack and stores in global variable - long offset to variable
+	OP_CALL = 13, ///< procedure call
+	OP_LIBCALL = 14, ///< library procedure call - long offset to procedure
+	OP_RET = 15, ///< procedure return
+	OP_ALLOC = 16, ///< allocate storage on stack
+	OP_JUMP = 17, ///< unconditional jump	- signed word offset
+	OP_JMPFALSE = 18, ///< conditional jump	- signed word offset
+	OP_JMPTRUE = 19, ///< conditional jump	- signed word offset
+	OP_EQUAL = 20, ///< tests top two items on stack for equality
+	OP_LESS, ///< tests top two items on stack
+	OP_LEQUAL, ///< tests top two items on stack
+	OP_NEQUAL, ///< tests top two items on stack
+	OP_GEQUAL, ///< tests top two items on stack
+	OP_GREAT = 25, ///< tests top two items on stack
+	OP_PLUS, ///< adds top two items on stack and replaces with result
+	OP_MINUS, ///< subs top two items on stack and replaces with result
+	OP_LOR, ///< logical or of top two items on stack and replaces with result
+	OP_MULT, ///< multiplies top two items on stack and replaces with result
+	OP_DIV = 30, ///< divides top two items on stack and replaces with result
+	OP_MOD, ///< divides top two items on stack and replaces with modulus
+	OP_AND, ///< bitwise ands top two items on stack and replaces with result
+	OP_OR, ///< bitwise ors top two items on stack and replaces with result
+	OP_EOR, ///< bitwise exclusive ors top two items on stack and replaces with result
+	OP_LAND = 35, ///< logical ands top two items on stack and replaces with result
+	OP_NOT, ///< logical nots top item on stack
+	OP_COMP, ///< complements top item on stack
+	OP_NEG, ///< negates top item on stack
+	OP_DUP, ///< duplicates top item on stack
+	OP_ESCON = 40, ///< start of escapable sequence
+	OP_ESCOFF = 41, ///< end of escapable sequence
+	OP_CIMM, ///< loads signed immediate onto stack (special to case statements)
+	OP_CDFILM ///< loads film offset onto stack but not in current scene
 };
 
 // modifiers for the above opcodes
-#define	OPSIZE8		0x40	///< when this bit is set - the operand size is 8 bits
-#define	OPSIZE16	0x80	///< when this bit is set - the operand size is 16 bits
+#define OPSIZE8 0x40 ///< when this bit is set - the operand size is 8 bits
+#define OPSIZE16 0x80 ///< when this bit is set - the operand size is 16 bits
 
-#define	OPMASK		0x3F	///< mask to isolate the opcode
+#define OPMASK 0x3F ///< mask to isolate the opcode
 
 bool g_bNoPause = false;
 
@@ -106,9 +106,9 @@ bool g_bNoPause = false;
 
 // FIXME: Avoid non-const global vars
 
-static int32 *g_pGlobals = 0;		// global vars
+static int32 *g_pGlobals = 0; // global vars
 
-static int g_numGlobals = 0;		// How many global variables to save/restore
+static int g_numGlobals = 0; // How many global variables to save/restore
 
 static INT_CONTEXT *g_icList = 0;
 
@@ -120,42 +120,41 @@ static uint32 g_hMasterScript;
  * This structure is used to introduce bug fixes into the scripts used by the games.
  */
 struct WorkaroundEntry {
-	TinselEngineVersion version;	///< Engine version this workaround applies to
-	bool scnFlag;					///< Only applicable for Tinsel 1 (DW 1)
-	bool isDemo;					///< Flags whether it's for a demo
-	Common::Platform platform;		///< Platform filter
-	SCNHANDLE hCode;				///< Script to apply fragment to
-	int ip;							///< Script offset to run this fragment before
-	int numBytes;					///< Number of bytes in the script
-	const byte *script;				///< Instruction(s) to execute
+	TinselEngineVersion version; ///< Engine version this workaround applies to
+	bool scnFlag; ///< Only applicable for Tinsel 1 (DW 1)
+	bool isDemo; ///< Flags whether it's for a demo
+	Common::Platform platform; ///< Platform filter
+	SCNHANDLE hCode; ///< Script to apply fragment to
+	int ip; ///< Script offset to run this fragment before
+	int numBytes; ///< Number of bytes in the script
+	const byte *script; ///< Instruction(s) to execute
 };
 
-#define FRAGMENT_WORD(x)	(byte)(x & 0xFF), (byte)(x >> 8)
-#define FRAGMENT_DWORD(x)	(byte)(x & 0xFF), (byte)(x >> 8), (byte)(x >> 16), (byte)(x >> 24)
+#define FRAGMENT_WORD(x) (byte)(x & 0xFF), (byte)(x >> 8)
+#define FRAGMENT_DWORD(x) (byte)(x & 0xFF), (byte)(x >> 8), (byte)(x >> 16), (byte)(x >> 24)
 
-static const byte fragment1[] = {OP_ZERO, OP_GSTORE | OPSIZE16, 206, 0};
-static const byte fragment2[] = {OP_LIBCALL | OPSIZE8, 110};
-static const byte fragment3[] = {OP_ZERO, OP_GSTORE | OPSIZE16, FRAGMENT_WORD(490)};
-static const byte fragment4[] = {OP_IMM | OPSIZE16, FRAGMENT_WORD(900), OP_JUMP | OPSIZE16, FRAGMENT_WORD(466)};
-static const byte fragment5[] = {OP_IMM | OPSIZE16, FRAGMENT_WORD(901), OP_JUMP | OPSIZE16, FRAGMENT_WORD(488)};
-static const byte fragment6[] = {OP_IMM | OPSIZE16, FRAGMENT_WORD(903), OP_JUMP | OPSIZE16, FRAGMENT_WORD(516)};
-static const byte fragment7[] = {OP_IMM | OPSIZE16, FRAGMENT_WORD(908), OP_JUMP | OPSIZE16, FRAGMENT_WORD(616)};
-static const byte fragment8[] = {OP_IMM | OPSIZE16, FRAGMENT_WORD(910), OP_JUMP | OPSIZE16, FRAGMENT_WORD(644)};
-static const byte fragment9[] = {OP_JUMP | OPSIZE8, 123};
-static const byte fragment10[] = {OP_IMM | OPSIZE16, FRAGMENT_WORD(160), OP_JUMP | OPSIZE16, FRAGMENT_WORD(136)};
-static const byte fragment11[] = {OP_JMPTRUE | OPSIZE16, FRAGMENT_WORD(1572),
-		OP_ONE, OP_LIBCALL | OPSIZE8, 14,									// Re-show the cursor
-		OP_IMM | OPSIZE16, FRAGMENT_WORD(322), OP_LIBCALL | OPSIZE8, 46,	// Give back the whistle
-		OP_JUMP | OPSIZE16, FRAGMENT_WORD(1661)};
-static const byte fragment12[] = {OP_JMPTRUE | OPSIZE16, FRAGMENT_WORD(1491),
-		OP_ONE, OP_LIBCALL | OPSIZE8, 14,									// Re-show the cursor
-		OP_IMM | OPSIZE16, FRAGMENT_WORD(322), OP_LIBCALL | OPSIZE8, 46,	// Give back the whistle
-		OP_JUMP | OPSIZE16, FRAGMENT_WORD(1568)};
-static const byte fragment13[] = {OP_ZERO, OP_GSTORE | OPSIZE16, FRAGMENT_WORD(306)};
-static const byte fragment14[] = {OP_LIBCALL | OPSIZE8, 58,
-		OP_IMM, FRAGMENT_DWORD((42 << 23)), OP_ONE, OP_ZERO, OP_LIBCALL | OPSIZE8, 44,
-		OP_LIBCALL | OPSIZE8, 97, OP_JUMP | OPSIZE16, FRAGMENT_WORD(2220)
-};
+static const byte fragment1[] = { OP_ZERO, OP_GSTORE | OPSIZE16, 206, 0 };
+static const byte fragment2[] = { OP_LIBCALL | OPSIZE8, 110 };
+static const byte fragment3[] = { OP_ZERO, OP_GSTORE | OPSIZE16, FRAGMENT_WORD(490) };
+static const byte fragment4[] = { OP_IMM | OPSIZE16, FRAGMENT_WORD(900), OP_JUMP | OPSIZE16, FRAGMENT_WORD(466) };
+static const byte fragment5[] = { OP_IMM | OPSIZE16, FRAGMENT_WORD(901), OP_JUMP | OPSIZE16, FRAGMENT_WORD(488) };
+static const byte fragment6[] = { OP_IMM | OPSIZE16, FRAGMENT_WORD(903), OP_JUMP | OPSIZE16, FRAGMENT_WORD(516) };
+static const byte fragment7[] = { OP_IMM | OPSIZE16, FRAGMENT_WORD(908), OP_JUMP | OPSIZE16, FRAGMENT_WORD(616) };
+static const byte fragment8[] = { OP_IMM | OPSIZE16, FRAGMENT_WORD(910), OP_JUMP | OPSIZE16, FRAGMENT_WORD(644) };
+static const byte fragment9[] = { OP_JUMP | OPSIZE8, 123 };
+static const byte fragment10[] = { OP_IMM | OPSIZE16, FRAGMENT_WORD(160), OP_JUMP | OPSIZE16, FRAGMENT_WORD(136) };
+static const byte fragment11[] = { OP_JMPTRUE | OPSIZE16, FRAGMENT_WORD(1572),
+	                                 OP_ONE, OP_LIBCALL | OPSIZE8, 14, // Re-show the cursor
+	                                 OP_IMM | OPSIZE16, FRAGMENT_WORD(322), OP_LIBCALL | OPSIZE8, 46, // Give back the whistle
+	                                 OP_JUMP | OPSIZE16, FRAGMENT_WORD(1661) };
+static const byte fragment12[] = { OP_JMPTRUE | OPSIZE16, FRAGMENT_WORD(1491),
+	                                 OP_ONE, OP_LIBCALL | OPSIZE8, 14, // Re-show the cursor
+	                                 OP_IMM | OPSIZE16, FRAGMENT_WORD(322), OP_LIBCALL | OPSIZE8, 46, // Give back the whistle
+	                                 OP_JUMP | OPSIZE16, FRAGMENT_WORD(1568) };
+static const byte fragment13[] = { OP_ZERO, OP_GSTORE | OPSIZE16, FRAGMENT_WORD(306) };
+static const byte fragment14[] = { OP_LIBCALL | OPSIZE8, 58,
+	                                 OP_IMM, FRAGMENT_DWORD((42 << 23)), OP_ONE, OP_ZERO, OP_LIBCALL | OPSIZE8, 44,
+	                                 OP_LIBCALL | OPSIZE8, 97, OP_JUMP | OPSIZE16, FRAGMENT_WORD(2220) };
 static const byte fragment15[] = { OP_JMPFALSE | OPSIZE16, FRAGMENT_WORD(154) };
 
 #undef FRAGMENT_WORD
@@ -165,7 +164,7 @@ const WorkaroundEntry workaroundList[] = {
 	// book back to the present. In the GRA version, it was global 373,
 	// and was reset when he is returned to the past, but was forgotten
 	// in the SCN version, so this ensures the flag is properly reset.
-	{TINSEL_V1, true, false, Common::kPlatformUnknown, 427942095, 1, sizeof(fragment1), fragment1},
+	{ TINSEL_V1, true, false, Common::kPlatformUnknown, 427942095, 1, sizeof(fragment1), fragment1 },
 
 	// DW1-GRA: Rincewind exiting the Inn is blocked by the luggage.
 	// Whilst you can then move into walkable areas, saving and
@@ -173,26 +172,26 @@ const WorkaroundEntry workaroundList[] = {
 	// fragment turns off NPC blocking for the Outside Inn rooms so that
 	// the luggage won't block Past Outside Inn.
 	// See bug report #2525010.
-	{TINSEL_V1, false, false, Common::kPlatformUnknown, 444622076, 0,  sizeof(fragment2), fragment2},
+	{ TINSEL_V1, false, false, Common::kPlatformUnknown, 444622076, 0, sizeof(fragment2), fragment2 },
 	// Present Outside Inn
-	{TINSEL_V1, false, false, Common::kPlatformUnknown, 352600876, 0,  sizeof(fragment2), fragment2},
+	{ TINSEL_V1, false, false, Common::kPlatformUnknown, 352600876, 0, sizeof(fragment2), fragment2 },
 
 	// DW1-GRA: Talking to palace guards in Act 2 gives !!!HIGH
 	// STRING||| - this happens if you initiate dialog with one of the
 	// guards, but not the other. So these fragments provide the correct
 	// talk parameters where needed.
 	// See bug report #2831159.
-	{TINSEL_V1, false, false, Common::kPlatformUnknown, 310506872, 463, sizeof(fragment4), fragment4},
-	{TINSEL_V1, false, false, Common::kPlatformUnknown, 310506872, 485, sizeof(fragment5), fragment5},
-	{TINSEL_V1, false, false, Common::kPlatformUnknown, 310506872, 513, sizeof(fragment6), fragment6},
-	{TINSEL_V1, false, false, Common::kPlatformUnknown, 310506872, 613, sizeof(fragment7), fragment7},
-	{TINSEL_V1, false, false, Common::kPlatformUnknown, 310506872, 641, sizeof(fragment8), fragment8},
+	{ TINSEL_V1, false, false, Common::kPlatformUnknown, 310506872, 463, sizeof(fragment4), fragment4 },
+	{ TINSEL_V1, false, false, Common::kPlatformUnknown, 310506872, 485, sizeof(fragment5), fragment5 },
+	{ TINSEL_V1, false, false, Common::kPlatformUnknown, 310506872, 513, sizeof(fragment6), fragment6 },
+	{ TINSEL_V1, false, false, Common::kPlatformUnknown, 310506872, 613, sizeof(fragment7), fragment7 },
+	{ TINSEL_V1, false, false, Common::kPlatformUnknown, 310506872, 641, sizeof(fragment8), fragment8 },
 
 	// DW1-SCN: The script for the lovable street-Starfish does a
 	// 'StopSample' after flicking the coin to ensure it's sound is
 	// stopped, but which also accidentally can stop any active
 	// conversation with the Amazon.
-	{TINSEL_V1, true, false, Common::kPlatformUnknown, 394640351, 121, sizeof(fragment9), fragment9},
+	{ TINSEL_V1, true, false, Common::kPlatformUnknown, 394640351, 121, sizeof(fragment9), fragment9 },
 
 	// DW2: In the garden, global #490 is set when the bees begin their
 	// 'out of hive' animation, and reset when done. But if the game is
@@ -205,32 +204,32 @@ const WorkaroundEntry workaroundList[] = {
 	//  * Stealing the mallets from the wizards (bug #2820788).
 	// This fix ensures that the global is reset when the Garden scene
 	// is loaded (both entering and restoring a game).
-	{TINSEL_V2, true, false, Common::kPlatformUnknown, 2888147476U, 0, sizeof(fragment3), fragment3},
+	{ TINSEL_V2, true, false, Common::kPlatformUnknown, 2888147476U, 0, sizeof(fragment3), fragment3 },
 
 	// DW1-GRA: Corrects text being drawn partially off-screen during
 	// the blackboard description of the Librarian.
-	{TINSEL_V1, false, false, Common::kPlatformUnknown, 293831402, 133, sizeof(fragment10), fragment10},
+	{ TINSEL_V1, false, false, Common::kPlatformUnknown, 293831402, 133, sizeof(fragment10), fragment10 },
 
 	// DW1-GRA/SCN: Corrects the dead-end of being able to give the
 	// whistle back to the pirate before giving him the parrot.
 	// See bug report #2934211.
-	{TINSEL_V1, true, false, Common::kPlatformUnknown, 352601285, 1569, sizeof(fragment11), fragment11},
-	{TINSEL_V1, false, false, Common::kPlatformUnknown, 352602304, 1488, sizeof(fragment12), fragment12},
+	{ TINSEL_V1, true, false, Common::kPlatformUnknown, 352601285, 1569, sizeof(fragment11), fragment11 },
+	{ TINSEL_V1, false, false, Common::kPlatformUnknown, 352602304, 1488, sizeof(fragment12), fragment12 },
 
 	// DW2: Corrects a bug with global 306 not being cleared if you leave
 	// the marketplace scene whilst D'Blah is talking (even if it's not
 	// actually audible); returning to the scene and clicking on him multiple
 	// times would cause the game to crash
-	{TINSEL_V2, true, false, Common::kPlatformUnknown, 1109294728, 0, sizeof(fragment13), fragment13},
+	{ TINSEL_V2, true, false, Common::kPlatformUnknown, 1109294728, 0, sizeof(fragment13), fragment13 },
 
 	// DW1 PSX DEMO: Alters a script in the PSX DW1 demo to show the Idle animation scene rather than
 	// quitting the game when no user input happens for a while
-	{TINSEL_V1, true, true, Common::kPlatformPSX, 0, 2186, sizeof(fragment14), fragment14},
+	{ TINSEL_V1, true, true, Common::kPlatformPSX, 0, 2186, sizeof(fragment14), fragment14 },
 
 	// DW1-GRA: Fixes hang in Temple, when trying to use items on the big hammer
-	{TINSEL_V1, false, false, Common::kPlatformUnknown, 276915849, 0x98, sizeof(fragment15), fragment15},
+	{ TINSEL_V1, false, false, Common::kPlatformUnknown, 276915849, 0x98, sizeof(fragment15), fragment15 },
 
-	{TINSEL_V0, false, false, Common::kPlatformUnknown, 0, 0, 0, NULL}
+	{ TINSEL_V0, false, false, Common::kPlatformUnknown, 0, 0, 0, NULL }
 };
 
 //----------------- LOCAL GLOBAL DATA --------------------
@@ -254,7 +253,7 @@ void LockCode(INT_CONTEXT *ic) {
  */
 static INT_CONTEXT *AllocateInterpretContext(GSORT gsort) {
 	INT_CONTEXT *pic;
-	int	i;
+	int i;
 
 	for (i = 0, pic = g_icList; i < NUM_INTERPRET; i++, pic++) {
 		if (pic->GSort == GS_NONE) {
@@ -318,7 +317,7 @@ static void FreeInterpretContextPi(INT_CONTEXT *pic) {
  */
 void FreeInterpretContextPr(Common::PROCESS *pProc) {
 	INT_CONTEXT *pic;
-	int	i;
+	int i;
 
 	for (i = 0, pic = g_icList; i < NUM_INTERPRET; i++, pic++) {
 		if (pic->GSort != GS_NONE && pic->pProc == pProc) {
@@ -336,7 +335,7 @@ void FreeInterpretContextPr(Common::PROCESS *pProc) {
  */
 void FreeMostInterpretContexts() {
 	INT_CONTEXT *pic;
-	int	i;
+	int i;
 
 	for (i = 0, pic = g_icList; i < NUM_INTERPRET; i++, pic++) {
 		if ((pic->GSort != GS_MASTER) && (pic->GSort != GS_GPROCESS)) {
@@ -351,9 +350,9 @@ void FreeMostInterpretContexts() {
  */
 void FreeMasterInterpretContext() {
 	INT_CONTEXT *pic;
-	int	i;
+	int i;
 
-	for (i = 0, pic = g_icList; i < NUM_INTERPRET; i++, pic++)	{
+	for (i = 0, pic = g_icList; i < NUM_INTERPRET; i++, pic++) {
 		if ((pic->GSort == GS_MASTER) || (pic->GSort == GS_GPROCESS)) {
 			memset(pic, 0, sizeof(INT_CONTEXT));
 			pic->GSort = GS_NONE;
@@ -372,8 +371,8 @@ void FreeMasterInterpretContext() {
  * @param actorId		Associated actor (if any)
  * @param pinvo			Associated inventory object
  */
-INT_CONTEXT *InitInterpretContext(GSORT gsort, SCNHANDLE hCode,	TINSEL_EVENT event,
-		HPOLYGON hpoly, int actorid, INV_OBJECT *pinvo, int myEscape) {
+INT_CONTEXT *InitInterpretContext(GSORT gsort, SCNHANDLE hCode, TINSEL_EVENT event,
+                                  HPOLYGON hpoly, int actorid, INV_OBJECT *pinvo, int myEscape) {
 	INT_CONTEXT *ic;
 
 	ic = AllocateInterpretContext(gsort);
@@ -387,12 +386,12 @@ INT_CONTEXT *InitInterpretContext(GSORT gsort, SCNHANDLE hCode,	TINSEL_EVENT eve
 	ic->pinvo = pinvo;
 
 	// Previously local variables in Interpret()
-	ic->bHalt = false;		// set to exit interpeter
+	ic->bHalt = false; // set to exit interpeter
 	ic->escOn = myEscape > 0;
 	ic->myEscape = myEscape;
 	ic->sp = 0;
 	ic->bp = ic->sp + 1;
-	ic->ip = 0;			// start of code
+	ic->ip = 0; // start of code
 
 	ic->resumeState = RES_NOT;
 
@@ -405,7 +404,7 @@ INT_CONTEXT *InitInterpretContext(GSORT gsort, SCNHANDLE hCode,	TINSEL_EVENT eve
 INT_CONTEXT *RestoreInterpretContext(INT_CONTEXT *ric) {
 	INT_CONTEXT *ic;
 
-	ic = AllocateInterpretContext(GS_NONE);	// Sort will soon be overridden
+	ic = AllocateInterpretContext(GS_NONE); // Sort will soon be overridden
 
 	memcpy(ic, ric, sizeof(INT_CONTEXT));
 	ic->pProc = CoroScheduler.getCurrentProcess();
@@ -423,8 +422,7 @@ void RegisterGlobals(int num) {
 	if (g_pGlobals == NULL) {
 		g_numGlobals = num;
 
-		g_hMasterScript = !TinselV2 ? 0 :
-			READ_32(FindChunk(MASTER_SCNHANDLE, CHUNK_MASTER_SCRIPT));
+		g_hMasterScript = !TinselV2 ? 0 : READ_32(FindChunk(MASTER_SCNHANDLE, CHUNK_MASTER_SCRIPT));
 
 		// Allocate RAM for pGlobals and make sure it's allocated
 		g_pGlobals = (int32 *)calloc(g_numGlobals, sizeof(int32));
@@ -523,7 +521,7 @@ void SaveInterpretContexts(INT_CONTEXT *sICInfo) {
 /**
  * Fetches up to 4 bytes from the code script
  */
-static int32 GetBytes(const byte *scriptCode, const WorkaroundEntry* &wkEntry, int &ip, uint numBytes) {
+static int32 GetBytes(const byte *scriptCode, const WorkaroundEntry *&wkEntry, int &ip, uint numBytes) {
 	assert(numBytes <= 4 && numBytes != 3);
 	const byte *code = scriptCode;
 
@@ -569,7 +567,7 @@ static int32 GetBytes(const byte *scriptCode, const WorkaroundEntry* &wkEntry, i
  * Fetch (and sign extend, if necessary) a 8/16/32 bit value from the code
  * stream and advance the instruction pointer accordingly.
  */
-static int32 Fetch(byte opcode, const byte *code, const WorkaroundEntry* &wkEntry, int &ip) {
+static int32 Fetch(byte opcode, const byte *code, const WorkaroundEntry *&wkEntry, int &ip) {
 	if (TinselV0)
 		// Fetch a 32 bit value.
 		return GetBytes(code, wkEntry, ip, 4);
@@ -594,12 +592,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 		if (wkEntry == NULL) {
 			// Check to see if a workaround fragment needs to be executed
 			for (wkEntry = workaroundList; wkEntry->script != NULL; ++wkEntry) {
-				if ((wkEntry->version == TinselVersion) &&
-					(wkEntry->hCode == ic->hCode) &&
-					(wkEntry->ip == ip) &&
-					(wkEntry->isDemo == _vm->getIsADGFDemo()) &&
-					((wkEntry->platform == Common::kPlatformUnknown) || (wkEntry->platform == _vm->getPlatform())) &&
-					(!TinselV1 || (wkEntry->scnFlag == ((_vm->getFeatures() & GF_SCNFILES) != 0)))) {
+				if ((wkEntry->version == TinselVersion) && (wkEntry->hCode == ic->hCode) && (wkEntry->ip == ip) && (wkEntry->isDemo == _vm->getIsADGFDemo()) && ((wkEntry->platform == Common::kPlatformUnknown) || (wkEntry->platform == _vm->getPlatform())) && (!TinselV1 || (wkEntry->scnFlag == ((_vm->getFeatures() & GF_SCNFILES) != 0)))) {
 					// Point to start of workaround fragment
 					ip = 0;
 					break;
@@ -615,69 +608,69 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 
 		debug(7, "ip=%d  Opcode %d (-> %d)", ic->ip, opcode, opcode & OPMASK);
 		switch (opcode & OPMASK) {
-		case OP_HALT:			// end of program
+		case OP_HALT: // end of program
 
 			ic->bHalt = true;
 			break;
 
-		case OP_IMM:			// loads immediate data onto stack
-		case OP_STR:			// loads string handle onto stack
-		case OP_FILM:			// loads film handle onto stack
-		case OP_CDFILM:			// loads film handle onto stack
-		case OP_FONT:			// loads font handle onto stack
-		case OP_PAL:			// loads palette handle onto stack
+		case OP_IMM: // loads immediate data onto stack
+		case OP_STR: // loads string handle onto stack
+		case OP_FILM: // loads film handle onto stack
+		case OP_CDFILM: // loads film handle onto stack
+		case OP_FONT: // loads font handle onto stack
+		case OP_PAL: // loads palette handle onto stack
 
 			ic->stack[++ic->sp] = Fetch(opcode, ic->code, wkEntry, ip);
 			break;
 
-		case OP_ZERO:			// loads zero onto stack
+		case OP_ZERO: // loads zero onto stack
 			ic->stack[++ic->sp] = 0;
 			break;
 
-		case OP_ONE:			// loads one onto stack
+		case OP_ONE: // loads one onto stack
 			ic->stack[++ic->sp] = 1;
 			break;
 
-		case OP_MINUSONE:		// loads minus one onto stack
+		case OP_MINUSONE: // loads minus one onto stack
 			ic->stack[++ic->sp] = -1;
 			break;
 
-		case OP_LOAD:			// loads local variable onto stack
+		case OP_LOAD: // loads local variable onto stack
 
 			ic->stack[++ic->sp] = ic->stack[ic->bp + Fetch(opcode, ic->code, wkEntry, ip)];
 			break;
 
-		case OP_GLOAD:				// loads global variable onto stack
+		case OP_GLOAD: // loads global variable onto stack
 
 			tmp = Fetch(opcode, ic->code, wkEntry, ip);
 			assert(0 <= tmp && tmp < g_numGlobals);
 			ic->stack[++ic->sp] = g_pGlobals[tmp];
 			break;
 
-		case OP_STORE:				// pops stack and stores in local variable
+		case OP_STORE: // pops stack and stores in local variable
 
 			ic->stack[ic->bp + Fetch(opcode, ic->code, wkEntry, ip)] = ic->stack[ic->sp--];
 			break;
 
-		case OP_GSTORE:				// pops stack and stores in global variable
+		case OP_GSTORE: // pops stack and stores in global variable
 
 			tmp = Fetch(opcode, ic->code, wkEntry, ip);
 			assert(0 <= tmp && tmp < g_numGlobals);
 			g_pGlobals[tmp] = ic->stack[ic->sp--];
 			break;
 
-		case OP_CALL:				// procedure call
+		case OP_CALL: // procedure call
 
 			tmp = Fetch(opcode, ic->code, wkEntry, ip);
 			//assert(0 <= tmp && tmp < codeSize);	// TODO: Verify jumps are not out of bounds
-			ic->stack[ic->sp + 1] = 0;	// static link
-			ic->stack[ic->sp + 2] = ic->bp;	// dynamic link
-			ic->stack[ic->sp + 3] = ip;	// return address
-			ic->bp = ic->sp + 1;		// set new base pointer
-			ip = tmp;	// set ip to procedure address
+			ic->stack[ic->sp + 1] = 0; // static link
+			ic->stack[ic->sp + 2] = ic->bp; // dynamic link
+			ic->stack[ic->sp + 3] = ip; // return address
+			ic->bp = ic->sp + 1; // set new base pointer
+			ip = tmp; // set ip to procedure address
 			break;
 
-		case OP_LIBCALL:		// library procedure or function call
+		case OP_LIBCALL: // library procedure or function call
 
 			tmp = Fetch(opcode, ic->code, wkEntry, ip);
 			// NOTE: Interpret() itself is not using the coroutine facilities,
@@ -709,52 +702,52 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 				ic->resumeState = RES_NOT;
 			break;
 
-		case OP_RET:			// procedure return
+		case OP_RET: // procedure return
 
-			ic->sp = ic->bp - 1;		// restore stack
-			ip = ic->stack[ic->sp + 3];	// return address
-			ic->bp = ic->stack[ic->sp + 2];	// restore previous base pointer
+			ic->sp = ic->bp - 1; // restore stack
+			ip = ic->stack[ic->sp + 3]; // return address
+			ic->bp = ic->stack[ic->sp + 2]; // restore previous base pointer
 			break;
 
-		case OP_ALLOC:			// allocate storage on stack
+		case OP_ALLOC: // allocate storage on stack
 
 			ic->sp += (int32)Fetch(opcode, ic->code, wkEntry, ip);
 			break;
 
-		case OP_JUMP:	// unconditional jump
+		case OP_JUMP: // unconditional jump
 
 			ip = Fetch(opcode, ic->code, wkEntry, ip);
-			wkEntry = NULL;					// In case a jump occurs from a workaround
+			wkEntry = NULL; // In case a jump occurs from a workaround
 			break;
 
-		case OP_JMPFALSE:	// conditional jump
+		case OP_JMPFALSE: // conditional jump
 
 			tmp = Fetch(opcode, ic->code, wkEntry, ip);
 			if (ic->stack[ic->sp--] == 0) {
 				// condition satisfied - do the jump
 				ip = tmp;
-				wkEntry = NULL;					// In case a jump occurs from a workaround
+				wkEntry = NULL; // In case a jump occurs from a workaround
 			}
 			break;
 
-		case OP_JMPTRUE:	// conditional jump
+		case OP_JMPTRUE: // conditional jump
 
 			tmp = Fetch(opcode, ic->code, wkEntry, ip);
 			if (ic->stack[ic->sp--] != 0) {
 				// condition satisfied - do the jump
 				ip = tmp;
-				wkEntry = NULL;					// In case a jump occurs from a workaround
+				wkEntry = NULL; // In case a jump occurs from a workaround
 			}
 			break;
 
-		case OP_EQUAL:			// tests top two items on stack for equality
-		case OP_LESS:			// tests top two items on stack
-		case OP_LEQUAL:			// tests top two items on stack
-		case OP_NEQUAL:			// tests top two items on stack
-		case OP_GEQUAL:			// tests top two items on stack
-		case OP_GREAT:			// tests top two items on stack
-		case OP_LOR:			// logical or of top two items on stack and replaces with result
-		case OP_LAND:			// logical ands top two items on stack and replaces with result
+		case OP_EQUAL: // tests top two items on stack for equality
+		case OP_LESS: // tests top two items on stack
+		case OP_LEQUAL: // tests top two items on stack
+		case OP_NEQUAL: // tests top two items on stack
+		case OP_GEQUAL: // tests top two items on stack
+		case OP_GREAT: // tests top two items on stack
+		case OP_LOR: // logical or of top two items on stack and replaces with result
+		case OP_LAND: // logical ands top two items on stack and replaces with result
 
 			// pop one operand
 			ic->sp--;
@@ -764,28 +757,44 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 
 			// replace other operand with result of operation
 			switch (opcode) {
-			case OP_EQUAL:  tmp = (tmp == tmp2); break;
-			case OP_LESS:   tmp = (tmp <  tmp2); break;
-			case OP_LEQUAL: tmp = (tmp <= tmp2); break;
-			case OP_NEQUAL: tmp = (tmp != tmp2); break;
-			case OP_GEQUAL: tmp = (tmp >= tmp2); break;
-			case OP_GREAT:  tmp = (tmp >  tmp2); break;
+			case OP_EQUAL:
+				tmp = (tmp == tmp2);
+				break;
+			case OP_LESS:
+				tmp = (tmp < tmp2);
+				break;
+			case OP_LEQUAL:
+				tmp = (tmp <= tmp2);
+				break;
+			case OP_NEQUAL:
+				tmp = (tmp != tmp2);
+				break;
+			case OP_GEQUAL:
+				tmp = (tmp >= tmp2);
+				break;
+			case OP_GREAT:
+				tmp = (tmp > tmp2);
+				break;
 
-			case OP_LOR:    tmp = (tmp || tmp2); break;
-			case OP_LAND:   tmp = (tmp && tmp2); break;
+			case OP_LOR:
+				tmp = (tmp || tmp2);
+				break;
+			case OP_LAND:
+				tmp = (tmp && tmp2);
+				break;
 			}
 
 			ic->stack[ic->sp] = tmp;
 			break;
 
-		case OP_PLUS:			// adds top two items on stack and replaces with result
-		case OP_MINUS:			// subs top two items on stack and replaces with result
-		case OP_MULT:			// multiplies top two items on stack and replaces with result
-		case OP_DIV:			// divides top two items on stack and replaces with result
-		case OP_MOD:			// divides top two items on stack and replaces with modulus
-		case OP_AND:			// bitwise ands top two items on stack and replaces with result
-		case OP_OR:				// bitwise ors top two items on stack and replaces with result
-		case OP_EOR:			// bitwise exclusive ors top two items on stack and replaces with result
+		case OP_PLUS: // adds top two items on stack and replaces with result
+		case OP_MINUS: // subs top two items on stack and replaces with result
+		case OP_MULT: // multiplies top two items on stack and replaces with result
+		case OP_DIV: // divides top two items on stack and replaces with result
+		case OP_MOD: // divides top two items on stack and replaces with modulus
+		case OP_AND: // bitwise ands top two items on stack and replaces with result
+		case OP_OR: // bitwise ors top two items on stack and replaces with result
+		case OP_EOR: // bitwise exclusive ors top two items on stack and replaces with result
 
 			// pop one operand
 			ic->sp--;
@@ -795,32 +804,48 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 
 			// replace other operand with result of operation
 			switch (opcode) {
-			case OP_PLUS:   tmp += tmp2; break;
-			case OP_MINUS:  tmp -= tmp2; break;
-			case OP_MULT:   tmp *= tmp2; break;
-			case OP_DIV:    tmp /= tmp2; break;
-			case OP_MOD:    tmp %= tmp2; break;
-			case OP_AND:    tmp &= tmp2; break;
-			case OP_OR:     tmp |= tmp2; break;
-			case OP_EOR:    tmp ^= tmp2; break;
+			case OP_PLUS:
+				tmp += tmp2;
+				break;
+			case OP_MINUS:
+				tmp -= tmp2;
+				break;
+			case OP_MULT:
+				tmp *= tmp2;
+				break;
+			case OP_DIV:
+				tmp /= tmp2;
+				break;
+			case OP_MOD:
+				tmp %= tmp2;
+				break;
+			case OP_AND:
+				tmp &= tmp2;
+				break;
+			case OP_OR:
+				tmp |= tmp2;
+				break;
+			case OP_EOR:
+				tmp ^= tmp2;
+				break;
 			}
 			ic->stack[ic->sp] = tmp;
 			break;
 
-		case OP_NOT:			// logical nots top item on stack
+		case OP_NOT: // logical nots top item on stack
 
 			ic->stack[ic->sp] = !ic->stack[ic->sp];
 			break;
 
-		case OP_COMP:			// complements top item on stack
+		case OP_COMP: // complements top item on stack
 			ic->stack[ic->sp] = ~ic->stack[ic->sp];
 			break;
 
-		case OP_NEG:			// negates top item on stack
+		case OP_NEG: // negates top item on stack
 			ic->stack[ic->sp] = -ic->stack[ic->sp];
 			break;
 
-		case OP_DUP:			// duplicates top item on stack
+		case OP_DUP: // duplicates top item on stack
 			ic->stack[ic->sp + 1] = ic->stack[ic->sp];
 			ic->sp++;
 			break;
@@ -873,8 +898,8 @@ static uint32 UniqueWaitNumber() {
 			retval = (uint32)-1;
 
 		for (i = 0; i < NUM_INTERPRET; i++) {
-			if ((g_icList+i)->waitNumber1 == retval
-			 || (g_icList+i)->waitNumber2 == retval)
+			if ((g_icList + i)->waitNumber1 == retval
+			    || (g_icList + i)->waitNumber2 == retval)
 				break;
 		}
 
@@ -891,16 +916,16 @@ void WaitInterpret(CORO_PARAM, Common::PPROCESS pWaitProc, bool *result) {
 	Common::PPROCESS currentProcess = CoroScheduler.getCurrentProcess();
 	assert(currentProcess);
 	assert(currentProcess != pWaitProc);
-	if (result) *result = false;
+	if (result)
+		*result = false;
 
 	/*
 	 * Calling process is the waiter, find its interpret context.
 	 */
 
 	CORO_BEGIN_CONTEXT;
-		PINT_CONTEXT picWaiter, picWaitee;
+	PINT_CONTEXT picWaiter, picWaitee;
 	CORO_END_CONTEXT(_ctx);
-
 
 	CORO_BEGIN_CODE(_ctx);
 
@@ -946,13 +971,13 @@ void CheckOutWaiters() {
 	int i, j;
 
 	// Check all waited for have someone waiting
-	for (i = 0; i < NUM_INTERPRET; i++)	{
+	for (i = 0; i < NUM_INTERPRET; i++) {
 		// If someone is supposedly waiting for this one
 		if ((g_icList + i)->GSort != GS_NONE && (g_icList + i)->waitNumber2) {
 			// Someone really must be waiting for this one
 			for (j = 0; j < NUM_INTERPRET; j++) {
 				if ((g_icList + j)->GSort != GS_NONE
-				 && (g_icList + j)->waitNumber1 == (g_icList + i)->waitNumber2) {
+				    && (g_icList + j)->waitNumber1 == (g_icList + i)->waitNumber2) {
 					break;
 				}
 			}
@@ -967,7 +992,7 @@ void CheckOutWaiters() {
 			// Someone really must be waiting for this one
 			for (j = 0; j < NUM_INTERPRET; j++) {
 				if ((g_icList + j)->GSort != GS_NONE
-				 && (g_icList + j)->waitNumber2 == (g_icList + i)->waitNumber1) {
+				    && (g_icList + j)->waitNumber2 == (g_icList + i)->waitNumber1) {
 					break;
 				}
 			}

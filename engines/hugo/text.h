@@ -51,21 +51,20 @@ private:
 	char ***_arrayNouns;
 	char ***_arrayVerbs;
 
-	char  **_screenNames;
-	char  **_stringtData;
-	char  **_textData;
-	char  **_textEngine;
-	char  **_textIntro;
-	char  **_textMouse;
-	char  **_textParser;
-	char  **_textUtil;
+	char **_screenNames;
+	char **_stringtData;
+	char **_textData;
+	char **_textEngine;
+	char **_textIntro;
+	char **_textMouse;
+	char **_textParser;
+	char **_textUtil;
 
 	char ***loadTextsArray(Common::ReadStream &in);
-	char  **loadTextsVariante(Common::ReadStream &in, uint16 *arraySize);
-	char  **loadTexts(Common::ReadStream &in);
+	char **loadTextsVariante(Common::ReadStream &in, uint16 *arraySize);
+	char **loadTexts(Common::ReadStream &in);
 
-	void    freeTexts(char **ptr);
-
+	void freeTexts(char **ptr);
 };
 
 } // End of namespace Hugo

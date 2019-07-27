@@ -29,9 +29,9 @@
 #ifndef TONY_UTILS_H
 #define TONY_UTILS_H
 
-#include "common/scummsys.h"
 #include "common/file.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 #include "tony/mpal/memory.h"
 

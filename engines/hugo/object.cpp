@@ -29,22 +29,23 @@
 
 #include "common/debug.h"
 
-#include "hugo/hugo.h"
-#include "hugo/game.h"
-#include "hugo/object.h"
 #include "hugo/display.h"
 #include "hugo/file.h"
-#include "hugo/route.h"
-#include "hugo/util.h"
-#include "hugo/parser.h"
-#include "hugo/schedule.h"
-#include "hugo/text.h"
+#include "hugo/game.h"
+#include "hugo/hugo.h"
 #include "hugo/inventory.h"
 #include "hugo/mouse.h"
+#include "hugo/object.h"
+#include "hugo/parser.h"
+#include "hugo/route.h"
+#include "hugo/schedule.h"
+#include "hugo/text.h"
+#include "hugo/util.h"
 
 namespace Hugo {
 
-ObjectHandler::ObjectHandler(HugoEngine *vm) : _vm(vm) {
+ObjectHandler::ObjectHandler(HugoEngine *vm)
+  : _vm(vm) {
 	_uses = nullptr;
 	_objects = nullptr;
 	_numObj = 0;
@@ -52,8 +53,8 @@ ObjectHandler::ObjectHandler(HugoEngine *vm) : _vm(vm) {
 	_usesSize = 0;
 	memset(_objBound, '\0', sizeof(Overlay));
 	memset(_boundary, '\0', sizeof(Overlay));
-	memset(_overlay,  '\0', sizeof(Overlay));
-	memset(_ovlBase,  '\0', sizeof(Overlay));
+	memset(_overlay, '\0', sizeof(Overlay));
+	memset(_ovlBase, '\0', sizeof(Overlay));
 }
 
 ObjectHandler::~ObjectHandler() {
@@ -135,24 +136,24 @@ void ObjectHandler::useObject(int16 objId) {
 	debugC(1, kDebugObject, "useObject(%d)", objId);
 
 	int16 inventObjId = _vm->_inventory->getInventoryObjId();
-	Object *obj = &_objects[objId];                       // Ptr to object
+	Object *obj = &_objects[objId]; // Ptr to object
 	if (inventObjId == -1) {
-		const char *verb;                                 // Background verb to use directly
+		const char *verb; // Background verb to use directly
 		// Get or use objid directly
-		if ((obj->_genericCmd & TAKE) || obj->_objValue)  // Get collectible item
+		if ((obj->_genericCmd & TAKE) || obj->_objValue) // Get collectible item
 			sprintf(_vm->_line, "%s %s", _vm->_text->getVerb(_vm->_take, 0), _vm->_text->getNoun(obj->_nounIndex, 0));
-		else if (obj->_cmdIndex != 0)                     // Use non-collectible item if able
+		else if (obj->_cmdIndex != 0) // Use non-collectible item if able
 			sprintf(_vm->_line, "%s %s", _vm->_text->getVerb(_vm->_parser->getCmdDefaultVerbIdx(obj->_cmdIndex), 0), _vm->_text->getNoun(obj->_nounIndex, 0));
 		else if ((verb = _vm->_parser->useBG(_vm->_text->getNoun(obj->_nounIndex, 0))) != 0)
 			sprintf(_vm->_line, "%s %s", verb, _vm->_text->getNoun(obj->_nounIndex, 0));
 		else
-			return;                                       // Can't use object directly
+			return; // Can't use object directly
 	} else {
 		// Use status.objid on objid
 		// Default to first cmd verb
 		sprintf(_vm->_line, "%s %s %s", _vm->_text->getVerb(_vm->_parser->getCmdDefaultVerbIdx(_objects[inventObjId]._cmdIndex), 0),
-			                       _vm->_text->getNoun(_objects[inventObjId]._nounIndex, 0),
-			                       _vm->_text->getNoun(obj->_nounIndex, 0));
+		        _vm->_text->getNoun(_objects[inventObjId]._nounIndex, 0),
+		        _vm->_text->getNoun(obj->_nounIndex, 0));
 
 		// Check valid use of objects and override verb if necessary
 		for (Uses *use = _uses; use->_objId != _numObj; use++) {
@@ -164,8 +165,8 @@ void ObjectHandler::useObject(int16 objId) {
 					if (target->_nounIndex == obj->_nounIndex) {
 						foundFl = true;
 						sprintf(_vm->_line, "%s %s %s", _vm->_text->getVerb(target->_verbIndex, 0),
-							                       _vm->_text->getNoun(_objects[inventObjId]._nounIndex, 0),
-							                       _vm->_text->getNoun(obj->_nounIndex, 0));
+						        _vm->_text->getNoun(_objects[inventObjId]._nounIndex, 0),
+						        _vm->_text->getNoun(obj->_nounIndex, 0));
 					}
 
 				// No valid use of objects found, print failure string
@@ -185,7 +186,7 @@ void ObjectHandler::useObject(int16 objId) {
 
 	_vm->_screen->resetInventoryObjId();
 
-	_vm->_parser->lineHandler();                    // and process command
+	_vm->_parser->lineHandler(); // and process command
 }
 
 /**
@@ -195,8 +196,8 @@ void ObjectHandler::useObject(int16 objId) {
 int16 ObjectHandler::findObject(uint16 x, uint16 y) {
 	debugC(3, kDebugObject, "findObject(%d, %d)", x, y);
 
-	int16     objIndex = -1;                        // Index of found object
-	uint16    y2Max = 0;                            // Greatest y2
+	int16 objIndex = -1; // Index of found object
+	uint16 y2Max = 0; // Greatest y2
 	Object *obj = _objects;
 	// Check objects on screen
 	for (int i = 0; i < _numObj; i++, obj++) {
@@ -210,7 +211,7 @@ int16 ObjectHandler::findObject(uint16 x, uint16 y) {
 					// If object is closest so far
 					if (obj->_y + curImage->_y2 > y2Max) {
 						y2Max = obj->_y + curImage->_y2;
-						objIndex = i;               // Found an object!
+						objIndex = i; // Found an object!
 					}
 				}
 			} else {
@@ -221,7 +222,7 @@ int16 ObjectHandler::findObject(uint16 x, uint16 y) {
 						// If object is closest so far
 						if (obj->_oldy + obj->_vyPath - 1 > (int16)y2Max) {
 							y2Max = obj->_oldy + obj->_vyPath - 1;
-							objIndex = i;           // Found an object!
+							objIndex = i; // Found an object!
 						}
 					}
 				}
@@ -350,9 +351,7 @@ void ObjectHandler::showTakeables() {
 
 	for (int j = 0; j < _numObj; j++) {
 		Object *obj = &_objects[j];
-		if ((obj->_cycling != kCycleInvisible) &&
-		    (obj->_screenIndex == *_vm->_screenPtr) &&
-		    (((TAKE & obj->_genericCmd) == TAKE) || obj->_objValue)) {
+		if ((obj->_cycling != kCycleInvisible) && (obj->_screenIndex == *_vm->_screenPtr) && (((TAKE & obj->_genericCmd) == TAKE) || obj->_objValue)) {
 			Utils::notifyBox(Common::String::format("You can also see:\n%s.", _vm->_text->getNoun(obj->_nounIndex, LOOK_NAME)));
 		}
 	}
@@ -374,7 +373,7 @@ bool ObjectHandler::findObjectSpace(Object *obj, int16 *destx, int16 *desty) {
 			foundFl = false;
 	}
 
-	if (!foundFl) {                                 // Try right rear corner
+	if (!foundFl) { // Try right rear corner
 		foundFl = true;
 		for (int16 x = *destx = obj->_x + curImage->_x2 - kHeroMaxWidth + 1; x <= obj->_x + (int16)curImage->_x2; x++) {
 			if (checkBoundary(x, y))
@@ -382,7 +381,7 @@ bool ObjectHandler::findObjectSpace(Object *obj, int16 *destx, int16 *desty) {
 		}
 	}
 
-	if (!foundFl) {                                 // Try left front corner
+	if (!foundFl) { // Try left front corner
 		foundFl = true;
 		y += 2;
 		for (int16 x = *destx = obj->_x + curImage->_x1; x < *destx + kHeroMaxWidth; x++) {
@@ -391,7 +390,7 @@ bool ObjectHandler::findObjectSpace(Object *obj, int16 *destx, int16 *desty) {
 		}
 	}
 
-	if (!foundFl) {                                 // Try right rear corner
+	if (!foundFl) { // Try right rear corner
 		foundFl = true;
 		for (int16 x = *destx = obj->_x + curImage->_x2 - kHeroMaxWidth + 1; x <= obj->_x + (int16)curImage->_x2; x++) {
 			if (checkBoundary(x, y))
@@ -452,7 +451,7 @@ void ObjectHandler::readObject(Common::ReadStream &in, Object &curObject) {
 	for (int j = 0; j < numSubElem; j++)
 		curObject._stateDataIndex[j] = in.readUint16BE();
 
-	curObject._pathType = (Path) in.readSint16BE();
+	curObject._pathType = (Path)in.readSint16BE();
 	curObject._vxPath = in.readSint16BE();
 	curObject._vyPath = in.readSint16BE();
 	curObject._actIndex = in.readUint16BE();
@@ -530,8 +529,8 @@ void ObjectHandler::loadObjectArr(Common::ReadStream &in) {
  * number
  */
 void ObjectHandler::setCarriedScreen(int screenNum) {
-	for (int i = kHeroIndex + 1; i < _numObj; i++) {// Any others
-		if (isCarried(i))                           // being carried
+	for (int i = kHeroIndex + 1; i < _numObj; i++) { // Any others
+		if (isCarried(i)) // being carried
 			_objects[i]._screenIndex = screenNum;
 	}
 }
@@ -596,10 +595,10 @@ void ObjectHandler::saveObjects(Common::WriteStream *out) {
  */
 void ObjectHandler::restoreObjects(Common::SeekableReadStream *in) {
 	for (int i = 0; i < _numObj; i++) {
-		_objects[i]._pathType = (Path) in->readByte();
+		_objects[i]._pathType = (Path)in->readByte();
 		_objects[i]._vxPath = in->readSint16BE();
 		_objects[i]._vyPath = in->readSint16BE();
-		_objects[i]._cycling = (Cycle) in->readByte();
+		_objects[i]._cycling = (Cycle)in->readByte();
 		_objects[i]._cycleNumb = in->readByte();
 		_objects[i]._frameTimer = in->readByte();
 		_objects[i]._screenIndex = in->readByte();
@@ -653,32 +652,32 @@ bool ObjectHandler::checkBoundary(int16 x, int16 y) {
  * not cross a boundary (either background or another object)
  */
 int ObjectHandler::deltaX(const int x1, const int x2, const int vx, int y) const {
-// Explanation of algorithm:  The boundaries are drawn as contiguous
-// lines 1 pixel wide.  Since DX,DY are not necessarily 1, we must
-// detect boundary crossing.  If vx positive, examine each pixel from
-// x1 old to x2 new, else x2 old to x1 new, both at the y2 line.
-// If vx zero, no need to check.  If vy non-zero then examine each
-// pixel on the line segment x1 to x2 from y old to y new.
-// Fix from Hugo I v1.5:
-// Note the diff is munged in the return statement to cater for a special
-// cases arising from differences in image widths from one sequence to
-// another.  The problem occurs reversing direction at a wall where the
-// new image intersects before the object can move away.  This is cured
-// by comparing the intersection with half the object width pos. If the
-// intersection is in the other half wrt the intended direction, use the
-// desired vx, else use the computed delta.  i.e. believe the desired vx
+	// Explanation of algorithm:  The boundaries are drawn as contiguous
+	// lines 1 pixel wide.  Since DX,DY are not necessarily 1, we must
+	// detect boundary crossing.  If vx positive, examine each pixel from
+	// x1 old to x2 new, else x2 old to x1 new, both at the y2 line.
+	// If vx zero, no need to check.  If vy non-zero then examine each
+	// pixel on the line segment x1 to x2 from y old to y new.
+	// Fix from Hugo I v1.5:
+	// Note the diff is munged in the return statement to cater for a special
+	// cases arising from differences in image widths from one sequence to
+	// another.  The problem occurs reversing direction at a wall where the
+	// new image intersects before the object can move away.  This is cured
+	// by comparing the intersection with half the object width pos. If the
+	// intersection is in the other half wrt the intended direction, use the
+	// desired vx, else use the computed delta.  i.e. believe the desired vx
 
 	debugC(3, kDebugEngine, "deltaX(%d, %d, %d, %d)", x1, x2, vx, y);
 
 	if (vx == 0)
-		return 0;                                  // Object stationary
+		return 0; // Object stationary
 
-	y *= kCompLineSize;                             // Offset into boundary file
+	y *= kCompLineSize; // Offset into boundary file
 	if (vx > 0) {
 		// Moving to right
-		for (int i = x1 >> 3; i <= (x2 + vx) >> 3; i++) {// Search by byte
+		for (int i = x1 >> 3; i <= (x2 + vx) >> 3; i++) { // Search by byte
 			int b = Utils::firstBit((byte)(_boundary[y + i] | _objBound[y + i]));
-			if (b < 8) {   // b is index or 8
+			if (b < 8) { // b is index or 8
 				// Compute x of boundary and test if intersection
 				b += i << 3;
 				if ((b >= x1) && (b <= x2 + vx))
@@ -687,9 +686,9 @@ int ObjectHandler::deltaX(const int x1, const int x2, const int vx, int y) const
 		}
 	} else {
 		// Moving to left
-		for (int i = x2 >> 3; i >= (x1 + vx) >> 3; i--) {// Search by byte
+		for (int i = x2 >> 3; i >= (x1 + vx) >> 3; i--) { // Search by byte
 			int b = Utils::lastBit((byte)(_boundary[y + i] | _objBound[y + i]));
-			if (b < 8) {    // b is index or 8
+			if (b < 8) { // b is index or 8
 				// Compute x of boundary and test if intersection
 				b += i << 3;
 				if ((b >= x1 + vx) && (b <= x2))
@@ -709,17 +708,17 @@ int ObjectHandler::deltaY(const int x1, const int x2, const int vy, const int y)
 	debugC(3, kDebugEngine, "deltaY(%d, %d, %d, %d)", x1, x2, vy, y);
 
 	if (vy == 0)
-		return 0;                                   // Object stationary
+		return 0; // Object stationary
 
 	int inc = (vy > 0) ? 1 : -1;
 	for (int j = y + inc; j != (y + vy + inc); j += inc) { //Search by byte
 		for (int i = x1 >> 3; i <= x2 >> 3; i++) {
 			int b = _boundary[j * kCompLineSize + i] | _objBound[j * kCompLineSize + i];
-			if (b != 0) {                           // Any bit set
+			if (b != 0) { // Any bit set
 				// Make sure boundary bits fall on line segment
-				if (i == (x2 >> 3))                 // Adjust right end
+				if (i == (x2 >> 3)) // Adjust right end
 					b &= 0xff << ((i << 3) + 7 - x2);
-				else if (i == (x1 >> 3))            // Adjust left end
+				else if (i == (x1 >> 3)) // Adjust left end
 					b &= 0xff >> (x1 - (i << 3));
 				if (b)
 					return j - y - inc;
@@ -735,11 +734,11 @@ int ObjectHandler::deltaY(const int x1, const int x2, const int vy, const int y)
 void ObjectHandler::storeBoundary(const int x1, const int x2, const int y) {
 	debugC(5, kDebugEngine, "storeBoundary(%d, %d, %d)", x1, x2, y);
 
-	for (int i = x1 >> 3; i <= x2 >> 3; i++) {      // For each byte in line
-		byte *b = &_objBound[y * kCompLineSize + i];// get boundary byte
-		if (i == x2 >> 3)                           // Adjust right end
+	for (int i = x1 >> 3; i <= x2 >> 3; i++) { // For each byte in line
+		byte *b = &_objBound[y * kCompLineSize + i]; // get boundary byte
+		if (i == x2 >> 3) // Adjust right end
 			*b |= 0xff << ((i << 3) + 7 - x2);
-		else if (i == x1 >> 3)                      // Adjust left end
+		else if (i == x1 >> 3) // Adjust left end
 			*b |= 0xff >> (x1 - (i << 3));
 		else
 			*b = 0xff;
@@ -752,11 +751,11 @@ void ObjectHandler::storeBoundary(const int x1, const int x2, const int y) {
 void ObjectHandler::clearBoundary(const int x1, const int x2, const int y) {
 	debugC(5, kDebugEngine, "clearBoundary(%d, %d, %d)", x1, x2, y);
 
-	for (int i = x1 >> 3; i <= x2 >> 3; i++) {      // For each byte in line
-		byte *b = &_objBound[y * kCompLineSize + i];// get boundary byte
-		if (i == x2 >> 3)                           // Adjust right end
+	for (int i = x1 >> 3; i <= x2 >> 3; i++) { // For each byte in line
+		byte *b = &_objBound[y * kCompLineSize + i]; // get boundary byte
+		if (i == x2 >> 3) // Adjust right end
 			*b &= ~(0xff << ((i << 3) + 7 - x2));
-		else if (i == x1 >> 3)                      // Adjust left end
+		else if (i == x1 >> 3) // Adjust left end
 			*b &= ~(0xff >> (x1 - (i << 3)));
 		else
 			*b = 0;
@@ -770,11 +769,11 @@ void ObjectHandler::clearBoundary(const int x1, const int x2, const int y) {
 void ObjectHandler::clearScreenBoundary(const int x1, const int x2, const int y) {
 	debugC(5, kDebugEngine, "clearScreenBoundary(%d, %d, %d)", x1, x2, y);
 
-	for (int i = x1 >> 3; i <= x2 >> 3; i++) {      // For each byte in line
-		byte *b = &_boundary[y * kCompLineSize + i];// get boundary byte
-		if (i == x2 >> 3)                           // Adjust right end
+	for (int i = x1 >> 3; i <= x2 >> 3; i++) { // For each byte in line
+		byte *b = &_boundary[y * kCompLineSize + i]; // get boundary byte
+		if (i == x2 >> 3) // Adjust right end
 			*b &= ~(0xff << ((i << 3) + 7 - x2));
-		else if (i == x1 >> 3)                      // Adjust left end
+		else if (i == x1 >> 3) // Adjust left end
 			*b &= ~(0xff >> (x1 - (i << 3)));
 		else
 			*b = 0;

@@ -23,8 +23,8 @@
 #include "groovie/saveload.h"
 #include "groovie/groovie.h"
 
-#include "common/system.h"
 #include "common/substream.h"
+#include "common/system.h"
 
 #define SUPPORTED_SAVEFILE_VERSION 1
 // 0 - Just script variables, compatible with the original
@@ -125,18 +125,18 @@ Common::InSaveFile *SaveLoad::openForLoading(const Common::String &target, int s
 		for (int i = 0; (c != 0) && (i < 15); i++) {
 			c = savefile->readByte();
 			switch (c) {
-				case 0:
-					break;
-				case 16: // @
-				// fall through intended
-				case 254: // . (generated when pressing space)
-					c = ' ';
-					break;
-				case 244: // $
-					c = 0;
-					break;
-				default:
-					c += 0x30;
+			case 0:
+				break;
+			case 16: // @
+			// fall through intended
+			case 254: // . (generated when pressing space)
+				c = ' ';
+				break;
+			case 244: // $
+				c = 0;
+				break;
+			default:
+				c += 0x30;
 			}
 			if (c != 0) {
 				description += c;

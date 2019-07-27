@@ -128,8 +128,10 @@ void CineEngine::readVolCnf() {
 	}
 	delete[] packedBuf;
 	uint8 *p = buf;
-	int resourceFilesCount = READ_BE_UINT16(p); p += 2;
-	int entrySize = READ_BE_UINT16(p); p += 2;
+	int resourceFilesCount = READ_BE_UINT16(p);
+	p += 2;
+	int entrySize = READ_BE_UINT16(p);
+	p += 2;
 	for (int i = 0; i < resourceFilesCount; ++i) {
 		char volumeResourceFile[9];
 		memcpy(volumeResourceFile, p, 8);
@@ -142,7 +144,8 @@ void CineEngine::readVolCnf() {
 	bool fileNameLenMod11, fileNameLenMod13;
 	fileNameLenMod11 = fileNameLenMod13 = true;
 	for (int i = 0; i < resourceFilesCount; ++i) {
-		int size = READ_BE_UINT32(p); p += 4;
+		int size = READ_BE_UINT32(p);
+		p += 4;
 		fileNameLenMod11 &= ((size % 11) == 0);
 		fileNameLenMod13 &= ((size % 13) == 0);
 		p += size;
@@ -170,7 +173,8 @@ void CineEngine::readVolCnf() {
 
 	p = buf + 4 + resourceFilesCount * entrySize;
 	for (int i = 0; i < resourceFilesCount; ++i) {
-		int count = READ_BE_UINT32(p) / fileNameLength; p += 4;
+		int count = READ_BE_UINT32(p) / fileNameLength;
+		p += 4;
 		while (count--) {
 			Common::String volumeEntryName = fixVolCnfFileName(p, fileNameLength);
 			_volumeEntriesMap.setVal(volumeEntryName, _volumeResourceFiles[i].c_str());

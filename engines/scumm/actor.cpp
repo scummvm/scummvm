@@ -20,21 +20,21 @@
  *
  */
 
-#include "common/system.h"	// for setFocusRectangle/clearFocusRectangle
-#include "scumm/scumm.h"
 #include "scumm/actor.h"
+#include "common/system.h" // for setFocusRectangle/clearFocusRectangle
 #include "scumm/actor_he.h"
 #include "scumm/akos.h"
 #include "scumm/boxes.h"
 #include "scumm/charset.h"
 #include "scumm/costume.h"
 #include "scumm/he/intern_he.h"
-#include "scumm/object.h"
-#include "scumm/resource.h"
-#include "scumm/scumm_v7.h"
-#include "scumm/scumm_v0.h"
 #include "scumm/he/sound_he.h"
 #include "scumm/he/sprite_he.h"
+#include "scumm/object.h"
+#include "scumm/resource.h"
+#include "scumm/scumm.h"
+#include "scumm/scumm_v0.h"
+#include "scumm/scumm_v7.h"
 #include "scumm/usage_bits.h"
 #include "scumm/util.h"
 
@@ -99,13 +99,14 @@ static const byte v0ActorTalk[25] = {
 };
 
 static const byte v0WalkboxSlantedModifier[0x16] = {
-	0x00,0x01,0x02,0x03,0x03,0x04,0x05,0x06,
-	0x06,0x07,0x08,0x09,0x09,0x0A,0x0B,
-	0x0C,0x0C,0x0D,0x0E,0x0F,0x10,0x10
+	0x00, 0x01, 0x02, 0x03, 0x03, 0x04, 0x05, 0x06,
+	0x06, 0x07, 0x08, 0x09, 0x09, 0x0A, 0x0B,
+	0x0C, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x10
 };
 
-Actor::Actor(ScummEngine *scumm, int id) :
-	_vm(scumm), _number(id) {
+Actor::Actor(ScummEngine *scumm, int id)
+  : _vm(scumm)
+  , _number(id) {
 	assert(_vm != 0);
 }
 
@@ -295,7 +296,7 @@ void Actor_v0::walkboxQueueReverse() {
 	if (j <= 1)
 		return;
 
-	for (int i = 1; i < j && j >= 1 ; ++i, --j) {
+	for (int i = 1; i < j && j >= 1; ++i, --j) {
 
 		byte tmp = _walkboxQueue[i];
 
@@ -337,7 +338,7 @@ bool Actor_v0::walkBoxQueuePrepare() {
 			if ((BoxFound = _vm->getNextBox(BoxFound, _walkdata.destbox)) == kInvalidBox) {
 
 				// Its not, start hunting through this boxes immediate connections
-				byte* boxm = _vm->getBoxConnectionBase(_walkboxQueue[_walkboxQueueIndex - 1]);
+				byte *boxm = _vm->getBoxConnectionBase(_walkboxQueue[_walkboxQueueIndex - 1]);
 
 				// Attempt to find one, which we havn't already used
 				for (; *boxm != kInvalidBox; ++boxm) {
@@ -418,11 +419,9 @@ void Actor::setupActorScale() {
 	_scalex = _scaley = (byte)scale;
 }
 
-
 #pragma mark -
-#pragma mark --- Actor walking ---
+#pragma mark--- Actor walking ---
 #pragma mark -
-
 
 void ScummEngine::walkActors() {
 	for (int i = 1; i < _numActors; ++i) {
@@ -474,7 +473,7 @@ int getAngleFromPos(int x, int y, bool useATAN) {
 	}
 }
 
-int Actor::calcMovementFactor(const Common::Point& next) {
+int Actor::calcMovementFactor(const Common::Point &next) {
 	int diffX, diffY;
 	int32 deltaXFactor, deltaYFactor;
 
@@ -495,7 +494,7 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 		deltaYFactor = 0;
 	}
 
-	if ((uint) ABS(deltaXFactor) > (_speedx << 16))	{
+	if ((uint)ABS(deltaXFactor) > (_speedx << 16)) {
 		deltaXFactor = _speedx << 16;
 		if (diffX < 0)
 			deltaXFactor = -deltaXFactor;
@@ -516,7 +515,7 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 	_walkdata.yfrac = 0;
 
 	if (_vm->_game.version <= 2)
-		_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*deltaXFactor, V12_Y_MULTIPLIER*deltaYFactor, false);
+		_targetFacing = getAngleFromPos(V12_X_MULTIPLIER * deltaXFactor, V12_Y_MULTIPLIER * deltaYFactor, false);
 	else
 		_targetFacing = getAngleFromPos(deltaXFactor, deltaYFactor, (_vm->_game.id == GID_DIG || _vm->_game.id == GID_CMI));
 
@@ -755,10 +754,9 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 
 	} else if (_vm->_game.version <= 2) {
 		_moving = (_moving & ~(MF_LAST_LEG | MF_IN_LEG)) | MF_NEW_LEG;
- 	} else {
- 		_moving = (_moving & MF_IN_LEG) | MF_NEW_LEG;
- 	}
-
+	} else {
+		_moving = (_moving & MF_IN_LEG) | MF_NEW_LEG;
+	}
 }
 
 void Actor::startWalkAnim(int cmd, int angle) {
@@ -777,14 +775,14 @@ void Actor::startWalkAnim(int cmd, int angle) {
 		_vm->runScript(_walkScript, 1, 0, args);
 	} else {
 		switch (cmd) {
-		case 1:										/* start walk */
+		case 1: /* start walk */
 			setDirection(angle);
 			startAnimActor(_walkFrame);
 			break;
-		case 2:										/* change dir only */
+		case 2: /* change dir only */
 			setDirection(angle);
 			break;
-		case 3:										/* stop walk */
+		case 3: /* stop walk */
 			turnToDirection(angle);
 			startAnimActor(_standFrame);
 			break;
@@ -882,7 +880,7 @@ void Actor_v0::walkActor() {
 	if (_NewWalkTo != _CurrentWalkTo) {
 		_CurrentWalkTo = _NewWalkTo;
 
-UpdateActorDirection:;
+	UpdateActorDirection:;
 		_tmp_NewPos = _pos;
 
 		byte tmp = calcWalkDistances();
@@ -891,15 +889,15 @@ UpdateActorDirection:;
 
 		if (!_walkYCountGreaterThanXCount) {
 			if (_walkDirX) {
-				_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*1, V12_Y_MULTIPLIER*0, false);
+				_targetFacing = getAngleFromPos(V12_X_MULTIPLIER * 1, V12_Y_MULTIPLIER * 0, false);
 			} else {
-				_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*-1, V12_Y_MULTIPLIER*0, false);
+				_targetFacing = getAngleFromPos(V12_X_MULTIPLIER * -1, V12_Y_MULTIPLIER * 0, false);
 			}
 		} else {
 			if (_walkDirY) {
-				_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*0, V12_Y_MULTIPLIER*1, false);
+				_targetFacing = getAngleFromPos(V12_X_MULTIPLIER * 0, V12_Y_MULTIPLIER * 1, false);
 			} else {
-				_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*0, V12_Y_MULTIPLIER*-1, false);
+				_targetFacing = getAngleFromPos(V12_X_MULTIPLIER * 0, V12_Y_MULTIPLIER * -1, false);
 			}
 		}
 
@@ -1061,16 +1059,16 @@ UpdateActorDirection:;
 				_moving |= A;
 
 				if (_walkDirY) {
-					_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*0, V12_Y_MULTIPLIER*1, false);
+					_targetFacing = getAngleFromPos(V12_X_MULTIPLIER * 0, V12_Y_MULTIPLIER * 1, false);
 				} else {
-					_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*0, V12_Y_MULTIPLIER*-1, false);
+					_targetFacing = getAngleFromPos(V12_X_MULTIPLIER * 0, V12_Y_MULTIPLIER * -1, false);
 				}
 
 				directionUpdate();
 				animateActor(newDirToOldDir(_facing));
 
-				// FIXME: During the hands-free-demo in the library (room 5), Purple Tentacle gets stuck following Sandy due to the corner of the stairs, 
-				//        This is due to distance, and walkbox gap/layout. This works fine with the original engine, because it 'brute forces' 
+				// FIXME: During the hands-free-demo in the library (room 5), Purple Tentacle gets stuck following Sandy due to the corner of the stairs,
+				//        This is due to distance, and walkbox gap/layout. This works fine with the original engine, because it 'brute forces'
 				//        another pixel move in the walk direction before giving up, allowing us to move enough pixels to hit the next walkbox.
 				//        Why this fails with the return is because script-10 is executing a 'walkActorToActor' every cycle, which restarts the movement process
 				//        As a work around, we implement the original engine behaviour only for Purple Tentacle in the Demo. Doing this for other actors
@@ -1093,9 +1091,9 @@ UpdateActorDirection:;
 				_moving |= A;
 
 				if (_walkDirX) {
-					_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*1, V12_Y_MULTIPLIER*0, false);
+					_targetFacing = getAngleFromPos(V12_X_MULTIPLIER * 1, V12_Y_MULTIPLIER * 0, false);
 				} else {
-					_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*-1, V12_Y_MULTIPLIER*0, false);
+					_targetFacing = getAngleFromPos(V12_X_MULTIPLIER * -1, V12_Y_MULTIPLIER * 0, false);
 				}
 
 				directionUpdate();
@@ -1162,7 +1160,7 @@ void Actor_v2::walkActor() {
 }
 
 void Actor_v3::walkActor() {
-	Common::Point p2, p3;	// Gate locations
+	Common::Point p2, p3; // Gate locations
 	int new_dir, next_box;
 
 	if (!_moving)
@@ -1248,11 +1246,9 @@ void Actor_v3::walkActor() {
 	calcMovementFactor(_walkdata.dest);
 }
 
-
 #pragma mark -
-#pragma mark --- Actor direction ---
+#pragma mark--- Actor direction ---
 #pragma mark -
-
 
 int Actor::remapDirection(int dir, bool is_walking) {
 	int specdir;
@@ -1310,9 +1306,9 @@ int Actor::remapDirection(int dir, bool is_walking) {
 				else
 					return 270;
 			} else {
-				if (is_walking)	                       // Actor is walking
+				if (is_walking) // Actor is walking
 					return flipX ? 90 : 270;
-				else	                               // Actor is standing/turning
+				else // Actor is standing/turning
 					return (dir == 90) ? 90 : 270;
 			}
 		case 2:
@@ -1322,9 +1318,9 @@ int Actor::remapDirection(int dir, bool is_walking) {
 				else
 					return 0;
 			} else {
-				if (is_walking)	                       // Actor is walking
+				if (is_walking) // Actor is walking
 					return flipY ? 180 : 0;
-				else	                               // Actor is standing/turning
+				else // Actor is standing/turning
 					return (dir == 0) ? 0 : 180;
 			}
 		case 3:
@@ -1382,7 +1378,7 @@ int Actor::updateActorDirection(bool is_walking) {
 
 		if (diff > 0) {
 			to = from + 1;
-		} else if (diff < 0){
+		} else if (diff < 0) {
 			to = from - 1;
 		}
 
@@ -1430,21 +1426,21 @@ void Actor_v0::setDirection(int direction) {
 	int res = 0;
 
 	switch (dir) {
-		case 0:
-			res = 4;	// Left
-			break;
+	case 0:
+		res = 4; // Left
+		break;
 
-		case 1:
-			res = 5;	// Right
-			break;
+	case 1:
+		res = 5; // Right
+		break;
 
-		case 2:
-			res = 6;	// Face Camera
-			break;
+	case 2:
+		res = 6; // Face Camera
+		break;
 
-		default:
-			res = 7;	// Face Away
-			break;
+	default:
+		res = 7; // Face Away
+		break;
 	}
 
 	_animFrameRepeat = -1;
@@ -1486,11 +1482,9 @@ void Actor::turnToDirection(int newdir) {
 	}
 }
 
-
 #pragma mark -
-#pragma mark --- Actor position ---
+#pragma mark--- Actor position ---
 #pragma mark -
-
 
 void ScummEngine::putActors() {
 	Actor *a;
@@ -1690,7 +1684,7 @@ AdjustBoxResult Actor_v0::adjustPosInBorderWalkbox(AdjustBoxResult box) {
 
 	if (A == 1) {
 		// 1BCF
-		A = BoxCoord.ur.x - v0WalkboxSlantedModifier[ Modifier ];
+		A = BoxCoord.ur.x - v0WalkboxSlantedModifier[Modifier];
 		if (A < box.x)
 			return box;
 
@@ -1700,7 +1694,7 @@ AdjustBoxResult Actor_v0::adjustPosInBorderWalkbox(AdjustBoxResult box) {
 		Result.x = A;
 	} else {
 		// 1BED
-		A = BoxCoord.ul.x + v0WalkboxSlantedModifier[ Modifier ];
+		A = BoxCoord.ul.x + v0WalkboxSlantedModifier[Modifier];
 
 		if (A < box.x || A == box.x)
 			Result.x = A;
@@ -1734,7 +1728,7 @@ AdjustBoxResult Actor_v2::adjustXYToBeInBox(const int dstX, const int dstY) {
 		int flags = _vm->getBoxFlags(box);
 		if ((flags & kBoxInvisible) && !((flags & kBoxPlayerOnly) && !isPlayer()))
 			continue;
-		int dist = checkXYInBoxBounds(box, dstX, dstY, foundX, foundY);	// also merged with getClosestPtOnBox
+		int dist = checkXYInBoxBounds(box, dstX, dstY, foundX, foundY); // also merged with getClosestPtOnBox
 		if (dist == 0) {
 			abr.x = foundX;
 			abr.y = foundY;
@@ -1864,7 +1858,7 @@ int ScummEngine::getActorFromPos(int x, int y) {
 
 	for (i = 1; i < _numActors; i++) {
 		if (testGfxUsageBit(x / 8, i) && !getClass(i, kObjectClassUntouchable)
-			&& y >= _actors[i]->_top && y <= _actors[i]->_bottom) {
+		    && y >= _actors[i]->_top && y <= _actors[i]->_bottom) {
 			if (_game.version > 2 || i != VAR(VAR_EGO))
 				return i;
 		}
@@ -1882,19 +1876,17 @@ int ScummEngine_v70he::getActorFromPos(int x, int y) {
 	curActor = 0;
 	for (i = 1; i < _numActors; i++) {
 		if (testGfxUsageBit(x / 8, i) && !getClass(i, kObjectClassUntouchable)
-			&& y >= _actors[i]->_top && y <= _actors[i]->_bottom
-			&& (_actors[i]->getPos().y > _actors[curActor]->getPos().y || curActor == 0))
-				curActor = i;
+		    && y >= _actors[i]->_top && y <= _actors[i]->_bottom
+		    && (_actors[i]->getPos().y > _actors[curActor]->getPos().y || curActor == 0))
+			curActor = i;
 	}
 
 	return curActor;
 }
 
-
 #pragma mark -
-#pragma mark --- TODO ---
+#pragma mark--- TODO ---
 #pragma mark -
-
 
 void Actor::hideActor() {
 	if (!_visible)
@@ -2002,7 +1994,7 @@ bool ScummEngine::isValidActor(int id) const {
 Actor *ScummEngine::derefActor(int id, const char *errmsg) const {
 	if (id == 0)
 		debugC(DEBUG_ACTORS, "derefActor(0, \"%s\") in script %d, opcode 0x%x",
-			errmsg, vm.slot[_currentScript].number, _opcode);
+		       errmsg, vm.slot[_currentScript].number, _opcode);
 
 	if (!isValidActor(id)) {
 		if (errmsg)
@@ -2016,21 +2008,19 @@ Actor *ScummEngine::derefActor(int id, const char *errmsg) const {
 Actor *ScummEngine::derefActorSafe(int id, const char *errmsg) const {
 	if (id == 0)
 		debugC(DEBUG_ACTORS, "derefActorSafe(0, \"%s\") in script %d, opcode 0x%x",
-			errmsg, vm.slot[_currentScript].number, _opcode);
+		       errmsg, vm.slot[_currentScript].number, _opcode);
 
 	if (!isValidActor(id)) {
 		debugC(DEBUG_ACTORS, "Invalid actor %d in %s (script %d, opcode 0x%x)",
-			 id, errmsg, vm.slot[_currentScript].number, _opcode);
+		       id, errmsg, vm.slot[_currentScript].number, _opcode);
 		return NULL;
 	}
 	return _actors[id];
 }
 
-
 #pragma mark -
-#pragma mark --- Actor drawing ---
+#pragma mark--- Actor drawing ---
 #pragma mark -
-
 
 void ScummEngine::processActors() {
 	int numactors = 0;
@@ -2118,13 +2108,13 @@ void ScummEngine::processActors() {
 	}
 
 	// Finally draw the now sorted actors
-	Actor** end = _sortedActors + numactors;
-	for (Actor** ac = _sortedActors; ac != end; ++ac) {
-		Actor* a = *ac;
+	Actor **end = _sortedActors + numactors;
+	for (Actor **ac = _sortedActors; ac != end; ++ac) {
+		Actor *a = *ac;
 
 		if (_game.version == 0) {
 			// 0x057B
-			Actor_v0 *a0 = (Actor_v0*) a;
+			Actor_v0 *a0 = (Actor_v0 *)a;
 			if (a0->_speaking & 1) {
 				a0->_speaking ^= 0xFE;
 				++_V0Delay._actorRedrawCount;
@@ -2244,7 +2234,6 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	}
 }
 
-
 void Actor::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
 
 	bcr->_actorID = _number;
@@ -2272,8 +2261,8 @@ void Actor::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
 		bcr->_zbuf = _forceClip;
 		if (bcr->_zbuf == 100) {
 			bcr->_zbuf = _vm->getMaskFromBox(_walkbox);
-			if (bcr->_zbuf > _vm->_gdi->_numZBuffer-1)
-				bcr->_zbuf = _vm->_gdi->_numZBuffer-1;
+			if (bcr->_zbuf > _vm->_gdi->_numZBuffer - 1)
+				bcr->_zbuf = _vm->_gdi->_numZBuffer - 1;
 		}
 
 	} else {
@@ -2285,10 +2274,9 @@ void Actor::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
 			bcr->_zbuf = _vm->getMaskFromBox(_walkbox);
 			if (_vm->_game.version == 0)
 				bcr->_zbuf &= 0x03;
-			if (bcr->_zbuf > _vm->_gdi->_numZBuffer-1)
-				bcr->_zbuf = _vm->_gdi->_numZBuffer-1;
+			if (bcr->_zbuf > _vm->_gdi->_numZBuffer - 1)
+				bcr->_zbuf = _vm->_gdi->_numZBuffer - 1;
 		}
-
 	}
 
 	bcr->_draw_top = 0x7fffffff;
@@ -2348,7 +2336,7 @@ void Actor_v2::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
 		if (_facing == 90)
 			bcr->_actorX -= 8;
 	} else if (_vm->_game.version == 0) {
-			bcr->_actorX += 12;
+		bcr->_actorX += 12;
 	} else if (_vm->_game.version <= 2) {
 		// HACK: We have to adjust the x position by one strip (8 pixels) in
 		// V2 games. However, it is not quite clear to me why. And to fully
@@ -2405,7 +2393,7 @@ void Actor::startAnimActor(int f) {
 			_needRedraw = true;
 			if (f == _initFrame)
 				_cost.reset();
-			_vm->_costumeLoader->costumeDecodeData(this, f, (uint) - 1);
+			_vm->_costumeLoader->costumeDecodeData(this, f, (uint)-1);
 			_frame = f;
 		}
 	} else {
@@ -2438,10 +2426,10 @@ void Actor::startAnimActor(int f) {
 			if (_vm->_game.version >= 3 && f == _initFrame) {
 				_cost.reset();
 				if (_vm->_game.heversion != 0) {
-				((ActorHE *)this)->_auxBlock.reset();
+					((ActorHE *)this)->_auxBlock.reset();
 				}
 			}
-			_vm->_costumeLoader->costumeDecodeData(this, f, (uint) - 1);
+			_vm->_costumeLoader->costumeDecodeData(this, f, (uint)-1);
 			_frame = f;
 		}
 	}
@@ -2485,19 +2473,18 @@ void Actor::animateActor(int anim) {
 
 		// Convert into old cmd code
 		cmd = 0x3F - cmd + 2;
-
 	}
 
 	switch (cmd) {
-	case 2:				// stop walking
+	case 2: // stop walking
 		startAnimActor(_standFrame);
 		stopActorMoving();
 		break;
-	case 3:				// change direction immediatly
+	case 3: // change direction immediatly
 		_moving &= ~MF_TURN;
 		setDirection(dir);
 		break;
-	case 4:				// turn to new direction
+	case 4: // turn to new direction
 		turnToDirection(dir);
 		break;
 	case 64:
@@ -2597,8 +2584,8 @@ void Actor::animateLimb(int limb, int f) {
 		byte *akos = _vm->getResourceAddress(rtCostume, _costume);
 		assert(akos);
 
-		aksq = _vm->findResourceData(MKTAG('A','K','S','Q'), akos);
-		akfo = _vm->findResourceData(MKTAG('A','K','F','O'), akos);
+		aksq = _vm->findResourceData(MKTAG('A', 'K', 'S', 'Q'), akos);
+		akfo = _vm->findResourceData(MKTAG('A', 'K', 'F', 'O'), akos);
 
 		size = _vm->getResourceDataSize(akfo) / 2;
 
@@ -2607,8 +2594,8 @@ void Actor::animateLimb(int limb, int f) {
 				((ScummEngine_v6 *)_vm)->akos_increaseAnim(this, limb, aksq, (const uint16 *)akfo, size);
 		}
 
-//		_needRedraw = true;
-//		_needBgReset = true;
+		//		_needRedraw = true;
+		//		_needBgReset = true;
 	}
 }
 #endif
@@ -2663,8 +2650,7 @@ void ScummEngine::resetActorBgs() {
 			if (_game.heversion != 0 && ((ActorHE *)_actors[j])->_heFlags & 1)
 				continue;
 
-			if (testGfxUsageBit(strip, j) &&
-				((_actors[j]->_top != 0x7fffffff && _actors[j]->_needRedraw) || _actors[j]->_needBgReset)) {
+			if (testGfxUsageBit(strip, j) && ((_actors[j]->_top != 0x7fffffff && _actors[j]->_needRedraw) || _actors[j]->_needBgReset)) {
 				clearGfxUsageBit(strip, j);
 				if ((_actors[j]->_bottom - _actors[j]->_top) >= 0)
 					_gdi->resetBackground(_actors[j]->_top, _actors[j]->_bottom, i);
@@ -2700,11 +2686,9 @@ void ActorHE::drawActorToBackBuf(int x, int y) {
 		_bottom = curBottom;
 }
 
-
 #pragma mark -
-#pragma mark --- Actor talking ---
+#pragma mark--- Actor talking ---
 #pragma mark -
-
 
 // V1 Maniac doesn't have a ScummVar for VAR_TALK_ACTOR, and just uses
 // an internal variable. Emulate this to prevent overwriting script vars...
@@ -2825,9 +2809,8 @@ void ScummEngine::actorTalk(const byte *msg) {
 		int oldact;
 
 		// WORKAROUND bug #770724
-		if (_game.id == GID_LOOM && _roomResource == 23 &&
-			vm.slot[_currentScript].number == 232 && _actorToPrintStrFor == 0) {
-			_actorToPrintStrFor = 2;	// Could be anything from 2 to 5. Maybe compare to original?
+		if (_game.id == GID_LOOM && _roomResource == 23 && vm.slot[_currentScript].number == 232 && _actorToPrintStrFor == 0) {
+			_actorToPrintStrFor = 2; // Could be anything from 2 to 5. Maybe compare to original?
 		}
 
 		a = derefActor(_actorToPrintStrFor, "actorTalk");
@@ -2905,8 +2888,7 @@ void ScummEngine::stopTalk() {
 	act = getTalkingActor();
 	if (act && act < 0x80) {
 		Actor *a = derefActor(act, "stopTalk");
-		if ((_game.version >= 7 && !_string[0].no_talk_anim) ||
-			(_game.version <= 6 && a->isInCurrentRoom() && _useTalkAnims)) {
+		if ((_game.version >= 7 && !_string[0].no_talk_anim) || (_game.version <= 6 && a->isInCurrentRoom() && _useTalkAnims)) {
 			a->runActorTalkScript(a->_talkStopFrame);
 			_useTalkAnims = false;
 		}
@@ -2938,14 +2920,12 @@ void ScummEngine::stopTalk() {
 	}
 }
 
-
 #pragma mark -
-#pragma mark --- TODO ---
+#pragma mark--- TODO ---
 #pragma mark -
-
 
 void ActorHE::setActorCostume(int c) {
-	if (_vm->_game.heversion >= 61 && (c == -1  || c == -2)) {
+	if (_vm->_game.heversion >= 61 && (c == -1 || c == -2)) {
 		_heSkipLimbs = (c == -1);
 		_needRedraw = true;
 		return;
@@ -3005,7 +2985,6 @@ void Actor::setActorCostume(int c) {
 			_cost.reset();
 		}
 	}
-
 
 	// V1 zak uses palette[] as a dynamic costume color array.
 	if (_vm->_game.version <= 1)
@@ -3127,7 +3106,7 @@ void Actor::remapActorPaletteColor(int color, int new_color) {
 		return;
 	}
 
-	akpl = _vm->findResourceData(MKTAG('A','K','P','L'), akos);
+	akpl = _vm->findResourceData(MKTAG('A', 'K', 'P', 'L'), akos);
 	if (!akpl) {
 		debugC(DEBUG_ACTORS, "Actor::remapActorPaletteColor: Can't remap actor %d, costume %d doesn't contain an AKPL block", _number, _costume);
 		return;
@@ -3162,7 +3141,7 @@ void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold)
 		return;
 	}
 
-	akpl = _vm->findResourceData(MKTAG('A','K','P','L'), akos);
+	akpl = _vm->findResourceData(MKTAG('A', 'K', 'P', 'L'), akos);
 	if (!akpl) {
 		debugC(DEBUG_ACTORS, "Actor::remapActorPalette: Can't remap actor %d, costume %d doesn't contain an AKPL block", _number, _costume);
 		return;
@@ -3171,7 +3150,7 @@ void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold)
 	// Get the number palette entries
 	akpl_size = _vm->getResourceDataSize(akpl);
 
-	rgbs = _vm->findResourceData(MKTAG('R','G','B','S'), akos);
+	rgbs = _vm->findResourceData(MKTAG('R', 'G', 'B', 'S'), akos);
 
 	if (!rgbs) {
 		debugC(DEBUG_ACTORS, "Actor::remapActorPalette: Can't remap actor %d costume %d doesn't contain an RGB block", _number, _costume);
@@ -3290,19 +3269,19 @@ void ScummEngine_v71he::postProcessAuxQueue() {
 				if (_game.heversion >= 72)
 					dy -= a->getElevation();
 
-				const uint8 *akax = findResource(MKTAG('A','K','A','X'), cost);
+				const uint8 *akax = findResource(MKTAG('A', 'K', 'A', 'X'), cost);
 				assert(akax);
 				const uint8 *auxd = findPalInPals(akax, ae->subIndex) - _resourceHeaderSize;
 				assert(auxd);
-				const uint8 *frel = findResourceData(MKTAG('F','R','E','L'), auxd);
+				const uint8 *frel = findResourceData(MKTAG('F', 'R', 'E', 'L'), auxd);
 				if (frel) {
 					error("unhandled FREL block");
 				}
-				const uint8 *disp = findResourceData(MKTAG('D','I','S','P'), auxd);
+				const uint8 *disp = findResourceData(MKTAG('D', 'I', 'S', 'P'), auxd);
 				if (disp) {
 					error("unhandled DISP block");
 				}
-				const uint8 *axfd = findResourceData(MKTAG('A','X','F','D'), auxd);
+				const uint8 *axfd = findResourceData(MKTAG('A', 'X', 'F', 'D'), auxd);
 				assert(axfd);
 
 				uint16 comp = READ_LE_UINT16(axfd);
@@ -3322,9 +3301,10 @@ void ScummEngine_v71he::postProcessAuxQueue() {
 						error("unimplemented compression type %d", comp);
 					}
 				}
-				const uint8 *axur = findResourceData(MKTAG('A','X','U','R'), auxd);
+				const uint8 *axur = findResourceData(MKTAG('A', 'X', 'U', 'R'), auxd);
 				if (axur) {
-					uint16 n = READ_LE_UINT16(axur); axur += 2;
+					uint16 n = READ_LE_UINT16(axur);
+					axur += 2;
 					while (n--) {
 						int x1 = (int16)READ_LE_UINT16(axur + 0) + dx;
 						int y1 = (int16)READ_LE_UINT16(axur + 2) + dy;
@@ -3334,12 +3314,12 @@ void ScummEngine_v71he::postProcessAuxQueue() {
 						axur += 8;
 					}
 				}
-				const uint8 *axer = findResourceData(MKTAG('A','X','E','R'), auxd);
+				const uint8 *axer = findResourceData(MKTAG('A', 'X', 'E', 'R'), auxd);
 				if (axer) {
-					a->_auxBlock.visible  = true;
-					a->_auxBlock.r.left   = (int16)READ_LE_UINT16(axer + 0) + dx;
-					a->_auxBlock.r.top    = (int16)READ_LE_UINT16(axer + 2) + dy;
-					a->_auxBlock.r.right  = (int16)READ_LE_UINT16(axer + 4) + dx;
+					a->_auxBlock.visible = true;
+					a->_auxBlock.r.left = (int16)READ_LE_UINT16(axer + 0) + dx;
+					a->_auxBlock.r.top = (int16)READ_LE_UINT16(axer + 2) + dy;
+					a->_auxBlock.r.right = (int16)READ_LE_UINT16(axer + 4) + dx;
 					a->_auxBlock.r.bottom = (int16)READ_LE_UINT16(axer + 6) + dy;
 					adjustRect(a->_auxBlock.r);
 				}
@@ -3371,28 +3351,28 @@ void Actor_v0::animateActor(int anim) {
 	int dir = -1;
 
 	switch (anim) {
-		case 0x00:
-		case 0x04:
-			dir = 0;
-			break;
+	case 0x00:
+	case 0x04:
+		dir = 0;
+		break;
 
-		case 0x01:
-		case 0x05:
-			dir = 1;
-			break;
+	case 0x01:
+	case 0x05:
+		dir = 1;
+		break;
 
-		case 0x02:
-		case 0x06:
-			dir = 2;
-			break;
+	case 0x02:
+	case 0x06:
+		dir = 2;
+		break;
 
-		case 0x03:
-		case 0x07:
-			dir = 3;
-			break;
+	case 0x03:
+	case 0x07:
+		dir = 3;
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	if (isInCurrentRoom()) {

@@ -35,17 +35,16 @@
 #include "common/singleton.h"
 
 #include "sword25/kernel/common.h"
-#include "sword25/kernel/persistable.h"
 #include "sword25/kernel/objectregistry.h"
+#include "sword25/kernel/persistable.h"
 
 namespace Sword25 {
 
 class Region;
 
-class RegionRegistry :
-			public ObjectRegistry<Region>,
-			public Persistable,
-			public Common::Singleton<RegionRegistry> {
+class RegionRegistry : public ObjectRegistry<Region>,
+                       public Persistable,
+                       public Common::Singleton<RegionRegistry> {
 public:
 	virtual bool persist(OutputPersistenceBlock &writer);
 	virtual bool unpersist(InputPersistenceBlock &reader);

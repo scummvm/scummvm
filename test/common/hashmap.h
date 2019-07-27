@@ -1,11 +1,10 @@
 #include <cxxtest/TestSuite.h>
 
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 
-class HashMapTestSuite : public CxxTest::TestSuite
-{
-	public:
+class HashMapTestSuite : public CxxTest::TestSuite {
+public:
 	void test_empty_clear() {
 		Common::HashMap<int, int> container;
 		TS_ASSERT(container.empty());
@@ -155,47 +154,47 @@ class HashMapTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(container2[323], 32);
 	}
 
-    void test_collision() {
+	void test_collision() {
 		// NB: The usefulness of this example depends strongly on the
 		// specific hashmap implementation.
 		// It is constructed to insert multiple colliding elements.
 		Common::HashMap<int, int> h;
 		h[5] = 1;
-		h[32+5] = 1;
-		h[64+5] = 1;
-		h[128+5] = 1;
+		h[32 + 5] = 1;
+		h[64 + 5] = 1;
+		h[128 + 5] = 1;
 		TS_ASSERT(h.contains(5));
-		TS_ASSERT(h.contains(32+5));
-		TS_ASSERT(h.contains(64+5));
-		TS_ASSERT(h.contains(128+5));
-		h.erase(32+5);
+		TS_ASSERT(h.contains(32 + 5));
+		TS_ASSERT(h.contains(64 + 5));
+		TS_ASSERT(h.contains(128 + 5));
+		h.erase(32 + 5);
 		TS_ASSERT(h.contains(5));
-		TS_ASSERT(h.contains(64+5));
-		TS_ASSERT(h.contains(128+5));
+		TS_ASSERT(h.contains(64 + 5));
+		TS_ASSERT(h.contains(128 + 5));
 		h.erase(5);
-		TS_ASSERT(h.contains(64+5));
-		TS_ASSERT(h.contains(128+5));
-		h[32+5] = 1;
-		TS_ASSERT(h.contains(32+5));
-		TS_ASSERT(h.contains(64+5));
-		TS_ASSERT(h.contains(128+5));
+		TS_ASSERT(h.contains(64 + 5));
+		TS_ASSERT(h.contains(128 + 5));
+		h[32 + 5] = 1;
+		TS_ASSERT(h.contains(32 + 5));
+		TS_ASSERT(h.contains(64 + 5));
+		TS_ASSERT(h.contains(128 + 5));
 		h[5] = 1;
 		TS_ASSERT(h.contains(5));
-		TS_ASSERT(h.contains(32+5));
-		TS_ASSERT(h.contains(64+5));
-		TS_ASSERT(h.contains(128+5));
+		TS_ASSERT(h.contains(32 + 5));
+		TS_ASSERT(h.contains(64 + 5));
+		TS_ASSERT(h.contains(128 + 5));
 		h.erase(5);
-		TS_ASSERT(h.contains(32+5));
-		TS_ASSERT(h.contains(64+5));
-		TS_ASSERT(h.contains(128+5));
-		h.erase(64+5);
-		TS_ASSERT(h.contains(32+5));
-		TS_ASSERT(h.contains(128+5));
-		h.erase(128+5);
-		TS_ASSERT(h.contains(32+5));
-		h.erase(32+5);
+		TS_ASSERT(h.contains(32 + 5));
+		TS_ASSERT(h.contains(64 + 5));
+		TS_ASSERT(h.contains(128 + 5));
+		h.erase(64 + 5);
+		TS_ASSERT(h.contains(32 + 5));
+		TS_ASSERT(h.contains(128 + 5));
+		h.erase(128 + 5);
+		TS_ASSERT(h.contains(32 + 5));
+		h.erase(32 + 5);
 		TS_ASSERT(h.empty());
-    }
+	}
 
 	void test_iterator() {
 		Common::HashMap<int, int> container;
@@ -217,7 +216,7 @@ class HashMapTestSuite : public CxxTest::TestSuite
 			TS_ASSERT(!(found & (1 << key)));
 			found |= 1 << key;
 		}
-		TS_ASSERT(found == 16+8+4);
+		TS_ASSERT(found == 16 + 8 + 4);
 
 		found = 0;
 		Common::HashMap<int, int>::const_iterator j;
@@ -227,8 +226,8 @@ class HashMapTestSuite : public CxxTest::TestSuite
 			TS_ASSERT(!(found & (1 << key)));
 			found |= 1 << key;
 		}
-		TS_ASSERT(found == 16+8+4);
-}
+		TS_ASSERT(found == 16 + 8 + 4);
+	}
 
 	// TODO: Add test cases for iterators, find, ...
 };

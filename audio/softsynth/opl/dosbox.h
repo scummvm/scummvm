@@ -32,74 +32,75 @@
 
 #ifndef DISABLE_DOSBOX_OPL
 
-#include "audio/fmopl.h"
+#	include "audio/fmopl.h"
 
 namespace OPL {
 namespace DOSBox {
 
-struct Timer {
-	double startTime;
-	double delay;
-	bool enabled, overflow, masked;
-	uint8 counter;
+	struct Timer {
+		double startTime;
+		double delay;
+		bool enabled, overflow, masked;
+		uint8 counter;
 
-	Timer();
+		Timer();
 
-	//Call update before making any further changes
-	void update(double time);
+		//Call update before making any further changes
+		void update(double time);
 
-	//On a reset make sure the start is in sync with the next cycle
-	void reset(double time);
+		//On a reset make sure the start is in sync with the next cycle
+		void reset(double time);
 
-	void stop();
+		void stop();
 
-	void start(double time, int scale);
-};
+		void start(double time, int scale);
+	};
 
-struct Chip {
-	//Last selected register
-	Timer timer[2];
-	//Check for it being a write to the timer
-	bool write(uint32 addr, uint8 val);
-	//Read the current timer state, will use current double
-	uint8 read();
-};
+	struct Chip {
+		//Last selected register
+		Timer timer[2];
+		//Check for it being a write to the timer
+		bool write(uint32 addr, uint8 val);
+		//Read the current timer state, will use current double
+		uint8 read();
+	};
 
-namespace DBOPL {
-struct Chip;
-} // end of namespace DBOPL
+	namespace DBOPL {
+		struct Chip;
+	} // end of namespace DBOPL
 
-class OPL : public ::OPL::EmulatedOPL {
-private:
-	Config::OplType _type;
-	uint _rate;
+	class OPL : public ::OPL::EmulatedOPL {
+	private:
+		Config::OplType _type;
+		uint _rate;
 
-	DBOPL::Chip *_emulator;
-	Chip _chip[2];
-	union {
-		uint16 normal;
-		uint8 dual[2];
-	} _reg;
+		DBOPL::Chip *_emulator;
+		Chip _chip[2];
+		union {
+			uint16 normal;
+			uint8 dual[2];
+		} _reg;
 
-	void free();
-	void dualWrite(uint8 index, uint8 reg, uint8 val);
-public:
-	OPL(Config::OplType type);
-	~OPL();
+		void free();
+		void dualWrite(uint8 index, uint8 reg, uint8 val);
 
-	bool init();
-	void reset();
+	public:
+		OPL(Config::OplType type);
+		~OPL();
 
-	void write(int a, int v);
-	byte read(int a);
+		bool init();
+		void reset();
 
-	void writeReg(int r, int v);
+		void write(int a, int v);
+		byte read(int a);
 
-	bool isStereo() const { return _type != Config::kOpl2; }
+		void writeReg(int r, int v);
 
-protected:
-	void generateSamples(int16 *buffer, int length);
-};
+		bool isStereo() const { return _type != Config::kOpl2; }
+
+	protected:
+		void generateSamples(int16 *buffer, int length);
+	};
 
 } // End of namespace DOSBox
 } // End of namespace OPL

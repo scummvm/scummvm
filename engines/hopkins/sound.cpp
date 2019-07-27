@@ -25,23 +25,24 @@
 #include "hopkins/globals.h"
 #include "hopkins/hopkins.h"
 
-#include "audio/decoders/adpcm_intern.h"
-#include "audio/decoders/wave.h"
-#include "audio/softsynth/pcspk.h"
-#include "common/system.h"
-#include "common/config-manager.h"
-#include "common/file.h"
-#include "common/textconsole.h"
 #include "audio/audiostream.h"
+#include "audio/decoders/adpcm_intern.h"
+#include "audio/decoders/raw.h"
+#include "audio/decoders/wave.h"
 #include "audio/mods/module.h"
 #include "audio/mods/protracker.h"
-#include "audio/decoders/raw.h"
+#include "audio/softsynth/pcspk.h"
+#include "common/config-manager.h"
+#include "common/file.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 
 namespace Hopkins {
 
 class APC_ADPCMStream : public Audio::DVI_ADPCMStream {
 public:
-	APC_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int rate, int channels) : DVI_ADPCMStream(stream, disposeAfterUse, stream->size(), rate, channels, 0) {
+	APC_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int rate, int channels)
+	  : DVI_ADPCMStream(stream, disposeAfterUse, stream->size(), rate, channels, 0) {
 		stream->seek(-12, SEEK_CUR);
 		_status.ima_ch[0].last = _startValue[0] = stream->readUint32LE();
 		_status.ima_ch[1].last = _startValue[1] = stream->readUint32LE();
@@ -487,19 +488,19 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 		return false;
 
 	if ((voiceMode == 1 || voiceMode == 2)
-	 && (   voiceId == 4   || voiceId == 16  || voiceId == 121
-	     || voiceId == 142 || voiceId == 182 || voiceId == 191
-		 || voiceId == 212 || voiceId == 225 || voiceId == 239
-		 || voiceId == 245 || voiceId == 297 || voiceId == 308
-		 || voiceId == 333 || voiceId == 348 || voiceId == 352
-		 || voiceId == 358 || voiceId == 364 || voiceId == 371
-		 || voiceId == 394 || voiceId == 414 || voiceId == 429
-		 || voiceId == 442 || voiceId == 446 || voiceId == 461
-		 || voiceId == 468 || voiceId == 476 || voiceId == 484
-		 || voiceId == 491 || voiceId == 497 || voiceId == 501
-		 || voiceId == 511 || voiceId == 520 || voiceId == 536
-		 || voiceId == 554 || voiceId == 566 || voiceId == 573
-		 || voiceId == 632 || voiceId == 645))
+	    && (voiceId == 4 || voiceId == 16 || voiceId == 121
+	        || voiceId == 142 || voiceId == 182 || voiceId == 191
+	        || voiceId == 212 || voiceId == 225 || voiceId == 239
+	        || voiceId == 245 || voiceId == 297 || voiceId == 308
+	        || voiceId == 333 || voiceId == 348 || voiceId == 352
+	        || voiceId == 358 || voiceId == 364 || voiceId == 371
+	        || voiceId == 394 || voiceId == 414 || voiceId == 429
+	        || voiceId == 442 || voiceId == 446 || voiceId == 461
+	        || voiceId == 468 || voiceId == 476 || voiceId == 484
+	        || voiceId == 491 || voiceId == 497 || voiceId == 501
+	        || voiceId == 511 || voiceId == 520 || voiceId == 536
+	        || voiceId == 554 || voiceId == 566 || voiceId == 573
+	        || voiceId == 632 || voiceId == 645))
 		fileNumber = 684;
 
 	if (voiceMode == 1 || voiceMode == 2)
@@ -641,7 +642,6 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 		if (!_sWav[20]._active && !dispTxtFl)
 			break;
 	} while (!_vm->shouldQuit() && !breakFlag);
-
 
 	stopVoice(2);
 	removeWavSample(20);
@@ -816,7 +816,7 @@ void SoundManager::loadWavSample(int wavIndex, const Common::String &filename, b
 	if (loadVoice(filename, 0, 0, _sWav[wavIndex])) {
 		_sWav[wavIndex]._active = true;
 		_sWav[wavIndex]._freeSampleFl = freeSample;
-	} else{
+	} else {
 		_sWav[wavIndex]._active = false;
 	}
 }
@@ -861,12 +861,12 @@ void SoundManager::playWavSample(int voiceIndex, int wavIndex) {
 	// handle to that sound. This can currently happen (but probably
 	// shouldn't) when skipping a movie.
 	if (_vm->_mixer->isSoundHandleActive(_sWav[wavIndex]._soundHandle))
-		  _vm->_mixer->stopHandle(_sWav[wavIndex]._soundHandle);
+		_vm->_mixer->stopHandle(_sWav[wavIndex]._soundHandle);
 
 	// Start the voice playing
 	_sWav[wavIndex]._audioStream->rewind();
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sWav[wavIndex]._soundHandle,
-		_sWav[wavIndex]._audioStream, -1, volume, 0, DisposeAfterUse::NO);
+	                        _sWav[wavIndex]._audioStream, -1, volume, 0, DisposeAfterUse::NO);
 }
 
 void SoundManager::syncSoundSettings() {

@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "xeen/dialogs/dialogs.h"
+#include "common/scummsys.h"
 #include "xeen/events.h"
 #include "xeen/resources.h"
 #include "xeen/screen.h"
@@ -46,19 +46,19 @@ void ButtonContainer::restoreButtons() {
 }
 
 void ButtonContainer::addButton(const Common::Rect &bounds, int val,
-		SpriteResource *sprites) {
+                                SpriteResource *sprites) {
 	_buttons.push_back(UIButton(bounds, val, _buttons.size() * 2, sprites, sprites != nullptr));
 }
 
 void ButtonContainer::addButton(const Common::Rect &bounds, int val,
-		int frameNum, SpriteResource *sprites) {
+                                int frameNum, SpriteResource *sprites) {
 	_buttons.push_back(UIButton(bounds, val, frameNum, sprites, sprites != nullptr));
 }
 
 void ButtonContainer::addPartyButtons(XeenEngine *vm) {
 	for (uint idx = 0; idx < MAX_ACTIVE_PARTY; ++idx) {
 		addButton(Common::Rect(Res.CHAR_FACES_X[idx], 150, Res.CHAR_FACES_X[idx] + 32, 182),
-			Common::KEYCODE_F1 + idx);
+		          Common::KEYCODE_F1 + idx);
 	}
 }
 
@@ -108,7 +108,7 @@ bool ButtonContainer::checkEvents(XeenEngine *vm) {
 			else if (keycode == Common::KEYCODE_KP_ENTER)
 				_buttonValue = Common::KEYCODE_RETURN;
 			else if (keycode != Common::KEYCODE_LCTRL && keycode != Common::KEYCODE_RCTRL
-					&& keycode != Common::KEYCODE_LALT && keycode != Common::KEYCODE_RALT)
+			         && keycode != Common::KEYCODE_LALT && keycode != Common::KEYCODE_RALT)
 				_buttonValue = keycode;
 
 			if (_buttonValue)
@@ -152,7 +152,7 @@ void ButtonContainer::drawButtons(XSurface *surface) {
 		if (btn._draw) {
 			assert(btn._sprites);
 			btn._sprites->draw(*surface, btn._frameNum,
-				Common::Point(btn._bounds.left, btn._bounds.top));
+			                   Common::Point(btn._bounds.left, btn._bounds.top));
 		}
 	}
 }

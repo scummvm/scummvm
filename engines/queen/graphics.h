@@ -90,7 +90,6 @@ class QueenEngine;
 
 class Graphics {
 public:
-
 	Graphics(QueenEngine *vm);
 	~Graphics();
 
@@ -169,17 +168,15 @@ public:
 	void update(uint16 room);
 
 	enum {
-		ARROW_BOB_UP        =  62,
-		ARROW_BOB_DOWN      =  63,
-		MAX_BOBS_NUMBER     =  64,
-		MAX_STRING_LENGTH   = 255,
-		MAX_STRING_SIZE     = (MAX_STRING_LENGTH + 1),
+		ARROW_BOB_UP = 62,
+		ARROW_BOB_DOWN = 63,
+		MAX_BOBS_NUMBER = 64,
+		MAX_STRING_LENGTH = 255,
+		MAX_STRING_SIZE = (MAX_STRING_LENGTH + 1),
 		BOB_SHRINK_BUF_SIZE = 60000
 	};
 
-
 private:
-
 	BobSlot _bobs[MAX_BOBS_NUMBER];
 
 	//! bobs to display
@@ -223,7 +220,6 @@ private:
 
 class BamScene {
 public:
-
 	BamScene(QueenEngine *vm);
 
 	void playSfx();
@@ -237,19 +233,18 @@ public:
 	enum {
 		BOB_OBJ1 = 5,
 		BOB_OBJ2 = 6,
-		BOB_FX   = 7
+		BOB_FX = 7
 	};
 
 	enum {
-		F_STOP     = 0,
-		F_PLAY     = 1,
+		F_STOP = 0,
+		F_PLAY = 1,
 		F_REQ_STOP = 2
 	};
 
 	uint16 _flag, _index;
 
 private:
-
 	struct BamDataObj {
 		int16 x, y;
 		int16 frame;

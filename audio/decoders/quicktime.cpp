@@ -21,10 +21,10 @@
  */
 
 #include "common/debug.h"
-#include "common/util.h"
 #include "common/memstream.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
 #include "audio/decoders/codec.h"
 #include "audio/decoders/quicktime.h"
@@ -45,7 +45,9 @@ namespace Audio {
  */
 class SilentAudioStream : public AudioStream {
 public:
-	SilentAudioStream(int rate, bool stereo) : _rate(rate), _isStereo(stereo) {}
+	SilentAudioStream(int rate, bool stereo)
+	  : _rate(rate)
+	  , _isStereo(stereo) {}
 
 	int readBuffer(int16 *buffer, const int numSamples) {
 		memset(buffer, 0, numSamples * 2);
@@ -67,12 +69,13 @@ private:
  */
 class ForcedMonoAudioStream : public AudioStream {
 public:
-	ForcedMonoAudioStream(AudioStream *parentStream, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) :
-			_parentStream(parentStream), _disposeAfterUse(disposeAfterUse) {}
+	ForcedMonoAudioStream(AudioStream *parentStream, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES)
+	  : _parentStream(parentStream)
+	  , _disposeAfterUse(disposeAfterUse) {}
 
 	~ForcedMonoAudioStream() {
 		if (_disposeAfterUse == DisposeAfterUse::YES)
-				delete _parentStream;
+			delete _parentStream;
 	}
 
 	int readBuffer(int16 *buffer, const int numSamples) {
@@ -100,7 +103,8 @@ private:
 	DisposeAfterUse::Flag _disposeAfterUse;
 };
 
-QuickTimeAudioDecoder::QuickTimeAudioDecoder() : Common::QuickTimeParser() {
+QuickTimeAudioDecoder::QuickTimeAudioDecoder()
+  : Common::QuickTimeParser() {
 }
 
 QuickTimeAudioDecoder::~QuickTimeAudioDecoder() {
@@ -144,8 +148,8 @@ Common::QuickTimeParser::SampleDesc *QuickTimeAudioDecoder::readSampleDesc(Track
 		_fd->readUint16BE(); // revision level
 		_fd->readUint32BE(); // vendor
 
-		entry->_channels = _fd->readUint16BE();			 // channel count
-		entry->_bitsPerSample = _fd->readUint16BE();	  // sample size
+		entry->_channels = _fd->readUint16BE(); // channel count
+		entry->_bitsPerSample = _fd->readUint16BE(); // sample size
 
 		_fd->readUint16BE(); // compression id = 0
 		_fd->readUint16BE(); // packet size = 0
@@ -159,7 +163,7 @@ Common::QuickTimeParser::SampleDesc *QuickTimeAudioDecoder::readSampleDesc(Track
 		} else if (stsdVersion == 1) {
 			// Read QT version 1 fields. In version 0 these dont exist.
 			entry->_samplesPerFrame = _fd->readUint32BE();
-			debug(0, "stsd samples_per_frame =%d",entry->_samplesPerFrame);
+			debug(0, "stsd samples_per_frame =%d", entry->_samplesPerFrame);
 			_fd->readUint32BE(); // bytes per packet
 			entry->_bytesPerFrame = _fd->readUint32BE();
 			debug(0, "stsd bytes_per_frame =%d", entry->_bytesPerFrame);
@@ -285,7 +289,7 @@ Timestamp QuickTimeAudioDecoder::QuickTimeAudioTrack::getCurrentTrackTime() cons
 		return getLength().convertToFramerate(getRate());
 
 	return Timestamp(0, _parentTrack->editList[_curEdit].timeOffset, _decoder->_timeScale).convertToFramerate(getRate())
-			+ _curMediaPos - Timestamp(0, _parentTrack->editList[_curEdit].mediaTime, _parentTrack->timeScale).convertToFramerate(getRate());
+	  + _curMediaPos - Timestamp(0, _parentTrack->editList[_curEdit].mediaTime, _parentTrack->timeScale).convertToFramerate(getRate());
 }
 
 void QuickTimeAudioDecoder::QuickTimeAudioTrack::queueRemainingAudio() {
@@ -467,8 +471,8 @@ void QuickTimeAudioDecoder::QuickTimeAudioTrack::enterNewEdit(const Timestamp &p
 	// Convert our variables from the media time (position) and the edit time (based on position)
 	// and the media time
 	Timestamp curAudioTime = Timestamp(0, _parentTrack->editList[_curEdit].mediaTime, _parentTrack->timeScale)
-		+ position.convertToFramerate(_parentTrack->timeScale)
-		- Timestamp(0, _parentTrack->editList[_curEdit].timeOffset, _decoder->_timeScale).convertToFramerate(_parentTrack->timeScale);
+	  + position.convertToFramerate(_parentTrack->timeScale)
+	  - Timestamp(0, _parentTrack->editList[_curEdit].timeOffset, _decoder->_timeScale).convertToFramerate(_parentTrack->timeScale);
 
 	uint32 sample = curAudioTime.totalNumberOfFrames();
 	uint32 seekSample = sample;
@@ -544,7 +548,7 @@ Timestamp QuickTimeAudioDecoder::QuickTimeAudioTrack::getChunkLength(uint chunk,
 	return Timestamp(0, getAACSampleTime(chunkSampleCount, skipAACPrimer), getRate());
 }
 
-uint32 QuickTimeAudioDecoder::QuickTimeAudioTrack::getAACSampleTime(uint32 totalSampleCount, bool skipAACPrimer) const{
+uint32 QuickTimeAudioDecoder::QuickTimeAudioTrack::getAACSampleTime(uint32 totalSampleCount, bool skipAACPrimer) const {
 	uint32 curSample = 0;
 	uint32 time = 0;
 
@@ -575,7 +579,8 @@ uint32 QuickTimeAudioDecoder::QuickTimeAudioTrack::getAACSampleTime(uint32 total
 	return time;
 }
 
-QuickTimeAudioDecoder::AudioSampleDesc::AudioSampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag) : Common::QuickTimeParser::SampleDesc(parentTrack, codecTag) {
+QuickTimeAudioDecoder::AudioSampleDesc::AudioSampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag)
+  : Common::QuickTimeParser::SampleDesc(parentTrack, codecTag) {
 	_channels = 0;
 	_sampleRate = 0;
 	_samplesPerFrame = 0;
@@ -653,7 +658,8 @@ AudioStream *QuickTimeAudioDecoder::AudioSampleDesc::createAudioStream(Common::S
 }
 
 void QuickTimeAudioDecoder::AudioSampleDesc::initCodec() {
-	delete _codec; _codec = 0;
+	delete _codec;
+	_codec = 0;
 
 	switch (_codecTag) {
 	case MKTAG('Q', 'D', 'M', '2'):

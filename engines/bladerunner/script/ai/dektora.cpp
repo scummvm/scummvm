@@ -24,7 +24,8 @@
 
 namespace BladeRunner {
 
-AIScriptDektora::AIScriptDektora(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptDektora::AIScriptDektora(BladeRunnerEngine *vm)
+  : AIScriptBase(vm) {
 	_flag = false;
 	_x = _y = _z = 0.0f;
 }
@@ -51,11 +52,10 @@ bool AIScriptDektora::Update() {
 			Actor_Set_At_Waypoint(kActorDektora, 39, 0);
 			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraStartWalkingAround);
 		} else {
-			if ( Game_Flag_Query(kFlagAR02DektoraWillBuyScorpions)
-			 && !Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)
-			 &&  Player_Query_Current_Scene() != kSceneAR01
-			 &&  Player_Query_Current_Scene() != kSceneAR02
-			) {
+			if (Game_Flag_Query(kFlagAR02DektoraWillBuyScorpions)
+			    && !Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)
+			    && Player_Query_Current_Scene() != kSceneAR01
+			    && Player_Query_Current_Scene() != kSceneAR02) {
 #if BLADERUNNER_ORIGINAL_BUGS
 				if (Game_Flag_Query(kFlagAR02Entered)) {
 					Item_Remove_From_World(kItemScorpions);
@@ -159,9 +159,8 @@ void AIScriptDektora::CompletedMovementTrack() {
 
 	case kGoalDektoraWalkAroundAsReplicant:
 		if (Random_Query(1, 7) == 1
-		 && Actor_Query_Goal_Number(kActorEarlyQ) != 1
-		 && Actor_Query_Goal_Number(kActorEarlyQ) != 101
-		) {
+		    && Actor_Query_Goal_Number(kActorEarlyQ) != 1
+		    && Actor_Query_Goal_Number(kActorEarlyQ) != 101) {
 			Game_Flag_Set(kFlagAR02DektoraWillBuyScorpions);
 			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraStartWalkingAround);
 		} else {
@@ -171,9 +170,8 @@ void AIScriptDektora::CompletedMovementTrack() {
 
 	case kGoalDektoraWalkAroundAsHuman:
 		if (Random_Query(1, 5) == 1
-		 && Actor_Query_Goal_Number(kActorEarlyQ) != 1
-		 && Actor_Query_Goal_Number(kActorEarlyQ) != 101
-		) {
+		    && Actor_Query_Goal_Number(kActorEarlyQ) != 1
+		    && Actor_Query_Goal_Number(kActorEarlyQ) != 101) {
 			Game_Flag_Set(kFlagAR02DektoraWillBuyScorpions);
 			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraStartWalkingAround);
 		} else {
@@ -202,7 +200,6 @@ void AIScriptDektora::CompletedMovementTrack() {
 
 	default:
 		return; //false;
-
 	}
 
 	return; //true;
@@ -215,14 +212,14 @@ void AIScriptDektora::ReceivedClue(int clueId, int fromActorId) {
 void AIScriptDektora::ClickedByPlayer() {
 	if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraGone) {
 		Actor_Face_Actor(0, kActorDektora, true);
-		Actor_Says(kActorMcCoy, 8630, 12);  // What a waste
+		Actor_Says(kActorMcCoy, 8630, 12); // What a waste
 
 		return; //true;
 	}
 
 	if (Actor_Query_Goal_Number(kActorDektora) < kGoalDektoraStartChapter3) {
 		Actor_Face_Actor(kActorMcCoy, kActorDektora, true);
-		Actor_Says(kActorMcCoy, 8590, 13);  // Not the talkative type
+		Actor_Says(kActorMcCoy, 8590, 13); // Not the talkative type
 	}
 
 	if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR08Dance) {
@@ -244,8 +241,7 @@ void AIScriptDektora::EnteredScene(int sceneId) {
 
 void AIScriptDektora::OtherAgentEnteredThisScene(int otherActorId) {
 	if (otherActorId == kActorMcCoy
-	 && Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR08GoToNR10
-	) {
+	    && Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR08GoToNR10) {
 		Scene_Exits_Disable();
 		Actor_Change_Animation_Mode(kActorDektora, 23);
 	}
@@ -268,13 +264,12 @@ void AIScriptDektora::ShotAtAndMissed() {
 
 bool AIScriptDektora::ShotAtAndHit() {
 	if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR11Burning
-	 || Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR11BurningGoToMcCoy
-	 || Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR11BurningGoToWindow
-	) {
+	    || Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR11BurningGoToMcCoy
+	    || Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR11BurningGoToWindow) {
 		Actor_Set_Health(kActorDektora, 100, 100);
 		if (_vm->_cutContent) {
-		// add hit sounds with small probability
-		switch (Random_Query(1, 10)) {
+			// add hit sounds with small probability
+			switch (Random_Query(1, 10)) {
 			case 1:
 				Sound_Play_Speech_Line(kActorDektora, 9000, 65, 0, 99);
 				break;
@@ -324,9 +319,8 @@ void AIScriptDektora::Retired(int byActorId) {
 	}
 
 	if (byActorId == kActorSteele
-	 && Actor_Query_In_Set(kActorSteele, kSetHF06)
-	 && Actor_Query_In_Set(kActorMcCoy, kSetHF06)
-	) {
+	    && Actor_Query_In_Set(kActorSteele, kSetHF06)
+	    && Actor_Query_In_Set(kActorMcCoy, kSetHF06)) {
 		Non_Player_Actor_Combat_Mode_On(kActorSteele, kActorCombatStateUncover, true, kActorMcCoy, 15, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 25, 300, false);
 	}
 
@@ -383,8 +377,7 @@ bool AIScriptDektora::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Append_With_Facing(kActorDektora, 288, 35, 528);
 
 		if (Random_Query(1, 2) == 1
-		 && Game_Flag_Query(kFlagAR02DektoraWillBuyScorpions)
-		) {
+		    && Game_Flag_Query(kFlagAR02DektoraWillBuyScorpions)) {
 			AI_Movement_Track_Append(kActorDektora, 289, 0);
 			AI_Movement_Track_Append_With_Facing(kActorDektora, 290, 2, 979);
 			AI_Movement_Track_Append(kActorDektora, 289, 0);
@@ -407,8 +400,7 @@ bool AIScriptDektora::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Append(kActorDektora, 40, 90);
 
 		if (Game_Flag_Query(kFlagZubenRetired)
-		 && Game_Flag_Query(kFlagLucyIsReplicant)
-		) {
+		    && Game_Flag_Query(kFlagLucyIsReplicant)) {
 			AI_Movement_Track_Append(kActorDektora, 33, 180);
 		} else {
 			AI_Movement_Track_Append(kActorDektora, 33, 160);
@@ -585,7 +577,6 @@ bool AIScriptDektora::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	default:
 		return false;
-
 	}
 
 	return true;
@@ -609,8 +600,7 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 	case 2:
 		*animation = kModelAnimationDektoraStandingNodShort;
 		if (_animationFrame == 0
-		 && _flag
-		) {
+		    && _flag) {
 			*animation = kModelAnimationDektoraStandingIdle;
 			_animationState = 0;
 		} else {
@@ -785,8 +775,7 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 		*animation = kModelAnimationDektoraCombatPunchAttack;
 		_animationFrame++;
 		if (_animationFrame == 6
-		 && Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR10AttackMcCoy
-		) {
+		    && Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR10AttackMcCoy) {
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 		}
 
@@ -1103,8 +1092,7 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 		*animation = kModelAnimationDektoraStandingTalkGestureA;
 		_animationFrame++;
 		if (_animationFrame == 8
-		 && Actor_Query_In_Set(kActorDektora, kSetNR10)
-		) {
+		    && Actor_Query_In_Set(kActorDektora, kSetNR10)) {
 			Scene_Loop_Start_Special(kSceneLoopModeOnce, 4, true);
 		}
 
@@ -1195,8 +1183,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 
 	case kAnimationModeTalk:
 		if (_animationState < 2
-		 || _animationState > 8
-		) {
+		    || _animationState > 8) {
 			_animationState = 2;
 			_animationFrame = 0;
 			_flag = false;
@@ -1255,8 +1242,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 
 	case 12:
 		if (_animationState < 2
-		 || _animationState > 8
-		) {
+		    || _animationState > 8) {
 			_animationState = 3;
 			_animationFrame = 0;
 			_flag = false;
@@ -1265,8 +1251,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 
 	case 13:
 		if (_animationState < 2
-		 || _animationState > 8
-		) {
+		    || _animationState > 8) {
 			_animationState = 4;
 			_animationFrame = 0;
 			_flag = false;
@@ -1275,8 +1260,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 
 	case 14:
 		if (_animationState < 2
-		 || _animationState > 8
-		) {
+		    || _animationState > 8) {
 			_animationState = 5;
 			_animationFrame = 0;
 			_flag = 0;
@@ -1285,8 +1269,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 
 	case 15:
 		if (_animationState < 2
-		 || _animationState > 8
-		) {
+		    || _animationState > 8) {
 			_animationState = 6;
 			_animationFrame = 0;
 			_flag = false;
@@ -1295,8 +1278,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 
 	case 16:
 		if (_animationState < 2
-		 || _animationState > 8
-		) {
+		    || _animationState > 8) {
 			_animationState = 7;
 			_animationFrame = 0;
 			_flag = false;
@@ -1305,8 +1287,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 
 	case 17:
 		if (_animationState < 2
-		 || _animationState > 8
-		) {
+		    || _animationState > 8) {
 			_animationState = 8;
 			_animationFrame = 0;
 			_flag = false;
@@ -1352,8 +1333,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 
 	case 30:
 		if (_animationState != 27
-		 && _animationState != 28
-		) {
+		    && _animationState != 28) {
 			_animationState = 27;
 			_animationFrame = 0;
 			_flag = false;
@@ -1362,8 +1342,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 
 	case 31:
 		if (_animationState != 27
-		 && _animationState != 28
-		) {
+		    && _animationState != 28) {
 			_animationState = 28;
 			_animationFrame = 0;
 			_flag = false;
@@ -1428,17 +1407,17 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptDektora::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptDektora::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptDektora::ReachedMovementTrackWaypoint(int waypointId) {
@@ -1459,9 +1438,8 @@ double AIScriptDektora::comp_distance(int actorId, float x1, float y1, float z1)
 
 void AIScriptDektora::checkCombat() {
 	if (Actor_Query_In_Set(kActorDektora, kSetHF01)
-	 && Global_Variable_Query(kVariableChapter) == 5
-	 && Actor_Query_Goal_Number(kActorDektora) != 450
-	) {
+	    && Global_Variable_Query(kVariableChapter) == 5
+	    && Actor_Query_Goal_Number(kActorDektora) != 450) {
 		if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsDektora) {
 			Global_Variable_Set(kVariableAffectionTowards, kAffectionTowardsNone);
 		}

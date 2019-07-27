@@ -21,9 +21,9 @@
  */
 
 #include "titanic/sound/music_room_instrument.h"
-#include "titanic/sound/sound_manager.h"
-#include "titanic/core/project_item.h"
 #include "titanic/core/game_object.h"
+#include "titanic/core/project_item.h"
+#include "titanic/sound/sound_manager.h"
 
 namespace Titanic {
 
@@ -49,8 +49,10 @@ void CMusicRoomInstrument::deinit() {
 	_buffer = nullptr;
 }
 
-CMusicRoomInstrument::CMusicRoomInstrument(CProjectItem *project, CSoundManager *soundManager, MusicWaveInstrument instrument) :
-		_project(project), _soundManager(soundManager), _instrument(instrument) {
+CMusicRoomInstrument::CMusicRoomInstrument(CProjectItem *project, CSoundManager *soundManager, MusicWaveInstrument instrument)
+  : _project(project)
+  , _soundManager(soundManager)
+  , _instrument(instrument) {
 	Common::fill(&_gameObjects[0], &_gameObjects[4], (CGameObject *)nullptr);
 	_insStartTime = 0.0;
 	_waveIndex = -1;

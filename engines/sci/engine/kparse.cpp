@@ -22,11 +22,11 @@
 
 /* String and parser handling */
 
-#include "sci/resource.h"
-#include "sci/engine/state.h"
-#include "sci/engine/selector.h"
-#include "sci/engine/message.h"
 #include "sci/engine/kernel.h"
+#include "sci/engine/message.h"
+#include "sci/engine/selector.h"
+#include "sci/engine/state.h"
+#include "sci/resource.h"
 
 //#define DEBUG_PARSER
 
@@ -35,7 +35,6 @@ namespace Sci {
 /*************************************************************/
 /* Parser */
 /**********/
-
 
 reg_t kSaid(EngineState *s, int argc, reg_t *argv) {
 	reg_t heap_said_block = argv[0];
@@ -59,8 +58,8 @@ reg_t kSaid(EngineState *s, int argc, reg_t *argv) {
 	}
 
 #ifdef DEBUG_PARSER
-		debugN("Said block: ");
-		g_sci->getVocabulary()->debugDecipherSaidBlock(said_block);
+	debugN("Said block: ");
+	g_sci->getVocabulary()->debugDecipherSaidBlock(said_block);
 #endif
 
 	if (voc->parser_event.isNull() || (readSelectorValue(s->_segMan, voc->parser_event, SELECTOR(claimed)))) {
@@ -68,7 +67,7 @@ reg_t kSaid(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	new_lastmatch = said(said_block, debug_parser);
-	if (new_lastmatch  != SAID_NO_MATCH) { /* Build and possibly display a parse tree */
+	if (new_lastmatch != SAID_NO_MATCH) { /* Build and possibly display a parse tree */
 
 #ifdef DEBUG_PARSER
 		debugN("kSaid: Match.\n");
@@ -192,11 +191,11 @@ reg_t kSetSynonyms(EngineState *s, int argc, reg_t *argv) {
 
 			if (synonyms) {
 				debugC(kDebugLevelParser, "Setting %d synonyms for script.%d",
-				          numSynonyms, script);
+				       numSynonyms, script);
 
 				if (numSynonyms > 16384) {
 					error("Segtable corruption: script.%03d has %d synonyms",
-					         script, numSynonyms);
+					      script, numSynonyms);
 					/* We used to reset the corrupted value here. I really don't think it's appropriate.
 					 * Lars */
 				} else
@@ -208,7 +207,6 @@ reg_t kSetSynonyms(EngineState *s, int argc, reg_t *argv) {
 					}
 			} else
 				warning("Synonyms of script.%03d were requested, but script is not available", script);
-
 		}
 
 		node = s->_segMan->lookupNode(node->succ);

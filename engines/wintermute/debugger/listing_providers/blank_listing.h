@@ -27,6 +27,7 @@
 namespace Wintermute {
 class BlankListing : public Listing {
 	const Common::String _filename;
+
 public:
 	BlankListing(const Common::String filename);
 	virtual ~BlankListing();

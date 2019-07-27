@@ -74,11 +74,10 @@ struct SavePoint {
 	}
 };
 
-typedef Common::Functor1<const SavePoint&, void> Callback;
+typedef Common::Functor1<const SavePoint &, void> Callback;
 
 class SavePoints : Common::Serializable {
 public:
-
 	struct SavePointData {
 		EntityIndex entity1;
 		ActionIndex action;
@@ -134,7 +133,7 @@ private:
 
 	LastExpressEngine *_engine;
 
-	Common::List<SavePoint> _savepoints;    ///< could be a queue, but we need to be able to iterate on the items
+	Common::List<SavePoint> _savepoints; ///< could be a queue, but we need to be able to iterate on the items
 	Common::Array<SavePointData> _data;
 	Callback *_callbacks[40];
 

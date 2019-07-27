@@ -37,7 +37,7 @@ namespace Xeen {
 
 class XeenEngine;
 
-class Screen: public Graphics::Screen {
+class Screen : public Graphics::Screen {
 private:
 	XeenEngine *_vm;
 	byte _mainPalette[PALETTE_SIZE];
@@ -56,6 +56,7 @@ private:
 	void updatePalette();
 
 	void updatePalette(const byte *pal, int start, int count16);
+
 public:
 	Screen(XeenEngine *vm);
 	virtual ~Screen() {}

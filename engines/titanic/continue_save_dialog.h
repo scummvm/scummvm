@@ -25,10 +25,10 @@
 
 #include "common/array.h"
 #include "titanic/events.h"
+#include "titanic/gfx/text_control.h"
 #include "titanic/support/image.h"
 #include "titanic/support/rect.h"
 #include "titanic/support/string.h"
-#include "titanic/gfx/text_control.h"
 
 namespace Titanic {
 
@@ -38,9 +38,13 @@ class CContinueSaveDialog : public CEventTarget {
 	struct SaveEntry {
 		int _slot;
 		CString _name;
-		SaveEntry() : _slot(0) {}
-		SaveEntry(int slot, const CString &name) : _slot(slot), _name(name) {}
+		SaveEntry()
+		  : _slot(0) {}
+		SaveEntry(int slot, const CString &name)
+		  : _slot(slot)
+		  , _name(name) {}
 	};
+
 private:
 	Common::Array<SaveEntry> _saves;
 	CTextControl _slotNames[5];
@@ -53,6 +57,7 @@ private:
 	Image _evilTwin;
 	Image _restoreD, _restoreU, _restoreF;
 	Image _startD, _startU, _startF;
+
 private:
 	/**
 	 * Load the images
@@ -78,6 +83,7 @@ private:
 	 * Get the area to draw a slot name in
 	 */
 	Rect getSlotBounds(int index);
+
 public:
 	CContinueSaveDialog();
 	virtual ~CContinueSaveDialog();

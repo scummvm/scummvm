@@ -22,20 +22,22 @@
 
 #include "gui/debugger.h"
 
-#include "lab/lab.h"
 #include "lab/console.h"
 #include "lab/dispman.h"
 #include "lab/eventman.h"
+#include "lab/lab.h"
 #include "lab/music.h"
 #include "lab/processroom.h"
 #include "lab/resource.h"
 
 namespace Lab {
 
-Console::Console(LabEngine *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("scene",			WRAP_METHOD(Console, Cmd_Scene));
-	registerCmd("scene_resources",  WRAP_METHOD(Console, Cmd_DumpSceneResources));
-	registerCmd("find_action",      WRAP_METHOD(Console, Cmd_FindAction));
+Console::Console(LabEngine *vm)
+  : GUI::Debugger()
+  , _vm(vm) {
+	registerCmd("scene", WRAP_METHOD(Console, Cmd_Scene));
+	registerCmd("scene_resources", WRAP_METHOD(Console, Cmd_DumpSceneResources));
+	registerCmd("find_action", WRAP_METHOD(Console, Cmd_FindAction));
 }
 
 Console::~Console() {
@@ -122,11 +124,8 @@ bool Console::Cmd_FindAction(int argc, const char **argv) {
 		for (RuleList::iterator rule = _vm->_rooms[i]._rules.begin(); rule != _vm->_rooms[i]._rules.end(); ++rule) {
 			ActionList::iterator action;
 			for (action = rule->_actionList.begin(); action != rule->_actionList.end(); ++action) {
-				if (action->_actionType == actionId &&
-					(action->_param1 == param1 || param1 == -1) &&
-					(action->_param2 == param2 || param2 == -1) &&
-					(action->_param3 == param3 || param3 == -1)) {
-						debugPrintf("Found at script %d\n", i);
+				if (action->_actionType == actionId && (action->_param1 == param1 || param1 == -1) && (action->_param2 == param2 || param2 == -1) && (action->_param3 == param3 || param3 == -1)) {
+					debugPrintf("Found at script %d\n", i);
 				}
 			}
 		}

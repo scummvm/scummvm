@@ -22,15 +22,15 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objects.h"
-#include "fullpipe/objectnames.h"
-#include "fullpipe/constants.h"
-#include "fullpipe/motion.h"
-#include "fullpipe/scenes.h"
-#include "fullpipe/scene.h"
-#include "fullpipe/statics.h"
-#include "fullpipe/messages.h"
 #include "fullpipe/behavior.h"
+#include "fullpipe/constants.h"
+#include "fullpipe/messages.h"
+#include "fullpipe/motion.h"
+#include "fullpipe/objectnames.h"
+#include "fullpipe/objects.h"
+#include "fullpipe/scene.h"
+#include "fullpipe/scenes.h"
+#include "fullpipe/statics.h"
 
 namespace Fullpipe {
 
@@ -120,7 +120,7 @@ int sceneHandler07(ExCommand *ex) {
 	if (ex->_messageKind != 17)
 		return 0;
 
-	switch(ex->_messageNum) {
+	switch (ex->_messageNum) {
 	case MSG_SC7_OPENLUKE:
 		sceneHandler07_openLuke();
 		break;
@@ -149,24 +149,23 @@ int sceneHandler07(ExCommand *ex) {
 		sceneHandler07_hideBox();
 		break;
 
-	case 33:
-		{
-			int res = 0;
+	case 33: {
+		int res = 0;
 
-			if (g_fp->_aniMan2) {
-				if (g_fp->_aniMan2->_ox < g_fp->_sceneRect.left + 200)
-					g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.left - 300;
+		if (g_fp->_aniMan2) {
+			if (g_fp->_aniMan2->_ox < g_fp->_sceneRect.left + 200)
+				g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.left - 300;
 
-				if (g_fp->_aniMan2->_ox > g_fp->_sceneRect.right - 200)
-					g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.right + 300;
+			if (g_fp->_aniMan2->_ox > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = g_fp->_aniMan2->_ox - g_fp->_sceneRect.right + 300;
 
-				res = 1;
-			}
-
-			g_fp->_behaviorManager->updateBehaviors();
-
-			return res;
+			res = 1;
 		}
+
+		g_fp->_behaviorManager->updateBehaviors();
+
+		return res;
+	}
 	}
 
 	return 0;

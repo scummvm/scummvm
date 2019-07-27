@@ -20,14 +20,13 @@
  *
  */
 
-
 #include "common/config-manager.h"
+#include "scumm/he/intern_he.h"
+#include "scumm/he/logic_he.h"
 #include "scumm/scumm.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v8.h"
 #include "scumm/sound.h"
-#include "scumm/he/intern_he.h"
-#include "scumm/he/logic_he.h"
 
 #include "audio/mididrv.h"
 
@@ -101,7 +100,7 @@ void ScummEngine::setupScummVars() {
 		VAR_SOUNDPARAM = 64;
 		VAR_SOUNDPARAM2 = 65;
 		VAR_SOUNDPARAM3 = 66;
-		VAR_INPUTMODE = 67;	// 1 is keyboard, 2 is joystick, 3 is mouse
+		VAR_INPUTMODE = 67; // 1 is keyboard, 2 is joystick, 3 is mouse
 		VAR_MEMORY_PERFORMANCE = 68;
 		VAR_VIDEO_PERFORMANCE = 69;
 		VAR_ROOM_FLAG = 70;
@@ -461,7 +460,6 @@ void ScummEngine_v7::setupScummVars() {
 
 	VAR_MUSIC_BUNDLE_LOADED = 135;
 	VAR_VOICE_BUNDLE_LOADED = 136;
-
 }
 
 void ScummEngine_v8::setupScummVars() {
@@ -638,7 +636,7 @@ void ScummEngine_v8::resetScummVars() {
 		VAR(VAR_LANGUAGE) = 8;
 		break;
 	default:
-		VAR(VAR_LANGUAGE) = 0;	// Default to english
+		VAR(VAR_LANGUAGE) = 0; // Default to english
 	}
 }
 #endif
@@ -691,7 +689,7 @@ void ScummEngine_v80he::resetScummVars() {
 		VAR(VAR_PLATFORM_VERSION) = 70;
 	} else {
 		VAR(VAR_PLATFORM) = 1;
-		VAR(VAR_PLATFORM_VERSION) = 40;		// 31 is Windows 3.1, 40 is Windows 95+
+		VAR(VAR_PLATFORM_VERSION) = 40; // 31 is Windows 3.1, 40 is Windows 95+
 	}
 	VAR(VAR_COLOR_DEPTH) = 256;
 }
@@ -722,11 +720,11 @@ void ScummEngine_v99he::resetScummVars() {
 
 	if (_game.heversion >= 100 && (_game.features & GF_16BIT_COLOR)) {
 		// Enable Bink video in 16bit color games
-#ifdef USE_BINK
+#	ifdef USE_BINK
 		VAR(140) = 1;
-#else
+#	else
 		VAR(140) = 0;
-#endif
+#	endif
 	}
 
 	if (_game.id == GID_PUTTZOO && _game.heversion == 100 && _game.platform == Common::kPlatformWindows) {
@@ -761,7 +759,7 @@ void ScummEngine::resetScummVars() {
 			break;
 		default:
 			if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA || (_game.id == GID_LOOM && _game.version == 3))
-			   &&  (_game.platform == Common::kPlatformDOS)) {
+			    && (_game.platform == Common::kPlatformDOS)) {
 				VAR(VAR_SOUNDCARD) = 4;
 			} else {
 				VAR(VAR_SOUNDCARD) = 3;
@@ -808,7 +806,7 @@ void ScummEngine::resetScummVars() {
 			// Set fast speed, to enable all animations
 			VAR(VAR_MACHINE_SPEED) = 2;
 
-			VAR(VAR_SOUNDPARAM) = 1;  // Soundblaster for music
+			VAR(VAR_SOUNDPARAM) = 1; // Soundblaster for music
 			VAR(VAR_SOUNDPARAM2) = 1; // Soundblaster for sound effects
 		}
 	}

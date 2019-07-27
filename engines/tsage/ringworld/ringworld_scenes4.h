@@ -24,8 +24,8 @@
 #define TSAGE_RINGWORLD_SCENES4_H
 
 #include "common/scummsys.h"
-#include "tsage/core.h"
 #include "tsage/converse.h"
+#include "tsage/core.h"
 #include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/ringworld/ringworld_speakers.h"
 
@@ -33,64 +33,66 @@ namespace TsAGE {
 
 namespace Ringworld {
 
-using namespace TsAGE;
+	using namespace TsAGE;
 
-class Scene3500 : public Scene {
-	/* Actions */
-	class Action1 : public Action {
+	class Scene3500 : public Scene {
+		/* Actions */
+		class Action1 : public Action {
+		public:
+			virtual void signal();
+		};
+		class Action2 : public Action {
+		public:
+			virtual void signal();
+		};
+
 	public:
-		virtual void signal();
-	};
-	class Action2 : public Action {
-	public:
-		virtual void signal();
-	};
-public:
-	SpeakerSText _speakerSText;
-	SpeakerMText _speakerMText;
-	SpeakerQText _speakerQText;
-	Action1 _action1;
-	Action2 _action2;
+		SpeakerSText _speakerSText;
+		SpeakerMText _speakerMText;
+		SpeakerQText _speakerQText;
+		Action1 _action1;
+		Action2 _action2;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-};
-
-class Scene3700 : public Scene {
-	/* Custom classes */
-	class Viewer : public SceneObject {
-	public:
-		Visage _images1;
-		Visage _images2;
-
-		int _frameList[4];
-		int _percentList[4];
-		bool _active;
-		int _countdownCtr;
-
-		Viewer();
-		virtual Common::String getClassName() { return "Viewer"; }
-		virtual void synchronize(Serializer &s);
-		virtual void dispatch();
-		virtual void reposition();
-		virtual void draw();
+		virtual void postInit(SceneObjectList *OwnerList = NULL);
 	};
 
-	/* Actions */
-	class Action1 : public Action {
-	public:
-		virtual void signal();
-	};
-public:
-	Viewer _viewer;
-	Action1 _action1;
-	SceneObject _hotspot1, _hotspot2;
-	SpeakerSText _speakerSText;
-	SpeakerMText _speakerMText;
-	SpeakerMR _speakerMR;
-	ASound _soundHandler;
+	class Scene3700 : public Scene {
+		/* Custom classes */
+		class Viewer : public SceneObject {
+		public:
+			Visage _images1;
+			Visage _images2;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-};
+			int _frameList[4];
+			int _percentList[4];
+			bool _active;
+			int _countdownCtr;
+
+			Viewer();
+			virtual Common::String getClassName() { return "Viewer"; }
+			virtual void synchronize(Serializer &s);
+			virtual void dispatch();
+			virtual void reposition();
+			virtual void draw();
+		};
+
+		/* Actions */
+		class Action1 : public Action {
+		public:
+			virtual void signal();
+		};
+
+	public:
+		Viewer _viewer;
+		Action1 _action1;
+		SceneObject _hotspot1, _hotspot2;
+		SpeakerSText _speakerSText;
+		SpeakerMText _speakerMText;
+		SpeakerMR _speakerMR;
+		ASound _soundHandler;
+
+		virtual void postInit(SceneObjectList *OwnerList = NULL);
+	};
 
 } // End of namespace Ringworld
 

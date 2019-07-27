@@ -20,20 +20,19 @@
  *
  */
 
-
 #include "common/scummsys.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/flac.h"
+#include "audio/decoders/mp3.h"
 #include "audio/decoders/voc.h"
 #include "audio/decoders/vorbis.h"
-#include "audio/decoders/mp3.h"
 
-#include "scumm/resource.h"
-#include "scumm/scumm.h"
 #include "scumm/imuse_digi/dimuse_bndmgr.h"
 #include "scumm/imuse_digi/dimuse_codecs.h"
 #include "scumm/imuse_digi/dimuse_sndmgr.h"
+#include "scumm/resource.h"
+#include "scumm/scumm.h"
 
 namespace Scumm {
 
@@ -62,34 +61,40 @@ void ImuseDigiSndMgr::countElements(byte *ptr, int &numRegions, int &numJumps, i
 	int32 size = 0;
 
 	do {
-		tag = READ_BE_UINT32(ptr); ptr += 4;
+		tag = READ_BE_UINT32(ptr);
+		ptr += 4;
 		switch (tag) {
-		case MKTAG('S','T','O','P'):
-		case MKTAG('F','R','M','T'):
-		case MKTAG('D','A','T','A'):
-			size = READ_BE_UINT32(ptr); ptr += size + 4;
+		case MKTAG('S', 'T', 'O', 'P'):
+		case MKTAG('F', 'R', 'M', 'T'):
+		case MKTAG('D', 'A', 'T', 'A'):
+			size = READ_BE_UINT32(ptr);
+			ptr += size + 4;
 			break;
-		case MKTAG('T','E','X','T'):
+		case MKTAG('T', 'E', 'X', 'T'):
 			if (!scumm_stricmp((const char *)(ptr + 8), "exit"))
 				numMarkers++;
-			size = READ_BE_UINT32(ptr); ptr += size + 4;
+			size = READ_BE_UINT32(ptr);
+			ptr += size + 4;
 			break;
-		case MKTAG('R','E','G','N'):
+		case MKTAG('R', 'E', 'G', 'N'):
 			numRegions++;
-			size = READ_BE_UINT32(ptr); ptr += size + 4;
+			size = READ_BE_UINT32(ptr);
+			ptr += size + 4;
 			break;
-		case MKTAG('J','U','M','P'):
+		case MKTAG('J', 'U', 'M', 'P'):
 			numJumps++;
-			size = READ_BE_UINT32(ptr); ptr += size + 4;
+			size = READ_BE_UINT32(ptr);
+			ptr += size + 4;
 			break;
-		case MKTAG('S','Y','N','C'):
+		case MKTAG('S', 'Y', 'N', 'C'):
 			numSyncs++;
-			size = READ_BE_UINT32(ptr); ptr += size + 4;
+			size = READ_BE_UINT32(ptr);
+			ptr += size + 4;
 			break;
 		default:
 			error("ImuseDigiSndMgr::countElements() Unknown sfx header '%s'", tag2str(tag));
 		}
-	} while (tag != MKTAG('D','A','T','A'));
+	} while (tag != MKTAG('D', 'A', 'T', 'A'));
 }
 
 void ImuseDigiSndMgr::prepareSoundFromRMAP(Common::SeekableReadStream *file, SoundDesc *sound, int32 offset, int32 size) {
@@ -97,7 +102,7 @@ void ImuseDigiSndMgr::prepareSoundFromRMAP(Common::SeekableReadStream *file, Sou
 
 	file->seek(offset, SEEK_SET);
 	uint32 tag = file->readUint32BE();
-	assert(tag == MKTAG('R','M','A','P'));
+	assert(tag == MKTAG('R', 'M', 'A', 'P'));
 	int32 version = file->readUint32BE();
 	if (version != 3) {
 		if (version == 2) {
@@ -152,7 +157,7 @@ void ImuseDigiSndMgr::prepareSoundFromRMAP(Common::SeekableReadStream *file, Sou
 }
 
 void ImuseDigiSndMgr::prepareSound(byte *ptr, SoundDesc *sound) {
-	if (READ_BE_UINT32(ptr) == MKTAG('C','r','e','a')) {
+	if (READ_BE_UINT32(ptr) == MKTAG('C', 'r', 'e', 'a')) {
 		bool quit = false;
 		int len;
 
@@ -191,23 +196,21 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, SoundDesc *sound) {
 			case 0:
 				quit = true;
 				break;
-			case 1:
-				{
-					int time_constant = ptr[offset];
-					offset += 2;
-					len -= 2;
-					sound->freq = Audio::getSampleRateFromVOCRate(time_constant);
-					sound->region[sound->numRegions].offset = offset;
-					sound->region[sound->numRegions].length = len;
-					sound->numRegions++;
-				}
-				break;
-			case 6:	// begin of loop
+			case 1: {
+				int time_constant = ptr[offset];
+				offset += 2;
+				len -= 2;
+				sound->freq = Audio::getSampleRateFromVOCRate(time_constant);
+				sound->region[sound->numRegions].offset = offset;
+				sound->region[sound->numRegions].length = len;
+				sound->numRegions++;
+			} break;
+			case 6: // begin of loop
 				sound->jump[0].dest = offset + 8;
 				sound->jump[0].hookId = 0;
 				sound->jump[0].fadeDelay = 0;
 				break;
-			case 7:	// end of loop
+			case 7: // end of loop
 				sound->jump[0].offset = offset - 4;
 				sound->numJumps++;
 				sound->region[sound->numRegions].offset = offset - 4;
@@ -221,7 +224,7 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, SoundDesc *sound) {
 			}
 			offset += len;
 		}
-	} else if (READ_BE_UINT32(ptr) == MKTAG('i','M','U','S')) {
+	} else if (READ_BE_UINT32(ptr) == MKTAG('i', 'M', 'U', 'S')) {
 		uint32 tag;
 		int32 size = 0;
 		byte *s_ptr = ptr;
@@ -247,15 +250,19 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, SoundDesc *sound) {
 		assert(sound->marker);
 
 		do {
-			tag = READ_BE_UINT32(ptr); ptr += 4;
+			tag = READ_BE_UINT32(ptr);
+			ptr += 4;
 			switch (tag) {
-			case MKTAG('F','R','M','T'):
+			case MKTAG('F', 'R', 'M', 'T'):
 				ptr += 12;
-				sound->bits = READ_BE_UINT32(ptr); ptr += 4;
-				sound->freq = READ_BE_UINT32(ptr); ptr += 4;
-				sound->channels = READ_BE_UINT32(ptr); ptr += 4;
+				sound->bits = READ_BE_UINT32(ptr);
+				ptr += 4;
+				sound->freq = READ_BE_UINT32(ptr);
+				ptr += 4;
+				sound->channels = READ_BE_UINT32(ptr);
+				ptr += 4;
 				break;
-			case MKTAG('T','E','X','T'):
+			case MKTAG('T', 'E', 'X', 'T'):
 				if (!scumm_stricmp((const char *)(ptr + 8), "exit")) {
 					sound->marker[curIndexMarker].pos = READ_BE_UINT32(ptr + 4);
 					sound->marker[curIndexMarker].length = strlen((const char *)(ptr + 8)) + 1;
@@ -264,27 +271,36 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, SoundDesc *sound) {
 					strcpy(sound->marker[curIndexMarker].ptr, (const char *)(ptr + 8));
 					curIndexMarker++;
 				}
-				size = READ_BE_UINT32(ptr); ptr += size + 4;
+				size = READ_BE_UINT32(ptr);
+				ptr += size + 4;
 				break;
-			case MKTAG('S','T','O','P'):
-				size = READ_BE_UINT32(ptr); ptr += size + 4;
+			case MKTAG('S', 'T', 'O', 'P'):
+				size = READ_BE_UINT32(ptr);
+				ptr += size + 4;
 				break;
-			case MKTAG('R','E','G','N'):
+			case MKTAG('R', 'E', 'G', 'N'):
 				ptr += 4;
-				sound->region[curIndexRegion].offset = READ_BE_UINT32(ptr); ptr += 4;
-				sound->region[curIndexRegion].length = READ_BE_UINT32(ptr); ptr += 4;
+				sound->region[curIndexRegion].offset = READ_BE_UINT32(ptr);
+				ptr += 4;
+				sound->region[curIndexRegion].length = READ_BE_UINT32(ptr);
+				ptr += 4;
 				curIndexRegion++;
 				break;
-			case MKTAG('J','U','M','P'):
+			case MKTAG('J', 'U', 'M', 'P'):
 				ptr += 4;
-				sound->jump[curIndexJump].offset = READ_BE_UINT32(ptr); ptr += 4;
-				sound->jump[curIndexJump].dest = READ_BE_UINT32(ptr); ptr += 4;
-				sound->jump[curIndexJump].hookId = READ_BE_UINT32(ptr); ptr += 4;
-				sound->jump[curIndexJump].fadeDelay = READ_BE_UINT32(ptr); ptr += 4;
+				sound->jump[curIndexJump].offset = READ_BE_UINT32(ptr);
+				ptr += 4;
+				sound->jump[curIndexJump].dest = READ_BE_UINT32(ptr);
+				ptr += 4;
+				sound->jump[curIndexJump].hookId = READ_BE_UINT32(ptr);
+				ptr += 4;
+				sound->jump[curIndexJump].fadeDelay = READ_BE_UINT32(ptr);
+				ptr += 4;
 				curIndexJump++;
 				break;
-			case MKTAG('S','Y','N','C'):
-				size = READ_BE_UINT32(ptr); ptr += 4;
+			case MKTAG('S', 'Y', 'N', 'C'):
+				size = READ_BE_UINT32(ptr);
+				ptr += 4;
 				sound->sync[curIndexSync].size = size;
 				sound->sync[curIndexSync].ptr = new byte[size];
 				assert(sound->sync[curIndexSync].ptr);
@@ -292,13 +308,13 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, SoundDesc *sound) {
 				curIndexSync++;
 				ptr += size;
 				break;
-			case MKTAG('D','A','T','A'):
+			case MKTAG('D', 'A', 'T', 'A'):
 				ptr += 4;
 				break;
 			default:
 				error("ImuseDigiSndMgr::prepareSound(%d/%s) Unknown sfx header '%s'", sound->soundId, sound->name, tag2str(tag));
 			}
-		} while (tag != MKTAG('D','A','T','A'));
+		} while (tag != MKTAG('D', 'A', 'T', 'A'));
 		sound->offsetData = ptr - s_ptr;
 	} else {
 		error("ImuseDigiSndMgr::prepareSound(): Unknown sound format");
@@ -329,12 +345,12 @@ bool ImuseDigiSndMgr::openMusicBundle(SoundDesc *sound, int &disk) {
 			if (disk == -1)
 				disk = _vm->VAR(_vm->VAR_CURRENTDISK);
 			sprintf(musicfile, "musdisk%d.bun", disk);
-//			if (_disk != _vm->VAR(_vm->VAR_CURRENTDISK)) {
-//				_vm->_imuseDigital->parseScriptCmds(0x1000, 0, 0, 0, 0, 0, 0, 0);
-//				_vm->_imuseDigital->parseScriptCmds(0x2000, 0, 0, 0, 0, 0, 0, 0);
-//				_vm->_imuseDigital->stopAllSounds();
-//				sound->bundle->closeFile();
-//			}
+			//			if (_disk != _vm->VAR(_vm->VAR_CURRENTDISK)) {
+			//				_vm->_imuseDigital->parseScriptCmds(0x1000, 0, 0, 0, 0, 0, 0, 0);
+			//				_vm->_imuseDigital->parseScriptCmds(0x2000, 0, 0, 0, 0, 0, 0, 0);
+			//				_vm->_imuseDigital->stopAllSounds();
+			//				sound->bundle->closeFile();
+			//			}
 
 			result = sound->bundle->open(musicfile, sound->compressed, true);
 
@@ -364,12 +380,12 @@ bool ImuseDigiSndMgr::openVoiceBundle(SoundDesc *sound, int &disk) {
 			if (disk == -1)
 				disk = _vm->VAR(_vm->VAR_CURRENTDISK);
 			sprintf(voxfile, "voxdisk%d.bun", disk);
-//			if (_disk != _vm->VAR(_vm->VAR_CURRENTDISK)) {
-//				_vm->_imuseDigital->parseScriptCmds(0x1000, 0, 0, 0, 0, 0, 0, 0);
-//				_vm->_imuseDigital->parseScriptCmds(0x2000, 0, 0, 0, 0, 0, 0, 0);
-//				_vm->_imuseDigital->stopAllSounds();
-//				sound->bundle->closeFile();
-//			}
+			//			if (_disk != _vm->VAR(_vm->VAR_CURRENTDISK)) {
+			//				_vm->_imuseDigital->parseScriptCmds(0x1000, 0, 0, 0, 0, 0, 0, 0);
+			//				_vm->_imuseDigital->parseScriptCmds(0x2000, 0, 0, 0, 0, 0, 0, 0);
+			//				_vm->_imuseDigital->stopAllSounds();
+			//				sound->bundle->closeFile();
+			//			}
 
 			result = sound->bundle->open(voxfile, sound->compressed);
 
@@ -401,7 +417,7 @@ ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::openSound(int32 soundId, const char
 
 	switch (soundType) {
 	case IMUSE_RESOURCE:
-		assert(soundName[0] == 0);	// Paranoia check
+		assert(soundName[0] == 0); // Paranoia check
 
 		_vm->ensureResourceLoaded(rtSound, soundId);
 		_vm->_res->lock(rtSound, soundId);

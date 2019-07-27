@@ -21,8 +21,8 @@
  */
 
 #include "titanic/pet_control/pet_load_save.h"
-#include "titanic/pet_control/pet_control.h"
 #include "titanic/core/project_item.h"
+#include "titanic/pet_control/pet_control.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -122,7 +122,7 @@ void CPetLoadSave::resetSlots() {
 
 		// Try and open up the savegame for access
 		Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(
-			g_vm->generateSaveName(idx));
+		  g_vm->generateSaveName(idx));
 
 		if (in) {
 			// Read in the savegame header data

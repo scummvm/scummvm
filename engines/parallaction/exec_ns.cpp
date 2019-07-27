@@ -29,40 +29,37 @@
 
 namespace Parallaction {
 
-#define INST_ON							1
-#define INST_OFF						2
-#define INST_X							3
-#define INST_Y							4
-#define INST_Z							5
-#define INST_F							6
-#define INST_LOOP						7
-#define INST_ENDLOOP					8
-#define INST_SHOW						9
-#define INST_INC						10
-#define INST_DEC						11
-#define INST_SET						12
-#define INST_PUT						13
-#define INST_CALL						14
-#define INST_WAIT						15
-#define INST_START						16
-#define INST_SOUND						17
-#define INST_MOVE						18
-#define INST_ENDSCRIPT					19
+#define INST_ON 1
+#define INST_OFF 2
+#define INST_X 3
+#define INST_Y 4
+#define INST_Z 5
+#define INST_F 6
+#define INST_LOOP 7
+#define INST_ENDLOOP 8
+#define INST_SHOW 9
+#define INST_INC 10
+#define INST_DEC 11
+#define INST_SET 12
+#define INST_PUT 13
+#define INST_CALL 14
+#define INST_WAIT 15
+#define INST_START 16
+#define INST_SOUND 17
+#define INST_MOVE 18
+#define INST_ENDSCRIPT 19
 
 #define SetOpcodeTable(x) table = &x;
 
-
-
-typedef Common::Functor1Mem<CommandContext&, void, CommandExec_ns> OpcodeV1;
+typedef Common::Functor1Mem<CommandContext &, void, CommandExec_ns> OpcodeV1;
 #define COMMAND_OPCODE(op) table->push_back(new OpcodeV1(this, &CommandExec_ns::cmdOp_##op))
-#define DECLARE_COMMAND_OPCODE(op) void CommandExec_ns::cmdOp_##op(CommandContext& ctxt)
+#define DECLARE_COMMAND_OPCODE(op) void CommandExec_ns::cmdOp_##op(CommandContext &ctxt)
 
-typedef Common::Functor1Mem<ProgramContext&, void, ProgramExec_ns> OpcodeV2;
+typedef Common::Functor1Mem<ProgramContext &, void, ProgramExec_ns> OpcodeV2;
 #define INSTRUCTION_OPCODE(op) table->push_back(new OpcodeV2(this, &ProgramExec_ns::instOp_##op))
-#define DECLARE_INSTRUCTION_OPCODE(op) void ProgramExec_ns::instOp_##op(ProgramContext& ctxt)
+#define DECLARE_INSTRUCTION_OPCODE(op) void ProgramExec_ns::instOp_##op(ProgramContext &ctxt)
 
 extern const char *_instructionNamesRes_ns[];
-
 
 DECLARE_INSTRUCTION_OPCODE(on) {
 	InstructionPtr inst = ctxt._inst;
@@ -71,11 +68,9 @@ DECLARE_INSTRUCTION_OPCODE(on) {
 	inst->_a->_flags &= ~kFlagsRemove;
 }
 
-
 DECLARE_INSTRUCTION_OPCODE(off) {
 	ctxt._inst->_a->_flags |= kFlagsRemove;
 }
-
 
 DECLARE_INSTRUCTION_OPCODE(loop) {
 	InstructionPtr inst = ctxt._inst;
@@ -83,7 +78,6 @@ DECLARE_INSTRUCTION_OPCODE(loop) {
 	ctxt._program->_loopCounter = inst->_opB.getValue();
 	ctxt._program->_loopStart = ctxt._ip;
 }
-
 
 DECLARE_INSTRUCTION_OPCODE(endloop) {
 	if (--ctxt._program->_loopCounter > 0) {
@@ -95,11 +89,12 @@ DECLARE_INSTRUCTION_OPCODE(inc) {
 	InstructionPtr inst = ctxt._inst;
 	int16 _si = inst->_opB.getValue();
 
-	if (inst->_flags & kInstMod) {	// mod
+	if (inst->_flags & kInstMod) { // mod
 		int16 _bx = (_si > 0 ? _si : -_si);
-		if (ctxt._modCounter % _bx != 0) return;
+		if (ctxt._modCounter % _bx != 0)
+			return;
 
-		_si = (_si > 0 ?  1 : -1);
+		_si = (_si > 0 ? 1 : -1);
 	}
 
 	int16 lvalue = inst->_opA.getValue();
@@ -111,14 +106,11 @@ DECLARE_INSTRUCTION_OPCODE(inc) {
 	}
 
 	inst->_opA.setValue(lvalue);
-
 }
-
 
 DECLARE_INSTRUCTION_OPCODE(set) {
 	ctxt._inst->_opA.setValue(ctxt._inst->_opB.getValue());
 }
-
 
 DECLARE_INSTRUCTION_OPCODE(put) {
 	InstructionPtr inst = ctxt._inst;
@@ -147,7 +139,6 @@ DECLARE_INSTRUCTION_OPCODE(call) {
 	_vm->callFunction(ctxt._inst->_immediate, 0);
 }
 
-
 DECLARE_INSTRUCTION_OPCODE(wait) {
 	if (g_engineFlags & kEngineWalking) {
 		ctxt._ip--;
@@ -155,16 +146,13 @@ DECLARE_INSTRUCTION_OPCODE(wait) {
 	}
 }
 
-
 DECLARE_INSTRUCTION_OPCODE(start) {
 	ctxt._inst->_a->_flags |= (kFlagsActing | kFlagsActive);
 }
 
-
 DECLARE_INSTRUCTION_OPCODE(sound) {
 	_vm->_activeZone = ctxt._inst->_z;
 }
-
 
 DECLARE_INSTRUCTION_OPCODE(move) {
 	InstructionPtr inst = ctxt._inst;
@@ -186,9 +174,6 @@ DECLARE_INSTRUCTION_OPCODE(endscript) {
 	ctxt._suspend = true;
 }
 
-
-
-
 DECLARE_COMMAND_OPCODE(invalid) {
 	error("Can't execute invalid command '%i'", ctxt._cmd->_id);
 }
@@ -202,7 +187,6 @@ DECLARE_COMMAND_OPCODE(set) {
 	}
 }
 
-
 DECLARE_COMMAND_OPCODE(clear) {
 	if (ctxt._cmd->_flags & kFlagsGlobal) {
 		ctxt._cmd->_flags &= ~kFlagsGlobal;
@@ -212,11 +196,9 @@ DECLARE_COMMAND_OPCODE(clear) {
 	}
 }
 
-
 DECLARE_COMMAND_OPCODE(start) {
 	ctxt._cmd->_zone->_flags |= kFlagsActing;
 }
-
 
 DECLARE_COMMAND_OPCODE(speak) {
 	if (ACTIONTYPE(ctxt._cmd->_zone) == kZoneSpeak) {
@@ -226,22 +208,18 @@ DECLARE_COMMAND_OPCODE(speak) {
 	}
 }
 
-
 DECLARE_COMMAND_OPCODE(get) {
 	ctxt._cmd->_zone->_flags &= ~kFlagsFixed;
 	_vm->runZone(ctxt._cmd->_zone);
 }
 
-
 DECLARE_COMMAND_OPCODE(location) {
 	_vm->scheduleLocationSwitch(ctxt._cmd->_string.c_str());
 }
 
-
 DECLARE_COMMAND_OPCODE(open) {
 	_vm->updateDoor(ctxt._cmd->_zone, false);
 }
-
 
 DECLARE_COMMAND_OPCODE(close) {
 	_vm->updateDoor(ctxt._cmd->_zone, true);
@@ -251,16 +229,13 @@ DECLARE_COMMAND_OPCODE(on) {
 	_vm->showZone(ctxt._cmd->_zone, true);
 }
 
-
 DECLARE_COMMAND_OPCODE(off) {
 	_vm->showZone(ctxt._cmd->_zone, false);
 }
 
-
 DECLARE_COMMAND_OPCODE(call) {
 	_vm->callFunction(ctxt._cmd->_callable, &ctxt._z);
 }
-
 
 DECLARE_COMMAND_OPCODE(toggle) {
 	if (ctxt._cmd->_flags & kFlagsGlobal) {
@@ -271,27 +246,25 @@ DECLARE_COMMAND_OPCODE(toggle) {
 	}
 }
 
-
-DECLARE_COMMAND_OPCODE(drop){
-	_vm->dropItem( ctxt._cmd->_object );
+DECLARE_COMMAND_OPCODE(drop) {
+	_vm->dropItem(ctxt._cmd->_object);
 }
-
 
 DECLARE_COMMAND_OPCODE(quit) {
 	_vm->quitGame();
 }
 
-
 DECLARE_COMMAND_OPCODE(move) {
 	_vm->scheduleWalk(ctxt._cmd->_move.x, ctxt._cmd->_move.y, false);
 }
-
 
 DECLARE_COMMAND_OPCODE(stop) {
 	ctxt._cmd->_zone->_flags &= ~kFlagsActing;
 }
 
-CommandExec_ns::CommandExec_ns(Parallaction_ns* vm) : CommandExec(vm), _vm(vm) {
+CommandExec_ns::CommandExec_ns(Parallaction_ns *vm)
+  : CommandExec(vm)
+  , _vm(vm) {
 	CommandOpcodeSet *table = 0;
 
 	SetOpcodeTable(_opcodes);
@@ -314,7 +287,8 @@ CommandExec_ns::CommandExec_ns(Parallaction_ns* vm) : CommandExec(vm), _vm(vm) {
 	COMMAND_OPCODE(stop);
 }
 
-ProgramExec_ns::ProgramExec_ns(Parallaction_ns *vm) : _vm(vm) {
+ProgramExec_ns::ProgramExec_ns(Parallaction_ns *vm)
+  : _vm(vm) {
 	_instructionNames = _instructionNamesRes_ns;
 
 	ProgramOpcodeSet *table = 0;
@@ -323,15 +297,15 @@ ProgramExec_ns::ProgramExec_ns(Parallaction_ns *vm) : _vm(vm) {
 	INSTRUCTION_OPCODE(invalid);
 	INSTRUCTION_OPCODE(on);
 	INSTRUCTION_OPCODE(off);
-	INSTRUCTION_OPCODE(set);		// x
-	INSTRUCTION_OPCODE(set);		// y
-	INSTRUCTION_OPCODE(set);		// z
-	INSTRUCTION_OPCODE(set);		// f
+	INSTRUCTION_OPCODE(set); // x
+	INSTRUCTION_OPCODE(set); // y
+	INSTRUCTION_OPCODE(set); // z
+	INSTRUCTION_OPCODE(set); // f
 	INSTRUCTION_OPCODE(loop);
 	INSTRUCTION_OPCODE(endloop);
 	INSTRUCTION_OPCODE(show);
 	INSTRUCTION_OPCODE(inc);
-	INSTRUCTION_OPCODE(inc);		// dec
+	INSTRUCTION_OPCODE(inc); // dec
 	INSTRUCTION_OPCODE(set);
 	INSTRUCTION_OPCODE(put);
 	INSTRUCTION_OPCODE(call);
@@ -342,4 +316,4 @@ ProgramExec_ns::ProgramExec_ns(Parallaction_ns *vm) : _vm(vm) {
 	INSTRUCTION_OPCODE(endscript);
 }
 
-}	// namespace Parallaction
+} // namespace Parallaction

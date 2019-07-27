@@ -24,11 +24,11 @@
 
 #if defined(DYNAMIC_MODULES) && defined(__PSP__)
 
-#include <psputils.h>
-#include <psputilsforkernel.h>
+#	include <psputils.h>
+#	include <psputilsforkernel.h>
 
-#include "backends/plugins/psp/psp-provider.h"
-#include "backends/plugins/elf/mips-loader.h"
+#	include "backends/plugins/elf/mips-loader.h"
+#	include "backends/plugins/psp/psp-provider.h"
 
 class PSPDLObject : public MIPSDLObject {
 protected:

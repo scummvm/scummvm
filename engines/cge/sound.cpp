@@ -26,14 +26,14 @@
  */
 
 #include "cge/sound.h"
-#include "cge/text.h"
-#include "cge/cge_main.h"
-#include "common/config-manager.h"
-#include "common/memstream.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
+#include "cge/cge_main.h"
+#include "cge/text.h"
+#include "common/config-manager.h"
+#include "common/memstream.h"
 
 namespace CGE {
 
@@ -46,7 +46,8 @@ DataCk::~DataCk() {
 	free(_buf);
 }
 
-Sound::Sound(CGEEngine *vm) : _vm(vm) {
+Sound::Sound(CGEEngine *vm)
+  : _vm(vm) {
 	_audioStream = NULL;
 	_soundRepeatCount = 1;
 	open();
@@ -87,12 +88,12 @@ void Sound::play(DataCk *wav, int pan) {
 void Sound::sndDigiStart(SmpInfo *PSmpInfo) {
 	// Create an audio stream wrapper for sound
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(PSmpInfo->_saddr,
-		PSmpInfo->_slen, DisposeAfterUse::NO);
+	                                                                PSmpInfo->_slen, DisposeAfterUse::NO);
 	_audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 
 	// Start the new sound
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle,
-		Audio::makeLoopingAudioStream(_audioStream, (uint)PSmpInfo->_counter));
+	                        Audio::makeLoopingAudioStream(_audioStream, (uint)PSmpInfo->_counter));
 
 	// CGE pan:
 	// 8 = Center
@@ -111,7 +112,9 @@ void Sound::sndDigiStop(SmpInfo *PSmpInfo) {
 	_audioStream = NULL;
 }
 
-Fx::Fx(CGEEngine *vm, int size) : _current(NULL), _vm(vm) {
+Fx::Fx(CGEEngine *vm, int size)
+  : _current(NULL)
+  , _vm(vm) {
 	_cache = new Handler[size];
 	for (_size = 0; _size < size; _size++) {
 		_cache[_size]._ref = 0;
@@ -211,7 +214,8 @@ DataCk *Fx::operator[](int ref) {
 	return _current;
 }
 
-MusicPlayer::MusicPlayer(CGEEngine *vm) : _vm(vm) {
+MusicPlayer::MusicPlayer(CGEEngine *vm)
+  : _vm(vm) {
 	_data = NULL;
 	_isGM = false;
 

@@ -22,17 +22,16 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
-
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
@@ -236,7 +235,7 @@ int sceneHandler37(ExCommand *cmd) {
 	if (cmd->_messageKind != 17)
 		return 0;
 
-	switch(cmd->_messageNum) {
+	switch (cmd->_messageNum) {
 	case MSG_SC37_EXITLEFT:
 		sceneHandler37_updateRing(0);
 		sceneHandler37_updateRing(1);
@@ -244,25 +243,24 @@ int sceneHandler37(ExCommand *cmd) {
 
 		break;
 
-	case 29:
-		{
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+	case 29: {
+		StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
-			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
-				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
+		if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
+			int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
 
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
-					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
-						|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
-						g_fp->processArcade(cmd);
-						break;
-					}
+			if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
+				if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
+				    || (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
+					g_fp->processArcade(cmd);
+					break;
 				}
 			}
 		}
+	}
 
-		break;
+	break;
 
 	case 33:
 		if (g_fp->_aniMan2) {
@@ -296,21 +294,21 @@ int sceneHandler37(ExCommand *cmd) {
 	case MSG_SC37_PULL:
 		if (g_vars->scene37_rings[0]->ani->_movement && g_vars->scene37_rings[0]->ani->_movement->_id == MV_GRD37_PULL) {
 			if ((g_fp->getObjectState(sO_Guard_1) == g_fp->getObjectEnumState(sO_Guard_1, sO_On) && !g_vars->scene37_rings[0]->state)
-				|| (g_fp->getObjectState(sO_Guard_1) == g_fp->getObjectEnumState(sO_Guard_1, sO_Off) && g_vars->scene37_rings[0]->state)) {
+			    || (g_fp->getObjectState(sO_Guard_1) == g_fp->getObjectEnumState(sO_Guard_1, sO_Off) && g_vars->scene37_rings[0]->state)) {
 				g_vars->scene37_plusMinus1->_statics = g_vars->scene37_plusMinus1->getStaticsById(ST_PMS_PLUS);
 			} else {
 				g_vars->scene37_plusMinus1->_statics = g_vars->scene37_plusMinus1->getStaticsById(ST_PMS_MINUS);
 			}
 		} else if (g_vars->scene37_rings[1]->ani->_movement && g_vars->scene37_rings[1]->ani->_movement->_id == MV_GRD37_PULL) {
 			if ((g_fp->getObjectState(sO_Guard_2) == g_fp->getObjectEnumState(sO_Guard_2, sO_On) && !g_vars->scene37_rings[1]->state)
-				|| (g_fp->getObjectState(sO_Guard_2) == g_fp->getObjectEnumState(sO_Guard_2, sO_Off) && g_vars->scene37_rings[1]->state)) {
+			    || (g_fp->getObjectState(sO_Guard_2) == g_fp->getObjectEnumState(sO_Guard_2, sO_Off) && g_vars->scene37_rings[1]->state)) {
 				g_vars->scene37_plusMinus2->_statics = g_vars->scene37_plusMinus2->getStaticsById(ST_PMS_PLUS);
 			} else {
 				g_vars->scene37_plusMinus2->_statics = g_vars->scene37_plusMinus2->getStaticsById(ST_PMS_MINUS);
 			}
 		} else if (g_vars->scene37_rings[2]->ani->_movement && g_vars->scene37_rings[2]->ani->_movement->_id == MV_GRD37_PULL) {
 			if ((g_fp->getObjectState(sO_Guard_3) == g_fp->getObjectEnumState(sO_Guard_3, sO_On) && !g_vars->scene37_rings[2]->state)
-				|| (g_fp->getObjectState(sO_Guard_3) == g_fp->getObjectEnumState(sO_Guard_3, sO_Off) && g_vars->scene37_rings[2]->state)) {
+			    || (g_fp->getObjectState(sO_Guard_3) == g_fp->getObjectEnumState(sO_Guard_3, sO_Off) && g_vars->scene37_rings[2]->state)) {
 				g_vars->scene37_plusMinus3->_statics = g_vars->scene37_plusMinus3->getStaticsById(ST_PMS_PLUS);
 			} else {
 				g_vars->scene37_plusMinus3->_statics = g_vars->scene37_plusMinus3->getStaticsById(ST_PMS_MINUS);

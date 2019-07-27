@@ -22,16 +22,16 @@
 
 #include "sword1/sword1.h"
 
-#include "sword1/resman.h"
-#include "sword1/objectman.h"
-#include "sword1/mouse.h"
-#include "sword1/logic.h"
-#include "sword1/sound.h"
-#include "sword1/screen.h"
-#include "sword1/swordres.h"
-#include "sword1/menu.h"
-#include "sword1/music.h"
 #include "sword1/control.h"
+#include "sword1/logic.h"
+#include "sword1/menu.h"
+#include "sword1/mouse.h"
+#include "sword1/music.h"
+#include "sword1/objectman.h"
+#include "sword1/resman.h"
+#include "sword1/screen.h"
+#include "sword1/sound.h"
+#include "sword1/swordres.h"
 
 #include "common/config-manager.h"
 #include "common/textconsole.h"
@@ -45,11 +45,9 @@ namespace Sword1 {
 SystemVars SwordEngine::_systemVars;
 
 SwordEngine::SwordEngine(OSystem *syst)
-	: Engine(syst) {
+  : Engine(syst) {
 
-	if (!scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1demo") ||
-	        !scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1psxdemo") ||
-	        !scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1macdemo"))
+	if (!scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1demo") || !scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1psxdemo") || !scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1macdemo"))
 		_features = GF_DEMO;
 	else
 		_features = 0;
@@ -96,11 +94,9 @@ Common::Error SwordEngine::init() {
 
 	initGraphics(640, 480);
 
-	if (0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1mac") ||
-	        0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1macdemo"))
+	if (0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1mac") || 0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1macdemo"))
 		_systemVars.platform = Common::kPlatformMacintosh;
-	else if (0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1psx") ||
-	         0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1psxdemo"))
+	else if (0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1psx") || 0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1psxdemo"))
 		_systemVars.platform = Common::kPlatformPSX;
 	else
 		_systemVars.platform = Common::kPlatformWindows;
@@ -173,7 +169,7 @@ void SwordEngine::reinitialize() {
 	_sound->quitScreen();
 	_resMan->flush(); // free everything that's currently alloced and opened. (*evil*)
 
-	_logic->initialize();     // now reinitialize these objects as they (may) have locked
+	_logic->initialize(); // now reinitialize these objects as they (may) have locked
 	_objectMan->initialize(); // resources which have just been wiped.
 	_mouse->initialize();
 	_system->warpMouse(320, 240);
@@ -294,15 +290,18 @@ const CdFile SwordEngine::_pcCdFileList[] = {
 	{ "speech1.clu", FLAG_SPEECH1 },
 	{ "speech2.clu", FLAG_SPEECH2 }
 #ifdef USE_FLAC
-	, { "speech1.clf", FLAG_SPEECH1 },
+	,
+	{ "speech1.clf", FLAG_SPEECH1 },
 	{ "speech2.clf", FLAG_SPEECH2 }
 #endif
 #ifdef USE_VORBIS
-	, { "speech1.clv", FLAG_SPEECH1 },
+	,
+	{ "speech1.clv", FLAG_SPEECH1 },
 	{ "speech2.clv", FLAG_SPEECH2 }
 #endif
 #ifdef USE_MAD
-	, { "speech1.cl3", FLAG_SPEECH1 },
+	,
+	{ "speech1.cl3", FLAG_SPEECH1 },
 	{ "speech2.cl3", FLAG_SPEECH2 }
 #endif
 };
@@ -326,15 +325,18 @@ const CdFile SwordEngine::_macCdFileList[] = {
 	{ "speech1.clu", FLAG_SPEECH1 },
 	{ "speech2.clu", FLAG_SPEECH2 }
 #ifdef USE_FLAC
-	,{ "speech1.clf", FLAG_SPEECH1 },
+	,
+	{ "speech1.clf", FLAG_SPEECH1 },
 	{ "speech2.clf", FLAG_SPEECH2 }
 #endif
 #ifdef USE_VORBIS
-	,{ "speech1.clv", FLAG_SPEECH1 },
+	,
+	{ "speech1.clv", FLAG_SPEECH1 },
 	{ "speech2.clv", FLAG_SPEECH2 }
 #endif
 #ifdef USE_MAD
-	,{ "speech1.cl3", FLAG_SPEECH1 },
+	,
+	{ "speech1.cl3", FLAG_SPEECH1 },
 	{ "speech2.cl3", FLAG_SPEECH2 }
 #endif
 };
@@ -352,7 +354,7 @@ const CdFile SwordEngine::_psxCdFileList[] = { // PSX edition has only one cd
 	{ "compacts.clu", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
 	{ "general.clu", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
 	{ "maps.clu", FLAG_CD1 | FLAG_DEMO },
-	{ "paris1.clu", FLAG_CD1 | FLAG_DEMO},
+	{ "paris1.clu", FLAG_CD1 | FLAG_DEMO },
 	{ "scripts.clu", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
 	{ "swordres.rif", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
 	{ "text.clu", FLAG_CD1 | FLAG_DEMO },
@@ -499,9 +501,9 @@ void SwordEngine::checkCdFiles() { // check if we're running from cd, hdd or wha
 	if (foundTypes[TYPE_SPEECH2]) // same for speech2
 		missingTypes[TYPE_SPEECH2] = false;
 
-	if (isFullVersion)                   // if this is the full version...
+	if (isFullVersion) // if this is the full version...
 		missingTypes[TYPE_DEMO] = false; // then we don't need demo files...
-	else                                 // and vice versa
+	else // and vice versa
 		missingTypes[TYPE_SPEECH1] = missingTypes[TYPE_SPEECH2] = missingTypes[TYPE_CD1] = missingTypes[TYPE_CD2] = false;
 
 	bool somethingMissing = false;
@@ -561,7 +563,8 @@ void SwordEngine::checkCdFiles() { // check if we're running from cd, hdd or wha
 			else
 				warning("Unable to find the speech file from CD %d.\n"
 				        "You won't hear any voice output in that part of the game.\n"
-				        "Please read the ScummVM Readme file for more information", missingTypes[TYPE_SPEECH1] ? 1 : 2);
+				        "Please read the ScummVM Readme file for more information",
+				        missingTypes[TYPE_SPEECH1] ? 1 : 2);
 		} else if (missingTypes[TYPE_DEMO]) {
 			// for the demo version, we simply expect to have all files immediately
 			showFileErrorMsg(TYPE_IMMED, fileExists);
@@ -631,9 +634,9 @@ void SwordEngine::checkCd() {
 			_music->startMusic(0, 0); //
 			_sound->closeCowSystem(); // close music and sound files before changing CDs
 			_systemVars.currentCD = needCd; // askForCd will ask the player to insert _systemVars.currentCd,
-			_control->askForCd();           // so it has to be updated before calling it.
+			_control->askForCd(); // so it has to be updated before calling it.
 		}
-	} else {        // we're running from HDD, we don't have to care about music files and Sound will take care of
+	} else { // we're running from HDD, we don't have to care about music files and Sound will take care of
 		if (needCd) // switching sound.clu files on Sound::newScreen by itself, so there's nothing to be done.
 			_systemVars.currentCD = needCd;
 		else if (_systemVars.currentCD == 0)
@@ -686,7 +689,8 @@ uint8 SwordEngine::mainLoop() {
 
 			// The control panel is triggered by F5 or ESC.
 			else if (((_keyPressed.keycode == Common::KEYCODE_F5 || _keyPressed.keycode == Common::KEYCODE_ESCAPE)
-			          && (Logic::_scriptVars[MOUSE_STATUS] & 1)) || (_systemVars.controlPanelMode)) {
+			          && (Logic::_scriptVars[MOUSE_STATUS] & 1))
+			         || (_systemVars.controlPanelMode)) {
 				retCode = _control->runPanel();
 				if (retCode == CONTROL_NOTHING_DONE)
 					_screen->fullRefresh();

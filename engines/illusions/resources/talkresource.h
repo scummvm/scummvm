@@ -32,10 +32,12 @@ class IllusionsEngine;
 
 class TalkResourceLoader : public BaseResourceLoader {
 public:
-	TalkResourceLoader(IllusionsEngine *vm) : _vm(vm) {}
+	TalkResourceLoader(IllusionsEngine *vm)
+	  : _vm(vm) {}
 	virtual ~TalkResourceLoader() {}
 	virtual void load(Resource *resource);
 	virtual bool isFlag(int flag);
+
 protected:
 	IllusionsEngine *_vm;
 };
@@ -54,6 +56,7 @@ public:
 	TalkResource();
 	~TalkResource();
 	void load(byte *data, uint32 dataSize);
+
 public:
 	uint _talkEntriesCount;
 	TalkEntry *_talkEntries;
@@ -66,6 +69,7 @@ public:
 	virtual void unload();
 	virtual void pause();
 	virtual void unpause();
+
 public:
 	IllusionsEngine *_vm;
 	uint32 _talkId;
@@ -86,9 +90,9 @@ public:
 	TalkInstance *findTalkItemBySceneId(uint32 sceneId);
 	void pauseBySceneId(uint32 sceneId);
 	void unpauseBySceneId(uint32 sceneId);
-//protected:
+	//protected:
 public:
-	typedef Common::List<TalkInstance*> Items;
+	typedef Common::List<TalkInstance *> Items;
 	typedef Items::iterator ItemsIterator;
 	IllusionsEngine *_vm;
 	Items _items;

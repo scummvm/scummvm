@@ -23,9 +23,9 @@
  *
  */
 
+#include "common/util.h"
 #include "common/random.h"
 #include "common/system.h"
-#include "common/util.h"
 
 #include "pegasus/util.h"
 
@@ -56,11 +56,10 @@ int32 pegasusRound(const int32 a, const int32 b) {
 			return -((a - (-b >> 1)) / -b);
 		else
 			return -((a + (-b >> 1)) / -b);
+	else if (a < 0)
+		return (a - (b >> 1)) / b;
 	else
-		if (a < 0)
-			return (a - (b >> 1)) / b;
-		else
-			return (a + (b >> 1)) / b;
+		return (a + (b >> 1)) / b;
 }
 
 int32 linearInterp(const int32 start1, const int32 stop1, const int32 current1, const int32 start2, const int32 stop2) {

@@ -141,7 +141,7 @@ void CCameraMover::save(SimpleFile *file, int indent) {
 
 void CCameraMover::incLockCount() {
 	if (_lockCounter < 3)
-	++_lockCounter;
+		++_lockCounter;
 }
 
 void CCameraMover::decLockCount() {

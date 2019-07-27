@@ -47,7 +47,6 @@ public:
 	}
 	~HuffmanLists() {}
 
-
 	uint32 getNumEntries() const { return _numEntries; }
 	uint32 getLength(uint32 index) const { return _lens[index]; }
 	uint32 getMask(uint32 index) const { return _masks[index]; }

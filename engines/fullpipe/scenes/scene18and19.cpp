@@ -22,16 +22,16 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
+#include "fullpipe/interaction.h"
 
 #include "common/math.h"
 
@@ -48,7 +48,6 @@ struct Swinger {
 	int sflags;
 	int sfield_24;
 };
-
 
 void scene18_preload() {
 	g_fp->_scene3 = 0;
@@ -725,43 +724,42 @@ int sceneHandler18(ExCommand *cmd) {
 		sceneHandler18and19_showBoyJump();
 		break;
 
-	case 29:
-		{
-			if (g_vars->scene18_enteredTrubaRight) {
-				cmd->_messageKind = 0;
+	case 29: {
+		if (g_vars->scene18_enteredTrubaRight) {
+			cmd->_messageKind = 0;
 
-				break;
-			}
-
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-
-			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
-				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
-
-				if (pic && pic->_id == PIC_SC18_DOMIN && g_vars->scene18_domino
-					&& (g_vars->scene18_domino->_flags & 4) && g_fp->_aniMan->isIdle()) {
-					if (!(g_fp->_aniMan->_flags & 0x100) && g_fp->_msgObjectId2 != g_vars->scene18_domino->_id) {
-						handleObjectInteraction(g_fp->_aniMan, g_vars->scene18_domino, cmd->_param);
-						cmd->_messageKind = 0;
-
-						break;
-					}
-				}
-
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
-					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
-						|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
-						g_fp->processArcade(cmd);
-
-						g_vars->scene18_manIsReady = false;
-
-						break;
-					}
-				}
-			}
 			break;
 		}
+
+		StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+
+		if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
+			int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
+
+			if (pic && pic->_id == PIC_SC18_DOMIN && g_vars->scene18_domino
+			    && (g_vars->scene18_domino->_flags & 4) && g_fp->_aniMan->isIdle()) {
+				if (!(g_fp->_aniMan->_flags & 0x100) && g_fp->_msgObjectId2 != g_vars->scene18_domino->_id) {
+					handleObjectInteraction(g_fp->_aniMan, g_vars->scene18_domino, cmd->_param);
+					cmd->_messageKind = 0;
+
+					break;
+				}
+			}
+
+			if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
+				if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
+				    || (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
+					g_fp->processArcade(cmd);
+
+					g_vars->scene18_manIsReady = false;
+
+					break;
+				}
+			}
+		}
+		break;
+	}
 
 	case 33:
 		if (g_fp->_aniMan2) {

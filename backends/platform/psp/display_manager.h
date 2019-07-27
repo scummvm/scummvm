@@ -26,16 +26,17 @@
 #include "backends/platform/psp/thread.h"
 #include "common/list.h"
 
-#define UNCACHED(x)		((byte *)(((uint32)(x)) | 0x40000000))	/* make an uncached access */
-#define CACHED(x)		((byte *)(((uint32)(x)) & 0xBFFFFFFF))	/* make an uncached access into a cached one */
+#define UNCACHED(x) ((byte *)(((uint32)(x)) | 0x40000000)) /* make an uncached access */
+#define CACHED(x) ((byte *)(((uint32)(x)) & 0xBFFFFFFF)) /* make an uncached access into a cached one */
 
 /**
  *	Class that allocates memory in the VRAM
  */
 class VramAllocator : public Common::Singleton<VramAllocator> {
 public:
-	VramAllocator() : _bytesAllocated(0) {}
-	void *allocate(int32 size, bool smallAllocation = false);	// smallAllocation e.g. palettes
+	VramAllocator()
+	  : _bytesAllocated(0) {}
+	void *allocate(int32 size, bool smallAllocation = false); // smallAllocation e.g. palettes
 	void deallocate(void *pointer);
 
 	static inline bool isAddressInVram(void *address) {
@@ -43,7 +44,6 @@ public:
 			return true;
 		return false;
 	}
-
 
 private:
 	/**
@@ -53,27 +53,33 @@ private:
 		byte *address;
 		uint32 size;
 		void *getEnd() { return address + size; }
-		Allocation(void *Address, uint32 Size) : address((byte *)Address), size(Size) {}
-		Allocation() : address(0), size(0) {}
+		Allocation(void *Address, uint32 Size)
+		  : address((byte *)Address)
+		  , size(Size) {}
+		Allocation()
+		  : address(0)
+		  , size(0) {}
 	};
 
 	enum {
 		VRAM_START_ADDRESS = 0x04000000,
-		VRAM_END_ADDRESS   = 0x04200000,
-		VRAM_SMALL_ADDRESS = VRAM_END_ADDRESS - (4 * 1024)	// 4K in the end for small allocations
+		VRAM_END_ADDRESS = 0x04200000,
+		VRAM_SMALL_ADDRESS = VRAM_END_ADDRESS - (4 * 1024) // 4K in the end for small allocations
 	};
-	Common::List <Allocation> _allocList;		// List of allocations
+	Common::List<Allocation> _allocList; // List of allocations
 	uint32 _bytesAllocated;
 };
-
 
 /**
  *	Class used only by DisplayManager to start/stop GU rendering
  */
 class MasterGuRenderer : public PspThreadable {
 public:
-	MasterGuRenderer() : _lastRenderTime(0), _renderFinished(true),
-		_renderSema(1, 1), _callbackId(-1) {}
+	MasterGuRenderer()
+	  : _lastRenderTime(0)
+	  , _renderFinished(true)
+	  , _renderSema(1, 1)
+	  , _callbackId(-1) {}
 	void guInit();
 	void guPreRender();
 	void guPostRender();
@@ -81,15 +87,16 @@ public:
 	bool isRenderFinished() { return _renderFinished; }
 	void sleepUntilRenderFinished();
 	void setupCallbackThread();
+
 private:
-	virtual void threadFunction();			// for the display callback thread
+	virtual void threadFunction(); // for the display callback thread
 	static uint32 _displayList[];
-	uint32 _lastRenderTime;					// For measuring rendering time
+	uint32 _lastRenderTime; // For measuring rendering time
 	void guProgramDisplayBufferSizes();
-	static int guCallback(int, int, void *__this);	// for the display callback
-	bool _renderFinished;					// for sync with render callback
-	PspSemaphore _renderSema;				// semaphore for syncing
-	int _callbackId;						// to keep track of render callback
+	static int guCallback(int, int, void *__this); // for the display callback
+	bool _renderFinished; // for sync with render callback
+	PspSemaphore _renderSema; // semaphore for syncing
+	int _callbackId; // to keep track of render callback
 };
 
 class Screen;
@@ -103,23 +110,29 @@ class ImageViewer;
  */
 class DisplayManager {
 public:
-	enum GraphicsModeID {			///> Possible output formats onscreen
+	enum GraphicsModeID { ///> Possible output formats onscreen
 		ORIGINAL_RESOLUTION,
 		FIT_TO_SCREEN,
 		STRETCH_TO_SCREEN
 	};
-	DisplayManager() : _screen(0), _cursor(0), _overlay(0), _keyboard(0),
-					  _imageViewer(0), _lastUpdateTime(0), _graphicsMode(0) {}
+	DisplayManager()
+	  : _screen(0)
+	  , _cursor(0)
+	  , _overlay(0)
+	  , _keyboard(0)
+	  , _imageViewer(0)
+	  , _lastUpdateTime(0)
+	  , _graphicsMode(0) {}
 	~DisplayManager();
 
 	void init();
-	bool renderAll();	// return true if rendered or nothing dirty. False otherwise
+	bool renderAll(); // return true if rendered or nothing dirty. False otherwise
 	void waitUntilRenderFinished();
 	bool setGraphicsMode(int mode);
 	bool setGraphicsMode(const char *name);
 	int getGraphicsMode() const { return _graphicsMode; }
 	uint32 getDefaultGraphicsMode() const { return FIT_TO_SCREEN; }
-	const OSystem::GraphicsMode* getSupportedGraphicsModes() const { return _supportedModes; }
+	const OSystem::GraphicsMode *getSupportedGraphicsModes() const { return _supportedModes; }
 
 	// Setters for pointers
 	void setScreen(Screen *screen) { _screen = screen; }
@@ -144,8 +157,11 @@ private:
 		Dimensions screenSource;
 		float scaleX;
 		float scaleY;
-		uint32 outputBitsPerPixel;		// How many bits end up on-screen
-		GlobalDisplayParams() : scaleX(0.0f), scaleY(0.0f), outputBitsPerPixel(0) {}
+		uint32 outputBitsPerPixel; // How many bits end up on-screen
+		GlobalDisplayParams()
+		  : scaleX(0.0f)
+		  , scaleY(0.0f)
+		  , outputBitsPerPixel(0) {}
 	};
 
 	// Pointers to DisplayClients
@@ -156,14 +172,13 @@ private:
 	ImageViewer *_imageViewer;
 
 	MasterGuRenderer _masterGuRenderer;
-	uint32 _lastUpdateTime;					// For limiting FPS
+	uint32 _lastUpdateTime; // For limiting FPS
 	int _graphicsMode;
 	GlobalDisplayParams _displayParams;
 	static const OSystem::GraphicsMode _supportedModes[];
 
-	void calculateScaleParams();	// calculates scaling factor
-	bool isTimeToUpdate();			// should we update the screen now
+	void calculateScaleParams(); // calculates scaling factor
+	bool isTimeToUpdate(); // should we update the screen now
 };
-
 
 #endif /* PSP_DISPLAY_MAN_H */

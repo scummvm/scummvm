@@ -57,6 +57,7 @@ public:
 	bool isMouseOver();
 	bool isEditDlgVisible();
 	Dialog *getActiveDlg();
+
 protected:
 	virtual void releaseFocus();
 };

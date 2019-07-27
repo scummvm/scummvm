@@ -24,23 +24,26 @@
 
 namespace Titanic {
 
-TTsynonym::TTsynonym() : TTstringNode() {
+TTsynonym::TTsynonym()
+  : TTstringNode() {
 }
 
-TTsynonym::TTsynonym(const TTsynonym *src) : TTstringNode() {
+TTsynonym::TTsynonym(const TTsynonym *src)
+  : TTstringNode() {
 	_string = src->_string;
 	initialize(src->_mode);
 	_file = src->_file;
 }
 
-TTsynonym::TTsynonym(int mode, const char *str, FileHandle file) :
-		TTstringNode() {
+TTsynonym::TTsynonym(int mode, const char *str, FileHandle file)
+  : TTstringNode() {
 	_string = str;
 	initialize(mode);
 	_file = file;
 }
 
-TTsynonym::TTsynonym(int mode, TTstring *str) : TTstringNode() {
+TTsynonym::TTsynonym(int mode, TTstring *str)
+  : TTstringNode() {
 	_string = *str;
 	initialize(mode);
 }

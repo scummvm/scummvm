@@ -23,8 +23,8 @@
 #ifndef LASTEXPRESS_EVENTHANDLER_H
 #define LASTEXPRESS_EVENTHANDLER_H
 
-#include "common/func.h"
 #include "common/events.h"
+#include "common/func.h"
 
 namespace LastExpress {
 
@@ -32,17 +32,17 @@ namespace LastExpress {
 	_engine->setEventHandlers(new EVENT_HANDLER(class, eventMouse, inst), new EVENT_HANDLER(class, eventTick, inst));
 
 #define EVENT_HANDLER(class, name, inst) \
-	Common::Functor1Mem<const Common::Event&, void, class>(inst, &class::name)
+	Common::Functor1Mem<const Common::Event &, void, class>(inst, &class ::name)
 
 class EventHandler {
 public:
 	virtual ~EventHandler() {}
 
 	// Function pointer for event handler
-	typedef Common::Functor1<const Common::Event&, void> EventFunction;
+	typedef Common::Functor1<const Common::Event &, void> EventFunction;
 
-	virtual void eventMouse(const Common::Event &ev) {}    // Event type 1
-	virtual void eventTick(const Common::Event &ev) {}     // Event type 3
+	virtual void eventMouse(const Common::Event &ev) {} // Event type 1
+	virtual void eventTick(const Common::Event &ev) {} // Event type 3
 };
 
 } // End of namespace LastExpress

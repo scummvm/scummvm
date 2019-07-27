@@ -29,9 +29,9 @@
 #ifndef WINTERMUTE_UIEDIT_H
 #define WINTERMUTE_UIEDIT_H
 
+#include "common/events.h"
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/ui/ui_object.h"
-#include "common/events.h"
 
 namespace Wintermute {
 class BaseFont;
@@ -59,6 +59,7 @@ public:
 	virtual bool scSetProperty(const char *name, ScValue *value) override;
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	virtual const char *scToString() override;
+
 private:
 	uint32 _cursorBlinkRate;
 	uint32 _lastBlinkTime;

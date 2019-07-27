@@ -23,23 +23,23 @@
 // Game interface module
 #include "saga/saga.h"
 
-#include "saga/gfx.h"
 #include "saga/actor.h"
 #include "saga/console.h"
 #include "saga/displayinfo.h"
 #include "saga/events.h"
 #include "saga/font.h"
-#include "saga/objectmap.h"
+#include "saga/gfx.h"
 #include "saga/isomap.h"
 #include "saga/itedata.h"
 #include "saga/music.h"
+#include "saga/objectmap.h"
 #include "saga/puzzle.h"
 #include "saga/render.h"
+#include "saga/resource.h"
 #include "saga/scene.h"
 #include "saga/script.h"
 #include "saga/sound.h"
 #include "saga/sprite.h"
-#include "saga/resource.h"
 
 #include "saga/interface.h"
 
@@ -50,8 +50,8 @@
 namespace Saga {
 
 static const int verbToTextIdITE[] = {
-	kTextWalkTo,	kTextLookAt,	kTextPickUp,	kTextTalkTo,
-	kTextOpen,		kTextClose,		kTextUse,		kTextGive
+	kTextWalkTo, kTextLookAt, kTextPickUp, kTextTalkTo,
+	kTextOpen, kTextClose, kTextUse, kTextGive
 };
 
 // This maps the internally used string ITE IDs to the LUT strings loaded in IHNM
@@ -59,48 +59,45 @@ static const int verbToTextIdITE[] = {
 // The comments are what the actual IHNM string is
 // For the text string IDs, refer to saga.h, enum TextStringIds
 static const int IHNMTextStringIdsLUT[56] = {
-	-1,	// (Empty)
-	-1,	// (Empty)
-	4,	// Take
-	6,	// Talk to
+	-1, // (Empty)
+	-1, // (Empty)
+	4, // Take
+	6, // Talk to
 	-1,
 	-1,
-	5,	// Use
-	8,	// Give
-	10,	// Options
-	11,	// Test
-	12,	// Demo
-	13,	// Help
-	14,	// Quit Game
-	16,	// Fast
-	18,	// Slow
-	20,	// On
-	21,	// Off
-	15,	// Continue Playing
-	22,	// Load
-	23,	// Save
-	24,	// Game Options
-	25,	// Reading Speed
-	26,	// Music
-	27,	// Sound
-	32,	// Cancel
-	33,	// Quit
-	34,	// OK
-	17,	// Mid
-	19,	// Click
-	36,	// 10%
-	37,	// 20%
-	38,	// 30%
-	39,	// 40%
-	40,	// 50%
-	41,	// 60%
-	42,	// 70%
-	43,	// 80%
-	44,	// 90%
-	45,	// Max
-	-1,
-	-1,
-	-1,
+	5, // Use
+	8, // Give
+	10, // Options
+	11, // Test
+	12, // Demo
+	13, // Help
+	14, // Quit Game
+	16, // Fast
+	18, // Slow
+	20, // On
+	21, // Off
+	15, // Continue Playing
+	22, // Load
+	23, // Save
+	24, // Game Options
+	25, // Reading Speed
+	26, // Music
+	27, // Sound
+	32, // Cancel
+	33, // Quit
+	34, // OK
+	17, // Mid
+	19, // Click
+	36, // 10%
+	37, // 20%
+	38, // 30%
+	39, // 40%
+	40, // 50%
+	41, // 60%
+	42, // 70%
+	43, // 80%
+	44, // 90%
+	45, // Max
 	-1,
 	-1,
 	-1,
@@ -111,16 +108,20 @@ static const int IHNMTextStringIdsLUT[56] = {
 	-1,
 	-1,
 	-1,
-	28,	// Voices
-	29,	// Text
-	30,	// Audio
-	31	// Both
+	-1,
+	-1,
+	-1,
+	28, // Voices
+	29, // Text
+	30, // Audio
+	31 // Both
 };
 
 #define buttonRes0 0x42544E00
 #define buttonRes1 0x42544E01
 
-Interface::Interface(SagaEngine *vm) : _vm(vm) {
+Interface::Interface(SagaEngine *vm)
+  : _vm(vm) {
 	ByteArray resourceData;
 	int i;
 
@@ -742,9 +743,9 @@ void Interface::loadScenePortraits(int resourceId) {
 	_vm->_sprite->loadList(resourceId, _scenePortraits);
 }
 
-void Interface::drawVerbPanel(PanelButton* panelButton) {
-	PanelButton * rightButtonVerbPanelButton;
-	PanelButton * currentVerbPanelButton;
+void Interface::drawVerbPanel(PanelButton *panelButton) {
+	PanelButton *rightButtonVerbPanelButton;
+	PanelButton *currentVerbPanelButton;
 	KnownColor textColor;
 	int spriteNumber;
 	Point point;
@@ -783,8 +784,7 @@ void Interface::draw() {
 
 	drawStatusBar();
 
-	if (_panelMode == kPanelMain || _panelMode == kPanelMap ||
-		(_panelMode == kPanelNull && _vm->isIHNMDemo())) {
+	if (_panelMode == kPanelMain || _panelMode == kPanelMap || (_panelMode == kPanelNull && _vm->isIHNMDemo())) {
 		_mainPanel.getRect(rect);
 		_vm->_gfx->drawRegion(rect, _mainPanel.image.getBuffer());
 
@@ -799,9 +799,7 @@ void Interface::draw() {
 		converseDisplayTextLines();
 	}
 
-	if (_panelMode == kPanelMain || _panelMode == kPanelConverse ||
-		_lockedMode == kPanelMain || _lockedMode == kPanelConverse ||
-		(_panelMode == kPanelNull && _vm->isIHNMDemo())) {
+	if (_panelMode == kPanelMain || _panelMode == kPanelConverse || _lockedMode == kPanelMain || _lockedMode == kPanelConverse || (_panelMode == kPanelNull && _vm->isIHNMDemo())) {
 		leftPortraitPoint.x = _mainPanel.x + _vm->getDisplayInfo().leftPortraitXOffset;
 		leftPortraitPoint.y = _mainPanel.y + _vm->getDisplayInfo().leftPortraitYOffset;
 		_vm->_sprite->draw(_defPortraits, _leftPortrait, leftPortraitPoint, 256);
@@ -829,7 +827,7 @@ void Interface::calcOptionSaveSlider() {
 	int totalFiles = _vm->getSaveFilesCount();
 	int visibleFiles = _vm->getDisplayInfo().optionSaveFileVisible;
 	int height = _optionSaveFileSlider->height;
-	int sliderHeight = 13;		// IHNM's save file list slider has a fixed height
+	int sliderHeight = 13; // IHNM's save file list slider has a fixed height
 	int pos;
 
 	if (totalFiles < visibleFiles) {
@@ -926,7 +924,7 @@ void Interface::drawPanelText(InterfacePanel *panel, PanelButton *panelButton) {
 	textPoint.y = rect.top + 1;
 
 	_vm->_font->textDraw(textFont, text, textPoint,
-						_vm->KnownColor2ColorId(kKnownColorVerbText), _vm->KnownColor2ColorId(textShadowKnownColor), kFontShadow);
+	                     _vm->KnownColor2ColorId(kKnownColorVerbText), _vm->KnownColor2ColorId(textShadowKnownColor), kFontShadow);
 }
 
 void Interface::drawOption() {
@@ -973,7 +971,6 @@ void Interface::drawOption() {
 		sliderPoint.x = _optionPanel.x + panelButton->xOffset;
 		sliderPoint.y = _optionSaveRectSlider.top;
 		_vm->_sprite->draw(_optionPanel.sprites, 0 + _optionSaveFileSlider->state, sliderPoint, 256);
-
 	}
 
 	if (_optionSaveRectBottom.height() > 0) {
@@ -1008,7 +1005,6 @@ void Interface::drawOption() {
 				_vm->_font->textDraw(kKnownFontVerb, text, textPoint, fgColor, 0, kFontNormal);
 		}
 	}
-
 }
 
 void Interface::drawQuit() {
@@ -1033,7 +1029,7 @@ void Interface::drawQuit() {
 	}
 }
 
-void Interface::handleQuitUpdate(const Point& mousePoint) {
+void Interface::handleQuitUpdate(const Point &mousePoint) {
 	bool releasedButton;
 
 	_quitPanel.currentButton = quitHitTest(mousePoint);
@@ -1048,7 +1044,7 @@ void Interface::handleQuitUpdate(const Point& mousePoint) {
 	}
 }
 
-void Interface::handleQuitClick(const Point& mousePoint) {
+void Interface::handleQuitClick(const Point &mousePoint) {
 	_quitPanel.currentButton = quitHitTest(mousePoint);
 
 	_quitPanel.zeroAllButtonState();
@@ -1063,17 +1059,17 @@ void Interface::handleQuitClick(const Point& mousePoint) {
 void Interface::setQuit(PanelButton *panelButton) {
 	_quitPanel.currentButton = NULL;
 	switch (panelButton->id) {
-		case kTextCancel:
-			setMode(kPanelOption);
-			break;
-		case kTextQuit:
+	case kTextCancel:
+		setMode(kPanelOption);
+		break;
+	case kTextQuit:
 #ifdef ENABLE_IHNM
-			if (_vm->isIHNMDemo())
-				_vm->_scene->creditsScene();	// display sales info for IHNM demo
-			else
+		if (_vm->isIHNMDemo())
+			_vm->_scene->creditsScene(); // display sales info for IHNM demo
+		else
 #endif
-				_vm->quitGame();
-			break;
+			_vm->quitGame();
+		break;
 	}
 }
 
@@ -1099,7 +1095,7 @@ void Interface::drawLoad() {
 	}
 }
 
-void Interface::handleLoadUpdate(const Point& mousePoint) {
+void Interface::handleLoadUpdate(const Point &mousePoint) {
 	bool releasedButton;
 
 	_loadPanel.currentButton = loadHitTest(mousePoint);
@@ -1114,7 +1110,7 @@ void Interface::handleLoadUpdate(const Point& mousePoint) {
 	}
 }
 
-void Interface::handleLoadClick(const Point& mousePoint) {
+void Interface::handleLoadClick(const Point &mousePoint) {
 	_loadPanel.currentButton = loadHitTest(mousePoint);
 
 	_loadPanel.zeroAllButtonState();
@@ -1129,24 +1125,24 @@ void Interface::handleLoadClick(const Point& mousePoint) {
 void Interface::setLoad(PanelButton *panelButton) {
 	_loadPanel.currentButton = NULL;
 	switch (panelButton->id) {
-		case kTextOK:
-			if (_vm->getGameId() == GID_ITE) {
-				setMode(kPanelMain);
-			} else {
-				if (_vm->getSaveFilesCount() > 0) {
-					if (_vm->isSaveListFull() || (_optionSaveFileTitleNumber > 0)) {
-						debug(1, "Loading save game %d", _vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
-						setMode(kPanelMain);
-						_vm->load(_vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber));
-						_vm->syncSoundSettings();
-					}
+	case kTextOK:
+		if (_vm->getGameId() == GID_ITE) {
+			setMode(kPanelMain);
+		} else {
+			if (_vm->getSaveFilesCount() > 0) {
+				if (_vm->isSaveListFull() || (_optionSaveFileTitleNumber > 0)) {
+					debug(1, "Loading save game %d", _vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
+					setMode(kPanelMain);
+					_vm->load(_vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber));
+					_vm->syncSoundSettings();
 				}
 			}
-			break;
-		case kTextCancel:
-			// IHNM only
-			setMode(kPanelOption);
-			break;
+		}
+		break;
+	case kTextCancel:
+		// IHNM only
+		setMode(kPanelOption);
+		break;
 	}
 }
 
@@ -1233,8 +1229,7 @@ bool Interface::processTextInput(Common::KeyState keystate) {
 		_textInputPos = _textInputStringLength + 1;
 		break;
 	default:
-		if (((keystate.ascii <= 255) && (Common::isAlnum(keystate.ascii))) || (keystate.ascii == ' ') ||
-		    (keystate.ascii == '-') || (keystate.ascii == '_')) {
+		if (((keystate.ascii <= 255) && (Common::isAlnum(keystate.ascii))) || (keystate.ascii == ' ') || (keystate.ascii == '-') || (keystate.ascii == '_')) {
 			if (_textInputStringLength < save_title_size - 1) {
 				ch[0] = keystate.ascii;
 				tempWidth = _vm->_font->getStringWidth(kKnownFontSmall, ch, 0, kFontNormal);
@@ -1340,15 +1335,14 @@ void Interface::drawProtect() {
 	drawTextInput(&_protectPanel, _protectEdit);
 }
 
-void Interface::handleSaveUpdate(const Point& mousePoint) {
+void Interface::handleSaveUpdate(const Point &mousePoint) {
 	bool releasedButton;
 
 	_savePanel.currentButton = saveHitTest(mousePoint);
 
 	validateSaveButtons();
 
-	releasedButton = (_savePanel.currentButton != NULL) &&
-		(_savePanel.currentButton->state > 0) && (!_vm->mouseButtonPressed());
+	releasedButton = (_savePanel.currentButton != NULL) && (_savePanel.currentButton->state > 0) && (!_vm->mouseButtonPressed());
 
 	if (!_vm->mouseButtonPressed()) {
 		_savePanel.zeroAllButtonState();
@@ -1359,7 +1353,7 @@ void Interface::handleSaveUpdate(const Point& mousePoint) {
 	}
 }
 
-void Interface::handleSaveClick(const Point& mousePoint) {
+void Interface::handleSaveClick(const Point &mousePoint) {
 	_savePanel.currentButton = saveHitTest(mousePoint);
 
 	validateSaveButtons();
@@ -1382,34 +1376,34 @@ void Interface::setSave(PanelButton *panelButton) {
 	uint titleNumber;
 	char *fileName;
 	switch (panelButton->id) {
-		case kTextSave:
-			if (_textInputStringLength == 0) {
-				break;
-			}
-			if (!_vm->isSaveListFull() && (_optionSaveFileTitleNumber == 0)) {
-				if (_vm->locateSaveFile(_textInputString, titleNumber)) {
-					fileName = _vm->calcSaveFileName(_vm->getSaveFile(titleNumber)->slotNumber);
-					_vm->save(fileName, _textInputString);
-					_optionSaveFileTitleNumber = titleNumber;
-				} else {
-					fileName = _vm->calcSaveFileName(_vm->getNewSaveSlotNumber());
-					_vm->save(fileName, _textInputString);
-					_vm->fillSaveList();
-					calcOptionSaveSlider();
-				}
-			} else {
-				fileName = _vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
+	case kTextSave:
+		if (_textInputStringLength == 0) {
+			break;
+		}
+		if (!_vm->isSaveListFull() && (_optionSaveFileTitleNumber == 0)) {
+			if (_vm->locateSaveFile(_textInputString, titleNumber)) {
+				fileName = _vm->calcSaveFileName(_vm->getSaveFile(titleNumber)->slotNumber);
 				_vm->save(fileName, _textInputString);
+				_optionSaveFileTitleNumber = titleNumber;
+			} else {
+				fileName = _vm->calcSaveFileName(_vm->getNewSaveSlotNumber());
+				_vm->save(fileName, _textInputString);
+				_vm->fillSaveList();
+				calcOptionSaveSlider();
 			}
-			resetSaveReminder();
+		} else {
+			fileName = _vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
+			_vm->save(fileName, _textInputString);
+		}
+		resetSaveReminder();
 
-			_textInput = false;
-			setMode(kPanelOption);
-			break;
-		case kTextCancel:
-			_textInput = false;
-			setMode(kPanelOption);
-			break;
+		_textInput = false;
+		setMode(kPanelOption);
+		break;
+	case kTextCancel:
+		_textInput = false;
+		setMode(kPanelOption);
+		break;
 	}
 }
 
@@ -1419,7 +1413,7 @@ void Interface::resetSaveReminder() {
 	setSaveReminderState(1);
 }
 
-void Interface::handleOptionUpdate(const Point& mousePoint) {
+void Interface::handleOptionUpdate(const Point &mousePoint) {
 	int16 mouseY;
 	Rect rect;
 	int totalFiles = _vm->getSaveFilesCount();
@@ -1430,15 +1424,14 @@ void Interface::handleOptionUpdate(const Point& mousePoint) {
 		if (_optionSaveFileSlider->state > 0) {
 			_optionPanel.calcPanelButtonRect(_optionSaveFileSlider, rect);
 
-			mouseY = mousePoint.y - rect.top -_optionSaveFileMouseOff;
+			mouseY = mousePoint.y - rect.top - _optionSaveFileMouseOff;
 			if (mouseY < 0)
 				mouseY = 0;
 
 			if (totalFiles - visibleFiles <= 0) {
 				_optionSaveFileTop = 0;
 			} else {
-				_optionSaveFileTop = mouseY * (totalFiles - visibleFiles) /
-					(_optionSaveFileSlider->height - _optionSaveRectSlider.height());
+				_optionSaveFileTop = mouseY * (totalFiles - visibleFiles) / (_optionSaveFileSlider->height - _optionSaveRectSlider.height());
 			}
 
 			_optionSaveFileTop = CLIP<uint>(_optionSaveFileTop, 0, totalFiles - visibleFiles);
@@ -1461,8 +1454,7 @@ void Interface::handleOptionUpdate(const Point& mousePoint) {
 	}
 }
 
-
-void Interface::handleOptionClick(const Point& mousePoint) {
+void Interface::handleOptionClick(const Point &mousePoint) {
 	Rect rect;
 	_optionPanel.currentButton = optionHitTest(mousePoint);
 
@@ -1508,10 +1500,10 @@ void Interface::handleOptionClick(const Point& mousePoint) {
 	}
 }
 
-void Interface::handleChapterSelectionUpdate(const Point& mousePoint) {
+void Interface::handleChapterSelectionUpdate(const Point &mousePoint) {
 	uint16 objectId;
 	int hitZoneIndex;
-	const HitZone * hitZone;
+	const HitZone *hitZone;
 
 	// FIXME: Original handled more object types here.
 
@@ -1531,7 +1523,7 @@ void Interface::handleChapterSelectionUpdate(const Point& mousePoint) {
 	}
 }
 
-void Interface::handleChapterSelectionClick(const Point& mousePoint) {
+void Interface::handleChapterSelectionClick(const Point &mousePoint) {
 	int obj = _vm->_script->_pointerObject;
 
 	_vm->_actor->abortSpeech();
@@ -1572,10 +1564,10 @@ void Interface::handleChapterSelectionClick(const Point& mousePoint) {
 			event.time = 0;
 			event.param = _vm->_scene->getScriptModuleNumber();
 			event.param2 = script;
-			event.param3 = _vm->_script->getVerbType(kVerbUse);		// Action
-			event.param4 = obj;	// Object
-			event.param5 = 0;	// With Object
-			event.param6 = obj;		// Actor
+			event.param3 = _vm->_script->getVerbType(kVerbUse); // Action
+			event.param4 = obj; // Object
+			event.param5 = 0; // With Object
+			event.param6 = obj; // Actor
 			_vm->_events->queue(event);
 		}
 	}
@@ -1638,35 +1630,38 @@ void Interface::setOption(PanelButton *panelButton) {
 		break;
 	case kTextMusic:
 		_vm->_musicVolume = _vm->_musicVolume + 25;
-		if (_vm->_musicVolume > 255) _vm->_musicVolume = 0;
+		if (_vm->_musicVolume > 255)
+			_vm->_musicVolume = 0;
 		_vm->_music->setVolume(_vm->_musicVolume, 1);
 		ConfMan.setInt("music_volume", _vm->_musicVolume);
 		break;
 	case kTextSound:
 		_vm->_soundVolume = _vm->_soundVolume + 25;
-		if (_vm->_soundVolume > 255) _vm->_soundVolume = 0;
+		if (_vm->_soundVolume > 255)
+			_vm->_soundVolume = 0;
 		ConfMan.setInt("sfx_volume", _vm->_soundVolume);
 		_vm->_sound->setVolume();
 		break;
 	case kTextVoices:
 		if (_vm->_voiceFilesExist) {
-			if (_vm->_subtitlesEnabled && _vm->_voicesEnabled) {		// Both
-				_vm->_subtitlesEnabled = false;							// Set it to "Audio"
-				_vm->_voicesEnabled = true;								// Not necessary, just for completeness
+			if (_vm->_subtitlesEnabled && _vm->_voicesEnabled) { // Both
+				_vm->_subtitlesEnabled = false; // Set it to "Audio"
+				_vm->_voicesEnabled = true; // Not necessary, just for completeness
 			} else if (!_vm->_subtitlesEnabled && _vm->_voicesEnabled) {
-				_vm->_subtitlesEnabled = true;							// Set it to "Text"
+				_vm->_subtitlesEnabled = true; // Set it to "Text"
 				_vm->_voicesEnabled = false;
 			} else if (_vm->_subtitlesEnabled && !_vm->_voicesEnabled) {
-				_vm->_subtitlesEnabled = true;							// Set it to "Both"
+				_vm->_subtitlesEnabled = true; // Set it to "Both"
 				_vm->_voicesEnabled = true;
 			}
 		} else {
-			_vm->_subtitlesEnabled = true;								// Set it to "Text"
+			_vm->_subtitlesEnabled = true; // Set it to "Text"
 			_vm->_voicesEnabled = false;
 		}
 
 		_vm->_speechVolume = _vm->_speechVolume + 25;
-		if (_vm->_speechVolume > 255) _vm->_speechVolume = 0;
+		if (_vm->_speechVolume > 255)
+			_vm->_speechVolume = 0;
 		ConfMan.setInt("speech_volume", _vm->_speechVolume);
 		_vm->_sound->setVolume();
 
@@ -1676,7 +1671,7 @@ void Interface::setOption(PanelButton *panelButton) {
 	}
 }
 
-void Interface::update(const Point& mousePoint, int updateFlag) {
+void Interface::update(const Point &mousePoint, int updateFlag) {
 
 	if (!_active && _panelMode == kPanelNull && (updateFlag & UPDATE_MOUSECLICK))
 		_vm->_actor->abortSpeech();
@@ -1692,7 +1687,7 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 				// the psychic profile or the special screen in IHNM demo is open, don't return
 			} else if (_panelMode == kPanelOption || _panelMode == kPanelQuit) {
 				// options/quit panel is open, set interface to active and don't return
-				_vm->_actor->abortSpeech();	// abort any speech being played
+				_vm->_actor->abortSpeech(); // abort any speech being played
 				_active = true;
 			} else {
 				return;
@@ -1920,13 +1915,12 @@ void Interface::drawStatusBar() {
 		rect.right = rect.left + _vm->getDisplayInfo().saveReminderWidth;
 		rect.bottom = rect.top + _vm->getDisplayInfo().saveReminderHeight;
 		_vm->_sprite->draw(_vm->_sprite->_saveReminderSprites,
-			_vm->getDisplayInfo().saveReminderFirstSpriteNumber + _saveReminderState - 1,
-			rect, 256);
-
+		                   _vm->getDisplayInfo().saveReminderFirstSpriteNumber + _saveReminderState - 1,
+		                   rect, 256);
 	}
 }
 
-void Interface::handleMainClick(const Point& mousePoint) {
+void Interface::handleMainClick(const Point &mousePoint) {
 
 	PanelButton *panelButton;
 
@@ -1968,7 +1962,7 @@ void Interface::handleMainClick(const Point& mousePoint) {
 	}
 }
 
-void Interface::handleMainUpdate(const Point& mousePoint) {
+void Interface::handleMainUpdate(const Point &mousePoint) {
 	PanelButton *panelButton;
 
 	panelButton = verbHitTest(mousePoint);
@@ -1988,8 +1982,7 @@ void Interface::handleMainUpdate(const Point& mousePoint) {
 		return;
 	}
 
-
-	if (!_vm->mouseButtonPressed()) {			// remove pressed flag
+	if (!_vm->mouseButtonPressed()) { // remove pressed flag
 		if (_inventoryUpButton) {
 			_inventoryUpButton->state = 0;
 			_inventoryDownButton->state = 0;
@@ -2020,9 +2013,8 @@ void Interface::handleMainUpdate(const Point& mousePoint) {
 void Interface::inventoryChangePos(int chg) {
 	// Arrows will scroll the inventory up or down up to 4 items
 	for (int i = 1; i <= 4; i++) {
-		if ((chg < 0 && _inventoryStart + chg >= 0) ||
-			(chg > 0 && _inventoryStart < _inventoryEnd)) {
-				_inventoryStart += chg;
+		if ((chg < 0 && _inventoryStart + chg >= 0) || (chg > 0 && _inventoryStart < _inventoryEnd)) {
+			_inventoryStart += chg;
 		}
 	}
 	draw();
@@ -2141,8 +2133,9 @@ void Interface::drawInventory() {
 }
 
 void Interface::setVerbState(int verb, int state) {
-	PanelButton * panelButton = getPanelButtonByVerbType(verb);
-	if (panelButton == NULL) return;
+	PanelButton *panelButton = getPanelButtonByVerbType(verb);
+	if (panelButton == NULL)
+		return;
 	if (state == 2) {
 		state = (_mainPanel.currentButton == panelButton) ? 1 : 0;
 	}
@@ -2150,7 +2143,7 @@ void Interface::setVerbState(int verb, int state) {
 	draw();
 }
 
-void Interface::drawButtonBox(const Rect& rect, ButtonKind kind, bool down) {
+void Interface::drawButtonBox(const Rect &rect, ButtonKind kind, bool down) {
 	byte cornerColor;
 	byte frameColor;
 	byte fillColor;
@@ -2236,8 +2229,10 @@ void Interface::drawButtonBox(const Rect& rect, ButtonKind kind, bool down) {
 	_vm->_gfx->vLine(xe, y, y + h - 2, iur);
 	_vm->_gfx->hLine(x + 1, y, x + 1 + w - 2, iur);
 
-	x++; y++;
-	w -= 2; h -= 2;
+	x++;
+	y++;
+	w -= 2;
+	h -= 2;
 
 	Common::Rect fill(x, y, x + w, y + h);
 	_vm->_gfx->fillRect(fill, solidColor);
@@ -2277,18 +2272,16 @@ void Interface::drawPanelButtonText(InterfacePanel *panel, PanelButton *panelBut
 			if (textId > kTextMax) {
 				textId = kTextMax;
 			}
-		}
-		else
+		} else
 			textId = kTextOff;
 		break;
 	case kTextSound:
 		if (_vm->_soundVolume) {
-			textId = kText10Percent + _vm->_soundVolume / 25  - 1;
+			textId = kText10Percent + _vm->_soundVolume / 25 - 1;
 			if (textId > kTextMax) {
 				textId = kTextMax;
 			}
-		}
-		else
+		} else
 			textId = kTextOff;
 		break;
 	case kTextVoices:
@@ -2367,7 +2360,7 @@ void Interface::drawPanelButtonText(InterfacePanel *panel, PanelButton *panelBut
 	}
 
 	_vm->_font->textDraw(textFont, text, point,
-		_vm->KnownColor2ColorId(textColor), _vm->KnownColor2ColorId(textShadowKnownColor), kFontShadow);
+	                     _vm->KnownColor2ColorId(textColor), _vm->KnownColor2ColorId(textShadowKnownColor), kFontShadow);
 }
 
 void Interface::drawPanelButtonArrow(InterfacePanel *panel, PanelButton *panelButton) {
@@ -2419,10 +2412,9 @@ void Interface::drawVerbPanelText(PanelButton *panelButton, KnownColor textKnown
 	}
 
 	_vm->_font->textDraw(kKnownFontVerb, text, point,
-						_vm->KnownColor2ColorId(textKnownColor), _vm->KnownColor2ColorId(textShadowKnownColor),
-						(textShadowKnownColor != kKnownColorTransparent) ? kFontShadow : kFontNormal);
+	                     _vm->KnownColor2ColorId(textKnownColor), _vm->KnownColor2ColorId(textShadowKnownColor),
+	                     (textShadowKnownColor != kKnownColorTransparent) ? kFontShadow : kFontNormal);
 }
-
 
 // Converse stuff
 void Interface::converseClear() {
@@ -2442,7 +2434,7 @@ void Interface::converseClear() {
 }
 
 bool Interface::converseAddText(const char *text, int strId, int replyId, byte replyFlags, int replyBit) {
-	int count = 0;	// count how many pieces of text per string
+	int count = 0; // count how many pieces of text per string
 	int i;
 	int len;
 	byte c;
@@ -2512,7 +2504,6 @@ void Interface::converseDisplayText() {
 	draw();
 }
 
-
 void Interface::converseSetTextLines(int row) {
 	int pos = row + _converseStartPos;
 	if (pos >= _converseTextCount)
@@ -2546,14 +2537,14 @@ void Interface::converseDisplayTextLines() {
 	} else {
 		bulletForegnd = _vm->KnownColor2ColorId(kKnownColorBrightWhite);
 		bulletBackgnd = _vm->KnownColor2ColorId(kKnownColorBlack);
-		bullet[0] = '>';				// different bullet in IHNM
+		bullet[0] = '>'; // different bullet in IHNM
 	}
 
 	if (_vm->getGameId() == GID_ITE)
-		_vm->_gfx->drawRect(rect, kITEColorDarkGrey);	// fill bullet place
+		_vm->_gfx->drawRect(rect, kITEColorDarkGrey); // fill bullet place
 	else if (_vm->getGameId() == GID_IHNM)
 		// TODO: Add these to IHNM_DisplayInfo?
-		_vm->_gfx->drawRect(Common::Rect(118, 345, 603, 463), _vm->KnownColor2ColorId(kKnownColorBlack));	// fill converse rect
+		_vm->_gfx->drawRect(Common::Rect(118, 345, 603, 463), _vm->KnownColor2ColorId(kKnownColorBlack)); // fill converse rect
 
 	for (int i = 0; i < _vm->getDisplayInfo().converseTextLines; i++) {
 		relPos = _converseStartPos + i;
@@ -2615,9 +2606,8 @@ void Interface::converseDisplayTextLines() {
 void Interface::converseChangePos(int chg) {
 	// Arrows will scroll the converse panel or down up to 4 conversation options
 	for (int i = 1; i <= 4; i++) {
-		if ((chg < 0 && _converseStartPos + chg >= 0) ||
-			(chg > 0 && _converseStartPos < _converseEndPos)) {
-				_converseStartPos += chg;
+		if ((chg < 0 && _converseStartPos + chg >= 0) || (chg > 0 && _converseStartPos < _converseEndPos)) {
+			_converseStartPos += chg;
 		}
 	}
 	draw();
@@ -2642,13 +2632,12 @@ void Interface::converseSetPos(int key) {
 	_conversePos = -1;
 }
 
-
-void Interface::handleConverseUpdate(const Point& mousePoint) {
+void Interface::handleConverseUpdate(const Point &mousePoint) {
 	bool changed;
 
 	PanelButton *last = _conversePanel.currentButton;
 
-	if (!_vm->mouseButtonPressed()) {			// remove pressed flag
+	if (!_vm->mouseButtonPressed()) { // remove pressed flag
 		if (_converseUpButton) {
 			_converseUpButton->state = 0;
 			_converseDownButton->state = 0;
@@ -2657,7 +2646,6 @@ void Interface::handleConverseUpdate(const Point& mousePoint) {
 
 	_conversePanel.currentButton = converseHitTest(mousePoint);
 	changed = last != _conversePanel.currentButton;
-
 
 	if (_conversePanel.currentButton == NULL) {
 		_conversePos = -1;
@@ -2679,8 +2667,7 @@ void Interface::handleConverseUpdate(const Point& mousePoint) {
 	}
 }
 
-
-void Interface::handleConverseClick(const Point& mousePoint) {
+void Interface::handleConverseClick(const Point &mousePoint) {
 	_conversePanel.currentButton = converseHitTest(mousePoint);
 
 	if (_conversePanel.currentButton == NULL) {
@@ -2695,7 +2682,6 @@ void Interface::handleConverseClick(const Point& mousePoint) {
 		_conversePanel.currentButton->state = 1;
 		converseChangePos(_conversePanel.currentButton->id);
 	}
-
 }
 
 void Interface::saveState(Common::OutSaveFile *out) {
@@ -2764,7 +2750,6 @@ void Interface::mapPanelShow() {
 		_vm->_render->drawScene();
 		_vm->_system->delayMillis(5);
 	}
-
 
 	setSaveReminderState(false);
 
@@ -2862,7 +2847,6 @@ void Interface::keyBoss() {
 	_vm->_gfx->setPalette(cPal);
 }
 
-
 void Interface::keyBossExit() {
 	PalEntry pal[PAL_ENTRIES];
 
@@ -2883,6 +2867,5 @@ void Interface::keyBossExit() {
 
 	_bossMode = -1;
 }
-
 
 } // End of namespace Saga

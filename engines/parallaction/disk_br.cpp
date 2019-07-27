@@ -27,21 +27,26 @@
 #include "parallaction/parallaction.h"
 #include "parallaction/parser.h"
 
-
 namespace Parallaction {
 
 extern byte braAmigaFramesDefaultPalette[];
 
 struct Sprite {
-	uint16	size;
-	uint16	x;
-	uint16	y;
-	uint16	w;
-	uint16	h;
+	uint16 size;
+	uint16 x;
+	uint16 y;
+	uint16 w;
+	uint16 h;
 
 	byte *packedData;
 
-	Sprite() : size(0), x(0), y(0), w(0), h(0), packedData(0) {
+	Sprite()
+	  : size(0)
+	  , x(0)
+	  , y(0)
+	  , w(0)
+	  , h(0)
+	  , packedData(0) {
 	}
 
 	~Sprite() {
@@ -50,10 +55,12 @@ struct Sprite {
 };
 
 struct Sprites : public Frames {
-	uint16		_num;
-	Sprite*		_sprites;
+	uint16 _num;
+	Sprite *_sprites;
 
-	Sprites(uint num) : _num(0), _sprites(0) {
+	Sprites(uint num)
+	  : _num(0)
+	  , _sprites(0) {
 		_num = num;
 		_sprites = new Sprite[_num];
 	}
@@ -66,7 +73,7 @@ struct Sprites : public Frames {
 		return _num;
 	}
 
-	byte* getData(uint16 index) {
+	byte *getData(uint16 index) {
 		assert(index < _num);
 		return _sprites[index].packedData;
 	}
@@ -77,16 +84,14 @@ struct Sprites : public Frames {
 		r.setHeight(_sprites[index].h);
 		r.moveTo(_sprites[index].x, _sprites[index].y);
 	}
-	uint	getRawSize(uint16 index) {
+	uint getRawSize(uint16 index) {
 		assert(index < _num);
 		return _sprites[index].size;
 	}
-	uint	getSize(uint16 index) {
+	uint getSize(uint16 index) {
 		assert(index < _num);
 		return _sprites[index].w * _sprites[index].h;
 	}
-
-
 };
 
 Common::SeekableReadStream *Disk_br::openFile_internal(bool errorOnNotFound, const Common::String &name, const Common::String &ext) {
@@ -134,12 +139,11 @@ Common::SeekableReadStream *Disk_br::tryOpenFile(const Common::String &name, con
 	return openFile_internal(false, name, ext);
 }
 
-
 void Disk_br::errorFileNotFound(const Common::String &filename) {
 	error("File '%s' not found", filename.c_str());
 }
 
-Common::String DosDisk_br::selectArchive(const Common::String& name) {
+Common::String DosDisk_br::selectArchive(const Common::String &name) {
 	debugC(5, kDebugDisk, "DosDisk_br::selectArchive");
 
 	Common::String oldPath = _currentPart;
@@ -158,7 +162,8 @@ void DosDisk_br::setLanguage(uint16 language) {
 	_language = language;
 }
 
-DosDisk_br::DosDisk_br(Parallaction* vm) : Disk_br(vm) {
+DosDisk_br::DosDisk_br(Parallaction *vm)
+  : Disk_br(vm) {
 }
 
 void DosDisk_br::init() {
@@ -168,8 +173,7 @@ void DosDisk_br::init() {
 	_sset.add("base", _baseDir, 5, true);
 }
 
-
-GfxObj* DosDisk_br::loadTalk(const char *name) {
+GfxObj *DosDisk_br::loadTalk(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadTalk(%s)", name);
 
 	Common::SeekableReadStream *stream = openFile("tal/" + Common::String(name), ".tal");
@@ -185,10 +189,10 @@ GfxObj* DosDisk_br::loadTalk(const char *name) {
 	return new GfxObj(0, spr, name);
 }
 
-Script* DosDisk_br::loadLocation(const char *name) {
+Script *DosDisk_br::loadLocation(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadLocation");
 
-	static const char * const langs[4] = { "it/", "fr/", "en/", "ge/" };
+	static const char *const langs[4] = { "it/", "fr/", "en/", "ge/" };
 
 	Common::String fullName(name);
 	if (!fullName.hasSuffix(".slf")) {
@@ -199,14 +203,14 @@ Script* DosDisk_br::loadLocation(const char *name) {
 	return new Script(stream, true);
 }
 
-Script* DosDisk_br::loadScript(const char* name) {
+Script *DosDisk_br::loadScript(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadScript");
 	Common::SeekableReadStream *stream = openFile("scripts/" + Common::String(name), ".scr");
 	return new Script(stream, true);
 }
 
 //	there are no Head resources in Big Red Adventure
-GfxObj* DosDisk_br::loadHead(const char* name) {
+GfxObj *DosDisk_br::loadHead(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadHead");
 	return 0;
 }
@@ -214,7 +218,8 @@ GfxObj* DosDisk_br::loadHead(const char* name) {
 void DosDisk_br::loadBitmap(Common::SeekableReadStream &stream, Graphics::Surface &surf, byte *palette) {
 	stream.skip(4);
 	uint width = stream.readUint32BE();
-	if (width & 1) width++;
+	if (width & 1)
+		width++;
 	uint height = stream.readUint32BE();
 	stream.skip(20);
 
@@ -228,7 +233,7 @@ void DosDisk_br::loadBitmap(Common::SeekableReadStream &stream, Graphics::Surfac
 	stream.read(surf.getPixels(), width * height);
 }
 
-Frames* DosDisk_br::loadPointer(const char *name) {
+Frames *DosDisk_br::loadPointer(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadPointer");
 	Common::SeekableReadStream *stream = openFile(Common::String(name), ".ras");
 	Graphics::Surface *surf = new Graphics::Surface;
@@ -237,8 +242,7 @@ Frames* DosDisk_br::loadPointer(const char *name) {
 	return new SurfaceToFrames(surf);
 }
 
-
-Font* DosDisk_br::loadFont(const char* name) {
+Font *DosDisk_br::loadFont(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadFont");
 	Common::SeekableReadStream *stream = openFile(name, ".fnt");
 	Font *font = createFont(name, *stream);
@@ -246,8 +250,7 @@ Font* DosDisk_br::loadFont(const char* name) {
 	return font;
 }
 
-
-GfxObj* DosDisk_br::loadObjects(const char *name, uint8 part) {
+GfxObj *DosDisk_br::loadObjects(const char *name, uint8 part) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadObjects");
 	Common::SeekableReadStream *stream = openFile(name);
 	GfxObj *obj = createInventoryObjects(*stream);
@@ -255,11 +258,11 @@ GfxObj* DosDisk_br::loadObjects(const char *name, uint8 part) {
 	return obj;
 }
 
-void genSlidePath(char *path, const char* name) {
+void genSlidePath(char *path, const char *name) {
 	sprintf(path, "%s.bmp", name);
 }
 
-GfxObj* DosDisk_br::loadStatic(const char* name) {
+GfxObj *DosDisk_br::loadStatic(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadStatic");
 	Common::SeekableReadStream *stream = openFile("ras/" + Common::String(name), ".ras");
 	Graphics::Surface *surf = new Graphics::Surface;
@@ -268,7 +271,7 @@ GfxObj* DosDisk_br::loadStatic(const char* name) {
 	return new GfxObj(0, new SurfaceToFrames(surf), name);
 }
 
-Sprites* DosDisk_br::createSprites(Common::ReadStream *stream) {
+Sprites *DosDisk_br::createSprites(Common::ReadStream *stream) {
 
 	uint16 num = stream->readUint16LE();
 
@@ -290,7 +293,7 @@ Sprites* DosDisk_br::createSprites(Common::ReadStream *stream) {
 	return sprites;
 }
 
-Frames* DosDisk_br::loadFrames(const char* name) {
+Frames *DosDisk_br::loadFrames(const char *name) {
 	Common::SeekableReadStream *stream = 0;
 
 	debugC(5, kDebugDisk, "DosDisk_br::loadFrames");
@@ -310,7 +313,7 @@ Frames* DosDisk_br::loadFrames(const char* name) {
 // doesn't need slides in that sense, but it still has some special
 // graphics resources with palette data, so those will be named slides.
 //
-void DosDisk_br::loadSlide(BackgroundInfo& info, const char *name) {
+void DosDisk_br::loadSlide(BackgroundInfo &info, const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadSlide");
 
 	Common::SeekableReadStream *stream = openFile(name, ".bmp");
@@ -324,7 +327,7 @@ void DosDisk_br::loadSlide(BackgroundInfo& info, const char *name) {
 	delete stream;
 
 	for (uint i = 0; i < 256; i++) {
-		info.palette.setEntry(i, rgb[i] >> 2, rgb[i+256] >> 2, rgb[i+512] >> 2);
+		info.palette.setEntry(i, rgb[i] >> 2, rgb[i + 256] >> 2, rgb[i + 512] >> 2);
 	}
 }
 
@@ -364,7 +367,7 @@ PathBuffer *DosDisk_br::loadPath(const char *name, uint32 w, uint32 h) {
 	return buffer;
 }
 
-void DosDisk_br::loadScenery(BackgroundInfo& info, const char *name, const char *mask, const char* path) {
+void DosDisk_br::loadScenery(BackgroundInfo &info, const char *name, const char *mask, const char *path) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadScenery");
 
 	Common::SeekableReadStream *stream;
@@ -378,7 +381,7 @@ void DosDisk_br::loadScenery(BackgroundInfo& info, const char *name, const char 
 		info.height = info.bg.h;
 
 		for (uint i = 0; i < 256; i++) {
-			info.palette.setEntry(i, rgb[i] >> 2, rgb[i+256] >> 2, rgb[i+512] >> 2);
+			info.palette.setEntry(i, rgb[i] >> 2, rgb[i + 256] >> 2, rgb[i + 512] >> 2);
 		}
 
 		delete stream;
@@ -393,27 +396,23 @@ void DosDisk_br::loadScenery(BackgroundInfo& info, const char *name, const char 
 	}
 }
 
-Table* DosDisk_br::loadTable(const char* name) {
+Table *DosDisk_br::loadTable(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadTable");
 	return createTableFromStream(100, openFile(name, ".tab"));
 }
 
-Common::SeekableReadStream* DosDisk_br::loadMusic(const char* name) {
+Common::SeekableReadStream *DosDisk_br::loadMusic(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadMusic");
 	return openFile("msc/" + Common::String(name), ".msc");
 }
 
-
-Common::SeekableReadStream* DosDisk_br::loadSound(const char* name) {
+Common::SeekableReadStream *DosDisk_br::loadSound(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadSound");
 	return openFile("sfx/" + Common::String(name), ".sfx");
 }
 
-
-
-
-DosDemoDisk_br::DosDemoDisk_br(Parallaction *vm) : DosDisk_br(vm) {
-
+DosDemoDisk_br::DosDemoDisk_br(Parallaction *vm)
+  : DosDisk_br(vm) {
 }
 
 void DosDemoDisk_br::init() {
@@ -423,16 +422,15 @@ void DosDemoDisk_br::init() {
 	_sset.add("base", _baseDir, 5, false);
 }
 
-
-Common::String DosDemoDisk_br::selectArchive(const Common::String& name) {
+Common::String DosDemoDisk_br::selectArchive(const Common::String &name) {
 	debugC(5, kDebugDisk, "DosDemoDisk_br::selectArchive");
 	Common::String oldPath = _currentPart;
 	_currentPart = name;
 	return oldPath;
 }
 
-
-AmigaDisk_br::AmigaDisk_br(Parallaction *vm) : DosDisk_br(vm) {
+AmigaDisk_br::AmigaDisk_br(Parallaction *vm)
+  : DosDisk_br(vm) {
 }
 
 void AmigaDisk_br::init() {
@@ -456,8 +454,8 @@ void AmigaDisk_br::adjustForPalette(Graphics::Surface &surf, int transparentColo
 	}
 }
 
-void AmigaDisk_br::loadBackground(BackgroundInfo& info, const char *filename) {
-	byte r,g,b;
+void AmigaDisk_br::loadBackground(BackgroundInfo &info, const char *filename) {
+	byte r, g, b;
 	const byte *p;
 	Common::SeekableReadStream *stream;
 	Image::IFFDecoder decoder;
@@ -516,20 +514,28 @@ void finalpass(byte *buffer, uint32 size) {
 	byte b = 0xC0;
 	byte r1 = 0x40;
 	byte r2 = 0x80;
-	for (uint32 i = 0; i < size*4; i++) {
-		byte s = buffer[i/4];
+	for (uint32 i = 0; i < size * 4; i++) {
+		byte s = buffer[i / 4];
 		s &= b;
 
 		if (s == r1) {
-			buffer[i/4] |= b;
-		} else
-		if (s == b) {
-			buffer[i/4] ^= r2;
+			buffer[i / 4] |= b;
+		} else if (s == b) {
+			buffer[i / 4] ^= r2;
 		}
 
-		b >>= 2; if (b == 0) { b = 0xC0; }
-		r1 >>= 2; if (r1 == 0) { r1 = 0x40; }
-		r2 >>= 2; if (r2 == 0) { r2 = 0x80; }
+		b >>= 2;
+		if (b == 0) {
+			b = 0xC0;
+		}
+		r1 >>= 2;
+		if (r1 == 0) {
+			r1 = 0x40;
+		}
+		r2 >>= 2;
+		if (r2 == 0) {
+			r2 = 0x80;
+		}
 	}
 }
 
@@ -558,7 +564,7 @@ MaskBuffer *AmigaDisk_br::loadMask(const char *name, uint32 w, uint32 h) {
 	return buffer;
 }
 
-void AmigaDisk_br::loadScenery(BackgroundInfo& info, const char* name, const char* mask, const char* path) {
+void AmigaDisk_br::loadScenery(BackgroundInfo &info, const char *name, const char *mask, const char *path) {
 	debugC(1, kDebugDisk, "AmigaDisk_br::loadScenery '%s', '%s' '%s'", name, mask, path);
 
 	if (name) {
@@ -573,12 +579,12 @@ void AmigaDisk_br::loadScenery(BackgroundInfo& info, const char* name, const cha
 	}
 }
 
-void AmigaDisk_br::loadSlide(BackgroundInfo& info, const char *name) {
+void AmigaDisk_br::loadSlide(BackgroundInfo &info, const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk_br::loadSlide '%s'", name);
 	loadBackground(info, name);
 }
 
-GfxObj* AmigaDisk_br::loadStatic(const char* name) {
+GfxObj *AmigaDisk_br::loadStatic(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk_br::loadStatic '%s'", name);
 
 	Common::String sName = name;
@@ -605,7 +611,7 @@ GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 	if (!stream) {
 		debugC(9, kDebugDisk, "Cannot find shadow file for '%s'\n", name);
 	} else {
-		uint32 shadowWidth = ((surf->w + 15)/8) & ~1;
+		uint32 shadowWidth = ((surf->w + 15) / 8) & ~1;
 		uint32 shadowSize = shadowWidth * surf->h;
 		byte *shadow = new byte[shadowSize];
 		assert(shadow);
@@ -615,8 +621,9 @@ GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 			byte *dst = (byte *)surf->getPixels() + surf->pitch * i;
 
 			for (int32 j = 0; j < surf->w; ++j, ++dst) {
-				byte bit = src[j/8] & (1 << (7 - (j & 7)));
-				if (bit == 0) *dst = 0;
+				byte bit = src[j / 8] & (1 << (7 - (j & 7)));
+				if (bit == 0)
+					*dst = 0;
 			}
 		}
 
@@ -627,7 +634,7 @@ GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 	return new GfxObj(0, new SurfaceToFrames(surf), name);
 }
 
-Sprites* AmigaDisk_br::createSprites(Common::ReadStream *stream) {
+Sprites *AmigaDisk_br::createSprites(Common::ReadStream *stream) {
 	uint16 num = stream->readUint16BE();
 
 	Sprites *sprites = new Sprites(num);
@@ -649,7 +656,7 @@ Sprites* AmigaDisk_br::createSprites(Common::ReadStream *stream) {
 	return sprites;
 }
 
-Frames* AmigaDisk_br::loadFrames(const char* name) {
+Frames *AmigaDisk_br::loadFrames(const char *name) {
 	Common::SeekableReadStream *stream = 0;
 
 	debugC(5, kDebugDisk, "AmigaDisk_br::loadFrames");
@@ -664,7 +671,7 @@ Frames* AmigaDisk_br::loadFrames(const char* name) {
 	return createSprites(stream);
 }
 
-GfxObj* AmigaDisk_br::loadTalk(const char *name) {
+GfxObj *AmigaDisk_br::loadTalk(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk_br::loadTalk '%s'", name);
 
 	Common::SeekableReadStream *stream = openFile("talks/" + Common::String(name), ".tal");
@@ -680,7 +687,7 @@ GfxObj* AmigaDisk_br::loadTalk(const char *name) {
 	return new GfxObj(0, spr, name);
 }
 
-Font* AmigaDisk_br::loadFont(const char* name) {
+Font *AmigaDisk_br::loadFont(const char *name) {
 	debugC(1, kDebugDisk, "AmigaFullDisk::loadFont '%s'", name);
 
 	Common::SeekableReadStream *stream = openFile("fonts/" + Common::String(name), ".font");
@@ -690,8 +697,10 @@ Font* AmigaDisk_br::loadFont(const char* name) {
 	byte ch;
 
 	stream->seek(4, SEEK_SET);
-	while ((ch = stream->readByte()) != 0x2F) fontDir += ch;
-	while ((ch = stream->readByte()) != 0) fontFile += ch;
+	while ((ch = stream->readByte()) != 0x2F)
+		fontDir += ch;
+	while ((ch = stream->readByte()) != 0)
+		fontFile += ch;
 	delete stream;
 
 	stream = openFile("fonts/" + fontDir + "/" + fontFile);
@@ -701,13 +710,12 @@ Font* AmigaDisk_br::loadFont(const char* name) {
 	return font;
 }
 
-Common::SeekableReadStream* AmigaDisk_br::loadMusic(const char* name) {
+Common::SeekableReadStream *AmigaDisk_br::loadMusic(const char *name) {
 	debugC(5, kDebugDisk, "AmigaDisk_br::loadMusic");
 	return tryOpenFile("msc/" + Common::String(name), ".msc");
 }
 
-
-Common::SeekableReadStream* AmigaDisk_br::loadSound(const char* name) {
+Common::SeekableReadStream *AmigaDisk_br::loadSound(const char *name) {
 	debugC(5, kDebugDisk, "AmigaDisk_br::loadSound");
 	return openFile("sfx/" + Common::String(name), ".sfx");
 }
@@ -716,7 +724,7 @@ static const uint16 objectsMax[5] = {
 	5, 73, 71, 19, 48
 };
 
-GfxObj* AmigaDisk_br::loadObjects(const char *name, uint8 part) {
+GfxObj *AmigaDisk_br::loadObjects(const char *name, uint8 part) {
 	debugC(5, kDebugDisk, "AmigaDisk_br::loadObjects");
 
 	Common::SeekableReadStream *stream = openFile(name);
@@ -728,7 +736,7 @@ GfxObj* AmigaDisk_br::loadObjects(const char *name, uint8 part) {
 		max = 72;
 
 	byte *data = new byte[max * 2601];
-	const byte *srcPtr = (const byte *)decoder.getSurface()->getBasePtr(0,0);
+	const byte *srcPtr = (const byte *)decoder.getSurface()->getBasePtr(0, 0);
 	int w = decoder.getSurface()->w;
 
 	// Convert to the expected display format
@@ -748,7 +756,7 @@ GfxObj* AmigaDisk_br::loadObjects(const char *name, uint8 part) {
 	return new GfxObj(0, new Cnv(max, 51, 51, data, true));
 }
 
-Common::String AmigaDisk_br::selectArchive(const Common::String& name) {
+Common::String AmigaDisk_br::selectArchive(const Common::String &name) {
 	debugC(5, kDebugDisk, "AmigaDisk_br::selectArchive");
 
 	Common::String oldPath = _currentPart;
@@ -761,8 +769,10 @@ Common::String AmigaDisk_br::selectArchive(const Common::String& name) {
 	return oldPath;
 }
 
-
-Disk_br::Disk_br(Parallaction *vm) : _vm(vm), _baseDir(0), _language(0) {
+Disk_br::Disk_br(Parallaction *vm)
+  : _vm(vm)
+  , _baseDir(0)
+  , _language(0) {
 }
 
 Disk_br::~Disk_br() {

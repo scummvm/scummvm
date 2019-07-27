@@ -20,13 +20,13 @@
  *
  */
 
-#include "common/random.h"
 #include "common/error.h"
+#include "common/random.h"
 
 #include "adl/adl_v2.h"
+#include "adl/detection.h"
 #include "adl/display.h"
 #include "adl/graphics.h"
-#include "adl/detection.h"
 
 namespace Adl {
 
@@ -34,15 +34,15 @@ AdlEngine_v2::~AdlEngine_v2() {
 	delete _disk;
 }
 
-AdlEngine_v2::AdlEngine_v2(OSystem *syst, const AdlGameDescription *gd) :
-		AdlEngine(syst, gd),
-		_maxLines(4),
-		_disk(nullptr),
-		_currentVolume(0),
-		_itemRemoved(false),
-		_roomOnScreen(0),
-		_picOnScreen(0),
-		_itemsOnScreen(0) { }
+AdlEngine_v2::AdlEngine_v2(OSystem *syst, const AdlGameDescription *gd)
+  : AdlEngine(syst, gd)
+  , _maxLines(4)
+  , _disk(nullptr)
+  , _currentVolume(0)
+  , _itemRemoved(false)
+  , _roomOnScreen(0)
+  , _picOnScreen(0)
+  , _itemsOnScreen(0) {}
 
 void AdlEngine_v2::insertDisk(byte volume) {
 	delete _disk;

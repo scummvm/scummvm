@@ -96,7 +96,6 @@ public:
 	Common::Platform getPlatform() const;
 
 protected:
-
 	// Engine APIs
 	Common::Error run();
 

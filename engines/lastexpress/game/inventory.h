@@ -51,7 +51,6 @@ class Scene;
 
 class Inventory : Common::Serializable, public EventHandler {
 public:
-
 	// Entry
 	struct InventoryEntry : Common::Serializable {
 		CursorStyle cursor;
@@ -141,7 +140,7 @@ private:
 	uint32 _itemsShown;
 
 	bool _showingHourGlass;
-	int16  _blinkingDirection;
+	int16 _blinkingDirection;
 	uint16 _blinkingBrightness;
 
 	// Flags

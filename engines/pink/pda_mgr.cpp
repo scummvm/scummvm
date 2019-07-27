@@ -21,22 +21,29 @@
  */
 
 #include "pink/pda_mgr.h"
-#include "pink/pink.h"
 #include "pink/director.h"
-#include "pink/objects/actors/pda_button_actor.h"
-#include "pink/objects/actors/lead_actor.h"
-#include "pink/objects/pages/pda_page.h"
 #include "pink/objects/actions/action_play_with_sfx.h"
+#include "pink/objects/actors/lead_actor.h"
+#include "pink/objects/actors/pda_button_actor.h"
+#include "pink/objects/pages/pda_page.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
-static const char * const g_countries[] = {"BRI", "EGY", "BHU", "AUS", "IND", "CHI"};
-static const char * const g_domains[] = {"NAT", "CLO", "HIS", "REL", "PLA", "ART", "FOO", "PEO"};
+static const char *const g_countries[] = { "BRI", "EGY", "BHU", "AUS", "IND", "CHI" };
+static const char *const g_domains[] = { "NAT", "CLO", "HIS", "REL", "PLA", "ART", "FOO", "PEO" };
 
 PDAMgr::PDAMgr(PinkEngine *game)
-	: _game(game), _lead(nullptr), _page(nullptr), _globalPage(nullptr),
-	_cursorMgr(game, nullptr), _countryIndex(0), _domainIndex(0),
-	_iteration(0), _handFrame(0), _leftHandAction(kLeft1) {}
+  : _game(game)
+  , _lead(nullptr)
+  , _page(nullptr)
+  , _globalPage(nullptr)
+  , _cursorMgr(game, nullptr)
+  , _countryIndex(0)
+  , _domainIndex(0)
+  , _iteration(0)
+  , _handFrame(0)
+  , _leftHandAction(kLeft1) {}
 
 PDAMgr::~PDAMgr() {
 	delete _globalPage;
@@ -117,18 +124,18 @@ void PDAMgr::goToPage(const Common::String &pageName) {
 }
 
 void PDAMgr::onLeftButtonClick(Common::Point point) {
-	Actor* rightHand = _globalPage->findActor(kRightHand);
+	Actor *rightHand = _globalPage->findActor(kRightHand);
 	if (rightHand)
-		static_cast<ActionStill*>(rightHand->getAction())->setFrame(1);
+		static_cast<ActionStill *>(rightHand->getAction())->setFrame(1);
 	Actor *actor = _game->getDirector()->getActorByPoint(point);
 	if (actor)
 		actor->onLeftClickMessage();
 }
 
 void PDAMgr::onLeftButtonUp() {
-	Actor* rightHand = _globalPage->findActor(kRightHand);
+	Actor *rightHand = _globalPage->findActor(kRightHand);
 	if (rightHand)
-		static_cast<ActionStill*>(rightHand->getAction())->setFrame(0);
+		static_cast<ActionStill *>(rightHand->getAction())->setFrame(0);
 }
 
 void PDAMgr::onMouseMove(Common::Point point) {
@@ -147,27 +154,27 @@ void PDAMgr::onMouseMove(Common::Point point) {
 		if (k > 1) {
 			if (k > 1.5 && _leftHandAction != kLeft4) {
 				leftHand->setAction(kLeft4Name);
-				static_cast<ActionStill*>(leftHand->getAction())->setFrame(_handFrame + 1);
+				static_cast<ActionStill *>(leftHand->getAction())->setFrame(_handFrame + 1);
 				_leftHandAction = kLeft4;
 			} else if (_leftHandAction != kLeft3) {
 				leftHand->setAction(kLeft3Name);
-				static_cast<ActionStill*>(leftHand->getAction())->setFrame(_handFrame + 1);
+				static_cast<ActionStill *>(leftHand->getAction())->setFrame(_handFrame + 1);
 				_leftHandAction = kLeft3;
 			}
 		} else if (_leftHandAction != kLeft2) {
 			leftHand->setAction(kLeft2Name);
-			static_cast<ActionStill*>(leftHand->getAction())->setFrame(_handFrame + 1);
+			static_cast<ActionStill *>(leftHand->getAction())->setFrame(_handFrame + 1);
 			_leftHandAction = kLeft2;
 		}
 	} else if (_leftHandAction != kLeft1) {
 		leftHand->setAction(kLeft1Name);
-		static_cast<ActionStill*>(leftHand->getAction())->setFrame(_handFrame + 1);
+		static_cast<ActionStill *>(leftHand->getAction())->setFrame(_handFrame + 1);
 		_leftHandAction = kLeft1;
 	}
 
 	if (_iteration == 0) {
 		_handFrame = (_handFrame + 1) % 4;
-		static_cast<ActionStill*>(leftHand->getAction())->nextFrameLooped();
+		static_cast<ActionStill *>(leftHand->getAction())->nextFrameLooped();
 	}
 	_iteration = (_iteration + 1) % 4;
 }
@@ -220,14 +227,14 @@ void PDAMgr::updateWheels(bool playSfx) {
 	Actor *wheel = _page->findActor(kCountryWheel);
 	if (playSfx && wheel->getAction()->getName() != g_countries[_countryIndex]) {
 		wheel->setAction(Common::String(g_countries[_countryIndex]) + kSfx);
-		static_cast<ActionPlayWithSfx*>(wheel->getAction())->update(); // hack
+		static_cast<ActionPlayWithSfx *>(wheel->getAction())->update(); // hack
 	}
 	wheel->setAction(g_countries[_countryIndex]);
 
 	wheel = _page->findActor(kDomainWheel);
 	if (playSfx && wheel->getAction()->getName() != g_domains[_domainIndex]) {
 		wheel->setAction(Common::String(g_domains[_domainIndex]) + kSfx);
-		static_cast<ActionPlayWithSfx*>(wheel->getAction())->update(); // hack
+		static_cast<ActionPlayWithSfx *>(wheel->getAction())->update(); // hack
 	}
 	wheel->setAction(g_domains[_domainIndex]);
 }

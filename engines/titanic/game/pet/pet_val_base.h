@@ -32,6 +32,7 @@ protected:
 	int _fieldC;
 	int _field10;
 	int _field14;
+
 public:
 	CPetElement();
 

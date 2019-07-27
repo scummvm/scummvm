@@ -36,15 +36,15 @@ struct point {
 };
 
 struct persoStruct {
-	int16 inc_droite;	// 2
-	int16 inc_droite0;	// 2
-	int16 inc_chemin;	// 2
-	point coordinates[400];	// 1600
-	int16 solution[NUM_NODES + 3][2];	//((20+3)*2*2)
-	int16 inc_jo1;		// 2
-	int16 inc_jo2;		// 2
-	int16 dir_perso;	// 2
-	int16 inc_jo0;		// 2
+	int16 inc_droite; // 2
+	int16 inc_droite0; // 2
+	int16 inc_chemin; // 2
+	point coordinates[400]; // 1600
+	int16 solution[NUM_NODES + 3][2]; //((20+3)*2*2)
+	int16 inc_jo1; // 2
+	int16 inc_jo2; // 2
+	int16 dir_perso; // 2
+	int16 inc_jo0; // 2
 };
 
 struct MovementEntry {
@@ -58,7 +58,7 @@ struct MovementEntry {
 extern persoStruct *persoTable[NUM_PERSONS];
 extern int16 numPoly;
 
-int cor_droite(int x1, int y1, int x2, int y2, point* outputTable);
+int cor_droite(int x1, int y1, int x2, int y2, point *outputTable);
 void freePerso(int persoIdx);
 void freeCTP();
 void affiche_chemin(int16 persoIdx, MovementEntry &data);

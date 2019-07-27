@@ -20,20 +20,20 @@
  *
  */
 
-#include "common/debug.h"
 #include "common/rational.h"
-#include "common/util.h"
 #include "common/algorithm.h"
+#include "common/debug.h"
+#include "common/util.h"
 
 namespace Common {
 
 Rational::Rational() {
-	_num   = 1;
+	_num = 1;
 	_denom = 1;
 }
 
 Rational::Rational(int num) {
-	_num   = num;
+	_num = num;
 	_denom = 1;
 }
 
@@ -41,10 +41,10 @@ Rational::Rational(int num, int denom) {
 	assert(denom != 0);
 
 	if (denom > 0) {
-		_num   = num;
+		_num = num;
 		_denom = denom;
 	} else {
-		_num   = -num;
+		_num = -num;
 		_denom = -denom;
 	}
 
@@ -57,19 +57,19 @@ void Rational::cancel() {
 
 	const int gcd = Common::gcd(_num, _denom);
 
-	_num   /= gcd;
+	_num /= gcd;
 	_denom /= gcd;
 }
 
 Rational &Rational::operator=(const Rational &right) {
-	_num   = right._num;
+	_num = right._num;
 	_denom = right._denom;
 
 	return *this;
 }
 
 Rational &Rational::operator=(int right) {
-	_num   = right;
+	_num = right;
 	_denom = 1;
 
 	return *this;
@@ -80,9 +80,9 @@ Rational &Rational::operator+=(const Rational &right) {
 	// Note that the result is *not* always normalized.
 	const int gcd = Common::gcd(_denom, right._denom);
 
-	_num    = _num * (right._denom / gcd);
-	_denom  = _denom / gcd;
-	_num   += right._num * _denom;
+	_num = _num * (right._denom / gcd);
+	_denom = _denom / gcd;
+	_num += right._num * _denom;
 	_denom *= right._denom;
 
 	cancel();
@@ -95,9 +95,9 @@ Rational &Rational::operator-=(const Rational &right) {
 	// Note that the result is *not* always normalized.
 	const int gcd = Common::gcd(_denom, right._denom);
 
-	_num    = _num * (right._denom / gcd);
-	_denom  = _denom / gcd;
-	_num   -= right._num * _denom;
+	_num = _num * (right._denom / gcd);
+	_denom = _denom / gcd;
+	_num -= right._num * _denom;
 	_denom *= right._denom;
 
 	cancel();
@@ -111,8 +111,8 @@ Rational &Rational::operator*=(const Rational &right) {
 	const int gcd1 = gcd(_num, right._denom);
 	const int gcd2 = gcd(right._num, _denom);
 
-	_num   = (_num    / gcd1) * (right._num    / gcd2);
-	_denom = (_denom  / gcd2) * (right._denom  / gcd1);
+	_num = (_num / gcd1) * (right._num / gcd2);
+	_denom = (_denom / gcd2) * (right._denom / gcd1);
 
 	return *this;
 }

@@ -21,16 +21,16 @@
  */
 
 #include "titanic/pet_control/pet_drag_chev.h"
-#include "titanic/pet_control/pet_control.h"
 #include "titanic/messages/messages.h"
 #include "titanic/npcs/succubus.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPetDragChev, CPetGraphic2)
-	ON_MESSAGE(MouseDragStartMsg)
-	ON_MESSAGE(MouseDragMoveMsg)
-	ON_MESSAGE(MouseDragEndMsg)
+ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(MouseDragMoveMsg)
+ON_MESSAGE(MouseDragEndMsg)
 END_MESSAGE_MAP()
 
 void CPetDragChev::save(SimpleFile *file, int indent) {
@@ -63,7 +63,7 @@ bool CPetDragChev::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 	} else {
 		CPetControl *petControl = getPetControl();
 		if (!petControl || !petControl->contains(msg->_mousePos)
-				|| msg->_mousePos.x >= 528 || !petControl->checkDragEnd(this))
+		    || msg->_mousePos.x >= 528 || !petControl->checkDragEnd(this))
 			petMoveToHiddenRoom();
 	}
 

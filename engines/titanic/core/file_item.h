@@ -23,16 +23,18 @@
 #ifndef TITANIC_FILE_ITEM_H
 #define TITANIC_FILE_ITEM_H
 
-#include "titanic/support/string.h"
 #include "titanic/core/list.h"
 #include "titanic/core/tree_item.h"
+#include "titanic/support/string.h"
 
 namespace Titanic {
 
-class CFileItem: public CTreeItem {
+class CFileItem : public CTreeItem {
 	DECLARE_MESSAGE_MAP;
+
 private:
 	CString _filename;
+
 public:
 	CLASSDEF;
 

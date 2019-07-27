@@ -40,79 +40,78 @@
 namespace StarTrek {
 
 extern const RoomAction feather5ActionList[] = {
-	{ {ACTION_TICK, 1, 0, 0},                            &Room::feather5Tick1 },
-	{ {ACTION_TOUCHED_HOTSPOT, 0, 0, 0},                 &Room::feather5TouchedHotspot0 },
-	{ {ACTION_USE, OBJECT_SPOCK, HOTSPOT_FERN, 0},       &Room::feather5UseSpockOnFern },
-	{ {ACTION_USE, OBJECT_MCCOY, HOTSPOT_FERN, 0},       &Room::feather5UseMccoyOnFern },
-	{ {ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_FERN, 0},    &Room::feather5UseRedshirtOnFern },
+	{ { ACTION_TICK, 1, 0, 0 }, &Room::feather5Tick1 },
+	{ { ACTION_TOUCHED_HOTSPOT, 0, 0, 0 }, &Room::feather5TouchedHotspot0 },
+	{ { ACTION_USE, OBJECT_SPOCK, HOTSPOT_FERN, 0 }, &Room::feather5UseSpockOnFern },
+	{ { ACTION_USE, OBJECT_MCCOY, HOTSPOT_FERN, 0 }, &Room::feather5UseMccoyOnFern },
+	{ { ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_FERN, 0 }, &Room::feather5UseRedshirtOnFern },
 
-	{ {ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_LEFT_EXIT, 0}, &Room::feather5UseRedshirtOnLeftExit },
-	{ {ACTION_DONE_WALK, 8, 0, 0},                         &Room::feather5RedshirtReachedLog },
-	{ {ACTION_DONE_ANIM, 8, 0, 0},                         &Room::feather5RedshirtDeathFinished },
+	{ { ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_LEFT_EXIT, 0 }, &Room::feather5UseRedshirtOnLeftExit },
+	{ { ACTION_DONE_WALK, 8, 0, 0 }, &Room::feather5RedshirtReachedLog },
+	{ { ACTION_DONE_ANIM, 8, 0, 0 }, &Room::feather5RedshirtDeathFinished },
 
-	{ {ACTION_USE, OBJECT_SPOCK, HOTSPOT_LEFT_EXIT, 0},    &Room::feather5UseSpockOnLeftExit },
-	{ {ACTION_USE, OBJECT_MCCOY, HOTSPOT_LEFT_EXIT, 0},    &Room::feather5UseMccoyOnLeftExit },
-	{ {ACTION_USE, OBJECT_ISNAKE, OBJECT_KIRK, 0},         &Room::feather5UseSnakeOnKirk },
-	{ {ACTION_USE, OBJECT_ISNAKE, OBJECT_SPOCK, 0},        &Room::feather5UseSnakeOnSpock },
-	{ {ACTION_USE, OBJECT_ISNAKE, OBJECT_MCCOY, 0},        &Room::feather5UseSnakeOnMccoy },
-	{ {ACTION_USE, OBJECT_ISNAKE, OBJECT_REDSHIRT, 0},     &Room::feather5UseSnakeOnRedshirt },
-	{ {ACTION_USE, OBJECT_ISNAKE, HOTSPOT_WATER, 0},       &Room::feather5UseSnakeOnWater },
-	{ {ACTION_USE, OBJECT_IKNIFE, OBJECT_KIRK, 0},         &Room::feather5UseKnifeOnKirk },
-	{ {ACTION_USE, OBJECT_IKNIFE, OBJECT_SPOCK, 0},        &Room::feather5UseKnifeOnSpock },
-	{ {ACTION_USE, OBJECT_IKNIFE, OBJECT_MCCOY, 0},        &Room::feather5UseKnifeOnMccoy },
-	{ {ACTION_USE, OBJECT_IKNIFE, OBJECT_REDSHIRT, 0},     &Room::feather5UseKnifeOnRedshirt },
-	{ {ACTION_USE, OBJECT_IKNIFE, HOTSPOT_WATER, 0},       &Room::feather5UseKnifeOnWater },
-	{ {ACTION_USE, OBJECT_IKNIFE, OBJECT_MONSTER, 0},      &Room::feather5UseKnifeOnMonster },
-	{ {ACTION_GET, HOTSPOT_FERN, 0, 0},                    &Room::feather5GetFern },
+	{ { ACTION_USE, OBJECT_SPOCK, HOTSPOT_LEFT_EXIT, 0 }, &Room::feather5UseSpockOnLeftExit },
+	{ { ACTION_USE, OBJECT_MCCOY, HOTSPOT_LEFT_EXIT, 0 }, &Room::feather5UseMccoyOnLeftExit },
+	{ { ACTION_USE, OBJECT_ISNAKE, OBJECT_KIRK, 0 }, &Room::feather5UseSnakeOnKirk },
+	{ { ACTION_USE, OBJECT_ISNAKE, OBJECT_SPOCK, 0 }, &Room::feather5UseSnakeOnSpock },
+	{ { ACTION_USE, OBJECT_ISNAKE, OBJECT_MCCOY, 0 }, &Room::feather5UseSnakeOnMccoy },
+	{ { ACTION_USE, OBJECT_ISNAKE, OBJECT_REDSHIRT, 0 }, &Room::feather5UseSnakeOnRedshirt },
+	{ { ACTION_USE, OBJECT_ISNAKE, HOTSPOT_WATER, 0 }, &Room::feather5UseSnakeOnWater },
+	{ { ACTION_USE, OBJECT_IKNIFE, OBJECT_KIRK, 0 }, &Room::feather5UseKnifeOnKirk },
+	{ { ACTION_USE, OBJECT_IKNIFE, OBJECT_SPOCK, 0 }, &Room::feather5UseKnifeOnSpock },
+	{ { ACTION_USE, OBJECT_IKNIFE, OBJECT_MCCOY, 0 }, &Room::feather5UseKnifeOnMccoy },
+	{ { ACTION_USE, OBJECT_IKNIFE, OBJECT_REDSHIRT, 0 }, &Room::feather5UseKnifeOnRedshirt },
+	{ { ACTION_USE, OBJECT_IKNIFE, HOTSPOT_WATER, 0 }, &Room::feather5UseKnifeOnWater },
+	{ { ACTION_USE, OBJECT_IKNIFE, OBJECT_MONSTER, 0 }, &Room::feather5UseKnifeOnMonster },
+	{ { ACTION_GET, HOTSPOT_FERN, 0, 0 }, &Room::feather5GetFern },
 
-	{ {ACTION_USE, OBJECT_IKNIFE, HOTSPOT_FERN, 0},        &Room::feather5UseKnifeOnFern },
-	{ {ACTION_DONE_WALK, 1, 0, 0},                         &Room::feather5ReachedFern },
-	{ {ACTION_DONE_ANIM, 1, 0, 0},                         &Room::feather5PickedUpFern },
+	{ { ACTION_USE, OBJECT_IKNIFE, HOTSPOT_FERN, 0 }, &Room::feather5UseKnifeOnFern },
+	{ { ACTION_DONE_WALK, 1, 0, 0 }, &Room::feather5ReachedFern },
+	{ { ACTION_DONE_ANIM, 1, 0, 0 }, &Room::feather5PickedUpFern },
 
-	{ {ACTION_USE, OBJECT_IFERN, OBJECT_MONSTER, 0},       &Room::feather5UseFernOnMonster },
-	{ {ACTION_USE, OBJECT_IFERN, HOTSPOT_WATER, 0},        &Room::feather5UseFernOnMonster },
-	{ {ACTION_DONE_WALK, 2, 0, 0},                         &Room::feather5ReachedPositionToUseFern },
-	{ {ACTION_DONE_ANIM, 2, 0, 0},                         &Room::feather5DoneThrowingFern },
-	{ {ACTION_DONE_ANIM, 3, 0, 0},                         &Room::feather5FernFellIntoWater },
-	{ {ACTION_TIMER_EXPIRED, 1, 0, 0},                     &Room::feather5Timer1Expired },
+	{ { ACTION_USE, OBJECT_IFERN, OBJECT_MONSTER, 0 }, &Room::feather5UseFernOnMonster },
+	{ { ACTION_USE, OBJECT_IFERN, HOTSPOT_WATER, 0 }, &Room::feather5UseFernOnMonster },
+	{ { ACTION_DONE_WALK, 2, 0, 0 }, &Room::feather5ReachedPositionToUseFern },
+	{ { ACTION_DONE_ANIM, 2, 0, 0 }, &Room::feather5DoneThrowingFern },
+	{ { ACTION_DONE_ANIM, 3, 0, 0 }, &Room::feather5FernFellIntoWater },
+	{ { ACTION_TIMER_EXPIRED, 1, 0, 0 }, &Room::feather5Timer1Expired },
 
-	{ {ACTION_USE, OBJECT_IROCK, OBJECT_SPOCK, 0},         &Room::feather5UseRockOnSpock },
-	{ {ACTION_USE, OBJECT_IROCK, OBJECT_MCCOY, 0},         &Room::feather5UseRockOnMccoy },
-	{ {ACTION_USE, OBJECT_IROCK, OBJECT_REDSHIRT, 0},      &Room::feather5UseRockOnRedshirt },
-	{ {ACTION_USE, OBJECT_SPOCK, OBJECT_THROWN_FERN, 0},   &Room::feather5UseCrewmanOnThrownFern },
-	{ {ACTION_USE, OBJECT_MCCOY, OBJECT_THROWN_FERN, 0},   &Room::feather5UseCrewmanOnThrownFern },
-	{ {ACTION_USE, OBJECT_REDSHIRT, OBJECT_THROWN_FERN, 0}, &Room::feather5UseCrewmanOnThrownFern },
-	{ {ACTION_USE, OBJECT_SPOCK, OBJECT_MONSTER, 0},       &Room::feather5UseSpockOnMonster },
-	{ {ACTION_USE, OBJECT_MCCOY, OBJECT_MONSTER, 0},       &Room::feather5UseMccoyOnMonster },
-	{ {ACTION_USE, OBJECT_REDSHIRT, OBJECT_MONSTER, 0},    &Room::feather5UseRedshirtOnMonster },
-	{ {ACTION_USE, OBJECT_IPHASERS, 0xff, 0},              &Room::feather5UsePhaser },
-	{ {ACTION_USE, OBJECT_IPHASERK, 0xff, 0},              &Room::feather5UsePhaser },
-	{ {ACTION_LOOK, 0xff, 0, 0},                           &Room::feather5LookAnywhere },
-	{ {ACTION_LOOK, HOTSPOT_LOG, 0, 0},                    &Room::feather5LookAtLog },
-	{ {ACTION_LOOK, HOTSPOT_WATER, 0, 0},                  &Room::feather5LookAtWater },
-	{ {ACTION_LOOK, HOTSPOT_FERN, 0, 0},                   &Room::feather5LookAtFern },
-	{ {ACTION_LOOK, HOTSPOT_INSECTS_1, 0, 0},              &Room::feather5LookAtInsects },
-	{ {ACTION_LOOK, HOTSPOT_INSECTS_2, 0, 0},              &Room::feather5LookAtInsects },
-	{ {ACTION_LOOK, HOTSPOT_CAVE, 0, 0},                   &Room::feather5LookAtCave },
-	{ {ACTION_LOOK, OBJECT_MONSTER, 0, 0},                 &Room::feather5LookAtMonster },
-	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0},                   &Room::feather5LookAtSpock },
-	{ {ACTION_LOOK, OBJECT_KIRK, 0, 0},                    &Room::feather5LookAtKirk },
-	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0},                   &Room::feather5LookAtMccoy },
-	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0},                &Room::feather5LookAtRedshirt },
-	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0},                   &Room::feather5TalkToMccoy },
-	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0},                   &Room::feather5TalkToSpock },
-	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0},                &Room::feather5TalkToRedshirt },
-	{ {ACTION_USE, OBJECT_IMTRICOR, HOTSPOT_WATER, 0},     &Room::feather5UseMTricorderOnWater },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_MONSTER, 0},    &Room::feather5UseMTricorderOnMonster },
-	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_MONSTER, 0},    &Room::feather5UseSTricorderOnMonster },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0},              &Room::feather5UseSTricorderAnywhere },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_WATER, 0},     &Room::feather5UseSTricorderOnWater },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_FERN, 0},      &Room::feather5UseSTricorderOnFern },
-	{ {ACTION_USE, OBJECT_IMEDKIT, 0xff, 0},               &Room::feather5UseMedkitAnywhere },
+	{ { ACTION_USE, OBJECT_IROCK, OBJECT_SPOCK, 0 }, &Room::feather5UseRockOnSpock },
+	{ { ACTION_USE, OBJECT_IROCK, OBJECT_MCCOY, 0 }, &Room::feather5UseRockOnMccoy },
+	{ { ACTION_USE, OBJECT_IROCK, OBJECT_REDSHIRT, 0 }, &Room::feather5UseRockOnRedshirt },
+	{ { ACTION_USE, OBJECT_SPOCK, OBJECT_THROWN_FERN, 0 }, &Room::feather5UseCrewmanOnThrownFern },
+	{ { ACTION_USE, OBJECT_MCCOY, OBJECT_THROWN_FERN, 0 }, &Room::feather5UseCrewmanOnThrownFern },
+	{ { ACTION_USE, OBJECT_REDSHIRT, OBJECT_THROWN_FERN, 0 }, &Room::feather5UseCrewmanOnThrownFern },
+	{ { ACTION_USE, OBJECT_SPOCK, OBJECT_MONSTER, 0 }, &Room::feather5UseSpockOnMonster },
+	{ { ACTION_USE, OBJECT_MCCOY, OBJECT_MONSTER, 0 }, &Room::feather5UseMccoyOnMonster },
+	{ { ACTION_USE, OBJECT_REDSHIRT, OBJECT_MONSTER, 0 }, &Room::feather5UseRedshirtOnMonster },
+	{ { ACTION_USE, OBJECT_IPHASERS, 0xff, 0 }, &Room::feather5UsePhaser },
+	{ { ACTION_USE, OBJECT_IPHASERK, 0xff, 0 }, &Room::feather5UsePhaser },
+	{ { ACTION_LOOK, 0xff, 0, 0 }, &Room::feather5LookAnywhere },
+	{ { ACTION_LOOK, HOTSPOT_LOG, 0, 0 }, &Room::feather5LookAtLog },
+	{ { ACTION_LOOK, HOTSPOT_WATER, 0, 0 }, &Room::feather5LookAtWater },
+	{ { ACTION_LOOK, HOTSPOT_FERN, 0, 0 }, &Room::feather5LookAtFern },
+	{ { ACTION_LOOK, HOTSPOT_INSECTS_1, 0, 0 }, &Room::feather5LookAtInsects },
+	{ { ACTION_LOOK, HOTSPOT_INSECTS_2, 0, 0 }, &Room::feather5LookAtInsects },
+	{ { ACTION_LOOK, HOTSPOT_CAVE, 0, 0 }, &Room::feather5LookAtCave },
+	{ { ACTION_LOOK, OBJECT_MONSTER, 0, 0 }, &Room::feather5LookAtMonster },
+	{ { ACTION_LOOK, OBJECT_SPOCK, 0, 0 }, &Room::feather5LookAtSpock },
+	{ { ACTION_LOOK, OBJECT_KIRK, 0, 0 }, &Room::feather5LookAtKirk },
+	{ { ACTION_LOOK, OBJECT_MCCOY, 0, 0 }, &Room::feather5LookAtMccoy },
+	{ { ACTION_LOOK, OBJECT_REDSHIRT, 0, 0 }, &Room::feather5LookAtRedshirt },
+	{ { ACTION_TALK, OBJECT_MCCOY, 0, 0 }, &Room::feather5TalkToMccoy },
+	{ { ACTION_TALK, OBJECT_SPOCK, 0, 0 }, &Room::feather5TalkToSpock },
+	{ { ACTION_TALK, OBJECT_REDSHIRT, 0, 0 }, &Room::feather5TalkToRedshirt },
+	{ { ACTION_USE, OBJECT_IMTRICOR, HOTSPOT_WATER, 0 }, &Room::feather5UseMTricorderOnWater },
+	{ { ACTION_USE, OBJECT_IMTRICOR, OBJECT_MONSTER, 0 }, &Room::feather5UseMTricorderOnMonster },
+	{ { ACTION_USE, OBJECT_ISTRICOR, OBJECT_MONSTER, 0 }, &Room::feather5UseSTricorderOnMonster },
+	{ { ACTION_USE, OBJECT_ISTRICOR, 0xff, 0 }, &Room::feather5UseSTricorderAnywhere },
+	{ { ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_WATER, 0 }, &Room::feather5UseSTricorderOnWater },
+	{ { ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_FERN, 0 }, &Room::feather5UseSTricorderOnFern },
+	{ { ACTION_USE, OBJECT_IMEDKIT, 0xff, 0 }, &Room::feather5UseMedkitAnywhere },
 };
 
 extern const int feather5NumActions = ARRAYSIZE(feather5ActionList);
-
 
 void Room::feather5Tick1() {
 	playVoc("FEA5LOOP");
@@ -250,7 +249,6 @@ void Room::feather5PickedUpFern() {
 	_awayMission->feather.gotFern = true;
 }
 
-
 void Room::feather5UseFernOnMonster() {
 	// BUG: Infinite score mechanism. Just keep throwing ferns into the water.
 	_awayMission->feather.missionScore += 2;
@@ -282,7 +280,6 @@ void Room::feather5FernFellIntoWater() {
 void Room::feather5Timer1Expired() { // Spock explains that the creature retreated
 	showText(TX_SPEAKER_SPOCK, TX_FEA5_025);
 }
-
 
 void Room::feather5UseRockOnSpock() {
 	showText(TX_SPEAKER_SPOCK, TX_FEA5_027);

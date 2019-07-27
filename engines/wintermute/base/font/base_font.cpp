@@ -27,10 +27,10 @@
  */
 
 #include "engines/wintermute/base/font/base_font.h"
+#include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/font/base_font_bitmap.h"
 #include "engines/wintermute/base/font/base_font_truetype.h"
-#include "engines/wintermute/base/base_parser.h"
-#include "engines/wintermute/base/base_file_manager.h"
 
 namespace Wintermute {
 
@@ -41,38 +41,32 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(BaseFont, false)
 
 //////////////////////////////////////////////////////////////////////
-BaseFont::BaseFont(BaseGame *inGame) : BaseObject(inGame) {
-
+BaseFont::BaseFont(BaseGame *inGame)
+  : BaseObject(inGame) {
 }
-
 
 //////////////////////////////////////////////////////////////////////
 BaseFont::~BaseFont() {
 }
 
-
 //////////////////////////////////////////////////////////////////////
 void BaseFont::drawText(const byte *text, int x, int y, int width, TTextAlign align, int maxHeight, int maxLength) {
 }
-
 
 //////////////////////////////////////////////////////////////////////
 int BaseFont::getTextHeight(const byte *text, int width) {
 	return 0;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 int BaseFont::getTextWidth(const byte *text, int maxLength) {
 	return 0;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 int BaseFont::getLetterHeight() {
 	return 0;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFont::persist(BasePersistenceManager *persistMgr) {
@@ -81,10 +75,9 @@ bool BaseFont::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 BaseFont *BaseFont::createFromFile(BaseGame *gameRef, const Common::String &filename) {
-	if (isTrueType(gameRef,  filename)) {
+	if (isTrueType(gameRef, filename)) {
 		BaseFontTT *font = new BaseFontTT(gameRef);
 		if (font) {
 			if (DID_FAIL(font->loadFile(filename))) {
@@ -105,7 +98,6 @@ BaseFont *BaseFont::createFromFile(BaseGame *gameRef, const Common::String &file
 	}
 }
 
-
 TOKEN_DEF_START
 TOKEN_DEF(FONT)
 TOKEN_DEF(TTFONT)
@@ -116,7 +108,6 @@ bool BaseFont::isTrueType(BaseGame *gameRef, const Common::String &filename) {
 	TOKEN_TABLE(FONT)
 	TOKEN_TABLE(TTFONT)
 	TOKEN_TABLE_END
-
 
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {

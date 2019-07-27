@@ -24,16 +24,15 @@ namespace Voyeur {
 
 static const VoyeurGameDescription gameDescriptions[] = {
 	{
-		// Voyeur DOS English
-		{
-			"voyeur",
-			0,
-			AD_ENTRY1s("a1100100.rl2", "b44630677618d034970ca0a13c1c1237", 336361),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
-		},
+	  // Voyeur DOS English
+	  {
+	    "voyeur",
+	    0,
+	    AD_ENTRY1s("a1100100.rl2", "b44630677618d034970ca0a13c1c1237", 336361),
+	    Common::EN_ANY,
+	    Common::kPlatformDOS,
+	    ADGF_NO_FLAGS,
+	    GUIO1(GUIO_NONE) },
 	},
 
 	{ AD_TABLE_END_MARKER }

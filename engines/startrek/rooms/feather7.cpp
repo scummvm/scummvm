@@ -27,18 +27,17 @@
 namespace StarTrek {
 
 extern const RoomAction feather7ActionList[] = {
-	{ {ACTION_TICK, 1, 0, 0},       &Room::feather7Tick1 },
-	{ {ACTION_TICK, 40, 0, 0},      &Room::feather7Tick40 },
-	{ {ACTION_DONE_WALK, 1, 0, 0},  &Room::feather7KirkReachedSeat },
-	{ {ACTION_DONE_WALK, 2, 0, 0},  &Room::feather7SpockReachedSeat },
-	{ {ACTION_DONE_WALK, 3, 0, 0},  &Room::feather7MccoyReachedSeat },
-	{ {ACTION_DONE_ANIM, 4, 0, 0},  &Room::feather7QuetzecoatlReachedSeat },
-	{ {ACTION_DONE_ANIM, 1, 0, 0},  &Room::feather7KirkSatDown },
-	{ {ACTION_DONE_ANIM, 2, 0, 0},  &Room::feather7ReadyToBeamOut },
+	{ { ACTION_TICK, 1, 0, 0 }, &Room::feather7Tick1 },
+	{ { ACTION_TICK, 40, 0, 0 }, &Room::feather7Tick40 },
+	{ { ACTION_DONE_WALK, 1, 0, 0 }, &Room::feather7KirkReachedSeat },
+	{ { ACTION_DONE_WALK, 2, 0, 0 }, &Room::feather7SpockReachedSeat },
+	{ { ACTION_DONE_WALK, 3, 0, 0 }, &Room::feather7MccoyReachedSeat },
+	{ { ACTION_DONE_ANIM, 4, 0, 0 }, &Room::feather7QuetzecoatlReachedSeat },
+	{ { ACTION_DONE_ANIM, 1, 0, 0 }, &Room::feather7KirkSatDown },
+	{ { ACTION_DONE_ANIM, 2, 0, 0 }, &Room::feather7ReadyToBeamOut },
 };
 
 extern const int feather7NumActions = ARRAYSIZE(feather7ActionList);
-
 
 void Room::feather7Tick1() {
 	playVoc("FEA7LOOP");

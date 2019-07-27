@@ -73,10 +73,10 @@ void FrameInfo::read(Common::SeekableReadStream *in, bool isSequence) {
 	next = in->readUint32LE();
 }
 
-
 // AnimFrame
 
-AnimFrame::AnimFrame(Common::SeekableReadStream *in, const FrameInfo &f, bool /* ignoreSubtype */) : _palette(NULL) {
+AnimFrame::AnimFrame(Common::SeekableReadStream *in, const FrameInfo &f, bool /* ignoreSubtype */)
+  : _palette(NULL) {
 	_palSize = 1;
 	// TODO: use just the needed rectangle
 	_image.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
@@ -167,7 +167,7 @@ void AnimFrame::decomp34(Common::SeekableReadStream *in, const FrameInfo &f, byt
 	uint32 numBlanks = 640 - (f.xPos2 - f.xPos1);
 
 	in->seek((int)f.dataOffset);
-	for (uint32 out = skip; out < size; ) {
+	for (uint32 out = skip; out < size;) {
 		uint16 opcode = in->readByte();
 
 		if (opcode & 0x80) {
@@ -210,7 +210,7 @@ void AnimFrame::decomp5(Common::SeekableReadStream *in, const FrameInfo &f) {
 	//assert (f.yPos2 == size / 640);
 
 	in->seek((int)f.dataOffset);
-	for (uint32 out = skip; out < size; ) {
+	for (uint32 out = skip; out < size;) {
 		uint16 opcode = in->readByte();
 		if (!(opcode & 0x1f)) {
 			opcode = (uint16)((opcode << 3) + in->readByte());
@@ -247,7 +247,7 @@ void AnimFrame::decomp7(Common::SeekableReadStream *in, const FrameInfo &f) {
 	uint32 numBlanks = 640 - (f.xPos2 - f.xPos1);
 
 	in->seek((int)f.dataOffset);
-	for (uint32 out = skip; out < size; ) {
+	for (uint32 out = skip; out < size;) {
 		uint16 opcode = in->readByte();
 		if (opcode & 0x80) {
 			if (opcode & 0x40) {
@@ -294,7 +294,7 @@ void AnimFrame::decompFF(Common::SeekableReadStream *in, const FrameInfo &f) {
 	uint32 size = f.decompressedEndOffset / 2;
 
 	in->seek((int)f.dataOffset);
-	for (uint32 out = skip; out < size; ) {
+	for (uint32 out = skip; out < size;) {
 		uint16 opcode = in->readByte();
 
 		if (opcode < 0x80) {
@@ -327,7 +327,6 @@ void AnimFrame::decompFF(Common::SeekableReadStream *in, const FrameInfo &f) {
 		}
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 //  SEQUENCE

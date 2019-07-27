@@ -60,9 +60,9 @@ public:
 	Common::String _fontname;
 	TextJustification _justification;
 	int16 _size;
-	uint8 _red;     // 0-255
-	uint8 _green;   // 0-255
-	uint8 _blue;    // 0-255
+	uint8 _red; // 0-255
+	uint8 _green; // 0-255
+	uint8 _blue; // 0-255
 	bool _italic;
 	bool _bold;
 	bool _underline;
@@ -73,7 +73,8 @@ public:
 
 class TextRenderer {
 public:
-	TextRenderer(ZVision *engine): _engine(engine) {};
+	TextRenderer(ZVision *engine)
+	  : _engine(engine) {};
 
 	void drawTextWithJustification(const Common::String &text, StyledTTFont &font, uint32 color, Graphics::Surface &dest, int lineY, TextJustification jusification);
 	int32 drawText(const Common::String &text, TextStyleState &state, Graphics::Surface &dest);

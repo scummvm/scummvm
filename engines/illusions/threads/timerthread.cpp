@@ -20,8 +20,8 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/threads/timerthread.h"
+#include "illusions/illusions.h"
 #include "illusions/input.h"
 #include "illusions/time.h"
 
@@ -30,8 +30,10 @@ namespace Illusions {
 // TimerThread
 
 TimerThread::TimerThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
-	uint32 duration, bool isAbortable)
-	: Thread(vm, threadId, callingThreadId, notifyFlags), _duration(duration), _isAbortable(isAbortable) {
+                         uint32 duration, bool isAbortable)
+  : Thread(vm, threadId, callingThreadId, notifyFlags)
+  , _duration(duration)
+  , _isAbortable(isAbortable) {
 	_type = kTTTimerThread;
 	_startTime = getCurrentTime();
 	_endTime = _startTime + _duration;
@@ -41,12 +43,10 @@ TimerThread::TimerThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThr
 		if (callingThread)
 			_sceneId = callingThread->_sceneId;
 	}
-
 }
 
 int TimerThread::onUpdate() {
-	if (isTimerExpired(_startTime, _endTime) ||
-		(_isAbortable && _vm->_input->pollEvent(kEventAbort)))
+	if (isTimerExpired(_startTime, _endTime) || (_isAbortable && _vm->_input->pollEvent(kEventAbort)))
 		return kTSTerminate;
 	return kTSYield;
 }

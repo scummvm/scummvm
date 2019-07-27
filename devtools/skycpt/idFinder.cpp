@@ -20,9 +20,9 @@
  *
  */
 
-#include "stdafx.h"
-#include "TextFile.h"
 #include "KmpSearch.h"
+#include "TextFile.h"
+#include "stdafx.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -35,9 +35,7 @@ uint16 findCptId(char *name, TextFile *cptFile) {
 		cLine = cptFile->findLine(kmp, cLine);
 		if (cLine >= 0) {
 			char *line = cptFile->giveLine(cLine);
-			if ((strncmp(line, "COMPACT::", 9) == 0) ||
-				(strncmp(line, "SCRATCH::", 9) == 0) ||
-				(strncmp(line, "GET_TOS::", 9) == 0)) {
+			if ((strncmp(line, "COMPACT::", 9) == 0) || (strncmp(line, "SCRATCH::", 9) == 0) || (strncmp(line, "GET_TOS::", 9) == 0)) {
 				char *stopCh;
 				uint16 resId = (uint16)strtoul(line + 9, &stopCh, 16);
 				if ((stopCh[0] == ':') && (stopCh[1] == ':') && (strcmp(stopCh + 2, name) == 0)) {

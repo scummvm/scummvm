@@ -78,9 +78,9 @@ void LabEngine::loadMapData() {
 	_imgPath = new Image(mapImages, this);
 	_imgBridge = new Image(mapImages, this);
 
-	_mapButtonList.push_back(_interface->createButton( 8,  _utils->vgaScaleY(105), 0, Common::KEYCODE_ESCAPE, new Image(mapImages, this), new Image(mapImages, this)));	// back
-	_mapButtonList.push_back(_interface->createButton( 55, _utils->vgaScaleY(105), 1, Common::KEYCODE_UP,     new Image(mapImages, this), new Image(mapImages, this)));	// up
-	_mapButtonList.push_back(_interface->createButton(101, _utils->vgaScaleY(105), 2, Common::KEYCODE_DOWN,   new Image(mapImages, this), new Image(mapImages, this)));	// down
+	_mapButtonList.push_back(_interface->createButton(8, _utils->vgaScaleY(105), 0, Common::KEYCODE_ESCAPE, new Image(mapImages, this), new Image(mapImages, this))); // back
+	_mapButtonList.push_back(_interface->createButton(55, _utils->vgaScaleY(105), 1, Common::KEYCODE_UP, new Image(mapImages, this), new Image(mapImages, this))); // up
+	_mapButtonList.push_back(_interface->createButton(101, _utils->vgaScaleY(105), 2, Common::KEYCODE_DOWN, new Image(mapImages, this), new Image(mapImages, this))); // down
 
 	delete mapImages;
 
@@ -88,12 +88,12 @@ void LabEngine::loadMapData() {
 	updateEvents();
 
 	_maxRooms = mapFile->readUint16LE();
-	_maps = new MapData[_maxRooms + 1];	// will be freed when the user exits the map
+	_maps = new MapData[_maxRooms + 1]; // will be freed when the user exits the map
 	for (int i = 0; i <= _maxRooms; i++) {
 		_maps[i]._x = mapFile->readUint16LE();
 		_maps[i]._y = mapFile->readUint16LE();
 		_maps[i]._pageNumber = mapFile->readUint16LE();
-		_maps[i]._specialID = (SpecialRoom) mapFile->readUint16LE();
+		_maps[i]._specialID = (SpecialRoom)mapFile->readUint16LE();
 		_maps[i]._mapFlags = mapFile->readUint32LE();
 	}
 
@@ -349,8 +349,8 @@ void LabEngine::drawMap(uint16 curRoom, uint16 curMsg, uint16 floorNum, bool fad
 	if ((_maps[curRoom]._pageNumber == floorNum) && _roomsFound->in(curRoom) && _maps[curRoom]._x)
 		drawRoomMap(curRoom, true);
 
-	_interface->toggleButton(_interface->getButton(1), 12, (getUpperFloor(floorNum) != kFloorNone));	// up button
-	_interface->toggleButton(_interface->getButton(2), 12, (getLowerFloor(floorNum) != kFloorNone));	// down button
+	_interface->toggleButton(_interface->getButton(1), 12, (getUpperFloor(floorNum) != kFloorNone)); // up button
+	_interface->toggleButton(_interface->getButton(2), 12, (getLowerFloor(floorNum) != kFloorNone)); // down button
 
 	// Labyrinth specific code
 	if (floorNum == kFloorLower) {
@@ -423,10 +423,10 @@ void LabEngine::processMap(uint16 curRoom) {
 				place = 1;
 
 		} else {
-			uint32 msgClass  = msg->_msgClass;
-			uint16 msgCode   = msg->_code;
-			uint16 mouseX    = msg->_mouse.x;
-			uint16 mouseY    = msg->_mouse.y;
+			uint32 msgClass = msg->_msgClass;
+			uint16 msgCode = msg->_code;
+			uint16 mouseX = msg->_mouse.x;
+			uint16 mouseY = msg->_mouse.y;
 
 			if ((msgClass == kMessageRightClick) || ((msgClass == kMessageRawKey) && (msgCode == Common::KEYCODE_ESCAPE)))
 				return;
@@ -456,28 +456,28 @@ void LabEngine::processMap(uint16 curRoom) {
 				}
 			} else if (msgClass == kMessageLeftClick) {
 				if ((curFloor == kFloorLower) && _utils->mapRectScale(538, 277, 633, 352).contains(mouseX, mouseY)
-					  && floorVisited(kFloorSurMaze)) {
+				    && floorVisited(kFloorSurMaze)) {
 					curFloor = kFloorSurMaze;
 
 					_graphics->fade(false);
 					drawMap(curRoom, curMsg, curFloor, false);
 					_graphics->fade(true);
 				} else if ((curFloor == kFloorMiddle) && _utils->mapRectScale(358, 71, 452, 147).contains(mouseX, mouseY)
-							&& floorVisited(kFloorCarnival)) {
+				           && floorVisited(kFloorCarnival)) {
 					curFloor = kFloorCarnival;
 
 					_graphics->fade(false);
 					drawMap(curRoom, curMsg, curFloor, false);
 					_graphics->fade(true);
 				} else if ((curFloor == kFloorMiddle) && _utils->mapRectScale(557, 325, 653, 401).contains(mouseX, mouseY)
-							&& floorVisited(kFloorMedMaze)) {
+				           && floorVisited(kFloorMedMaze)) {
 					curFloor = kFloorMedMaze;
 
 					_graphics->fade(false);
 					drawMap(curRoom, curMsg, curFloor, false);
 					_graphics->fade(true);
 				} else if ((curFloor == kFloorUpper) && _utils->mapRectScale(524, 97, 645, 207).contains(mouseX, mouseY)
-							&& floorVisited(kFloorHedgeMaze)) {
+				           && floorVisited(kFloorHedgeMaze)) {
 					curFloor = kFloorHedgeMaze;
 
 					_graphics->fade(false);
@@ -491,7 +491,7 @@ void LabEngine::processMap(uint16 curRoom) {
 						curCoords = roomCoords(i);
 
 						if ((_maps[i]._pageNumber == curFloor)
-							  && _roomsFound->in(i) && curCoords.contains(Common::Point(mouseX, mouseY))) {
+						    && _roomsFound->in(i) && curCoords.contains(Common::Point(mouseX, mouseY))) {
 							curMsg = i;
 						}
 					}
@@ -523,7 +523,7 @@ void LabEngine::processMap(uint16 curRoom) {
 
 			_graphics->screenUpdate();
 		}
-	}	// while
+	} // while
 }
 
 void LabEngine::doMap() {

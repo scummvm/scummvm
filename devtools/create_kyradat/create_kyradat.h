@@ -1000,9 +1000,10 @@ struct Game {
 	int lang;
 };
 
-#define GAME_DUMMY_ENTRY { -1, -1, -1, -1 }
+#define GAME_DUMMY_ENTRY \
+	{ -1, -1, -1, -1 }
 
-extern const Game * const gameDescs[];
+extern const Game *const gameDescs[];
 
 const int *getNeedList(const Game *g);
 

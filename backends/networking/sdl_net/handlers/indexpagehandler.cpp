@@ -28,7 +28,8 @@
 
 namespace Networking {
 
-IndexPageHandler::IndexPageHandler(): CommandSender(nullptr) {}
+IndexPageHandler::IndexPageHandler()
+  : CommandSender(nullptr) {}
 
 IndexPageHandler::~IndexPageHandler() {}
 
@@ -42,14 +43,12 @@ void IndexPageHandler::handle(Client &client) {
 	if (queryCode == "") {
 		// redirect to "/filesAJAX"
 		HandlerUtils::setMessageHandler(
-			client,
-			Common::String::format(
-				"%s<br/><a href=\"files\">%s</a>",
-				_("This is a local webserver index page."),
-				_("Open Files manager")
-			),
-			"/filesAJAX"
-		);
+		  client,
+		  Common::String::format(
+		    "%s<br/><a href=\"files\">%s</a>",
+		    _("This is a local webserver index page."),
+		    _("Open Files manager")),
+		  "/filesAJAX");
 		return;
 	}
 

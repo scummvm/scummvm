@@ -23,7 +23,6 @@
 #ifndef SKY_MOUSE_H
 #define SKY_MOUSE_H
 
-
 #include "common/scummsys.h"
 
 class OSystem;
@@ -37,7 +36,6 @@ class SkyCompact;
 class Mouse {
 
 public:
-
 	Mouse(OSystem *system, Disk *skyDisk, SkyCompact *skyCompact);
 	~Mouse();
 
@@ -64,20 +62,19 @@ public:
 	void resetCursor();
 
 protected:
-
 	void pointerEngine(uint16 xPos, uint16 yPos);
 	void buttonEngine1();
 
 	bool _logicClick;
 
-	uint16 _mouseB;	//mouse button
-	uint16 _mouseX;	//actual mouse coordinates
+	uint16 _mouseB; //mouse button
+	uint16 _mouseX; //actual mouse coordinates
 	uint16 _mouseY;
 
 	uint16 _currentCursor;
 
-	byte *_miceData;	//address of mouse sprites
-	byte *_objectMouseData;	//address of object mouse sprites
+	byte *_miceData; //address of mouse sprites
+	byte *_objectMouseData; //address of object mouse sprites
 
 	static uint32 _mouseMainObjects[24];
 	static uint32 _mouseLincObjects[21];

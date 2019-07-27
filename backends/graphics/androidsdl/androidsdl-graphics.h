@@ -28,7 +28,6 @@
 class AndroidSdlGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
 	AndroidSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
-
 };
 
 #endif

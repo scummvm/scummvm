@@ -35,18 +35,18 @@ FilesAjaxPageHandler::~FilesAjaxPageHandler() {}
 
 namespace {
 
-Common::String encodeDoubleQuotesAndSlashes(Common::String s) {
-	Common::String result = "";
-	for (uint32 i = 0; i < s.size(); ++i)
-		if (s[i] == '"') {
-			result += "\\\"";
-		} else if (s[i] == '\\') {
-			result += "\\\\";
-		} else {
-			result += s[i];
-		}
-	return result;
-}
+	Common::String encodeDoubleQuotesAndSlashes(Common::String s) {
+		Common::String result = "";
+		for (uint32 i = 0; i < s.size(); ++i)
+			if (s[i] == '"') {
+				result += "\\\"";
+			} else if (s[i] == '\\') {
+				result += "\\\\";
+			} else {
+				result += s[i];
+			}
+		return result;
+	}
 
 }
 

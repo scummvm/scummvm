@@ -36,25 +36,27 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "sword25/kernel/common.h"
 #include "sword25/gfx/renderobjectregistry.h"
+#include "sword25/kernel/common.h"
 
 namespace Sword25 {
 
 class RenderObject;
 
-template<class T>
+template <class T>
 class RenderObjectPtr {
 public:
-	RenderObjectPtr() : _handle(0) {}
+	RenderObjectPtr()
+	  : _handle(0) {}
 
-	RenderObjectPtr(uint handle) : _handle(handle) {}
+	RenderObjectPtr(uint handle)
+	  : _handle(handle) {}
 
 	T *operator->() const {
 		return static_cast<T *>(RenderObjectRegistry::instance().resolveHandle(_handle));
 	}
 
-	bool operator==(const RenderObjectPtr<T> & other) {
+	bool operator==(const RenderObjectPtr<T> &other) {
 		return _handle == other._handle;
 	}
 

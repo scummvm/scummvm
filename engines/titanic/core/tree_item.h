@@ -35,19 +35,20 @@ class CProjectItem;
 class CScreenManager;
 class CViewItem;
 
-class CTreeItem: public CMessageTarget {
+class CTreeItem : public CMessageTarget {
 	friend class CMessage;
 	DECLARE_MESSAGE_MAP;
+
 private:
 	CTreeItem *_parent;
 	CTreeItem *_nextSibling;
 	CTreeItem *_priorSibling;
 	CTreeItem *_firstChild;
 	int _field14;
+
 public:
 	CLASSDEF;
 	CTreeItem();
-
 
 	/**
 	 * Dump the item and any of it's children
@@ -127,7 +128,7 @@ public:
 	/**
 	 * Returns true if the item's name matches a passed name
 	 */
-	virtual bool isEquals(const CString &name, bool startsWith = false) const{ return false; }
+	virtual bool isEquals(const CString &name, bool startsWith = false) const { return false; }
 
 	/**
 	 * Compares the name of the item to a passed name

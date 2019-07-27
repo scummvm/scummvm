@@ -29,7 +29,6 @@
 #ifndef WINTERMUTE_SXDIRECTORY_H
 #define WINTERMUTE_SXDIRECTORY_H
 
-
 #include "engines/wintermute/base/base_scriptable.h"
 
 namespace Wintermute {

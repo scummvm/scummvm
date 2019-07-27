@@ -23,11 +23,11 @@
 #ifndef COMMON_RECT_H
 #define COMMON_RECT_H
 
+#include "common/debug.h"
 #include "common/scummsys.h"
 #include "common/util.h"
-#include "common/debug.h"
 
-#define PRINT_RECT(x) (x).left,(x).top,(x).right,(x).bottom
+#define PRINT_RECT(x) (x).left, (x).top, (x).right, (x).bottom
 
 namespace Common {
 
@@ -35,13 +35,17 @@ namespace Common {
  * Simple class for handling both 2D position and size.
  */
 struct Point {
-	int16 x;	///< The horizontal part of the point
-	int16 y;	///< The vertical part of the point
+	int16 x; ///< The horizontal part of the point
+	int16 y; ///< The vertical part of the point
 
-	Point() : x(0), y(0) {}
-	Point(int16 x1, int16 y1) : x(x1), y(y1) {}
-	bool  operator==(const Point &p)    const { return x == p.x && y == p.y; }
-	bool  operator!=(const Point &p)    const { return x != p.x || y != p.y; }
+	Point()
+	  : x(0)
+	  , y(0) {}
+	Point(int16 x1, int16 y1)
+	  : x(x1)
+	  , y(y1) {}
+	bool operator==(const Point &p) const { return x == p.x && y == p.y; }
+	bool operator!=(const Point &p) const { return x != p.x || y != p.y; }
 	Point operator+(const Point &delta) const { return Point(x + delta.x, y + delta.y); }
 	Point operator-(const Point &delta) const { return Point(x - delta.x, y - delta.y); }
 
@@ -93,12 +97,24 @@ struct Point {
  * When writing code using our Rect class, always keep this principle in mind!
 */
 struct Rect {
-	int16 top, left;		///< The point at the top left of the rectangle (part of the rect).
-	int16 bottom, right;	///< The point at the bottom right of the rectangle (not part of the rect).
+	int16 top, left; ///< The point at the top left of the rectangle (part of the rect).
+	int16 bottom, right; ///< The point at the bottom right of the rectangle (not part of the rect).
 
-	Rect() : top(0), left(0), bottom(0), right(0) {}
-	Rect(int16 w, int16 h) : top(0), left(0), bottom(h), right(w) {}
-	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : top(y1), left(x1), bottom(y2), right(x2) {
+	Rect()
+	  : top(0)
+	  , left(0)
+	  , bottom(0)
+	  , right(0) {}
+	Rect(int16 w, int16 h)
+	  : top(0)
+	  , left(0)
+	  , bottom(h)
+	  , right(w) {}
+	Rect(int16 x1, int16 y1, int16 x2, int16 y2)
+	  : top(y1)
+	  , left(x1)
+	  , bottom(y2)
+	  , right(x2) {
 		assert(isValidRect());
 	}
 	bool operator==(const Rect &rhs) const { return equals(rhs); }
@@ -214,17 +230,25 @@ struct Rect {
 		assert(isValidRect());
 		assert(r.isValidRect());
 
-		if (top < r.top) top = r.top;
-		else if (top > r.bottom) top = r.bottom;
+		if (top < r.top)
+			top = r.top;
+		else if (top > r.bottom)
+			top = r.bottom;
 
-		if (left < r.left) left = r.left;
-		else if (left > r.right) left = r.right;
+		if (left < r.left)
+			left = r.left;
+		else if (left > r.right)
+			left = r.right;
 
-		if (bottom > r.bottom) bottom = r.bottom;
-		else if (bottom < r.top) bottom = r.top;
+		if (bottom > r.bottom)
+			bottom = r.bottom;
+		else if (bottom < r.top)
+			bottom = r.top;
 
-		if (right > r.right) right = r.right;
-		else if (right < r.left) right = r.left;
+		if (right > r.right)
+			right = r.right;
+		else if (right < r.left)
+			right = r.left;
 	}
 
 	void clip(int16 maxw, int16 maxh) {
@@ -247,8 +271,10 @@ struct Rect {
 	}
 
 	void translate(int16 dx, int16 dy) {
-		left += dx; right += dx;
-		top += dy; bottom += dy;
+		left += dx;
+		right += dx;
+		top += dy;
+		bottom += dy;
 	}
 
 	void moveTo(const Point &p) {

@@ -42,8 +42,9 @@ private:
 	uint16 getNextValue();
 	void setMessage(int resNum, int lineNum, int color, const Common::Point &pt, int width);
 	void setMessage(int resNum, int lineNum, int fontNum, int color1, int color2, int color3,
-		const Common::Point &pt, int width);
+	                const Common::Point &pt, int width);
 	SequenceManager *globalManager();
+
 public:
 	SceneText _sceneText;
 	int _resNum;
@@ -57,6 +58,7 @@ public:
 	SceneObject *_objectList[6];
 	ASound _soundHandler;
 	SequenceCallback _onCallback;
+
 public:
 	SequenceManager();
 
@@ -67,7 +69,6 @@ public:
 	virtual void process(Event &event);
 	virtual void attached(EventHandler *newOwner, EventHandler *endHandler, va_list va);
 };
-
 
 class Speaker : public EventHandler {
 public:
@@ -85,6 +86,7 @@ public:
 	TextAlign _textMode;
 	int _color1, _color2, _color3;
 	bool _hideObjects;
+
 public:
 	Speaker();
 
@@ -109,6 +111,7 @@ public:
 class ScreenSpeaker : public Speaker {
 public:
 	SceneItem *_npc;
+
 public:
 	ScreenSpeaker();
 
@@ -128,6 +131,7 @@ public:
 	SceneObject _object1;
 	SceneObject _object2;
 	SpeakerAction _speakerAction;
+
 public:
 	virtual Common::String getClassName() { return "AnimatedSpeaker"; }
 	virtual void removeText();
@@ -150,6 +154,7 @@ private:
 	int textLeft() const;
 	int textMaxWidth() const;
 	int numberLeft() const;
+
 public:
 	int _stdColor;
 	int _highlightColor;
@@ -158,6 +163,7 @@ public:
 	int _savedFontNumber;
 	Common::Array<ChoiceEntry> _choiceList;
 	uint _selectedIndex;
+
 public:
 	ConversationChoiceDialog();
 
@@ -197,6 +203,7 @@ public:
 	int _lookupValue, _lookupIndex, _exitMode;
 	int _speakerMode;
 	int _field16[11];
+
 public:
 	void load(const byte *dataP);
 	virtual void synchronize(Serializer &s);
@@ -210,6 +217,7 @@ private:
 	void load();
 	Speaker *getSpeaker(const char *speakerName);
 	int getNewIndex(int newId);
+
 public:
 	int _stripNum;
 	int _obj44ListIndex;
@@ -231,6 +239,7 @@ public:
 
 	// Ringworld 2 specific fields
 	byte *_lookupList;
+
 public:
 	StripManager();
 	virtual ~StripManager();

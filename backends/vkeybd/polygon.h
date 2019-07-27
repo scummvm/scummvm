@@ -27,15 +27,16 @@
 
 #ifdef ENABLE_VKEYBD
 
-#include "common/array.h"
-#include "common/rect.h"
+#	include "common/array.h"
+#	include "common/rect.h"
 
 namespace Common {
 
 struct Polygon {
 
 	Polygon() {}
-	Polygon(Array<Point> p) : _points(p) {
+	Polygon(Array<Point> p)
+	  : _points(p) {
 		for (uint i = 0; i < p.size(); i++) {
 			_bound.extend(Rect(p[i].x, p[i].y, p[i].x, p[i].y));
 		}

@@ -25,21 +25,22 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#include "gui/saveload.h"
-#include "common/config-manager.h"
 #include "common/events.h"
-#include "common/translation.h"
-#include "engines/advancedDetector.h"
-#include "cge/events.h"
+#include "cge/cge_main.h"
 #include "cge/events.h"
 #include "cge/text.h"
-#include "cge/cge_main.h"
+#include "common/config-manager.h"
+#include "common/translation.h"
+#include "engines/advancedDetector.h"
+#include "gui/saveload.h"
 
 namespace CGE {
 
 /*----------------- KEYBOARD interface -----------------*/
 
-Keyboard::Keyboard(CGEEngine *vm) : _client(NULL), _vm(vm) {
+Keyboard::Keyboard(CGEEngine *vm)
+  : _client(NULL)
+  , _vm(vm) {
 	_keyAlt = false;
 }
 
@@ -76,7 +77,7 @@ bool Keyboard::getKey(Common::Event &event) {
 
 			if (savegameId != -1)
 				_vm->saveGameState(savegameId, savegameDescription);
-			}
+		}
 		return false;
 	case Common::KEYCODE_F7:
 		if (_vm->canLoadGameStateCurrently()) {
@@ -90,7 +91,7 @@ bool Keyboard::getKey(Common::Event &event) {
 		return false;
 	case Common::KEYCODE_d:
 		if (event.kbd.flags & Common::KBD_CTRL) {
-		// Start the debugger
+			// Start the debugger
 			_vm->getDebugger()->attach();
 			_vm->getDebugger()->onFrame();
 			return false;
@@ -136,15 +137,20 @@ void Keyboard::newKeyboard(Common::Event &event) {
 		CGEEvent &evt = _vm->_eventManager->getNextEvent();
 		evt._x = 0;
 		evt._y = 0;
-		evt._keyCode = event.kbd.keycode;   // Keycode
-		evt._mask = kEventKeyb;             // Event mask
-		evt._spritePtr = _client;           // Sprite pointer
+		evt._keyCode = event.kbd.keycode; // Keycode
+		evt._mask = kEventKeyb; // Event mask
+		evt._spritePtr = _client; // Sprite pointer
 	}
 }
 
 /*----------------- MOUSE interface -----------------*/
 
-Mouse::Mouse(CGEEngine *vm) : Sprite(vm, NULL), _busy(NULL), _hold(NULL), _hx(0), _vm(vm) {
+Mouse::Mouse(CGEEngine *vm)
+  : Sprite(vm, NULL)
+  , _busy(NULL)
+  , _hold(NULL)
+  , _hx(0)
+  , _vm(vm) {
 	_hold = NULL;
 	_hx = 0;
 	_hy = 0;
@@ -235,7 +241,8 @@ void Mouse::newMouse(Common::Event &event) {
 
 /*----------------- EventManager interface -----------------*/
 
-EventManager::EventManager(CGEEngine *vm) : _vm(vm){
+EventManager::EventManager(CGEEngine *vm)
+  : _vm(vm) {
 	_eventQueueHead = 0;
 	_eventQueueTail = 0;
 	for (uint16 k = 0; k < kEventMax; k++) {

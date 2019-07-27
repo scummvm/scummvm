@@ -22,15 +22,17 @@
 
 #include "kyra/gui/gui_v1.h"
 
-#include "kyra/text/text.h"
 #include "kyra/graphics/wsamovie.h"
+#include "kyra/text/text.h"
 
 #include "common/savefile.h"
 #include "common/system.h"
 
 namespace Kyra {
 
-GUI_v1::GUI_v1(KyraEngine_v1 *kyra) : GUI(kyra), _text(kyra->text()) {
+GUI_v1::GUI_v1(KyraEngine_v1 *kyra)
+  : GUI(kyra)
+  , _text(kyra->text()) {
 	_menuButtonList = 0;
 
 	_redrawButtonFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::redrawButtonCallback);
@@ -73,7 +75,7 @@ void GUI_v1::initMenu(Menu &menu) {
 	int textX;
 	int textY;
 
-	int menu_x2 = menu.width  + menu.x - 1;
+	int menu_x2 = menu.width + menu.x - 1;
 	int menu_y2 = menu.height + menu.y - 1;
 
 	_screen->fillRect(menu.x + 2, menu.y + 2, menu_x2 - 2, menu_y2 - 2, menu.bkgdColor);
@@ -110,7 +112,7 @@ void GUI_v1::initMenu(Menu &menu) {
 			menuButtonData->nextButton = 0;
 			menuButtonData->x = x1;
 			menuButtonData->y = y1;
-			menuButtonData->width  = menu.item[i].width - 1;
+			menuButtonData->width = menu.item[i].width - 1;
 			menuButtonData->height = menu.item[i].height - 1;
 			menuButtonData->buttonCallback = menu.item[i].callback;
 			menuButtonData->keyCode = menu.item[i].keyCode;
@@ -220,8 +222,7 @@ void GUI_v1::processHighlights(Menu &menu) {
 		x2 = x1 + menu.item[i].width;
 		y2 = y1 + menu.item[i].height;
 
-		if (mouseX > x1 && mouseX < x2 &&
-		        mouseY > y1 && mouseY < y2) {
+		if (mouseX > x1 && mouseX < x2 && mouseY > y1 && mouseY < y2) {
 
 			if (menu.highlightedItem != i || _vm->game() == GI_LOL) {
 				if (_vm->game() != GI_LOL) {
@@ -379,7 +380,7 @@ void GUI_v1::checkTextfieldInput() {
 			_vm->_mouseY = pos.y;
 			keys = event.type == Common::EVENT_LBUTTONDOWN ? 199 : (200 | 0x800);
 			running = false;
-			} break;
+		} break;
 
 		case Common::EVENT_MOUSEMOVE: {
 			Common::Point pos = _vm->getMousePos();
@@ -388,7 +389,7 @@ void GUI_v1::checkTextfieldInput() {
 
 			_vm->_system->updateScreen();
 			_lastScreenUpdate = now;
-			} break;
+		} break;
 
 		default:
 			break;
@@ -414,7 +415,9 @@ int GUI_v1::getMenuCenterStringX(const char *str, int x1, int x2) {
 
 #pragma mark -
 
-MainMenu::MainMenu(KyraEngine_v1 *vm) : _vm(vm), _screen(0) {
+MainMenu::MainMenu(KyraEngine_v1 *vm)
+  : _vm(vm)
+  , _screen(0) {
 	_screen = _vm->screen();
 	_nextUpdate = 0;
 	_system = g_system;
@@ -496,7 +499,7 @@ int MainMenu::handle(int dim) {
 	int x = _screen->_curDim->sx << 3;
 	int y = _screen->_curDim->sy;
 	int width = _screen->_curDim->w << 3;
-	int height =  _screen->_curDim->h;
+	int height = _screen->_curDim->h;
 
 	drawBox(x, y, width, height, 1);
 	drawBox(x + 1, y + 1, width - 2, height - 2, 0);
@@ -572,7 +575,8 @@ void MainMenu::draw(int select) {
 }
 
 void MainMenu::drawBox(int x, int y, int w, int h, int fill) {
-	--w; --h;
+	--w;
+	--h;
 
 	if (fill)
 		_screen->fillRect(x, y, x + w, y + h, _static.colorTable[0]);

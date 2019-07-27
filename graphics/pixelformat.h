@@ -29,90 +29,74 @@
 namespace Graphics {
 
 /** Template to expand from an n-bit component to an 8-bit component */
-template<int depth>
+template <int depth>
 struct ColorComponent {
 };
 
-template<>
+template <>
 struct ColorComponent<0> {
 	static inline uint expand(uint value) {
 		return 0;
 	}
 };
 
-template<>
+template <>
 struct ColorComponent<1> {
 	static inline uint expand(uint value) {
 		value &= 1;
-		return value |
-		       (value << 1) |
-		       (value << 2) |
-		       (value << 3) |
-		       (value << 4) |
-		       (value << 5) |
-		       (value << 6) |
-		       (value << 7);
+		return value | (value << 1) | (value << 2) | (value << 3) | (value << 4) | (value << 5) | (value << 6) | (value << 7);
 	}
 };
 
-template<>
+template <>
 struct ColorComponent<2> {
 	static inline uint expand(uint value) {
 		value &= 3;
-		return value |
-		       (value << 2) |
-		       (value << 4) |
-		       (value << 6);
+		return value | (value << 2) | (value << 4) | (value << 6);
 	}
 };
 
-template<>
+template <>
 struct ColorComponent<3> {
 	static inline uint expand(uint value) {
 		value &= 7;
-		return (value << 5) |
-		       (value << 2) |
-		       (value >> 1);
+		return (value << 5) | (value << 2) | (value >> 1);
 	}
 };
 
-template<>
+template <>
 struct ColorComponent<4> {
 	static inline uint expand(uint value) {
 		value &= 15;
-		return value |
-		       (value << 4);
+		return value | (value << 4);
 	}
 };
 
-template<>
+template <>
 struct ColorComponent<5> {
 	static inline uint expand(uint value) {
 		value &= 31;
-		return (value << 3) |
-		       (value >> 2);
+		return (value << 3) | (value >> 2);
 	}
 };
 
-template<>
+template <>
 struct ColorComponent<6> {
 	static inline uint expand(uint value) {
 		value &= 63;
-		return (value << 2) |
-		       (value >> 4);
+		return (value << 2) | (value >> 4);
 	}
 };
 
-template<>
+template <>
 struct ColorComponent<7> {
 	static inline uint expand(uint value) {
 		value &= 127;
-		return (value << 1) |
-		       (value >> 6);
+		return (value << 1) | (value >> 6);
 	}
 };
 
-template<>
+template <>
 struct ColorComponent<8> {
 	static inline uint expand(uint value) {
 		return value & 255;
@@ -140,14 +124,12 @@ struct PixelFormat {
 	byte rShift, gShift, bShift, aShift; /**< Binary left shift of each color component in the pixel value. */
 
 	inline PixelFormat() {
-		bytesPerPixel =
-		rLoss = gLoss = bLoss = aLoss =
-		rShift = gShift = bShift = aShift = 0;
+		bytesPerPixel = rLoss = gLoss = bLoss = aLoss = rShift = gShift = bShift = aShift = 0;
 	}
 
 	inline PixelFormat(byte BytesPerPixel,
-						byte RBits, byte GBits, byte BBits, byte ABits,
-						byte RShift, byte GShift, byte BShift, byte AShift) {
+	                   byte RBits, byte GBits, byte BBits, byte ABits,
+	                   byte RShift, byte GShift, byte BShift, byte AShift) {
 		bytesPerPixel = BytesPerPixel;
 		rLoss = 8 - RBits;
 		gLoss = 8 - GBits;
@@ -165,15 +147,7 @@ struct PixelFormat {
 
 	inline bool operator==(const PixelFormat &fmt) const {
 		// TODO: If aLoss==8, then the value of aShift is irrelevant, and should be ignored.
-		return bytesPerPixel == fmt.bytesPerPixel &&
-		       rLoss == fmt.rLoss &&
-		       gLoss == fmt.gLoss &&
-		       bLoss == fmt.bLoss &&
-		       aLoss == fmt.aLoss &&
-		       rShift == fmt.rShift &&
-		       gShift == fmt.gShift &&
-		       bShift == fmt.bShift &&
-		       aShift == fmt.aShift;
+		return bytesPerPixel == fmt.bytesPerPixel && rLoss == fmt.rLoss && gLoss == fmt.gLoss && bLoss == fmt.bLoss && aLoss == fmt.aLoss && rShift == fmt.rShift && gShift == fmt.gShift && bShift == fmt.bShift && aShift == fmt.aShift;
 	}
 
 	inline bool operator!=(const PixelFormat &fmt) const {
@@ -181,19 +155,11 @@ struct PixelFormat {
 	}
 
 	inline uint32 RGBToColor(uint8 r, uint8 g, uint8 b) const {
-		return
-			((0xFF >> aLoss) << aShift) |
-			((   r >> rLoss) << rShift) |
-			((   g >> gLoss) << gShift) |
-			((   b >> bLoss) << bShift);
+		return ((0xFF >> aLoss) << aShift) | ((r >> rLoss) << rShift) | ((g >> gLoss) << gShift) | ((b >> bLoss) << bShift);
 	}
 
 	inline uint32 ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b) const {
-		return
-			((a >> aLoss) << aShift) |
-			((r >> rLoss) << rShift) |
-			((g >> gLoss) << gShift) |
-			((b >> bLoss) << bShift);
+		return ((a >> aLoss) << aShift) | ((r >> rLoss) << rShift) | ((g >> gLoss) << gShift) | ((b >> bLoss) << bShift);
 	}
 
 	inline void colorToRGB(uint32 color, uint8 &r, uint8 &g, uint8 &b) const {

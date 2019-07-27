@@ -23,10 +23,10 @@
 #ifndef ACCESS_RESOURCES_H
 #define ACCESS_RESOURCES_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/language.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/str-array.h"
 #include "common/stream.h"
 
@@ -61,6 +61,7 @@ class Resources {
 		Common::String _desc;
 		int _combo[4];
 	};
+
 protected:
 	AccessEngine *_vm;
 	Common::Array<DATEntry> _datIndex;
@@ -79,16 +80,19 @@ protected:
 	 * Load data from the access.dat file
 	 */
 	virtual void load(Common::SeekableReadStream &s);
+
 public:
 	Common::StringArray FILENAMES;
-	Common::Array< Common::Array<byte> > CHARTBL;
+	Common::Array<Common::Array<byte>> CHARTBL;
 	Common::Array<RoomEntry> ROOMTBL;
 	Common::Array<DeathEntry> DEATHS;
 	Common::Array<InventoryEntry> INVENTORY;
-	Common::Array< Common::Array<byte> > CURSORS;
+	Common::Array<Common::Array<byte>> CURSORS;
 	Common::String CANT_GET_THERE;
+
 public:
-	Resources(AccessEngine *vm) : _vm(vm) {}
+	Resources(AccessEngine *vm)
+	  : _vm(vm) {}
 	virtual ~Resources() {}
 	static Resources *init(AccessEngine *vm);
 

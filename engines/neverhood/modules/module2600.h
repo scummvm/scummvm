@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE2600_H
 #define NEVERHOOD_MODULES_MODULE2600_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -35,6 +35,7 @@ class Module2600 : public Module {
 public:
 	Module2600(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module2600();
+
 protected:
 	int _sceneNum;
 	void createScene(int sceneNum, int which);
@@ -44,6 +45,7 @@ protected:
 class Scene2609 : public Scene {
 public:
 	Scene2609(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	bool _isBusy;
 	Sprite *_asWater;

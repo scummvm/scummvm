@@ -32,7 +32,6 @@ class ZVision;
 // Used by Zork: Nemesis for the mixing chamber gas effect in the gas puzzle (location tt5e, when the blinds are down)
 class FogFx : public GraphicsEffect {
 public:
-
 	FogFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, EffectMap *Map, const Common::String &clouds);
 	~FogFx();
 
@@ -45,7 +44,7 @@ private:
 	Graphics::Surface _fog;
 	uint8 _r, _g, _b;
 	int32 _pos;
-	Common::Array< Common::Array< bool > > _mp;
+	Common::Array<Common::Array<bool>> _mp;
 	uint16 _colorMap[32];
 };
 } // End of namespace ZVision

@@ -22,17 +22,16 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
-
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
@@ -245,11 +244,11 @@ void sceneHandler13_walkForward(bool flag) {
 }
 
 void sceneHandler13_walkBackward(bool flag) {
-	BehaviorMove *beh = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT|0x4000, QU_STR_LTOR);
+	BehaviorMove *beh = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_RIGHT | 0x4000, QU_STR_LTOR);
 
 	sceneHandler13_setBehFlag(beh, flag);
 
-	beh = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_LEFT|0x4000, QU_STR_TURNR_L);
+	beh = g_fp->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene13_guard, ST_STR_LEFT | 0x4000, QU_STR_TURNR_L);
 
 	sceneHandler13_setBehFlag(beh, flag);
 
@@ -260,7 +259,7 @@ int sceneHandler13(ExCommand *cmd) {
 	if (cmd->_messageKind != 17)
 		return 0;
 
-	switch(cmd->_messageNum) {
+	switch (cmd->_messageNum) {
 	case MSG_SC13_OPENBRIDGE:
 		sceneHandler13_openBridge();
 		break;
@@ -313,71 +312,69 @@ int sceneHandler13(ExCommand *cmd) {
 		sceneHandler13_showGum();
 		break;
 
-	case 29:
-		{
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+	case 29: {
+		StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
-			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
-				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
+		if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
+			int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
 
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
-					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47
-						 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
-						|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
-						g_fp->processArcade(cmd);
-					}
+			if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
+				if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47
+				     && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
+				    || (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
+					g_fp->processArcade(cmd);
 				}
 			}
-			break;
+		}
+		break;
+	}
+
+	case 33: {
+		int res = 0;
+		int x;
+
+		if (g_fp->_aniMan2) {
+			x = g_fp->_aniMan2->_ox;
+			g_vars->scene13_dudeX = x;
+
+			if (x < g_fp->_sceneRect.left + 200)
+				g_fp->_currentScene->_x = x - g_fp->_sceneRect.left - 300;
+
+			if (x > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = x - g_fp->_sceneRect.right + 300;
+
+			res = 1;
+
+			g_fp->sceneAutoScrolling();
+		} else {
+			x = g_vars->scene13_dudeX;
 		}
 
-	case 33:
-		{
-			int res = 0;
-			int x;
+		if (g_vars->scene13_guardDirection) {
+			if (x < 1022) {
+				sceneHandler13_walkForward(1);
+				sceneHandler13_walkBackward(0);
 
-			if (g_fp->_aniMan2) {
-				x = g_fp->_aniMan2->_ox;
-				g_vars->scene13_dudeX = x;
+				g_vars->scene13_guardDirection = false;
 
-				if (x < g_fp->_sceneRect.left + 200)
-					g_fp->_currentScene->_x = x - g_fp->_sceneRect.left - 300;
+				g_fp->_behaviorManager->updateBehaviors();
+				g_fp->startSceneTrack();
 
-				if (x > g_fp->_sceneRect.right - 200)
-					g_fp->_currentScene->_x = x - g_fp->_sceneRect.right + 300;
-
-				res = 1;
-
-				g_fp->sceneAutoScrolling();
-			} else {
-				x = g_vars->scene13_dudeX;
+				return res;
 			}
+		} else if (x > 1022) {
+			sceneHandler13_walkForward(0);
+			sceneHandler13_walkBackward(1);
 
-			if (g_vars->scene13_guardDirection) {
-				if (x < 1022) {
-					sceneHandler13_walkForward(1);
-					sceneHandler13_walkBackward(0);
-
-					g_vars->scene13_guardDirection = false;
-
-					g_fp->_behaviorManager->updateBehaviors();
-					g_fp->startSceneTrack();
-
-					return res;
-				}
-			} else if (x > 1022) {
-				sceneHandler13_walkForward(0);
-				sceneHandler13_walkBackward(1);
-
-				g_vars->scene13_guardDirection = true;
-			}
-
-			g_fp->_behaviorManager->updateBehaviors();
-			g_fp->startSceneTrack();
-
-			return res;
+			g_vars->scene13_guardDirection = true;
 		}
+
+		g_fp->_behaviorManager->updateBehaviors();
+		g_fp->startSceneTrack();
+
+		return res;
+	}
 	}
 
 	return 0;

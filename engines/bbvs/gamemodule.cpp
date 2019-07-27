@@ -26,11 +26,27 @@
 namespace Bbvs {
 
 GameModule::GameModule()
-	: _bgSpriteCount(0), _bgSpriteIndices(0), _bgSpritePriorities(0), _walkRectsCount(0),
-	_walkRects(0), _sceneExitsCount(0), _sceneExits(0), _bgObjectsCount(0), _bgObjects(0),
-	_animationsCount(0), _animations(0), _sceneObjectDefsCount(0), _sceneObjectDefs(0),
-	_sceneObjectInitsCount(0), _sceneObjectInits(0), _actionsCount(0), _actions(0),
-	_sceneSoundsCount(0), _sceneSounds(0), _preloadSoundsCount(0), _preloadSounds(0) {
+  : _bgSpriteCount(0)
+  , _bgSpriteIndices(0)
+  , _bgSpritePriorities(0)
+  , _walkRectsCount(0)
+  , _walkRects(0)
+  , _sceneExitsCount(0)
+  , _sceneExits(0)
+  , _bgObjectsCount(0)
+  , _bgObjects(0)
+  , _animationsCount(0)
+  , _animations(0)
+  , _sceneObjectDefsCount(0)
+  , _sceneObjectDefs(0)
+  , _sceneObjectInitsCount(0)
+  , _sceneObjectInits(0)
+  , _actionsCount(0)
+  , _actions(0)
+  , _sceneSoundsCount(0)
+  , _sceneSounds(0)
+  , _preloadSoundsCount(0)
+  , _preloadSounds(0) {
 }
 
 GameModule::~GameModule() {
@@ -270,7 +286,6 @@ void GameModule::loadBgSprites(Common::SeekableReadStream &s) {
 	s.seek(bgSpritePrioritiesOffs);
 	for (int i = 0; i < _bgSpriteCount; ++i)
 		_bgSpritePriorities[i] = s.readUint16LE();
-
 }
 
 void GameModule::loadCameraInits(Common::SeekableReadStream &s) {

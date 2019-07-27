@@ -24,9 +24,9 @@
 
 #include "zvision/scripting/effects/animation_effect.h"
 
-#include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/scripting/script_manager.h"
+#include "zvision/zvision.h"
 
 #include "graphics/surface.h"
 #include "video/video_decoder.h"
@@ -34,10 +34,10 @@
 namespace ZVision {
 
 AnimationEffect::AnimationEffect(ZVision *engine, uint32 controlKey, const Common::String &fileName, int32 mask, int32 frate, bool disposeAfterUse)
-	: ScriptingEffect(engine, controlKey, SCRIPTING_EFFECT_ANIM),
-	  _disposeAfterUse(disposeAfterUse),
-	  _mask(mask),
-	  _animation(NULL) {
+  : ScriptingEffect(engine, controlKey, SCRIPTING_EFFECT_ANIM)
+  , _disposeAfterUse(disposeAfterUse)
+  , _mask(mask)
+  , _animation(NULL) {
 
 	_animation = engine->loadAnimation(fileName);
 
@@ -65,7 +65,7 @@ AnimationEffect::~AnimationEffect() {
 
 		if ((*it)._scaled) {
 			(*it)._scaled->free();
-			delete(*it)._scaled;
+			delete (*it)._scaled;
 		}
 	}
 
@@ -204,7 +204,7 @@ bool AnimationEffect::stop() {
 		_engine->getScriptManager()->setStateValue((*it).slot, 2);
 		if ((*it)._scaled) {
 			(*it)._scaled->free();
-			delete(*it)._scaled;
+			delete (*it)._scaled;
 		}
 	}
 

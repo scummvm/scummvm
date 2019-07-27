@@ -20,8 +20,8 @@
  *
  */
 
-#include "sludge/builtin.h"
 #include "sludge/function.h"
+#include "sludge/builtin.h"
 #include "sludge/loadsave.h"
 #include "sludge/newfatal.h"
 #include "sludge/people.h"
@@ -42,13 +42,13 @@ VariableStack *noStack = NULL;
 Variable *globalVars = NULL;
 
 const char *sludgeText[] = { "?????", "RETURN", "BRANCH", "BR_ZERO",
-		"SET_GLOBAL", "SET_LOCAL", "LOAD_GLOBAL", "LOAD_LOCAL", "PLUS", "MINUS",
-		"MULT", "DIVIDE", "AND", "OR", "EQUALS", "NOT_EQ", "MODULUS",
-		"LOAD_VALUE", "LOAD_BUILT", "LOAD_FUNC", "CALLIT", "LOAD_STRING",
-		"LOAD_FILE", "LOAD_OBJTYPE", "NOT", "LOAD_NULL", "STACK_PUSH",
-		"LESSTHAN", "MORETHAN", "NEGATIVE", "U", "LESS_EQUAL", "MORE_EQUAL",
-		"INC_LOCAL", "DEC_LOCAL", "INC_GLOBAL", "DEC_GLOBAL", "INDEXSET",
-		"INDEXGET", "INC_INDEX", "DEC_INDEX", "QUICK_PUSH" };
+	                           "SET_GLOBAL", "SET_LOCAL", "LOAD_GLOBAL", "LOAD_LOCAL", "PLUS", "MINUS",
+	                           "MULT", "DIVIDE", "AND", "OR", "EQUALS", "NOT_EQ", "MODULUS",
+	                           "LOAD_VALUE", "LOAD_BUILT", "LOAD_FUNC", "CALLIT", "LOAD_STRING",
+	                           "LOAD_FILE", "LOAD_OBJTYPE", "NOT", "LOAD_NULL", "STACK_PUSH",
+	                           "LESSTHAN", "MORETHAN", "NEGATIVE", "U", "LESS_EQUAL", "MORE_EQUAL",
+	                           "INC_LOCAL", "DEC_LOCAL", "INC_GLOBAL", "DEC_GLOBAL", "INDEXSET",
+	                           "INDEXGET", "INC_INDEX", "DEC_INDEX", "QUICK_PUSH" };
 
 void pauseFunction(LoadedFunction *fun) {
 	LoadedFunction **huntAndDestroy = &allRunningFunctions;
@@ -72,7 +72,7 @@ void killSpeechTimers() {
 
 	while (thisFunction) {
 		if (thisFunction->freezerLevel == 0 && thisFunction->isSpeech
-				&& thisFunction->timeLeft) {
+		    && thisFunction->timeLeft) {
 			thisFunction->timeLeft = 0;
 			thisFunction->isSpeech = false;
 		}
@@ -113,10 +113,10 @@ void abortFunction(LoadedFunction *fun) {
 	pauseFunction(fun);
 	while (fun->stack)
 		trimStack(fun->stack);
-	delete []fun->compiledLines;
+	delete[] fun->compiledLines;
 	for (a = 0; a < fun->numLocals; a++)
 		fun->localVars[a].unlinkVar();
-	delete []fun->localVars;
+	delete[] fun->localVars;
 	fun->reg.unlinkVar();
 	if (fun->calledBy)
 		abortFunction(fun->calledBy);
@@ -196,8 +196,8 @@ bool continueFunction(LoadedFunction *fun) {
 				restartFunction(fun);
 			} else {
 				finishFunction(fun);
-				advanceNow = false;   // So we don't do anything else with "fun"
-				keepLooping = false;    // So we drop out of the loop
+				advanceNow = false; // So we don't do anything else with "fun"
+				keepLooping = false; // So we drop out of the loop
 			}
 			break;
 
@@ -207,30 +207,26 @@ bool continueFunction(LoadedFunction *fun) {
 				pauseFunction(fun);
 				if (numBIFNames)
 					setFatalInfo(
-							(fun->originalNumber < numUserFunc) ?
-									allUserFunc[fun->originalNumber] :
-									"Unknown user function",
-							(fun->reg.varData.intValue < numUserFunc) ?
-									allUserFunc[fun->reg.varData.intValue] :
-									"Unknown user function");
+					  (fun->originalNumber < numUserFunc) ? allUserFunc[fun->originalNumber] : "Unknown user function",
+					  (fun->reg.varData.intValue < numUserFunc) ? allUserFunc[fun->reg.varData.intValue] : "Unknown user function");
 
 				if (!startNewFunctionNum(fun->reg.varData.intValue, param, fun,
-						fun->stack))
+				                         fun->stack))
 					return false;
 				fun = allRunningFunctions;
-				advanceNow = false;   // So we don't do anything else with "fun"
+				advanceNow = false; // So we don't do anything else with "fun"
 				break;
 
 			case SVT_BUILT: {
 				debugC(1, kSludgeDebugStackMachine, "Built-in init value: %i",
-						fun->reg.varData.intValue);
+				       fun->reg.varData.intValue);
 				BuiltReturn br = callBuiltIn(fun->reg.varData.intValue, param,
-						fun);
+				                             fun);
 
 				switch (br) {
 				case BR_ERROR:
 					return fatal(
-							"Unknown error. This shouldn't happen. Please notify the SLUDGE developers.");
+					  "Unknown error. This shouldn't happen. Please notify the SLUDGE developers.");
 
 				case BR_PAUSE:
 					pauseFunction(fun);
@@ -251,24 +247,18 @@ bool continueFunction(LoadedFunction *fun) {
 					pauseFunction(fun);
 					if (numBIFNames)
 						setFatalInfo(
-								(fun->originalNumber < numUserFunc) ?
-										allUserFunc[fun->originalNumber] :
-										"Unknown user function",
-								(i < numUserFunc) ?
-										allUserFunc[i] :
-										"Unknown user function");
+						  (fun->originalNumber < numUserFunc) ? allUserFunc[fun->originalNumber] : "Unknown user function",
+						  (i < numUserFunc) ? allUserFunc[i] : "Unknown user function");
 					if (!startNewFunctionNum(i, 0, fun, noStack, false))
 						return false;
 					fun = allRunningFunctions;
 					advanceNow = false; // So we don't do anything else with "fun"
-				}
-					break;
+				} break;
 
 				default:
 					break;
 				}
-			}
-				break;
+			} break;
 
 			default:
 				return fatal(ERROR_CALL_NONFUNCTION);
@@ -296,13 +286,13 @@ bool continueFunction(LoadedFunction *fun) {
 
 		case SLU_AND:
 			fun->reg.setVariable(SVT_INT,
-					fun->reg.getBoolean() && fun->stack->thisVar.getBoolean());
+			                     fun->reg.getBoolean() && fun->stack->thisVar.getBoolean());
 			trimStack(fun->stack);
 			break;
 
 		case SLU_OR:
 			fun->reg.setVariable(SVT_INT,
-					fun->reg.getBoolean() || fun->stack->thisVar.getBoolean());
+			                     fun->reg.getBoolean() || fun->stack->thisVar.getBoolean());
 			trimStack(fun->stack);
 			break;
 
@@ -348,10 +338,7 @@ bool continueFunction(LoadedFunction *fun) {
 					int ii;
 					if (!fun->reg.getValueType(ii, SVT_INT))
 						return false;
-					Variable *grab =
-							(fun->stack->thisVar.varType == SVT_FASTARRAY) ?
-									fun->stack->thisVar.varData.fastArray->fastArrayGetByIndex(ii) :
-									fun->stack->thisVar.varData.theStack->first->stackGetByIndex(ii);
+					Variable *grab = (fun->stack->thisVar.varType == SVT_FASTARRAY) ? fun->stack->thisVar.varData.fastArray->fastArrayGetByIndex(ii) : fun->stack->thisVar.varData.theStack->first->stackGetByIndex(ii);
 
 					trimStack(fun->stack);
 
@@ -415,8 +402,7 @@ bool continueFunction(LoadedFunction *fun) {
 					return false;
 				trimStack(fun->stack);
 				trimStack(fun->stack);
-			}
-				break;
+			} break;
 
 			default:
 				return fatal(ERROR_INDEX_NONSTACK);
@@ -432,8 +418,7 @@ bool continueFunction(LoadedFunction *fun) {
 				return false;
 			fun->reg.setVariable(SVT_INT, ii);
 			fun->localVars[param].setVariable(SVT_INT, ii + 1);
-		}
-			break;
+		} break;
 
 		case SLU_INCREMENT_GLOBAL: {
 			int ii;
@@ -441,8 +426,7 @@ bool continueFunction(LoadedFunction *fun) {
 				return false;
 			fun->reg.setVariable(SVT_INT, ii);
 			globalVars[param].setVariable(SVT_INT, ii + 1);
-		}
-			break;
+		} break;
 
 		case SLU_DECREMENT_LOCAL: {
 			int ii;
@@ -450,8 +434,7 @@ bool continueFunction(LoadedFunction *fun) {
 				return false;
 			fun->reg.setVariable(SVT_INT, ii);
 			fun->localVars[param].setVariable(SVT_INT, ii - 1);
-		}
-			break;
+		} break;
 
 		case SLU_DECREMENT_GLOBAL: {
 			int ii;
@@ -459,8 +442,7 @@ bool continueFunction(LoadedFunction *fun) {
 				return false;
 			fun->reg.setVariable(SVT_INT, ii);
 			globalVars[param].setVariable(SVT_INT, ii - 1);
-		}
-			break;
+		} break;
 
 		case SLU_SET_LOCAL:
 			if (!fun->localVars[param].copyFrom(fun->reg))
@@ -508,8 +490,7 @@ bool continueFunction(LoadedFunction *fun) {
 			if (!fun->reg.getValueType(i, SVT_INT))
 				return false;
 			fun->reg.setVariable(SVT_INT, -i);
-		}
-			break;
+		} break;
 
 			// All these things rely on there being somet' on the stack
 
@@ -554,42 +535,42 @@ bool continueFunction(LoadedFunction *fun) {
 					switch (com) {
 					case SLU_MULT:
 						fun->reg.setVariable(SVT_INT,
-								firstValue * secondValue);
+						                     firstValue * secondValue);
 						break;
 
 					case SLU_MINUS:
 						fun->reg.setVariable(SVT_INT,
-								firstValue - secondValue);
+						                     firstValue - secondValue);
 						break;
 
 					case SLU_MODULUS:
 						fun->reg.setVariable(SVT_INT,
-								firstValue % secondValue);
+						                     firstValue % secondValue);
 						break;
 
 					case SLU_DIVIDE:
 						fun->reg.setVariable(SVT_INT,
-								firstValue / secondValue);
+						                     firstValue / secondValue);
 						break;
 
 					case SLU_LESSTHAN:
 						fun->reg.setVariable(SVT_INT,
-								firstValue < secondValue);
+						                     firstValue < secondValue);
 						break;
 
 					case SLU_MORETHAN:
 						fun->reg.setVariable(SVT_INT,
-								firstValue > secondValue);
+						                     firstValue > secondValue);
 						break;
 
 					case SLU_LESS_EQUAL:
 						fun->reg.setVariable(SVT_INT,
-								firstValue <= secondValue);
+						                     firstValue <= secondValue);
 						break;
 
 					case SLU_MORE_EQUAL:
 						fun->reg.setVariable(SVT_INT,
-								firstValue >= secondValue);
+						                     firstValue >= secondValue);
 						break;
 
 					default:
@@ -607,7 +588,6 @@ bool continueFunction(LoadedFunction *fun) {
 
 		if (advanceNow)
 			fun->runThisLine++;
-
 	}
 	return true;
 }
@@ -641,7 +621,7 @@ bool loadFunctionCode(LoadedFunction *newFunc) {
 		newFunc->compiledLines[numLinesRead].theCommand = (SludgeCommand)readStream->readByte();
 		newFunc->compiledLines[numLinesRead].param = readStream->readUint16BE();
 		debugC(3, kSludgeDebugDataLoad, "command line %i: %i", numLinesRead,
-				newFunc->compiledLines[numLinesRead].theCommand);
+		       newFunc->compiledLines[numLinesRead].theCommand);
 	}
 	g_sludge->_resMan->finishAccess();
 
@@ -654,7 +634,7 @@ bool loadFunctionCode(LoadedFunction *newFunc) {
 }
 
 int startNewFunctionNum(uint funcNum, uint numParamsExpected,
-		LoadedFunction *calledBy, VariableStack *&vStack, bool returnSommet) {
+                        LoadedFunction *calledBy, VariableStack *&vStack, bool returnSommet) {
 	LoadedFunction *newFunc = new LoadedFunction;
 	checkNew(newFunc);
 	newFunc->originalNumber = funcNum;
@@ -672,7 +652,7 @@ int startNewFunctionNum(uint funcNum, uint numParamsExpected,
 		numParamsExpected--;
 		if (vStack == NULL)
 			return fatal(
-					"Corrupted file!The stack's empty and there were still parameters expected");
+			  "Corrupted file!The stack's empty and there were still parameters expected");
 		newFunc->localVars[numParamsExpected].copyFrom(vStack->thisVar);
 		trimStack(vStack);
 	}
@@ -702,7 +682,7 @@ bool runAllFunctions() {
 			if (thisFunction->timeLeft) {
 				if (thisFunction->timeLeft < 0) {
 					if (!g_sludge->_soundMan->stillPlayingSound(
-							g_sludge->_speechMan->getLastSpeechSound())) {
+					      g_sludge->_speechMan->getLastSpeechSound())) {
 						thisFunction->timeLeft = 0;
 					}
 				} else if (!--(thisFunction->timeLeft)) {

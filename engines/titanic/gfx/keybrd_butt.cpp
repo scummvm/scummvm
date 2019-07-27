@@ -26,7 +26,8 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CKeybrdButt, CToggleSwitch);
 
-CKeybrdButt::CKeybrdButt() : CToggleSwitch() {
+CKeybrdButt::CKeybrdButt()
+  : CToggleSwitch() {
 }
 
 void CKeybrdButt::save(SimpleFile *file, int indent) {

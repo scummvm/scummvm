@@ -22,21 +22,23 @@
 
 #ifdef ENABLE_HE
 
-#include "common/system.h"
-#include "common/memstream.h"
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
-#include "audio/decoders/raw.h"
-#include "graphics/palette.h"
-#include "scumm/scumm.h"
-#include "scumm/util.h"
-#include "scumm/he/intern_he.h"
-#include "scumm/he/cup_player_he.h"
+#	include "scumm/he/cup_player_he.h"
+#	include "audio/audiostream.h"
+#	include "audio/decoders/raw.h"
+#	include "audio/mixer.h"
+#	include "common/memstream.h"
+#	include "common/system.h"
+#	include "graphics/palette.h"
+#	include "scumm/he/intern_he.h"
+#	include "scumm/scumm.h"
+#	include "scumm/util.h"
 
 namespace Scumm {
 
 CUP_Player::CUP_Player(OSystem *sys, ScummEngine_vCUPhe *vm, Audio::Mixer *mixer)
-	: _vm(vm), _mixer(mixer), _system(sys) {
+  : _vm(vm)
+  , _mixer(mixer)
+  , _system(sys) {
 }
 
 bool CUP_Player::open(const char *filename) {
@@ -45,7 +47,7 @@ bool CUP_Player::open(const char *filename) {
 	if (_fileStream.open(filename)) {
 		uint32 tag = _fileStream.readUint32BE();
 		_fileStream.readUint32BE();
-		if (tag == MKTAG('B','E','A','N')) {
+		if (tag == MKTAG('B', 'E', 'A', 'N')) {
 			_playbackRate = kDefaultPlaybackRate;
 			_width = kDefaultVideoWidth;
 			_height = kDefaultVideoHeight;
@@ -92,7 +94,8 @@ void CUP_Player::close() {
 }
 
 void CUP_Player::play() {
-	while (parseNextHeaderTag(_fileStream)) { }
+	while (parseNextHeaderTag(_fileStream)) {
+	}
 
 	if (_fileStream.eos() || _fileStream.err())
 		return;
@@ -101,7 +104,8 @@ void CUP_Player::play() {
 
 	int ticks = _system->getMillis();
 	while (_dataSize != 0 && !_vm->shouldQuit()) {
-		while (parseNextBlockTag(_fileStream)) { }
+		while (parseNextBlockTag(_fileStream)) {
+		}
 		if (_fileStream.eos() || _fileStream.err())
 			return;
 
@@ -166,15 +170,13 @@ void CUP_Player::updateSfx() {
 			assert(sfxIndex >= 0 && sfxIndex < _sfxCount);
 			uint32 offset = READ_LE_UINT32(_sfxBuffer + sfxIndex * 4) - 8;
 			uint8 *soundData = _sfxBuffer + offset;
-			if (READ_BE_UINT32(soundData) == MKTAG('D','A','T','A')) {
+			if (READ_BE_UINT32(soundData) == MKTAG('D', 'A', 'T', 'A')) {
 				uint32 soundSize = READ_BE_UINT32(soundData + 4);
 				_mixer->playStream(Audio::Mixer::kSFXSoundType, &sfxChannel->handle,
-							Audio::makeLoopingAudioStream(
-								Audio::makeRawStream(soundData + 8, soundSize - 8,
-										11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO),
-								(sfx->flags & kSfxFlagLoop) ? 0 : 1
-							)
-						);
+				                   Audio::makeLoopingAudioStream(
+				                     Audio::makeRawStream(soundData + 8, soundSize - 8,
+				                                          11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO),
+				                     (sfx->flags & kSfxFlagLoop) ? 0 : 1));
 			}
 		} else {
 			warning("Unable to find a free channel to play sound %d", sfx->num);
@@ -206,19 +208,19 @@ bool CUP_Player::parseNextHeaderTag(Common::SeekableReadStream &dataStream) {
 	uint32 next = dataStream.pos() + size;
 	debug(1, "New header tag %s %d dataSize %d", tag2str(tag), size, _dataSize);
 	switch (tag) {
-	case MKTAG('H','E','A','D'):
+	case MKTAG('H', 'E', 'A', 'D'):
 		handleHEAD(dataStream, size);
 		break;
-	case MKTAG('S','F','X','B'):
+	case MKTAG('S', 'F', 'X', 'B'):
 		handleSFXB(dataStream, size);
 		break;
-	case MKTAG('R','G','B','S'):
+	case MKTAG('R', 'G', 'B', 'S'):
 		handleRGBS(dataStream, size);
 		break;
-	case MKTAG('D','A','T','A'):
+	case MKTAG('D', 'A', 'T', 'A'):
 		_dataSize = size;
 		return false;
-	case MKTAG('G','F','X','B'):
+	case MKTAG('G', 'F', 'X', 'B'):
 		// this is never triggered
 	default:
 		warning("Unhandled tag %s", tag2str(tag));
@@ -234,34 +236,34 @@ bool CUP_Player::parseNextBlockTag(Common::SeekableReadStream &dataStream) {
 	uint32 next = dataStream.pos() + size;
 	debug(1, "New block tag %s %d dataSize %d", tag2str(tag), size, _dataSize);
 	switch (tag) {
-	case MKTAG('F','R','A','M'):
+	case MKTAG('F', 'R', 'A', 'M'):
 		handleFRAM(dataStream, size);
 		break;
-	case MKTAG('L','Z','S','S'):
+	case MKTAG('L', 'Z', 'S', 'S'):
 		if (handleLZSS(dataStream, size) && _outLzssBufSize != 0) {
 			Common::MemoryReadStream memoryStream(_outLzssBufData, _outLzssBufSize);
 			parseNextBlockTag(memoryStream);
 		}
 		break;
-	case MKTAG('R','A','T','E'):
+	case MKTAG('R', 'A', 'T', 'E'):
 		handleRATE(dataStream, size);
 		break;
-	case MKTAG('R','G','B','S'):
+	case MKTAG('R', 'G', 'B', 'S'):
 		handleRGBS(dataStream, size);
 		break;
-	case MKTAG('S','N','D','E'):
+	case MKTAG('S', 'N', 'D', 'E'):
 		handleSNDE(dataStream, size);
 		break;
-	case MKTAG('T','O','I','L'):
+	case MKTAG('T', 'O', 'I', 'L'):
 		handleTOIL(dataStream, size);
 		break;
-	case MKTAG('S','R','L','E'):
+	case MKTAG('S', 'R', 'L', 'E'):
 		handleSRLE(dataStream, size);
 		break;
-	case MKTAG('B','L','O','K'):
+	case MKTAG('B', 'L', 'O', 'K'):
 		_dataSize -= size + 8;
 		return false;
-	case MKTAG('W','R','L','E'):
+	case MKTAG('W', 'R', 'L', 'E'):
 		// this is never triggered
 	default:
 		warning("Unhandled tag %s", tag2str(tag));
@@ -281,10 +283,10 @@ void CUP_Player::handleSFXB(Common::SeekableReadStream &dataStream, uint32 dataS
 	if (dataSize > 16) { // WRAP and OFFS chunks
 		uint32 tag = dataStream.readUint32BE();
 		uint32 size = dataStream.readUint32BE();
-		if (tag == MKTAG('W','R','A','P')) {
+		if (tag == MKTAG('W', 'R', 'A', 'P')) {
 			tag = dataStream.readUint32BE();
 			size = dataStream.readUint32BE();
-			if (tag == MKTAG('O','F','F','S')) {
+			if (tag == MKTAG('O', 'F', 'F', 'S')) {
 				_sfxCount = (size - 8) / 4;
 				_sfxBuffer = (uint8 *)malloc(dataSize - 16);
 				if (_sfxBuffer) {
@@ -333,7 +335,6 @@ static void decodeTRLE(uint8 *dst, int dstPitch, Common::Rect &dstRect, Common::
 	}
 }
 
-
 void CUP_Player::handleFRAM(Common::SeekableReadStream &dataStream, uint32 dataSize) {
 	const uint8 flags = dataStream.readByte();
 	int type = 256;
@@ -342,9 +343,9 @@ void CUP_Player::handleFRAM(Common::SeekableReadStream &dataStream, uint32 dataS
 	}
 	Common::Rect r;
 	if (flags & 2) {
-		r.left   = dataStream.readUint16LE();
-		r.top    = dataStream.readUint16LE();
-		r.right  = dataStream.readUint16LE();
+		r.left = dataStream.readUint16LE();
+		r.top = dataStream.readUint16LE();
+		r.right = dataStream.readUint16LE();
 		r.bottom = dataStream.readUint16LE();
 	}
 	if (flags & 0x80) {
@@ -394,9 +395,9 @@ static void decodeSRLE(uint8 *dst, const uint8 *colorMap, Common::SeekableReadSt
 
 void CUP_Player::handleSRLE(Common::SeekableReadStream &dataStream, uint32 dataSize) {
 	Common::Rect r;
-	r.left   = dataStream.readUint16LE();
-	r.top    = dataStream.readUint16LE();
-	r.right  = dataStream.readUint16LE();
+	r.left = dataStream.readUint16LE();
+	r.top = dataStream.readUint16LE();
+	r.right = dataStream.readUint16LE();
 	r.bottom = dataStream.readUint16LE();
 	uint8 colorMap[32];
 	dataStream.read(colorMap, 32);
@@ -419,7 +420,8 @@ static void decodeLZSS(uint8 *dst, const uint8 *src1, const uint8 *src2, const u
 				++index;
 				index &= 0xFFF;
 			} else {
-				int cmd = READ_LE_UINT16(src3); src3 += 2;
+				int cmd = READ_LE_UINT16(src3);
+				src3 += 2;
 				int count = (cmd >> 0xC) + 2;
 				int offs = cmd & 0xFFF;
 				if (offs == 0) {
@@ -440,12 +442,12 @@ static void decodeLZSS(uint8 *dst, const uint8 *src1, const uint8 *src2, const u
 bool CUP_Player::handleLZSS(Common::SeekableReadStream &dataStream, uint32 dataSize) {
 	uint32 tag = dataStream.readUint32BE();
 	uint32 size = dataStream.readUint32BE();
-	if (tag == MKTAG('L','Z','H','D')) {
+	if (tag == MKTAG('L', 'Z', 'H', 'D')) {
 		uint32 compressionType = dataStream.readUint32LE();
 		uint32 compressionSize = dataStream.readUint32LE();
 		tag = dataStream.readUint32BE();
 		size = dataStream.readUint32BE();
-		if (tag == MKTAG('D','A','T','A') && compressionType == 0x2000) {
+		if (tag == MKTAG('D', 'A', 'T', 'A') && compressionType == 0x2000) {
 			if (_inLzssBufSize < size - 16) {
 				free(_inLzssBufData);
 				_inLzssBufSize = size - 16;
@@ -503,16 +505,15 @@ void CUP_Player::handleTOIL(Common::SeekableReadStream &dataStream, uint32 dataS
 			_vm->quitGame();
 			break;
 		case 7: {
-				int channelSync = dataStream.readUint32LE();
-				waitForSfxChannel(channelSync);
-			}
-			break;
+			int channelSync = dataStream.readUint32LE();
+			waitForSfxChannel(channelSync);
+		} break;
 		case 2: // display copyright/information messagebox
 		case 3: // no-op in the original
 		case 4: // restart playback
 		case 5: // disable normal screen update
 		case 6: // enable double buffer rendering
-			// these are never triggered
+		  // these are never triggered
 		default:
 			warning("Unhandled TOIL code=%d", code);
 			break;

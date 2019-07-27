@@ -26,9 +26,9 @@
 #include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/crimes_database.h"
+#include "bladerunner/font.h"
 #include "bladerunner/game_flags.h"
 #include "bladerunner/game_info.h"
-#include "bladerunner/font.h"
 #include "bladerunner/script/kia_script.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/ui/kia.h"
@@ -42,7 +42,8 @@
 
 namespace BladeRunner {
 
-KIASectionClues::KIASectionClues(BladeRunnerEngine *vm, ActorClues *clues) : KIASectionBase(vm) {
+KIASectionClues::KIASectionClues(BladeRunnerEngine *vm, ActorClues *clues)
+  : KIASectionBase(vm) {
 	_uiContainer = new UIContainer(_vm);
 
 	_isOpen = false;
@@ -64,8 +65,8 @@ KIASectionClues::KIASectionClues(BladeRunnerEngine *vm, ActorClues *clues) : KIA
 	_uiContainer->add(_filterScrollBox);
 
 	_assetTypeFilterCount = 4 + 1; // we have 4 asset types
-	_crimeFilterCount     = _vm->_gameInfo->getCrimeCount() + 1;
-	_filterCount          = _assetTypeFilterCount + _crimeFilterCount;
+	_crimeFilterCount = _vm->_gameInfo->getCrimeCount() + 1;
+	_filterCount = _assetTypeFilterCount + _crimeFilterCount;
 	_filters.resize(_filterCount);
 	for (int i = 0; i < _filterCount; ++i) {
 		_filters[i] = true;
@@ -322,7 +323,7 @@ void KIASectionClues::populateFilters() {
 				if (typeTextId == -1) {
 					text = _vm->_textKIA->getText(10);
 				} else {
-					text =  assetTypeNames[typeTextId];
+					text = assetTypeNames[typeTextId];
 				}
 
 				_filterScrollBox->addLine(text, i, flags);

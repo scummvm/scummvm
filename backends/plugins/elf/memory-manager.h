@@ -27,9 +27,9 @@
 
 #if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER)
 
-#include "common/singleton.h"
-#include "common/list.h"
-#include "common/mutex.h"
+#	include "common/list.h"
+#	include "common/mutex.h"
+#	include "common/singleton.h"
 
 /**
  * A 'foolproof' way to prevent memory fragmentation. This class is used to
@@ -37,7 +37,7 @@
  * unloading plugins from causing heavy fragmentation.
  **/
 
-#define ELFMemMan		ELFMemoryManager::instance()
+#	define ELFMemMan ELFMemoryManager::instance()
 
 class ELFMemoryManager : public Common::Singleton<ELFMemoryManager> {
 public:
@@ -51,7 +51,7 @@ public:
 	void pluginDeallocate(void *ptr);
 
 private:
-   friend class Common::Singleton<ELFMemoryManager>;
+	friend class Common::Singleton<ELFMemoryManager>;
 
 	ELFMemoryManager();
 	~ELFMemoryManager();
@@ -63,16 +63,18 @@ private:
 		byte *start;
 		uint32 size;
 		byte *end() { return start + size; }
-		Allocation(byte *a, uint32 b) : start(a), size(b) {}
+		Allocation(byte *a, uint32 b)
+		  : start(a)
+		  , size(b) {}
 	};
 
 	// heap
 	void *_heap;
-	uint32 _heapAlign;			// alignment of the heap
-	uint32 _heapSize;			// size of the heap
+	uint32 _heapAlign; // alignment of the heap
+	uint32 _heapSize; // size of the heap
 
 	// tracking allocations
-	bool _trackAllocs;		// whether we are currently tracking
+	bool _trackAllocs; // whether we are currently tracking
 	uint32 _measuredSize;
 	uint32 _measuredAlign;
 

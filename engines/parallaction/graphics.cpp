@@ -21,26 +21,24 @@
  *
  */
 
-#include "common/system.h"
 #include "common/file.h"
+#include "common/system.h"
 #include "common/textconsole.h"
+#include "engines/util.h"
 #include "graphics/palette.h"
 #include "graphics/primitives.h"
-#include "engines/util.h"
 
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"
-
 
 namespace Parallaction {
 
 // this is the size of the receiving buffer for unpacked frames,
 // since BRA uses some insanely big animations (the largest is
 // part0/ani/dino.ani).
-#define MAXIMUM_UNPACKED_BITMAP_SIZE	641*401
+#define MAXIMUM_UNPACKED_BITMAP_SIZE 641 * 401
 
-
-#define	LABEL_TRANSPARENT_COLOR 0xFF
+#define LABEL_TRANSPARENT_COLOR 0xFF
 
 void halfbritePixel(int x, int y, int color, void *data) {
 	Graphics::Surface *surf = (Graphics::Surface *)data;
@@ -48,7 +46,7 @@ void halfbritePixel(int x, int y, int color, void *data) {
 	*pixel &= ~0x20;
 }
 
-void drawCircleLine(int xCenter, int yCenter, int x, int y, int color, void (*plotProc)(int, int, int, void *), void *data){
+void drawCircleLine(int xCenter, int yCenter, int x, int y, int color, void (*plotProc)(int, int, int, void *), void *data) {
 	Graphics::drawLine(xCenter + x, yCenter + y, xCenter - x, yCenter + y, color, plotProc, data);
 	Graphics::drawLine(xCenter + x, yCenter - y, xCenter - x, yCenter - y, color, plotProc, data);
 	Graphics::drawLine(xCenter + y, yCenter + x, xCenter - y, yCenter + x, color, plotProc, data);
@@ -66,17 +64,14 @@ void drawCircle(int xCenter, int yCenter, int radius, int color, void (*plotProc
 	while (x < y) {
 		x++;
 		if (p < 0)
-			p += 2*x + 1;
+			p += 2 * x + 1;
 		else {
 			y--;
-			p += 2 * (x-y) + 1;
+			p += 2 * (x - y) + 1;
 		}
 		drawCircleLine(xCenter, yCenter, x, y, color, plotProc, data);
 	}
 }
-
-
-
 
 Palette::Palette() {
 
@@ -85,8 +80,7 @@ Palette::Palette() {
 	if (gameType == GType_Nippon) {
 		_colors = 32;
 		_hb = (g_vm->getPlatform() == Common::kPlatformAmiga);
-	} else
-	if (gameType == GType_BRA) {
+	} else if (gameType == GType_BRA) {
 		_colors = 256;
 		_hb = false;
 	} else
@@ -108,7 +102,6 @@ void Palette::clone(const Palette &pal) {
 	memcpy(_data, pal._data, _size);
 }
 
-
 void Palette::makeBlack() {
 	memset(_data, 0, _size);
 }
@@ -117,38 +110,39 @@ void Palette::setEntry(uint index, int red, int green, int blue) {
 	assert(index < _colors);
 
 	if (red >= 0)
-		_data[index*3] = red & 0xFF;
+		_data[index * 3] = red & 0xFF;
 
 	if (green >= 0)
-		_data[index*3+1] = green & 0xFF;
+		_data[index * 3 + 1] = green & 0xFF;
 
 	if (blue >= 0)
-		_data[index*3+2] = blue & 0xFF;
+		_data[index * 3 + 2] = blue & 0xFF;
 }
 
 void Palette::getEntry(uint index, int &red, int &green, int &blue) {
 	assert(index < _colors);
-	red   = _data[index*3];
-	green = _data[index*3+1];
-	blue  = _data[index*3+2];
+	red = _data[index * 3];
+	green = _data[index * 3 + 1];
+	blue = _data[index * 3 + 2];
 }
 
 void Palette::makeGrayscale() {
 	byte v;
 	for (uint16 i = 0; i < _colors; i++) {
-		v = MAX(_data[i*3+1], _data[i*3+2]);
-		v = MAX(v, _data[i*3]);
+		v = MAX(_data[i * 3 + 1], _data[i * 3 + 2]);
+		v = MAX(v, _data[i * 3]);
 		setEntry(i, v, v, v);
 	}
 }
 
-void Palette::fadeTo(const Palette& target, uint step) {
+void Palette::fadeTo(const Palette &target, uint step) {
 
 	if (step == 0)
 		return;
 
 	for (uint16 i = 0; i < _size; i++) {
-		if (_data[i] == target._data[i]) continue;
+		if (_data[i] == target._data[i])
+			continue;
 
 		if (_data[i] < target._data[i])
 			_data[i] = CLIP(_data[i] + (int)step, (int)0, (int)target._data[i]);
@@ -165,20 +159,19 @@ uint Palette::fillRGB(byte *rgb) {
 	byte *hbPal = rgb + _colors * 3;
 
 	for (uint32 i = 0; i < _colors; i++) {
-		r = (_data[i*3]   << 2) | (_data[i*3]   >> 4);
-		g = (_data[i*3+1] << 2) | (_data[i*3+1] >> 4);
-		b = (_data[i*3+2] << 2) | (_data[i*3+2] >> 4);
+		r = (_data[i * 3] << 2) | (_data[i * 3] >> 4);
+		g = (_data[i * 3 + 1] << 2) | (_data[i * 3 + 1] >> 4);
+		b = (_data[i * 3 + 2] << 2) | (_data[i * 3 + 2] >> 4);
 
-		rgb[i*3]   = r;
-		rgb[i*3+1] = g;
-		rgb[i*3+2] = b;
+		rgb[i * 3] = r;
+		rgb[i * 3 + 1] = g;
+		rgb[i * 3 + 2] = b;
 
 		if (_hb) {
-			hbPal[i*3]   = r >> 1;
-			hbPal[i*3+1] = g >> 1;
-			hbPal[i*3+2] = b >> 1;
+			hbPal[i * 3] = r >> 1;
+			hbPal[i * 3 + 1] = g >> 1;
+			hbPal[i * 3 + 2] = b >> 1;
 		}
-
 	}
 
 	return ((_hb) ? 2 : 1) * _colors;
@@ -188,38 +181,34 @@ void Palette::rotate(uint first, uint last, bool forward) {
 
 	byte tmp[3];
 
-	if (forward) {					// forward
+	if (forward) { // forward
 
 		tmp[0] = _data[first * 3];
 		tmp[1] = _data[first * 3 + 1];
 		tmp[2] = _data[first * 3 + 2];
 
-		memmove(_data+first*3, _data+(first+1)*3, (last - first)*3);
+		memmove(_data + first * 3, _data + (first + 1) * 3, (last - first) * 3);
 
-		_data[last * 3]	 = tmp[0];
+		_data[last * 3] = tmp[0];
 		_data[last * 3 + 1] = tmp[1];
 		_data[last * 3 + 2] = tmp[2];
 
-	} else {											// backward
+	} else { // backward
 
 		tmp[0] = _data[last * 3];
 		tmp[1] = _data[last * 3 + 1];
 		tmp[2] = _data[last * 3 + 2];
 
-		memmove(_data+(first+1)*3, _data+first*3, (last - first)*3);
+		memmove(_data + (first + 1) * 3, _data + first * 3, (last - first) * 3);
 
-		_data[first * 3]	  = tmp[0];
+		_data[first * 3] = tmp[0];
 		_data[first * 3 + 1] = tmp[1];
 		_data[first * 3 + 2] = tmp[2];
-
 	}
-
 }
 
-
-
 void Gfx::setPalette(Palette &pal) {
-	byte sysPal[256*3];
+	byte sysPal[256 * 3];
 
 	uint n = pal.fillRGB(sysPal);
 	_vm->_system->getPaletteManager()->setPalette(sysPal, 0, n);
@@ -230,9 +219,6 @@ void Gfx::setBlackPalette() {
 	setPalette(pal);
 }
 
-
-
-
 void Gfx::animatePalette() {
 
 	// avoid forcing setPalette when not needed
@@ -242,12 +228,14 @@ void Gfx::animatePalette() {
 	for (uint16 i = 0; i < 4; i++) {
 		range = &_backgroundInfo->ranges[i];
 
-		if ((range->_flags & 1) == 0) continue;		// animated palette
-		range->_timer += range->_step * 2;	// update timer
+		if ((range->_flags & 1) == 0)
+			continue; // animated palette
+		range->_timer += range->_step * 2; // update timer
 
-		if (range->_timer < 0x4000) continue;		// check timeout
+		if (range->_timer < 0x4000)
+			continue; // check timeout
 
-		range->_timer = 0;							// reset timer
+		range->_timer = 0; // reset timer
 
 		_palette.rotate(range->_first, range->_last, (range->_flags & 2) != 0);
 
@@ -261,18 +249,16 @@ void Gfx::animatePalette() {
 	return;
 }
 
-
-
-
-
 void Gfx::setHalfbriteMode(bool enable) {
-	if (_vm->getPlatform() != Common::kPlatformAmiga) return;
-	if (enable == _halfbrite) return;
+	if (_vm->getPlatform() != Common::kPlatformAmiga)
+		return;
+	if (enable == _halfbrite)
+		return;
 
 	_halfbrite = !_halfbrite;
 }
 
-#define HALFBRITE_CIRCLE_RADIUS		48
+#define HALFBRITE_CIRCLE_RADIUS 48
 void Gfx::setProjectorPos(int x, int y) {
 	_hbCircleRadius = HALFBRITE_CIRCLE_RADIUS;
 	_hbCirclePos.x = x + _hbCircleRadius;
@@ -286,7 +272,7 @@ void Gfx::setProjectorProgram(int16 *data) {
 }
 
 void Gfx::drawInventory() {
-/*
+	/*
 	if ((_engineFlags & kEngineInventory) == 0) {
 		return;
 	}
@@ -381,13 +367,13 @@ void Gfx::initiateScroll(int deltaX, int deltaY) {
 	if (deltaX != 0) {
 		_requestedHScrollDir = deltaX > 0 ? 1 : -1;
 		deltaX *= _requestedHScrollDir;
-		_requestedHScrollSteps = ((deltaX+31)/32) / _requestedHScrollDir;
+		_requestedHScrollSteps = ((deltaX + 31) / 32) / _requestedHScrollDir;
 	}
 
 	if (deltaY != 0) {
 		_requestedVScrollDir = deltaY > 0 ? 1 : -1;
 		deltaY *= _requestedVScrollDir;
-		_requestedVScrollSteps = ((deltaY+7)/8) / _requestedVScrollDir;
+		_requestedVScrollSteps = ((deltaY + 7) / 8) / _requestedVScrollDir;
 	}
 }
 
@@ -395,12 +381,12 @@ void Gfx::scroll() {
 	int32 x = _scrollPosX, y = _scrollPosY;
 
 	if (_requestedHScrollSteps) {
-		x += 32*_requestedHScrollDir;	// scroll 32 pixels at a time
+		x += 32 * _requestedHScrollDir; // scroll 32 pixels at a time
 		_requestedHScrollSteps--;
 	}
 
 	if (_requestedVScrollSteps) {
-		y += 8*_requestedVScrollDir;	// scroll 8 pixel at a time
+		y += 8 * _requestedVScrollDir; // scroll 8 pixel at a time
 		_requestedVScrollSteps--;
 	}
 
@@ -419,7 +405,7 @@ void Gfx::updateScreen() {
 	// is needed
 	_overlayMode = false;
 
-	bool skipBackground = (_backgroundInfo->bg.getPixels() == 0);	// don't render frame if background is missing
+	bool skipBackground = (_backgroundInfo->bg.getPixels() == 0); // don't render frame if background is missing
 
 	if (!skipBackground) {
 		// background may not cover the whole screen, so adjust bulk update size
@@ -432,14 +418,14 @@ void Gfx::updateScreen() {
 
 	sortScene();
 	Graphics::Surface *surf = lockScreen();
-		// draws animations frames and other game items
-		drawList(*surf, _sceneObjects);
+	// draws animations frames and other game items
+	drawList(*surf, _sceneObjects);
 
-		// special effects
-		applyHalfbriteEffect_NS(*surf);
+	// special effects
+	applyHalfbriteEffect_NS(*surf);
 
-		// draws inventory, labels and dialogue items
-		drawOverlay(*surf);
+	// draws inventory, labels and dialogue items
+	drawOverlay(*surf);
 	unlockScreen();
 
 	updateScreenIntern();
@@ -451,7 +437,7 @@ void Gfx::applyHalfbriteEffect_NS(Graphics::Surface &surf) {
 	}
 
 	byte *buf = (byte *)surf.getPixels();
-	for (int i = 0; i < surf.w*surf.h; i++) {
+	for (int i = 0; i < surf.w * surf.h; i++) {
 		*buf++ |= 0x20;
 	}
 
@@ -486,7 +472,6 @@ void Gfx::drawOverlay(Graphics::Surface &surf) {
 //	graphic primitives
 //
 
-
 void Gfx::patchBackground(Graphics::Surface &surf, int16 x, int16 y, bool mask) {
 
 	Common::Rect r(surf.w, surf.h);
@@ -496,11 +481,11 @@ void Gfx::patchBackground(Graphics::Surface &surf, int16 x, int16 y, bool mask) 
 	blt(r, (byte *)surf.getPixels(), &_backgroundInfo->bg, z, 100, 0);
 }
 
-void Gfx::fillBackground(const Common::Rect& r, byte color) {
+void Gfx::fillBackground(const Common::Rect &r, byte color) {
 	_backgroundInfo->bg.fillRect(r, color);
 }
 
-void Gfx::invertBackground(const Common::Rect& r) {
+void Gfx::invertBackground(const Common::Rect &r) {
 
 	byte *d = (byte *)_backgroundInfo->bg.getBasePtr(r.left, r.top);
 
@@ -512,16 +497,11 @@ void Gfx::invertBackground(const Common::Rect& r) {
 
 		d += (_backgroundInfo->bg.pitch - r.width());
 	}
-
 }
-
-
-
-
 
 void setupLabelSurface(Graphics::Surface &surf, uint w, uint h) {
 	surf.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
-	surf.fillRect(Common::Rect(w,h), LABEL_TRANSPARENT_COLOR);
+	surf.fillRect(Common::Rect(w, h), LABEL_TRANSPARENT_COLOR);
 }
 
 GfxObj *Gfx::renderFloatingLabel(Font *font, char *text) {
@@ -578,7 +558,6 @@ void Gfx::hideFloatingLabel() {
 	_floatingLabel = 0;
 }
 
-
 void Gfx::updateFloatingLabel() {
 	if (_floatingLabel == 0) {
 		return;
@@ -587,25 +566,25 @@ void Gfx::updateFloatingLabel() {
 	struct FloatingLabelTraits {
 		Common::Point _offsetWithItem;
 		Common::Point _offsetWithoutItem;
-		int	_minX;
+		int _minX;
 		int _minY;
-		int	_maxX;
+		int _maxX;
 		int _maxY;
-	} *traits;
+	} * traits;
 
 	Common::Rect r;
 	_floatingLabel->getRect(0, r);
 
 	FloatingLabelTraits traits_NS = {
-		Common::Point(16 - r.width()/2, 34),
-		Common::Point(8 - r.width()/2, 21),
+		Common::Point(16 - r.width() / 2, 34),
+		Common::Point(8 - r.width() / 2, 21),
 		0, 0, _vm->_screenWidth - r.width(), 190
 	};
 
 	// FIXME: _maxY for BRA is not constant (390), but depends on _vm->_subtitleY
 	FloatingLabelTraits traits_BR = {
-		Common::Point(34 - r.width()/2, 70),
-		Common::Point(16 - r.width()/2, 37),
+		Common::Point(34 - r.width() / 2, 70),
+		Common::Point(16 - r.width() / 2, 37),
 		0, 0, _vm->_screenWidth - r.width(), 390
 	};
 
@@ -615,16 +594,13 @@ void Gfx::updateFloatingLabel() {
 		traits = &traits_BR;
 	}
 
-	Common::Point	cursor;
+	Common::Point cursor;
 	_vm->_input->getCursorPos(cursor);
 	Common::Point offset = (_vm->_input->_activeItem._id) ? traits->_offsetWithItem : traits->_offsetWithoutItem;
 
 	_floatingLabel->x = CLIP(cursor.x + offset.x, traits->_minX, traits->_maxX);
 	_floatingLabel->y = CLIP(cursor.y + offset.y, traits->_minY, traits->_maxY);
 }
-
-
-
 
 GfxObj *Gfx::createLabel(Font *font, const char *text, byte color) {
 	Graphics::Surface *cnv = new Graphics::Surface;
@@ -666,11 +642,11 @@ void Gfx::showLabel(GfxObj *label, int16 x, int16 y) {
 	label->getRect(0, r);
 
 	if (x == CENTER_LABEL_HORIZONTAL) {
-		x = CLIP<int16>((_backgroundInfo->width - r.width()) / 2, 0, _backgroundInfo->width/2);
+		x = CLIP<int16>((_backgroundInfo->width - r.width()) / 2, 0, _backgroundInfo->width / 2);
 	}
 
 	if (y == CENTER_LABEL_VERTICAL) {
-		y = CLIP<int16>((_vm->_screenHeight - r.height()) / 2, 0, _vm->_screenHeight/2);
+		y = CLIP<int16>((_vm->_screenHeight - r.height()) / 2, 0, _vm->_screenHeight / 2);
 	}
 
 	label->x = x;
@@ -700,7 +676,6 @@ void Gfx::unregisterLabel(GfxObj *label) {
 	}
 }
 
-
 void Gfx::copyRect(const Common::Rect &r, Graphics::Surface &src, Graphics::Surface &dst) {
 
 	byte *s = (byte *)src.getBasePtr(r.left, r.top);
@@ -716,17 +691,24 @@ void Gfx::copyRect(const Common::Rect &r, Graphics::Surface &src, Graphics::Surf
 	return;
 }
 
-void Gfx::grabBackground(const Common::Rect& r, Graphics::Surface &dst) {
+void Gfx::grabBackground(const Common::Rect &r, Graphics::Surface &dst) {
 	copyRect(r, _backgroundInfo->bg, dst);
 }
 
-
-Gfx::Gfx(Parallaction* vm) :
-	_vm(vm), _disk(vm->_disk), _backgroundInfo(0),
-	_scrollPosX(0), _scrollPosY(0),_minScrollX(0), _maxScrollX(0),
-	_minScrollY(0), _maxScrollY(0),
-	_requestedHScrollSteps(0), _requestedVScrollSteps(0),
-	_requestedHScrollDir(0), _requestedVScrollDir(0) {
+Gfx::Gfx(Parallaction *vm)
+  : _vm(vm)
+  , _disk(vm->_disk)
+  , _backgroundInfo(0)
+  , _scrollPosX(0)
+  , _scrollPosY(0)
+  , _minScrollX(0)
+  , _maxScrollX(0)
+  , _minScrollY(0)
+  , _maxScrollY(0)
+  , _requestedHScrollSteps(0)
+  , _requestedVScrollSteps(0)
+  , _requestedHScrollDir(0)
+  , _requestedVScrollDir(0) {
 
 	_gameType = _vm->getGameType();
 	_doubleBuffering = _gameType != GType_Nippon;
@@ -749,8 +731,8 @@ Gfx::Gfx(Parallaction* vm) :
 	assert(_unpackedBitmap);
 
 	if ((_gameType == GType_BRA) && (_vm->getPlatform() == Common::kPlatformDOS)) {
-	// this loads the backup palette needed by the PC version of BRA (see setBackground()).
-		BackgroundInfo	paletteInfo;
+		// this loads the backup palette needed by the PC version of BRA (see setBackground()).
+		BackgroundInfo paletteInfo;
 		_disk->loadSlide(paletteInfo, "pointer");
 		_backupPal.clone(paletteInfo.palette);
 	}
@@ -773,9 +755,7 @@ Gfx::~Gfx() {
 	return;
 }
 
-
-
-int Gfx::setItem(GfxObj* frames, uint16 x, uint16 y, byte transparentColor) {
+int Gfx::setItem(GfxObj *frames, uint16 x, uint16 y, byte transparentColor) {
 	int id = _items.size();
 
 	frames->x = x;
@@ -795,8 +775,7 @@ void Gfx::setItemFrame(uint item, uint16 f) {
 	_items[item]->frame = f;
 }
 
-
-GfxObj* Gfx::registerBalloon(Frames *frames, const char *text) {
+GfxObj *Gfx::registerBalloon(Frames *frames, const char *text) {
 
 	GfxObj *obj = new GfxObj(kGfxObjTypeBalloon, frames, text);
 
@@ -848,7 +827,7 @@ void Gfx::setBackground(uint type, BackgroundInfo *info) {
 		_palette.clone(_backgroundInfo->palette);
 	} else {
 		for (uint i = 0; i < 6; i++)
-			_backgroundInfo->ranges[i]._flags = 0;	// disable palette cycling for slides
+			_backgroundInfo->ranges[i]._flags = 0; // disable palette cycling for slides
 		setPalette(_backgroundInfo->palette);
 	}
 
@@ -870,8 +849,13 @@ void Gfx::setBackground(uint type, BackgroundInfo *info) {
 	_maxScrollY = MAX<int>(0, _backgroundInfo->height - _vm->_screenHeight);
 }
 
-
-BackgroundInfo::BackgroundInfo() : _x(0), _y(0), width(0), height(0), _mask(0), _path(0) {
+BackgroundInfo::BackgroundInfo()
+  : _x(0)
+  , _y(0)
+  , width(0)
+  , height(0)
+  , _mask(0)
+  , _path(0) {
 	layers[0] = layers[1] = layers[2] = layers[3] = 0;
 	memset(ranges, 0, sizeof(ranges));
 }
@@ -889,7 +873,7 @@ bool BackgroundInfo::hasMask() {
 void BackgroundInfo::clearMaskData() {
 	// free mask data
 	MaskPatches::iterator it = _maskPatches.begin();
-	for ( ; it != _maskPatches.end(); ++it) {
+	for (; it != _maskPatches.end(); ++it) {
 		delete *it;
 	}
 	_maskPatches.clear();
@@ -933,12 +917,13 @@ void BackgroundInfo::toggleMaskPatch(uint id, int x, int y, bool apply) {
 
 uint16 BackgroundInfo::getMaskLayer(uint16 z) const {
 	for (uint16 i = 0; i < 3; i++) {
-		if (layers[i+1] > z) return i;
+		if (layers[i + 1] > z)
+			return i;
 	}
 	return LAYER_FOREGROUND;
 }
 
-void BackgroundInfo::setPaletteRange(int index, const PaletteFxRange& range) {
+void BackgroundInfo::setPaletteRange(int index, const PaletteFxRange &range) {
 	assert(index < 6);
 	memcpy(&ranges[index], &range, sizeof(PaletteFxRange));
 }
@@ -950,7 +935,7 @@ bool BackgroundInfo::hasPath() {
 void BackgroundInfo::clearPathData() {
 	// free mask data
 	PathPatches::iterator it = _pathPatches.begin();
-	for ( ; it != _pathPatches.end(); ++it) {
+	for (; it != _pathPatches.end(); ++it) {
 		delete *it;
 	}
 	_pathPatches.clear();
@@ -992,14 +977,20 @@ void BackgroundInfo::togglePathPatch(uint id, int x, int y, bool apply) {
 	}
 }
 
-MaskBuffer::MaskBuffer() : w(0), internalWidth(0), h(0), size(0), data(0), bigEndian(true) {
+MaskBuffer::MaskBuffer()
+  : w(0)
+  , internalWidth(0)
+  , h(0)
+  , size(0)
+  , data(0)
+  , bigEndian(true) {
 }
 
 MaskBuffer::~MaskBuffer() {
 	free();
 }
 
-byte* MaskBuffer::getPtr(uint16 x, uint16 y) const {
+byte *MaskBuffer::getPtr(uint16 x, uint16 y) const {
 	return data + (x >> 2) + y * internalWidth;
 }
 
@@ -1073,9 +1064,13 @@ void MaskBuffer::bltCopy(uint16 dx, uint16 dy, const MaskBuffer &src, uint16 sx,
 	}
 }
 
-
-
-PathBuffer::PathBuffer() : w(0), internalWidth(0), h(0), size(0), data(0), bigEndian(true) {
+PathBuffer::PathBuffer()
+  : w(0)
+  , internalWidth(0)
+  , h(0)
+  , size(0)
+  , data(0)
+  , bigEndian(true) {
 }
 
 PathBuffer::~PathBuffer() {
@@ -1124,7 +1119,7 @@ byte PathBuffer::getValue(uint16 x, uint16 y) const {
 	return ((1 << bit) & m) >> bit;
 }
 
-byte* PathBuffer::getPtr(uint16 x, uint16 y) const {
+byte *PathBuffer::getPtr(uint16 x, uint16 y) const {
 	return data + (x >> 3) + y * internalWidth;
 }
 

@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "startrek/startrek.h"
 
 namespace StarTrek {
@@ -101,7 +100,7 @@ void StarTrekEngine::drawStarfield() {
 		Point3 point2 = matrixMult(p, _starPositionMatrix);
 
 		if (point2.z > _flt_50898 && point2.z < 0x3fff
-		        && abs(point2.x) < point2.z && abs(point2.y) < point2.z) {
+		    && abs(point2.x) < point2.z && abs(point2.y) < point2.z) {
 
 			int16 x = _starfieldXVar1 + scaleSpacePosition(point2.x, point2.z);
 			int16 y = _starfieldYVar1 - scaleSpacePosition(point2.y, point2.z);

@@ -25,11 +25,12 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CDeadArea, CGameObject)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(MouseButtonUpMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseButtonUpMsg)
 END_MESSAGE_MAP()
 
-CDeadArea::CDeadArea() : CGameObject() {
+CDeadArea::CDeadArea()
+  : CGameObject() {
 }
 
 void CDeadArea::save(SimpleFile *file, int indent) {

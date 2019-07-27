@@ -35,57 +35,55 @@ class GCTFile;
 
 namespace OnceUpon {
 
-/** The home / parents animation sequence. */
-class Parents : public SEQFile {
-public:
-	Parents(GobEngine *vm, const Common::String &seq, const Common::String &gct,
-	        const Common::String &childName, uint8 house, const Font &font,
-	        const byte *normalPalette, const byte *brightPalette, uint paletteSize);
-	~Parents();
+	/** The home / parents animation sequence. */
+	class Parents : public SEQFile {
+	public:
+		Parents(GobEngine *vm, const Common::String &seq, const Common::String &gct,
+		        const Common::String &childName, uint8 house, const Font &font,
+		        const byte *normalPalette, const byte *brightPalette, uint paletteSize);
+		~Parents();
 
-	void play();
+		void play();
 
-protected:
-	void handleFrameEvent();
-	void handleInput(int16 key, int16 mouseX, int16 mouseY, MouseButtons mouseButtons);
+	protected:
+		void handleFrameEvent();
+		void handleInput(int16 key, int16 mouseX, int16 mouseY, MouseButtons mouseButtons);
 
-private:
-	static const uint kLoopCount = 7;
+	private:
+		static const uint kLoopCount = 7;
 
-	static const uint16 kLoop[kLoopCount][3];
+		static const uint16 kLoop[kLoopCount][3];
 
-	enum Sound {
-		kSoundCackle  = 0,
-		kSoundThunder    ,
-		kSoundCount
+		enum Sound {
+			kSoundCackle = 0,
+			kSoundThunder,
+			kSoundCount
+		};
+
+		static const char *kSound[kSoundCount];
+
+		uint8 _house;
+
+		const Font *_font;
+
+		uint _paletteSize;
+		const byte *_normalPalette;
+		const byte *_brightPalette;
+
+		SoundDesc _sounds[kSoundCount];
+
+		GCTFile *_gct;
+
+		uint _loopID[kLoopCount];
+		uint _currentLoop;
+
+		void lightningEffect();
+
+		void playSound(Sound sound);
+		void setPalette(const byte *palette, uint size);
+
+		void drawGCT(uint item, uint loop = 0xFFFF);
 	};
-
-	static const char *kSound[kSoundCount];
-
-
-	uint8 _house;
-
-	const Font *_font;
-
-	uint _paletteSize;
-	const byte *_normalPalette;
-	const byte *_brightPalette;
-
-	SoundDesc _sounds[kSoundCount];
-
-	GCTFile *_gct;
-
-	uint _loopID[kLoopCount];
-	uint _currentLoop;
-
-
-	void lightningEffect();
-
-	void playSound(Sound sound);
-	void setPalette(const byte *palette, uint size);
-
-	void drawGCT(uint item, uint loop = 0xFFFF);
-};
 
 } // End of namespace OnceUpon
 

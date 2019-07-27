@@ -26,20 +26,19 @@ namespace BladeRunner {
 
 void SceneScriptDR06::InitializeScene() {
 	if (Game_Flag_Query(kFlagDR04toDR06)) {
-		Setup_Scene_Information(-733.57f, 136.6f,  -968.64f,   0);
+		Setup_Scene_Information(-733.57f, 136.6f, -968.64f, 0);
 	} else {
 		Setup_Scene_Information(-707.57f, 136.6f, -1132.64f, 472);
 	}
 
 	Scene_Exit_Add_2D_Exit(0, 601, 11, 639, 479, 1);
 	if (Global_Variable_Query(kVariableChapter) > 3
-	 && Game_Flag_Query(kFlagDR06UnlockedToUG16)
-	) {
+	    && Game_Flag_Query(kFlagDR06UnlockedToUG16)) {
 		Scene_Exit_Add_2D_Exit(1, 0, 272, 46, 477, 2);
 	}
 	if (_vm->_cutContent && !Game_Flag_Query(kFlagMcCoyCommentsOnFans)) {
-		Scene_2D_Region_Add(0, 300,  80, 360, 190); // statue 1
-		Scene_2D_Region_Add(1,  60, 120, 155, 260); // statue 2
+		Scene_2D_Region_Add(0, 300, 80, 360, 190); // statue 1
+		Scene_2D_Region_Add(1, 60, 120, 155, 260); // statue 2
 		Scene_2D_Region_Add(2, 378, 270, 420, 320); // statue 3
 	}
 
@@ -120,10 +119,9 @@ bool SceneScriptDR06::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("X2_MON01D01", objectName)) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -645.34f, 136.6f, -1047.37f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 329, false);
-			if ( Actor_Clue_Query(kActorMcCoy, kClueFolder)
-			 &&  Actor_Clue_Query(kActorMcCoy, kClueGuzzaFramedMcCoy)
-			 && !Game_Flag_Query(kFlagCallWithGuzza)
-			) {
+			if (Actor_Clue_Query(kActorMcCoy, kClueFolder)
+			    && Actor_Clue_Query(kActorMcCoy, kClueGuzzaFramedMcCoy)
+			    && !Game_Flag_Query(kFlagCallWithGuzza)) {
 				Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyCallWithGuzza);
 				Game_Flag_Set(kFlagCallWithGuzza);
 			} else if (!Game_Flag_Query(kFlagDR06VidphoneChecked)) {
@@ -139,8 +137,8 @@ bool SceneScriptDR06::ClickedOn3DObject(const char *objectName, bool a2) {
 		return true;
 	}
 #if BLADERUNNER_ORIGINAL_BUGS
-	if ( Object_Query_Click("X2_KEYBRD02", objectName) // a bug? there is no X2_KEYBRD02 only X2KEYBRD02
-	 && !Game_Flag_Query(kFlagDR06KeyboardChecked)) {
+	if (Object_Query_Click("X2_KEYBRD02", objectName) // a bug? there is no X2_KEYBRD02 only X2KEYBRD02
+	    && !Game_Flag_Query(kFlagDR06KeyboardChecked)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -655.57f, 136.6f, -1092.64f, 0, true, false, false);
 		Actor_Face_Object(kActorMcCoy, "X2_KEYBRD02", true);
 		Actor_Voice_Over(830, kActorVoiceOver);
@@ -149,8 +147,8 @@ bool SceneScriptDR06::ClickedOn3DObject(const char *objectName, bool a2) {
 		return true;
 	}
 #else
-	if ( Object_Query_Click("X2KEYBRD02", objectName) // Use X2KEYBRD02 in place of X2_KEYBRD02
-	 && !Game_Flag_Query(kFlagDR06KeyboardChecked)) {
+	if (Object_Query_Click("X2KEYBRD02", objectName) // Use X2KEYBRD02 in place of X2_KEYBRD02
+	    && !Game_Flag_Query(kFlagDR06KeyboardChecked)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -655.57f, 136.6f, -1092.64f, 0, true, false, false);
 		Actor_Face_Object(kActorMcCoy, "X2KEYBRD02", true);
 		Actor_Voice_Over(830, kActorVoiceOver);
@@ -230,8 +228,8 @@ bool SceneScriptDR06::ClickedOnExit(int exitId) {
 }
 
 bool SceneScriptDR06::ClickedOn2DRegion(int region) {
-if (_vm->_cutContent) {
-		if (!Game_Flag_Query(kFlagMcCoyCommentsOnStatues) && (region == 0 || region == 1 || region == 2) ) {
+	if (_vm->_cutContent) {
+		if (!Game_Flag_Query(kFlagMcCoyCommentsOnStatues) && (region == 0 || region == 1 || region == 2)) {
 			Game_Flag_Set(kFlagMcCoyCommentsOnStatues);
 			Actor_Face_Heading(kActorMcCoy, 88, true);
 			Actor_Voice_Over(810, kActorVoiceOver);

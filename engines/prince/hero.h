@@ -23,12 +23,12 @@
 #ifndef PRINCE_HERO_H
 #define PRINCE_HERO_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/memstream.h"
+#include "common/scummsys.h"
 
-#include "graphics/surface.h"
 #include "graphics/primitives.h"
+#include "graphics/surface.h"
 
 namespace Prince {
 
@@ -108,7 +108,10 @@ public:
 
 	Graphics::Surface *getSurface();
 
-	void setPos(int16 x, int16 y) { _middleX = x; _middleY = y; }
+	void setPos(int16 x, int16 y) {
+		_middleX = x;
+		_middleY = y;
+	}
 	void setVisible(bool flag) { _visible = flag; }
 
 	void showHero();

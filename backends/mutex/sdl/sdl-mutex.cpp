@@ -24,12 +24,11 @@
 
 #if defined(SDL_BACKEND)
 
-#include "backends/mutex/sdl/sdl-mutex.h"
-#include "backends/platform/sdl/sdl-sys.h"
-
+#	include "backends/mutex/sdl/sdl-mutex.h"
+#	include "backends/platform/sdl/sdl-sys.h"
 
 OSystem::MutexRef SdlMutexManager::createMutex() {
-	return (OSystem::MutexRef) SDL_CreateMutex();
+	return (OSystem::MutexRef)SDL_CreateMutex();
 }
 
 void SdlMutexManager::lockMutex(OSystem::MutexRef mutex) {

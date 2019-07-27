@@ -26,49 +26,34 @@
  * Copyright (c) 1997-2003 Nayma Software
  */
 
-#include "common/system.h"
-#include "common/savefile.h"
-#include "tony/mpal/mpal.h"
-#include "tony/mpal/memory.h"
 #include "tony/custom.h"
+#include "common/savefile.h"
+#include "common/system.h"
 #include "tony/font.h"
 #include "tony/game.h"
 #include "tony/gfxcore.h"
+#include "tony/mpal/memory.h"
+#include "tony/mpal/mpal.h"
 #include "tony/tony.h"
 #include "tony/tonychar.h"
 #include "tony/utils.h"
 
 namespace Tony {
 
-static const char *const kAmbianceFile[] =  {
+static const char *const kAmbianceFile[] = {
 	"None",
-	"1.ADP",    // Grilli.WAV
-	"2.ADP",    // Grilli-Ovattati.WAV
-	"3.ADP",    // Grilli-Vento.WAV
-	"3.ADP",    // Grilli-Vento1.WAV
-	"5.ADP",    // Vento1.WAV
-	"4.ADP",    // Mare1.WAV
-	"6.ADP"     // Mare1.WAV half volume
+	"1.ADP", // Grilli.WAV
+	"2.ADP", // Grilli-Ovattati.WAV
+	"3.ADP", // Grilli-Vento.WAV
+	"3.ADP", // Grilli-Vento1.WAV
+	"5.ADP", // Vento1.WAV
+	"4.ADP", // Mare1.WAV
+	"6.ADP" // Mare1.WAV half volume
 };
 
-static const MusicFileEntry kMusicFiles[] =  {
-	{"00.ADP", 0},    {"01.ADP", 0},    {"02.ADP", 0},    {"03.ADP", 0},
-	{"04.ADP", 0},    {"05.ADP", 0},    {"06.ADP", 0},    {"07.ADP", 0},
-	{"08.ADP", 2450}, {"09.ADP", 0},    {"10.ADP", 0},    {"11.ADP", 0},
-	{"12.ADP", 0},    {"13.ADP", 0},    {"14.ADP", 0},    {"15.ADP", 0},
-	{"16.ADP", 0},    {"17.ADP", 0},    {"18.ADP", 0},    {"19.ADP", 0},
-	{"20.ADP", 0},    {"21.ADP", 0},    {"22.ADP", 0},    {"23.ADP", 0},
-	{"24.ADP", 0},    {"25.ADP", 0},    {"26.ADP", 0},    {"27.ADP", 0},
-	{"28.ADP", 1670}, {"29.ADP", 0},    {"30.ADP", 0},    {"31.ADP", 0},
-	{"32.ADP", 2900}, {"33.ADP", 0},    {"34.ADP", 0},    {"35.ADP", 0},
-	{"36.ADP", 0},    {"37.ADP", 0},    {"38.ADP", 0},    {"39.ADP", 0},
-	{"40.ADP", 0},    {"41.ADP", 1920}, {"42.ADP", 1560}, {"43.ADP", 1920},
-	{"44.ADP", 1920}, {"45.ADP", 1920}, {"46.ADP", 1920}, {"47.ADP", 1920},
-	{"48.ADP", 1920}, {"49.ADP", 1920}, {"50.ADP", 1920}, {"51.ADP", 1920},
-	{"52.ADP", 1920}, {"53.ADP", 0},    {"54.ADP", 0},    {"55.ADP", 0},
-	{"56.ADP", 0},    {"57.ADP", 0},    {"58.ADP", 0},    {"59.ADP", 0}
+static const MusicFileEntry kMusicFiles[] = {
+	{ "00.ADP", 0 }, { "01.ADP", 0 }, { "02.ADP", 0 }, { "03.ADP", 0 }, { "04.ADP", 0 }, { "05.ADP", 0 }, { "06.ADP", 0 }, { "07.ADP", 0 }, { "08.ADP", 2450 }, { "09.ADP", 0 }, { "10.ADP", 0 }, { "11.ADP", 0 }, { "12.ADP", 0 }, { "13.ADP", 0 }, { "14.ADP", 0 }, { "15.ADP", 0 }, { "16.ADP", 0 }, { "17.ADP", 0 }, { "18.ADP", 0 }, { "19.ADP", 0 }, { "20.ADP", 0 }, { "21.ADP", 0 }, { "22.ADP", 0 }, { "23.ADP", 0 }, { "24.ADP", 0 }, { "25.ADP", 0 }, { "26.ADP", 0 }, { "27.ADP", 0 }, { "28.ADP", 1670 }, { "29.ADP", 0 }, { "30.ADP", 0 }, { "31.ADP", 0 }, { "32.ADP", 2900 }, { "33.ADP", 0 }, { "34.ADP", 0 }, { "35.ADP", 0 }, { "36.ADP", 0 }, { "37.ADP", 0 }, { "38.ADP", 0 }, { "39.ADP", 0 }, { "40.ADP", 0 }, { "41.ADP", 1920 }, { "42.ADP", 1560 }, { "43.ADP", 1920 }, { "44.ADP", 1920 }, { "45.ADP", 1920 }, { "46.ADP", 1920 }, { "47.ADP", 1920 }, { "48.ADP", 1920 }, { "49.ADP", 1920 }, { "50.ADP", 1920 }, { "51.ADP", 1920 }, { "52.ADP", 1920 }, { "53.ADP", 0 }, { "54.ADP", 0 }, { "55.ADP", 0 }, { "56.ADP", 0 }, { "57.ADP", 0 }, { "58.ADP", 0 }, { "59.ADP", 0 }
 };
-
 
 static const char *const kJingleFileNames[] = {
 	"S00.ADP", "S01.ADP", "S02.ADP", "S03.ADP", "S04.ADP",
@@ -442,7 +427,6 @@ void sendFullscreenMsgEnd(CORO_PARAM, uint32 bNotEnableTony, uint32, uint32, uin
 	mCharResetCodes();
 	reapplyChangedHotspot();
 }
-
 
 void sendFullscreenMessage(CORO_PARAM, uint32 nMsg, uint32 nFont, uint32, uint32) {
 	CORO_BEGIN_CONTEXT;
@@ -1584,8 +1568,7 @@ void mCharSendMessage(CORO_PARAM, uint32 nChar, uint32 dwMessage, uint32 bIsBack
 		_ctx->pt = RMPoint(GLOBALS._mCharacter[nChar]._x, GLOBALS._mCharacter[nChar]._y);
 
 	// Parameter for special actions: random between the spoken
-	_ctx->parm = (GLOBALS._mCharacter[nChar]._curGroup * 10) + g_vm->_randomSource.getRandomNumber(
-	                 GLOBALS._mCharacter[nChar]._numTalks[GLOBALS._mCharacter[nChar]._curGroup] - 1) + 1;
+	_ctx->parm = (GLOBALS._mCharacter[nChar]._curGroup * 10) + g_vm->_randomSource.getRandomNumber(GLOBALS._mCharacter[nChar]._numTalks[GLOBALS._mCharacter[nChar]._curGroup] - 1) + 1;
 
 	// Try to run the custom function to initialize the speech
 	if (GLOBALS._mCharacter[nChar]._item) {
@@ -1760,8 +1743,7 @@ void sendDialogMessage(CORO_PARAM, uint32 nPers, uint32 nMsg, uint32, uint32) {
 			_ctx->pt = RMPoint(GLOBALS._mCharacter[nPers]._x, GLOBALS._mCharacter[nPers]._y);
 
 		// Parameter for special actions. Random between the spoken.
-		_ctx->parm = (GLOBALS._mCharacter[nPers]._curGroup * 10) + g_vm->_randomSource.getRandomNumber(
-		                 GLOBALS._mCharacter[nPers]._numTalks[GLOBALS._mCharacter[nPers]._curGroup] - 1) + 1;
+		_ctx->parm = (GLOBALS._mCharacter[nPers]._curGroup * 10) + g_vm->_randomSource.getRandomNumber(GLOBALS._mCharacter[nPers]._numTalks[GLOBALS._mCharacter[nPers]._curGroup] - 1) + 1;
 
 		if (GLOBALS._mCharacter[nPers]._numTexts != 0 && GLOBALS._mCharacter[nPers]._bInTexts) {
 			GLOBALS._mCharacter[nPers]._numTexts--;
@@ -1879,7 +1861,7 @@ void startDialog(CORO_PARAM, uint32 nDialog, uint32 nStartGroup, uint32, uint32)
 
 	// Wait until a choice is selected
 	mpalQueryDialogWaitForChoice(&_ctx->nChoice);
-	while (_ctx->nChoice != (uint32) - 1) {
+	while (_ctx->nChoice != (uint32)-1) {
 		// Get the list of options
 		_ctx->sl = mpalQueryDialogSelectList(_ctx->nChoice);
 		for (_ctx->num = 0; _ctx->sl[_ctx->num] != 0; _ctx->num++)
@@ -2233,14 +2215,14 @@ void doCredits(CORO_PARAM, uint32 nMsg, uint32 dwTime, uint32, uint32) {
 
 	_ctx->text = new RMTextDialog[_ctx->msg->numPeriods()];
 
-	for (_ctx->i = 0; _ctx->i < _ctx->msg->numPeriods(); _ctx->i++)     {
+	for (_ctx->i = 0; _ctx->i < _ctx->msg->numPeriods(); _ctx->i++) {
 		_ctx->text[_ctx->i].setInput(GLOBALS._input);
 
 		// Alignment
 		if ((*_ctx->msg)[_ctx->i][0] == '@') {
 			_ctx->text[_ctx->i].setAlignType(RMText::HCENTER, RMText::VTOP);
 			_ctx->text[_ctx->i].writeText(&(*_ctx->msg)[_ctx->i][1], 3);
-			_ctx->text[_ctx->i].setPosition(RMPoint(414, 70 + _ctx->i * 26));  // 70
+			_ctx->text[_ctx->i].setPosition(RMPoint(414, 70 + _ctx->i * 26)); // 70
 		} else {
 			_ctx->text[_ctx->i].setAlignType(RMText::HLEFT, RMText::VTOP);
 			_ctx->text[_ctx->i].writeText((*_ctx->msg)[_ctx->i], 3);
@@ -2284,74 +2266,74 @@ void doCredits(CORO_PARAM, uint32 nMsg, uint32 dwTime, uint32, uint32) {
 
 BEGIN_CUSTOM_FUNCTION_MAP()
 
-ASSIGN(1,   custLoadLocation)
-ASSIGN(2,   mySleep)
-ASSIGN(3,   setPointer)
-ASSIGN(5,   moveTony)
-ASSIGN(6,   faceToMe)
-ASSIGN(7,   backToMe)
-ASSIGN(8,   leftToMe)
-ASSIGN(9,   rightToMe)
-ASSIGN(10,  sendTonyMessage)
-ASSIGN(11,  changeBoxStatus)
-ASSIGN(12,  changeLocation)
-ASSIGN(13,  disableTony)
-ASSIGN(14,  enableTony)
-ASSIGN(15,  waitForPatternEnd)
-ASSIGN(16,  setLocStartPosition)
-ASSIGN(17,  scrollLocation)
-ASSIGN(18,  moveTonyAndWait)
-ASSIGN(19,  changeHotspot)
-ASSIGN(20,  addInventory)
-ASSIGN(21,  removeInventory)
-ASSIGN(22,  changeInventoryStatus)
-ASSIGN(23,  setTonyPosition)
-ASSIGN(24,  sendFullscreenMessage)
-ASSIGN(25,  saveTonyPosition)
-ASSIGN(26,  restoreTonyPosition)
-ASSIGN(27,  disableInput)
-ASSIGN(28,  enableInput)
-ASSIGN(29,  stopTony)
+ASSIGN(1, custLoadLocation)
+ASSIGN(2, mySleep)
+ASSIGN(3, setPointer)
+ASSIGN(5, moveTony)
+ASSIGN(6, faceToMe)
+ASSIGN(7, backToMe)
+ASSIGN(8, leftToMe)
+ASSIGN(9, rightToMe)
+ASSIGN(10, sendTonyMessage)
+ASSIGN(11, changeBoxStatus)
+ASSIGN(12, changeLocation)
+ASSIGN(13, disableTony)
+ASSIGN(14, enableTony)
+ASSIGN(15, waitForPatternEnd)
+ASSIGN(16, setLocStartPosition)
+ASSIGN(17, scrollLocation)
+ASSIGN(18, moveTonyAndWait)
+ASSIGN(19, changeHotspot)
+ASSIGN(20, addInventory)
+ASSIGN(21, removeInventory)
+ASSIGN(22, changeInventoryStatus)
+ASSIGN(23, setTonyPosition)
+ASSIGN(24, sendFullscreenMessage)
+ASSIGN(25, saveTonyPosition)
+ASSIGN(26, restoreTonyPosition)
+ASSIGN(27, disableInput)
+ASSIGN(28, enableInput)
+ASSIGN(29, stopTony)
 
-ASSIGN(30,  tonyTakeUp1)
-ASSIGN(31,  tonyTakeMid1)
-ASSIGN(32,  tonyTakeDown1)
-ASSIGN(33,  tonyTakeUp2)
-ASSIGN(34,  tonyTakeMid2)
-ASSIGN(35,  tonyTakeDown2)
+ASSIGN(30, tonyTakeUp1)
+ASSIGN(31, tonyTakeMid1)
+ASSIGN(32, tonyTakeDown1)
+ASSIGN(33, tonyTakeUp2)
+ASSIGN(34, tonyTakeMid2)
+ASSIGN(35, tonyTakeDown2)
 
-ASSIGN(72,  tonyPutUp1)
-ASSIGN(73,  tonyPutMid1)
-ASSIGN(74,  tonyPutDown1)
-ASSIGN(75,  tonyPutUp2)
-ASSIGN(76,  tonyPutMid2)
-ASSIGN(77,  tonyPutDown2)
+ASSIGN(72, tonyPutUp1)
+ASSIGN(73, tonyPutMid1)
+ASSIGN(74, tonyPutDown1)
+ASSIGN(75, tonyPutUp2)
+ASSIGN(76, tonyPutMid2)
+ASSIGN(77, tonyPutDown2)
 
-ASSIGN(36,  tonyOnTheFloor)
-ASSIGN(37,  tonyGetUp)
-ASSIGN(38,  tonyShepherdess)
-ASSIGN(39,  tonyWhistle)
+ASSIGN(36, tonyOnTheFloor)
+ASSIGN(37, tonyGetUp)
+ASSIGN(38, tonyShepherdess)
+ASSIGN(39, tonyWhistle)
 
-ASSIGN(40,  tonyLaugh)
-ASSIGN(41,  tonyHips)
-ASSIGN(42,  tonySing)
-ASSIGN(43,  tonyIndicate)
-ASSIGN(44,  tonyScaredWithHands)
-ASSIGN(49,  tonyScaredWithoutHands)
-ASSIGN(45,  tonyWithGlasses)
-ASSIGN(46,  tonyWithWorm)
-ASSIGN(47,  tonyWithHammer)
-ASSIGN(48,  tonyWithRope)
-ASSIGN(90,  tonyWithRabbitANIM)
-ASSIGN(91,  tonyWithRecipeANIM)
-ASSIGN(92,  tonyWithCardsANIM)
-ASSIGN(93,  tonyWithSnowmanANIM)
-ASSIGN(94,  tonyWithSnowmanStart)
-ASSIGN(95,  tonyWithSnowmanEnd)
-ASSIGN(96,  tonyWithRabbitStart)
-ASSIGN(97,  tonyWithRabbitEnd)
-ASSIGN(98,  tonyWithRecipeStart)
-ASSIGN(99,  tonyWithRecipeEnd)
+ASSIGN(40, tonyLaugh)
+ASSIGN(41, tonyHips)
+ASSIGN(42, tonySing)
+ASSIGN(43, tonyIndicate)
+ASSIGN(44, tonyScaredWithHands)
+ASSIGN(49, tonyScaredWithoutHands)
+ASSIGN(45, tonyWithGlasses)
+ASSIGN(46, tonyWithWorm)
+ASSIGN(47, tonyWithHammer)
+ASSIGN(48, tonyWithRope)
+ASSIGN(90, tonyWithRabbitANIM)
+ASSIGN(91, tonyWithRecipeANIM)
+ASSIGN(92, tonyWithCardsANIM)
+ASSIGN(93, tonyWithSnowmanANIM)
+ASSIGN(94, tonyWithSnowmanStart)
+ASSIGN(95, tonyWithSnowmanEnd)
+ASSIGN(96, tonyWithRabbitStart)
+ASSIGN(97, tonyWithRabbitEnd)
+ASSIGN(98, tonyWithRecipeStart)
+ASSIGN(99, tonyWithRecipeEnd)
 ASSIGN(100, tonyWithCardsStart)
 ASSIGN(101, tonyWithCardsEnd)
 ASSIGN(102, tonyWithNotebookStart)
@@ -2370,41 +2352,41 @@ ASSIGN(114, tonyScaredStart)
 ASSIGN(115, tonyScaredEnd)
 ASSIGN(116, tonyWithSecretary)
 
-ASSIGN(50,  charSetCode)
-ASSIGN(51,  charSetColor)
-ASSIGN(52,  charSetTalkPattern)
-ASSIGN(53,  charSendMessage)
-ASSIGN(54,  charSetStartEndTalkPattern)
+ASSIGN(50, charSetCode)
+ASSIGN(51, charSetColor)
+ASSIGN(52, charSetTalkPattern)
+ASSIGN(53, charSendMessage)
+ASSIGN(54, charSetStartEndTalkPattern)
 
-ASSIGN(60,  mCharSetCode)
-ASSIGN(61,  mCharSetColor)
-ASSIGN(62,  mCharSetCurrentGroup)
-ASSIGN(63,  mCharSetNumTalksInGroup)
-ASSIGN(64,  mCharSetNumTexts)
-ASSIGN(65,  mCharSendMessage)
-ASSIGN(66,  mCharSetPosition)
-ASSIGN(67,  mCharSetAlwaysBack)
-ASSIGN(68,  mCharResetCode)
+ASSIGN(60, mCharSetCode)
+ASSIGN(61, mCharSetColor)
+ASSIGN(62, mCharSetCurrentGroup)
+ASSIGN(63, mCharSetNumTalksInGroup)
+ASSIGN(64, mCharSetNumTexts)
+ASSIGN(65, mCharSendMessage)
+ASSIGN(66, mCharSetPosition)
+ASSIGN(67, mCharSetAlwaysBack)
+ASSIGN(68, mCharResetCode)
 
-ASSIGN(70,  startDialog)
-ASSIGN(71,  sendDialogMessage)
+ASSIGN(70, startDialog)
+ASSIGN(71, sendDialogMessage)
 
-ASSIGN(80,  takeOwnership)
-ASSIGN(81,  releaseOwnership)
+ASSIGN(80, takeOwnership)
+ASSIGN(81, releaseOwnership)
 
-ASSIGN(86,  playSoundEffect)
-ASSIGN(87,  playJingle)
-ASSIGN(88,  fadeInSoundEffect)
-ASSIGN(89,  fadeOutSoundEffect)
+ASSIGN(86, playSoundEffect)
+ASSIGN(87, playJingle)
+ASSIGN(88, fadeInSoundEffect)
+ASSIGN(89, fadeOutSoundEffect)
 ASSIGN(123, fadeInJingle)
 ASSIGN(124, fadeOutJingle)
 ASSIGN(125, muteSoundEffect)
 ASSIGN(126, demuteSoundEffect)
 ASSIGN(127, muteJingle)
 ASSIGN(128, demuteJingle)
-ASSIGN(84,  stopSoundEffect)
-ASSIGN(85,  stopJingle)
-ASSIGN(83,  playItemSfx)
+ASSIGN(84, stopSoundEffect)
+ASSIGN(85, stopJingle)
+ASSIGN(83, playItemSfx)
 ASSIGN(129, jingleFadeStart)
 ASSIGN(130, jingleFadeEnd)
 
@@ -2465,9 +2447,9 @@ void setupGlobalVars(RMTony *tony, RMPointer *ptr, RMGameBoxes *box, RMLocation 
 	for (int i = 0; i < 200; i++)
 		GLOBALS._ambiance[i] = 0;
 
-	GLOBALS._ambiance[6] =  AMBIANCE_CRICKETS;
-	GLOBALS._ambiance[7] =  AMBIANCE_CRICKETS;
-	GLOBALS._ambiance[8] =  AMBIANCE_CRICKETSMUFFLED;
+	GLOBALS._ambiance[6] = AMBIANCE_CRICKETS;
+	GLOBALS._ambiance[7] = AMBIANCE_CRICKETS;
+	GLOBALS._ambiance[8] = AMBIANCE_CRICKETSMUFFLED;
 	GLOBALS._ambiance[10] = AMBIANCE_CRICKETS;
 	GLOBALS._ambiance[12] = AMBIANCE_CRICKETS;
 	GLOBALS._ambiance[13] = AMBIANCE_CRICKETSMUFFLED;

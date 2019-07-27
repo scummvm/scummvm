@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 
 #ifdef USE_PNG
-#include <png.h>
+#	include <png.h>
 #endif
 
 #include "image/png.h"
@@ -39,11 +39,11 @@
 
 namespace Image {
 
-PNGDecoder::PNGDecoder() :
-        _outputSurface(0),
-        _palette(0),
-        _paletteColorCount(0),
-        _skipSignature(false) {
+PNGDecoder::PNGDecoder()
+  : _outputSurface(0)
+  , _palette(0)
+  , _paletteColorCount(0)
+  , _skipSignature(false) {
 }
 
 PNGDecoder::~PNGDecoder() {
@@ -173,7 +173,6 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 			_palette[(i * 3)] = palette[i].red;
 			_palette[(i * 3) + 1] = palette[i].green;
 			_palette[(i * 3) + 2] = palette[i].blue;
-
 		}
 		_outputSurface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		png_set_packing(pngPtr);
@@ -190,8 +189,7 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 			png_set_strip_16(pngPtr);
 		if (bitDepth < 8)
 			png_set_expand(pngPtr);
-		if (colorType == PNG_COLOR_TYPE_GRAY ||
-			colorType == PNG_COLOR_TYPE_GRAY_ALPHA)
+		if (colorType == PNG_COLOR_TYPE_GRAY || colorType == PNG_COLOR_TYPE_GRAY_ALPHA)
 			png_set_gray_to_rgb(pngPtr);
 
 		if (colorType != PNG_COLOR_TYPE_RGB_ALPHA)
@@ -245,13 +243,13 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const bool bottomUp) {
 #ifdef USE_PNG
-#ifdef SCUMM_LITTLE_ENDIAN
+#	ifdef SCUMM_LITTLE_ENDIAN
 	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 0, 8, 16, 0);
 	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 0, 8, 16, 24);
-#else
+#	else
 	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 16, 8, 0, 0);
 	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 24, 16, 8, 0);
-#endif
+#	endif
 
 	if (input.format.bytesPerPixel == 3) {
 		if (input.format != requiredFormat_3byte) {

@@ -28,8 +28,8 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "common/scummsys.h"
 #include "common/endian.h"
+#include "common/scummsys.h"
 #include "common/util.h"
 
 namespace Common {
@@ -129,8 +129,10 @@ public:
 class File : public Stream {
 private:
 	::FILE *_f;
+
 public:
-	File() : _f(nullptr) {}
+	File()
+	  : _f(nullptr) {}
 	virtual ~File() { close(); }
 
 	bool open(const char *filename, AccessMode mode = kFileReadMode) {
@@ -174,11 +176,16 @@ class MemFile : public Stream {
 private:
 	byte _data[MAX_MEM_SIZE];
 	size_t _size, _offset;
+
 public:
-	MemFile() : _size(0), _offset(0) {
+	MemFile()
+	  : _size(0)
+	  , _offset(0) {
 		memset(_data, 0, MAX_MEM_SIZE);
 	}
-	MemFile(const byte *data, size_t size) : _size(size), _offset(0) {
+	MemFile(const byte *data, size_t size)
+	  : _size(size)
+	  , _offset(0) {
 		memcpy(_data, data, size);
 	}
 	virtual ~MemFile() {}
@@ -193,9 +200,15 @@ public:
 
 	virtual int seek(int offset, int whence = SEEK_SET) {
 		switch (whence) {
-		case SEEK_SET: _offset = whence; break;
-		case SEEK_CUR: _offset += whence; break;
-		case SEEK_END: _offset = _size + whence; break;
+		case SEEK_SET:
+			_offset = whence;
+			break;
+		case SEEK_CUR:
+			_offset += whence;
+			break;
+		case SEEK_END:
+			_offset = _size + whence;
+			break;
 		}
 
 		return _offset;

@@ -86,8 +86,12 @@ private:
 	uint _ignoreResizeEvents;
 
 	struct VideoMode {
-		VideoMode() : width(0), height(0) {}
-		VideoMode(uint w, uint h) : width(w), height(h) {}
+		VideoMode()
+		  : width(0)
+		  , height(0) {}
+		VideoMode(uint w, uint h)
+		  : width(w)
+		  , height(h) {}
 
 		bool operator<(const VideoMode &right) const {
 			if (width < right.width) {

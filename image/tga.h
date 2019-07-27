@@ -64,16 +64,17 @@ public:
 	virtual const byte *getPalette() const { return _colorMap; }
 	virtual uint16 getPaletteColorCount() const { return _colorMapLength; }
 	virtual bool loadStream(Common::SeekableReadStream &stream);
+
 private:
 	// Format-spec from:
 	//http://www.ludorg.net/amnesia/TGA_File_Format_Spec.html
 	enum {
-	    TYPE_CMAP = 1,
-	    TYPE_TRUECOLOR = 2,
-	    TYPE_BW = 3,
-	    TYPE_RLE_CMAP = 9,
-	    TYPE_RLE_TRUECOLOR = 10,
-	    TYPE_RLE_BW = 11
+		TYPE_CMAP = 1,
+		TYPE_TRUECOLOR = 2,
+		TYPE_BW = 3,
+		TYPE_RLE_CMAP = 9,
+		TYPE_RLE_TRUECOLOR = 10,
+		TYPE_RLE_BW = 11
 	};
 
 	// Color-map:

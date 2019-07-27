@@ -25,12 +25,12 @@
 
 #include <FBase.h>
 
-#include "common/timer.h"
 #include "common/list.h"
+#include "common/timer.h"
 
 using namespace Tizen::Base::Runtime;
 
-struct TimerSlot: public EventDrivenThread, public ITimerEventListener {
+struct TimerSlot : public EventDrivenThread, public ITimerEventListener {
 	TimerSlot(Common::TimerManager::TimerProc callback, uint32 interval, void *refCon);
 	~TimerSlot();
 
@@ -40,7 +40,7 @@ struct TimerSlot: public EventDrivenThread, public ITimerEventListener {
 
 	Timer *_timer;
 	Common::TimerManager::TimerProc _callback;
-	uint32 _interval;	// in microseconds
+	uint32 _interval; // in microseconds
 	void *_refCon;
 };
 

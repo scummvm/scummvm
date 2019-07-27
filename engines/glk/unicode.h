@@ -28,8 +28,12 @@
 namespace Glk {
 
 typedef uint gli_case_block_t[2]; // upper, lower
-enum BufferChangeCase { CASE_UPPER = 0, CASE_LOWER = 1, CASE_TITLE = 2, CASE_IDENT = 3 };
-enum BufferChangeCond { COND_ALL = 0, COND_LINESTART = 1 };
+enum BufferChangeCase { CASE_UPPER = 0,
+	                      CASE_LOWER = 1,
+	                      CASE_TITLE = 2,
+	                      CASE_IDENT = 3 };
+enum BufferChangeCond { COND_ALL = 0,
+	                      COND_LINESTART = 1 };
 
 /*
  * Get the length of a unicode string
@@ -44,7 +48,7 @@ size_t strlen_uni(const uint32 *s);
  *converted string should have contained.
  */
 extern uint bufferChangeCase(uint32 *buf, uint len,
-							   uint numchars, BufferChangeCase destcase, BufferChangeCond cond, int changerest);
+                             uint numchars, BufferChangeCase destcase, BufferChangeCond cond, int changerest);
 
 } // End of namespace Glk
 

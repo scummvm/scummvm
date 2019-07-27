@@ -29,12 +29,12 @@
 #ifndef WINTERMUTE_BASE_POINT_H
 #define WINTERMUTE_BASE_POINT_H
 
-#include "engines/wintermute/persistent.h"
 #include "engines/wintermute/base/base.h"
+#include "engines/wintermute/persistent.h"
 
 namespace Wintermute {
 
-class BasePoint: public BaseClass {
+class BasePoint : public BaseClass {
 public:
 	DECLARE_PERSISTENT(BasePoint, BaseClass)
 	BasePoint();
@@ -42,7 +42,6 @@ public:
 	int32 y;
 	int32 x;
 	virtual ~BasePoint();
-
 };
 
 } // End of namespace Wintermute

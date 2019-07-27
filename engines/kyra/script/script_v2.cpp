@@ -21,8 +21,8 @@
  */
 
 #include "kyra/engine/kyra_v2.h"
-#include "kyra/graphics/screen_v2.h"
 #include "kyra/engine/timer.h"
+#include "kyra/graphics/screen_v2.h"
 
 #include "common/system.h"
 
@@ -193,7 +193,6 @@ int KyraEngine_v2::o2_getDlgIndex(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_getDlgIndex(%p) ()", (const void *)script);
 	return _mainCharacter.dlgIndex;
 }
-
 
 int KyraEngine_v2::o2_defineRoomEntrance(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_defineRoomEntrance(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));

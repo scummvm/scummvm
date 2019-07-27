@@ -25,7 +25,7 @@
 namespace Neverhood {
 
 AsScene2101Door::AsScene2101Door(NeverhoodEngine *vm, bool isOpen)
-	: AnimatedSprite(vm, 1100) {
+  : AnimatedSprite(vm, 1100) {
 
 	createSurface(100, 328, 347);
 	_x = 320;
@@ -76,7 +76,8 @@ void AsScene2101Door::stCloseDoorDone() {
 }
 
 AsScene2101HitByDoorEffect::AsScene2101HitByDoorEffect(NeverhoodEngine *vm, Sprite *klaymen)
-	: AnimatedSprite(vm, 1400), _klaymen(klaymen) {
+  : AnimatedSprite(vm, 1400)
+  , _klaymen(klaymen) {
 
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene2101HitByDoorEffect::handleMessage);
@@ -102,8 +103,12 @@ uint32 AsScene2101HitByDoorEffect::handleMessage(int messageNum, const MessagePa
 }
 
 SsCommonFloorButton::SsCommonFloorButton(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int surfacePriority, uint32 soundFileHash)
-	: StaticSprite(vm, 1100), _parentScene(parentScene), _countdown(0),
-	_fileHash1(fileHash1), _fileHash2(fileHash2), _soundFileHash(soundFileHash) {
+  : StaticSprite(vm, 1100)
+  , _parentScene(parentScene)
+  , _countdown(0)
+  , _fileHash1(fileHash1)
+  , _fileHash2(fileHash2)
+  , _soundFileHash(soundFileHash) {
 
 	SetUpdateHandler(&SsCommonFloorButton::update);
 	SetMessageHandler(&SsCommonFloorButton::handleMessage);
@@ -142,7 +147,7 @@ uint32 SsCommonFloorButton::handleMessage(int messageNum, const MessageParam &pa
 }
 
 KmScene2101::KmScene2101(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+  : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }

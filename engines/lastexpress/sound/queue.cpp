@@ -33,10 +33,11 @@
 
 namespace LastExpress {
 
-SoundQueue::SoundQueue(LastExpressEngine *engine) : _engine(engine) {
-	 _ambientState = 0;
-	 _currentTag = kSoundTagFirstNormal;
-	 _flag = 0;
+SoundQueue::SoundQueue(LastExpressEngine *engine)
+  : _engine(engine) {
+	_ambientState = 0;
+	_currentTag = kSoundTagFirstNormal;
+	_flag = 0;
 
 	_subtitlesFlag = 0;
 	_currentSubtitle = NULL;
@@ -268,11 +269,11 @@ void SoundQueue::updateSubtitles() {
 		SoundFlag status = (SoundFlag)soundEntry->getStatus();
 
 		if (!(status & kSoundFlagPlaying)
-		 || status & kSoundFlagMute
-		 || soundEntry->getTime() == 0
-		 || (status & kSoundVolumeMask) < kVolume6
-		 || ((getFlags()->nis & 0x8000) && soundEntry->getPriority() < 90)) {
-			 current_index = 0;
+		    || status & kSoundFlagMute
+		    || soundEntry->getTime() == 0
+		    || (status & kSoundVolumeMask) < kVolume6
+		    || ((getFlags()->nis & 0x8000) && soundEntry->getPriority() < 90)) {
+			current_index = 0;
 		} else {
 			current_index = soundEntry->getPriority() + (status & kSoundVolumeMask);
 
@@ -323,13 +324,12 @@ void SoundQueue::saveLoadWithSerializer(Common::Serializer &s) {
 		uint32 numEntries;
 		s.syncAsUint32LE(numEntries);
 		for (uint32 i = 0; i < numEntries; i++) {
-			SoundEntry* entry = new SoundEntry(_engine);
+			SoundEntry *entry = new SoundEntry(_engine);
 			entry->saveLoadWithSerializer(s);
 			addToQueue(entry);
 		}
 	}
 }
-
 
 uint32 SoundQueue::count() {
 	uint32 numEntries = 0;

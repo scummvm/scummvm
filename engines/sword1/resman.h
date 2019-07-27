@@ -23,21 +23,21 @@
 #ifndef SWORD1_RESMAN_H
 #define SWORD1_RESMAN_H
 
-#include "sword1/memman.h"
-#include "common/file.h"
-#include "sword1/sworddefs.h"
 #include "common/endian.h"
+#include "common/file.h"
+#include "sword1/memman.h"
+#include "sword1/sworddefs.h"
 
 namespace Sword1 {
 
-#define MAX_LABEL_SIZE (31+1)
+#define MAX_LABEL_SIZE (31 + 1)
 
 #if defined(__PSP__)
-#define MAX_OPEN_CLUS 4 // the PSP can't have more than 8 files open simultaneously
-                        // since we also need filehandles for music and sometimes savegames
-                        // set the maximum number of open clusters to 4.
+#	define MAX_OPEN_CLUS 4 // the PSP can't have more than 8 files open simultaneously \
+		// since we also need filehandles for music and sometimes savegames               \
+		// set the maximum number of open clusters to 4.
 #else
-#define MAX_OPEN_CLUS 8 // don't open more than 8 files at once
+#	define MAX_OPEN_CLUS 8 // don't open more than 8 files at once
 #endif
 
 struct Grp {
@@ -104,12 +104,11 @@ public:
 		return (_isBigEndian) ? TO_BE_32(value) : TO_LE_32(value);
 	}
 
-
 private:
-	uint32     resLength(uint32 id);
+	uint32 resLength(uint32 id);
 	MemHandle *resHandle(uint32 id);
-	uint32     resOffset(uint32 id);
-	Common::File      *resFile(uint32 id);
+	uint32 resOffset(uint32 id);
+	Common::File *resFile(uint32 id);
 
 	void openCptResourceBigEndian(uint32 id);
 	void openScriptResourceBigEndian(uint32 id);
@@ -120,10 +119,10 @@ private:
 	void freeCluDescript();
 	Prj _prj;
 	MemMan *_memMan;
-	static const uint32 _scriptList[TOTAL_SECTIONS];    //a table of resource tags
+	static const uint32 _scriptList[TOTAL_SECTIONS]; //a table of resource tags
 	static uint32 _srIdList[29];
 	Clu *_openCluStart, *_openCluEnd;
-	int  _openClus;
+	int _openClus;
 	bool _isBigEndian;
 };
 

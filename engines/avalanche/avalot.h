@@ -36,7 +36,7 @@ namespace Avalanche {
 class AvalancheEngine;
 
 static const byte kObjectNum = 18; // always preface with a #
-static const int16 kCarryLimit = 12;  // carry limit
+static const int16 kCarryLimit = 12; // carry limit
 
 struct PedType {
 	int16 _x, _y;
@@ -57,10 +57,10 @@ struct LineType : public FieldType {
 };
 
 struct QuasipedType {
-	byte   _whichPed;
-	Color  _textColor;
-	Room   _room;
-	Color  _backgroundColor;
+	byte _whichPed;
+	Color _textColor;
+	Room _room;
+	Color _backgroundColor;
 	People _who;
 };
 

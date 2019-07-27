@@ -32,10 +32,10 @@
 namespace Sludge {
 
 // Sound list stuff
-struct SoundList{
+struct SoundList {
 	int sound;
-	struct SoundList*next;
-	struct SoundList*prev;
+	struct SoundList *next;
+	struct SoundList *prev;
 	int cacheIndex;
 	int vol;
 };
@@ -46,7 +46,7 @@ public:
 	virtual ~SoundManager();
 
 	// Sound list
-	void playSoundList(SoundList*s);
+	void playSoundList(SoundList *s);
 	void handleSoundLists(); // to produce the same effects as end of stream call back functions
 
 	// GENERAL...
@@ -84,9 +84,9 @@ private:
 
 	struct SoundThing {
 		Audio::SoundHandle handle;
-		int fileLoaded, vol;	//Used for wav/ogg sounds only. (sound saving/loading)
-		bool looping;			//Used for wav/ogg sounds only. (sound saving/loading)
-		bool inSoundList;		//Used for wav/ogg sounds only
+		int fileLoaded, vol; //Used for wav/ogg sounds only. (sound saving/loading)
+		bool looping; //Used for wav/ogg sounds only. (sound saving/loading)
+		bool inSoundList; //Used for wav/ogg sounds only
 	};
 	typedef Common::List<SoundList *> SoundListHandles;
 
@@ -108,7 +108,7 @@ private:
 
 	void freeSound(int a);
 	bool forceRemoveSound();
-	bool deleteSoundFromList(SoundList*&s);
+	bool deleteSoundFromList(SoundList *&s);
 	int findEmptySoundSlot();
 	int makeSoundAudioStream(int f, Audio::AudioStream *&audiostream, bool loopy);
 };

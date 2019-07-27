@@ -20,14 +20,12 @@
  *
  */
 
-
 #ifndef SCUMM_ACTOR_H
 #define SCUMM_ACTOR_H
 
 #include "common/scummsys.h"
 #include "common/serializer.h"
 #include "scumm/scumm.h"
-
 
 namespace Scumm {
 
@@ -72,13 +70,13 @@ struct CostumeData {
 	}
 };
 
-struct AdjustBoxResult {	/* Result type of AdjustBox functions */
+struct AdjustBoxResult { /* Result type of AdjustBox functions */
 	int16 x, y;
 	byte box;
 };
 
 enum {
-	kOldInvalidBox = 255,	// For small header games
+	kOldInvalidBox = 255, // For small header games
 	kNewInavlidBox = 0
 };
 
@@ -139,14 +137,14 @@ public:
 
 protected:
 	struct ActorWalkData {
-		Common::Point dest;           // Final destination point
-		byte destbox;                 // Final destination box
-		int16 destdir;                // Final destination, direction to face at
+		Common::Point dest; // Final destination point
+		byte destbox; // Final destination box
+		int16 destdir; // Final destination, direction to face at
 
-		Common::Point cur;            // Last position
-		byte curbox;                  // Last box
+		Common::Point cur; // Last position
+		byte curbox; // Last box
 
-		Common::Point next;           // Next position on our way to the destination, i.e. our intermediate destination
+		Common::Point next; // Next position on our way to the destination, i.e. our intermediate destination
 
 		Common::Point point3;
 		int32 deltaXFactor, deltaYFactor;
@@ -167,7 +165,6 @@ protected:
 		}
 	};
 
-
 	uint16 _palette[256];
 	int _elevation;
 	uint16 _facing;
@@ -179,11 +176,10 @@ protected:
 	int16 _animVariable[27];
 
 public:
-
 	Actor(ScummEngine *scumm, int id);
 	virtual ~Actor() {}
 
-//protected:
+	//protected:
 	virtual void hideActor();
 	void showActor();
 
@@ -203,8 +199,9 @@ public:
 
 	void putActor(int x, int y, int room);
 	void setActorWalkSpeed(uint newSpeedX, uint newSpeedY);
+
 protected:
-	int calcMovementFactor(const Common::Point& next);
+	int calcMovementFactor(const Common::Point &next);
 	int actorWalkStep();
 	int remapDirection(int dir, bool is_walking);
 	virtual void setupActorScale();
@@ -232,8 +229,10 @@ public:
 	const byte *getActorName();
 	void startWalkActor(int x, int y, int dir);
 	void stopActorMoving();
+
 protected:
 	void startWalkAnim(int cmd, int angle);
+
 public:
 	void runActorTalkScript(int f);
 	virtual void startAnimActor(int frame);
@@ -256,7 +255,7 @@ public:
 		return p;
 	}
 
-	const Common::Point& getRealPos() const {
+	const Common::Point &getRealPos() const {
 		return _pos;
 	}
 
@@ -326,7 +325,8 @@ protected:
 
 class Actor_v3 : public Actor {
 public:
-	Actor_v3(ScummEngine *scumm, int id) : Actor(scumm, id) {}
+	Actor_v3(ScummEngine *scumm, int id)
+	  : Actor(scumm, id) {}
 
 	virtual void walkActor();
 
@@ -337,7 +337,8 @@ protected:
 
 class Actor_v2 : public Actor_v3 {
 public:
-	Actor_v2(ScummEngine *scumm, int id) : Actor_v3(scumm, id) {}
+	Actor_v2(ScummEngine *scumm, int id)
+	  : Actor_v3(scumm, id) {}
 
 	virtual void initActor(int mode);
 	virtual void walkActor();
@@ -349,14 +350,14 @@ protected:
 };
 
 enum ActorV0MiscFlags {
-	kActorMiscFlagStrong    = 0x01, // Kid is strong (Hunk-O-Matic used)
-	kActorMiscFlagGTFriend  = 0x02, // Kid is green tentacle's friend (recording contract)
+	kActorMiscFlagStrong = 0x01, // Kid is strong (Hunk-O-Matic used)
+	kActorMiscFlagGTFriend = 0x02, // Kid is green tentacle's friend (recording contract)
 	kActorMiscFlagWatchedTV = 0x04, // Kid knows publisher's address (watched TV)
-	kActorMiscFlagEdsEnemy  = 0x08, // Kid is not Weird Ed's friend
-	kActorMiscFlag_10       = 0x10, // ???
-	kActorMiscFlag_20       = 0x20, // ???
-	kActorMiscFlagFreeze    = 0x40, // Stop moving
-	kActorMiscFlagHide      = 0x80  // Kid is invisible (dead or in radiation suit)
+	kActorMiscFlagEdsEnemy = 0x08, // Kid is not Weird Ed's friend
+	kActorMiscFlag_10 = 0x10, // ???
+	kActorMiscFlag_20 = 0x20, // ???
+	kActorMiscFlagFreeze = 0x40, // Stop moving
+	kActorMiscFlagHide = 0x80 // Kid is invisible (dead or in radiation suit)
 };
 
 class Actor_v0 : public Actor_v2 {
@@ -399,13 +400,13 @@ public:
 	bool _limb_flipped[8];
 
 private:
-
 	bool walkBoxQueueAdd(int box);
 	bool walkBoxQueueFind(int box);
 	void walkboxQueueReverse();
 
 public:
-	Actor_v0(ScummEngine *scumm, int id) : Actor_v2(scumm, id) {}
+	Actor_v0(ScummEngine *scumm, int id)
+	  : Actor_v2(scumm, id) {}
 
 	void initActor(int mode);
 	void animateActor(int anim);
@@ -436,7 +437,6 @@ public:
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
-
 
 } // End of namespace Scumm
 

@@ -34,6 +34,7 @@ class FVector;
 class CUnmarkedCameraMover : public CCameraMover {
 private:
 	CUnmarkedAutoMover _autoMover;
+
 public:
 	CUnmarkedCameraMover(const CNavigationInfo *src);
 	virtual ~CUnmarkedCameraMover() {}

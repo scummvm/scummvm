@@ -20,15 +20,15 @@
  *
  */
 
-#include "illusions/duckman/illusions_duckman.h"
-#include "illusions/duckman/duckman_credits.h"
-#include "illusions/duckman/duckman_screenshakereffects.h"
 #include "illusions/duckman/duckman_specialcode.h"
-#include "illusions/duckman/duckman_inventory.h"
-#include "illusions/duckman/propertytimers.h"
-#include "illusions/duckman/scriptopcodes_duckman.h"
 #include "illusions/actor.h"
 #include "illusions/dictionary.h"
+#include "illusions/duckman/duckman_credits.h"
+#include "illusions/duckman/duckman_inventory.h"
+#include "illusions/duckman/duckman_screenshakereffects.h"
+#include "illusions/duckman/illusions_duckman.h"
+#include "illusions/duckman/propertytimers.h"
+#include "illusions/duckman/scriptopcodes_duckman.h"
 #include "illusions/resources/fontresource.h"
 #include "illusions/resources/scriptresource.h"
 #include "illusions/sound.h"
@@ -44,7 +44,7 @@ namespace Illusions {
 // Duckman_SpecialCode
 
 DuckmanSpecialCode::DuckmanSpecialCode(IllusionsEngine_Duckman *vm)
-	: _vm(vm) {
+  : _vm(vm) {
 
 	_propertyTimers = new PropertyTimers(_vm);
 	_inventory = new DuckmanInventory(_vm);
@@ -62,7 +62,7 @@ DuckmanSpecialCode::~DuckmanSpecialCode() {
 	delete _credits;
 }
 
-typedef Common::Functor1Mem<OpCall&, void, DuckmanSpecialCode> SpecialCodeFunctionDM;
+typedef Common::Functor1Mem<OpCall &, void, DuckmanSpecialCode> SpecialCodeFunctionDM;
 #define SPECIAL(id, func) _specialCodeMap[id] = new SpecialCodeFunctionDM(this, &DuckmanSpecialCode::func);
 
 void DuckmanSpecialCode::init() {
@@ -132,11 +132,9 @@ void DuckmanSpecialCode::spcAddChinesePuzzleAnswer(OpCall &opCall) {
 	_chinesePuzzleAnswers[_chinesePuzzleIndex++] = answer;
 	if (_chinesePuzzleIndex == 3) {
 		_vm->_scriptResource->_properties.set(0x000E0018, true);
-		if ((_chinesePuzzleAnswers[0] == 7 && _chinesePuzzleAnswers[1] == 2 && _chinesePuzzleAnswers[2] == 5) ||
-			(_chinesePuzzleAnswers[0] == 5 && _chinesePuzzleAnswers[1] == 2 && _chinesePuzzleAnswers[2] == 7))
+		if ((_chinesePuzzleAnswers[0] == 7 && _chinesePuzzleAnswers[1] == 2 && _chinesePuzzleAnswers[2] == 5) || (_chinesePuzzleAnswers[0] == 5 && _chinesePuzzleAnswers[1] == 2 && _chinesePuzzleAnswers[2] == 7))
 			_vm->_scriptResource->_properties.set(0x000E0019, true);
-		else if ((_chinesePuzzleAnswers[0] == 7 && _chinesePuzzleAnswers[1] == 2 && _chinesePuzzleAnswers[2] == 1) ||
-			(_chinesePuzzleAnswers[0] == 1 && _chinesePuzzleAnswers[1] == 2 && _chinesePuzzleAnswers[2] == 7))
+		else if ((_chinesePuzzleAnswers[0] == 7 && _chinesePuzzleAnswers[1] == 2 && _chinesePuzzleAnswers[2] == 1) || (_chinesePuzzleAnswers[0] == 1 && _chinesePuzzleAnswers[1] == 2 && _chinesePuzzleAnswers[2] == 7))
 			_vm->_scriptResource->_properties.set(0x000E00A0, true);
 	}
 	_vm->notifyThreadId(opCall._threadId);

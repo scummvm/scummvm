@@ -20,9 +20,9 @@
  *
  */
 
-#include "scumm/scumm.h"
 #include "scumm/actor.h"
 #include "scumm/charset.h"
+#include "scumm/scumm.h"
 #include "scumm/scumm_v7.h"
 
 #include "common/util.h"
@@ -45,10 +45,10 @@ void ScummEngine::setCameraAt(int pos_x, int pos_y) {
 	camera._dest.x = pos_x;
 
 	if (VAR_CAMERA_MIN_X != 0xFF && camera._cur.x < VAR(VAR_CAMERA_MIN_X))
-		camera._cur.x = (short) VAR(VAR_CAMERA_MIN_X);
+		camera._cur.x = (short)VAR(VAR_CAMERA_MIN_X);
 
 	if (VAR_CAMERA_MAX_X != 0xFF && camera._cur.x > VAR(VAR_CAMERA_MAX_X))
-		camera._cur.x = (short) VAR(VAR_CAMERA_MAX_X);
+		camera._cur.x = (short)VAR(VAR_CAMERA_MAX_X);
 
 	if (VAR_SCROLL_SCRIPT != 0xFF && VAR(VAR_SCROLL_SCRIPT)) {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
@@ -101,7 +101,7 @@ void ScummEngine::moveCamera() {
 
 	if (VAR_CAMERA_MIN_X != 0xFF && camera._cur.x < VAR(VAR_CAMERA_MIN_X)) {
 		if (snapToX)
-			camera._cur.x = (short) VAR(VAR_CAMERA_MIN_X);
+			camera._cur.x = (short)VAR(VAR_CAMERA_MIN_X);
 		else
 			camera._cur.x += 8;
 		cameraMoved();
@@ -110,7 +110,7 @@ void ScummEngine::moveCamera() {
 
 	if (VAR_CAMERA_MAX_X != 0xFF && camera._cur.x > VAR(VAR_CAMERA_MAX_X)) {
 		if (snapToX)
-			camera._cur.x = (short) VAR(VAR_CAMERA_MAX_X);
+			camera._cur.x = (short)VAR(VAR_CAMERA_MAX_X);
 		else
 			camera._cur.x -= 8;
 		cameraMoved();
@@ -125,7 +125,7 @@ void ScummEngine::moveCamera() {
 
 		if (t < camera._leftTrigger || t > camera._rightTrigger) {
 			if (snapToX) {
-				if (t > 40-5)
+				if (t > 40 - 5)
 					camera._dest.x = actorx + 80;
 				if (t < 5)
 					camera._dest.x = actorx - 80;
@@ -140,10 +140,10 @@ void ScummEngine::moveCamera() {
 	}
 
 	if (VAR_CAMERA_MIN_X != 0xFF && camera._dest.x < VAR(VAR_CAMERA_MIN_X))
-		camera._dest.x = (short) VAR(VAR_CAMERA_MIN_X);
+		camera._dest.x = (short)VAR(VAR_CAMERA_MIN_X);
 
 	if (VAR_CAMERA_MAX_X != 0xFF && camera._dest.x > VAR(VAR_CAMERA_MAX_X))
-		camera._dest.x = (short) VAR(VAR_CAMERA_MAX_X);
+		camera._dest.x = (short)VAR(VAR_CAMERA_MAX_X);
 
 	if (snapToX) {
 		camera._cur.x = camera._dest.x;
@@ -272,8 +272,7 @@ void ScummEngine_v7::moveCamera() {
 
 	if (camera._follows) {
 		a = derefActor(camera._follows, "moveCamera");
-		if (ABS(camera._cur.x - a->getPos().x) > VAR(VAR_CAMERA_THRESHOLD_X) ||
-				ABS(camera._cur.y - a->getPos().y) > VAR(VAR_CAMERA_THRESHOLD_Y)) {
+		if (ABS(camera._cur.x - a->getPos().x) > VAR(VAR_CAMERA_THRESHOLD_X) || ABS(camera._cur.y - a->getPos().y) > VAR(VAR_CAMERA_THRESHOLD_Y)) {
 			camera._movingToActor = true;
 			if (VAR(VAR_CAMERA_THRESHOLD_X) == 0)
 				camera._cur.x = a->getPos().x;
@@ -295,25 +294,25 @@ void ScummEngine_v7::moveCamera() {
 	clampCameraPos(&camera._dest);
 
 	if (camera._cur.x < camera._dest.x) {
-		camera._cur.x += (short) VAR(VAR_CAMERA_SPEED_X);
+		camera._cur.x += (short)VAR(VAR_CAMERA_SPEED_X);
 		if (camera._cur.x > camera._dest.x)
 			camera._cur.x = camera._dest.x;
 	}
 
 	if (camera._cur.x > camera._dest.x) {
-		camera._cur.x -= (short) VAR(VAR_CAMERA_SPEED_X);
+		camera._cur.x -= (short)VAR(VAR_CAMERA_SPEED_X);
 		if (camera._cur.x < camera._dest.x)
 			camera._cur.x = camera._dest.x;
 	}
 
 	if (camera._cur.y < camera._dest.y) {
-		camera._cur.y += (short) VAR(VAR_CAMERA_SPEED_Y);
+		camera._cur.y += (short)VAR(VAR_CAMERA_SPEED_Y);
 		if (camera._cur.y > camera._dest.y)
 			camera._cur.y = camera._dest.y;
 	}
 
 	if (camera._cur.y > camera._dest.y) {
-		camera._cur.y -= (short) VAR(VAR_CAMERA_SPEED_Y);
+		camera._cur.y -= (short)VAR(VAR_CAMERA_SPEED_Y);
 		if (camera._cur.y < camera._dest.y)
 			camera._cur.y = camera._dest.y;
 	}
@@ -325,8 +324,8 @@ void ScummEngine_v7::moveCamera() {
 		VAR(VAR_CAMERA_SPEED_X) = VAR(VAR_CAMERA_SPEED_Y) = 0;
 	} else {
 
-		camera._accel.x += (short) VAR(VAR_CAMERA_ACCEL_X);
-		camera._accel.y += (short) VAR(VAR_CAMERA_ACCEL_Y);
+		camera._accel.x += (short)VAR(VAR_CAMERA_ACCEL_X);
+		camera._accel.y += (short)VAR(VAR_CAMERA_ACCEL_Y);
 
 		VAR(VAR_CAMERA_SPEED_X) += camera._accel.x / 100;
 		VAR(VAR_CAMERA_SPEED_Y) += camera._accel.y / 100;
@@ -336,7 +335,6 @@ void ScummEngine_v7::moveCamera() {
 
 		if (VAR(VAR_CAMERA_SPEED_Y) > 8)
 			VAR(VAR_CAMERA_SPEED_Y) = 8;
-
 	}
 
 	cameraMoved();

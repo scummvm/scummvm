@@ -26,17 +26,19 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CRestaurantPhonograph, CPhonograph)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(PhonographPlayMsg)
-	ON_MESSAGE(PhonographStopMsg)
-	ON_MESSAGE(PhonographReadyToPlayMsg)
-	ON_MESSAGE(EjectCylinderMsg)
-	ON_MESSAGE(QueryPhonographState)
-	ON_MESSAGE(LockPhonographMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(PhonographPlayMsg)
+ON_MESSAGE(PhonographStopMsg)
+ON_MESSAGE(PhonographReadyToPlayMsg)
+ON_MESSAGE(EjectCylinderMsg)
+ON_MESSAGE(QueryPhonographState)
+ON_MESSAGE(LockPhonographMsg)
 END_MESSAGE_MAP()
 
-CRestaurantPhonograph::CRestaurantPhonograph() : CPhonograph(),
-		_isLocked(true), _field114(0) {}
+CRestaurantPhonograph::CRestaurantPhonograph()
+  : CPhonograph()
+  , _isLocked(true)
+  , _field114(0) {}
 
 void CRestaurantPhonograph::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);

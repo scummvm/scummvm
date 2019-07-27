@@ -44,12 +44,12 @@ namespace LastExpress {
 static const struct {
 	const char *saveFile;
 } gameInfo[6] = {
-	{"lastexpress-blue.egg"},
-	{"lastexpress-red.egg"},
-	{"lastexpress-green.egg"},
-	{"lastexpress-purple.egg"},
-	{"lastexpress-teal.egg"},
-	{"lastexpress-gold.egg"}
+	{ "lastexpress-blue.egg" },
+	{ "lastexpress-red.egg" },
+	{ "lastexpress-green.egg" },
+	{ "lastexpress-purple.egg" },
+	{ "lastexpress-teal.egg" },
+	{ "lastexpress-gold.egg" }
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -103,8 +103,7 @@ void SavegameStream::writeBuffer(uint8 value, bool onlyValue) {
 	_offset++;
 	_bufferOffset++;
 
-	if (!onlyValue && value >= 0xFB)
-	{
+	if (!onlyValue && value >= 0xFB) {
 		if (_bufferOffset == 256) {
 			_bufferOffset = 0;
 			Common::MemoryWriteStreamDynamic::write(_buffer, 256);
@@ -325,8 +324,7 @@ uint32 SavegameStream::readCompressed(void *dataPtr, uint32 dataSize) {
 				_valueCount = 2;
 				break;
 			}
-			}
-			break;
+		} break;
 
 		case 2:
 			*data++ = _previousValue;
@@ -346,7 +344,11 @@ uint32 SavegameStream::readCompressed(void *dataPtr, uint32 dataSize) {
 // Constructors
 //////////////////////////////////////////////////////////////////////////
 
-SaveLoad::SaveLoad(LastExpressEngine *engine) : _engine(engine), _savegame(NULL), _gameTicksLastSavegame(0), _entity(kEntityPlayer) {
+SaveLoad::SaveLoad(LastExpressEngine *engine)
+  : _engine(engine)
+  , _savegame(NULL)
+  , _gameTicksLastSavegame(0)
+  , _entity(kEntityPlayer) {
 }
 
 SaveLoad::~SaveLoad() {
@@ -452,7 +454,7 @@ void SaveLoad::loadStream(GameId id) {
 		uint32 count = save->read(buf, 8192);
 		if (count) {
 			uint32 w = _savegame->write(buf, count);
-			assert (w == count);
+			assert(w == count);
 		}
 	}
 
@@ -574,7 +576,7 @@ void SaveLoad::saveGame(SavegameType type, EntityIndex entity, uint32 value) {
 			// Not ready to save a game, skipping!
 			return;
 		} else if ((type == kSavegameTypeTime || type == kSavegameTypeEvent)
-			&& (entry.type == kSavegameTypeTickInterval && (getState()->time - entry.time) < 450)) {
+		           && (entry.type == kSavegameTypeTickInterval && (getState()->time - entry.time) < 450)) {
 			_savegame->seek(header.offsetEntry);
 			--header.count;
 		} else {
@@ -849,38 +851,37 @@ bool SaveLoad::isGameFinished(uint32 menuIndex, uint32 savegameIndex) {
 		return false;
 
 	return (data->value == kEventAnnaKilled
-	     || data->value == kEventKronosHostageAnnaNoFirebird
-	     || data->value == kEventKahinaPunchBaggageCarEntrance
-	     || data->value == kEventKahinaPunchBlue
-	     || data->value == kEventKahinaPunchYellow
-	     || data->value == kEventKahinaPunchSalon
-	     || data->value == kEventKahinaPunchKitchen
-	     || data->value == kEventKahinaPunchBaggageCar
-	     || data->value == kEventKahinaPunchCar
-	     || data->value == kEventKahinaPunchSuite4
-	     || data->value == kEventKahinaPunchRestaurant
-	     || data->value == kEventKahinaPunch
-	     || data->value == kEventKronosGiveFirebird
-	     || data->value == kEventAugustFindCorpse
-	     || data->value == kEventMertensBloodJacket
-	     || data->value == kEventMertensCorpseFloor
-	     || data->value == kEventMertensCorpseBed
-	     || data->value == kEventCoudertBloodJacket
-	     || data->value == kEventGendarmesArrestation
-	     || data->value == kEventAbbotDrinkGiveDetonator
-	     || data->value == kEventMilosCorpseFloor
-	     || data->value == kEventLocomotiveAnnaStopsTrain
-	     || data->value == kEventTrainStopped
-	     || data->value == kEventCathVesnaRestaurantKilled
-	     || data->value == kEventCathVesnaTrainTopKilled
-	     || data->value == kEventLocomotiveConductorsDiscovered
-	     || data->value == kEventViennaAugustUnloadGuns
-	     || data->value == kEventViennaKronosFirebird
-	     || data->value == kEventVergesAnnaDead
-	     || data->value == kEventTrainExplosionBridge
-	     || data->value == kEventKronosBringNothing);
+	        || data->value == kEventKronosHostageAnnaNoFirebird
+	        || data->value == kEventKahinaPunchBaggageCarEntrance
+	        || data->value == kEventKahinaPunchBlue
+	        || data->value == kEventKahinaPunchYellow
+	        || data->value == kEventKahinaPunchSalon
+	        || data->value == kEventKahinaPunchKitchen
+	        || data->value == kEventKahinaPunchBaggageCar
+	        || data->value == kEventKahinaPunchCar
+	        || data->value == kEventKahinaPunchSuite4
+	        || data->value == kEventKahinaPunchRestaurant
+	        || data->value == kEventKahinaPunch
+	        || data->value == kEventKronosGiveFirebird
+	        || data->value == kEventAugustFindCorpse
+	        || data->value == kEventMertensBloodJacket
+	        || data->value == kEventMertensCorpseFloor
+	        || data->value == kEventMertensCorpseBed
+	        || data->value == kEventCoudertBloodJacket
+	        || data->value == kEventGendarmesArrestation
+	        || data->value == kEventAbbotDrinkGiveDetonator
+	        || data->value == kEventMilosCorpseFloor
+	        || data->value == kEventLocomotiveAnnaStopsTrain
+	        || data->value == kEventTrainStopped
+	        || data->value == kEventCathVesnaRestaurantKilled
+	        || data->value == kEventCathVesnaTrainTopKilled
+	        || data->value == kEventLocomotiveConductorsDiscovered
+	        || data->value == kEventViennaAugustUnloadGuns
+	        || data->value == kEventViennaKronosFirebird
+	        || data->value == kEventVergesAnnaDead
+	        || data->value == kEventTrainExplosionBridge
+	        || data->value == kEventKronosBringNothing);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // Private methods

@@ -25,12 +25,16 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMusicControl, CBackground)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(MouseDoubleClickMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseDoubleClickMsg)
 END_MESSAGE_MAP()
 
-CMusicControl::CMusicControl() : CBackground(),
-	_controlArea(BELLS), _controlVal(0), _controlMax(1), _enabled(true) {
+CMusicControl::CMusicControl()
+  : CBackground()
+  , _controlArea(BELLS)
+  , _controlVal(0)
+  , _controlMax(1)
+  , _enabled(true) {
 }
 
 void CMusicControl::save(SimpleFile *file, int indent) {

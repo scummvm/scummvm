@@ -23,8 +23,8 @@
 #ifndef TEENAGENT_SEGMENT_H
 #define TEENAGENT_SEGMENT_H
 
-#include "common/stream.h"
 #include "common/endian.h"
+#include "common/stream.h"
 
 namespace TeenAgent {
 
@@ -33,7 +33,9 @@ class Segment {
 	byte *_data;
 
 public:
-	Segment() : _size(0), _data(0) {}
+	Segment()
+	  : _size(0)
+	  , _data(0) {}
 	~Segment();
 
 	void read(Common::ReadStream *s, uint32 _size);

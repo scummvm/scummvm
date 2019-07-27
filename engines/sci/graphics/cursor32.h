@@ -23,12 +23,12 @@
 #ifndef SCI_GRAPHICS_CURSOR32_H
 #define SCI_GRAPHICS_CURSOR32_H
 
-#include "common/array.h"           // for Array
-#include "common/rect.h"            // for Point, Rect
-#include "common/scummsys.h"        // for int16, byte, uint8
-#include "common/serializer.h"      // for Serializable, Serializer (ptr only)
-#include "sci/graphics/celobj32.h"  // for CelInfo32
-#include "sci/graphics/helpers.h"   // for GuiResourceId
+#include "common/array.h" // for Array
+#include "common/rect.h" // for Point, Rect
+#include "common/scummsys.h" // for int16, byte, uint8
+#include "common/serializer.h" // for Serializable, Serializer (ptr only)
+#include "sci/graphics/celobj32.h" // for CelInfo32
+#include "sci/graphics/helpers.h" // for GuiResourceId
 
 namespace Sci {
 
@@ -109,7 +109,8 @@ private:
 		byte *data;
 		uint8 skipColor;
 
-		DrawRegion() : data(nullptr) {}
+		DrawRegion()
+		  : data(nullptr) {}
 	};
 
 	/**

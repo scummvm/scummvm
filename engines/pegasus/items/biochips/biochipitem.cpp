@@ -23,17 +23,16 @@
  *
  */
 
-
 #include "common/stream.h"
 
-#include "pegasus/pegasus.h"
 #include "pegasus/ai/ai_area.h"
 #include "pegasus/items/biochips/biochipitem.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
-BiochipItem::BiochipItem(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
-		Item(id, neighborhood, room, direction) {
+BiochipItem::BiochipItem(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction)
+  : Item(id, neighborhood, room, direction) {
 
 	PegasusEngine *vm = (PegasusEngine *)g_engine;
 
